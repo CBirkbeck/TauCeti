@@ -150,16 +150,16 @@ lemma IsCompletelyMonotone.integral_Ioi_neg_iteratedDerivWithin_one_of_nonneg
     (hcm : IsCompletelyMonotone f) {x : ℝ} (hx : 0 ≤ x) {L : ℝ}
     (hL : Tendsto f atTop (nhds L)) :
     ∫ t in Ioi x, -iteratedDerivWithin 1 f (Ici 0) t = f x - L := by
-  -- Evaluate on `[x, T]` by the fundamental theorem of calculus, then let `T → ∞` using `f → L`.
-  have hintx : IntegrableOn (fun t => -iteratedDerivWithin 1 f (Ici 0) t) (Ioi x) :=
-    hcm.neg_iteratedDerivWithin_one_integrableOn.mono_set (Ioi_subset_Ioi hx)
-  refine tendsto_nhds_unique
-    (intervalIntegral_tendsto_integral_Ioi x hintx tendsto_id) ?_
-  simp only [id]
-  refine Tendsto.congr' ?_ (Tendsto.sub tendsto_const_nhds hL)
-  filter_upwards [eventually_gt_atTop (max x 1)] with T hT
-  have hxT : x < T := lt_of_le_of_lt (le_max_left x 1) hT
-  exact (IsCompletelyMonotone.integral_neg_iteratedDerivWithin_one_Ici_eq_sub hcm hx hxT.le).symm
+  have hcont : ContinuousWithinAt f (Ici x) x :=
+    (hcm.contDiffOn.continuousOn.continuousWithinAt hx).mono (Ici_subset_Ici.mpr hx)
+  have hderiv : ∀ t ∈ Ioi x, HasDerivAt f (iteratedDerivWithin 1 f (Ici 0) t) t :=
+    fun t ht => hcm.hasDerivAt_iteratedDerivWithin_succ 0 (hx.trans_lt ht)
+  have hneg : ∀ t ∈ Ioi x, iteratedDerivWithin 1 f (Ici 0) t ≤ 0 :=
+    fun t ht => hcm.iteratedDerivWithin_one_nonpos (hx.trans ht.le)
+  have hFTC : ∫ t in Ioi x, iteratedDerivWithin 1 f (Ici 0) t = L - f x :=
+    integral_Ioi_of_hasDerivAt_of_nonpos hcont hderiv hneg hL
+  rw [MeasureTheory.integral_neg, hFTC]
+  ring
 
 /-- The improper integral `∫₀^∞ (-f') dt = f(0) - L` for completely monotone functions. -/
 lemma IsCompletelyMonotone.integral_Ioi_neg_iteratedDerivWithin_one
