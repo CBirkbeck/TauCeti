@@ -1153,12 +1153,13 @@ private lemma ibp_kernel_integrableOn (f : ℝ → ℝ) (hcm : IsCompletelyMonot
       _ = (-1 : ℝ) ^ k / ↑(k - 1).factorial * t ^ (k - 1) *
           iteratedDerivWithin k f (Ici 0) t := by field_simp
 
-/-- The order-one case of the repeated integration by parts: on `(x, ∞)` the integral of `-f'`
-recovers `f x - L`, by the fundamental theorem of calculus on `[x, T]` together with `f → L`. -/
+/-- For a completely monotone `f` with limit `L` at infinity and `0 ≤ x`, the integral of `-f'`
+over `(x, ∞)` is the total drop `f x - L`. -/
 private lemma integral_Ioi_neg_iteratedDerivWithin_one (f : ℝ → ℝ)
     (hcm : IsCompletelyMonotone f) (x : ℝ) (hx : 0 ≤ x)
     (L : ℝ) (hL : Tendsto f atTop (nhds L)) :
     ∫ t in Ioi x, -iteratedDerivWithin 1 f (Ici 0) t = f x - L := by
+  -- Evaluate on `[x, T]` by the fundamental theorem of calculus, then let `T → ∞` using `f → L`.
   have hintx : IntegrableOn (fun t => -iteratedDerivWithin 1 f (Ici 0) t) (Ioi x) :=
     hcm.neg_iteratedDerivWithin_one_integrableOn.mono_set (Ioi_subset_Ioi hx)
   refine tendsto_nhds_unique
@@ -1180,16 +1181,17 @@ private lemma intervalIntegral_neg_one_pow_succ_kernel (f : ℝ → ℝ) (k : �
   rw [pow_succ (-1 : ℝ) k]
   ring
 
-/-- The inductive step of the repeated integration by parts: one integration by parts lowers the
-kernel order from `k + 1` to `k`. The boundary term decays (`boundary_term_decay`), so passing to
-the limit `T → ∞` in the finite-interval identity turns the order-`k` statement into the
-order-`k + 1` one. -/
+/-- For a completely monotone `f` with limit `L` at infinity, `0 ≤ x` and `k ≠ 0`, the order-`k`
+kernel identity implies the order-`k + 1` one: if the order-`k` kernel integrates against the
+`k`-th derivative to `f x - L` on `(x, ∞)`, then so does the order-`k + 1` kernel against the
+`(k + 1)`-st derivative. -/
 private lemma chafai_repeated_ibp_succ (f : ℝ → ℝ) (hcm : IsCompletelyMonotone f)
     (k : ℕ) (hk : k ≠ 0) (x : ℝ) (hx : 0 ≤ x) (L : ℝ) (hL : Tendsto f atTop (nhds L))
     (ih : ∫ t in Ioi x, (-1 : ℝ) ^ k / ↑(k - 1).factorial * (t - x) ^ (k - 1) *
       iteratedDerivWithin k f (Ici 0) t = f x - L) :
     ∫ t in Ioi x, (-1 : ℝ) ^ (k + 1) / ↑k.factorial * (t - x) ^ k *
       iteratedDerivWithin (k + 1) f (Ici 0) t = f x - L := by
+  -- Integrate by parts on `[x, T]`; the boundary term decays, so `T → ∞` transfers `ih`.
   have hk1 : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk
   have hintk := ibp_kernel_integrableOn f hcm k hk1 x hx L hL
   have hintkp1 := ibp_kernel_integrableOn f hcm (k + 1) (by omega) x hx L hL
@@ -1215,6 +1217,11 @@ private lemma chafai_repeated_ibp_succ (f : ℝ → ℝ) (hcm : IsCompletelyMono
     ((intervalIntegral_tendsto_integral_Ioi x hintkp1 tendsto_id).congr
       (fun T => by simp [id])) htend_via_ibp
 
+/-- **Repeated integration by parts for a completely monotone function.** For `n ≥ 1`, `0 ≤ x`
+and `f` tending to `L` at infinity, integrating the order-`n` kernel
+`(-1) ^ n / (n - 1)! * (t - x) ^ (n - 1)` against the `n`-th derivative of `f` over `(x, ∞)`
+recovers `f x - L`. This is the analytic identity behind the Chafaï reconstruction of `f` from
+its derivatives. -/
 private lemma chafai_repeated_ibp (f : ℝ → ℝ) (hcm : IsCompletelyMonotone f)
     (n : ℕ) (hn : 1 ≤ n) (x : ℝ) (hx : 0 ≤ x)
     (L : ℝ) (hL : Tendsto f atTop (nhds L)) :
