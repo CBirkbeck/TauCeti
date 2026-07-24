@@ -89,22 +89,21 @@ theorem laplacian_add_const_smul_norm_sq {f : E → ℝ} {x : E} (ε : ℝ) (hf 
 
 omit [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] in
 /-- **The `ε → 0` perturbation engine of the weak maximum principles.** To bound `f x ≤ m` on a
-compact set `K`, it suffices to produce, for every `ε > 0`, a point `z ∈ K` at which the
+bounded set `K`, it suffices to produce, for every `ε > 0`, a point `z ∈ K` at which the
 perturbation `f + ε‖·‖²` attains its maximum over `K` and where `f z ≤ m`: bounding `‖·‖²` by a
-constant on the compact `K` and letting `ε → 0` then gives `f x ≤ m`. The bare-Laplacian and
+constant on the bounded `K` and letting `ε → 0` then gives `f x ≤ m`. The bare-Laplacian and
 `-Δ + c` weak maximum principles differ only in how they produce such a maximizer, so this lemma
 packages everything they share. -/
-theorem le_of_forall_pos_exists_isMaxOn_perturbation {K : Set E} (hK : IsCompact K) {f : E → ℝ}
-    {m : ℝ} {x : E} (hxK : x ∈ K)
+theorem le_of_forall_pos_exists_isMaxOn_perturbation {K : Set E} (hK : Bornology.IsBounded K)
+    {f : E → ℝ} {m : ℝ} {x : E} (hxK : x ∈ K)
     (H : ∀ ε : ℝ, 0 < ε → ∃ z ∈ K, IsMaxOn (fun y : E => f y + ε • ‖y‖ ^ 2) K z ∧ f z ≤ m) :
     f x ≤ m := by
-  obtain ⟨C, hCub⟩ := hK.bddAbove_image (f := fun y : E => ‖y‖ ^ 2) (by fun_prop)
-  have hCnonneg : 0 ≤ C := le_trans (sq_nonneg _) (hCub ⟨x, hxK, rfl⟩)
-  refine le_of_forall_pos_mul_le hCnonneg fun ε hε => ?_
+  obtain ⟨M, hM⟩ := hK.exists_norm_le
+  refine le_of_forall_pos_mul_le (sq_nonneg M) fun ε hε => ?_
   obtain ⟨z, hzK, hzmax, hfz⟩ := H ε hε
   have hxz : f x + ε * ‖x‖ ^ 2 ≤ f z + ε * ‖z‖ ^ 2 := by simpa [smul_eq_mul] using hzmax hxK
-  have hzC : ‖z‖ ^ 2 ≤ C := hCub ⟨z, hzK, rfl⟩
-  have hεzC : ε * ‖z‖ ^ 2 ≤ ε * C := mul_le_mul_of_nonneg_left hzC hε.le
+  have hzC : ‖z‖ ^ 2 ≤ M ^ 2 := by nlinarith [hM z hzK, norm_nonneg z]
+  have hεzC : ε * ‖z‖ ^ 2 ≤ ε * M ^ 2 := mul_le_mul_of_nonneg_left hzC hε.le
   have hεx : 0 ≤ ε * ‖x‖ ^ 2 := mul_nonneg hε.le (sq_nonneg _)
   linarith
 
@@ -124,7 +123,7 @@ theorem le_of_laplacian_nonneg_le_frontier {K : Set E} (hK : IsCompact K) {f : E
   -- frontier by the strict boundary maximum principle; then let `ε → 0`.
   intro x hxK
   have hfrpos : (0 : ℝ) < Module.finrank ℝ E := by exact_mod_cast Module.finrank_pos
-  refine le_of_forall_pos_exists_isMaxOn_perturbation hK hxK fun ε hε => ?_
+  refine le_of_forall_pos_exists_isMaxOn_perturbation hK.isBounded hxK fun ε hε => ?_
   have hεsq : ∀ y : E, ContDiffAt ℝ 2 (fun z : E => ε • ‖z‖ ^ 2) y :=
     fun y => ((contDiff_norm_sq ℝ).contDiffAt).const_smul ε
   have hgcont : ContinuousOn (fun y : E => f y + ε • ‖y‖ ^ 2) K := hcont.add (by fun_prop)

@@ -76,7 +76,7 @@ theorem le_of_mul_le_laplacian_le_frontier {K : Set E} (hK : IsCompact K) {c f :
     ∀ ⦃x⦄, x ∈ K → f x ≤ m := by
   intro x hxK
   have hfrpos : (0 : ℝ) < Module.finrank ℝ E := by exact_mod_cast Module.finrank_pos
-  refine le_of_forall_pos_exists_isMaxOn_perturbation hK hxK fun ε hε => ?_
+  refine le_of_forall_pos_exists_isMaxOn_perturbation hK.isBounded hxK fun ε hε => ?_
   have hεsq : ∀ y : E, ContDiffAt ℝ 2 (fun z : E => ε • ‖z‖ ^ 2) y :=
     fun y => ((contDiff_norm_sq ℝ).contDiffAt).const_smul ε
   have hgcont : ContinuousOn (fun y : E => f y + ε • ‖y‖ ^ 2) K := hcont.add (by fun_prop)
