@@ -165,6 +165,12 @@ theorem realOperator_continuousWithinAt_zero (S : StronglyContinuousSemigroup X)
     filter_upwards with t
     simp only [realOperator, Function.comp_apply])
 
+omit [CompleteSpace X] in
+/-- The orbit `t ↦ S.realOperator t x` is right-continuous at `0`: it tends to `x` along `Ici 0`. -/
+theorem tendsto_realOperator_nhdsWithin_zero (S : StronglyContinuousSemigroup X) (x : X) :
+    Filter.Tendsto (fun t => S.realOperator t x) (nhdsWithin 0 (Set.Ici 0)) (nhds x) := by
+  simpa using (S.realOperator_continuousWithinAt_zero x).tendsto
+
 end StronglyContinuousSemigroup
 
 variable (X)
@@ -277,9 +283,7 @@ private theorem StronglyContinuousSemigroup.pointwiseBoundedOnUnitInterval
     ∀ x : X, ∃ C, ∀ (i : Set.Icc (0 : ℝ) 1),
       ‖(fun j : Set.Icc (0 : ℝ) 1 => S.realOperator j.val) i x‖ ≤ C := by
   intro x
-  have hsc : Filter.Tendsto (fun t => S.realOperator t x)
-      (nhdsWithin 0 (Set.Ici 0)) (nhds x) := by
-    simpa using (S.realOperator_continuousWithinAt_zero x).tendsto
+  have hsc := S.tendsto_realOperator_nhdsWithin_zero x
   rw [Metric.tendsto_nhdsWithin_nhds] at hsc
   obtain ⟨δ, hδ_pos, hδ⟩ := hsc 1 one_pos
   have h_near : ∀ t : ℝ, 0 ≤ t → t < δ →
@@ -359,9 +363,7 @@ private theorem StronglyContinuousSemigroup.strongContWithinAt_left
   obtain ⟨C, hC_pos, hC_bound⟩ := h_norm_bound
   rw [Metric.tendsto_nhdsWithin_nhds]
   intro ε hε
-  have h_sc : Filter.Tendsto (fun t => S.realOperator t x)
-      (nhdsWithin 0 (Set.Ici 0)) (nhds x) := by
-    simpa using (S.realOperator_continuousWithinAt_zero x).tendsto
+  have h_sc := S.tendsto_realOperator_nhdsWithin_zero x
   rw [Metric.tendsto_nhdsWithin_nhds] at h_sc
   obtain ⟨δ, hδ_pos, hδ_spec⟩ := h_sc (ε / C) (div_pos hε hC_pos)
   refine ⟨δ, hδ_pos, fun t ht_mem ht_dist => ?_⟩
