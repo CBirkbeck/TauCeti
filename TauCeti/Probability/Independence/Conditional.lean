@@ -359,7 +359,7 @@ private lemma integral_sq_condExp_eq_of_pair_law [IsFiniteMeasure μ]
 integral (`∫ g₂ g₁ = ∫ g₁²`) are a.e. equal: the `L²` distance polarises to
 `∫ (g₂ - g₁)² = ∫ g₂² - 2 ∫ g₂ g₁ + ∫ g₁² = 0`. The products `g₁²`, `g₂²`, `g₂ g₁` are assumed
 integrable. -/
-private lemma ae_eq_of_integral_sq_eq_of_integral_mul_eq {Ω : Type*} {mΩ : MeasurableSpace Ω}
+private lemma ae_eq_of_integral_mul_eq_of_integral_sq_eq {Ω : Type*} {mΩ : MeasurableSpace Ω}
     {μ : Measure Ω} {g₁ g₂ : Ω → ℝ}
     (hg₁sq : Integrable (fun ω => g₁ ω * g₁ ω) μ)
     (hg₂sq : Integrable (fun ω => g₂ ω * g₂ ω) μ)
@@ -449,7 +449,7 @@ theorem condExp_indicator_eq_of_law_eq_of_comap_le [IsFiniteMeasure μ]
           refine integral_congr_ae ?_; filter_upwards [h_tower] with ω hω; rw [hω]
   have h_sq_eq : ∫ ω, μ₁ ω * μ₁ ω ∂μ = ∫ ω, μ₂ ω * μ₂ ω ∂μ := h_sq_eq_raw
   -- `μ₁ =ᵐ μ₂` from the polarisation `∫ (μ₂ - μ₁)² = ∫ μ₂² - 2 ∫ μ₂ μ₁ + ∫ μ₁² = 0`.
-  exact (ae_eq_of_integral_sq_eq_of_integral_mul_eq hμ₁sq_int hμ₂sq_int hμ₂μ₁_int
+  exact (ae_eq_of_integral_mul_eq_of_integral_sq_eq hμ₁sq_int hμ₂sq_int hμ₂μ₁_int
     h_cross h_sq_eq).symm
 
 end Probability
