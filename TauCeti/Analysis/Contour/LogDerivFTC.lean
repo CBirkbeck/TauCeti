@@ -84,11 +84,6 @@ theorem integral_deriv_div_sub_eq_log {γ γ' : ℝ → ℂ} {w : ℂ} {a b : �
     (fun t ht ↦ ((hγ_diff t ht).sub_const w).div_const _) h_slit (by rw [hfun]; exact h_int)
   rwa [hfun, div_self h_a_ne, Complex.log_one, sub_zero] at hgen
 
-/-- The winding integrand `(γ t - w)⁻¹ · γ'(t)` rewritten as the quotient `γ'(t) / (γ t - w)`. -/
-lemma inv_sub_mul_deriv_eq_deriv_div (γ : ℝ → ℂ) (w : ℂ) :
-    (fun t ↦ (γ t - w)⁻¹ * deriv γ t) = fun t ↦ deriv γ t / (γ t - w) := by
-  funext t; rw [div_eq_mul_inv, mul_comm]
-
 /-- **Winding-integrand form of the contour log-derivative FTC.** The `γ' = deriv γ` specialization
 of `integral_deriv_div_sub_eq_log`, stated with the winding-integral integrand
 `(γ t - w)⁻¹ * deriv γ t` in both the integrability hypothesis and the conclusion (matching the
@@ -100,9 +95,8 @@ theorem integral_inv_sub_mul_deriv_eq_log {γ : ℝ → ℂ} {w : ℂ} {a b : �
     (h_slit : ∀ t ∈ uIcc a b, (γ t - w) / (γ a - w) ∈ slitPlane)
     (h_int : IntervalIntegrable (fun t ↦ (γ t - w)⁻¹ * deriv γ t) volume a b) :
     ∫ t in a..b, (γ t - w)⁻¹ * deriv γ t = Complex.log ((γ b - w) / (γ a - w)) := by
-  have hfun := inv_sub_mul_deriv_eq_deriv_div γ w
-  rw [hfun]
+  simp only [inv_mul_eq_div]
   exact integral_deriv_div_sub_eq_log (γ' := deriv γ) hP hγ_cont
-    (fun t ht ↦ (hγ_diff t ht).hasDerivAt) h_slit (hfun ▸ h_int)
+    (fun t ht ↦ (hγ_diff t ht).hasDerivAt) h_slit (by simpa only [inv_mul_eq_div] using h_int)
 
 end TauCeti.Contour
