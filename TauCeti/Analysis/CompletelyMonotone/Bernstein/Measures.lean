@@ -1153,23 +1153,6 @@ private lemma ibp_kernel_integrableOn (f : ℝ → ℝ) (hcm : IsCompletelyMonot
       _ = (-1 : ℝ) ^ k / ↑(k - 1).factorial * t ^ (k - 1) *
           iteratedDerivWithin k f (Ici 0) t := by field_simp
 
-/-- For a completely monotone `f` with limit `L` at infinity and `0 ≤ x`, the integral of `-f'`
-over `(x, ∞)` is the total drop `f x - L`. -/
-private lemma integral_Ioi_neg_iteratedDerivWithin_one (f : ℝ → ℝ)
-    (hcm : IsCompletelyMonotone f) (x : ℝ) (hx : 0 ≤ x)
-    (L : ℝ) (hL : Tendsto f atTop (nhds L)) :
-    ∫ t in Ioi x, -iteratedDerivWithin 1 f (Ici 0) t = f x - L := by
-  -- Evaluate on `[x, T]` by the fundamental theorem of calculus, then let `T → ∞` using `f → L`.
-  have hintx : IntegrableOn (fun t => -iteratedDerivWithin 1 f (Ici 0) t) (Ioi x) :=
-    hcm.neg_iteratedDerivWithin_one_integrableOn.mono_set (Ioi_subset_Ioi hx)
-  refine tendsto_nhds_unique
-    (intervalIntegral_tendsto_integral_Ioi x hintx tendsto_id) ?_
-  simp only [id]
-  refine Tendsto.congr' ?_ (Tendsto.sub tendsto_const_nhds hL)
-  filter_upwards [eventually_gt_atTop (max x 1)] with T hT
-  have hxT : x < T := lt_of_le_of_lt (le_max_left x 1) hT
-  exact (IsCompletelyMonotone.integral_neg_iteratedDerivWithin_one_Ici_eq_sub hcm hx hxT.le).symm
-
 /-- Raising the sign exponent of the order-`k` kernel by one negates its integral. -/
 private lemma intervalIntegral_neg_one_pow_succ_kernel (f : ℝ → ℝ) (k : ℕ) (x T : ℝ) :
     ∫ t in x..T, (-1 : ℝ) ^ (k + 1) / ↑(k - 1).factorial * (t - x) ^ (k - 1) *
@@ -1233,7 +1216,7 @@ private lemma chafai_repeated_ibp (f : ℝ → ℝ) (hcm : IsCompletelyMonotone 
   | succ k ih =>
     by_cases hk : k = 0
     · subst hk
-      simpa using integral_Ioi_neg_iteratedDerivWithin_one f hcm x hx L hL
+      simpa using hcm.integral_Ioi_neg_iteratedDerivWithin_one_of_nonneg hx hL
     · have hk1 : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk
       simp only [show k + 1 - 1 = k by omega]
       exact chafai_repeated_ibp_succ f hcm k hk x hx L hL (ih hk1)
