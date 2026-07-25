@@ -88,7 +88,9 @@ theorem windingNumber_same (γ : ℝ → ℂ) (a : ℝ) (z₀ : ℂ) :
     (HasCauchyPVAt.refl γ a (fun z : ℂ => (z - z₀)⁻¹) z₀)]
   ring
 
-/-- **The generalized winding number depends on the curve only up to null sets.** -/
+/-- **The generalized winding number is unchanged when both the curves and their derivatives
+agree almost everywhere** on the integration interval. Curve equality alone does not suffice: the
+index integrand contains `deriv γ`. -/
 theorem windingNumber_congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {z₀ : ℂ}
     (h_eq : γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] γ₂)
     (h_deriv : deriv γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] deriv γ₂) :

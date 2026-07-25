@@ -232,10 +232,11 @@ interval: the two differ only at the right endpoint, which is null. -/
 private theorem aeEq_restrict_uIoc_of_eqOn_uIoo {u v : ℝ → ℂ} {a b : ℝ}
     (h : Set.EqOn u v (Set.uIoo a b)) :
     u =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] v := by
-  rw [show MeasureTheory.volume.restrict (Set.uIoc a b)
-      = MeasureTheory.volume.restrict (Set.uIoo a b) from
-    (MeasureTheory.Measure.restrict_congr_set
-      (MeasureTheory.Ioo_ae_eq_Ioc (μ := MeasureTheory.volume))).symm]
+  -- `uIoc` and `uIoo` differ only at the right endpoint, so they restrict the measure equally.
+  have hrestrict : MeasureTheory.volume.restrict (Set.uIoc a b)
+      = MeasureTheory.volume.restrict (Set.uIoo a b) :=
+    MeasureTheory.restrict_Ioo_eq_restrict_Ioc.symm
+  rw [hrestrict]
   exact h.aeEq_restrict measurableSet_Ioo
 
 /-- **The principal value depends on the curve only up to null sets.** If `γ₁` and `γ₂` agree
@@ -257,8 +258,8 @@ theorem HasCauchyPVAt.congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f 
   refine ⟨?_, ?_⟩
   · filter_upwards [h.1] with ε hε
     exact (intervalIntegrable_congr_ae (hfun ε)).mp hε
-  · refine Filter.Tendsto.congr (fun ε => intervalIntegral.integral_congr_ae ?_) h.2
-    exact (MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mp (hfun ε)
+  · exact Filter.Tendsto.congr
+      (fun ε => intervalIntegral.integral_congr_ae_restrict (hfun ε)) h.2
 
 /-- The principal value depends on the **curve** only through its values on the open interval
 between `a` and `b`. Agreement on the *open* interval is enough even though the integrand involves
@@ -286,8 +287,9 @@ theorem CauchyPVExistsAt.congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f 
   let ⟨_, hL⟩ := h
   CauchyPVExistsAt.intro (hL.congr_curve h_eq)
 
-/-- Value form of `HasCauchyPVAt.congr_curve_ae`: the raw `cauchyPVAt` value depends on the curve
-only up to null sets. -/
+/-- Value form of `HasCauchyPVAt.congr_curve_ae`: the raw `cauchyPVAt` value is unchanged when
+both the curves *and* their derivatives agree almost everywhere on the integration interval.
+Curve equality alone does not suffice — the integrand contains `deriv γ`. -/
 theorem cauchyPVAt_congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ}
     (h_eq : γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] γ₂)
     (h_deriv : deriv γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] deriv γ₂) :
@@ -295,8 +297,7 @@ theorem cauchyPVAt_congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : �
   unfold cauchyPVAt
   congr 1
   ext ε
-  refine intervalIntegral.integral_congr_ae
-    ((MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mp ?_)
+  refine intervalIntegral.integral_congr_ae_restrict ?_
   filter_upwards [h_eq, h_deriv] with t ht htd
   simp only [ht, htd]
 
