@@ -876,7 +876,7 @@ private lemma ibp_finite_interval (f : ℝ → ℝ) (hcm : IsCompletelyMonotone 
   have hu_cont : ContinuousOn u (uIcc x T) :=
     continuousOn_const.mul ((continuousOn_id.sub continuousOn_const).pow _)
   have hg_cont : ContinuousOn g (uIcc x T) :=
-    hcm.continuousOn_iteratedDerivWithin_uIcc k hx hxT.le
+    hcm.continuousOn_iteratedDerivWithin_uIcc k hx (hx.trans hxT.le)
   have hu_deriv : ∀ t ∈ Ioo (min x T) (max x T),
       HasDerivWithinAt u (u' t) (Ioi t) t := by
     intro t _ht
@@ -893,7 +893,7 @@ private lemma ibp_finite_interval (f : ℝ → ℝ) (hcm : IsCompletelyMonotone 
     (continuousOn_const.mul (continuousOn_const.mul
       ((continuousOn_id.sub continuousOn_const).pow _))).intervalIntegrable
   have hg'_int : IntervalIntegrable g' volume x T :=
-    (hcm.continuousOn_iteratedDerivWithin_uIcc (k + 1) hx hxT.le).intervalIntegrable
+    (hcm.continuousOn_iteratedDerivWithin_uIcc (k + 1) hx (hx.trans hxT.le)).intervalIntegrable
   have hibp := integral_mul_deriv_eq_deriv_mul_of_hasDeriv_right
     hu_cont hg_cont hu_deriv hg_deriv hu'_int hg'_int
   have hu0 : u x = 0 := by simp [u, sub_self, zero_pow hk]

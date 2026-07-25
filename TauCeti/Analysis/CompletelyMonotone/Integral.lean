@@ -109,13 +109,13 @@ private lemma IsCompletelyMonotone.iteratedDerivWithin_one_nonpos
   rw [iteratedDerivWithin_one]; exact hf.derivWithin_nonpos ht
 
 /-- Every iterated derivative within `[0, ∞)` of a completely monotone function is continuous on
-a compact interval `[x, T]` contained in `[0, ∞)`. -/
+the interval spanned by any two nonnegative endpoints. The endpoints need no ordering: `uIcc` is
+the unordered interval, and `[0, ∞)` is order-connected. -/
 lemma IsCompletelyMonotone.continuousOn_iteratedDerivWithin_uIcc (hcm : IsCompletelyMonotone f)
-    (m : ℕ) {x T : ℝ} (hx : 0 ≤ x) (hxT : x ≤ T) :
-    ContinuousOn (iteratedDerivWithin m f (Ici 0)) (uIcc x T) := by
-  rw [uIcc_of_le hxT]
-  exact (hcm.contDiffOn.continuousOn_iteratedDerivWithin (nat_le_top m)
-    (uniqueDiffOn_Ici 0)).mono (Icc_subset_Ici_self.trans (Ici_subset_Ici.mpr hx))
+    (m : ℕ) {x T : ℝ} (hx : 0 ≤ x) (hT : 0 ≤ T) :
+    ContinuousOn (iteratedDerivWithin m f (Ici 0)) (uIcc x T) :=
+  (hcm.contDiffOn.continuousOn_iteratedDerivWithin (nat_le_top m)
+    (uniqueDiffOn_Ici 0)).mono (ordConnected_Ici.uIcc_subset hx hT)
 
 /-- On a compact interval in `[0, ∞)`, the integral of `-f'` for a completely monotone
 function is the endpoint drop, with the derivative taken within `[0, ∞)`. -/
