@@ -28,10 +28,12 @@ Hungerbühler–Wasem half-residue theorem `hasCauchyPV_half_residue`.
 
 ## Main results
 
-* `TauCeti.Contour.hasCauchyPVAt_inv_sub_segment` / `TauCeti.Contour.windingNumber_segment` — an
-  arbitrary straight segment `v · t + z₀` traversed symmetrically through `z₀` has index
-  principal value and winding number `0` about `z₀`. The real-axis case through the origin is the
-  private base case from which the general one is transported.
+* `TauCeti.Contour.hasCauchyPVAt_inv_sub_segment`,
+  `TauCeti.Contour.cauchyPVExistsAt_inv_sub_segment` and
+  `TauCeti.Contour.windingNumber_eq_zero_segment` — an arbitrary straight segment `v · t + z₀`
+  traversed symmetrically through `z₀` has index principal value and winding number `0` about
+  `z₀`. The real-axis case through the origin is the private base case from which the general
+  one is transported.
 
 ## References
 
@@ -47,16 +49,6 @@ open Complex Filter Topology MeasureTheory
 
 namespace TauCeti.Contour
 
-/-- The derivative of the real-to-complex inclusion, as the specialization of Mathlib's
-`ContinuousLinearMap.deriv` to `Complex.ofRealCLM`. Kept private: it exists only to put the
-index integrand of a real segment into evaluated form. -/
-private theorem deriv_ofReal_eq_one : deriv (fun s : ℝ => (s : ℂ)) = fun _ => 1 := by
-  funext t
-  -- `⇑Complex.ofRealCLM` is definitionally the inclusion, so Mathlib's lemma applies directly.
-  have h : deriv (fun s : ℝ => (s : ℂ)) t = Complex.ofRealCLM 1 :=
-    Complex.ofRealCLM.deriv (x := t)
-  rw [h, Complex.ofRealCLM_apply, Complex.ofReal_one]
-
 /-- The `ε`-truncated index integrand of the real segment through the origin is odd. -/
 private theorem truncated_inv_ofReal_odd (ε : ℝ) :
     Function.Odd (fun t : ℝ =>
@@ -69,22 +61,23 @@ private theorem truncated_inv_ofReal_odd (ε : ℝ) :
 
 /-- Every `ε`-truncated index integral of the real segment through the origin vanishes. -/
 private theorem integral_truncated_inv_ofReal (R ε : ℝ) :
-    ∫ t in (-R)..R, (if ‖((t : ℝ) : ℂ) - 0‖ > ε then
-      (((t : ℝ) : ℂ) - 0)⁻¹ * deriv (fun s : ℝ => (s : ℂ)) t else 0) = 0 := by
+    ∫ t in (-R)..R, (if ‖(Complex.ofRealCLM t) - 0‖ > ε then
+      ((Complex.ofRealCLM t) - 0)⁻¹ * deriv (⇑Complex.ofRealCLM) t else 0) = 0 := by
   refine intervalIntegral.integral_eq_zero_of_odd (fun t => ?_) R
-  simpa [deriv_ofReal_eq_one] using truncated_inv_ofReal_odd ε t
+  simpa [Complex.ofRealCLM.deriv, Complex.ofRealCLM_apply]
+    using truncated_inv_ofReal_odd ε t
 
 /-- **The real segment through the origin has vanishing index principal value.** The index
 integrand `1 / t` is odd, so every truncated integral over `[-R, R]` is `0`, and the principal
 value of `∫_γ dz / z` along the segment exists with value `0`. -/
 private theorem hasCauchyPVAt_inv_sub_ofReal (R : ℝ) :
-    HasCauchyPVAt (fun t : ℝ => (t : ℂ)) (-R) R (fun z => (z - 0)⁻¹) 0 0 := by
+    HasCauchyPVAt (⇑Complex.ofRealCLM) (-R) R (fun z => (z - 0)⁻¹) 0 0 := by
   refine HasCauchyPVAt.intro ?_ ?_
   · filter_upwards [self_mem_nhdsWithin] with ε hε
-    refine intervalIntegrable_truncated_mul_deriv (γ := fun t : ℝ => (t : ℂ))
+    refine intervalIntegrable_truncated_mul_deriv (γ := ⇑Complex.ofRealCLM)
       (f := fun z : ℂ => (z - 0)⁻¹) (z₀ := 0) (M := ε⁻¹) ?_ ?_ ?_
-    · simp [deriv_ofReal_eq_one]
-    · simp only [deriv_ofReal_eq_one]
+    · simp [Complex.ofRealCLM.deriv, Complex.ofRealCLM_apply]
+    · simp only [Complex.ofRealCLM.deriv, Complex.ofRealCLM_apply]
       refine (Measurable.ite ?_ ?_ measurable_const).aestronglyMeasurable
       · exact measurableSet_lt measurable_const (by fun_prop)
       · fun_prop
@@ -105,9 +98,15 @@ theorem hasCauchyPVAt_inv_sub_segment (v z₀ : ℂ) (R : ℝ) :
   · refine HasCauchyPVAt.intro ?_ ?_ <;> simp
   · simpa using hasCauchyPVAt_inv_sub_affine (d := z₀) (hasCauchyPVAt_inv_sub_ofReal R) hv
 
+/-- Existence form of `hasCauchyPVAt_inv_sub_segment`, matching the existence-form API of the
+adjacent scaling and affine coordinate changes. -/
+theorem cauchyPVExistsAt_inv_sub_segment (v z₀ : ℂ) (R : ℝ) :
+    CauchyPVExistsAt (fun t : ℝ => v * (t : ℂ) + z₀) (-R) R (fun z => (z - z₀)⁻¹) z₀ :=
+  CauchyPVExistsAt.intro (hasCauchyPVAt_inv_sub_segment v z₀ R)
+
 /-- **The winding number of a straight segment through its reference point vanishes.** -/
 @[simp]
-theorem windingNumber_segment (v z₀ : ℂ) (R : ℝ) :
+theorem windingNumber_eq_zero_segment (v z₀ : ℂ) (R : ℝ) :
     windingNumber (fun t : ℝ => v * (t : ℂ) + z₀) (-R) R z₀ = 0 := by
   rw [windingNumber_eq_of_hasCauchyPVAt (hasCauchyPVAt_inv_sub_segment v z₀ R)]
   ring
