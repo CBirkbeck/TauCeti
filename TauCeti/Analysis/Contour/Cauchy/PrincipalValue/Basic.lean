@@ -245,26 +245,35 @@ private theorem aeEq_restrict_uIoc_of_eqOn_uIoo {u v : ℝ → ℂ} {a b : ℝ}
   exact h.aeEq_restrict measurableSet_Ioo
 
 /-- **The principal value depends on the curve only up to null sets.** If `γ₁` and `γ₂` agree
-almost everywhere on the integration interval, and so do their derivatives, their contour
-principal values agree. Both hypotheses are needed separately: almost-everywhere equality of the
-curves says nothing about their derivatives. -/
+almost everywhere on the integration interval, and their derivatives agree almost everywhere
+*where the curve misses `z₀`*, their contour principal values agree.
+
+Derivative agreement is only needed off `z₀`: the `ε`-truncation deletes the integrand wherever
+`‖γ t - z₀‖ ≤ ε`, so for the positive `ε` the principal value ranges over, a point with
+`γ₁ t = z₀` contributes `0` whatever the derivative there is. Curve agreement alone is still not
+enough — the integrand contains `deriv γ`. -/
 theorem HasCauchyPVAt.congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ} {L : ℂ}
     (h : HasCauchyPVAt γ₁ a b f z₀ L)
     (h_eq : γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] γ₂)
-    (h_deriv : deriv γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] deriv γ₂) :
+    (h_deriv : ∀ᵐ t ∂MeasureTheory.volume.restrict (Set.uIoc a b),
+      γ₁ t ≠ z₀ → deriv γ₁ t = deriv γ₂ t) :
     HasCauchyPVAt γ₂ a b f z₀ L := by
-  have hfun : ∀ ε : ℝ,
+  have hfun : ∀ ε : ℝ, 0 < ε →
       (fun t => if ‖γ₁ t - z₀‖ > ε then f (γ₁ t) * deriv γ₁ t else 0)
         =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)]
       (fun t => if ‖γ₂ t - z₀‖ > ε then f (γ₂ t) * deriv γ₂ t else 0) := by
-    intro ε
+    intro ε hε
     filter_upwards [h_eq, h_deriv] with t ht htd
-    simp only [ht, htd]
+    by_cases hz : γ₁ t = z₀
+    · -- The truncation deletes this point for both curves, so the derivative is irrelevant.
+      rw [if_neg, if_neg] <;> simp [hz, ← ht, hε.not_gt]
+    · simp only [ht, htd hz]
   refine ⟨?_, ?_⟩
-  · filter_upwards [h.1] with ε hε
-    exact (intervalIntegrable_congr_ae (hfun ε)).mp hε
-  · exact Filter.Tendsto.congr
-      (fun ε => intervalIntegral.integral_congr_ae_restrict (hfun ε)) h.2
+  · filter_upwards [h.1, self_mem_nhdsWithin] with ε hε hpos
+    exact (intervalIntegrable_congr_ae (hfun ε (Set.mem_Ioi.mp hpos))).mp hε
+  · refine Filter.Tendsto.congr' ?_ h.2
+    filter_upwards [self_mem_nhdsWithin] with ε hε
+    exact intervalIntegral.integral_congr_ae_restrict (hfun ε (Set.mem_Ioi.mp hε))
 
 /-- The principal value depends on the **curve** only through its values on the open interval
 between `a` and `b`. Agreement on the *open* interval is enough even though the integrand involves
@@ -274,13 +283,14 @@ theorem HasCauchyPVAt.congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : �
     (h : HasCauchyPVAt γ₁ a b f z₀ L) (h_eq : Set.EqOn γ₁ γ₂ (Set.uIoo a b)) :
     HasCauchyPVAt γ₂ a b f z₀ L :=
   h.congr_curve_ae (aeEq_restrict_uIoc_of_eqOn_uIoo h_eq)
-    (aeEq_restrict_uIoc_of_eqOn_uIoo (h_eq.deriv isOpen_Ioo))
+    ((aeEq_restrict_uIoc_of_eqOn_uIoo (h_eq.deriv isOpen_Ioo)).mono fun _ ht _ => ht)
 
 /-- Existence form of `HasCauchyPVAt.congr_curve_ae`. -/
 theorem CauchyPVExistsAt.congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ}
     (h : CauchyPVExistsAt γ₁ a b f z₀)
     (h_eq : γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] γ₂)
-    (h_deriv : deriv γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] deriv γ₂) :
+    (h_deriv : ∀ᵐ t ∂MeasureTheory.volume.restrict (Set.uIoc a b),
+      γ₁ t ≠ z₀ → deriv γ₁ t = deriv γ₂ t) :
     CauchyPVExistsAt γ₂ a b f z₀ :=
   let ⟨_, hL⟩ := h
   CauchyPVExistsAt.intro (hL.congr_curve_ae h_eq h_deriv)
@@ -297,21 +307,28 @@ both the curves *and* their derivatives agree almost everywhere on the integrati
 Curve equality alone does not suffice — the integrand contains `deriv γ`. -/
 theorem cauchyPVAt_congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ}
     (h_eq : γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] γ₂)
-    (h_deriv : deriv γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] deriv γ₂) :
+    (h_deriv : ∀ᵐ t ∂MeasureTheory.volume.restrict (Set.uIoc a b),
+      γ₁ t ≠ z₀ → deriv γ₁ t = deriv γ₂ t) :
     cauchyPVAt γ₁ a b f z₀ = cauchyPVAt γ₂ a b f z₀ := by
-  unfold cauchyPVAt
-  congr 1
-  ext ε
-  refine intervalIntegral.integral_congr_ae_restrict ?_
-  filter_upwards [h_eq, h_deriv] with t ht htd
-  simp only [ht, htd]
+  have hev : (fun ε => ∫ t in a..b, if ‖γ₁ t - z₀‖ > ε then f (γ₁ t) * deriv γ₁ t else 0)
+      =ᶠ[nhdsWithin (0 : ℝ) (Set.Ioi 0)]
+      (fun ε => ∫ t in a..b, if ‖γ₂ t - z₀‖ > ε then f (γ₂ t) * deriv γ₂ t else 0) := by
+    filter_upwards [self_mem_nhdsWithin] with ε hε
+    have hpos : (0 : ℝ) < ε := Set.mem_Ioi.mp hε
+    refine intervalIntegral.integral_congr_ae_restrict ?_
+    filter_upwards [h_eq, h_deriv] with t ht htd
+    by_cases hz : γ₁ t = z₀
+    · rw [if_neg, if_neg] <;> simp [hz, ← ht, hpos.not_gt]
+    · simp only [ht, htd hz]
+  unfold cauchyPVAt Filter.limUnder
+  rw [Filter.map_congr hev]
 
 /-- Value form of `HasCauchyPVAt.congr_curve`. -/
 theorem cauchyPVAt_congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ}
     (h_eq : Set.EqOn γ₁ γ₂ (Set.uIoo a b)) :
     cauchyPVAt γ₁ a b f z₀ = cauchyPVAt γ₂ a b f z₀ :=
   cauchyPVAt_congr_curve_ae (aeEq_restrict_uIoc_of_eqOn_uIoo h_eq)
-    (aeEq_restrict_uIoc_of_eqOn_uIoo (h_eq.deriv isOpen_Ioo))
+    ((aeEq_restrict_uIoc_of_eqOn_uIoo (h_eq.deriv isOpen_Ioo)).mono fun _ ht _ => ht)
 
 /-- Scalar multiplication: if the principal value of `f` is `L`, that of `c • f` is `c • L`. -/
 theorem HasCauchyPVAt.const_mul {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ} {L : ℂ}
