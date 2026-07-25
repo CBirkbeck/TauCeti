@@ -88,6 +88,17 @@ theorem windingNumber_same (γ : ℝ → ℂ) (a : ℝ) (z₀ : ℂ) :
     (HasCauchyPVAt.refl γ a (fun z : ℂ => (z - z₀)⁻¹) z₀)]
   ring
 
+/-- **The generalized winding number depends on the curve only through its values on the open
+interval between `a` and `b`.** Agreement on the open interval suffices even though the index
+integrand involves `deriv γ`, since the open interval is a neighbourhood of each of its points.
+This is what lets a piecewise contour be evaluated one piece at a time: on each piece the
+assembled curve agrees with the simple curve computing that piece's contribution. -/
+theorem windingNumber_congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {z₀ : ℂ}
+    (h_eq : Set.EqOn γ₁ γ₂ (Set.uIoo a b)) :
+    windingNumber γ₁ a b z₀ = windingNumber γ₂ a b z₀ := by
+  unfold windingNumber
+  rw [cauchyPVAt_congr_curve h_eq]
+
 /-- If the two endpoints are equal, the generalized winding number is `0`. -/
 theorem windingNumber_eq_zero_of_eq (γ : ℝ → ℂ) {a b : ℝ} (hab : a = b) (z₀ : ℂ) :
     windingNumber γ a b z₀ = 0 := by

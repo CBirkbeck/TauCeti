@@ -227,6 +227,36 @@ theorem cauchyPVAt_congr_along_curve {γ : ℝ → ℂ} {a b : ℝ} {f g : ℂ �
   refine intervalIntegral.integral_congr_uIoo fun t ht => ?_
   simp only [h_eq t ht]
 
+/-- The principal value depends on the **curve** only through its values on the open interval
+between `a` and `b`: if `γ₁ = γ₂` there, their principal values agree. Agreement on the *open*
+interval is enough even though the integrand involves `deriv γ`: the open interval is a
+neighbourhood of each of its points, so the two curves are eventually equal at every such point
+and their derivatives agree, while the endpoints are invisible to the interval integral. -/
+theorem HasCauchyPVAt.congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ} {L : ℂ}
+    (h : HasCauchyPVAt γ₁ a b f z₀ L) (h_eq : Set.EqOn γ₁ γ₂ (Set.uIoo a b)) :
+    HasCauchyPVAt γ₂ a b f z₀ L := by
+  have hderiv : ∀ t ∈ Set.uIoo a b, deriv γ₁ t = deriv γ₂ t := fun t ht =>
+    (h_eq.eventuallyEq_of_mem (isOpen_Ioo.mem_nhds ht)).deriv_eq
+  refine ⟨?_, ?_⟩
+  · filter_upwards [h.1] with ε hε
+    refine (intervalIntegrable_congr_uIoo fun t ht => ?_).mp hε
+    simp only [h_eq ht, hderiv t ht]
+  · refine Filter.Tendsto.congr (fun ε => intervalIntegral.integral_congr_uIoo fun t ht => ?_) h.2
+    simp only [h_eq ht, hderiv t ht]
+
+/-- Value form of `HasCauchyPVAt.congr_curve`: the raw `cauchyPVAt` value depends on the curve
+only through its values on the open interval between `a` and `b`. -/
+theorem cauchyPVAt_congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ}
+    (h_eq : Set.EqOn γ₁ γ₂ (Set.uIoo a b)) :
+    cauchyPVAt γ₁ a b f z₀ = cauchyPVAt γ₂ a b f z₀ := by
+  have hderiv : ∀ t ∈ Set.uIoo a b, deriv γ₁ t = deriv γ₂ t := fun t ht =>
+    (h_eq.eventuallyEq_of_mem (isOpen_Ioo.mem_nhds ht)).deriv_eq
+  unfold cauchyPVAt
+  congr 1
+  ext ε
+  refine intervalIntegral.integral_congr_uIoo fun t ht => ?_
+  simp only [h_eq ht, hderiv t ht]
+
 /-- Scalar multiplication: if the principal value of `f` is `L`, that of `c • f` is `c • L`. -/
 theorem HasCauchyPVAt.const_mul {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ} {L : ℂ}
     (h : HasCauchyPVAt γ a b f z₀ L) (c : ℂ) :
