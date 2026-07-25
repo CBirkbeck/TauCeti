@@ -61,17 +61,20 @@ variable {Ω : Type*} [MeasurableSpace Ω] {μ : Measure Ω}
 almost everywhere and in `L¹`, along an antitone filtration, then `Xlim` is the conditional
 expectation of `f` on the tail σ-algebra `⨅ n, 𝔽 n`.
 
-Both convergence modes are needed: the a.e. one makes `Xlim` measurable for `⨅ n, 𝔽 n`, and the
-`L¹` one transports the tower property `μ[μ[f | 𝔽 n] | ⨅ n, 𝔽 n] =ᵐ μ[f | ⨅ n, 𝔽 n]` to the
+The proof uses the a.e. convergence to make `Xlim` measurable for `⨅ n, 𝔽 n`, and the `L¹`
+convergence to transport the tower property `μ[μ[f | 𝔽 n] | ⨅ n, 𝔽 n] =ᵐ μ[f | ⨅ n, 𝔽 n]` to the
 limit. -/
 private lemma condExp_iInf_ae_eq_of_tendsto_ae_of_tendsto_eLpNorm
     [IsFiniteMeasure μ] {𝔽 : ℕ → MeasurableSpace Ω} {f Xlim : Ω → ℝ}
     (h_filtration : Antitone 𝔽)
-    (h_le : ∀ n, 𝔽 n ≤ (inferInstance : MeasurableSpace Ω))
+    (h_le0 : 𝔽 0 ≤ (inferInstance : MeasurableSpace Ω))
     (hXlimint : Integrable Xlim μ)
     (h_tendsto : ∀ᵐ ω ∂μ, Tendsto (fun n => μ[f | 𝔽 n] ω) atTop (𝓝 (Xlim ω)))
     (hL1_conv : Tendsto (fun n => eLpNorm (μ[f | 𝔽 n] - Xlim) 1 μ) atTop (𝓝 0)) :
     μ[f | ⨅ n, 𝔽 n] =ᵐ[μ] Xlim := by
+  -- Antitonicity upgrades measurability at index `0` to every index.
+  have h_le : ∀ n, 𝔽 n ≤ (inferInstance : MeasurableSpace Ω) :=
+    fun n => (h_filtration (Nat.zero_le n)).trans h_le0
   -- `Xlim` is `AEStronglyMeasurable[⨅ n, 𝔽 n]` (a.e. limit of `𝔽 n`-strongly-measurable functions).
   have hXlim_iInf_meas : AEStronglyMeasurable[⨅ n, 𝔽 n] Xlim μ :=
     aestronglyMeasurable_iInf_of_tendsto_ae_antitone h_filtration
@@ -136,7 +139,7 @@ private theorem tendsto_ae_and_eLpNorm_condExp_iInf
     · exact h_tendsto
   -- 3) Identify the a.e. limit as the conditional expectation on the tail σ-algebra.
   have hXlim_eq : μ[f | ⨅ n, 𝔽 n] =ᵐ[μ] Xlim :=
-    condExp_iInf_ae_eq_of_tendsto_ae_of_tendsto_eLpNorm h_filtration h_le hXlimint
+    condExp_iInf_ae_eq_of_tendsto_ae_of_tendsto_eLpNorm h_filtration h_le0 hXlimint
       h_tendsto hL1_conv
   refine ⟨?_, ?_⟩
   · -- Combine `h_tendsto : μ[f | 𝔽 n] → Xlim` with `hXlim_eq : μ[f | ⨅ n, 𝔽 n] =ᵐ Xlim`.
