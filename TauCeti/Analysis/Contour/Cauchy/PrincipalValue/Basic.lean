@@ -227,35 +227,56 @@ theorem cauchyPVAt_congr_along_curve {γ : ℝ → ℂ} {a b : ℝ} {f g : ℂ �
   refine intervalIntegral.integral_congr_uIoo fun t ht => ?_
   simp only [h_eq t ht]
 
+/-- **The principal value depends on the curve only up to null sets.** If `γ₁` and `γ₂` agree
+almost everywhere on the integration interval, and so do their derivatives, their index principal
+values agree. Both hypotheses are needed separately: almost-everywhere equality of the curves says
+nothing about their derivatives. -/
+theorem HasCauchyPVAt.congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ} {L : ℂ}
+    (h : HasCauchyPVAt γ₁ a b f z₀ L)
+    (h_eq : γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] γ₂)
+    (h_deriv : deriv γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] deriv γ₂) :
+    HasCauchyPVAt γ₂ a b f z₀ L := by
+  have hfun : ∀ ε : ℝ,
+      (fun t => if ‖γ₁ t - z₀‖ > ε then f (γ₁ t) * deriv γ₁ t else 0)
+        =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)]
+      (fun t => if ‖γ₂ t - z₀‖ > ε then f (γ₂ t) * deriv γ₂ t else 0) := by
+    intro ε
+    filter_upwards [h_eq, h_deriv] with t ht htd
+    simp only [ht, htd]
+  refine ⟨?_, ?_⟩
+  · filter_upwards [h.1] with ε hε
+    exact (intervalIntegrable_congr_ae (hfun ε)).mp hε
+  · refine Filter.Tendsto.congr (fun ε => intervalIntegral.integral_congr_ae ?_) h.2
+    exact (MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mp (hfun ε)
+
 /-- The principal value depends on the **curve** only through its values on the open interval
 between `a` and `b`: if `γ₁ = γ₂` there, their principal values agree. Agreement on the *open*
-interval is enough even though the integrand involves `deriv γ`: the open interval is a
-neighbourhood of each of its points, so the two curves are eventually equal at every such point
-and their derivatives agree, while the endpoints are invisible to the interval integral. -/
+interval is enough even though the integrand involves `deriv γ`, because an open set is a
+neighbourhood of each of its points (`Set.EqOn.deriv`), and the endpoints are invisible to the
+interval integral. -/
 theorem HasCauchyPVAt.congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ} {L : ℂ}
     (h : HasCauchyPVAt γ₁ a b f z₀ L) (h_eq : Set.EqOn γ₁ γ₂ (Set.uIoo a b)) :
     HasCauchyPVAt γ₂ a b f z₀ L := by
-  have hderiv : ∀ t ∈ Set.uIoo a b, deriv γ₁ t = deriv γ₂ t := fun t ht =>
-    (h_eq.eventuallyEq_of_mem (isOpen_Ioo.mem_nhds ht)).deriv_eq
-  refine ⟨?_, ?_⟩
-  · filter_upwards [h.1] with ε hε
-    refine (intervalIntegrable_congr_uIoo fun t ht => ?_).mp hε
-    simp only [h_eq ht, hderiv t ht]
-  · refine Filter.Tendsto.congr (fun ε => intervalIntegral.integral_congr_uIoo fun t ht => ?_) h.2
-    simp only [h_eq ht, hderiv t ht]
+  have hae : ∀ {u v : ℝ → ℂ}, Set.EqOn u v (Set.uIoo a b) →
+      u =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] v := by
+    intro u v huv
+    rw [Filter.EventuallyEq, MeasureTheory.ae_restrict_iff' measurableSet_uIoc]
+    filter_upwards [MeasureTheory.Ioo_ae_eq_Ioc (μ := MeasureTheory.volume)
+      (a := min a b) (b := max a b)] with t ht hmem
+    exact huv (ht.mpr hmem)
+  exact h.congr_curve_ae (hae h_eq) (hae (h_eq.deriv isOpen_Ioo))
 
 /-- Value form of `HasCauchyPVAt.congr_curve`: the raw `cauchyPVAt` value depends on the curve
 only through its values on the open interval between `a` and `b`. -/
 theorem cauchyPVAt_congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ}
     (h_eq : Set.EqOn γ₁ γ₂ (Set.uIoo a b)) :
     cauchyPVAt γ₁ a b f z₀ = cauchyPVAt γ₂ a b f z₀ := by
-  have hderiv : ∀ t ∈ Set.uIoo a b, deriv γ₁ t = deriv γ₂ t := fun t ht =>
-    (h_eq.eventuallyEq_of_mem (isOpen_Ioo.mem_nhds ht)).deriv_eq
+  have hderiv : Set.EqOn (deriv γ₁) (deriv γ₂) (Set.uIoo a b) := h_eq.deriv isOpen_Ioo
   unfold cauchyPVAt
   congr 1
   ext ε
   refine intervalIntegral.integral_congr_uIoo fun t ht => ?_
-  simp only [h_eq ht, hderiv t ht]
+  simp only [h_eq ht, hderiv ht]
 
 /-- Scalar multiplication: if the principal value of `f` is `L`, that of `c • f` is `c • L`. -/
 theorem HasCauchyPVAt.const_mul {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ} {L : ℂ}
