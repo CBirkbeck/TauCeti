@@ -56,8 +56,9 @@ versus `MeromorphicOn` (on a set).
 * `HasCauchyPVAt.congr_along_curve`, `cauchyPVAt_congr_along_curve` — the integrand only matters
   along `γ` on `[a, b]`;
 * `HasCauchyPVAt.congr_curve_ae`, `CauchyPVExistsAt.congr_curve_ae`, `cauchyPVAt_congr_curve_ae`
-  — the *curve* only matters up to null sets: the principal value is unchanged when both the
-  curves and their derivatives agree almost everywhere on the integration interval;
+  — the *curve* only matters up to null sets: the principal value is unchanged when the curves
+  agree almost everywhere on the integration interval and their derivatives agree almost
+  everywhere *where the curve misses `z₀`* (the truncation deletes the integrand at `z₀`);
   `HasCauchyPVAt.congr_curve`, `CauchyPVExistsAt.congr_curve`, `cauchyPVAt_congr_curve` — the
   pointwise corollaries, needing agreement only on the open interval `Set.uIoo a b`;
   `HasCauchyPVAt.zero`, `HasCauchyPVAt.const_mul`, `HasCauchyPVAt.add`, `HasCauchyPVAt.sum` (and the
@@ -311,9 +312,10 @@ theorem CauchyPVExistsAt.congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f 
   let ⟨_, hL⟩ := h
   CauchyPVExistsAt.intro (hL.congr_curve h_eq)
 
-/-- Value form of `HasCauchyPVAt.congr_curve_ae`: the raw `cauchyPVAt` value is unchanged when
-both the curves *and* their derivatives agree almost everywhere on the integration interval.
-Curve equality alone does not suffice — the integrand contains `deriv γ`. -/
+/-- Value form of `HasCauchyPVAt.congr_curve_ae`: the raw `cauchyPVAt` value is unchanged when the
+curves agree almost everywhere on the integration interval and their derivatives agree almost
+everywhere where the curve misses `z₀`. Curve equality alone does not suffice — the integrand
+contains `deriv γ`. -/
 theorem cauchyPVAt_congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ}
     (h_eq : γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] γ₂)
     (h_deriv : ∀ᵐ t ∂MeasureTheory.volume.restrict (Set.uIoc a b),
