@@ -28,10 +28,10 @@ Hungerbühler–Wasem half-residue theorem `hasCauchyPV_half_residue`.
 
 ## Main results
 
-* `TauCeti.Contour.hasCauchyPVAt_inv_sub_ofReal` — the index principal value along the real
-  segment `[-R, R]` through the origin is `0`.
-* `TauCeti.Contour.hasCauchyPVAt_inv_sub_segment` / `TauCeti.Contour.windingNumber_segment` — the
-  same for an arbitrary straight segment `v · t + z₀` traversed symmetrically through `z₀`.
+* `TauCeti.Contour.hasCauchyPVAt_inv_sub_segment` / `TauCeti.Contour.windingNumber_segment` — an
+  arbitrary straight segment `v · t + z₀` traversed symmetrically through `z₀` has index
+  principal value and winding number `0` about `z₀`. The real-axis case through the origin is the
+  private base case from which the general one is transported.
 
 ## References
 
@@ -77,7 +77,7 @@ private theorem integral_truncated_inv_ofReal (R ε : ℝ) :
 /-- **The real segment through the origin has vanishing index principal value.** The index
 integrand `1 / t` is odd, so every truncated integral over `[-R, R]` is `0`, and the principal
 value of `∫_γ dz / z` along the segment exists with value `0`. -/
-theorem hasCauchyPVAt_inv_sub_ofReal (R : ℝ) :
+private theorem hasCauchyPVAt_inv_sub_ofReal (R : ℝ) :
     HasCauchyPVAt (fun t : ℝ => (t : ℂ)) (-R) R (fun z => (z - 0)⁻¹) 0 0 := by
   refine HasCauchyPVAt.intro ?_ ?_
   · filter_upwards [self_mem_nhdsWithin] with ε hε
