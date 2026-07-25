@@ -5,8 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.Analysis.Contour.Winding.Number.Affine
-import Mathlib.Algebra.Group.EvenFunction
-import Mathlib.Analysis.Complex.RealDeriv
+import TauCeti.Analysis.Calculus.OfRealDeriv
+import TauCeti.MeasureTheory.Integral.OddSymmetric
 
 /-!
 # The generalized winding number of a straight segment through the point
@@ -17,7 +17,8 @@ the generalized winding number about that point. The mechanism is oddness: for t
 `ε`-truncated integral over the symmetric interval vanishes *identically* — not merely in the
 limit — and the principal value is `0` with no limiting argument at all. The general segment
 `γ t = v · t + z₀` about `z₀` then follows by transporting along the affine change of coordinates
-of `Winding/Number/Affine.lean`.
+of `Winding/Number/Affine.lean`; the degenerate direction `v = 0` (the constant curve at `z₀`) is
+included, since there every positive-radius truncation is identically zero.
 
 This is the on-curve counterpart of `ModelSectorWinding.lean`, which computes the winding of an
 arc about its *centre*, a point off the curve. Together they supply the two pieces of an indented
@@ -27,18 +28,10 @@ Hungerbühler–Wasem half-residue theorem `hasCauchyPV_half_residue`.
 
 ## Main results
 
-* `intervalIntegral.integral_eq_zero_of_odd` — an odd integrand into a real normed space has
-  vanishing integral over a symmetric interval `[-R, R]`.
-* `Complex.deriv_ofReal` — the real-to-complex inclusion has constant derivative `1`.
-* `TauCeti.Contour.hasCauchyPVAt_inv_sub_segment` / `TauCeti.Contour.windingNumber_segment` — a
-  straight segment `v · t + z₀` traversed symmetrically through `z₀` has index principal value
-  and winding number `0` about `z₀`.
-* `TauCeti.Contour.hasCauchyPVAt_inv_sub_ofReal` / `TauCeti.Contour.windingNumber_ofReal` — the
-  real-axis specialization about the origin.
-
-The first two are general-purpose facts, so they are stated in the namespaces of the operations
-they describe (`intervalIntegral`, `Complex`) rather than the contour namespace, and are
-candidates for upstreaming.
+* `TauCeti.Contour.hasCauchyPVAt_inv_sub_ofReal` — the index principal value along the real
+  segment `[-R, R]` through the origin is `0`.
+* `TauCeti.Contour.hasCauchyPVAt_inv_sub_segment` / `TauCeti.Contour.windingNumber_segment` — the
+  same for an arbitrary straight segment `v · t + z₀` traversed symmetrically through `z₀`.
 
 ## References
 
@@ -51,29 +44,6 @@ public section
 noncomputable section
 
 open Complex Filter Topology MeasureTheory
-
-/-- **An odd integrand integrates to zero over a symmetric interval.** No integrability
-hypothesis is needed: the substitution `t ↦ -t` maps `[-R, R]` to itself, so the integral equals
-its own negative. -/
-theorem intervalIntegral.integral_eq_zero_of_odd {E : Type*} [NormedAddCommGroup E]
-    [NormedSpace ℝ E] {g : ℝ → E} (hodd : Function.Odd g) (R : ℝ) :
-    ∫ t in (-R)..R, g t = 0 := by
-  have hfun : (fun t => g (-t)) = fun t => -g t := funext hodd
-  have hcomp : ∫ t in (-R)..R, g (-t) = ∫ t in (-R)..R, g t := by
-    simp [intervalIntegral.integral_comp_neg (a := -R) (b := R) g]
-  rw [hfun, intervalIntegral.integral_neg] at hcomp
-  -- `hcomp` says the integral is its own negative; in a real vector space that forces `0`.
-  have htwo : (2 : ℝ) • (∫ t in (-R)..R, g t) = 0 := by
-    rw [two_smul]
-    nth_rewrite 1 [← hcomp]
-    abel
-  simpa using htwo
-
-/-- The derivative of the real-to-complex inclusion is constantly `1`. -/
-@[simp]
-theorem Complex.deriv_ofReal : deriv (fun s : ℝ => (s : ℂ)) = fun _ => 1 := by
-  funext t
-  simpa using ((hasDerivAt_id t).ofReal_comp).deriv
 
 namespace TauCeti.Contour
 
@@ -94,9 +64,9 @@ private theorem integral_truncated_inv_ofReal (R ε : ℝ) :
   refine intervalIntegral.integral_eq_zero_of_odd (fun t => ?_) R
   simpa using truncated_inv_ofReal_odd ε t
 
-/-- **The real segment through the origin has vanishing principal value.** The index integrand
-`1 / t` is odd, so every truncated integral over `[-R, R]` is `0` and the principal value of
-`∮ dz / z` along the segment exists with value `0`. -/
+/-- **The real segment through the origin has vanishing index principal value.** The index
+integrand `1 / t` is odd, so every truncated integral over `[-R, R]` is `0`, and the principal
+value of `∫_γ dz / z` along the segment exists with value `0`. -/
 theorem hasCauchyPVAt_inv_sub_ofReal (R : ℝ) :
     HasCauchyPVAt (fun t : ℝ => (t : ℂ)) (-R) R (fun z => (z - 0)⁻¹) 0 0 := by
   refine HasCauchyPVAt.intro ?_ ?_
@@ -114,26 +84,21 @@ theorem hasCauchyPVAt_inv_sub_ofReal (R : ℝ) :
   · simp_rw [integral_truncated_inv_ofReal R]
     exact tendsto_const_nhds
 
-/-- **A straight segment through its reference point has vanishing index principal value.** For a
-nonzero direction `v`, the segment `γ t = v · t + z₀` traversed over the symmetric interval
-`[-R, R]` passes through `z₀` at `t = 0`, and the principal value of `∮ dz / (z - z₀)` along it is
-`0`. Transported from the real-axis case by the affine change of coordinates. -/
-theorem hasCauchyPVAt_inv_sub_segment {v z₀ : ℂ} (hv : v ≠ 0) (R : ℝ) :
+/-- **A straight segment through its reference point has vanishing index principal value.** The
+segment `γ t = v · t + z₀` traversed over the symmetric interval `[-R, R]` passes through `z₀` at
+`t = 0`, and the principal value of `∫_γ dz / (z - z₀)` along it is `0`. For `v ≠ 0` this is the
+real-axis case transported by the affine change of coordinates; for `v = 0` the curve is constant
+at `z₀`, so every positive-radius truncation is identically zero. -/
+theorem hasCauchyPVAt_inv_sub_segment (v z₀ : ℂ) (R : ℝ) :
     HasCauchyPVAt (fun t : ℝ => v * (t : ℂ) + z₀) (-R) R (fun z => (z - z₀)⁻¹) z₀ 0 := by
-  simpa using hasCauchyPVAt_inv_sub_affine (d := z₀) (hasCauchyPVAt_inv_sub_ofReal R) hv
+  rcases eq_or_ne v 0 with rfl | hv
+  · refine HasCauchyPVAt.intro ?_ ?_ <;> simp
+  · simpa using hasCauchyPVAt_inv_sub_affine (d := z₀) (hasCauchyPVAt_inv_sub_ofReal R) hv
 
 /-- **The winding number of a straight segment through its reference point vanishes.** -/
-theorem windingNumber_segment {v z₀ : ℂ} (hv : v ≠ 0) (R : ℝ) :
+theorem windingNumber_segment (v z₀ : ℂ) (R : ℝ) :
     windingNumber (fun t : ℝ => v * (t : ℂ) + z₀) (-R) R z₀ = 0 := by
-  rw [windingNumber_eq_of_hasCauchyPVAt (hasCauchyPVAt_inv_sub_segment hv R)]
-  ring
-
-/-- The winding number of a symmetric real segment through the origin vanishes: the `v = 1`,
-`z₀ = 0` case of `windingNumber_segment`. -/
-@[simp]
-theorem windingNumber_ofReal (R : ℝ) :
-    windingNumber (fun t : ℝ => (t : ℂ)) (-R) R 0 = 0 := by
-  rw [windingNumber_eq_of_hasCauchyPVAt (hasCauchyPVAt_inv_sub_ofReal R)]
+  rw [windingNumber_eq_of_hasCauchyPVAt (hasCauchyPVAt_inv_sub_segment v z₀ R)]
   ring
 
 end TauCeti.Contour
