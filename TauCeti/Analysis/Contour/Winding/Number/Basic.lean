@@ -28,6 +28,11 @@ value does not exist.
   `cauchyPVAt` defining value.
 * `TauCeti.Contour.windingNumber_eq_of_hasCauchyPVAt` — evaluate `windingNumber` from a Cauchy
   principal-value witness, without unfolding the definition.
+* `TauCeti.Contour.windingNumber_congr_curve_ae` — the winding number is unchanged when both the
+  curves and their derivatives agree almost everywhere on the integration interval;
+  `TauCeti.Contour.windingNumber_congr_curve` — the pointwise corollary, needing agreement only on
+  the open interval `Set.uIoo a b`. This is what lets a piecewise contour be evaluated one piece
+  at a time.
 * `TauCeti.Contour.windingNumber_same` — the generalized winding number on `[a, a]` is `0`.
 * `TauCeti.Contour.isNullHomologous_iff` — restates `IsNullHomologous` as its vanishing condition,
   so consumers use the predicate without unfolding its hidden body.

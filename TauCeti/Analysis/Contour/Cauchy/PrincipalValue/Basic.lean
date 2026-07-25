@@ -55,6 +55,11 @@ versus `MeromorphicOn` (on a set).
   package/unpack existence and recover the predicate at `cauchyPVAt`.
 * `HasCauchyPVAt.congr_along_curve`, `cauchyPVAt_congr_along_curve` — the integrand only matters
   along `γ` on `[a, b]`;
+* `HasCauchyPVAt.congr_curve_ae`, `CauchyPVExistsAt.congr_curve_ae`, `cauchyPVAt_congr_curve_ae`
+  — the *curve* only matters up to null sets: the principal value is unchanged when both the
+  curves and their derivatives agree almost everywhere on the integration interval;
+  `HasCauchyPVAt.congr_curve`, `CauchyPVExistsAt.congr_curve`, `cauchyPVAt_congr_curve` — the
+  pointwise corollaries, needing agreement only on the open interval `Set.uIoo a b`;
   `HasCauchyPVAt.zero`, `HasCauchyPVAt.const_mul`, `HasCauchyPVAt.add`, `HasCauchyPVAt.sum` (and the
   `CauchyPVExistsAt` forms) — the principal value is `ℂ`-linear in the integrand, including over
   finite sums.
