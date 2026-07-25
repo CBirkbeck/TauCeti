@@ -244,6 +244,23 @@ private theorem aeEq_restrict_uIoc_of_eqOn_uIoo {u v : ℝ → ℂ} {a b : ℝ}
   rw [hrestrict]
   exact h.aeEq_restrict measurableSet_Ioo
 
+/-- The `ε`-truncated integrands of two curves that agree almost everywhere — with derivatives
+agreeing almost everywhere off `z₀` — are themselves equal almost everywhere, for every positive
+`ε`. Positivity is what makes the derivative hypothesis enough: at a point with `γ₁ t = z₀` the
+truncation deletes both integrands. -/
+private theorem truncated_integrand_congr_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ}
+    (h_eq : γ₁ =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)] γ₂)
+    (h_deriv : ∀ᵐ t ∂MeasureTheory.volume.restrict (Set.uIoc a b),
+      γ₁ t ≠ z₀ → deriv γ₁ t = deriv γ₂ t)
+    {ε : ℝ} (hε : 0 < ε) :
+    (fun t => if ‖γ₁ t - z₀‖ > ε then f (γ₁ t) * deriv γ₁ t else 0)
+      =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)]
+    (fun t => if ‖γ₂ t - z₀‖ > ε then f (γ₂ t) * deriv γ₂ t else 0) := by
+  filter_upwards [h_eq, h_deriv] with t ht htd
+  by_cases hz : γ₁ t = z₀
+  · rw [if_neg, if_neg] <;> simp [hz, ← ht, hε.not_gt]
+  · simp only [ht, htd hz]
+
 /-- **The principal value depends on the curve only up to null sets.** If `γ₁` and `γ₂` agree
 almost everywhere on the integration interval, and their derivatives agree almost everywhere
 *where the curve misses `z₀`*, their contour principal values agree.
@@ -258,22 +275,14 @@ theorem HasCauchyPVAt.congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f 
     (h_deriv : ∀ᵐ t ∂MeasureTheory.volume.restrict (Set.uIoc a b),
       γ₁ t ≠ z₀ → deriv γ₁ t = deriv γ₂ t) :
     HasCauchyPVAt γ₂ a b f z₀ L := by
-  have hfun : ∀ ε : ℝ, 0 < ε →
-      (fun t => if ‖γ₁ t - z₀‖ > ε then f (γ₁ t) * deriv γ₁ t else 0)
-        =ᵐ[MeasureTheory.volume.restrict (Set.uIoc a b)]
-      (fun t => if ‖γ₂ t - z₀‖ > ε then f (γ₂ t) * deriv γ₂ t else 0) := by
-    intro ε hε
-    filter_upwards [h_eq, h_deriv] with t ht htd
-    by_cases hz : γ₁ t = z₀
-    · -- The truncation deletes this point for both curves, so the derivative is irrelevant.
-      rw [if_neg, if_neg] <;> simp [hz, ← ht, hε.not_gt]
-    · simp only [ht, htd hz]
   refine ⟨?_, ?_⟩
   · filter_upwards [h.1, self_mem_nhdsWithin] with ε hε hpos
-    exact (intervalIntegrable_congr_ae (hfun ε (Set.mem_Ioi.mp hpos))).mp hε
+    exact (intervalIntegrable_congr_ae
+      (truncated_integrand_congr_ae h_eq h_deriv (Set.mem_Ioi.mp hpos))).mp hε
   · refine Filter.Tendsto.congr' ?_ h.2
     filter_upwards [self_mem_nhdsWithin] with ε hε
-    exact intervalIntegral.integral_congr_ae_restrict (hfun ε (Set.mem_Ioi.mp hε))
+    exact intervalIntegral.integral_congr_ae_restrict
+      (truncated_integrand_congr_ae h_eq h_deriv (Set.mem_Ioi.mp hε))
 
 /-- The principal value depends on the **curve** only through its values on the open interval
 between `a` and `b`. Agreement on the *open* interval is enough even though the integrand involves
@@ -314,12 +323,8 @@ theorem cauchyPVAt_congr_curve_ae {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : �
       =ᶠ[nhdsWithin (0 : ℝ) (Set.Ioi 0)]
       (fun ε => ∫ t in a..b, if ‖γ₂ t - z₀‖ > ε then f (γ₂ t) * deriv γ₂ t else 0) := by
     filter_upwards [self_mem_nhdsWithin] with ε hε
-    have hpos : (0 : ℝ) < ε := Set.mem_Ioi.mp hε
-    refine intervalIntegral.integral_congr_ae_restrict ?_
-    filter_upwards [h_eq, h_deriv] with t ht htd
-    by_cases hz : γ₁ t = z₀
-    · rw [if_neg, if_neg] <;> simp [hz, ← ht, hpos.not_gt]
-    · simp only [ht, htd hz]
+    exact intervalIntegral.integral_congr_ae_restrict
+      (truncated_integrand_congr_ae h_eq h_deriv (Set.mem_Ioi.mp hε))
   unfold cauchyPVAt Filter.limUnder
   rw [Filter.map_congr hev]
 
