@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.Analysis.Contour.Winding.Number.Affine
-import TauCeti.Analysis.Calculus.OfRealDeriv
+import Mathlib.Analysis.Calculus.Deriv.Linear
 import TauCeti.MeasureTheory.Integral.OddSymmetric
 
 /-!
@@ -47,6 +47,16 @@ open Complex Filter Topology MeasureTheory
 
 namespace TauCeti.Contour
 
+/-- The derivative of the real-to-complex inclusion, as the specialization of Mathlib's
+`ContinuousLinearMap.deriv` to `Complex.ofRealCLM`. Kept private: it exists only to put the
+index integrand of a real segment into evaluated form. -/
+private theorem deriv_ofReal_eq_one : deriv (fun s : ℝ => (s : ℂ)) = fun _ => 1 := by
+  funext t
+  -- `⇑Complex.ofRealCLM` is definitionally the inclusion, so Mathlib's lemma applies directly.
+  have h : deriv (fun s : ℝ => (s : ℂ)) t = Complex.ofRealCLM 1 :=
+    Complex.ofRealCLM.deriv (x := t)
+  rw [h, Complex.ofRealCLM_apply, Complex.ofReal_one]
+
 /-- The `ε`-truncated index integrand of the real segment through the origin is odd. -/
 private theorem truncated_inv_ofReal_odd (ε : ℝ) :
     Function.Odd (fun t : ℝ =>
@@ -62,7 +72,7 @@ private theorem integral_truncated_inv_ofReal (R ε : ℝ) :
     ∫ t in (-R)..R, (if ‖((t : ℝ) : ℂ) - 0‖ > ε then
       (((t : ℝ) : ℂ) - 0)⁻¹ * deriv (fun s : ℝ => (s : ℂ)) t else 0) = 0 := by
   refine intervalIntegral.integral_eq_zero_of_odd (fun t => ?_) R
-  simpa using truncated_inv_ofReal_odd ε t
+  simpa [deriv_ofReal_eq_one] using truncated_inv_ofReal_odd ε t
 
 /-- **The real segment through the origin has vanishing index principal value.** The index
 integrand `1 / t` is odd, so every truncated integral over `[-R, R]` is `0`, and the principal
@@ -73,8 +83,8 @@ theorem hasCauchyPVAt_inv_sub_ofReal (R : ℝ) :
   · filter_upwards [self_mem_nhdsWithin] with ε hε
     refine intervalIntegrable_truncated_mul_deriv (γ := fun t : ℝ => (t : ℂ))
       (f := fun z : ℂ => (z - 0)⁻¹) (z₀ := 0) (M := ε⁻¹) ?_ ?_ ?_
-    · simp
-    · simp only [Complex.deriv_ofReal]
+    · simp [deriv_ofReal_eq_one]
+    · simp only [deriv_ofReal_eq_one]
       refine (Measurable.ite ?_ ?_ measurable_const).aestronglyMeasurable
       · exact measurableSet_lt measurable_const (by fun_prop)
       · fun_prop
