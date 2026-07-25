@@ -31,6 +31,7 @@ namespace intervalIntegral
 /-- **An odd integrand integrates to zero over a symmetric interval.** No integrability
 hypothesis is needed: the substitution `t ↦ -t` maps `[-R, R]` to itself, so the integral equals
 its own negative. -/
+@[simp]
 theorem integral_eq_zero_of_odd {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {g : ℝ → E} (hodd : Function.Odd g) (R : ℝ) :
     ∫ t in (-R)..R, g t = 0 := by

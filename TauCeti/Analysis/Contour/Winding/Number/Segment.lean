@@ -106,6 +106,7 @@ theorem hasCauchyPVAt_inv_sub_segment (v z₀ : ℂ) (R : ℝ) :
   · simpa using hasCauchyPVAt_inv_sub_affine (d := z₀) (hasCauchyPVAt_inv_sub_ofReal R) hv
 
 /-- **The winding number of a straight segment through its reference point vanishes.** -/
+@[simp]
 theorem windingNumber_segment (v z₀ : ℂ) (R : ℝ) :
     windingNumber (fun t : ℝ => v * (t : ℂ) + z₀) (-R) R z₀ = 0 := by
   rw [windingNumber_eq_of_hasCauchyPVAt (hasCauchyPVAt_inv_sub_segment v z₀ R)]
