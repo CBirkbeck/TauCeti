@@ -6,6 +6,7 @@ module
 
 public import TauCeti.Analysis.Contour.PwC1ImmersionOn
 public import TauCeti.Analysis.Contour.RegularityConditions
+import TauCeti.Analysis.Contour.Crossing.Finiteness
 public import TauCeti.Analysis.Contour.Winding.Number.Circle
 public import TauCeti.Analysis.Contour.Winding.Number.Concat
 public import TauCeti.Analysis.Contour.Winding.Number.Reparam
@@ -43,9 +44,8 @@ residue theorem does not apply because the pole lies *on* the contour.
   the single breakpoint `R`; this is the regularity hypothesis of the Hungerbühler–Wasem theorems.
 * `TauCeti.Contour.windingNumber_halfDiscBoundary` — its generalized winding number about the
   origin is `½`.
-* `TauCeti.Contour.halfDiscBoundary_eq_zero_iff` and
-  `TauCeti.Contour.finite_crossings_halfDiscBoundary` — the contour meets the origin exactly
-  once, at `t = 0`.
+* `TauCeti.Contour.halfDiscBoundary_eq_zero_iff` — the contour meets the origin exactly once,
+  at `t = 0`.
 * `TauCeti.Contour.flatOfOrder_halfDiscBoundary` — near the origin the contour *is* the real
   diameter, so it is flat there to every order.
 * `TauCeti.Contour.conditionAprime_halfDiscBoundary` — Hungerbühler–Wasem condition (A′) at the
@@ -253,27 +253,31 @@ theorem halfDiscBoundary_eq_zero_iff (hR : 0 < R) {t : ℝ} :
   · rintro rfl
     simpa using halfDiscBoundary_of_le hR.le
 
-/-- The crossing set of the origin is `{0}`, hence finite. -/
-theorem finite_crossings_halfDiscBoundary (hR : 0 < R) :
-    (uIcc (-R) (R + Real.pi) ∩ halfDiscBoundary R ⁻¹' {0}).Finite :=
-  Set.Finite.subset (Set.finite_singleton 0) fun _ ht =>
-    (halfDiscBoundary_eq_zero_iff hR).mp ht.2
-
 /-- **The half-disc boundary is flat to every order at the origin.** Near `t = 0` the contour is
 the real diameter, so it lies *exactly* on the real line: with tangent direction `v = 1` the
 distance `|Im(γ t - γ 0)|` is identically zero there, which is `o` of anything. -/
-theorem flatOfOrder_halfDiscBoundary (hR : 0 < R) (n : ℕ) :
+theorem flatOfOrder_halfDiscBoundary (hR : 0 ≤ R) (n : ℕ) :
     FlatOfOrder (halfDiscBoundary R) 0 n := by
   have hzero : ∀ t : ℝ, t ≤ R →
       ((halfDiscBoundary R t - halfDiscBoundary R 0) * star (1 : ℂ)).im = 0 := by
     intro t ht
-    rw [halfDiscBoundary_of_le ht, halfDiscBoundary_of_le hR.le]
+    rw [halfDiscBoundary_of_le ht, halfDiscBoundary_of_le hR]
     simp
-  refine flatOfOrder_of_eventually_collinear one_ne_zero one_ne_zero n ?_ ?_
-  · filter_upwards [Ioo_mem_nhdsGT hR] with t ht
-    exact hzero t (mem_Ioo.mp ht).2.le
-  · filter_upwards [self_mem_nhdsWithin] with t ht
-    exact hzero t (le_trans (le_of_lt ht) hR.le)
+  rcases eq_or_lt_of_le hR with rfl | hR'
+  · -- Degenerate radius: the arc collapses to the origin, so the deviation vanishes everywhere.
+    have hall : ∀ t : ℝ, ((halfDiscBoundary 0 t - halfDiscBoundary 0 0) * star (1 : ℂ)).im = 0 := by
+      intro t
+      rcases le_or_gt t 0 with h | h
+      · exact hzero t h
+      · rw [halfDiscBoundary_of_lt h, halfDiscBoundary_of_le le_rfl]
+        simp [circleMap]
+    exact flatOfOrder_of_eventually_collinear one_ne_zero one_ne_zero n
+      (Filter.Eventually.of_forall hall) (Filter.Eventually.of_forall hall)
+  · refine flatOfOrder_of_eventually_collinear one_ne_zero one_ne_zero n ?_ ?_
+    · filter_upwards [Ioo_mem_nhdsGT hR'] with t ht
+      exact hzero t (mem_Ioo.mp ht).2.le
+    · filter_upwards [self_mem_nhdsWithin] with t ht
+      exact hzero t (le_trans (le_of_lt ht) hR)
 
 /-- **Condition (A′) holds for the half-disc boundary at the origin**, for any integrand. The
 origin is met exactly once, the contour is flat there to every order (it is locally the real
@@ -284,10 +288,10 @@ theorem conditionAprime_halfDiscBoundary (hR : 0 < R) (f : ℂ → ℂ) :
   have hmin : min (-R) (R + Real.pi) = -R := min_eq_left (by linarith)
   refine ⟨fun s hs => ?_, fun t₀ _ hmem n _ _ => ?_, fun hbase => ?_⟩
   · rw [Finset.mem_singleton.mp hs]
-    exact finite_crossings_halfDiscBoundary hR
+    exact (isPwC1ImmersionOn_halfDiscBoundary hR).finite_crossings
   · have ht₀ : t₀ = 0 := (halfDiscBoundary_eq_zero_iff hR).mp (by simpa using hmem)
     subst ht₀
-    exact flatOfOrder_halfDiscBoundary hR n
+    exact flatOfOrder_halfDiscBoundary hR.le n
   · exfalso
     rw [hmin, halfDiscBoundary_of_le (by linarith : (-R : ℝ) ≤ R)] at hbase
     have : (-R : ℝ) = 0 := by
