@@ -5,12 +5,12 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.Analysis.Contour.HungerbuhlerWasem
-public import TauCeti.Analysis.Contour.WorkedExamples.HalfDisc
+public import TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.Basic
 import TauCeti.Analysis.Contour.NullHomologous
 import TauCeti.Analysis.Contour.Residue.SimplePole
 
 /-!
-# A simple pole on the contour: the half-residue on an indented half-disc
+# A simple pole on the contour: the half-residue on a half-disc boundary
 
 The Hungerbühler–Wasem generalized residue theorem applied to a concrete contour and a concrete
 integrand. The contour is `halfDiscBoundary R` — the real diameter `[-R, R]` followed by the
@@ -35,7 +35,7 @@ origin, so it meets condition (A′) whatever the pole.
 
 * `TauCeti.Contour.hasCauchyPV_halfDiscBoundary_of_simple_pole` — for any `f` holomorphic off
   the origin with at worst a simple pole there, the principal value of `∫_γ f` along the
-  indented half-disc boundary is `π i · residue f 0`.
+  half-disc boundary is `π i · residue f 0`.
 * `TauCeti.Contour.hasCauchyPV_halfDiscBoundary_inv` — the concrete instance `f z = z⁻¹`, whose
   principal value is exactly `π i`.
 
@@ -56,9 +56,11 @@ namespace TauCeti.Contour
 
 variable {R : ℝ}
 
-/-- **The half-residue theorem on an indented half-disc.** If `f` is holomorphic off the origin
-and has at worst a simple pole there, then along the half-disc boundary — which passes *through*
-the pole — the Cauchy principal value of `∫ f` is `π i · residue f 0`: half of what the classical
+/-- **The half-residue theorem on the half-disc boundary.** If `f` is holomorphic off the origin
+and has at worst a simple pole there (the hypotheses also permit a removable singularity, or
+`f` holomorphic at `0`, in which case the residue is `0`), then along the half-disc boundary —
+which passes *through*
+the origin — the Cauchy principal value of `∫ f` is `π i · residue f 0`: half of what the classical
 residue theorem would give for a pole enclosed by the contour, because the generalized winding
 number at a smooth crossing is `½`. -/
 theorem hasCauchyPV_halfDiscBoundary_of_simple_pole {f : ℂ → ℂ} (hR : 0 < R)
@@ -75,21 +77,22 @@ theorem hasCauchyPV_halfDiscBoundary_of_simple_pole {f : ℂ → ℂ} (hR : 0 < 
     (windingNumber_halfDiscBoundary hR)
   rw [halfDiscBoundary_left hR.le, halfDiscBoundary_right]
 
-/-- **The motivating example**: the principal value of `∫ dz / z` along the indented half-disc
+/-- **The motivating example**: the principal value of `∫ dz / z` along the half-disc
 boundary is `π i`. The pole sits *on* the contour, so the classical residue theorem does not
 apply and the integral exists only as a principal value; the generalized theorem evaluates it as
 half the enclosed-pole answer `2π i`. -/
 theorem hasCauchyPV_halfDiscBoundary_inv (hR : 0 < R) :
     HasCauchyPV (halfDiscBoundary R) (-R) (R + Real.pi) (fun z => z⁻¹)
       ((Real.pi : ℂ) * Complex.I) := by
-  -- `z⁻¹` is the elementary simple pole `(z - 0)⁻¹`, so `Residue/SimplePole.lean` supplies its
-  -- meromorphy, its order and its residue directly.
+  -- `z⁻¹` is the elementary simple pole `(z - 0)⁻¹`: `Residue/SimplePole.lean` supplies its
+  -- meromorphy and its residue, and Mathlib's `meromorphicOrderAt_zpow_id_sub_const` its order.
   have hfun : (fun z : ℂ => (z - 0)⁻¹) = fun z : ℂ => z⁻¹ := by simp
   have hdiff : DifferentiableOn ℂ (fun z : ℂ => z⁻¹) (univ \ {0}) := fun z hz =>
     (differentiableAt_inv (by simpa using hz.2)).differentiableWithinAt
   have hmero : MeromorphicAt (fun z : ℂ => z⁻¹) 0 := hfun ▸ meromorphicAt_sub_inv 0
   have horder : meromorphicOrderAt (fun z : ℂ => z⁻¹) 0 = -1 := by
-    rw [← hfun]; exact meromorphicOrderAt_sub_inv 0
+    simpa [zpow_neg_one, Pi.inv_def] using
+      meromorphicOrderAt_zpow_id_sub_const (x := (0 : ℂ)) (n := -1)
   have hres : residue (fun z : ℂ => z⁻¹) 0 = 1 := by rw [← hfun]; exact residue_sub_inv 0
   have key := hasCauchyPV_halfDiscBoundary_of_simple_pole hR hdiff hmero (by simp [horder])
   rwa [hres, mul_one] at key
