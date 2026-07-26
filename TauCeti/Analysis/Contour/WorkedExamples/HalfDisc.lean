@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import TauCeti.Analysis.Contour.PwC1ImmersionOn
 public import TauCeti.Analysis.Contour.Winding.Number.Circle
 public import TauCeti.Analysis.Contour.Winding.Number.Concat
 public import TauCeti.Analysis.Contour.Winding.Number.Reparam
@@ -35,6 +36,10 @@ residue theorem does not apply because the pole lies *on* the contour.
 * `TauCeti.Contour.halfDiscBoundary` — the contour, with `halfDiscBoundary_of_le` and
   `halfDiscBoundary_of_lt` evaluating its two branches and `halfDiscBoundary_left`,
   `halfDiscBoundary_right` its endpoints (equal, so the contour is closed).
+* `TauCeti.Contour.continuous_halfDiscBoundary` — the two branches agree at the junction, so the
+  contour is continuous.
+* `TauCeti.Contour.isPwC1ImmersionOn_halfDiscBoundary` — it is a piecewise-`C¹` immersion, with
+  the single breakpoint `R`; this is the regularity hypothesis of the Hungerbühler–Wasem theorems.
 * `TauCeti.Contour.windingNumber_halfDiscBoundary` — its generalized winding number about the
   origin is `½`.
 
@@ -100,6 +105,68 @@ theorem eqOn_halfDiscBoundary_arc (R : ℝ) :
     simp [circleMap]
   · rw [halfDiscBoundary_of_lt h]
     rfl
+
+/-- **The half-disc boundary is continuous**, the two branches agreeing at the junction `t = R`
+(where `circleMap 0 R 0 = R`). -/
+theorem continuous_halfDiscBoundary (R : ℝ) : Continuous (halfDiscBoundary R) := by
+  refine Continuous.if_le (by fun_prop)
+    ((continuous_circleMap 0 R).comp (continuous_id.sub continuous_const))
+    continuous_id continuous_const (fun x hx => ?_)
+  simp [hx, circleMap]
+
+/-- On a subinterval left of the junction the contour is the real inclusion. -/
+private theorem eqOn_left_piece {c d : ℝ} (hd : d ≤ R) :
+    EqOn (halfDiscBoundary R) (fun t : ℝ => (t : ℂ)) (Icc c d) :=
+  fun _ ht => halfDiscBoundary_of_le ((mem_Icc.mp ht).2.trans hd)
+
+/-- On a subinterval right of the junction the contour is the shifted circle. -/
+private theorem eqOn_right_piece {c d : ℝ} (hc : R ≤ c) :
+    EqOn (halfDiscBoundary R) (circleMap 0 R ∘ fun s : ℝ => s - R) (Icc c d) := by
+  intro t ht
+  rcases eq_or_lt_of_le (hc.trans (mem_Icc.mp ht).1) with h | h
+  · rw [← h, halfDiscBoundary_of_le le_rfl]
+    simp [circleMap]
+  · rw [halfDiscBoundary_of_lt h]
+    rfl
+
+/-- **The half-disc boundary is a piecewise-`C¹` immersion**, with the single breakpoint `R` where
+the diameter meets the arc. Off that breakpoint each piece is one of the two smooth branches: the
+real inclusion, of derivative `1`, or the shifted circle, of derivative `R e^{i(t-R)} · i`; both
+are nonzero for `0 < R`, so the tangent never vanishes. -/
+theorem isPwC1ImmersionOn_halfDiscBoundary (hR : 0 < R) :
+    IsPwC1ImmersionOn (halfDiscBoundary R) (-R) (R + Real.pi) := by
+  have hpi := Real.pi_pos
+  refine IsPwC1ImmersionOn.of_breakpoints (continuous_halfDiscBoundary R).continuousOn {R}
+    (by
+      rw [min_eq_left (by linarith : (-R : ℝ) ≤ R + Real.pi),
+        max_eq_right (by linarith : (-R : ℝ) ≤ R + Real.pi)]
+      simpa using ⟨by linarith, by linarith⟩)
+    fun c d hcd hsub hdisj => ?_
+  have huniq : UniqueDiffOn ℝ (Icc c d) := uniqueDiffOn_Icc hcd
+  -- Disjointness from the breakpoint puts the piece entirely on one side of `R`.
+  have hside : d ≤ R ∨ R ≤ c := by
+    by_contra hcon
+    push Not at hcon
+    exact Set.disjoint_left.mp hdisj (by simp) (mem_Ioo.mpr ⟨hcon.2, hcon.1⟩)
+  rcases hside with hd | hc
+  · refine ⟨(?_ : ContDiffOn ℝ 1 (fun t : ℝ => (t : ℂ)) (Icc c d)).congr
+      (eqOn_left_piece hd), fun t ht => ?_⟩
+    · exact (Complex.ofRealCLM.contDiff (n := 1)).contDiffOn
+    · have hd1 : HasDerivAt (fun s : ℝ => (s : ℂ)) 1 t := by
+        simpa using (hasDerivAt_id' (x := t)).ofReal_comp
+      rw [derivWithin_congr (eqOn_left_piece hd) (eqOn_left_piece hd ht),
+        hd1.hasDerivWithinAt.derivWithin (huniq t ht)]
+      norm_num
+  · refine ⟨(?_ : ContDiffOn ℝ 1 (circleMap 0 R ∘ fun s : ℝ => s - R) (Icc c d)).congr
+      (eqOn_right_piece hc), fun t ht => ?_⟩
+    · exact ((contDiff_circleMap 0 R).comp (contDiff_id.sub contDiff_const)).contDiffOn
+    · have hd2 : HasDerivAt (circleMap 0 R ∘ fun s : ℝ => s - R)
+          (circleMap 0 R (t - R) * Complex.I) t := by
+        simpa using (hasDerivAt_circleMap 0 R (t - R)).scomp t
+          ((hasDerivAt_id' (x := t)).sub_const R)
+      rw [derivWithin_congr (eqOn_right_piece hc) (eqOn_right_piece hc ht),
+        hd2.hasDerivWithinAt.derivWithin (huniq t ht)]
+      exact mul_ne_zero (circleMap_ne_center (c := 0) (θ := t - R) hR.ne') Complex.I_ne_zero
 
 /-- The index principal value of the reparametrized arc about the origin exists: the arc misses
 the origin, so the truncation is vacuous and the ordinary index integral converges. -/
