@@ -151,6 +151,7 @@ number of the counterclockwise circle `circleMap c R` (`R ≠ 0`) over `[0, 2π]
 is `1`, the interior value. This is the `[0, 2π]` specialization of `windingNumber_circleMap_center`
 (`2π / 2π = 1`); it reconciles with `circleIntegral.integral_sub_center_inv`. Unlike
 `windingNumber_circleMap_eq_one_of_dist_lt`, this covers a negative radius `R` as well. -/
+@[simp]
 theorem windingNumber_circleMap_center_eq_one {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
     windingNumber (circleMap c R) 0 (2 * Real.pi) c = 1 := by
   rw [windingNumber_circleMap_center hR]
@@ -164,6 +165,7 @@ theorem windingNumber_circleMap_center_eq_one {c : ℂ} {R : ℝ} (hR : R ≠ 0)
 This is one of the two ingredients of a half-disc contour computation: the arc about the point
 supplies `½`, and `windingNumber_eq_zero_segment` supplies `0` for a diameter *through* it. The
 combined contour, and the additivity argument assembling the two, are not established here. -/
+@[simp]
 theorem windingNumber_circleMap_center_eq_half {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
     windingNumber (circleMap c R) 0 Real.pi c = 1 / 2 := by
   rw [windingNumber_circleMap_center hR]
