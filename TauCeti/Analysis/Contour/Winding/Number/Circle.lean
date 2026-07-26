@@ -44,8 +44,9 @@ across the whole disc, so its circle integral vanishes.
 * `TauCeti.Contour.windingNumber_circleMap_eq_one_of_dist_lt` — `n_w(circle) = 1` for any `w` inside
   the disc.
 * `TauCeti.Contour.windingNumber_circleMap_center_eq_one` — `n_c(circle) = 1`.
-* `TauCeti.Contour.windingNumber_circleMap_center_eq_half` — `n_c(semicircle) = ½` at the centre:
-  the `[0, π]` half of the circle, the smooth-crossing value.
+* `TauCeti.Contour.windingNumber_circleMap_center` — an arc about its own centre has winding
+  `(b − a) / 2π`, its angular extent; `TauCeti.Contour.windingNumber_circleMap_center_eq_half` —
+  the `[0, π]` specialization, `n_c(semicircle) = ½`.
 * `TauCeti.Contour.windingNumber_circleMap_eq_zero_of_lt_dist` — `n_w(circle) = 0` for `w` outside
   the disc.
 
@@ -135,31 +136,44 @@ theorem windingNumber_circleMap_center_eq_one {c : ℂ} {R : ℝ} (hR : R ≠ 0)
   rw [hker]
   exact windingNumber_circle hR
 
-/-- **`n_c(semicircle) = ½` at the centre.** The generalized winding number of the counterclockwise
-semicircle `circleMap c R` (`R ≠ 0`) over `[0, π]` about its centre `c` is `½` — the smooth-crossing
-value. This is the `windingNumber`-definition form of the raw-index-integral `windingNumber_at_i`:
-the curve misses its centre, so the principal value collapses to the ordinary index integral.
-
-Together with `windingNumber_eq_zero_segment` (a diameter through `c` contributes `0`) this is the
-half of an indented contour that supplies the `windingNumber = 1/2` hypothesis of the
-Hungerbühler–Wasem half-residue theorem `hasCauchyPV_half_residue`. -/
-theorem windingNumber_circleMap_center_eq_half {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
-    windingNumber (circleMap c R) 0 Real.pi c = 1 / 2 := by
-  have hcont : ContinuousOn (circleMap c R) (Set.uIcc 0 Real.pi) :=
+/-- **The winding number of a circular arc about its own centre is its angular extent over `2π`.**
+For `R ≠ 0`, the generalized winding number of `circleMap c R` over `[a, b]` about `c` is
+`(b - a) / 2π`. The curve misses its centre (`circleMap_ne_center`), so the principal value in
+`windingNumber` collapses to the ordinary index integral, which is
+`windingNumber_modelSector_interval`. This is the `windingNumber`-definition form of that raw
+index-integral computation. -/
+theorem windingNumber_circleMap_center {c : ℂ} {R : ℝ} (hR : R ≠ 0) (a b : ℝ) :
+    windingNumber (circleMap c R) a b c = ((b - a : ℝ) : ℂ) / (2 * (Real.pi : ℂ)) := by
+  have hcont : ContinuousOn (circleMap c R) (Set.uIcc a b) :=
     (continuous_circleMap c R).continuousOn
   have hderiv : Continuous (fun θ => deriv (circleMap c R) θ) := by
     simp only [deriv_circleMap]
     exact (continuous_circleMap 0 R).mul continuous_const
   have havoid : ∀ θ, circleMap c R θ ≠ c := fun _ => circleMap_ne_center hR
   have hint : IntervalIntegrable
-      (fun t => (circleMap c R t - c)⁻¹ * deriv (circleMap c R) t) MeasureTheory.volume
-      0 Real.pi :=
+      (fun t => (circleMap c R t - c)⁻¹ * deriv (circleMap c R) t) MeasureTheory.volume a b :=
     intervalIntegrable_inv_sub_mul_deriv hcont (fun t _ => havoid t)
       (hderiv.intervalIntegrable _ _)
   rw [windingNumber_eq_integral_of_avoidance hcont (fun t _ => havoid t) hint,
-    ← windingNumber_at_i (z₀ := c) hR]
+    ← windingNumber_modelSector_interval (z₀ := c) hR a b]
   congr 1
   exact intervalIntegral.integral_congr fun θ _ => inv_mul_eq_div _ _
+
+/-- **`n_c(semicircle) = ½` at the centre**, the `[0, π]` specialization of
+`windingNumber_circleMap_center`.
+
+Paired with `windingNumber_eq_zero_segment` — a diameter *through* `c` contributes `0` — this is
+the arc half of the **half-disc contour**, whose winding at the on-curve point `c` is `½`. That is
+the hypothesis of the Hungerbühler–Wasem half-residue theorem `hasCauchyPV_half_residue`. Note the
+half-disc contour passes *through* the point, unlike an indented contour, which detours around
+it. -/
+theorem windingNumber_circleMap_center_eq_half {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    windingNumber (circleMap c R) 0 Real.pi c = 1 / 2 := by
+  rw [windingNumber_circleMap_center hR]
+  have hpi : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
+  push_cast
+  rw [sub_zero]
+  field_simp
 
 /-- **`n_w(circle) = 0` outside the disc** — the roadmap's "`n` is `0` outside" companion to the
 centre normalization. For a point `w` strictly outside the closed disc (`R < dist w c`, with
