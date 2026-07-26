@@ -223,8 +223,9 @@ theorem flatOfOrder_iff {γ : ℝ → ℂ} {t₀ : ℝ} {n : ℕ} :
 side of `t₀`, the curve eventually stays on the line through `γ t₀` with direction `v` — which for
 complex numbers is exactly the vanishing of `Im ((γ t - γ t₀) * conj v)` — then the perpendicular
 deviation is identically `0` near `t₀`, hence `o` of anything. The two directions are allowed to
-differ, so a curve with a *corner* at `t₀` still qualifies; this is what makes indented and
-polygonal contours satisfy Hungerbühler–Wasem condition (A′). -/
+differ, so a curve with a *corner* at `t₀` still qualifies. This supplies the **flatness** clause
+of Hungerbühler–Wasem condition (A′) for indented and polygonal contours; the finite-crossing and
+basepoint clauses are separate and must be established independently. -/
 theorem flatOfOrder_of_eventually_collinear {γ : ℝ → ℂ} {t₀ : ℝ} {v_plus v_minus : ℂ}
     (hv_plus : v_plus ≠ 0) (hv_minus : v_minus ≠ 0) (n : ℕ)
     (hplus : ∀ᶠ t in 𝓝[>] t₀, ((γ t - γ t₀) * star v_plus).im = 0)
