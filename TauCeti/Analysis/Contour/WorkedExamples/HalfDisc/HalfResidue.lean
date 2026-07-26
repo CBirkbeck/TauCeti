@@ -90,9 +90,10 @@ theorem hasCauchyPV_halfDiscBoundary_inv (hR : 0 < R) :
   have hdiff : DifferentiableOn ℂ (fun z : ℂ => z⁻¹) (univ \ {0}) := fun z hz =>
     (differentiableAt_inv (by simpa using hz.2)).differentiableWithinAt
   have hmero : MeromorphicAt (fun z : ℂ => z⁻¹) 0 := hfun ▸ meromorphicAt_sub_inv 0
+  have hzpow : (fun z : ℂ => z⁻¹) = fun z : ℂ => (z - 0) ^ (-1 : ℤ) := by
+    funext z; simp
   have horder : meromorphicOrderAt (fun z : ℂ => z⁻¹) 0 = -1 := by
-    simpa [zpow_neg_one, Pi.inv_def] using
-      meromorphicOrderAt_zpow_id_sub_const (x := (0 : ℂ)) (n := -1)
+    rw [hzpow]; exact meromorphicOrderAt_zpow_id_sub_const
   have hres : residue (fun z : ℂ => z⁻¹) 0 = 1 := by rw [← hfun]; exact residue_sub_inv 0
   have key := hasCauchyPV_halfDiscBoundary_of_simple_pole hR hdiff hmero (by simp [horder])
   rwa [hres, mul_one] at key

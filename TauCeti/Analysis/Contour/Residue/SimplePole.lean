@@ -37,7 +37,6 @@ direction one uses in practice to read off a residue.
   f z₀` (at most a simple pole); the analytic case gives the limit `0 = residue f z₀`.
 * `TauCeti.Contour.residue_eq_of_tendsto_sub_mul` — the converse: if `f` is meromorphic at `z₀` and
   `(z − z₀) · f z` converges to `L`, then `residue f z₀ = L`.
-* `TauCeti.Contour.meromorphicOrderAt_sub_inv` — `(z − z₀)⁻¹` has order exactly `−1` at `z₀`.
 * `TauCeti.Contour.residue_sub_inv` — `residue (fun z => (z − z₀)⁻¹) z₀ = 1`, and
   `TauCeti.Contour.residue_const_mul_sub_inv` — `residue (fun z => c · (z − z₀)⁻¹) z₀ = c`: the
   elementary simple-pole residues, read off from the converse rule.
@@ -141,13 +140,6 @@ theorem residue_eq_of_tendsto_sub_mul {L : ℂ} (hf : MeromorphicAt f z₀)
 /-- The reciprocal `(· − z₀)⁻¹` of the simple factor `(· − z₀)` is meromorphic at `z₀`. -/
 theorem meromorphicAt_sub_inv (z₀ : ℂ) : MeromorphicAt (fun z => (z - z₀)⁻¹) z₀ :=
   ((analyticAt_id.sub analyticAt_const).meromorphicAt).inv
-
-/-- The elementary simple pole `(z - z₀)⁻¹` has order exactly `-1` at `z₀`, completing the
-`MeromorphicAt` / order / `residue` trio for the basic pole. -/
-theorem meromorphicOrderAt_sub_inv (z₀ : ℂ) :
-    meromorphicOrderAt (fun z => (z - z₀)⁻¹) z₀ = -1 := by
-  have hid : (fun z : ℂ => (z - z₀)⁻¹) = (fun z : ℂ => z - z₀)⁻¹ := rfl
-  rw [hid, meromorphicOrderAt_inv, meromorphicOrderAt_id_sub_const]
 
 /-- The residue of the elementary simple pole `(· − z₀)⁻¹` at `z₀` is `1`: since
 `(z − z₀) · (z − z₀)⁻¹ → 1` as `z → z₀`, the simple-pole limit formula gives the residue. -/
