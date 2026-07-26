@@ -128,6 +128,7 @@ For `R ≠ 0`, the generalized winding number of `circleMap c R` over `[a, b]` a
 `windingNumber` collapses to the ordinary index integral, which is
 `windingNumber_modelSector_interval`. This is the `windingNumber`-definition form of that raw
 index-integral computation. -/
+@[simp]
 theorem windingNumber_circleMap_center {c : ℂ} {R : ℝ} (hR : R ≠ 0) (a b : ℝ) :
     windingNumber (circleMap c R) a b c = ((b - a : ℝ) : ℂ) / (2 * (Real.pi : ℂ)) := by
   have hcont : ContinuousOn (circleMap c R) (Set.uIcc a b) :=
