@@ -69,17 +69,20 @@ theorem halfDiscBoundary_of_lt {t : ℝ} (h : R < t) :
   if_neg (not_le.mpr h)
 
 /-- The contour starts at `-R`. -/
-theorem halfDiscBoundary_left (hR : 0 < R) : halfDiscBoundary R (-R) = (-R : ℝ) :=
+-- Not `@[simp]`: with `halfDiscBoundary_of_le` in the simp set, `simp` already proves this
+-- (`neg_le_self_iff` discharges `-R ≤ R`), and `simpNF` rejects the redundant annotation.
+theorem halfDiscBoundary_left (hR : 0 ≤ R) : halfDiscBoundary R (-R) = (-R : ℝ) :=
   halfDiscBoundary_of_le (by linarith)
 
 /-- The contour ends at `-R`, so it is closed. -/
+@[simp]
 theorem halfDiscBoundary_right (R : ℝ) :
     halfDiscBoundary R (R + Real.pi) = (-R : ℝ) := by
   rw [halfDiscBoundary_of_lt (by linarith [Real.pi_pos])]
   simp [circleMap, Complex.exp_pi_mul_I]
 
 /-- On the diameter's parameter interval the contour is the real segment. -/
-theorem eqOn_halfDiscBoundary_segment (hR : 0 < R) :
+theorem eqOn_halfDiscBoundary_segment (hR : 0 ≤ R) :
     EqOn (fun t : ℝ => (1 : ℂ) * (t : ℂ) + 0) (halfDiscBoundary R) (uIoo (-R) R) := by
   intro t ht
   have h2 : t < max (-R) R := (Set.mem_Ioo.mp ht).2
@@ -98,11 +101,6 @@ theorem eqOn_halfDiscBoundary_arc (R : ℝ) :
   · rw [halfDiscBoundary_of_lt h]
     rfl
 
-/-- The derivative of the reparametrized arc, by the chain rule. -/
-private theorem hasDerivAt_arc (R t : ℝ) :
-    HasDerivAt (circleMap 0 R ∘ fun s : ℝ => s - R) (circleMap 0 R (t - R) * Complex.I) t := by
-  simpa using (hasDerivAt_circleMap 0 R (t - R)).scomp t ((hasDerivAt_id' (x := t)).sub_const R)
-
 /-- The index principal value of the reparametrized arc about the origin exists: the arc misses
 the origin, so the truncation is vacuous and the ordinary index integral converges. -/
 private theorem cauchyPVExistsAt_arc (hR : 0 < R) :
@@ -112,14 +110,20 @@ private theorem cauchyPVExistsAt_arc (hR : 0 < R) :
     circleMap_ne_center hR.ne'
   have hcont : ContinuousOn (circleMap 0 R ∘ fun s : ℝ => s - R) (uIcc R (R + Real.pi)) :=
     ((continuous_circleMap 0 R).comp (continuous_id.sub continuous_const)).continuousOn
-  have hderiv_eq : deriv (circleMap 0 R ∘ fun s : ℝ => s - R)
-      = fun t => circleMap 0 R (t - R) * Complex.I :=
-    funext fun t => (hasDerivAt_arc R t).deriv
+  have hderiv_circle : ContinuousOn (deriv (circleMap 0 R))
+      ((fun s : ℝ => s - R) '' uIcc R (R + Real.pi)) := by
+    have h : deriv (circleMap 0 R) = fun θ => circleMap 0 R θ * Complex.I :=
+      funext (deriv_circleMap 0 R)
+    rw [h]
+    exact ((continuous_circleMap 0 R).mul continuous_const).continuousOn
+  have hderiv : ContinuousOn (deriv (circleMap 0 R ∘ fun s : ℝ => s - R))
+      (uIcc R (R + Real.pi)) :=
+    continuousOn_deriv_comp_reparam (φ' := fun _ => 1)
+      (fun t _ => (hasDerivAt_id' (x := t)).sub_const R) continuousOn_const
+      (fun u _ => (differentiable_circleMap 0 R) u) hderiv_circle
   refine cauchyPVExistsAt_of_avoidance hcont (fun t _ => havoid t) ?_
-  refine intervalIntegrable_inv_sub_mul_deriv hcont (fun t _ => havoid t) ?_
-  rw [hderiv_eq]
-  exact (((continuous_circleMap 0 R).comp
-    (continuous_id.sub continuous_const)).mul continuous_const).intervalIntegrable _ _
+  exact intervalIntegrable_inv_sub_mul_deriv hcont (fun t _ => havoid t)
+    (hderiv.intervalIntegrable)
 
 /-- The reparametrized arc in the `r · t + s` shape `windingNumber_comp_mul_add` expects. -/
 private theorem arc_eq_comp_mul_add (R : ℝ) :
@@ -146,12 +150,12 @@ origin contributes `0` and the semicircular arc about it contributes `½`. -/
 theorem windingNumber_halfDiscBoundary (hR : 0 < R) :
     windingNumber (halfDiscBoundary R) (-R) (R + Real.pi) 0 = 1 / 2 := by
   have hpv_seg : CauchyPVExistsAt (halfDiscBoundary R) (-R) R (fun z => (z - 0)⁻¹) 0 :=
-    (cauchyPVExistsAt_inv_sub_segment 1 0 R).congr_curve (eqOn_halfDiscBoundary_segment hR)
+    (cauchyPVExistsAt_inv_sub_segment 1 0 R).congr_curve (eqOn_halfDiscBoundary_segment hR.le)
   have hpv_arc : CauchyPVExistsAt (halfDiscBoundary R) R (R + Real.pi) (fun z => (z - 0)⁻¹) 0 :=
     (cauchyPVExistsAt_arc hR).congr_curve
       ((eqOn_halfDiscBoundary_arc R).mono (uIoo_subset_uIcc_self))
   have hseg : windingNumber (halfDiscBoundary R) (-R) R 0 = 0 := by
-    rw [← windingNumber_congr_curve (eqOn_halfDiscBoundary_segment hR)]
+    rw [← windingNumber_congr_curve (eqOn_halfDiscBoundary_segment hR.le)]
     exact windingNumber_eq_zero_segment 1 0 R
   have harc : windingNumber (halfDiscBoundary R) R (R + Real.pi) 0 = 1 / 2 := by
     rw [← windingNumber_congr_curve
