@@ -4,8 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.Analysis.Contour.HungerbuhlerWasem
+public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.On
+public import TauCeti.Analysis.Contour.Residue.Basic
 public import TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.Basic
+import TauCeti.Analysis.Contour.HungerbuhlerWasem
 import TauCeti.Analysis.Contour.NullHomologous
 import TauCeti.Analysis.Contour.Residue.SimplePole
 
@@ -26,10 +28,11 @@ development: every hypothesis of `hasCauchyPV_half_residue_of_simple_pole` is di
 from the geometry of an explicit curve.
 
 The null-homology hypothesis is vacuous because the ambient region is all of `ℂ`, which has no
-exterior points; conditions (A′) and (B) are supplied by the simple-pole form of the summit,
-which derives them from the pole order. For a pole of *higher* order the general form applies
-instead, using `conditionAprime_halfDiscBoundary` — the half-disc is flat to every order at the
-origin, so it meets condition (A′) whatever the pole.
+exterior points; conditions (A′) and (B) are supplied by the simple-pole form of the theorem,
+which derives them from the pole order. For a pole of *higher* order the general form is the one
+to use, and `conditionAprime_halfDiscBoundary` already discharges its condition (A′) — the
+half-disc is flat to every order at the origin, so it meets (A′) whatever the pole. Condition (B)
+is independent and would still have to be established separately for that integrand.
 
 ## Main results
 
