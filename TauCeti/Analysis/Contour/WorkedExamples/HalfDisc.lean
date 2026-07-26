@@ -240,6 +240,7 @@ theorem windingNumber_halfDiscBoundary (hR : 0 < R) :
 
 /-- **The half-disc boundary meets the origin exactly once**, at `t = 0`: on the diameter
 `γ t = t` vanishes only there, and the arc stays at distance `|R|` from the origin. -/
+@[simp]
 theorem halfDiscBoundary_eq_zero_iff (hR : 0 < R) {t : ℝ} :
     halfDiscBoundary R t = 0 ↔ t = 0 := by
   constructor
@@ -284,7 +285,8 @@ theorem conditionAprime_halfDiscBoundary (hR : 0 < R) (f : ℂ → ℂ) :
   refine ⟨fun s hs => ?_, fun t₀ _ hmem n _ _ => ?_, fun hbase => ?_⟩
   · rw [Finset.mem_singleton.mp hs]
     exact finite_crossings_halfDiscBoundary hR
-  · rw [show t₀ = 0 from (halfDiscBoundary_eq_zero_iff hR).mp (by simpa using hmem)]
+  · have ht₀ : t₀ = 0 := (halfDiscBoundary_eq_zero_iff hR).mp (by simpa using hmem)
+    subst ht₀
     exact flatOfOrder_halfDiscBoundary hR n
   · exfalso
     rw [hmin, halfDiscBoundary_of_le (by linarith : (-R : ℝ) ≤ R)] at hbase

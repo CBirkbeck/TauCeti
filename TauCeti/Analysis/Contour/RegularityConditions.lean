@@ -230,6 +230,7 @@ theorem flatOfOrder_of_eventually_collinear {γ : ℝ → ℂ} {t₀ : ℝ} {v_p
     (hplus : ∀ᶠ t in 𝓝[>] t₀, ((γ t - γ t₀) * star v_plus).im = 0)
     (hminus : ∀ᶠ t in 𝓝[<] t₀, ((γ t - γ t₀) * star v_minus).im = 0) :
     FlatOfOrder γ t₀ n := by
+  rw [flatOfOrder_iff]
   refine ⟨v_plus, v_minus, hv_plus, hv_minus, ?_, ?_⟩ <;>
     refine (Asymptotics.isLittleO_zero _ _).congr' ?_ Filter.EventuallyEq.rfl
   · filter_upwards [hplus] with t ht
