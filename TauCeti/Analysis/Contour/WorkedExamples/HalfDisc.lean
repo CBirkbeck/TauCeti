@@ -46,8 +46,8 @@ residue theorem does not apply because the pole lies *on* the contour.
   origin is `½`.
 * `TauCeti.Contour.halfDiscBoundary_eq_zero_iff` — the contour meets the origin exactly once,
   at `t = 0`.
-* `TauCeti.Contour.flatOfOrder_halfDiscBoundary` — near the origin the contour *is* the real
-  diameter, so it is flat there to every order.
+* `TauCeti.Contour.flatOfOrder_halfDiscBoundary` — both one-sided branches at the origin lie on
+  the real line, so the contour is flat there to every order.
 * `TauCeti.Contour.conditionAprime_halfDiscBoundary` — Hungerbühler–Wasem condition (A′) at the
   origin, for any integrand.
 
@@ -253,9 +253,11 @@ theorem halfDiscBoundary_eq_zero_iff (hR : 0 < R) {t : ℝ} :
   · rintro rfl
     simpa using halfDiscBoundary_of_le hR.le
 
-/-- **The half-disc boundary is flat to every order at the origin.** Near `t = 0` the contour is
-the real diameter, so it lies *exactly* on the real line: with tangent direction `v = 1` the
-distance `|Im(γ t - γ 0)|` is identically zero there, which is `o` of anything. -/
+/-- **The half-disc boundary is flat to every order at the origin.** With tangent direction
+`v = 1` the perpendicular deviation `|Im (γ t - γ 0)|` vanishes *identically* near `t = 0`, which
+is `o` of anything. For `R > 0` that is because the contour is locally the real diameter; for the
+degenerate radius `R = 0` the arc collapses to the origin, so both one-sided branches still lie on
+the real line. -/
 theorem flatOfOrder_halfDiscBoundary (hR : 0 ≤ R) (n : ℕ) :
     FlatOfOrder (halfDiscBoundary R) 0 n := by
   have hzero : ∀ t : ℝ, t ≤ R →
