@@ -161,11 +161,9 @@ theorem windingNumber_circleMap_center_eq_one {c : ℂ} {R : ℝ} (hR : R ≠ 0)
 /-- **`n_c(semicircle) = ½` at the centre**, the `[0, π]` specialization of
 `windingNumber_circleMap_center`.
 
-Paired with `windingNumber_eq_zero_segment` — a diameter *through* `c` contributes `0` — this is
-the arc half of the **half-disc contour**, whose winding at the on-curve point `c` is `½`. That is
-the hypothesis of the Hungerbühler–Wasem half-residue theorem `hasCauchyPV_half_residue`. Note the
-half-disc contour passes *through* the point, unlike an indented contour, which detours around
-it. -/
+This is one of the two ingredients of a half-disc contour computation: the arc about the point
+supplies `½`, and `windingNumber_eq_zero_segment` supplies `0` for a diameter *through* it. The
+combined contour, and the additivity argument assembling the two, are not established here. -/
 theorem windingNumber_circleMap_center_eq_half {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
     windingNumber (circleMap c R) 0 Real.pi c = 1 / 2 := by
   rw [windingNumber_circleMap_center hR]
