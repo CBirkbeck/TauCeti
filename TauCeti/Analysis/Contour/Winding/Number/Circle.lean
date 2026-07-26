@@ -44,6 +44,8 @@ across the whole disc, so its circle integral vanishes.
 * `TauCeti.Contour.windingNumber_circleMap_eq_one_of_dist_lt` — `n_w(circle) = 1` for any `w` inside
   the disc.
 * `TauCeti.Contour.windingNumber_circleMap_center_eq_one` — `n_c(circle) = 1`.
+* `TauCeti.Contour.windingNumber_circleMap_center_eq_half` — `n_c(semicircle) = ½` at the centre:
+  the `[0, π]` half of the circle, the smooth-crossing value.
 * `TauCeti.Contour.windingNumber_circleMap_eq_zero_of_lt_dist` — `n_w(circle) = 0` for `w` outside
   the disc.
 
@@ -132,6 +134,32 @@ theorem windingNumber_circleMap_center_eq_one {c : ℂ} {R : ℝ} (hR : R ≠ 0)
     simp only [circleIntegral, smul_eq_mul, div_eq_mul_inv]
   rw [hker]
   exact windingNumber_circle hR
+
+/-- **`n_c(semicircle) = ½` at the centre.** The generalized winding number of the counterclockwise
+semicircle `circleMap c R` (`R ≠ 0`) over `[0, π]` about its centre `c` is `½` — the smooth-crossing
+value. This is the `windingNumber`-definition form of the raw-index-integral `windingNumber_at_i`:
+the curve misses its centre, so the principal value collapses to the ordinary index integral.
+
+Together with `windingNumber_eq_zero_segment` (a diameter through `c` contributes `0`) this is the
+half of an indented contour that supplies the `windingNumber = 1/2` hypothesis of the
+Hungerbühler–Wasem half-residue theorem `hasCauchyPV_half_residue`. -/
+theorem windingNumber_circleMap_center_eq_half {c : ℂ} {R : ℝ} (hR : R ≠ 0) :
+    windingNumber (circleMap c R) 0 Real.pi c = 1 / 2 := by
+  have hcont : ContinuousOn (circleMap c R) (Set.uIcc 0 Real.pi) :=
+    (continuous_circleMap c R).continuousOn
+  have hderiv : Continuous (fun θ => deriv (circleMap c R) θ) := by
+    simp only [deriv_circleMap]
+    exact (continuous_circleMap 0 R).mul continuous_const
+  have havoid : ∀ θ, circleMap c R θ ≠ c := fun _ => circleMap_ne_center hR
+  have hint : IntervalIntegrable
+      (fun t => (circleMap c R t - c)⁻¹ * deriv (circleMap c R) t) MeasureTheory.volume
+      0 Real.pi :=
+    intervalIntegrable_inv_sub_mul_deriv hcont (fun t _ => havoid t)
+      (hderiv.intervalIntegrable _ _)
+  rw [windingNumber_eq_integral_of_avoidance hcont (fun t _ => havoid t) hint,
+    ← windingNumber_at_i (z₀ := c) hR]
+  congr 1
+  exact intervalIntegral.integral_congr fun θ _ => inv_mul_eq_div _ _
 
 /-- **`n_w(circle) = 0` outside the disc** — the roadmap's "`n` is `0` outside" companion to the
 centre normalization. For a point `w` strictly outside the closed disc (`R < dist w c`, with
