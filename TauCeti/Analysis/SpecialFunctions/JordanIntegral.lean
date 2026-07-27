@@ -20,16 +20,14 @@ estimate on the whole interval; what makes it work is **Jordan's inequality**
 `sin θ ≥ (2/π) θ` on `[0, π/2]` (Mathlib's `Real.mul_le_sin`), which forces enough decay near
 the endpoint to make the whole integral `O(1/c)`.
 
-That `1/c` is exactly what cancels the length of a semicircular arc of radius `c` when this is
-applied to `|e^{iaz}| = e^{-aR\sin\theta}`, and it is why Jordan's lemma beats the naive
-`ML` bound: the latter would need the integrand to decay faster than `1/R`, while this needs
-no decay at all beyond boundedness.
+Applied to `|e^{iaz}| = e^{-aR\sin\theta}` on an arc of radius `R`, the relevant instance is
+`c = aR`, giving the bound `1/(aR)`; its `1/R` factor is what cancels the `R` in the arc length
+`πR`. That is why Jordan's lemma beats the naive `ML` bound, which would instead need the
+integrand itself to decay faster than `1/R`.
 
 ## Main results
 
 * `TauCeti.integral_exp_neg_mul_sin_le` — the bound above.
-* `TauCeti.integral_exp_neg_mul_sin_nonneg` — the integral is nonnegative, so the bound pins it
-  to `[0, π/c]`.
 
 ## References
 
@@ -39,7 +37,7 @@ no decay at all beyond boundedness.
 
 public section
 
-open Real intervalIntegral MeasureTheory Set
+open Real MeasureTheory Set
 
 namespace TauCeti
 
@@ -59,20 +57,15 @@ private theorem integral_exp_neg_mul (k b : ℝ) (hk : k ≠ 0) :
   ring
 
 /-- On `[0, π/2]` Jordan's inequality bounds the integrand by a decaying exponential. -/
-private theorem exp_neg_mul_sin_le (c : ℝ) (hc : 0 < c) {θ : ℝ} (hθ : θ ∈ Icc (0 : ℝ) (π / 2)) :
+private theorem exp_neg_mul_sin_le (c : ℝ) (hc : 0 ≤ c) {θ : ℝ} (hθ : θ ∈ Icc (0 : ℝ) (π / 2)) :
     Real.exp (-c * Real.sin θ) ≤ Real.exp (-(2 * c / π) * θ) := by
   refine Real.exp_le_exp.mpr ?_
   have hjordan : 2 / π * θ ≤ Real.sin θ := Real.mul_le_sin hθ.1 hθ.2
   have : 2 * c / π * θ ≤ c * Real.sin θ := by
-    have := mul_le_mul_of_nonneg_left hjordan hc.le
+    have := mul_le_mul_of_nonneg_left hjordan hc
     calc 2 * c / π * θ = c * (2 / π * θ) := by ring
       _ ≤ c * Real.sin θ := this
   linarith
-
-/-- The integrand is positive, so the integral over `[0, π]` is nonnegative. -/
-theorem integral_exp_neg_mul_sin_nonneg (c : ℝ) :
-    0 ≤ ∫ θ in (0 : ℝ)..π, Real.exp (-c * Real.sin θ) :=
-  intervalIntegral.integral_nonneg Real.pi_nonneg fun _ _ => (Real.exp_pos _).le
 
 /-- Half the interval carries half the integral: `θ ↦ π - θ` exchanges `[0, π/2]` and
 `[π/2, π]` and fixes `sin`. -/
@@ -91,9 +84,13 @@ private theorem integral_exp_neg_mul_sin_eq_two_mul (c : ℝ) :
         = ∫ θ in (π / 2)..π, Real.exp (-c * Real.sin (π - θ)) :=
           intervalIntegral.integral_congr fun x _ => by rw [Real.sin_pi_sub]
       _ = ∫ θ in (0 : ℝ)..(π / 2), Real.exp (-c * Real.sin θ) := by
+          -- Reflection sends `[π/2, π]` to `[π - π, π - π/2]`; those endpoints are equal to
+          -- `0` and `π/2` only propositionally, so they are rewritten explicitly.
           have h := intervalIntegral.integral_comp_sub_left
             (fun θ => Real.exp (-c * Real.sin θ)) (a := π / 2) (b := π) π
-          rw [show π - π = (0 : ℝ) by ring, show π - π / 2 = π / 2 by ring] at h
+          have hlo : π - π = (0 : ℝ) := sub_self π
+          have hhi : π - π / 2 = π / 2 := by ring
+          rw [hlo, hhi] at h
           exact h
   rw [hsplit, hrefl]
   ring
@@ -109,7 +106,7 @@ theorem integral_exp_neg_mul_sin_le (c : ℝ) (hc : 0 < c) :
       refine intervalIntegral.integral_mono_on (by positivity)
         (intervalIntegrable_exp_neg_mul_sin c 0 (π / 2))
         ((Real.continuous_exp.comp (continuous_const.mul continuous_id)).intervalIntegrable _ _)
-        fun θ hθ => exp_neg_mul_sin_le c hc hθ
+        fun θ hθ => exp_neg_mul_sin_le c hc.le hθ
     refine hmono.trans ?_
     rw [integral_exp_neg_mul _ _ hk]
     have hpi : π * (2 * c / π) = 2 * c := by field_simp

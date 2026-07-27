@@ -10,16 +10,18 @@ public import Mathlib.MeasureTheory.Integral.CircleIntegral
 /-!
 # Jordan's lemma
 
-The contribution of a large semicircular arc to a contour integral vanishes, for integrands
-carrying an oscillatory factor `e^{iaz}` with `a > 0`:
+A large semicircular arc contributes little to a contour integral whose integrand carries an
+oscillatory factor `e^{iaz}` with `a > 0`:
 
 $$\left\|\int_{C_R} f(z)\,e^{iaz}\,dz\right\| \;\le\; \frac{\pi}{a}\,M_R,
 \qquad M_R = \sup_{C_R} \|f\|,$$
 
 where `C_R` is the upper semicircle of radius `R` traversed counterclockwise.
 
-The point is that this needs **no decay of `f` beyond boundedness**, whereas the naive `ML`
-estimate `‖∫‖ ≤ (πR) · M_R` would need `M_R = o(1/R)`. The gain comes from
+The point is that the **estimate** needs no decay of `f` beyond boundedness, whereas the naive
+`ML` estimate `‖∫‖ ≤ (πR) · M_R` would need `M_R = o(1/R)` even to stay bounded. Concluding that
+the arc contribution actually **vanishes** is a further step, and does require `M_R → 0` — that
+is the hypothesis of `tendsto_integral_semicircle_exp_mul_nhds_zero`. The gain comes from
 `|e^{iaz}| = e^{-aR\sin θ}` on the arc together with `TauCeti.integral_exp_neg_mul_sin_le`,
 whose `1/(aR)` cancels the arc length `πR`.
 
@@ -45,28 +47,34 @@ public section
 
 noncomputable section
 
-open Real Complex intervalIntegral MeasureTheory Set Filter Topology
+open Real Complex MeasureTheory Set Filter Topology
 
 namespace TauCeti.Contour
 
 /-- On the circle of radius `R`, the oscillatory factor has norm `e^{-aR sin θ}`. -/
 private theorem norm_exp_mul_circleMap (a R θ : ℝ) :
-    ‖Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ)‖
-      = Real.exp (-(a * R) * Real.sin θ) := by
+    ‖Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ)‖ = Real.exp (-(a * R) * Real.sin θ) := by
   rw [Complex.norm_exp]
   congr 1
-  simp [circleMap, Complex.mul_re, Complex.mul_im]
+  simp only [circleMap, zero_add, mul_re, I_re, ofReal_re, zero_mul, I_im, ofReal_im, mul_zero,
+    sub_self, exp_ofReal_mul_I_re, exp_ofReal_mul_I_im, sub_zero, mul_im, one_mul, add_zero,
+    zero_sub, neg_mul, neg_inj]
   ring
 
 /-- **Jordan's lemma.** If `‖f‖ ≤ M` on the upper semicircle of radius `R > 0`, then for `a > 0`
 the arc contribution of `f z · e^{iaz}` is at most `π M / a` in norm — a bound independent of
 `R`, obtained without assuming any decay of `f`. -/
-theorem norm_integral_semicircle_exp_mul_le {f : ℂ → ℂ} {a R M : ℝ} (ha : 0 < a) (hR : 0 < R)
+theorem norm_integral_semicircle_exp_mul_le {f : ℂ → ℂ} {a R M : ℝ} (ha : 0 < a) (hR : 0 ≤ R)
     (hM : ∀ θ ∈ Icc (0 : ℝ) π, ‖f (circleMap 0 R θ)‖ ≤ M) :
     ‖∫ θ in (0 : ℝ)..π, f (circleMap 0 R θ) *
         Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) * deriv (circleMap 0 R) θ‖
       ≤ π * M / a := by
   have hM0 : 0 ≤ M := le_trans (norm_nonneg _) (hM 0 ⟨le_rfl, Real.pi_nonneg⟩)
+  rcases hR.eq_or_lt with rfl | hR
+  · -- Degenerate radius: the arc is a point, `deriv (circleMap 0 0) = 0`, so the integral is `0`.
+    have hderiv : ∀ θ : ℝ, deriv (circleMap 0 0) θ = 0 := by simp [circleMap_zero_radius]
+    simp only [hderiv, mul_zero, intervalIntegral.integral_zero, norm_zero]
+    exact div_nonneg (mul_nonneg Real.pi_nonneg hM0) ha.le
   have hbound : ∀ᵐ θ ∂volume, θ ∈ Ioc (0 : ℝ) π →
       ‖f (circleMap 0 R θ) * Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) *
           deriv (circleMap 0 R) θ‖ ≤ M * R * Real.exp (-(a * R) * Real.sin θ) := by
@@ -95,12 +103,10 @@ theorem norm_integral_semicircle_exp_mul_le {f : ℂ → ℂ} {a R M : ℝ} (ha 
 tending to `0` — the typical case `M R = 1/R` for `f z = z⁻¹` — the semicircular arc integral of
 `f z · e^{iaz}` tends to `0`. This is the form the improper-integral limit consumes. -/
 theorem tendsto_integral_semicircle_exp_mul_nhds_zero {f : ℂ → ℂ} {a : ℝ} {l : Filter ℝ}
-    {M : ℝ → ℝ} (ha : 0 < a) (hpos : ∀ᶠ R in l, 0 < R)
-    (hM : ∀ᶠ R in l, ∀ θ ∈ Icc (0 : ℝ) π, ‖f (circleMap 0 R θ)‖ ≤ M R)
-    (hM0 : Tendsto M l (𝓝 0)) :
+    {M : ℝ → ℝ} (ha : 0 < a) (hpos : ∀ᶠ R in l, 0 ≤ R)
+    (hM : ∀ᶠ R in l, ∀ θ ∈ Icc (0 : ℝ) π, ‖f (circleMap 0 R θ)‖ ≤ M R) (hM0 : Tendsto M l (𝓝 0)) :
     Tendsto (fun R => ∫ θ in (0 : ℝ)..π, f (circleMap 0 R θ) *
-        Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) * deriv (circleMap 0 R) θ)
-      l (𝓝 0) := by
+        Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) * deriv (circleMap 0 R) θ) l (𝓝 0) := by
   have hb : ∀ᶠ R in l, ‖∫ θ in (0 : ℝ)..π, f (circleMap 0 R θ) *
       Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) * deriv (circleMap 0 R) θ‖
       ≤ π * M R / a := by
