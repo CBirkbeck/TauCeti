@@ -48,8 +48,9 @@ residue theorem does not apply because the pole lies *on* the contour.
   at `t = 0`.
 * `TauCeti.Contour.deriv_halfDiscBoundary_of_lt` — strictly beyond the junction the derivative is
   the circle map's, at the shifted parameter.
-* `TauCeti.Contour.integral_arc_halfDiscBoundary` — the `[R, R + π]` piece of the contour integral
-  is the upper-semicircle integral, the form Jordan's lemma bounds.
+* `TauCeti.Contour.integral_halfDiscBoundary_arc` — the `[R, R + π]` piece of the contour integral
+  is the `circleMap 0 R` integral over `[0, π]`; for `0 ≤ R` that is the upper semicircle, the
+  form Jordan's lemma bounds.
 * `TauCeti.Contour.flatOfOrder_halfDiscBoundary` — both one-sided branches at the origin lie on
   the real line, so the contour is flat there to every order.
 * `TauCeti.Contour.conditionAprime_halfDiscBoundary` — Hungerbühler–Wasem condition (A′) at the
@@ -110,6 +111,7 @@ theorem eqOn_halfDiscBoundary_segment (hR : 0 ≤ R) :
 coincides with the shifted circle map on a whole neighbourhood, so its derivative is the circle
 map's, evaluated at the shifted parameter. (At the junction `t = R` itself the contour has a
 corner, and no such identity is claimed.) -/
+@[simp]
 theorem deriv_halfDiscBoundary_of_lt {R t : ℝ} (h : R < t) :
     deriv (halfDiscBoundary R) t = deriv (circleMap 0 R) (t - R) := by
   have hev : halfDiscBoundary R =ᶠ[nhds t] (circleMap 0 R ∘ fun s : ℝ => s - R) := by
@@ -125,12 +127,15 @@ theorem deriv_halfDiscBoundary_of_lt {R t : ℝ} (h : R < t) :
     simpa using hc.scomp t hsub
   exact hd.deriv
 
-/-- **The arc piece of the contour integral is the semicircle integral.** Beyond the junction the
+/-- **The arc piece of the contour integral is the circle-map integral.** Beyond the junction the
 half-disc boundary is the circle map shifted by `R`, so translating the parameter identifies the
-`[R, R + π]` piece of `∮_γ f` with the integral over the upper semicircle traversed from `0` to
-`π` — the form Jordan's lemma bounds. The junction `t = R` itself, where the contour has a corner,
-is a single point and does not affect the integral. -/
-theorem integral_arc_halfDiscBoundary (f : ℂ → ℂ) (R : ℝ) :
+`[R, R + π]` piece of `∮_γ f` with the integral of `circleMap 0 R` over `[0, π]`. The junction
+`t = R` itself, where the contour has a corner, is a single point and does not affect the integral.
+
+The identity holds for every `R`. For `0 ≤ R` the right-hand side is the *upper* semicircle
+traversed counterclockwise — the form Jordan's lemma bounds; for `R < 0` the same parametrization
+traces the lower semicircle instead. -/
+theorem integral_halfDiscBoundary_arc (f : ℂ → ℂ) (R : ℝ) :
     (∫ t in R..(R + Real.pi), f (halfDiscBoundary R t) * deriv (halfDiscBoundary R) t)
       = ∫ θ in (0 : ℝ)..Real.pi, f (circleMap 0 R θ) * deriv (circleMap 0 R) θ := by
   have hshift : (∫ t in R..(R + Real.pi),
