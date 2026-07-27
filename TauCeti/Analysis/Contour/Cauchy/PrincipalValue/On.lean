@@ -37,6 +37,8 @@ of `f` (which fails at an on-curve singularity), never silently identifying the 
 
 ## Main definitions
 
+* `HasCauchyPVWith γ a b f S v` — the same with the excision set `S` **prescribed**; the form
+  that concatenates, since adjacent subcurves must share it (`PrincipalValue/Concat.lean`)
 * `HasCauchyPV γ a b f v` — some finite excision set makes the truncated integrals converge to `v`
   (the primary predicate).
 * `CauchyPVExists γ a b f` — the principal value exists (`∃ v, HasCauchyPV γ a b f v`).
@@ -127,6 +129,40 @@ theorem HasCauchyPV.intro {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {v : 
         (𝓝[>] 0) (𝓝 v)) :
     HasCauchyPV γ a b f v :=
   ⟨S, h_int, h_tendsto⟩
+
+/-- **The Cauchy principal value with a prescribed excision set.** Identical to `HasCauchyPV`
+except that the finite set `S` of excised points is an explicit parameter rather than
+existentially bound, which is what makes the principal values along adjacent subcurves
+concatenable. -/
+def HasCauchyPVWith (γ : ℝ → ℂ) (a b : ℝ) (f : ℂ → ℂ) (S : Finset ℂ) (v : ℂ) : Prop :=
+  (∀ᶠ ε in 𝓝[>] (0 : ℝ), IntervalIntegrable
+      (fun t => if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then 0 else f (γ t) * deriv γ t)
+        MeasureTheory.volume a b) ∧
+    Tendsto (fun ε ↦ ∫ t in a..b, if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then 0 else f (γ t) * deriv γ t)
+      (𝓝[>] 0) (𝓝 v)
+
+/-- `HasCauchyPVWith` unfolded into its two clauses — eventual integrability of the excised
+integrand and convergence of the excised integrals — so consumers need not unfold the
+definition. -/
+theorem hasCauchyPVWith_iff {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {S : Finset ℂ} {v : ℂ} :
+    HasCauchyPVWith γ a b f S v ↔
+      (∀ᶠ ε in 𝓝[>] (0 : ℝ), IntervalIntegrable
+          (fun t => if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then 0 else f (γ t) * deriv γ t)
+        MeasureTheory.volume a b) ∧
+        Tendsto (fun ε ↦ ∫ t in a..b, if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then 0 else f (γ t) * deriv γ t)
+          (𝓝[>] 0) (𝓝 v) :=
+  Iff.rfl
+
+/-- Forgetting the witness recovers the existentially-bound form. -/
+theorem HasCauchyPVWith.hasCauchyPV {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {S : Finset ℂ} {v : ℂ}
+    (h : HasCauchyPVWith γ a b f S v) : HasCauchyPV γ a b f v :=
+  HasCauchyPV.intro S h.1 h.2
+
+/-- `HasCauchyPV` is exactly `HasCauchyPVWith` with the excision set existentially quantified. -/
+theorem hasCauchyPV_iff_exists_hasCauchyPVWith {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {v : ℂ} :
+    HasCauchyPV γ a b f v ↔ ∃ S : Finset ℂ, HasCauchyPVWith γ a b f S v := by
+  rw [hasCauchyPV_iff]
+  exact Iff.rfl
 
 /-- The Cauchy principal value on a set exists: shorthand for `∃ v, HasCauchyPV γ a b f v`. -/
 def CauchyPVExists (γ : ℝ → ℂ) (a b : ℝ) (f : ℂ → ℂ) : Prop :=
