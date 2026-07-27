@@ -36,6 +36,8 @@ convenience.
 * `TauCeti.Contour.norm_integral_semicircle_exp_mul_le` — Jordan's lemma as an explicit bound.
 * `TauCeti.Contour.tendsto_integral_semicircle_exp_mul_nhds_zero` — the arc contribution tends
   to `0` along any radius filter on which the sup bound tends to `0`.
+* `TauCeti.Contour.tendsto_integral_semicircle_exp_div_nhds_zero` — the canonical instance
+  `f z = z⁻¹`, where `M_R = 1/R`.
 
 ## References
 
@@ -114,6 +116,23 @@ theorem tendsto_integral_semicircle_exp_mul_nhds_zero {E : Type*} [NormedAddComm
     filter_upwards [hpos, hM] with R hR hMR
     exact norm_integral_semicircle_exp_mul_le ha hR hMR
   exact squeeze_zero_norm' hb (by simpa using (hM0.const_mul π).div_const a)
+
+/-- On the circle of radius `R > 0` the reciprocal is bounded by `1 / R` — the sup bound that
+makes `z⁻¹` the canonical instance of Jordan's lemma. -/
+theorem norm_inv_circleMap_le {R : ℝ} (hR : 0 < R) (θ : ℝ) : ‖(circleMap 0 R θ)⁻¹‖ ≤ 1 / R := by
+  rw [norm_inv, norm_circleMap_zero, abs_of_pos hR, one_div]
+
+/-- **The canonical instance of Jordan's lemma**: the arc contribution of `e^{iaz} / z` vanishes
+as `R → ∞`. Here `M_R = 1/R → 0`, which is precisely the regime the naive `ML` bound cannot
+reach — it would give `πR · (1/R) = π`, a constant. -/
+theorem tendsto_integral_semicircle_exp_div_nhds_zero {a : ℝ} (ha : 0 < a) :
+    Tendsto (fun R => ∫ θ in (0 : ℝ)..π, (Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) *
+        deriv (circleMap 0 R) θ) • (circleMap 0 R θ)⁻¹) atTop (𝓝 0) := by
+  refine tendsto_integral_semicircle_exp_mul_nhds_zero (M := fun R => 1 / R) ha ?_ ?_ ?_
+  · filter_upwards [eventually_gt_atTop (0 : ℝ)] with R hR using hR.le
+  · filter_upwards [eventually_gt_atTop (0 : ℝ)] with R hR θ _
+    exact norm_inv_circleMap_le hR θ
+  · simpa [one_div] using tendsto_inv_atTop_zero
 
 end TauCeti.Contour
 
