@@ -23,9 +23,12 @@ Running the half-disc contour of `HalfDisc/Basic.lean` and letting the radius gr
   line, leaving the segment alone;
 * Jordan's lemma kills the arc as `R → ∞`, since `‖1/z‖ = 1/R → 0` on it.
 
-The oscillatory factor is essential rather than cosmetic: for `f z = z⁻¹` alone (`a = 0`) the
-arc integral is `i π` for **every** `R` and never vanishes, so no limit exists to take. That is
-exactly the regime the naive `ML` bound cannot reach and Jordan's lemma can.
+The oscillatory factor is essential rather than cosmetic. At `a = 0` the integrand is `z⁻¹` and
+the arc integral equals `i π` for **every** `R`; it converges, but not to `0`, so Jordan's lemma
+does not apply and the argument cannot deliver `π i`. The identity itself still holds there, and
+reading it off gives `π i - i π = 0` — consistent with the symmetric principal values of `1/x`
+all vanishing by oddness. Positive frequency is what forces the arc to zero, and the decay it
+supplies is exactly the regime the naive `ML` bound cannot reach.
 
 ## Main results
 
