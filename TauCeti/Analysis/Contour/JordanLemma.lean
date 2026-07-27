@@ -63,9 +63,15 @@ private theorem norm_exp_mul_circleMap (a R θ : ℝ) :
     zero_sub, neg_mul, neg_inj]
   ring
 
-/-- **Jordan's lemma.** If `‖f‖ ≤ M` on the upper semicircle of radius `R > 0`, then for `a > 0`
+/-- **Jordan's lemma.** If `‖f‖ ≤ M` on the upper semicircle of radius `R`, then for `a > 0`
 the arc contribution of `f z · e^{iaz}` is at most `π M / a` in norm — a bound independent of
-`R`, obtained without assuming any decay of `f`. -/
+`R`, obtained without assuming any decay of `f`.
+
+No integrability hypothesis is imposed on the integrand, matching the Mathlib norm-of-integral
+idiom (`intervalIntegral.norm_integral_le_of_norm_le` constrains only the dominating function).
+When the parameterized integrand fails to be integrable the interval integral totalizes to `0`
+and the bound reads `0 ≤ π M / a`, which holds since `0 ≤ M`; the content of the lemma is
+therefore unchanged, and callers are not obliged to discharge integrability. -/
 theorem norm_integral_semicircle_exp_mul_le {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {f : ℂ → E} {a R M : ℝ} (ha : 0 < a) (hR : 0 ≤ R)
     (hM : ∀ θ ∈ Icc (0 : ℝ) π, ‖f (circleMap 0 R θ)‖ ≤ M) :
@@ -104,7 +110,10 @@ theorem norm_integral_semicircle_exp_mul_le {E : Type*} [NormedAddCommGroup E] [
 
 /-- **The arc contribution vanishes.** Along any filter of radii on which `f` admits a sup bound
 tending to `0` — the typical case `M R = 1/R` for `f z = z⁻¹` — the semicircular arc integral of
-`f z · e^{iaz}` tends to `0`. This is the form the improper-integral limit consumes. -/
+`f z · e^{iaz}` tends to `0`. This is the form the improper-integral limit consumes.
+
+As with the estimate it specialises, no integrability hypothesis is imposed; see
+`norm_integral_semicircle_exp_mul_le` for why the degenerate case is harmless. -/
 theorem tendsto_integral_semicircle_exp_mul_nhds_zero {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] {f : ℂ → E} {a : ℝ} {l : Filter ℝ}
     {M : ℝ → ℝ} (ha : 0 < a) (hpos : ∀ᶠ R in l, 0 ≤ R)
