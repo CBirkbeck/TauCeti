@@ -36,8 +36,8 @@ exactly the regime the naive `ML` bound cannot reach and Jordan's lemma can.
   along `[-R, R]` on the real axis is `π i` minus the arc contribution.
 * `TauCeti.Contour.tendsto_integral_arc_dirichlet_atTop` — the arc contribution vanishes, by
   Jordan's lemma at `a = 1`.
-* `TauCeti.Contour.tendsto_diameter_halfDiscBoundary_dirichlet` — hence the diameter principal
-  values converge to `π i`.
+* `TauCeti.Contour.tendsto_cauchyPV_realSegment_dirichlet` — hence the principal values
+  themselves, `cauchyPV` along `[-R, R]` on the real axis, converge to `π i`.
 
 ## References
 
@@ -139,15 +139,27 @@ theorem tendsto_integral_arc_dirichlet_atTop {a : ℝ} (ha : 0 < a) :
   rw [dirichletIntegrand_eq]
   ring
 
-/-- **The improper limit.** As the radius grows, the diameter principal values converge to `π i`
-— the half-residue, evaluated by the Hungerbühler–Wasem theorem on a contour through the pole,
-where the classical residue theorem does not apply. -/
-theorem tendsto_diameter_halfDiscBoundary_dirichlet {a : ℝ} (ha : 0 < a) :
+/-- The auxiliary limit: `π i` minus the arc contribution converges to `π i`. -/
+private theorem tendsto_sub_integral_arc_dirichlet {a : ℝ} (ha : 0 < a) :
     Tendsto (fun R : ℝ => (Real.pi : ℂ) * Complex.I -
       ∫ θ in (0 : ℝ)..Real.pi,
         dirichletIntegrand a (circleMap 0 R θ) * deriv (circleMap 0 R) θ)
       atTop (𝓝 ((Real.pi : ℂ) * Complex.I)) := by
   simpa using tendsto_const_nhds.sub (tendsto_integral_arc_dirichlet_atTop ha)
+
+/-- **The improper principal value.** As the radius grows, the Cauchy principal values of
+`e^{iaz}/z` along `[-R, R]` on the real axis converge to `π i` — the half-residue, evaluated by
+the Hungerbühler–Wasem theorem on a contour running through the pole, where the classical residue
+theorem does not apply.
+
+This is the roadmap's improper-integral acceptance criterion: the statement is about `cauchyPV`
+along the real line, with no reference to the auxiliary half-disc contour used to prove it. -/
+theorem tendsto_cauchyPV_realSegment_dirichlet {a : ℝ} (ha : 0 < a) :
+    Tendsto (fun R : ℝ => cauchyPV (fun t : ℝ => (t : ℂ)) (-R) R (dirichletIntegrand a))
+      atTop (𝓝 ((Real.pi : ℂ) * Complex.I)) := by
+  refine (tendsto_sub_integral_arc_dirichlet ha).congr' ?_
+  filter_upwards [eventually_gt_atTop (0 : ℝ)] with R hR
+  exact ((hasCauchyPV_realSegment_dirichlet a hR).cauchyPV_eq).symm
 
 end TauCeti.Contour
 
