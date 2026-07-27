@@ -153,6 +153,16 @@ theorem HasCauchyPVWith.hasCauchyPV {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → 
     (h : HasCauchyPVWith γ a b f S v) : HasCauchyPV γ a b f v :=
   HasCauchyPV.intro S h.1 h.2
 
+/-- `HasCauchyPV` is exactly `HasCauchyPVWith` with the excision set existentially quantified.
+
+This is the abstraction-preserving bridge between the two forms, and is **not** redundant with
+the definition: under the module system `HasCauchyPV`'s body is not exposed outside this file,
+so `Iff.rfl` proves this only here and consumers elsewhere cannot unfold their way across. The
+sibling `hasCauchyPV_iff` expands the truncation body instead, which loses the abstraction. -/
+theorem hasCauchyPV_iff_exists_hasCauchyPVWith {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {v : ℂ} :
+    HasCauchyPV γ a b f v ↔ ∃ S : Finset ℂ, HasCauchyPVWith γ a b f S v :=
+  Iff.rfl
+
 /-- The Cauchy principal value on a set exists: shorthand for `∃ v, HasCauchyPV γ a b f v`. -/
 def CauchyPVExists (γ : ℝ → ℂ) (a b : ℝ) (f : ℂ → ℂ) : Prop :=
   ∃ v : ℂ, HasCauchyPV γ a b f v
