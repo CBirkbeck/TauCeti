@@ -248,7 +248,7 @@ subtracted off via `HasCauchyPVWith.sub_right` without knowing that witness. Com
 theorem HasCauchyPVWith.of_integrable_of_crossings_measure_zero {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ}
     (S : Finset ℂ) (hγ : AEMeasurable γ (MeasureTheory.volume.restrict (Set.uIoc a b)))
     (h_int : IntervalIntegrable (fun t => f (γ t) * deriv γ t) MeasureTheory.volume a b)
-    (h_null : MeasureTheory.volume (⋃ s ∈ S, Set.uIcc a b ∩ γ ⁻¹' {s}) = 0) :
+    (h_null : MeasureTheory.volume (⋃ s ∈ S, Set.uIoc a b ∩ γ ⁻¹' {s}) = 0) :
     HasCauchyPVWith γ a b f S (∫ t in a..b, f (γ t) * deriv γ t) := by
   classical
   set g : ℝ → ℂ := fun t => f (γ t) * deriv γ t with hg
@@ -274,7 +274,7 @@ theorem HasCauchyPVWith.of_integrable_of_crossings_measure_zero {γ : ℝ → �
         (𝓝[>] 0) (𝓝 (g t)) := by
     filter_upwards [MeasureTheory.measure_eq_zero_iff_ae_notMem.mp h_null] with t ht htI
     have hne : ∀ s ∈ S, γ t ≠ s := fun s hs hst =>
-      ht (Set.mem_biUnion hs ⟨Set.uIoc_subset_uIcc htI, hst⟩)
+      ht (Set.mem_biUnion hs ⟨htI, hst⟩)
     refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
     filter_upwards [eventually_not_exists_mem_le (γ t) S hne] with ε hε
     exact (if_neg hε).symm
@@ -295,7 +295,8 @@ theorem HasCauchyPVWith.of_integrable_of_finite_crossings {γ : ℝ → ℂ} {a 
     (h_fin : ∀ s ∈ S, (Set.uIcc a b ∩ γ ⁻¹' {s}).Finite) :
     HasCauchyPVWith γ a b f S (∫ t in a..b, f (γ t) * deriv γ t) :=
   .of_integrable_of_crossings_measure_zero S hγ h_int
-    ((S.finite_toSet.biUnion fun s hs => h_fin s hs).measure_zero _)
+    ((S.finite_toSet.biUnion fun s hs => (h_fin s hs).subset
+      (Set.inter_subset_inter_left _ Set.uIoc_subset_uIcc)).measure_zero _)
 
 /-- **Zero integrand.** The principal value of the zero integrand is `0`, witnessed by the empty
 excision: the truncated integrand is identically `0`, hence integrable with vanishing integral. -/
