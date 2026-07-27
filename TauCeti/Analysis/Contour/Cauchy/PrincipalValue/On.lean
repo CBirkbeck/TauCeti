@@ -236,7 +236,7 @@ private theorem eventually_not_exists_mem_le (z : ℂ) (S : Finset ℂ) (h : ∀
 /-- **An integrable integrand has principal value the ordinary integral, for *any* prescribed
 excision set.** Where the contour integrand is interval-integrable and the curve meets the excised
 points only on a null set of parameters, shrinking the excised neighbourhoods recovers the ordinary
-integral: for each fixed `ε` the excision does perturb the integrand on a set of positive measure,
+integral: for each fixed `ε` the excision may perturb the integrand on a set of positive measure,
 but as `ε → 0⁺` the excised integrands converge almost everywhere to the original one, since the
 limiting crossing set is null.
 
@@ -245,20 +245,21 @@ principal value happens to be witnessed by, which is what lets an arc carrying n
 subtracted off via `HasCauchyPVWith.sub_right` without knowing that witness. Compare
 `HasCauchyPV.of_integrable`, which proves the weaker existential form by exhibiting `S = ∅`. -/
 theorem HasCauchyPVWith.of_integrable {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} (S : Finset ℂ)
-    (hγ : Measurable γ)
+    (hγ : AEMeasurable γ (MeasureTheory.volume.restrict (Set.uIoc a b)))
     (h_int : IntervalIntegrable (fun t => f (γ t) * deriv γ t) MeasureTheory.volume a b)
     (h_null : MeasureTheory.volume (⋃ s ∈ S, Set.uIcc a b ∩ γ ⁻¹' {s}) = 0) :
     HasCauchyPVWith γ a b f S (∫ t in a..b, f (γ t) * deriv γ t) := by
   classical
   set g : ℝ → ℂ := fun t => f (γ t) * deriv γ t with hg
-  have hmeas : ∀ ε : ℝ, MeasurableSet {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} := fun ε => by
+  have hmeas : ∀ ε : ℝ, MeasureTheory.NullMeasurableSet {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε}
+      (MeasureTheory.volume.restrict (Set.uIoc a b)) := fun ε => by
     have hset : {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} = ⋃ s ∈ S, {t | ‖γ t - s‖ ≤ ε} := by ext t; simp
-    exact hset ▸ S.measurableSet_biUnion fun s _ =>
-      measurableSet_le ((hγ.sub measurable_const).norm) measurable_const
+    refine hset ▸ MeasureTheory.NullMeasurableSet.biUnion S.countable_toSet fun s _ => ?_
+    exact nullMeasurableSet_le ((hγ.sub_const s).norm) aemeasurable_const
   have hsm : ∀ ε : ℝ, MeasureTheory.AEStronglyMeasurable
       (fun t => if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then 0 else g t)
       (MeasureTheory.volume.restrict (Set.uIoc a b)) := fun ε =>
-    (h_int.def'.aestronglyMeasurable.indicator (hmeas ε).compl).congr
+    (h_int.def'.aestronglyMeasurable.indicator₀ (hmeas ε).compl).congr
       (Filter.Eventually.of_forall fun t => by
         dsimp only
         by_cases h : ∃ s ∈ S, ‖γ t - s‖ ≤ ε
@@ -287,7 +288,7 @@ theorem HasCauchyPVWith.of_integrable {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ �
 only finitely often meets them on a null set of parameters. This is the form contour arguments
 consume, since `IsPwC1ImmersionOn.finite_crossings` (HW Prop 2.2) supplies exactly this. -/
 theorem HasCauchyPVWith.of_integrable_of_finite_crossings {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ}
-    (S : Finset ℂ) (hγ : Measurable γ)
+    (S : Finset ℂ) (hγ : AEMeasurable γ (MeasureTheory.volume.restrict (Set.uIoc a b)))
     (h_int : IntervalIntegrable (fun t => f (γ t) * deriv γ t) MeasureTheory.volume a b)
     (h_fin : ∀ s ∈ S, (Set.uIcc a b ∩ γ ⁻¹' {s}).Finite) :
     HasCauchyPVWith γ a b f S (∫ t in a..b, f (γ t) * deriv γ t) :=
