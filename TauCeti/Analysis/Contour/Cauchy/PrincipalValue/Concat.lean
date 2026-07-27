@@ -12,8 +12,9 @@ public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.On
 `HasCauchyPV` binds its finite excision set **existentially**, which is the right interface for
 consumers but is too weak to concatenate: two principal values along adjacent subcurves may be
 witnessed by *different* excision sets, and passing to their union changes the excised integrand.
-Recovering the union form would need the added points to be met on a null set of parameters, which
-the definition does not supply.
+Recovering the union form needs extra control that `HasCauchyPV` does not supply — the added
+points being met on a null set of parameters is one sufficient condition, though not a necessary
+one, since enlargement is also harmless wherever the integrand's contribution already vanishes.
 
 This file therefore works with the prescribed-witness form `HasCauchyPVWith` of
 `PrincipalValue/On.lean`, in which the excision set is an explicit parameter, and concatenates
