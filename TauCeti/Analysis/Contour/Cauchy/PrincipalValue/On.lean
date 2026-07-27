@@ -153,12 +153,6 @@ theorem HasCauchyPVWith.hasCauchyPV {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → 
     (h : HasCauchyPVWith γ a b f S v) : HasCauchyPV γ a b f v :=
   HasCauchyPV.intro S h.1 h.2
 
-/-- `HasCauchyPV` is exactly `HasCauchyPVWith` with the excision set existentially quantified. -/
-theorem hasCauchyPV_iff_exists_hasCauchyPVWith {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {v : ℂ} :
-    HasCauchyPV γ a b f v ↔ ∃ S : Finset ℂ, HasCauchyPVWith γ a b f S v := by
-  rw [hasCauchyPV_iff]
-  exact Iff.rfl
-
 /-- The Cauchy principal value on a set exists: shorthand for `∃ v, HasCauchyPV γ a b f v`. -/
 def CauchyPVExists (γ : ℝ → ℂ) (a b : ℝ) (f : ℂ → ℂ) : Prop :=
   ∃ v : ℂ, HasCauchyPV γ a b f v
