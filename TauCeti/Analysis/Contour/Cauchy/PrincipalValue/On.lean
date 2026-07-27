@@ -52,7 +52,8 @@ of `f` (which fails at an on-curve singularity), never silently identifying the 
 * `HasCauchyPVAt.hasCauchyPV`, `CauchyPVExistsAt.cauchyPVExists` — the single-point principal value
   at `z₀` is the set-level principal value with `S = {z₀}`: the excision `‖γ t − z₀‖ > ε` is exactly
   the `S = {z₀}` case of the set excision.
-* `HasCauchyPVWith.of_integrable` and `HasCauchyPVWith.of_integrable_of_finite_crossings` — where
+* `HasCauchyPVWith.of_integrable_of_crossings_measure_zero` and its finite-crossings wrapper
+  `HasCauchyPVWith.of_integrable_of_finite_crossings` — where
   the integrand is integrable and the curve meets the excised points on a null set of parameters
   (in particular, finitely often), the principal value is the ordinary integral **for any
   prescribed excision set**
@@ -244,8 +245,8 @@ The strength here is that `S` is arbitrary: the conclusion holds for whatever ex
 principal value happens to be witnessed by, which is what lets an arc carrying no singularity be
 subtracted off via `HasCauchyPVWith.sub_right` without knowing that witness. Compare
 `HasCauchyPV.of_integrable`, which proves the weaker existential form by exhibiting `S = ∅`. -/
-theorem HasCauchyPVWith.of_integrable {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} (S : Finset ℂ)
-    (hγ : AEMeasurable γ (MeasureTheory.volume.restrict (Set.uIoc a b)))
+theorem HasCauchyPVWith.of_integrable_of_crossings_measure_zero {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ}
+    (S : Finset ℂ) (hγ : AEMeasurable γ (MeasureTheory.volume.restrict (Set.uIoc a b)))
     (h_int : IntervalIntegrable (fun t => f (γ t) * deriv γ t) MeasureTheory.volume a b)
     (h_null : MeasureTheory.volume (⋃ s ∈ S, Set.uIcc a b ∩ γ ⁻¹' {s}) = 0) :
     HasCauchyPVWith γ a b f S (∫ t in a..b, f (γ t) * deriv γ t) := by
@@ -284,15 +285,17 @@ theorem HasCauchyPVWith.of_integrable {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ �
     (Filter.Eventually.of_forall fun ε => Filter.Eventually.of_forall fun t _ => hle ε t)
     h_int.norm hae
 
-/-- Finite-crossings form of `HasCauchyPVWith.of_integrable`: a curve meeting each excised point
-only finitely often meets them on a null set of parameters. This is the form contour arguments
-consume, since `IsPwC1ImmersionOn.finite_crossings` (HW Prop 2.2) supplies exactly this. -/
+/-- Finite-crossings form of `HasCauchyPVWith.of_integrable_of_crossings_measure_zero`: a curve
+meeting each excised point only finitely often meets them on a null set of parameters. This is
+the form contour arguments consume, since `IsPwC1ImmersionOn.finite_crossings` (HW Prop 2.2)
+supplies exactly this. -/
 theorem HasCauchyPVWith.of_integrable_of_finite_crossings {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ}
     (S : Finset ℂ) (hγ : AEMeasurable γ (MeasureTheory.volume.restrict (Set.uIoc a b)))
     (h_int : IntervalIntegrable (fun t => f (γ t) * deriv γ t) MeasureTheory.volume a b)
     (h_fin : ∀ s ∈ S, (Set.uIcc a b ∩ γ ⁻¹' {s}).Finite) :
     HasCauchyPVWith γ a b f S (∫ t in a..b, f (γ t) * deriv γ t) :=
-  .of_integrable S hγ h_int ((S.finite_toSet.biUnion fun s hs => h_fin s hs).measure_zero _)
+  .of_integrable_of_crossings_measure_zero S hγ h_int
+    ((S.finite_toSet.biUnion fun s hs => h_fin s hs).measure_zero _)
 
 /-- **Zero integrand.** The principal value of the zero integrand is `0`, witnessed by the empty
 excision: the truncated integrand is identically `0`, hence integrable with vanishing integral. -/
