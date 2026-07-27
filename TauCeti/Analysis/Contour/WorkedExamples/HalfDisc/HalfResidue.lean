@@ -5,6 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.On
+public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Concat
+import TauCeti.Analysis.Contour.Crossing.Finiteness
 public import TauCeti.Analysis.Contour.Residue.Basic
 public import TauCeti.Analysis.Contour.WorkedExamples.HalfDisc.Basic
 import TauCeti.Analysis.Contour.HungerbuhlerWasem
@@ -41,6 +43,9 @@ is independent and would still have to be established separately for that integr
   half-disc boundary is `π i · residue f 0`.
 * `TauCeti.Contour.hasCauchyPV_halfDiscBoundary_inv` — the concrete instance `f z = z⁻¹`, whose
   principal value is exactly `π i`.
+* `TauCeti.Contour.hasCauchyPV_diameter_halfDiscBoundary` — the same identity with the arc
+  contribution subtracted off, leaving the principal value along the diameter and an explicit
+  `circleMap` integral for the arc, the form Jordan's lemma bounds.
 
 ## References
 
@@ -100,6 +105,37 @@ theorem hasCauchyPV_halfDiscBoundary_inv (hR : 0 < R) :
   have hres : residue (fun z : ℂ => z⁻¹) 0 = 1 := by rw [← hfun]; exact residue_sub_inv 0
   have key := hasCauchyPV_halfDiscBoundary_of_simple_pole hR hdiff hmero (by simp [horder])
   rwa [hres, mul_one] at key
+
+/-- **Splitting the half-disc: the diameter piece.** Subtracting the arc contribution from the
+half-residue identity leaves the principal value along the diameter alone.
+
+The subtraction is the delicate step. `hasCauchyPV_halfDiscBoundary_of_simple_pole` binds its
+excision set existentially, so the witness is unknown; `HasCauchyPVWith.sub_right` needs both
+pieces to share it. `HasCauchyPVWith.of_integrable_of_finite_crossings` supplies the arc piece for
+*whatever* that witness is, using that an immersion meets any point only finitely often
+(HW Prop 2.2). The arc term is then rewritten as a `circleMap` integral, which is the form
+Jordan's lemma bounds — so letting `R → ∞` on a suitable integrand kills it. -/
+theorem hasCauchyPV_diameter_halfDiscBoundary {f : ℂ → ℂ} (hR : 0 < R)
+    (hf : DifferentiableOn ℂ f (univ \ {0})) (hmero : MeromorphicAt f 0)
+    (h_simple : ((-1 : ℤ) : WithTop ℤ) ≤ meromorphicOrderAt f 0)
+    (h_arc : IntervalIntegrable
+      (fun t => f (halfDiscBoundary R t) * deriv (halfDiscBoundary R) t)
+      MeasureTheory.volume R (R + Real.pi)) :
+    HasCauchyPV (halfDiscBoundary R) (-R) R f
+      ((Real.pi : ℂ) * Complex.I * residue f 0 -
+        ∫ θ in (0 : ℝ)..Real.pi, f (circleMap 0 R θ) * deriv (circleMap 0 R) θ) := by
+  obtain ⟨S, hS⟩ := hasCauchyPV_iff_exists_hasCauchyPVWith.mp
+    (hasCauchyPV_halfDiscBoundary_of_simple_pole hR hf hmero h_simple)
+  have harc : HasCauchyPVWith (halfDiscBoundary R) R (R + Real.pi) f S
+      (∫ t in R..(R + Real.pi),
+        f (halfDiscBoundary R t) * deriv (halfDiscBoundary R) t) :=
+    .of_integrable_of_finite_crossings S
+      (continuous_halfDiscBoundary R).measurable.aemeasurable h_arc
+      fun s _ => ((isPwC1ImmersionOn_halfDiscBoundary hR).finite_crossings (z₀ := s)).subset
+        (Set.inter_subset_inter_left _ (Set.uIoc_subset_uIcc.trans (Set.uIcc_subset_uIcc
+          (Set.mem_uIcc.mpr (Or.inl ⟨by linarith, by linarith [Real.pi_pos]⟩))
+          Set.right_mem_uIcc)))
+  simpa [integral_halfDiscBoundary_arc] using (hS.sub_right harc).hasCauchyPV
 
 end TauCeti.Contour
 
