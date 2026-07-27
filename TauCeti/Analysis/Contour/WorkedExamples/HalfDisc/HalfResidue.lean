@@ -161,9 +161,8 @@ theorem hasCauchyPV_realSegment_diameter {f : ℂ → ℂ} (hR : 0 < R)
     HasCauchyPV (fun t : ℝ => (t : ℂ)) (-R) R f
       ((Real.pi : ℂ) * Complex.I * residue f 0 -
         ∫ θ in (0 : ℝ)..Real.pi, f (circleMap 0 R θ) * deriv (circleMap 0 R) θ) := by
-  obtain ⟨S, hS⟩ := hasCauchyPV_iff_exists_hasCauchyPVWith.mp
-    (hasCauchyPV_halfDiscBoundary_diameter hR hf hmero h_simple)
-  refine (hS.congr_curve (fun t ht => ?_) fun t ht => ?_).hasCauchyPV <;>
+  refine (hasCauchyPV_halfDiscBoundary_diameter hR hf hmero h_simple).congr_curve
+    (fun t ht => ?_) fun t ht => ?_ <;>
     · rw [Set.uIoo_of_le (by linarith)] at ht
       first
         | exact halfDiscBoundary_of_le ht.2.le

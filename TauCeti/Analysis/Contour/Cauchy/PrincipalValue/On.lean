@@ -348,6 +348,23 @@ theorem HasCauchyPVWith.congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f :
     exact (intervalIntegrable_congr_uIoo fun t ht => hbody ε t ht).mp hε
   · exact h.2.congr fun ε => intervalIntegral.integral_congr_uIoo fun t ht => hbody ε t ht
 
+/-- Curve congruence for the primary predicate: `HasCauchyPVWith.congr_curve` with the excision
+set re-hidden, so consumers need not name it. -/
+theorem HasCauchyPV.congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {v : ℂ}
+    (h : HasCauchyPV γ₁ a b f v) (h_eq : Set.EqOn γ₁ γ₂ (Set.uIoo a b))
+    (h_deriv : Set.EqOn (deriv γ₁) (deriv γ₂) (Set.uIoo a b)) :
+    HasCauchyPV γ₂ a b f v :=
+  let ⟨_, hS⟩ := hasCauchyPV_iff_exists_hasCauchyPVWith.mp h
+  (hS.congr_curve h_eq h_deriv).hasCauchyPV
+
+/-- Existence form of `HasCauchyPV.congr_curve`. -/
+theorem CauchyPVExists.congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ}
+    (h : CauchyPVExists γ₁ a b f) (h_eq : Set.EqOn γ₁ γ₂ (Set.uIoo a b))
+    (h_deriv : Set.EqOn (deriv γ₁) (deriv γ₂) (Set.uIoo a b)) :
+    CauchyPVExists γ₂ a b f :=
+  let ⟨_, hv⟩ := h
+  ⟨_, hv.congr_curve h_eq h_deriv⟩
+
 /-- **Congruence along the curve.** If `f` and `g` agree along `γ` on the open interval `Set.uIoo a
 b`, they share the same principal value there, with the same excision set (the endpoints are
 invisible to the interval integral; the excised integrand reads `f` only through `f (γ t)`). -/
