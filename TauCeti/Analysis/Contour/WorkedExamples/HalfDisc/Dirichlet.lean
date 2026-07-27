@@ -32,13 +32,13 @@ supplies is exactly the regime the naive `ML` bound cannot reach.
 
 ## Main results
 
-* `TauCeti.Contour.residue_exp_mul_I_div_self` — `Res₀ (e^{iaz}/z) = 1`, for every frequency.
+* `TauCeti.Contour.residue_dirichletIntegrand` — `Res₀ (e^{iaz}/z) = 1`, for every frequency.
 * `TauCeti.Contour.neg_one_le_meromorphicOrderAt_dirichletIntegrand` — the pole is at worst
   simple, the hypothesis the half-residue theorem consumes.
 * `TauCeti.Contour.hasCauchyPV_realSegment_dirichlet` — for each radius, the principal value
   along `[-R, R]` on the real axis is `π i` minus the arc contribution.
 * `TauCeti.Contour.tendsto_integral_arc_dirichlet_atTop` — the arc contribution vanishes, by
-  Jordan's lemma at `a = 1`.
+  Jordan's lemma for any positive frequency `a > 0`.
 * `TauCeti.Contour.tendsto_cauchyPV_realSegment_dirichlet` — hence the principal values
   themselves, `cauchyPV` along `[-R, R]` on the real axis, converge to `π i`.
 
@@ -71,9 +71,9 @@ theorem meromorphicAt_dirichletIntegrand (a : ℝ) :
       (analyticAt_id.meromorphicAt.inv)
   exact h.congr (Filter.Eventually.of_forall fun z => (dirichletIntegrand_eq a z).symm)
 
-/-- Near the origin `z · e^{iz}/z = e^{iz} → 1`. This single limit yields both the residue and
+/-- Near the origin `z · e^{iaz}/z = e^{iaz} → 1`. This single limit yields both the residue and
 the simplicity of the pole. -/
-theorem tendsto_sub_mul_dirichletIntegrand (a : ℝ) :
+private theorem tendsto_sub_mul_dirichletIntegrand (a : ℝ) :
     Tendsto (fun z : ℂ => (z - 0) * dirichletIntegrand a z) (𝓝[≠] 0) (𝓝 1) := by
   have hlim : Tendsto (fun z : ℂ => Complex.exp (Complex.I * (a : ℂ) * z)) (𝓝[≠] 0) (𝓝 1) := by
     have hc : Continuous fun z : ℂ => Complex.exp (Complex.I * (a : ℂ) * z) := by fun_prop
@@ -84,8 +84,8 @@ theorem tendsto_sub_mul_dirichletIntegrand (a : ℝ) :
   rw [dirichletIntegrand_eq, sub_zero]
   field_simp
 
-/-- **The residue of `e^{iz}/z` at the origin is `1`.** -/
-theorem residue_exp_mul_I_div_self (a : ℝ) : residue (dirichletIntegrand a) 0 = 1 :=
+/-- **The residue of `e^{iaz}/z` at the origin is `1`**, for every frequency. -/
+theorem residue_dirichletIntegrand (a : ℝ) : residue (dirichletIntegrand a) 0 = 1 :=
   residue_eq_of_tendsto_sub_mul (meromorphicAt_dirichletIntegrand a)
     (tendsto_sub_mul_dirichletIntegrand a)
 
@@ -97,27 +97,14 @@ theorem differentiableOn_dirichletIntegrand (a : ℝ) :
   refine (DifferentiableAt.div ?_ differentiableAt_id hz0).differentiableWithinAt
   exact (Complex.differentiable_exp _).comp z (by fun_prop)
 
-/-- **The pole at the origin is at worst simple.** Multiplying by `z` gives a function with a
-limit there, so the order of `e^{iz}/z` is at least `-1` — the hypothesis the half-residue
+/-- **The pole at the origin is at worst simple**, for every frequency: the punctured limit of
+`z · e^{iaz}/z` exists, which is exactly the criterion of
+`neg_one_le_meromorphicOrderAt_of_tendsto_sub_mul`. This is the hypothesis the half-residue
 theorem consumes. -/
 theorem neg_one_le_meromorphicOrderAt_dirichletIntegrand (a : ℝ) :
-    ((-1 : ℤ) : WithTop ℤ) ≤ meromorphicOrderAt (dirichletIntegrand a) 0 := by
-  have hid : MeromorphicAt (fun z : ℂ => z - 0) 0 :=
-    (analyticAt_id.sub analyticAt_const).meromorphicAt
-  have hprod : meromorphicOrderAt (fun z : ℂ => (z - 0) * dirichletIntegrand a z) 0
-      = 1 + meromorphicOrderAt (dirichletIntegrand a) 0 := by
-    have h := meromorphicOrderAt_mul hid (meromorphicAt_dirichletIntegrand a)
-    rwa [meromorphicOrderAt_id_sub_const] at h
-  have hnn : 0 ≤ meromorphicOrderAt (fun z : ℂ => (z - 0) * dirichletIntegrand a z) 0 :=
-    (tendsto_nhds_iff_meromorphicOrderAt_nonneg
-      (hid.mul (meromorphicAt_dirichletIntegrand a))).1 ⟨1, tendsto_sub_mul_dirichletIntegrand a⟩
-  rw [hprod] at hnn
-  induction hord : meromorphicOrderAt (dirichletIntegrand a) 0 using WithTop.recTopCoe with
-  | top => exact le_top
-  | coe n =>
-      rw [hord] at hnn
-      norm_cast at hnn ⊢
-      omega
+    ((-1 : ℤ) : WithTop ℤ) ≤ meromorphicOrderAt (dirichletIntegrand a) 0 :=
+  neg_one_le_meromorphicOrderAt_of_tendsto_sub_mul (meromorphicAt_dirichletIntegrand a)
+    (tendsto_sub_mul_dirichletIntegrand a)
 
 /-- **The identity along the real segment.** For each positive radius the principal value of
 `e^{iaz}/z` along `[-R, R]` on the real axis is `π i` minus the arc contribution. The pole sits on
@@ -127,7 +114,7 @@ theorem hasCauchyPV_realSegment_dirichlet (a : ℝ) {R : ℝ} (hR : 0 < R) :
       ((Real.pi : ℂ) * Complex.I -
         ∫ θ in (0 : ℝ)..Real.pi,
           dirichletIntegrand a (circleMap 0 R θ) * deriv (circleMap 0 R) θ) := by
-  simpa [residue_exp_mul_I_div_self a] using
+  simpa [residue_dirichletIntegrand a] using
     hasCauchyPV_realSegment_diameter hR (differentiableOn_dirichletIntegrand a)
       (meromorphicAt_dirichletIntegrand a) (neg_one_le_meromorphicOrderAt_dirichletIntegrand a)
 
