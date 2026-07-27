@@ -46,6 +46,8 @@ is independent and would still have to be established separately for that integr
 * `TauCeti.Contour.hasCauchyPV_halfDiscBoundary_diameter` — the same identity with the arc
   contribution subtracted off, leaving the principal value along the diameter and an explicit
   `circleMap` integral for the arc, the form Jordan's lemma bounds.
+* `TauCeti.Contour.hasCauchyPV_realSegment_diameter` — the same, restated along the straight line
+  `t ↦ t`, which is the form a real-axis improper integral consumes.
 
 ## References
 
@@ -109,8 +111,10 @@ theorem hasCauchyPV_halfDiscBoundary_inv (hR : 0 < R) :
 /-- **Splitting the half-disc: the diameter piece.** Subtracting the arc contribution from the
 half-residue identity leaves the principal value along the diameter alone.
 
-The arc term is expressed as a `circleMap` integral, which is the form Jordan's lemma bounds, so
-on an oscillatory integrand it vanishes as `R → ∞`. -/
+The arc term is expressed as a `circleMap` integral, which is the form Jordan's lemma bounds. It
+vanishes as `R → ∞` for an integrand `e^{iaz} · g z` (`a > 0`) whose sup bound on the semicircle
+tends to `0` — oscillation alone is not enough, the amplitude must decay. The concrete case
+`f z = e^{iz}/z`, where that bound is `1/R`, is the Hungerbühler–Wasem motivating example. -/
 theorem hasCauchyPV_halfDiscBoundary_diameter {f : ℂ → ℂ} (hR : 0 < R)
     (hf : DifferentiableOn ℂ f (univ \ {0})) (hmero : MeromorphicAt f 0)
     (h_simple : ((-1 : ℤ) : WithTop ℤ) ≤ meromorphicOrderAt f 0) :
@@ -147,6 +151,23 @@ theorem hasCauchyPV_halfDiscBoundary_diameter {f : ℂ → ℂ} (hR : 0 < R)
       fun s _ => ((isPwC1ImmersionOn_halfDiscBoundary hR).finite_crossings (z₀ := s)).subset
         (Set.inter_subset_inter_left _ (Set.uIoc_subset_uIcc.trans hsub))
   simpa [integral_halfDiscBoundary_arc] using (hS.sub_right harc).hasCauchyPV
+
+/-- **The identity along the real segment.** The diameter of the half-disc traces the straight
+line `t ↦ t`, so the principal value can be stated along that curve directly — the form the
+real-axis improper integral consumes, with no reference to the auxiliary contour. -/
+theorem hasCauchyPV_realSegment_diameter {f : ℂ → ℂ} (hR : 0 < R)
+    (hf : DifferentiableOn ℂ f (univ \ {0})) (hmero : MeromorphicAt f 0)
+    (h_simple : ((-1 : ℤ) : WithTop ℤ) ≤ meromorphicOrderAt f 0) :
+    HasCauchyPV (fun t : ℝ => (t : ℂ)) (-R) R f
+      ((Real.pi : ℂ) * Complex.I * residue f 0 -
+        ∫ θ in (0 : ℝ)..Real.pi, f (circleMap 0 R θ) * deriv (circleMap 0 R) θ) := by
+  obtain ⟨S, hS⟩ := hasCauchyPV_iff_exists_hasCauchyPVWith.mp
+    (hasCauchyPV_halfDiscBoundary_diameter hR hf hmero h_simple)
+  refine (hS.congr_curve (fun t ht => ?_) fun t ht => ?_).hasCauchyPV <;>
+    · rw [Set.uIoo_of_le (by linarith)] at ht
+      first
+        | exact halfDiscBoundary_of_le ht.2.le
+        | exact deriv_halfDiscBoundary_of_lt_radius ht.2
 
 end TauCeti.Contour
 

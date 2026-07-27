@@ -326,6 +326,28 @@ theorem HasCauchyPV.const_mul {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {
     rw [← intervalIntegral.integral_const_mul]
     exact intervalIntegral.integral_congr fun t _ => (hbody ε t).symm
 
+/-- **Changing the curve.** Two curves that agree on the open parameter interval, with equal
+derivatives there, have the same principal value: both the excision test `‖γ t - s‖ ≤ ε` and the
+integrand `f (γ t) * deriv γ t` are computed pointwise from the curve, and the endpoints do not
+affect an interval integral.
+
+This is what lets a contour identity be restated along a more convenient parametrization — for
+instance replacing a piece of a closed contour by the straight line it traces. -/
+theorem HasCauchyPVWith.congr_curve {γ₁ γ₂ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {S : Finset ℂ} {v : ℂ}
+    (h : HasCauchyPVWith γ₁ a b f S v) (h_eq : Set.EqOn γ₁ γ₂ (Set.uIoo a b))
+    (h_deriv : Set.EqOn (deriv γ₁) (deriv γ₂) (Set.uIoo a b)) :
+    HasCauchyPVWith γ₂ a b f S v := by
+  rw [hasCauchyPVWith_iff] at h ⊢
+  have hbody : ∀ ε : ℝ, ∀ t ∈ Set.uIoo a b,
+      (if ∃ s ∈ S, ‖γ₁ t - s‖ ≤ ε then 0 else f (γ₁ t) * deriv γ₁ t)
+        = if ∃ s ∈ S, ‖γ₂ t - s‖ ≤ ε then 0 else f (γ₂ t) * deriv γ₂ t := by
+    intro ε t ht
+    rw [h_eq ht, h_deriv ht]
+  refine ⟨?_, ?_⟩
+  · filter_upwards [h.1] with ε hε
+    exact (intervalIntegrable_congr_uIoo fun t ht => hbody ε t ht).mp hε
+  · exact h.2.congr fun ε => intervalIntegral.integral_congr_uIoo fun t ht => hbody ε t ht
+
 /-- **Congruence along the curve.** If `f` and `g` agree along `γ` on the open interval `Set.uIoo a
 b`, they share the same principal value there, with the same excision set (the endpoints are
 invisible to the interval integral; the excised integrand reads `f` only through `f (γ t)`). -/
