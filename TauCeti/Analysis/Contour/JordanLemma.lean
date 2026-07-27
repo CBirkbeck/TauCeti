@@ -64,22 +64,23 @@ private theorem norm_exp_mul_circleMap (a R θ : ℝ) :
 /-- **Jordan's lemma.** If `‖f‖ ≤ M` on the upper semicircle of radius `R > 0`, then for `a > 0`
 the arc contribution of `f z · e^{iaz}` is at most `π M / a` in norm — a bound independent of
 `R`, obtained without assuming any decay of `f`. -/
-theorem norm_integral_semicircle_exp_mul_le {f : ℂ → ℂ} {a R M : ℝ} (ha : 0 < a) (hR : 0 ≤ R)
+theorem norm_integral_semicircle_exp_mul_le {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+    {f : ℂ → E} {a R M : ℝ} (ha : 0 < a) (hR : 0 ≤ R)
     (hM : ∀ θ ∈ Icc (0 : ℝ) π, ‖f (circleMap 0 R θ)‖ ≤ M) :
-    ‖∫ θ in (0 : ℝ)..π, f (circleMap 0 R θ) *
-        Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) * deriv (circleMap 0 R) θ‖
-      ≤ π * M / a := by
+    ‖∫ θ in (0 : ℝ)..π, (Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) *
+        deriv (circleMap 0 R) θ) • f (circleMap 0 R θ)‖ ≤ π * M / a := by
   have hM0 : 0 ≤ M := le_trans (norm_nonneg _) (hM 0 ⟨le_rfl, Real.pi_nonneg⟩)
   rcases hR.eq_or_lt with rfl | hR
   · -- Degenerate radius: the arc is a point, `deriv (circleMap 0 0) = 0`, so the integral is `0`.
     have hderiv : ∀ θ : ℝ, deriv (circleMap 0 0) θ = 0 := by simp [circleMap_zero_radius]
-    simp only [hderiv, mul_zero, intervalIntegral.integral_zero, norm_zero]
+    simp only [hderiv, mul_zero, zero_smul, intervalIntegral.integral_zero, norm_zero]
     exact div_nonneg (mul_nonneg Real.pi_nonneg hM0) ha.le
   have hbound : ∀ᵐ θ ∂volume, θ ∈ Ioc (0 : ℝ) π →
-      ‖f (circleMap 0 R θ) * Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) *
-          deriv (circleMap 0 R) θ‖ ≤ M * R * Real.exp (-(a * R) * Real.sin θ) := by
+      ‖(Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) *
+          deriv (circleMap 0 R) θ) • f (circleMap 0 R θ)‖
+        ≤ M * R * Real.exp (-(a * R) * Real.sin θ) := by
     refine Filter.Eventually.of_forall fun θ hθ => ?_
-    rw [norm_mul, norm_mul, norm_exp_mul_circleMap, deriv_circleMap, norm_mul,
+    rw [norm_smul, norm_mul, norm_exp_mul_circleMap, deriv_circleMap, norm_mul,
       norm_circleMap_zero, Complex.norm_I, mul_one, abs_of_pos hR]
     have h1 := hM θ ⟨hθ.1.le, hθ.2⟩
     nlinarith [mul_nonneg (mul_nonneg (sub_nonneg.mpr h1) hR.le)
@@ -88,8 +89,8 @@ theorem norm_integral_semicircle_exp_mul_le {f : ℂ → ℂ} {a R M : ℝ} (ha 
       (fun θ => M * R * Real.exp (-(a * R) * Real.sin θ)) volume 0 π := by
     apply Continuous.intervalIntegrable
     fun_prop
-  calc ‖∫ θ in (0 : ℝ)..π, f (circleMap 0 R θ) *
-          Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) * deriv (circleMap 0 R) θ‖
+  calc ‖∫ θ in (0 : ℝ)..π, (Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) *
+          deriv (circleMap 0 R) θ) • f (circleMap 0 R θ)‖
       ≤ ∫ θ in (0 : ℝ)..π, M * R * Real.exp (-(a * R) * Real.sin θ) :=
         intervalIntegral.norm_integral_le_of_norm_le Real.pi_nonneg hbound hintb
     _ = M * R * ∫ θ in (0 : ℝ)..π, Real.exp (-(a * R) * Real.sin θ) :=
@@ -102,14 +103,14 @@ theorem norm_integral_semicircle_exp_mul_le {f : ℂ → ℂ} {a R M : ℝ} (ha 
 /-- **The arc contribution vanishes.** Along any filter of radii on which `f` admits a sup bound
 tending to `0` — the typical case `M R = 1/R` for `f z = z⁻¹` — the semicircular arc integral of
 `f z · e^{iaz}` tends to `0`. This is the form the improper-integral limit consumes. -/
-theorem tendsto_integral_semicircle_exp_mul_nhds_zero {f : ℂ → ℂ} {a : ℝ} {l : Filter ℝ}
+theorem tendsto_integral_semicircle_exp_mul_nhds_zero {E : Type*} [NormedAddCommGroup E]
+    [NormedSpace ℂ E] {f : ℂ → E} {a : ℝ} {l : Filter ℝ}
     {M : ℝ → ℝ} (ha : 0 < a) (hpos : ∀ᶠ R in l, 0 ≤ R)
     (hM : ∀ᶠ R in l, ∀ θ ∈ Icc (0 : ℝ) π, ‖f (circleMap 0 R θ)‖ ≤ M R) (hM0 : Tendsto M l (𝓝 0)) :
-    Tendsto (fun R => ∫ θ in (0 : ℝ)..π, f (circleMap 0 R θ) *
-        Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) * deriv (circleMap 0 R) θ) l (𝓝 0) := by
-  have hb : ∀ᶠ R in l, ‖∫ θ in (0 : ℝ)..π, f (circleMap 0 R θ) *
-      Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) * deriv (circleMap 0 R) θ‖
-      ≤ π * M R / a := by
+    Tendsto (fun R => ∫ θ in (0 : ℝ)..π, (Complex.exp (Complex.I * (a : ℂ) * circleMap 0 R θ) *
+        deriv (circleMap 0 R) θ) • f (circleMap 0 R θ)) l (𝓝 0) := by
+  have hb : ∀ᶠ R in l, ‖∫ θ in (0 : ℝ)..π, (Complex.exp (Complex.I * (a : ℂ) *
+      circleMap 0 R θ) * deriv (circleMap 0 R) θ) • f (circleMap 0 R θ)‖ ≤ π * M R / a := by
     filter_upwards [hpos, hM] with R hR hMR
     exact norm_integral_semicircle_exp_mul_le ha hR hMR
   exact squeeze_zero_norm' hb (by simpa using (hM0.const_mul π).div_const a)
