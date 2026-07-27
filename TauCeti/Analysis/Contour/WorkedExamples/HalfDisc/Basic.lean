@@ -49,7 +49,7 @@ residue theorem does not apply because the pole lies *on* the contour.
 * `TauCeti.Contour.deriv_halfDiscBoundary_of_lt` — strictly beyond the junction the derivative is
   the circle map's, at the shifted parameter.
 * `TauCeti.Contour.integral_halfDiscBoundary_arc` — the `[R, R + π]` piece of the contour integral
-  is the `circleMap 0 R` integral over `[0, π]`; for `0 ≤ R` that is the upper semicircle, the
+  is the `circleMap 0 R` integral over `[0, π]`; for `0 < R` that is the upper semicircle, the
   form Jordan's lemma bounds.
 * `TauCeti.Contour.flatOfOrder_halfDiscBoundary` — both one-sided branches at the origin lie on
   the real line, so the contour is flat there to every order.
@@ -118,13 +118,11 @@ theorem deriv_halfDiscBoundary_of_lt {R t : ℝ} (h : R < t) :
     filter_upwards [Ioi_mem_nhds h] with s hs
     exact halfDiscBoundary_of_lt hs
   rw [hev.deriv_eq]
+  have hsub : HasDerivAt (fun s : ℝ => s - R) 1 t := by
+    simpa using (hasDerivAt_id t).sub_const R
   have hd : HasDerivAt (circleMap 0 R ∘ fun s : ℝ => s - R)
       (deriv (circleMap 0 R) (t - R)) t := by
-    have hc : HasDerivAt (circleMap 0 R) (deriv (circleMap 0 R) (t - R)) (t - R) :=
-      (differentiable_circleMap 0 R (t - R)).hasDerivAt
-    have hsub : HasDerivAt (fun s : ℝ => s - R) 1 t := by
-      simpa using (hasDerivAt_id t).sub_const R
-    simpa using hc.scomp t hsub
+    simpa [deriv_circleMap] using (hasDerivAt_circleMap 0 R (t - R)).scomp t hsub
   exact hd.deriv
 
 /-- **The arc piece of the contour integral is the circle-map integral.** Beyond the junction the
@@ -132,9 +130,10 @@ half-disc boundary is the circle map shifted by `R`, so translating the paramete
 `[R, R + π]` piece of `∮_γ f` with the integral of `circleMap 0 R` over `[0, π]`. The junction
 `t = R` itself, where the contour has a corner, is a single point and does not affect the integral.
 
-The identity holds for every `R`. For `0 ≤ R` the right-hand side is the *upper* semicircle
+The identity holds for every `R`. For `0 < R` the right-hand side is the *upper* semicircle
 traversed counterclockwise — the form Jordan's lemma bounds; for `R < 0` the same parametrization
-traces the lower semicircle instead. -/
+traces the lower semicircle instead, and `R = 0` is degenerate, `circleMap 0 0` being the constant
+path at the origin. -/
 theorem integral_halfDiscBoundary_arc (f : ℂ → ℂ) (R : ℝ) :
     (∫ t in R..(R + Real.pi), f (halfDiscBoundary R t) * deriv (halfDiscBoundary R) t)
       = ∫ θ in (0 : ℝ)..Real.pi, f (circleMap 0 R θ) * deriv (circleMap 0 R) θ := by
