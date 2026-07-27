@@ -287,16 +287,16 @@ theorem HasCauchyPVWith.of_integrable_of_crossings_measure_zero {γ : ℝ → �
 
 /-- Finite-crossings form of `HasCauchyPVWith.of_integrable_of_crossings_measure_zero`: a curve
 meeting each excised point only finitely often meets them on a null set of parameters. This is
-the form contour arguments consume, since `IsPwC1ImmersionOn.finite_crossings` (HW Prop 2.2)
-supplies exactly this. -/
+the form contour arguments consume: `IsPwC1ImmersionOn.finite_crossings` (HW Prop 2.2) supplies
+finiteness on the closed interval, from which this follows by `Set.Finite.subset` along
+`Set.uIoc_subset_uIcc`. -/
 theorem HasCauchyPVWith.of_integrable_of_finite_crossings {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ}
     (S : Finset ℂ) (hγ : AEMeasurable γ (MeasureTheory.volume.restrict (Set.uIoc a b)))
     (h_int : IntervalIntegrable (fun t => f (γ t) * deriv γ t) MeasureTheory.volume a b)
-    (h_fin : ∀ s ∈ S, (Set.uIcc a b ∩ γ ⁻¹' {s}).Finite) :
+    (h_fin : ∀ s ∈ S, (Set.uIoc a b ∩ γ ⁻¹' {s}).Finite) :
     HasCauchyPVWith γ a b f S (∫ t in a..b, f (γ t) * deriv γ t) :=
   .of_integrable_of_crossings_measure_zero S hγ h_int
-    ((S.finite_toSet.biUnion fun s hs => (h_fin s hs).subset
-      (Set.inter_subset_inter_left _ Set.uIoc_subset_uIcc)).measure_zero _)
+    ((S.finite_toSet.biUnion fun s hs => h_fin s hs).measure_zero _)
 
 /-- **Zero integrand.** The principal value of the zero integrand is `0`, witnessed by the empty
 excision: the truncated integrand is identically `0`, hence integrable with vanishing integral. -/
