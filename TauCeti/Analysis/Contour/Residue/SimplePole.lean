@@ -146,12 +146,8 @@ in practice to read off a residue. -/
 theorem residue_eq_of_tendsto_sub_mul {L : ℂ} (hf : MeromorphicAt f z₀)
     (h : Tendsto (fun z => (z - z₀) * f z) (𝓝[≠] z₀) (𝓝 L)) :
     residue f z₀ = L := by
-  have hg : MeromorphicAt (fun z : ℂ => (z - z₀) * f z) z₀ :=
-    ((analyticAt_id.sub analyticAt_const).meromorphicAt).mul hf
-  have hgnn : 0 ≤ meromorphicOrderAt (fun z => (z - z₀) * f z) z₀ :=
-    (tendsto_nhds_iff_meromorphicOrderAt_nonneg hg).1 ⟨L, h⟩
-  rw [meromorphicOrderAt_sub_mul hf] at hgnn
-  exact tendsto_nhds_unique (tendsto_sub_mul_nhds_residue hf (neg_one_le_of_zero_le_one_add hgnn)) h
+  exact tendsto_nhds_unique
+    (tendsto_sub_mul_nhds_residue hf (neg_one_le_meromorphicOrderAt_of_tendsto_sub_mul hf h)) h
 
 /-- The reciprocal `(· − z₀)⁻¹` of the simple factor `(· − z₀)` is meromorphic at `z₀`. -/
 theorem meromorphicAt_sub_inv (z₀ : ℂ) : MeromorphicAt (fun z => (z - z₀)⁻¹) z₀ :=
