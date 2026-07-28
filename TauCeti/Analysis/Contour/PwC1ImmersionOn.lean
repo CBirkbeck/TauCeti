@@ -47,6 +47,9 @@ theorem, whose singularities lie *off* the curve, needs only `IsPiecewiseC1On`.)
 * `Contour.IsPwC1ImmersionOn.exists_deriv_right_limit`,
   `Contour.IsPwC1ImmersionOn.exists_deriv_left_limit` — the non-zero one-sided tangent limits,
   recovered from the within-piece derivative.
+* `Contour.IsPwC1ImmersionOn.exists_tendsto_slope_right`,
+  `Contour.IsPwC1ImmersionOn.exists_tendsto_slope_left` — the same one-sided tangents as limits
+  of the chord slope `(γ t - γ t₀) / (t - t₀)`, which is the form the crossing angle needs.
 
 ## Provenance
 
@@ -251,9 +254,8 @@ theorem IsPwC1ImmersionOn.exists_tendsto_slope_right (h : IsPwC1ImmersionOn γ a
   refine ⟨derivWithin γ (Icc t₀ d) t₀, hne t₀ (left_mem_Icc.mpr hlt.le), ?_⟩
   have hd : HasDerivWithinAt γ (derivWithin γ (Icc t₀ d) t₀) (Icc t₀ d) t₀ :=
     ((hC1.differentiableOn one_ne_zero) t₀ (left_mem_Icc.mpr hlt.le)).hasDerivWithinAt
-  refine (hasDerivWithinAt_iff_tendsto_slope.mp hd).mono_left ?_
   rw [← nhdsWithin_Ioo_eq_nhdsGT hlt]
-  exact nhdsWithin_mono _ fun t ht => ⟨Ioo_subset_Icc_self ht, ne_of_gt ht.1⟩
+  exact (hasDerivWithinAt_iff_tendsto_slope' (by simp)).1 (hd.mono Ioo_subset_Icc_self)
 
 /-- **Left difference-quotient limit of an immersion.** At every parameter `t₀ ∈ (min, max]` the
 slope `(γ t - γ t₀) / (t - t₀)` converges from the left to the non-zero one-sided tangent of the
@@ -265,9 +267,8 @@ theorem IsPwC1ImmersionOn.exists_tendsto_slope_left (h : IsPwC1ImmersionOn γ a 
   refine ⟨derivWithin γ (Icc c t₀) t₀, hne t₀ (right_mem_Icc.mpr hlt.le), ?_⟩
   have hd : HasDerivWithinAt γ (derivWithin γ (Icc c t₀) t₀) (Icc c t₀) t₀ :=
     ((hC1.differentiableOn one_ne_zero) t₀ (right_mem_Icc.mpr hlt.le)).hasDerivWithinAt
-  refine (hasDerivWithinAt_iff_tendsto_slope.mp hd).mono_left ?_
   rw [← nhdsWithin_Ioo_eq_nhdsLT hlt]
-  exact nhdsWithin_mono _ fun t ht => ⟨Ioo_subset_Icc_self ht, ne_of_lt ht.2⟩
+  exact (hasDerivWithinAt_iff_tendsto_slope' (by simp)).1 (hd.mono Ioo_subset_Icc_self)
 
 end TauCeti.Contour
 
