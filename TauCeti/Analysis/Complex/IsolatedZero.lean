@@ -42,7 +42,8 @@ compactness of the sphere supplying the bound.
 
 No hypothesis on the radius. At `ρ = 0` the sphere is the single point `a`; for `ρ < 0` it is
 empty, nothing is attained, and the bound holds vacuously. -/
-theorem exists_pos_le_norm_of_mem_sphere {f : ℂ → ℂ} {a : ℂ} {ρ : ℝ}
+theorem exists_pos_le_norm_of_mem_sphere {E F : Type*} [PseudoMetricSpace E] [ProperSpace E]
+    [NormedAddCommGroup F] {f : E → F} {a : E} {ρ : ℝ}
     (hcont : ContinuousOn f (sphere a ρ)) (hne : ∀ z ∈ sphere a ρ, f z ≠ 0) :
     ∃ δ > 0, ∀ z ∈ sphere a ρ, δ ≤ ‖f z‖ :=
   (isCompact_sphere a ρ).exists_forall_le' hcont.norm fun z hz => norm_pos_iff.mpr (hne z hz)
