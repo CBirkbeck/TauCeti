@@ -72,8 +72,8 @@ open Complex Set Metric
 
 /-- **A holomorphic square root of `z - a`.** On a simply connected open `U` avoiding `a` the
 function `z - a` is nonvanishing, so it has a holomorphic square root. Squaring such a root
-recovers `z`, so `z ↦ h z ^ 2` is injective on `U`; and `h` is nonvanishing, because its square
-is. -/
+recovers `z - a`, which pins down `z` because `a` is fixed, so `z ↦ h z ^ 2` is injective on `U`;
+and `h` is nonvanishing, because its square is. -/
 private lemma exists_sq_eq_sub_injOn_ne_zero {U : Set ℂ} (hUc : IsSimplyConnected U)
     (hUo : IsOpen U) {a : ℂ} (ha : a ∉ U) :
     ∃ h : ℂ → ℂ, DifferentiableOn ℂ h U ∧ (∀ z ∈ U, h z ^ 2 = z - a) ∧
