@@ -299,8 +299,6 @@ theorem weighted_sums_converge_L1 {μ : Measure Ω} [IsProbabilityMeasure μ]
     apply MemLp.of_bound (hY_meas i).aestronglyMeasurable C
     filter_upwards with ω
     exact hC (X i ω)
-  have hD : 0 ≤ Var[Y 0; μ] - cov[Y 0, Y 1; μ] :=
-    zero_le_variance_sub_cov_of_contractable hY hY_L2
   have hA_L2 : ∀ m : ℕ, MemLp (blockAverage Y fun i : Fin (m + 1) => (i : ℕ)) 2 μ := fun m =>
     memLp_blockAverage (fun i : Fin (m + 1) => (i : ℕ)) fun i => hY_L2 i
   let A₂ : ℕ → Lp ℝ 2 μ := fun m =>
