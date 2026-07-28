@@ -548,7 +548,8 @@ theorem isOpen_refined_tubeNeighborhood
 smaller one again gives a family that is open, path-connected, contained in `T.V` pointwise, and
 through which `α` still passes at every partition point. -/
 private theorem exists_refined_vertex_family {n' : ℕ} {part : IntervalPartition (n' + 1)}
-    {T : TubeData X (n' + 1)} {α : BasedPath x₀} (hα_tube : PathInTube α.toPath part T)
+    {T : TubeData X (n' + 1)} {α : BasedPath x₀}
+    (hα_passes : ∀ j, α.toPath (part.t j) ∈ T.V j)
     {V_last' : Set X} (hV'_open : IsOpen V_last') (hV'_pathConn : IsPathConnected V_last')
     (hα_V' : endpoint α ∈ V_last') (hV'_sub_V : V_last' ⊆ T.V (Fin.last (n' + 1))) :
     ∃ V' : Fin (n' + 2) → Set X,
@@ -573,17 +574,19 @@ private theorem exists_refined_vertex_family {n' : ℕ} {part : IntervalPartitio
   · exact fun j ↦ by
       induction j using Fin.lastCases with
       | last => rw [Fin.snoc_last, hα_at_last]; exact hα_V'
-      | cast k => rw [Fin.snoc_castSucc]; exact hα_tube.passes_through_V _
+      | cast k => rw [Fin.snoc_castSucc]; exact hα_passes _
 
 /-- **A path through the refined tube is joined to `α`.** If `β` runs through the same tube as `α`
 with refined vertex sets `V'` whose terminal member lies in `U`, then `β` is joined to `α` inside
 `endpoint ⁻¹' U`. -/
-private theorem joinedIn_endpoint_preimage_of_pathInTube [LocallyPathConnectedSpace X] {n' : ℕ}
-    {U : Set X} {V' : Fin (n' + 2) → Set X} {part : IntervalPartition (n' + 1)}
+private theorem joinedIn_endpoint_preimage_of_pathInTube {n' : ℕ} {U : Set X}
+    {V' : Fin (n' + 2) → Set X} {part : IntervalPartition (n' + 1)}
     {T : TubeData X (n' + 1)} (hV'_open : ∀ j, IsOpen (V' j))
     (hV'_pathConn : ∀ j, IsPathConnected (V' j)) (hV'_sub_TV : ∀ j, V' j ⊆ T.V j)
     (hV'_last_sub_U : V' (Fin.last (n' + 1)) ⊆ U) {α β : BasedPath x₀}
-    (hα_tube : PathInTube α.toPath part T) (hα_passes : ∀ j, α.toPath (part.t j) ∈ V' j)
+    (hα_stays : ∀ (i : Fin (n' + 1)) (s : I),
+      (part.t i.castSucc : ℝ) ≤ s ∧ s ≤ (part.t i.succ : ℝ) → α.toPath s ∈ T.U i)
+    (hα_passes : ∀ j, α.toPath (part.t j) ∈ V' j)
     (hβ_stays : ∀ (i : Fin (n' + 1)) (s : I),
       (part.t i.castSucc : ℝ) ≤ s ∧ s ≤ (part.t i.succ : ℝ) → β.1 s ∈ T.U i)
     (hβ_passes : ∀ j, β.1 (part.t j) ∈ V' j) :
@@ -601,14 +604,13 @@ private theorem joinedIn_endpoint_preimage_of_pathInTube [LocallyPathConnectedSp
   have hβ_end_U : endpoint β ∈ U :=
     hV'_last_sub_U (by simpa [part.t_last] using! hβ_passes (Fin.last (n' + 1)))
   obtain ⟨ρ_final, hρ_final_range_V, h_paste⟩ :=
-    Path.tube_subset_homotopy_class_source α.toPath part T' ⟨hα_tube.stays_in_U, hα_passes⟩
+    Path.tube_subset_homotopy_class_source α.toPath part T' ⟨hα_stays, hα_passes⟩
       β.toPath ⟨hβ_stays, hβ_passes⟩
   refine (joinedIn_preimage_of_append α ρ_final
     (hρ_final_range_V.trans hV'_last_sub_U)).trans ?_
   obtain ⟨γ, hγ⟩ :=
     (joinedIn_endpoint_preimage_of_homotopic (x₀ := x₀) (U := ({endpoint β} : Set X))
-      (show endpoint β ∈ ({endpoint β} : Set X) from rfl)
-      (show Path.Homotopic (α.toPath.trans ρ_final) β.toPath from h_paste)).mono
+      (Set.mem_singleton _) h_paste).mono
       (Set.preimage_mono (Set.singleton_subset_iff.mpr hβ_end_U))
   exact ⟨γ.cast rfl (by ext t; rfl), hγ⟩
 
@@ -635,7 +637,8 @@ public theorem exists_open_nhds_pathComponent_preimage
   obtain ⟨V_last', hV'_open, hV'_pathConn, hα_V', hV'_sub_V, hV'_sub_U⟩ :=
     exists_refined_terminal_vertex hU_open α hα part T hα_tube
   obtain ⟨V', hV'_open_all, hV'_pathConn_all, hV'_sub_TV, hV'_last_eq, hα_passes_V'⟩ :=
-    exists_refined_vertex_family hα_tube hV'_open hV'_pathConn hα_V' hV'_sub_V
+    exists_refined_vertex_family hα_tube.passes_through_V hV'_open hV'_pathConn hα_V'
+      hV'_sub_V
   have hV'_last_sub_U : V' (Fin.last (n' + 1)) ⊆ U := hV'_last_eq ▸ hV'_sub_U
   -- The neighborhood `N` of `α`: based paths satisfying the refined tube conditions.
   set N : Set (BasedPath x₀) := {β : BasedPath x₀ |
@@ -651,7 +654,7 @@ public theorem exists_open_nhds_pathComponent_preimage
       hV'_last_sub_U (by simpa [part.t_last] using! hβ.2 (Fin.last (n' + 1)))
   · -- Every `β ∈ N` is `JoinedIn (endpoint ⁻¹' U)` to `α`.
     exact fun β hβ ↦ joinedIn_endpoint_preimage_of_pathInTube hV'_open_all hV'_pathConn_all
-      hV'_sub_TV hV'_last_sub_U hα_tube hα_passes_V' hβ.1 hβ.2
+      hV'_sub_TV hV'_last_sub_U hα_tube.stays_in_U hα_passes_V' hβ.1 hβ.2
 
 
 /-- For an open neighborhood `U`, path components of `endpoint ⁻¹' U` are open. -/
