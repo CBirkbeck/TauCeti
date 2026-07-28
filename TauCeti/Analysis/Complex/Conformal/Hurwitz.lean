@@ -6,7 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Topology.UniformSpace.LocallyUniformConvergence
-public import TauCeti.Analysis.Complex.Conformal.IsolatedZero
+public import TauCeti.Analysis.Complex.Conformal.Rouche
+public import TauCeti.Analysis.Complex.IsolatedZero
 import Mathlib.Analysis.Complex.LocallyUniformLimit
 
 /-!

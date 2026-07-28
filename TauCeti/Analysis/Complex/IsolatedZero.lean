@@ -5,7 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Analysis.Complex.Conformal.Rouche
+public import Mathlib.Analysis.Analytic.Order
+public import Mathlib.Analysis.Complex.Basic
+import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 /-!
 # Estimates for a Rouché count on a small disc
@@ -15,7 +17,8 @@ zero of the function inside it.
 
 Both `TauCeti.Analysis.Complex.Conformal.LocalDegree` and
 `TauCeti.Analysis.Complex.Conformal.Hurwitz` set up such a comparison, and each needs the same
-two facts about the disc before Rouché can be applied:
+two facts about the disc before Rouché can be applied. Neither fact mentions Rouché's theorem, so
+this module does not import it:
 
 ## Main results
 
