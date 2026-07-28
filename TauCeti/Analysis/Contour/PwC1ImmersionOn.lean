@@ -44,12 +44,13 @@ theorem, whose singularities lie *off* the curve, needs only `IsPiecewiseC1On`.)
 * `Contour.IsPwC1ImmersionOn.of_breakpoints`, `Contour.IsPwC1ImmersionOn.exists_breakpoints` —
   introduce the predicate from, and eliminate it to, a finite breakpoint witness.
 * `Contour.isPwC1ImmersionOn_comm`, `Contour.IsPwC1ImmersionOn.symm` — endpoint-swap invariance.
-* `Contour.IsPwC1ImmersionOn.exists_deriv_right_limit`,
-  `Contour.IsPwC1ImmersionOn.exists_deriv_left_limit` — the tangent-limit halves of those.
 * `Contour.IsPwC1ImmersionOn.exists_deriv_slope_right_limit`,
   `Contour.IsPwC1ImmersionOn.exists_deriv_slope_left_limit` — the same one-sided tangent as the
   limit of both `deriv γ` and the chord slope `(γ t - γ t₀) / (t - t₀)`; the chord form is what
   the crossing angle needs.
+* `Contour.IsPwC1ImmersionOn.exists_deriv_right_limit`,
+  `Contour.IsPwC1ImmersionOn.exists_deriv_left_limit` — the tangent-limit projections of
+  `exists_deriv_slope_right_limit` and `exists_deriv_slope_left_limit`.
 
 ## Provenance
 
