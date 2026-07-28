@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Analysis.Analytic.Order
 public import Mathlib.Analysis.Complex.Basic
-import Mathlib.Analysis.Normed.Module.FiniteDimension
 
 /-!
 # Estimates for a Rouché count on a small disc
@@ -49,8 +48,8 @@ theorem exists_pos_le_norm_of_mem_sphere {E F : Type*} [PseudoMetricSpace E] [Pr
   (isCompact_sphere a ρ).exists_forall_le' hcont.norm fun z hz => norm_pos_iff.mpr (hne z hz)
 
 /-- **A function with no zero off the centre does not vanish identically there.** If `f` is
-nonzero at every point of a closed ball other than its centre `a`, and the radius is positive,
-then `f` has finite analytic order at `a`: were the order `⊤`, `f` would vanish on a whole
+nonzero at every point of an open ball of positive radius other than its centre `a`, then `f`
+has finite analytic order at `a`: were the order `⊤`, `f` would vanish on a whole
 neighbourhood of `a`, and that neighbourhood meets the ball away from `a`.
 
 Nothing is assumed about `f a`, which may or may not be zero, nor about analyticity of `f`. -/
