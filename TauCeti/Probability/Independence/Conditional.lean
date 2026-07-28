@@ -413,7 +413,7 @@ private lemma ae_norm_condExp_indicator_le_one {Ω : Type*} {m0 : MeasurableSpac
     ∀ᵐ ω ∂μ, ‖μ[s.indicator (fun _ => (1 : ℝ)) | m'] ω‖ ≤ 1 := by
   have habs : ∀ᵐ ω ∂μ, |s.indicator (fun _ => (1 : ℝ)) ω| ≤ 1 := by
     filter_upwards with ω
-    by_cases hω : ω ∈ s <;> simp [hω]
+    simpa only [Real.norm_eq_abs, norm_one] using norm_indicator_le_norm_self (fun _ => (1 : ℝ)) ω
   filter_upwards [ae_bdd_abs_condExp_of_ae_bdd_abs (m := m') (R := (1 : ℝ)) habs] with ω hω
   rwa [Real.norm_eq_abs]
 
