@@ -59,6 +59,9 @@ pole — and that it meet each `s` only finitely often. Condition (B) governs po
   and at the join: flatness restricts downward in the order, and the sector resonance
   `k · θ ∈ 2π · ℤ` at the crossing angle is the power equation of the unit tangent
   directions.
+* `crossingAngle_eq_of_tendsto` / `basepointAngle_eq_of_tendsto` — the characteristic equations,
+  evaluating each angle from one-sided `Tendsto` hypotheses on `deriv γ`. Downstream files cannot
+  unfold the definitions (their bodies are not exposed), so these are the intended entry points.
 
 Both conditions read the on-curve pole orders of `f` from `meromorphicOrderAt`. Condition (B) needs
 no explicit singular set — it fires **intrinsically** at the times `t₀` where
@@ -135,6 +138,28 @@ private theorem toIcoMod_arg_neg_sub_arg {L : ℂ} (hL : L ≠ 0) :
     have hshift : -Real.pi + 2 * Real.pi = Real.pi := by ring
     rw [← toIcoMod_add_right Real.two_pi_pos 0 (-Real.pi), hshift]
     exact (toIcoMod_eq_self Real.two_pi_pos).mpr hmem
+
+/-- **Characteristic equation for `crossingAngle`.** When `deriv γ` tends to `L_L` from the left
+and to `L_R` from the right at `t₀`, the crossing angle is the normalized angle from the exit
+tangent `L_R` to the reversed entry tangent `−L_L`. This is the form consumers should rewrite with:
+the body of `crossingAngle` is not exposed across module boundaries, so it cannot be unfolded
+downstream. -/
+theorem crossingAngle_eq_of_tendsto {γ : ℝ → ℂ} {t₀ : ℝ} {L_R L_L : ℂ}
+    (h_R : Filter.Tendsto (deriv γ) (𝓝[>] t₀) (𝓝 L_R))
+    (h_L : Filter.Tendsto (deriv γ) (𝓝[<] t₀) (𝓝 L_L)) :
+    crossingAngle γ t₀ =
+      toIcoMod Real.two_pi_pos 0 (Complex.arg (-L_L) - Complex.arg L_R) := by
+  rw [crossingAngle, h_R.limUnder_eq, h_L.limUnder_eq]
+
+/-- **Characteristic equation for `basepointAngle`.** The join analogue of
+`crossingAngle_eq_of_tendsto`, with the outgoing tangent limit at `a` and the incoming one
+at `b`. -/
+theorem basepointAngle_eq_of_tendsto {γ : ℝ → ℂ} {a b : ℝ} {L_R L_L : ℂ}
+    (h_R : Filter.Tendsto (deriv γ) (𝓝[>] a) (𝓝 L_R))
+    (h_L : Filter.Tendsto (deriv γ) (𝓝[<] b) (𝓝 L_L)) :
+    basepointAngle γ a b =
+      toIcoMod Real.two_pi_pos 0 (Complex.arg (-L_L) - Complex.arg L_R) := by
+  rw [basepointAngle, h_R.limUnder_eq, h_L.limUnder_eq]
 
 /-- `crossingAngle γ t₀` lies in `[0, 2π)`, the range of the model-sector normalization. Its two
 projections `crossingAngle_nonneg`/`crossingAngle_lt_two_pi` are the `@[simp]` normal forms. -/
@@ -430,7 +455,8 @@ private theorem pow_unit_eq_of_angle_resonance {L_R L_L : ℂ} {θ : ℝ} {k : �
   have h_real : (k : ℝ) * Complex.arg L_R
       = (k : ℝ) * Complex.arg (-L_L) + (-((m : ℝ) + (k : ℝ) * (j : ℝ))) * (2 * Real.pi) := by
     linear_combination -hm
-  rw [div_norm_eq_exp_arg_mul_I hL_R, show (‖L_L‖ : ℂ) = (‖-L_L‖ : ℂ) by rw [norm_neg],
+  have hnorm : (‖L_L‖ : ℂ) = (‖-L_L‖ : ℂ) := by rw [norm_neg]
+  rw [div_norm_eq_exp_arg_mul_I hL_R, hnorm,
     div_norm_eq_exp_arg_mul_I (neg_ne_zero.mpr hL_L), ← Complex.exp_nat_mul,
     ← Complex.exp_nat_mul, Complex.exp_eq_exp_iff_exists_int]
   refine ⟨-(m + (k : ℤ) * j), ?_⟩
@@ -450,8 +476,7 @@ theorem pow_unit_tangent_eq_of_resonance {γ : ℝ → ℂ} {t₀ : ℝ} {L_R L_
     (L_R / (‖L_R‖ : ℂ)) ^ k = ((-L_L) / (‖L_L‖ : ℂ)) ^ k := by
   obtain ⟨j, hj⟩ := toIcoMod_two_pi_sub_witness (Complex.arg (-L_L) - Complex.arg L_R)
   refine pow_unit_eq_of_angle_resonance hL_R hL_L ⟨j, ?_⟩ h_res
-  unfold crossingAngle
-  rw [h_R.limUnder_eq, h_L.limUnder_eq]
+  rw [crossingAngle_eq_of_tendsto h_R h_L]
   exact hj
 
 /-- **Basepoint resonance to tangent powers**: the join analogue of
@@ -465,8 +490,7 @@ theorem pow_unit_tangent_eq_of_basepoint_resonance {γ : ℝ → ℂ} {a b : ℝ
     (L_R / (‖L_R‖ : ℂ)) ^ k = ((-L_L) / (‖L_L‖ : ℂ)) ^ k := by
   obtain ⟨j, hj⟩ := toIcoMod_two_pi_sub_witness (Complex.arg (-L_L) - Complex.arg L_R)
   refine pow_unit_eq_of_angle_resonance hL_R hL_L ⟨j, ?_⟩ h_res
-  unfold basepointAngle
-  rw [h_R.limUnder_eq, h_L.limUnder_eq]
+  rw [basepointAngle_eq_of_tendsto h_R h_L]
   exact hj
 
 end TauCeti.Contour
