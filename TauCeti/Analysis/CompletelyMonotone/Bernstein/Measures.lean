@@ -516,10 +516,8 @@ private lemma chafaiRescaled_lintegral_coe_eq_chafaiMeasure_neg_derivWithin
 `Ici 0` given `n`-fold differentiability there, and `[0, T]` sits inside that ray. -/
 private lemma intervalIntegrable_chafaiDensity {f : ℝ → ℝ} {n : ℕ}
     (hf : ContDiffOn ℝ ((n : ℕ) : WithTop ℕ∞) f (Ici 0)) {T : ℝ} (hT : 0 ≤ T) :
-    IntervalIntegrable (fun t => chafaiDensity f n t) volume 0 T := by
-  apply ContinuousOn.intervalIntegrable
-  rw [uIcc_of_le hT]
-  exact (continuousOn_chafaiDensity hf).mono Icc_subset_Ici_self
+    IntervalIntegrable (fun t => chafaiDensity f n t) volume 0 T :=
+  ((continuousOn_chafaiDensity hf).mono Icc_subset_Ici_self).intervalIntegrable_of_Icc hT
 
 /-- **IBP identity** for the CM density:
 `∫₀ᵀ ρ_{m+2}(t) dt = B_{m+2}(T) + ∫₀ᵀ ρ_{m+1}(t) dt`. -/
