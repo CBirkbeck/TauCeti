@@ -135,10 +135,12 @@ private theorem mul_map_eq_prod_of_mem_image_union {R : Type*} [CommSemiring R] 
   · obtain ⟨a, ha, rfl⟩ := Finset.mem_image.mp hA
     rw [Ideal.map_mul, hmapq, hprodS, ← hprod' a ha]; ring
 
-/-- **Two shifted copies double the family.** Multiplying a family of ideals by each member of a
-conjugate pair gives images of the same size, and if those images are disjoint the union has
+/-- **Two shifted copies double the family.** Multiplying a family of ideals by each of two
+height-one primes gives images of the same size, and if those images are disjoint the union has
 twice the cardinality. That is exactly enough to carry a bound `2 ^ (m / 2)` up to `2 ^ (n / 2)`
-whenever `n ≤ m + 2` — the two primes removed from the index set at each induction step. -/
+whenever `n ≤ m + 2` — the two primes removed from the index set at each induction step. No
+relationship between the primes is assumed beyond disjointness of the images; the caller
+supplies a conjugate pair, but the estimate does not need that. -/
 private lemma two_pow_le_card_union_image_mul {G' : Finset (Ideal R)}
     {p q : IsDedekindDomain.HeightOneSpectrum R}
     (hdisj : Disjoint (G'.image (· * p.asIdeal)) (G'.image (· * q.asIdeal)))
@@ -194,7 +196,6 @@ theorem exists_transversal_family (σ : R ≃+* R)
   have hpq : q ≠ p := hfree p hpS
   have hqIdeal : q.asIdeal = Ideal.map σ p.asIdeal := by
     rw [hqdef]; exact asIdeal_equivOfRingEquiv σ p
-  have hp0 : p.asIdeal ≠ ⊥ := p.ne_bot
   have hpair : ({p, q} : Finset (IsDedekindDomain.HeightOneSpectrum R)) ⊆ S := by
     intro x hx; rcases Finset.mem_insert.mp hx with rfl | hx
     · exact hpS
