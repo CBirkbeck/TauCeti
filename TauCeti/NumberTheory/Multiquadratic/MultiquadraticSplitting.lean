@@ -107,22 +107,22 @@ private theorem exists_dvd_sq_sub_and_not_dvd_of_legendreSym_eq_one (p : ℕ) [F
   rw [← hsub]
   exact dvd_sub (dvd_pow hd (by norm_num)) hpa
 
-/-- If a prime ideal `Q` of a commutative ring contains a product `(R - A)(R + A)`, and an
-additive map preserving `Q` sends `R` to `-R` and fixes `A`, then `2A ∈ Q`. -/
-private theorem two_mul_mem_of_mul_mem_of_map_eq_neg {S : Type*} [CommRing S] {Q : Ideal S}
+/-- If a prime ideal `Q` of a ring contains a product `(R - A)(R + A)`, and an additive map
+preserving `Q` sends `R` to `-R` and fixes `A`, then `2A ∈ Q`. -/
+private theorem two_mul_mem_of_mul_mem_of_map_eq_neg {S : Type*} [Ring S] {Q : Ideal S}
     [Q.IsPrime] (f : S →+ S) (hfQ : ∀ x ∈ Q, f x ∈ Q) {R A : S}
     (hfacQ : (R - A) * (R + A) ∈ Q) (hR : f R = -R) (hA : f A = A) : (2 : S) * A ∈ Q := by
   rcases (‹Q.IsPrime›).mem_or_mem hfacQ with hca | hca
   · have h1 : f (R - A) ∈ Q := hfQ _ hca
     rw [map_sub, hR, hA] at h1
     have hs := Q.add_mem hca h1
-    have hsum : (R - A) + (-R - A) = -(2 * A) := by ring
+    have hsum : (R - A) + (-R - A) = -(2 * A) := by rw [two_mul]; abel
     rw [hsum] at hs
     exact neg_mem_iff.mp hs
   · have h1 : f (R + A) ∈ Q := hfQ _ hca
     rw [map_add, hR, hA] at h1
     have hs := Q.add_mem hca h1
-    have hsum : (R + A) + (-R + A) = 2 * A := by ring
+    have hsum : (R + A) + (-R + A) = 2 * A := by rw [two_mul]; abel
     rw [hsum] at hs
     exact hs
 
