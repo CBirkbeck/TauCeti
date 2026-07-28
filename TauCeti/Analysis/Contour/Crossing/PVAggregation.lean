@@ -26,6 +26,8 @@ simple-pole and higher-order per-window theorems both discharge them.
 
 ## Main results
 
+* `Contour.hasCauchyPVAt_of_perWindow` — the piece/window decomposition of a principal
+  value into between-window arc values and per-window values.
 * `Contour.cauchyPVExistsAt_of_perWindow_tendsto` — the single-point principal value on
   `[a, b]` from per-window convergence at finitely many crossings.
 * `Contour.hasCauchyPVAt_of_perWindow_boundary_tendsto` — the telescoping form: when the
@@ -51,27 +53,6 @@ noncomputable section
 namespace TauCeti.Contour
 
 open Filter MeasureTheory Set Topology
-
-/-- **Away from the pole the principal value is the ordinary integral.** On an interval where
-the curve keeps distance `≥ m > 0` from `s`, every `ε`-truncation below `m` is the untruncated
-integrand, so the principal value at `s` is the plain integral. Continuity of the curve is not
-needed — the distance bound and the truncated integrability carry the clauses. -/
-theorem hasCauchyPVAt_of_dist_lower_bound {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
-    {l u m : ℝ} (hlu : l ≤ u) (hm_pos : 0 < m)
-    (h_far : ∀ t ∈ Icc l u, m ≤ ‖γ t - s‖)
-    (h_int_tr : ∀ ε : ℝ, 0 < ε →
-      IntervalIntegrable (fun t => if ‖γ t - s‖ > ε then g (γ t) * deriv γ t else 0)
-        MeasureTheory.volume l u) :
-    HasCauchyPVAt γ l u g s (∫ t in l..u, g (γ t) * deriv γ t) := by
-  have h_ev : (fun ε : ℝ => ∫ t in l..u, if ‖γ t - s‖ > ε then g (γ t) * deriv γ t else 0)
-      =ᶠ[𝓝[>] (0 : ℝ)] fun _ => ∫ t in l..u, g (γ t) * deriv γ t := by
-    filter_upwards [Ioo_mem_nhdsGT hm_pos] with ε hε
-    refine intervalIntegral.integral_congr fun t ht => ?_
-    rw [uIcc_of_le hlu] at ht
-    rw [if_pos (lt_of_lt_of_le hε.2 (h_far t ht))]
-  refine hasCauchyPVAt_iff.mpr ⟨?_, Tendsto.congr' h_ev.symm tendsto_const_nhds⟩
-  filter_upwards [self_mem_nhdsWithin] with ε hε
-  exact h_int_tr ε hε
 
 /-- The truncated integrand is eventually interval-integrable on a crossing window interior to
 `[a, b]`, by restriction. -/
@@ -100,10 +81,11 @@ private theorem hasCauchyPVAt_plain_piece {γ : ℝ → ℂ} {s : ℂ} {g : ℂ 
     {l u : ℝ} (hA : a ≤ l) (hlu : l ≤ u) (hu : u ≤ b)
     (h_far : ∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) :
     HasCauchyPVAt γ l u g s (∫ t in l..u, g (γ t) * deriv γ t) :=
-  hasCauchyPVAt_of_dist_lower_bound hlu hm_pos h_far
-    (fun ε hε => (h_int_tr ε hε).mono_set (by
+  hasCauchyPVAt_of_dist_lower_bound hlu hm_pos h_far <| by
+    filter_upwards [self_mem_nhdsWithin] with ε hε
+    exact (h_int_tr ε hε).mono_set (by
       rw [uIcc_of_le hlu, uIcc_of_le hab]
-      exact Icc_subset_Icc hA hu))
+      exact Icc_subset_Icc hA hu)
 
 /-- The alternating piece/window sum along a sorted crossing list: the curve contributes an
 ordinary piece value `p l u` between consecutive windows and a window value `w t` at each
