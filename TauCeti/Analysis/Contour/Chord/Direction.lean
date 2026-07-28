@@ -22,8 +22,9 @@ crossing is measured from the reversed incoming tangent to the outgoing one, as
 contributes `½` rather than `0`.
 
 Both statements are exact rather than asymptotic: away from `t₀` the chord *is* a real multiple
-of the slope, so Mathlib's `NormedSpace.normalize_smul_of_pos` and `normalize_smul_of_neg` give
-the identity pointwise, and the limits are the slope limits transported.
+of the slope (Mathlib's `sub_smul_slope`), so `NormedSpace.normalize_smul_of_pos` and
+`normalize_smul_of_neg` give the identity pointwise, and the limits are the slope limits
+transported.
 
 Nothing here mentions curves, crossings or immersions, nor anything specific to `ℂ`: the
 hypotheses are a point equality and a one-sided slope limit, so the results hold for any
@@ -49,13 +50,6 @@ open Filter Set Topology
 variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
 variable {γ : ℝ → V} {z₀ L : V} {t₀ : ℝ}
 
-/-- The chord from a point the curve passes through is the corresponding real multiple of the
-slope. -/
-private theorem sub_eq_smul_slope (hcross : γ t₀ = z₀) (t : ℝ) :
-    γ t - z₀ = (t - t₀) • slope γ t₀ t := by
-  rw [← hcross]
-  exact (sub_smul_slope γ t₀ t).symm
-
 /-- Normalising a slope with a non-zero limit converges to the normalised limit. -/
 private theorem tendsto_normalize_slope {l : Filter ℝ} (hL : L ≠ 0)
     (hslope : Tendsto (slope γ t₀) l (𝓝 L)) :
@@ -72,7 +66,7 @@ theorem tendsto_normalize_sub_nhdsGT (hcross : γ t₀ = z₀) (hL : L ≠ 0)
       (𝓝 (NormedSpace.normalize L)) := by
   refine (tendsto_normalize_slope hL hslope).congr' ?_
   filter_upwards [self_mem_nhdsWithin] with t ht
-  rw [sub_eq_smul_slope hcross t,
+  rw [← hcross, ← vsub_eq_sub (γ t) (γ t₀), ← sub_smul_slope γ t₀ t,
     NormedSpace.normalize_smul_of_pos (sub_pos.mpr ht)]
 
 /-- **The incoming chord direction, reversed.** As `t → t₀⁻` the direction of `γ t - z₀` tends
@@ -83,7 +77,7 @@ theorem tendsto_normalize_sub_nhdsLT (hcross : γ t₀ = z₀) (hL : L ≠ 0)
       (𝓝 (-NormedSpace.normalize L)) := by
   refine ((tendsto_normalize_slope hL hslope).neg).congr' ?_
   filter_upwards [self_mem_nhdsWithin] with t ht
-  rw [sub_eq_smul_slope hcross t,
+  rw [← hcross, ← vsub_eq_sub (γ t) (γ t₀), ← sub_smul_slope γ t₀ t,
     NormedSpace.normalize_smul_of_neg (sub_neg.mpr ht)]
 
 end TauCeti.Contour
