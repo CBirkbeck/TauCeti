@@ -6,7 +6,6 @@ module
 
 public import Mathlib.Analysis.Normed.Module.Normalize
 public import Mathlib.LinearAlgebra.AffineSpace.Slope
-public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 
 /-!
 # The direction of a chord at a point the curve passes through
@@ -26,8 +25,9 @@ Both statements are exact rather than asymptotic: away from `t₀` the chord *is
 of the slope, so Mathlib's `NormedSpace.normalize_smul_of_pos` and `normalize_smul_of_neg` give
 the identity pointwise, and the limits are the slope limits transported.
 
-Nothing here mentions curves, crossings or immersions: the hypotheses are a point equality and a
-one-sided slope limit, so the results apply to any `γ : ℝ → ℂ`.
+Nothing here mentions curves, crossings or immersions, nor anything specific to `ℂ`: the
+hypotheses are a point equality and a one-sided slope limit, so the results hold for any
+`γ : ℝ → V` into a real normed space.
 
 ## Main results
 
@@ -46,7 +46,8 @@ namespace TauCeti.Contour
 
 open Filter Set Topology
 
-variable {γ : ℝ → ℂ} {z₀ L : ℂ} {t₀ : ℝ}
+variable {V : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
+variable {γ : ℝ → V} {z₀ L : V} {t₀ : ℝ}
 
 /-- The chord from a point the curve passes through is the corresponding real multiple of the
 slope. -/
