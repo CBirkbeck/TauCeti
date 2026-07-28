@@ -111,8 +111,8 @@ private theorem integrable_of_integrable_exp_mul_abs_mul (ha : 0 ≤ a)
   rw [Real.norm_eq_abs, Real.norm_eq_abs, abs_mul, abs_of_pos (Real.exp_pos _)]
   nlinarith [abs_nonneg (g x)]
 
-/-- The two truncations `g⁺` and `g⁻`, taken as densities against `ν`, have the same `n`-th
-moment exactly when `∫ xⁿ g` vanishes: their difference is `g` pointwise. -/
+/-- If `∫ xⁿ g` vanishes then the two truncations `g⁺` and `g⁻`, taken as densities against `ν`,
+have the same `n`-th moment: their difference is `g` pointwise. -/
 private theorem integral_pow_withDensity_ofReal_eq {n : ℕ}
     (hmeasp : AEMeasurable (fun x : ℝ => ENNReal.ofReal (g x)) ν)
     (hmeasn : AEMeasurable (fun x : ℝ => ENNReal.ofReal (-g x)) ν)
