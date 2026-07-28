@@ -225,7 +225,8 @@ private lemma not_injOn_ball_of_deriv_eq_zero {f : ℂ → ℂ} {z₀ : ℂ} {r 
   have hA : AnalyticAt ℂ (fun ζ => f ζ - f z₀) z₀ :=
     (hf.sub analyticOnNhd_const) z₀ (mem_closedBall_self hr.le)
   have htop : analyticOrderAt (fun ζ => f ζ - f z₀) z₀ ≠ ⊤ :=
-    analyticOrderAt_ne_top_of_forall_ne_zero hr fun z hz hzn => sub_ne_zero.mpr (hisol z hz hzn)
+    analyticOrderAt_ne_top_of_forall_ne_zero hr fun z hz hzn =>
+      sub_ne_zero.mpr (hisol z (ball_subset_closedBall hz) hzn)
   have h2 : 2 ≤ analyticOrderNatAt (fun ζ => f ζ - f z₀) z₀ := by
     have hle : ((2 : ℕ) : ℕ∞) ≤ analyticOrderAt (fun ζ => f ζ - f z₀) z₀ := by
       rw [natCast_le_analyticOrderAt_iff_iteratedDeriv_eq_zero hA]

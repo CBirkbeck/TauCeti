@@ -185,7 +185,8 @@ private lemma eventually_exists_eq {ι : Type*} {l : Filter ι} {Ω : Set ℂ} {
     exact lt_of_lt_of_le (by simpa [dist_eq_norm] using hn z hz) (hδle z hz)
   have hcount := rouche hρ hA hB hs
   have htop : analyticOrderAt (fun ζ => g ζ - v) a ≠ ⊤ :=
-    analyticOrderAt_ne_top_of_forall_ne_zero hρ fun z hz hne => sub_ne_zero.mpr (hzf z hz hne)
+    analyticOrderAt_ne_top_of_forall_ne_zero hρ fun z hz hne =>
+      sub_ne_zero.mpr (hzf z (ball_subset_closedBall hz) hne)
   have hord : analyticOrderNatAt (fun ζ => g ζ - v) a ≠ 0 := by
     have h0 : analyticOrderAt (fun ζ => g ζ - v) a ≠ 0 := fun h =>
       ((hA a (mem_closedBall_self hρ.le)).analyticOrderAt_eq_zero.mp h) (by simp [hga])
