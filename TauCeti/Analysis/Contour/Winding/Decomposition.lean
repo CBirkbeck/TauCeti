@@ -25,8 +25,9 @@ Two things are deliberately *not* here. The crossing set is passed in rather tha
 with `{t | γ t = z₀}` — `IsPwC1ImmersionOn.finite_crossings` supplies that finiteness, but a
 caller may also want a coarser set. And the per-window values `w` are still hypotheses: turning
 each into the model-sector value `α_ℓ / 2π` for the crossing angle `α_ℓ` is the geometric half of
-the proposition, and is independent of the aggregation done here. Only the aggregation is needed
-to know that the crossings are the *only* source of non-integrality.
+the proposition, and is independent of the aggregation done here. Nor is the closed avoiding
+curve `Λ̃` constructed, so nothing here asserts that the arc terms are integral — that is a
+statement about `Λ̃`, not about the individual open arcs.
 
 ## Main results
 
@@ -52,8 +53,12 @@ away from those windows, the generalized winding number about `z₀` is `(2πi)�
 alternating sum of the arc integrals and the per-window values.
 
 The arcs are *ordinary* integrals, not principal values: off the windows the curve is bounded
-away from `z₀`, so the truncation is eventually inactive there. All of the non-integrality of the
-winding number is therefore carried by the finitely many window terms. -/
+away from `z₀`, so the truncation is eventually inactive there.
+
+This does **not** say the crossings carry all the non-integrality. The arcs here are open arcs,
+and an open arc's integral is not a multiple of `2πi`; the integrality statement in
+Hungerbühler–Wasem is about the *closed* curve `Λ̃` obtained by joining the arcs with detours
+around each crossing, which this theorem does not construct. -/
 theorem windingNumber_eq_windowPieceSum {γ : ℝ → ℂ} {z₀ : ℂ} {w : ℝ → ℂ}
     {a b r m : ℝ} (hr_pos : 0 < r) (hab : a ≤ b) (hm_pos : 0 < m) (crossings : Finset ℝ)
     (h_lo : ∀ t ∈ crossings, a < t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
