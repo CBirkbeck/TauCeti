@@ -101,10 +101,8 @@ private lemma exists_radius_sphere_ne_zero {Ω : Set ℂ} (hΩ : IsOpen Ω) {g :
   have hev : ∀ᶠ z in 𝓝 z₀, z ∈ Ω ∧ (z ≠ z₀ → g z ≠ 0) :=
     (hΩ.eventually_mem hz₀Ω).and (eventually_nhdsWithin_iff.mp hpunct)
   obtain ⟨r, hr, hball⟩ := Metric.nhds_basis_closedBall.eventually_iff.1 hev
-  refine ⟨r, hr, fun z hz => (hball hz).1, fun z hz => ?_⟩
-  have hdz : dist z z₀ = r := mem_sphere.mp hz
-  exact (hball (sphere_subset_closedBall hz)).2 fun h => by
-    rw [h, dist_self] at hdz; exact absurd hdz.symm hr.ne'
+  exact ⟨r, hr, fun z hz => (hball hz).1, fun z hz =>
+    (hball (sphere_subset_closedBall hz)).2 (Metric.ne_of_mem_sphere hz hr.ne')⟩
 
 /-- **Hurwitz's theorem.** On a connected open set, a locally uniform limit of holomorphic
 functions that are nowhere zero is itself either nowhere zero or identically zero.
