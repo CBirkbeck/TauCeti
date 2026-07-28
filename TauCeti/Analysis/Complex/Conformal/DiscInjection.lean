@@ -71,12 +71,13 @@ namespace TauCeti
 open Complex Set Metric
 
 /-- **A holomorphic square root of `z - a`.** On a simply connected open `U` avoiding `a` the
-function `z - a` is nonvanishing, so it has a holomorphic square root; any such root is injective,
-because squaring recovers `z`, and nonvanishing, because its square is. -/
+function `z - a` is nonvanishing, so it has a holomorphic square root. Squaring such a root
+recovers `z`, so `z ↦ h z ^ 2` is injective on `U`; and `h` is nonvanishing, because its square
+is. -/
 private lemma exists_sq_eq_sub_injOn_ne_zero {U : Set ℂ} (hUc : IsSimplyConnected U)
     (hUo : IsOpen U) {a : ℂ} (ha : a ∉ U) :
-    ∃ h : ℂ → ℂ, DifferentiableOn ℂ h U ∧ (∀ z ∈ U, h z ^ 2 = z - a) ∧ InjOn h U ∧
-      ∀ z ∈ U, h z ≠ 0 := by
+    ∃ h : ℂ → ℂ, DifferentiableOn ℂ h U ∧ (∀ z ∈ U, h z ^ 2 = z - a) ∧
+      InjOn (fun z => h z ^ 2) U ∧ ∀ z ∈ U, h z ≠ 0 := by
   have hsub : DifferentiableOn ℂ (fun z : ℂ => z - a) U :=
     (differentiable_id.sub_const a).differentiableOn
   have hzero : (0 : ℂ) ∉ (fun z : ℂ => z - a) '' U := by
@@ -87,7 +88,7 @@ private lemma exists_sq_eq_sub_injOn_ne_zero {U : Set ℂ} (hUc : IsSimplyConnec
     exists_differentiableOn_pow_eq hUc hUo hsub hzero (n := 2) two_ne_zero
   have hsq : ∀ z ∈ U, h z ^ 2 = z - a := fun z hz => hheq hz
   refine ⟨h, hhd, hsq, fun z₁ hz₁ z₂ hz₂ hEq => ?_, fun z hz hz0 => ?_⟩
-  · have hdiff : z₁ - a = z₂ - a := by rw [← hsq z₁ hz₁, ← hsq z₂ hz₂, hEq]
+  · have hdiff : z₁ - a = z₂ - a := by rw [← hsq z₁ hz₁, ← hsq z₂ hz₂]; exact hEq
     linear_combination hdiff
   · have hza : z - a = 0 := by rw [← hsq z hz, hz0]; ring
     exact ha (by rwa [sub_eq_zero.mp hza] at hz)
@@ -122,7 +123,8 @@ theorem exists_differentiableOn_injOn_mapsTo_unitBall {U : Set ℂ} (hUc : IsSim
     exact hUne (eq_univ_of_forall (by simpa using hcon))
   -- `z - a` is nonvanishing on `U`, so it has a holomorphic square root there, injective and
   -- itself nonvanishing.
-  obtain ⟨h, hhd, hsq, hinj, hne⟩ := exists_sq_eq_sub_injOn_ne_zero hUc hUo ha
+  obtain ⟨h, hhd, hsq, hsq_inj, hne⟩ := exists_sq_eq_sub_injOn_ne_zero hUc hUo ha
+  have hinj : InjOn h U := fun z₁ hz₁ z₂ hz₂ he => hsq_inj hz₁ hz₂ (by simp only; rw [he])
   -- `h '' U` is open: `h` is injective, hence nonconstant, on the connected `U`.
   have hconn : IsPreconnected U := hUc.isPathConnected.isConnected.isPreconnected
   have hanal : AnalyticOnNhd ℂ h U := hhd.analyticOnNhd hUo
@@ -137,9 +139,6 @@ theorem exists_differentiableOn_injOn_mapsTo_unitBall {U : Set ℂ} (hUc : IsSim
   -- The image contains a ball around `h z₀`, and `-h` avoids it.
   obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp hopen (h z₀) ⟨z₀, hz₀, rfl⟩
   set w₀ : ℂ := h z₀ with hw₀
-  have hsq_inj : Set.InjOn (fun z => h z ^ 2) U := fun z₁ hz₁ z₂ hz₂ he => by
-    have : z₁ - a = z₂ - a := by rw [← hsq z₁ hz₁, ← hsq z₂ hz₂]; exact he
-    linear_combination this
   have havoid : ∀ z ∈ U, r ≤ ‖h z + w₀‖ :=
     le_norm_add_of_ball_subset_image hsq_inj hne hball
   -- Every denominator is nonzero, `r` being positive.
