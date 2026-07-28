@@ -716,8 +716,8 @@ private theorem continuous_uncurry_basedPath {α β : BasedPath x₀} (F : Path 
   exact ContinuousMap.continuous_uncurry_of_continuous ⟨_, h1⟩
 
 /-- **A square with prescribed edges is a path homotopy.** A continuous map on `I × I` that
-restricts to `p` and `q` on the two horizontal edges and is constant on the two vertical ones
-exhibits `p` and `q` as homotopic paths. -/
+restricts to `p` at `t = 0` and to `q` at `t = 1`, and is constant along each of the edges `s = 0`
+and `s = 1`, exhibits `p` and `q` as homotopic paths. -/
 private theorem homotopic_of_continuous_square {a b : X} {p q : Path a b} (K : I × I → X)
     (hK_cont : Continuous K) (hK_zero : ∀ s, K (0, s) = p s) (hK_one : ∀ s, K (1, s) = q s)
     (hK_left : ∀ t, K (t, 0) = a) (hK_right : ∀ t, K (t, 1) = b) : p.Homotopic q :=
