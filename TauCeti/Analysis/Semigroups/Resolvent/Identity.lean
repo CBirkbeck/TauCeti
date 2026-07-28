@@ -91,6 +91,30 @@ private theorem hasDerivWithinAt_exp_neg_smul_realOperator
   · rfl
   · module
 
+/-- **Improper fundamental theorem of calculus, from the right.** This is the one-sided analogue
+of Mathlib's `MeasureTheory.integral_Ioi_of_hasDerivAt_of_tendsto`, which asks for the two-sided
+`HasDerivAt`. Semigroup orbits are differentiable only from the right, so that version does not
+apply; the continuity of `f'` on `Ici a` is what replaces the missing two-sided derivative. -/
+private theorem integral_Ioi_of_hasDerivWithinAt_Ioi_of_tendsto [CompleteSpace X]
+    {f f' : ℝ → X} {a : ℝ} {m : X}
+    (hcont : ContinuousOn f (Set.Ici a))
+    (hderiv : ∀ t ∈ Set.Ioi a, HasDerivWithinAt f (f' t) (Set.Ioi t) t)
+    (hf'cont : ContinuousOn f' (Set.Ici a)) (hf'int : IntegrableOn f' (Set.Ioi a))
+    (hf : Filter.Tendsto f Filter.atTop (nhds m)) :
+    ∫ t in Set.Ioi a, f' t = m - f a := by
+  have hfinite : ∀ T : ℝ, a ≤ T → ∫ t in a..T, f' t = f T - f a := fun T hT =>
+    intervalIntegral.integral_eq_sub_of_hasDeriv_right_of_le hT
+      (hcont.mono Set.Icc_subset_Ici_self) (fun t ht => hderiv t ht.1)
+      (hf'cont.mono (by rw [Set.uIcc_of_le hT]; exact Set.Icc_subset_Ici_self)).intervalIntegrable
+  refine tendsto_nhds_unique
+    (intervalIntegral_tendsto_integral_Ioi a hf'int Filter.tendsto_id) ?_
+  have heq : (fun T => ∫ t in a..T, f' t) =ᶠ[Filter.atTop] fun T => f T - f a := by
+    filter_upwards [Filter.eventually_ge_atTop a] with T hT
+    exact hfinite T hT
+  simpa only [id_eq] using
+    (hf.sub (tendsto_const_nhds :
+      Filter.Tendsto (fun _ : ℝ => f a) Filter.atTop (nhds (f a)))).congr' heq.symm
+
 /-- The Laplace-transform resolvent is a left inverse to `lambda • I - A` on the generator
 domain: `R(lambda) (lambda x - A x) = x`. -/
 @[simp] theorem resolventLeftInv (S : StronglyContinuousSemigroup X) {omega M : ℝ}
@@ -123,25 +147,10 @@ domain: `R(lambda) (lambda x - A x) = x`. -/
     convert hAx.sub hx using 1
     ext t
     simp only [g', Pi.sub_apply, map_smul, smul_sub, smul_smul]
-  have hfinite : ∀ T : ℝ, 0 ≤ T → ∫ t in (0 : ℝ)..T, g' t = g T - (x : X) := by
-    intro T hT
-    have hftc := intervalIntegral.integral_eq_sub_of_hasDeriv_right_of_le hT
-      (hg_cont.mono Set.Icc_subset_Ici_self)
-      (fun t ht => hg_deriv t ht.1)
-      (hg'_cont.mono (by rw [Set.uIcc_of_le hT]; exact Set.Icc_subset_Ici_self)).intervalIntegrable
-    have hg0 : g 0 = (x : X) := by simp only [g, mul_zero, neg_zero, Real.exp_zero,
-      S.realOperator_zero_apply, one_smul]
-    rwa [hg0] at hftc
   have h_integral : ∫ t in Set.Ioi (0 : ℝ), g' t = -(x : X) := by
-    apply tendsto_nhds_unique
-      (intervalIntegral_tendsto_integral_Ioi 0 hg'_int Filter.tendsto_id)
-    have ht := (S.tendsto_exp_neg_smul_realOperator_atTop hb hlambda x).sub
-      (tendsto_const_nhds : Filter.Tendsto (fun _ : ℝ => (x : X)) Filter.atTop (nhds x))
-    have heq : (fun T => ∫ t in (0 : ℝ)..T, g' t) =ᶠ[Filter.atTop]
-        (fun T => g T - (x : X)) := by
-      filter_upwards [Filter.eventually_ge_atTop (0 : ℝ)] with T hT
-      exact hfinite T hT
-    simpa only [id_eq, zero_sub] using ht.congr' heq.symm
+    rw [integral_Ioi_of_hasDerivWithinAt_Ioi_of_tendsto hg_cont hg_deriv hg'_cont hg'_int
+      (S.tendsto_exp_neg_smul_realOperator_atTop hb hlambda x)]
+    simp only [g, mul_zero, neg_zero, Real.exp_zero, S.realOperator_zero_apply, one_smul, zero_sub]
   rw [S.resolvent_apply]
   have hpoint : ∀ t : ℝ,
       Real.exp (-(lambda * t)) • S.realOperator t
