@@ -107,6 +107,37 @@ private theorem exists_dvd_sq_sub_and_not_dvd_of_legendreSym_eq_one (p : ℕ) [F
   rw [← hsub]
   exact dvd_sub (dvd_pow hd (by norm_num)) hpa
 
+/-- The inclusion `𝓞 K → K` intertwines the Galois action on the ring of integers with the one on
+the field. -/
+private theorem algebraMap_smul_eq_map (σ : K ≃ₐ[ℚ] K) (x : 𝓞 K) :
+    algebraMap (𝓞 K) K (σ • x) = σ (algebraMap (𝓞 K) K x) := by
+  have hcoe : algebraMap (𝓞 K) K (σ • x) = σ • algebraMap (𝓞 K) K x :=
+    integralClosure.coe_smul σ x
+  rw [hcoe, AlgEquiv.smul_def]
+
+/-- If a prime `Q` contains a product `(R - A)(R + A)` and `σ` stabilises `Q` while sending
+`R` to `-R` and fixing `A`, then `2A ∈ Q`. Whichever factor lies in `Q`, adding its `σ`-image to
+it cancels `R` and leaves `±2A`. -/
+private theorem two_mul_mem_of_mul_mem_of_smul_eq_neg {Q : Ideal (𝓞 K)} [Q.IsPrime]
+    {σ : K ≃ₐ[ℚ] K} (hσ : σ ∈ stabilizer (K ≃ₐ[ℚ] K) Q) {R A : 𝓞 K}
+    (hfacQ : (R - A) * (R + A) ∈ Q) (hsR : σ • R = -R) (hsA : σ • A = A) :
+    (2 : 𝓞 K) * A ∈ Q := by
+  have hmapQ : ∀ x ∈ Q, σ • x ∈ Q := fun x hx => by
+    rw [← mem_stabilizer_iff.mp hσ]; exact Ideal.smul_mem_pointwise_smul σ x Q hx
+  rcases (‹Q.IsPrime›).mem_or_mem hfacQ with hca | hca
+  · have h1 : σ • (R - A) ∈ Q := hmapQ _ hca
+    rw [smul_sub, hsR, hsA] at h1
+    have hs := Q.add_mem hca h1
+    have hsum : (R - A) + (-R - A) = -(2 * A) := by ring
+    rw [hsum] at hs
+    exact neg_mem_iff.mp hs
+  · have h1 : σ • (R + A) ∈ Q := hmapQ _ hca
+    rw [smul_add, hsR, hsA] at h1
+    have hs := Q.add_mem hca h1
+    have hsum : (R + A) + (-R + A) = 2 * A := by ring
+    rw [hsum] at hs
+    exact hs
+
 /-- If `d` is a quadratic residue mod the odd prime `p` (with `p ∤ d`), no element `σ` of the
 decomposition group of a prime `Q` above `p` sends the generator `r` to its negation. -/
 private theorem map_ne_neg_of_legendreSym_eq_one (d : ℤ) (r : K)
@@ -118,13 +149,6 @@ private theorem map_ne_neg_of_legendreSym_eq_one (d : ℤ) (r : K)
   intro hflip
   obtain ⟨a, hpa, hpa'⟩ := exists_dvd_sq_sub_and_not_dvd_of_legendreSym_eq_one p hqr
   let R : 𝓞 K := integralSqrt hr
-  -- `algebraMap` intertwines the Galois action on `𝓞 K` with that on `K` (used for `hsR`/`hsA`).
-  have hbridge (x : 𝓞 K) : algebraMap (𝓞 K) K (σ • x) = σ (algebraMap (𝓞 K) K x) := by
-    have hcoe : algebraMap (𝓞 K) K (σ • x) = σ • algebraMap (𝓞 K) K x :=
-      integralClosure.coe_smul σ x
-    rw [hcoe, AlgEquiv.smul_def]
-  have hmapQ : ∀ x ∈ Q, σ • x ∈ Q := by
-    intro x hx; rw [← mem_stabilizer_iff.mp hσ]; exact Ideal.smul_mem_pointwise_smul σ x Q hx
   set A : 𝓞 K := algebraMap ℤ (𝓞 K) a with hAdef
   -- `(R - A)(R + A) = d - a² ∈ Q`, so one factor lies in the prime `Q`.
   have hAsq : A ^ 2 = algebraMap ℤ (𝓞 K) (a ^ 2) := by rw [hAdef, ← map_pow]
@@ -136,26 +160,13 @@ private theorem map_ne_neg_of_legendreSym_eq_one (d : ℤ) (r : K)
   -- `σ` sends `R ↦ -R` and fixes the integer `A`.
   have hsR : σ • R = - R := by
     apply FaithfulSMul.algebraMap_injective (𝓞 K) K
-    rw [hbridge R, map_neg, algebraMap_integralSqrt, hflip]
+    rw [algebraMap_smul_eq_map σ R, map_neg, algebraMap_integralSqrt, hflip]
   have hsA : σ • A = A := by
     apply FaithfulSMul.algebraMap_injective (𝓞 K) K
-    rw [hbridge A, hAdef, ← IsScalarTower.algebraMap_apply ℤ (𝓞 K) K,
+    rw [algebraMap_smul_eq_map σ A, hAdef, ← IsScalarTower.algebraMap_apply ℤ (𝓞 K) K,
       IsScalarTower.algebraMap_apply ℤ ℚ K, AlgEquiv.commutes]
   -- Applying `σ` to whichever factor lies in `Q` and adding the two gives `2 A ∈ Q`.
-  have h2A : (2 : 𝓞 K) * A ∈ Q := by
-    rcases (‹Q.IsPrime›).mem_or_mem hfacQ with hca | hca
-    · have h1 : σ • (R - A) ∈ Q := hmapQ _ hca
-      rw [smul_sub, hsR, hsA] at h1
-      have hs := Q.add_mem hca h1
-      have hsum : (R - A) + (-R - A) = -(2 * A) := by ring
-      rw [hsum] at hs
-      exact neg_mem_iff.mp hs
-    · have h1 : σ • (R + A) ∈ Q := hmapQ _ hca
-      rw [smul_add, hsR, hsA] at h1
-      have hs := Q.add_mem hca h1
-      have hsum : (R + A) + (-R + A) = 2 * A := by ring
-      rw [hsum] at hs
-      exact hs
+  have h2A : (2 : 𝓞 K) * A ∈ Q := two_mul_mem_of_mul_mem_of_smul_eq_neg hσ hfacQ hsR hsA
   -- `2 A = algebraMap (2 a) ∈ Q` forces `p ∣ 2 a`, hence (as `p` is odd) `p ∣ a` — absurd.
   have h2a : algebraMap ℤ (𝓞 K) (2 * a) ∈ Q := by
     have halg_two : algebraMap ℤ (𝓞 K) 2 = 2 := by norm_num
