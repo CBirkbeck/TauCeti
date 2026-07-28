@@ -62,20 +62,19 @@ private theorem tendsto_exp_neg_smul_realOperator_atTop (S : StronglyContinuousS
     simpa only [Function.comp_apply, smul_eq_mul, mul_zero] using
       (Real.tendsto_exp_neg_atTop_nhds_zero.comp hrate).const_mul (M * ‖(x : X)‖)
 
-/-- The derivative of an exponentially weighted orbit, using the right derivative supplied
-by the C₀-semigroup generator API. -/
-private theorem hasDerivWithinAt_exp_neg_smul_realOperator
-    (S : StronglyContinuousSemigroup X) (lambda : ℝ) (x : S.domain) {t : ℝ}
-    (ht : 0 ≤ t) :
-    HasDerivWithinAt
+/-- At a **positive** time the weighted orbit is two-sidedly differentiable: the orbit derivative
+is already known within `Set.Ici 0`, which is a neighbourhood of any `t > 0`. -/
+private theorem hasDerivAt_exp_neg_smul_realOperator
+    (S : StronglyContinuousSemigroup X) [CompleteSpace X] (lambda : ℝ) (x : S.domain) {t : ℝ}
+    (ht : 0 < t) :
+    HasDerivAt
       (fun u : ℝ => Real.exp (-(lambda * u)) • S.realOperator u (x : X))
       (Real.exp (-(lambda * t)) •
         (S.realOperator t (S.generator
           ⟨x, by rw [S.generator_domain]; exact x.property⟩) -
-          lambda • S.realOperator t (x : X)))
-      (Set.Ioi t) t := by
-  have hexp : HasDerivWithinAt (fun u : ℝ => Real.exp (-(lambda * u)))
-      (-lambda * Real.exp (-(lambda * t))) (Set.Ioi t) t := by
+          lambda • S.realOperator t (x : X))) t := by
+  have hexp : HasDerivAt (fun u : ℝ => Real.exp (-(lambda * u)))
+      (-lambda * Real.exp (-(lambda * t))) t := by
     have h := (Real.hasDerivAt_exp (t * -lambda)).comp t (hasDerivAt_mul_const (-lambda))
     have heq : (fun u : ℝ => Real.exp (u * -lambda)) =
         fun u => Real.exp (-(lambda * u)) := by
@@ -83,37 +82,14 @@ private theorem hasDerivWithinAt_exp_neg_smul_realOperator
       congr 1
       ring
     rw [← heq]
-    exact h.hasDerivWithinAt.congr_deriv (by ring_nf)
-  have horbit := (S.realOperator_hasDerivWithinAt_map_generator x ht).mono
-    (Set.Ioi_subset_Ici_self : Set.Ioi t ⊆ Set.Ici t)
-  have h := hexp.smul horbit
-  convert h using 1
-  · rfl
-  · module
-
-/-- **Improper fundamental theorem of calculus, from the right.** This is the one-sided analogue
-of Mathlib's `MeasureTheory.integral_Ioi_of_hasDerivAt_of_tendsto`, which asks for the two-sided
-`HasDerivAt`. Semigroup orbits are differentiable only from the right, so that version does not
-apply; the continuity of `f'` on `Ici a` is what replaces the missing two-sided derivative. -/
-private theorem integral_Ioi_of_hasDerivWithinAt_Ioi_of_tendsto [CompleteSpace X]
-    {f f' : ℝ → X} {a : ℝ} {m : X}
-    (hcont : ContinuousOn f (Set.Ici a))
-    (hderiv : ∀ t ∈ Set.Ioi a, HasDerivWithinAt f (f' t) (Set.Ioi t) t)
-    (hf'cont : ContinuousOn f' (Set.Ici a)) (hf'int : IntegrableOn f' (Set.Ioi a))
-    (hf : Filter.Tendsto f Filter.atTop (nhds m)) :
-    ∫ t in Set.Ioi a, f' t = m - f a := by
-  have hfinite : ∀ T : ℝ, a ≤ T → ∫ t in a..T, f' t = f T - f a := fun T hT =>
-    intervalIntegral.integral_eq_sub_of_hasDeriv_right_of_le hT
-      (hcont.mono Set.Icc_subset_Ici_self) (fun t ht => hderiv t ht.1)
-      (hf'cont.mono (by rw [Set.uIcc_of_le hT]; exact Set.Icc_subset_Ici_self)).intervalIntegrable
-  refine tendsto_nhds_unique
-    (intervalIntegral_tendsto_integral_Ioi a hf'int Filter.tendsto_id) ?_
-  have heq : (fun T => ∫ t in a..T, f' t) =ᶠ[Filter.atTop] fun T => f T - f a := by
-    filter_upwards [Filter.eventually_ge_atTop a] with T hT
-    exact hfinite T hT
-  simpa only [id_eq] using
-    (hf.sub (tendsto_const_nhds :
-      Filter.Tendsto (fun _ : ℝ => f a) Filter.atTop (nhds (f a)))).congr' heq.symm
+    exact h.congr_deriv (by ring_nf)
+  have horbit : HasDerivAt (fun s : ℝ => S.realOperator s (x : X))
+      (S.realOperator t (S.generator
+        ⟨x, by rw [S.generator_domain]; exact x.property⟩)) t := by
+    rw [← S.realOperator_generator_map ht.le x]
+    exact (S.realOperator_hasDerivWithinAt_Ici x ht.le).hasDerivAt (Ici_mem_nhds ht)
+  refine (hexp.smul horbit).congr_deriv ?_
+  module
 
 /-- The Laplace-transform resolvent is a left inverse to `lambda • I - A` on the generator
 domain: `R(lambda) (lambda x - A x) = x`. -/
@@ -131,16 +107,9 @@ domain: `R(lambda) (lambda x - A x) = x`. -/
   have hg_cont : ContinuousOn g (Set.Ici 0) :=
     (Real.continuous_exp.comp (continuous_const.mul continuous_id).neg).continuousOn.smul
       (S.realOperator_continuousOn_Ici (x : X))
-  have hg_deriv : ∀ t ∈ Set.Ioi (0 : ℝ), HasDerivWithinAt g (g' t) (Set.Ioi t) t := by
+  have hg_deriv : ∀ t ∈ Set.Ioi (0 : ℝ), HasDerivAt g (g' t) t := by
     intro t ht
-    simpa only [g, g', Ax] using
-      S.hasDerivWithinAt_exp_neg_smul_realOperator lambda x ht.le
-  have hg'_cont : ContinuousOn g' (Set.Ici 0) := by
-    apply ContinuousOn.smul
-    · exact (Real.continuous_exp.comp
-        ((continuous_const.mul continuous_id).neg)).continuousOn
-    · exact (S.realOperator_continuousOn_Ici Ax).sub
-        ((S.realOperator_continuousOn_Ici (x : X)).const_smul lambda)
+    simpa only [g, g', Ax] using S.hasDerivAt_exp_neg_smul_realOperator lambda x ht
   have hg'_int : IntegrableOn g' (Set.Ioi 0) := by
     have hAx := S.integrable_resolvent_integrand hb lambda hlambda Ax
     have hx := S.integrable_resolvent_integrand hb lambda hlambda (lambda • (x : X))
@@ -148,8 +117,8 @@ domain: `R(lambda) (lambda x - A x) = x`. -/
     ext t
     simp only [g', Pi.sub_apply, map_smul, smul_sub, smul_smul]
   have h_integral : ∫ t in Set.Ioi (0 : ℝ), g' t = -(x : X) := by
-    rw [integral_Ioi_of_hasDerivWithinAt_Ioi_of_tendsto hg_cont hg_deriv hg'_cont hg'_int
-      (S.tendsto_exp_neg_smul_realOperator_atTop hb hlambda x)]
+    rw [MeasureTheory.integral_Ioi_of_hasDerivAt_of_tendsto (hg_cont 0 Set.self_mem_Ici)
+      hg_deriv hg'_int (S.tendsto_exp_neg_smul_realOperator_atTop hb hlambda x)]
     simp only [g, mul_zero, neg_zero, Real.exp_zero, S.realOperator_zero_apply, one_smul, zero_sub]
   rw [S.resolvent_apply]
   have hpoint : ∀ t : ℝ,
