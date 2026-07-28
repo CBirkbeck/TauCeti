@@ -38,16 +38,14 @@ open Complex Metric Filter Topology
 namespace TauCeti
 
 /-- A continuous zero-free function on a sphere is bounded below there by a positive constant:
-the sphere is compact, so `‖f‖` attains a minimum on it, and zero-freeness makes that minimum
-positive.
+the sphere is compact, so `‖f‖` attains a positive minimum on it.
 
-The radius may be zero, where the sphere is the single point `a`. -/
-theorem exists_pos_le_norm_of_mem_sphere {f : ℂ → ℂ} {a : ℂ} {ρ : ℝ} (hρ : 0 ≤ ρ)
+No hypothesis on the radius: at `ρ = 0` the sphere is the single point `a`, and for `ρ < 0` it is
+empty and the bound is vacuous. -/
+theorem exists_pos_le_norm_of_mem_sphere {f : ℂ → ℂ} {a : ℂ} {ρ : ℝ}
     (hcont : ContinuousOn f (sphere a ρ)) (hne : ∀ z ∈ sphere a ρ, f z ≠ 0) :
-    ∃ δ > 0, ∀ z ∈ sphere a ρ, δ ≤ ‖f z‖ := by
-  obtain ⟨u, hu, humin⟩ := (isCompact_sphere a ρ).exists_isMinOn
-    (NormedSpace.sphere_nonempty.mpr hρ) hcont.norm
-  exact ⟨‖f u‖, norm_pos_iff.mpr (hne u hu), fun z hz => humin hz⟩
+    ∃ δ > 0, ∀ z ∈ sphere a ρ, δ ≤ ‖f z‖ :=
+  (isCompact_sphere a ρ).exists_forall_le' hcont.norm fun z hz => norm_pos_iff.mpr (hne z hz)
 
 /-- **A function with no zero off the centre does not vanish identically there.** If `f` is
 nonzero at every point of a closed ball other than its centre `a`, and the radius is positive,

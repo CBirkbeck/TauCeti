@@ -100,7 +100,7 @@ theorem localDegree {f : ℂ → ℂ} {z₀ : ℂ} {r : ℝ} (hr : 0 < r)
     ∃ δ > 0, ∀ w : ℂ, ‖w - f z₀‖ < δ →
       (∑ᶠ z ∈ ball z₀ r, analyticOrderNatAt (fun ζ => f ζ - w) z)
         = analyticOrderNatAt (fun ζ => f ζ - f z₀) z₀ := by
-  obtain ⟨δ, hδ, hδle⟩ := exists_pos_le_norm_of_mem_sphere (f := fun ζ => f ζ - f z₀) hr.le
+  obtain ⟨δ, hδ, hδle⟩ := exists_pos_le_norm_of_mem_sphere (f := fun ζ => f ζ - f z₀)
     ((hf.continuousOn.mono sphere_subset_closedBall).sub continuousOn_const)
     fun z hz => sub_ne_zero.mpr
       (hisol z (sphere_subset_closedBall hz) (Metric.ne_of_mem_sphere hz hr.ne'))

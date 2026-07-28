@@ -136,7 +136,7 @@ theorem hurwitz {ι : Type*} {l : Filter ι} [l.NeBot] {Ω : Set ℂ} (hΩ : IsO
   obtain ⟨r, hr, hcb, hgne⟩ := exists_radius_sphere_ne_zero hΩ hz₀Ω hpunct
   have hsph : sphere z₀ r ⊆ closedBall z₀ r := sphere_subset_closedBall
   -- `‖g‖` attains a positive minimum on the circle
-  obtain ⟨δ, hδ, hδle⟩ := exists_pos_le_norm_of_mem_sphere hr.le
+  obtain ⟨δ, hδ, hδle⟩ := exists_pos_le_norm_of_mem_sphere
     (hgA.continuousOn.mono (hsph.trans hcb)) hgne
   -- locally uniform convergence gives an `n` with `‖g - F n‖ < ‖g‖` on the circle
   have hconvS : TendstoUniformlyOn F g l (sphere z₀ r) :=
@@ -170,7 +170,7 @@ private lemma eventually_exists_eq {ι : Type*} {l : Filter ι} {Ω : Set ℂ} {
     (hg.mono hball).sub analyticOnNhd_const
   have hsphne : ∀ z ∈ sphere a ρ, g z - v ≠ 0 := fun z hz =>
     sub_ne_zero.mpr (hzf z (sphere_subset_closedBall hz) (Metric.ne_of_mem_sphere hz hρ.ne'))
-  obtain ⟨δ, hδ, hδle⟩ := exists_pos_le_norm_of_mem_sphere hρ.le
+  obtain ⟨δ, hδ, hδle⟩ := exists_pos_le_norm_of_mem_sphere
     (hA.continuousOn.mono sphere_subset_closedBall) hsphne
   have hconvS : TendstoUniformlyOn F g l (sphere a ρ) :=
     (tendstoLocallyUniformlyOn_iff_tendstoUniformlyOn_of_compact (isCompact_sphere a ρ)).mp
