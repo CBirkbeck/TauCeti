@@ -52,10 +52,11 @@ namespace TauCeti.Contour
 
 open Filter MeasureTheory Set Topology
 
-/-- On an interval where the curve keeps distance `≥ m > 0` from `s`, the principal value at
-`s` is the plain integral: the truncation is eventually inactive. Continuity of the curve is
-not needed — the distance bound and the truncated integrability carry the clauses. -/
-private theorem hasCauchyPVAt_of_dist_lower_bound {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
+/-- **Away from the pole the principal value is the ordinary integral.** On an interval where
+the curve keeps distance `≥ m > 0` from `s`, every `ε`-truncation below `m` is the untruncated
+integrand, so the principal value at `s` is the plain integral. Continuity of the curve is not
+needed — the distance bound and the truncated integrability carry the clauses. -/
+theorem hasCauchyPVAt_of_dist_lower_bound {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
     {l u m : ℝ} (hlu : l ≤ u) (hm_pos : 0 < m)
     (h_far : ∀ t ∈ Icc l u, m ≤ ‖γ t - s‖)
     (h_int_tr : ∀ ε : ℝ, 0 < ε →
