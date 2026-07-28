@@ -241,15 +241,6 @@ private lemma measureReal_symmDiff_lt_of_measure_lt {ρ : Measure (ℕ → α)}
   have := (ENNReal.toReal_lt_toReal (measure_ne_top ρ _) ENNReal.ofReal_ne_top).mpr h
   rwa [ENNReal.toReal_ofReal he.le] at this
 
-/-- **Small symmetric difference means close measure.** -/
-private lemma abs_measureReal_sub_lt_of_measure_symmDiff_lt {ρ : Measure (ℕ → α)}
-    [IsFiniteMeasure ρ] {A s : Set (ℕ → α)} (hA : NullMeasurableSet A ρ)
-    (hs : NullMeasurableSet s ρ)
-    {e : ℝ} (he : 0 < e) (h : ρ (symmDiff A s) < ENNReal.ofReal e) :
-    |ρ.real A - ρ.real s| < e :=
-  lt_of_le_of_lt (abs_measureReal_sub_le_measureReal_symmDiff hA hs)
-    (measureReal_symmDiff_lt_of_measure_lt he h)
-
 /-- **Two close sets have a close intersection**, since `(A ∩ B) ∆ s` sits inside the union of
 the two symmetric differences. -/
 private lemma abs_measureReal_inter_sub_lt {ρ : Measure (ℕ → α)} [IsFiniteMeasure ρ]
@@ -269,8 +260,8 @@ private lemma abs_measureReal_inter_sub_lt {ρ : Measure (ℕ → α)} [IsFinite
 within `2e` of each other. -/
 private lemma abs_sub_mul_self_lt_of_close {q z e : ℝ} (h1 : |q - z| < e) (h2 : |z - q * q| < e) :
     |q - q * q| < 2 * e :=
-  calc |q - q * q| ≤ |q - z| + |z - q * q| := by
-        rw [show q - q * q = (q - z) + (z - q * q) by ring]; exact abs_add_le _ _
+  have hsplit : q - q * q = (q - z) + (z - q * q) := by ring
+  calc |q - q * q| ≤ |q - z| + |z - q * q| := by rw [hsplit]; exact abs_add_le _ _
     _ < 2 * e := by linarith
 
 /-- **The squaring identity.** Under an exchangeable path law in which cylinders over disjoint
@@ -290,9 +281,9 @@ private theorem measureReal_sq_of_exchangeableSigma {ρ : Measure (ℕ → α)} 
   have hs_meas : MeasurableSet s := MeasurableSet.ambient_of_exchangeableSigma hs
   by_contra hne
   set q := ρ.real s with hq
-  have hdpos : 0 < |q - q * q| := abs_pos.mpr (sub_ne_zero.mpr hne)
   set d := |q - q * q| with hd
-  have h5 : 0 < d / 5 := by linarith
+  have h5 : 0 < d / 5 := by
+    have : 0 < d := hd ▸ abs_pos.mpr (sub_ne_zero.mpr hne); linarith
   obtain ⟨F, S, hS, hFS⟩ := exists_cylinder_measure_symmDiff_lt (ρ := ρ) hs_meas
     (ε := ENNReal.ofReal (d / 5)) (ENNReal.ofReal_pos.mpr h5)
   obtain ⟨N, hN⟩ := Finset.exists_nat_subset_range F
@@ -301,6 +292,9 @@ private theorem measureReal_sq_of_exchangeableSigma {ρ : Measure (ℕ → α)} 
   have ht_meas : MeasurableSet t := MeasurableSet.cylinder (α := fun _ : ℕ => α) F hS
   set t' := permReindex (α := α) π ⁻¹' t with ht'
   have ht'_meas : MeasurableSet t' := ht_meas.preimage (measurable_reindex π)
+  have hsN := hs_meas.nullMeasurableSet (μ := ρ)
+  have htN := ht_meas.nullMeasurableSet (μ := ρ)
+  have ht'N := ht'_meas.nullMeasurableSet (μ := ρ)
   -- the moved copy is a cylinder over the disjoint block `F.map π`
   have ht'_cyl : t' = cylinder (α := fun _ : ℕ => α) (F.map (Equiv.toEmbedding π))
       (pullMoved π F α ⁻¹' S) := preimage_permReindex_cylinder π F S
@@ -308,19 +302,16 @@ private theorem measureReal_sq_of_exchangeableSigma {ρ : Measure (ℕ → α)} 
   have hs_inv : permReindex (α := α) π ⁻¹' s = s :=
     MeasurableSet.preimage_permReindex_eq_of_exchangeableSigma hs (blockSwap_finite_support N)
   have ht'_symm : ρ (symmDiff t' s) = ρ (symmDiff t s) :=
-    measure_symmDiff_preimage_permReindex hexch π ht_meas.nullMeasurableSet
-      hs_meas.nullMeasurableSet hs_inv
+    measure_symmDiff_preimage_permReindex hexch π htN hsN hs_inv
   -- pass to real-valued measures
   have h1 : ρ.real (symmDiff t s) < d / 5 :=
     measureReal_symmDiff_lt_of_measure_lt h5 hFS
   have h2 : ρ.real (symmDiff t' s) < d / 5 :=
     measureReal_symmDiff_lt_of_measure_lt h5 (ht'_symm ▸ hFS)
   have hbt : |ρ.real t - q| < d / 5 :=
-    abs_measureReal_sub_lt_of_measure_symmDiff_lt ht_meas.nullMeasurableSet
-      hs_meas.nullMeasurableSet h5 hFS
+    lt_of_le_of_lt (abs_measureReal_sub_le_measureReal_symmDiff htN hsN) h1
   have hbt' : |ρ.real t' - q| < d / 5 :=
-    abs_measureReal_sub_lt_of_measure_symmDiff_lt ht'_meas.nullMeasurableSet
-      hs_meas.nullMeasurableSet h5 (ht'_symm ▸ hFS)
+    lt_of_le_of_lt (abs_measureReal_sub_le_measureReal_symmDiff ht'N hsN) h2
   -- independence factors the intersection
   have hinter : ρ.real (t ∩ t') = ρ.real t * ρ.real t' := by
     rw [Measure.real, Measure.real, Measure.real, ht'_cyl, ht,
@@ -328,8 +319,7 @@ private theorem measureReal_sq_of_exchangeableSigma {ρ : Measure (ℕ → α)} 
       ENNReal.toReal_mul]
   -- and the intersection still approximates the event
   have hbi : |ρ.real (t ∩ t') - q| < 2 * (d / 5) :=
-    abs_measureReal_inter_sub_lt ht_meas.nullMeasurableSet ht'_meas.nullMeasurableSet
-      hs_meas.nullMeasurableSet h1 h2
+    abs_measureReal_inter_sub_lt htN ht'N hsN h1 h2
   -- both factors lie in `[0, 1]`, so the product is close to `q * q`
   have hprodclose : |ρ.real t * ρ.real t' - q * q| < 2 * (d / 5) :=
     abs_mul_sub_mul_self_lt hbt hbt' (by simp) measureReal_nonneg measureReal_nonneg
