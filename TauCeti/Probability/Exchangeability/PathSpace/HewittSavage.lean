@@ -234,13 +234,6 @@ private lemma abs_mul_sub_mul_self_lt {x y q e : ℝ} (hx : |x - q| < e) (hy : |
         rw [abs_mul, abs_mul, abs_of_nonneg hy0, abs_of_nonneg hq0]
     _ < 2 * e := by nlinarith [abs_nonneg (x - q), abs_nonneg (y - q)]
 
-/-- Transferring a small measure bound to the real-valued measure. -/
-private lemma measureReal_symmDiff_lt_of_measure_lt {ρ : Measure (ℕ → α)}
-    [IsFiniteMeasure ρ] {A s : Set (ℕ → α)} {e : ℝ} (he : 0 < e)
-    (h : ρ (symmDiff A s) < ENNReal.ofReal e) : ρ.real (symmDiff A s) < e := by
-  have := (ENNReal.toReal_lt_toReal (measure_ne_top ρ _) ENNReal.ofReal_ne_top).mpr h
-  rwa [ENNReal.toReal_ofReal he.le] at this
-
 /-- **Two close sets have a close intersection**, since `(A ∩ B) ∆ s` sits inside the union of
 the two symmetric differences. -/
 private lemma abs_measureReal_inter_sub_lt {ρ : Measure (ℕ → α)} [IsFiniteMeasure ρ]
@@ -304,10 +297,8 @@ private theorem measureReal_sq_of_exchangeableSigma {ρ : Measure (ℕ → α)} 
   have ht'_symm : ρ (symmDiff t' s) = ρ (symmDiff t s) :=
     measure_symmDiff_preimage_permReindex hexch π htN hsN hs_inv
   -- pass to real-valued measures
-  have h1 : ρ.real (symmDiff t s) < d / 5 :=
-    measureReal_symmDiff_lt_of_measure_lt h5 hFS
-  have h2 : ρ.real (symmDiff t' s) < d / 5 :=
-    measureReal_symmDiff_lt_of_measure_lt h5 (ht'_symm ▸ hFS)
+  have h1 : ρ.real (symmDiff t s) < d / 5 := ENNReal.toReal_lt_of_lt_ofReal hFS
+  have h2 : ρ.real (symmDiff t' s) < d / 5 := ENNReal.toReal_lt_of_lt_ofReal (ht'_symm ▸ hFS)
   have hbt : |ρ.real t - q| < d / 5 :=
     lt_of_le_of_lt (abs_measureReal_sub_le_measureReal_symmDiff htN hsN) h1
   have hbt' : |ρ.real t' - q| < d / 5 :=
