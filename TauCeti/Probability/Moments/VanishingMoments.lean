@@ -227,7 +227,8 @@ private theorem memLp_two_algebraMap_pow_of_integrable_exp_mul_abs {b : ℝ} (hb
     exact Real.exp_le_exp.mpr (by nlinarith [hb, neg_le_abs x])
   have hpow : ∀ k : ℕ, Integrable (fun x : ℝ => x ^ k) ν := fun k =>
     integrable_pow_of_integrable_exp_mul (ne_of_gt hb) hpos hneg k
-  simpa using memLp_two_algebraMap_eval_of_forall_integrable_pow (𝕜 := 𝕜) hpow (Polynomial.X ^ n)
+  simpa only [Polynomial.eval_pow, Polynomial.eval_X, map_pow] using
+    memLp_two_algebraMap_eval_of_forall_integrable_pow (𝕜 := 𝕜) hpow (Polynomial.X ^ n)
 
 /-- A real-linear functional passes through a vanishing monomial moment.  The monomial `xⁿ` is
 real, so `L` commutes with multiplication by it, and `∫ xⁿ · L(g)` is `L` applied to the moment. -/
@@ -284,9 +285,11 @@ theorem ae_eq_zero_of_forall_moment_eq_zero_of_exists_integrable_exp
     simpa only [Pi.mul_def] using (memLp_two_algebraMap_pow_of_integrable_exp_mul_abs hbpos
       (hexp2.integrable (show (1 : ENNReal) ≤ 2 by norm_num)) n).integrable_mul hg
   have hre : ∀ n : ℕ, ∫ x, x ^ n * RCLike.re (g x) ∂ν = 0 := fun n => by
-    simpa using integral_pow_mul_clm_eq_zero RCLike.reCLM (hint n) (hmom n)
+    simpa only [RCLike.reCLM_apply] using
+      integral_pow_mul_clm_eq_zero RCLike.reCLM (hint n) (hmom n)
   have him : ∀ n : ℕ, ∫ x, x ^ n * RCLike.im (g x) ∂ν = 0 := fun n => by
-    simpa using integral_pow_mul_clm_eq_zero RCLike.imCLM (hint n) (hmom n)
+    simpa only [RCLike.imCLM_apply] using
+      integral_pow_mul_clm_eq_zero RCLike.imCLM (hint n) (hmom n)
   -- Apply the function-level form to the real and imaginary parts separately.
   have hzre := ae_eq_zero_of_forall_moment_eq_zero (ν := ν) _ ⟨b, hbpos, key _ hg.re⟩ hre
   have hzim := ae_eq_zero_of_forall_moment_eq_zero (ν := ν) _ ⟨b, hbpos, key _ hg.im⟩ him
