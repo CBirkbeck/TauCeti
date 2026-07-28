@@ -104,9 +104,11 @@ private theorem hasCauchyPVAt_plain_piece {γ : ℝ → ℂ} {s : ℂ} {g : ℂ 
       rw [uIcc_of_le hlu, uIcc_of_le hab]
       exact Icc_subset_Icc hA hu))
 
-/-- The aggregated value along a sorted crossing list: between-piece values `p` alternating
-with window values `w`. -/
-private def windowPieceSum (r : ℝ) (p : ℝ → ℝ → ℂ) (w : ℝ → ℂ) (b : ℝ) :
+/-- The alternating piece/window sum along a sorted crossing list: the curve contributes an
+ordinary piece value `p l u` between consecutive windows and a window value `w t` at each
+crossing. This is the shape of the Hungerbühler–Wasem decomposition of a principal value at a
+point the curve meets. -/
+def windowPieceSum (r : ℝ) (p : ℝ → ℝ → ℂ) (w : ℝ → ℂ) (b : ℝ) :
     List ℝ → ℝ → ℂ
   | [], a => p a b
   | t :: rest, a => p a (t - r) + w t + windowPieceSum r p w b rest (t + r)
@@ -198,6 +200,32 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : 
     (h_lo t h_mem) (h_hi t h_mem) hr_pos h_int_tr, ?_⟩
   rw [dif_pos h_mem]
   exact (h_win t h_mem).choose_spec
+
+/-- **The piece/window decomposition of a principal value** (Hungerbühler–Wasem Prop. 2.2, the
+aggregation half). With pairwise-disjoint windows of radius `r` about a finite crossing set,
+interior to `[a, b]`, the principal value at `s` over `[a, b]` is the alternating sum of the
+between-window piece values and the per-window values.
+
+Unlike `hasCauchyPVAt_of_perWindow_boundary_tendsto`, no global antiderivative is assumed, so
+nothing telescopes: this is the form the Cauchy kernel `(z - s)⁻¹` needs, whose antiderivative
+`log` exists only off a branch cut. -/
+theorem hasCauchyPVAt_of_perWindow {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ} {p : ℝ → ℝ → ℂ} {w : ℝ → ℂ}
+    {a b r m : ℝ} (hr_pos : 0 < r) (hab : a ≤ b) (crossings : Finset ℝ)
+    (h_lo : ∀ t ∈ crossings, a < t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
+    (h_pair : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r < |t - t'|)
+    (h_piece : ∀ l u : ℝ, a ≤ l → l ≤ u → u ≤ b → (∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) →
+      HasCauchyPVAt γ l u g s (p l u))
+    (h_win : ∀ t ∈ crossings, HasCauchyPVAt γ (t - r) (t + r) g s (w t))
+    (h_far : ∀ u ∈ Icc a b, (∀ t ∈ crossings, u ∉ Ioo (t - r) (t + r)) → m ≤ ‖γ u - s‖) :
+    HasCauchyPVAt γ a b g s (windowPieceSum r p w b (crossings.sort (· ≤ ·)) a) :=
+  hasCauchyPVAt_along_sorted hr_pos h_piece (crossings.sort (· ≤ ·))
+    (Finset.sortedLT_sort crossings) a le_rfl hab
+    (fun t ht => h_lo t ((Finset.mem_sort _).mp ht))
+    (fun t ht => h_hi t ((Finset.mem_sort _).mp ht))
+    (fun t ht t' ht' hne => h_pair t ((Finset.mem_sort _).mp ht)
+      t' ((Finset.mem_sort _).mp ht') hne)
+    (fun t ht => h_win t ((Finset.mem_sort _).mp ht))
+    (fun u hu h_avoid => h_far u hu fun t ht => h_avoid t ((Finset.mem_sort _).mpr ht))
 
 /-- The alternating sum telescopes when both the piece and window values are boundary
 differences of `Φ ∘ γ`. -/
