@@ -410,12 +410,9 @@ private lemma ae_eq_of_integral_mul_eq_of_integral_sq_eq {Ω : Type*} {mΩ : Mea
 on any sub-σ-algebra: the indicator itself is, and conditioning does not increase the bound. -/
 private lemma ae_norm_condExp_indicator_le_one {Ω : Type*} {m0 : MeasurableSpace Ω}
     {μ : Measure Ω} (m' : MeasurableSpace Ω) {s : Set Ω} :
-    ∀ᵐ ω ∂μ, ‖μ[s.indicator (fun _ => (1 : ℝ)) | m'] ω‖ ≤ 1 := by
-  have habs : ∀ᵐ ω ∂μ, |s.indicator (fun _ => (1 : ℝ)) ω| ≤ 1 := by
-    filter_upwards with ω
-    simpa only [Real.norm_eq_abs, norm_one] using norm_indicator_le_norm_self (fun _ => (1 : ℝ)) ω
-  filter_upwards [ae_bdd_abs_condExp_of_ae_bdd_abs (m := m') (R := (1 : ℝ)) habs] with ω hω
-  rwa [Real.norm_eq_abs]
+    ∀ᵐ ω ∂μ, ‖μ[s.indicator (fun _ => (1 : ℝ)) | m'] ω‖ ≤ 1 :=
+  ae_bdd_norm_condExp_of_ae_bdd_norm (m := m') <| Filter.Eventually.of_forall fun ω => by
+    simpa only [norm_one] using norm_indicator_le_norm_self (fun _ => (1 : ℝ)) ω
 
 /-- **Kallenberg Lemma 1.3 (contraction-independence).** If `(X, W) =ᵈ (X, W')` and
 `σ(W) ≤ σ(W')` (so `W` is a contraction of `W'`), then conditioning the indicator of `X` on the
