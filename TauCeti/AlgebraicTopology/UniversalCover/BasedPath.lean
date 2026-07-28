@@ -715,15 +715,6 @@ private theorem continuous_uncurry_basedPath {α β : BasedPath x₀} (F : Path 
     continuous_subtype_val.comp F.continuous
   exact ContinuousMap.continuous_uncurry_of_continuous ⟨_, h1⟩
 
-/-- **Cancelling a null-homotopic loop.** If `L` is homotopic to the constant loop and `p ⬝ L` is
-homotopic to `q ⬝ const`, then `p` and `q` are homotopic. -/
-private theorem homotopic_of_trans_homotopic {a b : X} {p q : Path a b} {L : Path b b}
-    (hL : L.Homotopic (Path.refl b))
-    (h : (p.trans L).Homotopic (q.trans (Path.refl b))) : p.Homotopic q :=
-  (Path.Homotopic.trans_refl p).symm.trans <|
-    (Path.Homotopic.hcomp (Path.Homotopic.refl p) hL.symm).trans <|
-      h.trans (Path.Homotopic.trans_refl q)
-
 /-- **A square with prescribed edges is a path homotopy.** A continuous map on `I × I` that
 restricts to `p` and `q` on the two horizontal edges and is constant on the two vertical ones
 exhibits `p` and `q` as homotopic paths. -/
@@ -737,12 +728,10 @@ private theorem homotopic_of_continuous_square {a b : X} {p q : Path a b} (K : I
      prop' := by
        intro t s hs
        rcases hs with rfl | hs
-       · change K (t, (0 : I)) = p 0
-         rw [hK_left, p.source]
+       · exact (hK_left t).trans p.source.symm
        · rw [Set.mem_singleton_iff] at hs
          subst hs
-         change K (t, (1 : I)) = p 1
-         rw [hK_right, p.target] }⟩
+         exact (hK_right t).trans p.target.symm }⟩
 
 private theorem joinedInSLSC_uFn_zero_left (s : I) :
     (joinedInSLSC_uFn (0, s) : ℝ) = max 0 (2 * (s : ℝ) - 1) := by
@@ -847,10 +836,10 @@ public theorem toPath_homotopic_of_joinedIn_pathHomotopyTrivial
     exact (F (joinedInSLSC_uFn (t, 0))).2
   have hK_at_one : ∀ t : I, K_fn (t, 1) = v := fun t ↦ by
     rw [K_fn_apply, joinedInSLSC_uFn_one_right, joinedInSLSC_vFn_one_right, hF1_eq]; rfl
-  have h_rect : (α'.trans L).Homotopic (β.toPath.trans (Path.refl v)) :=
-    homotopic_of_continuous_square K_fn hK_cont hK_zero hK_one hK_at_zero hK_at_one
-  -- `L` is null-homotopic, so the rectangle collapses to `α' ≃ β`.
-  exact homotopic_of_trans_homotopic hL_refl h_rect
+  -- The square deforms `α' ⬝ L` into `β ⬝ const`, and `L` is null-homotopic, so it collapses.
+  exact (Path.Homotopic.trans_right_of_nullhomotopic hL_refl).symm.trans
+    ((homotopic_of_continuous_square K_fn hK_cont hK_zero hK_one hK_at_zero hK_at_one).trans
+      (Path.Homotopic.trans_refl β.toPath))
 
 
 /-- Path components of `endpoint ⁻¹' U` are invariant under endpoint-preserving homotopy:
