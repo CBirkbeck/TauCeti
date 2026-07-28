@@ -88,19 +88,17 @@ private lemma affineChart_reflection_coord {p a z : ℂ} (ha : a ≠ 0) :
       (starRingEnd ℂ) ((z - p) / a) :=
   affineChart_right_inv ha _
 
-/-- **The affine chart carries a pulled-back half-plane to the original one.** For any condition
-`P` on the imaginary part — `0 ≤ ·` for the closed half-plane, `0 < ·` for the open one — the
-chart `w ↦ p + a·w` maps `φ⁻¹(Ω)` cut by `P ∘ im` into `Ω` cut by `P` on the *rotated* imaginary
-part. Both the continuity and the holomorphy transports below are instances. -/
-private lemma mapsTo_affineChart_halfPlane {p a : ℂ} (ha : a ≠ 0) {Ω : Set ℂ} {P : ℝ → Prop} :
+/-- **The affine chart carries a pulled-back imaginary-coordinate cut to the original one.** For
+any predicate `P` on the imaginary part, the chart `w ↦ p + a·w` maps `φ⁻¹(Ω)` cut by `P ∘ im`
+into `Ω` cut by `P` on the *rotated* imaginary part `((z - p)/a).im`. Taking `P` to be `0 ≤ ·`
+and `0 < ·` gives the closed and open half-planes, which is how the continuity and holomorphy
+transports below use it; the statement itself constrains `P` no further. -/
+private lemma mapsTo_affineChart_inter_im {p a : ℂ} (ha : a ≠ 0) {Ω : Set ℂ} {P : ℝ → Prop} :
     MapsTo (fun w : ℂ => p + a * w)
       ((fun w : ℂ => p + a * w) ⁻¹' Ω ∩ {w : ℂ | P w.im})
       (Ω ∩ {z : ℂ | P ((z - p) / a).im}) := by
-  intro w hw
-  refine ⟨hw.1, ?_⟩
-  change P ((p + a * w - p) / a).im
-  rw [affineChart_right_inv ha]
-  exact hw.2
+  refine (Set.mapsTo_preimage _ Ω).inter_inter fun w hw => ?_
+  simpa only [Set.mem_setOf_eq, affineChart_right_inv ha] using hw
 
 /-- **Schwarz reflection principle across an affine line, holomorphy form.** Let the source line
 be `p + a * ℝ`, with `a ≠ 0`. Suppose an open domain `Ω` is invariant under reflection in this
@@ -145,11 +143,11 @@ theorem differentiableOn_lineSchwarzReflection_of_symmetric
     simpa only [φ, ψ, hψφ] using hreflect
   have hgcont : ContinuousOn g (U ∩ {w : ℂ | 0 ≤ w.im}) := by
     have hfcomp : ContinuousOn (f ∘ φ) (U ∩ {w : ℂ | 0 ≤ w.im}) :=
-      hcont.comp hφdiff.continuous.continuousOn (mapsTo_affineChart_halfPlane ha)
+      hcont.comp hφdiff.continuous.continuousOn (mapsTo_affineChart_inter_im ha)
     simpa [g, Function.comp_apply] using hfcomp.sub continuousOn_const |>.div_const b
   have hgdiff : DifferentiableOn ℂ g (U ∩ {w : ℂ | 0 < w.im}) := by
     have hfcomp : DifferentiableOn ℂ (f ∘ φ) (U ∩ {w : ℂ | 0 < w.im}) :=
-      hholo.comp hφdiff.differentiableOn (mapsTo_affineChart_halfPlane ha)
+      hholo.comp hφdiff.differentiableOn (mapsTo_affineChart_inter_im ha)
     simpa only [g, Function.comp_apply] using hfcomp.sub_const q |>.div_const b
   have hgline : ∀ w ∈ U, w.im = 0 → (g w).im = 0 := by
     intro w hw hwim
