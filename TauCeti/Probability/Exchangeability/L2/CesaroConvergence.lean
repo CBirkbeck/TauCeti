@@ -26,8 +26,8 @@ The proof first applies the two-window identity
 `Contractable.integral_sq_blockAverage_sub_of_disjoint` to compare two prefix averages through a
 third block disjoint from both. This makes the prefixes Cauchy in Mathlib's complete `L²` space.
 The same disjoint-block comparison shows that every fixed-start window converges to the prefix
-limit. Finally, `eLpNorm_le_eLpNorm_of_exponent_le` turns the `L²` convergence into `L¹`
-convergence.
+limit. Finally, `eLpNorm_le_eLpNorm_mul_rpow_measure_univ` turns the `L²` convergence into `L¹`
+convergence, at the cost of the fixed factor `μ univ ^ (1 - 1/2)`.
 
 The mathematical argument follows the elementary `L²` route around Theorem 1.1 in Kallenberg,
 *Probabilistic Symmetries and Invariance Principles* (2005). The theorem statement is adapted
@@ -174,11 +174,11 @@ private theorem zero_le_variance_sub_cov_of_contractable {μ : Measure Ω} [IsFi
 /-- The prefix block averages of a contractable `L²` sequence are Cauchy in `L²`: any two are
 compared through a fresh block lying beyond both. -/
 private theorem cauchySeq_blockAverage_prefix_toLp {μ : Measure Ω} [IsProbabilityMeasure μ]
-    {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y) (hY_L2 : ∀ i, MemLp (Y i) 2 μ)
-    (hD : 0 ≤ Var[Y 0; μ] - cov[Y 0, Y 1; μ]) :
+    {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y) (hY_L2 : ∀ i, MemLp (Y i) 2 μ) :
     CauchySeq fun m : ℕ =>
       (memLp_blockAverage (fun i : Fin (m + 1) => (i : ℕ)) fun i => hY_L2 i).toLp
         (blockAverage Y fun i : Fin (m + 1) => (i : ℕ)) := by
+  have hD := zero_le_variance_sub_cov_of_contractable hY hY_L2
   rw [Metric.cauchySeq_iff]
   intro ε hε
   obtain ⟨N, hN⟩ := eventually_atTop.1
@@ -215,14 +215,14 @@ private theorem cauchySeq_blockAverage_prefix_toLp {μ : Measure Ω} [IsProbabil
 through a block lying beyond them. -/
 private theorem tendsto_dist_blockAverage_window_prefix_toLp {μ : Measure Ω}
     [IsProbabilityMeasure μ] {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y)
-    (hY_L2 : ∀ i, MemLp (Y i) 2 μ)
-    (hD : 0 ≤ Var[Y 0; μ] - cov[Y 0, Y 1; μ]) (r : ℕ) :
+    (hY_L2 : ∀ i, MemLp (Y i) 2 μ) (r : ℕ) :
     Tendsto (fun m : ℕ =>
         dist ((memLp_blockAverage (fun j : Fin (m + 1) => r + j) fun j => hY_L2 (r + j)).toLp
             (blockAverage Y fun j : Fin (m + 1) => r + j))
           ((memLp_blockAverage (fun i : Fin (m + 1) => (i : ℕ)) fun i => hY_L2 i).toLp
             (blockAverage Y fun i : Fin (m + 1) => (i : ℕ))))
       atTop (𝓝 0) := by
+  have hD := zero_le_variance_sub_cov_of_contractable hY hY_L2
   have hsqrt :
       Tendsto (fun m : ℕ =>
           2 * Real.sqrt (2 * (Var[Y 0; μ] - cov[Y 0, Y 1; μ]) / ((m : ℝ) + 1))) atTop (𝓝 0) := by
@@ -253,19 +253,21 @@ private theorem tendsto_dist_blockAverage_window_prefix_toLp {μ : Measure Ω}
   simp only [Nat.cast_succ] at hdist
   linarith
 
-/-- On a probability space, `L²` convergence to a limit gives `L¹` convergence of the integrated
-absolute difference. -/
+/-- On a finite measure space, `L²` convergence to a limit gives `L¹` convergence of the integrated
+absolute difference: the exponent comparison costs only the fixed factor `μ univ ^ (1 - 1/2)`. -/
 private theorem tendsto_integral_abs_sub_of_tendsto_eLpNorm_two {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {W : ℕ → Ω → ℝ} {a : Ω → ℝ}
+    [IsFiniteMeasure μ] {W : ℕ → Ω → ℝ} {a : Ω → ℝ}
     (hW_L2 : ∀ m, MemLp (W m) 2 μ) (ha_L2 : MemLp a 2 μ)
     (h : Tendsto (fun m => eLpNorm (W m - a) 2 μ) atTop (𝓝 0)) :
     Tendsto (fun m => ∫ ω, |W m ω - a ω| ∂μ) atTop (𝓝 0) := by
   have hW_L1 : Tendsto (fun m => eLpNorm (W m - a) 1 μ) atTop (𝓝 0) := by
-    refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds h
-      (Eventually.of_forall fun _ => bot_le) ?_
-    filter_upwards with m
-    exact eLpNorm_le_eLpNorm_of_exponent_le one_le_two
-      ((hW_L2 m).sub ha_L2).aestronglyMeasurable
+    -- The exponent comparison costs a fixed finite factor, which the limit absorbs.
+    have hbound := fun m => eLpNorm_le_eLpNorm_mul_rpow_measure_univ (p := 1) (q := 2)
+      one_le_two ((hW_L2 m).sub ha_L2).aestronglyMeasurable
+    refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds ?_
+      (Eventually.of_forall fun _ => bot_le) (Eventually.of_forall hbound)
+    simpa using ENNReal.Tendsto.mul_const h
+      (Or.inr (ENNReal.rpow_ne_top_of_nonneg (by norm_num) (measure_ne_top μ Set.univ)))
   have hreal : Tendsto (fun m => (eLpNorm (W m - a) 1 μ).toReal) atTop (𝓝 0) := by
     simpa only [Function.comp_def, ENNReal.toReal_zero] using
       (ENNReal.tendsto_toReal ENNReal.zero_ne_top).comp hW_L1
@@ -305,7 +307,7 @@ theorem weighted_sums_converge_L1 {μ : Measure Ω} [IsProbabilityMeasure μ]
     (hA_L2 m).toLp (blockAverage Y fun i : Fin (m + 1) => (i : ℕ))
   -- Completeness of `L²` turns the Cauchy prefixes into a limit with a measurable representative.
   obtain ⟨a₂, ha₂⟩ : ∃ a₂ : Lp ℝ 2 μ, Tendsto A₂ atTop (𝓝 a₂) :=
-    cauchySeq_tendsto_of_complete (cauchySeq_blockAverage_prefix_toLp hY hY_L2 hD)
+    cauchySeq_tendsto_of_complete (cauchySeq_blockAverage_prefix_toLp hY hY_L2)
   let a : Ω → ℝ := (Lp.aestronglyMeasurable a₂).mk a₂
   have ha₂_ae : a₂ =ᵐ[μ] a := (Lp.aestronglyMeasurable a₂).ae_eq_mk
   have ha_meas : Measurable a := (Lp.aestronglyMeasurable a₂).measurable_mk
@@ -323,7 +325,7 @@ theorem weighted_sums_converge_L1 {μ : Measure Ω} [IsProbabilityMeasure μ]
       (Eventually.of_forall fun _ => dist_nonneg) (Eventually.of_forall fun m =>
         dist_triangle _ (A₂ m) _) ?_)
     simpa only [zero_add] using
-      (tendsto_dist_blockAverage_window_prefix_toLp hY hY_L2 hD r).add
+      (tendsto_dist_blockAverage_window_prefix_toLp hY hY_L2 r).add
         (tendsto_iff_dist_tendsto_zero.mp ha₂)
   refine tendsto_integral_abs_sub_of_tendsto_eLpNorm_two hW_L2 ha_L2 ?_
   rw [← Lp.tendsto_Lp_iff_tendsto_eLpNorm'' _ hW_L2 a ha_L2]
