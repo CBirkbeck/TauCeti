@@ -14,7 +14,7 @@ import Mathlib.Data.List.Sort
 # Aggregating per-window principal values across finitely many crossings
 
 If the `ε`-truncated integral of `g (γ t) * deriv γ t` converges on each crossing window
-`[t_i - r, t_i + r]`, the windows are pairwise disjoint and interior to `[a, b]`, and the curve
+`[t_i - r, t_i + r]`, the windows have disjoint interiors and lie in `[a, b]`, and the curve
 keeps a positive distance from `s` off the windows, then the truncated integral over all of
 `[a, b]` converges — the single-point principal value exists
 (`cauchyPVExistsAt_of_perWindow_tendsto`). Off the windows the truncation is eventually
@@ -54,7 +54,7 @@ namespace TauCeti.Contour
 
 open Filter MeasureTheory Set Topology
 
-/-- The truncated integrand is eventually interval-integrable on a crossing window interior to
+/-- The truncated integrand is eventually interval-integrable on a crossing window lying in
 `[a, b]`, by restriction. -/
 private theorem eventually_intervalIntegrable_truncated_window {γ : ℝ → ℂ} {s : ℂ}
     {g : ℂ → ℂ} {a b r t : ℝ} (hab : a ≤ b) (h_lo : a ≤ t - r) (h_hi : t + r ≤ b)
@@ -81,7 +81,7 @@ private theorem hasCauchyPVAt_plain_piece {γ : ℝ → ℂ} {s : ℂ} {g : ℂ 
     {l u : ℝ} (hA : a ≤ l) (hlu : l ≤ u) (hu : u ≤ b)
     (h_far : ∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) :
     HasCauchyPVAt γ l u g s (∫ t in l..u, g (γ t) * deriv γ t) :=
-  hasCauchyPVAt_of_dist_lower_bound hlu hm_pos h_far <| by
+  hasCauchyPVAt_of_dist_lower_bound hm_pos (by rwa [uIcc_of_le hlu]) <| by
     filter_upwards [self_mem_nhdsWithin] with ε hε
     exact (h_int_tr ε hε).mono_set (by
       rw [uIcc_of_le hlu, uIcc_of_le hab]
@@ -96,7 +96,7 @@ def windowPieceSum (r : ℝ) (p : ℝ → ℝ → ℂ) (w : ℝ → ℂ) (b : �
   | [], a => p a b
   | t :: rest, a => p a (t - r) + w t + windowPieceSum r p w b rest (t + r)
 
-/-- **The shared aggregation induction**: with pairwise-disjoint windows interior to `[a, b]`,
+/-- **The shared aggregation induction**: with windows of disjoint interiors lying in `[a, b]`,
 window principal values `w t`, and between-piece principal values `p l u` available on
 intervals where the curve keeps distance `≥ m` from `s`, the principal value on `[a, b]` is
 the alternating sum `windowPieceSum`. Both public aggregation theorems instantiate this. -/
@@ -148,8 +148,8 @@ private theorem hasCauchyPVAt_along_sorted {γ : ℝ → ℂ} {s : ℂ} {g : ℂ
     exact (h_left.concat (h_win t List.mem_cons_self)).concat h_rest
 
 /-- **The single-point principal value from per-window convergence**: if the `ε`-truncated
-integral of `g (γ t) * deriv γ t` converges on each crossing window (pairwise disjoint,
-interior to `[a, b]`), the truncations are integrable on `[a, b]`, and the curve keeps a
+integral of `g (γ t) * deriv γ t` converges on each crossing window (disjoint interiors,
+lying in `[a, b]`), the truncations are integrable on `[a, b]`, and the curve keeps a
 positive distance from `s` off the windows, then the principal value at `s` exists on
 `[a, b]`. The per-window limits are hypotheses, so both the simple-pole and higher-order
 per-window theorems discharge them. -/
@@ -185,9 +185,10 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : 
   exact (h_win t h_mem).choose_spec
 
 /-- **The piece/window decomposition of a principal value** (Hungerbühler–Wasem Prop. 2.2, the
-aggregation half). With pairwise-disjoint windows of radius `r` about a finite crossing set,
-interior to `[a, b]`, the principal value at `s` over `[a, b]` is the alternating sum of the
-between-window piece values and the per-window values.
+aggregation half). With windows of radius `r` about a finite crossing set having disjoint
+interiors and lying in `[a, b]` — they may touch each other, or touch `a` or `b` — the
+principal value at `s` over `[a, b]` is the alternating sum of the between-window piece values
+and the per-window values.
 
 Unlike `hasCauchyPVAt_of_perWindow_boundary_tendsto`, no global antiderivative is assumed, so
 nothing telescopes: this is the form the Cauchy kernel `(z - s)⁻¹` needs, whose antiderivative
