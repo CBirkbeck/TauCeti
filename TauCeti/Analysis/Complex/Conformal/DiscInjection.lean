@@ -70,17 +70,6 @@ namespace TauCeti
 
 open Complex Set Metric
 
-/-- An open subset of `ℂ` containing a point contains a second, distinct one. -/
-private lemma exists_mem_ne_of_isOpen {U : Set ℂ} (hUo : IsOpen U) {z₀ : ℂ} (hz₀ : z₀ ∈ U) :
-    ∃ z ∈ U, z ≠ z₀ := by
-  obtain ⟨ε, hε, hball⟩ := Metric.isOpen_iff.mp hUo z₀ hz₀
-  refine ⟨z₀ + ((ε / 2 : ℝ) : ℂ), hball ?_, ?_⟩
-  · rw [mem_ball, dist_eq_norm, add_sub_cancel_left, Complex.norm_real, Real.norm_eq_abs,
-      abs_of_pos (half_pos hε)]
-    linarith
-  · simp only [ne_eq, add_eq_left, Complex.ofReal_eq_zero]
-    exact (half_pos hε).ne'
-
 /-- **A holomorphic square root of `z - a`.** On a simply connected open `U` avoiding `a` the
 function `z - a` is nonvanishing, so it has a holomorphic square root; any such root is injective,
 because squaring recovers `z`, and nonvanishing, because its square is. -/
@@ -143,7 +132,8 @@ theorem exists_differentiableOn_injOn_mapsTo_unitBall {U : Set ℂ} (hUc : IsSim
   have hopen : IsOpen (h '' U) := by
     rcases hanal.is_constant_or_isOpen hconn with hconst | hopenmap
     · obtain ⟨w, hw⟩ := hconst
-      obtain ⟨z₁, hz₁, hz₁ne⟩ := exists_mem_ne_of_isOpen hUo hz₀
+      obtain ⟨z₁, hz₁, hz₁ne⟩ :=
+        (infinite_of_mem_nhds z₀ (hUo.mem_nhds hz₀)).nontrivial.exists_ne z₀
       exact absurd (hinj hz₁ hz₀ (by rw [hw _ hz₁, hw _ hz₀])) hz₁ne
     · exact hopenmap U (subset_refl U) hUo
   -- The image contains a ball around `h z₀`, and `-h` avoids it.
