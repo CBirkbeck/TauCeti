@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.Analysis.Contour.PiecewiseC1On
+public import Mathlib.Analysis.Calculus.Deriv.Slope
 import Mathlib.Analysis.Calculus.ContDiff.Deriv
 
 /-!
@@ -235,6 +236,38 @@ theorem IsPwC1ImmersionOn.exists_deriv_left_limit (h : IsPwC1ImmersionOn γ a b)
   rw [← nhdsWithin_Ioo_eq_nhdsLT hlt]
   exact h1.congr' <| eventually_mem_nhdsWithin.mono fun t ht =>
     derivWithin_of_mem_nhds (Icc_mem_nhds ht.1 ht.2)
+
+/-- **Right difference-quotient limit of an immersion.** At every parameter
+`t₀ ∈ [min, max)` the slope `(γ t - γ t₀) / (t - t₀)` converges from the right to the non-zero
+one-sided tangent of the piece beginning at `t₀`.
+
+This is the geometric refinement of `IsPwC1ImmersionOn.exists_deriv_right_limit`: that lemma
+gives the limit of `deriv γ`, this one the limit of the chord direction, which is what identifies
+the direction in which the curve leaves `γ t₀`. -/
+theorem IsPwC1ImmersionOn.exists_tendsto_slope_right (h : IsPwC1ImmersionOn γ a b) {t₀ : ℝ}
+    (ht₀ : t₀ ∈ Ico (min a b) (max a b)) :
+    ∃ L : ℂ, L ≠ 0 ∧ Tendsto (slope γ t₀) (𝓝[>] t₀) (𝓝 L) := by
+  obtain ⟨d, hlt, hsub, hC1, hne⟩ := h.exists_Icc_piece_right ht₀
+  refine ⟨derivWithin γ (Icc t₀ d) t₀, hne t₀ (left_mem_Icc.mpr hlt.le), ?_⟩
+  have hd : HasDerivWithinAt γ (derivWithin γ (Icc t₀ d) t₀) (Icc t₀ d) t₀ :=
+    ((hC1.differentiableOn one_ne_zero) t₀ (left_mem_Icc.mpr hlt.le)).hasDerivWithinAt
+  refine (hasDerivWithinAt_iff_tendsto_slope.mp hd).mono_left ?_
+  rw [← nhdsWithin_Ioo_eq_nhdsGT hlt]
+  exact nhdsWithin_mono _ fun t ht => ⟨Ioo_subset_Icc_self ht, ne_of_gt ht.1⟩
+
+/-- **Left difference-quotient limit of an immersion.** At every parameter `t₀ ∈ (min, max]` the
+slope `(γ t - γ t₀) / (t - t₀)` converges from the left to the non-zero one-sided tangent of the
+piece ending at `t₀`. -/
+theorem IsPwC1ImmersionOn.exists_tendsto_slope_left (h : IsPwC1ImmersionOn γ a b) {t₀ : ℝ}
+    (ht₀ : t₀ ∈ Ioc (min a b) (max a b)) :
+    ∃ L : ℂ, L ≠ 0 ∧ Tendsto (slope γ t₀) (𝓝[<] t₀) (𝓝 L) := by
+  obtain ⟨c, hlt, hsub, hC1, hne⟩ := h.exists_Icc_piece_left ht₀
+  refine ⟨derivWithin γ (Icc c t₀) t₀, hne t₀ (right_mem_Icc.mpr hlt.le), ?_⟩
+  have hd : HasDerivWithinAt γ (derivWithin γ (Icc c t₀) t₀) (Icc c t₀) t₀ :=
+    ((hC1.differentiableOn one_ne_zero) t₀ (right_mem_Icc.mpr hlt.le)).hasDerivWithinAt
+  refine (hasDerivWithinAt_iff_tendsto_slope.mp hd).mono_left ?_
+  rw [← nhdsWithin_Ioo_eq_nhdsLT hlt]
+  exact nhdsWithin_mono _ fun t ht => ⟨Ioo_subset_Icc_self ht, ne_of_lt ht.2⟩
 
 end TauCeti.Contour
 
