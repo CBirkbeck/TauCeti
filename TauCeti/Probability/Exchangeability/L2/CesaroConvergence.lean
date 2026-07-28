@@ -148,14 +148,6 @@ private theorem dist_blockAverages_toLp_le_via_disjoint {μ : Measure Ω}
         ((memLp_blockAverage k₀ fun i => hY_L2 (k₀ i)).toLp (blockAverage Y k₀))]
       exact add_le_add hk_bound hk'_bound
 
-/-- A constant over `n + 1` tends to zero along the naturals. -/
-private theorem tendsto_const_div_natCast_add_one (c : ℝ) :
-    Tendsto (fun n : ℕ => c / ((n : ℝ) + 1)) atTop (𝓝 0) := by
-  simpa only [div_eq_mul_inv, one_mul, mul_zero] using
-    (tendsto_const_nhds.mul
-      (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)) :
-      Tendsto (fun n : ℕ => c * (1 / (↑n + 1))) atTop (𝓝 (c * 0)))
-
 /-- For a contractable `L²` sequence the lag-one covariance never exceeds the variance: the
 two-window identity makes the gap a nonnegative multiple of a variance. -/
 private theorem zero_le_variance_sub_cov_of_contractable {μ : Measure Ω} [IsFiniteMeasure μ]
@@ -181,9 +173,11 @@ private theorem cauchySeq_blockAverage_prefix_toLp {μ : Measure Ω} [IsProbabil
   have hD := zero_le_variance_sub_cov_of_contractable hY hY_L2
   rw [Metric.cauchySeq_iff]
   intro ε hε
-  obtain ⟨N, hN⟩ := eventually_atTop.1
-    (tendsto_const_div_natCast_add_one (2 * (Var[Y 0; μ] - cov[Y 0, Y 1; μ]))
-      (Iio_mem_nhds (sq_pos_of_pos (half_pos hε))))
+  have hquot : Tendsto (fun n : ℕ => 2 * (Var[Y 0; μ] - cov[Y 0, Y 1; μ]) / ((n : ℝ) + 1))
+      atTop (𝓝 0) := by
+    simpa [Function.comp_def] using (tendsto_const_div_atTop_nhds_zero_nat
+      (2 * (Var[Y 0; μ] - cov[Y 0, Y 1; μ]))).comp (Filter.tendsto_add_atTop_nat 1)
+  obtain ⟨N, hN⟩ := eventually_atTop.1 (hquot (Iio_mem_nhds (sq_pos_of_pos (half_pos hε))))
   refine ⟨N, fun n hn m hm => ?_⟩
   let l := n + m + 2
   let k : Fin l → ℕ := fun i => l + i
@@ -226,10 +220,12 @@ private theorem tendsto_dist_blockAverage_window_prefix_toLp {μ : Measure Ω}
   have hsqrt :
       Tendsto (fun m : ℕ =>
           2 * Real.sqrt (2 * (Var[Y 0; μ] - cov[Y 0, Y 1; μ]) / ((m : ℝ) + 1))) atTop (𝓝 0) := by
+    have hquot : Tendsto (fun n : ℕ => 2 * (Var[Y 0; μ] - cov[Y 0, Y 1; μ]) / ((n : ℝ) + 1))
+        atTop (𝓝 0) := by
+      simpa [Function.comp_def] using (tendsto_const_div_atTop_nhds_zero_nat
+        (2 * (Var[Y 0; μ] - cov[Y 0, Y 1; μ]))).comp (Filter.tendsto_add_atTop_nat 1)
     simpa using
-      (Real.continuous_sqrt.continuousAt.tendsto.comp
-        (tendsto_const_div_natCast_add_one
-          (2 * (Var[Y 0; μ] - cov[Y 0, Y 1; μ])))).const_mul 2
+      (Real.continuous_sqrt.continuousAt.tendsto.comp hquot).const_mul 2
   refine squeeze_zero' (Eventually.of_forall fun m => dist_nonneg) ?_ hsqrt
   filter_upwards with m
   let l := r + m + 1
@@ -257,13 +253,13 @@ private theorem tendsto_dist_blockAverage_window_prefix_toLp {μ : Measure Ω}
 absolute difference: the exponent comparison costs only the fixed factor `μ univ ^ (1 - 1/2)`. -/
 private theorem tendsto_integral_abs_sub_of_tendsto_eLpNorm_two {μ : Measure Ω}
     [IsFiniteMeasure μ] {W : ℕ → Ω → ℝ} {a : Ω → ℝ}
-    (hW_L2 : ∀ m, MemLp (W m) 2 μ) (ha_L2 : MemLp a 2 μ)
+    (hWa_L2 : ∀ m, MemLp (W m - a) 2 μ)
     (h : Tendsto (fun m => eLpNorm (W m - a) 2 μ) atTop (𝓝 0)) :
     Tendsto (fun m => ∫ ω, |W m ω - a ω| ∂μ) atTop (𝓝 0) := by
   have hW_L1 : Tendsto (fun m => eLpNorm (W m - a) 1 μ) atTop (𝓝 0) := by
     -- The exponent comparison costs a fixed finite factor, which the limit absorbs.
     have hbound := fun m => eLpNorm_le_eLpNorm_mul_rpow_measure_univ (p := 1) (q := 2)
-      one_le_two ((hW_L2 m).sub ha_L2).aestronglyMeasurable
+      one_le_two (hWa_L2 m).aestronglyMeasurable
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds ?_
       (Eventually.of_forall fun _ => bot_le) (Eventually.of_forall hbound)
     simpa using ENNReal.Tendsto.mul_const h
@@ -274,7 +270,7 @@ private theorem tendsto_integral_abs_sub_of_tendsto_eLpNorm_two {μ : Measure Ω
   convert hreal using 1
   ext m
   simpa only [Pi.sub_apply, Real.norm_eq_abs, eLpNorm_one_eq_lintegral_enorm] using
-    (integral_norm_eq_lintegral_enorm ((hW_L2 m).sub ha_L2).aestronglyMeasurable)
+    (integral_norm_eq_lintegral_enorm (hWa_L2 m).aestronglyMeasurable)
 
 /-- A bounded measurable observable of a contractable process has fixed-start Cesàro averages
 converging in `L¹` to one common measurable limit.
@@ -325,7 +321,7 @@ theorem weighted_sums_converge_L1 {μ : Measure Ω} [IsProbabilityMeasure μ]
     simpa only [zero_add] using
       (tendsto_dist_blockAverage_window_prefix_toLp hY hY_L2 r).add
         (tendsto_iff_dist_tendsto_zero.mp ha₂)
-  refine tendsto_integral_abs_sub_of_tendsto_eLpNorm_two hW_L2 ha_L2 ?_
+  refine tendsto_integral_abs_sub_of_tendsto_eLpNorm_two (fun m => (hW_L2 m).sub ha_L2) ?_
   rw [← Lp.tendsto_Lp_iff_tendsto_eLpNorm'' _ hW_L2 a ha_L2]
   simpa only [ha_toLp] using hW₂_tendsto
 
