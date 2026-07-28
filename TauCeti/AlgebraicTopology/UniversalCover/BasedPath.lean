@@ -544,9 +544,10 @@ theorem isOpen_refined_tubeNeighborhood
     exact isOpen_iInter_of_finite fun j ↦
       (hV_open j).preimage ((continuous_eval_const (part.t j)).comp continuous_subtype_val)
 
-/-- **Refining the terminal vertex set of a tube.** Replacing the last vertex set of `T` by a
-smaller one again gives a family that is open, path-connected, contained in `T.V` pointwise, and
-through which `α` still passes at every partition point. -/
+/-- **Refining the terminal vertex set of a tube.** If the last vertex set of `T` is replaced by a
+smaller `V_last'` that is itself open, path-connected and contains `endpoint α`, the resulting
+family is again open and path-connected, is contained in `T.V` pointwise, and `α` still passes
+through it at every partition point. -/
 private theorem exists_refined_vertex_family {n' : ℕ} {part : IntervalPartition (n' + 1)}
     {T : TubeData X (n' + 1)} {α : BasedPath x₀}
     (hα_passes : ∀ j, α.toPath (part.t j) ∈ T.V j)
@@ -577,8 +578,8 @@ private theorem exists_refined_vertex_family {n' : ℕ} {part : IntervalPartitio
       | cast k => rw [Fin.snoc_castSucc]; exact hα_passes _
 
 /-- **A path through the refined tube is joined to `α`.** If `β` runs through the same tube as `α`
-with refined vertex sets `V'` whose terminal member lies in `U`, then `β` is joined to `α` inside
-`endpoint ⁻¹' U`. -/
+with refined vertex sets `V'` whose terminal member is contained in `U`, then `β` is joined to `α`
+inside `endpoint ⁻¹' U`. -/
 private theorem joinedIn_endpoint_preimage_of_pathInTube {n' : ℕ} {U : Set X}
     {V' : Fin (n' + 2) → Set X} {part : IntervalPartition (n' + 1)}
     {T : TubeData X (n' + 1)} (hV'_open : ∀ j, IsOpen (V' j))
