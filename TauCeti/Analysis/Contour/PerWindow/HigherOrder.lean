@@ -140,12 +140,12 @@ theorem integral_pow_inv_mul_deriv_eq_sub {γ : ℝ → ℂ} {s : ℂ} {k : ℕ}
   exact MeasureTheory.integral_eq_of_hasDerivAt_off_countable_of_le _ _ hlu hP h_G_cont
     h_G_deriv (intervalIntegrable_pow_inv_mul_deriv c k hlu hγ_cont h_ne hderiv_int)
 
-/-- **Antiderivative evaluation on a sub-window missing the crossing.** On `[l, u]` inside the
-window `[t_i - r, t_i + r]`, where the curve meets `s` only at `t_i` and `t_i ∉ [l, u]`, the
-higher-order integrand integrates to the difference of antiderivative values at the endpoints.
-The two pieces a truncated window integral splits into — left of the entry time and right of the
-exit time — are both instances. -/
-private lemma integral_pow_inv_mul_deriv_eq_sub_subwindow {γ : ℝ → ℂ} {s : ℂ} {t_i r : ℝ}
+/-- **Antiderivative evaluation on a subinterval missing the crossing.** On a subinterval
+`[l, u]` of the window `[t_i - r, t_i + r]`, where the curve meets `s` only at `t_i` and
+`t_i ∉ [l, u]`, the higher-order integrand integrates to the difference of antiderivative values
+at the endpoints. The two pieces a truncated window integral splits into — left of the entry time
+and right of the exit time — are both instances. -/
+private lemma integral_pow_inv_mul_deriv_eq_sub_of_subinterval {γ : ℝ → ℂ} {s : ℂ} {t_i r : ℝ}
     {k : ℕ} (hk : 2 ≤ k) (c : ℂ) {P : Set ℝ} (hP : P.Countable)
     (hγ_cont : ContinuousOn γ (Icc (t_i - r) (t_i + r)))
     (hγ_diffP : ∀ t ∈ Ioo (t_i - r) (t_i + r) \ P, DifferentiableAt ℝ γ t)
@@ -220,9 +220,9 @@ theorem perWindow_higherOrder_truncated_integral_tendsto {γ : ℝ → ℂ} {s :
           (-(↑(k - 1) : ℂ)⁻¹ * ((γ (τR ε) - s) ^ (k - 1))⁻¹)) := by
     filter_upwards [h_split, h_memL, h_memR] with ε hsplit hτL hτR
     rw [hsplit,
-      integral_pow_inv_mul_deriv_eq_sub_subwindow hk c hP hγ_cont hγ_diffP hderiv_int h_unique
+      integral_pow_inv_mul_deriv_eq_sub_of_subinterval hk c hP hγ_cont hγ_diffP hderiv_int h_unique
         hτL.1.le le_rfl (by linarith [hτL.2]) (fun h => absurd h.2 (by linarith [hτL.2])),
-      integral_pow_inv_mul_deriv_eq_sub_subwindow hk c hP hγ_cont hγ_diffP hderiv_int h_unique
+      integral_pow_inv_mul_deriv_eq_sub_of_subinterval hk c hP hγ_cont hγ_diffP hderiv_int h_unique
         hτR.2.le (by linarith [hτR.1]) le_rfl (fun h => absurd h.1 (by linarith [hτR.1]))]
     ring
   refine Tendsto.congr' h_ev.symm ?_
