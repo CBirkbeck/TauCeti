@@ -92,12 +92,13 @@ private lemma exists_sq_eq_sub_injOn_ne_zero {U : Set ℂ} (hUc : IsSimplyConnec
   · have hza : z - a = 0 := by rw [← hsq z hz, hz0]; ring
     exact ha (by rwa [sub_eq_zero.mp hza] at hz)
 
-/-- **The square root avoids its own negation, quantitatively.** If `h² = z - a` on `U` with `h`
-nonvanishing there, and a ball of radius `r` about `w₀` lies inside `h '' U`, then `-h z` stays
-outside that ball for every `z ∈ U`: otherwise `-h z = h z'` for some `z' ∈ U`, and squaring forces
-`z' = z`, hence `h z = 0`. -/
-private lemma le_norm_add_of_ball_subset_image {U : Set ℂ} {h : ℂ → ℂ} {a w₀ : ℂ} {r : ℝ}
-    (hsq : ∀ z ∈ U, h z ^ 2 = z - a) (hne : ∀ z ∈ U, h z ≠ 0) (hball : ball w₀ r ⊆ h '' U) :
+/-- **A square-injective function avoids its own negation, quantitatively.** If squaring `h` is
+injective on `U` and `h` is nonvanishing there, and a ball of radius `r` about `w₀` lies inside
+`h '' U`, then `-h z` stays outside that ball for every `z ∈ U`: otherwise `-h z = h z'` for some
+`z' ∈ U`, and equal squares force `z' = z`, hence `h z = 0`. -/
+private lemma le_norm_add_of_ball_subset_image {U : Set ℂ} {h : ℂ → ℂ} {w₀ : ℂ} {r : ℝ}
+    (hsq_inj : Set.InjOn (fun z => h z ^ 2) U) (hne : ∀ z ∈ U, h z ≠ 0)
+    (hball : ball w₀ r ⊆ h '' U) :
     ∀ z ∈ U, r ≤ ‖h z + w₀‖ := by
   intro z hz
   by_contra hcon
@@ -107,10 +108,7 @@ private lemma le_norm_add_of_ball_subset_image {U : Set ℂ} {h : ℂ → ℂ} {
     rw [hrw, norm_neg]
     exact lt_of_not_ge hcon
   obtain ⟨z', hz', hz'eq⟩ := hball hmem
-  have hsq' : z' - a = z - a := by
-    rw [← hsq z' hz', ← hsq z hz, hz'eq]
-    ring
-  have hzz : z' = z := by linear_combination hsq'
+  have hzz : z' = z := hsq_inj hz' hz (by simp only; rw [hz'eq]; ring)
   rw [hzz] at hz'eq
   exact hne z hz (by linear_combination hz'eq / 2)
 
@@ -139,7 +137,11 @@ theorem exists_differentiableOn_injOn_mapsTo_unitBall {U : Set ℂ} (hUc : IsSim
   -- The image contains a ball around `h z₀`, and `-h` avoids it.
   obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp hopen (h z₀) ⟨z₀, hz₀, rfl⟩
   set w₀ : ℂ := h z₀ with hw₀
-  have havoid : ∀ z ∈ U, r ≤ ‖h z + w₀‖ := le_norm_add_of_ball_subset_image hsq hne hball
+  have hsq_inj : Set.InjOn (fun z => h z ^ 2) U := fun z₁ hz₁ z₂ hz₂ he => by
+    have : z₁ - a = z₂ - a := by rw [← hsq z₁ hz₁, ← hsq z₂ hz₂]; exact he
+    linear_combination this
+  have havoid : ∀ z ∈ U, r ≤ ‖h z + w₀‖ :=
+    le_norm_add_of_ball_subset_image hsq_inj hne hball
   -- Every denominator is nonzero, `r` being positive.
   have hden : ∀ z ∈ U, h z + w₀ ≠ 0 := by
     intro z hz hzero'
