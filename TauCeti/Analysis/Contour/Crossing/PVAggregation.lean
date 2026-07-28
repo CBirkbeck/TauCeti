@@ -87,7 +87,7 @@ private theorem hasCauchyPVAt_plain_piece {γ : ℝ → ℂ} {s : ℂ} {g : ℂ 
       rw [uIcc_of_le hlu, uIcc_of_le hab]
       exact Icc_subset_Icc hA hu)
 
-/-- The alternating piece/window sum along a sorted crossing list: the curve contributes an
+/-- The interleaved piece/window sum along a sorted crossing list: the curve contributes an
 ordinary piece value `p l u` between consecutive windows and a window value `w t` at each
 crossing. This is the shape of the Hungerbühler–Wasem decomposition of a principal value at a
 point the curve meets. -/
@@ -99,7 +99,7 @@ def windowPieceSum (r : ℝ) (p : ℝ → ℝ → ℂ) (w : ℝ → ℂ) (b : �
 /-- **The shared aggregation induction**: with windows of disjoint interiors lying in `[a, b]`,
 window principal values `w t`, and between-piece principal values `p l u` available on
 intervals where the curve keeps distance `≥ m` from `s`, the principal value on `[a, b]` is
-the alternating sum `windowPieceSum`. Both public aggregation theorems instantiate this. -/
+the interleaved sum `windowPieceSum`. Both public aggregation theorems instantiate this. -/
 private theorem hasCauchyPVAt_along_sorted {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
     {p : ℝ → ℝ → ℂ} {w : ℝ → ℂ} {A b r m : ℝ} (hr_pos : 0 < r)
     (h_piece : ∀ l u : ℝ, A ≤ l → l ≤ u → u ≤ b → (∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) →
@@ -187,7 +187,7 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : 
 /-- **The piece/window decomposition of a principal value** (Hungerbühler–Wasem Prop. 2.2, the
 aggregation half). With windows of radius `r` about a finite crossing set having disjoint
 interiors and lying in `[a, b]` — they may touch each other, or touch `a` or `b` — the
-principal value at `s` over `[a, b]` is the alternating sum of the between-window piece values
+principal value at `s` over `[a, b]` is the interleaved sum of the between-window piece values
 and the per-window values.
 
 Unlike `hasCauchyPVAt_of_perWindow_boundary_tendsto`, no global antiderivative is assumed, so
@@ -211,7 +211,7 @@ theorem hasCauchyPVAt_of_perWindow {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ
     (fun t ht => h_win t ((Finset.mem_sort _).mp ht))
     (fun u hu h_avoid => h_far u hu fun t ht => h_avoid t ((Finset.mem_sort _).mpr ht))
 
-/-- The alternating sum telescopes when both the piece and window values are boundary
+/-- The interleaved sum telescopes when both the piece and window values are boundary
 differences of `Φ ∘ γ`. -/
 private theorem windowPieceSum_boundary {γ : ℝ → ℂ} {Φ : ℂ → ℂ} {b r : ℝ} :
     ∀ (sorted : List ℝ) (a : ℝ),
