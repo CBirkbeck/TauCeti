@@ -156,7 +156,7 @@ private lemma circleIntegrable_of_analyticOn_sphere {A : ℂ → ℂ} {c : ℂ} 
 pole at any other point of `S`, so a strict drop at `s₀` is a strict drop in the sum over `S`. -/
 private lemma sum_depthTerm_sub_lt {c : ℂ} {R : ℝ} (S : Finset ℂ)
     {F P : ℂ → ℂ} (hF_mero : MeromorphicOn F (closedBall c R))
-    (hP_mero : MeromorphicOn P (closedBall c R)) (hmem_cb : ∀ s ∈ S, s ∈ closedBall c R)
+    (hmem_cb : ∀ s ∈ S, s ∈ closedBall c R)
     {s₀ : ℂ} (hs₀S : s₀ ∈ S) (hP_an_off : ∀ z, z ≠ s₀ → AnalyticAt ℂ P z)
     {n₀ : ℤ} (hn₀_neg : n₀ < 0) (hFs₀ : meromorphicOrderAt F s₀ = (n₀ : WithTop ℤ))
     (hG_ord_s₀ : (n₀ : WithTop ℤ) < meromorphicOrderAt (fun z => F z - P z) s₀) :
@@ -170,7 +170,7 @@ private lemma sum_depthTerm_sub_lt {c : ℂ} {R : ℝ} (S : Finset ℂ)
   · subst hss₀; exact le_of_lt hdepth_s₀
   · refine depthTerm_le_of_sub (hP_an_off s hss₀).meromorphicOrderAt_nonneg ?_
     have hadd := meromorphicOrderAt_add (hF_mero s (hmem_cb s hs))
-      ((hP_mero s (hmem_cb s hs)).neg)
+      (hP_an_off s hss₀).meromorphicAt.neg
     rwa [← meromorphicOrderAt_neg, ← sub_eq_add_neg] at hadd
 
 /-- **Transferring the residue formula across a peeled term.** If the formula holds for the
@@ -248,7 +248,7 @@ private lemma residueTheorem_step {c : ℂ} {R : ℝ} (hR : 0 < R) (S : Finset �
     rw [meromorphicOrderAt_congr hG_germ]; exact meromorphicOrderAt_sub_leadingTerm_gt hg_an
   have hdepth_lt : (∑ s ∈ S, (-(meromorphicOrderAt G s).untop₀).toNat)
       < (∑ s ∈ S, (-(meromorphicOrderAt F s).untop₀).toNat) :=
-    sum_depthTerm_sub_lt S hF_mero hP_mero hmem_cb hs₀S hP_an_off hn₀_neg hFs₀ hG_ord_s₀
+    sum_depthTerm_sub_lt S hF_mero hmem_cb hs₀S hP_an_off hn₀_neg hFs₀ hG_ord_s₀
   -- Split `∮ F = ∮ G + ∮ P` and `∑ res F = ∑ res G + ∑ res P`, transferring `G`'s formula to `F`.
   have hP_int : CircleIntegrable P c R :=
     circleIntegrable_of_analyticOn_sphere hR.le fun z hz =>
