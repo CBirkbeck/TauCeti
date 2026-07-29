@@ -136,7 +136,19 @@ private theorem not_injOn_moebius_sq_moebius {a b : ℂ} (hb1 : ‖b‖ < 1) :
       (mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one hb1 hu') hcollide)
   norm_num at this
 
-/-- **The Möbius-conjugated square map is a differentiable self-map of the disc.** -/
+/-- **Post-composing a disc-valued holomorphic map with a Möbius factor keeps it holomorphic.** -/
+private theorem differentiableOn_moebius_comp {U : Set ℂ} {h : ℂ → ℂ} {b : ℂ} (hb1 : ‖b‖ < 1)
+    (hhd : DifferentiableOn ℂ h U) (hhmem : ∀ z ∈ U, h z ∈ ball (0 : ℂ) 1) :
+    DifferentiableOn ℂ (fun z => moebius b (h z)) U :=
+  (differentiableOn_unitDiscMoebiusFormula_of_norm_lt_one hb1).comp hhd hhmem
+
+/-- **…and keeps it disc-valued.** -/
+private theorem mapsTo_moebius_comp {U : Set ℂ} {h : ℂ → ℂ} {b : ℂ} (hb1 : ‖b‖ < 1)
+    (hhmem : ∀ z ∈ U, h z ∈ ball (0 : ℂ) 1) :
+    MapsTo (fun z => moebius b (h z)) U (ball (0 : ℂ) 1) :=
+  fun z hz => mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one hb1 (hhmem z hz)
+
+/-- **The Möbius-conjugated square map is differentiable on the disc.** -/
 private theorem differentiableOn_moebius_sq_moebius {a b : ℂ} (ha1 : ‖a‖ < 1) (hb1 : ‖b‖ < 1) :
     DifferentiableOn ℂ (fun w : ℂ => moebius a (moebius b w ^ 2)) (ball (0 : ℂ) 1) :=
   (differentiableOn_unitDiscMoebiusFormula_of_norm_lt_one ha1).comp
@@ -150,8 +162,8 @@ private theorem mapsTo_moebius_sq_moebius {a b : ℂ} (ha1 : ‖a‖ < 1) (hb1 :
   fun _ hw => mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one ha1
     (sq_mem_ball_of_mem_ball (mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one hb1 hw))
 
-/-- **The Möbius-conjugated square map fixes the origin** exactly when the two centres are related
-by `b ^ 2 = -a`, which is how the square root of the Möbius factor is normalised. -/
+/-- **The Möbius-conjugated square map fixes the origin** when the two centres are related by
+`b ^ 2 = -a`, which is how the square root of the Möbius factor is normalised. -/
 private theorem moebius_sq_moebius_apply_zero {a b : ℂ} (hb2 : b ^ 2 = -a) :
     moebius (-a) (moebius (-b) 0 ^ 2) = 0 := by
   rw [moebius_apply_zero, neg_neg, hb2]
@@ -185,25 +197,24 @@ theorem exists_isPointedDiscInjectionOn_one_lt_norm_deriv {U : Set ℂ} (hUo : I
   -- A value of the disc omitted by `U`, and a holomorphic square root of the Möbius factor there.
   obtain ⟨a, haU, haU'⟩ := Set.exists_of_ssubset (hUd.ssubset_of_ne hUne)
   have ha1 : ‖a‖ < 1 := mem_ball_zero_iff.mp haU
-  have ha0 : a ≠ 0 := fun h => haU' (h ▸ hU₀)
   obtain ⟨h, hhd, hhsq⟩ := exists_differentiableOn_pow_eq hUc hUo
     ((differentiableOn_unitDiscMoebiusFormula_of_norm_lt_one ha1).mono hUd)
     (zero_notMem_image_moebius ha1 hUd haU') (n := 2) two_ne_zero
   have hhmem : ∀ z ∈ U, h z ∈ ball (0 : ℂ) 1 := fun z hz =>
     mem_ball_of_sq_eq_moebius ha1 (hUd hz) (hhsq hz : h z ^ 2 = _)
   set b : ℂ := h 0 with hb_def
-  have hb2 : b ^ 2 = -a := by simpa [moebius_apply_zero] using hhsq hU₀
+  have hb2 : b ^ 2 = -a := by rw [hb_def]; simpa [moebius_apply_zero] using hhsq hU₀
   have hb1 : ‖b‖ < 1 := mem_ball_zero_iff.mp (hhmem 0 hU₀)
   -- The improved map, and the automorphism-square-automorphism that inverts it.
   set f : ℂ → ℂ := fun z => moebius b (h z) with hf_def
   set G : ℂ → ℂ := fun w => moebius (-a) (moebius (-b) w ^ 2) with hG_def
   have hna : ‖-a‖ < 1 := by rwa [norm_neg]
   have hnb : ‖-b‖ < 1 := by rwa [norm_neg]
-  have hfd : DifferentiableOn ℂ f U :=
-    (differentiableOn_unitDiscMoebiusFormula_of_norm_lt_one hb1).comp hhd hhmem
-  have hfm : MapsTo f U (ball (0 : ℂ) 1) := fun z hz =>
-    mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one hb1 (hhmem z hz)
-  have hf0 : f 0 = 0 := moebius_self b
+  have hfd : DifferentiableOn ℂ f U := by
+    rw [hf_def]; exact differentiableOn_moebius_comp hb1 hhd hhmem
+  have hfm : MapsTo f U (ball (0 : ℂ) 1) := by
+    rw [hf_def]; exact mapsTo_moebius_comp hb1 hhmem
+  have hf0 : f 0 = 0 := by rw [hf_def]; exact moebius_self b
   -- `G` inverts `f` on `U`, by pure algebra.
   have hGf : LeftInvOn G f U := by
     intro z hz
@@ -213,15 +224,16 @@ theorem exists_isPointedDiscInjectionOn_one_lt_norm_deriv {U : Set ℂ} (hUo : I
     simp only [hG_def]
     rw [h1, h2]
     exact leftInvOn_unitDiscMoebiusFormula_of_norm_lt_one ha1 (hUd hz)
-  have hGd : DifferentiableOn ℂ G (ball (0 : ℂ) 1) :=
-    differentiableOn_moebius_sq_moebius hna hnb
-  have hGm : MapsTo G (ball (0 : ℂ) 1) (ball (0 : ℂ) 1) := mapsTo_moebius_sq_moebius hna hnb
-  have hG0 : G 0 = 0 := moebius_sq_moebius_apply_zero hb2
+  have hGd : DifferentiableOn ℂ G (ball (0 : ℂ) 1) := by
+    rw [hG_def]; exact differentiableOn_moebius_sq_moebius hna hnb
+  have hGm : MapsTo G (ball (0 : ℂ) 1) (ball (0 : ℂ) 1) := by
+    rw [hG_def]; exact mapsTo_moebius_sq_moebius hna hnb
+  have hG0 : G 0 = 0 := by rw [hG_def]; exact moebius_sq_moebius_apply_zero hb2
   -- The strict Schwarz lemma applies, since squaring destroys injectivity.
   have hGderiv : ‖deriv G 0‖ < 1 :=
     norm_deriv_lt_one_of_not_injOn one_pos hGd
       (by rw [hG0]; exact hGm.mono_right ball_subset_closedBall)
-      (not_injOn_moebius_sq_moebius hb1)
+      (by rw [hG_def]; exact not_injOn_moebius_sq_moebius hb1)
   -- Differentiating `G ∘ f = id` at the origin then forces `1 < ‖deriv f 0‖`.
   have hnorm : ‖deriv G 0‖ * ‖deriv f 0‖ = 1 := by
     rw [← norm_mul,
