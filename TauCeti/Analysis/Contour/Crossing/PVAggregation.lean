@@ -269,15 +269,18 @@ private theorem windowPieceSum_eq_sum_intervalGapsWithin {p : ℝ → ℝ → �
 /-- **The window aggregation telescopes to the endpoint difference.** Reading the pieces as the
 gaps of the window finset `F = {(t - r, t + r) : t ∈ crossings}` inside `[a, b]`, this is exactly
 `Finset.sum_intervalGapsWithin_add_sum_eq_sub` for `g = Φ ∘ γ`. -/
-private theorem windowPieceSum_boundary {γ : ℝ → ℂ} {Φ : ℂ → ℂ} {a b r : ℝ} {k : ℕ}
-    {crossings : Finset ℝ} (hc : crossings.card = k)
-    {F : Finset (ℝ × ℝ)} (hFdef : F = crossings.image fun t : ℝ => (t - r, t + r))
-    (hF : F.card = k) :
+private theorem windowPieceSum_boundary {γ : ℝ → ℂ} {Φ : ℂ → ℂ} {a b r : ℝ}
+    {crossings : Finset ℝ} :
     windowPieceSum r (fun l u => Φ (γ u) - Φ (γ l))
         (fun t => Φ (γ (t + r)) - Φ (γ (t - r))) b (crossings.sort (· ≤ ·)) a
       = Φ (γ b) - Φ (γ a) := by
+  set k := crossings.card with hc
+  set F := crossings.image fun t : ℝ => (t - r, t + r) with hFdef
+  have hF : F.card = k := Finset.card_image_of_injective _ fun x y hxy => by
+    have : x - r = y - r := congrArg Prod.fst hxy
+    linarith
   have hbridge := windowPieceSum_eq_sum_intervalGapsWithin (p := fun l u => Φ (γ u) - Φ (γ l))
-    (w := fun t => Φ (γ (t + r)) - Φ (γ (t - r))) (b := b) (a := a) hc hFdef hF k 0
+    (w := fun t => Φ (γ (t + r)) - Φ (γ (t - r))) (b := b) (a := a) hc.symm hFdef hF k 0
     (by simp) (Nat.zero_le k)
   rw [List.drop_zero, Nat.cast_zero, Finset.intervalGapsWithin_zero_fst] at hbridge
   rw [hbridge]
@@ -340,11 +343,7 @@ theorem hasCauchyPVAt_of_perWindow_boundary_tendsto_of_interiorDisjoint {γ : �
       exact hasCauchyPVAt_iff.mpr ⟨eventually_intervalIntegrable_truncated_window hab
         (h_lo t h_mem) (h_hi t h_mem) (hr_nonneg ⟨t, h_mem⟩) h_int_tr, h_win t h_mem⟩)
     (fun u hu h_avoid => hm u hu fun t ht => h_avoid t ((Finset.mem_sort _).mpr ht))
-  have hF : (crossings.image fun t : ℝ => (t - r, t + r)).card = crossings.card :=
-    Finset.card_image_of_injective _ fun x y hxy => by
-      have : x - r = y - r := congrArg Prod.fst hxy
-      linarith
-  rwa [windowPieceSum_boundary rfl rfl hF] at h
+  rwa [windowPieceSum_boundary] at h
 
 /-- **Compatibility form of `cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint`** with
 windows strictly separated from each other and starting strictly after `a`; the right edges may
