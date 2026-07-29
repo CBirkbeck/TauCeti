@@ -63,7 +63,7 @@ private theorem dist_toLp_sq_eq_integral_sq {μ : Measure Ω} {g h : Ω → ℝ}
 
 /-- Bound the `L²` distance from a block average to a longer disjoint block average. -/
 private theorem dist_blockAverage_toLp_le_of_disjoint {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y)
+    [IsFiniteMeasure μ] {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y)
     (hY_L2 : ∀ i, MemLp (Y i) 2 μ)
     (hD : 0 ≤ Var[Y 0; μ] - cov[Y 0, Y 1; μ]) {n l : ℕ}
     (hn : 0 < n) (hl : 0 < l) {k : Fin n → ℕ} {k₀ : Fin l → ℕ}
@@ -115,7 +115,7 @@ private theorem dist_blockAverage_toLp_le_of_disjoint {μ : Measure Ω}
 
 /-- Compare two block averages in `L²` through a longer block disjoint from both. -/
 private theorem dist_blockAverages_toLp_le_via_disjoint {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y)
+    [IsFiniteMeasure μ] {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y)
     (hY_L2 : ∀ i, MemLp (Y i) 2 μ)
     (hD : 0 ≤ Var[Y 0; μ] - cov[Y 0, Y 1; μ]) {n m l : ℕ}
     (hn : 0 < n) (hm : 0 < m) (hl : 0 < l)
@@ -165,7 +165,7 @@ private theorem zero_le_variance_sub_covariance_of_contractable {μ : Measure Ω
 
 /-- The prefix block averages of a contractable `L²` sequence are Cauchy in `L²`: any two are
 compared through a fresh block lying beyond both. -/
-private theorem cauchySeq_blockAverage_prefix_toLp {μ : Measure Ω} [IsProbabilityMeasure μ]
+private theorem cauchySeq_blockAverage_prefix_toLp {μ : Measure Ω} [IsFiniteMeasure μ]
     {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y) (hY_L2 : ∀ i, MemLp (Y i) 2 μ) :
     CauchySeq fun m : ℕ =>
       (memLp_blockAverage (fun i : Fin (m + 1) => (i : ℕ)) fun i => hY_L2 i).toLp
@@ -208,7 +208,7 @@ private theorem cauchySeq_blockAverage_prefix_toLp {μ : Measure Ω} [IsProbabil
 /-- Every fixed-start window approaches the prefix of the same length in `L²`, by comparing both
 through a block lying beyond them. -/
 private theorem tendsto_dist_blockAverage_window_prefix_toLp {μ : Measure Ω}
-    [IsProbabilityMeasure μ] {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y)
+    [IsFiniteMeasure μ] {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y)
     (hY_L2 : ∀ i, MemLp (Y i) 2 μ) (r : ℕ) :
     Tendsto (fun m : ℕ =>
         dist ((memLp_blockAverage (fun j : Fin (m + 1) => r + j) fun j => hY_L2 (r + j)).toLp
