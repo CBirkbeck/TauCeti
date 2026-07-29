@@ -215,6 +215,26 @@ def isoOfLinearEquiv {M N : FGComoduleCat.{u, v, w} R C} (e : M ≃ₗ[R] N)
   (ComoduleCat.isFG (R := R) (C := C)).isoMk
     (ComoduleCat.isoOfLinearEquiv (R := R) (C := C) e h)
 
+/-- The forward morphism of `FGComoduleCat.isoOfLinearEquiv` has the original linear equivalence
+underneath. -/
+@[simp]
+theorem isoOfLinearEquiv_hom_toLinearMap {M N : FGComoduleCat.{u, v, w} R C} (e : M ≃ₗ[R] N)
+    (h : TensorProduct.map e.toLinearMap LinearMap.id ∘ₗ
+        Comodule.coact (R := R) (C := C) (M := M) =
+      Comodule.coact (R := R) (C := C) (M := N) ∘ₗ e.toLinearMap) :
+    (isoOfLinearEquiv e h).hom.hom.toLinearMap = e.toLinearMap :=
+  rfl
+
+/-- The inverse morphism of `FGComoduleCat.isoOfLinearEquiv` has the inverse linear equivalence
+underneath. -/
+@[simp]
+theorem isoOfLinearEquiv_inv_toLinearMap {M N : FGComoduleCat.{u, v, w} R C} (e : M ≃ₗ[R] N)
+    (h : TensorProduct.map e.toLinearMap LinearMap.id ∘ₗ
+        Comodule.coact (R := R) (C := C) (M := M) =
+      Comodule.coact (R := R) (C := C) (M := N) ∘ₗ e.toLinearMap) :
+    (isoOfLinearEquiv e h).inv.hom.toLinearMap = e.symm.toLinearMap :=
+  rfl
+
 /-- The forward map of `FGComoduleCat.isoOfLinearEquiv` is the given linear equivalence. -/
 @[simp]
 theorem isoOfLinearEquiv_hom_apply {M N : FGComoduleCat.{u, v, w} R C} (e : M ≃ₗ[R] N)
