@@ -144,22 +144,19 @@ private theorem moebius_sq_moebius_apply_zero {a b : ℂ} (hb2 : b ^ 2 = -a) :
   exact moebius_self (-a)
 
 /-- **A left inverse with a contracting derivative forces an expanding one.** If `G` inverts `f` on
-a neighbourhood of `z₀`, both are differentiable at `z₀`, `f` fixes `z₀`, and `G` contracts there,
-then `f` expands there. This is the step that turns the strict Schwarz bound into the Koebe gain. -/
+a neighbourhood of `z₀`, `f` is differentiable at `z₀`, and `G` is differentiable and contracting at
+`f z₀`, then `f` expands at `z₀`. This turns the strict Schwarz bound into the Koebe gain. -/
 private theorem one_lt_norm_deriv_of_leftInvOn {U : Set ℂ} {f G : ℂ → ℂ} {z₀ : ℂ}
-    (hU : U ∈ 𝓝 z₀) (hfd : DifferentiableAt ℂ f z₀) (hGd : DifferentiableAt ℂ G z₀)
-    (hGf : LeftInvOn G f U) (hf0 : f z₀ = z₀) (hG : ‖deriv G z₀‖ < 1) :
+    (hU : U ∈ 𝓝 z₀) (hfd : DifferentiableAt ℂ f z₀) (hGd : DifferentiableAt ℂ G (f z₀))
+    (hGf : LeftInvOn G f U) (hG : ‖deriv G (f z₀)‖ < 1) :
     1 < ‖deriv f z₀‖ := by
-  have hf_at : HasDerivAt f (deriv f z₀) z₀ := hfd.hasDerivAt
-  have hG_at : HasDerivAt G (deriv G z₀) (f z₀) := by
-    rw [hf0]
-    exact hGd.hasDerivAt
   have hev : (G ∘ f) =ᶠ[𝓝 z₀] id := by
     filter_upwards [hU] with z hz using hGf hz
-  have hmul : deriv G z₀ * deriv f z₀ = 1 :=
-    (hG_at.comp z₀ hf_at).unique ((hasDerivAt_id z₀).congr_of_eventuallyEq hev)
-  have hnorm : ‖deriv G z₀‖ * ‖deriv f z₀‖ = 1 := by rw [← norm_mul, hmul, norm_one]
-  nlinarith [norm_nonneg (deriv f z₀), norm_nonneg (deriv G z₀)]
+  have hmul : deriv G (f z₀) * deriv f z₀ = 1 :=
+    (hGd.hasDerivAt.comp z₀ hfd.hasDerivAt).unique
+      ((hasDerivAt_id z₀).congr_of_eventuallyEq hev)
+  have hnorm : ‖deriv G (f z₀)‖ * ‖deriv f z₀‖ = 1 := by rw [← norm_mul, hmul, norm_one]
+  nlinarith [norm_nonneg (deriv f z₀), norm_nonneg (deriv G (f z₀))]
 
 /-- **The Koebe gain.** If `f` is differentiable at the origin, fixes it, and is inverted on a
 neighbourhood `U` of the origin by the Möbius-conjugated square map with centres related by
@@ -189,7 +186,8 @@ private theorem one_lt_norm_deriv_of_moebius_leftInvOn {U : Set ℂ} {f : ℂ �
     exact ((mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one hna).comp hsq).mono_right
       ball_subset_closedBall
   exact one_lt_norm_deriv_of_leftInvOn hU hfd
-    (hGd.differentiableAt (isOpen_ball.mem_nhds (mem_ball_self one_pos))) hGf hf0 hGderiv
+    (by rw [hf0]; exact hGd.differentiableAt (isOpen_ball.mem_nhds (mem_ball_self one_pos)))
+    hGf (by rw [hf0]; exact hGderiv)
 
 /-- **A proper simply connected subdomain of the disc containing the origin expands.** If `U` is an
 open simply connected proper subset of the unit disc with `0 ∈ U`, then there is a holomorphic
