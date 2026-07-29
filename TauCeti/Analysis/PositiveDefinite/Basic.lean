@@ -223,7 +223,8 @@ theorem norm_apply_le_map_zero_re_of_add_star_eq_zero (hF : IsPositiveDefinite F
 -- `norm_apply_le_map_zero_re_of_add_star_eq_zero` is untagged for the same reason.
 /-- **A positive-definite function with `(F 0).re = 0` vanishes identically.**
 
-No hypothesis on the point is required, and none on the ambient structure beyond `AddMonoid`. -/
+No hypothesis on the point is required, and none on the ambient structure beyond an
+involutive additive monoid (`AddMonoid` and `StarAddMonoid`). -/
 theorem apply_eq_zero_of_map_zero_re_eq_zero (hF : IsPositiveDefinite F)
     (h0 : (F 0).re = 0) (a : M) : F a = 0 := by
   have hzero : F (0 + star 0) = 0 := by simpa [h0] using hF.map_zero_eq_ofReal_re
