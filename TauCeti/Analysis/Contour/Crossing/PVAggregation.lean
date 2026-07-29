@@ -56,7 +56,7 @@ open Filter MeasureTheory Set Topology
 `[a, b]`, by restriction. -/
 private theorem eventually_intervalIntegrable_truncated_window {γ : ℝ → ℂ} {s : ℂ}
     {g : ℂ → ℂ} {a b r t : ℝ} (hab : a ≤ b) (h_lo : a ≤ t - r) (h_hi : t + r ≤ b)
-    (hr_pos : 0 < r)
+    (hr_nonneg : 0 ≤ r)
     (h_int_tr : ∀ ε : ℝ, 0 < ε →
       IntervalIntegrable (fun u => if ‖γ u - s‖ > ε then g (γ u) * deriv γ u else 0)
         MeasureTheory.volume a b) :
@@ -97,7 +97,7 @@ window principal values `w t`, and between-piece principal values `p l u` availa
 intervals where the curve keeps distance `≥ m` from `s`, the principal value on `[a, b]` is
 the alternating sum `windowPieceSum`. Both public aggregation theorems instantiate this. -/
 private theorem hasCauchyPVAt_along_sorted {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
-    {p : ℝ → ℝ → ℂ} {w : ℝ → ℂ} {A b r m : ℝ} (hr_pos : 0 < r)
+    {p : ℝ → ℝ → ℂ} {w : ℝ → ℂ} {A b r m : ℝ} (hr_nonneg : 0 ≤ r)
     (h_piece : ∀ l u : ℝ, A ≤ l → l ≤ u → u ≤ b → (∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) →
       HasCauchyPVAt γ l u g s (p l u)) :
     ∀ (sorted : List ℝ), sorted.SortedLT →
@@ -151,7 +151,7 @@ positive distance from `s` off the windows, then the principal value at `s` exis
 `[a, b]`. The per-window limits are hypotheses, so both the simple-pole and higher-order
 per-window theorems discharge them. -/
 theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
-    {a b r : ℝ} (hr_pos : 0 < r) (hab : a ≤ b) (crossings : Finset ℝ)
+    {a b r : ℝ} (hr_nonneg : 0 ≤ r) (hab : a ≤ b) (crossings : Finset ℝ)
     (h_lo : ∀ t ∈ crossings, a ≤ t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
     (h_pair : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r ≤ |t - t'|)
     (h_int_tr : ∀ ε : ℝ, 0 < ε →
@@ -164,7 +164,7 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : 
     CauchyPVExistsAt γ a b g s := by
   classical
   obtain ⟨m, hm_pos, hm⟩ := h_far
-  refine CauchyPVExistsAt.intro (hasCauchyPVAt_along_sorted hr_pos
+  refine CauchyPVExistsAt.intro (hasCauchyPVAt_along_sorted hr_nonneg
     (p := fun l u => ∫ t in l..u, g (γ t) * deriv γ t)
     (w := fun t => if h : t ∈ crossings then (h_win t h).choose else 0)
     (fun l u hA hlu hu h_far' => hasCauchyPVAt_plain_piece hab hm_pos h_int_tr hA hlu hu h_far')
@@ -177,7 +177,7 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : 
     (fun u hu h_avoid => hm u hu fun t ht => h_avoid t ((Finset.mem_sort _).mpr ht)))
   have h_mem := (Finset.mem_sort (α := ℝ) (· ≤ ·)).mp ht
   refine hasCauchyPVAt_iff.mpr ⟨eventually_intervalIntegrable_truncated_window hab
-    (h_lo t h_mem) (h_hi t h_mem) hr_pos h_int_tr, ?_⟩
+    (h_lo t h_mem) (h_hi t h_mem) hr_nonneg h_int_tr, ?_⟩
   rw [dif_pos h_mem]
   exact (h_win t h_mem).choose_spec
 
@@ -197,7 +197,7 @@ private theorem windowPieceSum_boundary {γ : ℝ → ℂ} {Φ : ℂ → ℂ} {b
 principal value on `[a, b]` is `Φ (γ b) - Φ (γ a)` — in particular zero around a closed curve.
 The higher-order per-window limits have exactly this boundary-difference shape. -/
 theorem hasCauchyPVAt_of_perWindow_boundary_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
-    {Φ : ℂ → ℂ} {a b r : ℝ} (hr_pos : 0 < r) (hab : a ≤ b) (crossings : Finset ℝ)
+    {Φ : ℂ → ℂ} {a b r : ℝ} (hr_nonneg : 0 ≤ r) (hab : a ≤ b) (crossings : Finset ℝ)
     (h_lo : ∀ t ∈ crossings, a ≤ t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
     (h_pair : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r ≤ |t - t'|)
     (h_int_tr : ∀ ε : ℝ, 0 < ε →
@@ -213,7 +213,7 @@ theorem hasCauchyPVAt_of_perWindow_boundary_tendsto {γ : ℝ → ℂ} {s : ℂ}
     HasCauchyPVAt γ a b g s (Φ (γ b) - Φ (γ a)) := by
   classical
   obtain ⟨m, hm_pos, hm⟩ := h_far
-  have h := hasCauchyPVAt_along_sorted hr_pos
+  have h := hasCauchyPVAt_along_sorted hr_nonneg
     (p := fun l u => Φ (γ u) - Φ (γ l))
     (w := fun t => Φ (γ (t + r)) - Φ (γ (t - r)))
     (fun l u hA hlu hu h_far' => by
@@ -231,7 +231,7 @@ theorem hasCauchyPVAt_of_perWindow_boundary_tendsto {γ : ℝ → ℂ} {s : ℂ}
     (fun t ht => by
       have h_mem := (Finset.mem_sort (α := ℝ) (· ≤ ·)).mp ht
       exact hasCauchyPVAt_iff.mpr ⟨eventually_intervalIntegrable_truncated_window hab
-        (h_lo t h_mem) (h_hi t h_mem) hr_pos h_int_tr, h_win t h_mem⟩)
+        (h_lo t h_mem) (h_hi t h_mem) hr_nonneg h_int_tr, h_win t h_mem⟩)
     (fun u hu h_avoid => hm u hu fun t ht => h_avoid t ((Finset.mem_sort _).mpr ht))
   rwa [windowPieceSum_boundary] at h
 

@@ -161,7 +161,7 @@ theorem IsPwC1ImmersionOn.hasCauchyPVAt_pow_inv {γ : ℝ → ℂ} {a b : ℝ} {
   rcases T.eq_empty_or_nonempty with hT_empty | hT_ne
   · refine hasCauchyPVAt_of_perWindow_boundary_tendsto
       (Φ := fun z => c * (-(↑(k - 1) : ℂ)⁻¹ * ((z - s) ^ (k - 1))⁻¹))
-      one_pos hab.le T ?_ ?_ ?_ h_int_tr h_plain ?_
+      one_pos.le hab.le T ?_ ?_ ?_ h_int_tr h_plain ?_
       (exists_complement_windows_dist_lower_bound hγ_cont h_complete (fun _ => 1)
         fun t _ => one_pos)
     all_goals simp [hT_empty]
@@ -170,7 +170,7 @@ theorem IsPwC1ImmersionOn.hasCauchyPVAt_pow_inv {γ : ℝ → ℂ} {a b : ℝ} {
     have hρ_pos : 0 < r₀ / 2 := half_pos hr₀_pos
     refine hasCauchyPVAt_of_perWindow_boundary_tendsto
       (Φ := fun z => c * (-(↑(k - 1) : ℂ)⁻¹ * ((z - s) ^ (k - 1))⁻¹))
-      hρ_pos hab.le T
+      hρ_pos.le hab.le T
       (fun t ht => by linarith [(h_endpts t ht).1])
       (fun t ht => by linarith [(h_endpts t ht).2])
       (fun t ht t' ht' hne => by linarith [h_pair₀ t ht t' ht' hne])
