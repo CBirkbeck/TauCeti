@@ -161,13 +161,13 @@ private theorem one_lt_norm_deriv_of_leftInvOn {U : Set ℂ} {f G : ℂ → ℂ}
   have hnorm : ‖deriv G z₀‖ * ‖deriv f z₀‖ = 1 := by rw [← norm_mul, hmul, norm_one]
   nlinarith [norm_nonneg (deriv f z₀), norm_nonneg (deriv G z₀)]
 
-/-- **The Koebe gain.** If `f` is differentiable on the open `U ∋ 0`, fixes the origin, and is
-inverted on `U` by the Möbius-conjugated square map with centres related by `b ^ 2 = -a`, then `f`
-expands at the origin. The inverting map is a holomorphic self-map of the disc fixing `0` that
-squaring makes non-injective, so the strict Schwarz lemma contracts it and `f` must expand. -/
+/-- **The Koebe gain.** If `f` is differentiable at the origin, fixes it, and is inverted on a
+neighbourhood `U` of the origin by the Möbius-conjugated square map with centres related by
+`b ^ 2 = -a`, then `f` expands at the origin. The inverting map is a holomorphic self-map of the
+disc fixing `0` that squaring makes non-injective, so the strict Schwarz lemma contracts it. -/
 private theorem one_lt_norm_deriv_of_moebius_leftInvOn {U : Set ℂ} {f : ℂ → ℂ} {a b : ℂ}
-    (hUo : IsOpen U) (hU₀ : (0 : ℂ) ∈ U) (hb1 : ‖b‖ < 1) (hb2 : b ^ 2 = -a)
-    (hfd : DifferentiableOn ℂ f U) (hf0 : f 0 = 0)
+    (hU : U ∈ 𝓝 (0 : ℂ)) (hb1 : ‖b‖ < 1) (hb2 : b ^ 2 = -a)
+    (hfd : DifferentiableAt ℂ f 0) (hf0 : f 0 = 0)
     (hGf : LeftInvOn (fun w : ℂ => moebius (-a) (moebius (-b) w ^ 2)) f U) :
     1 < ‖deriv f 0‖ := by
   have ha1 : ‖a‖ < 1 := by
@@ -188,8 +188,7 @@ private theorem one_lt_norm_deriv_of_moebius_leftInvOn {U : Set ℂ} {f : ℂ �
     rw [moebius_sq_moebius_apply_zero hb2]
     exact ((mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one hna).comp hsq).mono_right
       ball_subset_closedBall
-  exact one_lt_norm_deriv_of_leftInvOn (hUo.mem_nhds hU₀)
-    (hfd.differentiableAt (hUo.mem_nhds hU₀))
+  exact one_lt_norm_deriv_of_leftInvOn hU hfd
     (hGd.differentiableAt (isOpen_ball.mem_nhds (mem_ball_self one_pos))) hGf hf0 hGderiv
 
 /-- **A proper simply connected subdomain of the disc containing the origin expands.** If `U` is an
@@ -234,7 +233,8 @@ theorem exists_isPointedDiscInjectionOn_one_lt_norm_deriv {U : Set ℂ} (hUo : I
     exact leftInvOn_unitDiscMoebiusFormula_of_norm_lt_one ha1 (hUd hz)
   -- The strict Schwarz lemma applied to `G` then forces `1 < ‖deriv f 0‖`.
   exact ⟨f, ⟨hfd, hfm, hGf.injOn, hf0⟩,
-    one_lt_norm_deriv_of_moebius_leftInvOn hUo hU₀ hb1 hb2 hfd hf0 (hG_def ▸ hGf)⟩
+    one_lt_norm_deriv_of_moebius_leftInvOn (hUo.mem_nhds hU₀) hb1 hb2
+      (hfd.differentiableAt (hUo.mem_nhds hU₀)) hf0 (hG_def ▸ hGf)⟩
 
 /-- **An extremal pointed disc injection is surjective onto the disc.** If `g` maximizes
 `‖deriv · z₀‖` over the holomorphic injections of `Ω` into the disc fixing `z₀`, then `g` omits no
