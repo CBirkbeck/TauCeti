@@ -292,8 +292,8 @@ private theorem windowPieceSum_boundary {γ : ℝ → ℂ} {Φ : ℂ → ℂ} {a
   rw [hbridge]
   have hsort : ∀ f : ℝ → ℂ,
       ((crossings.sort (· ≤ ·)).map f).sum = ∑ t ∈ crossings, f t := fun f => by
-    rw [Finset.sum_eq_multiset_sum, ← Finset.sort_eq crossings (· ≤ ·)]
-    rfl
+    rw [Finset.sum_eq_multiset_sum, ← Finset.sort_eq crossings (· ≤ ·), Multiset.map_coe,
+      Multiset.sum_coe]
   have hw : (((crossings.sort (· ≤ ·)).map fun t => Φ (γ (t + r)) - Φ (γ (t - r))).sum)
       = ∑ z ∈ F, ((Φ ∘ γ) z.2 - (Φ ∘ γ) z.1) := by
     rw [hsort, hFdef, Finset.sum_image (by
