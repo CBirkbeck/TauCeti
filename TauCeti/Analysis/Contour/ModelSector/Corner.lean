@@ -179,10 +179,11 @@ private theorem intervalIntegrable_deriv_twoRayCorner (z₀ u v : ℂ) (R : ℝ)
   · rw [if_neg (not_lt.mpr h)]
     exact le_max_right _ _
 
-/-- **The index principal value along a two-ray corner vanishes.** With the two rays of equal
+/-- **The index principal value along a two-ray corner vanishes.** For nonzero rays of equal
 length the excision `‖γ t - z₀‖ > ε` is the symmetric condition `|t| ‖v‖ > ε`, and the integrand is
 the odd function `1 / t` on both rays, so *every* truncated integral is `0` — not merely its limit.
--/
+Equal norms also permit `u = v = 0`, where the curve is constant at `z₀` and the integrand vanishes
+identically; that case is immediate. -/
 theorem hasCauchyPVAt_inv_sub_twoRayCorner {z₀ u v : ℂ} (huv : ‖u‖ = ‖v‖) (R : ℝ) :
     HasCauchyPVAt (twoRayCorner z₀ u v) (-R) R (fun z => (z - z₀)⁻¹) z₀ 0 := by
   rcases eq_or_ne u 0 with rfl | hu
