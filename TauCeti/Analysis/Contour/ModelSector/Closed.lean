@@ -27,7 +27,8 @@ traversed from the far end of one radius rather than from the corner.
 ## Main definitions
 
 * `TauCeti.Contour.modelSector` — the model sector, on `[-r, r + α]` with the corner at parameter
-  `0`; closed when `0 < r` and `0 ≤ α`.
+  `0`; closed when `0 ≤ r` and `0 ≤ α`. The winding number needs `0 < r`, so that the arc
+  avoids its centre.
 
 ## Main results
 
@@ -96,7 +97,7 @@ theorem modelSector_add (z₀ : ℂ) {r : ℝ} (hr : 0 ≤ r) (φ : ℝ) {α : �
   · rw [modelSector_of_lt (by linarith)]
     ring_nf
 
-/-- **The model sector is a closed curve** for `0 < r` and `0 ≤ α`. -/
+/-- **The model sector is a closed curve** for `0 ≤ r` and `0 ≤ α`. -/
 theorem modelSector_closed (z₀ : ℂ) {r : ℝ} (hr : 0 ≤ r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
     modelSector z₀ r φ α (-r) = modelSector z₀ r φ α (r + α) := by
   rw [modelSector_neg z₀ hr φ α, modelSector_add z₀ hr φ hα]

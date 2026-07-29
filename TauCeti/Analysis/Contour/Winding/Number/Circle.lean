@@ -43,6 +43,11 @@ across the whole disc, so its circle integral vanishes.
   winding number is `(2πi)⁻¹` times the ordinary Cauchy-kernel circle integral.
 * `TauCeti.Contour.windingNumber_circleMap_eq_one_of_dist_lt` — `n_w(circle) = 1` for any `w` inside
   the disc.
+* `TauCeti.Contour.indexIntegral_arc_interval` and `TauCeti.Contour.indexIntegral_arc` — the
+  normalized index integral of a circular arc about its centre, `(b − a) / 2π` and `α / 2π`, with
+  the specializations `windingNumber_at_i`, `windingNumber_at_rho` and `windingNumber_circle`.
+* `TauCeti.Contour.cauchyPVExistsAt_circleMap_comp_affine` — the index principal value of an
+  affinely reparametrised circle exists.
 * `TauCeti.Contour.windingNumber_circleMap_center` — an arc about its own centre has winding
   `(b − a) / 2π`, its angular extent, with the two specializations
   `TauCeti.Contour.windingNumber_circleMap_center_eq_one` (`n_c(circle) = 1`, over `[0, 2π]`) and
@@ -52,6 +57,13 @@ across the whole disc, so its circle integral vanishes.
 
 This is a Layer-1 acceptance criterion of the Hungerbühler–Wasem generalized residue theorem
 (HW Thm 3.3).
+
+## Provenance
+
+The arc index-integral material (`indexIntegral_arc_interval`, `indexIntegral_arc` and their
+specializations) was migrated and adapted from the AINTLIB `LeanModularForms` project
+(`ForMathlib/HungerbuhlerWasem/Crossing.lean`), specialised to the raw-function
+(`γ : ℝ → ℂ` on `[a, b]`) design of the contour-integration roadmap.
 
 ## References
 
