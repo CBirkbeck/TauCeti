@@ -136,18 +136,6 @@ private theorem not_injOn_moebius_sq_moebius {a b : ℂ} (hb1 : ‖b‖ < 1) :
       (mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one hb1 hu') hcollide)
   norm_num at this
 
-/-- **Post-composing a disc-valued holomorphic map with a Möbius factor keeps it holomorphic.** -/
-private theorem differentiableOn_moebius_comp {U : Set ℂ} {h : ℂ → ℂ} {b : ℂ} (hb1 : ‖b‖ < 1)
-    (hhd : DifferentiableOn ℂ h U) (hhmem : ∀ z ∈ U, h z ∈ ball (0 : ℂ) 1) :
-    DifferentiableOn ℂ (fun z => moebius b (h z)) U :=
-  (differentiableOn_unitDiscMoebiusFormula_of_norm_lt_one hb1).comp hhd hhmem
-
-/-- **…and keeps it disc-valued.** -/
-private theorem mapsTo_moebius_comp {U : Set ℂ} {h : ℂ → ℂ} {b : ℂ} (hb1 : ‖b‖ < 1)
-    (hhmem : ∀ z ∈ U, h z ∈ ball (0 : ℂ) 1) :
-    MapsTo (fun z => moebius b (h z)) U (ball (0 : ℂ) 1) :=
-  fun z hz => mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one hb1 (hhmem z hz)
-
 /-- **The Möbius-conjugated square map is differentiable on the disc.** -/
 private theorem differentiableOn_moebius_sq_moebius {a b : ℂ} (ha1 : ‖a‖ < 1) (hb1 : ‖b‖ < 1) :
     DifferentiableOn ℂ (fun w : ℂ => moebius a (moebius b w ^ 2)) (ball (0 : ℂ) 1) :=
@@ -169,21 +157,24 @@ private theorem moebius_sq_moebius_apply_zero {a b : ℂ} (hb2 : b ^ 2 = -a) :
   rw [moebius_apply_zero, neg_neg, hb2]
   exact moebius_self (-a)
 
-/-- **Differentiating a left inverse at a fixed point.** If `G` inverts `f` on an open `U`, both are
-differentiable, and `f` fixes `z₀ ∈ U`, then the two derivatives at `z₀` are reciprocal. -/
-private theorem deriv_mul_deriv_eq_one_of_leftInvOn {U V : Set ℂ} {f G : ℂ → ℂ} {z₀ : ℂ}
+/-- **A left inverse with a contracting derivative forces an expanding one.** If `G` inverts `f` on
+an open `U`, both are differentiable, `f` fixes `z₀ ∈ U`, and `G` contracts at `z₀`, then `f`
+expands there. This is the step that turns the strict Schwarz bound into the Koebe gain. -/
+private theorem one_lt_norm_deriv_of_leftInvOn {U V : Set ℂ} {f G : ℂ → ℂ} {z₀ : ℂ}
     (hUo : IsOpen U) (hz₀ : z₀ ∈ U) (hVo : IsOpen V) (hz₀V : z₀ ∈ V)
     (hfd : DifferentiableOn ℂ f U) (hGd : DifferentiableOn ℂ G V)
-    (hGf : LeftInvOn G f U) (hf0 : f z₀ = z₀) :
-    deriv G z₀ * deriv f z₀ = 1 := by
+    (hGf : LeftInvOn G f U) (hf0 : f z₀ = z₀) (hG : ‖deriv G z₀‖ < 1) :
+    1 < ‖deriv f z₀‖ := by
   have hf_at : HasDerivAt f (deriv f z₀) z₀ := (hfd.differentiableAt (hUo.mem_nhds hz₀)).hasDerivAt
   have hG_at : HasDerivAt G (deriv G z₀) (f z₀) := by
     rw [hf0]
     exact (hGd.differentiableAt (hVo.mem_nhds hz₀V)).hasDerivAt
-  have hcomp : HasDerivAt (G ∘ f) (deriv G z₀ * deriv f z₀) z₀ := hG_at.comp z₀ hf_at
   have hev : (G ∘ f) =ᶠ[𝓝 z₀] id := by
     filter_upwards [hUo.mem_nhds hz₀] with z hz using hGf hz
-  exact hcomp.unique ((hasDerivAt_id z₀).congr_of_eventuallyEq hev)
+  have hmul : deriv G z₀ * deriv f z₀ = 1 :=
+    (hG_at.comp z₀ hf_at).unique ((hasDerivAt_id z₀).congr_of_eventuallyEq hev)
+  have hnorm : ‖deriv G z₀‖ * ‖deriv f z₀‖ = 1 := by rw [← norm_mul, hmul, norm_one]
+  nlinarith [norm_nonneg (deriv f z₀), norm_nonneg (deriv G z₀)]
 
 /-- **A proper simply connected subdomain of the disc containing the origin expands.** If `U` is an
 open simply connected proper subset of the unit disc with `0 ∈ U`, then there is a holomorphic
@@ -204,22 +195,25 @@ theorem exists_isPointedDiscInjectionOn_one_lt_norm_deriv {U : Set ℂ} (hUo : I
     mem_ball_of_sq_eq_moebius ha1 (hUd hz) (hhsq hz : h z ^ 2 = _)
   set b : ℂ := h 0 with hb_def
   have hb2 : b ^ 2 = -a := by rw [hb_def]; simpa [moebius_apply_zero] using hhsq hU₀
-  have hb1 : ‖b‖ < 1 := mem_ball_zero_iff.mp (hhmem 0 hU₀)
+  have hb1 : ‖b‖ < 1 := by rw [hb_def]; exact mem_ball_zero_iff.mp (hhmem 0 hU₀)
   -- The improved map, and the automorphism-square-automorphism that inverts it.
   set f : ℂ → ℂ := fun z => moebius b (h z) with hf_def
   set G : ℂ → ℂ := fun w => moebius (-a) (moebius (-b) w ^ 2) with hG_def
   have hna : ‖-a‖ < 1 := by rwa [norm_neg]
   have hnb : ‖-b‖ < 1 := by rwa [norm_neg]
   have hfd : DifferentiableOn ℂ f U := by
-    rw [hf_def]; exact differentiableOn_moebius_comp hb1 hhd hhmem
+    rw [hf_def]
+    exact (differentiableOn_unitDiscMoebiusFormula_of_norm_lt_one hb1).comp hhd hhmem
   have hfm : MapsTo f U (ball (0 : ℂ) 1) := by
-    rw [hf_def]; exact mapsTo_moebius_comp hb1 hhmem
+    rw [hf_def]
+    exact fun z hz => mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one hb1 (hhmem z hz)
   have hf0 : f 0 = 0 := by rw [hf_def]; exact moebius_self b
   -- `G` inverts `f` on `U`, by pure algebra.
   have hGf : LeftInvOn G f U := by
     intro z hz
-    have h1 : moebius (-b) (f z) = h z :=
-      leftInvOn_unitDiscMoebiusFormula_of_norm_lt_one hb1 (hhmem z hz)
+    have h1 : moebius (-b) (f z) = h z := by
+      rw [hf_def]
+      exact leftInvOn_unitDiscMoebiusFormula_of_norm_lt_one hb1 (hhmem z hz)
     have h2 : h z ^ 2 = moebius a z := hhsq hz
     simp only [hG_def]
     rw [h1, h2]
@@ -235,13 +229,9 @@ theorem exists_isPointedDiscInjectionOn_one_lt_norm_deriv {U : Set ℂ} (hUo : I
       (by rw [hG0]; exact hGm.mono_right ball_subset_closedBall)
       (by rw [hG_def]; exact not_injOn_moebius_sq_moebius hb1)
   -- Differentiating `G ∘ f = id` at the origin then forces `1 < ‖deriv f 0‖`.
-  have hnorm : ‖deriv G 0‖ * ‖deriv f 0‖ = 1 := by
-    rw [← norm_mul,
-      deriv_mul_deriv_eq_one_of_leftInvOn hUo hU₀ isOpen_ball (mem_ball_self one_pos) hfd hGd
-        hGf hf0,
-      norm_one]
   exact ⟨f, ⟨hfd, hfm, hGf.injOn, hf0⟩,
-    by nlinarith [norm_nonneg (deriv f 0), norm_nonneg (deriv G 0)]⟩
+    one_lt_norm_deriv_of_leftInvOn hUo hU₀ isOpen_ball (mem_ball_self one_pos) hfd hGd hGf hf0
+      hGderiv⟩
 
 /-- **An extremal pointed disc injection is surjective onto the disc.** If `g` maximizes
 `‖deriv · z₀‖` over the holomorphic injections of `Ω` into the disc fixing `z₀`, then `g` omits no
