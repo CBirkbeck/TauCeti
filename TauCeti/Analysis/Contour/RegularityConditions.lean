@@ -62,10 +62,11 @@ pole — and that it meet each `s` only finitely often. Condition (B) governs po
 * `crossingAngle_eq_of_tendsto` / `basepointAngle_eq_of_tendsto` — the characteristic equations,
   evaluating each angle from one-sided `Tendsto` hypotheses on `deriv γ`. Downstream files cannot
   unfold the definitions (their bodies are not exposed), so these are the intended entry points.
-* `coe_crossingAngle_eq_boundaryArg_sub` — the crossing angle, read in `Real.Angle`, is exactly
-  what the two boundary arguments of a crossing window carry beyond the argument swept between
-  the window endpoints. This is the geometric identification the per-window principal value
-  (`perWindow_truncated_integral_tendsto`) needs, and the `Real.Angle` form is the exact one:
+* `coe_crossingAngle_eq_arg_neg_div_add_arg_div_sub_arg_div` — the crossing angle, read in
+  `Real.Angle`, is exactly what the two boundary arguments of a crossing window carry beyond the
+  argument swept between the window endpoints. This is the geometric identification the per-window
+  principal value (`perWindow_truncated_integral_tendsto`) needs, and the `Real.Angle` form is the
+  exact one:
   `Complex.arg` is additive only mod `2π`.
 
 Both conditions read the on-curve pole orders of `f` from `meromorphicOrderAt`. Condition (B) needs
@@ -200,8 +201,8 @@ a term depending only on the window endpoints. Nothing in the proof uses that re
 The equation is between `Real.Angle`s. That is not a weakening for convenience but the exact
 statement: `Complex.arg` is additive only mod `2π`, and `crossingAngle` is itself a `toIcoMod`
 normalization, so no `ℝ`-valued form is available without pinning a branch. -/
-theorem coe_crossingAngle_eq_boundaryArg_sub {γ : ℝ → ℂ} {t₀ : ℝ} {L_R L_L w_L w_R : ℂ}
-    (hL_L : L_L ≠ 0) (hL_R : L_R ≠ 0) (hw_L : w_L ≠ 0) (hw_R : w_R ≠ 0)
+theorem coe_crossingAngle_eq_arg_neg_div_add_arg_div_sub_arg_div {γ : ℝ → ℂ} {t₀ : ℝ}
+    {L_R L_L w_L w_R : ℂ} (hL_L : L_L ≠ 0) (hL_R : L_R ≠ 0) (hw_L : w_L ≠ 0) (hw_R : w_R ≠ 0)
     (h_R : Filter.Tendsto (deriv γ) (𝓝[>] t₀) (𝓝 L_R))
     (h_L : Filter.Tendsto (deriv γ) (𝓝[<] t₀) (𝓝 L_L)) :
     (crossingAngle γ t₀ : Real.Angle)
