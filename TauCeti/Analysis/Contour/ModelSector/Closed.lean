@@ -120,24 +120,23 @@ theorem windingNumber_modelSector {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ)
     (cauchyPVExistsAt_inv_sub_twoRayCorner (norm_modelSector_dirs φ α) r).congr_curve hcorner
   have hpv_arc : CauchyPVExistsAt (modelSector z₀ r φ α) r (r + α) (fun z => (z - z₀)⁻¹) z₀ := by
     refine CauchyPVExistsAt.congr_curve ?_ harc
-    refine cauchyPVExistsAt_of_avoidance ?_ (fun t _ => circleMap_ne_center hrne) ?_
-    · exact ((continuous_circleMap z₀ r).comp (by fun_prop)).continuousOn
-    · have hg : Continuous (circleMap z₀ r ∘ fun t : ℝ => 1 * t + (φ - r)) :=
-        (continuous_circleMap z₀ r).comp (by fun_prop)
-      have hdg : deriv (circleMap z₀ r ∘ fun t : ℝ => 1 * t + (φ - r))
-          = fun t => circleMap 0 r (1 * t + (φ - r)) * Complex.I := by
-        funext t
-        have hin : HasDerivAt (fun s : ℝ => 1 * s + (φ - r)) 1 t := by
-          simpa using (_root_.HasDerivAt.const_mul (1 : ℝ) (hasDerivAt_id t)).add_const (φ - r)
-        have := (hasDerivAt_circleMap z₀ r (1 * t + (φ - r))).scomp t hin
-        rw [one_smul] at this
-        exact this.deriv
-      apply ContinuousOn.intervalIntegrable
-      rw [hdg]
-      refine ContinuousOn.mul (ContinuousOn.inv₀ ?_ ?_) ?_
-      · exact (hg.sub continuous_const).continuousOn
-      · exact fun t _ => sub_ne_zero.mpr (circleMap_ne_center hrne)
-      · exact (((continuous_circleMap 0 r).comp (by fun_prop)).mul continuous_const).continuousOn
+    have hcont : ContinuousOn (circleMap z₀ r ∘ fun t : ℝ => 1 * t + (φ - r)) (uIcc r (r + α)) :=
+      ((continuous_circleMap z₀ r).comp (by fun_prop)).continuousOn
+    have hoff : ∀ t ∈ uIcc r (r + α),
+        (circleMap z₀ r ∘ fun t : ℝ => 1 * t + (φ - r)) t ≠ z₀ :=
+      fun _ _ => circleMap_ne_center hrne
+    have hderiv : ContinuousOn (deriv (circleMap z₀ r ∘ fun t : ℝ => 1 * t + (φ - r)))
+        (uIcc r (r + α)) := by
+      refine continuousOn_deriv_comp_reparam (φ' := fun _ => 1)
+        (fun s _ => by
+          simpa using (_root_.HasDerivAt.const_mul (1 : ℝ) (hasDerivAt_id s)).add_const (φ - r))
+        continuousOn_const (fun u _ => differentiable_circleMap z₀ r u) ?_
+      have hd : deriv (circleMap z₀ r) = fun θ => circleMap 0 r θ * Complex.I :=
+        funext fun θ => deriv_circleMap z₀ r θ
+      rw [hd]
+      exact ((continuous_circleMap 0 r).mul continuous_const).continuousOn
+    exact cauchyPVExistsAt_of_avoidance hcont hoff
+      (intervalIntegrable_inv_sub_mul_deriv hcont hoff hderiv.intervalIntegrable)
   rw [windingNumber_concat hpv_corner hpv_arc, ← windingNumber_congr_curve hcorner,
     ← windingNumber_congr_curve harc,
     windingNumber_eq_zero_twoRayCorner (norm_modelSector_dirs φ α) r,
