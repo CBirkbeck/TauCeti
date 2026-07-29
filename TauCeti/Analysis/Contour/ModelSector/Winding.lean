@@ -89,7 +89,7 @@ theorem indexIntegral_arc_interval {z₀ : ℂ} {r : ℝ} (hr : r ≠ 0) (a b : 
 @[deprecated (since := "2026-07-29")]
 alias windingNumber_modelSector_interval := indexIntegral_arc_interval
 
-/-- **The model-sector winding number** (Hungerbühler–Wasem (2.4)). The circular arc
+/-- **The normalized index integral of a circular arc** (Hungerbühler–Wasem (2.4)). The arc
 `γ θ = z₀ + r·e^{iθ}` about its centre `z₀`, traversed over `[0, α]`, has normalized index integral
 `(2πi)⁻¹ ∫_0^α (γ̇ / (γ − z₀)) dθ = α / 2π`: a counterclockwise arc of opening angle `α` contributes
 generalized winding number `α/2π`. The `α = π`, `α = π/3`, and `α = 2π` specializations are
@@ -101,6 +101,9 @@ theorem indexIntegral_arc {z₀ : ℂ} {r : ℝ} (hr : r ≠ 0) (α : ℝ) :
   rw [indexIntegral_arc_interval hr]
   push_cast
   ring
+
+@[deprecated (since := "2026-07-29")]
+alias windingNumber_modelSector := indexIntegral_arc
 
 /-- **The winding number `½` at `i`** — the coefficient of `ord_i(f)` in the valence formula. The
 semicircle (`[0, π]`) specialization of `indexIntegral_arc` (`π / 2π = ½`): `i` is a

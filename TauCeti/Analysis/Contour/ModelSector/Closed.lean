@@ -31,7 +31,8 @@ traversed from the far end of one radius rather than from the corner.
 
 ## Main results
 
-* `TauCeti.Contour.windingNumber_modelSector` — its winding number about `z₀` is `α / 2π`.
+* `TauCeti.Contour.windingNumber_modelSector_eq_div_two_pi` — its winding number about `z₀`
+  is `α / 2π`.
 * `TauCeti.Contour.windingNumber_modelSector_pi` and
   `TauCeti.Contour.windingNumber_modelSector_pi_div_three` — the `½` at a smooth crossing and the
   `1/6` at a `π/3` corner, the two values the valence formula consumes.
@@ -78,28 +79,30 @@ theorem modelSector_of_lt {z₀ : ℂ} {r φ α t : ℝ} (ht : r < t) :
     modelSector z₀ r φ α t = circleMap z₀ r (φ + (t - r)) := if_neg (not_le.mpr ht)
 
 /-- The model sector starts at the outer end of the incoming radius. -/
-theorem modelSector_neg (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ α : ℝ) :
+theorem modelSector_neg (z₀ : ℂ) {r : ℝ} (hr : 0 ≤ r) (φ α : ℝ) :
     modelSector z₀ r φ α (-r) = circleMap z₀ r (φ + α) := by
-  rw [modelSector_of_le (by linarith), twoRayCorner_of_neg (by linarith)]
-  simp [circleMap]
+  rcases eq_or_lt_of_le hr with rfl | hpos
+  · simp [neg_zero, circleMap]
+  · rw [modelSector_of_le (by linarith), twoRayCorner_of_neg (by linarith)]
+    simp [circleMap]
 
 /-- The model sector ends at the outer end of the incoming radius, the same point it started
 from. -/
-theorem modelSector_add (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
+theorem modelSector_add (z₀ : ℂ) {r : ℝ} (hr : 0 ≤ r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
     modelSector z₀ r φ α (r + α) = circleMap z₀ r (φ + α) := by
   rcases eq_or_lt_of_le hα with rfl | hpos
-  · rw [add_zero, modelSector_of_le le_rfl, twoRayCorner_of_nonneg hr.le]
+  · rw [add_zero, modelSector_of_le le_rfl, twoRayCorner_of_nonneg hr]
     simp [circleMap]
   · rw [modelSector_of_lt (by linarith)]
     ring_nf
 
 /-- **The model sector is a closed curve** for `0 < r` and `0 ≤ α`. -/
-theorem modelSector_closed (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
+theorem modelSector_closed (z₀ : ℂ) {r : ℝ} (hr : 0 ≤ r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
     modelSector z₀ r φ α (-r) = modelSector z₀ r φ α (r + α) := by
   rw [modelSector_neg z₀ hr φ α, modelSector_add z₀ hr φ hα]
 
 /-- On the corner interval the model sector is its two-ray corner. -/
-theorem modelSector_eqOn_corner (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ α : ℝ) :
+theorem modelSector_eqOn_corner (z₀ : ℂ) {r : ℝ} (hr : 0 ≤ r) (φ α : ℝ) :
     EqOn (twoRayCorner z₀ (Complex.exp ((φ + α : ℝ) * Complex.I))
         (Complex.exp ((φ : ℝ) * Complex.I))) (modelSector z₀ r φ α) (uIoo (-r) r) := by
   intro t ht
@@ -122,10 +125,11 @@ private theorem norm_modelSector_dirs (φ α : ℝ) :
 
 /-- **The model sector has winding number `α / 2π` about its corner** (Hungerbühler–Wasem (2.4)).
 The two radial segments contribute nothing and the arc contributes its opening angle. -/
-theorem windingNumber_modelSector {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
+theorem windingNumber_modelSector_eq_div_two_pi
+    {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
     windingNumber (modelSector z₀ r φ α) (-r) (r + α) z₀ = (α : ℂ) / (2 * (Real.pi : ℂ)) := by
   have hrne : r ≠ 0 := ne_of_gt hr
-  have hcorner := modelSector_eqOn_corner z₀ hr φ α
+  have hcorner := modelSector_eqOn_corner z₀ hr.le φ α
   have harc := modelSector_eqOn_arc z₀ r φ hα
   have hcirc_diff : ∀ u ∈ uIcc (1 * r + (φ - r)) (1 * (r + α) + (φ - r)),
       DifferentiableAt ℝ (circleMap z₀ r) u := fun u _ => differentiable_circleMap z₀ r u
@@ -171,7 +175,7 @@ the coefficient of `ord_i f` in the valence formula: at the smooth boundary poin
 indents by a semicircle. -/
 theorem windingNumber_modelSector_pi {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) :
     windingNumber (modelSector z₀ r φ Real.pi) (-r) (r + Real.pi) z₀ = 1 / 2 := by
-  rw [windingNumber_modelSector hr φ Real.pi_nonneg]
+  rw [windingNumber_modelSector_eq_div_two_pi hr φ Real.pi_nonneg]
   have hpi : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
   field_simp
 
@@ -180,7 +184,7 @@ such corners `ρ` and `ρ + 1` of the fundamental domain sum to the `1/3` coeffi
 `ord_ρ f`. -/
 theorem windingNumber_modelSector_pi_div_three {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) :
     windingNumber (modelSector z₀ r φ (Real.pi / 3)) (-r) (r + Real.pi / 3) z₀ = 1 / 6 := by
-  rw [windingNumber_modelSector hr φ (by positivity)]
+  rw [windingNumber_modelSector_eq_div_two_pi hr φ (by positivity)]
   have hpi : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
   push_cast
   field_simp
