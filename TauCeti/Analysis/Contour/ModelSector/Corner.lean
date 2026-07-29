@@ -54,12 +54,12 @@ namespace TauCeti.Contour
 open Filter MeasureTheory Set Topology
 
 /-- **The two-ray corner at `z₀`.** For `t < 0` the curve sits at distance `|t| ‖u‖` from `z₀`
-along `u`, and for `t ≥ 0` at distance `t ‖v‖` along `v`; it meets `z₀` at `t = 0`. When `u` and
-`v` are nonzero that is the only parameter at which it does; the degenerate `u = v = 0` curve is
-constant at `z₀`.
+along `u`, and for `t ≥ 0` at distance `t ‖v‖` along `v`; it meets `z₀` at `t = 0`. If both
+directions are nonzero that is the only such parameter; if one of them vanishes the corresponding
+ray is constant at `z₀`.
 
-On `[-R, R]` with `‖u‖ = ‖v‖` the two endpoints lie on the circle of radius `R ‖v‖` about `z₀`, so
-concatenating with the arc between them gives the Hungerbühler–Wasem model sector, parametrised
+On `[-R, R]` with `‖u‖ = ‖v‖` the two endpoints lie on the circle of radius `|R| ‖v‖` about `z₀`,
+so concatenating with the arc between them gives the Hungerbühler–Wasem model sector, parametrised
 from the far end of one radius rather than from the corner. For unequal norms it is simply a
 two-ray curve. -/
 def twoRayCorner (z₀ u v : ℂ) : ℝ → ℂ :=
