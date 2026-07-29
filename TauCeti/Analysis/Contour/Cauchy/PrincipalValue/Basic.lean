@@ -176,6 +176,24 @@ theorem HasCauchyPVAt.intro {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z�
     HasCauchyPVAt γ a b f z₀ L :=
   ⟨hint, htendsto⟩
 
+/-- **Away from the pole the principal value is the ordinary integral.** On an interval where the
+curve keeps distance `≥ m > 0` from `z₀`, every small enough truncation leaves the integrand
+untouched, so the principal value at `z₀` is the plain integral. Continuity of the curve is not
+needed — the distance bound and the eventual integrability carry both clauses. The endpoints
+are not assumed ordered; the bound is stated on `uIcc a b`. -/
+theorem hasCauchyPVAt_of_dist_lower_bound {γ : ℝ → ℂ} {z₀ : ℂ} {f : ℂ → ℂ}
+    {a b m : ℝ} (hm_pos : 0 < m)
+    (h_far : ∀ t ∈ Set.uIcc a b, m ≤ ‖γ t - z₀‖)
+    (h_int_tr : ∀ᶠ ε in 𝓝[>] (0 : ℝ), IntervalIntegrable
+      (fun t => if ‖γ t - z₀‖ > ε then f (γ t) * deriv γ t else 0) MeasureTheory.volume a b) :
+    HasCauchyPVAt γ a b f z₀ (∫ t in a..b, f (γ t) * deriv γ t) := by
+  have h_ev : (fun ε : ℝ => ∫ t in a..b, if ‖γ t - z₀‖ > ε then f (γ t) * deriv γ t else 0)
+      =ᶠ[𝓝[>] (0 : ℝ)] fun _ => ∫ t in a..b, f (γ t) * deriv γ t := by
+    filter_upwards [Ioo_mem_nhdsGT hm_pos] with ε hε
+    refine intervalIntegral.integral_congr fun t ht => ?_
+    rw [if_pos (lt_of_lt_of_le hε.2 (h_far t ht))]
+  exact HasCauchyPVAt.intro h_int_tr (Tendsto.congr' h_ev.symm tendsto_const_nhds)
+
 /-- The convergence clause of `HasCauchyPVAt`: the excised integrals tend to the value. -/
 theorem HasCauchyPVAt.tendsto {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ} {L : ℂ}
     (h : HasCauchyPVAt γ a b f z₀ L) :
