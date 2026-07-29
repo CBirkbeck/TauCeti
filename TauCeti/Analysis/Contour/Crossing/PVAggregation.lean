@@ -79,7 +79,7 @@ private theorem hasCauchyPVAt_plain_piece {γ : ℝ → ℂ} {s : ℂ} {g : ℂ 
     {l u : ℝ} (hA : a ≤ l) (hlu : l ≤ u) (hu : u ≤ b)
     (h_far : ∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) :
     HasCauchyPVAt γ l u g s (∫ t in l..u, g (γ t) * deriv γ t) :=
-  hasCauchyPVAt_of_dist_lower_bound hm_pos (by rwa [uIcc_of_le hlu]) <| by
+  HasCauchyPVAt.of_dist_lower_bound hm_pos (by rwa [uIcc_of_le hlu]) <| by
     filter_upwards [self_mem_nhdsWithin] with ε hε
     exact (h_int_tr ε hε).mono_set (by
       rw [uIcc_of_le hlu, uIcc_of_le hab]
