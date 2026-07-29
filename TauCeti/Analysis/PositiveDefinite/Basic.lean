@@ -217,6 +217,10 @@ theorem norm_apply_le_map_zero_re_of_add_star_eq_zero (hF : IsPositiveDefinite F
   refine le_of_sq_le_sq ?_ hF.map_zero_re_nonneg
   simpa [Complex.normSq_eq_norm_sq, pow_two, ha, star_zero] using hF.normSq_le a 0
 
+-- Not a `simp` lemma: the conclusion is `F a = 0` with `F` a variable, so the left-hand side has
+-- a variable head symbol. Lean rejects the tag outright ("the theorem will be tried on every simp
+-- step"), and `warningAsError` makes that a build failure. The sibling bound
+-- `norm_apply_le_map_zero_re_of_add_star_eq_zero` is untagged for the same reason.
 /-- **A positive-definite function with `(F 0).re = 0` vanishes at every skew point.**
 
 Stated pointwise in `a` and over an `AddMonoid`, so it also covers a group whose involution
