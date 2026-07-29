@@ -152,6 +152,17 @@ private theorem gram_three_add_star_re_eq (hF : IsPositiveDefinite F)
     simpa using congrArg conj h
   exact hF.gram_three_add_star_re_algebra hx hy hyx hnx hny hC hd hlam hCpos
 
+/-- **A positive-definite function with `(F 0).re = 0` vanishes at every skew element.**
+The bound `‖F x‖ ≤ (F 0).re` collapses to `‖F x‖ ≤ 0`.
+
+Stated pointwise in `x` and over an `AddMonoid`, so it also serves the group-level form where
+`star` negates globally. -/
+private theorem apply_eq_zero_of_map_zero_re_eq_zero (hF : IsPositiveDefinite F)
+    (h0 : (F 0).re = 0) {x : E} (hx : x + star x = 0) : F x = 0 := by
+  have hnorm : ‖F x‖ ≤ 0 := by
+    simpa [h0] using hF.norm_apply_le_map_zero_re_of_add_star_eq_zero x hx
+  exact norm_eq_zero.mp (le_antisymm hnorm (norm_nonneg _))
+
 /-- The local monoid-level real-part form of the standard positive-definite continuity estimate. -/
 theorem norm_sub_sq_le_two_mul_map_zero_re_mul_re_sub_of_add_star_eq_zero
     (hF : IsPositiveDefinite F)
@@ -159,15 +170,8 @@ theorem norm_sub_sq_le_two_mul_map_zero_re_mul_re_sub_of_add_star_eq_zero
     ‖F x - F y‖ ^ 2
       ≤ 2 * (F 0).re * ((F 0).re - (F (x + star y)).re) := by
   by_cases hC0 : (F 0).re = 0
-  · have hFx : F x = 0 := by
-      have hnorm : ‖F x‖ ≤ 0 := by
-        simpa [hC0] using hF.norm_apply_le_map_zero_re_of_add_star_eq_zero x hx
-      exact norm_eq_zero.mp (le_antisymm hnorm (norm_nonneg _))
-    have hFy : F y = 0 := by
-      have hnorm : ‖F y‖ ≤ 0 := by
-        simpa [hC0] using hF.norm_apply_le_map_zero_re_of_add_star_eq_zero y hy
-      exact norm_eq_zero.mp (le_antisymm hnorm (norm_nonneg _))
-    simp [hFx, hFy, hC0]
+  · simp [hF.apply_eq_zero_of_map_zero_re_eq_zero hC0 hx,
+      hF.apply_eq_zero_of_map_zero_re_eq_zero hC0 hy, hC0]
   have hCpos : 0 < (F 0).re := lt_of_le_of_ne hF.map_zero_re_nonneg (Ne.symm hC0)
   let C : ℂ := F 0
   let d : ℂ := F x - F y
@@ -222,10 +226,8 @@ section GroupAlgebra
 variable {E : Type*} [AddGroup E] [StarAddMonoid E] {F : E → ℂ}
 
 private theorem eq_zero_of_map_zero_re_eq_zero (hF : IsPositiveDefinite F)
-    (hstar : ∀ x : E, star x = -x) (h0 : (F 0).re = 0) (x : E) : F x = 0 := by
-  have hnorm : ‖F x‖ ≤ 0 := by
-    simpa [h0] using hF.norm_apply_le_map_zero_re_of_star_eq_neg x (hstar x)
-  exact norm_eq_zero.mp (le_antisymm hnorm (norm_nonneg _))
+    (hstar : ∀ x : E, star x = -x) (h0 : (F 0).re = 0) (x : E) : F x = 0 :=
+  hF.apply_eq_zero_of_map_zero_re_eq_zero h0 (by rw [hstar x, add_neg_cancel])
 
 /-- The local real-part form of the standard positive-definite continuity estimate. -/
 theorem norm_sub_sq_le_two_mul_map_zero_re_mul_re_sub_of_star_eq_neg
