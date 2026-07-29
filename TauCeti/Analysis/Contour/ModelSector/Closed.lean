@@ -13,10 +13,12 @@ public import TauCeti.Analysis.Contour.Winding.Number.Reparam
 /-!
 # The Hungerbühler–Wasem model sector
 
-For `0 < r` and `0 ≤ α`, the model sector of opening angle `α` at `z₀` is the closed curve made of
+For `0 ≤ r` and `0 ≤ α`, the model sector of opening angle `α` at `z₀` is the closed curve made of
 a radial segment into `z₀`, a circular arc of radius `r` sweeping `α`, and a radial segment back
-out. (The definition itself accepts any `r` and `α`; outside those bounds the two parameter
-intervals reverse and the description below does not apply.) Its generalized
+out. The geometry and closure hold for `0 ≤ r` and `0 ≤ α`, with `r = 0` and `α = 0` degenerate
+rather than ill-formed; only the winding number needs `0 < r`, so the arc avoids its centre. For
+negative `r` or `α` the two parameter intervals reverse and this description does not
+apply. Its generalized
 winding number about its own corner is `α / 2π` — the value HW (2.4) attaches to a corner of
 interior angle `α`, and the source of the `½` at a smooth crossing and the `1/6` at a `π/3` corner.
 
@@ -57,10 +59,11 @@ open Filter MeasureTheory Set Topology
 /-- **The Hungerbühler–Wasem model sector** of radius `r` and opening angle `α` at `z₀`, with the
 incoming radius at angle `φ + α` and the outgoing one at angle `φ`.
 
-For `0 < r` and `0 ≤ α`: on `[-r, r]` it is the two-ray corner through `z₀`, running from
+For `0 ≤ r` and `0 ≤ α`: on `[-r, r]` it is the two-ray corner through `z₀`, running from
 `z₀ + r e^{i(φ+α)}` in to `z₀` and back out to `z₀ + r e^{iφ}`; on `[r, r + α]` it is the arc of
-radius `r` from angle `φ` to `φ + α`, returning to the start. For other `r`, `α` the two intervals
-reverse and the branches no longer line up that way. -/
+radius `r` from angle `φ` to `φ + α`, returning to the start. At `r = 0` or `α = 0` the
+corresponding piece degenerates to a point. For negative `r` or `α` the two intervals reverse and
+the branches no longer line up that way. -/
 def modelSector (z₀ : ℂ) (r φ α : ℝ) : ℝ → ℂ :=
   fun t =>
     if t ≤ r then
