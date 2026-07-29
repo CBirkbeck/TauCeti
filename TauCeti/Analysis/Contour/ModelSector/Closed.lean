@@ -20,7 +20,9 @@ rather than ill-formed; only the winding number needs `0 < r`, so the arc avoids
 negative `r` or `α` the two parameter intervals reverse and this description does not
 apply. Its generalized
 winding number about its own corner is `α / 2π` — the value HW (2.4) attaches to a corner of
-interior angle `α`, and the source of the `½` at a smooth crossing and the `1/6` at a `π/3` corner.
+interior angle `α` **when `α < 2π`**, and the source of the `½` at a smooth crossing and the `1/6`
+at a `π/3` corner. For `α ≥ 2π` the arc wraps and the curve is a multi-turn swept arc rather than a
+sector, though the winding formula still holds.
 
 The two radial segments are packaged as a single `twoRayCorner`, since neither has a principal
 value on its own; the arc is a reparametrised `circleMap`. Concatenating them, the curve is
@@ -35,7 +37,9 @@ traversed from the far end of one radius rather than from the corner.
 ## Main results
 
 * `TauCeti.Contour.windingNumber_modelSector_eq_div_two_pi` — its winding number about `z₀`
-  is `α / 2π`.
+  is `α / 2π`, for every `0 ≤ α`.
+* `TauCeti.Contour.windingNumber_modelSector_of_lt_two_pi` — the same under `α < 2π`, where `α`
+  is genuinely an interior angle; this is the roadmap's acceptance criterion.
 * `TauCeti.Contour.windingNumber_modelSector_eq_half` and
   `TauCeti.Contour.windingNumber_modelSector_eq_one_div_six` — the `½` at a smooth crossing and the
   `1/6` at a `π/3` corner, the two values the valence formula consumes.
@@ -130,8 +134,13 @@ private theorem norm_modelSector_dirs (φ α : ℝ) :
     ‖Complex.exp ((φ + α : ℝ) * Complex.I)‖ = ‖Complex.exp ((φ : ℝ) * Complex.I)‖ := by
   rw [Complex.norm_exp_ofReal_mul_I, Complex.norm_exp_ofReal_mul_I]
 
-/-- **The model sector has winding number `α / 2π` about its corner** (Hungerbühler–Wasem (2.4)).
-The two radial segments contribute nothing and the arc contributes its opening angle. -/
+/-- **The swept-arc curve has winding number `α / 2π` about its corner.** The two radial segments
+contribute nothing and the arc contributes its swept angle.
+
+This holds for every `0 ≤ α`. It is the Hungerbühler–Wasem model sector of *interior angle* `α`
+only when `α < 2π`; at `α ≥ 2π` the arc wraps — `α = 4π` traverses the circle twice, giving winding
+`2` — so the corner reading does not apply. The bounded interface is
+`windingNumber_modelSector_of_lt_two_pi`. -/
 @[simp]
 theorem windingNumber_modelSector_eq_div_two_pi
     {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
@@ -160,6 +169,15 @@ theorem windingNumber_modelSector_eq_div_two_pi
     windingNumber_circleMap_center hrne]
   push_cast
   ring
+
+/-- **The model sector of interior angle `α` has winding `α / 2π`** (Hungerbühler–Wasem (2.4)).
+This is the roadmap's acceptance criterion: a point at a corner of interior angle `α` has winding
+`α / 2π`. The bound `α < 2π` is what makes `α` an interior angle rather than a swept angle; the
+unrestricted statement is `windingNumber_modelSector_eq_div_two_pi`. -/
+theorem windingNumber_modelSector_of_lt_two_pi {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ}
+    (hα : 0 ≤ α) (_hα_lt : α < 2 * Real.pi) :
+    windingNumber (modelSector z₀ r φ α) (-r) (r + α) z₀ = (α : ℂ) / (2 * (Real.pi : ℂ)) :=
+  windingNumber_modelSector_eq_div_two_pi hr φ hα
 
 /-- **A smooth crossing contributes winding `½`** — the `α = π` model sector (HW (2.4)). This is
 the coefficient of `ord_i f` in the valence formula: at the smooth boundary point `i` the contour

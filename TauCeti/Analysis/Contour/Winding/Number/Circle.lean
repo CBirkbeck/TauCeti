@@ -106,9 +106,12 @@ alias windingNumber_modelSector_interval := indexIntegral_arc_interval
 
 /-- **The normalized index integral of a circular arc** (Hungerbühler–Wasem (2.4)). The arc
 `γ θ = z₀ + r·e^{iθ}` about its centre `z₀`, traversed over `[0, α]`, has normalized index integral
-`(2πi)⁻¹ ∫_0^α (γ̇ / (γ − z₀)) dθ = α / 2π`: a counterclockwise arc of opening angle `α` contributes
-generalized winding number `α/2π`. The `α = π`, `α = π/3`, and `α = 2π` specializations are
-`windingNumber_circle`, and the valence-named values in `ModelSector/Winding.lean`. -/
+`(2πi)⁻¹ ∫_0^α (γ̇ / (γ − z₀)) dθ = α / 2π`: an arc of *signed* angular extent `α` contributes
+generalized winding number `α/2π`. For `0 ≤ α` the traversal is counterclockwise; for `α < 0`
+the interval `[0, α]` is reversed, the arc runs clockwise, and the contribution is negative.
+
+The `α = 2π` specialization is `windingNumber_circle`; the `α = π` and `α = π/3` values the valence
+formula names are `windingNumber_at_i` and `windingNumber_at_rho` in `ModelSector/Winding.lean`. -/
 theorem indexIntegral_arc {z₀ : ℂ} {r : ℝ} (hr : r ≠ 0) (α : ℝ) :
     (2 * (Real.pi : ℂ) * Complex.I)⁻¹ *
         ∫ θ in (0 : ℝ)..α, deriv (circleMap z₀ r) θ / (circleMap z₀ r θ - z₀)
