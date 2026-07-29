@@ -6,7 +6,6 @@ Authors: Tau Ceti contributors
 module
 
 public import TauCeti.Analysis.Contour.ModelSector.Corner
-public import TauCeti.Analysis.Contour.ModelSector.Winding
 public import TauCeti.Analysis.Contour.Winding.Number.Circle
 public import TauCeti.Analysis.Contour.Winding.Number.Concat
 public import TauCeti.Analysis.Contour.Winding.Number.Reparam
@@ -14,8 +13,10 @@ public import TauCeti.Analysis.Contour.Winding.Number.Reparam
 /-!
 # The Hungerbühler–Wasem model sector
 
-The model sector of opening angle `α` at `z₀` is the closed curve made of a radial segment into
-`z₀`, a circular arc of radius `r` sweeping `α`, and a radial segment back out. Its generalized
+For `0 < r` and `0 ≤ α`, the model sector of opening angle `α` at `z₀` is the closed curve made of
+a radial segment into `z₀`, a circular arc of radius `r` sweeping `α`, and a radial segment back
+out. (The definition itself accepts any `r` and `α`; outside those bounds the two parameter
+intervals reverse and the description below does not apply.) Its generalized
 winding number about its own corner is `α / 2π` — the value HW (2.4) attaches to a corner of
 interior angle `α`, and the source of the `½` at a smooth crossing and the `1/6` at a `π/3` corner.
 
@@ -25,8 +26,8 @@ traversed from the far end of one radius rather than from the corner.
 
 ## Main definitions
 
-* `TauCeti.Contour.modelSector` — the closed model sector, on `[-r, r + α]` with the corner at
-  parameter `0`.
+* `TauCeti.Contour.modelSector` — the model sector, on `[-r, r + α]` with the corner at parameter
+  `0`; closed when `0 < r` and `0 ≤ α`.
 
 ## Main results
 
@@ -54,17 +55,30 @@ open Filter MeasureTheory Set Topology
 /-- **The Hungerbühler–Wasem model sector** of radius `r` and opening angle `α` at `z₀`, with the
 incoming radius at angle `φ + α` and the outgoing one at angle `φ`.
 
-On `[-r, r]` it is the two-ray corner through `z₀`, running from `z₀ + r e^{i(φ+α)}` in to `z₀` and
-back out to `z₀ + r e^{iφ}`; on `[r, r + α]` it is the arc of radius `r` from angle `φ` to `φ + α`,
-returning to the start. -/
+For `0 < r` and `0 ≤ α`: on `[-r, r]` it is the two-ray corner through `z₀`, running from
+`z₀ + r e^{i(φ+α)}` in to `z₀` and back out to `z₀ + r e^{iφ}`; on `[r, r + α]` it is the arc of
+radius `r` from angle `φ` to `φ + α`, returning to the start. For other `r`, `α` the two intervals
+reverse and the branches no longer line up that way. -/
 def modelSector (z₀ : ℂ) (r φ α : ℝ) : ℝ → ℂ :=
   fun t =>
     if t ≤ r then
       twoRayCorner z₀ (Complex.exp ((φ + α : ℝ) * Complex.I)) (Complex.exp ((φ : ℝ) * Complex.I)) t
     else circleMap z₀ r (φ + (t - r))
 
+/-- Pointwise value of the model sector on the corner interval. -/
+@[simp]
+theorem modelSector_of_le {z₀ : ℂ} {r φ α t : ℝ} (ht : t ≤ r) :
+    modelSector z₀ r φ α t =
+      twoRayCorner z₀ (Complex.exp ((φ + α : ℝ) * Complex.I))
+        (Complex.exp ((φ : ℝ) * Complex.I)) t := if_pos ht
+
+/-- Pointwise value of the model sector on the arc interval. -/
+@[simp]
+theorem modelSector_of_lt {z₀ : ℂ} {r φ α t : ℝ} (ht : r < t) :
+    modelSector z₀ r φ α t = circleMap z₀ r (φ + (t - r)) := if_neg (not_le.mpr ht)
+
 /-- On the corner interval the model sector is its two-ray corner. -/
-private theorem modelSector_eqOn_corner (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ α : ℝ) :
+theorem modelSector_eqOn_corner (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ α : ℝ) :
     EqOn (twoRayCorner z₀ (Complex.exp ((φ + α : ℝ) * Complex.I))
         (Complex.exp ((φ : ℝ) * Complex.I))) (modelSector z₀ r φ α) (uIoo (-r) r) := by
   intro t ht
@@ -72,7 +86,7 @@ private theorem modelSector_eqOn_corner (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ 
   simp [modelSector, ht.2.le]
 
 /-- On the arc interval the model sector is the reparametrised circle map. -/
-private theorem modelSector_eqOn_arc (z₀ : ℂ) (r φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
+theorem modelSector_eqOn_arc (z₀ : ℂ) (r φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
     EqOn (circleMap z₀ r ∘ fun t => 1 * t + (φ - r)) (modelSector z₀ r φ α) (uIoo r (r + α)) := by
   intro t ht
   rw [Set.uIoo_of_le (by linarith), Set.mem_Ioo] at ht
