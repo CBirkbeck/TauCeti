@@ -253,13 +253,13 @@ private theorem tendsto_dist_blockAverage_window_prefix_toLp {μ : Measure Ω}
 absolute difference: the exponent comparison costs only the fixed factor `μ univ ^ (1 - 1/2)`. -/
 private theorem tendsto_integral_abs_sub_of_tendsto_eLpNorm_two {μ : Measure Ω}
     [IsFiniteMeasure μ] {W : ℕ → Ω → ℝ} {a : Ω → ℝ}
-    (hWa_L2 : ∀ m, MemLp (W m - a) 2 μ)
+    (hWa_meas : ∀ m, AEStronglyMeasurable (W m - a) μ)
     (h : Tendsto (fun m => eLpNorm (W m - a) 2 μ) atTop (𝓝 0)) :
     Tendsto (fun m => ∫ ω, |W m ω - a ω| ∂μ) atTop (𝓝 0) := by
   have hW_L1 : Tendsto (fun m => eLpNorm (W m - a) 1 μ) atTop (𝓝 0) := by
     -- The exponent comparison costs a fixed finite factor, which the limit absorbs.
     have hbound := fun m => eLpNorm_le_eLpNorm_mul_rpow_measure_univ (p := 1) (q := 2)
-      one_le_two (hWa_L2 m).aestronglyMeasurable
+      one_le_two (hWa_meas m)
     refine tendsto_of_tendsto_of_tendsto_of_le_of_le' tendsto_const_nhds ?_
       (Eventually.of_forall fun _ => bot_le) (Eventually.of_forall hbound)
     simpa using ENNReal.Tendsto.mul_const h
@@ -270,7 +270,7 @@ private theorem tendsto_integral_abs_sub_of_tendsto_eLpNorm_two {μ : Measure Ω
   convert hreal using 1
   ext m
   simpa only [Pi.sub_apply, Real.norm_eq_abs, eLpNorm_one_eq_lintegral_enorm] using
-    (integral_norm_eq_lintegral_enorm (hWa_L2 m).aestronglyMeasurable)
+    (integral_norm_eq_lintegral_enorm (hWa_meas m))
 
 /-- A bounded measurable observable of a contractable process has fixed-start Cesàro averages
 converging in `L¹` to one common measurable limit.
@@ -321,7 +321,8 @@ theorem weighted_sums_converge_L1 {μ : Measure Ω} [IsProbabilityMeasure μ]
     simpa only [zero_add] using
       (tendsto_dist_blockAverage_window_prefix_toLp hY hY_L2 r).add
         (tendsto_iff_dist_tendsto_zero.mp ha₂)
-  refine tendsto_integral_abs_sub_of_tendsto_eLpNorm_two (fun m => (hW_L2 m).sub ha_L2) ?_
+  refine tendsto_integral_abs_sub_of_tendsto_eLpNorm_two
+    (fun m => ((hW_L2 m).sub ha_L2).aestronglyMeasurable) ?_
   rw [← Lp.tendsto_Lp_iff_tendsto_eLpNorm'' _ hW_L2 a ha_L2]
   simpa only [ha_toLp] using hW₂_tendsto
 
