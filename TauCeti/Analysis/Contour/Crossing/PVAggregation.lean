@@ -37,8 +37,10 @@ simple-pole and higher-order per-window theorems both discharge them.
   a closed curve.
 * `Contour.cauchyPVExistsAt_of_perWindow_tendsto` and
   `Contour.hasCauchyPVAt_of_perWindow_boundary_tendsto` — the strict special cases of those
-  two, for windows strictly separated and strictly inside `[a, b]`. They cannot express
-  touching windows; reach for the `_of_interiorDisjoint` forms above when that matters.
+  two, for windows strictly separated from each other and starting strictly after `a` — their
+  right edges may already reach `b`, since `h_hi` is `t + r ≤ b`. They cannot express windows
+  that touch each other or that start at `a`; reach for the `_of_interiorDisjoint` forms above
+  when either matters.
 
 ## Provenance
 
@@ -251,8 +253,9 @@ theorem hasCauchyPVAt_of_perWindow_boundary_tendsto_of_interiorDisjoint {γ : �
   rwa [windowPieceSum_boundary] at h
 
 /-- **Compatibility form of `cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint`** with
-strictly separated windows strictly inside `[a, b]`. Prefer the general form, which also admits
-windows that touch each other or the endpoints. -/
+windows strictly separated from each other and starting strictly after `a`; the right edges may
+equal `b`, since `h_hi` is `t + r ≤ b`. Prefer the general form, which additionally admits windows
+that touch each other or start at `a`. -/
 theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
     {a b r : ℝ} (hr_pos : 0 < r) (hab : a ≤ b) (crossings : Finset ℝ)
     (h_lo : ∀ t ∈ crossings, a < t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
@@ -270,7 +273,8 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : 
     h_int_tr h_win h_far
 
 /-- **Compatibility form of `hasCauchyPVAt_of_perWindow_boundary_tendsto_of_interiorDisjoint`**
-with strictly separated windows strictly inside `[a, b]`. Prefer the general form. -/
+with windows strictly separated from each other and starting strictly after `a`; the right edges
+may equal `b`. Prefer the general form. -/
 theorem hasCauchyPVAt_of_perWindow_boundary_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
     {Φ : ℂ → ℂ} {a b r : ℝ} (hr_pos : 0 < r) (hab : a ≤ b) (crossings : Finset ℝ)
     (h_lo : ∀ t ∈ crossings, a < t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
