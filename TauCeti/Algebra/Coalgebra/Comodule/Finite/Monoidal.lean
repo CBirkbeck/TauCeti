@@ -18,12 +18,15 @@ semiring with its trivial coaction.
 
 The associator and unitors are the usual tensor-product linear equivalences. Their
 compatibility with the diagonal coaction reduces on pure coaction tensors to associativity
-and the unit laws in the coefficient bialgebra. The coherence laws are then inherited from
-`SemimoduleCat` along the faithful forgetful functor.
+and the unit laws in the coefficient bialgebra; compatibility of the *inverse* maps is then
+automatic, and is supplied by `TauCeti.FGComoduleCat.isoOfLinearEquiv`. The coherence laws are
+inherited from `SemimoduleCat` along the faithful forgetful functor.
 
 ## Main declarations
 
 * `TauCeti.FGComoduleCat.tensorUnit`: the finitely generated trivial comodule on the base.
+* `TauCeti.FGComoduleCat.associator`, `TauCeti.FGComoduleCat.leftUnitor`, and
+  `TauCeti.FGComoduleCat.rightUnitor`: the coherence isomorphisms.
 * `MonoidalCategory (TauCeti.FGComoduleCat R C)`: the standard monoidal category structure.
 * `TauCeti.FGComoduleCat.tensorHom_tmul`: tensor products of morphisms on pure tensors.
 * `TauCeti.FGComoduleCat.leftUnitor_hom_apply`,
@@ -62,6 +65,73 @@ noncomputable abbrev tensorUnit : FGComoduleCat.{u, v, u} R C :=
   letI : Comodule R C R := Comodule.trivial (R := R) (C := C) (M := R)
   of (R := R) (C := C) R
 
+/-- The associator on finitely generated comodules: the associativity equivalence of tensor
+products, which intertwines the diagonal coactions because the coefficient multiplication is
+associative. -/
+noncomputable def associator (M N P : FGComoduleCat.{u, v, u} R C) :
+    tensor R C (tensor R C M N) P ≅ tensor R C M (tensor R C N P) :=
+  isoOfLinearEquiv (TensorProduct.assoc R M N P) <| by
+    -- The goal names the coactions of the bundled objects `tensor R C _ _`, but the coaction
+    -- lemmas below are stated for the underlying modules. The two agree definitionally, so
+    -- proving the unbundled form and closing with `exact` is what lets `simp` see through to
+    -- `Comodule.tensorCoact`, whose body the module system does not expose here.
+    have h : TensorProduct.map (TensorProduct.assoc R M N P).toLinearMap
+          (LinearMap.id : C →ₗ[R] C) ∘ₗ
+          Comodule.coact (R := R) (C := C) (M := (M ⊗[R] N) ⊗[R] P) =
+        Comodule.coact (R := R) (C := C) (M := M ⊗[R] (N ⊗[R] P)) ∘ₗ
+          (TensorProduct.assoc R M N P).toLinearMap := by
+      apply TensorProduct.ext_threefold
+      intro m n p
+      simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
+        TensorProduct.assoc_tmul, Comodule.tensor_coact, Comodule.tensorCoact_tmul]
+      exact Comodule.tensorCombine_assoc (R := R) (C := C)
+        (Comodule.coact (R := R) (C := C) (M := M) m)
+        (Comodule.coact (R := R) (C := C) (M := N) n)
+        (Comodule.coact (R := R) (C := C) (M := P) p)
+    exact h
+
+/-- The left unitor on finitely generated comodules: the equivalence `R ⊗ M ≃ M`, which
+intertwines the diagonal coactions because `1` is a left unit for the coefficient
+multiplication. -/
+noncomputable def leftUnitor (M : FGComoduleCat.{u, v, u} R C) :
+    tensor R C (tensorUnit R C) M ≅ M :=
+  letI : Comodule R C R := Comodule.trivial (R := R) (C := C) (M := R)
+  isoOfLinearEquiv (TensorProduct.lid R M) <| by
+    -- Unbundled restatement, as in `associator`.
+    have h : TensorProduct.map (TensorProduct.lid R M).toLinearMap
+          (LinearMap.id : C →ₗ[R] C) ∘ₗ Comodule.coact (R := R) (C := C) (M := R ⊗[R] M) =
+        Comodule.coact (R := R) (C := C) (M := M) ∘ₗ (TensorProduct.lid R M).toLinearMap := by
+      apply TensorProduct.ext'
+      intro r m
+      simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
+        TensorProduct.lid_tmul, Comodule.tensor_coact, Comodule.tensorCoact_tmul,
+        Comodule.trivial_coact_apply]
+      rw [map_smul]
+      exact Comodule.tensorCombine_lid (R := R) (C := C) r
+        (Comodule.coact (R := R) (C := C) (M := M) m)
+    exact h
+
+/-- The right unitor on finitely generated comodules: the equivalence `M ⊗ R ≃ M`, which
+intertwines the diagonal coactions because `1` is a right unit for the coefficient
+multiplication. -/
+noncomputable def rightUnitor (M : FGComoduleCat.{u, v, u} R C) :
+    tensor R C M (tensorUnit R C) ≅ M :=
+  letI : Comodule R C R := Comodule.trivial (R := R) (C := C) (M := R)
+  isoOfLinearEquiv (TensorProduct.rid R M) <| by
+    -- Unbundled restatement, as in `associator`.
+    have h : TensorProduct.map (TensorProduct.rid R M).toLinearMap
+          (LinearMap.id : C →ₗ[R] C) ∘ₗ Comodule.coact (R := R) (C := C) (M := M ⊗[R] R) =
+        Comodule.coact (R := R) (C := C) (M := M) ∘ₗ (TensorProduct.rid R M).toLinearMap := by
+      apply TensorProduct.ext'
+      intro m r
+      simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
+        TensorProduct.rid_tmul, Comodule.tensor_coact, Comodule.tensorCoact_tmul,
+        Comodule.trivial_coact_apply]
+      rw [map_smul]
+      exact Comodule.tensorCombine_rid (R := R) (C := C)
+        (Comodule.coact (R := R) (C := C) (M := M) m) r
+    exact h
+
 /-- The tensor product, trivial unit, associator, and unitors on finitely generated right
 comodules over a bialgebra. -/
 noncomputable instance instMonoidalCategoryStruct :
@@ -71,118 +141,9 @@ noncomputable instance instMonoidalCategoryStruct :
   whiskerRight f M := tensorMap f (𝟙 M)
   tensorHom := tensorMap
   tensorUnit := tensorUnit R C
-  associator M N P := {
-    hom :=
-      ofHom
-        { toLinearMap := (TensorProduct.assoc R M N P).toLinearMap
-          map_coact := by
-            apply TensorProduct.ext_threefold
-            intro m n p
-            simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
-              TensorProduct.assoc_tmul, Comodule.tensor_coact, Comodule.tensorCoact_tmul]
-            rw [Comodule.tensor_coact (R := R) (C := C) (M := M) (N := N),
-              Comodule.tensorCoact_tmul,
-              Comodule.tensor_coact (R := R) (C := C) (M := N) (N := P),
-              Comodule.tensorCoact_tmul]
-            exact Comodule.tensorCombine_assoc (R := R) (C := C)
-              (Comodule.coact (R := R) (C := C) (M := M) m)
-              (Comodule.coact (R := R) (C := C) (M := N) n)
-              (Comodule.coact (R := R) (C := C) (M := P) p) }
-    inv :=
-      ofHom
-        { toLinearMap := (TensorProduct.assoc R M N P).symm.toLinearMap
-          map_coact := by
-            apply TensorProduct.ext_threefold'
-            intro m n p
-            simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
-              TensorProduct.assoc_symm_tmul, Comodule.tensor_coact, Comodule.tensorCoact_tmul]
-            rw [Comodule.tensor_coact (R := R) (C := C) (M := N) (N := P),
-              Comodule.tensorCoact_tmul,
-              Comodule.tensor_coact (R := R) (C := C) (M := M) (N := N),
-              Comodule.tensorCoact_tmul]
-            exact Comodule.tensorCombine_assoc_symm (R := R) (C := C)
-              (Comodule.coact (R := R) (C := C) (M := M) m)
-              (Comodule.coact (R := R) (C := C) (M := N) n)
-              (Comodule.coact (R := R) (C := C) (M := P) p) }
-    hom_inv_id := by
-      apply ObjectProperty.hom_ext
-      apply ComoduleCat.hom_ext
-      exact (TensorProduct.assoc R M N P).symm_apply_apply
-    inv_hom_id := by
-      apply ObjectProperty.hom_ext
-      apply ComoduleCat.hom_ext
-      exact (TensorProduct.assoc R M N P).apply_symm_apply
-    }
-
-  leftUnitor M :=
-    letI : Comodule R C R := Comodule.trivial (R := R) (C := C) (M := R)
-    {
-    hom :=
-      ofHom
-        { toLinearMap := (TensorProduct.lid R M).toLinearMap
-          map_coact := by
-            apply TensorProduct.ext'
-            intro r m
-            simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
-              TensorProduct.lid_tmul, Comodule.tensor_coact, Comodule.tensorCoact_tmul,
-              Comodule.trivial_coact_apply]
-            rw [map_smul]
-            exact Comodule.tensorCombine_lid (R := R) (C := C) r
-              (Comodule.coact (R := R) (C := C) (M := M) m) }
-    inv :=
-      ofHom
-        { toLinearMap := (TensorProduct.lid R M).symm.toLinearMap
-          map_coact := by
-            ext m
-            simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
-              TensorProduct.lid_symm_apply, Comodule.tensor_coact, Comodule.tensorCoact_tmul,
-              Comodule.trivial_coact_apply]
-            exact (Comodule.tensorCombine_lid_symm (R := R) (C := C)
-              (Comodule.coact (R := R) (C := C) (M := M) m)).symm }
-    hom_inv_id := by
-      apply ObjectProperty.hom_ext
-      apply ComoduleCat.hom_ext
-      exact (TensorProduct.lid R M).symm_apply_apply
-    inv_hom_id := by
-      apply ObjectProperty.hom_ext
-      apply ComoduleCat.hom_ext
-      exact (TensorProduct.lid R M).apply_symm_apply
-    }
-
-  rightUnitor M :=
-    letI : Comodule R C R := Comodule.trivial (R := R) (C := C) (M := R)
-    {
-    hom :=
-      ofHom
-        { toLinearMap := (TensorProduct.rid R M).toLinearMap
-          map_coact := by
-            apply TensorProduct.ext'
-            intro m r
-            simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
-              TensorProduct.rid_tmul, Comodule.tensor_coact, Comodule.tensorCoact_tmul,
-              Comodule.trivial_coact_apply]
-            rw [map_smul]
-            exact Comodule.tensorCombine_rid (R := R) (C := C)
-              (Comodule.coact (R := R) (C := C) (M := M) m) r }
-    inv :=
-      ofHom
-        { toLinearMap := (TensorProduct.rid R M).symm.toLinearMap
-          map_coact := by
-            ext m
-            simp only [LinearMap.comp_apply, LinearEquiv.coe_coe,
-              TensorProduct.rid_symm_apply, Comodule.tensor_coact, Comodule.tensorCoact_tmul,
-              Comodule.trivial_coact_apply]
-            exact (Comodule.tensorCombine_rid_symm (R := R) (C := C)
-              (Comodule.coact (R := R) (C := C) (M := M) m)).symm }
-    hom_inv_id := by
-      apply ObjectProperty.hom_ext
-      apply ComoduleCat.hom_ext
-      exact (TensorProduct.rid R M).symm_apply_apply
-    inv_hom_id := by
-      apply ObjectProperty.hom_ext
-      apply ComoduleCat.hom_ext
-      exact (TensorProduct.rid R M).apply_symm_apply
-    }
+  associator := associator R C
+  leftUnitor := leftUnitor R C
+  rightUnitor := rightUnitor R C
 
 /-- Finitely generated right comodules over a bialgebra form a monoidal category under the
 diagonal tensor product. Over a field, these are precisely finite-dimensional comodules. -/
