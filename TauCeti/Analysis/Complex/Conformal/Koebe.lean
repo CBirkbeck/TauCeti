@@ -162,7 +162,7 @@ private theorem one_lt_norm_deriv_of_leftInvOn {U : Set ℂ} {f G : ℂ → ℂ}
 neighbourhood `U` of the origin by the Möbius-conjugated square map with centres related by
 `b ^ 2 = -a`, then `f` expands at the origin. The inverting map is a holomorphic self-map of the
 disc fixing `0` that squaring makes non-injective, so the strict Schwarz lemma contracts it. -/
-private theorem one_lt_norm_deriv_of_moebius_leftInvOn {U : Set ℂ} {f : ℂ → ℂ} {a b : ℂ}
+private theorem one_lt_norm_deriv_of_moebius_sq_moebius_leftInvOn {U : Set ℂ} {f : ℂ → ℂ} {a b : ℂ}
     (hU : U ∈ 𝓝 (0 : ℂ)) (hb1 : ‖b‖ < 1) (hb2 : b ^ 2 = -a)
     (hfd : DifferentiableAt ℂ f 0) (hf0 : f 0 = 0)
     (hGf : LeftInvOn (fun w : ℂ => moebius (-a) (moebius (-b) w ^ 2)) f U) :
@@ -231,7 +231,7 @@ theorem exists_isPointedDiscInjectionOn_one_lt_norm_deriv {U : Set ℂ} (hUo : I
     exact leftInvOn_unitDiscMoebiusFormula_of_norm_lt_one ha1 (hUd hz)
   -- The strict Schwarz lemma applied to `G` then forces `1 < ‖deriv f 0‖`.
   exact ⟨f, ⟨hfd, hfm, hGf.injOn, hf0⟩,
-    one_lt_norm_deriv_of_moebius_leftInvOn (hUo.mem_nhds hU₀) hb1 hb2
+    one_lt_norm_deriv_of_moebius_sq_moebius_leftInvOn (hUo.mem_nhds hU₀) hb1 hb2
       (hfd.differentiableAt (hUo.mem_nhds hU₀)) hf0 (hG_def ▸ hGf)⟩
 
 /-- **An extremal pointed disc injection is surjective onto the disc.** If `g` maximizes
