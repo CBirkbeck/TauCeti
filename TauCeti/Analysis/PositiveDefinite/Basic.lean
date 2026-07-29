@@ -226,9 +226,9 @@ theorem norm_apply_le_map_zero_re_of_add_star_eq_zero (hF : IsPositiveDefinite F
 No hypothesis on the point is required, and none on the ambient structure beyond `AddMonoid`. -/
 theorem apply_eq_zero_of_map_zero_re_eq_zero (hF : IsPositiveDefinite F)
     (h0 : (F 0).re = 0) (a : M) : F a = 0 := by
-  have h := hF.normSq_le a 0
-  simp only [star_zero, add_zero, h0, mul_zero] at h
-  exact Complex.normSq_eq_zero.mp (le_antisymm h (Complex.normSq_nonneg _))
+  have hzero : F (0 + star 0) = 0 := by simpa [h0] using hF.map_zero_eq_ofReal_re
+  simpa using isPositiveDefiniteKernel_eq_zero_of_apply_self_eq_zero_right
+    hF.isPositiveDefiniteKernel (a := a) (b := 0) hzero
 
 section Group
 
