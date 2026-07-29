@@ -197,33 +197,37 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint {γ : ℝ → 
   rw [dif_pos h_mem]
   exact (h_win t h_mem).choose_spec
 
--- The three helpers below keep `hF : F.card = k` as an explicit hypothesis even though it is
+-- The two helpers below keep `hF : F.card = k` as an explicit hypothesis even though it is
 -- derivable from `hc` and `hFdef`: it is not merely a side condition but an *argument* appearing
 -- in their conclusions, since `Finset.orderEmbOfFin` and `Finset.intervalGapsWithin` both take the
 -- cardinality proof explicitly. `windowPieceSum_boundary` below, whose conclusion mentions neither
 -- `F` nor `hF`, takes none of them and derives everything internally.
-/-- Lex-sorting the window pairs `(t - r, t + r)` agrees with sorting the crossings, because
-`t ↦ t - r` is strictly monotone and `Prod.Lex` compares first coordinates first. -/
-private theorem orderEmbOfFin_image_window {crossings : Finset ℝ} {r : ℝ} {k : ℕ}
-    (hc : crossings.card = k) {F : Finset (ℝ × ℝ)}
-    (hFdef : F = crossings.image fun t : ℝ => (t - r, t + r)) (hF : F.card = k) :
-    (fun i : Fin k =>
-        toLex (crossings.orderEmbOfFin hc i - r, crossings.orderEmbOfFin hc i + r))
-      = ⇑(Finset.orderEmbOfFin (α := ℝ ×ₗ ℝ) F hF) := by
-  refine Finset.orderEmbOfFin_unique (α := ℝ ×ₗ ℝ) hF (fun i => ?_) (fun i j hij => ?_)
-  · subst hFdef
-    exact Finset.mem_image_of_mem _ (Finset.orderEmbOfFin_mem crossings hc i)
-  · exact Prod.Lex.left _ _ (by simpa using (crossings.orderEmbOfFin hc).strictMono hij)
+/-- The window map `t ↦ (t - r, t + r)` into the lexicographic plane, as an order embedding:
+`Prod.Lex` compares first coordinates first and `t ↦ t - r` is strictly monotone. -/
+private def windowLexEmb (r : ℝ) : ℝ ↪o (ℝ ×ₗ ℝ) :=
+  OrderEmbedding.ofStrictMono (fun t => toLex (t - r, t + r))
+    fun _ _ h => Prod.Lex.left _ _ (by simpa using h)
 
-/-- The two edges of window `i`, read off the order embedding of the pair set. -/
+/-- The two edges of window `i`, read off the order embedding of the pair set.
+
+Sorting commutes with the strictly monotone window map — that is Mathlib's
+`StrictMonoOn.map_finsetSort` — so the `i`-th sorted pair is the `i`-th sorted crossing
+shifted by `±r`. -/
 private theorem orderEmbOfFin_window_fst_snd {crossings : Finset ℝ} {r : ℝ} {k : ℕ}
     (hc : crossings.card = k) {F : Finset (ℝ × ℝ)}
     (hFdef : F = crossings.image fun t : ℝ => (t - r, t + r)) (hF : F.card = k) (i : Fin k) :
     ((Finset.orderEmbOfFin (α := ℝ ×ₗ ℝ) F hF) i).1 = crossings.orderEmbOfFin hc i - r
       ∧ ((Finset.orderEmbOfFin (α := ℝ ×ₗ ℝ) F hF) i).2 = crossings.orderEmbOfFin hc i + r := by
-  rw [← orderEmbOfFin_image_window hc hFdef hF]
-  exact ⟨rfl, rfl⟩
-
+  have hFmap : crossings.map (windowLexEmb r).toEmbedding = F := by
+    rw [hFdef, Finset.map_eq_image]; rfl
+  have hmap : (crossings.sort (· ≤ ·)).map (windowLexEmb r).toEmbedding
+      = Finset.sort (α := ℝ ×ₗ ℝ) F := by
+    rw [← hFmap]
+    exact ((windowLexEmb r).strictMono.strictMonoOn _).map_finsetSort
+  have key : Finset.orderEmbOfFin (α := ℝ ×ₗ ℝ) F hF i
+      = windowLexEmb r (crossings.orderEmbOfFin hc i) := by
+    simp [Finset.orderEmbOfFin_apply, ← hmap]
+  exact ⟨congrArg Prod.fst key, congrArg Prod.snd key⟩
 
 /-- **The piece/window sum is Mathlib's interval-gap sum.** Along the suffix of the sorted
 crossings from index `j`, the aggregated value splits into the gap pieces from `j` onwards and the
