@@ -237,12 +237,21 @@ private theorem windowPieceSum_eq_sum_intervalGapsWithin_add_sum {p : ℝ → �
     {a b r : ℝ} {k : ℕ} {crossings : Finset ℝ} (hc : crossings.card = k)
     {F : Finset (ℝ × ℝ)} (hFdef : F = crossings.image fun t : ℝ => (t - r, t + r))
     (hF : F.card = k) :
-    ∀ n j : ℕ, k - j = n → j ≤ k →
+    ∀ j : ℕ, j ≤ k →
       windowPieceSum r p w b ((crossings.sort (· ≤ ·)).drop j)
           (F.intervalGapsWithin hF a b j).1
         = (∑ i ∈ Finset.Ico j (k + 1),
             p (F.intervalGapsWithin hF a b i).1 (F.intervalGapsWithin hF a b i).2)
           + (((crossings.sort (· ≤ ·)).drop j).map w).sum := by
+  -- the induction runs on the fuel `k - j`, an implementation detail of the recursion rather
+  -- than part of the statement, so it is introduced here instead of being exposed above
+  suffices h : ∀ n j : ℕ, k - j = n → j ≤ k →
+      windowPieceSum r p w b ((crossings.sort (· ≤ ·)).drop j)
+          (F.intervalGapsWithin hF a b j).1
+        = (∑ i ∈ Finset.Ico j (k + 1),
+            p (F.intervalGapsWithin hF a b i).1 (F.intervalGapsWithin hF a b i).2)
+          + (((crossings.sort (· ≤ ·)).drop j).map w).sum from
+    fun j hj => h (k - j) j rfl hj
   intro n
   induction n with
   | zero =>
@@ -290,8 +299,8 @@ private theorem windowPieceSum_boundary {γ : ℝ → ℂ} {Φ : ℂ → ℂ} {a
     linarith
   have hbridge := windowPieceSum_eq_sum_intervalGapsWithin_add_sum
     (p := fun l u => Φ (γ u) - Φ (γ l))
-    (w := fun t => Φ (γ (t + r)) - Φ (γ (t - r))) (b := b) (a := a) hc.symm hFdef hF k 0
-    (by simp) (Nat.zero_le k)
+    (w := fun t => Φ (γ (t + r)) - Φ (γ (t - r))) (b := b) (a := a) hc.symm hFdef hF 0
+    (Nat.zero_le k)
   rw [List.drop_zero, Nat.cast_zero, Finset.intervalGapsWithin_zero_fst] at hbridge
   rw [hbridge]
   have hsort : ∀ f : ℝ → ℂ,
