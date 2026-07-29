@@ -197,6 +197,11 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint {γ : ℝ → 
   rw [dif_pos h_mem]
   exact (h_win t h_mem).choose_spec
 
+-- The three helpers below keep `hF : F.card = k` as an explicit hypothesis even though it is
+-- derivable from `hc` and `hFdef`: it is not merely a side condition but an *argument* appearing
+-- in their conclusions, since `Finset.orderEmbOfFin` and `Finset.intervalGapsWithin` both take the
+-- cardinality proof explicitly. `windowPieceSum_boundary` below, whose conclusion mentions neither
+-- `F` nor `hF`, takes none of them and derives everything internally.
 /-- Lex-sorting the window pairs `(t - r, t + r)` agrees with sorting the crossings, because
 `t ↦ t - r` is strictly monotone and `Prod.Lex` compares first coordinates first. -/
 private theorem orderEmbOfFin_image_window {crossings : Finset ℝ} {r : ℝ} {k : ℕ}
