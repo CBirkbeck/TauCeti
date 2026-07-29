@@ -159,9 +159,8 @@ Stated pointwise in `x` and over an `AddMonoid`, so it also serves the group-lev
 `star` negates globally. -/
 private theorem apply_eq_zero_of_map_zero_re_eq_zero (hF : IsPositiveDefinite F)
     (h0 : (F 0).re = 0) {x : E} (hx : x + star x = 0) : F x = 0 := by
-  have hnorm : ‖F x‖ ≤ 0 := by
-    simpa [h0] using hF.norm_apply_le_map_zero_re_of_add_star_eq_zero x hx
-  exact norm_eq_zero.mp (le_antisymm hnorm (norm_nonneg _))
+  apply norm_le_zero_iff.mp
+  simpa [h0] using hF.norm_apply_le_map_zero_re_of_add_star_eq_zero x hx
 
 /-- The local monoid-level real-part form of the standard positive-definite continuity estimate. -/
 theorem norm_sub_sq_le_two_mul_map_zero_re_mul_re_sub_of_add_star_eq_zero
