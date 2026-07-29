@@ -159,8 +159,7 @@ theorem norm_sub_sq_le_two_mul_map_zero_re_mul_re_sub_of_add_star_eq_zero
     ‖F x - F y‖ ^ 2
       ≤ 2 * (F 0).re * ((F 0).re - (F (x + star y)).re) := by
   by_cases hC0 : (F 0).re = 0
-  · simp [hF.apply_eq_zero_of_map_zero_re_eq_zero hC0 hx,
-      hF.apply_eq_zero_of_map_zero_re_eq_zero hC0 hy, hC0]
+  · simp [hF.apply_eq_zero_of_map_zero_re_eq_zero hC0]
   have hCpos : 0 < (F 0).re := lt_of_le_of_ne hF.map_zero_re_nonneg (Ne.symm hC0)
   let C : ℂ := F 0
   let d : ℂ := F x - F y
@@ -213,10 +212,6 @@ end Algebra
 section GroupAlgebra
 
 variable {E : Type*} [AddGroup E] [StarAddMonoid E] {F : E → ℂ}
-
-private theorem eq_zero_of_map_zero_re_eq_zero (hF : IsPositiveDefinite F)
-    (hstar : ∀ x : E, star x = -x) (h0 : (F 0).re = 0) (x : E) : F x = 0 :=
-  hF.apply_eq_zero_of_map_zero_re_eq_zero h0 (by rw [hstar x, add_neg_cancel])
 
 /-- The local real-part form of the standard positive-definite continuity estimate. -/
 theorem norm_sub_sq_le_two_mul_map_zero_re_mul_re_sub_of_star_eq_neg
@@ -271,7 +266,7 @@ theorem uniformContinuous_of_continuousAt_zero_of_forall_star_eq_neg (hF : IsPos
   intro ε hε
   by_cases hC0 : (F 0).re = 0
   · refine ⟨1, zero_lt_one, fun x y _ => ?_⟩
-    simp [hF.eq_zero_of_map_zero_re_eq_zero hstar hC0, hε]
+    simp [hF.apply_eq_zero_of_map_zero_re_eq_zero hC0, hε]
   have hCpos : 0 < (F 0).re := lt_of_le_of_ne hF.map_zero_re_nonneg (Ne.symm hC0)
   let η : ℝ := ε ^ 2 / (2 * (F 0).re)
   have hη : 0 < η := div_pos (sq_pos_of_pos hε) (mul_pos zero_lt_two hCpos)

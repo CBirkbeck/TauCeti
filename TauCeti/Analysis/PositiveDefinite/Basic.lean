@@ -53,7 +53,7 @@ here. The continuity theory and Bochner's representation theorem are later miles
   when `a + star a = 0`, with the additive-group corollary
   `TauCeti.IsPositiveDefinite.norm_apply_le_map_zero_re_of_star_eq_neg` for `star a = -a`.
 * `TauCeti.IsPositiveDefinite.apply_eq_zero_of_map_zero_re_eq_zero`: `(F 0).re = 0` forces
-  `F a = 0` at every skew point `a`.
+  `F` to vanish identically.
 * `TauCeti.IsPositiveDefinite.isPositiveDefiniteKernel`: a positive-definite function gives the
   positive-definite kernel `fun a b => F (a + star b)`.
 * `TauCeti.IsPositiveDefinite.of_isPositiveDefiniteKernel`: conversely, if the kernel
@@ -221,14 +221,14 @@ theorem norm_apply_le_map_zero_re_of_add_star_eq_zero (hF : IsPositiveDefinite F
 -- a variable head symbol. Lean rejects the tag outright ("the theorem will be tried on every simp
 -- step"), and `warningAsError` makes that a build failure. The sibling bound
 -- `norm_apply_le_map_zero_re_of_add_star_eq_zero` is untagged for the same reason.
-/-- **A positive-definite function with `(F 0).re = 0` vanishes at every skew point.**
+/-- **A positive-definite function with `(F 0).re = 0` vanishes identically.**
 
-Stated pointwise in `a` and over an `AddMonoid`, so it also covers a group whose involution
-negates globally. -/
+No hypothesis on the point is required, and none on the ambient structure beyond `AddMonoid`. -/
 theorem apply_eq_zero_of_map_zero_re_eq_zero (hF : IsPositiveDefinite F)
-    (h0 : (F 0).re = 0) {a : M} (ha : a + star a = 0) : F a = 0 := by
-  apply norm_le_zero_iff.mp
-  simpa [h0] using hF.norm_apply_le_map_zero_re_of_add_star_eq_zero a ha
+    (h0 : (F 0).re = 0) (a : M) : F a = 0 := by
+  have h := hF.normSq_le a 0
+  simp only [star_zero, add_zero, h0, mul_zero] at h
+  exact Complex.normSq_eq_zero.mp (le_antisymm h (Complex.normSq_nonneg _))
 
 section Group
 
