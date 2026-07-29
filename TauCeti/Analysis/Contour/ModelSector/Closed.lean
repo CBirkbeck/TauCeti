@@ -31,7 +31,7 @@ traversed from the far end of one radius rather than from the corner.
 
 ## Main results
 
-* `TauCeti.Contour.windingNumber_modelSector_eq` — its winding number about `z₀` is `α / 2π`.
+* `TauCeti.Contour.windingNumber_modelSector` — its winding number about `z₀` is `α / 2π`.
 * `TauCeti.Contour.windingNumber_modelSector_pi` and
   `TauCeti.Contour.windingNumber_modelSector_pi_div_three` — the `½` at a smooth crossing and the
   `1/6` at a `π/3` corner, the two values the valence formula consumes.
@@ -101,7 +101,7 @@ private theorem norm_modelSector_dirs (φ α : ℝ) :
 
 /-- **The model sector has winding number `α / 2π` about its corner** (Hungerbühler–Wasem (2.4)).
 The two radial segments contribute nothing and the arc contributes its opening angle. -/
-theorem windingNumber_modelSector_eq {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
+theorem windingNumber_modelSector {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
     windingNumber (modelSector z₀ r φ α) (-r) (r + α) z₀ = (α : ℂ) / (2 * (Real.pi : ℂ)) := by
   have hrne : r ≠ 0 := ne_of_gt hr
   have hcorner := modelSector_eqOn_corner z₀ hr φ α
@@ -151,7 +151,7 @@ the coefficient of `ord_i f` in the valence formula: at the smooth boundary poin
 indents by a semicircle. -/
 theorem windingNumber_modelSector_pi {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) :
     windingNumber (modelSector z₀ r φ Real.pi) (-r) (r + Real.pi) z₀ = 1 / 2 := by
-  rw [windingNumber_modelSector_eq hr φ Real.pi_nonneg]
+  rw [windingNumber_modelSector hr φ Real.pi_nonneg]
   have hpi : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
   field_simp
 
@@ -160,7 +160,7 @@ such corners `ρ` and `ρ + 1` of the fundamental domain sum to the `1/3` coeffi
 `ord_ρ f`. -/
 theorem windingNumber_modelSector_pi_div_three {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) :
     windingNumber (modelSector z₀ r φ (Real.pi / 3)) (-r) (r + Real.pi / 3) z₀ = 1 / 6 := by
-  rw [windingNumber_modelSector_eq hr φ (by positivity)]
+  rw [windingNumber_modelSector hr φ (by positivity)]
   have hpi : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
   push_cast
   field_simp

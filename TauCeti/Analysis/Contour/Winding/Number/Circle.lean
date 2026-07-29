@@ -126,7 +126,7 @@ theorem windingNumber_circleMap_eq_one_of_dist_lt {c w : ℂ} {R : ℝ} (hw : di
 For `R ≠ 0`, the generalized winding number of `circleMap c R` over `[a, b]` about `c` is
 `(b - a) / 2π`. The curve misses its centre (`circleMap_ne_center`), so the principal value in
 `windingNumber` collapses to the ordinary index integral, which is
-`windingNumber_modelSector_interval`. This is the `windingNumber`-definition form of that raw
+`indexIntegral_arc_interval`. This is the `windingNumber`-definition form of that raw
 index-integral computation. -/
 @[simp]
 theorem windingNumber_circleMap_center {c : ℂ} {R : ℝ} (hR : R ≠ 0) (a b : ℝ) :
@@ -142,7 +142,7 @@ theorem windingNumber_circleMap_center {c : ℂ} {R : ℝ} (hR : R ≠ 0) (a b :
     intervalIntegrable_inv_sub_mul_deriv hcont (fun t _ => havoid t)
       (hderiv.intervalIntegrable _ _)
   rw [windingNumber_eq_integral_of_avoidance hcont (fun t _ => havoid t) hint,
-    ← windingNumber_modelSector_interval (z₀ := c) hR a b]
+    ← indexIntegral_arc_interval (z₀ := c) hR a b]
   congr 1
   exact intervalIntegral.integral_congr fun θ _ => inv_mul_eq_div _ _
 
