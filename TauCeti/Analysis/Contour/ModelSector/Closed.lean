@@ -77,6 +77,27 @@ theorem modelSector_of_le {z₀ : ℂ} {r φ α t : ℝ} (ht : t ≤ r) :
 theorem modelSector_of_lt {z₀ : ℂ} {r φ α t : ℝ} (ht : r < t) :
     modelSector z₀ r φ α t = circleMap z₀ r (φ + (t - r)) := if_neg (not_le.mpr ht)
 
+/-- The model sector starts at the outer end of the incoming radius. -/
+theorem modelSector_neg (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ α : ℝ) :
+    modelSector z₀ r φ α (-r) = circleMap z₀ r (φ + α) := by
+  rw [modelSector_of_le (by linarith), twoRayCorner_of_neg (by linarith)]
+  simp [circleMap]
+
+/-- The model sector ends at the outer end of the incoming radius, the same point it started
+from. -/
+theorem modelSector_add (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
+    modelSector z₀ r φ α (r + α) = circleMap z₀ r (φ + α) := by
+  rcases eq_or_lt_of_le hα with rfl | hpos
+  · rw [add_zero, modelSector_of_le le_rfl, twoRayCorner_of_nonneg hr.le]
+    simp [circleMap]
+  · rw [modelSector_of_lt (by linarith)]
+    ring_nf
+
+/-- **The model sector is a closed curve** for `0 < r` and `0 ≤ α`. -/
+theorem modelSector_closed (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
+    modelSector z₀ r φ α (-r) = modelSector z₀ r φ α (r + α) := by
+  rw [modelSector_neg z₀ hr φ α, modelSector_add z₀ hr φ hα]
+
 /-- On the corner interval the model sector is its two-ray corner. -/
 theorem modelSector_eqOn_corner (z₀ : ℂ) {r : ℝ} (hr : 0 < r) (φ α : ℝ) :
     EqOn (twoRayCorner z₀ (Complex.exp ((φ + α : ℝ) * Complex.I))

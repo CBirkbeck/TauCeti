@@ -86,6 +86,9 @@ theorem indexIntegral_arc_interval {z₀ : ℂ} {r : ℝ} (hr : r ≠ 0) (a b : 
   rw [intervalIntegral.integral_const, Complex.real_smul]
   field_simp
 
+@[deprecated (since := "2026-07-29")]
+alias windingNumber_modelSector_interval := indexIntegral_arc_interval
+
 /-- **The model-sector winding number** (Hungerbühler–Wasem (2.4)). The circular arc
 `γ θ = z₀ + r·e^{iθ}` about its centre `z₀`, traversed over `[0, α]`, has normalized index integral
 `(2πi)⁻¹ ∫_0^α (γ̇ / (γ − z₀)) dθ = α / 2π`: a counterclockwise arc of opening angle `α` contributes
