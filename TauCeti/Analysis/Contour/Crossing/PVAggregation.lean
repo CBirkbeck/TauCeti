@@ -17,7 +17,8 @@ If the `ε`-truncated integral of `g (γ t) * deriv γ t` converges on each cros
 `[t_i - r, t_i + r]`, the windows have disjoint interiors and lie in `[a, b]`, and the curve
 keeps a positive distance from `s` off the windows, then the truncated integral over all of
 `[a, b]` converges — the single-point principal value exists
-(`cauchyPVExistsAt_of_perWindow_tendsto`). Off the windows the truncation is eventually
+(`cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint`). Off the windows the truncation
+is eventually
 inactive and each between-piece integral is constant; the windows contribute their given
 limits; the pieces concatenate (`HasCauchyPVAt.concat`) along the sorted crossing list.
 
@@ -26,12 +27,18 @@ simple-pole and higher-order per-window theorems both discharge them.
 
 ## Main results
 
-* `Contour.cauchyPVExistsAt_of_perWindow_tendsto` — the single-point principal value on
-  `[a, b]` from per-window convergence at finitely many crossings.
-* `Contour.hasCauchyPVAt_of_perWindow_boundary_tendsto` — the telescoping form: when the
-  integrand has a curve-antiderivative `Φ` off the pole and each window limit is the boundary
-  difference of `Φ ∘ γ`, the principal value is `Φ (γ b) - Φ (γ a)` — zero around a closed
-  curve.
+* `Contour.cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint` — the single-point
+  principal value on `[a, b]` from per-window convergence at finitely many crossings. The
+  windows need only have disjoint *interiors* and lie in `[a, b]`, so they may touch each
+  other, or touch `a` or `b`; and the radius bound is required only when there is a window.
+* `Contour.hasCauchyPVAt_of_perWindow_boundary_tendsto_of_interiorDisjoint` — the telescoping
+  form: when the integrand has a curve-antiderivative `Φ` off the pole and each window limit is
+  the boundary difference of `Φ ∘ γ`, the principal value is `Φ (γ b) - Φ (γ a)` — zero around
+  a closed curve.
+* `Contour.cauchyPVExistsAt_of_perWindow_tendsto` and
+  `Contour.hasCauchyPVAt_of_perWindow_boundary_tendsto` — the strict special cases of those
+  two, for windows strictly separated and strictly inside `[a, b]`. They cannot express
+  touching windows; reach for the `_of_interiorDisjoint` forms above when that matters.
 
 ## Provenance
 
