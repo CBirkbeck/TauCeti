@@ -5,7 +5,7 @@ Authors: Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Analysis.Contour.Winding.Number.Segment
+public import TauCeti.Analysis.Contour.Winding.Number.Basic
 import Mathlib.Analysis.Calculus.Deriv.Add
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.Analysis.Complex.RealDeriv
@@ -19,19 +19,22 @@ its centre, a circular arc of opening angle `α`, and a radial segment back out.
 contribution is `α / 2π` (`windingNumber_modelSector`); this file supplies the other half, that the
 two radial segments contribute nothing.
 
-The two segments cannot be treated separately: each excised integral diverges logarithmically as
-`ε → 0`. Taken together they cancel *exactly*, at every `ε`, so the pair is packaged here as a
-single curve through the centre.
+The two segments cannot be treated separately: for nonzero ray directions and `R > 0` each
+excised integral diverges logarithmically as `ε → 0`. Taken together they cancel *exactly*, at
+every `ε`, so the pair is packaged here as a single curve through the centre.
 
 ## Main definitions
 
 * `TauCeti.Contour.twoRayCorner` — the corner `z₀` approached along direction `u` and left along
-  direction `v`, parametrised on `[-R, R]` with the corner at `t = 0`.
+  direction `v`, with the corner at `t = 0`.
 
 ## Main results
 
+* `TauCeti.Contour.deriv_twoRayCorner_of_ne` and `TauCeti.Contour.norm_twoRayCorner_sub` — the
+  derivative and the distance from the corner, off the corner itself.
 * `TauCeti.Contour.hasCauchyPVAt_inv_sub_twoRayCorner` — the index principal value along a two-ray
-  corner with `‖u‖ = ‖v‖` is `0`.
+  corner with `‖u‖ = ‖v‖`, over `[-R, R]`, is `0`; `cauchyPVExistsAt_inv_sub_twoRayCorner` is its
+  existence form.
 * `TauCeti.Contour.windingNumber_eq_zero_twoRayCorner` — its generalized winding number vanishes.
 
 This is Layer 1 of the Hungerbühler–Wasem generalized residue theorem (HW Thm 3.3).
@@ -55,8 +58,10 @@ along `u`, and for `t ≥ 0` at distance `t ‖v‖` along `v`; it meets `z₀` 
 `v` are nonzero that is the only parameter at which it does; the degenerate `u = v = 0` curve is
 constant at `z₀`.
 
-Concatenated with a circular arc this is the Hungerbühler–Wasem model sector, parametrised from
-the far end of one radius rather than from the corner. -/
+On `[-R, R]` with `‖u‖ = ‖v‖` the two endpoints lie on the circle of radius `R ‖v‖` about `z₀`, so
+concatenating with the arc between them gives the Hungerbühler–Wasem model sector, parametrised
+from the far end of one radius rather than from the corner. For unequal norms it is simply a
+two-ray curve. -/
 def twoRayCorner (z₀ u v : ℂ) : ℝ → ℂ :=
   fun t => if t < 0 then z₀ - (t : ℂ) * u else z₀ + (t : ℂ) * v
 
@@ -69,11 +74,6 @@ theorem twoRayCorner_of_neg {z₀ u v : ℂ} {t : ℝ} (ht : t < 0) :
 @[simp]
 theorem twoRayCorner_of_nonneg {z₀ u v : ℂ} {t : ℝ} (ht : 0 ≤ t) :
     twoRayCorner z₀ u v t = z₀ + (t : ℂ) * v := if_neg (not_lt.mpr ht)
-
-/-- The corner curve meets `z₀` at the parameter `0`. Not a `simp` lemma: it is the `t = 0`
-instance of `twoRayCorner_of_nonneg`, which `simp` already applies. -/
-theorem twoRayCorner_zero (z₀ u v : ℂ) : twoRayCorner z₀ u v 0 = z₀ := by
-  simp [twoRayCorner]
 
 /-- On the negative ray the corner curve is the affine map `t ↦ z₀ - t u`. -/
 private theorem twoRayCorner_eventuallyEq_neg {z₀ u v : ℂ} {t : ℝ} (ht : t < 0) :
@@ -89,7 +89,7 @@ private theorem twoRayCorner_eventuallyEq_pos {z₀ u v : ℂ} {t : ℝ} (ht : 0
 
 /-- The derivative of the corner curve off the corner: `-u` on the negative ray, `v` on the
 positive ray. -/
-private theorem deriv_twoRayCorner_of_ne {z₀ u v : ℂ} {t : ℝ} (ht : t ≠ 0) :
+theorem deriv_twoRayCorner_of_ne {z₀ u v : ℂ} {t : ℝ} (ht : t ≠ 0) :
     deriv (twoRayCorner z₀ u v) t = if t < 0 then -u else v := by
   have hofReal : HasDerivAt (fun s : ℝ => (s : ℂ)) 1 t := by
     simpa using (hasDerivAt_id t).ofReal_comp (z := t)
@@ -122,7 +122,7 @@ private theorem integrand_twoRayCorner {z₀ u v : ℂ} (hu : u ≠ 0) (hv : v �
     field_simp
 
 /-- The distance from the corner is `|t|` times the common ray length. -/
-private theorem norm_twoRayCorner_sub {z₀ u v : ℂ} (huv : ‖u‖ = ‖v‖) (t : ℝ) :
+theorem norm_twoRayCorner_sub {z₀ u v : ℂ} (huv : ‖u‖ = ‖v‖) (t : ℝ) :
     ‖twoRayCorner z₀ u v t - z₀‖ = |t| * ‖v‖ := by
   rcases lt_or_ge t 0 with h | h
   · simp only [twoRayCorner, if_pos h, sub_sub_cancel_left]
