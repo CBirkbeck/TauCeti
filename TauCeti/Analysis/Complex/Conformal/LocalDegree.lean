@@ -254,30 +254,21 @@ private lemma not_injOn_ball_of_deriv_eq_zero {f : ℂ → ℂ} {z₀ : ℂ} {r 
 
 /-- **A non-locally-constant analytic function has eventually nonvanishing derivative.** If `f` is
 analytic at `z₀` and takes a value different from `f z₀` at every point of some punctured
-neighbourhood, then `deriv f` is nonzero on a punctured neighbourhood of `z₀`.
-
-Analyticity gives the dichotomy that `deriv f` either vanishes on a whole punctured neighbourhood
-of `z₀` or is nonvanishing on one. The first alternative makes `fderiv ℂ f` vanish on a ball, hence
-`f` constant there, which contradicts `hne`. -/
+neighbourhood, then `deriv f` is nonzero on a punctured neighbourhood of `z₀`. -/
 private theorem eventually_deriv_ne_zero_of_eventually_ne {f : ℂ → ℂ} {z₀ : ℂ}
     (hf : AnalyticAt ℂ f z₀) (hne : ∀ᶠ z in 𝓝[≠] z₀, f z ≠ f z₀) :
     ∀ᶠ z in 𝓝[≠] z₀, deriv f z ≠ 0 := by
   rcases hf.deriv.eventually_eq_zero_or_eventually_ne_zero with hz | hz
   · exfalso
     obtain ⟨ε, hε, hball⟩ := Metric.eventually_nhds_iff.mp (hz.and hf.eventually_analyticAt)
-    have hfd : Set.EqOn (fderiv ℂ f) 0 (ball z₀ ε) := by
-      intro x hx
-      have hdx : deriv f x = 0 := (hball (mem_ball.mp hx)).1
-      refine ContinuousLinearMap.ext fun y => ?_
-      rw [fderiv_eq_smul_deriv, hdx]
-      simp
+    have hfd : Set.EqOn (deriv f) 0 (ball z₀ ε) := fun x hx => (hball (mem_ball.mp hx)).1
     have hdiff : DifferentiableOn ℂ f (ball z₀ ε) := fun x hx =>
       ((hball (mem_ball.mp hx)).2.differentiableAt).differentiableWithinAt
     have hpunct : ∀ᶠ z in 𝓝[≠] z₀, z ∈ ball z₀ ε ∧ f z ≠ f z₀ := by
       filter_upwards [nhdsWithin_le_nhds (Metric.ball_mem_nhds z₀ hε), hne] with z h1 h2
       exact ⟨h1, h2⟩
     obtain ⟨b, hbball, hbne⟩ := hpunct.exists
-    exact hbne (isOpen_ball.is_const_of_fderiv_eq_zero
+    exact hbne (isOpen_ball.is_const_of_deriv_eq_zero
       (convex_ball z₀ ε).isPreconnected hdiff hfd hbball (mem_ball_self hε))
   · exact hz
 
