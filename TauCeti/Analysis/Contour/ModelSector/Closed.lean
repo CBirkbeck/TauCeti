@@ -83,6 +83,8 @@ theorem modelSector_of_lt {z₀ : ℂ} {r φ α t : ℝ} (ht : r < t) :
     modelSector z₀ r φ α t = circleMap z₀ r (φ + (t - r)) := if_neg (not_le.mpr ht)
 
 /-- The model sector starts at the outer end of the incoming radius. -/
+-- Not a `simp` lemma: `modelSector_of_le` rewrites the left-hand side to its `twoRayCorner`
+-- branch first, so this is not in simp normal form (simpNF rejects the attribute).
 theorem modelSector_neg (z₀ : ℂ) {r : ℝ} (hr : 0 ≤ r) (φ α : ℝ) :
     modelSector z₀ r φ α (-r) = circleMap z₀ r (φ + α) := by
   rcases eq_or_lt_of_le hr with rfl | hpos
@@ -92,6 +94,7 @@ theorem modelSector_neg (z₀ : ℂ) {r : ℝ} (hr : 0 ≤ r) (φ α : ℝ) :
 
 /-- The model sector ends at the outer end of the incoming radius, the same point it started
 from. -/
+@[simp]
 theorem modelSector_add (z₀ : ℂ) {r : ℝ} (hr : 0 ≤ r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
     modelSector z₀ r φ α (r + α) = circleMap z₀ r (φ + α) := by
   rcases eq_or_lt_of_le hα with rfl | hpos
@@ -129,6 +132,7 @@ private theorem norm_modelSector_dirs (φ α : ℝ) :
 
 /-- **The model sector has winding number `α / 2π` about its corner** (Hungerbühler–Wasem (2.4)).
 The two radial segments contribute nothing and the arc contributes its opening angle. -/
+@[simp]
 theorem windingNumber_modelSector_eq_div_two_pi
     {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) {α : ℝ} (hα : 0 ≤ α) :
     windingNumber (modelSector z₀ r φ α) (-r) (r + α) z₀ = (α : ℂ) / (2 * (Real.pi : ℂ)) := by
