@@ -150,7 +150,7 @@ private theorem dist_blockAverages_toLp_le_via_disjoint {μ : Measure Ω}
 
 /-- For a contractable `L²` sequence the lag-one covariance never exceeds the variance: the
 two-window identity makes the gap a nonnegative multiple of a variance. -/
-private theorem zero_le_variance_sub_cov_of_contractable {μ : Measure Ω} [IsFiniteMeasure μ]
+private theorem zero_le_variance_sub_covariance_of_contractable {μ : Measure Ω} [IsFiniteMeasure μ]
     {Y : ℕ → Ω → ℝ} (hY : Contractable μ Y) (hY_L2 : ∀ i, MemLp (Y i) 2 μ) :
     0 ≤ Var[Y 0; μ] - cov[Y 0, Y 1; μ] := by
   have hvar := hY.variance_blockAverage_sub_of_disjoint hY_L2
@@ -170,7 +170,7 @@ private theorem cauchySeq_blockAverage_prefix_toLp {μ : Measure Ω} [IsProbabil
     CauchySeq fun m : ℕ =>
       (memLp_blockAverage (fun i : Fin (m + 1) => (i : ℕ)) fun i => hY_L2 i).toLp
         (blockAverage Y fun i : Fin (m + 1) => (i : ℕ)) := by
-  have hD := zero_le_variance_sub_cov_of_contractable hY hY_L2
+  have hD := zero_le_variance_sub_covariance_of_contractable hY hY_L2
   rw [Metric.cauchySeq_iff]
   intro ε hε
   have hquot : Tendsto (fun n : ℕ => 2 * (Var[Y 0; μ] - cov[Y 0, Y 1; μ]) / ((n : ℝ) + 1))
@@ -216,7 +216,7 @@ private theorem tendsto_dist_blockAverage_window_prefix_toLp {μ : Measure Ω}
           ((memLp_blockAverage (fun i : Fin (m + 1) => (i : ℕ)) fun i => hY_L2 i).toLp
             (blockAverage Y fun i : Fin (m + 1) => (i : ℕ))))
       atTop (𝓝 0) := by
-  have hD := zero_le_variance_sub_cov_of_contractable hY hY_L2
+  have hD := zero_le_variance_sub_covariance_of_contractable hY hY_L2
   have hsqrt :
       Tendsto (fun m : ℕ =>
           2 * Real.sqrt (2 * (Var[Y 0; μ] - cov[Y 0, Y 1; μ]) / ((m : ℝ) + 1))) atTop (𝓝 0) := by
