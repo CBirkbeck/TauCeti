@@ -136,7 +136,7 @@ theorem IsPwC1ImmersionOn.cauchyPVExistsAt_inv_sub {γ : ℝ → ℂ} {a b : ℝ
     fun _ hε => intervalIntegrable_inv_sub_truncated h_imm.continuousOn
       h_imm.isPiecewiseC1On.intervalIntegrable_deriv hε
   rcases T.eq_empty_or_nonempty with hT_empty | hT_ne
-  · refine cauchyPVExistsAt_of_perWindow_tendsto one_pos.le hab.le T ?_ ?_ ?_ h_int_tr ?_
+  · refine cauchyPVExistsAt_of_perWindow_tendsto hab.le T (fun _ => one_pos.le) ?_ ?_ ?_ h_int_tr ?_
       (exists_complement_windows_dist_lower_bound hγ_cont h_complete (fun _ => 1)
         fun t _ => one_pos)
     all_goals simp [hT_empty]
@@ -154,7 +154,7 @@ theorem IsPwC1ImmersionOn.cauchyPVExistsAt_inv_sub {γ : ℝ → ℂ} {a b : ℝ
       have h1 := Finset.inf'_le R ht
       have h2 := min_le_right r₀ (T.inf' hT_ne R)
       rw [hρ_def]; linarith
-    refine cauchyPVExistsAt_of_perWindow_tendsto hρ_pos.le hab.le T
+    refine cauchyPVExistsAt_of_perWindow_tendsto hab.le T (fun _ => hρ_pos.le)
       (fun t ht => by linarith [(h_endpts t ht).1])
       (fun t ht => by linarith [(h_endpts t ht).2])
       (fun t ht t' ht' hne => by linarith [h_pair₀ t ht t' ht' hne])

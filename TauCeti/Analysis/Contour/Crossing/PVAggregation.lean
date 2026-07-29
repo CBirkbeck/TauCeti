@@ -151,7 +151,8 @@ positive distance from `s` off the windows, then the principal value at `s` exis
 `[a, b]`. The per-window limits are hypotheses, so both the simple-pole and higher-order
 per-window theorems discharge them. -/
 theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
-    {a b r : ℝ} (hr_nonneg : 0 ≤ r) (hab : a ≤ b) (crossings : Finset ℝ)
+    {a b r : ℝ} (hab : a ≤ b) (crossings : Finset ℝ)
+    (hr_nonneg : crossings.Nonempty → 0 ≤ r)
     (h_lo : ∀ t ∈ crossings, a ≤ t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
     (h_pair : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r ≤ |t - t'|)
     (h_int_tr : ∀ ε : ℝ, 0 < ε →
@@ -164,7 +165,10 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : 
     CauchyPVExistsAt γ a b g s := by
   classical
   obtain ⟨m, hm_pos, hm⟩ := h_far
-  refine CauchyPVExistsAt.intro (hasCauchyPVAt_along_sorted hr_nonneg
+  rcases crossings.eq_empty_or_nonempty with rfl | hne
+  · exact CauchyPVExistsAt.intro (hasCauchyPVAt_plain_piece hab hm_pos h_int_tr le_rfl hab le_rfl
+      fun u hu => hm u hu (by simp))
+  refine CauchyPVExistsAt.intro (hasCauchyPVAt_along_sorted (hr_nonneg hne)
     (p := fun l u => ∫ t in l..u, g (γ t) * deriv γ t)
     (w := fun t => if h : t ∈ crossings then (h_win t h).choose else 0)
     (fun l u hA hlu hu h_far' => hasCauchyPVAt_plain_piece hab hm_pos h_int_tr hA hlu hu h_far')
@@ -177,7 +181,7 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : 
     (fun u hu h_avoid => hm u hu fun t ht => h_avoid t ((Finset.mem_sort _).mpr ht)))
   have h_mem := (Finset.mem_sort (α := ℝ) (· ≤ ·)).mp ht
   refine hasCauchyPVAt_iff.mpr ⟨eventually_intervalIntegrable_truncated_window hab
-    (h_lo t h_mem) (h_hi t h_mem) hr_nonneg h_int_tr, ?_⟩
+    (h_lo t h_mem) (h_hi t h_mem) (hr_nonneg ⟨t, h_mem⟩) h_int_tr, ?_⟩
   rw [dif_pos h_mem]
   exact (h_win t h_mem).choose_spec
 
@@ -197,7 +201,8 @@ private theorem windowPieceSum_boundary {γ : ℝ → ℂ} {Φ : ℂ → ℂ} {b
 principal value on `[a, b]` is `Φ (γ b) - Φ (γ a)` — in particular zero around a closed curve.
 The higher-order per-window limits have exactly this boundary-difference shape. -/
 theorem hasCauchyPVAt_of_perWindow_boundary_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
-    {Φ : ℂ → ℂ} {a b r : ℝ} (hr_nonneg : 0 ≤ r) (hab : a ≤ b) (crossings : Finset ℝ)
+    {Φ : ℂ → ℂ} {a b r : ℝ} (hab : a ≤ b) (crossings : Finset ℝ)
+    (hr_nonneg : crossings.Nonempty → 0 ≤ r)
     (h_lo : ∀ t ∈ crossings, a ≤ t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
     (h_pair : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r ≤ |t - t'|)
     (h_int_tr : ∀ ε : ℝ, 0 < ε →
@@ -213,7 +218,14 @@ theorem hasCauchyPVAt_of_perWindow_boundary_tendsto {γ : ℝ → ℂ} {s : ℂ}
     HasCauchyPVAt γ a b g s (Φ (γ b) - Φ (γ a)) := by
   classical
   obtain ⟨m, hm_pos, hm⟩ := h_far
-  have h := hasCauchyPVAt_along_sorted hr_nonneg
+  rcases crossings.eq_empty_or_nonempty with rfl | hne
+  · have h0 := hasCauchyPVAt_plain_piece hab hm_pos h_int_tr le_rfl hab le_rfl
+      fun u hu => hm u hu (by simp)
+    rwa [h_plain_eq a b le_rfl hab le_rfl fun t ht h_eq => by
+      have := hm t ht (by simp)
+      rw [h_eq, sub_self, norm_zero] at this
+      linarith] at h0
+  have h := hasCauchyPVAt_along_sorted (hr_nonneg hne)
     (p := fun l u => Φ (γ u) - Φ (γ l))
     (w := fun t => Φ (γ (t + r)) - Φ (γ (t - r)))
     (fun l u hA hlu hu h_far' => by
@@ -231,7 +243,7 @@ theorem hasCauchyPVAt_of_perWindow_boundary_tendsto {γ : ℝ → ℂ} {s : ℂ}
     (fun t ht => by
       have h_mem := (Finset.mem_sort (α := ℝ) (· ≤ ·)).mp ht
       exact hasCauchyPVAt_iff.mpr ⟨eventually_intervalIntegrable_truncated_window hab
-        (h_lo t h_mem) (h_hi t h_mem) hr_nonneg h_int_tr, h_win t h_mem⟩)
+        (h_lo t h_mem) (h_hi t h_mem) (hr_nonneg ⟨t, h_mem⟩) h_int_tr, h_win t h_mem⟩)
     (fun u hu h_avoid => hm u hu fun t ht => h_avoid t ((Finset.mem_sort _).mpr ht))
   rwa [windowPieceSum_boundary] at h
 
