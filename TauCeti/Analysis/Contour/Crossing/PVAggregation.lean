@@ -229,7 +229,7 @@ private theorem orderEmbOfFin_window_fst_snd {crossings : Finset ℝ} {r : ℝ} 
 crossings from index `j`, the aggregated value splits into the gap pieces from `j` onwards and the
 window values of that suffix. The `j = 0` case identifies `windowPieceSum` with
 `Finset.intervalGapsWithin`. -/
-private theorem windowPieceSum_eq_sum_intervalGapsWithin {p : ℝ → ℝ → ℂ} {w : ℝ → ℂ}
+private theorem windowPieceSum_eq_sum_intervalGapsWithin_add_sum {p : ℝ → ℝ → ℂ} {w : ℝ → ℂ}
     {a b r : ℝ} {k : ℕ} {crossings : Finset ℝ} (hc : crossings.card = k)
     {F : Finset (ℝ × ℝ)} (hFdef : F = crossings.image fun t : ℝ => (t - r, t + r))
     (hF : F.card = k) :
@@ -284,7 +284,8 @@ private theorem windowPieceSum_boundary {γ : ℝ → ℂ} {Φ : ℂ → ℂ} {a
   have hF : F.card = k := Finset.card_image_of_injective _ fun x y hxy => by
     have : x - r = y - r := congrArg Prod.fst hxy
     linarith
-  have hbridge := windowPieceSum_eq_sum_intervalGapsWithin (p := fun l u => Φ (γ u) - Φ (γ l))
+  have hbridge := windowPieceSum_eq_sum_intervalGapsWithin_add_sum
+    (p := fun l u => Φ (γ u) - Φ (γ l))
     (w := fun t => Φ (γ (t + r)) - Φ (γ (t - r))) (b := b) (a := a) hc.symm hFdef hF k 0
     (by simp) (Nat.zero_le k)
   rw [List.drop_zero, Nat.cast_zero, Finset.intervalGapsWithin_zero_fst] at hbridge
