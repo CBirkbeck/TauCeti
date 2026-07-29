@@ -105,17 +105,16 @@ private lemma exists_radius_sphere_ne_zero {Ω : Set ℂ} (hΩ : IsOpen Ω) {g :
   exact ⟨r, hr, fun z hz => (hball hz).1, fun z hz =>
     (hball (sphere_subset_closedBall hz)).2 (Metric.ne_of_mem_sphere hz hr.ne')⟩
 
-/-- **An analytic function on a preconnected open set attains a value it does not attain
-identically only in isolation.** If `g` is analytic on `Ω` and is not constantly `v` there, then
-`g z ≠ v` on a punctured neighbourhood of any `x ∈ Ω`. -/
+/-- **An analytic function on a preconnected set attains a value it does not attain identically
+only in isolation.** If `g` is analytic on `Ω` and is not constantly `v` there, then `g z ≠ v` on
+a punctured neighbourhood of any `x ∈ Ω`. -/
 private theorem eventually_ne_of_not_forall_eq {Ω : Set ℂ} (hconn : IsPreconnected Ω)
     {g : ℂ → ℂ} (hgA : AnalyticOnNhd ℂ g Ω) {v : ℂ} (hnc : ¬ ∀ z ∈ Ω, g z = v)
     {x : ℂ} (hx : x ∈ Ω) : ∀ᶠ z in 𝓝[≠] x, g z ≠ v := by
-  rcases ((hgA.sub analyticOnNhd_const) x hx).eventually_eq_zero_or_eventually_ne_zero with h | h
-  · refine absurd (fun z hz => sub_eq_zero.mp ?_) hnc
-    exact (hgA.sub analyticOnNhd_const).eqOn_zero_of_preconnected_of_eventuallyEq_zero hconn hx
-      (by filter_upwards [h] with z hz using hz) hz
-  · filter_upwards [h] with z hz using sub_ne_zero.mp hz
+  rcases (hgA x hx).eventually_eq_or_eventually_ne (analyticAt_const (v := v)) with h | h
+  · exact absurd (fun z hz =>
+      hgA.eqOn_of_preconnected_of_eventuallyEq analyticOnNhd_const hconn hx h hz) hnc
+  · exact h
 
 /-- **Hurwitz's theorem.** On a connected open set, a locally uniform limit of holomorphic
 functions that are nowhere zero is itself either nowhere zero or identically zero.
