@@ -8,7 +8,9 @@ module
 public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
 import Mathlib.Data.Finset.Sort
+import Mathlib.Algebra.BigOperators.Group.Finset.Gaps
 import Mathlib.Data.List.Sort
+import Mathlib.Order.Interval.Finset.Gaps
 
 /-!
 # Aggregating per-window principal values across finitely many crossings
@@ -61,6 +63,8 @@ namespace TauCeti.Contour
 
 open Filter MeasureTheory Set Topology
 
+open scoped Fin.NatCast
+
 /-- The truncated integrand is eventually interval-integrable on a crossing window lying in
 `[a, b]`, by restriction. -/
 private theorem eventually_intervalIntegrable_truncated_window {γ : ℝ → ℂ} {s : ℂ}
@@ -94,7 +98,7 @@ private theorem hasCauchyPVAt_plain_piece {γ : ℝ → ℂ} {s : ℂ} {g : ℂ 
       rw [uIcc_of_le hlu, uIcc_of_le hab]
       exact Icc_subset_Icc hA hu)
 
-/-- The aggregated value along a sorted crossing list: between-piece values `p` alternating
+/-- The aggregated value along a sorted crossing list: between-piece values `p` interleaved
 with window values `w`. -/
 private def windowPieceSum (r : ℝ) (p : ℝ → ℝ → ℂ) (w : ℝ → ℂ) (b : ℝ) :
     List ℝ → ℝ → ℂ
@@ -104,7 +108,7 @@ private def windowPieceSum (r : ℝ) (p : ℝ → ℝ → ℂ) (w : ℝ → ℂ)
 /-- **The shared aggregation induction**: with windows of disjoint interiors lying in `[a, b]`,
 window principal values `w t`, and between-piece principal values `p l u` available on
 intervals where the curve keeps distance `≥ m` from `s`, the principal value on `[a, b]` is
-the alternating sum `windowPieceSum`. Both public aggregation theorems instantiate this. -/
+the interleaved sum `windowPieceSum`. Both public aggregation theorems instantiate this. -/
 private theorem hasCauchyPVAt_along_sorted {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
     {p : ℝ → ℝ → ℂ} {w : ℝ → ℂ} {A b r m : ℝ}
     (h_piece : ∀ l u : ℝ, A ≤ l → l ≤ u → u ≤ b → (∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) →
@@ -196,14 +200,101 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint {γ : ℝ → 
 
 /-- The alternating sum telescopes when both the piece and window values are boundary
 differences of `Φ ∘ γ`. -/
-private theorem windowPieceSum_boundary {γ : ℝ → ℂ} {Φ : ℂ → ℂ} {b r : ℝ} :
-    ∀ (sorted : List ℝ) (a : ℝ),
-      windowPieceSum r (fun l u => Φ (γ u) - Φ (γ l))
-        (fun t => Φ (γ (t + r)) - Φ (γ (t - r))) b sorted a = Φ (γ b) - Φ (γ a)
-  | [], a => rfl
-  | t :: rest, a => by
-    rw [windowPieceSum, windowPieceSum_boundary rest (t + r)]
+private theorem orderEmbOfFin_image_window {crossings : Finset ℝ} {r : ℝ} {k : ℕ}
+    (hc : crossings.card = k) {F : Finset (ℝ × ℝ)}
+    (hFdef : F = crossings.image fun t : ℝ => (t - r, t + r)) (hF : F.card = k) :
+    (fun i : Fin k =>
+        toLex (crossings.orderEmbOfFin hc i - r, crossings.orderEmbOfFin hc i + r))
+      = ⇑(Finset.orderEmbOfFin (α := ℝ ×ₗ ℝ) F hF) := by
+  refine Finset.orderEmbOfFin_unique (α := ℝ ×ₗ ℝ) hF (fun i => ?_) (fun i j hij => ?_)
+  · subst hFdef
+    exact Finset.mem_image_of_mem _ (Finset.orderEmbOfFin_mem crossings hc i)
+  · exact Prod.Lex.left _ _ (by simpa using (crossings.orderEmbOfFin hc).strictMono hij)
+
+/-- The two edges of window `i`, read off the order embedding of the pair set. -/
+private theorem orderEmbOfFin_window_fst_snd {crossings : Finset ℝ} {r : ℝ} {k : ℕ}
+    (hc : crossings.card = k) {F : Finset (ℝ × ℝ)}
+    (hFdef : F = crossings.image fun t : ℝ => (t - r, t + r)) (hF : F.card = k) (i : Fin k) :
+    ((Finset.orderEmbOfFin (α := ℝ ×ₗ ℝ) F hF) i).1 = crossings.orderEmbOfFin hc i - r
+      ∧ ((Finset.orderEmbOfFin (α := ℝ ×ₗ ℝ) F hF) i).2 = crossings.orderEmbOfFin hc i + r := by
+  rw [← orderEmbOfFin_image_window hc hFdef hF]
+  exact ⟨rfl, rfl⟩
+
+
+/-- **The piece/window sum is Mathlib's interval-gap sum.** Along the suffix of the sorted
+crossings from index `j`, the aggregated value splits into the gap pieces from `j` onwards and the
+window values of that suffix. The `j = 0` case identifies `windowPieceSum` with
+`Finset.intervalGapsWithin`. -/
+private theorem windowPieceSum_eq_sum_intervalGapsWithin {p : ℝ → ℝ → ℂ} {w : ℝ → ℂ}
+    {a b r : ℝ} {k : ℕ} {crossings : Finset ℝ} (hc : crossings.card = k)
+    {F : Finset (ℝ × ℝ)} (hFdef : F = crossings.image fun t : ℝ => (t - r, t + r))
+    (hF : F.card = k) :
+    ∀ n j : ℕ, k - j = n → j ≤ k →
+      windowPieceSum r p w b ((crossings.sort (· ≤ ·)).drop j)
+          (F.intervalGapsWithin hF a b j).1
+        = (∑ i ∈ Finset.Ico j (k + 1),
+            p (F.intervalGapsWithin hF a b i).1 (F.intervalGapsWithin hF a b i).2)
+          + (((crossings.sort (· ≤ ·)).drop j).map w).sum := by
+  intro n
+  induction n with
+  | zero =>
+    intro j hn hj
+    have hjk : j = k := le_antisymm hj (Nat.le_of_sub_eq_zero hn)
+    subst hjk
+    rw [List.drop_of_length_le (by simp [Finset.length_sort, hc]),
+      Nat.Ico_succ_singleton, Finset.sum_singleton]
+    simp [windowPieceSum, Finset.intervalGapsWithin_last_snd F hF a b]
+  | succ n ih =>
+    intro j hn hj
+    have hjk : j < k := by omega
+    have hlen : j < (crossings.sort (· ≤ ·)).length := by
+      rw [Finset.length_sort, hc]; exact hjk
+    obtain ⟨hfst, hsnd⟩ := orderEmbOfFin_window_fst_snd hc hFdef hF ⟨j, hjk⟩
+    have hgj : (F.intervalGapsWithin hF a b j).2
+        = (crossings.sort (· ≤ ·))[j]'hlen - r := by
+      rw [Finset.intervalGapsWithin_snd_of_lt F hF a b j hjk, hfst,
+        Finset.orderEmbOfFin_apply]
+      rfl
+    have hgj1 : (F.intervalGapsWithin hF a b (j + 1)).1
+        = (crossings.sort (· ≤ ·))[j]'hlen + r := by
+      have h := Finset.intervalGapsWithin_succ_fst_of_lt F hF a b j hjk
+      rw [hsnd, Finset.orderEmbOfFin_apply] at h
+      simpa using h
+    rw [List.drop_eq_getElem_cons hlen, windowPieceSum,
+      Finset.sum_eq_sum_Ico_succ_bot (show j < k + 1 by omega), hgj, ← hgj1,
+      show ((j : Fin (k + 1)) + 1) = ((j + 1 : ℕ) : Fin (k + 1)) by push_cast; ring,
+      ih (j + 1) (by omega) (by omega)]
+    simp only [List.map_cons, List.sum_cons]
     ring
+
+/-- **The window aggregation telescopes to the endpoint difference.** Reading the pieces as the
+gaps of the window finset `F = {(t - r, t + r) : t ∈ crossings}` inside `[a, b]`, this is exactly
+`Finset.sum_intervalGapsWithin_add_sum_eq_sub` for `g = Φ ∘ γ`. -/
+private theorem windowPieceSum_boundary {γ : ℝ → ℂ} {Φ : ℂ → ℂ} {a b r : ℝ} {k : ℕ}
+    {crossings : Finset ℝ} (hc : crossings.card = k)
+    {F : Finset (ℝ × ℝ)} (hFdef : F = crossings.image fun t : ℝ => (t - r, t + r))
+    (hF : F.card = k) :
+    windowPieceSum r (fun l u => Φ (γ u) - Φ (γ l))
+        (fun t => Φ (γ (t + r)) - Φ (γ (t - r))) b (crossings.sort (· ≤ ·)) a
+      = Φ (γ b) - Φ (γ a) := by
+  have hbridge := windowPieceSum_eq_sum_intervalGapsWithin (p := fun l u => Φ (γ u) - Φ (γ l))
+    (w := fun t => Φ (γ (t + r)) - Φ (γ (t - r))) (b := b) (a := a) hc hFdef hF k 0
+    (by simp) (Nat.zero_le k)
+  rw [List.drop_zero, Nat.cast_zero, Finset.intervalGapsWithin_zero_fst] at hbridge
+  rw [hbridge]
+  have hsort : ∀ f : ℝ → ℂ,
+      ((crossings.sort (· ≤ ·)).map f).sum = ∑ t ∈ crossings, f t := fun f => by
+    rw [Finset.sum_eq_multiset_sum, ← Finset.sort_eq crossings (· ≤ ·)]
+    rfl
+  have hw : (((crossings.sort (· ≤ ·)).map fun t => Φ (γ (t + r)) - Φ (γ (t - r))).sum)
+      = ∑ z ∈ F, ((Φ ∘ γ) z.2 - (Φ ∘ γ) z.1) := by
+    rw [hsort, hFdef, Finset.sum_image (by
+      intro x _ y _ hxy
+      have hx : x - r = y - r := congrArg Prod.fst hxy
+      linarith)]
+    rfl
+  rw [hw, ← Finset.range_eq_Ico]
+  simpa using Finset.sum_intervalGapsWithin_add_sum_eq_sub F hF (a := a) (b := b) (Φ ∘ γ)
 
 /-- **Telescoping per-window aggregation**: when the plain integrand has a curve-antiderivative
 `Φ` on pole-free pieces and each window limit is the boundary difference of `Φ ∘ γ`, the
@@ -250,7 +341,11 @@ theorem hasCauchyPVAt_of_perWindow_boundary_tendsto_of_interiorDisjoint {γ : �
       exact hasCauchyPVAt_iff.mpr ⟨eventually_intervalIntegrable_truncated_window hab
         (h_lo t h_mem) (h_hi t h_mem) (hr_nonneg ⟨t, h_mem⟩) h_int_tr, h_win t h_mem⟩)
     (fun u hu h_avoid => hm u hu fun t ht => h_avoid t ((Finset.mem_sort _).mpr ht))
-  rwa [windowPieceSum_boundary] at h
+  have hF : (crossings.image fun t : ℝ => (t - r, t + r)).card = crossings.card :=
+    Finset.card_image_of_injective _ fun x y hxy => by
+      have : x - r = y - r := congrArg Prod.fst hxy
+      linarith
+  rwa [windowPieceSum_boundary rfl rfl hF] at h
 
 /-- **Compatibility form of `cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint`** with
 windows strictly separated from each other and starting strictly after `a`; the right edges may
