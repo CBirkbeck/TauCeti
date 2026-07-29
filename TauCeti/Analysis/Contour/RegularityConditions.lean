@@ -120,12 +120,12 @@ def basepointAngle (γ : ℝ → ℂ) (a b : ℝ) : ℝ :=
   toIcoMod Real.two_pi_pos 0
     (Complex.arg (-limUnder (𝓝[<] b) (deriv γ)) - Complex.arg (limUnder (𝓝[>] a) (deriv γ)))
 
-/-- For a nonzero `L : ℂ`, the normalized angle from `L` to `−L` is `π`. Mathlib's
-`Complex.arg_neg_coe_angle` gives `(-L).arg = L.arg + π` in `Real.Angle`; transporting that back to
-`ℝ` leaves `π` up to a multiple of `2π`, which the `[0, 2π)` normalization discards. This is the
-engine behind the smooth-crossing values of `crossingAngle` and `basepointAngle`. -/
+/-- For a nonzero `L : ℂ`, the normalized angle from `L` to `−L` is `π`. This is the engine behind
+the smooth-crossing values of `crossingAngle` and `basepointAngle`. -/
 private theorem toIcoMod_arg_neg_sub_arg {L : ℂ} (hL : L ≠ 0) :
     toIcoMod Real.two_pi_pos 0 (Complex.arg (-L) - Complex.arg L) = Real.pi := by
+  -- `arg (-L) = arg L + π` holds in `Real.Angle`; transporting back to `ℝ` leaves `π` up to a
+  -- multiple of `2π`, which the `[0, 2π)` normalization discards.
   have hangle : ((Complex.arg (-L) - Complex.arg L : ℝ) : Real.Angle) = (Real.pi : ℝ) := by
     rw [Real.Angle.coe_sub, Complex.arg_neg_coe_angle hL]
     abel
