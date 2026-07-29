@@ -19,9 +19,9 @@ its centre, a circular arc of opening angle `α`, and a radial segment back out.
 contribution is `α / 2π` (`windingNumber_modelSector`); this file supplies the other half, that the
 two radial segments contribute nothing.
 
-The two segments cannot be treated separately: each excised integral is `log (R / ε)` in absolute
-value and diverges as `ε → 0`. Taken together they cancel *exactly*, at every `ε`, so the pair is
-packaged here as a single curve through the centre.
+The two segments cannot be treated separately: each excised integral diverges logarithmically as
+`ε → 0`. Taken together they cancel *exactly*, at every `ε`, so the pair is packaged here as a
+single curve through the centre.
 
 ## Main definitions
 
@@ -51,12 +51,29 @@ namespace TauCeti.Contour
 open Filter MeasureTheory Set Topology
 
 /-- **The two-ray corner at `z₀`.** For `t < 0` the curve sits at distance `|t| ‖u‖` from `z₀`
-along `u`, and for `t ≥ 0` at distance `t ‖v‖` along `v`; it meets `z₀` exactly at `t = 0`.
+along `u`, and for `t ≥ 0` at distance `t ‖v‖` along `v`; it meets `z₀` at `t = 0`. When `u` and
+`v` are nonzero that is the only parameter at which it does; the degenerate `u = v = 0` curve is
+constant at `z₀`.
 
 Concatenated with a circular arc this is the Hungerbühler–Wasem model sector, parametrised from
 the far end of one radius rather than from the corner. -/
 def twoRayCorner (z₀ u v : ℂ) : ℝ → ℂ :=
   fun t => if t < 0 then z₀ - (t : ℂ) * u else z₀ + (t : ℂ) * v
+
+/-- Evaluation of the corner curve on the incoming ray. -/
+@[simp]
+theorem twoRayCorner_of_neg {z₀ u v : ℂ} {t : ℝ} (ht : t < 0) :
+    twoRayCorner z₀ u v t = z₀ - (t : ℂ) * u := if_pos ht
+
+/-- Evaluation of the corner curve on the outgoing ray, including the corner itself. -/
+@[simp]
+theorem twoRayCorner_of_nonneg {z₀ u v : ℂ} {t : ℝ} (ht : 0 ≤ t) :
+    twoRayCorner z₀ u v t = z₀ + (t : ℂ) * v := if_neg (not_lt.mpr ht)
+
+/-- The corner curve meets `z₀` at the parameter `0`. Not a `simp` lemma: it is the `t = 0`
+instance of `twoRayCorner_of_nonneg`, which `simp` already applies. -/
+theorem twoRayCorner_zero (z₀ u v : ℂ) : twoRayCorner z₀ u v 0 = z₀ := by
+  simp [twoRayCorner]
 
 /-- On the negative ray the corner curve is the affine map `t ↦ z₀ - t u`. -/
 private theorem twoRayCorner_eventuallyEq_neg {z₀ u v : ℂ} {t : ℝ} (ht : t < 0) :
@@ -134,49 +151,81 @@ private theorem integral_truncated_inv_twoRayCorner {z₀ u v : ℂ} (hu : u ≠
   intervalIntegral.integral_eq_zero_of_odd (truncated_inv_twoRayCorner_odd hu hv huv ε) R
 
 
+/-- The corner curve is measurable: it is affine on each ray. -/
+private theorem measurable_twoRayCorner (z₀ u v : ℂ) : Measurable (twoRayCorner z₀ u v) := by
+  refine Measurable.ite (measurableSet_lt measurable_id measurable_const) ?_ ?_ <;> fun_prop
+
+/-- Off the corner the derivative is the step function `-u` / `v`. -/
+private theorem deriv_twoRayCorner_ae (z₀ u v : ℂ) (R : ℝ) :
+    deriv (twoRayCorner z₀ u v) =ᵐ[volume.restrict (uIoc (-R) R)]
+      fun t : ℝ => if t < 0 then -u else v := by
+  refine (MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mpr ?_
+  filter_upwards [MeasureTheory.compl_mem_ae_iff.mpr
+    (MeasureTheory.measure_singleton (0 : ℝ))] with t ht _
+  exact deriv_twoRayCorner_of_ne ht
+
+/-- The derivative of the corner curve is interval integrable: a bounded step function. -/
+private theorem intervalIntegrable_deriv_twoRayCorner (z₀ u v : ℂ) (R : ℝ) :
+    IntervalIntegrable (deriv (twoRayCorner z₀ u v)) volume (-R) R := by
+  refine (intervalIntegrable_congr_ae (deriv_twoRayCorner_ae z₀ u v R)).mpr ?_
+  have hmeas : Measurable (fun t : ℝ => if t < 0 then -u else v) :=
+    Measurable.ite (measurableSet_lt measurable_id measurable_const)
+      measurable_const measurable_const
+  refine (intervalIntegrable_const (c := max ‖u‖ ‖v‖)).mono_fun' hmeas.aestronglyMeasurable ?_
+  filter_upwards with t
+  rcases lt_or_ge t 0 with h | h
+  · rw [if_pos h, norm_neg]
+    exact le_max_left _ _
+  · rw [if_neg (not_lt.mpr h)]
+    exact le_max_right _ _
+
 /-- **The index principal value along a two-ray corner vanishes.** With the two rays of equal
 length the excision `‖γ t - z₀‖ > ε` is the symmetric condition `|t| ‖v‖ > ε`, and the integrand is
 the odd function `1 / t` on both rays, so *every* truncated integral is `0` — not merely its limit.
 -/
-theorem hasCauchyPVAt_inv_sub_twoRayCorner {z₀ u v : ℂ} (hu : u ≠ 0) (hv : v ≠ 0)
-    (huv : ‖u‖ = ‖v‖) (R : ℝ) :
+theorem hasCauchyPVAt_inv_sub_twoRayCorner {z₀ u v : ℂ} (huv : ‖u‖ = ‖v‖) (R : ℝ) :
     HasCauchyPVAt (twoRayCorner z₀ u v) (-R) R (fun z => (z - z₀)⁻¹) z₀ 0 := by
-  refine HasCauchyPVAt.intro ?_ ?_
-  · filter_upwards [self_mem_nhdsWithin] with ε hε
-    have hae : (fun t : ℝ => if ‖twoRayCorner z₀ u v t - z₀‖ > ε then
-          (twoRayCorner z₀ u v t - z₀)⁻¹ * deriv (twoRayCorner z₀ u v) t else 0)
-        =ᵐ[volume.restrict (uIoc (-R) R)]
-        fun t : ℝ => if |t| * ‖v‖ > ε then ((t : ℂ))⁻¹ else 0 := by
-      refine (MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mpr ?_
-      filter_upwards [MeasureTheory.compl_mem_ae_iff.mpr
-        (MeasureTheory.measure_singleton (0 : ℝ))] with t ht _
-      rw [norm_twoRayCorner_sub huv, integrand_twoRayCorner hu hv ht]
-    refine (intervalIntegrable_congr_ae hae.symm).mp ?_
-    refine (intervalIntegrable_const (c := (‖v‖ / ε : ℝ))).mono_fun' ?_ ?_
-    · refine (Measurable.ite ?_ (by fun_prop) measurable_const).aestronglyMeasurable
-      exact measurableSet_lt measurable_const (by fun_prop)
-    · filter_upwards with t
-      by_cases h : |t| * ‖v‖ > ε
-      · rw [if_pos h, norm_inv, Complex.norm_real, Real.norm_eq_abs]
-        have hε' : 0 < ε := hε
-        have ht0 : 0 < |t| := by
-          by_contra hc
-          push Not at hc
-          rw [le_antisymm hc (abs_nonneg t), zero_mul] at h
-          linarith
-        rw [le_div_iff₀ hε, inv_mul_eq_div, div_le_iff₀ ht0]
-        nlinarith
-      · simp only [if_neg h, norm_zero]
-        exact div_nonneg (norm_nonneg v) (le_of_lt hε)
-  · simp_rw [integral_truncated_inv_twoRayCorner hu hv huv R]
-    exact tendsto_const_nhds
+  rcases eq_or_ne u 0 with rfl | hu
+  · -- Equal lengths force the other ray to vanish too, leaving the constant curve at `z₀`.
+    have hv : v = 0 := by simpa [eq_comm] using huv
+    subst hv
+    refine HasCauchyPVAt.intro ?_ ?_ <;> simp [twoRayCorner]
+  · have hv : v ≠ 0 := fun h => hu (by rw [← norm_eq_zero, huv, h, norm_zero])
+    refine HasCauchyPVAt.intro ?_ ?_
+    · filter_upwards [self_mem_nhdsWithin] with ε hε
+      refine intervalIntegrable_truncated_mul_deriv (γ := twoRayCorner z₀ u v)
+        (f := fun z : ℂ => (z - z₀)⁻¹) (z₀ := z₀) (M := ε⁻¹)
+        (intervalIntegrable_deriv_twoRayCorner z₀ u v R) ?_ ?_
+      · have hstep : Measurable (fun t : ℝ => if t < 0 then -u else v) :=
+          Measurable.ite (measurableSet_lt measurable_id measurable_const)
+            measurable_const measurable_const
+        refine MeasureTheory.AEStronglyMeasurable.congr
+          (f := fun t : ℝ => if ‖twoRayCorner z₀ u v t - z₀‖ > ε then
+            (twoRayCorner z₀ u v t - z₀)⁻¹ * (if t < 0 then -u else v) else 0) ?_ ?_
+        · refine (Measurable.ite ?_ ?_ measurable_const).aestronglyMeasurable
+          · exact measurableSet_lt measurable_const
+              (((measurable_twoRayCorner z₀ u v).sub measurable_const).norm)
+          · exact (((measurable_twoRayCorner z₀ u v).sub measurable_const).inv).mul hstep
+        · filter_upwards [deriv_twoRayCorner_ae z₀ u v R] with s hs
+          rw [hs]
+      · intro s hs
+        rw [norm_inv]
+        simpa using one_div_le_one_div_of_le hε (le_of_lt hs)
+    · simp_rw [integral_truncated_inv_twoRayCorner hu hv huv R]
+      exact tendsto_const_nhds
+
+/-- Existence form of `hasCauchyPVAt_inv_sub_twoRayCorner`, matching the existence-form API that
+the winding-number composition lemmas consume. -/
+theorem cauchyPVExistsAt_inv_sub_twoRayCorner {z₀ u v : ℂ} (huv : ‖u‖ = ‖v‖) (R : ℝ) :
+    CauchyPVExistsAt (twoRayCorner z₀ u v) (-R) R (fun z => (z - z₀)⁻¹) z₀ :=
+  CauchyPVExistsAt.intro (hasCauchyPVAt_inv_sub_twoRayCorner huv R)
 
 /-- **The generalized winding number of a two-ray corner vanishes.** The radial approach and
 departure contribute nothing to the model sector's index; all of it comes from the arc. -/
-theorem windingNumber_eq_zero_twoRayCorner {z₀ u v : ℂ} (hu : u ≠ 0) (hv : v ≠ 0)
-    (huv : ‖u‖ = ‖v‖) (R : ℝ) :
+@[simp]
+theorem windingNumber_eq_zero_twoRayCorner {z₀ u v : ℂ} (huv : ‖u‖ = ‖v‖) (R : ℝ) :
     windingNumber (twoRayCorner z₀ u v) (-R) R z₀ = 0 := by
-  rw [windingNumber_eq_of_hasCauchyPVAt (hasCauchyPVAt_inv_sub_twoRayCorner hu hv huv R)]
+  rw [windingNumber_eq_of_hasCauchyPVAt (hasCauchyPVAt_inv_sub_twoRayCorner huv R)]
   ring
 
 end TauCeti.Contour
