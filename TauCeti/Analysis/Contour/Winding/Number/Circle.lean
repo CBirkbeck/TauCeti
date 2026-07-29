@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import TauCeti.Analysis.Contour.ModelSector.Winding
+public import TauCeti.Analysis.Contour.Curve.Reparam
 public import TauCeti.Analysis.Contour.Winding.Number.Basic
 public import Mathlib.Analysis.Complex.CauchyIntegral
 
@@ -121,6 +122,30 @@ theorem windingNumber_circleMap_eq_one_of_dist_lt {c w : ℂ} {R : ℝ} (hw : di
   rw [windingNumber_circleMap_eq_circleIntegral havoid,
     circleIntegral.integral_sub_inv_of_mem_ball (mem_ball.mpr hw)]
   exact inv_mul_cancel₀ Complex.two_pi_I_ne_zero
+
+/-- **The index principal value of an affinely reparametrised circle exists.** The curve
+`t ↦ circleMap c R (m t + s)` stays at distance `|R|` from `c`, so the principal value about `c` is
+the ordinary integral. This is the shared construction behind the arc pieces of the model sector
+and of the half-disc worked example. -/
+theorem cauchyPVExistsAt_circleMap_comp_affine {c : ℂ} {R : ℝ} (hR : R ≠ 0) (m s a b : ℝ) :
+    CauchyPVExistsAt (circleMap c R ∘ fun t : ℝ => m * t + s) a b (fun z => (z - c)⁻¹) c := by
+  have havoid : ∀ t ∈ Set.uIcc a b, (circleMap c R ∘ fun t : ℝ => m * t + s) t ≠ c :=
+    fun _ _ => circleMap_ne_center hR
+  have hcont : ContinuousOn (circleMap c R ∘ fun t : ℝ => m * t + s) (Set.uIcc a b) :=
+    ((continuous_circleMap c R).comp (by fun_prop)).continuousOn
+  have hderiv_circle : ContinuousOn (deriv (circleMap c R))
+      ((fun t : ℝ => m * t + s) '' Set.uIcc a b) := by
+    have h : deriv (circleMap c R) = fun θ => circleMap 0 R θ * Complex.I :=
+      funext (deriv_circleMap c R)
+    rw [h]
+    exact ((continuous_circleMap 0 R).mul continuous_const).continuousOn
+  have hderiv : ContinuousOn (deriv (circleMap c R ∘ fun t : ℝ => m * t + s)) (Set.uIcc a b) :=
+    continuousOn_deriv_comp_reparam (φ' := fun _ => m)
+      (fun t _ => by
+        simpa using (_root_.HasDerivAt.const_mul m (hasDerivAt_id t)).add_const s)
+      continuousOn_const (fun u _ => differentiable_circleMap c R u) hderiv_circle
+  exact cauchyPVExistsAt_of_avoidance hcont havoid
+    (intervalIntegrable_inv_sub_mul_deriv hcont havoid hderiv.intervalIntegrable)
 
 /-- **The winding number of a circular arc about its own centre is its angular extent over `2π`.**
 For `R ≠ 0`, the generalized winding number of `circleMap c R` over `[a, b]` about `c` is

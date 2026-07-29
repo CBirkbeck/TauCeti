@@ -239,24 +239,9 @@ the origin, so the truncation is vacuous and the ordinary index integral converg
 private theorem cauchyPVExistsAt_arc (hR : 0 < R) :
     CauchyPVExistsAt (circleMap 0 R ∘ fun s : ℝ => s - R) R (R + Real.pi)
       (fun z => (z - 0)⁻¹) 0 := by
-  have havoid : ∀ t : ℝ, (circleMap 0 R ∘ fun s : ℝ => s - R) t ≠ 0 := fun _ =>
-    circleMap_ne_center hR.ne'
-  have hcont : ContinuousOn (circleMap 0 R ∘ fun s : ℝ => s - R) (uIcc R (R + Real.pi)) :=
-    ((continuous_circleMap 0 R).comp (continuous_id.sub continuous_const)).continuousOn
-  have hderiv_circle : ContinuousOn (deriv (circleMap 0 R))
-      ((fun s : ℝ => s - R) '' uIcc R (R + Real.pi)) := by
-    have h : deriv (circleMap 0 R) = fun θ => circleMap 0 R θ * Complex.I :=
-      funext (deriv_circleMap 0 R)
-    rw [h]
-    exact ((continuous_circleMap 0 R).mul continuous_const).continuousOn
-  have hderiv : ContinuousOn (deriv (circleMap 0 R ∘ fun s : ℝ => s - R))
-      (uIcc R (R + Real.pi)) :=
-    continuousOn_deriv_comp_reparam (φ' := fun _ => 1)
-      (fun t _ => (hasDerivAt_id' (x := t)).sub_const R) continuousOn_const
-      (fun u _ => (differentiable_circleMap 0 R) u) hderiv_circle
-  refine cauchyPVExistsAt_of_avoidance hcont (fun t _ => havoid t) ?_
-  exact intervalIntegrable_inv_sub_mul_deriv hcont (fun t _ => havoid t)
-    (hderiv.intervalIntegrable)
+  have h : (fun s : ℝ => s - R) = fun s : ℝ => 1 * s + (-R) := by funext s; ring
+  rw [h]
+  exact cauchyPVExistsAt_circleMap_comp_affine hR.ne' 1 (-R) R (R + Real.pi)
 
 /-- The reparametrized arc in the `r · t + s` shape `windingNumber_comp_mul_add` expects. -/
 private theorem arc_eq_comp_mul_add (R : ℝ) :
