@@ -10,7 +10,6 @@ public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
 import Mathlib.Data.Finset.Sort
 import Mathlib.Algebra.BigOperators.Group.Finset.Gaps
 import Mathlib.Data.List.Sort
-import Mathlib.Order.Interval.Finset.Gaps
 
 /-!
 # Aggregating per-window principal values across finitely many crossings
@@ -198,8 +197,8 @@ theorem cauchyPVExistsAt_of_perWindow_tendsto_of_interiorDisjoint {γ : ℝ → 
   rw [dif_pos h_mem]
   exact (h_win t h_mem).choose_spec
 
-/-- The alternating sum telescopes when both the piece and window values are boundary
-differences of `Φ ∘ γ`. -/
+/-- Lex-sorting the window pairs `(t - r, t + r)` agrees with sorting the crossings, because
+`t ↦ t - r` is strictly monotone and `Prod.Lex` compares first coordinates first. -/
 private theorem orderEmbOfFin_image_window {crossings : Finset ℝ} {r : ℝ} {k : ℕ}
     (hc : crossings.card = k) {F : Finset (ℝ × ℝ)}
     (hFdef : F = crossings.image fun t : ℝ => (t - r, t + r)) (hF : F.card = k) :
@@ -261,8 +260,8 @@ private theorem windowPieceSum_eq_sum_intervalGapsWithin {p : ℝ → ℝ → �
       rw [hsnd, Finset.orderEmbOfFin_apply] at h
       simpa using h
     rw [List.drop_eq_getElem_cons hlen, windowPieceSum,
-      Finset.sum_eq_sum_Ico_succ_bot (show j < k + 1 by omega), hgj, ← hgj1,
-      show ((j : Fin (k + 1)) + 1) = ((j + 1 : ℕ) : Fin (k + 1)) by push_cast; ring,
+      Finset.sum_eq_sum_Ico_succ_bot (Nat.lt_succ_of_le hj), hgj, ← hgj1,
+      (Nat.cast_add_one (R := Fin (k + 1)) j).symm,
       ih (j + 1) (by omega) (by omega)]
     simp only [List.map_cons, List.sum_cons]
     ring
