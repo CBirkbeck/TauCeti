@@ -14,7 +14,7 @@ import Mathlib.Data.List.Sort
 # Aggregating per-window principal values across finitely many crossings
 
 If the `ε`-truncated integral of `g (γ t) * deriv γ t` converges on each crossing window
-`[t_i - r, t_i + r]`, the windows are pairwise disjoint and interior to `[a, b]`, and the curve
+`[t_i - r, t_i + r]`, the windows have disjoint interiors and lie in `[a, b]`, and the curve
 keeps a positive distance from `s` off the windows, then the truncated integral over all of
 `[a, b]` converges — the single-point principal value exists
 (`cauchyPVExistsAt_of_perWindow_tendsto`). Off the windows the truncation is eventually
@@ -52,10 +52,10 @@ namespace TauCeti.Contour
 
 open Filter MeasureTheory Set Topology
 
-/-- The truncated integrand is eventually interval-integrable on a crossing window interior to
+/-- The truncated integrand is eventually interval-integrable on a crossing window lying in
 `[a, b]`, by restriction. -/
 private theorem eventually_intervalIntegrable_truncated_window {γ : ℝ → ℂ} {s : ℂ}
-    {g : ℂ → ℂ} {a b r t : ℝ} (hab : a ≤ b) (h_lo : a < t - r) (h_hi : t + r ≤ b)
+    {g : ℂ → ℂ} {a b r t : ℝ} (hab : a ≤ b) (h_lo : a ≤ t - r) (h_hi : t + r ≤ b)
     (hr_pos : 0 < r)
     (h_int_tr : ∀ ε : ℝ, 0 < ε →
       IntervalIntegrable (fun u => if ‖γ u - s‖ > ε then g (γ u) * deriv γ u else 0)
@@ -92,7 +92,7 @@ private def windowPieceSum (r : ℝ) (p : ℝ → ℝ → ℂ) (w : ℝ → ℂ)
   | [], a => p a b
   | t :: rest, a => p a (t - r) + w t + windowPieceSum r p w b rest (t + r)
 
-/-- **The shared aggregation induction**: with pairwise-disjoint windows interior to `[a, b]`,
+/-- **The shared aggregation induction**: with windows of disjoint interiors lying in `[a, b]`,
 window principal values `w t`, and between-piece principal values `p l u` available on
 intervals where the curve keeps distance `≥ m` from `s`, the principal value on `[a, b]` is
 the alternating sum `windowPieceSum`. Both public aggregation theorems instantiate this. -/
@@ -101,8 +101,8 @@ private theorem hasCauchyPVAt_along_sorted {γ : ℝ → ℂ} {s : ℂ} {g : ℂ
     (h_piece : ∀ l u : ℝ, A ≤ l → l ≤ u → u ≤ b → (∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) →
       HasCauchyPVAt γ l u g s (p l u)) :
     ∀ (sorted : List ℝ), sorted.SortedLT →
-    ∀ a : ℝ, A ≤ a → a ≤ b → (∀ t ∈ sorted, a < t - r) → (∀ t ∈ sorted, t + r ≤ b) →
-      (∀ t ∈ sorted, ∀ t' ∈ sorted, t' ≠ t → 2 * r < |t - t'|) →
+    ∀ a : ℝ, A ≤ a → a ≤ b → (∀ t ∈ sorted, a ≤ t - r) → (∀ t ∈ sorted, t + r ≤ b) →
+      (∀ t ∈ sorted, ∀ t' ∈ sorted, t' ≠ t → 2 * r ≤ |t - t'|) →
       (∀ t ∈ sorted, HasCauchyPVAt γ (t - r) (t + r) g s (w t)) →
       (∀ u ∈ Icc a b, (∀ t ∈ sorted, u ∉ Ioo (t - r) (t + r)) → m ≤ ‖γ u - s‖) →
       HasCauchyPVAt γ a b g s (windowPieceSum r p w b sorted a) := by
@@ -114,16 +114,16 @@ private theorem hasCauchyPVAt_along_sorted {γ : ℝ → ℂ} {s : ℂ} {g : ℂ
       fun u hu => h_far u hu fun t ht => absurd ht (List.not_mem_nil)
   | cons t rest IH =>
     intro h_sorted a hA hab h_lo h_hi h_pair h_win h_far
-    have h_head_lo : a < t - r := h_lo t List.mem_cons_self
+    have h_head_lo : a ≤ t - r := h_lo t List.mem_cons_self
     have h_head_hi : t + r ≤ b := h_hi t List.mem_cons_self
-    have h_rest_above : ∀ t' ∈ rest, t + r < t' - r := fun t' ht' => by
+    have h_rest_above : ∀ t' ∈ rest, t + r ≤ t' - r := fun t' ht' => by
       have h_lt : t < t' := (List.pairwise_cons.mp h_sorted.pairwise).1 t' ht'
       have h_sep := h_pair t List.mem_cons_self t' (List.mem_cons_of_mem t ht')
         (ne_of_gt h_lt)
       rw [abs_sub_comm, abs_of_pos (by linarith)] at h_sep
       linarith
     have h_left : HasCauchyPVAt γ a (t - r) g s (p a (t - r)) := by
-      refine h_piece a (t - r) hA h_head_lo.le (by linarith) fun u hu => ?_
+      refine h_piece a (t - r) hA h_head_lo (by linarith) fun u hu => ?_
       refine h_far u ⟨hu.1, by linarith [hu.2]⟩ fun t' ht' h_in => ?_
       rcases List.mem_cons.mp ht' with rfl | h_rest
       · linarith [hu.2, h_in.1]
@@ -144,15 +144,16 @@ private theorem hasCauchyPVAt_along_sorted {γ : ℝ → ℂ} {s : ℂ} {g : ℂ
     exact (h_left.concat (h_win t List.mem_cons_self)).concat h_rest
 
 /-- **The single-point principal value from per-window convergence**: if the `ε`-truncated
-integral of `g (γ t) * deriv γ t` converges on each crossing window (pairwise disjoint,
-interior to `[a, b]`), the truncations are integrable on `[a, b]`, and the curve keeps a
+integral of `g (γ t) * deriv γ t` converges on each crossing window (disjoint interiors,
+lying in `[a, b]` — they may touch each other, or touch `a` or `b`), the truncations are
+integrable on `[a, b]`, and the curve keeps a
 positive distance from `s` off the windows, then the principal value at `s` exists on
 `[a, b]`. The per-window limits are hypotheses, so both the simple-pole and higher-order
 per-window theorems discharge them. -/
 theorem cauchyPVExistsAt_of_perWindow_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
     {a b r : ℝ} (hr_pos : 0 < r) (hab : a ≤ b) (crossings : Finset ℝ)
-    (h_lo : ∀ t ∈ crossings, a < t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
-    (h_pair : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r < |t - t'|)
+    (h_lo : ∀ t ∈ crossings, a ≤ t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
+    (h_pair : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r ≤ |t - t'|)
     (h_int_tr : ∀ ε : ℝ, 0 < ε →
       IntervalIntegrable (fun t => if ‖γ t - s‖ > ε then g (γ t) * deriv γ t else 0)
         MeasureTheory.volume a b)
@@ -197,8 +198,8 @@ principal value on `[a, b]` is `Φ (γ b) - Φ (γ a)` — in particular zero ar
 The higher-order per-window limits have exactly this boundary-difference shape. -/
 theorem hasCauchyPVAt_of_perWindow_boundary_tendsto {γ : ℝ → ℂ} {s : ℂ} {g : ℂ → ℂ}
     {Φ : ℂ → ℂ} {a b r : ℝ} (hr_pos : 0 < r) (hab : a ≤ b) (crossings : Finset ℝ)
-    (h_lo : ∀ t ∈ crossings, a < t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
-    (h_pair : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r < |t - t'|)
+    (h_lo : ∀ t ∈ crossings, a ≤ t - r) (h_hi : ∀ t ∈ crossings, t + r ≤ b)
+    (h_pair : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r ≤ |t - t'|)
     (h_int_tr : ∀ ε : ℝ, 0 < ε →
       IntervalIntegrable (fun t => if ‖γ t - s‖ > ε then g (γ t) * deriv γ t else 0)
         MeasureTheory.volume a b)
