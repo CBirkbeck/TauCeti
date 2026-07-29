@@ -34,7 +34,8 @@ normalization; its value also follows from Mathlib's `circleIntegral.integral_su
   `[a, b]` is `(b − a) / 2π`; the general statement the others specialize.
 * `indexIntegral_arc` — the same over `[0, α]`, giving `α / 2π`. This is the arc's contribution to
   the model sector; the closed model-sector curve and its winding number are
-  `TauCeti.Contour.modelSector` and `windingNumber_modelSector` in `ModelSector/Closed.lean`.
+  `TauCeti.Contour.modelSector` and `windingNumber_modelSector_eq_div_two_pi` in
+  `ModelSector/Closed.lean`.
 * `windingNumber_at_i` — the semicircle (`[0, π]`) specialization: winding `½` (the coefficient of
   `ord_i(f)` in the valence formula).
 * `windingNumber_at_rho` — the `[0, π/3]` specialization: winding `1/6` (the per-corner `ord_ρ(f)`

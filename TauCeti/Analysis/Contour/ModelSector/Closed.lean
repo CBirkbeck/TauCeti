@@ -33,8 +33,8 @@ traversed from the far end of one radius rather than from the corner.
 
 * `TauCeti.Contour.windingNumber_modelSector_eq_div_two_pi` — its winding number about `z₀`
   is `α / 2π`.
-* `TauCeti.Contour.windingNumber_modelSector_pi` and
-  `TauCeti.Contour.windingNumber_modelSector_pi_div_three` — the `½` at a smooth crossing and the
+* `TauCeti.Contour.windingNumber_modelSector_eq_half` and
+  `TauCeti.Contour.windingNumber_modelSector_eq_one_div_six` — the `½` at a smooth crossing and the
   `1/6` at a `π/3` corner, the two values the valence formula consumes.
 
 This is Layer 1 of the Hungerbühler–Wasem generalized residue theorem (HW Thm 3.3).
@@ -173,7 +173,7 @@ theorem windingNumber_modelSector_eq_div_two_pi
 /-- **A smooth crossing contributes winding `½`** — the `α = π` model sector (HW (2.4)). This is
 the coefficient of `ord_i f` in the valence formula: at the smooth boundary point `i` the contour
 indents by a semicircle. -/
-theorem windingNumber_modelSector_pi {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) :
+theorem windingNumber_modelSector_eq_half {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) :
     windingNumber (modelSector z₀ r φ Real.pi) (-r) (r + Real.pi) z₀ = 1 / 2 := by
   rw [windingNumber_modelSector_eq_div_two_pi hr φ Real.pi_nonneg]
   have hpi : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
@@ -182,7 +182,7 @@ theorem windingNumber_modelSector_pi {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : �
 /-- **A `π/3` corner contributes winding `1/6`** — the `α = π/3` model sector (HW (2.4)). The two
 such corners `ρ` and `ρ + 1` of the fundamental domain sum to the `1/3` coefficient of
 `ord_ρ f`. -/
-theorem windingNumber_modelSector_pi_div_three {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) :
+theorem windingNumber_modelSector_eq_one_div_six {z₀ : ℂ} {r : ℝ} (hr : 0 < r) (φ : ℝ) :
     windingNumber (modelSector z₀ r φ (Real.pi / 3)) (-r) (r + Real.pi / 3) z₀ = 1 / 6 := by
   rw [windingNumber_modelSector_eq_div_two_pi hr φ (by positivity)]
   have hpi : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
