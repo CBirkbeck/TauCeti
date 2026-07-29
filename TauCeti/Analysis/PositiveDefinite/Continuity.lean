@@ -153,7 +153,6 @@ private theorem gram_three_add_star_re_eq (hF : IsPositiveDefinite F)
   exact hF.gram_three_add_star_re_algebra hx hy hyx hnx hny hC hd hlam hCpos
 
 /-- **A positive-definite function with `(F 0).re = 0` vanishes at every skew element.**
-The bound `‖F x‖ ≤ (F 0).re` collapses to `‖F x‖ ≤ 0`.
 
 Stated pointwise in `x` and over an `AddMonoid`, so it also serves the group-level form where
 `star` negates globally. -/
