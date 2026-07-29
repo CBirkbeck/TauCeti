@@ -50,6 +50,8 @@ here. The continuity theory and Bochner's representation theorem are later miles
 * `TauCeti.IsPositiveDefinite.normSq_le`: the Cauchy–Schwarz inequality
   `‖F (a + b⋆)‖² ≤ (F (a + a⋆)).re * (F (b + b⋆)).re`.
 * `TauCeti.IsPositiveDefinite.norm_apply_le_map_zero_re_of_add_star_eq_zero`: `‖F a‖ ≤ (F 0).re`
+* `TauCeti.IsPositiveDefinite.apply_eq_zero_of_map_zero_re_eq_zero`: `(F 0).re = 0` forces
+  `F a = 0` at every skew point `a`.
   when `a + star a = 0`, with the additive-group corollary
   `TauCeti.IsPositiveDefinite.norm_apply_le_map_zero_re_of_star_eq_neg` for `star a = -a`.
 * `TauCeti.IsPositiveDefinite.isPositiveDefiniteKernel`: a positive-definite function gives the
@@ -214,6 +216,15 @@ theorem norm_apply_le_map_zero_re_of_add_star_eq_zero (hF : IsPositiveDefinite F
     (a : M) (ha : a + star a = 0) : ‖F a‖ ≤ (F 0).re := by
   refine le_of_sq_le_sq ?_ hF.map_zero_re_nonneg
   simpa [Complex.normSq_eq_norm_sq, pow_two, ha, star_zero] using hF.normSq_le a 0
+
+/-- **A positive-definite function with `(F 0).re = 0` vanishes at every skew point.**
+
+Stated pointwise in `a` and over an `AddMonoid`, so it also covers a group whose involution
+negates globally. -/
+theorem apply_eq_zero_of_map_zero_re_eq_zero (hF : IsPositiveDefinite F)
+    (h0 : (F 0).re = 0) {a : M} (ha : a + star a = 0) : F a = 0 := by
+  apply norm_le_zero_iff.mp
+  simpa [h0] using hF.norm_apply_le_map_zero_re_of_add_star_eq_zero a ha
 
 section Group
 
