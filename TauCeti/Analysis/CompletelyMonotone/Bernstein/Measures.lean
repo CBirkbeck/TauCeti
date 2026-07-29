@@ -1107,16 +1107,14 @@ private lemma boundary_term_decay (f : ℝ → ℝ) (hcm : IsCompletelyMonotone 
 /-- **The shifted order-`k` kernel is dominated by the Chafaï density.** For `0 ≤ x ≤ t` the
 kernel built from `(t - x) ^ (k - 1)` is nonnegative and bounded by the density built from
 `t ^ (k - 1)`. -/
-private lemma norm_ibp_kernel_le_chafaiDensity (f : ℝ → ℝ) (hcm : IsCompletelyMonotone f)
-    {k : ℕ} (hk0 : k ≠ 0) {x t : ℝ} (hx : 0 ≤ x) (ht : x ≤ t) :
+private lemma norm_ibp_kernel_le_chafaiDensity (f : ℝ → ℝ)
+    {k : ℕ} (hk0 : k ≠ 0) {x t : ℝ} (hx : 0 ≤ x) (ht : x ≤ t)
+    (hcm_sign : 0 ≤ (-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) t) :
     ‖(-1 : ℝ) ^ k / ↑(k - 1).factorial * (t - x) ^ (k - 1) *
       iteratedDerivWithin k f (Ici 0) t‖ ≤ chafaiDensity f k t := by
-  have ht0 : 0 ≤ t := le_trans hx ht
   have htx : 0 ≤ t - x := by linarith
   have htx_le : t - x ≤ t := by linarith
   rw [chafaiDensity_of_ne_zero hk0]
-  have hcm_sign : 0 ≤ (-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) t :=
-    hcm.neg_one_pow_mul_iteratedDerivWithin_nonneg k ht0
   have hfact : (0 : ℝ) < ↑(k - 1).factorial := Nat.cast_pos.mpr (Nat.factorial_pos _)
   have hval_nn : 0 ≤ (-1 : ℝ) ^ k / ↑(k - 1).factorial * (t - x) ^ (k - 1) *
       iteratedDerivWithin k f (Ici 0) t := by
@@ -1156,7 +1154,8 @@ private lemma ibp_kernel_integrableOn (f : ℝ → ℝ) (hcm : IsCompletelyMonot
         (uniqueDiffOn_Ici 0)).mono
         (fun t ht => mem_Ici.mpr (lt_of_le_of_lt hx ht).le)))
   · rw [ae_restrict_iff' measurableSet_Ioi]
-    exact ae_of_all _ fun t ht => norm_ibp_kernel_le_chafaiDensity f hcm hk0 hx (le_of_lt ht)
+    exact ae_of_all _ fun t ht => norm_ibp_kernel_le_chafaiDensity f hk0 hx (le_of_lt ht)
+      (hcm.neg_one_pow_mul_iteratedDerivWithin_nonneg k (le_trans hx (le_of_lt ht)))
 
 /-- Raising the sign exponent of the order-`k` kernel by one negates its integral. -/
 private lemma intervalIntegral_neg_one_pow_succ_kernel (f : ℝ → ℝ) (k : ℕ) (x T : ℝ) :
