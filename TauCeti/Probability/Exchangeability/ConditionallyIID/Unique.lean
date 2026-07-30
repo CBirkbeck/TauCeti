@@ -33,6 +33,9 @@ representative but not another directing measure.
 * `ConditionallyIIDWith.integral_empiricalFrequency_sub_sq` — the `L²` rate: the empirical
   frequency of a measurable set `B` along the first `n` coordinates approximates `(ν ·) B` with
   mean square error exactly `(∫ (ν ·) B - ∫ ((ν ·) B) ^ 2) / n`.
+* `ConditionallyIIDWith.integral_directing_sub_sq_le_four_div` — the finite-sample form of
+  uniqueness: two directing measures of the same process are within `4 / n` of each other in mean
+  square on each fixed measurable set, for every `n ≥ 1`.
 * `conditionallyIID_ae_unique` — two directing measures of the same process are a.e. equal.
 
 ## Implementation
@@ -489,7 +492,7 @@ private theorem integral_sub_sq_le_two_mul_add_two_mul_of_integral_sub_sq_le_of_
 /-- **The `L²` rate between two directing measures.** Two directing measures of the same process
 are within `4 / n` of each other in mean square, for every `n ≥ 1`, on each fixed measurable set.
 This is the quantitative form of `ae_measure_apply_eq`, which is its `n → ∞` limit. -/
-private theorem ConditionallyIIDWith.integral_directing_sub_sq_le_four_div [IsProbabilityMeasure μ]
+theorem ConditionallyIIDWith.integral_directing_sub_sq_le_four_div [IsProbabilityMeasure μ]
     (hX : ∀ i, AEMeasurable (X i) μ) (h : ConditionallyIIDWith μ X ν)
     (h' : ConditionallyIIDWith μ X ν') (hB : MeasurableSet B) {n : ℕ} (hn : n ≠ 0) :
     ∫ ω, (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2 ∂μ ≤ 4 / n := by
@@ -546,12 +549,13 @@ theorem ConditionallyIIDWith.ae_measure_apply_eq [IsProbabilityMeasure μ]
       ENNReal.toReal_mono ENNReal.one_ne_top (prob_le_one (μ := (ρ ω : Measure α)) (s := B))
   set d : Ω → ℝ := fun ω =>
     ((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal with hd_def
-  have hdm : Measurable d := (hqm ν h.measurable_directing).sub (hqm ν' h'.measurable_directing)
-  have hdint : Integrable (fun ω => d ω ^ 2) μ := by
-    refine Integrable.of_bound (hdm.pow_const 2).aestronglyMeasurable 1
-      (ae_of_all _ fun ω => ?_)
-    rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-    nlinarith [hq0 ν ω, hq1 ν ω, hq0 ν' ω, hq1 ν' ω]
+  have habs : ∀ (ρ : Ω → ProbabilityMeasure α) (ω : Ω),
+      |((ρ ω : Measure α) B).toReal| ≤ 1 := fun ρ ω => by
+    rw [abs_of_nonneg (hq0 ρ ω)]; exact hq1 ρ ω
+  have hdint : Integrable (fun ω => d ω ^ 2) μ :=
+    integrable_sub_sq_of_abs_le_one (hqm ν h.measurable_directing).aemeasurable
+      (hqm ν' h'.measurable_directing).aemeasurable
+      (ae_of_all _ (habs ν)) (ae_of_all _ (habs ν'))
   -- `hd_def` turns the `set` wrapper `d` into the explicit difference the rate lemma is stated for.
   have hbound : ∀ n : ℕ, 1 ≤ n → ∫ ω, d ω ^ 2 ∂μ ≤ 4 / n := fun n hn => by
     simpa only [hd_def] using h.integral_directing_sub_sq_le_four_div hX h' hB (n := n) (by omega)
