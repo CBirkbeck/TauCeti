@@ -365,7 +365,14 @@ theorem residue_const_mul {f : ℂ → ℂ} {z₀ : ℂ} (c : ℂ) (hf : Meromor
 the `Pi.smul` companion to `residue_const_mul`. -/
 @[simp]
 theorem residue_const_smul {f : ℂ → ℂ} {z₀ : ℂ} (c : ℂ) (hf : MeromorphicAt f z₀) :
-    residue (c • f) z₀ = c • residue f z₀ := residue_const_mul c hf
+    residue (c • f) z₀ = c • residue f z₀ :=
+  -- Both conversions are definitional: `c • f` unfolds to `fun z => c * f z` by `Pi.smul_apply`,
+  -- and `c • r` to `c * r` in `ℂ` by `smul_eq_mul`. The `show` spells them out rather than
+  -- leaving the reader to discover that `residue_const_mul` typechecks here by `rfl`.
+  show residue (fun z => c * f z) z₀ = c * residue f z₀ from residue_const_mul c hf
+
+@[deprecated (since := "2026-07-30")]
+alias residue_smul := residue_const_smul
 
 /-- **Subtractivity of the residue.** The residue distributes over subtraction of meromorphic
 functions; the `−1` scaling case of `residue_add` and `residue_const_mul`. -/
