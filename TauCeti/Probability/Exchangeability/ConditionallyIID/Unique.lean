@@ -238,6 +238,18 @@ private theorem integral_sq_average_sub [IsProbabilityMeasure μ] {e : ℕ → �
   field_simp
 
 omit [MeasurableSpace Ω] in
+/-- The real part of a `{0, 1}`-valued `ℝ≥0∞` indicator is the corresponding real indicator.
+
+This is Mathlib's `map_indicator` at `ENNReal.toRealHom`, not a separate proof: the only work is
+that `⇑ENNReal.toRealHom` and `.toReal` are definitionally but not syntactically equal, so the
+result needs an `exact` rather than closing by `rfl`. -/
+private theorem toReal_indicator_one (s : Set Ω) (ω : Ω) :
+    (s.indicator (1 : Ω → ℝ≥0∞) ω).toReal = s.indicator (1 : Ω → ℝ) ω := by
+  have h := map_indicator ENNReal.toRealHom s (1 : Ω → ℝ≥0∞) ω
+  simp only [Function.comp_def] at h
+  exact h
+
+omit [MeasurableSpace Ω] in
 /-- An `ℝ≥0∞` indicator of `1` is finite. -/
 private theorem indicator_one_ne_top (s : Set Ω) (ω : Ω) :
     s.indicator (1 : Ω → ℝ≥0∞) ω ≠ ∞ := by
@@ -261,12 +273,7 @@ private theorem ConditionallyIIDWith.integral_indicator_single
   have := integral_toReal_eq_of_lintegral_eq
     (measurable_one.aemeasurable.indicator₀ ((hX i).nullMeasurableSet_preimage hB))
     hu.aemeasurable (indicator_one_ne_top _) (fun ω => measure_ne_top _ _) hlin
-  have hind : ∀ ω, ((X i ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω).toReal
-      = (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω := fun ω => by
-    have h := map_indicator ENNReal.toRealHom (X i ⁻¹' B) (1 : Ω → ℝ≥0∞) ω
-    simp only [Function.comp_def] at h
-    exact h
-  simpa [hind] using this
+  simpa [toReal_indicator_one] using this
 
 /-- **Pair moment.** For distinct indices the integral of the product of the two indicators
 equals the integral of the squared mass — conditional independence, read at two indices. -/
@@ -309,12 +316,7 @@ private theorem ConditionallyIIDWith.integral_directing_mul_indicator
     (hu.mul hu).aemeasurable
     (fun ω => ENNReal.mul_ne_top (measure_ne_top _ _) (indicator_one_ne_top _ ω))
     (fun ω => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)) hlin
-  have hind : ∀ ω, ((X i ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω).toReal
-      = (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω := fun ω => by
-    have h := map_indicator ENNReal.toRealHom (X i ⁻¹' B) (1 : Ω → ℝ≥0∞) ω
-    simp only [Function.comp_def] at h
-    exact h
-  simpa [ENNReal.toReal_mul, hind, sq] using this
+  simpa [ENNReal.toReal_mul, toReal_indicator_one, sq] using this
 
 /-- **The `L²` rate for empirical frequencies.** For a conditionally i.i.d. process with directing
 measure `ν` and a measurable set `B`, the empirical frequency of `B` among the first `n`
