@@ -234,14 +234,16 @@ theorem isPwC1ImmersionOn_halfDiscBoundary (hR : 0 < R) :
         hd2.hasDerivWithinAt.derivWithin (huniq t ht)]
       exact mul_ne_zero (circleMap_ne_center (c := 0) (θ := t - R) hR.ne') Complex.I_ne_zero
 
-/-- The index principal value of the reparametrized arc about the origin exists: the arc misses
-the origin, so the truncation is vacuous and the ordinary index integral converges. -/
-private theorem cauchyPVExistsAt_arc (hR : 0 < R) :
+/-- The index principal value of the reparametrized arc about the origin exists: for `R ≠ 0` the
+arc misses the origin, so the truncation is vacuous and the ordinary index integral converges;
+at `R = 0` the arc is constant at the origin and every truncated integrand vanishes. Either way no
+positivity hypothesis is needed. -/
+private theorem cauchyPVExistsAt_arc :
     CauchyPVExistsAt (circleMap 0 R ∘ fun s : ℝ => s - R) R (R + Real.pi)
       (fun z => (z - 0)⁻¹) 0 := by
   have h : (fun s : ℝ => s - R) = fun s : ℝ => 1 * s + (-R) := by funext s; ring
   rw [h]
-  exact cauchyPVExistsAt_circleMap_comp_affine hR.ne' 1 (-R) R (R + Real.pi)
+  exact cauchyPVExistsAt_circleMap_comp_affine 1 (-R) R (R + Real.pi)
 
 /-- The reparametrized arc in the `r · t + s` shape `windingNumber_comp_mul_add` expects. -/
 private theorem arc_eq_comp_mul_add (R : ℝ) :
@@ -270,7 +272,7 @@ theorem windingNumber_halfDiscBoundary (hR : 0 < R) :
   have hpv_seg : CauchyPVExistsAt (halfDiscBoundary R) (-R) R (fun z => (z - 0)⁻¹) 0 :=
     (cauchyPVExistsAt_inv_sub_segment 1 0 R).congr_curve (eqOn_halfDiscBoundary_segment hR.le)
   have hpv_arc : CauchyPVExistsAt (halfDiscBoundary R) R (R + Real.pi) (fun z => (z - 0)⁻¹) 0 :=
-    (cauchyPVExistsAt_arc hR).congr_curve
+    cauchyPVExistsAt_arc.congr_curve
       ((eqOn_halfDiscBoundary_arc R).mono (uIoo_subset_uIcc_self))
   have hseg : windingNumber (halfDiscBoundary R) (-R) R 0 = 0 := by
     rw [← windingNumber_congr_curve (eqOn_halfDiscBoundary_segment hR.le)]

@@ -14,8 +14,13 @@ public import TauCeti.Analysis.Contour.Winding.Number.Reparam
 # The Hungerbühler–Wasem model sector
 
 The model sector of opening angle `α` at `z₀` is the closed curve made of a radial segment
-into `z₀`, a circular arc of radius `r` sweeping `α`, and a radial segment back out. The
-geometry and closure hold for `0 ≤ r` and `0 ≤ α`, with `r = 0` and `α = 0` degenerate rather
+inward to `z₀` along direction `φ + α`, a radial segment back out along direction `φ`, and a
+circular arc of radius `r` sweeping `α` from `φ` round to `φ + α`, which closes the curve at the
+point it started from. Both radii are traversed before the arc — the parameterization on
+`[-r, r + α]` puts the corner at `0` and the arc on `(r, r + α]` — so the curve is traversed
+from the far end of the incoming radius, not from the corner.
+
+The geometry and closure hold for `0 ≤ r` and `0 ≤ α`, with `r = 0` and `α = 0` degenerate rather
 than ill-formed; only the winding number needs `0 < r`, so that the arc avoids its centre. For
 negative `r` or `α` the two parameter intervals reverse and this description does not apply.
 
@@ -26,8 +31,7 @@ corner reading does not: at `α = 0` the two radii coincide, and for `α ≥ 2π
 the curve is a multi-turn swept arc rather than a sector.
 
 The two radial segments are packaged as a single `twoRayCorner`, since neither has a principal
-value on its own; the arc is a reparametrised `circleMap`. Concatenating them, the curve is
-traversed from the far end of one radius rather than from the corner.
+value on its own; the arc is a reparametrised `circleMap`.
 
 ## Main definitions
 
@@ -160,7 +164,7 @@ theorem windingNumber_closedModelSector
   have hpv_corner : CauchyPVExistsAt (modelSector z₀ r φ α) (-r) r (fun z => (z - z₀)⁻¹) z₀ :=
     (cauchyPVExistsAt_inv_sub_twoRayCorner (norm_modelSector_dirs φ α) r).congr_curve hcorner
   have hpv_arc : CauchyPVExistsAt (modelSector z₀ r φ α) r (r + α) (fun z => (z - z₀)⁻¹) z₀ :=
-    (cauchyPVExistsAt_circleMap_comp_affine hrne 1 (φ - r) r (r + α)).congr_curve harc
+    (cauchyPVExistsAt_circleMap_comp_affine 1 (φ - r) r (r + α)).congr_curve harc
   rw [windingNumber_concat hpv_corner hpv_arc, ← windingNumber_congr_curve hcorner,
     ← windingNumber_congr_curve harc,
     windingNumber_eq_zero_twoRayCorner (norm_modelSector_dirs φ α) r,

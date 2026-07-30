@@ -200,11 +200,23 @@ theorem windingNumber_circleMap_eq_one_of_dist_lt {c w : ℂ} {R : ℝ} (hw : di
   exact inv_mul_cancel₀ Complex.two_pi_I_ne_zero
 
 /-- **The index principal value of an affinely reparametrised circle exists.** The curve
-`t ↦ circleMap c R (m t + s)` stays at distance `|R|` from `c`, so the principal value about `c` is
-the ordinary integral. This is the shared construction behind the arc pieces of the model sector
-and of the half-disc worked example. -/
-theorem cauchyPVExistsAt_circleMap_comp_affine {c : ℂ} {R : ℝ} (hR : R ≠ 0) (m s a b : ℝ) :
+`t ↦ circleMap c R (m t + s)` stays at distance `|R|` from `c`, so for `R ≠ 0` the principal value
+about `c` is the ordinary integral. At `R = 0` the curve is constant at `c`, every truncated
+integrand is identically zero, and the principal value exists (and is `0`) for that reason
+instead. This is the shared construction behind the arc pieces of the model sector and of the
+half-disc worked example. -/
+theorem cauchyPVExistsAt_circleMap_comp_affine {c : ℂ} {R : ℝ} (m s a b : ℝ) :
     CauchyPVExistsAt (circleMap c R ∘ fun t : ℝ => m * t + s) a b (fun z => (z - c)⁻¹) c := by
+  rcases eq_or_ne R 0 with rfl | hR
+  · -- The curve never leaves `c`, so `‖γ t - c‖ > ε` fails for every `ε > 0`.
+    refine CauchyPVExistsAt.intro (L := 0) (hasCauchyPVAt_iff.mpr ⟨?_, ?_⟩)
+    · filter_upwards [self_mem_nhdsWithin] with ε hε
+      have hεpos : (0 : ℝ) < ε := Set.mem_Ioi.mp hε
+      simp [not_lt.mpr hεpos.le]
+    · refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
+      filter_upwards [self_mem_nhdsWithin] with ε hε
+      have hεpos : (0 : ℝ) < ε := Set.mem_Ioi.mp hε
+      simp [not_lt.mpr hεpos.le]
   have havoid : ∀ t ∈ Set.uIcc a b, (circleMap c R ∘ fun t : ℝ => m * t + s) t ≠ c :=
     fun _ _ => circleMap_ne_center hR
   have hcont : ContinuousOn (circleMap c R ∘ fun t : ℝ => m * t + s) (Set.uIcc a b) :=
