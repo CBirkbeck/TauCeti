@@ -30,6 +30,8 @@ scaffolding that localizes the principal-value analysis to one crossing per wind
 * `Contour.exists_common_window_radius_le` — a common window radius additionally held below a
   positive per-crossing bound, with strict endpoint margins.
 * `Contour.eq_of_mem_window_of_eq` — in-window uniqueness of the crossing.
+* `Contour.eq_of_mem_window_of_eq'` — the same, from the strict margins returned by
+  `exists_common_window_radius_le`.
 * `Contour.exists_window_dist_lower_bound` — a positive lower bound for `‖γ t - s‖` on the two
   closed half-windows excluding the crossing.
 * `Contour.exists_complement_windows_dist_lower_bound` — a positive lower bound for
@@ -200,6 +202,24 @@ theorem eq_of_mem_window_of_eq {α : Type*} {γ : ℝ → α} {s : α} {a b : �
     rw [abs_sub_comm, abs_le]
     exact ⟨by linarith [ht.1], by linarith [ht.2]⟩
   linarith [abs_nonneg (t_i - t)]
+
+/-- **In-window uniqueness of the crossing, from a common window radius.** The variant of
+`eq_of_mem_window_of_eq` whose margins are the *strict* ones `exists_common_window_radius_le`
+returns: crossings more than `r` inside the endpoints, and distinct crossings more than `2 * r`
+apart. No sign condition on `r` is required — halving the pairwise margin needs `0 ≤ r`, but a
+negative radius leaves the window `[t_i - r, t_i + r]` empty, so `ht` supplies it. -/
+theorem eq_of_mem_window_of_eq' {α : Type*} {γ : ℝ → α} {s : α} {a b : ℝ}
+    {crossings : Finset ℝ} {r : ℝ}
+    (h_endpts : ∀ t ∈ crossings, a + r < t ∧ t < b - r)
+    (h_pairwise : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r < |t - t'|)
+    (h_complete : ∀ t ∈ Icc a b, γ t = s → t ∈ crossings)
+    {t_i : ℝ} (ht_i : t_i ∈ crossings)
+    {t : ℝ} (ht : t ∈ Icc (t_i - r) (t_i + r)) (h_eq : γ t = s) :
+    t = t_i := by
+  have hr : 0 ≤ r := by linarith [ht.1, ht.2]
+  exact eq_of_mem_window_of_eq (fun u hu => ⟨(h_endpts u hu).1.le, (h_endpts u hu).2.le⟩)
+    (fun u hu u' hu' hne => by linarith [h_pairwise u hu u' hu' hne])
+    h_complete ht_i ht h_eq
 
 /-- **Positive distance bound on the half-windows**: when the crossing is unique in its window,
 `‖γ t - s‖` is bounded below by a common `m > 0` on the two closed half-windows
