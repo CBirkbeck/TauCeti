@@ -27,6 +27,8 @@ scaffolding that localizes the principal-value analysis to one crossing per wind
 ## Main results
 
 * `Contour.exists_common_window_radius` — the common window radius.
+* `Contour.exists_common_window_radius_le` — a common window radius additionally held below a
+  positive per-crossing bound, with strict endpoint margins.
 * `Contour.eq_of_mem_window_of_eq` — in-window uniqueness of the crossing.
 * `Contour.exists_window_dist_lower_bound` — a positive lower bound for `‖γ t - s‖` on the two
   closed half-windows excluding the crossing.
