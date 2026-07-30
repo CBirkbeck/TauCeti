@@ -483,6 +483,48 @@ private theorem integral_sub_sq_le_two_mul_add_two_mul_of_integral_sub_sq_le_of_
           integral_const_mul]
     _ ≤ 2 * c₁ + 2 * c₂ := by linarith
 
+/-- **The `L²` rate between two directing measures.** Two directing measures of the same process
+are within `4 / n` of each other in mean square, for every `n ≥ 1`, on each fixed measurable set.
+This is the quantitative form of `ae_measure_apply_eq`, which is its `n → ∞` limit.
+
+Integrability of the squared difference is a hypothesis rather than a consequence: the rate bounds
+available for the two measures separately constrain only the squares of the individual errors,
+which does not make their difference measurable. -/
+private theorem ConditionallyIIDWith.integral_directing_sub_sq_le_four_div [IsProbabilityMeasure μ]
+    (hX : ∀ i, AEMeasurable (X i) μ) (h : ConditionallyIIDWith μ X ν)
+    (h' : ConditionallyIIDWith μ X ν') (hB : MeasurableSet B)
+    (hdint : Integrable (fun ω =>
+      (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2) μ)
+    {n : ℕ} (hn : n ≠ 0) :
+    ∫ ω, (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2 ∂μ ≤ 4 / n := by
+  have hqm : ∀ ρ : Ω → ProbabilityMeasure α, Measurable ρ →
+      Measurable fun ω => ((ρ ω : Measure α) B).toReal := fun ρ hρ =>
+    ((Measure.measurable_coe hB).comp (measurable_subtype_coe.comp hρ)).ennreal_toReal
+  have habs : ∀ (ρ : Ω → ProbabilityMeasure α) (ω : Ω),
+      |((ρ ω : Measure α) B).toReal| ≤ 1 := fun ρ ω => by
+    rw [abs_of_nonneg ENNReal.toReal_nonneg]
+    simpa using
+      ENNReal.toReal_mono ENNReal.one_ne_top (prob_le_one (μ := (ρ ω : Measure α)) (s := B))
+  have hem : ∀ m : ℕ, AEMeasurable (fun ω =>
+      (m : ℝ)⁻¹ * ∑ i ∈ Finset.range m, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω) μ := fun m =>
+    aemeasurable_const.mul (Finset.aemeasurable_fun_sum _ fun i _ =>
+      measurable_one.aemeasurable.indicator₀ ((hX i).nullMeasurableSet_preimage hB))
+  have heb : ∀ (m : ℕ) (ω : Ω),
+      |(m : ℝ)⁻¹ * ∑ i ∈ Finset.range m, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω| ≤ 1 :=
+    fun m ω => abs_average_indicator_le_one (fun i => X i ⁻¹' B) m ω
+  -- Both errors are bounded by `1 / n`, so the general `2c₁ + 2c₂` bound specializes to `4 / n`.
+  have hb : ∫ ω, (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2 ∂μ
+      ≤ 2 * (n : ℝ)⁻¹ + 2 * (n : ℝ)⁻¹ :=
+    integral_sub_sq_le_two_mul_add_two_mul_of_integral_sub_sq_le_of_integral_sub_sq_le hdint
+      (integrable_sub_sq_of_abs_le_one (hem n) (hqm ν h.measurable_directing).aemeasurable
+        (ae_of_all _ (heb n)) (ae_of_all _ (habs ν)))
+      (integrable_sub_sq_of_abs_le_one (hem n) (hqm ν' h'.measurable_directing).aemeasurable
+        (ae_of_all _ (heb n)) (ae_of_all _ (habs ν')))
+      (h.integral_empiricalFrequency_sub_sq_le hX hB hn)
+      (h'.integral_empiricalFrequency_sub_sq_le hX hB hn)
+  rw [div_eq_mul_inv]
+  linarith
+
 /-- Two directing measures of the same process assign the same mass to each fixed measurable set,
 almost everywhere.
 
@@ -501,16 +543,6 @@ theorem ConditionallyIIDWith.ae_measure_apply_eq [IsProbabilityMeasure μ]
     intro ρ ω
     simpa using
       ENNReal.toReal_mono ENNReal.one_ne_top (prob_le_one (μ := (ρ ω : Measure α)) (s := B))
-  have hXB : ∀ i, NullMeasurableSet (X i ⁻¹' B) μ := fun i =>
-    (hX i).nullMeasurableSet_preimage hB
-  have hem : ∀ n : ℕ, AEMeasurable (fun ω =>
-      (n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω) μ := by
-    intro n
-    exact aemeasurable_const.mul
-      (Finset.aemeasurable_fun_sum _ fun i _ => measurable_one.aemeasurable.indicator₀ (hXB i))
-  have heb : ∀ (n : ℕ) (ω : Ω),
-      |(n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω| ≤ 1 :=
-    fun n ω => abs_average_indicator_le_one (fun i => X i ⁻¹' B) n ω
   set d : Ω → ℝ := fun ω =>
     ((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal with hd_def
   have hdm : Measurable d := (hqm ν h.measurable_directing).sub (hqm ν' h'.measurable_directing)
@@ -519,27 +551,8 @@ theorem ConditionallyIIDWith.ae_measure_apply_eq [IsProbabilityMeasure μ]
       (ae_of_all _ fun ω => ?_)
     rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
     nlinarith [hq0 ν ω, hq1 ν ω, hq0 ν' ω, hq1 ν' ω]
-  have habs : ∀ (ρ : Ω → ProbabilityMeasure α) (ω : Ω),
-      |((ρ ω : Measure α) B).toReal| ≤ 1 := fun ρ ω => by
-    rw [abs_of_nonneg (hq0 ρ ω)]; exact hq1 ρ ω
-  have hbound : ∀ n : ℕ, 1 ≤ n → ∫ ω, d ω ^ 2 ∂μ ≤ 4 / n := by
-    intro n hn
-    have hn0 : n ≠ 0 := by omega
-    -- Both errors are bounded by `1 / n`, so the general `2c₁ + 2c₂` bound specializes to `4 / n`.
-    -- `hd_def` turns the `set` wrapper `d` into the explicit difference the helper is stated for.
-    have hb : ∫ ω, d ω ^ 2 ∂μ ≤ 2 * (n : ℝ)⁻¹ + 2 * (n : ℝ)⁻¹ := by
-      simpa only [hd_def] using
-        integral_sub_sq_le_two_mul_add_two_mul_of_integral_sub_sq_le_of_integral_sub_sq_le hdint
-          (integrable_sub_sq_of_abs_le_one (hem n)
-            (hqm ν h.measurable_directing).aemeasurable
-            (ae_of_all _ (heb n)) (ae_of_all _ (habs ν)))
-          (integrable_sub_sq_of_abs_le_one (hem n)
-            (hqm ν' h'.measurable_directing).aemeasurable
-            (ae_of_all _ (heb n)) (ae_of_all _ (habs ν')))
-          (h.integral_empiricalFrequency_sub_sq_le hX hB hn0)
-          (h'.integral_empiricalFrequency_sub_sq_le hX hB hn0)
-    rw [div_eq_mul_inv]
-    linarith
+  have hbound : ∀ n : ℕ, 1 ≤ n → ∫ ω, d ω ^ 2 ∂μ ≤ 4 / n := fun n hn =>
+    h.integral_directing_sub_sq_le_four_div hX h' hB hdint (by omega)
   have hle : ∫ ω, d ω ^ 2 ∂μ ≤ 0 :=
     ge_of_tendsto (tendsto_const_div_atTop_nhds_zero_nat (4 : ℝ))
       (eventually_atTop.2 ⟨1, fun n hn => hbound n hn⟩)
