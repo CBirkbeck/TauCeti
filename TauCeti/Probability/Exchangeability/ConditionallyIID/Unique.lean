@@ -320,11 +320,8 @@ private theorem ConditionallyIIDWith.integral_directing_mul_indicator
 `q ω = ((ν ω) B).toReal` for the directing mass of `B`, the centred variables
 `1_{Xᵢ ∈ B} - q` have vanishing cross moments and common second moment `∫ q - ∫ q²`.
 
-Both cases reduce to the three moment identities above. On the diagonal the indicator is
-idempotent, so the pair moment is replaced by the first moment `∫ q`; off the diagonal the pair
-moment and the two cross moments are all `∫ q²`, and the four terms cancel. This is exactly the
-covariance hypothesis of `integral_sq_average_sub`, and it is the only place the conditional
-i.i.d. structure enters beyond measurability of the directing map. -/
+This is the covariance hypothesis of `integral_sq_average_sub`, and it is the only place the
+conditional i.i.d. structure enters beyond measurability of the directing map. -/
 private theorem ConditionallyIIDWith.integral_indicator_sub_directing_mul_indicator_sub_directing
     [IsFiniteMeasure μ] (h : ConditionallyIIDWith μ X ν) (hX : ∀ i, AEMeasurable (X i) μ)
     (hB : MeasurableSet B) (i j : ℕ) :
@@ -354,7 +351,9 @@ private theorem ConditionallyIIDWith.integral_indicator_sub_directing_mul_indica
     (by simpa [sq] using
       integrable_mul_of_nonneg_of_le_one hq.aemeasurable hq.aemeasurable hbq hbq)]
   by_cases hij : i = j
-  · subst hij
+  · -- On the diagonal the indicator is idempotent, so the first moment appears in place of the
+    -- pair moment and the variance is `∫ q - ∫ q²`.
+    subst hij
     have hsq : ∀ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
         * (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω = (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω := by
       intro ω
@@ -362,7 +361,9 @@ private theorem ConditionallyIIDWith.integral_indicator_sub_directing_mul_indica
     rw [if_pos rfl, integral_congr_ae (ae_of_all _ hsq),
       h.integral_indicator_single hX hB i, h.integral_directing_mul_indicator hX hB i]
     ring
-  · rw [if_neg hij, h.integral_indicator_pair hX hB hij,
+  · -- Off the diagonal the pair moment and both cross moments are `∫ q²`, so the four terms of
+    -- the expansion cancel.
+    rw [if_neg hij, h.integral_indicator_pair hX hB hij,
       h.integral_directing_mul_indicator hX hB i, h.integral_directing_mul_indicator hX hB j]
     ring
 
