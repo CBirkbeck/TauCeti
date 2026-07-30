@@ -446,28 +446,25 @@ private theorem integrable_sub_sq_of_abs_le_one [IsFiniteMeasure μ] {u v : Ω �
 
 
 /-- **An `L²` triangle bound.** If `q` and `q'` are each within `c` of a common `Y` in mean square,
-then they are within `4c` of each other. Only the two squared errors are assumed integrable. -/
+then they are within `4c` of each other. The three squared differences are assumed integrable;
+`hd` is not implied by `hi1` and `hi2`, which constrain only the squares `(Y - q)²` and `(Y - q')²`
+and so do not make `q - q'` measurable. -/
 private theorem integral_sub_sq_le_four_mul_of_integral_sub_sq_le_of_integral_sub_sq_le
     {q q' Y : Ω → ℝ}
+    (hd : Integrable (fun ω => (q ω - q' ω) ^ 2) μ)
     (hi1 : Integrable (fun ω => (Y ω - q ω) ^ 2) μ)
     (hi2 : Integrable (fun ω => (Y ω - q' ω) ^ 2) μ)
     {c : ℝ} (h1 : ∫ ω, (Y ω - q ω) ^ 2 ∂μ ≤ c) (h2 : ∫ ω, (Y ω - q' ω) ^ 2 ∂μ ≤ c) :
     ∫ ω, (q ω - q' ω) ^ 2 ∂μ ≤ 4 * c := by
-  have hc : 0 ≤ c := le_trans (integral_nonneg fun ω => by positivity) h1
-  by_cases hd : Integrable (fun ω => (q ω - q' ω) ^ 2) μ
-  · -- The pointwise step is Mathlib's `add_sq_le` applied to `q - q' = (q - Y) + (Y - q')`.
-    calc ∫ ω, (q ω - q' ω) ^ 2 ∂μ
-        ≤ ∫ ω, (2 * (Y ω - q ω) ^ 2 + 2 * (Y ω - q' ω) ^ 2) ∂μ :=
-          integral_mono hd ((hi1.const_mul 2).add (hi2.const_mul 2)) fun ω => by
-            nlinarith [add_sq_le (a := q ω - Y ω) (b := Y ω - q' ω)]
-      _ = 2 * ∫ ω, (Y ω - q ω) ^ 2 ∂μ + 2 * ∫ ω, (Y ω - q' ω) ^ 2 ∂μ := by
-          rw [integral_add (hi1.const_mul 2) (hi2.const_mul 2), integral_const_mul,
-            integral_const_mul]
-      _ ≤ 4 * c := by linarith
-  · -- `(q - q')²` need not be integrable: `hi1` and `hi2` constrain only the *squares*, so they do
-    -- not make `q - q'` measurable. There the integral is `0` by convention and `c` is nonnegative.
-    rw [integral_undef hd]
-    linarith
+  -- The pointwise step is Mathlib's `add_sq_le` applied to `q - q' = (q - Y) + (Y - q')`.
+  calc ∫ ω, (q ω - q' ω) ^ 2 ∂μ
+      ≤ ∫ ω, (2 * (Y ω - q ω) ^ 2 + 2 * (Y ω - q' ω) ^ 2) ∂μ :=
+        integral_mono hd ((hi1.const_mul 2).add (hi2.const_mul 2)) fun ω => by
+          nlinarith [add_sq_le (a := q ω - Y ω) (b := Y ω - q' ω)]
+    _ = 2 * ∫ ω, (Y ω - q ω) ^ 2 ∂μ + 2 * ∫ ω, (Y ω - q' ω) ^ 2 ∂μ := by
+        rw [integral_add (hi1.const_mul 2) (hi2.const_mul 2), integral_const_mul,
+          integral_const_mul]
+    _ ≤ 4 * c := by linarith
 
 /-- Two directing measures of the same process assign the same mass to each fixed measurable set,
 almost everywhere.
@@ -514,7 +511,7 @@ theorem ConditionallyIIDWith.ae_measure_apply_eq [IsProbabilityMeasure μ]
     rw [div_eq_mul_inv]
     -- `hd_def` turns the `set` wrapper `d` into the explicit difference the helper is stated for.
     simpa only [hd_def] using
-      integral_sub_sq_le_four_mul_of_integral_sub_sq_le_of_integral_sub_sq_le
+      integral_sub_sq_le_four_mul_of_integral_sub_sq_le_of_integral_sub_sq_le hdint
         (integrable_sub_sq_of_abs_le_one (hem n)
           (hqm ν h.measurable_directing).aemeasurable
           (ae_of_all _ (heb n)) (ae_of_all _ (habs ν)))
