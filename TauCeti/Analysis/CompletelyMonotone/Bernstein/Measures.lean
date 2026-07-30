@@ -519,22 +519,6 @@ private lemma intervalIntegrable_chafaiDensity {f : ℝ → ℝ} {n : ℕ}
     IntervalIntegrable (fun t => chafaiDensity f n t) volume 0 T :=
   ((continuousOn_chafaiDensity hf).mono Icc_subset_Ici_self).intervalIntegrable_of_Icc hT
 
-/-- **The Chafaï primitive differentiates to the density difference.** At every `t > 0` the
-primitive `s ↦ s^{m+1} · ((-1)^{m+2}/(m+1)! · D^{m+1}f(s))` — whose value at `T` is the boundary
-term of the IBP identity — has derivative `ρ_{m+2}(t) - ρ_{m+1}(t)`. -/
-private lemma hasDerivAt_chafaiPrimitive (f : ℝ → ℝ) {m : ℕ}
-    (hf : ContDiffOn ℝ ((m + 2 : ℕ) : WithTop ℕ∞) f (Ici 0)) {t : ℝ} (ht : 0 < t) :
-    HasDerivAt (fun s : ℝ => s ^ (m + 1) *
-        ((-1 : ℝ) ^ (m + 2) / ↑(m + 1).factorial * iteratedDerivWithin (m + 1) f (Ici 0) s))
-      (chafaiDensity f (m + 2) t - chafaiDensity f (m + 1) t) t := by
-  -- The product rule produces two summands; `chafaiDensity_succ_succ_sub_succ` is exactly the
-  -- identification of those two with the density difference.
-  have hg : HasDerivAt (iteratedDerivWithin (m + 1) f (Ici 0))
-      (iteratedDerivWithin (m + 2) f (Ici 0) t) t :=
-    ContDiffOn.hasDerivAt_iteratedDerivWithin hf (uniqueDiffOn_Ici 0) (Ici_mem_nhds ht)
-  exact (chafaiDensity_succ_succ_sub_succ f m t).symm ▸
-    (hasDerivAt_pow (m + 1) t).mul (hg.const_mul _)
-
 /-- **IBP identity** for the CM density:
 `∫₀ᵀ ρ_{m+2}(t) dt = B_{m+2}(T) + ∫₀ᵀ ρ_{m+1}(t) dt`. -/
 private lemma chafaiDensity_ibp_identity (f : ℝ → ℝ) {m : ℕ}
@@ -553,9 +537,14 @@ private lemma chafaiDensity_ibp_identity (f : ℝ → ℝ) {m : ℕ}
     ((continuous_pow _).continuousOn).mul (continuousOn_const.mul
       ((hf_m1.continuousOn_iteratedDerivWithin le_rfl (uniqueDiffOn_Ici 0)).mono
         Icc_subset_Ici_self))
+  -- The product rule gives two summands; `chafaiDensity_succ_succ_sub_succ` identifies them with
+  -- the density difference, which is the form the integrability and FTC steps below want.
   have hF_deriv : ∀ t ∈ Ioo 0 T, HasDerivAt F
-      (chafaiDensity f (m + 2) t - chafaiDensity f (m + 1) t) t :=
-    fun t ht => hasDerivAt_chafaiPrimitive f hf ht.1
+      (chafaiDensity f (m + 2) t - chafaiDensity f (m + 1) t) t := fun t ht => by
+    have hg : HasDerivAt g (iteratedDerivWithin (m + 2) f (Ici 0) t) t :=
+      ContDiffOn.hasDerivAt_iteratedDerivWithin hf (uniqueDiffOn_Ici 0) (Ici_mem_nhds ht.1)
+    exact (chafaiDensity_succ_succ_sub_succ f m t).symm ▸
+      (hasDerivAt_pow (m + 1) t).mul (hg.const_mul _)
   -- Both density branches are interval-integrable, so the difference is too.
   have h_int_m2 : IntervalIntegrable (fun t => chafaiDensity f (m + 2) t) volume 0 T :=
     intervalIntegrable_chafaiDensity hf hT.le
