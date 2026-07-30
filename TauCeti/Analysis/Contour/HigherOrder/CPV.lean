@@ -179,8 +179,8 @@ theorem IsPwC1ImmersionOn.hasCauchyPVAt_pow_inv {γ : ℝ → ℂ} {a b : ℝ} {
         (hT_mem.mp ht₀).2 hk hkn (h_flat t₀ (hT_mem.mp ht₀).1 (hT_mem.mp ht₀).2)
         (h_B t₀ (hT_mem.mp ht₀).1 (hT_mem.mp ht₀).2) c p.countable_toSet hp hρ_pos
         (by linarith [(h_endpts t₀ ht₀).1]) (by linarith [(h_endpts t₀ ht₀).2])
-        fun t ht h_eq =>
-          eq_of_mem_window_of_eq_of_lt_of_two_mul_lt h_endpts h_pair h_complete ht₀ ht h_eq)
+        fun t ht h_eq => eq_of_mem_window_of_eq_of_lt_of_two_mul_lt (h_endpts t₀ ht₀)
+          (h_pair t₀ ht₀) h_complete ht h_eq)
       (exists_complement_windows_dist_lower_bound hγ_cont h_complete (fun _ => ρ)
         fun t _ => hρ_pos)
 
