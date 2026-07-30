@@ -448,31 +448,21 @@ private theorem integrable_sq_sub_of_abs_le_one [IsFiniteMeasure μ] {u v : Ω �
   rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
   nlinarith [abs_le.mp (hu1 ω), abs_le.mp (hv1 ω)]
 
-omit [MeasurableSpace Ω] [MeasurableSpace α] in
-/-- **Two quantities approximated by a common third are close to each other**, pointwise: the
-squared difference `(a - b)²` is at most twice the sum of the two squared errors against `c`. -/
-private theorem sq_sub_le_two_mul_sq_add_two_mul_sq (a b c : ℝ) :
-    (a - b) ^ 2 ≤ 2 * (c - a) ^ 2 + 2 * (c - b) ^ 2 := by
-  nlinarith [sq_nonneg (a + b - 2 * c)]
-
 
 /-- **An `L²` triangle bound.** If `q` and `q'` are each within `c` of a common `Y` in mean square,
-then they are within `4c` of each other. All three are assumed bounded by `1`, which is what makes
-the squared errors integrable. -/
-private theorem integral_sq_sub_le_of_forall_integral_sq_sub_le [IsFiniteMeasure μ]
-    {q q' Y : Ω → ℝ} (hq : AEMeasurable q μ) (hq' : AEMeasurable q' μ) (hY : AEMeasurable Y μ)
-    (hqb : ∀ ω, |q ω| ≤ 1) (hq'b : ∀ ω, |q' ω| ≤ 1) (hYb : ∀ ω, |Y ω| ≤ 1)
+then they are within `4c` of each other. Only integrability of the three squared differences is
+needed; the pointwise step is Mathlib's `add_sq_le` applied to `q - q' = (q - Y) + (Y - q')`. -/
+private theorem integral_sq_sub_le_four_mul_of_integral_sq_sub_le_of_integral_sq_sub_le
+    {q q' Y : Ω → ℝ}
     (hd : Integrable (fun ω => (q ω - q' ω) ^ 2) μ)
+    (hi1 : Integrable (fun ω => (Y ω - q ω) ^ 2) μ)
+    (hi2 : Integrable (fun ω => (Y ω - q' ω) ^ 2) μ)
     {c : ℝ} (h1 : ∫ ω, (Y ω - q ω) ^ 2 ∂μ ≤ c) (h2 : ∫ ω, (Y ω - q' ω) ^ 2 ∂μ ≤ c) :
     ∫ ω, (q ω - q' ω) ^ 2 ∂μ ≤ 4 * c := by
-  have hi1 : Integrable (fun ω => (Y ω - q ω) ^ 2) μ :=
-    integrable_sq_sub_of_abs_le_one hY hq hYb hqb
-  have hi2 : Integrable (fun ω => (Y ω - q' ω) ^ 2) μ :=
-    integrable_sq_sub_of_abs_le_one hY hq' hYb hq'b
   calc ∫ ω, (q ω - q' ω) ^ 2 ∂μ
       ≤ ∫ ω, (2 * (Y ω - q ω) ^ 2 + 2 * (Y ω - q' ω) ^ 2) ∂μ :=
-        integral_mono hd ((hi1.const_mul 2).add (hi2.const_mul 2)) fun ω =>
-          sq_sub_le_two_mul_sq_add_two_mul_sq _ _ (Y ω)
+        integral_mono hd ((hi1.const_mul 2).add (hi2.const_mul 2)) fun ω => by
+          nlinarith [add_sq_le (a := q ω - Y ω) (b := Y ω - q' ω)]
     _ = 2 * ∫ ω, (Y ω - q ω) ^ 2 ∂μ + 2 * ∫ ω, (Y ω - q' ω) ^ 2 ∂μ := by
         rw [integral_add (hi1.const_mul 2) (hi2.const_mul 2), integral_const_mul,
           integral_const_mul]
@@ -521,9 +511,11 @@ theorem ConditionallyIIDWith.ae_measure_apply_eq [IsProbabilityMeasure μ]
     intro n hn
     have hn0 : n ≠ 0 := by omega
     rw [div_eq_mul_inv]
-    exact integral_sq_sub_le_of_forall_integral_sq_sub_le
-      (hqm ν h.measurable_directing).aemeasurable (hqm ν' h'.measurable_directing).aemeasurable
-      (hem n) (habs ν) (habs ν') (heb n) hdint
+    exact integral_sq_sub_le_four_mul_of_integral_sq_sub_le_of_integral_sq_sub_le hdint
+      (integrable_sq_sub_of_abs_le_one (hem n)
+        (hqm ν h.measurable_directing).aemeasurable (heb n) (habs ν))
+      (integrable_sq_sub_of_abs_le_one (hem n)
+        (hqm ν' h'.measurable_directing).aemeasurable (heb n) (habs ν'))
       (h.integral_empiricalFrequency_sub_sq_le hX hB hn0)
       (h'.integral_empiricalFrequency_sub_sq_le hX hB hn0)
   have hle : ∫ ω, d ω ^ 2 ∂μ ≤ 0 :=
