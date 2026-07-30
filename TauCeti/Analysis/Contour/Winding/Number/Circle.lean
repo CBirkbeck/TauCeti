@@ -45,8 +45,9 @@ across the whole disc, so its circle integral vanishes.
   the disc.
 * `TauCeti.Contour.indexIntegral_arc_interval` and `TauCeti.Contour.indexIntegral_arc` — the
   normalized index integral of a circular arc about its centre, `(b − a) / 2π` and `α / 2π`, with
-  the specializations `windingNumber_circle` (the full circle, `1`) and the two values the valence
-  formula names, `windingNumber_at_i` (`½`) and `windingNumber_at_rho` (`1/6`).
+  the specialization `windingNumber_circle` (the full circle, `1`). The two values the valence
+  formula names by their points, `windingNumber_at_i` and `windingNumber_at_rho`, are in
+  `ModelSector/Winding.lean`.
 * `TauCeti.Contour.cauchyPVExistsAt_circleMap_comp_affine` — the index principal value of an
   affinely reparametrised circle exists.
 * `TauCeti.Contour.windingNumber_circleMap_center` — an arc about its own centre has winding
@@ -62,7 +63,7 @@ This is a Layer-1 acceptance criterion of the Hungerbühler–Wasem generalized 
 ## Provenance
 
 The arc index-integral material (`indexIntegral_arc_interval`, `indexIntegral_arc` and their
-specializations `windingNumber_circle`, `windingNumber_at_i` and `windingNumber_at_rho`) was
+specialization `windingNumber_circle`) was
 migrated and adapted from the AINTLIB `LeanModularForms` project
 (`ForMathlib/HungerbuhlerWasem/Crossing.lean`), specialised to the raw-function
 (`γ : ℝ → ℂ` on `[a, b]`) design of the contour-integration roadmap.
@@ -111,14 +112,13 @@ alias windingNumber_modelSector_interval := indexIntegral_arc_interval
 generalized winding number `α/2π`. For `0 ≤ α` the traversal is counterclockwise; for `α < 0`
 the interval `[0, α]` is reversed, the arc runs clockwise, and the contribution is negative.
 
-The `α = 2π` specialization is `windingNumber_circle`, and the `α = π` and `α = π/3` values the
-valence formula names are `windingNumber_at_i` and `windingNumber_at_rho`.
+The `α = 2π` specialization is `windingNumber_circle`; the `α = π` and `α = π/3` values the valence
+formula names by their points are `windingNumber_at_i` and `windingNumber_at_rho`, in
+`ModelSector/Winding.lean`.
 
-This is the statement `ContourIntegration/Suggested.lean` lists as `windingNumber_modelSector`.
-That name is not used for it here: the roadmap wrote it before there was a `modelSector`
-definition to name, and it now denotes the theorem about that curve,
-`TauCeti.Contour.windingNumber_modelSector` in `ModelSector/Closed.lean`. This arc statement — a
-`circleMap` fact mentioning no `modelSector` — is `indexIntegral_arc`. -/
+`ContourIntegration/Suggested.lean` lists this statement as `windingNumber_modelSector`, which is
+retained below as a deprecated alias. The closed model-sector curve — a different statement — is
+`TauCeti.Contour.windingNumber_closedModelSector` in `ModelSector/Closed.lean`. -/
 theorem indexIntegral_arc {z₀ : ℂ} {r : ℝ} (hr : r ≠ 0) (α : ℝ) :
     (2 * (Real.pi : ℂ) * Complex.I)⁻¹ *
         ∫ θ in (0 : ℝ)..α, deriv (circleMap z₀ r) θ / (circleMap z₀ r θ - z₀)
@@ -126,6 +126,9 @@ theorem indexIntegral_arc {z₀ : ℂ} {r : ℝ} (hr : r ≠ 0) (α : ℝ) :
   rw [indexIntegral_arc_interval hr]
   push_cast
   ring
+
+@[deprecated (since := "2026-07-29")]
+alias windingNumber_modelSector := indexIntegral_arc
 
 /-- **A full circle (`[0, 2π]`) has winding number `1`** — the closed-curve normalization, the
 `[0, 2π]` specialization of `indexIntegral_arc` (`2π / 2π = 1`). Its value also follows from
@@ -139,34 +142,6 @@ theorem windingNumber_circle {c : ℂ} {r : ℝ} (hr : r ≠ 0) :
   rw [indexIntegral_arc hr]
   push_cast
   field_simp
-
-/-- **The winding number `½` at `i`** — the coefficient of `ord_i(f)` in the valence formula. The
-semicircle (`[0, π]`) specialization of `indexIntegral_arc` (`π / 2π = ½`): `i` is a
-*smooth* boundary point of the fundamental domain, so the valence contour indents around it by a
-**semicircle** (opening angle `α = π`). The statement is the generic arc computation; the point `i`
-names its downstream valence-formula role. -/
-theorem windingNumber_at_i {z₀ : ℂ} {r : ℝ} (hr : r ≠ 0) :
-    (2 * (Real.pi : ℂ) * Complex.I)⁻¹ *
-        ∫ θ in (0 : ℝ)..Real.pi, deriv (circleMap z₀ r) θ / (circleMap z₀ r θ - z₀)
-      = 1 / 2 := by
-  have hpi : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
-  rw [indexIntegral_arc hr]
-  field_simp
-
-/-- **The winding number `1/6` at `ρ`** — the per-corner coefficient in the valence formula. The
-`[0, π/3]` specialization of `indexIntegral_arc` (`(π/3) / 2π = 1/6`): `ρ` is a `π/3` corner
-of the fundamental domain, so the contour indents around it by a `π/3` arc, and the two such corners
-(`ρ` and `ρ+1`) each contribute `1/6`, summing to the `1/3` coefficient of `ord_ρ(f)`. The statement
-is the generic arc computation; the point `ρ` names its downstream valence-formula role. -/
-theorem windingNumber_at_rho {z₀ : ℂ} {r : ℝ} (hr : r ≠ 0) :
-    (2 * (Real.pi : ℂ) * Complex.I)⁻¹ *
-        ∫ θ in (0 : ℝ)..(Real.pi / 3), deriv (circleMap z₀ r) θ / (circleMap z₀ r θ - z₀)
-      = 1 / 6 := by
-  have hpi : (Real.pi : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr Real.pi_ne_zero
-  rw [indexIntegral_arc hr]
-  push_cast
-  field_simp
-  ring
 
 
 /-- **The exterior Cauchy-kernel circle integral vanishes.** For a point `w` strictly outside the
