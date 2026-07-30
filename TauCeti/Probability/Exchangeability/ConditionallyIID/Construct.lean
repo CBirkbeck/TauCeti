@@ -14,8 +14,6 @@ import TauCeti.Probability.Exchangeability.MixedIID.Mixture
 import TauCeti.Probability.Exchangeability.Contractability
 import TauCeti.Probability.Exchangeability.IID
 import TauCeti.MeasureTheory.Measure.GiryMonad
--- Non-public: `Measure.map_infinitePi_infinitePi_of_inj` selects a block out of a countable power.
-import Mathlib.Probability.Independence.InfinitePi
 
 /-!
 # The canonical conditionally i.i.d. process

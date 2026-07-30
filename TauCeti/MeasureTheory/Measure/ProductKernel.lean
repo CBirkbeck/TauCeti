@@ -7,7 +7,8 @@ module
 public import Mathlib.MeasureTheory.Measure.FiniteMeasurePi
 -- Public: `Measure.infinitePi` appears in the infinite-product statement.
 public import Mathlib.Probability.ProductMeasure
--- Non-public: `map_infinitePi_infinitePi_of_inj` is used only inside the prefix-marginal proof.
+-- Non-public: `map_infinitePi_infinitePi_of_inj` is used inside the prefix-marginal and
+-- block-selection proofs.
 import Mathlib.Probability.Independence.InfinitePi
 -- Non-public: `map_bind` is used only inside the mixture prefix-rectangle proof.
 import TauCeti.MeasureTheory.Measure.GiryMonad
