@@ -30,8 +30,8 @@ scaffolding that localizes the principal-value analysis to one crossing per wind
 * `Contour.exists_common_window_radius_le` — a common window radius additionally held below a
   positive per-crossing bound, with strict endpoint margins.
 * `Contour.eq_of_mem_window_of_eq` — in-window uniqueness of the crossing.
-* `Contour.eq_of_mem_window_of_eq'` — the same, from the strict margins returned by
-  `exists_common_window_radius_le`.
+* `Contour.eq_of_mem_window_of_eq_of_lt_of_two_mul_lt` — the same, from the strict margins
+  returned by `exists_common_window_radius_le`.
 * `Contour.exists_window_dist_lower_bound` — a positive lower bound for `‖γ t - s‖` on the two
   closed half-windows excluding the crossing.
 * `Contour.exists_complement_windows_dist_lower_bound` — a positive lower bound for
@@ -208,7 +208,7 @@ theorem eq_of_mem_window_of_eq {α : Type*} {γ : ℝ → α} {s : α} {a b : �
 returns: crossings more than `r` inside the endpoints, and distinct crossings more than `2 * r`
 apart. No sign condition on `r` is required — halving the pairwise margin needs `0 ≤ r`, but a
 negative radius leaves the window `[t_i - r, t_i + r]` empty, so `ht` supplies it. -/
-theorem eq_of_mem_window_of_eq' {α : Type*} {γ : ℝ → α} {s : α} {a b : ℝ}
+theorem eq_of_mem_window_of_eq_of_lt_of_two_mul_lt {α : Type*} {γ : ℝ → α} {s : α} {a b : ℝ}
     {crossings : Finset ℝ} {r : ℝ}
     (h_endpts : ∀ t ∈ crossings, a + r < t ∧ t < b - r)
     (h_pairwise : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r < |t - t'|)
