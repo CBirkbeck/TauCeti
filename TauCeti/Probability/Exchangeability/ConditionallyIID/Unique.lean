@@ -427,11 +427,8 @@ private theorem abs_average_indicator_le_one (A : ℕ → Set Ω) (n : ℕ) (ω 
       = Finset.expect (Finset.range n) fun i => (A i).indicator (1 : Ω → ℝ) ω := by
     rw [Finset.expect_eq_sum_div_card, Finset.card_range, div_eq_inv_mul]
   rw [hexp]
-  have h0 : (0 : ℝ) ≤ Finset.expect (Finset.range n) fun i => (A i).indicator (1 : Ω → ℝ) ω :=
-    Finset.le_expect hne fun i _ => Set.indicator_nonneg (fun _ _ => zero_le_one) ω
-  have h1 : (Finset.expect (Finset.range n) fun i => (A i).indicator (1 : Ω → ℝ) ω) ≤ 1 :=
-    Finset.expect_le hne fun i _ => by by_cases hmem : ω ∈ A i <;> simp [hmem]
-  exact abs_le.mpr ⟨by linarith, h1⟩
+  refine le_trans (Finset.abs_expect_le _ _) (Finset.expect_le hne fun i _ => ?_)
+  by_cases hmem : ω ∈ A i <;> simp [hmem]
 
 /-- **A squared difference of bounded functions is integrable**, being bounded by `4` on a finite
 measure space. -/
@@ -445,17 +442,17 @@ private theorem integrable_sub_sq_of_abs_le_one [IsFiniteMeasure μ] {u v : Ω �
   nlinarith [abs_le.mp hu1, abs_le.mp hv1]
 
 
-/-- **An `L²` triangle bound.** If `q` and `q'` are each within `c` of a common `Y` in mean square,
-then they are within `4c` of each other. The three squared differences are assumed integrable;
-`hd` is not implied by `hi1` and `hi2`, which constrain only the squares `(Y - q)²` and `(Y - q')²`
-and so do not make `q - q'` measurable. -/
-private theorem integral_sub_sq_le_four_mul_of_integral_sub_sq_le_of_integral_sub_sq_le
+/-- **An `L²` triangle bound.** If `q` and `q'` are within `c₁` and `c₂` of a common `Y` in mean
+square, then they are within `2c₁ + 2c₂` of each other. The three squared differences are assumed
+integrable; `hd` is not implied by `hi1` and `hi2`, which constrain only the squares `(Y - q)²` and
+`(Y - q')²` and so do not make `q - q'` measurable. -/
+private theorem integral_sub_sq_le_two_mul_add_two_mul_of_integral_sub_sq_le_of_integral_sub_sq_le
     {q q' Y : Ω → ℝ}
     (hd : Integrable (fun ω => (q ω - q' ω) ^ 2) μ)
     (hi1 : Integrable (fun ω => (Y ω - q ω) ^ 2) μ)
     (hi2 : Integrable (fun ω => (Y ω - q' ω) ^ 2) μ)
-    {c : ℝ} (h1 : ∫ ω, (Y ω - q ω) ^ 2 ∂μ ≤ c) (h2 : ∫ ω, (Y ω - q' ω) ^ 2 ∂μ ≤ c) :
-    ∫ ω, (q ω - q' ω) ^ 2 ∂μ ≤ 4 * c := by
+    {c₁ c₂ : ℝ} (h1 : ∫ ω, (Y ω - q ω) ^ 2 ∂μ ≤ c₁) (h2 : ∫ ω, (Y ω - q' ω) ^ 2 ∂μ ≤ c₂) :
+    ∫ ω, (q ω - q' ω) ^ 2 ∂μ ≤ 2 * c₁ + 2 * c₂ := by
   -- The pointwise step is Mathlib's `add_sq_le` applied to `q - q' = (q - Y) + (Y - q')`.
   calc ∫ ω, (q ω - q' ω) ^ 2 ∂μ
       ≤ ∫ ω, (2 * (Y ω - q ω) ^ 2 + 2 * (Y ω - q' ω) ^ 2) ∂μ :=
@@ -464,7 +461,7 @@ private theorem integral_sub_sq_le_four_mul_of_integral_sub_sq_le_of_integral_su
     _ = 2 * ∫ ω, (Y ω - q ω) ^ 2 ∂μ + 2 * ∫ ω, (Y ω - q' ω) ^ 2 ∂μ := by
         rw [integral_add (hi1.const_mul 2) (hi2.const_mul 2), integral_const_mul,
           integral_const_mul]
-    _ ≤ 4 * c := by linarith
+    _ ≤ 2 * c₁ + 2 * c₂ := by linarith
 
 /-- Two directing measures of the same process assign the same mass to each fixed measurable set,
 almost everywhere.
@@ -508,18 +505,21 @@ theorem ConditionallyIIDWith.ae_measure_apply_eq [IsProbabilityMeasure μ]
   have hbound : ∀ n : ℕ, 1 ≤ n → ∫ ω, d ω ^ 2 ∂μ ≤ 4 / n := by
     intro n hn
     have hn0 : n ≠ 0 := by omega
-    rw [div_eq_mul_inv]
+    -- Both errors are bounded by `1 / n`, so the general `2c₁ + 2c₂` bound specializes to `4 / n`.
     -- `hd_def` turns the `set` wrapper `d` into the explicit difference the helper is stated for.
-    simpa only [hd_def] using
-      integral_sub_sq_le_four_mul_of_integral_sub_sq_le_of_integral_sub_sq_le hdint
-        (integrable_sub_sq_of_abs_le_one (hem n)
-          (hqm ν h.measurable_directing).aemeasurable
-          (ae_of_all _ (heb n)) (ae_of_all _ (habs ν)))
-        (integrable_sub_sq_of_abs_le_one (hem n)
-          (hqm ν' h'.measurable_directing).aemeasurable
-          (ae_of_all _ (heb n)) (ae_of_all _ (habs ν')))
-        (h.integral_empiricalFrequency_sub_sq_le hX hB hn0)
-        (h'.integral_empiricalFrequency_sub_sq_le hX hB hn0)
+    have hb : ∫ ω, d ω ^ 2 ∂μ ≤ 2 * (n : ℝ)⁻¹ + 2 * (n : ℝ)⁻¹ := by
+      simpa only [hd_def] using
+        integral_sub_sq_le_two_mul_add_two_mul_of_integral_sub_sq_le_of_integral_sub_sq_le hdint
+          (integrable_sub_sq_of_abs_le_one (hem n)
+            (hqm ν h.measurable_directing).aemeasurable
+            (ae_of_all _ (heb n)) (ae_of_all _ (habs ν)))
+          (integrable_sub_sq_of_abs_le_one (hem n)
+            (hqm ν' h'.measurable_directing).aemeasurable
+            (ae_of_all _ (heb n)) (ae_of_all _ (habs ν')))
+          (h.integral_empiricalFrequency_sub_sq_le hX hB hn0)
+          (h'.integral_empiricalFrequency_sub_sq_le hX hB hn0)
+    rw [div_eq_mul_inv]
+    linarith
   have hle : ∫ ω, d ω ^ 2 ∂μ ≤ 0 :=
     ge_of_tendsto (tendsto_const_div_atTop_nhds_zero_nat (4 : ℝ))
       (eventually_atTop.2 ⟨1, fun n hn => hbound n hn⟩)
