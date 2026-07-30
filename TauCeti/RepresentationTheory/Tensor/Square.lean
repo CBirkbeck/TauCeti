@@ -147,23 +147,6 @@ private theorem toTensorPower_injective {R : Type} {M : Type*}
   simp only [exteriorPower.ιMultiDual, exteriorPower.ιMulti_family,
     pairingDual_ιMulti_apply, h]
 
-/-- **A strictly off-diagonal block has zero trace.** The endomorphism of `A × C` carrying
-`(a, c)` to `(u c, 0)` traces to `0`.
-
-This is why a block *triangular* map traces like its diagonal: the statement says nothing about
-the diagonal blocks, and holds for finite free modules over any commutative ring. -/
-private theorem trace_inl_comp_comp_snd {K A C : Type*} [CommRing K]
-    [AddCommGroup A] [Module K A] [Module.Free K A] [Module.Finite K A]
-    [AddCommGroup C] [Module K C] [Module.Free K C] [Module.Finite K C] (u : C →ₗ[K] A) :
-    LinearMap.trace K (A × C)
-      ((LinearMap.inl K A C).comp (u.comp (LinearMap.snd K A C))) = 0 := by
-  -- Composed the other way round the block is the zero map, so `trace_comp_comm'` applies.
-  rw [LinearMap.trace_comp_comm']
-  have hz : (u.comp (LinearMap.snd K A C)).comp (LinearMap.inl K A C) = 0 := by
-    ext a
-    simp
-  rw [hz, map_zero]
-
 -- Split an exact sequence as vector spaces. In that splitting the middle action is block
 -- triangular, so its trace is the sum of the traces on the subspace and the quotient.
 private theorem trace_eq_add_of_exact
@@ -219,8 +202,13 @@ private theorem trace_eq_add_of_exact
     · simpa only [LinearMap.add_apply, LinearMap.prodMap_apply, LinearMap.comp_apply,
         LinearMap.inl_apply, LinearMap.snd_apply, Prod.snd_add, add_zero] using
           LinearMap.congr_fun hsndF (a, c)
-  rw [← LinearMap.trace_conj' fB e, ← hF_def, hF, map_add, LinearMap.trace_prodMap',
-    trace_inl_comp_comp_snd u, add_zero]
+  have hoff : LinearMap.trace K (A × C)
+      ((LinearMap.inl K A C).comp (u.comp (LinearMap.snd K A C))) = 0 := by
+    rw [LinearMap.trace_comp_comm']
+    have hz : (u.comp (LinearMap.snd K A C)).comp (LinearMap.inl K A C) = 0 := by ext a; simp
+    rw [hz, map_zero]
+  rw [← LinearMap.trace_conj' fB e, ← hF_def, hF, map_add, LinearMap.trace_prodMap', hoff,
+    add_zero]
 
 end TauCeti.TensorSquare
 
