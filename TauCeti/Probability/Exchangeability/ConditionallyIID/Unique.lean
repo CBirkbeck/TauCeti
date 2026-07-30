@@ -171,29 +171,21 @@ private theorem integral_toReal_eq_of_lintegral_eq {F G : Ω → ℝ≥0∞}
 bounded by `1`. Every summand of the covariance expansion below is of this shape. -/
 private theorem integrable_mul_of_nonneg_of_le_one [IsFiniteMeasure μ] {u v : Ω → ℝ}
     (hu : AEMeasurable u μ) (hv : AEMeasurable v μ)
-    (hu0 : ∀ ω, 0 ≤ u ω) (hu1 : ∀ ω, u ω ≤ 1)
-    (hv0 : ∀ ω, 0 ≤ v ω) (hv1 : ∀ ω, v ω ≤ 1) :
+    (hu01 : ∀ᵐ ω ∂μ, 0 ≤ u ω ∧ u ω ≤ 1) (hv01 : ∀ᵐ ω ∂μ, 0 ≤ v ω ∧ v ω ≤ 1) :
     Integrable (fun ω => u ω * v ω) μ := by
-  refine Integrable.of_bound (hu.mul hv).aestronglyMeasurable 1 (ae_of_all _ fun ω => ?_)
-  rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (hu0 ω), abs_of_nonneg (hv0 ω)]
-  nlinarith [hu0 ω, hv0 ω, hu1 ω, hv1 ω]
+  refine Integrable.of_bound (hu.mul hv).aestronglyMeasurable 1 ?_
+  filter_upwards [hu01, hv01] with ω ⟨hu0, hu1⟩ ⟨hv0, hv1⟩
+  rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg hu0, abs_of_nonneg hv0]
+  nlinarith
 
-/-- **Expanding a centred product.** For `[0, 1]`-valued `u`, `v` and `q`, the integral of
-`(u - q)(v - q)` splits into the four moments of the product expansion. Each summand is integrable
-by `integrable_mul_of_nonneg_of_le_one`, which is what licenses splitting the integral. -/
-private theorem integral_sub_mul_sub [IsFiniteMeasure μ] {u v q : Ω → ℝ}
-    (hu : AEMeasurable u μ) (hv : AEMeasurable v μ) (hq : AEMeasurable q μ)
-    (hu0 : ∀ ω, 0 ≤ u ω) (hu1 : ∀ ω, u ω ≤ 1)
-    (hv0 : ∀ ω, 0 ≤ v ω) (hv1 : ∀ ω, v ω ≤ 1)
-    (hq0 : ∀ ω, 0 ≤ q ω) (hq1 : ∀ ω, q ω ≤ 1) :
+/-- **Expanding a centred product.** Whenever the four products are integrable, the integral of
+`(u - q)(v - q)` splits into the four moments of the product expansion. -/
+private theorem integral_sub_mul_sub {u v q : Ω → ℝ}
+    (hi1 : Integrable (fun ω => u ω * v ω) μ) (hi2 : Integrable (fun ω => q ω * u ω) μ)
+    (hi3 : Integrable (fun ω => q ω * v ω) μ) (hi4 : Integrable (fun ω => q ω ^ 2) μ) :
     ∫ ω, (u ω - q ω) * (v ω - q ω) ∂μ
       = ∫ ω, u ω * v ω ∂μ - ∫ ω, q ω * u ω ∂μ - ∫ ω, q ω * v ω ∂μ
         + ∫ ω, q ω ^ 2 ∂μ := by
-  have hi1 := integrable_mul_of_nonneg_of_le_one hu hv hu0 hu1 hv0 hv1
-  have hi2 := integrable_mul_of_nonneg_of_le_one hq hu hq0 hq1 hu0 hu1
-  have hi3 := integrable_mul_of_nonneg_of_le_one hq hv hq0 hq1 hv0 hv1
-  have hi4 : Integrable (fun ω => q ω ^ 2) μ := by
-    simpa [sq] using integrable_mul_of_nonneg_of_le_one hq hq hq0 hq1 hq0 hq1
   have hexp : ∀ ω, (u ω - q ω) * (v ω - q ω)
       = u ω * v ω - q ω * u ω - q ω * v ω + q ω ^ 2 := fun ω => by ring
   have hiB : Integrable (fun ω => u ω * v ω - q ω * u ω) μ := hi1.sub hi2
@@ -246,12 +238,6 @@ private theorem integral_sq_average_sub [IsProbabilityMeasure μ] {e : ℕ → �
   field_simp
 
 omit [MeasurableSpace Ω] in
-/-- Indicators of `ℝ≥0∞`-valued sets read as real indicators after `toReal`. -/
-private theorem toReal_indicator_one (s : Set Ω) (ω : Ω) :
-    (s.indicator (1 : Ω → ℝ≥0∞) ω).toReal = s.indicator (1 : Ω → ℝ) ω := by
-  by_cases hmem : ω ∈ s <;> simp [hmem]
-
-omit [MeasurableSpace Ω] in
 /-- An `ℝ≥0∞` indicator of `1` is finite. -/
 private theorem indicator_one_ne_top (s : Set Ω) (ω : Ω) :
     s.indicator (1 : Ω → ℝ≥0∞) ω ≠ ∞ := by
@@ -259,8 +245,9 @@ private theorem indicator_one_ne_top (s : Set Ω) (ω : Ω) :
 
 variable {X : ℕ → Ω → α} {ν : Ω → ProbabilityMeasure α} {B : Set α}
 
-/-- **First moment.** Each coordinate hits `B` with probability the mean of the directing
-measure's mass on `B`. -/
+/-- **First moment.** The integral of the indicator of `{Xᵢ ∈ B}` equals the integral of the
+directing measure's mass on `B`. (`μ` is an arbitrary measure here; under a probability measure
+this reads as the two having the same probability.) -/
 private theorem ConditionallyIIDWith.integral_indicator_single
     (h : ConditionallyIIDWith μ X ν) (hX : ∀ i, AEMeasurable (X i) μ) (hB : MeasurableSet B)
     (i : ℕ) :
@@ -274,10 +261,15 @@ private theorem ConditionallyIIDWith.integral_indicator_single
   have := integral_toReal_eq_of_lintegral_eq
     (measurable_one.aemeasurable.indicator₀ ((hX i).nullMeasurableSet_preimage hB))
     hu.aemeasurable (indicator_one_ne_top _) (fun ω => measure_ne_top _ _) hlin
-  simpa [toReal_indicator_one] using this
+  have hind : ∀ ω, ((X i ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω).toReal
+      = (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω := fun ω => by
+    have h := map_indicator ENNReal.toRealHom (X i ⁻¹' B) (1 : Ω → ℝ≥0∞) ω
+    simp only [Function.comp_def] at h
+    exact h
+  simpa [hind] using this
 
-/-- **Pair moment.** Distinct coordinates hit `B` jointly with probability the mean of the
-squared mass — the conditional independence, read at two indices. -/
+/-- **Pair moment.** For distinct indices the integral of the product of the two indicators
+equals the integral of the squared mass — conditional independence, read at two indices. -/
 private theorem ConditionallyIIDWith.integral_indicator_pair
     (h : ConditionallyIIDWith μ X ν) (hX : ∀ i, AEMeasurable (X i) μ) (hB : MeasurableSet B)
     {i j : ℕ} (hij : i ≠ j) :
@@ -299,8 +291,8 @@ private theorem ConditionallyIIDWith.integral_indicator_pair
     by_cases h1 : ω ∈ X i ⁻¹' B <;> by_cases h2 : ω ∈ X j ⁻¹' B <;> simp [h1, h2]
   simpa [hprod, ENNReal.toReal_pow] using this
 
-/-- **Cross moment.** Weighting one coordinate's indicator by the directing mass gives the same
-squared mean — the moment the mixture identity alone does not determine. -/
+/-- **Cross moment.** Weighting one coordinate's indicator by the directing mass integrates to the
+same squared quantity — the moment the mixture identity alone does not determine. -/
 private theorem ConditionallyIIDWith.integral_directing_mul_indicator
     (h : ConditionallyIIDWith μ X ν) (hX : ∀ i, AEMeasurable (X i) μ) (hB : MeasurableSet B)
     (i : ℕ) :
@@ -317,7 +309,12 @@ private theorem ConditionallyIIDWith.integral_directing_mul_indicator
     (hu.mul hu).aemeasurable
     (fun ω => ENNReal.mul_ne_top (measure_ne_top _ _) (indicator_one_ne_top _ ω))
     (fun ω => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)) hlin
-  simpa [ENNReal.toReal_mul, toReal_indicator_one, sq] using this
+  have hind : ∀ ω, ((X i ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω).toReal
+      = (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω := fun ω => by
+    have h := map_indicator ENNReal.toRealHom (X i ⁻¹' B) (1 : Ω → ℝ≥0∞) ω
+    simp only [Function.comp_def] at h
+    exact h
+  simpa [ENNReal.toReal_mul, hind, sq] using this
 
 /-- **The `L²` rate for empirical frequencies.** For a conditionally i.i.d. process with directing
 measure `ν` and a measurable set `B`, the empirical frequency of `B` among the first `n`
@@ -351,6 +348,11 @@ theorem ConditionallyIIDWith.integral_empiricalFrequency_sub_sq [IsProbabilityMe
   have he1 : ∀ i ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω ≤ 1 := by
     intro i ω
     by_cases hmem : ω ∈ X i ⁻¹' B <;> simp [hmem]
+  have hb : ∀ i, ∀ᵐ ω ∂μ, 0 ≤ (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
+      ∧ (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω ≤ 1 := fun i =>
+    ae_of_all _ fun ω => ⟨he0 i ω, he1 i ω⟩
+  have hbq : ∀ᵐ ω ∂μ, 0 ≤ ((ν ω : Measure α) B).toReal
+      ∧ ((ν ω : Measure α) B).toReal ≤ 1 := ae_of_all _ fun ω => ⟨hq0 ω, hq1 ω⟩
   -- the centred variables are uncorrelated with common variance `∫ q - ∫ q²`
   have hcov : ∀ i j, ∫ ω, ((X i ⁻¹' B).indicator (1 : Ω → ℝ) ω - ((ν ω : Measure α) B).toReal)
         * ((X j ⁻¹' B).indicator (1 : Ω → ℝ) ω - ((ν ω : Measure α) B).toReal) ∂μ
@@ -358,8 +360,12 @@ theorem ConditionallyIIDWith.integral_empiricalFrequency_sub_sq [IsProbabilityMe
           (∫ ω, ((ν ω : Measure α) B).toReal ∂μ - ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ)
         else 0 := by
     intro i j
-    rw [integral_sub_mul_sub (he i) (he j) hq.aemeasurable (he0 i) (he1 i) (he0 j) (he1 j)
-      hq0 hq1]
+    rw [integral_sub_mul_sub
+      (integrable_mul_of_nonneg_of_le_one (he i) (he j) (hb i) (hb j))
+      (integrable_mul_of_nonneg_of_le_one hq.aemeasurable (he i) hbq (hb i))
+      (integrable_mul_of_nonneg_of_le_one hq.aemeasurable (he j) hbq (hb j))
+      (by simpa [sq] using
+        integrable_mul_of_nonneg_of_le_one hq.aemeasurable hq.aemeasurable hbq hbq)]
     by_cases hij : i = j
     · -- On the diagonal the indicator is idempotent, so the first moment appears in place of the
       -- pair moment and the variance is `∫ q - ∫ q²`.
