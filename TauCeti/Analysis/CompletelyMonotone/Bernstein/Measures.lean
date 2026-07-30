@@ -6,6 +6,9 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Complex.LogBounds
 import Mathlib.MeasureTheory.Integral.IntegralEqImproper
+-- Non-public: `BoundedContinuousFunction.integrable` supplies integrability of the bounded
+-- kernels against a finite measure.
+import Mathlib.MeasureTheory.Integral.BoundedContinuousFunction
 import TauCeti.Analysis.CompletelyMonotone.Closure
 public import TauCeti.Analysis.CompletelyMonotone.Integral
 
@@ -36,6 +39,8 @@ These build on the `IsCompletelyMonotone` API in `CompletelyMonotone/Basic.lean`
   `TauCeti.bernsteinKernelBoundedContinuous_apply`,
   `TauCeti.laplaceKernelBoundedContinuous`,
   `TauCeti.laplaceKernelBoundedContinuous_apply`,
+  `TauCeti.integrable_exp_neg_mul`,
+  `TauCeti.integral_exp_neg_mul_add_smul_dirac_zero`,
   `TauCeti.bernsteinKernel_tendsto`: the rescaled Laplace kernel, its bundled
   bounded-continuous `p`-dependence on the nonnegative half-line, and its bundled pointwise
   limit `e^{-xp}`.
@@ -282,6 +287,24 @@ noncomputable def laplaceKernelBoundedContinuous {x : ℝ} (hx : 0 ≤ x) : ℝ�
 lemma laplaceKernelBoundedContinuous_apply {x : ℝ} (hx : 0 ≤ x) (p : ℝ≥0) :
     laplaceKernelBoundedContinuous hx p = Real.exp (-(x * (p : ℝ))) := by
   rw [laplaceKernelBoundedContinuous]; rfl
+
+/-- **The Laplace kernel is integrable against a finite measure.** For `0 ≤ x` the kernel
+`p ↦ e^{-xp}` is bounded and continuous on `ℝ≥0`, hence integrable against any finite measure. -/
+lemma integrable_exp_neg_mul (μ : Measure ℝ≥0) [IsFiniteMeasure μ] {x : ℝ} (hx : 0 ≤ x) :
+    Integrable (fun p : ℝ≥0 => Real.exp (-(x * (p : ℝ)))) μ := by
+  have h := (laplaceKernelBoundedContinuous hx).integrable μ
+  rwa [funext (laplaceKernelBoundedContinuous_apply hx)] at h
+
+/-- **An atom at `0` shifts the Laplace transform by its mass.** The kernel takes the value `1` at
+`p = 0`, so adjoining `c • δ₀` to a finite measure adds exactly `c`. -/
+lemma integral_exp_neg_mul_add_smul_dirac_zero (μ : Measure ℝ≥0) [IsFiniteMeasure μ] (c : ℝ≥0)
+    {x : ℝ} (hx : 0 ≤ x) :
+    ∫ p : ℝ≥0, Real.exp (-(x * (p : ℝ))) ∂(μ + c • Measure.dirac (0 : ℝ≥0))
+      = (∫ p : ℝ≥0, Real.exp (-(x * (p : ℝ))) ∂μ) + c := by
+  rw [integral_add_measure (integrable_exp_neg_mul μ hx)
+      (integrable_exp_neg_mul (c • Measure.dirac (0 : ℝ≥0)) hx),
+    integral_smul_nnreal_measure, integral_dirac]
+  simp [NNReal.smul_def]
 
 /-- The Bernstein kernel is measurable in `p` for fixed `n` and `x`. -/
 lemma measurable_bernsteinKernel (n : ℕ) (x : ℝ) : Measurable (bernsteinKernel n x) := by

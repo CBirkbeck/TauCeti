@@ -73,26 +73,6 @@ namespace TauCeti
 
 variable {f : ℝ → ℝ}
 
-/-- **The Laplace kernel is integrable against a finite measure.** For `0 ≤ t` the kernel
-`p ↦ e^{-tp}` is bounded and continuous on `ℝ≥0`, hence integrable against any finite measure.
-Nothing here depends on complete monotonicity or on the approximating measures. -/
-private theorem integrable_exp_neg_mul (μ : Measure ℝ≥0) [IsFiniteMeasure μ] {t : ℝ} (ht : 0 ≤ t) :
-    Integrable (fun p : ℝ≥0 => Real.exp (-(t * (p : ℝ)))) μ := by
-  have h := (laplaceKernelBoundedContinuous ht).integrable μ
-  rwa [funext (laplaceKernelBoundedContinuous_apply ht)] at h
-
-/-- **An atom at `0` shifts the Laplace transform by its mass.** The kernel takes the value `1` at
-`p = 0`, so adjoining `c • δ₀` to a finite measure adds exactly `c`. This is the last step of the
-existence proof: it converts a representation of `f - L` into one of `f`. -/
-private theorem integral_exp_neg_mul_add_smul_dirac_zero (μ : Measure ℝ≥0) [IsFiniteMeasure μ]
-    (c : ℝ≥0) {t : ℝ} (ht : 0 ≤ t) :
-    ∫ p : ℝ≥0, Real.exp (-(t * (p : ℝ))) ∂(μ + c • Measure.dirac (0 : ℝ≥0))
-      = (∫ p : ℝ≥0, Real.exp (-(t * (p : ℝ))) ∂μ) + c := by
-  rw [integral_add_measure (integrable_exp_neg_mul μ ht)
-      (integrable_exp_neg_mul (c • Measure.dirac (0 : ℝ≥0)) ht),
-    integral_smul_nnreal_measure, integral_dirac]
-  simp [NNReal.smul_def]
-
 /-- **The weak limit represents the non-constant part.** Along the ultrafilter `U`, the Chafaï
 measures converge weakly to `μ₀`; passing the reconstruction identity to that limit replaces the
 Bernstein kernel by `e^{-tp}` and exhibits `μ₀` as a representing measure for `f - L`, where `L` is
