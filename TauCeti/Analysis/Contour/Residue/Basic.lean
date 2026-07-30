@@ -386,8 +386,11 @@ theorem residue_const_smul {f : ℂ → ℂ} {z₀ : ℂ} (c : ℂ) :
 
 /-- Compatibility wrapper for the former name of `residue_const_smul`. Stated with the signature
 that name carried, so existing `residue_smul c hf` calls keep elaborating; the meromorphy argument
-is ignored, that lemma now being unconditional. -/
-@[deprecated residue_const_smul (since := "2026-07-30")]
+is ignored, that lemma now being unconditional. Migrate to `residue_const_smul`, dropping that
+argument — which is why no automatic replacement is named here: `residue_const_smul c hf` would not
+elaborate. -/
+@[deprecated "Use `residue_const_smul`, which is unconditional: drop the meromorphy argument."
+  (since := "2026-07-30")]
 theorem residue_smul {f : ℂ → ℂ} {z₀ : ℂ} (c : ℂ) (_hf : MeromorphicAt f z₀) :
     residue (c • f) z₀ = c • residue f z₀ := residue_const_smul c
 
