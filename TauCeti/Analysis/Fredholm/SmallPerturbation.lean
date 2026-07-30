@@ -163,21 +163,21 @@ variable [NormedAddCommGroup E] [NormedSpace 𝕜 E] [CompleteSpace E]
 variable [NormedAddCommGroup F] [NormedSpace 𝕜 F] [CompleteSpace F]
 
 omit [IsRCLikeNormedField 𝕜] [CompleteSpace 𝕜] in
-/-- **Invertibility is an open condition along a continuous family.** If `D` is a continuous family
-of operators `X →L[𝕜] Y` and `D T` is an equivalence, then `D S` is an equivalence for every `S`
-near `T`.
+/-- **Invertibility is an open condition along a family continuous at a point.** If `D T` is an
+equivalence and `D` is continuous at `T`, then `D S` is an equivalence for every `S` near `T`.
 
-This is the sole topological input to the stability theorem: Mathlib's
-`ContinuousLinearEquiv.nhds` says the equivalences are a neighbourhood of each of their members,
-and continuity pulls that back along `D`. Nothing here is specific to block forms. -/
+This is the sole topological input to the stability theorem; nothing in it is specific to block
+forms. -/
 private theorem eventually_exists_continuousLinearEquiv_eq {G : Type*} [TopologicalSpace G]
     {X Y : Type*} [NormedAddCommGroup X] [NormedSpace 𝕜 X] [CompleteSpace X]
     [SeminormedAddCommGroup Y] [NormedSpace 𝕜 Y]
-    {D : G → (X →L[𝕜] Y)} (hD : Continuous D) {T : G} {e₀ : X ≃L[𝕜] Y}
+    {D : G → (X →L[𝕜] Y)} {T : G} (hD : ContinuousAt D T) {e₀ : X ≃L[𝕜] Y}
     (hT : D T = (e₀ : X →L[𝕜] Y)) :
     ∀ᶠ S in 𝓝 T, ∃ e : X ≃L[𝕜] Y, D S = (e : X →L[𝕜] Y) := by
+  -- Mathlib's `ContinuousLinearEquiv.nhds` says the equivalences are a neighbourhood of each of
+  -- their members; continuity at `T` pulls that back along `D`.
   have hmem : D ⁻¹' Set.range ((↑) : (X ≃L[𝕜] Y) → (X →L[𝕜] Y)) ∈ 𝓝 T := by
-    apply hD.continuousAt.preimage_mem_nhds
+    apply hD.preimage_mem_nhds
     rw [hT]
     exact ContinuousLinearEquiv.nhds e₀
   filter_upwards [hmem] with S hS
@@ -188,10 +188,7 @@ omit [IsRCLikeNormedField 𝕜] [CompleteSpace E] [CompleteSpace F] in
 /-- **A splitting with an invertible corner makes an operator Fredholm.** Suppose the domain splits
 as `K × X` and the codomain as `Y × C`, with `K` and `C` finite-dimensional, and that in the
 resulting block form of `S` the corner `X → Y` is an equivalence. Then `S` is Fredholm of index
-`finrank K - finrank C`.
-
-Conjugating by the two splitting equivalences changes neither Fredholmness nor the index, so this
-is `isFredholm_and_index_eq_of_blockCorner_equiv` transported along `p` and `q`. -/
+`finrank K - finrank C`. -/
 private theorem isFredholm_and_index_eq_of_splitting
     {K X Y C : Type*}
     [NormedAddCommGroup K] [NormedSpace 𝕜 K] [FiniteDimensional 𝕜 K]
@@ -203,6 +200,8 @@ private theorem isFredholm_and_index_eq_of_splitting
       (e : X →L[𝕜] Y)) :
     IsFredholm S ∧
       ContinuousLinearMap.index S = (finrank 𝕜 K : ℤ) - finrank 𝕜 C := by
+  -- Conjugating by the two splitting equivalences changes neither Fredholmness nor the index, so
+  -- this is `isFredholm_and_index_eq_of_blockCorner_equiv` transported along `p` and `q`.
   set A := (q.symm : F →L[𝕜] Y × C).comp (S.comp (p : K × X →L[𝕜] E)) with hAdef
   obtain ⟨hAfredholm, hAindex⟩ := isFredholm_and_index_eq_of_blockCorner_equiv A e he
   have hrecover : S = (q : Y × C →L[𝕜] F).comp (A.comp (p.symm : E →L[𝕜] K × X)) := by
@@ -243,7 +242,7 @@ theorem IsFredholm.eventually_isFredholm_and_index_eq {T : E →L[𝕜] F}
   have hD : Continuous D := by
     dsimp only [D, A, blockCorner]
     fun_prop
-  filter_upwards [eventually_exists_continuousLinearEquiv_eq hD hDT] with S hS
+  filter_upwards [eventually_exists_continuousLinearEquiv_eq hD.continuousAt hDT] with S hS
   obtain ⟨e, he⟩ := hS
   obtain ⟨hSfredholm, hSindex⟩ :=
     isFredholm_and_index_eq_of_splitting S domainEquiv codomainEquiv he
