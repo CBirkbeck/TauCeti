@@ -73,6 +73,79 @@ namespace TauCeti
 
 variable {f : ℝ → ℝ}
 
+/-- **The Laplace kernel is integrable against a finite measure.** For `0 ≤ t` the kernel
+`p ↦ e^{-tp}` is bounded and continuous on `ℝ≥0`, hence integrable against any finite measure.
+Nothing here depends on complete monotonicity or on the approximating measures. -/
+private theorem integrable_exp_neg_mul (μ : Measure ℝ≥0) [IsFiniteMeasure μ] {t : ℝ} (ht : 0 ≤ t) :
+    Integrable (fun p : ℝ≥0 => Real.exp (-(t * (p : ℝ)))) μ := by
+  have h := (laplaceKernelBoundedContinuous ht).integrable μ
+  rwa [funext (laplaceKernelBoundedContinuous_apply ht)] at h
+
+/-- **An atom at `0` shifts the Laplace transform by its mass.** The kernel takes the value `1` at
+`p = 0`, so adjoining `c • δ₀` to a finite measure adds exactly `c`. This is the last step of the
+existence proof: it converts a representation of `f - L` into one of `f`. -/
+private theorem integral_exp_neg_mul_add_smul_dirac_zero (μ : Measure ℝ≥0) [IsFiniteMeasure μ]
+    (c : ℝ≥0) {t : ℝ} (ht : 0 ≤ t) :
+    ∫ p : ℝ≥0, Real.exp (-(t * (p : ℝ))) ∂(μ + c • Measure.dirac (0 : ℝ≥0))
+      = (∫ p : ℝ≥0, Real.exp (-(t * (p : ℝ))) ∂μ) + c := by
+  rw [integral_add_measure (integrable_exp_neg_mul μ ht)
+      (integrable_exp_neg_mul (c • Measure.dirac (0 : ℝ≥0)) ht),
+    integral_smul_nnreal_measure, integral_dirac]
+  simp [NNReal.smul_def]
+
+/-- **The weak limit represents the non-constant part.** Along the ultrafilter `U`, the Chafaï
+measures converge weakly to `μ₀`; passing the reconstruction identity to that limit replaces the
+Bernstein kernel by `e^{-tp}` and exhibits `μ₀` as a representing measure for `f - L`, where `L` is
+the limit of `f` at infinity. The atom carrying `L` itself is added by the caller.
+
+Stated pointwise in `t`, which is how the caller consumes it. -/
+private theorem sub_eq_integral_exp_neg_mul_of_weak_limit {L : ℝ} {C : ℝ≥0} {μ₀ : Measure ℝ≥0}
+    {U : Ultrafilter ℕ} (hcm : IsCompletelyMonotone f) (hL : Tendsto f atTop (nhds L))
+    (hfin : ∀ n, IsFiniteMeasure (chafaiRescaled f n))
+    (hmass' : ∀ n, (chafaiRescaled f n) univ ≤ (C : ℝ≥0∞)) (hU : (U : Filter ℕ) ≤ atTop)
+    (hweak : ∀ g : BoundedContinuousFunction ℝ≥0 ℝ,
+      Tendsto (fun n => ∫ x, g x ∂(chafaiRescaled f n)) (U : Filter ℕ) (nhds (∫ x, g x ∂μ₀)))
+    {t : ℝ} (ht : 0 ≤ t) :
+    f t - L = ∫ p : ℝ≥0, Real.exp (-(t * (p : ℝ))) ∂μ₀ := by
+  haveI : (U : Filter ℕ).NeBot := U.neBot'
+  have hlap : Tendsto (fun n => ∫ p, Real.exp (-(t * (p : ℝ))) ∂(chafaiRescaled f n))
+      (U : Filter ℕ) (nhds (∫ p, Real.exp (-(t * (p : ℝ))) ∂μ₀)) :=
+    chafaiRescaled_tendsto_laplace_integral_of_weak hweak ht
+  have herr : Tendsto (fun n => ∫ p : ℝ≥0,
+      (bernsteinKernel n t (p : ℝ) - Real.exp (-(t * (p : ℝ))))
+        ∂(chafaiRescaled f n)) (U : Filter ℕ) (nhds 0) :=
+    (integral_bernsteinKernel_sub_laplaceKernel_tendsto_zero_of_mass_bound
+      (C := (C : ℝ)) (chafaiRescaled f)
+      (Eventually.of_forall fun n => (hmass' n).trans
+        (by simp [ENNReal.ofReal_coe_nnreal])) t ht).mono_left hU
+  -- Split the error integral, using that both kernels are bounded continuous.
+  have hsplit : ∀ n, ∫ p : ℝ≥0,
+      (bernsteinKernel n t (p : ℝ) - Real.exp (-(t * (p : ℝ)))) ∂(chafaiRescaled f n)
+        = (∫ p, bernsteinKernel n t (p : ℝ) ∂(chafaiRescaled f n))
+          - ∫ p, Real.exp (-(t * (p : ℝ))) ∂(chafaiRescaled f n) := by
+    intro n
+    haveI := hfin n
+    have hb : Integrable (fun p : ℝ≥0 => bernsteinKernel n t (p : ℝ))
+        (chafaiRescaled f n) := by
+      have h := (bernsteinKernelBoundedContinuous n ht).integrable (chafaiRescaled f n)
+      rwa [funext (bernsteinKernelBoundedContinuous_apply n ht)] at h
+    exact integral_sub hb (integrable_exp_neg_mul (chafaiRescaled f n) ht)
+  -- The Bernstein integral is constantly `f t - L` once `n ≥ 2`.
+  have hconst : ∀ᶠ n in (U : Filter ℕ),
+      ∫ p, bernsteinKernel n t (p : ℝ) ∂(chafaiRescaled f n) = f t - L := by
+    have h2 : ∀ᶠ n in (U : Filter ℕ), 2 ≤ n := hU (eventually_ge_atTop 2)
+    filter_upwards [h2] with n hn
+    exact chafaiRescaled_integral_bernsteinKernel_eq_sub_tendsto_atTop f hcm n hn t ht L hL
+  -- Pass to the limit: `(f t - L) - ∫ laplace → 0`.
+  have hdiff : Tendsto (fun n => (f t - L)
+      - ∫ p, Real.exp (-(t * (p : ℝ))) ∂(chafaiRescaled f n)) (U : Filter ℕ) (nhds 0) := by
+    refine herr.congr' ?_
+    filter_upwards [hconst] with n hn
+    rw [hsplit n, hn]
+  have hlim := hdiff.add hlap
+  simp only [sub_add_cancel, zero_add] at hlim
+  exact tendsto_nhds_unique tendsto_const_nhds hlim
+
 /-- **Bernstein's theorem, existence half.** A completely monotone function on `[0, ∞)` is the
 Laplace transform of a finite positive measure on `ℝ≥0`.
 
@@ -87,66 +160,14 @@ theorem exists_isFiniteMeasure_integral_exp_neg_mul_eq_of_isCompletelyMonotone
   obtain ⟨μ₀, U, hU, hμ₀fin, -, hweak⟩ :=
     finite_measure_cluster_limit (chafaiRescaled f) C hmass'
       (isTightMeasureSet_range_chafaiRescaled hcm)
-  haveI : (U : Filter ℕ).NeBot := U.neBot'
   -- The limit represents the non-constant part `f - L`.
-  have key : ∀ t : ℝ, 0 ≤ t → f t - L = ∫ p, Real.exp (-(t * (p : ℝ))) ∂μ₀ := by
-    intro t ht
-    have hlap : Tendsto (fun n => ∫ p, Real.exp (-(t * (p : ℝ))) ∂(chafaiRescaled f n))
-        (U : Filter ℕ) (nhds (∫ p, Real.exp (-(t * (p : ℝ))) ∂μ₀)) :=
-      chafaiRescaled_tendsto_laplace_integral_of_weak hweak ht
-    have herr : Tendsto (fun n => ∫ p : ℝ≥0,
-        (bernsteinKernel n t (p : ℝ) - Real.exp (-(t * (p : ℝ))))
-          ∂(chafaiRescaled f n)) (U : Filter ℕ) (nhds 0) :=
-      (integral_bernsteinKernel_sub_laplaceKernel_tendsto_zero_of_mass_bound
-        (C := (C : ℝ)) (chafaiRescaled f)
-        (Eventually.of_forall fun n => (hmass' n).trans
-          (by simp [ENNReal.ofReal_coe_nnreal])) t ht).mono_left hU
-    -- Split the error integral, using that both kernels are bounded continuous.
-    have hsplit : ∀ n, ∫ p : ℝ≥0,
-        (bernsteinKernel n t (p : ℝ) - Real.exp (-(t * (p : ℝ)))) ∂(chafaiRescaled f n)
-          = (∫ p, bernsteinKernel n t (p : ℝ) ∂(chafaiRescaled f n))
-            - ∫ p, Real.exp (-(t * (p : ℝ))) ∂(chafaiRescaled f n) := by
-      intro n
-      haveI := hfin n
-      have hb : Integrable (fun p : ℝ≥0 => bernsteinKernel n t (p : ℝ))
-          (chafaiRescaled f n) := by
-        have h := (bernsteinKernelBoundedContinuous n ht).integrable (chafaiRescaled f n)
-        rwa [funext (bernsteinKernelBoundedContinuous_apply n ht)] at h
-      have hl : Integrable (fun p : ℝ≥0 => Real.exp (-(t * (p : ℝ))))
-          (chafaiRescaled f n) := by
-        have h := (laplaceKernelBoundedContinuous ht).integrable (chafaiRescaled f n)
-        rwa [funext (laplaceKernelBoundedContinuous_apply ht)] at h
-      exact integral_sub hb hl
-    -- The Bernstein integral is constantly `f t - L` once `n ≥ 2`.
-    have hconst : ∀ᶠ n in (U : Filter ℕ),
-        ∫ p, bernsteinKernel n t (p : ℝ) ∂(chafaiRescaled f n) = f t - L := by
-      have h2 : ∀ᶠ n in (U : Filter ℕ), 2 ≤ n := hU (eventually_ge_atTop 2)
-      filter_upwards [h2] with n hn
-      exact chafaiRescaled_integral_bernsteinKernel_eq_sub_tendsto_atTop f hcm n hn t ht L hL
-    -- Pass to the limit: `(f t - L) - ∫ laplace → 0`.
-    have hdiff : Tendsto (fun n => (f t - L)
-        - ∫ p, Real.exp (-(t * (p : ℝ))) ∂(chafaiRescaled f n)) (U : Filter ℕ) (nhds 0) := by
-      refine herr.congr' ?_
-      filter_upwards [hconst] with n hn
-      rw [hsplit n, hn]
-    have hlim := hdiff.add hlap
-    simp only [sub_add_cancel, zero_add] at hlim
-    exact tendsto_nhds_unique tendsto_const_nhds hlim
+  have key : ∀ t : ℝ, 0 ≤ t → f t - L = ∫ p, Real.exp (-(t * (p : ℝ))) ∂μ₀ :=
+    fun t ht => sub_eq_integral_exp_neg_mul_of_weak_limit hcm hL hfin hmass' hU hweak ht
   -- Add the atom `L · δ₀` to recover `f` itself.
   haveI := hμ₀fin
   refine ⟨μ₀ + L.toNNReal • Measure.dirac 0, inferInstance, fun t ht => ?_⟩
   simp only [neg_mul]
-  have hlapint : Integrable (fun p : ℝ≥0 => Real.exp (-(t * (p : ℝ)))) μ₀ := by
-    have h := (laplaceKernelBoundedContinuous ht).integrable μ₀
-    rwa [funext (laplaceKernelBoundedContinuous_apply ht)] at h
-  have hatomint : Integrable (fun p : ℝ≥0 => Real.exp (-(t * (p : ℝ))))
-      (L.toNNReal • Measure.dirac 0) := by
-    have h := (laplaceKernelBoundedContinuous ht).integrable
-      (L.toNNReal • Measure.dirac (0 : ℝ≥0))
-    rwa [funext (laplaceKernelBoundedContinuous_apply ht)] at h
-  rw [integral_add_measure hlapint hatomint, integral_smul_nnreal_measure, integral_dirac]
-  simp only [NNReal.coe_zero, mul_zero, neg_zero, Real.exp_zero, NNReal.smul_def, smul_eq_mul,
-    mul_one, Real.coe_toNNReal L hL_nn]
+  rw [integral_exp_neg_mul_add_smul_dirac_zero μ₀ _ ht, Real.coe_toNNReal L hL_nn]
   linarith [key t ht]
 
 end TauCeti
