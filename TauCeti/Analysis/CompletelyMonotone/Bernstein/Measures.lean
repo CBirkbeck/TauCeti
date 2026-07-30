@@ -39,11 +39,12 @@ These build on the `IsCompletelyMonotone` API in `CompletelyMonotone/Basic.lean`
   `TauCeti.bernsteinKernelBoundedContinuous_apply`,
   `TauCeti.laplaceKernelBoundedContinuous`,
   `TauCeti.laplaceKernelBoundedContinuous_apply`,
-  `TauCeti.integrable_exp_neg_mul`,
-  `TauCeti.integral_exp_neg_mul_add_smul_dirac_zero`,
   `TauCeti.bernsteinKernel_tendsto`: the rescaled Laplace kernel, its bundled
   bounded-continuous `p`-dependence on the nonnegative half-line, and its bundled pointwise
   limit `e^{-xp}`.
+* `TauCeti.integrable_exp_neg_mul`, `TauCeti.integral_exp_neg_mul_add_smul_dirac_zero`: the
+  Laplace kernel is integrable against any finite measure on `ℝ≥0`, and adjoining an atom
+  `c • δ₀` adds exactly `c` to the transform, the kernel being `1` at `0`.
 * `TauCeti.chafaiRescaled`, `TauCeti.chafaiRescaled_mass_eq`: the `ℝ≥0`-valued pushed-forward
   measures and mass preservation.
 * `TauCeti.chafaiRescaled_integral_bernsteinKernel`,
@@ -297,6 +298,7 @@ lemma integrable_exp_neg_mul (μ : Measure ℝ≥0) [IsFiniteMeasure μ] {x : �
 
 /-- **An atom at `0` shifts the Laplace transform by its mass.** The kernel takes the value `1` at
 `p = 0`, so adjoining `c • δ₀` to a finite measure adds exactly `c`. -/
+@[simp]
 lemma integral_exp_neg_mul_add_smul_dirac_zero (μ : Measure ℝ≥0) [IsFiniteMeasure μ] (c : ℝ≥0)
     {x : ℝ} (hx : 0 ≤ x) :
     ∫ p : ℝ≥0, Real.exp (-(x * (p : ℝ))) ∂(μ + c • Measure.dirac (0 : ℝ≥0))
