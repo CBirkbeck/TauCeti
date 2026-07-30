@@ -6,6 +6,9 @@ Authors: Claude
 module
 
 public import TauCeti.Probability.Exchangeability.ConditionallyIID.Basic
+-- Non-public: `measurable_probabilityMeasure_apply_real` evaluates a random measure at a fixed
+-- measurable set.
+import TauCeti.MeasureTheory.Measure.ProbabilityMeasureExt
 -- Non-public: the countable set algebra that compares two random measures set by set.
 import Mathlib.MeasureTheory.SetAlgebra
 -- Non-public: `tendsto_const_div_atTop_nhds_zero_nat` closes the `O(1/n)` squeeze.
@@ -485,21 +488,14 @@ private theorem integral_sub_sq_le_two_mul_add_two_mul_of_integral_sub_sq_le_of_
 
 /-- **The `L²` rate between two directing measures.** Two directing measures of the same process
 are within `4 / n` of each other in mean square, for every `n ≥ 1`, on each fixed measurable set.
-This is the quantitative form of `ae_measure_apply_eq`, which is its `n → ∞` limit.
-
-Integrability of the squared difference is a hypothesis rather than a consequence: the rate bounds
-available for the two measures separately constrain only the squares of the individual errors,
-which does not make their difference measurable. -/
+This is the quantitative form of `ae_measure_apply_eq`, which is its `n → ∞` limit. -/
 private theorem ConditionallyIIDWith.integral_directing_sub_sq_le_four_div [IsProbabilityMeasure μ]
     (hX : ∀ i, AEMeasurable (X i) μ) (h : ConditionallyIIDWith μ X ν)
-    (h' : ConditionallyIIDWith μ X ν') (hB : MeasurableSet B)
-    (hdint : Integrable (fun ω =>
-      (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2) μ)
-    {n : ℕ} (hn : n ≠ 0) :
+    (h' : ConditionallyIIDWith μ X ν') (hB : MeasurableSet B) {n : ℕ} (hn : n ≠ 0) :
     ∫ ω, (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2 ∂μ ≤ 4 / n := by
   have hqm : ∀ ρ : Ω → ProbabilityMeasure α, Measurable ρ →
-      Measurable fun ω => ((ρ ω : Measure α) B).toReal := fun ρ hρ =>
-    ((Measure.measurable_coe hB).comp (measurable_subtype_coe.comp hρ)).ennreal_toReal
+      Measurable fun ω => ((ρ ω : Measure α) B).toReal := fun _ hρ =>
+    (TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hρ
   have habs : ∀ (ρ : Ω → ProbabilityMeasure α) (ω : Ω),
       |((ρ ω : Measure α) B).toReal| ≤ 1 := fun ρ ω => by
     rw [abs_of_nonneg ENNReal.toReal_nonneg]
@@ -512,6 +508,11 @@ private theorem ConditionallyIIDWith.integral_directing_sub_sq_le_four_div [IsPr
   have heb : ∀ (m : ℕ) (ω : Ω),
       |(m : ℝ)⁻¹ * ∑ i ∈ Finset.range m, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω| ≤ 1 :=
     fun m ω => abs_average_indicator_le_one (fun i => X i ⁻¹' B) m ω
+  have hdint : Integrable (fun ω =>
+      (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2) μ :=
+    integrable_sub_sq_of_abs_le_one (hqm ν h.measurable_directing).aemeasurable
+      (hqm ν' h'.measurable_directing).aemeasurable
+      (ae_of_all _ (habs ν)) (ae_of_all _ (habs ν'))
   -- Both errors are bounded by `1 / n`, so the general `2c₁ + 2c₂` bound specializes to `4 / n`.
   have hb : ∫ ω, (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2 ∂μ
       ≤ 2 * (n : ℝ)⁻¹ + 2 * (n : ℝ)⁻¹ :=
@@ -535,8 +536,8 @@ theorem ConditionallyIIDWith.ae_measure_apply_eq [IsProbabilityMeasure μ]
     (h' : ConditionallyIIDWith μ X ν') (hB : MeasurableSet B) :
     (fun ω => (ν ω : Measure α) B) =ᵐ[μ] fun ω => (ν' ω : Measure α) B := by
   have hqm : ∀ ρ : Ω → ProbabilityMeasure α, Measurable ρ →
-      Measurable fun ω => ((ρ ω : Measure α) B).toReal := fun ρ hρ =>
-    ((Measure.measurable_coe hB).comp (measurable_subtype_coe.comp hρ)).ennreal_toReal
+      Measurable fun ω => ((ρ ω : Measure α) B).toReal := fun _ hρ =>
+    (TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hρ
   have hq0 : ∀ (ρ : Ω → ProbabilityMeasure α) (ω : Ω), 0 ≤ ((ρ ω : Measure α) B).toReal :=
     fun _ _ => ENNReal.toReal_nonneg
   have hq1 : ∀ (ρ : Ω → ProbabilityMeasure α) (ω : Ω), ((ρ ω : Measure α) B).toReal ≤ 1 := by
@@ -551,8 +552,9 @@ theorem ConditionallyIIDWith.ae_measure_apply_eq [IsProbabilityMeasure μ]
       (ae_of_all _ fun ω => ?_)
     rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
     nlinarith [hq0 ν ω, hq1 ν ω, hq0 ν' ω, hq1 ν' ω]
-  have hbound : ∀ n : ℕ, 1 ≤ n → ∫ ω, d ω ^ 2 ∂μ ≤ 4 / n := fun n hn =>
-    h.integral_directing_sub_sq_le_four_div hX h' hB hdint (by omega)
+  -- `hd_def` turns the `set` wrapper `d` into the explicit difference the rate lemma is stated for.
+  have hbound : ∀ n : ℕ, 1 ≤ n → ∫ ω, d ω ^ 2 ∂μ ≤ 4 / n := fun n hn => by
+    simpa only [hd_def] using h.integral_directing_sub_sq_le_four_div hX h' hB (n := n) (by omega)
   have hle : ∫ ω, d ω ^ 2 ∂μ ≤ 0 :=
     ge_of_tendsto (tendsto_const_div_atTop_nhds_zero_nat (4 : ℝ))
       (eventually_atTop.2 ⟨1, fun n hn => hbound n hn⟩)
