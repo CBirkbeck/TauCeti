@@ -167,6 +167,40 @@ private theorem integral_toReal_eq_of_lintegral_eq {F G : Ω → ℝ≥0∞}
   rw [integral_toReal hF (ae_of_all _ fun ω => (hFtop ω).lt_top),
     integral_toReal hG (ae_of_all _ fun ω => (hGtop ω).lt_top), hFG]
 
+/-- A product of two `[0, 1]`-valued functions is integrable on a finite measure space, being
+bounded by `1`. Every summand of the covariance expansion below is of this shape. -/
+private theorem integrable_mul_of_nonneg_of_le_one [IsFiniteMeasure μ] {u v : Ω → ℝ}
+    (hu : AEMeasurable u μ) (hv : AEMeasurable v μ)
+    (hu0 : ∀ ω, 0 ≤ u ω) (hu1 : ∀ ω, u ω ≤ 1)
+    (hv0 : ∀ ω, 0 ≤ v ω) (hv1 : ∀ ω, v ω ≤ 1) :
+    Integrable (fun ω => u ω * v ω) μ := by
+  refine Integrable.of_bound (hu.mul hv).aestronglyMeasurable 1 (ae_of_all _ fun ω => ?_)
+  rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (hu0 ω), abs_of_nonneg (hv0 ω)]
+  nlinarith [hu0 ω, hv0 ω, hu1 ω, hv1 ω]
+
+/-- **Expanding a centred product.** For `[0, 1]`-valued `u`, `v` and `q`, the integral of
+`(u - q)(v - q)` splits into the four moments of the product expansion. Each summand is integrable
+by `integrable_mul_of_nonneg_of_le_one`, which is what licenses splitting the integral. -/
+private theorem integral_sub_mul_sub [IsFiniteMeasure μ] {u v q : Ω → ℝ}
+    (hu : AEMeasurable u μ) (hv : AEMeasurable v μ) (hq : AEMeasurable q μ)
+    (hu0 : ∀ ω, 0 ≤ u ω) (hu1 : ∀ ω, u ω ≤ 1)
+    (hv0 : ∀ ω, 0 ≤ v ω) (hv1 : ∀ ω, v ω ≤ 1)
+    (hq0 : ∀ ω, 0 ≤ q ω) (hq1 : ∀ ω, q ω ≤ 1) :
+    ∫ ω, (u ω - q ω) * (v ω - q ω) ∂μ
+      = ∫ ω, u ω * v ω ∂μ - ∫ ω, q ω * u ω ∂μ - ∫ ω, q ω * v ω ∂μ
+        + ∫ ω, q ω ^ 2 ∂μ := by
+  have hi1 := integrable_mul_of_nonneg_of_le_one hu hv hu0 hu1 hv0 hv1
+  have hi2 := integrable_mul_of_nonneg_of_le_one hq hu hq0 hq1 hu0 hu1
+  have hi3 := integrable_mul_of_nonneg_of_le_one hq hv hq0 hq1 hv0 hv1
+  have hi4 : Integrable (fun ω => q ω ^ 2) μ := by
+    simpa [sq] using integrable_mul_of_nonneg_of_le_one hq hq hq0 hq1 hq0 hq1
+  have hexp : ∀ ω, (u ω - q ω) * (v ω - q ω)
+      = u ω * v ω - q ω * u ω - q ω * v ω + q ω ^ 2 := fun ω => by ring
+  have hiB : Integrable (fun ω => u ω * v ω - q ω * u ω) μ := hi1.sub hi2
+  have hiA : Integrable (fun ω => u ω * v ω - q ω * u ω - q ω * v ω) μ := hiB.sub hi3
+  rw [integral_congr_ae (ae_of_all _ hexp), integral_add hiA hi4,
+    integral_sub hiB hi3, integral_sub hi1 hi2]
+
 /-- The abstract second-moment computation behind the `L²` rate: if the centred variables
 `eᵢ - q` are uncorrelated with common variance `c`, then their average over `Fin n` has mean
 square `c / n`. Private: it is an algebraic repackaging with no probabilistic content of its own. -/
@@ -211,6 +245,80 @@ private theorem integral_sq_average_sub [IsProbabilityMeasure μ] {e : ℕ → �
   rw [Finset.sum_congr rfl hrow, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
   field_simp
 
+omit [MeasurableSpace Ω] in
+/-- Indicators of `ℝ≥0∞`-valued sets read as real indicators after `toReal`. -/
+private theorem toReal_indicator_one (s : Set Ω) (ω : Ω) :
+    (s.indicator (1 : Ω → ℝ≥0∞) ω).toReal = s.indicator (1 : Ω → ℝ) ω := by
+  by_cases hmem : ω ∈ s <;> simp [hmem]
+
+omit [MeasurableSpace Ω] in
+/-- An `ℝ≥0∞` indicator of `1` is finite. -/
+private theorem indicator_one_ne_top (s : Set Ω) (ω : Ω) :
+    s.indicator (1 : Ω → ℝ≥0∞) ω ≠ ∞ := by
+  by_cases hmem : ω ∈ s <;> simp [hmem]
+
+variable {X : ℕ → Ω → α} {ν : Ω → ProbabilityMeasure α} {B : Set α}
+
+/-- **First moment.** Each coordinate hits `B` with probability the mean of the directing
+measure's mass on `B`. -/
+private theorem ConditionallyIIDWith.integral_indicator_single
+    (h : ConditionallyIIDWith μ X ν) (hX : ∀ i, AEMeasurable (X i) μ) (hB : MeasurableSet B)
+    (i : ℕ) :
+    ∫ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω ∂μ
+      = ∫ ω, ((ν ω : Measure α) B).toReal ∂μ := by
+  have hu : Measurable fun ω => (ν ω : Measure α) B :=
+    (Measure.measurable_coe hB).comp (measurable_subtype_coe.comp h.measurable_directing)
+  have hlin : ∫⁻ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω ∂μ
+      = ∫⁻ ω, (ν ω : Measure α) B ∂μ := by
+    simpa using h.lintegral_mul_indicator_single (g := fun _ => 1) hX i measurable_const hB
+  have := integral_toReal_eq_of_lintegral_eq
+    (measurable_one.aemeasurable.indicator₀ ((hX i).nullMeasurableSet_preimage hB))
+    hu.aemeasurable (indicator_one_ne_top _) (fun ω => measure_ne_top _ _) hlin
+  simpa [toReal_indicator_one] using this
+
+/-- **Pair moment.** Distinct coordinates hit `B` jointly with probability the mean of the
+squared mass — the conditional independence, read at two indices. -/
+private theorem ConditionallyIIDWith.integral_indicator_pair
+    (h : ConditionallyIIDWith μ X ν) (hX : ∀ i, AEMeasurable (X i) μ) (hB : MeasurableSet B)
+    {i j : ℕ} (hij : i ≠ j) :
+    ∫ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω ∂μ
+      = ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ := by
+  have hu : Measurable fun ω => (ν ω : Measure α) B :=
+    (Measure.measurable_coe hB).comp (measurable_subtype_coe.comp h.measurable_directing)
+  have hlin : ∫⁻ ω, (X i ⁻¹' B ∩ X j ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω ∂μ
+      = ∫⁻ ω, (ν ω : Measure α) B ^ 2 ∂μ := by
+    simpa using h.lintegral_mul_indicator_pair (g := fun _ => 1) hX hij measurable_const hB
+  have := integral_toReal_eq_of_lintegral_eq
+    (measurable_one.aemeasurable.indicator₀
+      (((hX i).nullMeasurableSet_preimage hB).inter ((hX j).nullMeasurableSet_preimage hB)))
+    (hu.pow_const 2).aemeasurable (indicator_one_ne_top _)
+    (fun ω => by simp [measure_ne_top (ν ω : Measure α) B]) hlin
+  have hprod : ∀ ω, ((X i ⁻¹' B ∩ X j ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω).toReal
+      = (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω := by
+    intro ω
+    by_cases h1 : ω ∈ X i ⁻¹' B <;> by_cases h2 : ω ∈ X j ⁻¹' B <;> simp [h1, h2]
+  simpa [hprod, ENNReal.toReal_pow] using this
+
+/-- **Cross moment.** Weighting one coordinate's indicator by the directing mass gives the same
+squared mean — the moment the mixture identity alone does not determine. -/
+private theorem ConditionallyIIDWith.integral_directing_mul_indicator
+    (h : ConditionallyIIDWith μ X ν) (hX : ∀ i, AEMeasurable (X i) μ) (hB : MeasurableSet B)
+    (i : ℕ) :
+    ∫ ω, ((ν ω : Measure α) B).toReal * (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω ∂μ
+      = ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ := by
+  have hu : Measurable fun ω => (ν ω : Measure α) B :=
+    (Measure.measurable_coe hB).comp (measurable_subtype_coe.comp h.measurable_directing)
+  have hg : Measurable fun p : ProbabilityMeasure α => (p : Measure α) B :=
+    (Measure.measurable_coe hB).comp measurable_subtype_coe
+  have hlin := h.lintegral_mul_indicator_single (g := fun p => (p : Measure α) B) hX i hg hB
+  have := integral_toReal_eq_of_lintegral_eq
+    (hu.aemeasurable.mul
+      (measurable_one.aemeasurable.indicator₀ ((hX i).nullMeasurableSet_preimage hB)))
+    (hu.mul hu).aemeasurable
+    (fun ω => ENNReal.mul_ne_top (measure_ne_top _ _) (indicator_one_ne_top _ ω))
+    (fun ω => ENNReal.mul_ne_top (measure_ne_top _ _) (measure_ne_top _ _)) hlin
+  simpa [ENNReal.toReal_mul, toReal_indicator_one, sq] using this
+
 /-- **The `L²` rate for empirical frequencies.** For a conditionally i.i.d. process with directing
 measure `ν` and a measurable set `B`, the empirical frequency of `B` among the first `n`
 coordinates approximates `ω ↦ (ν ω) B` with mean square error
@@ -227,61 +335,11 @@ theorem ConditionallyIIDWith.integral_empiricalFrequency_sub_sq [IsProbabilityMe
       = (n : ℝ)⁻¹ * (∫ ω, ((ν ω : Measure α) B).toReal ∂μ
           - ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ) := by
   classical
-  have hν := h.measurable_directing
   have hu : Measurable fun ω => (ν ω : Measure α) B :=
-    (Measure.measurable_coe hB).comp (measurable_subtype_coe.comp hν)
+    (Measure.measurable_coe hB).comp (measurable_subtype_coe.comp h.measurable_directing)
   have hq : Measurable fun ω => ((ν ω : Measure α) B).toReal := hu.ennreal_toReal
-  have hXB : ∀ i, NullMeasurableSet (X i ⁻¹' B) μ := fun i =>
-    (hX i).nullMeasurableSet_preimage hB
   have he : ∀ i, AEMeasurable ((X i ⁻¹' B).indicator (1 : Ω → ℝ)) μ := fun i =>
-    measurable_one.aemeasurable.indicator₀ (hXB i)
-  have hutop : ∀ ω, (ν ω : Measure α) B ≠ ∞ := fun ω => measure_ne_top _ _
-  have hindtop : ∀ (s : Set Ω) (ω : Ω), s.indicator (1 : Ω → ℝ≥0∞) ω ≠ ∞ := by
-    intro s ω
-    by_cases hmem : ω ∈ s <;> simp [hmem]
-  have hindReal : ∀ (s : Set Ω) (ω : Ω),
-      (s.indicator (1 : Ω → ℝ≥0∞) ω).toReal = s.indicator (1 : Ω → ℝ) ω := by
-    intro s ω
-    by_cases hmem : ω ∈ s <;> simp [hmem]
-  -- the three moments supplied by the weighted block identity
-  have hEq1 : ∀ i, ∫ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω ∂μ
-      = ∫ ω, ((ν ω : Measure α) B).toReal ∂μ := by
-    intro i
-    have hlin : ∫⁻ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω ∂μ
-        = ∫⁻ ω, (ν ω : Measure α) B ∂μ := by
-      simpa using h.lintegral_mul_indicator_single (g := fun _ => 1) hX i measurable_const hB
-    have := integral_toReal_eq_of_lintegral_eq (measurable_one.aemeasurable.indicator₀ (hXB i))
-      hu.aemeasurable (hindtop _) hutop hlin
-    simpa [hindReal] using this
-  have hEq2 : ∀ i j, i ≠ j → ∫ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
-        * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω ∂μ
-      = ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ := by
-    intro i j hij
-    have hlin : ∫⁻ ω, (X i ⁻¹' B ∩ X j ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω ∂μ
-        = ∫⁻ ω, (ν ω : Measure α) B ^ 2 ∂μ := by
-      simpa using h.lintegral_mul_indicator_pair (g := fun _ => 1) hX hij measurable_const hB
-    have := integral_toReal_eq_of_lintegral_eq
-      (measurable_one.aemeasurable.indicator₀ ((hXB i).inter (hXB j)))
-      (hu.pow_const 2).aemeasurable (hindtop _) (fun ω => by simp [hutop ω]) hlin
-    have hprod : ∀ ω, ((X i ⁻¹' B ∩ X j ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω).toReal
-        = (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω := by
-      intro ω
-      by_cases h1 : ω ∈ X i ⁻¹' B <;> by_cases h2 : ω ∈ X j ⁻¹' B <;>
-        simp [h1, h2]
-    simpa [hprod, ENNReal.toReal_pow] using this
-  have hEq3 : ∀ i, ∫ ω, ((ν ω : Measure α) B).toReal
-        * (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω ∂μ
-      = ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ := by
-    intro i
-    have hg : Measurable fun p : ProbabilityMeasure α => (p : Measure α) B :=
-      (Measure.measurable_coe hB).comp measurable_subtype_coe
-    have hlin := h.lintegral_mul_indicator_single (g := fun p => (p : Measure α) B) hX i hg hB
-    have := integral_toReal_eq_of_lintegral_eq
-      (hu.aemeasurable.mul (measurable_one.aemeasurable.indicator₀ (hXB i)))
-      (hu.mul hu).aemeasurable
-      (fun ω => ENNReal.mul_ne_top (hutop ω) (hindtop _ ω))
-      (fun ω => ENNReal.mul_ne_top (hutop ω) (hutop ω)) hlin
-    simpa [ENNReal.toReal_mul, hindReal, sq] using this
+    measurable_one.aemeasurable.indicator₀ ((hX i).nullMeasurableSet_preimage hB)
   -- bounds
   have hq0 : ∀ ω, 0 ≤ ((ν ω : Measure α) B).toReal := fun _ => ENNReal.toReal_nonneg
   have hq1 : ∀ ω, ((ν ω : Measure α) B).toReal ≤ 1 := by
@@ -300,54 +358,21 @@ theorem ConditionallyIIDWith.integral_empiricalFrequency_sub_sq [IsProbabilityMe
           (∫ ω, ((ν ω : Measure α) B).toReal ∂μ - ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ)
         else 0 := by
     intro i j
-    have hi1 : Integrable (fun ω => (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
-        * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω) μ := by
-      refine Integrable.of_bound ((he i).mul (he j)).aestronglyMeasurable 1
-        (ae_of_all _ fun ω => ?_)
-      rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (he0 i ω), abs_of_nonneg (he0 j ω)]
-      nlinarith [he0 i ω, he0 j ω, he1 i ω, he1 j ω]
-    have hi2 : Integrable (fun ω => ((ν ω : Measure α) B).toReal
-        * (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω) μ := by
-      refine Integrable.of_bound (hq.aemeasurable.mul (he i)).aestronglyMeasurable 1
-        (ae_of_all _ fun ω => ?_)
-      rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (hq0 ω), abs_of_nonneg (he0 i ω)]
-      nlinarith [hq0 ω, hq1 ω, he0 i ω, he1 i ω]
-    have hi3 : Integrable (fun ω => ((ν ω : Measure α) B).toReal
-        * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω) μ := by
-      refine Integrable.of_bound (hq.aemeasurable.mul (he j)).aestronglyMeasurable 1
-        (ae_of_all _ fun ω => ?_)
-      rw [Real.norm_eq_abs, abs_mul, abs_of_nonneg (hq0 ω), abs_of_nonneg (he0 j ω)]
-      nlinarith [hq0 ω, hq1 ω, he0 j ω, he1 j ω]
-    have hi4 : Integrable (fun ω => ((ν ω : Measure α) B).toReal ^ 2) μ := by
-      refine Integrable.of_bound (hq.pow_const 2).aestronglyMeasurable 1
-        (ae_of_all _ fun ω => ?_)
-      rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-      nlinarith [hq0 ω, hq1 ω]
-    have hexp : ∀ ω, ((X i ⁻¹' B).indicator (1 : Ω → ℝ) ω - ((ν ω : Measure α) B).toReal)
-          * ((X j ⁻¹' B).indicator (1 : Ω → ℝ) ω - ((ν ω : Measure α) B).toReal)
-        = (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω
-          - ((ν ω : Measure α) B).toReal * (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
-          - ((ν ω : Measure α) B).toReal * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω
-          + ((ν ω : Measure α) B).toReal ^ 2 := by
-      intro ω; ring
-    have hiB : Integrable (fun ω => (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
-        * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω
-        - ((ν ω : Measure α) B).toReal * (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω) μ := hi1.sub hi2
-    have hiA : Integrable (fun ω => (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
-        * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω
-        - ((ν ω : Measure α) B).toReal * (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
-        - ((ν ω : Measure α) B).toReal * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω) μ := hiB.sub hi3
-    rw [integral_congr_ae (ae_of_all _ hexp), integral_add hiA hi4,
-      integral_sub hiB hi3, integral_sub hi1 hi2]
+    rw [integral_sub_mul_sub (he i) (he j) hq.aemeasurable (he0 i) (he1 i) (he0 j) (he1 j)
+      hq0 hq1]
     by_cases hij : i = j
-    · subst hij
+    · -- On the diagonal the indicator is idempotent, so the first moment appears in place of the
+      -- pair moment and the variance is `∫ q - ∫ q²`.
+      subst hij
       have hsq : ∀ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
           * (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω = (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω := by
         intro ω
         by_cases hmem : ω ∈ X i ⁻¹' B <;> simp [hmem]
-      rw [if_pos rfl, integral_congr_ae (ae_of_all _ hsq), hEq1 i, hEq3 i]
+      rw [if_pos rfl, integral_congr_ae (ae_of_all _ hsq),
+        h.integral_indicator_single hX hB i, h.integral_directing_mul_indicator hX hB i]
       ring
-    · rw [if_neg hij, hEq2 i j hij, hEq3 i, hEq3 j]
+    · rw [if_neg hij, h.integral_indicator_pair hX hB hij,
+        h.integral_directing_mul_indicator hX hB i, h.integral_directing_mul_indicator hX hB j]
       ring
   exact integral_sq_average_sub he hq.aemeasurable
     (fun i ω => abs_le.mpr ⟨by linarith [he0 i ω], he1 i ω⟩)
