@@ -112,7 +112,13 @@ generalized winding number `α/2π`. For `0 ≤ α` the traversal is countercloc
 the interval `[0, α]` is reversed, the arc runs clockwise, and the contribution is negative.
 
 The `α = 2π` specialization is `windingNumber_circle`, and the `α = π` and `α = π/3` values the
-valence formula names are `windingNumber_at_i` and `windingNumber_at_rho`. -/
+valence formula names are `windingNumber_at_i` and `windingNumber_at_rho`.
+
+This is the statement `ContourIntegration/Suggested.lean` lists as `windingNumber_modelSector`.
+That name is not used for it here: the roadmap wrote it before there was a `modelSector`
+definition to name, and it now denotes the theorem about that curve,
+`TauCeti.Contour.windingNumber_modelSector` in `ModelSector/Closed.lean`. This arc statement — a
+`circleMap` fact mentioning no `modelSector` — is `indexIntegral_arc`. -/
 theorem indexIntegral_arc {z₀ : ℂ} {r : ℝ} (hr : r ≠ 0) (α : ℝ) :
     (2 * (Real.pi : ℂ) * Complex.I)⁻¹ *
         ∫ θ in (0 : ℝ)..α, deriv (circleMap z₀ r) θ / (circleMap z₀ r θ - z₀)
@@ -120,9 +126,6 @@ theorem indexIntegral_arc {z₀ : ℂ} {r : ℝ} (hr : r ≠ 0) (α : ℝ) :
   rw [indexIntegral_arc_interval hr]
   push_cast
   ring
-
-@[deprecated (since := "2026-07-29")]
-alias windingNumber_modelSector := indexIntegral_arc
 
 /-- **A full circle (`[0, 2π]`) has winding number `1`** — the closed-curve normalization, the
 `[0, 2π]` specialization of `indexIntegral_arc` (`2π / 2π = 1`). Its value also follows from
