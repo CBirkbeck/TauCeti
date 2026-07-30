@@ -76,7 +76,7 @@ compactly coherent. This is the hypothesis Arzelà–Ascoli takes, in the
 `ContinuousMap.toUniformOnFunIsCompact`.
 
 Nothing here is specific to holomorphy or to `ℂ`; only `Montel.lean` in this library needs it. -/
-private theorem isClosedEmbedding_coe_uniformOnFun_isCompact {X Y : Type*} [TopologicalSpace X]
+private theorem isClosedEmbedding_toUniformOnFunIsCompact {X Y : Type*} [TopologicalSpace X]
     [CompactlyCoherentSpace X] [UniformSpace Y] :
     IsClosedEmbedding (⇑(UniformOnFun.ofFun {K : Set X | IsCompact K}) ∘
       (DFunLike.coe : C(X, Y) → (X → Y))) := by
@@ -107,7 +107,7 @@ theorem montel (hΩ : IsOpen Ω) (hF : ∀ n, DifferentiableOn ℂ (F n) Ω)
   -- uniform-on-compacts function space
   have hcpt : IsCompact (closure (Set.range f)) := by
     refine ArzelaAscoli.isCompact_closure_of_isClosedEmbedding (fun K hK => hK)
-      isClosedEmbedding_coe_uniformOnFun_isCompact ?_ ?_
+      isClosedEmbedding_toUniformOnFunIsCompact ?_ ?_
     · intro K _
       have hbase : Equicontinuous (fun n => (f n : Ω → ℂ)) :=
         (equicontinuous_restrict_iff F).mpr (hb.equicontinuousOn hΩ hF)
