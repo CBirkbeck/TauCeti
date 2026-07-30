@@ -420,39 +420,36 @@ the sum is between `0` and `n` and the average between `0` and `1`. Stated with 
 because that is the form the `L²` estimates below consume. -/
 private theorem abs_average_indicator_le_one (A : ℕ → Set Ω) (n : ℕ) (ω : Ω) :
     |(n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, (A i).indicator (1 : Ω → ℝ) ω| ≤ 1 := by
-  have h0 : ∀ i, 0 ≤ (A i).indicator (1 : Ω → ℝ) ω := fun i =>
-    Set.indicator_nonneg (fun _ _ => zero_le_one) ω
-  have h1 : ∀ i, (A i).indicator (1 : Ω → ℝ) ω ≤ 1 := by
-    intro i
-    by_cases hmem : ω ∈ A i <;> simp [hmem]
-  have hs0 : 0 ≤ ∑ i ∈ Finset.range n, (A i).indicator (1 : Ω → ℝ) ω :=
-    Finset.sum_nonneg fun i _ => h0 i
-  have hsn : ∑ i ∈ Finset.range n, (A i).indicator (1 : Ω → ℝ) ω ≤ (n : ℝ) := by
-    calc ∑ i ∈ Finset.range n, (A i).indicator (1 : Ω → ℝ) ω
-        ≤ ∑ _i ∈ Finset.range n, (1 : ℝ) := Finset.sum_le_sum fun i _ => h1 i
-      _ = (n : ℝ) := by simp
   rcases Nat.eq_zero_or_pos n with rfl | hpos
   · simp
-  · have hnpos : (0 : ℝ) < n := by exact_mod_cast hpos
-    rw [abs_of_nonneg (mul_nonneg (by positivity) hs0), ← div_eq_inv_mul, div_le_one hnpos]
-    exact hsn
+  have hne : (Finset.range n).Nonempty := Finset.nonempty_range_iff.mpr hpos.ne'
+  -- The average is `𝔼 i ∈ range n`, so the generic expectation bounds apply term by term.
+  have hexp : (n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, (A i).indicator (1 : Ω → ℝ) ω
+      = Finset.expect (Finset.range n) fun i => (A i).indicator (1 : Ω → ℝ) ω := by
+    rw [Finset.expect_eq_sum_div_card, Finset.card_range, div_eq_inv_mul]
+  rw [hexp]
+  have h0 : (0 : ℝ) ≤ Finset.expect (Finset.range n) fun i => (A i).indicator (1 : Ω → ℝ) ω :=
+    Finset.le_expect hne fun i _ => Set.indicator_nonneg (fun _ _ => zero_le_one) ω
+  have h1 : (Finset.expect (Finset.range n) fun i => (A i).indicator (1 : Ω → ℝ) ω) ≤ 1 :=
+    Finset.expect_le hne fun i _ => by by_cases hmem : ω ∈ A i <;> simp [hmem]
+  exact abs_le.mpr ⟨by linarith, h1⟩
 
 /-- **A squared difference of bounded functions is integrable**, being bounded by `4` on a finite
 measure space. -/
-private theorem integrable_sq_sub_of_abs_le_one [IsFiniteMeasure μ] {u v : Ω → ℝ}
+private theorem integrable_sub_sq_of_abs_le_one [IsFiniteMeasure μ] {u v : Ω → ℝ}
     (hu : AEMeasurable u μ) (hv : AEMeasurable v μ)
-    (hu1 : ∀ ω, |u ω| ≤ 1) (hv1 : ∀ ω, |v ω| ≤ 1) :
+    (hu1 : ∀ᵐ ω ∂μ, |u ω| ≤ 1) (hv1 : ∀ᵐ ω ∂μ, |v ω| ≤ 1) :
     Integrable (fun ω => (u ω - v ω) ^ 2) μ := by
-  refine Integrable.of_bound ((hu.sub hv).pow_const 2).aestronglyMeasurable 4
-    (ae_of_all _ fun ω => ?_)
+  refine Integrable.of_bound ((hu.sub hv).pow_const 2).aestronglyMeasurable 4 ?_
+  filter_upwards [hu1, hv1] with ω hu1 hv1
   rw [Real.norm_eq_abs, abs_of_nonneg (by positivity)]
-  nlinarith [abs_le.mp (hu1 ω), abs_le.mp (hv1 ω)]
+  nlinarith [abs_le.mp hu1, abs_le.mp hv1]
 
 
 /-- **An `L²` triangle bound.** If `q` and `q'` are each within `c` of a common `Y` in mean square,
 then they are within `4c` of each other. Only integrability of the three squared differences is
 needed; the pointwise step is Mathlib's `add_sq_le` applied to `q - q' = (q - Y) + (Y - q')`. -/
-private theorem integral_sq_sub_le_four_mul_of_integral_sq_sub_le_of_integral_sq_sub_le
+private theorem integral_sub_sq_le_four_mul_of_integral_sub_sq_le_of_integral_sub_sq_le
     {q q' Y : Ω → ℝ}
     (hd : Integrable (fun ω => (q ω - q' ω) ^ 2) μ)
     (hi1 : Integrable (fun ω => (Y ω - q ω) ^ 2) μ)
@@ -511,13 +508,17 @@ theorem ConditionallyIIDWith.ae_measure_apply_eq [IsProbabilityMeasure μ]
     intro n hn
     have hn0 : n ≠ 0 := by omega
     rw [div_eq_mul_inv]
-    exact integral_sq_sub_le_four_mul_of_integral_sq_sub_le_of_integral_sq_sub_le hdint
-      (integrable_sq_sub_of_abs_le_one (hem n)
-        (hqm ν h.measurable_directing).aemeasurable (heb n) (habs ν))
-      (integrable_sq_sub_of_abs_le_one (hem n)
-        (hqm ν' h'.measurable_directing).aemeasurable (heb n) (habs ν'))
-      (h.integral_empiricalFrequency_sub_sq_le hX hB hn0)
-      (h'.integral_empiricalFrequency_sub_sq_le hX hB hn0)
+    -- `hd_def` turns the `set` wrapper `d` into the explicit difference the helper is stated for.
+    simpa only [hd_def] using
+      integral_sub_sq_le_four_mul_of_integral_sub_sq_le_of_integral_sub_sq_le hdint
+        (integrable_sub_sq_of_abs_le_one (hem n)
+          (hqm ν h.measurable_directing).aemeasurable
+          (ae_of_all _ (heb n)) (ae_of_all _ (habs ν)))
+        (integrable_sub_sq_of_abs_le_one (hem n)
+          (hqm ν' h'.measurable_directing).aemeasurable
+          (ae_of_all _ (heb n)) (ae_of_all _ (habs ν')))
+        (h.integral_empiricalFrequency_sub_sq_le hX hB hn0)
+        (h'.integral_empiricalFrequency_sub_sq_le hX hB hn0)
   have hle : ∫ ω, d ω ^ 2 ∂μ ≤ 0 :=
     ge_of_tendsto (tendsto_const_div_atTop_nhds_zero_nat (4 : ℝ))
       (eventually_atTop.2 ⟨1, fun n hn => hbound n hn⟩)
