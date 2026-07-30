@@ -51,6 +51,11 @@ Measurability:
   coordinates being the corresponding finite product, with `map_prefixProj_infinitePi_const` the
   constant-family form. Mathlib's `Measure.infinitePi_map_restrict` gives the marginal indexed by a
   coerced `Finset`; this is the `Fin n`-prefix form that prefix-marginal arguments on `ℕ → α` use.
+* `map_infinitePi_pair_block` — an **arbitrary injective block** of coordinates read off a constant
+  countable power, and tagged with the law it came from: `Q^{⊗ℕ}` pushed along
+  `x ↦ (Q, x ∘ k)` is `δ_Q ⊗ Q^{⊗ Fin m}`. This generalizes the prefix marginal above from `Fin.val`
+  to any injective `k`, and pairs it with the Dirac factor, which is the form a disintegration
+  against a directing measure consumes.
 
 Bind-evaluation of the mixture `μ.bind fun ω => (ProbabilityMeasure.pi fun i => ν i ω).toMeasure`:
 * `bind_probabilityMeasure_pi_apply` — evaluation on a measurable set as the integral of the product
