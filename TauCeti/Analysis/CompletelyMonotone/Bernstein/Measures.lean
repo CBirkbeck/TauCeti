@@ -521,16 +521,14 @@ private lemma intervalIntegrable_chafaiDensity {f : ℝ → ℝ} {n : ℕ}
 
 /-- **The Chafaï primitive differentiates to the density difference.** At every `t > 0` the
 primitive `s ↦ s^{m+1} · ((-1)^{m+2}/(m+1)! · D^{m+1}f(s))` — whose value at `T` is the boundary
-term of the IBP identity — has derivative `ρ_{m+2}(t) - ρ_{m+1}(t)`.
-
-This is the product rule together with `chafaiDensity_succ_succ_sub_succ`, which identifies the two
-summands it produces with that difference. Packaging the two makes the FTC integrand below literally
-the density difference, so no `congr` is needed to recognise it. -/
+term of the IBP identity — has derivative `ρ_{m+2}(t) - ρ_{m+1}(t)`. -/
 private lemma hasDerivAt_chafaiPrimitive (f : ℝ → ℝ) {m : ℕ}
     (hf : ContDiffOn ℝ ((m + 2 : ℕ) : WithTop ℕ∞) f (Ici 0)) {t : ℝ} (ht : 0 < t) :
     HasDerivAt (fun s : ℝ => s ^ (m + 1) *
         ((-1 : ℝ) ^ (m + 2) / ↑(m + 1).factorial * iteratedDerivWithin (m + 1) f (Ici 0) s))
       (chafaiDensity f (m + 2) t - chafaiDensity f (m + 1) t) t := by
+  -- The product rule produces two summands; `chafaiDensity_succ_succ_sub_succ` is exactly the
+  -- identification of those two with the density difference.
   have hg : HasDerivAt (iteratedDerivWithin (m + 1) f (Ici 0))
       (iteratedDerivWithin (m + 2) f (Ici 0) t) t :=
     ContDiffOn.hasDerivAt_iteratedDerivWithin hf (uniqueDiffOn_Ici 0) (Ici_mem_nhds ht)
