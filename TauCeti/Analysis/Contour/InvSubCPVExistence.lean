@@ -16,7 +16,6 @@ import TauCeti.Analysis.Contour.Crossing.PVAggregation
 import TauCeti.Analysis.Contour.Crossing.Windows
 import TauCeti.Analysis.Contour.PerWindow.CPV
 import TauCeti.Analysis.Contour.PiecewiseC1On
-import Mathlib.Algebra.Order.Field.Pi
 
 /-!
 # Existence of the Cauchy-kernel principal value along an immersed curve
@@ -145,7 +144,7 @@ theorem IsPwC1ImmersionOn.cauchyPVExistsAt_inv_sub {γ : ℝ → ℂ} {a b : ℝ
       exists_radius_perWindow_tendsto h_imm hab (h_Ioo t₀ ht₀) (hT_mem.mp ht₀).2
     -- one radius serving every crossing at once, below each per-crossing radius `R t`
     obtain ⟨ρ, hρ_pos, h_endpts, h_pair, hρ_le_R⟩ :=
-      exists_common_window_radius_le hT_ne h_Ioo R hR_pos
+      exists_common_window_radius_le h_Ioo R hR_pos
     refine cauchyPVExistsAt_of_perWindow_tendsto hρ_pos hab.le T
       (fun t ht => by linarith [(h_endpts t ht).1])
       (fun t ht => by linarith [(h_endpts t ht).2])

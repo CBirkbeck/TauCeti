@@ -145,16 +145,21 @@ every crossing — which is what lets a family of per-crossing window results, e
 its own radius, be applied at one shared radius. There is no exceptional-set clause; use
 `exists_common_window_radius` directly when one is needed.
 
+Unlike that lemma this one does not ask for a nonempty family: for no crossings all three
+conditions are vacuous and any positive radius serves.
+
 The endpoint margins come out *strict* here: the radius is chosen strictly below the one that lemma
 supplies, so it clears both endpoints with room to spare. -/
 theorem exists_common_window_radius_le {a b : ℝ} {crossings : Finset ℝ}
-    (h_nonempty : crossings.Nonempty) (h_Ioo : ∀ t ∈ crossings, t ∈ Ioo a b)
+    (h_Ioo : ∀ t ∈ crossings, t ∈ Ioo a b)
     (R : ℝ → ℝ) (hR_pos : ∀ t ∈ crossings, 0 < R t) :
     ∃ r > 0,
       (∀ t ∈ crossings, a + r < t ∧ t < b - r) ∧
       (∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → 2 * r < |t - t'|) ∧
       (∀ t ∈ crossings, r ≤ R t) := by
   classical
+  rcases crossings.eq_empty_or_nonempty with rfl | h_nonempty
+  · exact ⟨1, one_pos, by simp, by simp, by simp⟩
   obtain ⟨r₀, hr₀_pos, h_endpts, h_pair, -⟩ :=
     exists_common_window_radius (P := ∅) h_nonempty h_Ioo fun t _ => Finset.notMem_empty t
   -- Pick one radius strictly under `r₀` and under every `R t`, indexing the bounds by
