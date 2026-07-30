@@ -124,27 +124,6 @@ theorem iidMixtureLaw_map_directing (hP : Measurable P) :
   have hcomp : (fun ω : T × (ℕ → α) => P ω.1) = P ∘ Prod.fst := rfl
   rw [hcomp, ← Measure.map_map hP measurable_fst, iidMixtureLaw_map_fst hP]
 
-/-- **Selecting a block from an i.i.d. power, tagged with its own law.** Reading an injective block
-`k : Fin m → ℕ` of coordinates off the countable power `Q^{⊗ℕ}` and recording `Q` alongside it
-gives `δ_Q ⊗ Q^{⊗ Fin m}`. Injectivity of `k` is what makes the selected coordinates independent,
-so it is exactly the hypothesis of `Measure.map_infinitePi_infinitePi_of_inj`. -/
-private theorem map_infinitePi_pair_block (Q : ProbabilityMeasure α) {m : ℕ} {k : Fin m → ℕ}
-    (hk : Function.Injective k) :
-    (Measure.infinitePi fun _ : ℕ => (Q : Measure α)).map
-        (fun x : ℕ → α => (Q, fun i : Fin m => x (k i)))
-      = (Measure.dirac Q).prod (ProbabilityMeasure.pi fun _ : Fin m => Q).toMeasure := by
-  have hblk : Measurable fun x : ℕ → α => fun i : Fin m => x (k i) :=
-    measurable_pi_lambda _ fun i => measurable_pi_apply (k i)
-  calc (Measure.infinitePi fun _ : ℕ => (Q : Measure α)).map
-        (fun x : ℕ → α => (Q, fun i : Fin m => x (k i)))
-      = ((Measure.infinitePi fun _ : ℕ => (Q : Measure α)).map
-          fun x : ℕ → α => fun i : Fin m => x (k i)).map (Prod.mk Q) :=
-        (Measure.map_map measurable_prodMk_left hblk).symm
-    _ = (Measure.pi fun _ : Fin m => (Q : Measure α)).map (Prod.mk Q) := by
-        rw [Measure.map_infinitePi_infinitePi_of_inj hk, Measure.infinitePi_eq_pi]
-    _ = (Measure.dirac Q).prod (ProbabilityMeasure.pi fun _ : Fin m => Q).toMeasure := by
-        rw [ProbabilityMeasure.toMeasure_pi, Measure.dirac_prod]
-
 /-- **The canonical process is conditionally i.i.d.** For a measurable family `P`, the coordinate
 process of `iidMixtureLaw π P` is conditionally i.i.d. with directing measure `ω ↦ P ω.1`: along
 every finite selection of distinct coordinates, the joint law of the directing measure and the
@@ -175,7 +154,7 @@ theorem conditionallyIIDWith_iidMixtureLaw (hP : Measurable P) :
         (fun ω : T × (ℕ → α) => (P ω.1, fun i : Fin m => ω.2 (k i))) = g (P t) := by
     intro t
     rw [Measure.dirac_prod, Measure.map_map hsel measurable_prodMk_left]
-    exact map_infinitePi_pair_block (P t) hk
+    exact TauCeti.MeasureTheory.map_infinitePi_pair_block (P t) hk
   -- the left-hand side: naturality of `bind` pushes the selection through the mixture, fibre by
   -- fibre
   have hleft : (iidMixtureLaw π P).map (fun ω => (P ω.1, fun i : Fin m => ω.2 (k i)))

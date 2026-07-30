@@ -245,6 +245,29 @@ theorem map_prefixProj_infinitePi_const {α : Type*} [MeasurableSpace α] (p : P
       = Measure.pi (fun _ : Fin n => (p : Measure α)) :=
   map_prefixProj_infinitePi (fun _ => p) n
 
+/-- **Selecting a block from an i.i.d. power, tagged with its own law.** Reading an injective block
+`k : Fin m → ℕ` of coordinates off the countable power `Q^{⊗ℕ}` and recording `Q` alongside the
+result gives `δ_Q ⊗ Q^{⊗ Fin m}`; injectivity is what makes the selected coordinates independent.
+
+This is `map_prefixProj_infinitePi_const` for an arbitrary injective block rather than a prefix,
+paired with the law, which is the form a disintegration against a directing measure consumes. -/
+theorem map_infinitePi_pair_block {α : Type*} [MeasurableSpace α] (Q : ProbabilityMeasure α)
+    {m : ℕ} {k : Fin m → ℕ} (hk : Function.Injective k) :
+    (Measure.infinitePi fun _ : ℕ => (Q : Measure α)).map
+        (fun x : ℕ → α => (Q, fun i : Fin m => x (k i)))
+      = (Measure.dirac Q).prod (ProbabilityMeasure.pi fun _ : Fin m => Q).toMeasure := by
+  have hblk : Measurable fun x : ℕ → α => fun i : Fin m => x (k i) :=
+    measurable_pi_lambda _ fun i => measurable_pi_apply (k i)
+  calc (Measure.infinitePi fun _ : ℕ => (Q : Measure α)).map
+        (fun x : ℕ → α => (Q, fun i : Fin m => x (k i)))
+      = ((Measure.infinitePi fun _ : ℕ => (Q : Measure α)).map
+          fun x : ℕ → α => fun i : Fin m => x (k i)).map (Prod.mk Q) :=
+        (Measure.map_map measurable_prodMk_left hblk).symm
+    _ = (Measure.pi fun _ : Fin m => (Q : Measure α)).map (Prod.mk Q) := by
+        rw [Measure.map_infinitePi_infinitePi_of_inj hk, Measure.infinitePi_eq_pi]
+    _ = (Measure.dirac Q).prod (ProbabilityMeasure.pi fun _ : Fin m => Q).toMeasure := by
+        rw [ProbabilityMeasure.toMeasure_pi, Measure.dirac_prod]
+
 /-- **Bind-evaluation.** Evaluating the mixture
 `μ.bind fun ω => (ProbabilityMeasure.pi fun i => ν i ω).toMeasure` on a measurable set `s` gives
 `∫⁻ ω, … s ∂μ`, requiring only a.e.-measurability of each coordinate kernel `ν i`. -/
