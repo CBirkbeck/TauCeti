@@ -346,15 +346,16 @@ theorem residue_add {f g : ℂ → ℂ} {z₀ : ℂ} (hf : MeromorphicAt f z₀)
 
 /-- **Scaling of the residue.** Scaling `f` by a constant scales its residue by that constant.
 
-No meromorphy hypothesis is needed. Where `f` is not meromorphic at `z₀` the identity still holds
-through the junk value: for `c ≠ 0` the scaled function is not meromorphic either, so both sides are
-`0`, and `c = 0` makes both sides `0` outright. Contrast `residue_add`, whose hypotheses are
-essential — two functions that are not meromorphic can sum to one that is. -/
+No meromorphy hypothesis is needed: the identity holds for every `f`, through the junk value where
+`f` is not meromorphic at `z₀`. Contrast `residue_add`, whose hypotheses are essential — two
+functions that are not meromorphic can sum to one that is. -/
 @[simp]
 theorem residue_const_mul {f : ℂ → ℂ} {z₀ : ℂ} (c : ℂ) :
     residue (fun z => c * f z) z₀ = c * residue f z₀ := by
   by_cases hf : MeromorphicAt f z₀
   case neg =>
+    -- `c = 0` collapses both sides to `0`; for `c ≠ 0` the scaled function is not meromorphic
+    -- either, so both sides are the junk value.
     rcases eq_or_ne c 0 with rfl | hc
     · simpa using residue_eq_zero_of_analyticAt (f := fun _ : ℂ => (0 : ℂ)) analyticAt_const
     · have hcf : ¬ MeromorphicAt (fun z => c * f z) z₀ := fun h =>
@@ -383,8 +384,12 @@ theorem residue_const_smul {f : ℂ → ℂ} {z₀ : ℂ} (c : ℂ) :
   -- `smul_eq_mul`; both are definitional, so `residue_const_mul` applies directly.
   residue_const_mul c
 
-@[deprecated (since := "2026-07-30")]
-alias residue_smul := residue_const_smul
+/-- Compatibility wrapper for the former name of `residue_const_smul`. Stated with the signature
+that name carried, so existing `residue_smul c hf` calls keep elaborating; the meromorphy argument
+is ignored, that lemma now being unconditional. -/
+@[deprecated residue_const_smul (since := "2026-07-30")]
+theorem residue_smul {f : ℂ → ℂ} {z₀ : ℂ} (c : ℂ) (_hf : MeromorphicAt f z₀) :
+    residue (c • f) z₀ = c • residue f z₀ := residue_const_smul c
 
 /-- **Subtractivity of the residue.** The residue distributes over subtraction of meromorphic
 functions; the `−1` scaling case of `residue_add` and `residue_const_mul`. -/
