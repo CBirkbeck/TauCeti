@@ -69,6 +69,26 @@ namespace TauCeti
 
 variable {Ω : Set ℂ} {F : ℕ → ℂ → ℂ}
 
+/-- **`C(X, Y)` embeds closedly in the uniform-on-compacts function space.** Coercing a continuous
+map to a bare function is a closed embedding into `X →ᵤ[{K | IsCompact K}] Y` whenever `X` is
+compactly coherent. This is the hypothesis Arzelà–Ascoli takes, in the
+`UniformOnFun.ofFun 𝔖 ∘ ⇑·` form it expects rather than the packaged
+`ContinuousMap.toUniformOnFunIsCompact`.
+
+Nothing here is specific to holomorphy or to `ℂ`; only `Montel.lean` in this library needs it. -/
+private theorem isClosedEmbedding_coe_uniformOnFun_isCompact {X Y : Type*} [TopologicalSpace X]
+    [CompactlyCoherentSpace X] [UniformSpace Y] :
+    IsClosedEmbedding (⇑(UniformOnFun.ofFun {K : Set X | IsCompact K}) ∘
+      (DFunLike.coe : C(X, Y) → (X → Y))) := by
+  refine ⟨ContinuousMap.isUniformEmbedding_toUniformOnFunIsCompact.isEmbedding, ?_⟩
+  -- The `rfl` below is just `ContinuousMap.toUniformOnFunIsCompact` unfolded (Mathlib
+  -- `Topology/UniformSpace/CompactConvergence.lean`): the range lemma is stated for the packaged
+  -- name, so this bridges the two forms.
+  rw [show (⇑(UniformOnFun.ofFun {K : Set X | IsCompact K}) ∘
+      (DFunLike.coe : C(X, Y) → (X → Y))) = ContinuousMap.toUniformOnFunIsCompact from rfl,
+    ContinuousMap.range_toUniformOnFunIsCompact]
+  exact UniformOnFun.isClosed_setOf_continuous CompactlyCoherentSpace.isCoherentWith
+
 /-- **Montel's selection theorem.** A locally bounded family of holomorphic functions on an open
 set `Ω ⊆ ℂ` is normal: every sequence from it has a subsequence converging locally uniformly on
 `Ω`, and the limit is holomorphic.
@@ -83,21 +103,11 @@ theorem montel (hΩ : IsOpen Ω) (hF : ∀ n, DifferentiableOn ℂ (F n) Ω)
   classical
   haveI : LocallyCompactSpace Ω := hΩ.locallyCompactSpace
   set f : ℕ → C(Ω, ℂ) := fun n => ⟨Ω.restrict (F n), ((hF n).continuousOn).restrict⟩ with hfdef
-  -- `C(Ω, ℂ)` sits as a closed subspace of the uniform-on-compacts function space
-  have hclemb : IsClosedEmbedding (⇑(UniformOnFun.ofFun {K : Set Ω | IsCompact K}) ∘
-      (DFunLike.coe : C(Ω, ℂ) → (Ω → ℂ))) := by
-    refine ⟨ContinuousMap.isUniformEmbedding_toUniformOnFunIsCompact.isEmbedding, ?_⟩
-    -- The `rfl` below is just `ContinuousMap.toUniformOnFunIsCompact` unfolded (Mathlib
-    -- `Topology/UniformSpace/CompactConvergence.lean`): Arzelà–Ascoli asks for the map in the
-    -- `UniformOnFun.ofFun 𝔖 ∘ F` form, while `range_toUniformOnFunIsCompact` is stated for the
-    -- packaged name, so this bridges the two.
-    rw [show (⇑(UniformOnFun.ofFun {K : Set Ω | IsCompact K}) ∘
-        (DFunLike.coe : C(Ω, ℂ) → (Ω → ℂ))) = ContinuousMap.toUniformOnFunIsCompact from rfl,
-      ContinuousMap.range_toUniformOnFunIsCompact]
-    exact UniformOnFun.isClosed_setOf_continuous CompactlyCoherentSpace.isCoherentWith
-  -- Arzelà–Ascoli in the compact-open topology
+  -- Arzelà–Ascoli in the compact-open topology, `C(Ω, ℂ)` sitting closedly in the
+  -- uniform-on-compacts function space
   have hcpt : IsCompact (closure (Set.range f)) := by
-    refine ArzelaAscoli.isCompact_closure_of_isClosedEmbedding (fun K hK => hK) hclemb ?_ ?_
+    refine ArzelaAscoli.isCompact_closure_of_isClosedEmbedding (fun K hK => hK)
+      isClosedEmbedding_coe_uniformOnFun_isCompact ?_ ?_
     · intro K _
       have hbase : Equicontinuous (fun n => (f n : Ω → ℂ)) :=
         (equicontinuous_restrict_iff F).mpr (hb.equicontinuousOn hΩ hF)
