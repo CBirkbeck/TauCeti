@@ -103,57 +103,47 @@ private lemma mapsTo_affineChart_inter_im {p a : ℂ} (ha : a ≠ 0) {Ω : Set �
 /-- **The chart pullback of a line-symmetric domain is conjugation-symmetric.** If `Ω` is carried
 into itself by reflection in the line `p + a·ℝ`, then its pullback along `w ↦ p + a·w` is carried
 into itself by ordinary complex conjugation — which is what the half-plane reflection theorem asks
-for. At `a = 0` that map is constant, so the pullback is `∅` or `univ` and the conclusion holds for
-that reason instead. -/
-private lemma mapsTo_conj_affineChart_preimage {p a : ℂ} {Ω : Set ℂ}
+for. -/
+private lemma mapsTo_conj_affineChart_preimage {p a : ℂ} (ha : a ≠ 0) {Ω : Set ℂ}
     (hΩ : MapsTo (fun z => p + a * (starRingEnd ℂ) ((z - p) / a)) Ω Ω) :
     MapsTo (starRingEnd ℂ) ((fun w : ℂ => p + a * w) ⁻¹' Ω)
-      ((fun w : ℂ => p + a * w) ⁻¹' Ω) := by
-  rcases eq_or_ne a 0 with rfl | ha
-  · exact fun w hw => by simpa using hw
-  · exact fun _ hw => by simpa only [Set.mem_preimage, affineChart_right_inv ha] using hΩ hw
+      ((fun w : ℂ => p + a * w) ⁻¹' Ω) := fun _ hw => by
+  simpa only [Set.mem_preimage, affineChart_right_inv ha] using hΩ hw
 
 /-- **Continuity transports along the chart.** Reading `f` in the source coordinate `w ↦ p + a·w`
 and normalizing its values by `(· - q) / b` turns continuity on the closed positive side of the line
-into continuity on the closed upper half-plane. At `a = 0` the source map is constant, so the
-transported function is constant and the conclusion needs no hypothesis. -/
-private lemma continuousOn_targetChart_comp_affineChart {p a q b : ℂ} {Ω : Set ℂ}
+into continuity on the closed upper half-plane. -/
+private lemma continuousOn_targetChart_comp_affineChart {p a q b : ℂ} (ha : a ≠ 0) {Ω : Set ℂ}
     {f : ℂ → ℂ} (hcont : ContinuousOn f (Ω ∩ {z : ℂ | 0 ≤ ((z - p) / a).im})) :
     ContinuousOn (fun w : ℂ => (f (p + a * w) - q) / b)
       ((fun w : ℂ => p + a * w) ⁻¹' Ω ∩ {w : ℂ | 0 ≤ w.im}) := by
-  rcases eq_or_ne a 0 with rfl | ha
-  · simpa using continuousOn_const (c := (f p - q) / b)
-  · have hfcomp : ContinuousOn (f ∘ fun w : ℂ => p + a * w)
-        ((fun w : ℂ => p + a * w) ⁻¹' Ω ∩ {w : ℂ | 0 ≤ w.im}) :=
-      hcont.comp (by fun_prop) (mapsTo_affineChart_inter_im ha)
-    simpa [Function.comp_apply] using hfcomp.sub continuousOn_const |>.div_const b
+  have hfcomp : ContinuousOn (f ∘ fun w : ℂ => p + a * w)
+      ((fun w : ℂ => p + a * w) ⁻¹' Ω ∩ {w : ℂ | 0 ≤ w.im}) :=
+    hcont.comp (by fun_prop) (mapsTo_affineChart_inter_im ha)
+  simpa [Function.comp_apply] using hfcomp.sub continuousOn_const |>.div_const b
 
 /-- **Holomorphy transports along the chart**, the open-side companion of
-`continuousOn_targetChart_comp_affineChart`, degenerating at `a = 0` for the same reason. -/
-private lemma differentiableOn_targetChart_comp_affineChart {p a q b : ℂ} {Ω : Set ℂ}
+`continuousOn_targetChart_comp_affineChart`. -/
+private lemma differentiableOn_targetChart_comp_affineChart {p a q b : ℂ} (ha : a ≠ 0) {Ω : Set ℂ}
     {f : ℂ → ℂ} (hholo : DifferentiableOn ℂ f (Ω ∩ {z : ℂ | 0 < ((z - p) / a).im})) :
     DifferentiableOn ℂ (fun w : ℂ => (f (p + a * w) - q) / b)
       ((fun w : ℂ => p + a * w) ⁻¹' Ω ∩ {w : ℂ | 0 < w.im}) := by
-  rcases eq_or_ne a 0 with rfl | ha
-  · simp
-  · have hfcomp : DifferentiableOn ℂ (f ∘ fun w : ℂ => p + a * w)
-        ((fun w : ℂ => p + a * w) ⁻¹' Ω ∩ {w : ℂ | 0 < w.im}) :=
-      hholo.comp (Differentiable.differentiableOn (by fun_prop))
-        (mapsTo_affineChart_inter_im ha)
-    simpa only [Function.comp_apply] using hfcomp.sub_const q |>.div_const b
+  have hfcomp : DifferentiableOn ℂ (f ∘ fun w : ℂ => p + a * w)
+      ((fun w : ℂ => p + a * w) ⁻¹' Ω ∩ {w : ℂ | 0 < w.im}) :=
+    hholo.comp (Differentiable.differentiableOn (by fun_prop))
+      (mapsTo_affineChart_inter_im ha)
+  simpa only [Function.comp_apply] using hfcomp.sub_const q |>.div_const b
 
 /-- **The boundary condition transports to the real axis.** In the source coordinate the line
 `p + a·ℝ` is the real axis, so the hypothesis that the normalized values `(f z - q) / b` are real on
 the line becomes the hypothesis that the transported function is real on the reals. For `b ≠ 0` that
 says `f` maps the source line into the target line `q + b·ℝ`; at `b = 0` the normalization is
 identically `0`, so both conditions are vacuous. -/
-private lemma im_targetChart_comp_affineChart_eq_zero {p a q b : ℂ} {Ω : Set ℂ}
+private lemma im_targetChart_comp_affineChart_eq_zero {p a q b : ℂ} (ha : a ≠ 0) {Ω : Set ℂ}
     {f : ℂ → ℂ} (hline : ∀ z ∈ Ω, ((z - p) / a).im = 0 → ((f z - q) / b).im = 0) :
     ∀ w ∈ (fun w : ℂ => p + a * w) ⁻¹' Ω, w.im = 0 →
-      ((fun w : ℂ => (f (p + a * w) - q) / b) w).im = 0 := by
-  rcases eq_or_ne a 0 with rfl | ha
-  · exact fun w hw _ => hline (p + 0 * w) hw (by simp)
-  · exact fun w hw hwim => hline (p + a * w) hw (by rw [affineChart_right_inv ha]; exact hwim)
+      ((fun w : ℂ => (f (p + a * w) - q) / b) w).im = 0 := fun w hw hwim =>
+  hline (p + a * w) hw (by rw [affineChart_right_inv ha]; exact hwim)
 
 /-- **Schwarz reflection principle across an affine line, holomorphy form.** Let the source line
 be `p + a * ℝ`, with `a ≠ 0`. Suppose an open domain `Ω` is invariant under reflection in this
@@ -179,10 +169,10 @@ theorem differentiableOn_lineSchwarzReflection_of_symmetric
     hΩopen.preimage (by fun_prop)
   have hg := differentiableOn_schwarzReflection_of_symmetric
     (f := fun w : ℂ => (f (p + a * w) - q) / b) hUopen
-    (mapsTo_conj_affineChart_preimage hΩ)
-    (continuousOn_targetChart_comp_affineChart hcont)
-    (differentiableOn_targetChart_comp_affineChart hholo)
-    (im_targetChart_comp_affineChart_eq_zero hline)
+    (mapsTo_conj_affineChart_preimage ha hΩ)
+    (continuousOn_targetChart_comp_affineChart ha hcont)
+    (differentiableOn_targetChart_comp_affineChart ha hholo)
+    (im_targetChart_comp_affineChart_eq_zero ha hline)
   -- Push back along `ψ`, whose image lands in `φ⁻¹(Ω)` by the other inverse law.
   have hcomp : DifferentiableOn ℂ
       (fun z => schwarzReflection (fun w : ℂ => (f (p + a * w) - q) / b) ((z - p) / a)) Ω := by
