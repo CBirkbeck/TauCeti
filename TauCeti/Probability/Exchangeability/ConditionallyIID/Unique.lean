@@ -238,13 +238,11 @@ private theorem integral_sq_average_sub [IsProbabilityMeasure μ] {e : ℕ → �
   field_simp
 
 omit [MeasurableSpace Ω] in
-/-- The real part of a `{0, 1}`-valued `ℝ≥0∞` indicator is the corresponding real indicator.
-
-This is Mathlib's `map_indicator` at `ENNReal.toRealHom`, not a separate proof: the only work is
-that `⇑ENNReal.toRealHom` and `.toReal` are definitionally but not syntactically equal, so the
-result needs an `exact` rather than closing by `rfl`. -/
+/-- The real part of a `{0, 1}`-valued `ℝ≥0∞` indicator is the corresponding real indicator. -/
 private theorem toReal_indicator_one (s : Set Ω) (ω : Ω) :
     (s.indicator (1 : Ω → ℝ≥0∞) ω).toReal = s.indicator (1 : Ω → ℝ) ω := by
+  -- Mathlib's `map_indicator` at `ENNReal.toRealHom`. `⇑ENNReal.toRealHom` and `.toReal` are
+  -- definitionally but not syntactically equal, hence the `exact` rather than `rfl`.
   have h := map_indicator ENNReal.toRealHom s (1 : Ω → ℝ≥0∞) ω
   simp only [Function.comp_def] at h
   exact h
