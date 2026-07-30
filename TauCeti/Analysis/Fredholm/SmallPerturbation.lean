@@ -67,10 +67,10 @@ domain by `x ↦ x - e⁻¹ a k` kills `a`, and then shearing the codomain by `z
 the Schur complement `c - d e⁻¹ a`, with the two target factors interchanged, which is where the
 swap in the statement comes from.
 
-Only the factorisation is recorded, not the Schur complement itself: all the index computation
+Only the factorization is recorded, not the Schur complement itself: all the index computation
 needs is that the remaining factor is *some* operator `K → C`, since between finite-dimensional
 spaces every operator has index `finrank K - finrank C`. -/
-private theorem exists_factorisation_of_blocks
+private theorem exists_factorization_of_blocks
     {K X Y C : Type*}
     [NormedAddCommGroup K] [NormedSpace 𝕜 K]
     [NormedAddCommGroup X] [NormedSpace 𝕜 X]
@@ -101,8 +101,8 @@ omit [IsRCLikeNormedField 𝕜] in
 private theorem isFredholm_and_index_eq_of_blocks
     {K X Y C : Type*}
     [NormedAddCommGroup K] [NormedSpace 𝕜 K] [FiniteDimensional 𝕜 K]
-    [NormedAddCommGroup X] [NormedSpace 𝕜 X] [CompleteSpace X]
-    [NormedAddCommGroup Y] [NormedSpace 𝕜 Y] [CompleteSpace Y]
+    [NormedAddCommGroup X] [NormedSpace 𝕜 X]
+    [NormedAddCommGroup Y] [NormedSpace 𝕜 Y]
     [NormedAddCommGroup C] [NormedSpace 𝕜 C] [FiniteDimensional 𝕜 C]
     (A : K × X →L[𝕜] Y × C) (a : K →L[𝕜] Y) (c : K →L[𝕜] C) (d : X →L[𝕜] C) (e : X ≃L[𝕜] Y)
     (hA : ∀ (k : K) (x : X), A (k, x) = (a k + e x, c k + d x)) :
@@ -110,7 +110,7 @@ private theorem isFredholm_and_index_eq_of_blocks
       ContinuousLinearMap.index A = (finrank 𝕜 K : ℤ) - finrank 𝕜 C := by
   letI : CompleteSpace K := FiniteDimensional.complete 𝕜 K
   letI : CompleteSpace C := FiniteDimensional.complete 𝕜 C
-  obtain ⟨f, P, Q, hfac⟩ := exists_factorisation_of_blocks A a c d e hA
+  obtain ⟨f, P, Q, hfac⟩ := exists_factorization_of_blocks A a c d e hA
   have hf : IsFredholm f := isFredholm_of_finiteDimensional f
   have he : IsFredholm (e : X →L[𝕜] Y) := IsFredholm.of_continuousLinearEquiv e
   have hprod : IsFredholm (f.prodMap (e : X →L[𝕜] Y)) := hf.prodMap he
@@ -130,8 +130,8 @@ omit [IsRCLikeNormedField 𝕜] in
 private theorem isFredholm_and_index_eq_of_blockCorner_equiv
     {K X Y C : Type*}
     [NormedAddCommGroup K] [NormedSpace 𝕜 K] [FiniteDimensional 𝕜 K]
-    [NormedAddCommGroup X] [NormedSpace 𝕜 X] [CompleteSpace X]
-    [NormedAddCommGroup Y] [NormedSpace 𝕜 Y] [CompleteSpace Y]
+    [NormedAddCommGroup X] [NormedSpace 𝕜 X]
+    [NormedAddCommGroup Y] [NormedSpace 𝕜 Y]
     [NormedAddCommGroup C] [NormedSpace 𝕜 C] [FiniteDimensional 𝕜 C]
     (A : K × X →L[𝕜] Y × C) (e : X ≃L[𝕜] Y)
     (he : blockCorner A = (e : X →L[𝕜] Y)) :
