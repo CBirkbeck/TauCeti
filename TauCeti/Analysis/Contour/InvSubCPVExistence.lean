@@ -135,7 +135,7 @@ theorem IsPwC1ImmersionOn.cauchyPVExistsAt_inv_sub {γ : ℝ → ℂ} {a b : ℝ
       MeasureTheory.volume a b :=
     fun _ hε => intervalIntegrable_inv_sub_truncated h_imm.continuousOn
       h_imm.isPiecewiseC1On.intervalIntegrable_deriv hε
-  rcases T.eq_empty_or_nonempty with hT_empty | hT_ne
+  rcases T.eq_empty_or_nonempty with hT_empty | -
   · refine cauchyPVExistsAt_of_perWindow_tendsto one_pos hab.le T ?_ ?_ ?_ h_int_tr ?_
       (exists_complement_windows_dist_lower_bound hγ_cont h_complete (fun _ => 1)
         fun t _ => one_pos)
