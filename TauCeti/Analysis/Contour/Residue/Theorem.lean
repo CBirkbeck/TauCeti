@@ -88,7 +88,7 @@ private lemma circleIntegral_const_mul_zpow_sub {c s₀ : ℂ} {R : ℝ} {n : �
     have h1 : AnalyticAt ℂ (fun _ : ℂ => (1 : ℂ)) s₀ := analyticAt_const
     rw [residue_eq_of_eventuallyEq_zpow_smul (by omega : n ≤ -1) h1
       (Filter.Eventually.of_forall fun z => by simp [smul_eq_mul]), iteratedDeriv_const]
-  rw [residue_const_mul a hQ_mero, hresQ]
+  rw [residue_const_mul a, hresQ]
   rcases eq_or_ne n (-1) with hn1 | hn1
   · subst hn1
     have hinv : (fun z => a * (z - s₀) ^ (-1 : ℤ)) = fun z => a * (z - s₀)⁻¹ := by
