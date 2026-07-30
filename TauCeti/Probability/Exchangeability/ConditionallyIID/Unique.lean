@@ -33,9 +33,6 @@ representative but not another directing measure.
 * `ConditionallyIIDWith.integral_empiricalFrequency_sub_sq` — the `L²` rate: the empirical
   frequency of a measurable set `B` along the first `n` coordinates approximates `(ν ·) B` with
   mean square error exactly `(∫ (ν ·) B - ∫ ((ν ·) B) ^ 2) / n`.
-* `ConditionallyIIDWith.integral_directing_sub_sq_le_four_div` — the finite-sample form of
-  uniqueness: two directing measures of the same process are within `4 / n` of each other in mean
-  square on each fixed measurable set, for every `n ≥ 1`.
 * `conditionallyIID_ae_unique` — two directing measures of the same process are a.e. equal.
 
 ## Implementation
@@ -491,8 +488,11 @@ private theorem integral_sub_sq_le_two_mul_add_two_mul_of_integral_sub_sq_le_of_
 
 /-- **The `L²` rate between two directing measures.** Two directing measures of the same process
 are within `4 / n` of each other in mean square, for every `n ≥ 1`, on each fixed measurable set.
-This is the quantitative form of `ae_measure_apply_eq`, which is its `n → ∞` limit. -/
-theorem ConditionallyIIDWith.integral_directing_sub_sq_le_four_div [IsProbabilityMeasure μ]
+This is the scaffolding for `ae_measure_apply_eq`, which is its `n → ∞` limit. It stays private:
+that theorem has the same hypotheses and makes the integrand a.e. zero, so once it is available
+this bound is a trivial consequence and carries no independent content. -/
+private theorem ConditionallyIIDWith.integral_directing_sub_sq_le_four_div
+    [IsProbabilityMeasure μ]
     (hX : ∀ i, AEMeasurable (X i) μ) (h : ConditionallyIIDWith μ X ν)
     (h' : ConditionallyIIDWith μ X ν') (hB : MeasurableSet B) {n : ℕ} (hn : n ≠ 0) :
     ∫ ω, (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2 ∂μ ≤ 4 / n := by
