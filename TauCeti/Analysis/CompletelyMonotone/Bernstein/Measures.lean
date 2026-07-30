@@ -519,6 +519,24 @@ private lemma intervalIntegrable_chafaiDensity {f : ℝ → ℝ} {n : ℕ}
     IntervalIntegrable (fun t => chafaiDensity f n t) volume 0 T :=
   ((continuousOn_chafaiDensity hf).mono Icc_subset_Ici_self).intervalIntegrable_of_Icc hT
 
+/-- **The Chafaï primitive differentiates to the density difference.** At every `t > 0` the
+primitive `s ↦ s^{m+1} · ((-1)^{m+2}/(m+1)! · D^{m+1}f(s))` — whose value at `T` is the boundary
+term of the IBP identity — has derivative `ρ_{m+2}(t) - ρ_{m+1}(t)`.
+
+This is the product rule together with `chafaiDensity_succ_succ_sub_succ`, which identifies the two
+summands it produces with that difference. Packaging the two makes the FTC integrand below literally
+the density difference, so no `congr` is needed to recognise it. -/
+private lemma hasDerivAt_chafaiPrimitive (f : ℝ → ℝ) {m : ℕ}
+    (hf : ContDiffOn ℝ ((m + 2 : ℕ) : WithTop ℕ∞) f (Ici 0)) {t : ℝ} (ht : 0 < t) :
+    HasDerivAt (fun s : ℝ => s ^ (m + 1) *
+        ((-1 : ℝ) ^ (m + 2) / ↑(m + 1).factorial * iteratedDerivWithin (m + 1) f (Ici 0) s))
+      (chafaiDensity f (m + 2) t - chafaiDensity f (m + 1) t) t := by
+  have hg : HasDerivAt (iteratedDerivWithin (m + 1) f (Ici 0))
+      (iteratedDerivWithin (m + 2) f (Ici 0) t) t :=
+    ContDiffOn.hasDerivAt_iteratedDerivWithin hf (uniqueDiffOn_Ici 0) (Ici_mem_nhds ht)
+  exact (chafaiDensity_succ_succ_sub_succ f m t).symm ▸
+    (hasDerivAt_pow (m + 1) t).mul (hg.const_mul _)
+
 /-- **IBP identity** for the CM density:
 `∫₀ᵀ ρ_{m+2}(t) dt = B_{m+2}(T) + ∫₀ᵀ ρ_{m+1}(t) dt`. -/
 private lemma chafaiDensity_ibp_identity (f : ℝ → ℝ) {m : ℕ}
@@ -527,51 +545,29 @@ private lemma chafaiDensity_ibp_identity (f : ℝ → ℝ) {m : ℕ}
     (-1 : ℝ) ^ (m + 2) * T ^ (m + 1) / ↑(m + 1).factorial *
       iteratedDerivWithin (m + 1) f (Ici 0) T +
     ∫ t in (0 : ℝ)..T, chafaiDensity f (m + 1) t := by
-  -- Set up the primitive whose derivative is the difference of successive densities.
-  set g := iteratedDerivWithin (m + 1) f (Ici 0)
-  set g' := iteratedDerivWithin (m + 2) f (Ici 0)
   set c : ℝ := (-1) ^ (m + 2) / ↑(m + 1).factorial
+  set g := iteratedDerivWithin (m + 1) f (Ici 0)
   set F := fun t : ℝ => t ^ (m + 1) * (c * g t)
-  -- Smoothness gives continuity of the primitive and differentiability of the iterated
-  -- derivative on the open interval.
-  have hg_cont : ContinuousOn g (Ici 0) :=
-    (hf.of_le (by exact_mod_cast (by omega : m + 1 ≤ m + 2))).continuousOn_iteratedDerivWithin
-      le_rfl (uniqueDiffOn_Ici 0)
-  have hg_deriv : ∀ t, 0 < t → HasDerivAt g (g' t) t :=
-    fun t ht =>
-      ContDiffOn.hasDerivAt_iteratedDerivWithin hf (uniqueDiffOn_Ici 0) (Ici_mem_nhds ht)
+  have hf_m1 : ContDiffOn ℝ ((m + 1 : ℕ) : WithTop ℕ∞) f (Ici 0) :=
+    hf.of_le (by exact_mod_cast (by omega : m + 1 ≤ m + 2))
+  -- The primitive is continuous up to the endpoints, and differentiates to the density difference.
   have hF_cont : ContinuousOn F (Icc 0 T) :=
-    ((continuous_pow _).continuousOn).mul
-      (continuousOn_const.mul (hg_cont.mono Icc_subset_Ici_self))
+    ((continuous_pow _).continuousOn).mul (continuousOn_const.mul
+      ((hf_m1.continuousOn_iteratedDerivWithin le_rfl (uniqueDiffOn_Ici 0)).mono
+        Icc_subset_Ici_self))
   have hF_deriv : ∀ t ∈ Ioo 0 T, HasDerivAt F
-      (↑(m + 1) * t ^ m * (c * g t) + t ^ (m + 1) * (c * g' t)) t :=
-    fun t ht => (hasDerivAt_pow (m + 1) t).mul ((hg_deriv t ht.1).const_mul c)
-  -- Transfer interval integrability from continuity of the two density branches.
+      (chafaiDensity f (m + 2) t - chafaiDensity f (m + 1) t) t :=
+    fun t ht => hasDerivAt_chafaiPrimitive f hf ht.1
+  -- Both density branches are interval-integrable, so the difference is too.
   have h_int_m2 : IntervalIntegrable (fun t => chafaiDensity f (m + 2) t) volume 0 T :=
     intervalIntegrable_chafaiDensity hf hT.le
   have h_int_m1 : IntervalIntegrable (fun t => chafaiDensity f (m + 1) t) volume 0 T :=
-    intervalIntegrable_chafaiDensity
-      (hf.of_le (by exact_mod_cast (by omega : m + 1 ≤ m + 2))) hT.le
-  have hF'_eq : ∀ t, ↑(m + 1) * t ^ m * (c * g t) + t ^ (m + 1) * (c * g' t) =
-      chafaiDensity f (m + 2) t - chafaiDensity f (m + 1) t := by
-    intro t
-    simp only [g, g', c]
-    exact (chafaiDensity_succ_succ_sub_succ f m t).symm
-  have hF'_int : IntervalIntegrable
-      (fun t => ↑(m + 1) * t ^ m * (c * g t) + t ^ (m + 1) * (c * g' t)) volume 0 T :=
-    (h_int_m2.sub h_int_m1).congr fun t _ => (hF'_eq t).symm
-  -- Apply FTC to the primitive and rewrite the derivative integral as the difference of the
-  -- Chafaï density integrals.
-  have hftc := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hT.le hF_cont hF_deriv hF'_int
-  have hstep1 : ∫ t in (0 : ℝ)..T,
-      (chafaiDensity f (m + 2) t - chafaiDensity f (m + 1) t) = F T - F 0 := by
-    rw [← hftc]
-    exact intervalIntegral.integral_congr_ae
-      (Filter.Eventually.of_forall fun t _ => (hF'_eq t).symm)
-  have hm1 : m + 1 ≠ 0 := by omega
-  have hF0 : F 0 = 0 := by simp [F, zero_pow hm1]
-  rw [hF0, sub_zero] at hstep1
-  rw [intervalIntegral.integral_sub h_int_m2 h_int_m1] at hstep1
+    intervalIntegrable_chafaiDensity hf_m1 hT.le
+  -- FTC now reads off the difference of the two integrals directly.
+  have hstep1 := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hT.le hF_cont hF_deriv
+    (h_int_m2.sub h_int_m1)
+  have hF0 : F 0 = 0 := by simp [F, zero_pow (by omega : m + 1 ≠ 0)]
+  rw [hF0, sub_zero, intervalIntegral.integral_sub h_int_m2 h_int_m1] at hstep1
   -- The lower endpoint vanishes; the upper endpoint is the boundary term in the statement.
   suffices hgoal : (-1 : ℝ) ^ (m + 2) * T ^ (m + 1) / ↑(m + 1).factorial * g T = F T by linarith
   simp only [F, c]; ring
