@@ -486,6 +486,24 @@ private theorem integral_sub_sq_le_two_mul_add_two_mul_of_integral_sub_sq_le_of_
           integral_const_mul]
     _ ≤ 2 * c₁ + 2 * c₂ := by linarith
 
+/-- **The squared difference of two directing masses is integrable.** Each evaluation
+`ω ↦ ((ρ ω) B).toReal` is measurable and takes values in `[0, 1]`, so the square of the difference
+is bounded, hence integrable on a finite measure space. -/
+private theorem integrable_toReal_directing_sub_sq [IsFiniteMeasure μ]
+    {ρ ρ' : Ω → ProbabilityMeasure α} (hρ : Measurable ρ) (hρ' : Measurable ρ')
+    (hB : MeasurableSet B) :
+    Integrable (fun ω =>
+      (((ρ ω : Measure α) B).toReal - ((ρ' ω : Measure α) B).toReal) ^ 2) μ := by
+  have habs : ∀ (σ : Ω → ProbabilityMeasure α) (ω : Ω),
+      |((σ ω : Measure α) B).toReal| ≤ 1 := fun σ ω => by
+    rw [abs_of_nonneg ENNReal.toReal_nonneg]
+    simpa using
+      ENNReal.toReal_mono ENNReal.one_ne_top (prob_le_one (μ := (σ ω : Measure α)) (s := B))
+  exact integrable_sub_sq_of_abs_le_one
+    ((TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hρ).aemeasurable
+    ((TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hρ').aemeasurable
+    (ae_of_all _ (habs ρ)) (ae_of_all _ (habs ρ'))
+
 /-- **The `L²` rate between two directing measures.** Two directing measures of the same process
 are within `4 / n` of each other in mean square, for every `n ≥ 1`, on each fixed measurable set.
 This is the scaffolding for `ae_measure_apply_eq`, which is its `n → ∞` limit. It stays private:
@@ -513,9 +531,7 @@ private theorem ConditionallyIIDWith.integral_directing_sub_sq_le_four_div
     fun m ω => abs_average_indicator_le_one (fun i => X i ⁻¹' B) m ω
   have hdint : Integrable (fun ω =>
       (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2) μ :=
-    integrable_sub_sq_of_abs_le_one (hqm ν h.measurable_directing).aemeasurable
-      (hqm ν' h'.measurable_directing).aemeasurable
-      (ae_of_all _ (habs ν)) (ae_of_all _ (habs ν'))
+    integrable_toReal_directing_sub_sq h.measurable_directing h'.measurable_directing hB
   -- Both errors are bounded by `1 / n`, so the general `2c₁ + 2c₂` bound specializes to `4 / n`.
   have hb : ∫ ω, (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2 ∂μ
       ≤ 2 * (n : ℝ)⁻¹ + 2 * (n : ℝ)⁻¹ :=
@@ -538,24 +554,11 @@ theorem ConditionallyIIDWith.ae_measure_apply_eq [IsProbabilityMeasure μ]
     (hX : ∀ i, AEMeasurable (X i) μ) (h : ConditionallyIIDWith μ X ν)
     (h' : ConditionallyIIDWith μ X ν') (hB : MeasurableSet B) :
     (fun ω => (ν ω : Measure α) B) =ᵐ[μ] fun ω => (ν' ω : Measure α) B := by
-  have hqm : ∀ ρ : Ω → ProbabilityMeasure α, Measurable ρ →
-      Measurable fun ω => ((ρ ω : Measure α) B).toReal := fun _ hρ =>
-    (TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hρ
-  have hq0 : ∀ (ρ : Ω → ProbabilityMeasure α) (ω : Ω), 0 ≤ ((ρ ω : Measure α) B).toReal :=
-    fun _ _ => ENNReal.toReal_nonneg
-  have hq1 : ∀ (ρ : Ω → ProbabilityMeasure α) (ω : Ω), ((ρ ω : Measure α) B).toReal ≤ 1 := by
-    intro ρ ω
-    simpa using
-      ENNReal.toReal_mono ENNReal.one_ne_top (prob_le_one (μ := (ρ ω : Measure α)) (s := B))
   set d : Ω → ℝ := fun ω =>
     ((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal with hd_def
-  have habs : ∀ (ρ : Ω → ProbabilityMeasure α) (ω : Ω),
-      |((ρ ω : Measure α) B).toReal| ≤ 1 := fun ρ ω => by
-    rw [abs_of_nonneg (hq0 ρ ω)]; exact hq1 ρ ω
-  have hdint : Integrable (fun ω => d ω ^ 2) μ :=
-    integrable_sub_sq_of_abs_le_one (hqm ν h.measurable_directing).aemeasurable
-      (hqm ν' h'.measurable_directing).aemeasurable
-      (ae_of_all _ (habs ν)) (ae_of_all _ (habs ν'))
+  have hdint : Integrable (fun ω => d ω ^ 2) μ := by
+    simpa only [hd_def] using
+      integrable_toReal_directing_sub_sq h.measurable_directing h'.measurable_directing hB
   -- `hd_def` turns the `set` wrapper `d` into the explicit difference the rate lemma is stated for.
   have hbound : ∀ n : ℕ, 1 ≤ n → ∫ ω, d ω ^ 2 ∂μ ≤ 4 / n := fun n hn => by
     simpa only [hd_def] using h.integral_directing_sub_sq_le_four_div hX h' hB (n := n) (by omega)
