@@ -217,13 +217,17 @@ private theorem IsDissipative.exists_bounded_rightInverse {A : X →ₗ.[ℝ] X}
     rw [← hSapp]
     exact e.apply_symm_apply y
   -- its inverse, bounded by `1 / lambda` through dissipativity
-  let J : X →ₗ[ℝ] X := A.domain.subtype ∘ₗ (e.symm : X →ₗ[ℝ] A.domain)
+  set J : X →ₗ[ℝ] X := A.domain.subtype ∘ₗ (e.symm : X →ₗ[ℝ] A.domain) with hJ_def
+  have hJapp : ∀ y : X, J y = ((e.symm y : A.domain) : X) := fun y => by
+    rw [hJ_def, LinearMap.comp_apply, Submodule.subtype_apply, LinearEquiv.coe_coe]
   have hJbound : ∀ y : X, ‖J y‖ ≤ lambda⁻¹ * ‖y‖ := by
     intro y
+    rw [hJapp]
     have := hA.norm_le_of_smul_sub_eq hlambda (x := e.symm y) (y := y) (he y)
     rwa [div_eq_inv_mul] at this
-  exact ⟨fun y => e.symm y, J.mkContinuous lambda⁻¹ hJbound,
-    J.mkContinuous_norm_le (by positivity) hJbound, fun _ => rfl, he⟩
+  refine ⟨fun y => e.symm y, J.mkContinuous lambda⁻¹ hJbound,
+    J.mkContinuous_norm_le (by positivity) hJbound, fun y => ?_, he⟩
+  rw [LinearMap.mkContinuous_apply, hJapp]
 
 section CompleteSpace
 
