@@ -34,6 +34,9 @@ schemes over `Spec S`. The underlying functor is Mathlib's `AlgebraicGeometry.ho
 which is fully faithful with essential image the affine group schemes; the isomorphism
 `commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso` records this on the level
 of functors. -/
+-- `@[expose]` is load-bearing, not a leak: the exported `rfl`-lemmas below unfold this
+-- definition, and the module system rejects an exported `rfl`-proof whose unfolding
+-- chain is not exposed ("all definitions that need to be unfolded ... must be exposed").
 @[expose] noncomputable def commHopfAlgCatOpEquivAffineGroupSchemeCat (S : CommRingCat.{u}) :
     (CommHopfAlgCat S)ᵒᵖ ≌ AffineGroupSchemeCat S :=
   (hopfSpec S).toEssImage.asEquivalence.trans
