@@ -307,7 +307,7 @@ private theorem ConditionallyIIDWith.integral_directing_mul_indicator
     (TauCeti.MeasureTheory.measurable_probabilityMeasure_toMeasure_apply hB).comp
       h.measurable_directing
   have hg : Measurable fun p : ProbabilityMeasure α => (p : Measure α) B :=
-    (Measure.measurable_coe hB).comp measurable_subtype_coe
+    TauCeti.MeasureTheory.measurable_probabilityMeasure_toMeasure_apply hB
   have hlin := h.lintegral_mul_indicator_single (g := fun p => (p : Measure α) B) hX i hg hB
   have := integral_toReal_eq_of_lintegral_eq
     (hu.aemeasurable.mul
