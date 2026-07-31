@@ -166,11 +166,13 @@ private lemma re_mul_conj_of_zero_mem_segment (h : (0 : ℂ) ∈ segment ℝ z w
       have hn := congrArg norm h'
       rwa [norm_mul, norm_neg, norm_mul, Complex.norm_real, Complex.norm_real,
         Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg ha, abs_of_nonneg hb] at hn
+    -- Multiplying `h'` by `conj w` makes each side a real scalar times a single complex number:
+    -- `z * conj w` on the left, `w * conj w = ‖w‖ ^ 2` on the right.
+    have hright : -((b : ℂ) * w) * (starRingEnd ℂ) w
+        = -((b : ℂ) * (w * (starRingEnd ℂ) w)) := by ring
     have hre : a * (z * (starRingEnd ℂ) w).re = -(b * ‖w‖ ^ 2) := by
       have hc := congrArg (fun x : ℂ => (x * (starRingEnd ℂ) w).re) h'
-      rwa [mul_assoc, show -((b : ℂ) * w) * (starRingEnd ℂ) w
-          = -((b : ℂ) * (w * (starRingEnd ℂ) w)) by ring,
-        Complex.re_ofReal_mul, Complex.neg_re, Complex.re_ofReal_mul,
+      rwa [mul_assoc, hright, Complex.re_ofReal_mul, Complex.neg_re, Complex.re_ofReal_mul,
         Complex.mul_conj, Complex.ofReal_re, Complex.normSq_eq_norm_sq] at hc
     refine mul_left_cancel₀ hapos.ne' ?_
     linear_combination hre + ‖w‖ * hnormeq
