@@ -246,18 +246,6 @@ private lemma commute_tmul_one_of_repr_eq_one {ι : Type*} (𝓑 : Basis ι K B)
       (lt_of_le_of_lt (Finset.card_le_card hsupp) (Finset.card_erase_lt_of_mem hi₀))
   exact sub_eq_zero.mp hz
 
--- If `1 ⊗ₜ b` lies in the ideal for some `b ≠ 0`, the ideal is everything: the `c` with
--- `1 ⊗ₜ c ∈ I` form the preimage of `I` along `includeRight`, a two-sided ideal of the simple
--- ring `B`. Only simplicity of `B` is used — not of `A`, and not centrality.
-private lemma one_mem_of_one_tmul_mem [IsSimpleRing B] {I : TwoSidedIdeal (A ⊗[K] B)} {b : B}
-    (hb : b ≠ 0) (hyI : (1 : A) ⊗ₜ[K] b ∈ I) : (1 : A ⊗[K] B) ∈ I := by
-  have honeB : (1 : B) ∈
-      I.comap (Algebra.TensorProduct.includeRight : B →ₐ[K] A ⊗[K] B) :=
-    _root_.IsSimpleRing.one_mem_of_ne_zero_mem _ hb
-      ((TwoSidedIdeal.mem_comap _).mpr (by simpa using hyI))
-  rw [TwoSidedIdeal.mem_comap] at honeB
-  simpa [Algebra.TensorProduct.one_def] using honeB
-
 variable (K A B) in
 /-- **The tensor product of a central simple `K`-algebra with a simple `K`-algebra is simple.**
 Together with `TauCeti.Algebra.IsCentral.tensorProduct` this says that central simple `K`-algebras
@@ -291,7 +279,14 @@ instance tensorProduct [Algebra.IsCentral K A] [IsSimpleRing A] [IsSimpleRing B]
   have hb : b ≠ 0 := by rintro rfl; exact hy0 (by simp)
   -- The `c : B` with `1 ⊗ₜ c ∈ I` form a two-sided ideal of `B`, namely the preimage of `I` along
   -- `Algebra.TensorProduct.includeRight`; it contains `b ≠ 0`, hence it is everything.
-  exact one_mem_of_one_tmul_mem hb hyI
+  -- The `c : B` with `1 ⊗ₜ c ∈ I` form the preimage of `I` along `includeRight`, a two-sided
+  -- ideal of the simple ring `B`; it contains `b ≠ 0`, hence it is everything.
+  have honeB : (1 : B) ∈
+      I.comap (Algebra.TensorProduct.includeRight : B →ₐ[K] A ⊗[K] B) :=
+    _root_.IsSimpleRing.one_mem_of_ne_zero_mem _ hb
+      ((TwoSidedIdeal.mem_comap _).mpr (by simpa using hyI))
+  rw [TwoSidedIdeal.mem_comap] at honeB
+  simpa [Algebra.TensorProduct.one_def] using honeB
 
 variable (K A B) in
 /-- **The tensor product of a simple `K`-algebra with a central simple `K`-algebra is simple.** This
