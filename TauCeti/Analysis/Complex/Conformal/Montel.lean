@@ -101,16 +101,6 @@ private theorem equicontinuous_subtype_val_range {ι X Y : Type*} [TopologicalSp
   rw [heq]
   exact h.comp σ
 
--- Locally uniform convergence of the restrictions to `s` is locally uniform convergence on `s`,
--- for any function `g` agreeing with the limit along the coercion.
-private theorem tendstoLocallyUniformlyOn_of_forall_coe_eq {ι X Y : Type*} [TopologicalSpace X]
-    [UniformSpace Y] {s : Set X} {G : ι → X → Y} {a : s → Y} {g : X → Y} {p : Filter ι}
-    (h : TendstoLocallyUniformly (fun n (x : s) => G n x) a p) (hg : ∀ x : s, g x = a x) :
-    TendstoLocallyUniformlyOn G g p s := by
-  rw [tendstoLocallyUniformlyOn_iff_tendstoLocallyUniformly_comp_coe,
-    show g ∘ (Subtype.val : s → X) = a from funext hg]
-  exact h
-
 /-- **Montel's selection theorem.** A locally bounded family of holomorphic functions on an open
 set `Ω ⊆ ℂ` is normal: every sequence from it has a subsequence converging locally uniformly on
 `Ω`, and the limit is holomorphic.
@@ -139,9 +129,14 @@ theorem montel (hΩ : IsOpen Ω) (hF : ∀ n, DifferentiableOn ℂ (F n) Ω)
     simpa [hfdef, mem_closedBall, dist_zero_right] using hC n
   obtain ⟨a, -, φ, hφ, hconv⟩ := hcpt.tendsto_subseq (x := f) fun n => subset_closure ⟨n, rfl⟩
   -- Compact-open convergence is locally uniform convergence; extend the limit off `Ω` by zero.
-  have hconvOn := tendstoLocallyUniformlyOn_of_forall_coe_eq
-    (ContinuousMap.tendsto_iff_tendstoLocallyUniformly.mp hconv)
-    (g := fun z => if hz : z ∈ Ω then a ⟨z, hz⟩ else 0) fun x => by simp [x.2]
+  have hlim : ((fun z => if hz : z ∈ Ω then a ⟨z, hz⟩ else 0) ∘ (Subtype.val : Ω → ℂ))
+      = fun x : Ω => a x := by
+    funext x
+    simp [x.2]
+  have hconvOn : TendstoLocallyUniformlyOn (fun n => F (φ n))
+      (fun z => if hz : z ∈ Ω then a ⟨z, hz⟩ else 0) atTop Ω := by
+    rw [tendstoLocallyUniformlyOn_iff_tendstoLocallyUniformly_comp_coe, hlim]
+    exact ContinuousMap.tendsto_iff_tendstoLocallyUniformly.mp hconv
   exact ⟨φ, _, hφ, hconvOn.differentiableOn (Eventually.of_forall fun n => hF (φ n)) hΩ, hconvOn⟩
 
 end TauCeti
