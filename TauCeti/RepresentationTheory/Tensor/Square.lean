@@ -8,6 +8,7 @@ public import TauCeti.LinearAlgebra.TensorSquare
 public import TauCeti.LinearAlgebra.ExteriorPower
 public import TauCeti.RepresentationTheory.ExteriorPower
 public import TauCeti.RepresentationTheory.SymmetricPower
+public import TauCeti.LinearAlgebra.Trace.Prod
 public import TauCeti.RepresentationTheory.Tensor.Power
 
 /-!
@@ -174,44 +175,6 @@ private theorem snd_comp_conj_eq_comp_snd {R A B C : Type*} [CommSemiring R]
   simp only [LinearMap.comp_apply, LinearEquiv.conj_apply_apply, hq]
   rw [← LinearMap.comp_apply, hfq, LinearMap.comp_apply, hq']
 
--- An endomorphism of `A × C` that preserves the first summand, acting there as `fA`, and covers
--- `fC` on the second, is block upper triangular: its only off-diagonal block is `C → A`.
-private theorem eq_prodMap_add_inl_comp_snd {R A C : Type*} [Semiring R]
-    [AddCommMonoid A] [Module R A] [AddCommMonoid C] [Module R C]
-    {fA : A →ₗ[R] A} {fC : C →ₗ[R] C} (F : (A × C) →ₗ[R] A × C)
-    (hinl : F.comp (LinearMap.inl R A C) = (LinearMap.inl R A C).comp fA)
-    (hsnd : (LinearMap.snd R A C).comp F = fC.comp (LinearMap.snd R A C)) :
-    F = LinearMap.prodMap fA fC + (LinearMap.inl R A C).comp
-      (((LinearMap.fst R A C).comp (F.comp (LinearMap.inr R A C))).comp
-        (LinearMap.snd R A C)) := by
-  refine LinearMap.prod_ext ?_ ?_
-  · -- On the `A` summand the off-diagonal block dies, since `snd ∘ inl = 0`.
-    rw [hinl]
-    refine LinearMap.ext fun a => ?_
-    simp [Prod.mk_zero_zero]
-  · -- On the `C` summand the first component is the off-diagonal block by definition, and the
-    -- second is `hsnd` read at `inr c`.
-    refine LinearMap.ext fun c => Prod.ext ?_ ?_
-    · simp
-    · simpa using LinearMap.congr_fun hsnd ((LinearMap.inr R A C) c)
-
--- The trace of a block upper triangular endomorphism of `A × C` is the sum of the traces of its
--- diagonal blocks: the off-diagonal `C → A` block composes to zero the other way round, so
--- `trace_comp_comm'` makes its contribution vanish.
-private theorem trace_prodMap_add_inl_comp_snd {R A C : Type*} [CommRing R]
-    [AddCommGroup A] [Module R A] [Module.Free R A] [Module.Finite R A]
-    [AddCommGroup C] [Module R C] [Module.Free R C] [Module.Finite R C]
-    (fA : A →ₗ[R] A) (fC : C →ₗ[R] C) (u : C →ₗ[R] A) :
-    LinearMap.trace R (A × C) (LinearMap.prodMap fA fC +
-        (LinearMap.inl R A C).comp (u.comp (LinearMap.snd R A C))) =
-      LinearMap.trace R A fA + LinearMap.trace R C fC := by
-  have hoff : LinearMap.trace R (A × C)
-      ((LinearMap.inl R A C).comp (u.comp (LinearMap.snd R A C))) = 0 := by
-    rw [LinearMap.trace_comp_comm']
-    have hz : (u.comp (LinearMap.snd R A C)).comp (LinearMap.inl R A C) = 0 := by ext a; simp
-    rw [hz, map_zero]
-  rw [map_add, LinearMap.trace_prodMap', hoff, add_zero]
-
 -- Split an exact sequence as vector spaces. In that splitting the middle action is block
 -- triangular, so its trace is the sum of the traces on the subspace and the quotient.
 private theorem trace_eq_add_of_exact
@@ -235,9 +198,9 @@ private theorem trace_eq_add_of_exact
   have hsnd : ∀ b : B, (LinearMap.snd K A C) (e b) = q b := fun b => by rw [hqe]; rfl
   -- In that splitting `fB` becomes block upper triangular, so its trace splits.
   rw [← LinearMap.trace_conj' fB e,
-    eq_prodMap_add_inl_comp_snd _ (conj_comp_inl_eq_inl_comp e hia hfi)
+    LinearMap.eq_prodMap_add_inl_comp_snd _ (conj_comp_inl_eq_inl_comp e hia hfi)
       (snd_comp_conj_eq_comp_snd e hsnd hfq),
-    trace_prodMap_add_inl_comp_snd]
+    LinearMap.trace_prodMap_add_inl_comp_snd]
 
 end TauCeti.TensorSquare
 
