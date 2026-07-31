@@ -267,8 +267,11 @@ private theorem measurable_directingMass (hν : Measurable ν) (hB : MeasurableS
 `fun s => ((P : Measure α) s).toNNReal` by `ProbabilityMeasure.coeFn_def`, and
 `ENNReal.toReal` is by definition `fun a => (a.toNNReal : ℝ)`, so both sides reduce to
 `(((ν ω : Measure α) B).toNNReal : ℝ)`. Stating the `.toReal` form here keeps that unfolding in
-one place instead of at each consumer. -/
-private theorem measurable_directingMass_toReal (hν : Measurable ν) (hB : MeasurableSet B) :
+one place instead of at each consumer.
+
+Public: `ConditionallyIID/Unique.lean` needs the same bridge, and previously restated it as a
+local `have`. -/
+theorem measurable_directingMass_toReal (hν : Measurable ν) (hB : MeasurableSet B) :
     Measurable fun ω => ((ν ω : Measure α) B).toReal :=
   (TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hν
 

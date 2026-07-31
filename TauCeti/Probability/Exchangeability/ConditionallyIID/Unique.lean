@@ -143,8 +143,8 @@ private theorem integrable_toReal_directing_sub_sq [IsFiniteMeasure μ]
     simpa using
       ENNReal.toReal_mono ENNReal.one_ne_top (prob_le_one (μ := (σ ω : Measure α)) (s := B))
   exact integrable_sub_sq_of_abs_le_one
-    ((TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hρ).aemeasurable
-    ((TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hρ').aemeasurable
+    (measurable_directingMass_toReal hρ hB).aemeasurable
+    (measurable_directingMass_toReal hρ' hB).aemeasurable
     (ae_of_all _ (habs ρ)) (ae_of_all _ (habs ρ'))
 
 /-- **The `L²` rate between two directing measures.** Two directing measures of the same process
@@ -159,7 +159,7 @@ private theorem ConditionallyIIDWith.integral_directing_sub_sq_le_four_div
     ∫ ω, (((ν ω : Measure α) B).toReal - ((ν' ω : Measure α) B).toReal) ^ 2 ∂μ ≤ 4 / n := by
   have hqm : ∀ ρ : Ω → ProbabilityMeasure α, Measurable ρ →
       Measurable fun ω => ((ρ ω : Measure α) B).toReal := fun _ hρ =>
-    (TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hρ
+    measurable_directingMass_toReal hρ hB
   have habs : ∀ (ρ : Ω → ProbabilityMeasure α) (ω : Ω),
       |((ρ ω : Measure α) B).toReal| ≤ 1 := fun ρ ω => by
     rw [abs_of_nonneg ENNReal.toReal_nonneg]
