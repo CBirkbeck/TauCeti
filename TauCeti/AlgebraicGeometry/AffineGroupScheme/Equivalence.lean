@@ -61,13 +61,12 @@ lemma commHopfAlgCatOpEquivAffineGroupSchemeCat_functor_obj_obj (S : CommRingCat
       (hopfSpec S).obj H :=
   rfl
 
-/-- On morphisms, the anti-equivalence acts as `hopfSpec` does, after inclusion into
-group objects in schemes over `Spec S`. -/
+/-- On morphisms, the anti-equivalence acts as `hopfSpec` does: the underlying morphism
+of the image of `f` is `(hopfSpec S).map f`. -/
 @[simp]
 lemma commHopfAlgCatOpEquivAffineGroupSchemeCat_functor_map (S : CommRingCat.{u})
     {H K : (CommHopfAlgCat S)ᵒᵖ} (f : H ⟶ K) :
-    (affineGroupSchemeProperty S).ι.map
-        ((commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor.map f) =
+    ((commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor.map f).hom =
       (hopfSpec S).map f :=
   rfl
 
