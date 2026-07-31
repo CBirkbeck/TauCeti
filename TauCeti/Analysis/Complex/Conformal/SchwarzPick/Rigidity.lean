@@ -137,20 +137,25 @@ private lemma mapsTo_ball_const_mul_of_norm_le_one {C : ℂ} (hC : ‖C‖ ≤ 1
 `M₋w ∘ (C⁻¹ · ) ∘ M_a` is a right inverse of `f` on the disc.
 
 Only the conjugation identity, the three norm bounds and the self-map property of `f` are used;
-differentiability of `f` and of the factors plays no part in this half. -/
+differentiability of `f` and of the factors plays no part in this half. The scalar `C` is assumed
+only to satisfy `1 ≤ ‖C‖`, which is all that `C ≠ 0` and the contractivity of `C⁻¹` need — the
+caller supplies a unimodular `C`. -/
 private lemma rightInvOn_moebius_rotate_moebius_of_forall_eq {a C : ℂ} (ha : ‖a‖ < 1)
-    (hw : ‖w‖ < 1) (hC : ‖C‖ = 1) (hmaps : MapsTo f (ball (0 : ℂ) 1) (ball (0 : ℂ) 1))
+    (hw : ‖w‖ < 1) (hC : 1 ≤ ‖C‖) (hmaps : MapsTo f (ball (0 : ℂ) 1) (ball (0 : ℂ) 1))
     (hCeq : ∀ ζ ∈ ball (0 : ℂ) 1, (f ζ - a) / (1 - (starRingEnd ℂ) a * f ζ)
       = C * ((ζ - w) / (1 - (starRingEnd ℂ) w * ζ))) :
     RightInvOn ((fun ξ : ℂ => (ξ - (-w)) / (1 - (starRingEnd ℂ) (-w) * ξ)) ∘
         (fun η : ℂ => C⁻¹ * η) ∘
         (fun η : ℂ => (η - a) / (1 - (starRingEnd ℂ) a * η)))
       f (ball (0 : ℂ) 1) := by
-  have hC0 : C ≠ 0 := fun h => zero_ne_one (by rw [h, norm_zero] at hC; exact hC)
+  have hC0 : C ≠ 0 := by
+    intro h
+    rw [h, norm_zero] at hC
+    linarith
   have hnegw : ‖(-w : ℂ)‖ < 1 := by simpa using hw
   have hT_maps := mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one ha
-  have hCinv : ‖C⁻¹‖ = 1 := by rw [norm_inv, hC, inv_one]
-  have hR_maps := mapsTo_ball_const_mul_of_norm_le_one hCinv.le
+  have hR_maps := mapsTo_ball_const_mul_of_norm_le_one
+    (C := C⁻¹) (by rw [norm_inv]; exact inv_le_one_of_one_le₀ hC)
   have hS_maps := mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := -w) hnegw
   have hTinj : InjOn (fun ζ : ℂ => (ζ - a) / (1 - (starRingEnd ℂ) a * ζ)) (ball (0 : ℂ) 1) :=
     (leftInvOn_unitDiscMoebiusFormula_of_norm_lt_one ha).injOn
@@ -207,7 +212,7 @@ theorem exists_differentiableOn_mapsTo_invOn_of_pseudoHyperbolicExpr_map_eq
     intro ζ hζ
     simp only [Function.comp_apply, hCeq ζ hζ, inv_mul_cancel_left₀ hC0]
     exact leftInvOn_unitDiscMoebiusFormula_of_norm_lt_one hw_norm hζ
-  · exact rightInvOn_moebius_rotate_moebius_of_forall_eq hfw_norm hw_norm hC hmaps hCeq
+  · exact rightInvOn_moebius_rotate_moebius_of_forall_eq hfw_norm hw_norm hC.ge hmaps hCeq
 
 /--
 **Schwarz--Pick rigidity, bijectivity form.**  A holomorphic self-map of the open unit disc
