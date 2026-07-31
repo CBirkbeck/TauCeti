@@ -84,49 +84,16 @@ namespace Probability
 
 variable {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α]
 
--- The directing-measure product is a `[0,1]`-valued measurable function, hence integrable against
--- a finite measure. Only tail-measurability of the process and measurability of the blocks are
--- used: no contractability, no tail event.
-private lemma integrable_prod_directingMeasure_real [StandardBorelSpace α] [Nonempty α]
-    {μ : Measure Ω} [IsFiniteMeasure μ] {X : ℕ → Ω → α}
-    (hTail : tailProcess X ≤ ‹MeasurableSpace Ω›) {r : ℕ} {B : Fin r → Set α}
-    (hB : ∀ i, MeasurableSet (B i)) :
-    Integrable (fun ω => ∏ i, (directingMeasure μ X ω).real (B i)) μ := by
-  have hg_meas : Measurable fun ω => ∏ i, (directingMeasure μ X ω).real (B i) :=
-    Finset.measurable_prod _ fun i _ =>
-      (measurable_directingMeasure_coe hTail (hB i)).ennreal_toReal
-  refine (integrable_const (1 : ℝ)).mono' hg_meas.aestronglyMeasurable (ae_of_all _ fun ω => ?_)
-  simp only [measureReal_def]
-  rw [Real.norm_of_nonneg (Finset.prod_nonneg fun i _ => ENNReal.toReal_nonneg)]
-  refine Finset.prod_le_one (fun i _ => ENNReal.toReal_nonneg) fun i _ => ?_
-  exact ENNReal.toReal_le_of_le_ofReal zero_le_one
-    (by rw [ENNReal.ofReal_one]; exact (measure_mono (Set.subset_univ _)).trans_eq measure_univ)
-
 -- Integrating the block indicator over a set is the real mass of the intersection: the indicator
 -- of the cylinder integrates to its measure. Needs no tail structure and no directing measure.
-private lemma setIntegral_blockIndicatorProd_eq_measureReal {μ : Measure Ω} [IsFiniteMeasure μ]
-    {X : ℕ → Ω → α} (hX_meas : ∀ n, Measurable (X n)) {r : ℕ} {k : Fin r → ℕ} {B : Fin r → Set α}
-    (hB : ∀ i, MeasurableSet (B i)) (A : Set Ω) :
+private lemma setIntegral_blockIndicatorProd_eq_measureReal {μ : Measure Ω}
+    {X : ℕ → Ω → α} {r : ℕ} {k : Fin r → ℕ} (hX_meas : ∀ i, Measurable (X (k i)))
+    {B : Fin r → Set α} (hB : ∀ i, MeasurableSet (B i)) (A : Set Ω) :
     ∫ ω in A, blockIndicatorProd X k B ω ∂μ = μ.real (A ∩ blockCylinder X k B) := by
   rw [blockIndicatorProd_eq_indicator,
-    setIntegral_indicator (measurableSet_blockCylinder (fun i => hX_meas _) hB),
+    setIntegral_indicator (measurableSet_blockCylinder hX_meas hB),
     setIntegral_const, Set.inter_comm]
   simp [measureReal_def]
-
--- Push a real integral of the directing-measure product to the `ℝ≥0∞` one, coordinate by
--- coordinate: each factor is a finite measure of a set, so `ofReal_toReal` applies.
-private lemma ofReal_setIntegral_eq_setLIntegral_prod [StandardBorelSpace α] [Nonempty α]
-    {μ : Measure Ω} [IsFiniteMeasure μ] {X : ℕ → Ω → α} {r : ℕ} {B : Fin r → Set α} {A : Set Ω}
-    (hA : MeasurableSet A)
-    (hg_int : Integrable (fun ω => ∏ i, (directingMeasure μ X ω).real (B i)) μ) :
-    ENNReal.ofReal (∫ ω in A, ∏ i, (directingMeasure μ X ω).real (B i) ∂μ)
-      = ∫⁻ ω in A, ∏ i, directingMeasure μ X ω (B i) ∂μ := by
-  rw [ofReal_integral_eq_lintegral_ofReal hg_int.restrict
-    (ae_of_all _ fun ω => Finset.prod_nonneg fun i _ => ENNReal.toReal_nonneg)]
-  refine setLIntegral_congr_fun hA (fun ω _ => ?_)
-  simp only [measureReal_def]
-  rw [ENNReal.ofReal_prod_of_nonneg fun i _ => ENNReal.toReal_nonneg]
-  exact Finset.prod_congr rfl fun i _ => ENNReal.ofReal_toReal (measure_ne_top _ _)
 
 /-- **Core set-integral identity.** The mass on the tail event `ν ⁻¹' S` intersected with a prefix
 block cylinder is the integral of the directing-measure product over that event.
@@ -165,8 +132,8 @@ private theorem measure_inter_blockCylinder_eq_setLIntegral
     exact hω
   have hne : μ (A ∩ blockCylinder X (fun i : Fin r => (i : ℕ)) B) ≠ ⊤ := measure_ne_top μ _
   rw [← ENNReal.ofReal_toReal hne, ← measureReal_def,
-    ← setIntegral_blockIndicatorProd_eq_measureReal hX_meas hB A, hchain,
-    ofReal_setIntegral_eq_setLIntegral_prod hA hg_int]
+    ← setIntegral_blockIndicatorProd_eq_measureReal (fun i => hX_meas _) hB A, hchain,
+    ofReal_integral_eq_lintegral_prod_directingMeasure hg_int.restrict]
 
 -- A finitely supported reindexing pulls the prefix cylinder back to the `k`-cylinder, once the
 -- permutation realises `k` on the initial segment. This is a set identity: no measure, no
