@@ -123,39 +123,26 @@ theorem exists_norm_eq_one_forall_eq_of_pseudoHyperbolicExpr_map_eq
   simp only [hgζ, hg0, zero_add, sub_zero, smul_eq_mul] at hval
   exact hval.trans (mul_comm _ _)
 
-/-- Multiplication by a constant of modulus at most one is a self-map of the open unit disc.
-
-This is Mathlib's `balanced_ball_zero` — a ball at the origin is balanced — read through
-`smul_eq_mul`; the lemma exists only to name that specialisation for the two call sites below. -/
-private lemma mapsTo_ball_const_mul_of_norm_le_one {C : ℂ} (hC : ‖C‖ ≤ 1) :
-    MapsTo (fun η : ℂ => C * η) (ball (0 : ℂ) 1) (ball (0 : ℂ) 1) := fun η hη => by
-  have h := (balanced_ball_zero (𝕜 := ℂ) (r := 1)).smul_mem hC hη
-  rwa [smul_eq_mul] at h
-
 /-- **The explicit inverse undoes `f` from the right.** If the Moebius factor at `a` conjugates
 `f` into the rotation by `C` composed with the Moebius factor at `w`, then the composite
 `M₋w ∘ (C⁻¹ · ) ∘ M_a` is a right inverse of `f` on the disc.
 
-Only the conjugation identity, the three norm bounds and the self-map property of `f` are used;
-differentiability of `f` and of the factors plays no part in this half. The scalar `C` is assumed
-only to satisfy `1 ≤ ‖C‖`, which is all that `C ≠ 0` and the contractivity of `C⁻¹` need — the
-caller supplies a unimodular `C`. -/
+Only the conjugation identity, the two norm bounds and the self-map properties of `f` and of the
+inverse rotation are used; differentiability of `f` and of the factors plays no part in this half.
+The scalar `C` enters only through `C ≠ 0` and through `hR_maps`, so the caller may supply any
+nonzero `C` whose inverse contracts the disc — in particular a unimodular one. -/
 private lemma rightInvOn_moebius_rotate_moebius_of_forall_eq {a C : ℂ} (ha : ‖a‖ < 1)
-    (hw : ‖w‖ < 1) (hC : 1 ≤ ‖C‖) (hmaps : MapsTo f (ball (0 : ℂ) 1) (ball (0 : ℂ) 1))
+    (hw : ‖w‖ < 1) (hC0 : C ≠ 0)
+    (hR_maps : MapsTo (fun η : ℂ => C⁻¹ * η) (ball (0 : ℂ) 1) (ball (0 : ℂ) 1))
+    (hmaps : MapsTo f (ball (0 : ℂ) 1) (ball (0 : ℂ) 1))
     (hCeq : ∀ ζ ∈ ball (0 : ℂ) 1, (f ζ - a) / (1 - (starRingEnd ℂ) a * f ζ)
       = C * ((ζ - w) / (1 - (starRingEnd ℂ) w * ζ))) :
     RightInvOn ((fun ξ : ℂ => (ξ - (-w)) / (1 - (starRingEnd ℂ) (-w) * ξ)) ∘
         (fun η : ℂ => C⁻¹ * η) ∘
         (fun η : ℂ => (η - a) / (1 - (starRingEnd ℂ) a * η)))
       f (ball (0 : ℂ) 1) := by
-  have hC0 : C ≠ 0 := by
-    intro h
-    rw [h, norm_zero] at hC
-    linarith
   have hnegw : ‖(-w : ℂ)‖ < 1 := by simpa using hw
   have hT_maps := mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one ha
-  have hR_maps := mapsTo_ball_const_mul_of_norm_le_one
-    (C := C⁻¹) (by rw [norm_inv]; exact inv_le_one_of_one_le₀ hC)
   have hS_maps := mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := -w) hnegw
   have hTinj : InjOn (fun ζ : ℂ => (ζ - a) / (1 - (starRingEnd ℂ) a * ζ)) (ball (0 : ℂ) 1) :=
     (leftInvOn_unitDiscMoebiusFormula_of_norm_lt_one ha).injOn
@@ -202,7 +189,11 @@ theorem exists_differentiableOn_mapsTo_invOn_of_pseudoHyperbolicExpr_map_eq
   have hS_maps := mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := -w) hnegw
   have hR_diff : DifferentiableOn ℂ (fun η : ℂ => C⁻¹ * η) (ball (0 : ℂ) 1) :=
     differentiableOn_id.const_mul _
-  have hR_maps := mapsTo_ball_const_mul_of_norm_le_one hCinv.le
+  -- The inverse rotation is a disc self-map because a ball at the origin is balanced.
+  have hR_maps : MapsTo (fun η : ℂ => C⁻¹ * η) (ball (0 : ℂ) 1) (ball (0 : ℂ) 1) :=
+    fun η hη => by
+      have h := (balanced_ball_zero (𝕜 := ℂ) (r := 1)).smul_mem hCinv.le hη
+      rwa [smul_eq_mul] at h
   refine ⟨(fun ξ : ℂ => (ξ - (-w)) / (1 - (starRingEnd ℂ) (-w) * ξ)) ∘
       (fun η : ℂ => C⁻¹ * η) ∘
       (fun η : ℂ => (η - f w) / (1 - (starRingEnd ℂ) (f w) * η)), ?_, ?_, ?_, ?_⟩
@@ -212,7 +203,7 @@ theorem exists_differentiableOn_mapsTo_invOn_of_pseudoHyperbolicExpr_map_eq
     intro ζ hζ
     simp only [Function.comp_apply, hCeq ζ hζ, inv_mul_cancel_left₀ hC0]
     exact leftInvOn_unitDiscMoebiusFormula_of_norm_lt_one hw_norm hζ
-  · exact rightInvOn_moebius_rotate_moebius_of_forall_eq hfw_norm hw_norm hC.ge hmaps hCeq
+  · exact rightInvOn_moebius_rotate_moebius_of_forall_eq hfw_norm hw_norm hC0 hR_maps hmaps hCeq
 
 /--
 **Schwarz--Pick rigidity, bijectivity form.**  A holomorphic self-map of the open unit disc
