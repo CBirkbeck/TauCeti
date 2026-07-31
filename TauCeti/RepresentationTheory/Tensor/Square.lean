@@ -150,8 +150,8 @@ private theorem toTensorPower_injective {R : Type} {M : Type*}
 
 -- Along a splitting `e` identifying `A` with the first summand via `i`, conjugating by `e` sends
 -- an endomorphism restricting to `fA` along `i` to one preserving that summand, acting as `fA`.
-private theorem conj_comp_inl_eq_inl_comp {R A B C : Type*} [CommRing R]
-    [AddCommGroup A] [Module R A] [AddCommGroup B] [Module R B] [AddCommGroup C] [Module R C]
+private theorem conj_comp_inl_eq_inl_comp {R A B C : Type*} [CommSemiring R]
+    [AddCommMonoid A] [Module R A] [AddCommMonoid B] [Module R B] [AddCommMonoid C] [Module R C]
     {i : A →ₗ[R] B} {fA : A →ₗ[R] A} {fB : B →ₗ[R] B} (e : B ≃ₗ[R] A × C)
     (hi : ∀ x : A, e.symm ((LinearMap.inl R A C) x) = i x) (hfi : fB.comp i = i.comp fA) :
     (e.conj fB).comp (LinearMap.inl R A C) = (LinearMap.inl R A C).comp fA := by
@@ -163,8 +163,8 @@ private theorem conj_comp_inl_eq_inl_comp {R A B C : Type*} [CommRing R]
 
 -- Dually, along a splitting `e` identifying `C` with the second summand via `q`, conjugating by
 -- `e` sends an endomorphism covering `fC` along `q` to one covering `fC` on that summand.
-private theorem snd_comp_conj_eq_comp_snd {R A B C : Type*} [CommRing R]
-    [AddCommGroup A] [Module R A] [AddCommGroup B] [Module R B] [AddCommGroup C] [Module R C]
+private theorem snd_comp_conj_eq_comp_snd {R A B C : Type*} [CommSemiring R]
+    [AddCommMonoid A] [Module R A] [AddCommMonoid B] [Module R B] [AddCommMonoid C] [Module R C]
     {q : B →ₗ[R] C} {fB : B →ₗ[R] B} {fC : C →ₗ[R] C} (e : B ≃ₗ[R] A × C)
     (hq : ∀ b : B, (LinearMap.snd R A C) (e b) = q b) (hfq : q.comp fB = fC.comp q) :
     (LinearMap.snd R A C).comp (e.conj fB) = fC.comp (LinearMap.snd R A C) := by
