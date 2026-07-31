@@ -11,16 +11,18 @@ public import Mathlib.AlgebraicGeometry.Group.Affine
 
 This file introduces the category of affine group schemes over `Spec S` for a
 commutative ring `S` — the full subcategory of group objects in schemes over `Spec S`
-whose underlying scheme is affine — together with the two endpoint statements of the
+whose underlying scheme is affine — together with the `Γ`-direction endpoint of the
 reductive-groups roadmap's Layer 0 dictionary, stated for a plain-typed base ring `R`
 and an arbitrary structure morphism rather than through `Scheme.Over` instance data:
+a commutative `R`-Hopf algebra structure on the global sections of an affine group
+scheme `φ : G ⟶ Spec R` (`hopfAlgebraGamma`).
 
-* a commutative `R`-Hopf algebra structure on the global sections of an affine group
-  scheme `φ : G ⟶ Spec R` (`hopfAlgebraGamma`);
-* a group-object structure on `Spec A` over `Spec R` for a commutative `R`-Hopf
-  algebra `A` (`grpObjSpec`).
-
-Both consume the instances of Mathlib's `AlgebraicGeometry/Group/Affine.lean`.
+The `Spec`-direction endpoint — the group-object structure on `Spec A` over `Spec R`
+for a commutative `R`-Hopf algebra `A` — needs no declaration here: it is Mathlib's
+`AlgebraicGeometry.instGrpObjSpecAsOverSpec`, and its `Over.mk` spelling is reached by
+`inferInstanceAs (GrpObj ((Spec (CommRingCat.of A)).asOver (Spec (CommRingCat.of R))))`
+at any use site. Everything consumes the instances of Mathlib's
+`AlgebraicGeometry/Group/Affine.lean`.
 Affineness enters only as the object property cutting out the full subcategory;
 further refinements stay predicates rather than being baked into the category. The
 anti-equivalence with commutative `S`-Hopf algebras is in
@@ -64,14 +66,13 @@ instance {S : CommRingCat.{u}} (G : AffineGroupSchemeCat S) : IsAffine G.obj.X.l
 variable {R : Type u} [CommRing R]
 
 /-- Mathlib's Hopf-algebra structure on the global sections of an affine group scheme,
-restated over a bundled ring `S : CommRingCat` with the arguments explicit. Not
-redundant: the carrier `↥(CommRingCat.of R)` reduces to `R` before instance synthesis,
-after which unification cannot match the bundled instance head, so a plain-typed goal
-such as `HopfAlgebra R (Γ.obj (op G))` cannot find the instance directly; only an
-explicitly applied bundled-`S` form survives, with definitional unfolding closing the
-gap on application. `hopfAlgebraGamma` applies this form at `CommRingCat.of R`;
-inlining it there fails to elaborate. -/
-@[expose, instance_reducible] noncomputable def hopfAlgebraGammaOfOver
+applied at a bundled ring `S : CommRingCat` bound as a variable. Private elaboration
+shim, not API: the carrier `↥(CommRingCat.of R)` reduces to `R` before instance
+synthesis, after which unification cannot match the bundled instance head, so the
+plain-typed goal of `hopfAlgebraGamma` cannot find the instance directly and inlining
+this application there fails to elaborate; only the explicitly applied bundled-`S`
+form survives, with definitional unfolding closing the gap on application. -/
+@[instance_reducible] private noncomputable def hopfAlgebraGammaAux
     (S : CommRingCat.{u}) (G : Scheme.{u})
     [G.Over (Spec S)] [GrpObj (G.asOver (Spec S))] [IsAffine G] :
     HopfAlgebra S (Γ.obj (op G)) :=
@@ -80,22 +81,14 @@ inlining it there fails to elaborate. -/
 /-- The global sections of an affine group scheme `φ : G ⟶ Spec R` are a commutative
 `R`-Hopf algebra. This is the `Γ`-direction endpoint of the Layer 0 dictionary, stated
 for an arbitrary structure morphism `φ` with the group structure carried by the object
-`Over.mk φ` of schemes over `Spec R`. Not an instance, because `φ` is data that
-instance search cannot recover from the goal. -/
-@[expose, instance_reducible] noncomputable def hopfAlgebraGamma {G : Scheme.{u}}
+`Over.mk φ` of schemes over `Spec R` — a statement Mathlib's `Scheme.Over`-instance
+form cannot express directly. Not an instance, because `φ` is data that instance
+search cannot recover from the goal. -/
+@[instance_reducible] noncomputable def hopfAlgebraGamma {G : Scheme.{u}}
     (φ : G ⟶ Spec (CommRingCat.of R)) [GrpObj (Over.mk φ)] [IsAffine G] :
     HopfAlgebra R (Γ.obj (op G)) :=
   letI : G.Over (Spec (CommRingCat.of R)) := ⟨φ⟩
   letI : GrpObj (G.asOver (Spec (CommRingCat.of R))) := ‹GrpObj (Over.mk φ)›
-  hopfAlgebraGammaOfOver (CommRingCat.of R) G
-
-/-- `Spec A` is a group object in schemes over `Spec R`, for a commutative `R`-Hopf
-algebra `A`, with structure morphism `Spec (algebraMap R A)`. This is the
-`Spec`-direction endpoint of the Layer 0 dictionary, stated on the explicit object
-`Over.mk (Spec.map (algebraMap R A))`. -/
-@[expose, instance_reducible] noncomputable def grpObjSpec (A : Type u) [CommRing A]
-    [HopfAlgebra R A] : GrpObj (Over.mk (Spec.map (CommRingCat.ofHom (algebraMap R A)) :
-      Spec (CommRingCat.of A) ⟶ Spec (CommRingCat.of R))) :=
-  inferInstanceAs (GrpObj ((Spec (CommRingCat.of A)).asOver (Spec (CommRingCat.of R))))
+  hopfAlgebraGammaAux (CommRingCat.of R) G
 
 end TauCeti
