@@ -9,6 +9,7 @@ public import TauCeti.Probability.Exchangeability.Cylinder
 public import TauCeti.Probability.Exchangeability.Contractability
 public import TauCeti.Probability.Exchangeability.MixedIID.Basic
 public import TauCeti.Probability.DeFinetti.DirectingMeasure.Basic
+public import TauCeti.Probability.DeFinetti.DirectingMeasure.Integral
 public import Mathlib.Probability.Independence.Conditional
 public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 -- Non-public: used only inside proofs — the tail factorization
@@ -56,15 +57,9 @@ finite-block rectangle identity for `directingProbabilityMeasure μ X`, exactly 
 * `mixedIID_of_exchangeable` — the exchangeable form (via `contractable_of_exchangeable`).
 
 The `..._of_iCondIndepFun_tailProcess` theorems expose the intermediate reduction (de Finetti given
-tail conditional independence of the coordinates). The rectangle-mixture staging lemmas and the
-standard-Borel-`Ω` existential are `private` (proof staging), with two exceptions, which are shared
-with the joint-rectangle argument of `DeFinetti/JointRectangle.lean`:
-
-* `integrable_prod_directingMeasure_real` — the directing-measure product is `[0,1]`-valued and
-  measurable, hence integrable against a finite measure;
-* `ofReal_integral_eq_lintegral_prod_directingMeasure` — the real integral of that product is the
-  `ℝ≥0∞` one, factor by factor. It is stated for an arbitrary measure `ν`, so the set-integral form
-  used there is the instance `ν := μ.restrict A`.
+tail conditional independence of the coordinates). All of the rectangle-mixture staging lemmas and
+the standard-Borel-`Ω` existential are `private` (proof staging); the integrability and real/`ℝ≥0∞`
+conversion facts this file runs on are `DirectingMeasure/Integral.lean`.
 
 The reverse-martingale ("third") proof follows Kallenberg, *Probabilistic Symmetries and Invariance
 Principles*, Theorem 1.1 (pp. 26–28). Adapted from `cameronfreer/exchangeability`
@@ -122,40 +117,6 @@ theorem condExp_blockIndicatorProd_ae_eq_prod_of_iCondIndepFun_tailProcess
   filter_upwards [key] with ω hω
   rw [Finset.prod_apply]
   exact Finset.prod_congr rfl fun i _ => hω i
-
-/-- The directing-measure product is a `[0,1]`-valued measurable function, hence integrable against
-a finite measure. Only tail-measurability of the process and measurability of the blocks are
-used. -/
-lemma integrable_prod_directingMeasure_real [StandardBorelSpace α] [Nonempty α]
-    {μ : Measure Ω} [IsFiniteMeasure μ] {X : ℕ → Ω → α}
-    (hTail : tailProcess X ≤ mΩ) {r : ℕ} {B : Fin r → Set α}
-    (hB : ∀ i, MeasurableSet (B i)) :
-    Integrable (fun ω => ∏ i, (directingMeasure μ X ω).real (B i)) μ := by
-  have hg_meas : Measurable fun ω => ∏ i, (directingMeasure μ X ω).real (B i) :=
-    Finset.measurable_prod _ fun i _ =>
-      (measurable_directingMeasure_coe hTail (hB i)).ennreal_toReal
-  refine (integrable_const (1 : ℝ)).mono' hg_meas.aestronglyMeasurable (ae_of_all _ fun ω => ?_)
-  simp only [measureReal_def]
-  rw [Real.norm_of_nonneg (Finset.prod_nonneg fun i _ => ENNReal.toReal_nonneg)]
-  refine Finset.prod_le_one (fun i _ => ENNReal.toReal_nonneg) fun i _ => ?_
-  exact ENNReal.toReal_le_of_le_ofReal zero_le_one
-    (by rw [ENNReal.ofReal_one]; exact (measure_mono (Set.subset_univ _)).trans_eq measure_univ)
-
-/-- Push the real integral of the directing-measure product to the `ℝ≥0∞` one, factor by factor:
-each factor is a finite measure of a set, so `ofReal_toReal` applies. Stated for an arbitrary
-measure `ν`, so the set-integral form is the instance `ν := μ.restrict A`. -/
-lemma ofReal_integral_eq_lintegral_prod_directingMeasure [StandardBorelSpace α]
-    [Nonempty α] {μ : Measure Ω} [IsFiniteMeasure μ] {ν : Measure Ω} {X : ℕ → Ω → α} {r : ℕ}
-    {B : Fin r → Set α}
-    (hg_int : Integrable (fun ω => ∏ i, (directingMeasure μ X ω).real (B i)) ν) :
-    ENNReal.ofReal (∫ ω, ∏ i, (directingMeasure μ X ω).real (B i) ∂ν)
-      = ∫⁻ ω, ∏ i, directingMeasure μ X ω (B i) ∂ν := by
-  rw [ofReal_integral_eq_lintegral_ofReal hg_int
-    (ae_of_all _ fun ω => Finset.prod_nonneg fun i _ => ENNReal.toReal_nonneg)]
-  refine lintegral_congr fun ω => ?_
-  simp only [measureReal_def]
-  rw [ENNReal.ofReal_prod_of_nonneg fun i _ => ENNReal.toReal_nonneg]
-  exact Finset.prod_congr rfl fun i _ => ENNReal.ofReal_toReal (measure_ne_top _ _)
 
 /-- **Block law of a rectangle as a directing-measure mixture.** If the tail conditional expectation
 of the block-indicator product is a.e. the directing-measure product

@@ -42,8 +42,8 @@ supply that, all private.
 **The set-integral identity.** The mass on the tail event `ν ⁻¹' S` meeting a *prefix* block
 cylinder is the integral of the directing-measure product over that event. Since `ν` is
 `tailProcess`-measurable, `ν ⁻¹' S` is a tail event, so `setIntegral_condExp` may be tested against
-it and the prefix factorization replaces the conditional expectation. All real/`ℝ≥0∞` conversion is
-confined here.
+it and the prefix factorization replaces the conditional expectation. The real/`ℝ≥0∞` conversion it
+runs on is `DirectingMeasure/Integral.lean`, shared with `BlockFactorization`.
 
 **Symmetry transport.** A finitely supported permutation realising an injective selection on the
 initial segment carries the prefix identity to that selection. It fixes `ν`, because tail events lie
@@ -84,23 +84,12 @@ namespace Probability
 
 variable {Ω α : Type*} [MeasurableSpace Ω] [MeasurableSpace α]
 
--- Integrating the block indicator over a set is the real mass of the intersection: the indicator
--- of the cylinder integrates to its measure. Needs no tail structure and no directing measure.
-private lemma setIntegral_blockIndicatorProd_eq_measureReal {μ : Measure Ω}
-    {X : ℕ → Ω → α} {r : ℕ} {k : Fin r → ℕ} (hX_meas : ∀ i, Measurable (X (k i)))
-    {B : Fin r → Set α} (hB : ∀ i, MeasurableSet (B i)) (A : Set Ω) :
-    ∫ ω in A, blockIndicatorProd X k B ω ∂μ = μ.real (A ∩ blockCylinder X k B) := by
-  rw [blockIndicatorProd_eq_indicator,
-    setIntegral_indicator (measurableSet_blockCylinder hX_meas hB),
-    setIntegral_const, Set.inter_comm]
-  simp [measureReal_def]
-
 /-- **Core set-integral identity.** The mass on the tail event `ν ⁻¹' S` intersected with a prefix
 block cylinder is the integral of the directing-measure product over that event.
 
-All real/`ℝ≥0∞` conversion for the joint-rectangle argument is confined here: the tail event is
-`tailProcess X`-measurable, so `setIntegral_condExp` may be tested against it, and the prefix
-factorization then replaces the conditional expectation. -/
+The tail event is `tailProcess X`-measurable, so `setIntegral_condExp` may be tested against it, and
+the prefix factorization then replaces the conditional expectation; the real/`ℝ≥0∞` conversion is
+`ofReal_integral_eq_lintegral_prod_directingMeasure`. -/
 private theorem measure_inter_blockCylinder_eq_setLIntegral
     [StandardBorelSpace Ω] [StandardBorelSpace α] [Nonempty α] {μ : Measure Ω} [IsFiniteMeasure μ]
     {X : ℕ → Ω → α} (hX : Contractable μ X) (hX_meas : ∀ n, Measurable (X n))
@@ -130,9 +119,17 @@ private theorem measure_inter_blockCylinder_eq_setLIntegral
     filter_upwards
       [condExp_blockIndicatorProd_prefix_ae_eq_prod_directingMeasure hX hX_meas hB] with ω hω _
     exact hω
+  -- The left side is the real mass of the intersection, via the public block-indicator integral
+  -- read against the restricted measure.
+  have hleft : ∫ ω in A, blockIndicatorProd X (fun i : Fin r => (i : ℕ)) B ω ∂μ
+      = μ.real (A ∩ blockCylinder X (fun i : Fin r => (i : ℕ)) B) := by
+    rw [integral_blockIndicatorProd (μ := μ.restrict A) (fun i => (hX_meas _).aemeasurable) hB,
+      blockLaw_blockCylinder X (fun i => (hX_meas _).aemeasurable) hB,
+      Measure.restrict_apply (measurableSet_blockCylinder (fun i => hX_meas _) hB),
+      Set.inter_comm]
+    rfl
   have hne : μ (A ∩ blockCylinder X (fun i : Fin r => (i : ℕ)) B) ≠ ⊤ := measure_ne_top μ _
-  rw [← ENNReal.ofReal_toReal hne, ← measureReal_def,
-    ← setIntegral_blockIndicatorProd_eq_measureReal (fun i => hX_meas _) hB A, hchain,
+  rw [← ENNReal.ofReal_toReal hne, ← measureReal_def, ← hleft, hchain,
     ofReal_integral_eq_lintegral_prod_directingMeasure hg_int.restrict]
 
 -- A finitely supported reindexing pulls the prefix cylinder back to the `k`-cylinder, once the
