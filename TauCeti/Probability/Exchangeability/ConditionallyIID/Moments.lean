@@ -6,8 +6,8 @@ Authors: Claude
 module
 
 public import TauCeti.Probability.Exchangeability.ConditionallyIID.Basic
--- Non-public: `measurable_probabilityMeasure_apply_real` evaluates a random measure at a fixed
--- measurable set.
+-- Non-public: the `measurable_probabilityMeasure_toMeasure_apply` lemmas evaluate a random measure
+-- at a fixed measurable set, in the `ℝ≥0∞` and `.toReal` forms.
 import TauCeti.MeasureTheory.Measure.ProbabilityMeasureExt
 
 /-!
@@ -253,28 +253,6 @@ private theorem indicator_one_ne_top (s : Set Ω) (ω : Ω) :
 
 variable {X : ℕ → Ω → α} {ν : Ω → ProbabilityMeasure α} {B : Set α}
 
-/-- Measurability of the directing mass `ω ↦ (ν ω) B`: the directing map composed with evaluation
-at `B`. Only measurability of `ν` is used, not the disintegration it comes from. -/
-private theorem measurable_directingMass (hν : Measurable ν) (hB : MeasurableSet B) :
-    Measurable fun ω => (ν ω : Measure α) B :=
-  (Measure.measurable_coe hB).comp (measurable_subtype_coe.comp hν)
-
-/-- Measurability of the real-valued directing mass `ω ↦ ((ν ω) B).toReal`.
-
-`TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real` concludes measurability of the
-`ℝ≥0`-coercion form `fun P => (P B : ℝ)`, which is the *same function* as
-`fun P => ((P : Measure α) B).toReal`: the `ProbabilityMeasure` function coercion is
-`fun s => ((P : Measure α) s).toNNReal` by `ProbabilityMeasure.coeFn_def`, and
-`ENNReal.toReal` is by definition `fun a => (a.toNNReal : ℝ)`, so both sides reduce to
-`(((ν ω : Measure α) B).toNNReal : ℝ)`. Stating the `.toReal` form here keeps that unfolding in
-one place instead of at each consumer.
-
-Public: `ConditionallyIID/Unique.lean` needs the same bridge, and previously restated it as a
-local `have`. -/
-theorem measurable_directingMass_toReal (hν : Measurable ν) (hB : MeasurableSet B) :
-    Measurable fun ω => ((ν ω : Measure α) B).toReal :=
-  (TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hν
-
 /-- **First moment.** The integral of the indicator of `{Xᵢ ∈ B}` equals the integral of the
 directing measure's mass on `B`. (`μ` is an arbitrary measure here; under a probability measure
 this reads as the two having the same probability.) -/
@@ -284,7 +262,8 @@ private theorem ConditionallyIIDWith.integral_indicator_single
     ∫ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω ∂μ
       = ∫ ω, ((ν ω : Measure α) B).toReal ∂μ := by
   have hu : Measurable fun ω => (ν ω : Measure α) B :=
-    measurable_directingMass h.measurable_directing hB
+    (TauCeti.MeasureTheory.measurable_probabilityMeasure_toMeasure_apply hB).comp
+      h.measurable_directing
   have hlin : ∫⁻ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω ∂μ
       = ∫⁻ ω, (ν ω : Measure α) B ∂μ := by
     simpa using h.lintegral_mul_indicator_single (g := fun _ => 1) hX i measurable_const hB
@@ -301,7 +280,8 @@ private theorem ConditionallyIIDWith.integral_indicator_pair
     ∫ ω, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω * (X j ⁻¹' B).indicator (1 : Ω → ℝ) ω ∂μ
       = ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ := by
   have hu : Measurable fun ω => (ν ω : Measure α) B :=
-    measurable_directingMass h.measurable_directing hB
+    (TauCeti.MeasureTheory.measurable_probabilityMeasure_toMeasure_apply hB).comp
+      h.measurable_directing
   have hlin : ∫⁻ ω, (X i ⁻¹' B ∩ X j ⁻¹' B).indicator (1 : Ω → ℝ≥0∞) ω ∂μ
       = ∫⁻ ω, (ν ω : Measure α) B ^ 2 ∂μ := by
     simpa using h.lintegral_mul_indicator_pair (g := fun _ => 1) hX hij measurable_const hB
@@ -324,7 +304,8 @@ private theorem ConditionallyIIDWith.integral_directing_mul_indicator
     ∫ ω, ((ν ω : Measure α) B).toReal * (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω ∂μ
       = ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ := by
   have hu : Measurable fun ω => (ν ω : Measure α) B :=
-    measurable_directingMass h.measurable_directing hB
+    (TauCeti.MeasureTheory.measurable_probabilityMeasure_toMeasure_apply hB).comp
+      h.measurable_directing
   have hg : Measurable fun p : ProbabilityMeasure α => (p : Measure α) B :=
     (Measure.measurable_coe hB).comp measurable_subtype_coe
   have hlin := h.lintegral_mul_indicator_single (g := fun p => (p : Measure α) B) hX i hg hB
@@ -352,7 +333,8 @@ private theorem ConditionallyIIDWith.integral_indicator_sub_directing_mul_indica
         else 0 := by
   classical
   have hq : Measurable fun ω => ((ν ω : Measure α) B).toReal :=
-    measurable_directingMass_toReal h.measurable_directing hB
+    (TauCeti.MeasureTheory.measurable_probabilityMeasure_toMeasure_apply_toReal hB).comp
+      h.measurable_directing
   have he : ∀ i, AEMeasurable ((X i ⁻¹' B).indicator (1 : Ω → ℝ)) μ := fun i =>
     measurable_one.aemeasurable.indicator₀ ((hX i).nullMeasurableSet_preimage hB)
   have hb : ∀ i, ∀ᵐ ω ∂μ, 0 ≤ (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
@@ -401,7 +383,8 @@ theorem ConditionallyIIDWith.integral_empiricalFrequency_sub_sq [IsProbabilityMe
           - ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ) := by
   classical
   have hq : Measurable fun ω => ((ν ω : Measure α) B).toReal :=
-    measurable_directingMass_toReal h.measurable_directing hB
+    (TauCeti.MeasureTheory.measurable_probabilityMeasure_toMeasure_apply_toReal hB).comp
+      h.measurable_directing
   have he : ∀ i, AEMeasurable ((X i ⁻¹' B).indicator (1 : Ω → ℝ)) μ := fun i =>
     measurable_one.aemeasurable.indicator₀ ((hX i).nullMeasurableSet_preimage hB)
   -- the `[0, 1]` bounds feeding the `|·| ≤ 1` hypotheses of `integral_sq_average_sub`
@@ -425,7 +408,8 @@ theorem ConditionallyIIDWith.integral_empiricalFrequency_sub_sq_le [IsProbabilit
     ∫ ω, ((n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω)
           - ((ν ω : Measure α) B).toReal) ^ 2 ∂μ ≤ (n : ℝ)⁻¹ := by
   have hq : Measurable fun ω => ((ν ω : Measure α) B).toReal :=
-    measurable_directingMass_toReal h.measurable_directing hB
+    (TauCeti.MeasureTheory.measurable_probabilityMeasure_toMeasure_apply_toReal hB).comp
+      h.measurable_directing
   have hq0 : ∀ ω, 0 ≤ ((ν ω : Measure α) B).toReal := fun _ => ENNReal.toReal_nonneg
   have hq1 : ∀ ω, ((ν ω : Measure α) B).toReal ≤ 1 := fun _ => measureReal_le_one
   have hqint : Integrable (fun ω => ((ν ω : Measure α) B).toReal) μ :=
