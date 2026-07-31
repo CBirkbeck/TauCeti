@@ -56,8 +56,15 @@ finite-block rectangle identity for `directingProbabilityMeasure μ X`, exactly 
 * `mixedIID_of_exchangeable` — the exchangeable form (via `contractable_of_exchangeable`).
 
 The `..._of_iCondIndepFun_tailProcess` theorems expose the intermediate reduction (de Finetti given
-tail conditional independence of the coordinates). All of the rectangle-mixture staging lemmas and
-the standard-Borel-`Ω` existential are `private` (proof staging).
+tail conditional independence of the coordinates). The rectangle-mixture staging lemmas and the
+standard-Borel-`Ω` existential are `private` (proof staging), with two exceptions, which are shared
+with the joint-rectangle argument of `DeFinetti/JointRectangle.lean`:
+
+* `integrable_prod_directingMeasure_real` — the directing-measure product is `[0,1]`-valued and
+  measurable, hence integrable against a finite measure;
+* `ofReal_integral_eq_lintegral_prod_directingMeasure` — the real integral of that product is the
+  `ℝ≥0∞` one, factor by factor. It is stated for an arbitrary measure `ν`, so the set-integral form
+  used there is the instance `ν := μ.restrict A`.
 
 The reverse-martingale ("third") proof follows Kallenberg, *Probabilistic Symmetries and Invariance
 Principles*, Theorem 1.1 (pp. 26–28). Adapted from `cameronfreer/exchangeability`
