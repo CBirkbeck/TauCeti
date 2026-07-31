@@ -74,15 +74,18 @@ private lemma algHom_comp_antipode_mul_self {D : Type w} [Semiring D] [Algebra R
         ext c
         simp
 
-section Bialgebra
+section AlgebraCoalgebra
 
-variable {R : Type u} {C : Type v} [CommSemiring R] [Semiring C] [_root_.Bialgebra R C]
+variable {R : Type u} {C : Type v} [CommSemiring R] [Semiring C] [Algebra R C]
+  [_root_.Coalgebra R C]
 
 /-- **Comultiplication is the convolution product of the two tensor inclusions.** In the
 convolution monoid of maps `C →ₗ[R] C ⊗[R] C`, the product of `includeLeft` and `includeRight`
 multiplies the two legs of `Δ c` back together in order, which is `Δ` itself.
 
-No antipode is involved, so this holds over any bialgebra. -/
+Neither the antipode nor the bialgebra compatibility axioms are involved: the statement needs
+only the algebra structure (for the inclusions) and the coalgebra structure (for `Δ` and for the
+convolution product). -/
 private lemma comul_eq_convMul_includeLeft_includeRight :
     (toConv (Coalgebra.comul : C →ₗ[R] C ⊗[R] C) : WithConv (C →ₗ[R] C ⊗[R] C)) =
       toConv (Algebra.TensorProduct.includeLeft (R := R) (A := C) (B := C)).toLinearMap *
@@ -93,6 +96,8 @@ private lemma comul_eq_convMul_includeLeft_includeRight :
         (Algebra.TensorProduct.includeLeft (R := R) (A := C) (B := C)).toLinearMap
         (Algebra.TensorProduct.includeRight (R := R) (A := C) (B := C)).toLinearMap =
       LinearMap.id := by
+    -- Mathlib's `lmul'_comp_map` + `lift_includeLeft_includeRight` state this as an algebra-hom
+    -- identity, but bridging that to linear maps exceeds `maxHeartbeats`; see the PR discussion.
     apply TensorProduct.ext
     ext x y
     simp
@@ -100,7 +105,12 @@ private lemma comul_eq_convMul_includeLeft_includeRight :
   rw [← LinearMap.comp_assoc, hmul]
   simp
 
-end Bialgebra
+end AlgebraCoalgebra
+
+section HopfAlgebraStruct
+
+variable {R : Type u} {C : Type v} [CommSemiring R] [Semiring C]
+  [_root_.HopfAlgebraStruct R C]
 
 /-- **The proposed opposite comultiplication is the reversed convolution product.** Precomposing
 each inclusion with the antipode and multiplying them in the opposite order gives
@@ -128,6 +138,8 @@ private lemma antipode_comul_op_eq_convMul :
   simp only [LinearMap.convMul_def]
   have h := congrArg (fun f => f ∘ₗ (Coalgebra.comul (R := R) (A := C))) hmul
   simpa only [LinearMap.comp_assoc] using h.symm
+
+end HopfAlgebraStruct
 
 /-- **The proposed opposite comultiplication is a left convolution inverse of
 comultiplication.** Expanding both sides into convolution products of the tensor inclusions, the
