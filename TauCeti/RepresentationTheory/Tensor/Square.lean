@@ -176,7 +176,7 @@ private theorem snd_comp_conj_eq_comp_snd {R A B C : Type*} [CommRing R]
 
 -- An endomorphism of `A × C` that preserves the first summand, acting there as `fA`, and covers
 -- `fC` on the second, is block upper triangular: its only off-diagonal block is `C → A`.
-private theorem eq_prodMap_add_inl_comp_snd {R A C : Type*} [CommSemiring R]
+private theorem eq_prodMap_add_inl_comp_snd {R A C : Type*} [Semiring R]
     [AddCommMonoid A] [Module R A] [AddCommMonoid C] [Module R C]
     {fA : A →ₗ[R] A} {fC : C →ₗ[R] C} (F : (A × C) →ₗ[R] A × C)
     (hinl : F.comp (LinearMap.inl R A C) = (LinearMap.inl R A C).comp fA)
@@ -184,13 +184,16 @@ private theorem eq_prodMap_add_inl_comp_snd {R A C : Type*} [CommSemiring R]
     F = LinearMap.prodMap fA fC + (LinearMap.inl R A C).comp
       (((LinearMap.fst R A C).comp (F.comp (LinearMap.inr R A C))).comp
         (LinearMap.snd R A C)) := by
-  refine LinearMap.ext fun x => Prod.ext ?_ ?_
-  · have hsplit : x = (LinearMap.inl R A C) x.1 + (LinearMap.inr R A C) x.2 := by ext <;> simp
-    rw [hsplit, map_add, ← LinearMap.comp_apply, hinl]
-    simp
-  · simpa only [LinearMap.add_apply, LinearMap.prodMap_apply, LinearMap.comp_apply,
-      LinearMap.inl_apply, LinearMap.snd_apply, Prod.snd_add, add_zero] using
-        LinearMap.congr_fun hsnd x
+  refine LinearMap.prod_ext ?_ ?_
+  · -- On the `A` summand the off-diagonal block dies, since `snd ∘ inl = 0`.
+    rw [hinl]
+    refine LinearMap.ext fun a => ?_
+    simp [Prod.mk_zero_zero]
+  · -- On the `C` summand the first component is the off-diagonal block by definition, and the
+    -- second is `hsnd` read at `inr c`.
+    refine LinearMap.ext fun c => Prod.ext ?_ ?_
+    · simp
+    · simpa using LinearMap.congr_fun hsnd ((LinearMap.inr R A C) c)
 
 -- The trace of a block upper triangular endomorphism of `A × C` is the sum of the traces of its
 -- diagonal blocks: the off-diagonal `C → A` block composes to zero the other way round, so
