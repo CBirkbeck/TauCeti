@@ -43,6 +43,11 @@ The file also records the base second-derivative computation `laplacian_norm_sq`
 
 ## Main declarations
 
+* `TauCeti.affineIsometryEquiv_apply_eq_linearIsometryEquiv_add` and
+  `TauCeti.comp_affineIsometryEquiv_eq_comp_linearIsometryEquiv`: an affine isometry equivalence
+  is its linear part translated by its value at the origin, and the resulting factorisation of
+  right composition. These are what reduce the affine case below to the linear and translation
+  cases, and the companion harmonicity file uses them for the same reduction.
 * `TauCeti.laplacian_comp_affineIsometryEquiv_right`: `Δ (f ∘ e) = (Δ f) ∘ e` for an
   affine isometry equivalence `e`.
 * `TauCeti.laplacian_comp_linearIsometryEquiv_right`: `Δ (f ∘ l) = (Δ f) ∘ l` for an
@@ -110,23 +115,40 @@ theorem laplacian_comp_add_right (f : E → F) (a : E) :
   refine Finset.sum_congr rfl fun i _ ↦ ?_
   rw [iteratedFDeriv_comp_add_right']
 
+section AffineIsometryDecomposition
+
+variable {V W : Type*} [NormedAddCommGroup V] [NormedSpace ℝ V]
+  [NormedAddCommGroup W] [NormedSpace ℝ W]
+
+/-- **An affine isometry equivalence is its linear part translated by its value at the origin**:
+`e x = e.linearIsometryEquiv x + e 0`. This is `AffineIsometryEquiv.map_vadd` read at the base
+point `0`, where the `+ᵥ` action of a normed space on itself is addition. -/
+theorem affineIsometryEquiv_apply_eq_linearIsometryEquiv_add (e : V ≃ᵃⁱ[ℝ] W) (x : V) :
+    e x = e.linearIsometryEquiv x + e 0 := by
+  simpa using e.map_vadd (0 : V) x
+
+/-- **Right composition with an affine isometry equivalence factors through its linear part**:
+`f ∘ e = (f ∘ (· + e 0)) ∘ e.linearIsometryEquiv`. This is the reduction that lets a statement
+about `e` be assembled from the linear-isometry and translation cases; nothing is assumed about
+the codomain `F`. -/
+theorem comp_affineIsometryEquiv_eq_comp_linearIsometryEquiv {F : Type*} (e : V ≃ᵃⁱ[ℝ] W)
+    (f : W → F) :
+    f ∘ e = (fun y ↦ f (y + e 0)) ∘ e.linearIsometryEquiv := by
+  funext x
+  simp [Function.comp_apply, affineIsometryEquiv_apply_eq_linearIsometryEquiv_add e x]
+
+end AffineIsometryDecomposition
+
 /-- **Geometric invariance of the Laplacian under affine isometries.** For an affine isometry
 equivalence `e`, the Laplacian commutes with right composition by `e`:
 `Δ (f ∘ e) = (Δ f) ∘ e`. No differentiability hypothesis is needed. -/
 theorem laplacian_comp_affineIsometryEquiv_right (e : E ≃ᵃⁱ[ℝ] E') (f : E' → F) :
     Δ (f ∘ e) = (Δ f) ∘ e := by
-  have hcomp : f ∘ e = (fun y ↦ f (y + e 0)) ∘ e.linearIsometryEquiv := by
-    funext x
-    have hx : e x = e.linearIsometryEquiv x + e 0 := by
-      simpa using e.map_vadd (0 : E) x
-    simp [Function.comp_apply, hx]
-  rw [hcomp, laplacian_comp_linearIsometryEquiv_right e.linearIsometryEquiv
-      (fun y ↦ f (y + e 0)),
+  rw [comp_affineIsometryEquiv_eq_comp_linearIsometryEquiv e f,
+    laplacian_comp_linearIsometryEquiv_right e.linearIsometryEquiv (fun y ↦ f (y + e 0)),
     laplacian_comp_add_right f (e 0)]
   ext x
-  have hx : e x = e.linearIsometryEquiv x + e 0 := by
-    simpa using e.map_vadd (0 : E) x
-  simp [Function.comp_apply, hx]
+  simp [Function.comp_apply, affineIsometryEquiv_apply_eq_linearIsometryEquiv_add e x]
 
 /-- **Scaling law for the Laplacian under origin-centered dilation.**
 
