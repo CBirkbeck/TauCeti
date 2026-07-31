@@ -31,10 +31,41 @@ universe u
 
 /-- `Spec` as an anti-equivalence from commutative `S`-Hopf algebras onto affine group
 schemes over `Spec S`. The underlying functor is Mathlib's `AlgebraicGeometry.hopfSpec`,
-which is fully faithful with essential image the affine group schemes. -/
-noncomputable def commHopfAlgCatOpEquivAffineGroupSchemeCat (S : CommRingCat.{u}) :
+which is fully faithful with essential image the affine group schemes; the isomorphism
+`commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso` records this on the level
+of functors. -/
+@[expose] noncomputable def commHopfAlgCatOpEquivAffineGroupSchemeCat (S : CommRingCat.{u}) :
     (CommHopfAlgCat S)ᵒᵖ ≌ AffineGroupSchemeCat S :=
   (hopfSpec S).toEssImage.asEquivalence.trans
-    (ObjectProperty.fullSubcategoryCongr (funext fun _ => propext essImage_hopfSpec))
+    (ObjectProperty.fullSubcategoryCongr
+      (funext fun G => propext (essImage_hopfSpec.trans (affineGroupSchemeProperty_iff G).symm)))
+
+/-- The forward functor of `commHopfAlgCatOpEquivAffineGroupSchemeCat`, followed by the
+inclusion of the full subcategory, is `hopfSpec`: the anti-equivalence really does act
+by `Spec`. -/
+noncomputable def commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso
+    (S : CommRingCat.{u}) :
+    (commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor ⋙
+      (affineGroupSchemeProperty S).ι ≅ hopfSpec S :=
+  (hopfSpec S).toEssImageCompι
+
+/-- On objects, the anti-equivalence sends a commutative Hopf algebra to its `hopfSpec`
+group scheme. -/
+@[simp]
+lemma commHopfAlgCatOpEquivAffineGroupSchemeCat_functor_obj_obj (S : CommRingCat.{u})
+    (H : (CommHopfAlgCat S)ᵒᵖ) :
+    ((commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor.obj H).obj =
+      (hopfSpec S).obj H :=
+  rfl
+
+/-- On morphisms, the anti-equivalence acts as `hopfSpec` does, after inclusion into
+group objects in schemes over `Spec S`. -/
+@[simp]
+lemma commHopfAlgCatOpEquivAffineGroupSchemeCat_functor_map (S : CommRingCat.{u})
+    {H K : (CommHopfAlgCat S)ᵒᵖ} (f : H ⟶ K) :
+    (affineGroupSchemeProperty S).ι.map
+        ((commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor.map f) =
+      (hopfSpec S).map f :=
+  rfl
 
 end TauCeti
