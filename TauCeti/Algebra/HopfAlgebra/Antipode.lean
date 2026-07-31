@@ -74,79 +74,101 @@ private lemma algHom_comp_antipode_mul_self {D : Type w} [Semiring D] [Algebra R
         ext c
         simp
 
+section Bialgebra
+
+variable {R : Type u} {C : Type v} [CommSemiring R] [Semiring C] [_root_.Bialgebra R C]
+
+/-- **Comultiplication is the convolution product of the two tensor inclusions.** In the
+convolution monoid of maps `C →ₗ[R] C ⊗[R] C`, the product of `includeLeft` and `includeRight`
+multiplies the two legs of `Δ c` back together in order, which is `Δ` itself.
+
+No antipode is involved, so this holds over any bialgebra. -/
+private lemma comul_eq_convMul_includeLeft_includeRight :
+    (toConv (Coalgebra.comul : C →ₗ[R] C ⊗[R] C) : WithConv (C →ₗ[R] C ⊗[R] C)) =
+      toConv (Algebra.TensorProduct.includeLeft (R := R) (A := C) (B := C)).toLinearMap *
+        toConv (Algebra.TensorProduct.includeRight (R := R) (A := C) (B := C)).toLinearMap := by
+  apply WithConv.ofConv_injective
+  have hmul : LinearMap.mul' R (C ⊗[R] C) ∘ₗ
+      TensorProduct.map
+        (Algebra.TensorProduct.includeLeft (R := R) (A := C) (B := C)).toLinearMap
+        (Algebra.TensorProduct.includeRight (R := R) (A := C) (B := C)).toLinearMap =
+      LinearMap.id := by
+    apply TensorProduct.ext
+    ext x y
+    simp
+  simp only [LinearMap.convMul_def]
+  rw [← LinearMap.comp_assoc, hmul]
+  simp
+
+end Bialgebra
+
+/-- **The proposed opposite comultiplication is the reversed convolution product.** Precomposing
+each inclusion with the antipode and multiplying them in the opposite order gives
+`(S ⊗ S) ∘ swap ∘ Δ` — the right-hand side of `antipode_comul_antidistrib`. -/
+private lemma antipode_comul_op_eq_convMul :
+    (toConv (TensorProduct.map (antipode R) (antipode R) ∘ₗ
+        (TensorProduct.comm R C C).toLinearMap ∘ₗ Coalgebra.comul) :
+          WithConv (C →ₗ[R] C ⊗[R] C)) =
+      toConv ((Algebra.TensorProduct.includeRight (R := R) (A := C) (B := C)).toLinearMap ∘ₗ
+          antipode R) *
+        toConv ((Algebra.TensorProduct.includeLeft (R := R) (A := C) (B := C)).toLinearMap ∘ₗ
+          antipode R) := by
+  apply WithConv.ofConv_injective
+  have hmul : LinearMap.mul' R (C ⊗[R] C) ∘ₗ
+      TensorProduct.map
+        ((Algebra.TensorProduct.includeRight (R := R) (A := C) (B := C)).toLinearMap ∘ₗ
+          antipode R)
+        ((Algebra.TensorProduct.includeLeft (R := R) (A := C) (B := C)).toLinearMap ∘ₗ
+          antipode R) =
+      TensorProduct.map (antipode R) (antipode R) ∘ₗ
+        (TensorProduct.comm R C C).toLinearMap := by
+    apply TensorProduct.ext
+    ext x y
+    simp
+  simp only [LinearMap.convMul_def]
+  have h := congrArg (fun f => f ∘ₗ (Coalgebra.comul (R := R) (A := C))) hmul
+  simpa only [LinearMap.comp_assoc] using h.symm
+
+/-- **The proposed opposite comultiplication is a left convolution inverse of
+comultiplication.** Expanding both sides into convolution products of the tensor inclusions, the
+two inner factors cancel by `algHom_comp_antipode_mul_self`, leaving the outer pair to cancel in
+turn. -/
+private lemma antipode_comul_op_mul_comul :
+    (toConv (TensorProduct.map (antipode R) (antipode R) ∘ₗ
+        (TensorProduct.comm R C C).toLinearMap ∘ₗ Coalgebra.comul) :
+          WithConv (C →ₗ[R] C ⊗[R] C)) * toConv Coalgebra.comul = 1 := by
+  have hL := algHom_comp_antipode_mul_self (R := R) (C := C) (D := C ⊗[R] C)
+    (Algebra.TensorProduct.includeLeft : C →ₐ[R] C ⊗[R] C)
+  have hP := algHom_comp_antipode_mul_self (R := R) (C := C) (D := C ⊗[R] C)
+    (Algebra.TensorProduct.includeRight : C →ₐ[R] C ⊗[R] C)
+  -- Expand both factors. `congrArg₂` rather than `rw`, since `WithConv` is a type synonym:
+  -- rewriting under `toConv` would re-wrap the result through `ofConv`.
+  rw [congrArg₂ (· * ·) antipode_comul_op_eq_convMul
+    comul_eq_convMul_includeLeft_includeRight]
+  set L : WithConv (C →ₗ[R] C ⊗[R] C) :=
+    toConv (Algebra.TensorProduct.includeLeft (R := R) (A := C) (B := C)).toLinearMap
+  set P : WithConv (C →ₗ[R] C ⊗[R] C) :=
+    toConv (Algebra.TensorProduct.includeRight (R := R) (A := C) (B := C)).toLinearMap
+  set LS : WithConv (C →ₗ[R] C ⊗[R] C) := toConv
+    ((Algebra.TensorProduct.includeLeft (R := R) (A := C) (B := C)).toLinearMap ∘ₗ antipode R)
+  set PS : WithConv (C →ₗ[R] C ⊗[R] C) := toConv
+    ((Algebra.TensorProduct.includeRight (R := R) (A := C) (B := C)).toLinearMap ∘ₗ antipode R)
+  calc PS * LS * (L * P) = PS * (LS * L * P) := by simp only [mul_assoc]
+    _ = PS * P := by rw [hL, one_mul]
+    _ = 1 := hP
+
 /-- The antipode reverses comultiplication: after comultiplication, swap the tensor factors
 and apply the antipode to each of them. This is the coalgebraic counterpart of
-`HopfAlgebra.antipode_mul_antidistrib`. -/
+`HopfAlgebra.antipode_mul_antidistrib`.
+
+`antipode_comul_op_mul_comul` makes the right-hand side a left convolution inverse of `Δ`, and
+`LinearMap.comul_right_inv` makes `Δ ∘ₗ S` a right inverse; the two therefore coincide. -/
 theorem antipode_comul_antidistrib :
     Coalgebra.comul ∘ₗ antipode R =
       TensorProduct.map (antipode R) (antipode R) ∘ₗ
-        (TensorProduct.comm R C C).toLinearMap ∘ₗ Coalgebra.comul := by
-  let ιl : C →ₗ[R] C ⊗[R] C :=
-    Algebra.TensorProduct.includeLeft.toLinearMap
-  let ιr : C →ₗ[R] C ⊗[R] C :=
-    Algebra.TensorProduct.includeRight.toLinearMap
-  let Δ : WithConv (C →ₗ[R] C ⊗[R] C) :=
-    toConv Coalgebra.comul
-  let SΔop : WithConv (C →ₗ[R] C ⊗[R] C) :=
-    toConv
-      (TensorProduct.map (antipode R) (antipode R) ∘ₗ
-        (TensorProduct.comm R C C).toLinearMap ∘ₗ Coalgebra.comul)
-  let L : WithConv (C →ₗ[R] C ⊗[R] C) := toConv ιl
-  let P : WithConv (C →ₗ[R] C ⊗[R] C) := toConv ιr
-  let LS : WithConv (C →ₗ[R] C ⊗[R] C) :=
-    toConv (ιl ∘ₗ antipode R)
-  let PS : WithConv (C →ₗ[R] C ⊗[R] C) :=
-    toConv (ιr ∘ₗ antipode R)
-  -- Comultiplication is the convolution product of the two tensor inclusions.
-  have hmul_ιl_ιr :
-      LinearMap.mul' R (C ⊗[R] C) ∘ₗ TensorProduct.map ιl ιr =
-        LinearMap.id := by
-    apply TensorProduct.ext
-    ext x y
-    simp [ιl, ιr]
-  have hΔ : Δ = L * P := by
-    apply WithConv.ofConv_injective
-    simp only [Δ, L, P, LinearMap.convMul_def]
-    rw [← LinearMap.comp_assoc, hmul_ιl_ιr]
-    simp
-  -- Reversing the inclusions gives the proposed opposite comultiplication.
-  have hmul_ιrS_ιlS :
-      LinearMap.mul' R (C ⊗[R] C) ∘ₗ
-          TensorProduct.map (ιr ∘ₗ antipode R) (ιl ∘ₗ antipode R) =
-        TensorProduct.map (antipode R) (antipode R) ∘ₗ
-          (TensorProduct.comm R C C).toLinearMap := by
-    apply TensorProduct.ext
-    ext x y
-    simp [ιl, ιr]
-  have hSΔop : SΔop = PS * LS := by
-    apply WithConv.ofConv_injective
-    simp only [SΔop, PS, LS, LinearMap.convMul_def]
-    have h := congrArg (fun f => f ∘ₗ (Coalgebra.comul (R := R) (A := C)))
-      hmul_ιrS_ιlS
-    simpa only [LinearMap.comp_assoc] using h.symm
-  -- Each inclusion, precomposed with the antipode, is a left convolution inverse of itself.
-  have hLS : LS * L = 1 := by
-    simpa only [LS, L, ιl] using
-      (algHom_comp_antipode_mul_self
-        (R := R) (C := C) (D := C ⊗[R] C)
-        (Algebra.TensorProduct.includeLeft : C →ₐ[R] C ⊗[R] C))
-  have hPS : PS * P = 1 := by
-    simpa only [PS, P, ιr] using
-      (algHom_comp_antipode_mul_self
-        (R := R) (C := C) (D := C ⊗[R] C)
-        (Algebra.TensorProduct.includeRight : C →ₐ[R] C ⊗[R] C))
-  -- So the proposed opposite comultiplication is a left inverse of comultiplication, while
-  -- `LinearMap.comul_right_inv` makes `comul ∘ₗ antipode` a right inverse of it.
-  have hleft : SΔop * Δ = 1 := by
-    rw [hΔ, hSΔop]
-    calc
-      (PS * LS) * (L * P) = PS * ((LS * L) * P) := by
-        simp only [mul_assoc]
-      _ = PS * P := by rw [hLS, one_mul]
-      _ = 1 := hPS
-  -- A left inverse and a right inverse of the same element coincide.
-  exact (WithConv.toConv_injective
-    (left_inv_eq_right_inv hleft LinearMap.comul_right_inv)).symm
+        (TensorProduct.comm R C C).toLinearMap ∘ₗ Coalgebra.comul :=
+  (WithConv.toConv_injective
+    (left_inv_eq_right_inv antipode_comul_op_mul_comul LinearMap.comul_right_inv)).symm
 
 /-- Pointwise form of `antipode_comul_antidistrib`. -/
 @[simp]
