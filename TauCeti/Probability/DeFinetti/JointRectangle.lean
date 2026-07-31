@@ -158,20 +158,6 @@ private lemma blockCylinder_eq_preimage_permReindex {m : ℕ} {k : Fin m → ℕ
   simp only [Set.mem_preimage, mem_blockCylinder, permReindex]
   exact forall_congr' fun i => by rw [hπval i]
 
--- The directing measure is `pathTail`-measurable, hence measurable for the exchangeable
--- σ-algebra, hence fixed by any finitely supported reindexing; so every event it defines is
--- pulled back to itself.
-private lemma preimage_permReindex_preimage_directingProbabilityMeasure [StandardBorelSpace α]
-    [Nonempty α] {μ : Measure (ℕ → α)} [IsFiniteMeasure μ] {π : Equiv.Perm ℕ}
-    (hπfin : (MulAction.fixedBy ℕ π)ᶜ.Finite) (S : Set (ProbabilityMeasure α)) :
-    permReindex π ⁻¹' (directingProbabilityMeasure μ (fun j (x : ℕ → α) => x j) ⁻¹' S)
-      = directingProbabilityMeasure μ (fun j (x : ℕ → α) => x j) ⁻¹' S := by
-  have hνex : Measurable[exchangeableSigma α]
-      (directingProbabilityMeasure μ fun j (x : ℕ → α) => x j) :=
-    measurable_tailProcess_directingProbabilityMeasure.mono tail_le_exchangeableSigma le_rfl
-  rw [← Set.preimage_comp,
-    comp_permReindex_eq_of_measurable_exchangeableSigma hνex hπfin]
-
 -- Contractability of the coordinate process upgrades to exchangeability of the law itself: the
 -- path law of the coordinates is the measure, and contractable processes are mixed-IID.
 private lemma exchangeableLaw_of_contractable [StandardBorelSpace α] [Nonempty α]
@@ -206,7 +192,14 @@ private theorem measure_inter_blockCylinder_eq_setLIntegral_of_injective
   obtain ⟨π, hπfin, hπval⟩ := Equiv.Perm.exists_finite_compl_fixedBy_apply_eq
     (⟨Fin.val, Fin.val_injective⟩ : Fin m ↪ ℕ) ⟨k, hk⟩
   simp only [Function.Embedding.coeFn_mk] at hπval
-  have hSfix := preimage_permReindex_preimage_directingProbabilityMeasure (μ := μ) hπfin S
+  -- The directing measure is `pathTail`-measurable, hence measurable for the exchangeable
+  -- σ-algebra, hence fixed by the reindexing; so the event it defines is pulled back to itself.
+  have hSfix : permReindex π ⁻¹'
+      (directingProbabilityMeasure μ (fun j (x : ℕ → α) => x j) ⁻¹' S)
+      = directingProbabilityMeasure μ (fun j (x : ℕ → α) => x j) ⁻¹' S := by
+    rw [← Set.preimage_comp, comp_permReindex_eq_of_measurable_exchangeableSigma
+      (measurable_tailProcess_directingProbabilityMeasure.mono tail_le_exchangeableSigma le_rfl)
+      hπfin]
   have hcyl := blockCylinder_eq_preimage_permReindex (B := B) hπval
   have hmp : MeasurePreserving (permReindex (α := α) π) μ μ :=
     (exchangeableLaw_of_contractable hX).measurePreserving_permReindex π
