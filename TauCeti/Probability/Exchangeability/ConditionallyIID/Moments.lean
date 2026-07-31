@@ -259,6 +259,19 @@ private theorem measurable_directingMass (hν : Measurable ν) (hB : MeasurableS
     Measurable fun ω => (ν ω : Measure α) B :=
   (Measure.measurable_coe hB).comp (measurable_subtype_coe.comp hν)
 
+/-- Measurability of the real-valued directing mass `ω ↦ ((ν ω) B).toReal`.
+
+`TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real` concludes measurability of the
+`ℝ≥0`-coercion form `fun P => (P B : ℝ)`, which is the *same function* as
+`fun P => ((P : Measure α) B).toReal`: the `ProbabilityMeasure` function coercion is
+`fun s => ((P : Measure α) s).toNNReal` by `ProbabilityMeasure.coeFn_def`, and
+`ENNReal.toReal` is by definition `fun a => (a.toNNReal : ℝ)`, so both sides reduce to
+`(((ν ω : Measure α) B).toNNReal : ℝ)`. Stating the `.toReal` form here keeps that unfolding in
+one place instead of at each consumer. -/
+private theorem measurable_directingMass_toReal (hν : Measurable ν) (hB : MeasurableSet B) :
+    Measurable fun ω => ((ν ω : Measure α) B).toReal :=
+  (TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp hν
+
 /-- **First moment.** The integral of the indicator of `{Xᵢ ∈ B}` equals the integral of the
 directing measure's mass on `B`. (`μ` is an arbitrary measure here; under a probability measure
 this reads as the two having the same probability.) -/
@@ -336,7 +349,7 @@ private theorem ConditionallyIIDWith.integral_indicator_sub_directing_mul_indica
         else 0 := by
   classical
   have hq : Measurable fun ω => ((ν ω : Measure α) B).toReal :=
-    (TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp h.measurable_directing
+    measurable_directingMass_toReal h.measurable_directing hB
   have he : ∀ i, AEMeasurable ((X i ⁻¹' B).indicator (1 : Ω → ℝ)) μ := fun i =>
     measurable_one.aemeasurable.indicator₀ ((hX i).nullMeasurableSet_preimage hB)
   have hb : ∀ i, ∀ᵐ ω ∂μ, 0 ≤ (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω
@@ -385,7 +398,7 @@ theorem ConditionallyIIDWith.integral_empiricalFrequency_sub_sq [IsProbabilityMe
           - ∫ ω, ((ν ω : Measure α) B).toReal ^ 2 ∂μ) := by
   classical
   have hq : Measurable fun ω => ((ν ω : Measure α) B).toReal :=
-    (TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp h.measurable_directing
+    measurable_directingMass_toReal h.measurable_directing hB
   have he : ∀ i, AEMeasurable ((X i ⁻¹' B).indicator (1 : Ω → ℝ)) μ := fun i =>
     measurable_one.aemeasurable.indicator₀ ((hX i).nullMeasurableSet_preimage hB)
   -- the `[0, 1]` bounds feeding the `|·| ≤ 1` hypotheses of `integral_sq_average_sub`
@@ -409,7 +422,7 @@ theorem ConditionallyIIDWith.integral_empiricalFrequency_sub_sq_le [IsProbabilit
     ∫ ω, ((n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, (X i ⁻¹' B).indicator (1 : Ω → ℝ) ω)
           - ((ν ω : Measure α) B).toReal) ^ 2 ∂μ ≤ (n : ℝ)⁻¹ := by
   have hq : Measurable fun ω => ((ν ω : Measure α) B).toReal :=
-    (TauCeti.MeasureTheory.measurable_probabilityMeasure_apply_real hB).comp h.measurable_directing
+    measurable_directingMass_toReal h.measurable_directing hB
   have hq0 : ∀ ω, 0 ≤ ((ν ω : Measure α) B).toReal := fun _ => ENNReal.toReal_nonneg
   have hq1 : ∀ ω, ((ν ω : Measure α) B).toReal ≤ 1 := fun _ => measureReal_le_one
   have hqint : Integrable (fun ω => ((ν ω : Measure α) B).toReal) μ :=
