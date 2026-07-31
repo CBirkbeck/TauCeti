@@ -318,7 +318,7 @@ private lemma setIntegral_map_eq_setIntegral_preimage_of_condExp_comp
 
 /-- Doob–Dynkin for a conditional expectation on a comap σ-algebra: `μ[φ | comap W]` factors as
 `g ∘ W` for a strongly measurable `g`, integrable against the pushforward. -/
-private lemma exists_stronglyMeasurable_integrable_condExp_comap_eq_comp [IsFiniteMeasure μ]
+private lemma exists_stronglyMeasurable_integrable_condExp_comap_eq_comp
     {W : Ω → γ} (hW : Measurable W) (φ : Ω → ℝ) :
     ∃ g : γ → ℝ, StronglyMeasurable g ∧ Integrable g (Measure.map W μ) ∧
       μ[φ | MeasurableSpace.comap W inferInstance] = g ∘ W := by
@@ -334,7 +334,8 @@ private lemma exists_stronglyMeasurable_integrable_condExp_comap_eq_comp [IsFini
 /-- Push the square of a conditional expectation through its Doob–Dynkin factorisation: the
 integral of `μ[φ | comap W]²` against `μ` is the integral of `g²` against the pushforward. -/
 private lemma integral_mul_self_condExp_comap_eq_integral_sq_map
-    {W : Ω → γ} (hW : Measurable W) {g : γ → ℝ} (hg : StronglyMeasurable g) {φ : Ω → ℝ}
+    {W : Ω → γ} (hW : Measurable W) {g : γ → ℝ}
+    (hg : AEStronglyMeasurable g (Measure.map W μ)) {φ : Ω → ℝ}
     (hg_eq : μ[φ | MeasurableSpace.comap W inferInstance] = g ∘ W) :
     ∫ ω, (μ[φ | MeasurableSpace.comap W inferInstance]) ω
         * (μ[φ | MeasurableSpace.comap W inferInstance]) ω ∂μ
@@ -345,7 +346,7 @@ private lemma integral_mul_self_condExp_comap_eq_integral_sq_map
         refine integral_congr_ae (.of_forall fun ω => ?_)
         simp only [hg_eq, Function.comp_apply, pow_two]
     _ = ∫ y, (g y) ^ 2 ∂(Measure.map W μ) :=
-        (integral_map hW.aemeasurable (hg.pow 2).aestronglyMeasurable).symm
+        (integral_map hW.aemeasurable (hg.pow 2)).symm
 
 /-- The Doob–Dynkin factors of the two conditional expectations agree a.e. on the common law: the
 pair law makes their set-integrals over corresponding preimages match, and an integrable function
@@ -355,7 +356,8 @@ private lemma ae_eq_of_condExp_comap_comp_of_pair_law [IsFiniteMeasure μ]
     (hX : Measurable X) (hW : Measurable W) (hW' : Measurable W')
     (h_law : Measure.map (fun ω => (X ω, W ω)) μ = Measure.map (fun ω => (X ω, W' ω)) μ)
     {A : Set α} (hA : MeasurableSet A) {g₁ g₂ : γ → ℝ}
-    (hg₁_sm : StronglyMeasurable g₁) (hg₂_sm : StronglyMeasurable g₂)
+    (hg₁_sm : AEStronglyMeasurable g₁ (Measure.map W μ))
+    (hg₂_sm : AEStronglyMeasurable g₂ (Measure.map W' μ))
     (hg₁_int : Integrable g₁ (Measure.map W μ)) (hg₂_int : Integrable g₂ (Measure.map W μ))
     (hμ₁_eq : μ[(X ⁻¹' A).indicator (fun _ => (1 : ℝ))
       | MeasurableSpace.comap W inferInstance] = g₁ ∘ W)
@@ -369,14 +371,14 @@ private lemma ae_eq_of_condExp_comap_comp_of_pair_law [IsFiniteMeasure μ]
   refine Integrable.ae_eq_of_forall_setIntegral_eq g₁ g₂ hg₁_int hg₂_int fun B hB _ => ?_
   calc ∫ y in B, g₁ y ∂(Measure.map W μ)
       = ∫ ω in W ⁻¹' B, (X ⁻¹' A).indicator (fun _ => (1 : ℝ)) ω ∂μ :=
-        setIntegral_map_eq_setIntegral_preimage_of_condExp_comp hW hg₁_sm.aestronglyMeasurable
+        setIntegral_map_eq_setIntegral_preimage_of_condExp_comp hW hg₁_sm
           hφ_int hμ₁_eq hB
     _ = ∫ ω in W' ⁻¹' B, (X ⁻¹' A).indicator (fun _ => (1 : ℝ)) ω ∂μ :=
         setIntegral_indicator_preimage_eq_of_pair_law X W W' hX hW hW' h_law hA hB
     _ = ∫ y in B, g₂ y ∂(Measure.map W μ) := by
         rw [hρ_eq]
         exact (setIntegral_map_eq_setIntegral_preimage_of_condExp_comp
-          hW' hg₂_sm.aestronglyMeasurable hφ_int hμ₂_eq hB).symm
+          hW' hg₂_sm hφ_int hμ₂_eq hB).symm
 
 /-- Helper for Kallenberg 1.3: the square-integrals of the two conditional expectations agree. -/
 private lemma integral_sq_condExp_eq_of_pair_law [IsFiniteMeasure μ]
@@ -395,7 +397,6 @@ private lemma integral_sq_condExp_eq_of_pair_law [IsFiniteMeasure μ]
   have hρ_eq : Measure.map W μ = Measure.map W' μ :=
     marginal_law_eq_of_pair_law X W W' hX hW hW' h_law
   set φ : Ω → ℝ := (X ⁻¹' A).indicator (fun _ => (1 : ℝ)) with hφ_def
-  have hφ_int : Integrable φ μ := Integrable.indicator (integrable_const 1) (hX hA)
   -- Doob–Dynkin factorisation `μ₁ = g₁ ∘ W`, `μ₂ = g₂ ∘ W'`.
   obtain ⟨g₁, hg₁_sm, hg₁_int, hμ₁_eq⟩ :=
     exists_stronglyMeasurable_integrable_condExp_comap_eq_comp (μ := μ) hW φ
@@ -403,18 +404,19 @@ private lemma integral_sq_condExp_eq_of_pair_law [IsFiniteMeasure μ]
     exists_stronglyMeasurable_integrable_condExp_comap_eq_comp (μ := μ) hW' φ
   have hg₂_int' : Integrable g₂ (Measure.map W μ) := by rw [hρ_eq]; exact hg₂_int
   have hg_eq := ae_eq_of_condExp_comap_comp_of_pair_law X W W' hX hW hW' h_law hA
-    hg₁_sm hg₂_sm hg₁_int hg₂_int' hμ₁_eq hμ₂_eq
+    hg₁_sm.aestronglyMeasurable hg₂_sm.aestronglyMeasurable hg₁_int hg₂_int' hμ₁_eq hμ₂_eq
   -- Push the square through the two factorisations; the middle step is `hg_eq`.
   calc ∫ ω, (μ[φ | MeasurableSpace.comap W inferInstance]) ω
           * (μ[φ | MeasurableSpace.comap W inferInstance]) ω ∂μ
       = ∫ y, (g₁ y) ^ 2 ∂(Measure.map W μ) :=
-        integral_mul_self_condExp_comap_eq_integral_sq_map hW hg₁_sm hμ₁_eq
+        integral_mul_self_condExp_comap_eq_integral_sq_map hW hg₁_sm.aestronglyMeasurable hμ₁_eq
     _ = ∫ y, (g₂ y) ^ 2 ∂(Measure.map W μ) := by
         refine integral_congr_ae ?_; filter_upwards [hg_eq] with y hy; rw [hy]
     _ = ∫ y, (g₂ y) ^ 2 ∂(Measure.map W' μ) := by rw [hρ_eq]
     _ = ∫ ω, (μ[φ | MeasurableSpace.comap W' inferInstance]) ω
           * (μ[φ | MeasurableSpace.comap W' inferInstance]) ω ∂μ :=
-        (integral_mul_self_condExp_comap_eq_integral_sq_map hW' hg₂_sm hμ₂_eq).symm
+        (integral_mul_self_condExp_comap_eq_integral_sq_map hW'
+          hg₂_sm.aestronglyMeasurable hμ₂_eq).symm
 
 /-- Two real functions with equal integrals of their squares (`∫ g₁² = ∫ g₂²`) and matching cross
 integral (`∫ g₂ g₁ = ∫ g₁²`) are a.e. equal: the `L²` distance polarises to
