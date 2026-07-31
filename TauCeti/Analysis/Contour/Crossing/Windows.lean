@@ -29,7 +29,9 @@ scaffolding that localizes the principal-value analysis to one crossing per wind
 * `Contour.exists_common_window_radius` — the common window radius.
 * `Contour.exists_common_window_radius_le` — a common window radius additionally held below a
   positive per-crossing bound, with strict endpoint margins.
-* `Contour.eq_of_mem_window_of_eq` — in-window uniqueness of the crossing.
+* `Contour.eq_of_mem_window_of_eq_of_le_of_lt` — in-window uniqueness of the crossing, from
+  margins at that crossing alone.
+* `Contour.eq_of_mem_window_of_eq` — the same for a whole crossing family.
 * `Contour.eq_of_mem_window_of_eq_of_lt_of_two_mul_lt` — the same, from the strict margins
   returned by `exists_common_window_radius_le`.
 * `Contour.exists_window_dist_lower_bound` — a positive lower bound for `‖γ t - s‖` on the two
@@ -181,15 +183,17 @@ theorem exists_common_window_radius_le {a b : ℝ} {crossings : Finset ℝ}
     fun t ht t' ht' hne => by linarith [h_pair t ht t' ht' hne],
     fun t ht => le_of_lt (by simpa using hr_all (some ⟨t, ht⟩))⟩
 
-/-- **In-window uniqueness of the crossing**: if the window `[t_i - r, t_i + r]` lies inside
-`[a, b]`, every listed crossing other than `t_i` is more than `r` from `t_i`, and the listing is
-complete — every parameter of `[a, b]` where `γ` takes the value `s` is listed — then the only
-parameter of that window where `γ` takes the value `s` is `t_i` itself.
+/-- **In-window uniqueness of the crossing, from margins at that crossing alone.** If the window
+`[t_i - r, t_i + r]` lies inside `[a, b]`, every listed crossing other than `t_i` is more than
+`r` from `t_i`, and the listing is complete — every parameter of `[a, b]` where `γ` takes the
+value `s` is listed — then the only parameter of that window where `γ` takes the value `s` is
+`t_i` itself.
 
-Both margin hypotheses are pointwise at `t_i`; nothing is assumed about the other crossings'
-windows, and `t_i` need not itself be listed. Stated for a bare function; no regularity is
+This is the pointwise core: nothing is assumed about the other crossings' own windows, and
+`t_i` need not itself be listed. `eq_of_mem_window_of_eq` is the family-wide form, for callers
+holding margins for every crossing at once. Stated for a bare function; no regularity is
 used. -/
-theorem eq_of_mem_window_of_eq {α : Type*} {γ : ℝ → α} {s : α} {a b : ℝ}
+theorem eq_of_mem_window_of_eq_of_le_of_lt {α : Type*} {γ : ℝ → α} {s : α} {a b : ℝ}
     {crossings : Finset ℝ} {r t_i : ℝ}
     (h_endpts : a + r ≤ t_i ∧ t_i ≤ b - r)
     (h_pairwise : ∀ t' ∈ crossings, t' ≠ t_i → r < |t_i - t'|)
@@ -206,12 +210,29 @@ theorem eq_of_mem_window_of_eq {α : Type*} {γ : ℝ → α} {s : α} {a b : �
     exact ⟨by linarith [ht.1], by linarith [ht.2]⟩
   linarith [abs_nonneg (t_i - t)]
 
+/-- **In-window uniqueness of the crossing**: with windows inside `[a, b]`, distinct crossings
+more than `r` apart, and completeness — every parameter of `[a, b]` where `γ` takes the value
+`s` is a listed crossing — the only parameter of the window `[t_i - r, t_i + r]` where `γ`
+takes the value `s` is `t_i` itself. Stated for a bare function; no regularity is used.
+
+The family-wide form, for callers holding margins for every crossing at once; it reads them off
+at `t_i` and defers to `eq_of_mem_window_of_eq_of_le_of_lt`. -/
+theorem eq_of_mem_window_of_eq {α : Type*} {γ : ℝ → α} {s : α} {a b : ℝ}
+    {crossings : Finset ℝ} {r : ℝ}
+    (h_endpts : ∀ t ∈ crossings, a + r ≤ t ∧ t ≤ b - r)
+    (h_pairwise : ∀ t ∈ crossings, ∀ t' ∈ crossings, t' ≠ t → r < |t - t'|)
+    (h_complete : ∀ t ∈ Icc a b, γ t = s → t ∈ crossings)
+    {t_i : ℝ} (ht_i : t_i ∈ crossings)
+    {t : ℝ} (ht : t ∈ Icc (t_i - r) (t_i + r)) (h_eq : γ t = s) :
+    t = t_i :=
+  eq_of_mem_window_of_eq_of_le_of_lt (h_endpts t_i ht_i) (h_pairwise t_i ht_i) h_complete ht h_eq
+
 /-- **In-window uniqueness of the crossing, from a common window radius.** The variant of
-`eq_of_mem_window_of_eq` whose margins are the *strict* ones `exists_common_window_radius_le`
-returns, read off at `t_i`: `t_i` more than `r` inside the endpoints, and every other crossing
-more than `2 * r` from it. No sign condition on `r` is required — halving the pairwise margin
-needs `0 ≤ r`, but a negative radius leaves the window `[t_i - r, t_i + r]` empty, so `ht`
-supplies it. -/
+`eq_of_mem_window_of_eq_of_le_of_lt` whose margins are the *strict* ones
+`exists_common_window_radius_le` returns, read off at `t_i`: `t_i` more than `r` inside the
+endpoints, and every other crossing more than `2 * r` from it. No sign condition on `r` is
+required — halving the pairwise margin needs `0 ≤ r`, but a negative radius leaves the window
+`[t_i - r, t_i + r]` empty, so `ht` supplies it. -/
 theorem eq_of_mem_window_of_eq_of_lt_of_two_mul_lt {α : Type*} {γ : ℝ → α} {s : α} {a b : ℝ}
     {crossings : Finset ℝ} {r t_i : ℝ}
     (h_endpts : a + r < t_i ∧ t_i < b - r)
@@ -220,7 +241,7 @@ theorem eq_of_mem_window_of_eq_of_lt_of_two_mul_lt {α : Type*} {γ : ℝ → α
     {t : ℝ} (ht : t ∈ Icc (t_i - r) (t_i + r)) (h_eq : γ t = s) :
     t = t_i := by
   have hr : 0 ≤ r := by linarith [ht.1, ht.2]
-  exact eq_of_mem_window_of_eq ⟨h_endpts.1.le, h_endpts.2.le⟩
+  exact eq_of_mem_window_of_eq_of_le_of_lt ⟨h_endpts.1.le, h_endpts.2.le⟩
     (fun t' ht' hne => by linarith [h_pairwise t' ht' hne]) h_complete ht h_eq
 
 /-- **Positive distance bound on the half-windows**: when the crossing is unique in its window,
