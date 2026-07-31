@@ -96,18 +96,6 @@ theorem eventuallyEq_nhds_of_analyticOnNhd_ball {F G : ℂ → ℂ} {c : ℂ} {r
   eventually_of_mem (isOpen_ball.mem_nhds hw)
     (hF.eqOn_of_preconnected_of_eventuallyEq hG (convex_ball c r).isPreconnected hz h)
 
-/-- **Two overlapping discs of analyticity.** If `F` and `G` are analytic on discs sharing a
-point `z` at which their germs agree, then they agree on the whole overlap. The intersection of
-two balls is convex, hence preconnected, so the identity principle applies to it just as it does
-to a single ball in `eventuallyEq_nhds_of_analyticOnNhd_ball`. -/
-theorem eqOn_inter_ball_of_eventuallyEq {F G : ℂ → ℂ} {c₁ c₂ : ℂ} {r₁ r₂ : ℝ}
-    (hF : AnalyticOnNhd ℂ F (ball c₁ r₁)) (hG : AnalyticOnNhd ℂ G (ball c₂ r₂))
-    {z : ℂ} (hz₁ : z ∈ ball c₁ r₁) (hz₂ : z ∈ ball c₂ r₂) (h : F =ᶠ[𝓝 z] G) :
-    Set.EqOn F G (ball c₁ r₁ ∩ ball c₂ r₂) :=
-  (hF.mono Set.inter_subset_left).eqOn_of_preconnected_of_eventuallyEq
-    (hG.mono Set.inter_subset_right)
-    ((convex_ball _ _).inter (convex_ball _ _)).isPreconnected ⟨hz₁, hz₂⟩ h
-
 /-- **Germ agreement is locally constant.** If `F` and `G` are both analytic at `z`, then for all
 `w` near `z` the germs of `F` and `G` agree at `w` exactly when they agree at `z`. -/
 theorem eventually_eventuallyEq_iff_of_analyticAt {F G : ℂ → ℂ} {z : ℂ} (hF : AnalyticAt ℂ F z)

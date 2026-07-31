@@ -194,10 +194,14 @@ theorem exists_representatives (hf : IsAnalyticContinuationAlong f γ s) (hs : I
     filter_upwards [hcont, hloc t ht, self_mem_nhdsWithin] with u hud hju hus
     have hRu := hR u hus
     have hRt := hR t ht
+    -- The overlap of the two discs is convex, hence preconnected, so the identity principle
+    -- upgrades germ agreement at `γ u` to equality on all of it.
     have hEq : EqOn (f (i u)) (f (i t)) (ball (γ (i u)) (R u) ∩ ball (γ (i t)) (R t)) :=
-      eqOn_inter_ball_of_eventuallyEq (hra u hus) (hra t ht)
-        (mem_ball.2 (by have hdu := (key u hus).2; linarith))
-        (mem_ball.2 (by linarith [hju.2])) (((key u hus).1.symm).trans hju.1)
+      ((hra u hus).mono inter_subset_left).eqOn_of_preconnected_of_eventuallyEq
+        ((hra t ht).mono inter_subset_right)
+        ((convex_ball _ _).inter (convex_ball _ _)).isPreconnected
+        ⟨mem_ball.2 (by have hdu := (key u hus).2; linarith),
+          mem_ball.2 (by linarith [hju.2])⟩ (((key u hus).1.symm).trans hju.1)
     refine fun z hz => hEq ⟨?_, ?_⟩
     · refine ball_subset_ball' ?_ hz
       have htri : dist (γ t) (γ (i u)) ≤ dist (γ t) (γ u) + dist (γ u) (γ (i u)) := dist_triangle ..
