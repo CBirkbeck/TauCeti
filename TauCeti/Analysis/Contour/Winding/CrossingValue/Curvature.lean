@@ -68,10 +68,10 @@ variable {γ : ℝ → ℂ} {t₀ : ℝ} {A : ℂ}
 -- The second-order remainder `γ t - γ t₀ - (t - t₀) · L - (t - t₀)² · A / 2` differentiates to
 -- `deriv γ t - L - (t - t₀) · A`. Only differentiability of `γ` at the single point is used: no
 -- neighbourhood, no second derivative, and `L`, `A` are arbitrary.
-private theorem hasDerivAt_chordRemainder {L : ℂ} {t : ℝ} (hγt : HasDerivAt γ (deriv γ t) t) :
+private theorem hasDerivAt_chordRemainder {D L : ℂ} {t : ℝ} (hγt : HasDerivAt γ D t) :
     HasDerivAt (fun s : ℝ ↦ γ s - γ t₀ - ((s - t₀ : ℝ) : ℂ) * L
         - ((s - t₀ : ℝ) : ℂ) ^ 2 * (A / 2))
-      (deriv γ t - L - ((t - t₀ : ℝ) : ℂ) * A) t := by
+      (D - L - ((t - t₀ : ℝ) : ℂ) * A) t := by
   have hu : HasDerivAt (fun x : ℝ ↦ ((x - t₀ : ℝ) : ℂ)) 1 t := by
     simpa using (((hasDerivAt_id t).sub_const t₀).ofReal_comp)
   refine (((hγt.sub_const (γ t₀)).sub (hu.mul_const L)).sub
@@ -122,8 +122,9 @@ private theorem tendsto_chord_secondOrder
   set F : ℝ → ℂ :=
     fun t ↦ γ t - γ t₀ - ((t - t₀ : ℝ) : ℂ) * L - ((t - t₀ : ℝ) : ℂ) ^ 2 * (A / 2) with hF
   set F' : ℝ → ℂ := fun t ↦ deriv γ t - L - ((t - t₀ : ℝ) : ℂ) * A with hF'
-  have hff' : ∀ t ∈ V, HasDerivWithinAt F (F' t) V t := fun t ht =>
-    (hasDerivAt_chordRemainder (hball (Metric.mem_ball.1 ht)).hasDerivAt).hasDerivWithinAt
+  have hff' : ∀ t ∈ V, HasDerivWithinAt F (F' t) V t := fun t ht => by
+    simpa only [hF, hF'] using
+      (hasDerivAt_chordRemainder (hball (Metric.mem_ball.1 ht)).hasDerivAt).hasDerivWithinAt
   have hFo : F' =o[𝓝[V] t₀] fun t ↦ (t - t₀) ^ 1 := by
     have hlit := hasDerivAt_iff_isLittleO.1 hA
     refine (hlit.mono nhdsWithin_le_nhds).congr' ?_ (Eventually.of_forall fun t ↦ ?_)
