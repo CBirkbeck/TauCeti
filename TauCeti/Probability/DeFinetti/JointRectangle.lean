@@ -126,8 +126,7 @@ private theorem measure_inter_blockCylinder_eq_setLIntegral
     rw [integral_blockIndicatorProd (μ := μ.restrict A) (fun i => (hX_meas _).aemeasurable) hB,
       blockLaw_blockCylinder X (fun i => (hX_meas _).aemeasurable) hB,
       Measure.restrict_apply (measurableSet_blockCylinder (fun i => hX_meas _) hB),
-      Set.inter_comm]
-    rfl
+      Set.inter_comm, measureReal_def]
   have hne : μ (A ∩ blockCylinder X (fun i : Fin r => (i : ℕ)) B) ≠ ⊤ := measure_ne_top μ _
   rw [← ENNReal.ofReal_toReal hne, ← measureReal_def, ← hleft, hchain,
     ofReal_integral_eq_lintegral_prod_directingMeasure hg_int.restrict]
