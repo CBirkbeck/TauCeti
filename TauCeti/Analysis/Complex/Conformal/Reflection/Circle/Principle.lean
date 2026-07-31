@@ -82,7 +82,7 @@ private lemma mapsTo_inversion_exterior {Ω : Set ℂ} {c : ℂ} {r : ℝ} (hr :
 -- The target-centre avoidance extends from the open source disc to the closed one: on the
 -- boundary sphere `f` lands on the target circle, which has positive radius and so misses the
 -- target centre. Positivity of `r` is not needed.
-private lemma forall_ne_of_mem_closedBall {Ω : Set ℂ} {c d : ℂ} {r s : ℝ} {f : ℂ → ℂ} (hs : 0 < s)
+private lemma ne_of_mem_closedBall {Ω : Set ℂ} {c d : ℂ} {r s : ℝ} {f : ℂ → ℂ} (hs : 0 < s)
     (hboundary : MapsTo f (Ω ∩ sphere c r) (sphere d s))
     (havoid : ∀ z ∈ Ω ∩ ball c r, z ≠ c → f z ≠ d) :
     ∀ z ∈ Ω ∩ closedBall c r, z ≠ c → f z ≠ d := by
@@ -90,10 +90,7 @@ private lemma forall_ne_of_mem_closedBall {Ω : Set ℂ} {c d : ℂ} {r s : ℝ}
   by_cases hzr : dist z c < r
   · exact havoid z ⟨hz.1, by simpa [mem_ball] using hzr⟩ hzc
   · have heq : dist z c = r := le_antisymm (by simpa [mem_closedBall] using hz.2) (not_lt.mp hzr)
-    have htarget : dist (f z) d = s := hboundary ⟨hz.1, Metric.mem_sphere.mpr heq⟩
-    intro hfd
-    rw [hfd, dist_self] at htarget
-    linarith
+    exact Metric.ne_of_mem_sphere (hboundary ⟨hz.1, Metric.mem_sphere.mpr heq⟩) hs.ne'
 
 -- On the closed exterior the extension is the reflection conjugate, and that is continuous:
 -- inversion in the source circle is continuous there and lands in the closed source disc, where
@@ -135,7 +132,7 @@ theorem continuousOn_circleSchwarzReflection_of_symmetric {Ω : Set ℂ} {c d : 
       exact not_lt.mp fun h => hz (by simpa [mem_closedBall] using h.le)
     · exact isClosed_le continuous_const (continuous_id.dist continuous_const)
   have hreflected := continuousOn_circleReflectionConjugate_exterior (s := s) hr hsymm hcont
-    (forall_ne_of_mem_closedBall hs hboundary havoid)
+    (ne_of_mem_closedBall hs hboundary havoid)
   rw [circleSchwarzReflection_def]
   apply ContinuousOn.piecewise
   · intro z hz
