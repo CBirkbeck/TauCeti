@@ -151,28 +151,31 @@ private theorem toTensorPower_injective {R : Type} {M : Type*}
 
 -- Along a splitting `e` identifying `A` with the first summand via `i`, conjugating by `e` sends
 -- an endomorphism restricting to `fA` along `i` to one preserving that summand, acting as `fA`.
-private theorem conj_comp_inl_eq_inl_comp {R A B C : Type*} [CommSemiring R]
+private theorem conj_comp_inl_eq_inl_comp {R A B C : Type*} [Semiring R]
     [AddCommMonoid A] [Module R A] [AddCommMonoid B] [Module R B] [AddCommMonoid C] [Module R C]
     {i : A →ₗ[R] B} {fA : A →ₗ[R] A} {fB : B →ₗ[R] B} (e : B ≃ₗ[R] A × C)
     (hi : ∀ x : A, e.symm ((LinearMap.inl R A C) x) = i x) (hfi : fB.comp i = i.comp fA) :
-    (e.conj fB).comp (LinearMap.inl R A C) = (LinearMap.inl R A C).comp fA := by
+    (((e : B →ₗ[R] A × C).comp fB).comp (e.symm : (A × C) →ₗ[R] B)).comp (LinearMap.inl R A C)
+      = (LinearMap.inl R A C).comp fA := by
   have hi' : ∀ x : A, e (i x) = (LinearMap.inl R A C) x := fun x => by
     rw [← hi x, LinearEquiv.apply_symm_apply]
   refine LinearMap.ext fun a => ?_
-  simp only [LinearMap.comp_apply, LinearEquiv.conj_apply_apply, hi]
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, hi]
   rw [← LinearMap.comp_apply, hfi, LinearMap.comp_apply, hi']
 
 -- Dually, along a splitting `e` identifying `C` with the second summand via `q`, conjugating by
 -- `e` sends an endomorphism covering `fC` along `q` to one covering `fC` on that summand.
-private theorem snd_comp_conj_eq_comp_snd {R A B C : Type*} [CommSemiring R]
+private theorem snd_comp_conj_eq_comp_snd {R A B C : Type*} [Semiring R]
     [AddCommMonoid A] [Module R A] [AddCommMonoid B] [Module R B] [AddCommMonoid C] [Module R C]
     {q : B →ₗ[R] C} {fB : B →ₗ[R] B} {fC : C →ₗ[R] C} (e : B ≃ₗ[R] A × C)
     (hq : ∀ b : B, (LinearMap.snd R A C) (e b) = q b) (hfq : q.comp fB = fC.comp q) :
-    (LinearMap.snd R A C).comp (e.conj fB) = fC.comp (LinearMap.snd R A C) := by
+    (LinearMap.snd R A C).comp
+        (((e : B →ₗ[R] A × C).comp fB).comp (e.symm : (A × C) →ₗ[R] B))
+      = fC.comp (LinearMap.snd R A C) := by
   have hq' : ∀ x : A × C, q (e.symm x) = (LinearMap.snd R A C) x := fun x => by
     rw [← hq (e.symm x), LinearEquiv.apply_symm_apply]
   refine LinearMap.ext fun x => ?_
-  simp only [LinearMap.comp_apply, LinearEquiv.conj_apply_apply, hq]
+  simp only [LinearMap.comp_apply, LinearEquiv.coe_coe, hq]
   rw [← LinearMap.comp_apply, hfq, LinearMap.comp_apply, hq']
 
 -- Split an exact sequence as vector spaces. In that splitting the middle action is block
@@ -197,7 +200,7 @@ private theorem trace_eq_add_of_exact
   have hia : ∀ x : A, e.symm ((LinearMap.inl K A C) x) = i x := fun x => by rw [hie]; rfl
   have hsnd : ∀ b : B, (LinearMap.snd K A C) (e b) = q b := fun b => by rw [hqe]; rfl
   -- In that splitting `fB` becomes block upper triangular, so its trace splits.
-  rw [← LinearMap.trace_conj' fB e,
+  rw [← LinearMap.trace_conj' fB e, LinearEquiv.conj_apply,
     LinearMap.eq_prodMap_add_inl_comp_snd _ (conj_comp_inl_eq_inl_comp e hia hfi)
       (snd_comp_conj_eq_comp_snd e hsnd hfq),
     LinearMap.trace_prodMap_add_inl_comp_snd]
