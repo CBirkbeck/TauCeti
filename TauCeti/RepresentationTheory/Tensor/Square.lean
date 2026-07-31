@@ -148,6 +148,67 @@ private theorem toTensorPower_injective {R : Type} {M : Type*}
   simp only [exteriorPower.ιMultiDual, exteriorPower.ιMulti_family,
     pairingDual_ιMulti_apply, h]
 
+-- Along a splitting `e` identifying `A` with the first summand via `i`, conjugating by `e` sends
+-- an endomorphism restricting to `fA` along `i` to one preserving that summand, acting as `fA`.
+private theorem conj_comp_inl_eq_inl_comp {R A B C : Type*} [CommRing R]
+    [AddCommGroup A] [Module R A] [AddCommGroup B] [Module R B] [AddCommGroup C] [Module R C]
+    {i : A →ₗ[R] B} {fA : A →ₗ[R] A} {fB : B →ₗ[R] B} (e : B ≃ₗ[R] A × C)
+    (hi : ∀ x : A, e.symm ((LinearMap.inl R A C) x) = i x) (hfi : fB.comp i = i.comp fA) :
+    (e.conj fB).comp (LinearMap.inl R A C) = (LinearMap.inl R A C).comp fA := by
+  have hi' : ∀ x : A, e (i x) = (LinearMap.inl R A C) x := fun x => by
+    rw [← hi x, LinearEquiv.apply_symm_apply]
+  refine LinearMap.ext fun a => ?_
+  simp only [LinearMap.comp_apply, LinearEquiv.conj_apply_apply, hi]
+  rw [← LinearMap.comp_apply, hfi, LinearMap.comp_apply, hi']
+
+-- Dually, along a splitting `e` identifying `C` with the second summand via `q`, conjugating by
+-- `e` sends an endomorphism covering `fC` along `q` to one covering `fC` on that summand.
+private theorem snd_comp_conj_eq_comp_snd {R A B C : Type*} [CommRing R]
+    [AddCommGroup A] [Module R A] [AddCommGroup B] [Module R B] [AddCommGroup C] [Module R C]
+    {q : B →ₗ[R] C} {fB : B →ₗ[R] B} {fC : C →ₗ[R] C} (e : B ≃ₗ[R] A × C)
+    (hq : ∀ b : B, (LinearMap.snd R A C) (e b) = q b) (hfq : q.comp fB = fC.comp q) :
+    (LinearMap.snd R A C).comp (e.conj fB) = fC.comp (LinearMap.snd R A C) := by
+  have hq' : ∀ x : A × C, q (e.symm x) = (LinearMap.snd R A C) x := fun x => by
+    rw [← hq (e.symm x), LinearEquiv.apply_symm_apply]
+  refine LinearMap.ext fun x => ?_
+  simp only [LinearMap.comp_apply, LinearEquiv.conj_apply_apply, hq]
+  rw [← LinearMap.comp_apply, hfq, LinearMap.comp_apply, hq']
+
+-- An endomorphism of `A × C` that preserves the first summand, acting there as `fA`, and covers
+-- `fC` on the second, is block upper triangular: its only off-diagonal block is `C → A`.
+private theorem eq_prodMap_add_inl_comp_snd {R A C : Type*} [CommSemiring R]
+    [AddCommMonoid A] [Module R A] [AddCommMonoid C] [Module R C]
+    {fA : A →ₗ[R] A} {fC : C →ₗ[R] C} (F : (A × C) →ₗ[R] A × C)
+    (hinl : F.comp (LinearMap.inl R A C) = (LinearMap.inl R A C).comp fA)
+    (hsnd : (LinearMap.snd R A C).comp F = fC.comp (LinearMap.snd R A C)) :
+    F = LinearMap.prodMap fA fC + (LinearMap.inl R A C).comp
+      (((LinearMap.fst R A C).comp (F.comp (LinearMap.inr R A C))).comp
+        (LinearMap.snd R A C)) := by
+  refine LinearMap.ext fun x => Prod.ext ?_ ?_
+  · have hsplit : x = (LinearMap.inl R A C) x.1 + (LinearMap.inr R A C) x.2 := by ext <;> simp
+    rw [hsplit, map_add, ← LinearMap.comp_apply, hinl]
+    simp
+  · simpa only [LinearMap.add_apply, LinearMap.prodMap_apply, LinearMap.comp_apply,
+      LinearMap.inl_apply, LinearMap.snd_apply, Prod.snd_add, add_zero] using
+        LinearMap.congr_fun hsnd x
+
+-- The trace of a block upper triangular endomorphism of `A × C` is the sum of the traces of its
+-- diagonal blocks: the off-diagonal `C → A` block composes to zero the other way round, so
+-- `trace_comp_comm'` makes its contribution vanish.
+private theorem trace_prodMap_add_inl_comp_snd {R A C : Type*} [CommRing R]
+    [AddCommGroup A] [Module R A] [Module.Free R A] [Module.Finite R A]
+    [AddCommGroup C] [Module R C] [Module.Free R C] [Module.Finite R C]
+    (fA : A →ₗ[R] A) (fC : C →ₗ[R] C) (u : C →ₗ[R] A) :
+    LinearMap.trace R (A × C) (LinearMap.prodMap fA fC +
+        (LinearMap.inl R A C).comp (u.comp (LinearMap.snd R A C))) =
+      LinearMap.trace R A fA + LinearMap.trace R C fC := by
+  have hoff : LinearMap.trace R (A × C)
+      ((LinearMap.inl R A C).comp (u.comp (LinearMap.snd R A C))) = 0 := by
+    rw [LinearMap.trace_comp_comm']
+    have hz : (u.comp (LinearMap.snd R A C)).comp (LinearMap.inl R A C) = 0 := by ext a; simp
+    rw [hz, map_zero]
+  rw [map_add, LinearMap.trace_prodMap', hoff, add_zero]
+
 -- Split an exact sequence as vector spaces. In that splitting the middle action is block
 -- triangular, so its trace is the sum of the traces on the subspace and the quotient.
 private theorem trace_eq_add_of_exact
@@ -167,49 +228,13 @@ private theorem trace_eq_add_of_exact
   obtain ⟨s, hs⟩ := q.exists_rightInverse_of_surjective (LinearMap.range_eq_top.mpr hq)
   obtain ⟨e, hie, hqe⟩ :=
     (LinearMap.exact_iff.mpr hexact.symm).splitSurjectiveEquiv hi ⟨s, hs⟩
-  -- `B` inherits finite-dimensionality from the splitting, so it need not be assumed.
-  haveI : FiniteDimensional K B := e.symm.finiteDimensional
-  -- In that splitting `fB` becomes block upper triangular: it fixes the `A` summand, acting there
-  -- as `fA`, and covers `fC` on the `C` factor.
-  set F : (A × C) →ₗ[K] (A × C) := e.conj fB with hF_def
   have hia : ∀ x : A, e.symm ((LinearMap.inl K A C) x) = i x := fun x => by rw [hie]; rfl
-  have hie' : ∀ x : A, e (i x) = (LinearMap.inl K A C) x := fun x => by
-    rw [← hia x, LinearEquiv.apply_symm_apply]
-  have hF_inl : F.comp (LinearMap.inl K A C) = (LinearMap.inl K A C).comp fA := by
-    apply LinearMap.ext
-    intro a
-    simp only [LinearMap.comp_apply, hF_def, LinearEquiv.conj_apply_apply, hia]
-    rw [← LinearMap.comp_apply, hfi, LinearMap.comp_apply, hie']
   have hsnd : ∀ b : B, (LinearMap.snd K A C) (e b) = q b := fun b => by rw [hqe]; rfl
-  have hqsymm : ∀ x : A × C, q (e.symm x) = (LinearMap.snd K A C) x := fun x => by
-    rw [← hsnd (e.symm x), LinearEquiv.apply_symm_apply]
-  have hsndF : (LinearMap.snd K A C).comp F = fC.comp (LinearMap.snd K A C) := by
-    apply LinearMap.ext
-    intro x
-    simp only [LinearMap.comp_apply, hF_def, LinearEquiv.conj_apply_apply, hsnd]
-    rw [← LinearMap.comp_apply, hfq, LinearMap.comp_apply, hqsymm]
-  -- Triangularity: the only off-diagonal block is `C → A`. Composed the other way round it is
-  -- zero, so `trace_comp_comm'` makes its contribution vanish.
-  set u : C →ₗ[K] A := (LinearMap.fst K A C).comp (F.comp (LinearMap.inr K A C)) with hu_def
-  have hF : F = LinearMap.prodMap fA fC +
-      (LinearMap.inl K A C).comp (u.comp (LinearMap.snd K A C)) := by
-    apply LinearMap.ext
-    rintro ⟨a, c⟩
-    have hsplit : ((a, c) : A × C) = (LinearMap.inl K A C) a + (LinearMap.inr K A C) c := by
-      ext <;> simp
-    apply Prod.ext
-    · rw [hsplit, map_add, ← LinearMap.comp_apply, hF_inl]
-      simp [hu_def]
-    · simpa only [LinearMap.add_apply, LinearMap.prodMap_apply, LinearMap.comp_apply,
-        LinearMap.inl_apply, LinearMap.snd_apply, Prod.snd_add, add_zero] using
-          LinearMap.congr_fun hsndF (a, c)
-  have hoff : LinearMap.trace K (A × C)
-      ((LinearMap.inl K A C).comp (u.comp (LinearMap.snd K A C))) = 0 := by
-    rw [LinearMap.trace_comp_comm']
-    have hz : (u.comp (LinearMap.snd K A C)).comp (LinearMap.inl K A C) = 0 := by ext a; simp
-    rw [hz, map_zero]
-  rw [← LinearMap.trace_conj' fB e, ← hF_def, hF, map_add, LinearMap.trace_prodMap', hoff,
-    add_zero]
+  -- In that splitting `fB` becomes block upper triangular, so its trace splits.
+  rw [← LinearMap.trace_conj' fB e,
+    eq_prodMap_add_inl_comp_snd _ (conj_comp_inl_eq_inl_comp e hia hfi)
+      (snd_comp_conj_eq_comp_snd e hsnd hfq),
+    trace_prodMap_add_inl_comp_snd]
 
 end TauCeti.TensorSquare
 
