@@ -123,12 +123,16 @@ theorem exists_norm_eq_one_forall_eq_of_pseudoHyperbolicExpr_map_eq
   simp only [hgζ, hg0, zero_add, sub_zero, smul_eq_mul] at hval
   exact hval.trans (mul_comm _ _)
 
-/-- Multiplication by a constant of modulus one is a self-map of the open unit disc. -/
-private lemma mapsTo_ball_const_mul_of_norm_eq_one {C : ℂ} (hC : ‖C‖ = 1) :
+/-- Multiplication by a constant of modulus at most one is a self-map of the open unit disc:
+it is a contraction, so it cannot increase the distance to the centre. -/
+private lemma mapsTo_ball_const_mul_of_norm_le_one {C : ℂ} (hC : ‖C‖ ≤ 1) :
     MapsTo (fun η : ℂ => C * η) (ball (0 : ℂ) 1) (ball (0 : ℂ) 1) := by
   intro η hη
   rw [mem_ball_zero_iff] at hη ⊢
-  simpa [hC] using hη
+  have hle : ‖C * η‖ ≤ ‖η‖ := by
+    rw [norm_mul]
+    exact mul_le_of_le_one_left (norm_nonneg η) hC
+  exact hle.trans_lt hη
 
 /-- **The explicit inverse undoes `f` from the right.** If the Moebius factor at `a` conjugates
 `f` into the rotation by `C` composed with the Moebius factor at `w`, then the composite
@@ -147,7 +151,8 @@ private lemma rightInvOn_moebius_rotate_moebius_of_forall_eq {a C : ℂ} (ha : �
   have hC0 : C ≠ 0 := fun h => zero_ne_one (by rw [h, norm_zero] at hC; exact hC)
   have hnegw : ‖(-w : ℂ)‖ < 1 := by simpa using hw
   have hT_maps := mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one ha
-  have hR_maps := mapsTo_ball_const_mul_of_norm_eq_one (C := C⁻¹) (by rw [norm_inv, hC, inv_one])
+  have hR_maps := mapsTo_ball_const_mul_of_norm_le_one (C := C⁻¹)
+    (le_of_eq (by rw [norm_inv, hC, inv_one]))
   have hS_maps := mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := -w) hnegw
   have hTinj : InjOn (fun ζ : ℂ => (ζ - a) / (1 - (starRingEnd ℂ) a * ζ)) (ball (0 : ℂ) 1) :=
     (leftInvOn_unitDiscMoebiusFormula_of_norm_lt_one ha).injOn
@@ -194,7 +199,7 @@ theorem exists_differentiableOn_mapsTo_invOn_of_pseudoHyperbolicExpr_map_eq
   have hS_maps := mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := -w) hnegw
   have hR_diff : DifferentiableOn ℂ (fun η : ℂ => C⁻¹ * η) (ball (0 : ℂ) 1) :=
     differentiableOn_id.const_mul _
-  have hR_maps := mapsTo_ball_const_mul_of_norm_eq_one hCinv
+  have hR_maps := mapsTo_ball_const_mul_of_norm_le_one hCinv.le
   refine ⟨(fun ξ : ℂ => (ξ - (-w)) / (1 - (starRingEnd ℂ) (-w) * ξ)) ∘
       (fun η : ℂ => C⁻¹ * η) ∘
       (fun η : ℂ => (η - f w) / (1 - (starRingEnd ℂ) (f w) * η)), ?_, ?_, ?_, ?_⟩
