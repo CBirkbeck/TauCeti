@@ -222,8 +222,10 @@ private lemma exists_mem_repr_eq_one [IsSimpleRing A] {ι : Type*} (𝓑 : Basis
 
 -- Minimality forces the additive commutators to vanish. For each `a`, the commutator
 -- `(a ⊗ₜ 1) * y - y * (a ⊗ₜ 1)` lies in `I` and is supported in `S.erase i₀` — the `i₀` term
--- cancels because that coordinate of `y` is `1`, and everything off `S` was already zero — so it
--- has strictly smaller support than `y` and minimality kills it.
+-- cancels because that coordinate of `y` is `1`, and everything off `S` was already zero — so its
+-- support cardinality is strictly below `S.card` and the supplied minimality hypothesis kills it.
+-- (`S` is an arbitrary `Finset` here; the caller instantiates it at the support of the
+-- minimal-support element, which is what makes `hmin` available.)
 private lemma commute_tmul_one_of_repr_eq_one {ι : Type*} (𝓑 : Basis ι K B)
     {I : TwoSidedIdeal (A ⊗[K] B)} {S : Finset ι} {i₀ : ι} (hi₀ : i₀ ∈ S) {y : A ⊗[K] B}
     (hyI : y ∈ I) (hyS : ∀ j ∉ S, (Algebra.TensorProduct.basis A 𝓑).repr y j = 0)
