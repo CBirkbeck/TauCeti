@@ -233,10 +233,17 @@ variable [HopfAlgebra R H] [HopfAlgebra R K] [HopfAlgebra R L]
 @[simp]
 theorem map_map (I : HopfIdeal R H) (f : H →ₐc[R] K) (g : K →ₐc[R] L) :
     (I.map f).map g = I.map (g.comp f) :=
-  ext fun _ => by
-    rw [← mem_toIdeal, map_toIdeal, map_toIdeal, Ideal.map_map, ← mem_toIdeal, map_toIdeal,
-      show ((g.comp f : H →ₐc[R] L) : H →+* L) = (g : K →+* L).comp (f : H →+* K) from
-        RingHom.ext fun x => congrFun (BialgHom.coe_comp g f) x]
+  le_antisymm
+    (by
+      rw [← toIdeal_le_toIdeal, map_toIdeal, map_toIdeal, Ideal.map_map,
+        Ideal.map_le_iff_le_comap]
+      intro i hi
+      have h := mem_map_of_mem (g.comp f) (mem_toIdeal.mp hi)
+      rw [BialgHom.coe_comp] at h
+      exact Ideal.mem_comap.mpr (mem_toIdeal.mpr h))
+    (map_le_iff.mpr fun x hx => by
+      rw [BialgHom.coe_comp]
+      exact mem_map_of_mem g (mem_map_of_mem f hx))
 
 end Comp
 
