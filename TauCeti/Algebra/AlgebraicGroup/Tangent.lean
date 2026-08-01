@@ -174,6 +174,14 @@ noncomputable def dualNumberReduction :
   AlgHom.mapValue (TrivSqZeroExt.fstHom R (Bialgebra.CounitAlgebra R A B)
     (Bialgebra.CounitAlgebra R A B))
 
+@[simp]
+lemma dualNumberReduction_apply
+    (ψ : WithConv (A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B))) (x : A) :
+    (dualNumberReduction R A B ψ).ofConv x =
+      TrivSqZeroExt.fstHom R (Bialgebra.CounitAlgebra R A B)
+        (Bialgebra.CounitAlgebra R A B) (ψ.ofConv x) := by
+  simp [dualNumberReduction, AlgHom.mapValue_apply]
+
 end BialgebraCommTarget
 
 /-- Mirror of `Coalgebra.sum_counit_smul`: summing the counit of the right factors
