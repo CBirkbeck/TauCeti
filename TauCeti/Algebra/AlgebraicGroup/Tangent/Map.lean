@@ -87,8 +87,9 @@ noncomputable def tangentKerMap (φ : A' →ₐc[R] A) :
     rw [AlgHom.comp_apply]
     exact fst_mapDomain_of_mem_tangentKer φ ψ.2 a
 
-/-- The differential acts by precomposition on dual-number points. -/
-@[simp]
+/-- The differential acts by precomposition on dual-number points. Not a `simp` lemma:
+the pointwise form `tangentKerMap_apply_val_ofConv` is the canonical reduction rule, and
+tagging both would leave its left-hand side reducible. -/
 lemma tangentKerMap_apply_val (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) :
     (tangentKerMap φ ψ).val =
       AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ ψ.val := by
@@ -100,6 +101,7 @@ lemma tangentKerMap_apply_val (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) :
   rfl
 
 /-- The differential acts pointwise by precomposition of dual-number points. -/
+@[simp]
 lemma tangentKerMap_apply_val_ofConv (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) (a : A') :
     (tangentKerMap φ ψ).val.ofConv a = ψ.val.ofConv ((φ : A' →ₐ[R] A) a) := by
   rw [tangentKerMap_apply_val]
