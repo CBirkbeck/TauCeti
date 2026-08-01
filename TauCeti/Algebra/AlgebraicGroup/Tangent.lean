@@ -138,6 +138,33 @@ lemma Bialgebra.CounitAlgebra.toAlgHom_eq_one_ofConv :
   exact (Bialgebra.CounitAlgebra.algebraMap_apply R A B a).trans
     (AlgHom.convOne_apply a).symm
 
+@[simp]
+lemma derivationToDualNumberEquivCounitLift_apply_fst
+    (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) (a : A) :
+    TrivSqZeroExt.fst (R := Bialgebra.CounitAlgebra R A B)
+        ((derivationToDualNumberEquivCounitLift R A B d :
+          A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B)) a) =
+      algebraMap A (Bialgebra.CounitAlgebra R A B) a := by
+  simp [derivationToDualNumberEquivCounitLift]
+  rfl
+
+@[simp]
+lemma derivationToDualNumberEquivCounitLift_apply_snd
+    (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) (a : A) :
+    TrivSqZeroExt.snd (R := Bialgebra.CounitAlgebra R A B)
+        ((derivationToDualNumberEquivCounitLift R A B d :
+          A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B)) a) = d a := by
+  simp [derivationToDualNumberEquivCounitLift]
+
+@[simp]
+lemma derivationToDualNumberEquivCounitLift_symm_apply
+    (ψ : {ψ : A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B) //
+      (TrivSqZeroExt.fstHom R _ _).comp ψ =
+        IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B)}) (a : A) :
+    (derivationToDualNumberEquivCounitLift R A B).symm ψ a =
+      TrivSqZeroExt.snd (ψ.1 a) := by
+  simp [derivationToDualNumberEquivCounitLift]
+
 /-- Reduction of dual-number points to their classical part, as a homomorphism of
 convolution monoids: postcomposition with the infinitesimal augmentation `B[ε] → B`.
 For a Hopf algebra its kernel is the tangent space at the identity. -/
@@ -272,6 +299,7 @@ noncomputable def derivationMulEquivTangentKer :
 variable (R A B) in
 /-- Membership in the tangent subgroup: a dual-number point lies in `tangentKer` iff
 its classical part is the identity point of the tower. -/
+@[simp]
 lemma mem_tangentKer_iff {ψ : WithConv (A →ₐ[R] DualNumber (CounitAlgebra R A B))} :
     ψ ∈ tangentKer R A B ↔
       (fstHom R _ _).comp ψ.ofConv =
