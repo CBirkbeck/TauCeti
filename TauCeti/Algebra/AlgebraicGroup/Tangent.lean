@@ -16,7 +16,7 @@ monoid whenever the latter exists. This file packages `B` as an `A`-algebra thro
 (`Bialgebra.CounitAlgebra`), so that the dual-number dictionary
 `TauCeti.derivationToDualNumberEquivLift` applies verbatim: derivations of `A` at the
 identity point are the dual-number points lying over the identity
-(`derivationToDualNumberEquivCounitLift`).
+(the dictionary applied at `Bialgebra.CounitAlgebra`).
 
 For `A` a Hopf algebra and `B` commutative, the dual-number points form a convolution
 group, reduction of the infinitesimal part is a group homomorphism
@@ -109,16 +109,6 @@ lemma algEquivSelf_symm_apply (b : B) : (algEquivSelf R A B).symm b = b := by
 
 end Bialgebra.CounitAlgebra
 
-/-- The tangent space at the identity: derivations of `A` at the identity point are
-equivalent to dual-number points of `A` lying over the identity point. This is
-`derivationToDualNumberEquivLift` instantiated at the counit. -/
-noncomputable def derivationToDualNumberEquivCounitLift :
-    Derivation R A (Bialgebra.CounitAlgebra R A B) ≃
-      {ψ : A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B) //
-        (TrivSqZeroExt.fstHom R _ _).comp ψ =
-          IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B)} :=
-  derivationToDualNumberEquivLift R A (Bialgebra.CounitAlgebra R A B)
-
 end BialgebraPoint
 
 section BialgebraCommTarget
@@ -137,33 +127,6 @@ lemma Bialgebra.CounitAlgebra.toAlgHom_eq_one_ofConv :
   ext a
   exact (Bialgebra.CounitAlgebra.algebraMap_apply R A B a).trans
     (AlgHom.convOne_apply a).symm
-
-@[simp]
-lemma derivationToDualNumberEquivCounitLift_apply_fst
-    (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) (a : A) :
-    TrivSqZeroExt.fst (R := Bialgebra.CounitAlgebra R A B)
-        ((derivationToDualNumberEquivCounitLift R A B d :
-          A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B)) a) =
-      algebraMap A (Bialgebra.CounitAlgebra R A B) a := by
-  simp [derivationToDualNumberEquivCounitLift]
-  rfl
-
-@[simp]
-lemma derivationToDualNumberEquivCounitLift_apply_snd
-    (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) (a : A) :
-    TrivSqZeroExt.snd (R := Bialgebra.CounitAlgebra R A B)
-        ((derivationToDualNumberEquivCounitLift R A B d :
-          A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B)) a) = d a := by
-  simp [derivationToDualNumberEquivCounitLift]
-
-@[simp]
-lemma derivationToDualNumberEquivCounitLift_symm_apply
-    (ψ : {ψ : A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B) //
-      (TrivSqZeroExt.fstHom R _ _).comp ψ =
-        IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B)}) (a : A) :
-    (derivationToDualNumberEquivCounitLift R A B).symm ψ a =
-      TrivSqZeroExt.snd (ψ.1 a) := by
-  simp [derivationToDualNumberEquivCounitLift]
 
 /-- Reduction of dual-number points to their classical part, as a homomorphism of
 convolution monoids: postcomposition with the infinitesimal augmentation `B[ε] → B`.
@@ -278,31 +241,34 @@ dual-number points over the identity corresponds to addition of derivations. -/
 noncomputable def derivationMulEquivTangentKer :
     Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B)) ≃*
       tangentKer R A B where
-  toFun d := ⟨toConv (derivationToDualNumberEquivCounitLift R A B d.toAdd).1,
-    toConv_mem_ker_iff.mpr (derivationToDualNumberEquivCounitLift R A B d.toAdd).2⟩
-  invFun ψ := .ofAdd <| (derivationToDualNumberEquivCounitLift R A B).symm
+  toFun d := ⟨toConv
+      (derivationToDualNumberEquivLift R A (Bialgebra.CounitAlgebra R A B) d.toAdd).1,
+    toConv_mem_ker_iff.mpr
+      (derivationToDualNumberEquivLift R A (Bialgebra.CounitAlgebra R A B) d.toAdd).2⟩
+  invFun ψ := .ofAdd <| (derivationToDualNumberEquivLift R A (Bialgebra.CounitAlgebra R A B)).symm
     ⟨ψ.1.ofConv, toConv_mem_ker_iff.mp ψ.2⟩
   left_inv d :=
     congrArg Multiplicative.ofAdd <|
-      (derivationToDualNumberEquivCounitLift R A B).symm_apply_apply d.toAdd
+      (derivationToDualNumberEquivLift R A
+        (Bialgebra.CounitAlgebra R A B)).symm_apply_apply d.toAdd
   right_inv ψ := by
-    have h := (derivationToDualNumberEquivCounitLift R A B).apply_symm_apply
+    have h := (derivationToDualNumberEquivLift R A (Bialgebra.CounitAlgebra R A B)).apply_symm_apply
       ⟨ψ.1.ofConv, toConv_mem_ker_iff.mp ψ.2⟩
     rw [Subtype.ext_iff] at h
     exact Subtype.ext ((congrArg toConv h).trans (toConv_ofConv ψ.1))
   map_mul' d₁ d₂ := by
     have h₁ := toConv_mem_ker_iff.mpr
-      (derivationToDualNumberEquivCounitLift R A B d₁.toAdd).2
+      (derivationToDualNumberEquivLift R A (Bialgebra.CounitAlgebra R A B) d₁.toAdd).2
     have h₂ := toConv_mem_ker_iff.mpr
-      (derivationToDualNumberEquivCounitLift R A B d₂.toAdd).2
+      (derivationToDualNumberEquivLift R A (Bialgebra.CounitAlgebra R A B) d₂.toAdd).2
     have hprod := toConv_mem_ker_iff.mpr
-      (derivationToDualNumberEquivCounitLift R A B (d₁.toAdd + d₂.toAdd)).2
+      (derivationToDualNumberEquivLift R A (Bialgebra.CounitAlgebra R A B) (d₁.toAdd + d₂.toAdd)).2
     refine Subtype.ext (ofConv_injective (AlgHom.ext fun a => TrivSqZeroExt.ext ?_ ?_))
     · exact (fst_apply_of_mem_ker hprod a).trans
         (fst_apply_of_mem_ker (mul_mem h₁ h₂) a).symm
     · simp only [MulMemClass.mk_mul_mk]
       rw [snd_convMul_apply h₁ h₂ a]
-      simp [derivationToDualNumberEquivCounitLift]
+      simp
 
 variable (R A B) in
 /-- Membership in the tangent subgroup: a dual-number point lies in `tangentKer` iff
@@ -320,7 +286,7 @@ lemma derivationMulEquivTangentKer_apply_fst
     fst (R := CounitAlgebra R A B)
         ((derivationMulEquivTangentKer R A B d).val.ofConv a) =
       algebraMap A (CounitAlgebra R A B) a := by
-  simp [derivationMulEquivTangentKer, derivationToDualNumberEquivCounitLift,
+  simp [derivationMulEquivTangentKer,
     derivationToDualNumberEquivLift_apply_fst]
   rfl
 
@@ -329,14 +295,14 @@ lemma derivationMulEquivTangentKer_apply_snd
     (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) (a : A) :
     snd (R := CounitAlgebra R A B)
         ((derivationMulEquivTangentKer R A B d).val.ofConv a) = d.toAdd a := by
-  simp [derivationMulEquivTangentKer, derivationToDualNumberEquivCounitLift,
+  simp [derivationMulEquivTangentKer,
     derivationToDualNumberEquivLift_apply_snd]
 
 @[simp]
 lemma derivationMulEquivTangentKer_symm_apply
     (ψ : tangentKer R A B) (a : A) :
     ((derivationMulEquivTangentKer R A B).symm ψ).toAdd a = snd (ψ.val.ofConv a) := by
-  simp [derivationMulEquivTangentKer, derivationToDualNumberEquivCounitLift,
+  simp [derivationMulEquivTangentKer,
     derivationToDualNumberEquivLift_symm_apply]
 
 /-- The tangent subgroup is abelian: first-order infinitesimal points commute. -/
