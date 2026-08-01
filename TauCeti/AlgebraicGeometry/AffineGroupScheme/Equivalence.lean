@@ -33,11 +33,8 @@ universe u
 schemes over `Spec S`. The underlying functor is Mathlib's `AlgebraicGeometry.hopfSpec`,
 which is fully faithful with essential image the affine group schemes; the isomorphism
 `commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso` records this on the level
-of functors. -/
--- `@[expose]` is load-bearing, not a leak: the exported `rfl`-lemmas below unfold this
--- definition, and the module system rejects an exported `rfl`-proof whose unfolding
--- chain is not exposed ("all definitions that need to be unfolded ... must be exposed").
-@[expose] noncomputable def commHopfAlgCatOpEquivAffineGroupSchemeCat (S : CommRingCat.{u}) :
+of functors, and is the intended interface for computing with the equivalence. -/
+noncomputable def commHopfAlgCatOpEquivAffineGroupSchemeCat (S : CommRingCat.{u}) :
     (CommHopfAlgCat S)ᵒᵖ ≌ AffineGroupSchemeCat S :=
   (hopfSpec S).toEssImage.asEquivalence.trans
     (ObjectProperty.fullSubcategoryCongr
@@ -45,29 +42,12 @@ of functors. -/
 
 /-- The forward functor of `commHopfAlgCatOpEquivAffineGroupSchemeCat`, followed by the
 inclusion of the full subcategory, is `hopfSpec`: the anti-equivalence really does act
-by `Spec`. -/
+by `Spec`. Consumers should transport along this isomorphism (and its `app` components
+and naturality squares) rather than unfold the equivalence. -/
 noncomputable def commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso
     (S : CommRingCat.{u}) :
     (commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor ⋙
       (affineGroupSchemeProperty S).ι ≅ hopfSpec S :=
   (hopfSpec S).toEssImageCompι
-
-/-- On objects, the anti-equivalence sends a commutative Hopf algebra to its `hopfSpec`
-group scheme. -/
-@[simp]
-lemma commHopfAlgCatOpEquivAffineGroupSchemeCat_functor_obj_obj (S : CommRingCat.{u})
-    (H : (CommHopfAlgCat S)ᵒᵖ) :
-    ((commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor.obj H).obj =
-      (hopfSpec S).obj H :=
-  rfl
-
-/-- On morphisms, the anti-equivalence acts as `hopfSpec` does: the underlying morphism
-of the image of `f` is `(hopfSpec S).map f`. -/
-@[simp]
-lemma commHopfAlgCatOpEquivAffineGroupSchemeCat_functor_map (S : CommRingCat.{u})
-    {H K : (CommHopfAlgCat S)ᵒᵖ} (f : H ⟶ K) :
-    ((commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor.map f).hom =
-      (hopfSpec S).map f :=
-  rfl
 
 end TauCeti
