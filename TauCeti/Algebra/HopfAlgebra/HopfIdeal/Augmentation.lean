@@ -40,18 +40,13 @@ universe u v
 
 variable (R : Type u) (H : Type v) [CommRing R] [Ring H] [HopfAlgebra R H]
 
-/-- The counit of a Hopf algebra, as a bialgebra morphism, is surjective: it is split by
-the unit. -/
-theorem counitBialgHom_surjective :
-    Function.Surjective (Bialgebra.counitBialgHom R H) := fun r =>
-  ⟨algebraMap R H r, by simp⟩
-
-/-- The augmentation Hopf ideal of a Hopf algebra: the kernel of the counit.
+/-- The augmentation Hopf ideal of a Hopf algebra: the kernel of the counit, which is
+surjective since the unit splits it (`Bialgebra.counit_surjective`).
 
 The ring hypotheses come from the kernel Hopf ideal construction, whose coideal condition
 uses tensor-kernel exactness. -/
 noncomputable def augmentation : HopfIdeal R H :=
-  ker (Bialgebra.counitBialgHom R H) (counitBialgHom_surjective R H)
+  ker (Bialgebra.counitBialgHom R H) Bialgebra.counit_surjective
 
 /-- Membership in the augmentation ideal is vanishing of the counit. -/
 @[simp]
