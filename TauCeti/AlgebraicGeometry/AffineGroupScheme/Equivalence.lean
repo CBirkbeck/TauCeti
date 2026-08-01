@@ -47,11 +47,17 @@ and naturality squares) rather than unfold the equivalence. -/
 noncomputable def commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso
     (S : CommRingCat.{u}) :
     (commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor ⋙
-      (affineGroupSchemeProperty S).ι ≅ hopfSpec S :=
-  Functor.associator (hopfSpec S).toEssImage
-      (ObjectProperty.ιOfLE fun G hG => (affineGroupSchemeProperty_iff G).mpr
-        (essImage_hopfSpec.mp hG))
-      (affineGroupSchemeProperty S).ι ≪≫
+      (affineGroupSchemeProperty S).ι ≅ hopfSpec S := by
+  -- The equivalence is built as `toEssImage.asEquivalence.trans (fullSubcategoryCongr _)`,
+  -- so its forward functor is, by definition of `Equivalence.trans`, `asEquivalence`, and
+  -- `fullSubcategoryCongr`, the composite `toEssImage ⋙ ιOfLE _`. This `change` performs
+  -- that unavoidable reduction once, explicitly; the isomorphism is then assembled from
+  -- the public whiskering API.
+  change ((hopfSpec S).toEssImage ⋙
+      ObjectProperty.ιOfLE fun G hG => (affineGroupSchemeProperty_iff G).mpr
+        (essImage_hopfSpec.mp hG)) ⋙
+      (affineGroupSchemeProperty S).ι ≅ hopfSpec S
+  exact Functor.associator _ _ _ ≪≫
     Functor.isoWhiskerLeft (hopfSpec S).toEssImage (ObjectProperty.ιOfLECompιIso _) ≪≫
     (hopfSpec S).toEssImageCompι
 
