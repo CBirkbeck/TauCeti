@@ -439,21 +439,28 @@ private lemma exists_circle_toUnitDisc_eq_of_nonneg {γ : ℝ → PoincareDisc} 
         exact hne 1 one_ne_zero heq
       refine ⟨θ⁻¹, inv_nonneg.mpr hθ.1, ?_⟩
       rw [heq, Complex.ofReal_inv, inv_mul_cancel_left₀ (Complex.ofReal_ne_zero.mpr hθ0)]
+  -- The direction is already named by `exists_radialGeodesic_eq` at the point `γ 1`, whose
+  -- distance to the origin is `1` because `γ` is an isometry fixing it.
+  have hd1 : dist (γ 1) (Complex.UnitDisc.toPoincare 0) = 1 := by
+    rw [← h0, hγ.dist_eq, Real.dist_eq, sub_zero, abs_one]
+  obtain ⟨u, hu1⟩ := exists_radialGeodesic_eq (γ 1)
+  rw [hd1] at hu1
+  have hu : (toUnitDisc (γ 1) : ℂ) = (u : ℂ) * ((Real.tanh 1 : ℝ) : ℂ) := by
+    rw [← hu1, coe_radialGeodesic]
+  have htanh1 : ((Real.tanh 1 : ℝ) : ℂ) ≠ 0 := by
+    refine Complex.ofReal_ne_zero.mpr fun hzero => one_ne_zero (α := ℝ) ?_
+    exact Real.tanh_injective (hzero.trans Real.tanh_zero.symm)
   have hpos1 : 0 < ‖(toUnitDisc (γ 1) : ℂ)‖ := norm_pos_iff.mpr (hne 1 one_ne_zero)
-  obtain ⟨u, hu⟩ : ∃ u : Circle,
-      (u : ℂ) = (toUnitDisc (γ 1) : ℂ) / ((‖(toUnitDisc (γ 1) : ℂ)‖ : ℝ) : ℂ) :=
-    ⟨⟨_, mem_sphere_zero_iff_norm.2 (by
-      rw [norm_div, Complex.norm_real, Real.norm_eq_abs, abs_of_pos hpos1,
-        div_self hpos1.ne'])⟩, rfl⟩
   have hX1 : ((‖(toUnitDisc (γ 1) : ℂ)‖ : ℝ) : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hpos1.ne'
   refine ⟨u, fun t ht => ?_⟩
   obtain ⟨κ, hκ, heq⟩ := hray t ht
   have hn : ‖(toUnitDisc (γ t) : ℂ)‖ = κ * ‖(toUnitDisc (γ 1) : ℂ)‖ := by
     rw [heq, norm_mul, Complex.norm_real, Real.norm_eq_abs, abs_of_nonneg hκ]
-  have hκval : (κ : ℂ) = ((Real.tanh t : ℝ) : ℂ) / ((‖(toUnitDisc (γ 1) : ℂ)‖ : ℝ) : ℂ) := by
-    rw [eq_div_iff hX1, ← Complex.ofReal_mul, ← hn, hnorm t, abs_of_nonneg ht]
-  rw [heq, hu, hκval]
-  field_simp
+  have hnorm1 : ‖(toUnitDisc (γ 1) : ℂ)‖ = Real.tanh 1 := by
+    rw [hnorm 1, abs_one]
+  have hκval : (κ : ℂ) * ((Real.tanh 1 : ℝ) : ℂ) = ((Real.tanh t : ℝ) : ℂ) := by
+    rw [← Complex.ofReal_mul, ← hnorm1, ← hn, hnorm t, abs_of_nonneg ht]
+  rw [heq, hu, ← mul_assoc, mul_comm (κ : ℂ) (u : ℂ), mul_assoc, hκval]
 
 -- Opposite times sit on opposite radii. The origin is *between* `γ (-s)` and `γ s`, so the two
 -- lie on a common Euclidean line through `0`; equal norms then force the segment parameters to be
