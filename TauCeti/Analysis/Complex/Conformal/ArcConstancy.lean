@@ -112,13 +112,13 @@ private lemma exists_mem_ball_of_mem_sphere {c w : ℂ} {r δ : ℝ} (hr : 0 < r
 any ball contained in `V`: the two branches agree along the circle, which is the frontier of the
 closed disc, and there `f` is the constant `a` by hypothesis. -/
 private lemma continuousOn_piecewise_sub_const {w : ℂ} {δ : ℝ}
-    [∀ z, Decidable (z ∈ closedBall c r)] (hr : 0 < r) (hδV : ball w δ ⊆ V)
+    [∀ z, Decidable (z ∈ closedBall c r)] (hr : r ≠ 0) (hδV : ball w δ ⊆ V)
     (hcont : ContinuousOn f (V ∩ closedBall c r))
     (harc : EqOn f (fun _ => a) (V ∩ sphere c r)) :
     ContinuousOn ((closedBall c r).piecewise (fun z => f z - a) 0) (ball w δ) := by
   refine ContinuousOn.piecewise (fun z hz => ?_) ?_ ?_
   · have hzS : z ∈ V ∩ sphere c r :=
-      ⟨hδV hz.1, by rw [frontier_closedBall c hr.ne'] at hz; exact hz.2⟩
+      ⟨hδV hz.1, by rw [frontier_closedBall c hr] at hz; exact hz.2⟩
     simp [harc hzS]
   · rw [isClosed_closedBall.closure_eq]
     exact (hcont.mono (inter_subset_inter_left _ hδV)).sub continuousOn_const
@@ -147,13 +147,15 @@ private lemma differentiableOn_piecewise_sub_const_compl_sphere
       exact Set.piecewise_eq_of_notMem _ _ _ hy
     exact ((differentiableAt_const (0 : ℂ)).congr_of_eventuallyEq hev).differentiableWithinAt
 
-/-- **The local step of boundary uniqueness.** Near a point `w` of the arc, `f` is already forced to
-be the constant `a` on a neighbourhood of some *interior* point of the disc.
+/-- **The local step of boundary uniqueness.** A single point `w` of the arc already forces `f` to
+be the constant `a` on a neighbourhood of *some* interior point of the disc. Which interior point
+is not recorded: the conclusion asserts only that one exists.
 
 This is where Painlevé removability enters. On a ball `Ω` around `w` the glued function is
 continuous and holomorphic off the circle, hence holomorphic on all of `Ω`; it vanishes on the part
 of `Ω` outside the closed disc, which is open and nonempty because `Ω` straddles the circle, so the
-identity principle kills it on `Ω`. -/
+identity principle kills it on `Ω`. The interior point produced is one of the points of
+`Ω ∩ ball c r`, but only its existence is needed to run the identity principle on the disc. -/
 private lemma exists_mem_ball_eventuallyEq_const (hr : 0 < r) (hV : IsOpen V)
     (hcont : ContinuousOn f (V ∩ closedBall c r)) (hdiff : DifferentiableOn ℂ f (ball c r))
     (harc : EqOn f (fun _ => a) (V ∩ sphere c r)) {w : ℂ} (hwV : w ∈ V) (hwS : w ∈ sphere c r) :
@@ -164,7 +166,7 @@ private lemma exists_mem_ball_eventuallyEq_const (hr : 0 < r) (hV : IsOpen V)
   have hΩo : IsOpen (ball w δ) := isOpen_ball
   have hGan : AnalyticOnNhd ℂ G (ball w δ) :=
     (differentiableOn_of_continuousOn_of_differentiableOn_diff_sphere hr hΩo
-      (continuousOn_piecewise_sub_const hr hδV hcont harc)
+      (continuousOn_piecewise_sub_const hr.ne' hδV hcont harc)
       ((differentiableOn_piecewise_sub_const_compl_sphere hdiff).mono
         fun _ hz => hz.2)).analyticOnNhd hΩo
   obtain ⟨⟨z₀, hz₀Ω, hz₀in⟩, z₁, hz₁Ω, hz₁out⟩ := exists_mem_ball_of_mem_sphere hr hδ hwS
