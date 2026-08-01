@@ -65,7 +65,7 @@ also the form the closure proofs use directly.
 `TauCeti.IsPElementary` records the internal direct product decomposition as
 `Subgroup.IsComplement'` together with elementwise commutation, rather than as normality of both
 factors: this is the form the proofs consume, and normality of the cyclic factor is derived from it
-in `TauCeti.normal_of_commute_of_isComplement'`.
+in `TauCeti.normal_of_commute_of_sup_eq_top`.
 
 ## References
 
@@ -179,13 +179,14 @@ theorem isPHyperelementary_iff_isPGroup_quotient : IsPHyperelementary p G ↔
 
 /-! ### Elementary groups are hyperelementary -/
 
-/-- A subgroup centralised elementwise by a complement is normal. This is what makes the cyclic
-factor of a `p`-elementary decomposition normal, so that `TauCeti.IsPElementary.isPHyperelementary`
-can form the quotient by it. -/
-theorem normal_of_commute_of_isComplement' {C P : Subgroup G}
-    (hcomm : ∀ c ∈ C, ∀ x ∈ P, Commute c x) (hcompl : C.IsComplement' P) : C.Normal := by
+/-- A subgroup centralised elementwise by a subgroup that joins with it to the whole group is
+normal. This is what makes the cyclic factor of a `p`-elementary decomposition normal, so that
+`TauCeti.IsPElementary.isPHyperelementary` can form the quotient by it; there the second subgroup
+is a complement, which is more than the proof needs. -/
+theorem normal_of_commute_of_sup_eq_top {C P : Subgroup G}
+    (hcomm : ∀ c ∈ C, ∀ x ∈ P, Commute c x) (hsup : C ⊔ P = ⊤) : C.Normal := by
   -- `C` is normalised by itself and centralised by `P`, and the two generate `G`.
-  rw [← normalizer_eq_top_iff, eq_top_iff, ← hcompl.sup_eq_top]
+  rw [← normalizer_eq_top_iff, eq_top_iff, ← hsup]
   exact sup_le le_normalizer fun x hx =>
     centralizer_le_normalizer _ (mem_centralizer_iff.mpr fun c hc => hcomm c hc x hx)
 
@@ -193,7 +194,7 @@ theorem normal_of_commute_of_isComplement' {C P : Subgroup G}
 it is the `p`-group factor. -/
 theorem IsPElementary.isPHyperelementary (h : IsPElementary p G) : IsPHyperelementary p G := by
   obtain ⟨C, P, hC, hCp, hP, hcomm, hcompl⟩ := h
-  refine ⟨C, normal_of_commute_of_isComplement' hcomm hcompl, hC, hCp, fun g => ?_⟩
+  refine ⟨C, normal_of_commute_of_sup_eq_top hcomm hcompl.sup_eq_top, hC, hCp, fun g => ?_⟩
   obtain ⟨⟨a, b⟩, rfl⟩ := hcompl.2 g
   obtain ⟨k, hk⟩ := hP b
   refine ⟨k, ?_⟩
@@ -271,22 +272,23 @@ theorem IsPHyperelementary.of_injective (h : IsPHyperelementary p G) (f : H →*
   obtain ⟨k, hk⟩ := hquot (f y)
   exact ⟨k, mem_comap.mpr (by rwa [map_pow])⟩
 
-/-- Along any `f : H →* G`, an element of `H` factors as a preimage of the cyclic factor times a
-preimage of the `p`-factor. No finiteness of `P` is assumed. -/
+/-- Along any `f : H →* G`, an element of `H` factors as a preimage of the prime-to-`p` subgroup
+`C` times a preimage of the `p`-subgroup `P`. Only a factorization of `G` into `C` and `P` is
+needed, not that they form a complement, and `P` need not be finite. -/
 private theorem exists_mem_comap_mul_mem_comap_eq [Fact p.Prime] {C P : Subgroup G}
     (hCp : ¬ p ∣ Nat.card C) (hP : IsPGroup p P) (hcomm : ∀ c ∈ C, ∀ x ∈ P, Commute c x)
-    (hcompl : C.IsComplement' P) (f : H →* G) (y : H) :
+    (hfac : ∀ g : G, ∃ a : C, ∃ b : P, (a : G) * b = g) (f : H →* G) (y : H) :
     ∃ c ∈ C.comap f, ∃ x ∈ P.comap f, c * x = y := by
-  obtain ⟨⟨a, b⟩, hab⟩ := hcompl.2 (f y)
+  obtain ⟨a, b, hab⟩ := hfac (f y)
   obtain ⟨k, hk⟩ := hP b
+  have ha : (a : G) ^ Nat.card C = 1 := by
+    exact_mod_cast congrArg Subtype.val (pow_card_eq_one' (x := a))
   -- the two factors of a preimage, and the Bézout identity between their orders; the exponent
   -- killing the `p`-part is the one `hP` supplies for that element, so `P` need not be finite
   set m := Nat.card C
   set n := p ^ k
   have hcop : Nat.Coprime n m :=
     Nat.Coprime.pow_left _ ((Nat.Prime.coprime_iff_not_dvd Fact.out).mpr hCp)
-  have ha : (a : G) ^ m = 1 :=
-    orderOf_dvd_iff_pow_eq_one.mp (by simpa using orderOf_dvd_natCard a)
   have hb : (b : G) ^ n = 1 := by exact_mod_cast hk
   have hyn : f (y ^ n) ∈ C := by
     rw [map_pow, ← hab, (hcomm a a.2 b b.2).mul_pow, hb, mul_one]
@@ -324,7 +326,8 @@ theorem IsPElementary.of_injective [Fact p.Prime] (h : IsPElementary p G) (f : H
       exact hf (this.trans (map_one f).symm)
     · refine Set.eq_univ_iff_forall.mpr fun y => ?_
       obtain ⟨c, hc, x, hx, hcx⟩ :=
-        exists_mem_comap_mul_mem_comap_eq hCp hP hcomm hcompl f y
+        exists_mem_comap_mul_mem_comap_eq hCp hP hcomm
+          (fun g => let ⟨⟨a, b⟩, hab⟩ := hcompl.2 g; ⟨a, b, hab⟩) f y
       exact Set.mem_mul.mpr ⟨c, hc, x, hx, hcx⟩
 
 /-- `p`-hyperelementarity passes to subgroups. -/
