@@ -107,6 +107,14 @@ noncomputable def dualNumberAugmentation :
 
 variable {R A B}
 
+variable (R A B) in
+/-- The tangent subgroup: dual-number points of `A` lying over the identity point, as
+the kernel of the augmentation inside the convolution group. -/
+noncomputable def tangentKer :
+    Subgroup (WithConv (A →ₐ[R] DualNumber (Bialgebra.CounitPoint R A B))) :=
+  (dualNumberAugmentation R A B).ker
+
+
 private lemma toAlgHom_eq_convOne :
     IsScalarTower.toAlgHom R A (CounitPoint R A B) =
       (1 : WithConv (A →ₐ[R] CounitPoint R A B)).ofConv := by
@@ -114,19 +122,19 @@ private lemma toAlgHom_eq_convOne :
   exact (algebraMap_apply R A B a).trans (AlgHom.convOne_apply a).symm
 
 private lemma fst_apply_of_mem_ker {ψ : WithConv (A →ₐ[R] DualNumber (CounitPoint R A B))}
-    (h : ψ ∈ (dualNumberAugmentation R A B).ker) (x : A) :
+    (h : ψ ∈ tangentKer R A B) (x : A) :
     fst (R := CounitPoint R A B) (ψ.ofConv x) =
       algebraMap R (Bialgebra.CounitPoint R A B) (counit x) := by
-  have h' := MonoidHom.mem_ker.mp h
-  have := congr($(h').ofConv x)
+  rw [tangentKer, MonoidHom.mem_ker] at h
+  have := congr($(h).ofConv x)
   simpa [dualNumberAugmentation, AlgHom.mapValue, fstHom_apply, AlgHom.convOne_apply]
     using this
 
 /-- On kernel elements, convolution multiplication adds infinitesimal components: the
 group law of the tangent space is addition of derivations. -/
 private lemma snd_convMul_apply {ψ₁ ψ₂ : WithConv (A →ₐ[R] DualNumber (CounitPoint R A B))}
-    (h₁ : ψ₁ ∈ (dualNumberAugmentation R A B).ker)
-    (h₂ : ψ₂ ∈ (dualNumberAugmentation R A B).ker) (a : A) :
+    (h₁ : ψ₁ ∈ tangentKer R A B)
+    (h₂ : ψ₂ ∈ tangentKer R A B) (a : A) :
     snd (R := CounitPoint R A B) ((ψ₁ * ψ₂).ofConv a) =
       snd (R := CounitPoint R A B) (ψ₁.ofConv a) +
         snd (R := CounitPoint R A B) (ψ₂.ofConv a) := by
@@ -158,6 +166,45 @@ private lemma snd_convMul_apply {ψ₁ ψ₂ : WithConv (A →ₐ[R] DualNumber 
             (∑ i ∈ (ℛ R a).index, counit (R := R) ((ℛ R a).left i) • (ℛ R a).right i)) := by
           simp [map_sum, map_smul, snd_sum, snd_smul]
       _ = _ := by rw [Coalgebra.sum_counit_smul]
+
+private lemma toConv_mem_ker_iff {ψ₀ : A →ₐ[R] DualNumber (Bialgebra.CounitPoint R A B)} :
+    toConv ψ₀ ∈ tangentKer R A B ↔
+      (fstHom R _ _).comp ψ₀ =
+        IsScalarTower.toAlgHom R A (Bialgebra.CounitPoint R A B) := by
+  rw [tangentKer, MonoidHom.mem_ker, toAlgHom_eq_convOne]
+  exact ⟨fun h => congrArg ofConv h, fun h => ofConv_injective h⟩
+
+variable (R A B) in
+/-- The group of the tangent space at the identity: the kernel of the dual-number
+augmentation is, additively, the derivations at the identity point. Convolution of
+dual-number points over the identity corresponds to addition of derivations — the
+underlying additive group of `Lie (Spec A)` evaluated on `B`. -/
+noncomputable def derivationMulEquivAugmentationKer :
+    Multiplicative (Derivation R A (Bialgebra.CounitPoint R A B)) ≃*
+      tangentKer R A B where
+  toFun d := ⟨toConv (derivationCounitEquivDualNumberLift R A B d.toAdd).1,
+    toConv_mem_ker_iff.mpr (derivationCounitEquivDualNumberLift R A B d.toAdd).2⟩
+  invFun ψ := .ofAdd <| (derivationCounitEquivDualNumberLift R A B).symm
+    ⟨ψ.1.ofConv, toConv_mem_ker_iff.mp ψ.2⟩
+  left_inv d := by
+    exact congrArg Multiplicative.ofAdd <|
+      (derivationCounitEquivDualNumberLift R A B).symm_apply_apply d.toAdd
+  right_inv ψ := by
+    have h := (derivationCounitEquivDualNumberLift R A B).apply_symm_apply
+      ⟨ψ.1.ofConv, toConv_mem_ker_iff.mp ψ.2⟩
+    rw [Subtype.ext_iff] at h
+    exact Subtype.ext ((congrArg toConv h).trans (toConv_ofConv ψ.1))
+  map_mul' d₁ d₂ := by
+    have h₁ := toConv_mem_ker_iff.mpr (derivationCounitEquivDualNumberLift R A B d₁.toAdd).2
+    have h₂ := toConv_mem_ker_iff.mpr (derivationCounitEquivDualNumberLift R A B d₂.toAdd).2
+    have hprod := toConv_mem_ker_iff.mpr
+      (derivationCounitEquivDualNumberLift R A B (d₁.toAdd + d₂.toAdd)).2
+    refine Subtype.ext (ofConv_injective (AlgHom.ext fun a => TrivSqZeroExt.ext ?_ ?_))
+    · exact (fst_apply_of_mem_ker hprod a).trans
+        (fst_apply_of_mem_ker (mul_mem h₁ h₂) a).symm
+    · simp only [MulMemClass.mk_mul_mk]
+      rw [snd_convMul_apply h₁ h₂ a]
+      simp [derivationCounitEquivDualNumberLift]
 
 end Hopf
 
