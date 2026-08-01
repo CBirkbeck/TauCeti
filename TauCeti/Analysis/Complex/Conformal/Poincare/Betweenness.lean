@@ -377,16 +377,27 @@ theorem eqOn_Icc_of_isometry {γ₁ γ₂ : ℝ → PoincareDisc} {z w : Poincar
   · rw [ha₂, hb₂]; ring
   · rw [ha₁, ha₂]
 
+-- The isometry transports the real distance to the hyperbolic one, in the disc coordinates the
+-- betweenness lemmas are stated in. Both specialisations below are used repeatedly.
+private lemma hyperbolicDist_toUnitDisc_eq_abs_sub {γ : ℝ → PoincareDisc} (hγ : Isometry γ)
+    (s t : ℝ) :
+    hyperbolicDist (toUnitDisc (γ s) : ℂ) (toUnitDisc (γ t) : ℂ) = |s - t| := by
+  have h := hγ.dist_eq s t
+  rwa [dist_eq, Real.dist_eq] at h
+
+private lemma hyperbolicDist_zero_toUnitDisc_eq_abs {γ : ℝ → PoincareDisc} (hγ : Isometry γ)
+    (h0 : γ 0 = Complex.UnitDisc.toPoincare 0) (t : ℝ) :
+    hyperbolicDist 0 (toUnitDisc (γ t) : ℂ) = |t| := by
+  have h := hyperbolicDist_toUnitDisc_eq_abs_sub hγ 0 t
+  rwa [h0, toUnitDisc_toPoincare, Complex.UnitDisc.coe_zero, zero_sub, abs_neg] at h
+
 -- An isometry of `ℝ` into the disc sending `0` to the origin has `‖γ t‖ = tanh |t|`: the
 -- hyperbolic distance to the origin is `|t|`, and `tanh` inverts `artanh` on the disc.
 private lemma norm_toUnitDisc_eq_tanh_abs {γ : ℝ → PoincareDisc} (hγ : Isometry γ)
     (h0 : γ 0 = Complex.UnitDisc.toPoincare 0) (t : ℝ) :
     ‖(toUnitDisc (γ t) : ℂ)‖ = Real.tanh |t| := by
-  have hi : hyperbolicDist 0 (toUnitDisc (γ t) : ℂ) = |t| := by
-    have h := hγ.dist_eq 0 t
-    rwa [dist_eq, h0, toUnitDisc_toPoincare, Complex.UnitDisc.coe_zero, Real.dist_eq, zero_sub,
-      abs_neg] at h
-  rw [hyperbolicDist_comm, hyperbolicDist_zero_right] at hi
+  have hi : Real.artanh ‖(toUnitDisc (γ t) : ℂ)‖ = |t| := by
+    rw [← dist_toPoincare_zero_right, ← h0, hγ.dist_eq, Real.dist_eq, sub_zero]
   rw [← hi]
   exact (Real.tanh_artanh ⟨by linarith [norm_nonneg (toUnitDisc (γ t) : ℂ)],
     (toUnitDisc (γ t)).norm_lt_one⟩).symm
@@ -401,10 +412,8 @@ private lemma exists_circle_toUnitDisc_eq_of_nonneg {γ : ℝ → PoincareDisc} 
   have hmem : ∀ p : PoincareDisc, ‖(toUnitDisc p : ℂ)‖ < 1 := fun p => (toUnitDisc p).norm_lt_one
   have hnorm : ∀ t : ℝ, ‖(toUnitDisc (γ t) : ℂ)‖ = Real.tanh |t| :=
     norm_toUnitDisc_eq_tanh_abs hγ h0
-  have hdist0 : ∀ t : ℝ, hyperbolicDist 0 (toUnitDisc (γ t) : ℂ) = |t| := fun t => by
-    have hi := hγ.dist_eq 0 t
-    rwa [dist_eq, h0, toUnitDisc_toPoincare, Complex.UnitDisc.coe_zero, Real.dist_eq, zero_sub,
-      abs_neg] at hi
+  have hdist0 : ∀ t : ℝ, hyperbolicDist 0 (toUnitDisc (γ t) : ℂ) = |t| :=
+    hyperbolicDist_zero_toUnitDisc_eq_abs hγ h0
   have hne : ∀ s : ℝ, s ≠ 0 → (toUnitDisc (γ s) : ℂ) ≠ 0 := by
     intro s hs hzero
     have hi := hdist0 s
@@ -414,11 +423,8 @@ private lemma exists_circle_toUnitDisc_eq_of_nonneg {γ : ℝ → PoincareDisc} 
       (toUnitDisc (γ s) : ℂ) ∈ segment ℝ 0 (toUnitDisc (γ t) : ℂ) := by
     intro s t hs hst
     refine (hyperbolicDist_zero_add_eq_iff_of_norm_lt_one (hmem _) (hmem _)).mp ?_
-    have hdistst : hyperbolicDist (toUnitDisc (γ s) : ℂ) (toUnitDisc (γ t) : ℂ) = |s - t| := by
-      have hi := hγ.dist_eq s t
-      rwa [dist_eq, Real.dist_eq] at hi
-    rw [hdist0, hdistst, hdist0, abs_of_nonneg hs, abs_of_nonneg (by linarith : (0 : ℝ) ≤ t),
-      abs_of_nonpos (by linarith : s - t ≤ 0)]
+    rw [hdist0, hyperbolicDist_toUnitDisc_eq_abs_sub hγ, hdist0, abs_of_nonneg hs,
+      abs_of_nonneg (by linarith : (0 : ℝ) ≤ t), abs_of_nonpos (by linarith : s - t ≤ 0)]
     ring
   have hray : ∀ t : ℝ, 0 ≤ t → ∃ κ : ℝ, 0 ≤ κ ∧
       (toUnitDisc (γ t) : ℂ) = (κ : ℂ) * (toUnitDisc (γ 1) : ℂ) := by
@@ -455,18 +461,14 @@ private lemma exists_circle_toUnitDisc_eq_of_nonneg {γ : ℝ → PoincareDisc} 
 private lemma toUnitDisc_neg_eq_neg {γ : ℝ → PoincareDisc} (hγ : Isometry γ)
     (h0 : γ 0 = Complex.UnitDisc.toPoincare 0) {s : ℝ} (hs : 0 < s) :
     (toUnitDisc (γ (-s)) : ℂ) = -(toUnitDisc (γ s) : ℂ) := by
-  have hdist0 : ∀ r : ℝ, hyperbolicDist 0 (toUnitDisc (γ r) : ℂ) = |r| := fun r => by
-    have h := hγ.dist_eq 0 r
-    rwa [dist_eq, h0, toUnitDisc_toPoincare, Complex.UnitDisc.coe_zero, Real.dist_eq, zero_sub,
-      abs_neg] at h
+  have hdist0 : ∀ r : ℝ, hyperbolicDist 0 (toUnitDisc (γ r) : ℂ) = |r| :=
+    hyperbolicDist_zero_toUnitDisc_eq_abs hγ h0
   obtain ⟨a, b, ha, hb, hab, heq⟩ :
       (0 : ℂ) ∈ segment ℝ (toUnitDisc (γ (-s)) : ℂ) (toUnitDisc (γ s) : ℂ) := by
     refine (hyperbolicDist_add_zero_eq_iff_of_norm_lt_one (toUnitDisc _).norm_lt_one
       (toUnitDisc _).norm_lt_one).mp ?_
-    have hst : hyperbolicDist (toUnitDisc (γ (-s)) : ℂ) (toUnitDisc (γ s) : ℂ) = |(-s) - s| := by
-      have h := hγ.dist_eq (-s) s
-      rwa [dist_eq, Real.dist_eq] at h
-    rw [hyperbolicDist_comm _ 0, hdist0, hdist0, hst, abs_of_nonpos (by linarith),
+    rw [hyperbolicDist_comm _ 0, hdist0, hdist0,
+      hyperbolicDist_toUnitDisc_eq_abs_sub hγ (-s) s, abs_of_nonpos (by linarith),
       abs_of_nonneg hs.le, abs_of_nonpos (by linarith : -s - s ≤ 0)]
     ring
   have hnormeq : ‖(toUnitDisc (γ (-s)) : ℂ)‖ = ‖(toUnitDisc (γ s) : ℂ)‖ := by
@@ -487,17 +489,6 @@ private lemma toUnitDisc_neg_eq_neg {γ : ℝ → PoincareDisc} (hγ : Isometry 
     Complex.real_smul] at heq
   push_cast at heq
   linear_combination 2 * heq
-
--- Distinct directions give distinct radial geodesics: evaluating at time `1` gives
--- `u * tanh 1 = v * tanh 1`, and `tanh 1 ≠ 0`. Nothing about isometries is involved.
-private lemma radialGeodesic_injective : Function.Injective radialGeodesic := by
-  intro u v huv
-  have htanh : (Real.tanh 1 : ℂ) ≠ 0 := by
-    refine Complex.ofReal_ne_zero.mpr fun hzero => one_ne_zero (α := ℝ) ?_
-    exact Real.tanh_injective (hzero.trans Real.tanh_zero.symm)
-  refine Circle.ext (mul_right_cancel₀ htanh ?_)
-  have hcoe := congrArg (fun p : PoincareDisc => (toUnitDisc p : ℂ)) (congrFun huv 1)
-  simpa only [coe_radialGeodesic] using hcoe
 
 /-- **Every geodesic line through the origin is a Euclidean diameter.** This is the converse to
 `TauCeti.PoincareDisc.isometry_radialGeodesic`, and it completes the description of the geodesics
