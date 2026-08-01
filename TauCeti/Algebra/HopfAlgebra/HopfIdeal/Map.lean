@@ -185,6 +185,14 @@ theorem map_bot (f : H →ₐc[R] K) : (⊥ : HopfIdeal R H).map f = ⊥ :=
     rw [← mem_toIdeal, map_toIdeal, bot_toIdeal, Ideal.map_bot]
     exact Ideal.mem_bot.trans mem_bot.symm
 
+/-- The image vanishes exactly when the Hopf ideal is contained in the kernel of the
+underlying ring homomorphism. For surjective morphisms the right side is the kernel Hopf
+ideal (`TauCeti.HopfIdeal.map_eq_bot_iff_le_ker`). -/
+theorem map_eq_bot_iff (I : HopfIdeal R H) (f : H →ₐc[R] K) :
+    I.map f = ⊥ ↔ I.toIdeal ≤ RingHom.ker (f : H →+* K) := by
+  rw [← le_bot_iff, ← toIdeal_le_toIdeal, map_toIdeal, bot_toIdeal, le_bot_iff,
+    Ideal.map_eq_bot_iff_le_ker]
+
 /-- Image of Hopf ideals preserves binary joins. -/
 @[simp]
 theorem map_sup (I J : HopfIdeal R H) (f : H →ₐc[R] K) :
@@ -286,10 +294,16 @@ theorem comap_map_of_surjective (I : HopfIdeal R H) (f : H →ₐc[R] K)
       ker_toIdeal, RingHom.ker_eq_comap_bot]
     exact Iff.rfl
 
-/-- The image vanishes exactly on Hopf ideals contained in the kernel. -/
+/-- The image vanishes exactly on Hopf ideals contained in the kernel Hopf ideal: the
+surjective bundled form of `TauCeti.HopfIdeal.map_eq_bot_iff`. -/
 theorem map_eq_bot_iff_le_ker (I : HopfIdeal R H) (f : H →ₐc[R] K)
     (hf : Function.Surjective f) : I.map f = ⊥ ↔ I ≤ ker f hf := by
-  rw [← le_bot_iff, map_le_iff_le_comap hf, comap_bot]
+  rw [map_eq_bot_iff]
+  constructor
+  · intro h x hx
+    exact (mem_ker f hf).mpr (RingHom.mem_ker.mp (h (mem_toIdeal.mpr hx)))
+  · intro h x hx
+    exact RingHom.mem_ker.mpr ((mem_ker f hf).mp (h (mem_toIdeal.mp hx)))
 
 end Adjunction
 
