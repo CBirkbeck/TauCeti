@@ -14,12 +14,22 @@ public import TauCeti.Algebra.HopfAlgebra.HopfIdeal.Map
 A morphism `f : H ⟶ K` of commutative Hopf algebras induces contravariantly a morphism of
 affine group schemes `Spec K ⟶ Spec H` over `Spec R`. Its kernel is the closed subgroup
 scheme of `Spec K` cut out by the kernel Hopf ideal: the image under `f` of the
-augmentation ideal of `H`, whose quotient coordinate ring is `K ⊗[H] R`.
+augmentation ideal of `H` — the ideal `K·f(H⁺)` of the coordinate ring of the *source*
+group scheme, which the classical theory identifies with the defining ideal of
+`Spec (K ⊗[H] R)` (that base-change identification is not formalized here).
 
 This file constructs the kernel Hopf ideal, the kernel closed subgroup scheme, and its
-closed immersion into the source, and proves the defining triangle: composing the induced
-group-scheme morphism with the kernel inclusion is the trivial morphism, because the
-composite coordinate map `H ⟶ K ⟶ K ⧸ K·f(H⁺)` is the counit-unit composite.
+closed immersion into the source, and proves the trivialization criterion that gives the
+construction its kernel semantics among Hopf-ideal quotients: a morphism out of `K` kills
+the kernel Hopf ideal *exactly* when its composite with `f` is the trivial (counit-unit)
+morphism. In particular the composite of the induced group-scheme morphism with the kernel
+inclusion is trivial, and any quotient closed subgroup scheme `quotientSpec K J` on which
+`f` trivializes satisfies `kernelHopfIdeal f ≤ J`, hence includes into the kernel via
+`TauCeti.CommHopfAlgCat.quotientSpecMapOfLe`, compatibly with the inclusions
+(`TauCeti.CommHopfAlgCat.quotientSpecMapOfLe_comp_quotientSpecι`); the coordinate-level
+factorization and its uniqueness are `TauCeti.CommHopfAlgCat.liftQuotient` and
+`TauCeti.CommHopfAlgCat.liftQuotient_unique`. The pullback square against the unit
+section is future work.
 
 ## Main declarations
 
@@ -28,6 +38,9 @@ composite coordinate map `H ⟶ K ⟶ K ⧸ K·f(H⁺)` is the counit-unit compo
 * `TauCeti.CommHopfAlgCat.kernelSpec` and `TauCeti.CommHopfAlgCat.kernelSpecι`: the kernel
   closed subgroup scheme and its inclusion (a closed immersion, by
   `TauCeti.CommHopfAlgCat.isClosedImmersion_quotientSpecι`).
+* `TauCeti.CommHopfAlgCat.comp_eq_counitUnit_iff`: the trivialization criterion — a
+  morphism kills the kernel Hopf ideal exactly when its composite with `f` is trivial.
+* `TauCeti.CommHopfAlgCat.kernelHopfIdeal_le_iff`: its Hopf-ideal-quotient form.
 * `TauCeti.CommHopfAlgCat.comp_mkQuotient_kernelHopfIdeal`: the coordinate-ring triangle.
 * `TauCeti.CommHopfAlgCat.kernelSpecι_comp`: the scheme-level triangle.
 
@@ -54,8 +67,9 @@ open AlgebraicGeometry
 variable {R : Type u} [CommRing R] {H K : _root_.CommHopfAlgCat.{u} R}
 
 /-- The kernel Hopf ideal of a morphism of commutative Hopf algebras: the image of the
-augmentation ideal of the source. Its quotient represents the kernel of the induced
-morphism of affine group schemes. -/
+augmentation ideal of the source. It is an ideal of the *codomain* `K`, the coordinate
+ring of the source of the induced group-scheme morphism `Spec K ⟶ Spec H`; its quotient
+represents the kernel of that morphism. -/
 noncomputable abbrev kernelHopfIdeal (f : H ⟶ K) : HopfIdeal R K :=
   (HopfIdeal.augmentation R H).map f.hom
 
@@ -84,29 +98,65 @@ private lemma unitBialgHom_apply {A : Type u} [Semiring A] [Bialgebra R A] (r : 
     Bialgebra.unitBialgHom R A r = algebraMap R A r :=
   rfl
 
-/-- The coordinate-ring triangle defining the kernel: composing `f` with the quotient by
-the kernel Hopf ideal is the counit-unit composite, i.e. the coordinate map of the trivial
-group-scheme morphism. -/
+/-- The difference between a morphism value and the counit-unit value lies in the kernel
+Hopf ideal. -/
+private theorem sub_counitUnit_mem_kernelHopfIdeal (f : H ⟶ K) (h : H) :
+    f.hom h - algebraMap R K (Coalgebra.counit (R := R) h) ∈ kernelHopfIdeal f := by
+  have hx : Coalgebra.counit (R := R)
+      (h - algebraMap R H (Coalgebra.counit (R := R) h)) = 0 := by
+    simp
+  simpa [map_sub, AlgHomClass.commutes] using
+    mem_kernelHopfIdeal_of_mem_augmentation f hx
+
+/-- The trivialization criterion, the defining property of the kernel among Hopf-ideal
+quotients: a morphism out of `K` kills the kernel Hopf ideal of `f` exactly when its
+composite with `f` is the trivial (counit-unit) morphism. -/
+theorem comp_eq_counitUnit_iff (f : H ⟶ K) {L : _root_.CommHopfAlgCat.{u} R}
+    (g : K ⟶ L) :
+    f ≫ g =
+        _root_.CommHopfAlgCat.ofHom
+          ((Bialgebra.unitBialgHom R L).comp (Bialgebra.counitBialgHom R H)) ↔
+      (kernelHopfIdeal f).toIdeal ≤ RingHom.ker g.hom.toAlgHom.toRingHom := by
+  constructor
+  · intro heq
+    rw [HopfIdeal.map_toIdeal, Ideal.map_le_iff_le_comap]
+    intro x hx
+    have hx0 : Coalgebra.counit (R := R) x = 0 :=
+      (HopfIdeal.mem_augmentation R H).mp (HopfIdeal.mem_toIdeal.mp hx)
+    have hval := congrArg (fun φ : H ⟶ L => φ.hom x) heq
+    simp only [_root_.CommHopfAlgCat.comp_apply, _root_.CommHopfAlgCat.hom_ofHom,
+      BialgHom.comp_apply, unitBialgHom_apply, Bialgebra.counitBialgHom_apply] at hval
+    rw [Ideal.mem_comap, RingHom.mem_ker]
+    simpa [hx0] using hval
+  · intro hle
+    ext h
+    have hker := hle (HopfIdeal.mem_toIdeal.mpr (sub_counitUnit_mem_kernelHopfIdeal f h))
+    rw [RingHom.mem_ker, map_sub, sub_eq_zero] at hker
+    simpa [unitBialgHom_apply, AlgHomClass.commutes] using hker
+
+/-- The coordinate-ring triangle: composing `f` with the quotient by its kernel Hopf
+ideal is the counit-unit composite, i.e. the coordinate map of the trivial group-scheme
+morphism. -/
 theorem comp_mkQuotient_kernelHopfIdeal (f : H ⟶ K) :
     f ≫ mkQuotient K (kernelHopfIdeal f) =
       _root_.CommHopfAlgCat.ofHom
         ((Bialgebra.unitBialgHom R (quotient K (kernelHopfIdeal f))).comp
-          (Bialgebra.counitBialgHom R H)) := by
-  ext h
-  have hmem : f.hom h - algebraMap R K (Coalgebra.counit (R := R) h) ∈
-      kernelHopfIdeal f := by
-    have hx : Coalgebra.counit (R := R)
-        (h - algebraMap R H (Coalgebra.counit (R := R) h)) = 0 := by
-      simp
-    simpa [map_sub, AlgHomClass.commutes] using
-      mem_kernelHopfIdeal_of_mem_augmentation f hx
-  have hquot :
-      (mkQuotient K (kernelHopfIdeal f)).hom
-          (f.hom h - algebraMap R K (Coalgebra.counit (R := R) h)) = 0 :=
-    (mkQuotient_eq_zero_iff K (kernelHopfIdeal f) _).mpr
-      (HopfIdeal.mem_toIdeal.mpr hmem)
-  rw [map_sub, sub_eq_zero] at hquot
-  simpa [unitBialgHom_apply] using hquot
+          (Bialgebra.counitBialgHom R H)) :=
+  (comp_eq_counitUnit_iff f _).mpr (mkQuotient_ker K (kernelHopfIdeal f) ▸ le_rfl)
+
+/-- The Hopf-ideal-quotient form of the trivialization criterion: `f` trivializes on the
+closed subgroup scheme cut out by `J` exactly when `J` contains the kernel Hopf ideal.
+Combined with `TauCeti.CommHopfAlgCat.quotientSpecMapOfLe` and
+`TauCeti.CommHopfAlgCat.quotientSpecMapOfLe_comp_quotientSpecι`, such a quotient closed
+subgroup scheme includes into the kernel compatibly with the inclusions. -/
+theorem kernelHopfIdeal_le_iff (f : H ⟶ K) {J : HopfIdeal R K} :
+    kernelHopfIdeal f ≤ J ↔
+      f ≫ mkQuotient K J =
+        _root_.CommHopfAlgCat.ofHom
+          ((Bialgebra.unitBialgHom R (quotient K J)).comp
+            (Bialgebra.counitBialgHom R H)) := by
+  rw [comp_eq_counitUnit_iff, mkQuotient_ker]
+  exact HopfIdeal.toIdeal_le_toIdeal.symm
 
 /-- The scheme-level triangle: the composite of the kernel inclusion with the induced
 group-scheme morphism is the trivial morphism, the image under `hopfSpec` of the
