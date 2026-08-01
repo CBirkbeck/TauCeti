@@ -262,6 +262,7 @@ theorem map_le_iff_le_comap {f : H →ₐc[R] K} (hf : Function.Surjective f)
 
 /-- For a surjective morphism, membership in the image Hopf ideal means being the value
 of a member. -/
+@[simp]
 theorem mem_map_iff_of_surjective {f : H →ₐc[R] K} (hf : Function.Surjective f)
     {I : HopfIdeal R H} {y : K} : y ∈ I.map f ↔ ∃ x ∈ I, f x = y := by
   rw [← mem_toIdeal, map_toIdeal]
