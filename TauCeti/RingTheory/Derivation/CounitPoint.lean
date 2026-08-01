@@ -12,9 +12,9 @@ public import TauCeti.RingTheory.Derivation.DualNumber
 # The tangent space at the identity point
 
 For a commutative bialgebra `A` over `R` — the coordinate ring of an affine monoid
-scheme — the identity `B`-point of the functor of points is the composite of the counit
-with the structure map `R → B`. This file packages `B` as an `A`-algebra through that
-point (`Bialgebra.CounitPoint`), so that the dual-number dictionary
+scheme — the identity `B`-point of the functor of points is the unit of the convolution
+monoid, `(1 : WithConv (A →ₐ[R] B)).ofConv`. This file packages `B` as an `A`-algebra
+through that point (`Bialgebra.CounitPoint`), so that the dual-number dictionary
 `TauCeti.derivationToDualNumberEquivLift` applies verbatim: derivations of `A` at the
 identity point — the tangent space at the identity of the reductive-groups roadmap's
 Layer 2, the underlying module of `Lie (Spec A)` — are the dual-number points lying
@@ -28,18 +28,12 @@ public section
 
 namespace TauCeti
 
-open Bialgebra Coalgebra
+open Bialgebra Coalgebra WithConv
 
 section BialgebraPoint
 
 variable (R A B : Type*) [CommSemiring R] [CommSemiring A] [Bialgebra R A]
   [CommSemiring B] [Algebra R B]
-
-/-- The identity `B`-point of the functor of points of a bialgebra `A` over `R`: the
-counit followed by the structure map of `B`. On an affine monoid scheme this is the
-unit element of the monoid of `B`-points. -/
-noncomputable def Bialgebra.identityPoint : A →ₐ[R] B :=
-  (Algebra.ofId R B).comp (counitAlgHom R A)
 
 /-- Type synonym: `B` as an `A`-algebra through the identity point of the functor of
 points. Derivations of `A` valued in `Bialgebra.CounitPoint R A B` are the tangent
@@ -54,18 +48,18 @@ instance : CommSemiring (CounitPoint R A B) := inferInstanceAs (CommSemiring B)
 instance : Algebra R (CounitPoint R A B) := inferInstanceAs (Algebra R B)
 
 noncomputable instance : Algebra A (CounitPoint R A B) :=
-  (identityPoint R A B).toRingHom.toAlgebra
+  ((1 : WithConv (A →ₐ[R] B)).ofConv).toRingHom.toAlgebra
 
 noncomputable instance : IsScalarTower R A (CounitPoint R A B) :=
   IsScalarTower.of_algebraMap_eq fun r => by
-    change algebraMap R B r = identityPoint R A B (algebraMap R A r)
-    simp [identityPoint]
+    change algebraMap R B r = (1 : WithConv (A →ₐ[R] B)).ofConv (algebraMap R A r)
+    simp
 
 @[simp]
 lemma algebraMap_apply (a : A) :
     algebraMap A (CounitPoint R A B) a = algebraMap R B (counit a) := by
-  change identityPoint R A B a = _
-  simp [identityPoint]
+  change (1 : WithConv (A →ₐ[R] B)).ofConv a = _
+  simp [AlgHom.convOne_apply]
 
 end Bialgebra.CounitPoint
 
@@ -82,7 +76,11 @@ noncomputable def derivationCounitEquivDualNumberLift :
 end BialgebraPoint
 
 /-- Mirror of `Coalgebra.sum_counit_smul`: summing the counit of the right factors
-against the left factors of a comultiplication representative recovers the element. -/
+against the left factors of a comultiplication representative recovers the element.
+Mathlib has the left identity in both forms (`Coalgebra.sum_counit_smul`, point-free
+`Coalgebra.lift_lsmul_comp_counit_comp_comul`, sending `x ⊗ y` to `ε x • y`); this
+right identity `∑ ε (a₂) • a₁ = a` exists in neither form there and is derived from
+the closest mirror, `Coalgebra.sum_tmul_counit_eq`. -/
 private lemma sum_smul_counit {R C : Type*} [CommSemiring R] [AddCommMonoid C]
     [Module R C] [Coalgebra R C] {c : C} {ι : Type*} (𝓡 : Coalgebra.Repr R c ι) :
     ∑ x ∈ 𝓡.index, Coalgebra.counit (R := R) (𝓡.right x) • 𝓡.left x = c := by
