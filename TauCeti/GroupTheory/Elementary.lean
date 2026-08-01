@@ -50,8 +50,8 @@ Each of the four predicates is restated as an `Iff` by `TauCeti.isPElementary_de
   closed under passing to a subgroup, in the form of an injective homomorphism into the group. The
   subgroup forms are `TauCeti.IsPElementary.subgroup` and `TauCeti.IsPHyperelementary.subgroup`.
 * `TauCeti.exists_mem_comap_mul_mem_comap_eq`: the factorization step those two rest on — along any
-  homomorphism, an element factors through the preimages of the two factors. Stated for a bare
-  commuting factorization of the target, with `p` merely coprime to `Nat.card C`.
+  homomorphism `f`, an element `y` factors through the preimages of the two factors. It asks only
+  for a commuting factorization of the single element `f y`, with `p` coprime to `Nat.card C`.
 * `TauCeti.IsHyperelementary.isSolvable`: a finite hyperelementary group is solvable, whence
   `TauCeti.not_isElementary_perm_fin_5`, the symmetric group on five letters is not elementary.
 
@@ -183,6 +183,11 @@ theorem isPHyperelementary_iff_isPGroup_quotient : IsPHyperelementary p G ↔
 
 /-! ### Elementary groups are hyperelementary -/
 
+@[deprecated normal_of_commute_of_sup_eq_top (since := "2026-08-01")]
+theorem normal_of_commute_of_isComplement' {C P : Subgroup G}
+    (hcomm : ∀ c ∈ C, ∀ x ∈ P, Commute c x) (hcompl : C.IsComplement' P) : C.Normal :=
+  normal_of_commute_of_sup_eq_top hcomm hcompl.sup_eq_top
+
 /-- A `p`-elementary group is `p`-hyperelementary: the cyclic factor is normal, and the quotient by
 it is the `p`-group factor. -/
 theorem IsPElementary.isPHyperelementary (h : IsPElementary p G) : IsPHyperelementary p G := by
@@ -269,13 +274,14 @@ theorem IsPHyperelementary.of_injective (h : IsPHyperelementary p G) (f : H →*
 `p`-subgroup `P`, given a factorization of `G` itself into `C` and `P` whose factors commute.
 
 Only coprimality of `p` with `Nat.card C` is used — not primality of `p`, not that `C` and `P` form
-a complement, and not finiteness of `P`. -/
+a complement, and not finiteness of `P`. The factorization is required only at `f y`, so `f` need
+not be surjective. -/
 theorem exists_mem_comap_mul_mem_comap_eq {C P : Subgroup G}
     (hcop : Nat.Coprime p (Nat.card C)) (hP : IsPGroup p P)
-    (hcomm : ∀ c ∈ C, ∀ x ∈ P, Commute c x)
-    (hfac : ∀ g : G, ∃ a : C, ∃ b : P, (a : G) * b = g) (f : H →* G) (y : H) :
+    (hcomm : ∀ c ∈ C, ∀ x ∈ P, Commute c x) (f : H →* G) {y : H}
+    (hfac : ∃ a : C, ∃ b : P, (a : G) * b = f y) :
     ∃ c ∈ C.comap f, ∃ x ∈ P.comap f, c * x = y := by
-  obtain ⟨a, b, hab⟩ := hfac (f y)
+  obtain ⟨a, b, hab⟩ := hfac
   obtain ⟨k, hk⟩ := hP b
   have ha : (a : G) ^ Nat.card C = 1 := by
     exact_mod_cast congrArg Subtype.val (pow_card_eq_one' (x := a))
@@ -322,7 +328,7 @@ theorem IsPElementary.of_injective [Fact p.Prime] (h : IsPElementary p G) (f : H
     · refine Set.eq_univ_iff_forall.mpr fun y => ?_
       obtain ⟨c, hc, x, hx, hcx⟩ :=
         exists_mem_comap_mul_mem_comap_eq ((Nat.Prime.coprime_iff_not_dvd Fact.out).mpr hCp) hP
-          hcomm (fun g => let ⟨⟨a, b⟩, hab⟩ := hcompl.2 g; ⟨a, b, hab⟩) f y
+          hcomm f (let ⟨⟨a, b⟩, hab⟩ := hcompl.2 (f y); ⟨a, b, hab⟩)
       exact Set.mem_mul.mpr ⟨c, hc, x, hx, hcx⟩
 
 /-- `p`-hyperelementarity passes to subgroups. -/
