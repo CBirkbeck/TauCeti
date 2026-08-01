@@ -48,6 +48,11 @@ noncomputable def commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso
     (S : CommRingCat.{u}) :
     (commHopfAlgCatOpEquivAffineGroupSchemeCat S).functor ⋙
       (affineGroupSchemeProperty S).ι ≅ hopfSpec S :=
-  (hopfSpec S).toEssImageCompι
+  Functor.associator (hopfSpec S).toEssImage
+      (ObjectProperty.ιOfLE fun G hG => (affineGroupSchemeProperty_iff G).mpr
+        (essImage_hopfSpec.mp hG))
+      (affineGroupSchemeProperty S).ι ≪≫
+    Functor.isoWhiskerLeft (hopfSpec S).toEssImage (ObjectProperty.ιOfLECompιIso _) ≪≫
+    (hopfSpec S).toEssImageCompι
 
 end TauCeti
