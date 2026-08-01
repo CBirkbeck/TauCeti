@@ -56,10 +56,15 @@ objects in schemes over `Spec S` whose underlying scheme is affine. -/
 abbrev AffineGroupSchemeCat (S : CommRingCat.{u}) :=
   (affineGroupSchemeProperty S).FullSubcategory
 
+/-- Being an affine group scheme is invariant under isomorphism of group objects: an
+isomorphism induces an isomorphism of underlying schemes, and affineness transfers
+along it. -/
 instance (S : CommRingCat.{u}) : (affineGroupSchemeProperty S).IsClosedUnderIsomorphisms where
   of_iso e hG :=
     (IsAffine.iff_of_isIso ((Over.forget _).mapIso ((Grp.forget _).mapIso e)).hom).mp hG
 
+/-- Membership in `AffineGroupSchemeCat` supplies affineness of the underlying scheme
+automatically, so downstream instance searches need not invoke `property` by hand. -/
 instance {S : CommRingCat.{u}} (G : AffineGroupSchemeCat S) : IsAffine G.obj.X.left :=
   G.property
 
