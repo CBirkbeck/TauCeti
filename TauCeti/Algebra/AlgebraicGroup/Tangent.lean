@@ -188,8 +188,7 @@ private lemma fst_apply_of_mem_ker
       algebraMap R (Bialgebra.CounitAlgebra R A B) (counit x) := by
   rw [tangentKer, MonoidHom.mem_ker] at h
   have := congr($(h).ofConv x)
-  simpa [dualNumberReduction, AlgHom.mapValue, fstHom_apply, AlgHom.convOne_apply]
-    using this
+  simpa [dualNumberReduction_apply, AlgHom.convOne_apply] using this
 
 /-- On kernel elements, convolution multiplication adds infinitesimal components: the
 group law of the tangent space is addition of derivations. -/
