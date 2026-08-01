@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Points.Basic
-public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Scheme.Kernel
+public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Kernel
 
 /-!
 # Points of the kernel of an affine group-scheme morphism
@@ -43,6 +43,7 @@ points cut out by the kernel Hopf ideal — the `A`-points of `kernelSpec f`. Th
 universal property of the kernel tested against arbitrary algebras; by Yoneda,
 `kernelSpec f` represents the kernel of the induced morphism of group-valued points
 functors. -/
+@[simp]
 theorem mapPointsFunctor_app_eq_one_iff (f : H ⟶ K) (A : CommAlgCat.{w} R)
     (g : HopfAlgebra.points (R := R) (H := K) A) :
     (mapPointsFunctor f).app A g = 1 ↔
