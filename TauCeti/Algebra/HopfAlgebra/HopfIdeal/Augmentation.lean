@@ -48,6 +48,14 @@ uses tensor-kernel exactness. -/
 noncomputable def augmentation : HopfIdeal R H :=
   ker (Bialgebra.counitBialgHom R H) Bialgebra.counit_surjective
 
+/-- `augmentation` is the kernel Hopf ideal of the counit. -/
+theorem augmentation_def :
+    augmentation R H = ker (Bialgebra.counitBialgHom R H) Bialgebra.counit_surjective := by
+  -- `augmentation` has no equation lemma to rewrite with; `change` spells out its
+  -- definitional unfolding once, explicitly.
+  change ker (Bialgebra.counitBialgHom R H) Bialgebra.counit_surjective = _
+  rfl
+
 /-- Membership in the augmentation ideal is vanishing of the counit. -/
 @[simp]
 theorem mem_augmentation {x : H} :

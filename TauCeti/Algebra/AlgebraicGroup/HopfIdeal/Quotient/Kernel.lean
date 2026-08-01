@@ -58,6 +58,14 @@ represents the kernel of that morphism. -/
 noncomputable def kernelHopfIdeal (f : H ⟶ K) : HopfIdeal R K :=
   (HopfIdeal.augmentation R H).map f.hom
 
+/-- `kernelHopfIdeal` is the extension of the augmentation ideal along the morphism. -/
+theorem kernelHopfIdeal_def (f : H ⟶ K) :
+    kernelHopfIdeal f = (HopfIdeal.augmentation R H).map f.hom := by
+  -- `kernelHopfIdeal` has no equation lemma to rewrite with; `change` spells out its
+  -- definitional unfolding once, explicitly.
+  change (HopfIdeal.augmentation R H).map f.hom = _
+  rfl
+
 /-- The underlying ideal of the kernel Hopf ideal is the extension of the augmentation
 ideal. -/
 @[simp]
