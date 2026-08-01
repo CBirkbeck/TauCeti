@@ -224,27 +224,24 @@ private lemma ne_zero_of_one_lt_two_mul_re_mul {a w : ℂ} (hw : 1 < 2 * (a * w)
   rw [mul_zero, Complex.zero_re] at hw
   linarith
 
-/-- **This is where `ρ < 2 * r` is used.** The model region is nonempty exactly because the
+/-- **This is where `ρ < 2 * ‖a‖` is used.** The model region is nonempty exactly because the
 crosscut radius is less than the diameter; a larger `ρ` would swallow the disc. The witness is a
-real multiple `s / a` with `1 / 2 < s < r / ρ`, which is a nonempty range precisely under that
-hypothesis. Positivity of `r` is not assumed: `0 < ρ < 2 * r` forces it. -/
-private lemma nonempty_halfPlane_inter_ball {a : ℂ} (hac : ‖a‖ = r) (hρ : 0 < ρ)
-    (hρ' : ρ < 2 * r) : ({w : ℂ | 1 < 2 * (a * w).re} ∩ ball 0 ρ⁻¹).Nonempty := by
-  have hr : 0 < r := by linarith
-  have ha0 : a ≠ 0 := by
-    intro h
-    rw [h, norm_zero] at hac
-    exact hr.ne hac
-  have hhalf : (1 : ℝ) / 2 < r / ρ := by rw [lt_div_iff₀ hρ]; linarith
-  obtain ⟨s, hs1, hs2⟩ : ∃ s : ℝ, 1 / 2 < s ∧ s < r / ρ :=
-    ⟨(1 / 2 + r / ρ) / 2, by linarith, by linarith⟩
+real multiple `s / a` with `1 / 2 < s < ‖a‖ / ρ`, which is a nonempty range precisely under that
+hypothesis. Neither `0 < ‖a‖` nor `a ≠ 0` is assumed: `0 < ρ < 2 * ‖a‖` forces both. -/
+private lemma nonempty_halfPlane_inter_ball {a : ℂ} (hρ : 0 < ρ) (hρ' : ρ < 2 * ‖a‖) :
+    ({w : ℂ | 1 < 2 * (a * w).re} ∩ ball 0 ρ⁻¹).Nonempty := by
+  have hr : 0 < ‖a‖ := by linarith
+  have ha0 : a ≠ 0 := norm_pos_iff.mp hr
+  have hhalf : (1 : ℝ) / 2 < ‖a‖ / ρ := by rw [lt_div_iff₀ hρ]; linarith
+  obtain ⟨s, hs1, hs2⟩ : ∃ s : ℝ, 1 / 2 < s ∧ s < ‖a‖ / ρ :=
+    ⟨(1 / 2 + ‖a‖ / ρ) / 2, by linarith, by linarith⟩
   have hs0 : 0 < s := by linarith
   refine ⟨(s : ℂ) / a, ?_, ?_⟩
   · have ha : a * ((s : ℂ) / a) = (s : ℂ) := by field_simp
     rw [mem_ofPred_eq, ha, Complex.ofReal_re]
     linarith
   · rw [mem_ball, dist_zero_right, norm_div, Complex.norm_real, Real.norm_eq_abs,
-      abs_of_pos hs0, hac, div_lt_iff₀ hr, inv_mul_eq_div]
+      abs_of_pos hs0, div_lt_iff₀ hr, inv_mul_eq_div]
     rw [lt_div_iff₀ hρ] at hs2 ⊢
     linarith
 
@@ -298,7 +295,7 @@ theorem isConnected_ball_diff_closedBall (hζ : dist ζ c = r) (hρ : 0 < ρ)
   have hac : ‖c - ζ‖ = r := by rw [← dist_eq_norm, dist_comm, hζ]
   rw [← image_add_inv_halfPlane_inter_ball hζ hρ]
   refine ((convex_halfPlane_inter_ball _ _).isConnected
-    (nonempty_halfPlane_inter_ball hac hρ hρ')).image _ fun w hw => ?_
+    (nonempty_halfPlane_inter_ball hρ (by rw [hac]; exact hρ'))).image _ fun w hw => ?_
   exact (continuousAt_const.add
     (continuousAt_inv₀ (ne_zero_of_one_lt_two_mul_re_mul hw.1))).continuousWithinAt
 
