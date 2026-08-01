@@ -155,28 +155,30 @@ theorem dualEvaluation_toLinearMap (M : FGComoduleCat.{u, v, u} k H) :
 `1` when they agree and `0` otherwise, so the antipode-transformed matrix is a right inverse of the
 matrix-coefficient matrix in this multiplication order; the opposite order is not claimed here.
 
-Stated for any comodule with a finite basis: neither the canonical `Module.Basis.ofVectorSpace`
-choice, nor finite-dimensionality, nor decidable equality on the index type plays a part. -/
-private lemma sum_matrixCoefficient_mul_antipode_eq_algebraMap {M : Type*} [AddCommMonoid M]
-    [Module k M] [Comodule k H M] {ι : Type*} [Fintype ι] (b : Module.Basis ι k M) (p q : ι) :
+Stated over its own base ring, for any comodule with a finite basis: neither the ambient field,
+nor the canonical `Module.Basis.ofVectorSpace` choice, nor finite-dimensionality, nor decidable
+equality on the index type plays a part. -/
+private lemma sum_matrixCoefficient_mul_antipode_eq_algebraMap (R : Type*) [CommSemiring R]
+    (A : Type*) [Semiring A] [HopfAlgebra R A] {M : Type*} [AddCommMonoid M] [Module R M]
+    [Comodule R A M] {ι : Type*} [Fintype ι] (b : Module.Basis ι R M) (p q : ι) :
     (∑ x : ι,
-      Comodule.matrixCoefficient (R := k) (C := H) (b.coord p) (b x) *
-      HopfAlgebra.antipode k
-        (Comodule.matrixCoefficient (R := k) (C := H) (b.coord x) (b q))) =
-      algebraMap k H (b.coord p (b q)) := by
+      Comodule.matrixCoefficient (R := R) (C := A) (b.coord p) (b x) *
+      HopfAlgebra.antipode R
+        (Comodule.matrixCoefficient (R := R) (C := A) (b.coord x) (b q))) =
+      algebraMap R A (b.coord p (b q)) := by
   -- Recognise the sum as the left antipode identity applied to a matrix coefficient, then finish
   -- with the counit computation of that coefficient.
   calc
-    _ = LinearMap.mul' k H
-        ((HopfAlgebra.antipode k).lTensor H
+    _ = LinearMap.mul' R A
+        ((HopfAlgebra.antipode R).lTensor A
           (Coalgebra.comul
-            (Comodule.matrixCoefficient (R := k) (C := H) (b.coord p) (b q)))) := by
+            (Comodule.matrixCoefficient (R := R) (C := A) (b.coord p) (b q)))) := by
       rw [Comodule.comul_matrixCoefficient_eq_sum b]
       simp only [map_sum, LinearMap.lTensor_tmul, LinearMap.mul'_apply]
-    _ = algebraMap k H
-        (Coalgebra.counit (Comodule.matrixCoefficient (R := k) (C := H) (b.coord p) (b q))) :=
+    _ = algebraMap R A
+        (Coalgebra.counit (Comodule.matrixCoefficient (R := R) (C := A) (b.coord p) (b q))) :=
       HopfAlgebra.mul_antipode_lTensor_comul_apply _
-    _ = algebraMap k H (b.coord p (b q)) := by rw [Comodule.counit_matrixCoefficient]
+    _ = algebraMap R A (b.coord p (b q)) := by rw [Comodule.counit_matrixCoefficient]
 
 private theorem tensorCoact_coevaluation_apply_one
     (M : FGComoduleCat.{u, v, u} k H) :
