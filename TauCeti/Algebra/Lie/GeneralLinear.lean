@@ -53,9 +53,10 @@ sits *inside* the derived ideal and the two are not complementary.
 
 Every result about `gl n R` is stated over an arbitrary commutative ring `R`; no field,
 characteristic, or algebraic closure hypothesis is used, and the invertibility of `Fintype.card n`
-is carried as an `Invertible` hypothesis only on the one result that needs it. The private
-matrix-unit helpers ask for less still — a ring for the bracket identities, and only an additive
-commutative group for the decomposition of a trace-zero matrix.
+is carried as an `Invertible` hypothesis only on the one result that needs it. Two groups of
+declarations ask for less: the matrix-unit bracket identities need only a ring, and the
+decomposition of a trace-zero matrix into matrix units needs only an additive commutative group,
+no multiplication at all.
 
 Mathlib does not register `LieRing.ofAssociativeRing` as a global instance, so, as in
 `Mathlib/Algebra/Lie/Matrix.lean`, it is a local instance here.
@@ -88,9 +89,8 @@ variable [AddCommGroup R]
 its matrix units `Eₚq (Aₚq)`; subtracting `E₀₀ (Aₚₚ)` from each diagonal one changes the total by
 `E₀₀ (trace A)`, so for a trace-zero `A` the corrected sum is still `A`.
 
-The correction is what puts each summand in commutator form:
-`TauCeti.ite_single_sub_mem_derivedSeries_one` exhibits an explicit bracket for every one of them.
-Only the additive structure of `R` is involved here. -/
+The correction is what puts each summand in commutator form: the membership helper below exhibits
+an explicit bracket for every one of them. Only the additive structure of `R` is involved here. -/
 private lemma eq_sum_sum_ite_single_sub_of_trace_eq_zero (i₀ : n) {A : Matrix n n R}
     (hA : A.trace = 0) :
     A = ∑ p : n, ∑ q : n,
@@ -190,8 +190,7 @@ theorem slIdeal_toLieSubalgebra_eq_sl :
 
 /-! ### The derived ideal of `gl n R` -/
 
-/-- Each summand of the corrected double sum of
-`TauCeti.eq_sum_sum_ite_single_sub_of_trace_eq_zero` lies in the derived ideal of `gl n R`, being a
+/-- Each summand of the corrected double sum above lies in the derived ideal of `gl n R`, being a
 commutator: an off-diagonal unit by `TauCeti.lie_single_self_single_of_ne`, and a corrected diagonal
 one by `TauCeti.lie_single_single_eq_sub`. -/
 private lemma ite_single_sub_mem_derivedSeries_one (i₀ : n) (A : Matrix n n R) (p q : n) :
@@ -199,8 +198,9 @@ private lemma ite_single_sub_mem_derivedSeries_one (i₀ : n) (A : Matrix n n R)
       ∈ derivedSeries R (Matrix n n R) 1 := by
   classical
   have hcomm : ∀ X Y : Matrix n n R, ⁅X, Y⁆ ∈ derivedSeries R (Matrix n n R) 1 := fun X Y => by
-    rw [derivedSeries_def, derivedSeriesOfIdeal_succ, derivedSeriesOfIdeal_zero]
-    exact LieSubmodule.lie_mem_lie (LieSubmodule.mem_top X) (LieSubmodule.mem_top Y)
+    have hmem : ⁅X, Y⁆ ∈ Submodule.span R {⁅x, y⁆ | (x : Matrix n n R) (y : Matrix n n R)} :=
+      Submodule.subset_span ⟨X, Y, rfl⟩
+    rwa [← coe_derivedSeries_one_eq] at hmem
   by_cases hpq : p = q
   · subst hpq
     simpa [lie_single_single_eq_sub p i₀ (A p p)] using
@@ -212,17 +212,21 @@ variable (R n) in
 /-- The derived ideal of `gl n R` is the special linear ideal: `⁅gl n R, gl n R⁆ = sl n R`.
 
 One inclusion is the vanishing of the trace of a commutator. For the other, a trace-zero matrix is
-a sum of commutators by `TauCeti.eq_sum_sum_ite_single_sub_of_trace_eq_zero` and
-`TauCeti.ite_single_sub_mem_derivedSeries_one`. For an empty index type both sides are the zero
-ideal. -/
+the sum of its off-diagonal matrix units `Eᵢⱼ (Aᵢⱼ)`, commutators by
+`TauCeti.lie_single_self_single_of_ne`, and of the differences `Eᵢᵢ (Aᵢᵢ) - E₀₀ (Aᵢᵢ)`, commutators
+by `TauCeti.lie_single_single_eq_sub`; the discrepancy between the two sums is `E₀₀ (trace A)`,
+which vanishes. For an empty index type both sides are the zero ideal. -/
 theorem derivedSeries_one_eq_slIdeal :
     derivedSeries R (Matrix n n R) 1 = slIdeal R n := by
   classical
   refine le_antisymm ?_ fun A hA => ?_
-  · rw [derivedSeries_def, derivedSeriesOfIdeal_succ, derivedSeriesOfIdeal_zero,
-      LieSubmodule.lie_le_iff]
-    intro X _ Y _
-    exact mem_slIdeal_iff.mpr (matrix_trace_commutator_zero n R X Y)
+  · have hspan : Submodule.span R {⁅X, Y⁆ | (X : Matrix n n R) (Y : Matrix n n R)}
+        ≤ (slIdeal R n : Submodule R (Matrix n n R)) := by
+      rw [Submodule.span_le]
+      rintro - ⟨X, Y, rfl⟩
+      exact mem_slIdeal_iff.mpr (matrix_trace_commutator_zero n R X Y)
+    rw [← coe_derivedSeries_one_eq] at hspan
+    exact hspan
   -- With no indices at all the only matrix is `0`, which lies in every ideal.
   rcases isEmpty_or_nonempty n with hn | hne
   · haveI := hn
