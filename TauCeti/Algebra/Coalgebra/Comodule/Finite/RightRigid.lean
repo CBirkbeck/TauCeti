@@ -150,46 +150,29 @@ theorem dualEvaluation_toLinearMap (M : FGComoduleCat.{u, v, u} k H) :
     (dualEvaluation k H M).hom.toLinearMap = contractLeft k M :=
   dualEvaluation_toLinearMap_aux k H M
 
-private theorem tensorCoact_coevaluation_apply_one
-    (M : FGComoduleCat.{u, v, u} k H) :
-    Comodule.tensorCoact (R := k) (C := H) (M := M) (N := Module.Dual k M)
-        (coevaluation k M 1) =
-      coevaluation k M 1 ⊗ₜ[k] (1 : H) := by
+/-- The coordinates of a basis vector of `Module.Basis.ofVectorSpace` in that same basis form a
+Kronecker delta. -/
+private lemma ofVectorSpace_repr_coe (M : FGComoduleCat.{u, v, u} k H)
+    [DecidableEq (Module.Basis.ofVectorSpaceIndex k M)]
+    (i j : Module.Basis.ofVectorSpaceIndex k M) :
+    (Module.Basis.ofVectorSpace k M).repr (i : M) j = if i = j then 1 else 0 := by
+  rw [← Module.Basis.ofVectorSpace_apply_self k M i]
+  exact Module.Basis.repr_self_apply (Module.Basis.ofVectorSpace k M) i j
+
+/-- **The antipode inverts the matrix-coefficient matrix.** Summing a matrix coefficient against the
+antipode of the transposed one collapses to a Kronecker delta, by the left antipode identity
+followed by the counit computation of a matrix coefficient. -/
+private lemma sum_matrixCoefficient_mul_antipode (M : FGComoduleCat.{u, v, u} k H)
+    [DecidableEq (Module.Basis.ofVectorSpaceIndex k M)]
+    (p q : Module.Basis.ofVectorSpaceIndex k M) :
+    (∑ x : Module.Basis.ofVectorSpaceIndex k M,
+      Comodule.matrixCoefficient (R := k) (C := H)
+        ((Module.Basis.ofVectorSpace k M).coord p) (x : M) *
+      HopfAlgebra.antipode k
+        (Comodule.matrixCoefficient (R := k) (C := H)
+          ((Module.Basis.ofVectorSpace k M).coord x) (q : M))) =
+      if q = p then 1 else 0 := by
   classical
-  -- Expand coevaluation and both coactions in a basis, then compare tensor coordinates.
-  -- The remaining matrix-coefficient sum collapses by the left antipode/counit identity.
-  let b := Module.Basis.ofVectorSpace k M
-  rw [coevaluation_apply_one]
-  dsimp only [b]
-  simp only [map_sum, Comodule.tensorCoact_tmul,
-    Comodule.coact_eq_sum_basis_matrixCoefficient (C := H) (Module.Basis.ofVectorSpace k M),
-    Comodule.dual_coact,
-    dualCoact_coord_eq_sum k H (Module.Basis.ofVectorSpace k M),
-    TensorProduct.sum_tmul, TensorProduct.tmul_sum,
-    Comodule.tensorCombine_tmul_tmul]
-  have hrepr (i j : Module.Basis.ofVectorSpaceIndex k M) :
-      (Module.Basis.ofVectorSpace k M).repr (i : M) j =
-        if i = j then 1 else 0 := by
-    rw [← Module.Basis.ofVectorSpace_apply_self k M i]
-    exact Module.Basis.repr_self_apply (Module.Basis.ofVectorSpace k M) i j
-  let bt := (Module.Basis.ofVectorSpace k M).tensorProduct
-    (Module.Basis.ofVectorSpace k M).dualBasis
-  apply (TensorProduct.equivFinsuppOfBasisLeft (N := H) bt).injective
-  ext ⟨p, q⟩
-  suffices h :
-      (∑ x : Module.Basis.ofVectorSpaceIndex k M,
-        Comodule.matrixCoefficient (R := k) (C := H)
-          ((Module.Basis.ofVectorSpace k M).coord p) (x : M) *
-        HopfAlgebra.antipode k
-          (Comodule.matrixCoefficient (R := k) (C := H)
-            ((Module.Basis.ofVectorSpace k M).coord x) (q : M))) =
-        if q = p then 1 else 0 by
-    simpa only [Module.Basis.coe_ofVectorSpace, map_sum,
-      TensorProduct.equivFinsuppOfBasisLeft_apply_tmul, Finsupp.coe_finsetSum,
-      Finset.sum_apply, Finsupp.mapRange_apply, Module.Basis.tensorProduct_repr_tmul_apply,
-      Module.Basis.dualBasis_repr, Module.Basis.coord_apply, hrepr, smul_eq_mul, mul_ite,
-      mul_one, mul_zero, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
-      Finset.mem_univ, ↓reduceIte, Finset.sum_ite_eq, bt] using h
   calc
     _ = LinearMap.mul' k H
         ((HopfAlgebra.antipode k).lTensor H
@@ -208,7 +191,36 @@ private theorem tensorCoact_coevaluation_apply_one
       HopfAlgebra.mul_antipode_lTensor_comul_apply _
     _ = if q = p then 1 else 0 := by
       rw [Comodule.counit_matrixCoefficient]
-      simp [Module.Basis.coord_apply, hrepr]
+      simp [Module.Basis.coord_apply, ofVectorSpace_repr_coe]
+
+private theorem tensorCoact_coevaluation_apply_one
+    (M : FGComoduleCat.{u, v, u} k H) :
+    Comodule.tensorCoact (R := k) (C := H) (M := M) (N := Module.Dual k M)
+        (coevaluation k M 1) =
+      coevaluation k M 1 ⊗ₜ[k] (1 : H) := by
+  classical
+  -- Expand coevaluation and both coactions in a basis, then compare tensor coordinates.
+  -- The remaining matrix-coefficient sum collapses by `sum_matrixCoefficient_mul_antipode`.
+  let b := Module.Basis.ofVectorSpace k M
+  rw [coevaluation_apply_one]
+  dsimp only [b]
+  simp only [map_sum, Comodule.tensorCoact_tmul,
+    Comodule.coact_eq_sum_basis_matrixCoefficient (C := H) (Module.Basis.ofVectorSpace k M),
+    Comodule.dual_coact,
+    dualCoact_coord_eq_sum k H (Module.Basis.ofVectorSpace k M),
+    TensorProduct.sum_tmul, TensorProduct.tmul_sum,
+    Comodule.tensorCombine_tmul_tmul]
+  let bt := (Module.Basis.ofVectorSpace k M).tensorProduct
+    (Module.Basis.ofVectorSpace k M).dualBasis
+  apply (TensorProduct.equivFinsuppOfBasisLeft (N := H) bt).injective
+  ext ⟨p, q⟩
+  simpa only [Module.Basis.coe_ofVectorSpace, map_sum,
+    TensorProduct.equivFinsuppOfBasisLeft_apply_tmul, Finsupp.coe_finsetSum,
+    Finset.sum_apply, Finsupp.mapRange_apply, Module.Basis.tensorProduct_repr_tmul_apply,
+    Module.Basis.dualBasis_repr, Module.Basis.coord_apply, ofVectorSpace_repr_coe, smul_eq_mul,
+    mul_ite, mul_one, mul_zero, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
+    Finset.mem_univ, ↓reduceIte, Finset.sum_ite_eq, bt] using
+    sum_matrixCoefficient_mul_antipode k H M p q
 
 /-- The ordinary finite-dimensional coevaluation, as a finite-comodule morphism into the
 tensor product with the antipode-twisted dual. -/
