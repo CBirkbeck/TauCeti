@@ -38,41 +38,6 @@ variable {R A A' B : Type*} [CommSemiring R]
   [CommSemiring A] [HopfAlgebra R A] [CommSemiring A'] [HopfAlgebra R A']
   [CommSemiring B] [Algebra R B]
 
-omit [CommSemiring A] [HopfAlgebra R A] [CommSemiring A'] [HopfAlgebra R A'] in
-/-- The first component of a dual-number element, transported between the two counit
-coefficient indexings through their canonical identifications with `B`. The two
-`Semiring`/`Algebra R` structures are the same `inferInstanceAs` terms over the shared
-carrier, so the transport is the identity, recorded here once as an explicit lemma. -/
-private lemma fst_transport (z : DualNumber (Bialgebra.CounitAlgebra R A' B)) :
-    fst (R := Bialgebra.CounitAlgebra R A' B) z =
-      (Bialgebra.CounitAlgebra.algEquivSelf R A' B).symm
-        (Bialgebra.CounitAlgebra.algEquivSelf R A B
-          (fst (R := Bialgebra.CounitAlgebra R A B) z)) := by
-  rw [Bialgebra.CounitAlgebra.algEquivSelf_symm_apply, Bialgebra.CounitAlgebra.algEquivSelf_apply]
-  -- The residual identification of the two indexings of `fst` over the shared carrier
-  -- is definitional; this is the single point where it is used.
-  rfl
-
-private lemma fst_mapDomain_of_mem_tangentKer (φ : A' →ₐc[R] A)
-    {ψ : WithConv (A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B))}
-    (hψ : ψ ∈ tangentKer R A B) (a : A') :
-    fst (R := Bialgebra.CounitAlgebra R A' B)
-        ((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ ψ).ofConv
-          a) =
-      algebraMap A' (Bialgebra.CounitAlgebra R A' B) a := by
-  rw [mem_tangentKer_iff] at hψ
-  have h := congrArg (fun χ : A →ₐ[R] Bialgebra.CounitAlgebra R A B => χ (φ a)) hψ
-  simp only [AlgHom.comp_apply, IsScalarTower.coe_toAlgHom'] at h
-  -- The cross-index step is the explicit transport lemma `fst_transport`
-  -- (`AlgHom.mapDomain_apply_apply` is a `rfl`-lemma, so the argument of `fst` is the
-  -- precomposed point); the remaining rewrites stay on one index at a time.
-  rw [fst_transport (A := A), Bialgebra.CounitAlgebra.algEquivSelf_symm_apply R A' B,
-    Bialgebra.CounitAlgebra.algEquivSelf_apply R A B,
-    Bialgebra.CounitAlgebra.algebraMap_apply,
-    ← CoalgHomClass.counit_comp_apply (F := A' →ₐc[R] A) φ a,
-    ← Bialgebra.CounitAlgebra.algebraMap_apply (R := R) (A := A) (B := B)]
-  exact h
-
 /-- The differential of a Hopf-algebra morphism on tangent kernels: a morphism
 `φ : A' →ₐc[R] A` of Hopf algebras sends a dual-number point of `A` over the identity to
 a dual-number point of `A'` over the identity by precomposition. The coefficient
@@ -82,10 +47,26 @@ noncomputable def tangentKerMap (φ : A' →ₐc[R] A) :
     tangentKer R A B →* tangentKer R A' B :=
   (((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ).comp
       (tangentKer R A B).subtype).codRestrict (tangentKer R A' B)) fun ψ => by
-    rw [mem_tangentKer_iff]
-    ext a
-    rw [AlgHom.comp_apply]
-    exact fst_mapDomain_of_mem_tangentKer φ ψ.2 a
+    have hψ : dualNumberReduction R A B ψ.val = 1 := by
+      have h : ψ.val ∈ tangentKer R A B := ψ.2
+      generalize hg : ψ.val = v at h ⊢
+      rwa [tangentKer_def, MonoidHom.mem_ker] at h
+    rw [tangentKer_def, MonoidHom.mem_ker, dualNumberReduction_def]
+    -- The reduction of `ψ` at the `A'` coefficient indexing is its `A`-side reduction:
+    -- the two counit coefficient algebras share the carrier `B` and its instances.
+    have hred : AlgHom.mapValue (TrivSqZeroExt.fstHom R (Bialgebra.CounitAlgebra R A' B)
+        (Bialgebra.CounitAlgebra R A' B)) ψ.val = dualNumberReduction R A B ψ.val := by
+      rw [dualNumberReduction_def]
+      rfl
+    have hsquare := DFunLike.congr_fun
+      (AlgHom.mapValue_mapDomain φ
+        (TrivSqZeroExt.fstHom R (Bialgebra.CounitAlgebra R A' B)
+          (Bialgebra.CounitAlgebra R A' B))) ψ.val
+    -- Naturality of reduction against precomposition, then the `A`-side reduction of
+    -- `ψ` is the identity point; composition applications agree definitionally.
+    exact hsquare.symm.trans
+      ((congrArg (AlgHom.mapDomain (A := Bialgebra.CounitAlgebra R A' B) φ)
+        (hred.trans hψ)).trans (map_one _))
 
 /-- The differential acts by precomposition on dual-number points. Not a `simp` lemma:
 the pointwise form `tangentKerMap_apply_val_ofConv` is the canonical reduction rule, and
