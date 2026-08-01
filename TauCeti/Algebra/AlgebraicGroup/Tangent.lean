@@ -53,6 +53,10 @@ whenever `B` is commutative (`toAlgHom_eq_one_ofConv`); at semiring `B` the
 convolution monoid does not exist and the composite is its generalization.
 Derivations of `A` valued in `Bialgebra.CounitAlgebra R A B` are the tangent vectors
 at the identity. -/
+-- `@[expose]` is mandated by the compiler for a type synonym carrying instances under
+-- the module system ("locally inferred compilation type differs from type that would
+-- be inferred in other modules ... may need to be `@[expose]`d"); removing it fails
+-- the build. Consumers should still prefer `algEquivSelf` for transport.
 @[expose]
 def Bialgebra.CounitAlgebra (_R _A : Type*) (B : Type*) : Type _ := B
 
@@ -87,6 +91,20 @@ lemma algebraMap_apply (a : A) :
 /-- The canonical `R`-algebra identification of the counit-point coefficient algebra
 with `B` itself. -/
 def algEquivSelf : CounitAlgebra R A B ≃ₐ[R] B := AlgEquiv.refl
+
+omit [CommSemiring A] [Bialgebra R A] in
+@[simp]
+lemma algEquivSelf_apply (x : CounitAlgebra R A B) : algEquivSelf R A B x = x := by
+  change (AlgEquiv.refl (R := R) (A₁ := B)) x = x
+  simp only [AlgEquiv.coe_refl]
+  rfl
+
+omit [CommSemiring A] [Bialgebra R A] in
+@[simp]
+lemma algEquivSelf_symm_apply (b : B) : (algEquivSelf R A B).symm b = b := by
+  change (AlgEquiv.refl (R := R) (A₁ := B)).symm b = b
+  simp only [AlgEquiv.refl_symm, AlgEquiv.coe_refl]
+  rfl
 
 
 end Bialgebra.CounitAlgebra
@@ -250,6 +268,40 @@ noncomputable def derivationMulEquivTangentKer :
     · simp only [MulMemClass.mk_mul_mk]
       rw [snd_convMul_apply h₁ h₂ a]
       simp [derivationToDualNumberEquivCounitLift]
+
+variable (R A B) in
+/-- Membership in the tangent subgroup: a dual-number point lies in `tangentKer` iff
+its classical part is the identity point of the tower. -/
+lemma mem_tangentKer_iff {ψ : WithConv (A →ₐ[R] DualNumber (CounitAlgebra R A B))} :
+    ψ ∈ tangentKer R A B ↔
+      (fstHom R _ _).comp ψ.ofConv =
+        IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B) := by
+  simpa using toConv_mem_ker_iff (ψ₀ := ψ.ofConv)
+
+@[simp]
+lemma derivationMulEquivTangentKer_apply_fst
+    (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) (a : A) :
+    fst (R := CounitAlgebra R A B)
+        ((derivationMulEquivTangentKer R A B d).val.ofConv a) =
+      algebraMap A (CounitAlgebra R A B) a := by
+  simp [derivationMulEquivTangentKer, derivationToDualNumberEquivCounitLift,
+    derivationToDualNumberEquivLift_apply_fst]
+  rfl
+
+@[simp]
+lemma derivationMulEquivTangentKer_apply_snd
+    (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) (a : A) :
+    snd (R := CounitAlgebra R A B)
+        ((derivationMulEquivTangentKer R A B d).val.ofConv a) = d.toAdd a := by
+  simp [derivationMulEquivTangentKer, derivationToDualNumberEquivCounitLift,
+    derivationToDualNumberEquivLift_apply_snd]
+
+@[simp]
+lemma derivationMulEquivTangentKer_symm_apply
+    (ψ : tangentKer R A B) (a : A) :
+    ((derivationMulEquivTangentKer R A B).symm ψ).toAdd a = snd (ψ.val.ofConv a) := by
+  simp [derivationMulEquivTangentKer, derivationToDualNumberEquivCounitLift,
+    derivationToDualNumberEquivLift_symm_apply]
 
 /-- The tangent subgroup is abelian: first-order infinitesimal points commute. -/
 theorem tangentKer_mul_comm (x y : tangentKer R A B) : x * y = y * x := by
