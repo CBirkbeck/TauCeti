@@ -150,21 +150,23 @@ theorem eventuallyEq_at_one (hUc : IsSimplyConnected U) (H : ContinuesInside f�
   rw [hend] at e₁
   exact (e₀.trans hmono.symm).trans e₁.symm
 
-/-- **A nearby path with a prescribed endpoint.** Given a path ending at `z` and a point `w` within
-`r` of it, there is a continuous path with the same start, ending at `w`, staying everywhere within
-`r` of the original.
+/-- **A nearby path with a prescribed endpoint.** Given a point `w` within `r` of the endpoint of a
+path, there is a continuous path with the same start, ending at `w`, staying everywhere within `r`
+of the original.
 
-The witness is the shear `x ↦ δ x + x • (w - z)`, which moves each point by at most `dist w z`.
-Purely a statement about paths in `ℂ`: no analytic continuation, and no reference to `U`. -/
-private lemma exists_continuous_path_dist_lt {z w : ℂ} {r : ℝ} (hδ : Continuous δ) (hδ1 : δ 1 = z)
-    (hw : dist w z < r) :
+The witness is the shear `x ↦ δ x + x • (w - δ 1)`, which moves each point by at most
+`dist w (δ 1)`. Purely a statement about paths in `ℂ`: no analytic continuation, and no reference
+to `U`. -/
+private lemma exists_continuous_path_dist_lt {w : ℂ} {r : ℝ} (hδ : Continuous δ)
+    (hw : dist w (δ 1) < r) :
     ∃ δ' : I → ℂ, Continuous δ' ∧ (∀ x, dist (δ' x) (δ x) < r) ∧ δ' 0 = δ 0 ∧ δ' 1 = w := by
-  refine ⟨fun x => δ x + (x : ℝ) • (w - z), by fun_prop, fun x => ?_, by simp, by simp [hδ1]⟩
+  refine ⟨fun x => δ x + (x : ℝ) • (w - δ 1), by fun_prop, fun x => ?_, by simp, by simp⟩
   have hx : |(x : ℝ)| ≤ 1 := abs_le.2 ⟨by linarith [x.2.1], x.2.2⟩
-  have hd : dist (δ x + (x : ℝ) • (w - z)) (δ x) = |(x : ℝ)| * dist w z := by
+  have hd : dist (δ x + (x : ℝ) • (w - δ 1)) (δ x) = |(x : ℝ)| * dist w (δ 1) := by
     rw [dist_eq_norm, dist_eq_norm]
     simp
-  have hle : |(x : ℝ)| * dist w z ≤ dist w z := mul_le_of_le_one_left dist_nonneg hx
+  have hle : |(x : ℝ)| * dist w (δ 1) ≤ dist w (δ 1) :=
+    mul_le_of_le_one_left dist_nonneg hx
   linarith [hd ▸ hle]
 
 /-- **The monodromy theorem for a simply connected domain.** A germ that continues along every
@@ -203,7 +205,7 @@ theorem exists_analyticOnNhd (hUo : IsOpen U) (hUc : IsSimplyConnected U) (hz₀
     filter_upwards [ball_mem_nhds z (lt_min hρ hε), hGone] with w hw hwG
     -- The path `δ` sheared to end at `w` instead of `z`.
     obtain ⟨δ', hδ'c, hdist, hδ'start, hδ'1⟩ :=
-      exists_continuous_path_dist_lt hδ hδ1 (r := min ρ ε) (mem_ball.1 hw)
+      exists_continuous_path_dist_lt hδ (r := min ρ ε) (hδ1 ▸ mem_ball.1 hw)
     have hδ'U : ∀ x, δ' x ∈ U := fun x =>
       hεU (mem_thickening_iff.2 ⟨δ x, mem_range_self x, (hdist x).trans_le (min_le_right _ _)⟩)
     have hδ'0 : δ' 0 = z₀ := hδ'start.trans hδ0
