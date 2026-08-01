@@ -150,19 +150,20 @@ theorem dualEvaluation_toLinearMap (M : FGComoduleCat.{u, v, u} k H) :
     (dualEvaluation k H M).hom.toLinearMap = contractLeft k M :=
   dualEvaluation_toLinearMap_aux k H M
 
-/-- Summing a matrix coefficient against the antipode of the transposed one collapses to a
-Kronecker delta: in the multiplication order displayed below, the antipode-transformed matrix is a
-right inverse of the matrix-coefficient matrix. The opposite order is not claimed here.
+/-- Summing a matrix coefficient against the antipode of the transposed one is the image under
+`algebraMap` of a single basis coordinate. Taking `p` and `q` basis indices, the right-hand side is
+`1` when they agree and `0` otherwise, so the antipode-transformed matrix is a right inverse of the
+matrix-coefficient matrix in this multiplication order; the opposite order is not claimed here.
 
-Stated for an arbitrary finite basis; nothing about the canonical `Module.Basis.ofVectorSpace`
-choice is used. -/
-private lemma sum_matrixCoefficient_mul_antipode {ι : Type u} [Fintype ι] [DecidableEq ι]
-    (M : FGComoduleCat.{u, v, u} k H) (b : Module.Basis ι k M) (p q : ι) :
+Stated for any comodule with a finite basis: neither the canonical `Module.Basis.ofVectorSpace`
+choice, nor finite-dimensionality, nor decidable equality on the index type plays a part. -/
+private lemma sum_matrixCoefficient_mul_antipode_eq_algebraMap {M : Type*} [AddCommMonoid M]
+    [Module k M] [Comodule k H M] {ι : Type*} [Fintype ι] (b : Module.Basis ι k M) (p q : ι) :
     (∑ x : ι,
       Comodule.matrixCoefficient (R := k) (C := H) (b.coord p) (b x) *
       HopfAlgebra.antipode k
         (Comodule.matrixCoefficient (R := k) (C := H) (b.coord x) (b q))) =
-      if q = p then 1 else 0 := by
+      algebraMap k H (b.coord p (b q)) := by
   -- Recognise the sum as the left antipode identity applied to a matrix coefficient, then finish
   -- with the counit computation of that coefficient.
   calc
@@ -175,9 +176,7 @@ private lemma sum_matrixCoefficient_mul_antipode {ι : Type u} [Fintype ι] [Dec
     _ = algebraMap k H
         (Coalgebra.counit (Comodule.matrixCoefficient (R := k) (C := H) (b.coord p) (b q))) :=
       HopfAlgebra.mul_antipode_lTensor_comul_apply _
-    _ = if q = p then 1 else 0 := by
-      rw [Comodule.counit_matrixCoefficient]
-      simp [Module.Basis.coord_apply, Finsupp.single_apply, apply_ite (algebraMap k H), eq_comm]
+    _ = algebraMap k H (b.coord p (b q)) := by rw [Comodule.counit_matrixCoefficient]
 
 private theorem tensorCoact_coevaluation_apply_one
     (M : FGComoduleCat.{u, v, u} k H) :
@@ -186,7 +185,7 @@ private theorem tensorCoact_coevaluation_apply_one
       coevaluation k M 1 ⊗ₜ[k] (1 : H) := by
   classical
   -- Expand coevaluation and both coactions in a basis, then compare tensor coordinates.
-  -- The remaining matrix-coefficient sum collapses by `sum_matrixCoefficient_mul_antipode`.
+  -- The remaining matrix-coefficient sum collapses by the antipode identity below.
   let b := Module.Basis.ofVectorSpace k M
   rw [coevaluation_apply_one]
   dsimp only [b]
@@ -209,8 +208,9 @@ private theorem tensorCoact_coevaluation_apply_one
     Finset.sum_apply, Finsupp.mapRange_apply, Module.Basis.tensorProduct_repr_tmul_apply,
     Module.Basis.dualBasis_repr, Module.Basis.coord_apply, hrepr, smul_eq_mul,
     mul_ite, mul_one, mul_zero, ite_smul, one_smul, zero_smul, Finset.sum_ite_eq',
-    Finset.mem_univ, ↓reduceIte, Finset.sum_ite_eq, bt] using
-    sum_matrixCoefficient_mul_antipode k H M (Module.Basis.ofVectorSpace k M) p q
+    Finset.mem_univ, ↓reduceIte, Finset.sum_ite_eq, bt,
+    apply_ite (algebraMap k H), map_one, map_zero] using
+    sum_matrixCoefficient_mul_antipode_eq_algebraMap k H (Module.Basis.ofVectorSpace k M) p q
 
 /-- The ordinary finite-dimensional coevaluation, as a finite-comodule morphism into the
 tensor product with the antipode-twisted dual. -/
