@@ -185,6 +185,15 @@ theorem map_bot (f : H →ₐc[R] K) : (⊥ : HopfIdeal R H).map f = ⊥ :=
     rw [← mem_toIdeal, map_toIdeal, bot_toIdeal, Ideal.map_bot]
     exact Ideal.mem_bot.trans mem_bot.symm
 
+/-- For a surjective morphism, membership in the image Hopf ideal means being the value
+of a member. -/
+@[simp]
+theorem mem_map_iff_of_surjective {f : H →ₐc[R] K} (hf : Function.Surjective f)
+    {I : HopfIdeal R H} {y : K} : y ∈ I.map f ↔ ∃ x ∈ I, f x = y := by
+  rw [← mem_toIdeal, map_toIdeal]
+  simp only [Ideal.mem_map_iff_of_surjective (f : H →+* K) hf, mem_toIdeal]
+  rfl
+
 /-- The image vanishes exactly when the Hopf ideal is contained in the kernel of the
 underlying ring homomorphism. For surjective morphisms the right side is the kernel Hopf
 ideal (`TauCeti.HopfIdeal.map_eq_bot_iff_le_ker`). -/
@@ -267,15 +276,6 @@ theorem map_le_iff_le_comap {f : H →ₐc[R] K} (hf : Function.Surjective f)
     {I : HopfIdeal R H} {J : HopfIdeal R K} : I.map f ≤ J ↔ I ≤ J.comap f hf := by
   rw [map_le_iff, le_def]
   exact ⟨fun h x hx => mem_comap.mpr (h hx), fun h x hx => mem_comap.mp (h hx)⟩
-
-/-- For a surjective morphism, membership in the image Hopf ideal means being the value
-of a member. -/
-@[simp]
-theorem mem_map_iff_of_surjective {f : H →ₐc[R] K} (hf : Function.Surjective f)
-    {I : HopfIdeal R H} {y : K} : y ∈ I.map f ↔ ∃ x ∈ I, f x = y := by
-  rw [← mem_toIdeal, map_toIdeal]
-  simp only [Ideal.mem_map_iff_of_surjective (f : H →+* K) hf, mem_toIdeal]
-  rfl
 
 /-- Along a surjective morphism, image after inverse image recovers the Hopf ideal. -/
 @[simp]
