@@ -19,11 +19,11 @@ antipode. We prove that here by the usual convolution-inverse uniqueness argumen
 
 ## Main results
 
-* `TauCeti.TensorProduct.antipode_tmul`: the antipode on a tensor product of Hopf algebras
-  acts componentwise on pure tensors (the convolution-inverse identities themselves are
-  Mathlib's `LinearMap.antipode_mul_id` and `LinearMap.id_mul_antipode`).
 * `BialgHom.toLinearMap_comp_antipode` and `BialgHom.map_antipode`: a bialgebra morphism
-  between Hopf algebras commutes with the antipodes.
+  between Hopf algebras commutes with the antipodes (the convolution-inverse identities
+  themselves are Mathlib's `LinearMap.antipode_mul_id` and `LinearMap.id_mul_antipode`,
+  and the pure-tensor antipode formula is Mathlib's simp lemma
+  `TensorProduct.antipode_def`).
 
 ## References
 
@@ -40,39 +40,6 @@ public section
 open Coalgebra HopfAlgebra TensorProduct WithConv
 
 namespace TauCeti
-
-namespace TensorProduct
-
-variable {R S A B : Type*} [CommSemiring R] [CommSemiring S] [Semiring A] [Semiring B]
-  [Algebra R S] [_root_.HopfAlgebra R A] [_root_.HopfAlgebra S B] [Algebra R B]
-  [IsScalarTower R S B]
-
-/-- The antipode on a tensor product of Hopf algebras acts componentwise on pure
-tensors. Simp-normal form of Mathlib's point-free `TensorProduct.antipode_def`; retained
-until an equivalent pure-tensor lemma is upstreamed. -/
-@[simp]
-lemma antipode_tmul (b : B) (a : A) :
-    antipode S (A := B ⊗[R] A) (b ⊗ₜ[R] a) =
-      antipode S b ⊗ₜ[R] antipode R a := by
-  simp [_root_.TensorProduct.antipode_def]
-
-end TensorProduct
-
-namespace HopfAlgebra
-
-variable {R H : Type*} [CommSemiring R] [Semiring H] [_root_.HopfAlgebra R H]
-
-/-- The antipode on the base-changed Hopf algebra `K ⊗[k] A` sends a pure tensor
-`s ⊗ a` to `s ⊗ S a`. Simp-normal form over Mathlib's point-free antipode; retained
-until upstreamed. -/
-@[simp]
-lemma baseChange_antipode_tmul {k K A : Type*} [CommSemiring k] [CommSemiring K]
-    [Semiring A] [Algebra k K] [_root_.HopfAlgebra k A] (s : K) (a : A) :
-    antipode K (A := K ⊗[k] A) (s ⊗ₜ[k] a) =
-      s ⊗ₜ[k] antipode k a := by
-  simp
-
-end HopfAlgebra
 
 namespace BialgHom
 
