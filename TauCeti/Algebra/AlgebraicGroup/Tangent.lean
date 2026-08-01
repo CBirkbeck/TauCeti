@@ -95,6 +95,9 @@ def algEquivSelf : CounitAlgebra R A B ≃ₐ[R] B := AlgEquiv.refl
 omit [CommSemiring A] [Bialgebra R A] in
 @[simp]
 lemma algEquivSelf_apply (x : CounitAlgebra R A B) : algEquivSelf R A B x = x := by
+  -- A direct `rfl` is rejected by the module system's exported-`rfl` validation (the
+  -- synonym's body is involved); the `change` performs the definitional identification
+  -- of `CounitAlgebra R A B` with `B` once, explicitly, and the proof term is opaque.
   change (AlgEquiv.refl (R := R) (A₁ := B)) x = x
   simp only [AlgEquiv.coe_refl]
   rfl
@@ -102,6 +105,7 @@ lemma algEquivSelf_apply (x : CounitAlgebra R A B) : algEquivSelf R A B x = x :=
 omit [CommSemiring A] [Bialgebra R A] in
 @[simp]
 lemma algEquivSelf_symm_apply (b : B) : (algEquivSelf R A B).symm b = b := by
+  -- Same documented definitional identification as in `algEquivSelf_apply`.
   change (AlgEquiv.refl (R := R) (A₁ := B)).symm b = b
   simp only [AlgEquiv.refl_symm, AlgEquiv.coe_refl]
   rfl
