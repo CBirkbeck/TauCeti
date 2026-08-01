@@ -10,8 +10,8 @@ public import TauCeti.RingTheory.Derivation.DualNumber
 /-!
 # The tangent space at the identity point
 
-For a commutative bialgebra `A` over `R`, the identity `B`-point of the functor of
-points is the counit followed by the structure map — the unit of the convolution
+For a bialgebra `A` over `R`, the identity `B`-point of the functor of points is the
+counit followed by the structure map — the unit of the convolution
 monoid whenever the latter exists. This file packages `B` as an `A`-algebra through that point
 (`Bialgebra.CounitAlgebra`), so that the dual-number dictionary
 `TauCeti.derivationToDualNumberEquivLift` applies verbatim: derivations of `A` at the
@@ -44,7 +44,7 @@ open Bialgebra Coalgebra WithConv
 
 section BialgebraPoint
 
-variable (R A B : Type*) [CommSemiring R] [CommSemiring A] [Bialgebra R A]
+variable (R A B : Type*) [CommSemiring R] [Semiring A] [Bialgebra R A]
   [Semiring B] [Algebra R B]
 
 /-- Type synonym: `B` as an `A`-algebra through the identity point of the functor of
@@ -65,6 +65,40 @@ namespace Bialgebra.CounitAlgebra
 instance : Semiring (CounitAlgebra R A B) := inferInstanceAs (Semiring B)
 
 instance : Algebra R (CounitAlgebra R A B) := inferInstanceAs (Algebra R B)
+
+/-- The canonical `R`-algebra identification of the counit-point coefficient algebra
+with `B` itself. -/
+def algEquivSelf : CounitAlgebra R A B ≃ₐ[R] B := AlgEquiv.refl
+
+omit [Semiring A] [Bialgebra R A] in
+@[simp]
+lemma algEquivSelf_apply (x : CounitAlgebra R A B) : algEquivSelf R A B x = x := by
+  -- A direct `rfl` is rejected by the module system's exported-`rfl` validation (the
+  -- synonym's body is involved); the `change` performs the definitional identification
+  -- of `CounitAlgebra R A B` with `B` once, explicitly, and the proof term is opaque.
+  change (AlgEquiv.refl (R := R) (A₁ := B)) x = x
+  simp only [AlgEquiv.coe_refl]
+  rfl
+
+omit [Semiring A] [Bialgebra R A] in
+@[simp]
+lemma algEquivSelf_symm_apply (b : B) : (algEquivSelf R A B).symm b = b := by
+  -- Same documented definitional identification as in `algEquivSelf_apply`.
+  change (AlgEquiv.refl (R := R) (A₁ := B)).symm b = b
+  simp only [AlgEquiv.refl_symm, AlgEquiv.coe_refl]
+  rfl
+
+
+end Bialgebra.CounitAlgebra
+
+end BialgebraPoint
+
+section BialgebraPointScalar
+
+variable (R A B : Type*) [CommSemiring R] [CommSemiring A] [Bialgebra R A]
+  [Semiring B] [Algebra R B]
+
+namespace Bialgebra.CounitAlgebra
 
 noncomputable instance : Algebra A (CounitAlgebra R A B) :=
   ((Algebra.ofId R B).comp (counitAlgHom R A)).toRingHom.toAlgebra' fun a x => by
@@ -88,49 +122,17 @@ lemma algebraMap_apply (a : A) :
   change ((Algebra.ofId R B).comp (counitAlgHom R A)) a = _
   simp [Algebra.ofId_apply]
 
-/-- The canonical `R`-algebra identification of the counit-point coefficient algebra
-with `B` itself. -/
-def algEquivSelf : CounitAlgebra R A B ≃ₐ[R] B := AlgEquiv.refl
-
-omit [CommSemiring A] [Bialgebra R A] in
-@[simp]
-lemma algEquivSelf_apply (x : CounitAlgebra R A B) : algEquivSelf R A B x = x := by
-  -- A direct `rfl` is rejected by the module system's exported-`rfl` validation (the
-  -- synonym's body is involved); the `change` performs the definitional identification
-  -- of `CounitAlgebra R A B` with `B` once, explicitly, and the proof term is opaque.
-  change (AlgEquiv.refl (R := R) (A₁ := B)) x = x
-  simp only [AlgEquiv.coe_refl]
-  rfl
-
-omit [CommSemiring A] [Bialgebra R A] in
-@[simp]
-lemma algEquivSelf_symm_apply (b : B) : (algEquivSelf R A B).symm b = b := by
-  -- Same documented definitional identification as in `algEquivSelf_apply`.
-  change (AlgEquiv.refl (R := R) (A₁ := B)).symm b = b
-  simp only [AlgEquiv.refl_symm, AlgEquiv.coe_refl]
-  rfl
-
-
 end Bialgebra.CounitAlgebra
 
-end BialgebraPoint
+end BialgebraPointScalar
 
 section BialgebraCommTarget
 
-variable (R A B : Type*) [CommSemiring R] [CommSemiring A] [Bialgebra R A]
+variable (R A B : Type*) [CommSemiring R] [Semiring A] [Bialgebra R A]
   [CommSemiring B] [Algebra R B]
 
 instance : CommSemiring (Bialgebra.CounitAlgebra R A B) :=
   inferInstanceAs (CommSemiring B)
-
-/-- Where the convolution monoid exists — commutative `B` — the identity point through
-which `CounitAlgebra` is built is the convolution unit. -/
-lemma Bialgebra.CounitAlgebra.toAlgHom_eq_one_ofConv :
-    IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B) =
-      (1 : WithConv (A →ₐ[R] Bialgebra.CounitAlgebra R A B)).ofConv := by
-  ext a
-  exact (Bialgebra.CounitAlgebra.algebraMap_apply R A B a).trans
-    (AlgHom.convOne_apply a).symm
 
 /-- Reduction of dual-number points to their classical part, as a homomorphism of
 convolution monoids: postcomposition with the infinitesimal augmentation `B[ε] → B`.
@@ -150,6 +152,22 @@ lemma dualNumberReduction_apply
   simp [dualNumberReduction, AlgHom.mapValue_apply]
 
 end BialgebraCommTarget
+
+section BialgebraCommTargetPoint
+
+variable (R A B : Type*) [CommSemiring R] [CommSemiring A] [Bialgebra R A]
+  [CommSemiring B] [Algebra R B]
+
+/-- Where the convolution monoid exists — commutative `B` — the identity point through
+which `CounitAlgebra` is built is the convolution unit. -/
+lemma Bialgebra.CounitAlgebra.toAlgHom_eq_one_ofConv :
+    IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B) =
+      (1 : WithConv (A →ₐ[R] Bialgebra.CounitAlgebra R A B)).ofConv := by
+  ext a
+  exact (Bialgebra.CounitAlgebra.algebraMap_apply R A B a).trans
+    (AlgHom.convOne_apply a).symm
+
+end BialgebraCommTargetPoint
 
 /-- Mirror of `Coalgebra.sum_counit_smul`: summing the counit of the right factors
 against the left factors of a comultiplication representative recovers the element.
@@ -289,9 +307,8 @@ lemma derivationMulEquivTangentKer_apply_fst
     fst (R := CounitAlgebra R A B)
         ((derivationMulEquivTangentKer R A B d).val.ofConv a) =
       algebraMap A (CounitAlgebra R A B) a := by
-  simp [derivationMulEquivTangentKer,
-    derivationToDualNumberEquivLift_apply_fst]
-  rfl
+  simp only [derivationMulEquivTangentKer, MulEquiv.coe_mk, Equiv.coe_fn_mk,
+    WithConv.ofConv_toConv, derivationToDualNumberEquivLift_apply_fst]
 
 @[simp]
 lemma derivationMulEquivTangentKer_apply_snd
