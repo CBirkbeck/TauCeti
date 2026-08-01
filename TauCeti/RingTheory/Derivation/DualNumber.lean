@@ -24,13 +24,14 @@ arbitrary point `φ : A →ₐ[R] B`, instantiate the tower locally with
 only: installing the instance where an `SMul A B` already exists creates a diamond,
 and derivations elaborated before it refer to the old point.
 
-The construction is direct (send `d` to `a ↦ (algebraMap A B a, d a)`), which keeps
-`B` a commutative semiring; `Mathlib.RingTheory.Derivation.ToSquareZero` proves the
-ideal-general statement but forces a `CommRing`.
+The construction is direct (send `d` to `a ↦ inl (algebraMap A B a) + inr (d a)`),
+which keeps `B` an arbitrary semiring — the image of `A` is central by
+`Algebra.commutes` — where the ideal-general route through
+`Mathlib.RingTheory.Derivation.ToSquareZero` would force a `CommRing`.
 
 ## Main declarations
 
-* `derivationEquivDualNumberLift`: `R`-derivations `A → B` are equivalent to lifts
+* `derivationToDualNumberEquivLift`: `R`-derivations `A → B` are equivalent to lifts
   `A →ₐ[R] B[ε]` of the structure point along `TrivSqZeroExt.fstHom`.
 -/
 
@@ -40,7 +41,7 @@ namespace TauCeti
 
 open TrivSqZeroExt
 
-variable (R A B : Type*) [CommSemiring R] [CommSemiring A] [CommSemiring B]
+variable (R A B : Type*) [CommSemiring R] [CommSemiring A] [Semiring B]
   [Algebra R A] [Algebra R B] [Algebra A B] [IsScalarTower R A B]
 
 variable {A B} in
@@ -51,10 +52,12 @@ private def liftOfDerivation (d : Derivation R A B) : A →ₐ[R] DualNumber B w
   toFun a := inl (algebraMap A B a) + inr (d a)
   map_one' := by rw [map_one, d.map_one_eq_zero, inr_zero, add_zero, inl_one]
   map_mul' a b := by
-    rw [d.leibniz, map_mul, mul_add, add_mul, add_mul, inl_mul_inl, inl_mul_inr,
-      inr_mul_inl, inr_mul_inr, add_zero, Algebra.smul_def, Algebra.smul_def,
-      op_smul_eq_smul, smul_eq_mul, smul_eq_mul, inr_add]
-    abel
+    ext
+    · simp [fst_mul]
+    · simp only [snd_mul, fst_add, fst_inl, fst_inr, snd_add, snd_inl, snd_inr, add_zero,
+        zero_add, smul_eq_mul, MulOpposite.smul_eq_mul_unop, MulOpposite.unop_op,
+        d.leibniz, Algebra.smul_def]
+      rw [Algebra.commutes, Algebra.commutes]
   map_zero' := by rw [map_zero, map_zero, inr_zero, add_zero, inl_zero]
   map_add' a b := by rw [map_add, map_add, inl_add, inr_add]; abel
   commutes' r := by
@@ -64,7 +67,7 @@ private def liftOfDerivation (d : Derivation R A B) : A →ₐ[R] DualNumber B w
 /-- Lifting the structure point of an algebra to the dual numbers is the same as giving
 a derivation: the equivalence between `R`-derivations `A → B` and dual-number points
 `A →ₐ[R] B[ε]` lying over the point `A →ₐ[R] B` of the tower. -/
-noncomputable def derivationEquivDualNumberLift :
+noncomputable def derivationToDualNumberEquivLift :
     Derivation R A B ≃
       {ψ : A →ₐ[R] DualNumber B // (fstHom R B B).comp ψ = IsScalarTower.toAlgHom R A B} where
   toFun d := ⟨liftOfDerivation R d, by ext a; simp [liftOfDerivation]⟩
@@ -78,7 +81,8 @@ noncomputable def derivationEquivDualNumberLift :
           congrArg DFunLike.coe ψ.2
         simp only [LinearMap.coe_comp, LinearMap.coe_restrictScalars, Function.comp_apply,
           AlgHom.toLinearMap_apply, map_mul, snd_mul, sndHom_apply, ha, hb, smul_eq_mul,
-          op_smul_eq_smul, Algebra.smul_def] }
+          MulOpposite.smul_eq_mul_unop, MulOpposite.unop_op, Algebra.smul_def]
+        rw [Algebra.commutes, Algebra.commutes] }
   left_inv d := by ext a; simp [liftOfDerivation]
   right_inv ψ := by
     ext a
@@ -90,21 +94,21 @@ noncomputable def derivationEquivDualNumberLift :
 variable {R A B}
 
 @[simp]
-lemma derivationEquivDualNumberLift_apply_fst (d : Derivation R A B) (a : A) :
-    fst ((derivationEquivDualNumberLift R A B d : A →ₐ[R] DualNumber B) a) =
+lemma derivationToDualNumberEquivLift_apply_fst (d : Derivation R A B) (a : A) :
+    fst ((derivationToDualNumberEquivLift R A B d : A →ₐ[R] DualNumber B) a) =
       algebraMap A B a := by
-  simp [derivationEquivDualNumberLift, liftOfDerivation]
+  simp [derivationToDualNumberEquivLift, liftOfDerivation]
 
 @[simp]
-lemma derivationEquivDualNumberLift_apply_snd (d : Derivation R A B) (a : A) :
-    snd ((derivationEquivDualNumberLift R A B d : A →ₐ[R] DualNumber B) a) = d a := by
-  simp [derivationEquivDualNumberLift, liftOfDerivation]
+lemma derivationToDualNumberEquivLift_apply_snd (d : Derivation R A B) (a : A) :
+    snd ((derivationToDualNumberEquivLift R A B d : A →ₐ[R] DualNumber B) a) = d a := by
+  simp [derivationToDualNumberEquivLift, liftOfDerivation]
 
 @[simp]
-lemma derivationEquivDualNumberLift_symm_apply
+lemma derivationToDualNumberEquivLift_symm_apply
     (ψ : {ψ : A →ₐ[R] DualNumber B //
       (fstHom R B B).comp ψ = IsScalarTower.toAlgHom R A B}) (a : A) :
-    (derivationEquivDualNumberLift R A B).symm ψ a = snd (ψ.1 a) := by
-  simp [derivationEquivDualNumberLift]
+    (derivationToDualNumberEquivLift R A B).symm ψ a = snd (ψ.1 a) := by
+  simp [derivationToDualNumberEquivLift]
 
 end TauCeti
