@@ -12,7 +12,8 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.Basic
 
 A morphism `φ : A' →ₐc[R] A` of Hopf algebras induces, contravariantly on coordinate
 rings and hence covariantly on the corresponding affine group schemes `Spec A → Spec A'`,
-a map of tangent spaces at the identity: precomposition of dual-number points. The
+a map of tangent groups at the identity — over rings these are the classical tangent
+spaces — by precomposition of dual-number points. The
 coefficient algebras `Bialgebra.CounitAlgebra R A B` and `Bialgebra.CounitAlgebra R A' B`
 share the carrier `B` and its `R`-algebra structure, and the identity points correspond
 under `φ` because bialgebra morphisms intertwine counits; so precomposition restricts to
@@ -97,6 +98,12 @@ lemma tangentKerMap_apply_val (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) :
   change ((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ).comp
       (tangentKer R A B).subtype) ψ = _
   rfl
+
+/-- The differential acts pointwise by precomposition of dual-number points. -/
+lemma tangentKerMap_apply_val_ofConv (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) (a : A') :
+    (tangentKerMap φ ψ).val.ofConv a = ψ.val.ofConv ((φ : A' →ₐ[R] A) a) := by
+  rw [tangentKerMap_apply_val]
+  exact AlgHom.mapDomain_apply_apply φ ψ.val a
 
 /-- The differential of the identity morphism is the identity. -/
 @[simp]
