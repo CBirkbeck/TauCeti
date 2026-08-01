@@ -377,11 +377,12 @@ theorem exists_circleImageLength_sq_lt_of_volume_image (hUo : IsOpen U)
   refine exists_circleImageLength_sq_lt f hs ζ hr hrR ?_
   rwa [volume_image_eq_lintegral_enorm_deriv_sq hUo hf hs.nullMeasurableSet hsU hinj] at hc
 
-/-- The circle parametrisation has speed `ρ`: multiplying by its velocity `circleMap 0 ρ θ * I`
-scales norms by `ρ`. Stated for an arbitrary factor `w`, since nothing about `deriv f` is used. -/
-private lemma norm_mul_circleMap_zero_mul_I {ρ : ℝ} (hρ : 0 < ρ) (w : ℂ) (θ : ℝ) :
-    ‖w * (circleMap 0 ρ θ * I)‖ = ρ * ‖w‖ := by
-  rw [norm_mul, norm_mul, norm_circleMap_zero, Complex.norm_I, mul_one, abs_of_pos hρ, mul_comm]
+/-- The circle parametrisation has speed `|ρ|`: multiplying by its velocity `circleMap 0 ρ θ * I`
+scales norms by `|ρ|`. Stated for an arbitrary factor `w` and any real radius, since neither
+`deriv f` nor the sign of `ρ` is used. -/
+private lemma norm_mul_circleMap_zero_mul_I (ρ : ℝ) (w : ℂ) (θ : ℝ) :
+    ‖w * (circleMap 0 ρ θ * I)‖ = |ρ| * ‖w‖ := by
+  rw [norm_mul, norm_mul, norm_circleMap_zero, Complex.norm_I, mul_one, mul_comm]
 
 /-- **The fundamental theorem of calculus along a circular arc.** Integrating `deriv f` against the
 velocity of the parametrisation recovers the increment of `f` between the endpoints.
@@ -439,7 +440,8 @@ theorem ofReal_dist_le_circleImageLength (hUo : IsOpen U) (hf : DifferentiableOn
       ∫ θ in a..b, ρ * ‖deriv f (circleMap ζ ρ θ)‖ := by
     rw [← hFTC]
     refine (intervalIntegral.norm_integral_le_integral_norm hab).trans_eq ?_
-    exact intervalIntegral.integral_congr fun θ _ => norm_mul_circleMap_zero_mul_I hρ _ θ
+    exact intervalIntegral.integral_congr fun θ _ => by
+      rw [norm_mul_circleMap_zero_mul_I, abs_of_pos hρ]
   have hintOn : IntegrableOn (fun θ => ρ * ‖deriv f (circleMap ζ ρ θ)‖) (Ioc a b) :=
     (ContinuousOn.integrableOn_compact isCompact_Icc
       (continuousOn_const.mul hcompCont.norm)).mono_set Set.Ioc_subset_Icc_self
