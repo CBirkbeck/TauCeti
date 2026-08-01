@@ -47,16 +47,20 @@ private lemma fst_mapDomain_of_mem_tangentKer (φ : A' →ₐc[R] A)
   rw [mem_tangentKer_iff] at hψ
   have h := congrArg (fun χ : A →ₐ[R] Bialgebra.CounitAlgebra R A B => χ (φ a)) hψ
   simp only [AlgHom.comp_apply, IsScalarTower.coe_toAlgHom'] at h
-  -- Rewrite only the right-hand side into the `A`-side spelling. The left-hand sides
-  -- then agree definitionally: `AlgHom.mapDomain_apply_apply` is a `rfl`-lemma
-  -- (`mapDomain` acts by precomposition), and the `Semiring`/`Algebra R` instances of
+  -- The transport across the two counit coefficient algebras is made explicit once:
+  -- `AlgHom.mapDomain_apply_apply` is a `rfl`-lemma (`mapDomain` acts by
+  -- precomposition), and the `Semiring`/`Algebra R` instances of
   -- `Bialgebra.CounitAlgebra R A B` and `Bialgebra.CounitAlgebra R A' B` are the same
-  -- `inferInstanceAs` terms over the shared carrier `B`, so `h`'s left-hand side is the
-  -- goal's left-hand side.
+  -- `inferInstanceAs` terms over the shared carrier `B`.
+  have hfst : fst (R := Bialgebra.CounitAlgebra R A' B)
+      (((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ)
+        ψ).ofConv a) =
+      fst (R := Bialgebra.CounitAlgebra R A B)
+        (ψ.ofConv ((φ : A' →ₐ[R] A) a)) := rfl
   rw [Bialgebra.CounitAlgebra.algebraMap_apply,
     ← CoalgHomClass.counit_comp_apply (F := A' →ₐc[R] A) φ a,
     ← Bialgebra.CounitAlgebra.algebraMap_apply (R := R) (A := A) (B := B)]
-  exact h
+  exact hfst.trans h
 
 /-- The differential of a Hopf-algebra morphism on tangent kernels: a morphism
 `φ : A' →ₐc[R] A` of Hopf algebras sends a dual-number point of `A` over the identity to
@@ -64,15 +68,13 @@ a dual-number point of `A'` over the identity by precomposition. The coefficient
 identification `Bialgebra.CounitAlgebra R A B = B = Bialgebra.CounitAlgebra R A' B` is
 definitional, and the identity points correspond because `φ` intertwines the counits. -/
 noncomputable def tangentKerMap (φ : A' →ₐc[R] A) :
-    tangentKer R A B →* tangentKer R A' B where
-  toFun ψ :=
-    ⟨AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ ψ.val, by
-      rw [mem_tangentKer_iff]
-      ext a
-      rw [AlgHom.comp_apply]
-      exact fst_mapDomain_of_mem_tangentKer φ ψ.2 a⟩
-  map_one' := Subtype.ext (map_one (AlgHom.mapDomain φ))
-  map_mul' ψ χ := Subtype.ext (map_mul (AlgHom.mapDomain φ) ψ.val χ.val)
+    tangentKer R A B →* tangentKer R A' B :=
+  (((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ).comp
+      (tangentKer R A B).subtype).codRestrict (tangentKer R A' B)) fun ψ => by
+    rw [mem_tangentKer_iff]
+    ext a
+    rw [AlgHom.comp_apply]
+    exact fst_mapDomain_of_mem_tangentKer φ ψ.2 a
 
 /-- The differential acts by precomposition on dual-number points. -/
 @[simp]
@@ -80,8 +82,10 @@ lemma tangentKerMap_apply_val (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) :
     (tangentKerMap φ ψ).val =
       AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ ψ.val := by
   -- `tangentKerMap` has no equation lemma to rewrite with; `change` spells out its
-  -- definitional unfolding once, explicitly.
-  change AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ ψ.val = _
+  -- definitional unfolding once, explicitly: the value of the corestriction is the
+  -- value of `mapDomain` on the inclusion.
+  change ((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ).comp
+      (tangentKer R A B).subtype) ψ = _
   rfl
 
 /-- The differential of the identity morphism is the identity. -/
@@ -103,7 +107,7 @@ lemma tangentKerMap_comp {A'' : Type*} [CommSemiring A''] [HopfAlgebra R A'']
   rw [MonoidHom.comp_apply, tangentKerMap_apply_val, tangentKerMap_apply_val,
     tangentKerMap_apply_val,
     AlgHom.mapDomain_comp (A := DualNumber (Bialgebra.CounitAlgebra R A'' B)) φ χ]
-  rfl
+  exact MonoidHom.comp_apply _ _ _
 
 end Differential
 
