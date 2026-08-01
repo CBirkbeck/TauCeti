@@ -150,9 +150,9 @@ theorem dualEvaluation_toLinearMap (M : FGComoduleCat.{u, v, u} k H) :
     (dualEvaluation k H M).hom.toLinearMap = contractLeft k M :=
   dualEvaluation_toLinearMap_aux k H M
 
-/-- Summing a matrix coefficient against the antipode of the transposed one is the image under
-`algebraMap` of a single basis coordinate. Taking `p` and `q` basis indices, the right-hand side is
-`1` when they agree and `0` otherwise, so the antipode-transformed matrix is a right inverse of the
+/-- Multiplying the matrix-coefficient matrix by its entrywise antipode transform gives the image
+under `algebraMap` of a single basis coordinate. Taking `p` and `q` basis indices, the right-hand
+side is `1` when they agree and `0` otherwise, so the antipode transform is a right inverse of the
 matrix-coefficient matrix in this multiplication order; the opposite order is not claimed here.
 
 Stated over its own base ring, for any comodule with a finite basis: neither the ambient field,
@@ -166,19 +166,15 @@ private lemma sum_matrixCoefficient_mul_antipode_eq_algebraMap (R : Type*) [Comm
       HopfAlgebra.antipode R
         (Comodule.matrixCoefficient (R := R) (C := A) (b.coord x) (b q))) =
       algebraMap R A (b.coord p (b q)) := by
-  -- Recognise the sum as the left antipode identity applied to a matrix coefficient, then finish
-  -- with the counit computation of that coefficient.
-  calc
-    _ = LinearMap.mul' R A
-        ((HopfAlgebra.antipode R).lTensor A
-          (Coalgebra.comul
-            (Comodule.matrixCoefficient (R := R) (C := A) (b.coord p) (b q)))) := by
-      rw [Comodule.comul_matrixCoefficient_eq_sum b]
-      simp only [map_sum, LinearMap.lTensor_tmul, LinearMap.mul'_apply]
-    _ = algebraMap R A
-        (Coalgebra.counit (Comodule.matrixCoefficient (R := R) (C := A) (b.coord p) (b q))) :=
-      HopfAlgebra.mul_antipode_lTensor_comul_apply _
-    _ = algebraMap R A (b.coord p (b q)) := by rw [Comodule.counit_matrixCoefficient]
+  -- The basis expansion of `comul` is a `Coalgebra.Repr`, so Mathlib's antipode sum applies.
+  let repr : Coalgebra.Repr R
+      (Comodule.matrixCoefficient (R := R) (C := A) (b.coord p) (b q)) ι :=
+    { index := Finset.univ
+      left := fun x => Comodule.matrixCoefficient (R := R) (C := A) (b.coord p) (b x)
+      right := fun x => Comodule.matrixCoefficient (R := R) (C := A) (b.coord x) (b q)
+      eq := (Comodule.comul_matrixCoefficient_eq_sum b (b.coord p) (b q)).symm }
+  rw [← Comodule.counit_matrixCoefficient (R := R) (C := A) (b.coord p) (b q)]
+  exact HopfAlgebra.sum_mul_antipode_eq_algebraMap_counit repr
 
 private theorem tensorCoact_coevaluation_apply_one
     (M : FGComoduleCat.{u, v, u} k H) :
