@@ -22,8 +22,8 @@ For `A` a Hopf algebra and `B` commutative, the dual-number points form a convol
 group, reduction of the infinitesimal part is a group homomorphism
 (`dualNumberReduction`), and its kernel `tangentKer` is multiplicatively equivalent to
 the additive monoid of derivations at the identity
-(`derivationMulEquivTangentKer`); in particular the kernel is abelian
-(`tangentKer_mul_comm`).
+(`derivationMulEquivTangentKer`); in particular the kernel is a commutative group
+(the `CommGroup (tangentKer R A B)` instance).
 
 This identifies counit-valued derivations with the first-order infinitesimal kernel.
 Over commutative rings this is the additive group of the tangent space at the identity
@@ -309,10 +309,14 @@ lemma derivationMulEquivTangentKer_symm_apply
   simp [derivationMulEquivTangentKer,
     derivationToDualNumberEquivLift_symm_apply]
 
-/-- The tangent subgroup is abelian: first-order infinitesimal points commute. -/
-theorem tangentKer_mul_comm (x y : tangentKer R A B) : x * y = y * x := by
-  refine (derivationMulEquivTangentKer R A B).symm.injective ?_
-  rw [map_mul, map_mul, mul_comm]
+/-- The tangent subgroup is abelian: first-order infinitesimal points commute, because
+multiplication corresponds to addition of derivations under
+`derivationMulEquivTangentKer`. -/
+noncomputable instance : CommGroup (tangentKer R A B) :=
+  { (tangentKer R A B).toGroup with
+    mul_comm x y := by
+      refine (derivationMulEquivTangentKer R A B).symm.injective ?_
+      rw [map_mul, map_mul, mul_comm] }
 
 end Hopf
 
