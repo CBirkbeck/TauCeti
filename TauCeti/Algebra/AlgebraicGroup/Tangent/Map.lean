@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.Algebra.AlgebraicGroup.Hopf.Map
-public import TauCeti.Algebra.AlgebraicGroup.Tangent
+public import TauCeti.Algebra.AlgebraicGroup.Tangent.Basic
 
 /-!
 # The differential of a Hopf-algebra morphism on tangent spaces
@@ -47,9 +47,12 @@ private lemma fst_mapDomain_of_mem_tangentKer (φ : A' →ₐc[R] A)
   rw [mem_tangentKer_iff] at hψ
   have h := congrArg (fun χ : A →ₐ[R] Bialgebra.CounitAlgebra R A B => χ (φ a)) hψ
   simp only [AlgHom.comp_apply, IsScalarTower.coe_toAlgHom'] at h
-  -- Rewrite only the right-hand side into the `A`-side spelling; the left-hand sides
-  -- agree definitionally since `mapDomain` acts by precomposition and the two counit
-  -- coefficient algebras share the carrier `B`.
+  -- Rewrite only the right-hand side into the `A`-side spelling. The left-hand sides
+  -- then agree definitionally: `AlgHom.mapDomain_apply_apply` is a `rfl`-lemma
+  -- (`mapDomain` acts by precomposition), and the `Semiring`/`Algebra R` instances of
+  -- `Bialgebra.CounitAlgebra R A B` and `Bialgebra.CounitAlgebra R A' B` are the same
+  -- `inferInstanceAs` terms over the shared carrier `B`, so `h`'s left-hand side is the
+  -- goal's left-hand side.
   rw [Bialgebra.CounitAlgebra.algebraMap_apply,
     ← CoalgHomClass.counit_comp_apply (F := A' →ₐc[R] A) φ a,
     ← Bialgebra.CounitAlgebra.algebraMap_apply (R := R) (A := A) (B := B)]
@@ -83,20 +86,24 @@ lemma tangentKerMap_apply_val (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) :
 
 /-- The differential of the identity morphism is the identity. -/
 @[simp]
-lemma tangentKerMap_id (ψ : tangentKer R A B) :
-    tangentKerMap (BialgHom.id R A) ψ = ψ := by
-  refine Subtype.ext ?_
-  rw [tangentKerMap_apply_val]
-  exact ofConv_injective (AlgHom.ext fun a => rfl)
+lemma tangentKerMap_id :
+    tangentKerMap (B := B) (BialgHom.id R A) = MonoidHom.id (tangentKer R A B) := by
+  refine MonoidHom.ext fun ψ => Subtype.ext ?_
+  rw [tangentKerMap_apply_val, MonoidHom.id_apply,
+    AlgHom.mapDomain_id (A := DualNumber (Bialgebra.CounitAlgebra R A B)),
+    MonoidHom.id_apply]
 
 /-- The differential of a composite is the composite of the differentials. -/
 @[simp]
 lemma tangentKerMap_comp {A'' : Type*} [CommSemiring A''] [HopfAlgebra R A'']
-    (φ : A' →ₐc[R] A) (χ : A'' →ₐc[R] A') (ψ : tangentKer R A B) :
-    tangentKerMap (B := B) (φ.comp χ) ψ = tangentKerMap χ (tangentKerMap φ ψ) := by
-  refine Subtype.ext ?_
-  rw [tangentKerMap_apply_val, tangentKerMap_apply_val, tangentKerMap_apply_val]
-  exact ofConv_injective (AlgHom.ext fun a => rfl)
+    (φ : A' →ₐc[R] A) (χ : A'' →ₐc[R] A') :
+    tangentKerMap (B := B) (φ.comp χ) =
+      (tangentKerMap (B := B) χ).comp (tangentKerMap (B := B) φ) := by
+  refine MonoidHom.ext fun ψ => Subtype.ext ?_
+  rw [MonoidHom.comp_apply, tangentKerMap_apply_val, tangentKerMap_apply_val,
+    tangentKerMap_apply_val,
+    AlgHom.mapDomain_comp (A := DualNumber (Bialgebra.CounitAlgebra R A'' B)) φ χ]
+  rfl
 
 end Differential
 
