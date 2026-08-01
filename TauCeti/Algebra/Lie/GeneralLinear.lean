@@ -51,9 +51,11 @@ sits *inside* the derived ideal and the two are not complementary.
 
 ## Implementation notes
 
-Everything is stated over an arbitrary commutative ring `R`; no field, characteristic, or
-algebraic closure hypothesis is used, and the invertibility of `Fintype.card n` is carried as an
-`Invertible` hypothesis only on the one result that needs it.
+Every result about `gl n R` is stated over an arbitrary commutative ring `R`; no field,
+characteristic, or algebraic closure hypothesis is used, and the invertibility of `Fintype.card n`
+is carried as an `Invertible` hypothesis only on the one result that needs it. The private
+matrix-unit helpers ask for less still — a ring for the bracket identities, and only an additive
+commutative group for the decomposition of a trace-zero matrix.
 
 Mathlib does not register `LieRing.ofAssociativeRing` as a global instance, so, as in
 `Mathlib/Algebra/Lie/Matrix.lean`, it is a local instance here.
@@ -76,6 +78,42 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 
 variable {R : Type*} {n : Type*} [DecidableEq n] [Fintype n]
 
+/-! ### Trace-zero matrices as sums of matrix units -/
+
+section AddCommGroup
+
+variable [AddCommGroup R]
+
+/-- **A trace-zero matrix as a sum of commutator-shaped matrix units.** Every matrix is the sum of
+its matrix units `Eₚq (Aₚq)`; subtracting `E₀₀ (Aₚₚ)` from each diagonal one changes the total by
+`E₀₀ (trace A)`, so for a trace-zero `A` the corrected sum is still `A`.
+
+The correction is what puts each summand in commutator form:
+`TauCeti.ite_single_sub_mem_derivedSeries_one` exhibits an explicit bracket for every one of them.
+Only the additive structure of `R` is involved here. -/
+private lemma eq_sum_sum_ite_single_sub_of_trace_eq_zero (i₀ : n) {A : Matrix n n R}
+    (hA : A.trace = 0) :
+    A = ∑ p : n, ∑ q : n,
+      (if p = q then single p p (A p q) - single i₀ i₀ (A p q) else single p q (A p q)) := by
+  have hsplit : ∀ p q : n,
+      (if p = q then single p p (A p q) - single i₀ i₀ (A p q) else single p q (A p q))
+        = single p q (A p q) - (if p = q then single i₀ i₀ (A p q) else 0) := fun p q => by
+    by_cases hpq : p = q <;> simp [hpq]
+  have hrow : ∀ p : n, (∑ q : n, if p = q then single i₀ i₀ (A p q) else (0 : Matrix n n R))
+      = single i₀ i₀ (A p p) := fun p => by simp
+  have hsingle_sum : ∀ f : n → R, ∑ p : n, single i₀ i₀ (f p) = single i₀ i₀ (∑ p : n, f p) :=
+    fun f => (map_sum (Matrix.singleAddMonoidHom i₀ i₀) f Finset.univ).symm
+  have hcorr : ∑ p : n, ∑ q : n, (if p = q then single i₀ i₀ (A p q) else 0)
+      = single i₀ i₀ A.trace := by
+    rw [Finset.sum_congr rfl fun p _ => hrow p, hsingle_sum]
+    -- `Matrix.trace` is by definition the sum of the diagonal entries.
+    rfl
+  rw [Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun q _ => hsplit p q]
+  simp only [Finset.sum_sub_distrib, hcorr, hA, Matrix.single_zero, sub_zero]
+  exact Matrix.matrix_eq_sum_single A
+
+end AddCommGroup
+
 /-! ### Matrix units as commutators -/
 
 section Ring
@@ -93,33 +131,6 @@ theorem lie_single_single_eq_sub (i j : n) (c : R) :
     ⁅single i j c, single j i (1 : R)⁆ = single i i c - single j j c := by
   rw [LieRing.of_associative_ring_bracket, single_mul_single_same, single_mul_single_same, mul_one,
     one_mul]
-
-/-- **A trace-zero matrix as a sum of commutator-shaped matrix units.** Every matrix is the sum of
-its matrix units `Eₚq (Aₚq)`; subtracting `E₀₀ (Aₚₚ)` from each diagonal one changes the total by
-`E₀₀ (trace A)`, so for a trace-zero `A` the corrected sum is still `A`.
-
-The point of the correction is that each corrected summand is a commutator — see
-`TauCeti.ite_single_sub_mem_derivedSeries_one` — whereas a bare diagonal unit `Eₚₚ` is not. -/
-private lemma eq_sum_sum_ite_single_sub_of_trace_eq_zero (i₀ : n) {A : Matrix n n R}
-    (hA : A.trace = 0) :
-    A = ∑ p : n, ∑ q : n,
-      (if p = q then single p p (A p q) - single i₀ i₀ (A p q) else single p q (A p q)) := by
-  have hsplit : ∀ p q : n,
-      (if p = q then single p p (A p q) - single i₀ i₀ (A p q) else single p q (A p q))
-        = single p q (A p q) - (if p = q then single i₀ i₀ (A p q) else 0) := fun p q => by
-    by_cases hpq : p = q <;> simp [hpq]
-  have hrow : ∀ p : n, (∑ q : n, if p = q then single i₀ i₀ (A p q) else (0 : Matrix n n R))
-      = single i₀ i₀ (A p p) := fun p => by simp
-  have hsingle_sum : ∀ f : n → R, ∑ p : n, single i₀ i₀ (f p) = single i₀ i₀ (∑ p : n, f p) :=
-    fun f => (map_sum (Matrix.singleLinearMap R i₀ i₀) f Finset.univ).symm
-  have hcorr : ∑ p : n, ∑ q : n, (if p = q then single i₀ i₀ (A p q) else 0)
-      = single i₀ i₀ A.trace := by
-    rw [Finset.sum_congr rfl fun p _ => hrow p, hsingle_sum]
-    -- `Matrix.trace` is by definition the sum of the diagonal entries.
-    rfl
-  rw [Finset.sum_congr rfl fun p _ => Finset.sum_congr rfl fun q _ => hsplit p q]
-  simp only [Finset.sum_sub_distrib, hcorr, hA, Matrix.single_zero, sub_zero]
-  exact Matrix.matrix_eq_sum_single A
 
 end Ring
 
