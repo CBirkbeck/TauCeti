@@ -66,7 +66,8 @@ private theorem map_tensor_leftTensorIdeal (f : H →ₐc[R] K) (I : Ideal H) :
   rw [leftTensorIdeal, leftTensorIdeal, Ideal.map_map, Ideal.map_map]
   congr 1
   ext x
-  simp
+  exact DFunLike.congr_fun
+    (Algebra.TensorProduct.map_comp_includeLeft (f : H →ₐ[R] K) (f : H →ₐ[R] K)) x
 
 private theorem map_tensor_rightTensorIdeal (f : H →ₐc[R] K) (I : Ideal H) :
     Ideal.map (Algebra.TensorProduct.map (f : H →ₐ[R] K) (f : H →ₐ[R] K)).toRingHom
@@ -75,15 +76,15 @@ private theorem map_tensor_rightTensorIdeal (f : H →ₐc[R] K) (I : Ideal H) :
   rw [rightTensorIdeal, rightTensorIdeal, Ideal.map_map, Ideal.map_map]
   congr 1
   ext x
-  simp
+  exact DFunLike.congr_fun
+    (Algebra.TensorProduct.map_comp_includeRight (f : H →ₐ[R] K) (f : H →ₐ[R] K)) x
 
 private theorem tensorProduct_map_coe (f : H →ₐc[R] K) (y : H ⊗[R] H) :
     TensorProduct.map (f : H →ₗ[R] K) (f : H →ₗ[R] K) y =
       Algebra.TensorProduct.map (f : H →ₐ[R] K) (f : H →ₐ[R] K) y := by
-  induction y using TensorProduct.induction_on with
-  | zero => simp
-  | tmul a b => simp
-  | add a b ha hb => simp [ha, hb]
+  rw [← TensorProduct.AlgebraTensorModule.map_eq]
+  exact (LinearMap.congr_fun
+    (Algebra.TensorProduct.toLinearMap_map (f : H →ₐ[R] K) (f : H →ₐ[R] K)) y).symm
 
 private theorem comul_mem_map (I : HopfIdeal R H) (f : H →ₐc[R] K) ⦃x : K⦄
     (hx : x ∈ Ideal.map (f : H →+* K) I.toIdeal) :
