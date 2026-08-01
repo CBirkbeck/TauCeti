@@ -193,8 +193,8 @@ theorem slIdeal_toLieSubalgebra_eq_sl :
 /-- Each summand of the corrected double sum above lies in the derived ideal of `gl n R`, being a
 commutator: an off-diagonal unit by `TauCeti.lie_single_self_single_of_ne`, and a corrected diagonal
 one by `TauCeti.lie_single_single_eq_sub`. -/
-private lemma ite_single_sub_mem_derivedSeries_one (i₀ : n) (A : Matrix n n R) (p q : n) :
-    (if p = q then single p p (A p q) - single i₀ i₀ (A p q) else single p q (A p q))
+private lemma ite_single_sub_mem_derivedSeries_one (i₀ : n) (c : R) (p q : n) :
+    (if p = q then single p p c - single i₀ i₀ c else single p q c)
       ∈ derivedSeries R (Matrix n n R) 1 := by
   classical
   have hcomm : ∀ X Y : Matrix n n R, ⁅X, Y⁆ ∈ derivedSeries R (Matrix n n R) 1 := fun X Y => by
@@ -203,10 +203,9 @@ private lemma ite_single_sub_mem_derivedSeries_one (i₀ : n) (A : Matrix n n R)
     rwa [← coe_derivedSeries_one_eq] at hmem
   by_cases hpq : p = q
   · subst hpq
-    simpa [lie_single_single_eq_sub p i₀ (A p p)] using
-      hcomm (single p i₀ (A p p)) (single i₀ p 1)
-  · simpa [hpq, lie_single_self_single_of_ne hpq (A p q)] using
-      hcomm (single p p (1 : R)) (single p q (A p q))
+    simpa [lie_single_single_eq_sub p i₀ c] using hcomm (single p i₀ c) (single i₀ p 1)
+  · simpa [hpq, lie_single_self_single_of_ne hpq c] using
+      hcomm (single p p (1 : R)) (single p q c)
 
 variable (R n) in
 /-- The derived ideal of `gl n R` is the special linear ideal: `⁅gl n R, gl n R⁆ = sl n R`.
@@ -235,7 +234,7 @@ theorem derivedSeries_one_eq_slIdeal :
   obtain ⟨i₀⟩ := hne
   rw [eq_sum_sum_ite_single_sub_of_trace_eq_zero i₀ (mem_slIdeal_iff.mp hA)]
   exact Submodule.sum_mem _ fun p _ => Submodule.sum_mem _ fun q _ =>
-    ite_single_sub_mem_derivedSeries_one i₀ A p q
+    ite_single_sub_mem_derivedSeries_one i₀ (A p q) p q
 
 variable (R n) in
 /-- The derived ideal of `gl n R` is Mathlib's special linear Lie algebra `sl n R`. -/
