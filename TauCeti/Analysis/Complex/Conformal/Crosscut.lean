@@ -203,9 +203,13 @@ theorem isConnected_ball_inter_ball (hr : 0 < r) (hζ : dist ζ c = r) (hρ : 0 
     IsConnected (ball c r ∩ ball ζ ρ) :=
   ((convex_ball c r).inter (convex_ball ζ ρ)).isConnected (nonempty_ball_inter_ball hr hζ hρ)
 
-/-- The inversion model of a disc punctured by a crosscut: an open half-plane through the origin's
-complement meets an open ball. It is convex for any `a` and any radius, being an intersection of a
-half-space with a ball. -/
+/-- The inversion model of a disc punctured by a crosscut: the intersection of the open half-plane
+`{w | 1 < 2 * (a * w).re}` with `ball 0 R`. It is convex for every `a` and every `R`, being an
+intersection of a half-space with a ball.
+
+No nonemptiness is claimed, and none holds in general: the intersection is empty for `R ≤ 0`, and
+the half-plane itself is empty for `a = 0`. Nonemptiness in the case at hand is
+`TauCeti.nonempty_halfPlane_inter_ball`, which is where `ρ < 2 * r` is used. -/
 private lemma convex_halfPlane_inter_ball (a : ℂ) (R : ℝ) :
     Convex ℝ ({w : ℂ | 1 < 2 * (a * w).re} ∩ ball 0 R) := by
   have hlin : IsLinearMap ℝ fun w : ℂ => 2 * (a * w).re :=
