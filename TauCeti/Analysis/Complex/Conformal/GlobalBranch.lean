@@ -150,6 +150,30 @@ theorem eventuallyEq_at_one (hUc : IsSimplyConnected U) (H : ContinuesInside f�
   rw [hend] at e₁
   exact (e₀.trans hmono.symm).trans e₁.symm
 
+/-- A path inside `U` from `z₀` to any other point, as a plain continuous map on `I`. Only
+path-connectedness is needed; the simply connected hypothesis of the theorem below plays no part
+here. -/
+private lemma exists_path_mem (hU : IsPathConnected U) (hz₀ : z₀ ∈ U) {w : ℂ} (hw : w ∈ U) :
+    ∃ γ : I → ℂ, Continuous γ ∧ (∀ x, γ x ∈ U) ∧ γ 0 = z₀ ∧ γ 1 = w := by
+  obtain ⟨c, hc⟩ := hU.joinedIn z₀ hz₀ w hw
+  exact ⟨c, c.continuous, hc, c.source, c.target⟩
+
+/-- **Shearing a path to a nearby endpoint.** Adding `x • (w - z)` to a path ending at `z` produces
+a path ending at `w`, with the same start, that stays within `dist w z` of the original — hence
+within `r` whenever `w` is `r`-close to `z`.
+
+Purely a statement about paths in `ℂ`: no analytic continuation, and no reference to `U`. -/
+private lemma exists_path_shear {z w : ℂ} {r : ℝ} (hδ : Continuous δ) (hδ1 : δ 1 = z)
+    (hw : dist w z < r) :
+    ∃ δ' : I → ℂ, Continuous δ' ∧ (∀ x, dist (δ' x) (δ x) < r) ∧ δ' 0 = δ 0 ∧ δ' 1 = w := by
+  refine ⟨fun x => δ x + (x : ℝ) • (w - z), by fun_prop, fun x => ?_, by simp, by simp [hδ1]⟩
+  have hx : |(x : ℝ)| ≤ 1 := abs_le.2 ⟨by linarith [x.2.1], x.2.2⟩
+  have hd : dist (δ x + (x : ℝ) • (w - z)) (δ x) = |(x : ℝ)| * dist w z := by
+    rw [dist_eq_norm, dist_eq_norm]
+    simp
+  have hle : |(x : ℝ)| * dist w z ≤ dist w z := mul_le_of_le_one_left dist_nonneg hx
+  linarith [hd ▸ hle]
+
 /-- **The monodromy theorem for a simply connected domain.** A germ that continues along every
 path of a simply connected open set `U` issuing from `z₀` is the germ at `z₀` of a single function
 analytic on all of `U`.
@@ -160,12 +184,8 @@ theorem exists_analyticOnNhd (hUo : IsOpen U) (hUc : IsSimplyConnected U) (hz₀
     (H : ContinuesInside f₀ U z₀) :
     ∃ F : ℂ → ℂ, AnalyticOnNhd ℂ F U ∧ F =ᶠ[𝓝 z₀] f₀ := by
   -- A path from `z₀` to each point of `U`, and a continuation of the germ along it.
-  have hpath : ∀ w ∈ U, ∃ γ : I → ℂ,
-      Continuous γ ∧ (∀ x, γ x ∈ U) ∧ γ 0 = z₀ ∧ γ 1 = w := by
-    intro w hw
-    obtain ⟨c, hc⟩ := hUc.isPathConnected.joinedIn z₀ hz₀ w hw
-    exact ⟨c, c.continuous, hc, c.source, c.target⟩
-  choose! γ hγc hγU hγ0 hγ1 using hpath
+  choose! γ hγc hγU hγ0 hγ1 using fun w (hw : w ∈ U) =>
+    exists_path_mem hUc.isPathConnected hz₀ hw
   choose! f hf hf₀ using fun w (hw : w ∈ U) =>
     continuesAlong_iff_exists.1 (H.continuesAlong (hγc w hw) (hγU w hw) (hγ0 w hw))
   have hf₀' : ∀ w ∈ U, f w 0 =ᶠ[𝓝 z₀] f₀ := fun w hw => by
@@ -187,22 +207,11 @@ theorem exists_analyticOnNhd (hUo : IsOpen U) (hUc : IsSimplyConnected U) (hz₀
       have := hGg 1 (mem_univ 1); rwa [hδ1] at this
     filter_upwards [ball_mem_nhds z (lt_min hρ hε), hGone] with w hw hwG
     -- The path `δ` sheared to end at `w` instead of `z`.
-    set δ' : I → ℂ := fun x => δ x + (x : ℝ) • (w - z) with hδ'def
-    have hδ'c : Continuous δ' := by fun_prop
-    have hdist : ∀ x : I, dist (δ' x) (δ x) < min ρ ε := by
-      intro x
-      have hx : |(x : ℝ)| ≤ 1 := abs_le.2 ⟨by linarith [x.2.1], x.2.2⟩
-      have hd : dist (δ' x) (δ x) = |(x : ℝ)| * dist w z := by
-        rw [dist_eq_norm, dist_eq_norm, hδ'def]
-        simp
-      have hwz : dist w z < min ρ ε := mem_ball.1 hw
-      have : |(x : ℝ)| * dist w z ≤ dist w z :=
-        mul_le_of_le_one_left dist_nonneg hx
-      linarith [hd ▸ this]
+    obtain ⟨δ', hδ'c, hdist, hδ'start, hδ'1⟩ :=
+      exists_path_shear hδ hδ1 (r := min ρ ε) (mem_ball.1 hw)
     have hδ'U : ∀ x, δ' x ∈ U := fun x =>
       hεU (mem_thickening_iff.2 ⟨δ x, mem_range_self x, (hdist x).trans_le (min_le_right _ _)⟩)
-    have hδ'0 : δ' 0 = z₀ := by simp [hδ'def, hδ0]
-    have hδ'1 : δ' 1 = w := by simp [hδ'def, hδ1]
+    have hδ'0 : δ' 0 = z₀ := hδ'start.trans hδ0
     have hwU : w ∈ U := hδ'1 ▸ hδ'U 1
     have hGδ' : IsAnalyticContinuationAlong G δ' univ :=
       hGcont δ' hδ'c.continuousOn fun t _ => (hdist t).trans_le (min_le_left _ _)
