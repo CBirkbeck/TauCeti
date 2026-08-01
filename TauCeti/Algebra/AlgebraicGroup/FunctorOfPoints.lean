@@ -4,8 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.Bialgebra.Convolution
-public import Mathlib.RingTheory.HopfAlgebra.Convolution
 public import TauCeti.Algebra.HopfAlgebra.Basic
 
 /-!

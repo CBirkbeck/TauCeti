@@ -5,9 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.Bialgebra.Hom
-public import Mathlib.RingTheory.HopfAlgebra.Basic
 public import Mathlib.RingTheory.HopfAlgebra.Convolution
-public import Mathlib.RingTheory.HopfAlgebra.TensorProduct
 
 /-!
 # Hopf algebra morphisms
@@ -31,8 +29,8 @@ This supplies a formal prerequisite for the Tau Ceti reductive-groups roadmap, L
 "the functor of points and the three-way dictionary": morphisms in the Hopf-algebra model
 must respect the inverse map in the affine group-scheme model. The proof uses Mathlib's
 convolution product on linear maps, due to Yaël Dillies, Michał Mrugała and Yunzhou Xie.
-The tensor-product antipode formula uses Mathlib's
-`Mathlib.RingTheory.HopfAlgebra.TensorProduct`, specifically `TensorProduct.antipode_def`.
+The pure-tensor antipode formula is Mathlib's `TensorProduct.antipode_def` in
+`Mathlib.RingTheory.HopfAlgebra.TensorProduct`, imported where consumed.
 -/
 
 public section
