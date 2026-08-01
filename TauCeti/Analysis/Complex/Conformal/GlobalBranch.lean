@@ -150,12 +150,13 @@ theorem eventuallyEq_at_one (hUc : IsSimplyConnected U) (H : ContinuesInside f�
   rw [hend] at e₁
   exact (e₀.trans hmono.symm).trans e₁.symm
 
-/-- **Shearing a path to a nearby endpoint.** Adding `x • (w - z)` to a path ending at `z` produces
-a path ending at `w`, with the same start, that stays within `dist w z` of the original — hence
-within `r` whenever `w` is `r`-close to `z`.
+/-- **A nearby path with a prescribed endpoint.** Given a path ending at `z` and a point `w` within
+`r` of it, there is a continuous path with the same start, ending at `w`, staying everywhere within
+`r` of the original.
 
+The witness is the shear `x ↦ δ x + x • (w - z)`, which moves each point by at most `dist w z`.
 Purely a statement about paths in `ℂ`: no analytic continuation, and no reference to `U`. -/
-private lemma exists_path_shear {z w : ℂ} {r : ℝ} (hδ : Continuous δ) (hδ1 : δ 1 = z)
+private lemma exists_continuous_path_dist_lt {z w : ℂ} {r : ℝ} (hδ : Continuous δ) (hδ1 : δ 1 = z)
     (hw : dist w z < r) :
     ∃ δ' : I → ℂ, Continuous δ' ∧ (∀ x, dist (δ' x) (δ x) < r) ∧ δ' 0 = δ 0 ∧ δ' 1 = w := by
   refine ⟨fun x => δ x + (x : ℝ) • (w - z), by fun_prop, fun x => ?_, by simp, by simp [hδ1]⟩
@@ -202,7 +203,7 @@ theorem exists_analyticOnNhd (hUo : IsOpen U) (hUc : IsSimplyConnected U) (hz₀
     filter_upwards [ball_mem_nhds z (lt_min hρ hε), hGone] with w hw hwG
     -- The path `δ` sheared to end at `w` instead of `z`.
     obtain ⟨δ', hδ'c, hdist, hδ'start, hδ'1⟩ :=
-      exists_path_shear hδ hδ1 (r := min ρ ε) (mem_ball.1 hw)
+      exists_continuous_path_dist_lt hδ hδ1 (r := min ρ ε) (mem_ball.1 hw)
     have hδ'U : ∀ x, δ' x ∈ U := fun x =>
       hεU (mem_thickening_iff.2 ⟨δ x, mem_range_self x, (hdist x).trans_le (min_le_right _ _)⟩)
     have hδ'0 : δ' 0 = z₀ := hδ'start.trans hδ0
