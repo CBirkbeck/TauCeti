@@ -195,10 +195,10 @@ lemma dist_radialGeodesic_zero (u : Circle) (t : ℝ) :
     dist (radialGeodesic u t) (Complex.UnitDisc.toPoincare 0) = |t| := by
   rw [← radialGeodesic_zero u, (isometry_radialGeodesic u).dist_eq, Real.dist_eq, sub_zero]
 
-/-- Distinct directions give distinct radial geodesics: evaluating at time `1` gives
-`u * Real.tanh 1 = v * Real.tanh 1`, and `Real.tanh 1 ≠ 0`. -/
+/-- Distinct directions give distinct radial geodesics. -/
 theorem radialGeodesic_injective : Function.Injective radialGeodesic := by
   intro u v huv
+  -- Evaluate at time `1`, where the two geodesics read `u * Real.tanh 1` and `v * Real.tanh 1`.
   have htanh : (Real.tanh 1 : ℂ) ≠ 0 := by
     refine Complex.ofReal_ne_zero.mpr fun hzero => one_ne_zero (α := ℝ) ?_
     exact Real.tanh_injective (hzero.trans Real.tanh_zero.symm)
