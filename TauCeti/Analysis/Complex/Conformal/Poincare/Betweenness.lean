@@ -447,11 +447,6 @@ private lemma exists_circle_toUnitDisc_eq_of_nonneg {γ : ℝ → PoincareDisc} 
   rw [hd1] at hu1
   have hu : (toUnitDisc (γ 1) : ℂ) = (u : ℂ) * ((Real.tanh 1 : ℝ) : ℂ) := by
     rw [← hu1, coe_radialGeodesic]
-  have htanh1 : ((Real.tanh 1 : ℝ) : ℂ) ≠ 0 := by
-    refine Complex.ofReal_ne_zero.mpr fun hzero => one_ne_zero (α := ℝ) ?_
-    exact Real.tanh_injective (hzero.trans Real.tanh_zero.symm)
-  have hpos1 : 0 < ‖(toUnitDisc (γ 1) : ℂ)‖ := norm_pos_iff.mpr (hne 1 one_ne_zero)
-  have hX1 : ((‖(toUnitDisc (γ 1) : ℂ)‖ : ℝ) : ℂ) ≠ 0 := Complex.ofReal_ne_zero.mpr hpos1.ne'
   refine ⟨u, fun t ht => ?_⟩
   obtain ⟨κ, hκ, heq⟩ := hray t ht
   have hn : ‖(toUnitDisc (γ t) : ℂ)‖ = κ * ‖(toUnitDisc (γ 1) : ℂ)‖ := by
