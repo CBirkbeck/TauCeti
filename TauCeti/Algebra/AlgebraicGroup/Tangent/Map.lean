@@ -37,6 +37,20 @@ variable {R A A' B : Type*} [CommSemiring R]
   [CommSemiring A] [HopfAlgebra R A] [CommSemiring A'] [HopfAlgebra R A']
   [CommSemiring B] [Algebra R B]
 
+/-- The first component of a dual-number element, transported between the two counit
+coefficient indexings through their canonical identifications with `B`. The two
+`Semiring`/`Algebra R` structures are the same `inferInstanceAs` terms over the shared
+carrier, so the transport is the identity, recorded here once as an explicit lemma. -/
+private lemma fst_transport (z : DualNumber (Bialgebra.CounitAlgebra R A' B)) :
+    fst (R := Bialgebra.CounitAlgebra R A' B) z =
+      (Bialgebra.CounitAlgebra.algEquivSelf R A' B).symm
+        (Bialgebra.CounitAlgebra.algEquivSelf R A B
+          (fst (R := Bialgebra.CounitAlgebra R A B) z)) := by
+  rw [Bialgebra.CounitAlgebra.algEquivSelf_symm_apply, Bialgebra.CounitAlgebra.algEquivSelf_apply]
+  -- The residual identification of the two indexings of `fst` over the shared carrier
+  -- is definitional; this is the single point where it is used.
+  rfl
+
 private lemma fst_mapDomain_of_mem_tangentKer (φ : A' →ₐc[R] A)
     {ψ : WithConv (A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B))}
     (hψ : ψ ∈ tangentKer R A B) (a : A') :
@@ -47,20 +61,15 @@ private lemma fst_mapDomain_of_mem_tangentKer (φ : A' →ₐc[R] A)
   rw [mem_tangentKer_iff] at hψ
   have h := congrArg (fun χ : A →ₐ[R] Bialgebra.CounitAlgebra R A B => χ (φ a)) hψ
   simp only [AlgHom.comp_apply, IsScalarTower.coe_toAlgHom'] at h
-  -- The transport across the two counit coefficient algebras is made explicit once:
-  -- `AlgHom.mapDomain_apply_apply` is a `rfl`-lemma (`mapDomain` acts by
-  -- precomposition), and the `Semiring`/`Algebra R` instances of
-  -- `Bialgebra.CounitAlgebra R A B` and `Bialgebra.CounitAlgebra R A' B` are the same
-  -- `inferInstanceAs` terms over the shared carrier `B`.
-  have hfst : fst (R := Bialgebra.CounitAlgebra R A' B)
-      (((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ)
-        ψ).ofConv a) =
-      fst (R := Bialgebra.CounitAlgebra R A B)
-        (ψ.ofConv ((φ : A' →ₐ[R] A) a)) := rfl
-  rw [Bialgebra.CounitAlgebra.algebraMap_apply,
+  -- The cross-index step is the explicit transport lemma `fst_transport`
+  -- (`AlgHom.mapDomain_apply_apply` is a `rfl`-lemma, so the argument of `fst` is the
+  -- precomposed point); the remaining rewrites stay on one index at a time.
+  rw [fst_transport, Bialgebra.CounitAlgebra.algEquivSelf_apply R A B,
+    Bialgebra.CounitAlgebra.algEquivSelf_symm_apply R A' B,
+    Bialgebra.CounitAlgebra.algebraMap_apply,
     ← CoalgHomClass.counit_comp_apply (F := A' →ₐc[R] A) φ a,
     ← Bialgebra.CounitAlgebra.algebraMap_apply (R := R) (A := A) (B := B)]
-  exact hfst.trans h
+  exact h
 
 /-- The differential of a Hopf-algebra morphism on tangent kernels: a morphism
 `φ : A' →ₐc[R] A` of Hopf algebras sends a dual-number point of `A` over the identity to
@@ -69,8 +78,8 @@ identification `Bialgebra.CounitAlgebra R A B = B = Bialgebra.CounitAlgebra R A'
 definitional, and the identity points correspond because `φ` intertwines the counits. -/
 noncomputable def tangentKerMap (φ : A' →ₐc[R] A) :
     tangentKer R A B →* tangentKer R A' B :=
-  (((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ).comp
-      (tangentKer R A B).subtype).codRestrict (tangentKer R A' B)) fun ψ => by
+  (((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ).domRestrict
+      (tangentKer R A B)).codRestrict (tangentKer R A' B)) fun ψ => by
     rw [mem_tangentKer_iff]
     ext a
     rw [AlgHom.comp_apply]
@@ -84,8 +93,8 @@ lemma tangentKerMap_apply_val (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) :
   -- `tangentKerMap` has no equation lemma to rewrite with; `change` spells out its
   -- definitional unfolding once, explicitly: the value of the corestriction is the
   -- value of `mapDomain` on the inclusion.
-  change ((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ).comp
-      (tangentKer R A B).subtype) ψ = _
+  change ((AlgHom.mapDomain (A := DualNumber (Bialgebra.CounitAlgebra R A' B)) φ).domRestrict
+      (tangentKer R A B)) ψ = _
   rfl
 
 /-- The differential of the identity morphism is the identity. -/
