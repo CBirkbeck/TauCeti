@@ -159,9 +159,9 @@ private lemma ofVectorSpace_repr_coe (M : FGComoduleCat.{u, v, u} k H)
   rw [← Module.Basis.ofVectorSpace_apply_self k M i]
   exact Module.Basis.repr_self_apply (Module.Basis.ofVectorSpace k M) i j
 
-/-- **The antipode inverts the matrix-coefficient matrix.** Summing a matrix coefficient against the
-antipode of the transposed one collapses to a Kronecker delta, by the left antipode identity
-followed by the counit computation of a matrix coefficient. -/
+/-- Summing a matrix coefficient against the antipode of the transposed one collapses to a
+Kronecker delta: in the multiplication order displayed below, the antipode-transformed matrix is a
+right inverse of the matrix-coefficient matrix. The opposite order is not claimed here. -/
 private lemma sum_matrixCoefficient_mul_antipode (M : FGComoduleCat.{u, v, u} k H)
     [DecidableEq (Module.Basis.ofVectorSpaceIndex k M)]
     (p q : Module.Basis.ofVectorSpaceIndex k M) :
@@ -173,6 +173,8 @@ private lemma sum_matrixCoefficient_mul_antipode (M : FGComoduleCat.{u, v, u} k 
           ((Module.Basis.ofVectorSpace k M).coord x) (q : M))) =
       if q = p then 1 else 0 := by
   classical
+  -- Recognise the sum as the left antipode identity applied to a matrix coefficient, then finish
+  -- with the counit computation of that coefficient.
   calc
     _ = LinearMap.mul' k H
         ((HopfAlgebra.antipode k).lTensor H
