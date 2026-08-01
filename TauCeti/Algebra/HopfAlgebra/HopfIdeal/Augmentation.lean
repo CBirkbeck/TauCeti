@@ -50,7 +50,7 @@ theorem counitBialgHom_surjective :
 
 The ring hypotheses come from the kernel Hopf ideal construction, whose coideal condition
 uses tensor-kernel exactness. -/
-noncomputable abbrev augmentation : HopfIdeal R H :=
+noncomputable def augmentation : HopfIdeal R H :=
   ker (Bialgebra.counitBialgHom R H) (counitBialgHom_surjective R H)
 
 /-- Membership in the augmentation ideal is vanishing of the counit. -/
