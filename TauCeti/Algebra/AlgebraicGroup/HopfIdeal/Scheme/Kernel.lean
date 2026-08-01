@@ -73,8 +73,8 @@ theorem kernelSpecι_def (f : H ⟶ K) :
 
 /-- The scheme-level triangle: the composite of the kernel inclusion with the induced
 group-scheme morphism is the trivial morphism, the image under `hopfSpec` of the
-counit-unit composite. -/
-@[simp]
+counit-unit composite. Not a `simp` lemma: Mathlib's simp set unfolds `hopfSpec.map`
+itself, so this left-hand side is not in simp-normal form. -/
 theorem kernelSpecι_comp (f : H ⟶ K) :
     kernelSpecι f ≫ (AlgebraicGeometry.hopfSpec (CommRingCat.of R)).map f.op =
       (AlgebraicGeometry.hopfSpec (CommRingCat.of R)).map

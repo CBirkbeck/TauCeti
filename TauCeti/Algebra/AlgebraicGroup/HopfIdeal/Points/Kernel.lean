@@ -46,9 +46,9 @@ functors. -/
 @[simp]
 theorem mapPointsFunctor_app_eq_one_iff (f : H ⟶ K) (A : CommAlgCat.{w} R)
     (g : HopfAlgebra.points (R := R) (H := K) A) :
-    (mapPointsFunctor f).app A g = 1 ↔
+    toConv (g.ofConv.comp (f.hom : ↥H →ₐ[R] ↥K)) = 1 ↔
       g ∈ quotientPointsSubgroup K (kernelHopfIdeal f) A := by
-  rw [mem_quotientPointsSubgroup_iff]
+  rw [← mapPointsFunctor_app_apply, mem_quotientPointsSubgroup_iff]
   have hbridge : (∀ h : ↥K, h ∈ kernelHopfIdeal f → g.ofConv h = 0) ↔
       (kernelHopfIdeal f).toIdeal ≤ RingHom.ker g.ofConv.toRingHom := by
     constructor
