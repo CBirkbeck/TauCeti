@@ -136,9 +136,7 @@ The `≃*` `AlgHom.baseChangePointsMulEquiv` is automatically a group isomorphis
 lemma baseChangePointsMulEquiv_inv_apply_tmul (f : WithConv (A →ₐ[k] R)) (s : K) (a : A) :
     (baseChangePointsMulEquiv (k := k) (K := K) (A := A) (R := R) f)⁻¹ (s ⊗ₜ[k] a) =
       s • f.ofConv (antipode k a) := by
-  rw [convInv_apply,
-    (by simp [_root_.TensorProduct.antipode_def] :
-      antipode K (A := K ⊗[k] A) (s ⊗ₜ[k] a) = s ⊗ₜ[k] antipode k a),
+  rw [convInv_apply, HopfAlgebra.baseChange_antipode_tmul,
     baseChangePointsMulEquiv_apply_tmul]
 
 /-- Pointwise inverse formula after restricting a base-changed point along `a ↦ 1 ⊗ a`:
