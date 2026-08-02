@@ -58,7 +58,9 @@ open Coalgebra WithConv TensorProduct
 
 namespace Derivation
 
-variable {R A B : Type*} [CommRing R] [CommRing A] [Bialgebra R A]
+section Bracket
+
+variable {R A B : Type*} [CommSemiring R] [CommSemiring A] [Bialgebra R A]
   [CommRing B] [Algebra R B]
 
 /-- The exterior convolution product on `A ⊗[R] A`: apply one factor on each tensor
@@ -68,7 +70,7 @@ private def mulTensor (s t : WithConv (A →ₗ[R] Bialgebra.CounitAlgebra R A B
   toConv ((Algebra.TensorProduct.lmul' R
     (S := Bialgebra.CounitAlgebra R A B)).toLinearMap ∘ₗ map s.ofConv t.ofConv)
 
-omit [CommRing A] [Bialgebra R A] in
+omit [CommSemiring A] [Bialgebra R A] in
 /-- The base algebra maps of the coefficient synonym and of `B` agree. -/
 private lemma algebraMap_counitAlgebra (r : R) :
     algebraMap R (Bialgebra.CounitAlgebra R A B) r = algebraMap R B r := rfl
@@ -219,6 +221,13 @@ private lemma toConv_coe_bracket
   rw [coe_bracket, toConv_sub, toConv_ofConv, toConv_ofConv,
     LieRing.of_associative_ring_bracket]
 
+end Bracket
+
+section Lie
+
+variable {R A B : Type*} [CommRing R] [CommRing A] [Bialgebra R A]
+  [CommRing B] [Algebra R B]
+
 /-- The tangent space at the identity is a Lie ring under the convolution
 commutator. -/
 noncomputable instance instLieRing :
@@ -269,6 +278,8 @@ noncomputable instance instLieAlgebra :
     exact DFunLike.congr_fun (congrArg ofConv
       (lie_smul r (toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
         (toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)))) a
+
+end Lie
 
 end Derivation
 
