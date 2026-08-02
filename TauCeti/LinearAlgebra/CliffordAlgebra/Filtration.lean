@@ -408,7 +408,7 @@ private theorem filtration_le_map_leadingTermPreimage (k : ℕ) :
 
 /-- **A product of `k + 1` generators is a leading term**, namely of the corresponding exterior
 product, so the top piece of the successor filtration also consists of leading terms. -/
-private theorem range_ι_pow_le_map_leadingTermPreimage (k : ℕ) :
+private theorem ι_range_pow_le_map_leadingTermPreimage (k : ℕ) :
     LinearMap.range (ι Q) ^ (k + 1) ≤
       (leadingTermPreimage Q k).map (filtration Q (k + 1)).subtype := by
   rw [Submodule.pow_eq_span_pow_set, Submodule.span_le]
@@ -437,7 +437,7 @@ theorem filtrationLeadingTerm_surjective (k : ℕ) :
       (leadingTermPreimage Q k).map (filtration Q (k + 1)).subtype :=
     (filtration_succ_eq_sup Q k).le.trans
       (sup_le (filtration_le_map_leadingTermPreimage Q k)
-        (range_ι_pow_le_map_leadingTermPreimage Q k))
+        (ι_range_pow_le_map_leadingTermPreimage Q k))
   intro z
   obtain ⟨x, rfl⟩ :=
     Submodule.Quotient.mk_surjective ((filtration Q k).comap (filtration Q (k + 1)).subtype) z
