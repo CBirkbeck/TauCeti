@@ -216,12 +216,8 @@ private lemma toConv_coe_bracket
     toConv (↑⁅d₁, d₂⁆ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) =
       ⁅toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B),
         toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)⁆ := by
-  rw [coe_bracket]
-  -- The residual is the definitional round trip `toConv (x.ofConv - y.ofConv) = x - y`
-  -- together with the ring commutator being a definitional difference
-  -- (`LieRing.of_associative_ring_bracket`); both are `rfl`-level unwrappings of the
-  -- `WithConv` synonym with no lemma to rewrite by.
-  rfl
+  rw [coe_bracket, toConv_sub, toConv_ofConv, toConv_ofConv,
+    LieRing.of_associative_ring_bracket]
 
 /-- The tangent space at the identity is a Lie ring under the convolution
 commutator. -/
@@ -248,11 +244,10 @@ noncomputable instance instLieRing :
   lie_self d := Derivation.ext fun a => by
     letI := LieRing.ofAssociativeRing
       (A := WithConv (A →ₗ[R] Bialgebra.CounitAlgebra R A B))
-    rw [bracket_apply_ofConv]
-    -- The trailing `rfl` collapses `(0 : WithConv _).ofConv a` to `0`, a definitional
-    -- unwrapping of the `WithConv` synonym with no lemma to rewrite by.
+    rw [bracket_apply_ofConv, Derivation.zero_apply]
     exact (DFunLike.congr_fun (congrArg ofConv
-      (lie_self (toConv (↑d : A →ₗ[R] Bialgebra.CounitAlgebra R A B)))) a).trans rfl
+      (lie_self (toConv (↑d : A →ₗ[R] Bialgebra.CounitAlgebra R A B)))) a).trans
+      (by rw [ofConv_zero]; exact LinearMap.zero_apply a)
   leibniz_lie d₁ d₂ d₃ := Derivation.ext fun a => by
     letI := LieRing.ofAssociativeRing
       (A := WithConv (A →ₗ[R] Bialgebra.CounitAlgebra R A B))
