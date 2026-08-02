@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.TensorProduct.Quotient
-public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Kernel
+public import TauCeti.Algebra.AlgebraicGroup.HopfIdeal.Quotient.Kernel.Basic
 
 /-!
 # The kernel coordinate ring as a base change
@@ -36,11 +36,11 @@ open CategoryTheory
 
 namespace TauCeti
 
-universe u
+universe u v
 
 namespace CommHopfAlgCat
 
-variable {R : Type u} [CommRing R] {H K : _root_.CommHopfAlgCat.{u} R}
+variable {R : Type u} [CommRing R] {H K : _root_.CommHopfAlgCat.{v} R}
 
 /-- The coordinate ring of the kernel of an affine group-scheme morphism is the base
 change of the identity point: `K ⧸ K·f(H⁺) ≃ₐ[K] K ⊗[H] R`, with `K` an `H`-algebra
@@ -71,6 +71,44 @@ noncomputable def quotientKernelHopfIdealAlgEquiv (f : H ⟶ K) :
       -- `rfl` performs that identification.
       rfl
     · exact Bialgebra.counit_surjective
+
+/-- The identification sends a quotient representative to its pure tensor against `1`. -/
+@[simp]
+lemma quotientKernelHopfIdealAlgEquiv_mk (f : H ⟶ K) (k : ↥K) :
+    letI : Algebra ↥H ↥K := f.hom.toAlgHom.toAlgebra
+    letI : Algebra ↥H R := (Bialgebra.counitAlgHom R ↥H).toAlgebra
+    quotientKernelHopfIdealAlgEquiv f (Ideal.Quotient.mk (kernelHopfIdeal f).toIdeal k) =
+      k ⊗ₜ[↥H] (1 : R) := by
+  letI : Algebra ↥H ↥K := f.hom.toAlgHom.toAlgebra
+  letI : Algebra ↥H R := (Bialgebra.counitAlgHom R ↥H).toAlgebra
+  simp [quotientKernelHopfIdealAlgEquiv]
+
+/-- The inverse of the identification sends `k ⊗ₜ r` to the class of `r`-scaled `k`. -/
+@[simp]
+lemma quotientKernelHopfIdealAlgEquiv_symm_tmul (f : H ⟶ K) (k : ↥K) (r : R) :
+    letI : Algebra ↥H ↥K := f.hom.toAlgHom.toAlgebra
+    letI : Algebra ↥H R := (Bialgebra.counitAlgHom R ↥H).toAlgebra
+    (quotientKernelHopfIdealAlgEquiv f).symm (k ⊗ₜ[↥H] r) =
+      Ideal.Quotient.mk (kernelHopfIdeal f).toIdeal (algebraMap R ↥K r * k) := by
+  letI : Algebra ↥H ↥K := f.hom.toAlgHom.toAlgebra
+  letI : Algebra ↥H R := (Bialgebra.counitAlgHom R ↥H).toAlgebra
+  apply (quotientKernelHopfIdealAlgEquiv f).injective
+  rw [AlgEquiv.apply_symm_apply, quotientKernelHopfIdealAlgEquiv_mk]
+  -- Slide the scalar across the tensor: `r` is the `H`-action of `algebraMap R ↥H r` on
+  -- `1 : R` through the counit, and that action on the left factor is multiplication by
+  -- `f (algebraMap R ↥H r) = algebraMap R ↥K r`.
+  rw [show (algebraMap R ↥K r * k) ⊗ₜ[↥H] (1 : R) =
+      ((algebraMap R ↥H r) • k) ⊗ₜ[↥H] (1 : R) from by
+    rw [Algebra.smul_def]
+    -- `algebraMap ↥H ↥K` for the `letI` structure is `f.hom`, which commutes with
+    -- `algebraMap R`.
+    rw [show (algebraMap ↥H ↥K) (algebraMap R ↥H r) = algebraMap R ↥K r from
+      AlgHomClass.commutes f.hom.toAlgHom r]]
+  rw [TensorProduct.smul_tmul, Algebra.smul_def]
+  -- `algebraMap ↥H R` for the `letI` structure is the counit, and
+  -- `counit (algebraMap R ↥H r) = r`.
+  rw [show (algebraMap ↥H R) (algebraMap R ↥H r) = r from Bialgebra.counit_algebraMap r,
+    mul_one]
 
 end CommHopfAlgCat
 
