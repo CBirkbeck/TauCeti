@@ -98,20 +98,24 @@ lemma quotientKernelHopfIdealAlgEquiv_symm_tmul (f : H ⟶ K) (k : ↥K) (r : R)
       Ideal.Quotient.mk (kernelHopfIdeal f).toIdeal (algebraMap R ↥K r * k) := by
   letI : Algebra ↥H ↥K := f.hom.toAlgHom.toAlgebra
   letI : Algebra ↥H R := (Bialgebra.counitAlgHom R ↥H).toAlgebra
-  -- The scalar slides across the `H`-tensor through the counit action: the two algebra
-  -- maps of the `letI` structures are `f.hom` and the counit, recorded as named
-  -- identities.
+  -- The counit/algebra-map bridges needed to normalize `r` (retained per review): the
+  -- two algebra maps of the `letI` structures are `f.hom` and the counit.
+  have hr : (Algebra.ofId ↥H R) (algebraMap R ↥H r) = r := Bialgebra.counit_algebraMap r
   have hK : (algebraMap ↥H ↥K) (algebraMap R ↥H r) = algebraMap R ↥K r :=
     AlgHomClass.commutes f.hom.toAlgHom r
-  have hR : (algebraMap ↥H R) (algebraMap R ↥H r) = r :=
-    Bialgebra.counit_algebraMap r
-  apply (quotientKernelHopfIdealAlgEquiv f).injective
-  rw [AlgEquiv.apply_symm_apply, quotientKernelHopfIdealAlgEquiv_mk]
-  symm
-  calc (algebraMap R ↥K r * k) ⊗ₜ[↥H] (1 : R)
-      = ((algebraMap R ↥H r) • k) ⊗ₜ[↥H] (1 : R) := by rw [Algebra.smul_def, hK]
-    _ = k ⊗ₜ[↥H] ((algebraMap R ↥H r) • (1 : R)) := TensorProduct.smul_tmul _ _ _
-    _ = k ⊗ₜ[↥H] r := by rw [Algebra.smul_def, hR, mul_one]
+  -- Compute the inverse through the component equivalences' own inverse formulas.
+  rw [show (r : R) = (Algebra.ofId ↥H R) (algebraMap R ↥H r) from hr.symm]
+  simp only [quotientKernelHopfIdealAlgEquiv, AlgEquiv.symm_trans_apply,
+    ← Algebra.TensorProduct.congr_symm, AlgEquiv.refl_symm,
+    Algebra.TensorProduct.congr_apply, AlgEquiv.coe_refl,
+    Algebra.TensorProduct.map_tmul, id_eq, Ideal.quotientEquivAlgOfEq_symm,
+    AlgEquiv.coe_toAlgHom]
+  rw [Ideal.quotientKerAlgEquivOfSurjective_symm_apply (f := Algebra.ofId ↥H R)
+    Bialgebra.counit_surjective (algebraMap R ↥H r)]
+  simp only [Ideal.quotientEquivAlgOfEq_mk,
+    Algebra.TensorProduct.quotIdealMapEquivTensorQuot_symm_tmul, hr]
+  rw [Algebra.smul_def, hK]
+  rfl
 
 end CommHopfAlgCat
 
