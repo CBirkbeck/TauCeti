@@ -9,6 +9,7 @@ public import Mathlib.MeasureTheory.Measure.ProbabilityMeasure
 public import Mathlib.MeasureTheory.Measure.Typeclasses.ZeroOne
 import Mathlib.MeasureTheory.Constructions.Projective
 import Mathlib.MeasureTheory.SetAlgebra
+import TauCeti.MeasureTheory.Measure.ZeroOne
 
 /-!
 # Finite evaluation laws determine a measure on `ProbabilityMeasure α`
@@ -203,25 +204,6 @@ theorem Measure.ext_of_forall_map_probabilityMeasure_eval_eq
       rwa [← measurableSpace_probabilityMeasure_eq_comap]
     exact MeasurableSpace.measurableSet_comap.1 hT'
   rw [← Measure.map_apply measurable_evalReal hU, ← Measure.map_apply measurable_evalReal hU, key]
-
-/-- **A zero-one law is almost surely constant along a measurable map.** If the pushforward lands
-in a standard Borel space it is again a zero-one probability measure, hence Dirac, and the map
-therefore agrees almost everywhere with a single value. -/
-private theorem exists_ae_eq_const_of_isZeroOneMeasure {Ω β : Type*} [MeasurableSpace Ω]
-    [MeasurableSpace β] [StandardBorelSpace β] {π : Measure Ω} [IsProbabilityMeasure π]
-    [IsZeroOneMeasure π] {f : Ω → β} (hf : Measurable f) :
-    ∃ q : β, ∀ᵐ ω ∂π, f ω = q := by
-  haveI : IsProbabilityMeasure (π.map f) := Measure.isProbabilityMeasure_map hf.aemeasurable
-  haveI : IsZeroOneMeasure (π.map f) := {
-    zero_one₀ := fun s hs => by
-      rw [Measure.map_apply hf hs]
-      exact _root_.MeasureTheory.Measure.zero_one π (f ⁻¹' s) }
-  obtain ⟨q, hq⟩ := IsZeroOneMeasure.exists_eq_dirac (μ := π.map f)
-  have hsingleton : MeasurableSet ({q} : Set β) := MeasurableSet.singleton q
-  have hmass : π (f ⁻¹' {q}) = 1 := by
-    rw [← Measure.map_apply hf hsingleton, hq]
-    simp
-  exact ⟨q, (_root_.MeasureTheory.mem_ae_iff_prob_eq_one (hsingleton.preimage hf)).2 hmass⟩
 
 /-- A nonzero zero-one law on `ProbabilityMeasure α` is a Dirac measure when the measurable
 space on `α` is countably generated.
