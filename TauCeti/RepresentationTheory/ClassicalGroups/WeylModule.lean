@@ -203,53 +203,78 @@ noncomputable def weylRepEquiv (t t' : YoungTableau μ) :
 
 /-! ### The vanishing criterion -/
 
-open Finset in
-/-- The Weyl module of a `μ`-tableau is nonzero as soon as `μ` has at most `n` rows.
+/-- **Every label of a `μ`-tableau has row index below `n`** once `μ` has at most `n` rows: the
+row of a label is bounded by the length of the first column. -/
+private theorem rowIndex_lt_of_colLen_le (t : YoungTableau μ) (hn : μ.colLen 0 ≤ n)
+    (ℓ : Fin μ.card) : rowIndex t ℓ < n := by
+  have hmem : ((t.symm ℓ : ℕ × ℕ).1, (t.symm ℓ : ℕ × ℕ).2) ∈ μ := (t.symm ℓ).2
+  have h1 := YoungDiagram.mem_iff_lt_colLen.mp hmem
+  rw [rowIndex_def]
+  exact lt_of_lt_of_le (lt_of_lt_of_le h1 (μ.colLen_anti 0 _ (Nat.zero_le _))) hn
 
-Evaluating the coordinate functional dual to `e_{r(1)} ⊗ ⋯ ⊗ e_{r(d)}` on `c_t` applied to that
-same pure tensor, where `r ℓ` is the row of the label `ℓ`, leaves exactly the terms indexed by
-the row group of `t`, each with coefficient `1`; the value is therefore the order of the row
-group, which is nonzero because the base ring has characteristic zero. -/
-theorem weylModule_ne_bot [Nontrivial k] (t : YoungTableau μ) (hn : μ.colLen 0 ≤ n) :
-    weylModule k n t ≠ ⊥ := by
+omit [Algebra ℚ k] in
+/-- **The coordinate functional dual to a multi-index detects exactly that multi-index.**
+Multiplying the `r ℓ`-th coordinates sends the pure tensor of standard basis vectors indexed by `s`
+to `1` when `s` agrees with `r`, and to `0` otherwise. -/
+private theorem lift_proj_apply_tprod_single {d : ℕ} (r s : Fin d → Fin n) :
+    PiTensorProduct.lift
+        ((MultilinearMap.mkPiAlgebra k (Fin d) k).compLinearMap fun ℓ => LinearMap.proj (r ℓ))
+        (PiTensorProduct.tprod k fun ℓ => (Pi.single (s ℓ) (1 : k) : Fin n → k))
+      = if ∀ ℓ, r ℓ = s ℓ then 1 else 0 := by
+  rw [PiTensorProduct.lift.tprod, MultilinearMap.compLinearMap_apply,
+    MultilinearMap.mkPiAlgebra_apply]
+  simp only [LinearMap.proj_apply, Pi.single_apply]
+  exact Finset.prod_boole.trans (by simp)
+
+/-- **A permutation lies in the row group exactly when it preserves every row index.** Stated for
+any `r` that computes the row of a label, so that it applies to the basis-index function used to
+build the coordinate functional. -/
+private theorem forall_eq_comp_symm_iff_mem_rowSubgroup (t : YoungTableau μ)
+    (r : Fin μ.card → Fin n) (hrv : ∀ ℓ, (r ℓ : ℕ) = rowIndex t ℓ)
+    (σ : Equiv.Perm (Fin μ.card)) :
+    (∀ ℓ, r ℓ = r (σ.symm ℓ)) ↔ σ ∈ rowSubgroup t := by
+  rw [← inv_mem_iff (G := Equiv.Perm (Fin μ.card)), mem_rowSubgroup]
+  constructor
+  · intro h ℓ
+    exact (hrv (σ.symm ℓ)).symm.trans ((congrArg Fin.val (h ℓ)).symm.trans (hrv ℓ))
+  · intro h ℓ
+    exact Fin.ext ((hrv ℓ).trans ((h ℓ).symm.trans (hrv (σ.symm ℓ)).symm))
+
+/-- **The symmetrizer does not annihilate the standard pure tensor of a tableau.** Write `r ℓ` for
+the row of the label `ℓ`, an index of the standard basis of `kⁿ`. Evaluating the coordinate
+functional dual to `e_{r(1)} ⊗ ⋯ ⊗ e_{r(d)}` on `c_t` applied to that same pure tensor leaves
+exactly the terms indexed by the row group of `t`, each with coefficient `1`; the value is the
+order of the row group, which is nonzero because the base ring has characteristic zero. -/
+private theorem lift_proj_symmetrizer_tprod_ne_zero [Nontrivial k] (t : YoungTableau μ)
+    (hn : μ.colLen 0 ≤ n) :
+    PiTensorProduct.lift
+        ((MultilinearMap.mkPiAlgebra k (Fin μ.card) k).compLinearMap fun ℓ =>
+          LinearMap.proj (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n))
+        (permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
+          (PiTensorProduct.tprod k fun ℓ =>
+            (Pi.single (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n) (1 : k) :
+              Fin n → k))) ≠ 0 := by
   classical
   have : CharZero k := charZero_of_injective_algebraMap (algebraMap ℚ k).injective
-  -- the row of each label, as an index of the standard basis of `kⁿ`
-  have hr : ∀ ℓ : Fin μ.card, rowIndex t ℓ < n := by
-    intro ℓ
-    have hmem : ((t.symm ℓ : ℕ × ℕ).1, (t.symm ℓ : ℕ × ℕ).2) ∈ μ := (t.symm ℓ).2
-    have h1 := YoungDiagram.mem_iff_lt_colLen.mp hmem
-    rw [rowIndex_def]
-    exact lt_of_lt_of_le (lt_of_lt_of_le h1 (μ.colLen_anti 0 _ (Nat.zero_le _))) hn
-  set r : Fin μ.card → Fin n := fun ℓ => ⟨rowIndex t ℓ, hr ℓ⟩ with hrdef
+  set r : Fin μ.card → Fin n := fun ℓ => ⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ with hrdef
   set φ : (⨂[k]^μ.card (Fin n → k)) →ₗ[k] k :=
     PiTensorProduct.lift
       ((MultilinearMap.mkPiAlgebra k (Fin μ.card) k).compLinearMap fun ℓ => LinearMap.proj (r ℓ))
     with hφdef
   have hφ : ∀ s : Fin μ.card → Fin n,
       φ (PiTensorProduct.tprod k fun ℓ => Pi.single (s ℓ) (1 : k)) =
-        if ∀ ℓ, r ℓ = s ℓ then 1 else 0 := by
-    intro s
-    rw [hφdef, PiTensorProduct.lift.tprod, MultilinearMap.compLinearMap_apply,
-      MultilinearMap.mkPiAlgebra_apply]
-    simp only [LinearMap.proj_apply, Pi.single_apply]
-    exact Finset.prod_boole.trans (by simp)
+        if ∀ ℓ, r ℓ = s ℓ then 1 else 0 := fun s => by
+    rw [hφdef]; exact lift_proj_apply_tprod_single r s
   -- the row group is exactly the set of permutations surviving the evaluation
   set S : Finset (Equiv.Perm (Fin μ.card)) := {σ | σ ∈ rowSubgroup t} with hSdef
   have hmemS : ∀ σ : Equiv.Perm (Fin μ.card), σ ∈ S ↔ σ ∈ rowSubgroup t := by
     intro σ; rw [hSdef]; simp
   have hcond : ∀ σ : Equiv.Perm (Fin μ.card),
-      (∀ ℓ, r ℓ = r (σ.symm ℓ)) ↔ σ ∈ rowSubgroup t := by
-    intro σ
-    rw [← inv_mem_iff (G := Equiv.Perm (Fin μ.card)), mem_rowSubgroup]
-    constructor
-    · intro h ℓ; exact (congrArg Fin.val (h ℓ)).symm
-    · intro h ℓ; exact Fin.ext (h ℓ).symm
-  -- evaluate the functional on the image of the standard pure tensor
-  set v : ⨂[k]^μ.card (Fin n → k) :=
-    PiTensorProduct.tprod k fun ℓ => Pi.single (r ℓ) (1 : k) with hvdef
-  have key : φ (permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t) v) = (S.card : k) := by
-    rw [hvdef, permTensorActionAlgHom_apply_tprod, map_finsuppSum]
+      (∀ ℓ, r ℓ = r (σ.symm ℓ)) ↔ σ ∈ rowSubgroup t :=
+    forall_eq_comp_symm_iff_mem_rowSubgroup t r (fun _ => rfl)
+  have key : φ (permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
+      (PiTensorProduct.tprod k fun ℓ => Pi.single (r ℓ) (1 : k))) = (S.card : k) := by
+    rw [permTensorActionAlgHom_apply_tprod, map_finsuppSum]
     have hterm : ∀ σ : Equiv.Perm (Fin μ.card), ∀ x : k,
         φ (x • PiTensorProduct.tprod k fun i => Pi.single (r (σ.symm i)) (1 : k)) =
           if σ ∈ rowSubgroup t then x else 0 := by
@@ -276,19 +301,28 @@ theorem weylModule_ne_bot [Nontrivial k] (t : YoungTableau μ) (hn : μ.colLen 0
       exact ⟨fun h => h.2, fun h => ⟨hsub ((hmemS σ).mpr h), h⟩⟩
     rw [hfilter, Finset.sum_congr rfl fun σ hσ => hcoeff σ ((hmemS σ).mp hσ), Finset.sum_const,
       nsmul_eq_mul, mul_one]
+  rw [key]
+  refine Nat.cast_ne_zero.mpr (Finset.card_ne_zero_of_mem (a := 1) ?_)
+  exact (hmemS 1).mpr (one_mem _)
+
+/-- The Weyl module of a `μ`-tableau is nonzero as soon as `μ` has at most `n` rows.
+
+The image of the standard pure tensor `e_{r(1)} ⊗ ⋯ ⊗ e_{r(d)}` under the symmetrizer, where
+`r ℓ` is the row of the label `ℓ`, is detected by the dual coordinate functional, so it is not
+zero and the module it generates is not `⊥`. -/
+theorem weylModule_ne_bot [Nontrivial k] (t : YoungTableau μ) (hn : μ.colLen 0 ≤ n) :
+    weylModule k n t ≠ ⊥ := by
   intro hbot
   -- the submodule underlying the zero subrepresentation is `⊥`
   have hbot' : (weylModule k n t).toSubmodule = ⊥ := by rw [hbot]; rfl
-  have hmem : permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t) v ∈
-      (weylModule k n t).toSubmodule := by
+  have hmem : permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
+      (PiTensorProduct.tprod k fun ℓ =>
+        (Pi.single (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n) (1 : k) :
+          Fin n → k)) ∈ (weylModule k n t).toSubmodule := by
     rw [weylModule_toSubmodule]
-    exact LinearMap.mem_range_self _ v
+    exact LinearMap.mem_range_self _ _
   rw [hbot', Submodule.mem_bot k] at hmem
-  rw [hmem, map_zero] at key
-  have hne : (S.card : k) ≠ 0 := by
-    refine Nat.cast_ne_zero.mpr (Finset.card_ne_zero_of_mem (a := 1) ?_)
-    exact (hmemS 1).mpr (one_mem _)
-  exact hne key.symm
+  exact lift_proj_symmetrizer_tprod_ne_zero t hn (by rw [hmem, map_zero])
 
 /-- The Weyl module of a `μ`-tableau vanishes as soon as `μ` has more than `n` rows.
 
