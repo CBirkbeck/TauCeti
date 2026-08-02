@@ -171,6 +171,41 @@ lemma endOfPoint_convMul (g h : WithConv (H →ₐ[R] A)) :
   simp only [LinearMap.restrictScalars_apply, LinearMap.coe_comp, Function.comp_apply,
     endOfPoint_tmul, map_smul, c1, c2, c3, c4, c5]
 
+section BaseChange
+
+variable {A' : Type*} [CommSemiring A'] [Algebra R A']
+
+variable (V) in
+/-- Base-change compatibility of the action: pushing a point forward along a morphism
+of value algebras and acting agrees with acting first and then extending scalars.
+Stated on the underlying `R`-linear maps, where both composites live. -/
+lemma rTensor_comp_endOfPoint (φ : A →ₐ[R] A') (g : H →ₐ[R] A) :
+    LinearMap.rTensor V φ.toLinearMap ∘ₗ (endOfPoint V g).restrictScalars R =
+      (endOfPoint V (φ.comp g)).restrictScalars R ∘ₗ
+        LinearMap.rTensor V φ.toLinearMap := by
+  have hsmul : ∀ (a : A) (z : A ⊗[R] V),
+      LinearMap.rTensor V φ.toLinearMap (a • z) =
+        φ a • LinearMap.rTensor V φ.toLinearMap z := by
+    intro a z
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | tmul x v => simp [TensorProduct.smul_tmul', smul_eq_mul, map_mul]
+    | add x y hx hy => simp [smul_add, hx, hy]
+  have hcol : LinearMap.rTensor V φ.toLinearMap ∘ₗ
+      (TensorProduct.comm R V A).toLinearMap ∘ₗ LinearMap.lTensor V g.toLinearMap =
+      (TensorProduct.comm R V A').toLinearMap ∘ₗ
+        LinearMap.lTensor V (φ.comp g).toLinearMap := by
+    refine TensorProduct.ext' fun w x => ?_
+    simp
+  refine TensorProduct.ext' fun a v => ?_
+  have hc := DFunLike.congr_fun hcol (coact (R := R) (C := H) v)
+  simp only [LinearMap.coe_comp, Function.comp_apply,
+    LinearEquiv.coe_toLinearMap] at hc
+  simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.restrictScalars_apply,
+    LinearMap.rTensor_tmul, endOfPoint_tmul, hsmul, hc, AlgHom.toLinearMap_apply]
+
+end BaseChange
+
 variable (V) in
 /-- The points action of a comodule, as a representation of the convolution monoid of
 points on the scalar extension. -/
