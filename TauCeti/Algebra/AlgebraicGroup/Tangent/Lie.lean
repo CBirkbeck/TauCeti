@@ -40,9 +40,12 @@ derivations fails the Leibniz rule by the value commutators `⁅d₁ x, d₂ y�
 No antipode enters: everything is stated over a bialgebra. The ring (rather than
 semiring) hypotheses are those of the additive group of derivations in Mathlib
 (`Derivation R A M` is an `AddCommGroup` for `CommRing R`, `CommRing A`), which the
-commutator needs. This bracket is the convolution commutator; it is unrelated to
-Mathlib's composition-commutator `LieRing (Derivation R A A)`, which concerns
-derivations of an algebra into itself.
+commutator needs. This bracket is the convolution commutator; it cannot collide with Mathlib's
+composition-commutator `LieRing (Derivation R A A)`, even at `B = A`: the two
+carrier types differ in their `Module A` instance argument — the coefficient action
+here is through the counit (`a • m = algebraMap R B (counit a) * m`,
+`Bialgebra.CounitAlgebra.algebraMap_apply`), not multiplication — so neither
+elaboration nor instance search can identify the types, and no diamond exists.
 -/
 
 public section
