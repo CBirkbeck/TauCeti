@@ -124,6 +124,9 @@ private lemma convMul_comp_mul'
     (toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
     (toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
     (_root_.Bialgebra.mulCoalgHom R A)
+  -- The `toLinearMap` field of `mulCoalgHom` is definitionally `mul'`; the library
+  -- states this only for the coercion (`Bialgebra.toLinearMap_mulCoalgHom`), whose
+  -- pattern does not match the field projection, so the identification is by `rfl`.
   rw [show (_root_.Bialgebra.mulCoalgHom R A).toLinearMap = LinearMap.mul' R A from rfl,
     ofConv_toConv, ofConv_toConv] at h
   rw [h, toConv_ofConv, toConv_coe_comp_mul', toConv_coe_comp_mul', add_mul, mul_add,
@@ -152,8 +155,7 @@ private lemma convMul_ofConv_mul (d₁ d₂ : Derivation R A (Bialgebra.CounitAl
     ← Algebra.smul_def, ← Algebra.smul_def]
 
 /-- The Lie bracket of tangent vectors at the identity: the commutator of the
-convolution product. The symmetric cross terms of `convMul_ofConv_mul` cancel between
-the two orders. -/
+convolution product. -/
 noncomputable instance instBracket :
     Bracket (Derivation R A (Bialgebra.CounitAlgebra R A B))
       (Derivation R A (Bialgebra.CounitAlgebra R A B)) :=
@@ -169,58 +171,97 @@ noncomputable instance instBracket :
 
 /-- The bracket of counit-valued derivations is the convolution commutator of their
 underlying linear maps. -/
+@[simp]
 theorem coe_bracket (d₁ d₂ : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     ↑⁅d₁, d₂⁆ =
       (toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
-          toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) -
-        toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
+          toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)).ofConv -
+        (toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
           toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)).ofConv :=
-  Derivation.coe_mk'_linearMap _ _
+  (Derivation.coe_mk'_linearMap _ _).trans (ofConv_sub _ _)
 
-private lemma toConv_coe_bracket (d₁ d₂ : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
-    toConv (↑⁅d₁, d₂⁆ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) =
-      toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
-          toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) -
-        toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
-          toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) := by
-  rw [coe_bracket, toConv_ofConv]
-
-/-- The bracket of tangent vectors, valuewise. -/
+/-- The bracket of tangent vectors, valuewise: the difference of the two convolution
+products, in convolution normal form. -/
+@[simp]
 theorem bracket_apply (d₁ d₂ : Derivation R A (Bialgebra.CounitAlgebra R A B)) (a : A) :
     ⁅d₁, d₂⁆ a =
-      (toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
-          toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)).ofConv a -
-        (toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
-          toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)).ofConv a := by
-  simpa [Derivation.coeFn_coe, ofConv_sub, LinearMap.sub_apply]
-    using DFunLike.congr_fun (coe_bracket d₁ d₂) a
+      LinearMap.mul' R (Bialgebra.CounitAlgebra R A B)
+          (map (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) ↑d₂ (comul a)) -
+        LinearMap.mul' R (Bialgebra.CounitAlgebra R A B)
+          (map (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) ↑d₁ (comul a)) := by
+  have h := DFunLike.congr_fun (coe_bracket d₁ d₂) a
+  simp only [Derivation.coeFn_coe, LinearMap.sub_apply, LinearMap.convMul_apply] at h
+  exact h
 
-/-- The tangent space at the identity is a Lie ring under the convolution commutator.
-Each axiom is inherited pointwise from ring arithmetic in the convolution algebra. -/
+private lemma bracket_apply_ofConv
+    (d₁ d₂ : Derivation R A (Bialgebra.CounitAlgebra R A B)) (a : A) :
+    ⁅d₁, d₂⁆ a =
+      (⁅toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B),
+        toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)⁆ :
+          WithConv (A →ₗ[R] Bialgebra.CounitAlgebra R A B)).ofConv a := by
+  have h := DFunLike.congr_fun (coe_bracket d₁ d₂) a
+  simp only [Derivation.coeFn_coe, LinearMap.sub_apply] at h
+  exact h
+
+private lemma toConv_coe_bracket
+    (d₁ d₂ : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
+    toConv (↑⁅d₁, d₂⁆ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) =
+      ⁅toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B),
+        toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)⁆ := by
+  rw [coe_bracket]
+  rfl
+
+/-- The tangent space at the identity is a Lie ring under the convolution
+commutator: each axiom is inherited from the commutator Lie ring of the convolution
+algebra (`LieRing.ofAssociativeRing`) along `coe_bracket`. -/
 noncomputable instance instLieRing :
     LieRing (Derivation R A (Bialgebra.CounitAlgebra R A B)) where
   add_lie d₁ d₂ d₃ := Derivation.ext fun a => by
-    simp only [bracket_apply, Derivation.add_apply, Derivation.coe_add_linearMap,
-      toConv_add, add_mul, mul_add, ofConv_add, LinearMap.add_apply]
-    abel
+    letI := LieRing.ofAssociativeRing
+      (A := WithConv (A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+    rw [Derivation.add_apply, bracket_apply_ofConv, bracket_apply_ofConv,
+      bracket_apply_ofConv, Derivation.coe_add_linearMap, toConv_add]
+    exact DFunLike.congr_fun (congrArg ofConv
+      (add_lie (toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+        (toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+        (toConv (↑d₃ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)))) a
   lie_add d₁ d₂ d₃ := Derivation.ext fun a => by
-    simp only [bracket_apply, Derivation.add_apply, Derivation.coe_add_linearMap,
-      toConv_add, add_mul, mul_add, ofConv_add, LinearMap.add_apply]
-    abel
+    letI := LieRing.ofAssociativeRing
+      (A := WithConv (A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+    rw [Derivation.add_apply, bracket_apply_ofConv, bracket_apply_ofConv,
+      bracket_apply_ofConv, Derivation.coe_add_linearMap, toConv_add]
+    exact DFunLike.congr_fun (congrArg ofConv
+      (lie_add (toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+        (toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+        (toConv (↑d₃ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)))) a
   lie_self d := Derivation.ext fun a => by
-    simp [bracket_apply]
+    letI := LieRing.ofAssociativeRing
+      (A := WithConv (A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+    rw [bracket_apply_ofConv]
+    exact (DFunLike.congr_fun (congrArg ofConv
+      (lie_self (toConv (↑d : A →ₗ[R] Bialgebra.CounitAlgebra R A B)))) a).trans rfl
   leibniz_lie d₁ d₂ d₃ := Derivation.ext fun a => by
-    simp only [bracket_apply, Derivation.add_apply, toConv_coe_bracket, mul_sub, sub_mul,
-      mul_assoc, ofConv_sub, LinearMap.sub_apply]
-    abel
+    letI := LieRing.ofAssociativeRing
+      (A := WithConv (A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+    rw [Derivation.add_apply, bracket_apply_ofConv, bracket_apply_ofConv,
+      bracket_apply_ofConv, toConv_coe_bracket, toConv_coe_bracket, toConv_coe_bracket]
+    exact DFunLike.congr_fun (congrArg ofConv
+      (leibniz_lie (toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+        (toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+        (toConv (↑d₃ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)))) a
 
-/-- The tangent space at the identity is a Lie algebra over the base ring. -/
+/-- The tangent space at the identity is a Lie algebra over the base ring, inherited
+from the convolution algebra (`LieAlgebra.ofAssociativeAlgebra`). -/
 noncomputable instance instLieAlgebra :
     LieAlgebra R (Derivation R A (Bialgebra.CounitAlgebra R A B)) where
   lie_smul r d₁ d₂ := Derivation.ext fun a => by
-    simp only [bracket_apply, Derivation.smul_apply, Derivation.coe_smul_linearMap,
-      toConv_smul, Algebra.mul_smul_comm, Algebra.smul_mul_assoc, ofConv_smul,
-      LinearMap.smul_apply, smul_sub]
+    letI := LieRing.ofAssociativeRing
+      (A := WithConv (A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+    rw [Derivation.smul_apply, bracket_apply_ofConv, bracket_apply_ofConv,
+      Derivation.coe_smul_linearMap, toConv_smul]
+    exact DFunLike.congr_fun (congrArg ofConv
+      (lie_smul r (toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
+        (toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)))) a
 
 end Derivation
 
