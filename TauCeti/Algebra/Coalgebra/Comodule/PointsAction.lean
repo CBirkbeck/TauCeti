@@ -11,8 +11,9 @@ public import Mathlib.RepresentationTheory.Basic
 /-!
 # The points action of a comodule
 
-A right comodule `V` over a bialgebra `H` makes the `A`-points of the corresponding
-affine monoid act on the scalar extension `A ⊗[R] V`: a point `g : H →ₐ[R] A` acts by
+A right comodule `V` over a bialgebra `H` makes the `A`-points of `H` — those of the
+corresponding affine monoid scheme, when `H` is commutative — act on the scalar
+extension `A ⊗[R] V`: a point `g : H →ₐ[R] A` acts by
 pushing the coaction coefficients through `g`, `A`-linearly. The two comodule axioms
 are exactly the two monoid-action laws: the counit law sends the convolution unit to
 the identity, and coassociativity sends convolution products to composites. (The
@@ -29,6 +30,8 @@ the functor of points on scalar extensions of `V`.
 * `TauCeti.Comodule.endOfPoint`: the endomorphism of `A ⊗[R] V` attached to a point.
 * `TauCeti.Comodule.pointsRepresentation`: the action, as a `Representation` of the
   convolution monoid of points on the scalar extension.
+* `TauCeti.Comodule.baseChange_comp_endOfPoint`: the action is functorial in the
+  comodule.
 
 ## References
 
@@ -101,6 +104,32 @@ lemma rTensor_comp_endOfPoint (φ : A →ₐ[R] A') (g : H →ₐ[R] A) :
     LinearMap.rTensor_tmul, endOfPoint_tmul, hsmul, hc, AlgHom.toLinearMap_apply]
 
 end BaseChange
+
+section Functorial
+
+variable {W : Type*} [AddCommMonoid W] [Module R W] [Comodule R H W]
+
+/-- Scalar extension of a comodule morphism intertwines the point actions: the action
+is functorial in the comodule. -/
+lemma baseChange_comp_endOfPoint (f : Hom R H V W) (g : H →ₐ[R] A) :
+    f.toLinearMap.baseChange A ∘ₗ endOfPoint V g =
+      endOfPoint W g ∘ₗ f.toLinearMap.baseChange A := by
+  have hcol : (f.toLinearMap.baseChange A).restrictScalars R ∘ₗ
+      (TensorProduct.comm R V A).toLinearMap ∘ₗ LinearMap.lTensor V g.toLinearMap =
+      (TensorProduct.comm R W A).toLinearMap ∘ₗ LinearMap.lTensor W g.toLinearMap ∘ₗ
+        TensorProduct.map f.toLinearMap LinearMap.id := by
+    refine TensorProduct.ext' fun w x => ?_
+    simp
+  apply LinearMap.restrictScalars_injective R
+  refine TensorProduct.ext' fun a v => ?_
+  have hc := DFunLike.congr_fun hcol (coact (R := R) (C := H) v)
+  simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.restrictScalars_apply,
+    LinearEquiv.coe_toLinearMap] at hc
+  simp only [LinearMap.coe_comp, Function.comp_apply, LinearMap.restrictScalars_apply,
+    endOfPoint_tmul, map_smul, LinearMap.baseChange_tmul, hc, Hom.map_coact_apply,
+    Hom.coe_toLinearMap]
+
+end Functorial
 
 end Coalgebra
 

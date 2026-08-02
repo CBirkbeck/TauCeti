@@ -11,8 +11,9 @@ public import Mathlib.LinearAlgebra.GeneralLinearGroup.Basic
 /-!
 # The points action of a comodule, by automorphisms
 
-Over a Hopf algebra the points of the corresponding affine group scheme form a group
-under convolution, so the points action of a comodule (`TauCeti.Comodule.endOfPoint`,
+Over a Hopf algebra the points form a group under convolution — the points of the
+corresponding affine group scheme, when `H` is commutative — so the points action of
+a comodule (`TauCeti.Comodule.endOfPoint`,
 `TauCeti.Comodule.pointsRepresentation`) lands in the units of the endomorphism
 monoid: the action upgrades to linear automorphisms of the scalar extension via
 `Representation.asGroupHom`, with inverses provided by the group structure rather
