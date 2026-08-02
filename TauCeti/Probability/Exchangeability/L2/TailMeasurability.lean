@@ -66,17 +66,14 @@ and only `r ≤ k j` is used. -/
 private theorem measurable_tailFamily_blockAverage {X : ℕ → Ω → α} {f : α → ℝ}
     (hf : Measurable f) {r n : ℕ} {k : Fin n → ℕ} (hk : ∀ j, r ≤ k j) :
     Measurable[tailFamily X r] (blockAverage (fun i ω => f (X i ω)) k) := by
-  rw [blockAverage_eq_sum]
   have hterm : ∀ j : Fin n,
       Measurable[tailFamily X r] fun ω => f (X (k j) ω) := fun j =>
     hf.comp (measurable_tailFamily_of_le (hk j))
-  refine Measurable.const_smul ?_ ((n : ℝ)⁻¹)
-  have hsum : (∑ j : Fin n, fun ω => f (X (k j) ω))
-      = fun ω => ∑ j : Fin n, f (X (k j) ω) := by
-    funext ω
-    simp [Finset.sum_apply]
-  rw [hsum]
-  exact Finset.measurable_sum Finset.univ fun j _ => hterm j
+  have happly : (blockAverage (fun i ω => f (X i ω)) k)
+      = fun ω => (n : ℝ)⁻¹ * ∑ j : Fin n, f (X (k j) ω) :=
+    funext fun ω => blockAverage_apply _ _
+  rw [happly]
+  exact (Finset.measurable_fun_sum Finset.univ fun j _ => hterm j).const_mul _
 
 /-- **The Cesàro limit lives on the tail.** For a measurable observable `f` whose composite with a
 single coordinate is square-integrable, the common `L¹` limit of the fixed-start Cesàro windows
