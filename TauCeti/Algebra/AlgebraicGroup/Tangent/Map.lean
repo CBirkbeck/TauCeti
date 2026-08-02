@@ -24,6 +24,9 @@ the tangent kernels.
 * `TauCeti.tangentKerMap`: the differential, as a group homomorphism between tangent
   kernels.
 * `TauCeti.tangentKerMap_id` and `TauCeti.tangentKerMap_comp`: functoriality.
+* `TauCeti.fst_tangentKerMap_apply`: the differential preserves lying over the identity.
+* `TauCeti.tangentKerMap_derivationMulEquivTangentKer_apply_snd`: on the derivation
+  dictionary, the differential acts by precomposition of derivations.
 -/
 
 public section
@@ -121,12 +124,24 @@ lemma tangentKerMap_comp {A'' : Type*} [CommSemiring A''] [HopfAlgebra R A'']
     ← mapDomain_transport (A'' := A'') φ ψ.val]
   exact MonoidHom.comp_apply _ _ _
 
+/-- The differential preserves lying over the identity: the classical part of the image
+of any tangent-kernel point is the identity point of `A'`. -/
+lemma fst_tangentKerMap_apply (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) (a : A') :
+    TrivSqZeroExt.fst (R := Bialgebra.CounitAlgebra R A' B)
+        ((tangentKerMap (B := B) φ ψ).val.ofConv a) =
+      algebraMap A' (Bialgebra.CounitAlgebra R A' B) a := by
+  have h := (tangentKerMap (B := B) φ ψ).2
+  rw [mem_tangentKer_iff] at h
+  have happ := congrArg
+    (fun χ : A' →ₐ[R] Bialgebra.CounitAlgebra R A' B => χ a) h
+  simpa [IsScalarTower.coe_toAlgHom', TrivSqZeroExt.fstHom_apply] using happ
+
 /-- Naturality of the tangent dictionary on infinitesimal parts: the differential of a
 morphism sends the dual-number point of a derivation `d` to a point whose infinitesimal
 part at `a` is `d (φ a)` — the differential acts on derivations by precomposition.
 Not a `simp` lemma: `tangentKerMap_apply_val_ofConv` already rewrites the left-hand
 side, and `simp` reaches the right-hand side through it. -/
-lemma snd_tangentKerMap_derivationMulEquivTangentKer (φ : A' →ₐc[R] A)
+lemma tangentKerMap_derivationMulEquivTangentKer_apply_snd (φ : A' →ₐc[R] A)
     (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) (a : A') :
     TrivSqZeroExt.snd (R := Bialgebra.CounitAlgebra R A' B)
         ((tangentKerMap (B := B) φ
@@ -134,17 +149,6 @@ lemma snd_tangentKerMap_derivationMulEquivTangentKer (φ : A' →ₐc[R] A)
       d.toAdd ((φ : A' →ₐ[R] A) a) := by
   rw [tangentKerMap_apply_val_ofConv]
   exact derivationMulEquivTangentKer_apply_snd d ((φ : A' →ₐ[R] A) a)
-
-/-- Naturality of the tangent dictionary on classical parts: the differential preserves
-lying over the identity point. Not a `simp` lemma, as above. -/
-lemma fst_tangentKerMap_derivationMulEquivTangentKer (φ : A' →ₐc[R] A)
-    (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) (a : A') :
-    TrivSqZeroExt.fst (R := Bialgebra.CounitAlgebra R A' B)
-        ((tangentKerMap (B := B) φ
-          (derivationMulEquivTangentKer R A B d)).val.ofConv a) =
-      algebraMap A (Bialgebra.CounitAlgebra R A B) ((φ : A' →ₐ[R] A) a) := by
-  rw [tangentKerMap_apply_val_ofConv]
-  exact derivationMulEquivTangentKer_apply_fst d ((φ : A' →ₐ[R] A) a)
 
 end Differential
 
