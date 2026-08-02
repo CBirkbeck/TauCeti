@@ -244,7 +244,7 @@ theorem IsZeroOneMeasure.exists_eq_dirac_probabilityMeasure [CountablyGenerated 
     simp
   letI : ∀ _ : {s : Set α // s ∈ 𝒜}, StandardBorelSpace ℝ≥0∞ :=
     fun _ => standardBorel_of_polish
-  obtain ⟨q, heq⟩ := exists_ae_eq_const_of_isZeroOneMeasure (π := π) he
+  obtain ⟨q, heq⟩ := IsZeroOneMeasure.exists_ae_eq_const (π := π) he.aemeasurable
   obtain ⟨P, hP⟩ := heq.exists
   have hid : (id : ProbabilityMeasure α → ProbabilityMeasure α) =ᵐ[π] fun _ => P :=
     heq.mono fun Q hQ => he_inj (hQ.trans hP.symm)

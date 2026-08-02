@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.MeasureTheory.Constructions.Polish.Basic
 public import Mathlib.MeasureTheory.Measure.Typeclasses.ZeroOne
 
 /-!
@@ -16,13 +15,17 @@ only when the carrier is standard Borel. This file records the form that survive
 carrier: a measurable map *into* a standard Borel space is almost surely constant, because its
 pushforward is again a zero-one probability measure and is therefore Dirac.
 
-That is the form a carrier without a standard Borel structure of its own needs, since such a space
-can still be embedded measurably into one and the conclusion pulled back along the embedding.
+The carrier itself needs no Borel structure, so this applies to a space that carries a measurable
+map into a standard Borel space without being one — for instance `ProbabilityMeasure α` for a
+countably generated `α`, which
+`TauCeti.MeasureTheory.IsZeroOneMeasure.exists_eq_dirac_probabilityMeasure` evaluates into a
+countable power of `ℝ≥0∞`.
 
 ## Main results
 
-* `TauCeti.MeasureTheory.exists_ae_eq_const_of_isZeroOneMeasure`: under a zero-one measure, a
-  measurable map into a standard Borel space agrees almost everywhere with a single value.
+* `TauCeti.MeasureTheory.IsZeroOneMeasure.exists_ae_eq_const`: under a zero-one measure, an
+  almost-everywhere measurable map into a standard Borel space agrees almost everywhere with a
+  single value.
 -/
 
 public section
@@ -34,26 +37,28 @@ namespace TauCeti
 namespace MeasureTheory
 
 /-- **A zero-one law is almost surely constant along a measurable map.** The pushforward of a
-zero-one probability measure along `f` is again a zero-one probability measure; on a standard Borel
-space it is therefore a Dirac mass at some `q`, and the fibre `f ⁻¹' {q}` has full measure.
+nonzero zero-one measure along `f` is again a zero-one probability measure; on a standard Borel
+space it is therefore a Dirac mass at some `q`, and `f` equals `q` almost everywhere.
 
-Only the measurability of `f` is required: the carrier `Ω` needs no topological or Borel structure,
-which is the point of the statement. -/
-theorem exists_ae_eq_const_of_isZeroOneMeasure {Ω β : Type*} [MeasurableSpace Ω]
-    [MeasurableSpace β] [StandardBorelSpace β] {π : Measure Ω} [IsProbabilityMeasure π]
-    [IsZeroOneMeasure π] {f : Ω → β} (hf : Measurable f) :
+The carrier `Ω` needs no topological or Borel structure of its own, and `f` need only be
+almost-everywhere measurable. -/
+theorem IsZeroOneMeasure.exists_ae_eq_const {Ω β : Type*} [MeasurableSpace Ω] [MeasurableSpace β]
+    [StandardBorelSpace β] {π : Measure Ω} [NeZero π] [_root_.MeasureTheory.IsZeroOneMeasure π]
+    {f : Ω → β} (hf : AEMeasurable f π) :
     ∃ q : β, ∀ᵐ ω ∂π, f ω = q := by
-  haveI : IsProbabilityMeasure (π.map f) := Measure.isProbabilityMeasure_map hf.aemeasurable
-  haveI : IsZeroOneMeasure (π.map f) := {
+  haveI : IsProbabilityMeasure π := by
+    rcases IsZeroOrProbabilityMeasure.measure_univ (μ := π) with (h | h)
+    · simp_all
+    · exact ⟨h⟩
+  haveI : IsProbabilityMeasure (π.map f) := Measure.isProbabilityMeasure_map hf
+  haveI : _root_.MeasureTheory.IsZeroOneMeasure (π.map f) := {
     zero_one₀ := fun s hs => by
-      rw [Measure.map_apply hf hs]
+      rw [Measure.map_apply_of_aemeasurable hf hs]
       exact _root_.MeasureTheory.Measure.zero_one π (f ⁻¹' s) }
-  obtain ⟨q, hq⟩ := IsZeroOneMeasure.exists_eq_dirac (μ := π.map f)
-  have hsingleton : MeasurableSet ({q} : Set β) := MeasurableSet.singleton q
-  have hmass : π (f ⁻¹' {q}) = 1 := by
-    rw [← Measure.map_apply hf hsingleton, hq]
-    simp
-  exact ⟨q, (_root_.MeasureTheory.mem_ae_iff_prob_eq_one (hsingleton.preimage hf)).2 hmass⟩
+  obtain ⟨q, hq⟩ := _root_.MeasureTheory.IsZeroOneMeasure.exists_eq_dirac (μ := π.map f)
+  refine ⟨q, ae_of_ae_map (p := fun y => y = q) hf ?_⟩
+  rw [hq]
+  simp
 
 end MeasureTheory
 
