@@ -49,6 +49,9 @@ This proves the Layer 6 extreme-point corollary and the public
 ## Main results
 
 * `ergodic_shift_infinitePi_const` — an i.i.d. product law is ergodic for the one-sided shift.
+* `infinitePi_mem_extremePoints_exchangeable` — an i.i.d. product law is an extreme exchangeable
+  law. This direction needs no standard Borel hypothesis, so it is stated over an arbitrary
+  measurable space.
 * `exchangeable_extreme_iff_iid` — the extreme exchangeable probability laws are exactly the
   i.i.d. product laws.
 
@@ -181,12 +184,13 @@ private theorem cond_eq_of_extreme_iidMixture [StandardBorelSpace α]
 /-- **An extreme exchangeable law is i.i.d.** De Finetti writes the law as a mixture over
 `ProbabilityMeasure α`; extremality forces the mixing measure to be a zero-one law, hence a Dirac
 mass, and the mixture collapses to a single infinite product. -/
-private theorem exists_eq_infinitePi_of_mem_extremePoints [StandardBorelSpace α] [Nonempty α]
+private theorem exists_eq_infinitePi_of_mem_extremePoints [StandardBorelSpace α]
     {ρ : Measure (ℕ → α)} [IsProbabilityMeasure ρ]
     (hρ : ρ ∈ extremePoints ℝ≥0∞
       {ν : Measure (ℕ → α) | ExchangeableLaw ν ∧ IsProbabilityMeasure ν}) :
     ∃ P : ProbabilityMeasure α,
       ρ = Measure.infinitePi fun _ : ℕ => (P : Measure α) := by
+  let : Nonempty α := (nonempty_of_isProbabilityMeasure ρ).map fun x => x 0
   have hcoord : ∀ n, Measurable (fun x : ℕ → α => x n) := fun n => measurable_pi_apply n
   have hX : Exchangeable ρ (fun n x => x n) :=
     (exchangeable_iff_exchangeableLaw_pathLaw fun n => (hcoord n).aemeasurable).2 (by
@@ -196,7 +200,7 @@ private theorem exists_eq_infinitePi_of_mem_extremePoints [StandardBorelSpace α
       fun P => Measure.infinitePi fun _ : ℕ => (P : Measure α) := by
     simpa [pathLaw_def] using hrepr
   let p : Measure (ProbabilityMeasure α) := π
-  haveI : IsProbabilityMeasure p := π.2
+  have : IsProbabilityMeasure p := π.2
   have hp_zeroOne : IsZeroOneMeasure p := {
     zero_one₀ := fun s hs => by
       by_cases hs0 : p s = 0
@@ -211,7 +215,7 @@ private theorem exists_eq_infinitePi_of_mem_extremePoints [StandardBorelSpace α
       rw [← hps]
       exact cond_apply_self hs0 (measure_ne_top p s)
     }
-  letI : IsZeroOneMeasure p := hp_zeroOne
+  let : IsZeroOneMeasure p := hp_zeroOne
   obtain ⟨P, hp⟩ :=
     TauCeti.MeasureTheory.IsZeroOneMeasure.exists_eq_dirac_probabilityMeasure (π := p)
   refine ⟨P, ?_⟩
@@ -224,7 +228,7 @@ private theorem exists_eq_infinitePi_of_mem_extremePoints [StandardBorelSpace α
 /-- **An i.i.d. law is an extreme exchangeable law.** The infinite product is ergodic for the
 shift, hence extreme among the shift-invariant laws; exchangeable laws are shift-invariant, so
 extremality survives the passage to that smaller set. -/
-private theorem infinitePi_mem_extremePoints_exchangeable (P : ProbabilityMeasure α) :
+theorem infinitePi_mem_extremePoints_exchangeable (P : ProbabilityMeasure α) :
     (Measure.infinitePi fun _ : ℕ => (P : Measure α)) ∈ extremePoints ℝ≥0∞
       {ν : Measure (ℕ → α) | ExchangeableLaw ν ∧ IsProbabilityMeasure ν} := by
   let ρP := Measure.infinitePi fun _ : ℕ => (P : Measure α)
@@ -238,7 +242,7 @@ private theorem infinitePi_mem_extremePoints_exchangeable (P : ProbabilityMeasur
         {ν : Measure (ℕ → α) |
           MeasurePreserving (shift α) ν ν ∧ IsProbabilityMeasure ν} := by
     rintro ν ⟨hν, hνprob⟩
-    letI : IsProbabilityMeasure ν := hνprob
+    let : IsProbabilityMeasure ν := hνprob
     exact ⟨hν.contractableLaw.measurePreserving_shift, hνprob⟩
   have hρPexch : ExchangeableLaw ρP := by
     have hdirac : ρP = (Measure.dirac P).bind
@@ -259,7 +263,6 @@ theorem exchangeable_extreme_iff_iid [StandardBorelSpace α]
         {ν : Measure (ℕ → α) | ExchangeableLaw ν ∧ IsProbabilityMeasure ν} ↔
       ∃ P : ProbabilityMeasure α,
         ρ = Measure.infinitePi fun _ : ℕ => (P : Measure α) := by
-  letI : Nonempty α := (nonempty_of_isProbabilityMeasure ρ).map fun x => x 0
   exact ⟨exists_eq_infinitePi_of_mem_extremePoints,
     fun ⟨P, hP⟩ => hP ▸ infinitePi_mem_extremePoints_exchangeable P⟩
 
