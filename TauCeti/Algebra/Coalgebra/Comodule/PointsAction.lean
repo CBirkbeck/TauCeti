@@ -119,23 +119,6 @@ private lemma endOfPoint_comp_comm (g : WithConv (H →ₐ[R] A)) :
   refine TensorProduct.ext' fun w c => ?_
   simp [endOfPoint_tmul, Algebra.lsmul_coe]
 
-/-- Peeling the coaction column off `map (pre g) id`: the two-column form of the
-`g`-leg against an untouched `h`-coefficient leg. Pure-tensor identity; the inner
-coaction value rides through opaquely. -/
-private lemma map_comp_lTensor (g h : WithConv (H →ₐ[R] A)) :
-    TensorProduct.map
-        ((TensorProduct.comm R V A).toLinearMap.comp
-          ((LinearMap.lTensor V (g.ofConv).toLinearMap).comp (coact (R := R) (C := H))))
-        LinearMap.id ∘ₗ
-      LinearMap.lTensor V (h.ofConv).toLinearMap =
-    (TensorProduct.map (TensorProduct.comm R V A).toLinearMap LinearMap.id).comp
-        ((TensorProduct.map (LinearMap.lTensor V (g.ofConv).toLinearMap)
-            LinearMap.id).comp
-          (LinearMap.lTensor (V ⊗[R] H) (h.ofConv).toLinearMap)) ∘ₗ
-      (coact (R := R) (C := H) (M := V)).rTensor H := by
-  simp only [LinearMap.lTensor, LinearMap.rTensor, ← TensorProduct.map_comp,
-    LinearMap.comp_id, LinearMap.id_comp, LinearMap.comp_assoc]
-
 variable (V) in
 /-- Convolution products act as composites: the coassociativity law of the comodule. -/
 @[simp]
@@ -152,8 +135,22 @@ lemma endOfPoint_convMul (g h : WithConv (H →ₐ[R] A)) :
   -- the endomorphism of the point `g`, evaluated on the flip of the `h`-column
   have c1 := DFunLike.congr_fun (endOfPoint_comp_comm (V := V) g)
     (LinearMap.lTensor V (h.ofConv).toLinearMap (coact (R := R) (C := H) v))
-  -- peel the coaction column off the `g`-leg
-  have c2 := DFunLike.congr_fun (map_comp_lTensor (V := V) g h) (coact (R := R) (C := H) v)
+  -- peel the coaction column off the `g`-leg: a composite of Mathlib's tensor-map
+  -- composition lemmas
+  have c2 := DFunLike.congr_fun (show
+      TensorProduct.map
+          ((TensorProduct.comm R V A).toLinearMap.comp
+            ((LinearMap.lTensor V (g.ofConv).toLinearMap).comp (coact (R := R) (C := H))))
+          LinearMap.id ∘ₗ
+        LinearMap.lTensor V (h.ofConv).toLinearMap =
+      (TensorProduct.map (TensorProduct.comm R V A).toLinearMap LinearMap.id).comp
+          ((TensorProduct.map (LinearMap.lTensor V (g.ofConv).toLinearMap)
+              LinearMap.id).comp
+            (LinearMap.lTensor (V ⊗[R] H) (h.ofConv).toLinearMap)) ∘ₗ
+        (coact (R := R) (C := H) (M := V)).rTensor H from by
+    simp only [LinearMap.lTensor, LinearMap.rTensor, ← TensorProduct.map_comp,
+      LinearMap.comp_id, LinearMap.id_comp, LinearMap.comp_assoc])
+    (coact (R := R) (C := H) v)
   -- the coact-free shuffle at the doubled coaction
   have c3 := DFunLike.congr_fun (shuffle (V := V) g h)
     ((coact (R := R) (C := H) (M := V)).rTensor H (coact (R := R) (C := H) v))
