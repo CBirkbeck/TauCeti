@@ -6,6 +6,7 @@ module
 
 public import TauCeti.Analysis.Semigroups.Generator.OrbitDerivative
 public import TauCeti.Analysis.Semigroups.GrowthBound
+import Mathlib.Analysis.Calculus.Deriv.Shift
 import Mathlib.Analysis.Calculus.MeanValue
 
 /-!
@@ -79,9 +80,7 @@ private theorem hasDerivAt_realOperator_sub {S : StronglyContinuousSemigroup X} 
     rw [S.realOperator_generator_map hrpos.le ⟨y, hyS⟩] at h
     simp only [hSa] at h
     exact h.hasDerivAt (Ici_mem_nhds hrpos)
-  have hinner : HasDerivAt (fun u : ℝ => t - u) (-1) s := by
-    simpa using (hasDerivAt_id s).const_sub t
-  simpa [Function.comp_def] using hpsi.scomp s hinner
+  exact HasDerivAt.comp_const_sub t s hpsi
 
 /-- The interpolation `u ↦ S (t - u) (T u x)` between the two semigroups has vanishing right
 derivative at every `u ∈ [0, t)`.
