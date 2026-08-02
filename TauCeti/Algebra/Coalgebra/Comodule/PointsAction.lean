@@ -4,9 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.Algebra.AlgebraicGroup.FunctorOfPoints
 public import TauCeti.Algebra.Coalgebra.Comodule.Basic
-public import Mathlib.LinearAlgebra.GeneralLinearGroup.Basic
+public import Mathlib.RingTheory.Bialgebra.Convolution
 public import Mathlib.RepresentationTheory.Basic
 
 /-!
@@ -16,9 +15,10 @@ A right comodule `V` over a bialgebra `H` makes the `A`-points of the correspond
 affine monoid act on the scalar extension `A ⊗[R] V`: a point `g : H →ₐ[R] A` acts by
 pushing the coaction coefficients through `g`, `A`-linearly. The two comodule axioms
 are exactly the two monoid-action laws: the counit law sends the convolution unit to
-the identity, and coassociativity sends convolution products to composites. Over a
-Hopf algebra the points form a group, so the action upgrades to linear automorphisms
-via `MonoidHom.toHomUnits` — no antipode computation is needed.
+the identity, and coassociativity sends convolution products to composites. (The
+upgrade to automorphisms over a Hopf algebra is in
+`TauCeti.Algebra.AlgebraicGroup.Representation.PointsAction`, with the group of
+points.)
 
 This is the comodule-to-representation direction of the "representations = comodules"
 dictionary (ReductiveGroups roadmap, Layer 1): it realizes a comodule as an action of
@@ -29,8 +29,6 @@ the functor of points on scalar extensions of `V`.
 * `TauCeti.Comodule.endOfPoint`: the endomorphism of `A ⊗[R] V` attached to a point.
 * `TauCeti.Comodule.pointsRepresentation`: the action, as a `Representation` of the
   convolution monoid of points on the scalar extension.
-* `TauCeti.Comodule.pointsAction`: over a Hopf algebra, the action by linear
-  automorphisms.
 
 ## References
 
@@ -135,8 +133,8 @@ private lemma map_comp_lTensor (g h : WithConv (H →ₐ[R] A)) :
             LinearMap.id).comp
           (LinearMap.lTensor (V ⊗[R] H) (h.ofConv).toLinearMap)) ∘ₗ
       (coact (R := R) (C := H) (M := V)).rTensor H := by
-  refine TensorProduct.ext' fun w x => ?_
-  simp
+  simp only [LinearMap.lTensor, LinearMap.rTensor, ← TensorProduct.map_comp,
+    LinearMap.comp_id, LinearMap.id_comp, LinearMap.comp_assoc]
 
 variable (V) in
 /-- Convolution products act as composites: the coassociativity law of the comodule. -/
@@ -223,35 +221,6 @@ lemma pointsRepresentation_apply (g : WithConv (H →ₐ[R] A)) :
   -- its definitional unfolding once, explicitly.
   change endOfPoint V g.ofConv = _
   rfl
-
-section Hopf
-
-variable {R H V A : Type*} [CommSemiring R] [Semiring H] [HopfAlgebra R H]
-  [AddCommMonoid V] [Module R V] [Comodule R H V]
-  [CommSemiring A] [Algebra R A]
-
-variable (V) in
-/-- Over a Hopf algebra the points act by linear automorphisms of the scalar
-extension: the group of points lands in the units of the endomorphism monoid, with
-inverses provided by the group structure rather than by an antipode computation. -/
-noncomputable def pointsAction :
-    WithConv (H →ₐ[R] A) →* ((A ⊗[R] V) ≃ₗ[A] (A ⊗[R] V)) :=
-  (LinearMap.GeneralLinearGroup.generalLinearEquiv A (A ⊗[R] V)).toMonoidHom.comp
-    (pointsRepresentation V).asGroupHom
-
-variable (V) in
-@[simp]
-lemma pointsAction_toLinearMap (g : WithConv (H →ₐ[R] A)) :
-    (pointsAction V g : A ⊗[R] V →ₗ[A] A ⊗[R] V) = endOfPoint V g.ofConv := by
-  -- `pointsAction` has no equation lemma to rewrite with; `change` spells out its
-  -- definitional unfolding once, explicitly.
-  change ((LinearMap.GeneralLinearGroup.generalLinearEquiv A (A ⊗[R] V))
-    ((pointsRepresentation V).asGroupHom g) : A ⊗[R] V →ₗ[A] A ⊗[R] V) = _
-  rw [LinearMap.GeneralLinearGroup.generalLinearEquiv_to_linearMap,
-    Representation.asGroupHom_apply]
-  rfl
-
-end Hopf
 
 end Comodule
 
