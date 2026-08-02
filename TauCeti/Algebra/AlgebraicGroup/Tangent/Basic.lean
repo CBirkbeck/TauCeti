@@ -224,7 +224,8 @@ theorem tangentKer_def :
 
 /-- The classical part of any tangent-kernel point is the identity point: pointwise, the
 first component of its value at `x` is `algebraMap R _ (counit x)`. -/
-lemma fst_apply_of_mem_ker
+@[simp]
+lemma tangentKer_apply_fst
     {ψ : WithConv (A →ₐ[R] DualNumber (CounitAlgebra R A B))}
     (h : ψ ∈ tangentKer R A B) (x : A) :
     fst (R := CounitAlgebra R A B) (ψ.ofConv x) =
@@ -255,7 +256,7 @@ private lemma snd_convMul_apply
           counit (R := R) ((ℛ R a).right i) • snd (R := CounitAlgebra R A B)
             (ψ₁.ofConv ((ℛ R a).left i)) := by
     intro i _
-    rw [snd_mul, fst_apply_of_mem_ker h₁, fst_apply_of_mem_ker h₂, op_smul_eq_smul,
+    rw [snd_mul, tangentKer_apply_fst h₁, tangentKer_apply_fst h₂, op_smul_eq_smul,
       algebraMap_smul, algebraMap_smul]
   rw [Finset.sum_congr rfl expand, Finset.sum_add_distrib, add_comm]
   congr 1
@@ -310,8 +311,8 @@ noncomputable def derivationMulEquivTangentKer :
     have hprod := toConv_mem_ker_iff.mpr
       (derivationToDualNumberEquivLift R A (Bialgebra.CounitAlgebra R A B) (d₁.toAdd + d₂.toAdd)).2
     refine Subtype.ext (ofConv_injective (AlgHom.ext fun a => TrivSqZeroExt.ext ?_ ?_))
-    · exact (fst_apply_of_mem_ker hprod a).trans
-        (fst_apply_of_mem_ker (mul_mem h₁ h₂) a).symm
+    · exact (tangentKer_apply_fst hprod a).trans
+        (tangentKer_apply_fst (mul_mem h₁ h₂) a).symm
     · simp only [MulMemClass.mk_mul_mk]
       rw [snd_convMul_apply h₁ h₂ a]
       simp
