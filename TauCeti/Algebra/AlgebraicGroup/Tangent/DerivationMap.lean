@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.Algebra.AlgebraicGroup.Tangent.Map
+public import TauCeti.Algebra.AlgebraicGroup.Tangent.Basic
 
 /-!
 # The differential on derivations
@@ -22,8 +22,9 @@ therefore comes from those two facts and is not reproved here.
 * `TauCeti.derivationComp`: precomposition of counit-valued derivations along a
   bialgebra morphism.
 * `TauCeti.derivationComp_apply`: it acts by precomposition.
-* `TauCeti.tangentKerMap_derivationMulEquivTangentKer`: the differential intertwines the
-  tangent dictionaries — on points of derivations it is precomposition.
+The intertwining with the tangent dictionaries is
+`TauCeti.tangentKerMap_derivationMulEquivTangentKer` in
+`TauCeti.Algebra.AlgebraicGroup.Tangent.Map`.
 -/
 
 public section
@@ -38,13 +39,13 @@ variable {R A A' B : Type*} [CommSemiring R]
   [CommSemiring A] [Bialgebra R A] [CommSemiring A'] [Bialgebra R A']
   [CommSemiring B] [Algebra R B]
 
-/-- Precomposition of a counit-valued derivation with a bialgebra morphism: the additive
-form of the differential.
+/-- Precomposition of a counit-valued derivation with a bialgebra morphism: the map
+sending an `R`-derivation `d : A → B` at the identity point of `A` to the derivation
+`a ↦ d (φ a)` at the identity point of `A'` — the additive form of the differential.
 
-The domain restriction is `Derivation.compAlgebraMap` over local scalar-tower instances
-making `φ` the canonical algebra map, and the coefficients then move across the canonical
-`A'`-linear identification of the two counit coefficient algebras, whose linearity is the
-counit compatibility of `φ`. -/
+(The commutativity hypotheses on `A` and `A'` are those of `Derivation` itself;
+commutativity of `B` is used to install the restricted algebra structure via
+`RingHom.toAlgebra`.) -/
 noncomputable def derivationComp (φ : A' →ₐc[R] A)
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     Derivation R A' (Bialgebra.CounitAlgebra R A' B) := by
@@ -90,32 +91,43 @@ lemma derivationComp_apply (φ : A' →ₐc[R] A)
   -- definitional in Mathlib's `compAlgebraMap`.
   exact (Bialgebra.CounitAlgebra.algEquivSelf_symm_apply R A' B _).trans rfl
 
+/-- Precomposition of counit-valued derivations, bundled as an `R`-linear map. -/
+noncomputable def derivationCompₗ (φ : A' →ₐc[R] A) :
+    Derivation R A (Bialgebra.CounitAlgebra R A B) →ₗ[R]
+      Derivation R A' (Bialgebra.CounitAlgebra R A' B) where
+  toFun := derivationComp φ
+  -- After simplification both sides are the same value of `B`; the residual is the
+  -- definitional identification of the two coefficient indexings.
+  map_add' d₁ d₂ := by ext a; simp; rfl
+  map_smul' r d := by ext a; simp; rfl
+
+@[simp]
+lemma derivationCompₗ_apply (φ : A' →ₐc[R] A)
+    (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
+    derivationCompₗ (B := B) φ d = derivationComp φ d := by
+  -- `derivationCompₗ` has no equation lemma to rewrite with; `change` spells out its
+  -- definitional unfolding once, explicitly.
+  change derivationComp φ d = _
+  rfl
+
+/-- Precomposition along the identity is the identity. -/
+@[simp]
+theorem derivationComp_id (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
+    derivationComp (B := B) (BialgHom.id R A) d = d := by
+  ext a
+  simp
+
+/-- Precomposition along a composite is the composite of the precompositions. -/
+@[simp]
+theorem derivationComp_comp {A'' : Type*} [CommSemiring A''] [Bialgebra R A'']
+    (φ : A' →ₐc[R] A) (χ : A'' →ₐc[R] A')
+    (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
+    derivationComp (B := B) (φ.comp χ) d = derivationComp χ (derivationComp φ d) := by
+  ext a
+  simp
+  -- The residual is the definitional identification of the coefficient indexings.
+  rfl
+
 end DerivationMap
-
-section Naturality
-
-variable {R A A' B : Type*} [CommSemiring R]
-  [CommSemiring A] [HopfAlgebra R A] [CommSemiring A'] [HopfAlgebra R A']
-  [CommSemiring B] [Algebra R B]
-
-/-- The differential intertwines the tangent dictionaries: the image of the dual-number
-point of a derivation `d` under `tangentKerMap φ` is the point of the precomposed
-derivation `derivationComp φ d`. -/
-theorem tangentKerMap_derivationMulEquivTangentKer (φ : A' →ₐc[R] A)
-    (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) :
-    tangentKerMap (B := B) φ (derivationMulEquivTangentKer R A B d) =
-      derivationMulEquivTangentKer R A' B
-        (Multiplicative.ofAdd (derivationComp φ d.toAdd)) := by
-  refine Subtype.ext (WithConv.ofConv_injective (AlgHom.ext fun a => ?_))
-  refine TrivSqZeroExt.ext ?_ ?_
-  · rw [fst_apply_of_mem_tangentKer (tangentKerMap (B := B) φ
-        (derivationMulEquivTangentKer R A B d)).2 a,
-      fst_apply_of_mem_tangentKer (derivationMulEquivTangentKer R A' B
-        (Multiplicative.ofAdd (derivationComp φ d.toAdd))).2 a]
-  · rw [tangentKerMap_apply_val_ofConv, derivationMulEquivTangentKer_apply_snd,
-      toAdd_ofAdd, derivationComp_apply]
-    exact derivationMulEquivTangentKer_apply_snd d ((φ : A' →ₐ[R] A) a)
-
-end Naturality
 
 end TauCeti
