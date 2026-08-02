@@ -134,7 +134,14 @@ lemma fst_tangentKerMap_apply (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) (a 
   rw [mem_tangentKer_iff] at h
   have happ := congrArg
     (fun χ : A' →ₐ[R] Bialgebra.CounitAlgebra R A' B => χ a) h
-  simpa [IsScalarTower.coe_toAlgHom', TrivSqZeroExt.fstHom_apply] using happ
+  -- `fst` is the underlying function of `fstHom`.
+  have hfst : TrivSqZeroExt.fst (R := Bialgebra.CounitAlgebra R A' B)
+      ((tangentKerMap (B := B) φ ψ).val.ofConv a) =
+      TrivSqZeroExt.fstHom R (Bialgebra.CounitAlgebra R A' B)
+        (Bialgebra.CounitAlgebra R A' B)
+        ((tangentKerMap (B := B) φ ψ).val.ofConv a) := rfl
+  rw [hfst]
+  simpa [IsScalarTower.coe_toAlgHom'] using happ
 
 /-- Naturality of the tangent dictionary on infinitesimal parts: the differential of a
 morphism sends the dual-number point of a derivation `d` to a point whose infinitesimal
