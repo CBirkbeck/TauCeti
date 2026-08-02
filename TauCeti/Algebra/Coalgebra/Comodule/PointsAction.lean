@@ -7,6 +7,7 @@ module
 public import TauCeti.Algebra.AlgebraicGroup.FunctorOfPoints
 public import TauCeti.Algebra.Coalgebra.Comodule.Basic
 public import Mathlib.LinearAlgebra.GeneralLinearGroup.Basic
+public import Mathlib.RepresentationTheory.Basic
 
 /-!
 # The points action of a comodule
@@ -19,17 +20,22 @@ the identity, and coassociativity sends convolution products to composites. Over
 Hopf algebra the points form a group, so the action upgrades to linear automorphisms
 via `MonoidHom.toHomUnits` — no antipode computation is needed.
 
-This is the comodule-to-representation direction of the Layer 1 dictionary
-"representations = comodules": it realizes a comodule as an action of the functor of
-points on scalar extensions of `V`.
+This is the comodule-to-representation direction of the "representations = comodules"
+dictionary (ReductiveGroups roadmap, Layer 1): it realizes a comodule as an action of
+the functor of points on scalar extensions of `V`.
 
 ## Main declarations
 
 * `TauCeti.Comodule.endOfPoint`: the endomorphism of `A ⊗[R] V` attached to a point.
-* `TauCeti.Comodule.pointsEndHom`: the action, as a monoid homomorphism from the
-  convolution monoid of points to the endomorphism monoid.
+* `TauCeti.Comodule.pointsRepresentation`: the action, as a `Representation` of the
+  convolution monoid of points on the scalar extension.
 * `TauCeti.Comodule.pointsAction`: over a Hopf algebra, the action by linear
   automorphisms.
+
+## References
+
+* W. C. Waterhouse, *Introduction to Affine Group Schemes*, §3.1–3.2.
+* J. S. Milne, *Algebraic Groups* (2017), Chapter 4.
 -/
 
 public section
@@ -61,7 +67,8 @@ lemma endOfPoint_tmul (g : H →ₐ[R] A) (a : A) (v : V) :
 
 variable (V) in
 /-- The convolution unit acts as the identity: the counit law of the comodule. -/
-lemma endOfPoint_ofConv_one :
+@[simp]
+lemma endOfPoint_convOne :
     endOfPoint V ((1 : WithConv (H →ₐ[R] A)).ofConv) = LinearMap.id := by
   apply LinearMap.restrictScalars_injective R
   refine TensorProduct.ext' fun a v => ?_
@@ -81,7 +88,7 @@ lemma endOfPoint_ofConv_one :
   simp [endOfPoint_tmul, hv, TensorProduct.smul_tmul', smul_eq_mul]
 
 omit [Comodule R H V] in
-/-- The coact-free shuffle underlying `endOfPoint_ofConv_mul`: with the two coaction
+/-- The coact-free shuffle underlying `endOfPoint_convMul`: with the two coaction
 columns already peeled off, the two ways of multiplying the pushed coefficients agree,
 by commutativity of the value algebra. -/
 private lemma shuffle (g h : WithConv (H →ₐ[R] A)) :
@@ -133,7 +140,8 @@ private lemma map_comp_lTensor (g h : WithConv (H →ₐ[R] A)) :
 
 variable (V) in
 /-- Convolution products act as composites: the coassociativity law of the comodule. -/
-lemma endOfPoint_ofConv_mul (g h : WithConv (H →ₐ[R] A)) :
+@[simp]
+lemma endOfPoint_convMul (g h : WithConv (H →ₐ[R] A)) :
     endOfPoint V ((g * h).ofConv) = endOfPoint V g.ofConv ∘ₗ endOfPoint V h.ofConv := by
   have hmul : ((g * h).ofConv).toLinearMap =
       LinearMap.mul' R A ∘ₗ
@@ -164,20 +172,20 @@ lemma endOfPoint_ofConv_mul (g h : WithConv (H →ₐ[R] A)) :
     endOfPoint_tmul, map_smul, c1, c2, c3, c4, c5]
 
 variable (V) in
-/-- The points action of a comodule, as a monoid homomorphism from the convolution
-monoid of points to the endomorphism monoid of the scalar extension. -/
-noncomputable def pointsEndHom :
-    WithConv (H →ₐ[R] A) →* Module.End A (A ⊗[R] V) where
+/-- The points action of a comodule, as a representation of the convolution monoid of
+points on the scalar extension. -/
+noncomputable def pointsRepresentation :
+    Representation A (WithConv (H →ₐ[R] A)) (A ⊗[R] V) where
   toFun g := endOfPoint V g.ofConv
-  map_one' := endOfPoint_ofConv_one V
-  map_mul' g h := endOfPoint_ofConv_mul V g h
+  map_one' := endOfPoint_convOne V
+  map_mul' g h := endOfPoint_convMul V g h
 
 variable (V) in
 @[simp]
-lemma pointsEndHom_apply (g : WithConv (H →ₐ[R] A)) :
-    pointsEndHom V g = endOfPoint V g.ofConv := by
-  -- `pointsEndHom` has no equation lemma to rewrite with; `change` spells out its
-  -- definitional unfolding once, explicitly.
+lemma pointsRepresentation_apply (g : WithConv (H →ₐ[R] A)) :
+    pointsRepresentation V g = endOfPoint V g.ofConv := by
+  -- `pointsRepresentation` has no equation lemma to rewrite with; `change` spells out
+  -- its definitional unfolding once, explicitly.
   change endOfPoint V g.ofConv = _
   rfl
 
@@ -194,7 +202,7 @@ inverses provided by the group structure rather than by an antipode computation.
 noncomputable def pointsAction :
     WithConv (H →ₐ[R] A) →* ((A ⊗[R] V) ≃ₗ[A] (A ⊗[R] V)) :=
   (LinearMap.GeneralLinearGroup.generalLinearEquiv A (A ⊗[R] V)).toMonoidHom.comp
-    (pointsEndHom V).toHomUnits
+    (pointsRepresentation V).asGroupHom
 
 variable (V) in
 @[simp]
@@ -203,8 +211,9 @@ lemma pointsAction_toLinearMap (g : WithConv (H →ₐ[R] A)) :
   -- `pointsAction` has no equation lemma to rewrite with; `change` spells out its
   -- definitional unfolding once, explicitly.
   change ((LinearMap.GeneralLinearGroup.generalLinearEquiv A (A ⊗[R] V))
-    ((pointsEndHom V).toHomUnits g) : A ⊗[R] V →ₗ[A] A ⊗[R] V) = _
-  rw [LinearMap.GeneralLinearGroup.generalLinearEquiv_to_linearMap]
+    ((pointsRepresentation V).asGroupHom g) : A ⊗[R] V →ₗ[A] A ⊗[R] V) = _
+  rw [LinearMap.GeneralLinearGroup.generalLinearEquiv_to_linearMap,
+    Representation.asGroupHom_apply]
   rfl
 
 end Hopf
