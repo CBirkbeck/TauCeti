@@ -180,11 +180,18 @@ theorem isPHyperelementary_iff_isPGroup_quotient : IsPHyperelementary p G ↔
 
 /-! ### Elementary groups are hyperelementary -/
 
+/-- A subgroup centralised elementwise by a complement is normal: the complement form of
+`TauCeti.normal_of_commute_of_sup_eq_top`, matching the shape in which `TauCeti.IsPElementary`
+records its decomposition. -/
+theorem normal_of_commute_of_isComplement' {C P : Subgroup G}
+    (hcomm : ∀ c ∈ C, ∀ x ∈ P, Commute c x) (hcompl : C.IsComplement' P) : C.Normal :=
+  normal_of_commute_of_sup_eq_top hcomm hcompl.sup_eq_top
+
 /-- A `p`-elementary group is `p`-hyperelementary: the cyclic factor is normal, and the quotient by
 it is the `p`-group factor. -/
 theorem IsPElementary.isPHyperelementary (h : IsPElementary p G) : IsPHyperelementary p G := by
   obtain ⟨C, P, hC, hCp, hP, hcomm, hcompl⟩ := h
-  refine ⟨C, normal_of_commute_of_sup_eq_top hcomm hcompl.sup_eq_top, hC, hCp, fun g => ?_⟩
+  refine ⟨C, normal_of_commute_of_isComplement' hcomm hcompl, hC, hCp, fun g => ?_⟩
   obtain ⟨⟨a, b⟩, rfl⟩ := hcompl.2 g
   obtain ⟨k, hk⟩ := hP b
   refine ⟨k, ?_⟩
