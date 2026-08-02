@@ -24,9 +24,7 @@ therefore comes from those two facts and is not reproved here.
 * `TauCeti.derivationComp_apply`, `TauCeti.derivationComp_id`,
   `TauCeti.derivationComp_comp`: it acts by precomposition, functorially.
 
-(`TauCeti.derivationCompAux` is the underlying construction; the module system does
-not allow a public definition to have a private body, so it is public but carries no
-API — use `derivationComp`.) The intertwining with the tangent dictionaries is
+The intertwining with the tangent dictionaries is
 `TauCeti.tangentKerMap_derivationMulEquivTangentKer` in
 `TauCeti.Algebra.AlgebraicGroup.Tangent.Map`.
 -/
@@ -43,11 +41,8 @@ variable {R A A' B : Type*} [CommSemiring R]
   [CommSemiring A] [Bialgebra R A] [CommSemiring A'] [Bialgebra R A']
   [Semiring B] [Algebra R B]
 
-/-- Implementation of `derivationComp`: the underlying function on derivations. Use
-the bundled `derivationComp` — this definition carries no API. (It cannot be
-`private`: the module system does not allow the public bundled map to have a private
-body.) -/
-noncomputable def derivationCompAux (φ : A' →ₐc[R] A)
+/-- Implementation of the bundled `derivationComp`, which is the API. -/
+private noncomputable def derivationCompAux (φ : A' →ₐc[R] A)
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     Derivation R A' (Bialgebra.CounitAlgebra R A' B) := by
   letI : Algebra A' A := (φ : A' →ₐ[R] A).toAlgebra
