@@ -7,7 +7,7 @@ module
 public import Mathlib.GroupTheory.Subgroup.Centralizer
 
 /-!
-# Normality from elementwise commutation with a generating complement
+# Normality from elementwise commutation with a generating subgroup
 
 A subgroup is normal as soon as its normalizer is everything, and the normalizer contains both the
 subgroup itself and anything centralising it. So a subgroup `C` that is centralised elementwise by
