@@ -212,8 +212,7 @@ private lemma toConv_coe_bracket
   rfl
 
 /-- The tangent space at the identity is a Lie ring under the convolution
-commutator: each axiom is inherited from the commutator Lie ring of the convolution
-algebra (`LieRing.ofAssociativeRing`) along `coe_bracket`. -/
+commutator. -/
 noncomputable instance instLieRing :
     LieRing (Derivation R A (Bialgebra.CounitAlgebra R A B)) where
   add_lie d₁ d₂ d₃ := Derivation.ext fun a => by
@@ -250,8 +249,7 @@ noncomputable instance instLieRing :
         (toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B))
         (toConv (↑d₃ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)))) a
 
-/-- The tangent space at the identity is a Lie algebra over the base ring, inherited
-from the convolution algebra (`LieAlgebra.ofAssociativeAlgebra`). -/
+/-- The tangent space at the identity is a Lie algebra over the base ring. -/
 noncomputable instance instLieAlgebra :
     LieAlgebra R (Derivation R A (Bialgebra.CounitAlgebra R A B)) where
   lie_smul r d₁ d₂ := Derivation.ext fun a => by
