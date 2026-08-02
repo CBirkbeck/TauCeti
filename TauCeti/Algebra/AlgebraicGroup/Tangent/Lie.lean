@@ -26,7 +26,9 @@ precomposing with it is multiplicative into the convolution algebra on `A ⊗[R]
 the two tensor legs, and `⊠` is itself multiplicative (`TensorProduct.map_convMul_map`
 pushed through `Algebra.TensorProduct.lmul'`). Expanding, the cross terms
 `d₁ ⊠ d₂ + d₂ ⊠ d₁` of the two composite products coincide and cancel in the
-commutator.
+commutator. Commutativity of `B` is essential to closure itself, not only to this
+route: over a noncommutative coefficient ring the commutator of counit-valued
+derivations fails the Leibniz rule by the value commutators `⁅d₁ x, d₂ y⁆`.
 
 ## Main declarations
 
@@ -35,12 +37,12 @@ commutator.
 * `TauCeti.Derivation.coe_bracket`, `TauCeti.Derivation.bracket_apply`: the bracket
   is the convolution commutator.
 
-No antipode enters: everything is stated over a bialgebra. Commutativity of `B` is
-essential already for the exterior product to be multiplicative, matching the
-classical setting of commutative coefficient rings. The ring (rather than semiring)
-hypotheses are those of the additive group of derivations in Mathlib
+No antipode enters: everything is stated over a bialgebra. The ring (rather than
+semiring) hypotheses are those of the additive group of derivations in Mathlib
 (`Derivation R A M` is an `AddCommGroup` for `CommRing R`, `CommRing A`), which the
-commutator needs.
+commutator needs. This bracket is the convolution commutator; it is unrelated to
+Mathlib's composition-commutator `LieRing (Derivation R A A)`, which concerns
+derivations of an algebra into itself.
 -/
 
 public section
