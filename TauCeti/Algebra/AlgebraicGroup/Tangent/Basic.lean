@@ -222,7 +222,9 @@ theorem tangentKer_def :
     Subgroup (WithConv (A →ₐ[R] DualNumber (Bialgebra.CounitAlgebra R A B)))) = _
   rfl
 
-private lemma fst_apply_of_mem_ker
+/-- The classical part of any tangent-kernel point is the identity point: pointwise, the
+first component of its value at `x` is `algebraMap R _ (counit x)`. -/
+lemma fst_apply_of_mem_ker
     {ψ : WithConv (A →ₐ[R] DualNumber (CounitAlgebra R A B))}
     (h : ψ ∈ tangentKer R A B) (x : A) :
     fst (R := CounitAlgebra R A B) (ψ.ofConv x) =
