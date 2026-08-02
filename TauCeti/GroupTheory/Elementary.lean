@@ -49,9 +49,9 @@ Each of the four predicates is restated as an `Iff` by `TauCeti.isPElementary_de
 * `TauCeti.IsPElementary.of_injective`, `TauCeti.IsPHyperelementary.of_injective`: both classes are
   closed under passing to a subgroup, in the form of an injective homomorphism into the group. The
   subgroup forms are `TauCeti.IsPElementary.subgroup` and `TauCeti.IsPHyperelementary.subgroup`.
-* `TauCeti.exists_mem_comap_mul_mem_comap_eq`: the factorization step those two rest on — along any
-  homomorphism `f`, an element `y` factors through the preimages of the two factors. It asks only
-  for a commuting factorization of the single element `f y`, with `p` coprime to `Nat.card C`.
+* `TauCeti.exists_mem_comap_mul_mem_comap_eq`: the factorization step behind
+  `TauCeti.IsPElementary.of_injective` — along any homomorphism `f`, an element `y` factors through
+  the preimages of the two factors, given a commuting factorization of the single element `f y`.
 * `TauCeti.IsHyperelementary.isSolvable`: a finite hyperelementary group is solvable, whence
   `TauCeti.not_isElementary_perm_fin_5`, the symmetric group on five letters is not elementary.
 
@@ -270,12 +270,12 @@ theorem IsPHyperelementary.of_injective (h : IsPHyperelementary p G) (f : H →*
   obtain ⟨k, hk⟩ := hquot (f y)
   exact ⟨k, mem_comap.mpr (by rwa [map_pow])⟩
 
-/-- Along any `f : H →* G`, an element of `H` factors as a preimage of `C` times a preimage of the
-`p`-subgroup `P`, given a factorization of `G` itself into `C` and `P` whose factors commute.
+/-- Along any `f : H →* G`, an element `y` of `H` factors as a preimage of `C` times a preimage of
+the `p`-subgroup `P`, given a commuting factorization of the single element `f y`.
 
 Only coprimality of `p` with `Nat.card C` is used — not primality of `p`, not that `C` and `P` form
-a complement, and not finiteness of `P`. The factorization is required only at `f y`, so `f` need
-not be surjective. -/
+a complement, not finiteness of `P`, and, since only `f y` is decomposed, not surjectivity of
+`f`. -/
 theorem exists_mem_comap_mul_mem_comap_eq {C P : Subgroup G}
     (hcop : Nat.Coprime p (Nat.card C)) (hP : IsPGroup p P)
     (hcomm : ∀ c ∈ C, ∀ x ∈ P, Commute c x) (f : H →* G) {y : H}
