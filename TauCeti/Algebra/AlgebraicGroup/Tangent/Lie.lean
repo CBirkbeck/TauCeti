@@ -16,7 +16,8 @@ point (`TauCeti.Bialgebra.CounitAlgebra`) — are closed under the commutator of
 convolution product: for derivations `d₁ d₂` the linear map `d₁ ⋆ d₂ - d₂ ⋆ d₁` is
 again a derivation. This equips the tangent space with `LieRing` and `LieAlgebra R`
 structures: the Lie algebra of the corresponding affine monoid scheme — of the affine
-group scheme, when `A` is a Hopf algebra.
+group scheme, when `A` is a Hopf algebra (ReductiveGroups roadmap, Layer 2,
+`Lie(G)`).
 
 The closure proof is composition-level, with no Sweedler-style computation.
 Multiplication of the bialgebra is a coalgebra morphism (`Bialgebra.mulCoalgHom`), so
@@ -26,9 +27,10 @@ precomposing with it is multiplicative into the convolution algebra on `A ⊗[R]
 the two tensor legs, and `⊠` is itself multiplicative (`TensorProduct.map_convMul_map`
 pushed through `Algebra.TensorProduct.lmul'`). Expanding, the cross terms
 `d₁ ⊠ d₂ + d₂ ⊠ d₁` of the two composite products coincide and cancel in the
-commutator. Commutativity of `B` is essential to closure itself, not only to this
-route: over a noncommutative coefficient ring the commutator of counit-valued
-derivations fails the Leibniz rule by the value commutators `⁅d₁ x, d₂ y⁆`.
+commutator. Commutativity of `B` matters to closure itself, not only to this route:
+over a noncommutative coefficient ring the commutator of counit-valued derivations
+need not satisfy the Leibniz rule, the obstruction being the value commutators
+`⁅d₁ x, d₂ y⁆`.
 
 ## Main declarations
 
@@ -215,6 +217,10 @@ private lemma toConv_coe_bracket
       ⁅toConv (↑d₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B),
         toConv (↑d₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B)⁆ := by
   rw [coe_bracket]
+  -- The residual is the definitional round trip `toConv (x.ofConv - y.ofConv) = x - y`
+  -- together with the ring commutator being a definitional difference
+  -- (`LieRing.of_associative_ring_bracket`); both are `rfl`-level unwrappings of the
+  -- `WithConv` synonym with no lemma to rewrite by.
   rfl
 
 /-- The tangent space at the identity is a Lie ring under the convolution
@@ -243,6 +249,8 @@ noncomputable instance instLieRing :
     letI := LieRing.ofAssociativeRing
       (A := WithConv (A →ₗ[R] Bialgebra.CounitAlgebra R A B))
     rw [bracket_apply_ofConv]
+    -- The trailing `rfl` collapses `(0 : WithConv _).ofConv a` to `0`, a definitional
+    -- unwrapping of the `WithConv` synonym with no lemma to rewrite by.
     exact (DFunLike.congr_fun (congrArg ofConv
       (lie_self (toConv (↑d : A →ₗ[R] Bialgebra.CounitAlgebra R A B)))) a).trans rfl
   leibniz_lie d₁ d₂ d₃ := Derivation.ext fun a => by
