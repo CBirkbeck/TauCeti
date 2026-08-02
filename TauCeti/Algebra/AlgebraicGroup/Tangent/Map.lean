@@ -24,6 +24,9 @@ the tangent kernels.
 * `TauCeti.tangentKerMap`: the differential, as a group homomorphism between tangent
   kernels.
 * `TauCeti.tangentKerMap_id` and `TauCeti.tangentKerMap_comp`: functoriality.
+* `TauCeti.tangentKerMap_derivationMulEquivTangentKer`: the differential is
+  compatible with the derivation–tangent dictionary — transporting a derivation to a
+  tangent point and mapping it forward is precomposition of derivations.
 -/
 
 public section
@@ -130,6 +133,7 @@ variable {R A A' B : Type*} [CommSemiring R]
 /-- The differential intertwines the tangent dictionaries: the image of the dual-number
 point of a derivation `d` under `tangentKerMap φ` is the point of the precomposed
 derivation `derivationComp φ d`. -/
+@[simp]
 theorem tangentKerMap_derivationMulEquivTangentKer (φ : A' →ₐc[R] A)
     (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) :
     tangentKerMap (B := B) φ (derivationMulEquivTangentKer R A B d) =

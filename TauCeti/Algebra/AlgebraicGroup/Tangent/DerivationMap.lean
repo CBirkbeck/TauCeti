@@ -20,9 +20,13 @@ therefore comes from those two facts and is not reproved here.
 ## Main declarations
 
 * `TauCeti.derivationComp`: precomposition of counit-valued derivations along a
-  bialgebra morphism.
-* `TauCeti.derivationComp_apply`: it acts by precomposition.
-The intertwining with the tangent dictionaries is
+  bialgebra morphism, as an `R`-linear map — the derivation form of the differential.
+* `TauCeti.derivationComp_apply`, `TauCeti.derivationComp_id`,
+  `TauCeti.derivationComp_comp`: it acts by precomposition, functorially.
+
+(`TauCeti.derivationCompAux` is the underlying construction; the module system does
+not allow a public definition to have a private body, so it is public but carries no
+API — use `derivationComp`.) The intertwining with the tangent dictionaries is
 `TauCeti.tangentKerMap_derivationMulEquivTangentKer` in
 `TauCeti.Algebra.AlgebraicGroup.Tangent.Map`.
 -/
@@ -39,12 +43,11 @@ variable {R A A' B : Type*} [CommSemiring R]
   [CommSemiring A] [Bialgebra R A] [CommSemiring A'] [Bialgebra R A']
   [Semiring B] [Algebra R B]
 
-/-- Precomposition of a counit-valued derivation with a bialgebra morphism: the map
-sending an `R`-derivation `d : A → B` at the identity point of `A` to the derivation
-`a ↦ d (φ a)` at the identity point of `A'` — the additive form of the differential.
-
-(The commutativity hypotheses on `A` and `A'` are those of `Derivation` itself.) -/
-noncomputable def derivationComp (φ : A' →ₐc[R] A)
+/-- Implementation of `derivationComp`: the underlying function on derivations. Use
+the bundled `derivationComp` — this definition carries no API. (It cannot be
+`private`: the module system does not allow the public bundled map to have a private
+body.) -/
+noncomputable def derivationCompAux (φ : A' →ₐc[R] A)
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     Derivation R A' (Bialgebra.CounitAlgebra R A' B) := by
   letI : Algebra A' A := (φ : A' →ₐ[R] A).toAlgebra
@@ -53,17 +56,27 @@ noncomputable def derivationComp (φ : A' →ₐc[R] A)
     (IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B)).comp (φ : A' →ₐ[R] A)
   letI : Algebra A' (Bialgebra.CounitAlgebra R A B) := ρ.toRingHom.toAlgebra'
     (fun a x => by
-      -- `ρ` factors through `algebraMap R _`, whose image is central.
+      -- The centrality obligation of `toAlgebra'` arrives phrased through `RingHom`
+      -- coercions of `ρ`; no rewrite lemma applies to that shape, since it is
+      -- definitional to this construction, so `change` restates it once.
       change ρ a * x = x * ρ a
       rw [show ρ a = algebraMap R (Bialgebra.CounitAlgebra R A B)
           (counit (R := R) ((φ : A' →ₐ[R] A) a)) from by
         simp [ρ, IsScalarTower.coe_toAlgHom',
           Bialgebra.CounitAlgebra.algebraMap_apply R A B]
+        -- The residual is the definitional identification of the coefficient synonym
+        -- with `B` itself, which `simp` exposes but no lemma states.
         rfl]
       exact Algebra.commutes _ x)
   letI : IsScalarTower R A' (Bialgebra.CounitAlgebra R A B) :=
     IsScalarTower.of_algebraMap_eq fun r => by
+      -- The goal is stated through the `letI` algebra structure just installed, whose
+      -- `algebraMap` is definitionally `ρ`; no global lemma can name a local
+      -- instance, so `change` performs that definitional unfolding once.
       change algebraMap R (Bialgebra.CounitAlgebra R A B) r = ρ (algebraMap R A' r)
+      -- `ρ` is a `let`-bound composite, so its value at `algebraMap R A' r` has no
+      -- equation lemma; the `show … from` states the one unfolding-and-`commutes`
+      -- step explicitly.
       rw [show ρ (algebraMap R A' r) =
           (IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B))
             (algebraMap R A r) from by simp [ρ, AlgHomClass.commutes],
@@ -82,6 +95,9 @@ noncomputable def derivationComp (φ : A' →ₐc[R] A)
       -- both sides then reduce through the counit.
       simp only [eRing, RingEquiv.trans_apply, AlgEquiv.coe_ringEquiv,
         Bialgebra.CounitAlgebra.algEquivSelf_apply]
+      -- The `A'`-algebra map on the left is the local `letI` instance, whose value
+      -- is definitionally `ρ a = algebraMap A _ (φ a)`; this holds by `rfl` only, as
+      -- no lemma describes an instance local to this construction.
       rw [show (algebraMap A' (Bialgebra.CounitAlgebra R A B)) a =
           algebraMap A (Bialgebra.CounitAlgebra R A B) ((φ : A' →ₐ[R] A) a) from rfl,
         Bialgebra.CounitAlgebra.algebraMap_apply R A B,
@@ -91,12 +107,10 @@ noncomputable def derivationComp (φ : A' →ₐc[R] A)
         (DFunLike.congr_fun (BialgHom.counitAlgHom_comp φ) a))
   exact e.toLinearEquiv.compDer (d.compAlgebraMap A')
 
-/-- The differential acts on derivations by precomposition. -/
-@[simp]
-lemma derivationComp_apply (φ : A' →ₐc[R] A)
+private lemma derivationCompAux_apply (φ : A' →ₐc[R] A)
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) (a : A') :
-    derivationComp (B := B) φ d a = d ((φ : A' →ₐ[R] A) a) := by
-  simp only [derivationComp, Derivation.linearEquiv_coe_comp, LinearMap.coe_comp,
+    derivationCompAux (B := B) φ d a = d ((φ : A' →ₐ[R] A) a) := by
+  simp only [derivationCompAux, Derivation.linearEquiv_coe_comp, LinearMap.coe_comp,
     Function.comp_apply, LinearMap.restrictScalars_apply, AlgEquiv.toLinearMap_apply,
     AlgEquiv.ofRingEquiv_apply, RingEquiv.trans_apply, AlgEquiv.coe_ringEquiv,
     Bialgebra.CounitAlgebra.algEquivSelf_apply]
@@ -104,58 +118,45 @@ lemma derivationComp_apply (φ : A' →ₐc[R] A)
   -- definitional in Mathlib's `compAlgebraMap`.
   exact (Bialgebra.CounitAlgebra.algEquivSelf_symm_apply R A' B _).trans rfl
 
-/-- Precomposition of counit-valued derivations, bundled as an `R`-linear map. -/
-noncomputable def derivationCompₗ (φ : A' →ₐc[R] A) :
+/-- Precomposition of counit-valued derivations along a bialgebra morphism, as an
+`R`-linear map: the derivation form of the differential, sending an `R`-derivation
+`d : A → B` at the identity point of `A` to `a ↦ d (φ a)` at the identity point of
+`A'`.
+
+(The commutativity hypotheses on `A` and `A'` are those of `Derivation` itself.) -/
+noncomputable def derivationComp (φ : A' →ₐc[R] A) :
     Derivation R A (Bialgebra.CounitAlgebra R A B) →ₗ[R]
       Derivation R A' (Bialgebra.CounitAlgebra R A' B) where
-  toFun := derivationComp φ
+  toFun := derivationCompAux φ
   -- After simplification both sides are the same value of `B`; the residual is the
   -- definitional identification of the two coefficient indexings.
-  map_add' d₁ d₂ := by ext a; simp; rfl
-  map_smul' r d := by ext a; simp; rfl
+  map_add' d₁ d₂ := by ext a; simp [derivationCompAux_apply]; rfl
+  map_smul' r d := by ext a; simp [derivationCompAux_apply]; rfl
 
+/-- The differential acts on derivations by precomposition. -/
 @[simp]
-lemma derivationCompₗ_apply (φ : A' →ₐc[R] A)
-    (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
-    derivationCompₗ (B := B) φ d = derivationComp φ d := by
-  -- `derivationCompₗ` has no equation lemma to rewrite with; `change` spells out its
+lemma derivationComp_apply (φ : A' →ₐc[R] A)
+    (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) (a : A') :
+    derivationComp (B := B) φ d a = d ((φ : A' →ₐ[R] A) a) := by
+  -- `derivationComp` has no equation lemma to rewrite with; `change` spells out its
   -- definitional unfolding once, explicitly.
-  change derivationComp φ d = _
-  rfl
+  change derivationCompAux (B := B) φ d a = _
+  rw [derivationCompAux_apply]
 
-/-- Precomposition along the identity is the identity. -/
+/-- Precomposition along the identity is the identity map. -/
 @[simp]
-theorem derivationComp_id (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
-    derivationComp (B := B) (BialgHom.id R A) d = d := by
-  ext a
-  simp
-
-/-- Precomposition along a composite is the composite of the precompositions. -/
-@[simp]
-theorem derivationComp_comp {A'' : Type*} [CommSemiring A''] [Bialgebra R A'']
-    (φ : A' →ₐc[R] A) (χ : A'' →ₐc[R] A')
-    (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
-    derivationComp (B := B) (φ.comp χ) d = derivationComp χ (derivationComp φ d) := by
-  ext a
-  simp
-  -- The residual is the definitional identification of the coefficient indexings.
-  rfl
-
-/-- Bundled identity law: precomposition along the identity is the identity map. -/
-@[simp]
-theorem derivationCompₗ_id :
-    derivationCompₗ (B := B) (BialgHom.id R A) =
+theorem derivationComp_id :
+    derivationComp (B := B) (BialgHom.id R A) =
       LinearMap.id (R := R) (M := Derivation R A (Bialgebra.CounitAlgebra R A B)) := by
   ext d a
   simp
 
-/-- Bundled composition law: precomposition along a composite is the composition of the
-precompositions. -/
+/-- Precomposition along a composite is the composition of the precompositions. -/
 @[simp]
-theorem derivationCompₗ_comp {A'' : Type*} [CommSemiring A''] [Bialgebra R A'']
+theorem derivationComp_comp {A'' : Type*} [CommSemiring A''] [Bialgebra R A'']
     (φ : A' →ₐc[R] A) (χ : A'' →ₐc[R] A') :
-    derivationCompₗ (B := B) (φ.comp χ) =
-      (derivationCompₗ (B := B) χ).comp (derivationCompₗ (B := B) φ) := by
+    derivationComp (B := B) (φ.comp χ) =
+      (derivationComp (B := B) χ).comp (derivationComp (B := B) φ) := by
   ext d a
   simp
   -- The residual is the definitional identification of the coefficient indexings.
