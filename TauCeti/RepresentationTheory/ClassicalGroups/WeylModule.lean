@@ -7,7 +7,6 @@ module
 public import Mathlib.Algebra.Algebra.Rat
 public import Mathlib.Algebra.CharP.Algebra
 public import Mathlib.Data.Complex.Basic
-public import Mathlib.LinearAlgebra.PiTensorProduct.Basis
 public import TauCeti.Combinatorics.Young.StandardTableau.Reading
 public import TauCeti.RepresentationTheory.ClassicalGroups.TensorPower
 public import TauCeti.RepresentationTheory.Symmetric.Relabel
@@ -212,80 +211,43 @@ private theorem rowIndex_lt_of_colLen_le (t : YoungTableau μ) (hn : μ.colLen 0
   rw [rowIndex_def]
   exact lt_of_lt_of_le (lt_of_lt_of_le h1 (μ.colLen_anti 0 _ (Nat.zero_le _))) hn
 
-omit [Algebra ℚ k] in
-/-- **The coordinate functional dual to a multi-index detects exactly that multi-index.**
-Multiplying the `r ℓ`-th coordinates sends the pure tensor of standard basis vectors indexed by `s`
-to `1` when `s` agrees with `r`, and to `0` otherwise. -/
-private theorem lift_proj_apply_tprod_single {d : ℕ} (r s : Fin d → Fin n) :
-    PiTensorProduct.lift
-        ((MultilinearMap.mkPiAlgebra k (Fin d) k).compLinearMap fun ℓ => LinearMap.proj (r ℓ))
-        (PiTensorProduct.tprod k fun ℓ => (Pi.single (s ℓ) (1 : k) : Fin n → k))
-      = if ∀ ℓ, r ℓ = s ℓ then 1 else 0 := by
-  rw [PiTensorProduct.lift.tprod, MultilinearMap.compLinearMap_apply,
-    MultilinearMap.mkPiAlgebra_apply]
-  simp only [LinearMap.proj_apply, Pi.single_apply]
-  exact Finset.prod_boole.trans (by simp)
-
-/-- **A permutation lies in the row group exactly when it preserves every row index.** Stated for
-any `r` that computes the row of a label, so that it applies to the basis-index function used to
-build the coordinate functional. -/
-private theorem forall_eq_comp_symm_iff_mem_rowSubgroup (t : YoungTableau μ)
-    (r : Fin μ.card → Fin n) (hrv : ∀ ℓ, (r ℓ : ℕ) = rowIndex t ℓ)
-    (σ : Equiv.Perm (Fin μ.card)) :
-    (∀ ℓ, r ℓ = r (σ.symm ℓ)) ↔ σ ∈ rowSubgroup t := by
-  rw [← inv_mem_iff (G := Equiv.Perm (Fin μ.card)), mem_rowSubgroup]
-  constructor
-  · intro h ℓ
-    exact (hrv (σ.symm ℓ)).symm.trans ((congrArg Fin.val (h ℓ)).symm.trans (hrv ℓ))
-  · intro h ℓ
-    exact Fin.ext ((hrv ℓ).trans ((h ℓ).symm.trans (hrv (σ.symm ℓ)).symm))
-
-/-- **The symmetrizer does not annihilate the standard pure tensor of a tableau.** Write `r ℓ` for
-the row of the label `ℓ`, an index of the standard basis of `kⁿ`. Evaluating the coordinate
-functional dual to `e_{r(1)} ⊗ ⋯ ⊗ e_{r(d)}` on `c_t` applied to that same pure tensor leaves
-exactly the terms indexed by the row group of `t`, each with coefficient `1`; the value is the
-order of the row group, which is nonzero because the base ring has characteristic zero. -/
-private theorem lift_proj_symmetrizer_tprod_ne_zero [Nontrivial k] (t : YoungTableau μ)
+/-- **The symmetrizer does not annihilate the monomial basis vector of a tableau.** Write `r ℓ` for
+the row of the label `ℓ`. Reading the `r`-coordinate of `c_t • e_r` in the monomial basis leaves
+exactly the terms indexed by the row group of `t`, each with coefficient `1`; the value is the order
+of the row group, which is nonzero because the base ring has characteristic zero. -/
+private theorem repr_symmetrizer_tensorPowerBasis_ne_zero [Nontrivial k] (t : YoungTableau μ)
     (hn : μ.colLen 0 ≤ n) :
-    PiTensorProduct.lift
-        ((MultilinearMap.mkPiAlgebra k (Fin μ.card) k).compLinearMap fun ℓ =>
-          LinearMap.proj (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n))
+    (tensorPowerBasis k n μ.card).repr
         (permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
-          (PiTensorProduct.tprod k fun ℓ =>
-            (Pi.single (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n) (1 : k) :
-              Fin n → k))) ≠ 0 := by
+          (tensorPowerBasis k n μ.card fun ℓ =>
+            (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n)))
+        (fun ℓ => (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n)) ≠ 0 := by
   classical
   have : CharZero k := charZero_of_injective_algebraMap (algebraMap ℚ k).injective
   set r : Fin μ.card → Fin n := fun ℓ => ⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ with hrdef
-  set φ : (⨂[k]^μ.card (Fin n → k)) →ₗ[k] k :=
-    PiTensorProduct.lift
-      ((MultilinearMap.mkPiAlgebra k (Fin μ.card) k).compLinearMap fun ℓ => LinearMap.proj (r ℓ))
-    with hφdef
-  have hφ : ∀ s : Fin μ.card → Fin n,
-      φ (PiTensorProduct.tprod k fun ℓ => Pi.single (s ℓ) (1 : k)) =
-        if ∀ ℓ, r ℓ = s ℓ then 1 else 0 := fun s => by
-    rw [hφdef]; exact lift_proj_apply_tprod_single r s
   -- the row group is exactly the set of permutations surviving the evaluation
   set S : Finset (Equiv.Perm (Fin μ.card)) := {σ | σ ∈ rowSubgroup t} with hSdef
   have hmemS : ∀ σ : Equiv.Perm (Fin μ.card), σ ∈ S ↔ σ ∈ rowSubgroup t := by
     intro σ; rw [hSdef]; simp
   have hcond : ∀ σ : Equiv.Perm (Fin μ.card),
-      (∀ ℓ, r ℓ = r (σ.symm ℓ)) ↔ σ ∈ rowSubgroup t :=
-    forall_eq_comp_symm_iff_mem_rowSubgroup t r (fun _ => rfl)
-  have key : φ (permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
-      (PiTensorProduct.tprod k fun ℓ => Pi.single (r ℓ) (1 : k))) = (S.card : k) := by
-    rw [permTensorActionAlgHom_apply_tprod, map_finsuppSum]
-    have hterm : ∀ σ : Equiv.Perm (Fin μ.card), ∀ x : k,
-        φ (x • PiTensorProduct.tprod k fun i => Pi.single (r (σ.symm i)) (1 : k)) =
-          if σ ∈ rowSubgroup t then x else 0 := by
-      intro σ x
-      rw [map_smul, hφ (fun i => r (σ.symm i))]
-      by_cases h : σ ∈ rowSubgroup t
-      · rw [if_pos ((hcond σ).mpr h), if_pos h, smul_eq_mul, mul_one]
-      · rw [if_neg fun hc => h ((hcond σ).mp hc), if_neg h, smul_zero]
-    rw [Finsupp.sum_congr (g2 := fun σ x => if σ ∈ rowSubgroup t then x else 0)
-      fun σ _ => hterm σ _]
-    rw [Finsupp.sum]
+      (fun ℓ => r (σ.symm ℓ)) = r ↔ σ ∈ rowSubgroup t := by
+    intro σ
+    rw [← inv_mem_iff (G := Equiv.Perm (Fin μ.card)), mem_rowSubgroup]
+    exact ⟨fun h ℓ => congrArg Fin.val (congrFun h ℓ), fun h => funext fun ℓ => Fin.ext (h ℓ)⟩
+  have key : (tensorPowerBasis k n μ.card).repr
+      (permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
+        (tensorPowerBasis k n μ.card r)) r = (S.card : k) := by
+    rw [permTensorActionAlgHom_apply_tensorPowerBasis, map_sum, Finset.sum_apply']
+    have hterm : ∀ σ ∈ (youngSymmetrizerOver k t).coeff.support,
+        ((tensorPowerBasis k n μ.card).repr
+            ((youngSymmetrizerOver k t).coeff σ •
+              tensorPowerBasis k n μ.card fun i => r (σ.symm i))) r =
+          if σ ∈ rowSubgroup t then (youngSymmetrizerOver k t).coeff σ else 0 := by
+      intro σ _
+      rw [map_smul, Module.Basis.repr_self, Finsupp.smul_single, smul_eq_mul, mul_one,
+        Finsupp.single_apply]
+      exact if_congr (hcond σ) rfl rfl
+    rw [Finset.sum_congr rfl hterm]
     have hcoeff : ∀ σ ∈ rowSubgroup t, (youngSymmetrizerOver k t).coeff σ = 1 := by
       intro σ hσ
       rw [youngSymmetrizerOver_coeff, youngSymmetrizer_coeff_eq_one_of_mem_rowSubgroup t hσ,
@@ -316,13 +278,13 @@ theorem weylModule_ne_bot [Nontrivial k] (t : YoungTableau μ) (hn : μ.colLen 0
   -- the submodule underlying the zero subrepresentation is `⊥`
   have hbot' : (weylModule k n t).toSubmodule = ⊥ := by rw [hbot]; rfl
   have hmem : permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
-      (PiTensorProduct.tprod k fun ℓ =>
-        (Pi.single (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n) (1 : k) :
-          Fin n → k)) ∈ (weylModule k n t).toSubmodule := by
+      (tensorPowerBasis k n μ.card fun ℓ =>
+        (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n))
+      ∈ (weylModule k n t).toSubmodule := by
     rw [weylModule_toSubmodule]
     exact LinearMap.mem_range_self _ _
   rw [hbot', Submodule.mem_bot k] at hmem
-  exact lift_proj_symmetrizer_tprod_ne_zero t hn (by rw [hmem, map_zero])
+  exact repr_symmetrizer_tensorPowerBasis_ne_zero t hn (by rw [hmem, map_zero]; rfl)
 
 /-- The Weyl module of a `μ`-tableau vanishes as soon as `μ` has more than `n` rows.
 
