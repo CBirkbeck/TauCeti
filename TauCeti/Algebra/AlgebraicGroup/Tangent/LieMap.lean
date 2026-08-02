@@ -13,9 +13,10 @@ public import TauCeti.Algebra.AlgebraicGroup.Tangent.Lie
 Precomposition of counit-valued derivations along a bialgebra morphism
 (`TauCeti.derivationComp`) preserves the convolution commutator: the differential of a
 morphism of affine monoid schemes is a morphism of Lie algebras (ReductiveGroups
-roadmap, Layer 2, "the differential of a homomorphism"). The point is that a bialgebra
-morphism is in particular a coalgebra morphism, so it intertwines the convolution
-products termwise.
+roadmap, Layer 2, "the differential of a homomorphism"). The bracket identity uses
+only the coalgebra half of the morphism — it intertwines the convolution products
+termwise; the algebra half already entered in `derivationComp`, which needs
+`d (φ (x * y)) = d (φ x * φ y)` to produce a derivation at all.
 
 ## Main declarations
 
