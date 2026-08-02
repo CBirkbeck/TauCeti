@@ -22,6 +22,8 @@ therefore comes from those two facts and is not reproved here.
 * `TauCeti.derivationComp`: precomposition of counit-valued derivations along a
   bialgebra morphism.
 * `TauCeti.derivationComp_apply`: it acts by precomposition.
+* `TauCeti.tangentKerMap_derivationMulEquivTangentKer`: the differential intertwines the
+  tangent dictionaries — on points of derivations it is precomposition.
 -/
 
 public section
@@ -89,5 +91,31 @@ lemma derivationComp_apply (φ : A' →ₐc[R] A)
   exact (Bialgebra.CounitAlgebra.algEquivSelf_symm_apply R A' B _).trans rfl
 
 end DerivationMap
+
+section Naturality
+
+variable {R A A' B : Type*} [CommSemiring R]
+  [CommSemiring A] [HopfAlgebra R A] [CommSemiring A'] [HopfAlgebra R A']
+  [CommSemiring B] [Algebra R B]
+
+/-- The differential intertwines the tangent dictionaries: the image of the dual-number
+point of a derivation `d` under `tangentKerMap φ` is the point of the precomposed
+derivation `derivationComp φ d`. -/
+theorem tangentKerMap_derivationMulEquivTangentKer (φ : A' →ₐc[R] A)
+    (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) :
+    tangentKerMap (B := B) φ (derivationMulEquivTangentKer R A B d) =
+      derivationMulEquivTangentKer R A' B
+        (Multiplicative.ofAdd (derivationComp φ d.toAdd)) := by
+  refine Subtype.ext (WithConv.ofConv_injective (AlgHom.ext fun a => ?_))
+  refine TrivSqZeroExt.ext ?_ ?_
+  · rw [fst_apply_of_mem_tangentKer (tangentKerMap (B := B) φ
+        (derivationMulEquivTangentKer R A B d)).2 a,
+      fst_apply_of_mem_tangentKer (derivationMulEquivTangentKer R A' B
+        (Multiplicative.ofAdd (derivationComp φ d.toAdd))).2 a]
+  · rw [tangentKerMap_apply_val_ofConv, derivationMulEquivTangentKer_apply_snd,
+      toAdd_ofAdd, derivationComp_apply]
+    exact derivationMulEquivTangentKer_apply_snd d ((φ : A' →ₐ[R] A) a)
+
+end Naturality
 
 end TauCeti
