@@ -37,15 +37,13 @@ section DerivationMap
 
 variable {R A A' B : Type*} [CommSemiring R]
   [CommSemiring A] [Bialgebra R A] [CommSemiring A'] [Bialgebra R A']
-  [CommSemiring B] [Algebra R B]
+  [Semiring B] [Algebra R B]
 
 /-- Precomposition of a counit-valued derivation with a bialgebra morphism: the map
 sending an `R`-derivation `d : A → B` at the identity point of `A` to the derivation
 `a ↦ d (φ a)` at the identity point of `A'` — the additive form of the differential.
 
-(The commutativity hypotheses on `A` and `A'` are those of `Derivation` itself;
-commutativity of `B` is used to install the restricted algebra structure via
-`RingHom.toAlgebra`.) -/
+(The commutativity hypotheses on `A` and `A'` are those of `Derivation` itself.) -/
 noncomputable def derivationComp (φ : A' →ₐc[R] A)
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     Derivation R A' (Bialgebra.CounitAlgebra R A' B) := by
@@ -53,8 +51,23 @@ noncomputable def derivationComp (φ : A' →ₐc[R] A)
   letI : IsScalarTower R A' A := IsScalarTower.of_algHom (φ : A' →ₐ[R] A)
   let ρ : A' →ₐ[R] Bialgebra.CounitAlgebra R A B :=
     (IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B)).comp (φ : A' →ₐ[R] A)
-  letI : Algebra A' (Bialgebra.CounitAlgebra R A B) := ρ.toAlgebra
-  letI : IsScalarTower R A' (Bialgebra.CounitAlgebra R A B) := IsScalarTower.of_algHom ρ
+  letI : Algebra A' (Bialgebra.CounitAlgebra R A B) := ρ.toRingHom.toAlgebra'
+    (fun a x => by
+      -- `ρ` factors through `algebraMap R _`, whose image is central.
+      change ρ a * x = x * ρ a
+      rw [show ρ a = algebraMap R (Bialgebra.CounitAlgebra R A B)
+          (counit (R := R) ((φ : A' →ₐ[R] A) a)) from by
+        simp [ρ, IsScalarTower.coe_toAlgHom',
+          Bialgebra.CounitAlgebra.algebraMap_apply R A B]
+        rfl]
+      exact Algebra.commutes _ x)
+  letI : IsScalarTower R A' (Bialgebra.CounitAlgebra R A B) :=
+    IsScalarTower.of_algebraMap_eq fun r => by
+      change algebraMap R (Bialgebra.CounitAlgebra R A B) r = ρ (algebraMap R A' r)
+      rw [show ρ (algebraMap R A' r) =
+          (IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B))
+            (algebraMap R A r) from by simp [ρ, AlgHomClass.commutes],
+        IsScalarTower.coe_toAlgHom', ← IsScalarTower.algebraMap_apply]
   letI : IsScalarTower A' A (Bialgebra.CounitAlgebra R A B) :=
     IsScalarTower.of_algebraMap_eq' rfl
   let eRing : Bialgebra.CounitAlgebra R A B ≃+* Bialgebra.CounitAlgebra R A' B :=
@@ -124,6 +137,26 @@ theorem derivationComp_comp {A'' : Type*} [CommSemiring A''] [Bialgebra R A'']
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     derivationComp (B := B) (φ.comp χ) d = derivationComp χ (derivationComp φ d) := by
   ext a
+  simp
+  -- The residual is the definitional identification of the coefficient indexings.
+  rfl
+
+/-- Bundled identity law: precomposition along the identity is the identity map. -/
+@[simp]
+theorem derivationCompₗ_id :
+    derivationCompₗ (B := B) (BialgHom.id R A) =
+      LinearMap.id (R := R) (M := Derivation R A (Bialgebra.CounitAlgebra R A B)) := by
+  ext d a
+  simp
+
+/-- Bundled composition law: precomposition along a composite is the composition of the
+precompositions. -/
+@[simp]
+theorem derivationCompₗ_comp {A'' : Type*} [CommSemiring A''] [Bialgebra R A'']
+    (φ : A' →ₐc[R] A) (χ : A'' →ₐc[R] A') :
+    derivationCompₗ (B := B) (φ.comp χ) =
+      (derivationCompₗ (B := B) χ).comp (derivationCompₗ (B := B) φ) := by
+  ext d a
   simp
   -- The residual is the definitional identification of the coefficient indexings.
   rfl
