@@ -24,7 +24,7 @@ the tangent kernels.
 * `TauCeti.tangentKerMap`: the differential, as a group homomorphism between tangent
   kernels.
 * `TauCeti.tangentKerMap_id` and `TauCeti.tangentKerMap_comp`: functoriality.
-* `TauCeti.fst_tangentKerMap_apply`: the differential preserves lying over the identity.
+* `TauCeti.tangentKerMap_apply_fst`: the differential preserves lying over the identity.
 * `TauCeti.tangentKerMap_derivationMulEquivTangentKer_apply_snd`: on the derivation
   dictionary, the differential acts by precomposition of derivations.
 -/
@@ -126,7 +126,7 @@ lemma tangentKerMap_comp {A'' : Type*} [CommSemiring A''] [HopfAlgebra R A'']
 
 /-- The differential preserves lying over the identity: the classical part of the image
 of any tangent-kernel point is the identity point of `A'`. -/
-lemma fst_tangentKerMap_apply (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) (a : A') :
+lemma tangentKerMap_apply_fst (φ : A' →ₐc[R] A) (ψ : tangentKer R A B) (a : A') :
     TrivSqZeroExt.fst (R := Bialgebra.CounitAlgebra R A' B)
         ((tangentKerMap (B := B) φ ψ).val.ofConv a) =
       algebraMap A' (Bialgebra.CounitAlgebra R A' B) a := by
