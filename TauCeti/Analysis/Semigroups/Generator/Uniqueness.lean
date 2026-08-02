@@ -70,9 +70,10 @@ namespace StronglyContinuousSemigroup
 fixed time `t`, the derivative at `s < t` is the negative of the generator transported along the
 remaining time `t - s`. -/
 private theorem hasDerivAt_realOperator_sub {S : StronglyContinuousSemigroup X} {t s : ℝ}
-    (hrpos : 0 < t - s) {y a : X} (hyS : y ∈ S.domain)
-    (hSa : S.generator ⟨y, by rw [S.generator_domain]; exact hyS⟩ = a) :
+    (hrpos : 0 < t - s) {y a : X} (hy : y ∈ S.generator.domain)
+    (hSa : S.generator ⟨y, hy⟩ = a) :
     HasDerivAt (fun u : ℝ => S.realOperator (t - u) y) (-(S.realOperator (t - s) a)) s := by
+  have hyS : y ∈ S.domain := by rwa [S.generator_domain] at hy
   have hpsi : HasDerivAt (fun u : ℝ => S.realOperator u y) (S.realOperator (t - s) a) (t - s) := by
     have h := S.realOperator_hasDerivWithinAt_Ici ⟨y, hyS⟩ hrpos.le
     rw [S.realOperator_generator_map hrpos.le ⟨y, hyS⟩] at h
@@ -98,15 +99,14 @@ private theorem hasDerivWithinAt_interpolate {S T : StronglyContinuousSemigroup 
   have hrpos : (0 : ℝ) < t - s := sub_pos.mpr hst
   set y : X := T.realOperator s x with hy_def
   have hyT : y ∈ T.domain := T.realOperator_mem_domain hs0 hx
-  have hyS : y ∈ S.domain := by rw [hdom]; exact hyT
   have hyT' : y ∈ T.generator.domain := by rw [T.generator_domain]; exact hyT
-  have hyS' : y ∈ S.generator.domain := by rw [S.generator_domain]; exact hyS
+  have hyS' : y ∈ S.generator.domain := by rw [S.generator_domain, hdom]; exact hyT
   set a : X := T.generator ⟨y, hyT'⟩
   have hSa : S.generator ⟨y, hyS'⟩ = a := @(LinearPMap.ext_iff.mp hgen).2 y hyS' hyT'
   -- The outer factor: the orbit of `y ∈ D(A)` read backwards from the fixed time `t`.
   have hrho : HasDerivAt (fun u : ℝ => S.realOperator (t - u) y)
       (-(S.realOperator (t - s) a)) s :=
-    hasDerivAt_realOperator_sub hrpos hyS (hSa ▸ rfl)
+    hasDerivAt_realOperator_sub hrpos hyS' hSa
   -- The inner factor: the defining difference quotient of the generator of `T` at `y`.
   have hshift : Tendsto (fun u : ℝ => u - s) (𝓝[>] s) (𝓝[>] 0) := by
     refine tendsto_nhdsWithin_iff.mpr ⟨?_, ?_⟩
