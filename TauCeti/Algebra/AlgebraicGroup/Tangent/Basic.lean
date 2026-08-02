@@ -327,7 +327,8 @@ lemma mem_tangentKer_iff {ψ : WithConv (A →ₐ[R] DualNumber (CounitAlgebra R
         IsScalarTower.toAlgHom R A (Bialgebra.CounitAlgebra R A B) := by
   simpa using toConv_mem_ker_iff (ψ₀ := ψ.ofConv)
 
-@[simp]
+/- Not a `simp` lemma: the general `tangentKer_apply_fst` (with `SetLike.coe_mem`)
+already rewrites this left-hand side. -/
 lemma derivationMulEquivTangentKer_apply_fst
     (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) (a : A) :
     fst (R := CounitAlgebra R A B)
