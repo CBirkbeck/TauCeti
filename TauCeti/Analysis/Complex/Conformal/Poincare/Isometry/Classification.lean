@@ -169,15 +169,13 @@ theorem real_inner_map_map_of_pseudoHyperbolicExpr_map_eq (h0 : g 0 = 0)
   rw [hsub, hnz, hnw] at h1
   linarith
 
-/-- **An isometry fixing the origin induces a coordinate frame.** Doubling the images of the probe
-points `1 / 2` and `I / 2` gives an orthonormal pair whose real inner products with `g z` are the
-Cartesian coordinates of `z`. This is the whole content of the two evaluations that pin such an
-isometry down; `TauCeti.exists_norm_eq_one_eqOn_ball_const_mul_or_const_mul_conj` then only has to
-recognise which of the two quarter turns relates the frame. -/
-theorem exists_orthonormal_pair_real_inner_map_eq (h0 : g 0 = 0) :
+/-- **An isometry fixing the origin admits a coordinate frame.** There is an orthonormal pair whose
+real inner products with `g z` recover the real and imaginary parts of `z`. -/
+private theorem exists_orthonormal_pair_real_inner_map_eq (h0 : g 0 = 0) :
     ∃ e₁ e₂ : ℂ, ‖e₁‖ = 1 ∧ ‖e₂‖ = 1 ∧ ⟪e₁, e₂⟫_ℝ = 0 ∧
       (∀ z ∈ ball (0 : ℂ) 1, ⟪e₁, g z⟫_ℝ = z.re) ∧
       (∀ z ∈ ball (0 : ℂ) 1, ⟪e₂, g z⟫_ℝ = z.im) := by
+  -- Take the doubled images of the probe points `1 / 2` and `I / 2`.
   set p : ℂ := ((1 / 2 : ℝ) : ℂ) with hp_def
   set q : ℂ := I * ((1 / 2 : ℝ) : ℂ) with hq_def
   have hnp : ‖p‖ = 1 / 2 := by rw [hp_def, Complex.norm_real]; norm_num
