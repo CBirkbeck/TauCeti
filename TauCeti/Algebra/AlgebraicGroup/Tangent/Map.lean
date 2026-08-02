@@ -123,8 +123,9 @@ lemma tangentKerMap_comp {A'' : Type*} [CommSemiring A''] [HopfAlgebra R A'']
 
 /-- Naturality of the tangent dictionary on infinitesimal parts: the differential of a
 morphism sends the dual-number point of a derivation `d` to a point whose infinitesimal
-part at `a` is `d (φ a)` — the differential acts on derivations by precomposition. -/
-@[simp]
+part at `a` is `d (φ a)` — the differential acts on derivations by precomposition.
+Not a `simp` lemma: `tangentKerMap_apply_val_ofConv` already rewrites the left-hand
+side, and `simp` reaches the right-hand side through it. -/
 lemma snd_tangentKerMap_derivationMulEquivTangentKer (φ : A' →ₐc[R] A)
     (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) (a : A') :
     TrivSqZeroExt.snd (R := Bialgebra.CounitAlgebra R A' B)
@@ -135,8 +136,7 @@ lemma snd_tangentKerMap_derivationMulEquivTangentKer (φ : A' →ₐc[R] A)
   exact derivationMulEquivTangentKer_apply_snd d ((φ : A' →ₐ[R] A) a)
 
 /-- Naturality of the tangent dictionary on classical parts: the differential preserves
-lying over the identity point. -/
-@[simp]
+lying over the identity point. Not a `simp` lemma, as above. -/
 lemma fst_tangentKerMap_derivationMulEquivTangentKer (φ : A' →ₐc[R] A)
     (d : Multiplicative (Derivation R A (Bialgebra.CounitAlgebra R A B))) (a : A') :
     TrivSqZeroExt.fst (R := Bialgebra.CounitAlgebra R A' B)
