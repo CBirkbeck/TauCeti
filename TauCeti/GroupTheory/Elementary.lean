@@ -49,9 +49,6 @@ Each of the four predicates is restated as an `Iff` by `TauCeti.isPElementary_de
 * `TauCeti.IsPElementary.of_injective`, `TauCeti.IsPHyperelementary.of_injective`: both classes are
   closed under passing to a subgroup, in the form of an injective homomorphism into the group. The
   subgroup forms are `TauCeti.IsPElementary.subgroup` and `TauCeti.IsPHyperelementary.subgroup`.
-* `TauCeti.exists_mem_comap_mul_mem_comap_eq`: the factorization step behind
-  `TauCeti.IsPElementary.of_injective` — along any homomorphism `f`, an element `y` factors through
-  the preimages of the two factors, given a commuting factorization of the single element `f y`.
 * `TauCeti.IsHyperelementary.isSolvable`: a finite hyperelementary group is solvable, whence
   `TauCeti.not_isElementary_perm_fin_5`, the symmetric group on five letters is not elementary.
 
@@ -183,11 +180,6 @@ theorem isPHyperelementary_iff_isPGroup_quotient : IsPHyperelementary p G ↔
 
 /-! ### Elementary groups are hyperelementary -/
 
-@[deprecated normal_of_commute_of_sup_eq_top (since := "2026-08-01")]
-theorem normal_of_commute_of_isComplement' {C P : Subgroup G}
-    (hcomm : ∀ c ∈ C, ∀ x ∈ P, Commute c x) (hcompl : C.IsComplement' P) : C.Normal :=
-  normal_of_commute_of_sup_eq_top hcomm hcompl.sup_eq_top
-
 /-- A `p`-elementary group is `p`-hyperelementary: the cyclic factor is normal, and the quotient by
 it is the `p`-group factor. -/
 theorem IsPElementary.isPHyperelementary (h : IsPElementary p G) : IsPHyperelementary p G := by
@@ -276,7 +268,7 @@ the `p`-subgroup `P`, given a commuting factorization of the single element `f y
 Only coprimality of `p` with `Nat.card C` is used — not primality of `p`, not that `C` and `P` form
 a complement, not finiteness of `P`, and, since only `f y` is decomposed, not surjectivity of
 `f`. -/
-theorem exists_mem_comap_mul_mem_comap_eq {C P : Subgroup G}
+private theorem exists_mem_comap_mul_mem_comap_eq {C P : Subgroup G}
     (hcop : Nat.Coprime p (Nat.card C)) (hP : IsPGroup p P)
     (hcomm : ∀ c ∈ C, ∀ x ∈ P, Commute c x) (f : H →* G) {y : H}
     (hfac : ∃ a : C, ∃ b : P, (a : G) * b = f y) :
