@@ -747,10 +747,10 @@ noncomputable def mvPolynomialEquivModularForms :
 @[simp]
 lemma mvPolynomialEquivModularForms_apply (p : MvPolynomial (Fin 2) ℂ) :
     mvPolynomialEquivModularForms p = evalE₄E₆ p := by
-  -- `mvPolynomialEquivModularForms` has no equation lemma to rewrite with; `change`
-  -- spells out its definitional unfolding once, explicitly.
+  -- `change` exposes the sealed definition once, explicitly; the identification is
+  -- then Mathlib's `AlgEquiv.ofBijective_apply`.
   change AlgEquiv.ofBijective evalE₄E₆ ⟨evalE₄E₆_injective, evalE₄E₆_surjective⟩ p = evalE₄E₆ p
-  rfl
+  exact AlgEquiv.ofBijective_apply _ _ p
 
 /-- `E₄` and `E₆` generate the entire graded ring of level 1 modular forms as an
 `ℂ`-algebra. -/
