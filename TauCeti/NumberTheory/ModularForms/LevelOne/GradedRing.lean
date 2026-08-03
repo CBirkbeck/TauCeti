@@ -28,6 +28,8 @@ weight `k − 12` by Mathlib's `CuspForm.discriminantEquiv`, and `Δ = (E₄³ �
 ## References
 
 * [J.-P. Serre, *A Course in Arithmetic*][serre1973], VII.3.2.
+* [Mathlib PR #39258](https://github.com/leanprover-community/mathlib4/pull/39258)
+  (Chris Birkbeck) — the upstream draft this file ports onto the current Mathlib pin.
 -/
 
 public noncomputable section
@@ -128,12 +130,12 @@ private lemma cuspForm_eq_discriminant_mul {n : ℕ} (g : ModularForm 𝒮ℒ �
   symm
   refine DirectSum.of_eq_of_gradedMonoid_eq
     (ModularForm.gradedMonoid_eq_of_cast (by change (↑n - 12 + 12 : ℤ) = ↑n; ring) ?_)
-  ext z
-  let hcusp := (ModularForm.isCuspForm_iff_coeffZero_eq_zero g).mp hg
-  change ((CuspForm.discriminantEquiv (ModularForm.toCuspForm g hcusp)).mul
-      ((CuspForm.discriminant : CuspForm 𝒮ℒ 12) : ModularForm 𝒮ℒ 12)) z = g z
-  rw [ModularForm.coe_mul, Pi.mul_apply, mul_comm]
-  exact ModularForm.discriminant_mul_discriminantEquiv_apply _ z
+  refine DFunLike.coe_injective ?_
+  have hcusp := (ModularForm.isCuspForm_iff_coeffZero_eq_zero g).mp hg
+  change ⇑((CuspForm.discriminantEquiv (ModularForm.toCuspForm g hcusp)).mul
+      ((CuspForm.discriminant : CuspForm 𝒮ℒ 12) : ModularForm 𝒮ℒ 12)) = ⇑g
+  rw [ModularForm.coe_mul, mul_comm]
+  exact ModularForm.discriminant_mul_discriminantEquiv (ModularForm.toCuspForm g hcusp)
 
 private def discriminantPoly : MvPolynomial (Fin 2) ℂ :=
   (1 / 1728 : ℂ) • (MvPolynomial.X 0 ^ 3 - MvPolynomial.X 1 ^ 2)
