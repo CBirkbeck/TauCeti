@@ -31,7 +31,7 @@ weight `k − 12` by Mathlib's `CuspForm.discriminantEquiv`, and `Δ = (E₄³ �
   `E₄` and `E₆` are algebraically independent.
 * `TauCeti.ModularForm.mvPolynomialEquivModularForms`: the induced algebra isomorphism
   `ℂ[X₀, X₁] ≃ₐ[ℂ] ⨁ k, ModularForm 𝒮ℒ k`.
-* `TauCeti.ModularForm.E₄E₆_generate`: the two Eisenstein series generate the graded ring.
+* `TauCeti.ModularForm.adjoin_E₄_E₆_eq_top`: the two Eisenstein series generate the graded ring.
 
 ## References
 
@@ -621,12 +621,14 @@ private lemma evalE₄E₆_monomial_qExpansion_coeff_zero {n : ℕ} {d₀ : Fin 
   rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul, evalE₄E₆_C,
     Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, evalE₄E₆_monomial,
     DirectSum.smul_apply,
-    -- Scalar action commutes with the coercion to functions, definitionally; the
-    -- ascribed `show … from rfl` records it once at the right type.
+    -- Scalar action commutes with the coercion to functions
+    -- (`ModularForm.IsGLPos.coe_smul`); the ascribed `show` pins the statement at the
+    -- right type.
     show (↑(c • ((DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ d₀ 0 *
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ d₀ 1) (↑n : ℤ))) : ℍ → ℂ) =
       c • (↑((DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ d₀ 0 *
-        DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ d₀ 1) (↑n : ℤ)) : ℍ → ℂ) from rfl,
+        DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ d₀ 1) (↑n : ℤ)) : ℍ → ℂ) from
+      ModularForm.IsGLPos.coe_smul _ c,
     UpperHalfPlane.qExpansion_smul (ModularFormClass.analyticAt_cuspFunction_zero _
       one_pos one_mem_strictPeriods_SL) c, PowerSeries.coeff_smul,
     monomial_qExpansion_coeff_zero_eq_one hd₀_weight]
@@ -742,7 +744,7 @@ lemma mvPolynomialEquivModularForms_apply (p : MvPolynomial (Fin 2) ℂ) :
 
 /-- `E₄` and `E₆` generate the entire graded ring of level 1 modular forms as an
 `ℂ`-algebra. -/
-theorem E₄E₆_generate :
+theorem adjoin_E₄_E₆_eq_top :
     Algebra.adjoin ℂ ({DirectSum.of (ModularForm 𝒮ℒ) 4 E₄,
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆} :
       Set (DirectSum ℤ (ModularForm 𝒮ℒ))) = ⊤ := by
