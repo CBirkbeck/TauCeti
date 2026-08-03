@@ -94,8 +94,7 @@ theorem derivationComp_bracket (φ : A' →ₐc[R] A)
   have h1 := DFunLike.congr_fun (hslot d₁ d₂) (comul a)
   have h2 := DFunLike.congr_fun (hslot d₂ d₁) (comul a)
   simp only [LinearMap.coe_comp, Function.comp_apply] at h1 h2
-  rw [show ((φ : A' →ₐ[R] A) a : A) = (φ : A' →ₐ[R] A).toLinearMap a from rfl,
-    hconv, hconv, h1, h2]
+  rw [← AlgHom.toLinearMap_apply (φ : A' →ₐ[R] A) a, hconv, hconv, h1, h2]
   -- The closing `rfl` identifies the two sides through the exposed coefficient
   -- synonyms once more: after the slotwise rewrites both are literally the same
   -- `B`-valued expression.
