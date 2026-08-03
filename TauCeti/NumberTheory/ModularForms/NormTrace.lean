@@ -15,8 +15,13 @@ infinity.
 
 ## Main declarations
 
-* `TauCeti.SlashInvariantForm.quotientFunc_mdiff`.
-* `TauCeti.SlashInvariantForm.quotientFunc_isBoundedAtImInfty`.
+* `TauCeti.SlashInvariantForm.mdifferentiable_quotientFunc`.
+* `TauCeti.SlashInvariantForm.isBoundedAtImInfty_quotientFunc`.
+
+## References
+
+* [Mathlib PR #39083](https://github.com/leanprover-community/mathlib4/pull/39083)
+  (Chris Birkbeck) — the upstream draft this file ports onto the current Mathlib pin.
 -/
 
 public noncomputable section
@@ -33,12 +38,12 @@ local notation "𝒬" => ℋ ⧸ (𝒢.subgroupOf ℋ)
 namespace TauCeti.SlashInvariantForm
 
 /-- Each translate in the package `quotientFunc` of a modular form is holomorphic. -/
-lemma quotientFunc_mdiff (q : 𝒬) : MDiff (quotientFunc f q) :=
+lemma mdifferentiable_quotientFunc (q : 𝒬) : MDiff (quotientFunc f q) :=
   Quotient.inductionOn q fun r ↦ (ModularForm.translate f r.val⁻¹).holo'
 
 /-- Each translate in the package `quotientFunc` of a modular form is bounded at infinity,
 when `∞` is a cusp of `ℋ` and the relative index is finite. -/
-lemma quotientFunc_isBoundedAtImInfty [𝒢.IsFiniteRelIndex ℋ] [Fact (IsCusp OnePoint.infty ℋ)]
+lemma isBoundedAtImInfty_quotientFunc [𝒢.IsFiniteRelIndex ℋ] [Fact (IsCusp OnePoint.infty ℋ)]
     (q : 𝒬) : IsBoundedAtImInfty (quotientFunc f q) :=
   Quotient.inductionOn q fun ⟨_, hr⟩ ↦ OnePoint.isBoundedAt_infty_iff.mp <|
     (ModularForm.translate f _).bdd_at_cusps'

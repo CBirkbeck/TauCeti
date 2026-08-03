@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Analysis.Analytic.Order
-public import Mathlib.Analysis.Meromorphic.NormalForm
+public import Mathlib.Analysis.Analytic.Constructions
 
 /-!
 # The analytic order of products and power-compositions
@@ -18,6 +18,11 @@ products, and composing with `q ↦ q ^ N` at `0` multiplies the order by `N`.
 * `TauCeti.analyticOrderAt_prod`: the order of `∏ i ∈ s, F i` is `∑ i ∈ s`, of the orders.
 * `TauCeti.analyticOrderAt_comp_pow_zero`: the order of `q ↦ f (q ^ N)` at `0` is `N` times
   the order of `f` at `0`.
+
+## References
+
+* [Mathlib PR #39083](https://github.com/leanprover-community/mathlib4/pull/39083)
+  (Chris Birkbeck) — the upstream draft this file ports onto the current Mathlib pin.
 -/
 
 public section
@@ -45,6 +50,8 @@ lemma analyticOrderAt_comp_pow_zero (hf : AnalyticAt 𝕜 f 0) {N : ℕ} (hN : 0
   set g : 𝕜 → 𝕜 := fun q ↦ q ^ N with hg_def
   have hzero : g 0 = 0 := zero_pow hN.ne'
   have h_sub_eq : (fun x : 𝕜 ↦ g x - 0) = (id : 𝕜 → 𝕜) ^ N := funext fun x ↦ by simp [hg_def]
+  -- The composite is definitionally the power lambda; `show … from rfl` records the
+  -- identification once so the composition rule applies.
   rw [show (fun q : 𝕜 ↦ f (q ^ N)) = f ∘ g from rfl,
     AnalyticAt.analyticOrderAt_comp (hzero.symm ▸ hf) (analyticAt_id.pow N), hzero, h_sub_eq,
     analyticOrderAt_pow analyticAt_id, analyticOrderAt_id]

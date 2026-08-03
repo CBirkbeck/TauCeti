@@ -15,6 +15,11 @@ period exactly when the original function is invariant under the corresponding t
 ## Main declarations
 
 * `TauCeti.UpperHalfPlane.periodic_comp_ofComplex_iff`.
+
+## References
+
+* [Mathlib PR #39083](https://github.com/leanprover-community/mathlib4/pull/39083)
+  (Chris Birkbeck) — the upstream draft this file ports onto the current Mathlib pin.
 -/
 
 public section
@@ -31,6 +36,8 @@ lemma periodic_comp_ofComplex_iff {α : Type*} {f : ℍ → α} {c : ℝ} :
   · intro h τ
     have := h ↑τ
     simp only [Function.comp_apply] at this
+    -- Identify the translated coercion with the coercion of the translate, so both
+    -- `ofComplex` applications land back on `ℍ`.
     rwa [show (τ : ℂ) + ↑c = ↑(c +ᵥ τ) by rw [coe_vadd]; ring, ofComplex_apply,
       ofComplex_apply] at this
   · intro h w
@@ -38,6 +45,8 @@ lemma periodic_comp_ofComplex_iff {α : Type*} {f : ℍ → α} {c : ℝ} :
     · exact congrArg f (ofComplex_apply_eq_of_im_nonpos (by simpa using hw) hw)
     · have hw' : 0 < (w + ↑c).im := by simpa using hw
       simp only [Function.comp_apply]
+      -- Both points have positive imaginary part; identify the shifted point with the
+      -- vector translate so the hypothesis applies.
       rw [ofComplex_apply_of_im_pos hw', ofComplex_apply_of_im_pos hw,
         show (⟨w + ↑c, hw'⟩ : ℍ) = c +ᵥ (⟨w, hw⟩ : ℍ) from _root_.UpperHalfPlane.ext
           (by simp [add_comm])]

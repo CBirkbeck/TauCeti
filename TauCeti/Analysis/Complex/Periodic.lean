@@ -17,6 +17,11 @@ parameter at period `m * h` is the local parameter at period `h`.
 
 * `TauCeti.Periodic.qParam_sub`: `𝕢 h (z - j) = 𝕢 h z * exp (-2 π I j / h)`.
 * `TauCeti.Periodic.qParam_nat_mul_pow`: `𝕢 (m * h) z ^ m = 𝕢 h z` for `m ≠ 0`.
+
+## References
+
+* [Mathlib PR #39083](https://github.com/leanprover-community/mathlib4/pull/39083)
+  (Chris Birkbeck) — the upstream draft this file ports onto the current Mathlib pin.
 -/
 
 public section

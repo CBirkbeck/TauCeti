@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.NumberTheory.ModularForms.LFunction
+public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import Mathlib.RingTheory.PowerSeries.Order
 public import TauCeti.Analysis.Analytic.Order
 public import TauCeti.Analysis.Complex.Periodic
@@ -17,14 +17,10 @@ half-plane equals the analytic order of its `cuspFunction` at `0`; consequently,
 from period `h` to period `m * h` multiplies the order by `m`. This is the vanishing-order
 bookkeeping feeding the finite-index Sturm bound.
 
-We also package the `q`-expansion as a `ℂ`-linear map on modular forms.
-
 ## Main declarations
 
 * `TauCeti.qExpansion_order_eq_analyticOrderAt_cuspFunction`.
 * `TauCeti.qExpansion_nat_mul_order`: `(qExpansion (m * h) g).order = (qExpansion h g).order * m`.
-* `TauCeti.qExpansion_order_le_qExpansion_nat_mul_order`.
-* `TauCeti.ModularForm.qExpansionLinearMap`.
 
 ## References
 
@@ -87,26 +83,6 @@ lemma qExpansion_nat_mul_order {g : ℍ → ℂ} {m : ℕ} (hh : 0 < h) (hm : 0 
       (by positivity) (by simpa using hg_per.nat_mul m) hg_mdiff hg_bdd),
     analyticOrderAt_congr (cuspFunction_nat_mul_eventuallyEq hh hm hg_per hg_bdd hg_mdiff),
     TauCeti.analyticOrderAt_comp_pow_zero han hm]
-
-/-- The order of the `q`-expansion at period `h` is at most its order at period `m * h`. -/
-lemma qExpansion_order_le_qExpansion_nat_mul_order {g : ℍ → ℂ} {m : ℕ} (hh : 0 < h) (hm : 0 < m)
-    (hg_per : Periodic (g ∘ ofComplex) h) (hg_bdd : IsBoundedAtImInfty g) (hg_mdiff : MDiff g) :
-    (qExpansion h g).order ≤ (qExpansion (m * h : ℝ) g).order :=
-  (ENat.self_le_mul_right _ (mod_cast hm.ne')).trans
-    (qExpansion_nat_mul_order hh hm hg_per hg_bdd hg_mdiff).ge
-
-namespace ModularForm
-
-variable {Γ : Subgroup (GL (Fin 2) ℝ)}
-
-/-- The qExpansion map as a `ℂ`-linear map to power series over `ℂ`. -/
-def qExpansionLinearMap [Γ.HasDetOne] (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (k : ℤ) :
-    ModularForm Γ k →ₗ[ℂ] PowerSeries ℂ where
-  toFun f := qExpansion h f
-  map_add' f g := _root_.ModularForm.qExpansion_add hh hΓ f g
-  map_smul' a f := _root_.ModularForm.qExpansion_smul hh hΓ a f
-
-end ModularForm
 
 end TauCeti
 
