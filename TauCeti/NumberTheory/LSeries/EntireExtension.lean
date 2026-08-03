@@ -16,13 +16,13 @@ public import Mathlib.NumberTheory.LSeries.Convergence
 The two analytic-continuation obligations of Hecke theory, as predicates on a coefficient
 sequence `a : ℕ → ℂ`:
 
-* `LSeries.HasEntireExtension a`: some entire function agrees with `LSeries a` on the
-  absolute-convergence half-plane. Such an extension is unique
-  (`LSeries.HasEntireExtension.unique`) by analytic continuation from the open half-plane.
-* `LSeries.HasMeromorphicExtensionWithPole a`: a witness meromorphic function with a
-  genuine pole (negative meromorphic order) that every entire extension of `LSeries a`
-  must agree with near the pole — the shape of the obligation ruling out entirety, e.g.
-  for Eisenstein L-functions.
+* `LSeries.HasEntireExtension a`: the abscissa of absolute convergence is finite and some
+  entire function agrees with `LSeries a` on the (nonempty) convergence half-plane. Such
+  an extension is unique (`LSeries.HasEntireExtension.unique`) by analytic continuation.
+* `LSeries.HasMeromorphicExtensionWithPole a`: the abscissa is finite and a globally
+  meromorphic witness agrees with `LSeries a` on the convergence half-plane while having
+  a genuine pole (negative meromorphic order) somewhere — the obligation shape ruling out
+  entirety, e.g. for Eisenstein L-functions.
 
 Supporting general lemmas:
 
@@ -49,12 +49,13 @@ namespace LSeries
 open Filter
 
 /-- **Hecke entire-continuation predicate.** A coefficient sequence `a : ℕ → ℂ` *has an
-entire extension* if some entire `F : ℂ → ℂ` agrees with `LSeries a` on the
-absolute-convergence half-plane `abscissaOfAbsConv a < s.re`. When it exists and the
-abscissa is finite, the extension is unique (`HasEntireExtension.unique`). -/
+entire extension* if its abscissa of absolute convergence is finite — so the agreement
+region below is a genuine half-plane, not vacuously empty — and some entire `F : ℂ → ℂ`
+agrees with `LSeries a` on it. The extension is unique (`HasEntireExtension.unique`). -/
 def HasEntireExtension (a : ℕ → ℂ) : Prop :=
-  ∃ F : ℂ → ℂ, Differentiable ℂ F ∧
-    ∀ {s : ℂ}, abscissaOfAbsConv a < s.re → F s = LSeries a s
+  abscissaOfAbsConv a < ⊤ ∧
+    ∃ F : ℂ → ℂ, Differentiable ℂ F ∧
+      ∀ {s : ℂ}, abscissaOfAbsConv a < s.re → F s = LSeries a s
 
 namespace HasEntireExtension
 
@@ -102,18 +103,19 @@ theorem _root_.meromorphicOrderAt_div_neg_of_orderAt_lt
   rw [h_neg, ← WithTop.coe_add, h_zero, WithTop.coe_lt_coe]
   lia
 
-/-- **Meromorphic extension with a pole.** A coefficient sequence `a : ℕ → ℂ` *has a
-meromorphic extension with a pole* if there is a witness `g : ℂ → ℂ`, meromorphic at some
-`s₀` with negative order there, that every entire extension of `LSeries a` agrees with on
-a punctured neighbourhood of `s₀`. Under this obligation `LSeries a` has no entire
-extension in the presence of one — the two agree near `s₀`, but `g` blows up. -/
+/-- **Meromorphic extension with a pole.** A coefficient sequence `a : ℕ → ℂ` (with
+finite abscissa of absolute convergence, so the agreement clause is not vacuous) *has a
+meromorphic extension with a pole* if some `g : ℂ → ℂ`, meromorphic at every point of
+`ℂ`, agrees with `LSeries a` on the absolute-convergence half-plane and has a genuine
+pole (negative meromorphic order) at some `s₀`. This is the obligation shape ruling out
+an entire extension: an entire extension would agree with `g` on the half-plane, hence —
+by analytic continuation off the polar set — near `s₀`, where `g` blows up. -/
 def HasMeromorphicExtensionWithPole (a : ℕ → ℂ) : Prop :=
-  ∃ (g : ℂ → ℂ) (s₀ : ℂ),
-    MeromorphicAt g s₀ ∧
-    meromorphicOrderAt g s₀ < 0 ∧
-    ∀ F : ℂ → ℂ, Differentiable ℂ F →
-      (∀ {s : ℂ}, abscissaOfAbsConv a < s.re → F s = LSeries a s) →
-      F =ᶠ[nhdsWithin s₀ {s₀}ᶜ] g
+  abscissaOfAbsConv a < ⊤ ∧
+    ∃ (g : ℂ → ℂ) (s₀ : ℂ),
+      (∀ z : ℂ, MeromorphicAt g z) ∧
+      meromorphicOrderAt g s₀ < 0 ∧
+      ∀ {s : ℂ}, abscissaOfAbsConv a < s.re → g s = LSeries a s
 
 /-- **The coprime-stripped coefficient sequence**: `f` zeroed at every `n` divisible by a
 prime of the finite set `S`, unchanged elsewhere — the elementary operation of removing
