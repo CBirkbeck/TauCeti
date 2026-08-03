@@ -61,12 +61,6 @@ instance : Inner ℂ (CuspForm Γ k) where
 @[simp]
 theorem inner_def (f g : CuspForm Γ k) : ⟪f, g⟫ = peterssonInnerFd f g := rfl
 
-/-- Hermitian symmetry of the Petersson inner product of cusp forms. -/
-theorem peterssonInnerFd_conj_symm (f g : CuspForm Γ k) :
-    conj (peterssonInnerFd g f) = peterssonInnerFd f g := by
-  simp only [peterssonInnerFd_def]
-  exact UpperHalfPlane.peterssonInner_conj_symm k ModularGroup.fd f g
-
 section HasDetOne
 
 variable [Γ.HasDetOne]
