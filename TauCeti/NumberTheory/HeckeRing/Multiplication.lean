@@ -63,6 +63,8 @@ noncomputable def structureConstants (H₁ H₂ H₃ : Subgroup G) [IsHeckeTripl
     structureConstants R H₁ H₂ H₃ g₁ g₂ D =
       (multiplicity H₁ H₂ H₃ (g₁ : G) (g₂ : G) (D.rep : G) : R) := rfl
 
+/-- The `R`-module structure of the Hecke coset module, transporting the standard `Finsupp`
+module structure to the wrapper type. -/
 noncomputable instance instModule : Module R (HeckeCosetModule Δ H₁ H₂ R) :=
   inferInstanceAs (Module R (HeckeCoset Δ H₁ H₂ →₀ R))
 
@@ -93,6 +95,7 @@ for `Finsupp` itself, this is the type-correct way to produce elements of
 noncomputable def single (D : HeckeCoset Δ H₁ H₂) (b : R) : HeckeCosetModule Δ H₁ H₂ R :=
   Finsupp.single D b
 
+@[grind =]
 lemma single_apply {D A : HeckeCoset Δ H₁ H₂} {b : R} [Decidable (D = A)] :
     single R D b A = if D = A then b else 0 :=
   Finsupp.single_apply
@@ -100,6 +103,7 @@ lemma single_apply {D A : HeckeCoset Δ H₁ H₂} {b : R} [Decidable (D = A)] :
 lemma smul_single_one (D : HeckeCoset Δ H₁ H₂) (b : R) : b • single R D 1 = single R D b :=
   Finsupp.smul_single_one D b
 
+@[simp]
 lemma sum_single (f : HeckeCosetModule Δ H₁ H₂ R) : f.sum (single R) = f := Finsupp.sum_single f
 
 /-- The convolution product of two basis elements. -/

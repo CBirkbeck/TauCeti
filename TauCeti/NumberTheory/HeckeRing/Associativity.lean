@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.GroupWithZero.Action
 public import Mathlib.LinearAlgebra.Finsupp.LSum
 public import TauCeti.NumberTheory.HeckeRing.One
 
@@ -32,7 +31,7 @@ stack merges.
   `(σᵢg)⁻¹d ∈ Γ₂hΓ₃`.
 * `DoubleCoset.multiplicity_doubleCoset_congr`: `m(g, h; d)` depends on `d` only through the
   double coset `Γ₁dΓ₃`.
-* `HeckeCosetModule.mul_assoc'`: associativity of the convolution product at mixed levels.
+* `HeckeCosetModule.mul_assoc`: associativity of the convolution product at mixed levels.
 * the `Semiring (𝕋 Δ H R)` instance.
 -/
 
@@ -142,6 +141,9 @@ theorem multiplicity_mul_left {γ : G} (hγ : γ ∈ Γ₁) (g h d : G)
       ConjAct.smul_def, ConjAct.ofConjAct_toConjAct, inv_inv] at hmem
   have hy : ((γ'⁻¹ • i).out : G) =
       γ⁻¹ * (i.out : G) * (((γ'⁻¹ * i.out)⁻¹ * (γ'⁻¹ • i).out : Γ₁) : G) := by
+    -- `γ' = ⟨γ, hγ⟩` by the `set` above, so the two sides of the `show` are definitionally
+    -- equal, but no rewriting lemma reassociates the bare product into the `Γ₁`-coercion;
+    -- the `show` exposes the coercion form so that `Subgroup.coe_mul` can fire.
     rw [show γ⁻¹ * (i.out : G) = ((γ'⁻¹ * i.out : Γ₁) : G) from rfl, ← Subgroup.coe_mul,
       mul_inv_cancel_left]
   have hcalc : (((γ'⁻¹ • i).out : G) * g)⁻¹ * d =
@@ -283,6 +285,9 @@ lemma sum_image_mulMap_multiplicity_left [IsHeckeTriple Δ H₁ H₂]
     refine Finset.sum_congr rfl fun l _ ↦ ?_
     rw [mul_ite, mul_one, mul_zero]
     split_ifs with hcond
+    -- the `show` ascription pins down the implicit arguments of `multiplicity_mul_left`:
+    -- rewriting with the bare `.symm` leaves the translated target `↑l.out * ↑E.rep`
+    -- undetermined, since it does not occur in the goal before the rewrite
     · rw [show multiplicity H₁ H₂ H₃ (g₁ : G) (g₂ : G) (E.rep : G) =
           multiplicity H₁ H₂ H₃ (g₁ : G) (g₂ : G) ((l.out : G) * E.rep) from
           (multiplicity_mul_left l.out.2 _ _ _).symm,
@@ -454,7 +459,7 @@ private lemma induction_linear {p : HeckeCosetModule Δ H₁ H₂ R → Prop}
 
 /-- Associativity of the convolution product of Hecke coset modules, at mixed levels
 (Proposition 3.2 of [Shimura][shimura1971]). -/
-theorem mul_assoc' [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
+theorem mul_assoc [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     [IsHeckeTriple Δ H₃ H₄] [IsHeckeTriple Δ H₁ H₃] [IsHeckeTriple Δ H₂ H₄]
     (f : HeckeCosetModule Δ H₁ H₂ R) (g : HeckeCosetModule Δ H₂ H₃ R)
     (h : HeckeCosetModule Δ H₃ H₄ R) :
@@ -500,7 +505,7 @@ theorem mul_assoc' [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
             b₁ * (b₂ * (b₃ * ((multiplicity H₂ H₃ H₄ (D₂.rep : G) (D₃.rep : G) (F.rep : G) *
               multiplicity H₁ H₂ H₄ (D₁.rep : G) (F.rep : G) (D.rep : G) : ℕ) : R))) := by
           intro F
-          rw [Nat.cast_mul, mul_assoc, mul_assoc]
+          rw [Nat.cast_mul, _root_.mul_assoc, _root_.mul_assoc]
         rw [Finset.sum_congr rfl fun E _ ↦ hL E, Finset.sum_congr rfl fun F _ ↦ hR F,
           ← Finset.mul_sum, ← Finset.mul_sum, ← Finset.mul_sum, ← Finset.mul_sum,
           ← Nat.cast_sum, ← Nat.cast_sum]
@@ -511,6 +516,6 @@ theorem mul_assoc' [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
 noncomputable instance instSemiringHeckeRing {H : Subgroup G} [IsHeckeTriple Δ H H] :
     Semiring (𝕋 Δ H R) :=
   { (inferInstance : NonAssocSemiring (𝕋 Δ H R)) with
-    mul_assoc := fun f g h ↦ mul_assoc' R f g h }
+    mul_assoc := fun f g h ↦ HeckeCosetModule.mul_assoc R f g h }
 
 end HeckeCosetModule

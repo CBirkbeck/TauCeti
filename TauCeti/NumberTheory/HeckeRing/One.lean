@@ -26,12 +26,12 @@ stack merges.
 ## Main results
 
 * `HeckeCosetModule.one_def`: `(1 : 𝕋 Δ H R) = single R 1 1`.
-* `HeckeCosetModule.one_mul'`, `HeckeCosetModule.mul_one'`: the identities of the diagonal
+* `HeckeCosetModule.one_mul`, `HeckeCosetModule.mul_one`: the identities of the diagonal
   Hecke rings are one-sided units for the convolution product of Hecke coset modules.
 * the `NonAssocSemiring (𝕋 Δ H R)` instance.
 -/
 
-@[expose] public section
+public section
 
 open DoubleCoset Finsupp
 open scoped Pointwise
@@ -92,11 +92,12 @@ lemma structureConstants_one_left [IsHeckeTriple Δ H₁ H₁] [IsHeckeTriple Δ
 coset. -/
 noncomputable instance instOneHeckeRing {H : Subgroup G} : One (𝕋 Δ H R) := ⟨single R 1 1⟩
 
+/-- The unit of the Hecke ring is the basis element of the identity double coset. -/
 theorem one_def {H : Subgroup G} : (1 : 𝕋 Δ H R) = single R 1 1 := rfl
 
 /-- The identity of the Hecke ring at the left level is a left unit for the convolution
 product of Hecke coset modules. -/
-theorem one_mul' [IsHeckeTriple Δ H₁ H₁] [IsHeckeTriple Δ H₁ H₂]
+@[simp] theorem one_mul [IsHeckeTriple Δ H₁ H₁] [IsHeckeTriple Δ H₁ H₂]
     (f : HeckeCosetModule Δ H₁ H₂ R) : mul R (1 : 𝕋 Δ H₁ R) f = f := by
   classical
   rw [one_def, mul_eq_sum, single,
@@ -110,7 +111,7 @@ theorem one_mul' [IsHeckeTriple Δ H₁ H₁] [IsHeckeTriple Δ H₁ H₂]
 
 /-- The identity of the Hecke ring at the right level is a right unit for the convolution
 product of Hecke coset modules. -/
-theorem mul_one' [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₂]
+@[simp] theorem mul_one [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₂]
     (f : HeckeCosetModule Δ H₁ H₂ R) : mul R f (1 : HeckeCosetModule Δ H₂ H₂ R) = f := by
   classical
   rw [one_def, mul_eq_sum, single]
@@ -134,7 +135,7 @@ noncomputable instance instNonAssocSemiringHeckeRing {H : Subgroup G} [IsHeckeTr
     natCast_succ := fun n ↦ by
       rw [Nat.cast_add, Nat.cast_one, single, Finsupp.single_add]
       rfl
-    one_mul := fun f ↦ one_mul' R f
-    mul_one := fun f ↦ mul_one' R f }
+    one_mul := fun f ↦ HeckeCosetModule.one_mul R f
+    mul_one := fun f ↦ HeckeCosetModule.mul_one R f }
 
 end HeckeCosetModule
