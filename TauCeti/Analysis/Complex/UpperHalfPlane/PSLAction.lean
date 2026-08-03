@@ -32,8 +32,8 @@ This file also provides the maps connecting the groups:
 * `UpperHalfPlane.instMulActionPSL2Z`, `instMulActionPSL2R` — the descended actions.
 * `SMulInvariantMeasure` instances for `SL(2, ℤ)`, `PSL(2, ℤ)` and `PSL(2, ℝ)` on
   `(ℍ, volume)`.
-* `UpperHalfPlane.Psl2zToPSL2R_injective` and the action compatibilities
-  `Psl2zToPSL2R_smul_eq`, `glPosToPSL2R_smul`.
+* `UpperHalfPlane.psl2zToPSL2R_injective` and the action compatibilities
+  `psl2zToPSL2R_smul_eq`, `glPosToPSL2R_smul`.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/Modularforms/PSL2Action.lean`); the AINTLIB Jacobian computation of
@@ -233,8 +233,8 @@ def sl2zToPSL2R : SL(2, ℤ) →* PSL(2, ℝ) :=
 
 /-- Representative-action compatibility: the `PSL(2, ℝ)`-image of an integer `SL`
 element acts on `ℍ` exactly as the underlying `SL(2, ℤ)`-element does (under the
-`SL(2, ℤ) → SL(2, ℝ)` embedding via `Int.castRingHom`). -/
-@[simp]
+`SL(2, ℤ) → SL(2, ℝ)` embedding via `Int.castRingHom`). Not `@[simp]`: simp already
+derives it from `sl2zToPSL2R_apply` and `PSL_R_smul_coe`. -/
 theorem sl2zToPSL2R_smul (g : SL(2, ℤ)) (τ : ℍ) :
     sl2zToPSL2R g • τ =
       (Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ) g) • τ :=
@@ -314,29 +314,29 @@ def psl2zToPSL2R : PSL(2, ℤ) →* PSL(2, ℝ) :=
   QuotientGroup.lift (Subgroup.center SL(2, ℤ)) sl2zToPSL2R fun x hx ↦ by
     rwa [sl2zToPSL2R_ker]
 
-@[simp] theorem Psl2zToPSL2R_mk (g : SL(2, ℤ)) :
+@[simp] theorem psl2zToPSL2R_mk (g : SL(2, ℤ)) :
     psl2zToPSL2R (↑g : PSL(2, ℤ)) = sl2zToPSL2R g :=
   QuotientGroup.lift_mk' _ _ g
 
 /-- Action compatibility for `psl2zToPSL2R` (representative form): the descended
 hom sends `[g] : PSL(2, ℤ)` to a `PSL(2, ℝ)`-element acting on `ℍ` exactly as the
-underlying `SL(2, ℤ)`-action does. -/
-@[simp]
-theorem Psl2zToPSL2R_smul (g : SL(2, ℤ)) (τ : ℍ) :
+underlying `SL(2, ℤ)`-action does. Not `@[simp]`: the left-hand side is not in simp
+normal form (`psl2zToPSL2R_mk` fires first); `psl2zToPSL2R_smul_eq` is the simp form. -/
+theorem psl2zToPSL2R_smul (g : SL(2, ℤ)) (τ : ℍ) :
     psl2zToPSL2R (↑g : PSL(2, ℤ)) • τ = g • τ :=
   (rfl)
 
 /-- Action compatibility for `psl2zToPSL2R` (generic form): for any
 `p : PSL(2, ℤ)`, the descended hom's image acts on `ℍ` exactly as `p` does. -/
 @[simp]
-theorem Psl2zToPSL2R_smul_eq (p : PSL(2, ℤ)) (τ : ℍ) :
+theorem psl2zToPSL2R_smul_eq (p : PSL(2, ℤ)) (τ : ℍ) :
     psl2zToPSL2R p • τ = p • τ := by
   induction p using Quotient.inductionOn with | h g => ?_
-  exact (Psl2zToPSL2R_smul g τ).trans (PSL_smul_coe g τ).symm
+  exact (psl2zToPSL2R_smul g τ).trans (PSL_smul_coe g τ).symm
 
 /-- `psl2zToPSL2R` is injective: its kernel is the image of
 `sl2zToPSL2R.ker = center SL(2, ℤ)` under the `PSL(2, ℤ)`-projection, which is `⊥`. -/
-theorem Psl2zToPSL2R_injective : Function.Injective psl2zToPSL2R := by
+theorem psl2zToPSL2R_injective : Function.Injective psl2zToPSL2R := by
   rw [← MonoidHom.ker_eq_bot_iff]
   change (QuotientGroup.lift (Subgroup.center SL(2, ℤ)) sl2zToPSL2R _).ker = ⊥
   rw [QuotientGroup.ker_lift, sl2zToPSL2R_ker, QuotientGroup.map_mk'_self]
