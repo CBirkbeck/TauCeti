@@ -51,8 +51,9 @@ hyperbolic length is unchanged by post-composition with a disc Moebius factor. T
 an arbitrary path to one starting at the origin.
 
 *The lower bound.* For a path with `γ a = 0` the estimate is a one-variable calculus argument.
-Choosing the unit vector `v = conj (γ b) / ‖γ b‖`, the real function `ψ t = (v * γ t).re` runs
-from `0` to `‖γ b‖` and satisfies `|ψ| ≤ ‖γ‖` and `|ψ ′| ≤ ‖γ ′‖`. Hence, pointwise,
+Choosing a unit vector `v` with `v * γ b = ‖γ b‖` — one exists for every `γ b`, including
+`γ b = 0`, by Mathlib's `Complex.exists_norm_eq_mul_self` — the real function `ψ t = (v * γ t).re`
+runs from `0` to `‖γ b‖` and satisfies `|ψ| ≤ ‖γ‖` and `|ψ ′| ≤ ‖γ ′‖`. Hence, pointwise,
 
 `(Real.artanh ∘ ψ) ′ = ψ ′ / (1 - ψ ^ 2) ≤ ‖γ ′‖ / (1 - ‖γ‖ ^ 2)`,
 
@@ -448,22 +449,6 @@ theorem hyperbolicLength_unitDiscMoebiusFormula_comp (hc : ‖c‖ < 1)
 
 /-! ## The distance is a lower bound for the length -/
 
-/-- **Every complex number is a unit multiple of its norm**: there is `v` with `‖v‖ = 1` and
-`v * z = ‖z‖`. Multiplying by such a `v` rotates `z` onto the nonnegative real axis and changes
-no norm. No `z ≠ 0` hypothesis is needed — at `z = 0` the rotation `Complex.exp 0 = 1` works,
-both sides being `0`. -/
-private theorem exists_norm_eq_one_mul_eq_norm (z : ℂ) :
-    ∃ v : ℂ, ‖v‖ = 1 ∧ v * z = (‖z‖ : ℂ) := by
-  refine ⟨Complex.exp ((-z.arg : ℝ) * Complex.I), Complex.norm_exp_ofReal_mul_I _, ?_⟩
-  calc Complex.exp ((-z.arg : ℝ) * Complex.I) * z
-      = Complex.exp ((-z.arg : ℝ) * Complex.I) *
-          ((‖z‖ : ℂ) * Complex.exp ((z.arg : ℝ) * Complex.I)) := by
-        rw [Complex.norm_mul_exp_arg_mul_I]
-    _ = (‖z‖ : ℂ) *
-          Complex.exp (((-z.arg : ℝ) : ℂ) * Complex.I + ((z.arg : ℝ) : ℂ) * Complex.I) := by
-        rw [Complex.exp_add]; ring
-    _ = (‖z‖ : ℂ) := by push_cast; ring_nf; simp
-
 /-- The lower bound for a path issued from the origin, where the hyperbolic distance to the
 endpoint is `Real.artanh` of its Euclidean norm. Comparing with the real function
 `t ↦ (v * γ t).re` for a suitable unit vector `v` — rather than with `t ↦ ‖γ t‖`, which need not
@@ -477,10 +462,10 @@ private theorem artanh_norm_le_integral (hab : a ≤ b) (hγ : ContinuousOn γ (
     nlinarith [norm_nonneg (γ t), hmem t ht]
   have hint2 : IntervalIntegrable (fun t => ‖γ' t‖ / (1 - ‖γ t‖ ^ 2)) MeasureTheory.volume a b :=
     intervalIntegrable_norm_div_one_sub_norm_sq hab hγ hγ' hmem
-  obtain ⟨v, hvnorm, hvb⟩ := exists_norm_eq_one_mul_eq_norm (γ b)
+  obtain ⟨v, hvnorm, hvb⟩ := Complex.exists_norm_eq_mul_self (γ b)
   set ψ : ℝ → ℝ := fun t => (v * γ t).re with hψdef
   have hψa : ψ a = 0 := by simp [hψdef, h0]
-  have hψb : ψ b = ‖γ b‖ := by simp only [hψdef, hvb, Complex.ofReal_re]
+  have hψb : ψ b = ‖γ b‖ := by simp only [hψdef, ← hvb, Complex.ofReal_re]
   have hψbound : ∀ t : ℝ, |ψ t| ≤ ‖γ t‖ := fun t =>
     (Complex.abs_re_le_norm _).trans_eq (by rw [norm_mul, hvnorm, one_mul])
   have hψmem : ∀ t ∈ Icc a b, ψ t ∈ Ioo (-1 : ℝ) 1 := fun t ht =>
