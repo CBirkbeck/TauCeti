@@ -5,10 +5,8 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.NumberTheory.LSeries.Basic
 public import Mathlib.NumberTheory.LSeries.Convergence
 public import Mathlib.NumberTheory.ModularForms.Bounds
-public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 /-!
 # L-functions of modular forms
@@ -20,21 +18,19 @@ Mathlib's `LSeries` infrastructure applied to the coefficient sequence of
 
 ## Main definitions
 
-* `ModularForms.lCoeff f`: the coefficient sequence `n ↦ aₙ(f)`, as `ℕ → ℂ`.
-* `ModularForms.lSeries f`: the L-function `s ↦ LSeries (lCoeff f) s`.
-* `ModularForms.imAxis f`: `f` along the positive imaginary axis (`0` off it) — the
+* `ModularForm.lCoeff f`: the coefficient sequence `n ↦ aₙ(f)`, as `ℕ → ℂ`.
+* `ModularForm.lSeries f`: the L-function `s ↦ LSeries (lCoeff f) s`.
+* `ModularForm.imAxis f`: `f` along the positive imaginary axis (`0` off it) — the
   function whose Mellin transform is the completed L-function.
 
 ## Main results
 
 Hecke's convergence bounds, from Mathlib's `q`-expansion coefficient growth:
 
-* `ModularForms.abscissaOfAbsConv_lCoeff_le`: for a modular form of weight `k ≥ 0`,
+* `ModularForm.abscissaOfAbsConv_lCoeff_le`: for a modular form of weight `k ≥ 0`,
   the abscissa of absolute convergence is at most `k + 1` (from `aₙ = O(nᵏ)`).
-* `ModularForms.abscissaOfAbsConv_lCoeff_le_cuspForm`: for a cusp form, at most
+* `ModularForm.abscissaOfAbsConv_lCoeff_le_cuspForm`: for a cusp form, at most
   `k/2 + 1` (from Hecke's `aₙ = O(n^{k/2})`).
-* `ModularForms.lSeriesSummable_of_modularForm` / `lSeriesSummable_of_cuspForm`:
-  absolute convergence on the corresponding half-planes.
 
 The non-cuspidal abscissa bound `k + 1` is weaker than Diamond–Shurman Prop. 5.9.1
 (which gives convergence for `Re s > k` via `aₙ = O(n^{k-1})`); tightening it is a
@@ -60,7 +56,7 @@ noncomputable section
 
 open Filter LSeries UpperHalfPlane
 
-namespace ModularForms
+namespace ModularForm
 
 variable {k : ℤ} {Γ : Subgroup (GL (Fin 2) ℝ)}
 variable {F : Type*} [FunLike F ℍ ℂ]
@@ -86,14 +82,21 @@ lemma im_I_mul_pos {t : ℝ} (ht : 0 < t) : 0 < (Complex.I * (t : ℂ)).im := by
   rw [Complex.mul_im, Complex.I_im, Complex.I_re, Complex.ofReal_re, Complex.ofReal_im]
   simpa using ht
 
-/-- **A modular form along the positive imaginary axis**: `t > 0` maps to `f(i·t)`, and
-`t ≤ 0` to `0`. The Mellin transform of this function is the completed L-function. -/
-def imAxis [ModularFormClass F Γ k] (f : F) (t : ℝ) : ℂ :=
+/-- **A function on `ℍ` along the positive imaginary axis**: `t > 0` maps to `f(i·t)`,
+and `t ≤ 0` to `0`. For a cusp form `f`, whose decay makes the integral converge, the
+Mellin transform of this restriction is the completed L-function. -/
+def imAxis (f : ℍ → ℂ) (t : ℝ) : ℂ :=
   if h : 0 < t then f ⟨Complex.I * (t : ℂ), im_I_mul_pos h⟩ else 0
 
-lemma imAxis_apply_of_pos [ModularFormClass F Γ k] (f : F) {t : ℝ} (ht : 0 < t) :
+@[simp]
+lemma imAxis_apply_of_pos (f : ℍ → ℂ) {t : ℝ} (ht : 0 < t) :
     imAxis f t = f ⟨Complex.I * (t : ℂ), im_I_mul_pos ht⟩ := by
   rw [imAxis, dif_pos ht]
+
+@[simp]
+lemma imAxis_apply_of_nonpos (f : ℍ → ℂ) {t : ℝ} (ht : ¬ 0 < t) :
+    imAxis f t = 0 := by
+  rw [imAxis, dif_neg ht]
 
 variable [Γ.IsArithmetic]
 
@@ -103,27 +106,19 @@ theorem abscissaOfAbsConv_lCoeff_le (hk : 0 ≤ k) [ModularFormClass F Γ k] (f 
     abscissaOfAbsConv (lCoeff f) ≤ ((k : ℝ) : EReal) + 1 := by
   refine LSeries.abscissaOfAbsConv_le_of_isBigO_rpow ?_
   have h := ModularFormClass.qExpansion_isBigO hk f
+  have h_lCoeff : lCoeff f = fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n :=
+    funext (lCoeff_apply f)
+  rw [h_lCoeff]
   refine h.congr' EventuallyEq.rfl (Eventually.of_forall fun n ↦ ?_)
   simp only [Real.rpow_intCast]
 
 /-- **Hecke's abscissa bound for cusp forms**: the L-series of a cusp form converges
 absolutely for `Re s > k/2 + 1` (from Hecke's `aₙ = O(n^{k/2})`). -/
 theorem abscissaOfAbsConv_lCoeff_le_cuspForm [CuspFormClass F Γ k] (f : F) :
-    abscissaOfAbsConv (lCoeff f) ≤ (((k : ℝ) / 2 : ℝ) : EReal) + 1 :=
-  LSeries.abscissaOfAbsConv_le_of_isBigO_rpow (CuspFormClass.qExpansion_isBigO f)
+    abscissaOfAbsConv (lCoeff f) ≤ (((k : ℝ) / 2 : ℝ) : EReal) + 1 := by
+  have h_lCoeff : lCoeff f = fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n :=
+    funext (lCoeff_apply f)
+  rw [h_lCoeff]
+  exact LSeries.abscissaOfAbsConv_le_of_isBigO_rpow (CuspFormClass.qExpansion_isBigO f)
 
-/-- The L-series of a weight-`k ≥ 0` modular form is summable for `Re s > k + 1`. -/
-theorem lSeriesSummable_of_modularForm (hk : 0 ≤ k) [ModularFormClass F Γ k] (f : F)
-    {s : ℂ} (hs : (k : ℝ) + 1 < s.re) :
-    LSeriesSummable (lCoeff f) s := by
-  refine LSeriesSummable_of_abscissaOfAbsConv_lt_re ?_
-  exact lt_of_le_of_lt (abscissaOfAbsConv_lCoeff_le hk f) (by exact_mod_cast hs)
-
-/-- The L-series of a weight-`k` cusp form is summable for `Re s > k/2 + 1`. -/
-theorem lSeriesSummable_of_cuspForm [CuspFormClass F Γ k] (f : F)
-    {s : ℂ} (hs : (k : ℝ) / 2 + 1 < s.re) :
-    LSeriesSummable (lCoeff f) s := by
-  refine LSeriesSummable_of_abscissaOfAbsConv_lt_re ?_
-  exact lt_of_le_of_lt (abscissaOfAbsConv_lCoeff_le_cuspForm f) (by exact_mod_cast hs)
-
-end ModularForms
+end ModularForm
