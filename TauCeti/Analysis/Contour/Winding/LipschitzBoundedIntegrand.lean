@@ -142,13 +142,13 @@ private theorem abs_div_sq_le_of_abs_le_mul_sq {x a b d N : ℝ} (hN : 0 ≤ N) 
     nlinarith [mul_le_mul_of_nonneg_right hx (sq_nonneg b), mul_le_mul_of_nonneg_left hsq hN]
 
 /-- **Pointwise bound on the real winding integrand near a `C^{1,1}` crossing.** For `t` close
-enough to `t₀` that `|t - t₀| * (4 * (K + 1)) ≤ ‖deriv γ t₀‖`, the real winding integrand at
+enough to `t₀` that `|t - t₀| * (4 * K) ≤ ‖deriv γ t₀‖`, the real winding integrand at
 `γ t - w` is bounded independent of `t`. -/
 private theorem abs_realWindingIntegrand_le_of_lipschitzOnWith {γ : ℝ → ℂ} {w : ℂ} {t₀ ε : ℝ}
     {K : ℝ≥0} (hε_pos : 0 < ε) (hderiv : ∀ t ∈ Icc (t₀ - ε) (t₀ + ε), HasDerivAt γ (deriv γ t) t)
     (hlip : LipschitzOnWith K (deriv γ) (Icc (t₀ - ε) (t₀ + ε)))
     (h_eq : γ t₀ = w) (hvel : deriv γ t₀ ≠ 0) {t : ℝ} (ht : t ∈ Icc (t₀ - ε) (t₀ + ε))
-    (hρ : |t - t₀| * (4 * ((K : ℝ) + 1)) ≤ ‖deriv γ t₀‖) :
+    (hρ : |t - t₀| * (4 * (K : ℝ)) ≤ ‖deriv γ t₀‖) :
     |realWindingIntegrand (γ t - w) (deriv γ t)| ≤
       4 * (2 * ‖deriv γ t₀‖ * K + K ^ 2 * ε) / ‖deriv γ t₀‖ ^ 2 := by
   have habs_le : |t - t₀| ≤ ε := by rw [abs_le]; constructor <;> linarith [ht.1, ht.2]
@@ -162,7 +162,7 @@ private theorem abs_realWindingIntegrand_le_of_lipschitzOnWith {γ : ℝ → ℂ
     rwa [dist_eq_norm, Real.dist_eq] at h
   -- The linear part `(t - t₀) • deriv γ t₀` controls `γ t - w` from both sides.
   have hlower : |t - t₀| * ‖deriv γ t₀‖ ≤ 2 * ‖γ t - w‖ :=
-    mul_norm_le_two_mul_norm_of_norm_sub_smul_le hR (by nlinarith [abs_nonneg (t - t₀)])
+    mul_norm_le_two_mul_norm_of_norm_sub_smul_le hR hρ
   have hupper : ‖γ t - w‖ ≤ |t - t₀| * ‖deriv γ t₀‖ + K * (t - t₀) ^ 2 := by
     have h := norm_add_le ((t - t₀) • deriv γ t₀) (γ t - w - (t - t₀) • deriv γ t₀)
     rw [norm_smul, Real.norm_eq_abs] at h
@@ -218,11 +218,15 @@ theorem exists_isBounded_image_realWindingIntegrand_of_lipschitzOnWith_deriv
   have hρ_le : |t - t₀| ≤ ρ := by rw [abs_le]; constructor <;> linarith [ht.1, ht.2]
   have hρ_le' : ρ ≤ ‖deriv γ t₀‖ / (8 * ((K : ℝ) + 1)) := min_le_right _ _
   have hK1_pos : (0 : ℝ) < 4 * ((K : ℝ) + 1) := by positivity
-  calc |t - t₀| * (4 * ((K : ℝ) + 1))
-      ≤ (‖deriv γ t₀‖ / (8 * ((K : ℝ) + 1))) * (4 * ((K : ℝ) + 1)) :=
-        mul_le_mul_of_nonneg_right (hρ_le.trans hρ_le') hK1_pos.le
-    _ = ‖deriv γ t₀‖ / 2 := by field_simp; ring
-    _ ≤ ‖deriv γ t₀‖ := by linarith
+  -- The radius keeps the `K + 1` denominator, which is positive even when `K = 0`; the pointwise
+  -- bound only needs the weaker smallness with `K`.
+  have hwide : |t - t₀| * (4 * ((K : ℝ) + 1)) ≤ ‖deriv γ t₀‖ :=
+    calc |t - t₀| * (4 * ((K : ℝ) + 1))
+        ≤ (‖deriv γ t₀‖ / (8 * ((K : ℝ) + 1))) * (4 * ((K : ℝ) + 1)) :=
+          mul_le_mul_of_nonneg_right (hρ_le.trans hρ_le') hK1_pos.le
+      _ = ‖deriv γ t₀‖ / 2 := by field_simp; ring
+      _ ≤ ‖deriv γ t₀‖ := by linarith
+  nlinarith [abs_nonneg (t - t₀), K.coe_nonneg]
 
 end TauCeti.Contour
 
