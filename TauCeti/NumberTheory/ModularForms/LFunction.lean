@@ -49,6 +49,9 @@ but not present there — supplied from Mathlib's `ModularFormClass.qExpansion_i
 
 * [DS] Diamond–Shurman, *A First Course in Modular Forms*, §5.9
 * [Miy] Miyake, *Modular Forms*, Thm 4.5.16
+* The AINTLIB `LeanModularForms` project,
+  <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>
+  (`Modularforms/LFunction.lean`)
 -/
 
 public section
