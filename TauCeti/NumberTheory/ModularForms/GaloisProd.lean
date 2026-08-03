@@ -10,10 +10,13 @@ public import TauCeti.NumberTheory.ModularForms.QExpansionOrder
 /-!
 # The Galois product of a periodic function
 
-For `f : ℍ → α` and `N : ℕ`, the product `galoisProd N f τ = ∏_{j < N} f(τ − j)` over the
-integer translates — the building block of the modular norm map. If `f` has period `N`
-then the product has period `1`, it inherits holomorphy and boundedness at `i∞`, and its
-`q`-expansion at period `1` has the same order as that of `f` at period `N`.
+For `f : ℍ → α` valued in a commutative monoid and `N : ℕ`, the product
+`galoisProd N f τ = ∏_{j < N} f(τ − j)` over the integer translates — the building block
+of the modular norm map. If `f` has period `N` along `ofComplex` then the product has
+period `1`. A product of functions bounded at `i∞` is bounded at `i∞` over any seminormed
+commutative ring, and for complex-valued holomorphic `f` the product is holomorphic; when
+moreover `0 < N`, `f` is bounded and holomorphic, the `q`-expansion of the product at
+period `1` has the same order at `0` as that of `f` at period `N`.
 
 ## Main declarations
 
@@ -54,11 +57,14 @@ end GaloisProd
 section GaloisProdComplex
 variable {N : ℕ} {f : ℍ → ℂ}
 /-- If `f` has period `N` along `ofComplex`, then `galoisProd N f` has period `1`. -/
-lemma galoisProd_periodic_one (hN : 0 < N)
+lemma galoisProd_periodic_one
     (hf_per : Function.Periodic (f ∘ ofComplex) (N : ℝ)) :
     Function.Periodic (galoisProd N f ∘ ofComplex) 1 := by
   refine periodic_comp_ofComplex_iff.mpr fun τ ↦ ?_
   simp only [galoisProd_apply, coe_vadd, Complex.ofReal_one]
+  -- For `N = 0` both sides are the empty product; otherwise peel the last factor.
+  rcases Nat.eq_zero_or_pos N with rfl | hN
+  · simp
   obtain ⟨n, rfl⟩ : ∃ n, N = n + 1 := ⟨N - 1, by lia⟩
   rw [Finset.prod_range_succ' (fun j ↦ f (ofComplex (1 + ↑τ - ↑j))),
     Finset.prod_range_succ (fun j ↦ f (ofComplex (↑τ - ↑j)))]
@@ -69,11 +75,12 @@ lemma galoisProd_periodic_one (hN : 0 < N)
       push_cast
       ring
   have hbdry : f (ofComplex (1 + ↑τ - ↑(0 : ℕ))) = f (ofComplex ((τ : ℂ) - ↑n)) := by
+    -- Rewrite the boundary point so the period hypothesis applies verbatim.
     rw [show 1 + (τ : ℂ) - ↑(0 : ℕ) = ((τ : ℂ) - ↑n) + ↑(n + 1 : ℕ) by push_cast; ring]
     exact hf_per ((τ : ℂ) - ↑n)
   rw [hinner, hbdry]
 /-- If `f` is holomorphic on `ℍ`, so is `galoisProd N f`. -/
-lemma galoisProd_mdiff (hf_mdiff : MDiff f) : MDiff (galoisProd N f) := by
+lemma mdifferentiable_galoisProd (hf_mdiff : MDiff f) : MDiff (galoisProd N f) := by
   unfold galoisProd
   have hfo : DifferentiableOn ℂ (f ∘ ofComplex) {z | 0 < z.im} :=
     mdifferentiable_iff.mp hf_mdiff
@@ -87,9 +94,12 @@ lemma galoisProd_mdiff (hf_mdiff : MDiff f) : MDiff (galoisProd N f) := by
         (isOpen_upperHalfPlaneSet.mem_nhds (hτj j))).comp (τ : ℂ)
         ((differentiableAt_id (𝕜 := ℂ)).sub (differentiableAt_const (c := (j : ℂ))))) ?_
   filter_upwards [eventuallyEq_coe_comp_ofComplex τ.im_pos] with z hz
-  simp_all [Function.comp_apply, id_eq, Pi.sub_apply]
-/-- If `f` is bounded at `i∞`, so is `galoisProd N f`. -/
-lemma galoisProd_isBoundedAtImInfty (hf_bdd : IsBoundedAtImInfty f) :
+  simp only [Function.comp_apply, id_eq, Pi.sub_apply] at hz ⊢
+  rw [hz]
+/-- If `f` is bounded at `i∞`, so is `galoisProd N f`, over any seminormed commutative
+ring. -/
+lemma isBoundedAtImInfty_galoisProd {R : Type*} [SeminormedCommRing R] {N : ℕ} {f : ℍ → R}
+    (hf_bdd : IsBoundedAtImInfty f) :
     IsBoundedAtImInfty (galoisProd N f) := by
   unfold galoisProd IsBoundedAtImInfty Filter.BoundedAtFilter
   rw [← Finset.prod_fn]
@@ -110,6 +120,7 @@ private lemma cuspFunction_factor_eq (hNR_ne : (N : ℝ) ≠ 0)
     simp [Complex.sub_im, Complex.natCast_im, τ.im_pos]
   have hqj : q * Complex.exp (-2 * Real.pi * Complex.I * j / N) =
       Function.Periodic.qParam (N : ℝ) ((⟨(τ : ℂ) - j, him⟩ : ℍ) : ℂ) := by
+    -- Align the two coercion routes `ℕ → ℂ` and `ℕ → ℝ → ℂ` before rewriting.
     rw [show ((N : ℕ) : ℂ) = (((N : ℕ) : ℝ) : ℂ) by push_cast; rfl, ← hτq,
       ← TauCeti.Periodic.qParam_sub (h := (N : ℝ)) τ j]
   rw [hqj, eq_cuspFunction ⟨(τ : ℂ) - j, him⟩ hNR_ne hf_per, ofComplex_apply_of_im_pos him]
@@ -125,8 +136,9 @@ private lemma cuspFunction_one_galoisProd_pow_eq (hN : 0 < N)
   have hRHS_an : AnalyticAt ℂ (cuspFunction (N : ℝ) f) 0 :=
     analyticAt_cuspFunction_zero hNR hf_per hf_mdiff hf_bdd
   have hLHS_cts : ContinuousAt (fun q : ℂ ↦ cuspFunction 1 (galoisProd N f) (q ^ N)) 0 :=
-    (analyticAt_cuspFunction_zero one_pos (galoisProd_periodic_one hN hf_per)
-      (galoisProd_mdiff hf_mdiff) (galoisProd_isBoundedAtImInfty hf_bdd)).continuousAt.comp_of_eq
+    (analyticAt_cuspFunction_zero one_pos (galoisProd_periodic_one hf_per)
+      (mdifferentiable_galoisProd hf_mdiff)
+      (isBoundedAtImInfty_galoisProd hf_bdd)).continuousAt.comp_of_eq
       (by fun_prop) (by simp [zero_pow hN.ne'])
   have hRHS_cts : ContinuousAt (fun q : ℂ ↦ ∏ j ∈ Finset.range N,
       cuspFunction (N : ℝ) f (q * Complex.exp (-2 * Real.pi * Complex.I * j / N))) 0 :=
@@ -142,7 +154,7 @@ private lemma cuspFunction_one_galoisProd_pow_eq (hN : 0 < N)
     Function.Periodic.qParam_right_inv hNR_ne hq_ne
   have hqN : q ^ N = Function.Periodic.qParam 1 (τ : ℂ) := by
     rw [← hτq, ← mul_one (N : ℝ), TauCeti.Periodic.qParam_nat_mul_pow hN.ne']
-  rw [hqN, eq_cuspFunction τ one_ne_zero (galoisProd_periodic_one hN hf_per), galoisProd_apply]
+  rw [hqN, eq_cuspFunction τ one_ne_zero (galoisProd_periodic_one hf_per), galoisProd_apply]
   exact Finset.prod_congr rfl fun j _ ↦ (cuspFunction_factor_eq hNR_ne hf_per hτq j).symm
 /-- Precomposing with a rotation does not change the analytic order at `0`. -/
 private lemma analyticOrderAt_factor_eq (j : ℕ) :
@@ -159,8 +171,8 @@ lemma qExpansion_one_galoisProd_order_eq (hN : 0 < N)
     (hf_bdd : IsBoundedAtImInfty f) (hf_mdiff : MDiff f) :
     (qExpansion 1 (galoisProd N f)).order = (qExpansion (N : ℝ) f).order := by
   have hLHS_an : AnalyticAt ℂ (cuspFunction 1 (galoisProd N f)) 0 :=
-    analyticAt_cuspFunction_zero one_pos (galoisProd_periodic_one hN hf_per)
-      (galoisProd_mdiff hf_mdiff) (galoisProd_isBoundedAtImInfty hf_bdd)
+    analyticAt_cuspFunction_zero one_pos (galoisProd_periodic_one hf_per)
+      (mdifferentiable_galoisProd hf_mdiff) (isBoundedAtImInfty_galoisProd hf_bdd)
   have hRHS_an : AnalyticAt ℂ (cuspFunction (N : ℝ) f) 0 :=
     analyticAt_cuspFunction_zero (mod_cast hN) hf_per hf_mdiff hf_bdd
   rw [qExpansion_order_eq_analyticOrderAt_cuspFunction hLHS_an,
