@@ -13,9 +13,9 @@ A morphism `φ : A' →ₐc[R] A` of bialgebras sends a counit-valued derivation
 one of `A'` by precomposition. The construction splits the transport into the two halves
 Mathlib provides: restricting the domain along `φ` (`Derivation.compAlgebraMap`, over
 local scalar-tower instances for `φ`), and moving the coefficients across the canonical
-identification of the two counit coefficient algebras (`counitAlgebraCongr`), which is
-`A'`-linear precisely because bialgebra morphisms intertwine counits (`LinearEquiv.compDer`).
-The Leibniz rule therefore comes from those two facts and is not reproved here.
+identification of the two counit coefficient algebras, which is `A'`-linear precisely
+because bialgebra morphisms intertwine counits (`LinearEquiv.compDer`). The Leibniz rule
+therefore comes from those two facts and is not reproved here.
 
 ## Main declarations
 
@@ -110,11 +110,13 @@ private noncomputable def derivationCompAux (φ : A' →ₐc[R] A)
 private lemma derivationCompAux_apply (φ : A' →ₐc[R] A)
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) (a : A') :
     derivationCompAux (B := B) φ d a = d ((φ : A' →ₐ[R] A) a) := by
+  -- `counitAlgebraCongr` must be unfolded rather than applied through an `_apply` lemma: the
+  -- `Algebra A' (CounitAlgebra R A B)` instance it takes lives only inside `derivationCompAux`,
+  -- so no lemma stated outside that body can mention it. See the PR discussion.
   simp only [derivationCompAux, counitAlgebraCongr, Derivation.linearEquiv_coe_comp,
-    LinearMap.coe_comp,
-    Function.comp_apply, LinearMap.restrictScalars_apply, AlgEquiv.toLinearMap_apply,
-    AlgEquiv.ofRingEquiv_apply, RingEquiv.trans_apply, AlgEquiv.coe_ringEquiv,
-    Bialgebra.CounitAlgebra.algEquivSelf_apply]
+    LinearMap.coe_comp, Function.comp_apply, LinearMap.restrictScalars_apply,
+    AlgEquiv.toLinearMap_apply, AlgEquiv.ofRingEquiv_apply, RingEquiv.trans_apply,
+    AlgEquiv.coe_ringEquiv, Bialgebra.CounitAlgebra.algEquivSelf_apply]
   -- The remaining transport erases at this value, and the precomposition is
   -- definitional in Mathlib's `compAlgebraMap`.
   exact (Bialgebra.CounitAlgebra.algEquivSelf_symm_apply R A' B _).trans rfl
