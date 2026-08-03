@@ -53,9 +53,6 @@ lemma galoisProd_apply (τ : ℍ) :
   -- definitional unfolding once, explicitly.
   change ∏ j ∈ Finset.range N, f (ofComplex ((τ : ℂ) - j)) = _
   rfl
-end GaloisProd
-section GaloisProdComplex
-variable {N : ℕ} {f : ℍ → ℂ}
 /-- If `f` has period `N` along `ofComplex`, then `galoisProd N f` has period `1`. -/
 lemma galoisProd_periodic_one
     (hf_per : Function.Periodic (f ∘ ofComplex) (N : ℝ)) :
@@ -79,6 +76,10 @@ lemma galoisProd_periodic_one
     rw [show 1 + (τ : ℂ) - ↑(0 : ℕ) = ((τ : ℂ) - ↑n) + ↑(n + 1 : ℕ) by push_cast; ring]
     exact hf_per ((τ : ℂ) - ↑n)
   rw [hinner, hbdry]
+
+end GaloisProd
+section GaloisProdComplex
+variable {N : ℕ} {f : ℍ → ℂ}
 /-- If `f` is holomorphic on `ℍ`, so is `galoisProd N f`. -/
 lemma mdifferentiable_galoisProd (hf_mdiff : MDiff f) : MDiff (galoisProd N f) := by
   unfold galoisProd
