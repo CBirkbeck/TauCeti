@@ -33,7 +33,7 @@ from a fundamental domain of the ambient group.
   translates to a `g H₁ g⁻¹`-fundamental domain under `g`.
 * `MeasureTheory.IsFundamentalDomain.aedisjoint_smul_of_inv_mul_mem`: translates `g₁ • D`,
   `g₂ • D` of an `H`-fundamental domain are a.e. disjoint whenever `g₁ ≠ g₂` and
-  `g₁⁻¹ * g₂ ∈ H`.
+  `g₁⁻¹ * g₂ ∈ H` (needing only quasi-measure-preservation of the one translation).
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/Modularforms/PeterssonLevelN.lean`, measure-theory section), as a
@@ -106,9 +106,9 @@ theorem IsFundamentalDomain.iUnion_smul_of_transversal
 /-- **Subgroup coset tiling of a fundamental domain.** If `s` is a fundamental
 domain for a group `G` acting on `α`, then for any subgroup `H ≤ G`, the union of
 `[G : H]`-many translates `(q.out)⁻¹ • s` (for `q ∈ G ⧸ H`) is a fundamental
-domain for the restricted `H`-action on `α`: the canonical representatives `q.out` form a
-right transversal of `H`. This is `IsFundamentalDomain.iUnion_smul_of_transversal` at
-`r q = (q.out)⁻¹`. -/
+domain for the restricted `H`-action on `α`: the inverses `(q.out)⁻¹` of the canonical
+representatives form the right transversal. This is
+`IsFundamentalDomain.iUnion_smul_of_transversal` at `r q = (q.out)⁻¹`. -/
 @[to_additive /-- **Subgroup coset tiling of a fundamental domain.** If `s` is a fundamental
 domain for an additive group `G` acting on `α`, then for any subgroup `H ≤ G`, the union of
 the translates `-q.out +ᵥ s` (for `q ∈ G ⧸ H`) is a fundamental domain for the restricted
@@ -129,16 +129,17 @@ theorem IsFundamentalDomain.subgroup_iUnion_out_inv_smul
 /-- **Conjugation-shift of a fundamental domain.** If `s` is an `H₁`-fundamental
 domain (where `H₁ ≤ G`) and `H₂` is the pointwise conjugate `g · H₁ · g⁻¹`
 (in `Subgroup` pointwise smul form, via the `ConjAct G`-action), then
-`g • s` is an `H₂`-fundamental domain. -/
+`g • s` is an `H₂`-fundamental domain. Only quasi-measure-preservation of the single
+translation `x ↦ g⁻¹ • x` is required, not invariance under the whole group. -/
 theorem IsFundamentalDomain.smul_of_eq_conjAct
     {G α : Type*} [Group G] [MeasurableSpace α] [MulAction G α]
-    [MeasurableConstSMul G α] {μ : Measure α} [SMulInvariantMeasure G α μ]
+    {μ : Measure α}
     {H₁ H₂ : Subgroup G} {s : Set α} (hs : IsFundamentalDomain H₁ s μ)
-    {g : G} (hgH : H₂ = ConjAct.toConjAct g • H₁) :
+    {g : G} (hg : Measure.QuasiMeasurePreserving (fun x : α ↦ g⁻¹ • x) μ μ)
+    (hgH : H₂ = ConjAct.toConjAct g • H₁) :
     IsFundamentalDomain H₂ (g • s) μ := by
   subst hgH
-  refine hs.image_of_equiv (MulAction.toPerm g)
-    (measurePreserving_smul _ _).quasiMeasurePreserving
+  refine hs.image_of_equiv (MulAction.toPerm g) hg
     { toFun := fun h₂ ↦ ⟨g⁻¹ * (h₂ : G) * g, ?_⟩
       invFun := fun h₁ ↦ ⟨g * (h₁ : G) * g⁻¹, ?_⟩
       left_inv := fun _ ↦ Subtype.ext (by group)
@@ -157,19 +158,22 @@ theorem IsFundamentalDomain.smul_of_eq_conjAct
     simp only [smul_smul, mul_inv_cancel_left, mul_assoc]
 
 /-- **AE-disjointness of arbitrary `G`-translates related by an `H`-element.**
-Let `D` be a fundamental domain for a subgroup `H ≤ G` acting on `α` with a
-`G`-invariant measure `μ`. For any distinct pair `g₁, g₂ ∈ G` whose relative
+Let `D` be a fundamental domain for a subgroup `H ≤ G` acting on `α` with a measure `μ`.
+For any distinct pair `g₁, g₂ ∈ G` whose relative
 position `g₁⁻¹ * g₂` lies in `H`, the translates `g₁ • D` and `g₂ • D` are
-`AE`-disjoint with respect to `μ`. -/
+`AE`-disjoint with respect to `μ` — needing only quasi-measure-preservation of the single
+translation `x ↦ g₁⁻¹ • x`, not invariance under the whole group. -/
 @[to_additive /-- **AE-disjointness of arbitrary `G`-translates related by an `H`-element.**
 Let `D` be a fundamental domain for a subgroup `H ≤ G` of an additive group acting on `α`
-with a `G`-invariant measure `μ`. For any distinct pair `g₁, g₂ ∈ G` with `-g₁ + g₂ ∈ H`,
-the translates `g₁ +ᵥ D` and `g₂ +ᵥ D` are `AE`-disjoint with respect to `μ`. -/]
+with a measure `μ`. For any distinct pair `g₁, g₂ ∈ G` with `-g₁ + g₂ ∈ H`, the translates
+`g₁ +ᵥ D` and `g₂ +ᵥ D` are `AE`-disjoint, given quasi-measure-preservation of the single
+translation `x ↦ -g₁ +ᵥ x`. -/]
 theorem IsFundamentalDomain.aedisjoint_smul_of_inv_mul_mem
     {G α : Type*} [Group G] [MeasurableSpace α] [MulAction G α]
-    {μ : Measure α} [SMulInvariantMeasure G α μ]
+    {μ : Measure α}
     {H : Subgroup G} {D : Set α} (hD : IsFundamentalDomain H D μ)
-    {g₁ g₂ : G} (h_mem : g₁⁻¹ * g₂ ∈ H) (h_ne : g₁ ≠ g₂) :
+    {g₁ g₂ : G} (hg₁ : Measure.QuasiMeasurePreserving (fun x : α ↦ g₁⁻¹ • x) μ μ)
+    (h_mem : g₁⁻¹ * g₂ ∈ H) (h_ne : g₁ ≠ g₂) :
     AEDisjoint μ (g₁ • D) (g₂ • D) := by
   have h_ne' : g₁⁻¹ * g₂ ≠ 1 := fun h ↦ h_ne (inv_mul_eq_one.mp h)
   have h_core : AEDisjoint μ ((1 : H) • D) ((⟨g₁⁻¹ * g₂, h_mem⟩ : H) • D) :=
@@ -178,8 +182,9 @@ theorem IsFundamentalDomain.aedisjoint_smul_of_inv_mul_mem
   rw [one_smul, coe_smul_set] at h_core
   -- `AEDisjoint μ s t` is by definition `μ (s ∩ t) = 0`; there is no iff-lemma to rewrite with.
   change μ ((g₁ • D) ∩ (g₂ • D)) = 0
-  rw [show (g₁ • D) ∩ (g₂ • D) = g₁ • (D ∩ ((g₁⁻¹ * g₂) • D)) by
-      rw [Set.smul_set_inter, ← mul_smul, mul_inv_cancel_left], measure_smul]
-  exact h_core
+  have h_inter : (g₁ • D) ∩ (g₂ • D) = g₁ • (D ∩ ((g₁⁻¹ * g₂) • D)) := by
+    rw [Set.smul_set_inter, ← mul_smul, mul_inv_cancel_left]
+  rw [h_inter, ← Set.preimage_smul_inv]
+  exact hg₁.preimage_null h_core
 
 end MeasureTheory
