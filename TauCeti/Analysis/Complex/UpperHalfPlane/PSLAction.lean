@@ -45,6 +45,9 @@ here descend from it.
 
 * [DS] Diamond–Shurman, *A First Course in Modular Forms*, §5.4
 * [Shi] Shimura, *Arithmetic Theory of Automorphic Functions*, §1.5
+* The AINTLIB `LeanModularForms` project,
+  <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>
+  (`Modularforms/PSL2Action.lean`)
 -/
 
 public section
