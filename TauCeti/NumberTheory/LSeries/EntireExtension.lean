@@ -34,12 +34,12 @@ Supporting general lemmas:
 
 * `meromorphicOrderAt_div_neg_of_orderAt_lt`: a quotient of meromorphic functions with
   finite orders has a pole where the numerator's order is smaller.
-* `LSeries.coprimeStrip`: the coefficient sequence stripped at a finite set of primes,
-  zeroed on multiples — the elementary Euler-factor-removal operation.
 
 Ported from the AINTLIB `LeanModularForms` project
-(`LeanModularForms/Modularforms/LFunction.lean`), as Layer-7 groundwork for the
-functional-equation and converse-theorem milestones.
+(`LeanModularForms/Modularforms/LFunction.lean`). This is prerequisite infrastructure:
+general `LSeries` API with no modular-forms dependence, supplied ahead of the
+ModularForms roadmap's Layer-7 entirety/functional-equation obligations, and usable by
+any Dirichlet-series development.
 
 ## References
 
@@ -181,18 +181,5 @@ theorem HasMeromorphicExtensionWithPole.not_hasEntireExtension {a : ℕ → ℂ}
   have h_nonneg : 0 ≤ meromorphicOrderAt F s₀ := (hF.analyticAt s₀).meromorphicOrderAt_nonneg
   rw [h_ord] at hg_pole
   exact absurd h_nonneg (not_le.mpr hg_pole)
-
-/-- **The coprime-stripped coefficient sequence**: `f` zeroed at every `n` divisible by a
-prime of the finite set `S`, unchanged elsewhere — the elementary operation of removing
-the Euler factors at `S`. -/
-def coprimeStrip (S : Finset Nat.Primes) (f : ℕ → ℂ) : ℕ → ℂ :=
-  fun n ↦ if ∀ p ∈ S, ¬ (p : ℕ) ∣ n then f n else 0
-
-/-- `coprimeStrip S f 1 = f 1`: no prime divides `1`. -/
-@[simp]
-lemma coprimeStrip_one (S : Finset Nat.Primes) (f : ℕ → ℂ) :
-    coprimeStrip S f 1 = f 1 := by
-  unfold coprimeStrip
-  rw [if_pos fun p _ h_dvd ↦ p.prop.one_lt.ne' (Nat.dvd_one.mp h_dvd)]
 
 end LSeries
