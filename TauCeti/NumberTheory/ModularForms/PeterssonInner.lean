@@ -18,7 +18,8 @@ import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 The **Petersson inner product**
 $$\langle f, g \rangle = \int_D \overline{f(\tau)} \, g(\tau) \, (\operatorname{Im}\tau)^k
 \, d\mu(\tau)$$
-of two functions on the upper half-plane, integrated over a fundamental domain `D` against
+of two functions on the upper half-plane, integrated over a set `D` — in applications a
+fundamental domain — against
 Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 `Mathlib/Analysis/Complex/UpperHalfPlane/Measure.lean`), with the integrand
 `petersson k f g` from `Mathlib/NumberTheory/ModularForms/Petersson.lean`.
@@ -42,9 +43,9 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 * `UpperHalfPlane.eq_zero_on_fd_of_peterssonInner_self_eq_zero`: definiteness on the
   fundamental domain.
 
-The inner product is parameterized by a fundamental domain `D : Set ℍ` rather than fixing a
-subgroup; for `SL₂(ℤ)` use `D = ModularGroup.fd`, and for a congruence subgroup of index `n` a
-union of `n` translates. The topology of `𝒟`/`𝒟ᵒ` (`ModularGroup.isClosed_fd`,
+The pairing is parameterized by an arbitrary `D : Set ℍ` rather than fixing a subgroup;
+for `SL₂(ℤ)` use `D = ModularGroup.fd`, and for a congruence subgroup a union of
+translates of `𝒟`. The topology of `𝒟`/`𝒟ᵒ` (`ModularGroup.isClosed_fd`,
 `ModularGroup.isOpen_fdo`, `ModularGroup.fd_eq_closure_fdo`) comes from
 `Mathlib/NumberTheory/Modular.lean`; this file adds their measure theory.
 
@@ -249,8 +250,9 @@ end ModularGroup
 
 namespace UpperHalfPlane
 
-/-- The Petersson inner product of two functions `f, g : ℍ → ℂ` of weight `k`,
-integrated over a fundamental domain `D` with respect to the invariant measure.
+/-- The Petersson pairing of two functions `f, g : ℍ → ℂ` of weight `k`, integrated over
+an arbitrary set `D` (in applications, a fundamental domain) with respect to the
+invariant measure.
 
 The integrand is `conj(f(τ)) · g(τ) · (Im τ)^k`, which equals
 `petersson k f g τ` from `Mathlib.NumberTheory.ModularForms.Petersson`. -/
@@ -266,21 +268,25 @@ theorem peterssonInner_conj_symm (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
   simp only [peterssonInner, ← integral_conj, petersson_symm k g f]
 
 /-- The pairing with zero on the right vanishes. -/
+@[simp]
 theorem peterssonInner_zero_right (k : ℤ) (D : Set ℍ) (f : ℍ → ℂ) :
     peterssonInner k D f 0 = 0 := by
   simp [peterssonInner, petersson]
 
 /-- The pairing with zero on the left vanishes. -/
+@[simp]
 theorem peterssonInner_zero_left (k : ℤ) (D : Set ℍ) (g : ℍ → ℂ) :
     peterssonInner k D 0 g = 0 := by
   simp [peterssonInner, petersson]
 
 /-- Negation in the right argument. -/
+@[simp]
 theorem peterssonInner_neg_right (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
     peterssonInner k D f (-g) = -peterssonInner k D f g := by
   simp only [peterssonInner, petersson, Pi.neg_apply, mul_neg, neg_mul, integral_neg]
 
 /-- Negation in the left argument. -/
+@[simp]
 theorem peterssonInner_neg_left (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
     peterssonInner k D (-f) g = -peterssonInner k D f g := by
   simp only [peterssonInner, petersson, Pi.neg_apply, map_neg, neg_mul, integral_neg]
@@ -405,15 +411,28 @@ variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
 standard fundamental domain `𝒟` for `SL₂(ℤ)`, whatever the level `Γ` — the `Fd` in the
 name marks that the integration domain is `𝒟`, not a `Γ`-fundamental domain.
 
-This is **not** the `Γ \ ℍ`-normalized Petersson inner product: for `Γ ≤ SL₂(ℤ)` of
-index `n`, the latter integrates over `n` translates of `𝒟`. The two differ by that
-positive factor, so this pairing is nonetheless Hermitian-sesquilinear and positive
-definite for cusp forms of any arithmetic level (`CuspForm.peterssonInnerFd_definite`),
-which is exactly how the level-`N` pairing's definiteness is reduced to level one. -/
+This is **not** the `Γ \ ℍ`-normalized Petersson inner product, which integrates over a
+`Γ`-fundamental domain. It is nonetheless Hermitian-sesquilinear and positive definite
+for cusp forms of any arithmetic level (`CuspForm.peterssonInnerFd_definite`), which is
+exactly how the level-`N` pairing's definiteness is reduced to level one. -/
 def peterssonInnerFd (f g : CuspForm Γ k) : ℂ :=
   UpperHalfPlane.peterssonInner k ModularGroup.fd f g
 
 theorem peterssonInnerFd_def (f g : CuspForm Γ k) :
     peterssonInnerFd f g = UpperHalfPlane.peterssonInner k ModularGroup.fd f g := (rfl)
+
+/-- Hermitian symmetry of the level-one-domain pairing. -/
+theorem peterssonInnerFd_conj_symm (f g : CuspForm Γ k) :
+    conj (peterssonInnerFd g f) = peterssonInnerFd f g := by
+  simp only [peterssonInnerFd_def]
+  exact UpperHalfPlane.peterssonInner_conj_symm k ModularGroup.fd f g
+
+@[simp]
+theorem peterssonInnerFd_zero_right (f : CuspForm Γ k) : peterssonInnerFd f 0 = 0 := by
+  simp [peterssonInnerFd_def]
+
+@[simp]
+theorem peterssonInnerFd_zero_left (g : CuspForm Γ k) : peterssonInnerFd 0 g = 0 := by
+  simp [peterssonInnerFd_def]
 
 end CuspForm
