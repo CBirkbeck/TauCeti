@@ -210,12 +210,6 @@ private lemma surj_at_weight_inductive {n : ℕ} (hn12 : 12 ≤ n) (hk_even : Ev
   rw [map_add, map_mul, hp1, evalE₄E₆_discriminantPoly,
     ← cuspForm_eq_discriminant_mul (f - c • mn) hg_cusp, evalE₄E₆_C_mul_monomial]
 
-private lemma rank_one_of_lt_twelve {k : ℕ} (hk3 : 3 ≤ k) (hk2 : Even k) (hk12 : k < 12) :
-    Module.rank ℂ (ModularForm 𝒮ℒ (↑k : ℤ)) = 1 := by
-  rw [ModularForm.rank_eq_one_add_rank_cuspForm hk3 hk2,
-    CuspForm.rank_eq_zero_of_weight_lt_twelve (mod_cast hk12 : (↑k : ℤ) < 12)]
-  norm_cast
-
 private lemma one_ne_zero_modularForm : (1 : ModularForm 𝒮ℒ 0) ≠ 0 := fun h ↦
   one_ne_zero (α := ℂ) (congr_fun (congr_arg (DFunLike.coe (F := ModularForm 𝒮ℒ 0)) h)
     UpperHalfPlane.I)
@@ -246,14 +240,16 @@ private lemma surj_at_weight_eight_or_ten {n : ℕ} (hn : n = 8 ∨ n = 10)
     (f : ModularForm 𝒮ℒ ↑n) :
     DirectSum.of _ (↑n : ℤ) f ∈ Set.range evalE₄E₆ := by
   obtain rfl | rfl := hn
-  · refine surj_of_rank_one (rank_one_of_lt_twelve (by norm_num) ⟨4, rfl⟩ (by norm_num))
+  · refine surj_of_rank_one
+      (by simpa [Nat.ModEq] using ModularForm.dimension_level_one 8 ⟨4, rfl⟩)
       (ModularForm.mul_ne_zero ⟨1, one_mem_strictPeriods_SL, one_pos⟩ (f := E₄) (g := E₄)
         (E_ne_zero (by norm_num) ⟨2, rfl⟩) (E_ne_zero (by norm_num) ⟨2, rfl⟩))
       (MvPolynomial.X 0 ^ 2) ?_ f
     rw [map_pow, evalE₄E₆_X0, pow_two, DirectSum.of_mul_of]
     exact DirectSum.of_eq_of_gradedMonoid_eq
       (ModularForm.gradedMonoid_eq_of_cast (by norm_num : (4 : ℤ) + 4 = 8) rfl)
-  · refine surj_of_rank_one (rank_one_of_lt_twelve (by norm_num) ⟨5, rfl⟩ (by norm_num))
+  · refine surj_of_rank_one
+      (by simpa [Nat.ModEq] using ModularForm.dimension_level_one 10 ⟨5, rfl⟩)
       (ModularForm.mul_ne_zero ⟨1, one_mem_strictPeriods_SL, one_pos⟩ (f := E₄) (g := E₆)
         (E_ne_zero (by norm_num) ⟨2, rfl⟩) (E_ne_zero (by norm_num) ⟨3, rfl⟩))
       (MvPolynomial.X 0 * MvPolynomial.X 1) ?_ f
