@@ -10,16 +10,17 @@ public import TauCeti.NumberTheory.ModularForms.PeterssonInner
 /-!
 # The Petersson inner product on cusp forms
 
-The sesquilinear API for `CuspForm.pet` and the `Inner ℂ (CuspForm Γ k)` structure it
+The sesquilinear API for `CuspForm.peterssonInner` and the `Inner ℂ (CuspForm Γ k)` structure it
 defines, together with **positive definiteness**: a cusp form with vanishing Petersson
 self-pairing is zero.
 
 ## Main results
 
-* `CuspForm.inner_def`: `⟪f, g⟫ = pet f g`.
-* `CuspForm.pet_conj_symm`, `pet_add_left`, `pet_add_right`, `pet_smul_right`,
-  `pet_conj_smul_left`: `pet` is Hermitian-sesquilinear.
-* `CuspForm.pet_definite`: `pet f f = 0 → f = 0`, for any arithmetic level `Γ`.
+* `CuspForm.inner_def`: `⟪f, g⟫ = peterssonInner f g`.
+* `CuspForm.peterssonInner_conj_symm`, `peterssonInner_add_left`, `peterssonInner_add_right`,
+  `peterssonInner_smul_right`, `peterssonInner_smul_left`: Hermitian-sesquilinear.
+* `CuspForm.peterssonInner_definite`: `peterssonInner f f = 0 → f = 0`, for any arithmetic
+  level `Γ`.
 
 ## Implementation notes
 
@@ -55,30 +56,32 @@ variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
 
 /-- The Petersson inner product as an `Inner ℂ` structure on cusp forms. -/
 instance : Inner ℂ (CuspForm Γ k) where
-  inner := pet
+  inner := peterssonInner
 
 @[simp]
-theorem inner_def (f g : CuspForm Γ k) : ⟪f, g⟫ = pet f g := rfl
+theorem inner_def (f g : CuspForm Γ k) : ⟪f, g⟫ = peterssonInner f g := rfl
 
 /-- Hermitian symmetry of the Petersson inner product of cusp forms. -/
-theorem pet_conj_symm (f g : CuspForm Γ k) : conj (pet g f) = pet f g := by
-  simp only [pet_def]
-  exact peterssonInner_conj_symm k ModularGroup.fd f g
+theorem peterssonInner_conj_symm (f g : CuspForm Γ k) :
+    conj (peterssonInner g f) = peterssonInner f g := by
+  simp only [peterssonInner_def]
+  exact UpperHalfPlane.peterssonInner_conj_symm k ModularGroup.fd f g
 
 section HasDetOne
 
 variable [Γ.HasDetOne]
 
 /-- The Petersson inner product is ℂ-linear in the second argument. -/
-theorem pet_smul_right (c : ℂ) (f g : CuspForm Γ k) : pet f (c • g) = c * pet f g := by
-  simp only [pet_def, IsGLPos.coe_smul]
-  exact peterssonInner_smul_right k ModularGroup.fd c f g
+theorem peterssonInner_smul_right (c : ℂ) (f g : CuspForm Γ k) :
+    peterssonInner f (c • g) = c * peterssonInner f g := by
+  simp only [peterssonInner_def, IsGLPos.coe_smul]
+  exact UpperHalfPlane.peterssonInner_smul_right k ModularGroup.fd c f g
 
 /-- The Petersson inner product is conjugate-linear in the first argument. -/
-theorem pet_conj_smul_left (c : ℂ) (f g : CuspForm Γ k) :
-    pet (c • f) g = conj c * pet f g := by
-  simp only [pet_def, IsGLPos.coe_smul]
-  exact peterssonInner_conj_smul_left k ModularGroup.fd c f g
+theorem peterssonInner_smul_left (c : ℂ) (f g : CuspForm Γ k) :
+    peterssonInner (c • f) g = conj c * peterssonInner f g := by
+  simp only [peterssonInner_def, IsGLPos.coe_smul]
+  exact UpperHalfPlane.peterssonInner_smul_left k ModularGroup.fd c f g
 
 end HasDetOne
 
@@ -87,22 +90,25 @@ section IsArithmetic
 variable [Γ.IsArithmetic]
 
 /-- Additivity of the Petersson inner product in the second argument. -/
-theorem pet_add_right (f g₁ g₂ : CuspForm Γ k) : pet f (g₁ + g₂) = pet f g₁ + pet f g₂ := by
-  simp only [pet_def, coe_add]
-  exact peterssonInner_add_right k ModularGroup.fd f g₁ g₂
-    (peterssonInner_integrableOn_left k Γ f g₁) (peterssonInner_integrableOn_left k Γ f g₂)
+theorem peterssonInner_add_right (f g₁ g₂ : CuspForm Γ k) :
+    peterssonInner f (g₁ + g₂) = peterssonInner f g₁ + peterssonInner f g₂ := by
+  simp only [peterssonInner_def, coe_add]
+  exact UpperHalfPlane.peterssonInner_add_right k ModularGroup.fd f g₁ g₂
+    (integrableOn_petersson_fd_left k Γ f g₁) (integrableOn_petersson_fd_left k Γ f g₂)
 
 /-- Additivity of the Petersson inner product in the first argument. -/
-theorem pet_add_left (f₁ f₂ g : CuspForm Γ k) : pet (f₁ + f₂) g = pet f₁ g + pet f₂ g := by
-  rw [← pet_conj_symm, pet_add_right, map_add, pet_conj_symm, pet_conj_symm]
+theorem peterssonInner_add_left (f₁ f₂ g : CuspForm Γ k) :
+    peterssonInner (f₁ + f₂) g = peterssonInner f₁ g + peterssonInner f₂ g := by
+  rw [← peterssonInner_conj_symm, peterssonInner_add_right, map_add,
+    peterssonInner_conj_symm, peterssonInner_conj_symm]
 
 /-- **Positive definiteness** of the Petersson inner product: a cusp form of any
-arithmetic level with `pet f f = 0` is zero.
+arithmetic level with `peterssonInner f f = 0` is zero.
 
-`pet f f = 0` forces `f = 0` on the open fundamental domain `𝒟ᵒ`, and a holomorphic
+`peterssonInner f f = 0` forces `f = 0` on the open fundamental domain `𝒟ᵒ`, and a holomorphic
 function on `ℍ` vanishing on a nonempty open set vanishes identically. -/
-theorem pet_definite (f : CuspForm Γ k) (hpet : pet f f = 0) : f = 0 := by
-  rw [pet_def] at hpet
+theorem peterssonInner_definite (f : CuspForm Γ k) (hpet : peterssonInner f f = 0) : f = 0 := by
+  rw [peterssonInner_def] at hpet
   have hfdo : ∀ τ ∈ fdo, f τ = 0 := fun τ hτ ↦
     eq_zero_on_fd_of_peterssonInner_self_eq_zero f hpet (fdo_subset_fd hτ)
   set τ₀ : ℍ := ⟨⟨0, 2⟩, by norm_num⟩ with hτ₀_def
