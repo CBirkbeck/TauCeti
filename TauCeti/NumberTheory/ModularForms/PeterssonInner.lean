@@ -27,8 +27,8 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 
 * `UpperHalfPlane.peterssonInner`: the Petersson inner product, parameterized by weight `k`
   and fundamental domain `D`.
-* `CuspForm.peterssonInner`: the inner product of two cusp forms over the standard
-  fundamental domain.
+* `CuspForm.peterssonInnerFd`: the level-one-domain pairing of two cusp forms (over `𝒟`,
+  whatever the level).
 
 ## Main results
 
@@ -48,10 +48,17 @@ union of `n` translates. The topology of `𝒟`/`𝒟ᵒ` (`ModularGroup.isClose
 `ModularGroup.isOpen_fdo`, `ModularGroup.fd_eq_closure_fdo`) comes from
 `Mathlib/NumberTheory/Modular.lean`; this file adds their measure theory.
 
+Ported from the AINTLIB `LeanModularForms` project's
+`LeanModularForms/Modularforms/PeterssonInnerProduct.lean` (Chris Birkbeck), rewritten to
+consume Mathlib's `MeasureSpace ℍ` instance instead of constructing the hyperbolic measure.
+
 ## References
 
 * Diamond–Shurman, *A first course in modular forms*, §5.4
 * Miyake, *Modular forms*, §2.5
+* The AINTLIB `LeanModularForms` project,
+  <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>
+  (`Modularforms/PeterssonInnerProduct.lean`)
 -/
 
 public section
@@ -394,18 +401,19 @@ open UpperHalfPlane
 
 variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
 
-/-- The Petersson inner product of two cusp forms, integrated over the standard
-fundamental domain `𝒟` for `SL₂(ℤ)`.
+/-- The **level-one-domain Petersson pairing** of two cusp forms: the integral over the
+standard fundamental domain `𝒟` for `SL₂(ℤ)`, whatever the level `Γ` — the `Fd` in the
+name marks that the integration domain is `𝒟`, not a `Γ`-fundamental domain.
 
-This is the level-one-domain pairing, **not** the `Γ \ ℍ`-normalized Petersson inner
-product: for `Γ ≤ SL₂(ℤ)` of index `n`, the latter integrates over `n` translates of `𝒟`.
-The two differ by that positive factor, so this pairing is nonetheless
-Hermitian-sesquilinear and positive definite for cusp forms of any arithmetic level
-(`CuspForm.peterssonInner_definite`). -/
-def peterssonInner (f g : CuspForm Γ k) : ℂ :=
+This is **not** the `Γ \ ℍ`-normalized Petersson inner product: for `Γ ≤ SL₂(ℤ)` of
+index `n`, the latter integrates over `n` translates of `𝒟`. The two differ by that
+positive factor, so this pairing is nonetheless Hermitian-sesquilinear and positive
+definite for cusp forms of any arithmetic level (`CuspForm.peterssonInnerFd_definite`),
+which is exactly how the level-`N` pairing's definiteness is reduced to level one. -/
+def peterssonInnerFd (f g : CuspForm Γ k) : ℂ :=
   UpperHalfPlane.peterssonInner k ModularGroup.fd f g
 
-theorem peterssonInner_def (f g : CuspForm Γ k) :
-    peterssonInner f g = UpperHalfPlane.peterssonInner k ModularGroup.fd f g := (rfl)
+theorem peterssonInnerFd_def (f g : CuspForm Γ k) :
+    peterssonInnerFd f g = UpperHalfPlane.peterssonInner k ModularGroup.fd f g := (rfl)
 
 end CuspForm
