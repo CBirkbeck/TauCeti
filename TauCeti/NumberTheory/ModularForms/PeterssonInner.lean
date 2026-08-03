@@ -249,6 +249,9 @@ The integrand is `conj(f(τ)) · g(τ) · (Im τ)^k`, which equals
 def peterssonInner (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) : ℂ :=
   ∫ τ in D, petersson k f g τ
 
+theorem peterssonInner_def (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
+    peterssonInner k D f g = ∫ τ in D, petersson k f g τ := (rfl)
+
 /-- Hermitian symmetry: `conj ⟨g, f⟩ = ⟨f, g⟩`. -/
 theorem peterssonInner_conj_symm (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
     conj (peterssonInner k D g f) = peterssonInner k D f g := by
@@ -400,7 +403,6 @@ positive definite for cusp forms of any arithmetic level (`CuspForm.pet_definite
 def pet (f g : CuspForm Γ k) : ℂ :=
   peterssonInner k ModularGroup.fd f g
 
-@[simp]
 theorem pet_def (f g : CuspForm Γ k) : pet f g = peterssonInner k ModularGroup.fd f g := (rfl)
 
 end CuspForm
