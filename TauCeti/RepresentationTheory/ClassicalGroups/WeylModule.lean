@@ -292,13 +292,9 @@ private theorem youngSymmetrizerOver_mul_single_swap {t : YoungTableau μ} {a b 
     (hab : a ≠ b) (hτ : Equiv.swap a b ∈ colSubgroup t) :
     youngSymmetrizerOver k t * MonoidAlgebra.single (Equiv.swap a b) 1 =
       -youngSymmetrizerOver k t := by
-  have h := mul_youngSymmetrizer_right t ⟨_, hτ⟩
-  rw [Equiv.Perm.sign_swap hab] at h
-  have h' := congrArg (MonoidAlgebra.mapAlgHom (Equiv.Perm (Fin μ.card)) (Algebra.ofId ℚ k))
-    (by simpa using h :
-      youngSymmetrizer t * MonoidAlgebra.single (Equiv.swap a b) 1 = -youngSymmetrizer t)
-  rw [map_mul, map_neg, MonoidAlgebra.mapAlgHom_single, map_one] at h'
-  rwa [youngSymmetrizerOver_def]
+  have h := youngSymmetrizerOver_mul_single k t ⟨_, hτ⟩
+  rwa [Equiv.Perm.sign_swap hab, Units.val_neg, Units.val_one, Int.cast_neg, Int.cast_one,
+    neg_smul, one_smul] at h
 
 /-- **The symmetrizer annihilates the whole tensor power when `μ` has more than `n` rows.** On each
 monomial basis vector two labels of the first column share a basis index, so their transposition
