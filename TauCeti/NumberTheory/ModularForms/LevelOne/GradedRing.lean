@@ -66,10 +66,6 @@ lemma evalE₄E₆_X1 :
     evalE₄E₆ (MvPolynomial.X 1) = DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ := by
   simp [evalE₄E₆]
 
-lemma evalE₄E₆_C (c : ℂ) :
-    evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c :=
-  MvPolynomial.aeval_C _ c
-
 lemma evalE₄E₆_monomial (a b : ℕ) :
     evalE₄E₆ (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b) =
       DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ a *
@@ -90,8 +86,10 @@ private lemma surj_of_rank_one {k : ℤ}
   obtain ⟨c, rfl⟩ := (finrank_eq_one_iff_of_nonzero' g hg).mp
     (Module.rank_eq_one_iff_finrank_eq_one.mp hrank) f
   refine ⟨MvPolynomial.C c * p, ?_⟩
-  rw [map_mul, evalE₄E₆_C, hp, Algebra.algebraMap_eq_smul_one,
-    smul_mul_assoc, one_mul, ← DirectSum.of_smul]
+  rw [map_mul,
+    show evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c from
+      MvPolynomial.aeval_C _ c,
+    hp, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, ← DirectSum.of_smul]
 
 private lemma directSum_of_E₄_pow_mul_E₆_pow_apply {a b n : ℕ}
     (hab : 4 * a + 6 * b = n) :
@@ -134,8 +132,8 @@ private lemma cuspForm_eq_discriminant_mul {n : ℕ} (g : ModularForm 𝒮ℒ �
   let hcusp := (ModularForm.isCuspForm_iff_coeffZero_eq_zero g).mp hg
   change ((CuspForm.discriminantEquiv (ModularForm.toCuspForm g hcusp)).mul
       ((CuspForm.discriminant : CuspForm 𝒮ℒ 12) : ModularForm 𝒮ℒ 12)) z = g z
-  rw [ModularForm.coe_mul, Pi.mul_apply, CuspForm.discriminantEquiv_apply]
-  exact div_mul_cancel₀ _ (discriminant_ne_zero z)
+  rw [ModularForm.coe_mul, Pi.mul_apply, mul_comm]
+  exact ModularForm.discriminant_mul_discriminantEquiv_apply _ z
 
 private def discriminantPoly : MvPolynomial (Fin 2) ℂ :=
   (1 / 1728 : ℂ) • (MvPolynomial.X 0 ^ 3 - MvPolynomial.X 1 ^ 2)
@@ -170,7 +168,9 @@ private lemma surj_at_weight_inductive {n : ℕ} (hn12 : 12 ≤ n) (hk_even : Ev
   exact ⟨p1 * discriminantPoly + MvPolynomial.C c * (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b),
     by rw [map_add, map_mul, hp1, evalE₄E₆_discriminantPoly,
       cuspForm_eq_discriminant_mul (f - c • mn) hg_cusp, map_mul,
-      evalE₄E₆_C, evalE₄E₆_monomial a b,
+      show evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c from
+        MvPolynomial.aeval_C _ c,
+      evalE₄E₆_monomial a b,
       Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul]⟩
 
 private lemma rank_one_of_lt_twelve {k : ℕ} (hk3 : 3 ≤ k) (hk2 : Even k) (hk12 : k < 12) :
