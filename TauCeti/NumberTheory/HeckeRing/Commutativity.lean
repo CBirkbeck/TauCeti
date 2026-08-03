@@ -90,6 +90,14 @@ lemma bar_mem_H {g : G} (hg : g ∈ H) : ι.bar g ∈ H := ι.mem_H g hg
 /-- The anti-involution preserves membership in `Δ`. -/
 lemma bar_mem_Δ {g : G} (hg : g ∈ Δ) : ι.bar g ∈ Δ := ι.mem_Δ g hg
 
+/-- Membership in `H` is preserved in both directions by the anti-involution. -/
+@[simp] lemma bar_mem_H_iff {g : G} : ι.bar g ∈ H ↔ g ∈ H :=
+  ⟨fun h ↦ ι.bar_bar g ▸ ι.bar_mem_H h, ι.bar_mem_H⟩
+
+/-- Membership in `Δ` is preserved in both directions by the anti-involution. -/
+@[simp] lemma bar_mem_Δ_iff {g : G} : ι.bar g ∈ Δ ↔ g ∈ Δ :=
+  ⟨fun h ↦ ι.bar_bar g ▸ ι.bar_mem_Δ h, ι.bar_mem_Δ⟩
+
 /-- The anti-involution maps the double coset of `a` into the double coset of `bar a`. -/
 lemma bar_mem_doubleCoset {a x : G} (hx : x ∈ doubleCoset a (H : Set G) H) :
     ι.bar x ∈ doubleCoset (ι.bar a) (H : Set G) H := by
