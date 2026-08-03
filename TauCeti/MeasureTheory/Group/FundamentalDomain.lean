@@ -42,6 +42,12 @@ open Measure Set
 
 open scoped Pointwise
 
+-- The `↥H`-action on `α` (and on `Set α`) is by definition the restriction of the
+-- `G`-action along the coercion; this lemma makes every use of that compatibility explicit.
+@[to_additive]
+private theorem coe_smul_set {G α : Type*} [Group G] [MulAction G α] {H : Subgroup G}
+    (h : H) (s : Set α) : h • s = (h : G) • s := rfl
+
 @[to_additive]
 private theorem eq_of_mul_transversal {G : Type*} [Group G] {H : Subgroup G}
     {ι : Type*} {r : ι → G}
@@ -55,7 +61,6 @@ private theorem eq_of_mul_transversal {G : Type*} [Group G] {H : Subgroup G}
     rw [← he']
     exact H.mul_mem (H.inv_mem b.2) a.2
   obtain rfl : i = j := he <| by
-    change (QuotientGroup.mk ((r i)⁻¹) : G ⧸ H) = QuotientGroup.mk ((r j)⁻¹)
     rw [eq_comm, QuotientGroup.eq]
     simpa [inv_inv] using hmem
   exact ⟨Subtype.ext (mul_right_cancel hh), rfl⟩
@@ -83,12 +88,11 @@ theorem IsFundamentalDomain.iUnion_smul_of_transversal
       rw [QuotientGroup.eq] at hi
       simpa [inv_inv] using hi
     refine ⟨⟨(r i) * g, hmem⟩, ?_⟩
-    change ((r i) * g) • τ ∈ T
-    rw [mul_smul]
+    rw [Submonoid.mk_smul, mul_smul]
     exact Set.mem_iUnion.mpr ⟨i, Set.smul_mem_smul_set hg⟩
   · intro h₁ h₂ hne
-    change AEDisjoint μ ((h₁ : G) • T) ((h₂ : G) • T)
-    rw [hT_def]
+    simp only [Function.onFun]
+    rw [coe_smul_set h₁, coe_smul_set h₂, hT_def]
     simp only [Set.smul_set_iUnion, AEDisjoint.iUnion_left_iff, AEDisjoint.iUnion_right_iff,
       ← mul_smul]
     exact fun i₁ i₂ ↦ hs.aedisjoint fun heq ↦ hne (eq_of_mul_transversal hr.injective heq).1
@@ -140,7 +144,10 @@ theorem IsFundamentalDomain.smul_of_eq_conjAct
       ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv,
       show g⁻¹ * (g * (h₁ : G) * g⁻¹) * g = (h₁ : G) by group]
     exact h₁.2
-  · change g • ((g⁻¹ * (h₂ : G) * g) • x) = (h₂ : G) • (g • x)
+  · -- the equivalence just constructed sends `h₂` to `⟨g⁻¹ * h₂ * g, _⟩`, and the subtype
+    -- action restricts the ambient one; both hold by definition, with no lemma-form
+    -- available for the anonymous-constructor application.
+    change g • ((g⁻¹ * (h₂ : G) * g) • x) = (h₂ : G) • (g • x)
     simp only [smul_smul, mul_inv_cancel_left, mul_assoc]
 
 /-- **AE-disjointness of arbitrary `G`-translates related by an `H`-element.**
@@ -162,8 +169,8 @@ theorem IsFundamentalDomain.aedisjoint_smul_of_inv_mul_mem
   have h_core : AEDisjoint μ ((1 : H) • D) ((⟨g₁⁻¹ * g₂, h_mem⟩ : H) • D) :=
     hD.aedisjoint fun heq ↦ h_ne' <| by
       simpa [Subgroup.coe_one, eq_comm] using congr_arg (Subtype.val : H → G) heq
-  rw [one_smul, show ((⟨g₁⁻¹ * g₂, h_mem⟩ : H) • D : Set α) = (g₁⁻¹ * g₂) • D from rfl]
-    at h_core
+  rw [one_smul, coe_smul_set] at h_core
+  -- `AEDisjoint μ s t` is by definition `μ (s ∩ t) = 0`; there is no iff-lemma to rewrite with.
   change μ ((g₁ • D) ∩ (g₂ • D)) = 0
   rw [show (g₁ • D) ∩ (g₂ • D) = g₁ • (D ∩ ((g₁⁻¹ * g₂) • D)) by
       rw [Set.smul_set_inter, ← mul_smul, mul_inv_cancel_left], measure_smul]
