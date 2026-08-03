@@ -15,7 +15,8 @@ This file defines the evaluation map `ℂ[X₀, X₁] →ₐ[ℂ] ⨁ k, Modular
 polynomial in the Eisenstein series `E₄` and `E₆`.
 
 The proof is the classical induction on the weight. Below weight `12` each graded piece
-has dimension at most one and is spanned by a monomial in `E₄`, `E₆`; at weight `k ≥ 12`,
+has dimension at most one — zero in odd weights and in weight `2`, and otherwise spanned
+by a monomial in `E₄`, `E₆`; at weight `k ≥ 12`,
 subtracting a multiple of such a monomial leaves a cusp form, which is `Δ` times a form of
 weight `k − 12` by Mathlib's `CuspForm.discriminantEquiv`, and `Δ = (E₄³ − E₆²)/1728`.
 
