@@ -739,14 +739,18 @@ theorem evalE₄E₆_injective : Function.Injective evalE₄E₆ := by
   rw [evalE₄E₆_component_eq, map_sub, hpq, sub_self, DirectSum.zero_apply]
 
 /-- The graded ring of level-1 modular forms is isomorphic to the polynomial ring
-`ℂ[X₀, X₁]` via evaluation at `E₄` and `E₆`.
-
-The definition is exposed so that its defining action is available downstream through
-Mathlib's own `AlgEquiv.ofBijective_apply`, with no wrapper lemma. -/
-@[expose]
+`ℂ[X₀, X₁]` via evaluation at `E₄` and `E₆`. -/
 noncomputable def mvPolynomialEquivModularForms :
     MvPolynomial (Fin 2) ℂ ≃ₐ[ℂ] DirectSum ℤ (ModularForm 𝒮ℒ) :=
   AlgEquiv.ofBijective evalE₄E₆ ⟨evalE₄E₆_injective, evalE₄E₆_surjective⟩
+
+@[simp]
+lemma mvPolynomialEquivModularForms_apply (p : MvPolynomial (Fin 2) ℂ) :
+    mvPolynomialEquivModularForms p = evalE₄E₆ p := by
+  -- `change` exposes the sealed definition once, explicitly; the identification is
+  -- then Mathlib's `AlgEquiv.ofBijective_apply`.
+  change AlgEquiv.ofBijective evalE₄E₆ ⟨evalE₄E₆_injective, evalE₄E₆_surjective⟩ p = evalE₄E₆ p
+  exact AlgEquiv.ofBijective_apply _ _ p
 
 /-- `E₄` and `E₆` generate the entire graded ring of level 1 modular forms as an
 `ℂ`-algebra. -/
