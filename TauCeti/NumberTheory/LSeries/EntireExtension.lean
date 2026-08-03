@@ -34,6 +34,12 @@ Supporting general lemmas:
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/Modularforms/LFunction.lean`), as Layer-7 groundwork for the
 functional-equation and converse-theorem milestones.
+
+## References
+
+* The AINTLIB `LeanModularForms` project,
+  <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>
+  (`Modularforms/LFunction.lean`)
 -/
 
 public section
