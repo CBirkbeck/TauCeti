@@ -57,6 +57,12 @@ variable {N : ℕ} [NeZero N]
 def Gamma1PSL (N : ℕ) [NeZero N] : Subgroup PSL(2, ℤ) :=
   (Gamma1 N).map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))
 
+/-- Membership in `Gamma1PSL N`: the projective images of the elements of `Γ₁(N)`. -/
+theorem mem_Gamma1PSL_iff {x : PSL(2, ℤ)} :
+    x ∈ Gamma1PSL N ↔ ∃ g ∈ Gamma1 N, (QuotientGroup.mk g : PSL(2, ℤ)) = x := by
+  rw [Gamma1PSL]
+  exact Subgroup.mem_map
+
 /-- The image of the finite-index subgroup `Γ₁(N)` under the surjection onto `PSL(2, ℤ)`
 has finite index. -/
 instance : (Gamma1PSL N).FiniteIndex := by
