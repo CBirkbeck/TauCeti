@@ -112,11 +112,11 @@ private theorem abs_im_mul_conj_le_norm_sub_mul_add_mul_norm_sub_smul (u z v : �
   exact (abs_add_le _ _).trans (add_le_add (habs _ _) (habs _ _))
 
 /-- **A quadratic error cannot swallow the linear term.** If `z` lies within `K * a ^ 2` of the
-real multiple `a • v`, and `a` is small enough that `|a| * (4 * K) ≤ ‖v‖`, then `z` still inherits
+real multiple `a • v`, and `a` is small enough that `|a| * (2 * K) ≤ ‖v‖`, then `z` still inherits
 half of the length `|a| * ‖v‖` of that multiple. -/
 private theorem mul_norm_le_two_mul_norm_of_norm_sub_smul_le {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] {z v : E} {a K : ℝ} (hR : ‖z - a • v‖ ≤ K * a ^ 2)
-    (ha : |a| * (4 * K) ≤ ‖v‖) :
+    (ha : |a| * (2 * K) ≤ ‖v‖) :
     |a| * ‖v‖ ≤ 2 * ‖z‖ := by
   have h1 : ‖a • v‖ - ‖z - a • v‖ ≤ ‖z‖ := by
     simpa [norm_sub_rev z (a • v)] using norm_sub_norm_le (a • v) (a • v - z)
@@ -142,13 +142,13 @@ private theorem abs_div_sq_le_of_abs_le_mul_sq {x a b d N : ℝ} (hN : 0 ≤ N) 
     nlinarith [mul_le_mul_of_nonneg_right hx (sq_nonneg b), mul_le_mul_of_nonneg_left hsq hN]
 
 /-- **Pointwise bound on the real winding integrand near a `C^{1,1}` crossing.** For `t` close
-enough to `t₀` that `|t - t₀| * (4 * K) ≤ ‖deriv γ t₀‖`, the real winding integrand at
+enough to `t₀` that `|t - t₀| * (2 * K) ≤ ‖deriv γ t₀‖`, the real winding integrand at
 `γ t - w` is bounded independent of `t`. -/
 private theorem abs_realWindingIntegrand_le_of_lipschitzOnWith {γ : ℝ → ℂ} {w : ℂ} {t₀ ε : ℝ}
     {K : ℝ≥0} (hε_pos : 0 < ε) (hderiv : ∀ t ∈ Icc (t₀ - ε) (t₀ + ε), HasDerivAt γ (deriv γ t) t)
     (hlip : LipschitzOnWith K (deriv γ) (Icc (t₀ - ε) (t₀ + ε)))
     (h_eq : γ t₀ = w) (hvel : deriv γ t₀ ≠ 0) {t : ℝ} (ht : t ∈ Icc (t₀ - ε) (t₀ + ε))
-    (hρ : |t - t₀| * (4 * (K : ℝ)) ≤ ‖deriv γ t₀‖) :
+    (hρ : |t - t₀| * (2 * (K : ℝ)) ≤ ‖deriv γ t₀‖) :
     |realWindingIntegrand (γ t - w) (deriv γ t)| ≤
       4 * (2 * ‖deriv γ t₀‖ * K + K ^ 2 * ε) / ‖deriv γ t₀‖ ^ 2 := by
   have habs_le : |t - t₀| ≤ ε := by rw [abs_le]; constructor <;> linarith [ht.1, ht.2]
