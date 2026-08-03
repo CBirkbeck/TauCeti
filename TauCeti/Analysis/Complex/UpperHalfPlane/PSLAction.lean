@@ -22,8 +22,8 @@ This file also provides the maps connecting the groups:
 * `UpperHalfPlane.sl2zToPSL2R : SL(2, ℤ) →* PSL(2, ℝ)` (cast entries, then project),
   with kernel the center of `SL(2, ℤ)`;
 * `UpperHalfPlane.psl2zToPSL2R : PSL(2, ℤ) →* PSL(2, ℝ)`, the injective descent;
-* `UpperHalfPlane.glPosToPSL2R : GL(2, ℝ)⁺ → PSL(2, ℝ)`, the det-normalized
-  projective representative (a plain function — normalization is not multiplicative),
+* `UpperHalfPlane.glPosToPSL2R : GL(2, ℝ)⁺ →* PSL(2, ℝ)`, the det-normalized
+  projective representative — a monoid homomorphism, since positive scalars are central —
   acting on `ℍ` exactly as the original element.
 
 ## Main results
@@ -379,22 +379,49 @@ lemma GL_smul_pos_eq
     ring
   rw [h_num, h_denom, mul_div_mul_left _ _ hc_C]
 
-/-- The det-normalized `SL(2, ℝ)` representative of a `GL(2, ℝ)⁺` element: the matrix
-`(Real.sqrt g.det.val)⁻¹ • g.val.val` has determinant `1`. -/
-def glPosToSL2R (g : GL(2, ℝ)⁺) : SL(2, ℝ) :=
-  ⟨(Real.sqrt ((g : GL (Fin 2) ℝ).det.val))⁻¹ •
-      ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ), by
+/-- The det-normalized `SL(2, ℝ)` representative of a `GL(2, ℝ)⁺` element, as a monoid
+homomorphism: the matrix `(√ det g)⁻¹ • g` has determinant `1`, and normalization is
+multiplicative because positive scalars are central and `√` is multiplicative on them. -/
+def glPosToSL2R : GL(2, ℝ)⁺ →* SL(2, ℝ) where
+  toFun g :=
+    ⟨(Real.sqrt ((g : GL (Fin 2) ℝ).det.val))⁻¹ •
+        ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ), by
+      have hg_pos : 0 < ((g : GL (Fin 2) ℝ).det.val : ℝ) := g.property
+      change ((Real.sqrt ((g : GL (Fin 2) ℝ).det.val))⁻¹ •
+          ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)).det = 1
+      rw [Matrix.det_smul, Fintype.card_fin, inv_pow, Real.sq_sqrt hg_pos.le]
+      exact inv_mul_cancel₀ (ne_of_gt hg_pos)⟩
+  map_one' := by
+    apply Subtype.ext
+    simp
+  map_mul' g h := by
+    apply Subtype.ext
     have hg_pos : 0 < ((g : GL (Fin 2) ℝ).det.val : ℝ) := g.property
-    change ((Real.sqrt ((g : GL (Fin 2) ℝ).det.val))⁻¹ •
-        ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)).det = 1
-    rw [Matrix.det_smul, Fintype.card_fin, inv_pow, Real.sq_sqrt hg_pos.le]
-    exact inv_mul_cancel₀ (ne_of_gt hg_pos)⟩
+    have hh_pos : 0 < ((h : GL (Fin 2) ℝ).det.val : ℝ) := h.property
+    have h_det : ((g * h : GL(2, ℝ)⁺) : GL (Fin 2) ℝ).det.val =
+        (g : GL (Fin 2) ℝ).det.val * (h : GL (Fin 2) ℝ).det.val := by
+      simp [Units.val_mul]
+    have h_mat : (((g * h : GL(2, ℝ)⁺) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
+        ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) *
+          ((h : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) := rfl
+    change (Real.sqrt (((g * h : GL(2, ℝ)⁺) : GL (Fin 2) ℝ).det.val))⁻¹ •
+        (((g * h : GL(2, ℝ)⁺) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) = _
+    rw [h_det, h_mat, Real.sqrt_mul hg_pos.le, mul_inv]
+    rw [show ((Real.sqrt (g : GL (Fin 2) ℝ).det.val)⁻¹ *
+        (Real.sqrt (h : GL (Fin 2) ℝ).det.val)⁻¹) •
+        (((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) *
+          ((h : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)) =
+        ((Real.sqrt (g : GL (Fin 2) ℝ).det.val)⁻¹ •
+          ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)) *
+        ((Real.sqrt (h : GL (Fin 2) ℝ).det.val)⁻¹ •
+          ((h : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)) from
+      (smul_mul_smul_comm _ _ _ _).symm]
+    rfl
 
-/-- The projective representative of a `GL(2, ℝ)⁺` element: the `PSL(2, ℝ)`-image of
-`glPosToSL2R g`. This is a function, not a group hom, since the determinant
-normalization does not commute with matrix multiplication. -/
-def glPosToPSL2R (g : GL(2, ℝ)⁺) : PSL(2, ℝ) :=
-  (glPosToSL2R g : PSL(2, ℝ))
+/-- The projective representative of a `GL(2, ℝ)⁺` element: the composition of
+`glPosToSL2R` with the projection to `PSL(2, ℝ)`, a monoid homomorphism. -/
+def glPosToPSL2R : GL(2, ℝ)⁺ →* PSL(2, ℝ) :=
+  (QuotientGroup.mk' (Subgroup.center SL(2, ℝ))).comp glPosToSL2R
 
 /-- Action equivariance: the projective representative `glPosToPSL2R g` acts on
 `ℍ` exactly as `g` does, even though `det g` need not be `1`. -/
@@ -412,9 +439,7 @@ theorem glPosToPSL2R_smul (g : GL(2, ℝ)⁺) (τ : ℍ) :
     (Real.sqrt ((g : GL (Fin 2) ℝ).det.val))⁻¹ •
       ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)
   rw [Matrix.SpecialLinearGroup.mapGL_coe_matrix]
-  ext i j
-  rw [Matrix.SpecialLinearGroup.map_apply_coe]
-  simp [glPosToSL2R, Matrix.smul_apply]
+  rfl
 
 /-- Set-level action compatibility: the set-level analogue of
 `glPosToPSL2R_smul`, lifting pointwise action-equality on `ℍ` to set-image
