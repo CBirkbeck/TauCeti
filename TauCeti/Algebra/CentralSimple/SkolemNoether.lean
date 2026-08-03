@@ -230,10 +230,13 @@ theorem skolemNoether [IsSimpleRing A] [FiniteDimensional K A]
             rw [map_smul]
       _ = (Bimodule.of g).symm ((b ⊗ₜ (1 : Aᵐᵒᵖ) : B ⊗[K] Aᵐᵒᵖ) • Bimodule.of g u) := by rw [hu']
       _ = g b * u := by rw [Bimodule.smul_of]; simp
+  -- Name the two coercions of the constructed unit through the stable `Units` API rather than
+  -- relying on `Units.mkOfMulEqOne` reducing definitionally.
+  have hUval : ((Units.mkOfMulEqOne u v huv : Aˣ) : A) = u := Units.val_mkOfMulEqOne huv
+  have hUinv : (↑(Units.mkOfMulEqOne u v huv)⁻¹ : A) = v :=
+    Units.inv_eq_of_mul_eq_one_right (by rw [hUval]; exact huv)
   refine ⟨Units.mkOfMulEqOne u v huv, fun x ↦ ?_⟩
-  -- Both coercions of `Units.mkOfMulEqOne u v huv` are `rfl`, so no coercion lemma is needed.
-  change g x = u * f x * v
-  rw [hb x, mul_assoc, huv, mul_one]
+  rw [hUval, hUinv, hb x, mul_assoc, huv, mul_one]
 
 /-- **Every automorphism of a central simple algebra is inner.** A `K`-algebra automorphism of a
 finite-dimensional central simple `K`-algebra `A` is conjugation by a unit of `A`. -/
