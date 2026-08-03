@@ -93,15 +93,15 @@ coset. -/
 noncomputable instance instOneHeckeRing {H : Subgroup G} : One (𝕋 Δ H R) := ⟨single R 1 1⟩
 
 /-- The unit of the Hecke ring is the basis element of the identity double coset. -/
-theorem one_def {H : Subgroup G} : (1 : 𝕋 Δ H R) = single R 1 1 := rfl
+theorem one_def {H : Subgroup G} : (1 : 𝕋 Δ H R) = single R 1 1 := (rfl)
 
 /-- The identity of the Hecke ring at the left level is a left unit for the convolution
 product of Hecke coset modules. -/
 @[simp] theorem one_mul [IsHeckeTriple Δ H₁ H₁] [IsHeckeTriple Δ H₁ H₂]
     (f : HeckeCosetModule Δ H₁ H₂ R) : mul R (1 : 𝕋 Δ H₁ R) f = f := by
   classical
-  rw [one_def, mul_eq_sum, single,
-    Finsupp.sum_single_index (by simp only [zero_smul]; exact Finsupp.sum_fun_zero (f := f))]
+  rw [one_def, mul_eq_sum,
+    sum_single_index R (by simp only [zero_smul]; exact Finsupp.sum_fun_zero (f := f))]
   have inner : ∀ (D₂ : HeckeCoset Δ H₁ H₂) (b₂ : R),
       (1 : R) • b₂ • structureConstants R H₁ H₁ H₂ (1 : HeckeCoset Δ H₁ H₁).rep D₂.rep =
         single R D₂ b₂ := fun D₂ b₂ ↦ by
@@ -114,12 +114,12 @@ product of Hecke coset modules. -/
 @[simp] theorem mul_one [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₂]
     (f : HeckeCosetModule Δ H₁ H₂ R) : mul R f (1 : HeckeCosetModule Δ H₂ H₂ R) = f := by
   classical
-  rw [one_def, mul_eq_sum, single]
+  rw [one_def, mul_eq_sum]
   have inner : ∀ (D₁ : HeckeCoset Δ H₁ H₂) (b₁ : R),
-      (Finsupp.single (1 : HeckeCoset Δ H₂ H₂) (1 : R)).sum
+      (single R (1 : HeckeCoset Δ H₂ H₂) (1 : R)).sum
         (fun D₂ b₂ ↦ b₁ • b₂ • structureConstants R H₁ H₂ H₂ D₁.rep D₂.rep) =
         single R D₁ b₁ := fun D₁ b₁ ↦ by
-    rw [Finsupp.sum_single_index (by simp), one_smul, structureConstants_one_right,
+    rw [sum_single_index R (by simp), one_smul, structureConstants_one_right,
       HeckeCoset.mk_rep, smul_single_one]
   simp only [inner]
   exact sum_single R f
@@ -131,10 +131,9 @@ noncomputable instance instNonAssocSemiringHeckeRing {H : Subgroup G} [IsHeckeTr
   { (inferInstance : NonUnitalNonAssocSemiring (𝕋 Δ H R)),
     (inferInstance : One (𝕋 Δ H R)) with
     natCast := fun n ↦ single R 1 n
-    natCast_zero := by rw [Nat.cast_zero, single, Finsupp.single_zero]; rfl
+    natCast_zero := by rw [Nat.cast_zero]; exact single_zero R 1
     natCast_succ := fun n ↦ by
-      rw [Nat.cast_add, Nat.cast_one, single, Finsupp.single_add]
-      rfl
+      rw [Nat.cast_add, Nat.cast_one, single_add, ← one_def]
     one_mul := fun f ↦ HeckeCosetModule.one_mul R f
     mul_one := fun f ↦ HeckeCosetModule.mul_one R f }
 

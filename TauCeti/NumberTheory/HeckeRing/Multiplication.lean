@@ -78,7 +78,7 @@ noncomputable instance instModule : Module R (HeckeCosetModule Δ H₁ H₂ R) :
 
 /-- The convolution product of Hecke coset modules, defined via the structure constants. The
 diagonal case is the multiplication of the Hecke ring; see the `Mul (𝕋 Δ H R)` instance. -/
-@[expose] noncomputable def mul [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
+noncomputable def mul [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     (f : HeckeCosetModule Δ H₁ H₂ R) (g : HeckeCosetModule Δ H₂ H₃ R) :
     HeckeCosetModule Δ H₁ H₃ R :=
   f.sum fun D₁ b₁ ↦ g.sum fun D₂ b₂ ↦ b₁ • b₂ • structureConstants R H₁ H₂ H₃ D₁.rep D₂.rep
@@ -86,7 +86,7 @@ diagonal case is the multiplication of the Hecke ring; see the `Mul (𝕋 Δ H R
 lemma mul_eq_sum [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     (f : HeckeCosetModule Δ H₁ H₂ R) (g : HeckeCosetModule Δ H₂ H₃ R) : mul R f g =
       f.sum fun D₁ b₁ ↦ g.sum fun D₂ b₂ ↦ b₁ • b₂ • structureConstants R H₁ H₂ H₃ D₁.rep D₂.rep :=
-  rfl
+  (rfl)
 
 /-- The multiplication of the Hecke ring: the diagonal case of the convolution product
 `HeckeCosetModule.mul`. -/
@@ -100,7 +100,7 @@ lemma mul_def {H : Subgroup G} [IsHeckeTriple Δ H H] (f g : 𝕋 Δ H R) :
 /-- A basis element of the Hecke coset module: `single R D b` is the formal sum `b • [D]`. As
 for `Finsupp` itself, this is the type-correct way to produce elements of
 `HeckeCosetModule Δ H₁ H₂ R`. -/
-@[expose] noncomputable def single (D : HeckeCoset Δ H₁ H₂) (b : R) :
+noncomputable def single (D : HeckeCoset Δ H₁ H₂) (b : R) :
     HeckeCosetModule Δ H₁ H₂ R :=
   Finsupp.single D b
 
@@ -114,6 +114,31 @@ lemma smul_single_one (D : HeckeCoset Δ H₁ H₂) (b : R) : b • single R D 1
 
 @[simp]
 lemma sum_single (f : HeckeCosetModule Δ H₁ H₂ R) : f.sum (single R) = f := Finsupp.sum_single f
+
+/-- `Finsupp.single_zero`, as a wrapper-level equation. -/
+@[simp] lemma single_zero (D : HeckeCoset Δ H₁ H₂) : single R D (0 : R) = 0 :=
+  Finsupp.single_zero D
+
+/-- `Finsupp.single_add`, as a wrapper-level equation. -/
+lemma single_add (D : HeckeCoset Δ H₁ H₂) (b c : R) :
+    single R D (b + c) = single R D b + single R D c :=
+  Finsupp.single_add D b c
+
+/-- `Finsupp.sum_single_index`, as a wrapper-level equation: summing over a basis element
+evaluates the summand at its point. -/
+lemma sum_single_index {N : Type*} [AddCommMonoid N] {D : HeckeCoset Δ H₁ H₂} {b : R}
+    {F : HeckeCoset Δ H₁ H₂ → R → N} (h : F D 0 = 0) : (single R D b).sum F = F D b :=
+  Finsupp.sum_single_index h
+
+/-- `Finsupp.induction_linear`, restated for the wrapper type `HeckeCosetModule Δ H₁ H₂ R` in
+its basis vocabulary `single`, in the same way that `MonoidAlgebra.induction_linear` restates
+it for `MonoidAlgebra`: to prove a property of all elements, prove it for `0`, for sums, and
+for basis elements. -/
+lemma induction_linear {p : HeckeCosetModule Δ H₁ H₂ R → Prop}
+    (f : HeckeCosetModule Δ H₁ H₂ R) (h0 : p 0)
+    (hadd : ∀ f g : HeckeCosetModule Δ H₁ H₂ R, p f → p g → p (f + g))
+    (hsingle : ∀ (D : HeckeCoset Δ H₁ H₂) (b : R), p (single R D b)) : p f :=
+  Finsupp.induction_linear f h0 hadd hsingle
 
 /-- The convolution product of two basis elements. -/
 lemma mul_single_single [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]

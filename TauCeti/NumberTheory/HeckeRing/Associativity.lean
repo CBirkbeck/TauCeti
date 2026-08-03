@@ -217,7 +217,7 @@ open Classical in
 /-- The right-handed Fubini step: summing the structure constants against a further
 multiplicity over the double cosets of the product `H₂g₂H₃g₃H₄` counts, for each representative
 `σᵢ` of `H₁g₁H₂`, the multiplicity of `(σᵢg₁)⁻¹d`. -/
-lemma sum_image_mulMap_multiplicity_right [IsHeckeTriple Δ H₁ H₂]
+private lemma sum_image_mulMap_multiplicity_right [IsHeckeTriple Δ H₁ H₂]
     [IsHeckeTriple Δ H₂ H₃] [IsHeckeTriple Δ H₃ H₄] (g₁ g₂ g₃ d : Δ) :
     ∑ F ∈ Finset.univ.image (mulMap H₂ H₃ H₄ g₂ g₃),
         multiplicity H₂ H₃ H₄ (g₂ : G) (g₃ : G) (F.rep : G) *
@@ -240,7 +240,7 @@ lemma sum_image_mulMap_multiplicity_right [IsHeckeTriple Δ H₁ H₂]
 
 /-- Joining the right-handed Fubini step with the one-sided count: the right association counts
 pairs of representatives whose product moves `d` into `H₃g₃H₄`. -/
-lemma sum_multiplicity_eq_card [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
+private lemma sum_multiplicity_eq_card [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     [IsHeckeTriple Δ H₃ H₄] (g₁ g₂ g₃ d : Δ) :
     ∑ i : DecompQuotient H₁ H₂ (g₁ : G),
         multiplicity H₂ H₃ H₄ (g₂ : G) (g₃ : G) (((i.out : G) * g₁)⁻¹ * d) =
@@ -263,7 +263,7 @@ open Classical in
 /-- The left-handed Fubini step: the left association also counts pairs of representatives
 whose product moves `d` into `H₃g₃H₄`, using the invariance of the multiplicity across the
 left cosets of a double coset. -/
-lemma sum_image_mulMap_multiplicity_left [IsHeckeTriple Δ H₁ H₂]
+private lemma sum_image_mulMap_multiplicity_left [IsHeckeTriple Δ H₁ H₂]
     [IsHeckeTriple Δ H₂ H₃] [IsHeckeTriple Δ H₃ H₄] (g₁ g₂ g₃ d : Δ) :
     ∑ E ∈ Finset.univ.image (mulMap H₁ H₂ H₃ g₁ g₂),
         multiplicity H₁ H₂ H₃ (g₁ : G) (g₂ : G) (E.rep : G) *
@@ -430,8 +430,8 @@ lemma single_mul [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     (D₁ : HeckeCoset Δ H₁ H₂) (b₁ : R) (g : HeckeCosetModule Δ H₂ H₃ R) :
     mul R (single R D₁ b₁) g =
       g.sum fun D₂ b₂ ↦ b₁ • b₂ • structureConstants R H₁ H₂ H₃ D₁.rep D₂.rep := by
-  rw [mul_eq_sum, single]
-  exact Finsupp.sum_single_index (by simp only [zero_smul]; exact Finsupp.sum_fun_zero (f := g))
+  rw [mul_eq_sum]
+  exact sum_single_index R (by simp only [zero_smul]; exact Finsupp.sum_fun_zero (f := g))
 
 /-- Evaluation of the convolution product against a basis element on the right. -/
 lemma mul_single [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
@@ -439,15 +439,7 @@ lemma mul_single [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     mul R f (single R D₂ b₂) =
       f.sum fun D₁ b₁ ↦ b₁ • b₂ • structureConstants R H₁ H₂ H₃ D₁.rep D₂.rep := by
   rw [mul_eq_sum]
-  exact Finsupp.sum_congr fun D₁ _ ↦ Finsupp.sum_single_index (by simp)
-
-/-- `Finsupp.induction_linear`, restated for the wrapper type `HeckeCosetModule Δ H₁ H₂ R` so
-that the hypotheses match the `HeckeCosetModule` vocabulary. -/
-private lemma induction_linear {p : HeckeCosetModule Δ H₁ H₂ R → Prop}
-    (f : HeckeCosetModule Δ H₁ H₂ R) (h0 : p 0)
-    (hadd : ∀ f g : HeckeCosetModule Δ H₁ H₂ R, p f → p g → p (f + g))
-    (hsingle : ∀ (D : HeckeCoset Δ H₁ H₂) (b : R), p (single R D b)) : p f :=
-  Finsupp.induction_linear f h0 hadd hsingle
+  exact Finsupp.sum_congr fun D₁ _ ↦ sum_single_index R (by simp)
 
 /-- Associativity of the convolution product of Hecke coset modules, at mixed levels
 (Proposition 3.2 of [Shimura][shimura1971]). -/
