@@ -74,6 +74,17 @@ private lemma evalE₄E₆_monomial (a b : ℕ) :
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ b := by
   simp [map_mul, map_pow]
 
+private lemma evalE₄E₆_C_mul_monomial (c : ℂ) (a b : ℕ) :
+    evalE₄E₆ (MvPolynomial.C c * (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b)) =
+      c • (DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ a *
+        DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ b) := by
+  -- `evalE₄E₆` is definitionally `aeval ![…]`, so `aeval_C` computes the constant once
+  -- the equation is ascribed at that type; `rw` alone does not unfold the wrapper.
+  rw [map_mul,
+    show evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c from
+      MvPolynomial.aeval_C _ c,
+    evalE₄E₆_monomial a b, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul]
+
 private lemma exists_monomial_weight {k : ℕ} (hk : 4 ≤ k) (hkeven : Even k) :
     ∃ a b : ℕ, 4 * a + 6 * b = k := by
   obtain ⟨m, rfl⟩ := hkeven
@@ -111,21 +122,23 @@ private lemma directSum_of_E₄_pow_mul_E₆_pow_apply {a b n : ℕ}
       ring,
     DirectSum.of_eq_same]
 
+/-- Transport along the ring homomorphism `qExpansionRingHom`: the `q`-expansion of the
+weight-`n` component of `E₄^a * E₆^b` is the product of the `q`-expansions. -/
+private lemma qExpansion_of_E₄_pow_mul_E₆_pow {n a b : ℕ} (hab : 4 * a + 6 * b = n) :
+    qExpansion 1 ((DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ a *
+      DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ b) (n : ℤ)) =
+      qExpansion 1 E₄ ^ a * qExpansion 1 E₆ ^ b := by
+  rw [← ModularForm.qExpansionRingHom_apply (h := 1) one_pos one_mem_strictPeriods_SL,
+    directSum_of_E₄_pow_mul_E₆_pow_apply hab, map_mul, map_pow, map_pow,
+    ModularForm.qExpansionRingHom_apply, ModularForm.qExpansionRingHom_apply]
+
 private lemma monomial_qExpansion_coeff_zero_eq_one {n a b : ℕ} (hab : 4 * a + 6 * b = n) :
     (qExpansion 1
       ((DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ a *
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ b) (n : ℤ))).coeff 0 = 1 := by
-  -- Transport along the ring homomorphism `qExpansionRingHom`: the `q`-expansion of
-  -- the weight-`n` component of the product is the product of the `q`-expansions.
-  have hq : qExpansion 1 ((DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ a *
-      DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ b) (n : ℤ)) =
-      qExpansion 1 E₄ ^ a * qExpansion 1 E₆ ^ b := by
-    rw [← ModularForm.qExpansionRingHom_apply (h := 1) one_pos one_mem_strictPeriods_SL,
-      directSum_of_E₄_pow_mul_E₆_pow_apply hab, map_mul, map_pow, map_pow,
-      ModularForm.qExpansionRingHom_apply, ModularForm.qExpansionRingHom_apply]
   -- Both Eisenstein series are normalized to constant term `1`, so the zeroth
   -- coefficient of the product of their powers is `1`.
-  rw [hq, PowerSeries.coeff_mul]
+  rw [qExpansion_of_E₄_pow_mul_E₆_pow hab, PowerSeries.coeff_mul]
   simp [PowerSeries.coeff_pow,
     E_qExpansion_coeff_zero _ ⟨2, rfl⟩, E_qExpansion_coeff_zero _ ⟨3, rfl⟩]
 
@@ -191,15 +204,10 @@ private lemma surj_at_weight_inductive {n : ℕ} (hn12 : 12 ≤ n) (hk_even : Ev
   refine ⟨p1 * discriminantPoly +
     MvPolynomial.C c * (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b), ?_⟩
   -- First summand: the inductive witness times the discriminant polynomial evaluates
-  -- to the cusp part, through the discriminant factorization.
+  -- to the cusp part (through the discriminant factorization); second summand: the
+  -- scalar times the weight-`n` monomial.
   rw [map_add, map_mul, hp1, evalE₄E₆_discriminantPoly,
-    ← cuspForm_eq_discriminant_mul (f - c • mn) hg_cusp]
-  -- Second summand: `C c` evaluates to the scalar (`evalE₄E₆` is definitionally
-  -- `aeval ![…]`, so `aeval_C` applies once ascribed), and the monomial to the product.
-  rw [map_mul,
-    show evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c from
-      MvPolynomial.aeval_C _ c,
-    evalE₄E₆_monomial a b, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul]
+    ← cuspForm_eq_discriminant_mul (f - c • mn) hg_cusp, evalE₄E₆_C_mul_monomial]
 
 private lemma rank_one_of_lt_twelve {k : ℕ} (hk3 : 3 ≤ k) (hk2 : Even k) (hk12 : k < 12) :
     Module.rank ℂ (ModularForm 𝒮ℒ (↑k : ℤ)) = 1 := by
@@ -286,8 +294,10 @@ homomorphism `evalE₄E₆` is surjective. -/
 theorem evalE₄E₆_surjective : Function.Surjective evalE₄E₆ := by
   classical
   intro x
-  -- Decompose `x` into its graded components; each component lies in the range, and the
-  -- range is closed under sums.
+  -- Decompose `x` into its graded components; each component lies in the range, and
+  -- the range is closed under sums. The ascribed `show … from` fixes the rewrite
+  -- motive: rewriting with `sum_single` directly would also rewrite the copy of `x`
+  -- inside the sum it introduces.
   rw [show x = x.sum (fun i m ↦ DirectSum.of _ i m) from (DFinsupp.sum_single (f := x)).symm,
     ← AlgHom.mem_range]
   exact Subalgebra.sum_mem _ fun k _ ↦ surj_of_weight k (x k)
