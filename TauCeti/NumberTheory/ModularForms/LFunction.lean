@@ -79,8 +79,7 @@ lemma lSeries_apply [ModularFormClass F Γ k] (f : F) (s : ℂ) :
 
 /-- The point `i·t` lies in the upper half-plane when `0 < t`. -/
 lemma im_I_mul_pos {t : ℝ} (ht : 0 < t) : 0 < (Complex.I * (t : ℂ)).im := by
-  rw [Complex.mul_im, Complex.I_im, Complex.I_re, Complex.ofReal_re, Complex.ofReal_im]
-  simpa using ht
+  simpa only [Complex.I_mul_im, Complex.ofReal_re] using ht
 
 /-- **A function on `ℍ` along the positive imaginary axis**: `t > 0` maps to `f(i·t)`,
 and `t ≤ 0` to `0`. For a cusp form `f`, whose decay makes the integral converge, the
