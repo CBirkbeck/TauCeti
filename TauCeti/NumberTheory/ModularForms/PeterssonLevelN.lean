@@ -30,7 +30,7 @@ domain, and positive definiteness, are subsequent steps of the roadmap's Layer 3
 ## Main results
 
 * `CuspForm.petN_conj_symm`: Hermitian symmetry.
-* `CuspForm.petN_add_left`/`petN_add_right`/`petN_smul_right`/`petN_conj_smul_left`:
+* `CuspForm.petN_add_left`/`petN_add_right`/`petN_smul_right`/`petN_smul_left`:
   sesquilinearity.
 * `CuspForm.slash_Gamma1_eq`: the weight-`k` slash action of `γ ∈ Γ₁(N)` on a
   `Γ₁(N)`-cusp form is trivial.
@@ -74,26 +74,28 @@ theorem slash_Gamma1_eq (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)
 `petN f g = Σ_{[δ] ∈ SL₂(ℤ)/Γ₁(N)} ∫ τ in 𝒟, petersson k (f∣δ⁻¹) (g∣δ⁻¹) τ`. -/
 def petN (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) : ℂ :=
   ∑ q : SL(2, ℤ) ⧸ Gamma1 N,
-    peterssonInner k fd (⇑f ∣[k] (q.out)⁻¹) (⇑g ∣[k] (q.out)⁻¹)
+    UpperHalfPlane.peterssonInner k fd (⇑f ∣[k] (q.out)⁻¹) (⇑g ∣[k] (q.out)⁻¹)
 
 theorem petN_def (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     petN f g = ∑ q : SL(2, ℤ) ⧸ Gamma1 N,
-      peterssonInner k fd (⇑f ∣[k] (q.out)⁻¹) (⇑g ∣[k] (q.out)⁻¹) := (rfl)
+      UpperHalfPlane.peterssonInner k fd (⇑f ∣[k] (q.out)⁻¹) (⇑g ∣[k] (q.out)⁻¹) := (rfl)
 
 /-- Hermitian symmetry: `conj (petN g f) = petN f g`. -/
 theorem petN_conj_symm (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     starRingEnd ℂ (petN g f) = petN f g := by
-  simp only [petN_def, map_sum, peterssonInner_conj_symm]
+  simp only [petN_def, map_sum, UpperHalfPlane.peterssonInner_conj_symm]
 
 /-- The pairing with zero on the right vanishes. -/
 theorem petN_zero_right (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     petN f 0 = 0 := by
-  simp [petN_def, ModularForm.SL_slash, SlashAction.zero_slash, peterssonInner_zero_right]
+  simp [petN_def, ModularForm.SL_slash, SlashAction.zero_slash,
+    UpperHalfPlane.peterssonInner_zero_right]
 
 /-- The pairing with zero on the left vanishes. -/
 theorem petN_zero_left (g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     petN 0 g = 0 := by
-  simp [petN_def, ModularForm.SL_slash, SlashAction.zero_slash, peterssonInner_zero_left]
+  simp [petN_def, ModularForm.SL_slash, SlashAction.zero_slash,
+    UpperHalfPlane.peterssonInner_zero_left]
 
 /-- The Petersson integrand of slashed cusp forms is integrable on `𝒟`. -/
 theorem integrableOn_petersson_slash {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ]
@@ -119,13 +121,13 @@ theorem integrableOn_petersson_slash {F F' : Type*} [FunLike F ℍ ℂ] [FunLike
 theorem petN_neg_right (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     petN f (-g) = -petN f g := by
   simp only [petN_def, coe_neg, ModularForm.SL_slash, SlashAction.neg_slash,
-    peterssonInner_neg_right, Finset.sum_neg_distrib]
+    UpperHalfPlane.peterssonInner_neg_right, Finset.sum_neg_distrib]
 
 /-- Negation in the first argument. -/
 theorem petN_neg_left (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     petN (-f) g = -petN f g := by
   simp only [petN_def, coe_neg, ModularForm.SL_slash, SlashAction.neg_slash,
-    peterssonInner_neg_left, Finset.sum_neg_distrib]
+    UpperHalfPlane.peterssonInner_neg_left, Finset.sum_neg_distrib]
 
 /-- Additivity in the second argument. -/
 theorem petN_add_right (f g₁ g₂ : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
@@ -137,7 +139,7 @@ theorem petN_add_right (f g₁ g₂ : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     rw [coe_add]
     exact SlashAction.add_slash k _ _ _
   rw [h_slash]
-  exact peterssonInner_add_right k fd _ _ _
+  exact UpperHalfPlane.peterssonInner_add_right k fd _ _ _
     (integrableOn_petersson_slash f g₁ (q.out)⁻¹)
     (integrableOn_petersson_slash f g₂ (q.out)⁻¹)
 
@@ -155,11 +157,11 @@ theorem petN_smul_right (c : ℂ) (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k
     rw [IsGLPos.coe_smul]
     exact smul_slash_SL c _ _
   rw [h_slash]
-  exact peterssonInner_smul_right k _ c _ _
+  exact UpperHalfPlane.peterssonInner_smul_right k _ c _ _
 
 /-- Conjugate-complex scalar in the first argument:
 `petN (c • f) g = conj c * petN f g`. -/
-theorem petN_conj_smul_left (c : ℂ) (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+theorem petN_smul_left (c : ℂ) (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     petN (c • f) g = starRingEnd ℂ c * petN f g :=
   calc petN (c • f) g
       = starRingEnd ℂ (petN g (c • f)) := (petN_conj_symm _ _).symm
