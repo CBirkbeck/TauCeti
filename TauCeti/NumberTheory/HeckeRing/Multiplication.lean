@@ -37,7 +37,7 @@ stack merges.
 * the `NonUnitalNonAssocSemiring (𝕋 Δ H R)` instance.
 -/
 
-@[expose] public section
+public section
 
 open DoubleCoset Finsupp
 open scoped Pointwise
@@ -61,7 +61,15 @@ noncomputable def structureConstants (H₁ H₂ H₃ : Subgroup G) [IsHeckeTripl
 @[simp] lemma structureConstants_apply [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     (g₁ g₂ : Δ) (D : HeckeCoset Δ H₁ H₃) :
     structureConstants R H₁ H₂ H₃ g₁ g₂ D =
-      (multiplicity H₁ H₂ H₃ (g₁ : G) (g₂ : G) (D.rep : G) : R) := rfl
+      (multiplicity H₁ H₂ H₃ (g₁ : G) (g₂ : G) (D.rep : G) : R) := (rfl)
+
+open Classical in
+/-- The support of the structure constants is contained in the image of `mulMap`. -/
+lemma support_structureConstants_subset [IsHeckeTriple Δ H₁ H₂]
+    [IsHeckeTriple Δ H₂ H₃] (g₁ g₂ : Δ) :
+    (structureConstants R H₁ H₂ H₃ g₁ g₂).support ⊆
+      Finset.univ.image (HeckeCoset.mulMap H₁ H₂ H₃ g₁ g₂) :=
+  Finsupp.support_onFinset_subset
 
 /-- The `R`-module structure of the Hecke coset module, transporting the standard `Finsupp`
 module structure to the wrapper type. -/
@@ -70,7 +78,7 @@ noncomputable instance instModule : Module R (HeckeCosetModule Δ H₁ H₂ R) :
 
 /-- The convolution product of Hecke coset modules, defined via the structure constants. The
 diagonal case is the multiplication of the Hecke ring; see the `Mul (𝕋 Δ H R)` instance. -/
-noncomputable def mul [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
+@[expose] noncomputable def mul [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     (f : HeckeCosetModule Δ H₁ H₂ R) (g : HeckeCosetModule Δ H₂ H₃ R) :
     HeckeCosetModule Δ H₁ H₃ R :=
   f.sum fun D₁ b₁ ↦ g.sum fun D₂ b₂ ↦ b₁ • b₂ • structureConstants R H₁ H₂ H₃ D₁.rep D₂.rep
@@ -87,12 +95,13 @@ noncomputable instance instMulHeckeRing {H : Subgroup G} [IsHeckeTriple Δ H H] 
   mul f g := mul R f g
 
 lemma mul_def {H : Subgroup G} [IsHeckeTriple Δ H H] (f g : 𝕋 Δ H R) :
-    f * g = mul R f g := rfl
+    f * g = mul R f g := (rfl)
 
 /-- A basis element of the Hecke coset module: `single R D b` is the formal sum `b • [D]`. As
 for `Finsupp` itself, this is the type-correct way to produce elements of
 `HeckeCosetModule Δ H₁ H₂ R`. -/
-noncomputable def single (D : HeckeCoset Δ H₁ H₂) (b : R) : HeckeCosetModule Δ H₁ H₂ R :=
+@[expose] noncomputable def single (D : HeckeCoset Δ H₁ H₂) (b : R) :
+    HeckeCosetModule Δ H₁ H₂ R :=
   Finsupp.single D b
 
 @[grind =]

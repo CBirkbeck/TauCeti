@@ -383,14 +383,6 @@ open DoubleCoset
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H₁ H₂ H₃ H₄ : Subgroup G}
   (R : Type*) [Semiring R]
 
-open Classical in
-/-- The support of the structure constants is contained in the image of `mulMap`. -/
-private lemma support_structureConstants_subset [IsHeckeTriple Δ H₁ H₂]
-    [IsHeckeTriple Δ H₂ H₃] (g₁ g₂ : Δ) :
-    (structureConstants R H₁ H₂ H₃ g₁ g₂).support ⊆
-      Finset.univ.image (HeckeCoset.mulMap H₁ H₂ H₃ g₁ g₂) :=
-  Finsupp.support_onFinset_subset
-
 /-- `Finsupp.sum_smul_index`, restated for the wrapper type `HeckeCosetModule Δ H₁ H₂ R`. -/
 private lemma sum_smul_index_T {N : Type*} [AddCommMonoid N] (a : R)
     (f : HeckeCosetModule Δ H₁ H₂ R) (F : HeckeCoset Δ H₁ H₂ → R → N) (h0 : ∀ D, F D 0 = 0) :
