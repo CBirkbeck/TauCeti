@@ -27,8 +27,9 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 ## Main definitions
 
 * `UpperHalfPlane.peterssonInner`: the Petersson pairing — the set integral of the
-  Petersson integrand over an arbitrary `D : Set ℍ`; it is an inner product only once a
-  domain and integrability are supplied.
+  Petersson integrand over an arbitrary `D : Set ℍ`. It is a pairing for every `D`;
+  positive definiteness is a separate result of the level-one-domain specialization
+  (`CuspForm.peterssonInnerFd_definite`).
 * `CuspForm.peterssonInnerFd`: the level-one-domain pairing of two cusp forms (over `𝒟`,
   whatever the level).
 
@@ -438,17 +439,31 @@ theorem peterssonInnerFd_zero_right (f : CuspForm Γ k) : peterssonInnerFd f 0 =
 theorem peterssonInnerFd_zero_left (g : CuspForm Γ k) : peterssonInnerFd 0 g = 0 := by
   simp [peterssonInnerFd_def]
 
+@[simp]
+theorem peterssonInnerFd_neg_right (f g : CuspForm Γ k) :
+    peterssonInnerFd f (-g) = -peterssonInnerFd f g := by
+  simp only [peterssonInnerFd_def, coe_neg]
+  exact UpperHalfPlane.peterssonInner_neg_right k ModularGroup.fd f g
+
+@[simp]
+theorem peterssonInnerFd_neg_left (f g : CuspForm Γ k) :
+    peterssonInnerFd (-f) g = -peterssonInnerFd f g := by
+  simp only [peterssonInnerFd_def, coe_neg]
+  exact UpperHalfPlane.peterssonInner_neg_left k ModularGroup.fd f g
+
 section HasDetOne
 
 variable [Γ.HasDetOne]
 
 /-- The level-one-domain pairing is ℂ-linear in the second argument. -/
+@[simp]
 theorem peterssonInnerFd_smul_right (c : ℂ) (f g : CuspForm Γ k) :
     peterssonInnerFd f (c • g) = c * peterssonInnerFd f g := by
   simp only [peterssonInnerFd_def, IsGLPos.coe_smul]
   exact UpperHalfPlane.peterssonInner_smul_right k ModularGroup.fd c f g
 
 /-- The level-one-domain pairing is conjugate-linear in the first argument. -/
+@[simp]
 theorem peterssonInnerFd_smul_left (c : ℂ) (f g : CuspForm Γ k) :
     peterssonInnerFd (c • f) g = conj c * peterssonInnerFd f g := by
   simp only [peterssonInnerFd_def, IsGLPos.coe_smul]
@@ -461,6 +476,7 @@ section IsArithmetic
 variable [Γ.IsArithmetic]
 
 /-- Additivity of the level-one-domain pairing in the second argument. -/
+@[simp]
 theorem peterssonInnerFd_add_right (f g₁ g₂ : CuspForm Γ k) :
     peterssonInnerFd f (g₁ + g₂) = peterssonInnerFd f g₁ + peterssonInnerFd f g₂ := by
   simp only [peterssonInnerFd_def, coe_add]
@@ -468,6 +484,7 @@ theorem peterssonInnerFd_add_right (f g₁ g₂ : CuspForm Γ k) :
     (integrableOn_petersson_fd_left k Γ f g₁) (integrableOn_petersson_fd_left k Γ f g₂)
 
 /-- Additivity of the level-one-domain pairing in the first argument. -/
+@[simp]
 theorem peterssonInnerFd_add_left (f₁ f₂ g : CuspForm Γ k) :
     peterssonInnerFd (f₁ + f₂) g = peterssonInnerFd f₁ g + peterssonInnerFd f₂ g := by
   rw [← peterssonInnerFd_conj_symm, peterssonInnerFd_add_right, map_add,
