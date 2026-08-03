@@ -147,6 +147,20 @@ theorem subgroupQuotientProj_basepoint (H : Subgroup (FundamentalGroup X x₀)) 
     subgroupQuotientProj x₀ H (SubgroupQuotient.basepoint x₀ H) = x₀ :=
   subgroupQuotientProj_mk x₀ H _
 
+/-- **A point over the distinguished point of the quotient lies over the basepoint.** The descended
+projection composed with the quotient covering map is the universal-cover projection, so any point
+of the fibre over `SubgroupQuotient.basepoint x₀ H` projects to `x₀`. -/
+theorem proj_eq_of_mem_subgroupQuotientMap_fibre (H : Subgroup (FundamentalGroup X x₀))
+    (y : (subgroupQuotientMap x₀ H) ⁻¹' {SubgroupQuotient.basepoint x₀ H}) :
+    proj (y : UniversalCover x₀) = x₀ := by
+  have hb : subgroupQuotientMap x₀ H y = SubgroupQuotient.basepoint x₀ H := by
+    simpa only [Set.mem_preimage, Set.mem_singleton_iff] using y.2
+  calc
+    proj (y : UniversalCover x₀) = subgroupQuotientProj x₀ H (subgroupQuotientMap x₀ H y) :=
+      congrFun (subgroupQuotientProj_comp_subgroupQuotientMap x₀ H) y |>.symm
+    _ = subgroupQuotientProj x₀ H (SubgroupQuotient.basepoint x₀ H) := by rw [hb]
+    _ = x₀ := subgroupQuotientProj_basepoint x₀ H
+
 /-- The descended endpoint projection is continuous. -/
 theorem continuous_subgroupQuotientProj (H : Subgroup (FundamentalGroup X x₀)) :
     Continuous (subgroupQuotientProj x₀ H) := by
