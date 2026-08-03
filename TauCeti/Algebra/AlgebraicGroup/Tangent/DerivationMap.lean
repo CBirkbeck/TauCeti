@@ -110,9 +110,11 @@ private noncomputable def derivationCompAux (φ : A' →ₐc[R] A)
 private lemma derivationCompAux_apply (φ : A' →ₐc[R] A)
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) (a : A') :
     derivationCompAux (B := B) φ d a = d ((φ : A' →ₐ[R] A) a) := by
-  -- `counitAlgebraCongr` must be unfolded rather than applied through an `_apply` lemma: the
-  -- `Algebra A' (CounitAlgebra R A B)` instance it takes lives only inside `derivationCompAux`,
-  -- so no lemma stated outside that body can mention it. See the PR discussion.
+  -- `counitAlgebraCongr` is unfolded rather than applied through an `_apply` lemma. Its `hmap`
+  -- argument is supplied here as `fun _ => rfl`, elaborated under the `letI` algebra instance of
+  -- `derivationCompAux`, in which the two sides of `hmap` are the *same* term; the stored proof
+  -- therefore carries a reflexivity type. An `_apply` lemma, whose `hmap` has the general
+  -- non-reflexive type, does not match this occurrence, and `rw`/`simp only` find no pattern.
   simp only [derivationCompAux, counitAlgebraCongr, Derivation.linearEquiv_coe_comp,
     LinearMap.coe_comp, Function.comp_apply, LinearMap.restrictScalars_apply,
     AlgEquiv.toLinearMap_apply, AlgEquiv.ofRingEquiv_apply, RingEquiv.trans_apply,
