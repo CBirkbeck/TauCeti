@@ -48,10 +48,17 @@ union of `n` translates. The topology of `𝒟`/`𝒟ᵒ` (`ModularGroup.isClose
 `ModularGroup.isOpen_fdo`, `ModularGroup.fd_eq_closure_fdo`) comes from
 `Mathlib/NumberTheory/Modular.lean`; this file adds their measure theory.
 
+Ported from the AINTLIB `LeanModularForms` project's
+`LeanModularForms/Modularforms/PeterssonInnerProduct.lean` (Chris Birkbeck), rewritten to
+consume Mathlib's `MeasureSpace ℍ` instance instead of constructing the hyperbolic measure.
+
 ## References
 
 * Diamond–Shurman, *A first course in modular forms*, §5.4
 * Miyake, *Modular forms*, §2.5
+* The AINTLIB `LeanModularForms` project,
+  <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>
+  (`Modularforms/PeterssonInnerProduct.lean`)
 -/
 
 public section
