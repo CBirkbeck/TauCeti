@@ -192,15 +192,6 @@ def sl2zToPSL2R : SL(2, ℤ) →* PSL(2, ℝ) :=
     sl2zToPSL2R g =
       (↑(Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ) g) : PSL(2, ℝ)) := (rfl)
 
-/-- Representative-action compatibility: the `PSL(2, ℝ)`-image of an integer `SL`
-element acts on `ℍ` exactly as the underlying `SL(2, ℤ)`-element does (under the
-`SL(2, ℤ) → SL(2, ℝ)` embedding via `Int.castRingHom`). Not `@[simp]`: simp already
-derives it from `sl2zToPSL2R_apply` and `PSL_R_smul_coe`. -/
-theorem sl2zToPSL2R_smul (g : SL(2, ℤ)) (τ : ℍ) :
-    sl2zToPSL2R g • τ =
-      (Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ) g) • τ :=
-  (rfl)
-
 private lemma map_intCast_entry (g : SL(2, ℤ)) (i j : Fin 2) :
     ((Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ) g : SL(2, ℝ)) :
       Matrix (Fin 2) (Fin 2) ℝ) i j =
@@ -383,14 +374,5 @@ theorem glPosToPSL2R_smul (g : GL(2, ℝ)⁺) (τ : ℍ) :
       ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)
   rw [Matrix.SpecialLinearGroup.mapGL_coe_matrix]
   rfl
-
-/-- Set-level action compatibility: the set-level analogue of
-`glPosToPSL2R_smul`, lifting pointwise action-equality on `ℍ` to set-image
-equality. -/
-@[simp]
-theorem glPosToPSL2R_smul_set (g : GL(2, ℝ)⁺) (S : Set ℍ) :
-    (glPosToPSL2R g • S : Set ℍ) = ((g : GL(2, ℝ)⁺) • S : Set ℍ) := by
-  ext τ
-  simp [Set.mem_smul_set, glPosToPSL2R_smul]
 
 end UpperHalfPlane
