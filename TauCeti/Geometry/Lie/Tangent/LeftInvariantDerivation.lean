@@ -187,7 +187,7 @@ private noncomputable def mulInvariantDerivation [ContMDiffMul I ∞ G]
 
 /-- `mulInvariantDerivation v` is left invariant: differentiating along a left-invariant
 vector field commutes with left translation. -/
-private theorem hfdifferential_evalAt_one_mulInvariantDerivation [ContMDiffMul I ∞ G]
+private theorem mulInvariantDerivation_left_invariant [ContMDiffMul I ∞ G]
     (v : GroupLieAlgebra I G) (g : G) :
     (𝒅ₕ (smoothLeftMul_one I g)) (Derivation.evalAt 1 (mulInvariantDerivation v)) =
       Derivation.evalAt g (mulInvariantDerivation v) := by
@@ -223,7 +223,7 @@ noncomputable def tangentToLeftInvariantDerivation
     GroupLieAlgebra I G →ₗ[𝕜] LeftInvariantDerivation I G where
   toFun v :=
     { toDerivation := mulInvariantDerivation v
-      left_invariant'' := hfdifferential_evalAt_one_mulInvariantDerivation v }
+      left_invariant'' := mulInvariantDerivation_left_invariant v }
   map_add' v w := by
     apply LeftInvariantDerivation.evalAt_one_injective
     ext f
