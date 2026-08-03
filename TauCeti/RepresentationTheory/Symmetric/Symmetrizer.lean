@@ -356,18 +356,6 @@ theorem youngSymmetrizerOver_coeff (t : YoungTableau μ) (σ : Equiv.Perm (Fin �
     (youngSymmetrizerOver k t).coeff σ = algebraMap ℚ k ((youngSymmetrizer t).coeff σ) := by
   rw [youngSymmetrizerOver_def, MonoidAlgebra.coeff_mapAlgHom, Algebra.ofId_apply]
 
-/-- **The row group fixes the transported Young symmetrizer on the left.** This is
-`TauCeti.mul_youngSymmetrizer_left` carried into `k`, the companion of
-`TauCeti.mul_youngSymmetrizerOver_right`. -/
-@[simp]
-theorem mul_youngSymmetrizerOver_left (t : YoungTableau μ) (p : rowSubgroup t) :
-    MonoidAlgebra.single (p : Equiv.Perm (Fin μ.card)) 1 * youngSymmetrizerOver k t =
-      youngSymmetrizerOver k t := by
-  have h := congrArg (MonoidAlgebra.mapAlgHom (Equiv.Perm (Fin μ.card)) (Algebra.ofId ℚ k))
-    (mul_youngSymmetrizer_left t p)
-  rw [map_mul, MonoidAlgebra.mapAlgHom_single, map_one] at h
-  rwa [youngSymmetrizerOver_def]
-
 /-- **The column group acts on the transported Young symmetrizer through its sign character.**
 This is `TauCeti.mul_youngSymmetrizer_right` carried into `k`. The sign keeps acting as a rational
 scalar, which is available because `k` is a `ℚ`-algebra; it cannot be phrased as a `ℤ`-action,
