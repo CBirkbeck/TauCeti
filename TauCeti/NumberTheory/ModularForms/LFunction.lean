@@ -58,10 +58,6 @@ noncomputable section
 
 open Filter LSeries UpperHalfPlane
 
-/-- The point `i·t` lies strictly above the real axis when `0 < t`. -/
-lemma Complex.im_I_mul_pos {t : ℝ} (ht : 0 < t) : 0 < (Complex.I * (t : ℂ)).im := by
-  simpa only [Complex.I_mul_im, Complex.ofReal_re] using ht
-
 namespace ModularForm
 
 variable {k : ℤ} {Γ : Subgroup (GL (Fin 2) ℝ)}
@@ -90,11 +86,14 @@ lemma lSeries_apply [ModularFormClass F Γ k] (f : F) (s : ℂ) :
 and `t ≤ 0` to `0`. For a cusp form `f`, whose decay makes the integral converge, the
 Mellin transform of this restriction is the completed L-function. -/
 def imAxis (f : ℍ → ℂ) (t : ℝ) : ℂ :=
-  if h : 0 < t then f ⟨Complex.I * (t : ℂ), Complex.im_I_mul_pos h⟩ else 0
+  if h : 0 < t then
+    f ⟨Complex.I * (t : ℂ), by simpa only [Complex.I_mul_im, Complex.ofReal_re] using h⟩
+  else 0
 
 @[simp]
 lemma imAxis_apply_of_pos (f : ℍ → ℂ) {t : ℝ} (ht : 0 < t) :
-    imAxis f t = f ⟨Complex.I * (t : ℂ), Complex.im_I_mul_pos ht⟩ := by
+    imAxis f t =
+      f ⟨Complex.I * (t : ℂ), by simpa only [Complex.I_mul_im, Complex.ofReal_re] using ht⟩ := by
   rw [imAxis, dif_pos ht]
 
 @[simp]
