@@ -14,9 +14,10 @@ This file defines the evaluation map `ℂ[X₀, X₁] →ₐ[ℂ] ⨁ k, Modular
 `X₀ ↦ E₄`, `X₁ ↦ E₆`, and proves it is surjective: every modular form of level one is a
 polynomial in the Eisenstein series `E₄` and `E₆`.
 
-The proof is the classical induction on the weight. Below weight `12` each graded piece
-has dimension at most one — zero in odd weights and in weight `2`, and otherwise spanned
-by a monomial in `E₄`, `E₆`; at weight `k ≥ 12`,
+The proof is the classical induction on the weight. Negative-weight pieces vanish. In
+nonnegative weight below `12` each graded piece has dimension at most one — zero in odd
+weights and in weight `2`, and otherwise spanned by a monomial in `E₄`, `E₆`; at weight
+`k ≥ 12`,
 subtracting a multiple of such a monomial leaves a cusp form, which is `Δ` times a form of
 weight `k − 12` by Mathlib's `CuspForm.discriminantEquiv`, and `Δ = (E₄³ − E₆²)/1728`.
 
@@ -60,12 +61,12 @@ def evalE₄E₆ :
     ![DirectSum.of (ModularForm 𝒮ℒ) 4 E₄, DirectSum.of (ModularForm 𝒮ℒ) 6 E₆]
 
 @[simp]
-lemma evalE₄E₆_X0 :
+lemma evalE₄E₆_X_zero :
     evalE₄E₆ (MvPolynomial.X 0) = DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ := by
   simp [evalE₄E₆]
 
 @[simp]
-lemma evalE₄E₆_X1 :
+lemma evalE₄E₆_X_one :
     evalE₄E₆ (MvPolynomial.X 1) = DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ := by
   simp [evalE₄E₆]
 
@@ -176,7 +177,7 @@ private lemma evalE₄E₆_discriminantPoly :
   -- Unfold the polynomial, push the algebra homomorphism through scalar, difference
   -- and powers onto the generators, then recognize `Δ = (E₄³ − E₆²)/1728` in its
   -- graded form.
-  rw [discriminantPoly, map_smul, map_sub, map_pow, map_pow, evalE₄E₆_X0, evalE₄E₆_X1,
+  rw [discriminantPoly, map_smul, map_sub, map_pow, map_pow, evalE₄E₆_X_zero, evalE₄E₆_X_one,
     ← discriminant_eq_E₄_cube_sub_E₆_sq_graded]
 
 private lemma surj_at_weight_inductive {n : ℕ} (hn12 : 12 ≤ n) (hk_even : Even (n : ℤ))
@@ -231,10 +232,10 @@ private lemma surj_at_weight_le_six {n : ℕ} (hn : n = 0 ∨ n = 2 ∨ n = 4 �
       ModularForm.levelOne_weight_two_rank_zero) f
   · exact surj_of_rank_one ModularForm.levelOne_weight_four_rank_one
       (E_ne_zero (k := 4) (by norm_num) ⟨2, rfl⟩)
-      (MvPolynomial.X 0) evalE₄E₆_X0 f
+      (MvPolynomial.X 0) evalE₄E₆_X_zero f
   · exact surj_of_rank_one ModularForm.levelOne_weight_six_rank_one
       (E_ne_zero (k := 6) (by norm_num) ⟨3, rfl⟩)
-      (MvPolynomial.X 1) evalE₄E₆_X1 f
+      (MvPolynomial.X 1) evalE₄E₆_X_one f
 
 private lemma surj_at_weight_eight_or_ten {n : ℕ} (hn : n = 8 ∨ n = 10)
     (f : ModularForm 𝒮ℒ ↑n) :
@@ -245,7 +246,7 @@ private lemma surj_at_weight_eight_or_ten {n : ℕ} (hn : n = 8 ∨ n = 10)
       (ModularForm.mul_ne_zero ⟨1, one_mem_strictPeriods_SL, one_pos⟩ (f := E₄) (g := E₄)
         (E_ne_zero (by norm_num) ⟨2, rfl⟩) (E_ne_zero (by norm_num) ⟨2, rfl⟩))
       (MvPolynomial.X 0 ^ 2) ?_ f
-    rw [map_pow, evalE₄E₆_X0, pow_two, DirectSum.of_mul_of]
+    rw [map_pow, evalE₄E₆_X_zero, pow_two, DirectSum.of_mul_of]
     exact DirectSum.of_eq_of_gradedMonoid_eq
       (ModularForm.gradedMonoid_eq_of_cast (by norm_num : (4 : ℤ) + 4 = 8) rfl)
   · refine surj_of_rank_one
@@ -253,7 +254,7 @@ private lemma surj_at_weight_eight_or_ten {n : ℕ} (hn : n = 8 ∨ n = 10)
       (ModularForm.mul_ne_zero ⟨1, one_mem_strictPeriods_SL, one_pos⟩ (f := E₄) (g := E₆)
         (E_ne_zero (by norm_num) ⟨2, rfl⟩) (E_ne_zero (by norm_num) ⟨3, rfl⟩))
       (MvPolynomial.X 0 * MvPolynomial.X 1) ?_ f
-    rw [map_mul, evalE₄E₆_X0, evalE₄E₆_X1, DirectSum.of_mul_of]
+    rw [map_mul, evalE₄E₆_X_zero, evalE₄E₆_X_one, DirectSum.of_mul_of]
     exact DirectSum.of_eq_of_gradedMonoid_eq
       (ModularForm.gradedMonoid_eq_of_cast (by norm_num : (4 : ℤ) + 6 = 10) rfl)
 
