@@ -26,8 +26,9 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 
 ## Main definitions
 
-* `UpperHalfPlane.peterssonInner`: the Petersson inner product, parameterized by weight `k`
-  and fundamental domain `D`.
+* `UpperHalfPlane.peterssonInner`: the Petersson pairing — the set integral of the
+  Petersson integrand over an arbitrary `D : Set ℍ`; it is an inner product only once a
+  domain and integrability are supplied.
 * `CuspForm.peterssonInnerFd`: the level-one-domain pairing of two cusp forms (over `𝒟`,
   whatever the level).
 
@@ -340,6 +341,7 @@ theorem peterssonInner_add_left (k : ℤ) (D : Set ℍ) (f₁ f₂ g : ℍ → �
     ring)
 
 /-- Scalar multiplication in the second argument. -/
+@[simp]
 theorem peterssonInner_smul_right (k : ℤ) (D : Set ℍ) (c : ℂ) (f g : ℍ → ℂ) :
     peterssonInner k D f (c • g) = c * peterssonInner k D f g := by
   simp only [peterssonInner]
@@ -349,6 +351,7 @@ theorem peterssonInner_smul_right (k : ℤ) (D : Set ℍ) (c : ℂ) (f g : ℍ �
     ring)
 
 /-- Conjugate-scalar multiplication in the left argument. -/
+@[simp]
 theorem peterssonInner_smul_left (k : ℤ) (D : Set ℍ) (c : ℂ) (f g : ℍ → ℂ) :
     peterssonInner k D (c • f) g = conj c * peterssonInner k D f g := by
   simp only [peterssonInner]
@@ -412,9 +415,9 @@ standard fundamental domain `𝒟` for `SL₂(ℤ)`, whatever the level `Γ` —
 name marks that the integration domain is `𝒟`, not a `Γ`-fundamental domain.
 
 This is **not** the `Γ \ ℍ`-normalized Petersson inner product, which integrates over a
-`Γ`-fundamental domain. It is nonetheless Hermitian-sesquilinear and positive definite
-for cusp forms of any arithmetic level (`CuspForm.peterssonInnerFd_definite`), which is
-exactly how the level-`N` pairing's definiteness is reduced to level one. -/
+`Γ`-fundamental domain. It is nonetheless Hermitian-sesquilinear
+(`peterssonInnerFd_add_left`/`_right`, `peterssonInnerFd_smul_left`/`_right`) and positive
+definite for cusp forms of any arithmetic level (`peterssonInnerFd_definite`, below). -/
 def peterssonInnerFd (f g : CuspForm Γ k) : ℂ :=
   UpperHalfPlane.peterssonInner k ModularGroup.fd f g
 
@@ -434,5 +437,65 @@ theorem peterssonInnerFd_zero_right (f : CuspForm Γ k) : peterssonInnerFd f 0 =
 @[simp]
 theorem peterssonInnerFd_zero_left (g : CuspForm Γ k) : peterssonInnerFd 0 g = 0 := by
   simp [peterssonInnerFd_def]
+
+section HasDetOne
+
+variable [Γ.HasDetOne]
+
+/-- The level-one-domain pairing is ℂ-linear in the second argument. -/
+theorem peterssonInnerFd_smul_right (c : ℂ) (f g : CuspForm Γ k) :
+    peterssonInnerFd f (c • g) = c * peterssonInnerFd f g := by
+  simp only [peterssonInnerFd_def, IsGLPos.coe_smul]
+  exact UpperHalfPlane.peterssonInner_smul_right k ModularGroup.fd c f g
+
+/-- The level-one-domain pairing is conjugate-linear in the first argument. -/
+theorem peterssonInnerFd_smul_left (c : ℂ) (f g : CuspForm Γ k) :
+    peterssonInnerFd (c • f) g = conj c * peterssonInnerFd f g := by
+  simp only [peterssonInnerFd_def, IsGLPos.coe_smul]
+  exact UpperHalfPlane.peterssonInner_smul_left k ModularGroup.fd c f g
+
+end HasDetOne
+
+section IsArithmetic
+
+variable [Γ.IsArithmetic]
+
+/-- Additivity of the level-one-domain pairing in the second argument. -/
+theorem peterssonInnerFd_add_right (f g₁ g₂ : CuspForm Γ k) :
+    peterssonInnerFd f (g₁ + g₂) = peterssonInnerFd f g₁ + peterssonInnerFd f g₂ := by
+  simp only [peterssonInnerFd_def, coe_add]
+  exact UpperHalfPlane.peterssonInner_add_right k ModularGroup.fd f g₁ g₂
+    (integrableOn_petersson_fd_left k Γ f g₁) (integrableOn_petersson_fd_left k Γ f g₂)
+
+/-- Additivity of the level-one-domain pairing in the first argument. -/
+theorem peterssonInnerFd_add_left (f₁ f₂ g : CuspForm Γ k) :
+    peterssonInnerFd (f₁ + f₂) g = peterssonInnerFd f₁ g + peterssonInnerFd f₂ g := by
+  rw [← peterssonInnerFd_conj_symm, peterssonInnerFd_add_right, map_add,
+    peterssonInnerFd_conj_symm, peterssonInnerFd_conj_symm]
+
+/-- **Positive definiteness of the level-one-domain pairing**: a cusp form of any
+arithmetic level with vanishing self-pairing is zero.
+
+The self-pairing vanishing forces `f = 0` on the open fundamental domain `𝒟ᵒ`
+(`eq_zero_on_fd_of_peterssonInner_self_eq_zero`), and a holomorphic function on `ℍ`
+vanishing on a nonempty open set vanishes identically
+(`UpperHalfPlane.eq_zero_of_frequently`). -/
+theorem peterssonInnerFd_definite (f : CuspForm Γ k) (hpet : peterssonInnerFd f f = 0) :
+    f = 0 := by
+  rw [peterssonInnerFd_def] at hpet
+  have hfdo : ∀ τ ∈ ModularGroup.fdo, f τ = 0 := fun τ hτ ↦
+    eq_zero_on_fd_of_peterssonInner_self_eq_zero f hpet (ModularGroup.fdo_subset_fd hτ)
+  set τ₀ : ℍ := ⟨⟨0, 2⟩, by norm_num⟩ with hτ₀_def
+  have hτ₀ : τ₀ ∈ ModularGroup.fdo := by
+    constructor
+    · norm_num [hτ₀_def, Complex.normSq_apply]
+    · norm_num [hτ₀_def]
+  have hev := Filter.eventually_of_mem (ModularGroup.isOpen_fdo.mem_nhds hτ₀) hfdo
+  have h := UpperHalfPlane.eq_zero_of_frequently (CuspFormClass.holo f)
+    (hev.filter_mono nhdsWithin_le_nhds).frequently
+  ext τ
+  exact congr_fun h τ
+
+end IsArithmetic
 
 end CuspForm
