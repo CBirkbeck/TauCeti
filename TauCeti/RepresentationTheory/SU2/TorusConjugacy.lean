@@ -56,13 +56,15 @@ namespace SU2
 
 /-! ### Torus conjugacy -/
 
-/-- **A unitary diagonalising `H` diagonalises every scalar-plus-multiple of `H`.** Conjugation is
-linear and fixes the identity, so it carries `a • 1 + b • H` to `a • 1 + b • (Uᴴ H U)`. -/
-private theorem isDiag_conj_of_eq_smul_one_add_smul {n : Type*} [Fintype n] [DecidableEq n]
-    {G H U : Matrix n n ℂ} {a b : ℂ} (hdecomp : G = a • (1 : Matrix n n ℂ) + b • H)
+/-- **Conjugating by `U` carries `a • 1 + b • H` to `a • 1 + b • (star U * H * U)`.** So whenever
+`star U` is a left inverse of `U`, any `U` that diagonalises `H` also diagonalises every matrix of
+that form: conjugation is linear, and it fixes the identity precisely because `star U * U = 1`. -/
+private theorem isDiag_conj_of_eq_smul_one_add_smul {R n : Type*} [CommSemiring R] [Star R]
+    [Fintype n] [DecidableEq n] {G H U : Matrix n n R} {a b : R}
+    (hdecomp : G = a • (1 : Matrix n n R) + b • H)
     (hUU : star U * U = 1) (hdiagH : (star U * H * U).IsDiag) :
     (star U * G * U).IsDiag := by
-  have hexpand : star U * G * U = a • (1 : Matrix n n ℂ) + b • (star U * H * U) := by
+  have hexpand : star U * G * U = a • (1 : Matrix n n R) + b • (star U * H * U) := by
     conv_lhs => rw [hdecomp]
     simp only [Matrix.mul_add, Matrix.add_mul, Matrix.mul_smul, Matrix.smul_mul, Matrix.mul_one]
     rw [hUU]
