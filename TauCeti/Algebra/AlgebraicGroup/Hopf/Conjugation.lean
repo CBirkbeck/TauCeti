@@ -272,9 +272,7 @@ theorem conjugationAlgHom_coassoc :
   have hactSecondRight :
       toConv (actSecond.comp Algebra.TensorProduct.includeRight) =
         g₂ * x * g₂⁻¹ := by
-    rw [show actSecond.comp Algebra.TensorProduct.includeRight =
-        Algebra.TensorProduct.includeRight.comp c from
-      Algebra.TensorProduct.map_comp_includeRight _ _,
+    rw [Algebra.TensorProduct.map_comp_includeRight (AlgHom.id R H) c,
       comp_conjugationAlgHom _, toConv_ofConv]
   -- The two coordinate maps now evaluate to the corresponding conjugates; associativity and
   -- `(g₁ * g₂)⁻¹ = g₂⁻¹ * g₁⁻¹` finish the comparison.
