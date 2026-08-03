@@ -316,10 +316,6 @@ theorem evalE₄E₆_surjective : Function.Surjective evalE₄E₆ := by
   exact Subalgebra.sum_mem _ fun k _ ↦ surj_of_weight k (x k)
 
 
-private lemma evalE₄E₆_C (c : ℂ) :
-    evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c :=
-  MvPolynomial.aeval_C _ c
-
 private lemma discriminantPoly_smul_eq :
     (1728 : ℂ) • discriminantPoly = MvPolynomial.X 0 ^ 3 - MvPolynomial.X 1 ^ 2 := by
   rw [discriminantPoly, smul_smul]
@@ -360,7 +356,9 @@ private lemma evalE₄E₆_X_pow_mul_apply_eq_zero_of_ne (a b : ℕ) (k : ℤ)
 private lemma evalE₄E₆_monomial_apply_eq_zero_of_ne (d : Fin 2 →₀ ℕ) (c : ℂ) (k : ℤ)
     (hk : k ≠ (↑(d 0) * 4 + ↑(d 1) * 6 : ℤ)) :
     (evalE₄E₆ (MvPolynomial.monomial d c)) k = 0 := by
-  rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul, evalE₄E₆_C,
+  rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul,
+    show evalE₄E₆ (MvPolynomial.C _) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) _ from
+      MvPolynomial.aeval_C _ _,
     Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, DirectSum.smul_apply,
     evalE₄E₆_X_pow_mul_apply_eq_zero_of_ne (d 0) (d 1) k hk, smul_zero]
 
@@ -455,7 +453,9 @@ private lemma per_weight_injective_unique_monomial {n : ℕ} (p : MvPolynomial (
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ d₀ 1) (↑n : ℤ) ≠ 0) : p = 0 := by
   have hpc := hp.eq_monomial_of_unique_weight huniq
   rw [hpc] at heval ⊢
-  rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul, evalE₄E₆_C,
+  rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul,
+    show evalE₄E₆ (MvPolynomial.C _) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) _ from
+      MvPolynomial.aeval_C _ _,
     Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, evalE₄E₆_monomial,
     DirectSum.smul_apply] at heval
   rcases smul_eq_zero.mp heval with hc | hmz
@@ -496,7 +496,8 @@ private lemma per_weight_injective_zero
   rw [hpc, MvPolynomial.monomial_zero'] at heval ⊢
   -- The degree-`0` component of the graded unit is the unit form; `show` states the
   -- component extraction so `of_eq_same` can close it.
-  rw [evalE₄E₆_C, Algebra.algebraMap_eq_smul_one, DirectSum.smul_apply,
+  rw [show evalE₄E₆ (MvPolynomial.C _) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) _ from
+      MvPolynomial.aeval_C _ _, Algebra.algebraMap_eq_smul_one, DirectSum.smul_apply,
     show (1 : DirectSum ℤ (ModularForm 𝒮ℒ)) (0 : ℤ) = (1 : ModularForm 𝒮ℒ 0) from by
       conv_lhs => rw [← DirectSum.of_zero_one (ModularForm 𝒮ℒ)]
       exact DirectSum.of_eq_same _ _] at heval
@@ -625,7 +626,9 @@ private lemma reduced_isWeightedHomogeneous_eq_monomial {n : ℕ}
 private lemma evalE₄E₆_monomial_qExpansion_coeff_zero {n : ℕ} {d₀ : Fin 2 →₀ ℕ}
     (hd₀_weight : 4 * d₀ 0 + 6 * d₀ 1 = n) (c : ℂ) :
     (qExpansion 1 ↑((evalE₄E₆ (MvPolynomial.monomial d₀ c)) (↑n : ℤ))).coeff 0 = c := by
-  rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul, evalE₄E₆_C,
+  rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul,
+    show evalE₄E₆ (MvPolynomial.C _) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) _ from
+      MvPolynomial.aeval_C _ _,
     Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, evalE₄E₆_monomial,
     DirectSum.smul_apply,
     -- Scalar action commutes with the coercion to functions
