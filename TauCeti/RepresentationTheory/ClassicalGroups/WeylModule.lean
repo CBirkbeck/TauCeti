@@ -286,16 +286,6 @@ theorem weylModule_ne_bot [Nontrivial k] (t : YoungTableau μ) (hn : μ.colLen 0
   rw [hbot', Submodule.mem_bot k] at hmem
   exact repr_symmetrizer_tensorPowerBasis_ne_zero t hn (by rw [hmem, map_zero]; rfl)
 
-/-- **Right-multiplying the symmetrizer by a column transposition negates it.** A transposition in
-the column group has sign `-1`, and `c_t` is alternating under the column group. -/
-private theorem youngSymmetrizerOver_mul_single_swap {t : YoungTableau μ} {a b : Fin μ.card}
-    (hab : a ≠ b) (hτ : Equiv.swap a b ∈ colSubgroup t) :
-    youngSymmetrizerOver k t * MonoidAlgebra.single (Equiv.swap a b) 1 =
-      -youngSymmetrizerOver k t := by
-  have h := youngSymmetrizerOver_mul_single k t ⟨_, hτ⟩
-  rwa [Equiv.Perm.sign_swap hab, Units.val_neg, Units.val_one, Int.cast_neg, Int.cast_one,
-    neg_smul, one_smul] at h
-
 /-- **The symmetrizer annihilates the whole tensor power when `μ` has more than `n` rows.** On each
 monomial basis vector two labels of the first column share a basis index, so their transposition
 fixes it while negating `c_t`; the value is its own negative, hence zero since `2` is invertible. -/
@@ -334,8 +324,13 @@ private theorem permTensorActionAlgHom_youngSymmetrizerOver_eq_zero (t : YoungTa
         (tensorPowerBasis k n μ.card p) =
       -permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
         (tensorPowerBasis k n μ.card p) := by
+    -- a transposition of the column group has sign `-1`, and `c_t` is alternating under it
+    have hneg' : youngSymmetrizerOver k t *
+        MonoidAlgebra.single (Equiv.swap (a : Fin μ.card) (b : Fin μ.card)) 1 =
+        -youngSymmetrizerOver k t := by
+      simpa [Equiv.Perm.sign_swap hxy] using mul_youngSymmetrizerOver_right k t ⟨_, hτ⟩
     conv_lhs => rw [← h]
-    rw [youngSymmetrizerOver_mul_single_swap hxy hτ, map_neg, LinearMap.neg_apply]
+    rw [hneg', map_neg, LinearMap.neg_apply]
   have htwo : (2 : k) • permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
       (tensorPowerBasis k n μ.card p) = 0 := by
     rw [two_smul]

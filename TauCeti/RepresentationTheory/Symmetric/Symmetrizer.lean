@@ -361,7 +361,7 @@ This is `TauCeti.mul_youngSymmetrizer_right` carried into `k`. The sign keeps ac
 scalar, which is available because `k` is a `ℚ`-algebra; it cannot be phrased as a `ℤ`-action,
 since a `CommSemiring` `k` need not have negation. -/
 @[simp]
-theorem youngSymmetrizerOver_mul_single (t : YoungTableau μ) (q : colSubgroup t) :
+theorem mul_youngSymmetrizerOver_right (t : YoungTableau μ) (q : colSubgroup t) :
     youngSymmetrizerOver k t * MonoidAlgebra.single (q : Equiv.Perm (Fin μ.card)) 1 =
       ((Equiv.Perm.sign (q : Equiv.Perm (Fin μ.card)) : ℤ) : ℚ) • youngSymmetrizerOver k t := by
   have h := congrArg (MonoidAlgebra.mapAlgHom (Equiv.Perm (Fin μ.card)) (Algebra.ofId ℚ k))
