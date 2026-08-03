@@ -20,8 +20,10 @@ Mathlib's `LSeries` infrastructure applied to the coefficient sequence of
 
 * `ModularForm.lCoeff f`: the coefficient sequence `n ↦ aₙ(f)`, as `ℕ → ℂ`.
 * `ModularForm.lSeries f`: the L-function `s ↦ LSeries (lCoeff f) s`.
-* `ModularForm.imAxis f`: `f` along the positive imaginary axis (`0` off it) — the
-  function whose Mellin transform is the completed L-function.
+* `ModularForm.imAxis f`: `f` along the positive imaginary axis (`0` off it). For a
+  *cusp form* `f`, whose decay makes the integral converge, the Mellin transform of this
+  restriction is the completed L-function; for general modular forms that reading needs
+  the constant term subtracted first.
 
 ## Main results
 
@@ -56,6 +58,10 @@ noncomputable section
 
 open Filter LSeries UpperHalfPlane
 
+/-- The point `i·t` lies strictly above the real axis when `0 < t`. -/
+lemma Complex.im_I_mul_pos {t : ℝ} (ht : 0 < t) : 0 < (Complex.I * (t : ℂ)).im := by
+  simpa only [Complex.I_mul_im, Complex.ofReal_re] using ht
+
 namespace ModularForm
 
 variable {k : ℤ} {Γ : Subgroup (GL (Fin 2) ℝ)}
@@ -66,6 +72,7 @@ at `∞` of its level, viewed as `ℕ → ℂ` — the natural input to Mathlib'
 def lCoeff [ModularFormClass F Γ k] (f : F) : ℕ → ℂ :=
   fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n
 
+@[simp]
 lemma lCoeff_apply [ModularFormClass F Γ k] (f : F) (n : ℕ) :
     lCoeff f n = (qExpansion Γ.strictWidthInfty f).coeff n := (rfl)
 
@@ -74,22 +81,20 @@ lemma lCoeff_apply [ModularFormClass F Γ k] (f : F) (n : ℕ) :
 def lSeries [ModularFormClass F Γ k] (f : F) (s : ℂ) : ℂ :=
   LSeries (lCoeff f) s
 
+@[simp]
 lemma lSeries_apply [ModularFormClass F Γ k] (f : F) (s : ℂ) :
     lSeries f s = LSeries (lCoeff f) s := (rfl)
 
-/-- The point `i·t` lies in the upper half-plane when `0 < t`. -/
-lemma im_I_mul_pos {t : ℝ} (ht : 0 < t) : 0 < (Complex.I * (t : ℂ)).im := by
-  simpa only [Complex.I_mul_im, Complex.ofReal_re] using ht
 
 /-- **A function on `ℍ` along the positive imaginary axis**: `t > 0` maps to `f(i·t)`,
 and `t ≤ 0` to `0`. For a cusp form `f`, whose decay makes the integral converge, the
 Mellin transform of this restriction is the completed L-function. -/
 def imAxis (f : ℍ → ℂ) (t : ℝ) : ℂ :=
-  if h : 0 < t then f ⟨Complex.I * (t : ℂ), im_I_mul_pos h⟩ else 0
+  if h : 0 < t then f ⟨Complex.I * (t : ℂ), Complex.im_I_mul_pos h⟩ else 0
 
 @[simp]
 lemma imAxis_apply_of_pos (f : ℍ → ℂ) {t : ℝ} (ht : 0 < t) :
-    imAxis f t = f ⟨Complex.I * (t : ℂ), im_I_mul_pos ht⟩ := by
+    imAxis f t = f ⟨Complex.I * (t : ℂ), Complex.im_I_mul_pos ht⟩ := by
   rw [imAxis, dif_pos ht]
 
 @[simp]
