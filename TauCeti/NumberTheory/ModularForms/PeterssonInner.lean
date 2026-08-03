@@ -27,14 +27,15 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 
 * `UpperHalfPlane.peterssonInner`: the Petersson inner product, parameterized by weight `k`
   and fundamental domain `D`.
-* `CuspForm.pet`: the inner product of two cusp forms over the standard fundamental domain.
+* `CuspForm.peterssonInner`: the inner product of two cusp forms over the standard
+  fundamental domain.
 
 ## Main results
 
 * `ModularGroup.volume_fd_lt_top`: the standard fundamental domain has finite invariant
   measure.
 * `UpperHalfPlane.peterssonInner_conj_symm`: Hermitian symmetry.
-* `UpperHalfPlane.peterssonInner_integrableOn_left`: integrability of the Petersson integrand of a
+* `UpperHalfPlane.integrableOn_petersson_fd_left`: integrability of the Petersson integrand of a
   cusp form against a modular form over the standard fundamental domain.
 * `ModularGroup.volume_frontier_fd`, `ModularGroup.setIntegral_fd_eq_fdo`: the frontier of
   the fundamental domain is null, so integrals over `𝒟` and `𝒟ᵒ` agree.
@@ -279,7 +280,7 @@ theorem peterssonInner_neg_left (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
 
 /-- The Petersson integrand of a cusp form against a modular form is integrable over the
 standard fundamental domain. -/
-theorem peterssonInner_integrableOn_left {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ]
+theorem integrableOn_petersson_fd_left {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ]
     (k : ℤ) (Γ : Subgroup (GL (Fin 2) ℝ)) [Γ.IsArithmetic]
     [CuspFormClass F Γ k] [ModularFormClass F' Γ k]
     (f : F) (f' : F') :
@@ -292,7 +293,7 @@ theorem peterssonInner_integrableOn_left {F F' : Type*} [FunLike F ℍ ℂ] [Fun
 
 /-- The Petersson integrand of a modular form against a cusp form is integrable over the
 standard fundamental domain. -/
-theorem peterssonInner_integrableOn_right {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ]
+theorem integrableOn_petersson_fd_right {F F' : Type*} [FunLike F ℍ ℂ] [FunLike F' ℍ ℂ]
     (k : ℤ) (Γ : Subgroup (GL (Fin 2) ℝ)) [Γ.IsArithmetic]
     [ModularFormClass F Γ k] [CuspFormClass F' Γ k]
     (f : F) (f' : F') :
@@ -335,7 +336,7 @@ theorem peterssonInner_smul_right (k : ℤ) (D : Set ℍ) (c : ℂ) (f g : ℍ �
     ring)
 
 /-- Conjugate-scalar multiplication in the left argument. -/
-theorem peterssonInner_conj_smul_left (k : ℤ) (D : Set ℍ) (c : ℂ) (f g : ℍ → ℂ) :
+theorem peterssonInner_smul_left (k : ℤ) (D : Set ℍ) (c : ℂ) (f g : ℍ → ℂ) :
     peterssonInner k D (c • f) g = conj c * peterssonInner k D f g := by
   simp only [peterssonInner]
   rw [← integral_const_mul]
@@ -359,7 +360,7 @@ theorem eq_zero_on_fd_of_peterssonInner_self_eq_zero {F : Type*} [FunLike F ℍ 
     (f : F) (hpet : peterssonInner k fd (fun τ ↦ f τ) (fun τ ↦ f τ) = 0)
     {τ : ℍ} (hτ : τ ∈ fd) : f τ = 0 := by
   set g : ℍ → ℝ := fun z ↦ (petersson k (⇑f) (⇑f) z).re
-  have hint := peterssonInner_integrableOn_left k Γ f f
+  have hint := integrableOn_petersson_fd_left k Γ f f
   have hg_zero : ∫ z in fd, g z = 0 := by
     trans RCLike.re (∫ z in fd, petersson k (⇑f) (⇑f) z)
     · exact integral_re hint
@@ -393,16 +394,18 @@ open UpperHalfPlane
 
 variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
 
-/-- The Petersson pairing of two cusp forms, integrated over the standard fundamental
-domain `𝒟` for `SL₂(ℤ)`.
+/-- The Petersson inner product of two cusp forms, integrated over the standard
+fundamental domain `𝒟` for `SL₂(ℤ)`.
 
 This is the level-one-domain pairing, **not** the `Γ \ ℍ`-normalized Petersson inner
 product: for `Γ ≤ SL₂(ℤ)` of index `n`, the latter integrates over `n` translates of `𝒟`.
-The two differ by that positive factor, so `pet` is nonetheless Hermitian-sesquilinear and
-positive definite for cusp forms of any arithmetic level (`CuspForm.pet_definite`). -/
-def pet (f g : CuspForm Γ k) : ℂ :=
-  peterssonInner k ModularGroup.fd f g
+The two differ by that positive factor, so this pairing is nonetheless
+Hermitian-sesquilinear and positive definite for cusp forms of any arithmetic level
+(`CuspForm.peterssonInner_definite`). -/
+def peterssonInner (f g : CuspForm Γ k) : ℂ :=
+  UpperHalfPlane.peterssonInner k ModularGroup.fd f g
 
-theorem pet_def (f g : CuspForm Γ k) : pet f g = peterssonInner k ModularGroup.fd f g := (rfl)
+theorem peterssonInner_def (f g : CuspForm Γ k) :
+    peterssonInner f g = UpperHalfPlane.peterssonInner k ModularGroup.fd f g := (rfl)
 
 end CuspForm
