@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Analysis.Analytic.Order
-public import Mathlib.Analysis.Analytic.Constructions
 
 /-!
 # The analytic order of products and power-compositions
