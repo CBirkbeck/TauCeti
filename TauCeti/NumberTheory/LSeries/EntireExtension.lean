@@ -24,6 +24,12 @@ sequence `a : ℕ → ℂ`:
   a genuine pole (negative meromorphic order) somewhere — the obligation shape ruling out
   entirety, e.g. for Eisenstein L-functions.
 
+The predicates are exercised: `LSeries.hasEntireExtension_delta` is a nondegenerate
+witness, `LSeries.HasEntireExtension.existsUnique` pins down the unique extension, and
+`LSeries.HasMeromorphicExtensionWithPole.not_hasEntireExtension` shows the two
+obligations exclude each other (via the clopen infinite-order locus of the meromorphic
+difference).
+
 Supporting general lemmas:
 
 * `meromorphicOrderAt_div_neg_of_orderAt_lt`: a quotient of meromorphic functions with
@@ -82,7 +88,28 @@ theorem unique {F G : ℂ → ℂ} (hF : Differentiable ℂ F) (hG : Differentia
       ⟨U, (isOpen_lt continuous_const Complex.continuous_re).mem_nhds hz₀,
         fun s hs ↦ (hFa (hU_sub s hs)).trans (hGa (hU_sub s hs)).symm⟩)
 
+/-- The entire extension, as an `∃!`: `HasEntireExtension` pins down a unique entire
+function agreeing with `LSeries a` on the convergence half-plane. -/
+theorem existsUnique (h : HasEntireExtension a) :
+    ∃! F : ℂ → ℂ, Differentiable ℂ F ∧
+      ∀ ⦃s : ℂ⦄, abscissaOfAbsConv a < s.re → F s = LSeries a s := by
+  obtain ⟨hfin, F, hF, hFa⟩ := h
+  refine ⟨F, ⟨hF, fun s hs ↦ hFa hs⟩, fun G ⟨hG, hGa⟩ ↦ ?_⟩
+  exact unique hG hF hfin (fun {s} hs ↦ hGa hs) (fun {s} hs ↦ hFa hs)
+
 end HasEntireExtension
+
+/-- The delta sequence (the coefficients of the constant Dirichlet series `1`) has an
+entire extension, witnessed by the constant function `1`: the predicate is not vacuous. -/
+theorem hasEntireExtension_delta : HasEntireExtension LSeries.delta := by
+  refine ⟨?_, fun _ ↦ 1, differentiable_const 1, fun {s} _ ↦ ?_⟩
+  · refine lt_of_le_of_lt (LSeriesSummable.abscissaOfAbsConv_le (s := 2) ?_) (by simp)
+    refine summable_of_ne_finset_zero (s := {1}) fun n hn ↦ ?_
+    rw [LSeries.term_delta]
+    simp only [Finset.mem_singleton] at hn
+    simp [hn]
+  · rw [LSeries_delta]
+    rfl
 
 /-- **A quotient of meromorphic functions has a pole where the numerator's order is
 smaller**: if `num` and `den` are meromorphic at `x` with finite orders and
@@ -116,6 +143,44 @@ def HasMeromorphicExtensionWithPole (a : ℕ → ℂ) : Prop :=
       (∀ z : ℂ, MeromorphicAt g z) ∧
       meromorphicOrderAt g s₀ < 0 ∧
       ∀ {s : ℂ}, abscissaOfAbsConv a < s.re → g s = LSeries a s
+
+/-- **A meromorphic extension with a pole excludes an entire extension.** The two would
+agree on the convergence half-plane; the difference is meromorphic on all of `ℂ` with
+infinite order there, so — the infinite-order locus being clopen and `ℂ` preconnected —
+they agree near the pole `s₀`, where the meromorphic witness has negative order but an
+entire function has nonnegative order. -/
+theorem HasMeromorphicExtensionWithPole.not_hasEntireExtension {a : ℕ → ℂ}
+    (hm : HasMeromorphicExtensionWithPole a) : ¬ HasEntireExtension a := by
+  rintro ⟨hfin, F, hF, hFa⟩
+  obtain ⟨-, g, s₀, hg_mero, hg_pole, hg_agree⟩ := hm
+  set d : ℂ → ℂ := fun z ↦ g z - F z with hd_def
+  have hd_mero : MeromorphicOn d Set.univ := fun z _ ↦
+    (hg_mero z).sub (hF.analyticAt z).meromorphicAt
+  obtain ⟨σ, hσ_abs, -⟩ := EReal.exists_between_coe_real hfin
+  have h_zero : ∀ z : ℂ, (σ : ℝ) < z.re → d z = 0 := fun z hz ↦ by
+    have habs : abscissaOfAbsConv a < (z.re : EReal) :=
+      lt_of_lt_of_le hσ_abs (by exact_mod_cast hz.le)
+    simp [hd_def, hg_agree habs, hFa habs]
+  have h_top : meromorphicOrderAt d ((σ + 1 : ℝ) : ℂ) = ⊤ := by
+    rw [meromorphicOrderAt_eq_top_iff]
+    have h_mem : ∀ᶠ z in nhds (((σ + 1 : ℝ) : ℂ)), (σ : ℝ) < z.re :=
+      (isOpen_lt continuous_const Complex.continuous_re).eventually_mem
+        (show (σ : ℝ) < ((σ + 1 : ℝ) : ℂ).re by simp)
+    filter_upwards [nhdsWithin_le_nhds h_mem] with z hz
+    exact h_zero z hz
+  have : PreconnectedSpace (Set.univ : Set ℂ) := Subtype.preconnectedSpace isPreconnected_univ
+  have h_univ := (hd_mero.isClopen_setOfPred_meromorphicOrderAt_eq_top).eq_univ
+    ⟨⟨((σ + 1 : ℝ) : ℂ), trivial⟩, h_top⟩
+  have h_s₀ : meromorphicOrderAt d s₀ = ⊤ :=
+    Set.eq_univ_iff_forall.mp h_univ ⟨s₀, trivial⟩
+  have h_eq : g =ᶠ[nhdsWithin s₀ {s₀}ᶜ] F := by
+    filter_upwards [meromorphicOrderAt_eq_top_iff.mp h_s₀] with z hz
+    exact sub_eq_zero.mp hz
+  have h_ord : meromorphicOrderAt g s₀ = meromorphicOrderAt F s₀ :=
+    meromorphicOrderAt_congr h_eq
+  have h_nonneg : 0 ≤ meromorphicOrderAt F s₀ := (hF.analyticAt s₀).meromorphicOrderAt_nonneg
+  rw [h_ord] at hg_pole
+  exact absurd h_nonneg (not_le.mpr hg_pole)
 
 /-- **The coprime-stripped coefficient sequence**: `f` zeroed at every `n` divisible by a
 prime of the finite set `S`, unchanged elsewhere — the elementary operation of removing
