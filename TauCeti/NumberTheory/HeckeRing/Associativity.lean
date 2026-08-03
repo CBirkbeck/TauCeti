@@ -508,7 +508,8 @@ theorem mul_assoc' [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
           (HeckeCoset.sum_multiplicity_assoc D₁.rep D₂.rep D₃.rep D.rep)
 
 /-- The Hecke ring is a semiring: the convolution product is associative. -/
-noncomputable instance {H : Subgroup G} [IsHeckeTriple Δ H H] : Semiring (𝕋 Δ H R) :=
+noncomputable instance instSemiringHeckeRing {H : Subgroup G} [IsHeckeTriple Δ H H] :
+    Semiring (𝕋 Δ H R) :=
   { (inferInstance : NonAssocSemiring (𝕋 Δ H R)) with
     mul_assoc := fun f g h ↦ mul_assoc' R f g h }
 

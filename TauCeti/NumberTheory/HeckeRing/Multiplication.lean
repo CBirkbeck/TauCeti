@@ -63,7 +63,7 @@ noncomputable def structureConstants (H₁ H₂ H₃ : Subgroup G) [IsHeckeTripl
     structureConstants R H₁ H₂ H₃ g₁ g₂ D =
       (multiplicity H₁ H₂ H₃ (g₁ : G) (g₂ : G) (D.rep : G) : R) := rfl
 
-noncomputable instance : Module R (HeckeCosetModule Δ H₁ H₂ R) :=
+noncomputable instance instModule : Module R (HeckeCosetModule Δ H₁ H₂ R) :=
   inferInstanceAs (Module R (HeckeCoset Δ H₁ H₂ →₀ R))
 
 /-- The convolution product of Hecke coset modules, defined via the structure constants. The
@@ -80,7 +80,8 @@ lemma mul_eq_sum [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
 
 /-- The multiplication of the Hecke ring: the diagonal case of the convolution product
 `HeckeCosetModule.mul`. -/
-noncomputable instance {H : Subgroup G} [IsHeckeTriple Δ H H] : Mul (𝕋 Δ H R) where
+noncomputable instance instMulHeckeRing {H : Subgroup G} [IsHeckeTriple Δ H H] :
+    Mul (𝕋 Δ H R) where
   mul f g := mul R f g
 
 lemma mul_def {H : Subgroup G} [IsHeckeTriple Δ H H] (f g : 𝕋 Δ H R) :
@@ -148,7 +149,8 @@ lemma mul_zero [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     (Finsupp.sum_fun_zero f)
 
 /-- The Hecke ring is a non-unital non-associative semiring (distributivity and zero laws). -/
-noncomputable instance {H : Subgroup G} [IsHeckeTriple Δ H H] :
+noncomputable instance instNonUnitalNonAssocSemiringHeckeRing {H : Subgroup G}
+    [IsHeckeTriple Δ H H] :
     NonUnitalNonAssocSemiring (𝕋 Δ H R) :=
   { (inferInstance : AddCommMonoid (𝕋 Δ H R)), (inferInstance : Mul (𝕋 Δ H R)) with
     left_distrib := fun f g h ↦ mul_add R f g h

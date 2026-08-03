@@ -90,7 +90,7 @@ lemma structureConstants_one_left [IsHeckeTriple Δ H₁ H₁] [IsHeckeTriple Δ
 
 /-- The multiplicative identity of the Hecke ring is the basis element of the identity double
 coset. -/
-noncomputable instance {H : Subgroup G} : One (𝕋 Δ H R) := ⟨single R 1 1⟩
+noncomputable instance instOneHeckeRing {H : Subgroup G} : One (𝕋 Δ H R) := ⟨single R 1 1⟩
 
 theorem one_def {H : Subgroup G} : (1 : 𝕋 Δ H R) = single R 1 1 := rfl
 
@@ -125,7 +125,7 @@ theorem mul_one' [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₂]
 
 /-- The Hecke ring is a non-associative semiring: the identity double coset is a two-sided
 identity. -/
-noncomputable instance {H : Subgroup G} [IsHeckeTriple Δ H H] :
+noncomputable instance instNonAssocSemiringHeckeRing {H : Subgroup G} [IsHeckeTriple Δ H H] :
     NonAssocSemiring (𝕋 Δ H R) :=
   { (inferInstance : NonUnitalNonAssocSemiring (𝕋 Δ H R)),
     (inferInstance : One (𝕋 Δ H R)) with
