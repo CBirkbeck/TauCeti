@@ -33,7 +33,13 @@ open Coalgebra TensorProduct WithConv
 section Bracket
 
 variable {R A A' B : Type*} [CommSemiring R] [CommSemiring A] [Bialgebra R A]
-  [CommSemiring A'] [Bialgebra R A'] [CommRing B] [Algebra R B]
+  [CommSemiring A'] [Bialgebra R A']
+
+section Transport
+
+-- The transport step needs no more of `B` than `derivationComp` itself does; only the bracket
+-- below, being a commutator, asks for a ring.
+variable [Semiring B] [Algebra R B]
 
 /-- **Precomposing both slots by `φ` is multiplication of the transported derivations.** The two
 sides differ only by which counit coefficient algebra they are read in, and those are the same
@@ -61,6 +67,10 @@ private theorem mul'_comp_map_derivationComp (φ : A' →ₐc[R] A)
   -- The residual is print-identical across the two coefficient synonyms; both multiplications
   -- are definitionally `B`'s (the synonym is exposed), which is what this `rfl` uses.
   rfl
+
+end Transport
+
+variable [CommRing B] [Algebra R B]
 
 /-- The differential preserves the convolution commutator: a bialgebra morphism
 intertwines comultiplications, hence convolution products of derivations termwise. -/
