@@ -27,9 +27,10 @@ boundary, the sum reindexes along the fibers of `slToPslQuot` (each fiber contri
 the same tile integral, by `Γ₁(N)`-invariance of the Petersson integrand), and the
 resulting `PSL`-tile sum is exactly the tile decomposition of `gamma1FundDomain N`.
 
-Definiteness needs none of that identification: the `⟦1⟧`-summand of `petN f f` is
-`pet f f`, every summand is a nonnegative real, so `petN f f = 0` forces `pet f f = 0`
-and `CuspForm.pet_definite` applies.
+Definiteness needs none of that identification: the `⟦1⟧`-summand of `petN f f` is the
+level-one inner product of `f` with itself, every summand is a nonnegative real, so
+`petN f f = 0` forces the level-one self-pairing to vanish and
+`CuspForm.peterssonInner_definite` applies.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/Modularforms/PeterssonLevelN.lean`), completing the level-`N`
@@ -195,12 +196,12 @@ theorem petersson_Gamma1_invariant (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) 
 
 omit [NeZero N] in
 /-- Each `petN` summand equals an integral over a translate of `𝒟`:
-`peterssonInner k fd (f∣q⁻¹) (g∣q⁻¹) = ∫ τ in q.out⁻¹ • 𝒟, petersson k f g τ`. -/
+`UpperHalfPlane.peterssonInner k fd (f∣q⁻¹) (g∣q⁻¹) = ∫ τ in q.out⁻¹ • 𝒟, petersson k f g τ`. -/
 theorem petN_summand_eq_setIntegral
     (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (q : SL(2, ℤ) ⧸ Gamma1 N) :
-    peterssonInner k fd (⇑f ∣[k] (q.out)⁻¹) (⇑g ∣[k] (q.out)⁻¹) =
+    UpperHalfPlane.peterssonInner k fd (⇑f ∣[k] (q.out)⁻¹) (⇑g ∣[k] (q.out)⁻¹) =
       ∫ τ in (q.out : SL(2, ℤ))⁻¹ • (fd : Set ℍ), petersson k ⇑f ⇑g τ := by
-  simp only [peterssonInner_def, petersson_slash_SL]
+  simp only [UpperHalfPlane.peterssonInner_def, petersson_slash_SL]
   rw [setIntegral_smul_eq]
 
 omit [NeZero N] in
@@ -343,8 +344,8 @@ private theorem petersson_self_ofReal (h : ℍ → ℂ) (τ : ℍ) :
 
 omit [NeZero N] in
 private theorem peterssonInner_self_real (h : ℍ → ℂ) :
-    peterssonInner k fd h h = ↑(∫ τ in fd, Complex.normSq (h τ) * τ.im ^ k) := by
-  rw [peterssonInner_def]
+    UpperHalfPlane.peterssonInner k fd h h = ↑(∫ τ in fd, Complex.normSq (h τ) * τ.im ^ k) := by
+  rw [UpperHalfPlane.peterssonInner_def]
   simp_rw [petersson_self_ofReal]
   exact integral_ofReal
 
@@ -353,7 +354,7 @@ omit [NeZero N] in
 theorem petN_summand_nonneg (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)
     (q : SL(2, ℤ) ⧸ Gamma1 N) :
     ∃ r : ℝ, 0 ≤ r ∧
-      peterssonInner k fd (⇑f ∣[k] (q.out)⁻¹) (⇑f ∣[k] (q.out)⁻¹) = ↑r := by
+      UpperHalfPlane.peterssonInner k fd (⇑f ∣[k] (q.out)⁻¹) (⇑f ∣[k] (q.out)⁻¹) = ↑r := by
   set h := ⇑f ∣[k] (q.out)⁻¹
   exact ⟨∫ τ in fd, Complex.normSq (h τ) * τ.im ^ k,
     setIntegral_nonneg isClosed_fd.measurableSet fun τ _ ↦
@@ -368,21 +369,22 @@ private theorem out_one_mem_Gamma1 :
   simpa using h'
 
 omit [NeZero N] in
-private theorem identity_coset_eq_pet (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
-    peterssonInner k fd
+private theorem identity_coset_eq_peterssonInner (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    UpperHalfPlane.peterssonInner k fd
       (⇑f ∣[k] ((⟦(1 : SL(2, ℤ))⟧ : SL(2, ℤ) ⧸ Gamma1 N)).out⁻¹)
       (⇑g ∣[k] ((⟦(1 : SL(2, ℤ))⟧ : SL(2, ℤ) ⧸ Gamma1 N)).out⁻¹) =
-    CuspForm.pet f g := by
+    CuspForm.peterssonInner f g := by
   have hmem := (Gamma1 N).inv_mem out_one_mem_Gamma1
-  rw [slash_Gamma1_eq f _ hmem, slash_Gamma1_eq g _ hmem, CuspForm.pet_def]
+  rw [slash_Gamma1_eq f _ hmem, slash_Gamma1_eq g _ hmem, CuspForm.peterssonInner_def]
 
 /-- **Positive definiteness of the level-`N` Petersson pairing**: `petN f f = 0` forces
 `f = 0`. Every summand is a nonnegative real, so all vanish; the `⟦1⟧`-summand is
-`pet f f`, and `CuspForm.pet_definite` concludes. -/
+the level-one inner product of `f` with itself, and
+`CuspForm.peterssonInner_definite` concludes. -/
 theorem petN_definite (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)
     (hpet : petN f f = 0) : f = 0 := by
-  apply CuspForm.pet_definite f
-  rw [← identity_coset_eq_pet f f]
+  apply CuspForm.peterssonInner_definite f
+  rw [← identity_coset_eq_peterssonInner f f]
   choose r hr_nonneg hr_eq using petN_summand_nonneg f
   have hsum : (↑(∑ q, r q) : ℂ) = 0 := by
     rw [Complex.ofReal_sum]
