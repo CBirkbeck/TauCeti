@@ -37,6 +37,7 @@ variable {R A A' B : Type*} [CommSemiring R] [CommSemiring A] [Bialgebra R A]
 
 /-- The differential preserves the convolution commutator: a bialgebra morphism
 intertwines comultiplications, hence convolution products of derivations termwise. -/
+@[simp]
 theorem derivationComp_bracket (φ : A' →ₐc[R] A)
     (d₁ d₂ : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     derivationComp (B := B) φ ⁅d₁, d₂⁆ =
@@ -64,37 +65,40 @@ theorem derivationComp_bracket (φ : A' →ₐc[R] A)
         ((φ : A' →ₐc[R] A) : A' →ₗc[R] A)) a
     simp only [LinearMap.convMul_apply, LinearMap.coe_comp, Function.comp_apply] at h
     exact h
-  have hslot : ∀ (e₁ e₂ : Derivation R A (Bialgebra.CounitAlgebra R A B))
-      (z : A' ⊗[R] A'),
-      LinearMap.mul' R (Bialgebra.CounitAlgebra R A B)
-          (TensorProduct.map
-            ((↑e₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) ∘ₗ
-              (φ : A' →ₐ[R] A).toLinearMap)
-            ((↑e₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) ∘ₗ
-              (φ : A' →ₐ[R] A).toLinearMap) z) =
-        LinearMap.mul' R (Bialgebra.CounitAlgebra R A' B)
-          (TensorProduct.map
-            (↑(derivationComp (B := B) φ e₁) : A' →ₗ[R] Bialgebra.CounitAlgebra R A' B)
-            ↑(derivationComp (B := B) φ e₂) z) := by
-    intro e₁ e₂ z
-    induction z using TensorProduct.induction_on with
-    -- Both zeros live in the two coefficient synonyms, whose ring structures are
-    -- definitionally `B`'s; the closing `rfl`s below depend on that identification.
-    | zero => exact (map_zero _).trans ((map_zero _).symm.trans rfl)
-    | tmul x y =>
-      simp only [TensorProduct.map_tmul, LinearMap.coe_comp, Function.comp_apply,
-        LinearMap.mul'_apply, Derivation.coeFn_coe, AlgHom.toLinearMap_apply]
-      rw [derivationComp_apply, derivationComp_apply]
-      -- The residual is print-identical across the two coefficient synonyms; both
-      -- multiplications are definitionally `B`'s (`Bialgebra.CounitAlgebra` is an
-      -- exposed synonym), which is what this `rfl` uses.
-      rfl
-    | add u w hu hw =>
-      rw [map_add, map_add, map_add, map_add, hu, hw]
-      -- Addition on both sides is definitionally `B`'s.
-      rfl
+  -- The two composites agree slotwise: an equality of linear maps on `A' ⊗ A'`
+  -- across the two coefficient synonyms (which are definitionally `B`), checked on
+  -- pure tensors by `derivationComp_apply`. `TensorProduct.ext'` supplies the
+  -- extensionality; no induction is needed.
+  have hslot : ∀ (e₁ e₂ : Derivation R A (Bialgebra.CounitAlgebra R A B)),
+      LinearMap.mul' R (Bialgebra.CounitAlgebra R A B) ∘ₗ
+        TensorProduct.map
+          ((↑e₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) ∘ₗ
+            (φ : A' →ₐ[R] A).toLinearMap)
+          ((↑e₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) ∘ₗ
+            (φ : A' →ₐ[R] A).toLinearMap) =
+      LinearMap.mul' R (Bialgebra.CounitAlgebra R A' B) ∘ₗ
+        TensorProduct.map
+          (↑(derivationComp (B := B) φ e₁) : A' →ₗ[R] Bialgebra.CounitAlgebra R A' B)
+          ↑(derivationComp (B := B) φ e₂) := by
+    intro e₁ e₂
+    refine TensorProduct.ext' fun x y => ?_
+    -- Both composite applications unfold definitionally; restate them as values.
+    change (e₁ ((φ : A' →ₐ[R] A) x) * e₂ ((φ : A' →ₐ[R] A) y) :
+        Bialgebra.CounitAlgebra R A B) =
+      derivationComp (B := B) φ e₁ x * derivationComp (B := B) φ e₂ y
+    rw [derivationComp_apply, derivationComp_apply]
+    -- The residual is print-identical across the two coefficient synonyms; both
+    -- multiplications are definitionally `B`'s (the synonym is exposed), which is
+    -- what this `rfl` uses.
+    rfl
+  have h1 := DFunLike.congr_fun (hslot d₁ d₂) (comul a)
+  have h2 := DFunLike.congr_fun (hslot d₂ d₁) (comul a)
+  simp only [LinearMap.coe_comp, Function.comp_apply] at h1 h2
   rw [show ((φ : A' →ₐ[R] A) a : A) = (φ : A' →ₐ[R] A).toLinearMap a from rfl,
-    hconv, hconv, hslot, hslot]
+    hconv, hconv, h1, h2]
+  -- The closing `rfl` identifies the two sides through the exposed coefficient
+  -- synonyms once more: after the slotwise rewrites both are literally the same
+  -- `B`-valued expression.
   rfl
 
 end Bracket
