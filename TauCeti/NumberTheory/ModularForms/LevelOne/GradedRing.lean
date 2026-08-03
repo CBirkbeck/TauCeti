@@ -29,15 +29,17 @@ weight `k − 12` by Mathlib's `CuspForm.discriminantEquiv`, and `Δ = (E₄³ �
 * `TauCeti.ModularForm.evalE₄E₆_surjective`: the evaluation homomorphism is surjective.
 * `TauCeti.ModularForm.evalE₄E₆_injective`: the evaluation homomorphism is injective —
   `E₄` and `E₆` are algebraically independent.
-* `TauCeti.ModularForm.modularFormsEquivMvPolynomial`: the induced algebra isomorphism
+* `TauCeti.ModularForm.mvPolynomialEquivModularForms`: the induced algebra isomorphism
   `ℂ[X₀, X₁] ≃ₐ[ℂ] ⨁ k, ModularForm 𝒮ℒ k`.
 * `TauCeti.ModularForm.E₄E₆_generate`: the two Eisenstein series generate the graded ring.
 
 ## References
 
 * [J.-P. Serre, *A Course in Arithmetic*][serre1973], VII.3.2.
-* [Mathlib PR #39258](https://github.com/leanprover-community/mathlib4/pull/39258)
-  (Chris Birkbeck) — the upstream draft this file ports onto the current Mathlib pin.
+* [Mathlib PR #39258](https://github.com/leanprover-community/mathlib4/pull/39258) and
+  [Mathlib PR #38813](https://github.com/leanprover-community/mathlib4/pull/38813)
+  (Chris Birkbeck) — the upstream drafts (surjectivity, resp. freeness) this file ports
+  onto the current Mathlib pin.
 -/
 
 public noncomputable section
@@ -429,6 +431,8 @@ private lemma evalE₄E₆_discriminantPoly_mul_coeff_zero {n : ℕ} (hn12 : 12 
   rw [evalE₄E₆_discriminantPoly_mul_apply s hs hcast]
   set f := (CuspForm.discriminant : ModularForm 𝒮ℒ 12)
   set g := (evalE₄E₆ s) ((n - 12 : ℕ) : ℤ)
+  -- Transporting along the degree identity does not change pointwise values
+  -- (`cast_apply`); `show` states the function-level identification.
   rw [show ((hcast ▸ GradedMonoid.GMul.mul f g : ModularForm 𝒮ℒ ↑n) : ℍ → ℂ) =
       ((f.mul g : ModularForm 𝒮ℒ (12 + ((n - 12 : ℕ) : ℤ))) : ℍ → ℂ) from
         funext fun z ↦ cast_apply hcast _ z,
@@ -451,11 +455,12 @@ private lemma per_weight_injective_unique_monomial {n : ℕ} (p : MvPolynomial (
   · rw [hc, MvPolynomial.monomial_zero]
   · exact absurd hmz hmf_ne
 
-private lemma per_weight_injective_small {n : ℕ} (a b : ℕ) (ha : a < 3) (hn : n < 12)
+private lemma per_weight_injective_small {n : ℕ} (a b : ℕ) (hn : n < 12)
     (hab : 4 * a + 6 * b = n)
     (p : MvPolynomial (Fin 2) ℂ)
     (hp : MvPolynomial.IsWeightedHomogeneous (![4, 6] : Fin 2 → ℕ) p n)
     (heval : (evalE₄E₆ p) (↑n : ℤ) = 0) : p = 0 := by
+  have ha : a < 3 := by lia
   obtain ⟨d₀, hd0a, hd0b⟩ : ∃ d : Fin 2 →₀ ℕ, d 0 = a ∧ d 1 = b :=
     ⟨Finsupp.equivFunOnFinite.invFun ![a, b], rfl, rfl⟩
   apply per_weight_injective_unique_monomial p hp heval d₀
@@ -482,6 +487,8 @@ private lemma per_weight_injective_zero
       ext i
       fin_cases i <;> simp <;> lia)
   rw [hpc, MvPolynomial.monomial_zero'] at heval ⊢
+  -- The degree-`0` component of the graded unit is the unit form; `show` states the
+  -- component extraction so `of_eq_same` can close it.
   rw [evalE₄E₆_C, Algebra.algebraMap_eq_smul_one, DirectSum.smul_apply,
     show (1 : DirectSum ℤ (ModularForm 𝒮ℒ)) (0 : ℤ) = (1 : ModularForm 𝒮ℒ 0) from by
       conv_lhs => rw [← DirectSum.of_zero_one (ModularForm 𝒮ℒ)]
@@ -490,7 +497,7 @@ private lemma per_weight_injective_zero
   · simp [hc]
   · exact absurd h1z one_ne_zero_modularForm
 
-private lemma discriminantPoly_piece_isWeightedHomogeneous {n : ℕ} (hn12 : 12 ≤ n)
+private lemma discriminantPoly_piece_isWeightedHomogeneous {n : ℕ}
     (d : Fin 2 →₀ ℕ) (hd_ge : 3 ≤ d 0) (hwd : d 0 * 4 + d 1 * 6 = n) (c : ℂ) :
     MvPolynomial.IsWeightedHomogeneous (![4, 6] : Fin 2 → ℕ)
       (MvPolynomial.C c * ((1728 : ℂ) • discriminantPoly *
@@ -541,7 +548,7 @@ private lemma support_degreeSum_lt_of_sub_discriminantPoly_piece (p : MvPolynomi
   simp [d', Finsupp.add_apply]
   lia
 
-private lemma weightedHomogeneous_poly_Delta_decomp_step {n : ℕ} (hn12 : 12 ≤ n)
+private lemma weightedHomogeneous_poly_Delta_decomp_step {n : ℕ}
     (p : MvPolynomial (Fin 2) ℂ)
     (hp : MvPolynomial.IsWeightedHomogeneous (![4, 6] : Fin 2 → ℕ) p n)
     (hnotall : ¬ ∀ d ∈ p.support, d 0 < 3) :
@@ -564,13 +571,13 @@ private lemma weightedHomogeneous_poly_Delta_decomp_step {n : ℕ} (hn12 : 12 �
     simp only [δ_piece, q₁, MvPolynomial.smul_eq_C_mul, map_mul]
     ring
   refine ⟨p - δ_piece, q₁, hp.sub
-      (discriminantPoly_piece_isWeightedHomogeneous hn12 d hd_ge hwd c),
+      (discriminantPoly_piece_isWeightedHomogeneous d hd_ge hwd c),
     .C_mul (X0_pow_mul_X1_pow_isWeightedHomogeneous (d 0 - 3) (d 1) (n - 12) (by lia)) _, ?_,
     support_degreeSum_lt_of_sub_discriminantPoly_piece p hd_mem hd_ge⟩
   rw [← hδ_eq]
   ring
 
-private lemma weightedHomogeneous_poly_Delta_decomp {n : ℕ} (hn12 : 12 ≤ n)
+private lemma weightedHomogeneous_poly_Delta_decomp {n : ℕ}
     (p : MvPolynomial (Fin 2) ℂ)
     (hp : MvPolynomial.IsWeightedHomogeneous (![4, 6] : Fin 2 → ℕ) p n) :
     ∃ r s : MvPolynomial (Fin 2) ℂ,
@@ -584,7 +591,7 @@ private lemma weightedHomogeneous_poly_Delta_decomp {n : ℕ} (hn12 : 12 ≤ n)
   · exact ⟨p, 0, hp, MvPolynomial.isWeightedHomogeneous_zero ℂ _ _,
       by simp only [mul_zero, add_zero], hall⟩
   obtain ⟨p', q₁, hp'_wh, hq₁_wh, hp_eq, hlt⟩ :=
-    weightedHomogeneous_poly_Delta_decomp_step hn12 p hp hall
+    weightedHomogeneous_poly_Delta_decomp_step p hp hall
   obtain ⟨r, s', hr_wh, hs'_wh, hp'_eq, hr_red⟩ :=
     ih _ (hM ▸ hlt) p' hp'_wh rfl
   refine ⟨r, s' + q₁, hr_wh, hs'_wh.add hq₁_wh, ?_, hr_red⟩
@@ -614,6 +621,8 @@ private lemma evalE₄E₆_monomial_qExpansion_coeff_zero {n : ℕ} {d₀ : Fin 
   rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul, evalE₄E₆_C,
     Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, evalE₄E₆_monomial,
     DirectSum.smul_apply,
+    -- Scalar action commutes with the coercion to functions, definitionally; the
+    -- ascribed `show … from rfl` records it once at the right type.
     show (↑(c • ((DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ d₀ 0 *
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ ^ d₀ 1) (↑n : ℤ))) : ℍ → ℂ) =
       c • (↑((DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ d₀ 0 *
@@ -644,6 +653,8 @@ private lemma reduced_part_eq_zero {n : ℕ} (hn12 : 12 ≤ n)
   have hQ : (Q ((evalE₄E₆ (MvPolynomial.monomial d₀ c)) (↑n : ℤ))).coeff 0 +
       (Q ((evalE₄E₆ (discriminantPoly * s)) (↑n : ℤ))).coeff 0 = 0 := by
     rw [← LinearMap.map_add, ← Q.map_add, heval, map_zero, map_zero]
+  -- Name the two constant coefficients through `Q`: the discriminant part vanishes,
+  -- the monomial part is the coefficient itself.
   rw [show (Q ((evalE₄E₆ (discriminantPoly * s)) (↑n : ℤ))).coeff 0 = 0 from
       evalE₄E₆_discriminantPoly_mul_coeff_zero hn12 s hs, add_zero,
     show (Q ((evalE₄E₆ (MvPolynomial.monomial d₀ c)) (↑n : ℤ))).coeff 0 = c from
@@ -670,7 +681,7 @@ private lemma per_weight_injective_inductive_step (n : ℕ)
     (hp : MvPolynomial.IsWeightedHomogeneous (![4, 6] : Fin 2 → ℕ) p n)
     (heval : (evalE₄E₆ p) (↑n : ℤ) = 0)
     (hn12 : 12 ≤ n) : p = 0 := by
-  obtain ⟨r, s, hr_wh, hs_wh, hp_eq, hr_red⟩ := weightedHomogeneous_poly_Delta_decomp hn12 p hp
+  obtain ⟨r, s, hr_wh, hs_wh, hp_eq, hr_red⟩ := weightedHomogeneous_poly_Delta_decomp p hp
   have hr0 : r = 0 := reduced_part_eq_zero hn12 r s hr_wh hs_wh hr_red (hp_eq ▸ heval)
   rw [hp_eq, hr0, zero_add] at heval ⊢
   rw [ih (n - 12) (by lia) s hs_wh
@@ -686,10 +697,10 @@ private lemma per_weight_injective_at_small_weight {n : ℕ} (hn12 : n < 12) (hk
     lia
   · exact per_weight_injective_zero p hp heval
   · exact hp.eq_zero_of_no_monomials fun d h ↦ by rw [weight_eq_4a_6b] at h; lia
-  · exact per_weight_injective_small 1 0 (by lia) (by lia) rfl p hp heval
-  · exact per_weight_injective_small 0 1 (by lia) (by lia) rfl p hp heval
-  · exact per_weight_injective_small 2 0 (by lia) (by lia) rfl p hp heval
-  · exact per_weight_injective_small 1 1 (by lia) (by lia) rfl p hp heval
+  · exact per_weight_injective_small 1 0 (by lia) rfl p hp heval
+  · exact per_weight_injective_small 0 1 (by lia) rfl p hp heval
+  · exact per_weight_injective_small 2 0 (by lia) rfl p hp heval
+  · exact per_weight_injective_small 1 1 (by lia) rfl p hp heval
 
 private lemma per_weight_injective : ∀ (n : ℕ) (p : MvPolynomial (Fin 2) ℂ),
     MvPolynomial.IsWeightedHomogeneous (![4, 6] : Fin 2 → ℕ) p n →
@@ -717,9 +728,17 @@ theorem evalE₄E₆_injective : Function.Injective evalE₄E₆ := by
 
 /-- The graded ring of level-1 modular forms is isomorphic to the polynomial ring
 `ℂ[X₀, X₁]` via evaluation at `E₄` and `E₆`. -/
-noncomputable def modularFormsEquivMvPolynomial :
+noncomputable def mvPolynomialEquivModularForms :
     MvPolynomial (Fin 2) ℂ ≃ₐ[ℂ] DirectSum ℤ (ModularForm 𝒮ℒ) :=
   AlgEquiv.ofBijective evalE₄E₆ ⟨evalE₄E₆_injective, evalE₄E₆_surjective⟩
+
+@[simp]
+lemma mvPolynomialEquivModularForms_apply (p : MvPolynomial (Fin 2) ℂ) :
+    mvPolynomialEquivModularForms p = evalE₄E₆ p := by
+  -- `mvPolynomialEquivModularForms` has no equation lemma to rewrite with; `change`
+  -- spells out its definitional unfolding once, explicitly.
+  change AlgEquiv.ofBijective evalE₄E₆ ⟨evalE₄E₆_injective, evalE₄E₆_surjective⟩ p = evalE₄E₆ p
+  rfl
 
 /-- `E₄` and `E₆` generate the entire graded ring of level 1 modular forms as an
 `ℂ`-algebra. -/
@@ -727,6 +746,8 @@ theorem E₄E₆_generate :
     Algebra.adjoin ℂ ({DirectSum.of (ModularForm 𝒮ℒ) 4 E₄,
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆} :
       Set (DirectSum ℤ (ModularForm 𝒮ℒ))) = ⊤ := by
+  -- Rewrite the two-element set as the range of the evaluation vector, so the adjoin
+  -- becomes the range of `aeval`.
   rw [show ({DirectSum.of (ModularForm 𝒮ℒ) 4 E₄,
         DirectSum.of (ModularForm 𝒮ℒ) 6 E₆} : Set _) =
       Set.range (![DirectSum.of _ 4 E₄, DirectSum.of _ 6 E₆] : Fin 2 → _)
@@ -735,9 +756,9 @@ theorem E₄E₆_generate :
   exact (AlgHom.range_eq_top evalE₄E₆).mpr evalE₄E₆_surjective
 
 /-- The graded ring of level-1 modular forms is an integral domain, being isomorphic (via
-`modularFormsEquivMvPolynomial`) to the polynomial ring `ℂ[X₀, X₁]`. -/
+`mvPolynomialEquivModularForms`) to the polynomial ring `ℂ[X₀, X₁]`. -/
 instance : IsDomain (DirectSum ℤ (ModularForm 𝒮ℒ)) :=
-  modularFormsEquivMvPolynomial.symm.toMulEquiv.isDomain _
+  mvPolynomialEquivModularForms.symm.toMulEquiv.isDomain _
 
 end ModularForm
 
