@@ -74,8 +74,7 @@ theorem slToPslQuot_surjective : Function.Surjective (slToPslQuot (N := N)) := b
   obtain ⟨g_sl, hg_sl⟩ := QuotientGroup.mk_surjective g_psl
   exact ⟨QuotientGroup.mk g_sl, by rw [slToPslQuot_mk, hg_sl, hg_psl]⟩
 
-/-- Left multiplication by `h : SL(2, ℤ)`, descended to `SL(2, ℤ) ⧸ Γ₁(N)`. -/
-def slLeftMul (h : SL(2, ℤ)) : SL(2, ℤ) ⧸ Gamma1 N → SL(2, ℤ) ⧸ Gamma1 N :=
+private def slLeftMul (h : SL(2, ℤ)) : SL(2, ℤ) ⧸ Gamma1 N → SL(2, ℤ) ⧸ Gamma1 N :=
   Quotient.lift (fun g : SL(2, ℤ) ↦ (QuotientGroup.mk (h * g) : SL(2, ℤ) ⧸ Gamma1 N))
     (fun a b hab ↦ by
       refine QuotientGroup.eq.mpr ?_
@@ -85,24 +84,22 @@ def slLeftMul (h : SL(2, ℤ)) : SL(2, ℤ) ⧸ Gamma1 N → SL(2, ℤ) ⧸ Gamm
 
 omit [NeZero N] in
 @[simp]
-theorem slLeftMul_mk (h g : SL(2, ℤ)) :
+private theorem slLeftMul_mk (h g : SL(2, ℤ)) :
     slLeftMul h (QuotientGroup.mk g : SL(2, ℤ) ⧸ Gamma1 N) =
       QuotientGroup.mk (h * g) := (rfl)
 
 omit [NeZero N] in
-theorem slLeftMul_one (q : SL(2, ℤ) ⧸ Gamma1 N) : slLeftMul 1 q = q := by
+private theorem slLeftMul_one (q : SL(2, ℤ) ⧸ Gamma1 N) : slLeftMul 1 q = q := by
   induction q using QuotientGroup.induction_on with
   | _ g => simp
 
 omit [NeZero N] in
-theorem slLeftMul_comp (h₁ h₂ : SL(2, ℤ)) (q : SL(2, ℤ) ⧸ Gamma1 N) :
+private theorem slLeftMul_comp (h₁ h₂ : SL(2, ℤ)) (q : SL(2, ℤ) ⧸ Gamma1 N) :
     slLeftMul h₁ (slLeftMul h₂ q) = slLeftMul (h₁ * h₂) q := by
   induction q using QuotientGroup.induction_on with
   | _ g => simp [mul_assoc]
 
-/-- **`SL`-equivariance of `slToPslQuot`**: `slToPslQuot (h · q)` is the projective image
-of `h` acting on `slToPslQuot q` by descended left multiplication. -/
-theorem slToPslQuot_slLeftMul (h : SL(2, ℤ)) (q : SL(2, ℤ) ⧸ Gamma1 N) :
+private theorem slToPslQuot_slLeftMul (h : SL(2, ℤ)) (q : SL(2, ℤ) ⧸ Gamma1 N) :
     slToPslQuot (slLeftMul h q) =
       Quotient.map' (fun x : PSL(2, ℤ) ↦ (QuotientGroup.mk h : PSL(2, ℤ)) * x)
         (fun a b hab ↦ by
@@ -213,10 +210,10 @@ theorem setIntegral_Gamma1_smul_eq (h : ℍ → ℂ) (η : SL(2, ℤ)) (_hη : �
   rw [setIntegral_smul_eq h η S]
   exact integral_congr_ae (ae_of_all _ fun τ ↦ h_inv τ)
 
-/-- **Fiber-invariance of the tile integral.** For a `Γ₁(N)`-invariant function `h`, the
-integral over the `SL`-tile `q.out⁻¹ • 𝒟ᵒ` equals the integral over the `PSL`-tile of
-the corresponding coset `(slToPslQuot q).out⁻¹ • 𝒟ᵒ`. -/
-theorem setIntegral_sl_tile_eq_psl_tile (h : ℍ → ℂ)
+-- Fiber-invariance of the tile integral: for a `Γ₁(N)`-invariant integrand, the `SL`-tile
+-- integral equals the corresponding `PSL`-tile integral (the discrepancy acts by an actual
+-- element of `Γ₁(N)`, extracted through `mem_Gamma1PSL_iff`).
+private theorem setIntegral_sl_tile_eq_psl_tile (h : ℍ → ℂ)
     (h_inv : ∀ γ ∈ Gamma1 N, ∀ τ : ℍ, h (γ • τ) = h τ) (q : SL(2, ℤ) ⧸ Gamma1 N) :
     ∫ τ in (q.out : SL(2, ℤ))⁻¹ • (fdo : Set ℍ), h τ =
       ∫ τ in ((slToPslQuot q).out : PSL(2, ℤ))⁻¹ • (fdo : Set ℍ), h τ := by
@@ -245,9 +242,9 @@ theorem setIntegral_sl_tile_eq_psl_tile (h : ℍ → ℂ)
   exact integral_congr_ae (ae_of_all _ fun τ ↦ h_inv γ⁻¹ ((Gamma1 N).inv_mem hγ_mem) τ)
 
 open Classical in
-/-- **`SL`→`PSL` fiber-sum reindexing** for `Γ₁(N)`-invariant integrands: the `SL`-coset
-sum of tile integrals is the `PSL`-coset sum weighted by fiber cardinalities. -/
-theorem sum_sl_tile_eq_fiberwise_psl_tile (h : ℍ → ℂ)
+-- `SL`→`PSL` fiber-sum reindexing for `Γ₁(N)`-invariant integrands, weighted by
+-- fiber cardinalities.
+private theorem sum_sl_tile_eq_fiberwise_psl_tile (h : ℍ → ℂ)
     (h_inv : ∀ γ ∈ Gamma1 N, ∀ τ : ℍ, h (γ • τ) = h τ) :
     ∑ q : SL(2, ℤ) ⧸ Gamma1 N,
         ∫ τ in (q.out : SL(2, ℤ))⁻¹ • (fdo : Set ℍ), h τ =
@@ -269,8 +266,7 @@ theorem sum_sl_tile_eq_fiberwise_psl_tile (h : ℍ → ℂ)
         Finset.sum_congr rfl fun q' _ ↦ Finset.sum_const _
 
 omit [NeZero N] in
-/-- The tile integrals over `𝒟` and `𝒟ᵒ` agree: the boundary is null. -/
-theorem setIntegral_sl_tile_fd_eq_fdo (h : ℍ → ℂ) (q : SL(2, ℤ) ⧸ Gamma1 N) :
+private theorem setIntegral_sl_tile_fd_eq_fdo (h : ℍ → ℂ) (q : SL(2, ℤ) ⧸ Gamma1 N) :
     ∫ τ in (q.out : SL(2, ℤ))⁻¹ • (fd : Set ℍ), h τ =
       ∫ τ in (q.out : SL(2, ℤ))⁻¹ • (fdo : Set ℍ), h τ := by
   rw [setIntegral_smul_eq, setIntegral_smul_eq, setIntegral_fd_eq_fdo]
@@ -313,16 +309,6 @@ theorem slToPslQuot_fiberCard_eq (q' : PSL(2, ℤ) ⧸ Gamma1PSL N) :
   convert slToPslQuot_fiber_card_uniform q' _ using 2
 
 open Classical in
-/-- `petN` as the uniform fiber count times the sum of `PSL`-tile integrals. -/
-theorem petN_eq_nsmul_sum_psl_tile (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
-    petN f g = (slToPslQuotFiberCard N) •
-      ∑ q' : PSL(2, ℤ) ⧸ Gamma1PSL N,
-        ∫ τ in ((q'.out : PSL(2, ℤ)))⁻¹ • (fdo : Set ℍ), petersson k ⇑f ⇑g τ := by
-  rw [petN_eq_weighted_sum_setIntegral_psl_tile f g, Finset.smul_sum]
-  refine Finset.sum_congr rfl fun q' _ ↦ ?_
-  congr 1
-  convert slToPslQuot_fiberCard_eq q' using 2
-
 /-- **`petN` as a single integral over the `Γ₁(N)`-fundamental domain**:
 `petN f g = c_N • ∫ τ in gamma1FundDomain N, petersson k f g τ`, with
 `c_N = slToPslQuotFiberCard N` the uniform fiber count of the `SL`→`PSL` reindexing. -/
@@ -330,8 +316,12 @@ theorem petN_eq_setIntegral_gamma1FundDomain
     (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     petN f g = (slToPslQuotFiberCard N) •
       ∫ τ in gamma1FundDomain N, petersson k ⇑f ⇑g τ := by
-  rw [petN_eq_nsmul_sum_psl_tile,
-    setIntegral_gamma1FundDomain_eq_sum _ (integrableOn_petersson_gamma1FundDomain f g)]
+  rw [petN_eq_weighted_sum_setIntegral_psl_tile f g,
+    setIntegral_gamma1FundDomain_eq_sum _ (integrableOn_petersson_gamma1FundDomain f g),
+    Finset.smul_sum]
+  refine Finset.sum_congr rfl fun q' _ ↦ ?_
+  congr 1
+  convert slToPslQuot_fiberCard_eq q' using 2
 
 /-! ## Positive definiteness -/
 
