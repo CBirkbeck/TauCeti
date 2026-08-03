@@ -101,8 +101,8 @@ lemma hasIntEntries_of_mem_SLnZ {g : GL (Fin n) ℚ} (hg : g ∈ SLnZ n) :
   let ⟨σ, hσ⟩ := hg
   ⟨σ.val, hσ ▸ by simp [mapGL_coe_matrix, algebraMap_int_eq]⟩
 
-/-- The identity matrix has integer entries. -/
-@[simp]
+/-- The identity matrix has integer entries. Not `@[simp]`: `hasIntEntries_iff` rewrites the
+left-hand side out of normal form first. -/
 lemma hasIntEntries_one : HasIntEntries n (1 : GL (Fin n) ℚ) :=
   ⟨1, by ext i j; simp [Matrix.map_apply, Matrix.one_apply]⟩
 
