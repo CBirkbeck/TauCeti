@@ -22,6 +22,13 @@ weights and in weight `2`, and otherwise spanned by a monomial in `E₄`, `E₆`
 subtracting a multiple of such a monomial leaves a cusp form, which is `Δ` times a form of
 weight `k − 12` by Mathlib's `CuspForm.discriminantEquiv`, and `Δ = (E₄³ − E₆²)/1728`.
 
+Injectivity is a weight-by-weight argument on weighted-homogeneous components (weights
+`4`, `6`): any component of a relation splits, by repeated division of its high-`X₀`
+monomials, as a reduced part of `X₀`-degree below `3` plus the discriminant polynomial
+times a lower-weight piece; evaluating and inspecting the constant `q`-coefficient kills
+the reduced monomial, and induction on the weight — descending through the discriminant
+factor — finishes.
+
 ## Main declarations
 
 * `TauCeti.ModularForm.evalE₄E₆`: the evaluation homomorphism
