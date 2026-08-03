@@ -155,6 +155,32 @@ lemma smulOrbit_congr (g : Δ) {β₁ β₂ : Δ} (h : (mk β₁ : HeckeLeftCose
   rw [mul_inv_rev, inv_inv]
   group
 
+open scoped Pointwise in
+private lemma smulOrbit_map_injective (g β : Δ) :
+    Function.Injective fun i : DecompQuotient H H (g : G) ↦
+      (mk ⟨(β : G) * i.out * g,
+        Δ.mul_mem (Δ.mul_mem β.2 (IsHeckeTriple.mem_of_mem_left H i.out.2)) g.2⟩ :
+        HeckeLeftCoset Δ H) := by
+  intro i₁ i₂ heq
+  have hmem : ((β : G) * ((i₁.out : H) : G) * (g : G))⁻¹ *
+      ((β : G) * ((i₂.out : H) : G) * (g : G)) ∈ H := mk_eq_mk.mp heq
+  have hcoset : ((((i₁.out : H) : G) * (g : G) : G) : G ⧸ H) =
+      ((((i₂.out : H) : G) * (g : G) : G) : G ⧸ H) := by
+    rw [QuotientGroup.eq]
+    have hshape : ((β : G) * ((i₁.out : H) : G) * (g : G))⁻¹ *
+        ((β : G) * ((i₂.out : H) : G) * (g : G)) =
+        (((i₁.out : H) : G) * g)⁻¹ * (((i₂.out : H) : G) * g) := by group
+    exact hshape ▸ hmem
+  exact mk_out_mul_injective H H (g : G) hcoset
+
+/-- The orbit of a left coset under `g` has exactly as many elements as the decomposition
+`HgH = ⊔ᵢ σᵢgH`: the map `i ↦ βσᵢgH` is injective. -/
+lemma smulOrbit_card (g β : Δ) :
+    (smulOrbit H g β).card = Fintype.card (DecompQuotient H H (g : G)) := by
+  classical
+  rw [smulOrbit, Finset.card_image_of_injective _ (smulOrbit_map_injective g β),
+    Finset.card_univ]
+
 /-- Orbits of representatives of distinct double cosets on a common left coset are
 disjoint. -/
 lemma smulOrbit_disjoint {g₁ g₂ : Δ} (β : Δ)
