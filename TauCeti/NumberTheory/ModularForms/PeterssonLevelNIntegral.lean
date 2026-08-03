@@ -30,7 +30,7 @@ resulting `PSL`-tile sum is exactly the tile decomposition of `gamma1FundDomain 
 Definiteness needs none of that identification: the `⟦1⟧`-summand of `petN f f` is the
 level-one inner product of `f` with itself, every summand is a nonnegative real, so
 `petN f f = 0` forces the level-one self-pairing to vanish and
-`CuspForm.peterssonInner_definite` applies.
+`CuspForm.peterssonInnerFd_definite` applies.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/Modularforms/PeterssonLevelN.lean`), completing the level-`N`
@@ -359,22 +359,22 @@ private theorem out_one_mem_Gamma1 :
   simpa using h'
 
 omit [NeZero N] in
-private theorem identity_coset_eq_peterssonInner (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+private theorem identity_coset_eq_peterssonInnerFd (f g : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     UpperHalfPlane.peterssonInner k fd
       (⇑f ∣[k] ((⟦(1 : SL(2, ℤ))⟧ : SL(2, ℤ) ⧸ Gamma1 N)).out⁻¹)
       (⇑g ∣[k] ((⟦(1 : SL(2, ℤ))⟧ : SL(2, ℤ) ⧸ Gamma1 N)).out⁻¹) =
-    CuspForm.peterssonInner f g := by
+    CuspForm.peterssonInnerFd f g := by
   have hmem := (Gamma1 N).inv_mem out_one_mem_Gamma1
-  rw [slash_Gamma1_eq f _ hmem, slash_Gamma1_eq g _ hmem, CuspForm.peterssonInner_def]
+  rw [slash_Gamma1_eq f _ hmem, slash_Gamma1_eq g _ hmem, CuspForm.peterssonInnerFd_def]
 
 /-- **Positive definiteness of the level-`N` Petersson pairing**: `petN f f = 0` forces
 `f = 0`. Every summand is a nonnegative real, so all vanish; the `⟦1⟧`-summand is
 the level-one inner product of `f` with itself, and
-`CuspForm.peterssonInner_definite` concludes. -/
+`CuspForm.peterssonInnerFd_definite` concludes. -/
 theorem petN_definite (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k)
     (hpet : petN f f = 0) : f = 0 := by
-  apply CuspForm.peterssonInner_definite f
-  rw [← identity_coset_eq_peterssonInner f f]
+  apply CuspForm.peterssonInnerFd_definite f
+  rw [← identity_coset_eq_peterssonInnerFd f f]
   choose r hr_nonneg hr_eq using petN_summand_nonneg f
   have hsum : (↑(∑ q, r q) : ℂ) = 0 := by
     rw [Complex.ofReal_sum]
