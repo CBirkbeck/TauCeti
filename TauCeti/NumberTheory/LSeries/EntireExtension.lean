@@ -8,6 +8,7 @@ module
 public import Mathlib.Analysis.Analytic.Uniqueness
 public import Mathlib.Analysis.Calculus.FDeriv.Defs
 import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
 public import Mathlib.NumberTheory.LSeries.Convergence
 
 /-!
@@ -21,9 +22,10 @@ by analytic continuation.
 
 The predicate comes with an introduction lemma (`LSeries.HasEntireExtension.of_extension`)
 and elimination lemmas (`.abscissa_lt_top`, `.exists_extension`), so consumers never
-unfold the definition. It is exercised: `LSeries.hasEntireExtension_delta` is a
-nondegenerate witness, and `LSeries.HasEntireExtension.existsUnique` pins down the unique
-extension.
+unfold the definition. It is exercised: every finitely supported coefficient sequence has
+an entire extension (`LSeries.hasEntireExtension_of_support_finite`, with the delta
+sequence `LSeries.hasEntireExtension_delta` as the basic instance), and
+`LSeries.HasEntireExtension.existsUnique` pins down the unique extension.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/Modularforms/LFunction.lean`). This is prerequisite infrastructure:
@@ -107,16 +109,39 @@ theorem existsUnique (h : HasEntireExtension a) :
 
 end HasEntireExtension
 
+/-- **Every finitely supported coefficient sequence has an entire extension**: the finite
+sum of its Dirichlet terms is entire and agrees with the L-series everywhere. -/
+theorem hasEntireExtension_of_support_finite {a : ℕ → ℂ}
+    (ha : (Function.support a).Finite) : HasEntireExtension a := by
+  classical
+  refine .of_extension (F := fun s ↦ ∑ n ∈ ha.toFinset, LSeries.term a s n)
+    ?_ ?_ fun {s} _ ↦ ?_
+  · refine lt_of_le_of_lt (LSeries.abscissaOfAbsConv_le_of_le_const
+      ⟨∑ n ∈ ha.toFinset, ‖a n‖, fun n _ ↦ ?_⟩)
+      (by exact_mod_cast EReal.coe_lt_top (1 : ℝ))
+    by_cases hn : n ∈ ha.toFinset
+    · exact Finset.single_le_sum (fun m _ ↦ norm_nonneg (a m)) hn
+    · rw [Function.notMem_support.mp fun h ↦ hn (ha.mem_toFinset.mpr h), norm_zero]
+      exact Finset.sum_nonneg fun m _ ↦ norm_nonneg (a m)
+  · refine Differentiable.fun_sum (𝕜 := ℂ) (A := fun n s ↦ LSeries.term a s n) fun n _ ↦ ?_
+    rcases eq_or_ne n 0 with rfl | hn0
+    · simp [LSeries.term_def]
+    · have hbase : ((n : ℂ)) ≠ 0 := Nat.cast_ne_zero.mpr hn0
+      simp only [LSeries.term_def, if_neg hn0]
+      intro s
+      exact (differentiableAt_const (a n)).div
+        (DifferentiableAt.const_cpow differentiableAt_id (Or.inl hbase))
+        (by simp [Complex.cpow_def_of_ne_zero hbase, Complex.exp_ne_zero])
+  · exact (tsum_eq_sum fun n hn ↦ by
+      simp [LSeries.term_def,
+        Function.notMem_support.mp fun h ↦ hn (ha.mem_toFinset.mpr h)]).symm
+
 /-- The delta sequence (the coefficients of the constant Dirichlet series `1`) has an
-entire extension, witnessed by the constant function `1`: the predicate is not vacuous. -/
-theorem hasEntireExtension_delta : HasEntireExtension LSeries.delta := by
-  refine .of_extension (F := fun _ ↦ 1) ?_ (differentiable_const 1) fun {s} _ ↦ ?_
-  · refine lt_of_le_of_lt (LSeriesSummable.abscissaOfAbsConv_le (s := (2 : ℂ)) ?_) (by simp)
-    refine summable_of_ne_finset_zero (s := {1}) fun n hn ↦ ?_
-    rw [LSeries.term_delta]
-    simp only [Finset.mem_singleton] at hn
-    simp [hn]
-  · rw [LSeries_delta]
-    rfl
+entire extension: the predicate is not vacuous. -/
+theorem hasEntireExtension_delta : HasEntireExtension LSeries.delta :=
+  hasEntireExtension_of_support_finite <| (Set.finite_singleton 1).subset fun n hn ↦
+    Set.mem_singleton_iff.mpr (by
+      by_contra h1
+      exact hn (by simp [LSeries.delta, h1]))
 
 end LSeries
