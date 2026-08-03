@@ -117,9 +117,12 @@ namespace ModularGroup
 
 private theorem integrableOn_zpow_neg_two_Ioi {c : ℝ} (hc : 0 < c) :
     IntegrableOn (· ^ (-2 : ℤ)) (Ioi c) (volume : Measure ℝ) := by
-  have h := integrableOn_Ioi_rpow_of_lt (show (-2 : ℝ) < -1 by norm_num) hc
-  rwa [show (· ^ (-2 : ℝ) : ℝ → ℝ) = (· ^ (-2 : ℤ)) from funext fun _ ↦ by
-    rw [show (-2 : ℝ) = ((-2 : ℤ) : ℝ) by norm_cast, Real.rpow_intCast]] at h
+  have h := integrableOn_Ioi_rpow_of_lt (by norm_num : (-2 : ℝ) < -1) hc
+  have h_eq : (· ^ (-2 : ℝ) : ℝ → ℝ) = (· ^ (-2 : ℤ)) := by
+    funext x
+    rw [← Real.rpow_intCast]
+    norm_num
+  rwa [h_eq] at h
 
 private theorem strip_lintegral_lt_top {c : ℝ} (hc : 0 < c) :
     ∫⁻ p in Icc (-1/2 : ℝ) (1/2) ×ˢ Ioi c,
@@ -136,9 +139,8 @@ private theorem strip_lintegral_lt_top {c : ℝ} (hc : 0 < c) :
         (integrableOn_zpow_neg_two_Ioi hc).hasFiniteIntegral
 
 private theorem setLIntegral_im_eq_prod (g : ℝ → ENNReal) (T : Set (ℝ × ℝ)) :
-    ∫⁻ z in equivRealProd ⁻¹' T, g z.im ∂(volume : Measure ℂ) =
+    ∫⁻ z in measurableEquivRealProd ⁻¹' T, g z.im ∂(volume : Measure ℂ) =
       ∫⁻ p in T, g p.2 ∂(volume : Measure (ℝ × ℝ)) := by
-  rw [show (⇑equivRealProd : ℂ → ℝ × ℝ) = ⇑measurableEquivRealProd from rfl]
   have h := volume_preserving_equiv_real_prod.setLIntegral_comp_emb
       measurableEquivRealProd.measurableEmbedding (fun p : ℝ × ℝ ↦ g p.2)
       (measurableEquivRealProd ⁻¹' T)
@@ -160,42 +162,46 @@ theorem volume_fd_lt_top : (volume : Measure ℍ) fd < ⊤ := by
         push_cast [Real.nnnorm_of_nonneg τ.im_pos.le]
         rw [one_div, inv_pow, zpow_neg]
         norm_num
-    _ ≤ ∫⁻ z in equivRealProd ⁻¹' T, ENNReal.ofReal (z.im ^ (-2 : ℤ)) :=
+    _ ≤ ∫⁻ z in measurableEquivRealProd ⁻¹' T, ENNReal.ofReal (z.im ^ (-2 : ℤ)) :=
         lintegral_mono_set fun z ↦ by
           rintro ⟨τ, hτ, rfl⟩
-          simp only [mem_preimage, equivRealProd_apply, coe_re, coe_im]
+          simp only [mem_preimage, measurableEquivRealProd_apply, coe_re, coe_im]
           refine ⟨⟨by linarith [(abs_le.mp hτ.2).1], (abs_le.mp hτ.2).2⟩,
             mem_Ioi.mpr ?_⟩
           have h := three_le_four_mul_im_sq_of_mem_fd hτ
-          rw [show (4 : ℝ) * τ.im ^ 2 = (2 * τ.im) ^ 2 from by ring] at h
+          have h_sq : (4 : ℝ) * τ.im ^ 2 = (2 * τ.im) ^ 2 := by ring
+          rw [h_sq] at h
           have h2 := Real.sqrt_le_sqrt h
           rw [Real.sqrt_sq (by linarith [τ.im_pos])] at h2
-          nlinarith [Real.sqrt_pos_of_pos (show (3 : ℝ) > 0 by norm_num)]
+          nlinarith [Real.sqrt_pos_of_pos (by norm_num : (0 : ℝ) < 3)]
     _ = ∫⁻ p in T, ENNReal.ofReal (p.2 ^ (-2 : ℤ)) ∂volume :=
         setLIntegral_im_eq_prod (fun y ↦ ENNReal.ofReal (y ^ (-2 : ℤ))) T
     _ < ⊤ := strip_lintegral_lt_top (by positivity)
 
 private theorem volume_complex_re_eq (c : ℝ) : volume {z : ℂ | z.re = c} = 0 := by
-  rw [show {z : ℂ | z.re = c} = measurableEquivRealProd ⁻¹' ({c} ×ˢ univ) from by
-    ext z; simp [measurableEquivRealProd]]
-  rw [volume_preserving_equiv_real_prod.measure_preimage
+  have h_eq : {z : ℂ | z.re = c} = measurableEquivRealProd ⁻¹' ({c} ×ˢ univ) := by
+    ext z
+    simp [measurableEquivRealProd_apply]
+  rw [h_eq, volume_preserving_equiv_real_prod.measure_preimage
     ((measurableSet_singleton c).prod MeasurableSet.univ).nullMeasurableSet,
     volume_eq_prod, Measure.prod_prod, Real.volume_singleton, zero_mul]
 
 private theorem volume_complex_normSq_eq (c : ℝ) :
     volume {z : ℂ | Complex.normSq z = c} = 0 := by
   rcases le_or_gt 0 c with hc | hc
-  · rw [show {z : ℂ | Complex.normSq z = c} = Metric.sphere (0 : ℂ) (Real.sqrt c) from by
+  · have h_eq : {z : ℂ | Complex.normSq z = c} = Metric.sphere (0 : ℂ) (Real.sqrt c) := by
       ext z
       simp only [mem_ofPred_eq, Complex.normSq_eq_norm_sq, mem_sphere_zero_iff_norm]
       constructor
       · intro h
         rw [← h, Real.sqrt_sq (norm_nonneg z)]
       · intro h
-        rw [h, Real.sq_sqrt hc]]
+        rw [h, Real.sq_sqrt hc]
+    rw [h_eq]
     exact Measure.addHaar_sphere volume 0 _
-  · rw [show {z : ℂ | Complex.normSq z = c} = ∅ from eq_empty_iff_forall_notMem.mpr
-      fun z hz ↦ not_le.mpr hc (hz ▸ Complex.normSq_nonneg z)]
+  · have h_empty : {z : ℂ | Complex.normSq z = c} = ∅ :=
+      eq_empty_iff_forall_notMem.mpr fun z hz ↦ not_le.mpr hc (hz ▸ Complex.normSq_nonneg z)
+    rw [h_empty]
     exact measure_empty
 
 /-- **The frontier of the standard fundamental domain has zero invariant measure.**
@@ -299,41 +305,45 @@ theorem peterssonInner_add_right (k : ℤ) (D : Set ℍ) (f g₁ g₂ : ℍ → 
     (hg₁ : IntegrableOn (fun τ ↦ petersson k f g₁ τ) D (volume : Measure ℍ))
     (hg₂ : IntegrableOn (fun τ ↦ petersson k f g₂ τ) D (volume : Measure ℍ)) :
     peterssonInner k D f (g₁ + g₂) = peterssonInner k D f g₁ + peterssonInner k D f g₂ := by
-  rw [show peterssonInner k D f (g₁ + g₂) =
-      ∫ τ in D, (petersson k f g₁ τ + petersson k f g₂ τ) from by
-    simp only [peterssonInner, petersson, Pi.add_apply]; congr 1; ext τ; ring]
-  exact integral_add hg₁ hg₂
+  simp only [peterssonInner]
+  rw [← integral_add hg₁ hg₂]
+  exact integral_congr_ae (ae_of_all _ fun τ ↦ by
+    simp only [petersson, Pi.add_apply]
+    ring)
 
 /-- Additivity in the first argument, given integrability of both summands. -/
 theorem peterssonInner_add_left (k : ℤ) (D : Set ℍ) (f₁ f₂ g : ℍ → ℂ)
     (hf₁ : IntegrableOn (fun τ ↦ petersson k f₁ g τ) D (volume : Measure ℍ))
     (hf₂ : IntegrableOn (fun τ ↦ petersson k f₂ g τ) D (volume : Measure ℍ)) :
     peterssonInner k D (f₁ + f₂) g = peterssonInner k D f₁ g + peterssonInner k D f₂ g := by
-  rw [show peterssonInner k D (f₁ + f₂) g =
-      ∫ τ in D, (petersson k f₁ g τ + petersson k f₂ g τ) from by
-    simp only [peterssonInner, petersson, Pi.add_apply, map_add]; congr 1; ext τ; ring]
-  exact integral_add hf₁ hf₂
+  simp only [peterssonInner]
+  rw [← integral_add hf₁ hf₂]
+  exact integral_congr_ae (ae_of_all _ fun τ ↦ by
+    simp only [petersson, Pi.add_apply, map_add]
+    ring)
 
 /-- Scalar multiplication in the second argument. -/
 theorem peterssonInner_smul_right (k : ℤ) (D : Set ℍ) (c : ℂ) (f g : ℍ → ℂ) :
     peterssonInner k D f (c • g) = c * peterssonInner k D f g := by
-  rw [show peterssonInner k D f (c • g) = ∫ τ in D, c * petersson k f g τ from by
-    simp only [peterssonInner, petersson, Pi.smul_apply, smul_eq_mul]
-    congr 1; ext τ; ring]
-  exact integral_const_mul c _
+  simp only [peterssonInner]
+  rw [← integral_const_mul]
+  exact integral_congr_ae (ae_of_all _ fun τ ↦ by
+    simp only [petersson, Pi.smul_apply, smul_eq_mul]
+    ring)
 
 /-- Conjugate-scalar multiplication in the left argument. -/
 theorem peterssonInner_conj_smul_left (k : ℤ) (D : Set ℍ) (c : ℂ) (f g : ℍ → ℂ) :
     peterssonInner k D (c • f) g = conj c * peterssonInner k D f g := by
-  rw [show peterssonInner k D (c • f) g = ∫ τ in D, conj c * petersson k f g τ from by
-    simp only [peterssonInner, petersson, Pi.smul_apply, smul_eq_mul, map_mul]
-    congr 1; ext τ; ring]
-  exact integral_const_mul (conj c) _
+  simp only [peterssonInner]
+  rw [← integral_const_mul]
+  exact integral_congr_ae (ae_of_all _ fun τ ↦ by
+    simp only [petersson, Pi.smul_apply, smul_eq_mul, map_mul]
+    ring)
 
 private lemma petersson_self_re_eq (z : ℂ) (y : ℝ) (k : ℤ) :
     (starRingEnd ℂ z * z * (↑y : ℂ) ^ k).re = Complex.normSq z * y ^ k := by
-  rw [show starRingEnd ℂ z * z = ↑(Complex.normSq z) from Complex.normSq_eq_conj_mul_self.symm,
-    ← Complex.ofReal_zpow, ← Complex.ofReal_mul, Complex.ofReal_re]
+  rw [← Complex.normSq_eq_conj_mul_self, ← Complex.ofReal_zpow, ← Complex.ofReal_mul,
+    Complex.ofReal_re]
 
 /-- **Definiteness of the Petersson pairing on the fundamental domain**: a cusp form whose
 Petersson self-pairing over `𝒟` vanishes is zero everywhere on `𝒟`.
@@ -351,12 +361,12 @@ theorem eq_zero_on_fd_of_peterssonInner_self_eq_zero {F : Type*} [FunLike F ℍ 
     trans RCLike.re (∫ z in fd, petersson k (⇑f) (⇑f) z)
     · exact integral_re hint
     · simp only [peterssonInner] at hpet; rw [hpet]; simp
+  have hg_nonneg : ∀ z, 0 ≤ g z := fun z ↦ by
+    simp only [g, petersson]
+    exact (petersson_self_re_eq (f z) z.im k).symm ▸
+      mul_nonneg (Complex.normSq_nonneg _) (zpow_nonneg z.im_pos.le _)
   have hg_ae : g =ᶠ[ae ((volume : Measure ℍ).restrict fd)] 0 := by
-    rwa [← integral_eq_zero_iff_of_nonneg_ae
-      (ae_of_all _ fun z ↦ show 0 ≤ g z from by
-        simp only [g, petersson]
-        exact (petersson_self_re_eq (f z) z.im k).symm ▸
-          mul_nonneg (Complex.normSq_nonneg _) (zpow_nonneg z.im_pos.le _)) hint.re]
+    rwa [← integral_eq_zero_iff_of_nonneg_ae (ae_of_all _ hg_nonneg) hint.re]
   have hg_cont : Continuous g :=
     Complex.continuous_re.comp (petersson_continuous k (ModularFormClass.continuous f)
       (ModularFormClass.continuous f))
