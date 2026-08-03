@@ -76,10 +76,13 @@ def bar (g : G) : G := (ι.toFun g).unop
 @[simp] lemma bar_bar (g : G) : ι.bar (ι.bar g) = g := ι.involutive g
 
 /-- The anti-involution reverses multiplication. -/
-lemma bar_mul (a b : G) : ι.bar (a * b) = ι.bar b * ι.bar a := by simp [bar]
+@[simp] lemma bar_mul (a b : G) : ι.bar (a * b) = ι.bar b * ι.bar a := by simp [bar]
 
 /-- The anti-involution commutes with inversion. -/
-lemma bar_inv (g : G) : ι.bar g⁻¹ = (ι.bar g)⁻¹ := by simp [bar]
+@[simp] lemma bar_inv (g : G) : ι.bar g⁻¹ = (ι.bar g)⁻¹ := by simp [bar]
+
+/-- The anti-involution fixes the identity. -/
+@[simp] lemma bar_one : ι.bar (1 : G) = 1 := by simp [bar]
 
 /-- The anti-involution preserves membership in `H`. -/
 lemma bar_mem_H {g : G} (hg : g ∈ H) : ι.bar g ∈ H := ι.mem_H g hg
@@ -99,7 +102,7 @@ noncomputable def onHeckeCoset (D : HeckeCoset Δ H H) : HeckeCoset Δ H H :=
   HeckeCoset.mk H H ⟨ι.bar (D.rep : G), ι.bar_mem_Δ D.rep.2⟩
 
 /-- `onHeckeCoset` sends the class of `g` to the class of `bar g`. -/
-lemma onHeckeCoset_mk (g : Δ) :
+@[simp] lemma onHeckeCoset_mk (g : Δ) :
     ι.onHeckeCoset (HeckeCoset.mk H H g) =
       HeckeCoset.mk H H ⟨ι.bar (g : G), ι.bar_mem_Δ g.2⟩ := by
   refine HeckeCoset.eq_iff.mpr ?_
@@ -107,6 +110,14 @@ lemma onHeckeCoset_mk (g : Δ) :
     have h := HeckeCoset.rep_mem (HeckeCoset.mk H H g)
     rwa [HeckeCoset.toSet_mk] at h
   exact doubleCoset_eq_of_mem (ι.bar_mem_doubleCoset hrep)
+
+/-- The induced action on double cosets is an involution. -/
+@[simp] lemma onHeckeCoset_onHeckeCoset (D : HeckeCoset Δ H H) :
+    ι.onHeckeCoset (ι.onHeckeCoset D) = D := by
+  induction D using HeckeCoset.induction with
+  | h g =>
+    rw [ι.onHeckeCoset_mk, ι.onHeckeCoset_mk]
+    exact congrArg (HeckeCoset.mk H H) (Subtype.ext (ι.bar_bar (g : G)))
 
 /-- When the anti-involution fixes every double coset, `bar g` lies in the double coset of
 `g` for every `g ∈ Δ`. -/
