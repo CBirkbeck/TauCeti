@@ -159,7 +159,7 @@ theorem tangentToPointDerivation_injective
 function as a combination of the coordinate functions of any finitely-indexed basis, each taken
 relative to its own value at `x`, with smooth coefficients. At the base point those coefficients
 are the directional derivatives along the basis. -/
-private theorem exists_contMDiff_hadamard_coords {E : Type*} [NormedAddCommGroup E]
+private theorem exists_contMDiffMap_hadamard_coords {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] {ι : Type*} [Fintype ι]
     (f : C^∞⟮modelWithCornersSelf ℝ E, E; ℝ⟯) (x : E) (b : Module.Basis ι ℝ E) :
     ∃ a : ι → C^∞⟮modelWithCornersSelf ℝ E, E; ℝ⟯,
@@ -205,7 +205,7 @@ private theorem tangentToPointDerivation_surjective_model
   rw [mvfderiv, mfderiv_eq_fderiv]
   -- Hadamard's lemma factors `f - f(x)` through the coordinate functions, with smooth factors,
   -- so this identity lives in the algebra on which the derivation acts.
-  obtain ⟨a, hax, ha⟩ := exists_contMDiff_hadamard_coords f' x b
+  obtain ⟨a, hax, ha⟩ := exists_contMDiffMap_hadamard_coords f' x b
   let k : C^∞⟮modelWithCornersSelf ℝ E, E; ℝ⟯ :=
     ⟨fun _ ↦ f' x, contDiff_const.contMDiff⟩
   let kcoord (i : Fin (Module.finrank ℝ E)) :
