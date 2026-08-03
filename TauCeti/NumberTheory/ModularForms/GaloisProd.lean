@@ -99,6 +99,21 @@ lemma galoisProd_isBoundedAtImInfty (hf_bdd : IsBoundedAtImInfty f) :
   have him : 0 < ((τ : ℂ) - ↑j).im := by
     simp [Complex.sub_im, Complex.natCast_im, τ.im_pos]
   simp [ofComplex_apply_of_im_pos him]
+/-- Each rotated factor of the cusp function at period `N` is the value of `f` at the
+corresponding integer translate of the preimage point. -/
+private lemma cuspFunction_factor_eq (hNR_ne : (N : ℝ) ≠ 0)
+    (hf_per : Function.Periodic (f ∘ ofComplex) (N : ℝ)) {q : ℂ} {τ : ℍ}
+    (hτq : Function.Periodic.qParam (N : ℝ) τ = q) (j : ℕ) :
+    cuspFunction (N : ℝ) f (q * Complex.exp (-2 * Real.pi * Complex.I * j / N)) =
+      f (ofComplex ((τ : ℂ) - j)) := by
+  have him : 0 < ((τ : ℂ) - ↑j).im := by
+    simp [Complex.sub_im, Complex.natCast_im, τ.im_pos]
+  have hqj : q * Complex.exp (-2 * Real.pi * Complex.I * j / N) =
+      Function.Periodic.qParam (N : ℝ) ((⟨(τ : ℂ) - j, him⟩ : ℍ) : ℂ) := by
+    rw [show ((N : ℕ) : ℂ) = (((N : ℕ) : ℝ) : ℂ) by push_cast; rfl, ← hτq,
+      ← TauCeti.Periodic.qParam_sub (h := (N : ℝ)) τ j]
+  rw [hqj, eq_cuspFunction ⟨(τ : ℂ) - j, him⟩ hNR_ne hf_per, ofComplex_apply_of_im_pos him]
+
 private lemma cuspFunction_one_galoisProd_pow_eq (hN : 0 < N)
     (hf_per : Function.Periodic (f ∘ ofComplex) (N : ℝ))
     (hf_bdd : IsBoundedAtImInfty f) (hf_mdiff : MDiff f) :
@@ -128,14 +143,15 @@ private lemma cuspFunction_one_galoisProd_pow_eq (hN : 0 < N)
   have hqN : q ^ N = Function.Periodic.qParam 1 (τ : ℂ) := by
     rw [← hτq, ← mul_one (N : ℝ), TauCeti.Periodic.qParam_nat_mul_pow hN.ne']
   rw [hqN, eq_cuspFunction τ one_ne_zero (galoisProd_periodic_one hN hf_per), galoisProd_apply]
-  refine Finset.prod_congr rfl fun j _ ↦ ?_
-  have him : 0 < ((τ : ℂ) - ↑j).im := by
-    simp [Complex.sub_im, Complex.natCast_im, τ.im_pos]
-  have hqj : q * Complex.exp (-2 * Real.pi * Complex.I * j / N) =
-      Function.Periodic.qParam (N : ℝ) ((⟨(τ : ℂ) - j, him⟩ : ℍ) : ℂ) := by
-    rw [show ((N : ℕ) : ℂ) = (((N : ℕ) : ℝ) : ℂ) by push_cast; rfl, ← hτq,
-      ← TauCeti.Periodic.qParam_sub (h := (N : ℝ)) τ j]
-  rw [hqj, eq_cuspFunction ⟨(τ : ℂ) - j, him⟩ hNR_ne hf_per, ofComplex_apply_of_im_pos him]
+  exact Finset.prod_congr rfl fun j _ ↦ (cuspFunction_factor_eq hNR_ne hf_per hτq j).symm
+/-- Precomposing with a rotation does not change the analytic order at `0`. -/
+private lemma analyticOrderAt_factor_eq (j : ℕ) :
+    analyticOrderAt (fun q : ℂ ↦ cuspFunction (N : ℝ) f
+      (q * Complex.exp (-2 * Real.pi * Complex.I * j / N))) 0 =
+      analyticOrderAt (cuspFunction (N : ℝ) f) 0 := by
+  rw [← Function.comp_def, analyticOrderAt_comp_of_deriv_ne_zero
+    (f := cuspFunction (N : ℝ) f) (by fun_prop) (by simp [Complex.exp_ne_zero]), zero_mul]
+
 /-- The `q`-expansion of `galoisProd N f` (period `1`) and that of `f` (period `N`) have the same
 order at `0`. -/
 lemma qExpansion_one_galoisProd_order_eq (hN : 0 < N)
@@ -157,9 +173,8 @@ lemma qExpansion_one_galoisProd_order_eq (hN : 0 < N)
     hRHS_an.comp_of_eq (by fun_prop) (by simp)
   have h_factor_order : ∀ j ∈ Finset.range N,
       analyticOrderAt (fun q : ℂ ↦ cuspFunction (N : ℝ) f
-        (q * Complex.exp (-2 * Real.pi * Complex.I * j / N))) 0 = MR := fun j _ ↦ by
-    rw [← Function.comp_def, analyticOrderAt_comp_of_deriv_ne_zero
-      (f := cuspFunction (N : ℝ) f) (by fun_prop) (by simp [Complex.exp_ne_zero]), zero_mul]
+        (q * Complex.exp (-2 * Real.pi * Complex.I * j / N))) 0 = MR := fun j _ ↦
+    analyticOrderAt_factor_eq j
   have h_combine : ML * (N : ℕ∞) = (N : ℕ∞) * MR := by
     rw [← analyticOrderAt_comp_pow_zero hLHS_an hN,
       analyticOrderAt_congr (cuspFunction_one_galoisProd_pow_eq hN hf_per hf_bdd hf_mdiff),
