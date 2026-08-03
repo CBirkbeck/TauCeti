@@ -1,0 +1,110 @@
+/-
+Copyright (c) 2024 Chris Birkbeck. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Chris Birkbeck
+-/
+module
+
+public import TauCeti.NumberTheory.HeckeRing.LeftCosetModule
+public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Unit
+import Mathlib.Tactic.Group
+
+/-!
+# Hecke rings: the degree homomorphism
+
+The degree of a double coset `HgH = ⊔ᵢ σᵢgH` is the number of left cosets in its
+decomposition, `deg(HgH) = [H : H ∩ gHg⁻¹]`. Extended linearly it gives the degree
+homomorphism `deg : 𝕋 Δ H R →+* R` of the Hecke ring (Proposition 3.3 of
+[Shimura][shimura1971]). Multiplicativity is proved through the module of left cosets:
+`deg f` is the coefficient sum of `f • [H]`, and the action satisfies the compatibility law
+`(f * g) • m = g • (f • m)` (Proposition 3.4), so the coefficient sum multiplies.
+
+Ported from the AINTLIB `LeanModularForms` project
+(`HeckeRIngs/AbstractHeckeRing/Degree.lean` and the compatibility law of
+`HeckeRIngs/AbstractHeckeRing/Associativity.lean`,
+<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), per the
+ModularForms roadmap's dependency policy; the compatibility law is stated as a plain lemma
+(`HeckeLeftCosetModule.mul_smul'`) rather than through AINTLIB's reversed scalar action.
+
+## Main definitions
+
+* `HeckeCoset.degree D`: the number of left cosets in the decomposition of `D`.
+* `HeckeCosetModule.coeffSum`: the coefficient-sum homomorphism of the left-coset module.
+* `HeckeCosetModule.deg`: the degree homomorphism `𝕋 Δ H R →+* R`.
+
+## Main results
+
+* `HeckeLeftCoset.smulOrbit_card`: the orbit of a left coset under `D` has `D.degree`
+  elements.
+* `HeckeLeftCosetModule.mul_smul'`: the action compatibility `(f * g) • m = g • (f • m)`.
+* `HeckeCosetModule.deg_mul`: the degree is multiplicative.
+-/
+
+public section
+
+open DoubleCoset Subgroup
+
+variable {G : Type*} [Group G] {Δ : Submonoid G} {H : Subgroup G}
+
+namespace HeckeCoset
+
+variable [IsHeckeTriple Δ H H]
+
+/-- The degree of a double coset: the number of left cosets `σᵢgH` in the decomposition
+`HgH = ⊔ᵢ σᵢgH`, i.e. `[H : H ∩ gHg⁻¹]`. -/
+noncomputable def degree (D : HeckeCoset Δ H H) : ℕ :=
+  Fintype.card (DecompQuotient H H (D.rep : G))
+
+/-- Every double coset has positive degree. -/
+lemma degree_pos (D : HeckeCoset Δ H H) : 0 < D.degree :=
+  Fintype.card_pos
+
+/-- The identity double coset has degree one. -/
+@[simp] lemma degree_one : (1 : HeckeCoset Δ H H).degree = 1 := by
+  have hsub : Subsingleton (DecompQuotient H H ((1 : HeckeCoset Δ H H).rep : G)) :=
+    subsingleton_decompQuotient_of_mem (rep_one_mem)
+  exact Fintype.card_eq_one_iff_nonempty_unique.mpr
+    ⟨uniqueOfSubsingleton (Classical.arbitrary _)⟩
+
+end HeckeCoset
+
+namespace HeckeLeftCoset
+
+variable [IsHeckeTriple Δ H H]
+
+/-- The orbit of a left coset under the representative of `D` has `D.degree` elements. -/
+lemma smulOrbit_rep_card (D : HeckeCoset Δ H H) (β : Δ) :
+    (smulOrbit H D.rep β).card = D.degree :=
+  smulOrbit_card D.rep β
+
+end HeckeLeftCoset
+
+namespace HeckeLeftCosetModule
+
+open HeckeLeftCoset
+
+open scoped HeckeCosetModule
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
+
+variable (Δ H R) in
+/-- The coefficient-sum homomorphism of the left-coset module: the sum of all coefficients
+of a formal linear combination of left cosets. -/
+noncomputable def coeffSum : (HeckeLeftCoset Δ H →₀ R) →+ R :=
+  Finsupp.liftAddHom fun _ ↦ AddMonoidHom.id R
+
+omit [IsHeckeTriple Δ H H] in
+@[simp] lemma coeffSum_single (q : HeckeLeftCoset Δ H) (b : R) :
+    coeffSum Δ H R (Finsupp.single q b) = b :=
+  Finsupp.liftAddHom_apply_single _ _ _
+
+/-- The coefficient sum of the action of a ring basis element on a module basis element:
+the degree of the double coset appears as the orbit size. -/
+lemma coeffSum_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeLeftCoset Δ H) (a b : R) :
+    coeffSum Δ H R (HeckeCosetModule.single R D a • (Finsupp.single q b :
+      HeckeLeftCoset Δ H →₀ R)) = (D.degree : ℕ) • (a * b) := by
+  classical
+  rw [single_smul_single, map_sum]
+  simp [smulOrbit_rep_card]
+
+end HeckeLeftCosetModule
