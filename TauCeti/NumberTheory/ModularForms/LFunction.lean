@@ -7,6 +7,7 @@ module
 
 public import Mathlib.NumberTheory.LSeries.Convergence
 public import Mathlib.NumberTheory.ModularForms.LFunction
+public import TauCeti.NumberTheory.LSeries.EntireExtension
 
 /-!
 # Dirichlet series of modular forms
@@ -122,5 +123,19 @@ theorem LSeries_qExpansion_coeff_eq (hk : 0 < k) [CuspFormClass F Γ k] (f : F)
     have hk' : (0 : ℝ) < (k : ℝ) := mod_cast hk
     linarith
   exact LSeries_eq_of_hasSum hs0 (hasSum_L hk f hs)
+
+/-- **Entire continuation of the L-series of a cusp form** — the roadmap's Layer-7
+continuation milestone: the Dirichlet series of the `q`-expansion coefficients of a cusp
+form of positive weight has an entire extension, namely `s ↦ (h Γ)⁻ˢ · L hk f s`, through
+Mathlib's `CuspForm.differentiable_L` and the half-plane identification. -/
+theorem hasEntireExtension_qExpansion_coeff (hk : 0 < k) [CuspFormClass F Γ k] (f : F) :
+    LSeries.HasEntireExtension (fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n) := by
+  refine LSeries.HasEntireExtension.of_extension_of_le (c := (k : ℝ) / 2 + 1)
+    ?_ ?_ (fun {s} hs ↦ (LSeries_qExpansion_coeff_eq hk f hs).symm)
+  · refine (abscissaOfAbsConv_qExpansion_coeff_le f).trans_eq ?_
+    rw [EReal.coe_add, EReal.coe_one]
+  · exact (Differentiable.const_cpow differentiable_neg
+      (Or.inl (Complex.ofReal_ne_zero.mpr Γ.strictWidthInfty_pos.ne'))).mul
+      (differentiable_L hk f)
 
 end CuspForm

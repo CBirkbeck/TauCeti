@@ -8,6 +8,7 @@ module
 import Mathlib.Analysis.Analytic.Uniqueness
 public import Mathlib.Analysis.Calculus.FDeriv.Defs
 import Mathlib.Analysis.Complex.CauchyIntegral
+import Mathlib.Analysis.Complex.Convex
 import Mathlib.NumberTheory.LSeries.Deriv
 public import Mathlib.NumberTheory.LSeries.Convergence
 
@@ -66,6 +67,40 @@ theorem of_extension {F : ℂ → ℂ} (h_finite : abscissaOfAbsConv a < ⊤)
     (hFa : ∀ {s : ℂ}, abscissaOfAbsConv a < s.re → F s = LSeries a s) :
     HasEntireExtension a :=
   ⟨h_finite, F, hF, hFa⟩
+
+/-- Introduction from a smaller half-plane: an entire function agreeing with `LSeries a`
+on `Re s > c`, for any real `c` above the abscissa, extends it on the full
+absolute-convergence half-plane, by the identity theorem on connected half-planes. -/
+theorem of_extension_of_le {F : ℂ → ℂ} {c : ℝ} (hc : abscissaOfAbsConv a ≤ c)
+    (hF : Differentiable ℂ F) (hFa : ∀ {s : ℂ}, c < s.re → F s = LSeries a s) :
+    HasEntireExtension a := by
+  refine ⟨lt_of_le_of_lt hc (EReal.coe_lt_top c), F, hF, fun {s} hs ↦ ?_⟩
+  obtain ⟨σ, hσ_abs, hσ_s⟩ := EReal.exists_between_coe_real hs
+  have hσ_s' : (σ : ℝ) < s.re := by exact_mod_cast hσ_s
+  set W : Set ℂ := {z : ℂ | (σ : ℝ) < z.re} with hW_def
+  have hW_open : IsOpen W := isOpen_lt continuous_const Complex.continuous_re
+  have hW_sub : ∀ z ∈ W, abscissaOfAbsConv a < (z.re : EReal) := fun z hz ↦
+    lt_of_lt_of_le hσ_abs (by exact_mod_cast (hz : (σ : ℝ) < z.re).le)
+  have hL : AnalyticOnNhd ℂ (LSeries a) W :=
+    DifferentiableOn.analyticOnNhd
+      (fun z hz ↦ ((LSeries_hasDerivAt (hW_sub z hz)).differentiableAt).differentiableWithinAt)
+      hW_open
+  have hFW : AnalyticOnNhd ℂ F W :=
+    (Complex.analyticOnNhd_univ_iff_differentiable.mpr hF).mono (Set.subset_univ W)
+  set z₀ : ℂ := ((max σ c + 1 : ℝ) : ℂ) with hz₀_def
+  have hz₀W : z₀ ∈ W := by
+    simp only [hW_def, Set.mem_ofPred_eq, hz₀_def, Complex.ofReal_re]
+    have := le_max_left σ c
+    linarith
+  have hfg : F =ᶠ[nhds z₀] LSeries a := by
+    refine Filter.eventuallyEq_iff_exists_mem.mpr
+      ⟨{z : ℂ | (max σ c : ℝ) < z.re},
+        (isOpen_lt continuous_const Complex.continuous_re).mem_nhds ?_, fun z hz ↦ ?_⟩
+    · simp only [Set.mem_ofPred_eq, hz₀_def, Complex.ofReal_re]
+      linarith
+    · exact hFa (lt_of_le_of_lt (le_max_right σ c) hz)
+  have hconn : IsPreconnected W := (convex_halfSpace_re_gt σ).isPreconnected
+  exact hFW.eqOn_of_preconnected_of_eventuallyEq hL hconn hz₀W hfg hσ_s'
 
 /-- The abscissa of absolute convergence of a sequence with an entire extension is
 finite. -/
