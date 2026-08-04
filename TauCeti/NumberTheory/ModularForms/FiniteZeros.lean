@@ -31,7 +31,7 @@ valence formula.
 
 public noncomputable section
 
-open Complex Filter Metric Set UpperHalfPlane
+open Complex Filter Metric Set UpperHalfPlane TauCeti.UpperHalfPlane
 
 open scoped ModularForm MatrixGroups Modular Topology
 
