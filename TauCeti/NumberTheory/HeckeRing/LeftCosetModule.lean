@@ -106,6 +106,14 @@ noncomputable def smulOrbit (H : Subgroup G) [IsHeckeTriple Δ H H] (g β : Δ) 
       Δ.mul_mem (Δ.mul_mem β.2 (IsHeckeTriple.mem_of_mem_left H i.out.2)) g.2⟩
 
 open Classical in
+/-- The orbit as an explicit image: the defining equation, exported for consumers that
+count over the enumeration. -/
+lemma smulOrbit_eq_image (g β : Δ) :
+    smulOrbit H g β = Finset.univ.image fun i : DecompQuotient H H (g : G) ↦
+      mk ⊥ H ⟨(β : G) * i.out * g,
+        Δ.mul_mem (Δ.mul_mem β.2 (IsHeckeTriple.mem_of_mem_left H i.out.2)) g.2⟩ := (rfl)
+
+open Classical in
 /-- Membership in the orbit: the left cosets of the products `β · σᵢ · g` over the
 decomposition representatives. -/
 lemma mem_smulOrbit {g β : Δ} {x : HeckeCoset Δ ⊥ H} :
@@ -209,7 +217,9 @@ lemma smulOrbit_congr_left (β : Δ) {g₁ g₂ : Δ}
     (smulOrbit_subset_left (hset.symm ▸ mem_doubleCoset_self H H (g₂ : G)))
 
 open scoped Pointwise in
-private lemma smulOrbit_map_injective (g β : Δ) :
+/-- The orbit enumeration is injective: distinct decomposition classes give distinct left
+cosets. -/
+lemma smulOrbit_map_injective (g β : Δ) :
     Function.Injective fun i : DecompQuotient H H (g : G) ↦
       (mk ⊥ H ⟨(β : G) * i.out * g,
         Δ.mul_mem (Δ.mul_mem β.2 (IsHeckeTriple.mem_of_mem_left H i.out.2)) g.2⟩ :
