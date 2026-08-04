@@ -218,6 +218,13 @@ lemma rationalOrderAtCusp_eq_orderAtCusp (hh : 0 < h) (hg_per : Periodic (g ∘ 
   push_cast
   ring
 
+/-- The rational cusp order is the halved doubled-width analytic order. -/
+lemma rationalOrderAtCusp_eq_analyticOrderAt (hg : AnalyticAt ℂ (cuspFunction (2 * h) g) 0) :
+    rationalOrderAtCusp h g = ((analyticOrderAt (cuspFunction (2 * h) g) 0).toNat : ℚ) / 2 := by
+  rw [rationalOrderAtCusp_def, orderAtCusp_eq_analyticOrderAt hg]
+  push_cast
+  ring
+
 /-- The rational cusp order is nonnegative. -/
 lemma rationalOrderAtCusp_nonneg (h : ℝ) (f : ℍ → ℂ) : 0 ≤ rationalOrderAtCusp h f := by
   rw [rationalOrderAtCusp_def]
@@ -330,6 +337,26 @@ lemma orderAtCusp_pos_iff [ModularFormClass F Γ k] (hh : 0 < h)
   rw [(orderAtCusp_nonneg h ⇑f).lt_iff_ne, ne_comm,
     ← not_not (a := cuspFunction h ⇑f 0 = 0)]
   exact not_congr (orderAtCusp_eq_zero_iff hh hΓ hf)
+
+/-- For a nonzero modular form the rational cusp order vanishes iff the doubled-width
+constant term is nonzero. -/
+@[simp]
+lemma rationalOrderAtCusp_eq_zero_iff [ModularFormClass F Γ k] (hh : 0 < h)
+    (hΓ : 2 * h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    rationalOrderAtCusp h ⇑f = 0 ↔ cuspFunction (2 * h) ⇑f 0 ≠ 0 := by
+  rw [rationalOrderAtCusp_def, div_eq_zero_iff]
+  simp only [OfNat.ofNat_ne_zero, or_false, Int.cast_eq_zero]
+  exact orderAtCusp_eq_zero_iff (by positivity) hΓ hf
+
+/-- For a nonzero modular form the rational cusp order is positive iff the form vanishes
+at the cusp in the doubled-width reading. -/
+@[simp]
+lemma rationalOrderAtCusp_pos_iff [ModularFormClass F Γ k] (hh : 0 < h)
+    (hΓ : 2 * h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    0 < rationalOrderAtCusp h ⇑f ↔ cuspFunction (2 * h) ⇑f 0 = 0 := by
+  rw [rationalOrderAtCusp_def]
+  rw [div_pos_iff_of_pos_right (by norm_num : (0 : ℚ) < 2), Int.cast_pos]
+  exact orderAtCusp_pos_iff (by positivity) hΓ hf
 
 end ModularForm
 
