@@ -118,8 +118,10 @@ lemma smulOrbit_nonempty (g β : Δ) : (smulOrbit H g β).Nonempty := by
   classical
   exact (Finset.univ_nonempty).image _
 
-/-- The conjugation criterion for the stabilizer subgroup indexing `DecompQuotient`. -/
-private lemma conj_mem_of_stabilizer (g : G)
+/-- The conjugation criterion for the stabilizer subgroup indexing `DecompQuotient`: an
+element of the stabilizer conjugates into `H` under `g`. Used by every orbit argument that
+replaces a decomposition representative by its canonical `out`. -/
+lemma conj_mem_of_stabilizer (g : G)
     (n : (ConjAct.toConjAct g • H).subgroupOf H) : g⁻¹ * (n : G) * g ∈ H := by
   have hn := n.2
   rw [Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
