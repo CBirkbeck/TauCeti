@@ -61,6 +61,13 @@ open Filter LSeries UpperHalfPlane
 variable {k : ℤ} {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic]
 variable {F : Type*} [FunLike F ℍ ℂ] {s : ℂ}
 
+/-- The `HasSum`-to-`LSeries` boundary shared by the identification theorems below:
+plain Dirichlet sums at `s ≠ 0` converging to `v` identify `LSeries a s` with `v`. -/
+private lemma LSeries_eq_of_hasSum {a : ℕ → ℂ} {v : ℂ} (hs0 : s ≠ 0)
+    (h : HasSum (fun n : ℕ ↦ a n / (n : ℂ) ^ s) v) : LSeries a s = v := by
+  rw [← funext (LSeries.term_of_ne_zero' hs0 a)] at h
+  exact LSeriesHasSum.LSeries_eq h
+
 namespace ModularForm
 
 /-- **Hecke's abscissa bound for modular forms**: for weight `k ≥ 0`, the Dirichlet series
@@ -77,6 +84,7 @@ theorem abscissaOfAbsConv_qExpansion_coeff_le (hk : 0 ≤ k) [ModularFormClass F
 
 /-- On the half-plane `Re s > k + 1`, the Dirichlet series of the `q`-expansion
 coefficients is Mathlib's `ModularForm.L`, up to the width factor. -/
+@[simp]
 theorem LSeries_qExpansion_coeff_eq (hk : 0 < k) [ModularFormClass F Γ k] (f : F)
     (hs : k + 1 < s.re) :
     LSeries (fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n) s =
@@ -84,10 +92,9 @@ theorem LSeries_qExpansion_coeff_eq (hk : 0 < k) [ModularFormClass F Γ k] (f : 
   have hs0 : s ≠ 0 := by
     rintro rfl
     simp only [Complex.zero_re] at hs
-    linarith [show (0 : ℝ) ≤ k from mod_cast hk.le]
-  have h := hasSum_L hk f hs
-  rw [← funext (LSeries.term_of_ne_zero' hs0 _)] at h
-  exact LSeriesHasSum.LSeries_eq h
+    have hk' : (0 : ℝ) ≤ (k : ℝ) := mod_cast hk.le
+    linarith
+  exact LSeries_eq_of_hasSum hs0 (hasSum_L hk f hs)
 
 end ModularForm
 
@@ -103,6 +110,7 @@ theorem abscissaOfAbsConv_qExpansion_coeff_le [CuspFormClass F Γ k] (f : F) :
 
 /-- On the half-plane `Re s > k/2 + 1`, the Dirichlet series of the `q`-expansion
 coefficients of a cusp form is Mathlib's `ModularForm.L`, up to the width factor. -/
+@[simp]
 theorem LSeries_qExpansion_coeff_eq (hk : 0 < k) [CuspFormClass F Γ k] (f : F)
     (hs : k / 2 + 1 < s.re) :
     LSeries (fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n) s =
@@ -110,9 +118,8 @@ theorem LSeries_qExpansion_coeff_eq (hk : 0 < k) [CuspFormClass F Γ k] (f : F)
   have hs0 : s ≠ 0 := by
     rintro rfl
     simp only [Complex.zero_re] at hs
-    linarith [show (0 : ℝ) < (k : ℝ) from mod_cast hk]
-  have h := hasSum_L hk f hs
-  rw [← funext (LSeries.term_of_ne_zero' hs0 _)] at h
-  exact LSeriesHasSum.LSeries_eq h
+    have hk' : (0 : ℝ) < (k : ℝ) := mod_cast hk
+    linarith
+  exact LSeries_eq_of_hasSum hs0 (hasSum_L hk f hs)
 
 end CuspForm
