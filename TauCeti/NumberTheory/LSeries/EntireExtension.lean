@@ -69,12 +69,13 @@ theorem of_extension {F : ℂ → ℂ} (h_finite : abscissaOfAbsConv a < ⊤)
   ⟨h_finite, F, hF, hFa⟩
 
 /-- Introduction from a smaller half-plane: an entire function agreeing with `LSeries a`
-on `Re s > c`, for any real `c` above the abscissa, extends it on the full
-absolute-convergence half-plane, by the identity theorem on connected half-planes. -/
-theorem of_extension_of_le {F : ℂ → ℂ} {c : ℝ} (hc : abscissaOfAbsConv a ≤ c)
+on `Re s > c`, for any real `c`, extends it on the full absolute-convergence half-plane
+(finite by hypothesis), by the identity theorem on connected half-planes: every real
+cutoff overlaps a finite convergence half-plane. -/
+theorem of_extension_of_le {F : ℂ → ℂ} {c : ℝ} (h_finite : abscissaOfAbsConv a < ⊤)
     (hF : Differentiable ℂ F) (hFa : ∀ {s : ℂ}, c < s.re → F s = LSeries a s) :
     HasEntireExtension a := by
-  refine ⟨lt_of_le_of_lt hc (EReal.coe_lt_top c), F, hF, fun {s} hs ↦ ?_⟩
+  refine ⟨h_finite, F, hF, fun {s} hs ↦ ?_⟩
   obtain ⟨σ, hσ_abs, hσ_s⟩ := EReal.exists_between_coe_real hs
   have hσ_s' : (σ : ℝ) < s.re := by exact_mod_cast hσ_s
   set W : Set ℂ := {z : ℂ | (σ : ℝ) < z.re} with hW_def
