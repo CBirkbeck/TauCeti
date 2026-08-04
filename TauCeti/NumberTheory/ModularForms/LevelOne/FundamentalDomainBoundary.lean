@@ -72,7 +72,7 @@ section SegmentApply
 /-!
 The five characteristic evaluation lemmas: the segment definitions are sealed by the module
 system, and these equations are the supported cross-module rewrites. They are deliberately
-not `@[simp]`: the endpoint values `fdBoundary_seg*_apply_*` below are the `simp` normal
+not `@[simp]`: the endpoint values `fdBoundary_segment*_apply_*` below are the `simp` normal
 forms, and a general unfolding rule would reduce their left-hand sides past them (the arc
 endpoints do not `simp`-evaluate from `circleMap`).
 -/
