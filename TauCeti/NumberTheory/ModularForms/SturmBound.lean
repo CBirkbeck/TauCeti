@@ -5,15 +5,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
+public import Mathlib.RingTheory.Polynomial.DegreeLT
 public import TauCeti.NumberTheory.ModularForms.NormTrace
 public import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 
 /-!
 # The Sturm bound for finite-index subgroups of `SL(2, ℤ)`
 
-For `𝒢 ≤ GL(2, ℝ)` of finite relative index in `𝒮ℒ` and `f : ModularForm 𝒢 k`, if the
-`q`-expansion of `f` at the cusp `∞` (with cusp width `𝒢.strictWidthInfty`) has order
-strictly greater than `k · [𝒮ℒ : 𝒢 ⊓ 𝒮ℒ] / 12`, then `f = 0`.
+For `𝒢 ≤ GL(2, ℝ)` of finite relative index in `𝒮ℒ` with discrete strict periods and
+`f : ModularForm 𝒢 k`, if the `q`-expansion of `f` at the cusp `∞` (with cusp width
+`𝒢.strictWidthInfty`) has order strictly greater than `k · [𝒮ℒ : 𝒢 ⊓ 𝒮ℒ] / 12`, then
+`f = 0`.
 
 The proof lifts the level-one bound `ModularForm.sturm_bound_levelOne` through the norm map:
 the norm of `f` vanishes exactly when `f` does, and by the decomposition
@@ -89,9 +91,9 @@ private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.s
   exact qExpansion_order_le_qExpansion_nat_mul_order strictWidthInfty_pos_of_finiteRelIndex hm'_pos
     hf_w_per hf_bdd f.holo'
 
-/-- **Sturm bound for subgroups of `GL(2, ℝ)` of finite relative index in `SL(2, ℤ)`.** A
-modular form of weight `k` whose `q`-expansion at the cusp `∞` has order strictly greater
-than `k · [𝒮ℒ : 𝒢 ⊓ 𝒮ℒ] / 12` is identically zero. -/
+/-- **Sturm bound for subgroups of `GL(2, ℝ)` of finite relative index in `SL(2, ℤ)`** with
+discrete strict periods. A modular form of weight `k` whose `q`-expansion at the cusp `∞`
+has order strictly greater than `k · [𝒮ℒ : 𝒢 ⊓ 𝒮ℒ] / 12` is identically zero. -/
 theorem sturm_bound_finiteIndex [DiscreteTopology 𝒢.strictPeriods]
     (h : (↑((k * Nat.card (𝒮ℒ ⧸ 𝒢.subgroupOf 𝒮ℒ)).toNat / 12) : ℕ∞) <
       (qExpansion 𝒢.strictWidthInfty f).order) : f = 0 := by
@@ -136,8 +138,6 @@ instance finiteDimensional_modularForm_finiteIndex
     [DiscreteTopology 𝒢.strictPeriods] {k : ℤ} :
     Module.Finite ℂ (ModularForm 𝒢 k) := by
   set N : ℕ := (k * Nat.card (𝒮ℒ ⧸ 𝒢.subgroupOf 𝒮ℒ)).toNat / 12 + 1
-  have hfin : Module.Finite ℂ (Polynomial.degreeLT ℂ N) :=
-    Module.Finite.equiv (Polynomial.degreeLTEquiv ℂ N).symm
   refine Module.Finite.of_injective
     (((PowerSeries.trunc N).comp (ModularForm.qExpansionLinearMap
         strictWidthInfty_pos_of_finiteRelIndex 𝒢.strictWidthInfty_mem_strictPeriods k)).codRestrict
