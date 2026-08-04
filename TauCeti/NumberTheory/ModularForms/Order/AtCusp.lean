@@ -105,12 +105,14 @@ lemma orderAtCusp_mul {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f
     (hf' : analyticOrderAt (cuspFunction h f) 0 ≠ ⊤)
     (hg' : analyticOrderAt (cuspFunction h g) 0 ≠ ⊤) :
     orderAtCusp h (f * g) = orderAtCusp h f + orderAtCusp h g := by
-  have hf'' : (qExpansion h f).order ≠ ⊤ := by
-    rwa [qExpansion_order_eq_analyticOrderAt_cuspFunction hf]
-  have hg'' : (qExpansion h g).order ≠ ⊤ := by
-    rwa [qExpansion_order_eq_analyticOrderAt_cuspFunction hg]
-  rw [orderAtCusp_def, orderAtCusp_def, orderAtCusp_def, qExpansion_mul hf hg,
-    PowerSeries.order_mul, ENat.toNat_add hf'' hg'']
+  have h_an : AnalyticAt ℂ (cuspFunction h (f * g)) 0 := by
+    rw [cuspFunction_mul hf.continuousAt hg.continuousAt]
+    exact hf.mul hg
+  have h_nat := analyticOrderNatAt_mul hf hg hf' hg'
+  simp only [analyticOrderNatAt] at h_nat
+  rw [orderAtCusp_eq_analyticOrderAt h_an, orderAtCusp_eq_analyticOrderAt hf,
+    orderAtCusp_eq_analyticOrderAt hg, cuspFunction_mul hf.continuousAt hg.continuousAt,
+    h_nat]
   push_cast
   ring
 
@@ -157,9 +159,12 @@ lemma orderAtCusp_pow {f : ℍ → ℂ} (n : ℕ) (hf : AnalyticAt ℂ (cuspFunc
   have h_an : AnalyticAt ℂ (cuspFunction h (f ^ n)) 0 := by
     rw [cuspFunction_pow hf n]
     exact hf.pow n
+  have h_nat := analyticOrderNatAt_pow hf n
+  simp only [analyticOrderNatAt, smul_eq_mul] at h_nat
   rw [orderAtCusp_eq_analyticOrderAt h_an, orderAtCusp_eq_analyticOrderAt hf,
-    cuspFunction_pow hf n, analyticOrderAt_pow hf, nsmul_eq_mul, ENat.toNat_mul]
-  simp
+    cuspFunction_pow hf n, h_nat]
+  push_cast
+  ring
 
 private lemma cuspFunction_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
     (hf : ∀ i ∈ s, AnalyticAt ℂ (cuspFunction h (f i)) 0) :
