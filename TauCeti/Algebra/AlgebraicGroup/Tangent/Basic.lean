@@ -55,7 +55,7 @@ public section
 
 namespace TauCeti
 
-open Bialgebra _root_.Coalgebra WithConv
+open TauCeti.Bialgebra _root_.Bialgebra _root_.Coalgebra WithConv
 
 section BialgebraPoint
 
@@ -105,6 +105,30 @@ lemma algEquivSelf_symm_apply (b : B) : (algEquivSelf R A B).symm b = b := by
 
 end Bialgebra.CounitAlgebra
 
+section SynonymScalars
+
+variable {R A B : Type*}
+
+namespace Bialgebra.CounitAlgebra
+
+/-- The coefficient synonym is a module over the coefficients, inherited from `B`. -/
+instance [Semiring B] : Module B (CounitAlgebra R A B) := inferInstanceAs (Module B B)
+
+/-- Base and coefficient scalars commute on the synonym, inherited from `B`. -/
+instance [CommSemiring R] [Semiring B] [Algebra R B] :
+    SMulCommClass R B (CounitAlgebra R A B) :=
+  inferInstanceAs (SMulCommClass R B B)
+
+/-- Coefficient scalars associate with the synonym's multiplication, inherited from
+`B`. -/
+instance [Semiring B] : IsScalarTower B (CounitAlgebra R A B) (CounitAlgebra R A B) :=
+  inferInstanceAs (IsScalarTower B B B)
+
+end Bialgebra.CounitAlgebra
+
+end SynonymScalars
+
+
 end BialgebraPoint
 
 section RingTarget
@@ -143,17 +167,6 @@ noncomputable instance : IsScalarTower R A (CounitAlgebra R A B) :=
     change algebraMap R B r =
       ((Algebra.ofId R B).comp (counitAlgHom R A)) (algebraMap R A r)
     simp
-
-/-- The coefficient synonym is a module over the coefficients, inherited from `B`. -/
-instance : Module B (CounitAlgebra R A B) := inferInstanceAs (Module B B)
-
-/-- Base and coefficient scalars commute on the synonym, inherited from `B`. -/
-instance : SMulCommClass R B (CounitAlgebra R A B) := inferInstanceAs (SMulCommClass R B B)
-
-/-- Coefficient scalars associate with the synonym's multiplication, inherited from
-`B`. -/
-instance : IsScalarTower B (CounitAlgebra R A B) (CounitAlgebra R A B) :=
-  inferInstanceAs (IsScalarTower B B B)
 
 /-- Scalars of the coefficient algebra commute with the bialgebra scalar action, because
 the latter multiplies by a central element — the image of the counit in `B`. -/
@@ -263,7 +276,7 @@ private lemma sum_smul_counit {R C : Type*} [CommSemiring R] [AddCommMonoid C]
 
 section Hopf
 
-open TrivSqZeroExt WithConv Bialgebra Bialgebra.CounitAlgebra
+open TrivSqZeroExt WithConv _root_.Bialgebra Bialgebra.CounitAlgebra
 
 variable {R A B : Type*} [CommSemiring R] [CommSemiring A] [HopfAlgebra R A]
   [CommSemiring B] [Algebra R B]
