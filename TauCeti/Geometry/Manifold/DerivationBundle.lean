@@ -234,10 +234,10 @@ private theorem derivation_sub_algebraMap {E : Type*} [NormedAddCommGroup E]
     D.map_algebraMap s
   rw [hsub, hconst, sub_zero]
 
-/-- **A derivation kills the constant, leaving the coefficient's value.** Since `D` annihilates
-`algebraMap` and the Leibniz scalar action is evaluation at the base point, subtracting the value
-of `q` at `x` before multiplying isolates `q x`'s contribution: only `D q`, weighted by `p x`,
-survives. -/
+/-- **The Leibniz rule collapses once the second factor vanishes at the base point.** Subtracting
+`q x` from `q` makes that factor vanish at `x`, and the Leibniz scalar action is evaluation at `x`,
+so the `D p` term drops out. What survives is `D q`, weighted by `p x` — the subtracted constant
+itself contributing nothing, being annihilated by `D`. -/
 private theorem derivation_mul_sub_algebraMap {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] {x : E}
     (D : PointDerivation (modelWithCornersSelf ℝ E) x)
