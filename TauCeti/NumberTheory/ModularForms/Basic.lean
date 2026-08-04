@@ -39,6 +39,7 @@ lemma _root_.CuspForm.mcast_apply {a b : ℤ} {Γ Γ' : Subgroup (GL (Fin 2) ℝ
 
 /-- `GL(2, ℝ)`-level coercion lemma for `CuspForm.translate`; Mathlib's
 `CuspForm.coe_translate` is specialized to `SL(2, ℤ)` arguments. -/
+@[simp]
 lemma _root_.CuspForm.coe_translate_gl {F : Type*} [FunLike F UpperHalfPlane ℂ] {k : ℤ}
     {Γ : Subgroup (GL (Fin 2) ℝ)} [CuspFormClass F Γ k] (f : F) (g : GL (Fin 2) ℝ) :
     ⇑(CuspForm.translate f g) = ⇑f ∣[k] g := (rfl)
