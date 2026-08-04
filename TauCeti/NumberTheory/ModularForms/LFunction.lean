@@ -31,7 +31,7 @@ API and Mathlib's `LSeries` of the `q`-expansion coefficients:
   (from Hecke's `aₙ = O(n^{k/2})`).
 * `ModularForm.LSeries_qExpansion_coeff_eq`, `CuspForm.LSeries_qExpansion_coeff_eq`:
   on the respective half-planes, `LSeries` of the coefficients is
-  `(h Γ)⁻ˢ · L hk f s` for Mathlib's `ModularForm.L`.
+  `(Γ.strictWidthInfty : ℂ) ^ (-s) * L hk f s` for Mathlib's `ModularForm.L`.
 
 The non-cuspidal abscissa bound `k + 1` is weaker than Diamond–Shurman Prop. 5.9.1
 (which gives convergence for `Re s > k` via `aₙ = O(n^{k-1})`); tightening it, and the
@@ -85,14 +85,8 @@ theorem LSeries_qExpansion_coeff_eq (hk : 0 < k) [ModularFormClass F Γ k] (f : 
     rintro rfl
     simp only [Complex.zero_re] at hs
     linarith [show (0 : ℝ) ≤ k from mod_cast hk.le]
-  have hfun : LSeries.term (fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n) s =
-      fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n / (n : ℂ) ^ s := by
-    funext n
-    rcases eq_or_ne n 0 with rfl | hn
-    · simp [Complex.zero_cpow hs0]
-    · simp [hn]
   have h := hasSum_L hk f hs
-  rw [← hfun] at h
+  rw [← funext (LSeries.term_of_ne_zero' hs0 _)] at h
   exact LSeriesHasSum.LSeries_eq h
 
 end ModularForm
@@ -117,14 +111,8 @@ theorem LSeries_qExpansion_coeff_eq (hk : 0 < k) [CuspFormClass F Γ k] (f : F)
     rintro rfl
     simp only [Complex.zero_re] at hs
     linarith [show (0 : ℝ) < (k : ℝ) from mod_cast hk]
-  have hfun : LSeries.term (fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n) s =
-      fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n / (n : ℂ) ^ s := by
-    funext n
-    rcases eq_or_ne n 0 with rfl | hn
-    · simp [Complex.zero_cpow hs0]
-    · simp [hn]
   have h := hasSum_L hk f hs
-  rw [← hfun] at h
+  rw [← funext (LSeries.term_of_ne_zero' hs0 _)] at h
   exact LSeriesHasSum.LSeries_eq h
 
 end CuspForm
