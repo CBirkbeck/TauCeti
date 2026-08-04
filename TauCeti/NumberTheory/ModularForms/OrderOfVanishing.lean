@@ -23,7 +23,8 @@ irregular cusps in odd weight) belongs to the general-level layer and is not def
 * `TauCeti.orderOfVanishingAt`.
 * `TauCeti.orderOfVanishingAt_eq_zero_iff`: for a nonzero holomorphic function, the order
   at `z` vanishes exactly when the function does not vanish at `z`.
-* `TauCeti.orderOfVanishingAt_mul`: orders add under multiplication.
+* `TauCeti.orderOfVanishingAt_mul`: orders add under multiplication, with the
+  `Finset.prod` and power versions.
 * `TauCeti.orderOfVanishingAt_smul`: invariance along the action of the group.
 
 ## References
@@ -115,6 +116,37 @@ lemma orderOfVanishingAt_mul {g : ℍ → ℂ} (hf : MDiff f) (hg : MDiff g)
       (analyticAt_comp_ofComplex hg z.im_pos).meromorphicAt]
   exact WithTop.untop₀_add (meromorphicOrderAt_comp_ofComplex_ne_top hf hfne z)
     (meromorphicOrderAt_comp_ofComplex_ne_top hg hgne z)
+
+private lemma untop₀_sum {ι : Type*} {s : Finset ι} {g : ι → WithTop ℤ}
+    (hg : ∀ i ∈ s, g i ≠ ⊤) :
+    (∑ i ∈ s, g i).untop₀ = ∑ i ∈ s, (g i).untop₀ := by
+  induction s using Finset.cons_induction with
+  | empty => simp
+  | cons i s his ih =>
+    rw [Finset.sum_cons, Finset.sum_cons,
+      WithTop.untop₀_add (hg i (Finset.mem_cons_self i s))
+        (WithTop.sum_ne_top.mpr fun j hj ↦ hg j (Finset.mem_cons_of_mem hj)),
+      ih fun j hj ↦ hg j (Finset.mem_cons_of_mem hj)]
+
+/-- Vanishing orders sum over finite products of nonzero holomorphic functions. -/
+lemma orderOfVanishingAt_prod {ι : Type*} {s : Finset ι} {F : ι → ℍ → ℂ}
+    (hF : ∀ i ∈ s, MDiff (F i)) (hFne : ∀ i ∈ s, F i ≠ 0) (z : ℍ) :
+    orderOfVanishingAt (∏ i ∈ s, F i) z = ∑ i ∈ s, orderOfVanishingAt (F i) z := by
+  have hcomp : (∏ i ∈ s, F i) ∘ ofComplex = ∏ i ∈ s, (F i ∘ ofComplex) := by
+    ext w
+    simp [Finset.prod_apply]
+  simp only [orderOfVanishingAt_def]
+  rw [hcomp, meromorphicOrderAt_prod
+    (fun i hi ↦ (analyticAt_comp_ofComplex (hF i hi) z.im_pos).meromorphicAt)]
+  exact untop₀_sum fun i hi ↦
+    meromorphicOrderAt_comp_ofComplex_ne_top (hF i hi) (hFne i hi) z
+
+/-- Vanishing orders scale under powers of a nonzero holomorphic function. -/
+lemma orderOfVanishingAt_pow (hf : MDiff f) (hfne : f ≠ 0) (n : ℕ) (z : ℍ) :
+    orderOfVanishingAt (f ^ n) z = n * orderOfVanishingAt f z := by
+  have hpow : f ^ n = ∏ _i ∈ Finset.range n, f := by simp
+  rw [hpow, orderOfVanishingAt_prod (fun _ _ ↦ hf) (fun _ _ ↦ hfne),
+    Finset.sum_const, Finset.card_range, nsmul_eq_mul]
 
 variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
 
