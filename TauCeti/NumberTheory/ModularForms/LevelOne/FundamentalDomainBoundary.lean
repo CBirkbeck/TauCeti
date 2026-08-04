@@ -87,6 +87,16 @@ lemma mem_fdBoundaryBreakpoints {t : ℝ} :
 
 section Branches
 
+/-!
+The five branch lemmas are deliberately not `@[simp]`, matching `Path.trans_apply` for
+Mathlib's piecewise paths: their side conditions are numeral-decidable exactly at the
+corner parameters, where they would fire ahead of the `fdBoundary_at_*` corner lemmas
+and strand `simp` at an unreducible `fdBoundary_seg*` application (`fdBoundary H 1`
+would rewrite to `fdBoundary_seg1 H 1` rather than `↑ρ + 1`), turning every corner
+lemma into a `simp`-normal-form violation. The corner values are the `simp` normal
+forms; select a branch by `rw` with the interval hypotheses.
+-/
+
 variable {H t : ℝ}
 
 /-- On `t ≤ 1` the path follows segment 1. -/
@@ -113,7 +123,7 @@ lemma fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
     if_neg (not_le.mpr h3), if_pos h4]
 
 /-- On `4 < t` the path follows segment 5. -/
-lemma fdBoundary_of_lt_four (h4 : 4 < t) : fdBoundary H t = fdBoundary_seg5 H t := by
+lemma fdBoundary_of_gt_four (h4 : 4 < t) : fdBoundary H t = fdBoundary_seg5 H t := by
   unfold fdBoundary
   rw [if_neg (by linarith : ¬t ≤ 1), if_neg (by linarith : ¬t ≤ 2),
     if_neg (by linarith : ¬t ≤ 3), if_neg (not_le.mpr h4)]
@@ -163,7 +173,7 @@ lemma fdBoundary_at_four (H : ℝ) : fdBoundary H 4 = -1 / 2 + H * Complex.I := 
 @[simp]
 lemma fdBoundary_at_five (H : ℝ) : fdBoundary H 5 = 1 / 2 + H * Complex.I := by
   have hpar : (5 : ℝ) - 4 = 1 := by norm_num
-  rw [fdBoundary_of_lt_four (by norm_num), fdBoundary_seg5, hpar,
+  rw [fdBoundary_of_gt_four (by norm_num), fdBoundary_seg5, hpar,
     AffineMap.lineMap_apply_one]
 
 /-- The boundary contour is closed. -/
