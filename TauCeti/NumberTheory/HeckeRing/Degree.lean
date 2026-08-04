@@ -7,6 +7,7 @@ module
 
 public import Mathlib.LinearAlgebra.Finsupp.LSum
 public import TauCeti.NumberTheory.HeckeRing.LeftCosetModule
+public import TauCeti.NumberTheory.HeckeRing.Associativity
 public import TauCeti.NumberTheory.HeckeRing.Multiplication
 public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Unit
 import Mathlib.Tactic.Group
@@ -285,5 +286,25 @@ private lemma mem_smulOrbit_iff_rep {g w : Δ} {x : HeckeCoset Δ ⊥ H} :
     rw [key]
     exact H.mul_mem
       (by simpa [mul_assoc] using H.inv_mem (conj_mem_of_stabilizer (g : G) n)) hh₂
+
+open Classical in
+/-- **Shimura's pair count** (the heart of Proposition 3.4): for a left coset in the orbit
+of `D₀`, the number of intermediate cosets of the `D₁`-orbit whose `D₂`-orbit contains it
+is the multiplicity of `D₀` in the product `D₁ * D₂`. -/
+private lemma card_filter_orbit_eq_multiplicity {D₁ D₂ D₀ : HeckeCoset Δ H H} {β : Δ}
+    {x : HeckeCoset Δ ⊥ H} (hx : x ∈ smulOrbit H D₀.rep β) :
+    ((smulOrbit H D₁.rep β).filter fun i ↦ x ∈ smulOrbit H D₂.rep i.rep).card =
+      multiplicity H H H (D₁.rep : G) (D₂.rep : G) (D₀.rep : G) := by
+  classical
+  rw [← multiplicity_doubleCoset_congr (D₁.rep : G) (D₂.rep : G)
+      (mem_smulOrbit_iff_rep.mp hx),
+    multiplicity_eq_card_filter, Nat.card_eq_fintype_card, Fintype.card_subtype,
+    smulOrbit_eq_image, Finset.filter_image,
+    Finset.card_image_of_injective _ (smulOrbit_map_injective D₁.rep β)]
+  refine congrArg Finset.card (Finset.filter_congr fun i _ ↦ ?_)
+  rw [smulOrbit_congr D₂.rep (HeckeCoset.mk_rep _), mem_smulOrbit_iff_rep,
+    show ((β : G) * (i.out : G) * ((D₁.rep : Δ) : G))⁻¹ * ((x.rep : Δ) : G) =
+      ((i.out : G) * ((D₁.rep : Δ) : G))⁻¹ * ((β : G)⁻¹ * ((x.rep : Δ) : G)) by group]
+  exact Iff.rfl
 
 end HeckeLeftCosetModule
