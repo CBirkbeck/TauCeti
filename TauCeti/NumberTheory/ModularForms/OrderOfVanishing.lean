@@ -143,13 +143,9 @@ lemma orderOfVanishingAt_const (c : ℂ) (z : ℍ) :
 
 /-- The vanishing order of a holomorphic function is nonnegative. -/
 lemma orderOfVanishingAt_nonneg (hf : MDiff f) (z : ℍ) : 0 ≤ orderOfVanishingAt f z := by
-  rw [orderOfVanishingAt_def,
-    (analyticAt_comp_ofComplex hf z.im_pos).meromorphicOrderAt_eq]
-  induction analyticOrderAt (f ∘ ofComplex) (z : ℂ) using ENat.recTopCoe with
-  | top => simp
-  | coe n =>
-    simp only [ENat.map_natCast, WithTop.untop₀_coe]
-    exact Int.natCast_nonneg n
+  rw [orderOfVanishingAt_def]
+  exact WithTop.untop₀_nonneg.mpr
+    (analyticAt_comp_ofComplex hf z.im_pos).meromorphicOrderAt_nonneg
 
 /-- For a nonzero holomorphic function, the vanishing order at `z` is positive exactly
 when the function vanishes at `z`. -/
@@ -202,9 +198,9 @@ lemma orderOfVanishingAt_smul [SlashInvariantFormClass F Γ k] (f : F) {γ}
     intro τ
     have h := congr_fun (SlashInvariantForm.slash_action_eqn f γ hγ) τ
     rw [ModularForm.slash_def] at h
-    have hσ : σ γ = ContinuousAlgEquiv.refl ℝ ℂ := by
-      rw [σ, if_pos (show (0 : ℝ) < ↑(Matrix.GeneralLinearGroup.det γ) from by
-        rwa [Matrix.GeneralLinearGroup.val_det_apply])]
+    have hdet' : (0 : ℝ) < ↑(Matrix.GeneralLinearGroup.det γ) := by
+      rwa [Matrix.GeneralLinearGroup.val_det_apply]
+    have hσ : σ γ = ContinuousAlgEquiv.refl ℝ ℂ := by rw [σ, if_pos hdet']
     rw [hσ] at h
     have hden : denom γ (τ : ℂ) ≠ 0 := denom_ne_zero γ τ
     have h2 : f (γ • τ) =
@@ -212,7 +208,8 @@ lemma orderOfVanishingAt_smul [SlashInvariantFormClass F Γ k] (f : F) {γ}
       rw [← h]
       field_simp
       rfl
-    rw [h2, ← zpow_neg, ← zpow_neg, neg_neg, show -(k - 1) = 1 - k by ring]
+    have hexp : -(k - 1) = 1 - k := by ring
+    rw [h2, ← zpow_neg, ← zpow_neg, neg_neg, hexp]
     ring
   have hcongr : (fun w : ℂ ↦ f (γ • ofComplex w)) =ᶠ[nhds (z : ℂ)]
       (fun w : ℂ ↦ ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (1 - k) *
