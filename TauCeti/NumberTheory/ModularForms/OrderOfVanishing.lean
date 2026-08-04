@@ -24,6 +24,8 @@ irregular cusps in odd weight) belongs to the general-level layer and is not def
   at `z` vanishes exactly when the function does not vanish at `z`.
 * `TauCeti.orderOfVanishingAt_mul`: orders add under multiplication, with the
   `Finset.prod` and power versions.
+* `TauCeti.orderOfVanishingAt_pos_iff`: for a nonzero holomorphic function, positive
+  order characterizes the zeros.
 * `TauCeti.orderOfVanishingAt_smul`: invariance along the action of the group.
 
 ## References
@@ -127,15 +129,49 @@ private lemma untop₀_sum {ι : Type*} {s : Finset ι} {g : ι → WithTop ℤ}
         (WithTop.sum_ne_top.mpr fun j hj ↦ hg j (Finset.mem_cons_of_mem hj)),
       ih fun j hj ↦ hg j (Finset.mem_cons_of_mem hj)]
 
+/-- Constant functions have vanishing order zero everywhere (including the zero function,
+by the order-zero convention). -/
+@[simp]
+lemma orderOfVanishingAt_const (c : ℂ) (z : ℍ) :
+    orderOfVanishingAt (fun _ ↦ c) z = 0 := by
+  classical
+  rw [orderOfVanishingAt_def,
+    show (fun _ : ℍ ↦ c) ∘ ofComplex = fun _ ↦ c from rfl, meromorphicOrderAt_const]
+  split_ifs <;> rfl
+
+/-- The vanishing order of a holomorphic function is nonnegative. -/
+lemma orderOfVanishingAt_nonneg (hf : MDiff f) (z : ℍ) : 0 ≤ orderOfVanishingAt f z := by
+  rw [orderOfVanishingAt_def,
+    (analyticAt_comp_ofComplex hf z.im_pos).meromorphicOrderAt_eq]
+  induction analyticOrderAt (f ∘ ofComplex) (z : ℂ) using ENat.recTopCoe with
+  | top => simp
+  | coe n =>
+    simp only [ENat.map_natCast, WithTop.untop₀_coe]
+    exact Int.natCast_nonneg n
+
+/-- For a nonzero holomorphic function, the vanishing order at `z` is positive exactly
+when the function vanishes at `z`. -/
+@[simp]
+lemma orderOfVanishingAt_pos_iff (hf : MDiff f) (hne : f ≠ 0) {z : ℍ} :
+    0 < orderOfVanishingAt f z ↔ f z = 0 := by
+  constructor
+  · intro h
+    by_contra hz
+    rw [orderOfVanishingAt_eq_zero_of_ne_zero
+      (analyticAt_comp_ofComplex hf z.im_pos).meromorphicNFAt hz] at h
+    exact lt_irrefl 0 h
+  · exact fun hz ↦ lt_of_le_of_ne (orderOfVanishingAt_nonneg hf z)
+      (Ne.symm (orderOfVanishingAt_ne_zero_of_eq_zero hf hne hz))
+
 /-- Vanishing orders sum over finite products of nonzero holomorphic functions. -/
 lemma orderOfVanishingAt_prod {ι : Type*} {s : Finset ι} {F : ι → ℍ → ℂ}
     (hF : ∀ i ∈ s, MDiff (F i)) (hFne : ∀ i ∈ s, F i ≠ 0) (z : ℍ) :
     orderOfVanishingAt (∏ i ∈ s, F i) z = ∑ i ∈ s, orderOfVanishingAt (F i) z := by
+  have hcomp : (∏ i ∈ s, F i) ∘ ofComplex = fun w ↦ ∏ i ∈ s, (F i ∘ ofComplex) w :=
+    funext fun w ↦ Finset.prod_apply ..
   simp only [orderOfVanishingAt_def]
-  rw [show (∏ i ∈ s, F i) ∘ ofComplex = fun w ↦ ∏ i ∈ s, (F i ∘ ofComplex) w from
-      funext fun w ↦ Finset.prod_apply .. ,
-    meromorphicOrderAt_fun_prod
-      (fun i hi ↦ (analyticAt_comp_ofComplex (hF i hi) z.im_pos).meromorphicAt)]
+  rw [hcomp, meromorphicOrderAt_fun_prod
+    (fun i hi ↦ (analyticAt_comp_ofComplex (hF i hi) z.im_pos).meromorphicAt)]
   exact untop₀_sum fun i hi ↦
     meromorphicOrderAt_comp_ofComplex_ne_top (hF i hi) (hFne i hi) z
 
