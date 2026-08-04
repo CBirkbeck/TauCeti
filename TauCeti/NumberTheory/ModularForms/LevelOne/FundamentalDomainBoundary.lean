@@ -172,7 +172,7 @@ section Branches
 The `simp` normal form: the five branch selectors together with the segment-endpoint
 values form the simp set, so `fdBoundary H t` at a corner numeral reduces in two steps —
 branch selection, then the endpoint value (`fdBoundary H 1` to `fdBoundary_seg1 H 1` to
-`↑ρ + 1`). The `fdBoundary_at_*` corner lemmas below restate the composites for `rw`
+`↑ρ + 1`). The `fdBoundary_apply_*` corner lemmas below restate the composites for `rw`
 ergonomics; they are deliberately not `@[simp]`, since the two-step chain already
 reduces their left-hand sides (`simp`-normal-form confluence).
 -/
