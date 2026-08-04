@@ -147,6 +147,8 @@ def glPosToSL2R : GL(2, ℝ)⁺ →* SL(2, ℝ) where
     ⟨(Real.sqrt ((g : GL (Fin 2) ℝ).det.val))⁻¹ •
         ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ), by
       have hg_pos : 0 < ((g : GL (Fin 2) ℝ).det.val : ℝ) := g.property
+      -- the subtype's defining property is stated through `Subtype.val`; `change` exposes
+      -- the determinant of the underlying smul-matrix, which no rewriting lemma names
       change ((Real.sqrt ((g : GL (Fin 2) ℝ).det.val))⁻¹ •
           ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)).det = 1
       rw [Matrix.det_smul, Fintype.card_fin, inv_pow, Real.sq_sqrt hg_pos.le]
@@ -165,6 +167,9 @@ def glPosToSL2R : GL(2, ℝ)⁺ →* SL(2, ℝ) where
         ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) *
           ((h : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) := by
       simp [Units.val_mul]
+    -- `Subtype.ext` reduces to the value level, where the normalized matrix of a product
+    -- is definitionally the smul-matrix of the coerced product; `change` states it since
+    -- the `glPosToSL2R`-value has no `coe_mk`-style equation before this definition ends
     change (Real.sqrt (((g * h : GL(2, ℝ)⁺) : GL (Fin 2) ℝ).det.val))⁻¹ •
         (((g * h : GL(2, ℝ)⁺) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) = _
     rw [h_det, h_mat, Real.sqrt_mul hg_pos.le, mul_inv]
