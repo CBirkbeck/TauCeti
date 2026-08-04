@@ -155,6 +155,48 @@ lemma smulOrbit_congr (g : Δ) {β₁ β₂ : Δ} (h : mk ⊥ H β₁ = mk ⊥ H
   rw [mul_inv_rev, inv_inv]
   group
 
+private lemma smulOrbit_subset_left {g₁ g₂ β : Δ}
+    (h : (g₂ : G) ∈ doubleCoset (g₁ : G) (H : Set G) H) :
+    smulOrbit H g₂ β ⊆ smulOrbit H g₁ β := by
+  classical
+  intro x hx
+  simp only [smulOrbit, Finset.mem_image, Finset.mem_univ, true_and] at hx ⊢
+  obtain ⟨i, hi⟩ := hx
+  obtain ⟨h₁, hh₁, h₂, hh₂, hg₂⟩ := mem_doubleCoset.mp h
+  -- abstract the representative coercion: `i`'s type depends on `g₂`, so rewriting `g₂`
+  -- under `i.out` would produce a type-incorrect motive
+  set σ : G := ((i.out : H) : G) with hσ
+  set j : DecompQuotient H H (g₁ : G) :=
+    QuotientGroup.mk ((i.out : H) * ⟨h₁, hh₁⟩) with hj
+  obtain ⟨n, hn⟩ := QuotientGroup.mk_out_eq_mul
+    ((ConjAct.toConjAct (g₁ : G) • H).subgroupOf H) ((i.out : H) * ⟨h₁, hh₁⟩)
+  have hout : ((j.out : H) : G) = σ * h₁ * n := by
+    rw [hj, hσ]
+    simpa [Subgroup.coe_mul, mul_assoc] using congrArg (Subtype.val : H → G) hn
+  refine ⟨j, ?_⟩
+  rw [← hi]
+  refine mk_bot_eq_mk_bot.mpr ?_
+  -- as in `smulOrbit_subset`, `mk_bot_eq_mk_bot` unfolds to the double-coset setoid
+  -- through the `Δ`-subtype coercions, which no rewriting lemma states
+  change ((β : G) * ((j.out : H) : G) * (g₁ : G))⁻¹ * ((β : G) * σ * (g₂ : G)) ∈ H
+  have key : ((β : G) * ((j.out : H) : G) * (g₁ : G))⁻¹ * ((β : G) * σ * (g₂ : G)) =
+      ((g₁ : G)⁻¹ * (n : G)⁻¹ * g₁) * h₂ := by
+    rw [hout, hg₂]
+    group
+  rw [key]
+  exact H.mul_mem
+    (by simpa [mul_assoc] using H.inv_mem (conj_mem_of_stabilizer (g₁ : G) n)) hh₂
+
+/-- The orbit is invariant in the acting double-coset representative: representatives of
+the same double coset produce the same orbit. -/
+lemma smulOrbit_congr_left (β : Δ) {g₁ g₂ : Δ}
+    (h : HeckeCoset.mk H H g₁ = HeckeCoset.mk H H g₂) :
+    smulOrbit H g₁ β = smulOrbit H g₂ β := by
+  have hset := HeckeCoset.eq_iff.mp h
+  exact Finset.Subset.antisymm
+    (smulOrbit_subset_left (hset ▸ mem_doubleCoset_self H H (g₁ : G)))
+    (smulOrbit_subset_left (hset.symm ▸ mem_doubleCoset_self H H (g₂ : G)))
+
 open scoped Pointwise in
 private lemma smulOrbit_map_injective (g β : Δ) :
     Function.Injective fun i : DecompQuotient H H (g : G) ↦
