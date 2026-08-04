@@ -85,11 +85,11 @@ lemma evalE₄E₆_X_one :
     evalE₄E₆ (MvPolynomial.X 1) = DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ := by
   simp [evalE₄E₆]
 
-/-- Constants evaluate to scalars: `evalE₄E₆` is definitionally `aeval ![…]`, and this
-private restatement of `MvPolynomial.aeval_C` at the wrapper's type lets `rw` use the
-identity without a `show`-ascription at every site. -/
+/-- Constants evaluate to scalars. -/
 private lemma evalE₄E₆_C (c : ℂ) :
     evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c :=
+  -- `evalE₄E₆` is definitionally `aeval ![…]`; stating the identity once at the
+  -- wrapper's type lets `rw` use it without a `show`-ascription at every site.
   MvPolynomial.aeval_C _ c
 
 private lemma evalE₄E₆_monomial (a b : ℕ) :
