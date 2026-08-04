@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Data.ENat.BigOperators
+public import TauCeti.NumberTheory.ModularForms.FiniteZeros
 public import TauCeti.NumberTheory.ModularForms.QExpansion.Order
 
 /-!
@@ -23,6 +24,8 @@ of them are supplied by the `ModularFormClass` machinery.
 * `TauCeti.ModularForm.orderAtCusp`.
 * `TauCeti.ModularForm.orderAtCusp_eq_analyticOrderAt`: the analytic-order dictionary.
 * `TauCeti.ModularForm.orderAtCusp_nat_mul`: linear rescaling in the width.
+* `TauCeti.ModularForm.orderAtCusp_eq_zero_iff`: for a nonzero modular form, order zero
+  is a nonzero constant term.
 * `TauCeti.ModularForm.orderAtCusp_mul`: additivity on products (with `orderAtCusp_pow`
   and `orderAtCusp_prod`).
 
@@ -184,6 +187,41 @@ lemma orderAtCusp_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
     analyticOrderAt_congr h_ev, TauCeti.analyticOrderAt_prod hf, ENat.toNat_sum hf',
     Nat.cast_sum]
   exact Finset.sum_congr rfl fun i hi ↦ (orderAtCusp_eq_analyticOrderAt (hf i hi)).symm
+
+section ModularFormClass
+
+variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] {f : F}
+
+/-- For a nonzero modular form the cusp function does not vanish identically near `0`,
+so its analytic order there is finite. -/
+lemma analyticOrderAt_cuspFunction_ne_top [ModularFormClass F Γ k] (hh : 0 < h)
+    (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    analyticOrderAt (cuspFunction h ⇑f) 0 ≠ ⊤ := by
+  simp only [ne_eq, analyticOrderAt_eq_top]
+  exact cuspFunction_not_eventually_zero hh hΓ hf
+
+/-- For a nonzero modular form the cusp order vanishes iff the constant term — the value
+of the cusp function at `0` — is nonzero. -/
+@[simp]
+lemma orderAtCusp_eq_zero_iff [ModularFormClass F Γ k] (hh : 0 < h)
+    (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    orderAtCusp h ⇑f = 0 ↔ cuspFunction h ⇑f 0 ≠ 0 := by
+  have h_an := ModularFormClass.analyticAt_cuspFunction_zero f hh hΓ
+  rw [orderAtCusp_eq_analyticOrderAt h_an, Int.natCast_eq_zero, ENat.toNat_eq_zero,
+    or_iff_left (analyticOrderAt_cuspFunction_ne_top hh hΓ hf),
+    h_an.analyticOrderAt_eq_zero]
+
+/-- For a nonzero modular form the cusp order is positive iff the form vanishes at the
+cusp. -/
+@[simp]
+lemma orderAtCusp_pos_iff [ModularFormClass F Γ k] (hh : 0 < h)
+    (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    0 < orderAtCusp h ⇑f ↔ cuspFunction h ⇑f 0 = 0 := by
+  rw [(orderAtCusp_nonneg h ⇑f).lt_iff_ne, ne_comm,
+    ← not_not (a := cuspFunction h ⇑f 0 = 0)]
+  exact not_congr (orderAtCusp_eq_zero_iff hh hΓ hf)
+
+end ModularFormClass
 
 end ModularForm
 

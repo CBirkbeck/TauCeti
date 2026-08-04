@@ -41,7 +41,9 @@ namespace ModularForm
 
 variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] {f : F} {h : ℝ}
 
-private lemma cuspFunction_not_eventually_zero [ModularFormClass F Γ k] (hh : 0 < h)
+/-- The cusp function of a nonzero modular form does not vanish identically near `0`:
+otherwise the identity theorem on the unit `q`-ball forces the form to vanish. -/
+lemma cuspFunction_not_eventually_zero [ModularFormClass F Γ k] (hh : 0 < h)
     (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     ¬∀ᶠ q in 𝓝 (0 : ℂ), cuspFunction h f q = 0 := by
   intro h_ev
@@ -58,7 +60,9 @@ private lemma cuspFunction_not_eventually_zero [ModularFormClass F Γ k] (hh : 0
     rw [mem_ball, dist_zero_right]
     exact_mod_cast Function.Periodic.norm_qParam_lt_one hh τ.im_pos)
 
-private lemma cuspFunction_eventually_ne_zero [ModularFormClass F Γ k] (hh : 0 < h)
+/-- The cusp function of a nonzero modular form is nonvanishing on a punctured
+neighborhood of `0`. -/
+lemma cuspFunction_eventually_ne_zero [ModularFormClass F Γ k] (hh : 0 < h)
     (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     ∀ᶠ q in 𝓝[≠] (0 : ℂ), cuspFunction h f q ≠ 0 :=
   (ModularFormClass.analyticAt_cuspFunction_zero f hh
