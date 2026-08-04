@@ -36,7 +36,7 @@ re-founded slash action with built-in character) and their names. The Hecke pair
   `Γ₀(N) →* (ZMod N)ˣ`.
 * `diamondOp`/`diamondOpCusp`: the diamond operator `⟨d⟩` for `d : (ZMod N)ˣ`, a linear
   endomorphism of `ModularForm ((Gamma1 N).map (mapGL ℝ)) k` resp. `CuspForm _ k`, evaluated
-  by `coe_diamondOp_apply`/`coe_diamondOpCusp_apply` as slashing by any representative.
+  by `coe_diamondOp`/`coe_diamondOpCusp` as slashing by any representative.
 * `diamondOpHom`/`diamondOpCuspHom`: the diamond operators as monoid homomorphisms into the
   endomorphism algebras.
 * `modFormCharSpace`/`cuspFormCharSpace`: the nebentypus character spaces `M_k(Γ₁(N), χ)` and
@@ -82,10 +82,10 @@ private lemma cusp_mcast_translate_apply (k : ℤ) (g : ↥(Gamma0 N))
   (CuspForm.mcast_apply rfl (CuspForm.translate f (mapGL ℝ (g : SL(2, ℤ))))
     (Gamma1_map_inv_conjAct_eq g).symm z).trans (congr_fun (CuspForm.coe_translate_gl f _) z)
 
-/-- The diamond operator on modular forms for `Gamma1 N`, at a chosen representative: for
-`g ∈ Gamma0 N`, translation by `mapGL ℝ g` (Mathlib's `ModularForm.translate`) lands at the
-conjugated level, which `Gamma1_map_inv_conjAct_eq` identifies with the original one. -/
-noncomputable def diamondOpAux (k : ℤ) (g : ↥(Gamma0 N)) :
+-- The diamond operator at a chosen representative: for `g ∈ Gamma0 N`, translation by
+-- `mapGL ℝ g` lands at the conjugated level, which `Gamma1_map_inv_conjAct_eq` identifies
+-- with the original one.
+private noncomputable def diamondOpAux (k : ℤ) (g : ↥(Gamma0 N)) :
     ModularForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] ModularForm ((Gamma1 N).map (mapGL ℝ)) k where
   toFun f :=
     ModularForm.mcast rfl (ModularForm.translate f (mapGL ℝ (g : SL(2, ℤ))))
@@ -111,9 +111,8 @@ lemma slash_eq_of_Gamma0Map_eq {k : ℤ} {f : UpperHalfPlane → ℂ}
     map_mul, SlashAction.slash_mul,
     hf _ (Subgroup.mem_map.mpr ⟨_, mul_inv_mem_Gamma1_of_Gamma0Map_eq g₁ g₂ heq, rfl⟩)]
 
-/-- The diamond operator depends only on the `Gamma0Map` value: if two `Gamma0 N`
-elements have the same image, their diamond operators agree. -/
-theorem diamondOpAux_eq_of_Gamma0Map_eq (k : ℤ) (g₁ g₂ : ↥(Gamma0 N))
+-- The diamond operator depends only on the `Gamma0Map` value.
+private theorem diamondOpAux_eq_of_Gamma0Map_eq (k : ℤ) (g₁ g₂ : ↥(Gamma0 N))
     (heq : Gamma0Map N g₁ = Gamma0Map N g₂) : diamondOpAux k g₁ = diamondOpAux k g₂ := by
   ext f z
   exact congr_fun (slash_eq_of_Gamma0Map_eq
@@ -125,15 +124,15 @@ noncomputable def diamondOp [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) :
     ModularForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] ModularForm ((Gamma1 N).map (mapGL ℝ)) k :=
   diamondOpAux k (Gamma0Map_toHomUnits_surjective d).choose
 
-/-- `diamondOp` equals `diamondOpAux` on any representative with the right image. -/
-theorem diamondOp_eq_diamondOpAux [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
+-- `diamondOp` equals `diamondOpAux` on any representative with the right image.
+private theorem diamondOp_eq_diamondOpAux [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
     (hg : (Gamma0Map N).toHomUnits g = d) : diamondOp k d = diamondOpAux k g :=
   diamondOpAux_eq_of_Gamma0Map_eq k _ g
     (congrArg Units.val ((Gamma0Map_toHomUnits_surjective d).choose_spec.trans hg.symm))
 
 /-- Evaluation of the diamond operator: at any representative `g ∈ Γ₀(N)` with lower-right
 entry `d`, the diamond operator `⟨d⟩` is slashing by `g`. -/
-theorem coe_diamondOp_apply [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
+theorem coe_diamondOp [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
     (hg : (Gamma0Map N).toHomUnits g = d) (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :
     ⇑(diamondOp k d f) = ⇑f ∣[k] mapGL ℝ (g : SL(2, ℤ)) := by
   rw [diamondOp_eq_diamondOpAux k d g hg]
@@ -172,10 +171,9 @@ noncomputable def diamondOpHom [NeZero N] (k : ℤ) :
 lemma diamondOpHom_apply [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) :
     diamondOpHom k d = diamondOp k d := (rfl)
 
-/-- Auxiliary form of the diamond operator on cusp forms: translation by a fixed
-`Γ₀(N)`-representative (Mathlib's `CuspForm.translate`, transported along
-`Gamma1_map_inv_conjAct_eq`), before descending to the `Γ₀(N)/Γ₁(N)`-quotient. -/
-noncomputable def diamondOpCuspAux (k : ℤ) (g : ↥(Gamma0 N)) :
+-- Auxiliary form of the cusp-form diamond operator: translation by a fixed
+-- `Γ₀(N)`-representative, before descending to the `Γ₀(N)/Γ₁(N)`-quotient.
+private noncomputable def diamondOpCuspAux (k : ℤ) (g : ↥(Gamma0 N)) :
     CuspForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] CuspForm ((Gamma1 N).map (mapGL ℝ)) k where
   toFun f :=
     CuspForm.mcast rfl (CuspForm.translate f (mapGL ℝ (g : SL(2, ℤ))))
@@ -189,8 +187,8 @@ noncomputable def diamondOpCuspAux (k : ℤ) (g : ↥(Gamma0 N)) :
     rw [CuspForm.IsGLPos.coe_smul, ModularForm.smul_slash]
     simp
 
-/-- Well-definedness for the cusp-form diamond operator. -/
-theorem diamondOpCuspAux_eq_of_Gamma0Map_eq (k : ℤ) (g₁ g₂ : ↥(Gamma0 N))
+-- Well-definedness for the cusp-form diamond operator.
+private theorem diamondOpCuspAux_eq_of_Gamma0Map_eq (k : ℤ) (g₁ g₂ : ↥(Gamma0 N))
     (heq : Gamma0Map N g₁ = Gamma0Map N g₂) :
     diamondOpCuspAux k g₁ = diamondOpCuspAux k g₂ := by
   ext f z
@@ -202,8 +200,8 @@ noncomputable def diamondOpCusp [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) :
     CuspForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] CuspForm ((Gamma1 N).map (mapGL ℝ)) k :=
   diamondOpCuspAux k (Gamma0Map_toHomUnits_surjective d).choose
 
-/-- `diamondOpCusp` equals `diamondOpCuspAux` on any representative. -/
-theorem diamondOpCusp_eq_diamondOpCuspAux (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
+-- `diamondOpCusp` equals `diamondOpCuspAux` on any representative.
+private theorem diamondOpCusp_eq_diamondOpCuspAux (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
     (hg : (Gamma0Map N).toHomUnits g = d) [NeZero N] :
     diamondOpCusp k d = diamondOpCuspAux k g :=
   diamondOpCuspAux_eq_of_Gamma0Map_eq k _ g
@@ -211,7 +209,7 @@ theorem diamondOpCusp_eq_diamondOpCuspAux (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Ga
 
 /-- Evaluation of the cusp-form diamond operator: at any representative `g ∈ Γ₀(N)` with
 lower-right entry `d`, the diamond operator `⟨d⟩` is slashing by `g`. -/
-theorem coe_diamondOpCusp_apply [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
+theorem coe_diamondOpCusp [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
     (hg : (Gamma0Map N).toHomUnits g = d) (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     ⇑(diamondOpCusp k d f) = ⇑f ∣[k] mapGL ℝ (g : SL(2, ℤ)) := by
   rw [diamondOpCusp_eq_diamondOpCuspAux k d g hg]

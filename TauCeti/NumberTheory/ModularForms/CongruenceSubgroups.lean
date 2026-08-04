@@ -16,6 +16,12 @@ Foundational results about the pair `Γ₁(N) ≤ Γ₀(N)` beyond Mathlib's
 after mapping to `GL₂(ℝ)`), the ratio of two `Γ₀(N)`-elements with equal lower-right entry
 lies in `Γ₁(N)`, and the lower-right-entry map `Γ₀(N) →* (ZMod N)ˣ` is surjective.
 
+Ported from the AINTLIB `LeanModularForms` project
+(`LeanModularForms/HeckeRIngs/GL2/Gamma1Pair.lean`, Chris Birkbeck,
+<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), extracted from
+`TauCeti/NumberTheory/ModularForms/DiamondOperators.lean` as congruence-subgroup
+infrastructure independent of the diamond operators.
+
 ## Main results
 
 * `CongruenceSubgroup.Gamma0_normalizes_Gamma1`: conjugation by `Γ₀(N)` preserves `Γ₁(N)`.
