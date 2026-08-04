@@ -20,6 +20,8 @@ canonical inclusions `c ↦ c ⊗ₜ 1` and `c ↦ 1 ⊗ₜ c` of `C` into its t
   convolution product of the two tensor inclusions.
 * `TauCeti.Bialgebra.comulPoint_eq_include_mul`: the corresponding identity for the
   algebra-hom points of a commutative bialgebra.
+* `TauCeti.Bialgebra.toConv_comp_comulAlgHom`: the functorial form of the previous identity,
+  after post-composing with an arbitrary algebra map out of the tensor square.
 -/
 
 public section
@@ -83,6 +85,24 @@ theorem comulPoint_eq_include_mul :
     Bialgebra.TensorProduct.includeLeft_toAlgHom,
     Bialgebra.TensorProduct.includeRight_toAlgHom] using
       (Coalgebra.comul_eq_convMul_includeLeft_includeRight (R := R) (C := H))
+
+/-- **Post-composition splits the comultiplication point into its two inclusions.** For any
+algebra map `φ` out of the tensor square, the point `φ ∘ Δ` is the convolution product of `φ`
+restricted along the two inclusions. This is the functorial form of
+`TauCeti.Bialgebra.comulPoint_eq_include_mul`, obtained from it by `AlgHom.comp_convMul_distrib`. -/
+theorem toConv_comp_comulAlgHom {A : Type*} [CommSemiring A] [Algebra R A]
+    (phi : H ⊗[R] H →ₐ[R] A) :
+    toConv (phi.comp (Bialgebra.comulAlgHom R H)) =
+      toConv (phi.comp (Bialgebra.TensorProduct.includeLeft
+        (R := R) (H₁ := H) (H₂ := H)).toAlgHom) *
+      toConv (phi.comp (Bialgebra.TensorProduct.includeRight
+        (R := R) (H₁ := H) (H₂ := H)).toAlgHom) := by
+  have hcomul : Bialgebra.comulAlgHom R H =
+      (toConv (Bialgebra.TensorProduct.includeLeft (R := R) (H₁ := H) (H₂ := H)).toAlgHom *
+        toConv (Bialgebra.TensorProduct.includeRight
+          (R := R) (H₁ := H) (H₂ := H)).toAlgHom).ofConv := by
+    rw [← comulPoint_eq_include_mul]
+  rw [hcomul, AlgHom.comp_convMul_distrib]
 
 end Bialgebra
 
