@@ -129,10 +129,8 @@ def psl2zToPSL2R : PSL(2, ℤ) →* PSL(2, ℝ) :=
 
 /-- `psl2zToPSL2R` is injective: its kernel is the image of
 `sl2zToPSL2R.ker = center SL(2, ℤ)` under the `PSL(2, ℤ)`-projection, which is `⊥`. -/
-theorem psl2zToPSL2R_injective : Function.Injective psl2zToPSL2R := by
-  rw [← MonoidHom.ker_eq_bot_iff]
-  change (QuotientGroup.lift (Subgroup.center SL(2, ℤ)) sl2zToPSL2R _).ker = ⊥
-  rw [QuotientGroup.ker_lift, sl2zToPSL2R_ker, QuotientGroup.map_mk'_self]
+theorem psl2zToPSL2R_injective : Function.Injective psl2zToPSL2R :=
+  QuotientGroup.injective_lift_iff _ _ _ |>.2 sl2zToPSL2R_ker.symm
 
 instance : Countable SL(2, ℤ) :=
   Function.Injective.countable
