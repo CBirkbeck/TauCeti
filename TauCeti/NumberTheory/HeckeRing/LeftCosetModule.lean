@@ -64,7 +64,7 @@ variable (Δ) in
 /-- The identity left coset `1H = H` in the bottom-left specialization. -/
 instance instOneBot : One (HeckeCoset Δ ⊥ H) := ⟨mk ⊥ H ⟨1, Δ.one_mem⟩⟩
 
-lemma bot_one_def : (1 : HeckeCoset Δ ⊥ H) = mk ⊥ H ⟨1, Δ.one_mem⟩ := (rfl)
+lemma one_bot_def : (1 : HeckeCoset Δ ⊥ H) = mk ⊥ H ⟨1, Δ.one_mem⟩ := (rfl)
 
 /-- In the bottom-left specialization two elements define the same class iff they differ by
 an element of `H` on the right: `⊥β₁H = ⊥β₂H ↔ β₁H = β₂H`. This is the entry point through
@@ -115,10 +115,10 @@ lemma smulOrbit_nonempty (g β : Δ) : (smulOrbit H g β).Nonempty := by
   classical
   exact (Finset.univ_nonempty).image _
 
-/-- The conjugation criterion for the stabilizer subgroup indexing `DecompQuotient`: an
-element of the stabilizer conjugates into `H` under `g`. Used by every orbit argument that
-replaces a decomposition representative by its canonical `out`. -/
-lemma conj_mem_of_stabilizer (g : G)
+-- The conjugation criterion for the stabilizer subgroup indexing `DecompQuotient`: an
+-- element of the stabilizer conjugates into `H` under `g`. Used by every orbit argument
+-- that replaces a decomposition representative by its canonical `out`.
+private lemma conj_mem_of_stabilizer (g : G)
     (n : (ConjAct.toConjAct g • H).subgroupOf H) : g⁻¹ * (n : G) * g ∈ H := by
   have hn := n.2
   rw [Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
