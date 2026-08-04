@@ -39,10 +39,11 @@ namespace TauCeti
 
 namespace ModularForm
 
-variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {f : ModularForm Γ k} {h : ℝ}
+variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] {f : F} {h : ℝ}
 
-private lemma cuspFunction_not_eventually_zero (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
-    (hf : f ≠ 0) : ¬∀ᶠ q in 𝓝 (0 : ℂ), cuspFunction h f q = 0 := by
+private lemma cuspFunction_not_eventually_zero [ModularFormClass F Γ k] (hh : 0 < h)
+    (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    ¬∀ᶠ q in 𝓝 (0 : ℂ), cuspFunction h f q = 0 := by
   intro h_ev
   have h_diff : DifferentiableOn ℂ (cuspFunction h f) (ball 0 1) := fun q hq ↦
     (ModularFormClass.differentiableAt_cuspFunction f hh hΓ
@@ -50,22 +51,23 @@ private lemma cuspFunction_not_eventually_zero (hh : 0 < h) (hΓ : h ∈ Γ.stri
   have h_eqOn : EqOn (cuspFunction h f) 0 (ball 0 1) :=
     (h_diff.analyticOnNhd isOpen_ball).eqOn_zero_of_preconnected_of_eventuallyEq_zero
       (convex_ball 0 1).isPreconnected (mem_ball_self one_pos) h_ev
-  refine hf (DFunLike.coe_injective (funext fun τ ↦ ?_))
-  rw [ModularForm.coe_zero, Pi.zero_apply,
-    ← SlashInvariantFormClass.eq_cuspFunction f τ hΓ hh.ne']
+  refine hf (funext fun τ ↦ ?_)
+  rw [Pi.zero_apply, ← SlashInvariantFormClass.eq_cuspFunction f τ hΓ hh.ne']
   exact h_eqOn (by
     rw [mem_ball, dist_zero_right]
     exact_mod_cast Function.Periodic.norm_qParam_lt_one hh τ.im_pos)
 
-private lemma cuspFunction_eventually_ne_zero (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
-    (hf : f ≠ 0) : ∀ᶠ q in 𝓝[≠] (0 : ℂ), cuspFunction h f q ≠ 0 :=
+private lemma cuspFunction_eventually_ne_zero [ModularFormClass F Γ k] (hh : 0 < h)
+    (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    ∀ᶠ q in 𝓝[≠] (0 : ℂ), cuspFunction h f q ≠ 0 :=
   (ModularFormClass.analyticAt_cuspFunction_zero f hh
     hΓ).eventually_eq_zero_or_eventually_ne_zero.resolve_left
     (cuspFunction_not_eventually_zero hh hΓ hf)
 
 /-- A nonzero modular form with a positive strict period does not vanish at points of
 sufficiently large imaginary part. -/
-lemma exists_height_nonvanishing (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (hf : f ≠ 0) :
+lemma exists_height_nonvanishing [ModularFormClass F Γ k] (hh : 0 < h)
+    (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     ∃ H : ℝ, ∀ p : ℍ, H ≤ (p : ℂ).im → f p ≠ 0 := by
   obtain ⟨s, hs_prop, hs_open, hs_zero⟩ := _root_.eventually_nhds_iff.mp
     (eventually_nhdsWithin_iff.mp (cuspFunction_eventually_ne_zero hh hΓ hf))
@@ -91,10 +93,9 @@ lemma exists_height_nonvanishing (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (hf
 
 /-- The set of points of the fundamental domain at which the vanishing order of a nonzero
 level-one modular form is nonzero is finite. -/
-lemma finite_zeros_in_fd {f : ModularForm 𝒮ℒ k} (hf : f ≠ 0) :
+lemma finite_zeros_in_fd [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     Set.Finite {p : ℍ | p ∈ 𝒟 ∧ orderOfVanishingAt f p ≠ 0} := by
   obtain ⟨H₀, hH₀_no⟩ := exists_height_nonvanishing one_pos (by simp) hf
-  have hne : (⇑f : ℍ → ℂ) ≠ 0 := (ModularForm.coe_eq_zero_iff f).not.mpr hf
   have hK : IsCompact (UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H₀) :=
     (ModularGroup.isCompact_truncatedFundamentalDomain H₀).image continuous_coe
   have hK_im : ∀ z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H₀,
@@ -109,7 +110,7 @@ lemma finite_zeros_in_fd {f : ModularForm 𝒮ℒ k} (hf : f ≠ 0) :
   rintro p ⟨hp_fd, hp_ord⟩
   have h_zero : f p = 0 := by
     by_contra hne'
-    exact hp_ord ((orderOfVanishingAt_eq_zero_iff (ModularFormClass.holo f) hne).mpr hne')
+    exact hp_ord ((orderOfVanishingAt_eq_zero_iff (ModularFormClass.holo f) hf).mpr hne')
   have hpK : (p : ℂ) ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H₀ :=
     ⟨p, ⟨hp_fd, by by_contra! h_gt; exact hH₀_no p h_gt.le h_zero⟩, rfl⟩
   rw [Set.mem_preimage, Function.mem_support, ne_eq,
