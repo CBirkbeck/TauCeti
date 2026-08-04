@@ -18,8 +18,6 @@ subsets of `ℂ` are null in `ℍ`.
 
 ## Main results
 
-* `UpperHalfPlane.volume_eq_withDensity_ofReal`: the invariant measure as a density over
-  the pullback of the Lebesgue measure.
 * `UpperHalfPlane.volume_absolutelyContinuous_comap`,
   `UpperHalfPlane.comap_absolutelyContinuous_volume`: mutual absolute continuity.
 * the `IsOpenPosMeasure` instance for `volume : Measure ℍ`.
@@ -37,21 +35,9 @@ noncomputable section
 
 open MeasureTheory Measure Set
 
-namespace UpperHalfPlane
+open scoped NNReal
 
-/-- Mathlib's invariant measure on `ℍ`, respelled with the density `(Im τ)⁻²` in
-`ENNReal.ofReal` form. -/
-theorem volume_eq_withDensity_ofReal :
-    (volume : Measure ℍ) = (Measure.comap UpperHalfPlane.coe volume).withDensity
-      (fun τ ↦ ENNReal.ofReal (τ.im ^ (-2 : ℤ))) := by
-  rw [volume_def]
-  congr 1
-  funext τ
-  rw [← ENNReal.ofReal_coe_nnreal]
-  congr 1
-  push_cast [NNReal.coe_mk]
-  rw [one_div, inv_pow, zpow_neg]
-  norm_num
+namespace UpperHalfPlane
 
 /-- The pullback of the Lebesgue measure along `ℍ ↪ ℂ` is positive on nonempty open sets. -/
 instance : IsOpenPosMeasure (Measure.comap UpperHalfPlane.coe (volume : Measure ℂ)) :=
@@ -61,19 +47,20 @@ instance : IsOpenPosMeasure (Measure.comap UpperHalfPlane.coe (volume : Measure 
 measure along `ℍ ↪ ℂ`. -/
 theorem volume_absolutelyContinuous_comap :
     (volume : Measure ℍ) ≪ Measure.comap UpperHalfPlane.coe volume := by
-  rw [volume_eq_withDensity_ofReal]
+  rw [volume_def]
   exact withDensity_absolutelyContinuous _ _
 
 /-- The pullback of the Lebesgue measure along `ℍ ↪ ℂ` is absolutely continuous w.r.t. the
 invariant measure, since the density `(Im τ)⁻²` is everywhere positive on `ℍ`. -/
 theorem comap_absolutelyContinuous_volume :
     Measure.comap UpperHalfPlane.coe (volume : Measure ℂ) ≪ (volume : Measure ℍ) := by
-  rw [volume_eq_withDensity_ofReal]
-  exact withDensity_absolutelyContinuous'
-    ((continuous_im.zpow₀ _ fun τ ↦ Or.inl τ.im_pos.ne').measurable.ennreal_ofReal.aemeasurable)
-    (ae_of_all _ fun τ ↦ by
-      simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]
-      exact zpow_pos τ.im_pos _)
+  rw [volume_def]
+  refine withDensity_absolutelyContinuous' ?_ (ae_of_all _ fun τ ↦ ?_)
+  · exact (measurable_coe_nnreal_ennreal.comp (by fun_prop)).aemeasurable
+  · have h1 : (1 / NNReal.mk τ.im τ.im_pos.le : ℝ≥0) ≠ 0 := by
+      rw [one_div, ne_eq, inv_eq_zero]
+      exact fun h ↦ τ.im_pos.ne' (congrArg NNReal.toReal h)
+    exact ENNReal.coe_ne_zero.mpr (pow_ne_zero _ h1)
 
 /-- The invariant measure gives positive mass to nonempty open sets. -/
 instance : IsOpenPosMeasure (volume : Measure ℍ) :=

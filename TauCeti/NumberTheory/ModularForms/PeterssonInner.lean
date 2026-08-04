@@ -318,6 +318,33 @@ theorem peterssonInnerFd_smul_left (c : ℂ) (f g : CuspForm Γ k) :
 
 end HasDetOne
 
+/-- **Positive definiteness from integrability**, at arbitrary level: a cusp form with
+integrable Petersson self-integrand over `𝒟` and vanishing self-pairing is zero.
+
+The self-pairing vanishing forces `f = 0` on the open fundamental domain `𝒟ᵒ`
+(`eq_zero_on_fd_of_peterssonInner_self_eq_zero`), and a holomorphic function on `ℍ`
+vanishing on a nonempty open set vanishes identically
+(`UpperHalfPlane.eq_zero_of_frequently`). -/
+theorem peterssonInnerFd_definite_of_integrable (f : CuspForm Γ k)
+    (hint : MeasureTheory.IntegrableOn (petersson k (⇑f) (⇑f)) ModularGroup.fd
+      MeasureTheory.volume)
+    (hpet : peterssonInnerFd f f = 0) :
+    f = 0 := by
+  rw [peterssonInnerFd_def] at hpet
+  have hfdo : ∀ τ ∈ ModularGroup.fdo, f τ = 0 := fun τ hτ ↦
+    eq_zero_on_fd_of_peterssonInner_self_eq_zero (ModularFormClass.continuous f)
+      hint hpet (ModularGroup.fdo_subset_fd hτ)
+  set τ₀ : ℍ := ⟨⟨0, 2⟩, by norm_num⟩ with hτ₀_def
+  have hτ₀ : τ₀ ∈ ModularGroup.fdo := by
+    constructor
+    · norm_num [hτ₀_def, Complex.normSq_apply]
+    · norm_num [hτ₀_def]
+  have hev := Filter.eventually_of_mem (ModularGroup.isOpen_fdo.mem_nhds hτ₀) hfdo
+  have h := UpperHalfPlane.eq_zero_of_frequently (CuspFormClass.holo f)
+    (hev.filter_mono nhdsWithin_le_nhds).frequently
+  ext τ
+  exact congr_fun h τ
+
 section IsArithmetic
 
 variable [Γ.IsArithmetic]
@@ -334,32 +361,19 @@ theorem peterssonInnerFd_add_right (f g₁ g₂ : CuspForm Γ k) :
 @[simp]
 theorem peterssonInnerFd_add_left (f₁ f₂ g : CuspForm Γ k) :
     peterssonInnerFd (f₁ + f₂) g = peterssonInnerFd f₁ g + peterssonInnerFd f₂ g := by
-  rw [← peterssonInnerFd_conj_symm, peterssonInnerFd_add_right, map_add,
-    peterssonInnerFd_conj_symm, peterssonInnerFd_conj_symm]
+  calc peterssonInnerFd (f₁ + f₂) g
+      = conj (peterssonInnerFd g (f₁ + f₂)) := (peterssonInnerFd_conj_symm _ _).symm
+    _ = conj (peterssonInnerFd g f₁) + conj (peterssonInnerFd g f₂) := by
+        simp [peterssonInnerFd_add_right]
+    _ = peterssonInnerFd f₁ g + peterssonInnerFd f₂ g := by
+        simp [peterssonInnerFd_conj_symm]
 
 /-- **Positive definiteness of the level-one-domain pairing**: a cusp form of any
-arithmetic level with vanishing self-pairing is zero.
-
-The self-pairing vanishing forces `f = 0` on the open fundamental domain `𝒟ᵒ`
-(`eq_zero_on_fd_of_peterssonInner_self_eq_zero`), and a holomorphic function on `ℍ`
-vanishing on a nonempty open set vanishes identically
-(`UpperHalfPlane.eq_zero_of_frequently`). -/
+arithmetic level with vanishing self-pairing is zero — the integrability hypothesis of
+`peterssonInnerFd_definite_of_integrable` is automatic. -/
 theorem peterssonInnerFd_definite (f : CuspForm Γ k) (hpet : peterssonInnerFd f f = 0) :
-    f = 0 := by
-  rw [peterssonInnerFd_def] at hpet
-  have hfdo : ∀ τ ∈ ModularGroup.fdo, f τ = 0 := fun τ hτ ↦
-    eq_zero_on_fd_of_peterssonInner_self_eq_zero (ModularFormClass.continuous f)
-      (integrableOn_petersson_fd_left k Γ f f) hpet (ModularGroup.fdo_subset_fd hτ)
-  set τ₀ : ℍ := ⟨⟨0, 2⟩, by norm_num⟩ with hτ₀_def
-  have hτ₀ : τ₀ ∈ ModularGroup.fdo := by
-    constructor
-    · norm_num [hτ₀_def, Complex.normSq_apply]
-    · norm_num [hτ₀_def]
-  have hev := Filter.eventually_of_mem (ModularGroup.isOpen_fdo.mem_nhds hτ₀) hfdo
-  have h := UpperHalfPlane.eq_zero_of_frequently (CuspFormClass.holo f)
-    (hev.filter_mono nhdsWithin_le_nhds).frequently
-  ext τ
-  exact congr_fun h τ
+    f = 0 :=
+  peterssonInnerFd_definite_of_integrable f (integrableOn_petersson_fd_left k Γ f f) hpet
 
 /-- The self-pairing vanishes exactly on the zero form: nondegeneracy packaged with the
 zero law. -/
