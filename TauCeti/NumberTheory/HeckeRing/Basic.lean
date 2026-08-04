@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.Algebra.BigOperators.Finsupp.Basic
+public import Mathlib.Data.Finsupp.SMul
 public import Mathlib.NumberTheory.HeckeRing.Defs
 public import Mathlib.GroupTheory.Index
 
@@ -139,7 +140,7 @@ variable (R : Type*) [Zero R]
 for `Finsupp` itself, this is the type-correct way to produce elements of
 `HeckeCosetModule Δ H₁ H₂ R`. Only `[Zero R]` is assumed, so consumers with coefficient
 assumptions below `Semiring` (the left-coset scalar operations) can use it. -/
-@[expose] noncomputable def single (D : HeckeCoset Δ H₁ H₂) (b : R) :
+noncomputable def single (D : HeckeCoset Δ H₁ H₂) (b : R) :
     HeckeCosetModule Δ H₁ H₂ R :=
   Finsupp.single D b
 
@@ -155,5 +156,42 @@ lemma single_apply {D A : HeckeCoset Δ H₁ H₂} {b : R} [Decidable (D = A)] :
   Finsupp.single_apply
 
 end SingleWrapper
+
+section SingleAlgebra
+
+variable (R : Type*) [Semiring R]
+
+/-- The `R`-module structure of the Hecke coset module, transporting the standard `Finsupp`
+module structure to the wrapper type. -/
+noncomputable instance instModule : Module R (HeckeCosetModule Δ H₁ H₂ R) :=
+  inferInstanceAs (Module R (HeckeCoset Δ H₁ H₂ →₀ R))
+
+lemma smul_single_one (D : HeckeCoset Δ H₁ H₂) (b : R) : b • single R D 1 = single R D b :=
+  Finsupp.smul_single_one D b
+
+@[simp]
+lemma sum_single (f : HeckeCosetModule Δ H₁ H₂ R) : f.sum (single R) = f :=
+  Finsupp.sum_single f
+
+/-- `Finsupp.single_zero`, as a wrapper-level equation. -/
+@[simp] lemma single_zero (D : HeckeCoset Δ H₁ H₂) : single R D (0 : R) = 0 :=
+  Finsupp.single_zero D
+
+/-- `Finsupp.single_add`, as a wrapper-level equation. -/
+lemma single_add (D : HeckeCoset Δ H₁ H₂) (b c : R) :
+    single R D (b + c) = single R D b + single R D c :=
+  Finsupp.single_add D b c
+
+/-- `Finsupp.induction_linear`, restated for the wrapper type `HeckeCosetModule Δ H₁ H₂ R` in
+its basis vocabulary `single`, in the same way that `MonoidAlgebra.induction_linear` restates
+it for `MonoidAlgebra`: to prove a property of all elements, prove it for `0`, for sums, and
+for basis elements. -/
+lemma induction_linear {p : HeckeCosetModule Δ H₁ H₂ R → Prop}
+    (f : HeckeCosetModule Δ H₁ H₂ R) (h0 : p 0)
+    (hadd : ∀ f g : HeckeCosetModule Δ H₁ H₂ R, p f → p g → p (f + g))
+    (hsingle : ∀ (D : HeckeCoset Δ H₁ H₂) (b : R), p (single R D b)) : p f :=
+  Finsupp.induction_linear f h0 hadd hsingle
+
+end SingleAlgebra
 
 end HeckeCosetModule

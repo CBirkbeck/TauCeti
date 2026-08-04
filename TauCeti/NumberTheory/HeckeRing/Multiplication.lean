@@ -6,7 +6,6 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.Algebra.BigOperators.Finsupp.Basic
-public import Mathlib.Data.Finsupp.SMul
 public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Support
 
 /-!
@@ -72,11 +71,6 @@ lemma support_structureConstants_subset [IsHeckeTriple Δ H₁ H₂]
       Finset.univ.image (HeckeCoset.mulMap H₁ H₂ H₃ g₁ g₂) :=
   Finsupp.support_onFinset_subset
 
-/-- The `R`-module structure of the Hecke coset module, transporting the standard `Finsupp`
-module structure to the wrapper type. -/
-noncomputable instance instModule : Module R (HeckeCosetModule Δ H₁ H₂ R) :=
-  inferInstanceAs (Module R (HeckeCoset Δ H₁ H₂ →₀ R))
-
 /-- The convolution product of Hecke coset modules, defined via the structure constants. The
 diagonal case is the multiplication of the Hecke ring; see the `Mul (𝕋 Δ H R)` instance. -/
 noncomputable def mul [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
@@ -98,38 +92,14 @@ noncomputable instance instMulHeckeRing {H : Subgroup G} [IsHeckeTriple Δ H H] 
 lemma mul_def {H : Subgroup G} [IsHeckeTriple Δ H H] (f g : 𝕋 Δ H R) :
     f * g = mul R f g := (rfl)
 
-lemma smul_single_one (D : HeckeCoset Δ H₁ H₂) (b : R) : b • single R D 1 = single R D b :=
-  Finsupp.smul_single_one D b
-
-@[simp]
-lemma sum_single (f : HeckeCosetModule Δ H₁ H₂ R) : f.sum (single R) = f := Finsupp.sum_single f
-
-/-- `Finsupp.single_zero`, as a wrapper-level equation. -/
-@[simp] lemma single_zero (D : HeckeCoset Δ H₁ H₂) : single R D (0 : R) = 0 :=
-  Finsupp.single_zero D
-
-/-- `Finsupp.single_add`, as a wrapper-level equation. -/
-lemma single_add (D : HeckeCoset Δ H₁ H₂) (b c : R) :
-    single R D (b + c) = single R D b + single R D c :=
-  Finsupp.single_add D b c
-
-/-- `Finsupp.induction_linear`, restated for the wrapper type `HeckeCosetModule Δ H₁ H₂ R` in
-its basis vocabulary `single`, in the same way that `MonoidAlgebra.induction_linear` restates
-it for `MonoidAlgebra`: to prove a property of all elements, prove it for `0`, for sums, and
-for basis elements. -/
-lemma induction_linear {p : HeckeCosetModule Δ H₁ H₂ R → Prop}
-    (f : HeckeCosetModule Δ H₁ H₂ R) (h0 : p 0)
-    (hadd : ∀ f g : HeckeCosetModule Δ H₁ H₂ R, p f → p g → p (f + g))
-    (hsingle : ∀ (D : HeckeCoset Δ H₁ H₂) (b : R), p (single R D b)) : p f :=
-  Finsupp.induction_linear f h0 hadd hsingle
-
 /-- The convolution product of two basis elements. -/
 lemma mul_single_single [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     (D₁ : HeckeCoset Δ H₁ H₂) (D₂ : HeckeCoset Δ H₂ H₃) (a b : R) :
     mul R (single R D₁ a) (single R D₂ b) =
       a • b • structureConstants R H₁ H₂ H₃ D₁.rep D₂.rep := by
-  rw [mul_eq_sum]
-  simp [single, Finsupp.sum_single_index]
+  rw [mul_eq_sum, sum_single_index, sum_single_index]
+  · simp
+  · rw [sum_single_index] <;> simp
 
 /-- The product of two basis elements of the Hecke ring. -/
 lemma single_mul_single {H : Subgroup G} [IsHeckeTriple Δ H H]

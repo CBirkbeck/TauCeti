@@ -337,6 +337,13 @@ lemma smul_zero (t : 𝕋 Δ H R) : t • (0 : HeckeCoset Δ ⊥ H →₀ R) = 0
   simp only [Finsupp.sum_zero_index]
   exact Finsupp.sum_fun_zero t
 
+/-- The scalar operations distribute over the module's addition, packaged as the
+`DistribSMul` typeclass (the strongest action class available before the compatibility
+law with the convolution product). -/
+noncomputable instance : DistribSMul (𝕋 Δ H R) (HeckeCoset Δ ⊥ H →₀ R) where
+  smul_zero := smul_zero
+  smul_add := smul_add
+
 end HeckeLeftCosetModule
 
 namespace HeckeLeftCosetModule
