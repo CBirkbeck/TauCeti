@@ -239,6 +239,23 @@ lemma orderAtCuspQ_eq_orderAtCusp (hh : 0 < h) (hg_per : Periodic (g ∘ ofCompl
   push_cast
   ring
 
+/-- The rational cusp order is nonnegative. -/
+lemma orderAtCuspQ_nonneg (h : ℝ) (f : ℍ → ℂ) : 0 ≤ orderAtCuspQ h f := by
+  rw [orderAtCuspQ_def]
+  exact div_nonneg (by exact_mod_cast orderAtCusp_nonneg (2 * h) f) (by norm_num)
+
+/-- Every constant function has rational cusp order zero. -/
+@[simp]
+lemma orderAtCuspQ_const (h : ℝ) (c : ℂ) : orderAtCuspQ h (fun _ ↦ c) = 0 := by
+  rw [orderAtCuspQ_def, orderAtCusp_const]
+  norm_num
+
+/-- The constant-one function has rational cusp order zero. -/
+@[simp]
+lemma orderAtCuspQ_one (h : ℝ) : orderAtCuspQ h (1 : ℍ → ℂ) = 0 := by
+  rw [orderAtCuspQ_def, orderAtCusp_one]
+  norm_num
+
 /-- The rational cusp order is additive on products. -/
 lemma orderAtCuspQ_mul {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction (2 * h) f) 0)
     (hg : AnalyticAt ℂ (cuspFunction (2 * h) g) 0)
