@@ -143,14 +143,14 @@ lemma fdBoundary_at_two (H : ℝ) : fdBoundary H 2 = Complex.I := by
 @[simp]
 lemma fdBoundary_at_three (H : ℝ) : fdBoundary H 3 = (ρ : ℂ) := by
   have hangle : Real.pi / 2 + ((3 : ℝ) - 2) * (2 * Real.pi / 3 - Real.pi / 2) =
-      2 * Real.pi / 3 := by ring
-  have hsub : (2 * Real.pi / 3 : ℝ) = Real.pi - Real.pi / 3 := by ring
-  rw [fdBoundary_of_le_three (by norm_num) le_rfl, fdBoundary_seg3, hangle,
-    circleMap, Complex.ofReal_one, one_mul, exp_mul_I, ← ofReal_cos, ← ofReal_sin, hsub,
-    Real.cos_pi_sub, Real.cos_pi_div_three, Real.sin_pi_sub, Real.sin_pi_div_three]
-  rw [Complex.ext_iff]
-  refine ⟨by simp [ρ]; norm_num, ?_⟩
-  simp [ρ]
+      Real.pi - Real.pi / 3 := by ring
+  rw [fdBoundary_of_le_three (by norm_num) le_rfl, fdBoundary_seg3, hangle]
+  refine Complex.ext ?_ ?_
+  · rw [circleMap_zero_re, Real.cos_pi_sub, Real.cos_pi_div_three]
+    simp [ρ]
+    norm_num
+  · rw [circleMap_zero_im, Real.sin_pi_sub, Real.sin_pi_div_three]
+    simp [ρ]
 
 /-- The parameter `4` lands on the top left corner `-1/2 + H·i`. -/
 @[simp]
