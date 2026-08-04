@@ -22,7 +22,7 @@ the integer cusp width is a positive integer multiple of the strict width at `�
 * `TauCeti.Subgroup.natCast_mem_strictPeriods_iff`: the integer strict periods are the
   multiples of the width.
 * `TauCeti.Subgroup.quotient_T_pow_integerCuspWidth_injective`.
-* `TauCeti.Subgroup.integerCuspWidth_eq_nat_mul_strictWidthInfty`.
+* `TauCeti.Subgroup.exists_pos_nat_integerCuspWidth_eq_mul_strictWidthInfty`.
 
 ## References
 
@@ -38,26 +38,25 @@ open scoped MatrixGroups
 
 namespace TauCeti
 
-/-- The image of `T : SL(2, ℤ)` in `GL(2, S)` for any commutative ring `S` is the
-upper-triangular matrix `[1, 1; 0, 1]`. -/
-lemma ModularGroup.mapGL_T_eq_upperRightHom {S : Type*} [CommRing S] :
-    Matrix.SpecialLinearGroup.mapGL S (ModularGroup.T : SL(2, ℤ)) =
-      Matrix.GeneralLinearGroup.upperRightHom (1 : S) := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> simp [mapGL_coe_matrix, ModularGroup.coe_T]
-
 /-- The image of `T ^ n : SL(2, ℤ)` in `GL(2, S)` for any commutative ring `S` is the
 upper-triangular matrix `[1, n; 0, 1]`. -/
+@[simp]
 lemma ModularGroup.mapGL_T_zpow_eq_upperRightHom {S : Type*} [CommRing S] (n : ℤ) :
     Matrix.SpecialLinearGroup.mapGL S ((ModularGroup.T : SL(2, ℤ))^n) =
       Matrix.GeneralLinearGroup.upperRightHom (n : S) := by
-  rw [map_zpow, ModularGroup.mapGL_T_eq_upperRightHom, ← AddChar.map_zsmul_eq_zpow, zsmul_one]
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [mapGL_coe_matrix, ModularGroup.coe_T_zpow, -map_zpow]
 
 /-- The image of `T ^ n : SL(2, ℤ)` in `GL(2, S)`, for a natural exponent. -/
+@[simp]
 lemma ModularGroup.mapGL_T_pow_eq_upperRightHom {S : Type*} [CommRing S] (n : ℕ) :
     Matrix.SpecialLinearGroup.mapGL S ((ModularGroup.T : SL(2, ℤ))^n) =
       Matrix.GeneralLinearGroup.upperRightHom (n : S) := by
   rw [← zpow_natCast, ModularGroup.mapGL_T_zpow_eq_upperRightHom, Int.cast_natCast]
+
+/-- The coercion of `SL(2, ℤ)` into `GL(2, ℝ)` agrees with `mapGL ℝ`. -/
+lemma Matrix.SpecialLinearGroup.coe_GL_eq_mapGL (g : SL(2, ℤ)) :
+    (g : GL (Fin 2) ℝ) = mapGL ℝ g := rfl
 
 
 section IntegerCuspWidth
@@ -147,18 +146,15 @@ omit [𝒢.IsFiniteRelIndex 𝒮ℒ] in
 /-- The `integerCuspWidth 𝒢`-th power of `T` lies in `𝒢`. -/
 lemma Subgroup.T_pow_integerCuspWidth_mem :
     ((ModularGroup.T : SL(2, ℤ))^(Subgroup.integerCuspWidth 𝒢 : ℕ) : GL (Fin 2) ℝ) ∈ 𝒢 := by
-  -- The `GL`-coercion of a power of `T` is definitionally the power of `mapGL T`;
-  -- `change` exposes that spelling once.
-  change (mapGL ℝ ModularGroup.T)^(Subgroup.integerCuspWidth 𝒢 : ℕ) ∈ 𝒢
-  rw [← map_pow, ModularGroup.mapGL_T_pow_eq_upperRightHom, ← mem_strictPeriods_iff]
+  rw [Matrix.SpecialLinearGroup.coe_GL_eq_mapGL, ← map_pow,
+    ModularGroup.mapGL_T_pow_eq_upperRightHom, ← mem_strictPeriods_iff]
   exact Subgroup.integerCuspWidth_mem_strictPeriods
 
 omit [𝒢.IsFiniteRelIndex 𝒮ℒ] in
 /-- The natural numbers among the strict periods are exactly the multiples of the
-integer cusp width.
-
-Not a `simp` lemma: `simpNF` rejects it because the left-hand side already simplifies
-through `Subgroup.mem_strictPeriods_iff`. -/
+integer cusp width. -/
+-- Not a `simp` lemma: `simpNF` rejects it because the left-hand side already simplifies
+-- through `Subgroup.mem_strictPeriods_iff`.
 lemma Subgroup.natCast_mem_strictPeriods_iff {n : ℕ} :
     (n : ℝ) ∈ 𝒢.strictPeriods ↔ Subgroup.integerCuspWidth 𝒢 ∣ n := by
   let _ : MulAction 𝒮ℒ (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := quotientTAction (𝒢 := 𝒢)
@@ -172,10 +168,8 @@ integer cusp width. -/
 lemma Subgroup.T_pow_mem_iff {n : ℕ} :
     ((ModularGroup.T : SL(2, ℤ))^n : GL (Fin 2) ℝ) ∈ 𝒢 ↔
       Subgroup.integerCuspWidth 𝒢 ∣ n := by
-  -- The `GL`-coercion of a power of `T` is definitionally the power of `mapGL T`;
-  -- `change` exposes that spelling once.
-  change (mapGL ℝ ModularGroup.T)^n ∈ 𝒢 ↔ _
-  rw [← map_pow, ModularGroup.mapGL_T_pow_eq_upperRightHom, ← mem_strictPeriods_iff,
+  rw [Matrix.SpecialLinearGroup.coe_GL_eq_mapGL, ← map_pow,
+    ModularGroup.mapGL_T_pow_eq_upperRightHom, ← mem_strictPeriods_iff,
     Subgroup.natCast_mem_strictPeriods_iff]
 
 omit [𝒢.IsFiniteRelIndex 𝒮ℒ] in
@@ -201,7 +195,8 @@ lemma Subgroup.quotient_T_pow_integerCuspWidth_injective :
 
 
 /-- The integer cusp width is a positive integer multiple of the strict width at `∞`. -/
-lemma Subgroup.integerCuspWidth_eq_nat_mul_strictWidthInfty [DiscreteTopology 𝒢.strictPeriods] :
+lemma Subgroup.exists_pos_nat_integerCuspWidth_eq_mul_strictWidthInfty
+    [DiscreteTopology 𝒢.strictPeriods] :
     ∃ m : ℕ, 0 < m ∧ (Subgroup.integerCuspWidth 𝒢 : ℝ) = m * 𝒢.strictWidthInfty := by
   obtain ⟨m, hm⟩ := AddSubgroup.mem_zmultiples_iff.mp <|
     Subgroup.strictPeriods_eq_zmultiples_strictWidthInfty (𝒢 := 𝒢) ▸
