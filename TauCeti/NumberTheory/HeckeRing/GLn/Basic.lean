@@ -30,13 +30,13 @@ modular forms); the AINTLIB `HeckePair` bundle is replaced by Mathlib's `IsHecke
 ## Main definitions
 
 * `SLnZ`: `SL_n(ℤ)` as a subgroup of `GL_n(ℚ)`, via `mapGL ℚ`.
-* `posDetInt_submonoid`: integral matrices with positive determinant, Shimura's `Δ`.
+* `posDetInt`: integral matrices with positive determinant, Shimura's `Δ`.
 
 ## Main results
 
 * `SLnZ_le_posDetInt`: `SL_n(ℤ) ≤ Δ`.
 * `posDetInt_le_commensurator`: `Δ ≤ commensurator(SL_n(ℤ))` (Shimura's Lemma 3.10).
-* the `IsHeckeTriple (posDetInt_submonoid n) (SLnZ n) (SLnZ n)` instance, and the
+* the `IsHeckeTriple (posDetInt n) (SLnZ n) (SLnZ n)` instance, and the
   Hecke ring `GLnHeckeRing n` it founds.
 
 ## References
@@ -102,7 +102,7 @@ lemma HasIntEntries.mul {a b : GL (Fin n) ℚ} (ha : HasIntEntries n a) (hb : Ha
 
 /-- The submonoid of `GL_n(ℚ)` consisting of invertible matrices with integer entries
     and positive determinant. This is Shimura's `Δ`. -/
-noncomputable def posDetInt_submonoid : Submonoid (GL (Fin n) ℚ) where
+noncomputable def posDetInt : Submonoid (GL (Fin n) ℚ) where
   carrier := {g | HasIntEntries n g ∧ 0 < (↑g : Matrix (Fin n) (Fin n) ℚ).det}
   one_mem' := ⟨hasIntEntries_one n, by simp⟩
   mul_mem' := fun ⟨ha, hda⟩ ⟨hb, hdb⟩ ↦ ⟨HasIntEntries.mul (n := n) ha hb, by
@@ -111,8 +111,8 @@ noncomputable def posDetInt_submonoid : Submonoid (GL (Fin n) ℚ) where
 
 /-- Membership in `Δ`: integer entries and positive determinant. -/
 @[simp]
-lemma mem_posDetInt_submonoid_iff {g : GL (Fin n) ℚ} :
-    g ∈ posDetInt_submonoid n ↔
+lemma mem_posDetInt_iff {g : GL (Fin n) ℚ} :
+    g ∈ posDetInt n ↔
       HasIntEntries n g ∧ 0 < (↑g : Matrix (Fin n) (Fin n) ℚ).det :=
   (Iff.rfl)
 
@@ -121,7 +121,7 @@ end PosDetInt
 section Pair
 
 /-- `SL_n(ℤ) ⊆ Δ`: elements of `SL_n(ℤ)` have integer entries and det = 1 > 0. -/
-lemma SLnZ_le_posDetInt : (SLnZ n).toSubmonoid ≤ posDetInt_submonoid n := by
+lemma SLnZ_le_posDetInt : (SLnZ n).toSubmonoid ≤ posDetInt n := by
   rintro g ⟨A, rfl⟩
   refine ⟨⟨A.val, by simp [mapGL_coe_matrix, algebraMap_int_eq]⟩, ?_⟩
   have h := (RingHom.map_det (Int.castRingHom ℚ) A.val).symm
@@ -264,8 +264,9 @@ private lemma conj_ker_mem_SLnZ (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fin n)
     simp only [← Int.coe_castRingHom, ← Matrix.map_mul]
     rw [h_int_eq]
   have h_unit_eq : g * (delta : GL (Fin n) ℚ) = (γ : GL (Fin n) ℚ) * g := Units.ext h_mat_eq
-  rw [show (delta : GL (Fin n) ℚ) = g⁻¹ * ((γ : GL (Fin n) ℚ) * g) by
-    rw [← h_unit_eq, inv_mul_cancel_left], mul_assoc]
+  have h_delta : (delta : GL (Fin n) ℚ) = g⁻¹ * ((γ : GL (Fin n) ℚ) * g) := by
+    rw [← h_unit_eq, inv_mul_cancel_left]
+  rw [h_delta, mul_assoc]
 
 omit [NeZero n] in
 omit [NeZero n] in
@@ -285,11 +286,11 @@ private lemma conj_dvd_reverse (A gamma : Matrix (Fin n) (Fin n) ℤ)
     A.det ∣ (A * gamma * A.adjugate) i j := by
   have hT : ∀ i j : Fin n, Aᵀ.det ∣ (gammaᵀ i j - (1 : Matrix (Fin n) (Fin n) ℤ) i j) := by
     intro i j
-    rw [Matrix.det_transpose, Matrix.transpose_apply,
-      show (1 : Matrix (Fin n) (Fin n) ℤ) i j = (1 : Matrix (Fin n) (Fin n) ℤ) j i by
-        rcases eq_or_ne i j with rfl | h
-        · rfl
-        · rw [Matrix.one_apply_ne h, Matrix.one_apply_ne (Ne.symm h)]]
+    have h_one : (1 : Matrix (Fin n) (Fin n) ℤ) i j = (1 : Matrix (Fin n) (Fin n) ℤ) j i := by
+      rcases eq_or_ne i j with rfl | h
+      · rfl
+      · rw [Matrix.one_apply_ne h, Matrix.one_apply_ne (Ne.symm h)]
+    rw [Matrix.det_transpose, Matrix.transpose_apply, h_one]
     exact hgamma j i
   have h := adjugate_conj_dvd n Aᵀ gammaᵀ hT j i
   rwa [Matrix.det_transpose, transpose_conj_apply] at h
@@ -305,11 +306,12 @@ private lemma conj_mat_det_one_reverse
     exact hdvd j i
   have h := conj_mat_det_one n Aᵀ gammaᵀ (by rwa [Matrix.det_transpose]) hdvdT
     (by rwa [Matrix.det_transpose])
-  rw [show (Matrix.of fun i j ↦ (A * gamma * A.adjugate) i j / A.det) =
-      (Matrix.of fun i j ↦ (Aᵀ.adjugate * gammaᵀ * Aᵀ) i j / Aᵀ.det)ᵀ by
+  have h_transpose : (Matrix.of fun i j ↦ (A * gamma * A.adjugate) i j / A.det) =
+      (Matrix.of fun i j ↦ (Aᵀ.adjugate * gammaᵀ * Aᵀ) i j / Aᵀ.det)ᵀ := by
     ext i j
     simp only [Matrix.transpose_apply, Matrix.of_apply, Matrix.det_transpose,
-      transpose_conj_apply], Matrix.det_transpose]
+      transpose_conj_apply]
+  rw [h_transpose, Matrix.det_transpose]
   exact h
 
 omit [NeZero n] in
@@ -322,11 +324,12 @@ private lemma int_mul_eq_reverse (A gamma : Matrix (Fin n) (Fin n) ℤ) (hAdet :
     rw [Matrix.det_transpose, transpose_conj_apply]
     exact hdvd j i
   have h := int_mul_eq n Aᵀ gammaᵀ (by rwa [Matrix.det_transpose]) hdvdT
-  rw [show (Matrix.of fun i j ↦ (Aᵀ.adjugate * gammaᵀ * Aᵀ) i j / Aᵀ.det) =
-      (Matrix.of fun i j ↦ (A * gamma * A.adjugate) i j / A.det)ᵀ by
+  have h_transpose : (Matrix.of fun i j ↦ (Aᵀ.adjugate * gammaᵀ * Aᵀ) i j / Aᵀ.det) =
+      (Matrix.of fun i j ↦ (A * gamma * A.adjugate) i j / A.det)ᵀ := by
     ext i j
     simp only [Matrix.of_apply, Matrix.transpose_apply, Matrix.det_transpose,
-      transpose_conj_apply]] at h
+      transpose_conj_apply]
+  rw [h_transpose] at h
   have h2 := congrArg Matrix.transpose h
   rwa [Matrix.transpose_mul, Matrix.transpose_mul, Matrix.transpose_transpose,
     Matrix.transpose_transpose] at h2
@@ -359,8 +362,9 @@ private lemma conj_ker_mem_SLnZ_inv (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fi
     simp only [← Int.coe_castRingHom, ← Matrix.map_mul]
     rw [h_int_eq]
   have h_unit_eq : (delta : GL (Fin n) ℚ) * g = g * (γ : GL (Fin n) ℚ) := Units.ext h_mat_eq
-  rw [SLnZ, MonoidHom.mem_range, show g * (γ : GL (Fin n) ℚ) * g⁻¹ =
-    (delta : GL (Fin n) ℚ) by rw [← h_unit_eq, mul_inv_cancel_right]]
+  have h_conj : g * (γ : GL (Fin n) ℚ) * g⁻¹ = (delta : GL (Fin n) ℚ) := by
+    rw [← h_unit_eq, mul_inv_cancel_right]
+  rw [SLnZ, MonoidHom.mem_range, h_conj]
   exact ⟨delta, rfl⟩
 
 omit [NeZero n] in
@@ -371,10 +375,10 @@ private lemma congruence_ker_image_relIndex_ne_zero (d : ℕ) [NeZero d] :
       (SLnZ n) ≠ 0 := by
   set phi : SpecialLinearGroup (Fin n) ℤ →* SpecialLinearGroup (Fin n) (ZMod d) :=
     SpecialLinearGroup.map (Int.castRingHom (ZMod d))
-  rw [show SLnZ n =
-      Subgroup.map (mapGL ℚ : SpecialLinearGroup (Fin n) ℤ →* GL (Fin n) ℚ) ⊤ by
-        simp [SLnZ, MonoidHom.range_eq_map],
-    Subgroup.relIndex_map_map_of_injective _ _ (mapGL_injective n),
+  have h_map : SLnZ n =
+      Subgroup.map (mapGL ℚ : SpecialLinearGroup (Fin n) ℤ →* GL (Fin n) ℚ) ⊤ := by
+    simp [SLnZ, MonoidHom.range_eq_map]
+  rw [h_map, Subgroup.relIndex_map_map_of_injective _ _ (mapGL_injective n),
     Subgroup.relIndex_top_right]
   exact (Subgroup.finiteIndex_ker phi).index_ne_zero
 
@@ -436,14 +440,14 @@ lemma mem_commensurator_of_hasIntEntries {g : GL (Fin n) ℚ} (hg : HasIntEntrie
 /-- `Δ ⊆ commensurator(SL_n(ℤ))`, by projection: a positive-determinant integral matrix is
 in particular integral. -/
 lemma posDetInt_le_commensurator :
-    posDetInt_submonoid n ≤ (commensurator (SLnZ n)).toSubmonoid := fun _ hg ↦
+    posDetInt n ≤ (commensurator (SLnZ n)).toSubmonoid := fun _ hg ↦
   (Subgroup.mem_toSubmonoid _ _).mpr
     (mem_commensurator_of_hasIntEntries n hg.1)
 
 /-- **The arithmetic Hecke triple for `GL_n`**: `SL_n(ℤ) ≤ Δ ≤ commensurator(SL_n(ℤ))` in
 `GL_n(ℚ)`, where `Δ` is the positive-determinant integral submonoid. This is the Hecke triple
 underlying the classical Hecke operators, following Shimura §3.2. -/
-instance : IsHeckeTriple (posDetInt_submonoid n) (SLnZ n) (SLnZ n) :=
+instance : IsHeckeTriple (posDetInt n) (SLnZ n) (SLnZ n) :=
   IsHeckeTriple.of_diagonal (SLnZ_le_posDetInt n) (posDetInt_le_commensurator n)
 
 end Pair
@@ -455,7 +459,7 @@ open scoped HeckeCosetModule
 variable [NeZero n]
 
 /-- The Hecke ring of `GL_n` over `ℤ`: the Hecke ring of the arithmetic triple. -/
-abbrev GLnHeckeRing := 𝕋 (posDetInt_submonoid n) (SLnZ n) ℤ
+abbrev GLnHeckeRing := 𝕋 (posDetInt n) (SLnZ n) ℤ
 
 end API
 
