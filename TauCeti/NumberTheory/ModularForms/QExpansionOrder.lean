@@ -21,6 +21,7 @@ bookkeeping feeding the finite-index Sturm bound.
 
 * `TauCeti.qExpansion_order_eq_analyticOrderAt_cuspFunction`.
 * `TauCeti.qExpansion_nat_mul_order`: `(qExpansion (m * h) g).order = (qExpansion h g).order * m`.
+* `TauCeti.ModularForm.qExpansionLinearMap`: the `q`-expansion as a `ℂ`-linear map.
 
 ## References
 
@@ -83,6 +84,27 @@ lemma qExpansion_nat_mul_order {g : ℍ → ℂ} {m : ℕ} (hh : 0 < h) (hm : 0 
       (by positivity) (by simpa using hg_per.nat_mul m) hg_mdiff hg_bdd),
     analyticOrderAt_congr (cuspFunction_nat_mul_eventuallyEq hh hm hg_per hg_bdd hg_mdiff),
     TauCeti.analyticOrderAt_comp_pow_zero han hm]
+
+/-- The order of the `q`-expansion at period `h` is at most its order at period `m * h`. -/
+lemma qExpansion_order_le_qExpansion_nat_mul_order {g : ℍ → ℂ} {m : ℕ} (hh : 0 < h) (hm : 0 < m)
+    (hg_per : Periodic (g ∘ ofComplex) h) (hg_bdd : IsBoundedAtImInfty g) (hg_mdiff : MDiff g) :
+    (qExpansion h g).order ≤ (qExpansion (m * h : ℝ) g).order :=
+  (ENat.self_le_mul_right _ (mod_cast hm.ne')).trans
+    (qExpansion_nat_mul_order hh hm hg_per hg_bdd hg_mdiff).ge
+
+/-- The `q`-expansion map as a `ℂ`-linear map to power series over `ℂ`. -/
+@[expose]
+def ModularForm.qExpansionLinearMap {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.HasDetOne]
+    (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (k : ℤ) :
+    ModularForm Γ k →ₗ[ℂ] PowerSeries ℂ where
+  toFun f := qExpansion h f
+  map_add' f g := _root_.ModularForm.qExpansion_add hh hΓ f g
+  map_smul' a f := _root_.ModularForm.qExpansion_smul hh hΓ a f
+
+@[simp]
+lemma ModularForm.qExpansionLinearMap_apply {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.HasDetOne]
+    (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) {k : ℤ} (f : ModularForm Γ k) :
+    ModularForm.qExpansionLinearMap hh hΓ k f = qExpansion h f := rfl
 
 end TauCeti
 
