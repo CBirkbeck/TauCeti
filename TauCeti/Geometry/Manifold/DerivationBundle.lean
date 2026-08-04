@@ -207,18 +207,26 @@ private theorem sub_algebraMap_eq_sum_mul_sub_algebraMap {E : Type*} [NormedAddC
       rw [map_sum]
       exact Finset.sum_congr rfl fun i _ ↦ rfl
 
-/-- **Subtracting its value at the base point does not change a derivation.** The constant is
-annihilated by `D`.
+/-- The constant smooth map `algebraMap ℝ C^∞⟮…⟯ s` takes the value `s` at every point.
 
-`D`'s domain is a type synonym for `C^∞⟮…⟯`, so a difference formed in the unpointed type does not
-match `map_sub`/`map_algebraMap` as stated; the two restatements below supply the form `rw` needs,
-each holding by definitional unfolding alone. Isolating them here keeps that bookkeeping out of
-every consumer. -/
+The algebra structure on smooth maps is pointwise, so this holds by unfolding; stating it gives
+that normalization a name, so the proofs below need not rely on it silently. -/
+private theorem algebraMap_contMDiffMap_apply {E : Type*} [NormedAddCommGroup E]
+    [NormedSpace ℝ E] (s : ℝ) (y : E) :
+    (algebraMap ℝ C^∞⟮modelWithCornersSelf ℝ E, E; ℝ⟯ s) y = s :=
+  rfl
+
+/-- **Subtracting its value at the base point does not change a derivation**, since the constant
+subtracted off is annihilated by `D`. -/
 private theorem derivation_sub_algebraMap {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℝ E] {x : E}
     (D : PointDerivation (modelWithCornersSelf ℝ E) x)
     (q : C^∞⟮modelWithCornersSelf ℝ E, E; ℝ⟯) :
     D (q - algebraMap ℝ C^∞⟮modelWithCornersSelf ℝ E, E; ℝ⟯ (q x)) = D q := by
+  -- `D`'s domain is a type synonym for `C^∞⟮…⟯`, so a difference formed in the unpointed type
+  -- does not match `map_sub`/`map_algebraMap` as stated. These restatements supply the form `rw`
+  -- needs, each holding by definitional unfolding alone; isolating them here keeps that
+  -- bookkeeping out of every consumer.
   have hsub (u w : C^∞⟮modelWithCornersSelf ℝ E, E; ℝ⟯) : D (u - w) = D u - D w :=
     D.map_sub _ _
   have hconst (s : ℝ) :
@@ -243,8 +251,7 @@ private theorem derivation_mul_sub_algebraMap {E : Type*} [NormedAddCommGroup E]
   change D (p * r) = p x * D r + r x * D p at hleibniz
   have hrx : r x = 0 := by
     rw [hr]
-    change q x - q x = 0
-    exact sub_self _
+    simp [algebraMap_contMDiffMap_apply]
   rw [hleibniz, hrx, hr, derivation_sub_algebraMap, zero_mul, add_zero]
 
 private theorem tangentToPointDerivation_surjective_model
