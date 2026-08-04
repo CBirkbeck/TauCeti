@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Measure
 public import TauCeti.LinearAlgebra.Matrix.ProjectiveSpecialLinearGroup
+-- supplies the `FaithfulSMul PGL(2, ℝ) ℍ` instance behind the projective faithfulness
 import Mathlib.Analysis.Complex.UpperHalfPlane.FixedPoints
 
 /-!
@@ -14,10 +15,10 @@ import Mathlib.Analysis.Complex.UpperHalfPlane.FixedPoints
 
 The projective special linear groups `PSL(2, ℤ)` and `PSL(2, ℝ)` (quotients of `SL(2, ·)`
 by their centers `{±I}`) act faithfully on the upper half-plane `ℍ`. The `PSL(2, ℝ)`-action
-is the restriction of Mathlib's `PGL(2, ℝ)`-action along
-`Matrix.ProjectiveSpecialLinearGroup.toPGL`, and the `PSL(2, ℤ)`-action is its further
-restriction along the injective descent `psl2zToPSL2R` from
-`TauCeti/LinearAlgebra/Matrix/ProjectiveSpecialLinearGroup.lean`. Both actions are
+is the central-quotient descent of the `SL(2, R)`-action, uniformly in the coefficients;
+it agrees with Mathlib's `PGL(2, ℝ)`-action along `toPGL` (`psl2r_smul_toPGL`) and with
+the `PSL(2, ℤ)`-action along the injective descent `psl2zToPSL2R` from
+`TauCeti/LinearAlgebra/Matrix/ProjectiveSpecialLinearGroup.lean`. The actions are
 measurable and preserve the invariant measure `volume : Measure ℍ` (inherited from
 Mathlib's `GL(2, ℝ)`-invariance).
 
@@ -25,12 +26,13 @@ Mathlib's `GL(2, ℝ)`-invariance).
 
 * `UpperHalfPlane.smul_eq_self_of_mem_center` — the center of `SL(2, R)` acts trivially,
   for any coefficients mapping to `ℝ`.
-* `UpperHalfPlane.instMulActionPSL2Z`, `instMulActionPSL2R` — the restricted actions, with
-  the representative compatibilities `psl2zMk_smul`, `psl2rMk_smul`.
+* `UpperHalfPlane.instMulActionPSL2` — the `PSL(2, R)`-action for any coefficients mapping
+  to `ℝ`, descending the `SL(2, R)`-action along the central quotient, with the
+  representative compatibility `pslMk_smul`.
 * `FaithfulSMul` instances for `PSL(2, ℤ)` and `PSL(2, ℝ)` on `ℍ`, restricting Mathlib's
   faithful `PGL(2, ℝ)`-action along the injective `toPGL` and `psl2zToPSL2R`.
-* `SMulInvariantMeasure` instances for `SL(2, R)` (any coefficients mapping to `ℝ`),
-  `PSL(2, ℤ)` and `PSL(2, ℝ)` on `(ℍ, volume)`.
+* `SMulInvariantMeasure` instances for `SL(2, R)` and `PSL(2, R)` (any coefficients
+  mapping to `ℝ`) on `(ℍ, volume)`.
 * `UpperHalfPlane.smul_eq_smul_of_coe_eq_smul` — matrices differing by a nonzero scalar act
   identically on `ℍ`.
 * `UpperHalfPlane.glPosToPSL2R_smul` — the det-normalized projective representative of a
@@ -78,79 +80,20 @@ instance : SMulInvariantMeasure SL(2, R) ℍ volume where
     simp only [MulAction.compHom_smul_def]
     exact (measurePreserving_smul (mapGL ℝ g) volume).measure_preimage hs.nullMeasurableSet
 
-/-- The `PSL(2, ℝ)`-action on `ℍ`, through the injection into `PGL(2, ℝ)` and Mathlib's
-`MulAction PGL(2, ℝ) ℍ`. -/
-noncomputable instance instMulActionPSL2R : MulAction PSL(2, ℝ) ℍ :=
-  MulAction.compHom ℍ (Matrix.ProjectiveSpecialLinearGroup.toPGL (n := Fin 2) (R := ℝ))
-
-/-- The `PSL(2, ℝ)`-action unfolds to the `PGL(2, ℝ)`-action of the `toPGL`-image, for
-arbitrary projective `g`. -/
-@[simp]
-theorem psl2r_smul_def (g : PSL(2, ℝ)) (τ : ℍ) :
-    g • τ = Matrix.ProjectiveSpecialLinearGroup.toPGL g • τ := (rfl)
-
-/-- Compatibility: the `PSL(2, ℝ)` action of a representative coincides with
-the underlying `SL(2, ℝ)` action. -/
--- not `@[simp]`: the `psl2r_smul_def`/`toPGL_mk`/`pglMk_smul` chain already normalizes
--- the left-hand side (simp-NF lint)
-theorem psl2rMk_smul (g : SL(2, ℝ)) (τ : ℍ) :
-    (↑g : PSL(2, ℝ)) • τ = g • τ := by
-  -- the `compHom` action is definitionally the `PGL(2, ℝ)`-action of the `toPGL`-image
-  change Matrix.ProjectiveSpecialLinearGroup.toPGL (↑g : PSL(2, ℝ)) • τ = g • τ
-  rw [Matrix.ProjectiveSpecialLinearGroup.toPGL_mk, pglMk_smul]
-  -- the cast `SL(2, ℝ)`-action is definitionally the `GL(2, ℝ)`-action of the coercion;
-  -- no rewriting lemma crosses this definitional boundary
-  rfl
-
-/-- The `PSL(2, ℝ)`-action on `ℍ` is faithful: it restricts Mathlib's faithful
-`PGL(2, ℝ)`-action along the injective `toPGL`. -/
-instance : FaithfulSMul PSL(2, ℝ) ℍ where
-  eq_of_smul_eq_smul h :=
-    Matrix.ProjectiveSpecialLinearGroup.toPGL_injective (eq_of_smul_eq_smul fun τ : ℍ ↦ h τ)
-
-/-- The `PSL(2, ℤ)`-action on `ℍ`: the restriction of the `PSL(2, ℝ)`-action along the
-injective descent `psl2zToPSL2R`. -/
-noncomputable instance instMulActionPSL2Z : MulAction PSL(2, ℤ) ℍ :=
-  MulAction.compHom ℍ psl2zToPSL2R
-
-/-- The `PSL(2, ℤ)`-action unfolds to the `PSL(2, ℝ)`-action along `psl2zToPSL2R`, for
-arbitrary projective `g`. -/
-@[simp]
-theorem psl2z_smul_def (g : PSL(2, ℤ)) (τ : ℍ) : g • τ = psl2zToPSL2R g • τ := (rfl)
-
-/-- The `PSL(2, ℤ)` action is compatible with the `SL(2, ℤ)` action:
-`(↑g) • τ = g • τ` for `g : SL(2, ℤ)`. -/
--- not `@[simp]`: simp derives this through the `psl2z_smul_def` unfolding chain
--- (simp-NF lint)
-theorem psl2zMk_smul (g : SL(2, ℤ)) (τ : ℍ) :
-    (↑g : PSL(2, ℤ)) • τ = g • τ := by
-  -- expose the restriction along `psl2zToPSL2R`, then descend to representatives
-  change psl2zToPSL2R (↑g : PSL(2, ℤ)) • τ = g • τ
-  rw [psl2zToPSL2R_mk, sl2zToPSL2R_apply, psl2rMk_smul]
-  -- the `SL(2, ℤ)`-action and the cast `SL(2, ℝ)`-action are definitionally the
-  -- `GL(2, ℝ)`-action of the common `mapGL ℝ` image
-  rfl
-
-/-- Nonzero-scalar action invariance for `GL (Fin 2) ℝ`: matrices differing by a
-nonzero scalar define the same class in `PGL(2, ℝ)`, hence act identically on `ℍ`. -/
+/-- Nonzero-scalar action invariance for `GL (Fin 2) ℝ`: a matrix that is a nonzero
+scalar multiple of another acts identically on `ℍ`, through Mathlib's scalar-matrix
+action `glScalar_smul`. -/
 lemma smul_eq_smul_of_coe_eq_smul {g h : GL (Fin 2) ℝ} {c : ℝ} (hc : c ≠ 0)
     (h_eq : ((h : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
       c • ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ))
     (τ : ℍ) :
     h • τ = g • τ := by
-  have h_mk : Matrix.ProjGenLinGroup.mk g = Matrix.ProjGenLinGroup.mk h := by
-    rw [Matrix.ProjGenLinGroup.mk_eq_mk_iff]
-    refine ⟨Units.mk0 c hc, Units.ext ?_⟩
-    rw [Units.val_mul, Matrix.GeneralLinearGroup.coe_scalar]
-    have h_scalar : (Matrix.scalar (Fin 2)) ((Units.mk0 c hc : ℝˣ) : ℝ) =
-        c • (1 : Matrix (Fin 2) (Fin 2) ℝ) := by
-      simp [Matrix.scalar, Matrix.smul_one_eq_diagonal]
-    rw [h_scalar]
-    rw [mul_smul_comm, mul_one]
-    exact h_eq.symm
-  calc h • τ = Matrix.ProjGenLinGroup.mk h • τ := (pglMk_smul h τ).symm
-    _ = Matrix.ProjGenLinGroup.mk g • τ := by rw [← h_mk]
-    _ = g • τ := pglMk_smul g τ
+  have h_mul : h = Matrix.GeneralLinearGroup.scalar (Fin 2) (Units.mk0 c hc) * g := by
+    refine Units.ext ?_
+    rw [Units.val_mul, Matrix.GeneralLinearGroup.coe_scalar, h_eq]
+    ext i j
+    simp [Matrix.scalar, Matrix.diagonal_mul]
+  rw [h_mul, mul_smul, glScalar_smul]
 
 /-- Central elements of `SL(2, R)` fix every point of `ℍ`, for any coefficients mapping
 to `ℝ`: they are the scalar matrices `r • 1` with `r ^ 2 = 1`, and nonzero-scalar
@@ -177,54 +120,71 @@ theorem smul_eq_self_of_mem_center (c : SL(2, R)) (hc : c ∈ Subgroup.center SL
   -- rewrite the action through its `compHom` definition
   rw [MulAction.compHom_smul_def, h1, one_smul]
 
+variable (R) in
+/-- The `PSL(2, R)`-action homomorphism on `ℍ`: the `SL(2, R)`-action descends along the
+central quotient, since central elements fix every point
+(`smul_eq_self_of_mem_center`). -/
+noncomputable def psl2PermHom : PSL(2, R) →* Equiv.Perm ℍ :=
+  QuotientGroup.lift (Subgroup.center SL(2, R)) (MulAction.toPermHom SL(2, R) ℍ)
+    fun c hc ↦ Equiv.ext fun τ ↦ by
+      simpa only [MulAction.toPermHom_apply, MulAction.toPerm_apply, Equiv.Perm.one_apply]
+        using smul_eq_self_of_mem_center c hc τ
+
+/-- The `PSL(2, R)`-action on `ℍ` for any coefficients mapping to `ℝ`: the descent of the
+`SL(2, R)`-action along the central quotient. -/
+noncomputable instance instMulActionPSL2 : MulAction PSL(2, R) ℍ :=
+  MulAction.compHom ℍ (psl2PermHom R)
+
+/-- The `PSL(2, R)` action of a representative coincides with the `SL(2, R)` action. -/
+@[simp]
+theorem pslMk_smul (g : SL(2, R)) (τ : ℍ) : (↑g : PSL(2, R)) • τ = g • τ := (rfl)
+
+noncomputable instance : MeasurableConstSMul PSL(2, R) ℍ where
+  measurable_const_smul g := by
+    refine QuotientGroup.induction_on g fun a ↦ ?_
+    simp only [pslMk_smul]
+    exact measurable_const_smul a
+
+/-- `PSL(2, R)` preserves the invariant measure on `ℍ`, descending the `SL(2, R)`
+invariance. -/
+noncomputable instance : SMulInvariantMeasure PSL(2, R) ℍ volume where
+  measure_preimage_smul g s hs := by
+    refine QuotientGroup.induction_on g fun a ↦ ?_
+    simp only [pslMk_smul]
+    exact (measurePreserving_smul a (volume : Measure ℍ)).measure_preimage
+      hs.nullMeasurableSet
+
+/-- The `PSL(2, ℝ)`-action agrees with Mathlib's `PGL(2, ℝ)`-action along `toPGL`. -/
+theorem psl2r_smul_toPGL (g : PSL(2, ℝ)) (τ : ℍ) :
+    g • τ = Matrix.ProjectiveSpecialLinearGroup.toPGL g • τ := by
+  refine QuotientGroup.induction_on g fun a ↦ ?_
+  rw [pslMk_smul, Matrix.ProjectiveSpecialLinearGroup.toPGL_mk, pglMk_smul]
+  -- the `SL(2, ℝ)`-action is definitionally the `GL(2, ℝ)`-action of the coercion;
+  -- no rewriting lemma crosses this definitional boundary
+  rfl
+
+/-- The `PSL(2, ℝ)`-action on `ℍ` is faithful, through the faithful `PGL(2, ℝ)`-action
+and the injective `toPGL`. -/
+instance : FaithfulSMul PSL(2, ℝ) ℍ where
+  eq_of_smul_eq_smul {g₁ g₂} h :=
+    Matrix.ProjectiveSpecialLinearGroup.toPGL_injective <| eq_of_smul_eq_smul
+      fun τ : ℍ ↦ by rw [← psl2r_smul_toPGL, ← psl2r_smul_toPGL, h τ]
+
+/-- The `PSL(2, ℤ)`-action factors through the `PSL(2, ℝ)`-action along the descent
+`psl2zToPSL2R`. -/
+theorem psl2zToPSL2R_smul (g : PSL(2, ℤ)) (τ : ℍ) : psl2zToPSL2R g • τ = g • τ := by
+  refine QuotientGroup.induction_on g fun a ↦ ?_
+  rw [psl2zToPSL2R_mk, sl2zToPSL2R_apply, pslMk_smul, pslMk_smul]
+  -- the `SL(2, ℤ)`-action and the cast `SL(2, ℝ)`-action are definitionally the
+  -- `GL(2, ℝ)`-action of the common `mapGL ℝ` image
+  rfl
+
 /-- The `PSL(2, ℤ)`-action on `ℍ` is faithful, through the injective descent
 `psl2zToPSL2R` and the faithfulness of the `PSL(2, ℝ)`-action. -/
 instance : FaithfulSMul PSL(2, ℤ) ℍ where
-  eq_of_smul_eq_smul h :=
-    psl2zToPSL2R_injective (eq_of_smul_eq_smul fun τ : ℍ ↦ h τ)
-
-instance : MeasurableConstSMul PSL(2, ℤ) ℍ where
-  measurable_const_smul g := by
-    induction g using Quotient.inductionOn with | h a => ?_
-    -- reduce to the representative, then to the definitional `mapGL ℝ` factorization
-    change Measurable (fun τ ↦ (↑a : PSL(2, ℤ)) • τ)
-    simp only [psl2zMk_smul]
-    change Measurable (fun τ ↦ (mapGL ℝ a) • τ)
-    exact (continuous_const_smul (mapGL ℝ a)).measurable
-
-/-- `PSL(2, ℤ)` preserves the invariant measure on `ℍ`. -/
-instance : SMulInvariantMeasure PSL(2, ℤ) ℍ volume where
-  measure_preimage_smul g s hs := by
-    induction g using Quotient.inductionOn with | h a => ?_
-    -- reduce to the representative `SL(2, ℤ)`-action, whose invariance descends from
-    -- Mathlib's `GL(2, ℝ)`-invariance
-    change volume ((fun τ ↦ (↑a : PSL(2, ℤ)) • τ) ⁻¹' s) = volume s
-    simpa only [psl2zMk_smul] using
-      (measurePreserving_smul a (volume : Measure ℍ)).measure_preimage hs.nullMeasurableSet
-
-instance : MeasurableConstSMul PSL(2, ℝ) ℍ where
-  measurable_const_smul g := by
-    obtain ⟨G, hG⟩ := Matrix.ProjGenLinGroup.mk_surjective
-      (Matrix.ProjectiveSpecialLinearGroup.toPGL g)
-    have h_act : ∀ τ : ℍ, g • τ = G • τ := fun τ ↦ by
-      -- the `compHom` action is definitionally the `PGL(2, ℝ)`-action of the image
-      change Matrix.ProjectiveSpecialLinearGroup.toPGL g • τ = G • τ
-      rw [← hG, pglMk_smul]
-    simp only [h_act]
-    exact (continuous_const_smul G).measurable
-
-/-- `PSL(2, ℝ)` preserves the invariant measure on `ℍ`. -/
-instance : SMulInvariantMeasure PSL(2, ℝ) ℍ volume where
-  measure_preimage_smul g s hs := by
-    obtain ⟨G, hG⟩ := Matrix.ProjGenLinGroup.mk_surjective
-      (Matrix.ProjectiveSpecialLinearGroup.toPGL g)
-    have h_act : ∀ τ : ℍ, g • τ = G • τ := fun τ ↦ by
-      -- as above, expose the definitional `PGL(2, ℝ)`-factorization
-      change Matrix.ProjectiveSpecialLinearGroup.toPGL g • τ = G • τ
-      rw [← hG, pglMk_smul]
-    simp only [h_act]
-    exact (measurePreserving_smul G (volume : Measure ℍ)).measure_preimage
-      hs.nullMeasurableSet
+  eq_of_smul_eq_smul {g₁ g₂} h :=
+    psl2zToPSL2R_injective <| eq_of_smul_eq_smul
+      fun τ : ℍ ↦ by rw [psl2zToPSL2R_smul, psl2zToPSL2R_smul, h τ]
 
 /-- Action equivariance: the projective representative `glPosToPSL2R g` acts on
 `ℍ` exactly as `g` does, even though `det g` need not be `1`. -/
@@ -235,7 +195,7 @@ theorem glPosToPSL2R_smul (g : GL(2, ℝ)⁺) (τ : ℍ) :
   have hg_pos : 0 < ((g : GL (Fin 2) ℝ).det.val : ℝ) := g.property
   have h_sqrt_ne : (Real.sqrt ((g : GL (Fin 2) ℝ).det.val))⁻¹ ≠ 0 :=
     inv_ne_zero (Real.sqrt_ne_zero'.mpr hg_pos)
-  rw [glPosToPSL2R_apply, psl2rMk_smul]
+  rw [glPosToPSL2R_apply, pslMk_smul]
   -- the `SL(2, ℝ)`-action is definitionally the `GL(2, ℝ)`-action of the `mapGL ℝ` image
   change (mapGL ℝ (glPosToSL2R g) : GL (Fin 2) ℝ) • τ = (g : GL (Fin 2) ℝ) • τ
   refine smul_eq_smul_of_coe_eq_smul h_sqrt_ne ?_ τ

@@ -6,6 +6,8 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
+-- not redundant: supplies the scoped `GL(n, R)⁺` notation, which the projective import
+-- does not re-export under the module system
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.LinearAlgebra.Matrix.ProjectiveSpecialLinearGroup
 
