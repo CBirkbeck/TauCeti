@@ -26,10 +26,10 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 
 ## Main definitions
 
-* `UpperHalfPlane.peterssonInner`: the Petersson pairing — the set integral of the
-  Petersson integrand over an arbitrary `D : Set ℍ`. It is a pairing for every `D`;
-  positive definiteness is a separate result of the level-one-domain specialization
-  (`CuspForm.peterssonInnerFd_definite`).
+* `UpperHalfPlane.peterssonInner`: the set integral of the Petersson integrand over an
+  arbitrary `D : Set ℍ` — a sesquilinear pairing on classes of functions whose integrands
+  are integrable over `D`; positive definiteness is a separate result of the
+  level-one-domain specialization (`CuspForm.peterssonInnerFd_definite`).
 * `CuspForm.peterssonInnerFd`: the level-one-domain pairing of two cusp forms (over `𝒟`,
   whatever the level).
 
@@ -416,9 +416,11 @@ standard fundamental domain `𝒟` for `SL₂(ℤ)`, whatever the level `Γ` —
 name marks that the integration domain is `𝒟`, not a `Γ`-fundamental domain.
 
 This is **not** the `Γ \ ℍ`-normalized Petersson inner product, which integrates over a
-`Γ`-fundamental domain. It is nonetheless Hermitian-sesquilinear
-(`peterssonInnerFd_add_left`/`_right`, `peterssonInnerFd_smul_left`/`_right`) and positive
-definite for cusp forms of any arithmetic level (`peterssonInnerFd_definite`, below). -/
+`Γ`-fundamental domain. Its structure accrues by hypothesis: Hermitian symmetry and the
+zero/negation laws, reality, and nonnegativity of the self-pairing are unconditional,
+the scalar laws (`peterssonInnerFd_smul_left`/`_right`) require `[Γ.HasDetOne]`, and
+additivity (`peterssonInnerFd_add_left`/`_right`) and positive definiteness
+(`peterssonInnerFd_definite`) require `[Γ.IsArithmetic]`. -/
 def peterssonInnerFd (f g : CuspForm Γ k) : ℂ :=
   UpperHalfPlane.peterssonInner k ModularGroup.fd f g
 
@@ -430,6 +432,26 @@ theorem peterssonInnerFd_conj_symm (f g : CuspForm Γ k) :
     conj (peterssonInnerFd g f) = peterssonInnerFd f g := by
   simp only [peterssonInnerFd_def]
   exact UpperHalfPlane.peterssonInner_conj_symm k ModularGroup.fd f g
+
+/-- The self-pairing is real: its imaginary part vanishes, by Hermitian symmetry. -/
+@[simp]
+theorem peterssonInnerFd_self_im (f : CuspForm Γ k) : (peterssonInnerFd f f).im = 0 :=
+  Complex.conj_eq_iff_im.mp (peterssonInnerFd_conj_symm f f)
+
+/-- The self-pairing is nonnegative: its real part is the integral of
+`|f τ|² (Im τ)ᵏ ≥ 0` over the fundamental domain. -/
+theorem peterssonInnerFd_self_re_nonneg (f : CuspForm Γ k) :
+    0 ≤ (peterssonInnerFd f f).re := by
+  rw [peterssonInnerFd_def, UpperHalfPlane.peterssonInner_def]
+  have hpt : ∀ τ : ℍ, UpperHalfPlane.petersson k (⇑f) (⇑f) τ =
+      ((‖f τ‖ ^ 2 * τ.im ^ k : ℝ) : ℂ) := fun τ ↦ by
+    simp [UpperHalfPlane.petersson, Complex.conj_mul', Complex.ofReal_mul,
+      Complex.ofReal_zpow]
+  simp only [hpt, integral_complex_ofReal, Complex.ofReal_re]
+  refine MeasureTheory.setIntegral_nonneg ModularGroup.isClosed_fd.measurableSet
+    fun τ _ ↦ ?_
+  have him : (0 : ℝ) < τ.im := τ.im_pos
+  positivity
 
 @[simp]
 theorem peterssonInnerFd_zero_right (f : CuspForm Γ k) : peterssonInnerFd f 0 = 0 := by
@@ -512,6 +534,13 @@ theorem peterssonInnerFd_definite (f : CuspForm Γ k) (hpet : peterssonInnerFd f
     (hev.filter_mono nhdsWithin_le_nhds).frequently
   ext τ
   exact congr_fun h τ
+
+/-- The self-pairing vanishes exactly on the zero form: nondegeneracy packaged with the
+zero law. -/
+@[simp]
+theorem peterssonInnerFd_self_eq_zero_iff (f : CuspForm Γ k) :
+    peterssonInnerFd f f = 0 ↔ f = 0 :=
+  ⟨peterssonInnerFd_definite f, fun h ↦ by rw [h]; exact peterssonInnerFd_zero_left 0⟩
 
 end IsArithmetic
 
