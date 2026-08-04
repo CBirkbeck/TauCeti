@@ -231,4 +231,23 @@ private lemma sum_smulOrbit_single_apply (t : 𝕋 Δ H R) (β : Δ) (c : R)
       t.sum fun D mD ↦ if x ∈ smulOrbit H D.rep β then mD * c else 0 := by
   exact Finsupp.sum_apply.trans (Finsupp.sum_congr fun D _ ↦ sum_single_apply _ _ x)
 
+/-- A left coset lies in the orbit of at most one double coset. -/
+private lemma eq_of_mem_smulOrbit {g₁ g₂ β : Δ} {x : HeckeCoset Δ ⊥ H}
+    (h₁ : x ∈ smulOrbit H g₁ β) (h₂ : x ∈ smulOrbit H g₂ β) :
+    HeckeCoset.mk H H g₁ = HeckeCoset.mk H H g₂ := by
+  by_contra hne
+  exact Finset.disjoint_left.mp (smulOrbit_disjoint β hne) h₁ h₂
+
+open Classical in
+/-- The weighted orbit indicator collapses to the containing double coset's weight. -/
+private lemma sum_ite_orbit_eq (t : 𝕋 Δ H R) (β : Δ) (c : R) {x : HeckeCoset Δ ⊥ H}
+    {D₀ : HeckeCoset Δ H H} (hx : x ∈ smulOrbit H D₀.rep β) :
+    (t.sum fun D mD ↦ if x ∈ smulOrbit H D.rep β then mD * c else 0) = t D₀ * c := by
+  refine (Finsupp.sum_eq_single D₀ (fun D _ hne ↦ ?_) (fun _ ↦ by simp)).trans (if_pos hx)
+  rw [if_neg]
+  intro hmem
+  exact hne (by
+    have h := eq_of_mem_smulOrbit hmem hx
+    rwa [HeckeCoset.mk_rep, HeckeCoset.mk_rep] at h)
+
 end HeckeLeftCosetModule
