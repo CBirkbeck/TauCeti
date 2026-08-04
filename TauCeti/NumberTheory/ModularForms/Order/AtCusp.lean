@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Data.ENat.BigOperators
-public import TauCeti.NumberTheory.ModularForms.FiniteZeros
 public import TauCeti.NumberTheory.ModularForms.QExpansion.Order
 
 /-!
@@ -37,7 +36,7 @@ of them are supplied by the `ModularFormClass` machinery.
 
 public noncomputable section
 
-open UpperHalfPlane Complex Function SlashInvariantForm Periodic
+open UpperHalfPlane Complex Filter Function Metric Set SlashInvariantForm Periodic
 
 open scoped ModularForm Topology Filter Manifold
 
@@ -70,11 +69,16 @@ lemma orderAtCusp_eq_analyticOrderAt (hg : AnalyticAt ℂ (cuspFunction h g) 0) 
     orderAtCusp h g = ((analyticOrderAt (cuspFunction h g) 0).toNat : ℤ) := by
   rw [orderAtCusp_def, qExpansion_order_eq_analyticOrderAt_cuspFunction hg]
 
-/-- A nonzero constant term at the cusp forces cusp order zero. -/
-lemma orderAtCusp_eq_zero_of_cuspFunction_ne_zero (hg : AnalyticAt ℂ (cuspFunction h g) 0)
-    (h0 : cuspFunction h g 0 ≠ 0) : orderAtCusp h g = 0 := by
-  rw [orderAtCusp_eq_analyticOrderAt hg, hg.analyticOrderAt_eq_zero.mpr h0]
-  rfl
+/-- A nonzero constant term at the cusp forces cusp order zero, with no analyticity
+hypothesis: the constant coefficient of the `q`-expansion is the value at `0`. -/
+lemma orderAtCusp_eq_zero_of_cuspFunction_ne_zero (h0 : cuspFunction h g 0 ≠ 0) :
+    orderAtCusp h g = 0 := by
+  rw [orderAtCusp_def, Int.natCast_eq_zero, ENat.toNat_eq_zero]
+  left
+  by_contra hne
+  exact h0 (by
+    simpa [← PowerSeries.coeff_zero_eq_constantCoeff, qExpansion_coeff, iteratedDeriv_zero]
+      using PowerSeries.order_ne_zero_iff_constCoeff_eq_zero.mp hne)
 
 /-- The cusp order rescales linearly in the width. For a modular form the periodicity,
 boundedness, and holomorphy are `SlashInvariantFormClass.periodic_comp_ofComplex`,
@@ -89,9 +93,8 @@ lemma orderAtCusp_nat_mul {m : ℕ} (hh : 0 < h) (hm : 0 < m)
 private lemma cuspFunction_mul_eventuallyEq (h : ℝ) (f g : ℍ → ℂ) :
     cuspFunction h (f * g) =ᶠ[𝓝[≠] (0 : ℂ)] cuspFunction h f * cuspFunction h g := by
   filter_upwards [self_mem_nhdsWithin] with q hq
-  simp only [UpperHalfPlane.cuspFunction, Pi.mul_apply,
+  simp only [UpperHalfPlane.cuspFunction, Pi.mul_apply, Function.comp_apply,
     Function.Periodic.cuspFunction_eq_of_nonzero _ _ hq]
-  rfl
 
 private lemma cuspFunction_mul_nhds {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0)
     (hg : AnalyticAt ℂ (cuspFunction h g) 0) :
@@ -132,9 +135,7 @@ private lemma cuspFunction_one (h : ℝ) : cuspFunction h (1 : ℍ → ℂ) = 1 
 /-- The constant-one function has cusp order zero. -/
 @[simp]
 lemma orderAtCusp_one (h : ℝ) : orderAtCusp h (1 : ℍ → ℂ) = 0 :=
-  orderAtCusp_eq_zero_of_cuspFunction_ne_zero
-    (by rw [cuspFunction_one]; exact analyticAt_const)
-    (by rw [cuspFunction_one]; exact one_ne_zero)
+  orderAtCusp_eq_zero_of_cuspFunction_ne_zero (by rw [cuspFunction_one]; exact one_ne_zero)
 
 private lemma cuspFunction_pow_nhds {f : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
     ∀ n : ℕ, cuspFunction h (f ^ n) =ᶠ[𝓝 (0 : ℂ)] cuspFunction h f ^ n
@@ -191,6 +192,41 @@ lemma orderAtCusp_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
 section ModularFormClass
 
 variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] {f : F}
+
+private lemma cuspFunction_not_eventually_zero [ModularFormClass F Γ k] (hh : 0 < h)
+    (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    ¬∀ᶠ q in 𝓝 (0 : ℂ), cuspFunction h f q = 0 := by
+  intro h_ev
+  have h_diff : DifferentiableOn ℂ (cuspFunction h f) (ball 0 1) :=
+    have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods hh hΓ⟩
+    differentiableOn_cuspFunction_ball hh (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ)
+      (ModularFormClass.holo f) (ModularFormClass.bdd_at_infty f)
+  have h_eqOn : EqOn (cuspFunction h f) 0 (ball 0 1) :=
+    (h_diff.analyticOnNhd isOpen_ball).eqOn_zero_of_preconnected_of_eventuallyEq_zero
+      (convex_ball 0 1).isPreconnected (mem_ball_self one_pos) h_ev
+  refine hf (funext fun τ ↦ ?_)
+  rw [Pi.zero_apply, ← SlashInvariantFormClass.eq_cuspFunction f τ hΓ hh.ne']
+  exact h_eqOn (by
+    rw [mem_ball, dist_zero_right]
+    exact_mod_cast Function.Periodic.norm_qParam_lt_one hh τ.im_pos)
+
+/-- The cusp function of a nonzero modular form is nonvanishing on a punctured
+neighborhood of `0`. -/
+lemma cuspFunction_eventually_ne_zero [ModularFormClass F Γ k] (hh : 0 < h)
+    (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    ∀ᶠ q in 𝓝[≠] (0 : ℂ), cuspFunction h f q ≠ 0 :=
+  (ModularFormClass.analyticAt_cuspFunction_zero f hh
+    hΓ).eventually_eq_zero_or_eventually_ne_zero.resolve_left
+    (cuspFunction_not_eventually_zero hh hΓ hf)
+
+/-- The width rescaling for a modular form, with the periodicity, boundedness, and
+holomorphy supplied by the class machinery. -/
+lemma orderAtCusp_nat_mul_of_mem_strictPeriods [ModularFormClass F Γ k] {m : ℕ}
+    (hh : 0 < h) (hm : 0 < m) (hΓ : h ∈ Γ.strictPeriods) :
+    orderAtCusp (m * h) ⇑f = m * orderAtCusp h ⇑f :=
+  have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods hh hΓ⟩
+  orderAtCusp_nat_mul hh hm (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ)
+    (ModularFormClass.bdd_at_infty f) (ModularFormClass.holo f)
 
 /-- For a nonzero modular form the cusp function does not vanish identically near `0`,
 so its analytic order there is finite. -/
