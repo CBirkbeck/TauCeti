@@ -76,6 +76,7 @@ noncomputable scoped instance coeMapGLRat :
     Coe (SpecialLinearGroup (Fin n) ℤ) (GL (Fin n) ℚ) :=
   ⟨mapGL ℚ⟩
 
+@[simp]
 lemma coe_mem_SLnZ (σ : SpecialLinearGroup (Fin n) ℤ) :
     (σ : GL (Fin n) ℚ) ∈ SLnZ n := ⟨σ, rfl⟩
 
@@ -271,7 +272,7 @@ private lemma conj_ker_mem_SLnZ (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fin n)
     change (g.val * (delta : GL (Fin n) ℚ).val : Matrix _ _ ℚ) =
       ((γ : GL (Fin n) ℚ).val * g.val : Matrix _ _ ℚ)
     simp only [mapGL_coe_matrix, algebraMap_int_eq,
-      map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom] at *
+      map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom] at hA ⊢
     rw [hA]
     simp only [← Int.coe_castRingHom, ← Matrix.map_mul]
     rw [h_int_eq]
@@ -366,7 +367,7 @@ private lemma conj_ker_mem_SLnZ_inv (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fi
     change ((delta : GL (Fin n) ℚ).val * g.val : Matrix _ _ ℚ) =
       (g.val * (γ : GL (Fin n) ℚ).val : Matrix _ _ ℚ)
     simp only [mapGL_coe_matrix, algebraMap_int_eq,
-      map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom] at *
+      map_apply_coe, RingHom.mapMatrix_apply, Int.coe_castRingHom] at hA ⊢
     rw [hA]
     simp only [← Int.coe_castRingHom, ← Matrix.map_mul]
     rw [h_int_eq]
@@ -419,22 +420,18 @@ private lemma congruence_ker_image_le_conj_inv (g : GL (Fin n) ℚ) (A : Matrix 
   rw [ConjAct.smul_def, ConjAct.ofConjAct_toConjAct]
   exact conj_ker_mem_SLnZ_inv n g A hA γ hγ_ker
 
-/-- `Δ ⊆ commensurator(SL_n(ℤ))`: for any integer matrix `α` with positive determinant,
-    `SL_n(ℤ)` and `α · SL_n(ℤ) · α⁻¹` are commensurable.
-
-    The key idea (Shimura Lemma 3.10): if `α` has integer entries with `det(α) = d > 0`,
-    then the congruence subgroup `Γ(d) = ker(SL_n(ℤ) → SL_n(ℤ/dℤ))` has finite index
-    in `SL_n(ℤ)` and is contained in both `SL_n(ℤ) ∩ α·SL_n(ℤ)·α⁻¹` and
-    `SL_n(ℤ) ∩ α⁻¹·SL_n(ℤ)·α`, establishing commensurability. -/
-lemma posDetInt_le_commensurator :
-    posDetInt_submonoid n ≤ (commensurator (SLnZ n)).toSubmonoid := by
-  intro g ⟨⟨A, hA⟩, hdet⟩
-  rw [Subgroup.mem_toSubmonoid, commensurator_mem_iff]
+/-- Every integral-entry element of `GL_n(ℚ)` lies in the commensurator of `SL_n(ℤ)`
+(Shimura Lemma 3.10): if `α` has integer entries with `|det(α)| = d` — nonzero, since
+invertibility already forces the determinant of an integral witness to be nonzero, so
+positivity is not needed — then the congruence subgroup `Γ(d) = ker(SL_n(ℤ) → SL_n(ℤ/dℤ))`
+has finite index in `SL_n(ℤ)` and is contained in both `SL_n(ℤ) ∩ α·SL_n(ℤ)·α⁻¹` and
+`SL_n(ℤ) ∩ α⁻¹·SL_n(ℤ)·α`, establishing commensurability. -/
+lemma mem_commensurator_of_hasIntEntries {g : GL (Fin n) ℚ} (hg : HasIntEntries n g) :
+    g ∈ commensurator (SLnZ n) := by
+  obtain ⟨A, hA⟩ := hg
+  rw [commensurator_mem_iff]
   set H := SLnZ n
-  have hdetc : (A.map (Int.cast : ℤ → ℚ)).det = (A.det : ℚ) := by
-    simpa [RingHom.mapMatrix_apply] using (RingHom.map_det (Int.castRingHom ℚ) A).symm
-  have hAdet_ne : A.det ≠ 0 :=
-    (Int.cast_pos.mp (by rw [← hdetc, ← hA]; exact hdet : (0 : ℚ) < (A.det : ℚ))).ne'
+  have hAdet_ne : A.det ≠ 0 := det_ne_zero_of_val_eq n g hA
   have hnatAbs_ne : NeZero A.det.natAbs := ⟨Int.natAbs_ne_zero.mpr hAdet_ne⟩
   set K := (SpecialLinearGroup.map (Int.castRingHom (ZMod A.det.natAbs))).ker.map
     (mapGL ℚ : SpecialLinearGroup (Fin n) ℤ →* GL (Fin n) ℚ)
@@ -448,6 +445,13 @@ lemma posDetInt_le_commensurator :
   rw [(Subgroup.relIndex_pointwise_smul (ConjAct.toConjAct g⁻¹) H
     (ConjAct.toConjAct g • H)).symm.trans (by rw [h1])]
   exact ne_zero_of_dvd_ne_zero hK_relIndex (Subgroup.relIndex_dvd_of_le_left H hK_le_ginvH)
+
+/-- `Δ ⊆ commensurator(SL_n(ℤ))`, by projection: a positive-determinant integral matrix is
+in particular integral. -/
+lemma posDetInt_le_commensurator :
+    posDetInt_submonoid n ≤ (commensurator (SLnZ n)).toSubmonoid := fun _ hg ↦
+  (Subgroup.mem_toSubmonoid _ _).mpr
+    (mem_commensurator_of_hasIntEntries n ((mem_posDetInt_submonoid_iff (n := n)).mp hg).1)
 
 /-- **The arithmetic Hecke triple for `GL_n`**: `SL_n(ℤ) ≤ Δ ≤ commensurator(SL_n(ℤ))` in
 `GL_n(ℚ)`, where `Δ` is the positive-determinant integral submonoid. This is the Hecke triple
