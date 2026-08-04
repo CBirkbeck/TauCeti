@@ -14,9 +14,15 @@ The vanishing order of a modular form at the cusp is the order of its `q`-expans
 integer with junk value `0` at the identically vanishing expansion — the convention of the
 interior dictionary `orderOfVanishingAt`. It is computed by the analytic order of the cusp
 function at `0`, vanishes when the constant term is nonzero, and rescales linearly in the
-width — the cusp term of the valence formula. The lemmas take the raw analytic, periodicity,
-and boundedness hypotheses of the underlying `q`-expansion theorems; for a modular form all
-of them are supplied by the `ModularFormClass` machinery.
+width — the cusp term of the level-one valence formula. The lemmas take the raw analytic,
+periodicity, and boundedness hypotheses of the underlying `q`-expansion theorems; for a
+modular form all of them are supplied by the `ModularFormClass` machinery.
+
+This is the integral exponent of the width-`h` expansion, the correct primitive at every
+cusp: at an irregular cusp of odd weight the conventionally normalized order is the
+half-integer obtained by reading this exponent at the doubled width, a `ℚ`-valued
+convention layer that belongs with the cusp classification machinery and is deliberately
+not defined here.
 
 ## Main declarations
 
@@ -46,7 +52,9 @@ variable {h : ℝ} {g : ℍ → ℂ}
 
 /-- The vanishing order at the cusp: the order of the `q`-expansion at width `h`, as an
 integer, with junk value `0` when the expansion vanishes identically — the `untop₀`
-convention of `orderOfVanishingAt`. -/
+convention of `orderOfVanishingAt`. This is the exponent of the width-`h` uniformizer;
+normalized orders at other widths (half-integral at irregular cusps) are conversion
+layers over this primitive. -/
 def orderAtCusp (h : ℝ) (f : ℍ → ℂ) : ℤ := ((qExpansion h f).order.toNat : ℤ)
 
 /-- `orderAtCusp` unfolded to the `q`-expansion order. The definition is sealed by the
