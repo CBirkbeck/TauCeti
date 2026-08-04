@@ -46,12 +46,6 @@ variable {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] (f : F)
 private lemma smul_eq_coe_smul (g : SL(2, ℤ)) (p : ℍ) :
     g • p = ((g : SL(2, ℤ)) : GL (Fin 2) ℝ) • p := rfl
 
-/-- The matrix of the coerced element is the entry-cast matrix: the `SL(2, ℤ) → GL(2, ℝ)`
-coercion is `toGL` after `map (Int.castRingHom ℝ)`, and `toGL` keeps the matrix. -/
-private lemma coe_GL_coe_matrix (g : SL(2, ℤ)) :
-    (((g : SL(2, ℤ)) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
-      ((Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ) g :
-        Matrix.SpecialLinearGroup (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) := rfl
 
 /-- The vanishing order of a level-one form, descended to `SL(2, ℤ)`-orbits of `ℍ`. -/
 def orderOfVanishingOnOrbit [SlashInvariantFormClass F 𝒮ℒ k]
@@ -61,7 +55,7 @@ def orderOfVanishingOnOrbit [SlashInvariantFormClass F 𝒮ℒ k]
     rw [← hg', smul_eq_coe_smul,
       orderOfVanishingAt_smul f (γ := ((g : SL(2, ℤ)) : GL (Fin 2) ℝ))
         (MonoidHom.mem_range.mpr ⟨g, rfl⟩) (by
-          rw [coe_GL_coe_matrix, Matrix.SpecialLinearGroup.det_coe]
+          rw [Matrix.SpecialLinearGroup.coe_GL_coe_matrix, Matrix.SpecialLinearGroup.det_coe]
           exact one_pos) b]
 
 @[simp]
