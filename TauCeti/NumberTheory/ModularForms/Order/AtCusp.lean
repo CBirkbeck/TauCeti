@@ -239,6 +239,33 @@ lemma orderAtCuspQ_eq_orderAtCusp (hh : 0 < h) (hg_per : Periodic (g ∘ ofCompl
   push_cast
   ring
 
+/-- The rational cusp order is additive on products. -/
+lemma orderAtCuspQ_mul {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction (2 * h) f) 0)
+    (hg : AnalyticAt ℂ (cuspFunction (2 * h) g) 0)
+    (hf' : analyticOrderAt (cuspFunction (2 * h) f) 0 ≠ ⊤)
+    (hg' : analyticOrderAt (cuspFunction (2 * h) g) 0 ≠ ⊤) :
+    orderAtCuspQ h (f * g) = orderAtCuspQ h f + orderAtCuspQ h g := by
+  rw [orderAtCuspQ_def, orderAtCuspQ_def, orderAtCuspQ_def, orderAtCusp_mul hf hg hf' hg']
+  push_cast
+  ring
+
+/-- The rational cusp order multiplies under powers. -/
+lemma orderAtCuspQ_pow {f : ℍ → ℂ} (n : ℕ)
+    (hf : AnalyticAt ℂ (cuspFunction (2 * h) f) 0) :
+    orderAtCuspQ h (f ^ n) = n * orderAtCuspQ h f := by
+  rw [orderAtCuspQ_def, orderAtCuspQ_def, orderAtCusp_pow n hf]
+  push_cast
+  ring
+
+/-- The rational cusp order is additive on finite products. -/
+lemma orderAtCuspQ_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
+    (hf : ∀ i ∈ s, AnalyticAt ℂ (cuspFunction (2 * h) (f i)) 0)
+    (hf' : ∀ i ∈ s, analyticOrderAt (cuspFunction (2 * h) (f i)) 0 ≠ ⊤) :
+    orderAtCuspQ h (∏ i ∈ s, f i) = ∑ i ∈ s, orderAtCuspQ h (f i) := by
+  rw [orderAtCuspQ_def, orderAtCusp_prod s hf hf']
+  push_cast
+  simp [orderAtCuspQ_def, Finset.sum_div]
+
 namespace ModularForm
 
 variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] {f : F}
