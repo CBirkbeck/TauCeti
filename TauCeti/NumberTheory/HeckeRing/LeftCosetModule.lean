@@ -12,12 +12,15 @@ import Mathlib.Tactic.Group
 /-!
 # Hecke rings: the module of left cosets
 
-The natural representation of the Hecke ring, following [Shimura][shimura1971], §3.1: the
-free module `HeckeLeftCoset Δ H →₀ R` on the left cosets `H\Δ` carries an action of
-`𝕋 Δ H R`, with a double coset `HgH = ⊔ᵢ σᵢgH` acting on a left coset `βH` by
-`βH ↦ Σᵢ βσᵢgH`. This file constructs the left-coset type, the orbit Finsets, the action,
-and proves the action is faithful — the input for the degree homomorphism of the following
-file.
+The scalar operations underlying the natural representation of the Hecke ring, following
+[Shimura][shimura1971], §3.1: on the free module `HeckeLeftCoset Δ H →₀ R` over the left
+cosets `H\Δ`, each element of `𝕋 Δ H R` defines a scalar operation, with a double coset
+`HgH = ⊔ᵢ σᵢgH` sending a left coset `βH` to `Σᵢ βσᵢgH`. This file constructs the
+left-coset type, the orbit Finsets, and the scalar multiplication, and proves it is
+additive in both arguments and faithful. The action laws proper — compatibility with the
+convolution product and its identity, which upgrade these operations to a module structure —
+are Shimura's Proposition 3.2 and are established together with the degree homomorphism in
+the follow-up development.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`HeckeRIngs/AbstractHeckeRing/Module.lean`,
@@ -55,8 +58,8 @@ abbrev HeckeLeftCoset.setoid (Δ : Submonoid G) (H : Subgroup G) : Setoid Δ :=
   (QuotientGroup.leftRel H).comap Subtype.val
 
 /-- A Hecke left coset: an equivalence class of `Δ`-elements under `βH = β'H`. This is the
-basis type for the natural representation of the Hecke ring `𝕋 Δ H R` on the free module
-`HeckeLeftCoset Δ H →₀ R`. -/
+basis type for the free module `HeckeLeftCoset Δ H →₀ R`, on which the scalar operations
+of the Hecke ring `𝕋 Δ H R` are defined. -/
 def HeckeLeftCoset (Δ : Submonoid G) (H : Subgroup G) := Quotient (HeckeLeftCoset.setoid Δ H)
 
 namespace HeckeLeftCoset
@@ -320,7 +323,8 @@ lemma eq_of_smul_eq_smul {t₁ t₂ : 𝕋 Δ H R}
   have h1 := congrArg (fun m ↦ m q) (h (Finsupp.single 1 1))
   rwa [smul_single_one_apply t₁ D hq, smul_single_one_apply t₂ D hq] at h1
 
-/-- The faithfulness of the natural representation, as an instance. -/
+/-- The scalar operations of the Hecke ring on the left-coset module are faithful, as an
+instance. -/
 noncomputable instance instFaithfulSMul :
     FaithfulSMul (𝕋 Δ H R) (HeckeLeftCoset Δ H →₀ R) where
   eq_of_smul_eq_smul := eq_of_smul_eq_smul
