@@ -83,8 +83,9 @@ theorem abscissaOfAbsConv_qExpansion_coeff_le (hk : 0 ≤ k) [ModularFormClass F
   simp only [Real.rpow_intCast]
 
 /-- On the half-plane `Re s > k + 1`, the Dirichlet series of the `q`-expansion
-coefficients is Mathlib's `ModularForm.L`, up to the width factor. -/
-@[simp]
+coefficients is Mathlib's `ModularForm.L`, up to the width factor. Not `@[simp]`: the
+positivity witness `hk` occurs in the right-hand side `L hk f s`, so the rewrite cannot
+fire from the left-hand side alone (simpNF rejects it). -/
 theorem LSeries_qExpansion_coeff_eq (hk : 0 < k) [ModularFormClass F Γ k] (f : F)
     (hs : k + 1 < s.re) :
     LSeries (fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n) s =
@@ -109,8 +110,8 @@ theorem abscissaOfAbsConv_qExpansion_coeff_le [CuspFormClass F Γ k] (f : F) :
   LSeries.abscissaOfAbsConv_le_of_isBigO_rpow (CuspFormClass.qExpansion_isBigO f)
 
 /-- On the half-plane `Re s > k/2 + 1`, the Dirichlet series of the `q`-expansion
-coefficients of a cusp form is Mathlib's `ModularForm.L`, up to the width factor. -/
-@[simp]
+coefficients of a cusp form is Mathlib's `ModularForm.L`, up to the width factor.
+Not `@[simp]`: as with the modular-form version, `hk` occurs in the right-hand side. -/
 theorem LSeries_qExpansion_coeff_eq (hk : 0 < k) [CuspFormClass F Γ k] (f : F)
     (hs : k / 2 + 1 < s.re) :
     LSeries (fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n) s =
