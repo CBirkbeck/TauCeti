@@ -133,20 +133,20 @@ lemma fdBoundary_at_one (H : ℝ) : fdBoundary H 1 = (ρ : ℂ) + 1 := by
 /-- The parameter `2` lands on `i`. -/
 @[simp]
 lemma fdBoundary_at_two (H : ℝ) : fdBoundary H 2 = Complex.I := by
-  rw [fdBoundary_of_le_two (by norm_num) le_rfl, fdBoundary_seg2,
-    show (Real.pi / 3 + ((2 : ℝ) - 1) * (Real.pi / 2 - Real.pi / 3)) = Real.pi / 2 by ring,
-    circleMap, Complex.ofReal_one, one_mul, exp_mul_I, ← ofReal_cos, ← ofReal_sin,
-    Real.cos_pi_div_two, Real.sin_pi_div_two]
+  have hangle : Real.pi / 3 + ((2 : ℝ) - 1) * (Real.pi / 2 - Real.pi / 3) = Real.pi / 2 := by
+    ring
+  rw [fdBoundary_of_le_two (by norm_num) le_rfl, fdBoundary_seg2, hangle,
+    circleMap_pi_div_two]
   simp
 
 /-- The parameter `3` lands on the elliptic corner `ρ`. -/
 @[simp]
 lemma fdBoundary_at_three (H : ℝ) : fdBoundary H 3 = (ρ : ℂ) := by
-  rw [fdBoundary_of_le_three (by norm_num) le_rfl, fdBoundary_seg3,
-    show (Real.pi / 2 + ((3 : ℝ) - 2) * (2 * Real.pi / 3 - Real.pi / 2)) =
-      2 * Real.pi / 3 by ring,
-    circleMap, Complex.ofReal_one, one_mul, exp_mul_I, ← ofReal_cos, ← ofReal_sin,
-    show (2 * Real.pi / 3 : ℝ) = Real.pi - Real.pi / 3 by ring,
+  have hangle : Real.pi / 2 + ((3 : ℝ) - 2) * (2 * Real.pi / 3 - Real.pi / 2) =
+      2 * Real.pi / 3 := by ring
+  have hsub : (2 * Real.pi / 3 : ℝ) = Real.pi - Real.pi / 3 := by ring
+  rw [fdBoundary_of_le_three (by norm_num) le_rfl, fdBoundary_seg3, hangle,
+    circleMap, Complex.ofReal_one, one_mul, exp_mul_I, ← ofReal_cos, ← ofReal_sin, hsub,
     Real.cos_pi_sub, Real.cos_pi_div_three, Real.sin_pi_sub, Real.sin_pi_div_three]
   rw [Complex.ext_iff]
   refine ⟨by simp [ρ]; norm_num, ?_⟩
@@ -155,14 +155,16 @@ lemma fdBoundary_at_three (H : ℝ) : fdBoundary H 3 = (ρ : ℂ) := by
 /-- The parameter `4` lands on the top left corner `-1/2 + H·i`. -/
 @[simp]
 lemma fdBoundary_at_four (H : ℝ) : fdBoundary H 4 = -1 / 2 + H * Complex.I := by
-  rw [fdBoundary_of_le_four (by norm_num) le_rfl, fdBoundary_seg4,
-    show (4 : ℝ) - 3 = 1 by norm_num, AffineMap.lineMap_apply_one]
+  have hpar : (4 : ℝ) - 3 = 1 := by norm_num
+  rw [fdBoundary_of_le_four (by norm_num) le_rfl, fdBoundary_seg4, hpar,
+    AffineMap.lineMap_apply_one]
 
 /-- The path ends where it starts, at `1/2 + H·i`. -/
 @[simp]
 lemma fdBoundary_at_five (H : ℝ) : fdBoundary H 5 = 1 / 2 + H * Complex.I := by
-  rw [fdBoundary_of_lt_four (by norm_num), fdBoundary_seg5,
-    show (5 : ℝ) - 4 = 1 by norm_num, AffineMap.lineMap_apply_one]
+  have hpar : (5 : ℝ) - 4 = 1 := by norm_num
+  rw [fdBoundary_of_lt_four (by norm_num), fdBoundary_seg5, hpar,
+    AffineMap.lineMap_apply_one]
 
 /-- The boundary contour is closed. -/
 lemma fdBoundary_closed (H : ℝ) : fdBoundary H 5 = fdBoundary H 0 := by
