@@ -34,7 +34,7 @@ re-founded slash action with built-in character) and their names. The Hecke pair
 
 ## Main definitions
 
-* `CongruenceSubgroup.Gamma0MapUnits`: the lower-right entry as a homomorphism
+* `(CongruenceSubgroup.Gamma0Map N).toHomUnits` (Mathlib): the lower-right entry as a
   `Γ₀(N) →* (ZMod N)ˣ`.
 * `diamondOp`/`diamondOpCusp`: the diamond operator `⟨d⟩` for `d : (ZMod N)ˣ`, a linear
   endomorphism of `ModularForm ((Gamma1 N).map (mapGL ℝ)) k` resp. `CuspForm _ k`.
@@ -45,7 +45,7 @@ re-founded slash action with built-in character) and their names. The Hecke pair
 
 ## Main results
 
-* `CongruenceSubgroup.Gamma0MapUnits_surjective`: every unit of `ZMod N` is the lower-right
+* `CongruenceSubgroup.Gamma0Map_toHomUnits_surjective`: every unit of `ZMod N` is the lower-right
   entry of a matrix in `Γ₀(N)` (via strong approximation for `SL₂`).
 * `mem_modFormCharSpace_iff_nebentypus`/`mem_cuspFormCharSpace_iff_nebentypus`: membership in the
   character space is the classical nebentypus relation `f ∣[k] g = χ(d_g) • f` for all
@@ -95,31 +95,13 @@ theorem Gamma1_map_inv_conjAct_eq (g : ↥(Gamma0 N)) :
     exact ⟨(g : SL(2, ℤ)) * σ * (g : SL(2, ℤ))⁻¹,
       Gamma0_normalizes_Gamma1 g σ hσ, by simp [map_mul, map_inv]⟩
 
-/-- The `Gamma0Map` lifts to a group homomorphism to `(ZMod N)ˣ`: the lower-right
-entry is a unit mod `N` with inverse the upper-left entry (from `det = 1` and `N ∣ c`). -/
-noncomputable def Gamma0MapUnits : ↥(Gamma0 N) →* (ZMod N)ˣ where
-  toFun g := by
-    set A := (g : SL(2, ℤ))
-    have hc : (A 1 0 : ZMod N) = 0 := Gamma0_mem.mp g.property
-    have hdet : A 0 0 * A 1 1 - A 0 1 * A 1 0 = 1 := by
-      simpa only [Matrix.det_fin_two] using A.prop
-    have hunit : (A 0 0 : ZMod N) * (A 1 1 : ZMod N) = 1 := by
-      simpa only [Int.cast_sub, Int.cast_mul, Int.cast_one, hc, mul_zero, sub_zero]
-        using congr_arg (Int.cast : ℤ → ZMod N) hdet
-    exact Units.mk (Gamma0Map N g) (A 0 0 : ZMod N) ((mul_comm _ _).trans hunit) hunit
-  map_one' := Units.ext (map_one (Gamma0Map N))
-  map_mul' g₁ g₂ := Units.ext (map_mul (Gamma0Map N) g₁ g₂)
-
-@[simp]
-lemma Gamma0MapUnits_val (g : ↥(Gamma0 N)) : (Gamma0MapUnits g : ZMod N) = Gamma0Map N g := (rfl)
-
 /-- If two `Γ₀(N)` elements have equal image under `Gamma0Map`, their ratio
 `g₁ · g₂⁻¹` lies in `Γ₁(N)` (as an `SL₂(ℤ)` element). -/
 lemma mul_inv_mem_Gamma1_of_Gamma0Map_eq (g₁ g₂ : ↥(Gamma0 N))
     (heq : Gamma0Map N g₁ = Gamma0Map N g₂) :
     ((g₁ : SL(2, ℤ)) * (g₂ : SL(2, ℤ))⁻¹) ∈ Gamma1 N := by
-  have heq_u : Gamma0MapUnits g₁ = Gamma0MapUnits g₂ := Units.ext heq
-  have hker : Gamma0MapUnits (g₁ * g₂⁻¹) = 1 := by simp [map_mul, map_inv, heq_u]
+  have heq_u : (Gamma0Map N).toHomUnits g₁ = (Gamma0Map N).toHomUnits g₂ := Units.ext heq
+  have hker : (Gamma0Map N).toHomUnits (g₁ * g₂⁻¹) = 1 := by simp [map_mul, map_inv, heq_u]
   exact (Gamma1_mem _ _).mpr <| (Gamma1_to_Gamma0_mem _).mp <| congr_arg Units.val hker
 
 /-- The diagonal matrix `!![u⁻¹, 0; 0, u]` as an element of `SL₂(ZMod N)`. -/
@@ -129,10 +111,10 @@ private def diagUnit (u : (ZMod N)ˣ) : SpecialLinearGroup (Fin 2) (ZMod N) :=
 private lemma coe_diagUnit (u : (ZMod N)ˣ) :
     (diagUnit u : Matrix (Fin 2) (Fin 2) (ZMod N)) = !![(↑u⁻¹ : ZMod N), 0; 0, ↑u] := rfl
 
-/-- `Gamma0MapUnits` is surjective: every unit `u ∈ (ZMod N)ˣ` is realized as the
+/-- `(Gamma0Map N).toHomUnits` is surjective: every unit `u ∈ (ZMod N)ˣ` is realized as the
 lower-right entry of some `g ∈ Gamma0 N`, by strong approximation for `SL₂`. -/
-theorem Gamma0MapUnits_surjective [NeZero N] :
-    Function.Surjective (Gamma0MapUnits (N := N)) := fun u ↦ by
+theorem Gamma0Map_toHomUnits_surjective [NeZero N] :
+    Function.Surjective ((Gamma0Map N).toHomUnits) := fun u ↦ by
   obtain ⟨g, hg⟩ := map_intCast_zmod_surjective (diagUnit u)
   have hentry : ∀ i j, ((g i j : ℤ) : ZMod N) =
       (!![(↑u⁻¹ : ZMod N), 0; 0, ↑u] : Matrix (Fin 2) (Fin 2) (ZMod N)) i j := fun i j => by
@@ -208,13 +190,13 @@ theorem diamondOpAux_eq_of_Gamma0Map_eq (k : ℤ) (g₁ g₂ : ↥(Gamma0 N))
 `d : (ZMod N)ˣ`. -/
 noncomputable def diamondOp [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) :
     ModularForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] ModularForm ((Gamma1 N).map (mapGL ℝ)) k :=
-  diamondOpAux k (Gamma0MapUnits_surjective d).choose
+  diamondOpAux k (Gamma0Map_toHomUnits_surjective d).choose
 
 /-- `diamondOp` equals `diamondOpAux` on any representative with the right image. -/
 theorem diamondOp_eq_diamondOpAux [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
-    (hg : Gamma0MapUnits g = d) : diamondOp k d = diamondOpAux k g :=
+    (hg : (Gamma0Map N).toHomUnits g = d) : diamondOp k d = diamondOpAux k g :=
   diamondOpAux_eq_of_Gamma0Map_eq k _ g
-    (by simp [← Gamma0MapUnits_val, (Gamma0MapUnits_surjective d).choose_spec, hg])
+    (congrArg Units.val ((Gamma0Map_toHomUnits_surjective d).choose_spec.trans hg.symm))
 
 /-- The diamond operator at `1` is the identity. -/
 @[simp]
@@ -228,8 +210,8 @@ theorem diamondOp_one [NeZero N] (k : ℤ) : diamondOp (N := N) k 1 = LinearMap.
 /-- Diamond operators compose: `⟨d₁ * d₂⟩ = ⟨d₁⟩ ∘ ⟨d₂⟩`. -/
 theorem diamondOp_mul [NeZero N] (k : ℤ) (d₁ d₂ : (ZMod N)ˣ) :
     diamondOp k (d₁ * d₂) = (diamondOp k d₁).comp (diamondOp k d₂) := by
-  obtain ⟨g₁, hg₁⟩ := Gamma0MapUnits_surjective (N := N) d₁
-  obtain ⟨g₂, hg₂⟩ := Gamma0MapUnits_surjective (N := N) d₂
+  obtain ⟨g₁, hg₁⟩ := Gamma0Map_toHomUnits_surjective (N := N) d₁
+  obtain ⟨g₂, hg₂⟩ := Gamma0Map_toHomUnits_surjective (N := N) d₂
   rw [diamondOp_eq_diamondOpAux k (d₁ * d₂) (g₂ * g₁) (by simp [map_mul, hg₁, hg₂, mul_comm]),
     diamondOp_eq_diamondOpAux k d₁ g₁ hg₁, diamondOp_eq_diamondOpAux k d₂ g₂ hg₂]
   ext f z
@@ -277,14 +259,14 @@ theorem diamondOpCuspAux_eq_of_Gamma0Map_eq (k : ℤ) (g₁ g₂ : ↥(Gamma0 N)
 /-- The cusp-form diamond operator indexed by `d : (ZMod N)ˣ`. -/
 noncomputable def diamondOpCusp [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) :
     CuspForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] CuspForm ((Gamma1 N).map (mapGL ℝ)) k :=
-  diamondOpCuspAux k (Gamma0MapUnits_surjective d).choose
+  diamondOpCuspAux k (Gamma0Map_toHomUnits_surjective d).choose
 
 /-- `diamondOpCusp` equals `diamondOpCuspAux` on any representative. -/
 theorem diamondOpCusp_eq_diamondOpCuspAux (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
-    (hg : Gamma0MapUnits g = d) [NeZero N] :
+    (hg : (Gamma0Map N).toHomUnits g = d) [NeZero N] :
     diamondOpCusp k d = diamondOpCuspAux k g :=
   diamondOpCuspAux_eq_of_Gamma0Map_eq k _ g
-    (by simp [← Gamma0MapUnits_val, (Gamma0MapUnits_surjective d).choose_spec, hg])
+    (congrArg Units.val ((Gamma0Map_toHomUnits_surjective d).choose_spec.trans hg.symm))
 
 /-- The cusp diamond operator at `1` is the identity. -/
 @[simp]
@@ -298,8 +280,8 @@ theorem diamondOpCusp_one [NeZero N] (k : ℤ) : diamondOpCusp (N := N) k 1 = Li
 /-- Cusp diamond operators compose multiplicatively. -/
 theorem diamondOpCusp_mul [NeZero N] (k : ℤ) (d₁ d₂ : (ZMod N)ˣ) :
     diamondOpCusp k (d₁ * d₂) = (diamondOpCusp k d₁).comp (diamondOpCusp k d₂) := by
-  obtain ⟨g₁, hg₁⟩ := Gamma0MapUnits_surjective (N := N) d₁
-  obtain ⟨g₂, hg₂⟩ := Gamma0MapUnits_surjective (N := N) d₂
+  obtain ⟨g₁, hg₁⟩ := Gamma0Map_toHomUnits_surjective (N := N) d₁
+  obtain ⟨g₂, hg₂⟩ := Gamma0Map_toHomUnits_surjective (N := N) d₂
   rw [diamondOpCusp_eq_diamondOpCuspAux k (d₁ * d₂) (g₂ * g₁)
       (by simp [map_mul, hg₁, hg₂, mul_comm]),
     diamondOpCusp_eq_diamondOpCuspAux k d₁ g₁ hg₁, diamondOpCusp_eq_diamondOpCuspAux k d₂ g₂ hg₂]
@@ -369,13 +351,13 @@ relation `f ∣[k] g = χ₀(d_g) • f` for all `g ∈ Γ₀(N)`. -/
 theorem mem_modFormCharSpace_iff_nebentypus [NeZero N] (k : ℤ) (χ₀ : (ZMod N)ˣ →* ℂˣ)
     (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) : f ∈ modFormCharSpace k χ₀ ↔
     ∀ g : ↥(Gamma0 N),
-      (⇑f) ∣[k] mapGL ℝ (g : SL(2, ℤ)) = (↑(χ₀ (Gamma0MapUnits g)) : ℂ) • ⇑f := by
+      (⇑f) ∣[k] mapGL ℝ (g : SL(2, ℤ)) = (↑(χ₀ ((Gamma0Map N).toHomUnits g)) : ℂ) • ⇑f := by
   rw [mem_modFormCharSpace_iff]
   refine ⟨fun h g ↦ ?_, fun h d ↦ ?_⟩
-  · have hd := h (Gamma0MapUnits g)
+  · have hd := h ((Gamma0Map N).toHomUnits g)
     rw [diamondOpHom_apply, diamondOp_eq_diamondOpAux k _ g rfl] at hd
     exact congr_arg (⇑· : ModularForm _ k → _) hd
-  · obtain ⟨g, hg⟩ := Gamma0MapUnits_surjective (N := N) d
+  · obtain ⟨g, hg⟩ := Gamma0Map_toHomUnits_surjective (N := N) d
     rw [diamondOpHom_apply, diamondOp_eq_diamondOpAux k d g hg, ← hg]
     exact ModularForm.ext (congr_fun (h g))
 
@@ -385,12 +367,12 @@ relation `f ∣[k] g = χ₀(d_g) • f` for all `g ∈ Γ₀(N)`. -/
 theorem mem_cuspFormCharSpace_iff_nebentypus [NeZero N] (k : ℤ) (χ₀ : (ZMod N)ˣ →* ℂˣ)
     (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) : f ∈ cuspFormCharSpace k χ₀ ↔
     ∀ g : ↥(Gamma0 N),
-      (⇑f) ∣[k] mapGL ℝ (g : SL(2, ℤ)) = (↑(χ₀ (Gamma0MapUnits g)) : ℂ) • ⇑f := by
+      (⇑f) ∣[k] mapGL ℝ (g : SL(2, ℤ)) = (↑(χ₀ ((Gamma0Map N).toHomUnits g)) : ℂ) • ⇑f := by
   rw [mem_cuspFormCharSpace_iff]
   refine ⟨fun h g ↦ ?_, fun h d ↦ ?_⟩
-  · have hd := h (Gamma0MapUnits g)
+  · have hd := h ((Gamma0Map N).toHomUnits g)
     rw [diamondOpCuspHom_apply, diamondOpCusp_eq_diamondOpCuspAux k _ g rfl] at hd
     exact congr_arg (⇑· : CuspForm _ k → _) hd
-  · obtain ⟨g, hg⟩ := Gamma0MapUnits_surjective (N := N) d
+  · obtain ⟨g, hg⟩ := Gamma0Map_toHomUnits_surjective (N := N) d
     rw [diamondOpCuspHom_apply, diamondOpCusp_eq_diamondOpCuspAux k d g hg, ← hg]
     exact CuspForm.ext (congr_fun (h g))
