@@ -381,9 +381,11 @@ lemma continuousOn_fdBoundary (H : ℝ) : ContinuousOn (fdBoundary H) (Icc 0 5) 
     isClosed_Icc
   rwa [Icc_union_Icc_eq_Icc (by norm_num) (by norm_num)] at h05
 
-/-- On every closed subinterval of `[0, 5]` whose interior avoids the four corner
-parameters, the contour is `C¹` — the certificate that `fdBoundaryBreakpoints` is a
-valid breakpoint witness for `isPiecewiseC1On_fdBoundary`. -/
+/-- On every closed subinterval of `[0, 5]` whose interior avoids the four segment-junction
+parameters, the contour is `C¹` — the certificate that `fdBoundaryBreakpoints` is a valid
+breakpoint witness for `isPiecewiseC1On_fdBoundary`. (At the junction `t = 2` the two arcs
+continue the same smooth circle map, so it is a breakpoint of the parameterization, not a
+geometric corner.) -/
 lemma contDiffOn_fdBoundary (H : ℝ) {c d : ℝ}
     (hcd : Icc c d ⊆ Icc 0 5) (hdis : Disjoint (fdBoundaryBreakpoints : Set ℝ) (Ioo c d)) :
     ContDiffOn ℝ 1 (fdBoundary H) (Icc c d) := by
@@ -404,7 +406,7 @@ lemma contDiffOn_fdBoundary (H : ℝ) {c d : ℝ}
           exact (fdBoundary_piece5 H).mono fun x hx ↦ ⟨hc4.trans hx.1, (hcd hx).2⟩
 
 /-- The fundamental-domain boundary contour is piecewise `C¹` on `[0, 5]`;
-`contDiffOn_fdBoundary` certifies the four interior corners as a breakpoint witness. -/
+`contDiffOn_fdBoundary` certifies the four segment junctions as a breakpoint witness. -/
 theorem isPiecewiseC1On_fdBoundary (H : ℝ) : Contour.IsPiecewiseC1On (fdBoundary H) 0 5 := by
   refine Contour.IsPiecewiseC1On.of_breakpoints ?_ fdBoundaryBreakpoints ?_ ?_
   · rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
