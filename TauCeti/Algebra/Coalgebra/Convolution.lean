@@ -65,8 +65,46 @@ end Coalgebra
 
 namespace Bialgebra
 
-variable {R : Type*} {H : Type*} [CommSemiring R] [CommSemiring H]
-  [_root_.Bialgebra R H]
+variable {R : Type*} [CommSemiring R]
+
+section Semiring
+
+variable {H : Type*} [Semiring H] [_root_.Bialgebra R H]
+
+/-- **Post-composition splits the comultiplication point into its two inclusions.** For any
+algebra map `φ` out of the tensor square, the point `φ ∘ Δ` is the convolution product of `φ`
+restricted along the two inclusions.
+
+The convolution monoid here is the one on points of `H` with values in the *commutative* algebra
+`A`, so `H` itself need only be a semiring: the tensor square `H ⊗[R] H` is used solely as the
+source of `φ`, never as a convolution target. That is why this is proved from the linear-map
+identity `TauCeti.Coalgebra.comul_eq_convMul_includeLeft_includeRight` rather than from
+`TauCeti.Bialgebra.comulPoint_eq_include_mul`, which needs `H ⊗[R] H` to be commutative. -/
+theorem toConv_comp_comulAlgHom {A : Type*} [CommSemiring A] [Algebra R A]
+    (phi : H ⊗[R] H →ₐ[R] A) :
+    toConv (phi.comp (Bialgebra.comulAlgHom R H)) =
+      toConv (phi.comp (Bialgebra.TensorProduct.includeLeft
+        (R := R) (H₁ := H) (H₂ := H)).toAlgHom) *
+      toConv (phi.comp (Bialgebra.TensorProduct.includeRight
+        (R := R) (H₁ := H) (H₂ := H)).toAlgHom) := by
+  apply WithConv.ofConv_injective
+  apply AlgHom.toLinearMap_injective
+  apply WithConv.toConv_injective
+  rw [AlgHom.toLinearMap_convMul]
+  have hcomul :
+      (Bialgebra.comulAlgHom R H).toLinearMap =
+        (toConv (Algebra.TensorProduct.includeLeft (R := R) (A := H) (B := H)).toLinearMap *
+          toConv (Algebra.TensorProduct.includeRight
+            (R := R) (A := H) (B := H)).toLinearMap).ofConv := by
+    rw [← Coalgebra.comul_eq_convMul_includeLeft_includeRight (R := R) (C := H)]
+    simp
+  simp only [AlgHom.comp_toLinearMap, Bialgebra.TensorProduct.includeLeft_toAlgHom,
+    Bialgebra.TensorProduct.includeRight_toAlgHom, hcomul]
+  exact congrArg WithConv.toConv (LinearMap.algHom_comp_convMul_distrib phi _ _)
+
+end Semiring
+
+variable {H : Type*} [CommSemiring H] [_root_.Bialgebra R H]
 
 /-- The comultiplication point of a commutative bialgebra is the convolution product of the
 two canonical tensor-factor points. This is the algebra-hom form of
@@ -85,24 +123,6 @@ theorem comulPoint_eq_include_mul :
     Bialgebra.TensorProduct.includeLeft_toAlgHom,
     Bialgebra.TensorProduct.includeRight_toAlgHom] using
       (Coalgebra.comul_eq_convMul_includeLeft_includeRight (R := R) (C := H))
-
-/-- **Post-composition splits the comultiplication point into its two inclusions.** For any
-algebra map `φ` out of the tensor square, the point `φ ∘ Δ` is the convolution product of `φ`
-restricted along the two inclusions. This is the functorial form of
-`TauCeti.Bialgebra.comulPoint_eq_include_mul`, obtained from it by `AlgHom.comp_convMul_distrib`. -/
-theorem toConv_comp_comulAlgHom {A : Type*} [CommSemiring A] [Algebra R A]
-    (phi : H ⊗[R] H →ₐ[R] A) :
-    toConv (phi.comp (Bialgebra.comulAlgHom R H)) =
-      toConv (phi.comp (Bialgebra.TensorProduct.includeLeft
-        (R := R) (H₁ := H) (H₂ := H)).toAlgHom) *
-      toConv (phi.comp (Bialgebra.TensorProduct.includeRight
-        (R := R) (H₁ := H) (H₂ := H)).toAlgHom) := by
-  have hcomul : Bialgebra.comulAlgHom R H =
-      (toConv (Bialgebra.TensorProduct.includeLeft (R := R) (H₁ := H) (H₂ := H)).toAlgHom *
-        toConv (Bialgebra.TensorProduct.includeRight
-          (R := R) (H₁ := H) (H₂ := H)).toAlgHom).ofConv := by
-    rw [← comulPoint_eq_include_mul]
-  rw [hcomul, AlgHom.comp_convMul_distrib]
 
 end Bialgebra
 
