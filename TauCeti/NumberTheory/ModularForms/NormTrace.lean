@@ -21,7 +21,6 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
 
 * `TauCeti.SlashInvariantForm.mdifferentiable_quotientFunc`.
 * `TauCeti.SlashInvariantForm.isBoundedAtImInfty_quotientFunc`.
-* `TauCeti.ModularForm.slash_T_zpow_apply`: slashing by a power of `T` is an integer shift.
 * `TauCeti.ModularForm.exists_norm_decomposition`.
 
 ## References
@@ -36,7 +35,7 @@ public noncomputable section
 open UpperHalfPlane Complex Function SlashInvariantForm Periodic
 open TauCeti.UpperHalfPlane
 
-open scoped ModularForm Topology Filter Manifold MatrixGroups
+open scoped ModularForm Topology Filter Manifold MatrixGroups Pointwise
 
 variable {𝒢 ℋ : Subgroup (GL (Fin 2) ℝ)} {F : Type*} (f : F) [FunLike F ℍ ℂ] {k : ℤ}
   [ModularFormClass F 𝒢 k]
@@ -60,15 +59,6 @@ lemma isBoundedAtImInfty_quotientFunc [𝒢.IsFiniteRelIndex ℋ] [Fact (IsCusp 
       ((Fact.out : IsCusp _ _).of_isFiniteRelIndex_conj hr)
 
 end SlashInvariantForm
-
-/-- Acting on a function `g : ℍ → ℂ` by `T ^ j` via the weight `k` slash action is the shift
-`τ ↦ g ((j : ℝ) +ᵥ τ)`. -/
-lemma ModularForm.slash_T_zpow_apply (k j : ℤ) (g : ℍ → ℂ) (τ : ℍ) :
-    (g ∣[k] (ModularGroup.T ^ j : SL(2, ℤ))) τ = g ((j : ℝ) +ᵥ τ) := by
-  have hd : denom ((ModularGroup.T ^ j : SL(2, ℤ)) : GL (Fin 2) ℝ) τ = 1 := by
-    rw [Matrix.SpecialLinearGroup.coe_GL_eq_mapGL, ModularGroup.mapGL_T_zpow_eq_upperRightHom]
-    simp [denom, Matrix.GeneralLinearGroup.upperRightHom_apply]
-  rw [_root_.ModularForm.SL_slash_apply, modular_T_zpow_smul, hd, one_zpow, mul_one]
 
 namespace ModularForm
 
@@ -140,17 +130,12 @@ private lemma inv_smul_mem_tPowCosets_iff [DecidableEq (𝒮ℒ ⧸ (𝒢.subgro
     ((mapGL ℝ).rangeRestrict (ModularGroup.T : SL(2, ℤ)))⁻¹ • q ∈ tPowCosets 𝒢 ↔
       q ∈ tPowCosets 𝒢 := by
   set t : 𝒮ℒ := (mapGL ℝ).rangeRestrict (ModularGroup.T : SL(2, ℤ))
-  have h_eq : (tPowCosets 𝒢).image (t • ·) = tPowCosets 𝒢 :=
+  have h_eq : t • tPowCosets 𝒢 = tPowCosets 𝒢 :=
     Finset.eq_of_subset_of_card_le (fun q hq ↦ by
-      obtain ⟨q', hq', rfl⟩ := Finset.mem_image.mp hq
+      obtain ⟨q', hq', rfl⟩ := Finset.mem_smul_finset.mp hq
       exact smul_mem_tPowCosets hq')
-      (Finset.card_image_of_injective _ (MulAction.injective t)).ge
-  refine ⟨fun hq ↦ ?_, fun hq ↦ ?_⟩
-  · have h := smul_mem_tPowCosets (𝒢 := 𝒢) hq
-    rwa [smul_inv_smul] at h
-  · obtain ⟨q', hq'_mem, hq'_eq⟩ := Finset.mem_image.mp (h_eq.symm ▸ hq)
-    rw [← hq'_eq, inv_smul_smul]
-    exact hq'_mem
+      (Finset.card_smul_finset ..).ge
+  rw [Finset.inv_smul_mem_iff, h_eq]
 
 private lemma prod_quotientFunc_one_vadd [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
     [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] (τ : ℍ) :

@@ -6,6 +6,7 @@ module
 
 public import Mathlib.GroupTheory.GroupAction.Period
 public import Mathlib.NumberTheory.ModularForms.Cusps
+public import Mathlib.NumberTheory.ModularForms.SlashActions
 
 /-!
 # The integer cusp width of a finite-index subgroup
@@ -23,6 +24,7 @@ the integer cusp width is a positive integer multiple of the strict width at `�
   multiples of the width.
 * `TauCeti.Subgroup.quotient_T_pow_integerCuspWidth_injective`.
 * `TauCeti.Subgroup.exists_pos_nat_integerCuspWidth_eq_mul_strictWidthInfty`.
+* `TauCeti.ModularForm.slash_T_zpow_apply`: slashing by a power of `T` is an integer shift.
 
 ## References
 
@@ -32,9 +34,9 @@ the integer cusp width is a positive integer multiple of the strict width at `�
 
 public noncomputable section
 
-open Matrix Matrix.SpecialLinearGroup Subgroup
+open Matrix Matrix.SpecialLinearGroup Subgroup UpperHalfPlane
 
-open scoped MatrixGroups
+open scoped MatrixGroups ModularForm
 
 namespace TauCeti
 
@@ -57,6 +59,15 @@ lemma ModularGroup.mapGL_T_pow_eq_upperRightHom {S : Type*} [CommRing S] (n : �
 /-- The coercion of `SL(2, ℤ)` into `GL(2, ℝ)` agrees with `mapGL ℝ`. -/
 lemma Matrix.SpecialLinearGroup.coe_GL_eq_mapGL (g : SL(2, ℤ)) :
     (g : GL (Fin 2) ℝ) = mapGL ℝ g := rfl
+
+/-- Acting on a function `g : ℍ → ℂ` by `T ^ j` via the weight `k` slash action is the shift
+`τ ↦ g ((j : ℝ) +ᵥ τ)`. -/
+lemma ModularForm.slash_T_zpow_apply (k j : ℤ) (g : ℍ → ℂ) (τ : ℍ) :
+    (g ∣[k] (ModularGroup.T ^ j : SL(2, ℤ))) τ = g ((j : ℝ) +ᵥ τ) := by
+  have hd : denom ((ModularGroup.T ^ j : SL(2, ℤ)) : GL (Fin 2) ℝ) τ = 1 := by
+    rw [Matrix.SpecialLinearGroup.coe_GL_eq_mapGL, ModularGroup.mapGL_T_zpow_eq_upperRightHom]
+    simp [denom, _root_.Matrix.GeneralLinearGroup.upperRightHom_apply]
+  rw [_root_.ModularForm.SL_slash_apply, modular_T_zpow_smul, hd, one_zpow, mul_one]
 
 
 section IntegerCuspWidth
