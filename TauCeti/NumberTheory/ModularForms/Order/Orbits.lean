@@ -54,6 +54,8 @@ def orderOfVanishingOnOrbit [SlashInvariantFormClass F 𝒮ℒ k]
           rw [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL]
           exact one_pos) b]
 
+/-- Evaluating the descended order on the orbit of `p` recovers the vanishing order at
+`p`. -/
 @[simp]
 lemma orderOfVanishingOnOrbit_mk [SlashInvariantFormClass F 𝒮ℒ k] (p : ℍ) :
     orderOfVanishingOnOrbit f (Quotient.mk'' p) = orderOfVanishingAt f p := by

@@ -45,13 +45,6 @@ lemma orbit_mk_int_vadd (n : ℤ) (z : ℍ) :
       Quotient.mk'' z :=
   Quotient.sound' ⟨_root_.ModularGroup.T ^ n, UpperHalfPlane.modular_T_zpow_smul z n⟩
 
-/-- Translation by one preserves the `SL(2, ℤ)`-orbit; in particular `ρ + 1` lies on the
-orbit of `ρ`. -/
-@[simp]
-lemma orbit_mk_one_vadd (z : ℍ) :
-    (Quotient.mk'' ((1 : ℝ) +ᵥ z) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) =
-      Quotient.mk'' z := by
-  simpa using orbit_mk_int_vadd 1 z
 
 end ModularGroup
 
