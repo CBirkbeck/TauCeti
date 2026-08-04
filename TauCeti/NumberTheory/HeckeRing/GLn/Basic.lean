@@ -109,8 +109,8 @@ noncomputable def posDetInt_submonoid : Submonoid (GL (Fin n) ℚ) where
     simp only [GeneralLinearGroup.coe_mul, Matrix.det_mul]
     exact mul_pos hda hdb⟩
 
-/-- Membership in `Δ`: integer entries and positive determinant. Not `@[simp]`: the
-right-hand side is not a normal form. -/
+/-- Membership in `Δ`: integer entries and positive determinant. -/
+@[simp]
 lemma mem_posDetInt_submonoid_iff {g : GL (Fin n) ℚ} :
     g ∈ posDetInt_submonoid n ↔
       HasIntEntries n g ∧ 0 < (↑g : Matrix (Fin n) (Fin n) ℚ).det :=
