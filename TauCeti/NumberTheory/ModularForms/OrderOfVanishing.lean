@@ -6,6 +6,7 @@ module
 
 public import Mathlib.Analysis.Meromorphic.NormalForm
 public import Mathlib.NumberTheory.ModularForms.Basic
+public import TauCeti.Analysis.Complex.UpperHalfPlane.Topology
 
 /-!
 # The vanishing order of a modular form
@@ -36,7 +37,7 @@ irregular cusps in odd weight) belongs to the general-level layer and is not def
 
 public noncomputable section
 
-open UpperHalfPlane Complex
+open UpperHalfPlane Complex TauCeti.UpperHalfPlane
 
 open scoped ModularForm MatrixGroups Manifold
 
@@ -59,13 +60,6 @@ lemma orderOfVanishingAt_def (f : ℍ → ℂ) (z : ℍ) :
   rfl
 
 variable {f : ℍ → ℂ}
-
-/-- A function holomorphic on `ℍ` composes with `ofComplex` to a function analytic at
-every point of the open upper half-plane. -/
-lemma analyticAt_comp_ofComplex (hf : MDiff f) {w : ℂ} (hw : 0 < w.im) :
-    AnalyticAt ℂ (f ∘ ofComplex) w :=
-  (UpperHalfPlane.mdifferentiable_iff.mp hf).analyticAt
-    (isOpen_upperHalfPlaneSet.mem_nhds hw)
 
 /-- At a point where a function in meromorphic normal form does not vanish, its order is
 zero. -/
