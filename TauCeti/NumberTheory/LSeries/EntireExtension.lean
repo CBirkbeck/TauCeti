@@ -8,7 +8,7 @@ module
 public import Mathlib.Analysis.Analytic.Uniqueness
 public import Mathlib.Analysis.Calculus.FDeriv.Defs
 import Mathlib.Analysis.Complex.CauchyIntegral
-import Mathlib.Analysis.SpecialFunctions.Pow.Deriv
+import Mathlib.NumberTheory.LSeries.Deriv
 public import Mathlib.NumberTheory.LSeries.Convergence
 
 /-!
@@ -123,15 +123,8 @@ theorem hasEntireExtension_of_support_finite {a : ℕ → ℂ}
     · exact Finset.single_le_sum (fun m _ ↦ norm_nonneg (a m)) hn
     · rw [Function.notMem_support.mp fun h ↦ hn (ha.mem_toFinset.mpr h), norm_zero]
       exact Finset.sum_nonneg fun m _ ↦ norm_nonneg (a m)
-  · refine Differentiable.fun_sum (𝕜 := ℂ) (A := fun n s ↦ LSeries.term a s n) fun n _ ↦ ?_
-    rcases eq_or_ne n 0 with rfl | hn0
-    · simp [LSeries.term_def]
-    · have hbase : ((n : ℂ)) ≠ 0 := Nat.cast_ne_zero.mpr hn0
-      simp only [LSeries.term_def, if_neg hn0]
-      intro s
-      exact (differentiableAt_const (a n)).div
-        (DifferentiableAt.const_cpow differentiableAt_id (Or.inl hbase))
-        (by simp [Complex.cpow_def_of_ne_zero hbase, Complex.exp_ne_zero])
+  · exact Differentiable.fun_sum (𝕜 := ℂ) (A := fun n s ↦ LSeries.term a s n)
+      fun n _ s ↦ (LSeries.hasDerivAt_term a n s).differentiableAt
   · exact (tsum_eq_sum fun n hn ↦ by
       simp [LSeries.term_def,
         Function.notMem_support.mp fun h ↦ hn (ha.mem_toFinset.mpr h)]).symm
