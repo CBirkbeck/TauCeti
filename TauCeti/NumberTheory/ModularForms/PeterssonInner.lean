@@ -5,8 +5,8 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.Analysis.InnerProductSpace.Defs
 public import Mathlib.NumberTheory.ModularForms.Bounds
-public import Mathlib.NumberTheory.ModularForms.Petersson
 public import TauCeti.NumberTheory.Modular
 
 /-!
@@ -29,6 +29,8 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
   level-one-domain specialization (`CuspForm.peterssonInnerFd_definite`).
 * `CuspForm.peterssonInnerFd`: the level-one-domain pairing of two cusp forms (over `𝒟`,
   whatever the level).
+* `CuspForm.peterssonInnerCore`: for arithmetic levels, the pairing bundled as an
+  `InnerProductSpace.Core` on `S_k(Γ)`.
 
 ## Main results
 
@@ -381,6 +383,25 @@ zero law. -/
 theorem peterssonInnerFd_self_eq_zero (f : CuspForm Γ k) :
     peterssonInnerFd f f = 0 ↔ f = 0 :=
   ⟨peterssonInnerFd_definite f, fun h ↦ by rw [h]; exact peterssonInnerFd_zero_left 0⟩
+
+/-- The `𝒟`-domain Petersson pairing bundled as an `InnerProductSpace.Core` on
+`S_k(Γ)` for an arithmetic level: the Hermitian interface behind Mathlib's standard
+inner-product, norm, and orthogonality APIs. Evaluation is `peterssonInnerCore_inner`. -/
+@[instance_reducible]
+noncomputable def peterssonInnerCore [Γ.HasDetOne] :
+    InnerProductSpace.Core ℂ (CuspForm Γ k) where
+  inner := peterssonInnerFd
+  conj_inner_symm := peterssonInnerFd_conj_symm
+  re_inner_nonneg := peterssonInnerFd_self_re_nonneg
+  add_left := peterssonInnerFd_add_left
+  smul_left f g c := peterssonInnerFd_smul_left c f g
+  definite := peterssonInnerFd_definite
+
+/-- Evaluation of the bundled core: its inner product is `peterssonInnerFd`. -/
+@[simp]
+theorem peterssonInnerCore_inner [Γ.HasDetOne] (f g : CuspForm Γ k) :
+    (peterssonInnerCore : InnerProductSpace.Core ℂ (CuspForm Γ k)).inner f g =
+      peterssonInnerFd f g := (rfl)
 
 end IsArithmetic
 
