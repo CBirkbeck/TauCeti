@@ -132,7 +132,10 @@ constant term, the zero function by the junk value. -/
 @[simp]
 lemma orderAtCusp_const (h : ℝ) (c : ℂ) : orderAtCusp h (fun _ ↦ c) = 0 := by
   rcases eq_or_ne c 0 with rfl | hc
-  · rw [orderAtCusp_def,
+  · -- `rw [qExpansion_zero]` cannot fire here: the goal spells the zero function as a
+    -- lambda, which `rw`'s syntactic matching does not unify with `0`; the ascription
+    -- applies the same lemma across the two spellings.
+    rw [orderAtCusp_def,
       show (qExpansion h fun _ ↦ (0 : ℂ)) = 0 from qExpansion_zero h, PowerSeries.order_zero]
     rfl
   · exact orderAtCusp_eq_zero_of_cuspFunction_ne_zero (by
@@ -152,8 +155,9 @@ private lemma cuspFunction_pow {f : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunct
       cuspFunction_mul (by rw [cuspFunction_pow hf n]; exact (hf.continuousAt.pow n))
         hf.continuousAt]
 
-/-- The cusp order multiplies under powers, with no finiteness hypothesis: at the
-identically vanishing expansion both sides take the junk value. -/
+/-- The cusp order multiplies under powers, with no finiteness hypothesis: for an
+identically vanishing expansion both sides take the junk value at positive exponents,
+and at exponent zero both sides are genuinely zero. -/
 lemma orderAtCusp_pow {f : ℍ → ℂ} (n : ℕ) (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
     orderAtCusp h (f ^ n) = n * orderAtCusp h f := by
   have h_an : AnalyticAt ℂ (cuspFunction h (f ^ n)) 0 := by
