@@ -132,13 +132,6 @@ def psl2zToPSL2R : PSL(2, ℤ) →* PSL(2, ℝ) :=
 theorem psl2zToPSL2R_injective : Function.Injective psl2zToPSL2R :=
   QuotientGroup.injective_lift_iff _ _ _ |>.2 sl2zToPSL2R_ker.symm
 
-instance : Countable SL(2, ℤ) :=
-  Function.Injective.countable
-    (f := fun (g : SL(2, ℤ)) (i j : Fin 2) ↦ g i j) fun _ _ h ↦
-      Subtype.coe_injective (Matrix.ext fun i j ↦ congr_fun (congr_fun h i) j)
-
-instance : Countable PSL(2, ℤ) := Quotient.countable
-
 /-- The det-normalized `SL(2, ℝ)` representative of a `GL(2, ℝ)⁺` element, as a monoid
 homomorphism: the matrix `(√ det g)⁻¹ • g` has determinant `1`, and normalization is
 multiplicative because positive scalars are central and `√` is multiplicative on them. -/

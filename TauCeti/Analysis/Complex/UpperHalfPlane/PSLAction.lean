@@ -23,8 +23,8 @@ Mathlib's `GL(2, ℝ)`-invariance).
 
 ## Main results
 
-* `UpperHalfPlane.center_SL2_smul_eq` — the center of `SL(2, R)` acts trivially, for any
-  coefficients mapping to `ℝ`.
+* `UpperHalfPlane.smul_eq_self_of_mem_center` — the center of `SL(2, R)` acts trivially,
+  for any coefficients mapping to `ℝ`.
 * `UpperHalfPlane.instMulActionPSL2Z`, `instMulActionPSL2R` — the restricted actions, with
   the representative compatibilities `psl2zMk_smul`, `psl2rMk_smul`.
 * `FaithfulSMul` instances for `PSL(2, ℤ)` and `PSL(2, ℝ)` on `ℍ`, restricting Mathlib's
@@ -83,6 +83,12 @@ instance : SMulInvariantMeasure SL(2, R) ℍ volume where
 noncomputable instance instMulActionPSL2R : MulAction PSL(2, ℝ) ℍ :=
   MulAction.compHom ℍ (Matrix.ProjectiveSpecialLinearGroup.toPGL (n := Fin 2) (R := ℝ))
 
+/-- The `PSL(2, ℝ)`-action unfolds to the `PGL(2, ℝ)`-action of the `toPGL`-image, for
+arbitrary projective `g`. -/
+@[simp]
+theorem psl2r_smul_def (g : PSL(2, ℝ)) (τ : ℍ) :
+    g • τ = Matrix.ProjectiveSpecialLinearGroup.toPGL g • τ := (rfl)
+
 /-- Compatibility: the `PSL(2, ℝ)` action of a representative coincides with
 the underlying `SL(2, ℝ)` action. -/
 @[simp]
@@ -105,6 +111,11 @@ instance : FaithfulSMul PSL(2, ℝ) ℍ where
 injective descent `psl2zToPSL2R`. -/
 noncomputable instance instMulActionPSL2Z : MulAction PSL(2, ℤ) ℍ :=
   MulAction.compHom ℍ psl2zToPSL2R
+
+/-- The `PSL(2, ℤ)`-action unfolds to the `PSL(2, ℝ)`-action along `psl2zToPSL2R`, for
+arbitrary projective `g`. -/
+@[simp]
+theorem psl2z_smul_def (g : PSL(2, ℤ)) (τ : ℍ) : g • τ = psl2zToPSL2R g • τ := (rfl)
 
 /-- The `PSL(2, ℤ)` action is compatible with the `SL(2, ℤ)` action:
 `(↑g) • τ = g • τ` for `g : SL(2, ℤ)`. -/
@@ -139,11 +150,12 @@ lemma smul_eq_smul_of_coe_eq_smul {g h : GL (Fin 2) ℝ} {c : ℝ} (hc : c ≠ 0
     _ = Matrix.ProjGenLinGroup.mk g • τ := by rw [← h_mk]
     _ = g • τ := pglMk_smul g τ
 
-/-- The center of `SL(2, R)` acts trivially on `ℍ` for any coefficients mapping to `ℝ`:
-central elements are the scalar matrices `r • 1` with `r ^ 2 = 1`, and nonzero-scalar
+/-- Central elements of `SL(2, R)` fix every point of `ℍ`, for any coefficients mapping
+to `ℝ`: they are the scalar matrices `r • 1` with `r ^ 2 = 1`, and nonzero-scalar
 matrices act as the identity Möbius transformation. -/
-theorem center_SL2_smul_eq (c : SL(2, R)) (hc : c ∈ Subgroup.center SL(2, R)) (τ : ℍ) :
-    c • τ = τ := by
+@[simp]
+theorem smul_eq_self_of_mem_center (c : SL(2, R)) (hc : c ∈ Subgroup.center SL(2, R))
+    (τ : ℍ) : c • τ = τ := by
   obtain ⟨r, hr, hrc⟩ := Matrix.SpecialLinearGroup.mem_center_iff.mp hc
   have hr' : r ^ 2 = 1 := by simpa using hr
   have hr2 : algebraMap R ℝ r ^ 2 = 1 := by rw [← map_pow, hr', map_one]
@@ -213,9 +225,9 @@ instance : SMulInvariantMeasure PSL(2, ℝ) ℍ volume where
       hs.nullMeasurableSet
 
 /-- Action equivariance: the projective representative `glPosToPSL2R g` acts on
-`ℍ` exactly as `g` does, even though `det g` need not be `1`. Not `@[simp]`:
-`glPosToPSL2R_apply` rewrites the left-hand side out of simp normal form first
-(simp-NF lint). -/
+`ℍ` exactly as `g` does, even though `det g` need not be `1`. -/
+-- not `@[simp]`: `glPosToPSL2R_apply` rewrites the left-hand side out of simp normal
+-- form first (simp-NF lint)
 theorem glPosToPSL2R_smul (g : GL(2, ℝ)⁺) (τ : ℍ) :
     glPosToPSL2R g • τ = g • τ := by
   have hg_pos : 0 < ((g : GL (Fin 2) ℝ).det.val : ℝ) := g.property
