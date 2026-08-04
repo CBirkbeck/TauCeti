@@ -29,6 +29,8 @@ not defined here.
 * `TauCeti.orderAtCusp`.
 * `TauCeti.orderAtCusp_eq_analyticOrderAt`: the analytic-order dictionary.
 * `TauCeti.orderAtCusp_nat_mul`: linear rescaling in the width.
+* `TauCeti.orderAtCuspQ`: the `ℚ`-valued cusp order — the doubled-width exponent halved,
+  the conventional half-integral order at irregular cusps.
 * `TauCeti.ModularForm.orderAtCusp_eq_zero_iff`: for a nonzero modular form, order zero
   is a nonzero constant term (the class-level interface lives in `TauCeti.ModularForm`).
 * `TauCeti.orderAtCusp_mul`: additivity on products (with `orderAtCusp_pow` and
@@ -213,6 +215,29 @@ lemma orderAtCusp_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
     analyticOrderAt_congr h_ev, TauCeti.analyticOrderAt_prod hf, ENat.toNat_sum hf',
     Nat.cast_sum]
   exact Finset.sum_congr rfl fun i hi ↦ (orderAtCusp_eq_analyticOrderAt (hf i hi)).symm
+
+/-- The `ℚ`-valued cusp order: the width-`2h` exponent, halved. For an `h`-periodic
+function this is the integral order `orderAtCusp h` (`orderAtCuspQ_eq_orderAtCusp`);
+at an irregular cusp of odd weight, where the form is only `2h`-periodic, it is the
+conventional half-integral order. -/
+def orderAtCuspQ (h : ℝ) (f : ℍ → ℂ) : ℚ := (orderAtCusp (2 * h) f : ℚ) / 2
+
+/-- `orderAtCuspQ` unfolded to the halved doubled-width exponent. -/
+lemma orderAtCuspQ_def (h : ℝ) (f : ℍ → ℂ) :
+    orderAtCuspQ h f = (orderAtCusp (2 * h) f : ℚ) / 2 := by
+  unfold orderAtCuspQ
+  rfl
+
+/-- For an `h`-periodic bounded holomorphic function the `ℚ`-valued cusp order is the
+integral one: the doubled-width exponent doubles. -/
+lemma orderAtCuspQ_eq_orderAtCusp (hh : 0 < h) (hg_per : Periodic (g ∘ ofComplex) h)
+    (hg_bdd : IsBoundedAtImInfty g) (hg_mdiff : MDiff g) :
+    orderAtCuspQ h g = (orderAtCusp h g : ℚ) := by
+  have h2 := orderAtCusp_nat_mul (g := g) (m := 2) hh (by norm_num) hg_per hg_bdd hg_mdiff
+  rw [orderAtCuspQ_def, show ((2 : ℕ) : ℝ) * h = 2 * h by norm_num] at *
+  rw [h2]
+  push_cast
+  ring
 
 namespace ModularForm
 
