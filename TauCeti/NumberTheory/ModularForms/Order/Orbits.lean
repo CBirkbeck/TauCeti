@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import TauCeti.NumberTheory.ModularForms.Cusps
 public import TauCeti.NumberTheory.ModularForms.FiniteZeros
 
 /-!
@@ -11,9 +12,9 @@ public import TauCeti.NumberTheory.ModularForms.FiniteZeros
 
 The vanishing order of a level-one modular form is constant on `SL(2, ℤ)`-orbits of `ℍ`,
 so it descends to the orbit space (`TauCeti.ModularForm.ordOrbit`). Every orbit has a
-representative in the standard fundamental domain, the elliptic orbits are those of `i`
-and `ρ` (with `ρ + 1` on the orbit of `ρ`), and for a nonzero form only finitely many
-orbits carry nonzero order — the summation index of the valence formula.
+representative in the standard fundamental domain, translation by one preserves orbits
+(so `ρ + 1` lies on the orbit of `ρ`), and for a nonzero form only finitely many orbits
+carry nonzero order — the summation index of the valence formula.
 
 ## Main declarations
 
@@ -22,6 +23,7 @@ orbits carry nonzero order — the summation index of the valence formula.
 * `TauCeti.ModularForm.orbit_exists_fd_rep`: every orbit meets `𝒟`.
 * `TauCeti.ModularForm.finite_support_ordOrbit`: finite support on orbits for a nonzero
   form.
+* `TauCeti.ModularForm.orbit_mk_one_vadd`: translation by one preserves the orbit.
 
 ## References
 
@@ -53,10 +55,8 @@ def ordOrbit [SlashInvariantFormClass F 𝒮ℒ k] (q : MulAction.orbitRel.Quoti
     rw [← hg', smul_eq_coe_smul,
       orderOfVanishingAt_smul f (γ := ((g : SL(2, ℤ)) : GL (Fin 2) ℝ))
         (MonoidHom.mem_range.mpr ⟨g, rfl⟩) (by
-          have h1 : ((((g : SL(2, ℤ)) : GL (Fin 2) ℝ)) : Matrix (Fin 2) (Fin 2) ℝ) =
-              ((Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ) g :
-                Matrix.SpecialLinearGroup (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) := rfl
-          rw [h1, Matrix.SpecialLinearGroup.det_coe]
+          rw [Matrix.SpecialLinearGroup.coe_GL_eq_mapGL,
+            ← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL]
           exact one_pos) b]
 
 @[simp]
@@ -86,11 +86,13 @@ lemma finite_support_ordOrbit [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (⇑f
     rw [← hrep_mk q₁, ← hrep_mk q₂, h]
   exact ((finite_zeros_in_fd hf).subset h_image).of_finite_image h_inj
 
-/-- The orbit of `ρ + 1` is the orbit of `ρ`. -/
-lemma orbit_mk_one_vadd_ρ :
-    (Quotient.mk'' ((1 : ℝ) +ᵥ ρ) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) =
-      Quotient.mk'' ρ := by
-  exact Quotient.sound' ⟨ModularGroup.T, UpperHalfPlane.modular_T_smul ρ⟩
+/-- Translation by one preserves the `SL(2, ℤ)`-orbit; in particular `ρ + 1` lies on the
+orbit of `ρ`. -/
+@[simp]
+lemma orbit_mk_one_vadd (z : ℍ) :
+    (Quotient.mk'' ((1 : ℝ) +ᵥ z) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) =
+      Quotient.mk'' z :=
+  Quotient.sound' ⟨ModularGroup.T, UpperHalfPlane.modular_T_smul z⟩
 
 end ModularForm
 
