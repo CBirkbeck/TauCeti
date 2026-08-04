@@ -63,7 +63,7 @@ namespace HeckeCoset
 
 variable (Δ) in
 /-- The identity left coset `1H = H` in the bottom-left specialization. -/
-instance : One (HeckeCoset Δ ⊥ H) := ⟨mk ⊥ H ⟨1, Δ.one_mem⟩⟩
+instance instOneBot : One (HeckeCoset Δ ⊥ H) := ⟨mk ⊥ H ⟨1, Δ.one_mem⟩⟩
 
 lemma bot_one_def : (1 : HeckeCoset Δ ⊥ H) = mk ⊥ H ⟨1, Δ.one_mem⟩ := (rfl)
 
