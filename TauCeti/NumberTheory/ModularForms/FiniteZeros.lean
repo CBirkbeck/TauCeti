@@ -69,25 +69,11 @@ sufficiently large imaginary part. -/
 lemma exists_height_nonvanishing [ModularFormClass F Γ k] (hh : 0 < h)
     (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     ∃ H : ℝ, ∀ p : ℍ, H ≤ (p : ℂ).im → f p ≠ 0 := by
-  obtain ⟨s, hs_prop, hs_open, hs_zero⟩ := _root_.eventually_nhds_iff.mp
-    (eventually_nhdsWithin_iff.mp (cuspFunction_eventually_ne_zero hh hΓ hf))
-  obtain ⟨r, hr_pos, hr_ball⟩ := Metric.isOpen_iff.mp hs_open 0 hs_zero
-  refine ⟨-h * Real.log (r / 2) / (2 * Real.pi), fun p hp hfp ↦ ?_⟩
-  have h_qmem : Function.Periodic.qParam h (p : ℂ) ∈ ball (0 : ℂ) r := by
-    rw [mem_ball, dist_zero_right, Function.Periodic.norm_qParam]
-    have h_exp : -2 * Real.pi * ((-h * Real.log (r / 2) / (2 * Real.pi)) / h) =
-        Real.log (r / 2) := by
-      field_simp
-    calc Real.exp (-2 * Real.pi * (p : ℂ).im / h)
-        ≤ Real.exp (-2 * Real.pi * ((-h * Real.log (r / 2) / (2 * Real.pi)) / h)) := by
-          refine Real.exp_le_exp.mpr ?_
-          rw [← mul_div_assoc]
-          refine (div_le_div_iff_of_pos_right hh).mpr ?_
-          have := mul_le_mul_of_nonneg_left hp (by positivity : (0 : ℝ) ≤ 2 * Real.pi)
-          linarith
-      _ = r / 2 := by rw [h_exp]; exact Real.exp_log (by linarith)
-      _ < r := by linarith
-  refine hs_prop _ (hr_ball h_qmem) (mem_compl_singleton_iff.mpr (Complex.exp_ne_zero _)) ?_
+  have h_ev : ∀ᶠ p : ℍ in atImInfty, cuspFunction h f (Function.Periodic.qParam h ↑p) ≠ 0 :=
+    ((Function.Periodic.qParam_tendsto hh).comp tendsto_coe_atImInfty).eventually
+      (cuspFunction_eventually_ne_zero hh hΓ hf)
+  obtain ⟨H, hH⟩ := (atImInfty_mem _).mp h_ev
+  refine ⟨H, fun p hp hfp ↦ hH p (by rwa [UpperHalfPlane.coe_im] at hp) ?_⟩
   rw [← SlashInvariantFormClass.eq_cuspFunction f p hΓ hh.ne'] at hfp
   exact hfp
 
