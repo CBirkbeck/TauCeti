@@ -174,15 +174,19 @@ private theorem sum_mul_symmetrization_mul_eq_of_pairwise_apply_eq_zero {d x : B
 /-- **The value of the symmetrized quadratic form at the test vector of a non-adjacent star.** For
 `i` outside a pairwise non-adjacent `s`, any vector taking the value `1` at `i`, the value
 `-dᵢAᵢₖ / 2dₖ` at each `k ∈ s` and `0` at every other index evaluates the form at
-`2dᵢ - (dᵢ/2) ∑ⱼ AᵢⱼAⱼᵢ`. The value at `k ∈ s` is the one minimizing the `k`-th coordinate of the
-form, which is a legitimate choice one coordinate at a time because `s` is pairwise non-adjacent.
+`2dᵢ - (dᵢ/2) ∑ⱼ AᵢⱼAⱼᵢ`. When the symmetrizer is positive, as it is at the one call site below,
+that value at `k ∈ s` is the one minimizing the `k`-th coordinate of the form — a legitimate choice
+one coordinate at a time because `s` is pairwise non-adjacent. The evaluation itself needs no sign
+condition, only `dₖ ≠ 0`.
 
-Of the matrix data only the nonvanishing of the symmetrizer on `s`, the diagonal entries and the
-symmetrization identity `dⱼAⱼᵢ = dᵢAᵢⱼ` are used; positive definiteness enters in
-`TauCeti.IsFiniteType.sum_apply_mul_apply_lt_four`, which is what turns this value into a bound. -/
+Of the matrix data only the nonvanishing of the symmetrizer on `s`, the diagonal entries at `i` and
+on `s`, and the symmetrization identity `dⱼAⱼᵢ = dᵢAᵢⱼ` for `j ∈ s` are used; positive definiteness
+enters in `TauCeti.IsFiniteType.sum_apply_mul_apply_lt_four`, which is what turns this value into a
+bound. -/
 private theorem dotProduct_mulVec_symmetrization_eq_of_pairwise_apply_eq_zero
-    {d : B → ℚ} {i : B} {s : Finset B} (hd : ∀ p ∈ s, d p ≠ 0) (h2 : ∀ p, A p p = 2)
-    (hsymm : ∀ p q : B, d q * (A q p : ℚ) = d p * (A p q : ℚ)) (his : i ∉ s)
+    {d : B → ℚ} {i : B} {s : Finset B} (hd : ∀ p ∈ s, d p ≠ 0) (h2i : A i i = 2)
+    (h2s : ∀ p ∈ s, A p p = 2)
+    (hsymm : ∀ p ∈ s, d p * (A p i : ℚ) = d i * (A i p : ℚ)) (his : i ∉ s)
     (hs : (s : Set B).Pairwise fun j k ↦ A j k = 0) {x : B → ℚ} (hxi : x i = 1)
     (hxs : ∀ k ∈ s, x k = -(d i * (A i k : ℚ)) / (2 * d k))
     (hxz : ∀ k, k ≠ i → k ∉ s → x k = 0) :
@@ -204,14 +208,14 @@ private theorem dotProduct_mulVec_symmetrization_eq_of_pairwise_apply_eq_zero
   simp only [Finset.sum_insert his]
   rw [add_assoc, ← Finset.sum_add_distrib]
   congr 1
-  · rw [hxi, h2 i]
+  · rw [hxi, h2i]
     push_cast
     ring
   · refine Finset.sum_congr rfl fun j hj ↦ ?_
     have hji : (A j i : ℚ) = d i * (A i j : ℚ) / d j := by
       field_simp [hd j hj]
-      linarith [hsymm i j]
-    rw [sum_mul_symmetrization_mul_eq_of_pairwise_apply_eq_zero hs hj, h2 j, hxi, hxs j hj, hji]
+      linarith [hsymm j hj]
+    rw [sum_mul_symmetrization_mul_eq_of_pairwise_apply_eq_zero hs hj, h2s j hj, hxi, hxs j hj, hji]
     field_simp [hd j hj]
     ring
 
@@ -240,8 +244,8 @@ theorem sum_apply_mul_apply_lt_four (h : IsFiniteType A) {i : B} {s : Finset B} 
     simp [hx, hki, hk]
   have hq := hpd.dotProduct_mulVec_pos (x := x) fun hc ↦ by simpa [hxi] using congrFun hc i
   rw [star_trivial, dotProduct_mulVec_symmetrization_eq_of_pairwise_apply_eq_zero
-    (fun p _ ↦ (hd p).ne') h.apply_self hsymm his hs hxi hxs
-    fun k hki hks ↦ by simp [hx, hki, hks]] at hq
+    (fun p _ ↦ (hd p).ne') (h.apply_self i) (fun p _ ↦ h.apply_self p) (fun p _ ↦ hsymm i p) his
+    hs hxi hxs fun k hki hks ↦ by simp [hx, hki, hks]] at hq
   -- Positive definiteness now reads off the bound, the factor `dᵢ` being positive.
   have hcast : ((∑ j ∈ s, A i j * A j i : ℤ) : ℚ) < 4 := by
     push_cast
