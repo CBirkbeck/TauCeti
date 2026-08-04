@@ -91,20 +91,12 @@ def HasIntEntries (g : GL (Fin n) ℚ) : Prop :=
   ∃ A : Matrix (Fin n) (Fin n) ℤ,
     (↑g : Matrix (Fin n) (Fin n) ℚ) = A.map (Int.cast : ℤ → ℚ)
 
-/-- The existential characterisation of `HasIntEntries`. -/
-@[simp]
-theorem hasIntEntries_iff {g : GL (Fin n) ℚ} :
-    HasIntEntries n g ↔ ∃ A : Matrix (Fin n) (Fin n) ℤ,
-      (↑g : Matrix (Fin n) (Fin n) ℚ) = A.map (Int.cast : ℤ → ℚ) :=
-  (Iff.rfl)
-
 lemma hasIntEntries_of_mem_SLnZ {g : GL (Fin n) ℚ} (hg : g ∈ SLnZ n) :
     HasIntEntries n g :=
   let ⟨σ, hσ⟩ := hg
   ⟨σ.val, hσ ▸ by simp [mapGL_coe_matrix, algebraMap_int_eq]⟩
 
-/-- The identity matrix has integer entries. Not `@[simp]`: `hasIntEntries_iff` rewrites the
-left-hand side out of normal form first. -/
+/-- The identity matrix has integer entries. -/
 lemma hasIntEntries_one : HasIntEntries n (1 : GL (Fin n) ℚ) :=
   ⟨1, by ext i j; simp [Matrix.map_apply, Matrix.one_apply]⟩
 
@@ -122,13 +114,6 @@ noncomputable def posDetInt_submonoid : Submonoid (GL (Fin n) ℚ) where
   mul_mem' := fun ⟨ha, hda⟩ ⟨hb, hdb⟩ ↦ ⟨HasIntEntries.mul (n := n) ha hb, by
     simp only [GeneralLinearGroup.coe_mul, Matrix.det_mul]
     exact mul_pos hda hdb⟩
-
-/-- Membership in `posDetInt_submonoid`: integral entries and positive determinant. -/
-@[simp]
-theorem mem_posDetInt_submonoid_iff {g : GL (Fin n) ℚ} :
-    g ∈ posDetInt_submonoid n ↔
-      HasIntEntries n g ∧ 0 < (↑g : Matrix (Fin n) (Fin n) ℚ).det :=
-  (Iff.rfl)
 
 end PosDetInt
 
@@ -452,7 +437,7 @@ in particular integral. -/
 lemma posDetInt_le_commensurator :
     posDetInt_submonoid n ≤ (commensurator (SLnZ n)).toSubmonoid := fun _ hg ↦
   (Subgroup.mem_toSubmonoid _ _).mpr
-    (mem_commensurator_of_hasIntEntries n ((mem_posDetInt_submonoid_iff (n := n)).mp hg).1)
+    (mem_commensurator_of_hasIntEntries n hg.1)
 
 /-- **The arithmetic Hecke triple for `GL_n`**: `SL_n(ℤ) ≤ Δ ≤ commensurator(SL_n(ℤ))` in
 `GL_n(ℚ)`, where `Δ` is the positive-determinant integral submonoid. This is the Hecke triple
