@@ -9,6 +9,7 @@ public import Mathlib.LinearAlgebra.Eigenspace.Basic
 public import Mathlib.NumberTheory.ModularForms.Basic
 public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup
+public import TauCeti.NumberTheory.ModularForms.Basic
 
 /-!
 # Diamond operators and modular forms with character
@@ -94,15 +95,6 @@ theorem Gamma1_map_inv_conjAct_eq (g : ↥(Gamma0 N)) :
     exact ⟨(g : SL(2, ℤ)) * σ * (g : SL(2, ℤ))⁻¹,
       Gamma0_normalizes_Gamma1 g σ hσ, by simp [map_mul, map_inv]⟩
 
-/-- Direct-conjugation variant of `Gamma1_map_inv_conjAct_eq`: the subgroup
-`(Gamma1 N).map (mapGL ℝ)` is invariant under conjugation by `mapGL ℝ g` (rather than by
-its inverse). -/
-theorem Gamma1_map_conjAct_eq (g : ↥(Gamma0 N)) :
-    ConjAct.toConjAct (mapGL ℝ (g : SL(2, ℤ))) •
-    (Gamma1 N).map (mapGL ℝ) = (Gamma1 N).map (mapGL ℝ) := by
-  simpa [map_inv, ConjAct.toConjAct_inv, inv_inv, inv_smul_eq_iff] using
-    Gamma1_map_inv_conjAct_eq ⟨(g : SL(2, ℤ))⁻¹, (Gamma0 N).inv_mem g.property⟩
-
 /-- The `Gamma0Map` lifts to a group homomorphism to `(ZMod N)ˣ`: the lower-right
 entry is a unit mod `N` with inverse the upper-left entry (from `det = 1` and `N ∣ c`). -/
 noncomputable def Gamma0MapUnits : ↥(Gamma0 N) →* (ZMod N)ˣ where
@@ -156,24 +148,6 @@ theorem Gamma0MapUnits_surjective [NeZero N] :
 end CongruenceSubgroup
 
 open CongruenceSubgroup
-
-/-- The slash-action conjugation `σ` is the identity for matrices coming from
-`SL₂(ℤ)`: their determinant is `1 > 0`, so the `σ` branch picks `ContinuousAlgEquiv.refl ℝ ℂ`. -/
-@[simp]
-lemma σ_mapGL_real_eq_refl (s : SL(2, ℤ)) :
-    UpperHalfPlane.σ (mapGL ℝ s) = ContinuousAlgEquiv.refl ℝ ℂ := by
-  simp [UpperHalfPlane.σ, SpecialLinearGroup.mapGL]
-
-/-- `CuspForm.mcast` does not change the pointwise values of a cusp form: the `CuspForm`
-analogue of Mathlib's `ModularForm.mcast_apply`, which Mathlib does not yet provide. -/
-lemma _root_.CuspForm.mcast_apply {a b : ℤ} {Γ Γ' : Subgroup (GL (Fin 2) ℝ)} (h : a = b)
-    (f : CuspForm Γ a) (hΓ : Γ' = Γ := by rfl) (z : ℍ) : CuspForm.mcast h f hΓ z = f z := (rfl)
-
-/-- `GL(2, ℝ)`-level coercion lemma for `CuspForm.translate`; Mathlib's
-`CuspForm.coe_translate` is specialized to `SL(2, ℤ)` arguments. -/
-lemma _root_.CuspForm.coe_translate_gl {F : Type*} [FunLike F UpperHalfPlane ℂ] {k : ℤ}
-    {Γ : Subgroup (GL (Fin 2) ℝ)} [CuspFormClass F Γ k] (f : F) (g : GL (Fin 2) ℝ) :
-    ⇑(CuspForm.translate f g) = ⇑f ∣[k] g := (rfl)
 
 /-- Pointwise formula for the translated-and-transported modular form underlying
 `diamondOpAux`. -/
@@ -361,6 +335,7 @@ theorem mem_cuspFormCharSpace_iff [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂ
   simp only [cuspFormCharSpace, Submodule.mem_iInf, Module.End.mem_eigenspace_iff]
 
 /-- Diamond operators act by `χ(d)` on elements of `S_k(Γ₁(N), χ)`. -/
+@[simp]
 theorem diamondOpCuspHom_apply_of_mem_cuspFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (d : (ZMod N)ˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hf : f ∈ cuspFormCharSpace k χ) :
@@ -381,6 +356,7 @@ theorem mem_modFormCharSpace_iff [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂ�
   simp only [modFormCharSpace, Submodule.mem_iInf, Module.End.mem_eigenspace_iff]
 
 /-- Diamond operators act by `χ(d)` on elements of `M_k(Γ₁(N), χ)`. -/
+@[simp]
 theorem diamondOpHom_apply_of_mem_modFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (d : (ZMod N)ˣ) {f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hf : f ∈ modFormCharSpace k χ) :
