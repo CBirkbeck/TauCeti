@@ -55,16 +55,6 @@ open scoped Pointwise
 
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H : Subgroup G}
 
-namespace IsHeckeTriple
-
-/-- Every member of the double coset `H₁gH₂` of an element of `Δ` lies in `Δ`. -/
-theorem mem_of_mem_doubleCoset {H₁ H₂ : Subgroup G} [IsHeckeTriple Δ H₁ H₂] {g x : G}
-    (hg : g ∈ Δ) (hx : x ∈ doubleCoset g (H₁ : Set G) H₂) : x ∈ Δ := by
-  obtain ⟨h₁, hh₁, h₂, hh₂, rfl⟩ := mem_doubleCoset.mp hx
-  exact mul_mem (mul_mem (mem_of_mem_left H₂ hh₁) hg) (mem_of_mem_right H₁ hh₂)
-
-end IsHeckeTriple
-
 /-- An anti-involution of the Hecke datum `(Δ, H)`: a monoid homomorphism `Δ →* Δᵐᵒᵖ`
 (equivalently, an anti-homomorphism of `Δ`) that is involutive and preserves membership in
 `H`. Following Shimura, the data lives on the submonoid `Δ` alone; an anti-involution of the
@@ -80,6 +70,10 @@ structure HeckeAntiInvolution (Δ : Submonoid G) (H : Subgroup G) where
   mem_H : ∀ g : Δ, (g : G) ∈ H → ((toFun g).unop : G) ∈ H
 
 namespace HeckeAntiInvolution
+
+@[ext]
+lemma ext {ι₁ ι₂ : HeckeAntiInvolution Δ H} (h : ι₁.toFun = ι₂.toFun) : ι₁ = ι₂ := by
+  cases ι₁; cases ι₂; subst h; rfl
 
 variable (ι : HeckeAntiInvolution Δ H)
 
@@ -184,7 +178,7 @@ lemma bar_mem_doubleCoset_self [IsHeckeTriple Δ H H]
   exact hg ▸ mem_doubleCoset_self H H _
 
 /-- Decompose `bar x` through the double coset of `g` when `x ∈ HgH`. -/
-lemma exists_bar_eq [IsHeckeTriple Δ H H]
+private lemma exists_bar_eq [IsHeckeTriple Δ H H]
     (h_fix : ∀ D : HeckeCoset Δ H H, ι.onHeckeCoset D = D) {g : Δ} {x : G}
     (hx : x ∈ doubleCoset (g : G) (H : Set G) H) :
     ∃ a ∈ H, ∃ b ∈ H,
