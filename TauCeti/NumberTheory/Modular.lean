@@ -23,8 +23,8 @@ invariant measure, its frontier is null, and therefore integrals over `𝒟` and
 * `ModularGroup.volume_fd_lt_top`: the standard fundamental domain has finite invariant
   measure.
 * `ModularGroup.volume_frontier_fd`: the frontier of `𝒟` has zero invariant measure.
-* `ModularGroup.fd_ae_eq_fdo`, `ModularGroup.setIntegral_fd_eq_fdo`: `𝒟` and `𝒟ᵒ` agree
-  almost everywhere, so their set integrals coincide.
+* `ModularGroup.fd_ae_eq_fdo`: `𝒟` and `𝒟ᵒ` agree almost everywhere (so set integrals
+  over them coincide, via `MeasureTheory.setIntegral_congr_set`).
 
 Split out of the Petersson inner-product development ported from the AINTLIB
 `LeanModularForms` project
@@ -158,10 +158,5 @@ theorem volume_frontier_fd : (volume : Measure ℍ) (frontier (fd : Set ℍ)) = 
 theorem fd_ae_eq_fdo : (fd : Set ℍ) =ᶠ[ae (volume : Measure ℍ)] fdo :=
   ((fdo_eq_interior_fd.symm ▸ interior_ae_eq_of_null_frontier volume_frontier_fd :
     (fdo : Set ℍ) =ᶠ[ae (volume : Measure ℍ)] fd)).symm
-
-/-- Integrals over `fd` and `fdo` agree against the invariant measure. -/
-theorem setIntegral_fd_eq_fdo {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    (f : ℍ → E) : ∫ τ in fd, f τ = ∫ τ in fdo, f τ :=
-  setIntegral_congr_set fd_ae_eq_fdo
 
 end ModularGroup
