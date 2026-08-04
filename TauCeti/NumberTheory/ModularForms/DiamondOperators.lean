@@ -164,57 +164,51 @@ lemma σ_mapGL_real_eq_refl (s : SL(2, ℤ)) :
     UpperHalfPlane.σ (mapGL ℝ s) = ContinuousAlgEquiv.refl ℝ ℂ := by
   simp [UpperHalfPlane.σ, SpecialLinearGroup.mapGL]
 
-/-- For a function `f` invariant under `(Gamma1 N).map (mapGL ℝ)`, the slash action
-`f ↦ f ∣[k] (mapGL ℝ g)` for `g ∈ Γ₀(N)` produces another `(Gamma1 N).map (mapGL ℝ)`-invariant
-function. -/
-lemma slash_mapGL_invariant_of_Gamma1_invariant {k : ℤ} (g : ↥(Gamma0 N))
-    {f : UpperHalfPlane → ℂ} (hf : ∀ γ ∈ (Gamma1 N).map (mapGL ℝ), f ∣[k] γ = f)
-    {γ : GL (Fin 2) ℝ} (hγ : γ ∈ (Gamma1 N).map (mapGL ℝ)) :
-    (f ∣[k] mapGL ℝ (g : SL(2, ℤ))) ∣[k] γ = f ∣[k] mapGL ℝ (g : SL(2, ℤ)) := by
-  obtain ⟨σ, hσ, rfl⟩ := Subgroup.mem_map.mp hγ
-  rw [← SlashAction.slash_mul, ← map_mul,
-    -- the ascription pins the conjugation regrouping; no rewriting lemma reassociates
-    -- the product into the conjugate-times-representative form directly
-    show (g : SL(2, ℤ)) * σ = ((g : SL(2, ℤ)) * σ * (g : SL(2, ℤ))⁻¹) * (g : SL(2, ℤ)) by group,
-    map_mul, SlashAction.slash_mul,
-    hf _ (Subgroup.mem_map.mpr ⟨_, Gamma0_normalizes_Gamma1 g σ hσ, rfl⟩)]
+/-- `CuspForm.mcast` does not change the pointwise values of a cusp form: the `CuspForm`
+analogue of Mathlib's `ModularForm.mcast_apply`, which Mathlib does not yet provide. -/
+lemma _root_.CuspForm.mcast_apply {a b : ℤ} {Γ Γ' : Subgroup (GL (Fin 2) ℝ)} (h : a = b)
+    (f : CuspForm Γ a) (hΓ : Γ' = Γ := by rfl) (z : ℍ) : CuspForm.mcast h f hΓ z = f z := (rfl)
 
-/-- For `g ∈ Γ₀(N)` and `γ ∈ GL₂(ℝ)` with `γ • ∞ = c`, a cusp `c` for
-`(Gamma1 N).map (mapGL ℝ)` transports along the conjugation by `mapGL ℝ g` to a cusp at
-`(mapGL ℝ g · γ) • ∞`. -/
-lemma isCusp_mul_mapGL_smul_infty (g : ↥(Gamma0 N))
-    {c : OnePoint ℝ} (hc : IsCusp c ((Gamma1 N).map (mapGL ℝ)))
-    {γ : GL (Fin 2) ℝ} (hγ : γ • (OnePoint.infty : OnePoint ℝ) = c) :
-    IsCusp ((mapGL ℝ (g : SL(2, ℤ)) * γ) • (OnePoint.infty : OnePoint ℝ))
-      ((Gamma1 N).map (mapGL ℝ)) := by
-  rw [mul_smul, hγ]
-  exact Gamma1_map_conjAct_eq g ▸ hc.smul (mapGL ℝ (g : SL(2, ℤ)))
+/-- `GL(2, ℝ)`-level coercion lemma for `CuspForm.translate`; Mathlib's
+`CuspForm.coe_translate` is specialized to `SL(2, ℤ)` arguments. -/
+lemma _root_.CuspForm.coe_translate_gl {F : Type*} [FunLike F UpperHalfPlane ℂ] {k : ℤ}
+    {Γ : Subgroup (GL (Fin 2) ℝ)} [CuspFormClass F Γ k] (f : F) (g : GL (Fin 2) ℝ) :
+    ⇑(CuspForm.translate f g) = ⇑f ∣[k] g := (rfl)
+
+/-- Pointwise formula for the translated-and-transported modular form underlying
+`diamondOpAux`. -/
+private lemma mcast_translate_apply (k : ℤ) (g : ↥(Gamma0 N))
+    (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) (z : ℍ) :
+    (ModularForm.mcast rfl (ModularForm.translate f (mapGL ℝ (g : SL(2, ℤ))))
+      (Gamma1_map_inv_conjAct_eq g).symm) z = (⇑f ∣[k] mapGL ℝ (g : SL(2, ℤ))) z :=
+  (ModularForm.mcast_apply rfl (ModularForm.translate f (mapGL ℝ (g : SL(2, ℤ))))
+    (Gamma1_map_inv_conjAct_eq g).symm z).trans (congr_fun (ModularForm.coe_translate f _) z)
+
+/-- Pointwise formula for the translated-and-transported cusp form underlying
+`diamondOpCuspAux`. -/
+private lemma cusp_mcast_translate_apply (k : ℤ) (g : ↥(Gamma0 N))
+    (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) (z : ℍ) :
+    (CuspForm.mcast rfl (CuspForm.translate f (mapGL ℝ (g : SL(2, ℤ))))
+      (Gamma1_map_inv_conjAct_eq g).symm) z = (⇑f ∣[k] mapGL ℝ (g : SL(2, ℤ))) z :=
+  (CuspForm.mcast_apply rfl (CuspForm.translate f (mapGL ℝ (g : SL(2, ℤ))))
+    (Gamma1_map_inv_conjAct_eq g).symm z).trans (congr_fun (CuspForm.coe_translate_gl f _) z)
 
 /-- The diamond operator on modular forms for `Gamma1 N`, at a chosen representative: for
-`g ∈ Gamma0 N`, the slash action `f ↦ f ∣[k] g` preserves
-`ModularForm ((Gamma1 N).map (mapGL ℝ)) k` by the normality of `Γ₁(N)` in `Γ₀(N)`. -/
+`g ∈ Gamma0 N`, translation by `mapGL ℝ g` (Mathlib's `ModularForm.translate`) lands at the
+conjugated level, which `Gamma1_map_inv_conjAct_eq` identifies with the original one. -/
 noncomputable def diamondOpAux (k : ℤ) (g : ↥(Gamma0 N)) :
     ModularForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] ModularForm ((Gamma1 N).map (mapGL ℝ)) k where
   toFun f :=
-    { toSlashInvariantForm :=
-      { toFun := ⇑f ∣[k] (mapGL ℝ (g : SL(2, ℤ)))
-        slash_action_eq' _ hγ :=
-          slash_mapGL_invariant_of_Gamma1_invariant g
-            (fun _ hδ ↦ SlashInvariantFormClass.slash_action_eq f _ hδ) hγ }
-      holo' := (ModularFormClass.holo f).slash k _
-      bdd_at_cusps' {c} hc _ hγ := by
-        rw [← SlashAction.slash_mul, ← OnePoint.isBoundedAt_infty_iff,
-          ← OnePoint.IsBoundedAt.smul_iff]
-        exact ModularFormClass.bdd_at_cusps f (isCusp_mul_mapGL_smul_infty g hc hγ) }
+    ModularForm.mcast rfl (ModularForm.translate f (mapGL ℝ (g : SL(2, ℤ))))
+      (Gamma1_map_inv_conjAct_eq g).symm
   map_add' f₁ f₂ := by
     ext z
     exact congr_fun (SlashAction.add_slash k (mapGL ℝ (g : SL(2, ℤ))) ⇑f₁ ⇑f₂) z
   map_smul' c f := by
-    ext z
-    -- the coercion of a bundled form slashes pointwise by definition; `change` states the
-    -- unfolded form so that the slash-action lemma applies (no rewriting lemma exists here)
-    change ((c • ⇑f) ∣[k] mapGL ℝ (g : SL(2, ℤ))) z = c • _
-    simp [ModularForm.smul_slash]
+    refine ModularForm.ext fun z ↦ ((mcast_translate_apply k g (c • f) z).trans ?_).trans
+      (congrArg (fun w : ℂ ↦ c • w) (mcast_translate_apply k g f z)).symm
+    rw [ModularForm.IsGLPos.coe_smul, ModularForm.smul_slash]
+    simp
 
 /-- Slash-transport for `Γ₁(N)`-invariant functions: if `f` is invariant under
 `(Gamma1 N).map (mapGL ℝ)` and `Gamma0Map N g₁ = Gamma0Map N g₂`, then
@@ -281,30 +275,22 @@ noncomputable def diamondOpHom [NeZero N] (k : ℤ) :
 lemma diamondOpHom_apply [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) :
     diamondOpHom k d = diamondOp k d := (rfl)
 
-/-- Auxiliary form of the diamond operator on cusp forms: the slash action of a fixed
-`Γ₀(N)`-representative, before descending to the `Γ₀(N)/Γ₁(N)`-quotient. -/
+/-- Auxiliary form of the diamond operator on cusp forms: translation by a fixed
+`Γ₀(N)`-representative (Mathlib's `CuspForm.translate`, transported along
+`Gamma1_map_inv_conjAct_eq`), before descending to the `Γ₀(N)/Γ₁(N)`-quotient. -/
 noncomputable def diamondOpCuspAux (k : ℤ) (g : ↥(Gamma0 N)) :
     CuspForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] CuspForm ((Gamma1 N).map (mapGL ℝ)) k where
   toFun f :=
-    { toSlashInvariantForm :=
-      { toFun := ⇑f ∣[k] (mapGL ℝ (g : SL(2, ℤ)))
-        slash_action_eq' _ hγ :=
-          slash_mapGL_invariant_of_Gamma1_invariant g
-            (fun _ hδ ↦ SlashInvariantFormClass.slash_action_eq f _ hδ) hγ }
-      holo' := (CuspFormClass.holo f).slash k _
-      zero_at_cusps' {c} hc _ hγ := by
-        rw [← SlashAction.slash_mul, ← OnePoint.isZeroAt_infty_iff,
-          ← OnePoint.IsZeroAt.smul_iff]
-        exact CuspFormClass.zero_at_cusps f (isCusp_mul_mapGL_smul_infty g hc hγ) }
+    CuspForm.mcast rfl (CuspForm.translate f (mapGL ℝ (g : SL(2, ℤ))))
+      (Gamma1_map_inv_conjAct_eq g).symm
   map_add' f₁ f₂ := by
     ext z
     exact congr_fun (SlashAction.add_slash k (mapGL ℝ (g : SL(2, ℤ))) ⇑f₁ ⇑f₂) z
   map_smul' c f := by
-    ext z
-    -- the coercion of a bundled form slashes pointwise by definition; `change` states the
-    -- unfolded form so that the slash-action lemma applies (no rewriting lemma exists here)
-    change ((c • ⇑f) ∣[k] mapGL ℝ (g : SL(2, ℤ))) z = c • _
-    simp [ModularForm.smul_slash]
+    refine CuspForm.ext fun z ↦ ((cusp_mcast_translate_apply k g (c • f) z).trans ?_).trans
+      (congrArg (fun w : ℂ ↦ c • w) (cusp_mcast_translate_apply k g f z)).symm
+    rw [CuspForm.IsGLPos.coe_smul, ModularForm.smul_slash]
+    simp
 
 /-- Well-definedness for the cusp-form diamond operator. -/
 theorem diamondOpCuspAux_eq_of_Gamma0Map_eq (k : ℤ) (g₁ g₂ : ↥(Gamma0 N))
