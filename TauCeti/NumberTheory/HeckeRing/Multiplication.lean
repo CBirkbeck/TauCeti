@@ -45,7 +45,28 @@ open scoped Pointwise
 namespace HeckeCosetModule
 
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H₁ H₂ H₃ : Subgroup G}
-  (R : Type*) [Semiring R]
+
+section SingleWrapper
+
+variable (R : Type*) [Zero R]
+
+/-- A basis element of the Hecke coset module: `single R D b` is the formal sum `b • [D]`. As
+for `Finsupp` itself, this is the type-correct way to produce elements of
+`HeckeCosetModule Δ H₁ H₂ R`. Only `[Zero R]` is assumed, so consumers with coefficient
+assumptions below `Semiring` (the left-coset scalar operations) can use it. -/
+noncomputable def single (D : HeckeCoset Δ H₁ H₂) (b : R) :
+    HeckeCosetModule Δ H₁ H₂ R :=
+  Finsupp.single D b
+
+/-- `Finsupp.sum_single_index`, as a wrapper-level equation: summing over a basis element
+evaluates the summand at its point. -/
+lemma sum_single_index {N : Type*} [AddCommMonoid N] {D : HeckeCoset Δ H₁ H₂} {b : R}
+    {F : HeckeCoset Δ H₁ H₂ → R → N} (h : F D 0 = 0) : (single R D b).sum F = F D b :=
+  Finsupp.sum_single_index h
+
+end SingleWrapper
+
+variable (R : Type*) [Semiring R]
 
 open Classical in
 /-- The structure constants of the Hecke product: `structureConstants H₁ H₂ H₃ R g₁ g₂` is the
@@ -97,13 +118,6 @@ noncomputable instance instMulHeckeRing {H : Subgroup G} [IsHeckeTriple Δ H H] 
 lemma mul_def {H : Subgroup G} [IsHeckeTriple Δ H H] (f g : 𝕋 Δ H R) :
     f * g = mul R f g := (rfl)
 
-/-- A basis element of the Hecke coset module: `single R D b` is the formal sum `b • [D]`. As
-for `Finsupp` itself, this is the type-correct way to produce elements of
-`HeckeCosetModule Δ H₁ H₂ R`. -/
-noncomputable def single (D : HeckeCoset Δ H₁ H₂) (b : R) :
-    HeckeCosetModule Δ H₁ H₂ R :=
-  Finsupp.single D b
-
 @[grind =]
 lemma single_apply {D A : HeckeCoset Δ H₁ H₂} {b : R} [Decidable (D = A)] :
     single R D b A = if D = A then b else 0 :=
@@ -123,12 +137,6 @@ lemma sum_single (f : HeckeCosetModule Δ H₁ H₂ R) : f.sum (single R) = f :=
 lemma single_add (D : HeckeCoset Δ H₁ H₂) (b c : R) :
     single R D (b + c) = single R D b + single R D c :=
   Finsupp.single_add D b c
-
-/-- `Finsupp.sum_single_index`, as a wrapper-level equation: summing over a basis element
-evaluates the summand at its point. -/
-lemma sum_single_index {N : Type*} [AddCommMonoid N] {D : HeckeCoset Δ H₁ H₂} {b : R}
-    {F : HeckeCoset Δ H₁ H₂ → R → N} (h : F D 0 = 0) : (single R D b).sum F = F D b :=
-  Finsupp.sum_single_index h
 
 /-- `Finsupp.induction_linear`, restated for the wrapper type `HeckeCosetModule Δ H₁ H₂ R` in
 its basis vocabulary `single`, in the same way that `MonoidAlgebra.induction_linear` restates

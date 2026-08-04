@@ -14,7 +14,7 @@ import Mathlib.Tactic.Group
 
 The scalar operations underlying the natural representation of the Hecke ring, following
 [Shimura][shimura1971], §3.1: on the free module `HeckeLeftCoset Δ H →₀ R` over the left
-cosets `H\Δ`, each element of `𝕋 Δ H R` defines a scalar operation, with a double coset
+cosets `Δ/H`, each element of `𝕋 Δ H R` defines a scalar operation, with a double coset
 `HgH = ⊔ᵢ σᵢgH` sending a left coset `βH` to `Σᵢ βσᵢgH`. This file constructs the
 left-coset type, the orbit Finsets, and the scalar multiplication, and proves it is
 additive in both arguments and faithful. The action laws proper — compatibility with the
@@ -74,7 +74,7 @@ variable (Δ) in
 /-- The identity left coset `1H = H`. -/
 instance : One (HeckeLeftCoset Δ H) := ⟨mk ⟨1, Δ.one_mem⟩⟩
 
-lemma one_def : (1 : HeckeLeftCoset Δ H) = mk ⟨1, Δ.one_mem⟩ := rfl
+lemma one_def : (1 : HeckeLeftCoset Δ H) = mk ⟨1, Δ.one_mem⟩ := (rfl)
 
 /-- Two elements of `Δ` define the same left coset iff they differ by an element of `H` on
 the right. -/
@@ -140,6 +140,9 @@ private lemma smulOrbit_subset {g β₁ β₂ : Δ} {k : G} (hk : k ∈ H)
   refine ⟨j, ?_⟩
   rw [← hi]
   refine mk_eq_mk.mpr ?_
+  -- `mk_eq_mk` lands in the `leftRel`-comap relation of the setoid; its membership statement
+  -- coincides with the displayed `H`-membership only through the definitional unfolding of
+  -- `QuotientGroup.leftRel` and the `Δ`-subtype coercions, which no rewriting lemma states
   change ((β₂ : G) * ((j.out : H) : G) * (g : G))⁻¹ * ((β₁ : G) * ((i.out : H) : G) * g) ∈ H
   have key : ((β₂ : G) * ((j.out : H) : G) * (g : G))⁻¹ *
       ((β₁ : G) * ((i.out : H) : G) * g) = (g : G)⁻¹ * (n : G)⁻¹ * g := by
@@ -215,7 +218,7 @@ open HeckeLeftCoset
 
 open scoped HeckeCosetModule
 
-variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
+variable [IsHeckeTriple Δ H H] {R : Type*} [NonUnitalNonAssocSemiring R]
 
 /-- The action of the Hecke ring on the free module of left cosets: a double coset acts on
 a left coset by summing over its orbit, extended biadditively. -/
@@ -240,7 +243,8 @@ lemma single_smul_single (D : HeckeCoset Δ H H) (q : HeckeLeftCoset Δ H) (a b 
     Finsupp.sum_single_index (by simp)]
 
 /-- The action is additive in the Hecke-ring argument. -/
-lemma add_smul' (t₁ t₂ : 𝕋 Δ H R) (m : HeckeLeftCoset Δ H →₀ R) :
+@[simp]
+lemma add_smul (t₁ t₂ : 𝕋 Δ H R) (m : HeckeLeftCoset Δ H →₀ R) :
     (t₁ + t₂) • m = t₁ • m + t₂ • m := by
   classical
   simp only [smul_eq_sum]
@@ -253,7 +257,8 @@ lemma add_smul' (t₁ t₂ : 𝕋 Δ H R) (m : HeckeLeftCoset Δ H →₀ R) :
     exact Finset.sum_congr rfl fun i _ ↦ by rw [add_mul, Finsupp.single_add]
 
 /-- The action is additive in the module argument. -/
-lemma smul_add' (t : 𝕋 Δ H R) (m₁ m₂ : HeckeLeftCoset Δ H →₀ R) :
+@[simp]
+lemma smul_add (t : 𝕋 Δ H R) (m₁ m₂ : HeckeLeftCoset Δ H →₀ R) :
     t • (m₁ + m₂) = t • m₁ + t • m₂ := by
   classical
   simp only [smul_eq_sum]
@@ -264,15 +269,27 @@ lemma smul_add' (t : 𝕋 Δ H R) (m₁ m₂ : HeckeLeftCoset Δ H →₀ R) :
     exact Finset.sum_congr rfl fun i _ ↦ by rw [mul_add, Finsupp.single_add]
 
 /-- The zero element of the Hecke ring acts as zero. -/
-lemma zero_smul' (m : HeckeLeftCoset Δ H →₀ R) : (0 : 𝕋 Δ H R) • m = 0 := by
+@[simp]
+lemma zero_smul (m : HeckeLeftCoset Δ H →₀ R) : (0 : 𝕋 Δ H R) • m = 0 := by
   rw [smul_eq_sum]
   exact Finsupp.sum_zero_index
 
 /-- Every Hecke-ring element acts as zero on zero. -/
-lemma smul_zero' (t : 𝕋 Δ H R) : t • (0 : HeckeLeftCoset Δ H →₀ R) = 0 := by
+@[simp]
+lemma smul_zero (t : 𝕋 Δ H R) : t • (0 : HeckeLeftCoset Δ H →₀ R) = 0 := by
   rw [smul_eq_sum]
   simp only [Finsupp.sum_zero_index]
   exact Finsupp.sum_fun_zero t
+
+end HeckeLeftCosetModule
+
+namespace HeckeLeftCosetModule
+
+open HeckeLeftCoset
+
+open scoped HeckeCosetModule
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [NonAssocSemiring R]
 
 /-- Reading off a coefficient of the action on the identity basis element: at any member of
 the orbit of `D`, the coefficient of `t • [H]` is the coefficient of `t` at `D`. -/
