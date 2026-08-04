@@ -13,17 +13,18 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 `TauCeti.orderOfVanishingAt f z` is the order of vanishing of `f : ℍ → ℂ` at `z ∈ ℍ`, read
 as the meromorphic order of `f ∘ ofComplex` at `z`; `TauCeti.orderAtCusp` is the order at
-the cusp `∞` of a level-one form, read in its `q`-expansion. For a holomorphic modular
-form the interior order is detected by vanishing (`orderOfVanishingAt_eq_zero_iff` under
-nonvanishing of the form), and it is constant along the group action
-(`orderOfVanishingAt_smul`) — the order dictionary feeding the valence formula.
+the cusp `∞` with respect to a width parameter, read in the `q`-expansion. For a nonzero
+holomorphic function the interior order detects vanishing
+(`orderOfVanishingAt_eq_zero_iff`), and for a slash-invariant form it is constant along
+the group action (`orderOfVanishingAt_smul`) — the order dictionary feeding the valence
+formula.
 
 ## Main declarations
 
 * `TauCeti.orderOfVanishingAt`, `TauCeti.orderAtCusp`.
+* `TauCeti.orderOfVanishingAt_eq_zero_iff`: for a nonzero holomorphic function, the order
+  at `z` vanishes exactly when the function does not vanish at `z`.
 * `TauCeti.orderOfVanishingAt_smul`: invariance along the action of the group.
-* `TauCeti.orderOfVanishingAt_ne_zero_of_eq_zero`: a zero of a nonzero form has
-  nonzero order.
 
 ## References
 
@@ -35,7 +36,7 @@ public noncomputable section
 
 open UpperHalfPlane Complex
 
-open scoped ModularForm MatrixGroups
+open scoped ModularForm MatrixGroups Manifold
 
 namespace TauCeti
 
@@ -46,54 +47,64 @@ order `0`. -/
 def orderOfVanishingAt (f : ℍ → ℂ) (z : ℍ) : ℤ :=
   (meromorphicOrderAt (f ∘ ofComplex) (z : ℂ)).untop₀
 
-/-- The order of vanishing at the cusp `∞` of a level-one modular form, read in its
-`q`-expansion, with the convention that the zero form gets order `0`. -/
-def orderAtCusp {k : ℤ} (f : ModularForm 𝒮ℒ k) : ℤ :=
-  (qExpansion 1 f).order.toNat
+/-- The order of vanishing of `f : ℍ → ℂ` at the cusp `∞` with respect to the width
+parameter `h`, read in the `q`-expansion, with the convention that the zero function gets
+order `0`. -/
+def orderAtCusp (h : ℝ) (f : ℍ → ℂ) : ℤ :=
+  (qExpansion h f).order.toNat
 
-variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
+/-- Restatement of `orderAtCusp` through the `q`-expansion order. -/
+lemma orderAtCusp_eq (h : ℝ) (f : ℍ → ℂ) :
+    orderAtCusp h f = (qExpansion h f).order.toNat := by
+  unfold orderAtCusp
+  rfl
 
-private lemma analyticAt_comp_ofComplex [ModularFormClass F Γ k] (f : F) {w : ℂ}
-    (hw : 0 < w.im) : AnalyticAt ℂ (⇑f ∘ ofComplex) w :=
-  (UpperHalfPlane.mdifferentiable_iff.mp (ModularFormClass.holo f)).analyticAt
+variable {f : ℍ → ℂ}
+
+private lemma analyticAt_comp_ofComplex (hf : MDiff f) {w : ℂ} (hw : 0 < w.im) :
+    AnalyticAt ℂ (f ∘ ofComplex) w :=
+  (UpperHalfPlane.mdifferentiable_iff.mp hf).analyticAt
     (isOpen_upperHalfPlaneSet.mem_nhds hw)
 
-/-- At a point where a holomorphic modular form does not vanish, its order is zero. -/
-lemma orderOfVanishingAt_eq_zero_of_ne_zero [ModularFormClass F Γ k] (f : F) {z : ℍ}
-    (hz : f z ≠ 0) : orderOfVanishingAt f z = 0 := by
-  have h_nf : MeromorphicNFAt (⇑f ∘ ofComplex) (z : ℂ) :=
-    (analyticAt_comp_ofComplex f z.im_pos).meromorphicNFAt
-  have : (⇑f ∘ ofComplex) (z : ℂ) ≠ 0 := by
+/-- At a point where a holomorphic function on `ℍ` does not vanish, its order is zero. -/
+lemma orderOfVanishingAt_eq_zero_of_ne_zero (hf : MDiff f) {z : ℍ} (hz : f z ≠ 0) :
+    orderOfVanishingAt f z = 0 := by
+  have h_nf : MeromorphicNFAt (f ∘ ofComplex) (z : ℂ) :=
+    (analyticAt_comp_ofComplex hf z.im_pos).meromorphicNFAt
+  have : (f ∘ ofComplex) (z : ℂ) ≠ 0 := by
     simpa [Function.comp_apply, ofComplex_apply] using hz
   rw [orderOfVanishingAt, h_nf.meromorphicOrderAt_eq_zero_iff.mpr this]
   rfl
 
-/-- A nonzero holomorphic modular form has finite vanishing order at every point of `ℍ`. -/
-lemma meromorphicOrderAt_comp_ofComplex_ne_top [ModularFormClass F Γ k] {f : F}
-    (hf : (⇑f : ℍ → ℂ) ≠ 0) (z : ℍ) : meromorphicOrderAt (⇑f ∘ ofComplex) (z : ℂ) ≠ ⊤ := by
-  intro htop
-  refine hf (funext fun τ ↦ ?_)
-  have h_eqOn : Set.EqOn (⇑f ∘ ofComplex) 0 upperHalfPlaneSet := by
-    have h_top : analyticOrderAt (⇑f ∘ ofComplex) (z : ℂ) = ⊤ := by
-      have := (analyticAt_comp_ofComplex f z.im_pos).meromorphicOrderAt_eq
-      rw [htop] at this
-      simpa using this.symm
-    exact AnalyticOnNhd.eqOn_zero_of_preconnected_of_eventuallyEq_zero
-      (fun w hw ↦ analyticAt_comp_ofComplex f hw)
-      (Convex.isPreconnected (convex_halfSpace_im_gt 0)) z.im_pos
-      (analyticOrderAt_eq_top.mp h_top)
-  simpa [Function.comp_apply, ofComplex_apply] using h_eqOn (τ.im_pos : (τ : ℂ) ∈ _)
+private lemma meromorphicOrderAt_comp_ofComplex_ne_top (hf : MDiff f) (hne : f ≠ 0)
+    (z : ℍ) : meromorphicOrderAt (f ∘ ofComplex) (z : ℂ) ≠ ⊤ := by
+  obtain ⟨τ, hτ⟩ := Function.ne_iff.mp hne
+  refine MeromorphicOn.meromorphicOrderAt_ne_top_of_isPreconnected
+    (fun w hw ↦ (analyticAt_comp_ofComplex hf hw).meromorphicAt)
+    (Convex.isPreconnected (convex_halfSpace_im_gt 0)) τ.im_pos z.im_pos ?_
+  rw [((analyticAt_comp_ofComplex hf τ.im_pos).meromorphicNFAt).meromorphicOrderAt_eq_zero_iff.mpr
+    (by simpa [Function.comp_apply, ofComplex_apply] using hτ)]
+  exact WithTop.zero_ne_top
 
-/-- A zero of a nonzero holomorphic modular form has nonzero vanishing order. -/
-lemma orderOfVanishingAt_ne_zero_of_eq_zero [ModularFormClass F Γ k] {f : F}
-    (hf : (⇑f : ℍ → ℂ) ≠ 0) {z : ℍ} (hz : f z = 0) : orderOfVanishingAt f z ≠ 0 := by
-  have h_nf : MeromorphicNFAt (⇑f ∘ ofComplex) (z : ℂ) :=
-    (analyticAt_comp_ofComplex f z.im_pos).meromorphicNFAt
-  have h_ne : meromorphicOrderAt (⇑f ∘ ofComplex) (z : ℂ) ≠ 0 := fun h0 ↦
+/-- A zero of a nonzero holomorphic function on `ℍ` has nonzero vanishing order. -/
+lemma orderOfVanishingAt_ne_zero_of_eq_zero (hf : MDiff f) (hne : f ≠ 0) {z : ℍ}
+    (hz : f z = 0) : orderOfVanishingAt f z ≠ 0 := by
+  have h_nf : MeromorphicNFAt (f ∘ ofComplex) (z : ℂ) :=
+    (analyticAt_comp_ofComplex hf z.im_pos).meromorphicNFAt
+  have h_ne : meromorphicOrderAt (f ∘ ofComplex) (z : ℂ) ≠ 0 := fun h0 ↦
     h_nf.meromorphicOrderAt_eq_zero_iff.mp h0 (by simp [ofComplex_apply, hz])
   rw [orderOfVanishingAt]
   exact fun h ↦ h_ne (((WithTop.untop₀_eq_zero).mp h).resolve_right
-    (meromorphicOrderAt_comp_ofComplex_ne_top hf z))
+    (meromorphicOrderAt_comp_ofComplex_ne_top hf hne z))
+
+/-- For a nonzero holomorphic function on `ℍ`, the vanishing order at `z` is zero exactly
+when the function does not vanish at `z`. -/
+lemma orderOfVanishingAt_eq_zero_iff (hf : MDiff f) (hne : f ≠ 0) {z : ℍ} :
+    orderOfVanishingAt f z = 0 ↔ f z ≠ 0 :=
+  ⟨fun h hz ↦ orderOfVanishingAt_ne_zero_of_eq_zero hf hne hz h,
+    orderOfVanishingAt_eq_zero_of_ne_zero hf⟩
+
+variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
 
 /-- The vanishing order of a slash-invariant form is constant along the group action. -/
 lemma orderOfVanishingAt_smul [Γ.HasDetOne] [SlashInvariantFormClass F Γ k] (f : F) {γ}
