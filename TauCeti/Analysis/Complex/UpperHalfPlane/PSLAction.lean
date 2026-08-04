@@ -91,7 +91,8 @@ theorem psl2r_smul_def (g : PSL(2, ℝ)) (τ : ℍ) :
 
 /-- Compatibility: the `PSL(2, ℝ)` action of a representative coincides with
 the underlying `SL(2, ℝ)` action. -/
-@[simp]
+-- not `@[simp]`: the `psl2r_smul_def`/`toPGL_mk`/`pglMk_smul` chain already normalizes
+-- the left-hand side (simp-NF lint)
 theorem psl2rMk_smul (g : SL(2, ℝ)) (τ : ℍ) :
     (↑g : PSL(2, ℝ)) • τ = g • τ := by
   -- the `compHom` action is definitionally the `PGL(2, ℝ)`-action of the `toPGL`-image
@@ -119,7 +120,8 @@ theorem psl2z_smul_def (g : PSL(2, ℤ)) (τ : ℍ) : g • τ = psl2zToPSL2R g 
 
 /-- The `PSL(2, ℤ)` action is compatible with the `SL(2, ℤ)` action:
 `(↑g) • τ = g • τ` for `g : SL(2, ℤ)`. -/
-@[simp]
+-- not `@[simp]`: simp derives this through the `psl2z_smul_def` unfolding chain
+-- (simp-NF lint)
 theorem psl2zMk_smul (g : SL(2, ℤ)) (τ : ℍ) :
     (↑g : PSL(2, ℤ)) • τ = g • τ := by
   -- expose the restriction along `psl2zToPSL2R`, then descend to representatives
