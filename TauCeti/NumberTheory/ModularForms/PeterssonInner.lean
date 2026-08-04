@@ -76,6 +76,17 @@ The integrand is `conj(f(τ)) · g(τ) · (Im τ)^k`, which equals
 def peterssonInner (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) : ℂ :=
   ∫ τ in D, petersson k f g τ
 
+/-- The pairing depends on the domain only up to null sets: congruent domains give equal
+pairings, with no unfolding to the underlying set integral. -/
+theorem peterssonInner_congr_set {k : ℤ} {D D' : Set ℍ} (h : D =ᶠ[MeasureTheory.ae volume] D')
+    (f g : ℍ → ℂ) : peterssonInner k D f g = peterssonInner k D' f g :=
+  MeasureTheory.setIntegral_congr_set h
+
+/-- Over the standard fundamental domain the pairing may be computed on its interior. -/
+theorem peterssonInner_fd_eq_fdo (k : ℤ) (f g : ℍ → ℂ) :
+    peterssonInner k ModularGroup.fd f g = peterssonInner k ModularGroup.fdo f g :=
+  peterssonInner_congr_set ModularGroup.fd_ae_eq_fdo f g
+
 theorem peterssonInner_def (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
     peterssonInner k D f g = ∫ τ in D, petersson k f g τ := (rfl)
 
