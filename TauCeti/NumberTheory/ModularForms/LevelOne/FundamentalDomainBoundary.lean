@@ -30,6 +30,7 @@ anchors of the valence-formula contour.
   built from `AffineMap.lineMap` and `circleMap`).
 * `TauCeti.ModularForm.fdBoundary_apply_three`: the parameter `3` lands on `ρ`.
 * `TauCeti.ModularForm.fdBoundary_closed`: the contour is closed.
+* `TauCeti.ModularForm.continuous_fdBoundary`: the contour is (globally) continuous.
 * `TauCeti.ModularForm.isPiecewiseC1On_fdBoundary`: the contour is piecewise `C¹`
   (`contDiffOn_fdBoundary` certifies `fdBoundaryBreakpoints` as a breakpoint witness).
 
@@ -366,20 +367,24 @@ private lemma fdBoundary_piece4 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc
 private lemma fdBoundary_piece5 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 4 5) :=
   (contDiff_fdBoundary_segment5 H).contDiffOn.congr (eqOn_fdBoundary_segment5 H)
 
+/-- The boundary path is continuous: consecutive segments agree at the junctions. -/
+lemma continuous_fdBoundary (H : ℝ) : Continuous (fdBoundary H) := by
+  unfold fdBoundary
+  refine Continuous.if_le (contDiff_fdBoundary_segment1 (n := 1) H).continuous
+    (Continuous.if_le (contDiff_fdBoundary_segment2 (n := 1)).continuous
+      (Continuous.if_le (contDiff_fdBoundary_segment3 (n := 1)).continuous
+        (Continuous.if_le (contDiff_fdBoundary_segment4 (n := 1) H).continuous
+          (contDiff_fdBoundary_segment5 (n := 1) H).continuous continuous_id continuous_const
+          fun t ht ↦ ?_)
+        continuous_id continuous_const fun t ht ↦ ?_)
+      continuous_id continuous_const fun t ht ↦ ?_)
+    continuous_id continuous_const fun t ht ↦ ?_
+  all_goals subst ht
+  all_goals norm_num
+
 /-- The boundary path is continuous on the parameter interval `[0, 5]`. -/
-lemma continuousOn_fdBoundary (H : ℝ) : ContinuousOn (fdBoundary H) (Icc 0 5) := by
-  have h02 := ((fdBoundary_piece1 H).continuousOn).union_of_isClosed
-    ((fdBoundary_piece2 H).continuousOn) isClosed_Icc isClosed_Icc
-  rw [Icc_union_Icc_eq_Icc (by norm_num) (by norm_num)] at h02
-  have h03 := h02.union_of_isClosed ((fdBoundary_piece3 H).continuousOn) isClosed_Icc
-    isClosed_Icc
-  rw [Icc_union_Icc_eq_Icc (by norm_num) (by norm_num)] at h03
-  have h04 := h03.union_of_isClosed ((fdBoundary_piece4 H).continuousOn) isClosed_Icc
-    isClosed_Icc
-  rw [Icc_union_Icc_eq_Icc (by norm_num) (by norm_num)] at h04
-  have h05 := h04.union_of_isClosed ((fdBoundary_piece5 H).continuousOn) isClosed_Icc
-    isClosed_Icc
-  rwa [Icc_union_Icc_eq_Icc (by norm_num) (by norm_num)] at h05
+lemma continuousOn_fdBoundary (H : ℝ) : ContinuousOn (fdBoundary H) (Icc 0 5) :=
+  (continuous_fdBoundary H).continuousOn
 
 /-- On every closed subinterval of `[0, 5]` whose interior avoids the four segment-junction
 parameters, the contour is `C¹` — the certificate that `fdBoundaryBreakpoints` is a valid
