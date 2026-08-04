@@ -93,6 +93,21 @@ theorem SubgroupQuotient.fundamentalGroupEquiv_unop_smul
   exact
     (isQuotientCoveringMap_subgroupQuotientMap x₀ H).unop_fundamentalGroupToMulOpposite_smul
 
+/-- **The fibre of `subgroupQuotientMap` over the distinguished quotient point lies inside the
+fibre of `proj` over `x₀`.** -/
+private theorem proj_eq_of_mem_fiber_subgroupQuotientMap
+    (H : Subgroup (FundamentalGroup X x₀))
+    (e : (subgroupQuotientMap x₀ H) ⁻¹' {SubgroupQuotient.basepoint x₀ H}) :
+    proj (e : UniversalCover x₀) = x₀ := by
+  have hbase : subgroupQuotientMap x₀ H e = SubgroupQuotient.basepoint x₀ H := by
+    simpa only [Set.mem_preimage, Set.mem_singleton_iff] using e.2
+  calc
+    proj (e : UniversalCover x₀) =
+        subgroupQuotientProj x₀ H (subgroupQuotientMap x₀ H e) :=
+      congrFun (subgroupQuotientProj_comp_subgroupQuotientMap x₀ H) e |>.symm
+    _ = subgroupQuotientProj x₀ H (SubgroupQuotient.basepoint x₀ H) := by rw [hbase]
+    _ = x₀ := subgroupQuotientProj_basepoint x₀ H
+
 variable [LocallyPathConnectedSpace X] [PathConnectedSpace X]
   [SemilocallySimplyConnectedSpace X]
 
