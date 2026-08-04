@@ -105,6 +105,15 @@ noncomputable def smulOrbit (H : Subgroup G) [IsHeckeTriple Δ H H] (g β : Δ) 
     mk ⊥ H ⟨(β : G) * i.out * g,
       Δ.mul_mem (Δ.mul_mem β.2 (IsHeckeTriple.mem_of_mem_left H i.out.2)) g.2⟩
 
+open Classical in
+/-- Membership in the orbit: the left cosets of the products `β · σᵢ · g` over the
+decomposition representatives. -/
+lemma mem_smulOrbit {g β : Δ} {x : HeckeCoset Δ ⊥ H} :
+    x ∈ smulOrbit H g β ↔ ∃ i : DecompQuotient H H (g : G),
+      mk ⊥ H ⟨(β : G) * i.out * g,
+        Δ.mul_mem (Δ.mul_mem β.2 (IsHeckeTriple.mem_of_mem_left H i.out.2)) g.2⟩ = x := by
+  simp [smulOrbit]
+
 lemma smulOrbit_nonempty (g β : Δ) : (smulOrbit H g β).Nonempty := by
   classical
   exact (Finset.univ_nonempty).image _
