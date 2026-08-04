@@ -163,7 +163,7 @@ namespace HeckeLeftCosetModule
 
 open HeckeCoset
 
-open scoped HeckeCosetModule
+open scoped HeckeCosetModule Pointwise
 
 variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
 
@@ -249,5 +249,41 @@ private lemma sum_ite_orbit_eq (t : 𝕋 Δ H R) (β : Δ) (c : R) {x : HeckeCos
   exact hne (by
     have h := eq_of_mem_smulOrbit hmem hx
     rwa [HeckeCoset.mk_rep, HeckeCoset.mk_rep] at h)
+
+open Classical in
+/-- Membership in the orbit through the canonical representative: `x` lies in the orbit of
+`g` on `w` iff `w⁻¹ · x.rep` lies in the double coset `HgH`. -/
+private lemma mem_smulOrbit_iff_rep {g w : Δ} {x : HeckeCoset Δ ⊥ H} :
+    x ∈ smulOrbit H g w ↔
+      ((w : G))⁻¹ * ((x.rep : Δ) : G) ∈ doubleCoset (g : G) (H : Set G) H := by
+  constructor
+  · intro hx
+    obtain ⟨i, hi⟩ := mem_smulOrbit.mp hx
+    have hrep := mk_bot_eq_mk_bot.mp ((HeckeCoset.mk_rep x).trans hi.symm)
+    -- hrep : x.rep⁻¹ · (w·σᵢ·g) ∈ H, so w⁻¹·x.rep = σᵢ·g·(w·σᵢ·g)⁻¹·x.rep with σᵢ ∈ H
+    refine mem_doubleCoset.mpr ⟨(i.out : G), i.out.2,
+      (((x.rep : Δ) : G)⁻¹ * ((w : G) * (i.out : G) * (g : G)))⁻¹, H.inv_mem hrep, by group⟩
+  · intro hmem
+    obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := mem_doubleCoset.mp hmem
+    set i : DecompQuotient H H (g : G) := QuotientGroup.mk ⟨h₁, hh₁⟩ with hi
+    obtain ⟨n, hn⟩ := QuotientGroup.mk_out_eq_mul
+      ((ConjAct.toConjAct (g : G) • H).subgroupOf H) (⟨h₁, hh₁⟩ : H)
+    have hout : ((i.out : H) : G) = h₁ * n := by
+      rw [hi]
+      simpa [Subgroup.coe_mul] using congrArg (Subtype.val : H → G) hn
+    refine mem_smulOrbit.mpr ⟨i, ?_⟩
+    rw [← HeckeCoset.mk_rep x]
+    refine mk_bot_eq_mk_bot.mpr ?_
+    -- as in `smulOrbit_subset`, the setoid membership is stated through the coercions
+    change ((w : G) * ((i.out : H) : G) * (g : G))⁻¹ * ((x.rep : Δ) : G) ∈ H
+    have key : ((w : G) * ((i.out : H) : G) * (g : G))⁻¹ * ((x.rep : Δ) : G) =
+        ((g : G)⁻¹ * (n : G)⁻¹ * g) * h₂ := by
+      have hx : ((x.rep : Δ) : G) = (w : G) * (h₁ * (g : G) * h₂) := by
+        rw [← heq]; group
+      rw [hout, hx]
+      group
+    rw [key]
+    exact H.mul_mem
+      (by simpa [mul_assoc] using H.inv_mem (conj_mem_of_stabilizer (g : G) n)) hh₂
 
 end HeckeLeftCosetModule
