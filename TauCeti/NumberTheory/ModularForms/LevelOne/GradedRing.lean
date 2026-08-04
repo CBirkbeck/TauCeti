@@ -105,8 +105,7 @@ private lemma evalE₄E₆_C_mul_monomial (c : ℂ) (a b : ℕ) :
   -- `evalE₄E₆` is definitionally `aeval ![…]`, so `aeval_C` computes the constant once
   -- the equation is ascribed at that type; `rw` alone does not unfold the wrapper.
   rw [map_mul,
-    show evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c from
-      MvPolynomial.aeval_C _ c,
+    evalE₄E₆_C _,
     evalE₄E₆_monomial a b, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul]
 
 private lemma exists_monomial_weight {k : ℕ} (hk : 4 ≤ k) (hkeven : Even k) :
@@ -126,8 +125,7 @@ private lemma surj_of_rank_one {k : ℤ}
   -- `evalE₄E₆` is definitionally `aeval ![…]`, so `aeval_C` computes the constant once
   -- the equation is ascribed at that type; `rw` alone does not unfold the wrapper.
   rw [map_mul,
-    show evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c from
-      MvPolynomial.aeval_C _ c,
+    evalE₄E₆_C _,
     hp, Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, ← DirectSum.of_smul]
 
 private lemma directSum_of_E₄_pow_mul_E₆_pow_apply {a b n : ℕ}
@@ -501,8 +499,7 @@ private lemma per_weight_injective_zero
   rw [hpc, MvPolynomial.monomial_zero'] at heval ⊢
   -- The degree-`0` component of the graded unit is the unit form; `show` states the
   -- component extraction so `of_eq_same` can close it.
-  rw [show evalE₄E₆ (MvPolynomial.C _) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) _ from
-      MvPolynomial.aeval_C _ _, Algebra.algebraMap_eq_smul_one, DirectSum.smul_apply,
+  rw [evalE₄E₆_C _, Algebra.algebraMap_eq_smul_one, DirectSum.smul_apply,
     show (1 : DirectSum ℤ (ModularForm 𝒮ℒ)) (0 : ℤ) = (1 : ModularForm 𝒮ℒ 0) from by
       conv_lhs => rw [← DirectSum.of_zero_one (ModularForm 𝒮ℒ)]
       exact DirectSum.of_eq_same _ _] at heval
