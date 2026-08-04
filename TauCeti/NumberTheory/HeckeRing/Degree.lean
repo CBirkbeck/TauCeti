@@ -32,14 +32,19 @@ ModularForms roadmap's dependency policy; the compatibility law is stated as a p
 ## Main definitions
 
 * `HeckeCoset.degree D`: the number of left cosets in the decomposition of `D`.
-* `HeckeCosetModule.coeffSum`: the coefficient-sum homomorphism of the left-coset module.
-* `HeckeCosetModule.deg`: the degree homomorphism `𝕋 Δ H R →+* R`.
+* `HeckeLeftCosetModule.coeffSum`: the coefficient-sum homomorphism of the left-coset
+  module.
+* `HeckeLeftCosetModule.deg`: the degree homomorphism `𝕋 Δ H R →+* R`.
 
 ## Main results
 
-* `HeckeLeftCoset.smulOrbit_card`: the orbit of a left coset under `D` has `D.degree`
+* `HeckeCoset.smulOrbit_rep_card`: the orbit of a left coset under `D` has `D.degree`
   elements.
-* `HeckeLeftCosetModule.mul_smul'`: the action compatibility `(f * g) • m = g • (f • m)`.
+* `HeckeLeftCosetModule.card_filter_orbit_eq_multiplicity` (private): Shimura's pair
+  count, the combinatorial core.
+* `HeckeLeftCosetModule.mul_smul'`: the action compatibility `(f * g) • m = g • (f • m)`
+  (Proposition 3.4).
+* `HeckeLeftCosetModule.deg_single`, `RingHom` laws of `deg`: Proposition 3.3.
 * `HeckeCosetModule.deg_mul`: the degree is multiplicative.
 -/
 
@@ -400,5 +405,48 @@ theorem mul_smul' (f g : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
       | h0 => rw [mul_zero, zero_smul, zero_smul]
       | hadd g₁ g₂ h₁ h₂ => rw [mul_add, add_smul, add_smul, h₁, h₂]
       | hsingle D₂ b => exact single_mul_smul_single D₁ D₂ q a b c
+
+/-- The coefficient sum is multiplicative against the action: the orbit-sum coefficient is
+independent of the acted-on coset, so the action factors through the degree. -/
+lemma coeffSum_smul (t : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
+    coeffSum Δ H R (t • m) =
+      coeffSum Δ H R (t • (Finsupp.single 1 1 : HeckeCoset Δ ⊥ H →₀ R)) *
+        coeffSum Δ H R m := by
+  induction t using HeckeCosetModule.induction_linear with
+  | h0 => rw [zero_smul, zero_smul, map_zero, zero_mul]
+  | hadd t₁ t₂ h₁ h₂ => rw [add_smul, add_smul, map_add, map_add, h₁, h₂, add_mul]
+  | hsingle D a =>
+    induction m using Finsupp.induction_linear with
+    | zero => rw [smul_zero, map_zero, mul_zero]
+    | add m₁ m₂ h₁ h₂ => rw [smul_add, map_add, map_add, h₁, h₂, mul_add]
+    | single q c =>
+      rw [coeffSum_single_smul_single, coeffSum_single_smul_single, coeffSum_single,
+        nsmul_eq_mul, nsmul_eq_mul, mul_one]
+      ring
+
+variable (Δ H R) in
+/-- **The degree homomorphism** (Shimura, Proposition 3.3): the coefficient sum of the
+action on the identity coset, as a ring homomorphism `𝕋 Δ H R →+* R`. On a basis element
+it is the degree of the double coset — the number of left cosets in its decomposition —
+scaled by the coefficient; multiplicativity is the compatibility law `mul_smul'`. -/
+noncomputable def deg : 𝕋 Δ H R →+* R where
+  toFun t := coeffSum Δ H R (t • (Finsupp.single 1 1 : HeckeCoset Δ ⊥ H →₀ R))
+  map_one' := by
+    rw [HeckeCosetModule.one_def, coeffSum_single_smul_single, HeckeCoset.degree_one]
+    simp
+  map_mul' f g := by
+    rw [mul_smul', coeffSum_smul, mul_comm]
+  map_zero' := by rw [zero_smul, map_zero]
+  map_add' f g := by rw [add_smul, map_add]
+
+lemma deg_apply (t : 𝕋 Δ H R) :
+    deg Δ H R t =
+      coeffSum Δ H R (t • (Finsupp.single 1 1 : HeckeCoset Δ ⊥ H →₀ R)) := (rfl)
+
+/-- The degree of a basis element: the degree of its double coset, scaled by the
+coefficient. -/
+@[simp] lemma deg_single (D : HeckeCoset Δ H H) (a : R) :
+    deg Δ H R (HeckeCosetModule.single R D a) = D.degree • a := by
+  rw [deg_apply, coeffSum_single_smul_single, mul_one]
 
 end HeckeLeftCosetModule
