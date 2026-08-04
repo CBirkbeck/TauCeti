@@ -4,9 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Manifold
 public import Mathlib.Analysis.Meromorphic.NormalForm
-public import Mathlib.NumberTheory.ModularForms.QExpansion
+public import Mathlib.NumberTheory.ModularForms.Basic
 
 /-!
 # The vanishing order of a modular form
@@ -132,21 +131,22 @@ private lemma untop₀_sum {ι : Type*} {s : Finset ι} {g : ι → WithTop ℤ}
 lemma orderOfVanishingAt_prod {ι : Type*} {s : Finset ι} {F : ι → ℍ → ℂ}
     (hF : ∀ i ∈ s, MDiff (F i)) (hFne : ∀ i ∈ s, F i ≠ 0) (z : ℍ) :
     orderOfVanishingAt (∏ i ∈ s, F i) z = ∑ i ∈ s, orderOfVanishingAt (F i) z := by
-  have hcomp : (∏ i ∈ s, F i) ∘ ofComplex = ∏ i ∈ s, (F i ∘ ofComplex) := by
-    ext w
-    simp [Finset.prod_apply]
   simp only [orderOfVanishingAt_def]
-  rw [hcomp, meromorphicOrderAt_prod
-    (fun i hi ↦ (analyticAt_comp_ofComplex (hF i hi) z.im_pos).meromorphicAt)]
+  rw [show (∏ i ∈ s, F i) ∘ ofComplex = fun w ↦ ∏ i ∈ s, (F i ∘ ofComplex) w from
+      funext fun w ↦ Finset.prod_apply .. ,
+    meromorphicOrderAt_fun_prod
+      (fun i hi ↦ (analyticAt_comp_ofComplex (hF i hi) z.im_pos).meromorphicAt)]
   exact untop₀_sum fun i hi ↦
     meromorphicOrderAt_comp_ofComplex_ne_top (hF i hi) (hFne i hi) z
 
-/-- Vanishing orders scale under powers of a nonzero holomorphic function. -/
-lemma orderOfVanishingAt_pow (hf : MDiff f) (hfne : f ≠ 0) (n : ℕ) (z : ℍ) :
+/-- Vanishing orders scale under powers of a holomorphic function. -/
+lemma orderOfVanishingAt_pow (hf : MDiff f) (n : ℕ) (z : ℍ) :
     orderOfVanishingAt (f ^ n) z = n * orderOfVanishingAt f z := by
-  have hpow : f ^ n = ∏ _i ∈ Finset.range n, f := by simp
-  rw [hpow, orderOfVanishingAt_prod (fun _ _ ↦ hf) (fun _ _ ↦ hfne),
-    Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+  have hcomp : (f ^ n) ∘ ofComplex = (f ∘ ofComplex) ^ n := rfl
+  rw [orderOfVanishingAt_def, orderOfVanishingAt_def, hcomp,
+    meromorphicOrderAt_pow (analyticAt_comp_ofComplex hf z.im_pos).meromorphicAt,
+    WithTop.untop₀_mul]
+  simp
 
 variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
 
