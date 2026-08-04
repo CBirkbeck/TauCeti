@@ -217,13 +217,9 @@ theorem eq_zero_on_fd_of_peterssonInner_self_eq_zero {k : ℤ} {f : ℍ → ℂ}
     rwa [← integral_eq_zero_iff_of_nonneg_ae (ae_of_all _ hg_nonneg) hint.re]
   have hg_cont : Continuous g :=
     Complex.continuous_re.comp (petersson_continuous k hf hf)
-  have hg_fdo : EqOn g 0 fdo :=
-    Measure.eqOn_open_of_ae_eq
-      (hg_ae.filter_mono (ae_mono (restrict_mono fdo_subset_fd le_rfl)))
-      isOpen_fdo hg_cont.continuousOn continuousOn_const
   have hgτ : g τ = 0 :=
-    (EqOn.of_subset_closure hg_fdo hg_cont.continuousOn continuousOn_const
-      fdo_subset_fd fd_eq_closure_fdo.subset) hτ
+    Measure.eqOn_of_ae_eq hg_ae hg_cont.continuousOn continuousOn_const
+      (by rw [← fdo_eq_interior_fd, ← fd_eq_closure_fdo]) hτ
   simp only [g, petersson] at hgτ
   rw [petersson_self_re_eq] at hgτ
   exact Complex.normSq_eq_zero.mp ((mul_eq_zero.mp hgτ).elim id
