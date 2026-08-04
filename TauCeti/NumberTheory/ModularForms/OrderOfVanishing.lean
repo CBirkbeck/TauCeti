@@ -46,6 +46,14 @@ order `0`. -/
 def orderOfVanishingAt (f : ℍ → ℂ) (z : ℍ) : ℤ :=
   (meromorphicOrderAt (f ∘ ofComplex) (z : ℂ)).untop₀
 
+-- The definition is sealed by the module system, so this restatement is the supported
+-- cross-module rewrite for it.
+@[simp]
+lemma orderOfVanishingAt_def (f : ℍ → ℂ) (z : ℍ) :
+    orderOfVanishingAt f z = (meromorphicOrderAt (f ∘ ofComplex) (z : ℂ)).untop₀ := by
+  unfold orderOfVanishingAt
+  rfl
+
 variable {f : ℍ → ℂ}
 
 /-- A function holomorphic on `ℍ` composes with `ofComplex` to a function analytic at
@@ -97,6 +105,7 @@ lemma orderOfVanishingAt_eq_zero_iff (hf : MDiff f) (hne : f ≠ 0) {z : ℍ} :
 variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
 
 /-- The vanishing order of a slash-invariant form is constant along the group action. -/
+@[simp]
 lemma orderOfVanishingAt_smul [Γ.HasDetOne] [SlashInvariantFormClass F Γ k] (f : F) {γ}
     (hγ : γ ∈ Γ) (z : ℍ) : orderOfVanishingAt f (γ • z) = orderOfVanishingAt f z := by
   have hdet : 0 < γ.val.det := by
