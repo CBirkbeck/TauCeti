@@ -384,4 +384,21 @@ private lemma single_mul_smul_single (D₁ D₂ : HeckeCoset Δ H H) (q : HeckeC
     rw [hzero, hempty, Finset.card_empty, zero_nsmul]
     simp
 
+/-- **The compatibility law of the left-coset action** (Shimura, Proposition 3.4): acting
+by a convolution product is acting by its factors in sequence. -/
+theorem mul_smul' (f g : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
+    (f * g) • m = g • (f • m) := by
+  induction m using Finsupp.induction_linear with
+  | zero => rw [smul_zero, smul_zero, smul_zero]
+  | add m₁ m₂ h₁ h₂ => rw [smul_add, smul_add, smul_add, h₁, h₂]
+  | single q c =>
+    induction f using HeckeCosetModule.induction_linear with
+    | h0 => rw [zero_mul, zero_smul, smul_zero]
+    | hadd f₁ f₂ h₁ h₂ => rw [add_mul, add_smul, add_smul, h₁, h₂, smul_add]
+    | hsingle D₁ a =>
+      induction g using HeckeCosetModule.induction_linear with
+      | h0 => rw [mul_zero, zero_smul, zero_smul]
+      | hadd g₁ g₂ h₁ h₂ => rw [mul_add, add_smul, add_smul, h₁, h₂]
+      | hsingle D₂ b => exact single_mul_smul_single D₁ D₂ q a b c
+
 end HeckeLeftCosetModule
