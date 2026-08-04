@@ -76,7 +76,8 @@ noncomputable scoped instance coeMapGLRat :
     Coe (SpecialLinearGroup (Fin n) ℤ) (GL (Fin n) ℚ) :=
   ⟨mapGL ℚ⟩
 
-@[simp]
+/-- Not `@[simp]`: the simp-NF linter shows `simp` already discharges this membership via
+`mem_SLnZ_iff` and `mapGL_inj`. -/
 lemma coe_mem_SLnZ (σ : SpecialLinearGroup (Fin n) ℤ) :
     (σ : GL (Fin n) ℚ) ∈ SLnZ n := ⟨σ, rfl⟩
 
