@@ -189,9 +189,33 @@ theorem conjugationAlgHom_counit_right :
   rw [← AlgHom.comp_assoc, hproduct]
   exact productMap_id_one_comp_conjugationAlgHom (R := R) (H := H)
 
+/-- **Post-composition splits the comultiplication point into its two inclusions.** For any algebra
+map `φ` out of the tensor square, the point `φ ∘ Δ` is the convolution product of `φ` restricted
+along the two inclusions. This is the functorial form of `Bialgebra.comulPoint_eq_include_mul`. -/
+theorem toConv_comp_comulAlgHom {A : Type w} [CommSemiring A] [Algebra R A]
+    (phi : H ⊗[R] H →ₐ[R] A) :
+    toConv (phi.comp (Bialgebra.comulAlgHom R H)) =
+      toConv (phi.comp
+          (Bialgebra.TensorProduct.includeLeft (R := R) (H₁ := H) (H₂ := H)).toAlgHom) *
+        toConv (phi.comp
+          (Bialgebra.TensorProduct.includeRight (R := R) (H₁ := H) (H₂ := H)).toAlgHom) := by
+  calc
+    toConv (phi.comp (Bialgebra.comulAlgHom R H)) =
+        AlgHom.mapValue (H := H) phi (toConv (Bialgebra.comulAlgHom R H)) := rfl
+    _ = AlgHom.mapValue (H := H) phi
+          (toConv (Bialgebra.TensorProduct.includeLeft
+              (R := R) (H₁ := H) (H₂ := H)).toAlgHom *
+            toConv (Bialgebra.TensorProduct.includeRight
+              (R := R) (H₁ := H) (H₂ := H)).toAlgHom) := by
+      rw [Bialgebra.comulPoint_eq_include_mul]
+    _ = _ := by
+      rw [map_mul]
+      rfl
+
 /-- **Comultiplying the conjugating variable splits it into the first two universal points.**
 Re-associating after comultiplying the first tensor factor sends the first universal point to the
-convolution product of the first two points of the triple tensor algebra. -/
+convolution product of the first two points of the triple tensor algebra. This is
+`toConv_comp_comulAlgHom` at the tensor associator. -/
 private theorem toConv_assoc_comp_map_comul_comp_includeLeft :
     toConv
         ((((Algebra.TensorProduct.assoc R R R H H H).toAlgHom.comp
@@ -210,22 +234,14 @@ private theorem toConv_assoc_comp_map_comul_comp_includeLeft :
         Algebra.TensorProduct.includeLeft : H →ₐ[R] H ⊗[R] (H ⊗[R] H)) =
         up.comp (Bialgebra.comulAlgHom R H) := by
     simp only [up, AlgHom.comp_assoc, Algebra.TensorProduct.map_comp_includeLeft]
-  rw [hfactor]
-  calc
-    toConv (up.comp (Bialgebra.comulAlgHom R H)) =
-        AlgHom.mapValue (H := H) up (toConv (Bialgebra.comulAlgHom R H)) := by
-      rw [AlgHom.mapValue_apply, ofConv_toConv]
-    _ = _ := by
-      rw [Bialgebra.comulPoint_eq_include_mul, map_mul]
-      apply congrArg₂ (fun a b ↦ a * b)
-      · apply WithConv.ofConv_injective
-        simp only [AlgHom.mapValue_apply]
-        ext h
-        simp [up, Algebra.TensorProduct.one_def]
-      · apply WithConv.ofConv_injective
-        simp only [AlgHom.mapValue_apply]
-        ext h
-        simp [up]
+  rw [hfactor, toConv_comp_comulAlgHom]
+  congr 1
+  · apply congrArg WithConv.toConv
+    ext h
+    simp [up, Algebra.TensorProduct.one_def]
+  · apply congrArg WithConv.toConv
+    ext h
+    simp [up]
 
 /-- The coordinate morphism of left conjugation satisfies the action-associativity law.
 
