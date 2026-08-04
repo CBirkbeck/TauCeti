@@ -85,6 +85,13 @@ lemma evalE₄E₆_X_one :
     evalE₄E₆ (MvPolynomial.X 1) = DirectSum.of (ModularForm 𝒮ℒ) 6 E₆ := by
   simp [evalE₄E₆]
 
+/-- Constants evaluate to scalars: `evalE₄E₆` is definitionally `aeval ![…]`, and this
+private restatement of `MvPolynomial.aeval_C` at the wrapper's type lets `rw` use the
+identity without a `show`-ascription at every site. -/
+private lemma evalE₄E₆_C (c : ℂ) :
+    evalE₄E₆ (MvPolynomial.C c) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) c :=
+  MvPolynomial.aeval_C _ c
+
 private lemma evalE₄E₆_monomial (a b : ℕ) :
     evalE₄E₆ (MvPolynomial.X 0 ^ a * MvPolynomial.X 1 ^ b) =
       DirectSum.of (ModularForm 𝒮ℒ) 4 E₄ ^ a *
@@ -357,8 +364,7 @@ private lemma evalE₄E₆_monomial_apply_eq_zero_of_ne (d : Fin 2 →₀ ℕ) (
     (hk : k ≠ (↑(d 0) * 4 + ↑(d 1) * 6 : ℤ)) :
     (evalE₄E₆ (MvPolynomial.monomial d c)) k = 0 := by
   rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul,
-    show evalE₄E₆ (MvPolynomial.C _) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) _ from
-      MvPolynomial.aeval_C _ _,
+    evalE₄E₆_C _,
     Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, DirectSum.smul_apply,
     evalE₄E₆_X_pow_mul_apply_eq_zero_of_ne (d 0) (d 1) k hk, smul_zero]
 
@@ -454,8 +460,7 @@ private lemma per_weight_injective_unique_monomial {n : ℕ} (p : MvPolynomial (
   have hpc := hp.eq_monomial_of_unique_weight huniq
   rw [hpc] at heval ⊢
   rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul,
-    show evalE₄E₆ (MvPolynomial.C _) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) _ from
-      MvPolynomial.aeval_C _ _,
+    evalE₄E₆_C _,
     Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, evalE₄E₆_monomial,
     DirectSum.smul_apply] at heval
   rcases smul_eq_zero.mp heval with hc | hmz
@@ -627,8 +632,7 @@ private lemma evalE₄E₆_monomial_qExpansion_coeff_zero {n : ℕ} {d₀ : Fin 
     (hd₀_weight : 4 * d₀ 0 + 6 * d₀ 1 = n) (c : ℂ) :
     (qExpansion 1 ↑((evalE₄E₆ (MvPolynomial.monomial d₀ c)) (↑n : ℤ))).coeff 0 = c := by
   rw [MvPolynomial.monomial_fin_two, mul_assoc, map_mul,
-    show evalE₄E₆ (MvPolynomial.C _) = algebraMap ℂ (DirectSum ℤ (ModularForm 𝒮ℒ)) _ from
-      MvPolynomial.aeval_C _ _,
+    evalE₄E₆_C _,
     Algebra.algebraMap_eq_smul_one, smul_mul_assoc, one_mul, evalE₄E₆_monomial,
     DirectSum.smul_apply,
     -- Scalar action commutes with the coercion to functions
