@@ -334,8 +334,8 @@ theorem mem_cuspFormCharSpace_iff [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂ
     ∀ d : (ZMod N)ˣ, diamondOpCuspHom k d f = (↑(χ d) : ℂ) • f := by
   simp only [cuspFormCharSpace, Submodule.mem_iInf, Module.End.mem_eigenspace_iff]
 
-/-- Diamond operators act by `χ(d)` on elements of `S_k(Γ₁(N), χ)`. -/
-@[simp]
+/-- Diamond operators act by `χ(d)` on elements of `S_k(Γ₁(N), χ)`. Not `@[simp]`: `χ`
+occurs only in the hypothesis and the right-hand side, so `simp` cannot infer it. -/
 theorem diamondOpCusp_apply_of_mem_cuspFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (d : (ZMod N)ˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hf : f ∈ cuspFormCharSpace k χ) :
@@ -355,8 +355,8 @@ theorem mem_modFormCharSpace_iff [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂ�
     ∀ d : (ZMod N)ˣ, diamondOpHom k d f = (↑(χ d) : ℂ) • f := by
   simp only [modFormCharSpace, Submodule.mem_iInf, Module.End.mem_eigenspace_iff]
 
-/-- Diamond operators act by `χ(d)` on elements of `M_k(Γ₁(N), χ)`. -/
-@[simp]
+/-- Diamond operators act by `χ(d)` on elements of `M_k(Γ₁(N), χ)`. Not `@[simp]`: `χ`
+occurs only in the hypothesis and the right-hand side, so `simp` cannot infer it. -/
 theorem diamondOp_apply_of_mem_modFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (d : (ZMod N)ˣ) {f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hf : f ∈ modFormCharSpace k χ) :
