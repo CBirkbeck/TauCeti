@@ -171,7 +171,7 @@ private theorem exists_contMDiffMap_hadamard_coords {E : Type*} [NormedAddCommGr
     -- Applying a smooth continuous-linear-map-valued function to the constant vector `b i`
     -- is the available API for smoothness of each scalar Hadamard factor.
     exact (hfac.clm_apply (show ContDiff ℝ ∞ (fun _ : E ↦ b i) from contDiff_const)).contMDiff
-  · exact congrFun (congrArg DFunLike.coe (hadamardFactor_self (f : E → ℝ) x)) (b i)
+  · simp
   · intro y
     calc
       f y - f x = hadamardFactor f x y (y - x) :=
