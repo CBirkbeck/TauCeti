@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Manifold
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Topology
 
 /-!
 # Periodicity and analyticity through `ofComplex`
