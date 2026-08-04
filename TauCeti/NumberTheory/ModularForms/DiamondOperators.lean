@@ -94,8 +94,9 @@ theorem Gamma1_map_inv_conjAct_eq (g : ↥(Gamma0 N)) :
     exact ⟨(g : SL(2, ℤ)) * σ * (g : SL(2, ℤ))⁻¹,
       Gamma0_normalizes_Gamma1 g σ hσ, by simp [map_mul, map_inv]⟩
 
-/-- Direct-conjugation variant of `Gamma1_map_inv_conjAct_eq`: `(Gamma1 N).map (mapGL ℝ)` is invariant
-under conjugation by `mapGL ℝ g` (rather than its inverse). -/
+/-- Direct-conjugation variant of `Gamma1_map_inv_conjAct_eq`: the subgroup
+`(Gamma1 N).map (mapGL ℝ)` is invariant under conjugation by `mapGL ℝ g` (rather than by
+its inverse). -/
 theorem Gamma1_map_conjAct_eq (g : ↥(Gamma0 N)) :
     ConjAct.toConjAct (mapGL ℝ (g : SL(2, ℤ))) •
     (Gamma1 N).map (mapGL ℝ) = (Gamma1 N).map (mapGL ℝ) := by
@@ -325,8 +326,8 @@ theorem diamondOpCusp_eq (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
   diamondOpCuspAux_eq_of_Gamma0Map_eq k _ g
     (by simp [← Gamma0MapUnits_val, (Gamma0MapUnits_surjective d).choose_spec, hg])
 
-@[simp]
 /-- The cusp diamond operator at `1` is the identity. -/
+@[simp]
 theorem diamondOpCusp_one [NeZero N] (k : ℤ) : diamondOpCusp (N := N) k 1 = LinearMap.id := by
   rw [diamondOpCusp_eq k 1 1 (map_one _)]
   ext f z
