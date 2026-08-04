@@ -211,8 +211,9 @@ lemma GL_smul_eq_of_coe_eq_smul {g h : GL (Fin 2) ℝ} {c : ℝ} (hc : c ≠ 0)
     _ = g • τ := pglMk_smul g τ
 
 /-- Action equivariance: the projective representative `glPosToPSL2R g` acts on
-`ℍ` exactly as `g` does, even though `det g` need not be `1`. -/
-@[simp]
+`ℍ` exactly as `g` does, even though `det g` need not be `1`. Not `@[simp]`:
+`glPosToPSL2R_apply` rewrites the left-hand side out of simp normal form first
+(simp-NF lint). -/
 theorem glPosToPSL2R_smul (g : GL(2, ℝ)⁺) (τ : ℍ) :
     glPosToPSL2R g • τ = g • τ := by
   have hg_pos : 0 < ((g : GL (Fin 2) ℝ).det.val : ℝ) := g.property
