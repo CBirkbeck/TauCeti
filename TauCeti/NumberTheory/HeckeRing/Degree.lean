@@ -342,3 +342,46 @@ private lemma exists_orbit_of_mem_orbit_orbit {g₁ g₂ β : Δ} {x i : HeckeCo
     mem_doubleCoset_self H H ((β : G)⁻¹ * ((x.rep : Δ) : G))
 
 end HeckeLeftCosetModule
+
+namespace HeckeLeftCosetModule
+
+open HeckeCoset
+
+open scoped HeckeCosetModule Pointwise
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
+
+open Classical in
+/-- **The compatibility law on basis elements** (Shimura, Proposition 3.4, single case):
+acting by a product of two basis elements is acting by them in sequence. -/
+private lemma single_mul_smul_single (D₁ D₂ : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H)
+    (a b c : R) :
+    (HeckeCosetModule.single R D₁ a * HeckeCosetModule.single R D₂ b) •
+        (Finsupp.single q c : HeckeCoset Δ ⊥ H →₀ R) =
+      HeckeCosetModule.single R D₂ b •
+        (HeckeCosetModule.single R D₁ a •
+          (Finsupp.single q c : HeckeCoset Δ ⊥ H →₀ R)) := by
+  classical
+  rw [HeckeCosetModule.single_mul_single, smul_smul_assoc, smul_smul_assoc,
+    structureConstants_smul_single, single_smul_single_smul]
+  refine Finsupp.ext fun x ↦ ?_
+  rw [Finsupp.smul_apply, Finsupp.smul_apply, sum_smulOrbit_single_apply,
+    sum_sum_single_apply]
+  by_cases h : ∃ D₀ : HeckeCoset Δ H H, x ∈ smulOrbit H D₀.rep q.rep
+  · obtain ⟨D₀, hD₀⟩ := h
+    rw [sum_ite_orbit_eq _ _ _ hD₀, card_filter_orbit_eq_multiplicity hD₀,
+      HeckeCosetModule.structureConstants_apply]
+    simp only [smul_eq_mul, nsmul_eq_mul]
+    ring
+  · have hzero : (HeckeCosetModule.structureConstants R H H H D₁.rep D₂.rep).sum
+        (fun D mD ↦ if x ∈ smulOrbit H D.rep q.rep then mD * c else 0) = 0 :=
+      (Finsupp.sum_congr fun D _ ↦ if_neg fun hmem ↦ h ⟨D, hmem⟩).trans
+        (Finsupp.sum_fun_zero _)
+    have hempty : (smulOrbit H D₁.rep q.rep).filter
+        (fun i ↦ x ∈ smulOrbit H D₂.rep i.rep) = ∅ :=
+      Finset.filter_eq_empty_iff.mpr fun i hi hpi ↦
+        h (exists_orbit_of_mem_orbit_orbit hi hpi)
+    rw [hzero, hempty, Finset.card_empty, zero_nsmul]
+    simp
+
+end HeckeLeftCosetModule
