@@ -21,7 +21,7 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
 
 * `TauCeti.SlashInvariantForm.mdifferentiable_quotientFunc`.
 * `TauCeti.SlashInvariantForm.isBoundedAtImInfty_quotientFunc`.
-* `TauCeti.ModularForm.slash_T_zpow_apply`: acting by a power of `T` is an integer shift.
+* `TauCeti.ModularForm.slash_T_zpow_apply`: slashing by a power of `T` is an integer shift.
 * `TauCeti.ModularForm.exists_norm_decomposition`.
 
 ## References
@@ -61,21 +61,14 @@ lemma isBoundedAtImInfty_quotientFunc [𝒢.IsFiniteRelIndex ℋ] [Fact (IsCusp 
 
 end SlashInvariantForm
 
-/-- The Möbius action of `upperRightHom x = [1, x; 0, 1]` on `ℍ` is the shift `x +ᵥ ·`. -/
-lemma Matrix.GeneralLinearGroup.upperRightHom_smul (x : ℝ) (τ : ℍ) :
-    _root_.Matrix.GeneralLinearGroup.upperRightHom x • τ = x +ᵥ τ := by
-  ext1
-  rw [coe_smul_of_det_pos (by simp)]
-  simp [num, denom, _root_.Matrix.GeneralLinearGroup.upperRightHom_apply, add_comm]
-
 /-- Acting on a function `g : ℍ → ℂ` by `T ^ j` via the weight `k` slash action is the shift
 `τ ↦ g ((j : ℝ) +ᵥ τ)`. -/
 lemma ModularForm.slash_T_zpow_apply (k j : ℤ) (g : ℍ → ℂ) (τ : ℍ) :
-    (g ∣[k] ((ModularGroup.T : SL(2, ℤ))^j : GL (Fin 2) ℝ)) τ = g ((j : ℝ) +ᵥ τ) := by
-  rw [Matrix.SpecialLinearGroup.coe_GL_eq_mapGL, ← map_zpow,
-    ModularGroup.mapGL_T_zpow_eq_upperRightHom, _root_.ModularForm.slash_apply,
-    Matrix.GeneralLinearGroup.upperRightHom_smul]
-  simp [σ, denom]
+    (g ∣[k] (ModularGroup.T ^ j : SL(2, ℤ))) τ = g ((j : ℝ) +ᵥ τ) := by
+  have hd : denom ((ModularGroup.T ^ j : SL(2, ℤ)) : GL (Fin 2) ℝ) τ = 1 := by
+    rw [Matrix.SpecialLinearGroup.coe_GL_eq_mapGL, ModularGroup.mapGL_T_zpow_eq_upperRightHom]
+    simp [denom, Matrix.GeneralLinearGroup.upperRightHom_apply]
+  rw [_root_.ModularForm.SL_slash_apply, modular_T_zpow_smul, hd, one_zpow, mul_one]
 
 namespace ModularForm
 
@@ -100,11 +93,11 @@ omit [𝒢.IsFiniteRelIndex 𝒮ℒ] in
 private lemma quotientFunc_T_pow_apply (j : Fin (Subgroup.integerCuspWidth 𝒢)) (τ : ℍ) :
     quotientFunc f (tPowCoset 𝒢 j) τ = f (ofComplex ((τ : ℂ) - (j : ℕ))) := by
   rw [tPowCoset, quotientFunc_mk]
-  have h_val : (((mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))^(j : ℕ)) : 𝒮ℒ) :
-      GL (Fin 2) ℝ) = ((ModularGroup.T : SL(2, ℤ))^((j : ℕ) : ℤ) : GL (Fin 2) ℝ) := by
-    rw [MonoidHom.coe_rangeRestrict, map_pow, zpow_natCast,
+  have h_val : ((((mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))^(j : ℕ)) : 𝒮ℒ) :
+      GL (Fin 2) ℝ))⁻¹ = ((ModularGroup.T ^ (-(j : ℕ) : ℤ) : SL(2, ℤ)) : GL (Fin 2) ℝ) := by
+    rw [MonoidHom.coe_rangeRestrict, ← map_inv, ← zpow_natCast, ← zpow_neg,
       ← Matrix.SpecialLinearGroup.coe_GL_eq_mapGL]
-  rw [h_val, ← zpow_neg, slash_T_zpow_apply]
+  rw [h_val, ← _root_.ModularForm.SL_slash, slash_T_zpow_apply]
   have him : 0 < ((τ : ℂ) - (j : ℕ)).im := by
     simp [Complex.sub_im, Complex.natCast_im, τ.im_pos]
   have h_eq : (((-(j : ℕ) : ℤ) : ℝ) +ᵥ τ : ℍ) = ofComplex ((τ : ℂ) - (j : ℕ)) := by
@@ -122,18 +115,22 @@ private lemma smul_mem_tPowCosets [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf �
     set t : 𝒮ℒ := (mapGL ℝ).rangeRestrict (ModularGroup.T : SL(2, ℤ)) with ht_def
     simp only [tPowCosets, tPowCoset] at hq ⊢
     obtain ⟨j, -, hj⟩ := Finset.mem_image.mp hq
-    rw [MulAction.Quotient.smul_mk, smul_eq_mul, Finset.mem_image,
-      show ((t * x : 𝒮ℒ) : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) =
-          ⟦(mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))^((j : ℕ) + 1))⟧ from
-        Quotient.sound (QuotientGroup.leftRel_apply.mpr (by
-          rw [pow_succ', map_mul, ← ht_def]
-          convert inv_mem (QuotientGroup.leftRel_apply.mp (Quotient.exact hj)) using 1
-          group))]
+    -- The action lemma below produces the `QuotientGroup.mk` spelling of the coset, while the
+    -- image members are spelled `⟦·⟧`; the two are definitionally but not syntactically equal,
+    -- so this bridge is proved by `Quotient.sound` rather than reached by rewriting.
+    have hmk : ((t * x : 𝒮ℒ) : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) =
+        ⟦(mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))^((j : ℕ) + 1))⟧ :=
+      Quotient.sound (QuotientGroup.leftRel_apply.mpr (by
+        rw [pow_succ', map_mul, ← ht_def]
+        convert inv_mem (QuotientGroup.leftRel_apply.mp (Quotient.exact hj)) using 1
+        group))
+    rw [MulAction.Quotient.smul_mk, smul_eq_mul, Finset.mem_image, hmk]
     by_cases hj1 : (j : ℕ) + 1 < Subgroup.integerCuspWidth 𝒢
     · exact ⟨⟨(j : ℕ) + 1, hj1⟩, Finset.mem_univ _, rfl⟩
     · refine ⟨⟨0, Subgroup.integerCuspWidth_pos⟩, Finset.mem_univ _,
         Quotient.sound (QuotientGroup.leftRel_apply.mpr ?_)⟩
-      rw [show (j : ℕ) + 1 = Subgroup.integerCuspWidth 𝒢 by lia]
+      have hw : (j : ℕ) + 1 = Subgroup.integerCuspWidth 𝒢 := by lia
+      rw [hw]
       simp only [pow_zero, map_one, inv_one, one_mul, Subgroup.mem_subgroupOf, map_pow]
       have key := Subgroup.T_pow_integerCuspWidth_mem (𝒢 := 𝒢)
       rwa [Matrix.SpecialLinearGroup.coe_GL_eq_mapGL] at key
@@ -160,14 +157,16 @@ private lemma prod_quotientFunc_one_vadd [DecidableEq (𝒮ℒ ⧸ (𝒢.subgrou
     ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q ((1 : ℝ) +ᵥ τ) =
       ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q τ := by
   set t : 𝒮ℒ := (mapGL ℝ).rangeRestrict (ModularGroup.T : SL(2, ℤ)) with ht_def
-  have ht_val : (t : GL (Fin 2) ℝ) = ((ModularGroup.T : SL(2, ℤ))^(1 : ℤ) : GL (Fin 2) ℝ) := by
+  have ht_val : (t : GL (Fin 2) ℝ) = ((ModularGroup.T ^ (1 : ℤ) : SL(2, ℤ)) : GL (Fin 2) ℝ) := by
     rw [ht_def, MonoidHom.coe_rangeRestrict, zpow_one,
       ← Matrix.SpecialLinearGroup.coe_GL_eq_mapGL]
   have h_step (q : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) :
       quotientFunc f q ((1 : ℝ) +ᵥ τ) = quotientFunc f (t⁻¹ • q) τ := by
-    rw [show quotientFunc f q ((1 : ℝ) +ᵥ τ) = (quotientFunc f q ∣[k] (t : GL (Fin 2) ℝ)) τ by
-        rw [ht_val, slash_T_zpow_apply]; norm_num,
-      quotientFunc_smul f t.2]
+    have hslash : quotientFunc f q ((1 : ℝ) +ᵥ τ) =
+        (quotientFunc f q ∣[k] (t : GL (Fin 2) ℝ)) τ := by
+      rw [ht_val, ← _root_.ModularForm.SL_slash, slash_T_zpow_apply]
+      norm_num
+    rw [hslash, quotientFunc_smul f t.2]
   refine (Finset.prod_congr rfl fun q _ ↦ h_step q).trans <|
     Finset.prod_equiv (MulAction.toPerm t⁻¹)
       (fun q ↦ by simpa using (inv_smul_mem_tPowCosets_iff (𝒢 := 𝒢) q).symm.not)
