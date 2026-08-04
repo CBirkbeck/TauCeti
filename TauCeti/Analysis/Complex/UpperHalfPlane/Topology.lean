@@ -4,19 +4,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Manifold
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Topology
 
 /-!
-# Periodicity and analyticity through `ofComplex`
+# Periodicity through `ofComplex`
 
 A function on the upper half-plane, extended to `ℂ` by `ofComplex`, is periodic with a real
-period exactly when the original function is invariant under the corresponding translation,
-and is analytic on the open upper half-plane when the original function is holomorphic.
+period exactly when the original function is invariant under the corresponding translation.
 
 ## Main declarations
 
 * `TauCeti.UpperHalfPlane.periodic_comp_ofComplex_iff`.
-* `TauCeti.UpperHalfPlane.analyticAt_comp_ofComplex`.
 
 ## References
 
@@ -29,14 +27,6 @@ public section
 open UpperHalfPlane
 
 namespace TauCeti.UpperHalfPlane
-
-open scoped Manifold in
-/-- A function holomorphic on `ℍ` composes with `ofComplex` to a function analytic at
-every point of the open upper half-plane. -/
-lemma analyticAt_comp_ofComplex {f : ℍ → ℂ} (hf : MDiff f) {w : ℂ} (hw : 0 < w.im) :
-    AnalyticAt ℂ (f ∘ ofComplex) w :=
-  (UpperHalfPlane.mdifferentiable_iff.mp hf).analyticAt
-    (isOpen_upperHalfPlaneSet.mem_nhds hw)
 
 /-- A function `ℍ → α`, extended to `ℂ` via `ofComplex`, is periodic with real period `c` iff
 the original function is invariant under translation by `c`. -/

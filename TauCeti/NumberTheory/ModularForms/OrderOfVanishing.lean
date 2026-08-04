@@ -6,7 +6,7 @@ module
 
 public import Mathlib.Analysis.Meromorphic.NormalForm
 public import Mathlib.NumberTheory.ModularForms.Basic
-public import TauCeti.Analysis.Complex.UpperHalfPlane.Topology
+public import TauCeti.Analysis.Complex.UpperHalfPlane.Manifold
 
 /-!
 # The vanishing order of a modular form
