@@ -39,86 +39,83 @@ namespace TauCeti
 
 namespace ModularForm
 
-variable {k : ℤ} {f : ModularForm 𝒮ℒ k}
+variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {f : ModularForm Γ k} {h : ℝ}
 
-private lemma one_mem_strictPeriods : (1 : ℝ) ∈ (𝒮ℒ).strictPeriods := by simp
-
-private lemma cuspFunction_not_eventually_zero (hf : f ≠ 0) :
-    ¬∀ᶠ q in 𝓝 (0 : ℂ), cuspFunction 1 f q = 0 := by
+private lemma cuspFunction_not_eventually_zero (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
+    (hf : f ≠ 0) : ¬∀ᶠ q in 𝓝 (0 : ℂ), cuspFunction h f q = 0 := by
   intro h_ev
-  have h_diff : DifferentiableOn ℂ (cuspFunction 1 f) (ball 0 1) := fun q hq ↦
-    (ModularFormClass.differentiableAt_cuspFunction f one_pos one_mem_strictPeriods
+  have h_diff : DifferentiableOn ℂ (cuspFunction h f) (ball 0 1) := fun q hq ↦
+    (ModularFormClass.differentiableAt_cuspFunction f hh hΓ
       (by rwa [mem_ball, dist_zero_right] at hq)).differentiableWithinAt
-  have h_eqOn : EqOn (cuspFunction 1 f) 0 (ball 0 1) :=
+  have h_eqOn : EqOn (cuspFunction h f) 0 (ball 0 1) :=
     (h_diff.analyticOnNhd isOpen_ball).eqOn_zero_of_preconnected_of_eventuallyEq_zero
       (convex_ball 0 1).isPreconnected (mem_ball_self one_pos) h_ev
   refine hf (DFunLike.coe_injective (funext fun τ ↦ ?_))
   rw [ModularForm.coe_zero, Pi.zero_apply,
-    ← SlashInvariantFormClass.eq_cuspFunction f τ one_mem_strictPeriods one_ne_zero]
+    ← SlashInvariantFormClass.eq_cuspFunction f τ hΓ hh.ne']
   exact h_eqOn (by
     rw [mem_ball, dist_zero_right]
-    exact_mod_cast norm_qParam_lt_one 1 τ)
+    exact_mod_cast Function.Periodic.norm_qParam_lt_one hh τ.im_pos)
 
-private lemma cuspFunction_eventually_ne_zero (hf : f ≠ 0) :
-    ∀ᶠ q in 𝓝[≠] (0 : ℂ), cuspFunction 1 f q ≠ 0 :=
-  (ModularFormClass.analyticAt_cuspFunction_zero f one_pos
-    one_mem_strictPeriods).eventually_eq_zero_or_eventually_ne_zero.resolve_left
-    (cuspFunction_not_eventually_zero hf)
+private lemma cuspFunction_eventually_ne_zero (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods)
+    (hf : f ≠ 0) : ∀ᶠ q in 𝓝[≠] (0 : ℂ), cuspFunction h f q ≠ 0 :=
+  (ModularFormClass.analyticAt_cuspFunction_zero f hh
+    hΓ).eventually_eq_zero_or_eventually_ne_zero.resolve_left
+    (cuspFunction_not_eventually_zero hh hΓ hf)
 
-/-- A nonzero level-one modular form does not vanish at points of sufficiently large
-imaginary part. -/
-lemma exists_height_nonvanishing (hf : f ≠ 0) :
+/-- A nonzero modular form with a positive strict period does not vanish at points of
+sufficiently large imaginary part. -/
+lemma exists_height_nonvanishing (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (hf : f ≠ 0) :
     ∃ H : ℝ, ∀ p : ℍ, H ≤ (p : ℂ).im → f p ≠ 0 := by
   obtain ⟨s, hs_prop, hs_open, hs_zero⟩ := _root_.eventually_nhds_iff.mp
-    (eventually_nhdsWithin_iff.mp (cuspFunction_eventually_ne_zero hf))
+    (eventually_nhdsWithin_iff.mp (cuspFunction_eventually_ne_zero hh hΓ hf))
   obtain ⟨r, hr_pos, hr_ball⟩ := Metric.isOpen_iff.mp hs_open 0 hs_zero
-  refine ⟨-Real.log (r / 2) / (2 * Real.pi), fun p hp hfp ↦ ?_⟩
-  have h_qmem : Function.Periodic.qParam (1 : ℝ) (p : ℂ) ∈ ball (0 : ℂ) r := by
-    rw [mem_ball, dist_zero_right, Function.Periodic.norm_qParam, div_one]
-    have h_exp : -2 * Real.pi * (-Real.log (r / 2) / (2 * Real.pi)) = Real.log (r / 2) := by
+  refine ⟨-h * Real.log (r / 2) / (2 * Real.pi), fun p hp hfp ↦ ?_⟩
+  have h_qmem : Function.Periodic.qParam h (p : ℂ) ∈ ball (0 : ℂ) r := by
+    rw [mem_ball, dist_zero_right, Function.Periodic.norm_qParam]
+    have h_exp : -2 * Real.pi * ((-h * Real.log (r / 2) / (2 * Real.pi)) / h) =
+        Real.log (r / 2) := by
       field_simp
-    calc Real.exp (-2 * Real.pi * (p : ℂ).im)
-        ≤ Real.exp (-2 * Real.pi * (-Real.log (r / 2) / (2 * Real.pi))) := by
+    calc Real.exp (-2 * Real.pi * (p : ℂ).im / h)
+        ≤ Real.exp (-2 * Real.pi * ((-h * Real.log (r / 2) / (2 * Real.pi)) / h)) := by
           refine Real.exp_le_exp.mpr ?_
-          nlinarith [Real.pi_pos]
+          rw [← mul_div_assoc]
+          refine (div_le_div_iff_of_pos_right hh).mpr ?_
+          have := mul_le_mul_of_nonneg_left hp (by positivity : (0 : ℝ) ≤ 2 * Real.pi)
+          linarith
       _ = r / 2 := by rw [h_exp]; exact Real.exp_log (by linarith)
       _ < r := by linarith
   refine hs_prop _ (hr_ball h_qmem) (mem_compl_singleton_iff.mpr (Complex.exp_ne_zero _)) ?_
-  rw [← SlashInvariantFormClass.eq_cuspFunction f p one_mem_strictPeriods one_ne_zero] at hfp
+  rw [← SlashInvariantFormClass.eq_cuspFunction f p hΓ hh.ne'] at hfp
   exact hfp
 
 /-- The set of points of the fundamental domain at which the vanishing order of a nonzero
 level-one modular form is nonzero is finite. -/
-lemma finite_zeros_in_fd (hf : f ≠ 0) :
+lemma finite_zeros_in_fd {f : ModularForm 𝒮ℒ k} (hf : f ≠ 0) :
     Set.Finite {p : ℍ | p ∈ 𝒟 ∧ orderOfVanishingAt f p ≠ 0} := by
-  obtain ⟨H₀, hH₀_no⟩ := exists_height_nonvanishing hf
-  by_contra h_inf
-  have h_zero : ∀ p : ℍ, orderOfVanishingAt (⇑f) p ≠ 0 → f p = 0 := fun p hp ↦ by
-    by_contra hne
-    exact hp (orderOfVanishingAt_eq_zero_of_ne_zero
-      (analyticAt_comp_ofComplex (ModularFormClass.holo f) p.im_pos).meromorphicNFAt hne)
-  have h_sub : {p : ℍ | p ∈ 𝒟 ∧ orderOfVanishingAt f p ≠ 0} ⊆
-      ModularGroup.truncatedFundamentalDomain H₀ := fun p ⟨hp_fd, hp_ord⟩ ↦ by
-    refine ⟨hp_fd, ?_⟩
-    by_contra! h_gt
-    exact hH₀_no p h_gt.le (h_zero p hp_ord)
+  obtain ⟨H₀, hH₀_no⟩ := exists_height_nonvanishing one_pos (by simp) hf
+  have hne : (⇑f : ℍ → ℂ) ≠ 0 := (ModularForm.coe_eq_zero_iff f).not.mpr hf
   have hK : IsCompact (UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H₀) :=
     (ModularGroup.isCompact_truncatedFundamentalDomain H₀).image continuous_coe
-  obtain ⟨z₀, hz₀K, hz₀_acc⟩ :=
-    ((show Set.Infinite _ from h_inf).image
-      UpperHalfPlane.coe_injective.injOn).exists_accPt_of_subset_isCompact hK
-      (Set.image_mono h_sub |>.trans (Set.image_subset_iff.mpr fun p hp ↦ ⟨p, hp, rfl⟩))
-  obtain ⟨q₀, -, rfl⟩ := hz₀K
-  have h_freq : ∃ᶠ w in 𝓝[≠] (q₀ : ℂ), (⇑f ∘ ofComplex) w = 0 := by
-    refine (accPt_iff_frequently_nhdsNE.mp hz₀_acc).mono ?_
-    rintro w ⟨p, ⟨-, hp_ord⟩, rfl⟩
-    simpa [Function.comp_apply, ofComplex_apply] using h_zero p hp_ord
-  have h_analOn : AnalyticOnNhd ℂ (⇑f ∘ ofComplex) {z : ℂ | 0 < z.im} :=
-    fun w hw ↦ analyticAt_comp_ofComplex (ModularFormClass.holo f) hw
-  refine hf (DFunLike.coe_injective (funext fun τ ↦ ?_))
-  have h_zero' := h_analOn.eqOn_zero_of_preconnected_of_frequently_eq_zero
-    (Convex.isPreconnected (convex_halfSpace_im_gt 0)) q₀.im_pos h_freq τ.im_pos
-  simpa [Function.comp_apply, ofComplex_apply] using h_zero'
+  have hK_im : ∀ z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H₀,
+      0 < z.im := by
+    rintro _ ⟨q, -, rfl⟩
+    exact q.im_pos
+  have h_mero : MeromorphicOn (⇑f ∘ ofComplex)
+      (UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H₀) := fun z hz ↦
+    (analyticAt_comp_ofComplex (ModularFormClass.holo f) (hK_im z hz)).meromorphicAt
+  have h_fin := MeromorphicOn.divisor_support_finite_of_subset h_mero hK subset_rfl
+  refine (h_fin.preimage UpperHalfPlane.coe_injective.injOn).subset ?_
+  rintro p ⟨hp_fd, hp_ord⟩
+  have h_zero : f p = 0 := by
+    by_contra hne'
+    exact hp_ord ((orderOfVanishingAt_eq_zero_iff (ModularFormClass.holo f) hne).mpr hne')
+  have hpK : (p : ℂ) ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H₀ :=
+    ⟨p, ⟨hp_fd, by by_contra! h_gt; exact hH₀_no p h_gt.le h_zero⟩, rfl⟩
+  rw [Set.mem_preimage, Function.mem_support, ne_eq,
+    MeromorphicOn.divisor_apply h_mero hpK]
+  intro h0
+  exact hp_ord (by rwa [orderOfVanishingAt_def])
 
 end ModularForm
 
