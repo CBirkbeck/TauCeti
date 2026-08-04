@@ -130,8 +130,8 @@ constant term, the zero function by the junk value. -/
 @[simp]
 lemma orderAtCusp_const (h : ℝ) (c : ℂ) : orderAtCusp h (fun _ ↦ c) = 0 := by
   rcases eq_or_ne c 0 with rfl | hc
-  · have h0 : qExpansion h (fun _ ↦ (0 : ℂ)) = 0 := qExpansion_zero h
-    rw [orderAtCusp_def, h0, PowerSeries.order_zero]
+  · rw [orderAtCusp_def,
+      show (qExpansion h fun _ ↦ (0 : ℂ)) = 0 from qExpansion_zero h, PowerSeries.order_zero]
     rfl
   · exact orderAtCusp_eq_zero_of_cuspFunction_ne_zero (by
       rw [cuspFunction_const]
