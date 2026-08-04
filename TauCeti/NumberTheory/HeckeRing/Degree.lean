@@ -157,3 +157,43 @@ lemma smul_comm' (r : R) (t : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
     rw [Finsupp.smul_single, smul_eq_mul, mul_left_comm]
 
 end HeckeLeftCosetModule
+
+namespace HeckeLeftCosetModule
+
+open HeckeCoset
+
+open scoped HeckeCosetModule
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
+
+/-- The scalar operations distribute over finite sums of module elements. -/
+private lemma smul_finset_sum {ι : Type*} (t : 𝕋 Δ H R) (s : Finset ι)
+    (f : ι → (HeckeCoset Δ ⊥ H →₀ R)) : t • ∑ i ∈ s, f i = ∑ i ∈ s, t • f i := by
+  classical
+  induction s using Finset.cons_induction with
+  | empty => rw [Finset.sum_empty, Finset.sum_empty, smul_zero]
+  | cons a s ha ih => rw [Finset.sum_cons, Finset.sum_cons, smul_add, ih]
+
+/-- Iterated action of two basis elements of the Hecke ring on a basis element of the
+module: the double sum over the two orbit layers. -/
+private lemma single_smul_single_smul (D₁ D₂ : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H)
+    (a b c : R) :
+    HeckeCosetModule.single R D₂ b •
+        (HeckeCosetModule.single R D₁ a • (Finsupp.single q c : HeckeCoset Δ ⊥ H →₀ R)) =
+      ∑ i ∈ smulOrbit H D₁.rep q.rep, ∑ j ∈ smulOrbit H D₂.rep i.rep,
+        Finsupp.single j (b * (a * c)) := by
+  rw [single_smul_single, smul_finset_sum]
+  exact Finset.sum_congr rfl fun i _ ↦ single_smul_single D₂ i b (a * c)
+
+/-- Expansion of the action of a structure-constants element: the multiplicity-weighted
+orbit sums. -/
+private lemma structureConstants_smul_single (D₁ D₂ : HeckeCoset Δ H H)
+    (q : HeckeCoset Δ ⊥ H) (c : R) :
+    HeckeCosetModule.structureConstants R H H H D₁.rep D₂.rep •
+        (Finsupp.single q c : HeckeCoset Δ ⊥ H →₀ R) =
+      (HeckeCosetModule.structureConstants R H H H D₁.rep D₂.rep).sum fun D mD ↦
+        ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (mD * c) := by
+  rw [smul_eq_sum]
+  exact Finsupp.sum_congr fun D _ ↦ Finsupp.sum_single_index (by simp)
+
+end HeckeLeftCosetModule
