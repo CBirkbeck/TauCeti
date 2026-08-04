@@ -1,0 +1,99 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import TauCeti.NumberTheory.ModularForms.FiniteZeros
+
+/-!
+# The vanishing order on `SL(2, ℤ)`-orbits
+
+The vanishing order of a level-one modular form is constant on `SL(2, ℤ)`-orbits of `ℍ`,
+so it descends to the orbit space (`TauCeti.ModularForm.ordOrbit`). Every orbit has a
+representative in the standard fundamental domain, the elliptic orbits are those of `i`
+and `ρ` (with `ρ + 1` on the orbit of `ρ`), and for a nonzero form only finitely many
+orbits carry nonzero order — the summation index of the valence formula.
+
+## Main declarations
+
+* `TauCeti.ModularForm.ordOrbit`: the order descended to
+  `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
+* `TauCeti.ModularForm.orbit_exists_fd_rep`: every orbit meets `𝒟`.
+* `TauCeti.ModularForm.finite_support_ordOrbit`: finite support on orbits for a nonzero
+  form.
+
+## References
+
+* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the valence-formula
+  development this file ports onto the current Mathlib pin.
+-/
+
+public noncomputable section
+
+open UpperHalfPlane
+
+open scoped ModularForm MatrixGroups Modular
+
+namespace TauCeti
+
+namespace ModularForm
+
+variable {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] (f : F)
+
+/-- The coercion of the `SL(2, ℤ)`-action on `ℍ` to the `GL(2, ℝ)`-action. -/
+private lemma smul_eq_coe_smul (g : SL(2, ℤ)) (p : ℍ) :
+    g • p = ((g : SL(2, ℤ)) : GL (Fin 2) ℝ) • p := rfl
+
+/-- The vanishing order of a level-one form, descended to `SL(2, ℤ)`-orbits of `ℍ`. -/
+def ordOrbit [SlashInvariantFormClass F 𝒮ℒ k] (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
+    ℤ :=
+  Quotient.liftOn' q (orderOfVanishingAt f) fun _ b ⟨g, hg⟩ ↦ by
+    have hg' : g • b = _ := hg
+    rw [← hg', smul_eq_coe_smul,
+      orderOfVanishingAt_smul f (γ := ((g : SL(2, ℤ)) : GL (Fin 2) ℝ))
+        (MonoidHom.mem_range.mpr ⟨g, rfl⟩) (by
+          have h1 : ((((g : SL(2, ℤ)) : GL (Fin 2) ℝ)) : Matrix (Fin 2) (Fin 2) ℝ) =
+              ((Matrix.SpecialLinearGroup.map (Int.castRingHom ℝ) g :
+                Matrix.SpecialLinearGroup (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) := rfl
+          rw [h1, Matrix.SpecialLinearGroup.det_coe]
+          exact one_pos) b]
+
+@[simp]
+lemma ordOrbit_mk [SlashInvariantFormClass F 𝒮ℒ k] (p : ℍ) :
+    ordOrbit f (Quotient.mk'' p) = orderOfVanishingAt f p := by
+  unfold ordOrbit
+  rfl
+
+/-- Every `SL(2, ℤ)`-orbit of `ℍ` has a representative in the standard fundamental
+domain. -/
+lemma orbit_exists_fd_rep (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
+    ∃ p : ℍ, Quotient.mk'' p = q ∧ p ∈ 𝒟 := by
+  induction q using Quotient.inductionOn' with
+  | h z =>
+    obtain ⟨g, hg⟩ := ModularGroup.exists_smul_mem_fd z
+    exact ⟨g • z, Quotient.sound' ⟨g, rfl⟩, hg⟩
+
+/-- For a nonzero level-one form, only finitely many orbits carry nonzero order. -/
+lemma finite_support_ordOrbit [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    Set.Finite {q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ | ordOrbit f q ≠ 0} := by
+  choose rep hrep_mk hrep_fd using orbit_exists_fd_rep
+  have h_image : rep '' {q | ordOrbit f q ≠ 0} ⊆
+      {p : ℍ | p ∈ 𝒟 ∧ orderOfVanishingAt f p ≠ 0} := by
+    rintro _ ⟨q, hq, rfl⟩
+    exact ⟨hrep_fd q, by rwa [← ordOrbit_mk f (rep q), hrep_mk q]⟩
+  have h_inj : Set.InjOn rep {q | ordOrbit f q ≠ 0} := fun q₁ _ q₂ _ h ↦ by
+    rw [← hrep_mk q₁, ← hrep_mk q₂, h]
+  exact ((finite_zeros_in_fd hf).subset h_image).of_finite_image h_inj
+
+/-- The orbit of `ρ + 1` is the orbit of `ρ`. -/
+lemma orbit_mk_one_vadd_ρ :
+    (Quotient.mk'' ((1 : ℝ) +ᵥ ρ) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) =
+      Quotient.mk'' ρ := by
+  exact Quotient.sound' ⟨ModularGroup.T, UpperHalfPlane.modular_T_smul ρ⟩
+
+end ModularForm
+
+end TauCeti
+
+end
