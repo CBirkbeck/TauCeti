@@ -23,7 +23,7 @@ as monoid homomorphisms `diamondOpHom` and `diamondOpCuspHom` into the endomorph
 The character space `modFormCharSpace k χ` (resp. `cuspFormCharSpace k χ`) is the simultaneous
 `χ`-eigenspace of the diamond operators, a `Submodule` of Mathlib's `ModularForm` — not a new
 bundled type — and membership in it is equivalent to the classical nebentypus transformation
-law `f ∣[k] γ = χ(d_γ) • f` for `γ ∈ Γ₀(N)` (`modFormCharSpace_iff_nebentypus`).
+law `f ∣[k] γ = χ(d_γ) • f` for `γ ∈ Γ₀(N)` (`mem_modFormCharSpace_iff_nebentypus`).
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GL2/Gamma1Pair.lean`, Chris Birkbeck), realizing Layer 0 of the
@@ -46,7 +46,7 @@ re-founded slash action with built-in character) and their names. The Hecke pair
 
 * `CongruenceSubgroup.Gamma0MapUnits_surjective`: every unit of `ZMod N` is the lower-right
   entry of a matrix in `Γ₀(N)` (via strong approximation for `SL₂`).
-* `modFormCharSpace_iff_nebentypus`/`cuspFormCharSpace_iff_nebentypus`: membership in the
+* `mem_modFormCharSpace_iff_nebentypus`/`mem_cuspFormCharSpace_iff_nebentypus`: membership in the
   character space is the classical nebentypus relation `f ∣[k] g = χ(d_g) • f` for all
   `g ∈ Γ₀(N)`.
 
@@ -76,7 +76,7 @@ theorem Gamma0_normalizes_Gamma1 (g : ↥(Gamma0 N)) (h : SL(2, ℤ)) (hh : h �
 
 /-- `(Gamma1 N).map (mapGL ℝ)` is invariant under conjugation by `Gamma0 N` elements
 in `GL₂(ℝ)`. -/
-theorem Gamma1_map_conjAct_eq (g : ↥(Gamma0 N)) :
+theorem Gamma1_map_inv_conjAct_eq (g : ↥(Gamma0 N)) :
     ConjAct.toConjAct (mapGL ℝ (g : SL(2, ℤ)))⁻¹ •
     (Gamma1 N).map (mapGL ℝ) = (Gamma1 N).map (mapGL ℝ) := by
   ext y
@@ -94,13 +94,13 @@ theorem Gamma1_map_conjAct_eq (g : ↥(Gamma0 N)) :
     exact ⟨(g : SL(2, ℤ)) * σ * (g : SL(2, ℤ))⁻¹,
       Gamma0_normalizes_Gamma1 g σ hσ, by simp [map_mul, map_inv]⟩
 
-/-- Forward variant of `Gamma1_map_conjAct_eq`: `(Gamma1 N).map (mapGL ℝ)` is invariant
+/-- Direct-conjugation variant of `Gamma1_map_inv_conjAct_eq`: `(Gamma1 N).map (mapGL ℝ)` is invariant
 under conjugation by `mapGL ℝ g` (rather than its inverse). -/
-theorem Gamma1_map_conjAct_eq_forward (g : ↥(Gamma0 N)) :
+theorem Gamma1_map_conjAct_eq (g : ↥(Gamma0 N)) :
     ConjAct.toConjAct (mapGL ℝ (g : SL(2, ℤ))) •
     (Gamma1 N).map (mapGL ℝ) = (Gamma1 N).map (mapGL ℝ) := by
   simpa [map_inv, ConjAct.toConjAct_inv, inv_inv, inv_smul_eq_iff] using
-    Gamma1_map_conjAct_eq ⟨(g : SL(2, ℤ))⁻¹, (Gamma0 N).inv_mem g.property⟩
+    Gamma1_map_inv_conjAct_eq ⟨(g : SL(2, ℤ))⁻¹, (Gamma0 N).inv_mem g.property⟩
 
 /-- The `Gamma0Map` lifts to a group homomorphism to `(ZMod N)ˣ`: the lower-right
 entry is a unit mod `N` with inverse the upper-left entry (from `det = 1` and `N ∣ c`). -/
@@ -172,6 +172,8 @@ lemma slash_mapGL_invariant_of_Gamma1_invariant {k : ℤ} (g : ↥(Gamma0 N))
     (f ∣[k] mapGL ℝ (g : SL(2, ℤ))) ∣[k] γ = f ∣[k] mapGL ℝ (g : SL(2, ℤ)) := by
   obtain ⟨σ, hσ, rfl⟩ := Subgroup.mem_map.mp hγ
   rw [← SlashAction.slash_mul, ← map_mul,
+    -- the ascription pins the conjugation regrouping; no rewriting lemma reassociates
+    -- the product into the conjugate-times-representative form directly
     show (g : SL(2, ℤ)) * σ = ((g : SL(2, ℤ)) * σ * (g : SL(2, ℤ))⁻¹) * (g : SL(2, ℤ)) by group,
     map_mul, SlashAction.slash_mul,
     hf _ (Subgroup.mem_map.mpr ⟨_, Gamma0_normalizes_Gamma1 g σ hσ, rfl⟩)]
@@ -185,7 +187,7 @@ lemma isCusp_mul_mapGL_smul_infty (g : ↥(Gamma0 N))
     IsCusp ((mapGL ℝ (g : SL(2, ℤ)) * γ) • (OnePoint.infty : OnePoint ℝ))
       ((Gamma1 N).map (mapGL ℝ)) := by
   rw [mul_smul, hγ]
-  exact Gamma1_map_conjAct_eq_forward g ▸ hc.smul (mapGL ℝ (g : SL(2, ℤ)))
+  exact Gamma1_map_conjAct_eq g ▸ hc.smul (mapGL ℝ (g : SL(2, ℤ)))
 
 /-- The diamond operator on modular forms for `Gamma1 N`, at a chosen representative: for
 `g ∈ Gamma0 N`, the slash action `f ↦ f ∣[k] g` preserves
@@ -220,6 +222,7 @@ lemma slash_eq_of_Gamma0Map_eq {k : ℤ} {f : UpperHalfPlane → ℂ}
     (hf : ∀ γ ∈ (Gamma1 N).map (mapGL ℝ), f ∣[k] γ = f)
     (g₁ g₂ : ↥(Gamma0 N)) (heq : Gamma0Map N g₁ = Gamma0Map N g₂) :
     f ∣[k] mapGL ℝ (g₁ : SL(2, ℤ)) = f ∣[k] mapGL ℝ (g₂ : SL(2, ℤ)) := by
+  -- the ascription pins the factor-through-g₂ regrouping; no rewriting lemma produces it
   rw [show (g₁ : SL(2, ℤ)) = ((g₁ : SL(2, ℤ)) * (g₂ : SL(2, ℤ))⁻¹) * (g₂ : SL(2, ℤ)) by group,
     map_mul, SlashAction.slash_mul,
     hf _ (Subgroup.mem_map.mpr ⟨_, mul_inv_mem_Gamma1_of_Gamma0Map_eq g₁ g₂ heq, rfl⟩)]
@@ -273,6 +276,7 @@ noncomputable def diamondOpHom [NeZero N] (k : ℤ) :
   map_one' := diamondOp_one k
   map_mul' := diamondOp_mul k
 
+@[simp]
 lemma diamondOpHom_apply [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) :
     diamondOpHom k d = diamondOp k d := (rfl)
 
@@ -322,6 +326,7 @@ theorem diamondOpCusp_eq (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
     (by simp [← Gamma0MapUnits_val, (Gamma0MapUnits_surjective d).choose_spec, hg])
 
 @[simp]
+/-- The cusp diamond operator at `1` is the identity. -/
 theorem diamondOpCusp_one [NeZero N] (k : ℤ) : diamondOpCusp (N := N) k 1 = LinearMap.id := by
   rw [diamondOpCusp_eq k 1 1 (map_one _)]
   ext f z
@@ -329,6 +334,7 @@ theorem diamondOpCusp_one [NeZero N] (k : ℤ) : diamondOpCusp (N := N) k 1 = Li
   change (⇑f ∣[k] mapGL ℝ (1 : SL(2, ℤ))) z = f z
   simp only [map_one, SlashAction.slash_one]
 
+/-- Cusp diamond operators compose multiplicatively. -/
 theorem diamondOpCusp_mul [NeZero N] (k : ℤ) (d₁ d₂ : (ZMod N)ˣ) :
     diamondOpCusp k (d₁ * d₂) = (diamondOpCusp k d₁).comp (diamondOpCusp k d₂) := by
   obtain ⟨g₁, hg₁⟩ := Gamma0MapUnits_surjective (N := N) d₁
@@ -348,6 +354,7 @@ noncomputable def diamondOpCuspHom [NeZero N] (k : ℤ) :
   map_one' := diamondOpCusp_one k
   map_mul' := diamondOpCusp_mul k
 
+@[simp]
 lemma diamondOpCuspHom_apply [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) :
     diamondOpCuspHom k d = diamondOpCusp k d := (rfl)
 
@@ -359,13 +366,14 @@ noncomputable def cuspFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* �
 
 /-- Membership in `S_k(Γ₁(N), χ)`: `f` is in the `χ`-eigenspace iff
 `⟨d⟩ f = χ(d) • f` for every `d ∈ (ZMod N)ˣ`. -/
+@[simp]
 theorem mem_cuspFormCharSpace_iff [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) : f ∈ cuspFormCharSpace k χ ↔
     ∀ d : (ZMod N)ˣ, diamondOpCuspHom k d f = (↑(χ d) : ℂ) • f := by
   simp only [cuspFormCharSpace, Submodule.mem_iInf, Module.End.mem_eigenspace_iff]
 
 /-- Diamond operators act by `χ(d)` on elements of `S_k(Γ₁(N), χ)`. -/
-theorem diamondOpCusp_apply_charSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+theorem diamondOpCuspHom_apply_of_mem_cuspFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (d : (ZMod N)ˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hf : f ∈ cuspFormCharSpace k χ) :
     diamondOpCuspHom k d f = (↑(χ d) : ℂ) • f :=
@@ -378,15 +386,23 @@ noncomputable def modFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* �
 
 /-- Membership in `M_k(Γ₁(N), χ)`: `f` is in the `χ`-eigenspace iff `⟨d⟩ f = χ(d) • f`
 for every `d ∈ (ZMod N)ˣ`. -/
+@[simp]
 theorem mem_modFormCharSpace_iff [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) : f ∈ modFormCharSpace k χ ↔
     ∀ d : (ZMod N)ˣ, diamondOpHom k d f = (↑(χ d) : ℂ) • f := by
   simp only [modFormCharSpace, Submodule.mem_iInf, Module.End.mem_eigenspace_iff]
 
+/-- Diamond operators act by `χ(d)` on elements of `M_k(Γ₁(N), χ)`. -/
+theorem diamondOpHom_apply_of_mem_modFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+    (d : (ZMod N)ˣ) {f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k}
+    (hf : f ∈ modFormCharSpace k χ) :
+    diamondOpHom k d f = (↑(χ d) : ℂ) • f :=
+  (mem_modFormCharSpace_iff k χ f).mp hf d
+
 /-- **Bridge**: for a `Gamma1`-invariant modular form `f`, membership in the
 diamond-eigenspace `modFormCharSpace k χ₀` is equivalent to the classical nebentypus
 relation `f ∣[k] g = χ₀(d_g) • f` for all `g ∈ Γ₀(N)`. -/
-theorem modFormCharSpace_iff_nebentypus [NeZero N] (k : ℤ) (χ₀ : (ZMod N)ˣ →* ℂˣ)
+theorem mem_modFormCharSpace_iff_nebentypus [NeZero N] (k : ℤ) (χ₀ : (ZMod N)ˣ →* ℂˣ)
     (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) : f ∈ modFormCharSpace k χ₀ ↔
     ∀ g : ↥(Gamma0 N),
       (⇑f) ∣[k] mapGL ℝ (g : SL(2, ℤ)) = (↑(χ₀ (Gamma0MapUnits g)) : ℂ) • ⇑f := by
@@ -402,7 +418,7 @@ theorem modFormCharSpace_iff_nebentypus [NeZero N] (k : ℤ) (χ₀ : (ZMod N)ˣ
 /-- **Bridge (cusp forms)**: for a `Gamma1`-invariant cusp form `f`, membership in the
 diamond-eigenspace `cuspFormCharSpace k χ₀` is equivalent to the classical nebentypus
 relation `f ∣[k] g = χ₀(d_g) • f` for all `g ∈ Γ₀(N)`. -/
-theorem cuspFormCharSpace_iff_nebentypus [NeZero N] (k : ℤ) (χ₀ : (ZMod N)ˣ →* ℂˣ)
+theorem mem_cuspFormCharSpace_iff_nebentypus [NeZero N] (k : ℤ) (χ₀ : (ZMod N)ˣ →* ℂˣ)
     (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) : f ∈ cuspFormCharSpace k χ₀ ↔
     ∀ g : ↥(Gamma0 N),
       (⇑f) ∣[k] mapGL ℝ (g : SL(2, ℤ)) = (↑(χ₀ (Gamma0MapUnits g)) : ℂ) • ⇑f := by
