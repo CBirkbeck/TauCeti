@@ -306,7 +306,7 @@ noncomputable def diamondOpCusp [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) :
   diamondOpCuspAux k (Gamma0MapUnits_surjective d).choose
 
 /-- `diamondOpCusp` equals `diamondOpCuspAux` on any representative. -/
-theorem diamondOpCusp_eq (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
+theorem diamondOpCusp_eq_diamondOpCuspAux (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
     (hg : Gamma0MapUnits g = d) [NeZero N] :
     diamondOpCusp k d = diamondOpCuspAux k g :=
   diamondOpCuspAux_eq_of_Gamma0Map_eq k _ g
@@ -315,7 +315,7 @@ theorem diamondOpCusp_eq (k : ℤ) (d : (ZMod N)ˣ) (g : ↥(Gamma0 N))
 /-- The cusp diamond operator at `1` is the identity. -/
 @[simp]
 theorem diamondOpCusp_one [NeZero N] (k : ℤ) : diamondOpCusp (N := N) k 1 = LinearMap.id := by
-  rw [diamondOpCusp_eq k 1 1 (map_one _)]
+  rw [diamondOpCusp_eq_diamondOpCuspAux k 1 1 (map_one _)]
   ext f z
   -- state the unfolded slash of the coercion so `slash_one` applies
   change (⇑f ∣[k] mapGL ℝ (1 : SL(2, ℤ))) z = f z
@@ -326,8 +326,9 @@ theorem diamondOpCusp_mul [NeZero N] (k : ℤ) (d₁ d₂ : (ZMod N)ˣ) :
     diamondOpCusp k (d₁ * d₂) = (diamondOpCusp k d₁).comp (diamondOpCusp k d₂) := by
   obtain ⟨g₁, hg₁⟩ := Gamma0MapUnits_surjective (N := N) d₁
   obtain ⟨g₂, hg₂⟩ := Gamma0MapUnits_surjective (N := N) d₂
-  rw [diamondOpCusp_eq k (d₁ * d₂) (g₂ * g₁) (by simp [map_mul, hg₁, hg₂, mul_comm]),
-    diamondOpCusp_eq k d₁ g₁ hg₁, diamondOpCusp_eq k d₂ g₂ hg₂]
+  rw [diamondOpCusp_eq_diamondOpCuspAux k (d₁ * d₂) (g₂ * g₁)
+      (by simp [map_mul, hg₁, hg₂, mul_comm]),
+    diamondOpCusp_eq_diamondOpCuspAux k d₁ g₁ hg₁, diamondOpCusp_eq_diamondOpCuspAux k d₂ g₂ hg₂]
   ext f z
   -- state the unfolded slash of the coercion so `slash_mul` applies
   change (⇑f ∣[k] mapGL ℝ ((g₂ : SL(2, ℤ)) * (g₁ : SL(2, ℤ)))) z =
@@ -412,8 +413,8 @@ theorem mem_cuspFormCharSpace_iff_nebentypus [NeZero N] (k : ℤ) (χ₀ : (ZMod
   rw [mem_cuspFormCharSpace_iff]
   refine ⟨fun h g ↦ ?_, fun h d ↦ ?_⟩
   · have hd := h (Gamma0MapUnits g)
-    rw [diamondOpCuspHom_apply, diamondOpCusp_eq k _ g rfl] at hd
+    rw [diamondOpCuspHom_apply, diamondOpCusp_eq_diamondOpCuspAux k _ g rfl] at hd
     exact congr_arg (⇑· : CuspForm _ k → _) hd
   · obtain ⟨g, hg⟩ := Gamma0MapUnits_surjective (N := N) d
-    rw [diamondOpCuspHom_apply, diamondOpCusp_eq k d g hg, ← hg]
+    rw [diamondOpCuspHom_apply, diamondOpCusp_eq_diamondOpCuspAux k d g hg, ← hg]
     exact CuspForm.ext (congr_fun (h g))
