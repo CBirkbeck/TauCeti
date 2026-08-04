@@ -7,6 +7,7 @@ module
 
 public import Mathlib.LinearAlgebra.Finsupp.LSum
 public import TauCeti.NumberTheory.HeckeRing.LeftCosetModule
+public import TauCeti.NumberTheory.HeckeRing.Multiplication
 public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Unit
 import Mathlib.Tactic.Group
 
@@ -195,5 +196,16 @@ private lemma structureConstants_smul_single (D₁ D₂ : HeckeCoset Δ H H)
         ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (mD * c) := by
   rw [smul_eq_sum]
   exact Finsupp.sum_congr fun D _ ↦ Finsupp.sum_single_index (by simp)
+
+omit [IsHeckeTriple Δ H H] in
+open Classical in
+/-- Evaluating a sum of distinct basis singles: the indicator coefficient. -/
+private lemma sum_single_apply (s : Finset (HeckeCoset Δ ⊥ H)) (v : R)
+    (x : HeckeCoset Δ ⊥ H) :
+    (∑ i ∈ s, Finsupp.single i v : HeckeCoset Δ ⊥ H →₀ R) x = if x ∈ s then v else 0 := by
+  classical
+  rw [Finset.sum_apply']
+  simp only [Finsupp.single_apply]
+  rw [Finset.sum_ite_eq' s x fun _ ↦ v]
 
 end HeckeLeftCosetModule
