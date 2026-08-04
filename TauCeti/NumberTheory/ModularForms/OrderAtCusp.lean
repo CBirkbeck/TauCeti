@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Mathlib.Data.ENat.BigOperators
 public import TauCeti.NumberTheory.ModularForms.QExpansion.Order
 
 /-!
@@ -22,6 +23,8 @@ of them are supplied by the `ModularFormClass` machinery.
 * `TauCeti.ModularForm.orderAtCusp`.
 * `TauCeti.ModularForm.orderAtCusp_eq_analyticOrderAt`: the analytic-order dictionary.
 * `TauCeti.ModularForm.orderAtCusp_nat_mul`: linear rescaling in the width.
+* `TauCeti.ModularForm.orderAtCusp_mul`: additivity on products (with `orderAtCusp_pow`
+  and `orderAtCusp_prod`).
 
 ## References
 
@@ -79,6 +82,108 @@ lemma orderAtCusp_nat_mul {m : ℕ} (hh : 0 < h) (hm : 0 < m)
   rw [orderAtCusp_def, orderAtCusp_def,
     qExpansion_nat_mul_order hh hm hg_per hg_bdd hg_mdiff, ENat.toNat_mul]
   simp [mul_comm]
+
+private lemma cuspFunction_mul_eventuallyEq (h : ℝ) (f g : ℍ → ℂ) :
+    cuspFunction h (f * g) =ᶠ[𝓝[≠] (0 : ℂ)] cuspFunction h f * cuspFunction h g := by
+  filter_upwards [self_mem_nhdsWithin] with q hq
+  simp only [UpperHalfPlane.cuspFunction, Pi.mul_apply,
+    Function.Periodic.cuspFunction_eq_of_nonzero _ _ hq]
+  rfl
+
+private lemma cuspFunction_mul_nhds {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0)
+    (hg : AnalyticAt ℂ (cuspFunction h g) 0) :
+    cuspFunction h (f * g) =ᶠ[𝓝 (0 : ℂ)] cuspFunction h f * cuspFunction h g := by
+  have h_lim : Filter.Tendsto (cuspFunction h (f * g)) (𝓝[≠] 0)
+      (𝓝 (cuspFunction h f 0 * cuspFunction h g 0)) :=
+    (((hf.continuousAt.tendsto.mono_left nhdsWithin_le_nhds).mul
+      (hg.continuousAt.tendsto.mono_left nhdsWithin_le_nhds))).congr'
+      (cuspFunction_mul_eventuallyEq h f g).symm
+  have h_at : cuspFunction h (f * g) 0 = cuspFunction h f 0 * cuspFunction h g 0 := by
+    rw [UpperHalfPlane.cuspFunction, Function.Periodic.cuspFunction_zero_eq_limUnder_nhds_ne]
+    exact h_lim.limUnder_eq
+  rw [← nhdsNE_sup_pure (0 : ℂ)]
+  exact Filter.eventually_sup.mpr
+    ⟨cuspFunction_mul_eventuallyEq h f g, Filter.eventually_pure.mpr h_at⟩
+
+/-- The cusp order is additive on products. The finiteness hypotheses exclude an
+identically vanishing factor, where the junk value `0` would break additivity. -/
+lemma orderAtCusp_mul {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0)
+    (hg : AnalyticAt ℂ (cuspFunction h g) 0)
+    (hf' : analyticOrderAt (cuspFunction h f) 0 ≠ ⊤)
+    (hg' : analyticOrderAt (cuspFunction h g) 0 ≠ ⊤) :
+    orderAtCusp h (f * g) = orderAtCusp h f + orderAtCusp h g := by
+  have h_full := cuspFunction_mul_nhds hf hg
+  rw [orderAtCusp_eq_analyticOrderAt ((hf.mul hg).congr h_full.symm),
+    orderAtCusp_eq_analyticOrderAt hf, orderAtCusp_eq_analyticOrderAt hg,
+    analyticOrderAt_congr h_full, analyticOrderAt_mul hf hg, ENat.toNat_add hf' hg']
+  push_cast
+  ring
+
+private lemma cuspFunction_one (h : ℝ) : cuspFunction h (1 : ℍ → ℂ) = 1 := by
+  have h_lim : Filter.limUnder (𝓝[≠] (0 : ℂ))
+      (((1 : ℍ → ℂ) ∘ ofComplex) ∘ Function.Periodic.invQParam h) = 1 :=
+    Filter.Tendsto.limUnder_eq tendsto_const_nhds
+  rw [UpperHalfPlane.cuspFunction, Function.Periodic.cuspFunction, h_lim]
+  exact Function.update_eq_self 0 (1 : ℂ → ℂ)
+
+/-- The constant-one function has cusp order zero. -/
+@[simp]
+lemma orderAtCusp_one (h : ℝ) : orderAtCusp h (1 : ℍ → ℂ) = 0 :=
+  orderAtCusp_eq_zero_of_cuspFunction_ne_zero
+    (by rw [cuspFunction_one]; exact analyticAt_const)
+    (by rw [cuspFunction_one]; exact one_ne_zero)
+
+private lemma cuspFunction_pow_nhds {f : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
+    ∀ n : ℕ, cuspFunction h (f ^ n) =ᶠ[𝓝 (0 : ℂ)] cuspFunction h f ^ n
+  | 0 => by simp [pow_zero, cuspFunction_one]
+  | n + 1 => by
+    have h_prev := cuspFunction_pow_nhds hf n
+    calc cuspFunction h (f ^ (n + 1))
+        =ᶠ[𝓝 (0 : ℂ)] cuspFunction h (f ^ n) * cuspFunction h f := by
+          rw [pow_succ]
+          exact cuspFunction_mul_nhds ((hf.pow n).congr h_prev.symm) hf
+      _ =ᶠ[𝓝 (0 : ℂ)] cuspFunction h f ^ n * cuspFunction h f :=
+          h_prev.mul Filter.EventuallyEq.rfl
+      _ = cuspFunction h f ^ (n + 1) := (pow_succ _ _).symm
+
+/-- The cusp order multiplies under powers, with no finiteness hypothesis: at the
+identically vanishing expansion both sides take the junk value. -/
+lemma orderAtCusp_pow {f : ℍ → ℂ} (n : ℕ) (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
+    orderAtCusp h (f ^ n) = n * orderAtCusp h f := by
+  have h_ev := cuspFunction_pow_nhds hf n
+  rw [orderAtCusp_eq_analyticOrderAt ((hf.pow n).congr h_ev.symm),
+    orderAtCusp_eq_analyticOrderAt hf, analyticOrderAt_congr h_ev, analyticOrderAt_pow hf,
+    nsmul_eq_mul, ENat.toNat_mul]
+  simp
+
+private lemma cuspFunction_prod_nhds {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
+    (hf : ∀ i ∈ s, AnalyticAt ℂ (cuspFunction h (f i)) 0) :
+    cuspFunction h (∏ i ∈ s, f i) =ᶠ[𝓝 (0 : ℂ)] ∏ i ∈ s, cuspFunction h (f i) := by
+  induction s using Finset.cons_induction with
+  | empty => simp [cuspFunction_one]
+  | cons a s ha ih =>
+    have h_prev := ih fun i hi ↦ hf i (Finset.mem_cons_of_mem hi)
+    calc cuspFunction h (∏ i ∈ Finset.cons a s ha, f i)
+        =ᶠ[𝓝 (0 : ℂ)] cuspFunction h (f a) * cuspFunction h (∏ i ∈ s, f i) := by
+          rw [Finset.prod_cons]
+          exact cuspFunction_mul_nhds (hf a (Finset.mem_cons_self a s))
+            ((Finset.analyticAt_prod _ fun i hi ↦
+              hf i (Finset.mem_cons_of_mem hi)).congr h_prev.symm)
+      _ =ᶠ[𝓝 (0 : ℂ)] cuspFunction h (f a) * ∏ i ∈ s, cuspFunction h (f i) :=
+          Filter.EventuallyEq.rfl.mul h_prev
+      _ = ∏ i ∈ Finset.cons a s ha, cuspFunction h (f i) := by rw [Finset.prod_cons]
+
+/-- The cusp order is additive on finite products. The finiteness hypotheses exclude an
+identically vanishing factor, where the junk value `0` would break additivity. -/
+lemma orderAtCusp_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
+    (hf : ∀ i ∈ s, AnalyticAt ℂ (cuspFunction h (f i)) 0)
+    (hf' : ∀ i ∈ s, analyticOrderAt (cuspFunction h (f i)) 0 ≠ ⊤) :
+    orderAtCusp h (∏ i ∈ s, f i) = ∑ i ∈ s, orderAtCusp h (f i) := by
+  have h_ev := cuspFunction_prod_nhds s hf
+  rw [orderAtCusp_eq_analyticOrderAt ((Finset.analyticAt_prod _ hf).congr h_ev.symm),
+    analyticOrderAt_congr h_ev, TauCeti.analyticOrderAt_prod hf, ENat.toNat_sum hf',
+    Nat.cast_sum]
+  exact Finset.sum_congr rfl fun i hi ↦ (orderAtCusp_eq_analyticOrderAt (hf i hi)).symm
 
 end ModularForm
 
