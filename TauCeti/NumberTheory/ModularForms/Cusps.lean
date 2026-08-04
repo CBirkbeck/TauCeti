@@ -4,8 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.NumberTheory.ModularForms.Cusps
+public import Mathlib.GroupTheory.GroupAction.Period
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.FinTwo
+public import Mathlib.NumberTheory.ModularForms.Cusps
 
 /-!
 # The integer cusp width of a finite-index subgroup
@@ -62,40 +63,81 @@ lemma ModularGroup.mapGL_T_pow_eq_upperRightHom {S : Type*} [CommRing S] (n : �
 
 section IntegerCuspWidth
 
-/-- A finite-index subgroup of `𝒮ℒ` always has a positive natural number in its strict periods,
-namely the order of `T` modulo `𝒢 ⊓ 𝒮ℒ`. -/
+variable {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsFiniteRelIndex 𝒮ℒ]
+
+/-- The left-multiplication action of `𝒮ℒ` on the coset space `𝒮ℒ ⧸ 𝒢 ⊓ 𝒮ℒ`,
+constructed explicitly: instance synthesis for this action is unstable at use sites, so
+the declarations below install it with `letI`. -/
+@[instance_reducible]
+private noncomputable def quotientTAction :
+    MulAction 𝒮ℒ (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) :=
+  letI : MulAction 𝒮ℒ 𝒮ℒ := Monoid.toMulAction _
+  .quotient ..
+
+omit [𝒢.IsFiniteRelIndex 𝒮ℒ] in
+/-- The coset of a power of `T` is the base coset exactly when the exponent is a strict
+period of `𝒢`: the bridge between the coset space and the strict periods, stated without
+reference to the group action. -/
+lemma Subgroup.mk_T_pow_eq_iff {n : ℕ} :
+    (⟦(mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ)))^n⟧ :
+        𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) = ⟦1⟧ ↔ (n : ℝ) ∈ 𝒢.strictPeriods := by
+  rw [Quotient.eq, QuotientGroup.leftRel_apply]
+  simp only [mul_one, inv_mem_iff, Subgroup.mem_subgroupOf,
+    MonoidHom.coe_rangeRestrict, ← map_pow, ModularGroup.mapGL_T_pow_eq_upperRightHom,
+    Subgroup.mem_strictPeriods_iff]
+
+/-- A finite-index subgroup of `𝒮ℒ` always has a positive natural number in its strict
+periods, namely the order of `T` modulo `𝒢 ⊓ 𝒮ℒ`. -/
 lemma Subgroup.exists_pos_nat_mem_strictPeriods (𝒢 : Subgroup (GL (Fin 2) ℝ))
     [𝒢.IsFiniteRelIndex 𝒮ℒ] :
     ∃ n : ℕ, 0 < n ∧ (n : ℝ) ∈ 𝒢.strictPeriods := by
   obtain ⟨n, hn_pos, _, hn_mem⟩ := Subgroup.exists_pow_mem_of_index_ne_zero
     (Subgroup.FiniteIndex.index_ne_zero (H := (𝒢 : Subgroup (GL (Fin 2) ℝ)).subgroupOf 𝒮ℒ))
     ((mapGL ℝ).rangeRestrict ModularGroup.T)
-  refine ⟨n, hn_pos, ?_⟩
-  rw [Subgroup.mem_subgroupOf, Subgroup.coe_pow, MonoidHom.coe_rangeRestrict, ← map_pow,
-    ← zpow_natCast, ModularGroup.mapGL_T_zpow_eq_upperRightHom] at hn_mem
-  simpa [Subgroup.mem_strictPeriods_iff] using hn_mem
+  refine ⟨n, hn_pos, Subgroup.mk_T_pow_eq_iff.mp ?_⟩
+  rw [Quotient.eq, QuotientGroup.leftRel_apply]
+  simpa using inv_mem hn_mem
+
+omit [𝒢.IsFiniteRelIndex 𝒮ℒ] in
+/-- The powers of the coset of `T` acting on the base coset, as statements about
+cosets: `t ^ n • ⟦1⟧ = ⟦t ^ n⟧` under the explicit action. -/
+private lemma quotientTAction_pow_smul_mk_one (n : ℕ) :
+    let _ : MulAction 𝒮ℒ (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := quotientTAction (𝒢 := 𝒢)
+    ((mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))))^n •
+        (⟦1⟧ : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) =
+      ⟦((mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))))^n⟧ := by
+  intro _
+  rw [MulAction.Quotient.smul_mk, smul_eq_mul, mul_one]
 
 /-- The smallest positive integer `n` such that the upper-triangular matrix `[1, n; 0, 1]`
-lies in `𝒢`; one exists because `𝒢` has finite relative index in `𝒮ℒ`. -/
+lies in `𝒢`: the `MulAction.period` of the coset of `T` acting on the base coset of
+`𝒮ℒ ⧸ 𝒢 ⊓ 𝒮ℒ`. -/
 noncomputable def Subgroup.integerCuspWidth (𝒢 : Subgroup (GL (Fin 2) ℝ))
     [𝒢.IsFiniteRelIndex 𝒮ℒ] : ℕ :=
-  open Classical in Nat.find (Subgroup.exists_pos_nat_mem_strictPeriods 𝒢)
-
-variable {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsFiniteRelIndex 𝒮ℒ]
+  let _ : MulAction 𝒮ℒ (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := quotientTAction (𝒢 := 𝒢)
+  MulAction.period ((mapGL ℝ).rangeRestrict (ModularGroup.T : SL(2, ℤ)))
+    (⟦1⟧ : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))
 
 /-- The integer cusp width is positive. -/
 lemma Subgroup.integerCuspWidth_pos : 0 < Subgroup.integerCuspWidth 𝒢 := by
-  classical exact (Nat.find_spec (Subgroup.exists_pos_nat_mem_strictPeriods 𝒢)).1
+  obtain ⟨n, hn_pos, hn_mem⟩ := Subgroup.exists_pos_nat_mem_strictPeriods 𝒢
+  let _ : MulAction 𝒮ℒ (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := quotientTAction (𝒢 := 𝒢)
+  exact MulAction.period_pos_of_fixed hn_pos
+    ((quotientTAction_pow_smul_mk_one n).trans (Subgroup.mk_T_pow_eq_iff.mpr hn_mem))
 
 /-- The integer cusp width is a strict period. -/
 lemma Subgroup.integerCuspWidth_mem_strictPeriods :
     (Subgroup.integerCuspWidth 𝒢 : ℝ) ∈ 𝒢.strictPeriods := by
-  classical exact (Nat.find_spec (Subgroup.exists_pos_nat_mem_strictPeriods 𝒢)).2
+  let _ : MulAction 𝒮ℒ (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := quotientTAction (𝒢 := 𝒢)
+  exact Subgroup.mk_T_pow_eq_iff.mp
+    ((quotientTAction_pow_smul_mk_one _).symm.trans (MulAction.pow_period_smul _ _))
 
 /-- The integer cusp width is minimal among positive integer strict periods. -/
-lemma Subgroup.integerCuspWidth_le {n : ℕ} (hpos : 0 < n) (hmem : (n : ℝ) ∈ 𝒢.strictPeriods) :
-    Subgroup.integerCuspWidth 𝒢 ≤ n := by
-  classical exact Nat.find_le ⟨hpos, hmem⟩
+lemma Subgroup.integerCuspWidth_le {n : ℕ} (hpos : 0 < n)
+    (hmem : (n : ℝ) ∈ 𝒢.strictPeriods) : Subgroup.integerCuspWidth 𝒢 ≤ n := by
+  let _ : MulAction 𝒮ℒ (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := quotientTAction (𝒢 := 𝒢)
+  exact MulAction.period_le_of_fixed hpos
+    ((quotientTAction_pow_smul_mk_one n).trans (Subgroup.mk_T_pow_eq_iff.mpr hmem))
 
 /-- The `integerCuspWidth 𝒢`-th power of `T` lies in `𝒢`. -/
 lemma Subgroup.T_pow_integerCuspWidth_mem :
@@ -106,33 +148,52 @@ lemma Subgroup.T_pow_integerCuspWidth_mem :
   rw [← map_pow, ModularGroup.mapGL_T_pow_eq_upperRightHom, ← mem_strictPeriods_iff]
   exact Subgroup.integerCuspWidth_mem_strictPeriods
 
-/-- The cosets `T ^ j • (𝒢 ⊓ 𝒮ℒ)` for `j < Subgroup.integerCuspWidth 𝒢` are pairwise distinct in
+/-- The natural numbers among the strict periods are exactly the multiples of the
+integer cusp width. -/
+lemma Subgroup.natCast_mem_strictPeriods_iff {n : ℕ} :
+    (n : ℝ) ∈ 𝒢.strictPeriods ↔ Subgroup.integerCuspWidth 𝒢 ∣ n := by
+  let _ : MulAction 𝒮ℒ (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := quotientTAction (𝒢 := 𝒢)
+  rw [← Subgroup.mk_T_pow_eq_iff, ← quotientTAction_pow_smul_mk_one n,
+    Subgroup.integerCuspWidth, MulAction.pow_smul_eq_iff_period_dvd]
+
+/-- The powers of `T` lying in `𝒢` are exactly those with exponent divisible by the
+integer cusp width. -/
+lemma Subgroup.T_pow_mem_iff {n : ℕ} :
+    ((ModularGroup.T : SL(2, ℤ))^n : GL (Fin 2) ℝ) ∈ 𝒢 ↔
+      Subgroup.integerCuspWidth 𝒢 ∣ n := by
+  -- The `GL`-coercion of a power of `T` is definitionally the power of `mapGL T`;
+  -- `change` exposes that spelling once.
+  change (mapGL ℝ ModularGroup.T)^n ∈ 𝒢 ↔ _
+  rw [← map_pow, ModularGroup.mapGL_T_pow_eq_upperRightHom, ← mem_strictPeriods_iff,
+    Subgroup.natCast_mem_strictPeriods_iff]
+
+/-- The cosets `T ^ j • (𝒢 ⊓ 𝒮ℒ)` for `j < integerCuspWidth 𝒢` are pairwise distinct in
 `𝒮ℒ ⧸ 𝒢.subgroupOf 𝒮ℒ`. -/
 lemma Subgroup.quotient_T_pow_integerCuspWidth_injective :
     Function.Injective (fun j : Fin (Subgroup.integerCuspWidth 𝒢) ↦
       (⟦(mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))^(j : ℕ))⟧ :
         𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))) := by
+  let _ : MulAction 𝒮ℒ (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := quotientTAction (𝒢 := 𝒢)
+  set t := (mapGL ℝ).rangeRestrict (ModularGroup.T : SL(2, ℤ))
   suffices key : ∀ {a b : ℕ}, a ≤ b → b < Subgroup.integerCuspWidth 𝒢 →
-      ((b : ℝ) - (a : ℝ)) ∈ 𝒢.strictPeriods → a = b by
+      t ^ a • (⟦1⟧ : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) = t ^ b • ⟦1⟧ → a = b by
     intro j₁ j₂ hj
-    rw [QuotientGroup.eq, Subgroup.mem_subgroupOf] at hj
-    have hSub : (((((mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))^(j₁ : ℕ)))⁻¹ *
-        (mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))^(j₂ : ℕ))) : 𝒮ℒ) : GL (Fin 2) ℝ) =
-        mapGL ℝ ((ModularGroup.T : SL(2, ℤ))^((j₂ : ℤ) - (j₁ : ℤ))) := by
-      rw [Subgroup.coe_mul, Subgroup.coe_inv, MonoidHom.coe_rangeRestrict,
-        MonoidHom.coe_rangeRestrict, ← map_inv, ← map_mul, zpow_sub, zpow_natCast, zpow_natCast]
-      exact congr_arg _ ((Commute.pow_pow_self ModularGroup.T _ _).inv_right).eq.symm
-    -- Align the coercion routes `ℤ → ℝ` on the exponent difference before reading off
-    -- strict-period membership.
-    rw [hSub, ModularGroup.mapGL_T_zpow_eq_upperRightHom,
-      show (((j₂ : ℤ) - (j₁ : ℤ) : ℤ) : ℝ) = ((j₂ : ℝ) - (j₁ : ℝ)) by push_cast; ring,
-      ← mem_strictPeriods_iff] at hj
-    exact Fin.ext <| (le_total (j₁ : ℕ) (j₂ : ℕ)).elim (key · j₂.isLt hj) fun hle ↦
-      (key hle j₁.isLt (by simpa [neg_sub] using neg_mem hj)).symm
-  intro a b hab hb hmem
+    simp only [map_pow] at hj
+    rw [← quotientTAction_pow_smul_mk_one (j₁ : ℕ),
+      ← quotientTAction_pow_smul_mk_one (j₂ : ℕ)] at hj
+    exact Fin.ext <| (le_total (j₁ : ℕ) (j₂ : ℕ)).elim (fun h ↦ key h j₂.isLt hj)
+      fun h ↦ (key h j₁.isLt hj.symm).symm
+  intro a b hab hb hfix
   by_contra hne
-  exact absurd (Subgroup.integerCuspWidth_le (n := b - a) (by lia)
-    (by rwa [Nat.cast_sub hab])) (by lia)
+  have hy : t ^ (b - a) • (t ^ a • (⟦1⟧ : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))) = t ^ a • ⟦1⟧ := by
+    rw [smul_smul, ← pow_add, Nat.sub_add_cancel hab]
+    exact hfix.symm
+  have hcancel : t ^ (b - a) • (⟦1⟧ : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) = ⟦1⟧ := by
+    have h := congrArg (fun x ↦ (t ^ a)⁻¹ • x) hy
+    -- Powers of `t` commute, so conjugating by `t ^ a` leaves `t ^ (b − a)` unchanged.
+    simpa [smul_smul, ← mul_assoc, pow_mul_comm, inv_mul_cancel_left] using h
+  exact MulAction.pow_smul_ne_of_lt_period (Nat.sub_pos_of_lt (lt_of_le_of_ne hab hne))
+    (lt_of_le_of_lt (Nat.sub_le b a) hb) hcancel
 
 /-- The integer cusp width is a positive integer multiple of the strict width at `∞`. -/
 lemma Subgroup.integerCuspWidth_eq_nat_mul_strictWidthInfty [DiscreteTopology 𝒢.strictPeriods] :
@@ -146,47 +207,6 @@ lemma Subgroup.integerCuspWidth_eq_nat_mul_strictWidthInfty [DiscreteTopology �
       pos_of_mul_pos_left (hm ▸ mod_cast Subgroup.integerCuspWidth_pos) 𝒢.strictWidthInfty_nonneg
     exact_mod_cast this
   exact ⟨m.toNat, by lia, by rw [← hm, ← Int.cast_natCast, Int.toNat_of_nonneg hm_pos.le]⟩
-
-/-- The natural numbers among the strict periods are exactly the multiples of the
-integer cusp width. -/
-lemma Subgroup.natCast_mem_strictPeriods_iff {n : ℕ} :
-    (n : ℝ) ∈ 𝒢.strictPeriods ↔ Subgroup.integerCuspWidth 𝒢 ∣ n := by
-  refine ⟨fun hn ↦ ?_, fun ⟨q, hq⟩ ↦ ?_⟩
-  · suffices hr : n % Subgroup.integerCuspWidth 𝒢 = 0 from Nat.dvd_of_mod_eq_zero hr
-    by_contra hr0
-    -- The remainder is itself a strict period, contradicting minimality.
-    have hrmem : ((n % Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) ∈ 𝒢.strictPeriods := by
-      have hcast : ((Subgroup.integerCuspWidth 𝒢 * (n / Subgroup.integerCuspWidth 𝒢) +
-          n % Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) = (n : ℝ) :=
-        congrArg (fun m : ℕ => (m : ℝ)) (Nat.div_add_mod n (Subgroup.integerCuspWidth 𝒢))
-      have hsub : ((n % Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) =
-          (n : ℝ) - (n / Subgroup.integerCuspWidth 𝒢 : ℕ) *
-            (Subgroup.integerCuspWidth 𝒢 : ℝ) := by
-        push_cast at hcast ⊢
-        linarith
-      have hmul := nsmul_mem (Subgroup.integerCuspWidth_mem_strictPeriods (𝒢 := 𝒢))
-        (n / Subgroup.integerCuspWidth 𝒢)
-      rw [nsmul_eq_mul] at hmul
-      rw [hsub]
-      exact sub_mem hn hmul
-    exact absurd (Subgroup.integerCuspWidth_le (Nat.pos_of_ne_zero hr0) hrmem)
-      (not_le.mpr (Nat.mod_lt _ Subgroup.integerCuspWidth_pos))
-  · subst hq
-    have hmul := nsmul_mem (Subgroup.integerCuspWidth_mem_strictPeriods (𝒢 := 𝒢)) q
-    rw [nsmul_eq_mul, mul_comm] at hmul
-    push_cast
-    exact hmul
-
-/-- The powers of `T` lying in `𝒢` are exactly those with exponent divisible by the
-integer cusp width. -/
-lemma Subgroup.T_pow_mem_iff {n : ℕ} :
-    ((ModularGroup.T : SL(2, ℤ))^n : GL (Fin 2) ℝ) ∈ 𝒢 ↔
-      Subgroup.integerCuspWidth 𝒢 ∣ n := by
-  -- The `GL`-coercion of a power of `T` is definitionally the power of `mapGL T`;
-  -- `change` exposes that spelling once.
-  change (mapGL ℝ ModularGroup.T)^n ∈ 𝒢 ↔ _
-  rw [← map_pow, ModularGroup.mapGL_T_pow_eq_upperRightHom, ← mem_strictPeriods_iff,
-    Subgroup.natCast_mem_strictPeriods_iff]
 
 end IntegerCuspWidth
 
