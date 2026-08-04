@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.Algebra.BigOperators.Finsupp.Basic
 public import Mathlib.NumberTheory.HeckeRing.Defs
 public import Mathlib.GroupTheory.Index
 
@@ -125,3 +126,34 @@ noncomputable instance {Δ : Submonoid G} {H₁ H₂ : Subgroup G} [IsHeckeTripl
   Subgroup.fintypeOfIndexNeZero (IsHeckeTriple.commensurable_conjAct_right g).1
 
 end IsHeckeTriple
+
+namespace HeckeCosetModule
+
+variable {G : Type*} [Group G] {Δ : Submonoid G} {H₁ H₂ : Subgroup G}
+
+section SingleWrapper
+
+variable (R : Type*) [Zero R]
+
+/-- A basis element of the Hecke coset module: `single R D b` is the formal sum `b • [D]`. As
+for `Finsupp` itself, this is the type-correct way to produce elements of
+`HeckeCosetModule Δ H₁ H₂ R`. Only `[Zero R]` is assumed, so consumers with coefficient
+assumptions below `Semiring` (the left-coset scalar operations) can use it. -/
+@[expose] noncomputable def single (D : HeckeCoset Δ H₁ H₂) (b : R) :
+    HeckeCosetModule Δ H₁ H₂ R :=
+  Finsupp.single D b
+
+/-- `Finsupp.sum_single_index`, as a wrapper-level equation: summing over a basis element
+evaluates the summand at its point. -/
+lemma sum_single_index {N : Type*} [AddCommMonoid N] {D : HeckeCoset Δ H₁ H₂} {b : R}
+    {F : HeckeCoset Δ H₁ H₂ → R → N} (h : F D 0 = 0) : (single R D b).sum F = F D b :=
+  Finsupp.sum_single_index h
+
+@[grind =]
+lemma single_apply {D A : HeckeCoset Δ H₁ H₂} {b : R} [Decidable (D = A)] :
+    single R D b A = if D = A then b else 0 :=
+  Finsupp.single_apply
+
+end SingleWrapper
+
+end HeckeCosetModule

@@ -5,8 +5,8 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Finsupp.Basic
-public import TauCeti.NumberTheory.HeckeRing.Multiplication
+public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Basic
+import Mathlib.Algebra.BigOperators.Finsupp.Basic
 import Mathlib.Tactic.Group
 
 /-!
