@@ -1,0 +1,53 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import Mathlib.NumberTheory.Modular
+
+/-!
+# Orbits of the modular group on the upper half-plane
+
+Every `SL(2, ℤ)`-orbit of `ℍ` has a representative in the standard fundamental domain,
+and translation by one preserves orbits. These are the orbit-space inputs of the
+valence formula.
+
+## Main declarations
+
+* `TauCeti.ModularGroup.orbit_exists_fd_rep`: every orbit meets `𝒟`.
+* `TauCeti.ModularGroup.orbit_mk_one_vadd`: translation by one preserves the orbit.
+-/
+
+public section
+
+open UpperHalfPlane
+
+open scoped MatrixGroups Modular
+
+namespace TauCeti
+
+namespace ModularGroup
+
+/-- Every `SL(2, ℤ)`-orbit of `ℍ` has a representative in the standard fundamental
+domain. -/
+lemma orbit_exists_fd_rep (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
+    ∃ p : ℍ, Quotient.mk'' p = q ∧ p ∈ 𝒟 := by
+  induction q using Quotient.inductionOn' with
+  | h z =>
+    obtain ⟨g, hg⟩ := _root_.ModularGroup.exists_smul_mem_fd z
+    exact ⟨g • z, Quotient.sound' ⟨g, rfl⟩, hg⟩
+
+/-- Translation by one preserves the `SL(2, ℤ)`-orbit; in particular `ρ + 1` lies on the
+orbit of `ρ`. -/
+@[simp]
+lemma orbit_mk_one_vadd (z : ℍ) :
+    (Quotient.mk'' ((1 : ℝ) +ᵥ z) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) =
+      Quotient.mk'' z :=
+  Quotient.sound' ⟨_root_.ModularGroup.T, UpperHalfPlane.modular_T_smul z⟩
+
+end ModularGroup
+
+end TauCeti
+
+end

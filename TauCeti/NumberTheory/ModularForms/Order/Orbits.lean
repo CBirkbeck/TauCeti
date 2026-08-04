@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import TauCeti.NumberTheory.Modular.Orbits
 public import TauCeti.NumberTheory.ModularForms.Cusps
 public import TauCeti.NumberTheory.ModularForms.FiniteZeros
 
@@ -11,19 +12,16 @@ public import TauCeti.NumberTheory.ModularForms.FiniteZeros
 # The vanishing order on `SL(2, ℤ)`-orbits
 
 The vanishing order of a level-one modular form is constant on `SL(2, ℤ)`-orbits of `ℍ`,
-so it descends to the orbit space (`TauCeti.ModularForm.ordOrbit`). Every orbit has a
-representative in the standard fundamental domain, translation by one preserves orbits
-(so `ρ + 1` lies on the orbit of `ρ`), and for a nonzero form only finitely many orbits
-carry nonzero order — the summation index of the valence formula.
+so it descends to the orbit space (`TauCeti.ModularForm.ordOrbit`), and for a nonzero
+form only finitely many orbits carry nonzero order — the summation index of the valence
+formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.Orbits`.
 
 ## Main declarations
 
 * `TauCeti.ModularForm.ordOrbit`: the order descended to
   `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
-* `TauCeti.ModularForm.orbit_exists_fd_rep`: every orbit meets `𝒟`.
 * `TauCeti.ModularForm.finite_support_ordOrbit`: finite support on orbits for a nonzero
   form.
-* `TauCeti.ModularForm.orbit_mk_one_vadd`: translation by one preserves the orbit.
 
 ## References
 
@@ -65,19 +63,10 @@ lemma ordOrbit_mk [SlashInvariantFormClass F 𝒮ℒ k] (p : ℍ) :
   unfold ordOrbit
   rfl
 
-/-- Every `SL(2, ℤ)`-orbit of `ℍ` has a representative in the standard fundamental
-domain. -/
-lemma orbit_exists_fd_rep (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
-    ∃ p : ℍ, Quotient.mk'' p = q ∧ p ∈ 𝒟 := by
-  induction q using Quotient.inductionOn' with
-  | h z =>
-    obtain ⟨g, hg⟩ := ModularGroup.exists_smul_mem_fd z
-    exact ⟨g • z, Quotient.sound' ⟨g, rfl⟩, hg⟩
-
 /-- For a nonzero level-one form, only finitely many orbits carry nonzero order. -/
 lemma finite_support_ordOrbit [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     Set.Finite {q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ | ordOrbit f q ≠ 0} := by
-  choose rep hrep_mk hrep_fd using orbit_exists_fd_rep
+  choose rep hrep_mk hrep_fd using ModularGroup.orbit_exists_fd_rep
   have h_image : rep '' {q | ordOrbit f q ≠ 0} ⊆
       {p : ℍ | p ∈ 𝒟 ∧ orderOfVanishingAt f p ≠ 0} := by
     rintro _ ⟨q, hq, rfl⟩
@@ -85,14 +74,6 @@ lemma finite_support_ordOrbit [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (⇑f
   have h_inj : Set.InjOn rep {q | ordOrbit f q ≠ 0} := fun q₁ _ q₂ _ h ↦ by
     rw [← hrep_mk q₁, ← hrep_mk q₂, h]
   exact ((finite_zeros_in_fd hf).subset h_image).of_finite_image h_inj
-
-/-- Translation by one preserves the `SL(2, ℤ)`-orbit; in particular `ρ + 1` lies on the
-orbit of `ρ`. -/
-@[simp]
-lemma orbit_mk_one_vadd (z : ℍ) :
-    (Quotient.mk'' ((1 : ℝ) +ᵥ z) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) =
-      Quotient.mk'' z :=
-  Quotient.sound' ⟨ModularGroup.T, UpperHalfPlane.modular_T_smul z⟩
 
 end ModularForm
 
