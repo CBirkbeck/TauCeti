@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Basic
+public import TauCeti.NumberTheory.HeckeRing.Basic
 import Mathlib.Tactic.Group
 
 /-!
@@ -71,19 +71,9 @@ an element of `H` on the right: `⊥β₁H = ⊥β₂H ↔ β₁H = β₂H`. Thi
 which the double-coset quotient serves as the left-coset quotient. -/
 lemma mk_bot_eq_mk_bot {β₁ β₂ : Δ} :
     mk ⊥ H β₁ = mk ⊥ H β₂ ↔ ((β₁ : G))⁻¹ * (β₂ : G) ∈ H := by
-  rw [eq_iff]
-  constructor
-  · intro h
-    have hmem : (β₂ : G) ∈ doubleCoset (β₁ : G) ((⊥ : Subgroup G) : Set G) H :=
-      h ▸ mem_doubleCoset_self _ _ _
-    obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := mem_doubleCoset.mp hmem
-    obtain rfl : h₁ = 1 := hh₁
-    rw [heq]
-    simpa using hh₂
-  · intro h
-    exact doubleCoset_eq_of_mem (mem_doubleCoset.mpr
-      ⟨1, Subgroup.mem_bot.mpr rfl, (β₂ : G)⁻¹ * (β₁ : G),
-        by simpa using H.inv_mem h, by group⟩)
+  rw [eq_iff, ← QuotientGroup.leftRel_apply, ← DoubleCoset.bot_rel_eq_leftRel H]
+  exact (Setoid.ker_def
+    (f := fun x : G ↦ doubleCoset x (((⊥ : Subgroup G) : Set G)) ((H : Set G)))).symm
 
 /-- The representative of the class of `β` differs from `β` by an element of `H`. -/
 lemma inv_rep_mul_mem (β : Δ) : (((mk ⊥ H β : HeckeCoset Δ ⊥ H).rep : G))⁻¹ * (β : G) ∈ H :=

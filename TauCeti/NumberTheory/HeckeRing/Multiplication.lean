@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Finsupp.Basic
 public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Support
 
 /-!
