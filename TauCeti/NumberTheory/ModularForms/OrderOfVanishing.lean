@@ -23,6 +23,7 @@ irregular cusps in odd weight) belongs to the general-level layer and is not def
 * `TauCeti.orderOfVanishingAt`.
 * `TauCeti.orderOfVanishingAt_eq_zero_iff`: for a nonzero holomorphic function, the order
   at `z` vanishes exactly when the function does not vanish at `z`.
+* `TauCeti.orderOfVanishingAt_mul`: orders add under multiplication.
 * `TauCeti.orderOfVanishingAt_smul`: invariance along the action of the group.
 
 ## References
@@ -46,9 +47,10 @@ order `0`. -/
 def orderOfVanishingAt (f : ℍ → ℂ) (z : ℍ) : ℤ :=
   (meromorphicOrderAt (f ∘ ofComplex) (z : ℂ)).untop₀
 
--- The definition is sealed by the module system, so this restatement is the supported
--- cross-module rewrite for it. Not a `simp` lemma: unfolding the definition is not a
--- normal form, and `simpNF` rejects it against the dictionary lemmas below.
+/-- The defining equality of `orderOfVanishingAt`: the definition is sealed by the module
+system, so this restatement is the supported cross-module rewrite for it. -/
+-- Not a `simp` lemma: unfolding the definition is not a normal form, and `simpNF` rejects
+-- it against the dictionary lemmas below.
 lemma orderOfVanishingAt_def (f : ℍ → ℂ) (z : ℍ) :
     orderOfVanishingAt f z = (meromorphicOrderAt (f ∘ ofComplex) (z : ℂ)).untop₀ := by
   unfold orderOfVanishingAt
@@ -102,6 +104,17 @@ lemma orderOfVanishingAt_eq_zero_iff (hf : MDiff f) (hne : f ≠ 0) {z : ℍ} :
   ⟨fun h hz ↦ orderOfVanishingAt_ne_zero_of_eq_zero hf hne hz h,
     orderOfVanishingAt_eq_zero_of_ne_zero
       (analyticAt_comp_ofComplex hf z.im_pos).meromorphicNFAt⟩
+
+/-- Vanishing orders add under multiplication of nonzero holomorphic functions. -/
+lemma orderOfVanishingAt_mul {g : ℍ → ℂ} (hf : MDiff f) (hg : MDiff g)
+    (hfne : f ≠ 0) (hgne : g ≠ 0) (z : ℍ) :
+    orderOfVanishingAt (f * g) z = orderOfVanishingAt f z + orderOfVanishingAt g z := by
+  have hmul : (f * g) ∘ ofComplex = (f ∘ ofComplex) * (g ∘ ofComplex) := rfl
+  rw [orderOfVanishingAt_def, orderOfVanishingAt_def, orderOfVanishingAt_def, hmul,
+    meromorphicOrderAt_mul (analyticAt_comp_ofComplex hf z.im_pos).meromorphicAt
+      (analyticAt_comp_ofComplex hg z.im_pos).meromorphicAt]
+  exact WithTop.untop₀_add (meromorphicOrderAt_comp_ofComplex_ne_top hf hfne z)
+    (meromorphicOrderAt_comp_ofComplex_ne_top hg hgne z)
 
 variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
 
