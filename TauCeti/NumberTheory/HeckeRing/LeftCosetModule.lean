@@ -105,6 +105,7 @@ lemma smulOrbit_eq_image (g β : Δ) :
 open Classical in
 /-- Membership in the orbit: the left cosets of the products `β · σᵢ · g` over the
 decomposition representatives. -/
+@[simp]
 lemma mem_smulOrbit {g β : Δ} {x : HeckeCoset Δ ⊥ H} :
     x ∈ smulOrbit H g β ↔ ∃ i : DecompQuotient H H (g : G),
       mk ⊥ H ⟨(β : G) * i.out * g,

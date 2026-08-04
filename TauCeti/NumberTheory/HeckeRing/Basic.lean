@@ -161,7 +161,7 @@ lemma sum_single_index {N : Type*} [AddCommMonoid N] {D : HeckeCoset Δ H₁ H�
     {F : HeckeCoset Δ H₁ H₂ → R → N} (h : F D 0 = 0) : (single R D b).sum F = F D b :=
   Finsupp.sum_single_index h
 
-@[grind =]
+@[simp, grind =]
 lemma single_apply {D A : HeckeCoset Δ H₁ H₂} {b : R} [Decidable (D = A)] :
     single R D b A = if D = A then b else 0 :=
   Finsupp.single_apply
