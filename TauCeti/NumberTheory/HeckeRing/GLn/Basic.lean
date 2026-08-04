@@ -85,6 +85,13 @@ def HasIntEntries (g : GL (Fin n) ℚ) : Prop :=
   ∃ A : Matrix (Fin n) (Fin n) ℤ,
     (↑g : Matrix (Fin n) (Fin n) ℚ) = A.map (Int.cast : ℤ → ℚ)
 
+/-- Characteristic lemma for `HasIntEntries`: introduction and elimination via the
+integer-matrix witness, without exposing the definition body. -/
+lemma hasIntEntries_iff {g : GL (Fin n) ℚ} :
+    HasIntEntries n g ↔ ∃ A : Matrix (Fin n) (Fin n) ℤ,
+      (↑g : Matrix (Fin n) (Fin n) ℚ) = A.map (Int.cast : ℤ → ℚ) :=
+  (Iff.rfl)
+
 lemma hasIntEntries_of_mem_SLnZ {g : GL (Fin n) ℚ} (hg : g ∈ SLnZ n) :
     HasIntEntries n g :=
   let ⟨σ, hσ⟩ := hg
