@@ -135,8 +135,10 @@ by the order-zero convention). -/
 lemma orderOfVanishingAt_const (c : ℂ) (z : ℍ) :
     orderOfVanishingAt (fun _ ↦ c) z = 0 := by
   classical
-  rw [orderOfVanishingAt_def,
-    show (fun _ : ℍ ↦ c) ∘ ofComplex = fun _ ↦ c from rfl, meromorphicOrderAt_const]
+  -- Composition with a constant is definitionally constant; the composition equality is by
+  -- `rfl` since no `ofComplex` value is consumed.
+  have hcomp : (fun _ : ℍ ↦ c) ∘ ofComplex = fun _ ↦ c := rfl
+  rw [orderOfVanishingAt_def, hcomp, meromorphicOrderAt_const]
   split_ifs <;> rfl
 
 /-- The vanishing order of a holomorphic function is nonnegative. -/
@@ -186,23 +188,46 @@ lemma orderOfVanishingAt_pow (hf : MDiff f) (n : ℕ) (z : ℍ) :
 
 variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
 
-/-- The vanishing order of a slash-invariant form is constant along the group action. -/
+/-- The vanishing order of a slash-invariant form is constant along the action of any
+positive-determinant element of the group. -/
 -- Not a `simp` lemma: the subgroup `Γ` occurs only in the hypotheses, so `simpNF` rejects
 -- the annotation (`simp` could never instantiate it from the left-hand side).
-lemma orderOfVanishingAt_smul [Γ.HasDetOne] [SlashInvariantFormClass F Γ k] (f : F) {γ}
-    (hγ : γ ∈ Γ) (z : ℍ) : orderOfVanishingAt f (γ • z) = orderOfVanishingAt f z := by
-  have hdet : 0 < γ.val.det := by
-    simp [← Matrix.GeneralLinearGroup.val_det_apply, Subgroup.HasDetOne.det_eq hγ]
+lemma orderOfVanishingAt_smul [SlashInvariantFormClass F Γ k] (f : F) {γ}
+    (hγ : γ ∈ Γ) (hdet : 0 < γ.val.det) (z : ℍ) :
+    orderOfVanishingAt f (γ • z) = orderOfVanishingAt f z := by
+  have hdet_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ≠ 0 := by
+    exact_mod_cast (abs_pos.mpr (γ.det : ℝˣ).ne_zero).ne'
+  have hpt : ∀ τ : ℍ, f (γ • τ) =
+      ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (1 - k) * denom γ (τ : ℂ) ^ k * f τ := by
+    intro τ
+    have h := congr_fun (SlashInvariantForm.slash_action_eqn f γ hγ) τ
+    rw [ModularForm.slash_def] at h
+    have hσ : σ γ = ContinuousAlgEquiv.refl ℝ ℂ := by
+      rw [σ, if_pos (show (0 : ℝ) < ↑(Matrix.GeneralLinearGroup.det γ) from by
+        rwa [Matrix.GeneralLinearGroup.val_det_apply])]
+    rw [hσ] at h
+    have hden : denom γ (τ : ℂ) ≠ 0 := denom_ne_zero γ τ
+    have h2 : f (γ • τ) =
+        f τ * (((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1))⁻¹ * (denom γ (τ : ℂ) ^ (-k))⁻¹ := by
+      rw [← h]
+      field_simp
+      rfl
+    rw [h2, ← zpow_neg, ← zpow_neg, neg_neg, show -(k - 1) = 1 - k by ring]
+    ring
   have hcongr : (fun w : ℂ ↦ f (γ • ofComplex w)) =ᶠ[nhds (z : ℂ)]
-      (fun w : ℂ ↦ ((γ 1 0 : ℂ) * w + (γ 1 1 : ℂ)) ^ k) * (⇑f ∘ ofComplex) := by
+      (fun w : ℂ ↦ ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (1 - k) *
+        ((γ 1 0 : ℂ) * w + (γ 1 1 : ℂ)) ^ k) * (⇑f ∘ ofComplex) := by
     filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds z.im_pos] with w hw
     rw [Pi.mul_apply, Function.comp_apply, ofComplex_apply_of_im_pos hw]
-    simpa using SlashInvariantForm.slash_action_eqn' f hγ ⟨w, hw⟩
-  have h_an : AnalyticAt ℂ (fun w : ℂ ↦ ((γ 1 0 : ℂ) * w + (γ 1 1 : ℂ)) ^ k) (z : ℂ) := by
-    refine AnalyticAt.zpow (by fun_prop) ?_
+    simpa [denom, mul_assoc] using hpt ⟨w, hw⟩
+  have h_an : AnalyticAt ℂ (fun w : ℂ ↦ ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (1 - k) *
+      ((γ 1 0 : ℂ) * w + (γ 1 1 : ℂ)) ^ k) (z : ℂ) := by
+    refine AnalyticAt.mul analyticAt_const (AnalyticAt.zpow (by fun_prop) ?_)
     simpa [denom] using denom_ne_zero γ z
-  have h_ne : ((γ 1 0 : ℂ) * (z : ℂ) + (γ 1 1 : ℂ)) ^ k ≠ 0 :=
-    zpow_ne_zero _ (by simpa [denom] using denom_ne_zero γ z)
+  have h_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (1 - k) *
+      ((γ 1 0 : ℂ) * (z : ℂ) + (γ 1 1 : ℂ)) ^ k ≠ 0 :=
+    mul_ne_zero (zpow_ne_zero _ hdet_ne)
+      (zpow_ne_zero _ (by simpa [denom] using denom_ne_zero γ z))
   unfold orderOfVanishingAt
   conv_lhs => rw [Function.comp_def]
   rw [← meromorphicOrderAt_comp_smul hdet,
