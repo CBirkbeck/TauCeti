@@ -89,6 +89,8 @@ theorem psl2rMk_smul (g : SL(2, ℝ)) (τ : ℍ) :
   -- the `compHom` action is definitionally the `PGL(2, ℝ)`-action of the `toPGL`-image
   change Matrix.ProjectiveSpecialLinearGroup.toPGL (↑g : PSL(2, ℝ)) • τ = g • τ
   rw [Matrix.ProjectiveSpecialLinearGroup.toPGL_mk, pglMk_smul]
+  -- the cast `SL(2, ℝ)`-action is definitionally the `GL(2, ℝ)`-action of the coercion;
+  -- no rewriting lemma crosses this definitional boundary
   rfl
 
 /-- The `PSL(2, ℝ)`-action on `ℍ` is faithful: it restricts Mathlib's faithful
