@@ -47,6 +47,15 @@ namespace ModularForm
 
 variable {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsFiniteRelIndex 𝒮ℒ] {k : ℤ} (f : ModularForm 𝒢 k)
 
+private lemma strictWidthInfty_pos_of_finiteRelIndex {𝒢 : Subgroup (GL (Fin 2) ℝ)}
+    [𝒢.IsFiniteRelIndex 𝒮ℒ] [DiscreteTopology 𝒢.strictPeriods] : 0 < 𝒢.strictWidthInfty := by
+  obtain ⟨m', hm'_pos, hnRw⟩ :=
+    Subgroup.exists_pos_nat_integerCuspWidth_eq_mul_strictWidthInfty (𝒢 := 𝒢)
+  refine 𝒢.strictWidthInfty_nonneg.lt_of_ne fun heq ↦ ?_
+  rw [← heq, mul_zero] at hnRw
+  exact (by exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢) : (0 : ℝ) <
+    Subgroup.integerCuspWidth 𝒢).ne' hnRw
+
 private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.strictPeriods] :
     (qExpansion 𝒢.strictWidthInfty f).order ≤
       (qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f)).order := by
@@ -77,11 +86,8 @@ private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.s
     qExpansion_one_galoisProd_order_eq hn_pos hf_n_per hf_bdd f.holo']
   refine le_trans ?_ le_self_add
   rw [hnRw]
-  exact qExpansion_order_le_qExpansion_nat_mul_order
-    (𝒢.strictWidthInfty_nonneg.lt_of_ne fun heq ↦ by
-      rw [← heq, mul_zero] at hnRw
-      exact hnR_pos.ne' hnRw)
-    hm'_pos hf_w_per hf_bdd f.holo'
+  exact qExpansion_order_le_qExpansion_nat_mul_order strictWidthInfty_pos_of_finiteRelIndex hm'_pos
+    hf_w_per hf_bdd f.holo'
 
 /-- **Sturm bound for subgroups of `GL(2, ℝ)` of finite relative index in `SL(2, ℤ)`.** A
 modular form of weight `k` whose `q`-expansion at the cusp `∞` has order strictly greater
@@ -107,15 +113,9 @@ theorem sturm_bound_finiteIndex_SL2Z {Γ : Subgroup SL(2, ℤ)} [Γ.FiniteIndex]
       Subgroup.relIndex_top_right]
   exact sturm_bound_finiteIndex f (h_index ▸ h)
 
-private lemma strictWidthInfty_pos {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.HasDetOne]
-    [𝒢.IsFiniteRelIndex 𝒮ℒ] [DiscreteTopology 𝒢.strictPeriods] : 0 < 𝒢.strictWidthInfty :=
-  𝒢.strictWidthInfty_pos_iff.mpr <| Subgroup.isCusp_of_mem_strictPeriods
-    (by exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢))
-    Subgroup.integerCuspWidth_mem_strictPeriods
-
 /-- **Modular forms agreeing up to the Sturm bound are equal**: two weight-`k` forms whose
 `q`-expansions at `∞` agree in every coefficient up to `k · [𝒮ℒ : 𝒢 ⊓ 𝒮ℒ] / 12` coincide. -/
-theorem eq_of_sturm_bound [𝒢.HasDetOne] [DiscreteTopology 𝒢.strictPeriods]
+theorem eq_of_sturm_bound [DiscreteTopology 𝒢.strictPeriods]
     (g : ModularForm 𝒢 k)
     (h : ∀ i ≤ (k * Nat.card (𝒮ℒ ⧸ 𝒢.subgroupOf 𝒮ℒ)).toNat / 12,
       PowerSeries.coeff i (qExpansion 𝒢.strictWidthInfty f) =
@@ -123,8 +123,9 @@ theorem eq_of_sturm_bound [𝒢.HasDetOne] [DiscreteTopology 𝒢.strictPeriods]
   rw [← sub_eq_zero]
   refine sturm_bound_finiteIndex (f - g) (lt_of_lt_of_le
     (by exact_mod_cast Nat.lt_succ_self _) (PowerSeries.nat_le_order _ _ fun i hi ↦ ?_))
-  rw [_root_.ModularForm.coe_sub, _root_.ModularForm.qExpansion_sub strictWidthInfty_pos
-    𝒢.strictWidthInfty_mem_strictPeriods, map_sub, sub_eq_zero]
+  rw [_root_.ModularForm.coe_sub, _root_.ModularForm.qExpansion_sub
+    strictWidthInfty_pos_of_finiteRelIndex 𝒢.strictWidthInfty_mem_strictPeriods,
+    map_sub, sub_eq_zero]
   exact h i (Nat.lt_succ_iff.mp hi)
 
 /-- **Finite-dimensionality of modular forms.** As a corollary of the Sturm bound, the space
@@ -138,8 +139,8 @@ instance finiteDimensional_modularForm_finiteIndex
   have hfin : Module.Finite ℂ (Polynomial.degreeLT ℂ N) :=
     Module.Finite.equiv (Polynomial.degreeLTEquiv ℂ N).symm
   refine Module.Finite.of_injective
-    (((PowerSeries.trunc N).comp (ModularForm.qExpansionLinearMap strictWidthInfty_pos
-        𝒢.strictWidthInfty_mem_strictPeriods k)).codRestrict
+    (((PowerSeries.trunc N).comp (ModularForm.qExpansionLinearMap
+        strictWidthInfty_pos_of_finiteRelIndex 𝒢.strictWidthInfty_mem_strictPeriods k)).codRestrict
       (Polynomial.degreeLT ℂ N) fun f ↦
         Polynomial.mem_degreeLT.mpr (PowerSeries.degree_trunc_lt _ _))
     ((injective_iff_map_eq_zero _).mpr fun f hf ↦ ?_)
