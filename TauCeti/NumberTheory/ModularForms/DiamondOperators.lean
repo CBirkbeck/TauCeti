@@ -276,6 +276,8 @@ noncomputable def diamondOpHom [NeZero N] (k : ℤ) :
 lemma diamondOpHom_apply [NeZero N] (k : ℤ) (d : (ZMod N)ˣ) :
     diamondOpHom k d = diamondOp k d := (rfl)
 
+/-- Auxiliary form of the diamond operator on cusp forms: the slash action of a fixed
+`Γ₀(N)`-representative, before descending to the `Γ₀(N)/Γ₁(N)`-quotient. -/
 noncomputable def diamondOpCuspAux (k : ℤ) (g : ↥(Gamma0 N)) :
     CuspForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] CuspForm ((Gamma1 N).map (mapGL ℝ)) k where
   toFun f :=
