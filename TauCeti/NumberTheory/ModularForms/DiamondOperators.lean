@@ -100,9 +100,10 @@ theorem Gamma1_map_inv_conjAct_eq (g : ↥(Gamma0 N)) :
 lemma mul_inv_mem_Gamma1_of_Gamma0Map_eq (g₁ g₂ : ↥(Gamma0 N))
     (heq : Gamma0Map N g₁ = Gamma0Map N g₂) :
     ((g₁ : SL(2, ℤ)) * (g₂ : SL(2, ℤ))⁻¹) ∈ Gamma1 N := by
-  have heq_u : (Gamma0Map N).toHomUnits g₁ = (Gamma0Map N).toHomUnits g₂ := Units.ext heq
-  have hker : (Gamma0Map N).toHomUnits (g₁ * g₂⁻¹) = 1 := by simp [map_mul, map_inv, heq_u]
-  exact (Gamma1_mem _ _).mpr <| (Gamma1_to_Gamma0_mem _).mp <| congr_arg Units.val hker
+  have hker : Gamma0Map N (g₁ * g₂⁻¹) = 1 := by
+    have h := (MonoidHom.div_mem_ker_iff (Gamma0Map N)).mpr heq
+    rwa [div_eq_mul_inv, MonoidHom.mem_ker] at h
+  exact (Gamma1_mem _ _).mpr <| (Gamma1_to_Gamma0_mem _).mp hker
 
 /-- The diagonal matrix `!![u⁻¹, 0; 0, u]` as an element of `SL₂(ZMod N)`. -/
 private def diagUnit (u : (ZMod N)ˣ) : SpecialLinearGroup (Fin 2) (ZMod N) :=
