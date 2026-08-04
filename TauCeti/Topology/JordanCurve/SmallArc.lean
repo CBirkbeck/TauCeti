@@ -193,17 +193,6 @@ private lemma subset_or_eq_empty_of_union_eq_union {α : Type*} {A B U V : Set �
     have hmem : x ∈ U ∪ V := by rw [hcover]; exact mem_union_left B hx
     exact hmem.elim id fun h => absurd (hdisj.le_bot ⟨hx, hVB h⟩) id
 
-/-- An injective parametrization carries a cut of the parameter space to the corresponding cut of
-its image: if `P` and `Q` cover the complement of the two parameters `z` and `w`, then their images
-cover the image with the two points `g z` and `g w` removed. -/
-private lemma image_union_image_eq_sdiff_pair {α β : Type*} {g : α → β}
-    (hginj : Function.Injective g) {D : Set β} (hgrange : range g = D) {z w : α} {p q : β}
-    (hgz : g z = p) (hgw : g w = q) {P Q : Set α} (hPQ : P ∪ Q = ({z, w} : Set α)ᶜ) :
-    g '' P ∪ g '' Q = D \ {p, q} := by
-  rw [← image_union, hPQ, compl_eq_univ_sdiff, image_sdiff hginj, image_univ, hgrange]
-  congr 1
-  rw [image_insert_eq, image_singleton, hgz, hgw]
-
 /-- **Two nearby points cut a small arc off a Jordan curve**, in the form that *builds* the small
 arc: for every `ε > 0` there is a `δ > 0` such that if `p` and `q` are two distinct points of the
 curve at distance less than `δ`, then `C \ {p, q}` is covered by two preconnected sets, the first of
@@ -245,8 +234,11 @@ private theorem IsJordanCurve.exists_pos_forall_exists_isPreconnected_diam_union
   -- The closed short arc downstairs is the image of the closed short arc of parameters.
   have hclosed : g '' (P ∪ {z, w}) = g '' P ∪ {p, q} := by
     rw [image_union, image_insert_eq, image_singleton, hgz, hgw]
+  have himg : g '' P ∪ g '' Q = C \ {p, q} := by
+    rw [← image_union, hunion, Set.image_compl_eq_range_sdiff_image hginj, hgrange,
+      image_insert_eq, image_singleton, hgz, hgw]
   refine ⟨g '' P, g '' Q, hPc.image _ hgc.continuousOn, hQc.image _ hgc.continuousOn,
-    image_union_image_eq_sdiff_pair hginj hgrange hgz hgw hunion, ?_⟩
+    himg, ?_⟩
   rw [← hclosed]
   refine Metric.diam_le_of_forall_dist_le hε.le ?_
   rintro _ ⟨u, hu, rfl⟩ _ ⟨v, hv, rfl⟩
