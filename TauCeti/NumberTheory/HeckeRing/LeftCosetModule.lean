@@ -302,37 +302,30 @@ lemma add_smul (t₁ t₂ : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
     rw [← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun i _ ↦ by rw [add_mul, Finsupp.single_add]
 
-/-- The action is additive in the module argument. -/
-@[simp]
-lemma smul_add (t : 𝕋 Δ H R) (m₁ m₂ : HeckeCoset Δ ⊥ H →₀ R) :
-    t • (m₁ + m₂) = t • m₁ + t • m₂ := by
-  classical
-  simp only [smul_eq_sum]
-  refine (Finsupp.sum_congr fun D b₁ ↦ ?_).trans Finsupp.sum_add
-  refine Finsupp.sum_add_index' (fun q ↦ ?_) fun q b₂ b₃ ↦ ?_
-  · exact Finset.sum_eq_zero fun i _ ↦ by simp
-  · rw [← Finset.sum_add_distrib]
-    exact Finset.sum_congr rfl fun i _ ↦ by rw [mul_add, Finsupp.single_add]
-
-/-- The zero element of the Hecke ring acts as zero. -/
-@[simp]
-lemma zero_smul (m : HeckeCoset Δ ⊥ H →₀ R) : (0 : 𝕋 Δ H R) • m = 0 := by
-  rw [smul_eq_sum]
-  exact Finsupp.sum_zero_index
-
-/-- Every Hecke-ring element acts as zero on zero. -/
-@[simp]
-lemma smul_zero (t : 𝕋 Δ H R) : t • (0 : HeckeCoset Δ ⊥ H →₀ R) = 0 := by
-  rw [smul_eq_sum]
-  simp only [Finsupp.sum_zero_index]
-  exact Finsupp.sum_fun_zero t
-
 /-- The scalar operations distribute over the module's addition, packaged as the
 `DistribSMul` typeclass (the strongest action class available before the compatibility
-law with the convolution product). -/
-noncomputable instance : DistribSMul (𝕋 Δ H R) (HeckeCoset Δ ⊥ H →₀ R) where
+law with the convolution product); the generic `smul_zero`/`smul_add` supersede
+ad-hoc laws. -/
+noncomputable instance distribSMul : DistribSMul (𝕋 Δ H R) (HeckeCoset Δ ⊥ H →₀ R) where
+  smul_zero t := by
+    rw [smul_eq_sum]
+    simp only [Finsupp.sum_zero_index]
+    exact Finsupp.sum_fun_zero t
+  smul_add t m₁ m₂ := by
+    classical
+    simp only [smul_eq_sum]
+    refine (Finsupp.sum_congr fun D b₁ ↦ ?_).trans Finsupp.sum_add
+    refine Finsupp.sum_add_index' (fun q ↦ ?_) fun q b₂ b₃ ↦ ?_
+    · exact Finset.sum_eq_zero fun i _ ↦ by simp
+    · rw [← Finset.sum_add_distrib]
+      exact Finset.sum_congr rfl fun i _ ↦ by rw [mul_add, Finsupp.single_add]
+
+/-- Zero acts as zero and acting on zero gives zero: the `SMulWithZero` typeclass. -/
+noncomputable instance smulWithZero : SMulWithZero (𝕋 Δ H R) (HeckeCoset Δ ⊥ H →₀ R) where
   smul_zero := smul_zero
-  smul_add := smul_add
+  zero_smul m := by
+    rw [smul_eq_sum]
+    exact Finsupp.sum_zero_index
 
 end HeckeLeftCosetModule
 
