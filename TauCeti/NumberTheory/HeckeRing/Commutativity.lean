@@ -11,13 +11,17 @@ import Mathlib.Tactic.Group
 /-!
 # Hecke rings: commutativity via an anti-involution
 
-Shimura's commutativity criterion (Proposition 3.8 of [Shimura][shimura1971]): if the group
-`G` admits an anti-involution `ι` preserving both `H` and `Δ` and fixing every double coset
-`HgH` for `g ∈ Δ`, then Shimura's multiplicity is symmetric, `m(g₁, g₂; d) = m(g₂, g₁; d)`,
-so the structure constants of the convolution product are symmetric and the Hecke ring
-`𝕋 Δ H R` is commutative for every commutative semiring `R`. The classical instance is the
-transpose on `GL₂(ℚ)`, which fixes the double cosets of `M₂(ℤ)`-integral matrices by the
-elementary divisor theorem.
+Shimura's commutativity criterion (Proposition 3.8 of [Shimura][shimura1971]), for
+anti-involutions of the ambient group: if `G` admits an anti-involution `ι` preserving both
+`H` and `Δ` and fixing every double coset `HgH` for `g ∈ Δ`, then Shimura's multiplicity is
+symmetric, `m(g₁, g₂; d) = m(g₂, g₁; d)`, so the structure constants of the convolution
+product are symmetric and the Hecke ring `𝕋 Δ H R` is commutative for every commutative
+semiring `R`. Shimura states the criterion for an anti-automorphism of the monoid `Δ` alone;
+this file proves the ambient-group case — `ι` is a homomorphism `G →* Gᵐᵒᵖ`, so barred
+inverses are available — which covers the classical instance, the transpose on `GL₂(ℚ)`
+(global on the ambient group), fixing the double cosets of `M₂(ℤ)`-integral matrices by the
+elementary divisor theorem. The monoid-level refinement, requiring the transport arguments to
+avoid inverses, is left as a future generalization.
 
 The symmetry of the multiplicity is proved through the one-sided count
 `DoubleCoset.multiplicity_eq_card_filter`: the anti-involution induces an injection between
@@ -51,10 +55,14 @@ open scoped Pointwise
 
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H : Subgroup G}
 
-/-- An anti-involution of the Hecke datum `(Δ, H)`: a monoid homomorphism `G →* Gᵐᵒᵖ`
-(equivalently, an anti-homomorphism of `G`) that is involutive and preserves membership in
-both `H` and `Δ`. Shimura's commutativity criterion applies when it moreover fixes every
-double coset `HgH`, `g ∈ Δ`; see `HeckeAntiInvolution.multiplicity_comm`. -/
+/-- An anti-involution of the Hecke datum `(Δ, H)` defined on the ambient group: a monoid
+homomorphism `G →* Gᵐᵒᵖ` (equivalently, an anti-homomorphism of `G`) that is involutive and
+preserves membership in both `H` and `Δ`. This is stronger than the hypothesis of
+Shimura's Proposition 3.8, which needs an anti-automorphism of the monoid `Δ` only; the
+ambient-group form makes barred inverses available to the transport proofs and covers the
+classical instance (the transpose on `GL₂`). Shimura's commutativity criterion applies when
+the anti-involution moreover fixes every double coset `HgH`, `g ∈ Δ`; see
+`HeckeAntiInvolution.multiplicity_comm`. -/
 structure HeckeAntiInvolution (Δ : Submonoid G) (H : Subgroup G) where
   /-- The underlying homomorphism to the opposite group. -/
   toFun : G →* Gᵐᵒᵖ
