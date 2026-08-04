@@ -62,7 +62,8 @@ The transport then runs both uniform continuities of the parametrization `TauCet
 `X`" into "their parameters are close on the circle", the other converts "the parameter arc is
 short" into "its image has small diameter". That transport is carried out in one step, which
 *builds* a small arc. The main statement below then only has to *locate* that arc inside an
-arbitrary separating decomposition, which is pure set theory.
+arbitrary separating decomposition; that part is set-theoretic except for its closing step, which
+compares diameters and so still needs the curve to be bounded.
 
 ## Identifying the arcs
 
@@ -210,9 +211,10 @@ which has diameter at most `ε` once the two cut points are put back.
 
 This is the analytic half of `TauCeti.IsJordanCurve.exists_pos_forall_diam_le`: it transports the
 cut of the circle along the parametrization, running both uniform continuities at once. The other
-half — passing from this one cover to an arbitrary separating decomposition — is pure set theory.
-Only the cover is recorded, not the disjointness of the two pieces, since that is all the
-identification below consumes. -/
+half — passing from this one cover to an arbitrary separating decomposition — is set-theoretic
+apart from its closing diameter comparison, which still uses boundedness of the curve. Only the
+cover is recorded, not the disjointness of the two pieces, since that is all the identification
+below consumes. -/
 private theorem IsJordanCurve.exists_pos_forall_exists_isPreconnected_diam_union_pair_le
     (h : IsJordanCurve C) (hε : 0 < ε) :
     ∃ δ > 0, ∀ ⦃p : X⦄, p ∈ C → ∀ ⦃q : X⦄, q ∈ C → p ≠ q → dist p q < δ →
