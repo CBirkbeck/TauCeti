@@ -63,14 +63,14 @@ lemma analyticAt_comp_ofComplex (hf : MDiff f) {w : ℂ} (hw : 0 < w.im) :
   (UpperHalfPlane.mdifferentiable_iff.mp hf).analyticAt
     (isOpen_upperHalfPlaneSet.mem_nhds hw)
 
-/-- At a point where a function analytic near `z` does not vanish, its order is zero. -/
+/-- At a point where a function in meromorphic normal form does not vanish, its order is
+zero. -/
 lemma orderOfVanishingAt_eq_zero_of_ne_zero {z : ℍ}
-    (hf : AnalyticAt ℂ (f ∘ ofComplex) (z : ℂ)) (hz : f z ≠ 0) :
+    (hf : MeromorphicNFAt (f ∘ ofComplex) (z : ℂ)) (hz : f z ≠ 0) :
     orderOfVanishingAt f z = 0 := by
-  have h_nf : MeromorphicNFAt (f ∘ ofComplex) (z : ℂ) := hf.meromorphicNFAt
   have : (f ∘ ofComplex) (z : ℂ) ≠ 0 := by
     simpa [Function.comp_apply, ofComplex_apply] using hz
-  rw [orderOfVanishingAt, h_nf.meromorphicOrderAt_eq_zero_iff.mpr this]
+  rw [orderOfVanishingAt, hf.meromorphicOrderAt_eq_zero_iff.mpr this]
   rfl
 
 private lemma meromorphicOrderAt_comp_ofComplex_ne_top (hf : MDiff f) (hne : f ≠ 0)
@@ -100,7 +100,8 @@ when the function does not vanish at `z`. -/
 lemma orderOfVanishingAt_eq_zero_iff (hf : MDiff f) (hne : f ≠ 0) {z : ℍ} :
     orderOfVanishingAt f z = 0 ↔ f z ≠ 0 :=
   ⟨fun h hz ↦ orderOfVanishingAt_ne_zero_of_eq_zero hf hne hz h,
-    orderOfVanishingAt_eq_zero_of_ne_zero (analyticAt_comp_ofComplex hf z.im_pos)⟩
+    orderOfVanishingAt_eq_zero_of_ne_zero
+      (analyticAt_comp_ofComplex hf z.im_pos).meromorphicNFAt⟩
 
 variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
 
