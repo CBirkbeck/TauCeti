@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.LinearAlgebra.Finsupp.LSum
 public import TauCeti.NumberTheory.HeckeRing.LeftCosetModule
 public import TauCeti.NumberTheory.HeckeRing.Multiplicity.Unit
 import Mathlib.Tactic.Group
@@ -106,5 +107,29 @@ lemma coeffSum_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeLeftCoset Δ
   classical
   rw [single_smul_single, map_sum]
   simp [smulOrbit_rep_card]
+
+end HeckeLeftCosetModule
+
+namespace HeckeLeftCosetModule
+
+open HeckeLeftCoset
+
+open scoped HeckeCosetModule
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
+
+/-- The action is `R`-homogeneous in the Hecke-ring argument. -/
+lemma smul_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : HeckeLeftCoset Δ H →₀ R) :
+    (r • t) • m = r • (t • m) := by
+  classical
+  simp only [smul_eq_sum]
+  refine (Finsupp.sum_smul_index fun D ↦ ?_).trans ?_
+  · exact Finsupp.sum_congr (g2 := fun _ _ ↦ 0) (fun q _ ↦ Finset.sum_eq_zero fun i _ ↦ by
+      simp) |>.trans (Finsupp.sum_fun_zero m)
+  · refine Eq.trans (Finsupp.sum_congr fun D b₁ ↦ ?_) Finsupp.smul_sum.symm
+    refine Eq.trans (Finsupp.sum_congr fun q b₂ ↦ ?_) Finsupp.smul_sum.symm
+    rw [Finset.smul_sum]
+    exact Finset.sum_congr rfl fun i _ ↦ by
+      rw [Finsupp.smul_single, smul_eq_mul, mul_assoc]
 
 end HeckeLeftCosetModule
