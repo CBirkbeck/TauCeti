@@ -42,20 +42,16 @@ namespace ModularForm
 
 variable {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] (f : F)
 
-/-- The coercion of the `SL(2, ℤ)`-action on `ℍ` to the `GL(2, ℝ)`-action. -/
-private lemma smul_eq_coe_smul (g : SL(2, ℤ)) (p : ℍ) :
-    g • p = ((g : SL(2, ℤ)) : GL (Fin 2) ℝ) • p := rfl
-
 
 /-- The vanishing order of a level-one form, descended to `SL(2, ℤ)`-orbits of `ℍ`. -/
 def orderOfVanishingOnOrbit [SlashInvariantFormClass F 𝒮ℒ k]
     (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) : ℤ :=
   Quotient.liftOn' q (orderOfVanishingAt f) fun _ b ⟨g, hg⟩ ↦ by
     have hg' : g • b = _ := hg
-    rw [← hg', smul_eq_coe_smul,
-      orderOfVanishingAt_smul f (γ := ((g : SL(2, ℤ)) : GL (Fin 2) ℝ))
+    rw [← hg', MulAction.compHom_smul_def,
+      orderOfVanishingAt_smul f (γ := Matrix.SpecialLinearGroup.mapGL ℝ g)
         (MonoidHom.mem_range.mpr ⟨g, rfl⟩) (by
-          rw [Matrix.SpecialLinearGroup.coe_GL_coe_matrix, Matrix.SpecialLinearGroup.det_coe]
+          rw [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL]
           exact one_pos) b]
 
 @[simp]

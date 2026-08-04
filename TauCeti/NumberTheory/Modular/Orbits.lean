@@ -16,7 +16,7 @@ valence formula.
 ## Main declarations
 
 * `TauCeti.ModularGroup.exists_rep_mem_fd`: every orbit meets `𝒟`.
-* `TauCeti.ModularGroup.orbit_mk_one_vadd`: translation by one preserves the orbit.
+* `TauCeti.ModularGroup.orbit_mk_int_vadd`: integer translation preserves the orbit.
 -/
 
 public section
@@ -38,13 +38,20 @@ lemma exists_rep_mem_fd (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
     obtain ⟨g, hg⟩ := _root_.ModularGroup.exists_smul_mem_fd z
     exact ⟨g • z, Quotient.sound' ⟨g, rfl⟩, hg⟩
 
+/-- Translation by any integer preserves the `SL(2, ℤ)`-orbit. -/
+@[simp]
+lemma orbit_mk_int_vadd (n : ℤ) (z : ℍ) :
+    (Quotient.mk'' ((n : ℝ) +ᵥ z) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) =
+      Quotient.mk'' z :=
+  Quotient.sound' ⟨_root_.ModularGroup.T ^ n, UpperHalfPlane.modular_T_zpow_smul z n⟩
+
 /-- Translation by one preserves the `SL(2, ℤ)`-orbit; in particular `ρ + 1` lies on the
 orbit of `ρ`. -/
 @[simp]
 lemma orbit_mk_one_vadd (z : ℍ) :
     (Quotient.mk'' ((1 : ℝ) +ᵥ z) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) =
-      Quotient.mk'' z :=
-  Quotient.sound' ⟨_root_.ModularGroup.T, UpperHalfPlane.modular_T_smul z⟩
+      Quotient.mk'' z := by
+  simpa using orbit_mk_int_vadd 1 z
 
 end ModularGroup
 
