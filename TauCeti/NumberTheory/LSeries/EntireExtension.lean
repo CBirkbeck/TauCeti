@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Analysis.Analytic.Uniqueness
+import Mathlib.Analysis.Analytic.Uniqueness
 public import Mathlib.Analysis.Calculus.FDeriv.Defs
 import Mathlib.Analysis.Complex.CauchyIntegral
 import Mathlib.NumberTheory.LSeries.Deriv
