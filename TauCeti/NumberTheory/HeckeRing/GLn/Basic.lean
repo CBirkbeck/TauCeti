@@ -64,11 +64,16 @@ noncomputable scoped instance coeMapGLRat :
     Coe (SpecialLinearGroup (Fin n) ℤ) (GL (Fin n) ℚ) :=
   ⟨mapGL ℚ⟩
 
-/-- The canonical membership: integral special-linear matrices land in `SL_n(ℤ)`. For
-membership facts beyond images use `MonoidHom.mem_range` after unfolding `SLnZ`. -/
+/-- The canonical membership: integral special-linear matrices land in `SL_n(ℤ)`. -/
 @[simp]
 lemma coe_mem_SLnZ (σ : SpecialLinearGroup (Fin n) ℤ) :
     (σ : GL (Fin n) ℚ) ∈ SLnZ n := ⟨σ, rfl⟩
+
+/-- Membership in `SL_n(ℤ)`: exactly the images of integral special-linear matrices.
+Not `@[simp]`: unpacking to an existential is not a simp normal form. -/
+lemma mem_SLnZ_iff {g : GL (Fin n) ℚ} :
+    g ∈ SLnZ n ↔ ∃ σ : SpecialLinearGroup (Fin n) ℤ, (σ : GL (Fin n) ℚ) = g :=
+  MonoidHom.mem_range
 
 end Embedding
 
@@ -103,6 +108,13 @@ noncomputable def posDetInt_submonoid : Submonoid (GL (Fin n) ℚ) where
   mul_mem' := fun ⟨ha, hda⟩ ⟨hb, hdb⟩ ↦ ⟨HasIntEntries.mul (n := n) ha hb, by
     simp only [GeneralLinearGroup.coe_mul, Matrix.det_mul]
     exact mul_pos hda hdb⟩
+
+/-- Membership in `Δ`: integer entries and positive determinant. Not `@[simp]`: the
+right-hand side is not a normal form. -/
+lemma mem_posDetInt_submonoid_iff {g : GL (Fin n) ℚ} :
+    g ∈ posDetInt_submonoid n ↔
+      HasIntEntries n g ∧ 0 < (↑g : Matrix (Fin n) (Fin n) ℚ).det :=
+  (Iff.rfl)
 
 end PosDetInt
 
