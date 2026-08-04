@@ -59,25 +59,14 @@ section Embedding
 noncomputable def SLnZ : Subgroup (GL (Fin n) ℚ) :=
   (mapGL ℚ : SpecialLinearGroup (Fin n) ℤ →* GL (Fin n) ℚ).range
 
-/-- Membership in `SL_n(ℤ)`: precisely the images of integral special-linear matrices. -/
-@[simp]
-theorem mem_SLnZ_iff {g : GL (Fin n) ℚ} :
-    g ∈ SLnZ n ↔ ∃ σ : SpecialLinearGroup (Fin n) ℤ, mapGL ℚ σ = g :=
-  (Iff.rfl)
-
-/-- `SL_n(ℤ)` is the image of the full integral special linear group. -/
-theorem SLnZ_eq_map_top :
-    SLnZ n =
-      Subgroup.map (mapGL ℚ : SpecialLinearGroup (Fin n) ℤ →* GL (Fin n) ℚ) ⊤ := by
-  rw [SLnZ, MonoidHom.range_eq_map]
-
 /-- Coercion from `SL_n(ℤ)` to `GL_n(ℚ)` via `mapGL ℚ`. -/
 noncomputable scoped instance coeMapGLRat :
     Coe (SpecialLinearGroup (Fin n) ℤ) (GL (Fin n) ℚ) :=
   ⟨mapGL ℚ⟩
 
-/-- Not `@[simp]`: the simp-NF linter shows `simp` already discharges this membership via
-`mem_SLnZ_iff` and `mapGL_inj`. -/
+/-- The canonical membership: integral special-linear matrices land in `SL_n(ℤ)`. For
+membership facts beyond images use `MonoidHom.mem_range` after unfolding `SLnZ`. -/
+@[simp]
 lemma coe_mem_SLnZ (σ : SpecialLinearGroup (Fin n) ℤ) :
     (σ : GL (Fin n) ℚ) ∈ SLnZ n := ⟨σ, rfl⟩
 
