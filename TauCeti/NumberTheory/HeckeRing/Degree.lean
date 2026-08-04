@@ -208,4 +208,27 @@ private lemma sum_single_apply (s : Finset (HeckeCoset Δ ⊥ H)) (v : R)
   simp only [Finsupp.single_apply]
   rw [Finset.sum_ite_eq' s x fun _ ↦ v]
 
+open Classical in
+/-- Coefficient of the double orbit sum at a left coset: the number of intermediate cosets
+whose second-layer orbit contains it. -/
+private lemma sum_sum_single_apply (g₁ g₂ β : Δ) (c : R) (x : HeckeCoset Δ ⊥ H) :
+    (∑ i ∈ smulOrbit H g₁ β, ∑ j ∈ smulOrbit H g₂ i.rep,
+        Finsupp.single j c : HeckeCoset Δ ⊥ H →₀ R) x =
+      ((smulOrbit H g₁ β).filter fun i ↦ x ∈ smulOrbit H g₂ i.rep).card • c := by
+  rw [Finset.sum_apply']
+  calc ∑ i ∈ smulOrbit H g₁ β, (∑ j ∈ smulOrbit H g₂ i.rep, Finsupp.single j c) x
+      = ∑ i ∈ smulOrbit H g₁ β, if x ∈ smulOrbit H g₂ i.rep then c else 0 :=
+        Finset.sum_congr rfl fun i _ ↦ sum_single_apply _ c x
+    _ = _ := by rw [← Finset.sum_filter, Finset.sum_const]
+
+open Classical in
+/-- Coefficient of a multiplicity-weighted orbit sum at a left coset: the weight of the
+unique double coset whose orbit contains it, if any. -/
+private lemma sum_smulOrbit_single_apply (t : 𝕋 Δ H R) (β : Δ) (c : R)
+    (x : HeckeCoset Δ ⊥ H) :
+    ((t.sum fun D mD ↦ ∑ i ∈ smulOrbit H D.rep β, Finsupp.single i (mD * c)) :
+        HeckeCoset Δ ⊥ H →₀ R) x =
+      t.sum fun D mD ↦ if x ∈ smulOrbit H D.rep β then mD * c else 0 := by
+  exact Finsupp.sum_apply.trans (Finsupp.sum_congr fun D _ ↦ sum_single_apply _ _ x)
+
 end HeckeLeftCosetModule
