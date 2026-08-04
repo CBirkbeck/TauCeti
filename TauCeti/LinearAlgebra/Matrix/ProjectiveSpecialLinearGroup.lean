@@ -8,7 +8,6 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Sqrt
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.LinearAlgebra.Matrix.ProjectiveSpecialLinearGroup
-public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 
 /-!
 # Maps into `PSL(2, ℝ)`
