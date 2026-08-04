@@ -6,7 +6,7 @@ module
 
 public import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
 public import TauCeti.NumberTheory.ModularForms.NormTrace
-public import TauCeti.NumberTheory.ModularForms.QExpansionOrder
+public import TauCeti.NumberTheory.ModularForms.QExpansion.Basic
 
 /-!
 # The Sturm bound for finite-index subgroups of `SL(2, ℤ)`
@@ -63,13 +63,16 @@ private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.s
     rw [hnRw]
     exact_mod_cast hf_w_per.nat_mul m'
   obtain ⟨rest, _, h_rest_an, h_decomp⟩ := exists_norm_decomposition f
-  rw [show qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f) =
-        qExpansion 1 (galoisProd (Subgroup.integerCuspWidth 𝒢) ⇑f) * qExpansion 1 rest by
-      rw [funext h_decomp]
-      exact qExpansion_mul (analyticAt_cuspFunction_zero one_pos
-        (galoisProd_periodic_one hf_n_per) (mdifferentiable_galoisProd f.holo')
-        (isBoundedAtImInfty_galoisProd hf_bdd)) h_rest_an,
-    PowerSeries.order_mul,
+  -- `h_decomp` is a pointwise identity; `funext` converts it to an equality of functions so
+  -- the `q`-expansion of the norm literally becomes that of the product, and `qExpansion_mul`
+  -- (with both cusp functions analytic at `0`) splits it.
+  have h_qexp : qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f) =
+      qExpansion 1 (galoisProd (Subgroup.integerCuspWidth 𝒢) ⇑f) * qExpansion 1 rest := by
+    rw [funext h_decomp]
+    exact qExpansion_mul (analyticAt_cuspFunction_zero one_pos
+      (galoisProd_periodic_one hf_n_per) (mdifferentiable_galoisProd f.holo')
+      (isBoundedAtImInfty_galoisProd hf_bdd)) h_rest_an
+  rw [h_qexp, PowerSeries.order_mul,
     qExpansion_one_galoisProd_order_eq hn_pos hf_n_per hf_bdd f.holo']
   refine le_trans ?_ le_self_add
   rw [hnRw]
@@ -110,6 +113,14 @@ def qExpansionCoeffLinearMap {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.HasDetOne]
     ModularForm 𝒢 k →ₗ[ℂ] (Fin N → ℂ) :=
   LinearMap.pi fun i ↦ (PowerSeries.coeff (i : ℕ)).comp (ModularForm.qExpansionLinearMap hh hΓ k)
 
+@[simp]
+lemma qExpansionCoeffLinearMap_apply {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.HasDetOne] {k : ℤ}
+    (N : ℕ) (hh : 0 < 𝒢.strictWidthInfty) (hΓ : 𝒢.strictWidthInfty ∈ 𝒢.strictPeriods)
+    (f : ModularForm 𝒢 k) (i : Fin N) :
+    qExpansionCoeffLinearMap N hh hΓ f i =
+      PowerSeries.coeff (i : ℕ) (qExpansion 𝒢.strictWidthInfty f) := by
+  simp [qExpansionCoeffLinearMap]
+
 /-- **Finite-dimensionality of modular forms.** As a corollary of the Sturm bound, the space
 `ModularForm 𝒢 k` is finite-dimensional over `ℂ` for any subgroup `𝒢 ≤ GL(2, ℝ)` of finite
 relative index in `𝒮ℒ` with determinant-one elements and discrete strict periods. -/
@@ -127,7 +138,7 @@ instance finiteDimensional_modularForm_finiteIndex
     ((injective_iff_map_eq_zero _).mpr fun f hf ↦ ?_)
   exact sturm_bound_finiteIndex f <| lt_of_lt_of_le (by exact_mod_cast Nat.lt_succ_self _) <|
     PowerSeries.nat_le_order _ _ fun i hi ↦ by
-      simpa [qExpansionCoeffLinearMap] using congr_fun hf ⟨i, hi⟩
+      simpa using congr_fun hf ⟨i, hi⟩
 
 end ModularForm
 
