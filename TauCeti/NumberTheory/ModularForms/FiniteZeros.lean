@@ -45,9 +45,10 @@ private lemma cuspFunction_not_eventually_zero [ModularFormClass F Γ k] (hh : 0
     (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     ¬∀ᶠ q in 𝓝 (0 : ℂ), cuspFunction h f q = 0 := by
   intro h_ev
-  have h_diff : DifferentiableOn ℂ (cuspFunction h f) (ball 0 1) := fun q hq ↦
-    (ModularFormClass.differentiableAt_cuspFunction f hh hΓ
-      (by rwa [mem_ball, dist_zero_right] at hq)).differentiableWithinAt
+  have h_diff : DifferentiableOn ℂ (cuspFunction h f) (ball 0 1) :=
+    have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods hh hΓ⟩
+    differentiableOn_cuspFunction_ball hh (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ)
+      (ModularFormClass.holo f) (ModularFormClass.bdd_at_infty f)
   have h_eqOn : EqOn (cuspFunction h f) 0 (ball 0 1) :=
     (h_diff.analyticOnNhd isOpen_ball).eqOn_zero_of_preconnected_of_eventuallyEq_zero
       (convex_ball 0 1).isPreconnected (mem_ball_self one_pos) h_ev
