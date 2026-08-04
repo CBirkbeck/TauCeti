@@ -6,10 +6,11 @@ module
 
 public import Mathlib.Analysis.SpecialFunctions.Complex.CircleMap
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
-public import Mathlib.Analysis.Calculus.AddTorsor.AffineMap
 public import Mathlib.LinearAlgebra.AffineSpace.AffineMap
-public import Mathlib.MeasureTheory.Integral.CircleIntegral
 public import TauCeti.Analysis.Contour.PiecewiseC1On
+
+import Mathlib.Analysis.Calculus.AddTorsor.AffineMap
+import Mathlib.MeasureTheory.Integral.CircleIntegral
 
 /-!
 # The boundary contour of the standard fundamental domain
@@ -29,8 +30,8 @@ anchors of the valence-formula contour.
   built from `AffineMap.lineMap` and `circleMap`).
 * `TauCeti.ModularForm.fdBoundary_apply_three`: the parameter `3` lands on `ρ`.
 * `TauCeti.ModularForm.fdBoundary_closed`: the contour is closed.
-* `TauCeti.ModularForm.isPiecewiseC1On_fdBoundary`: the contour is piecewise `C¹`, with
-  breakpoints at the four interior corners.
+* `TauCeti.ModularForm.isPiecewiseC1On_fdBoundary`: the contour is piecewise `C¹`
+  (`contDiffOn_fdBoundary` certifies `fdBoundaryBreakpoints` as a breakpoint witness).
 
 ## References
 
@@ -380,7 +381,10 @@ lemma continuousOn_fdBoundary (H : ℝ) : ContinuousOn (fdBoundary H) (Icc 0 5) 
     isClosed_Icc
   rwa [Icc_union_Icc_eq_Icc (by norm_num) (by norm_num)] at h05
 
-private lemma contDiffOn_fdBoundary_subinterval (H : ℝ) {c d : ℝ}
+/-- On every closed subinterval of `[0, 5]` whose interior avoids the four corner
+parameters, the contour is `C¹` — the certificate that `fdBoundaryBreakpoints` is a
+valid breakpoint witness for `isPiecewiseC1On_fdBoundary`. -/
+lemma contDiffOn_fdBoundary (H : ℝ) {c d : ℝ}
     (hcd : Icc c d ⊆ Icc 0 5) (hdis : Disjoint (fdBoundaryBreakpoints : Set ℝ) (Ioo c d)) :
     ContDiffOn ℝ 1 (fdBoundary H) (Icc c d) := by
   have hbp : ∀ m : ℝ, m ∈ fdBoundaryBreakpoints → m ∉ Ioo c d := fun m hm ↦
@@ -399,8 +403,8 @@ private lemma contDiffOn_fdBoundary_subinterval (H : ℝ) {c d : ℝ}
         · have hc4 : 4 ≤ c := le_of_not_gt fun hlt ↦ hbp 4 (by simp) ⟨hlt, hd4⟩
           exact (fdBoundary_piece5 H).mono fun x hx ↦ ⟨hc4.trans hx.1, (hcd hx).2⟩
 
-/-- The fundamental-domain boundary contour is piecewise `C¹` on `[0, 5]`, with breakpoints
-at the four interior corners. -/
+/-- The fundamental-domain boundary contour is piecewise `C¹` on `[0, 5]`;
+`contDiffOn_fdBoundary` certifies the four interior corners as a breakpoint witness. -/
 theorem isPiecewiseC1On_fdBoundary (H : ℝ) : Contour.IsPiecewiseC1On (fdBoundary H) 0 5 := by
   refine Contour.IsPiecewiseC1On.of_breakpoints ?_ fdBoundaryBreakpoints ?_ ?_
   · rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
@@ -411,7 +415,7 @@ theorem isPiecewiseC1On_fdBoundary (H : ℝ) : Contour.IsPiecewiseC1On (fdBounda
     rcases hx with rfl | rfl | rfl | rfl <;> exact ⟨by norm_num, by norm_num⟩
   · intro c d hcd hdis
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at hcd
-    exact contDiffOn_fdBoundary_subinterval H hcd hdis
+    exact contDiffOn_fdBoundary H hcd hdis
 
 end Regularity
 
