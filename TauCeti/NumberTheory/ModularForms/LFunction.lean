@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.NumberTheory.LSeries.Convergence
 public import Mathlib.NumberTheory.ModularForms.LFunction
 public import TauCeti.NumberTheory.LSeries.EntireExtension
 
@@ -39,8 +38,7 @@ API and Mathlib's `LSeries` of the `q`-expansion coefficients:
 The non-cuspidal abscissa bound `k + 1` is weaker than Diamond–Shurman Prop. 5.9.1
 (which gives convergence for `Re s > k` via `aₙ = O(n^{k-1})`); tightening it is a
 separate milestone of the roadmap's Layer 7. The entire continuation of the cusp-form
-series is `CuspForm.hasEntireExtension_qExpansion_coeff` below, through
-`CuspForm.differentiable_L` and `LSeries.HasEntireExtension.of_extension_of_le`.
+series is `CuspForm.hasEntireExtension_qExpansion_coeff` below.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/Modularforms/LFunction.lean`), rebuilt to consume Mathlib's
@@ -128,11 +126,11 @@ theorem LSeries_qExpansion_coeff_eq (hk : 0 < k) [CuspFormClass F Γ k] (f : F)
 
 /-- **Entire continuation of the L-series of a cusp form** — the roadmap's Layer-7
 continuation milestone: the Dirichlet series of the `q`-expansion coefficients of a cusp
-form of positive weight has an entire extension, namely `s ↦ (h Γ)⁻ˢ · L hk f s`, through
-Mathlib's `CuspForm.differentiable_L` and the half-plane identification. -/
+form of positive weight has an entire extension, namely
+`s ↦ (Γ.strictWidthInfty : ℂ) ^ (-s) * L hk f s`. -/
 theorem hasEntireExtension_qExpansion_coeff (hk : 0 < k) [CuspFormClass F Γ k] (f : F) :
     LSeries.HasEntireExtension (fun n ↦ (qExpansion Γ.strictWidthInfty f).coeff n) := by
-  refine LSeries.HasEntireExtension.of_extension_of_le (c := (k : ℝ) / 2 + 1)
+  refine LSeries.HasEntireExtension.of_extension_of_eq_on_lt_re (c := (k : ℝ) / 2 + 1)
     ?_ ?_ (fun {s} hs ↦ (LSeries_qExpansion_coeff_eq hk f hs).symm)
   · refine (abscissaOfAbsConv_qExpansion_coeff_le f).trans_lt ?_
     rw [show (((k : ℝ) / 2 : ℝ) : EReal) + 1 = (((k : ℝ) / 2 + 1 : ℝ) : EReal) by

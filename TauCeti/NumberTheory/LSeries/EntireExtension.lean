@@ -23,8 +23,8 @@ by analytic continuation.
 
 The predicate comes with introduction lemmas — `LSeries.HasEntireExtension.of_extension`
 (agreement on the full convergence half-plane) and the principal
-`LSeries.HasEntireExtension.of_extension_of_le` (agreement only on `Re s > c` for some
-`c`, upgraded to the whole half-plane by analytic continuation) — and elimination lemmas
+`LSeries.HasEntireExtension.of_extension_of_eq_on_lt_re` (agreement on `Re s > c` for
+some real `c`) — and elimination lemmas
 (`.abscissa_lt_top`, `.exists_extension`), so consumers never unfold the definition.
 It is exercised: every finitely supported coefficient sequence has an entire extension
 (`LSeries.hasEntireExtension_of_support_finite`, with the delta sequence
@@ -71,11 +71,10 @@ theorem of_extension {F : ℂ → ℂ} (h_finite : abscissaOfAbsConv a < ⊤)
     HasEntireExtension a :=
   ⟨h_finite, F, hF, hFa⟩
 
-/-- Introduction from a smaller half-plane: an entire function agreeing with `LSeries a`
-on `Re s > c`, for any real `c`, extends it on the full absolute-convergence half-plane
-(finite by hypothesis), by the identity theorem on connected half-planes: every real
-cutoff overlaps a finite convergence half-plane. -/
-theorem of_extension_of_le {F : ℂ → ℂ} {c : ℝ} (h_finite : abscissaOfAbsConv a < ⊤)
+/-- Introduction from agreement on any real-cutoff half-plane: if an entire function
+agrees with `LSeries a` on `Re s > c` for some real `c`, and the abscissa of absolute
+convergence is finite, then `a` has an entire extension. -/
+theorem of_extension_of_eq_on_lt_re {F : ℂ → ℂ} {c : ℝ} (h_finite : abscissaOfAbsConv a < ⊤)
     (hF : Differentiable ℂ F) (hFa : ∀ {s : ℂ}, c < s.re → F s = LSeries a s) :
     HasEntireExtension a := by
   refine ⟨h_finite, F, hF, fun {s} hs ↦ ?_⟩
