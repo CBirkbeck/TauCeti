@@ -11,17 +11,16 @@ import Mathlib.Tactic.Group
 /-!
 # Hecke rings: commutativity via an anti-involution
 
-Shimura's commutativity criterion (Proposition 3.8 of [Shimura][shimura1971]), for
-anti-involutions of the ambient group: if `G` admits an anti-involution `ι` preserving both
-`H` and `Δ` and fixing every double coset `HgH` for `g ∈ Δ`, then Shimura's multiplicity is
-symmetric, `m(g₁, g₂; d) = m(g₂, g₁; d)`, so the structure constants of the convolution
-product are symmetric and the Hecke ring `𝕋 Δ H R` is commutative for every commutative
-semiring `R`. Shimura states the criterion for an anti-automorphism of the monoid `Δ` alone;
-this file proves the ambient-group case — `ι` is a homomorphism `G →* Gᵐᵒᵖ`, so barred
-inverses are available — which covers the classical instance, the transpose on `GL₂(ℚ)`
-(global on the ambient group), fixing the double cosets of `M₂(ℤ)`-integral matrices by the
-elementary divisor theorem. The monoid-level refinement, requiring the transport arguments to
-avoid inverses, is left as a future generalization.
+Shimura's commutativity criterion (Proposition 3.8 of [Shimura][shimura1971]): if the monoid
+`Δ` admits an anti-involution `ι` preserving `H` and fixing every double coset `HgH` for
+`g ∈ Δ`, then Shimura's multiplicity is symmetric, `m(g₁, g₂; d) = m(g₂, g₁; d)`, so the
+structure constants of the convolution product are symmetric and the Hecke ring `𝕋 Δ H R` is
+commutative for every commutative semiring `R`. Following Shimura, the anti-involution is
+data on the submonoid `Δ` alone — it need not extend to the ambient group, and `Δ` contains
+no inverses in general — while an anti-involution of the ambient group preserving `H` and `Δ`
+restricts to one of the datum via `HeckeAntiInvolution.ofAmbient`. The classical instance is
+the transpose on `GL₂(ℚ)`, which fixes the double cosets of `M₂(ℤ)`-integral matrices by the
+elementary divisor theorem.
 
 The symmetry of the multiplicity is proved through the one-sided count
 `DoubleCoset.multiplicity_eq_card_filter`: the anti-involution induces an injection between
@@ -36,8 +35,9 @@ vendored Mathlib stack.
 
 ## Main definitions
 
-* `HeckeAntiInvolution`: an anti-involution of `G` (a monoid homomorphism `G →* Gᵐᵒᵖ`,
-  involutive on `G`) preserving `H` and `Δ`.
+* `HeckeAntiInvolution`: an anti-involution of the Hecke datum `(Δ, H)` — a monoid
+  homomorphism `Δ →* Δᵐᵒᵖ`, involutive on `Δ` and preserving `H`.
+* `HeckeAntiInvolution.ofAmbient`: restriction of an anti-involution of the ambient group.
 * `HeckeAntiInvolution.onHeckeCoset`: the induced action on double cosets.
 
 ## Main results
@@ -55,99 +55,141 @@ open scoped Pointwise
 
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H : Subgroup G}
 
-/-- An anti-involution of the Hecke datum `(Δ, H)` defined on the ambient group: a monoid
-homomorphism `G →* Gᵐᵒᵖ` (equivalently, an anti-homomorphism of `G`) that is involutive and
-preserves membership in both `H` and `Δ`. This is stronger than the hypothesis of
-Shimura's Proposition 3.8, which needs an anti-automorphism of the monoid `Δ` only; the
-ambient-group form makes barred inverses available to the transport proofs and covers the
-classical instance (the transpose on `GL₂`). Shimura's commutativity criterion applies when
-the anti-involution moreover fixes every double coset `HgH`, `g ∈ Δ`; see
+namespace IsHeckeTriple
+
+/-- Every member of the double coset `H₁gH₂` of an element of `Δ` lies in `Δ`. -/
+theorem mem_of_mem_doubleCoset {H₁ H₂ : Subgroup G} [IsHeckeTriple Δ H₁ H₂] {g x : G}
+    (hg : g ∈ Δ) (hx : x ∈ doubleCoset g (H₁ : Set G) H₂) : x ∈ Δ := by
+  obtain ⟨h₁, hh₁, h₂, hh₂, rfl⟩ := mem_doubleCoset.mp hx
+  exact mul_mem (mul_mem (mem_of_mem_left H₂ hh₁) hg) (mem_of_mem_right H₁ hh₂)
+
+end IsHeckeTriple
+
+/-- An anti-involution of the Hecke datum `(Δ, H)`: a monoid homomorphism `Δ →* Δᵐᵒᵖ`
+(equivalently, an anti-homomorphism of `Δ`) that is involutive and preserves membership in
+`H`. Following Shimura, the data lives on the submonoid `Δ` alone; an anti-involution of the
+ambient group restricts via `HeckeAntiInvolution.ofAmbient`. Shimura's commutativity
+criterion applies when it moreover fixes every double coset `HgH`, `g ∈ Δ`; see
 `HeckeAntiInvolution.multiplicity_comm`. -/
 structure HeckeAntiInvolution (Δ : Submonoid G) (H : Subgroup G) where
-  /-- The underlying homomorphism to the opposite group. -/
-  toFun : G →* Gᵐᵒᵖ
-  /-- The induced map on `G` is involutive. -/
+  /-- The underlying homomorphism to the opposite monoid. -/
+  toFun : Δ →* Δᵐᵒᵖ
+  /-- The induced map on `Δ` is involutive. -/
   involutive : ∀ g, (toFun (toFun g).unop).unop = g
   /-- The induced map preserves membership in `H`. -/
-  mem_H : ∀ g ∈ H, (toFun g).unop ∈ H
-  /-- The induced map preserves membership in `Δ`. -/
-  mem_Δ : ∀ g ∈ Δ, (toFun g).unop ∈ Δ
+  mem_H : ∀ g : Δ, (g : G) ∈ H → ((toFun g).unop : G) ∈ H
 
 namespace HeckeAntiInvolution
 
 variable (ι : HeckeAntiInvolution Δ H)
 
-/-- The underlying function of the anti-involution, viewed as a map `G → G`. -/
-def bar (g : G) : G := (ι.toFun g).unop
+/-- The underlying function of the anti-involution, as a map on elements of `G` lying in
+`Δ`. The membership witness is explicit; it is proof-irrelevant, so rewriting is unaffected
+by which witness appears. -/
+def bar (x : G) (hx : x ∈ Δ) : G := ((ι.toFun ⟨x, hx⟩).unop : G)
+
+/-- The anti-involution maps `Δ` into itself. -/
+lemma bar_mem_Δ (x : G) (hx : x ∈ Δ) : ι.bar x hx ∈ Δ := ((ι.toFun ⟨x, hx⟩).unop).2
+
+/-- `bar` does not depend on the membership witness; equal elements have equal images. -/
+lemma bar_congr {x y : G} (e : x = y) (hx : x ∈ Δ) (hy : y ∈ Δ) :
+    ι.bar x hx = ι.bar y hy := by subst e; rfl
 
 /-- The anti-involution is an involution. -/
-@[simp] lemma bar_bar (g : G) : ι.bar (ι.bar g) = g := ι.involutive g
+@[simp] lemma bar_bar {x : G} (hx : x ∈ Δ) (hbx : ι.bar x hx ∈ Δ) :
+    ι.bar (ι.bar x hx) hbx = x :=
+  congrArg Subtype.val (ι.involutive ⟨x, hx⟩)
 
-/-- The anti-involution reverses multiplication. -/
-@[simp] lemma bar_mul (a b : G) : ι.bar (a * b) = ι.bar b * ι.bar a := by simp [bar]
-
-/-- The anti-involution commutes with inversion. -/
-@[simp] lemma bar_inv (g : G) : ι.bar g⁻¹ = (ι.bar g)⁻¹ := by simp [bar]
+/-- The anti-involution reverses multiplication. The memberships of the factors are
+explicit so that `rw [ι.bar_mul hx hy]` determines the factors. -/
+lemma bar_mul {x y : G} (hx : x ∈ Δ) (hy : y ∈ Δ) (hxy : x * y ∈ Δ) :
+    ι.bar (x * y) hxy = ι.bar y hy * ι.bar x hx := by
+  simpa [bar, MulMemClass.mk_mul_mk] using
+    congrArg (fun u : Δᵐᵒᵖ ↦ ((u.unop : Δ) : G)) (map_mul ι.toFun ⟨x, hx⟩ ⟨y, hy⟩)
 
 /-- The anti-involution fixes the identity. -/
-@[simp] lemma bar_one : ι.bar (1 : G) = 1 := by simp [bar]
+@[simp] lemma bar_one (h : (1 : G) ∈ Δ) : ι.bar 1 h = 1 :=
+  congrArg Subtype.val (congrArg MulOpposite.unop (map_one ι.toFun))
 
 /-- The anti-involution preserves membership in `H`. -/
-lemma bar_mem_H {g : G} (hg : g ∈ H) : ι.bar g ∈ H := ι.mem_H g hg
-
-/-- The anti-involution preserves membership in `Δ`. -/
-lemma bar_mem_Δ {g : G} (hg : g ∈ Δ) : ι.bar g ∈ Δ := ι.mem_Δ g hg
+lemma bar_mem_H {x : G} (hx : x ∈ Δ) (h : x ∈ H) : ι.bar x hx ∈ H := ι.mem_H ⟨x, hx⟩ h
 
 /-- Membership in `H` is preserved in both directions by the anti-involution. -/
-@[simp] lemma bar_mem_H_iff {g : G} : ι.bar g ∈ H ↔ g ∈ H :=
-  ⟨fun h ↦ ι.bar_bar g ▸ ι.bar_mem_H h, ι.bar_mem_H⟩
+@[simp] lemma bar_mem_H_iff {x : G} (hx : x ∈ Δ) : ι.bar x hx ∈ H ↔ x ∈ H := by
+  refine ⟨fun h ↦ ?_, ι.bar_mem_H hx⟩
+  have h2 := ι.bar_mem_H (ι.bar_mem_Δ x hx) h
+  rwa [ι.bar_bar] at h2
 
-/-- Membership in `Δ` is preserved in both directions by the anti-involution. -/
-@[simp] lemma bar_mem_Δ_iff {g : G} : ι.bar g ∈ Δ ↔ g ∈ Δ :=
-  ⟨fun h ↦ ι.bar_bar g ▸ ι.bar_mem_Δ h, ι.bar_mem_Δ⟩
+/-- An anti-involution of the ambient group `G` preserving `H` and `Δ` restricts to an
+anti-involution of the Hecke datum `(Δ, H)`. The classical instance is the transpose on
+`GL₂(ℚ)` restricted to the integral matrices. -/
+def ofAmbient (f : G →* Gᵐᵒᵖ) (hinv : ∀ g, (f (f g).unop).unop = g)
+    (hH : ∀ g ∈ H, (f g).unop ∈ H) (hΔ : ∀ g ∈ Δ, (f g).unop ∈ Δ) :
+    HeckeAntiInvolution Δ H where
+  toFun :=
+    { toFun g := MulOpposite.op ⟨(f g).unop, hΔ g g.2⟩
+      map_one' := by
+        apply MulOpposite.unop_injective
+        exact Subtype.ext (by simp)
+      map_mul' a b := by
+        apply MulOpposite.unop_injective
+        exact Subtype.ext (by simp) }
+  involutive g := Subtype.ext (hinv g)
+  mem_H g hg := hH g hg
+
+@[simp] lemma ofAmbient_bar (f : G →* Gᵐᵒᵖ) (hinv : ∀ g, (f (f g).unop).unop = g)
+    (hH : ∀ g ∈ H, (f g).unop ∈ H) (hΔ : ∀ g ∈ Δ, (f g).unop ∈ Δ) (x : G) (hx : x ∈ Δ) :
+    (ofAmbient f hinv hH hΔ).bar x hx = (f x).unop := (rfl)
 
 /-- The anti-involution maps the double coset of `a` into the double coset of `bar a`. -/
-lemma bar_mem_doubleCoset {a x : G} (hx : x ∈ doubleCoset a (H : Set G) H) :
-    ι.bar x ∈ doubleCoset (ι.bar a) (H : Set G) H := by
-  obtain ⟨h₁, hh₁, h₂, hh₂, rfl⟩ := mem_doubleCoset.mp hx
-  exact mem_doubleCoset.mpr ⟨ι.bar h₂, ι.bar_mem_H hh₂, ι.bar h₁, ι.bar_mem_H hh₁, by
-    rw [ι.bar_mul, ι.bar_mul, mul_assoc]⟩
+lemma bar_mem_doubleCoset [IsHeckeTriple Δ H H] {a x : G} (ha : a ∈ Δ) (hx : x ∈ Δ)
+    (hmem : x ∈ doubleCoset a (H : Set G) H) :
+    ι.bar x hx ∈ doubleCoset (ι.bar a ha) (H : Set G) H := by
+  obtain ⟨h₁, hh₁, h₂, hh₂, rfl⟩ := mem_doubleCoset.mp hmem
+  have hh₁Δ : h₁ ∈ Δ := IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hh₁
+  have hh₂Δ : h₂ ∈ Δ := IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hh₂
+  refine mem_doubleCoset.mpr ⟨ι.bar h₂ hh₂Δ, ι.bar_mem_H hh₂Δ hh₂, ι.bar h₁ hh₁Δ,
+    ι.bar_mem_H hh₁Δ hh₁, ?_⟩
+  rw [ι.bar_mul (mul_mem hh₁Δ ha) hh₂Δ, ι.bar_mul hh₁Δ ha, mul_assoc]
 
 /-- The induced action of the anti-involution on the double cosets `H\Δ/H`. -/
 noncomputable def onHeckeCoset (D : HeckeCoset Δ H H) : HeckeCoset Δ H H :=
-  HeckeCoset.mk H H ⟨ι.bar (D.rep : G), ι.bar_mem_Δ D.rep.2⟩
+  HeckeCoset.mk H H ⟨ι.bar (D.rep : G) D.rep.2, ι.bar_mem_Δ _ _⟩
 
 /-- `onHeckeCoset` sends the class of `g` to the class of `bar g`. -/
-@[simp] lemma onHeckeCoset_mk (g : Δ) :
+@[simp] lemma onHeckeCoset_mk [IsHeckeTriple Δ H H] (g : Δ) :
     ι.onHeckeCoset (HeckeCoset.mk H H g) =
-      HeckeCoset.mk H H ⟨ι.bar (g : G), ι.bar_mem_Δ g.2⟩ := by
+      HeckeCoset.mk H H ⟨ι.bar (g : G) g.2, ι.bar_mem_Δ _ _⟩ := by
   refine HeckeCoset.eq_iff.mpr ?_
   have hrep : ((HeckeCoset.mk H H g).rep : G) ∈ doubleCoset (g : G) (H : Set G) H := by
     have h := HeckeCoset.rep_mem (HeckeCoset.mk H H g)
     rwa [HeckeCoset.toSet_mk] at h
-  exact doubleCoset_eq_of_mem (ι.bar_mem_doubleCoset hrep)
+  exact doubleCoset_eq_of_mem (ι.bar_mem_doubleCoset g.2 _ hrep)
 
 /-- The induced action on double cosets is an involution. -/
-@[simp] lemma onHeckeCoset_onHeckeCoset (D : HeckeCoset Δ H H) :
+@[simp] lemma onHeckeCoset_onHeckeCoset [IsHeckeTriple Δ H H] (D : HeckeCoset Δ H H) :
     ι.onHeckeCoset (ι.onHeckeCoset D) = D := by
   induction D using HeckeCoset.induction with
   | h g =>
     rw [ι.onHeckeCoset_mk, ι.onHeckeCoset_mk]
-    exact congrArg (HeckeCoset.mk H H) (Subtype.ext (ι.bar_bar (g : G)))
+    exact congrArg (HeckeCoset.mk H H) (Subtype.ext (ι.bar_bar g.2 _))
 
 /-- When the anti-involution fixes every double coset, `bar g` lies in the double coset of
 `g` for every `g ∈ Δ`. -/
-lemma bar_mem_doubleCoset_self (h_fix : ∀ D : HeckeCoset Δ H H, ι.onHeckeCoset D = D)
-    (g : Δ) : ι.bar (g : G) ∈ doubleCoset (g : G) (H : Set G) H := by
+lemma bar_mem_doubleCoset_self [IsHeckeTriple Δ H H]
+    (h_fix : ∀ D : HeckeCoset Δ H H, ι.onHeckeCoset D = D) (g : Δ) :
+    ι.bar (g : G) g.2 ∈ doubleCoset (g : G) (H : Set G) H := by
   have hg := congrArg HeckeCoset.toSet ((ι.onHeckeCoset_mk g).symm.trans (h_fix _))
   rw [HeckeCoset.toSet_mk, HeckeCoset.toSet_mk] at hg
   exact hg ▸ mem_doubleCoset_self H H _
 
 /-- Decompose `bar x` through the double coset of `g` when `x ∈ HgH`. -/
-lemma exists_bar_eq (h_fix : ∀ D : HeckeCoset Δ H H, ι.onHeckeCoset D = D)
-    {g : Δ} {x : G} (hx : x ∈ doubleCoset (g : G) (H : Set G) H) :
-    ∃ a ∈ H, ∃ b ∈ H, ι.bar x = a * (g : G) * b := by
-  have hbar := ι.bar_mem_doubleCoset hx
+lemma exists_bar_eq [IsHeckeTriple Δ H H]
+    (h_fix : ∀ D : HeckeCoset Δ H H, ι.onHeckeCoset D = D) {g : Δ} {x : G}
+    (hx : x ∈ doubleCoset (g : G) (H : Set G) H) :
+    ∃ a ∈ H, ∃ b ∈ H,
+      ι.bar x (IsHeckeTriple.mem_of_mem_doubleCoset g.2 hx) = a * (g : G) * b := by
+  have hbar := ι.bar_mem_doubleCoset g.2 (IsHeckeTriple.mem_of_mem_doubleCoset g.2 hx) hx
   rw [doubleCoset_eq_of_mem (ι.bar_mem_doubleCoset_self h_fix g)] at hbar
   exact mem_doubleCoset.mp hbar
 
@@ -193,84 +235,116 @@ private lemma out_mul_inv_mul_mem {g₁ g₂ d : G} {u : G} (hu : u ∈ H)
 open Classical in
 /-- Shimura's change of variables: the anti-involution transports a member of the one-sided
 count set of `m(g₁, g₂; d)` to a member of the one-sided count set of `m(g₂, g₁; d)`. -/
-private noncomputable def commFwdMap (h_fix : ∀ D : HeckeCoset Δ H H, ι.onHeckeCoset D = D)
+private noncomputable def commFwdMap [IsHeckeTriple Δ H H]
+    (h_fix : ∀ D : HeckeCoset Δ H H, ι.onHeckeCoset D = D)
     (g₁ g₂ d : Δ) {aD bD : G} (haD : aD ∈ H) (hbD : bD ∈ H)
-    (hbarD : ι.bar (d : G) = aD * (d : G) * bD)
+    (hbarD : ι.bar (d : G) d.2 = aD * (d : G) * bD)
     {a₁ b₁ : G} (ha₁ : a₁ ∈ H) (hb₁ : b₁ ∈ H)
-    (hbar₁ : ι.bar (g₁ : G) = a₁ * (g₁ : G) * b₁)
+    (hbar₁ : ι.bar (g₁ : G) g₁.2 = a₁ * (g₁ : G) * b₁)
     (p : {i : DecompQuotient H H (g₁ : G) |
       ((i.out : G) * g₁)⁻¹ * (d : G) ∈ doubleCoset (g₂ : G) (H : Set G) H}) :
     {j : DecompQuotient H H (g₂ : G) |
       ((j.out : G) * g₂)⁻¹ * (d : G) ∈ doubleCoset (g₁ : G) (H : Set G) H} :=
   have hx : ∃ a ∈ H, ∃ b ∈ H,
-      ι.bar (((p.1.out : G) * g₁)⁻¹ * (d : G)) = a * (g₂ : G) * b :=
+      ι.bar (((p.1.out : G) * g₁)⁻¹ * (d : G))
+        (IsHeckeTriple.mem_of_mem_doubleCoset g₂.2 p.2) = a * (g₂ : G) * b :=
     ι.exists_bar_eq h_fix p.2
   ⟨QuotientGroup.mk ⟨aD⁻¹ * hx.choose, H.mul_mem (H.inv_mem haD) hx.choose_spec.1⟩,
     out_mul_inv_mul_mem _ (by
-      -- the raw membership `((aD⁻¹ * a * g₂)⁻¹ * d ∈ H g₁ H` for the chosen decomposition
+      -- the raw membership `(aD⁻¹ * a * g₂)⁻¹ * d ∈ H g₁ H` for the chosen decomposition
       -- `bar((σᵢ g₁)⁻¹ d) = a g₂ b`, before passing to the canonical representative
       obtain ⟨hb, hbar⟩ := hx.choose_spec.2.choose_spec
       set a := hx.choose
       set b := hx.choose_spec.2.choose
+      have houtΔ : ((p.1.out : H) : G) ∈ Δ :=
+        IsHeckeTriple.mem_of_mem_left (Δ := Δ) H (p.1.out : H).2
+      have hxΔ : ((p.1.out : G) * g₁)⁻¹ * (d : G) ∈ Δ :=
+        IsHeckeTriple.mem_of_mem_doubleCoset g₂.2 p.2
+      have houtg₁Δ : (p.1.out : G) * (g₁ : G) ∈ Δ := mul_mem houtΔ g₁.2
       have hd : (d : G) = (p.1.out : G) * (g₁ : G) * (((p.1.out : G) * g₁)⁻¹ * (d : G)) := by
         group
-      have h2 : ι.bar ((p.1.out : G) * (g₁ : G) * (((p.1.out : G) * g₁)⁻¹ * (d : G))) =
-          ι.bar (((p.1.out : G) * g₁)⁻¹ * (d : G)) *
-            (ι.bar (g₁ : G) * ι.bar (p.1.out : G)) := by
-        rw [ι.bar_mul ((p.1.out : G) * (g₁ : G)), ι.bar_mul (p.1.out : G)]
+      have h2 : ι.bar (d : G) d.2 =
+          ι.bar (((p.1.out : G) * g₁)⁻¹ * (d : G)) hxΔ *
+            (ι.bar (g₁ : G) g₁.2 * ι.bar (p.1.out : G) houtΔ) := by
+        rw [ι.bar_congr hd d.2 (mul_mem houtg₁Δ hxΔ), ι.bar_mul houtg₁Δ hxΔ,
+          ι.bar_mul houtΔ g₁.2]
       have hkey : aD * (d : G) * bD =
-          a * (g₂ : G) * b * (a₁ * (g₁ : G) * b₁) * ι.bar (p.1.out : G) := by
-        rw [← hbarD, ← hbar, ← hbar₁]
-        conv_lhs => rw [hd]
-        rw [h2]
+          a * (g₂ : G) * b * (a₁ * (g₁ : G) * b₁) * ι.bar (p.1.out : G) houtΔ := by
+        rw [← hbarD, ← hbar, ← hbar₁, h2]
         group
       refine mem_doubleCoset.mpr ⟨b * a₁, H.mul_mem hb ha₁,
-        b₁ * ι.bar (p.1.out : G) * bD⁻¹,
-        H.mul_mem (H.mul_mem hb₁ (ι.bar_mem_H (p.1.out : H).2)) (H.inv_mem hbD), ?_⟩
+        b₁ * ι.bar (p.1.out : G) houtΔ * bD⁻¹,
+        H.mul_mem (H.mul_mem hb₁ (ι.bar_mem_H houtΔ (p.1.out : H).2)) (H.inv_mem hbD), ?_⟩
       have hADd : aD * (d : G) =
-          a * (g₂ : G) * (b * a₁ * (g₁ : G) * (b₁ * ι.bar (p.1.out : G) * bD⁻¹)) := by
+          a * (g₂ : G) *
+            (b * a₁ * (g₁ : G) * (b₁ * ι.bar (p.1.out : G) houtΔ * bD⁻¹)) := by
         calc aD * (d : G) = aD * (d : G) * bD * bD⁻¹ := by group
-          _ = a * (g₂ : G) * b * (a₁ * (g₁ : G) * b₁) * ι.bar (p.1.out : G) * bD⁻¹ := by
+          _ = a * (g₂ : G) * b * (a₁ * (g₁ : G) * b₁) * ι.bar (p.1.out : G) houtΔ * bD⁻¹ := by
             rw [hkey]
-          _ = a * (g₂ : G) * (b * a₁ * (g₁ : G) * (b₁ * ι.bar (p.1.out : G) * bD⁻¹)) := by
+          _ = a * (g₂ : G) *
+              (b * a₁ * (g₁ : G) * (b₁ * ι.bar (p.1.out : G) houtΔ * bD⁻¹)) := by
             group
       calc (aD⁻¹ * a * (g₂ : G))⁻¹ * (d : G)
           = ((g₂ : G))⁻¹ * a⁻¹ * (aD * (d : G)) := by group
         _ = ((g₂ : G))⁻¹ * a⁻¹ *
-              (a * (g₂ : G) * (b * a₁ * (g₁ : G) * (b₁ * ι.bar (p.1.out : G) * bD⁻¹))) := by
+              (a * (g₂ : G) *
+                (b * a₁ * (g₁ : G) * (b₁ * ι.bar (p.1.out : G) houtΔ * bD⁻¹))) := by
             rw [hADd]
-        _ = b * a₁ * (g₁ : G) * (b₁ * ι.bar (p.1.out : G) * bD⁻¹) := by group)⟩
+        _ = b * a₁ * (g₁ : G) * (b₁ * ι.bar (p.1.out : G) houtΔ * bD⁻¹) := by group)⟩
 
-/-- Transport back through the anti-involution: two elements whose barred decompositions
-share the middle `g₂` with stabilizer-related left parts differ by an element of `H`. -/
-private lemma bar_diff_mem {x₁ x₂ g₂ : G} {a₁' b₁' a₂' b₂' : G}
-    (hb₁' : b₁' ∈ H) (hb₂' : b₂' ∈ H)
-    (hbar₁' : ι.bar x₁ = a₁' * g₂ * b₁') (hbar₂' : ι.bar x₂ = a₂' * g₂ * b₂')
-    (hconj : g₂⁻¹ * (a₁'⁻¹ * a₂') * g₂ ∈ H) : x₂ * x₁⁻¹ ∈ H := by
-  have hcalc : ι.bar (x₂ * x₁⁻¹) = b₁'⁻¹ * (g₂⁻¹ * (a₁'⁻¹ * a₂') * g₂) * b₂' := by
-    rw [ι.bar_mul, ι.bar_inv, hbar₁', hbar₂']
-    group
-  have hmem : ι.bar (x₂ * x₁⁻¹) ∈ H :=
-    hcalc ▸ H.mul_mem (H.mul_mem (H.inv_mem hb₁') hconj) hb₂'
-  have hbb := ι.bar_mem_H hmem
-  rwa [ι.bar_bar] at hbb
+/-- Transport back through the anti-involution: two elements of `Δ` whose barred
+decompositions share the middle `g₂` with stabilizer-related left parts differ by an element
+of `H`. The proof expands the involution through the two decompositions, staying inside `Δ`
+throughout — `bar` is never applied to an inverse. -/
+private lemma bar_diff_mem [IsHeckeTriple Δ H H] {x₁ x₂ : G} (hx₁ : x₁ ∈ Δ) (hx₂ : x₂ ∈ Δ)
+    {g₂ : Δ} {a₁' b₁' a₂' b₂' : G} (ha₁' : a₁' ∈ H) (hb₁' : b₁' ∈ H) (hb₂' : b₂' ∈ H)
+    (hbar₁' : ι.bar x₁ hx₁ = a₁' * (g₂ : G) * b₁')
+    (hbar₂' : ι.bar x₂ hx₂ = a₂' * (g₂ : G) * b₂')
+    (hconj : (g₂ : G)⁻¹ * (a₁'⁻¹ * a₂') * g₂ ∈ H) : x₂ * x₁⁻¹ ∈ H := by
+  set m : G := (g₂ : G)⁻¹ * (a₁'⁻¹ * a₂') * g₂ with hm
+  -- rewrite the second decomposition through the stabilizer relation to share `a₁'`
+  have hx₂eq : ι.bar x₂ hx₂ = a₁' * (g₂ : G) * (m * b₂') := by rw [hbar₂', hm]; group
+  have ha₁'Δ : a₁' ∈ Δ := IsHeckeTriple.mem_of_mem_left (Δ := Δ) H ha₁'
+  have hb₁'Δ : b₁' ∈ Δ := IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hb₁'
+  have hmb₂'Δ : m * b₂' ∈ Δ := mul_mem (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hconj)
+    (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hb₂')
+  have ha₁g₂Δ : a₁' * (g₂ : G) ∈ Δ := mul_mem ha₁'Δ g₂.2
+  -- expand the involution through the two decompositions
+  have hx₁' : x₁ = ι.bar b₁' hb₁'Δ * (ι.bar (g₂ : G) g₂.2 * ι.bar a₁' ha₁'Δ) := by
+    have h := (ι.bar_bar hx₁ (ι.bar_mem_Δ x₁ hx₁)).symm
+    rw [ι.bar_congr hbar₁' (ι.bar_mem_Δ x₁ hx₁) (mul_mem ha₁g₂Δ hb₁'Δ),
+      ι.bar_mul ha₁g₂Δ hb₁'Δ, ι.bar_mul ha₁'Δ g₂.2] at h
+    exact h
+  have hx₂' : x₂ = ι.bar (m * b₂') hmb₂'Δ * (ι.bar (g₂ : G) g₂.2 * ι.bar a₁' ha₁'Δ) := by
+    have h := (ι.bar_bar hx₂ (ι.bar_mem_Δ x₂ hx₂)).symm
+    rw [ι.bar_congr hx₂eq (ι.bar_mem_Δ x₂ hx₂) (mul_mem ha₁g₂Δ hmb₂'Δ),
+      ι.bar_mul ha₁g₂Δ hmb₂'Δ, ι.bar_mul ha₁'Δ g₂.2] at h
+    exact h
+  -- the common right factor cancels
+  have hcalc : x₂ * x₁⁻¹ = ι.bar (m * b₂') hmb₂'Δ * (ι.bar b₁' hb₁'Δ)⁻¹ := by
+    rw [hx₁', hx₂']; group
+  rw [hcalc]
+  exact H.mul_mem (ι.bar_mem_H hmb₂'Δ (H.mul_mem hconj hb₂'))
+    (H.inv_mem (ι.bar_mem_H hb₁'Δ hb₁'))
 
 /-- The transported class determines the original: two members of the count set with barred
 decompositions sharing the middle `g₂` and stabilizer-related left parts differ by `H` on
 the left of `g₁`. -/
-private lemma commFwdMap_injective
+private lemma commFwdMap_injective [IsHeckeTriple Δ H H]
     (h_fix : ∀ D : HeckeCoset Δ H H, ι.onHeckeCoset D = D)
     (g₁ g₂ d : Δ) {aD bD : G} (haD : aD ∈ H) (hbD : bD ∈ H)
-    (hbarD : ι.bar (d : G) = aD * (d : G) * bD)
+    (hbarD : ι.bar (d : G) d.2 = aD * (d : G) * bD)
     {a₁ b₁ : G} (ha₁ : a₁ ∈ H) (hb₁ : b₁ ∈ H)
-    (hbar₁ : ι.bar (g₁ : G) = a₁ * (g₁ : G) * b₁) :
+    (hbar₁ : ι.bar (g₁ : G) g₁.2 = a₁ * (g₁ : G) * b₁) :
     Function.Injective (ι.commFwdMap h_fix g₁ g₂ d haD hbD hbarD ha₁ hb₁ hbar₁) := by
   intro p₁ p₂ heq
   have hx₁ : ∃ a ∈ H, ∃ b ∈ H,
-      ι.bar (((p₁.1.out : G) * g₁)⁻¹ * (d : G)) = a * (g₂ : G) * b :=
+      ι.bar (((p₁.1.out : G) * g₁)⁻¹ * (d : G))
+        (IsHeckeTriple.mem_of_mem_doubleCoset g₂.2 p₁.2) = a * (g₂ : G) * b :=
     ι.exists_bar_eq h_fix p₁.2
   have hx₂ : ∃ a ∈ H, ∃ b ∈ H,
-      ι.bar (((p₂.1.out : G) * g₁)⁻¹ * (d : G)) = a * (g₂ : G) * b :=
+      ι.bar (((p₂.1.out : G) * g₁)⁻¹ * (d : G))
+        (IsHeckeTriple.mem_of_mem_doubleCoset g₂.2 p₂.2) = a * (g₂ : G) * b :=
     ι.exists_bar_eq h_fix p₂.2
   have hmk : (QuotientGroup.mk ⟨aD⁻¹ * hx₁.choose,
         H.mul_mem (H.inv_mem haD) hx₁.choose_spec.1⟩ : DecompQuotient H H (g₂ : G)) =
@@ -284,7 +358,9 @@ private lemma commFwdMap_injective
   -- transport back through the anti-involution: the two count-set elements differ by `H`
   have hdiff : (((p₂.1.out : G) * g₁)⁻¹ * (d : G)) *
       ((((p₁.1.out : G) * g₁)⁻¹ * (d : G)))⁻¹ ∈ H :=
-    ι.bar_diff_mem hx₁.choose_spec.2.choose_spec.1 hx₂.choose_spec.2.choose_spec.1
+    ι.bar_diff_mem (IsHeckeTriple.mem_of_mem_doubleCoset g₂.2 p₁.2)
+      (IsHeckeTriple.mem_of_mem_doubleCoset g₂.2 p₂.2)
+      hx₁.choose_spec.1 hx₁.choose_spec.2.choose_spec.1 hx₂.choose_spec.2.choose_spec.1
       hx₁.choose_spec.2.choose_spec.2 hx₂.choose_spec.2.choose_spec.2 hconj'
   -- conclude equality in the decomposition quotient through the coset injectivity
   have hcoset : (((p₂.1.out : G) * g₁ : G) : G ⧸ H) = (((p₁.1.out : G) * g₁ : G) : G ⧸ H) := by
