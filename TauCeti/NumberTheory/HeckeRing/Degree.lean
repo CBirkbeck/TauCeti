@@ -307,4 +307,38 @@ private lemma card_filter_orbit_eq_multiplicity {D₁ D₂ D₀ : HeckeCoset Δ 
       ((i.out : G) * ((D₁.rep : Δ) : G))⁻¹ * ((β : G)⁻¹ * ((x.rep : Δ) : G)) by group]
   exact Iff.rfl
 
+/-- Iterated orbit membership factors through a single orbit at the original base: the
+witnessing double coset is that of `β⁻¹ · x.rep`. -/
+private lemma exists_orbit_of_mem_orbit_orbit {g₁ g₂ β : Δ} {x i : HeckeCoset Δ ⊥ H}
+    (hi : i ∈ smulOrbit H g₁ β) (hx : x ∈ smulOrbit H g₂ i.rep) :
+    ∃ D₀ : HeckeCoset Δ H H, x ∈ smulOrbit H D₀.rep β := by
+  have hβη := mem_smulOrbit_iff_rep.mp hi
+  have hηξ := mem_smulOrbit_iff_rep.mp hx
+  obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := mem_doubleCoset.mp hηξ
+  have hfirst : (β : G)⁻¹ * ((i.rep : Δ) : G) * h₁ ∈
+      doubleCoset ((g₁ : Δ) : G) (H : Set G) H := by
+    obtain ⟨k₁, hk₁, k₂, hk₂, hkeq⟩ := mem_doubleCoset.mp hβη
+    exact mem_doubleCoset.mpr ⟨k₁, hk₁, k₂ * h₁, H.mul_mem hk₂ hh₁, by rw [hkeq]; group⟩
+  have hprod : (β : G)⁻¹ * ((x.rep : Δ) : G) ∈
+      doubleCoset ((g₂ : Δ) : G) (doubleCoset ((g₁ : Δ) : G) (H : Set G) H) H :=
+    mem_doubleCoset.mpr ⟨(β : G)⁻¹ * ((i.rep : Δ) : G) * h₁, hfirst, h₂, hh₂, by
+      rw [show (β : G)⁻¹ * ((x.rep : Δ) : G) =
+        ((β : G)⁻¹ * ((i.rep : Δ) : G)) * (((i.rep : Δ) : G)⁻¹ * ((x.rep : Δ) : G)) by group,
+        heq]
+      group⟩
+  have hΔ : (β : G)⁻¹ * ((x.rep : Δ) : G) ∈ Δ := by
+    obtain ⟨w, hw, k, hk, hkeq⟩ := mem_doubleCoset.mp hprod
+    obtain ⟨w₁, hw₁, w₂, hw₂, hweq⟩ := mem_doubleCoset.mp hw
+    rw [hkeq, hweq]
+    exact Δ.mul_mem (Δ.mul_mem (Δ.mul_mem (Δ.mul_mem
+      (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hw₁) g₁.2)
+      (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hw₂)) g₂.2)
+      (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hk)
+  refine ⟨HeckeCoset.mk H H ⟨(β : G)⁻¹ * ((x.rep : Δ) : G), hΔ⟩, ?_⟩
+  rw [mem_smulOrbit_iff_rep]
+  have hrep := HeckeCoset.rep_mem (HeckeCoset.mk H H ⟨(β : G)⁻¹ * ((x.rep : Δ) : G), hΔ⟩)
+  rw [HeckeCoset.toSet_mk] at hrep
+  exact doubleCoset_eq_of_mem hrep ▸
+    mem_doubleCoset_self H H ((β : G)⁻¹ * ((x.rep : Δ) : G))
+
 end HeckeLeftCosetModule
