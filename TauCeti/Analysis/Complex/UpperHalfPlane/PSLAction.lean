@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Measure
 public import TauCeti.LinearAlgebra.Matrix.ProjectiveSpecialLinearGroup
+import Mathlib.Analysis.Complex.UpperHalfPlane.FixedPoints
 
 /-!
 # The `PSL(2)` actions on the upper half-plane
@@ -25,6 +26,8 @@ Mathlib's `GL(2, ℝ)`-invariance).
 * `UpperHalfPlane.center_SL2Z_smul_eq` — the center of `SL(2, ℤ)` acts trivially.
 * `UpperHalfPlane.instMulActionPSL2Z`, `instMulActionPSL2R` — the restricted actions, with
   the representative compatibilities `psl2zMk_smul`, `psl2rMk_smul`.
+* `FaithfulSMul` instances for `PSL(2, ℤ)` and `PSL(2, ℝ)` on `ℍ`, restricting Mathlib's
+  faithful `PGL(2, ℝ)`-action along the injective `toPGL` and `psl2zToPSL2R`.
 * `SMulInvariantMeasure` instances for `SL(2, ℤ)`, `PSL(2, ℤ)` and `PSL(2, ℝ)` on
   `(ℍ, volume)`.
 * `UpperHalfPlane.smul_eq_smul_of_coe_eq_smul` — matrices differing by a nonzero scalar act
@@ -116,6 +119,12 @@ theorem psl2rMk_smul (g : SL(2, ℝ)) (τ : ℍ) :
   rw [Matrix.ProjectiveSpecialLinearGroup.toPGL_mk, pglMk_smul]
   rfl
 
+/-- The `PSL(2, ℝ)`-action on `ℍ` is faithful: it restricts Mathlib's faithful
+`PGL(2, ℝ)`-action along the injective `toPGL`. -/
+instance : FaithfulSMul PSL(2, ℝ) ℍ where
+  eq_of_smul_eq_smul h :=
+    Matrix.ProjectiveSpecialLinearGroup.toPGL_injective (eq_of_smul_eq_smul fun τ : ℍ ↦ h τ)
+
 /-- The `PSL(2, ℤ)`-action on `ℍ`: the restriction of the `PSL(2, ℝ)`-action along the
 injective descent `psl2zToPSL2R`. -/
 noncomputable instance instMulActionPSL2Z : MulAction PSL(2, ℤ) ℍ :=
@@ -137,6 +146,12 @@ theorem psl2zMk_smul (g : SL(2, ℤ)) (τ : ℍ) :
 theorem psl2zToPSL2R_smul (g : SL(2, ℤ)) (τ : ℍ) :
     psl2zToPSL2R (↑g : PSL(2, ℤ)) • τ = g • τ := by
   rw [(MulAction.compHom_smul_def psl2zToPSL2R (↑g : PSL(2, ℤ)) τ).symm, psl2zMk_smul]
+
+/-- The `PSL(2, ℤ)`-action on `ℍ` is faithful, through the injective descent
+`psl2zToPSL2R` and the faithfulness of the `PSL(2, ℝ)`-action. -/
+instance : FaithfulSMul PSL(2, ℤ) ℍ where
+  eq_of_smul_eq_smul h :=
+    psl2zToPSL2R_injective (eq_of_smul_eq_smul fun τ : ℍ ↦ h τ)
 
 instance : MeasurableConstSMul PSL(2, ℤ) ℍ where
   measurable_const_smul g := by
