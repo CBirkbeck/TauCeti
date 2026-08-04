@@ -20,13 +20,13 @@ of them are supplied by the `ModularFormClass` machinery.
 
 ## Main declarations
 
-* `TauCeti.ModularForm.orderAtCusp`.
-* `TauCeti.ModularForm.orderAtCusp_eq_analyticOrderAt`: the analytic-order dictionary.
-* `TauCeti.ModularForm.orderAtCusp_nat_mul`: linear rescaling in the width.
+* `TauCeti.orderAtCusp`.
+* `TauCeti.orderAtCusp_eq_analyticOrderAt`: the analytic-order dictionary.
+* `TauCeti.orderAtCusp_nat_mul`: linear rescaling in the width.
 * `TauCeti.ModularForm.orderAtCusp_eq_zero_iff`: for a nonzero modular form, order zero
-  is a nonzero constant term.
-* `TauCeti.ModularForm.orderAtCusp_mul`: additivity on products (with `orderAtCusp_pow`
-  and `orderAtCusp_prod`).
+  is a nonzero constant term (the class-level interface lives in `TauCeti.ModularForm`).
+* `TauCeti.orderAtCusp_mul`: additivity on products (with `orderAtCusp_pow` and
+  `orderAtCusp_prod`).
 
 ## References
 
@@ -41,8 +41,6 @@ open UpperHalfPlane Complex Filter Function Metric Set SlashInvariantForm Period
 open scoped ModularForm Topology Filter Manifold
 
 namespace TauCeti
-
-namespace ModularForm
 
 variable {h : ℝ} {g : ℍ → ℂ}
 
@@ -125,17 +123,36 @@ lemma orderAtCusp_mul {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f
   push_cast
   ring
 
-private lemma cuspFunction_one (h : ℝ) : cuspFunction h (1 : ℍ → ℂ) = 1 := by
+private lemma cuspFunction_const (h : ℝ) (c : ℂ) :
+    UpperHalfPlane.cuspFunction h (fun _ ↦ c) = fun _ ↦ c := by
   have h_lim : Filter.limUnder (𝓝[≠] (0 : ℂ))
-      (((1 : ℍ → ℂ) ∘ ofComplex) ∘ Function.Periodic.invQParam h) = 1 :=
+      (((fun _ ↦ c : ℍ → ℂ) ∘ ofComplex) ∘ Function.Periodic.invQParam h) = c :=
     Filter.Tendsto.limUnder_eq tendsto_const_nhds
   rw [UpperHalfPlane.cuspFunction, Function.Periodic.cuspFunction, h_lim]
-  exact Function.update_eq_self 0 (1 : ℂ → ℂ)
+  exact Function.update_eq_self 0 (fun _ ↦ c)
+
+private lemma cuspFunction_one (h : ℝ) : cuspFunction h (1 : ℍ → ℂ) = 1 :=
+  cuspFunction_const h 1
+
+/-- Every constant function has cusp order zero: a nonzero constant by the nonvanishing
+constant term, the zero function by the junk value. -/
+@[simp]
+lemma orderAtCusp_const (h : ℝ) (c : ℂ) : orderAtCusp h (fun _ ↦ c) = 0 := by
+  rcases eq_or_ne c 0 with rfl | hc
+  · have h0 : qExpansion h (fun _ ↦ (0 : ℂ)) = 0 := by
+      ext m
+      rw [qExpansion_coeff, cuspFunction_const]
+      simp
+    rw [orderAtCusp_def, h0, PowerSeries.order_zero]
+    rfl
+  · exact orderAtCusp_eq_zero_of_cuspFunction_ne_zero (by
+      rw [cuspFunction_const]
+      exact hc)
 
 /-- The constant-one function has cusp order zero. -/
 @[simp]
 lemma orderAtCusp_one (h : ℝ) : orderAtCusp h (1 : ℍ → ℂ) = 0 :=
-  orderAtCusp_eq_zero_of_cuspFunction_ne_zero (by rw [cuspFunction_one]; exact one_ne_zero)
+  orderAtCusp_const h 1
 
 private lemma cuspFunction_pow_nhds {f : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
     ∀ n : ℕ, cuspFunction h (f ^ n) =ᶠ[𝓝 (0 : ℂ)] cuspFunction h f ^ n
@@ -189,7 +206,7 @@ lemma orderAtCusp_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
     Nat.cast_sum]
   exact Finset.sum_congr rfl fun i hi ↦ (orderAtCusp_eq_analyticOrderAt (hf i hi)).symm
 
-section ModularFormClass
+namespace ModularForm
 
 variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] {f : F}
 
@@ -256,8 +273,6 @@ lemma orderAtCusp_pos_iff [ModularFormClass F Γ k] (hh : 0 < h)
   rw [(orderAtCusp_nonneg h ⇑f).lt_iff_ne, ne_comm,
     ← not_not (a := cuspFunction h ⇑f 0 = 0)]
   exact not_congr (orderAtCusp_eq_zero_iff hh hΓ hf)
-
-end ModularFormClass
 
 end ModularForm
 
