@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import TauCeti.NumberTheory.ModularForms.QExpansion.Order
 
 /-!
@@ -12,9 +11,11 @@ public import TauCeti.NumberTheory.ModularForms.QExpansion.Order
 
 The vanishing order of a modular form at the cusp is the order of its `q`-expansion, as an
 integer with junk value `0` at the identically vanishing expansion — the convention of the
-interior dictionary `orderOfVanishingAt`. For a modular form it is computed by the analytic
-order of the cusp function at `0`, vanishes when the constant term is nonzero, and rescales
-linearly in the width — the cusp term of the valence formula.
+interior dictionary `orderOfVanishingAt`. It is computed by the analytic order of the cusp
+function at `0`, vanishes when the constant term is nonzero, and rescales linearly in the
+width — the cusp term of the valence formula. The lemmas take the raw analytic, periodicity,
+and boundedness hypotheses of the underlying `q`-expansion theorems; for a modular form all
+of them are supplied by the `ModularFormClass` machinery.
 
 ## Main declarations
 
@@ -32,13 +33,13 @@ public noncomputable section
 
 open UpperHalfPlane Complex Function SlashInvariantForm Periodic
 
-open scoped ModularForm
+open scoped ModularForm Topology Filter Manifold
 
 namespace TauCeti
 
 namespace ModularForm
 
-variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] {f : F} {h : ℝ}
+variable {h : ℝ} {g : ℍ → ℂ}
 
 /-- The vanishing order at the cusp: the order of the `q`-expansion at width `h`, as an
 integer, with junk value `0` when the expansion vanishes identically — the `untop₀`
@@ -57,30 +58,26 @@ lemma orderAtCusp_nonneg (h : ℝ) (f : ℍ → ℂ) : 0 ≤ orderAtCusp h f := 
   rw [orderAtCusp_def]
   exact Int.natCast_nonneg _
 
-/-- The cusp order of a modular form is the analytic order of its cusp function at `0`. -/
-lemma orderAtCusp_eq_analyticOrderAt [ModularFormClass F Γ k] (hh : 0 < h)
-    (hΓ : h ∈ Γ.strictPeriods) :
-    orderAtCusp h f = ((analyticOrderAt (cuspFunction h f) 0).toNat : ℤ) := by
-  rw [orderAtCusp_def, qExpansion_order_eq_analyticOrderAt_cuspFunction
-    (ModularFormClass.analyticAt_cuspFunction_zero f hh hΓ)]
+/-- The cusp order is the analytic order of the cusp function at `0`. For a modular form
+the analyticity is `ModularFormClass.analyticAt_cuspFunction_zero`. -/
+lemma orderAtCusp_eq_analyticOrderAt (hg : AnalyticAt ℂ (cuspFunction h g) 0) :
+    orderAtCusp h g = ((analyticOrderAt (cuspFunction h g) 0).toNat : ℤ) := by
+  rw [orderAtCusp_def, qExpansion_order_eq_analyticOrderAt_cuspFunction hg]
 
-/-- A modular form whose constant term at the cusp is nonzero has cusp order zero. -/
-lemma orderAtCusp_eq_zero_of_cuspFunction_ne_zero [ModularFormClass F Γ k] (hh : 0 < h)
-    (hΓ : h ∈ Γ.strictPeriods) (h0 : cuspFunction h f 0 ≠ 0) : orderAtCusp h f = 0 := by
-  rw [orderAtCusp_eq_analyticOrderAt hh hΓ,
-    (ModularFormClass.analyticAt_cuspFunction_zero f hh
-      hΓ).analyticOrderAt_eq_zero.mpr h0]
+/-- A nonzero constant term at the cusp forces cusp order zero. -/
+lemma orderAtCusp_eq_zero_of_cuspFunction_ne_zero (hg : AnalyticAt ℂ (cuspFunction h g) 0)
+    (h0 : cuspFunction h g 0 ≠ 0) : orderAtCusp h g = 0 := by
+  rw [orderAtCusp_eq_analyticOrderAt hg, hg.analyticOrderAt_eq_zero.mpr h0]
   rfl
 
-/-- The cusp order rescales linearly in the width. -/
-lemma orderAtCusp_nat_mul [ModularFormClass F Γ k] {m : ℕ} (hh : 0 < h) (hm : 0 < m)
-    (hΓ : h ∈ Γ.strictPeriods) :
-    orderAtCusp (m * h) f = m * orderAtCusp h f := by
-  have : Fact (IsCusp OnePoint.infty Γ) := ⟨Γ.isCusp_of_mem_strictPeriods hh hΓ⟩
+/-- The cusp order rescales linearly in the width. For a modular form the periodicity,
+boundedness, and holomorphy are `SlashInvariantFormClass.periodic_comp_ofComplex`,
+`ModularFormClass.bdd_at_infty`, and `ModularFormClass.holo`. -/
+lemma orderAtCusp_nat_mul {m : ℕ} (hh : 0 < h) (hm : 0 < m)
+    (hg_per : Periodic (g ∘ ofComplex) h) (hg_bdd : IsBoundedAtImInfty g)
+    (hg_mdiff : MDiff g) : orderAtCusp (m * h) g = m * orderAtCusp h g := by
   rw [orderAtCusp_def, orderAtCusp_def,
-    qExpansion_nat_mul_order hh hm (SlashInvariantFormClass.periodic_comp_ofComplex f hΓ)
-      (ModularFormClass.bdd_at_infty f) (ModularFormClass.holo f),
-    ENat.toNat_mul]
+    qExpansion_nat_mul_order hh hm hg_per hg_bdd hg_mdiff, ENat.toNat_mul]
   simp [mul_comm]
 
 end ModularForm
