@@ -47,8 +47,8 @@ def orderOfVanishingAt (f : ℍ → ℂ) (z : ℍ) : ℤ :=
   (meromorphicOrderAt (f ∘ ofComplex) (z : ℂ)).untop₀
 
 -- The definition is sealed by the module system, so this restatement is the supported
--- cross-module rewrite for it.
-@[simp]
+-- cross-module rewrite for it. Not a `simp` lemma: unfolding the definition is not a
+-- normal form, and `simpNF` rejects it against the dictionary lemmas below.
 lemma orderOfVanishingAt_def (f : ℍ → ℂ) (z : ℍ) :
     orderOfVanishingAt f z = (meromorphicOrderAt (f ∘ ofComplex) (z : ℂ)).untop₀ := by
   unfold orderOfVanishingAt
@@ -105,7 +105,8 @@ lemma orderOfVanishingAt_eq_zero_iff (hf : MDiff f) (hne : f ≠ 0) {z : ℍ} :
 variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
 
 /-- The vanishing order of a slash-invariant form is constant along the group action. -/
-@[simp]
+-- Not a `simp` lemma: the subgroup `Γ` occurs only in the hypotheses, so `simpNF` rejects
+-- the annotation (`simp` could never instantiate it from the left-hand side).
 lemma orderOfVanishingAt_smul [Γ.HasDetOne] [SlashInvariantFormClass F Γ k] (f : F) {γ}
     (hγ : γ ∈ Γ) (z : ℍ) : orderOfVanishingAt f (γ • z) = orderOfVanishingAt f z := by
   have hdet : 0 < γ.val.det := by
