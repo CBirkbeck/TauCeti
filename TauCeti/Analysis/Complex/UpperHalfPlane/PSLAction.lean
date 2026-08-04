@@ -24,10 +24,10 @@ Mathlib's `GL(2, ℝ)`-invariance).
 
 * `UpperHalfPlane.center_SL2Z_smul_eq` — the center of `SL(2, ℤ)` acts trivially.
 * `UpperHalfPlane.instMulActionPSL2Z`, `instMulActionPSL2R` — the restricted actions, with
-  the representative compatibilities `PSL_smul_coe`, `PSL_R_smul_coe`.
+  the representative compatibilities `psl2zMk_smul`, `psl2rMk_smul`.
 * `SMulInvariantMeasure` instances for `SL(2, ℤ)`, `PSL(2, ℤ)` and `PSL(2, ℝ)` on
   `(ℍ, volume)`.
-* `UpperHalfPlane.GL_smul_eq_of_coe_eq_smul` — matrices differing by a nonzero scalar act
+* `UpperHalfPlane.smul_eq_smul_of_coe_eq_smul` — matrices differing by a nonzero scalar act
   identically on `ℍ`.
 * `UpperHalfPlane.glPosToPSL2R_smul` — the det-normalized projective representative of a
   `GL(2, ℝ)⁺` element (multiplicative by `Real.sqrt_mul` together with the centrality of
@@ -109,7 +109,7 @@ noncomputable instance instMulActionPSL2R : MulAction PSL(2, ℝ) ℍ :=
 /-- Compatibility: the `PSL(2, ℝ)` action of a representative coincides with
 the underlying `SL(2, ℝ)` action. -/
 @[simp]
-theorem PSL_R_smul_coe (g : SL(2, ℝ)) (τ : ℍ) :
+theorem psl2rMk_smul (g : SL(2, ℝ)) (τ : ℍ) :
     (↑g : PSL(2, ℝ)) • τ = g • τ := by
   -- the `compHom` action is definitionally the `PGL(2, ℝ)`-action of the `toPGL`-image
   change Matrix.ProjectiveSpecialLinearGroup.toPGL (↑g : PSL(2, ℝ)) • τ = g • τ
@@ -121,22 +121,14 @@ injective descent `psl2zToPSL2R`. -/
 noncomputable instance instMulActionPSL2Z : MulAction PSL(2, ℤ) ℍ :=
   MulAction.compHom ℍ psl2zToPSL2R
 
-/-- Action compatibility for `psl2zToPSL2R`: the image of `p : PSL(2, ℤ)` acts on `ℍ`
-exactly as `p` does — definitionally, since the `PSL(2, ℤ)`-action is the restriction
-along `psl2zToPSL2R`. -/
-@[simp]
-theorem psl2zToPSL2R_smul_eq (p : PSL(2, ℤ)) (τ : ℍ) :
-    psl2zToPSL2R p • τ = p • τ :=
-  (rfl)
-
 /-- The `PSL(2, ℤ)` action is compatible with the `SL(2, ℤ)` action:
 `(↑g) • τ = g • τ` for `g : SL(2, ℤ)`. -/
 @[simp]
-theorem PSL_smul_coe (g : SL(2, ℤ)) (τ : ℍ) :
+theorem psl2zMk_smul (g : SL(2, ℤ)) (τ : ℍ) :
     (↑g : PSL(2, ℤ)) • τ = g • τ := by
   -- expose the restriction along `psl2zToPSL2R`, then descend to representatives
   change psl2zToPSL2R (↑g : PSL(2, ℤ)) • τ = g • τ
-  rw [psl2zToPSL2R_mk, sl2zToPSL2R_apply, PSL_R_smul_coe]
+  rw [psl2zToPSL2R_mk, sl2zToPSL2R_apply, psl2rMk_smul]
   -- the `SL(2, ℤ)`-action and the cast `SL(2, ℝ)`-action are definitionally the
   -- `GL(2, ℝ)`-action of the common `mapGL ℝ` image
   rfl
@@ -144,14 +136,14 @@ theorem PSL_smul_coe (g : SL(2, ℤ)) (τ : ℍ) :
 /-- Action compatibility for `psl2zToPSL2R` (representative form). -/
 theorem psl2zToPSL2R_smul (g : SL(2, ℤ)) (τ : ℍ) :
     psl2zToPSL2R (↑g : PSL(2, ℤ)) • τ = g • τ := by
-  rw [psl2zToPSL2R_smul_eq, PSL_smul_coe]
+  rw [(MulAction.compHom_smul_def psl2zToPSL2R (↑g : PSL(2, ℤ)) τ).symm, psl2zMk_smul]
 
 instance : MeasurableConstSMul PSL(2, ℤ) ℍ where
   measurable_const_smul g := by
     induction g using Quotient.inductionOn with | h a => ?_
     -- reduce to the representative, then to the definitional `mapGL ℝ` factorization
     change Measurable (fun τ ↦ (↑a : PSL(2, ℤ)) • τ)
-    simp only [PSL_smul_coe]
+    simp only [psl2zMk_smul]
     change Measurable (fun τ ↦ (mapGL ℝ a) • τ)
     exact (continuous_const_smul (mapGL ℝ a)).measurable
 
@@ -162,7 +154,7 @@ instance : SMulInvariantMeasure PSL(2, ℤ) ℍ volume where
     -- reduce to the representative `SL(2, ℤ)`-action, whose invariance descends from
     -- Mathlib's `GL(2, ℝ)`-invariance
     change volume ((fun τ ↦ (↑a : PSL(2, ℤ)) • τ) ⁻¹' s) = volume s
-    simpa only [PSL_smul_coe] using
+    simpa only [psl2zMk_smul] using
       (measurePreserving_smul a (volume : Measure ℍ)).measure_preimage hs.nullMeasurableSet
 
 instance : MeasurableConstSMul PSL(2, ℝ) ℍ where
@@ -191,7 +183,7 @@ instance : SMulInvariantMeasure PSL(2, ℝ) ℍ volume where
 
 /-- Nonzero-scalar action invariance for `GL (Fin 2) ℝ`: matrices differing by a
 nonzero scalar define the same class in `PGL(2, ℝ)`, hence act identically on `ℍ`. -/
-lemma GL_smul_eq_of_coe_eq_smul {g h : GL (Fin 2) ℝ} {c : ℝ} (hc : c ≠ 0)
+lemma smul_eq_smul_of_coe_eq_smul {g h : GL (Fin 2) ℝ} {c : ℝ} (hc : c ≠ 0)
     (h_eq : ((h : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
       c • ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ))
     (τ : ℍ) :
@@ -219,10 +211,10 @@ theorem glPosToPSL2R_smul (g : GL(2, ℝ)⁺) (τ : ℍ) :
   have hg_pos : 0 < ((g : GL (Fin 2) ℝ).det.val : ℝ) := g.property
   have h_sqrt_ne : (Real.sqrt ((g : GL (Fin 2) ℝ).det.val))⁻¹ ≠ 0 :=
     inv_ne_zero (Real.sqrt_ne_zero'.mpr hg_pos)
-  rw [glPosToPSL2R_apply, PSL_R_smul_coe]
+  rw [glPosToPSL2R_apply, psl2rMk_smul]
   -- the `SL(2, ℝ)`-action is definitionally the `GL(2, ℝ)`-action of the `mapGL ℝ` image
   change (mapGL ℝ (glPosToSL2R g) : GL (Fin 2) ℝ) • τ = (g : GL (Fin 2) ℝ) • τ
-  refine GL_smul_eq_of_coe_eq_smul h_sqrt_ne ?_ τ
+  refine smul_eq_smul_of_coe_eq_smul h_sqrt_ne ?_ τ
   -- read off the matrix of the normalized representative through `mapGL`
   change ((mapGL ℝ (glPosToSL2R g) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
     (Real.sqrt ((g : GL (Fin 2) ℝ).det.val))⁻¹ •
