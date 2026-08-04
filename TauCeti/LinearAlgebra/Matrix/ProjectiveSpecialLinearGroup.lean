@@ -68,18 +68,17 @@ private lemma g_mem_center_of_map_intCast_mem_center (g : SL(2, ℤ))
   set z : ℤ := (g : Matrix (Fin 2) (Fin 2) ℤ) 0 0
   have hr_z : (z : ℝ) = r := by
     have h00 := h_entry_R 0 0
-    rwa [show (Matrix.scalar (Fin 2) r) 0 0 = r by simp [Matrix.scalar_apply]] at h00
+    rwa [Matrix.scalar_apply, Matrix.diagonal_apply_eq] at h00
   have h_diag : ∀ i, (g : Matrix (Fin 2) (Fin 2) ℤ) i i = z := fun i ↦ by
     have h_iR : (((g : Matrix _ _ ℤ) i i : ℤ) : ℝ) = (z : ℝ) := by
       have hii := h_entry_R i i
-      rw [show (Matrix.scalar (Fin 2) r) i i = r by simp [Matrix.scalar_apply]] at hii
+      rw [Matrix.scalar_apply, Matrix.diagonal_apply_eq] at hii
       rw [hii, ← hr_z]
     exact_mod_cast h_iR
   have h_off : ∀ i j, i ≠ j → (g : Matrix (Fin 2) (Fin 2) ℤ) i j = 0 := fun i j hij ↦ by
     have h_R : (((g : Matrix _ _ ℤ) i j : ℤ) : ℝ) = 0 := by
       have hij' := h_entry_R i j
-      rwa [show (Matrix.scalar (Fin 2) r) i j = 0 by
-        simp [Matrix.scalar_apply, hij]] at hij'
+      rwa [Matrix.scalar_apply, Matrix.diagonal_apply_ne _ hij] at hij'
     exact_mod_cast h_R
   have hz_sq : z ^ 2 = 1 := by
     have hz_sq_R : (z : ℝ) ^ 2 = 1 := by
@@ -135,6 +134,13 @@ theorem psl2zToPSL2R_injective : Function.Injective psl2zToPSL2R := by
   change (QuotientGroup.lift (Subgroup.center SL(2, ℤ)) sl2zToPSL2R _).ker = ⊥
   rw [QuotientGroup.ker_lift, sl2zToPSL2R_ker, QuotientGroup.map_mk'_self]
 
+instance : Countable SL(2, ℤ) :=
+  Function.Injective.countable
+    (f := fun (g : SL(2, ℤ)) (i j : Fin 2) ↦ g i j) fun _ _ h ↦
+      Subtype.coe_injective (Matrix.ext fun i j ↦ congr_fun (congr_fun h i) j)
+
+instance : Countable PSL(2, ℤ) := Quotient.countable
+
 /-- The det-normalized `SL(2, ℝ)` representative of a `GL(2, ℝ)⁺` element, as a monoid
 homomorphism: the matrix `(√ det g)⁻¹ • g` has determinant `1`, and normalization is
 multiplicative because positive scalars are central and `√` is multiplicative on them. -/
@@ -159,19 +165,12 @@ def glPosToSL2R : GL(2, ℝ)⁺ →* SL(2, ℝ) where
       simp [Units.val_mul]
     have h_mat : (((g * h : GL(2, ℝ)⁺) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) =
         ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) *
-          ((h : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) := rfl
+          ((h : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) := by
+      simp [Units.val_mul]
     change (Real.sqrt (((g * h : GL(2, ℝ)⁺) : GL (Fin 2) ℝ).det.val))⁻¹ •
         (((g * h : GL(2, ℝ)⁺) : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) = _
     rw [h_det, h_mat, Real.sqrt_mul hg_pos.le, mul_inv]
-    rw [show ((Real.sqrt (g : GL (Fin 2) ℝ).det.val)⁻¹ *
-        (Real.sqrt (h : GL (Fin 2) ℝ).det.val)⁻¹) •
-        (((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ) *
-          ((h : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)) =
-        ((Real.sqrt (g : GL (Fin 2) ℝ).det.val)⁻¹ •
-          ((g : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)) *
-        ((Real.sqrt (h : GL (Fin 2) ℝ).det.val)⁻¹ •
-          ((h : GL (Fin 2) ℝ) : Matrix (Fin 2) (Fin 2) ℝ)) from
-      (smul_mul_smul_comm _ _ _ _).symm]
+    rw [← smul_mul_smul_comm]
     rfl
 
 /-- The matrix of the det-normalized representative: `(√det g)⁻¹ • g`. -/

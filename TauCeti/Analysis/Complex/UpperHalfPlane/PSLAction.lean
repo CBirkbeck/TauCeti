@@ -61,34 +61,6 @@ open ModularGroup UpperHalfPlane Matrix.SpecialLinearGroup MeasureTheory
 
 namespace UpperHalfPlane
 
-/-- The center of `SL(2, ℤ)` consists of `{I, -I}`. Every center element
-acts trivially on `ℍ` because it is a scalar matrix `ζI` with `ζ = ±1`,
-and `(ζτ + 0)/(0τ + ζ) = τ`. -/
-theorem center_SL2Z_smul_eq (c : SL(2, ℤ)) (hc : c ∈ Subgroup.center SL(2, ℤ)) (τ : ℍ) :
-    c • τ = τ := by
-  rw [mem_center_iff] at hc
-  obtain ⟨ζ, hζ, hζ_eq⟩ := hc
-  simp only [Fintype.card_fin] at hζ
-  have hζ_cases : ζ = 1 ∨ ζ = -1 := by
-    rcases mul_eq_zero.mp (by nlinarith [hζ] : (ζ - 1) * (ζ + 1) = 0) with h | h <;> lia
-  rcases hζ_cases with rfl | rfl
-  · have hc_one : c = 1 := by
-      ext i j
-      simpa [Matrix.scalar] using (congr_fun (congr_fun hζ_eq i) j).symm
-    rw [hc_one, one_smul]
-  · have hc_neg : c = -1 := by
-      ext i j
-      simpa [Matrix.scalar, coe_neg] using (congr_fun (congr_fun hζ_eq i) j).symm
-    rw [hc_neg]
-    simp
-
-instance : Countable SL(2, ℤ) :=
-  Function.Injective.countable
-    (f := fun (g : SL(2, ℤ)) (i j : Fin 2) ↦ g i j) fun _ _ h ↦
-      Subtype.coe_injective (Matrix.ext fun i j ↦ congr_fun (congr_fun h i) j)
-
-instance : Countable PSL(2, ℤ) := Quotient.countable
-
 instance : MeasurableConstSMul SL(2, ℤ) ℍ where
   measurable_const_smul g := by
     -- the `SL(2, ℤ)`-action on `ℍ` is definitionally the `GL(2, ℝ)`-action of `mapGL ℝ g`;
@@ -142,10 +114,11 @@ theorem psl2zMk_smul (g : SL(2, ℤ)) (τ : ℍ) :
   -- `GL(2, ℝ)`-action of the common `mapGL ℝ` image
   rfl
 
-/-- Action compatibility for `psl2zToPSL2R` (representative form). -/
-theorem psl2zToPSL2R_smul (g : SL(2, ℤ)) (τ : ℍ) :
-    psl2zToPSL2R (↑g : PSL(2, ℤ)) • τ = g • τ := by
-  rw [(MulAction.compHom_smul_def psl2zToPSL2R (↑g : PSL(2, ℤ)) τ).symm, psl2zMk_smul]
+/-- The center of `SL(2, ℤ)` acts trivially on `ℍ`: central elements are exactly the
+kernel of the `PSL(2, ℤ)`-projection, so their action factors through `1`. -/
+theorem center_SL2Z_smul_eq (c : SL(2, ℤ)) (hc : c ∈ Subgroup.center SL(2, ℤ)) (τ : ℍ) :
+    c • τ = τ := by
+  rw [← psl2zMk_smul, (QuotientGroup.eq_one_iff c).mpr hc, one_smul]
 
 /-- The `PSL(2, ℤ)`-action on `ℍ` is faithful, through the injective descent
 `psl2zToPSL2R` and the faithfulness of the `PSL(2, ℝ)`-action. -/
