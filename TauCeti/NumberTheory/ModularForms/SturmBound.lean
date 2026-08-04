@@ -25,6 +25,7 @@ propagates to the norm.
 * `TauCeti.ModularForm.sturm_bound_finiteIndex`: the Sturm bound for finite relative index.
 * `TauCeti.ModularForm.sturm_bound_finiteIndex_SL2Z`: the classical form for finite-index
   subgroups of `SL(2, ℤ)`.
+* `TauCeti.ModularForm.eq_of_sturm_bound`: forms agreeing up to the bound are equal.
 * `TauCeti.ModularForm.finiteDimensional_modularForm_finiteIndex`: `ModularForm 𝒢 k` is
   finite-dimensional over `ℂ`.
 
@@ -106,20 +107,25 @@ theorem sturm_bound_finiteIndex_SL2Z {Γ : Subgroup SL(2, ℤ)} [Γ.FiniteIndex]
       Subgroup.relIndex_top_right]
   exact sturm_bound_finiteIndex f (h_index ▸ h)
 
-/-- The `ℂ`-linear map sending a weight-`k` modular form for `𝒢` to the vector of the first
-`N` coefficients of its `q`-expansion at the cusp `∞` (cusp width `𝒢.strictWidthInfty`). -/
-def qExpansionCoeffLinearMap {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.HasDetOne] {k : ℤ} (N : ℕ)
-    (hh : 0 < 𝒢.strictWidthInfty) (hΓ : 𝒢.strictWidthInfty ∈ 𝒢.strictPeriods) :
-    ModularForm 𝒢 k →ₗ[ℂ] (Fin N → ℂ) :=
-  LinearMap.pi fun i ↦ (PowerSeries.coeff (i : ℕ)).comp (ModularForm.qExpansionLinearMap hh hΓ k)
+private lemma strictWidthInfty_pos {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.HasDetOne]
+    [𝒢.IsFiniteRelIndex 𝒮ℒ] [DiscreteTopology 𝒢.strictPeriods] : 0 < 𝒢.strictWidthInfty :=
+  𝒢.strictWidthInfty_pos_iff.mpr <| Subgroup.isCusp_of_mem_strictPeriods
+    (by exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢))
+    Subgroup.integerCuspWidth_mem_strictPeriods
 
-@[simp]
-lemma qExpansionCoeffLinearMap_apply {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.HasDetOne] {k : ℤ}
-    (N : ℕ) (hh : 0 < 𝒢.strictWidthInfty) (hΓ : 𝒢.strictWidthInfty ∈ 𝒢.strictPeriods)
-    (f : ModularForm 𝒢 k) (i : Fin N) :
-    qExpansionCoeffLinearMap N hh hΓ f i =
-      PowerSeries.coeff (i : ℕ) (qExpansion 𝒢.strictWidthInfty f) := by
-  simp [qExpansionCoeffLinearMap]
+/-- **Modular forms agreeing up to the Sturm bound are equal**: two weight-`k` forms whose
+`q`-expansions at `∞` agree in every coefficient up to `k · [𝒮ℒ : 𝒢 ⊓ 𝒮ℒ] / 12` coincide. -/
+theorem eq_of_sturm_bound [𝒢.HasDetOne] [DiscreteTopology 𝒢.strictPeriods]
+    (g : ModularForm 𝒢 k)
+    (h : ∀ i ≤ (k * Nat.card (𝒮ℒ ⧸ 𝒢.subgroupOf 𝒮ℒ)).toNat / 12,
+      PowerSeries.coeff i (qExpansion 𝒢.strictWidthInfty f) =
+        PowerSeries.coeff i (qExpansion 𝒢.strictWidthInfty g)) : f = g := by
+  rw [← sub_eq_zero]
+  refine sturm_bound_finiteIndex (f - g) (lt_of_lt_of_le
+    (by exact_mod_cast Nat.lt_succ_self _) (PowerSeries.nat_le_order _ _ fun i hi ↦ ?_))
+  rw [_root_.ModularForm.coe_sub, _root_.ModularForm.qExpansion_sub strictWidthInfty_pos
+    𝒢.strictWidthInfty_mem_strictPeriods, map_sub, sub_eq_zero]
+  exact h i (Nat.lt_succ_iff.mp hi)
 
 /-- **Finite-dimensionality of modular forms.** As a corollary of the Sturm bound, the space
 `ModularForm 𝒢 k` is finite-dimensional over `ℂ` for any subgroup `𝒢 ≤ GL(2, ℝ)` of finite
@@ -129,16 +135,20 @@ instance finiteDimensional_modularForm_finiteIndex
     [DiscreteTopology 𝒢.strictPeriods] {k : ℤ} :
     Module.Finite ℂ (ModularForm 𝒢 k) := by
   set N : ℕ := (k * Nat.card (𝒮ℒ ⧸ 𝒢.subgroupOf 𝒮ℒ)).toNat / 12 + 1
-  have hh : 0 < 𝒢.strictWidthInfty :=
-    𝒢.strictWidthInfty_pos_iff.mpr <| Subgroup.isCusp_of_mem_strictPeriods
-      (by exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢))
-      Subgroup.integerCuspWidth_mem_strictPeriods
-  have hΓ : 𝒢.strictWidthInfty ∈ 𝒢.strictPeriods := 𝒢.strictWidthInfty_mem_strictPeriods
-  refine Module.Finite.of_injective (qExpansionCoeffLinearMap N hh hΓ)
+  have hfin : Module.Finite ℂ (Polynomial.degreeLT ℂ N) :=
+    Module.Finite.equiv (Polynomial.degreeLTEquiv ℂ N).symm
+  refine Module.Finite.of_injective
+    (((PowerSeries.trunc N).comp (ModularForm.qExpansionLinearMap strictWidthInfty_pos
+        𝒢.strictWidthInfty_mem_strictPeriods k)).codRestrict
+      (Polynomial.degreeLT ℂ N) fun f ↦
+        Polynomial.mem_degreeLT.mpr (PowerSeries.degree_trunc_lt _ _))
     ((injective_iff_map_eq_zero _).mpr fun f hf ↦ ?_)
-  exact sturm_bound_finiteIndex f <| lt_of_lt_of_le (by exact_mod_cast Nat.lt_succ_self _) <|
-    PowerSeries.nat_le_order _ _ fun i hi ↦ by
-      simpa using congr_fun hf ⟨i, hi⟩
+  refine sturm_bound_finiteIndex f (lt_of_lt_of_le (by exact_mod_cast Nat.lt_succ_self _)
+    (PowerSeries.nat_le_order _ _ fun i hi ↦ ?_))
+  have hval : PowerSeries.trunc N (qExpansion 𝒢.strictWidthInfty f) = 0 := by
+    simpa using congrArg Subtype.val hf
+  have hcoeff := congrArg (fun p ↦ Polynomial.coeff p i) hval
+  rwa [PowerSeries.coeff_trunc, if_pos hi, Polynomial.coeff_zero] at hcoeff
 
 end ModularForm
 
