@@ -18,18 +18,18 @@ width — the cusp term of the level-one valence formula. The lemmas take the ra
 periodicity, and boundedness hypotheses of the underlying `q`-expansion theorems; for a
 modular form all of them are supplied by the `ModularFormClass` machinery.
 
-This is the integral exponent of the width-`h` expansion, the correct primitive at every
-cusp: at an irregular cusp of odd weight the conventionally normalized order is the
-half-integer obtained by reading this exponent at the doubled width, a `ℚ`-valued
-convention layer that belongs with the cusp classification machinery and is deliberately
-not defined here.
+`orderAtCusp` is the integral exponent of the width-`h` expansion, the correct primitive
+at every cusp; `rationalOrderAtCusp` supplies the width-normalized `ℚ`-valued convention
+on top of it — the doubled-width exponent halved, which is the integral order for an
+`h`-periodic function and the conventional half-integer at an irregular cusp of odd
+weight.
 
 ## Main declarations
 
 * `TauCeti.orderAtCusp`.
 * `TauCeti.orderAtCusp_eq_analyticOrderAt`: the analytic-order dictionary.
 * `TauCeti.orderAtCusp_nat_mul`: linear rescaling in the width.
-* `TauCeti.orderAtCuspQ`: the `ℚ`-valued cusp order — the doubled-width exponent halved,
+* `TauCeti.rationalOrderAtCusp`: the `ℚ`-valued cusp order — the doubled-width exponent halved,
   the conventional half-integral order at irregular cusps.
 * `TauCeti.ModularForm.orderAtCusp_eq_zero_iff`: for a nonzero modular form, order zero
   is a nonzero constant term (the class-level interface lives in `TauCeti.ModularForm`).
@@ -98,27 +98,6 @@ lemma orderAtCusp_nat_mul {m : ℕ} (hh : 0 < h) (hm : 0 < m)
     qExpansion_nat_mul_order hh hm hg_per hg_bdd hg_mdiff, ENat.toNat_mul]
   simp [mul_comm]
 
-private lemma cuspFunction_mul_eventuallyEq (h : ℝ) (f g : ℍ → ℂ) :
-    cuspFunction h (f * g) =ᶠ[𝓝[≠] (0 : ℂ)] cuspFunction h f * cuspFunction h g := by
-  filter_upwards [self_mem_nhdsWithin] with q hq
-  simp only [UpperHalfPlane.cuspFunction, Pi.mul_apply, Function.comp_apply,
-    Function.Periodic.cuspFunction_eq_of_nonzero _ _ hq]
-
-private lemma cuspFunction_mul_nhds {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0)
-    (hg : AnalyticAt ℂ (cuspFunction h g) 0) :
-    cuspFunction h (f * g) =ᶠ[𝓝 (0 : ℂ)] cuspFunction h f * cuspFunction h g := by
-  have h_lim : Filter.Tendsto (cuspFunction h (f * g)) (𝓝[≠] 0)
-      (𝓝 (cuspFunction h f 0 * cuspFunction h g 0)) :=
-    (((hf.continuousAt.tendsto.mono_left nhdsWithin_le_nhds).mul
-      (hg.continuousAt.tendsto.mono_left nhdsWithin_le_nhds))).congr'
-      (cuspFunction_mul_eventuallyEq h f g).symm
-  have h_at : cuspFunction h (f * g) 0 = cuspFunction h f 0 * cuspFunction h g 0 := by
-    rw [UpperHalfPlane.cuspFunction, Function.Periodic.cuspFunction_zero_eq_limUnder_nhds_ne]
-    exact h_lim.limUnder_eq
-  rw [← nhdsNE_sup_pure (0 : ℂ)]
-  exact Filter.eventually_sup.mpr
-    ⟨cuspFunction_mul_eventuallyEq h f g, Filter.eventually_pure.mpr h_at⟩
-
 /-- The cusp order is additive on products. The finiteness hypotheses exclude an
 identically vanishing factor, where the junk value `0` would break additivity. -/
 lemma orderAtCusp_mul {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0)
@@ -126,10 +105,12 @@ lemma orderAtCusp_mul {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f
     (hf' : analyticOrderAt (cuspFunction h f) 0 ≠ ⊤)
     (hg' : analyticOrderAt (cuspFunction h g) 0 ≠ ⊤) :
     orderAtCusp h (f * g) = orderAtCusp h f + orderAtCusp h g := by
-  have h_full := cuspFunction_mul_nhds hf hg
-  rw [orderAtCusp_eq_analyticOrderAt ((hf.mul hg).congr h_full.symm),
-    orderAtCusp_eq_analyticOrderAt hf, orderAtCusp_eq_analyticOrderAt hg,
-    analyticOrderAt_congr h_full, analyticOrderAt_mul hf hg, ENat.toNat_add hf' hg']
+  have hf'' : (qExpansion h f).order ≠ ⊤ := by
+    rwa [qExpansion_order_eq_analyticOrderAt_cuspFunction hf]
+  have hg'' : (qExpansion h g).order ≠ ⊤ := by
+    rwa [qExpansion_order_eq_analyticOrderAt_cuspFunction hg]
+  rw [orderAtCusp_def, orderAtCusp_def, orderAtCusp_def, qExpansion_mul hf hg,
+    PowerSeries.order_mul, ENat.toNat_add hf'' hg'']
   push_cast
   ring
 
@@ -164,45 +145,36 @@ lemma orderAtCusp_const (h : ℝ) (c : ℂ) : orderAtCusp h (fun _ ↦ c) = 0 :=
 lemma orderAtCusp_one (h : ℝ) : orderAtCusp h (1 : ℍ → ℂ) = 0 :=
   orderAtCusp_const h 1
 
-private lemma cuspFunction_pow_nhds {f : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
-    ∀ n : ℕ, cuspFunction h (f ^ n) =ᶠ[𝓝 (0 : ℂ)] cuspFunction h f ^ n
-  | 0 => by simp [pow_zero, cuspFunction_one]
+private lemma cuspFunction_pow {f : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
+    ∀ n : ℕ, cuspFunction h (f ^ n) = cuspFunction h f ^ n
+  | 0 => by rw [pow_zero, pow_zero]; exact cuspFunction_one h
   | n + 1 => by
-    have h_prev := cuspFunction_pow_nhds hf n
-    calc cuspFunction h (f ^ (n + 1))
-        =ᶠ[𝓝 (0 : ℂ)] cuspFunction h (f ^ n) * cuspFunction h f := by
-          rw [pow_succ]
-          exact cuspFunction_mul_nhds ((hf.pow n).congr h_prev.symm) hf
-      _ =ᶠ[𝓝 (0 : ℂ)] cuspFunction h f ^ n * cuspFunction h f :=
-          h_prev.mul Filter.EventuallyEq.rfl
-      _ = cuspFunction h f ^ (n + 1) := (pow_succ _ _).symm
+    rw [pow_succ, pow_succ, ← cuspFunction_pow hf n,
+      cuspFunction_mul (by rw [cuspFunction_pow hf n]; exact (hf.continuousAt.pow n))
+        hf.continuousAt]
 
 /-- The cusp order multiplies under powers, with no finiteness hypothesis: at the
 identically vanishing expansion both sides take the junk value. -/
 lemma orderAtCusp_pow {f : ℍ → ℂ} (n : ℕ) (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
     orderAtCusp h (f ^ n) = n * orderAtCusp h f := by
-  have h_ev := cuspFunction_pow_nhds hf n
-  rw [orderAtCusp_eq_analyticOrderAt ((hf.pow n).congr h_ev.symm),
-    orderAtCusp_eq_analyticOrderAt hf, analyticOrderAt_congr h_ev, analyticOrderAt_pow hf,
-    nsmul_eq_mul, ENat.toNat_mul]
+  have h_an : AnalyticAt ℂ (cuspFunction h (f ^ n)) 0 := by
+    rw [cuspFunction_pow hf n]
+    exact hf.pow n
+  rw [orderAtCusp_eq_analyticOrderAt h_an, orderAtCusp_eq_analyticOrderAt hf,
+    cuspFunction_pow hf n, analyticOrderAt_pow hf, nsmul_eq_mul, ENat.toNat_mul]
   simp
 
-private lemma cuspFunction_prod_nhds {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
+private lemma cuspFunction_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
     (hf : ∀ i ∈ s, AnalyticAt ℂ (cuspFunction h (f i)) 0) :
-    cuspFunction h (∏ i ∈ s, f i) =ᶠ[𝓝 (0 : ℂ)] ∏ i ∈ s, cuspFunction h (f i) := by
+    cuspFunction h (∏ i ∈ s, f i) = ∏ i ∈ s, cuspFunction h (f i) := by
   induction s using Finset.cons_induction with
-  | empty => simp [cuspFunction_one]
+  | empty => simpa using cuspFunction_one h
   | cons a s ha ih =>
     have h_prev := ih fun i hi ↦ hf i (Finset.mem_cons_of_mem hi)
-    calc cuspFunction h (∏ i ∈ Finset.cons a s ha, f i)
-        =ᶠ[𝓝 (0 : ℂ)] cuspFunction h (f a) * cuspFunction h (∏ i ∈ s, f i) := by
-          rw [Finset.prod_cons]
-          exact cuspFunction_mul_nhds (hf a (Finset.mem_cons_self a s))
-            ((Finset.analyticAt_prod _ fun i hi ↦
-              hf i (Finset.mem_cons_of_mem hi)).congr h_prev.symm)
-      _ =ᶠ[𝓝 (0 : ℂ)] cuspFunction h (f a) * ∏ i ∈ s, cuspFunction h (f i) :=
-          Filter.EventuallyEq.rfl.mul h_prev
-      _ = ∏ i ∈ Finset.cons a s ha, cuspFunction h (f i) := by rw [Finset.prod_cons]
+    rw [Finset.prod_cons, Finset.prod_cons, ← h_prev,
+      cuspFunction_mul (hf a (Finset.mem_cons_self a s)).continuousAt
+        (by rw [h_prev]; exact (Finset.analyticAt_prod _ fun i hi ↦
+          hf i (Finset.mem_cons_of_mem hi)).continuousAt)]
 
 /-- The cusp order is additive on finite products. The finiteness hypotheses exclude an
 identically vanishing factor, where the junk value `0` would break additivity. -/
@@ -210,78 +182,80 @@ lemma orderAtCusp_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
     (hf : ∀ i ∈ s, AnalyticAt ℂ (cuspFunction h (f i)) 0)
     (hf' : ∀ i ∈ s, analyticOrderAt (cuspFunction h (f i)) 0 ≠ ⊤) :
     orderAtCusp h (∏ i ∈ s, f i) = ∑ i ∈ s, orderAtCusp h (f i) := by
-  have h_ev := cuspFunction_prod_nhds s hf
-  rw [orderAtCusp_eq_analyticOrderAt ((Finset.analyticAt_prod _ hf).congr h_ev.symm),
-    analyticOrderAt_congr h_ev, TauCeti.analyticOrderAt_prod hf, ENat.toNat_sum hf',
-    Nat.cast_sum]
+  have h_an : AnalyticAt ℂ (cuspFunction h (∏ i ∈ s, f i)) 0 := by
+    rw [cuspFunction_prod s hf]
+    exact Finset.analyticAt_prod _ hf
+  rw [orderAtCusp_eq_analyticOrderAt h_an, cuspFunction_prod s hf,
+    TauCeti.analyticOrderAt_prod hf, ENat.toNat_sum hf', Nat.cast_sum]
   exact Finset.sum_congr rfl fun i hi ↦ (orderAtCusp_eq_analyticOrderAt (hf i hi)).symm
 
 /-- The `ℚ`-valued cusp order: the width-`2h` exponent, halved. For an `h`-periodic
-function this is the integral order `orderAtCusp h` (`orderAtCuspQ_eq_orderAtCusp`);
+function this is the integral order `orderAtCusp h` (`rationalOrderAtCusp_eq_orderAtCusp`);
 at an irregular cusp of odd weight, where the form is only `2h`-periodic, it is the
 conventional half-integral order. -/
-def orderAtCuspQ (h : ℝ) (f : ℍ → ℂ) : ℚ := (orderAtCusp (2 * h) f : ℚ) / 2
+def rationalOrderAtCusp (h : ℝ) (f : ℍ → ℂ) : ℚ := (orderAtCusp (2 * h) f : ℚ) / 2
 
-/-- `orderAtCuspQ` unfolded to the halved doubled-width exponent. -/
-lemma orderAtCuspQ_def (h : ℝ) (f : ℍ → ℂ) :
-    orderAtCuspQ h f = (orderAtCusp (2 * h) f : ℚ) / 2 := by
-  unfold orderAtCuspQ
+/-- `rationalOrderAtCusp` unfolded to the halved doubled-width exponent. -/
+lemma rationalOrderAtCusp_def (h : ℝ) (f : ℍ → ℂ) :
+    rationalOrderAtCusp h f = (orderAtCusp (2 * h) f : ℚ) / 2 := by
+  unfold rationalOrderAtCusp
   rfl
 
 /-- For an `h`-periodic bounded holomorphic function the `ℚ`-valued cusp order is the
 integral one: the doubled-width exponent doubles. -/
-lemma orderAtCuspQ_eq_orderAtCusp (hh : 0 < h) (hg_per : Periodic (g ∘ ofComplex) h)
+lemma rationalOrderAtCusp_eq_orderAtCusp (hh : 0 < h) (hg_per : Periodic (g ∘ ofComplex) h)
     (hg_bdd : IsBoundedAtImInfty g) (hg_mdiff : MDiff g) :
-    orderAtCuspQ h g = (orderAtCusp h g : ℚ) := by
+    rationalOrderAtCusp h g = (orderAtCusp h g : ℚ) := by
   have h2 := orderAtCusp_nat_mul (g := g) (m := 2) hh (by norm_num) hg_per hg_bdd hg_mdiff
-  rw [orderAtCuspQ_def, show ((2 : ℕ) : ℝ) * h = 2 * h by norm_num] at *
-  rw [h2]
+  norm_num at h2
+  rw [rationalOrderAtCusp_def, h2]
   push_cast
   ring
 
 /-- The rational cusp order is nonnegative. -/
-lemma orderAtCuspQ_nonneg (h : ℝ) (f : ℍ → ℂ) : 0 ≤ orderAtCuspQ h f := by
-  rw [orderAtCuspQ_def]
+lemma rationalOrderAtCusp_nonneg (h : ℝ) (f : ℍ → ℂ) : 0 ≤ rationalOrderAtCusp h f := by
+  rw [rationalOrderAtCusp_def]
   exact div_nonneg (by exact_mod_cast orderAtCusp_nonneg (2 * h) f) (by norm_num)
 
 /-- Every constant function has rational cusp order zero. -/
 @[simp]
-lemma orderAtCuspQ_const (h : ℝ) (c : ℂ) : orderAtCuspQ h (fun _ ↦ c) = 0 := by
-  rw [orderAtCuspQ_def, orderAtCusp_const]
+lemma rationalOrderAtCusp_const (h : ℝ) (c : ℂ) : rationalOrderAtCusp h (fun _ ↦ c) = 0 := by
+  rw [rationalOrderAtCusp_def, orderAtCusp_const]
   norm_num
 
 /-- The constant-one function has rational cusp order zero. -/
 @[simp]
-lemma orderAtCuspQ_one (h : ℝ) : orderAtCuspQ h (1 : ℍ → ℂ) = 0 := by
-  rw [orderAtCuspQ_def, orderAtCusp_one]
+lemma rationalOrderAtCusp_one (h : ℝ) : rationalOrderAtCusp h (1 : ℍ → ℂ) = 0 := by
+  rw [rationalOrderAtCusp_def, orderAtCusp_one]
   norm_num
 
 /-- The rational cusp order is additive on products. -/
-lemma orderAtCuspQ_mul {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction (2 * h) f) 0)
+lemma rationalOrderAtCusp_mul {f g : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction (2 * h) f) 0)
     (hg : AnalyticAt ℂ (cuspFunction (2 * h) g) 0)
     (hf' : analyticOrderAt (cuspFunction (2 * h) f) 0 ≠ ⊤)
     (hg' : analyticOrderAt (cuspFunction (2 * h) g) 0 ≠ ⊤) :
-    orderAtCuspQ h (f * g) = orderAtCuspQ h f + orderAtCuspQ h g := by
-  rw [orderAtCuspQ_def, orderAtCuspQ_def, orderAtCuspQ_def, orderAtCusp_mul hf hg hf' hg']
+    rationalOrderAtCusp h (f * g) = rationalOrderAtCusp h f + rationalOrderAtCusp h g := by
+  simp only [rationalOrderAtCusp_def]
+  rw [orderAtCusp_mul hf hg hf' hg']
   push_cast
   ring
 
 /-- The rational cusp order multiplies under powers. -/
-lemma orderAtCuspQ_pow {f : ℍ → ℂ} (n : ℕ)
+lemma rationalOrderAtCusp_pow {f : ℍ → ℂ} (n : ℕ)
     (hf : AnalyticAt ℂ (cuspFunction (2 * h) f) 0) :
-    orderAtCuspQ h (f ^ n) = n * orderAtCuspQ h f := by
-  rw [orderAtCuspQ_def, orderAtCuspQ_def, orderAtCusp_pow n hf]
+    rationalOrderAtCusp h (f ^ n) = n * rationalOrderAtCusp h f := by
+  rw [rationalOrderAtCusp_def, rationalOrderAtCusp_def, orderAtCusp_pow n hf]
   push_cast
   ring
 
 /-- The rational cusp order is additive on finite products. -/
-lemma orderAtCuspQ_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
+lemma rationalOrderAtCusp_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
     (hf : ∀ i ∈ s, AnalyticAt ℂ (cuspFunction (2 * h) (f i)) 0)
     (hf' : ∀ i ∈ s, analyticOrderAt (cuspFunction (2 * h) (f i)) 0 ≠ ⊤) :
-    orderAtCuspQ h (∏ i ∈ s, f i) = ∑ i ∈ s, orderAtCuspQ h (f i) := by
-  rw [orderAtCuspQ_def, orderAtCusp_prod s hf hf']
+    rationalOrderAtCusp h (∏ i ∈ s, f i) = ∑ i ∈ s, rationalOrderAtCusp h (f i) := by
+  rw [rationalOrderAtCusp_def, orderAtCusp_prod s hf hf']
   push_cast
-  simp [orderAtCuspQ_def, Finset.sum_div]
+  simp [rationalOrderAtCusp_def, Finset.sum_div]
 
 namespace ModularForm
 
