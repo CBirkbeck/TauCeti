@@ -66,24 +66,69 @@ def fdBoundary_seg5 (H : ℝ) : ℝ → ℂ := fun t ↦
   AffineMap.lineMap (-1 / 2 + H * Complex.I) (1 / 2 + H * Complex.I) (t - 4)
 
 
+
+section SegmentApply
+
+/-!
+The five characteristic evaluation lemmas: the segment definitions are sealed by the module
+system, and these equations are the supported cross-module rewrites. They are deliberately
+not `@[simp]`: the endpoint values `fdBoundary_seg*_apply_*` below are the `simp` normal
+forms, and a general unfolding rule would reduce their left-hand sides past them (the arc
+endpoints do not `simp`-evaluate from `circleMap`).
+-/
+
+/-- Segment 1 evaluated: the line from `1/2 + H·i` to `ρ + 1`. -/
+lemma fdBoundary_seg1_apply (H t : ℝ) :
+    fdBoundary_seg1 H t = AffineMap.lineMap (1 / 2 + H * Complex.I) ((ρ : ℂ) + 1) t := by
+  unfold fdBoundary_seg1
+  rfl
+
+/-- Segment 2 evaluated: the unit-circle arc at angle `π/3 + (t - 1)·(π/2 - π/3)`. -/
+lemma fdBoundary_seg2_apply (t : ℝ) :
+    fdBoundary_seg2 t = circleMap 0 1 (Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3)) := by
+  unfold fdBoundary_seg2
+  rfl
+
+/-- Segment 3 evaluated: the unit-circle arc at angle `π/2 + (t - 2)·(2π/3 - π/2)`. -/
+lemma fdBoundary_seg3_apply (t : ℝ) :
+    fdBoundary_seg3 t =
+      circleMap 0 1 (Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2)) := by
+  unfold fdBoundary_seg3
+  rfl
+
+/-- Segment 4 evaluated: the line from `ρ` to `-1/2 + H·i` at parameter `t - 3`. -/
+lemma fdBoundary_seg4_apply (H t : ℝ) :
+    fdBoundary_seg4 H t = AffineMap.lineMap (ρ : ℂ) (-1 / 2 + H * Complex.I) (t - 3) := by
+  unfold fdBoundary_seg4
+  rfl
+
+/-- Segment 5 evaluated: the line from `-1/2 + H·i` to `1/2 + H·i` at parameter `t - 4`. -/
+lemma fdBoundary_seg5_apply (H t : ℝ) :
+    fdBoundary_seg5 H t =
+      AffineMap.lineMap (-1 / 2 + H * Complex.I) (1 / 2 + H * Complex.I) (t - 4) := by
+  unfold fdBoundary_seg5
+  rfl
+
+end SegmentApply
+
 section SegmentEndpoints
 
 /-- Segment 1 starts at the top right corner `1/2 + H·i`. -/
 @[simp]
 lemma fdBoundary_seg1_apply_zero (H : ℝ) : fdBoundary_seg1 H 0 = 1 / 2 + H * Complex.I := by
-  rw [fdBoundary_seg1, AffineMap.lineMap_apply_zero]
+  rw [fdBoundary_seg1_apply, AffineMap.lineMap_apply_zero]
 
 /-- Segment 1 ends at the corner `ρ + 1`. -/
 @[simp]
 lemma fdBoundary_seg1_apply_one (H : ℝ) : fdBoundary_seg1 H 1 = (ρ : ℂ) + 1 := by
-  rw [fdBoundary_seg1, AffineMap.lineMap_apply_one]
+  rw [fdBoundary_seg1_apply, AffineMap.lineMap_apply_one]
 
 /-- Segment 2 starts at the corner `ρ + 1`. -/
 @[simp]
 lemma fdBoundary_seg2_apply_one : fdBoundary_seg2 1 = (ρ : ℂ) + 1 := by
   have hangle : Real.pi / 3 + ((1 : ℝ) - 1) * (Real.pi / 2 - Real.pi / 3) = Real.pi / 3 := by
     ring
-  rw [fdBoundary_seg2, hangle]
+  rw [fdBoundary_seg2_apply, hangle]
   refine Complex.ext ?_ ?_
   · rw [circleMap_zero_re, Real.cos_pi_div_three]
     simp [ρ]
@@ -96,7 +141,7 @@ lemma fdBoundary_seg2_apply_one : fdBoundary_seg2 1 = (ρ : ℂ) + 1 := by
 lemma fdBoundary_seg2_apply_two : fdBoundary_seg2 2 = Complex.I := by
   have hangle : Real.pi / 3 + ((2 : ℝ) - 1) * (Real.pi / 2 - Real.pi / 3) = Real.pi / 2 := by
     ring
-  rw [fdBoundary_seg2, hangle, circleMap_pi_div_two]
+  rw [fdBoundary_seg2_apply, hangle, circleMap_pi_div_two]
   simp
 
 /-- Segment 3 starts at `i`. -/
@@ -104,7 +149,7 @@ lemma fdBoundary_seg2_apply_two : fdBoundary_seg2 2 = Complex.I := by
 lemma fdBoundary_seg3_apply_two : fdBoundary_seg3 2 = Complex.I := by
   have hangle : Real.pi / 2 + ((2 : ℝ) - 2) * (2 * Real.pi / 3 - Real.pi / 2) = Real.pi / 2 := by
     ring
-  rw [fdBoundary_seg3, hangle, circleMap_pi_div_two]
+  rw [fdBoundary_seg3_apply, hangle, circleMap_pi_div_two]
   simp
 
 /-- Segment 3 ends at the elliptic corner `ρ`. -/
@@ -112,7 +157,7 @@ lemma fdBoundary_seg3_apply_two : fdBoundary_seg3 2 = Complex.I := by
 lemma fdBoundary_seg3_apply_three : fdBoundary_seg3 3 = (ρ : ℂ) := by
   have hangle : Real.pi / 2 + ((3 : ℝ) - 2) * (2 * Real.pi / 3 - Real.pi / 2) =
       Real.pi - Real.pi / 3 := by ring
-  rw [fdBoundary_seg3, hangle]
+  rw [fdBoundary_seg3_apply, hangle]
   refine Complex.ext ?_ ?_
   · rw [circleMap_zero_re, Real.cos_pi_sub, Real.cos_pi_div_three]
     simp [ρ]
@@ -124,25 +169,25 @@ lemma fdBoundary_seg3_apply_three : fdBoundary_seg3 3 = (ρ : ℂ) := by
 @[simp]
 lemma fdBoundary_seg4_apply_three (H : ℝ) : fdBoundary_seg4 H 3 = (ρ : ℂ) := by
   have hpar : (3 : ℝ) - 3 = 0 := by norm_num
-  rw [fdBoundary_seg4, hpar, AffineMap.lineMap_apply_zero]
+  rw [fdBoundary_seg4_apply, hpar, AffineMap.lineMap_apply_zero]
 
 /-- Segment 4 ends at the top left corner `-1/2 + H·i`. -/
 @[simp]
 lemma fdBoundary_seg4_apply_four (H : ℝ) : fdBoundary_seg4 H 4 = -1 / 2 + H * Complex.I := by
   have hpar : (4 : ℝ) - 3 = 1 := by norm_num
-  rw [fdBoundary_seg4, hpar, AffineMap.lineMap_apply_one]
+  rw [fdBoundary_seg4_apply, hpar, AffineMap.lineMap_apply_one]
 
 /-- Segment 5 starts at the top left corner `-1/2 + H·i`. -/
 @[simp]
 lemma fdBoundary_seg5_apply_four (H : ℝ) : fdBoundary_seg5 H 4 = -1 / 2 + H * Complex.I := by
   have hpar : (4 : ℝ) - 4 = 0 := by norm_num
-  rw [fdBoundary_seg5, hpar, AffineMap.lineMap_apply_zero]
+  rw [fdBoundary_seg5_apply, hpar, AffineMap.lineMap_apply_zero]
 
 /-- Segment 5 ends at the top right corner `1/2 + H·i`. -/
 @[simp]
 lemma fdBoundary_seg5_apply_five (H : ℝ) : fdBoundary_seg5 H 5 = 1 / 2 + H * Complex.I := by
   have hpar : (5 : ℝ) - 4 = 1 := by norm_num
-  rw [fdBoundary_seg5, hpar, AffineMap.lineMap_apply_one]
+  rw [fdBoundary_seg5_apply, hpar, AffineMap.lineMap_apply_one]
 
 end SegmentEndpoints
 
