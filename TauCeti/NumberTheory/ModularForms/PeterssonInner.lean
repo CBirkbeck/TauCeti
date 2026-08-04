@@ -5,12 +5,9 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Measure
-public import Mathlib.NumberTheory.Modular
 public import Mathlib.NumberTheory.ModularForms.Bounds
 public import Mathlib.NumberTheory.ModularForms.Petersson
-import Mathlib.Analysis.SpecialFunctions.ImproperIntegrals
-import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
+public import TauCeti.NumberTheory.Modular
 
 /-!
 # The Petersson inner product
@@ -35,21 +32,17 @@ Mathlib's invariant measure `volume : Measure ℍ` (`dx dy / y²`,
 
 ## Main results
 
-* `ModularGroup.volume_fd_lt_top`: the standard fundamental domain has finite invariant
-  measure.
 * `UpperHalfPlane.peterssonInner_conj_symm`: Hermitian symmetry.
 * `UpperHalfPlane.integrableOn_petersson_fd_left`: integrability of the Petersson integrand of a
   cusp form against a modular form over the standard fundamental domain.
-* `ModularGroup.volume_frontier_fd`, `ModularGroup.setIntegral_fd_eq_fdo`: the frontier of
-  the fundamental domain is null, so integrals over `𝒟` and `𝒟ᵒ` agree.
 * `UpperHalfPlane.eq_zero_on_fd_of_peterssonInner_self_eq_zero`: definiteness on the
-  fundamental domain.
+  fundamental domain, for any continuous function with integrable self-integrand.
 
 The pairing is parameterized by an arbitrary `D : Set ℍ` rather than fixing a subgroup;
 for `SL₂(ℤ)` use `D = ModularGroup.fd`, and for a congruence subgroup a union of
-translates of `𝒟`. The topology of `𝒟`/`𝒟ᵒ` (`ModularGroup.isClosed_fd`,
-`ModularGroup.isOpen_fdo`, `ModularGroup.fd_eq_closure_fdo`) comes from
-`Mathlib/NumberTheory/Modular.lean`; this file adds their measure theory.
+translates of `𝒟`. The topology of `𝒟`/`𝒟ᵒ` comes from
+`Mathlib/NumberTheory/Modular.lean`, and its measure theory (finite volume, null frontier,
+`𝒟`-vs-`𝒟ᵒ` integration) from `TauCeti/NumberTheory/Modular.lean`.
 
 Ported from the AINTLIB `LeanModularForms` project's
 `LeanModularForms/Modularforms/PeterssonInnerProduct.lean` (Chris Birkbeck), rewritten to
@@ -71,184 +64,6 @@ noncomputable section
 open MeasureTheory Measure UpperHalfPlane ModularGroup Complex Set ENNReal
 
 open scoped ComplexConjugate MatrixGroups NNReal Pointwise
-
-namespace UpperHalfPlane
-
-/-- Mathlib's invariant measure on `ℍ`, respelled with the density `(Im τ)⁻²` in
-`ENNReal.ofReal` form. -/
-theorem volume_eq_withDensity_ofReal :
-    (volume : Measure ℍ) = (Measure.comap UpperHalfPlane.coe volume).withDensity
-      (fun τ ↦ ENNReal.ofReal (τ.im ^ (-2 : ℤ))) := by
-  rw [volume_def]
-  congr 1
-  funext τ
-  rw [← ENNReal.ofReal_coe_nnreal]
-  congr 1
-  push_cast [NNReal.coe_mk]
-  rw [one_div, inv_pow, zpow_neg]
-  norm_num
-
-/-- The pullback of the Lebesgue measure along `ℍ ↪ ℂ` is positive on nonempty open sets. -/
-instance : IsOpenPosMeasure (Measure.comap UpperHalfPlane.coe (volume : Measure ℂ)) :=
-  IsOpenPosMeasure.comap volume isOpenEmbedding_coe
-
-/-- The invariant measure is absolutely continuous w.r.t. the pullback of the Lebesgue
-measure along `ℍ ↪ ℂ`. -/
-theorem volume_absolutelyContinuous_comap :
-    (volume : Measure ℍ) ≪ Measure.comap UpperHalfPlane.coe volume := by
-  rw [volume_eq_withDensity_ofReal]
-  exact withDensity_absolutelyContinuous _ _
-
-/-- The pullback of the Lebesgue measure along `ℍ ↪ ℂ` is absolutely continuous w.r.t. the
-invariant measure, since the density `(Im τ)⁻²` is everywhere positive on `ℍ`. -/
-theorem comap_absolutelyContinuous_volume :
-    Measure.comap UpperHalfPlane.coe (volume : Measure ℂ) ≪ (volume : Measure ℍ) := by
-  rw [volume_eq_withDensity_ofReal]
-  exact withDensity_absolutelyContinuous'
-    ((continuous_im.zpow₀ _ fun τ ↦ Or.inl τ.im_pos.ne').measurable.ennreal_ofReal.aemeasurable)
-    (ae_of_all _ fun τ ↦ by
-      simp only [ne_eq, ENNReal.ofReal_eq_zero, not_le]
-      exact zpow_pos τ.im_pos _)
-
-/-- The invariant measure gives positive mass to nonempty open sets. -/
-instance : IsOpenPosMeasure (volume : Measure ℍ) :=
-  comap_absolutelyContinuous_volume.isOpenPosMeasure
-
-/-- If a subset of `ℂ` has zero Lebesgue measure, its preimage in `ℍ` has zero invariant
-measure. -/
-theorem volume_preimage_coe_null {S : Set ℂ} (hS : volume S = 0) :
-    (volume : Measure ℍ) (UpperHalfPlane.coe ⁻¹' S) = 0 := by
-  refine volume_absolutelyContinuous_comap ?_
-  rw [isOpenEmbedding_coe.measurableEmbedding.comap_apply]
-  exact measure_mono_null (image_preimage_subset _ _) hS
-
-end UpperHalfPlane
-
-namespace ModularGroup
-
-private theorem integrableOn_zpow_neg_two_Ioi {c : ℝ} (hc : 0 < c) :
-    IntegrableOn (· ^ (-2 : ℤ)) (Ioi c) (volume : Measure ℝ) := by
-  have h := integrableOn_Ioi_rpow_of_lt (by norm_num : (-2 : ℝ) < -1) hc
-  have h_eq : (· ^ (-2 : ℝ) : ℝ → ℝ) = (· ^ (-2 : ℤ)) := by
-    funext x
-    rw [← Real.rpow_intCast]
-    norm_num
-  rwa [h_eq] at h
-
-private theorem strip_lintegral_lt_top {c : ℝ} (hc : 0 < c) :
-    ∫⁻ p in Icc (-1/2 : ℝ) (1/2) ×ˢ Ioi c,
-      ENNReal.ofReal (p.2 ^ (-2 : ℤ)) ∂(volume : Measure (ℝ × ℝ)) < ⊤ := by
-  rw [volume_eq_prod ℝ ℝ, setLIntegral_prod_symm _ (by fun_prop)]
-  simp_rw [setLIntegral_const]
-  calc ∫⁻ y in Ioi c, ENNReal.ofReal (y ^ (-2 : ℤ)) *
-        volume (Icc (-1/2 : ℝ) (1/2)) ∂volume
-      ≤ ∫⁻ y in Ioi c, ENNReal.ofReal (y ^ (-2 : ℤ)) * 1 ∂volume := by
-        gcongr with y; rw [Real.volume_Icc]; norm_num
-    _ = _ := by simp
-    _ < ⊤ := lt_of_le_of_lt (setLIntegral_mono' measurableSet_Ioi
-        fun y _ ↦ Real.ofReal_le_enorm _)
-        (integrableOn_zpow_neg_two_Ioi hc).hasFiniteIntegral
-
-private theorem setLIntegral_im_eq_prod (g : ℝ → ENNReal) (T : Set (ℝ × ℝ)) :
-    ∫⁻ z in measurableEquivRealProd ⁻¹' T, g z.im ∂(volume : Measure ℂ) =
-      ∫⁻ p in T, g p.2 ∂(volume : Measure (ℝ × ℝ)) := by
-  have h := volume_preserving_equiv_real_prod.setLIntegral_comp_emb
-      measurableEquivRealProd.measurableEmbedding (fun p : ℝ × ℝ ↦ g p.2)
-      (measurableEquivRealProd ⁻¹' T)
-  rw [MeasurableEquiv.image_preimage] at h
-  simpa only [measurableEquivRealProd_apply] using h
-
-/-- The invariant measure of the standard fundamental domain is finite. -/
-theorem volume_fd_lt_top : (volume : Measure ℍ) fd < ⊤ := by
-  rw [volume_eq_lintegral]
-  set T := Icc (-1/2 : ℝ) (1/2) ×ˢ Ioi (Real.sqrt 3 / 4)
-  calc ∫⁻ z in UpperHalfPlane.coe '' fd, ↑((1 / ‖z.im‖₊) ^ 2 : ℝ≥0)
-      = ∫⁻ z in UpperHalfPlane.coe '' fd, ENNReal.ofReal (z.im ^ (-2 : ℤ)) := by
-        refine setLIntegral_congr_fun
-          (isOpenEmbedding_coe.measurableEmbedding.measurableSet_image.mpr
-            isClosed_fd.measurableSet) fun z hz ↦ ?_
-        obtain ⟨τ, -, rfl⟩ := hz
-        rw [← ENNReal.ofReal_coe_nnreal]
-        congr 1
-        push_cast [Real.nnnorm_of_nonneg τ.im_pos.le]
-        rw [one_div, inv_pow, zpow_neg]
-        norm_num
-    _ ≤ ∫⁻ z in measurableEquivRealProd ⁻¹' T, ENNReal.ofReal (z.im ^ (-2 : ℤ)) :=
-        lintegral_mono_set fun z ↦ by
-          rintro ⟨τ, hτ, rfl⟩
-          simp only [mem_preimage, measurableEquivRealProd_apply, coe_re, coe_im]
-          refine ⟨⟨by linarith [(abs_le.mp hτ.2).1], (abs_le.mp hτ.2).2⟩,
-            mem_Ioi.mpr ?_⟩
-          have h := three_le_four_mul_im_sq_of_mem_fd hτ
-          have h_sq : (4 : ℝ) * τ.im ^ 2 = (2 * τ.im) ^ 2 := by ring
-          rw [h_sq] at h
-          have h2 := Real.sqrt_le_sqrt h
-          rw [Real.sqrt_sq (by linarith [τ.im_pos])] at h2
-          nlinarith [Real.sqrt_pos_of_pos (by norm_num : (0 : ℝ) < 3)]
-    _ = ∫⁻ p in T, ENNReal.ofReal (p.2 ^ (-2 : ℤ)) ∂volume :=
-        setLIntegral_im_eq_prod (fun y ↦ ENNReal.ofReal (y ^ (-2 : ℤ))) T
-    _ < ⊤ := strip_lintegral_lt_top (by positivity)
-
-private theorem volume_complex_re_eq (c : ℝ) : volume {z : ℂ | z.re = c} = 0 := by
-  have h_eq : {z : ℂ | z.re = c} = measurableEquivRealProd ⁻¹' ({c} ×ˢ univ) := by
-    ext z
-    simp [measurableEquivRealProd_apply]
-  rw [h_eq, volume_preserving_equiv_real_prod.measure_preimage
-    ((measurableSet_singleton c).prod MeasurableSet.univ).nullMeasurableSet,
-    volume_eq_prod, Measure.prod_prod, Real.volume_singleton, zero_mul]
-
-private theorem volume_complex_normSq_eq (c : ℝ) :
-    volume {z : ℂ | Complex.normSq z = c} = 0 := by
-  rcases le_or_gt 0 c with hc | hc
-  · have h_eq : {z : ℂ | Complex.normSq z = c} = Metric.sphere (0 : ℂ) (Real.sqrt c) := by
-      ext z
-      simp only [mem_ofPred_eq, Complex.normSq_eq_norm_sq, mem_sphere_zero_iff_norm]
-      constructor
-      · intro h
-        rw [← h, Real.sqrt_sq (norm_nonneg z)]
-      · intro h
-        rw [h, Real.sq_sqrt hc]
-    rw [h_eq]
-    exact Measure.addHaar_sphere volume 0 _
-  · have h_empty : {z : ℂ | Complex.normSq z = c} = ∅ :=
-      eq_empty_iff_forall_notMem.mpr fun z hz ↦ not_le.mpr hc (hz ▸ Complex.normSq_nonneg z)
-    rw [h_empty]
-    exact measure_empty
-
-/-- **The frontier of the standard fundamental domain has zero invariant measure.**
-
-`frontier 𝒟 = 𝒟 \ 𝒟ᵒ ⊆ {normSq = 1} ∪ {Re = 1/2} ∪ {Re = −1/2}`, each of which has
-zero Lebesgue measure in `ℂ`. -/
-theorem volume_frontier_fd : (volume : Measure ℍ) (frontier (fd : Set ℍ)) = 0 := by
-  rw [frontier, isClosed_fd.closure_eq, ← fdo_eq_interior_fd]
-  apply measure_mono_null _ (volume_preimage_coe_null
-    (measure_union_null
-      (measure_union_null (volume_complex_normSq_eq 1) (volume_complex_re_eq (1/2)))
-      (volume_complex_re_eq (-1/2))))
-  intro τ ⟨hfd, hfdo⟩
-  simp only [fd, fdo, mem_ofPred_eq, not_and, not_lt] at hfd hfdo
-  obtain ⟨h1, h2⟩ := hfd
-  simp only [mem_preimage, mem_union, mem_ofPred_eq]
-  by_cases h : Complex.normSq (τ : ℂ) = 1
-  · left; left; exact h
-  · have hns : 1 < Complex.normSq (τ : ℂ) := lt_of_le_of_ne h1 (Ne.symm h)
-    have habs : |τ.re| = 1 / 2 := le_antisymm h2 (hfdo hns)
-    by_cases hre : 0 ≤ τ.re
-    · left; right; rw [coe_re]; rwa [abs_of_nonneg hre] at habs
-    · push Not at hre; right
-      rw [coe_re]; rw [abs_of_neg hre] at habs; linarith
-
-/-- `fd` and `fdo` are a.e. equal w.r.t. the invariant measure. -/
-theorem fd_ae_eq_fdo : (fd : Set ℍ) =ᶠ[ae (volume : Measure ℍ)] fdo :=
-  ((fdo_eq_interior_fd.symm ▸ interior_ae_eq_of_null_frontier volume_frontier_fd :
-    (fdo : Set ℍ) =ᶠ[ae (volume : Measure ℍ)] fd)).symm
-
-/-- Integrals over `fd` and `fdo` agree against the invariant measure. -/
-theorem setIntegral_fd_eq_fdo {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    (f : ℍ → E) : ∫ τ in fd, f τ = ∫ τ in fdo, f τ :=
-  setIntegral_congr_set fd_ae_eq_fdo
-
-end ModularGroup
 
 namespace UpperHalfPlane
 
@@ -366,20 +181,18 @@ private lemma petersson_self_re_eq (z : ℂ) (y : ℝ) (k : ℤ) :
   rw [← Complex.normSq_eq_conj_mul_self, ← Complex.ofReal_zpow, ← Complex.ofReal_mul,
     Complex.ofReal_re]
 
-/-- **Definiteness of the Petersson pairing on the fundamental domain**: a cusp form whose
-Petersson self-pairing over `𝒟` vanishes is zero everywhere on `𝒟`.
+/-- **Definiteness of the Petersson pairing on the fundamental domain**: a continuous
+function whose Petersson self-integrand is integrable on `𝒟` and whose self-pairing over
+`𝒟` vanishes is zero everywhere on `𝒟`.
 
 The nonnegative continuous integrand `normSq (f τ) · (Im τ)^k` is a.e. zero, hence zero on
 the open domain `𝒟ᵒ`, hence zero on `𝒟 = closure 𝒟ᵒ` by continuity. -/
-theorem eq_zero_on_fd_of_peterssonInner_self_eq_zero {F : Type*} [FunLike F ℍ ℂ]
-    {k : ℤ} {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic]
-    [CuspFormClass F Γ k]
-    (f : F) (hpet : peterssonInner k fd (fun τ ↦ f τ) (fun τ ↦ f τ) = 0)
-    {τ : ℍ} (hτ : τ ∈ fd) : f τ = 0 := by
-  set g : ℍ → ℝ := fun z ↦ (petersson k (⇑f) (⇑f) z).re
-  have hint := integrableOn_petersson_fd_left k Γ f f
+theorem eq_zero_on_fd_of_peterssonInner_self_eq_zero {k : ℤ} {f : ℍ → ℂ}
+    (hf : Continuous f) (hint : IntegrableOn (petersson k f f) fd volume)
+    (hpet : peterssonInner k fd f f = 0) {τ : ℍ} (hτ : τ ∈ fd) : f τ = 0 := by
+  set g : ℍ → ℝ := fun z ↦ (petersson k f f z).re
   have hg_zero : ∫ z in fd, g z = 0 := by
-    trans RCLike.re (∫ z in fd, petersson k (⇑f) (⇑f) z)
+    trans RCLike.re (∫ z in fd, petersson k f f z)
     · exact integral_re hint
     · simp only [peterssonInner] at hpet; rw [hpet]; simp
   have hg_nonneg : ∀ z, 0 ≤ g z := fun z ↦ by
@@ -389,8 +202,7 @@ theorem eq_zero_on_fd_of_peterssonInner_self_eq_zero {F : Type*} [FunLike F ℍ 
   have hg_ae : g =ᶠ[ae ((volume : Measure ℍ).restrict fd)] 0 := by
     rwa [← integral_eq_zero_iff_of_nonneg_ae (ae_of_all _ hg_nonneg) hint.re]
   have hg_cont : Continuous g :=
-    Complex.continuous_re.comp (petersson_continuous k (ModularFormClass.continuous f)
-      (ModularFormClass.continuous f))
+    Complex.continuous_re.comp (petersson_continuous k hf hf)
   have hg_fdo : EqOn g 0 fdo :=
     Measure.eqOn_open_of_ae_eq
       (hg_ae.filter_mono (ae_mono (restrict_mono fdo_subset_fd le_rfl)))
@@ -523,7 +335,8 @@ theorem peterssonInnerFd_definite (f : CuspForm Γ k) (hpet : peterssonInnerFd f
     f = 0 := by
   rw [peterssonInnerFd_def] at hpet
   have hfdo : ∀ τ ∈ ModularGroup.fdo, f τ = 0 := fun τ hτ ↦
-    eq_zero_on_fd_of_peterssonInner_self_eq_zero f hpet (ModularGroup.fdo_subset_fd hτ)
+    eq_zero_on_fd_of_peterssonInner_self_eq_zero (ModularFormClass.continuous f)
+      (integrableOn_petersson_fd_left k Γ f f) hpet (ModularGroup.fdo_subset_fd hτ)
   set τ₀ : ℍ := ⟨⟨0, 2⟩, by norm_num⟩ with hτ₀_def
   have hτ₀ : τ₀ ∈ ModularGroup.fdo := by
     constructor
