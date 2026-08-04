@@ -15,7 +15,7 @@ valence formula.
 
 ## Main declarations
 
-* `TauCeti.ModularGroup.orbit_exists_fd_rep`: every orbit meets `𝒟`.
+* `TauCeti.ModularGroup.exists_rep_mem_fd`: every orbit meets `𝒟`.
 * `TauCeti.ModularGroup.orbit_mk_one_vadd`: translation by one preserves the orbit.
 -/
 
@@ -31,7 +31,7 @@ namespace ModularGroup
 
 /-- Every `SL(2, ℤ)`-orbit of `ℍ` has a representative in the standard fundamental
 domain. -/
-lemma orbit_exists_fd_rep (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
+lemma exists_rep_mem_fd (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
     ∃ p : ℍ, Quotient.mk'' p = q ∧ p ∈ 𝒟 := by
   induction q using Quotient.inductionOn' with
   | h z =>

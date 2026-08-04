@@ -20,8 +20,8 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
 
 * `TauCeti.ModularForm.ordOrbit`: the order descended to
   `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
-* `TauCeti.ModularForm.finite_support_ordOrbit`: finite support on orbits for a nonzero
-  form.
+* `TauCeti.ModularForm.hasFiniteSupport_ordOrbit`: finite support on orbits for a
+  nonzero form.
 
 ## References
 
@@ -64,9 +64,10 @@ lemma ordOrbit_mk [SlashInvariantFormClass F 𝒮ℒ k] (p : ℍ) :
   rfl
 
 /-- For a nonzero level-one form, only finitely many orbits carry nonzero order. -/
-lemma finite_support_ordOrbit [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (⇑f : ℍ → ℂ) ≠ 0) :
-    Set.Finite {q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ | ordOrbit f q ≠ 0} := by
-  choose rep hrep_mk hrep_fd using ModularGroup.orbit_exists_fd_rep
+lemma hasFiniteSupport_ordOrbit [ModularFormClass F 𝒮ℒ k] {f : F}
+    (hf : (⇑f : ℍ → ℂ) ≠ 0) : (ordOrbit f).HasFiniteSupport := by
+  change Set.Finite {q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ | ordOrbit f q ≠ 0}
+  choose rep hrep_mk hrep_fd using ModularGroup.exists_rep_mem_fd
   have h_image : rep '' {q | ordOrbit f q ≠ 0} ⊆
       {p : ℍ | p ∈ 𝒟 ∧ orderOfVanishingAt f p ≠ 0} := by
     rintro _ ⟨q, hq, rfl⟩
