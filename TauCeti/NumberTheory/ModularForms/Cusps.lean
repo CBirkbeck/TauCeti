@@ -110,9 +110,11 @@ private lemma quotientTAction_pow_smul_mk_one (n : ℕ) :
   intro _
   rw [MulAction.Quotient.smul_mk, smul_eq_mul, mul_one]
 
-/-- The smallest positive integer `n` such that the upper-triangular matrix `[1, n; 0, 1]`
-lies in `𝒢`: the `MulAction.period` of the coset of `T` acting on the base coset of
-`𝒮ℒ ⧸ 𝒢 ⊓ 𝒮ℒ`. -/
+/-- The `MulAction.period` of the coset of `T` acting on the base coset of
+`𝒮ℒ ⧸ 𝒢 ⊓ 𝒮ℒ`. When some positive power of `T` lies in `𝒢` — in particular whenever
+`𝒢` has finite relative index in `𝒮ℒ`, see `Subgroup.integerCuspWidth_pos` — this is
+the smallest positive integer `n` such that the upper-triangular matrix `[1, n; 0, 1]`
+lies in `𝒢`; otherwise it is `0`. -/
 noncomputable def Subgroup.integerCuspWidth (𝒢 : Subgroup (GL (Fin 2) ℝ)) : ℕ :=
   let _ : MulAction 𝒮ℒ (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := quotientTAction (𝒢 := 𝒢)
   MulAction.period ((mapGL ℝ).rangeRestrict (ModularGroup.T : SL(2, ℤ)))
