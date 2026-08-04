@@ -21,11 +21,14 @@ convergence is finite and some entire function agrees with `LSeries a` on the (n
 convergence half-plane. Such an extension is unique (`LSeries.HasEntireExtension.unique`)
 by analytic continuation.
 
-The predicate comes with an introduction lemma (`LSeries.HasEntireExtension.of_extension`)
-and elimination lemmas (`.abscissa_lt_top`, `.exists_extension`), so consumers never
-unfold the definition. It is exercised: every finitely supported coefficient sequence has
-an entire extension (`LSeries.hasEntireExtension_of_support_finite`, with the delta
-sequence `LSeries.hasEntireExtension_delta` as the basic instance), and
+The predicate comes with introduction lemmas — `LSeries.HasEntireExtension.of_extension`
+(agreement on the full convergence half-plane) and the principal
+`LSeries.HasEntireExtension.of_extension_of_le` (agreement only on `Re s > c` for some
+`c`, upgraded to the whole half-plane by analytic continuation) — and elimination lemmas
+(`.abscissa_lt_top`, `.exists_extension`), so consumers never unfold the definition.
+It is exercised: every finitely supported coefficient sequence has an entire extension
+(`LSeries.hasEntireExtension_of_support_finite`, with the delta sequence
+`LSeries.hasEntireExtension_delta` as the basic instance), and
 `LSeries.HasEntireExtension.existsUnique` pins down the unique extension.
 
 Ported from the AINTLIB `LeanModularForms` project
