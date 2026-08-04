@@ -336,10 +336,10 @@ theorem mem_cuspFormCharSpace_iff [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂ
 
 /-- Diamond operators act by `χ(d)` on elements of `S_k(Γ₁(N), χ)`. -/
 @[simp]
-theorem diamondOpCuspHom_apply_of_mem_cuspFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+theorem diamondOpCusp_apply_of_mem_cuspFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (d : (ZMod N)ˣ) {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hf : f ∈ cuspFormCharSpace k χ) :
-    diamondOpCuspHom k d f = (↑(χ d) : ℂ) • f :=
+    diamondOpCusp k d f = (↑(χ d) : ℂ) • f :=
   (mem_cuspFormCharSpace_iff k χ f).mp hf d
 
 /-- The modular-form nebentypus character space `M_k(Γ₁(N), χ)`. -/
@@ -357,10 +357,10 @@ theorem mem_modFormCharSpace_iff [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂ�
 
 /-- Diamond operators act by `χ(d)` on elements of `M_k(Γ₁(N), χ)`. -/
 @[simp]
-theorem diamondOpHom_apply_of_mem_modFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+theorem diamondOp_apply_of_mem_modFormCharSpace [NeZero N] (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (d : (ZMod N)ˣ) {f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k}
     (hf : f ∈ modFormCharSpace k χ) :
-    diamondOpHom k d f = (↑(χ d) : ℂ) • f :=
+    diamondOp k d f = (↑(χ d) : ℂ) • f :=
   (mem_modFormCharSpace_iff k χ f).mp hf d
 
 /-- **Bridge**: for a `Gamma1`-invariant modular form `f`, membership in the
