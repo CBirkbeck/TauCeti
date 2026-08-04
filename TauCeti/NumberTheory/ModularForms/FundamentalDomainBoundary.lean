@@ -10,11 +10,14 @@ public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 /-!
 # The boundary contour of the standard fundamental domain
 
-The five-segment boundary of the truncated standard fundamental domain for `SL(2, ℤ)`,
-parameterized over `[0, 5]` at a variable height `H`: the right vertical from `1/2 + H·i`
-down to `ρ + 1`, the unit-circle arcs from `ρ + 1` to `i` and from `i` to `ρ`, the left
-vertical from `ρ` up to `-1/2 + H·i`, and the top horizontal back to the start. The corner
-values and closedness recorded here are the anchors of the valence-formula contour.
+The raw five-segment path family `fdBoundary H`, parameterized over `[0, 5]` at a height
+parameter `H`: the right vertical from `1/2 + H·i` through `ρ + 1`, the unit-circle arcs
+from `ρ + 1` to `i` and from `i` to `ρ`, the left vertical from `ρ` through `-1/2 + H·i`,
+and the closing top horizontal. For `1 < H` — so that the horizontal sits above the arc,
+whose highest point is `i` — this is the boundary of the standard fundamental domain
+truncated at height `H`; the definitions carry no hypothesis, and the boundary reading is
+invoked with that bound downstream. The corner values and closedness recorded here are the
+anchors of the valence-formula contour.
 
 ## Main declarations
 
@@ -59,8 +62,9 @@ def fdBoundary_seg4 (H : ℝ) : ℝ → ℂ := fun t ↦
 /-- Segment 5: the top horizontal from `-1/2 + H·i` to `1/2 + H·i`, over `t ∈ [4, 5]`. -/
 def fdBoundary_seg5 (H : ℝ) : ℝ → ℂ := fun t ↦ (t - 9 / 2) + H * Complex.I
 
-/-- The boundary of the standard fundamental domain truncated at height `H`, as a closed
-contour parameterized over `[0, 5]`. -/
+/-- The raw five-segment path at height parameter `H`, parameterized over `[0, 5]` and
+closed for every `H`. For `1 < H` it is the boundary of the standard fundamental domain
+truncated at height `H`. -/
 def fdBoundary (H : ℝ) : ℝ → ℂ := fun t ↦
   if t ≤ 1 then fdBoundary_seg1 H t
   else if t ≤ 2 then fdBoundary_seg2 t
