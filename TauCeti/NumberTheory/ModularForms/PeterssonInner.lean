@@ -80,6 +80,7 @@ theorem peterssonInner_def (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
     peterssonInner k D f g = ∫ τ in D, petersson k f g τ := (rfl)
 
 /-- Hermitian symmetry: `conj ⟨g, f⟩ = ⟨f, g⟩`. -/
+@[simp]
 theorem peterssonInner_conj_symm (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
     conj (peterssonInner k D g f) = peterssonInner k D f g := by
   simp only [peterssonInner, ← integral_conj, petersson_symm k g f]
@@ -240,6 +241,7 @@ theorem peterssonInnerFd_def (f g : CuspForm Γ k) :
     peterssonInnerFd f g = UpperHalfPlane.peterssonInner k ModularGroup.fd f g := (rfl)
 
 /-- Hermitian symmetry of the level-one-domain pairing. -/
+@[simp]
 theorem peterssonInnerFd_conj_symm (f g : CuspForm Γ k) :
     conj (peterssonInnerFd g f) = peterssonInnerFd f g := by
   simp only [peterssonInnerFd_def]
@@ -351,7 +353,7 @@ theorem peterssonInnerFd_definite (f : CuspForm Γ k) (hpet : peterssonInnerFd f
 /-- The self-pairing vanishes exactly on the zero form: nondegeneracy packaged with the
 zero law. -/
 @[simp]
-theorem peterssonInnerFd_self_eq_zero_iff (f : CuspForm Γ k) :
+theorem peterssonInnerFd_self_eq_zero (f : CuspForm Γ k) :
     peterssonInnerFd f f = 0 ↔ f = 0 :=
   ⟨peterssonInnerFd_definite f, fun h ↦ by rw [h]; exact peterssonInnerFd_zero_left 0⟩
 
