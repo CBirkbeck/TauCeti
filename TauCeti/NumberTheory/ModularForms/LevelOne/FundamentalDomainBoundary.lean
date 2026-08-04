@@ -65,6 +65,87 @@ def fdBoundary_seg4 (H : ℝ) : ℝ → ℂ := fun t ↦
 def fdBoundary_seg5 (H : ℝ) : ℝ → ℂ := fun t ↦
   AffineMap.lineMap (-1 / 2 + H * Complex.I) (1 / 2 + H * Complex.I) (t - 4)
 
+
+section SegmentEndpoints
+
+/-- Segment 1 starts at the top right corner `1/2 + H·i`. -/
+@[simp]
+lemma fdBoundary_seg1_at_zero (H : ℝ) : fdBoundary_seg1 H 0 = 1 / 2 + H * Complex.I := by
+  rw [fdBoundary_seg1, AffineMap.lineMap_apply_zero]
+
+/-- Segment 1 ends at the corner `ρ + 1`. -/
+@[simp]
+lemma fdBoundary_seg1_at_one (H : ℝ) : fdBoundary_seg1 H 1 = (ρ : ℂ) + 1 := by
+  rw [fdBoundary_seg1, AffineMap.lineMap_apply_one]
+
+/-- Segment 2 starts at the corner `ρ + 1`. -/
+@[simp]
+lemma fdBoundary_seg2_at_one : fdBoundary_seg2 1 = (ρ : ℂ) + 1 := by
+  have hangle : Real.pi / 3 + ((1 : ℝ) - 1) * (Real.pi / 2 - Real.pi / 3) = Real.pi / 3 := by
+    ring
+  rw [fdBoundary_seg2, hangle]
+  refine Complex.ext ?_ ?_
+  · rw [circleMap_zero_re, Real.cos_pi_div_three]
+    simp [ρ]
+    norm_num
+  · rw [circleMap_zero_im, Real.sin_pi_div_three]
+    simp [ρ]
+
+/-- Segment 2 ends at `i`. -/
+@[simp]
+lemma fdBoundary_seg2_at_two : fdBoundary_seg2 2 = Complex.I := by
+  have hangle : Real.pi / 3 + ((2 : ℝ) - 1) * (Real.pi / 2 - Real.pi / 3) = Real.pi / 2 := by
+    ring
+  rw [fdBoundary_seg2, hangle, circleMap_pi_div_two]
+  simp
+
+/-- Segment 3 starts at `i`. -/
+@[simp]
+lemma fdBoundary_seg3_at_two : fdBoundary_seg3 2 = Complex.I := by
+  have hangle : Real.pi / 2 + ((2 : ℝ) - 2) * (2 * Real.pi / 3 - Real.pi / 2) = Real.pi / 2 := by
+    ring
+  rw [fdBoundary_seg3, hangle, circleMap_pi_div_two]
+  simp
+
+/-- Segment 3 ends at the elliptic corner `ρ`. -/
+@[simp]
+lemma fdBoundary_seg3_at_three : fdBoundary_seg3 3 = (ρ : ℂ) := by
+  have hangle : Real.pi / 2 + ((3 : ℝ) - 2) * (2 * Real.pi / 3 - Real.pi / 2) =
+      Real.pi - Real.pi / 3 := by ring
+  rw [fdBoundary_seg3, hangle]
+  refine Complex.ext ?_ ?_
+  · rw [circleMap_zero_re, Real.cos_pi_sub, Real.cos_pi_div_three]
+    simp [ρ]
+    norm_num
+  · rw [circleMap_zero_im, Real.sin_pi_sub, Real.sin_pi_div_three]
+    simp [ρ]
+
+/-- Segment 4 starts at the elliptic corner `ρ`. -/
+@[simp]
+lemma fdBoundary_seg4_at_three (H : ℝ) : fdBoundary_seg4 H 3 = (ρ : ℂ) := by
+  have hpar : (3 : ℝ) - 3 = 0 := by norm_num
+  rw [fdBoundary_seg4, hpar, AffineMap.lineMap_apply_zero]
+
+/-- Segment 4 ends at the top left corner `-1/2 + H·i`. -/
+@[simp]
+lemma fdBoundary_seg4_at_four (H : ℝ) : fdBoundary_seg4 H 4 = -1 / 2 + H * Complex.I := by
+  have hpar : (4 : ℝ) - 3 = 1 := by norm_num
+  rw [fdBoundary_seg4, hpar, AffineMap.lineMap_apply_one]
+
+/-- Segment 5 starts at the top left corner `-1/2 + H·i`. -/
+@[simp]
+lemma fdBoundary_seg5_at_four (H : ℝ) : fdBoundary_seg5 H 4 = -1 / 2 + H * Complex.I := by
+  have hpar : (4 : ℝ) - 4 = 0 := by norm_num
+  rw [fdBoundary_seg5, hpar, AffineMap.lineMap_apply_zero]
+
+/-- Segment 5 ends at the top right corner `1/2 + H·i`. -/
+@[simp]
+lemma fdBoundary_seg5_at_five (H : ℝ) : fdBoundary_seg5 H 5 = 1 / 2 + H * Complex.I := by
+  have hpar : (5 : ℝ) - 4 = 1 := by norm_num
+  rw [fdBoundary_seg5, hpar, AffineMap.lineMap_apply_one]
+
+end SegmentEndpoints
+
 /-- The raw five-segment path at height parameter `H`, parameterized over `[0, 5]` and
 closed for every `H`. For `1 < H` it is the boundary of the standard fundamental domain
 truncated at height `H`. -/
@@ -88,34 +169,37 @@ lemma mem_fdBoundaryBreakpoints {t : ℝ} :
 section Branches
 
 /-!
-The five branch lemmas are deliberately not `@[simp]`, matching `Path.trans_apply` for
-Mathlib's piecewise paths: their side conditions are numeral-decidable exactly at the
-corner parameters, where they would fire ahead of the `fdBoundary_at_*` corner lemmas
-and strand `simp` at an unreducible `fdBoundary_seg*` application (`fdBoundary H 1`
-would rewrite to `fdBoundary_seg1 H 1` rather than `↑ρ + 1`), turning every corner
-lemma into a `simp`-normal-form violation. The corner values are the `simp` normal
-forms; select a branch by `rw` with the interval hypotheses.
+The `simp` normal form: the five branch selectors together with the segment-endpoint
+values form the simp set, so `fdBoundary H t` at a corner numeral reduces in two steps —
+branch selection, then the endpoint value (`fdBoundary H 1` to `fdBoundary_seg1 H 1` to
+`↑ρ + 1`). The `fdBoundary_at_*` corner lemmas below restate the composites for `rw`
+ergonomics; they are deliberately not `@[simp]`, since the two-step chain already
+reduces their left-hand sides (`simp`-normal-form confluence).
 -/
 
 variable {H t : ℝ}
 
 /-- On `t ≤ 1` the path follows segment 1. -/
+@[simp]
 lemma fdBoundary_of_le_one (ht : t ≤ 1) : fdBoundary H t = fdBoundary_seg1 H t := by
   unfold fdBoundary
   rw [if_pos ht]
 
 /-- On `1 < t ≤ 2` the path follows segment 2. -/
+@[simp]
 lemma fdBoundary_of_le_two (h1 : 1 < t) (h2 : t ≤ 2) : fdBoundary H t = fdBoundary_seg2 t := by
   unfold fdBoundary
   rw [if_neg (not_le.mpr h1), if_pos h2]
 
 /-- On `2 < t ≤ 3` the path follows segment 3. -/
+@[simp]
 lemma fdBoundary_of_le_three (h2 : 2 < t) (h3 : t ≤ 3) :
     fdBoundary H t = fdBoundary_seg3 t := by
   unfold fdBoundary
   rw [if_neg (by linarith : ¬t ≤ 1), if_neg (not_le.mpr h2), if_pos h3]
 
 /-- On `3 < t ≤ 4` the path follows segment 4. -/
+@[simp]
 lemma fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
     fdBoundary H t = fdBoundary_seg4 H t := by
   unfold fdBoundary
@@ -123,6 +207,7 @@ lemma fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
     if_neg (not_le.mpr h3), if_pos h4]
 
 /-- On `4 < t` the path follows segment 5. -/
+@[simp]
 lemma fdBoundary_of_gt_four (h4 : 4 < t) : fdBoundary H t = fdBoundary_seg5 H t := by
   unfold fdBoundary
   rw [if_neg (by linarith : ¬t ≤ 1), if_neg (by linarith : ¬t ≤ 2),
@@ -131,50 +216,22 @@ lemma fdBoundary_of_gt_four (h4 : 4 < t) : fdBoundary H t = fdBoundary_seg5 H t 
 end Branches
 
 /-- The path starts at the top right corner `1/2 + H·i`. -/
-@[simp]
-lemma fdBoundary_at_zero (H : ℝ) : fdBoundary H 0 = 1 / 2 + H * Complex.I := by
-  rw [fdBoundary_of_le_one (by norm_num), fdBoundary_seg1, AffineMap.lineMap_apply_zero]
+lemma fdBoundary_at_zero (H : ℝ) : fdBoundary H 0 = 1 / 2 + H * Complex.I := by simp
 
 /-- The parameter `1` lands on the corner `ρ + 1`. -/
-@[simp]
-lemma fdBoundary_at_one (H : ℝ) : fdBoundary H 1 = (ρ : ℂ) + 1 := by
-  rw [fdBoundary_of_le_one le_rfl, fdBoundary_seg1, AffineMap.lineMap_apply_one]
+lemma fdBoundary_at_one (H : ℝ) : fdBoundary H 1 = (ρ : ℂ) + 1 := by simp
 
 /-- The parameter `2` lands on `i`. -/
-@[simp]
-lemma fdBoundary_at_two (H : ℝ) : fdBoundary H 2 = Complex.I := by
-  have hangle : Real.pi / 3 + ((2 : ℝ) - 1) * (Real.pi / 2 - Real.pi / 3) = Real.pi / 2 := by
-    ring
-  rw [fdBoundary_of_le_two (by norm_num) le_rfl, fdBoundary_seg2, hangle,
-    circleMap_pi_div_two]
-  simp
+lemma fdBoundary_at_two (H : ℝ) : fdBoundary H 2 = Complex.I := by simp
 
 /-- The parameter `3` lands on the elliptic corner `ρ`. -/
-@[simp]
-lemma fdBoundary_at_three (H : ℝ) : fdBoundary H 3 = (ρ : ℂ) := by
-  have hangle : Real.pi / 2 + ((3 : ℝ) - 2) * (2 * Real.pi / 3 - Real.pi / 2) =
-      Real.pi - Real.pi / 3 := by ring
-  rw [fdBoundary_of_le_three (by norm_num) le_rfl, fdBoundary_seg3, hangle]
-  refine Complex.ext ?_ ?_
-  · rw [circleMap_zero_re, Real.cos_pi_sub, Real.cos_pi_div_three]
-    simp [ρ]
-    norm_num
-  · rw [circleMap_zero_im, Real.sin_pi_sub, Real.sin_pi_div_three]
-    simp [ρ]
+lemma fdBoundary_at_three (H : ℝ) : fdBoundary H 3 = (ρ : ℂ) := by norm_num
 
 /-- The parameter `4` lands on the top left corner `-1/2 + H·i`. -/
-@[simp]
-lemma fdBoundary_at_four (H : ℝ) : fdBoundary H 4 = -1 / 2 + H * Complex.I := by
-  have hpar : (4 : ℝ) - 3 = 1 := by norm_num
-  rw [fdBoundary_of_le_four (by norm_num) le_rfl, fdBoundary_seg4, hpar,
-    AffineMap.lineMap_apply_one]
+lemma fdBoundary_at_four (H : ℝ) : fdBoundary H 4 = -1 / 2 + H * Complex.I := by norm_num
 
 /-- The path ends where it starts, at `1/2 + H·i`. -/
-@[simp]
-lemma fdBoundary_at_five (H : ℝ) : fdBoundary H 5 = 1 / 2 + H * Complex.I := by
-  have hpar : (5 : ℝ) - 4 = 1 := by norm_num
-  rw [fdBoundary_of_gt_four (by norm_num), fdBoundary_seg5, hpar,
-    AffineMap.lineMap_apply_one]
+lemma fdBoundary_at_five (H : ℝ) : fdBoundary H 5 = 1 / 2 + H * Complex.I := by norm_num
 
 /-- The boundary contour is closed. -/
 lemma fdBoundary_closed (H : ℝ) : fdBoundary H 5 = fdBoundary H 0 := by
