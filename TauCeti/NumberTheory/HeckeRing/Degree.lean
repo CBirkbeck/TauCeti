@@ -69,7 +69,7 @@ lemma degree_pos (D : HeckeCoset Δ H H) : 0 < D.degree :=
 
 end HeckeCoset
 
-namespace HeckeLeftCoset
+namespace HeckeCoset
 
 variable [IsHeckeTriple Δ H H]
 
@@ -78,11 +78,11 @@ lemma smulOrbit_rep_card (D : HeckeCoset Δ H H) (β : Δ) :
     (smulOrbit H D.rep β).card = D.degree :=
   smulOrbit_card D.rep β
 
-end HeckeLeftCoset
+end HeckeCoset
 
 namespace HeckeLeftCosetModule
 
-open HeckeLeftCoset
+open HeckeCoset
 
 open scoped HeckeCosetModule
 
@@ -91,19 +91,19 @@ variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
 variable (Δ H R) in
 /-- The coefficient-sum homomorphism of the left-coset module: the sum of all coefficients
 of a formal linear combination of left cosets. -/
-noncomputable def coeffSum : (HeckeLeftCoset Δ H →₀ R) →+ R :=
+noncomputable def coeffSum : (HeckeCoset Δ ⊥ H →₀ R) →+ R :=
   Finsupp.liftAddHom fun _ ↦ AddMonoidHom.id R
 
 omit [IsHeckeTriple Δ H H] in
-@[simp] lemma coeffSum_single (q : HeckeLeftCoset Δ H) (b : R) :
+@[simp] lemma coeffSum_single (q : HeckeCoset Δ ⊥ H) (b : R) :
     coeffSum Δ H R (Finsupp.single q b) = b :=
   Finsupp.liftAddHom_apply_single _ _ _
 
 /-- The coefficient sum of the action of a ring basis element on a module basis element:
 the degree of the double coset appears as the orbit size. -/
-lemma coeffSum_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeLeftCoset Δ H) (a b : R) :
+lemma coeffSum_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b : R) :
     coeffSum Δ H R (HeckeCosetModule.single R D a • (Finsupp.single q b :
-      HeckeLeftCoset Δ H →₀ R)) = (D.degree : ℕ) • (a * b) := by
+      HeckeCoset Δ ⊥ H →₀ R)) = (D.degree : ℕ) • (a * b) := by
   classical
   rw [single_smul_single, map_sum]
   simp [smulOrbit_rep_card]
@@ -112,14 +112,14 @@ end HeckeLeftCosetModule
 
 namespace HeckeLeftCosetModule
 
-open HeckeLeftCoset
+open HeckeCoset
 
 open scoped HeckeCosetModule
 
 variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
 
 /-- The action is `R`-homogeneous in the Hecke-ring argument. -/
-lemma smul_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : HeckeLeftCoset Δ H →₀ R) :
+lemma smul_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
     (r • t) • m = r • (t • m) := by
   classical
   simp only [smul_eq_sum]
@@ -131,5 +131,29 @@ lemma smul_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : HeckeLeftCoset Δ H →₀ 
     rw [Finset.smul_sum]
     exact Finset.sum_congr rfl fun i _ ↦ by
       rw [Finsupp.smul_single, smul_eq_mul, mul_assoc]
+
+end HeckeLeftCosetModule
+
+namespace HeckeLeftCosetModule
+
+open HeckeCoset
+
+open scoped HeckeCosetModule
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
+
+/-- Over a commutative semiring, the action commutes with scalars in the module
+argument. -/
+lemma smul_comm' (r : R) (t : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
+    t • (r • m) = r • (t • m) := by
+  classical
+  simp only [smul_eq_sum]
+  refine Eq.trans (Finsupp.sum_congr fun D b₁ ↦ ?_) Finsupp.smul_sum.symm
+  refine Eq.trans (Finsupp.sum_smul_index fun q ↦ ?_) ?_
+  · exact Finset.sum_eq_zero fun i _ ↦ by simp
+  · refine Eq.trans (Finsupp.sum_congr fun q b₂ ↦ ?_) Finsupp.smul_sum.symm
+    rw [Finset.smul_sum]
+    refine Finset.sum_congr rfl fun i _ ↦ ?_
+    rw [Finsupp.smul_single, smul_eq_mul, mul_left_comm]
 
 end HeckeLeftCosetModule
