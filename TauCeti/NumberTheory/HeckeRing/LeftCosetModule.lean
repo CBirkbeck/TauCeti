@@ -271,7 +271,7 @@ variable [IsHeckeTriple Δ H H] {R : Type*} [NonUnitalNonAssocSemiring R]
 
 /-- The action of the Hecke ring on the free module of left cosets: a double coset acts on
 a left coset by summing over its orbit, extended biadditively. Since `HgH` sends `βH` to
-the cosets `βσᵢH` by **right** multiplication, this is a right action — encoded, per
+the cosets `βσᵢgH` by **right** multiplication, this is a right action — encoded, per
 Mathlib convention, as a left action of the opposite ring `(𝕋 Δ H R)ᵐᵒᵖ`: Shimura's
 compatibility `(f * g) • m = g • (f • m)` is precisely `mul_smul` for the opposite
 ring. -/
