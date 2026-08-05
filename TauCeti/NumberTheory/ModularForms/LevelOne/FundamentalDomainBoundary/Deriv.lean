@@ -109,6 +109,44 @@ lemma hasDerivAt_fdBoundary_segment5 (H t : ℝ) :
 
 end Segments
 
+section SegmentDerivRewrites
+
+/-- Segment 1's derivative, in rewrite form. -/
+@[simp]
+lemma deriv_fdBoundary_segment1 (H t : ℝ) :
+    deriv (fdBoundary_segment1 H) t = (ρ : ℂ) + 1 - (1 / 2 + H * Complex.I) :=
+  (hasDerivAt_fdBoundary_segment1 H t).deriv
+
+/-- Segment 2's derivative, in rewrite form. -/
+@[simp]
+lemma deriv_fdBoundary_segment2 (t : ℝ) :
+    deriv fdBoundary_segment2 t =
+      (Real.pi / 2 - Real.pi / 3) •
+        (circleMap 0 1 (Real.pi / 3 + (t - 1) * (Real.pi / 2 - Real.pi / 3)) * Complex.I) :=
+  (hasDerivAt_fdBoundary_segment2 t).deriv
+
+/-- Segment 3's derivative, in rewrite form. -/
+@[simp]
+lemma deriv_fdBoundary_segment3 (t : ℝ) :
+    deriv fdBoundary_segment3 t =
+      (2 * Real.pi / 3 - Real.pi / 2) •
+        (circleMap 0 1 (Real.pi / 2 + (t - 2) * (2 * Real.pi / 3 - Real.pi / 2)) *
+          Complex.I) :=
+  (hasDerivAt_fdBoundary_segment3 t).deriv
+
+/-- Segment 4's derivative, in rewrite form. -/
+@[simp]
+lemma deriv_fdBoundary_segment4 (H t : ℝ) :
+    deriv (fdBoundary_segment4 H) t = -1 / 2 + H * Complex.I - (ρ : ℂ) :=
+  (hasDerivAt_fdBoundary_segment4 H t).deriv
+
+/-- Segment 5's derivative, in rewrite form. -/
+@[simp]
+lemma deriv_fdBoundary_segment5 (H t : ℝ) : deriv (fdBoundary_segment5 H) t = 1 :=
+  (hasDerivAt_fdBoundary_segment5 H t).deriv
+
+end SegmentDerivRewrites
+
 section Contour
 
 variable {H t : ℝ}
