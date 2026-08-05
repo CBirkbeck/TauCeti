@@ -14,7 +14,7 @@ import Mathlib.MeasureTheory.Integral.CircleIntegral
 
 Away from the three genuine corners every piece of the boundary contour has a nonvanishing
 tangent: the verticals and the horizontal move with constant nonzero chords (the height
-clearing the corner row keeps the verticals nondegenerate), and the unified arc moves at
+differing from the corner row keeps the verticals nondegenerate), and the unified arc moves at
 constant speed `π/6`. This is the regularity that feeds the principal-value existence of
 the winding decomposition and the residue sum along the contour.
 
@@ -35,43 +35,24 @@ namespace ModularForm
 
 variable {H t c d : ℝ}
 
-private lemma exists_piece_superset (hcd : Icc c d ⊆ Icc (0 : ℝ) 5)
-    (hdis : Disjoint (fdBoundaryCorners : Set ℝ) (Ioo c d)) :
-    Icc c d ⊆ Icc (0 : ℝ) 1 ∨ Icc c d ⊆ Icc (1 : ℝ) 3 ∨ Icc c d ⊆ Icc (3 : ℝ) 4 ∨
-      Icc c d ⊆ Icc (4 : ℝ) 5 := by
-  have hbp : ∀ m : ℝ, m ∈ fdBoundaryCorners → m ∉ Ioo c d := fun m hm ↦
-    Set.disjoint_left.mp hdis (Finset.mem_coe.mpr hm)
-  rcases le_or_gt d 1 with hd1 | hd1
-  · exact Or.inl fun x hx ↦ ⟨(hcd hx).1, hx.2.trans hd1⟩
-  · have hc1 : 1 ≤ c := le_of_not_gt fun hlt1 ↦ hbp 1 (by simp) ⟨hlt1, hd1⟩
-    rcases le_or_gt d 3 with hd3 | hd3
-    · exact Or.inr (Or.inl fun x hx ↦ ⟨hc1.trans hx.1, hx.2.trans hd3⟩)
-    · have hc3 : 3 ≤ c := le_of_not_gt fun hlt3 ↦ hbp 3 (by simp) ⟨hlt3, hd3⟩
-      rcases le_or_gt d 4 with hd4 | hd4
-      · exact Or.inr (Or.inr (Or.inl fun x hx ↦ ⟨hc3.trans hx.1, hx.2.trans hd4⟩))
-      · have hc4 : 4 ≤ c := le_of_not_gt fun hlt4 ↦ hbp 4 (by simp) ⟨hlt4, hd4⟩
-        exact Or.inr (Or.inr (Or.inr fun x hx ↦ ⟨hc4.trans hx.1, (hcd hx).2⟩))
-
-/-- The vertical chords are nonzero once the height clears the corner row. -/
-private lemma segment1_chord_ne_zero (hH : 1 ≤ H) :
+/-- The vertical chords are nonzero exactly when the height differs from the corner row. -/
+private lemma segment1_chord_ne_zero (hH : H ≠ Real.sqrt 3 / 2) :
     (ρ : ℂ) + 1 - (1 / 2 + H * Complex.I) ≠ 0 := by
-  have h32 : Real.sqrt 3 / 2 < 1 := by
-    rw [div_lt_one (by norm_num)]
-    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
   intro h0
-  have := congrArg Complex.im h0
-  simp [ρ] at this
-  nlinarith [this]
+  apply hH
+  have him : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).im = Real.sqrt 3 / 2 - H := by
+    simp [ρ]
+  rw [h0, Complex.zero_im] at him
+  linarith
 
-private lemma segment4_chord_ne_zero (hH : 1 ≤ H) :
+private lemma segment4_chord_ne_zero (hH : H ≠ Real.sqrt 3 / 2) :
     (-1 / 2 : ℂ) + H * Complex.I - (ρ : ℂ) ≠ 0 := by
-  have h32 : Real.sqrt 3 / 2 < 1 := by
-    rw [div_lt_one (by norm_num)]
-    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
   intro h0
-  have := congrArg Complex.im h0
-  simp [ρ] at this
-  nlinarith [this]
+  apply hH
+  have him : ((-1 / 2 : ℂ) + H * Complex.I - (ρ : ℂ)).im = H - Real.sqrt 3 / 2 := by
+    simp [ρ]
+  rw [h0, Complex.zero_im] at him
+  linarith
 
 private lemma arc_deriv_ne_zero (t : ℝ) :
     (Real.pi / 6) • (circleMap 0 1 ((t + 1) * (Real.pi / 6)) * Complex.I) ≠ 0 := by
@@ -80,7 +61,7 @@ private lemma arc_deriv_ne_zero (t : ℝ) :
 
 /-- The boundary contour is a piecewise-`C¹` immersion: every corner-free piece is `C¹`
 with nonvanishing tangent. -/
-theorem isPwC1ImmersionOn_fdBoundary (hH : 1 ≤ H) :
+theorem isPwC1ImmersionOn_fdBoundary (hH : H ≠ Real.sqrt 3 / 2) :
     IsPwC1ImmersionOn (fdBoundary H) 0 5 := by
   rw [isPwC1ImmersionOn_iff]
   refine ⟨(continuous_fdBoundary H).continuousOn, fdBoundaryCorners, ?_, ?_⟩
@@ -93,7 +74,7 @@ theorem isPwC1ImmersionOn_fdBoundary (hH : 1 ≤ H) :
       rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at hsub
     refine ⟨contDiffOn_fdBoundary H hsub' hdis, fun t ht ↦ ?_⟩
     have h_uniq : UniqueDiffWithinAt ℝ (Icc c d) t := uniqueDiffOn_Icc hlt t ht
-    rcases exists_piece_superset hsub' hdis with h | h | h | h
+    rcases subset_piece_of_disjoint_corners hsub' hdis with h | h | h | h
     · rw [derivWithin_congr (fun s hs ↦ eqOn_fdBoundary_segment1 H (h hs))
         (eqOn_fdBoundary_segment1 H (h ht)),
         (hasDerivAt_fdBoundary_segment1 H t).hasDerivWithinAt.derivWithin h_uniq]
