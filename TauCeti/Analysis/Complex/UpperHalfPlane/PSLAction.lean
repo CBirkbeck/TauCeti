@@ -16,7 +16,7 @@ import Mathlib.Analysis.Complex.UpperHalfPlane.FixedPoints
 The projective special linear groups `PSL(2, ℤ)` and `PSL(2, ℝ)` (quotients of `SL(2, ·)`
 by their centers `{±I}`) act faithfully on the upper half-plane `ℍ`. The `PSL(2, ℝ)`-action
 is the central-quotient descent of the `SL(2, R)`-action, uniformly in the coefficients;
-it agrees with Mathlib's `PGL(2, ℝ)`-action along `toPGL` (`psl2r_smul_toPGL`) and with
+it agrees with Mathlib's `PGL(2, ℝ)`-action along `toPGL` (`toPGL_smul`) and with
 the `PSL(2, ℤ)`-action along the injective descent `psl2zToPSL2R` from
 `TauCeti/LinearAlgebra/Matrix/ProjectiveSpecialLinearGroup.lean`. The actions are
 measurable and preserve the invariant measure `volume : Measure ℍ` (inherited from
@@ -120,20 +120,15 @@ theorem smul_eq_self_of_mem_center (c : SL(2, R)) (hc : c ∈ Subgroup.center SL
   -- rewrite the action through its `compHom` definition
   rw [MulAction.compHom_smul_def, h1, one_smul]
 
-variable (R) in
-/-- The `PSL(2, R)`-action homomorphism on `ℍ`: the `SL(2, R)`-action descends along the
-central quotient, since central elements fix every point
-(`smul_eq_self_of_mem_center`). -/
-noncomputable def psl2PermHom : PSL(2, R) →* Equiv.Perm ℍ :=
-  QuotientGroup.lift (Subgroup.center SL(2, R)) (MulAction.toPermHom SL(2, R) ℍ)
-    fun c hc ↦ Equiv.ext fun τ ↦ by
+/-- The `PSL(2, R)`-action on `ℍ` for any coefficients mapping to `ℝ`: the descent of the
+`SL(2, R)`-action along the central quotient, well-defined since central elements fix
+every point (`smul_eq_self_of_mem_center`). The underlying permutation homomorphism is
+recoverable as `MulAction.toPermHom`. -/
+noncomputable instance instMulActionPSL2 : MulAction PSL(2, R) ℍ :=
+  MulAction.compHom ℍ <| QuotientGroup.lift (Subgroup.center SL(2, R))
+    (MulAction.toPermHom SL(2, R) ℍ) fun c hc ↦ Equiv.ext fun τ ↦ by
       simpa only [MulAction.toPermHom_apply, MulAction.toPerm_apply, Equiv.Perm.one_apply]
         using smul_eq_self_of_mem_center c hc τ
-
-/-- The `PSL(2, R)`-action on `ℍ` for any coefficients mapping to `ℝ`: the descent of the
-`SL(2, R)`-action along the central quotient. -/
-noncomputable instance instMulActionPSL2 : MulAction PSL(2, R) ℍ :=
-  MulAction.compHom ℍ (psl2PermHom R)
 
 /-- The `PSL(2, R)` action of a representative coincides with the `SL(2, R)` action. -/
 @[simp]
@@ -154,9 +149,9 @@ noncomputable instance : SMulInvariantMeasure PSL(2, R) ℍ volume where
     exact (measurePreserving_smul a (volume : Measure ℍ)).measure_preimage
       hs.nullMeasurableSet
 
-/-- The `PSL(2, ℝ)`-action agrees with Mathlib's `PGL(2, ℝ)`-action along `toPGL`. -/
-theorem psl2r_smul_toPGL (g : PSL(2, ℝ)) (τ : ℍ) :
-    g • τ = Matrix.ProjectiveSpecialLinearGroup.toPGL g • τ := by
+/-- Mathlib's `PGL(2, ℝ)`-action along `toPGL` agrees with the `PSL(2, ℝ)`-action. -/
+theorem toPGL_smul (g : PSL(2, ℝ)) (τ : ℍ) :
+    Matrix.ProjectiveSpecialLinearGroup.toPGL g • τ = g • τ := by
   refine QuotientGroup.induction_on g fun a ↦ ?_
   rw [pslMk_smul, Matrix.ProjectiveSpecialLinearGroup.toPGL_mk, pglMk_smul]
   -- the `SL(2, ℝ)`-action is definitionally the `GL(2, ℝ)`-action of the coercion;
@@ -168,7 +163,7 @@ and the injective `toPGL`. -/
 instance : FaithfulSMul PSL(2, ℝ) ℍ where
   eq_of_smul_eq_smul {g₁ g₂} h :=
     Matrix.ProjectiveSpecialLinearGroup.toPGL_injective <| eq_of_smul_eq_smul
-      fun τ : ℍ ↦ by rw [← psl2r_smul_toPGL, ← psl2r_smul_toPGL, h τ]
+      fun τ : ℍ ↦ by rw [toPGL_smul, toPGL_smul, h τ]
 
 /-- The `PSL(2, ℤ)`-action factors through the `PSL(2, ℝ)`-action along the descent
 `psl2zToPSL2R`. -/
