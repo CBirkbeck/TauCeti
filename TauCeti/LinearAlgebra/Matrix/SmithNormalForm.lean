@@ -1,6 +1,7 @@
 /-
-Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Copyright (c) 2024 Chris Birkbeck. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Chris Birkbeck
 -/
 module
 
@@ -37,6 +38,11 @@ on `2 × 2` blocks.
 
 This is the elementary divisor theorem in the form needed for the theory of Hecke rings of
 `GL_n`: it produces the diagonal double coset representatives of Shimura, chapter 3.
+
+Ported from the AINTLIB `LeanModularForms` project
+([`LeanModularForms/HeckeRIngs/GLn/DiagonalCosets.lean`](https://github.com/CBirkbeck/AINTLIB),
+Chris Birkbeck) — the pure-matrix half of that file; the Hecke-theoretic half is ported
+separately on top of the arithmetic Hecke triple.
 
 ## References
 
@@ -285,12 +291,13 @@ private lemma blockEmbed_mul_diagonal_eq (k : ℕ) (e : Fin (k + 2) ≃ Fin 2 �
     (hH : Matrix.diagonal (fun i : Fin 2 ↦ (d ∘ e.symm) (Sum.inl i)) = H)
     (hH' : Matrix.diagonal (fun i : Fin 2 ↦ (d' ∘ e.symm) (Sum.inl i)) = H')
     (hmul : L22 * H * R22 = H')
-    (htail : ∀ i : Fin k, (d' ∘ e.symm) (Sum.inr i) = (d ∘ e.symm) (Sum.inr i))
-    (hsub : ∀ f : Fin (k + 2) → ℤ,
-      (Matrix.diagonal (f ∘ e.symm)).submatrix e e = Matrix.diagonal f) :
+    (htail : ∀ i : Fin k, (d' ∘ e.symm) (Sum.inr i) = (d ∘ e.symm) (Sum.inr i)) :
     ((fromBlocks L22 0 0 (1 : Matrix (Fin k) (Fin k) ℤ)).submatrix e e) * Matrix.diagonal d *
       ((fromBlocks R22 0 0 (1 : Matrix (Fin k) (Fin k) ℤ)).submatrix e e) =
     Matrix.diagonal d' := by
+  have hsub : ∀ f : Fin (k + 2) → ℤ,
+      (Matrix.diagonal (f ∘ e.symm)).submatrix e e = Matrix.diagonal f := fun f ↦ by
+    simp [Function.comp_def]
   rw [show Matrix.diagonal d = (Matrix.diagonal (d ∘ e.symm)).submatrix e e from (hsub d).symm]
   simp only [Matrix.submatrix_mul_equiv]
   rw [show Matrix.diagonal d' = (Matrix.diagonal (d' ∘ e.symm)).submatrix e e from (hsub d').symm]
@@ -318,9 +325,7 @@ private lemma gcd_step_matrix_eq (k : ℕ) (e : Fin (k + 2) ≃ Fin 2 ⊕ Fin k)
     (he0 : e.symm (Sum.inl (0 : Fin 2)) = (0 : Fin (k + 2)))
     (he1 : e.symm (Sum.inl (1 : Fin 2)) = j₁)
     (hinr0 : ∀ i : Fin k, e.symm (Sum.inr i) ≠ (0 : Fin (k + 2)))
-    (hinrj : ∀ i : Fin k, e.symm (Sum.inr i) ≠ j₁)
-    (hsub : ∀ f : Fin (k + 2) → ℤ,
-      (Matrix.diagonal (f ∘ e.symm)).submatrix e e = Matrix.diagonal f) :
+    (hinrj : ∀ i : Fin k, e.symm (Sum.inr i) ≠ j₁) :
     ((fromBlocks !![a.gcdA b, a.gcdB b; -(b / ↑(a.gcd b)), a / ↑(a.gcd b)] 0 0
         (1 : Matrix (Fin k) (Fin k) ℤ)).submatrix e e) * Matrix.diagonal d *
       ((fromBlocks !![(1 : ℤ), -(a.gcdB b * (b / ↑(a.gcd b)));
@@ -333,16 +338,11 @@ private lemma gcd_step_matrix_eq (k : ℕ) (e : Fin (k + 2) ≃ Fin 2 ⊕ Fin k)
       !![↑(a.gcd b), (0 : ℤ); 0, (a / ↑(a.gcd b)) * (b / ↑(a.gcd b)) * ↑(a.gcd b)] := by
     ext i m; fin_cases i <;> fin_cases m <;> simp [Function.comp, he0, he1, hd'0, hd'j]
   exact blockEmbed_mul_diagonal_eq k e d d' _ _ _ _ hH hH' (gcd_2x2_mul a b)
-    (fun i ↦ by simp only [Function.comp]; exact hrest _ (hinr0 i) (hinrj i)) hsub
+    (fun i ↦ by simp only [Function.comp]; exact hrest _ (hinr0 i) (hinrj i))
 
 private noncomputable def genEquiv (k : ℕ) (j : Fin (k + 2)) (_hj : j.val ≠ 0) :
     Fin (k + 2) ≃ Fin 2 ⊕ Fin k :=
   (Equiv.swap (⟨1, by omega⟩ : Fin (k + 2)) j).trans (finEquivSum k)
-
-private lemma diagonal_submatrix_genEquiv (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0)
-    (d : Fin (k + 2) → ℤ) : (Matrix.diagonal (d ∘ (genEquiv k j hj).symm)).submatrix
-    (genEquiv k j hj) (genEquiv k j hj) = Matrix.diagonal d := by
-  ext i m; simp [submatrix_apply, diagonal_apply]
 
 private lemma genEquiv_zero (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0) :
     genEquiv k j hj ⟨0, by omega⟩ = Sum.inl ⟨0, by omega⟩ := by
@@ -419,7 +419,6 @@ private lemma gcd_step_general (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : ∀ i, 
       (by simp only [e]; exact genEquiv_symm_inl1 k j hj)
       (fun i ↦ by simp only [e]; exact genEquiv_symm_inr_ne_zero k j hj i)
       (fun i ↦ by simp only [e]; exact genEquiv_symm_inr_ne_j k j hj i)
-      (diagonal_submatrix_genEquiv k j hj)
     · change (if j = (0 : Fin (k + 2)) then g else if j = j then p * q * g else d j) = _
       rw [if_neg (fun h ↦ hj (by rw [h]; rfl)), if_pos rfl]
     · intro i hi0 hij; simp only [d', if_neg hi0, if_neg hij]
@@ -453,10 +452,6 @@ private lemma fin1Sum_symm_inl (k : ℕ) :
 private lemma fin1Sum_symm_inr (k : ℕ) (i : Fin k) :
     (fin1Sum k).symm (Sum.inr i) = ⟨i.val + 1, by omega⟩ :=
   (fin1Sum k).symm_apply_eq.mpr (fin1Sum_succ k i).symm
-
-private lemma diagonal_submatrix_fin1Sum (k : ℕ) (d : Fin (k + 1) → ℤ) :
-    (Matrix.diagonal (d ∘ (fin1Sum k).symm)).submatrix (fin1Sum k) (fin1Sum k) =
-    Matrix.diagonal d := by ext i m; simp [submatrix_apply, diagonal_apply]
 
 private lemma make_first_divide_all (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : ∀ i, 0 < d i) :
     ∃ (d' : Fin (k + 2) → ℤ) (_ : ∀ i, 0 < d' i) (_ : ∀ j, d' (0 : Fin (k + 2)) ∣ d' j),
@@ -507,8 +502,11 @@ private lemma slSuccEmbed_mul_diagonal (k : ℕ) (d : Fin (k + 2) → ℤ)
   have he_inl : e.symm (Sum.inl (0 : Fin 1)) = (0 : Fin (k + 2)) := fin1Sum_symm_inl (k + 1)
   have he_inr : ∀ i : Fin (k + 1), e.symm (Sum.inr i) = ⟨i.val + 1, by omega⟩ :=
     fin1Sum_symm_inr (k + 1)
+  have hsub : ∀ f : Fin (k + 2) → ℤ,
+      (Matrix.diagonal (f ∘ e.symm)).submatrix e e = Matrix.diagonal f := fun f ↦ by
+    simp [Function.comp_def]
   rw [show Matrix.diagonal d = (Matrix.diagonal (d ∘ e.symm)).submatrix e e
-      from (diagonal_submatrix_fin1Sum (k + 1) d).symm]
+      from (hsub d).symm]
   change (fromBlocks 1 0 0 (L : Matrix _ _ ℤ)).submatrix e e *
     (Matrix.diagonal (d ∘ e.symm)).submatrix e e *
     (fromBlocks 1 0 0 (R : Matrix _ _ ℤ)).submatrix e e = _
@@ -527,7 +525,7 @@ private lemma slSuccEmbed_mul_diagonal (k : ℕ) (d : Fin (k + 2) → ℤ)
   rw [fromBlocks_multiply]; simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add,
     Matrix.mul_one]
   rw [show Matrix.diagonal d_out = (Matrix.diagonal (d_out ∘ e.symm)).submatrix e e
-      from (diagonal_submatrix_fin1Sum (k + 1) d_out).symm]; congr 1
+      from (hsub d_out).symm]; congr 1
   have h_out_decomp : Matrix.diagonal (d_out ∘ e.symm) =
       fromBlocks (Matrix.diagonal (fun _ : Fin 1 ↦ d 0)) 0 0 (Matrix.diagonal d'_tail) := by
     ext (i | i) (j | j)
