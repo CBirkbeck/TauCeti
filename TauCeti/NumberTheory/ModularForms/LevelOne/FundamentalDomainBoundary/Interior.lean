@@ -74,27 +74,6 @@ private lemma fdBoundary_ne_of_interior (hre : |w.re| < 1 / 2) (hnorm : 1 < ‖w
         rw [h_eq] at this
         linarith
 
-/-- Differentiability of the contour away from its corner parameters. -/
-private lemma differentiableAt_fdBoundary_off_corners :
-    ∀ t ∈ Ioo (min (0 : ℝ) 5) (max (0 : ℝ) 5) \ (fdBoundaryCorners : Set ℝ),
-      DifferentiableAt ℝ (fdBoundary H) t := by
-  intro t ht
-  rw [min_eq_left (by norm_num : (0 : ℝ) ≤ 5),
-    max_eq_right (by norm_num : (0 : ℝ) ≤ 5)] at ht
-  obtain ⟨ht', htc⟩ := ht
-  rw [Finset.mem_coe, mem_fdBoundaryCorners] at htc
-  push Not at htc
-  rcases lt_trichotomy t 1 with h1 | h1 | h1
-  · exact (hasDerivAt_fdBoundary_of_lt_one h1).differentiableAt
-  · exact absurd h1 htc.1
-  · rcases lt_trichotomy t 3 with h3 | h3 | h3
-    · exact (hasDerivAt_fdBoundary_of_mem_Ioo_one_three ⟨h1, h3⟩).differentiableAt
-    · exact absurd h3 htc.2.1
-    · rcases lt_trichotomy t 4 with h4 | h4 | h4
-      · exact (hasDerivAt_fdBoundary_of_mem_Ioo_three_four ⟨h3, h4⟩).differentiableAt
-      · exact absurd h4 htc.2.2
-      · exact (hasDerivAt_fdBoundary_of_gt_four h4).differentiableAt
-
 /-- The endpoint ratio of a piece has negative argument when its junction chord turns
 clockwise as seen from `w`; the four instances below feed the pinning argument. -/
 private lemma arg_div_neg {z₁ z₂ : ℂ} (hz₁ : z₁ ≠ 0)
@@ -155,9 +134,9 @@ theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 1 / 2)
       windingNumber_fdBoundary_segment5_eq_log hyH]
     ring
   -- integrality
-  obtain ⟨n, hn⟩ := exists_int_windingNumber_of_closed (P := (fdBoundaryCorners : Set ℝ))
-    (fdBoundary_closed H).symm fdBoundaryCorners.finite_toSet.countable
-    (continuous_fdBoundary H).continuousOn differentiableAt_fdBoundary_off_corners
+  obtain ⟨P, hP, hdiff⟩ := (isPiecewiseC1On_fdBoundary H).exists_countable_differentiableAt
+  obtain ⟨n, hn⟩ := exists_int_windingNumber_of_closed (P := P)
+    (fdBoundary_closed H).symm hP (continuous_fdBoundary H).continuousOn hdiff
     (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
     (intervalIntegrable_inv_sub_mul_deriv (continuous_fdBoundary H).continuousOn
       (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
