@@ -54,22 +54,80 @@ private lemma sqrt_three_div_two_le_one : Real.sqrt 3 / 2 ≤ 1 := by
   rw [div_le_one (by norm_num)]
   nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
 
+-- `simpNF` rejects `simp` annotations on the affine coordinate rewrites below: the
+-- `@[simp]` branch selectors already rewrite `fdBoundary` applications to the segment
+-- functions, so these left-hand sides are not in simp normal form.
+
+/-- The right vertical has constant real part `1/2`. -/
+lemma re_fdBoundary_of_le_one (h1 : t ≤ 1) : (fdBoundary H t).re = 1 / 2 := by
+  rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
+  have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).re = 0 := by
+    simp [ρ]
+    norm_num
+  rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero, zero_add]
+  simp
+
+/-- The right vertical descends affinely from the ceiling to the corner row. -/
+lemma im_fdBoundary_of_le_one (h1 : t ≤ 1) :
+    (fdBoundary H t).im = H + t * (Real.sqrt 3 / 2 - H) := by
+  rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
+  have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).im = Real.sqrt 3 / 2 - H := by
+    simp [ρ]
+  have him : (1 / 2 + H * Complex.I : ℂ).im = H := by simp
+  rw [Complex.add_im, Complex.smul_im, hchord, him, smul_eq_mul, add_comm]
+
+/-- The left vertical has constant real part `-1/2`. -/
+lemma re_fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
+    (fdBoundary H t).re = -(1 / 2) := by
+  rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply, AffineMap.lineMap_apply_module']
+  have hchord : ((-1 / 2 + H * Complex.I : ℂ) - (ρ : ℂ)).re = 0 := by
+    simp [ρ]
+  rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero, zero_add]
+  simp [ρ]
+  norm_num
+
+/-- The left vertical ascends affinely from the corner row to the ceiling. -/
+lemma im_fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
+    (fdBoundary H t).im = Real.sqrt 3 / 2 + (t - 3) * (H - Real.sqrt 3 / 2) := by
+  rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply, AffineMap.lineMap_apply_module']
+  have hchord : ((-1 / 2 + H * Complex.I : ℂ) - (ρ : ℂ)).im = H - Real.sqrt 3 / 2 := by
+    simp [ρ]
+  have hρ : (ρ : ℂ).im = Real.sqrt 3 / 2 := by simp [ρ]
+  rw [Complex.add_im, Complex.smul_im, hchord, hρ, smul_eq_mul, add_comm]
+
+/-- The truncation ceiling runs affinely from the left corner to the right. -/
+lemma re_fdBoundary_of_gt_four (h4 : 4 < t) :
+    (fdBoundary H t).re = -(1 / 2) + (t - 4) := by
+  rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply, AffineMap.lineMap_apply_module']
+  have hchord : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).re = 1 := by
+    simp
+    norm_num
+  have hre : (-1 / 2 + H * Complex.I : ℂ).re = -(1 / 2) := by
+    simp
+    norm_num
+  rw [Complex.add_re, Complex.smul_re, hchord, hre, smul_eq_mul, mul_one, add_comm]
+
+/-- The truncation ceiling has constant height `H`. -/
+lemma im_fdBoundary_of_gt_four (h4 : 4 < t) : (fdBoundary H t).im = H := by
+  rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply, AffineMap.lineMap_apply_module']
+  have h5 : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).im = 0 := by
+    simp
+  rw [Complex.add_im, Complex.smul_im, h5, smul_eq_mul, mul_zero, zero_add]
+  simp
+
+/-- The arc lies on the unit circle. -/
+@[simp]
+lemma norm_fdBoundary_arc (h1 : 1 ≤ t) (h3 : t ≤ 3) : ‖fdBoundary H t‖ = 1 := by
+  rw [eqOn_fdBoundary_arc H ⟨h1, h3⟩, norm_circleMap_zero, abs_one]
+
 /-- Every point of the boundary contour has imaginary part at least `√3/2`, provided the
 height parameter clears the corner row. -/
-lemma sqrt_three_div_two_le_im_fdBoundary (hH : Real.sqrt 3 / 2 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
-    Real.sqrt 3 / 2 ≤ (fdBoundary H t).im := by
+lemma sqrt_three_div_two_le_im_fdBoundary (hH : Real.sqrt 3 / 2 ≤ H)
+    (ht : t ∈ Icc (0 : ℝ) 5) : Real.sqrt 3 / 2 ≤ (fdBoundary H t).im := by
   obtain ⟨ht0, ht5⟩ := ht
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
   rcases le_or_gt t 1 with h1 | h1
-  · rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
-    have : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).im = Real.sqrt 3 / 2 - H := by
-      simp [ρ]
-    rw [Complex.add_im, Complex.smul_im, this]
-    have him : (1 / 2 + H * Complex.I : ℂ).im = H := by simp
-    rw [him, smul_eq_mul]
-    nlinarith [mul_nonneg (by linarith [ht0] : (0 : ℝ) ≤ t)
-      (by linarith : (0 : ℝ) ≤ H - Real.sqrt 3 / 2), h1, h32, hH,
-      mul_nonneg (by linarith : (0 : ℝ) ≤ 1 - t)
+  · rw [im_fdBoundary_of_le_one h1]
+    nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ 1 - t)
       (by linarith : (0 : ℝ) ≤ H - Real.sqrt 3 / 2)]
   · rcases le_or_gt t 3 with h3 | h3
     · rw [eqOn_fdBoundary_arc H ⟨h1.le, h3⟩, circleMap_zero_im, one_mul]
@@ -85,38 +143,17 @@ lemma sqrt_three_div_two_le_im_fdBoundary (hH : Real.sqrt 3 / 2 ≤ H) (ht : t �
               refine Real.sin_le_sin_of_le_of_le_pi_div_two
                 (by linarith [Real.pi_pos]) ?_ ?_ <;> linarith [Real.pi_pos, harc.2, hgt]
     · rcases le_or_gt t 4 with h4 | h4
-      · rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply,
-          AffineMap.lineMap_apply_module']
-        have : ((-1 / 2 + H * Complex.I : ℂ) - (ρ : ℂ)).im = H - Real.sqrt 3 / 2 := by
-          simp [ρ]
-        rw [Complex.add_im, Complex.smul_im, this]
-        have hρ : (ρ : ℂ).im = Real.sqrt 3 / 2 := by simp [ρ]
-        rw [hρ, smul_eq_mul]
+      · rw [im_fdBoundary_of_le_four h3 h4]
         nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ t - 3)
           (by linarith : (0 : ℝ) ≤ H - Real.sqrt 3 / 2)]
-      · rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply,
-          AffineMap.lineMap_apply_module']
-        have h5 : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).im = 0 := by
-          simp
-        rw [Complex.add_im, Complex.smul_im, h5]
-        have him : (-1 / 2 + H * Complex.I : ℂ).im = H := by simp
-        rw [him, smul_eq_mul, mul_zero]
-        nlinarith [hH, h32]
-
+      · rw [im_fdBoundary_of_gt_four h4]
+        exact hH
 
 /-- The contour's real part stays within the fundamental strip. -/
-lemma abs_re_fdBoundary_le_half (ht : t ∈ Icc (0 : ℝ) 5) :
-    |(fdBoundary H t).re| ≤ 1 / 2 := by
-  obtain ⟨ht0, ht5⟩ := ht
+lemma abs_re_fdBoundary_le_half (ht : t ≤ 5) : |(fdBoundary H t).re| ≤ 1 / 2 := by
   rw [abs_le]
   rcases le_or_gt t 1 with h1 | h1
-  · rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
-    have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).re = 0 := by
-      simp [ρ]
-      norm_num
-    rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero]
-    have : (1 / 2 + H * Complex.I : ℂ).re = 1 / 2 := by simp
-    rw [this]
+  · rw [re_fdBoundary_of_le_one h1]
     norm_num
   · rcases le_or_gt t 3 with h3 | h3
     · rw [eqOn_fdBoundary_arc H ⟨h1.le, h3⟩, circleMap_zero_re, one_mul]
@@ -135,26 +172,9 @@ lemma abs_re_fdBoundary_le_half (ht : t ∈ Icc (0 : ℝ) 5) :
                 (by linarith [Real.pi_pos]) harc.1
           _ = 1 / 2 := Real.cos_pi_div_three
     · rcases le_or_gt t 4 with h4 | h4
-      · rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply,
-          AffineMap.lineMap_apply_module']
-        have hchord : ((-1 / 2 + H * Complex.I : ℂ) - (ρ : ℂ)).re = 0 := by
-          simp [ρ]
-        rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero]
-        have : (ρ : ℂ).re = -(1 / 2) := by
-          simp [ρ]
-          norm_num
-        rw [this]
+      · rw [re_fdBoundary_of_le_four h3 h4]
         norm_num
-      · rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply,
-          AffineMap.lineMap_apply_module']
-        have hchord : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).re = 1 := by
-          simp
-          norm_num
-        rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_one]
-        have : (-1 / 2 + H * Complex.I : ℂ).re = -(1 / 2) := by
-          simp
-          norm_num
-        rw [this]
+      · rw [re_fdBoundary_of_gt_four h4]
         constructor <;> nlinarith
 
 /-- The contour stays at or below its height parameter. -/
@@ -163,70 +183,16 @@ lemma im_fdBoundary_le (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
   obtain ⟨ht0, ht5⟩ := ht
   have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
   rcases le_or_gt t 1 with h1 | h1
-  · rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
-    have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).im = Real.sqrt 3 / 2 - H := by
-      simp [ρ]
-    rw [Complex.add_im, Complex.smul_im, hchord, smul_eq_mul]
-    have : (1 / 2 + H * Complex.I : ℂ).im = H := by simp
-    rw [this]
+  · rw [im_fdBoundary_of_le_one h1]
     nlinarith [mul_nonneg ht0 (by linarith : (0 : ℝ) ≤ H - Real.sqrt 3 / 2)]
   · rcases le_or_gt t 3 with h3 | h3
     · rw [eqOn_fdBoundary_arc H ⟨h1.le, h3⟩, circleMap_zero_im, one_mul]
       exact (Real.sin_le_one _).trans hH
     · rcases le_or_gt t 4 with h4 | h4
-      · rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply,
-          AffineMap.lineMap_apply_module']
-        have hchord : ((-1 / 2 + H * Complex.I : ℂ) - (ρ : ℂ)).im = H - Real.sqrt 3 / 2 := by
-          simp [ρ]
-        rw [Complex.add_im, Complex.smul_im, hchord, smul_eq_mul]
-        have : (ρ : ℂ).im = Real.sqrt 3 / 2 := by simp [ρ]
-        rw [this]
-        nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ t - 3)
-          (by linarith : (0 : ℝ) ≤ H - Real.sqrt 3 / 2),
-          mul_nonneg (by linarith : (0 : ℝ) ≤ 4 - t)
+      · rw [im_fdBoundary_of_le_four h3 h4]
+        nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ 4 - t)
           (by linarith : (0 : ℝ) ≤ H - Real.sqrt 3 / 2)]
-      · rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply,
-          AffineMap.lineMap_apply_module']
-        have h5 : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).im = 0 := by
-          simp
-        rw [Complex.add_im, Complex.smul_im, h5, smul_eq_mul, mul_zero]
-        simp
-
-/-- The right vertical has constant real part `1/2`.
-
-`simpNF` rejects a `simp` annotation here: the `@[simp]` branch selectors already rewrite
-`fdBoundary` applications to the segment functions, so this left-hand side is not in simp
-normal form; the same applies to the other coordinate rewrites below. -/
-lemma re_fdBoundary_of_le_one (h1 : t ≤ 1) : (fdBoundary H t).re = 1 / 2 := by
-  rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
-  have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).re = 0 := by
-    simp [ρ]
-    norm_num
-  rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero, zero_add]
-  simp
-
-/-- The left vertical has constant real part `-1/2`. -/
-lemma re_fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
-    (fdBoundary H t).re = -(1 / 2) := by
-  rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply, AffineMap.lineMap_apply_module']
-  have hchord : ((-1 / 2 + H * Complex.I : ℂ) - (ρ : ℂ)).re = 0 := by
-    simp [ρ]
-  rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero, zero_add]
-  simp [ρ]
-  norm_num
-
-/-- The truncation ceiling has constant height `H`. -/
-lemma im_fdBoundary_of_gt_four (h4 : 4 < t) : (fdBoundary H t).im = H := by
-  rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply, AffineMap.lineMap_apply_module']
-  have h5 : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).im = 0 := by
-    simp
-  rw [Complex.add_im, Complex.smul_im, h5, smul_eq_mul, mul_zero, zero_add]
-  simp
-
-/-- The arc lies on the unit circle. -/
-@[simp]
-lemma norm_fdBoundary_arc (h1 : 1 ≤ t) (h3 : t ≤ 3) : ‖fdBoundary H t‖ = 1 := by
-  rw [eqOn_fdBoundary_arc H ⟨h1, h3⟩, norm_circleMap_zero, abs_one]
+      · rw [im_fdBoundary_of_gt_four h4]
 
 /-- The boundary contour stays outside the open unit disc: the verticals and the ceiling
 clear it by height and offset, and the arc lies on the unit circle. -/
@@ -287,10 +253,9 @@ theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {
       Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
     nlinarith [le_max_left R 0]
 
-/-- Every point strictly right of the fundamental strip winds zero.
-
-`simpNF` rejects a `simp` annotation here and on the left companion: `simp` normalizes the
-hypothesis `1 / 2 < w.re` to `2⁻¹ < w.re`, so the stated form never fires as a simp lemma. -/
+-- `simpNF` rejects `simp` annotations here and on the left companion: `simp` normalizes
+-- the hypothesis `1 / 2 < w.re` to `2⁻¹ < w.re`, so the stated forms never fire.
+/-- Every point strictly right of the fundamental strip winds zero. -/
 theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
     (hw : 1 / 2 < w.re) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
@@ -298,7 +263,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
     ?_ (fun R ↦ ⟨((max R 0 + 1 : ℝ) : ℂ), ?_, ?_⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
-    have := (abs_le.mp (abs_re_fdBoundary_le_half (H := H) ht)).2
+    have := (abs_le.mp (abs_re_fdBoundary_le_half (H := H) ht.2)).2
     rw [Set.mem_ofPred_eq] at hz
     linarith
   · rw [Set.mem_ofPred_eq, Complex.ofReal_re]
@@ -314,7 +279,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
     ?_ (fun R ↦ ⟨((-(max R 0 + 1) : ℝ) : ℂ), ?_, ?_⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
-    have := (abs_le.mp (abs_re_fdBoundary_le_half (H := H) ht)).1
+    have := (abs_le.mp (abs_re_fdBoundary_le_half (H := H) ht.2)).1
     rw [Set.mem_ofPred_eq] at hz
     linarith
   · rw [Set.mem_ofPred_eq, Complex.ofReal_re]
