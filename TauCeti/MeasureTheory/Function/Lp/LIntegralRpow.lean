@@ -63,7 +63,7 @@ the bound is not vacuous when `μ univ = ∞`: arithmetic in `ℝ≥0∞` makes 
 rather than `∞` whenever `∫⁻ ‖f‖ₑ ^ r = 0`, and the inequality still holds there because `f` then
 vanishes almost everywhere. -/
 theorem rpow_lintegral_enorm_le_measure_univ_rpow_mul {α : Type*} [MeasurableSpace α]
-    {μ : Measure α} {G : Type*} [NormedAddCommGroup G] {f : α → G}
+    {μ : Measure α} {G : Type*} [TopologicalSpace G] [ContinuousENorm G] {f : α → G}
     (hf : AEStronglyMeasurable f μ) {r : ℝ} (hr : 1 ≤ r) :
     (∫⁻ x, ‖f x‖ₑ ∂μ) ^ r ≤ μ Set.univ ^ (r - 1) * ∫⁻ x, ‖f x‖ₑ ^ r ∂μ := by
   have hr0 : (0 : ℝ) < r := one_pos.trans_le hr
