@@ -270,12 +270,6 @@ coefficient class — the stable named interface for the action below. -/
 abbrev LeftCosetModule (Δ : Submonoid G) (H : Subgroup G) (R : Type*) [Zero R] :=
   HeckeCoset Δ ⊥ H →₀ R
 
-/-- The basis element `b • [βH]` of the left-coset module. -/
-noncomputable abbrev LeftCosetModule.single {Δ : Submonoid G} {H : Subgroup G} {R : Type*}
-    [Zero R]
-    (q : HeckeCoset Δ ⊥ H) (b : R) : LeftCosetModule Δ H R :=
-  Finsupp.single q b
-
 namespace LeftCosetModule
 
 open HeckeCoset
@@ -299,20 +293,20 @@ noncomputable instance instSMulLeftCosetModule :
 -- the defining formula for an opaque opposite-ring element; instance plumbing
 private lemma smul_def (t : (𝕋 Δ H R)ᵐᵒᵖ) (m : LeftCosetModule Δ H R) :
     t • m = t.unop.sum fun D b₁ ↦ m.sum fun q b₂ ↦
-      ∑ i ∈ smulOrbit H D.rep q.rep, LeftCosetModule.single i (b₂ * b₁) :=
+      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₂ * b₁) :=
   (rfl)
 
 /-- The defining formula of the action. -/
 lemma smul_eq_sum (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
     MulOpposite.op t • m = t.sum fun D b₁ ↦ m.sum fun q b₂ ↦
-      ∑ i ∈ smulOrbit H D.rep q.rep, LeftCosetModule.single i (b₂ * b₁) :=
+      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₂ * b₁) :=
   (rfl)
 
 /-- The action of a basis element of the Hecke ring on a basis element of the module. -/
 lemma single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b : R) :
     MulOpposite.op (HeckeCosetModule.single R D a) •
-        LeftCosetModule.single q b =
-      ∑ i ∈ smulOrbit H D.rep q.rep, LeftCosetModule.single i (b * a) := by
+        Finsupp.single q b =
+      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b * a) := by
   classical
   rw [smul_eq_sum,
     HeckeCosetModule.sum_single_index R (by rw [Finsupp.sum_single_index (by simp)]; simp),
@@ -331,7 +325,7 @@ lemma add_smul (t₁ t₂ : (𝕋 Δ H R)ᵐᵒᵖ) (m : LeftCosetModule Δ H R)
   · refine ((Finsupp.sum_congr fun q _ ↦ ?_).trans Finsupp.sum_add)
     rw [← Finset.sum_add_distrib]
     exact Finset.sum_congr rfl fun i _ ↦ by
-      simp only [LeftCosetModule.single, mul_add, Finsupp.single_add]
+      simp only [mul_add, Finsupp.single_add]
 
 /-- The scalar operations distribute over the module's addition, packaged as the
 `DistribSMul` typeclass (the strongest action class available before the compatibility
@@ -351,7 +345,7 @@ noncomputable instance distribSMul :
     · exact Finset.sum_eq_zero fun i _ ↦ by simp
     · rw [← Finset.sum_add_distrib]
       exact Finset.sum_congr rfl fun i _ ↦ by
-        simp only [LeftCosetModule.single, add_mul, Finsupp.single_add]
+        simp only [add_mul, Finsupp.single_add]
 
 /-- Zero acts as zero and acting on zero gives zero: the `SMulWithZero` typeclass. -/
 noncomputable instance smulWithZero :
@@ -377,7 +371,7 @@ the orbit of `D`, the coefficient of `t • [H]` is the coefficient of `t` at `D
 private lemma smul_single_one_apply (t : 𝕋 Δ H R) (D : HeckeCoset Δ H H)
     {q : HeckeCoset Δ ⊥ H}
     (hq : q ∈ smulOrbit H D.rep (1 : HeckeCoset Δ ⊥ H).rep) :
-    (MulOpposite.op t • LeftCosetModule.single 1 1) q = t D := by
+    (MulOpposite.op t • Finsupp.single 1 1) q = t D := by
   classical
   have hinner : ∀ (D' : HeckeCoset Δ H H) (b₁ : R),
       (Finsupp.single (1 : HeckeCoset Δ ⊥ H) (1 : R)).sum (fun q' b₂ ↦
@@ -420,7 +414,7 @@ lemma eq_of_smul_eq_smul {t₁ t₂ : 𝕋 Δ H R}
   classical
   refine Finsupp.ext fun D ↦ ?_
   obtain ⟨q, hq⟩ := smulOrbit_nonempty (H := H) D.rep (1 : HeckeCoset Δ ⊥ H).rep
-  have h1 := congrArg (fun m ↦ m q) (h (LeftCosetModule.single 1 1))
+  have h1 := congrArg (fun m ↦ m q) (h (Finsupp.single 1 1))
   rwa [smul_single_one_apply t₁ D hq, smul_single_one_apply t₂ D hq] at h1
 
 /-- The scalar operations of the opposite Hecke ring on the left-coset module are
