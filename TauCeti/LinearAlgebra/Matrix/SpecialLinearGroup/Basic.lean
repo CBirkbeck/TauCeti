@@ -12,11 +12,13 @@ import Mathlib.Tactic.LinearCombination
 import TauCeti.Data.ZMod.Units
 
 /-!
-# Special linear groups: surjectivity of reduction, and the image of `-I`
+# Special linear groups: reduction surjectivity, `-I`, and `SL₂` inverse coordinates
 
 The natural reduction map `SL₂(ℤ) → SL₂(ℤ/dℤ)` is surjective (strong approximation for
-`SL₂`; Shimura §1.6, Serre Ch. VII), and the base-change map `SL(n, R) → GL(n, S)` sends
-`-I` to `-I`.
+`SL₂`; Shimura §1.6, Serre Ch. VII), the base-change map `SL(n, R) → GL(n, S)` sends
+`-I` to `-I`, and the four entries of an `SL₂` inverse are given by the explicit
+adjugate formulas `inv_apply_zero_zero` … `inv_apply_one_one` — exported with `@[simp]`
+so coordinate computations with congruence subgroups normalize automatically.
 
 The surjectivity is ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GLn/SL2Surjection.lean`, Chris Birkbeck). Prerequisite for the
@@ -27,6 +29,8 @@ diamond operators of the ModularForms roadmap (Layer 0), where it realizes every
 
 * `Matrix.SpecialLinearGroup.map_intCast_zmod_surjective`: strong approximation for `SL₂`.
 * `Matrix.SpecialLinearGroup.mapGL_neg_one`: `mapGL S (-1) = -1`.
+* `Matrix.SpecialLinearGroup.inv_apply_zero_zero` (and its three siblings): the
+  coordinates of an `SL₂` inverse, as `@[simp]` lemmas.
 
 ## References
 
