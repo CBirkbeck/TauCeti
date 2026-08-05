@@ -31,8 +31,8 @@ open Complex
 namespace TauCeti
 
 /-- The ratio of two members of an open half-plane through the origin lies in the slit
-plane. The half-plane with unit normal `a` is `{z | 0 < (conj a * z).re}`; degenerate `a`
-admits no members, so no nonvanishing hypothesis is needed. -/
+plane. The half-plane with normal direction `a` is `{z | 0 < (conj a * z).re}`; degenerate
+`a` admits no members, so no nonvanishing hypothesis is needed. -/
 theorem div_mem_slitPlane_of_re_conj_mul_pos {a z₁ z₂ : ℂ}
     (h₁ : 0 < ((starRingEnd ℂ) a * z₁).re) (h₂ : 0 < ((starRingEnd ℂ) a * z₂).re) :
     z₂ / z₁ ∈ slitPlane := by
