@@ -41,7 +41,7 @@ public noncomputable section
 
 open Complex Filter Metric Set UpperHalfPlane TauCeti.UpperHalfPlane
 
-open scoped ModularForm MatrixGroups Modular Topology
+open scoped Manifold ModularForm MatrixGroups Modular Topology
 
 namespace TauCeti
 
@@ -89,39 +89,34 @@ lemma finite_zeros_in_fd [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → �
   intro h0
   exact hp_ord (by rwa [orderOfVanishingAt_def])
 
-/-- The zeros of a nonzero form's complex extension do not accumulate at any point of the
-upper half-plane. -/
-lemma not_accPt_zeros_comp_ofComplex [ModularFormClass F Γ k] (hf : (⇑f : ℍ → ℂ) ≠ 0)
+/-- The zeros of a nonzero holomorphic function's complex extension do not accumulate at
+any point of the upper half-plane. -/
+lemma not_accPt_zeros_comp_ofComplex {g : ℍ → ℂ} (hg : MDiff g) (hg0 : g ≠ 0)
     {x : ℂ} (hx : 0 < x.im) :
-    ¬AccPt x (Filter.principal {z : ℂ | 0 < z.im ∧ (⇑f ∘ ofComplex) z = 0}) := by
-  have han : AnalyticAt ℂ (⇑f ∘ ofComplex) x :=
-    analyticAt_comp_ofComplex (ModularFormClass.holo f) hx
-  rcases han.eventually_eq_zero_or_eventually_ne_zero with hev | hev
-  · refine absurd (funext fun p => ?_) hf
-    have hall : AnalyticOnNhd ℂ (⇑f ∘ ofComplex) {z : ℂ | 0 < z.im} := fun w hw =>
-      analyticAt_comp_ofComplex (ModularFormClass.holo f) hw
-    have h0 := hall.eqOn_zero_of_preconnected_of_eventuallyEq_zero
-      (convex_halfSpace_im_gt 0).isPreconnected hx hev
-    have := h0 (Set.mem_ofPred_eq ▸ p.2 : (p : ℂ) ∈ {z : ℂ | 0 < z.im})
-    simpa [Function.comp, ofComplex_apply] using this
-  · rw [accPt_iff_frequently_nhdsNE]
-    intro hfreq
-    obtain ⟨y, hymem, hyne⟩ := (hfreq.and_eventually hev).exists
-    exact hyne hymem.2
+    ¬AccPt x (Filter.principal {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0}) := by
+  intro hacc
+  have hall : AnalyticOnNhd ℂ (g ∘ ofComplex) {z : ℂ | 0 < z.im} := fun w hw =>
+    analyticAt_comp_ofComplex hg hw
+  rw [accPt_iff_frequently_nhdsNE] at hacc
+  have h0 := hall.eqOn_zero_of_preconnected_of_frequently_eq_zero
+    (convex_halfSpace_im_gt 0).isPreconnected hx (hacc.mono fun y hy => hy.2)
+  refine hg0 (funext fun p => ?_)
+  have := h0 (Set.mem_ofPred_eq ▸ p.2 : (p : ℂ) ∈ {z : ℂ | 0 < z.im})
+  simpa [Function.comp, ofComplex_apply] using this
 
 /-- Any subset of the upper half-plane has an open neighbourhood in the upper half-plane
 containing no zeros of the form's complex extension beyond its own. -/
-lemma exists_isOpen_zeros_inter [ModularFormClass F Γ k] (hf : (⇑f : ℍ → ℂ) ≠ 0)
+lemma exists_isOpen_zeros_inter {g : ℍ → ℂ} (hg : MDiff g) (hg0 : g ≠ 0)
     {K : Set ℂ} (hK : K ⊆ {z : ℂ | 0 < z.im}) :
     ∃ U : Set ℂ, IsOpen U ∧ K ⊆ U ∧ U ⊆ {z : ℂ | 0 < z.im} ∧
-      {z ∈ U | (⇑f ∘ ofComplex) z = 0} = {z ∈ K | (⇑f ∘ ofComplex) z = 0} := by
+      {z ∈ U | (g ∘ ofComplex) z = 0} = {z ∈ K | (g ∘ ofComplex) z = 0} := by
   obtain ⟨U, hUo, hKU, hUV, hUZ⟩ := TauCeti.exists_isOpen_inter_eq_of_not_accPt
-    (Z := {z : ℂ | 0 < z.im ∧ (⇑f ∘ ofComplex) z = 0})
-    isOpen_upperHalfPlaneSet hK fun x hx => not_accPt_zeros_comp_ofComplex hf (hK hx)
+    (Z := {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0})
+    isOpen_upperHalfPlaneSet hK fun x hx => not_accPt_zeros_comp_ofComplex hg hg0 (hK hx)
   refine ⟨U, hUo, hKU, hUV, ?_⟩
   have hmassage : ∀ {W : Set ℂ}, W ⊆ {z : ℂ | 0 < z.im} →
-      {z ∈ W | (⇑f ∘ ofComplex) z = 0} =
-        W ∩ {z : ℂ | 0 < z.im ∧ (⇑f ∘ ofComplex) z = 0} := by
+      {z ∈ W | (g ∘ ofComplex) z = 0} =
+        W ∩ {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} := by
     intro W hW
     ext z
     exact ⟨fun hz => ⟨hz.1, hW hz.1, hz.2⟩, fun hz => ⟨hz.1, hz.2.2⟩⟩
