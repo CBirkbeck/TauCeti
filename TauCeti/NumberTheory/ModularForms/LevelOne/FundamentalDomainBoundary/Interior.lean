@@ -11,7 +11,6 @@ import TauCeti.Analysis.Contour.Winding.Integer
 import Mathlib.Analysis.Complex.Convex
 import TauCeti.Analysis.Contour.Winding.LocallyConstant
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Decomposition
-import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.PieceLog
 
 /-!
