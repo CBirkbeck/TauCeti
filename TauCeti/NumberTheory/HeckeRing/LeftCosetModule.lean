@@ -15,7 +15,7 @@ The scalar operations underlying the natural representation of the Hecke ring, f
 [Shimura][shimura1971], §3.1: on the free module `LeftCosetModule Δ H R` over the left
 cosets `Δ/H`, each element of `𝕋 Δ H R` defines a scalar operation, with a double coset
 `HgH = ⊔ᵢ σᵢgH` sending a left coset `βH` to `Σᵢ βσᵢgH`. This file constructs the
-left-coset type, the orbit Finsets, and the scalar multiplication, and proves it is
+left-coset presentation, the orbit Finsets, and the scalar multiplication, and proves it is
 additive in both arguments and faithful. Since `HgH` sends `βH` to `Σᵢ βσᵢgH` by right
 multiplication, this is a **right** action, encoded as a left action of the opposite ring
 `(𝕋 Δ H R)ᵐᵒᵖ` per Mathlib convention: Shimura's compatibility law
