@@ -193,16 +193,19 @@ section ExteriorConvolution
 
 open WithConv TensorProduct
 
-variable {R A S : Type*} [CommSemiring R] [Semiring A] [Bialgebra R A]
+variable {R C D S : Type*} [CommSemiring R]
+  [AddCommMonoid C] [Module R C] [CoalgebraStruct R C]
+  [AddCommMonoid D] [Module R D] [CoalgebraStruct R D]
   [CommSemiring S] [Algebra R S]
 
 namespace LinearMap
 
 /-- The exterior product is multiplicative for convolution: products interleave
-legwise. -/
+legwise. Only the comultiplication *data* on each leg is used — no multiplication on the
+sources and no bialgebra compatibility — so the two legs may be distinct coalgebras. -/
 @[simp]
 lemma mulTensor_convMul
-    (s t u v : WithConv (A →ₗ[R] S)) :
+    (s u : WithConv (C →ₗ[R] S)) (t v : WithConv (D →ₗ[R] S)) :
     mulTensor s t * mulTensor u v = mulTensor (s * u) (t * v) := by
   have h := LinearMap.algHom_comp_convMul_distrib
     (Algebra.TensorProduct.lmul' R (S := S))
