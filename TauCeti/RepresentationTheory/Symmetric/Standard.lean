@@ -137,27 +137,14 @@ theorem coe_standardRepresentation_apply (g : Equiv.Perm α)
 
 end Defn
 
-section Standard
+section WeakScalars
 
-variable {k : Type*} [Field k] {α : Type*} [Fintype α]
+variable {k : Type*} {α : Type*}
 
-/-- The standard subrepresentation is an atom when `Fintype.card α = 2`, with no hypothesis on the
-characteristic of `k`. -/
-private theorem isAtom_augmentationSubrepresentation_of_card_eq_two (hcard : Fintype.card α = 2) :
-    IsAtom (augmentationSubrepresentation k (Equiv.Perm α) α) := by
-  -- For two elements the subrepresentation is a line, and a line is an atom of the lattice of
-  -- subspaces; the lattice of subrepresentations embeds in it by `toSubmodule`.
-  have hbot :
-      (⊥ : Subrepresentation (Representation.ofMulAction k (Equiv.Perm α) α)).toSubmodule = ⊥ :=
-    rfl
-  have hatom : IsAtom (augmentationSubrepresentation k (Equiv.Perm α) α).toSubmodule :=
-    Submodule.isAtom_iff_finrank_eq_one.mpr
-      (by rw [finrank_augmentationSubrepresentation, hcard])
-  refine ⟨fun h => hatom.1 (by rw [h, hbot]), fun τ hτ =>
-    Subrepresentation.toSubmodule_injective ((hatom.2 _ ?_).trans hbot.symm)⟩
-  exact lt_of_le_of_ne hτ.le fun hc => hτ.ne (Subrepresentation.toSubmodule_injective hc)
+section NontrivialRing
 
-omit [Fintype α] in
+variable [CommRing k] [Nontrivial k]
+
 /-- A difference of two distinct standard basis vectors is nonzero. -/
 private theorem single_sub_single_ne_zero {x y : α} (hxy : x ≠ y) :
     (single x 1 - single y 1 : MonoidAlgebra k α) ≠ 0 := by
@@ -165,6 +152,12 @@ private theorem single_sub_single_ne_zero {x y : α} (hxy : x ≠ y) :
   intro hzero
   have hcoeff : (single x (1 : k) - single y 1).coeff x = 0 := by rw [hzero]; simp
   simp [MonoidAlgebra.coeff_single, Ne.symm hxy] at hcoeff
+
+end NontrivialRing
+
+section SemiringNoZeroDivisors
+
+variable [CommSemiring k] [NoZeroDivisors k] [Fintype α]
 
 /-- A nonzero vector in the kernel of `sumCoords` has two different coefficients, provided
 `(Fintype.card α : k) ≠ 0`.
@@ -190,26 +183,12 @@ private theorem exists_coeff_ne_of_ne_zero_of_sumCoords_eq_zero (hchar : (Fintyp
   have hzero : v.coeff x₀ = 0 := (mul_eq_zero.mp hmul).resolve_left hchar
   exact hv0 (MonoidAlgebra.coeff_eq_zero.mp (Finsupp.ext fun z => by simp [hall z, hzero]))
 
-omit [Fintype α] in
-/-- A subrepresentation containing a vector whose `x`- and `y`-coefficients differ contains the
-difference `single x 1 - single y 1`.
+end SemiringNoZeroDivisors
 
-The two indices need not be distinct as a hypothesis — differing coefficients already force it. -/
-private theorem single_sub_single_mem_of_mem_of_coeff_ne
-    {τ : Subrepresentation (Representation.ofMulAction k (Equiv.Perm α) α)}
-    {v : MonoidAlgebra k α} (hv : v ∈ τ.toSubmodule) {x y : α}
-    (hcoeff : v.coeff x ≠ v.coeff y) :
-    (single x 1 - single y 1 : MonoidAlgebra k α) ∈ τ.toSubmodule := by
-  classical
-  -- Subtract the transposition `swap x y` from `v`, then rescale.
-  have hsub : v - Representation.ofMulAction k (Equiv.Perm α) α (Equiv.swap x y) v ∈
-      τ.toSubmodule :=
-    Submodule.sub_mem _ hv (τ.apply_mem_toSubmodule _ hv)
-  rw [sub_ofMulAction_swap] at hsub
-  have hsmul := τ.toSubmodule.smul_mem (v.coeff x - v.coeff y)⁻¹ hsub
-  rwa [smul_smul, inv_mul_cancel₀ (sub_ne_zero.mpr hcoeff), one_smul] at hsmul
+section Ring
 
-omit [Fintype α] in
+variable [CommRing k]
+
 /-- A subrepresentation containing one difference of standard basis vectors contains every
 difference with the same base point `x`. -/
 private theorem single_sub_single_mem_of_ne_of_single_sub_single_mem
@@ -228,6 +207,49 @@ private theorem single_sub_single_mem_of_ne_of_single_sub_single_mem
     rw [map_sub, Representation.ofMulAction_single, Representation.ofMulAction_single,
       hswapx, hswapy] at hm
     simpa using τ.toSubmodule.neg_mem hm
+
+end Ring
+
+end WeakScalars
+
+section Standard
+
+variable {k : Type*} [Field k] {α : Type*} [Fintype α]
+
+/-- The standard subrepresentation is an atom when `Fintype.card α = 2`, with no hypothesis on the
+characteristic of `k`. -/
+private theorem isAtom_augmentationSubrepresentation_of_card_eq_two (hcard : Fintype.card α = 2) :
+    IsAtom (augmentationSubrepresentation k (Equiv.Perm α) α) := by
+  -- For two elements the subrepresentation is a line, and a line is an atom of the lattice of
+  -- subspaces; the lattice of subrepresentations embeds in it by `toSubmodule`.
+  have hbot :
+      (⊥ : Subrepresentation (Representation.ofMulAction k (Equiv.Perm α) α)).toSubmodule = ⊥ :=
+    rfl
+  have hatom : IsAtom (augmentationSubrepresentation k (Equiv.Perm α) α).toSubmodule :=
+    Submodule.isAtom_iff_finrank_eq_one.mpr
+      (by rw [finrank_augmentationSubrepresentation, hcard])
+  refine ⟨fun h => hatom.1 (by rw [h, hbot]), fun τ hτ =>
+    Subrepresentation.toSubmodule_injective ((hatom.2 _ ?_).trans hbot.symm)⟩
+  exact lt_of_le_of_ne hτ.le fun hc => hτ.ne (Subrepresentation.toSubmodule_injective hc)
+
+omit [Fintype α] in
+/-- A subrepresentation containing a vector whose `x`- and `y`-coefficients differ contains the
+difference `single x 1 - single y 1`.
+
+The two indices need not be distinct as a hypothesis — differing coefficients already force it. -/
+private theorem single_sub_single_mem_of_mem_of_coeff_ne
+    {τ : Subrepresentation (Representation.ofMulAction k (Equiv.Perm α) α)}
+    {v : MonoidAlgebra k α} (hv : v ∈ τ.toSubmodule) {x y : α}
+    (hcoeff : v.coeff x ≠ v.coeff y) :
+    (single x 1 - single y 1 : MonoidAlgebra k α) ∈ τ.toSubmodule := by
+  classical
+  -- Subtract the transposition `swap x y` from `v`, then rescale.
+  have hsub : v - Representation.ofMulAction k (Equiv.Perm α) α (Equiv.swap x y) v ∈
+      τ.toSubmodule :=
+    Submodule.sub_mem _ hv (τ.apply_mem_toSubmodule _ hv)
+  rw [sub_ofMulAction_swap] at hsub
+  have hsmul := τ.toSubmodule.smul_mem (v.coeff x - v.coeff y)⁻¹ hsub
+  rwa [smul_smul, inv_mul_cancel₀ (sub_ne_zero.mpr hcoeff), one_smul] at hsmul
 
 /-- **The standard subrepresentation is minimal.**  A nonzero subrepresentation of the permutation
 representation contained in the standard one is the whole of it: from a nonzero vector with
