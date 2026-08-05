@@ -6,8 +6,8 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.Algebra.DirectSum.Module
-public import Mathlib.Analysis.Complex.Polynomial.Basic
-public import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
+import Mathlib.Analysis.Complex.Polynomial.Basic
+import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
 
