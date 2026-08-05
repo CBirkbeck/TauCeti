@@ -17,7 +17,11 @@ Basic API for the double cosets `HeckeCoset` indexing a Hecke coset module, foll
 [Shimura][shimura1971], Chapter 3. This file provides representatives of double cosets, the
 characterisation of when two elements give the same double coset, and the quotient
 `Γ₁ ⧸ (Γ₁ ∩ gΓ₂g⁻¹)` indexing the left cosets inside a double coset `Γ₁gΓ₂`, which is used to
-define the Hecke product in later files and is finite for a Hecke triple.
+define the Hecke product in later files and is finite for a Hecke triple. It also houses
+the basis-element API of the coset module: `HeckeCosetModule.single` with its evaluation,
+summation, and additivity laws, the `induction_linear` principle, and the transported
+`Module` instance — placed at this layer so every later file (convolution, one, and the
+coset actions) can build on one shared vocabulary.
 
 Vendored from the in-review mathlib4 PR
 [#41253](https://github.com/leanprover-community/mathlib4/pull/41253) (Chris Birkbeck), per the
@@ -30,6 +34,9 @@ stack merges.
 * `HeckeCoset.rep`: a chosen representative in `Δ`.
 * `DoubleCoset.DecompQuotient`: the quotient `Γ₁ ⧸ (Γ₁ ∩ gΓ₂g⁻¹)` indexing the left cosets
   in `Γ₁gΓ₂`; finite for a Hecke triple.
+* `HeckeCosetModule.single`: the basis element `b • [D]` of the Hecke coset module, with
+  `single_apply`, `sum_single_index`, `smul_single_one`, `single_add`, `induction_linear`,
+  and the `Module R` instance `HeckeCosetModule.instModule`.
 
 ## Main results
 
