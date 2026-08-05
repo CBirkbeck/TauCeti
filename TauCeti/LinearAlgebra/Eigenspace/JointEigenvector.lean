@@ -31,11 +31,12 @@ nebentypus decomposition in `TauCeti/NumberTheory/ModularForms/CharacterDecomp.l
 
 * `charHomOfJointEigenvector`: the eigenvalue function of a nonzero joint eigenvector of a
   group representation, as a monoid homomorphism `G →* Kˣ`.
-* `iSupIndep_iInf_eigenspace_of_isSemisimple`,
+* `iSupIndep_iInf_eigenspace_of_commute`,
   `iSup_iInf_eigenspace_eq_top_of_isSemisimple`,
-  `iSup_inf_iInf_eigenspace_of_invariant`: joint eigenspaces of a commuting semisimple
-  family are independent, exhaust the space, and decompose every invariant submodule —
-  with the character-indexed forms (`…_charHom…`) for group representations.
+  `iSup_inf_iInf_eigenspace_of_invariant`: joint eigenspaces of a commuting family are
+  independent (with no further hypotheses), exhaust the space when semisimple, and
+  decompose every invariant submodule — with the character-indexed forms (`…_charHom…`)
+  for group representations.
 -/
 
 public section
@@ -110,20 +111,20 @@ lemma exists_charHom_of_iInf_eigenspace_ne_bot {ρ : G →* Module.End K V}
   obtain ⟨v, hv_mem, hv_ne⟩ := (Submodule.ne_bot_iff _).mp hχ
   exact ⟨charHomOfJointEigenvector ρ χ v hv_ne ((Submodule.mem_iInf _).mp hv_mem), rfl⟩
 
-/-- The joint eigenspaces of a pairwise-commuting family of semisimple endomorphisms,
-indexed by their eigenvalue functions, are supremum-independent. -/
-lemma iSupIndep_iInf_eigenspace_of_isSemisimple {ι : Type*} (f : ι → Module.End K V)
-    (hcomm : Pairwise fun i j ↦ Commute (f i) (f j)) (hss : ∀ i, (f i).IsSemisimple) :
+/-- The joint eigenspaces of a pairwise-commuting family of endomorphisms, indexed by
+their eigenvalue functions, are supremum-independent — with no semisimplicity assumption:
+independence of the larger generalized eigenspaces transports down. -/
+lemma iSupIndep_iInf_eigenspace_of_commute {ι : Type*} (f : ι → Module.End K V)
+    (hcomm : Pairwise fun i j ↦ Commute (f i) (f j)) :
     iSupIndep fun χ : ι → K ↦ ⨅ i, (f i).eigenspace (χ i) := by
-  have heq (i : ι) (μ : K) : (f i).maxGenEigenspace μ = (f i).eigenspace μ :=
-    (hss i).isFinitelySemisimple.maxGenEigenspace_eq_eigenspace μ
   have h_mapsTo (i j : ι) (φ : K) : Set.MapsTo (f i) ((f j).maxGenEigenspace φ : Set V)
       ((f j).maxGenEigenspace φ : Set V) := by
     refine Module.End.mapsTo_maxGenEigenspace_of_comm ?_ φ
     rcases eq_or_ne j i with rfl | hij
     · exact Commute.refl _
     · exact hcomm hij
-  simpa only [heq] using Module.End.independent_iInf_maxGenEigenspace_of_forall_mapsTo f h_mapsTo
+  exact (Module.End.independent_iInf_maxGenEigenspace_of_forall_mapsTo f h_mapsTo).mono
+    fun χ ↦ iInf_mono fun i ↦ Module.End.eigenspace_le_maxGenEigenspace
 
 /-- Over an algebraically closed field and in finite dimension, the joint eigenspaces of a
 pairwise-commuting family of semisimple endomorphisms exhaust the space. -/
@@ -198,10 +199,9 @@ lemma iSup_iInf_eigenspace_charHom_eq_top [IsAlgClosed K] [FiniteDimensional K V
 
 /-- **Character-indexed independence** of the joint eigenspaces. -/
 lemma iSupIndep_iInf_eigenspace_charHom
-    (hcomm : Pairwise fun g₁ g₂ ↦ Commute (ρ g₁) (ρ g₂))
-    (hss : ∀ g, (ρ g).IsSemisimple) :
+    (hcomm : Pairwise fun g₁ g₂ ↦ Commute (ρ g₁) (ρ g₂)) :
     iSupIndep fun χ₀ : G →* Kˣ ↦ ⨅ g, (ρ g).eigenspace (χ₀ g) :=
-  (iSupIndep_iInf_eigenspace_of_isSemisimple (fun g ↦ ρ g) hcomm hss).comp
+  (iSupIndep_iInf_eigenspace_of_commute (fun g ↦ ρ g) hcomm).comp
     fun _ _ h ↦ MonoidHom.ext fun g ↦ Units.ext (congr_fun h g)
 
 /-- **Character-indexed decomposition of a finite-dimensional invariant submodule**,

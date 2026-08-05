@@ -25,8 +25,6 @@ Both are stated of `Module.End`, so both sit in the `End` namespace under `open 
 * `TauCeti.End.pow_eq_one_of_isRoot_charpoly`: the roots of the characteristic polynomial of
   an endomorphism of finite order `n` are `n`-th roots of unity.
 * `TauCeti.End.isSemisimple_of_pow_eq_one`: an endomorphism of finite order `n`, with `n`
-* `Module.End.isSemisimple_of_isOfFinOrder`: the `IsOfFinOrder` packaging, over a
-  characteristic-zero field.
   invertible in the field, is semisimple.
 -/
 
@@ -65,11 +63,3 @@ theorem isSemisimple_of_pow_eq_one {f : End k V} {n : ℕ} (hn : (n : k) ≠ 0) 
 end End
 
 end TauCeti
-
-/-- A finite-order endomorphism of a vector space over a characteristic-zero field is
-semisimple; the `IsOfFinOrder` packaging of `TauCeti.End.isSemisimple_of_pow_eq_one`. -/
-lemma Module.End.isSemisimple_of_isOfFinOrder {K V : Type*} [Field K] [CharZero K]
-    [AddCommGroup V] [Module K V] {f : Module.End K V}
-    (hf : IsOfFinOrder f) : f.IsSemisimple := by
-  obtain ⟨n, hnpos, hn⟩ := hf.exists_pow_eq_one
-  exact TauCeti.End.isSemisimple_of_pow_eq_one (Nat.cast_ne_zero.mpr hnpos.ne') hn
