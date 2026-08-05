@@ -193,7 +193,6 @@ lemma im_fdBoundary_le (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
         simp
 
 /-- The right vertical has constant real part `1/2`. -/
-@[simp]
 lemma re_fdBoundary_of_le_one (h1 : t ≤ 1) : (fdBoundary H t).re = 1 / 2 := by
   rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
   have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).re = 0 := by
@@ -203,7 +202,6 @@ lemma re_fdBoundary_of_le_one (h1 : t ≤ 1) : (fdBoundary H t).re = 1 / 2 := by
   simp
 
 /-- The left vertical has constant real part `-1/2`. -/
-@[simp]
 lemma re_fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
     (fdBoundary H t).re = -(1 / 2) := by
   rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply, AffineMap.lineMap_apply_module']
@@ -214,7 +212,6 @@ lemma re_fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
   norm_num
 
 /-- The truncation ceiling has constant height `H`. -/
-@[simp]
 lemma im_fdBoundary_of_gt_four (h4 : 4 < t) : (fdBoundary H t).im = H := by
   rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply, AffineMap.lineMap_apply_module']
   have h5 : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).im = 0 := by
@@ -287,7 +284,6 @@ theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {
     nlinarith [le_max_left R 0]
 
 /-- Every point strictly right of the fundamental strip winds zero. -/
-@[simp]
 theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
     (hw : 1 / 2 < w.re) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
@@ -304,7 +300,6 @@ theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
     linarith [le_max_left R 0]
 
 /-- Every point strictly left of the fundamental strip winds zero. -/
-@[simp]
 theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
     (hw : w.re < -(1 / 2)) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
