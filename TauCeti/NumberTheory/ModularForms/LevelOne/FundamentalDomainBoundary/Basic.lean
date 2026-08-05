@@ -415,7 +415,7 @@ lemma continuousOn_fdBoundary (H : ℝ) : ContinuousOn (fdBoundary H) (Icc 0 5) 
 
 /-- A closed subinterval of `[0, 5]` whose interior avoids the three genuine corners lies
 inside one of the four smooth pieces. -/
-theorem subset_piece_of_disjoint_corners {c d : ℝ} (hcd : Icc c d ⊆ Icc (0 : ℝ) 5)
+private theorem subset_piece_of_disjoint_corners {c d : ℝ} (hcd : Icc c d ⊆ Icc (0 : ℝ) 5)
     (hdis : Disjoint (fdBoundaryCorners : Set ℝ) (Ioo c d)) :
     Icc c d ⊆ Icc (0 : ℝ) 1 ∨ Icc c d ⊆ Icc (1 : ℝ) 3 ∨ Icc c d ⊆ Icc (3 : ℝ) 4 ∨
       Icc c d ⊆ Icc (4 : ℝ) 5 := by

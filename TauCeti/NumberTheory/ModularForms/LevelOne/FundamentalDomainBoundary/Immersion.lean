@@ -7,8 +7,6 @@ module
 public import TauCeti.Analysis.Contour.PwC1ImmersionOn
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
 
-import Mathlib.MeasureTheory.Integral.CircleIntegral
-
 /-!
 # The boundary contour is a piecewise-`C¹` immersion
 
@@ -34,6 +32,25 @@ namespace TauCeti
 namespace ModularForm
 
 variable {H t c d : ℝ}
+
+-- Duplicated from `Basic` deliberately: review guidance keeps the interval classification
+-- private on both sides rather than public API.
+private lemma subset_piece_of_disjoint_corners {c d : ℝ} (hcd : Icc c d ⊆ Icc (0 : ℝ) 5)
+    (hdis : Disjoint (fdBoundaryCorners : Set ℝ) (Ioo c d)) :
+    Icc c d ⊆ Icc (0 : ℝ) 1 ∨ Icc c d ⊆ Icc (1 : ℝ) 3 ∨ Icc c d ⊆ Icc (3 : ℝ) 4 ∨
+      Icc c d ⊆ Icc (4 : ℝ) 5 := by
+  have hbp : ∀ m : ℝ, m ∈ fdBoundaryCorners → m ∉ Ioo c d := fun m hm ↦
+    Set.disjoint_left.mp hdis (Finset.mem_coe.mpr hm)
+  rcases le_or_gt d 1 with hd1 | hd1
+  · exact Or.inl fun x hx ↦ ⟨(hcd hx).1, hx.2.trans hd1⟩
+  · have hc1 : 1 ≤ c := le_of_not_gt fun hlt ↦ hbp 1 (by simp) ⟨hlt, hd1⟩
+    rcases le_or_gt d 3 with hd3 | hd3
+    · exact Or.inr (Or.inl fun x hx ↦ ⟨hc1.trans hx.1, hx.2.trans hd3⟩)
+    · have hc3 : 3 ≤ c := le_of_not_gt fun hlt ↦ hbp 3 (by simp) ⟨hlt, hd3⟩
+      rcases le_or_gt d 4 with hd4 | hd4
+      · exact Or.inr (Or.inr (Or.inl fun x hx ↦ ⟨hc3.trans hx.1, hx.2.trans hd4⟩))
+      · have hc4 : 4 ≤ c := le_of_not_gt fun hlt ↦ hbp 4 (by simp) ⟨hlt, hd4⟩
+        exact Or.inr (Or.inr (Or.inr fun x hx ↦ ⟨hc4.trans hx.1, (hcd hx).2⟩))
 
 /-- The vertical chords are nonzero exactly when the height differs from the corner row. -/
 private lemma segment1_chord_ne_zero (hH : H ≠ Real.sqrt 3 / 2) :
@@ -79,9 +96,8 @@ theorem isPwC1ImmersionOn_fdBoundary (hH : H ≠ Real.sqrt 3 / 2) :
         (eqOn_fdBoundary_segment1 H (h ht)),
         (hasDerivAt_fdBoundary_segment1 H t).hasDerivWithinAt.derivWithin h_uniq]
       exact segment1_chord_ne_zero hH
-    · rw [derivWithin_congr (fun s hs ↦ eqOn_fdBoundary_arc H (h hs))
-        (eqOn_fdBoundary_arc H (h ht)),
-        (hasDerivAt_fdBoundary_arcMap t).hasDerivWithinAt.derivWithin h_uniq]
+    · rw [(hasDerivWithinAt_fdBoundary_arc (h ⟨le_rfl, hlt.le⟩).1
+        (h ⟨hlt.le, le_rfl⟩).2 ht).derivWithin h_uniq]
       exact arc_deriv_ne_zero t
     · rw [derivWithin_congr (fun s hs ↦ eqOn_fdBoundary_segment4 H (h hs))
         (eqOn_fdBoundary_segment4 H (h ht)),
