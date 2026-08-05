@@ -64,8 +64,8 @@ noncomputable scoped instance coeMapGLRat :
     Coe (SpecialLinearGroup (Fin n) ℤ) (GL (Fin n) ℚ) :=
   ⟨mapGL ℚ⟩
 
-/-- The canonical membership: integral special-linear matrices land in `SL_n(ℤ)`. -/
-@[simp]
+/-- The canonical membership: integral special-linear matrices land in `SL_n(ℤ)`. Not a
+`simp` lemma: `mem_SLnZ_iff` subsumes it as a normal form. -/
 lemma coe_mem_SLnZ (σ : SpecialLinearGroup (Fin n) ℤ) :
     (σ : GL (Fin n) ℚ) ∈ SLnZ n := ⟨σ, rfl⟩
 
