@@ -141,20 +141,6 @@ section WeakScalars
 
 variable {k : Type*} {α : Type*}
 
-section NontrivialRing
-
-variable [CommRing k] [Nontrivial k]
-
-/-- A difference of two distinct standard basis vectors is nonzero. -/
-private theorem single_sub_single_ne_zero {x y : α} (hxy : x ≠ y) :
-    (single x 1 - single y 1 : MonoidAlgebra k α) ≠ 0 := by
-  classical
-  intro hzero
-  have hcoeff : (single x (1 : k) - single y 1).coeff x = 0 := by rw [hzero]; simp
-  simp [MonoidAlgebra.coeff_single, Ne.symm hxy] at hcoeff
-
-end NontrivialRing
-
 section SemiringNoZeroDivisors
 
 variable [CommSemiring k] [NoZeroDivisors k] [Fintype α]
@@ -270,7 +256,9 @@ theorem isAtom_augmentationSubrepresentation (h2 : 2 ≤ Fintype.card α)
         augmentationSubrepresentation k (Equiv.Perm α) α :=
       single_sub_single_mem_augmentationSubrepresentation x₀ y₀
     rw [hbot] at hmem
-    exact single_sub_single_ne_zero hx₀y₀ (Submodule.mem_bot k |>.mp hmem)
+    have hne : (single x₀ 1 - single y₀ 1 : MonoidAlgebra k α) ≠ 0 :=
+      sub_ne_zero.mpr ((MonoidAlgebra.single_left_injective one_ne_zero).ne hx₀y₀)
+    exact hne (Submodule.mem_bot k |>.mp hmem)
   · -- every strictly smaller subrepresentation is zero
     intro τ hτ
     by_contra hτbot
