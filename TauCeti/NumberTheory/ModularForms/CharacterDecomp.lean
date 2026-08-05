@@ -8,7 +8,7 @@ module
 public import Mathlib.Algebra.DirectSum.Module
 public import Mathlib.Analysis.Complex.Polynomial.Basic
 public import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
-public import Mathlib.NumberTheory.MulChar.Duality
+public import TauCeti.LinearAlgebra.End.FiniteOrder
 public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
 
@@ -68,15 +68,15 @@ noncomputable section
 variable {N : ℕ} [NeZero N] {k : ℤ}
 
 /-- Each diamond operator has finite order. -/
-lemma diamondOpHom_isOfFinOrder (d : (ZMod N)ˣ) : IsOfFinOrder (diamondOpHom k d) :=
+lemma isOfFinOrder_diamondOpHom (d : (ZMod N)ˣ) : IsOfFinOrder (diamondOpHom k d) :=
   (diamondOpHom k).isOfFinOrder (isOfFinOrder_of_finite d)
 
 /-- Each diamond operator is a semisimple endomorphism. -/
-lemma diamondOpHom_isSemisimple (d : (ZMod N)ˣ) : (diamondOpHom k d).IsSemisimple :=
-  Module.End.isSemisimple_of_isOfFinOrder (diamondOpHom_isOfFinOrder d)
+lemma isSemisimple_diamondOpHom (d : (ZMod N)ˣ) : (diamondOpHom k d).IsSemisimple :=
+  Module.End.isSemisimple_of_isOfFinOrder (isOfFinOrder_diamondOpHom d)
 
 /-- The diamond operators pairwise commute. -/
-lemma diamondOpHom_pairwise_commute :
+lemma pairwise_commute_diamondOpHom :
     Pairwise fun d₁ d₂ : (ZMod N)ˣ ↦ Commute (diamondOpHom k d₁) (diamondOpHom k d₂) :=
   fun _ _ _ ↦ (Commute.all _ _).map (diamondOpHom k)
 
@@ -114,7 +114,7 @@ theorem iSupIndep_modFormCharSpace (k : ℤ) :
     iSupIndep (fun χ : (ZMod N)ˣ →* ℂˣ ↦ modFormCharSpace (N := N) k χ) := by
   have h : iSupIndep (fun χ₀ : (ZMod N)ˣ →* ℂˣ ↦
       ⨅ d : (ZMod N)ˣ, (diamondOpHom k d).eigenspace ((χ₀ d : ℂ))) :=
-    iSupIndep_iInf_eigenspace_charHom diamondOpHom_pairwise_commute diamondOpHom_isSemisimple
+    iSupIndep_iInf_eigenspace_charHom pairwise_commute_diamondOpHom isSemisimple_diamondOpHom
   simpa only [iInf_eigenspace_eq_modFormCharSpace] using h
 
 /-- **Internal direct sum decomposition**: `M_k(Γ₁(N))` decomposes as the direct
@@ -125,15 +125,15 @@ theorem isInternal_modFormCharSpace (k : ℤ) [DecidableEq ((ZMod N)ˣ →* ℂ�
     (iSupIndep_modFormCharSpace k) (iSup_modFormCharSpace_eq_top k)
 
 /-- Each cusp-form diamond operator has finite order. -/
-lemma diamondOpCuspHom_isOfFinOrder (d : (ZMod N)ˣ) : IsOfFinOrder (diamondOpCuspHom k d) :=
+lemma isOfFinOrder_diamondOpCuspHom (d : (ZMod N)ˣ) : IsOfFinOrder (diamondOpCuspHom k d) :=
   (diamondOpCuspHom k).isOfFinOrder (isOfFinOrder_of_finite d)
 
 /-- Each cusp-form diamond operator is semisimple. -/
-lemma diamondOpCuspHom_isSemisimple (d : (ZMod N)ˣ) : (diamondOpCuspHom k d).IsSemisimple :=
-  Module.End.isSemisimple_of_isOfFinOrder (diamondOpCuspHom_isOfFinOrder d)
+lemma isSemisimple_diamondOpCuspHom (d : (ZMod N)ˣ) : (diamondOpCuspHom k d).IsSemisimple :=
+  Module.End.isSemisimple_of_isOfFinOrder (isOfFinOrder_diamondOpCuspHom d)
 
 /-- The cusp-form diamond operators pairwise commute. -/
-lemma diamondOpCuspHom_pairwise_commute :
+lemma pairwise_commute_diamondOpCuspHom :
     Pairwise fun d₁ d₂ : (ZMod N)ˣ ↦
       Commute (diamondOpCuspHom k d₁) (diamondOpCuspHom k d₂) :=
   fun _ _ _ ↦ (Commute.all _ _).map (diamondOpCuspHom k)
@@ -150,8 +150,8 @@ theorem iSupIndep_cuspFormCharSpace (k : ℤ) :
     iSupIndep (fun χ : (ZMod N)ˣ →* ℂˣ ↦ cuspFormCharSpace (N := N) k χ) := by
   have h : iSupIndep (fun χ₀ : (ZMod N)ˣ →* ℂˣ ↦
       ⨅ d : (ZMod N)ˣ, (diamondOpCuspHom k d).eigenspace ((χ₀ d : ℂ))) :=
-    iSupIndep_iInf_eigenspace_charHom diamondOpCuspHom_pairwise_commute
-      diamondOpCuspHom_isSemisimple
+    iSupIndep_iInf_eigenspace_charHom pairwise_commute_diamondOpCuspHom
+      isSemisimple_diamondOpCuspHom
   simpa only [iInf_eigenspace_eq_cuspFormCharSpace] using h
 
 /-- **The cusp-form character subspaces span the whole space.** -/

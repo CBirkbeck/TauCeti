@@ -5,10 +5,8 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Algebra.Module.Submodule.Invariant
 import Mathlib.NumberTheory.MulChar.Duality
 public import Mathlib.RingTheory.RootsOfUnity.EnoughRootsOfUnity
-public import TauCeti.LinearAlgebra.End.FiniteOrder
 public import Mathlib.LinearAlgebra.Eigenspace.Pi
 public import Mathlib.LinearAlgebra.Eigenspace.Semisimple
 
@@ -140,29 +138,40 @@ lemma iSup_iInf_eigenspace_eq_top_of_isSemisimple [IsAlgClosed K]
       hcomm fun i ↦ by simpa only [heq] using (hss i).iSup_eigenspace_eq_top
 
 /-- A finite-dimensional submodule invariant under a pairwise-commuting family of
-semisimple endomorphisms is the supremum of its intersections with the joint eigenspaces:
-the restricted family diagonalizes, with no assumption on the ambient space. -/
+endomorphisms whose **restrictions** to it are semisimple is the supremum of its
+intersections with the joint eigenspaces: the restricted family diagonalizes, with no
+assumption on the ambient operators. -/
 lemma iSup_inf_iInf_eigenspace_of_invariant [IsAlgClosed K] {ι : Type*}
     (f : ι → Module.End K V) (hcomm : Pairwise fun i j ↦ Commute (f i) (f j))
-    (hss : ∀ i, (f i).IsSemisimple)
-    (p : Submodule K V) [FiniteDimensional K p] (hp : ∀ i, ∀ x ∈ p, f i x ∈ p) :
+    (p : Submodule K V) [FiniteDimensional K p] (hp : ∀ i, ∀ x ∈ p, f i x ∈ p)
+    (hss : ∀ i, Module.End.IsSemisimple ((f i).restrict (hp i))) :
     (⨆ χ : ι → K, p ⊓ ⨅ i, (f i).eigenspace (χ i)) = p := by
-  have hres : ∀ i, Module.End.IsSemisimple ((f i).restrict (hp i)) := fun i ↦
-    (hss i).restrict ((Module.End.mem_invtSubmodule_iff_forall_mem_of_mem (f := f i)).mpr
-      (hp i))
-  have hmax (i : ι) (μ : K) : (f i).maxGenEigenspace μ = (f i).eigenspace μ :=
-    (hss i).isFinitelySemisimple.maxGenEigenspace_eq_eigenspace μ
   have hmax' (i : ι) (μ : K) :
       Module.End.maxGenEigenspace ((f i).restrict (hp i)) μ =
         Module.End.eigenspace ((f i).restrict (hp i)) μ :=
-    (hres i).isFinitelySemisimple.maxGenEigenspace_eq_eigenspace μ
-  simp_rw [← hmax,
-    fun χ : ι → K ↦ Submodule.inf_iInf_maxGenEigenspace_of_forall_mapsTo
-      (f := f) (μ := χ) p (fun i ↦ hp i),
-    ← Submodule.map_iSup]
+    (hss i).isFinitelySemisimple.maxGenEigenspace_eq_eigenspace μ
+  -- the joint eigenspace intersected with `p` is the image of the restricted joint
+  -- eigenspace, elementarily: evaluation of `f i` and its restriction agree on `p`
+  have hbridge : ∀ χ : ι → K, p ⊓ (⨅ i, (f i).eigenspace (χ i)) =
+      Submodule.map p.subtype
+        (⨅ i, Module.End.eigenspace ((f i).restrict (hp i)) (χ i)) := by
+    intro χ
+    ext x
+    constructor
+    · rintro ⟨hxp, hxe⟩
+      refine ⟨⟨x, hxp⟩, (Submodule.mem_iInf _).mpr fun i ↦ ?_, rfl⟩
+      have hx := (Submodule.mem_iInf _).mp hxe i
+      rw [Module.End.mem_eigenspace_iff] at hx ⊢
+      exact Subtype.ext (by simpa [LinearMap.restrict_apply] using hx)
+    · rintro ⟨⟨y, hyp⟩, hye, rfl⟩
+      refine ⟨hyp, (Submodule.mem_iInf _).mpr fun i ↦ ?_⟩
+      have hy := (Submodule.mem_iInf _).mp hye i
+      rw [Module.End.mem_eigenspace_iff] at hy ⊢
+      simpa [LinearMap.restrict_apply] using congrArg Subtype.val hy
+  simp_rw [hbridge, ← Submodule.map_iSup]
   suffices h_restrict_top :
       (⨆ χ : ι → K, ⨅ i,
-        Module.End.maxGenEigenspace ((f i).restrict (hp i)) (χ i)) = ⊤ by
+        Module.End.eigenspace ((f i).restrict (hp i)) (χ i)) = ⊤ by
     rw [h_restrict_top, Submodule.map_top, Submodule.range_subtype]
   have hcomm' : Pairwise fun i j ↦
       Commute ((f i).restrict (hp i)) ((f j).restrict (hp j)) := by
@@ -170,8 +179,8 @@ lemma iSup_inf_iInf_eigenspace_of_invariant [IsAlgClosed K] {ι : Type*}
     refine LinearMap.ext fun ⟨x, _⟩ ↦ Subtype.ext ?_
     simpa only [Module.End.mul_apply, LinearMap.coe_restrict_apply] using
       LinearMap.congr_fun (hcomm hij).eq x
-  simpa only [hmax'] using
-    iSup_iInf_eigenspace_eq_top_of_isSemisimple (fun i ↦ (f i).restrict (hp i)) hcomm' hres
+  exact iSup_iInf_eigenspace_eq_top_of_isSemisimple (fun i ↦ (f i).restrict (hp i))
+    hcomm' hss
 
 section CharHom
 
@@ -200,13 +209,14 @@ lemma iSupIndep_iInf_eigenspace_charHom
   (iSupIndep_iInf_eigenspace_of_isSemisimple (fun g ↦ ρ g) hcomm hss).comp
     fun _ _ h ↦ MonoidHom.ext fun g ↦ Units.ext (congr_fun h g)
 
-/-- **Character-indexed decomposition of a finite-dimensional invariant submodule.** -/
+/-- **Character-indexed decomposition of a finite-dimensional invariant submodule**,
+assuming only that the restricted representation is semisimple. -/
 lemma iSup_inf_iInf_eigenspace_charHom_of_invariant [IsAlgClosed K]
     (hcomm : Pairwise fun g₁ g₂ ↦ Commute (ρ g₁) (ρ g₂))
-    (hss : ∀ g, (ρ g).IsSemisimple)
-    (p : Submodule K V) [FiniteDimensional K p] (hp : ∀ g, ∀ x ∈ p, ρ g x ∈ p) :
+    (p : Submodule K V) [FiniteDimensional K p] (hp : ∀ g, ∀ x ∈ p, ρ g x ∈ p)
+    (hss : ∀ g, Module.End.IsSemisimple ((ρ g).restrict (hp g))) :
     (⨆ χ₀ : G →* Kˣ, p ⊓ ⨅ g, (ρ g).eigenspace (χ₀ g)) = p := by
-  have h := iSup_inf_iInf_eigenspace_of_invariant (fun g ↦ ρ g) hcomm hss p hp
+  have h := iSup_inf_iInf_eigenspace_of_invariant (fun g ↦ ρ g) hcomm p hp hss
   refine le_antisymm (iSup_le fun _ ↦ inf_le_left) ?_
   conv_lhs => rw [← h]
   refine iSup_le fun χ ↦ ?_
