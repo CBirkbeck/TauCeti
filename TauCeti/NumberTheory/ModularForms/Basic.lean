@@ -12,9 +12,10 @@ public import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 # Modular-forms basics: extensions of Mathlib's API
 
 Small generic lemmas extending `Mathlib/NumberTheory/ModularForms/Basic.lean` and its slash
-actions: the conjugation `σ` is trivial on `SL(2, ℤ)`-matrices, and the `CuspForm`
+actions: the conjugation `σ` is trivial on `SL(2, ℤ)`-matrices, the `CuspForm`
 translation equations Mathlib does not yet provide (`CuspForm.mcast_apply` and the
-`GL(2, ℝ)`-level `CuspForm.coe_translate_gl`).
+`GL(2, ℝ)`-level `CuspForm.coe_translate_gl`), and the descent of finite-dimensionality
+from modular forms to cusp forms (`CuspForm.finiteDimensional_of_modularForm`).
 
 Split out of the diamond-operator development ported from the AINTLIB `LeanModularForms`
 project (<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>).

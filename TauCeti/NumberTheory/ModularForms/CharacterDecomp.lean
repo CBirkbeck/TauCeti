@@ -47,9 +47,9 @@ Layer 0 of the ModularForms roadmap.
   any diamond-invariant submodule is the supremum of its intersections with the
   character spaces, with finsupp-indexed corollaries
   `exists_finsupp_of_diamondOp_invariant`/`exists_finsupp_of_diamondOpCusp_invariant`.
-* `endo_ext_of_mem_modFormCharSpace`: two endomorphisms agreeing on every character
-  space are equal — the gluing principle for extending Hecke-operator identities proven
-  per character space to the whole space.
+* `endo_ext_of_mem_modFormCharSpace`, `endo_ext_of_mem_cuspFormCharSpace`: two
+  endomorphisms agreeing on every character space are equal — the gluing principle for
+  extending Hecke-operator identities proven per character space to the whole space.
 
 ## References
 
@@ -313,6 +313,20 @@ theorem endo_ext_of_mem_modFormCharSpace
   refine LinearMap.ext fun f ↦ ?_
   have hf : f ∈ ⨆ χ : (ZMod N)ˣ →* ℂˣ, modFormCharSpace k χ :=
     iSup_modFormCharSpace_eq_top (N := N) k ▸ Submodule.mem_top
+  exact Submodule.iSup_induction _ (motive := fun g ↦ S g = T g) hf h (by simp only [map_zero])
+    fun x y hx hy ↦ by simp only [map_add, hx, hy]
+
+/-- **Extensionality along the cusp-form character decomposition**: two `ℂ`-linear
+endomorphisms of `S_k(Γ₁(N))` that agree on every nebentypus subspace
+`cuspFormCharSpace k χ` are equal. -/
+theorem endo_ext_of_mem_cuspFormCharSpace
+    [FiniteDimensional ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)]
+    {S T : Module.End ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)}
+    (h : ∀ (χ : (ZMod N)ˣ →* ℂˣ) (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k),
+      f ∈ cuspFormCharSpace k χ → S f = T f) : S = T := by
+  refine LinearMap.ext fun f ↦ ?_
+  have hf : f ∈ ⨆ χ : (ZMod N)ˣ →* ℂˣ, cuspFormCharSpace k χ :=
+    iSup_cuspFormCharSpace_eq_top (N := N) k ▸ Submodule.mem_top
   exact Submodule.iSup_induction _ (motive := fun g ↦ S g = T g) hf h (by simp only [map_zero])
     fun x y hx hy ↦ by simp only [map_add, hx, hy]
 

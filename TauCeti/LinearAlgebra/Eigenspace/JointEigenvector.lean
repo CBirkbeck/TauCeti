@@ -5,12 +5,9 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.FieldTheory.IsAlgClosed.Basic
 public import TauCeti.LinearAlgebra.End.FiniteOrder
 public import Mathlib.LinearAlgebra.Eigenspace.Pi
 public import Mathlib.LinearAlgebra.Eigenspace.Semisimple
-public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
-public import Mathlib.LinearAlgebra.Semisimple
 
 /-!
 # Joint eigenvectors of commuting semisimple families
