@@ -547,8 +547,11 @@ section DerivationLeibniz
 
 open WithConv TensorProduct
 
+-- Only `Semiring B` is needed: the statement preserves multiplication order, and the
+-- centrality it relies on comes from the `Algebra A (CounitAlgebra R A B)` structure.
+-- Commutativity is required later, by `mulTensor_convMul` and the adjoint representation.
 variable {R A B : Type*} [CommSemiring R] [CommSemiring A] [Bialgebra R A]
-  [CommSemiring B] [Algebra R B]
+  [Semiring B] [Algebra R B]
 
 namespace Derivation
 

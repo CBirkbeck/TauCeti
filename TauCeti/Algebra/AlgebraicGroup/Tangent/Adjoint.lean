@@ -83,7 +83,7 @@ private lemma conj_comp_mul'
     AlgHom.toConv_toLinearMap_comp_mul' (g⁻¹).ofConv]
   rw [mul_add, add_mul, LinearMap.mulTensor_convMul, LinearMap.mulTensor_convMul,
     LinearMap.mulTensor_convMul, LinearMap.mulTensor_convMul, mul_one,
-    AlgHom.toConv_toLinearMap_mul_inv]
+    ← AlgHom.toLinearMap_convMul, mul_inv_cancel, AlgHom.toLinearMap_convOne]
 
 /-- The Leibniz rule for a conjugated derivation, in scalar-action form. -/
 private lemma conj_ofConv_mul
