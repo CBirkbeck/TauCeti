@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.NumberTheory.ModularForms.Basic
+public import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
 
 /-!
 # Modular-forms basics: extensions of Mathlib's API
@@ -44,3 +45,9 @@ lemma _root_.CuspForm.coe_translate_gl {F : Type*} [FunLike F UpperHalfPlane ℂ
     {Γ : Subgroup (GL (Fin 2) ℝ)} [CuspFormClass F Γ k] (f : F) (g : GL (Fin 2) ℝ) :
     ⇑(CuspForm.translate f g) = ⇑f ∣[k] g := (rfl)
 
+/-- Finite-dimensionality of cusp forms follows from finite-dimensionality of modular
+forms of the same level and weight, along Mathlib's inclusion `CuspForm.toModularFormₗ`. -/
+instance CuspForm.finiteDimensional_of_modularForm {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
+    [Γ.HasDetOne] [FiniteDimensional ℂ (ModularForm Γ k)] :
+    FiniteDimensional ℂ (CuspForm Γ k) :=
+  FiniteDimensional.of_injective CuspForm.toModularFormₗ CuspForm.toModularFormₗ_injective

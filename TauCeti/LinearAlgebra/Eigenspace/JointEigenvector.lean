@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.FieldTheory.IsAlgClosed.Basic
-public import Mathlib.FieldTheory.Separable
+public import TauCeti.LinearAlgebra.End.FiniteOrder
 public import Mathlib.LinearAlgebra.Eigenspace.Pi
 public import Mathlib.LinearAlgebra.Eigenspace.Semisimple
 public import Mathlib.LinearAlgebra.Eigenspace.Triangularizable
@@ -48,12 +48,16 @@ noncomputable section
 
 open Polynomial
 
-variable {G K V : Type*} [Group G] [Field K] [AddCommGroup V] [Module K V]
+variable {G K V : Type*} [Field K] [AddCommGroup V] [Module K V]
+
+section Monoid
+
+variable [Monoid G]
 
 /-- If `v ≠ 0` is a joint eigenvector of a monoid-hom representation
 `ρ : G →* Module.End K V` with eigenvalues `χ g`, then the eigenvalue at the
 identity is `1`. -/
-lemma jointEigenvector_char_one (ρ : G →* Module.End K V) (χ : G → K) (v : V)
+lemma eigenvalue_one_of_jointEigenvector (ρ : G →* Module.End K V) (χ : G → K) (v : V)
     (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) : χ 1 = 1 := by
   have h1 := hv_mem 1
   rw [Module.End.mem_eigenspace_iff, map_one, Module.End.one_apply] at h1
@@ -62,7 +66,7 @@ lemma jointEigenvector_char_one (ρ : G →* Module.End K V) (χ : G → K) (v :
 /-- If `v ≠ 0` is a joint eigenvector of a monoid-hom representation
 `ρ : G →* Module.End K V` with eigenvalues `χ g`, then the eigenvalues are
 multiplicative: `χ (g₁ * g₂) = χ g₁ * χ g₂`. -/
-lemma jointEigenvector_char_mul (ρ : G →* Module.End K V) (χ : G → K) (v : V)
+lemma eigenvalue_mul_of_jointEigenvector (ρ : G →* Module.End K V) (χ : G → K) (v : V)
     (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) (g₁ g₂ : G) :
     χ (g₁ * g₂) = χ g₁ * χ g₂ := by
   have h := hv_mem (g₁ * g₂)
@@ -74,18 +78,24 @@ lemma jointEigenvector_char_mul (ρ : G →* Module.End K V) (χ : G → K) (v :
 /-- If `g` has finite order and `v ≠ 0` is a joint eigenvector with eigenvalues
 `χ`, then `χ g ≠ 0`: the eigenvalue of a finite-order element is a root of
 unity (hence a unit). -/
-lemma jointEigenvector_char_ne_zero (ρ : G →* Module.End K V) (χ : G → K) (v : V)
+lemma eigenvalue_ne_zero_of_jointEigenvector (ρ : G →* Module.End K V) (χ : G → K) (v : V)
     (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) {g : G}
     (hg : IsOfFinOrder g) :
     χ g ≠ 0 := by
   obtain ⟨n, hnpos, hn⟩ := hg.exists_pow_eq_one
   intro hzero
   have hχ_pow : χ (g ^ n) = χ g ^ n :=
-    map_pow (⟨⟨χ, jointEigenvector_char_one ρ χ v hv hv_mem⟩,
-      jointEigenvector_char_mul ρ χ v hv hv_mem⟩ : G →* K) g n
-  rw [hn, jointEigenvector_char_one ρ χ v hv hv_mem, hzero,
+    map_pow (⟨⟨χ, eigenvalue_one_of_jointEigenvector ρ χ v hv hv_mem⟩,
+      eigenvalue_mul_of_jointEigenvector ρ χ v hv hv_mem⟩ : G →* K) g n
+  rw [hn, eigenvalue_one_of_jointEigenvector ρ χ v hv hv_mem, hzero,
     zero_pow hnpos.ne'] at hχ_pow
   exact one_ne_zero hχ_pow
+
+end Monoid
+
+section Group
+
+variable [Group G]
 
 /-- Given a joint eigenvector `v ≠ 0` for a monoid-hom representation
 `ρ : G →* Module.End K V` of a *finite* group `G`, the eigenvalue function
@@ -93,10 +103,10 @@ lemma jointEigenvector_char_ne_zero (ρ : G →* Module.End K V) (χ : G → K) 
 def charHomOfJointEigenvector [Finite G] (ρ : G →* Module.End K V) (χ : G → K) (v : V)
     (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) : G →* Kˣ where
   toFun g := Units.mk0 (χ g)
-    (jointEigenvector_char_ne_zero ρ χ v hv hv_mem (isOfFinOrder_of_finite g))
-  map_one' := Units.ext (jointEigenvector_char_one ρ χ v hv hv_mem)
+    (eigenvalue_ne_zero_of_jointEigenvector ρ χ v hv hv_mem (isOfFinOrder_of_finite g))
+  map_one' := Units.ext (eigenvalue_one_of_jointEigenvector ρ χ v hv hv_mem)
   map_mul' g₁ g₂ :=
-    Units.ext (jointEigenvector_char_mul ρ χ v hv hv_mem g₁ g₂)
+    Units.ext (eigenvalue_mul_of_jointEigenvector ρ χ v hv hv_mem g₁ g₂)
 
 @[simp]
 lemma charHomOfJointEigenvector_coe [Finite G] (ρ : G →* Module.End K V) (χ : G → K)
@@ -113,13 +123,11 @@ lemma exists_charHom_of_iInf_eigenspace_ne_bot [Finite G] {ρ : G →* Module.En
   exact ⟨charHomOfJointEigenvector ρ χ v hv_ne ((Submodule.mem_iInf _).mp hv_mem), rfl⟩
 
 /-- A finite-order endomorphism of a vector space over a characteristic-zero field is
-semisimple. -/
+semisimple; the `IsOfFinOrder` packaging of `TauCeti.End.isSemisimple_of_pow_eq_one`. -/
 lemma Module.End.isSemisimple_of_isOfFinOrder [CharZero K] {f : Module.End K V}
     (hf : IsOfFinOrder f) : f.IsSemisimple := by
   obtain ⟨n, hnpos, hn⟩ := hf.exists_pow_eq_one
-  exact Module.End.isSemisimple_of_squarefree_aeval_eq_zero
-    (X_pow_sub_one_separable_iff.mpr <| Nat.cast_ne_zero.mpr hnpos.ne').squarefree
-    (by simp [map_sub, aeval_X_pow, hn])
+  exact TauCeti.End.isSemisimple_of_pow_eq_one (Nat.cast_ne_zero.mpr hnpos.ne') hn
 
 /-- The joint eigenspaces of a pairwise-commuting family of semisimple endomorphisms,
 indexed by their eigenvalue functions, are supremum-independent. -/
@@ -173,5 +181,7 @@ lemma iSup_inf_iInf_eigenspace_of_invariant {ι : Type*} [FiniteDimensional K V]
       LinearMap.congr_fun (hcomm hij).eq x
   · refine fun i ↦ Module.End.genEigenspace_restrict_eq_top (hp i) ?_
     simpa only [hmax] using htop i
+
+end Group
 
 end
