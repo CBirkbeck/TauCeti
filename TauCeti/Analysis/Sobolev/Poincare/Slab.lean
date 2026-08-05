@@ -84,6 +84,83 @@ private theorem eq_zero_of_support_subset_Icc (hg : Continuous g)
   by_contra h
   exact absurd (hsupp (Function.mem_support.2 fun h' => h h'.symm)).1 (not_le.2 ht)
 
+omit [NormedSpace ℝ F] [CompleteSpace F] in
+/-- A function supported in the degenerate interval `Set.Icc a a` and vanishing at `a` vanishes
+identically. -/
+private theorem eq_zero_of_support_subset_Icc_self (hsupp : Function.support g ⊆ Icc a a)
+    (hga : g a = 0) (t : ℝ) : g t = 0 := by
+  by_cases h : g t = 0
+  · exact h
+  · have htm := hsupp (Function.mem_support.2 h)
+    rw [le_antisymm htm.2 htm.1]
+    exact hga
+
+omit [NormedSpace ℝ F] [CompleteSpace F] in
+/-- The support of `‖g ·‖ₑ ^ r` lies in the half-open interval `Set.Ioc a b`: the left endpoint
+is excluded because `g` vanishes there. -/
+private theorem support_enorm_rpow_subset_Ioc (hsupp : Function.support g ⊆ Icc a b)
+    (hga : g a = 0) {r : ℝ} (hr0 : 0 < r) :
+    Function.support (fun t => ‖g t‖ₑ ^ r) ⊆ Ioc a b := by
+  intro t ht
+  have hgt : g t ≠ 0 := fun h => ht (by simp [h, ENNReal.zero_rpow_of_pos hr0])
+  have htm := hsupp (Function.mem_support.2 hgt)
+  exact ⟨htm.1.lt_of_ne fun h => hgt (h ▸ hga), htm.2⟩
+
+/-- **The fundamental theorem of calculus, in `∫⁻` form**: a function vanishing at `a` is bounded
+throughout `Set.Icc a b` by the total variation of its derivative over the interval.
+
+Only `g a = 0` is used, not a support hypothesis, and the conclusion is pointwise in `t`. -/
+private theorem enorm_le_lintegral_enorm_deriv (hab : a ≤ b)
+    (hg : ∀ t, HasDerivAt g (g' t) t) (hg' : Continuous g') (hga : g a = 0)
+    {t : ℝ} (ht : t ∈ Icc a b) : ‖g t‖ₑ ≤ ∫⁻ s in Ioc a b, ‖g' s‖ₑ := by
+  have h1 : ∫ s in a..t, g' s = g t - g a :=
+    intervalIntegral.integral_eq_sub_of_hasDerivAt (fun s _ => hg s) (hg'.intervalIntegrable a t)
+  have h2 : ‖g t‖ ≤ ∫ s in a..t, ‖g' s‖ := by
+    have hgt : g t = ∫ s in a..t, g' s := by rw [h1, hga, sub_zero]
+    rw [hgt]
+    exact intervalIntegral.norm_integral_le_integral_norm ht.1
+  have h3 : ∫ s in a..t, ‖g' s‖ ≤ ∫ s in a..b, ‖g' s‖ :=
+    intervalIntegral.integral_mono_interval le_rfl ht.1 ht.2
+      (.of_forall fun s => norm_nonneg _) (hg'.norm.intervalIntegrable a b)
+  calc ‖g t‖ₑ = ENNReal.ofReal ‖g t‖ := (ofReal_norm _).symm
+    _ ≤ ENNReal.ofReal (∫ s in a..b, ‖g' s‖) := ENNReal.ofReal_le_ofReal (h2.trans h3)
+    _ = _ := by
+        rw [intervalIntegral.integral_of_le hab]
+        exact ofReal_integral_norm_eq_lintegral_enorm hg'.integrableOn_Ioc
+
+omit [NormedSpace ℝ F] [CompleteSpace F] in
+/-- **The nesting `L^r ⊆ L^1` on a bounded interval**, in `∫⁻` form and raised to the power `r`,
+which is how the Poincaré argument consumes it: the total variation over `Set.Ioc a b` is
+controlled by the `L^r` integral at the cost of the factor `(b - a)^{r-1}`.
+
+Measurability is all that is asked of `f`; no relation between `a` and `b` is needed. -/
+private theorem rpow_lintegral_enorm_le_mul_lintegral_enorm_rpow {f : ℝ → F}
+    (hf : AEStronglyMeasurable f (volume.restrict (Ioc a b))) {r : ℝ} (hr : 1 ≤ r) :
+    (∫⁻ s in Ioc a b, ‖f s‖ₑ) ^ r
+      ≤ ENNReal.ofReal (b - a) ^ (r - 1) * ∫⁻ s in Ioc a b, ‖f s‖ₑ ^ r := by
+  have hr0 : (0 : ℝ) < r := one_pos.trans_le hr
+  have hvol : (volume.restrict (Ioc a b)) univ = ENNReal.ofReal (b - a) := by
+    rw [Measure.restrict_apply_univ, Real.volume_Ioc]
+  have hCr : eLpNorm f (ENNReal.ofReal r) (volume.restrict (Ioc a b))
+      = (∫⁻ s in Ioc a b, ‖f s‖ₑ ^ r) ^ (1 / r) := by
+    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by simpa using hr0) ENNReal.ofReal_ne_top,
+      ENNReal.toReal_ofReal hr0.le]
+  have holder : ∫⁻ s in Ioc a b, ‖f s‖ₑ ≤ (∫⁻ s in Ioc a b, ‖f s‖ₑ ^ r) ^ (1 / r) *
+      ENNReal.ofReal (b - a) ^ (1 - 1 / r) := by
+    have hle : (1 : ℝ≥0∞) ≤ ENNReal.ofReal r := by
+      rw [← ENNReal.ofReal_one]; exact ENNReal.ofReal_le_ofReal hr
+    have := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (f := f)
+      (μ := volume.restrict (Ioc a b)) hle hf
+    rwa [eLpNorm_one_eq_lintegral_enorm, hCr, hvol, ENNReal.toReal_one,
+      ENNReal.toReal_ofReal hr0.le, div_one] at this
+  have hexp : (1 - r⁻¹) * r = r - 1 := by field_simp
+  calc (∫⁻ s in Ioc a b, ‖f s‖ₑ) ^ r
+      ≤ ((∫⁻ s in Ioc a b, ‖f s‖ₑ ^ r) ^ (1 / r) * ENNReal.ofReal (b - a) ^ (1 - 1 / r)) ^ r :=
+        ENNReal.rpow_le_rpow holder hr0.le
+    _ = _ := by
+        rw [ENNReal.mul_rpow_of_nonneg _ _ hr0.le, ← ENNReal.rpow_mul, ← ENNReal.rpow_mul,
+          one_div, inv_mul_cancel₀ hr0.ne', ENNReal.rpow_one, hexp, mul_comm]
+
 /-- **The one-dimensional Poincaré inequality**, in the `∫⁻` form the Fubini argument below
 consumes: a `C¹` function on `ℝ` that vanishes outside `Set.Icc a b` satisfies
 `∫ ‖g‖^r ≤ (b - a)^r ∫ ‖g'‖^r` for every `1 ≤ r`.
@@ -101,80 +178,28 @@ theorem lintegral_enorm_rpow_le_of_support_subset_Icc (hab : a ≤ b)
   have hga : g a = 0 := eq_zero_of_support_subset_Icc hgc hsupp
   -- The degenerate slab carries no function at all.
   rcases hab.eq_or_lt with rfl | hab'
-  · have hgz : ∀ t, g t = 0 := by
-      intro t
-      by_cases h : g t = 0
-      · exact h
-      · have htm := hsupp (Function.mem_support.2 h)
-        rw [le_antisymm htm.2 htm.1]
-        exact hga
-    simp [hgz, ENNReal.zero_rpow_of_pos hr0]
+  · simp [eq_zero_of_support_subset_Icc_self hsupp hga, ENNReal.zero_rpow_of_pos hr0]
   have hba : (0 : ℝ) < b - a := sub_pos.2 hab'
-  set C : ℝ≥0∞ := ∫⁻ s in Ioc a b, ‖g' s‖ₑ with hCdef
-  -- Step 1: the fundamental theorem of calculus bounds `g` by the total variation of `g'`.
-  have hkey : ∀ t ∈ Icc a b, ‖g t‖ₑ ≤ C := by
-    intro t ht
-    have h1 : ∫ s in a..t, g' s = g t - g a :=
-      intervalIntegral.integral_eq_sub_of_hasDerivAt (fun s _ => hg s) (hg'.intervalIntegrable a t)
-    have h2 : ‖g t‖ ≤ ∫ s in a..t, ‖g' s‖ := by
-      have hgt : g t = ∫ s in a..t, g' s := by rw [h1, hga, sub_zero]
-      rw [hgt]
-      exact intervalIntegral.norm_integral_le_integral_norm ht.1
-    have h3 : ∫ s in a..t, ‖g' s‖ ≤ ∫ s in a..b, ‖g' s‖ :=
-      intervalIntegral.integral_mono_interval le_rfl ht.1 ht.2
-        (.of_forall fun s => norm_nonneg _) (hg'.norm.intervalIntegrable a b)
-    calc ‖g t‖ₑ = ENNReal.ofReal ‖g t‖ := (ofReal_norm _).symm
-      _ ≤ ENNReal.ofReal (∫ s in a..b, ‖g' s‖) := ENNReal.ofReal_le_ofReal (h2.trans h3)
-      _ = C := by
-          rw [intervalIntegral.integral_of_le hab, hCdef]
-          exact ofReal_integral_norm_eq_lintegral_enorm (hg'.integrableOn_Ioc)
-  -- Step 2: Hölder, as the inclusion `L^r (Ioc a b) ⊆ L^1 (Ioc a b)`.
-  have hvol : (volume.restrict (Ioc a b)) univ = ENNReal.ofReal (b - a) := by
-    rw [Measure.restrict_apply_univ, Real.volume_Ioc]
-  have hCr : eLpNorm g' (ENNReal.ofReal r) (volume.restrict (Ioc a b))
-      = (∫⁻ s in Ioc a b, ‖g' s‖ₑ ^ r) ^ (1 / r) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by simpa using hr0) ENNReal.ofReal_ne_top,
-      ENNReal.toReal_ofReal hr0.le]
-  have holder : C ≤ (∫⁻ s in Ioc a b, ‖g' s‖ₑ ^ r) ^ (1 / r) *
-      ENNReal.ofReal (b - a) ^ (1 - 1 / r) := by
-    have hle : (1 : ℝ≥0∞) ≤ ENNReal.ofReal r := by
-      rw [← ENNReal.ofReal_one]; exact ENNReal.ofReal_le_ofReal hr
-    have := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (f := g')
-      (μ := volume.restrict (Ioc a b)) hle hg'.aestronglyMeasurable
-    rwa [eLpNorm_one_eq_lintegral_enorm, ← hCdef, hCr, hvol, ENNReal.toReal_one,
-      ENNReal.toReal_ofReal hr0.le, div_one] at this
-  have holder' : C ^ r ≤ ENNReal.ofReal (b - a) ^ (r - 1) * ∫⁻ s in Ioc a b, ‖g' s‖ₑ ^ r := by
-    have hexp : (1 - r⁻¹) * r = r - 1 := by field_simp
-    calc C ^ r
-        ≤ ((∫⁻ s in Ioc a b, ‖g' s‖ₑ ^ r) ^ (1 / r) * ENNReal.ofReal (b - a) ^ (1 - 1 / r)) ^ r :=
-          ENNReal.rpow_le_rpow holder hr0.le
-      _ = _ := by
-          rw [ENNReal.mul_rpow_of_nonneg _ _ hr0.le, ← ENNReal.rpow_mul, ← ENNReal.rpow_mul,
-            one_div, inv_mul_cancel₀ hr0.ne', ENNReal.rpow_one, hexp, mul_comm]
-  -- Step 3: integrate the pointwise bound over the slab.
   have hpow : ENNReal.ofReal (b - a) ^ (r - 1) * ENNReal.ofReal (b - a)
       = ENNReal.ofReal ((b - a) ^ r) := by
-    have hsum : r - 1 + 1 = r := by ring
     nth_rewrite 2 [← ENNReal.rpow_one (ENNReal.ofReal (b - a))]
-    rw [← ENNReal.rpow_add _ _ (by simpa using hba) ENNReal.ofReal_ne_top, hsum,
-      ENNReal.ofReal_rpow_of_pos hba]
-  have hsupp' : Function.support (fun t => ‖g t‖ₑ ^ r) ⊆ Ioc a b := by
-    intro t ht
-    have hgt : g t ≠ 0 := by
-      intro h
-      exact ht (by simp [h, ENNReal.zero_rpow_of_pos hr0])
-    have htm := hsupp (Function.mem_support.2 hgt)
-    exact ⟨htm.1.lt_of_ne fun h => hgt (h ▸ hga), htm.2⟩
+    rw [← ENNReal.rpow_add _ _ (by simpa using hba) ENNReal.ofReal_ne_top,
+      show r - 1 + 1 = r by ring, ENNReal.ofReal_rpow_of_pos hba]
   calc ∫⁻ t, ‖g t‖ₑ ^ r
       = ∫⁻ t in Ioc a b, ‖g t‖ₑ ^ r := by
-        rw [← lintegral_indicator measurableSet_Ioc, Set.indicator_eq_self.2 hsupp']
-    _ ≤ ∫⁻ _ in Ioc a b, C ^ r := by
+        rw [← lintegral_indicator measurableSet_Ioc,
+          Set.indicator_eq_self.2 (support_enorm_rpow_subset_Ioc hsupp hga hr0)]
+    _ ≤ ∫⁻ _ in Ioc a b, (∫⁻ s in Ioc a b, ‖g' s‖ₑ) ^ r := by
         refine lintegral_mono_ae ?_
         filter_upwards [ae_restrict_mem measurableSet_Ioc] with t ht
-        exact ENNReal.rpow_le_rpow (hkey t (Ioc_subset_Icc_self ht)) hr0.le
-    _ = C ^ r * ENNReal.ofReal (b - a) := by rw [setLIntegral_const, Real.volume_Ioc]
+        exact ENNReal.rpow_le_rpow
+          (enorm_le_lintegral_enorm_deriv hab hg hg' hga (Ioc_subset_Icc_self ht)) hr0.le
+    _ = (∫⁻ s in Ioc a b, ‖g' s‖ₑ) ^ r * ENNReal.ofReal (b - a) := by
+        rw [setLIntegral_const, Real.volume_Ioc]
     _ ≤ (ENNReal.ofReal (b - a) ^ (r - 1) * ∫⁻ s in Ioc a b, ‖g' s‖ₑ ^ r) *
-          ENNReal.ofReal (b - a) := by gcongr
+          ENNReal.ofReal (b - a) := by
+        gcongr
+        exact rpow_lintegral_enorm_le_mul_lintegral_enorm_rpow hg'.aestronglyMeasurable hr
     _ = ENNReal.ofReal ((b - a) ^ r) * ∫⁻ s in Ioc a b, ‖g' s‖ₑ ^ r := by
         rw [mul_right_comm, hpow]
     _ ≤ ENNReal.ofReal ((b - a) ^ r) * ∫⁻ t, ‖g' t‖ₑ ^ r :=
