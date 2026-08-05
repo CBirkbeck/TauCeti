@@ -36,7 +36,8 @@ nebentypus decomposition in `TauCeti/NumberTheory/ModularForms/CharacterDecomp.l
 * `iSupIndep_iInf_eigenspace_of_isSemisimple`,
   `iSup_iInf_eigenspace_eq_top_of_isSemisimple`,
   `iSup_inf_iInf_eigenspace_of_invariant`: joint eigenspaces of a commuting semisimple
-  family are independent, exhaust the space, and decompose every invariant submodule.
+  family are independent, exhaust the space, and decompose every invariant submodule —
+  with the character-indexed forms (`…_charHom…`) for finite-group representations.
 -/
 
 public section
@@ -106,7 +107,7 @@ def charHomOfJointEigenvector [Finite G] (ρ : G →* Module.End K V) (χ : G �
     Units.ext (eigenvalue_mul_of_jointEigenvector ρ χ v hv hv_mem g₁ g₂)
 
 @[simp]
-lemma charHomOfJointEigenvector_coe [Finite G] (ρ : G →* Module.End K V) (χ : G → K)
+lemma charHomOfJointEigenvector_apply [Finite G] (ρ : G →* Module.End K V) (χ : G → K)
     (v : V) (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) (g : G) :
     ((charHomOfJointEigenvector ρ χ v hv hv_mem g) : K) = χ g := (rfl)
 
@@ -178,6 +179,52 @@ lemma iSup_inf_iInf_eigenspace_of_invariant {ι : Type*} [FiniteDimensional K V]
       LinearMap.congr_fun (hcomm hij).eq x
   · refine fun i ↦ Module.End.genEigenspace_restrict_eq_top (hp i) ?_
     simpa only [hmax] using htop i
+
+section CharHom
+
+variable [Finite G] {ρ : G →* Module.End K V}
+
+/-- **Character-indexed spanning**: for a commuting semisimple representation of a finite
+group over an algebraically closed field, in finite dimension, the joint eigenspaces
+indexed by characters `G →* Kˣ` exhaust the space — eigenvalue functions that are not
+characters contribute `⊥`. -/
+lemma iSup_iInf_eigenspace_charHom_eq_top [IsAlgClosed K] [FiniteDimensional K V]
+    (hcomm : Pairwise fun g₁ g₂ ↦ Commute (ρ g₁) (ρ g₂))
+    (hss : ∀ g, (ρ g).IsSemisimple) :
+    (⨆ χ₀ : G →* Kˣ, ⨅ g, (ρ g).eigenspace (χ₀ g)) = ⊤ := by
+  have h := iSup_iInf_eigenspace_eq_top_of_isSemisimple (fun g ↦ ρ g) hcomm hss
+  refine le_antisymm le_top (h ▸ iSup_le fun χ ↦ ?_)
+  by_cases hχ : (⨅ g, (ρ g).eigenspace (χ g)) = ⊥
+  · simp only [hχ, bot_le]
+  · obtain ⟨χ₀, rfl⟩ := exists_charHom_of_iInf_eigenspace_ne_bot hχ
+    exact le_iSup (fun ψ : G →* Kˣ ↦ ⨅ g, (ρ g).eigenspace (ψ g)) χ₀
+
+omit [Finite G] in
+/-- **Character-indexed independence** of the joint eigenspaces. -/
+lemma iSupIndep_iInf_eigenspace_charHom
+    (hcomm : Pairwise fun g₁ g₂ ↦ Commute (ρ g₁) (ρ g₂))
+    (hss : ∀ g, (ρ g).IsSemisimple) :
+    iSupIndep fun χ₀ : G →* Kˣ ↦ ⨅ g, (ρ g).eigenspace (χ₀ g) :=
+  (iSupIndep_iInf_eigenspace_of_isSemisimple (fun g ↦ ρ g) hcomm hss).comp
+    fun _ _ h ↦ MonoidHom.ext fun g ↦ Units.ext (congr_fun h g)
+
+/-- **Character-indexed decomposition of an invariant submodule.** -/
+lemma iSup_inf_iInf_eigenspace_charHom_of_invariant [FiniteDimensional K V]
+    (hcomm : Pairwise fun g₁ g₂ ↦ Commute (ρ g₁) (ρ g₂))
+    (hss : ∀ g, (ρ g).IsSemisimple) (htop : ∀ g, ⨆ μ : K, (ρ g).eigenspace μ = ⊤)
+    (p : Submodule K V) (hp : ∀ g, ∀ x ∈ p, ρ g x ∈ p) :
+    (⨆ χ₀ : G →* Kˣ, p ⊓ ⨅ g, (ρ g).eigenspace (χ₀ g)) = p := by
+  have h := iSup_inf_iInf_eigenspace_of_invariant (fun g ↦ ρ g) hcomm hss htop p hp
+  refine le_antisymm (iSup_le fun _ ↦ inf_le_left) ?_
+  conv_lhs => rw [← h]
+  refine iSup_le fun χ ↦ ?_
+  by_cases hχ : p ⊓ (⨅ g, (ρ g).eigenspace (χ g)) = ⊥
+  · simp only [hχ, bot_le]
+  · obtain ⟨χ₀, rfl⟩ := exists_charHom_of_iInf_eigenspace_ne_bot
+      (fun h_bot ↦ hχ (by rw [h_bot, inf_bot_eq]))
+    exact le_iSup (fun ψ : G →* Kˣ ↦ p ⊓ ⨅ g, (ρ g).eigenspace (ψ g)) χ₀
+
+end CharHom
 
 end Group
 
