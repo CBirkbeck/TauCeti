@@ -355,12 +355,6 @@ lemma eqOn_fdBoundary_segment5 (H : ℝ) : EqOn (fdBoundary H) (fdBoundary_segme
 private lemma fdBoundary_piece1 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 0 1) :=
   (contDiff_fdBoundary_segment1 H).contDiffOn.congr (eqOn_fdBoundary_segment1 H)
 
-private lemma fdBoundary_piece2 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 1 2) :=
-  contDiff_fdBoundary_segment2.contDiffOn.congr (eqOn_fdBoundary_segment2 H)
-
-private lemma fdBoundary_piece3 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 2 3) :=
-  contDiff_fdBoundary_segment3.contDiffOn.congr (eqOn_fdBoundary_segment3 H)
-
 private lemma fdBoundary_piece13 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 1 3) := by
   have h_arc : ContDiff ℝ 1 fun s : ℝ ↦ circleMap 0 1 ((s + 1) * (Real.pi / 6)) :=
     (contDiff_circleMap 0 1).comp (by fun_prop)
