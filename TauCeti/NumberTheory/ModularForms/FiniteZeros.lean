@@ -110,9 +110,17 @@ lemma exists_isOpen_zeros_inter {g : ℍ → ℂ} (hg : MDiff g) (hg0 : g ≠ 0)
     {K : Set ℂ} (hK : K ⊆ {z : ℂ | 0 < z.im}) :
     ∃ U : Set ℂ, IsOpen U ∧ K ⊆ U ∧ U ⊆ {z : ℂ | 0 < z.im} ∧
       {z ∈ U | (g ∘ ofComplex) z = 0} = {z ∈ K | (g ∘ ofComplex) z = 0} := by
-  obtain ⟨U, hUo, hKU, hUV, hUZ⟩ := TauCeti.exists_isOpen_inter_eq_of_not_accPt
-    (Z := {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0})
-    isOpen_upperHalfPlaneSet hK fun x hx => not_accPt_zeros_comp_ofComplex hg hg0 (hK hx)
+  have hnc : ∀ x ∈ K, x ∉ closure ({z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} \ K) := by
+    intro x hx hxc
+    have hx_notin : x ∉ {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} \ K := fun h => h.2 hx
+    have hcl : ClusterPt x (Filter.principal
+        (({z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} \ K) \ {x})) := by
+      rwa [Set.sdiff_singleton_eq_self hx_notin, ← mem_closure_iff_clusterPt]
+    exact not_accPt_zeros_comp_ofComplex hg hg0 (hK hx)
+      ((accPt_principal_iff_clusterPt.mpr hcl).mono
+        (Filter.principal_mono.mpr Set.sdiff_subset))
+  obtain ⟨U, hUo, hKU, hUV, hUZ⟩ := TauCeti.exists_isOpen_inter_eq_of_notMem_closure
+    (Z := {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0}) isOpen_upperHalfPlaneSet hK hnc
   refine ⟨U, hUo, hKU, hUV, ?_⟩
   have hmassage : ∀ {W : Set ℂ}, W ⊆ {z : ℂ | 0 < z.im} →
       {z ∈ W | (g ∘ ofComplex) z = 0} =
