@@ -32,7 +32,7 @@ anchors of the valence-formula contour.
 * `TauCeti.ModularForm.fdBoundary_closed`: the contour is closed.
 * `TauCeti.ModularForm.continuous_fdBoundary`: the contour is (globally) continuous.
 * `TauCeti.ModularForm.isPiecewiseC1On_fdBoundary`: the contour is piecewise `C¹`
-  (`contDiffOn_fdBoundary` certifies `fdBoundaryBreakpoints` as a breakpoint witness).
+  (`contDiffOn_fdBoundary` certifies `fdBoundaryCorners` as a breakpoint witness).
 
 ## References
 
@@ -211,10 +211,11 @@ def fdBoundary (H : ℝ) : ℝ → ℂ := fun t ↦
   else if t ≤ 4 then fdBoundary_segment4 H t
   else fdBoundary_segment5 H t
 
-/-- The interior breakpoints of the five-segment parameterization. -/
+/-- The four interior subdivision parameters of the five-segment parameterization; the
+junction at `2` is smooth, so only `fdBoundaryCorners` are genuine corners. -/
 def fdBoundaryBreakpoints : Finset ℝ := {1, 2, 3, 4}
 
-/-- Membership in the breakpoints is being one of the four interior corners. -/
+/-- Membership in the four subdivision parameters. -/
 @[simp]
 lemma mem_fdBoundaryBreakpoints {t : ℝ} :
     t ∈ fdBoundaryBreakpoints ↔ t = 1 ∨ t = 2 ∨ t = 3 ∨ t = 4 := by
