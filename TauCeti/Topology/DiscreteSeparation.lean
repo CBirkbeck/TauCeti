@@ -6,6 +6,8 @@ module
 
 public import Mathlib.Topology.Closure
 
+import Mathlib.Topology.ClusterPt
+
 /-!
 # Shrinking an open set to separate part of a non-accumulating set
 
@@ -16,7 +18,8 @@ shrunk until the only singularities it contains are the intended ones.
 
 ## Main declarations
 
-* `TauCeti.exists_isOpen_inter_eq_of_notMem_closure`.
+* `TauCeti.exists_isOpen_inter_eq_of_notMem_closure` (with the accumulation-hypothesis
+  corollary `TauCeti.exists_isOpen_inter_eq_of_not_accPt`).
 -/
 
 public section
@@ -36,6 +39,19 @@ theorem exists_isOpen_inter_eq_of_notMem_closure {X : Type*} [TopologicalSpace X
   refine ⟨?_, hzZ⟩
   by_contra hzK
   exact hznc (subset_closure ⟨hzZ, hzK⟩)
+
+/-- The separation under the stronger hypothesis that no point of `K` is an accumulation
+point of `Z` at all. -/
+theorem exists_isOpen_inter_eq_of_not_accPt {X : Type*} [TopologicalSpace X] {V Z K : Set X}
+    (hV : IsOpen V) (hKV : K ⊆ V)
+    (hacc : ∀ x ∈ K, ¬AccPt x (Filter.principal Z)) :
+    ∃ U : Set X, IsOpen U ∧ K ⊆ U ∧ U ⊆ V ∧ U ∩ Z = K ∩ Z := by
+  refine exists_isOpen_inter_eq_of_notMem_closure hV hKV fun x hx hxc => ?_
+  have hx_notin : x ∉ Z \ K := fun h => h.2 hx
+  have hcl : ClusterPt x (Filter.principal ((Z \ K) \ {x})) := by
+    rwa [Set.sdiff_singleton_eq_self hx_notin, ← mem_closure_iff_clusterPt]
+  exact hacc x hx ((accPt_principal_iff_clusterPt.mpr hcl).mono
+    (Filter.principal_mono.mpr Set.sdiff_subset))
 
 end TauCeti
 

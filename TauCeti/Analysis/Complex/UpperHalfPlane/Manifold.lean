@@ -47,18 +47,19 @@ any point of the upper half-plane. -/
 lemma not_accPt_zeros_comp_ofComplex {g : ℍ → ℂ} (hg : MDiff g) (hg0 : g ≠ 0)
     {x : ℂ} (hx : 0 < x.im) :
     ¬AccPt x (Filter.principal {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0}) := by
-  intro hacc
-  rw [accPt_iff_nhds] at hacc
-  refine hg0 (UpperHalfPlane.eq_zero_of_frequently hg (τ := ⟨x, hx⟩) ?_)
-  rw [Filter.frequently_iff]
-  intro V hV
-  obtain ⟨O, hO_open, hτO, hOV⟩ := mem_nhdsWithin.mp hV
-  obtain ⟨y, ⟨hyO, hyim, hyzero⟩, hyne⟩ :=
-    hacc _ ((UpperHalfPlane.isOpenEmbedding_coe.isOpenMap O hO_open).mem_nhds
-      (Set.mem_image_of_mem _ hτO))
-  obtain ⟨τ', hτ'O, rfl⟩ := hyO
-  refine ⟨τ', hOV ⟨hτ'O, fun hmem => hyne (congrArg UpperHalfPlane.coe hmem)⟩, ?_⟩
-  simpa [Function.comp, ofComplex_apply] using hyzero
+  have hall : AnalyticOnNhd ℂ (g ∘ ofComplex) {z : ℂ | 0 < z.im} := fun w hw =>
+    analyticAt_comp_ofComplex hg hw
+  obtain ⟨τ, hτ⟩ := Function.ne_iff.mp hg0
+  have hcod := hall.preimage_zero_mem_codiscreteWithin (x := (τ : ℂ))
+    (by simpa [Function.comp, ofComplex_apply] using hτ) τ.2
+    ⟨⟨Complex.I, by simp⟩, (convex_halfSpace_im_gt 0).isPreconnected⟩
+  have hne := mem_codiscreteWithin_accPt.mp hcod x hx
+  have hset : {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} =
+      {z : ℂ | 0 < z.im} \ (g ∘ ofComplex) ⁻¹' {0}ᶜ := by
+    ext z
+    simp only [Set.mem_ofPred_eq, Set.mem_sdiff, Set.mem_preimage, Set.mem_compl_iff,
+      Set.mem_singleton_iff, not_not]
+  rwa [hset]
 
 /-- Any subset of the upper half-plane has an open neighbourhood in the upper half-plane
 containing no zeros of the function's complex extension beyond its own. -/
@@ -66,17 +67,9 @@ lemma exists_isOpen_zeros_inter {g : ℍ → ℂ} (hg : MDiff g) (hg0 : g ≠ 0)
     {K : Set ℂ} (hK : K ⊆ {z : ℂ | 0 < z.im}) :
     ∃ U : Set ℂ, IsOpen U ∧ K ⊆ U ∧ U ⊆ {z : ℂ | 0 < z.im} ∧
       {z ∈ U | (g ∘ ofComplex) z = 0} = {z ∈ K | (g ∘ ofComplex) z = 0} := by
-  have hnc : ∀ x ∈ K, x ∉ closure ({z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} \ K) := by
-    intro x hx hxc
-    have hx_notin : x ∉ {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} \ K := fun h => h.2 hx
-    have hcl : ClusterPt x (Filter.principal
-        (({z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} \ K) \ {x})) := by
-      rwa [Set.sdiff_singleton_eq_self hx_notin, ← mem_closure_iff_clusterPt]
-    exact not_accPt_zeros_comp_ofComplex hg hg0 (hK hx)
-      ((accPt_principal_iff_clusterPt.mpr hcl).mono
-        (Filter.principal_mono.mpr Set.sdiff_subset))
-  obtain ⟨U, hUo, hKU, hUV, hUZ⟩ := TauCeti.exists_isOpen_inter_eq_of_notMem_closure
-    (Z := {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0}) isOpen_upperHalfPlaneSet hK hnc
+  obtain ⟨U, hUo, hKU, hUV, hUZ⟩ := TauCeti.exists_isOpen_inter_eq_of_not_accPt
+    (Z := {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0}) isOpen_upperHalfPlaneSet hK
+    fun x hx => not_accPt_zeros_comp_ofComplex hg hg0 (hK hx)
   refine ⟨U, hUo, hKU, hUV, ?_⟩
   have hmassage : ∀ {W : Set ℂ}, W ⊆ {z : ℂ | 0 < z.im} →
       {z ∈ W | (g ∘ ofComplex) z = 0} =

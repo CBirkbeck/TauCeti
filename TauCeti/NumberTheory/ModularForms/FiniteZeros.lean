@@ -34,7 +34,7 @@ public noncomputable section
 
 open Complex Filter Metric Set UpperHalfPlane TauCeti.UpperHalfPlane
 
-open scoped Manifold ModularForm MatrixGroups Modular Topology
+open scoped ModularForm MatrixGroups Modular Topology
 
 namespace TauCeti
 
