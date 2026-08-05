@@ -31,6 +31,12 @@ the interior winding number `-1` of the contour is computed.
   `TauCeti.ModularForm.im_fdBoundary_arc_le` — the half-plane confinements.
 * `TauCeti.ModularForm.windingNumber_fdBoundary_segment1_eq_log`, `…_arc_eq_log`,
   `…_segment4_eq_log`, `…_segment5_eq_log` — the four logarithm values.
+
+## References
+
+The piece-logarithm evaluation follows the fundamental-domain boundary development of
+AINTLIB's `LeanModularForms` (`ForMathlib/FDBoundary.lean`, `FDBoundaryH.lean`,
+`FDBoundaryPath.lean`); the logarithm FTC and the slit-plane criteria are Tau Ceti's.
 -/
 
 public section
@@ -69,17 +75,6 @@ theorem im_fdBoundary_segment5 (H : ℝ) (ht : t ∈ Icc (4 : ℝ) 5) :
   rw [eqOn_fdBoundary_segment5 H ht, fdBoundary_segment5_apply, AffineMap.lineMap_apply]
   simp [Complex.real_smul]
 
-/-- The index integrand of the boundary path is interval-integrable on any parameter
-subinterval avoiding `w`: the kernel factor is continuous by avoidance, and the velocity
-is integrable by piecewise-`C¹` regularity. -/
-lemma intervalIntegrable_index_fdBoundary {c d : ℝ} (hsub : uIcc c d ⊆ uIcc (0 : ℝ) 5)
-    (hw : ∀ t ∈ uIcc c d, fdBoundary H t ≠ w) :
-    IntervalIntegrable (fun t => (fdBoundary H t - w)⁻¹ * deriv (fdBoundary H) t)
-      MeasureTheory.volume c d :=
-  ((isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv.mono_set hsub).continuousOn_mul
-    (((continuous_fdBoundary H).continuousOn.sub continuousOn_const).inv₀
-      fun t ht => sub_ne_zero.mpr (hw t ht))
-
 /-- The winding number of the right vertical about a point strictly to its left is the
 principal logarithm of the endpoint ratio. -/
 theorem windingNumber_fdBoundary_segment1_eq_log (hw : w.re < 1 / 2) :
@@ -92,9 +87,10 @@ theorem windingNumber_fdBoundary_segment1_eq_log (hw : w.re < 1 / 2) :
     linarith
   have h_avoid : ∀ t ∈ uIcc (0 : ℝ) 1, fdBoundary H t ≠ w := fun t ht h_eq =>
     absurd (hre t ht) (by simp [h_eq])
-  have h_int := intervalIntegrable_index_fdBoundary (H := H) (w := w)
-    (by rw [h01, uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-        exact Icc_subset_Icc le_rfl (by norm_num)) h_avoid
+  have h_int := intervalIntegrable_inv_sub_mul_deriv (continuous_fdBoundary H).continuousOn
+    h_avoid ((isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv.mono_set
+      (by rw [h01, uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
+          exact Icc_subset_Icc le_rfl (by norm_num)))
   have h_diff : ∀ s ∈ Ioo (min (0 : ℝ) 1) (max (0 : ℝ) 1) \ (∅ : Set ℝ),
       DifferentiableAt ℝ (fdBoundary H) s := by
     intro s hs
@@ -123,9 +119,10 @@ theorem windingNumber_fdBoundary_arc_eq_log (hw : 1 < w.im) :
     linarith
   have h_avoid : ∀ t ∈ uIcc (1 : ℝ) 3, fdBoundary H t ≠ w := fun t ht h_eq =>
     absurd (him t ht) (by simp [h_eq])
-  have h_int := intervalIntegrable_index_fdBoundary (H := H) (w := w)
-    (by rw [h13, uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-        exact Icc_subset_Icc (by norm_num) (by norm_num)) h_avoid
+  have h_int := intervalIntegrable_inv_sub_mul_deriv (continuous_fdBoundary H).continuousOn
+    h_avoid ((isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv.mono_set
+      (by rw [h13, uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
+          exact Icc_subset_Icc (by norm_num) (by norm_num)))
   have h_diff : ∀ s ∈ Ioo (min (1 : ℝ) 3) (max (1 : ℝ) 3) \ (∅ : Set ℝ),
       DifferentiableAt ℝ (fdBoundary H) s := by
     intro s hs
@@ -153,9 +150,10 @@ theorem windingNumber_fdBoundary_segment4_eq_log (hw : -(1 / 2) < w.re) :
     linarith
   have h_avoid : ∀ t ∈ uIcc (3 : ℝ) 4, fdBoundary H t ≠ w := fun t ht h_eq =>
     absurd (hre t ht) (by simp [h_eq])
-  have h_int := intervalIntegrable_index_fdBoundary (H := H) (w := w)
-    (by rw [h34, uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-        exact Icc_subset_Icc (by norm_num) (by norm_num)) h_avoid
+  have h_int := intervalIntegrable_inv_sub_mul_deriv (continuous_fdBoundary H).continuousOn
+    h_avoid ((isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv.mono_set
+      (by rw [h34, uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
+          exact Icc_subset_Icc (by norm_num) (by norm_num)))
   have h_diff : ∀ s ∈ Ioo (min (3 : ℝ) 4) (max (3 : ℝ) 4) \ (∅ : Set ℝ),
       DifferentiableAt ℝ (fdBoundary H) s := by
     intro s hs
@@ -183,9 +181,10 @@ theorem windingNumber_fdBoundary_segment5_eq_log (hw : w.im < H) :
     linarith
   have h_avoid : ∀ t ∈ uIcc (4 : ℝ) 5, fdBoundary H t ≠ w := fun t ht h_eq =>
     absurd (him t ht) (by simp [h_eq])
-  have h_int := intervalIntegrable_index_fdBoundary (H := H) (w := w)
-    (by rw [h45, uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
-        exact Icc_subset_Icc (by norm_num) le_rfl) h_avoid
+  have h_int := intervalIntegrable_inv_sub_mul_deriv (continuous_fdBoundary H).continuousOn
+    h_avoid ((isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv.mono_set
+      (by rw [h45, uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
+          exact Icc_subset_Icc (by norm_num) le_rfl))
   have h_diff : ∀ s ∈ Ioo (min (4 : ℝ) 5) (max (4 : ℝ) 5) \ (∅ : Set ℝ),
       DifferentiableAt ℝ (fdBoundary H) s := by
     intro s hs
