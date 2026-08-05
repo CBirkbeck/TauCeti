@@ -353,7 +353,7 @@ lemma eqOn_fdBoundary_segment5 (H : ℝ) : EqOn (fdBoundary H) (fdBoundary_segme
   · rw [← h4, fdBoundary_apply_four, fdBoundary_segment5_apply_four]
   · exact fdBoundary_of_gt_four h4
 
-private lemma fdBoundary_piece1 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 0 1) :=
+private lemma fdBoundary_piece1 (H : ℝ) : ContDiffOn ℝ n (fdBoundary H) (Icc 0 1) :=
   (contDiff_fdBoundary_segment1 H).contDiffOn.congr (eqOn_fdBoundary_segment1 H)
 
 /-- On `[1, 3]` the path agrees with the unified unit-circle arc of angle `(t + 1)·π/6`:
@@ -374,13 +374,13 @@ lemma eqOn_fdBoundary_arc (H : ℝ) :
     congr 1
     ring
 
-private lemma fdBoundary_piece13 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 1 3) :=
+private lemma fdBoundary_piece13 (H : ℝ) : ContDiffOn ℝ n (fdBoundary H) (Icc 1 3) :=
   (((contDiff_circleMap 0 1).comp (by fun_prop)).contDiffOn).congr (eqOn_fdBoundary_arc H)
 
-private lemma fdBoundary_piece4 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 3 4) :=
+private lemma fdBoundary_piece4 (H : ℝ) : ContDiffOn ℝ n (fdBoundary H) (Icc 3 4) :=
   (contDiff_fdBoundary_segment4 H).contDiffOn.congr (eqOn_fdBoundary_segment4 H)
 
-private lemma fdBoundary_piece5 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 4 5) :=
+private lemma fdBoundary_piece5 (H : ℝ) : ContDiffOn ℝ n (fdBoundary H) (Icc 4 5) :=
   (contDiff_fdBoundary_segment5 H).contDiffOn.congr (eqOn_fdBoundary_segment5 H)
 
 
@@ -414,12 +414,12 @@ lemma continuousOn_fdBoundary (H : ℝ) : ContinuousOn (fdBoundary H) (Icc 0 5) 
   (continuous_fdBoundary H).continuousOn
 
 /-- On every closed subinterval of `[0, 5]` whose interior avoids the three genuine
-corners, the contour is `C¹` — the certificate that `fdBoundaryCorners` is a valid
-breakpoint witness for `isPiecewiseC1On_fdBoundary`. The two arcs continue one smooth
-circle map through `t = 2`, so no hypothesis excludes it. -/
+corners, the contour is smooth at every order — the certificate that `fdBoundaryCorners`
+is a valid breakpoint witness for `isPiecewiseC1On_fdBoundary`. The two arcs continue one
+smooth circle map through `t = 2`, so no hypothesis excludes it. -/
 lemma contDiffOn_fdBoundary (H : ℝ) {c d : ℝ}
     (hcd : Icc c d ⊆ Icc 0 5) (hdis : Disjoint (fdBoundaryCorners : Set ℝ) (Ioo c d)) :
-    ContDiffOn ℝ 1 (fdBoundary H) (Icc c d) := by
+    ContDiffOn ℝ n (fdBoundary H) (Icc c d) := by
   have hbp : ∀ m : ℝ, m ∈ fdBoundaryCorners → m ∉ Ioo c d := fun m hm ↦
     Set.disjoint_left.mp hdis (Finset.mem_coe.mpr hm)
   rcases le_or_gt d 1 with hd1 | hd1
