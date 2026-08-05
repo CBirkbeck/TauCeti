@@ -170,18 +170,10 @@ lemma iSup_inf_iInf_eigenspace_of_invariant [IsAlgClosed K] {ι : Type*}
       Submodule.map p.subtype
         (⨅ i, Module.End.eigenspace ((f i).restrict (hp i)) (χ i)) := by
     intro χ
-    ext x
-    constructor
-    · rintro ⟨hxp, hxe⟩
-      refine ⟨⟨x, hxp⟩, (Submodule.mem_iInf _).mpr fun i ↦ ?_, rfl⟩
-      have hx := (Submodule.mem_iInf _).mp hxe i
-      rw [Module.End.mem_eigenspace_iff] at hx ⊢
-      exact Subtype.ext (by simpa [LinearMap.restrict_apply] using hx)
-    · rintro ⟨⟨y, hyp⟩, hye, rfl⟩
-      refine ⟨hyp, (Submodule.mem_iInf _).mpr fun i ↦ ?_⟩
-      have hy := (Submodule.mem_iInf _).mp hye i
-      rw [Module.End.mem_eigenspace_iff] at hy ⊢
-      simpa [LinearMap.restrict_apply] using congrArg Subtype.val hy
+    cases isEmpty_or_nonempty ι
+    · simp [iInf_of_isEmpty]
+    · simp_rw [Module.End.eigenspace, inf_iInf, p.inf_genEigenspace _ (hp _),
+        Submodule.map_iInf _ p.injective_subtype]
   simp_rw [hbridge, ← Submodule.map_iSup]
   suffices h_restrict_top :
       (⨆ χ : ι → K, ⨅ i,
