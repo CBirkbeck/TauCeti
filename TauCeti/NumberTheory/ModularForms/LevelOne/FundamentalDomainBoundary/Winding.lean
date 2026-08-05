@@ -192,7 +192,11 @@ lemma im_fdBoundary_le (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
         rw [Complex.add_im, Complex.smul_im, h5, smul_eq_mul, mul_zero]
         simp
 
-/-- The right vertical has constant real part `1/2`. -/
+/-- The right vertical has constant real part `1/2`.
+
+`simpNF` rejects a `simp` annotation here: the `@[simp]` branch selectors already rewrite
+`fdBoundary` applications to the segment functions, so this left-hand side is not in simp
+normal form; the same applies to the other coordinate rewrites below. -/
 lemma re_fdBoundary_of_le_one (h1 : t ≤ 1) : (fdBoundary H t).re = 1 / 2 := by
   rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
   have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).re = 0 := by
@@ -283,7 +287,10 @@ theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {
       Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
     nlinarith [le_max_left R 0]
 
-/-- Every point strictly right of the fundamental strip winds zero. -/
+/-- Every point strictly right of the fundamental strip winds zero.
+
+`simpNF` rejects a `simp` annotation here and on the left companion: `simp` normalizes the
+hypothesis `1 / 2 < w.re` to `2⁻¹ < w.re`, so the stated form never fires as a simp lemma. -/
 theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
     (hw : 1 / 2 < w.re) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
