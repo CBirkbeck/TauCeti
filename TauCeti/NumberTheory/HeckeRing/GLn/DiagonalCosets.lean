@@ -142,7 +142,7 @@ noncomputable def diagElem (a : Fin n → ℕ) : IntegralHeckeRing n :=
   HeckeCosetModule.single ℤ (diagCoset a) 1
 
 /-- The underlying set of `diagCoset a` is the double coset of `natDiagGL n a`. -/
-lemma diagCoset_toSet (a : Fin n → ℕ) :
+@[simp] lemma diagCoset_toSet (a : Fin n → ℕ) :
     (diagCoset a).toSet = doubleCoset (natDiagGL n a) (SLnZ n) (SLnZ n) :=
   HeckeCoset.toSet_mk _
 
