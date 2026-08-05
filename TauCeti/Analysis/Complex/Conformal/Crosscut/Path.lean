@@ -231,7 +231,7 @@ turn, and `f` is injective on `ball c r`, then the path is injective there.
 
 Injectivity of `circleMap` on the arc is what `b - a < 2 * π` buys; `f` supplies the rest. -/
 private theorem injOn_of_lineMap_circleMap_formula {a b : ℝ} (hab : a < b)
-    (hab2π : b - a < 2 * π) (hρ : 0 < ρ) (hinj : InjOn f (ball c r))
+    (hab2π : b - a ≤ 2 * π) (hρ : ρ ≠ 0) (hinj : InjOn f (ball c r))
     (hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) (ball c r)) {u v : ℂ} {γ : Path u v}
     (hγformula : ∀ t ∈ Ioo (0 : unitInterval) 1,
       γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ)))) :
@@ -241,8 +241,8 @@ private theorem injOn_of_lineMap_circleMap_formula {a b : ℝ} (hab : a < b)
   have hyIoo := lineMap_mem_Ioo hab hy
   rw [hγformula x hx, hγformula y hy] at hxy
   have hcircle := hinj (hmaps hxIoo) (hmaps hyIoo) hxy
-  have hangle := injOn_circleMap_of_abs_sub_le (c := ζ) hρ.ne'
-    (by rw [abs_sub_comm, abs_of_pos (sub_pos.mpr hab)]; exact hab2π.le)
+  have hangle := injOn_circleMap_of_abs_sub_le (c := ζ) hρ
+    (by rw [abs_sub_comm, abs_of_pos (sub_pos.mpr hab)]; exact hab2π)
     (by rw [uIoc_of_le hab.le]; exact ⟨hxIoo.1, hxIoo.2.le⟩)
     (by rw [uIoc_of_le hab.le]; exact ⟨hyIoo.1, hyIoo.2.le⟩) hcircle
   exact Subtype.ext ((AffineMap.lineMap_injective ℝ hab.ne) hangle)
@@ -290,10 +290,11 @@ private theorem mem_frontier_image_ball_of_tendsto_arc_endpoint
 If `γ` maps the open interval into `S`, neither endpoint value lies in `S`, and `γ` is injective on
 the open interval, then any repeated value is a common value of the two endpoints.
 
-Purely combinatorial: no topology on `S` is used, only that the interior values lie in `S` and the
-endpoint values do not. The frontier/open-set form is derived at the call site. -/
+Purely a statement about function values: neither `γ` nor `S` carries any topology, and a `Path`
+specializes automatically through its coercion. The frontier/open-set form is derived at the call
+site. -/
 private theorem eq_or_eq_endpoints_of_notMem_of_forall_mem_Ioo {X : Type*}
-    [TopologicalSpace X] {u v : X} {γ : Path u v} {S : Set X}
+    {γ : unitInterval → X} {S : Set X}
     (hzero : γ 0 ∉ S) (hone : γ 1 ∉ S)
     (hmem : ∀ t ∈ Ioo (0 : unitInterval) 1, γ t ∈ S)
     (hinj : InjOn γ (Ioo (0 : unitInterval) 1)) ⦃x y : unitInterval⦄ (hxy : γ x = γ y) :
@@ -375,7 +376,7 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere_of_injOn
       γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ))) := by
     simpa only [a, b, φ] using hγformula
   have hγinj : InjOn γ (Ioo (0 : unitInterval) 1) :=
-    injOn_of_lineMap_circleMap_formula hab hab2π hρ hinj hmaps hγformula'
+    injOn_of_lineMap_circleMap_formula hab hab2π.le hρ.ne' hinj hmaps hγformula'
   have hγzero : γ 0 ∈ frontier (f '' ball c r) := by
     simpa only [Path.source] using hufrontier
   have hγone : γ 1 ∈ frontier (f '' ball c r) := by
