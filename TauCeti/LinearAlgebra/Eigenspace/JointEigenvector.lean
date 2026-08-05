@@ -6,6 +6,8 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.Algebra.Module.Submodule.Invariant
+import Mathlib.NumberTheory.MulChar.Duality
+public import Mathlib.RingTheory.RootsOfUnity.EnoughRootsOfUnity
 public import TauCeti.LinearAlgebra.End.FiniteOrder
 public import Mathlib.LinearAlgebra.Eigenspace.Pi
 public import Mathlib.LinearAlgebra.Eigenspace.Semisimple
@@ -217,5 +219,132 @@ lemma iSup_inf_iInf_eigenspace_charHom_of_invariant [IsAlgClosed K]
 end CharHom
 
 end Group
+
+section FourierDecomposition
+
+/-! ### Unconditional decomposition for finite commutative groups
+
+For a finite commutative group `G` acting through `ρ : G →* Module.End K V` on any module
+over a field with enough roots of unity — with no finite-dimensionality assumption — the
+classical character projectors `|G|⁻¹ • ∑ d, χ(d)⁻¹ • ρ d` decompose every vector into
+joint eigenvectors, so the joint eigenspaces indexed by `G →* Kˣ` span. -/
+
+variable [CommGroup G] [Finite G]
+
+private noncomputable instance : Fintype G :=
+  Fintype.ofFinite _
+
+private noncomputable instance : Fintype (G →* Kˣ) :=
+  Fintype.ofFinite _
+
+open Finset
+
+variable {ρ : G →* Module.End K V}
+
+-- the character projector applied to a vector
+private noncomputable def fourierComponent (χ₀ : G →* Kˣ) (v : V) : V :=
+  (Nat.card G : K)⁻¹ • ∑ d : G, (((χ₀ d)⁻¹ : Kˣ) : K) • ρ d v
+
+variable (ρ) in
+-- the projector lands in the joint eigenspace, by reindexing the averaged sum
+private lemma fourierComponent_mem (χ₀ : G →* Kˣ) (v : V) (g : G) :
+    fourierComponent (ρ := ρ) χ₀ v ∈ (ρ g).eigenspace (χ₀ g) := by
+  rw [Module.End.mem_eigenspace_iff, fourierComponent, map_smul,
+    smul_comm ((χ₀ g : Kˣ) : K) ((Nat.card G : K)⁻¹)]
+  congr 1
+  rw [map_sum]
+  calc ∑ d : G, ρ g ((((χ₀ d)⁻¹ : Kˣ) : K) • ρ d v)
+      = ∑ d : G, (((χ₀ d)⁻¹ : Kˣ) : K) • ρ (g * d) v := by
+        refine Finset.sum_congr rfl fun d _ ↦ ?_
+        rw [map_smul, map_mul]
+        rfl
+    _ = ∑ e : G, (((χ₀ (g⁻¹ * e))⁻¹ : Kˣ) : K) • ρ e v := by
+        exact Fintype.sum_equiv (Equiv.mulLeft g) _ _ fun d ↦ by simp
+    _ = (χ₀ g : K) • ∑ e : G, (((χ₀ e)⁻¹ : Kˣ) : K) • ρ e v := by
+        rw [smul_sum]
+        refine Finset.sum_congr rfl fun e _ ↦ ?_
+        rw [smul_smul]
+        congr 1
+        rw [map_mul, map_inv, mul_inv, inv_inv, Units.val_mul]
+
+variable [HasEnoughRootsOfUnity K (Monoid.exponent G)]
+
+private instance : HasEnoughRootsOfUnity K (Monoid.exponent Gˣ) :=
+  Monoid.exponent_eq_of_mulEquiv (toUnits (G := G)).symm ▸ inferInstance
+
+-- the character group of a finite commutative group over a field with enough roots of
+-- unity has the size of the group, by Mathlib's character duality
+private lemma card_charHom : Nat.card (G →* Kˣ) = Nat.card G := by
+  rw [Nat.card_congr (MulChar.equivToUnitHom.trans
+      (toUnits (G := G)).monoidHomCongrLeftEquiv.symm).symm,
+    MulChar.card_eq_card_units_of_hasEnoughRootsOfUnity G K,
+    Nat.card_congr (toUnits (G := G)).toEquiv.symm]
+
+-- second orthogonality: a nontrivial element sums to zero over the full character group,
+-- by reindexing along multiplication by a separating character
+private lemma sum_charHom_apply_eq_zero
+    {d : G} (hd : d ≠ 1) :
+    ∑ χ : G →* Kˣ, ((χ d : Kˣ) : K) = 0 := by
+  obtain ⟨ψ, hψ⟩ := CommGroup.exists_apply_ne_one_of_hasEnoughRootsOfUnity G K hd
+  set S := ∑ χ : G →* Kˣ, ((χ d : Kˣ) : K) with hS
+  have hshift : ((ψ d : Kˣ) : K) * S = S := by
+    rw [hS, mul_sum]
+    exact Fintype.sum_equiv (Equiv.mulLeft ψ) _ _ fun χ ↦ by simp [Units.val_mul]
+  have hzero : (((ψ d : Kˣ) : K) - 1) * S = 0 := by rw [sub_mul, one_mul, hshift, sub_self]
+  rcases mul_eq_zero.mp hzero with h | h
+  · exact absurd (by rwa [sub_eq_zero, ← Units.val_one, Units.val_inj] at h) hψ
+  · exact h
+
+
+-- every vector is the sum of its projections, by second orthogonality
+private lemma sum_fourierComponent [NeZero (Nat.card G : K)] (v : V) :
+    ∑ χ₀ : G →* Kˣ, fourierComponent (ρ := ρ) χ₀ v = v := by
+  unfold fourierComponent
+  rw [← smul_sum, Finset.sum_comm]
+  have hcol : ∀ d : G, ∑ χ₀ : G →* Kˣ, (((χ₀ d)⁻¹ : Kˣ) : K) • ρ d v =
+      (∑ χ₀ : G →* Kˣ, ((χ₀ d⁻¹ : Kˣ) : K)) • ρ d v := by
+    intro d
+    rw [Finset.sum_smul]
+    exact Finset.sum_congr rfl fun χ₀ _ ↦ by rw [map_inv]
+  rw [Finset.sum_congr rfl fun d _ ↦ hcol d]
+  have hsplit : ∀ d : G, d ≠ 1 → (∑ χ₀ : G →* Kˣ, ((χ₀ d⁻¹ : Kˣ) : K)) • ρ d v = 0 := by
+    intro d hd
+    rw [sum_charHom_apply_eq_zero (by simpa using hd), zero_smul]
+  rw [Finset.sum_eq_single 1 (fun d _ hd ↦ hsplit d hd) (by simp)]
+  have hone : ∀ χ₀ : G →* Kˣ, ((χ₀ (1 : G)⁻¹ : Kˣ) : K) = 1 := by simp
+  rw [Finset.sum_congr rfl fun χ₀ _ ↦ hone χ₀]
+  have hcard : (∑ _χ₀ : G →* Kˣ, (1 : K)) = (Nat.card G : K) := by
+    rw [Finset.sum_const, card_univ, nsmul_eq_mul, mul_one, ← Nat.card_eq_fintype_card,
+      card_charHom]
+  rw [hcard, map_one, Module.End.one_apply, smul_smul,
+    inv_mul_cancel₀ (NeZero.ne _), one_smul]
+
+/-- **Unconditional character-indexed spanning** for a finite commutative group acting on
+an arbitrary module over a field with enough roots of unity: the classical character
+projectors decompose every vector, with no finite-dimensionality or semisimplicity
+hypotheses. -/
+theorem iSup_iInf_eigenspace_charHom_eq_top_of_commGroup [NeZero (Nat.card G : K)] :
+    (⨆ χ₀ : G →* Kˣ, ⨅ g, (ρ g).eigenspace (χ₀ g)) = ⊤ := by
+  refine top_unique fun v _ ↦ ?_
+  rw [← sum_fourierComponent (ρ := ρ) v]
+  exact Submodule.sum_mem _ fun χ₀ _ ↦ Submodule.mem_iSup_of_mem χ₀
+    (Submodule.mem_iInf _ |>.mpr fun g ↦ fourierComponent_mem ρ χ₀ v g)
+
+/-- **Unconditional decomposition of an invariant submodule**: the character projectors
+preserve every `ρ`-invariant submodule, so it is the supremum of its intersections with
+the joint eigenspaces — again with no finite-dimensionality hypothesis. -/
+theorem iSup_inf_iInf_eigenspace_charHom_of_invariant_of_commGroup
+    [NeZero (Nat.card G : K)]
+    (p : Submodule K V) (hp : ∀ g, ∀ x ∈ p, ρ g x ∈ p) :
+    (⨆ χ₀ : G →* Kˣ, p ⊓ ⨅ g, (ρ g).eigenspace (χ₀ g)) = p := by
+  refine le_antisymm (iSup_le fun _ ↦ inf_le_left) fun v hv ↦ ?_
+  rw [← sum_fourierComponent (ρ := ρ) v]
+  refine Submodule.sum_mem _ fun χ₀ _ ↦ Submodule.mem_iSup_of_mem χ₀ ?_
+  refine Submodule.mem_inf.mpr ⟨?_, Submodule.mem_iInf _ |>.mpr fun g ↦
+    fourierComponent_mem ρ χ₀ v g⟩
+  exact Submodule.smul_mem _ _ (Submodule.sum_mem _ fun d _ ↦
+    Submodule.smul_mem _ _ (hp d v hv))
+
+end FourierDecomposition
 
 end

@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Algebra.DirectSum.Module
 public import Mathlib.Analysis.Complex.Polynomial.Basic
+public import Mathlib.RingTheory.RootsOfUnity.AlgebraicallyClosed
 public import Mathlib.NumberTheory.MulChar.Duality
 public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector
 public import TauCeti.NumberTheory.ModularForms.DiamondOperators
@@ -25,10 +26,10 @@ together with its cusp-form analogues and the refinement to diamond-invariant
 submodules, by simultaneous diagonalization of the commuting finite-order diamond
 operators (`TauCeti/LinearAlgebra/Eigenspace/JointEigenvector.lean`).
 
-Finite-dimensionality of `M_k(Γ₁(N))` is **not** proved here: the results that need it
-take it as an instance hypothesis, to be discharged once the roadmap's dimension-formula
-milestones land (cusp-form finite-dimensionality descends from the modular-form one via
-`CuspForm.finiteDimensional_of_modularForm` in `TauCeti/NumberTheory/ModularForms/Basic.lean`).
+All statements are **unconditional**: the diamond group `(ZMod N)ˣ` is finite and
+commutative, so the classical character projectors decompose every vector
+(`iSup_iInf_eigenspace_charHom_eq_top_of_commGroup`), with no finite-dimensionality
+hypotheses anywhere — matching the roadmap's canonical statement.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GL2/CharacterDecomp.lean`, Chris Birkbeck,
@@ -79,6 +80,15 @@ lemma diamondOpHom_pairwise_commute :
     Pairwise fun d₁ d₂ : (ZMod N)ˣ ↦ Commute (diamondOpHom k d₁) (diamondOpHom k d₂) :=
   fun _ _ _ ↦ (Commute.all _ _).map (diamondOpHom k)
 
+private instance : NeZero ((Nat.card (ZMod N)ˣ : ℂ)) :=
+  ⟨Nat.cast_ne_zero.mpr Nat.card_pos.ne'⟩
+
+private instance : NeZero (Monoid.exponent (ZMod N)ˣ) :=
+  ⟨Monoid.exponent_ne_zero_of_finite⟩
+
+private instance : NeZero ((Monoid.exponent (ZMod N)ˣ : ℂ)) :=
+  ⟨Nat.cast_ne_zero.mpr (NeZero.ne _)⟩
+
 -- The joint diamond eigenspace at a character is the nebentypus space: the bridge from
 -- the generic character-indexed theorems. `modFormCharSpace`'s body is not exposed, so
 -- this is proved by membership extensionality rather than unfolding — the sealed
@@ -91,13 +101,12 @@ private lemma iInf_eigenspace_eq_modFormCharSpace (χ₀ : (ZMod N)ˣ →* ℂˣ
 /-- **The character subspaces `modFormCharSpace k χ` span the whole space**:
 modular forms for `Γ₁(N)` decompose into the span of nebentypus character
 spaces, one for each character `(ZMod N)ˣ →* ℂˣ`. -/
-theorem iSup_modFormCharSpace_eq_top (k : ℤ)
-    [FiniteDimensional ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)] :
+theorem iSup_modFormCharSpace_eq_top (k : ℤ) :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, modFormCharSpace k χ) =
     (⊤ : Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) := by
   have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ,
       ⨅ d : (ZMod N)ˣ, (diamondOpHom k d).eigenspace ((χ₀ d : ℂ))) = ⊤ :=
-    iSup_iInf_eigenspace_charHom_eq_top diamondOpHom_pairwise_commute diamondOpHom_isSemisimple
+    iSup_iInf_eigenspace_charHom_eq_top_of_commGroup (ρ := diamondOpHom k)
   simpa only [iInf_eigenspace_eq_modFormCharSpace] using h
 
 /-- **The character subspaces form an independent family.** -/
@@ -110,8 +119,7 @@ theorem iSupIndep_modFormCharSpace (k : ℤ) :
 
 /-- **Internal direct sum decomposition**: `M_k(Γ₁(N))` decomposes as the direct
 sum of the nebentypus character spaces `modFormCharSpace k χ`. -/
-theorem isInternal_modFormCharSpace (k : ℤ) [DecidableEq ((ZMod N)ˣ →* ℂˣ)]
-    [FiniteDimensional ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)] :
+theorem isInternal_modFormCharSpace (k : ℤ) [DecidableEq ((ZMod N)ˣ →* ℂˣ)] :
     DirectSum.IsInternal (fun χ : (ZMod N)ˣ →* ℂˣ ↦ modFormCharSpace k χ) :=
   DirectSum.isInternal_submodule_of_iSupIndep_of_iSup_eq_top
     (iSupIndep_modFormCharSpace k) (iSup_modFormCharSpace_eq_top k)
@@ -151,20 +159,17 @@ theorem iSupIndep_cuspFormCharSpace (k : ℤ) :
   simpa only [iInf_eigenspace_eq_cuspFormCharSpace] using h
 
 /-- **The cusp-form character subspaces span the whole space.** -/
-theorem iSup_cuspFormCharSpace_eq_top (k : ℤ)
-    [FiniteDimensional ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)] :
+theorem iSup_cuspFormCharSpace_eq_top (k : ℤ) :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, cuspFormCharSpace k χ) =
     (⊤ : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) := by
   have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ,
       ⨅ d : (ZMod N)ˣ, (diamondOpCuspHom k d).eigenspace ((χ₀ d : ℂ))) = ⊤ :=
-    iSup_iInf_eigenspace_charHom_eq_top diamondOpCuspHom_pairwise_commute
-      diamondOpCuspHom_isSemisimple
+    iSup_iInf_eigenspace_charHom_eq_top_of_commGroup (ρ := diamondOpCuspHom k)
   simpa only [iInf_eigenspace_eq_cuspFormCharSpace] using h
 
 /-- **Internal direct sum decomposition of cusp forms**: `S_k(Γ₁(N))` decomposes as the
 direct sum of the nebentypus character spaces `cuspFormCharSpace k χ`. -/
-theorem isInternal_cuspFormCharSpace (k : ℤ) [DecidableEq ((ZMod N)ˣ →* ℂˣ)]
-    [FiniteDimensional ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)] :
+theorem isInternal_cuspFormCharSpace (k : ℤ) [DecidableEq ((ZMod N)ˣ →* ℂˣ)] :
     DirectSum.IsInternal (fun χ : (ZMod N)ˣ →* ℂˣ ↦ cuspFormCharSpace k χ) :=
   DirectSum.isInternal_submodule_of_iSupIndep_of_iSup_eq_top
     (iSupIndep_cuspFormCharSpace k) (iSup_cuspFormCharSpace_eq_top k)
@@ -178,26 +183,22 @@ nebentypus character subspaces `modFormCharSpace k χ`. Specializing `p = ⊤`
 recovers `iSup_modFormCharSpace_eq_top`. -/
 theorem iSup_inf_modFormCharSpace_of_invariant
     (k : ℤ) (p : Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k))
-    [FiniteDimensional ℂ p]
     (hp : ∀ d : (ZMod N)ˣ, ∀ f ∈ p, diamondOpHom k d f ∈ p) :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, p ⊓ modFormCharSpace k χ) = p := by
   have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ,
       p ⊓ ⨅ d : (ZMod N)ˣ, (diamondOpHom k d).eigenspace ((χ₀ d : ℂ))) = p :=
-    iSup_inf_iInf_eigenspace_charHom_of_invariant diamondOpHom_pairwise_commute
-      diamondOpHom_isSemisimple p hp
+    iSup_inf_iInf_eigenspace_charHom_of_invariant_of_commGroup p hp
   simpa only [iInf_eigenspace_eq_modFormCharSpace] using h
 
 /-- **Character decomposition of a diamond-invariant submodule of `S_k(Γ₁(N))`.**
 The cusp-form analogue of `iSup_inf_modFormCharSpace_of_invariant`. -/
 theorem iSup_inf_cuspFormCharSpace_of_invariant
     (k : ℤ) (p : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k))
-    [FiniteDimensional ℂ p]
     (hp : ∀ d : (ZMod N)ˣ, ∀ f ∈ p, diamondOpCuspHom k d f ∈ p) :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, p ⊓ cuspFormCharSpace k χ) = p := by
   have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ,
       p ⊓ ⨅ d : (ZMod N)ˣ, (diamondOpCuspHom k d).eigenspace ((χ₀ d : ℂ))) = p :=
-    iSup_inf_iInf_eigenspace_charHom_of_invariant diamondOpCuspHom_pairwise_commute
-      diamondOpCuspHom_isSemisimple p hp
+    iSup_inf_iInf_eigenspace_charHom_of_invariant_of_commGroup p hp
   simpa only [iInf_eigenspace_eq_cuspFormCharSpace] using h
 
 /-- **Finsupp-indexed character decomposition of a modular form in a
@@ -207,7 +208,6 @@ submodule `p ⊆ M_k(Γ₁(N))` is a finitely-supported sum of nebentypus-charac
 components, each landing simultaneously in `p` and in its character subspace. -/
 theorem exists_finsupp_of_diamondOp_invariant
     (k : ℤ) (p : Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k))
-    [FiniteDimensional ℂ p]
     (hp : ∀ d : (ZMod N)ˣ, ∀ f ∈ p, diamondOpHom k d f ∈ p)
     {f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ p) :
     ∃ g : ((ZMod N)ˣ →* ℂˣ) →₀ ModularForm ((Gamma1 N).map (mapGL ℝ)) k,
@@ -221,7 +221,6 @@ diamond-invariant submodule.** Cusp-form analogue of
 `exists_finsupp_of_diamondOp_invariant`. -/
 theorem exists_finsupp_of_diamondOpCusp_invariant
     (k : ℤ) (p : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k))
-    [FiniteDimensional ℂ p]
     (hp : ∀ d : (ZMod N)ˣ, ∀ f ∈ p, diamondOpCuspHom k d f ∈ p)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ p) :
     ∃ g : ((ZMod N)ˣ →* ℂˣ) →₀ CuspForm ((Gamma1 N).map (mapGL ℝ)) k,
@@ -237,7 +236,6 @@ end InvariantSubmodule
 This is the gluing principle by which identities of Hecke operators proven per character
 space extend to the whole space of modular forms. -/
 theorem endo_ext_of_mem_modFormCharSpace
-    [FiniteDimensional ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)]
     {S T : Module.End ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)}
     (h : ∀ (χ : (ZMod N)ˣ →* ℂˣ) (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k),
       f ∈ modFormCharSpace k χ → S f = T f) : S = T := by
@@ -251,7 +249,6 @@ theorem endo_ext_of_mem_modFormCharSpace
 endomorphisms of `S_k(Γ₁(N))` that agree on every nebentypus subspace
 `cuspFormCharSpace k χ` are equal. -/
 theorem endo_ext_of_mem_cuspFormCharSpace
-    [FiniteDimensional ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)]
     {S T : Module.End ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)}
     (h : ∀ (χ : (ZMod N)ˣ →* ℂˣ) (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k),
       f ∈ cuspFormCharSpace k χ → S f = T f) : S = T := by
