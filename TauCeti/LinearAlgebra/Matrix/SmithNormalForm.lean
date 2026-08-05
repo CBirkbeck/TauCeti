@@ -71,12 +71,14 @@ private lemma finrank_range_mulVecLin (A : Matrix (Fin n) (Fin n) ℤ) (hdet : A
 already `+1` the original matrices work; when both are `-1` a coordinate-flip corrects
 the signs. -/
 private lemma sign_correct_unit_transform (A : Matrix (Fin n) (Fin n) ℤ) (d : Fin n → ℤ)
-    (L_mat Q_mat : Matrix (Fin n) (Fin n) ℤ) (hd_pos : ∀ i, 0 < d i)
-    (hL_eq : L_mat * A * Q_mat = Matrix.diagonal d) (hLQ_one : L_mat.det * Q_mat.det = 1)
-    (hL_unit : IsUnit L_mat.det) (hQ_unit : IsUnit Q_mat.det) :
+    (L_mat Q_mat : Matrix (Fin n) (Fin n) ℤ)
+    (hL_eq : L_mat * A * Q_mat = Matrix.diagonal d) (hLQ_one : L_mat.det * Q_mat.det = 1) :
     ∃ (L R : SpecialLinearGroup (Fin n) ℤ),
       (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
       Matrix.diagonal d := by
+  have hL_unit : IsUnit L_mat.det := IsUnit.of_mul_eq_one _ hLQ_one
+  have hQ_unit : IsUnit Q_mat.det :=
+    IsUnit.of_mul_eq_one _ ((mul_comm Q_mat.det L_mat.det).trans hLQ_one)
   rcases Int.isUnit_iff.mp hL_unit with hLd | hLd <;>
     rcases Int.isUnit_iff.mp hQ_unit with hQd | hQd
   · exact ⟨⟨L_mat, hLd⟩, ⟨Q_mat, hQd⟩, hL_eq⟩
@@ -104,6 +106,7 @@ private lemma sign_correct_unit_transform (A : Matrix (Fin n) (Fin n) ℤ) (d : 
     have hflip_L_det : (flip * L_mat).det = 1 := by rw [det_mul, hflip_det, hLd]; norm_num
     have hflip_Q_det : (Q_mat * flip).det = 1 := by rw [det_mul, hQd, hflip_det]; norm_num
     refine ⟨⟨flip * L_mat, hflip_L_det⟩, ⟨Q_mat * flip, hflip_Q_det⟩, ?_⟩
+    -- reassociate so the flip conjugation surrounds the diagonalised core
     rw [show flip * L_mat * A * (Q_mat * flip) = flip * (L_mat * A * Q_mat) * flip from by
       simp only [Matrix.mul_assoc], hL_eq, hflip_diag]
 
@@ -156,7 +159,7 @@ private lemma exists_SL_diagonal_of_unit_diagonalization (A P Q : Matrix (Fin n)
       rw [hneg] at hmul_eq
       have hprod_pos : (0 : ℤ) < ∏ i, d i := Finset.prod_pos fun i _ ↦ hd_pos i
       nlinarith
-  exact ⟨d, hd_pos, sign_correct_unit_transform A d L_mat Q hd_pos hL_eq hLQ_one hL_unit hQ_unit⟩
+  exact ⟨d, hd_pos, sign_correct_unit_transform A d L_mat Q hL_eq hLQ_one⟩
 
 /-- Every integer matrix with positive determinant is `SL_n(ℤ)`-equivalent to a positive
 diagonal. -/
@@ -180,6 +183,7 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
   set Q_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ r j k) with hQ_def
   have hmat_eq : A * Q_mat = P_mat * Matrix.diagonal a := by
     ext k j; simp only [Matrix.mul_apply, hQ_def, hP_def, Matrix.of_apply, Matrix.diagonal_apply]
+    -- fold the entry sum into a matrix-vector product to apply `hkey`
     conv_lhs => rw [show ∑ l, A k l * r j l = (A *ᵥ r j) k by simp [mulVec, dotProduct]]
     rw [hkey j]; simp only [Pi.smul_apply, smul_eq_mul]
     simp [Finset.sum_ite_eq', Finset.mem_univ, mul_comm]
@@ -305,8 +309,10 @@ private lemma blockEmbed_mul_diagonal_eq (k : ℕ) (e : Fin (k + 2) ≃ Fin 2 �
   have hsub : ∀ f : Fin (k + 2) → ℤ,
       (Matrix.diagonal (f ∘ e.symm)).submatrix e e = Matrix.diagonal f := fun f ↦ by
     simp [Function.comp_def]
+  -- re-express the diagonal through the reindexing, via the named identity `hsub`
   rw [show Matrix.diagonal d = (Matrix.diagonal (d ∘ e.symm)).submatrix e e from (hsub d).symm]
   simp only [Matrix.submatrix_mul_equiv]
+  -- re-express the target diagonal through the same reindexing
   rw [show Matrix.diagonal d' = (Matrix.diagonal (d' ∘ e.symm)).submatrix e e from (hsub d').symm]
   congr 1
   have hdecomp : ∀ f : Fin (k + 2) → ℤ, Matrix.diagonal (f ∘ e.symm) =
@@ -441,6 +447,7 @@ private lemma gcd_step_general (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : ∀ i, 
 private lemma dvd_diag_of_SL_transform (m : ℕ) (d d' : Fin m → ℤ) (c : ℤ) (hc : ∀ i, c ∣ d i)
     (L R : Matrix (Fin m) (Fin m) ℤ) (heq : L * Matrix.diagonal d * R = Matrix.diagonal d') :
     ∀ i, c ∣ d' i := by
+  -- read the value off the diagonal so the product identity `heq` applies entrywise
   intro i; rw [show d' i = (Matrix.diagonal d') i i by simp, ← heq, mul_apply]
   apply Finset.dvd_sum; intro k _; rw [mul_apply]; apply dvd_mul_of_dvd_left
   apply Finset.dvd_sum; intro l _; simp only [diagonal_apply]; split_ifs with h
@@ -493,6 +500,7 @@ private lemma make_first_divide_all (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : �
         ih _ hN₁ d₁ hd₁_pos (hd₁_pos 0) rfl
       refine ⟨d₂, hd₂_pos, hd₂_div, L₂ * L₁, R₁ * R₂, ?_⟩
       simp only [SpecialLinearGroup.coe_mul]
+      -- reassociate to expose `L₁ * diagonal d * R₁`, the shape `hmul₁` rewrites
       rw [show ((L₂ : Matrix _ _ ℤ) * (L₁ : Matrix _ _ ℤ)) * Matrix.diagonal d *
         ((R₁ : Matrix _ _ ℤ) * (R₂ : Matrix _ _ ℤ)) = (L₂ : Matrix _ _ ℤ) *
         ((L₁ : Matrix _ _ ℤ) * Matrix.diagonal d * (R₁ : Matrix _ _ ℤ)) * (R₂ : Matrix _ _ ℤ)
@@ -521,6 +529,7 @@ private lemma slSuccEmbed_mul_diagonal (k : ℕ) (d : Fin (k + 2) → ℤ)
   have hsub : ∀ f : Fin (k + 2) → ℤ,
       (Matrix.diagonal (f ∘ e.symm)).submatrix e e = Matrix.diagonal f := fun f ↦ by
     simp [Function.comp_def]
+  -- re-express the diagonal through the reindexing, via the named identity `hsub`
   rw [show Matrix.diagonal d = (Matrix.diagonal (d ∘ e.symm)).submatrix e e
       from (hsub d).symm]
   -- definitional: `slSuccEmbed` is the embedded block matrix
@@ -542,6 +551,7 @@ private lemma slSuccEmbed_mul_diagonal (k : ℕ) (d : Fin (k + 2) → ℤ)
     Matrix.one_mul]
   rw [fromBlocks_multiply]; simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add,
     Matrix.mul_one]
+  -- re-express the output diagonal through the reindexing before comparing blocks
   rw [show Matrix.diagonal d_out = (Matrix.diagonal (d_out ∘ e.symm)).submatrix e e
       from (hsub d_out).symm]; congr 1
   have h_out_decomp : Matrix.diagonal (d_out ∘ e.symm) =
@@ -620,6 +630,7 @@ private lemma exists_divChain_of_pos_diagonal (d : Fin n → ℤ) (hd : ∀ i, 0
             (L_tail : Matrix _ _ ℤ) (R_tail : Matrix _ _ ℤ) hmul_tail) hd_tail'_chain
       refine ⟨d₂, hd₂_pos, hd₂_chain, slSuccEmbed L_tail * L₁, R₁ * slSuccEmbed R_tail, ?_⟩
       simp only [SpecialLinearGroup.coe_mul]
+      -- reassociate to expose `L₁ * diagonal d * R₁`, the shape `hmul₁` rewrites
       rw [show ((slSuccEmbed L_tail : Matrix _ _ ℤ) * (L₁ : Matrix _ _ ℤ)) * Matrix.diagonal d *
         ((R₁ : Matrix _ _ ℤ) * (slSuccEmbed R_tail : Matrix _ _ ℤ)) =
         (slSuccEmbed L_tail : Matrix _ _ ℤ) * ((L₁ : Matrix _ _ ℤ) * Matrix.diagonal d *
@@ -694,6 +705,7 @@ private lemma prod_take_dvd_of_mul_diagonal_mul_eq {c d : Fin n → ℤ}
   have hprod_d : ∏ j : Fin k, d (e j) =
       det ((P * Matrix.diagonal c * Q).submatrix e e) := by
     rw [hcd]
+    -- a diagonal reindexed by an equiv is the diagonal of the composed function
     rw [show (Matrix.diagonal d).submatrix e e =
         Matrix.diagonal (fun j : Fin k ↦ d (e j)) from by
       ext i j; simp only [Matrix.submatrix_apply, Matrix.diagonal_apply, he_inj.eq_iff]]
