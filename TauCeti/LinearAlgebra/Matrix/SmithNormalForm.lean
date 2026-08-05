@@ -1,0 +1,641 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
+
+import Mathlib.Algebra.EuclideanDomain.Int
+import Mathlib.Data.Int.GCD
+import Mathlib.LinearAlgebra.Determinant
+import Mathlib.LinearAlgebra.FreeModule.PID
+import Mathlib.LinearAlgebra.Matrix.Basis
+import Mathlib.LinearAlgebra.Matrix.Block
+import Mathlib.LinearAlgebra.Matrix.Nondegenerate
+import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
+import Mathlib.LinearAlgebra.Matrix.Notation
+
+/-!
+# Smith normal form over `ℤ` with special linear transformations
+
+Every square integer matrix with positive determinant can be brought to diagonal form with
+positive diagonal entries in which each entry divides the next, using row and column
+operations of determinant one:
+
+* `Matrix.exists_smith_normal_form_of_det_pos`: for `A : Matrix (Fin n) (Fin n) ℤ` with
+  `0 < A.det` there are `L R : SpecialLinearGroup (Fin n) ℤ` and a positive `d : Fin n → ℤ`,
+  monotone under divisibility, with `L * A * R = diagonal d`.
+
+Mathlib's `Submodule.smithNormalForm` provides basis-level diagonalization over a PID; this
+file supplies the matrix-level statement over `ℤ`, refined in three ways that the basis-level
+result does not give: the transforming matrices have determinant `1` (not merely unit
+determinant), the diagonal entries are positive, and successive entries divide each other
+(the invariant-factor chain).  The proof first diagonalises using the basis-level theorem,
+corrects signs, and then establishes the divisibility chain by repeated Bézout pivot steps
+on `2 × 2` blocks.
+
+This is the elementary divisor theorem in the form needed for the theory of Hecke rings of
+`GL_n`: it produces the diagonal double coset representatives of Shimura, chapter 3.
+
+## References
+
+* Shimura, *Introduction to the Arithmetic Theory of Automorphic Functions*, §3.2
+-/
+
+public section
+
+namespace Matrix
+
+variable {n : ℕ}
+
+/-! ## Diagonalisation with special linear transformations -/
+
+private lemma mulVecLin_injective_of_det_ne_zero (A : Matrix (Fin n) (Fin n) ℤ)
+    (hdet : A.det ≠ 0) : Function.Injective A.mulVecLin := fun x y h ↦
+  mulVec_injective_of_det_ne_zero hdet (by simpa using h)
+
+private lemma finrank_range_mulVecLin (A : Matrix (Fin n) (Fin n) ℤ) (hdet : A.det ≠ 0) :
+    Module.finrank ℤ (LinearMap.range A.mulVecLin) = Module.finrank ℤ (Fin n → ℤ) :=
+  LinearMap.finrank_range_of_inj (mulVecLin_injective_of_det_ne_zero A hdet)
+
+/-- Given `L * A * Q = diag(d)` with `d` positive and `det(L) * det(Q) = 1`, produce
+`SL_n(ℤ)` matrices `L', Q'` with `L' * A * Q' = diag(d)`. When both determinants are
+already `+1` the original matrices work; when both are `-1` a coordinate-flip corrects
+the signs. -/
+private lemma sign_correct_unit_transform (A : Matrix (Fin n) (Fin n) ℤ) (d : Fin n → ℤ)
+    (L_mat Q_mat : Matrix (Fin n) (Fin n) ℤ) (hd_pos : ∀ i, 0 < d i)
+    (hL_eq : L_mat * A * Q_mat = Matrix.diagonal d) (hLQ_one : L_mat.det * Q_mat.det = 1)
+    (hL_unit : IsUnit L_mat.det) (hQ_unit : IsUnit Q_mat.det) :
+    ∃ (L R : SpecialLinearGroup (Fin n) ℤ),
+      (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+      Matrix.diagonal d := by
+  rcases Int.isUnit_iff.mp hL_unit with hLd | hLd <;>
+    rcases Int.isUnit_iff.mp hQ_unit with hQd | hQd
+  · exact ⟨⟨L_mat, hLd⟩, ⟨Q_mat, hQd⟩, hL_eq⟩
+  · exfalso; nlinarith [hLQ_one]
+  · exfalso; nlinarith [hLQ_one]
+  · have hn : 0 < n := by
+      rcases Nat.eq_zero_or_pos n with rfl | hn
+      · simp [det_isEmpty] at hLd
+      · exact hn
+    have : NeZero n := ⟨by omega⟩
+    set flip : Matrix (Fin n) (Fin n) ℤ := Matrix.diagonal (Function.update 1 0 (-1))
+    have hflip_det : flip.det = -1 := by
+      rw [Matrix.det_diagonal, Finset.prod_update_of_mem (Finset.mem_univ 0)]; simp
+    have hflip_sq : flip * flip = 1 := by
+      rw [Matrix.diagonal_mul_diagonal]; ext i j
+      simp only [Matrix.diagonal_apply, Matrix.one_apply]
+      by_cases h : i = j
+      · subst h; by_cases hi : i = 0 <;> simp [hi]
+      · simp [h]
+    have hflip_diag : flip * Matrix.diagonal d * flip = Matrix.diagonal d := by
+      have hcomm : flip * Matrix.diagonal d = Matrix.diagonal d * flip := by
+        rw [Matrix.diagonal_mul_diagonal, Matrix.diagonal_mul_diagonal]; congr 1; ext i
+        simp only [Function.update_apply]; by_cases hi : i = 0 <;> simp [hi, mul_comm]
+      rw [hcomm, Matrix.mul_assoc, hflip_sq, Matrix.mul_one]
+    have hflip_L_det : (flip * L_mat).det = 1 := by rw [det_mul, hflip_det, hLd]; norm_num
+    have hflip_Q_det : (Q_mat * flip).det = 1 := by rw [det_mul, hQd, hflip_det]; norm_num
+    refine ⟨⟨flip * L_mat, hflip_L_det⟩, ⟨Q_mat * flip, hflip_Q_det⟩, ?_⟩
+    rw [show flip * L_mat * A * (Q_mat * flip) = flip * (L_mat * A * Q_mat) * flip from by
+      simp only [Matrix.mul_assoc], hL_eq, hflip_diag]
+
+/-- Refine a unit-determinant diagonalization `P⁻¹ * A * Q = diag a` (with `a i ≠ 0`) of a
+positive-determinant matrix to an `SL_n(ℤ)`-diagonalization with the positive diagonal `|a|`:
+absorb the signs of `a` into a diagonal `±1` matrix, then sign-correct the unit factors. -/
+private lemma exists_SL_diagonal_of_unit_diagonalization (A P Q : Matrix (Fin n) (Fin n) ℤ)
+    (a : Fin n → ℤ) (hdet : 0 < A.det) (ha_ne : ∀ i, a i ≠ 0) (hP_unit : IsUnit P.det)
+    (hQ_unit : IsUnit Q.det) (hdiag : P⁻¹ * A * Q = Matrix.diagonal a) :
+    ∃ (d : Fin n → ℤ) (_ : ∀ i, 0 < d i), ∃ (L R : SpecialLinearGroup (Fin n) ℤ),
+      (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+      Matrix.diagonal d := by
+  set d := fun i ↦ |a i| with hd_def
+  have hd_pos : ∀ i, 0 < d i := fun i ↦ abs_pos.mpr (ha_ne i)
+  set sv := fun i ↦ if (0 : ℤ) < a i then (1 : ℤ) else -1 with hsv_def
+  have hsv_sq : ∀ i, sv i * sv i = 1 := fun i ↦ by simp only [hsv_def]; split_ifs <;> ring
+  have hsv_mul_d : ∀ i, sv i * d i = a i := fun i ↦ by
+    simp only [hsv_def, hd_def]; rcases lt_trichotomy (a i) 0 with h | h | h
+    · rw [if_neg (not_lt.mpr h.le), abs_of_neg h]; ring
+    · exact absurd h (ha_ne i)
+    · rw [if_pos h, abs_of_pos h, one_mul]
+  have h_sd : Matrix.diagonal a = Matrix.diagonal sv * Matrix.diagonal d := by
+    rw [Matrix.diagonal_mul_diagonal]; congr 1; ext i; exact (hsv_mul_d i).symm
+  have hss : Matrix.diagonal sv * Matrix.diagonal sv = 1 := by
+    rw [Matrix.diagonal_mul_diagonal]; ext i j; simp only [Matrix.diagonal_apply, Matrix.one_apply]
+    by_cases h : i = j
+    · subst h; simp [hsv_sq]
+    · simp [h]
+  have hs_det_unit : IsUnit (Matrix.diagonal sv).det := by
+    rw [Matrix.det_diagonal]; exact IsUnit.of_mul_eq_one _
+      (by rw [← Finset.prod_mul_distrib]; exact Finset.prod_eq_one (fun i _ ↦ hsv_sq i))
+  set L_mat := Matrix.diagonal sv * P⁻¹ with hL_def
+  have hL_eq : L_mat * A * Q = Matrix.diagonal d := by
+    calc L_mat * A * Q
+        = Matrix.diagonal sv * (P⁻¹ * A * Q) := by rw [hL_def]; simp only [Matrix.mul_assoc]
+      _ = Matrix.diagonal sv * Matrix.diagonal a := by rw [hdiag]
+      _ = Matrix.diagonal sv * (Matrix.diagonal sv * Matrix.diagonal d) := by rw [h_sd]
+      _ = (Matrix.diagonal sv * Matrix.diagonal sv) * Matrix.diagonal d := by rw [Matrix.mul_assoc]
+      _ = Matrix.diagonal d := by rw [hss, Matrix.one_mul]
+  have hL_unit : IsUnit L_mat.det := by
+    rw [hL_def, det_mul]; exact IsUnit.mul hs_det_unit (isUnit_nonsing_inv_det _ hP_unit)
+  have hLQ_one : L_mat.det * Q.det = 1 := by
+    have h_prod : L_mat.det * A.det * Q.det = ∏ i, d i := by
+      rw [← det_mul, ← det_mul, hL_eq, Matrix.det_diagonal]
+    rcases Int.isUnit_iff.mp (IsUnit.mul hL_unit hQ_unit) with hone | hneg
+    · exact hone
+    · exfalso
+      have hmul_eq : L_mat.det * Q.det * A.det = ∏ i, d i := by
+        rw [mul_right_comm]; exact h_prod
+      rw [hneg] at hmul_eq
+      have hprod_pos : (0 : ℤ) < ∏ i, d i := Finset.prod_pos fun i _ ↦ hd_pos i
+      nlinarith
+  exact ⟨d, hd_pos, sign_correct_unit_transform A d L_mat Q hd_pos hL_eq hLQ_one hL_unit hQ_unit⟩
+
+/-- Every integer matrix with positive determinant is `SL_n(ℤ)`-equivalent to a positive
+diagonal. -/
+private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hdet : 0 < A.det) :
+    ∃ (d : Fin n → ℤ) (_ : ∀ i, 0 < d i), ∃ (L R : SpecialLinearGroup (Fin n) ℤ),
+      (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+      Matrix.diagonal d := by
+  have hdet_ne : A.det ≠ 0 := ne_of_gt hdet
+  obtain ⟨b', a, ab', hsnf⟩ :=
+    Submodule.exists_smith_normal_form_of_rank_eq (Pi.basisFun ℤ (Fin n))
+      (finrank_range_mulVecLin A hdet_ne)
+  have ha_ne : ∀ i, a i ≠ 0 := by
+    intro i hi
+    have : (ab' i : Fin n → ℤ) = 0 := by rw [hsnf i, hi, zero_smul]
+    exact ab'.ne_zero i (Subtype.ext this)
+  choose r hr using fun i ↦ LinearMap.mem_range.mp (ab' i).2
+  have hkey : ∀ j, A *ᵥ r j = a j • b' j := fun j ↦ by
+    show A *ᵥ r j = a j • b' j; rw [← hsnf j, ← hr j]; rfl
+  set e := Pi.basisFun ℤ (Fin n)
+  set P_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ b' j k) with hP_def
+  set Q_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ r j k) with hQ_def
+  have hmat_eq : A * Q_mat = P_mat * Matrix.diagonal a := by
+    ext k j; simp only [Matrix.mul_apply, hQ_def, hP_def, Matrix.of_apply, Matrix.diagonal_apply]
+    conv_lhs => rw [show ∑ l, A k l * r j l = (A *ᵥ r j) k by simp [mulVec, dotProduct]]
+    rw [hkey j]; simp only [Pi.smul_apply, smul_eq_mul]
+    simp [Finset.sum_ite_eq', Finset.mem_univ, mul_comm]
+  have hP_eq : P_mat = e.toMatrix b' := by
+    ext k j; change b' j k = e.toMatrix b' k j; rw [e.toMatrix_apply, Pi.basisFun_repr]
+  have hP_unit : IsUnit P_mat.det := by
+    rw [hP_eq]; simpa [Module.Basis.det_apply] using e.isUnit_det b'
+  have hQ_eq : Q_mat = e.toMatrix r := by
+    ext k j; change r j k = e.toMatrix r k j; rw [e.toMatrix_apply, Pi.basisFun_repr]
+  have hQ_unit : IsUnit Q_mat.det := by
+    have hinj := mulVecLin_injective_of_det_ne_zero A hdet_ne
+    set r_basis : Module.Basis (Fin n) ℤ (Fin n → ℤ) :=
+      ab'.map (LinearEquiv.ofInjective A.mulVecLin hinj).symm with hr_basis
+    have hrb : ⇑r_basis = r := funext fun i ↦ hinj (by
+      rw [hr i, hr_basis, Module.Basis.map_apply]
+      exact congrArg Subtype.val
+        ((LinearEquiv.ofInjective A.mulVecLin hinj).apply_symm_apply (ab' i)))
+    rw [hQ_eq, ← hrb]
+    simpa [Module.Basis.det_apply] using e.isUnit_det r_basis
+  have h_diag_eq : P_mat⁻¹ * A * Q_mat = Matrix.diagonal a := by
+    rw [Matrix.mul_assoc, hmat_eq, ← Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hP_unit,
+      Matrix.one_mul]
+  exact exists_SL_diagonal_of_unit_diagonalization A P_mat Q_mat a hdet ha_ne hP_unit
+    hQ_unit h_diag_eq
+
+/-! ## The divisibility chain
+
+Bézout pivot steps on `2 × 2` blocks replace a pair of diagonal entries `a, b` by
+`gcd a b` and `(a / g) * (b / g) * g`, strictly decreasing the head entry unless it already
+divides `b`.  Iterating produces a diagonal in which each entry divides the next. -/
+
+private noncomputable def finEquivSum (k : ℕ) : Fin (k + 2) ≃ Fin 2 ⊕ Fin k :=
+  (Fin.castOrderIso (by omega : k + 2 = 2 + k)).toEquiv.trans finSumFinEquiv.symm
+
+private lemma gcd_2x2_det_L (a b : ℤ) (ha : 0 < a) :
+    let g : ℤ := ↑(a.gcd b); let s := a.gcdA b; let t := a.gcdB b
+    (!![s, t; -(b / g), a / g] : Matrix (Fin 2) (Fin 2) ℤ).det = 1 := by
+  simp only [det_fin_two_of, mul_neg, sub_neg_eq_add]
+  have hg_pos : (0 : ℤ) < ↑(a.gcd b) := by positivity
+  suffices h : (a.gcdA b * (a / ↑(a.gcd b)) + a.gcdB b * (b / ↑(a.gcd b))) * ↑(a.gcd b) =
+      1 * ↑(a.gcd b) from mul_right_cancel₀ (ne_of_gt hg_pos) h
+  rw [one_mul]
+  calc (a.gcdA b * (a / ↑(a.gcd b)) + a.gcdB b * (b / ↑(a.gcd b))) * ↑(a.gcd b)
+      = a.gcdA b * (a / ↑(a.gcd b) * ↑(a.gcd b)) +
+        a.gcdB b * (b / ↑(a.gcd b) * ↑(a.gcd b)) := by ring
+    _ = a.gcdA b * a + a.gcdB b * b := by
+        rw [Int.ediv_mul_cancel (Int.gcd_dvd_left a b),
+          Int.ediv_mul_cancel (Int.gcd_dvd_right a b)]
+    _ = a * a.gcdA b + b * a.gcdB b := by ring
+    _ = ↑(a.gcd b) := (Int.gcd_eq_gcd_ab a b).symm
+
+private lemma gcd_2x2_det_R (a b : ℤ) :
+    let g : ℤ := ↑(a.gcd b); let t := a.gcdB b; let q := b / g
+    (!![(1 : ℤ), -(t * q); 1, 1 - t * q] : Matrix (Fin 2) (Fin 2) ℤ).det = 1 := by
+  simp [det_fin_two]
+
+private lemma gcd_2x2_mul (a b : ℤ) :
+    let g : ℤ := ↑(a.gcd b); let s := a.gcdA b; let t := a.gcdB b
+    let p := a / g; let q := b / g
+    !![s, t; -q, p] * !![a, (0 : ℤ); 0, b] * !![1, -(t * q); 1, 1 - t * q] =
+    (!![g, 0; 0, p * q * g] : Matrix (Fin 2) (Fin 2) ℤ) := by
+  intro g s t p q
+  have hpg : p * g = a := Int.ediv_mul_cancel (Int.gcd_dvd_left a b)
+  have hqg : q * g = b := Int.ediv_mul_cancel (Int.gcd_dvd_right a b)
+  have hbez : s * a + t * b = g := by linarith [Int.gcd_eq_gcd_ab a b]
+  have h1 : !![s, t; -q, p] * (!![a, (0 : ℤ); 0, b] : Matrix (Fin 2) (Fin 2) ℤ) =
+      !![s * a, t * b; -(q * a), p * b] := by
+    ext i j; fin_cases i <;> fin_cases j <;>
+      simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, mul_apply, of_apply, cons_val',
+        cons_val_fin_one, cons_val_zero, cons_val_one, Fin.sum_univ_two, mul_zero, add_zero,
+        zero_add, neg_mul]
+  rw [h1]; ext i j; fin_cases i <;> fin_cases j <;>
+    simp only [Fin.zero_eta, Fin.isValue, Fin.mk_one, mul_apply, of_apply, cons_val',
+      cons_val_fin_one, cons_val_zero, cons_val_one, Fin.sum_univ_two, mul_one, mul_neg,
+      neg_mul, neg_neg]
+  · linarith
+  · have key : -(s * a * (t * q)) + t * b * (1 - t * q) =
+        (1 - (s * p + t * q)) * (t * q * g) := by rw [← hpg, ← hqg]; ring
+    rw [key]
+    have h2 : (1 - (s * p + t * q)) * g = 0 := by
+      have : (s * p + t * q) * g = g := by
+        calc (s * p + t * q) * g = s * (p * g) + t * (q * g) := by ring
+          _ = s * a + t * b := by rw [hpg, hqg]
+          _ = g := hbez
+      linarith
+    calc (1 - (s * p + t * q)) * (t * q * g) =
+          t * q * ((1 - (s * p + t * q)) * g) := by ring
+      _ = t * q * 0 := by rw [h2]
+      _ = 0 := by ring
+  · rw [← hpg, ← hqg]; ring
+  · rw [← hpg, ← hqg]; ring
+
+private lemma gcd_natAbs_le_left (a b : ℤ) (ha : 0 < a) :
+    (↑(a.gcd b) : ℤ).natAbs ≤ a.natAbs :=
+  Nat.le_of_dvd (Int.natAbs_pos.mpr (ne_of_gt ha))
+    (Int.natAbs_dvd_natAbs.mpr (Int.gcd_dvd_left a b))
+
+private lemma gcd_natAbs_lt_left_of_not_dvd (a b : ℤ) (ha : 0 < a) (hndvd : ¬ a ∣ b) :
+    (↑(a.gcd b) : ℤ).natAbs < a.natAbs :=
+  lt_of_le_of_ne (gcd_natAbs_le_left a b ha) (fun heq ↦ hndvd (by
+    have h1 : (↑(a.gcd b) : ℤ).natAbs = a.gcd b := by simp
+    have h2 : a.gcd b = a.natAbs := by omega
+    exact Int.natAbs_dvd_natAbs.mp (h2 ▸ Nat.gcd_dvd_right a.natAbs b.natAbs)))
+
+/-- Embedding a `2 × 2` left/right multiplication into `Fin (k + 2)` via an equivalence `e`:
+the block matrices `(fromBlocks L22 0 0 1).submatrix e e` act on `diagonal d` exactly as `L22`,
+`R22` act on the `2 × 2` head block (selected by `e.symm ∘ inl`), leaving the tail untouched. -/
+private lemma blockEmbed_mul_diagonal_eq (k : ℕ) (e : Fin (k + 2) ≃ Fin 2 ⊕ Fin k)
+    (d d' : Fin (k + 2) → ℤ) (L22 R22 H H' : Matrix (Fin 2) (Fin 2) ℤ)
+    (hH : Matrix.diagonal (fun i : Fin 2 ↦ (d ∘ e.symm) (Sum.inl i)) = H)
+    (hH' : Matrix.diagonal (fun i : Fin 2 ↦ (d' ∘ e.symm) (Sum.inl i)) = H')
+    (hmul : L22 * H * R22 = H')
+    (htail : ∀ i : Fin k, (d' ∘ e.symm) (Sum.inr i) = (d ∘ e.symm) (Sum.inr i))
+    (hsub : ∀ f : Fin (k + 2) → ℤ,
+      (Matrix.diagonal (f ∘ e.symm)).submatrix e e = Matrix.diagonal f) :
+    ((fromBlocks L22 0 0 (1 : Matrix (Fin k) (Fin k) ℤ)).submatrix e e) * Matrix.diagonal d *
+      ((fromBlocks R22 0 0 (1 : Matrix (Fin k) (Fin k) ℤ)).submatrix e e) =
+    Matrix.diagonal d' := by
+  rw [show Matrix.diagonal d = (Matrix.diagonal (d ∘ e.symm)).submatrix e e from (hsub d).symm]
+  simp only [Matrix.submatrix_mul_equiv]
+  rw [show Matrix.diagonal d' = (Matrix.diagonal (d' ∘ e.symm)).submatrix e e from (hsub d').symm]
+  congr 1
+  have hdecomp : ∀ f : Fin (k + 2) → ℤ, Matrix.diagonal (f ∘ e.symm) =
+      fromBlocks (Matrix.diagonal (fun i : Fin 2 ↦ (f ∘ e.symm) (Sum.inl i)))
+        0 0 (Matrix.diagonal (fun i : Fin k ↦ (f ∘ e.symm) (Sum.inr i))) := by
+    intro f; ext (i | i) (j | j) <;> simp [fromBlocks, diagonal_apply, Sum.elim, Function.comp]
+  rw [hdecomp d, fromBlocks_multiply]
+  simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, Matrix.one_mul]
+  rw [fromBlocks_multiply]
+  simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, Matrix.mul_one]
+  rw [hdecomp d']; congr 1
+  · rw [hH, hmul, hH']
+  · congr 1; ext i; exact (htail i).symm
+
+/-- The pivot step on positions `0` and `j₁` (chosen by an equivalence `e` sending
+`0 ↦ inl 0`, `j₁ ↦ inl 1`): conjugating `diagonal d` by the embedded Bézout matrices replaces the
+entries `a = d 0`, `b = d j₁` by `gcd a b` and `(a/g)(b/g)g`, leaving all other entries fixed. -/
+private lemma gcd_step_matrix_eq (k : ℕ) (e : Fin (k + 2) ≃ Fin 2 ⊕ Fin k) (j₁ : Fin (k + 2))
+    (d d' : Fin (k + 2) → ℤ) (a b : ℤ) (hda : d (0 : Fin (k + 2)) = a) (hdb : d j₁ = b)
+    (hd'0 : d' (0 : Fin (k + 2)) = ↑(a.gcd b))
+    (hd'j : d' j₁ = (a / ↑(a.gcd b)) * (b / ↑(a.gcd b)) * ↑(a.gcd b))
+    (hrest : ∀ i, i ≠ (0 : Fin (k + 2)) → i ≠ j₁ → d' i = d i)
+    (he0 : e.symm (Sum.inl (0 : Fin 2)) = (0 : Fin (k + 2)))
+    (he1 : e.symm (Sum.inl (1 : Fin 2)) = j₁)
+    (hinr0 : ∀ i : Fin k, e.symm (Sum.inr i) ≠ (0 : Fin (k + 2)))
+    (hinrj : ∀ i : Fin k, e.symm (Sum.inr i) ≠ j₁)
+    (hsub : ∀ f : Fin (k + 2) → ℤ,
+      (Matrix.diagonal (f ∘ e.symm)).submatrix e e = Matrix.diagonal f) :
+    ((fromBlocks !![a.gcdA b, a.gcdB b; -(b / ↑(a.gcd b)), a / ↑(a.gcd b)] 0 0
+        (1 : Matrix (Fin k) (Fin k) ℤ)).submatrix e e) * Matrix.diagonal d *
+      ((fromBlocks !![(1 : ℤ), -(a.gcdB b * (b / ↑(a.gcd b)));
+        1, 1 - a.gcdB b * (b / ↑(a.gcd b))] 0 0 (1 : Matrix (Fin k) (Fin k) ℤ)).submatrix e e) =
+    Matrix.diagonal d' := by
+  have hH : Matrix.diagonal (fun i : Fin 2 ↦ (d ∘ e.symm) (Sum.inl i)) =
+      !![a, (0 : ℤ); 0, b] := by
+    ext i m; fin_cases i <;> fin_cases m <;> simp [Function.comp, he0, he1, hda, hdb]
+  have hH' : Matrix.diagonal (fun i : Fin 2 ↦ (d' ∘ e.symm) (Sum.inl i)) =
+      !![↑(a.gcd b), (0 : ℤ); 0, (a / ↑(a.gcd b)) * (b / ↑(a.gcd b)) * ↑(a.gcd b)] := by
+    ext i m; fin_cases i <;> fin_cases m <;> simp [Function.comp, he0, he1, hd'0, hd'j]
+  exact blockEmbed_mul_diagonal_eq k e d d' _ _ _ _ hH hH' (gcd_2x2_mul a b)
+    (fun i ↦ by simp only [Function.comp]; exact hrest _ (hinr0 i) (hinrj i)) hsub
+
+private noncomputable def genEquiv (k : ℕ) (j : Fin (k + 2)) (_hj : j.val ≠ 0) :
+    Fin (k + 2) ≃ Fin 2 ⊕ Fin k :=
+  (Equiv.swap (⟨1, by omega⟩ : Fin (k + 2)) j).trans (finEquivSum k)
+
+private lemma diagonal_submatrix_genEquiv (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0)
+    (d : Fin (k + 2) → ℤ) : (Matrix.diagonal (d ∘ (genEquiv k j hj).symm)).submatrix
+    (genEquiv k j hj) (genEquiv k j hj) = Matrix.diagonal d := by
+  ext i m; simp [submatrix_apply, diagonal_apply]
+
+private lemma genEquiv_zero (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0) :
+    genEquiv k j hj ⟨0, by omega⟩ = Sum.inl ⟨0, by omega⟩ := by
+  simp only [genEquiv, Equiv.trans_apply]
+  rw [Equiv.swap_apply_of_ne_of_ne (by intro h; simp at h) (fun h ↦ hj (by rw [← h]))]
+  show finEquivSum k ⟨0, by omega⟩ = _
+  unfold finEquivSum; simp [Equiv.trans_apply, Fin.castOrderIso]; rfl
+
+private lemma genEquiv_j (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0) :
+    genEquiv k j hj j = Sum.inl ⟨1, by omega⟩ := by
+  simp only [genEquiv, Equiv.trans_apply, Equiv.swap_apply_right]
+  change finEquivSum k ⟨1, by omega⟩ = _; unfold finEquivSum
+  simp [Equiv.trans_apply, Fin.castOrderIso]; rfl
+
+private lemma genEquiv_symm_inl0 (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0) :
+    (genEquiv k j hj).symm (Sum.inl (0 : Fin 2)) = (0 : Fin (k + 2)) :=
+  (genEquiv k j hj).symm_apply_eq.mpr (genEquiv_zero k j hj).symm
+
+private lemma genEquiv_symm_inl1 (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0) :
+    (genEquiv k j hj).symm (Sum.inl (1 : Fin 2)) = j :=
+  (genEquiv k j hj).symm_apply_eq.mpr (genEquiv_j k j hj).symm
+
+private lemma genEquiv_symm_inr_ne_zero (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0) (i : Fin k) :
+    (genEquiv k j hj).symm (Sum.inr i) ≠ ⟨0, by omega⟩ := fun h ↦ by
+  have := Equiv.apply_symm_apply (genEquiv k j hj) (Sum.inr i)
+  rw [h, genEquiv_zero] at this; nomatch this
+
+private lemma genEquiv_symm_inr_ne_j (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0) (i : Fin k) :
+    (genEquiv k j hj).symm (Sum.inr i) ≠ j := fun h ↦ by
+  have := Equiv.apply_symm_apply (genEquiv k j hj) (Sum.inr i)
+  rw [h, genEquiv_j] at this; nomatch this
+
+private lemma gcd_step_general (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : ∀ i, 0 < d i)
+    (j : Fin (k + 2)) (hj : j.val ≠ 0) :
+    let a := d ⟨0, by omega⟩; let b := d j; let g : ℤ := ↑(a.gcd b)
+    ∃ (L R : SpecialLinearGroup (Fin (k + 2)) ℤ) (d' : Fin (k + 2) → ℤ),
+      (∀ i, 0 < d' i) ∧ d' ⟨0, by omega⟩ = g ∧
+      (∀ i, i ≠ ⟨0, by omega⟩ → i ≠ j → d' i = d i) ∧
+      (g.natAbs ≤ a.natAbs) ∧ (¬(a ∣ b) → g.natAbs < a.natAbs) ∧
+      (L : Matrix _ _ ℤ) * Matrix.diagonal d * (R : Matrix _ _ ℤ) = Matrix.diagonal d' := by
+  intro a b g
+  set e := genEquiv k j hj
+  set p := a / g; set q := b / g
+  set d' : Fin (k + 2) → ℤ := fun i ↦
+    if i = (0 : Fin (k + 2)) then g else if i = j then p * q * g else d i
+  have ha : 0 < a := hd ⟨0, by omega⟩; have hb : 0 < b := hd j
+  have hg_pos : (0 : ℤ) < g :=
+    Int.natCast_pos.mpr (Nat.gcd_pos_of_pos_left _ (Int.natAbs_pos.mpr (ne_of_gt ha)))
+  have hp_pos : 0 < p := Int.ediv_pos_of_pos_of_dvd ha (le_of_lt hg_pos) (Int.gcd_dvd_left a b)
+  have hq_pos : 0 < q := Int.ediv_pos_of_pos_of_dvd hb (le_of_lt hg_pos) (Int.gcd_dvd_right a b)
+  have hd'_pos : ∀ i, 0 < d' i := fun i ↦ by
+    simp only [d']; split_ifs <;> [exact hg_pos; positivity; exact hd i]
+  set L22 := !![a.gcdA b, a.gcdB b; -(b / g), a / g]
+  set R22 := !![(1 : ℤ), -(a.gcdB b * (b / g)); 1, 1 - a.gcdB b * (b / g)]
+  set L_big : Matrix (Fin (k + 2)) (Fin (k + 2)) ℤ :=
+    (fromBlocks L22 0 0 (1 : Matrix (Fin k) (Fin k) ℤ)).submatrix e e
+  set R_big : Matrix (Fin (k + 2)) (Fin (k + 2)) ℤ :=
+    (fromBlocks R22 0 0 (1 : Matrix (Fin k) (Fin k) ℤ)).submatrix e e
+  have hL_det_big : L_big.det = 1 := by
+    simp only [L_big]; rw [det_submatrix_equiv_self, det_fromBlocks_zero₂₁, det_one, mul_one,
+      gcd_2x2_det_L a b ha]
+  have hR_det_big : R_big.det = 1 := by
+    simp only [R_big]; rw [det_submatrix_equiv_self, det_fromBlocks_zero₂₁, det_one, mul_one,
+      gcd_2x2_det_R a b]
+  refine ⟨⟨L_big, hL_det_big⟩, ⟨R_big, hR_det_big⟩, d', hd'_pos,
+    by show d' ⟨0, _⟩ = g; simp [d'], ?_, ?_, ?_, ?_⟩
+  · intro i hi1 hi2; show d' i = d i
+    simp only [d']; rw [if_neg (show i ≠ (0 : Fin (k + 2)) from hi1), if_neg hi2]
+  · exact gcd_natAbs_le_left a b ha
+  · exact gcd_natAbs_lt_left_of_not_dvd a b ha
+  · change L_big * Matrix.diagonal d * R_big = Matrix.diagonal d'
+    refine gcd_step_matrix_eq k e j d d' a b rfl rfl rfl ?_ ?_
+      (by simp only [e]; exact genEquiv_symm_inl0 k j hj)
+      (by simp only [e]; exact genEquiv_symm_inl1 k j hj)
+      (fun i ↦ by simp only [e]; exact genEquiv_symm_inr_ne_zero k j hj i)
+      (fun i ↦ by simp only [e]; exact genEquiv_symm_inr_ne_j k j hj i)
+      (diagonal_submatrix_genEquiv k j hj)
+    · change (if j = (0 : Fin (k + 2)) then g else if j = j then p * q * g else d j) = _
+      rw [if_neg (fun h ↦ hj (by rw [h]; rfl)), if_pos rfl]
+    · intro i hi0 hij; simp only [d', if_neg hi0, if_neg hij]
+
+private lemma dvd_diag_of_SL_transform (m : ℕ) (d d' : Fin m → ℤ) (c : ℤ) (hc : ∀ i, c ∣ d i)
+    (L R : Matrix (Fin m) (Fin m) ℤ) (heq : L * Matrix.diagonal d * R = Matrix.diagonal d') :
+    ∀ i, c ∣ d' i := by
+  intro i; rw [show d' i = (Matrix.diagonal d') i i by simp, ← heq, mul_apply]
+  apply Finset.dvd_sum; intro k _; rw [mul_apply]; apply dvd_mul_of_dvd_left
+  apply Finset.dvd_sum; intro l _; simp only [diagonal_apply]; split_ifs with h
+  · subst h; exact dvd_mul_of_dvd_right (hc l) _
+  · simp
+
+private noncomputable def fin1Sum (k : ℕ) : Fin (k + 1) ≃ Fin 1 ⊕ Fin k :=
+  (Fin.castOrderIso (show k + 1 = 1 + k by omega)).toEquiv.trans finSumFinEquiv.symm
+
+private lemma fin1Sum_zero (k : ℕ) : fin1Sum k (0 : Fin (k + 1)) = Sum.inl (0 : Fin 1) := by
+  unfold fin1Sum; simp [Equiv.trans_apply, Fin.castOrderIso]; rfl
+
+private lemma fin1Sum_succ (k : ℕ) (i : Fin k) :
+    fin1Sum k ⟨i.val + 1, by omega⟩ = Sum.inr i := by
+  unfold fin1Sum; simp only [Equiv.trans_apply, Fin.castOrderIso]; rw [Equiv.symm_apply_eq]
+  simp only [finSumFinEquiv, Fin.addCases, Equiv.coe_fn_mk, Fin.cast_mk, Order.lt_one_iff,
+    Fin.val_eq_zero_iff, eq_rec_constant, Sum.elim_inr]
+  ext; simp only [Fin.val_natAdd]; omega
+
+private lemma fin1Sum_symm_inl (k : ℕ) :
+    (fin1Sum k).symm (Sum.inl (0 : Fin 1)) = (0 : Fin (k + 1)) :=
+  (fin1Sum k).symm_apply_eq.mpr (fin1Sum_zero k).symm
+
+private lemma fin1Sum_symm_inr (k : ℕ) (i : Fin k) :
+    (fin1Sum k).symm (Sum.inr i) = ⟨i.val + 1, by omega⟩ :=
+  (fin1Sum k).symm_apply_eq.mpr (fin1Sum_succ k i).symm
+
+private lemma diagonal_submatrix_fin1Sum (k : ℕ) (d : Fin (k + 1) → ℤ) :
+    (Matrix.diagonal (d ∘ (fin1Sum k).symm)).submatrix (fin1Sum k) (fin1Sum k) =
+    Matrix.diagonal d := by ext i m; simp [submatrix_apply, diagonal_apply]
+
+private lemma make_first_divide_all (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : ∀ i, 0 < d i) :
+    ∃ (d' : Fin (k + 2) → ℤ) (_ : ∀ i, 0 < d' i) (_ : ∀ j, d' (0 : Fin (k + 2)) ∣ d' j),
+    ∃ (L R : SpecialLinearGroup (Fin (k + 2)) ℤ),
+      (L : Matrix _ _ ℤ) * Matrix.diagonal d * (R : Matrix _ _ ℤ) = Matrix.diagonal d' := by
+  have ha_pos : 0 < d (0 : Fin (k + 2)) := hd 0
+  obtain ⟨N, hN⟩ : ∃ N, (d (0 : Fin (k + 2))).natAbs = N := ⟨_, rfl⟩
+  revert d hd ha_pos
+  induction N using Nat.strongRecOn with
+  | _ N ih =>
+    intro d hd ha_pos hN
+    by_cases hall : ∀ j, d (0 : Fin (k + 2)) ∣ d j
+    · exact ⟨d, hd, hall, 1, 1, by simp⟩
+    · push Not at hall
+      obtain ⟨j, hj_ndvd⟩ := hall
+      have hj_ne : j.val ≠ 0 := fun h ↦ hj_ndvd ((Fin.ext h : j = 0) ▸ dvd_refl _)
+      obtain ⟨L₁, R₁, d₁, hd₁_pos, hd₁_zero, hd₁_rest, _, hlt, hmul₁⟩ :=
+        gcd_step_general k d hd j hj_ne
+      have hN₁ : (d₁ (0 : Fin (k + 2))).natAbs < N := by
+        rw [show d₁ (0 : Fin (k + 2)) = d₁ ⟨0, by omega⟩ from rfl, hd₁_zero, ← hN]
+        exact hlt hj_ndvd
+      obtain ⟨d₂, hd₂_pos, hd₂_div, L₂, R₂, hmul₂⟩ :=
+        ih _ hN₁ d₁ hd₁_pos (hd₁_pos 0) rfl
+      refine ⟨d₂, hd₂_pos, hd₂_div, L₂ * L₁, R₁ * R₂, ?_⟩
+      simp only [SpecialLinearGroup.coe_mul]
+      rw [show ((L₂ : Matrix _ _ ℤ) * (L₁ : Matrix _ _ ℤ)) * Matrix.diagonal d *
+        ((R₁ : Matrix _ _ ℤ) * (R₂ : Matrix _ _ ℤ)) = (L₂ : Matrix _ _ ℤ) *
+        ((L₁ : Matrix _ _ ℤ) * Matrix.diagonal d * (R₁ : Matrix _ _ ℤ)) * (R₂ : Matrix _ _ ℤ)
+        by simp [Matrix.mul_assoc], hmul₁, hmul₂]
+
+private noncomputable def slSuccEmbed {k : ℕ} (M : SpecialLinearGroup (Fin (k + 1)) ℤ) :
+    SpecialLinearGroup (Fin (k + 2)) ℤ := by
+  let e := fin1Sum (k + 1)
+  refine ⟨(fromBlocks (1 : Matrix (Fin 1) (Fin 1) ℤ) 0 0
+    (M : Matrix (Fin (k + 1)) (Fin (k + 1)) ℤ)).submatrix e e, ?_⟩
+  rw [det_submatrix_equiv_self, det_fromBlocks_zero₂₁, det_one, one_mul, M.prop]
+
+private lemma slSuccEmbed_mul_diagonal (k : ℕ) (d : Fin (k + 2) → ℤ)
+    (L R : SpecialLinearGroup (Fin (k + 1)) ℤ) (d'_tail : Fin (k + 1) → ℤ) (hmul :
+    (L : Matrix _ _ ℤ) * Matrix.diagonal (fun i : Fin (k + 1) ↦ d ⟨i.val + 1, by omega⟩) *
+    (R : Matrix _ _ ℤ) = Matrix.diagonal d'_tail) :
+    let d_out : Fin (k + 2) → ℤ := fun i ↦
+      if i = (0 : Fin (k + 2)) then d 0 else d'_tail ⟨i.val - 1, by omega⟩
+    (slSuccEmbed L : Matrix _ _ ℤ) * Matrix.diagonal d *
+      (slSuccEmbed R : Matrix _ _ ℤ) = Matrix.diagonal d_out := by
+  intro d_out
+  set e := fin1Sum (k + 1)
+  have he_inl : e.symm (Sum.inl (0 : Fin 1)) = (0 : Fin (k + 2)) := fin1Sum_symm_inl (k + 1)
+  have he_inr : ∀ i : Fin (k + 1), e.symm (Sum.inr i) = ⟨i.val + 1, by omega⟩ :=
+    fin1Sum_symm_inr (k + 1)
+  rw [show Matrix.diagonal d = (Matrix.diagonal (d ∘ e.symm)).submatrix e e
+      from (diagonal_submatrix_fin1Sum (k + 1) d).symm]
+  change (fromBlocks 1 0 0 (L : Matrix _ _ ℤ)).submatrix e e *
+    (Matrix.diagonal (d ∘ e.symm)).submatrix e e *
+    (fromBlocks 1 0 0 (R : Matrix _ _ ℤ)).submatrix e e = _
+  simp only [Matrix.submatrix_mul_equiv]
+  have h_decomp : Matrix.diagonal (d ∘ e.symm) =
+      fromBlocks (Matrix.diagonal (fun _ : Fin 1 ↦ d 0))
+        0 0 (Matrix.diagonal (fun i : Fin (k + 1) ↦ d ⟨i.val + 1, by omega⟩)) := by
+    ext (i | i) (j | j)
+    · fin_cases i; fin_cases j; simp [fromBlocks, Function.comp, he_inl]
+    · simp [fromBlocks]
+    · simp [fromBlocks]
+    · simp [fromBlocks, diagonal_apply, Function.comp, he_inr]
+  rw [h_decomp]
+  rw [fromBlocks_multiply]; simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add,
+    Matrix.one_mul]
+  rw [fromBlocks_multiply]; simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add,
+    Matrix.mul_one]
+  rw [show Matrix.diagonal d_out = (Matrix.diagonal (d_out ∘ e.symm)).submatrix e e
+      from (diagonal_submatrix_fin1Sum (k + 1) d_out).symm]; congr 1
+  have h_out_decomp : Matrix.diagonal (d_out ∘ e.symm) =
+      fromBlocks (Matrix.diagonal (fun _ : Fin 1 ↦ d 0)) 0 0 (Matrix.diagonal d'_tail) := by
+    ext (i | i) (j | j)
+    · fin_cases i; fin_cases j; simp [fromBlocks, Function.comp, d_out, he_inl]
+    · simp [fromBlocks]
+    · simp [fromBlocks]
+    · simp [fromBlocks, diagonal_apply, Function.comp, d_out, he_inr]
+  rw [h_out_decomp, hmul]
+
+/-- Prepending a head entry `c` that divides every entry of `d_tail'` to a divisibility chain
+again yields a divisibility chain: the head step is `c ∣ d_tail' 0`, the later steps are the
+tail chain. -/
+private lemma divChain_prepend (k : ℕ) (c : ℤ) (d_tail' : Fin (k + 1) → ℤ)
+    (hc : ∀ i, c ∣ d_tail' i)
+    (htail : ∀ (i : ℕ) (hi : i + 1 < k + 1), d_tail' ⟨i, by omega⟩ ∣ d_tail' ⟨i + 1, hi⟩)
+    (i : ℕ) (hi : i + 1 < k + 2) :
+    (if (⟨i, by omega⟩ : Fin (k + 2)) = 0 then c else d_tail' ⟨i - 1, by omega⟩) ∣
+    (if (⟨i + 1, hi⟩ : Fin (k + 2)) = 0 then c else d_tail' ⟨i + 1 - 1, by omega⟩) := by
+  cases i with
+  | zero =>
+    rw [if_pos (show (⟨0, by omega⟩ : Fin (k + 2)) = 0 from rfl),
+      if_neg (show (⟨1, hi⟩ : Fin (k + 2)) ≠ 0 from
+        fun h ↦ absurd (Fin.ext_iff.mp h) (by simp))]
+    exact hc ⟨0, by omega⟩
+  | succ i =>
+    rw [if_neg (show (⟨i + 1, by omega⟩ : Fin (k + 2)) ≠ 0 from
+        fun h ↦ absurd (Fin.ext_iff.mp h) (by simp)),
+      if_neg (show (⟨i + 2, hi⟩ : Fin (k + 2)) ≠ 0 from
+        fun h ↦ absurd (Fin.ext_iff.mp h) (by simp))]
+    change d_tail' ⟨i, by omega⟩ ∣ d_tail' ⟨i + 1, by omega⟩
+    exact htail i (by omega)
+
+private lemma exists_divChain_of_pos_diagonal (d : Fin n → ℤ) (hd : ∀ i, 0 < d i) :
+    ∃ (d' : Fin n → ℤ) (_ : ∀ i, 0 < d' i)
+      (_ : ∀ (i : ℕ) (hi : i + 1 < n), d' ⟨i, by omega⟩ ∣ d' ⟨i + 1, hi⟩),
+    ∃ (L R : SpecialLinearGroup (Fin n) ℤ),
+      (L : Matrix (Fin n) (Fin n) ℤ) * Matrix.diagonal d *
+        (R : Matrix (Fin n) (Fin n) ℤ) = Matrix.diagonal d' := by
+  suffices h : ∀ (m : ℕ) (d : Fin m → ℤ), (∀ i, 0 < d i) →
+    ∃ (d' : Fin m → ℤ) (_ : ∀ i, 0 < d' i)
+      (_ : ∀ (i : ℕ) (hi : i + 1 < m), d' ⟨i, by omega⟩ ∣ d' ⟨i + 1, hi⟩),
+    ∃ (L R : SpecialLinearGroup (Fin m) ℤ),
+      (L : Matrix (Fin m) (Fin m) ℤ) * Matrix.diagonal d *
+        (R : Matrix (Fin m) (Fin m) ℤ) = Matrix.diagonal d' from h n d hd
+  intro m
+  induction m with
+  | zero =>
+    intro d hd
+    exact ⟨d, hd, fun i hi ↦ by omega, 1, 1, by simp⟩
+  | succ m ih =>
+    cases m with
+    | zero =>
+      intro d hd
+      exact ⟨d, hd, fun i hi ↦ by omega, 1, 1, by simp⟩
+    | succ k =>
+      intro d hd
+      obtain ⟨d₁, hd₁_pos, hd₁_div, L₁, R₁, hmul₁⟩ := make_first_divide_all k d hd
+      obtain ⟨d_tail', hd_tail'_pos, hd_tail'_chain, L_tail, R_tail, hmul_tail⟩ :=
+        ih (fun i : Fin (k + 1) ↦ d₁ ⟨i.val + 1, by omega⟩)
+          (fun i ↦ hd₁_pos ⟨i.val + 1, by omega⟩)
+      set d₂ : Fin (k + 2) → ℤ := fun i ↦
+        if i = (0 : Fin (k + 2)) then d₁ 0
+        else d_tail' ⟨i.val - 1, by omega⟩
+      have hd₂_pos : ∀ i, 0 < d₂ i := by
+        intro i; simp only [d₂]; split_ifs <;> [exact hd₁_pos 0; exact hd_tail'_pos _]
+      have hd₂_chain : ∀ (i : ℕ) (hi : i + 1 < k + 2),
+          d₂ ⟨i, by omega⟩ ∣ d₂ ⟨i + 1, hi⟩ :=
+        divChain_prepend k (d₁ 0) d_tail'
+          (dvd_diag_of_SL_transform (k + 1) (fun i : Fin (k + 1) ↦ d₁ ⟨i.val + 1, by omega⟩)
+            d_tail' (d₁ 0) (fun i ↦ hd₁_div ⟨i.val + 1, by omega⟩)
+            (L_tail : Matrix _ _ ℤ) (R_tail : Matrix _ _ ℤ) hmul_tail) hd_tail'_chain
+      refine ⟨d₂, hd₂_pos, hd₂_chain, slSuccEmbed L_tail * L₁, R₁ * slSuccEmbed R_tail, ?_⟩
+      simp only [SpecialLinearGroup.coe_mul]
+      rw [show ((slSuccEmbed L_tail : Matrix _ _ ℤ) * (L₁ : Matrix _ _ ℤ)) * Matrix.diagonal d *
+        ((R₁ : Matrix _ _ ℤ) * (slSuccEmbed R_tail : Matrix _ _ ℤ)) =
+        (slSuccEmbed L_tail : Matrix _ _ ℤ) * ((L₁ : Matrix _ _ ℤ) * Matrix.diagonal d *
+        (R₁ : Matrix _ _ ℤ)) * (slSuccEmbed R_tail : Matrix _ _ ℤ)
+        by simp [Matrix.mul_assoc], hmul₁,
+        slSuccEmbed_mul_diagonal k d₁ L_tail R_tail d_tail' hmul_tail]
+
+/-- Successive divisibility upgrades to divisibility along any `i ≤ j`. -/
+private lemma dvd_of_le_of_chain {d : Fin n → ℤ}
+    (hchain : ∀ (i : ℕ) (hi : i + 1 < n), d ⟨i, by omega⟩ ∣ d ⟨i + 1, hi⟩)
+    {i j : Fin n} (hij : i ≤ j) : d i ∣ d j := by
+  suffices h : ∀ (t : ℕ) (ht : i.val + t < n), d i ∣ d ⟨i.val + t, ht⟩ by
+    simpa [Nat.add_sub_cancel' (Fin.val_le_of_le hij)] using h (j.val - i.val) (by omega)
+  intro t
+  induction t with
+  | zero => intro ht; exact dvd_rfl
+  | succ m ih => exact fun ht ↦ dvd_trans (ih (by omega)) (hchain (i.val + m) ht)
+
+/-- **Smith normal form over `ℤ` with special linear transformations.** Every square integer
+matrix `A` with positive determinant can be brought to diagonal form by determinant-one row and
+column operations, with positive diagonal entries each dividing the next (the elementary
+divisors of `A`). -/
+theorem exists_smith_normal_form_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hA : 0 < A.det) :
+    ∃ (L R : SpecialLinearGroup (Fin n) ℤ) (d : Fin n → ℤ), (∀ i, 0 < d i) ∧
+      (∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j) ∧
+      (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
+        Matrix.diagonal d := by
+  obtain ⟨d₀, hd₀_pos, L₀, R₀, hLR₀⟩ := exists_diagonal_of_det_pos A hA
+  obtain ⟨d, hd_pos, hd_chain, L₁, R₁, hLR₁⟩ := exists_divChain_of_pos_diagonal d₀ hd₀_pos
+  refine ⟨L₁ * L₀, R₀ * R₁, d, hd_pos, fun i j hij ↦ dvd_of_le_of_chain hd_chain hij, ?_⟩
+  change (↑(L₁ * L₀) : Matrix _ _ ℤ) * A * (↑(R₀ * R₁) : Matrix _ _ ℤ) = Matrix.diagonal d
+  simp only [SpecialLinearGroup.coe_mul]
+  calc (↑L₁ : Matrix _ _ ℤ) * ↑L₀ * A * (↑R₀ * ↑R₁)
+      = ↑L₁ * (↑L₀ * A * ↑R₀) * ↑R₁ := by simp only [Matrix.mul_assoc]
+    _ = ↑L₁ * Matrix.diagonal d₀ * ↑R₁ := by rw [hLR₀]
+    _ = Matrix.diagonal d := hLR₁
+
+end Matrix
