@@ -356,10 +356,11 @@ lemma eqOn_fdBoundary_segment5 (H : ℝ) : EqOn (fdBoundary H) (fdBoundary_segme
 private lemma fdBoundary_piece1 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 0 1) :=
   (contDiff_fdBoundary_segment1 H).contDiffOn.congr (eqOn_fdBoundary_segment1 H)
 
-private lemma fdBoundary_piece13 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 1 3) := by
-  have h_arc : ContDiff ℝ 1 fun s : ℝ ↦ circleMap 0 1 ((s + 1) * (Real.pi / 6)) :=
-    (contDiff_circleMap 0 1).comp (by fun_prop)
-  refine h_arc.contDiffOn.congr fun t ht ↦ ?_
+/-- On `[1, 3]` the path agrees with the unified unit-circle arc of angle `(t + 1)·π/6`:
+the two arc segments continue one smooth circle parameterization. -/
+lemma eqOn_fdBoundary_arc (H : ℝ) :
+    EqOn (fdBoundary H) (fun s : ℝ ↦ circleMap 0 1 ((s + 1) * (Real.pi / 6))) (Icc 1 3) := by
+  intro t ht
   rcases le_or_gt t 2 with h2 | h2
   · rcases eq_or_lt_of_le ht.1 with h1 | h1
     · rw [← h1, fdBoundary_apply_one, ← fdBoundary_segment2_apply_one,
@@ -372,6 +373,9 @@ private lemma fdBoundary_piece13 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Ic
   · rw [fdBoundary_of_le_three h2 ht.2, fdBoundary_segment3_apply]
     congr 1
     ring
+
+private lemma fdBoundary_piece13 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 1 3) :=
+  (((contDiff_circleMap 0 1).comp (by fun_prop)).contDiffOn).congr (eqOn_fdBoundary_arc H)
 
 private lemma fdBoundary_piece4 (H : ℝ) : ContDiffOn ℝ 1 (fdBoundary H) (Icc 3 4) :=
   (contDiff_fdBoundary_segment4 H).contDiffOn.congr (eqOn_fdBoundary_segment4 H)
