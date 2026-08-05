@@ -1,0 +1,518 @@
+/-
+Copyright (c) 2024 Chris Birkbeck. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Chris Birkbeck
+-/
+module
+
+public import TauCeti.NumberTheory.HeckeRing.LeftCosetModule
+public import Mathlib.Data.Finsupp.Weight
+public import TauCeti.NumberTheory.HeckeRing.Associativity
+import Mathlib.Tactic.Group
+
+/-!
+# Hecke rings: the degree homomorphism
+
+The degree of a double coset `HgH = ⊔ᵢ σᵢgH` is the number of left cosets in its
+decomposition, `deg(HgH) = [H : H ∩ gHg⁻¹]`. Extended linearly it gives the degree
+homomorphism `deg : 𝕋 Δ H R →+* R` of the Hecke ring (Proposition 3.3 of
+[Shimura][shimura1971]). Multiplicativity is proved through the module of left cosets:
+`deg f` is the coefficient sum of `f • [H]`, and the action satisfies the compatibility law
+`op (f * g) • m = op g • (op f • m)` — `mul_smul` of the opposite ring
+(Proposition 3.4) — so the coefficient sum multiplies.
+
+Ported from the AINTLIB `LeanModularForms` project
+(`HeckeRIngs/AbstractHeckeRing/Degree.lean` and the compatibility law of
+`HeckeRIngs/AbstractHeckeRing/Associativity.lean`,
+<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), per the
+ModularForms roadmap's dependency policy; the compatibility law is stated as a plain lemma
+(the `Module (𝕋 Δ H R)ᵐᵒᵖ` instance) rather than through AINTLIB's reversed scalar
+action.
+
+## Main definitions
+
+* `HeckeCoset.degree D`: the number of left cosets in the decomposition of `D`.
+* `LeftCosetModule.deg`: the degree homomorphism `𝕋 Δ H R →+* R`, built on Mathlib's
+  coefficient sum `Finsupp.degree` of the left-coset module.
+
+## Main results
+
+* `HeckeCoset.smulOrbit_rep_card`: the orbit of a left coset under `D` has `D.degree`
+  elements.
+* `LeftCosetModule.card_filter_orbit_eq_multiplicity` (private): Shimura's pair
+  count, the combinatorial core.
+* `LeftCosetModule.degree_single_smul_single`, `LeftCosetModule.degree_smul`: the
+  coefficient sum against the scalar operations — the bridge to the degree.
+* `LeftCosetModule.deg_single`, `RingHom` laws of `deg`: Proposition 3.3.
+* `LeftCosetModule.instModuleOp`: the opposite Hecke ring acts on the left-coset
+  module — Shimura's right action through the standard `Module` API.
+-/
+
+public section
+
+open DoubleCoset Subgroup
+
+variable {G : Type*} [Group G] {Δ : Submonoid G} {H : Subgroup G}
+
+namespace HeckeCoset
+
+variable [IsHeckeTriple Δ H H]
+
+/-- The degree of a double coset: the number of left cosets `σᵢgH` in the decomposition
+`HgH = ⊔ᵢ σᵢgH`, i.e. `[H : H ∩ gHg⁻¹]`. -/
+noncomputable def degree (D : HeckeCoset Δ H H) : ℕ :=
+  Fintype.card (DecompQuotient H H (D.rep : G))
+
+/-- The defining equation of `degree`. -/
+lemma degree_def (D : HeckeCoset Δ H H) :
+    D.degree = Fintype.card (DecompQuotient H H (D.rep : G)) :=
+  (rfl)
+
+/-- Every double coset has positive degree. -/
+lemma degree_pos (D : HeckeCoset Δ H H) : 0 < D.degree :=
+  Fintype.card_pos
+
+open scoped Pointwise in
+/-- The degree as a relative index: `deg(HgH) = [H : H ∩ gHg⁻¹]`.  This is the form in
+which concrete degree computations identify the count with a congruence-subgroup index. -/
+lemma degree_eq_relIndex (D : HeckeCoset Δ H H) :
+    D.degree = (ConjAct.toConjAct (D.rep : G) • H).relIndex H :=
+  (Nat.card_eq_fintype_card).symm
+
+/-- The identity double coset has degree one. -/
+@[simp] lemma degree_one : (1 : HeckeCoset Δ H H).degree = 1 := by
+  have hsub : Subsingleton (DecompQuotient H H ((1 : HeckeCoset Δ H H).rep : G)) :=
+    subsingleton_decompQuotient_of_mem (rep_one_mem)
+  exact Fintype.card_eq_one_iff_nonempty_unique.mpr
+    ⟨uniqueOfSubsingleton (Classical.arbitrary _)⟩
+
+end HeckeCoset
+
+namespace HeckeCoset
+
+variable [IsHeckeTriple Δ H H]
+
+/-- The orbit of a left coset under the representative of `D` has `D.degree` elements. -/
+lemma smulOrbit_rep_card (D : HeckeCoset Δ H H) (β : Δ) :
+    (smulOrbit H D.rep β).card = D.degree :=
+  smulOrbit_card D.rep β
+
+end HeckeCoset
+
+namespace LeftCosetModule
+
+open HeckeCoset
+
+open scoped HeckeCosetModule
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
+
+/-- The coefficient sum of the action of a ring basis element on a module basis element:
+the degree of the double coset appears as the orbit size. -/
+lemma degree_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b : R) :
+    Finsupp.degree (MulOpposite.op (HeckeCosetModule.single R D a) •
+      Finsupp.single q b) = (D.degree : ℕ) • (b * a) := by
+  classical
+  rw [single_smul_single, map_sum]
+  simp [smulOrbit_rep_card]
+
+end LeftCosetModule
+
+namespace LeftCosetModule
+
+open HeckeCoset
+
+open scoped HeckeCosetModule
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
+
+/-- The action is `R`-homogeneous in the Hecke-ring argument; over the opposite-ring
+action the scalar crosses the reversed product, so commutativity is required. -/
+lemma smul_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
+    MulOpposite.op (r • t) • m = r • (MulOpposite.op t • m) := by
+  classical
+  simp only [smul_eq_sum]
+  refine (Finsupp.sum_smul_index fun D ↦ ?_).trans ?_
+  · exact Finsupp.sum_congr (g2 := fun _ _ ↦ 0) (fun q _ ↦ Finset.sum_eq_zero fun i _ ↦ by
+      simp) |>.trans (Finsupp.sum_fun_zero m)
+  · refine Eq.trans (Finsupp.sum_congr fun D b₁ ↦ ?_) Finsupp.smul_sum.symm
+    refine Eq.trans (Finsupp.sum_congr fun q b₂ ↦ ?_) Finsupp.smul_sum.symm
+    rw [Finset.smul_sum]
+    exact Finset.sum_congr rfl fun i _ ↦ by
+      rw [Finsupp.smul_single, smul_eq_mul]
+      exact congrArg _ (mul_left_comm _ _ _)
+
+end LeftCosetModule
+
+namespace LeftCosetModule
+
+open HeckeCoset
+
+open scoped HeckeCosetModule
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
+
+/-- Over a commutative semiring, the action commutes with scalars in the module
+argument. -/
+lemma smul_comm' (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
+    MulOpposite.op t • (r • m) = r • (MulOpposite.op t • m) := by
+  classical
+  simp only [smul_eq_sum]
+  refine Eq.trans (Finsupp.sum_congr fun D b₁ ↦ ?_) Finsupp.smul_sum.symm
+  refine Eq.trans (Finsupp.sum_smul_index fun q ↦ ?_) ?_
+  · exact Finset.sum_eq_zero fun i _ ↦ by simp
+  · refine Eq.trans (Finsupp.sum_congr fun q b₂ ↦ ?_) Finsupp.smul_sum.symm
+    rw [Finset.smul_sum]
+    refine Finset.sum_congr rfl fun i _ ↦ ?_
+    rw [Finsupp.smul_single, smul_eq_mul]
+    exact congrArg _ (by ring)
+
+end LeftCosetModule
+
+namespace LeftCosetModule
+
+open HeckeCoset
+
+open scoped HeckeCosetModule Pointwise
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
+
+/-- Iterated action of two basis elements of the Hecke ring on a basis element of the
+module: the double sum over the two orbit layers. -/
+private lemma single_smul_single_smul (D₁ D₂ : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H)
+    (a b c : R) :
+    MulOpposite.op (HeckeCosetModule.single R D₂ b) •
+        (MulOpposite.op (HeckeCosetModule.single R D₁ a) •
+          (Finsupp.single q c : LeftCosetModule Δ H R)) =
+      ∑ i ∈ smulOrbit H D₁.rep q.rep, ∑ j ∈ smulOrbit H D₂.rep i.rep,
+        Finsupp.single j (c * a * b) := by
+  rw [single_smul_single, Finset.smul_sum]
+  exact Finset.sum_congr rfl fun i _ ↦ single_smul_single D₂ i b (c * a)
+
+/-- Expansion of the action of a structure-constants element: the multiplicity-weighted
+orbit sums. -/
+private lemma structureConstants_smul_single (D₁ D₂ : HeckeCoset Δ H H)
+    (q : HeckeCoset Δ ⊥ H) (c : R) :
+    MulOpposite.op (HeckeCosetModule.structureConstants R H H H D₁.rep D₂.rep) •
+        (Finsupp.single q c : LeftCosetModule Δ H R) =
+      (HeckeCosetModule.structureConstants R H H H D₁.rep D₂.rep).sum fun D mD ↦
+        ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (c * mD) := by
+  rw [smul_eq_sum]
+  exact Finsupp.sum_congr fun D _ ↦ Finsupp.sum_single_index (by simp)
+
+omit [IsHeckeTriple Δ H H] in
+open Classical in
+/-- Evaluating a sum of distinct basis singles: the indicator coefficient. -/
+private lemma sum_single_apply (s : Finset (HeckeCoset Δ ⊥ H)) (v : R)
+    (x : HeckeCoset Δ ⊥ H) :
+    (∑ i ∈ s, Finsupp.single i v : LeftCosetModule Δ H R) x = if x ∈ s then v else 0 := by
+  classical
+  rw [Finset.sum_apply']
+  simp only [Finsupp.single_apply]
+  rw [Finset.sum_ite_eq' s x fun _ ↦ v]
+
+open Classical in
+/-- Coefficient of the double orbit sum at a left coset: the number of intermediate cosets
+whose second-layer orbit contains it. -/
+private lemma sum_sum_single_apply (g₁ g₂ β : Δ) (c : R) (x : HeckeCoset Δ ⊥ H) :
+    (∑ i ∈ smulOrbit H g₁ β, ∑ j ∈ smulOrbit H g₂ i.rep,
+        Finsupp.single j c : LeftCosetModule Δ H R) x =
+      ((smulOrbit H g₁ β).filter fun i ↦ x ∈ smulOrbit H g₂ i.rep).card • c := by
+  rw [Finset.sum_apply']
+  calc ∑ i ∈ smulOrbit H g₁ β, (∑ j ∈ smulOrbit H g₂ i.rep, Finsupp.single j c) x
+      = ∑ i ∈ smulOrbit H g₁ β, if x ∈ smulOrbit H g₂ i.rep then c else 0 :=
+        Finset.sum_congr rfl fun i _ ↦ sum_single_apply _ c x
+    _ = _ := by rw [← Finset.sum_filter, Finset.sum_const]
+
+open Classical in
+/-- Coefficient of a multiplicity-weighted orbit sum at a left coset: the weight of the
+unique double coset whose orbit contains it, if any. -/
+private lemma sum_smulOrbit_single_apply (t : 𝕋 Δ H R) (β : Δ) (c : R)
+    (x : HeckeCoset Δ ⊥ H) :
+    ((t.sum fun D mD ↦ ∑ i ∈ smulOrbit H D.rep β, Finsupp.single i (c * mD)) :
+        LeftCosetModule Δ H R) x =
+      t.sum fun D mD ↦ if x ∈ smulOrbit H D.rep β then c * mD else 0 := by
+  exact Finsupp.sum_apply.trans (Finsupp.sum_congr fun D _ ↦ sum_single_apply _ _ x)
+
+/-- A left coset lies in the orbit of at most one double coset. -/
+private lemma eq_of_mem_smulOrbit {g₁ g₂ β : Δ} {x : HeckeCoset Δ ⊥ H}
+    (h₁ : x ∈ smulOrbit H g₁ β) (h₂ : x ∈ smulOrbit H g₂ β) :
+    HeckeCoset.mk H H g₁ = HeckeCoset.mk H H g₂ := by
+  by_contra hne
+  exact Finset.disjoint_left.mp (smulOrbit_disjoint β hne) h₁ h₂
+
+open Classical in
+/-- The weighted orbit indicator collapses to the containing double coset's weight. -/
+private lemma sum_ite_orbit_eq (t : 𝕋 Δ H R) (β : Δ) (c : R) {x : HeckeCoset Δ ⊥ H}
+    {D₀ : HeckeCoset Δ H H} (hx : x ∈ smulOrbit H D₀.rep β) :
+    (t.sum fun D mD ↦ if x ∈ smulOrbit H D.rep β then c * mD else 0) = c * t D₀ := by
+  refine (Finsupp.sum_eq_single D₀ (fun D _ hne ↦ ?_) (fun _ ↦ by simp)).trans (if_pos hx)
+  rw [if_neg]
+  intro hmem
+  exact hne (by
+    have h := eq_of_mem_smulOrbit hmem hx
+    rwa [HeckeCoset.mk_rep, HeckeCoset.mk_rep] at h)
+
+open Classical in
+/-- Membership in the orbit through the canonical representative: `x` lies in the orbit of
+`g` on `w` iff `w⁻¹ · x.rep` lies in the double coset `HgH`. -/
+private lemma mem_smulOrbit_iff_rep {g w : Δ} {x : HeckeCoset Δ ⊥ H} :
+    x ∈ smulOrbit H g w ↔
+      ((w : G))⁻¹ * ((x.rep : Δ) : G) ∈ doubleCoset (g : G) (H : Set G) H := by
+  constructor
+  · intro hx
+    obtain ⟨i, hi⟩ := mem_smulOrbit.mp hx
+    have hrep := mk_bot_eq_mk_bot.mp ((HeckeCoset.mk_rep x).trans hi.symm)
+    -- hrep : x.rep⁻¹ · (w·σᵢ·g) ∈ H, so w⁻¹·x.rep = σᵢ·g·(w·σᵢ·g)⁻¹·x.rep with σᵢ ∈ H
+    refine mem_doubleCoset.mpr ⟨(i.out : G), i.out.2,
+      (((x.rep : Δ) : G)⁻¹ * ((w : G) * (i.out : G) * (g : G)))⁻¹, H.inv_mem hrep, by group⟩
+  · intro hmem
+    obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := mem_doubleCoset.mp hmem
+    set i : DecompQuotient H H (g : G) := QuotientGroup.mk ⟨h₁, hh₁⟩ with hi
+    obtain ⟨n, hn⟩ := QuotientGroup.mk_out_eq_mul
+      ((ConjAct.toConjAct (g : G) • H).subgroupOf H) (⟨h₁, hh₁⟩ : H)
+    have hout : ((i.out : H) : G) = h₁ * n := by
+      rw [hi]
+      simpa [Subgroup.coe_mul] using congrArg (Subtype.val : H → G) hn
+    refine mem_smulOrbit.mpr ⟨i, ?_⟩
+    rw [← HeckeCoset.mk_rep x]
+    refine mk_bot_eq_mk_bot.mpr ?_
+    -- as in `smulOrbit_subset`, the setoid membership is stated through the coercions
+    change ((w : G) * ((i.out : H) : G) * (g : G))⁻¹ * ((x.rep : Δ) : G) ∈ H
+    have key : ((w : G) * ((i.out : H) : G) * (g : G))⁻¹ * ((x.rep : Δ) : G) =
+        ((g : G)⁻¹ * (n : G)⁻¹ * g) * h₂ := by
+      have hx : ((x.rep : Δ) : G) = (w : G) * (h₁ * (g : G) * h₂) := by
+        rw [← heq]; group
+      rw [hout, hx]
+      group
+    rw [key]
+    exact H.mul_mem
+      (by simpa [mul_assoc] using H.inv_mem (DoubleCoset.conj_mem_of_stabilizer (g : G) n)) hh₂
+
+open Classical in
+/-- **Shimura's pair count** (the heart of Proposition 3.4): for a left coset in the orbit
+of `D₀`, the number of intermediate cosets of the `D₁`-orbit whose `D₂`-orbit contains it
+is the multiplicity of `D₀` in the product `D₁ * D₂`. -/
+private lemma card_filter_orbit_eq_multiplicity {D₁ D₂ D₀ : HeckeCoset Δ H H} {β : Δ}
+    {x : HeckeCoset Δ ⊥ H} (hx : x ∈ smulOrbit H D₀.rep β) :
+    ((smulOrbit H D₁.rep β).filter fun i ↦ x ∈ smulOrbit H D₂.rep i.rep).card =
+      multiplicity H H H (D₁.rep : G) (D₂.rep : G) (D₀.rep : G) := by
+  classical
+  rw [← multiplicity_doubleCoset_congr (D₁.rep : G) (D₂.rep : G)
+      (mem_smulOrbit_iff_rep.mp hx),
+    multiplicity_eq_card_filter, Nat.card_eq_fintype_card, Fintype.card_subtype,
+    smulOrbit_eq_image, Finset.filter_image,
+    Finset.card_image_of_injective _ (smulOrbit_map_injective D₁.rep β)]
+  refine congrArg Finset.card (Finset.filter_congr fun i _ ↦ ?_)
+  -- normalize the basepoint: peel `β` off the product so both sides quotient at `i·g₁`
+  have hbase : ((β : G) * (i.out : G) * ((D₁.rep : Δ) : G))⁻¹ * ((x.rep : Δ) : G) =
+      ((i.out : G) * ((D₁.rep : Δ) : G))⁻¹ * ((β : G)⁻¹ * ((x.rep : Δ) : G)) := by group
+  rw [smulOrbit_congr D₂.rep (HeckeCoset.mk_rep _), mem_smulOrbit_iff_rep, hbase]
+  exact Iff.rfl
+
+/-- Iterated orbit membership factors through a single orbit at the original base: the
+witnessing double coset is that of `β⁻¹ · x.rep`. -/
+private lemma exists_orbit_of_mem_orbit_orbit {g₁ g₂ β : Δ} {x i : HeckeCoset Δ ⊥ H}
+    (hi : i ∈ smulOrbit H g₁ β) (hx : x ∈ smulOrbit H g₂ i.rep) :
+    ∃ D₀ : HeckeCoset Δ H H, x ∈ smulOrbit H D₀.rep β := by
+  have hβη := mem_smulOrbit_iff_rep.mp hi
+  have hηξ := mem_smulOrbit_iff_rep.mp hx
+  obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := mem_doubleCoset.mp hηξ
+  have hfirst : (β : G)⁻¹ * ((i.rep : Δ) : G) * h₁ ∈
+      doubleCoset ((g₁ : Δ) : G) (H : Set G) H := by
+    obtain ⟨k₁, hk₁, k₂, hk₂, hkeq⟩ := mem_doubleCoset.mp hβη
+    exact mem_doubleCoset.mpr ⟨k₁, hk₁, k₂ * h₁, H.mul_mem hk₂ hh₁, by rw [hkeq]; group⟩
+  have hprod : (β : G)⁻¹ * ((x.rep : Δ) : G) ∈
+      doubleCoset ((g₂ : Δ) : G) (doubleCoset ((g₁ : Δ) : G) (H : Set G) H) H :=
+    mem_doubleCoset.mpr ⟨(β : G)⁻¹ * ((i.rep : Δ) : G) * h₁, hfirst, h₂, hh₂, by
+      -- factor through the intermediate coset: insert `i.rep⁻¹ · i.rep` at the seam
+      have hseam : (β : G)⁻¹ * ((x.rep : Δ) : G) =
+          ((β : G)⁻¹ * ((i.rep : Δ) : G)) * (((i.rep : Δ) : G)⁻¹ * ((x.rep : Δ) : G)) := by
+        group
+      rw [hseam, heq]
+      group⟩
+  have hΔ : (β : G)⁻¹ * ((x.rep : Δ) : G) ∈ Δ := by
+    obtain ⟨w, hw, k, hk, hkeq⟩ := mem_doubleCoset.mp hprod
+    obtain ⟨w₁, hw₁, w₂, hw₂, hweq⟩ := mem_doubleCoset.mp hw
+    rw [hkeq, hweq]
+    exact Δ.mul_mem (Δ.mul_mem (Δ.mul_mem (Δ.mul_mem
+      (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hw₁) g₁.2)
+      (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hw₂)) g₂.2)
+      (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hk)
+  refine ⟨HeckeCoset.mk H H ⟨(β : G)⁻¹ * ((x.rep : Δ) : G), hΔ⟩, ?_⟩
+  rw [mem_smulOrbit_iff_rep]
+  have hrep := HeckeCoset.rep_mem (HeckeCoset.mk H H ⟨(β : G)⁻¹ * ((x.rep : Δ) : G), hΔ⟩)
+  rw [HeckeCoset.toSet_mk] at hrep
+  exact doubleCoset_eq_of_mem hrep ▸
+    mem_doubleCoset_self H H ((β : G)⁻¹ * ((x.rep : Δ) : G))
+
+end LeftCosetModule
+
+namespace LeftCosetModule
+
+open HeckeCoset
+
+open scoped HeckeCosetModule Pointwise
+
+variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
+
+open Classical in
+/-- **The compatibility law on basis elements** (Shimura, Proposition 3.4, single case):
+acting by a product of two basis elements is acting by them in sequence. -/
+private lemma single_mul_smul_single (D₁ D₂ : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H)
+    (a b c : R) :
+    MulOpposite.op (HeckeCosetModule.single R D₁ a * HeckeCosetModule.single R D₂ b) •
+        (Finsupp.single q c : LeftCosetModule Δ H R) =
+      MulOpposite.op (HeckeCosetModule.single R D₂ b) •
+        (MulOpposite.op (HeckeCosetModule.single R D₁ a) •
+          (Finsupp.single q c : LeftCosetModule Δ H R)) := by
+  classical
+  rw [HeckeCosetModule.single_mul_single, smul_smul_assoc, smul_smul_assoc,
+    structureConstants_smul_single, single_smul_single_smul]
+  refine Finsupp.ext fun x ↦ ?_
+  rw [Finsupp.smul_apply, Finsupp.smul_apply, sum_smulOrbit_single_apply,
+    sum_sum_single_apply]
+  by_cases h : ∃ D₀ : HeckeCoset Δ H H, x ∈ smulOrbit H D₀.rep q.rep
+  · obtain ⟨D₀, hD₀⟩ := h
+    rw [sum_ite_orbit_eq _ _ _ hD₀, card_filter_orbit_eq_multiplicity hD₀,
+      HeckeCosetModule.structureConstants_apply]
+    simp only [smul_eq_mul, nsmul_eq_mul]
+    ring
+  · have hzero : (HeckeCosetModule.structureConstants R H H H D₁.rep D₂.rep).sum
+        (fun D mD ↦ if x ∈ smulOrbit H D.rep q.rep then c * mD else 0) = 0 :=
+      (Finsupp.sum_congr fun D _ ↦ if_neg fun hmem ↦ h ⟨D, hmem⟩).trans
+        (Finsupp.sum_fun_zero _)
+    have hempty : (smulOrbit H D₁.rep q.rep).filter
+        (fun i ↦ x ∈ smulOrbit H D₂.rep i.rep) = ∅ :=
+      Finset.filter_eq_empty_iff.mpr fun i hi hpi ↦
+        h (exists_orbit_of_mem_orbit_orbit hi hpi)
+    rw [hzero, hempty, Finset.card_empty, zero_nsmul]
+    simp
+
+/-- **The compatibility law of the left-coset action** (Shimura, Proposition 3.4): acting
+by a convolution product is acting by its factors in sequence. -/
+private theorem mul_smul' (f g : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
+    MulOpposite.op (f * g) • m = MulOpposite.op g • (MulOpposite.op f • m) := by
+  induction m using Finsupp.induction_linear with
+  | zero => rw [smul_zero, smul_zero, smul_zero]
+  | add m₁ m₂ h₁ h₂ => rw [smul_add, smul_add, smul_add, h₁, h₂]
+  | single q c =>
+    induction f using HeckeCosetModule.induction_linear with
+    | h0 => simp
+    | hadd f₁ f₂ h₁ h₂ =>
+      rw [add_mul, MulOpposite.op_add, MulOpposite.op_add, add_smul, add_smul, h₁, h₂,
+        smul_add]
+    | hsingle D₁ a =>
+      induction g using HeckeCosetModule.induction_linear with
+      | h0 => rw [mul_zero, MulOpposite.op_zero, zero_smul, zero_smul]
+      | hadd g₁ g₂ h₁ h₂ =>
+        rw [mul_add, MulOpposite.op_add, MulOpposite.op_add, add_smul, add_smul, h₁, h₂]
+      | hsingle D₂ b => exact single_mul_smul_single D₁ D₂ q a b c
+
+/-- The orbit of the identity double coset is the singleton of the base coset: `H·1·H = H`
+decomposes into a single left coset, which absorbs into `βH`. -/
+private lemma smulOrbit_one_rep (q : HeckeCoset Δ ⊥ H) :
+    smulOrbit H (1 : HeckeCoset Δ H H).rep q.rep = {q} := by
+  classical
+  rw [smulOrbit_congr_left q.rep
+    ((HeckeCoset.mk_rep (1 : HeckeCoset Δ H H)).trans (rfl))]
+  ext x
+  simp only [mem_smulOrbit, Finset.mem_singleton]
+  constructor
+  · rintro ⟨i, rfl⟩
+    conv_rhs => rw [← HeckeCoset.mk_rep q]
+    rw [HeckeCoset.mk_bot_eq_mk_bot]
+    -- definitional: the constructor's coercion is its underlying product, and the tail
+    -- `i.out * 1` lies in `H`, so it absorbs into the left coset of `q.rep`
+    change (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ * ((q.rep : Δ) : G) ∈ H
+    have habsorb : (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ *
+        ((q.rep : Δ) : G) = ((1 : Δ) : G)⁻¹ * (i.out : G)⁻¹ := by group
+    rw [habsorb]
+    exact H.mul_mem (by simp) (H.inv_mem i.out.2)
+  · intro hx
+    rw [hx]
+    obtain ⟨i⟩ : Nonempty (DecompQuotient H H ((1 : Δ) : G)) := inferInstance
+    refine ⟨i, ?_⟩
+    conv_rhs => rw [← HeckeCoset.mk_rep q]
+    rw [HeckeCoset.mk_bot_eq_mk_bot]
+    -- definitional: as above, with the same absorption
+    change (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ * ((q.rep : Δ) : G) ∈ H
+    have habsorb : (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ *
+        ((q.rep : Δ) : G) = ((1 : Δ) : G)⁻¹ * (i.out : G)⁻¹ := by group
+    rw [habsorb]
+    exact H.mul_mem (by simp) (H.inv_mem i.out.2)
+
+/-- The identity of the Hecke ring fixes every basis element of the module. -/
+private lemma one_smul_single (q : HeckeCoset Δ ⊥ H) (c : R) :
+    MulOpposite.op (1 : 𝕋 Δ H R) • (Finsupp.single q c : LeftCosetModule Δ H R) =
+      Finsupp.single q c := by
+  classical
+  rw [HeckeCosetModule.one_def, single_smul_single, smulOrbit_one_rep,
+    Finset.sum_singleton, mul_one]
+
+/-- **The left-coset module is a module over the opposite Hecke ring** (Shimura,
+Propositions 3.2 and 3.4): the scalar operations of the defining file, packaged with the
+unit and compatibility laws through the standard `Module` API. -/
+noncomputable instance instModuleOp :
+    Module (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R) where
+  one_smul m := by
+    induction m using Finsupp.induction_linear with
+    | zero => exact smul_zero _
+    | add f g hf hg => rw [smul_add, hf, hg]
+    | single q c => exact one_smul_single q c
+  mul_smul x y m := by
+    rw [← MulOpposite.op_unop x, ← MulOpposite.op_unop y, ← MulOpposite.op_mul]
+    exact mul_smul' y.unop x.unop m
+  smul_zero t := smul_zero t
+  smul_add t m₁ m₂ := smul_add t m₁ m₂
+  add_smul x y m := add_smul x y m
+  zero_smul m := _root_.zero_smul _ m
+
+/-- The coefficient sum is multiplicative against the action: the orbit-sum coefficient is
+independent of the acted-on coset, so the action factors through the degree. -/
+lemma degree_smul (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
+    Finsupp.degree (MulOpposite.op t • m) =
+      Finsupp.degree (MulOpposite.op t • (Finsupp.single 1 1 : LeftCosetModule Δ H R)) *
+        Finsupp.degree m := by
+  induction t using HeckeCosetModule.induction_linear with
+  | h0 => simp
+  | hadd t₁ t₂ h₁ h₂ =>
+    rw [MulOpposite.op_add, add_smul, add_smul, map_add, map_add, h₁, h₂, add_mul]
+  | hsingle D a =>
+    induction m using Finsupp.induction_linear with
+    | zero => rw [smul_zero, map_zero, mul_zero]
+    | add m₁ m₂ h₁ h₂ => rw [smul_add, map_add, map_add, h₁, h₂, mul_add]
+    | single q c =>
+      rw [degree_single_smul_single, degree_single_smul_single, Finsupp.degree_single,
+        nsmul_eq_mul, nsmul_eq_mul]
+      ring
+
+variable (Δ H R) in
+/-- **The degree homomorphism** (Shimura, Proposition 3.3): the coefficient sum of the
+action on the identity coset, as a ring homomorphism `𝕋 Δ H R →+* R`. On a basis element
+it is the degree of the double coset — the number of left cosets in its decomposition —
+scaled by the coefficient; multiplicativity is the compatibility law `mul_smul'`. -/
+noncomputable def deg : 𝕋 Δ H R →+* R where
+  toFun t := Finsupp.degree (MulOpposite.op t •
+    (Finsupp.single 1 1 : LeftCosetModule Δ H R))
+  map_one' := by
+    rw [HeckeCosetModule.one_def, degree_single_smul_single, HeckeCoset.degree_one]
+    simp
+  map_mul' f g := by
+    rw [mul_smul', degree_smul, mul_comm]
+  map_zero' := by
+    rw [MulOpposite.op_zero, zero_smul, map_zero]
+  map_add' f g := by rw [MulOpposite.op_add, add_smul, map_add]
+
+lemma deg_apply (t : 𝕋 Δ H R) :
+    deg Δ H R t =
+      Finsupp.degree (MulOpposite.op t •
+        (Finsupp.single 1 1 : LeftCosetModule Δ H R)) := (rfl)
+
+/-- The degree of a basis element: the degree of its double coset, scaled by the
+coefficient. -/
+@[simp] lemma deg_single (D : HeckeCoset Δ H H) (a : R) :
+    deg Δ H R (HeckeCosetModule.single R D a) = D.degree • a := by
+  rw [deg_apply, degree_single_smul_single, one_mul]
+
+end LeftCosetModule
