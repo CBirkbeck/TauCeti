@@ -128,11 +128,6 @@ theorem isInternal_modFormCharSpace (k : ℤ) [DecidableEq ((ZMod N)ˣ →* ℂ�
 instance instFiniteCharHom : Finite ((ZMod N)ˣ →* ℂˣ) :=
   .of_equiv (MulChar (ZMod N) ℂ) MulChar.equivToUnitHom
 
-/-- `Fintype` version of `instFiniteCharHom`, needed to state sums over the
-character group at the statement level (`∑ χ : …`). -/
-noncomputable instance instFintypeCharHom : Fintype ((ZMod N)ˣ →* ℂˣ) :=
-  Fintype.ofFinite _
-
 /-- Each cusp-form diamond operator has finite order. -/
 lemma diamondOpCuspHom_isOfFinOrder (d : (ZMod N)ˣ) : IsOfFinOrder (diamondOpCuspHom k d) :=
   (diamondOpCuspHom k).isOfFinOrder (isOfFinOrder_of_finite d)
@@ -146,22 +141,6 @@ lemma diamondOpCuspHom_pairwise_commute :
     Pairwise fun d₁ d₂ : (ZMod N)ˣ ↦
       Commute (diamondOpCuspHom k d₁) (diamondOpCuspHom k d₂) :=
   fun _ _ _ ↦ (Commute.all _ _).map (diamondOpCuspHom k)
-
-/-- For each cusp-form diamond operator, the supremum of its eigenspaces is
-the whole space. -/
-lemma diamondOpCuspHom_iSup_eigenspace_eq_top
-    [FiniteDimensional ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)] (d : (ZMod N)ˣ) :
-    ⨆ μ : ℂ, (diamondOpCuspHom k d).eigenspace μ =
-    (⊤ : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) :=
-  (diamondOpCuspHom_isSemisimple d).iSup_eigenspace_eq_top
-
-/-- For each diamond operator, the supremum of its eigenspaces is the whole
-space. -/
-lemma diamondOpHom_iSup_eigenspace_eq_top
-    [FiniteDimensional ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)] (d : (ZMod N)ˣ) :
-    ⨆ μ : ℂ, (diamondOpHom k d).eigenspace μ =
-    (⊤ : Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) :=
-  (diamondOpHom_isSemisimple d).iSup_eigenspace_eq_top
 
 -- the cusp-form analogue of `jointDiamondEigenspace`
 private def jointDiamondCuspEigenspace (k : ℤ) (χ : (ZMod N)ˣ → ℂ) :

@@ -14,8 +14,8 @@ public import Mathlib.LinearAlgebra.Eigenspace.Semisimple
 # Joint eigenvectors of commuting semisimple families
 
 The eigenvalue function of a joint eigenvector of a monoid-hom representation
-`ρ : G →* Module.End K V` is a character: it maps `1` to `1`, is multiplicative, and — for
-a finite group — valued in units, assembling into `charHomOfJointEigenvector : G →* Kˣ`.
+`ρ : G →* Module.End K V` is a character: it maps `1` to `1`, is multiplicative, and, for
+a group, valued in units, assembling into `charHomOfJointEigenvector : G →* Kˣ`.
 Together with semisimplicity of finite-order endomorphisms in characteristic zero, this
 yields the simultaneous-diagonalization toolkit for a commuting family of semisimple
 endomorphisms: the joint eigenspaces are supremum-independent, they span (over an
@@ -31,14 +31,14 @@ nebentypus decomposition in `TauCeti/NumberTheory/ModularForms/CharacterDecomp.l
 ## Main results
 
 * `charHomOfJointEigenvector`: the eigenvalue function of a nonzero joint eigenvector of a
-  finite-group representation, as a monoid homomorphism `G →* Kˣ`.
+  group representation, as a monoid homomorphism `G →* Kˣ`.
 * `Module.End.isSemisimple_of_isOfFinOrder`: finite-order endomorphisms are semisimple in
   characteristic zero.
 * `iSupIndep_iInf_eigenspace_of_isSemisimple`,
   `iSup_iInf_eigenspace_eq_top_of_isSemisimple`,
   `iSup_inf_iInf_eigenspace_of_invariant`: joint eigenspaces of a commuting semisimple
   family are independent, exhaust the space, and decompose every invariant submodule —
-  with the character-indexed forms (`…_charHom…`) for finite-group representations.
+  with the character-indexed forms (`…_charHom…`) for group representations.
 -/
 
 public section
@@ -105,9 +105,8 @@ lemma charHomOfJointEigenvector_apply (ρ : G →* Module.End K V) (χ : G → K
     (v : V) (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) (g : G) :
     ((charHomOfJointEigenvector ρ χ v hv hv_mem g) : K) = χ g := (rfl)
 
-/-- If the joint eigenspace of an eigenvalue function `χ` of a finite-group
-representation is nonzero, then `χ` is (the underlying function of) a character
-`G →* Kˣ`. -/
+/-- If the joint eigenspace of an eigenvalue function `χ` of a group representation is
+nonzero, then `χ` is (the underlying function of) a character `G →* Kˣ`. -/
 lemma exists_charHom_of_iInf_eigenspace_ne_bot {ρ : G →* Module.End K V}
     {χ : G → K} (hχ : ⨅ g, (ρ g).eigenspace (χ g) ≠ ⊥) :
     ∃ χ₀ : G →* Kˣ, (fun g ↦ ((χ₀ g) : K)) = χ := by
