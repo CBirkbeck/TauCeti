@@ -89,6 +89,7 @@ theorem peterssonInner_fd_eq_fdo (k : ℤ) (f g : ℍ → ℂ) :
     peterssonInner k ModularGroup.fd f g = peterssonInner k ModularGroup.fdo f g :=
   peterssonInner_congr_set ModularGroup.fd_ae_eq_fdo f g
 
+/-- Unfolding: the pairing over `D` is the integral of the Petersson integrand over `D`. -/
 theorem peterssonInner_def (k : ℤ) (D : Set ℍ) (f g : ℍ → ℂ) :
     peterssonInner k D f g = ∫ τ in D, petersson k f g τ := (rfl)
 
@@ -246,6 +247,7 @@ additivity (`peterssonInnerFd_add_left`/`_right`) and positive definiteness
 def peterssonInnerFd (f g : CuspForm Γ k) : ℂ :=
   UpperHalfPlane.peterssonInner k ModularGroup.fd f g
 
+/-- Unfolding: the cusp-form pairing is `peterssonInner` over the standard domain `𝒟`. -/
 theorem peterssonInnerFd_def (f g : CuspForm Γ k) :
     peterssonInnerFd f g = UpperHalfPlane.peterssonInner k ModularGroup.fd f g := (rfl)
 
@@ -276,20 +278,25 @@ theorem peterssonInnerFd_self_re_nonneg (f : CuspForm Γ k) :
   have him : (0 : ℝ) < τ.im := τ.im_pos
   positivity
 
+/-- The pairing vanishes when its right argument is zero. -/
 @[simp]
 theorem peterssonInnerFd_zero_right (f : CuspForm Γ k) : peterssonInnerFd f 0 = 0 := by
   simp [peterssonInnerFd_def]
 
+/-- The pairing vanishes when its left argument is zero. -/
 @[simp]
 theorem peterssonInnerFd_zero_left (g : CuspForm Γ k) : peterssonInnerFd 0 g = 0 := by
   simp [peterssonInnerFd_def]
 
+/-- Negating the right argument negates the pairing. -/
 @[simp]
 theorem peterssonInnerFd_neg_right (f g : CuspForm Γ k) :
     peterssonInnerFd f (-g) = -peterssonInnerFd f g := by
   simp only [peterssonInnerFd_def, coe_neg]
   exact UpperHalfPlane.peterssonInner_neg_right k ModularGroup.fd f g
 
+/-- Negating the left argument negates the pairing: the first slot is conjugate-linear,
+and conjugation fixes `-1`. -/
 @[simp]
 theorem peterssonInnerFd_neg_left (f g : CuspForm Γ k) :
     peterssonInnerFd (-f) g = -peterssonInnerFd f g := by
@@ -382,7 +389,15 @@ theorem peterssonInnerFd_self_eq_zero (f : CuspForm Γ k) :
 
 /-- The `𝒟`-domain Petersson pairing bundled as an `InnerProductSpace.Core` on
 `S_k(Γ)` for an arithmetic level: the Hermitian interface behind Mathlib's standard
-inner-product, norm, and orthogonality APIs. Evaluation is `peterssonInnerCore_inner`. -/
+inner-product, norm, and orthogonality APIs. Evaluation is `peterssonInnerCore_inner`.
+
+Deliberately **not** an instance: the pairing integrates over the level-one domain `𝒟`, not
+over a fundamental domain for `Γ`, so for general `Γ` it is not the genuine level-`Γ`
+Petersson product, and making it canonical would silently give downstream orthogonality and
+adjoint APIs the wrong domain. It is a plain `def` that consumers must name explicitly; no
+`InnerProductSpace` instance is derived from it. The `@[instance_reducible]` attribute is
+required by Lean's class-definition reducibility linter for any `def` of class type — it
+governs unfolding during instance search and registers nothing on its own. -/
 @[instance_reducible]
 noncomputable def peterssonInnerCore [Γ.HasDetOne] :
     InnerProductSpace.Core ℂ (CuspForm Γ k) where
