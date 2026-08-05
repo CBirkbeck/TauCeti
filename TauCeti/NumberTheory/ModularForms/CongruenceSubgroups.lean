@@ -183,6 +183,11 @@ private lemma TjS_inv_10 (j : ℤ) : ((T ^ j * S)⁻¹).1 1 0 = -1 := by
 private lemma TjS_inv_11 (j : ℤ) : ((T ^ j * S)⁻¹).1 1 1 = j := by
   rw [inv_apply_one_one, TjS_00]
 
+
+private lemma mul_apply_one_zero (M g : SL(2, ℤ)) :
+    (M * g) 1 0 = M 1 0 * g 0 0 + M 1 1 * g 1 0 := by
+  simp [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two]
+
 private lemma TjS_inv_mul_10 (j : ℤ) (σ : SL(2, ℤ)) :
     ((T ^ j * S)⁻¹ * σ).1 1 0 = j * σ.1 1 0 - σ.1 0 0 := by
   rw [mul_apply_one_zero, TjS_inv_10, TjS_inv_11]
@@ -272,9 +277,6 @@ private lemma lowerTriRep_inv_mul_10 (k : ℕ) (c : Fin p) (σ : SL(2, ℤ)) :
 private def relindexRep (k : ℕ) (c : Fin p) : ↥(Gamma0 (p ^ k)) :=
   ⟨lowerTriRep p k c, lowerTriRep_mem_Gamma0 p k c⟩
 
-private lemma relindexRep_coe (k : ℕ) (c : Fin p) :
-    (relindexRep p k c : SL(2, ℤ)) = lowerTriRep p k c := (rfl)
-
 variable (hp : 0 < p)
 include hp
 
@@ -284,7 +286,7 @@ private lemma Gamma0_relindex_step_inj (k : ℕ) :
         ↥(Gamma0 (p ^ k)) ⧸ (Gamma0 (p ^ (k + 1))).subgroupOf (Gamma0 (p ^ k)))) := by
   intro ⟨c₁, hc₁⟩ ⟨c₂, hc₂⟩ hf
   rw [QuotientGroup.eq, Subgroup.mem_subgroupOf, Gamma0_mem] at hf
-  simp only [InvMemClass.coe_inv, MulMemClass.coe_mul, relindexRep_coe] at hf
+  simp only [relindexRep, InvMemClass.coe_inv, MulMemClass.coe_mul] at hf
   rw [lowerTriRep_diff_entry p, ZMod.intCast_zmod_eq_zero_iff_dvd, Nat.cast_pow, pow_succ,
     mul_comm ((↑c₂ : ℤ) - ↑c₁) ((p : ℤ) ^ k),
     mul_dvd_mul_iff_left (pow_ne_zero k (Int.natCast_ne_zero.mpr hp.ne'))] at hf
@@ -314,7 +316,7 @@ private lemma Gamma0_relindex_step_surj (k : ℕ) (hk : 0 < k) :
   obtain ⟨c₀, hc₀⟩ := exists_dvd_sub_val_mul p q (σ.1 0 0) h00_unit
   refine ⟨⟨c₀.val, ZMod.val_lt c₀⟩, ?_⟩
   rw [QuotientGroup.eq, Subgroup.mem_subgroupOf]
-  simp only [InvMemClass.coe_inv, MulMemClass.coe_mul, relindexRep_coe]
+  simp only [relindexRep, InvMemClass.coe_inv, MulMemClass.coe_mul]
   rw [Gamma0_mem, lowerTriRep_inv_mul_10, hq, ZMod.intCast_zmod_eq_zero_iff_dvd, pow_succ]
   push_cast
   calc (p : ℤ) ^ k * (p : ℤ)

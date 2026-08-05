@@ -80,7 +80,7 @@ lemma inv_apply_zero_one (M : SpecialLinearGroup (Fin 2) R) :
   rw [SL2_inv_expl]
   rfl
 
-lemma mul_apply_one_zero (M g : SpecialLinearGroup (Fin 2) R) :
+private lemma mul_apply_one_zero (M g : SpecialLinearGroup (Fin 2) R) :
     (M * g) 1 0 = M 1 0 * g 0 0 + M 1 1 * g 1 0 := by
   simp [coe_mul, mul_apply, Fin.sum_univ_two]
 
