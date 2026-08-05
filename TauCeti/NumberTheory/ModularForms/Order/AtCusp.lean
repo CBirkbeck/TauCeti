@@ -155,20 +155,28 @@ private lemma cuspFunction_pow {f : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunct
       cuspFunction_mul (by rw [cuspFunction_pow hf n]; exact (hf.continuousAt.pow n))
         hf.continuousAt]
 
+private lemma qExpansion_one (h : ℝ) : qExpansion h (1 : ℍ → ℂ) = 1 := by
+  ext m
+  rw [qExpansion_coeff, cuspFunction_one]
+  rcases m with _ | m <;> simp [PowerSeries.coeff_one, Pi.one_def, iteratedDeriv_const]
+
+private lemma qExpansion_pow {f : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
+    ∀ n : ℕ, qExpansion h (f ^ n) = qExpansion h f ^ n
+  | 0 => by rw [pow_zero, pow_zero, qExpansion_one]
+  | n + 1 => by
+    have h_an : AnalyticAt ℂ (cuspFunction h (f ^ n)) 0 := by
+      rw [cuspFunction_pow hf n]
+      exact hf.pow n
+    rw [pow_succ, pow_succ, qExpansion_mul h_an hf, qExpansion_pow hf n]
+
 /-- The cusp order multiplies under powers, with no finiteness hypothesis: for an
 identically vanishing expansion both sides take the junk value at positive exponents,
 and at exponent zero both sides are genuinely zero. -/
 lemma orderAtCusp_pow {f : ℍ → ℂ} (n : ℕ) (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
     orderAtCusp h (f ^ n) = n * orderAtCusp h f := by
-  have h_an : AnalyticAt ℂ (cuspFunction h (f ^ n)) 0 := by
-    rw [cuspFunction_pow hf n]
-    exact hf.pow n
-  have h_nat := analyticOrderNatAt_pow hf n
-  simp only [analyticOrderNatAt, smul_eq_mul] at h_nat
-  rw [orderAtCusp_eq_analyticOrderAt h_an, orderAtCusp_eq_analyticOrderAt hf,
-    cuspFunction_pow hf n, h_nat]
-  push_cast
-  ring
+  rw [orderAtCusp_def, orderAtCusp_def, qExpansion_pow hf n, PowerSeries.order_pow,
+    nsmul_eq_mul, ENat.toNat_mul]
+  simp
 
 private lemma cuspFunction_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
     (hf : ∀ i ∈ s, AnalyticAt ℂ (cuspFunction h (f i)) 0) :
@@ -182,18 +190,31 @@ private lemma cuspFunction_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finse
         (by rw [h_prev]; exact (Finset.analyticAt_prod _ fun i hi ↦
           hf i (Finset.mem_cons_of_mem hi)).continuousAt)]
 
+private lemma qExpansion_prod {ι : Type*} (s : Finset ι) (f : ι → ℍ → ℂ)
+    (hf : ∀ i ∈ s, AnalyticAt ℂ (cuspFunction h (f i)) 0) :
+    qExpansion h (∏ i ∈ s, f i) = ∏ i ∈ s, qExpansion h (f i) := by
+  induction s using Finset.cons_induction with
+  | empty => simpa using qExpansion_one h
+  | cons a s ha ih =>
+    have h_an : AnalyticAt ℂ (cuspFunction h (∏ i ∈ s, f i)) 0 := by
+      rw [cuspFunction_prod s fun i hi ↦ hf i (Finset.mem_cons_of_mem hi)]
+      exact Finset.analyticAt_prod _ fun i hi ↦ hf i (Finset.mem_cons_of_mem hi)
+    rw [Finset.prod_cons, Finset.prod_cons,
+      qExpansion_mul (hf a (Finset.mem_cons_self a s)) h_an,
+      ih fun i hi ↦ hf i (Finset.mem_cons_of_mem hi)]
+
 /-- The cusp order is additive on finite products. The finiteness hypotheses exclude an
 identically vanishing factor, where the junk value `0` would break additivity. -/
 lemma orderAtCusp_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
     (hf : ∀ i ∈ s, AnalyticAt ℂ (cuspFunction h (f i)) 0)
     (hf' : ∀ i ∈ s, analyticOrderAt (cuspFunction h (f i)) 0 ≠ ⊤) :
     orderAtCusp h (∏ i ∈ s, f i) = ∑ i ∈ s, orderAtCusp h (f i) := by
-  have h_an : AnalyticAt ℂ (cuspFunction h (∏ i ∈ s, f i)) 0 := by
-    rw [cuspFunction_prod s hf]
-    exact Finset.analyticAt_prod _ hf
-  rw [orderAtCusp_eq_analyticOrderAt h_an, cuspFunction_prod s hf,
-    TauCeti.analyticOrderAt_prod hf, ENat.toNat_sum hf', Nat.cast_sum]
-  exact Finset.sum_congr rfl fun i hi ↦ (orderAtCusp_eq_analyticOrderAt (hf i hi)).symm
+  have hf'' : ∀ i ∈ s, (qExpansion h (f i)).order ≠ ⊤ := fun i hi ↦ by
+    rw [qExpansion_order_eq_analyticOrderAt_cuspFunction (hf i hi)]
+    exact hf' i hi
+  rw [orderAtCusp_def, qExpansion_prod s f hf, PowerSeries.order_prod,
+    ENat.toNat_sum hf'', Nat.cast_sum]
+  exact Finset.sum_congr rfl fun i hi ↦ by rw [orderAtCusp_def]
 
 /-- The `ℚ`-valued cusp order: the width-`2h` exponent, halved. For an `h`-periodic
 function this is the integral order `orderAtCusp h` (`rationalOrderAtCusp_eq_orderAtCusp`);
