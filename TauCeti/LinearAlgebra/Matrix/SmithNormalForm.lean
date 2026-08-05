@@ -309,7 +309,11 @@ private lemma blockEmbed_mul_diagonal_eq (k : ℕ) (e : Fin (k + 2) ≃ Fin 2 �
   have hdecomp : ∀ f : Fin (k + 2) → ℤ, Matrix.diagonal (f ∘ e.symm) =
       fromBlocks (Matrix.diagonal (fun i : Fin 2 ↦ (f ∘ e.symm) (Sum.inl i)))
         0 0 (Matrix.diagonal (fun i : Fin k ↦ (f ∘ e.symm) (Sum.inr i))) := by
-    intro f; ext (i | i) (j | j) <;> simp [fromBlocks, diagonal_apply, Sum.elim, Function.comp]
+    intro f
+    rw [Matrix.fromBlocks_diagonal]
+    congr 1
+    funext x
+    cases x <;> rfl
   rw [hdecomp d, fromBlocks_multiply]
   simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add, Matrix.one_mul]
   rw [fromBlocks_multiply]
@@ -523,11 +527,12 @@ private lemma slSuccEmbed_mul_diagonal (k : ℕ) (d : Fin (k + 2) → ℤ)
   have h_decomp : Matrix.diagonal (d ∘ e.symm) =
       fromBlocks (Matrix.diagonal (fun _ : Fin 1 ↦ d 0))
         0 0 (Matrix.diagonal (fun i : Fin (k + 1) ↦ d ⟨i.val + 1, by omega⟩)) := by
-    ext (i | i) (j | j)
-    · fin_cases i; fin_cases j; simp [fromBlocks, Function.comp, he_inl]
-    · simp [fromBlocks]
-    · simp [fromBlocks]
-    · simp [fromBlocks, diagonal_apply, Function.comp, he_inr]
+    rw [Matrix.fromBlocks_diagonal]
+    congr 1
+    funext x
+    cases x with
+    | inl i => fin_cases i; simp [Function.comp, he_inl]
+    | inr i => simp [Function.comp, he_inr]
   rw [h_decomp]
   rw [fromBlocks_multiply]; simp only [Matrix.mul_zero, Matrix.zero_mul, add_zero, zero_add,
     Matrix.one_mul]
@@ -537,11 +542,12 @@ private lemma slSuccEmbed_mul_diagonal (k : ℕ) (d : Fin (k + 2) → ℤ)
       from (hsub d_out).symm]; congr 1
   have h_out_decomp : Matrix.diagonal (d_out ∘ e.symm) =
       fromBlocks (Matrix.diagonal (fun _ : Fin 1 ↦ d 0)) 0 0 (Matrix.diagonal d'_tail) := by
-    ext (i | i) (j | j)
-    · fin_cases i; fin_cases j; simp [fromBlocks, Function.comp, d_out, he_inl]
-    · simp [fromBlocks]
-    · simp [fromBlocks]
-    · simp [fromBlocks, diagonal_apply, Function.comp, d_out, he_inr]
+    rw [Matrix.fromBlocks_diagonal]
+    congr 1
+    funext x
+    cases x with
+    | inl i => fin_cases i; simp [Function.comp, d_out, he_inl]
+    | inr i => simp [Function.comp, d_out, he_inr]
   rw [h_out_decomp, hmul]
 
 /-- Prepending a head entry `c` that divides every entry of `d_tail'` to a divisibility chain
