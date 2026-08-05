@@ -22,7 +22,7 @@ angles, and concludes that its image under a conformal map has small diameter at
 `ρ`.
 
 That is the first of the two geometric inputs
-`TauCeti.exists_continuousOn_closedBall_eqOn_of_forall_exists_diam_union_le` of
+`TauCeti.exists_continuousOn_closure_eqOn_of_forall_exists_diam_union_le` of
 `Conformal/CutDiameter.lean` runs on, and hence of layer **L5** of
 `TauCetiRoadmap/ConformalMapping/README.md`, Carathéodory's boundary correspondence. The second —
 a small set `E` enclosing the boundary points of the image domain that cling to the piece the
@@ -49,6 +49,8 @@ bound applies.
   `TauCeti.circleImageLength f (ball c r) ζ ρ`.
 * `TauCeti.diam_image_ball_inter_sphere_le` — hence the image of `ball c r ∩ sphere ζ ρ` is no
   wider than that quantity.
+* `TauCeti.isBounded_image_ball_inter_sphere_of_circleImageLength_ne_top` — and when that quantity
+  is finite the image is bounded, so its diameter is a genuine bound on the distances inside it.
 * `TauCeti.exists_diam_image_ball_inter_sphere_le_of_lintegral_ne_top` — the conclusion, from
   Wolff's lemma: a holomorphic map of a disc with finite Dirichlet integral has, at every boundary
   point and below every positive radius, a radius `ρ` at which `f '' (ball c r ∩ sphere ζ ρ)` has
@@ -135,6 +137,25 @@ theorem diam_image_ball_inter_sphere_le (hζ : dist ζ c = r) (hρ : 0 < ρ)
   exact (ENNReal.ofReal_le_ofReal_iff hε).mp
     ((ofReal_dist_le_circleImageLength_of_mem_ball_inter_sphere hζ hρ hf hz hw).trans hlen)
 
+/-- **An image crosscut of finite length is bounded.** The chord bound
+`TauCeti.ofReal_dist_le_circleImageLength_of_mem_ball_inter_sphere` keeps every pair of points of
+`f '' (ball c r ∩ sphere ζ ρ)` within the finite number
+`(TauCeti.circleImageLength f (ball c r) ζ ρ).toReal` of each other.
+
+This is what makes `Metric.diam (f '' (ball c r ∩ sphere ζ ρ))` a bound on the distances inside the
+image crosscut rather than the junk value `0` that an unbounded set carries; it is the disc
+counterpart of `TauCeti.isBounded_image_circleMap_image_Ioo_of_lintegral_ne_top`, stated against
+the crosscut rather than against an arc of angles. -/
+theorem isBounded_image_ball_inter_sphere_of_circleImageLength_ne_top (hζ : dist ζ c = r)
+    (hρ : 0 < ρ) (hf : DifferentiableOn ℂ f (ball c r))
+    (hfin : circleImageLength f (ball c r) ζ ρ ≠ ⊤) :
+    IsBounded (f '' (ball c r ∩ sphere ζ ρ)) := by
+  rw [isBounded_iff]
+  refine ⟨(circleImageLength f (ball c r) ζ ρ).toReal, ?_⟩
+  rintro _ ⟨z, hz, rfl⟩ _ ⟨w, hw, rfl⟩
+  exact (ENNReal.ofReal_le_iff_le_toReal hfin).mp
+    (ofReal_dist_le_circleImageLength_of_mem_ball_inter_sphere hζ hρ hf hz hw)
+
 /-! ## Crosscuts with a short image -/
 
 /-- **A holomorphic map of finite Dirichlet integral has short image crosscuts at every boundary
@@ -153,7 +174,7 @@ when `ρ < 2 * r`, being empty otherwise; since `R` is arbitrary, a caller wanti
 the theorem with `R ≤ 2 * r`.
 
 This is the first of the two geometric inputs of
-`TauCeti.exists_continuousOn_closedBall_eqOn_of_forall_exists_diam_union_le`; nothing here bounds
+`TauCeti.exists_continuousOn_closure_eqOn_of_forall_exists_diam_union_le`; nothing here bounds
 the boundary piece the crosscut cuts off, which is a matter of the image domain rather than of the
 map. -/
 theorem exists_diam_image_ball_inter_sphere_le_of_lintegral_ne_top (hζ : dist ζ c = r)
