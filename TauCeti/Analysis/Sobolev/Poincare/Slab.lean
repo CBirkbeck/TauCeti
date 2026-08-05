@@ -110,12 +110,13 @@ omit [CompleteSpace F] in
 throughout `Set.Icc a b` by its total variation `∫ ‖g'‖` over the interval.
 
 Only `g a = 0` is used, not a support hypothesis, and the conclusion is pointwise in `t`; the
-order `a ≤ b` is not assumed separately, being implied by `t ∈ Set.Icc a b`. Completeness of `F`
-is not needed either — `MeasureTheory.enorm_sub_le_lintegral_deriv_of_contDiffOn_Icc` passes to
-the completion internally. -/
+order `a ≤ b` is not assumed separately, being implied by `t ∈ Set.Icc a b`; and `F` need not be
+complete. -/
 private theorem enorm_le_lintegral_enorm_deriv
     (hg : ∀ t, HasDerivAt g (g' t) t) (hg' : Continuous g') (hga : g a = 0)
     {t : ℝ} (ht : t ∈ Icc a b) : ‖g t‖ₑ ≤ ∫⁻ s in Ioc a b, ‖g' s‖ₑ := by
+  -- Completeness would only be needed for the fundamental theorem of calculus, and
+  -- `enorm_sub_le_lintegral_deriv_of_contDiffOn_Icc` passes to the completion itself.
   have hderiv : deriv g = g' := funext fun x => (hg x).deriv
   have hC1 : ContDiff ℝ 1 g :=
     contDiff_one_iff_deriv.2 ⟨fun x => (hg x).differentiableAt, hderiv ▸ hg'⟩
@@ -135,9 +136,7 @@ variation `∫ ‖g'‖` over the interval, and the nesting `L^r ⊆ L^1` of the
 finite measure space `Set.Ioc a b`, which converts that `L^1` bound into an `L^r` one at the cost
 of the factor `(b - a)^{r-1}`.
 
-Completeness of `F` is not required: the only place it could enter is the fundamental theorem of
-calculus, and `MeasureTheory.enorm_sub_le_lintegral_deriv_of_contDiffOn_Icc` passes to the
-completion internally. -/
+`F` need not be complete. -/
 theorem lintegral_enorm_rpow_le_of_support_subset_Icc (hab : a ≤ b)
     (hg : ∀ t, HasDerivAt g (g' t) t) (hg' : Continuous g')
     (hsupp : Function.support g ⊆ Icc a b) {r : ℝ} (hr : 1 ≤ r) :
