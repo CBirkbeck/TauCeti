@@ -208,14 +208,19 @@ private lemma single_smul_single_smul (D₁ D₂ : HeckeCoset Δ H H) (q : Hecke
 
 /-- Expansion of the action of a structure-constants element: the multiplicity-weighted
 orbit sums. -/
-private lemma structureConstants_smul_single (D₁ D₂ : HeckeCoset Δ H H)
-    (q : HeckeCoset Δ ⊥ H) (c : R) :
-    MulOpposite.op (HeckeCosetModule.structureConstants R H H H D₁.rep D₂.rep) •
+private lemma smul_structureConstants_smul_single (D₁ D₂ : HeckeCoset Δ H H)
+    (q : HeckeCoset Δ ⊥ H) (r c : R) :
+    MulOpposite.op (r • HeckeCosetModule.structureConstants R H H H D₁.rep D₂.rep) •
         (Finsupp.single q c : LeftCosetModule Δ H R) =
       (HeckeCosetModule.structureConstants R H H H D₁.rep D₂.rep).sum fun D mD ↦
-        ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (c * mD) := by
+        ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (c * r * mD) := by
   rw [smul_eq_sum]
-  exact Finsupp.sum_congr fun D _ ↦ Finsupp.sum_single_index (by simp)
+  refine Eq.trans (Finsupp.sum_smul_index fun D ↦ ?_) ?_
+  · exact Finsupp.sum_congr (g2 := fun _ _ ↦ 0) (fun q _ ↦ Finset.sum_eq_zero fun i _ ↦ by
+      simp) |>.trans (Finsupp.sum_fun_zero _)
+  · refine Finsupp.sum_congr fun D _ ↦ ?_
+    rw [Finsupp.sum_single_index (by simp)]
+    exact Finset.sum_congr rfl fun i _ ↦ congrArg (Finsupp.single i) (mul_assoc c r _).symm
 
 omit [IsHeckeTriple Δ H H] in
 open Classical in
@@ -371,7 +376,7 @@ open HeckeCoset
 
 open scoped HeckeCosetModule Pointwise
 
-variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
+variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
 
 open Classical in
 /-- **The compatibility law on basis elements** (Shimura, Proposition 3.4, single case):
@@ -384,19 +389,20 @@ private lemma single_mul_smul_single (D₁ D₂ : HeckeCoset Δ H H) (q : HeckeC
         (MulOpposite.op (HeckeCosetModule.single R D₁ a) •
           (Finsupp.single q c : LeftCosetModule Δ H R)) := by
   classical
-  rw [HeckeCosetModule.single_mul_single, op_smul_assoc, op_smul_assoc,
-    structureConstants_smul_single, single_smul_single_smul]
+  rw [HeckeCosetModule.single_mul_single, smul_smul,
+    smul_structureConstants_smul_single, single_smul_single_smul]
   refine Finsupp.ext fun x ↦ ?_
-  rw [Finsupp.smul_apply, Finsupp.smul_apply, sum_smulOrbit_single_apply,
-    sum_sum_single_apply]
+  rw [sum_smulOrbit_single_apply, sum_sum_single_apply]
   by_cases h : ∃ D₀ : HeckeCoset Δ H H, x ∈ smulOrbit H D₀.rep q.rep
   · obtain ⟨D₀, hD₀⟩ := h
     rw [sum_ite_orbit_eq _ _ _ hD₀, card_filter_orbit_eq_multiplicity hD₀,
       HeckeCosetModule.structureConstants_apply]
-    simp only [smul_eq_mul, nsmul_eq_mul]
-    ring
+    simp only [nsmul_eq_mul]
+    -- the multiplicity enters as a natural-number cast, which is central
+    rw [mul_assoc c a b]
+    exact (Nat.cast_commute _ (c * (a * b))).symm.eq
   · have hzero : (HeckeCosetModule.structureConstants R H H H D₁.rep D₂.rep).sum
-        (fun D mD ↦ if x ∈ smulOrbit H D.rep q.rep then c * mD else 0) = 0 :=
+        (fun D mD ↦ if x ∈ smulOrbit H D.rep q.rep then c * (a * b) * mD else 0) = 0 :=
       (Finsupp.sum_congr fun D _ ↦ if_neg fun hmem ↦ h ⟨D, hmem⟩).trans
         (Finsupp.sum_fun_zero _)
     have hempty : (smulOrbit H D₁.rep q.rep).filter
@@ -404,7 +410,6 @@ private lemma single_mul_smul_single (D₁ D₂ : HeckeCoset Δ H H) (q : HeckeC
       Finset.filter_eq_empty_iff.mpr fun i hi hpi ↦
         h (exists_orbit_of_mem_orbit_orbit hi hpi)
     rw [hzero, hempty, Finset.card_empty, zero_nsmul]
-    simp
 
 /-- **The compatibility law of the left-coset action** (Shimura, Proposition 3.4): acting
 by a convolution product is acting by its factors in sequence. -/
@@ -485,6 +490,18 @@ noncomputable instance instModuleOp :
   smul_add t m₁ m₂ := smul_add t m₁ m₂
   add_smul x y m := add_smul x y m
   zero_smul m := _root_.zero_smul _ m
+
+end LeftCosetModule
+
+namespace LeftCosetModule
+
+open HeckeCoset
+
+open scoped HeckeCosetModule Pointwise
+
+-- the degree homomorphism is `R`-valued and multiplicative, so its construction needs the
+-- coefficients to commute — unlike the module structure above
+variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
 
 /-- The coefficient sum is multiplicative against the action: the orbit-sum coefficient is
 independent of the acted-on coset, so the action factors through the degree. -/
