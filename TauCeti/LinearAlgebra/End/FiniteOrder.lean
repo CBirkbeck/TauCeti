@@ -25,6 +25,8 @@ Both are stated of `Module.End`, so both sit in the `End` namespace under `open 
 * `TauCeti.End.pow_eq_one_of_isRoot_charpoly`: the roots of the characteristic polynomial of
   an endomorphism of finite order `n` are `n`-th roots of unity.
 * `TauCeti.End.isSemisimple_of_pow_eq_one`: an endomorphism of finite order `n`, with `n`
+* `Module.End.isSemisimple_of_isOfFinOrder`: the `IsOfFinOrder` packaging, over a
+  characteristic-zero field.
   invertible in the field, is semisimple.
 -/
 

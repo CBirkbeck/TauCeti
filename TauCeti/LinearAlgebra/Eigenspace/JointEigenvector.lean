@@ -142,8 +142,9 @@ endomorphisms whose **restrictions** to it are semisimple is the supremum of its
 intersections with the joint eigenspaces: the restricted family diagonalizes, with no
 assumption on the ambient operators. -/
 lemma iSup_inf_iInf_eigenspace_of_invariant [IsAlgClosed K] {ι : Type*}
-    (f : ι → Module.End K V) (hcomm : Pairwise fun i j ↦ Commute (f i) (f j))
+    (f : ι → Module.End K V)
     (p : Submodule K V) [FiniteDimensional K p] (hp : ∀ i, ∀ x ∈ p, f i x ∈ p)
+    (hcomm : Pairwise fun i j ↦ Commute ((f i).restrict (hp i)) ((f j).restrict (hp j)))
     (hss : ∀ i, Module.End.IsSemisimple ((f i).restrict (hp i))) :
     (⨆ χ : ι → K, p ⊓ ⨅ i, (f i).eigenspace (χ i)) = p := by
   have hmax' (i : ι) (μ : K) :
@@ -173,14 +174,8 @@ lemma iSup_inf_iInf_eigenspace_of_invariant [IsAlgClosed K] {ι : Type*}
       (⨆ χ : ι → K, ⨅ i,
         Module.End.eigenspace ((f i).restrict (hp i)) (χ i)) = ⊤ by
     rw [h_restrict_top, Submodule.map_top, Submodule.range_subtype]
-  have hcomm' : Pairwise fun i j ↦
-      Commute ((f i).restrict (hp i)) ((f j).restrict (hp j)) := by
-    intro i j hij
-    refine LinearMap.ext fun ⟨x, _⟩ ↦ Subtype.ext ?_
-    simpa only [Module.End.mul_apply, LinearMap.coe_restrict_apply] using
-      LinearMap.congr_fun (hcomm hij).eq x
   exact iSup_iInf_eigenspace_eq_top_of_isSemisimple (fun i ↦ (f i).restrict (hp i))
-    hcomm' hss
+    hcomm hss
 
 section CharHom
 
@@ -212,11 +207,12 @@ lemma iSupIndep_iInf_eigenspace_charHom
 /-- **Character-indexed decomposition of a finite-dimensional invariant submodule**,
 assuming only that the restricted representation is semisimple. -/
 lemma iSup_inf_iInf_eigenspace_charHom_of_invariant [IsAlgClosed K]
-    (hcomm : Pairwise fun g₁ g₂ ↦ Commute (ρ g₁) (ρ g₂))
     (p : Submodule K V) [FiniteDimensional K p] (hp : ∀ g, ∀ x ∈ p, ρ g x ∈ p)
+    (hcomm : Pairwise fun g₁ g₂ ↦
+      Commute ((ρ g₁).restrict (hp g₁)) ((ρ g₂).restrict (hp g₂)))
     (hss : ∀ g, Module.End.IsSemisimple ((ρ g).restrict (hp g))) :
     (⨆ χ₀ : G →* Kˣ, p ⊓ ⨅ g, (ρ g).eigenspace (χ₀ g)) = p := by
-  have h := iSup_inf_iInf_eigenspace_of_invariant (fun g ↦ ρ g) hcomm p hp hss
+  have h := iSup_inf_iInf_eigenspace_of_invariant (fun g ↦ ρ g) p hp hcomm hss
   refine le_antisymm (iSup_le fun _ ↦ inf_le_left) ?_
   conv_lhs => rw [← h]
   refine iSup_le fun χ ↦ ?_
