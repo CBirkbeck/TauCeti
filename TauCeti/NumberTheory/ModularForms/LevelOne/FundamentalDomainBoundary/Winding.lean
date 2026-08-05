@@ -253,11 +253,11 @@ theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {
       Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
     nlinarith [le_max_left R 0]
 
--- `simpNF` rejects `simp` annotations here and on the left companion: `simp` normalizes
--- the hypothesis `1 / 2 < w.re` to `2⁻¹ < w.re`, so the stated forms never fire.
-/-- Every point strictly right of the fundamental strip winds zero. -/
+/-- Every point strictly right of the fundamental strip winds zero. The bound is stated
+in simp-normal form so the lemma can participate in simplification. -/
+@[simp]
 theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
-    (hw : 1 / 2 < w.re) : windingNumber (fdBoundary H) 0 5 w = 0 := by
+    (hw : 2⁻¹ < w.re) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
     (convex_halfSpace_re_gt _).isPreconnected
     ?_ (fun R ↦ ⟨((max R 0 + 1 : ℝ) : ℂ), ?_, ?_⟩) hw
@@ -272,8 +272,9 @@ theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
     linarith [le_max_left R 0]
 
 /-- Every point strictly left of the fundamental strip winds zero. -/
+@[simp]
 theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
-    (hw : w.re < -(1 / 2)) : windingNumber (fdBoundary H) 0 5 w = 0 := by
+    (hw : w.re < -2⁻¹) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
     (convex_halfSpace_re_lt _).isPreconnected
     ?_ (fun R ↦ ⟨((-(max R 0 + 1) : ℝ) : ℂ), ?_, ?_⟩) hw
@@ -351,8 +352,10 @@ theorem isNullHomologous_fdBoundary (hH : 1 ≤ H) :
       (him.trans_le (by positivity))
   · exact windingNumber_fdBoundary_eq_zero_of_lt_im hH hzH
   · rcases lt_abs.mp hre with h | h
-    · exact windingNumber_fdBoundary_eq_zero_of_half_lt_re h
-    · exact windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half (by linarith)
+    · exact windingNumber_fdBoundary_eq_zero_of_half_lt_re (by simpa using h)
+    · refine windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half ?_
+      rw [show (-2⁻¹ : ℝ) = -(1 / 2) by norm_num]
+      linarith
   · exact windingNumber_fdBoundary_eq_zero_of_norm_lt_one hH hnorm
 
 end ModularForm
