@@ -37,7 +37,7 @@ some such hypothesis is genuinely needed: no constant works on the whole space.
 The proof is the classical one-dimensional argument. Along the line through `x` in the direction
 of the `i`-th coordinate the function starts at `0`, so the fundamental theorem of calculus gives
 `‖u‖ ≤ ∫ ‖∂ᵢ u‖` over the width of the slab; Hölder's inequality — in the form of the nesting
-`L^p ⊆ L^1` of the `Lᵖ` scale, `TauCeti.rpow_lintegral_enorm_le_measure_univ_rpow_mul` — turns
+`L^p ⊆ L^1` of the `Lᵖ` scale, `TauCeti.rpow_lintegral_le_measure_univ_rpow_mul` — turns
 that into
 `‖u‖^p ≤ (b - a)^{p-1} ∫ ‖∂ᵢ u‖^p`, and integrating in the remaining variables by Fubini gives
 the result. See Evans, *Partial Differential Equations*, Section 5.6.
@@ -169,8 +169,8 @@ theorem lintegral_enorm_rpow_le_of_support_subset_Icc (hab : a ≤ b)
         gcongr
         have hmu : (volume.restrict (Ioc a b)) Set.univ = ENNReal.ofReal (b - a) := by
           rw [Measure.restrict_apply_univ, Real.volume_Ioc]
-        simpa only [hmu] using rpow_lintegral_enorm_le_measure_univ_rpow_mul
-          (μ := volume.restrict (Ioc a b)) hg'.aestronglyMeasurable hr
+        simpa only [hmu] using rpow_lintegral_le_measure_univ_rpow_mul
+          (μ := volume.restrict (Ioc a b)) hg'.enorm.measurable.aemeasurable hr
     _ = ENNReal.ofReal ((b - a) ^ r) * ∫⁻ s in Ioc a b, ‖g' s‖ₑ ^ r := by
         rw [mul_right_comm, hpow]
     _ ≤ ENNReal.ofReal ((b - a) ^ r) * ∫⁻ t, ‖g' t‖ₑ ^ r :=

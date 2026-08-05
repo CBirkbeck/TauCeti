@@ -12,7 +12,6 @@ import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 import Mathlib.Analysis.SpecialFunctions.PolarCoord
 import Mathlib.MeasureTheory.Integral.CircleIntegral
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
-import Mathlib.MeasureTheory.Integral.MeanInequalities
 import TauCeti.MeasureTheory.Function.Lp.LIntegralRpow
 import Mathlib.MeasureTheory.Integral.Prod
 import Mathlib.Topology.Order.LeftRightNhds
@@ -274,12 +273,11 @@ private theorem sq_lintegral_angle_le
   have hpow : ∀ x : ℝ≥0∞, x ^ (2 : ℝ) = x ^ 2 := fun x => by
     rw [← ENNReal.rpow_natCast x 2]
     norm_num
-  have h := rpow_lintegral_enorm_le_measure_univ_rpow_mul (μ := volume.restrict (Ioo (-π) π))
-    (f := fun θ => g (circleMap ζ ρ θ)) hg.aestronglyMeasurable (r := 2) one_le_two
-  rw [hvol] at h
-  simp only [enorm_eq_self, hpow] at h
-  rw [show (2 : ℝ) - 1 = 1 by norm_num, ENNReal.rpow_one] at h
-  exact h
+  have hexp : (2 : ℝ) - 1 = 1 := by norm_num
+  have h := rpow_lintegral_le_measure_univ_rpow_mul (μ := volume.restrict (Ioo (-π) π))
+    (u := fun θ => g (circleMap ζ ρ θ)) hg (r := 2) one_le_two
+  rw [hvol, hexp, ENNReal.rpow_one] at h
+  simpa only [hpow] using h
 
 /-- **Cauchy–Schwarz on a circle.** The square of the circle integral of `g` is at most
 `2 π ρ` — for `ρ > 0` the circumference of the circle — times the circle integral of `g ^ 2`.
