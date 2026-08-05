@@ -42,7 +42,7 @@ Mathlib stack.
 
 * `HeckeCoset.smulOrbit_congr`, `HeckeCoset.smulOrbit_disjoint`: the orbit depends
   only on the left coset, and orbits of distinct double cosets are disjoint.
-* `HeckeLeftCosetModule.instFaithfulSMul`: the action of the (opposite) Hecke ring on the
+* `LeftCosetModule.instFaithfulSMul`: the action of the (opposite) Hecke ring on the
   module of left cosets is faithful.
 -/
 
@@ -274,7 +274,7 @@ noncomputable abbrev LeftCosetModule.single {Δ : Submonoid G} {H : Subgroup G} 
     (q : HeckeCoset Δ ⊥ H) (b : R) : LeftCosetModule Δ H R :=
   Finsupp.single q b
 
-namespace HeckeLeftCosetModule
+namespace LeftCosetModule
 
 open HeckeCoset
 
@@ -288,7 +288,7 @@ the cosets `βσᵢgH` by **right** multiplication, this is a right action — e
 Mathlib convention, as a left action of the opposite ring `(𝕋 Δ H R)ᵐᵒᵖ`: Shimura's
 compatibility `(f * g) • m = g • (f • m)` is precisely `mul_smul` for the opposite
 ring. -/
-noncomputable instance instSMulHeckeLeftCosetModule :
+noncomputable instance instSMulLeftCosetModule :
     SMul (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R) where
   smul t m := t.unop.sum fun D b₁ ↦ m.sum fun q b₂ ↦
     ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₂ * b₁)
@@ -359,9 +359,9 @@ noncomputable instance smulWithZero :
     simp only [MulOpposite.unop_zero]
     exact Finsupp.sum_zero_index
 
-end HeckeLeftCosetModule
+end LeftCosetModule
 
-namespace HeckeLeftCosetModule
+namespace LeftCosetModule
 
 open HeckeCoset
 
@@ -427,4 +427,4 @@ noncomputable instance instFaithfulSMul :
     MulOpposite.unop_injective <| eq_of_smul_eq_smul fun m ↦ by
       simpa only [MulOpposite.op_unop] using h m
 
-end HeckeLeftCosetModule
+end LeftCosetModule
