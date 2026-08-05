@@ -17,10 +17,12 @@ cosets `Δ/H`, each element of `𝕋 Δ H R` defines a scalar operation, with a 
 `HgH = ⊔ᵢ σᵢgH` sending a left coset `βH` to `Σᵢ βσᵢgH`. This file constructs the
 left-coset presentation, the orbit Finsets, and the scalar multiplication, and proves it is
 additive in both arguments and faithful. Since `HgH` sends `βH` to `Σᵢ βσᵢgH` by right
-multiplication, this is a **right** action, encoded as a left action of the opposite ring
-`(𝕋 Δ H R)ᵐᵒᵖ` per Mathlib convention: Shimura's compatibility law
-`(f * g) • m = g • (f • m)` (Proposition 3.2) is exactly `mul_smul` for the opposite ring,
-and is established together with the degree homomorphism in the follow-up development.
+multiplication, this is **right** multiplication, encoded as scalar operations of the
+opposite ring `(𝕋 Δ H R)ᵐᵒᵖ` per Mathlib convention. This file provides only the scalar
+operations, not yet an action: Shimura's compatibility law `(f * g) • m = g • (f • m)`
+(Proposition 3.2) is exactly `mul_smul` for the opposite ring, and is established — turning
+these scalars into a genuine action — together with the degree homomorphism in the
+follow-up development.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`HeckeRIngs/AbstractHeckeRing/Module.lean`,
@@ -35,15 +37,15 @@ Mathlib stack.
   the existing double-coset quotient serve as the left-coset quotient, with no new type.
 * `HeckeCoset.smulOrbit H g β`: the orbit Finset `{βσᵢgH}` of a left coset under a
   double coset representative.
-* the `SMul (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R)` instance — the right Hecke action in
-  its opposite-ring encoding.
+* the `SMul (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R)` instance — right multiplication by the
+  Hecke ring in its opposite-ring encoding.
 
 ## Main results
 
 * `HeckeCoset.smulOrbit_congr`, `HeckeCoset.smulOrbit_disjoint`: the orbit depends
   only on the left coset, and orbits of distinct double cosets are disjoint.
-* `LeftCosetModule.instFaithfulSMul`: the action of the (opposite) Hecke ring on the
-  module of left cosets is faithful.
+* `LeftCosetModule.instFaithfulSMul`: the scalar multiplication of the (opposite) Hecke
+  ring on the module of left cosets is faithful.
 -/
 
 public section
@@ -282,12 +284,13 @@ open scoped HeckeCosetModule
 
 variable [IsHeckeTriple Δ H H] {R : Type*} [NonUnitalNonAssocSemiring R]
 
-/-- The action of the Hecke ring on the free module of left cosets: a double coset acts on
-a left coset by summing over its orbit, extended biadditively. Since `HgH` sends `βH` to
-the cosets `βσᵢgH` by **right** multiplication, this is a right action — encoded, per
-Mathlib convention, as a left action of the opposite ring `(𝕋 Δ H R)ᵐᵒᵖ`: Shimura's
-compatibility `(f * g) • m = g • (f • m)` is precisely `mul_smul` for the opposite
-ring. -/
+/-- The scalar multiplication of the Hecke ring on the free module of left cosets: a double
+coset scales a left coset by summing over its orbit, extended biadditively. Since `HgH`
+sends `βH` to the cosets `βσᵢgH` by **right** multiplication, the scalars come from the
+opposite ring `(𝕋 Δ H R)ᵐᵒᵖ`, per Mathlib convention. Shimura's compatibility
+`(f * g) • m = g • (f • m)` — precisely `mul_smul` for the opposite ring, which upgrades
+these scalar operations to an action — is proved with the degree homomorphism in the
+follow-up development. -/
 noncomputable instance instSMulLeftCosetModule :
     SMul (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R) where
   smul t m := t.unop.sum fun D b₁ ↦ m.sum fun q b₂ ↦
@@ -409,7 +412,8 @@ private lemma smul_single_one_apply (t : 𝕋 Δ H R) (D : HeckeCoset Δ H H)
   exact (Finset.sum_eq_single D hzero fun hD ↦
     (hread (t D)).trans (Finsupp.notMem_support_iff.mp hD)).trans (hread (t D))
 
-/-- The action of the Hecke ring on the module of left cosets is faithful. -/
+/-- The scalar multiplication of the Hecke ring on the module of left cosets is
+faithful. -/
 lemma eq_of_smul_eq_smul {t₁ t₂ : 𝕋 Δ H R}
     (h : ∀ m : LeftCosetModule Δ H R,
       MulOpposite.op t₁ • m = MulOpposite.op t₂ • m) : t₁ = t₂ := by
