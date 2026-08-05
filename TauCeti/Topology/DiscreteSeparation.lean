@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.Topology.Separation.Basic
+public import Mathlib.Topology.Closure
 
 /-!
 # Shrinking an open set to separate part of a non-accumulating set
