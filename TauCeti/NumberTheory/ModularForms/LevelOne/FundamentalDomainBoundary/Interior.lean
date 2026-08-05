@@ -50,7 +50,7 @@ variable {H : ℝ} {w : ℂ}
 
 /-- Off-curve avoidance for interior points: each piece is separated from `w` in one
 coordinate, the arc by the norm. -/
-private lemma fdBoundary_ne_of_interior (hre : |w.re| < 1 / 2) (hnorm : 1 < ‖w‖)
+lemma fdBoundary_ne_of_interior (hre : |w.re| < 1 / 2) (hnorm : 1 < ‖w‖)
     (him : w.im < H) : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ≠ w := by
   obtain ⟨hx₁, hx₂⟩ := abs_lt.mp hre
   intro t ht h_eq
