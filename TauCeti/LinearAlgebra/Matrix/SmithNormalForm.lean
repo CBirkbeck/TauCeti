@@ -14,7 +14,6 @@ import Mathlib.LinearAlgebra.FreeModule.PID
 import Mathlib.LinearAlgebra.Matrix.Basis
 import Mathlib.LinearAlgebra.Matrix.Block
 import Mathlib.LinearAlgebra.Matrix.Nondegenerate
-import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 import Mathlib.LinearAlgebra.Matrix.Notation
 
 /-!
@@ -27,6 +26,8 @@ operations of determinant one:
 * `Matrix.exists_smith_normal_form_of_det_pos`: for `A : Matrix (Fin n) (Fin n) ℤ` with
   `0 < A.det` there are `L R : SpecialLinearGroup (Fin n) ℤ` and a positive `d : Fin n → ℤ`,
   monotone under divisibility, with `L * A * R = diagonal d`.
+* `Matrix.smith_normal_form_unique`: two positive chained diagonals in the same
+  `SL_n(ℤ)`-equivalence class are equal, so the invariant factors of `A` are well defined.
 
 Mathlib's `Submodule.smithNormalForm` provides basis-level diagonalization over a PID; this
 file supplies the matrix-level statement over `ℤ`, refined in three ways that the basis-level
@@ -418,12 +419,14 @@ private lemma gcd_step_general (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : ∀ i, 
     simp only [d']; rw [if_neg (show i ≠ (0 : Fin (k + 2)) from hi1), if_neg hi2]
   · exact gcd_natAbs_le_left a b ha
   · exact gcd_natAbs_lt_left_of_not_dvd a b ha
+  -- definitional: the values of the constructed `SL` elements are `L_big` and `R_big`
   · change L_big * Matrix.diagonal d * R_big = Matrix.diagonal d'
     refine gcd_step_matrix_eq k e j d d' a b rfl rfl rfl ?_ ?_
       (by simp only [e]; exact genEquiv_symm_inl0 k j hj)
       (by simp only [e]; exact genEquiv_symm_inl1 k j hj)
       (fun i ↦ by simp only [e]; exact genEquiv_symm_inr_ne_zero k j hj i)
       (fun i ↦ by simp only [e]; exact genEquiv_symm_inr_ne_j k j hj i)
+    -- definitional: unfold the local abbreviation `d'` at the pivot index
     · change (if j = (0 : Fin (k + 2)) then g else if j = j then p * q * g else d j) = _
       rw [if_neg (fun h ↦ hj (by rw [h]; rfl)), if_pos rfl]
     · intro i hi0 hij; simp only [d', if_neg hi0, if_neg hij]
