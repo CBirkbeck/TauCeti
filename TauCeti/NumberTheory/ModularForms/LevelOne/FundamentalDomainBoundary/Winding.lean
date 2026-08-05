@@ -354,7 +354,7 @@ theorem isNullHomologous_fdBoundary (hH : 1 ≤ H) :
   · rcases lt_abs.mp hre with h | h
     · exact windingNumber_fdBoundary_eq_zero_of_half_lt_re (by simpa using h)
     · refine windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half ?_
-      rw [show (-2⁻¹ : ℝ) = -(1 / 2) by norm_num]
+      norm_num at h ⊢
       linarith
   · exact windingNumber_fdBoundary_eq_zero_of_norm_lt_one hH hnorm
 
