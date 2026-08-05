@@ -4,25 +4,37 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.Analysis.Complex.Convex
-public import TauCeti.Analysis.Contour.Winding.Vanishing
-public import TauCeti.Analysis.Contour.Winding.LocallyConstant
+public import Mathlib.NumberTheory.Modular
+public import TauCeti.Analysis.Contour.Winding.Number.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
+
+import Mathlib.Analysis.Complex.Convex
+import TauCeti.Analysis.Contour.Winding.UnboundedComponent
 
 /-!
 # Winding of the fundamental-domain boundary: the exterior
 
-The boundary contour lies in the half-plane `im ≥ √3/2`, so every point strictly below
-that height sits in the unbounded connected component of the complement, where the
-winding number vanishes: the exterior determination feeding the valence-formula residue
-count.
+Every point off the closed truncated fundamental domain lies in one of five regions —
+below the corner height, right or left of the fundamental strip, above the ceiling, or in
+the open unit disc under the arc — and each region sits in the unbounded connected
+component of the contour's complement, where the winding number vanishes. Together the
+five determinations package as null-homology of the boundary contour in the truncated
+fundamental domain, the exterior input to the valence-formula residue count.
 
 ## Main declarations
 
 * `TauCeti.ModularForm.sqrt_three_div_two_le_im_fdBoundary`: the image height bound.
 * `TauCeti.ModularForm.windingNumber_fdBoundary_eq_zero_of_im_lt`: points below the
-  contour wind zero, with the analogous determinations on the other three sides
-  (`_of_half_lt_re`, `_of_re_lt_neg_half`, `_of_lt_im`).
+  corner height wind zero, with the analogous determinations on the other sides
+  (`_of_half_lt_re`, `_of_re_lt_neg_half`, `_of_lt_im`) and in the unit disc
+  (`_of_norm_lt_one`).
+* `TauCeti.ModularForm.isNullHomologous_fdBoundary`: the packaged null-homology.
+
+## References
+
+The truncated-contour strategy follows the fundamental-domain boundary development of
+AINTLIB's `LeanModularForms` (`ForMathlib/FDBoundary.lean`, `FDBoundaryH.lean`,
+`FDBoundaryPath.lean`); the winding transport is Tau Ceti's Hungerbühler–Wasem machinery.
 -/
 
 public noncomputable section
@@ -39,7 +51,7 @@ variable {H t : ℝ}
 
 /-- Every point of the boundary contour has imaginary part at least `√3/2`, provided the
 height parameter clears the corner row. -/
-lemma sqrt_three_div_two_le_im_fdBoundary (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
+lemma sqrt_three_div_two_le_im_fdBoundary (hH : Real.sqrt 3 / 2 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
     Real.sqrt 3 / 2 ≤ (fdBoundary H t).im := by
   obtain ⟨ht0, ht5⟩ := ht
   have h32 : Real.sqrt 3 / 2 ≤ 1 := by
@@ -109,9 +121,9 @@ lemma abs_re_fdBoundary_le_half (ht : t ∈ Icc (0 : ℝ) 5) :
           (t + 1) * (Real.pi / 6) ≤ 2 * Real.pi / 3 := by
         constructor <;> nlinarith [Real.pi_pos]
       constructor
-      · calc (-(1 / 2) : ℝ) = Real.cos (2 * Real.pi / 3) := by
-              rw [show (2 * Real.pi / 3 : ℝ) = Real.pi - Real.pi / 3 by ring,
-                Real.cos_pi_sub, Real.cos_pi_div_three]
+      · have h23 : (2 * Real.pi / 3 : ℝ) = Real.pi - Real.pi / 3 := by ring
+        calc (-(1 / 2) : ℝ) = Real.cos (2 * Real.pi / 3) := by
+              rw [h23, Real.cos_pi_sub, Real.cos_pi_div_three]
           _ ≤ Real.cos ((t + 1) * (Real.pi / 6)) :=
               Real.cos_le_cos_of_nonneg_of_le_pi (by positivity)
                 (by linarith [Real.pi_pos]) harc.2
@@ -216,7 +228,10 @@ lemma one_le_norm_fdBoundary (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
     1 ≤ ‖fdBoundary H t‖ := by
   obtain ⟨ht0, ht5⟩ := ht
   have hsq : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
-  have him := sqrt_three_div_two_le_im_fdBoundary hH ⟨ht0, ht5⟩
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
+    rw [div_le_one (by norm_num)]
+    nlinarith [Real.sqrt_nonneg 3]
+  have him := sqrt_three_div_two_le_im_fdBoundary (h32.trans hH) ⟨ht0, ht5⟩
   have hnn := norm_nonneg (fdBoundary H t)
   rcases le_or_gt t 1 with h1 | h1
   · have h1' : 1 ≤ ‖fdBoundary H t‖ ^ 2 := by
@@ -242,45 +257,30 @@ private lemma windingNumber_fdBoundary_eq_zero_of_mem_preconnected {S : Set ℂ}
     (hconn : IsPreconnected S) (hdisj : S ⊆ (fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ)
     (hunb : ∀ R : ℝ, ∃ z ∈ S, R < ‖z‖) {w : ℂ} (hw : w ∈ S) :
     windingNumber (fdBoundary H) 0 5 w = 0 := by
-  obtain ⟨p, hdiff⟩ := (isPiecewiseC1On_fdBoundary H).exists_finset_differentiableAt
-  have hclosed := (fdBoundary_closed H).symm
-  have hP : ((p : Set ℝ)).Countable := p.finite_toSet.countable
-  have hcont : ContinuousOn (fdBoundary H) (uIcc 0 5) :=
-    (continuous_fdBoundary H).continuousOn
-  have hint := (isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv
-  have h_ev := windingNumber_eventually_zero_cocompact hclosed hP hcont hdiff hint
-  rw [Filter.eventually_iff, Filter.mem_cocompact] at h_ev
-  obtain ⟨K, hK, hKsub⟩ := h_ev
-  obtain ⟨r, hr⟩ := hK.isBounded.subset_closedBall 0
-  obtain ⟨w₀, hw₀S, hw₀far⟩ := hunb r
-  have hw₀_notK : w₀ ∉ K := fun hmem ↦ by
-    have := hr hmem
-    rw [Metric.mem_closedBall, dist_zero_right] at this
-    linarith
-  have hw₀_zero : windingNumber (fdBoundary H) 0 5 w₀ = 0 := (hKsub hw₀_notK).2
-  have h_sub : S ⊆ connectedComponentIn ((fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ) w₀ :=
-    hconn.subset_connectedComponentIn hw₀S hdisj
-  rw [windingNumber_eq_of_mem_connectedComponentIn hclosed hP hcont hdiff hint (h_sub hw)]
-  exact hw₀_zero
+  refine (isPiecewiseC1On_fdBoundary H).windingNumber_eq_zero_of_unbounded_component
+    (fdBoundary_closed H).symm fun hbdd => ?_
+  obtain ⟨r, hr⟩ := hbdd.subset_closedBall 0
+  obtain ⟨z, hzS, hzr⟩ := hunb r
+  have hz_comp : z ∈ connectedComponentIn ((fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ) w :=
+    hconn.subset_connectedComponentIn hw hdisj hzS
+  have := hr hz_comp
+  rw [Metric.mem_closedBall, dist_zero_right] at this
+  linarith
 
 /-- Every point strictly below the contour's height winds zero. -/
-theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : 1 ≤ H) {w : ℂ}
+theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {w : ℂ}
     (hw : w.im < Real.sqrt 3 / 2) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
     (convex_halfSpace_im_lt _).isPreconnected
-    ?_ (fun R ↦ ⟨-(max R 0 + 1) * Complex.I, ?_, ?_⟩) hw
+    ?_ (fun R ↦ ⟨((-(max R 0 + 1) : ℝ) : ℂ) * Complex.I, ?_, ?_⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
     exact absurd hz (not_lt.mpr (sqrt_three_div_two_le_im_fdBoundary hH ht))
-  · have : (-(max R 0 + 1) * Complex.I).im = -(max R 0 + 1) := by simp
-    rw [Set.mem_ofPred_eq, this]
+  · rw [Set.mem_ofPred_eq, Complex.mul_I_im, Complex.ofReal_re]
     nlinarith [le_max_right R 0, Real.sqrt_nonneg 3]
-  · rw [norm_mul, Complex.norm_I, mul_one, norm_neg]
-    have hnorm : ‖((max R 0 : ℝ) : ℂ) + 1‖ = max R 0 + 1 := by
-      rw [show ((max R 0 : ℝ) : ℂ) + 1 = ((max R 0 + 1 : ℝ) : ℂ) by push_cast; ring,
-        Complex.norm_real, Real.norm_of_nonneg (by positivity)]
-    rw [hnorm]
-    linarith [le_max_left R 0]
+  · rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real,
+      Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
+    nlinarith [le_max_left R 0]
 
 /-- Every point strictly right of the fundamental strip winds zero. -/
 theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
@@ -303,18 +303,15 @@ theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
     (hw : w.re < -(1 / 2)) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
     (convex_halfSpace_re_lt _).isPreconnected
-    ?_ (fun R ↦ ⟨(-(max R 0 + 1 : ℝ) : ℂ), ?_, ?_⟩) hw
+    ?_ (fun R ↦ ⟨((-(max R 0 + 1) : ℝ) : ℂ), ?_, ?_⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
     have := (abs_le.mp (abs_re_fdBoundary_le_half (H := H) ht)).1
     rw [Set.mem_ofPred_eq] at hz
     linarith
-  · rw [Set.mem_ofPred_eq]
-    have : ((-(max R 0 + 1 : ℝ) : ℝ) : ℂ).re = -(max R 0 + 1) := Complex.ofReal_re _
-    rw [show (-(max R 0 + 1 : ℝ) : ℂ) = ((-(max R 0 + 1) : ℝ) : ℂ) by push_cast; ring, this]
+  · rw [Set.mem_ofPred_eq, Complex.ofReal_re]
     nlinarith [le_max_right R 0]
-  · rw [show (-(max R 0 + 1 : ℝ) : ℂ) = ((-(max R 0 + 1) : ℝ) : ℂ) by push_cast; ring,
-      Complex.norm_real, Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
+  · rw [Complex.norm_real, Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
     nlinarith [le_max_left R 0]
 
 /-- Every point strictly above the contour's height winds zero. -/
@@ -348,23 +345,44 @@ theorem windingNumber_fdBoundary_eq_zero_of_norm_lt_one (hH : 1 ≤ H) {w : ℂ}
       (convex_ball 0 1).isPreconnected (convex_halfSpace_im_lt _).isPreconnected
     rw [Set.mem_ofPred_eq, Complex.zero_im]
     positivity
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
+    rw [div_le_one (by norm_num)]
+    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected hconn ?_
-    (fun R ↦ ⟨-(max R 0 + 1) * Complex.I, Or.inr ?_, ?_⟩)
+    (fun R ↦ ⟨((-(max R 0 + 1) : ℝ) : ℂ) * Complex.I, Or.inr ?_, ?_⟩)
     (Or.inl (by rwa [Metric.mem_ball, dist_zero_right]))
   · rintro z (hz | hz) ⟨t, ht, rfl⟩ <;>
       rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
     · rw [Metric.mem_ball, dist_zero_right] at hz
       exact absurd hz (not_lt.mpr (one_le_norm_fdBoundary hH ht))
-    · exact absurd hz (not_lt.mpr (sqrt_three_div_two_le_im_fdBoundary hH ht))
-  · have him : (-(max R 0 + 1) * Complex.I).im = -(max R 0 + 1) := by simp
-    rw [Set.mem_ofPred_eq, him]
+    · exact absurd hz (not_lt.mpr (sqrt_three_div_two_le_im_fdBoundary (h32.trans hH) ht))
+  · rw [Set.mem_ofPred_eq, Complex.mul_I_im, Complex.ofReal_re]
     nlinarith [le_max_right R 0, Real.sqrt_nonneg 3]
-  · rw [norm_mul, Complex.norm_I, mul_one, norm_neg]
-    have hnorm : ‖((max R 0 : ℝ) : ℂ) + 1‖ = max R 0 + 1 := by
-      rw [show ((max R 0 : ℝ) : ℂ) + 1 = ((max R 0 + 1 : ℝ) : ℂ) by push_cast; ring,
-        Complex.norm_real, Real.norm_of_nonneg (by positivity)]
-    rw [hnorm]
-    linarith [le_max_left R 0]
+  · rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real,
+      Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
+    nlinarith [le_max_left R 0]
+
+/-- The boundary contour is null-homologous in the truncated fundamental domain: every
+point off the closed truncated domain lies in one of the five exterior regions, where the
+winding number vanishes. -/
+theorem isNullHomologous_fdBoundary (hH : 1 ≤ H) :
+    IsNullHomologous (fdBoundary H) 0 5
+      (UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H) := by
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
+    rw [div_le_one (by norm_num)]
+    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+  rw [isNullHomologous_iff]
+  intro z hz
+  rw [ModularGroup.coe_truncatedFundamentalDomain, Set.mem_ofPred_eq, not_and_or, not_and_or,
+    not_and_or, not_le, not_le, not_le, not_le] at hz
+  rcases hz with him | hzH | hre | hnorm
+  · exact windingNumber_fdBoundary_eq_zero_of_im_lt (h32.trans hH)
+      (him.trans_le (by positivity))
+  · exact windingNumber_fdBoundary_eq_zero_of_lt_im hH hzH
+  · rcases lt_abs.mp hre with h | h
+    · exact windingNumber_fdBoundary_eq_zero_of_half_lt_re h
+    · exact windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half (by linarith)
+  · exact windingNumber_fdBoundary_eq_zero_of_norm_lt_one hH hnorm
 
 end ModularForm
 
