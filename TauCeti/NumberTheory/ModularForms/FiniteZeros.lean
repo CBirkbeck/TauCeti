@@ -8,9 +8,6 @@ public import Mathlib.NumberTheory.Modular
 public import TauCeti.NumberTheory.ModularForms.Order.AtCusp
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
-import Mathlib.Analysis.Analytic.Uniqueness
-import Mathlib.Analysis.Complex.Convex
-import TauCeti.Topology.DiscreteSeparation
 
 /-!
 # Finite zeros of a level-one modular form in the fundamental domain
@@ -26,10 +23,6 @@ finite-support input to the valence formula.
 * `TauCeti.ModularForm.exists_height_nonvanishing`: a nonzero form does not vanish at
   points of imaginary part above some height.
 * `TauCeti.ModularForm.finite_zeros_in_fd`: finiteness of the nonzero-order points in `𝒟`.
-* `TauCeti.ModularForm.not_accPt_zeros_comp_ofComplex`: the extension's zeros do not
-  accumulate in the upper half-plane.
-* `TauCeti.ModularForm.exists_isOpen_zeros_inter`: an open neighbourhood isolating a
-  subset's zeros.
 
 ## References
 
@@ -88,47 +81,6 @@ lemma finite_zeros_in_fd [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → �
     MeromorphicOn.divisor_apply h_mero hpK]
   intro h0
   exact hp_ord (by rwa [orderOfVanishingAt_def])
-
-/-- The zeros of a nonzero holomorphic function's complex extension do not accumulate at
-any point of the upper half-plane. -/
-lemma not_accPt_zeros_comp_ofComplex {g : ℍ → ℂ} (hg : MDiff g) (hg0 : g ≠ 0)
-    {x : ℂ} (hx : 0 < x.im) :
-    ¬AccPt x (Filter.principal {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0}) := by
-  intro hacc
-  have hall : AnalyticOnNhd ℂ (g ∘ ofComplex) {z : ℂ | 0 < z.im} := fun w hw =>
-    analyticAt_comp_ofComplex hg hw
-  rw [accPt_iff_frequently_nhdsNE] at hacc
-  have h0 := hall.eqOn_zero_of_preconnected_of_frequently_eq_zero
-    (convex_halfSpace_im_gt 0).isPreconnected hx (hacc.mono fun y hy => hy.2)
-  refine hg0 (funext fun p => ?_)
-  have := h0 (Set.mem_ofPred_eq ▸ p.2 : (p : ℂ) ∈ {z : ℂ | 0 < z.im})
-  simpa [Function.comp, ofComplex_apply] using this
-
-/-- Any subset of the upper half-plane has an open neighbourhood in the upper half-plane
-containing no zeros of the form's complex extension beyond its own. -/
-lemma exists_isOpen_zeros_inter {g : ℍ → ℂ} (hg : MDiff g) (hg0 : g ≠ 0)
-    {K : Set ℂ} (hK : K ⊆ {z : ℂ | 0 < z.im}) :
-    ∃ U : Set ℂ, IsOpen U ∧ K ⊆ U ∧ U ⊆ {z : ℂ | 0 < z.im} ∧
-      {z ∈ U | (g ∘ ofComplex) z = 0} = {z ∈ K | (g ∘ ofComplex) z = 0} := by
-  have hnc : ∀ x ∈ K, x ∉ closure ({z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} \ K) := by
-    intro x hx hxc
-    have hx_notin : x ∉ {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} \ K := fun h => h.2 hx
-    have hcl : ClusterPt x (Filter.principal
-        (({z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} \ K) \ {x})) := by
-      rwa [Set.sdiff_singleton_eq_self hx_notin, ← mem_closure_iff_clusterPt]
-    exact not_accPt_zeros_comp_ofComplex hg hg0 (hK hx)
-      ((accPt_principal_iff_clusterPt.mpr hcl).mono
-        (Filter.principal_mono.mpr Set.sdiff_subset))
-  obtain ⟨U, hUo, hKU, hUV, hUZ⟩ := TauCeti.exists_isOpen_inter_eq_of_notMem_closure
-    (Z := {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0}) isOpen_upperHalfPlaneSet hK hnc
-  refine ⟨U, hUo, hKU, hUV, ?_⟩
-  have hmassage : ∀ {W : Set ℂ}, W ⊆ {z : ℂ | 0 < z.im} →
-      {z ∈ W | (g ∘ ofComplex) z = 0} =
-        W ∩ {z : ℂ | 0 < z.im ∧ (g ∘ ofComplex) z = 0} := by
-    intro W hW
-    ext z
-    exact ⟨fun hz => ⟨hz.1, hW hz.1, hz.2⟩, fun hz => ⟨hz.1, hz.2.2⟩⟩
-  rw [hmassage hUV, hmassage hK, hUZ]
 
 end ModularForm
 
