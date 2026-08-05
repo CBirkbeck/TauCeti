@@ -16,10 +16,11 @@ The scalar operations underlying the natural representation of the Hecke ring, f
 cosets `Δ/H`, each element of `𝕋 Δ H R` defines a scalar operation, with a double coset
 `HgH = ⊔ᵢ σᵢgH` sending a left coset `βH` to `Σᵢ βσᵢgH`. This file constructs the
 left-coset type, the orbit Finsets, and the scalar multiplication, and proves it is
-additive in both arguments and faithful. The action laws proper — compatibility with the
-convolution product and its identity, which upgrade these operations to a module structure —
-are Shimura's Proposition 3.2 and are established together with the degree homomorphism in
-the follow-up development.
+additive in both arguments and faithful. Since `HgH` sends `βH` to `Σᵢ βσᵢgH` by right
+multiplication, this is a **right** action, encoded as a left action of the opposite ring
+`(𝕋 Δ H R)ᵐᵒᵖ` per Mathlib convention: Shimura's compatibility law
+`(f * g) • m = g • (f • m)` (Proposition 3.2) is exactly `mul_smul` for the opposite ring,
+and is established together with the degree homomorphism in the follow-up development.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`HeckeRIngs/AbstractHeckeRing/Module.lean`,
@@ -34,14 +35,15 @@ Mathlib stack.
   the existing double-coset quotient serve as the left-coset quotient, with no new type.
 * `HeckeCoset.smulOrbit H g β`: the orbit Finset `{βσᵢgH}` of a left coset under a
   double coset representative.
-* the `SMul (𝕋 Δ H R) (HeckeCoset Δ ⊥ H →₀ R)` instance.
+* the `SMul (𝕋 Δ H R)ᵐᵒᵖ (HeckeCoset Δ ⊥ H →₀ R)` instance — the right Hecke action in
+  its opposite-ring encoding.
 
 ## Main results
 
 * `HeckeCoset.smulOrbit_congr`, `HeckeCoset.smulOrbit_disjoint`: the orbit depends
   only on the left coset, and orbits of distinct double cosets are disjoint.
-* `HeckeLeftCosetModule.instFaithfulSMul`: the action of the Hecke ring on the module of
-  left cosets is faithful.
+* `HeckeLeftCosetModule.instFaithfulSMul`: the action of the (opposite) Hecke ring on the
+  module of left cosets is faithful.
 -/
 
 public section
@@ -268,21 +270,32 @@ open scoped HeckeCosetModule
 variable [IsHeckeTriple Δ H H] {R : Type*} [NonUnitalNonAssocSemiring R]
 
 /-- The action of the Hecke ring on the free module of left cosets: a double coset acts on
-a left coset by summing over its orbit, extended biadditively. -/
+a left coset by summing over its orbit, extended biadditively. Since `HgH` sends `βH` to
+the cosets `βσᵢH` by **right** multiplication, this is a right action — encoded, per
+Mathlib convention, as a left action of the opposite ring `(𝕋 Δ H R)ᵐᵒᵖ`: Shimura's
+compatibility `(f * g) • m = g • (f • m)` is precisely `mul_smul` for the opposite
+ring. -/
 noncomputable instance instSMulHeckeLeftCosetModule :
-    SMul (𝕋 Δ H R) (HeckeCoset Δ ⊥ H →₀ R) where
-  smul t m := t.sum fun D b₁ ↦ m.sum fun q b₂ ↦
+    SMul (𝕋 Δ H R)ᵐᵒᵖ (HeckeCoset Δ ⊥ H →₀ R) where
+  smul t m := t.unop.sum fun D b₁ ↦ m.sum fun q b₂ ↦
     ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₁ * b₂)
+
+-- the defining formula for an opaque opposite-ring element; instance plumbing
+private lemma smul_def (t : (𝕋 Δ H R)ᵐᵒᵖ) (m : HeckeCoset Δ ⊥ H →₀ R) :
+    t • m = t.unop.sum fun D b₁ ↦ m.sum fun q b₂ ↦
+      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₁ * b₂) :=
+  (rfl)
 
 /-- The defining formula of the action. -/
 lemma smul_eq_sum (t : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
-    t • m = t.sum fun D b₁ ↦ m.sum fun q b₂ ↦
+    MulOpposite.op t • m = t.sum fun D b₁ ↦ m.sum fun q b₂ ↦
       ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₁ * b₂) :=
   (rfl)
 
 /-- The action of a basis element of the Hecke ring on a basis element of the module. -/
 lemma single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b : R) :
-    HeckeCosetModule.single R D a • (Finsupp.single q b : HeckeCoset Δ ⊥ H →₀ R) =
+    MulOpposite.op (HeckeCosetModule.single R D a) •
+        (Finsupp.single q b : HeckeCoset Δ ⊥ H →₀ R) =
       ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (a * b) := by
   classical
   rw [smul_eq_sum,
@@ -292,7 +305,7 @@ lemma single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b 
 /-- The action is additive in the Hecke-ring argument. -/
 @[simp]
 lemma add_smul (t₁ t₂ : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
-    (t₁ + t₂) • m = t₁ • m + t₂ • m := by
+    MulOpposite.op (t₁ + t₂) • m = MulOpposite.op t₁ • m + MulOpposite.op t₂ • m := by
   classical
   simp only [smul_eq_sum]
   refine Finsupp.sum_add_index' (fun D ↦ ?_) fun D b₁ b₂ ↦ ?_
@@ -307,14 +320,15 @@ lemma add_smul (t₁ t₂ : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
 `DistribSMul` typeclass (the strongest action class available before the compatibility
 law with the convolution product); the generic `smul_zero`/`smul_add` supersede
 ad-hoc laws. -/
-noncomputable instance distribSMul : DistribSMul (𝕋 Δ H R) (HeckeCoset Δ ⊥ H →₀ R) where
+noncomputable instance distribSMul :
+    DistribSMul (𝕋 Δ H R)ᵐᵒᵖ (HeckeCoset Δ ⊥ H →₀ R) where
   smul_zero t := by
-    rw [smul_eq_sum]
+    rw [smul_def]
     simp only [Finsupp.sum_zero_index]
-    exact Finsupp.sum_fun_zero t
+    exact Finsupp.sum_fun_zero t.unop
   smul_add t m₁ m₂ := by
     classical
-    simp only [smul_eq_sum]
+    simp only [smul_def]
     refine (Finsupp.sum_congr fun D b₁ ↦ ?_).trans Finsupp.sum_add
     refine Finsupp.sum_add_index' (fun q ↦ ?_) fun q b₂ b₃ ↦ ?_
     · exact Finset.sum_eq_zero fun i _ ↦ by simp
@@ -322,10 +336,12 @@ noncomputable instance distribSMul : DistribSMul (𝕋 Δ H R) (HeckeCoset Δ �
       exact Finset.sum_congr rfl fun i _ ↦ by rw [mul_add, Finsupp.single_add]
 
 /-- Zero acts as zero and acting on zero gives zero: the `SMulWithZero` typeclass. -/
-noncomputable instance smulWithZero : SMulWithZero (𝕋 Δ H R) (HeckeCoset Δ ⊥ H →₀ R) where
+noncomputable instance smulWithZero :
+    SMulWithZero (𝕋 Δ H R)ᵐᵒᵖ (HeckeCoset Δ ⊥ H →₀ R) where
   smul_zero := smul_zero
   zero_smul m := by
-    rw [smul_eq_sum]
+    rw [smul_def]
+    simp only [MulOpposite.unop_zero]
     exact Finsupp.sum_zero_index
 
 end HeckeLeftCosetModule
@@ -343,7 +359,7 @@ the orbit of `D`, the coefficient of `t • [H]` is the coefficient of `t` at `D
 private lemma smul_single_one_apply (t : 𝕋 Δ H R) (D : HeckeCoset Δ H H)
     {q : HeckeCoset Δ ⊥ H}
     (hq : q ∈ smulOrbit H D.rep (1 : HeckeCoset Δ ⊥ H).rep) :
-    (t • (Finsupp.single 1 1 : HeckeCoset Δ ⊥ H →₀ R)) q = t D := by
+    (MulOpposite.op t • (Finsupp.single 1 1 : HeckeCoset Δ ⊥ H →₀ R)) q = t D := by
   classical
   have hinner : ∀ (D' : HeckeCoset Δ H H) (b₁ : R),
       (Finsupp.single (1 : HeckeCoset Δ ⊥ H) (1 : R)).sum (fun q' b₂ ↦
@@ -380,17 +396,20 @@ private lemma smul_single_one_apply (t : 𝕋 Δ H R) (D : HeckeCoset Δ H H)
 
 /-- The action of the Hecke ring on the module of left cosets is faithful. -/
 lemma eq_of_smul_eq_smul {t₁ t₂ : 𝕋 Δ H R}
-    (h : ∀ m : HeckeCoset Δ ⊥ H →₀ R, t₁ • m = t₂ • m) : t₁ = t₂ := by
+    (h : ∀ m : HeckeCoset Δ ⊥ H →₀ R,
+      MulOpposite.op t₁ • m = MulOpposite.op t₂ • m) : t₁ = t₂ := by
   classical
   refine Finsupp.ext fun D ↦ ?_
   obtain ⟨q, hq⟩ := smulOrbit_nonempty (H := H) D.rep (1 : HeckeCoset Δ ⊥ H).rep
   have h1 := congrArg (fun m ↦ m q) (h (Finsupp.single 1 1))
   rwa [smul_single_one_apply t₁ D hq, smul_single_one_apply t₂ D hq] at h1
 
-/-- The scalar operations of the Hecke ring on the left-coset module are faithful, as an
-instance. -/
+/-- The scalar operations of the opposite Hecke ring on the left-coset module are
+faithful, as an instance. -/
 noncomputable instance instFaithfulSMul :
-    FaithfulSMul (𝕋 Δ H R) (HeckeCoset Δ ⊥ H →₀ R) where
-  eq_of_smul_eq_smul := eq_of_smul_eq_smul
+    FaithfulSMul (𝕋 Δ H R)ᵐᵒᵖ (HeckeCoset Δ ⊥ H →₀ R) where
+  eq_of_smul_eq_smul {a b} h :=
+    MulOpposite.unop_injective <| eq_of_smul_eq_smul fun m ↦ by
+      simpa only [MulOpposite.op_unop] using h m
 
 end HeckeLeftCosetModule
