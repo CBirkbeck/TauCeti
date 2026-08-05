@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.Algebra.AlgebraicGroup.Tangent.Basic
-public import TauCeti.Algebra.AlgebraicGroup.Tangent.Lie.Basic
 public import Mathlib.RepresentationTheory.Basic
 
 /-!
@@ -31,8 +30,13 @@ computation appears; inverses come from the group of points.
 ## Main declarations
 
 * `TauCeti.Derivation.adDerivation`: the conjugate of a tangent vector by a point.
+* `TauCeti.Derivation.toConv_coe_adDerivation`: that conjugate as the convolution product
+  `g ⋆ d ⋆ g⁻¹`, the form the algebraic manipulations use.
 * `TauCeti.Derivation.adRepresentation`: the adjoint action, as a representation of
   the convolution group of points on the tangent space.
+
+Compatibility of the action with the Lie bracket needs the Lie structure and so lives in
+`Tangent.Lie.Adjoint`, keeping this module free of it.
 
 The action stays on the Lie functor `B ↦ Derivation R A (CounitAlgebra R A B)`; at
 each `B` it is a genuine representation. Identifying the functor's value at `B` with
@@ -150,7 +154,11 @@ theorem adDerivation_apply (g : WithConv (A →ₐ[R] Bialgebra.CounitAlgebra R 
   have h := DFunLike.congr_fun (coe_adDerivation_linearMap g d) a
   simpa only [Derivation.coeFn_coe] using h
 
-private lemma toConv_coe_adDerivation
+/-- **The conjugate of a tangent vector, in convolution form**: `Ad g d` is the product
+`g ⋆ d ⋆ g⁻¹` in the convolution algebra of linear maps.  This is the form in which the
+adjoint action is manipulated algebraically, and the bracket compatibility in
+`Tangent.Lie.Adjoint` is proved from it. -/
+lemma toConv_coe_adDerivation
     (g : WithConv (A →ₐ[R] Bialgebra.CounitAlgebra R A B))
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     toConv (↑(adDerivation B g d) : A →ₗ[R] Bialgebra.CounitAlgebra R A B) =
@@ -200,45 +208,6 @@ lemma adRepresentation_apply (g : WithConv (A →ₐ[R] Bialgebra.CounitAlgebra 
   -- definitional unfolding once, explicitly.
   change adDerivation B g d = _
   rfl
-
-section LieAdjoint
-
--- Only the coefficient algebra `B` need be a ring: the bracket is a commutator, so the
--- convolution algebra `A →ₗ[R] CounitAlgebra R A B` must admit subtraction, and it inherits that
--- from `B` alone. The base `R` and the Hopf algebra `A` are used only multiplicatively.
-variable {R A B : Type*} [CommSemiring R] [CommSemiring A] [HopfAlgebra R A]
-  [CommRing B] [Algebra R B]
-
-variable (B) in
-/-- **The adjoint action is by Lie automorphisms.** `Ad g` is conjugation `g ⋆ · ⋆ g⁻¹` in the
-convolution ring, and conjugation by a unit preserves the commutator, so it respects the
-bracket of tangent vectors. -/
-@[simp]
-theorem adDerivation_lie (g : WithConv (A →ₐ[R] Bialgebra.CounitAlgebra R A B))
-    (d₁ d₂ : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
-    adDerivation B g ⁅d₁, d₂⁆ = ⁅adDerivation B g d₁, adDerivation B g d₂⁆ := by
-  have hinv : toConv ((g⁻¹).ofConv.toLinearMap) * toConv g.ofConv.toLinearMap = 1 := by
-    rw [← AlgHom.toLinearMap_convMul, inv_mul_cancel, AlgHom.toLinearMap_convOne]
-  have hbr : ∀ e₁ e₂ : Derivation R A (Bialgebra.CounitAlgebra R A B),
-      toConv (↑⁅e₁, e₂⁆ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) =
-        toConv (↑e₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
-            toConv (↑e₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) -
-          toConv (↑e₂ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
-            toConv (↑e₁ : A →ₗ[R] Bialgebra.CounitAlgebra R A B) := by
-    intro e₁ e₂
-    rw [coe_bracket, toConv_sub, toConv_ofConv, toConv_ofConv]
-  refine Derivation.ext fun a => ?_
-  have key : toConv (↑(adDerivation B g ⁅d₁, d₂⁆) : A →ₗ[R] Bialgebra.CounitAlgebra R A B) =
-      toConv (↑⁅adDerivation B g d₁, adDerivation B g d₂⁆ :
-        A →ₗ[R] Bialgebra.CounitAlgebra R A B) := by
-    rw [toConv_coe_adDerivation, hbr, hbr, toConv_coe_adDerivation, toConv_coe_adDerivation,
-      mul_sub, sub_mul]
-    simp only [mul_assoc]
-    rw [← mul_assoc (toConv ((g⁻¹).ofConv.toLinearMap)), hinv, one_mul,
-      ← mul_assoc (toConv ((g⁻¹).ofConv.toLinearMap)), hinv, one_mul]
-  exact DFunLike.congr_fun (congrArg ofConv key) a
-
-end LieAdjoint
 
 end Derivation
 
