@@ -33,7 +33,7 @@ namespace ModularForm
 
 variable {H t c d : ℝ}
 
-/-- The vertical chords are nonzero exactly when the height differs from the corner row. -/
+/-- The segment-1 chord is nonzero when the height differs from the corner row. -/
 private lemma segment1_chord_ne_zero (hH : H ≠ Real.sqrt 3 / 2) :
     (ρ : ℂ) + 1 - (1 / 2 + H * Complex.I) ≠ 0 := by
   intro h0
