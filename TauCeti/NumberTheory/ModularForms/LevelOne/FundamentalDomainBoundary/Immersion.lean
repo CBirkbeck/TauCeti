@@ -19,6 +19,14 @@ the winding decomposition and the residue sum along the contour.
 ## Main declarations
 
 * `TauCeti.ModularForm.isPwC1ImmersionOn_fdBoundary`.
+
+## References
+
+The immersion condition is the regularity requirement of N. Hungerbühler and M. Wasem,
+*Non-integer valued winding numbers and a generalized Residue Theorem*, arXiv:1808.00997
+(2018); the truncated-contour strategy follows the fundamental-domain boundary development
+of AINTLIB's `LeanModularForms` (`ForMathlib/FDBoundary.lean`, `FDBoundaryH.lean`,
+`FDBoundaryPath.lean`).
 -/
 
 public noncomputable section
