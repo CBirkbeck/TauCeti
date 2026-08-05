@@ -274,8 +274,7 @@ private lemma fourierComponent_mem (χ₀ : G →* Kˣ) (v : V) (g : G) :
   calc ∑ d : G, ρ g ((((χ₀ d)⁻¹ : Kˣ) : K) • ρ d v)
       = ∑ d : G, (((χ₀ d)⁻¹ : Kˣ) : K) • ρ (g * d) v := by
         refine Finset.sum_congr rfl fun d _ ↦ ?_
-        rw [map_smul, map_mul]
-        rfl
+        rw [map_smul, map_mul, Module.End.mul_apply]
     _ = ∑ e : G, (((χ₀ (g⁻¹ * e))⁻¹ : Kˣ) : K) • ρ e v := by
         exact Fintype.sum_equiv (Equiv.mulLeft g) _ _ fun d ↦ by simp
     _ = (χ₀ g : K) • ∑ e : G, (((χ₀ e)⁻¹ : Kˣ) : K) • ρ e v := by
