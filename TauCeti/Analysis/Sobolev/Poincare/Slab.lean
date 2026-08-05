@@ -5,14 +5,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Analysis.Calculus.ContDiff.Basic
-public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 -- `TauCeti.MeasureTheory.Function.Lp.LIntegralRpow` is imported publicly: every estimate below is
 -- proved as a bound between `∫⁻ ‖·‖ₑ ^ p` integrals and converted by
 -- `TauCeti.eLpNorm_le_eLpNorm_of_lintegral_rpow_le`, which a reader of either form will want.
 public import TauCeti.MeasureTheory.Function.Lp.LIntegralRpow
+import Mathlib.Analysis.Calculus.ContDiff.Deriv
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.MeasureTheory.Constructions.Pi
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.ContDiff
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 import Mathlib.MeasureTheory.Integral.Prod
 
@@ -38,8 +39,8 @@ some such hypothesis is genuinely needed: no constant works on the whole space.
 The proof is the classical one-dimensional argument. Along the line through `x` in the direction
 of the `i`-th coordinate the function starts at `0`, so the fundamental theorem of calculus gives
 `‖u‖ ≤ ∫ ‖∂ᵢ u‖` over the width of the slab; Hölder's inequality — in the form of the nesting
-`L^p ⊆ L^1` of the `Lᵖ` scale on a finite measure space,
-`MeasureTheory.eLpNorm_le_eLpNorm_mul_rpow_measure_univ` — turns that into
+`L^p ⊆ L^1` of the `Lᵖ` scale, `TauCeti.rpow_lintegral_enorm_le_measure_univ_rpow_mul` — turns
+that into
 `‖u‖^p ≤ (b - a)^{p-1} ∫ ‖∂ᵢ u‖^p`, and integrating in the remaining variables by Fubini gives
 the result. See Evans, *Partial Differential Equations*, Section 5.6.
 
@@ -106,61 +107,27 @@ private theorem support_enorm_rpow_subset_Ioc (hsupp : Function.support g ⊆ Ic
   have htm := hsupp (Function.mem_support.2 hgt)
   exact ⟨htm.1.lt_of_ne fun h => hgt (h ▸ hga), htm.2⟩
 
+omit [CompleteSpace F] in
 /-- **The fundamental theorem of calculus, in `∫⁻` form**: a function vanishing at `a` is bounded
 throughout `Set.Icc a b` by the total variation of its derivative over the interval.
 
-Only `g a = 0` is used, not a support hypothesis, and the conclusion is pointwise in `t`. -/
-private theorem enorm_le_lintegral_enorm_deriv (hab : a ≤ b)
+Only `g a = 0` is used, not a support hypothesis, and the conclusion is pointwise in `t`; the
+order `a ≤ b` is not assumed separately, being implied by `t ∈ Set.Icc a b`. Completeness of `F`
+is not needed either — `MeasureTheory.enorm_sub_le_lintegral_deriv_of_contDiffOn_Icc` passes to
+the completion internally. -/
+private theorem enorm_le_lintegral_enorm_deriv
     (hg : ∀ t, HasDerivAt g (g' t) t) (hg' : Continuous g') (hga : g a = 0)
     {t : ℝ} (ht : t ∈ Icc a b) : ‖g t‖ₑ ≤ ∫⁻ s in Ioc a b, ‖g' s‖ₑ := by
-  have h1 : ∫ s in a..t, g' s = g t - g a :=
-    intervalIntegral.integral_eq_sub_of_hasDerivAt (fun s _ => hg s) (hg'.intervalIntegrable a t)
-  have h2 : ‖g t‖ ≤ ∫ s in a..t, ‖g' s‖ := by
-    have hgt : g t = ∫ s in a..t, g' s := by rw [h1, hga, sub_zero]
-    rw [hgt]
-    exact intervalIntegral.norm_integral_le_integral_norm ht.1
-  have h3 : ∫ s in a..t, ‖g' s‖ ≤ ∫ s in a..b, ‖g' s‖ :=
-    intervalIntegral.integral_mono_interval le_rfl ht.1 ht.2
-      (.of_forall fun s => norm_nonneg _) (hg'.norm.intervalIntegrable a b)
-  calc ‖g t‖ₑ = ENNReal.ofReal ‖g t‖ := (ofReal_norm _).symm
-    _ ≤ ENNReal.ofReal (∫ s in a..b, ‖g' s‖) := ENNReal.ofReal_le_ofReal (h2.trans h3)
-    _ = _ := by
-        rw [intervalIntegral.integral_of_le hab]
-        exact ofReal_integral_norm_eq_lintegral_enorm hg'.integrableOn_Ioc
+  have hderiv : deriv g = g' := funext fun x => (hg x).deriv
+  have hC1 : ContDiff ℝ 1 g :=
+    contDiff_one_iff_deriv.2 ⟨fun x => (hg x).differentiableAt, hderiv ▸ hg'⟩
+  calc ‖g t‖ₑ = ‖g t - g a‖ₑ := by rw [hga, sub_zero]
+    _ ≤ ∫⁻ s in Icc a t, ‖deriv g s‖ₑ :=
+        enorm_sub_le_lintegral_deriv_of_contDiffOn_Icc hC1.contDiffOn ht.1
+    _ = ∫⁻ s in Ioc a t, ‖g' s‖ₑ := by rw [hderiv, setLIntegral_congr Ioc_ae_eq_Icc]
+    _ ≤ ∫⁻ s in Ioc a b, ‖g' s‖ₑ := lintegral_mono_set (Ioc_subset_Ioc_right ht.2)
 
-omit [NormedSpace ℝ F] [CompleteSpace F] in
-/-- **The nesting `L^r ⊆ L^1` on a bounded interval**, in `∫⁻` form and raised to the power `r`,
-which is how the Poincaré argument consumes it: the total variation over `Set.Ioc a b` is
-controlled by the `L^r` integral at the cost of the factor `(b - a)^{r-1}`.
-
-Measurability is all that is asked of `f`; no relation between `a` and `b` is needed. -/
-private theorem rpow_lintegral_enorm_le_mul_lintegral_enorm_rpow {f : ℝ → F}
-    (hf : AEStronglyMeasurable f (volume.restrict (Ioc a b))) {r : ℝ} (hr : 1 ≤ r) :
-    (∫⁻ s in Ioc a b, ‖f s‖ₑ) ^ r
-      ≤ ENNReal.ofReal (b - a) ^ (r - 1) * ∫⁻ s in Ioc a b, ‖f s‖ₑ ^ r := by
-  have hr0 : (0 : ℝ) < r := one_pos.trans_le hr
-  have hvol : (volume.restrict (Ioc a b)) univ = ENNReal.ofReal (b - a) := by
-    rw [Measure.restrict_apply_univ, Real.volume_Ioc]
-  have hCr : eLpNorm f (ENNReal.ofReal r) (volume.restrict (Ioc a b))
-      = (∫⁻ s in Ioc a b, ‖f s‖ₑ ^ r) ^ (1 / r) := by
-    rw [eLpNorm_eq_lintegral_rpow_enorm_toReal (by simpa using hr0) ENNReal.ofReal_ne_top,
-      ENNReal.toReal_ofReal hr0.le]
-  have holder : ∫⁻ s in Ioc a b, ‖f s‖ₑ ≤ (∫⁻ s in Ioc a b, ‖f s‖ₑ ^ r) ^ (1 / r) *
-      ENNReal.ofReal (b - a) ^ (1 - 1 / r) := by
-    have hle : (1 : ℝ≥0∞) ≤ ENNReal.ofReal r := by
-      rw [← ENNReal.ofReal_one]; exact ENNReal.ofReal_le_ofReal hr
-    have := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (f := f)
-      (μ := volume.restrict (Ioc a b)) hle hf
-    rwa [eLpNorm_one_eq_lintegral_enorm, hCr, hvol, ENNReal.toReal_one,
-      ENNReal.toReal_ofReal hr0.le, div_one] at this
-  have hexp : (1 - r⁻¹) * r = r - 1 := by field_simp
-  calc (∫⁻ s in Ioc a b, ‖f s‖ₑ) ^ r
-      ≤ ((∫⁻ s in Ioc a b, ‖f s‖ₑ ^ r) ^ (1 / r) * ENNReal.ofReal (b - a) ^ (1 - 1 / r)) ^ r :=
-        ENNReal.rpow_le_rpow holder hr0.le
-    _ = _ := by
-        rw [ENNReal.mul_rpow_of_nonneg _ _ hr0.le, ← ENNReal.rpow_mul, ← ENNReal.rpow_mul,
-          one_div, inv_mul_cancel₀ hr0.ne', ENNReal.rpow_one, hexp, mul_comm]
-
+omit [CompleteSpace F] in
 /-- **The one-dimensional Poincaré inequality**, in the `∫⁻` form the Fubini argument below
 consumes: a `C¹` function on `ℝ` that vanishes outside `Set.Icc a b` satisfies
 `∫ ‖g‖^r ≤ (b - a)^r ∫ ‖g'‖^r` for every `1 ≤ r`.
@@ -168,7 +135,11 @@ consumes: a `C¹` function on `ℝ` that vanishes outside `Set.Icc a b` satisfie
 The two ingredients are the fundamental theorem of calculus, which bounds `‖g t‖` by the total
 variation `∫ ‖g'‖` over the interval, and the nesting `L^r ⊆ L^1` of the `Lᵖ` scale on the
 finite measure space `Set.Ioc a b`, which converts that `L^1` bound into an `L^r` one at the cost
-of the factor `(b - a)^{r-1}`. -/
+of the factor `(b - a)^{r-1}`.
+
+Completeness of `F` is not required: the only place it could enter is the fundamental theorem of
+calculus, and `MeasureTheory.enorm_sub_le_lintegral_deriv_of_contDiffOn_Icc` passes to the
+completion internally. -/
 theorem lintegral_enorm_rpow_le_of_support_subset_Icc (hab : a ≤ b)
     (hg : ∀ t, HasDerivAt g (g' t) t) (hg' : Continuous g')
     (hsupp : Function.support g ⊆ Icc a b) {r : ℝ} (hr : 1 ≤ r) :
@@ -183,28 +154,32 @@ theorem lintegral_enorm_rpow_le_of_support_subset_Icc (hab : a ≤ b)
   have hpow : ENNReal.ofReal (b - a) ^ (r - 1) * ENNReal.ofReal (b - a)
       = ENNReal.ofReal ((b - a) ^ r) := by
     nth_rewrite 2 [← ENNReal.rpow_one (ENNReal.ofReal (b - a))]
-    rw [← ENNReal.rpow_add _ _ (by simpa using hba) ENNReal.ofReal_ne_top,
-      show r - 1 + 1 = r by ring, ENNReal.ofReal_rpow_of_pos hba]
+    have hsum : r - 1 + 1 = r := by ring
+    rw [← ENNReal.rpow_add _ _ (by simpa using hba) ENNReal.ofReal_ne_top, hsum,
+      ENNReal.ofReal_rpow_of_pos hba]
   calc ∫⁻ t, ‖g t‖ₑ ^ r
-      = ∫⁻ t in Ioc a b, ‖g t‖ₑ ^ r := by
-        rw [← lintegral_indicator measurableSet_Ioc,
-          Set.indicator_eq_self.2 (support_enorm_rpow_subset_Ioc hsupp hga hr0)]
+      = ∫⁻ t in Ioc a b, ‖g t‖ₑ ^ r :=
+        (setLIntegral_eq_of_support_subset (support_enorm_rpow_subset_Ioc hsupp hga hr0)).symm
     _ ≤ ∫⁻ _ in Ioc a b, (∫⁻ s in Ioc a b, ‖g' s‖ₑ) ^ r := by
         refine lintegral_mono_ae ?_
         filter_upwards [ae_restrict_mem measurableSet_Ioc] with t ht
         exact ENNReal.rpow_le_rpow
-          (enorm_le_lintegral_enorm_deriv hab hg hg' hga (Ioc_subset_Icc_self ht)) hr0.le
+          (enorm_le_lintegral_enorm_deriv hg hg' hga (Ioc_subset_Icc_self ht)) hr0.le
     _ = (∫⁻ s in Ioc a b, ‖g' s‖ₑ) ^ r * ENNReal.ofReal (b - a) := by
         rw [setLIntegral_const, Real.volume_Ioc]
     _ ≤ (ENNReal.ofReal (b - a) ^ (r - 1) * ∫⁻ s in Ioc a b, ‖g' s‖ₑ ^ r) *
           ENNReal.ofReal (b - a) := by
         gcongr
-        exact rpow_lintegral_enorm_le_mul_lintegral_enorm_rpow hg'.aestronglyMeasurable hr
+        have hmu : (volume.restrict (Ioc a b)) Set.univ = ENNReal.ofReal (b - a) := by
+          rw [Measure.restrict_apply_univ, Real.volume_Ioc]
+        simpa only [hmu] using rpow_lintegral_enorm_le_measure_univ_rpow_mul
+          (μ := volume.restrict (Ioc a b)) hg'.aestronglyMeasurable hr
     _ = ENNReal.ofReal ((b - a) ^ r) * ∫⁻ s in Ioc a b, ‖g' s‖ₑ ^ r := by
         rw [mul_right_comm, hpow]
     _ ≤ ENNReal.ofReal ((b - a) ^ r) * ∫⁻ t, ‖g' t‖ₑ ^ r :=
         mul_le_mul' le_rfl (setLIntegral_le_lintegral _ _)
 
+omit [CompleteSpace F] in
 /-- **The one-dimensional Poincaré inequality**: a `C¹` function on `ℝ` supported in an interval
 of length `b - a` obeys `‖g‖_p ≤ (b - a) ‖g'‖_p` for every `1 ≤ p < ∞`.
 
@@ -262,6 +237,7 @@ private theorem lintegral_eq_lintegral_slabChart {w : EuclideanSpace ℝ (Fin (n
   exact lintegral_prod_symm (fun z => w (slabChart i z))
     (hw.comp (measurePreserving_slabChart (i := i)).measurable).aemeasurable
 
+omit [CompleteSpace F] in
 /-- **The Poincaré inequality on a slab.** A `C¹` function on `ℝ^{n+1}` that vanishes outside
 the slab `{x | x i ∈ Set.Icc a b}` satisfies `‖u‖_p ≤ (b - a) ‖Du‖_p` for every `1 ≤ p < ∞`.
 
@@ -325,6 +301,7 @@ theorem eLpNorm_le_eLpNorm_fderiv_of_support_subset_slab (hu : ContDiff ℝ 1 u)
     _ = ENNReal.ofReal ((b - a) ^ r) * ∫⁻ x, ‖fderiv ℝ u x‖ₑ ^ r := by
         rw [lintegral_eq_lintegral_slabChart hmf]
 
+omit [CompleteSpace F] in
 /-- **The Poincaré inequality on a ball.** A `C¹` function on `ℝ^{n+1}` supported in the ball of
 radius `R` about the origin satisfies `‖u‖_p ≤ 2R ‖Du‖_p` for every `1 ≤ p < ∞`.
 
