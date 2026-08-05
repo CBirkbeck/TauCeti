@@ -4,10 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.MeasureTheory.Integral.CircleIntegral
+public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 
 import Mathlib.Analysis.Calculus.Deriv.AffineMap
+import Mathlib.MeasureTheory.Integral.CircleIntegral
 
 /-!
 # Derivatives of the fundamental-domain boundary contour
