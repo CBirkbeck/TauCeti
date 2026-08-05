@@ -75,19 +75,25 @@ private theorem eq_of_mul_transversal {G : Type*} [Group G] {H : Subgroup G}
 for a group `G` acting on `α`, `H ≤ G` a subgroup, and `r : ι → G` a family such that
 `i ↦ ⟦(r i)⁻¹⟧` enumerates the left cosets `G ⧸ H` bijectively, then `⋃ i, r i • s` is a
 fundamental domain for the restricted `H`-action. The inverses make `r` a *right*
-transversal: each `x ∈ G` factors as `h * r i` with `h ∈ H` for exactly one `i`. -/
+transversal: each `x ∈ G` factors as `h * r i` with `h ∈ H` for exactly one `i`.
+
+Only null-measurability of the individual translates `r i • s` is assumed; measurability and
+invariance of the whole ambient action are not needed. `subgroup_iUnion_out_inv_smul` is the
+convenience form that supplies `hnull` from `[MeasurableConstSMul G α]` and
+`[SMulInvariantMeasure G α μ]`. -/
 @[to_additive /-- **Transversal coset tiling of a fundamental domain.** If `s` is a fundamental
 domain for an additive group `G` acting on `α`, `H ≤ G` a subgroup, and `r : ι → G` a family
 such that `i ↦ ⟦-(r i)⟧` enumerates the cosets `G ⧸ H` bijectively, then `⋃ i, r i +ᵥ s` is
 a fundamental domain for the restricted `H`-action. -/]
 theorem IsFundamentalDomain.iUnion_smul_of_transversal
     {G α ι : Type*} [Group G] [MeasurableSpace α] [MulAction G α] [Countable ι]
-    [MeasurableConstSMul G α] {μ : Measure α} [SMulInvariantMeasure G α μ]
+    {μ : Measure α}
     {H : Subgroup G} {s : Set α} (hs : IsFundamentalDomain G s μ)
-    {r : ι → G} (hr : Function.Bijective fun i ↦ (QuotientGroup.mk ((r i)⁻¹) : G ⧸ H)) :
+    {r : ι → G} (hnull : ∀ i, NullMeasurableSet (r i • s) μ)
+    (hr : Function.Bijective fun i ↦ (QuotientGroup.mk ((r i)⁻¹) : G ⧸ H)) :
     IsFundamentalDomain H (⋃ i, r i • s) μ := by
   set T : Set α := ⋃ i, r i • s with hT_def
-  refine ⟨.iUnion fun i ↦ hs.nullMeasurableSet_smul _, ?_, ?_⟩
+  refine ⟨.iUnion hnull, ?_, ?_⟩
   · filter_upwards [hs.ae_covers] with τ ⟨g, hg⟩
     obtain ⟨i, hi⟩ := hr.surjective (QuotientGroup.mk g)
     have hmem : (r i) * g ∈ H := by
@@ -119,7 +125,8 @@ theorem IsFundamentalDomain.subgroup_iUnion_out_inv_smul
     (H : Subgroup G) [Countable (G ⧸ H)] {s : Set α}
     (hs : IsFundamentalDomain G s μ) :
     IsFundamentalDomain H (⋃ q : G ⧸ H, ((q.out : G))⁻¹ • s) μ :=
-  hs.iUnion_smul_of_transversal (r := fun q : G ⧸ H ↦ (q.out : G)⁻¹) <| by
+  hs.iUnion_smul_of_transversal (r := fun q : G ⧸ H ↦ (q.out : G)⁻¹)
+      (fun q ↦ hs.nullMeasurableSet_smul _) <| by
     have h_id : (fun q : G ⧸ H ↦ (QuotientGroup.mk (((q.out : G))⁻¹⁻¹) : G ⧸ H)) = id := by
       funext q
       simp [inv_inv]
@@ -180,11 +187,7 @@ theorem IsFundamentalDomain.aedisjoint_smul_of_inv_mul_mem
     hD.aedisjoint fun heq ↦ h_ne' <| by
       simpa [Subgroup.coe_one, eq_comm] using congr_arg (Subtype.val : H → G) heq
   rw [one_smul, coe_smul_set] at h_core
-  -- `AEDisjoint μ s t` is by definition `μ (s ∩ t) = 0`; there is no iff-lemma to rewrite with.
-  change μ ((g₁ • D) ∩ (g₂ • D)) = 0
-  have h_inter : (g₁ • D) ∩ (g₂ • D) = g₁ • (D ∩ ((g₁⁻¹ * g₂) • D)) := by
-    rw [Set.smul_set_inter, ← mul_smul, mul_inv_cancel_left]
-  rw [h_inter, ← Set.preimage_smul_inv]
-  exact hg₁.preimage_null h_core
+  -- Pull the disjointness back along `x ↦ g₁⁻¹ • x`; the two preimages are the stated translates.
+  simpa [Set.preimage_smul_inv, smul_smul] using h_core.preimage hg₁
 
 end MeasureTheory
