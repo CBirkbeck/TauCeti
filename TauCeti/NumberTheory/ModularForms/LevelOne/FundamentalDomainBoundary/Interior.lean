@@ -32,6 +32,13 @@ open strip box, is one preconnected region avoiding the contour, so the value tr
 * `TauCeti.ModularForm.windingNumber_fdBoundary_eq_neg_one_of_one_lt_im` — the strip value.
 * `TauCeti.ModularForm.windingNumber_fdBoundary_eq_neg_one_of_interior` — every interior
   point.
+
+## References
+
+The interior determination follows the fundamental-domain boundary development of AINTLIB's
+`LeanModularForms` (`ForMathlib/FDBoundary.lean`, `FDBoundaryH.lean`, `FDBoundaryPath.lean`),
+adapted to the raw-path winding machinery: the piece decomposition and logarithm values are
+summed and pinned by integrality rather than evaluated termwise.
 -/
 
 public section
@@ -87,17 +94,6 @@ private lemma differentiableAt_fdBoundary_off_corners :
       · exact (hasDerivAt_fdBoundary_of_mem_Ioo_three_four ⟨h3, h4⟩).differentiableAt
       · exact absurd h4 htc.2.2
       · exact (hasDerivAt_fdBoundary_of_gt_four h4).differentiableAt
-
-/-- Winding transport between two points of a preconnected region avoiding the contour. -/
-private lemma windingNumber_fdBoundary_eq_of_preconnected {S : Set ℂ}
-    (hconn : IsPreconnected S) (hdisj : S ⊆ (fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ)
-    {w w' : ℂ} (hw : w ∈ S) (hw' : w' ∈ S) :
-    windingNumber (fdBoundary H) 0 5 w = windingNumber (fdBoundary H) 0 5 w' :=
-  windingNumber_eq_of_mem_connectedComponentIn (fdBoundary_closed H).symm
-    fdBoundaryCorners.finite_toSet.countable (continuous_fdBoundary H).continuousOn
-    differentiableAt_fdBoundary_off_corners
-    (isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv
-    (hconn.subset_connectedComponentIn hw' hdisj hw)
 
 /-- The endpoint ratio of a piece has negative argument when its junction chord turns
 clockwise as seen from `w`; the four instances below feed the pinning argument. -/
@@ -173,10 +169,8 @@ theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 1 / 2)
         ((((ρ : ℂ) - w)) / ((ρ : ℂ) + 1 - w)).arg +
         (((-1 / 2 + H * Complex.I - w)) / ((ρ : ℂ) - w)).arg +
         (((1 / 2 + H * Complex.I - w)) / (-1 / 2 + H * Complex.I - w)).arg := by
-    have h2πI : (2 * (Real.pi : ℂ) * Complex.I) ≠ 0 := by
-      simp [Complex.ext_iff, Real.pi_ne_zero]
     have := hsum.symm.trans hn
-    rw [inv_mul_eq_iff_eq_mul₀ h2πI] at this
+    rw [inv_mul_eq_iff_eq_mul₀ Complex.two_pi_I_ne_zero] at this
     have hIm' := congrArg Complex.im this.symm
     simpa [Complex.log_im, Complex.add_im, Complex.mul_im] using hIm'
   have hb₁ := Complex.neg_pi_lt_arg (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w))
@@ -269,8 +263,10 @@ theorem windingNumber_fdBoundary_eq_neg_one_of_interior (hH : 1 < H) {w : ℂ}
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
     obtain ⟨hz_re, hz_norm, hz_im⟩ := interior_avoiding_facts hH hnorm hre him hpos hz
     exact fdBoundary_ne_of_interior hz_re hz_norm hz_im t ht h_eq
-  rw [windingNumber_fdBoundary_eq_of_preconnected hconn hdisj
-      (Or.inl (left_mem_segment ℝ w _)) (Or.inr htop_mem_box),
+  rw [(isPiecewiseC1On_fdBoundary H).windingNumber_eq_of_mem_connectedComponentIn
+      (fdBoundary_closed H).symm
+      (hconn.subset_connectedComponentIn (Or.inr htop_mem_box) hdisj
+        (Or.inl (left_mem_segment ℝ w _))),
     windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (by simpa using hre)
       (by simpa using hy1) (by simpa using hyH)]
 
