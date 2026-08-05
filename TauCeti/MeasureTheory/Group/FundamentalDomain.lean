@@ -144,15 +144,20 @@ theorem IsFundamentalDomain.smul_of_eq_conjAct_pointwise_smul
     (hgH : H₂ = ConjAct.toConjAct g • H₁) :
     IsFundamentalDomain H₂ (g • s) μ := by
   subst hgH
-  -- `Subgroup.pointwise_smul_def` is `rfl`; the `ConjAct` monoid endomorphism at `g` is
-  -- definitionally `MulAut.conj g`, which is what `MulEquiv.subgroupMap` below speaks about.
-  rw [Subgroup.pointwise_smul_def]
+  -- `Subgroup.pointwise_smul_def` is `rfl`, and the `ConjAct` monoid endomorphism at `g` is
+  -- definitionally `MulAut.conj g`; naming the target form here (rather than letting the
+  -- lemma leave it as `toMonoidEnd …`) is what lets `MulEquiv.subgroupMap_symm_apply`
+  -- rewrite below, since simp matches the subgroup index syntactically.
+  rw [show ConjAct.toConjAct g • H₁ = H₁.map (MulAut.conj g : G ≃* G) from
+    Subgroup.pointwise_smul_def _]
   refine hs.image_of_equiv (MulAction.toPerm g) hg
     ((MulAut.conj g).subgroupMap H₁).symm.toEquiv fun h₂ x ↦ ?_
   -- `MulEquiv.subgroupMap` sends `h₁` to `g * h₁ * g⁻¹`, so its inverse sends `h₂` to
-  -- `g⁻¹ * h₂ * g`; the subtype action restricts the ambient one definitionally.
-  change g • ((g⁻¹ * (h₂ : G) * g) • x) = (h₂ : G) • (g • x)
-  simp only [smul_smul, mul_inv_cancel_left, mul_assoc]
+  -- `g⁻¹ * h₂ * g`; `MulAction.subgroup_smul_def` restricts the subtype action to the
+  -- ambient one on each side.
+  simp only [MulEquiv.toEquiv_eq_coe, MulEquiv.coe_toEquiv, MulEquiv.subgroupMap_symm_apply,
+    MulAut.conj_symm_apply, MulAction.subgroup_smul_def, MulAction.toPerm_apply, smul_smul,
+    mul_inv_cancel_left, mul_assoc]
 
 /-- **AE-disjointness of arbitrary `G`-translates related by an `H`-element.**
 Let `D` be a fundamental domain for a subgroup `H ≤ G` acting on `α` with a measure `μ`.
