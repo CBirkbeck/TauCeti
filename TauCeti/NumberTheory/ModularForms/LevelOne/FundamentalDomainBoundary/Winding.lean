@@ -21,7 +21,8 @@ count.
 
 * `TauCeti.ModularForm.sqrt_three_div_two_le_im_fdBoundary`: the image height bound.
 * `TauCeti.ModularForm.windingNumber_fdBoundary_eq_zero_of_im_lt`: points below the
-  contour wind zero.
+  contour wind zero, with the analogous determinations on the other three sides
+  (`_of_half_lt_re`, `_of_re_lt_neg_half`, `_of_lt_im`).
 -/
 
 public noncomputable section
@@ -87,45 +88,51 @@ lemma sqrt_three_div_two_le_im_fdBoundary (hH : 1 ≤ H) (ht : t ∈ Icc (0 : �
         rw [him, smul_eq_mul, mul_zero]
         nlinarith [hH, h32]
 
-/-- Every point strictly below the contour's height winds zero: it lies in the convex —
-hence connected — half-plane inside the complement, along which the winding number is
-constant, and vanishes at points far below. -/
-theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : 1 ≤ H) {w : ℂ}
-    (hw : w.im < Real.sqrt 3 / 2) : windingNumber (fdBoundary H) 0 5 w = 0 := by
+/-- Winding transport through an unbounded convex region avoiding the contour: the
+region lies in one connected component of the complement, which reaches points far away
+where the winding number vanishes. -/
+private lemma windingNumber_fdBoundary_eq_zero_of_mem_convex {S : Set ℂ}
+    (hconv : Convex ℝ S) (hdisj : S ⊆ (fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ)
+    (hunb : ∀ R : ℝ, ∃ z ∈ S, R < ‖z‖) {w : ℂ} (hw : w ∈ S) :
+    windingNumber (fdBoundary H) 0 5 w = 0 := by
   obtain ⟨p, hdiff⟩ := (isPiecewiseC1On_fdBoundary H).exists_finset_differentiableAt
   have hclosed := (fdBoundary_closed H).symm
   have hP : ((p : Set ℝ)).Countable := p.finite_toSet.countable
   have hcont : ContinuousOn (fdBoundary H) (uIcc 0 5) :=
     (continuous_fdBoundary H).continuousOn
   have hint := (isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv
-  have h_lower : {z : ℂ | z.im < Real.sqrt 3 / 2} ⊆ (fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ := by
-    rintro z hz ⟨t, ht, rfl⟩
-    rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
-    exact absurd hz (not_lt.mpr (sqrt_three_div_two_le_im_fdBoundary hH ht))
   have h_ev := windingNumber_eventually_zero_cocompact hclosed hP hcont hdiff hint
   rw [Filter.eventually_iff, Filter.mem_cocompact] at h_ev
   obtain ⟨K, hK, hKsub⟩ := h_ev
   obtain ⟨r, hr⟩ := hK.isBounded.subset_closedBall 0
-  set w₀ : ℂ := -((max r 0 + 1 : ℝ) : ℂ) * Complex.I with hw₀_def
-  have hw₀_norm : ‖w₀‖ = max r 0 + 1 := by
-    rw [hw₀_def, norm_mul, Complex.norm_I, mul_one, norm_neg, Complex.norm_real]
-    exact abs_of_nonneg (by positivity)
+  obtain ⟨w₀, hw₀S, hw₀far⟩ := hunb r
   have hw₀_notK : w₀ ∉ K := fun hmem ↦ by
     have := hr hmem
-    rw [Metric.mem_closedBall, dist_zero_right, hw₀_norm] at this
-    nlinarith [le_max_left r 0]
+    rw [Metric.mem_closedBall, dist_zero_right] at this
+    linarith
   have hw₀_zero : windingNumber (fdBoundary H) 0 5 w₀ = 0 := (hKsub hw₀_notK).2
-  have hw₀_S : w₀ ∈ {z : ℂ | z.im < Real.sqrt 3 / 2} := by
-    have : w₀.im = -(max r 0 + 1) := by
-      rw [hw₀_def]
-      simp
-    rw [Set.mem_ofPred_eq, this]
-    nlinarith [le_max_right r 0, Real.sqrt_nonneg 3]
-  have h_sub : {z : ℂ | z.im < Real.sqrt 3 / 2} ⊆
-      connectedComponentIn ((fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ) w₀ :=
-    (convex_halfSpace_im_lt _).isPreconnected.subset_connectedComponentIn hw₀_S h_lower
+  have h_sub : S ⊆ connectedComponentIn ((fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ) w₀ :=
+    hconv.isPreconnected.subset_connectedComponentIn hw₀S hdisj
   rw [windingNumber_eq_of_mem_connectedComponentIn hclosed hP hcont hdiff hint (h_sub hw)]
   exact hw₀_zero
+
+/-- Every point strictly below the contour's height winds zero. -/
+theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : 1 ≤ H) {w : ℂ}
+    (hw : w.im < Real.sqrt 3 / 2) : windingNumber (fdBoundary H) 0 5 w = 0 := by
+  refine windingNumber_fdBoundary_eq_zero_of_mem_convex (convex_halfSpace_im_lt _)
+    ?_ (fun R ↦ ⟨-(max R 0 + 1) * Complex.I, ?_, ?_⟩) hw
+  · rintro z hz ⟨t, ht, rfl⟩
+    rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
+    exact absurd hz (not_lt.mpr (sqrt_three_div_two_le_im_fdBoundary hH ht))
+  · have : (-(max R 0 + 1) * Complex.I).im = -(max R 0 + 1) := by simp
+    rw [Set.mem_ofPred_eq, this]
+    nlinarith [le_max_right R 0, Real.sqrt_nonneg 3]
+  · rw [norm_mul, Complex.norm_I, mul_one, norm_neg]
+    have hnorm : ‖((max R 0 : ℝ) : ℂ) + 1‖ = max R 0 + 1 := by
+      rw [show ((max R 0 : ℝ) : ℂ) + 1 = ((max R 0 + 1 : ℝ) : ℂ) by push_cast; ring,
+        Complex.norm_real, Real.norm_of_nonneg (by positivity)]
+    rw [hnorm]
+    linarith [le_max_left R 0]
 
 end ModularForm
 
