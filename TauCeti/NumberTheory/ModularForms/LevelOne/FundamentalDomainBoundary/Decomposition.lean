@@ -38,23 +38,19 @@ namespace ModularForm
 
 variable {H : ℝ} {w : ℂ}
 
-/-- The single-point Cauchy principal value of the index integrand exists on every
-subinterval of the parameter interval of the boundary contour, for any point `w` off the
-contour: the integrand is then singularity-free, and integrable by piecewise-`C¹`
-regularity. -/
-theorem cauchyPVExistsAt_fdBoundary (hw : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ≠ w)
-    (c d : ℝ) (hc : c ∈ Icc (0 : ℝ) 5) (hd : d ∈ Icc (0 : ℝ) 5) :
+/-- The single-point Cauchy principal value of the index integrand exists on any parameter
+subinterval of the boundary contour avoiding `w`: the integrand is then singularity-free,
+and integrable by piecewise-`C¹` regularity. -/
+theorem cauchyPVExistsAt_fdBoundary (c d : ℝ) (hc : c ∈ Icc (0 : ℝ) 5)
+    (hd : d ∈ Icc (0 : ℝ) 5) (hw : ∀ t ∈ uIcc c d, fdBoundary H t ≠ w) :
     CauchyPVExistsAt (fdBoundary H) c d (fun z => (z - w)⁻¹) w := by
   have hsub : uIcc c d ⊆ uIcc (0 : ℝ) 5 := uIcc_subset_uIcc
     (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
     (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
-  have hsub' : uIcc c d ⊆ Icc (0 : ℝ) 5 := by
-    rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at hsub
-  refine cauchyPVExistsAt_of_avoidance (continuous_fdBoundary H).continuousOn
-    (fun t ht => hw t (hsub' ht)) ?_
+  refine cauchyPVExistsAt_of_avoidance (continuous_fdBoundary H).continuousOn hw ?_
   have hcont : ContinuousOn (fun t => (fdBoundary H t - w)⁻¹) (uIcc c d) :=
     ((continuous_fdBoundary H).continuousOn.sub continuousOn_const).inv₀
-      fun t ht => sub_ne_zero.mpr (hw t (hsub' ht))
+      fun t ht => sub_ne_zero.mpr (hw t ht)
   exact ((isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv.mono_set
     hsub).continuousOn_mul hcont
 
@@ -67,7 +63,14 @@ theorem windingNumber_fdBoundary_eq_sum_pieces
     windingNumber (fdBoundary H) 0 5 w =
       windingNumber (fdBoundary H) 0 1 w + windingNumber (fdBoundary H) 1 3 w +
         windingNumber (fdBoundary H) 3 4 w + windingNumber (fdBoundary H) 4 5 w := by
-  have hpv := cauchyPVExistsAt_fdBoundary hw
+  have hpv : ∀ c d : ℝ, c ∈ Icc (0 : ℝ) 5 → d ∈ Icc (0 : ℝ) 5 →
+      CauchyPVExistsAt (fdBoundary H) c d (fun z => (z - w)⁻¹) w := fun c d hc hd =>
+    cauchyPVExistsAt_fdBoundary c d hc hd fun s hs => hw s (by
+      have hsub : uIcc c d ⊆ uIcc (0 : ℝ) 5 := uIcc_subset_uIcc
+        (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
+        (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
+      have hs5 := hsub hs
+      rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at hs5)
   have h := windingNumber_eq_sum_range (γ := fdBoundary H) (z₀ := w) (n := 4)
     (t := fun k => match k with | 0 => 0 | 1 => 1 | 2 => 3 | 3 => 4 | _ => 5)
     (fun k hk => by
