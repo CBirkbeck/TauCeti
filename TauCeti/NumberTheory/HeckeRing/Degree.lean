@@ -126,9 +126,10 @@ open scoped HeckeCosetModule
 
 variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
 
-/-- The action is `R`-homogeneous in the Hecke-ring argument; over the opposite-ring
-action the scalar crosses the reversed product, so commutativity is required. -/
-lemma smul_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
+/-- The scalar operations are `R`-homogeneous in the Hecke-ring argument; over the
+opposite-ring encoding the scalar crosses the reversed product, so commutativity of `R` is
+required. Packaged as `instIsScalarTowerOp`. -/
+private lemma op_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
     MulOpposite.op (r • t) • m = r • (MulOpposite.op t • m) := by
   classical
   simp only [smul_eq_sum]
@@ -142,6 +143,14 @@ lemma smul_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
       rw [Finsupp.smul_single, smul_eq_mul]
       exact congrArg _ (mul_left_comm _ _ _)
 
+/-- The scalar tower `R → (𝕋 Δ H R)ᵐᵒᵖ → LeftCosetModule Δ H R`: the canonical form of the
+`R`-homogeneity of the scalar operations. -/
+noncomputable instance instIsScalarTowerOp :
+    IsScalarTower R (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R) where
+  smul_assoc r t m := by
+    conv_lhs => rw [show (r • t : (𝕋 Δ H R)ᵐᵒᵖ) = MulOpposite.op (r • t.unop) from rfl]
+    rw [op_smul_assoc, MulOpposite.op_unop]
+
 end LeftCosetModule
 
 namespace LeftCosetModule
@@ -152,9 +161,9 @@ open scoped HeckeCosetModule
 
 variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
 
-/-- Over a commutative semiring, the action commutes with scalars in the module
-argument. -/
-lemma smul_comm' (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
+/-- The scalar operations commute with the `R`-scalars of the module argument. Packaged as
+`instSMulCommClassOp`. -/
+private lemma op_smul_comm (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
     MulOpposite.op t • (r • m) = r • (MulOpposite.op t • m) := by
   classical
   simp only [smul_eq_sum]
@@ -166,6 +175,14 @@ lemma smul_comm' (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
     refine Finset.sum_congr rfl fun i _ ↦ ?_
     rw [Finsupp.smul_single, smul_eq_mul]
     exact congrArg _ (by ring)
+
+/-- The scalar operations of the opposite Hecke ring commute with the `R`-scalars: the
+canonical `SMulCommClass` form. -/
+noncomputable instance instSMulCommClassOp :
+    SMulCommClass (𝕋 Δ H R)ᵐᵒᵖ R (LeftCosetModule Δ H R) where
+  smul_comm t r m := by
+    conv_lhs => rw [← MulOpposite.op_unop t]
+    rw [op_smul_comm, MulOpposite.op_unop]
 
 end LeftCosetModule
 
@@ -367,7 +384,7 @@ private lemma single_mul_smul_single (D₁ D₂ : HeckeCoset Δ H H) (q : HeckeC
         (MulOpposite.op (HeckeCosetModule.single R D₁ a) •
           (Finsupp.single q c : LeftCosetModule Δ H R)) := by
   classical
-  rw [HeckeCosetModule.single_mul_single, smul_smul_assoc, smul_smul_assoc,
+  rw [HeckeCosetModule.single_mul_single, op_smul_assoc, op_smul_assoc,
     structureConstants_smul_single, single_smul_single_smul]
   refine Finsupp.ext fun x ↦ ?_
   rw [Finsupp.smul_apply, Finsupp.smul_apply, sum_smulOrbit_single_apply,
@@ -416,31 +433,32 @@ private lemma smulOrbit_one_rep (q : HeckeCoset Δ ⊥ H) :
   classical
   rw [smulOrbit_congr_left q.rep
     ((HeckeCoset.mk_rep (1 : HeckeCoset Δ H H)).trans (rfl))]
+  -- the tail `σᵢ · 1` lies in `H`, so it absorbs into the left coset of `q.rep`
+  have key : ∀ i : DecompQuotient H H ((1 : Δ) : G),
+      (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ * ((q.rep : Δ) : G) ∈ H := by
+    intro i
+    have habsorb : (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ *
+        ((q.rep : Δ) : G) = ((1 : Δ) : G)⁻¹ * (i.out : G)⁻¹ := by group
+    rw [habsorb]
+    exact H.mul_mem (by simp) (H.inv_mem i.out.2)
   ext x
   simp only [mem_smulOrbit, Finset.mem_singleton]
   constructor
   · rintro ⟨i, rfl⟩
     conv_rhs => rw [← HeckeCoset.mk_rep q]
     rw [HeckeCoset.mk_bot_eq_mk_bot]
-    -- definitional: the constructor's coercion is its underlying product, and the tail
-    -- `i.out * 1` lies in `H`, so it absorbs into the left coset of `q.rep`
+    -- definitional: the constructor's coercion is its underlying product
     change (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ * ((q.rep : Δ) : G) ∈ H
-    have habsorb : (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ *
-        ((q.rep : Δ) : G) = ((1 : Δ) : G)⁻¹ * (i.out : G)⁻¹ := by group
-    rw [habsorb]
-    exact H.mul_mem (by simp) (H.inv_mem i.out.2)
+    exact key i
   · intro hx
     rw [hx]
     obtain ⟨i⟩ : Nonempty (DecompQuotient H H ((1 : Δ) : G)) := inferInstance
     refine ⟨i, ?_⟩
     conv_rhs => rw [← HeckeCoset.mk_rep q]
     rw [HeckeCoset.mk_bot_eq_mk_bot]
-    -- definitional: as above, with the same absorption
+    -- definitional: as above
     change (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ * ((q.rep : Δ) : G) ∈ H
-    have habsorb : (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ *
-        ((q.rep : Δ) : G) = ((1 : Δ) : G)⁻¹ * (i.out : G)⁻¹ := by group
-    rw [habsorb]
-    exact H.mul_mem (by simp) (H.inv_mem i.out.2)
+    exact key i
 
 /-- The identity of the Hecke ring fixes every basis element of the module. -/
 private lemma one_smul_single (q : HeckeCoset Δ ⊥ H) (c : R) :
@@ -504,6 +522,7 @@ noncomputable def deg : 𝕋 Δ H R →+* R where
     rw [MulOpposite.op_zero, zero_smul, map_zero]
   map_add' f g := by rw [MulOpposite.op_add, add_smul, map_add]
 
+/-- The defining equation of `deg`. -/
 lemma deg_apply (t : 𝕋 Δ H R) :
     deg Δ H R t =
       Finsupp.degree (MulOpposite.op t •
