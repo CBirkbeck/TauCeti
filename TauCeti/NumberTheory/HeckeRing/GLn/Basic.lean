@@ -37,7 +37,7 @@ modular forms); the AINTLIB `HeckePair` bundle is replaced by Mathlib's `IsHecke
 * `SLnZ_le_posDetInt`: `SL_n(ℤ) ≤ Δ`.
 * `posDetInt_le_commensurator`: `Δ ≤ commensurator(SL_n(ℤ))` (Shimura's Lemma 3.10).
 * the `IsHeckeTriple (posDetInt n) (SLnZ n) (SLnZ n)` instance, and the
-  Hecke ring `GLnHeckeRing n` it founds.
+  Hecke ring `IntegralHeckeRing n` it founds.
 
 ## References
 
@@ -464,7 +464,7 @@ section API
 open scoped HeckeCosetModule
 
 /-- The Hecke ring of `GL_n` over `ℤ`: the Hecke ring of the arithmetic triple. -/
-abbrev GLnHeckeRing := 𝕋 (posDetInt n) (SLnZ n) ℤ
+abbrev IntegralHeckeRing := 𝕋 (posDetInt n) (SLnZ n) ℤ
 
 variable [NeZero n]
 
