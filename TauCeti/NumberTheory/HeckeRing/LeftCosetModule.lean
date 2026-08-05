@@ -68,6 +68,7 @@ variable (Δ) in
 /-- The identity left coset `1H = H` in the bottom-left specialization. -/
 instance instOneBot : One (HeckeCoset Δ ⊥ H) := ⟨mk ⊥ H ⟨1, Δ.one_mem⟩⟩
 
+@[simp]
 lemma one_bot_def : (1 : HeckeCoset Δ ⊥ H) = mk ⊥ H ⟨1, Δ.one_mem⟩ := (rfl)
 
 /-- In the bottom-left specialization two elements define the same class iff they differ by
