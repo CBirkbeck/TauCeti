@@ -124,10 +124,6 @@ theorem isInternal_modFormCharSpace (k : ℤ) [DecidableEq ((ZMod N)ˣ →* ℂ�
   DirectSum.isInternal_submodule_of_iSupIndep_of_iSup_eq_top
     (iSupIndep_modFormCharSpace k) (iSup_modFormCharSpace_eq_top k)
 
-/-- The character group `(ZMod N)ˣ →* ℂˣ` is finite. -/
-instance instFiniteCharHom : Finite ((ZMod N)ˣ →* ℂˣ) :=
-  .of_equiv (MulChar (ZMod N) ℂ) MulChar.equivToUnitHom
-
 /-- Each cusp-form diamond operator has finite order. -/
 lemma diamondOpCuspHom_isOfFinOrder (d : (ZMod N)ˣ) : IsOfFinOrder (diamondOpCuspHom k d) :=
   (diamondOpCuspHom k).isOfFinOrder (isOfFinOrder_of_finite d)
