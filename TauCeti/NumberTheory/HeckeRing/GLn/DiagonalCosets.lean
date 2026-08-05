@@ -38,6 +38,8 @@ Chris Birkbeck), on top of the matrix-level Smith normal form
 * `exists_diagonal_representative`: every double coset of the arithmetic Hecke triple is
   `diagCoset a` for a positive divisibility chain `a` (Smith normal form).
 * `diagCoset_bijective`: positive divisibility chains biject with the double cosets.
+* `diagCosetEquiv`: that bijection as an equivalence, the canonical index of the double
+  cosets.
 * `span_diagElem_eq_top`: the elements `T(a₁,...,aₙ)` span the Hecke ring.
 
 ## References
@@ -296,6 +298,16 @@ theorem diagCoset_bijective :
   · intro D
     obtain ⟨a, hpos, hchain, rfl⟩ := exists_diagonal_representative D
     exact ⟨⟨a, hpos, hchain⟩, rfl⟩
+
+/-- **The canonical index of the double cosets** (Shimura §3.2): the positive divisibility
+chains index the double cosets of the arithmetic Hecke triple, so they may be used directly
+as the index type and the inverse gives each coset its canonical diagonal. -/
+noncomputable def diagCosetEquiv :
+    CanonicalDiagonal n ≃ HeckeCoset (posDetInt n) (SLnZ n) (SLnZ n) :=
+  Equiv.ofBijective _ diagCoset_bijective
+
+@[simp] lemma diagCosetEquiv_apply (a : CanonicalDiagonal n) :
+    diagCosetEquiv a = diagCoset a.1 := (rfl)
 
 /-- The Hecke ring of the arithmetic triple is spanned by the diagonal double coset elements
 `T(a₁,...,aₙ)` with positive entries and divisibility chain. -/
