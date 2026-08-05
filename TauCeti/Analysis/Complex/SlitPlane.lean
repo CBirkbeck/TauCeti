@@ -40,9 +40,7 @@ theorem div_mem_slitPlane_of_re_conj_mul_pos {a z₁ z₂ : ℂ}
   by_contra hmem
   rw [mem_slitPlane_iff, not_or, not_lt, not_ne_iff] at hmem
   obtain ⟨hre, him⟩ := hmem
-  have heq : z₂ / z₁ = (((z₂ / z₁).re : ℝ) : ℂ) := by
-    rw [← Complex.re_add_im (z₂ / z₁), him, Complex.ofReal_zero, zero_mul, add_zero,
-      Complex.ofReal_re]
+  have heq : z₂ / z₁ = (((z₂ / z₁).re : ℝ) : ℂ) := Complex.ext (by simp) (by simpa using him)
   have hz₂ : z₂ = (((z₂ / z₁).re : ℝ) : ℂ) * z₁ := by
     rw [← heq, div_mul_cancel₀ _ hz₁]
   have hkey : ((starRingEnd ℂ) a) * ((((z₂ / z₁).re : ℝ) : ℂ) * z₁) =
