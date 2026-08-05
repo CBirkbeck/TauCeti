@@ -285,8 +285,8 @@ private lemma row0_clear_step {m : ℕ} (σ : SpecialLinearGroup (Fin (m + 1)) �
         ∑ k ∈ Finset.univ.erase j₀, (if (k : ℕ) = 0 then 0 else (σ.1 0 k).natAbs) :=
       Finset.sum_congr rfl fun k hk ↦ by
         by_cases h0 : (k : ℕ) = 0 <;> simp [h0, hother k (Finset.mem_erase.mp hk).1]
-    rw [h_rest, hclear, show (if (j₀ : ℕ) = 0 then 0 else (0 : ℤ).natAbs) = 0 from by simp]
-    simp only [hj₀_val, ↓reduceIte, zero_add] at hj₀_nz ⊢
+    rw [h_rest, hclear]
+    simp only [Int.natAbs_zero, hj₀_val, ↓reduceIte, zero_add] at hj₀_nz ⊢
     omega
 
 private lemma row0_clear {m : ℕ} (τ : SpecialLinearGroup (Fin (m + 1)) ℤ)
@@ -494,8 +494,9 @@ private lemma to_block_form {m : ℕ} (τ : SpecialLinearGroup (Fin (m + 1)) ℤ
     rcases h_unit with h1 | h_neg1
     · exact ⟨[], by simp [h1], fun i hi ↦ by simpa using h_others i hi⟩
     rcases m with _ | m'
-    · exact absurd (show τ.1.det = -1 by simp [Matrix.det_unique, h_neg1])
-        (by rw [τ.2]; norm_num)
+    · -- in dimension one the determinant is the unique entry, `-1`, contradicting `det = 1`
+      have hdet_neg : τ.1.det = -1 := by simp [Matrix.det_unique, h_neg1]
+      exact absurd hdet_neg (by rw [τ.2]; norm_num)
     · exact column_pivot_of_neg_one_at_zero τ h_neg1 h_others
   · exact column_pivot_of_unit_off_diagonal τ i₀ hi₀_zero h_others h_unit
 
