@@ -8,6 +8,10 @@ public import Mathlib.NumberTheory.Modular
 public import TauCeti.NumberTheory.ModularForms.Order.AtCusp
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
+import Mathlib.Analysis.Analytic.Uniqueness
+import Mathlib.Analysis.Complex.Convex
+import TauCeti.Topology.DiscreteSeparation
+
 /-!
 # Finite zeros of a level-one modular form in the fundamental domain
 
@@ -80,6 +84,48 @@ lemma finite_zeros_in_fd [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → �
     MeromorphicOn.divisor_apply h_mero hpK]
   intro h0
   exact hp_ord (by rwa [orderOfVanishingAt_def])
+
+/-- The zeros of a nonzero form's complex extension do not accumulate at any point of the
+upper half-plane. -/
+lemma not_accPt_zeros_comp_ofComplex [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → ℂ) ≠ 0)
+    {x : ℂ} (hx : 0 < x.im) :
+    ¬AccPt x (Filter.principal {z : ℂ | 0 < z.im ∧ (⇑f ∘ ofComplex) z = 0}) := by
+  have han : AnalyticAt ℂ (⇑f ∘ ofComplex) x :=
+    analyticAt_comp_ofComplex (ModularFormClass.holo f) hx
+  rcases han.eventually_eq_zero_or_eventually_ne_zero with hev | hev
+  · refine absurd (funext fun p => ?_) hf
+    have hall : AnalyticOnNhd ℂ (⇑f ∘ ofComplex) {z : ℂ | 0 < z.im} := fun w hw =>
+      analyticAt_comp_ofComplex (ModularFormClass.holo f) hw
+    have h0 := hall.eqOn_zero_of_preconnected_of_eventuallyEq_zero
+      (convex_halfSpace_im_gt 0).isPreconnected hx hev
+    have := h0 (Set.mem_ofPred_eq ▸ p.2 : (p : ℂ) ∈ {z : ℂ | 0 < z.im})
+    simpa [Function.comp, ofComplex_apply] using this
+  · rw [accPt_iff_frequently]
+    intro hfreq
+    have hfreq' : ∃ᶠ y in nhdsWithin x {x}ᶜ,
+        y ∈ {z : ℂ | 0 < z.im ∧ (⇑f ∘ ofComplex) z = 0} := by
+      rw [frequently_nhdsWithin_iff]
+      exact hfreq.mono fun y hy => ⟨hy.2, Set.mem_compl_singleton_iff.mpr hy.1⟩
+    obtain ⟨y, hymem, hyne⟩ := (hfreq'.and_eventually hev).exists
+    exact hyne hymem.2
+
+/-- Any subset of the upper half-plane has an open neighbourhood in the upper half-plane
+containing no zeros of the form's complex extension beyond its own. -/
+lemma exists_isOpen_zeros_inter [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → ℂ) ≠ 0)
+    {K : Set ℂ} (hK : K ⊆ {z : ℂ | 0 < z.im}) :
+    ∃ U : Set ℂ, IsOpen U ∧ K ⊆ U ∧ U ⊆ {z : ℂ | 0 < z.im} ∧
+      {z ∈ U | (⇑f ∘ ofComplex) z = 0} = {z ∈ K | (⇑f ∘ ofComplex) z = 0} := by
+  obtain ⟨U, hUo, hKU, hUV, hUZ⟩ := TauCeti.exists_isOpen_inter_eq_of_not_accPt
+    (Z := {z : ℂ | 0 < z.im ∧ (⇑f ∘ ofComplex) z = 0})
+    isOpen_upperHalfPlaneSet hK fun x hx => not_accPt_zeros_comp_ofComplex hf (hK hx)
+  refine ⟨U, hUo, hKU, hUV, ?_⟩
+  have hmassage : ∀ {W : Set ℂ}, W ⊆ {z : ℂ | 0 < z.im} →
+      {z ∈ W | (⇑f ∘ ofComplex) z = 0} =
+        W ∩ {z : ℂ | 0 < z.im ∧ (⇑f ∘ ofComplex) z = 0} := by
+    intro W hW
+    ext z
+    exact ⟨fun hz => ⟨hz.1, hW hz.1, hz.2⟩, fun hz => ⟨hz.1, hz.2.2⟩⟩
+  rw [hmassage hUV, hmassage hK, hUZ]
 
 end ModularForm
 
