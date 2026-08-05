@@ -27,8 +27,6 @@ the interior winding number `-1` of the contour is computed.
 
 ## Main declarations
 
-* `TauCeti.ModularForm.re_fdBoundary_segment1`, `…_segment4`, `…_segment5`,
-  `TauCeti.ModularForm.im_fdBoundary_arc_le` — the half-plane confinements.
 * `TauCeti.ModularForm.windingNumber_fdBoundary_segment1_eq_log`, `…_arc_eq_log`,
   `…_segment4_eq_log`, `…_segment5_eq_log` — the four logarithm values.
 
@@ -48,32 +46,6 @@ namespace TauCeti
 namespace ModularForm
 
 variable {H t : ℝ} {w : ℂ}
-
-/-- The right vertical has constant real part `1/2`. -/
-theorem re_fdBoundary_segment1 (H : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) :
-    (fdBoundary H t).re = 1 / 2 := by
-  rw [eqOn_fdBoundary_segment1 H ht, fdBoundary_segment1_apply, AffineMap.lineMap_apply]
-  simp [ρ, Complex.real_smul]
-  norm_num
-
-/-- The arc stays at height at most `1`. -/
-theorem im_fdBoundary_arc_le (H : ℝ) (ht : t ∈ Icc (1 : ℝ) 3) :
-    (fdBoundary H t).im ≤ 1 := by
-  rw [eqOn_fdBoundary_arc H ht, circleMap_zero_im]
-  simpa using Real.sin_le_one ((t + 1) * (Real.pi / 6))
-
-/-- The left vertical has constant real part `-1/2`. -/
-theorem re_fdBoundary_segment4 (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
-    (fdBoundary H t).re = -(1 / 2) := by
-  rw [eqOn_fdBoundary_segment4 H ht, fdBoundary_segment4_apply, AffineMap.lineMap_apply]
-  simp [ρ, Complex.real_smul]
-  norm_num
-
-/-- The truncation ceiling has constant height `H`. -/
-theorem im_fdBoundary_segment5 (H : ℝ) (ht : t ∈ Icc (4 : ℝ) 5) :
-    (fdBoundary H t).im = H := by
-  rw [eqOn_fdBoundary_segment5 H ht, fdBoundary_segment5_apply, AffineMap.lineMap_apply]
-  simp [Complex.real_smul]
 
 /-- The winding number of the right vertical about a point strictly to its left is the
 principal logarithm of the endpoint ratio. -/
