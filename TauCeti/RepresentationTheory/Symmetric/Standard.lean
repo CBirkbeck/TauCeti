@@ -141,19 +141,18 @@ section Standard
 
 variable {k : Type*} [Field k] {α : Type*} [Fintype α]
 
-/-- For a two-element `α` the standard subrepresentation is a line, and a line is an atom of the
-lattice of subspaces; the lattice of subrepresentations embeds in it, the bottom one carrying the
-zero subspace.  No hypothesis on the characteristic is needed. -/
+/-- The standard subrepresentation is an atom when `Fintype.card α = 2`, with no hypothesis on the
+characteristic of `k`. -/
 private theorem isAtom_augmentationSubrepresentation_of_card_eq_two (hcard : Fintype.card α = 2) :
     IsAtom (augmentationSubrepresentation k (Equiv.Perm α) α) := by
-  have hbot :
-      (⊥ : Subrepresentation (Representation.ofMulAction k (Equiv.Perm α) α)).toSubmodule = ⊥ :=
-    rfl
+  -- For two elements the subrepresentation is a line, and a line is an atom of the lattice of
+  -- subspaces; the lattice of subrepresentations embeds in it by `toSubmodule`.
   have hatom : IsAtom (augmentationSubrepresentation k (Equiv.Perm α) α).toSubmodule :=
     Submodule.isAtom_iff_finrank_eq_one.mpr
       (by rw [finrank_augmentationSubrepresentation, hcard])
-  refine ⟨fun h => hatom.1 (by rw [h, hbot]), fun τ hτ =>
-    Subrepresentation.toSubmodule_injective ((hatom.2 _ ?_).trans hbot.symm)⟩
+  refine ⟨fun h => hatom.1 (by rw [h, Subrepresentation.toSubmodule_bot]), fun τ hτ =>
+    Subrepresentation.toSubmodule_injective
+      ((hatom.2 _ ?_).trans Subrepresentation.toSubmodule_bot.symm)⟩
   exact lt_of_le_of_ne hτ.le fun hc => hτ.ne (Subrepresentation.toSubmodule_injective hc)
 
 omit [Fintype α] in
@@ -165,16 +164,16 @@ private theorem single_sub_single_ne_zero {x y : α} (hxy : x ≠ y) :
   have hcoeff : (single x (1 : k) - single y 1).coeff x = 0 := by rw [hzero]; simp
   simp [MonoidAlgebra.coeff_single, Ne.symm hxy] at hcoeff
 
-/-- A nonzero vector with vanishing coefficient sum has two different coefficients, provided the
-cardinality of `α` is invertible: otherwise all its coefficients would be equal, and their common
-value would be killed by `Fintype.card α`.
+/-- A nonzero vector in the kernel of `sumCoords` has two different coefficients, provided
+`(Fintype.card α : k) ≠ 0`.
 
 Nonemptiness of `α` is not assumed — it follows from `(Fintype.card α : k) ≠ 0`. -/
-private theorem exists_coeff_ne_of_sumCoords_eq_zero (hchar : (Fintype.card α : k) ≠ 0)
+private theorem exists_coeff_ne_of_ne_zero_of_sumCoords_eq_zero (hchar : (Fintype.card α : k) ≠ 0)
     {v : MonoidAlgebra k α} (hv0 : v ≠ 0)
     (hvker : (MonoidAlgebra.basis α k).sumCoords v = 0) :
     ∃ x y : α, x ≠ y ∧ v.coeff x ≠ v.coeff y := by
   classical
+  -- Otherwise all coefficients agree, and their common value is killed by `Fintype.card α`.
   have hpos : 0 < Fintype.card α :=
     Nat.pos_of_ne_zero fun h => hchar (by rw [h]; simp)
   obtain ⟨x₀⟩ := Fintype.card_pos_iff.mp hpos
@@ -191,15 +190,16 @@ private theorem exists_coeff_ne_of_sumCoords_eq_zero (hchar : (Fintype.card α :
 
 omit [Fintype α] in
 /-- A subrepresentation containing a vector whose `x`- and `y`-coefficients differ contains the
-difference `single x 1 - single y 1`: subtract the transposition `swap x y` and rescale.
+difference `single x 1 - single y 1`.
 
 The two indices need not be distinct as a hypothesis — differing coefficients already force it. -/
-private theorem single_sub_single_mem_of_coeff_ne
+private theorem single_sub_single_mem_of_mem_of_coeff_ne
     {τ : Subrepresentation (Representation.ofMulAction k (Equiv.Perm α) α)}
     {v : MonoidAlgebra k α} (hv : v ∈ τ.toSubmodule) {x y : α}
     (hcoeff : v.coeff x ≠ v.coeff y) :
     (single x 1 - single y 1 : MonoidAlgebra k α) ∈ τ.toSubmodule := by
   classical
+  -- Subtract the transposition `swap x y` from `v`, then rescale.
   have hsub : v - Representation.ofMulAction k (Equiv.Perm α) α (Equiv.swap x y) v ∈
       τ.toSubmodule :=
     Submodule.sub_mem _ hv (τ.apply_mem_toSubmodule _ hv)
@@ -208,13 +208,14 @@ private theorem single_sub_single_mem_of_coeff_ne
   rwa [smul_smul, inv_mul_cancel₀ (sub_ne_zero.mpr hcoeff), one_smul] at hsmul
 
 omit [Fintype α] in
-/-- From a single difference of standard basis vectors, transposing `y` with an arbitrary `z`
-produces every other difference with the same base point `x`. -/
-private theorem single_sub_single_mem_of_single_sub_single_mem
+/-- A subrepresentation containing one difference of standard basis vectors contains every
+difference with the same base point `x`. -/
+private theorem single_sub_single_mem_of_ne_of_single_sub_single_mem
     {τ : Subrepresentation (Representation.ofMulAction k (Equiv.Perm α) α)} {x y : α}
     (hxy : x ≠ y) (hmem : (single x 1 - single y 1 : MonoidAlgebra k α) ∈ τ.toSubmodule) (z : α) :
     (single z 1 - single x 1 : MonoidAlgebra k α) ∈ τ.toSubmodule := by
   classical
+  -- Transpose `y` with `z`, which fixes `x`.
   rcases eq_or_ne z x with rfl | hzx
   · simp
   · have hswapx : (Equiv.swap y z) • x = x := by
@@ -254,8 +255,8 @@ theorem isAtom_augmentationSubrepresentation (h2 : 2 ≤ Fintype.card α)
     obtain ⟨v, hv, hv0⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hτne
     have hvker : (MonoidAlgebra.basis α k).sumCoords v = 0 :=
       mem_augmentationSubrepresentation_iff.mp (hτ.le hv)
-    obtain ⟨x, y, hxy, hcoeff⟩ := exists_coeff_ne_of_sumCoords_eq_zero hchar hv0 hvker
-    have hdiff := single_sub_single_mem_of_coeff_ne hv hcoeff
+    obtain ⟨x, y, hxy, hcoeff⟩ := exists_coeff_ne_of_ne_zero_of_sumCoords_eq_zero hchar hv0 hvker
+    have hdiff := single_sub_single_mem_of_mem_of_coeff_ne hv hcoeff
     -- `τ` then contains every difference of standard basis vectors, which span
     have hle : augmentationSubrepresentation k (Equiv.Perm α) α ≤ τ := by
       intro w hw
@@ -264,7 +265,7 @@ theorem isAtom_augmentationSubrepresentation (h2 : 2 ≤ Fintype.card α)
       rw [ker_sumCoords_basis_eq_span k α x] at hw'
       exact Submodule.span_le.mpr (by
         rintro _ ⟨z, rfl⟩
-        exact single_sub_single_mem_of_single_sub_single_mem hxy hdiff z) hw'
+        exact single_sub_single_mem_of_ne_of_single_sub_single_mem hxy hdiff z) hw'
     exact absurd (le_antisymm hτ.le hle) hτ.ne
 
 /-- **The standard representation is irreducible.**  Given `2 ≤ |α|`, the hypothesis is sharp: for
