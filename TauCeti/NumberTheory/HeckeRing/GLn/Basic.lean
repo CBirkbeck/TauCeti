@@ -69,12 +69,6 @@ noncomputable scoped instance coeMapGLRat :
 lemma coe_mem_SLnZ (σ : SpecialLinearGroup (Fin n) ℤ) :
     (σ : GL (Fin n) ℚ) ∈ SLnZ n := ⟨σ, rfl⟩
 
-/-- Membership in `SL_n(ℤ)`: exactly the images of integral special-linear matrices.
-Not `@[simp]`: unpacking to an existential is not a simp normal form. -/
-lemma mem_SLnZ_iff {g : GL (Fin n) ℚ} :
-    g ∈ SLnZ n ↔ ∃ σ : SpecialLinearGroup (Fin n) ℤ, (σ : GL (Fin n) ℚ) = g :=
-  MonoidHom.mem_range
-
 end Embedding
 
 section PosDetInt
