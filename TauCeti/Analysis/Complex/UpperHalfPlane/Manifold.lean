@@ -6,7 +6,6 @@ module
 
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Manifold
 
-import Mathlib.Analysis.Complex.UpperHalfPlane.Topology
 import TauCeti.Topology.DiscreteSeparation
 
 /-!
