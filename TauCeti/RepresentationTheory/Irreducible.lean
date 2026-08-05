@@ -51,21 +51,6 @@ irreducible by.
 
 public section
 
-namespace Subrepresentation
-
-variable {A G W : Type*} [Semiring A] [Monoid G] [AddCommMonoid W] [Module A W]
-  {ρ : Representation A G W}
-
-/-- The bottom subrepresentation carries the bottom subspace. -/
-@[simp]
-lemma toSubmodule_bot : (⊥ : Subrepresentation ρ).toSubmodule = ⊥ := rfl
-
-/-- The top subrepresentation carries the top subspace. -/
-@[simp]
-lemma toSubmodule_top : (⊤ : Subrepresentation ρ).toSubmodule = ⊤ := rfl
-
-end Subrepresentation
-
 namespace TauCeti
 
 namespace Representation
@@ -76,14 +61,15 @@ variable {k G V : Type*} [Field k] [Monoid G] [AddCommGroup V] [Module k V]
 theorem isIrreducible_of_finrank_eq_one (ρ : Representation k G V)
     (h : Module.finrank k V = 1) : ρ.IsIrreducible := by
   have hsimple : IsSimpleModule k V := isSimpleModule_iff_finrank_eq_one.mpr h
+  -- the two extreme subrepresentations carry the two extreme subspaces
+  have hbot : (⊥ : Subrepresentation ρ).toSubmodule = ⊥ := rfl
+  have htop : (⊤ : Subrepresentation ρ).toSubmodule = ⊤ := rfl
   have hne : (⊥ : Subrepresentation ρ) ≠ ⊤ := fun hc =>
-    bot_ne_top (α := Submodule k V) (by
-      rw [← Subrepresentation.toSubmodule_bot (ρ := ρ), ← Subrepresentation.toSubmodule_top
-        (ρ := ρ), hc])
+    bot_ne_top (α := Submodule k V) (by rw [← hbot, ← htop, hc])
   have : Nontrivial (Subrepresentation ρ) := ⟨⊥, ⊤, hne⟩
   refine ⟨fun σ => (eq_bot_or_eq_top σ.toSubmodule).imp (fun hσ => ?_) fun hσ => ?_⟩
-  · exact Subrepresentation.toSubmodule_injective (hσ.trans Subrepresentation.toSubmodule_bot.symm)
-  · exact Subrepresentation.toSubmodule_injective (hσ.trans Subrepresentation.toSubmodule_top.symm)
+  · exact Subrepresentation.toSubmodule_injective (hσ.trans hbot.symm)
+  · exact Subrepresentation.toSubmodule_injective (hσ.trans htop.symm)
 
 /-- The trivial representation of a monoid on the base field is irreducible, being a line. -/
 instance isIrreducible_trivial_self : (_root_.Representation.trivial k G k).IsIrreducible :=
@@ -95,13 +81,15 @@ translation is the correspondence between the subrepresentations of `σ.toRepres
 subrepresentations of `ρ` contained in `σ`, given by pushing forward along the inclusion. -/
 theorem isIrreducible_toRepresentation_of_isAtom {ρ : Representation k G V}
     {σ : Subrepresentation ρ} (h : IsAtom σ) : σ.toRepresentation.IsIrreducible := by
+  have hbot : (⊥ : Subrepresentation ρ).toSubmodule = ⊥ := rfl
   have hσ : σ.toSubmodule ≠ ⊥ := fun hc =>
-    h.1 (Subrepresentation.toSubmodule_injective (hc.trans Subrepresentation.toSubmodule_bot.symm))
+    h.1 (Subrepresentation.toSubmodule_injective (hc.trans hbot.symm))
   have : Nontrivial σ.toSubmodule := Submodule.nontrivial_iff_ne_bot.mpr hσ
+  -- the two extreme subrepresentations of `σ.toRepresentation` carry the two extreme subspaces
+  have hbot' : (⊥ : Subrepresentation σ.toRepresentation).toSubmodule = ⊥ := rfl
+  have htop' : (⊤ : Subrepresentation σ.toRepresentation).toSubmodule = ⊤ := rfl
   have hne : (⊥ : Subrepresentation σ.toRepresentation) ≠ ⊤ := fun hc =>
-    bot_ne_top (α := Submodule k σ.toSubmodule) (by
-      rw [← Subrepresentation.toSubmodule_bot (ρ := σ.toRepresentation),
-        ← Subrepresentation.toSubmodule_top (ρ := σ.toRepresentation), hc])
+    bot_ne_top (α := Submodule k σ.toSubmodule) (by rw [← hbot', ← htop', hc])
   have : Nontrivial (Subrepresentation σ.toRepresentation) := ⟨⊥, ⊤, hne⟩
   refine ⟨fun τ => ?_⟩
   -- push `τ` forward to a subrepresentation of `ρ` contained in `σ`
@@ -119,7 +107,7 @@ theorem isIrreducible_toRepresentation_of_isAtom {ρ : Representation k G V}
       rw [Submodule.map_bot]
       exact hmap.symm.trans (congrArg Subrepresentation.toSubmodule hτ)
     exact (Submodule.map_injective_of_injective σ.toSubmodule.subtype_injective this).trans
-      Subrepresentation.toSubmodule_bot.symm
+      hbot'.symm
   · refine Or.inr (Subrepresentation.toSubmodule_injective ?_)
     have heq : τ' = σ := by
       by_contra hne'
@@ -129,7 +117,7 @@ theorem isIrreducible_toRepresentation_of_isAtom {ρ : Representation k G V}
       rw [Submodule.map_subtype_top]
       exact hmap.symm.trans (congrArg Subrepresentation.toSubmodule heq)
     exact (Submodule.map_injective_of_injective σ.toSubmodule.subtype_injective this).trans
-      Subrepresentation.toSubmodule_top.symm
+      htop'.symm
 
 /-- **A representation whose algebra map exhausts the endomorphisms is irreducible.** Every nonzero
 vector then generates, because a vector space is a simple module over its endomorphism ring. -/
