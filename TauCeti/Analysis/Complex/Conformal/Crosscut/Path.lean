@@ -232,21 +232,15 @@ turn, and `f` is injective on `ball c r`, then the path is injective there.
 Injectivity of `circleMap` on the arc is what `b - a < 2 * π` buys; `f` supplies the rest. -/
 private theorem injOn_of_lineMap_circleMap_formula {a b : ℝ} (hab : a < b)
     (hab2π : b - a < 2 * π) (hρ : 0 < ρ) (hinj : InjOn f (ball c r))
-    (hcrosscut : ball c r ∩ sphere ζ ρ = circleMap ζ ρ '' Ioo a b) {u v : ℂ} {γ : Path u v}
+    (hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) (ball c r)) {u v : ℂ} {γ : Path u v}
     (hγformula : ∀ t ∈ Ioo (0 : unitInterval) 1,
       γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ)))) :
     InjOn γ (Ioo (0 : unitInterval) 1) := by
   intro x hx y hy hxy
   have hxIoo := lineMap_mem_Ioo hab hx
   have hyIoo := lineMap_mem_Ioo hab hy
-  have hxcross : circleMap ζ ρ (AffineMap.lineMap a b (x : ℝ)) ∈ ball c r ∩ sphere ζ ρ := by
-    rw [hcrosscut]
-    exact ⟨_, hxIoo, rfl⟩
-  have hycross : circleMap ζ ρ (AffineMap.lineMap a b (y : ℝ)) ∈ ball c r ∩ sphere ζ ρ := by
-    rw [hcrosscut]
-    exact ⟨_, hyIoo, rfl⟩
   rw [hγformula x hx, hγformula y hy] at hxy
-  have hcircle := hinj hxcross.1 hycross.1 hxy
+  have hcircle := hinj (hmaps hxIoo) (hmaps hyIoo) hxy
   have hangle := injOn_circleMap_of_abs_sub_le (c := ζ) hρ.ne'
     (by rw [abs_sub_comm, abs_of_pos (sub_pos.mpr hab)]; exact hab2π.le)
     (by rw [uIoc_of_le hab.le]; exact ⟨hxIoo.1, hxIoo.2.le⟩)
@@ -254,8 +248,8 @@ private theorem injOn_of_lineMap_circleMap_formula {a b : ℝ} (hab : a < b)
   exact Subtype.ext ((AffineMap.lineMap_injective ℝ hab.ne) hangle)
 
 /-- **An endpoint limit of a circular image crosscut lies on the frontier of the image.** For `f`
-injective on `ball c r`, a limit of `f` along the crosscut at either endpoint of its defining arc
-is a boundary point of `f '' ball c r`.
+differentiable and injective on `ball c r`, a limit of `f` along the crosscut at either endpoint of
+its defining arc is a boundary point of `f '' ball c r`.
 
 The endpoints are named by the arccos formula rather than through a local abbreviation, so the
 statement stands on its own. -/
@@ -266,7 +260,6 @@ private theorem mem_frontier_image_ball_of_tendsto_arc_endpoint
       θ = (c - ζ).arg + Real.arccos (ρ / (2 * r)))
     {w : ℂ} (hw : Tendsto f (𝓝[ball c r ∩ sphere ζ ρ] (circleMap ζ ρ θ)) (𝓝 w)) :
     w ∈ frontier (f '' ball c r) := by
-  have hr : 0 < r := by linarith
   have hφ0 : 0 < Real.arccos (ρ / (2 * r)) :=
     Real.arccos_pos.mpr ((div_lt_one (by linarith)).mpr hρr)
   have heclosed : circleMap ζ ρ θ ∈ closedBall c r ∩ sphere ζ ρ := by
@@ -283,24 +276,25 @@ private theorem mem_frontier_image_ball_of_tendsto_arc_endpoint
     rcases hθends with rfl | rfl
     · exact mem_insert _ _
     · exact mem_insert_of_mem _ (mem_singleton _)
+  have hr : 0 < r := by linarith
   have hefrontier : circleMap ζ ρ θ ∈ frontier (ball c r) := by
     rw [frontier_ball c hr.ne']
     exact hesphere.1
   have hwcluster : w ∈ clusterSetOn f (ball c r ∩ sphere ζ ρ) (circleMap ζ ρ θ) := by
     rw [clusterSetOn_eq_singleton_of_tendsto hecl hw]
     exact mem_singleton w
-  exact clusterSetOn_subset_frontier_image isOpen_ball hf hinj hefrontier
-    (clusterSetOn_mono inter_subset_left hwcluster)
+  exact (clusterSetOn_inter_sphere_subset_frontier_inter_closure_image (U := ball c r) (ζ := ζ)
+    (ρ := ρ) isOpen_ball hf hinj hefrontier hwcluster).1
 
-/-- **A path into an open set whose endpoints sit on the boundary repeats only at its endpoints.**
-If `γ` maps the open interval into `S`, its two endpoints lie on `frontier S`, and it is injective
-on the open interval, then any repeated value is a common value of the two endpoints.
+/-- **A path repeats only at its endpoints when its interior avoids both endpoint values.**
+If `γ` maps the open interval into `S`, neither endpoint value lies in `S`, and `γ` is injective on
+the open interval, then any repeated value is a common value of the two endpoints.
 
-Nothing here is complex-analytic: the interior values lie in `S` and the endpoint values do not,
-so an interior point can never coincide with an endpoint. -/
-private theorem eq_or_eq_endpoints_of_mem_frontier_of_mapsTo_interior {X : Type*}
-    [TopologicalSpace X] {u v : X} {γ : Path u v} {S : Set X} (hS : IsOpen S)
-    (hzero : γ 0 ∈ frontier S) (hone : γ 1 ∈ frontier S)
+Purely combinatorial: no topology on `S` is used, only that the interior values lie in `S` and the
+endpoint values do not. The frontier/open-set form is derived at the call site. -/
+private theorem eq_or_eq_endpoints_of_notMem_of_forall_mem_Ioo {X : Type*}
+    [TopologicalSpace X] {u v : X} {γ : Path u v} {S : Set X}
+    (hzero : γ 0 ∉ S) (hone : γ 1 ∉ S)
     (hmem : ∀ t ∈ Ioo (0 : unitInterval) 1, γ t ∈ S)
     (hinj : InjOn γ (Ioo (0 : unitInterval) 1)) ⦃x y : unitInterval⦄ (hxy : γ x = γ y) :
     x = y ∨ (x = 0 ∧ y = 1) ∨ (x = 1 ∧ y = 0) := by
@@ -308,14 +302,14 @@ private theorem eq_or_eq_endpoints_of_mem_frontier_of_mapsTo_interior {X : Type*
   · rcases unitInterval_eq_zero_or_eq_one_or_mem_Ioo y with rfl | rfl | hy
     · exact Or.inl rfl
     · exact Or.inr (Or.inl ⟨rfl, rfl⟩)
-    · exact absurd (by rw [hxy]; exact hmem y hy) (hS.frontier_eq ▸ hzero).2
+    · exact absurd (by rw [hxy]; exact hmem y hy) hzero
   · rcases unitInterval_eq_zero_or_eq_one_or_mem_Ioo y with rfl | rfl | hy
     · exact Or.inr (Or.inr ⟨rfl, rfl⟩)
     · exact Or.inl rfl
-    · exact absurd (by rw [hxy]; exact hmem y hy) (hS.frontier_eq ▸ hone).2
+    · exact absurd (by rw [hxy]; exact hmem y hy) hone
   · rcases unitInterval_eq_zero_or_eq_one_or_mem_Ioo y with rfl | rfl | hy
-    · exact absurd (by rw [← hxy]; exact hmem x hx) (hS.frontier_eq ▸ hzero).2
-    · exact absurd (by rw [← hxy]; exact hmem x hx) (hS.frontier_eq ▸ hone).2
+    · exact absurd (by rw [← hxy]; exact hmem x hx) hzero
+    · exact absurd (by rw [← hxy]; exact hmem x hx) hone
     · exact Or.inl (hinj hx hy hxy)
 
 /-- **An injective finite-length circular image crosscut has no repetitions except possibly at its
@@ -356,14 +350,12 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere_of_injOn
   let b : ℝ := (c - ζ).arg + φ
   have hφ0 : 0 < φ := by
     exact Real.arccos_pos.mpr ((div_lt_one (by linarith)).mpr hρr)
+  have hab : a < b := by simp only [a, b]; linarith
   have hφπ2 : φ < π / 2 := by
     exact Real.arccos_lt_pi_div_two.mpr (div_pos hρ (by linarith))
-  have hab : a < b := by simp only [a, b]; linarith
   have hab2π : b - a < 2 * π := by simp only [a, b]; linarith [Real.pi_pos]
   have hcrosscut : ball c r ∩ sphere ζ ρ = circleMap ζ ρ '' Ioo a b := by
     simpa only [a, b, φ] using ball_inter_sphere_eq_circleMap_image_Ioo hζ hρ hρr
-  have hclosedCrosscut : closedBall c r ∩ sphere ζ ρ = circleMap ζ ρ '' Icc a b := by
-    simpa only [a, b, φ] using closedBall_inter_sphere_eq_circleMap_image_Icc hζ hρ hρr
   have hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) (ball c r) := by
     intro θ hθ
     have : circleMap ζ ρ θ ∈ ball c r ∩ sphere ζ ρ := by
@@ -383,7 +375,7 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere_of_injOn
       γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ))) := by
     simpa only [a, b, φ] using hγformula
   have hγinj : InjOn γ (Ioo (0 : unitInterval) 1) :=
-    injOn_of_lineMap_circleMap_formula hab hab2π hρ hinj hcrosscut hγformula'
+    injOn_of_lineMap_circleMap_formula hab hab2π hρ hinj hmaps hγformula'
   have hγzero : γ 0 ∈ frontier (f '' ball c r) := by
     simpa only [Path.source] using hufrontier
   have hγone : γ 1 ∈ frontier (f '' ball c r) := by
@@ -395,8 +387,8 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere_of_injOn
     rw [hγformula' t ht]
     exact ⟨circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ)),
       hmaps (lineMap_mem_Ioo hab ht), rfl⟩
-  have hγsimple := eq_or_eq_endpoints_of_mem_frontier_of_mapsTo_interior
-    himageOpen hγzero hγone hγmem hγinj
+  have hγsimple := eq_or_eq_endpoints_of_notMem_of_forall_mem_Ioo
+    (himageOpen.frontier_eq ▸ hγzero).2 (himageOpen.frontier_eq ▸ hγone).2 hγmem hγinj
   exact ⟨u, v, γ, hγrange, hu, hv, hufrontier, hvfrontier, hγsimple, hγformula⟩
 
 end TauCeti
