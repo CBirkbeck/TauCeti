@@ -74,48 +74,41 @@ lemma eigenvalue_mul_of_jointEigenvector (ρ : G →* Module.End K V) (χ : G �
   rw [← h, Module.End.mul_apply, Module.End.mem_eigenspace_iff.mp (hv_mem g₂), map_smul,
     Module.End.mem_eigenspace_iff.mp (hv_mem g₁), smul_smul, mul_comm (χ g₂) (χ g₁)]
 
-/-- If `g` has finite order and `v ≠ 0` is a joint eigenvector with eigenvalues
-`χ`, then `χ g ≠ 0`: the eigenvalue of a finite-order element is a root of
-unity (hence a unit). -/
-lemma eigenvalue_ne_zero_of_jointEigenvector (ρ : G →* Module.End K V) (χ : G → K) (v : V)
-    (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) {g : G}
-    (hg : IsOfFinOrder g) :
-    χ g ≠ 0 := by
-  obtain ⟨n, hnpos, hn⟩ := hg.exists_pow_eq_one
-  intro hzero
-  have hχ_pow : χ (g ^ n) = χ g ^ n :=
-    map_pow (⟨⟨χ, eigenvalue_one_of_jointEigenvector ρ χ v hv hv_mem⟩,
-      eigenvalue_mul_of_jointEigenvector ρ χ v hv hv_mem⟩ : G →* K) g n
-  rw [hn, eigenvalue_one_of_jointEigenvector ρ χ v hv hv_mem, hzero,
-    zero_pow hnpos.ne'] at hχ_pow
-  exact one_ne_zero hχ_pow
-
 end Monoid
 
 section Group
 
 variable [Group G]
 
+/-- The eigenvalues of a nonzero joint eigenvector of a group representation are
+nonzero: `χ g · χ g⁻¹ = χ 1 = 1`. -/
+lemma eigenvalue_ne_zero_of_jointEigenvector (ρ : G →* Module.End K V) (χ : G → K) (v : V)
+    (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) (g : G) :
+    χ g ≠ 0 :=
+  left_ne_zero_of_mul_eq_one (b := χ g⁻¹) (by
+    rw [← eigenvalue_mul_of_jointEigenvector ρ χ v hv hv_mem, mul_inv_cancel,
+      eigenvalue_one_of_jointEigenvector ρ χ v hv hv_mem])
+
 /-- Given a joint eigenvector `v ≠ 0` for a monoid-hom representation
-`ρ : G →* Module.End K V` of a *finite* group `G`, the eigenvalue function
-`χ : G → K` factors through a monoid homomorphism `G →* Kˣ`. -/
-def charHomOfJointEigenvector [Finite G] (ρ : G →* Module.End K V) (χ : G → K) (v : V)
+`ρ : G →* Module.End K V` of a group `G`, the eigenvalue function `χ : G → K`
+factors through a monoid homomorphism `G →* Kˣ`. -/
+def charHomOfJointEigenvector (ρ : G →* Module.End K V) (χ : G → K) (v : V)
     (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) : G →* Kˣ where
   toFun g := Units.mk0 (χ g)
-    (eigenvalue_ne_zero_of_jointEigenvector ρ χ v hv hv_mem (isOfFinOrder_of_finite g))
+    (eigenvalue_ne_zero_of_jointEigenvector ρ χ v hv hv_mem g)
   map_one' := Units.ext (eigenvalue_one_of_jointEigenvector ρ χ v hv hv_mem)
   map_mul' g₁ g₂ :=
     Units.ext (eigenvalue_mul_of_jointEigenvector ρ χ v hv hv_mem g₁ g₂)
 
 @[simp]
-lemma charHomOfJointEigenvector_apply [Finite G] (ρ : G →* Module.End K V) (χ : G → K)
+lemma charHomOfJointEigenvector_apply (ρ : G →* Module.End K V) (χ : G → K)
     (v : V) (hv : v ≠ 0) (hv_mem : ∀ g, v ∈ (ρ g).eigenspace (χ g)) (g : G) :
     ((charHomOfJointEigenvector ρ χ v hv hv_mem g) : K) = χ g := (rfl)
 
 /-- If the joint eigenspace of an eigenvalue function `χ` of a finite-group
 representation is nonzero, then `χ` is (the underlying function of) a character
 `G →* Kˣ`. -/
-lemma exists_charHom_of_iInf_eigenspace_ne_bot [Finite G] {ρ : G →* Module.End K V}
+lemma exists_charHom_of_iInf_eigenspace_ne_bot {ρ : G →* Module.End K V}
     {χ : G → K} (hχ : ⨅ g, (ρ g).eigenspace (χ g) ≠ ⊥) :
     ∃ χ₀ : G →* Kˣ, (fun g ↦ ((χ₀ g) : K)) = χ := by
   obtain ⟨v, hv_mem, hv_ne⟩ := (Submodule.ne_bot_iff _).mp hχ
@@ -191,7 +184,7 @@ lemma iSup_inf_iInf_eigenspace_of_invariant [IsAlgClosed K] {ι : Type*}
 
 section CharHom
 
-variable [Finite G] {ρ : G →* Module.End K V}
+variable {ρ : G →* Module.End K V}
 
 /-- **Character-indexed spanning**: for a commuting semisimple representation of a finite
 group over an algebraically closed field, in finite dimension, the joint eigenspaces
@@ -208,7 +201,6 @@ lemma iSup_iInf_eigenspace_charHom_eq_top [IsAlgClosed K] [FiniteDimensional K V
   · obtain ⟨χ₀, rfl⟩ := exists_charHom_of_iInf_eigenspace_ne_bot hχ
     exact le_iSup (fun ψ : G →* Kˣ ↦ ⨅ g, (ρ g).eigenspace (ψ g)) χ₀
 
-omit [Finite G] in
 /-- **Character-indexed independence** of the joint eigenspaces. -/
 lemma iSupIndep_iInf_eigenspace_charHom
     (hcomm : Pairwise fun g₁ g₂ ↦ Commute (ρ g₁) (ρ g₂))
