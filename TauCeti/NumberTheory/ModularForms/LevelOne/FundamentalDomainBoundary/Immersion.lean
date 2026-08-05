@@ -41,6 +41,26 @@ namespace ModularForm
 
 variable {H t c d : ℝ}
 
+-- Deliberately duplicated from `Basic`, where the same classification is private: the
+-- api-design adjudication on PR #2040 (review comment 3723294035) keeps the classifier
+-- out of the public API, and `private` declarations cannot be shared across modules.
+private lemma subset_piece_of_disjoint_corners {c d : ℝ} (hcd : Icc c d ⊆ Icc (0 : ℝ) 5)
+    (hdis : Disjoint (fdBoundaryCorners : Set ℝ) (Ioo c d)) :
+    Icc c d ⊆ Icc (0 : ℝ) 1 ∨ Icc c d ⊆ Icc (1 : ℝ) 3 ∨ Icc c d ⊆ Icc (3 : ℝ) 4 ∨
+      Icc c d ⊆ Icc (4 : ℝ) 5 := by
+  have hbp : ∀ m : ℝ, m ∈ fdBoundaryCorners → m ∉ Ioo c d := fun m hm ↦
+    Set.disjoint_left.mp hdis (Finset.mem_coe.mpr hm)
+  rcases le_or_gt d 1 with hd1 | hd1
+  · exact Or.inl fun x hx ↦ ⟨(hcd hx).1, hx.2.trans hd1⟩
+  · have hc1 : 1 ≤ c := le_of_not_gt fun hlt ↦ hbp 1 (by simp) ⟨hlt, hd1⟩
+    rcases le_or_gt d 3 with hd3 | hd3
+    · exact Or.inr (Or.inl fun x hx ↦ ⟨hc1.trans hx.1, hx.2.trans hd3⟩)
+    · have hc3 : 3 ≤ c := le_of_not_gt fun hlt ↦ hbp 3 (by simp) ⟨hlt, hd3⟩
+      rcases le_or_gt d 4 with hd4 | hd4
+      · exact Or.inr (Or.inr (Or.inl fun x hx ↦ ⟨hc3.trans hx.1, hx.2.trans hd4⟩))
+      · have hc4 : 4 ≤ c := le_of_not_gt fun hlt ↦ hbp 4 (by simp) ⟨hlt, hd4⟩
+        exact Or.inr (Or.inr (Or.inr fun x hx ↦ ⟨hc4.trans hx.1, (hcd hx).2⟩))
+
 /-- The segment-1 chord is nonzero when the height differs from the corner row. -/
 private lemma segment1_chord_ne_zero (hH : H ≠ Real.sqrt 3 / 2) :
     (ρ : ℂ) + 1 - (1 / 2 + H * Complex.I) ≠ 0 := by
@@ -80,7 +100,7 @@ theorem isPwC1ImmersionOn_fdBoundary (hH : H ≠ Real.sqrt 3 / 2) :
       rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at hsub
     refine ⟨contDiffOn_fdBoundary H hsub' hdis, fun t ht ↦ ?_⟩
     have h_uniq : UniqueDiffWithinAt ℝ (Icc c d) t := uniqueDiffOn_Icc hlt t ht
-    rcases subset_piece_of_disjoint_corners_aux hsub' hdis with h | h | h | h
+    rcases subset_piece_of_disjoint_corners hsub' hdis with h | h | h | h
     · rw [derivWithin_congr (fun s hs ↦ eqOn_fdBoundary_segment1 H (h hs))
         (eqOn_fdBoundary_segment1 H (h ht)),
         (hasDerivAt_fdBoundary_segment1 H t).hasDerivWithinAt.derivWithin h_uniq]
