@@ -17,10 +17,12 @@ public import Mathlib.MeasureTheory.Group.FundamentalDomain
 /-!
 # Fundamental domains for subgroups by coset tiling
 
-If `s` is a fundamental domain for a group `G` acting on `α`, a subgroup `H ≤ G` has the
-`[G : H]`-fold tiling `⋃ q : G ⧸ H, (q.out)⁻¹ • s` as a fundamental domain. This is how a
-fundamental domain for a finite-index subgroup (a congruence subgroup, say) is manufactured
-from a fundamental domain of the ambient group.
+If `s` is a fundamental domain for a group `G` acting on `α`, a subgroup `H ≤ G` with
+countable coset space has the `[G : H]`-fold tiling `⋃ q : G ⧸ H, (q.out)⁻¹ • s` as a
+fundamental domain. This is how a fundamental domain for a finite-index subgroup (a
+congruence subgroup, say) is manufactured from a fundamental domain of the ambient group;
+countability of `G ⧸ H` — automatic at finite index — is what makes the tiling a countable
+union.
 
 ## Main results
 
@@ -29,7 +31,7 @@ from a fundamental domain of the ambient group.
   `H`-fundamental domain.
 * `MeasureTheory.IsFundamentalDomain.subgroup_iUnion_out_inv_smul`: the special case of the
   canonical representatives, `⋃ q : G ⧸ H, (q.out)⁻¹ • s`.
-* `MeasureTheory.IsFundamentalDomain.smul_of_eq_conjAct`: an `H₁`-fundamental domain
+* `MeasureTheory.IsFundamentalDomain.smul_of_eq_conjAct_pointwise_smul`: an `H₁`-fundamental domain
   translates to a `g H₁ g⁻¹`-fundamental domain under `g`.
 * `MeasureTheory.IsFundamentalDomain.aedisjoint_smul_of_inv_mul_mem`: translates `g₁ • D`,
   `g₂ • D` of an `H`-fundamental domain are a.e. disjoint whenever `g₁ ≠ g₂` and
@@ -77,10 +79,11 @@ for a group `G` acting on `α`, `H ≤ G` a subgroup, and `r : ι → G` a famil
 fundamental domain for the restricted `H`-action. The inverses make `r` a *right*
 transversal: each `x ∈ G` factors as `h * r i` with `h ∈ H` for exactly one `i`.
 
-Only null-measurability of the individual translates `r i • s` is assumed; measurability and
-invariance of the whole ambient action are not needed. `subgroup_iUnion_out_inv_smul` is the
-convenience form that supplies `hnull` from `[MeasurableConstSMul G α]` and
-`[SMulInvariantMeasure G α μ]`. -/
+The index type must be countable (`[Countable ι]`), so that the tiling is a countable union.
+Beyond that, the *only* measure-theoretic hypothesis is null-measurability of the individual
+translates `r i • s`: measurability and invariance of the whole ambient action are not needed.
+`subgroup_iUnion_out_inv_smul` is the convenience form that supplies `hnull` from
+`[MeasurableConstSMul G α]` and `[SMulInvariantMeasure G α μ]`. -/
 @[to_additive /-- **Transversal coset tiling of a fundamental domain.** If `s` is a fundamental
 domain for an additive group `G` acting on `α`, `H ≤ G` a subgroup, and `r : ι → G` a family
 such that `i ↦ ⟦-(r i)⟧` enumerates the cosets `G ⧸ H` bijectively, then `⋃ i, r i +ᵥ s` is
@@ -113,7 +116,8 @@ theorem IsFundamentalDomain.iUnion_smul_of_transversal
 domain for a group `G` acting on `α`, then for any subgroup `H ≤ G`, the union of
 `[G : H]`-many translates `(q.out)⁻¹ • s` (for `q ∈ G ⧸ H`) is a fundamental
 domain for the restricted `H`-action on `α`: the inverses `(q.out)⁻¹` of the canonical
-representatives form the right transversal. This is
+representatives form the right transversal. The coset space must be countable
+(`[Countable (G ⧸ H)]`) — in particular this covers every finite-index subgroup. This is
 `IsFundamentalDomain.iUnion_smul_of_transversal` at `r q = (q.out)⁻¹`. -/
 @[to_additive /-- **Subgroup coset tiling of a fundamental domain.** If `s` is a fundamental
 domain for an additive group `G` acting on `α`, then for any subgroup `H ≤ G`, the union of
@@ -133,12 +137,20 @@ theorem IsFundamentalDomain.subgroup_iUnion_out_inv_smul
     rw [h_id]
     exact Function.bijective_id
 
+/-- Membership in the pointwise conjugate `ConjAct.toConjAct g • H` is conjugation back
+into `H`. This unfolds the `ConjAct`-encoded pointwise action once, so that the two
+directions of the conjugation bijection below need not repeat the chain. -/
+private lemma mem_conjAct_toConjAct_smul_iff {G : Type*} [Group G] {H : Subgroup G} {g x : G} :
+    x ∈ ConjAct.toConjAct g • H ↔ g⁻¹ * x * g ∈ H := by
+  rw [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def, map_inv,
+    ConjAct.ofConjAct_toConjAct, inv_inv]
+
 /-- **Conjugation-shift of a fundamental domain.** If `s` is an `H₁`-fundamental
 domain (where `H₁ ≤ G`) and `H₂` is the pointwise conjugate `g · H₁ · g⁻¹`
 (in `Subgroup` pointwise smul form, via the `ConjAct G`-action), then
 `g • s` is an `H₂`-fundamental domain. Only quasi-measure-preservation of the single
 translation `x ↦ g⁻¹ • x` is required, not invariance under the whole group. -/
-theorem IsFundamentalDomain.smul_of_eq_conjAct
+theorem IsFundamentalDomain.smul_of_eq_conjAct_pointwise_smul
     {G α : Type*} [Group G] [MeasurableSpace α] [MulAction G α]
     {μ : Measure α}
     {H₁ H₂ : Subgroup G} {s : Set α} (hs : IsFundamentalDomain H₁ s μ)
@@ -151,13 +163,10 @@ theorem IsFundamentalDomain.smul_of_eq_conjAct
       invFun := fun h₁ ↦ ⟨g * (h₁ : G) * g⁻¹, ?_⟩
       left_inv := fun _ ↦ Subtype.ext (by group)
       right_inv := fun _ ↦ Subtype.ext (by group) } fun h₂ x ↦ ?_
-  · have := h₂.2
-    rwa [Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
-      ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv] at this
-  · rw [Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
-      ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv,
-      show g⁻¹ * (g * (h₁ : G) * g⁻¹) * g = (h₁ : G) by group]
-    exact h₁.2
+  · exact mem_conjAct_toConjAct_smul_iff.mp h₂.2
+  · refine mem_conjAct_toConjAct_smul_iff.mpr ?_
+    convert h₁.2 using 2
+    group
   · -- the equivalence just constructed sends `h₂` to `⟨g⁻¹ * h₂ * g, _⟩`, and the subtype
     -- action restricts the ambient one; both hold by definition, with no lemma-form
     -- available for the anonymous-constructor application.
