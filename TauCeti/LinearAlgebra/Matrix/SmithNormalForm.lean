@@ -174,8 +174,7 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
     exact ab'.ne_zero i (Subtype.ext this)
   choose r hr using fun i ↦ LinearMap.mem_range.mp (ab' i).2
   have hkey : ∀ j, A *ᵥ r j = a j • b' j := fun j ↦ by
-    -- definitional: `A.mulVecLin (r j)` is `A *ᵥ r j`, and the subtype coercion evaluates
-    show A *ᵥ r j = a j • b' j; rw [← hsnf j, ← hr j]; rfl
+    rw [← Matrix.mulVecLin_apply, hr j, hsnf j]
   set e := Pi.basisFun ℤ (Fin n)
   set P_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ b' j k) with hP_def
   set Q_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ r j k) with hQ_def
@@ -185,13 +184,17 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
     rw [hkey j]; simp only [Pi.smul_apply, smul_eq_mul]
     simp [Finset.sum_ite_eq', Finset.mem_univ, mul_comm]
   have hP_eq : P_mat = e.toMatrix b' := by
-    -- definitional: the `Matrix.of` entry of `P_mat` is `b' j k`
-    ext k j; change b' j k = e.toMatrix b' k j; rw [e.toMatrix_apply, Pi.basisFun_repr]
+    ext k j
+    rw [hP_def]
+    simp only [Matrix.of_apply]
+    rw [e.toMatrix_apply, Pi.basisFun_repr]
   have hP_unit : IsUnit P_mat.det := by
     rw [hP_eq]; simpa [Module.Basis.det_apply] using e.isUnit_det b'
   have hQ_eq : Q_mat = e.toMatrix r := by
-    -- definitional: the `Matrix.of` entry of `Q_mat` is `r j k`
-    ext k j; change r j k = e.toMatrix r k j; rw [e.toMatrix_apply, Pi.basisFun_repr]
+    ext k j
+    rw [hQ_def]
+    simp only [Matrix.of_apply]
+    rw [e.toMatrix_apply, Pi.basisFun_repr]
   have hQ_unit : IsUnit Q_mat.det := by
     have hinj := mulVecLin_injective_of_det_ne_zero A hdet_ne
     set r_basis : Module.Basis (Fin n) ℤ (Fin n → ℤ) :=
