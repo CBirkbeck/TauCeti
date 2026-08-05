@@ -6,7 +6,7 @@ module
 
 public import Mathlib.NumberTheory.Modular
 public import TauCeti.Analysis.Contour.Winding.Number.Basic
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
+public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 
 import Mathlib.Analysis.Complex.Convex
 import TauCeti.Analysis.Contour.Winding.UnboundedComponent
@@ -49,14 +49,17 @@ namespace ModularForm
 
 variable {H t : ℝ}
 
+/-- The corner height `√3/2` lies below `1`, the height of the arc's apex. -/
+private lemma sqrt_three_div_two_le_one : Real.sqrt 3 / 2 ≤ 1 := by
+  rw [div_le_one (by norm_num)]
+  nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+
 /-- Every point of the boundary contour has imaginary part at least `√3/2`, provided the
 height parameter clears the corner row. -/
 lemma sqrt_three_div_two_le_im_fdBoundary (hH : Real.sqrt 3 / 2 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
     Real.sqrt 3 / 2 ≤ (fdBoundary H t).im := by
   obtain ⟨ht0, ht5⟩ := ht
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
-    rw [div_le_one (by norm_num)]
-    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
   rcases le_or_gt t 1 with h1 | h1
   · rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
     have : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).im = Real.sqrt 3 / 2 - H := by
@@ -158,9 +161,7 @@ lemma abs_re_fdBoundary_le_half (ht : t ∈ Icc (0 : ℝ) 5) :
 lemma im_fdBoundary_le (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
     (fdBoundary H t).im ≤ H := by
   obtain ⟨ht0, ht5⟩ := ht
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
-    rw [div_le_one (by norm_num)]
-    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
   rcases le_or_gt t 1 with h1 | h1
   · rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
     have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).im = Real.sqrt 3 / 2 - H := by
@@ -192,6 +193,7 @@ lemma im_fdBoundary_le (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
         simp
 
 /-- The right vertical has constant real part `1/2`. -/
+@[simp]
 lemma re_fdBoundary_of_le_one (h1 : t ≤ 1) : (fdBoundary H t).re = 1 / 2 := by
   rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
   have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).re = 0 := by
@@ -201,6 +203,7 @@ lemma re_fdBoundary_of_le_one (h1 : t ≤ 1) : (fdBoundary H t).re = 1 / 2 := by
   simp
 
 /-- The left vertical has constant real part `-1/2`. -/
+@[simp]
 lemma re_fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
     (fdBoundary H t).re = -(1 / 2) := by
   rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply, AffineMap.lineMap_apply_module']
@@ -211,6 +214,7 @@ lemma re_fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
   norm_num
 
 /-- The truncation ceiling has constant height `H`. -/
+@[simp]
 lemma im_fdBoundary_of_gt_four (h4 : 4 < t) : (fdBoundary H t).im = H := by
   rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply, AffineMap.lineMap_apply_module']
   have h5 : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).im = 0 := by
@@ -219,6 +223,7 @@ lemma im_fdBoundary_of_gt_four (h4 : 4 < t) : (fdBoundary H t).im = H := by
   simp
 
 /-- The arc lies on the unit circle. -/
+@[simp]
 lemma norm_fdBoundary_arc (h1 : 1 ≤ t) (h3 : t ≤ 3) : ‖fdBoundary H t‖ = 1 := by
   rw [eqOn_fdBoundary_arc H ⟨h1, h3⟩, norm_circleMap_zero, abs_one]
 
@@ -228,9 +233,7 @@ lemma one_le_norm_fdBoundary (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
     1 ≤ ‖fdBoundary H t‖ := by
   obtain ⟨ht0, ht5⟩ := ht
   have hsq : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
-    rw [div_le_one (by norm_num)]
-    nlinarith [Real.sqrt_nonneg 3]
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
   have him := sqrt_three_div_two_le_im_fdBoundary (h32.trans hH) ⟨ht0, ht5⟩
   have hnn := norm_nonneg (fdBoundary H t)
   rcases le_or_gt t 1 with h1 | h1
@@ -268,6 +271,7 @@ private lemma windingNumber_fdBoundary_eq_zero_of_mem_preconnected {S : Set ℂ}
   linarith
 
 /-- Every point strictly below the contour's height winds zero. -/
+@[simp]
 theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {w : ℂ}
     (hw : w.im < Real.sqrt 3 / 2) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
@@ -283,6 +287,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : Real.sqrt 3 / 2 ≤ H) {
     nlinarith [le_max_left R 0]
 
 /-- Every point strictly right of the fundamental strip winds zero. -/
+@[simp]
 theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
     (hw : 1 / 2 < w.re) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
@@ -299,6 +304,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
     linarith [le_max_left R 0]
 
 /-- Every point strictly left of the fundamental strip winds zero. -/
+@[simp]
 theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
     (hw : w.re < -(1 / 2)) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
@@ -315,6 +321,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
     nlinarith [le_max_left R 0]
 
 /-- Every point strictly above the contour's height winds zero. -/
+@[simp]
 theorem windingNumber_fdBoundary_eq_zero_of_lt_im (hH : 1 ≤ H) {w : ℂ}
     (hw : H < w.im) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
@@ -337,6 +344,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_lt_im (hH : 1 ≤ H) {w : ℂ}
 contour's complement, and connects through the origin to the region below the corner
 height. Together with the four half-plane determinations this covers every point off the
 closed truncated fundamental domain. -/
+@[simp]
 theorem windingNumber_fdBoundary_eq_zero_of_norm_lt_one (hH : 1 ≤ H) {w : ℂ}
     (hw : ‖w‖ < 1) : windingNumber (fdBoundary H) 0 5 w = 0 := by
   have hconn : IsPreconnected
@@ -345,9 +353,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_norm_lt_one (hH : 1 ≤ H) {w : ℂ}
       (convex_ball 0 1).isPreconnected (convex_halfSpace_im_lt _).isPreconnected
     rw [Set.mem_ofPred_eq, Complex.zero_im]
     positivity
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
-    rw [div_le_one (by norm_num)]
-    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected hconn ?_
     (fun R ↦ ⟨((-(max R 0 + 1) : ℝ) : ℂ) * Complex.I, Or.inr ?_, ?_⟩)
     (Or.inl (by rwa [Metric.mem_ball, dist_zero_right]))
@@ -368,9 +374,7 @@ winding number vanishes. -/
 theorem isNullHomologous_fdBoundary (hH : 1 ≤ H) :
     IsNullHomologous (fdBoundary H) 0 5
       (UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H) := by
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
-    rw [div_le_one (by norm_num)]
-    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
   rw [isNullHomologous_iff]
   intro z hz
   rw [ModularGroup.coe_truncatedFundamentalDomain, Set.mem_ofPred_eq, not_and_or, not_and_or,
