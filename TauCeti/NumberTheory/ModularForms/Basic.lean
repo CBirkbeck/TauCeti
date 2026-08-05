@@ -5,16 +5,15 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.NumberTheory.ModularForms.CuspFormSubmodule
+public import Mathlib.NumberTheory.ModularForms.Basic
 
 /-!
 # Modular-forms basics: extensions of Mathlib's API
 
 Small generic lemmas extending `Mathlib/NumberTheory/ModularForms/Basic.lean` and its slash
-actions: the conjugation `σ` is trivial on `SL(2, ℤ)`-matrices, the `CuspForm`
+actions: the conjugation `σ` is trivial on `SL(2, ℤ)`-matrices, and the `CuspForm`
 translation equations Mathlib does not yet provide (`CuspForm.mcast_apply` and the
-`GL(2, ℝ)`-level `CuspForm.coe_translate_gl`), and the descent of finite-dimensionality
-from modular forms to cusp forms (`CuspForm.finiteDimensional_of_modularForm`).
+`GL(2, ℝ)`-level `CuspForm.coe_translate_gl`).
 
 Split out of the diamond-operator development ported from the AINTLIB `LeanModularForms`
 project (<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>).
@@ -45,9 +44,3 @@ lemma _root_.CuspForm.coe_translate_gl {F : Type*} [FunLike F UpperHalfPlane ℂ
     {Γ : Subgroup (GL (Fin 2) ℝ)} [CuspFormClass F Γ k] (f : F) (g : GL (Fin 2) ℝ) :
     ⇑(CuspForm.translate f g) = ⇑f ∣[k] g := (rfl)
 
-/-- Finite-dimensionality of cusp forms follows from finite-dimensionality of modular
-forms of the same level and weight, along Mathlib's inclusion `CuspForm.toModularFormₗ`. -/
-instance CuspForm.finiteDimensional_of_modularForm {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ}
-    [Γ.HasDetOne] [FiniteDimensional ℂ (ModularForm Γ k)] :
-    FiniteDimensional ℂ (CuspForm Γ k) :=
-  FiniteDimensional.of_injective CuspForm.toModularFormₗ CuspForm.toModularFormₗ_injective
