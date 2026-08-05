@@ -179,11 +179,67 @@ lemma im_fdBoundary_le (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
         rw [Complex.add_im, Complex.smul_im, h5, smul_eq_mul, mul_zero]
         simp
 
-/-- Winding transport through an unbounded convex region avoiding the contour: the
+/-- The right vertical has constant real part `1/2`. -/
+lemma re_fdBoundary_of_le_one (h1 : t ≤ 1) : (fdBoundary H t).re = 1 / 2 := by
+  rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
+  have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).re = 0 := by
+    simp [ρ]
+    norm_num
+  rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero, zero_add]
+  simp
+
+/-- The left vertical has constant real part `-1/2`. -/
+lemma re_fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
+    (fdBoundary H t).re = -(1 / 2) := by
+  rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply, AffineMap.lineMap_apply_module']
+  have hchord : ((-1 / 2 + H * Complex.I : ℂ) - (ρ : ℂ)).re = 0 := by
+    simp [ρ]
+  rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero, zero_add]
+  simp [ρ]
+  norm_num
+
+/-- The truncation ceiling has constant height `H`. -/
+lemma im_fdBoundary_of_gt_four (h4 : 4 < t) : (fdBoundary H t).im = H := by
+  rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply, AffineMap.lineMap_apply_module']
+  have h5 : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).im = 0 := by
+    simp
+  rw [Complex.add_im, Complex.smul_im, h5, smul_eq_mul, mul_zero, zero_add]
+  simp
+
+/-- The arc lies on the unit circle. -/
+lemma norm_fdBoundary_arc (h1 : 1 ≤ t) (h3 : t ≤ 3) : ‖fdBoundary H t‖ = 1 := by
+  rw [eqOn_fdBoundary_arc H ⟨h1, h3⟩, norm_circleMap_zero, abs_one]
+
+/-- The boundary contour stays outside the open unit disc: the verticals and the ceiling
+clear it by height and offset, and the arc lies on the unit circle. -/
+lemma one_le_norm_fdBoundary (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
+    1 ≤ ‖fdBoundary H t‖ := by
+  obtain ⟨ht0, ht5⟩ := ht
+  have hsq : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
+  have him := sqrt_three_div_two_le_im_fdBoundary hH ⟨ht0, ht5⟩
+  have hnn := norm_nonneg (fdBoundary H t)
+  rcases le_or_gt t 1 with h1 | h1
+  · have h1' : 1 ≤ ‖fdBoundary H t‖ ^ 2 := by
+      rw [Complex.sq_norm, Complex.normSq_apply, re_fdBoundary_of_le_one h1]
+      nlinarith [Real.sqrt_nonneg 3]
+    nlinarith
+  · rcases le_or_gt t 3 with h3 | h3
+    · exact (norm_fdBoundary_arc h1.le h3).ge
+    · rcases le_or_gt t 4 with h4 | h4
+      · have h1' : 1 ≤ ‖fdBoundary H t‖ ^ 2 := by
+          rw [Complex.sq_norm, Complex.normSq_apply, re_fdBoundary_of_le_four h3 h4]
+          nlinarith [Real.sqrt_nonneg 3]
+        nlinarith
+      · calc (1 : ℝ) ≤ H := hH
+          _ = (fdBoundary H t).im := (im_fdBoundary_of_gt_four h4).symm
+          _ ≤ |(fdBoundary H t).im| := le_abs_self _
+          _ ≤ ‖fdBoundary H t‖ := Complex.abs_im_le_norm _
+
+/-- Winding transport through an unbounded preconnected region avoiding the contour: the
 region lies in one connected component of the complement, which reaches points far away
 where the winding number vanishes. -/
-private lemma windingNumber_fdBoundary_eq_zero_of_mem_convex {S : Set ℂ}
-    (hconv : Convex ℝ S) (hdisj : S ⊆ (fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ)
+private lemma windingNumber_fdBoundary_eq_zero_of_mem_preconnected {S : Set ℂ}
+    (hconn : IsPreconnected S) (hdisj : S ⊆ (fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ)
     (hunb : ∀ R : ℝ, ∃ z ∈ S, R < ‖z‖) {w : ℂ} (hw : w ∈ S) :
     windingNumber (fdBoundary H) 0 5 w = 0 := by
   obtain ⟨p, hdiff⟩ := (isPiecewiseC1On_fdBoundary H).exists_finset_differentiableAt
@@ -203,14 +259,15 @@ private lemma windingNumber_fdBoundary_eq_zero_of_mem_convex {S : Set ℂ}
     linarith
   have hw₀_zero : windingNumber (fdBoundary H) 0 5 w₀ = 0 := (hKsub hw₀_notK).2
   have h_sub : S ⊆ connectedComponentIn ((fdBoundary H '' uIcc (0 : ℝ) 5)ᶜ) w₀ :=
-    hconv.isPreconnected.subset_connectedComponentIn hw₀S hdisj
+    hconn.subset_connectedComponentIn hw₀S hdisj
   rw [windingNumber_eq_of_mem_connectedComponentIn hclosed hP hcont hdiff hint (h_sub hw)]
   exact hw₀_zero
 
 /-- Every point strictly below the contour's height winds zero. -/
 theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : 1 ≤ H) {w : ℂ}
     (hw : w.im < Real.sqrt 3 / 2) : windingNumber (fdBoundary H) 0 5 w = 0 := by
-  refine windingNumber_fdBoundary_eq_zero_of_mem_convex (convex_halfSpace_im_lt _)
+  refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
+    (convex_halfSpace_im_lt _).isPreconnected
     ?_ (fun R ↦ ⟨-(max R 0 + 1) * Complex.I, ?_, ?_⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
@@ -228,7 +285,8 @@ theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : 1 ≤ H) {w : ℂ}
 /-- Every point strictly right of the fundamental strip winds zero. -/
 theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
     (hw : 1 / 2 < w.re) : windingNumber (fdBoundary H) 0 5 w = 0 := by
-  refine windingNumber_fdBoundary_eq_zero_of_mem_convex (convex_halfSpace_re_gt _)
+  refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
+    (convex_halfSpace_re_gt _).isPreconnected
     ?_ (fun R ↦ ⟨((max R 0 + 1 : ℝ) : ℂ), ?_, ?_⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
@@ -243,7 +301,8 @@ theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
 /-- Every point strictly left of the fundamental strip winds zero. -/
 theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
     (hw : w.re < -(1 / 2)) : windingNumber (fdBoundary H) 0 5 w = 0 := by
-  refine windingNumber_fdBoundary_eq_zero_of_mem_convex (convex_halfSpace_re_lt _)
+  refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
+    (convex_halfSpace_re_lt _).isPreconnected
     ?_ (fun R ↦ ⟨(-(max R 0 + 1 : ℝ) : ℂ), ?_, ?_⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
@@ -261,7 +320,8 @@ theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
 /-- Every point strictly above the contour's height winds zero. -/
 theorem windingNumber_fdBoundary_eq_zero_of_lt_im (hH : 1 ≤ H) {w : ℂ}
     (hw : H < w.im) : windingNumber (fdBoundary H) 0 5 w = 0 := by
-  refine windingNumber_fdBoundary_eq_zero_of_mem_convex (convex_halfSpace_im_gt _)
+  refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected
+    (convex_halfSpace_im_gt _).isPreconnected
     ?_ (fun R ↦ ⟨((H + max R 0 + 1 : ℝ) : ℂ) * Complex.I, ?_, ?_⟩) hw
   · rintro z hz ⟨t, ht, rfl⟩
     rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
@@ -275,6 +335,36 @@ theorem windingNumber_fdBoundary_eq_zero_of_lt_im (hH : 1 ≤ H) {w : ℂ}
   · rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real,
       Real.norm_of_nonneg (by nlinarith [le_max_right R 0])]
     nlinarith [le_max_left R 0]
+
+/-- Every point of the open unit disc winds zero: the disc sits under the arc, inside the
+contour's complement, and connects through the origin to the region below the corner
+height. Together with the four half-plane determinations this covers every point off the
+closed truncated fundamental domain. -/
+theorem windingNumber_fdBoundary_eq_zero_of_norm_lt_one (hH : 1 ≤ H) {w : ℂ}
+    (hw : ‖w‖ < 1) : windingNumber (fdBoundary H) 0 5 w = 0 := by
+  have hconn : IsPreconnected
+      (Metric.ball (0 : ℂ) 1 ∪ {z : ℂ | z.im < Real.sqrt 3 / 2}) := by
+    refine IsPreconnected.union 0 (Metric.mem_ball_self one_pos) ?_
+      (convex_ball 0 1).isPreconnected (convex_halfSpace_im_lt _).isPreconnected
+    rw [Set.mem_ofPred_eq, Complex.zero_im]
+    positivity
+  refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected hconn ?_
+    (fun R ↦ ⟨-(max R 0 + 1) * Complex.I, Or.inr ?_, ?_⟩)
+    (Or.inl (by rwa [Metric.mem_ball, dist_zero_right]))
+  · rintro z (hz | hz) ⟨t, ht, rfl⟩ <;>
+      rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
+    · rw [Metric.mem_ball, dist_zero_right] at hz
+      exact absurd hz (not_lt.mpr (one_le_norm_fdBoundary hH ht))
+    · exact absurd hz (not_lt.mpr (sqrt_three_div_two_le_im_fdBoundary hH ht))
+  · have him : (-(max R 0 + 1) * Complex.I).im = -(max R 0 + 1) := by simp
+    rw [Set.mem_ofPred_eq, him]
+    nlinarith [le_max_right R 0, Real.sqrt_nonneg 3]
+  · rw [norm_mul, Complex.norm_I, mul_one, norm_neg]
+    have hnorm : ‖((max R 0 : ℝ) : ℂ) + 1‖ = max R 0 + 1 := by
+      rw [show ((max R 0 : ℝ) : ℂ) + 1 = ((max R 0 + 1 : ℝ) : ℂ) by push_cast; ring,
+        Complex.norm_real, Real.norm_of_nonneg (by positivity)]
+    rw [hnorm]
+    linarith [le_max_left R 0]
 
 end ModularForm
 
