@@ -278,25 +278,25 @@ ring. -/
 noncomputable instance instSMulHeckeLeftCosetModule :
     SMul (𝕋 Δ H R)ᵐᵒᵖ (HeckeCoset Δ ⊥ H →₀ R) where
   smul t m := t.unop.sum fun D b₁ ↦ m.sum fun q b₂ ↦
-    ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₁ * b₂)
+    ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₂ * b₁)
 
 -- the defining formula for an opaque opposite-ring element; instance plumbing
 private lemma smul_def (t : (𝕋 Δ H R)ᵐᵒᵖ) (m : HeckeCoset Δ ⊥ H →₀ R) :
     t • m = t.unop.sum fun D b₁ ↦ m.sum fun q b₂ ↦
-      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₁ * b₂) :=
+      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₂ * b₁) :=
   (rfl)
 
 /-- The defining formula of the action. -/
 lemma smul_eq_sum (t : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
     MulOpposite.op t • m = t.sum fun D b₁ ↦ m.sum fun q b₂ ↦
-      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₁ * b₂) :=
+      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₂ * b₁) :=
   (rfl)
 
 /-- The action of a basis element of the Hecke ring on a basis element of the module. -/
 lemma single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b : R) :
     MulOpposite.op (HeckeCosetModule.single R D a) •
         (Finsupp.single q b : HeckeCoset Δ ⊥ H →₀ R) =
-      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (a * b) := by
+      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b * a) := by
   classical
   rw [smul_eq_sum,
     HeckeCosetModule.sum_single_index R (by rw [Finsupp.sum_single_index (by simp)]; simp),
@@ -314,7 +314,7 @@ lemma add_smul (t₁ t₂ : (𝕋 Δ H R)ᵐᵒᵖ) (m : HeckeCoset Δ ⊥ H →
     exact Finset.sum_eq_zero fun i _ ↦ by simp
   · refine ((Finsupp.sum_congr fun q _ ↦ ?_).trans Finsupp.sum_add)
     rw [← Finset.sum_add_distrib]
-    exact Finset.sum_congr rfl fun i _ ↦ by rw [add_mul, Finsupp.single_add]
+    exact Finset.sum_congr rfl fun i _ ↦ by rw [mul_add, Finsupp.single_add]
 
 /-- The scalar operations distribute over the module's addition, packaged as the
 `DistribSMul` typeclass (the strongest action class available before the compatibility
@@ -333,7 +333,7 @@ noncomputable instance distribSMul :
     refine Finsupp.sum_add_index' (fun q ↦ ?_) fun q b₂ b₃ ↦ ?_
     · exact Finset.sum_eq_zero fun i _ ↦ by simp
     · rw [← Finset.sum_add_distrib]
-      exact Finset.sum_congr rfl fun i _ ↦ by rw [mul_add, Finsupp.single_add]
+      exact Finset.sum_congr rfl fun i _ ↦ by rw [add_mul, Finsupp.single_add]
 
 /-- Zero acts as zero and acting on zero gives zero: the `SMulWithZero` typeclass. -/
 noncomputable instance smulWithZero :
@@ -363,14 +363,14 @@ private lemma smul_single_one_apply (t : 𝕋 Δ H R) (D : HeckeCoset Δ H H)
   classical
   have hinner : ∀ (D' : HeckeCoset Δ H H) (b₁ : R),
       (Finsupp.single (1 : HeckeCoset Δ ⊥ H) (1 : R)).sum (fun q' b₂ ↦
-        ∑ i ∈ smulOrbit H D'.rep q'.rep, Finsupp.single i (b₁ * b₂)) =
+        ∑ i ∈ smulOrbit H D'.rep q'.rep, Finsupp.single i (b₂ * b₁)) =
       ∑ i ∈ smulOrbit H D'.rep (1 : HeckeCoset Δ ⊥ H).rep, Finsupp.single i b₁ := by
     intro D' b₁
     rw [Finsupp.sum_single_index (by simp)]
     simp
   have hsum : (t.sum fun D' b₁ ↦
         (Finsupp.single (1 : HeckeCoset Δ ⊥ H) (1 : R)).sum fun q' b₂ ↦
-          ∑ i ∈ smulOrbit H D'.rep q'.rep, Finsupp.single i (b₁ * b₂)) =
+          ∑ i ∈ smulOrbit H D'.rep q'.rep, Finsupp.single i (b₂ * b₁)) =
       t.sum fun D' b₁ ↦
         ∑ i ∈ smulOrbit H D'.rep (1 : HeckeCoset Δ ⊥ H).rep, Finsupp.single i b₁ :=
     Finsupp.sum_congr fun D' _ ↦ hinner D' (t D')
