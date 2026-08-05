@@ -12,11 +12,12 @@ import TauCeti.Analysis.Contour.Winding.Number.Partition
 /-!
 # Decomposition of the winding number of the boundary contour
 
-For a point off the boundary contour of the truncated fundamental domain, the winding
+For a point off the boundary path `fdBoundary H` — the contour that traces the boundary of
+the truncated fundamental domain once the height parameter satisfies `1 < H` — the winding
 number over the full parameter interval `[0, 5]` splits as the sum of the winding numbers
 of the four smooth pieces: the right vertical, the arc, the left vertical, and the
-truncation ceiling. This is the entry point for evaluating the winding number at interior
-points piece by piece.
+truncation ceiling. The statements hold for arbitrary `H`. This is the entry point for
+evaluating the winding number at interior points piece by piece.
 
 The single-point Cauchy principal values required by the partition additivity are supplied
 by avoidance: away from the contour the index integrand has no singularity, and its
@@ -39,7 +40,7 @@ namespace ModularForm
 variable {H : ℝ} {w : ℂ}
 
 /-- The single-point Cauchy principal value of the index integrand exists on any parameter
-subinterval of the boundary contour avoiding `w`: the integrand is then singularity-free,
+subinterval of the boundary path avoiding `w`: the integrand is then singularity-free,
 and integrable by piecewise-`C¹` regularity. -/
 theorem cauchyPVExistsAt_fdBoundary (c d : ℝ) (hc : c ∈ Icc (0 : ℝ) 5)
     (hd : d ∈ Icc (0 : ℝ) 5) (hw : ∀ t ∈ uIcc c d, fdBoundary H t ≠ w) :
@@ -54,7 +55,7 @@ theorem cauchyPVExistsAt_fdBoundary (c d : ℝ) (hc : c ∈ Icc (0 : ℝ) 5)
   exact ((isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv.mono_set
     hsub).continuousOn_mul hcont
 
-/-- The winding number of the boundary contour about a point off the contour is the sum of
+/-- The winding number of the boundary path about a point off it is the sum of
 the winding numbers of its four smooth pieces: the right vertical, the arc, the left
 vertical, and the truncation ceiling. This instantiates the finite-partition additivity
 `Contour.windingNumber_eq_sum_range` at the junction partition `0, 1, 3, 4, 5`. -/
