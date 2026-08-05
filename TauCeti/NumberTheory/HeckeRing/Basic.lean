@@ -134,6 +134,16 @@ lemma mk_out_mul_injective (Γ₁ Γ₂ : Subgroup G) (g : G) :
       ConjAct.smul_def, ConjAct.ofConjAct_toConjAct, inv_inv]
   simpa [mul_assoc] using hij
 
+open scoped Pointwise in
+/-- The conjugation criterion for the stabilizer subgroup indexing `DecompQuotient`: an
+element of the stabilizer conjugates into `H` under `g`. -/
+lemma conj_mem_of_stabilizer {H : Subgroup G} (g : G)
+    (n : (ConjAct.toConjAct g • H).subgroupOf H) : g⁻¹ * (n : G) * g ∈ H := by
+  have hn := n.2
+  rw [Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
+    ConjAct.smul_def] at hn
+  simpa [ConjAct.ofConjAct_toConjAct] using hn
+
 end DoubleCoset
 
 namespace IsHeckeTriple
@@ -183,25 +193,18 @@ end SingleWrapper
 
 section SingleAlgebra
 
-variable (R : Type*) [Semiring R]
-
-/-- The `R`-module structure of the Hecke coset module, transporting the standard `Finsupp`
-module structure to the wrapper type. -/
-noncomputable instance instModule : Module R (HeckeCosetModule Δ H₁ H₂ R) :=
-  inferInstanceAs (Module R (HeckeCoset Δ H₁ H₂ →₀ R))
-
-lemma smul_single_one (D : HeckeCoset Δ H₁ H₂) (b : R) : b • single R D 1 = single R D b :=
-  Finsupp.smul_single_one D b
-
-@[simp]
-lemma sum_single (f : HeckeCosetModule Δ H₁ H₂ R) : f.sum (single R) = f :=
-  Finsupp.sum_single f
+variable (R : Type*) [AddCommMonoid R]
 
 /-- `Finsupp.single_zero`, as a wrapper-level equation. -/
 @[simp] lemma single_zero (D : HeckeCoset Δ H₁ H₂) : single R D (0 : R) = 0 :=
   Finsupp.single_zero D
 
+@[simp]
+lemma sum_single (f : HeckeCosetModule Δ H₁ H₂ R) : f.sum (single R) = f :=
+  Finsupp.sum_single f
+
 /-- `Finsupp.single_add`, as a wrapper-level equation. -/
+@[simp]
 lemma single_add (D : HeckeCoset Δ H₁ H₂) (b c : R) :
     single R D (b + c) = single R D b + single R D c :=
   Finsupp.single_add D b c
@@ -217,5 +220,20 @@ lemma induction_linear {p : HeckeCosetModule Δ H₁ H₂ R → Prop}
   Finsupp.induction_linear f h0 hadd hsingle
 
 end SingleAlgebra
+
+section SingleModule
+
+variable (R : Type*) [Semiring R]
+
+/-- The `R`-module structure of the Hecke coset module, transporting the standard `Finsupp`
+module structure to the wrapper type. -/
+noncomputable instance instModule : Module R (HeckeCosetModule Δ H₁ H₂ R) :=
+  inferInstanceAs (Module R (HeckeCoset Δ H₁ H₂ →₀ R))
+
+@[simp]
+lemma smul_single_one (D : HeckeCoset Δ H₁ H₂) (b : R) : b • single R D 1 = single R D b :=
+  Finsupp.smul_single_one D b
+
+end SingleModule
 
 end HeckeCosetModule

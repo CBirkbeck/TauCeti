@@ -120,16 +120,6 @@ lemma smulOrbit_nonempty (g β : Δ) : (smulOrbit H g β).Nonempty := by
   classical
   exact (Finset.univ_nonempty).image _
 
--- The conjugation criterion for the stabilizer subgroup indexing `DecompQuotient`: an
--- element of the stabilizer conjugates into `H` under `g`. Used by every orbit argument
--- that replaces a decomposition representative by its canonical `out`.
-private lemma conj_mem_of_stabilizer (g : G)
-    (n : (ConjAct.toConjAct g • H).subgroupOf H) : g⁻¹ * (n : G) * g ∈ H := by
-  have hn := n.2
-  rw [Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
-    ConjAct.smul_def] at hn
-  simpa [ConjAct.ofConjAct_toConjAct] using hn
-
 private lemma smulOrbit_subset {g β₁ β₂ : Δ} {k : G} (hk : k ∈ H)
     (hβ : (β₂ : G) = (β₁ : G) * k) : smulOrbit H g β₁ ⊆ smulOrbit H g β₂ := by
   classical
@@ -266,7 +256,7 @@ end HeckeCoset
 /-- The left-coset module: the free `R`-module on the left cosets `Δ/H` (the bottom-left
 Hecke cosets), the carrier of the natural representation of the Hecke ring. An `abbrev`
 of the underlying `Finsupp`, so the full `Finsupp` API applies transparently at every
-coefficient class — the stable named interface for the action below. -/
+coefficient class — the stable named interface for the scalar operations below. -/
 abbrev LeftCosetModule (Δ : Submonoid G) (H : Subgroup G) (R : Type*) [Zero R] :=
   HeckeCoset Δ ⊥ H →₀ R
 
@@ -290,19 +280,14 @@ noncomputable instance instSMulLeftCosetModule :
   smul t m := t.unop.sum fun D b₁ ↦ m.sum fun q b₂ ↦
     ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₂ * b₁)
 
--- the defining formula for an opaque opposite-ring element; instance plumbing
-private lemma smul_def (t : (𝕋 Δ H R)ᵐᵒᵖ) (m : LeftCosetModule Δ H R) :
-    t • m = t.unop.sum fun D b₁ ↦ m.sum fun q b₂ ↦
-      ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₂ * b₁) :=
-  (rfl)
-
-/-- The defining formula of the action. -/
+/-- The defining formula of the scalar multiplication. -/
 lemma smul_eq_sum (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
     MulOpposite.op t • m = t.sum fun D b₁ ↦ m.sum fun q b₂ ↦
       ∑ i ∈ smulOrbit H D.rep q.rep, Finsupp.single i (b₂ * b₁) :=
   (rfl)
 
-/-- The action of a basis element of the Hecke ring on a basis element of the module. -/
+/-- A basis element of the Hecke ring scales a basis element of the module into its
+orbit sum. -/
 lemma single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b : R) :
     MulOpposite.op (HeckeCosetModule.single R D a) •
         Finsupp.single q b =
@@ -312,12 +297,13 @@ lemma single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b 
     HeckeCosetModule.sum_single_index R (by rw [Finsupp.sum_single_index (by simp)]; simp),
     Finsupp.sum_single_index (by simp)]
 
-/-- The action is additive in the (opposite) Hecke-ring argument. -/
+/-- The scalar multiplication is additive in the (opposite) Hecke-ring argument. -/
 @[simp]
 lemma add_smul (t₁ t₂ : (𝕋 Δ H R)ᵐᵒᵖ) (m : LeftCosetModule Δ H R) :
     (t₁ + t₂) • m = t₁ • m + t₂ • m := by
   classical
-  simp only [smul_def, MulOpposite.unop_add]
+  rw [← MulOpposite.op_unop t₁, ← MulOpposite.op_unop t₂, ← MulOpposite.op_add,
+    smul_eq_sum, smul_eq_sum, smul_eq_sum]
   refine Finsupp.sum_add_index' (fun D ↦ ?_) fun D b₁ b₂ ↦ ?_
   · refine (Finsupp.sum_congr (g2 := fun _ _ ↦ 0) fun q _ ↦ ?_).trans
       (Finsupp.sum_fun_zero m)
@@ -334,12 +320,12 @@ ad-hoc laws. -/
 noncomputable instance distribSMul :
     DistribSMul (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R) where
   smul_zero t := by
-    rw [smul_def]
+    rw [← MulOpposite.op_unop t, smul_eq_sum]
     simp only [Finsupp.sum_zero_index]
     exact Finsupp.sum_fun_zero t.unop
   smul_add t m₁ m₂ := by
     classical
-    simp only [smul_def]
+    rw [← MulOpposite.op_unop t, smul_eq_sum, smul_eq_sum, smul_eq_sum]
     refine (Finsupp.sum_congr fun D b₁ ↦ ?_).trans Finsupp.sum_add
     refine Finsupp.sum_add_index' (fun q ↦ ?_) fun q b₂ b₃ ↦ ?_
     · exact Finset.sum_eq_zero fun i _ ↦ by simp
@@ -352,8 +338,7 @@ noncomputable instance smulWithZero :
     SMulWithZero (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R) where
   smul_zero := smul_zero
   zero_smul m := by
-    rw [smul_def]
-    simp only [MulOpposite.unop_zero]
+    rw [← MulOpposite.op_zero, smul_eq_sum]
     exact Finsupp.sum_zero_index
 
 end LeftCosetModule
@@ -366,8 +351,8 @@ open scoped HeckeCosetModule
 
 variable [IsHeckeTriple Δ H H] {R : Type*} [NonAssocSemiring R]
 
-/-- Reading off a coefficient of the action on the identity basis element: at any member of
-the orbit of `D`, the coefficient of `t • [H]` is the coefficient of `t` at `D`. -/
+/-- Reading off a coefficient of the scalar multiple of the identity basis element: at any
+member of the orbit of `D`, the coefficient of `t • [H]` is the coefficient of `t` at `D`. -/
 private lemma smul_single_one_apply (t : 𝕋 Δ H R) (D : HeckeCoset Δ H H)
     {q : HeckeCoset Δ ⊥ H}
     (hq : q ∈ smulOrbit H D.rep (1 : HeckeCoset Δ ⊥ H).rep) :
