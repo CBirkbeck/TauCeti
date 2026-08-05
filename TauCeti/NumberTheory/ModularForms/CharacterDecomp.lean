@@ -79,23 +79,14 @@ lemma diamondOpHom_pairwise_commute :
     Pairwise fun d₁ d₂ : (ZMod N)ˣ ↦ Commute (diamondOpHom k d₁) (diamondOpHom k d₂) :=
   fun _ _ _ ↦ (Commute.all _ _).map (diamondOpHom k)
 
--- The joint eigenspace indexed by a function `χ : (ZMod N)ˣ → ℂ`: proof scaffolding for
--- the simultaneous diagonalization; `⊥` unless `χ` underlies a character.
-private def jointDiamondEigenspace (k : ℤ) (χ : (ZMod N)ˣ → ℂ) :
-    Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :=
-  ⨅ d : (ZMod N)ˣ, (diamondOpHom k d).eigenspace (χ d)
-
--- at the underlying function of a character, the joint eigenspace is `modFormCharSpace`
-private lemma jointDiamondEigenspace_eq_modFormCharSpace (χ₀ : (ZMod N)ˣ →* ℂˣ) :
-    jointDiamondEigenspace k (fun d ↦ (χ₀ d : ℂ)) = modFormCharSpace k χ₀ := by
+-- The joint diamond eigenspace at a character is the nebentypus space: the bridge from
+-- the generic character-indexed theorems. `modFormCharSpace`'s body is not exposed, so
+-- this is proved by membership extensionality rather than unfolding — the sealed
+-- boundary is why the bridge exists at all.
+private lemma iInf_eigenspace_eq_modFormCharSpace (χ₀ : (ZMod N)ˣ →* ℂˣ) :
+    (⨅ d : (ZMod N)ˣ, (diamondOpHom k d).eigenspace ((χ₀ d : ℂ))) = modFormCharSpace k χ₀ := by
   ext f
-  simp [jointDiamondEigenspace, Submodule.mem_iInf]
-
--- a nonzero joint eigenspace forces `χ` to come from a character
-private lemma exists_charHom_of_jointDiamondEigenspace_ne_bot {χ : (ZMod N)ˣ → ℂ}
-    (hχ : jointDiamondEigenspace k χ ≠ ⊥) :
-    ∃ χ₀ : (ZMod N)ˣ →* ℂˣ, (fun d ↦ ((χ₀ d) : ℂ)) = χ :=
-  exists_charHom_of_iInf_eigenspace_ne_bot (ρ := diamondOpHom k) hχ
+  simp [Submodule.mem_iInf]
 
 /-- **The character subspaces `modFormCharSpace k χ` span the whole space**:
 modular forms for `Γ₁(N)` decompose into the span of nebentypus character
@@ -104,17 +95,18 @@ theorem iSup_modFormCharSpace_eq_top (k : ℤ)
     [FiniteDimensional ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)] :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, modFormCharSpace k χ) =
     (⊤ : Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) := by
-  have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ, jointDiamondEigenspace k fun d ↦ (χ₀ d : ℂ)) = ⊤ :=
+  have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ,
+      ⨅ d : (ZMod N)ˣ, (diamondOpHom k d).eigenspace ((χ₀ d : ℂ))) = ⊤ :=
     iSup_iInf_eigenspace_charHom_eq_top diamondOpHom_pairwise_commute diamondOpHom_isSemisimple
-  simpa only [jointDiamondEigenspace_eq_modFormCharSpace] using h
+  simpa only [iInf_eigenspace_eq_modFormCharSpace] using h
 
 /-- **The character subspaces form an independent family.** -/
 theorem iSupIndep_modFormCharSpace (k : ℤ) :
     iSupIndep (fun χ : (ZMod N)ˣ →* ℂˣ ↦ modFormCharSpace (N := N) k χ) := by
-  have h : iSupIndep (fun χ₀ : (ZMod N)ˣ →* ℂˣ ↦ jointDiamondEigenspace k
-      fun d ↦ (χ₀ d : ℂ)) :=
+  have h : iSupIndep (fun χ₀ : (ZMod N)ˣ →* ℂˣ ↦
+      ⨅ d : (ZMod N)ˣ, (diamondOpHom k d).eigenspace ((χ₀ d : ℂ))) :=
     iSupIndep_iInf_eigenspace_charHom diamondOpHom_pairwise_commute diamondOpHom_isSemisimple
-  simpa only [jointDiamondEigenspace_eq_modFormCharSpace] using h
+  simpa only [iInf_eigenspace_eq_modFormCharSpace] using h
 
 /-- **Internal direct sum decomposition**: `M_k(Γ₁(N))` decomposes as the direct
 sum of the nebentypus character spaces `modFormCharSpace k χ`. -/
@@ -142,41 +134,32 @@ lemma diamondOpCuspHom_pairwise_commute :
       Commute (diamondOpCuspHom k d₁) (diamondOpCuspHom k d₂) :=
   fun _ _ _ ↦ (Commute.all _ _).map (diamondOpCuspHom k)
 
--- the cusp-form analogue of `jointDiamondEigenspace`
-private def jointDiamondCuspEigenspace (k : ℤ) (χ : (ZMod N)ˣ → ℂ) :
-    Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :=
-  ⨅ d : (ZMod N)ˣ, (diamondOpCuspHom k d).eigenspace (χ d)
-
--- at the underlying function of a character, the joint eigenspace is `cuspFormCharSpace`
-private lemma jointDiamondCuspEigenspace_eq_cuspFormCharSpace (χ₀ : (ZMod N)ˣ →* ℂˣ) :
-    jointDiamondCuspEigenspace k (fun d ↦ (χ₀ d : ℂ)) = cuspFormCharSpace k χ₀ := by
+-- the cusp-form analogue of `iInf_eigenspace_eq_modFormCharSpace`
+private lemma iInf_eigenspace_eq_cuspFormCharSpace (χ₀ : (ZMod N)ˣ →* ℂˣ) :
+    (⨅ d : (ZMod N)ˣ, (diamondOpCuspHom k d).eigenspace ((χ₀ d : ℂ))) =
+      cuspFormCharSpace k χ₀ := by
   ext f
-  simp [jointDiamondCuspEigenspace, Submodule.mem_iInf]
-
--- a nonzero joint cusp eigenspace forces `χ` to come from a character
-private lemma exists_charHom_of_jointDiamondCuspEigenspace_ne_bot {χ : (ZMod N)ˣ → ℂ}
-    (hχ : jointDiamondCuspEigenspace k χ ≠ ⊥) :
-    ∃ χ₀ : (ZMod N)ˣ →* ℂˣ, (fun d ↦ ((χ₀ d) : ℂ)) = χ :=
-  exists_charHom_of_iInf_eigenspace_ne_bot (ρ := diamondOpCuspHom k) hχ
+  simp [Submodule.mem_iInf]
 
 /-- **The cusp-form character subspaces form an independent family.** -/
 theorem iSupIndep_cuspFormCharSpace (k : ℤ) :
     iSupIndep (fun χ : (ZMod N)ˣ →* ℂˣ ↦ cuspFormCharSpace (N := N) k χ) := by
-  have h : iSupIndep (fun χ₀ : (ZMod N)ˣ →* ℂˣ ↦ jointDiamondCuspEigenspace k
-      fun d ↦ (χ₀ d : ℂ)) :=
+  have h : iSupIndep (fun χ₀ : (ZMod N)ˣ →* ℂˣ ↦
+      ⨅ d : (ZMod N)ˣ, (diamondOpCuspHom k d).eigenspace ((χ₀ d : ℂ))) :=
     iSupIndep_iInf_eigenspace_charHom diamondOpCuspHom_pairwise_commute
       diamondOpCuspHom_isSemisimple
-  simpa only [jointDiamondCuspEigenspace_eq_cuspFormCharSpace] using h
+  simpa only [iInf_eigenspace_eq_cuspFormCharSpace] using h
 
 /-- **The cusp-form character subspaces span the whole space.** -/
 theorem iSup_cuspFormCharSpace_eq_top (k : ℤ)
     [FiniteDimensional ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)] :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, cuspFormCharSpace k χ) =
     (⊤ : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) := by
-  have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ, jointDiamondCuspEigenspace k fun d ↦ (χ₀ d : ℂ)) = ⊤ :=
+  have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ,
+      ⨅ d : (ZMod N)ˣ, (diamondOpCuspHom k d).eigenspace ((χ₀ d : ℂ))) = ⊤ :=
     iSup_iInf_eigenspace_charHom_eq_top diamondOpCuspHom_pairwise_commute
       diamondOpCuspHom_isSemisimple
-  simpa only [jointDiamondCuspEigenspace_eq_cuspFormCharSpace] using h
+  simpa only [iInf_eigenspace_eq_cuspFormCharSpace] using h
 
 /-- **Internal direct sum decomposition of cusp forms**: `S_k(Γ₁(N))` decomposes as the
 direct sum of the nebentypus character spaces `cuspFormCharSpace k χ`. -/
@@ -198,10 +181,11 @@ theorem iSup_inf_modFormCharSpace_of_invariant
     [FiniteDimensional ℂ p]
     (hp : ∀ d : (ZMod N)ˣ, ∀ f ∈ p, diamondOpHom k d f ∈ p) :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, p ⊓ modFormCharSpace k χ) = p := by
-  have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ, p ⊓ jointDiamondEigenspace k fun d ↦ (χ₀ d : ℂ)) = p :=
+  have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ,
+      p ⊓ ⨅ d : (ZMod N)ˣ, (diamondOpHom k d).eigenspace ((χ₀ d : ℂ))) = p :=
     iSup_inf_iInf_eigenspace_charHom_of_invariant diamondOpHom_pairwise_commute
       diamondOpHom_isSemisimple p hp
-  simpa only [jointDiamondEigenspace_eq_modFormCharSpace] using h
+  simpa only [iInf_eigenspace_eq_modFormCharSpace] using h
 
 /-- **Character decomposition of a diamond-invariant submodule of `S_k(Γ₁(N))`.**
 The cusp-form analogue of `iSup_inf_modFormCharSpace_of_invariant`. -/
@@ -211,10 +195,10 @@ theorem iSup_inf_cuspFormCharSpace_of_invariant
     (hp : ∀ d : (ZMod N)ˣ, ∀ f ∈ p, diamondOpCuspHom k d f ∈ p) :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, p ⊓ cuspFormCharSpace k χ) = p := by
   have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ,
-      p ⊓ jointDiamondCuspEigenspace k fun d ↦ (χ₀ d : ℂ)) = p :=
+      p ⊓ ⨅ d : (ZMod N)ˣ, (diamondOpCuspHom k d).eigenspace ((χ₀ d : ℂ))) = p :=
     iSup_inf_iInf_eigenspace_charHom_of_invariant diamondOpCuspHom_pairwise_commute
       diamondOpCuspHom_isSemisimple p hp
-  simpa only [jointDiamondCuspEigenspace_eq_cuspFormCharSpace] using h
+  simpa only [iInf_eigenspace_eq_cuspFormCharSpace] using h
 
 /-- **Finsupp-indexed character decomposition of a modular form in a
 diamond-invariant submodule.** Consumer-facing corollary of

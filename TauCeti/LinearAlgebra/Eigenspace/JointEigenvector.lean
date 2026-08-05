@@ -15,8 +15,7 @@ public import Mathlib.LinearAlgebra.Eigenspace.Semisimple
 
 The eigenvalue function of a joint eigenvector of a monoid-hom representation
 `ρ : G →* Module.End K V` is a character: it maps `1` to `1`, is multiplicative, and, for
-a group, valued in units, assembling into `charHomOfJointEigenvector : G →* Kˣ`.
-Together with semisimplicity of finite-order endomorphisms in characteristic zero, this
+a group, valued in units, assembling into `charHomOfJointEigenvector : G →* Kˣ`. This
 yields the simultaneous-diagonalization toolkit for a commuting family of semisimple
 endomorphisms: the joint eigenspaces are supremum-independent, they span (over an
 algebraically closed field, in finite dimension), and every invariant submodule is the
@@ -32,8 +31,6 @@ nebentypus decomposition in `TauCeti/NumberTheory/ModularForms/CharacterDecomp.l
 
 * `charHomOfJointEigenvector`: the eigenvalue function of a nonzero joint eigenvector of a
   group representation, as a monoid homomorphism `G →* Kˣ`.
-* `Module.End.isSemisimple_of_isOfFinOrder`: finite-order endomorphisms are semisimple in
-  characteristic zero.
 * `iSupIndep_iInf_eigenspace_of_isSemisimple`,
   `iSup_iInf_eigenspace_eq_top_of_isSemisimple`,
   `iSup_inf_iInf_eigenspace_of_invariant`: joint eigenspaces of a commuting semisimple
@@ -113,13 +110,6 @@ lemma exists_charHom_of_iInf_eigenspace_ne_bot {ρ : G →* Module.End K V}
   obtain ⟨v, hv_mem, hv_ne⟩ := (Submodule.ne_bot_iff _).mp hχ
   exact ⟨charHomOfJointEigenvector ρ χ v hv_ne ((Submodule.mem_iInf _).mp hv_mem), rfl⟩
 
-/-- A finite-order endomorphism of a vector space over a characteristic-zero field is
-semisimple; the `IsOfFinOrder` packaging of `TauCeti.End.isSemisimple_of_pow_eq_one`. -/
-lemma Module.End.isSemisimple_of_isOfFinOrder [CharZero K] {f : Module.End K V}
-    (hf : IsOfFinOrder f) : f.IsSemisimple := by
-  obtain ⟨n, hnpos, hn⟩ := hf.exists_pow_eq_one
-  exact TauCeti.End.isSemisimple_of_pow_eq_one (Nat.cast_ne_zero.mpr hnpos.ne') hn
-
 /-- The joint eigenspaces of a pairwise-commuting family of semisimple endomorphisms,
 indexed by their eigenvalue functions, are supremum-independent. -/
 lemma iSupIndep_iInf_eigenspace_of_isSemisimple {ι : Type*} (f : ι → Module.End K V)
@@ -185,9 +175,9 @@ section CharHom
 
 variable {ρ : G →* Module.End K V}
 
-/-- **Character-indexed spanning**: for a commuting semisimple representation of a finite
-group over an algebraically closed field, in finite dimension, the joint eigenspaces
-indexed by characters `G →* Kˣ` exhaust the space — eigenvalue functions that are not
+/-- **Character-indexed spanning**: for a commuting semisimple representation of a group
+over an algebraically closed field, in finite dimension, the joint eigenspaces indexed by
+characters `G →* Kˣ` exhaust the space — eigenvalue functions that are not
 characters contribute `⊥`. -/
 lemma iSup_iInf_eigenspace_charHom_eq_top [IsAlgClosed K] [FiniteDimensional K V]
     (hcomm : Pairwise fun g₁ g₂ ↦ Commute (ρ g₁) (ρ g₂))
