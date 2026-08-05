@@ -124,7 +124,7 @@ noncomputable def adDerivation (g : WithConv (A →ₐ[R] Bialgebra.CounitAlgebr
 
 /-- The adjoint action is the convolution conjugate, on underlying linear maps. -/
 @[simp]
-theorem coe_adDerivation (g : WithConv (A →ₐ[R] Bialgebra.CounitAlgebra R A B))
+theorem coe_adDerivation_linearMap (g : WithConv (A →ₐ[R] Bialgebra.CounitAlgebra R A B))
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     ↑(adDerivation B g d) =
       (toConv g.ofConv.toLinearMap *
@@ -146,7 +146,7 @@ theorem adDerivation_apply (g : WithConv (A →ₐ[R] Bialgebra.CounitAlgebra R 
       (toConv g.ofConv.toLinearMap *
         toConv (↑d : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
         toConv ((g⁻¹).ofConv.toLinearMap)).ofConv a := by
-  have h := DFunLike.congr_fun (coe_adDerivation g d) a
+  have h := DFunLike.congr_fun (coe_adDerivation_linearMap g d) a
   simpa only [Derivation.coeFn_coe] using h
 
 private lemma toConv_coe_adDerivation
@@ -156,7 +156,7 @@ private lemma toConv_coe_adDerivation
       toConv g.ofConv.toLinearMap *
         toConv (↑d : A →ₗ[R] Bialgebra.CounitAlgebra R A B) *
         toConv ((g⁻¹).ofConv.toLinearMap) := by
-  rw [coe_adDerivation, toConv_ofConv]
+  rw [coe_adDerivation_linearMap, toConv_ofConv]
 
 variable (B) in
 /-- The adjoint action of the group of points on the tangent space, as a

@@ -38,10 +38,11 @@ as the dictionary requires; it does not install instances on `B` itself, and
 
 ## The exterior convolution product
 
-The file also provides the exterior convolution product `LinearMap.mulTensor`: two
-convolution linear maps applied legwise on `A ⊗[R] A` and multiplied in the
-coefficients, with its normalization rules (zero, addition, scalars) and its
-multiplicativity for convolution. Composing with the multiplication of `A` lands in
+This file *applies* the exterior convolution product `LinearMap.mulTensor` — two
+convolution linear maps applied legwise on `A ⊗[R] A` and multiplied in the coefficients
+— to counit-valued derivations. The product itself, together with its normalization rules
+(zero, addition, scalars) and its multiplicativity for convolution, is defined generically
+in `TauCeti/Algebra/Coalgebra/Convolution.lean`. Composing with the multiplication of `A` lands in
 this product's image: an algebra-map point satisfies `g ∘ mul = g ⊠ g`
 (`AlgHom.toConv_toLinearMap_comp_mul'`), and a counit-valued derivation satisfies the
 Leibniz rule `d ∘ mul = 1 ⊠ d + d ⊠ 1` (`Derivation.toConv_coe_comp_mul'`). This
@@ -458,6 +459,7 @@ open TauCeti.LinearMap
 /-- The Leibniz rule in convolution form: composing a counit-valued derivation with
 the multiplication of `A` is the exterior product against the convolution unit, on
 either side. -/
+@[simp]
 lemma toConv_coe_comp_mul'
     (d : Derivation R A (Bialgebra.CounitAlgebra R A B)) :
     toConv ((d : A →ₗ[R] Bialgebra.CounitAlgebra R A B) ∘ₗ LinearMap.mul' R A) =
