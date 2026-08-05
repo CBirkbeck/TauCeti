@@ -189,38 +189,23 @@ section SmithNormalForm
 
 variable {n}
 
-/-- The underlying matrix of `GeneralLinearGroup.mkOfDetNeZero` is the matrix it was built
-from. Mathlib defines the constructor through `mk'` but exposes no coercion lemma for
-either, so this supplies the missing rewrite. -/
-private lemma coe_mkOfDetNeZero (A : Matrix (Fin n) (Fin n) ℚ) (h : A.det ≠ 0) :
-    ((GeneralLinearGroup.mkOfDetNeZero A h : GL (Fin n) ℚ) :
-      Matrix (Fin n) (Fin n) ℚ) = A := (rfl)
-
+/-- Smith normal form transports the double coset: if `L · A · R` is the diagonal of a
+positive natural tuple, the double coset of `α` is that of `natDiagGL n a`. -/
 private lemma double_coset_eq_of_SLnZ_equiv (α : posDetInt n) (A : Matrix (Fin n) (Fin n) ℤ)
     (hA : (↑(↑α : GL (Fin n) ℚ) : Matrix (Fin n) (Fin n) ℚ) = A.map (Int.cast : ℤ → ℚ))
-    (d : Fin n → ℤ) (hd_pos : ∀ i, 0 < d i) (L R : SpecialLinearGroup (Fin n) ℤ)
+    (a : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i) (L R : SpecialLinearGroup (Fin n) ℤ)
     (hLR : (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
-      Matrix.diagonal d) :
+      Matrix.diagonal (fun i ↦ (a i : ℤ))) :
     doubleCoset (↑α : GL (Fin n) ℚ) (SLnZ n) (SLnZ n) =
-    doubleCoset
-      (GeneralLinearGroup.mkOfDetNeZero
-        ((Matrix.diagonal d).map (Int.cast : ℤ → ℚ))
-        (by simp only [← Int.coe_castRingHom, ← RingHom.mapMatrix_apply, ← RingHom.map_det,
-              Matrix.det_diagonal]
-            rw [eq_intCast]
-            exact_mod_cast (ne_of_gt (Finset.prod_pos (fun i _ ↦ hd_pos i)))))
-      (SLnZ n) (SLnZ n) := by
-  set diag_GL := GeneralLinearGroup.mkOfDetNeZero
-    ((Matrix.diagonal d).map (Int.cast : ℤ → ℚ))
-    (by simp only [← Int.coe_castRingHom, ← RingHom.mapMatrix_apply, ← RingHom.map_det,
-              Matrix.det_diagonal]
-        rw [eq_intCast]
-        exact_mod_cast (ne_of_gt (Finset.prod_pos (fun i _ ↦ hd_pos i)))) with hdiag_GL
-  symm; apply doubleCoset_eq_of_mem; rw [mem_doubleCoset]
+      doubleCoset (natDiagGL n a) (SLnZ n) (SLnZ n) := by
+  symm
+  apply doubleCoset_eq_of_mem
+  rw [mem_doubleCoset]
   refine ⟨(L : GL (Fin n) ℚ), coe_mem_SLnZ n L, (R : GL (Fin n) ℚ), coe_mem_SLnZ n R, ?_⟩
   apply Units.ext
-  rw [hdiag_GL, coe_mkOfDetNeZero]
-  simp only [Units.val_mul, mapGL_coe_matrix, algebraMap_int_eq, hA]; symm
+  rw [natDiagGL_coe n a ha_pos]
+  simp only [Units.val_mul, mapGL_coe_matrix, algebraMap_int_eq, hA]
+  symm
   calc (↑L : Matrix _ _ ℤ).map (Int.cast : ℤ → ℚ) *
       A.map (Int.cast : ℤ → ℚ) * (↑R : Matrix _ _ ℤ).map (Int.cast : ℤ → ℚ)
       = ((↑L : Matrix _ _ ℤ) * A).map (Int.cast : ℤ → ℚ) *
@@ -228,7 +213,10 @@ private lemma double_coset_eq_of_SLnZ_equiv (α : posDetInt n) (A : Matrix (Fin 
           simp only [← Int.coe_castRingHom, ← Matrix.map_mul]
     _ = ((↑L : Matrix _ _ ℤ) * A * (↑R : Matrix _ _ ℤ)).map (Int.cast : ℤ → ℚ) := by
         simp only [← Int.coe_castRingHom, ← Matrix.map_mul]
-    _ = (Matrix.diagonal d).map (Int.cast : ℤ → ℚ) := by rw [hLR]
+    _ = (Matrix.diagonal (fun i ↦ (a i : ℤ))).map (Int.cast : ℤ → ℚ) := by rw [hLR]
+    _ = Matrix.diagonal (fun i ↦ (a i : ℚ)) := by
+        rw [Matrix.diagonal_map (by simp)]
+        norm_cast
 
 private lemma mk_eq_diagCoset (α : posDetInt n) :
     ∃ a : Fin n → ℕ, (∀ i, 0 < a i) ∧ IsDvdChain a ∧
@@ -253,15 +241,9 @@ private lemma mk_eq_diagCoset (α : posDetInt n) :
     exact_mod_cast h1
   refine ⟨a, hd_pos_nat, hdiv, ?_⟩
   rw [diagCoset, HeckeCoset.eq_iff]
-  rw [double_coset_eq_of_SLnZ_equiv α A hA d hd_pos L R hLR]
-  congr 1
-  apply Units.ext
-  rw [coe_mkOfDetNeZero]
-  ext i j
-  simp only [natDiagGL_coe n a hd_pos_nat, Matrix.diagonal_apply, Matrix.map_apply]
-  split_ifs with h
-  · rw [hd_eq i]; push_cast; rfl
-  · simp
+  refine double_coset_eq_of_SLnZ_equiv α A hA a hd_pos_nat L R ?_
+  rw [hLR]
+  exact congrArg Matrix.diagonal (funext hd_eq)
 
 /-- **Existence of diagonal representatives** (Smith normal form): every double coset of the
 arithmetic Hecke triple is `diagCoset a` for a positive divisibility chain
