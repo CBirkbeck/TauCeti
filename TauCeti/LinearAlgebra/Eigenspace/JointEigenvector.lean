@@ -21,6 +21,12 @@ endomorphisms: the joint eigenspaces are supremum-independent, they span (over a
 algebraically closed field, in finite dimension), and every invariant submodule is the
 supremum of its intersections with them.
 
+When `G` is a *finite commutative group* there is a second, unconditional route to the same
+spanning statements. Averaging against the characters of `G` produces Fourier projectors onto
+the joint eigenspaces, so they exhaust the whole space — and cut out every invariant submodule —
+with no algebraic-closedness, finite-dimensionality or semisimplicity hypothesis; all that is
+needed is enough roots of unity in `K` and `Nat.card G` invertible there.
+
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GL2/CharacterDecomp.lean`, Chris Birkbeck,
 <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), extracted as
@@ -37,6 +43,12 @@ nebentypus decomposition in `TauCeti/NumberTheory/ModularForms/CharacterDecomp.l
   independent (with no further hypotheses), exhaust the space when semisimple, and
   decompose every invariant submodule — with the character-indexed forms (`…_charHom…`)
   for group representations.
+* `iSup_iInf_eigenspace_charHom_eq_top_of_commGroup`,
+  `iSup_inf_iInf_eigenspace_charHom_of_invariant_of_commGroup`: for a finite commutative `G`
+  with `[HasEnoughRootsOfUnity K (Monoid.exponent G)]` and `[NeZero (Nat.card G : K)]`, the
+  character eigenspaces span the whole space, and every invariant submodule is the supremum of
+  its intersections with them — proved by finite-group Fourier projectors, so neither
+  semisimplicity nor finite dimension is assumed.
 -/
 
 public section
