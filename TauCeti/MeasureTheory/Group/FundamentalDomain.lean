@@ -80,8 +80,10 @@ translates `r i • s`: measurability and invariance of the whole ambient action
 `[MeasurableConstSMul G α]` and `[SMulInvariantMeasure G α μ]`. -/
 @[to_additive /-- **Transversal coset tiling of a fundamental domain.** If `s` is a fundamental
 domain for an additive group `G` acting on `α`, `H ≤ G` a subgroup, and `r : ι → G` a family
-such that `i ↦ ⟦-(r i)⟧` enumerates the cosets `G ⧸ H` bijectively, then `⋃ i, r i +ᵥ s` is
-a fundamental domain for the restricted `H`-action. -/]
+over a **countable** index type (`[Countable ι]`) such that `i ↦ ⟦-(r i)⟧` enumerates the
+cosets `G ⧸ H` bijectively, then `⋃ i, r i +ᵥ s` is a fundamental domain for the restricted
+`H`-action. Beyond countability the only measure-theoretic hypothesis is null-measurability
+of the individual translates `r i +ᵥ s`. -/]
 theorem IsFundamentalDomain.iUnion_smul_of_transversal
     {G α ι : Type*} [Group G] [MeasurableSpace α] [MulAction G α] [Countable ι]
     {μ : Measure α}
@@ -114,8 +116,9 @@ representatives form the right transversal. The coset space must be countable
 (`[Countable (G ⧸ H)]`) — in particular this covers every finite-index subgroup. This is
 `IsFundamentalDomain.iUnion_smul_of_transversal` at `r q = (q.out)⁻¹`. -/
 @[to_additive /-- **Subgroup coset tiling of a fundamental domain.** If `s` is a fundamental
-domain for an additive group `G` acting on `α`, then for any subgroup `H ≤ G`, the union of
-the translates `-q.out +ᵥ s` (for `q ∈ G ⧸ H`) is a fundamental domain for the restricted
+domain for an additive group `G` acting on `α`, then for any subgroup `H ≤ G` whose coset
+space is **countable** (`[Countable (G ⧸ H)]`, automatic at finite index), the union of the
+translates `-q.out +ᵥ s` (for `q ∈ G ⧸ H`) is a fundamental domain for the restricted
 `H`-action on `α`. -/]
 theorem IsFundamentalDomain.subgroup_iUnion_out_inv_smul
     {G α : Type*} [Group G] [MeasurableSpace α] [MulAction G α]
