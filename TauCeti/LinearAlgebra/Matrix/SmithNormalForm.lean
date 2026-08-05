@@ -173,6 +173,7 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
     exact ab'.ne_zero i (Subtype.ext this)
   choose r hr using fun i ↦ LinearMap.mem_range.mp (ab' i).2
   have hkey : ∀ j, A *ᵥ r j = a j • b' j := fun j ↦ by
+    -- definitional: `A.mulVecLin (r j)` is `A *ᵥ r j`, and the subtype coercion evaluates
     show A *ᵥ r j = a j • b' j; rw [← hsnf j, ← hr j]; rfl
   set e := Pi.basisFun ℤ (Fin n)
   set P_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ b' j k) with hP_def
@@ -183,10 +184,12 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
     rw [hkey j]; simp only [Pi.smul_apply, smul_eq_mul]
     simp [Finset.sum_ite_eq', Finset.mem_univ, mul_comm]
   have hP_eq : P_mat = e.toMatrix b' := by
+    -- definitional: the `Matrix.of` entry of `P_mat` is `b' j k`
     ext k j; change b' j k = e.toMatrix b' k j; rw [e.toMatrix_apply, Pi.basisFun_repr]
   have hP_unit : IsUnit P_mat.det := by
     rw [hP_eq]; simpa [Module.Basis.det_apply] using e.isUnit_det b'
   have hQ_eq : Q_mat = e.toMatrix r := by
+    -- definitional: the `Matrix.of` entry of `Q_mat` is `r j k`
     ext k j; change r j k = e.toMatrix r k j; rw [e.toMatrix_apply, Pi.basisFun_repr]
   have hQ_unit : IsUnit Q_mat.det := by
     have hinj := mulVecLin_injective_of_det_ne_zero A hdet_ne
@@ -348,12 +351,14 @@ private lemma genEquiv_zero (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0) :
     genEquiv k j hj ⟨0, by omega⟩ = Sum.inl ⟨0, by omega⟩ := by
   simp only [genEquiv, Equiv.trans_apply]
   rw [Equiv.swap_apply_of_ne_of_ne (by intro h; simp at h) (fun h ↦ hj (by rw [← h]))]
+  -- the swap fixes `0`, so the composite reduces to `finEquivSum k` definitionally
   show finEquivSum k ⟨0, by omega⟩ = _
   unfold finEquivSum; simp [Equiv.trans_apply, Fin.castOrderIso]; rfl
 
 private lemma genEquiv_j (k : ℕ) (j : Fin (k + 2)) (hj : j.val ≠ 0) :
     genEquiv k j hj j = Sum.inl ⟨1, by omega⟩ := by
   simp only [genEquiv, Equiv.trans_apply, Equiv.swap_apply_right]
+  -- the swap sends `j` to `⟨1, _⟩`, so the composite reduces to `finEquivSum k`
   change finEquivSum k ⟨1, by omega⟩ = _; unfold finEquivSum
   simp [Equiv.trans_apply, Fin.castOrderIso]; rfl
 
@@ -408,8 +413,8 @@ private lemma gcd_step_general (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : ∀ i, 
     simp only [R_big]; rw [det_submatrix_equiv_self, det_fromBlocks_zero₂₁, det_one, mul_one,
       gcd_2x2_det_R a b]
   refine ⟨⟨L_big, hL_det_big⟩, ⟨R_big, hR_det_big⟩, d', hd'_pos,
-    by show d' ⟨0, _⟩ = g; simp [d'], ?_, ?_, ?_, ?_⟩
-  · intro i hi1 hi2; show d' i = d i
+    by simp [d'], ?_, ?_, ?_, ?_⟩
+  · intro i hi1 hi2
     simp only [d']; rw [if_neg (show i ≠ (0 : Fin (k + 2)) from hi1), if_neg hi2]
   · exact gcd_natAbs_le_left a b ha
   · exact gcd_natAbs_lt_left_of_not_dvd a b ha
@@ -507,6 +512,7 @@ private lemma slSuccEmbed_mul_diagonal (k : ℕ) (d : Fin (k + 2) → ℤ)
     simp [Function.comp_def]
   rw [show Matrix.diagonal d = (Matrix.diagonal (d ∘ e.symm)).submatrix e e
       from (hsub d).symm]
+  -- definitional: `slSuccEmbed` is the embedded block matrix
   change (fromBlocks 1 0 0 (L : Matrix _ _ ℤ)).submatrix e e *
     (Matrix.diagonal (d ∘ e.symm)).submatrix e e *
     (fromBlocks 1 0 0 (R : Matrix _ _ ℤ)).submatrix e e = _
@@ -555,6 +561,7 @@ private lemma divChain_prepend (k : ℕ) (c : ℤ) (d_tail' : Fin (k + 1) → �
         fun h ↦ absurd (Fin.ext_iff.mp h) (by simp)),
       if_neg (show (⟨i + 2, hi⟩ : Fin (k + 2)) ≠ 0 from
         fun h ↦ absurd (Fin.ext_iff.mp h) (by simp))]
+    -- definitional: `i + 1 - 1` reduces to `i`
     change d_tail' ⟨i, by omega⟩ ∣ d_tail' ⟨i + 1, by omega⟩
     exact htail i (by omega)
 
@@ -619,8 +626,8 @@ private lemma dvd_of_le_of_chain {d : Fin n → ℤ}
 
 /-- **Smith normal form over `ℤ` with special linear transformations.** Every square integer
 matrix `A` with positive determinant can be brought to diagonal form by determinant-one row and
-column operations, with positive diagonal entries each dividing the next (the elementary
-divisors of `A`). -/
+column operations, with positive diagonal entries each dividing the next (the invariant
+factors of `A`). -/
 theorem exists_smith_normal_form_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hA : 0 < A.det) :
     ∃ (L R : SpecialLinearGroup (Fin n) ℤ) (d : Fin n → ℤ), (∀ i, 0 < d i) ∧
       (∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j) ∧
@@ -629,11 +636,113 @@ theorem exists_smith_normal_form_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hA
   obtain ⟨d₀, hd₀_pos, L₀, R₀, hLR₀⟩ := exists_diagonal_of_det_pos A hA
   obtain ⟨d, hd_pos, hd_chain, L₁, R₁, hLR₁⟩ := exists_divChain_of_pos_diagonal d₀ hd₀_pos
   refine ⟨L₁ * L₀, R₀ * R₁, d, hd_pos, fun i j hij ↦ dvd_of_le_of_chain hd_chain hij, ?_⟩
-  change (↑(L₁ * L₀) : Matrix _ _ ℤ) * A * (↑(R₀ * R₁) : Matrix _ _ ℤ) = Matrix.diagonal d
   simp only [SpecialLinearGroup.coe_mul]
   calc (↑L₁ : Matrix _ _ ℤ) * ↑L₀ * A * (↑R₀ * ↑R₁)
       = ↑L₁ * (↑L₀ * A * ↑R₀) * ↑R₁ := by simp only [Matrix.mul_assoc]
     _ = ↑L₁ * Matrix.diagonal d₀ * ↑R₁ := by rw [hLR₀]
     _ = Matrix.diagonal d := hLR₁
+
+/-! ## Uniqueness of the invariant factors
+
+The partial products `d 0 * ⋯ * d (k-1)` of a chained diagonal are determined by the
+`SL_n(ℤ)`-equivalence class, by a Cauchy–Binet expansion of the leading `k × k` minor. -/
+
+/-- Along a divisibility chain, the product of the first `k` entries divides the product of
+the entries at any `k` distinct positions. -/
+private lemma prod_dvd_prod_of_injective {d : Fin n → ℤ}
+    (hd : ∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j) (k : ℕ) (hk : k ≤ n) (f : Fin k → Fin n)
+    (hf : Function.Injective f) :
+    (∏ j : Fin k, d ⟨j.val, by omega⟩) ∣ (∏ j : Fin k, d (f j)) := by
+  induction k with
+  | zero => simp
+  | succ k ih =>
+    obtain ⟨j₀, _, hmax⟩ :=
+      Finset.exists_max_image Finset.univ (fun j ↦ (f j).val) Finset.univ_nonempty
+    have hge : k ≤ (f j₀).val := by
+      by_contra hlt; push Not at hlt
+      have : Fintype.card (Fin (k + 1)) ≤ Fintype.card (Fin k) :=
+        Fintype.card_le_of_injective
+          (fun j : Fin (k + 1) ↦ (⟨(f j).val, by
+            exact Nat.lt_of_le_of_lt (hmax j (Finset.mem_univ _)) hlt⟩ : Fin k))
+          (fun j₁ j₂ heq ↦ by simp only [Fin.mk.injEq] at heq; exact hf (Fin.ext heq))
+      simp at this
+    rw [Fin.prod_univ_castSucc, Fin.prod_univ_succAbove _ j₀, mul_comm (d (f j₀)) _]
+    exact mul_dvd_mul (ih (by omega) (f ∘ j₀.succAbove)
+      (hf.comp Fin.succAbove_right_injective)) (hd (by simpa [Fin.le_def] using hge))
+
+/-- One direction of the invariant-factor comparison, by Cauchy–Binet on the leading minor. -/
+private lemma prod_take_dvd_of_mul_diagonal_mul_eq {c d : Fin n → ℤ}
+    (hc : ∀ ⦃i j : Fin n⦄, i ≤ j → c i ∣ c j) (P Q : Matrix (Fin n) (Fin n) ℤ)
+    (hcd : P * Matrix.diagonal c * Q = Matrix.diagonal d) (k : ℕ) (hk : k ≤ n) :
+    (∏ j : Fin k, c ⟨j.val, by omega⟩) ∣ (∏ j : Fin k, d ⟨j.val, by omega⟩) := by
+  set e : Fin k → Fin n := fun j ↦ ⟨j.val, by omega⟩ with he_def
+  have he_inj : Function.Injective e := fun _ _ h ↦ Fin.ext (Fin.mk.inj h)
+  have hprod_d : ∏ j : Fin k, d (e j) =
+      det ((P * Matrix.diagonal c * Q).submatrix e e) := by
+    rw [hcd]
+    rw [show (Matrix.diagonal d).submatrix e e =
+        Matrix.diagonal (fun j : Fin k ↦ d (e j)) from by
+      ext i j; simp only [Matrix.submatrix_apply, Matrix.diagonal_apply, he_inj.eq_iff]]
+    exact Matrix.det_diagonal.symm
+  rw [hprod_d]
+  have hcb : det ((P * Matrix.diagonal c * Q).submatrix e e) =
+      ∑ g : Fin k → Fin n, (∏ i : Fin k, c (g i)) *
+        ((∏ i : Fin k, Q (g i) (e i)) * det (P.submatrix e g)) := by
+    simp only [Matrix.det_apply', Matrix.submatrix_apply, Matrix.mul_apply,
+      Matrix.diagonal_apply, mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true,
+      Finset.prod_univ_sum, Fintype.piFinset_univ, Finset.mul_sum]
+    rw [Finset.sum_comm]; congr 1; ext g; congr 1; ext σ
+    simp only [Finset.prod_mul_distrib]; ring
+  rw [hcb]
+  apply Finset.dvd_sum; intro g _
+  by_cases hg : Function.Injective g
+  · exact dvd_mul_of_dvd_left (prod_dvd_prod_of_injective hc k hk g hg) _
+  · simp only [Function.not_injective_iff] at hg; obtain ⟨j₁, j₂, hgeq, hjne⟩ := hg
+    have : det (P.submatrix e g) = 0 := Matrix.det_zero_of_column_eq hjne (fun i ↦ by
+      simp only [Matrix.submatrix_apply, hgeq])
+    simp [this]
+
+/-- **Uniqueness of the Smith normal form**: two positive diagonals with divisibility chains
+in the same `SL_n(ℤ)`-equivalence class are equal.  Together with
+`Matrix.exists_smith_normal_form_of_det_pos` this makes the invariant factors of a
+positive-determinant integer matrix well defined. -/
+theorem smith_normal_form_unique {c d : Fin n → ℤ} (hc_pos : ∀ i, 0 < c i)
+    (hd_pos : ∀ i, 0 < d i) (hc : ∀ ⦃i j : Fin n⦄, i ≤ j → c i ∣ c j)
+    (hd : ∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j) (L R : SpecialLinearGroup (Fin n) ℤ)
+    (h : (L : Matrix (Fin n) (Fin n) ℤ) * Matrix.diagonal c *
+      (R : Matrix (Fin n) (Fin n) ℤ) = Matrix.diagonal d) : c = d := by
+  have hL : (L⁻¹ : SpecialLinearGroup (Fin n) ℤ).val * (L : Matrix (Fin n) (Fin n) ℤ) = 1 := by
+    rw [← SpecialLinearGroup.coe_mul, inv_mul_cancel, SpecialLinearGroup.coe_one]
+  have hR : (R : Matrix (Fin n) (Fin n) ℤ) * (R⁻¹ : SpecialLinearGroup (Fin n) ℤ).val = 1 := by
+    rw [← SpecialLinearGroup.coe_mul, mul_inv_cancel, SpecialLinearGroup.coe_one]
+  have h' : (L⁻¹ : SpecialLinearGroup (Fin n) ℤ).val * Matrix.diagonal d *
+      (R⁻¹ : SpecialLinearGroup (Fin n) ℤ).val = Matrix.diagonal c := by
+    calc (L⁻¹ : SpecialLinearGroup (Fin n) ℤ).val * Matrix.diagonal d *
+        (R⁻¹ : SpecialLinearGroup (Fin n) ℤ).val
+        = (L⁻¹ : SpecialLinearGroup (Fin n) ℤ).val *
+            ((L : Matrix (Fin n) (Fin n) ℤ) * Matrix.diagonal c *
+              (R : Matrix (Fin n) (Fin n) ℤ)) *
+            (R⁻¹ : SpecialLinearGroup (Fin n) ℤ).val := by rw [h]
+      _ = ((L⁻¹ : SpecialLinearGroup (Fin n) ℤ).val * (L : Matrix (Fin n) (Fin n) ℤ)) *
+            Matrix.diagonal c *
+            ((R : Matrix (Fin n) (Fin n) ℤ) * (R⁻¹ : SpecialLinearGroup (Fin n) ℤ).val) := by
+          simp only [Matrix.mul_assoc]
+      _ = Matrix.diagonal c := by rw [hL, hR, Matrix.one_mul, Matrix.mul_one]
+  have key : ∀ k (hk : k ≤ n),
+      ∏ j : Fin k, c ⟨j.val, by omega⟩ = ∏ j : Fin k, d ⟨j.val, by omega⟩ := fun k hk ↦
+    Int.dvd_antisymm
+      (Finset.prod_nonneg fun j _ ↦ (hc_pos _).le)
+      (Finset.prod_nonneg fun j _ ↦ (hd_pos _).le)
+      (prod_take_dvd_of_mul_diagonal_mul_eq hc _ _ h k hk)
+      (prod_take_dvd_of_mul_diagonal_mul_eq hd _ _ h' k hk)
+  funext i
+  have hprod₁ := key (i.val + 1) (by omega)
+  have split_eq : ∀ (a : Fin n → ℤ),
+      ∏ j : Fin (i.val + 1), a ⟨j.val, by omega⟩ =
+      (∏ j : Fin i.val, a ⟨j.val, by omega⟩) * a i := by
+    intro a; rw [Fin.prod_univ_castSucc]; congr 1
+  rw [split_eq c, split_eq d, key i.val (by omega)] at hprod₁
+  exact mul_left_cancel₀
+    (ne_of_gt (Finset.prod_pos fun j _ ↦ hd_pos ⟨j.val, by omega⟩)) hprod₁
 
 end Matrix
