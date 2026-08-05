@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
+public import Mathlib.MeasureTheory.Function.LpSeminorm.Basic
+import Mathlib.MeasureTheory.Function.LpSeminorm.CompareExp
 
 /-!
 # `Lᵖ` seminorm bounds out of bounds between the integrals `∫⁻ ‖·‖ₑ ^ p`
@@ -52,12 +53,14 @@ theorem eLpNorm_le_eLpNorm_of_lintegral_rpow_le {α : Type*} [MeasurableSpace α
           ← ENNReal.ofReal_rpow_of_nonneg hc hr0.le, ← ENNReal.rpow_mul,
           mul_one_div_cancel hr0.ne', ENNReal.rpow_one]
 
-/-- **The nesting `L^r ⊆ L^1`**, in `∫⁻` form and raised to the power `r`: the `L^1` integral is
-controlled by the `L^r` integral at the cost of the factor `μ univ ^ (r - 1)`.
+/-- **Hölder's inequality in extended-valued `∫⁻` form**, raised to the power `r`: the `L¹`
+integral is controlled by the `L^r` integral at the cost of the factor `μ univ ^ (r - 1)`.
 
-This is Hölder's inequality in the shape an estimate proved by integration consumes.  No
-finiteness is assumed: when `μ univ = ∞` and `1 < r` the right-hand side is `∞` and the bound is
-vacuous. -/
+On a finite measure space this is the nesting `L^r ⊆ L¹`; for a general `μ` it is only the
+displayed inequality, which does not by itself give that inclusion.  No finiteness is assumed, and
+the bound is not vacuous when `μ univ = ∞`: arithmetic in `ℝ≥0∞` makes the right-hand side `0`
+rather than `∞` whenever `∫⁻ ‖f‖ₑ ^ r = 0`, and the inequality still holds there because `f` then
+vanishes almost everywhere. -/
 theorem rpow_lintegral_enorm_le_measure_univ_rpow_mul {α : Type*} [MeasurableSpace α]
     {μ : Measure α} {G : Type*} [NormedAddCommGroup G] {f : α → G}
     (hf : AEStronglyMeasurable f μ) {r : ℝ} (hr : 1 ≤ r) :
@@ -73,12 +76,15 @@ theorem rpow_lintegral_enorm_le_measure_univ_rpow_mul {α : Type*} [MeasurableSp
     have := eLpNorm_le_eLpNorm_mul_rpow_measure_univ (f := f) (μ := μ) hle hf
     rwa [eLpNorm_one_eq_lintegral_enorm, hCr, ENNReal.toReal_one,
       ENNReal.toReal_ofReal hr0.le, div_one] at this
-  have hexp : (1 - r⁻¹) * r = r - 1 := by field_simp
+  have hinv : 1 / r * r = 1 := by field_simp
+  have hexp : (1 - 1 / r) * r = r - 1 := by field_simp
   calc (∫⁻ x, ‖f x‖ₑ ∂μ) ^ r
       ≤ ((∫⁻ x, ‖f x‖ₑ ^ r ∂μ) ^ (1 / r) * μ Set.univ ^ (1 - 1 / r)) ^ r :=
         ENNReal.rpow_le_rpow holder hr0.le
-    _ = _ := by
-        rw [ENNReal.mul_rpow_of_nonneg _ _ hr0.le, ← ENNReal.rpow_mul, ← ENNReal.rpow_mul,
-          one_div, inv_mul_cancel₀ hr0.ne', ENNReal.rpow_one, hexp, mul_comm]
+    _ = ((∫⁻ x, ‖f x‖ₑ ^ r ∂μ) ^ (1 / r)) ^ r * (μ Set.univ ^ (1 - 1 / r)) ^ r :=
+        ENNReal.mul_rpow_of_nonneg _ _ hr0.le
+    _ = (∫⁻ x, ‖f x‖ₑ ^ r ∂μ) * μ Set.univ ^ (r - 1) := by
+        rw [← ENNReal.rpow_mul, ← ENNReal.rpow_mul, hinv, hexp, ENNReal.rpow_one]
+    _ = μ Set.univ ^ (r - 1) * ∫⁻ x, ‖f x‖ₑ ^ r ∂μ := mul_comm _ _
 
 end TauCeti
