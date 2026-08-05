@@ -50,12 +50,6 @@ open Measure Set
 
 open scoped Pointwise
 
--- The `↥H`-action on `α` (and on `Set α`) is by definition the restriction of the
--- `G`-action along the coercion; this lemma makes every use of that compatibility explicit.
-@[to_additive]
-private theorem coe_smul_set {G α : Type*} [Group G] [MulAction G α] {H : Subgroup G}
-    (h : H) (s : Set α) : h • s = (h : G) • s := rfl
-
 @[to_additive]
 private theorem eq_of_mul_transversal {G : Type*} [Group G] {H : Subgroup G}
     {ι : Type*} {r : ι → G}
@@ -107,7 +101,7 @@ theorem IsFundamentalDomain.iUnion_smul_of_transversal
     exact Set.mem_iUnion.mpr ⟨i, Set.smul_mem_smul_set hg⟩
   · intro h₁ h₂ hne
     simp only [Function.onFun]
-    rw [coe_smul_set h₁, coe_smul_set h₂, hT_def]
+    rw [MulAction.subgroup_smul_def h₁, MulAction.subgroup_smul_def h₂, hT_def]
     simp only [Set.smul_set_iUnion, AEDisjoint.iUnion_left_iff, AEDisjoint.iUnion_right_iff,
       ← mul_smul]
     exact fun i₁ i₂ ↦ hs.aedisjoint fun heq ↦ hne (eq_of_mul_transversal hr.injective heq).1
@@ -137,19 +131,6 @@ theorem IsFundamentalDomain.subgroup_iUnion_out_inv_smul
     rw [h_id]
     exact Function.bijective_id
 
-/-- The `ConjAct`-encoded pointwise conjugate of a subgroup is its image under the
-conjugation automorphism. Identifying the two lets the conjugation bijection below be
-Mathlib's `MulEquiv.subgroupMap` instead of a hand-built equivalence. -/
-private lemma conjAct_smul_eq_map_conj {G : Type*} [Group G] (g : G) (H : Subgroup G) :
-    ConjAct.toConjAct g • H = H.map (MulAut.conj g : G ≃* G) := by
-  ext x
-  simp only [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def, map_inv,
-    ConjAct.ofConjAct_toConjAct, inv_inv, Subgroup.mem_map]
-  constructor
-  · exact fun h => ⟨g⁻¹ * x * g, h, by simp [MulAut.conj]; group⟩
-  · rintro ⟨y, hy, rfl⟩
-    simpa [MulAut.conj, mul_assoc] using hy
-
 /-- **Conjugation-shift of a fundamental domain.** If `s` is an `H₁`-fundamental
 domain (where `H₁ ≤ G`) and `H₂` is the pointwise conjugate `g · H₁ · g⁻¹`
 (in `Subgroup` pointwise smul form, via the `ConjAct G`-action), then
@@ -163,7 +144,9 @@ theorem IsFundamentalDomain.smul_of_eq_conjAct_pointwise_smul
     (hgH : H₂ = ConjAct.toConjAct g • H₁) :
     IsFundamentalDomain H₂ (g • s) μ := by
   subst hgH
-  rw [conjAct_smul_eq_map_conj]
+  -- `Subgroup.pointwise_smul_def` is `rfl`; the `ConjAct` monoid endomorphism at `g` is
+  -- definitionally `MulAut.conj g`, which is what `MulEquiv.subgroupMap` below speaks about.
+  rw [Subgroup.pointwise_smul_def]
   refine hs.image_of_equiv (MulAction.toPerm g) hg
     ((MulAut.conj g).subgroupMap H₁).symm.toEquiv fun h₂ x ↦ ?_
   -- `MulEquiv.subgroupMap` sends `h₁` to `g * h₁ * g⁻¹`, so its inverse sends `h₂` to
@@ -193,7 +176,7 @@ theorem IsFundamentalDomain.aedisjoint_smul_of_inv_mul_mem
   have h_core : AEDisjoint μ ((1 : H) • D) ((⟨g₁⁻¹ * g₂, h_mem⟩ : H) • D) :=
     hD.aedisjoint fun heq ↦ h_ne' <| by
       simpa [Subgroup.coe_one, eq_comm] using congr_arg (Subtype.val : H → G) heq
-  rw [one_smul, coe_smul_set] at h_core
+  rw [one_smul, MulAction.subgroup_smul_def] at h_core
   -- Pull the disjointness back along `x ↦ g₁⁻¹ • x`; the two preimages are the stated translates.
   simpa [Set.preimage_smul_inv, smul_smul] using h_core.preimage hg₁
 
