@@ -287,6 +287,23 @@ lemma orderAtCusp_prod {ι : Type*} {f : ι → ℍ → ℂ} (s : Finset ι)
   push_cast
   simp [orderAtCusp_def, Finset.sum_div]
 
+/-- The exponent vanishes iff the constant term — the value of the cusp function at
+`0` — is nonzero, for any function whose cusp function is analytic with finite order. -/
+lemma qExpansionOrderAtCusp_eq_zero_iff (hg : AnalyticAt ℂ (cuspFunction h g) 0)
+    (hg' : analyticOrderAt (cuspFunction h g) 0 ≠ ⊤) :
+    qExpansionOrderAtCusp h g = 0 ↔ cuspFunction h g 0 ≠ 0 := by
+  rw [qExpansionOrderAtCusp_eq_analyticOrderAt hg, Int.natCast_eq_zero, ENat.toNat_eq_zero,
+    or_iff_left hg', hg.analyticOrderAt_eq_zero]
+
+/-- The exponent is positive iff the function vanishes at the cusp, for any function
+whose cusp function is analytic with finite order. -/
+lemma qExpansionOrderAtCusp_pos_iff (hg : AnalyticAt ℂ (cuspFunction h g) 0)
+    (hg' : analyticOrderAt (cuspFunction h g) 0 ≠ ⊤) :
+    0 < qExpansionOrderAtCusp h g ↔ cuspFunction h g 0 = 0 := by
+  rw [(qExpansionOrderAtCusp_nonneg h g).lt_iff_ne, ne_comm,
+    ← not_not (a := cuspFunction h g 0 = 0)]
+  exact not_congr (qExpansionOrderAtCusp_eq_zero_iff hg hg')
+
 namespace ModularForm
 
 variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] {f : F}
@@ -334,29 +351,13 @@ lemma analyticOrderAt_cuspFunction_ne_top [ModularFormClass F Γ k] (hh : 0 < h)
   simp only [ne_eq, analyticOrderAt_eq_top]
   exact cuspFunction_not_eventually_zero hh hΓ hf
 
-/-- The exponent vanishes iff the constant term — the value of the cusp function at
-`0` — is nonzero, for any function whose cusp function is analytic with finite order. -/
-lemma qExpansionOrderAtCusp_eq_zero_iff' (hg : AnalyticAt ℂ (cuspFunction h g) 0)
-    (hg' : analyticOrderAt (cuspFunction h g) 0 ≠ ⊤) :
-    qExpansionOrderAtCusp h g = 0 ↔ cuspFunction h g 0 ≠ 0 := by
-  rw [qExpansionOrderAtCusp_eq_analyticOrderAt hg, Int.natCast_eq_zero, ENat.toNat_eq_zero,
-    or_iff_left hg', hg.analyticOrderAt_eq_zero]
-
-/-- The exponent is positive iff the function vanishes at the cusp, for any function
-whose cusp function is analytic with finite order. -/
-lemma qExpansionOrderAtCusp_pos_iff' (hg : AnalyticAt ℂ (cuspFunction h g) 0)
-    (hg' : analyticOrderAt (cuspFunction h g) 0 ≠ ⊤) :
-    0 < qExpansionOrderAtCusp h g ↔ cuspFunction h g 0 = 0 := by
-  rw [(qExpansionOrderAtCusp_nonneg h g).lt_iff_ne, ne_comm,
-    ← not_not (a := cuspFunction h g 0 = 0)]
-  exact not_congr (qExpansionOrderAtCusp_eq_zero_iff' hg hg')
-
 /-- For a nonzero modular form the exponent vanishes iff the constant term is nonzero. -/
 @[simp]
 lemma qExpansionOrderAtCusp_eq_zero_iff [ModularFormClass F Γ k] (hh : 0 < h)
     (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     qExpansionOrderAtCusp h ⇑f = 0 ↔ cuspFunction h ⇑f 0 ≠ 0 :=
-  qExpansionOrderAtCusp_eq_zero_iff' (ModularFormClass.analyticAt_cuspFunction_zero f hh hΓ)
+  TauCeti.qExpansionOrderAtCusp_eq_zero_iff
+    (ModularFormClass.analyticAt_cuspFunction_zero f hh hΓ)
     (analyticOrderAt_cuspFunction_ne_top hh hΓ hf)
 
 /-- For a nonzero modular form the exponent is positive iff the form vanishes at the
@@ -365,7 +366,8 @@ cusp. -/
 lemma qExpansionOrderAtCusp_pos_iff [ModularFormClass F Γ k] (hh : 0 < h)
     (hΓ : h ∈ Γ.strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     0 < qExpansionOrderAtCusp h ⇑f ↔ cuspFunction h ⇑f 0 = 0 :=
-  qExpansionOrderAtCusp_pos_iff' (ModularFormClass.analyticAt_cuspFunction_zero f hh hΓ)
+  TauCeti.qExpansionOrderAtCusp_pos_iff
+    (ModularFormClass.analyticAt_cuspFunction_zero f hh hΓ)
     (analyticOrderAt_cuspFunction_ne_top hh hΓ hf)
 
 /-- For a nonzero modular form the rational cusp order vanishes iff the doubled-width
