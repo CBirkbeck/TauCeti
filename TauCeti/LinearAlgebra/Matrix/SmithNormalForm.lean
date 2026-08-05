@@ -486,6 +486,7 @@ private lemma make_first_divide_all (k : ℕ) (d : Fin (k + 2) → ℤ) (hd : �
       obtain ⟨L₁, R₁, d₁, hd₁_pos, hd₁_zero, hd₁_rest, _, hlt, hmul₁⟩ :=
         gcd_step_general k d hd j hj_ne
       have hN₁ : (d₁ (0 : Fin (k + 2))).natAbs < N := by
+        -- definitional: the literal `0` and the constructor `⟨0, _⟩` coincide in `Fin (k + 2)`
         rw [show d₁ (0 : Fin (k + 2)) = d₁ ⟨0, by omega⟩ from rfl, hd₁_zero, ← hN]
         exact hlt hj_ndvd
       obtain ⟨d₂, hd₂_pos, hd₂_div, L₂, R₂, hmul₂⟩ :=
@@ -564,6 +565,7 @@ private lemma divChain_prepend (k : ℕ) (c : ℤ) (d_tail' : Fin (k + 1) → �
     (if (⟨i + 1, hi⟩ : Fin (k + 2)) = 0 then c else d_tail' ⟨i + 1 - 1, by omega⟩) := by
   cases i with
   | zero =>
+    -- definitional: the constructor `⟨0, _⟩` is the literal `0` in `Fin (k + 2)`
     rw [if_pos (show (⟨0, by omega⟩ : Fin (k + 2)) = 0 from rfl),
       if_neg (show (⟨1, hi⟩ : Fin (k + 2)) ≠ 0 from
         fun h ↦ absurd (Fin.ext_iff.mp h) (by simp))]
