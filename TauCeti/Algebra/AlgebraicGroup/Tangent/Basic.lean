@@ -201,8 +201,9 @@ end BialgebraPointScalar
 
 section CommPointScalar
 
-variable (R A B : Type*) [CommSemiring R] [CommSemiring A] [Bialgebra R A]
-  [CommSemiring B] [Algebra R B]
+-- The synonym's carrier is `B`, so this instance is inherited from the coefficient semiring
+-- alone; `R` and `A` are phantom parameters here and need no structure.
+variable (R A B : Type*) [CommSemiring B]
 
 /-- Coefficient scalars commute with multiplication in the coefficient synonym. -/
 instance : SMulCommClass B (Bialgebra.CounitAlgebra R A B) (Bialgebra.CounitAlgebra R A B) :=
