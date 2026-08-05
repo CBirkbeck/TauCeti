@@ -150,6 +150,7 @@ noncomputable instance : SMulInvariantMeasure PSL(2, R) ℍ volume where
       hs.nullMeasurableSet
 
 /-- Mathlib's `PGL(2, ℝ)`-action along `toPGL` agrees with the `PSL(2, ℝ)`-action. -/
+@[simp]
 theorem toPGL_smul (g : PSL(2, ℝ)) (τ : ℍ) :
     Matrix.ProjectiveSpecialLinearGroup.toPGL g • τ = g • τ := by
   refine QuotientGroup.induction_on g fun a ↦ ?_
@@ -167,6 +168,7 @@ instance : FaithfulSMul PSL(2, ℝ) ℍ where
 
 /-- The `PSL(2, ℤ)`-action factors through the `PSL(2, ℝ)`-action along the descent
 `psl2zToPSL2R`. -/
+@[simp]
 theorem psl2zToPSL2R_smul (g : PSL(2, ℤ)) (τ : ℍ) : psl2zToPSL2R g • τ = g • τ := by
   refine QuotientGroup.induction_on g fun a ↦ ?_
   rw [psl2zToPSL2R_mk, sl2zToPSL2R_apply, pslMk_smul, pslMk_smul]
