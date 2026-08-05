@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.Algebra.Module.Submodule.Invariant
 public import TauCeti.LinearAlgebra.End.FiniteOrder
 public import Mathlib.LinearAlgebra.Eigenspace.Pi
 public import Mathlib.LinearAlgebra.Eigenspace.Semisimple
@@ -154,16 +155,23 @@ lemma iSup_iInf_eigenspace_eq_top_of_isSemisimple [IsAlgClosed K]
     Module.End.iSup_iInf_maxGenEigenspace_eq_top_of_iSup_maxGenEigenspace_eq_top_of_commute f
       hcomm fun i ↦ by simpa only [heq] using (hss i).iSup_eigenspace_eq_top
 
-/-- A submodule invariant under a pairwise-commuting family of semisimple endomorphisms
-with exhausting eigenspaces is the supremum of its intersections with the joint
-eigenspaces. -/
-lemma iSup_inf_iInf_eigenspace_of_invariant {ι : Type*} [FiniteDimensional K V]
+/-- A finite-dimensional submodule invariant under a pairwise-commuting family of
+semisimple endomorphisms is the supremum of its intersections with the joint eigenspaces:
+the restricted family diagonalizes, with no assumption on the ambient space. -/
+lemma iSup_inf_iInf_eigenspace_of_invariant [IsAlgClosed K] {ι : Type*}
     (f : ι → Module.End K V) (hcomm : Pairwise fun i j ↦ Commute (f i) (f j))
-    (hss : ∀ i, (f i).IsSemisimple) (htop : ∀ i, ⨆ μ : K, (f i).eigenspace μ = ⊤)
-    (p : Submodule K V) (hp : ∀ i, ∀ x ∈ p, f i x ∈ p) :
+    (hss : ∀ i, (f i).IsSemisimple)
+    (p : Submodule K V) [FiniteDimensional K p] (hp : ∀ i, ∀ x ∈ p, f i x ∈ p) :
     (⨆ χ : ι → K, p ⊓ ⨅ i, (f i).eigenspace (χ i)) = p := by
+  have hres : ∀ i, Module.End.IsSemisimple ((f i).restrict (hp i)) := fun i ↦
+    (hss i).restrict ((Module.End.mem_invtSubmodule_iff_forall_mem_of_mem (f := f i)).mpr
+      (hp i))
   have hmax (i : ι) (μ : K) : (f i).maxGenEigenspace μ = (f i).eigenspace μ :=
     (hss i).isFinitelySemisimple.maxGenEigenspace_eq_eigenspace μ
+  have hmax' (i : ι) (μ : K) :
+      Module.End.maxGenEigenspace ((f i).restrict (hp i)) μ =
+        Module.End.eigenspace ((f i).restrict (hp i)) μ :=
+    (hres i).isFinitelySemisimple.maxGenEigenspace_eq_eigenspace μ
   simp_rw [← hmax,
     fun χ : ι → K ↦ Submodule.inf_iInf_maxGenEigenspace_of_forall_mapsTo
       (f := f) (μ := χ) p (fun i ↦ hp i),
@@ -172,13 +180,14 @@ lemma iSup_inf_iInf_eigenspace_of_invariant {ι : Type*} [FiniteDimensional K V]
       (⨆ χ : ι → K, ⨅ i,
         Module.End.maxGenEigenspace ((f i).restrict (hp i)) (χ i)) = ⊤ by
     rw [h_restrict_top, Submodule.map_top, Submodule.range_subtype]
-  apply Module.End.iSup_iInf_maxGenEigenspace_eq_top_of_iSup_maxGenEigenspace_eq_top_of_commute
-  · intro i j hij
+  have hcomm' : Pairwise fun i j ↦
+      Commute ((f i).restrict (hp i)) ((f j).restrict (hp j)) := by
+    intro i j hij
     refine LinearMap.ext fun ⟨x, _⟩ ↦ Subtype.ext ?_
     simpa only [Module.End.mul_apply, LinearMap.coe_restrict_apply] using
       LinearMap.congr_fun (hcomm hij).eq x
-  · refine fun i ↦ Module.End.genEigenspace_restrict_eq_top (hp i) ?_
-    simpa only [hmax] using htop i
+  simpa only [hmax'] using
+    iSup_iInf_eigenspace_eq_top_of_isSemisimple (fun i ↦ (f i).restrict (hp i)) hcomm' hres
 
 section CharHom
 
@@ -208,13 +217,13 @@ lemma iSupIndep_iInf_eigenspace_charHom
   (iSupIndep_iInf_eigenspace_of_isSemisimple (fun g ↦ ρ g) hcomm hss).comp
     fun _ _ h ↦ MonoidHom.ext fun g ↦ Units.ext (congr_fun h g)
 
-/-- **Character-indexed decomposition of an invariant submodule.** -/
-lemma iSup_inf_iInf_eigenspace_charHom_of_invariant [FiniteDimensional K V]
+/-- **Character-indexed decomposition of a finite-dimensional invariant submodule.** -/
+lemma iSup_inf_iInf_eigenspace_charHom_of_invariant [IsAlgClosed K]
     (hcomm : Pairwise fun g₁ g₂ ↦ Commute (ρ g₁) (ρ g₂))
-    (hss : ∀ g, (ρ g).IsSemisimple) (htop : ∀ g, ⨆ μ : K, (ρ g).eigenspace μ = ⊤)
-    (p : Submodule K V) (hp : ∀ g, ∀ x ∈ p, ρ g x ∈ p) :
+    (hss : ∀ g, (ρ g).IsSemisimple)
+    (p : Submodule K V) [FiniteDimensional K p] (hp : ∀ g, ∀ x ∈ p, ρ g x ∈ p) :
     (⨆ χ₀ : G →* Kˣ, p ⊓ ⨅ g, (ρ g).eigenspace (χ₀ g)) = p := by
-  have h := iSup_inf_iInf_eigenspace_of_invariant (fun g ↦ ρ g) hcomm hss htop p hp
+  have h := iSup_inf_iInf_eigenspace_of_invariant (fun g ↦ ρ g) hcomm hss p hp
   refine le_antisymm (iSup_le fun _ ↦ inf_le_left) ?_
   conv_lhs => rw [← h]
   refine iSup_le fun χ ↦ ?_

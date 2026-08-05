@@ -215,26 +215,26 @@ If `p ⊆ M_k(Γ₁(N))` is stable under every diamond operator `⟨d⟩` for
 nebentypus character subspaces `modFormCharSpace k χ`. Specializing `p = ⊤`
 recovers `iSup_modFormCharSpace_eq_top`. -/
 theorem iSup_inf_modFormCharSpace_of_invariant
-    (k : ℤ) [FiniteDimensional ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)]
-    (p : Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k))
+    (k : ℤ) (p : Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k))
+    [FiniteDimensional ℂ p]
     (hp : ∀ d : (ZMod N)ˣ, ∀ f ∈ p, diamondOpHom k d f ∈ p) :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, p ⊓ modFormCharSpace k χ) = p := by
   have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ, p ⊓ jointDiamondEigenspace k fun d ↦ (χ₀ d : ℂ)) = p :=
     iSup_inf_iInf_eigenspace_charHom_of_invariant diamondOpHom_pairwise_commute
-      diamondOpHom_isSemisimple diamondOpHom_iSup_eigenspace_eq_top p hp
+      diamondOpHom_isSemisimple p hp
   simpa only [jointDiamondEigenspace_eq_modFormCharSpace] using h
 
 /-- **Character decomposition of a diamond-invariant submodule of `S_k(Γ₁(N))`.**
 The cusp-form analogue of `iSup_inf_modFormCharSpace_of_invariant`. -/
 theorem iSup_inf_cuspFormCharSpace_of_invariant
-    (k : ℤ) [FiniteDimensional ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)]
-    (p : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k))
+    (k : ℤ) (p : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k))
+    [FiniteDimensional ℂ p]
     (hp : ∀ d : (ZMod N)ˣ, ∀ f ∈ p, diamondOpCuspHom k d f ∈ p) :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, p ⊓ cuspFormCharSpace k χ) = p := by
   have h : (⨆ χ₀ : (ZMod N)ˣ →* ℂˣ,
       p ⊓ jointDiamondCuspEigenspace k fun d ↦ (χ₀ d : ℂ)) = p :=
     iSup_inf_iInf_eigenspace_charHom_of_invariant diamondOpCuspHom_pairwise_commute
-      diamondOpCuspHom_isSemisimple diamondOpCuspHom_iSup_eigenspace_eq_top p hp
+      diamondOpCuspHom_isSemisimple p hp
   simpa only [jointDiamondCuspEigenspace_eq_cuspFormCharSpace] using h
 
 /-- **Finsupp-indexed character decomposition of a modular form in a
@@ -243,8 +243,8 @@ diamond-invariant submodule.** Consumer-facing corollary of
 submodule `p ⊆ M_k(Γ₁(N))` is a finitely-supported sum of nebentypus-character
 components, each landing simultaneously in `p` and in its character subspace. -/
 theorem exists_finsupp_of_diamondOp_invariant
-    (k : ℤ) [FiniteDimensional ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)]
-    (p : Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k))
+    (k : ℤ) (p : Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k))
+    [FiniteDimensional ℂ p]
     (hp : ∀ d : (ZMod N)ˣ, ∀ f ∈ p, diamondOpHom k d f ∈ p)
     {f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ p) :
     ∃ g : ((ZMod N)ˣ →* ℂˣ) →₀ ModularForm ((Gamma1 N).map (mapGL ℝ)) k,
@@ -257,8 +257,8 @@ theorem exists_finsupp_of_diamondOp_invariant
 diamond-invariant submodule.** Cusp-form analogue of
 `exists_finsupp_of_diamondOp_invariant`. -/
 theorem exists_finsupp_of_diamondOpCusp_invariant
-    (k : ℤ) [FiniteDimensional ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)]
-    (p : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k))
+    (k : ℤ) (p : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k))
+    [FiniteDimensional ℂ p]
     (hp : ∀ d : (ZMod N)ˣ, ∀ f ∈ p, diamondOpCuspHom k d f ∈ p)
     {f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k} (hf : f ∈ p) :
     ∃ g : ((ZMod N)ˣ →* ℂˣ) →₀ CuspForm ((Gamma1 N).map (mapGL ℝ)) k,
