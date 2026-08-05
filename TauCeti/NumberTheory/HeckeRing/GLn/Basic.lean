@@ -81,6 +81,7 @@ def HasIntEntries (g : GL (Fin n) ℚ) : Prop :=
 
 /-- Characteristic lemma for `HasIntEntries`: introduction and elimination via the
 integer-matrix witness, without exposing the definition body. -/
+@[simp]
 lemma hasIntEntries_iff {g : GL (Fin n) ℚ} :
     HasIntEntries n g ↔ ∃ A : Matrix (Fin n) (Fin n) ℤ,
       (↑g : Matrix (Fin n) (Fin n) ℚ) = A.map (Int.cast : ℤ → ℚ) :=
@@ -101,21 +102,28 @@ lemma HasIntEntries.mul {a b : GL (Fin n) ℚ} (ha : HasIntEntries n a) (hb : Ha
   let ⟨A, hA⟩ := ha; let ⟨B, hB⟩ := hb
   ⟨A * B, by ext i j; simp [hA, hB, Matrix.mul_apply, Matrix.map_apply]⟩
 
+/-- The submonoid of `GL_n(ℚ)` with integer matrix entries. -/
+noncomputable def intEntries : Submonoid (GL (Fin n) ℚ) where
+  carrier := {g | HasIntEntries n g}
+  one_mem' := hasIntEntries_one n
+  mul_mem' := fun ha hb ↦ HasIntEntries.mul (n := n) ha hb
+
+@[simp]
+lemma mem_intEntries {g : GL (Fin n) ℚ} : g ∈ intEntries n ↔ HasIntEntries n g := (Iff.rfl)
+
 /-- The submonoid of `GL_n(ℚ)` consisting of invertible matrices with integer entries
-    and positive determinant. This is Shimura's `Δ`. -/
-noncomputable def posDetInt : Submonoid (GL (Fin n) ℚ) where
-  carrier := {g | HasIntEntries n g ∧ 0 < (↑g : Matrix (Fin n) (Fin n) ℚ).det}
-  one_mem' := ⟨hasIntEntries_one n, by simp⟩
-  mul_mem' := fun ⟨ha, hda⟩ ⟨hb, hdb⟩ ↦ ⟨HasIntEntries.mul (n := n) ha hb, by
-    simp only [GeneralLinearGroup.coe_mul, Matrix.det_mul]
-    exact mul_pos hda hdb⟩
+and positive determinant — Shimura's `Δ`, as the integral-entry part of Mathlib's
+positive-determinant subgroup `Matrix.GLPos`. -/
+noncomputable def posDetInt : Submonoid (GL (Fin n) ℚ) :=
+  intEntries n ⊓ (Matrix.GLPos (Fin n) ℚ).toSubmonoid
 
 /-- Membership in `Δ`: integer entries and positive determinant. -/
 @[simp]
 lemma mem_posDetInt_iff {g : GL (Fin n) ℚ} :
     g ∈ posDetInt n ↔
-      HasIntEntries n g ∧ 0 < (↑g : Matrix (Fin n) (Fin n) ℚ).det :=
-  (Iff.rfl)
+      HasIntEntries n g ∧ 0 < (↑g : Matrix (Fin n) (Fin n) ℚ).det := by
+  simp [posDetInt, Submonoid.mem_inf, Matrix.mem_glpos,
+    Matrix.GeneralLinearGroup.val_det_apply]
 
 end PosDetInt
 
@@ -125,9 +133,7 @@ section Pair
 lemma SLnZ_le_posDetInt : (SLnZ n).toSubmonoid ≤ posDetInt n := by
   rintro g ⟨A, rfl⟩
   refine ⟨⟨A.val, by simp [mapGL_coe_matrix, algebraMap_int_eq]⟩, ?_⟩
-  have h := (RingHom.map_det (Int.castRingHom ℚ) A.val).symm
-  simp only [RingHom.mapMatrix_apply, Int.coe_castRingHom] at h
-  simp [mapGL_coe_matrix, algebraMap_int_eq, h, A.prop]
+  simp
 
 /-- `mapGL ℚ` is injective on `SL_n(ℤ)`. -/
 private lemma mapGL_injective : Function.Injective
@@ -457,10 +463,10 @@ section API
 
 open scoped HeckeCosetModule
 
-variable [NeZero n]
-
 /-- The Hecke ring of `GL_n` over `ℤ`: the Hecke ring of the arithmetic triple. -/
 abbrev GLnHeckeRing := 𝕋 (posDetInt n) (SLnZ n) ℤ
+
+variable [NeZero n]
 
 end API
 
