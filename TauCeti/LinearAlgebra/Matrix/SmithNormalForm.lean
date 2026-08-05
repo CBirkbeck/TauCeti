@@ -6,7 +6,6 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
-public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 
 import Mathlib.Algebra.EuclideanDomain.Int
 import Mathlib.Data.Int.GCD
@@ -27,7 +26,7 @@ operations of determinant one:
 * `Matrix.exists_smith_normal_form_of_det_pos`: for `A : Matrix (Fin n) (Fin n) ℤ` with
   `0 < A.det` there are `L R : SpecialLinearGroup (Fin n) ℤ` and a positive `d : Fin n → ℤ`,
   monotone under divisibility, with `L * A * R = diagonal d`.
-* `Matrix.smith_normal_form_unique`: two positive chained diagonals in the same
+* `Matrix.smith_normal_form_unique`: two nonnegative chained diagonals in the same
   `GL_n(ℤ)`-equivalence class are equal, so the invariant factors of `A` are well defined.
 
 Mathlib's `Submodule.smithNormalForm` provides basis-level diagonalization over a PID; this
@@ -706,12 +705,13 @@ private lemma prod_take_dvd_of_mul_diagonal_mul_eq {c d : Fin n → ℤ}
       simp only [Matrix.submatrix_apply, hgeq])
     simp [this]
 
-/-- **Uniqueness of the Smith normal form**: two positive diagonals with divisibility chains
-in the same `GL_n(ℤ)`-equivalence class are equal.  Together with
+/-- **Uniqueness of the Smith normal form**: two nonnegative diagonals with divisibility
+chains in the same `GL_n(ℤ)`-equivalence class are equal — including singular forms, whose
+chains vanish from the first zero on.  Together with
 `Matrix.exists_smith_normal_form_of_det_pos` this makes the invariant factors of a
 positive-determinant integer matrix well defined. -/
-theorem smith_normal_form_unique {c d : Fin n → ℤ} (hc_pos : ∀ i, 0 < c i)
-    (hd_pos : ∀ i, 0 < d i) (hc : ∀ ⦃i j : Fin n⦄, i ≤ j → c i ∣ c j)
+theorem smith_normal_form_unique {c d : Fin n → ℤ} (hc_pos : ∀ i, 0 ≤ c i)
+    (hd_pos : ∀ i, 0 ≤ d i) (hc : ∀ ⦃i j : Fin n⦄, i ≤ j → c i ∣ c j)
     (hd : ∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j) (L R : GeneralLinearGroup (Fin n) ℤ)
     (h : (L : Matrix (Fin n) (Fin n) ℤ) * Matrix.diagonal c *
       (R : Matrix (Fin n) (Fin n) ℤ) = Matrix.diagonal d) : c = d := by
@@ -731,18 +731,29 @@ theorem smith_normal_form_unique {c d : Fin n → ℤ} (hc_pos : ∀ i, 0 < c i)
   have key : ∀ k (hk : k ≤ n),
       ∏ j : Fin k, c ⟨j.val, by omega⟩ = ∏ j : Fin k, d ⟨j.val, by omega⟩ := fun k hk ↦
     Int.dvd_antisymm
-      (Finset.prod_nonneg fun j _ ↦ (hc_pos _).le)
-      (Finset.prod_nonneg fun j _ ↦ (hd_pos _).le)
+      (Finset.prod_nonneg fun j _ ↦ hc_pos _)
+      (Finset.prod_nonneg fun j _ ↦ hd_pos _)
       (prod_take_dvd_of_mul_diagonal_mul_eq hc _ _ h k hk)
       (prod_take_dvd_of_mul_diagonal_mul_eq hd _ _ h' k hk)
-  funext i
-  have hprod₁ := key (i.val + 1) (by omega)
-  have split_eq : ∀ (a : Fin n → ℤ),
+  have split_eq : ∀ (a : Fin n → ℤ) (i : Fin n),
       ∏ j : Fin (i.val + 1), a ⟨j.val, by omega⟩ =
       (∏ j : Fin i.val, a ⟨j.val, by omega⟩) * a i := by
-    intro a; rw [Fin.prod_univ_castSucc]; congr 1
-  rw [split_eq c, split_eq d, key i.val (by omega)] at hprod₁
-  exact mul_left_cancel₀
-    (ne_of_gt (Finset.prod_pos fun j _ ↦ hd_pos ⟨j.val, by omega⟩)) hprod₁
+    intro a i; rw [Fin.prod_univ_castSucc]; congr 1
+  -- entries agree below the first zero by cancellation, and a chained sequence vanishes
+  -- from its first zero on; equal partial products force the same vanishing threshold
+  have chain_zero : ∀ {a : Fin n → ℤ}, (∀ ⦃i j : Fin n⦄, i ≤ j → a i ∣ a j) →
+      ∀ {i : Fin n}, (∏ j : Fin i.val, a ⟨j.val, by omega⟩) = 0 → a i = 0 := by
+    intro a ha i hpre
+    obtain ⟨l, -, hl⟩ := Finset.prod_eq_zero_iff.mp hpre
+    have := ha (show (⟨l.val, by omega⟩ : Fin n) ≤ i from by
+      simp [Fin.le_def, l.isLt.le])
+    rw [hl] at this
+    simpa using this
+  funext i
+  have hprod₁ := key (i.val + 1) (by omega)
+  rw [split_eq c i, split_eq d i, key i.val (by omega)] at hprod₁
+  by_cases hpre : (∏ j : Fin i.val, d ⟨j.val, by omega⟩) = 0
+  · rw [chain_zero hd hpre, chain_zero hc (by rw [key i.val (by omega)]; exact hpre)]
+  · exact mul_left_cancel₀ hpre hprod₁
 
 end Matrix
