@@ -133,8 +133,9 @@ theorem hasEntireExtension_qExpansion_coeff (hk : 0 < k) [CuspFormClass F Γ k] 
   refine LSeries.HasEntireExtension.of_extension_of_eq_on_lt_re (c := (k : ℝ) / 2 + 1)
     ?_ ?_ (fun {s} hs ↦ (LSeries_qExpansion_coeff_eq hk f hs).symm)
   · refine (abscissaOfAbsConv_qExpansion_coeff_le f).trans_lt ?_
-    rw [show (((k : ℝ) / 2 : ℝ) : EReal) + 1 = (((k : ℝ) / 2 + 1 : ℝ) : EReal) by
-      rw [EReal.coe_add, EReal.coe_one]]
+    have hcast : (((k : ℝ) / 2 : ℝ) : EReal) + 1 = (((k : ℝ) / 2 + 1 : ℝ) : EReal) := by
+      norm_cast
+    rw [hcast]
     exact EReal.coe_lt_top _
   · exact (Differentiable.const_cpow differentiable_neg
       (Or.inl (Complex.ofReal_ne_zero.mpr Γ.strictWidthInfty_pos.ne'))).mul

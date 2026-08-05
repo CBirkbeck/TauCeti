@@ -81,13 +81,9 @@ theorem of_extension_of_eq_on_lt_re {F : ℂ → ℂ} {c : ℝ} (h_finite : absc
   obtain ⟨σ, hσ_abs, hσ_s⟩ := EReal.exists_between_coe_real hs
   have hσ_s' : (σ : ℝ) < s.re := by exact_mod_cast hσ_s
   set W : Set ℂ := {z : ℂ | (σ : ℝ) < z.re} with hW_def
-  have hW_open : IsOpen W := isOpen_lt continuous_const Complex.continuous_re
   have hW_sub : ∀ z ∈ W, abscissaOfAbsConv a < (z.re : EReal) := fun z hz ↦
     lt_of_lt_of_le hσ_abs (by exact_mod_cast (hz : (σ : ℝ) < z.re).le)
-  have hL : AnalyticOnNhd ℂ (LSeries a) W :=
-    DifferentiableOn.analyticOnNhd
-      (fun z hz ↦ ((LSeries_hasDerivAt (hW_sub z hz)).differentiableAt).differentiableWithinAt)
-      hW_open
+  have hL : AnalyticOnNhd ℂ (LSeries a) W := (LSeries_analyticOnNhd a).mono hW_sub
   have hFW : AnalyticOnNhd ℂ F W :=
     (Complex.analyticOnNhd_univ_iff_differentiable.mpr hF).mono (Set.subset_univ W)
   set z₀ : ℂ := ((max σ c + 1 : ℝ) : ℂ) with hz₀_def
