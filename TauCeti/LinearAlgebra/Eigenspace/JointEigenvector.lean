@@ -340,6 +340,7 @@ private lemma sum_fourierComponent [NeZero (Nat.card G : K)] (v : V) :
 an arbitrary module over a field with enough roots of unity: the classical character
 projectors decompose every vector, with no finite-dimensionality or semisimplicity
 hypotheses. -/
+@[simp]
 theorem iSup_iInf_eigenspace_charHom_eq_top_of_commGroup [NeZero (Nat.card G : K)] :
     (⨆ χ₀ : G →* Kˣ, ⨅ g, (ρ g).eigenspace (χ₀ g)) = ⊤ := by
   refine top_unique fun v _ ↦ ?_
