@@ -107,7 +107,7 @@ private theorem support_enorm_rpow_subset_Ioc (hsupp : Function.support g ⊆ Ic
 
 omit [CompleteSpace F] in
 /-- **The fundamental theorem of calculus, in `∫⁻` form**: a function vanishing at `a` is bounded
-throughout `Set.Icc a b` by the total variation of its derivative over the interval.
+throughout `Set.Icc a b` by its total variation `∫ ‖g'‖` over the interval.
 
 Only `g a = 0` is used, not a support hypothesis, and the conclusion is pointwise in `t`; the
 order `a ≤ b` is not assumed separately, being implied by `t ∈ Set.Icc a b`. Completeness of `F`
