@@ -7,8 +7,8 @@ module
 public import TauCeti.Analysis.Contour.Winding.Number.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 
-import TauCeti.Analysis.Contour.Winding.Integer
 import Mathlib.Analysis.Complex.Convex
+import TauCeti.Analysis.Contour.Winding.Integer
 import TauCeti.Analysis.Contour.Winding.LocallyConstant
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Decomposition
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.PieceLog
@@ -202,8 +202,7 @@ private lemma interior_avoiding_facts (hH : 1 < H) {w : ℂ} (hnorm : 1 < ‖w�
       hz.2.2⟩
 
 /-- **The boundary contour winds `-1` about every point of the open truncated fundamental
-domain**: interior points connect vertically into the strip above the corner row, where
-the value is pinned by `windingNumber_fdBoundary_eq_neg_one_of_one_lt_im`. -/
+domain**: the region `1 < ‖w‖`, `|re w| < 1/2`, `0 < im w < H`. -/
 theorem windingNumber_fdBoundary_eq_neg_one_of_interior (hH : 1 < H) {w : ℂ}
     (hnorm : 1 < ‖w‖) (hre : |w.re| < 1 / 2) (hpos : 0 < w.im) (him : w.im < H) :
     windingNumber (fdBoundary H) 0 5 w = -1 := by
