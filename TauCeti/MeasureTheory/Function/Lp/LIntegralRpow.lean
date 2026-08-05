@@ -22,8 +22,9 @@ covers comparing a function with its derivative.
 
 * `TauCeti.eLpNorm_le_eLpNorm_of_lintegral_rpow_le`: from
   `∫⁻ ‖v‖ₑ ^ p ≤ c ^ p * ∫⁻ ‖w‖ₑ ^ p` conclude `‖v‖_p ≤ c * ‖w‖_p`.
-* `TauCeti.rpow_lintegral_enorm_le_measure_univ_rpow_mul`: the nesting `L^r ⊆ L^1`, in the same
-  `∫⁻` form — `(∫⁻ ‖f‖ₑ) ^ r ≤ μ univ ^ (r - 1) * ∫⁻ ‖f‖ₑ ^ r`.
+* `TauCeti.rpow_lintegral_enorm_le_measure_univ_rpow_mul`: Hölder's extended-valued integral
+  inequality `(∫⁻ ‖f‖ₑ) ^ r ≤ μ univ ^ (r - 1) * ∫⁻ ‖f‖ₑ ^ r`, in the same `∫⁻` form.  On a finite
+  measure space it expresses the nesting `L^r ⊆ L¹`; for a general `μ` it is only the inequality.
 -/
 
 public section

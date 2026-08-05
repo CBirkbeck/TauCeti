@@ -10,7 +10,6 @@ public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 -- proved as a bound between `∫⁻ ‖·‖ₑ ^ p` integrals and converted by
 -- `TauCeti.eLpNorm_le_eLpNorm_of_lintegral_rpow_le`, which a reader of either form will want.
 public import TauCeti.MeasureTheory.Function.Lp.LIntegralRpow
-import Mathlib.Analysis.Calculus.ContDiff.Deriv
 import Mathlib.Analysis.Calculus.Deriv.Mul
 import Mathlib.MeasureTheory.Constructions.Pi
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.ContDiff
