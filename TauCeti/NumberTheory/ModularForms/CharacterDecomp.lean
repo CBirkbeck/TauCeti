@@ -92,6 +92,7 @@ private lemma iInf_eigenspace_eq_modFormCharSpace (χ₀ : (ZMod N)ˣ →* ℂˣ
 /-- **The character subspaces `modFormCharSpace k χ` span the whole space**:
 modular forms for `Γ₁(N)` decompose into the span of nebentypus character
 spaces, one for each character `(ZMod N)ˣ →* ℂˣ`. -/
+@[simp]
 theorem iSup_modFormCharSpace_eq_top (k : ℤ) :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, modFormCharSpace k χ) =
     (⊤ : Submodule ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k)) := by
@@ -137,6 +138,7 @@ theorem iSupIndep_cuspFormCharSpace (k : ℤ) :
   simpa only [iInf_eigenspace_eq_cuspFormCharSpace] using h
 
 /-- **The cusp-form character subspaces span the whole space.** -/
+@[simp]
 theorem iSup_cuspFormCharSpace_eq_top (k : ℤ) :
     (⨆ χ : (ZMod N)ˣ →* ℂˣ, cuspFormCharSpace k χ) =
     (⊤ : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)) := by
