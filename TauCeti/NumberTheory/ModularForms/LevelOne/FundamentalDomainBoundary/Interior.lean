@@ -29,9 +29,7 @@ open strip box, is one preconnected region avoiding the contour, so the value tr
 
 ## Main declarations
 
-* `TauCeti.ModularForm.windingNumber_fdBoundary_eq_neg_one_of_one_lt_im` — the strip value.
-* `TauCeti.ModularForm.windingNumber_fdBoundary_eq_neg_one_of_interior` — every interior
-  point.
+* `TauCeti.ModularForm.windingNumber_fdBoundary_eq_neg_one_of_interior`.
 
 ## References
 
@@ -83,7 +81,7 @@ private lemma arg_div_neg {z₁ z₂ : ℂ} (hz₁ : z₁ ≠ 0)
 
 /-- The winding number of the boundary contour is `-1` on the open strip above the corner
 row: the region `|re w| < 1/2`, `1 < im w < H`. -/
-theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 1 / 2)
+private theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 1 / 2)
     (hy1 : 1 < w.im) (hyH : w.im < H) : windingNumber (fdBoundary H) 0 5 w = -1 := by
   obtain ⟨hx₁, hx₂⟩ := abs_lt.mp hx
   have h32 : Real.sqrt 3 / 2 ≤ 1 := by
