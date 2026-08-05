@@ -25,20 +25,19 @@ Ported from the AINTLIB `LeanModularForms` project
 (`HeckeRIngs/AbstractHeckeRing/Degree.lean` and the compatibility law of
 `HeckeRIngs/AbstractHeckeRing/Associativity.lean`,
 <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), per the
-ModularForms roadmap's dependency policy; the compatibility law is stated as a plain lemma
-(the `Module (𝕋 Δ H R)ᵐᵒᵖ` instance) rather than through AINTLIB's reversed scalar
-action.
+ModularForms roadmap's dependency policy. The compatibility law is proved as a private
+lemma and exposed through the public `Module (𝕋 Δ H R)ᵐᵒᵖ` instance, rather than through
+AINTLIB's reversed scalar action.
 
 ## Main definitions
 
 * `HeckeCoset.degree D`: the number of left cosets in the decomposition of `D`.
-* `LeftCosetModule.deg`: the degree homomorphism `𝕋 Δ H R →+* R`, built on Mathlib's
+* `LeftCosetModule.deg`: the degree homomorphism `𝕋 Δ H R →+* R` over any semiring of
+  coefficients, built on Mathlib's
   coefficient sum `Finsupp.degree` of the left-coset module.
 
 ## Main results
 
-* `HeckeCoset.smulOrbit_rep_card`: the orbit of a left coset under `D` has `D.degree`
-  elements.
 * `LeftCosetModule.card_filter_orbit_eq_multiplicity` (private): Shimura's pair
   count, the combinatorial core.
 * `LeftCosetModule.degree_single_smul_single`, `LeftCosetModule.degree_smul`: the
@@ -79,6 +78,24 @@ lemma degree_eq_relIndex (D : HeckeCoset Δ H H) :
     D.degree = (ConjAct.toConjAct (D.rep : G) • H).relIndex H :=
   (Nat.card_eq_fintype_card).symm
 
+open scoped Pointwise in
+/-- The degree at an explicit representative: `deg(HgH) = [H : H ∩ gHg⁻¹]` computed from
+any `g`, not only from the chosen `rep`. This is the form concrete coset calculations use,
+since they present a double coset as `mk H H g`. -/
+lemma degree_mk (g : Δ) :
+    (HeckeCoset.mk H H g).degree = (ConjAct.toConjAct (g : G) • H).relIndex H := by
+  obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ :=
+    DoubleCoset.mem_doubleCoset.mp (toSet_mk g ▸ rep_mem (HeckeCoset.mk H H g))
+  have hfix₂ : ConjAct.toConjAct h₂ • H = H :=
+    Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hh₂)
+  have hfix₁ : ConjAct.toConjAct h₁ • H = H :=
+    Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hh₁)
+  have htransport := Subgroup.relIndex_pointwise_smul
+    (ConjAct.toConjAct h₁) (ConjAct.toConjAct (g : G) • H) H
+  rw [hfix₁] at htransport
+  rw [degree_eq_relIndex, heq, map_mul, map_mul, ← smul_smul, ← smul_smul, hfix₂,
+    htransport]
+
 /-- The identity double coset has degree one. -/
 @[simp] lemma degree_one : (1 : HeckeCoset Δ H H).degree = 1 := by
   have hsub : Subsingleton (DecompQuotient H H ((1 : HeckeCoset Δ H H).rep : G)) :=
@@ -91,11 +108,6 @@ end HeckeCoset
 namespace HeckeCoset
 
 variable [IsHeckeTriple Δ H H]
-
-/-- The orbit of a left coset under the representative of `D` has `D.degree` elements. -/
-lemma smulOrbit_rep_card (D : HeckeCoset Δ H H) (β : Δ) :
-    (smulOrbit H D.rep β).card = D.degree :=
-  smulOrbit_card D.rep β
 
 end HeckeCoset
 
@@ -114,7 +126,7 @@ lemma degree_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H
       Finsupp.single q b) = (D.degree : ℕ) • (b * a) := by
   classical
   rw [single_smul_single, map_sum]
-  simp [smulOrbit_rep_card]
+  simp [HeckeCoset.degree_def, smulOrbit_card]
 
 end LeftCosetModule
 
@@ -148,7 +160,7 @@ private lemma op_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H 
 noncomputable instance instIsScalarTowerOp :
     IsScalarTower R (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R) where
   smul_assoc r t m := by
-    conv_lhs => rw [show (r • t : (𝕋 Δ H R)ᵐᵒᵖ) = MulOpposite.op (r • t.unop) from rfl]
+    conv_lhs => rw [← MulOpposite.op_unop t, ← MulOpposite.op_smul]
     rw [op_smul_assoc, MulOpposite.op_unop]
 
 end LeftCosetModule
@@ -499,28 +511,28 @@ open HeckeCoset
 
 open scoped HeckeCosetModule Pointwise
 
--- the degree homomorphism is `R`-valued and multiplicative, so its construction needs the
--- coefficients to commute — unlike the module structure above
-variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
+variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
 
 /-- The coefficient sum is multiplicative against the action: the orbit-sum coefficient is
 independent of the acted-on coset, so the action factors through the degree. -/
 lemma degree_smul (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
     Finsupp.degree (MulOpposite.op t • m) =
-      Finsupp.degree (MulOpposite.op t • (Finsupp.single 1 1 : LeftCosetModule Δ H R)) *
-        Finsupp.degree m := by
+      Finsupp.degree m *
+        Finsupp.degree (MulOpposite.op t • (Finsupp.single 1 1 : LeftCosetModule Δ H R)) := by
   induction t using HeckeCosetModule.induction_linear with
   | h0 => simp
   | hadd t₁ t₂ h₁ h₂ =>
-    rw [MulOpposite.op_add, add_smul, add_smul, map_add, map_add, h₁, h₂, add_mul]
+    rw [MulOpposite.op_add, add_smul, add_smul, map_add, map_add, h₁, h₂, mul_add]
   | hsingle D a =>
     induction m using Finsupp.induction_linear with
-    | zero => rw [smul_zero, map_zero, mul_zero]
-    | add m₁ m₂ h₁ h₂ => rw [smul_add, map_add, map_add, h₁, h₂, mul_add]
+    | zero => rw [smul_zero, map_zero, zero_mul]
+    | add m₁ m₂ h₁ h₂ => rw [smul_add, map_add, map_add, h₁, h₂, add_mul]
     | single q c =>
       rw [degree_single_smul_single, degree_single_smul_single, Finsupp.degree_single,
         nsmul_eq_mul, nsmul_eq_mul]
-      ring
+      -- only the degree, a natural-number cast, has to move past the coefficient
+      simp only [one_mul, ← mul_assoc]
+      rw [(Nat.cast_commute _ c).eq]
 
 variable (Δ H R) in
 /-- **The degree homomorphism** (Shimura, Proposition 3.3): the coefficient sum of the
@@ -534,7 +546,7 @@ noncomputable def deg : 𝕋 Δ H R →+* R where
     rw [HeckeCosetModule.one_def, degree_single_smul_single, HeckeCoset.degree_one]
     simp
   map_mul' f g := by
-    rw [mul_smul', degree_smul, mul_comm]
+    rw [mul_smul', degree_smul]
   map_zero' := by
     rw [MulOpposite.op_zero, zero_smul, map_zero]
   map_add' f g := by rw [MulOpposite.op_add, add_smul, map_add]
