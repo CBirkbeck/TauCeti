@@ -203,7 +203,10 @@ lemma adRepresentation_apply (g : WithConv (A →ₐ[R] Bialgebra.CounitAlgebra 
 
 section LieAdjoint
 
-variable {R A B : Type*} [CommRing R] [CommRing A] [HopfAlgebra R A]
+-- Only the coefficient algebra `B` need be a ring: the bracket is a commutator, so the
+-- convolution algebra `A →ₗ[R] CounitAlgebra R A B` must admit subtraction, and it inherits that
+-- from `B` alone. The base `R` and the Hopf algebra `A` are used only multiplicatively.
+variable {R A B : Type*} [CommSemiring R] [CommSemiring A] [HopfAlgebra R A]
   [CommRing B] [Algebra R B]
 
 variable (B) in
