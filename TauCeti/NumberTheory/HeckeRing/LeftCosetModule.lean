@@ -302,12 +302,12 @@ lemma single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b 
     HeckeCosetModule.sum_single_index R (by rw [Finsupp.sum_single_index (by simp)]; simp),
     Finsupp.sum_single_index (by simp)]
 
-/-- The action is additive in the Hecke-ring argument. -/
+/-- The action is additive in the (opposite) Hecke-ring argument. -/
 @[simp]
-lemma add_smul (t₁ t₂ : 𝕋 Δ H R) (m : HeckeCoset Δ ⊥ H →₀ R) :
-    MulOpposite.op (t₁ + t₂) • m = MulOpposite.op t₁ • m + MulOpposite.op t₂ • m := by
+lemma add_smul (t₁ t₂ : (𝕋 Δ H R)ᵐᵒᵖ) (m : HeckeCoset Δ ⊥ H →₀ R) :
+    (t₁ + t₂) • m = t₁ • m + t₂ • m := by
   classical
-  simp only [smul_eq_sum]
+  simp only [smul_def, MulOpposite.unop_add]
   refine Finsupp.sum_add_index' (fun D ↦ ?_) fun D b₁ b₂ ↦ ?_
   · refine (Finsupp.sum_congr (g2 := fun _ _ ↦ 0) fun q _ ↦ ?_).trans
       (Finsupp.sum_fun_zero m)
