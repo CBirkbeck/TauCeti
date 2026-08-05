@@ -155,17 +155,37 @@ private lemma col0_reduce {m : ℕ} (σ : SpecialLinearGroup (Fin (m + 1)) ℤ) 
       rw [List.map_append, List.prod_append]
       simpa [mul_assoc] using hT⟩
 
+/-- The equivalence `Fin m ⊕ Unit ≃ Fin (m + 1)` sending `inl i` to `i.succ` and `inr` to
+`0`, along which transvection data extends to the larger index type. -/
+private def finSuccSum (m : ℕ) : Fin m ⊕ Unit ≃ Fin (m + 1) :=
+  ((finSuccEquiv m).trans (Equiv.optionEquivSumPUnit (Fin m))).symm
+
+private lemma finSuccSum_inl {m : ℕ} (i : Fin m) : finSuccSum m (Sum.inl i) = i.succ := by
+  simp [finSuccSum]
+
+/-- Transvection data extended from `Fin m` to `Fin (m + 1)`, acting on the successor
+indices: Mathlib's `sumInl` into `Fin m ⊕ Unit`, reindexed along `finSuccSum`. -/
+private def blockLiftT {m : ℕ} (t : TransvectionStruct (Fin m) ℤ) :
+    TransvectionStruct (Fin (m + 1)) ℤ :=
+  (t.sumInl (p := Unit)).reindexEquiv (finSuccSum m)
+
+private lemma succ_ne_succ {m : ℕ} {i j : Fin m} (hij : i ≠ j) : i.succ ≠ j.succ :=
+  fun h ↦ hij (Fin.succ_injective m h)
+
+/-- The special-linear image of the lifted transvection data is the transvection at the
+successor indices. -/
+private lemma blockLiftT_toSpecialLinearGroup {m : ℕ} (t : TransvectionStruct (Fin m) ℤ) :
+    (blockLiftT t).toSpecialLinearGroup = transvection (succ_ne_succ t.hij) t.c := by
+  apply Subtype.ext
+  obtain ⟨i, j, hij, c⟩ := t
+  -- definitional: both values are `Matrix.transvection` at the images of `i` and `j`
+  change _root_.Matrix.transvection (finSuccSum m (Sum.inl i)) (finSuccSum m (Sum.inl j)) c =
+    _root_.Matrix.transvection i.succ j.succ c
+  rw [finSuccSum_inl, finSuccSum_inl]
+
 private def blockLift {m : ℕ} (i j : Fin m) (hij : i ≠ j) (c : ℤ) :
     SpecialLinearGroup (Fin (m + 1)) ℤ :=
-  transvection (show i.succ ≠ j.succ from fun h ↦ hij (Fin.succ_injective m h)) c
-
-/-- `blockLift` as transvection data on the extended index type. -/
-private def blockLiftT {m : ℕ} (t : TransvectionStruct (Fin m) ℤ) :
-    TransvectionStruct (Fin (m + 1)) ℤ where
-  i := t.i.succ
-  j := t.j.succ
-  hij := fun h ↦ t.hij (Fin.succ_injective m h)
-  c := t.c
+  transvection (succ_ne_succ hij) c
 
 private lemma blockLift_entry {m : ℕ} (i j : Fin m) (hij : i ≠ j) (c : ℤ)
     (τ : SpecialLinearGroup (Fin (m + 1)) ℤ) (a b : Fin (m + 1)) :
@@ -375,8 +395,7 @@ private lemma block_form_transvec_lift {m : ℕ} (M : SpecialLinearGroup (Fin (m
     obtain ⟨T'', hT''_eq⟩ := ihT (blockLift i j hij (-c) * M) H00' H0j' Hi0' hext'
     refine ⟨blockLiftT ⟨i, j, hij, c⟩ :: T'', ?_⟩
     simp only [List.map_cons, List.prod_cons]
-    rw [show (blockLiftT ⟨i, j, hij, c⟩).toSpecialLinearGroup = blockLift i j hij c from rfl,
-      ← hT''_eq, ← mul_assoc]
+    rw [blockLiftT_toSpecialLinearGroup, ← hT''_eq, ← mul_assoc]
     unfold blockLift
     rw [← transvection_add, add_neg_cancel, transvection_coeff_zero, one_mul]
 
@@ -480,8 +499,7 @@ private lemma to_block_form {m : ℕ} (τ : SpecialLinearGroup (Fin (m + 1)) ℤ
     · exact column_pivot_of_neg_one_at_zero τ h_neg1 h_others
   · exact column_pivot_of_unit_off_diagonal τ i₀ hi₀_zero h_others h_unit
 
-/-- Every element of `SL_n(ℤ)` is a product of elementary transvections. -/
-theorem exists_list_transvec_prod (m : ℕ) (σ : SpecialLinearGroup (Fin m) ℤ) :
+private lemma exists_list_transvec_prod_fin (m : ℕ) (σ : SpecialLinearGroup (Fin m) ℤ) :
     ∃ T : List (TransvectionStruct (Fin m) ℤ),
       σ = (T.map TransvectionStruct.toSpecialLinearGroup).prod := by
   induction m with
@@ -507,13 +525,44 @@ theorem exists_list_transvec_prod (m : ℕ) (σ : SpecialLinearGroup (Fin m) ℤ
       ← hT_block_eq, hσ_eq]
     group
 
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
+
+private lemma coe_list_prod {κ : Type*} [Fintype κ] [DecidableEq κ]
+    (T : List (TransvectionStruct κ ℤ)) :
+    ((T.map TransvectionStruct.toSpecialLinearGroup).prod : Matrix κ κ ℤ) =
+    (T.map TransvectionStruct.toMatrix).prod := by
+  induction T with
+  | nil => simp
+  | cons t T ih => simp [ih]
+
+/-- Every element of `SL_n(ℤ)` is a product of elementary transvections. -/
+theorem exists_list_transvec_prod (σ : SpecialLinearGroup ι ℤ) :
+    ∃ T : List (TransvectionStruct ι ℤ),
+      σ = (T.map TransvectionStruct.toSpecialLinearGroup).prod := by
+  set e := Fintype.equivFin ι
+  set σ' : SpecialLinearGroup (Fin (Fintype.card ι)) ℤ :=
+    ⟨σ.1.submatrix e.symm e.symm, by rw [Matrix.det_submatrix_equiv_self]; exact σ.2⟩
+    with hσ'_def
+  obtain ⟨T', hT'⟩ := exists_list_transvec_prod_fin (Fintype.card ι) σ'
+  refine ⟨T'.map (TransvectionStruct.reindexEquiv e.symm), Subtype.ext ?_⟩
+  have hprod : (T'.map TransvectionStruct.toMatrix).prod = σ'.1 := by
+    rw [← coe_list_prod, ← hT']
+  calc (σ : Matrix ι ι ℤ)
+      = (Matrix.reindexAlgEquiv ℤ ℤ e.symm) σ'.1 := by
+        simp [hσ'_def, Matrix.submatrix_submatrix]
+    _ = ((T'.map (TransvectionStruct.toMatrix ∘ TransvectionStruct.reindexEquiv e.symm))).prod
+        := by rw [TransvectionStruct.toMatrix_reindexEquiv_prod, hprod]
+    _ = (((T'.map (TransvectionStruct.reindexEquiv e.symm)).map
+          TransvectionStruct.toSpecialLinearGroup).prod : Matrix ι ι ℤ) := by
+        rw [coe_list_prod, List.map_map]
+
 /-- `SL_n(ℤ)` is generated by its transvections. -/
-theorem closure_range_toSpecialLinearGroup_eq_top (m : ℕ) :
+theorem closure_range_toSpecialLinearGroup_eq_top :
     Subgroup.closure (Set.range (TransvectionStruct.toSpecialLinearGroup :
-      TransvectionStruct (Fin m) ℤ → SpecialLinearGroup (Fin m) ℤ)) = ⊤ := by
+      TransvectionStruct ι ℤ → SpecialLinearGroup ι ℤ)) = ⊤ := by
   rw [eq_top_iff]
   intro σ _
-  obtain ⟨T, rfl⟩ := exists_list_transvec_prod m σ
+  obtain ⟨T, rfl⟩ := exists_list_transvec_prod σ
   exact list_prod_mem fun E hE ↦ by
     obtain ⟨t, -, rfl⟩ := List.mem_map.mp hE
     exact Subgroup.subset_closure (Set.mem_range_self t)
