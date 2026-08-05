@@ -288,6 +288,7 @@ lemma smul_eq_sum (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
 
 /-- A basis element of the Hecke ring scales a basis element of the module into its
 orbit sum. -/
+@[simp]
 lemma single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b : R) :
     MulOpposite.op (HeckeCosetModule.single R D a) •
         Finsupp.single q b =

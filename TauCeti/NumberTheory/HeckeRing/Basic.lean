@@ -184,6 +184,7 @@ lemma sum_single_index {N : Type*} [AddCommMonoid N] {D : HeckeCoset Δ H₁ H�
     {F : HeckeCoset Δ H₁ H₂ → R → N} (h : F D 0 = 0) : (single R D b).sum F = F D b :=
   Finsupp.sum_single_index h
 
+/-- Evaluating a basis element: `single R D b` is `b` at `D` and `0` elsewhere. -/
 @[simp, grind =]
 lemma single_apply {D A : HeckeCoset Δ H₁ H₂} {b : R} [Decidable (D = A)] :
     single R D b A = if D = A then b else 0 :=
@@ -199,6 +200,7 @@ variable (R : Type*) [AddCommMonoid R]
 @[simp] lemma single_zero (D : HeckeCoset Δ H₁ H₂) : single R D (0 : R) = 0 :=
   Finsupp.single_zero D
 
+/-- Every element is the sum of its basis components. -/
 @[simp]
 lemma sum_single (f : HeckeCosetModule Δ H₁ H₂ R) : f.sum (single R) = f :=
   Finsupp.sum_single f
@@ -230,6 +232,7 @@ module structure to the wrapper type. -/
 noncomputable instance instModule : Module R (HeckeCosetModule Δ H₁ H₂ R) :=
   inferInstanceAs (Module R (HeckeCoset Δ H₁ H₂ →₀ R))
 
+/-- Scaling the unit basis element produces the basis element of the scalar. -/
 @[simp]
 lemma smul_single_one (D : HeckeCoset Δ H₁ H₂) (b : R) : b • single R D 1 = single R D b :=
   Finsupp.smul_single_one D b
