@@ -155,11 +155,6 @@ private lemma cuspFunction_pow {f : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunct
       cuspFunction_mul (by rw [cuspFunction_pow hf n]; exact (hf.continuousAt.pow n))
         hf.continuousAt]
 
-private lemma qExpansion_one (h : ℝ) : qExpansion h (1 : ℍ → ℂ) = 1 := by
-  ext m
-  rw [qExpansion_coeff, cuspFunction_one]
-  rcases m with _ | m <;> simp [PowerSeries.coeff_one, Pi.one_def, iteratedDeriv_const]
-
 private lemma qExpansion_pow {f : ℍ → ℂ} (hf : AnalyticAt ℂ (cuspFunction h f) 0) :
     ∀ n : ℕ, qExpansion h (f ^ n) = qExpansion h f ^ n
   | 0 => by rw [pow_zero, pow_zero, qExpansion_one]
