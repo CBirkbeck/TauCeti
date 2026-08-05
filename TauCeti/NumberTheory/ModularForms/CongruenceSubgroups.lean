@@ -184,13 +184,10 @@ private lemma TjS_inv_11 (j : ℤ) : ((T ^ j * S)⁻¹).1 1 1 = j := by
   rw [inv_apply_one_one, TjS_00]
 
 
-private lemma mul_apply_one_zero (M g : SL(2, ℤ)) :
-    (M * g) 1 0 = M 1 0 * g 0 0 + M 1 1 * g 1 0 := by
-  simp [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two]
-
 private lemma TjS_inv_mul_10 (j : ℤ) (σ : SL(2, ℤ)) :
     ((T ^ j * S)⁻¹ * σ).1 1 0 = j * σ.1 1 0 - σ.1 0 0 := by
-  rw [mul_apply_one_zero, TjS_inv_10, TjS_inv_11]
+  simp only [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two]
+  rw [TjS_inv_10, TjS_inv_11]
   ring
 
 private lemma rep_diff_10 (i j : ℤ) :
@@ -264,13 +261,15 @@ private lemma lowerTriRep_mem_Gamma0 (k : ℕ) (c : Fin p) :
 private lemma lowerTriRep_diff_entry (k : ℕ) (c₁ c₂ : Fin p) :
     ((lowerTriRep p k c₁)⁻¹ * lowerTriRep p k c₂).1 1 0 =
     ((c₂ : ℤ) - (c₁ : ℤ)) * (p : ℤ) ^ k := by
-  rw [mul_apply_one_zero, inv_apply_one_zero, inv_apply_one_one]
+  simp only [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two]
+  rw [inv_apply_one_zero, inv_apply_one_one]
   simp [lowerTriRep]
   ring
 
 private lemma lowerTriRep_inv_mul_10 (k : ℕ) (c : Fin p) (σ : SL(2, ℤ)) :
     ((lowerTriRep p k c)⁻¹ * σ).1 1 0 = σ.1 1 0 - (c : ℤ) * (p : ℤ) ^ k * σ.1 0 0 := by
-  rw [mul_apply_one_zero, inv_apply_one_zero, inv_apply_one_one]
+  simp only [Matrix.SpecialLinearGroup.coe_mul, Matrix.mul_apply, Fin.sum_univ_two]
+  rw [inv_apply_one_zero, inv_apply_one_one]
   simp [lowerTriRep]
   ring
 
