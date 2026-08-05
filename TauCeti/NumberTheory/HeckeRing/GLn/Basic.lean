@@ -135,11 +135,6 @@ lemma SLnZ_le_posDetInt : (SLnZ n).toSubmonoid ≤ posDetInt n := by
   refine ⟨⟨A.val, by simp [mapGL_coe_matrix, algebraMap_int_eq]⟩, ?_⟩
   simp
 
-/-- `mapGL ℚ` is injective on `SL_n(ℤ)`. -/
-private lemma mapGL_injective : Function.Injective
-    (mapGL ℚ : SpecialLinearGroup (Fin n) ℤ →* GL (Fin n) ℚ) :=
-  SpecialLinearGroup.mapGL_injective
-
 /-- Kernel element of `SL_n(ℤ) → SL_n(ℤ/dℤ)` has entries congruent to identity mod d. -/
 private lemma ker_entry_dvd (d : ℕ) [NeZero d] (γ : SpecialLinearGroup (Fin n) ℤ)
     (hγ : γ ∈ (SpecialLinearGroup.map (Int.castRingHom (ZMod d))).ker) (i j : Fin n) :
@@ -385,7 +380,7 @@ private lemma congruence_ker_image_relIndex_ne_zero (d : ℕ) [NeZero d] :
   have h_map : SLnZ n =
       Subgroup.map (mapGL ℚ : SpecialLinearGroup (Fin n) ℤ →* GL (Fin n) ℚ) ⊤ := by
     simp [SLnZ, MonoidHom.range_eq_map]
-  rw [h_map, Subgroup.relIndex_map_map_of_injective _ _ (mapGL_injective n),
+  rw [h_map, Subgroup.relIndex_map_map_of_injective _ _ SpecialLinearGroup.mapGL_injective,
     Subgroup.relIndex_top_right]
   exact (Subgroup.finiteIndex_ker phi).index_ne_zero
 
