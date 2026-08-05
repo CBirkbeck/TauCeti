@@ -88,6 +88,97 @@ lemma sqrt_three_div_two_le_im_fdBoundary (hH : 1 ≤ H) (ht : t ∈ Icc (0 : �
         rw [him, smul_eq_mul, mul_zero]
         nlinarith [hH, h32]
 
+
+/-- The contour's real part stays within the fundamental strip. -/
+lemma abs_re_fdBoundary_le_half (ht : t ∈ Icc (0 : ℝ) 5) :
+    |(fdBoundary H t).re| ≤ 1 / 2 := by
+  obtain ⟨ht0, ht5⟩ := ht
+  rw [abs_le]
+  rcases le_or_gt t 1 with h1 | h1
+  · rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
+    have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).re = 0 := by
+      simp [ρ]
+      norm_num
+    rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero]
+    have : (1 / 2 + H * Complex.I : ℂ).re = 1 / 2 := by simp
+    rw [this]
+    norm_num
+  · rcases le_or_gt t 3 with h3 | h3
+    · rw [eqOn_fdBoundary_arc H ⟨h1.le, h3⟩, circleMap_zero_re, one_mul]
+      have harc : Real.pi / 3 ≤ (t + 1) * (Real.pi / 6) ∧
+          (t + 1) * (Real.pi / 6) ≤ 2 * Real.pi / 3 := by
+        constructor <;> nlinarith [Real.pi_pos]
+      constructor
+      · calc (-(1 / 2) : ℝ) = Real.cos (2 * Real.pi / 3) := by
+              rw [show (2 * Real.pi / 3 : ℝ) = Real.pi - Real.pi / 3 by ring,
+                Real.cos_pi_sub, Real.cos_pi_div_three]
+          _ ≤ Real.cos ((t + 1) * (Real.pi / 6)) :=
+              Real.cos_le_cos_of_nonneg_of_le_pi (by positivity)
+                (by linarith [Real.pi_pos]) harc.2
+      · calc Real.cos ((t + 1) * (Real.pi / 6)) ≤ Real.cos (Real.pi / 3) :=
+              Real.cos_le_cos_of_nonneg_of_le_pi (by positivity)
+                (by linarith [Real.pi_pos]) harc.1
+          _ = 1 / 2 := Real.cos_pi_div_three
+    · rcases le_or_gt t 4 with h4 | h4
+      · rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply,
+          AffineMap.lineMap_apply_module']
+        have hchord : ((-1 / 2 + H * Complex.I : ℂ) - (ρ : ℂ)).re = 0 := by
+          simp [ρ]
+        rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero]
+        have : (ρ : ℂ).re = -(1 / 2) := by
+          simp [ρ]
+          norm_num
+        rw [this]
+        norm_num
+      · rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply,
+          AffineMap.lineMap_apply_module']
+        have hchord : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).re = 1 := by
+          simp
+          norm_num
+        rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_one]
+        have : (-1 / 2 + H * Complex.I : ℂ).re = -(1 / 2) := by
+          simp
+          norm_num
+        rw [this]
+        constructor <;> nlinarith
+
+/-- The contour stays at or below its height parameter. -/
+lemma im_fdBoundary_le (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
+    (fdBoundary H t).im ≤ H := by
+  obtain ⟨ht0, ht5⟩ := ht
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
+    rw [div_le_one (by norm_num)]
+    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+  rcases le_or_gt t 1 with h1 | h1
+  · rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
+    have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).im = Real.sqrt 3 / 2 - H := by
+      simp [ρ]
+    rw [Complex.add_im, Complex.smul_im, hchord, smul_eq_mul]
+    have : (1 / 2 + H * Complex.I : ℂ).im = H := by simp
+    rw [this]
+    nlinarith [mul_nonneg ht0 (by linarith : (0 : ℝ) ≤ H - Real.sqrt 3 / 2)]
+  · rcases le_or_gt t 3 with h3 | h3
+    · rw [eqOn_fdBoundary_arc H ⟨h1.le, h3⟩, circleMap_zero_im, one_mul]
+      exact (Real.sin_le_one _).trans hH
+    · rcases le_or_gt t 4 with h4 | h4
+      · rw [fdBoundary_of_le_four h3 h4, fdBoundary_segment4_apply,
+          AffineMap.lineMap_apply_module']
+        have hchord : ((-1 / 2 + H * Complex.I : ℂ) - (ρ : ℂ)).im = H - Real.sqrt 3 / 2 := by
+          simp [ρ]
+        rw [Complex.add_im, Complex.smul_im, hchord, smul_eq_mul]
+        have : (ρ : ℂ).im = Real.sqrt 3 / 2 := by simp [ρ]
+        rw [this]
+        nlinarith [mul_nonneg (by linarith : (0 : ℝ) ≤ t - 3)
+          (by linarith : (0 : ℝ) ≤ H - Real.sqrt 3 / 2),
+          mul_nonneg (by linarith : (0 : ℝ) ≤ 4 - t)
+          (by linarith : (0 : ℝ) ≤ H - Real.sqrt 3 / 2)]
+      · rw [fdBoundary_of_gt_four h4, fdBoundary_segment5_apply,
+          AffineMap.lineMap_apply_module']
+        have h5 : ((1 / 2 + H * Complex.I : ℂ) - (-1 / 2 + H * Complex.I)).im = 0 := by
+          simp
+        rw [Complex.add_im, Complex.smul_im, h5, smul_eq_mul, mul_zero]
+        simp
+
 /-- Winding transport through an unbounded convex region avoiding the contour: the
 region lies in one connected component of the complement, which reaches points far away
 where the winding number vanishes. -/
@@ -133,6 +224,57 @@ theorem windingNumber_fdBoundary_eq_zero_of_im_lt (hH : 1 ≤ H) {w : ℂ}
         Complex.norm_real, Real.norm_of_nonneg (by positivity)]
     rw [hnorm]
     linarith [le_max_left R 0]
+
+/-- Every point strictly right of the fundamental strip winds zero. -/
+theorem windingNumber_fdBoundary_eq_zero_of_half_lt_re {w : ℂ}
+    (hw : 1 / 2 < w.re) : windingNumber (fdBoundary H) 0 5 w = 0 := by
+  refine windingNumber_fdBoundary_eq_zero_of_mem_convex (convex_halfSpace_re_gt _)
+    ?_ (fun R ↦ ⟨((max R 0 + 1 : ℝ) : ℂ), ?_, ?_⟩) hw
+  · rintro z hz ⟨t, ht, rfl⟩
+    rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
+    have := (abs_le.mp (abs_re_fdBoundary_le_half (H := H) ht)).2
+    rw [Set.mem_ofPred_eq] at hz
+    linarith
+  · rw [Set.mem_ofPred_eq, Complex.ofReal_re]
+    nlinarith [le_max_right R 0]
+  · rw [Complex.norm_real, Real.norm_of_nonneg (by positivity)]
+    linarith [le_max_left R 0]
+
+/-- Every point strictly left of the fundamental strip winds zero. -/
+theorem windingNumber_fdBoundary_eq_zero_of_re_lt_neg_half {w : ℂ}
+    (hw : w.re < -(1 / 2)) : windingNumber (fdBoundary H) 0 5 w = 0 := by
+  refine windingNumber_fdBoundary_eq_zero_of_mem_convex (convex_halfSpace_re_lt _)
+    ?_ (fun R ↦ ⟨(-(max R 0 + 1 : ℝ) : ℂ), ?_, ?_⟩) hw
+  · rintro z hz ⟨t, ht, rfl⟩
+    rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
+    have := (abs_le.mp (abs_re_fdBoundary_le_half (H := H) ht)).1
+    rw [Set.mem_ofPred_eq] at hz
+    linarith
+  · rw [Set.mem_ofPred_eq]
+    have : ((-(max R 0 + 1 : ℝ) : ℝ) : ℂ).re = -(max R 0 + 1) := Complex.ofReal_re _
+    rw [show (-(max R 0 + 1 : ℝ) : ℂ) = ((-(max R 0 + 1) : ℝ) : ℂ) by push_cast; ring, this]
+    nlinarith [le_max_right R 0]
+  · rw [show (-(max R 0 + 1 : ℝ) : ℂ) = ((-(max R 0 + 1) : ℝ) : ℂ) by push_cast; ring,
+      Complex.norm_real, Real.norm_of_nonpos (by nlinarith [le_max_right R 0])]
+    nlinarith [le_max_left R 0]
+
+/-- Every point strictly above the contour's height winds zero. -/
+theorem windingNumber_fdBoundary_eq_zero_of_lt_im (hH : 1 ≤ H) {w : ℂ}
+    (hw : H < w.im) : windingNumber (fdBoundary H) 0 5 w = 0 := by
+  refine windingNumber_fdBoundary_eq_zero_of_mem_convex (convex_halfSpace_im_gt _)
+    ?_ (fun R ↦ ⟨((H + max R 0 + 1 : ℝ) : ℂ) * Complex.I, ?_, ?_⟩) hw
+  · rintro z hz ⟨t, ht, rfl⟩
+    rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht
+    have := im_fdBoundary_le hH ht
+    rw [Set.mem_ofPred_eq] at hz
+    linarith
+  · rw [Set.mem_ofPred_eq]
+    have : (((H + max R 0 + 1 : ℝ) : ℂ) * Complex.I).im = H + max R 0 + 1 := by simp
+    rw [this]
+    nlinarith [le_max_right R 0]
+  · rw [norm_mul, Complex.norm_I, mul_one, Complex.norm_real,
+      Real.norm_of_nonneg (by nlinarith [le_max_right R 0])]
+    nlinarith [le_max_left R 0]
 
 end ModularForm
 
