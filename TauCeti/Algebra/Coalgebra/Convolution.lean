@@ -224,8 +224,9 @@ the multiplicativity of the point, in convolution form. -/
 lemma toConv_toLinearMap_comp_mul' (g : A →ₐ[R] S) :
     toConv (g.toLinearMap ∘ₗ LinearMap.mul' R A) =
       mulTensor (toConv g.toLinearMap) (toConv g.toLinearMap) := by
-  refine ofConv_injective (TensorProduct.ext' fun x y => ?_)
-  simp [map_mul]
+  -- Not a re-derivation: this is Mathlib's `AlgHom.comp_mul'` transported into the file's
+  -- own `mulTensor` vocabulary, which is what consumers rewrite with.
+  exact congrArg toConv (AlgHom.comp_mul' g)
 
 end AlgHom
 
