@@ -80,14 +80,8 @@ theorem isPwC1ImmersionOn_fdBoundary (hH : H ≠ Real.sqrt 3 / 2) :
         (hasDerivAt_fdBoundary_segment1 H t).hasDerivWithinAt.derivWithin h_uniq]
       exact segment1_chord_ne_zero hH
     · rw [derivWithin_congr (fun s hs ↦ eqOn_fdBoundary_arc H (h hs))
-        (eqOn_fdBoundary_arc H (h ht))]
-      have h_arc : HasDerivAt (fun s : ℝ ↦ circleMap 0 1 ((s + 1) * (Real.pi / 6)))
-          ((Real.pi / 6) • (circleMap 0 1 ((t + 1) * (Real.pi / 6)) * Complex.I)) t := by
-        have hθ : HasDerivAt (fun s : ℝ ↦ (s + 1) * (Real.pi / 6)) (Real.pi / 6) t := by
-          simpa using ((hasDerivAt_id t).add_const 1).mul_const (Real.pi / 6)
-        exact HasDerivAt.scomp_of_eq (x := t)
-          (hg := hasDerivAt_circleMap 0 1 ((t + 1) * (Real.pi / 6))) (hh := hθ) (hy := rfl)
-      rw [h_arc.hasDerivWithinAt.derivWithin h_uniq]
+        (eqOn_fdBoundary_arc H (h ht)),
+        (hasDerivAt_fdBoundary_arcMap t).hasDerivWithinAt.derivWithin h_uniq]
       exact arc_deriv_ne_zero t
     · rw [derivWithin_congr (fun s hs ↦ eqOn_fdBoundary_segment4 H (h hs))
         (eqOn_fdBoundary_segment4 H (h ht)),
