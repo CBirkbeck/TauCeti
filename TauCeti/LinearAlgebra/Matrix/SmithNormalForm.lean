@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
 
 import Mathlib.Algebra.EuclideanDomain.Int
@@ -27,7 +28,7 @@ operations of determinant one:
   `0 < A.det` there are `L R : SpecialLinearGroup (Fin n) ℤ` and a positive `d : Fin n → ℤ`,
   monotone under divisibility, with `L * A * R = diagonal d`.
 * `Matrix.smith_normal_form_unique`: two positive chained diagonals in the same
-  `SL_n(ℤ)`-equivalence class are equal, so the invariant factors of `A` are well defined.
+  `GL_n(ℤ)`-equivalence class are equal, so the invariant factors of `A` are well defined.
 
 Mathlib's `Submodule.smithNormalForm` provides basis-level diagonalization over a PID; this
 file supplies the matrix-level statement over `ℤ`, refined in three ways that the basis-level
@@ -648,7 +649,7 @@ theorem exists_smith_normal_form_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hA
 /-! ## Uniqueness of the invariant factors
 
 The partial products `d 0 * ⋯ * d (k-1)` of a chained diagonal are determined by the
-`SL_n(ℤ)`-equivalence class, by a Cauchy–Binet expansion of the leading `k × k` minor. -/
+`GL_n(ℤ)`-equivalence class, by a Cauchy–Binet expansion of the leading `k × k` minor. -/
 
 /-- Along a divisibility chain, the product of the first `k` entries divides the product of
 the entries at any `k` distinct positions. -/
@@ -706,31 +707,27 @@ private lemma prod_take_dvd_of_mul_diagonal_mul_eq {c d : Fin n → ℤ}
     simp [this]
 
 /-- **Uniqueness of the Smith normal form**: two positive diagonals with divisibility chains
-in the same `SL_n(ℤ)`-equivalence class are equal.  Together with
+in the same `GL_n(ℤ)`-equivalence class are equal.  Together with
 `Matrix.exists_smith_normal_form_of_det_pos` this makes the invariant factors of a
 positive-determinant integer matrix well defined. -/
 theorem smith_normal_form_unique {c d : Fin n → ℤ} (hc_pos : ∀ i, 0 < c i)
     (hd_pos : ∀ i, 0 < d i) (hc : ∀ ⦃i j : Fin n⦄, i ≤ j → c i ∣ c j)
-    (hd : ∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j) (L R : SpecialLinearGroup (Fin n) ℤ)
+    (hd : ∀ ⦃i j : Fin n⦄, i ≤ j → d i ∣ d j) (L R : GeneralLinearGroup (Fin n) ℤ)
     (h : (L : Matrix (Fin n) (Fin n) ℤ) * Matrix.diagonal c *
       (R : Matrix (Fin n) (Fin n) ℤ) = Matrix.diagonal d) : c = d := by
-  have hL : (L⁻¹ : SpecialLinearGroup (Fin n) ℤ).val * (L : Matrix (Fin n) (Fin n) ℤ) = 1 := by
-    rw [← SpecialLinearGroup.coe_mul, inv_mul_cancel, SpecialLinearGroup.coe_one]
-  have hR : (R : Matrix (Fin n) (Fin n) ℤ) * (R⁻¹ : SpecialLinearGroup (Fin n) ℤ).val = 1 := by
-    rw [← SpecialLinearGroup.coe_mul, mul_inv_cancel, SpecialLinearGroup.coe_one]
-  have h' : (L⁻¹ : SpecialLinearGroup (Fin n) ℤ).val * Matrix.diagonal d *
-      (R⁻¹ : SpecialLinearGroup (Fin n) ℤ).val = Matrix.diagonal c := by
-    calc (L⁻¹ : SpecialLinearGroup (Fin n) ℤ).val * Matrix.diagonal d *
-        (R⁻¹ : SpecialLinearGroup (Fin n) ℤ).val
-        = (L⁻¹ : SpecialLinearGroup (Fin n) ℤ).val *
+  have h' : (↑L⁻¹ : Matrix (Fin n) (Fin n) ℤ) * Matrix.diagonal d *
+      (↑R⁻¹ : Matrix (Fin n) (Fin n) ℤ) = Matrix.diagonal c := by
+    calc (↑L⁻¹ : Matrix (Fin n) (Fin n) ℤ) * Matrix.diagonal d *
+        (↑R⁻¹ : Matrix (Fin n) (Fin n) ℤ)
+        = (↑L⁻¹ : Matrix (Fin n) (Fin n) ℤ) *
             ((L : Matrix (Fin n) (Fin n) ℤ) * Matrix.diagonal c *
               (R : Matrix (Fin n) (Fin n) ℤ)) *
-            (R⁻¹ : SpecialLinearGroup (Fin n) ℤ).val := by rw [h]
-      _ = ((L⁻¹ : SpecialLinearGroup (Fin n) ℤ).val * (L : Matrix (Fin n) (Fin n) ℤ)) *
-            Matrix.diagonal c *
-            ((R : Matrix (Fin n) (Fin n) ℤ) * (R⁻¹ : SpecialLinearGroup (Fin n) ℤ).val) := by
+            (↑R⁻¹ : Matrix (Fin n) (Fin n) ℤ) := by rw [h]
+      _ = ((↑L⁻¹ : Matrix (Fin n) (Fin n) ℤ) * ↑L) * Matrix.diagonal c *
+            (↑R * (↑R⁻¹ : Matrix (Fin n) (Fin n) ℤ)) := by
           simp only [Matrix.mul_assoc]
-      _ = Matrix.diagonal c := by rw [hL, hR, Matrix.one_mul, Matrix.mul_one]
+      _ = Matrix.diagonal c := by
+          rw [Units.inv_mul, Units.mul_inv, Matrix.one_mul, Matrix.mul_one]
   have key : ∀ k (hk : k ≤ n),
       ∏ j : Fin k, c ⟨j.val, by omega⟩ = ∏ j : Fin k, d ⟨j.val, by omega⟩ := fun k hk ↦
     Int.dvd_antisymm
