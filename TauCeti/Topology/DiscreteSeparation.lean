@@ -6,16 +6,13 @@ module
 
 public import Mathlib.Topology.Separation.Basic
 
-import Mathlib.Topology.Compactness.Compact
-
 /-!
-# Shrinking an open set to isolate the compact part of a discrete set
+# Shrinking an open set to separate part of a non-accumulating set
 
-A set that is closed and discrete inside an open ambient set meets a compact subset in
-finitely many points, and the ambient set shrinks to an open neighbourhood of the compact
-subset meeting the discrete set in exactly those points. This is the standard localization
-step for residue computations: a contour region is shrunk until the only singularities it
-contains are the finitely many inside the contour's compact hull.
+If no point of `K ⊆ V` is an accumulation point of `Z`, the open ambient set `V` shrinks
+to an open neighbourhood of `K` meeting `Z` in exactly `K ∩ Z`: remove the closure of the
+rest of `Z`. This is the localization step for residue computations — a contour region is
+shrunk until the only singularities it contains are the intended ones.
 
 ## Main declarations
 

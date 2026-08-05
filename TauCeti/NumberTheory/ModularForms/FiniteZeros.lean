@@ -26,6 +26,10 @@ finite-support input to the valence formula.
 * `TauCeti.ModularForm.exists_height_nonvanishing`: a nonzero form does not vanish at
   points of imaginary part above some height.
 * `TauCeti.ModularForm.finite_zeros_in_fd`: finiteness of the nonzero-order points in `𝒟`.
+* `TauCeti.ModularForm.not_accPt_zeros_comp_ofComplex`: the extension's zeros do not
+  accumulate in the upper half-plane.
+* `TauCeti.ModularForm.exists_isOpen_zeros_inter`: an open neighbourhood isolating a
+  subset's zeros.
 
 ## References
 
@@ -87,7 +91,7 @@ lemma finite_zeros_in_fd [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → �
 
 /-- The zeros of a nonzero form's complex extension do not accumulate at any point of the
 upper half-plane. -/
-lemma not_accPt_zeros_comp_ofComplex [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → ℂ) ≠ 0)
+lemma not_accPt_zeros_comp_ofComplex [ModularFormClass F Γ k] (hf : (⇑f : ℍ → ℂ) ≠ 0)
     {x : ℂ} (hx : 0 < x.im) :
     ¬AccPt x (Filter.principal {z : ℂ | 0 < z.im ∧ (⇑f ∘ ofComplex) z = 0}) := by
   have han : AnalyticAt ℂ (⇑f ∘ ofComplex) x :=
@@ -100,18 +104,14 @@ lemma not_accPt_zeros_comp_ofComplex [ModularFormClass F 𝒮ℒ k] (hf : (⇑f 
       (convex_halfSpace_im_gt 0).isPreconnected hx hev
     have := h0 (Set.mem_ofPred_eq ▸ p.2 : (p : ℂ) ∈ {z : ℂ | 0 < z.im})
     simpa [Function.comp, ofComplex_apply] using this
-  · rw [accPt_iff_frequently]
+  · rw [accPt_iff_frequently_nhdsNE]
     intro hfreq
-    have hfreq' : ∃ᶠ y in nhdsWithin x {x}ᶜ,
-        y ∈ {z : ℂ | 0 < z.im ∧ (⇑f ∘ ofComplex) z = 0} := by
-      rw [frequently_nhdsWithin_iff]
-      exact hfreq.mono fun y hy => ⟨hy.2, Set.mem_compl_singleton_iff.mpr hy.1⟩
-    obtain ⟨y, hymem, hyne⟩ := (hfreq'.and_eventually hev).exists
+    obtain ⟨y, hymem, hyne⟩ := (hfreq.and_eventually hev).exists
     exact hyne hymem.2
 
 /-- Any subset of the upper half-plane has an open neighbourhood in the upper half-plane
 containing no zeros of the form's complex extension beyond its own. -/
-lemma exists_isOpen_zeros_inter [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → ℂ) ≠ 0)
+lemma exists_isOpen_zeros_inter [ModularFormClass F Γ k] (hf : (⇑f : ℍ → ℂ) ≠ 0)
     {K : Set ℂ} (hK : K ⊆ {z : ℂ | 0 < z.im}) :
     ∃ U : Set ℂ, IsOpen U ∧ K ⊆ U ∧ U ⊆ {z : ℂ | 0 < z.im} ∧
       {z ∈ U | (⇑f ∘ ofComplex) z = 0} = {z ∈ K | (⇑f ∘ ofComplex) z = 0} := by
