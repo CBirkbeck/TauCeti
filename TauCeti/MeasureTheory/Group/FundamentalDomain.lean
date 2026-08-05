@@ -137,13 +137,18 @@ theorem IsFundamentalDomain.subgroup_iUnion_out_inv_smul
     rw [h_id]
     exact Function.bijective_id
 
-/-- Membership in the pointwise conjugate `ConjAct.toConjAct g • H` is conjugation back
-into `H`. This unfolds the `ConjAct`-encoded pointwise action once, so that the two
-directions of the conjugation bijection below need not repeat the chain. -/
-private lemma mem_conjAct_toConjAct_smul_iff {G : Type*} [Group G] {H : Subgroup G} {g x : G} :
-    x ∈ ConjAct.toConjAct g • H ↔ g⁻¹ * x * g ∈ H := by
-  rw [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def, map_inv,
-    ConjAct.ofConjAct_toConjAct, inv_inv]
+/-- The `ConjAct`-encoded pointwise conjugate of a subgroup is its image under the
+conjugation automorphism. Identifying the two lets the conjugation bijection below be
+Mathlib's `MulEquiv.subgroupMap` instead of a hand-built equivalence. -/
+private lemma conjAct_smul_eq_map_conj {G : Type*} [Group G] (g : G) (H : Subgroup G) :
+    ConjAct.toConjAct g • H = H.map (MulAut.conj g : G ≃* G) := by
+  ext x
+  simp only [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def, map_inv,
+    ConjAct.ofConjAct_toConjAct, inv_inv, Subgroup.mem_map]
+  constructor
+  · exact fun h => ⟨g⁻¹ * x * g, h, by simp [MulAut.conj]; group⟩
+  · rintro ⟨y, hy, rfl⟩
+    simpa [MulAut.conj, mul_assoc] using hy
 
 /-- **Conjugation-shift of a fundamental domain.** If `s` is an `H₁`-fundamental
 domain (where `H₁ ≤ G`) and `H₂` is the pointwise conjugate `g · H₁ · g⁻¹`
@@ -158,20 +163,13 @@ theorem IsFundamentalDomain.smul_of_eq_conjAct_pointwise_smul
     (hgH : H₂ = ConjAct.toConjAct g • H₁) :
     IsFundamentalDomain H₂ (g • s) μ := by
   subst hgH
+  rw [conjAct_smul_eq_map_conj]
   refine hs.image_of_equiv (MulAction.toPerm g) hg
-    { toFun := fun h₂ ↦ ⟨g⁻¹ * (h₂ : G) * g, ?_⟩
-      invFun := fun h₁ ↦ ⟨g * (h₁ : G) * g⁻¹, ?_⟩
-      left_inv := fun _ ↦ Subtype.ext (by group)
-      right_inv := fun _ ↦ Subtype.ext (by group) } fun h₂ x ↦ ?_
-  · exact mem_conjAct_toConjAct_smul_iff.mp h₂.2
-  · refine mem_conjAct_toConjAct_smul_iff.mpr ?_
-    convert h₁.2 using 2
-    group
-  · -- the equivalence just constructed sends `h₂` to `⟨g⁻¹ * h₂ * g, _⟩`, and the subtype
-    -- action restricts the ambient one; both hold by definition, with no lemma-form
-    -- available for the anonymous-constructor application.
-    change g • ((g⁻¹ * (h₂ : G) * g) • x) = (h₂ : G) • (g • x)
-    simp only [smul_smul, mul_inv_cancel_left, mul_assoc]
+    ((MulAut.conj g).subgroupMap H₁).symm.toEquiv fun h₂ x ↦ ?_
+  -- `MulEquiv.subgroupMap` sends `h₁` to `g * h₁ * g⁻¹`, so its inverse sends `h₂` to
+  -- `g⁻¹ * h₂ * g`; the subtype action restricts the ambient one definitionally.
+  change g • ((g⁻¹ * (h₂ : G) * g) • x) = (h₂ : G) • (g • x)
+  simp only [smul_smul, mul_inv_cancel_left, mul_assoc]
 
 /-- **AE-disjointness of arbitrary `G`-translates related by an `H`-element.**
 Let `D` be a fundamental domain for a subgroup `H ≤ G` acting on `α` with a measure `μ`.
