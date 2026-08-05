@@ -61,8 +61,8 @@ private lemma arc_deriv_ne_zero (t : ℝ) :
 with nonvanishing tangent. -/
 theorem isPwC1ImmersionOn_fdBoundary (hH : H ≠ Real.sqrt 3 / 2) :
     IsPwC1ImmersionOn (fdBoundary H) 0 5 := by
-  rw [isPwC1ImmersionOn_iff]
-  refine ⟨(continuous_fdBoundary H).continuousOn, fdBoundaryCorners, ?_, ?_⟩
+  refine IsPwC1ImmersionOn.of_breakpoints (continuous_fdBoundary H).continuousOn
+    fdBoundaryCorners ?_ ?_
   · intro x hx
     rw [Finset.mem_coe, mem_fdBoundaryCorners] at hx
     rw [min_eq_left (by norm_num : (0 : ℝ) ≤ 5), max_eq_right (by norm_num : (0 : ℝ) ≤ 5)]
