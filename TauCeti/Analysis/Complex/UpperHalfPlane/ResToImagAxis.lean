@@ -12,17 +12,17 @@ public import Mathlib.Geometry.Manifold.Notation
 # Restriction of a function on the upper half-plane to the imaginary axis
 
 The Mellin transform computing the completed L-function of a modular form integrates the
-form along the positive imaginary axis: Mathlib's `ModularForm.Λ_eq_mellin` reads
-`Λ f = mellin (fun t ↦ f (ofComplex (I * t)))`. This file names that restriction,
+form along the positive imaginary axis: Mathlib's `CuspForm.Λ_eq_mellin` reads
+`Λ hk f = mellin (fun t ↦ f (ofComplex (I * t)))` for a cusp form. This file names that
+restriction,
 `resToImagAxis F t = F (i t)` for `t > 0` (and `0` otherwise, since `i t ∈ ℍ` fails for
 `t ≤ 0`), for an arbitrary `F : ℍ → ℂ`.
 
 The three predicates `RealOnImagAxis`, `PosOnImagAxis` and `EventuallyPosOnImagAxis` record
 that the restriction is real-valued, real and positive, or real and eventually positive along
-`atTop`. Each is closed under the pointwise algebraic operations. The closure lemmas under
-`+`, `*`, `•` and `^` are tagged `@[fun_prop]`; the constant lemmas of `PosOnImagAxis` and
-`EventuallyPosOnImagAxis` are not, since they take a positivity hypothesis on the constant
-that has to be supplied by hand.
+`atTop`. Each is closed under the pointwise algebraic operations, and the closure lemmas are
+tagged `@[fun_prop]` — except `PosOnImagAxis.const` and `EventuallyPosOnImagAxis.const`,
+whose constant is not determined by the goal.
 
 ## Main definitions
 
@@ -33,7 +33,9 @@ that has to be supplied by hand.
 ## Main results
 
 * `UpperHalfPlane.resToImagAxis_of_pos`, `resToImagAxis_of_nonpos`: the characteristic
-  equations of the restriction, which every proof below rewrites with.
+  equations of the restriction.
+* `UpperHalfPlane.resToImagAxis_add`, `_neg`, `_sub`, `_mul`, `_smul`: the restriction
+  commutes with the pointwise operations, unconditionally.
 * `UpperHalfPlane.differentiableAt_resToImagAxis`: the restriction is real-differentiable at
   `t > 0` when `F` is differentiable as a map of manifolds at the corresponding point.
 
@@ -70,6 +72,47 @@ theorem resToImagAxis_of_pos (F : ℍ → ℂ) {t : ℝ} (ht : 0 < t) :
 theorem resToImagAxis_of_nonpos (F : ℍ → ℂ) {t : ℝ} (ht : t ≤ 0) :
     resToImagAxis F t = 0 := dif_neg (not_lt.mpr ht)
 
+/-! ### The restriction commutes with the pointwise operations
+
+Each identity is unconditional in `t`: off the positive axis both sides are `0`.
+-/
+
+@[simp]
+theorem resToImagAxis_neg (F : ℍ → ℂ) : resToImagAxis (-F) = -resToImagAxis F := by
+  funext t
+  rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
+
+@[simp]
+theorem resToImagAxis_add (F G : ℍ → ℂ) :
+    resToImagAxis (F + G) = resToImagAxis F + resToImagAxis G := by
+  funext t
+  rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
+
+@[simp]
+theorem resToImagAxis_sub (F G : ℍ → ℂ) :
+    resToImagAxis (F - G) = resToImagAxis F - resToImagAxis G := by
+  funext t
+  rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
+
+@[simp]
+theorem resToImagAxis_mul (F G : ℍ → ℂ) :
+    resToImagAxis (F * G) = resToImagAxis F * resToImagAxis G := by
+  funext t
+  rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
+
+@[simp]
+theorem resToImagAxis_smul (c : ℝ) (F : ℍ → ℂ) :
+    resToImagAxis (c • F) = c • resToImagAxis F := by
+  funext t
+  rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
+
+/-- Powers need `0 < t`: at `t ≤ 0` the restriction of `F ^ 0 = 1` is `0`, not `1`. -/
+theorem resToImagAxis_pow (F : ℍ → ℂ) (n : ℕ) {t : ℝ} (ht : 0 < t) :
+    resToImagAxis (F ^ n) t = resToImagAxis F t ^ n := by
+  simp [resToImagAxis_of_pos _ ht]
+
+/-! ### Real-valuedness, positivity, and eventual positivity -/
+
 /-- `F` is real-valued on the positive imaginary axis. -/
 @[fun_prop]
 def RealOnImagAxis (F : ℍ → ℂ) : Prop :=
@@ -87,21 +130,25 @@ def EventuallyPosOnImagAxis (F : ℍ → ℂ) : Prop :=
 
 /-! ### Differentiability -/
 
-/-- The restriction is real-differentiable at `t > 0` whenever `F` is differentiable as a map
-of manifolds at the corresponding point: the restriction is the composite of `F` with
-`t ↦ i t`, so only differentiability there is used. -/
-@[fun_prop]
+/-- The restriction is real-differentiable at `t > 0` whenever `F ∘ ofComplex` is: the
+restriction is its composite with `t ↦ i t`, so only real differentiability at the
+corresponding point is used — holomorphy is not needed. -/
 theorem differentiableAt_resToImagAxis (F : ℍ → ℂ) {t : ℝ} (ht : 0 < t)
-    (hF : MDiffAt F ⟨Complex.I * t, by simpa using ht⟩) :
+    (hF : DifferentiableAt ℝ (fun z : ℂ ↦ F (ofComplex z)) (Complex.I * t)) :
     DifferentiableAt ℝ (resToImagAxis F) t := by
-  rw [mdifferentiableAt_iff] at hF
   have h_diff : DifferentiableAt ℝ (fun t : ℝ ↦ F (ofComplex (Complex.I * t))) t := by
-    convert hF.restrictScalars ℝ |>.comp t
-      (DifferentiableAt.const_mul ofRealCLM.differentiableAt _) using 1
-    all_goals try rfl
+    have hmul : DifferentiableAt ℝ (fun s : ℝ ↦ Complex.I * s) t := by fun_prop
+    simpa only [Function.comp_def] using hF.comp t hmul
   refine h_diff.congr_of_eventuallyEq ?_
   filter_upwards [lt_mem_nhds ht] with s hs
   rw [resToImagAxis_of_pos F hs, ofComplex_apply_of_im_pos (by simp [hs])]
+
+/-- The manifold-differentiable case, which is how modular forms supply the hypothesis. -/
+@[fun_prop]
+theorem differentiableAt_resToImagAxis_of_mDiffAt (F : ℍ → ℂ) {t : ℝ} (ht : 0 < t)
+    (hF : MDiffAt F ⟨Complex.I * t, by simpa using ht⟩) :
+    DifferentiableAt ℝ (resToImagAxis F) t :=
+  differentiableAt_resToImagAxis F ht ((mdifferentiableAt_iff.mp hF).restrictScalars ℝ)
 
 /-! ### Real-valuedness is preserved by the algebraic operations -/
 
@@ -110,8 +157,7 @@ namespace RealOnImagAxis
 /-- A real constant is real-valued on the imaginary axis. -/
 @[fun_prop]
 theorem const (c : ℝ) : RealOnImagAxis (fun _ ↦ (c : ℂ)) := fun t ht ↦ by
-  rw [resToImagAxis_of_pos _ ht]
-  simp
+  simp [resToImagAxis_of_pos _ ht]
 
 /-- The zero function is real-valued on the imaginary axis. -/
 @[fun_prop]
@@ -124,18 +170,13 @@ theorem one : RealOnImagAxis (fun _ ↦ 1) := by simpa using const 1
 /-- Negation preserves real-valuedness on the imaginary axis. -/
 @[fun_prop]
 theorem neg {F : ℍ → ℂ} (hF : RealOnImagAxis F) : RealOnImagAxis (-F) := fun t ht ↦ by
-  have hf := hF t ht
-  rw [resToImagAxis_of_pos _ ht] at hf ⊢
-  simp [hf]
+  simp [hF t ht]
 
 /-- Addition preserves real-valuedness on the imaginary axis. -/
 @[fun_prop]
 theorem add {F G : ℍ → ℂ} (hF : RealOnImagAxis F) (hG : RealOnImagAxis G) :
     RealOnImagAxis (F + G) := fun t ht ↦ by
-  have hf := hF t ht
-  have hg := hG t ht
-  rw [resToImagAxis_of_pos _ ht] at hf hg ⊢
-  simp [hf, hg]
+  simp [hF t ht, hG t ht]
 
 /-- Subtraction preserves real-valuedness on the imaginary axis. -/
 @[fun_prop]
@@ -146,18 +187,12 @@ theorem sub {F G : ℍ → ℂ} (hF : RealOnImagAxis F) (hG : RealOnImagAxis G) 
 @[fun_prop]
 theorem mul {F G : ℍ → ℂ} (hF : RealOnImagAxis F) (hG : RealOnImagAxis G) :
     RealOnImagAxis (F * G) := fun t ht ↦ by
-  have hf := hF t ht
-  have hg := hG t ht
-  rw [resToImagAxis_of_pos _ ht] at hf hg ⊢
-  simp [Complex.mul_im, hf, hg]
+  simp [Complex.mul_im, hF t ht, hG t ht]
 
 /-- Real scalar multiplication preserves real-valuedness on the imaginary axis. -/
 @[fun_prop]
-theorem smul {F : ℍ → ℂ} {c : ℝ} (hF : RealOnImagAxis F) : RealOnImagAxis (c • F) :=
-  fun t ht ↦ by
-  have hf := hF t ht
-  rw [resToImagAxis_of_pos _ ht] at hf ⊢
-  simp [Complex.real_smul, Complex.mul_im, hf]
+theorem const_smul {F : ℍ → ℂ} {c : ℝ} (hF : RealOnImagAxis F) : RealOnImagAxis (c • F) :=
+  fun t ht ↦ by simp [Complex.real_smul, Complex.mul_im, hF t ht]
 
 /-- Natural powers preserve real-valuedness on the imaginary axis. -/
 @[fun_prop]
@@ -174,7 +209,7 @@ namespace PosOnImagAxis
 
 /-- A positive real constant is positive on the imaginary axis. -/
 theorem const {c : ℝ} (hc : 0 < c) : PosOnImagAxis (fun _ ↦ (c : ℂ)) :=
-  ⟨RealOnImagAxis.const c, fun t ht ↦ by rw [resToImagAxis_of_pos _ ht]; simpa using hc⟩
+  ⟨RealOnImagAxis.const c, fun t ht ↦ by simpa [resToImagAxis_of_pos _ ht] using hc⟩
 
 /-- The constant function `1` is positive on the imaginary axis. -/
 @[fun_prop]
@@ -184,11 +219,7 @@ theorem one : PosOnImagAxis (fun _ ↦ 1) := by simpa using const one_pos
 @[fun_prop]
 theorem add {F G : ℍ → ℂ} (hF : PosOnImagAxis F) (hG : PosOnImagAxis G) :
     PosOnImagAxis (F + G) :=
-  ⟨hF.1.add hG.1, fun t ht ↦ by
-    have hf := hF.2 t ht
-    have hg := hG.2 t ht
-    rw [resToImagAxis_of_pos _ ht] at hf hg ⊢
-    simpa using add_pos hf hg⟩
+  ⟨hF.1.add hG.1, fun t ht ↦ by simpa using add_pos (hF.2 t ht) (hG.2 t ht)⟩
 
 /-- Multiplication preserves positivity on the imaginary axis: the two restrictions are real
 there, so the real part of the product is the product of the real parts. -/
@@ -196,21 +227,14 @@ there, so the real part of the product is the product of the real parts. -/
 theorem mul {F G : ℍ → ℂ} (hF : PosOnImagAxis F) (hG : PosOnImagAxis G) :
     PosOnImagAxis (F * G) :=
   ⟨hF.1.mul hG.1, fun t ht ↦ by
-    have hfi := hF.1 t ht
-    have hgi := hG.1 t ht
-    have hfr := hF.2 t ht
-    have hgr := hG.2 t ht
-    rw [resToImagAxis_of_pos _ ht] at hfi hgi hfr hgr ⊢
-    simpa [Complex.mul_re, hfi, hgi] using mul_pos hfr hgr⟩
+    simpa [Complex.mul_re, hF.1 t ht, hG.1 t ht] using mul_pos (hF.2 t ht) (hG.2 t ht)⟩
 
 /-- Positive scalar multiplication preserves positivity on the imaginary axis. -/
 @[fun_prop]
-theorem smul {F : ℍ → ℂ} {c : ℝ} (hF : PosOnImagAxis F) (hc : 0 < c) :
+theorem const_smul {F : ℍ → ℂ} {c : ℝ} (hF : PosOnImagAxis F) (hc : 0 < c) :
     PosOnImagAxis (c • F) :=
-  ⟨hF.1.smul, fun t ht ↦ by
-    have hf := hF.2 t ht
-    rw [resToImagAxis_of_pos _ ht] at hf ⊢
-    simpa [Complex.real_smul, Complex.mul_re] using mul_pos hc hf⟩
+  ⟨hF.1.const_smul, fun t ht ↦ by
+    simpa [Complex.real_smul, Complex.mul_re] using mul_pos hc (hF.2 t ht)⟩
 
 /-- Natural powers preserve positivity on the imaginary axis. -/
 @[fun_prop]
@@ -227,24 +251,24 @@ namespace EventuallyPosOnImagAxis
 
 /-- Positivity everywhere implies positivity far out. -/
 @[fun_prop]
-theorem of_pos {F : ℍ → ℂ} (hF : PosOnImagAxis F) : EventuallyPosOnImagAxis F :=
+theorem _root_.UpperHalfPlane.PosOnImagAxis.eventuallyPos {F : ℍ → ℂ}
+    (hF : PosOnImagAxis F) : EventuallyPosOnImagAxis F :=
   ⟨hF.1, by filter_upwards [eventually_gt_atTop (0 : ℝ)] with t ht using hF.2 t ht⟩
 
 /-- The constant function `1` is eventually positive on the imaginary axis. -/
 @[fun_prop]
-theorem one : EventuallyPosOnImagAxis (fun _ ↦ 1) := of_pos PosOnImagAxis.one
+theorem one : EventuallyPosOnImagAxis (fun _ ↦ 1) := PosOnImagAxis.one.eventuallyPos
 
 /-- A positive real constant is eventually positive on the imaginary axis. -/
 theorem const {c : ℝ} (hc : 0 < c) : EventuallyPosOnImagAxis (fun _ ↦ (c : ℂ)) :=
-  of_pos (PosOnImagAxis.const hc)
+  (PosOnImagAxis.const hc).eventuallyPos
 
 /-- Addition preserves eventual positivity on the imaginary axis. -/
 @[fun_prop]
 theorem add {F G : ℍ → ℂ} (hF : EventuallyPosOnImagAxis F) (hG : EventuallyPosOnImagAxis G) :
     EventuallyPosOnImagAxis (F + G) :=
   ⟨hF.1.add hG.1, by
-    filter_upwards [hF.2, hG.2, eventually_gt_atTop (0 : ℝ)] with t hf hg ht
-    rw [resToImagAxis_of_pos _ ht] at hf hg ⊢
+    filter_upwards [hF.2, hG.2] with t hf hg
     simpa using add_pos hf hg⟩
 
 /-- Multiplication preserves eventual positivity on the imaginary axis. -/
@@ -253,18 +277,14 @@ theorem mul {F G : ℍ → ℂ} (hF : EventuallyPosOnImagAxis F) (hG : Eventuall
     EventuallyPosOnImagAxis (F * G) :=
   ⟨hF.1.mul hG.1, by
     filter_upwards [hF.2, hG.2, eventually_gt_atTop (0 : ℝ)] with t hf hg ht
-    have hfi := hF.1 t ht
-    have hgi := hG.1 t ht
-    rw [resToImagAxis_of_pos _ ht] at hfi hgi hf hg ⊢
-    simpa [Complex.mul_re, hfi, hgi] using mul_pos hf hg⟩
+    simpa [Complex.mul_re, hF.1 t ht, hG.1 t ht] using mul_pos hf hg⟩
 
 /-- Positive scalar multiplication preserves eventual positivity on the imaginary axis. -/
 @[fun_prop]
-theorem smul {F : ℍ → ℂ} {c : ℝ} (hF : EventuallyPosOnImagAxis F) (hc : 0 < c) :
+theorem const_smul {F : ℍ → ℂ} {c : ℝ} (hF : EventuallyPosOnImagAxis F) (hc : 0 < c) :
     EventuallyPosOnImagAxis (c • F) :=
-  ⟨hF.1.smul, by
-    filter_upwards [hF.2, eventually_gt_atTop (0 : ℝ)] with t hf ht
-    rw [resToImagAxis_of_pos _ ht] at hf ⊢
+  ⟨hF.1.const_smul, by
+    filter_upwards [hF.2] with t hf
     simpa [Complex.real_smul, Complex.mul_re] using mul_pos hc hf⟩
 
 /-- Natural powers preserve eventual positivity on the imaginary axis. -/

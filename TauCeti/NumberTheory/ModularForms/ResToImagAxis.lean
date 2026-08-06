@@ -46,10 +46,12 @@ theorem resToImagAxis_slash_S (F : ℍ → ℂ) (k : ℤ) {t : ℝ} (ht : 0 < t)
   have h : mk _ (⟨Complex.I * t, by simpa using ht⟩ : ℍ).im_inv_neg_coe_pos =
       (⟨Complex.I * (1 / t : ℝ), by simpa using ht'⟩ : ℍ) :=
     UpperHalfPlane.ext (by
+      -- `(-(i t))⁻¹ = i / t`, since `i * i = -1`
+      have ht0 : (t : ℂ) ≠ 0 := by exact_mod_cast ht.ne'
+      have hI : Complex.I * Complex.I = -1 := Complex.I_mul_I
       push_cast
       field_simp
-      rw [Complex.I_sq]
-      ring)
+      linear_combination -hI)
   rw [resToImagAxis_of_pos _ ht, SlashInvariantForm.slash_S_apply, h,
     resToImagAxis_of_pos F ht']
   simp only [mul_zpow]
