@@ -51,9 +51,7 @@ variable {H : ℝ}
 lemma fdBoundary_mem_coe_truncatedFundamentalDomain (hH : 1 ≤ H) {t : ℝ}
     (ht : t ∈ Icc (0 : ℝ) 5) :
     fdBoundary H t ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H := by
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
-    rw [div_le_one (by norm_num)]
-    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
   rw [ModularGroup.coe_truncatedFundamentalDomain, Set.mem_ofPred_eq]
   refine ⟨?_, im_fdBoundary_le hH ht, abs_re_fdBoundary_le_half ht.2,
     one_le_norm_fdBoundary hH ht⟩
@@ -70,11 +68,10 @@ theorem hasCauchyPV_fdBoundary_residue_sum (hH : 1 < H) {f : ℂ → ℂ} {S : F
     (hS : ∀ s ∈ S, 1 < ‖s‖ ∧ |s.re| < 1 / 2 ∧ 0 < s.im ∧ s.im < H) :
     HasCauchyPV (fdBoundary H) 0 5 f
       (-(2 * (Real.pi : ℂ) * Complex.I) * ∑ s ∈ S, residue f s) := by
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := by
-    rw [div_le_one (by norm_num)]
-    nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
   have hne : ∀ s ∈ S, ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ≠ s := fun s hs =>
-    fdBoundary_ne_of_interior (hS s hs).2.1 (hS s hs).1 (hS s hs).2.2.2
+    fdBoundary_ne_of_abs_re_lt_half_of_one_lt_norm_of_im_lt (hS s hs).2.1 (hS s hs).1
+      (hS s hs).2.2.2
   have key := decomp.hasCauchyPV_residue_sum hU
     (isPwC1ImmersionOn_fdBoundary (ne_of_gt (lt_of_le_of_lt h32 hH)))
     (by norm_num : (0 : ℝ) ≤ 5) (fdBoundary_closed H).symm

@@ -50,7 +50,7 @@ namespace ModularForm
 variable {H t : ℝ}
 
 /-- The corner height `√3/2` lies below `1`, the height of the arc's apex. -/
-private lemma sqrt_three_div_two_le_one : Real.sqrt 3 / 2 ≤ 1 := by
+lemma sqrt_three_div_two_le_one : Real.sqrt 3 / 2 ≤ 1 := by
   rw [div_le_one (by norm_num)]
   nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
 
