@@ -654,27 +654,22 @@ private theorem basis_zero_mem_of_raise_mem (N : Submodule K (Sl2Std K n)) (hN :
   exact N.smul_mem _ (Module.End.pow_apply_mem_of_forall_mem k hraise v hvN)
 
 /-- **A subspace stable under lowering and containing the highest weight vector contains the whole
-coordinate basis.** The lowering operator walks `basis K n 0` along the basis, rescaling by the
-coefficients `n - i`, which are nonzero for `i < n`. -/
+coordinate basis.** `Sl2Std.lower_pow_basis_zero` identifies `fⁱ · v₀` as `basis K n i` scaled by
+`n(n - 1)⋯(n - i + 1)`, and that product is nonzero because every factor has `j < i ≤ n`. -/
 private theorem basis_mem_of_lower_mem (N : Submodule K (Sl2Std K n))
     (hlower : ∀ w ∈ N, lower K n w ∈ N) (hbasis0 : basis K n 0 ∈ N) (i : Fin (n + 1)) :
     basis K n i ∈ N := by
-  induction i using Fin.induction with
-  | zero => exact hbasis0
-  | succ i ih =>
-    have hlt : ((i.castSucc : Fin (n + 1)) : ℕ) < n := i.isLt
-    have hcne : ((n : K) - ((i.castSucc : Fin (n + 1)) : ℕ)) ≠ 0 := by
-      intro hc
-      have h1 : (n : K) = (((i.castSucc : Fin (n + 1)) : ℕ) : K) := sub_eq_zero.1 hc
-      have h2 : n = ((i.castSucc : Fin (n + 1)) : ℕ) := Nat.cast_injective h1
-      omega
-    have hstep := hlower _ ih
-    rw [lower_basis _ hlt] at hstep
-    have hidx : (⟨((i.castSucc : Fin (n + 1)) : ℕ) + 1, by omega⟩ : Fin (n + 1)) = i.succ := by
-      ext; simp
-    rw [hidx] at hstep
-    have := N.smul_mem ((n : K) - ((i.castSucc : Fin (n + 1)) : ℕ))⁻¹ hstep
-    rwa [smul_smul, inv_mul_cancel₀ hcne, one_smul] at this
+  have hmem : ((lower K n) ^ (i : ℕ)) (basis K n 0) ∈ N :=
+    Module.End.pow_apply_mem_of_forall_mem _ hlower _ hbasis0
+  rw [lower_pow_basis_zero] at hmem
+  have hne : (∏ j ∈ Finset.range (i : ℕ), ((n : K) - j)) ≠ 0 := by
+    refine Finset.prod_ne_zero_iff.2 fun j hj hc ↦ ?_
+    have h2 : n = j := Nat.cast_injective (sub_eq_zero.1 hc)
+    have := Finset.mem_range.1 hj
+    have := i.isLt
+    omega
+  have := N.smul_mem (∏ j ∈ Finset.range (i : ℕ), ((n : K) - j))⁻¹ hmem
+  rwa [smul_smul, inv_mul_cancel₀ hne, one_smul] at this
 
 /-- **The engine of irreducibility.** A nonzero subspace of `V(n)` stable under the raising and
 lowering operators is the whole of `V(n)`: raising produces the highest weight vector, lowering
