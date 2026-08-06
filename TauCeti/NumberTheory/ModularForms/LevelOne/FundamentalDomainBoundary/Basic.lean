@@ -494,12 +494,11 @@ itself, reversed, through the inversion `z ↦ -1/z`: the two halves of the arc 
 fundamental-domain boundary are identified by `S`. -/
 theorem fdBoundary_four_sub_arc (H : ℝ) {t : ℝ} (ht : t ∈ Icc (1 : ℝ) 3) :
     fdBoundary H (4 - t) = -1 / fdBoundary H t := by
+  have hangle : (4 - t + 1) * (Real.pi / 6) + (t + 1) * (Real.pi / 6) = Real.pi := by ring
   rw [eqOn_fdBoundary_arc H ⟨by linarith [ht.2], by linarith [ht.1]⟩,
     eqOn_fdBoundary_arc H ht, eq_div_iff (circleMap_ne_center one_ne_zero)]
   simp only [circleMap, Complex.ofReal_one, one_mul, zero_add]
-  rw [← Complex.exp_add, ← add_mul, ← Complex.ofReal_add,
-    show (4 - t + 1) * (Real.pi / 6) + (t + 1) * (Real.pi / 6) = Real.pi by ring,
-    Complex.exp_pi_mul_I]
+  rw [← Complex.exp_add, ← add_mul, ← Complex.ofReal_add, hangle, Complex.exp_pi_mul_I]
 
 end Regularity
 
