@@ -25,6 +25,9 @@ the term that lands as `k/12` on the divisor side of the valence formula.
 
 * `TauCeti.ModularForm.logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg`: the
   direct and reflected arc contour integrands sum to the negated weight term.
+* `TauCeti.ModularForm.intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc`:
+  the arc contour integral of the form's logarithmic derivative evaluates to
+  `-(k * (π/6 * I))`, the arc's `-k/12` contribution to the normalized valence contour.
 
 ## References
 
@@ -76,22 +79,10 @@ theorem intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
     (hne : ∀ t ∈ Ioo (1 : ℝ) 2, (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
     (hint : IntervalIntegrable
       (fun t ↦ deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t))
-      volume 1 2)
-    (hint' : IntervalIntegrable
-      (fun t ↦ deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t))
-      volume 2 3) :
+      volume 1 2) :
     ∫ t in (1 : ℝ)..3,
         deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t) =
       -(k * ((Real.pi / 6 : ℝ) * Complex.I)) := by
-  rw [← intervalIntegral.integral_add_adjacent_intervals hint hint']
-  have h23 : (∫ t in (2 : ℝ)..3,
-      deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) =
-      ∫ u in (1 : ℝ)..2,
-        deriv (fdBoundary H) (4 - u) • logDeriv (⇑f ∘ ofComplex) (fdBoundary H (4 - u)) := by
-    have h := intervalIntegral.integral_comp_sub_left (a := 1) (b := 2)
-      (fun t ↦ deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) 4
-    norm_num at h
-    exact h.symm
   have hpair : ∀ u ∈ Ioo (1 : ℝ) 2,
       deriv (fdBoundary H) (4 - u) • logDeriv (⇑f ∘ ofComplex) (fdBoundary H (4 - u)) =
         -(↑k * logDeriv (fdBoundary H) u) -
@@ -108,6 +99,27 @@ theorem intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
     rw [Set.uIoo_of_le (by norm_num : (1 : ℝ) ≤ 2)]
     intro u hu
     simp only [logDeriv_fdBoundary_arc ⟨hu.1, by linarith [hu.2]⟩]
+  have hint' : IntervalIntegrable
+      (fun t ↦ deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t))
+      volume 2 3 := by
+    have hI := ((hconst.sub hint).comp_sub_left 4).symm
+    norm_num at hI
+    refine hI.congr_uIoo ?_
+    rw [Set.uIoo_of_le (by norm_num : (2 : ℝ) ≤ 3)]
+    intro x hx
+    have hu : 4 - x ∈ Ioo (1 : ℝ) 2 := ⟨by linarith [hx.2], by linarith [hx.1]⟩
+    have hp := hpair (4 - x) hu
+    rw [show (4 : ℝ) - (4 - x) = x by ring] at hp
+    simpa using hp.symm
+  rw [← intervalIntegral.integral_add_adjacent_intervals hint hint']
+  have h23 : (∫ t in (2 : ℝ)..3,
+      deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) =
+      ∫ u in (1 : ℝ)..2,
+        deriv (fdBoundary H) (4 - u) • logDeriv (⇑f ∘ ofComplex) (fdBoundary H (4 - u)) := by
+    have h := intervalIntegral.integral_comp_sub_left (a := 1) (b := 2)
+      (fun t ↦ deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) 4
+    norm_num at h
+    exact h.symm
   rw [h23, intervalIntegral.integral_congr_Ioo_of_le (by norm_num) hpair,
     intervalIntegral.integral_sub hconst hint, intervalIntegral.integral_neg,
     intervalIntegral.integral_const_mul,
