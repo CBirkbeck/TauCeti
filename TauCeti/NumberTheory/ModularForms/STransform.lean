@@ -8,8 +8,6 @@ public import Mathlib.Analysis.Calculus.LogDeriv
 public import Mathlib.Analysis.Complex.UpperHalfPlane.Topology
 public import Mathlib.NumberTheory.ModularForms.SlashInvariantForms
 
-import Mathlib.Analysis.Complex.UpperHalfPlane.MoebiusAction
-
 /-!
 # The `S`-transformation of the complex extension of a slash-invariant form
 
@@ -99,11 +97,9 @@ theorem logDeriv_comp_ofComplex_S_transform [SlashInvariantFormClass F Γ k] (f 
     logDeriv_comp (differentiableAt_comp_ofComplex_S_transform f hS hw hd)
       ((differentiableAt_const _).div differentiableAt_id hw0)
   have h_deriv_S : deriv (fun v : ℂ ↦ -1 / v) w = 1 / w ^ 2 := by
-    have h : HasDerivAt (fun v : ℂ ↦ -1 / v) (1 / w ^ 2) w := by
-      have hinv : HasDerivAt (fun v : ℂ ↦ -v⁻¹) (-(-(w ^ 2)⁻¹)) w :=
-        (hasDerivAt_inv hw0).neg
-      convert hinv using 1 <;> [ext v; skip] <;> field_simp
-    exact h.deriv
+    simp only [div_eq_mul_inv]
+    rw [deriv_const_mul_field, deriv_inv]
+    ring
   have h_mul : logDeriv (fun v ↦ v ^ k * (⇑f ∘ ofComplex) v) w =
       logDeriv (· ^ k) w + logDeriv (⇑f ∘ ofComplex) w :=
     logDeriv_mul w (zpow_ne_zero k hw0) hfw
