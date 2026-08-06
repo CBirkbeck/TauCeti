@@ -78,7 +78,7 @@ criterion adds is the production of the pointwise limits that theorem asks for.
   is a continuum** once the approach regions `U ∩ t` are preconnected along a neighbourhood basis
   of `w`; `TauCeti.isCompact_clusterSetOn_of_isBounded` and
   `TauCeti.isConnected_clusterSetOn_of_isBounded` are again the proper-metric forms.
-* `TauCeti.eq_of_continuousOn_closure_of_eqOn_of_tendsto` — a continuous extension is pinned down by
+* `TauCeti.eq_of_continuousWithinAt_of_eqOn_of_tendsto` — a continuous extension is pinned down by
   the limits of the extended function: wherever the latter tends to a value along `U`, that is the
   value the extension takes.
 
@@ -509,13 +509,17 @@ variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y] [T2Space Y] {U 
   {F g : X → Y}
 
 /-- **A continuous extension takes the value the extended function tends to.** If `F` is continuous
-on `closure U` and agrees with `g` on `U`, then at any point of `closure U` the value of `F` is
-whatever `g` tends to along `U`. -/
-theorem eq_of_continuousOn_closure_of_eqOn_of_tendsto {x : X} {v : Y}
-    (hFc : ContinuousOn F (closure U)) (hFg : EqOn F g U) (hx : x ∈ closure U)
+at `x` along `U` and agrees with `g` on `U`, then whenever `x` is adherent to `U` the value `F x` is
+whatever `g` tends to along `U`.
+
+Only continuity along `U` at the single point `x` is needed, so this applies verbatim at a boundary
+point where `F` is a continuous extension of `g`: pass `(hFc x hx).mono subset_closure` for a map
+continuous on `closure U`. -/
+theorem eq_of_continuousWithinAt_of_eqOn_of_tendsto {x : X} {v : Y}
+    (hFc : ContinuousWithinAt F U x) (hFg : EqOn F g U) (hx : x ∈ closure U)
     (hv : Tendsto g (𝓝[U] x) (𝓝 v)) : F x = v := by
   have hF : Tendsto g (𝓝[U] x) (𝓝 (F x)) :=
-    ((hFc x hx).mono subset_closure).congr' (hFg.eventuallyEq_of_mem self_mem_nhdsWithin)
+    hFc.congr' (hFg.eventuallyEq_of_mem self_mem_nhdsWithin)
   exact tendsto_nhds_unique' (mem_closure_iff_nhdsWithin_neBot.mp hx) hF hv
 
 end ContinuousExtension

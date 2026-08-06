@@ -5,8 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Analysis.Convex.Segment
-public import Mathlib.Topology.Path
 public import TauCeti.Topology.Path
 public import TauCeti.Analysis.Complex.Conformal.Crosscut.EndpointLimit
 import TauCeti.Analysis.Complex.Conformal.Crosscut.Endpoints
@@ -209,7 +207,9 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
       Tendsto f (𝓝[ball c r ∩ sphere ζ ρ] (circleMap ζ ρ θ)) (𝓝 (F θ)) := by
     intro θ hθ
     obtain ⟨v, hv, hvangle⟩ := hglim θ hθ
-    rwa [eq_of_continuousOn_closure_of_eqOn_of_tendsto hFc hFg (frontier_subset_closure hθ) hvangle]
+    have hθcl : θ ∈ closure (Ioo a b) := frontier_subset_closure hθ
+    rwa [eq_of_continuousWithinAt_of_eqOn_of_tendsto ((hFc θ hθcl).mono subset_closure) hFg hθcl
+      hvangle]
   obtain ⟨γ, hγrange, hγpt⟩ := Path.exists_path_range_eq_image_Icc hab.le hFcIcc
   have hγformula : ∀ t ∈ Ioo (0 : unitInterval) 1,
       γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ))) := fun t ht =>
