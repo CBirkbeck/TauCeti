@@ -225,16 +225,17 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
   · simpa only [a, b, φ] using hFends b hb
   · simpa only [a, b, φ] using hγformula
 
-/-- **The interior of an image crosscut is injective.** If a path is given on the open interval by
-`f ∘ circleMap ζ ρ` along an affine reparametrisation of `[a, b]`, that arc is shorter than a full
-turn, and `f` is injective on `ball c r`, then the path is injective there.
+/-- **A path given by `g ∘ circleMap` along an affine reparametrisation is injective.** If the arc
+`Ioo a b` spans at most a full turn and `g` is injective on a set the arc maps into, then the path
+is injective on the open interval.
 
-Injectivity of `circleMap` on the arc is what `b - a < 2 * π` buys; `f` supplies the rest. -/
-private theorem injOn_of_lineMap_circleMap_formula {a b : ℝ} (hab : a < b)
-    (hab2π : b - a ≤ 2 * π) (hρ : ρ ≠ 0) (hinj : InjOn f (ball c r))
-    (hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) (ball c r)) {u v : ℂ} {γ : Path u v}
+Injectivity of `circleMap` on the arc is what `b - a ≤ 2 * π` buys; `g` supplies the rest. Nothing
+is assumed of the codomain, and `g` need only be injective on the set the arc lands in. -/
+private theorem injOn_of_lineMap_circleMap_formula {X : Type*} {S : Set ℂ} {g : ℂ → X}
+    {γ : unitInterval → X} {a b : ℝ} (hab : a < b) (hab2π : b - a ≤ 2 * π) (hρ : ρ ≠ 0)
+    (hinj : InjOn g S) (hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) S)
     (hγformula : ∀ t ∈ Ioo (0 : unitInterval) 1,
-      γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ)))) :
+      γ t = g (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ)))) :
     InjOn γ (Ioo (0 : unitInterval) 1) := by
   intro x hx y hy hxy
   have hxIoo := lineMap_mem_Ioo hab hx
