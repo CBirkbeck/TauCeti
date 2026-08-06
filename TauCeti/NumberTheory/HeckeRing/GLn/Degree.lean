@@ -153,9 +153,22 @@ private lemma conjDiag_relIndex_eq_Gamma0_index (p : ℕ) (a : Fin 2 → ℕ) (h
 /-- **The prime-power degree** (Shimura, Theorem 3.24, degree count): for prime `p`,
 `deg T(pⁱ, pⁱ⁺ᵏ) = pᵏ⁻¹ (p + 1)` for `k ≥ 1`. -/
 theorem degree_diagCoset_prime_pow (p : ℕ) (hp : Nat.Prime p) (a : Fin 2 → ℕ)
-    (ha : ∀ i, 0 < a i) (hdiv : IsDvdChain a) (k : ℕ) (hk : 0 < k)
-    (h_ratio : a 1 / a 0 = p ^ k) :
+    (hdiv : IsDvdChain a) (k : ℕ) (hk : 0 < k) (h_ratio : a 1 / a 0 = p ^ k) :
     (diagCoset a).degree = p ^ (k - 1) * (p + 1) := by
+  -- positivity is forced by the ratio: in `ℕ`, a vanishing numerator or denominator would
+  -- make `a 1 / a 0` zero, but `p ^ k` is not
+  have hpk : 0 < p ^ k := pow_pos hp.pos k
+  have ha : ∀ i, 0 < a i := by
+    have h0 : 0 < a 0 := by
+      rcases Nat.eq_zero_or_pos (a 0) with h | h
+      · rw [h, Nat.div_zero] at h_ratio; omega
+      · exact h
+    have h1 : 0 < a 1 := by
+      rcases Nat.eq_zero_or_pos (a 1) with h | h
+      · rw [h, Nat.zero_div] at h_ratio; omega
+      · exact h
+    intro i
+    fin_cases i <;> assumption
   -- `degree_mk` already computes the degree from an explicit representative, so only the
   -- relative index at `natDiagGL` is left to identify
   rw [diagCoset_def, HeckeCoset.degree_mk,
@@ -193,14 +206,12 @@ theorem degree_diagCoset_scalar (a : Fin n → ℕ) (h_const : ∀ i, a i = a 0)
     rw [diagCoset_of_not_pos ha]
     exact HeckeCoset.degree_one
   rw [diagCoset_def, HeckeCoset.degree_mk]
-  have h_diag_conj : ∀ g : GL (Fin n) ℚ,
-      (natDiagGL n a)⁻¹ * g * natDiagGL n a = g := fun g ↦ by
-    rw [mul_assoc, ← natDiagGL_comm_of_const n a ha h_const g, ← mul_assoc,
-      inv_mul_cancel, one_mul]
-  have h_smul_diag : ConjAct.toConjAct (natDiagGL n a) • SLnZ n = SLnZ n := by
-    ext x
-    simp only [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def,
-      map_inv, ConjAct.ofConjAct_toConjAct, inv_inv, h_diag_conj]
-  rw [h_smul_diag, Subgroup.relIndex_self]
+  -- a central element normalizes every subgroup, so Mathlib's lemma applies
+  have hnorm : natDiagGL n a ∈ Subgroup.normalizer (SLnZ n) := by
+    rw [Subgroup.mem_normalizer_iff]
+    intro x
+    rw [show natDiagGL n a * x * (natDiagGL n a)⁻¹ = x by
+      rw [natDiagGL_comm_of_const n a ha h_const x, mul_assoc, mul_inv_cancel, mul_one]]
+  rw [Subgroup.conjAct_pointwise_smul_eq_self hnorm, Subgroup.relIndex_self]
 
 end HeckeRing.GLn
