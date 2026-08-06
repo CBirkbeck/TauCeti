@@ -78,6 +78,9 @@ criterion adds is the production of the pointwise limits that theorem asks for.
   is a continuum** once the approach regions `U ∩ t` are preconnected along a neighbourhood basis
   of `w`; `TauCeti.isCompact_clusterSetOn_of_isBounded` and
   `TauCeti.isConnected_clusterSetOn_of_isBounded` are again the proper-metric forms.
+* `TauCeti.eq_of_continuousOn_closure_of_eqOn_of_tendsto` — a continuous extension is pinned down by
+  the limits of the extended function: wherever the latter tends to a value along `U`, that is the
+  value the extension takes.
 
 ## References
 
@@ -508,18 +511,12 @@ variable {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y] [T2Space Y] {U 
 /-- **A continuous extension takes the value the extended function tends to.** If `F` is continuous
 on `closure U` and agrees with `g` on `U`, then at any point of `closure U` the value of `F` is
 whatever `g` tends to along `U`. -/
-theorem eq_of_tendsto_of_continuousOn_closure {x : X} {v : Y}
+theorem eq_of_continuousOn_closure_of_eqOn_of_tendsto {x : X} {v : Y}
     (hFc : ContinuousOn F (closure U)) (hFg : EqOn F g U) (hx : x ∈ closure U)
     (hv : Tendsto g (𝓝[U] x) (𝓝 v)) : F x = v := by
   have hF : Tendsto g (𝓝[U] x) (𝓝 (F x)) :=
     ((hFc x hx).mono subset_closure).congr' (hFg.eventuallyEq_of_mem self_mem_nhdsWithin)
   exact tendsto_nhds_unique' (mem_closure_iff_nhdsWithin_neBot.mp hx) hF hv
-
-/-- **The image of the closure under a continuous extension is the closure of the image.** -/
-theorem image_closure_eq_closure_image_of_eqOn (hU : IsCompact (closure U))
-    (hFc : ContinuousOn F (closure U)) (hFg : EqOn F g U) :
-    F '' closure U = closure (g '' U) := by
-  rw [image_closure_of_isCompact hU hFc, hFg.image_eq]
 
 end ContinuousExtension
 

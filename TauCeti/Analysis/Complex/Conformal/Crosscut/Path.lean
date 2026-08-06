@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Topology.Path
-public import TauCeti.Topology.Homotopy.Path
+public import TauCeti.Topology.Path
 public import TauCeti.Analysis.Complex.Conformal.Crosscut.EndpointLimit
 import TauCeti.Analysis.Complex.Conformal.Crosscut.Endpoints
 import TauCeti.Analysis.Complex.Conformal.ShortCrosscut
@@ -209,14 +209,13 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
       Tendsto f (𝓝[ball c r ∩ sphere ζ ρ] (circleMap ζ ρ θ)) (𝓝 (F θ)) := by
     intro θ hθ
     obtain ⟨v, hv, hvangle⟩ := hglim θ hθ
-    rwa [eq_of_tendsto_of_continuousOn_closure hFc hFg (frontier_subset_closure hθ) hvangle]
-  obtain ⟨γ, hγrange, hγpt⟩ := Path.exists_path_range_eq_image_Icc hab hFcIcc
+    rwa [eq_of_continuousOn_closure_of_eqOn_of_tendsto hFc hFg (frontier_subset_closure hθ) hvangle]
+  obtain ⟨γ, hγrange, hγpt⟩ := Path.exists_path_range_eq_image_Icc hab.le hFcIcc
   have hγformula : ∀ t ∈ Ioo (0 : unitInterval) 1,
       γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ))) := fun t ht =>
     (hγpt t).trans (hFg (lineMap_mem_Ioo hab ht))
-  have hFimage : F '' Icc a b = closure (g '' Ioo a b) :=
-    hcl ▸ image_closure_eq_closure_image_of_eqOn
-      (by rw [closure_Ioo hab.ne]; exact isCompact_Icc) hFc hFg
+  have hFimage : F '' Icc a b = closure (g '' Ioo a b) := by
+    rw [← hcl, image_closure_of_isCompact (hcl ▸ isCompact_Icc) hFc, hFg.image_eq]
   have hgimage : g '' Ioo a b = f '' (ball c r ∩ sphere ζ ρ) := by
     rw [hcrosscut, image_image]
   have ha : a ∈ frontier (Ioo a b) := by rw [frontier_Ioo hab]; exact mem_insert a {b}

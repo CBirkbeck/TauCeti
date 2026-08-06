@@ -10,7 +10,6 @@ public import Mathlib.Topology.Homotopy.Contractible
 -- Private: `Path.Homotopic.map_trans_evalAt` is used only in the proof of
 -- `map_nullhomotopic_of_nullhomotopic` below, so this import is not re-exported.
 import Mathlib.AlgebraicTopology.FundamentalGroupoid.InducedMaps
-import Mathlib.Topology.Algebra.Affine
 
 /-!
 # Path homotopy helpers
@@ -28,29 +27,6 @@ open scoped unitInterval
 open Topology Set
 
 namespace Path
-
-open Set AffineMap in
-/-- **A continuous function on `Icc a b` traverses its image as a path.** Reparametrising `[a, b]`
-affinely by the unit interval turns `F` into a path from `F a` to `F b` whose range is exactly
-`F '' Icc a b`. -/
-theorem exists_path_range_eq_image_Icc {Y : Type*} [TopologicalSpace Y] {a b : ℝ}
-    (hab : a < b) {F : ℝ → Y} (hFcIcc : ContinuousOn F (Icc a b)) :
-    ∃ γ : Path (F a) (F b), range γ = F '' Icc a b ∧
-      ∀ t : unitInterval, γ t = F (AffineMap.lineMap a b (t : ℝ)) := by
-  refine ⟨{ toFun := fun t => F (AffineMap.lineMap a b (t : ℝ))
-            continuous_toFun := by
-              refine hFcIcc.comp_continuous ?_ ?_
-              · exact (AffineMap.lineMap_continuous).comp continuous_subtype_val
-              · intro t
-                rw [← segment_eq_Icc hab.le]
-                exact lineMap_mem_segment ℝ a b t.2
-            source' := by simp
-            target' := by simp }, ?_, fun _ => rfl⟩
-  calc range _ = range (F ∘ AffineMap.lineMap a b ∘ ((↑) : unitInterval → ℝ)) := rfl
-    _ = F '' Icc a b := by
-      rw [range_comp, range_comp, Subtype.range_coe, ← segment_eq_image_lineMap ℝ a b,
-        segment_eq_Icc hab.le]
-
 variable {X : Type*} [TopologicalSpace X]
 
 /-- Restrict a path whose image lies in a subset to a path in the corresponding subtype.
