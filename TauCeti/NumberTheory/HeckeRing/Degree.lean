@@ -7,7 +7,6 @@ module
 
 public import TauCeti.NumberTheory.HeckeRing.LeftCosetModule.Action
 public import Mathlib.Data.Finsupp.Weight
-import Mathlib.Tactic.Group
 
 /-!
 # Hecke rings: the degree homomorphism

@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.LeftCosetModule
+public import TauCeti.NumberTheory.HeckeRing.LeftCosetModule.Basic
 public import TauCeti.NumberTheory.HeckeRing.Associativity
 
 import Mathlib.Tactic.Group
