@@ -81,6 +81,19 @@ lemma hasIntEntries_natDiagGL (a : Fin n → ℕ) : HasIntEntries n (natDiagGL n
       ext i j; simp [Matrix.diagonal_apply, Matrix.map_apply]⟩
   · exact hasIntEntries_one n
 
+/-- Positivity is preserved by pointwise products. -/
+private lemma pi_mul_pos {a b : Fin n → ℕ} (ha : ∀ i, 0 < a i) (hb : ∀ i, 0 < b i) :
+    ∀ i, 0 < (a * b) i :=
+  fun i ↦ Nat.mul_pos (ha i) (hb i)
+
+/-- The diagonal element is multiplicative in its tuple of entries. -/
+lemma natDiagGL_mul (a b : Fin n → ℕ) (ha : ∀ i, 0 < a i) (hb : ∀ i, 0 < b i) :
+    natDiagGL n a * natDiagGL n b = natDiagGL n (a * b) := by
+  apply Units.ext
+  simp [natDiagGL_coe n a ha, natDiagGL_coe n b hb,
+    natDiagGL_coe n (a * b) (pi_mul_pos n ha hb), Matrix.diagonal_mul_diagonal,
+    Pi.mul_apply, Nat.cast_mul]
+
 lemma natDiagGL_det_pos (a : Fin n → ℕ) (ha : ∀ i, 0 < a i) :
     0 < (↑(natDiagGL n a) : Matrix (Fin n) (Fin n) ℚ).det := by
   rw [natDiagGL_coe n a ha, det_diagonal]
@@ -102,6 +115,27 @@ lemma natDiagGL_det (a : Fin n → ℕ) (ha : ∀ i, 0 < a i) :
 @[simp] lemma natDiagGL_of_not_pos {a : Fin n → ℕ} (ha : ¬ ∀ i, 0 < a i) :
     natDiagGL n a = 1 :=
   dif_neg ha
+
+private lemma natDiagGL_const_eq_scalar {c : ℕ} (hc : 0 < c) :
+    natDiagGL n (fun _ ↦ c) =
+      Matrix.GeneralLinearGroup.scalar (Fin n)
+        (Units.mk0 (c : ℚ) (by exact_mod_cast hc.ne')) := by
+  apply Units.ext
+  ext i j
+  simp only [natDiagGL_coe n _ fun _ ↦ hc, Matrix.GeneralLinearGroup.coe_scalar,
+    Matrix.scalar_apply, Matrix.diagonal_apply, Units.val_mk0]
+
+/-- A constant diagonal matrix is a scalar, hence commutes with everything — unconditionally
+in the constant, since `c = 0` sends `natDiagGL` to its junk value `1`. -/
+lemma natDiagGL_const_comm (c : ℕ) (g : GL (Fin n) ℚ) :
+    natDiagGL n (fun _ ↦ c) * g = g * natDiagGL n (fun _ ↦ c) := by
+  rcases Nat.eq_zero_or_pos n with rfl | hn
+  -- at rank zero `GL (Fin 0) ℚ` is trivial
+  · exact Subsingleton.elim _ _
+  rcases Nat.eq_zero_or_pos c with rfl | hc
+  · rw [natDiagGL_of_not_pos n (not_forall.mpr ⟨⟨0, hn⟩, by simp⟩), one_mul, mul_one]
+  · rw [natDiagGL_const_eq_scalar n hc]
+    exact Matrix.GeneralLinearGroup.scalar_commute _ _
 
 @[simp] lemma natDiagGL_one : natDiagGL n (fun _ ↦ 1) = 1 := by
   ext1
