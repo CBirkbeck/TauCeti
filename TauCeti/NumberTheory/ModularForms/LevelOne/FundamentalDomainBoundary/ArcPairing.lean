@@ -109,7 +109,8 @@ theorem intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
     intro x hx
     have hu : 4 - x ∈ Ioo (1 : ℝ) 2 := ⟨by linarith [hx.2], by linarith [hx.1]⟩
     have hp := hpair (4 - x) hu
-    rw [show (4 : ℝ) - (4 - x) = x by ring] at hp
+    have hxx : (4 : ℝ) - (4 - x) = x := by ring
+    rw [hxx] at hp
     simpa using hp.symm
   rw [← intervalIntegral.integral_add_adjacent_intervals hint hint']
   have h23 : (∫ t in (2 : ℝ)..3,
