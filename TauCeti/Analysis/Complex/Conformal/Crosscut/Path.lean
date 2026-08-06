@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Topology.Path
+public import Mathlib.Analysis.Convex.PathConnected
 public import TauCeti.Analysis.Complex.Conformal.Crosscut.EndpointLimit
 import TauCeti.Analysis.Complex.Conformal.Crosscut.Endpoints
 import TauCeti.Analysis.Complex.Conformal.ShortCrosscut
@@ -180,19 +180,14 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
   let a : ℝ := (c - ζ).arg - φ
   let b : ℝ := (c - ζ).arg + φ
   let g : ℝ → ℂ := fun θ => f (circleMap ζ ρ θ)
-  have hφ0 : 0 < φ := by
-    exact Real.arccos_pos.mpr ((div_lt_one (by linarith)).mpr hρr)
+  have hφ0 : 0 < φ := Real.arccos_pos.mpr ((div_lt_one (by linarith)).mpr hρr)
   have hab : a < b := by simp only [a, b]; linarith
   have hcrosscut : ball c r ∩ sphere ζ ρ = circleMap ζ ρ '' Ioo a b := by
     simpa only [a, b, φ] using ball_inter_sphere_eq_circleMap_image_Ioo hζ hρ hρr
   have hclosedCrosscut : closedBall c r ∩ sphere ζ ρ = circleMap ζ ρ '' Icc a b := by
     simpa only [a, b, φ] using closedBall_inter_sphere_eq_circleMap_image_Icc hζ hρ hρr
-  have hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) (ball c r) := by
-    intro θ hθ
-    have : circleMap ζ ρ θ ∈ ball c r ∩ sphere ζ ρ := by
-      rw [hcrosscut]
-      exact ⟨θ, hθ, rfl⟩
-    exact this.1
+  have hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) (ball c r) := fun θ hθ =>
+    (hcrosscut.ge ⟨θ, hθ, rfl⟩).1
   have hglim : ∀ θ ∈ frontier (Ioo a b), ∃ v,
       Tendsto f (𝓝[ball c r ∩ sphere ζ ρ] (circleMap ζ ρ θ)) (𝓝 v) ∧
         Tendsto g (𝓝[Ioo a b] θ) (𝓝 v) := fun θ hθ =>
@@ -202,28 +197,31 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
     exists_continuousOn_closure_eqOn_comp_circleMap hf hfin hcrosscut hmaps
       fun θ hθ => (hglim θ hθ).imp fun _ h => h.2
   have hcl : closure (Ioo a b) = Icc a b := closure_Ioo hab.ne
-  have hFcIcc : ContinuousOn F (Icc a b) := by simpa only [hcl] using hFc
   have hFends : ∀ θ ∈ frontier (Ioo a b),
       Tendsto f (𝓝[ball c r ∩ sphere ζ ρ] (circleMap ζ ρ θ)) (𝓝 (F θ)) := by
     intro θ hθ
     obtain ⟨v, hv, hvangle⟩ := hglim θ hθ
     have hθcl : θ ∈ closure (Ioo a b) := frontier_subset_closure hθ
-    rwa [eq_of_continuousWithinAt_of_eqOn_of_tendsto ((hFc θ hθcl).mono subset_closure) hFg hθcl
-      hvangle]
-  obtain ⟨γ, hγrange, hγpt⟩ := Path.exists_path_range_eq_image_Icc hab.le hFcIcc
-  have hγformula : ∀ t ∈ Ioo (0 : unitInterval) 1,
-      γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ))) := fun t ht =>
-    (hγpt t).trans (hFg (lineMap_mem_Ioo hab ht))
+    rwa [tendsto_nhds_unique' (mem_closure_iff_nhdsWithin_neBot.mp hθcl)
+      (((hFc θ hθcl).mono subset_closure).congr'
+        (hFg.eventuallyEq_of_mem self_mem_nhdsWithin)) hvangle]
+  -- Traverse `Icc a b` by `Path.segment a b`, then push it forward along `F` with `Path.map'`.
+  have hFcseg : ContinuousOn F (range (Path.segment a b)) := by
+    rw [Path.range_segment, segment_eq_Icc hab.le, ← hcl]; exact hFc
+  have hcoe : ⇑((Path.segment a b).map' hFcseg) = F ∘ ⇑(Path.segment a b) := by
+    simp only [Path.map', Path.coe_mk_mk]
+  have hγformula : ∀ t ∈ Ioo (0 : unitInterval) 1, ((Path.segment a b).map' hFcseg) t
+      = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ))) := fun t ht => by
+    rw [hcoe, Function.comp_apply, Path.segment_apply]
+    exact hFg (lineMap_mem_Ioo hab ht)
   have hFimage : F '' Icc a b = closure (g '' Ioo a b) := by
     rw [← hcl, image_closure_of_isCompact (hcl ▸ isCompact_Icc) hFc, hFg.image_eq]
   have hgimage : g '' Ioo a b = f '' (ball c r ∩ sphere ζ ρ) := by
     rw [hcrosscut, image_image]
   have ha : a ∈ frontier (Ioo a b) := by rw [frontier_Ioo hab]; exact mem_insert a {b}
-  have hb : b ∈ frontier (Ioo a b) := by
-    rw [frontier_Ioo hab]
-    exact mem_insert_of_mem a (mem_singleton b)
-  refine ⟨F a, F b, γ, ?_, ?_, ?_, ?_⟩
-  · rw [hγrange, hFimage, hgimage]
+  have hb : b ∈ frontier (Ioo a b) := by rw [frontier_Ioo hab]; exact mem_insert_of_mem a rfl
+  refine ⟨F a, F b, (Path.segment a b).map' hFcseg, ?_, ?_, ?_, ?_⟩
+  · rw [hcoe, range_comp, Path.range_segment, segment_eq_Icc hab.le, hFimage, hgimage]
   · simpa only [a, b, φ] using hFends a ha
   · simpa only [a, b, φ] using hFends b hb
   · simpa only [a, b, φ] using hγformula
