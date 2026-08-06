@@ -57,51 +57,17 @@ namespace HeckeCoset
 
 variable [IsHeckeTriple Δ H H]
 
-/-- The degree of a double coset: the number of left cosets `σᵢgH` in the decomposition
-`HgH = ⊔ᵢ σᵢgH`, i.e. `[H : H ∩ gHg⁻¹]`. -/
-noncomputable def degree (D : HeckeCoset Δ H H) : ℕ :=
-  Fintype.card (DecompQuotient H H (D.rep : G))
-
-/-- The defining equation of `degree`. -/
-lemma degree_def (D : HeckeCoset Δ H H) :
-    D.degree = Fintype.card (DecompQuotient H H (D.rep : G)) :=
-  (rfl)
-
-/-- Every double coset has positive degree. -/
-lemma degree_pos (D : HeckeCoset Δ H H) : 0 < D.degree :=
-  Fintype.card_pos
-
-open scoped Pointwise in
-/-- The degree as a relative index: `deg(HgH) = [H : H ∩ gHg⁻¹]`.  This is the form in
-which concrete degree computations identify the count with a congruence-subgroup index. -/
-lemma degree_eq_relIndex (D : HeckeCoset Δ H H) :
-    D.degree = (ConjAct.toConjAct (D.rep : G) • H).relIndex H :=
-  (Nat.card_eq_fintype_card).symm
-
-open scoped Pointwise in
-/-- The degree at an explicit representative: `deg(HgH) = [H : H ∩ gHg⁻¹]` computed from
-any `g`, not only from the chosen `rep`. This is the form concrete coset calculations use,
-since they present a double coset as `mk H H g`. -/
-lemma degree_mk (g : Δ) :
-    (HeckeCoset.mk H H g).degree = (ConjAct.toConjAct (g : G) • H).relIndex H := by
-  obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ :=
-    DoubleCoset.mem_doubleCoset.mp (toSet_mk g ▸ rep_mem (HeckeCoset.mk H H g))
-  have hfix₂ : ConjAct.toConjAct h₂ • H = H :=
-    Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hh₂)
-  have hfix₁ : ConjAct.toConjAct h₁ • H = H :=
-    Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hh₁)
-  have htransport := Subgroup.relIndex_pointwise_smul
-    (ConjAct.toConjAct h₁) (ConjAct.toConjAct (g : G) • H) H
-  rw [hfix₁] at htransport
-  rw [degree_eq_relIndex, heq, map_mul, map_mul, ← smul_smul, ← smul_smul, hfix₂,
-    htransport]
-
+-- `degree` and its basic API live in `HeckeRing.Basic`, beside `DecompQuotient`; this
+-- specialization stays here because it needs the subsingleton criterion of
+-- `HeckeRing.Multiplicity.Basic`
 /-- The identity double coset has degree one. -/
 @[simp] lemma degree_one : (1 : HeckeCoset Δ H H).degree = 1 := by
   have hsub : Subsingleton (DecompQuotient H H ((1 : HeckeCoset Δ H H).rep : G)) :=
     subsingleton_decompQuotient_of_mem (rep_one_mem)
+  rw [degree_def]
   exact Fintype.card_eq_one_iff_nonempty_unique.mpr
-    ⟨uniqueOfSubsingleton (Classical.arbitrary _)⟩
+    ⟨uniqueOfSubsingleton (Classical.arbitrary
+      (DecompQuotient H H ((1 : HeckeCoset Δ H H).rep : G)))⟩
 
 end HeckeCoset
 
@@ -464,8 +430,6 @@ private lemma smulOrbit_one_rep (q : HeckeCoset Δ ⊥ H) :
   · rintro ⟨i, rfl⟩
     conv_rhs => rw [← HeckeCoset.mk_rep q]
     rw [HeckeCoset.mk_bot_eq_mk_bot]
-    -- definitional: the constructor's coercion is its underlying product
-    change (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ * ((q.rep : Δ) : G) ∈ H
     exact key i
   · intro hx
     rw [hx]
@@ -473,8 +437,6 @@ private lemma smulOrbit_one_rep (q : HeckeCoset Δ ⊥ H) :
     refine ⟨i, ?_⟩
     conv_rhs => rw [← HeckeCoset.mk_rep q]
     rw [HeckeCoset.mk_bot_eq_mk_bot]
-    -- definitional: as above
-    change (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ * ((q.rep : Δ) : G) ∈ H
     exact key i
 
 /-- The identity of the Hecke ring fixes every basis element of the module. -/

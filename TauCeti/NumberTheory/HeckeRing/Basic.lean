@@ -162,6 +162,52 @@ noncomputable instance {Δ : Submonoid G} {H₁ H₂ : Subgroup G} [IsHeckeTripl
 
 end IsHeckeTriple
 
+namespace HeckeCoset
+
+variable {G : Type*} [Group G] {Δ : Submonoid G} {H₁ H₂ : Subgroup G}
+  [IsHeckeTriple Δ H₁ H₂]
+
+/-- The degree of a double coset: the number of left cosets `σᵢgH₂` in the decomposition
+`H₁gH₂ = ⊔ᵢ σᵢgH₂`, i.e. `[H₁ : H₁ ∩ gH₂g⁻¹]`. -/
+noncomputable def degree (D : HeckeCoset Δ H₁ H₂) : ℕ :=
+  Fintype.card (DecompQuotient H₁ H₂ (D.rep : G))
+
+/-- The defining equation of `degree`. -/
+lemma degree_def (D : HeckeCoset Δ H₁ H₂) :
+    D.degree = Fintype.card (DecompQuotient H₁ H₂ (D.rep : G)) :=
+  (rfl)
+
+/-- Every double coset has positive degree. -/
+lemma degree_pos (D : HeckeCoset Δ H₁ H₂) : 0 < D.degree :=
+  Fintype.card_pos
+
+open scoped Pointwise in
+/-- The degree as a relative index: `deg(H₁gH₂) = [H₁ : H₁ ∩ gH₂g⁻¹]`. This is the form in
+which concrete degree computations identify the count with a congruence-subgroup index. -/
+lemma degree_eq_relIndex (D : HeckeCoset Δ H₁ H₂) :
+    D.degree = (ConjAct.toConjAct (D.rep : G) • H₂).relIndex H₁ :=
+  (Nat.card_eq_fintype_card).symm
+
+open scoped Pointwise in
+/-- The degree at an explicit representative: the count computed from any `g`, not only
+from the chosen `rep`. This is the form concrete coset calculations use, since they present
+a double coset as `mk H H g`. -/
+@[simp] lemma degree_mk {H : Subgroup G} [IsHeckeTriple Δ H H] (g : Δ) :
+    (HeckeCoset.mk H H g).degree = (ConjAct.toConjAct (g : G) • H).relIndex H := by
+  obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ :=
+    DoubleCoset.mem_doubleCoset.mp (toSet_mk g ▸ rep_mem (HeckeCoset.mk H H g))
+  have hfix₂ : ConjAct.toConjAct h₂ • H = H :=
+    Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hh₂)
+  have hfix₁ : ConjAct.toConjAct h₁ • H = H :=
+    Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hh₁)
+  have htransport := Subgroup.relIndex_pointwise_smul
+    (ConjAct.toConjAct h₁) (ConjAct.toConjAct (g : G) • H) H
+  rw [hfix₁] at htransport
+  rw [degree_eq_relIndex, heq, map_mul, map_mul, ← smul_smul, ← smul_smul, hfix₂,
+    htransport]
+
+end HeckeCoset
+
 namespace HeckeCosetModule
 
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H₁ H₂ : Subgroup G}
