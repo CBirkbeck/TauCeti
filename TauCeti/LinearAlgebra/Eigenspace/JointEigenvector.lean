@@ -211,10 +211,6 @@ lemma iSup_inf_iInf_eigenspace_of_invariant [IsAlgClosed K] {ι : Type*}
     (hcomm : Pairwise fun i j ↦ Commute ((f i).restrict (hp i)) ((f j).restrict (hp j)))
     (hss : ∀ i, Module.End.IsSemisimple ((f i).restrict (hp i))) :
     (⨆ χ : ι → K, p ⊓ ⨅ i, (f i).eigenspace (χ i)) = p := by
-  have hmax' (i : ι) (μ : K) :
-      Module.End.maxGenEigenspace ((f i).restrict (hp i)) μ =
-        Module.End.eigenspace ((f i).restrict (hp i)) μ :=
-    (hss i).isFinitelySemisimple.maxGenEigenspace_eq_eigenspace μ
   simp_rw [fun χ ↦ Submodule.inf_iInf_eigenspace_of_forall_mapsTo (f := f) p hp χ,
     ← Submodule.map_iSup]
   suffices h_restrict_top :
@@ -286,9 +282,9 @@ section FourierDecomposition
 /-! ### Unconditional decomposition for finite commutative groups
 
 For a finite commutative group `G` acting through `ρ : G →* Module.End K V` on any module
-over a field with enough roots of unity — with no finite-dimensionality assumption — the
-classical character projectors `|G|⁻¹ • ∑ d, χ(d)⁻¹ • ρ d` decompose every vector into
-joint eigenvectors, so the joint eigenspaces indexed by `G →* Kˣ` span. -/
+over a commutative domain with enough roots of unity — with no finite-dimensionality
+assumption — the classical character projectors `|G|⁻¹ • ∑ d, χ(d)⁻¹ • ρ d` decompose every
+vector into joint eigenvectors, so the joint eigenspaces indexed by `G →* Kˣ` span. -/
 
 variable [CommGroup G] [Finite G]
 
@@ -333,8 +329,8 @@ variable [HasEnoughRootsOfUnity K (Monoid.exponent G)]
 private instance : HasEnoughRootsOfUnity K (Monoid.exponent Gˣ) :=
   Monoid.exponent_eq_of_mulEquiv (toUnits (G := G)).symm ▸ inferInstance
 
--- the character group of a finite commutative group over a field with enough roots of
--- unity has the size of the group, by Mathlib's character duality
+-- the character group of a finite commutative group over a commutative domain with enough
+-- roots of unity has the size of the group, by Mathlib's character duality
 omit [IsDomain K] in
 private lemma card_unitHom : Nat.card (G →* Kˣ) = Nat.card G := by
   rw [Nat.card_congr (MulChar.equivToUnitHom.trans
@@ -389,9 +385,9 @@ private lemma sum_fourierComponent (hunit : IsUnit (Nat.card G : K)) (v : V) :
     Ring.inverse_mul_cancel _ hunit, one_smul]
 
 /-- **Unconditional character-indexed spanning** for a finite commutative group acting on
-an arbitrary module over a field with enough roots of unity: the classical character
-projectors decompose every vector, with no finite-dimensionality or semisimplicity
-hypotheses. -/
+an arbitrary module over a commutative domain with enough roots of unity: the classical
+character projectors decompose every vector, with no finite-dimensionality or
+semisimplicity hypotheses. -/
 theorem iSup_iInf_eigenspace_unitHom_eq_top_of_commGroup
     (hcard : IsUnit (Nat.card G : K)) :
     (⨆ χ₀ : G →* Kˣ, ⨅ g, (ρ g).eigenspace (χ₀ g)) = ⊤ := by
