@@ -51,13 +51,6 @@ private lemma segment1_chord_ne_zero (hH : H ≠ Real.sqrt 3 / 2) :
   rw [h0, Complex.zero_im] at him
   linarith
 
-private lemma segment4_chord_ne_zero (hH : H ≠ Real.sqrt 3 / 2) :
-    (-1 / 2 : ℂ) + H * Complex.I - (ρ : ℂ) ≠ 0 := by
-  have h : (-1 / 2 : ℂ) + H * Complex.I - (ρ : ℂ) =
-      -((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)) := by ring
-  rw [h]
-  exact neg_ne_zero.mpr (segment1_chord_ne_zero hH)
-
 private lemma arc_deriv_ne_zero (t : ℝ) :
     (Real.pi / 6) • (circleMap 0 1 ((t + 1) * (Real.pi / 6)) * Complex.I) ≠ 0 := by
   refine smul_ne_zero (by positivity) (mul_ne_zero ?_ Complex.I_ne_zero)
@@ -86,10 +79,12 @@ theorem isPwC1ImmersionOn_fdBoundary (hH : H ≠ Real.sqrt 3 / 2) :
     · rw [(hasDerivWithinAt_fdBoundary_arc (h ⟨le_rfl, hlt.le⟩).1
         (h ⟨hlt.le, le_rfl⟩).2 ht).derivWithin h_uniq]
       exact arc_deriv_ne_zero t
-    · rw [derivWithin_congr (fun s hs ↦ eqOn_fdBoundary_segment4 H (h hs))
+    · have hchord : (-1 / 2 : ℂ) + H * Complex.I - (ρ : ℂ) =
+          -((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)) := by ring
+      rw [derivWithin_congr (fun s hs ↦ eqOn_fdBoundary_segment4 H (h hs))
         (eqOn_fdBoundary_segment4 H (h ht)),
-        (hasDerivAt_fdBoundary_segment4 H t).hasDerivWithinAt.derivWithin h_uniq]
-      exact segment4_chord_ne_zero hH
+        (hasDerivAt_fdBoundary_segment4 H t).hasDerivWithinAt.derivWithin h_uniq, hchord]
+      exact neg_ne_zero.mpr (segment1_chord_ne_zero hH)
     · rw [derivWithin_congr (fun s hs ↦ eqOn_fdBoundary_segment5 H (h hs))
         (eqOn_fdBoundary_segment5 H (h ht)),
         (hasDerivAt_fdBoundary_segment5 H t).hasDerivWithinAt.derivWithin h_uniq]
