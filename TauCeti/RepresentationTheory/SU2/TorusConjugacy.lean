@@ -76,10 +76,10 @@ private theorem isDiag_star_left_conjugate_of_eq_smul_one_add_smul {R n : Type*}
   rw [hexpand]
   exact (Matrix.isDiag_one.smul _).add (hdiagH.smul _)
 
-/-- **A special unitary matrix is a scalar plus a multiple of its Hermitian part.** Writing
-`H = I • (g - star g)`, the identity `g = (tr g / 2) • 1 + (-I / 2) • H` holds because
-`g + star g` is the scalar `tr g`. -/
-private theorem coe_eq_smul_one_add_smul_hermitianPart (g : SU2) :
+/-- **A special unitary matrix is a scalar plus a multiple of `I • (g - star g)`.** The identity
+`g = (tr g / 2) • 1 + (-I / 2) • (I • (g - star g))` holds because `g + star g` is the scalar
+`tr g`. -/
+private theorem coe_eq_smul_one_add_smul_I_smul_sub_star (g : SU2) :
     (g : Matrix (Fin 2) (Fin 2) ℂ)
       = (Matrix.trace (g : Matrix (Fin 2) (Fin 2) ℂ) / 2) • (1 : Matrix (Fin 2) (Fin 2) ℂ)
         + (-Complex.I / 2) •
@@ -99,7 +99,7 @@ private theorem coe_eq_smul_one_add_smul_hermitianPart (g : SU2) :
 /-- **A unitary that diagonalises `g` rescales to a special unitary one.** Multiplying a unitary by
 a unit-modulus scalar leaves the conjugate `star u * g * u` unchanged, and some such multiple is
 special unitary, so `g` is conjugate into the torus inside `SU(2)`. -/
-private theorem exists_mem_torus_of_isDiag_star_conj (g : SU2)
+private theorem exists_conj_mem_torus_of_isDiag_star_left_conjugate (g : SU2)
     {U : Matrix.unitaryGroup (Fin 2) ℂ}
     (hdiagG : (star (U : Matrix (Fin 2) (Fin 2) ℂ) * (g : Matrix (Fin 2) (Fin 2) ℂ)
       * (U : Matrix (Fin 2) (Fin 2) ℂ)).IsDiag) :
@@ -138,9 +138,9 @@ theorem exists_conj_mem_torus (g : SU2) : ∃ u : SU2, u * g * u⁻¹ ∈ torus 
     rw [h]
     exact Matrix.isDiag_diagonal _
   -- `G` is a scalar plus a multiple of `H`, so that unitary diagonalises `G` too.
-  exact exists_mem_torus_of_isDiag_star_conj g
+  exact exists_conj_mem_torus_of_isDiag_star_left_conjugate g
     (isDiag_star_left_conjugate_of_eq_smul_one_add_smul
-      (coe_eq_smul_one_add_smul_hermitianPart g) (Matrix.UnitaryGroup.star_mul_self U) hdiagH)
+      (coe_eq_smul_one_add_smul_I_smul_sub_star g) (Matrix.UnitaryGroup.star_mul_self U) hdiagH)
 
 /-- Every element of `SU(2)` is conjugate to the torus element `diag (e^{iθ}, e^{-iθ})` for some
 angle `θ`. -/
