@@ -53,10 +53,10 @@ variable [IsHeckeTriple Δ H H]
 
 -- `degree` and its basic API live in `HeckeRing.Basic`, beside `DecompQuotient`; this
 -- kept here, next to its only consumer: this is the `map_one` field of `deg` below
+omit [IsHeckeTriple Δ H H] in
 /-- The identity double coset has degree one. -/
 @[simp] lemma degree_one : (1 : HeckeCoset Δ H H).degree = 1 := by
-  have hone : (1 : HeckeCoset Δ H H) = HeckeCoset.mk H H (1 : Δ) := rfl
-  rw [hone, degree_mk]
+  rw [HeckeCoset.one_def H, degree_mk]
   simp
 
 end HeckeCoset

@@ -27,10 +27,11 @@ that stack merges.
 
 ## Main results
 
-* `LeftCosetModule.instModuleOp`: the opposite Hecke ring acts on the left-coset module —
-  Shimura's right action through the standard `Module` API.
-* `LeftCosetModule.instIsScalarTowerOp`, `LeftCosetModule.instSMulCommClassOp`: the scalar
-  operations are homogeneous in, and commute with, the coefficients.
+* `LeftCosetModule.instModuleMulOpposite`: the opposite Hecke ring acts on the left-coset
+  module — Shimura's right action through the standard `Module` API.
+* `LeftCosetModule.instIsScalarTowerMulOpposite`,
+  `LeftCosetModule.instSMulCommClassMulOpposite`: the scalar operations are homogeneous in,
+  and commute with, the coefficients.
 * `LeftCosetModule.card_filter_orbit_eq_multiplicity` (private): Shimura's pair count, the
   combinatorial core of the compatibility law.
 
@@ -56,7 +57,7 @@ variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
 
 /-- The scalar operations are `R`-homogeneous in the Hecke-ring argument; over the
 opposite-ring encoding the scalar crosses the reversed product, so commutativity of `R` is
-required. Packaged as `instIsScalarTowerOp`. -/
+required. Packaged as `instIsScalarTowerMulOpposite`. -/
 private lemma op_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
     MulOpposite.op (r • t) • m = r • (MulOpposite.op t • m) := by
   classical
@@ -73,7 +74,7 @@ private lemma op_smul_assoc (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H 
 
 /-- The scalar tower `R → (𝕋 Δ H R)ᵐᵒᵖ → LeftCosetModule Δ H R`: the canonical form of the
 `R`-homogeneity of the scalar operations. -/
-noncomputable instance instIsScalarTowerOp :
+noncomputable instance instIsScalarTowerMulOpposite :
     IsScalarTower R (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R) where
   smul_assoc r t m := by
     conv_lhs => rw [← MulOpposite.op_unop t, ← MulOpposite.op_smul]
@@ -90,7 +91,7 @@ open scoped HeckeCosetModule
 variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
 
 /-- The scalar operations commute with the `R`-scalars of the module argument. Packaged as
-`instSMulCommClassOp`. -/
+`instSMulCommClassMulOpposite`. -/
 private lemma op_smul_comm (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
     MulOpposite.op t • (r • m) = r • (MulOpposite.op t • m) := by
   classical
@@ -106,7 +107,7 @@ private lemma op_smul_comm (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R
 
 /-- The scalar operations of the opposite Hecke ring commute with the `R`-scalars: the
 canonical `SMulCommClass` form. -/
-noncomputable instance instSMulCommClassOp :
+noncomputable instance instSMulCommClassMulOpposite :
     SMulCommClass (𝕋 Δ H R)ᵐᵒᵖ R (LeftCosetModule Δ H R) where
   smul_comm t r m := by
     conv_lhs => rw [← MulOpposite.op_unop t]
@@ -365,7 +366,7 @@ private lemma smulOrbit_one_rep (q : HeckeCoset Δ ⊥ H) :
     smulOrbit H (1 : HeckeCoset Δ H H).rep q.rep = {q} := by
   classical
   rw [smulOrbit_congr_left q.rep
-    ((HeckeCoset.mk_rep (1 : HeckeCoset Δ H H)).trans (rfl))]
+    ((HeckeCoset.mk_rep (1 : HeckeCoset Δ H H)).trans (HeckeCoset.one_def H))]
   -- the tail `σᵢ · 1` lies in `H`, so it absorbs into the left coset of `q.rep`
   have key : ∀ i : DecompQuotient H H ((1 : Δ) : G),
       (((q.rep : Δ) : G) * (i.out : G) * ((1 : Δ) : G))⁻¹ * ((q.rep : Δ) : G) ∈ H := by
@@ -400,7 +401,7 @@ private lemma one_smul_single (q : HeckeCoset Δ ⊥ H) (c : R) :
 /-- **The left-coset module is a module over the opposite Hecke ring** (Shimura,
 Propositions 3.2 and 3.4): the scalar operations of the defining file, packaged with the
 unit and compatibility laws through the standard `Module` API. -/
-noncomputable instance instModuleOp :
+noncomputable instance instModuleMulOpposite :
     Module (𝕋 Δ H R)ᵐᵒᵖ (LeftCosetModule Δ H R) where
   one_smul m := by
     induction m using Finsupp.induction_linear with

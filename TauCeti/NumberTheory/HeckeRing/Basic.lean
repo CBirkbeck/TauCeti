@@ -169,28 +169,21 @@ end IsHeckeTriple
 namespace HeckeCoset
 
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H₁ H₂ : Subgroup G}
-  [IsHeckeTriple Δ H₁ H₂]
 
+open scoped Pointwise in
 /-- The degree of a double coset: the number of left cosets `σᵢgH₂` in the decomposition
-`H₁gH₂ = ⊔ᵢ σᵢgH₂`, i.e. `[H₁ : H₁ ∩ gH₂g⁻¹]`. -/
+`H₁gH₂ = ⊔ᵢ σᵢgH₂`, i.e. the relative index `[H₁ : H₁ ∩ gH₂g⁻¹]`. Stating it needs no
+finiteness — `Subgroup.relIndex` is a `Nat.card`, which is `0` when the index is infinite;
+the Hecke-triple hypothesis enters only where the count is genuinely finite. -/
 noncomputable def degree (D : HeckeCoset Δ H₁ H₂) : ℕ :=
-  Fintype.card (DecompQuotient H₁ H₂ (D.rep : G))
-
-/-- The defining equation of `degree`. -/
-lemma degree_def (D : HeckeCoset Δ H₁ H₂) :
-    D.degree = Fintype.card (DecompQuotient H₁ H₂ (D.rep : G)) :=
-  (rfl)
-
-/-- Every double coset has positive degree. -/
-lemma degree_pos (D : HeckeCoset Δ H₁ H₂) : 0 < D.degree :=
-  Fintype.card_pos
+  (ConjAct.toConjAct (D.rep : G) • H₂).relIndex H₁
 
 open scoped Pointwise in
 /-- The degree as a relative index: `deg(H₁gH₂) = [H₁ : H₁ ∩ gH₂g⁻¹]`. This is the form in
 which concrete degree computations identify the count with a congruence-subgroup index. -/
 lemma degree_eq_relIndex (D : HeckeCoset Δ H₁ H₂) :
     D.degree = (ConjAct.toConjAct (D.rep : G) • H₂).relIndex H₁ :=
-  (Nat.card_eq_fintype_card).symm
+  (rfl)
 
 open scoped Pointwise in
 /-- The degree at an explicit representative: the count computed from any `g`, not only
@@ -209,6 +202,18 @@ a double coset as `mk H H g`. -/
   rw [hfix₁] at htransport
   rw [degree_eq_relIndex, heq, map_mul, map_mul, ← smul_smul, ← smul_smul, hfix₂,
     htransport]
+
+variable [IsHeckeTriple Δ H₁ H₂]
+
+/-- The degree counts the decomposition quotient. This is where the Hecke-triple hypothesis
+is needed: it is what makes that quotient finite. -/
+lemma degree_def (D : HeckeCoset Δ H₁ H₂) :
+    D.degree = Fintype.card (DecompQuotient H₁ H₂ (D.rep : G)) :=
+  Nat.card_eq_fintype_card
+
+/-- Every double coset has positive degree. -/
+lemma degree_pos (D : HeckeCoset Δ H₁ H₂) : 0 < D.degree := by
+  rw [degree_def]; exact Fintype.card_pos
 
 end HeckeCoset
 
