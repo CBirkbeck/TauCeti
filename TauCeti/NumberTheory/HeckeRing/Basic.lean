@@ -40,7 +40,8 @@ stack merges.
   `single_apply`, `sum_single_index`, `smul_single_one`, `single_add`, `induction_linear`,
   and the `Module R` instance `HeckeCosetModule.instModule`.
 * `HeckeCoset.degree`: the number of left cosets in the decomposition of a double coset,
-  with `degree_eq_relIndex` and `degree_mk` presenting it as a relative index.
+  with `degree_eq_relIndex` and `degree_mk` presenting it as a relative index, and
+  `degree_one` the identity coset.
 
 ## Main results
 
@@ -202,6 +203,11 @@ a double coset as `mk H H g`. -/
   rw [hfix₁] at htransport
   rw [degree_eq_relIndex, heq, map_mul, map_mul, ← smul_smul, ← smul_smul, hfix₂,
     htransport]
+
+/-- The identity double coset has degree one: `H·1·H = H` is a single left coset. -/
+@[simp] lemma degree_one {H : Subgroup G} : (1 : HeckeCoset Δ H H).degree = 1 := by
+  rw [one_def H, degree_mk]
+  simp
 
 variable [IsHeckeTriple Δ H₁ H₂]
 
