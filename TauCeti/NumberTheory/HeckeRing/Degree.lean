@@ -67,7 +67,7 @@ lemma degree_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H
       Finsupp.single q b) = (D.degree : ℕ) • (b * a) := by
   classical
   rw [single_smul_single, map_sum]
-  simp [HeckeCoset.degree_def, smulOrbit_card]
+  simp [HeckeCoset.degree_eq_card_decompQuotient, smulOrbit_card]
 
 end NonUnital
 

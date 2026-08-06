@@ -213,13 +213,13 @@ variable [IsHeckeTriple Δ H₁ H₂]
 
 /-- The degree counts the decomposition quotient. This is where the Hecke-triple hypothesis
 is needed: it is what makes that quotient finite. -/
-lemma degree_def (D : HeckeCoset Δ H₁ H₂) :
+lemma degree_eq_card_decompQuotient (D : HeckeCoset Δ H₁ H₂) :
     D.degree = Fintype.card (DecompQuotient H₁ H₂ (D.rep : G)) :=
   Nat.card_eq_fintype_card
 
 /-- Every double coset has positive degree. -/
 lemma degree_pos (D : HeckeCoset Δ H₁ H₂) : 0 < D.degree := by
-  rw [degree_def]; exact Fintype.card_pos
+  rw [degree_eq_card_decompQuotient]; exact Fintype.card_pos
 
 end HeckeCoset
 
