@@ -25,6 +25,8 @@ derivative.
 
 * `TauCeti.ModularForm.intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunction`
   (the ceiling bridge).
+* `TauCeti.ModularForm.intervalIntegral_fdBoundary_segment5_eq_qExpansionOrderAtCusp`:
+  the evaluated form — the ceiling contributes `2πi` times the cusp order.
 
 ## References
 
@@ -120,6 +122,24 @@ theorem intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunc
   refine intervalIntegral.integral_congr_Ioo_of_le (by norm_num) fun t ht ↦ ?_
   rw [hLc, hcusp, hR]
   exact ceiling_integrand_eq hper ht.1
+
+
+/-- **The ceiling contour integral evaluates to the cusp order**: for a width-`1`
+periodic function whose cusp function is analytic on the closed `q`-disc and vanishes
+there at most at the origin, the ceiling contour integral of the logarithmic derivative
+is `2πi` times the `q`-expansion order at the cusp. -/
+theorem intervalIntegral_fdBoundary_segment5_eq_qExpansionOrderAtCusp
+    {g : UpperHalfPlane → ℂ} {H : ℝ}
+    (hper : Function.Periodic (g ∘ UpperHalfPlane.ofComplex) 1)
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (UpperHalfPlane.cuspFunction 1 g) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      UpperHalfPlane.cuspFunction 1 g q ≠ 0) :
+    ∫ t in (4 : ℝ)..5,
+        deriv (fdBoundary H) t • logDeriv (g ∘ UpperHalfPlane.ofComplex) (fdBoundary H t) =
+      2 * Real.pi * Complex.I * qExpansionOrderAtCusp 1 g :=
+  (intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunction hper).trans
+    (circleIntegral_logDeriv_cuspFunction hga hgz)
 
 end ModularForm
 
