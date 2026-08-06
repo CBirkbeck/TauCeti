@@ -52,16 +52,12 @@ namespace HeckeCoset
 variable [IsHeckeTriple Δ H H]
 
 -- `degree` and its basic API live in `HeckeRing.Basic`, beside `DecompQuotient`; this
--- specialization stays here because it needs the subsingleton criterion of
--- `HeckeRing.Multiplicity.Basic`
+-- kept here, next to its only consumer: this is the `map_one` field of `deg` below
 /-- The identity double coset has degree one. -/
 @[simp] lemma degree_one : (1 : HeckeCoset Δ H H).degree = 1 := by
-  have hsub : Subsingleton (DecompQuotient H H ((1 : HeckeCoset Δ H H).rep : G)) :=
-    subsingleton_decompQuotient_of_mem (rep_one_mem)
-  rw [degree_def]
-  exact Fintype.card_eq_one_iff_nonempty_unique.mpr
-    ⟨uniqueOfSubsingleton (Classical.arbitrary
-      (DecompQuotient H H ((1 : HeckeCoset Δ H H).rep : G)))⟩
+  have hone : (1 : HeckeCoset Δ H H) = HeckeCoset.mk H H (1 : Δ) := rfl
+  rw [hone, degree_mk]
+  simp
 
 end HeckeCoset
 
