@@ -14,7 +14,8 @@ public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
 
 The degree of a diagonal double coset `T(a₁, ..., aₙ)`, in the two cases the Hecke-ring
 calculations need. The scalar case `deg T(c, ..., c) = 1` holds at every positive rank, because a
-scalar matrix is central. The prime-power case `deg T(pⁱ, pⁱ⁺ᵏ) = pᵏ⁻¹(p + 1)` for `k ≥ 1`
+scalar matrix is central. The prime-power case `deg T(a₀, a₁) = pᵏ⁻¹(p + 1)` for a divisibility
+chain of ratio `a₁ / a₀ = pᵏ` with `k ≥ 1`
 is specific to rank two: the degree of a double coset is the relative index of the
 conjugated copy of `SL₂(ℤ)`, which for a diagonal representative is exactly the index
 `[SL₂(ℤ) : Γ₀(pᵏ)]` computed in `TauCeti.NumberTheory.ModularForms.CongruenceSubgroups`.
@@ -32,9 +33,10 @@ contains representatives with permuted diagonals.
 
 ## Main results
 
-* `degree_diagCoset_eq_Gamma0_index`: `deg T(a₀, a₁) = [SL₂(ℤ) : Γ₀(N)]` for the ratio
-  `N = a₁ / a₀`, whenever that ratio is positive.
-* `degree_diagCoset_prime_pow`: `deg T(pⁱ, pⁱ⁺ᵏ) = pᵏ⁻¹(p + 1)` for prime `p`, `k ≥ 1`.
+* `degree_diagCoset_eq_Gamma0_index`: `deg T(a₀, a₁) = [SL₂(ℤ) : Γ₀(N)]` for a divisibility
+  chain `a` whose ratio `N = a₁ / a₀` is positive.
+* `degree_diagCoset_prime_pow`: `deg T(a₀, a₁) = pᵏ⁻¹(p + 1)` for a divisibility chain `a`
+  whose ratio is `pᵏ`, with `p` prime and `k ≥ 1`.
 * `degree_diagCoset_scalar`: `deg T(c, ..., c) = 1`, at every positive rank and for every
   constant tuple.
 
@@ -150,10 +152,10 @@ private lemma conjDiag_relIndex_eq_Gamma0_index (N : ℕ) (a : Fin 2 → ℕ) (h
         Subgroup.relIndex_map_map_of_injective _ _ h_inj
     _ = (Gamma0 N).index := (Gamma0 N).relIndex_top_right
 
-/-- **The degree of a rank-two diagonal double coset is an index of `Γ₀`**: if the two entries
-of `a` are in ratio `N > 0`, then `deg T(a₀, a₁) = [SL₂(ℤ) : Γ₀(N)]`. Conjugating `SL₂(ℤ)` by
-the diagonal matrix `a` carves out exactly `Γ₀(N)`, so the relative index computing the degree
-is the index of `Γ₀(N)`. -/
+/-- **The degree of a rank-two diagonal double coset is an index of `Γ₀`**: if `a` is a
+divisibility chain whose entries are in ratio `N > 0`, then
+`deg T(a₀, a₁) = [SL₂(ℤ) : Γ₀(N)]`. Conjugating `SL₂(ℤ)` by the diagonal matrix `a` carves out
+exactly `Γ₀(N)`, so the relative index computing the degree is the index of `Γ₀(N)`. -/
 theorem degree_diagCoset_eq_Gamma0_index (N : ℕ) (hN : 0 < N) (a : Fin 2 → ℕ)
     (hdiv : IsDvdChain a) (h_ratio : a 1 / a 0 = N) :
     (diagCoset a).degree = (Gamma0 N).index := by
@@ -175,8 +177,9 @@ theorem degree_diagCoset_eq_Gamma0_index (N : ℕ) (hN : 0 < N) (a : Fin 2 → �
   rw [diagCoset_def, HeckeCoset.degree_mk,
     conjDiag_relIndex_eq_Gamma0_index N a ha h_ratio (isDvdChain_iff.mp hdiv (Fin.zero_le 1))]
 
-/-- **The prime-power degree** (Shimura, Theorem 3.24, degree count): for prime `p`,
-`deg T(pⁱ, pⁱ⁺ᵏ) = pᵏ⁻¹ (p + 1)` for `k ≥ 1`. -/
+/-- **The prime-power degree** (Shimura, Theorem 3.24, degree count): for prime `p` and
+`k ≥ 1`, a divisibility chain `a` of ratio `a₁ / a₀ = pᵏ` has `deg T(a₀, a₁) = pᵏ⁻¹ (p + 1)`.
+The archetype is `a = (pⁱ, pⁱ⁺ᵏ)`. -/
 theorem degree_diagCoset_prime_pow (p : ℕ) (hp : Nat.Prime p) (a : Fin 2 → ℕ)
     (hdiv : IsDvdChain a) (k : ℕ) (hk : 0 < k) (h_ratio : a 1 / a 0 = p ^ k) :
     (diagCoset a).degree = p ^ (k - 1) * (p + 1) := by
@@ -217,8 +220,7 @@ theorem degree_diagCoset_scalar (a : Fin n → ℕ) (h_const : ∀ i, a i = a 0)
   have hnorm : natDiagGL n a ∈ Subgroup.normalizer (SLnZ n) := by
     rw [Subgroup.mem_normalizer_iff]
     intro x
-    rw [show natDiagGL n a * x * (natDiagGL n a)⁻¹ = x by
-      rw [natDiagGL_comm_of_const n a ha h_const x, mul_assoc, mul_inv_cancel, mul_one]]
+    rw [natDiagGL_comm_of_const n a ha h_const x, mul_assoc, mul_inv_cancel, mul_one]
   rw [Subgroup.conjAct_pointwise_smul_eq_self hnorm, Subgroup.relIndex_self]
 
 end HeckeRing.GLn
