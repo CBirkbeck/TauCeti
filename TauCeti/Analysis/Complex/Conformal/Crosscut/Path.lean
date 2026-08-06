@@ -103,8 +103,7 @@ private theorem exists_continuousOn_closure_eqOn_comp_circleMap
     (hcrosscut : ball c r ∩ sphere ζ ρ = circleMap ζ ρ '' Ioo a b)
     (hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) (ball c r))
     (hglim : ∀ θ ∈ frontier (Ioo a b), ∃ v,
-      Tendsto f (𝓝[ball c r ∩ sphere ζ ρ] (circleMap ζ ρ θ)) (𝓝 v) ∧
-        Tendsto (fun θ => f (circleMap ζ ρ θ)) (𝓝[Ioo a b] θ) (𝓝 v)) :
+      Tendsto (fun θ => f (circleMap ζ ρ θ)) (𝓝[Ioo a b] θ) (𝓝 v)) :
     ∃ F : ℝ → ℂ, ContinuousOn F (closure (Ioo a b)) ∧
       EqOn F (fun θ => f (circleMap ζ ρ θ)) (Ioo a b) := by
   have hgcont : ContinuousOn (fun θ => f (circleMap ζ ρ θ)) (Ioo a b) := by
@@ -119,7 +118,7 @@ private theorem exists_continuousOn_closure_eqOn_comp_circleMap
   have hgsub : ∀ θ ∈ frontier (Ioo a b),
       (clusterSetOn (fun θ => f (circleMap ζ ρ θ)) (Ioo a b) θ).Subsingleton := by
     intro θ hθ
-    obtain ⟨v, -, hlim⟩ := hglim θ hθ
+    obtain ⟨v, hlim⟩ := hglim θ hθ
     rw [clusterSetOn_eq_singleton_of_tendsto (frontier_subset_closure hθ) hlim]
     exact subsingleton_singleton
   exact exists_continuousOn_closure_eqOn_of_isBounded isOpen_Ioo hgcont hgb hgsub
@@ -127,8 +126,8 @@ private theorem exists_continuousOn_closure_eqOn_comp_circleMap
 /-- **A continuous function on `Icc a b` traverses its image as a path.** Reparametrising `[a, b]`
 affinely by the unit interval turns `F` into a path from `F a` to `F b` whose range is exactly
 `F '' Icc a b`. -/
-private theorem exists_path_range_eq_image_Icc {a b : ℝ} (hab : a < b) {F : ℝ → ℂ}
-    (hFcIcc : ContinuousOn F (Icc a b)) :
+private theorem exists_path_range_eq_image_Icc {Y : Type*} [TopologicalSpace Y] {a b : ℝ}
+    (hab : a < b) {F : ℝ → Y} (hFcIcc : ContinuousOn F (Icc a b)) :
     ∃ γ : Path (F a) (F b), range γ = F '' Icc a b ∧
       ∀ t : unitInterval, γ t = F (AffineMap.lineMap a b (t : ℝ)) := by
   refine ⟨{ toFun := fun t => F (AffineMap.lineMap a b (t : ℝ))
@@ -148,7 +147,8 @@ private theorem exists_path_range_eq_image_Icc {a b : ℝ} (hab : a < b) {F : �
 /-- **A continuous extension takes the value the function tends to.** If `F` is continuous on
 `closure (Ioo a b)` and agrees with `g` on `Ioo a b`, then at any point of the closure `F` takes
 whatever value `g` tends to along `Ioo a b`. -/
-private theorem eq_of_tendsto_of_continuousOn_closure {a b θ : ℝ} {F g : ℝ → ℂ} {v : ℂ}
+private theorem eq_of_tendsto_of_continuousOn_closure {Y : Type*} [TopologicalSpace Y]
+    [T2Space Y] {a b θ : ℝ} {F g : ℝ → Y} {v : Y}
     (hFc : ContinuousOn F (closure (Ioo a b))) (hFg : EqOn F g (Ioo a b))
     (hθcl : θ ∈ closure (Ioo a b)) (hvangle : Tendsto g (𝓝[Ioo a b] θ) (𝓝 v)) :
     F θ = v := by
@@ -158,7 +158,8 @@ private theorem eq_of_tendsto_of_continuousOn_closure {a b θ : ℝ} {F g : ℝ 
   exact tendsto_nhds_unique' hne hFangle hvangle
 
 /-- **The image of the closure under a continuous extension is the closure of the image.** -/
-private theorem image_closure_eq_closure_image_of_eqOn {a b : ℝ} (hab : a < b) {F g : ℝ → ℂ}
+private theorem image_closure_eq_closure_image_of_eqOn {Y : Type*} [TopologicalSpace Y]
+    [T2Space Y] {a b : ℝ} (hab : a < b) {F g : ℝ → Y}
     (hFc : ContinuousOn F (closure (Ioo a b))) (hFg : EqOn F g (Ioo a b)) :
     F '' closure (Ioo a b) = closure (g '' Ioo a b) := by
   rw [image_closure_of_isCompact
@@ -241,7 +242,8 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
     exists_tendsto_nhdsWithin_and_tendsto_comp_circleMap hζ hρ hρr hf hfin hcrosscut
       hclosedCrosscut (closure_Ioo hab.ne ▸ frontier_subset_closure hθ)
   obtain ⟨F, hFc, hFg⟩ :=
-    exists_continuousOn_closure_eqOn_comp_circleMap hf hfin hcrosscut hmaps hglim
+    exists_continuousOn_closure_eqOn_comp_circleMap hf hfin hcrosscut hmaps
+      fun θ hθ => (hglim θ hθ).imp fun _ h => h.2
   have hcl : closure (Ioo a b) = Icc a b := closure_Ioo hab.ne
   have hFcIcc : ContinuousOn F (Icc a b) := by simpa only [hcl] using hFc
   have hFends : ∀ θ ∈ frontier (Ioo a b),
