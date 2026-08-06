@@ -70,7 +70,7 @@ theorem logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg
 /-- The reflected-half integrability: interval integrability of the arc contour
 integrand on `[2, 3]` follows from integrability on `[1, 2]` through the pairing, which
 writes the second half as a reflected constant-minus-first-half integrand. -/
-theorem intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc_snd
+theorem intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_segment3
     [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ}
     (hd : ∀ t ∈ Ioo (1 : ℝ) 2, DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
     (hne : ∀ t ∈ Ioo (1 : ℝ) 2, (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
@@ -128,7 +128,7 @@ theorem intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
       (fun u : ℝ ↦ -(↑k * logDeriv (fdBoundary H) u)) volume 1 2 :=
     ((intervalIntegrable_logDeriv_fdBoundary_arc H ⟨le_rfl, by norm_num⟩
       ⟨by norm_num, by norm_num⟩).const_mul _).neg
-  have hint' := intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc_snd
+  have hint' := intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_segment3
     f hS hd hne hint
   rw [← intervalIntegral.integral_add_adjacent_intervals hint hint']
   have h23 : (∫ t in (2 : ℝ)..3,
