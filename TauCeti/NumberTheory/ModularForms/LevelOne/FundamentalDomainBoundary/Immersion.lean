@@ -80,7 +80,7 @@ theorem isPwC1ImmersionOn_fdBoundary (hH : H ≠ Real.sqrt 3 / 2) :
       rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at hsub
     refine ⟨contDiffOn_fdBoundary H hsub' hdis, fun t ht ↦ ?_⟩
     have h_uniq : UniqueDiffWithinAt ℝ (Icc c d) t := uniqueDiffOn_Icc hlt t ht
-    rcases subset_piece_of_disjoint_corners_aux hsub' hdis with h | h | h | h
+    rcases subset_piece_of_disjoint_corners hsub' hdis with h | h | h | h
     · rw [derivWithin_congr (fun s hs ↦ eqOn_fdBoundary_segment1 H (h hs))
         (eqOn_fdBoundary_segment1 H (h ht)),
         (hasDerivAt_fdBoundary_segment1 H t).hasDerivWithinAt.derivWithin h_uniq]

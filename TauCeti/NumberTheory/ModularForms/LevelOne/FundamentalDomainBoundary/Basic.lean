@@ -415,7 +415,7 @@ lemma continuousOn_fdBoundary (H : ℝ) : ContinuousOn (fdBoundary H) (Icc 0 5) 
 
 /-- A corner-free closed subinterval of `[0, 5]` lies inside one smooth piece — the
 classification certificate shared by the smoothness and immersion witnesses. -/
-theorem subset_piece_of_disjoint_corners_aux {c d : ℝ} (hcd : Icc c d ⊆ Icc (0 : ℝ) 5)
+theorem subset_piece_of_disjoint_corners {c d : ℝ} (hcd : Icc c d ⊆ Icc (0 : ℝ) 5)
     (hdis : Disjoint (fdBoundaryCorners : Set ℝ) (Ioo c d)) :
     Icc c d ⊆ Icc (0 : ℝ) 1 ∨ Icc c d ⊆ Icc (1 : ℝ) 3 ∨ Icc c d ⊆ Icc (3 : ℝ) 4 ∨
       Icc c d ⊆ Icc (4 : ℝ) 5 := by
@@ -439,7 +439,7 @@ smooth circle map through `t = 2`, so no hypothesis excludes it. -/
 lemma contDiffOn_fdBoundary (H : ℝ) {c d : ℝ}
     (hcd : Icc c d ⊆ Icc 0 5) (hdis : Disjoint (fdBoundaryCorners : Set ℝ) (Ioo c d)) :
     ContDiffOn ℝ n (fdBoundary H) (Icc c d) := by
-  rcases subset_piece_of_disjoint_corners_aux hcd hdis with h | h | h | h
+  rcases subset_piece_of_disjoint_corners hcd hdis with h | h | h | h
   · exact (fdBoundary_piece1 H).mono h
   · exact (fdBoundary_piece13 H).mono h
   · exact (fdBoundary_piece4 H).mono h
