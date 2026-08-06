@@ -67,6 +67,38 @@ theorem logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg
   ring
 
 
+/-- The reflected-half integrability: interval integrability of the arc contour
+integrand on `[2, 3]` follows from integrability on `[1, 2]` through the pairing, which
+writes the second half as a reflected constant-minus-first-half integrand. -/
+theorem intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc_snd
+    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ}
+    (hd : ∀ t ∈ Ioo (1 : ℝ) 2, DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
+    (hne : ∀ t ∈ Ioo (1 : ℝ) 2, (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hint : IntervalIntegrable
+      (fun t ↦ deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t))
+      volume 1 2) :
+    IntervalIntegrable
+      (fun t ↦ deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t))
+      volume 2 3 := by
+  have hconst : IntervalIntegrable
+      (fun u : ℝ ↦ -(↑k * logDeriv (fdBoundary H) u)) volume 1 2 :=
+    ((intervalIntegrable_logDeriv_fdBoundary_arc H ⟨le_rfl, by norm_num⟩
+      ⟨by norm_num, by norm_num⟩).const_mul _).neg
+  have hI := ((hconst.sub hint).comp_sub_left 4).symm
+  have h42 : (4 : ℝ) - 2 = 2 := by norm_num
+  have h41 : (4 : ℝ) - 1 = 3 := by norm_num
+  rw [h42, h41] at hI
+  refine hI.congr_uIoo ?_
+  rw [Set.uIoo_of_le (by norm_num : (2 : ℝ) ≤ 3)]
+  intro x hx
+  have hu : 4 - x ∈ Ioo (1 : ℝ) 2 := ⟨by linarith [hx.2], by linarith [hx.1]⟩
+  have hp := logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS
+    ⟨hu.1, by linarith [hu.2]⟩ (hd _ hu) (hne _ hu)
+  have hxx : (4 : ℝ) - (4 - x) = x := by ring
+  rw [hxx] at hp
+  simp only [smul_eq_mul] at hp ⊢
+  linear_combination -hp
+
 /-- The arc contour integral of a slash-invariant form's logarithmic derivative is
 `-(k * (π/6 * I))` — the arc's `-k/12` contribution to the `(2πi)⁻¹`-normalized valence
 contour. The two halves of the arc pair through the `S`-transformation under the
@@ -93,34 +125,21 @@ theorem intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
       (hd u hu) (hne u hu)
     linear_combination hp
   have hconst : IntervalIntegrable
-      (fun u : ℝ ↦ -(↑k * logDeriv (fdBoundary H) u)) volume 1 2 := by
-    refine (intervalIntegrable_const
-      (c := -(↑k * (((Real.pi / 6 : ℝ) : ℂ) * Complex.I)))).congr_uIoo ?_
-    rw [Set.uIoo_of_le (by norm_num : (1 : ℝ) ≤ 2)]
-    intro u hu
-    simp only [logDeriv_fdBoundary_arc ⟨hu.1, by linarith [hu.2]⟩]
-  have hint' : IntervalIntegrable
-      (fun t ↦ deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t))
-      volume 2 3 := by
-    have hI := ((hconst.sub hint).comp_sub_left 4).symm
-    norm_num at hI
-    refine hI.congr_uIoo ?_
-    rw [Set.uIoo_of_le (by norm_num : (2 : ℝ) ≤ 3)]
-    intro x hx
-    have hu : 4 - x ∈ Ioo (1 : ℝ) 2 := ⟨by linarith [hx.2], by linarith [hx.1]⟩
-    have hp := hpair (4 - x) hu
-    have hxx : (4 : ℝ) - (4 - x) = x := by ring
-    rw [hxx] at hp
-    simpa using hp.symm
+      (fun u : ℝ ↦ -(↑k * logDeriv (fdBoundary H) u)) volume 1 2 :=
+    ((intervalIntegrable_logDeriv_fdBoundary_arc H ⟨le_rfl, by norm_num⟩
+      ⟨by norm_num, by norm_num⟩).const_mul _).neg
+  have hint' := intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc_snd
+    f hS hd hne hint
   rw [← intervalIntegral.integral_add_adjacent_intervals hint hint']
   have h23 : (∫ t in (2 : ℝ)..3,
       deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) =
       ∫ u in (1 : ℝ)..2,
         deriv (fdBoundary H) (4 - u) • logDeriv (⇑f ∘ ofComplex) (fdBoundary H (4 - u)) := by
-    have h := intervalIntegral.integral_comp_sub_left (a := 1) (b := 2)
-      (fun t ↦ deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) 4
-    norm_num at h
-    exact h.symm
+    have h42 : (4 : ℝ) - 2 = 2 := by norm_num
+    have h41 : (4 : ℝ) - 1 = 3 := by norm_num
+    have h := intervalIntegral_comp_fdBoundary_four_sub H
+      (logDeriv (⇑f ∘ ofComplex)) (a := 1) (b := 2)
+    rwa [h42, h41] at h
   rw [h23, intervalIntegral.integral_congr_Ioo_of_le (by norm_num) hpair,
     intervalIntegral.integral_sub hconst hint, intervalIntegral.integral_neg,
     intervalIntegral.integral_const_mul,
