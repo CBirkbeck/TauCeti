@@ -80,10 +80,12 @@ noncomputable def evalEquiv [𝒢.IsArithmetic] [𝒢.HasDetOne] (τ : ℍ) :
   map_smul' _ _ := by simp
 
 /-- The equivalence evaluates a form at the chosen point. -/
+@[simp]
 theorem evalEquiv_apply [𝒢.IsArithmetic] [𝒢.HasDetOne] (τ : ℍ) (f : ModularForm 𝒢 0) :
     evalEquiv (𝒢 := 𝒢) τ f = f τ := (rfl)
 
 /-- The inverse of the equivalence is the constant form. -/
+@[simp]
 theorem evalEquiv_symm_apply [𝒢.IsArithmetic] [𝒢.HasDetOne] (τ : ℍ) (c : ℂ) :
     (evalEquiv (𝒢 := 𝒢) τ).symm c = const c := (rfl)
 
