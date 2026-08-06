@@ -34,6 +34,11 @@ representatives with permuted diagonals.
 The rank-general constant case `deg T(c, ..., c) = 1` is in
 `TauCeti/NumberTheory/HeckeRing/GLn/Degree.lean`.
 
+Ported from the AINTLIB `LeanModularForms` project
+([`LeanModularForms/HeckeRIngs/GLn/Degree.lean`](https://github.com/CBirkbeck/AINTLIB),
+Chris Birkbeck), split out of the rank-general material of that file, since
+the Γ₀-index computation is specific to rank two.
+
 ## References
 
 * [G. Shimura, *Introduction to the arithmetic theory of automorphic functions*][shimura1971],

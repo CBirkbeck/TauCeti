@@ -23,6 +23,11 @@ is in `TauCeti/NumberTheory/HeckeRing/GL2/DiagonalCosetDegree.lean`.
   unconditionally, since a non-positive entry sends `natDiagGL` to its junk value `1`, whose
   double coset is the identity.
 
+Ported from the AINTLIB `LeanModularForms` project
+([`LeanModularForms/HeckeRIngs/GLn/Degree.lean`](https://github.com/CBirkbeck/AINTLIB),
+Chris Birkbeck), keeping only the rank-general constant case; the rank-two
+computation is split into `GL2/DiagonalCosetDegree.lean`.
+
 ## References
 
 * [G. Shimura, *Introduction to the arithmetic theory of automorphic functions*][shimura1971],
