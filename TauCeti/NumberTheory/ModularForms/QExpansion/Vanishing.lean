@@ -12,23 +12,23 @@ public import Mathlib.NumberTheory.ModularForms.NormTrace
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 /-!
-# Vanishing order of a `q`-expansion
+# The `q`-expansion principle at `∞`
 
-The `q`-expansion principle at `∞`, in the quantitative form the dimension formulas need: the
-first `N` coefficients of `qExpansion h f` vanish exactly when the cusp function is
-`O(‖q‖ ^ N)` near `0`.
+The quantitative form the dimension formulas need: the first `N` coefficients of
+`qExpansion h f` vanish exactly when the cusp function is `O(‖q‖ ^ N)` near `0`.
 
-Both directions are Cauchy estimates on a small circle: bounding the coefficients by the
-maximum of `cuspFunction h f` gives one, and bounding `cuspFunction h f / q ^ N` on the
-circle gives the other.
+The two directions use different arguments. Forwards is the Taylor bound for an analytic
+function whose first `N` Taylor coefficients vanish
+(`HasFPowerSeriesAt.isBigO_sub_partialSum_pow`). Backwards is a Cauchy estimate, bounding
+`cuspFunction h f z / z ^ (n + 1)` on a small circle.
 
 ## Main results
 
-* `ModularFormClass.tendsto_valueAtInfty`: a modular form tends to its value at `∞` along
-  `atImInfty`.
+* `ModularFormClass.tendsto_atImInfty_valueAtInfty`: a modular form tends to its value at
+  `∞` along `atImInfty`.
 * `ModularFormClass.cuspFunction_isBigO_pow_of_qExpansion_coeff_eq_zero` and
   `ModularFormClass.qExpansion_coeff_eq_zero_of_cuspFunction_isBigO_pow`: the two directions
-  of the vanishing-order principle.
+  of the principle.
 
 Ported from the AINTLIB `LeanModularForms` project
 ([`LeanModularForms/Modularforms/DimGenCongLevels/Auxiliary.lean`](https://github.com/CBirkbeck/AINTLIB),
@@ -40,16 +40,12 @@ namespace ModularFormClass
 open scoped Topology Real
 open UpperHalfPlane Filter
 
-noncomputable section
-
-local notation "𝕢" => Function.Periodic.qParam
-
 section Tendsto
 
 variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {h : ℝ} {F : Type*} [FunLike F ℍ ℂ]
 
 /-- Values of a modular form tend to `valueAtInfty` along `atImInfty`. -/
-public lemma tendsto_valueAtInfty [ModularFormClass F Γ k]
+public lemma tendsto_atImInfty_valueAtInfty [ModularFormClass F Γ k]
     (f : F) (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) :
     Tendsto (fun τ : ℍ ↦ f τ) atImInfty (𝓝 (valueAtInfty f)) := by
   have hAn := ModularFormClass.analyticAt_cuspFunction_zero (f := f) hh hΓ
@@ -118,7 +114,8 @@ private lemma norm_circleIntegral_cuspFunction_div_pow_le
   circleIntegral.norm_integral_le_of_norm_le_const hR0.le fun _ hz ↦
     norm_cuspFunction_div_pow_le_of_ball_bound (f := f) hn hC' hδ hR0 hRltδ hRlt1 hz
 
-/-- If `cuspFunction h f = O(‖q‖^N)` near `0`, then the `n`-th `q`-coefficient vanishes. -/
+/-- If `cuspFunction h f = O(‖q‖^N)` near `0`, then `(qExpansion h f).coeff n = 0` for every
+`n < N`. -/
 public lemma qExpansion_coeff_eq_zero_of_cuspFunction_isBigO_pow
     [ModularFormClass F Γ k]
     (f : F) (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) {N n : ℕ} (hn : n < N)
@@ -165,7 +162,5 @@ public lemma qExpansion_coeff_eq_zero_of_cuspFunction_isBigO_pow
   linarith [norm_nonneg ((qExpansion h f).coeff n)]
 
 end BigO
-
-end
 
 end ModularFormClass
