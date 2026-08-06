@@ -37,8 +37,6 @@ AINTLIB's reversed scalar action.
 
 ## Main results
 
-* `LeftCosetModule.card_filter_orbit_eq_multiplicity` (private): Shimura's pair
-  count, the combinatorial core.
 * `LeftCosetModule.degree_single_smul_single`, `LeftCosetModule.degree_smul`: the
   coefficient sum against the scalar operations — the bridge to the degree.
 * `LeftCosetModule.deg_single`, `RingHom` laws of `deg`: Proposition 3.3.
