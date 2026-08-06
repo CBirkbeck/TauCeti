@@ -64,13 +64,16 @@ theorem logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg
   ring
 
 
-/-- The arc integral of the logarithmic-derivative contour integrand collapses to the
-weight term: under the substitution `t ↦ 4 - t` the two halves of the arc pair through
-the `S`-transformation, leaving `-k` times the arc integral of `γ' / γ`. -/
-theorem intervalIntegral_logDeriv_fdBoundary_arc [SlashInvariantFormClass F Γ k] (f : F)
+/-- The arc contour integral of a slash-invariant form's logarithmic derivative is
+`-(k * (π/6 * I))` — the arc's `-k/12` contribution to the `(2πi)⁻¹`-normalized valence
+contour. The two halves of the arc pair through the `S`-transformation under the
+substitution `t ↦ 4 - t`, leaving `-k` times the constant arc integral of the contour's
+own logarithmic derivative. -/
+theorem intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
+    [SlashInvariantFormClass F Γ k] (f : F)
     (hS : ModularGroup.S ∈ Γ) {H : ℝ}
-    (hd : ∀ t ∈ Icc (1 : ℝ) 3, DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
-    (hne : ∀ t ∈ Icc (1 : ℝ) 3, (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hd : ∀ t ∈ Ioo (1 : ℝ) 2, DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
+    (hne : ∀ t ∈ Ioo (1 : ℝ) 2, (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
     (hint : IntervalIntegrable
       (fun t ↦ deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t))
       volume 1 2)
@@ -96,7 +99,7 @@ theorem intervalIntegral_logDeriv_fdBoundary_arc [SlashInvariantFormClass F Γ k
     intro u hu
     have hu13 : u ∈ Ioo (1 : ℝ) 3 := ⟨hu.1, by linarith [hu.2]⟩
     have hp := logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS hu13
-      (hd u ⟨hu13.1.le, hu13.2.le⟩) (hne u ⟨hu13.1.le, hu13.2.le⟩)
+      (hd u hu) (hne u hu)
     linear_combination hp
   have hconst : IntervalIntegrable
       (fun u : ℝ ↦ -(↑k * logDeriv (fdBoundary H) u)) volume 1 2 := by
