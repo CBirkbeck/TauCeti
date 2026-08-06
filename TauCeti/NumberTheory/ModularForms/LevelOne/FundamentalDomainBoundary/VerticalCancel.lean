@@ -12,8 +12,8 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deri
 /-!
 # The vertical integrals of a periodic integrand cancel
 
-The reflection `t ↦ 4 - t` carries the left vertical of the boundary contour onto the
-right vertical through the translation `z ↦ z - 1`, reversing the orientation. For any
+The reflection `t ↦ 4 - t` carries the right vertical of the boundary contour onto the
+left vertical through the translation `z ↦ z - 1`, reversing the orientation. For any
 integrand `φ` of period `1` — the level-one situation, where `φ` is the logarithmic
 derivative of the extension of a modular form — the left vertical contour integral of
 `γ' • φ ∘ γ` is therefore the negative of the right one: the values are identified by
@@ -35,9 +35,9 @@ namespace TauCeti
 namespace ModularForm
 
 /-- The left vertical integral of a period-`1` integrand along the boundary contour is
-the negative of the right vertical integral: the reflection `t ↦ 4 - t` matches the
-verticals through the translation `z ↦ z - 1`, which the periodicity absorbs, and
-reverses the orientation. -/
+the negative of the right vertical integral: the reflection `t ↦ 4 - t` carries the
+right vertical onto the left through the translation `z ↦ z - 1`, which the periodicity
+absorbs, and reverses the orientation. -/
 theorem intervalIntegral_fdBoundary_segment4_eq_neg_segment1 {E : Type*}
     [NormedAddCommGroup E] [NormedSpace ℂ E] (H : ℝ) {φ : ℂ → E}
     (hφ : Function.Periodic φ 1) :
