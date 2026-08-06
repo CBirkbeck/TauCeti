@@ -54,7 +54,8 @@ lemma fdBoundaryQRadius_def (H : ℝ) :
   rfl
 
 /-- The `q`-circle radius is positive. -/
-lemma fdBoundaryQRadius_pos (H : ℝ) : 0 < fdBoundaryQRadius H := Real.exp_pos _
+lemma fdBoundaryQRadius_pos (H : ℝ) : 0 < fdBoundaryQRadius H := by
+  simpa only [fdBoundaryQRadius_def] using Real.exp_pos (-2 * Real.pi * H)
 
 /-- The `q`-circle radius is less than one for a positive truncation height. -/
 lemma fdBoundaryQRadius_lt_one {H : ℝ} (hH : 0 < H) : fdBoundaryQRadius H < 1 := by
