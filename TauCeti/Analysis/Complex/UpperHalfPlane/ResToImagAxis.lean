@@ -20,8 +20,9 @@ restriction,
 
 The three predicates `RealOnImagAxis`, `PosOnImagAxis` and `EventuallyPosOnImagAxis` record
 that the restriction is real-valued, real and positive, or real and eventually positive along
-`atTop`. `RealOnImagAxis` is closed under all the pointwise algebraic operations; the two
-positivity predicates are closed under the operations that preserve strict positivity —
+`atTop`. `RealOnImagAxis` is closed under constants, negation, addition, subtraction,
+multiplication, multiplication by a real scalar, and natural powers; the two positivity
+predicates are closed under the operations that preserve strict positivity —
 positive constants, addition, multiplication, multiplication by a positive real scalar, and
 natural powers — but not under negation or subtraction. The closure lemmas are tagged
 `@[fun_prop]`, except `PosOnImagAxis.const` and `EventuallyPosOnImagAxis.const`, whose
@@ -40,7 +41,8 @@ constant is not determined by the goal.
 * `UpperHalfPlane.resToImagAxis_zero`, `_add`, `_neg`, `_sub`, `_mul`, `_smul`: the
   restriction commutes with the pointwise operations, unconditionally.
 * `UpperHalfPlane.differentiableAt_resToImagAxis`: the restriction is real-differentiable at
-  `t > 0` when `F` is differentiable as a map of manifolds at the corresponding point.
+  `t > 0` when `F ∘ ofComplex` is, and `differentiableAt_resToImagAxis_of_mDiffAt`: the same
+  from manifold differentiability at the corresponding point.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/Modularforms/ResToImagAxis.lean`, Chris Birkbeck,
