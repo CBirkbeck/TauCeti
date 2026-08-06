@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Analysis.Convex.Segment
 public import Mathlib.Topology.Path
+public import TauCeti.Topology.Homotopy.Path
 public import TauCeti.Analysis.Complex.Conformal.Crosscut.EndpointLimit
 import TauCeti.Analysis.Complex.Conformal.Crosscut.Endpoints
 import TauCeti.Analysis.Complex.Conformal.ShortCrosscut
@@ -123,27 +124,6 @@ private theorem exists_continuousOn_closure_eqOn_comp_circleMap
     exact subsingleton_singleton
   exact exists_continuousOn_closure_eqOn_of_isBounded isOpen_Ioo hgcont hgb hgsub
 
-/-- **A continuous function on `Icc a b` traverses its image as a path.** Reparametrising `[a, b]`
-affinely by the unit interval turns `F` into a path from `F a` to `F b` whose range is exactly
-`F '' Icc a b`. -/
-private theorem exists_path_range_eq_image_Icc {Y : Type*} [TopologicalSpace Y] {a b : ℝ}
-    (hab : a < b) {F : ℝ → Y} (hFcIcc : ContinuousOn F (Icc a b)) :
-    ∃ γ : Path (F a) (F b), range γ = F '' Icc a b ∧
-      ∀ t : unitInterval, γ t = F (AffineMap.lineMap a b (t : ℝ)) := by
-  refine ⟨{ toFun := fun t => F (AffineMap.lineMap a b (t : ℝ))
-            continuous_toFun := by
-              refine hFcIcc.comp_continuous ?_ ?_
-              · fun_prop
-              · intro t
-                rw [← segment_eq_Icc hab.le]
-                exact lineMap_mem_segment ℝ a b t.2
-            source' := by simp
-            target' := by simp }, ?_, fun _ => rfl⟩
-  calc range _ = range (F ∘ AffineMap.lineMap a b ∘ ((↑) : unitInterval → ℝ)) := rfl
-    _ = F '' Icc a b := by
-      rw [range_comp, range_comp, Subtype.range_coe, ← segment_eq_image_lineMap ℝ a b,
-        segment_eq_Icc hab.le]
-
 /-- **At any angle of the closed arc, the crosscut has a limit reached along both approaches.**
 The limit of `f` along the crosscut at `circleMap ζ ρ θ` is also the limit of the angular
 composite `θ ↦ f (circleMap ζ ρ θ)` along `Ioo a b`.
@@ -230,7 +210,7 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
     intro θ hθ
     obtain ⟨v, hv, hvangle⟩ := hglim θ hθ
     rwa [eq_of_tendsto_of_continuousOn_closure hFc hFg (frontier_subset_closure hθ) hvangle]
-  obtain ⟨γ, hγrange, hγpt⟩ := exists_path_range_eq_image_Icc hab hFcIcc
+  obtain ⟨γ, hγrange, hγpt⟩ := Path.exists_path_range_eq_image_Icc hab hFcIcc
   have hγformula : ∀ t ∈ Ioo (0 : unitInterval) 1,
       γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ))) := fun t ht =>
     (hγpt t).trans (hFg (lineMap_mem_Ioo hab ht))
