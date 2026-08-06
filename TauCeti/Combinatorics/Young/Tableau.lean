@@ -172,9 +172,7 @@ theorem card_filter_rowIndex_eq (t : YoungTableau μ) (i : ℕ) :
 
 /-! ## The counting lemma -/
 
-/-- **Row `i` meets the first `k` columns in exactly `min (μ.rowLen i) k` labels.** The labels of
-row `i` are indexed by their columns, which run over `Finset.range (μ.rowLen i)`, so those below `k`
-number `min (μ.rowLen i) k`. -/
+/-- **Row `i` meets the first `k` columns in exactly `min (μ.rowLen i) k` labels.** -/
 private theorem card_filter_colIndex_lt_and_rowIndex_eq (t : YoungTableau μ) (i k : ℕ) :
     (Finset.univ.filter fun y => colIndex t y < k ∧ rowIndex t y = i).card
       = min (μ.rowLen i) k := by
@@ -200,11 +198,11 @@ private theorem card_filter_colIndex_lt_and_rowIndex_eq (t : YoungTableau μ) (i
     simp
   rw [← Finset.card_image_of_injOn hinj, himg, hrange, Finset.card_range]
 
-/-- **Along an injective row-column pairing, row `i` meets the first `k` columns of the `u`-image in
-at most `min (μ.rowLen i) k` labels.** The bound by `μ.rowLen i` is the size of the row; the bound
-by `k` holds because injectivity makes the `u`-columns of row `i` distinct. -/
+/-- **Row `i` meets the first `k` columns of the `u`-image in at most `min (μ.rowLen i) k`
+labels**, when the row of a label together with the column of its `u`-image determines the label.
+Only injectivity of that pairing is used, so `u` need not be a permutation. -/
 private theorem card_filter_colIndex_comp_lt_and_rowIndex_eq_le (t : YoungTableau μ)
-    {u : Equiv.Perm (Fin μ.card)}
+    {u : Fin μ.card → Fin μ.card}
     (hu : Function.Injective fun x => (rowIndex t x, colIndex t (u x))) (i k : ℕ) :
     (Finset.univ.filter fun y => colIndex t (u y) < k ∧ rowIndex t y = i).card
       ≤ min (μ.rowLen i) k := by
@@ -229,9 +227,7 @@ private theorem card_filter_colIndex_comp_lt_and_rowIndex_eq_le (t : YoungTablea
       _ = k := Finset.card_range k
 
 /-- **Summed over the rows, the labels whose `u`-image lies in the first `k` columns number
-`∑ᵢ min (μ.rowLen i) k`.** Both sides count the same labels: `u` is a permutation, so it does not
-change how many labels land in the first `k` columns, and without `u` each row contributes exactly
-`min (μ.rowLen i) k` of them. No injectivity hypothesis is needed. -/
+`∑ᵢ min (μ.rowLen i) k`.** No injectivity hypothesis is needed. -/
 private theorem sum_card_filter_colIndex_comp_lt_and_rowIndex_eq (t : YoungTableau μ)
     (u : Equiv.Perm (Fin μ.card)) (k : ℕ) :
     ∑ i ∈ Finset.image (rowIndex t) Finset.univ,
