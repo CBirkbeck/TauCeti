@@ -231,7 +231,7 @@ is injective on the open interval.
 
 Injectivity of `circleMap` on the arc is what `b - a ≤ 2 * π` buys; `g` supplies the rest. Nothing
 is assumed of the codomain, and `g` need only be injective on the set the arc lands in. -/
-private theorem injOn_of_lineMap_circleMap_formula {X : Type*} {S : Set ℂ} {g : ℂ → X}
+private theorem injOn_Ioo_of_eq_circleMap_lineMap {X : Type*} {S : Set ℂ} {g : ℂ → X}
     {γ : unitInterval → X} {a b : ℝ} (hab : a < b) (hab2π : b - a ≤ 2 * π) (hρ : ρ ≠ 0)
     (hinj : InjOn g S) (hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) S)
     (hγformula : ∀ t ∈ Ioo (0 : unitInterval) 1,
@@ -377,7 +377,7 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere_of_injOn
       γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ))) := by
     simpa only [a, b, φ] using hγformula
   have hγinj : InjOn γ (Ioo (0 : unitInterval) 1) :=
-    injOn_of_lineMap_circleMap_formula hab hab2π.le hρ.ne' hinj hmaps hγformula'
+    injOn_Ioo_of_eq_circleMap_lineMap hab hab2π.le hρ.ne' hinj hmaps hγformula'
   have hγzero : γ 0 ∈ frontier (f '' ball c r) := by
     simpa only [Path.source] using hufrontier
   have hγone : γ 1 ∈ frontier (f '' ball c r) := by
