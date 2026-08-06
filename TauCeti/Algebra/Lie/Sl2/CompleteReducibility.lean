@@ -181,7 +181,7 @@ private theorem exists_invariant_notMem_of_forall_lie_mem {d : ℕ}
       ∀ [FiniteDimensional K M'] (N' : LieSubmodule K L M'), finrank K M' ≤ d → N' ≠ ⊤ →
         (∀ (x : L) (m : M'), ⁅x, m⁆ ∈ N') → ∃ v : M', v ∉ N' ∧ ∀ x : L, ⁅x, v⁆ = 0)
     {M : Type v} [AddCommGroup M] [Module K M] [LieRingModule L M] [LieModule K L M]
-    [FiniteDimensional K M] {N W : LieSubmodule K L M} {v₀ : M} (hWrank : finrank K W + 1 ≤ d)
+    {N W : LieSubmodule K L M} [FiniteDimensional K W] {v₀ : M} (hWrank : finrank K W + 1 ≤ d)
     (hWle : W ≤ N) (hv₀N : v₀ ∉ N) (hv₀W : ∀ x : L, ⁅x, v₀⁆ ∈ W) :
     ∃ v : M, v ∉ N ∧ ∀ x : L, ⁅x, v⁆ = 0 := by
   have hlie : ∀ (x : L) (m : M),
@@ -199,12 +199,16 @@ private theorem exists_invariant_notMem_of_forall_lie_mem {d : ℕ}
   have hv₀P : v₀ ∈ P :=
     (hPmem _).2 (Submodule.mem_sup_right (Submodule.mem_span_singleton_self v₀))
   have hPrank : finrank K P ≤ d := by
-    have hsup := Submodule.finrank_sup_span_singleton
-      (p := (W : Submodule K M)) (v := v₀) (fun hc ↦ hv₀N (hWle hc))
+    have hne : v₀ ≠ 0 := fun hc ↦ hv₀N (hc ▸ N.zero_mem)
+    have hle := Submodule.finrank_add_le_finrank_add_finrank
+      (W : Submodule K M) (Submodule.span K {v₀})
+    rw [finrank_span_singleton hne] at hle
     have hP : finrank K (((W : Submodule K M) ⊔ Submodule.span K {v₀} :
         Submodule K M) : Type _) = finrank K P := rfl
     have hw : finrank K ((W : Submodule K M) : Type _) = finrank K W := rfl
     omega
+  have : FiniteDimensional K P :=
+    Submodule.finiteDimensional_sup (W : Submodule K M) (Submodule.span K {v₀})
   have hWcomap : W.comap P.incl ≠ ⊤ := by
     rw [Ne, LieSubmodule.comap_incl_eq_top]
     exact fun hc ↦ hv₀N (hWle (hc hv₀P))
