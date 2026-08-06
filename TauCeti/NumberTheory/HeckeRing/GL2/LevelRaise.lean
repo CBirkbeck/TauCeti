@@ -134,7 +134,9 @@ lemma levelRaiseConjOfDvd_mem_Gamma0 (d M : ℕ) [NeZero d] (γ : SL(2, ℤ))
 /-- The (1,1) entry of the conjugate equals the (1,1) entry of the original. -/
 lemma levelRaiseConjOfDvd_lower_right (d : ℕ) (γ : SL(2, ℤ))
     (hdvd : (d : ℤ) ∣ γ.val 1 0) :
-    (levelRaiseConjOfDvd d γ hdvd).val 1 1 = γ.val 1 1 := (rfl)
+    (levelRaiseConjOfDvd d γ hdvd).val 1 1 = γ.val 1 1 :=
+  -- the `(1,1)` slot of the defining matrix literal is literally `γ.val 1 1`
+  (rfl)
 
 /-- The matrix conjugation identity (in `GL(2, ℝ)`) for `levelRaiseConjOfDvd`:
 `α_d * γ * α_d⁻¹ = (levelRaiseConjOfDvd d γ hdvd : GL₂(ℝ))`, equivalently
@@ -162,6 +164,8 @@ lemma levelRaiseConj_mem_Gamma1 (d M : ℕ) [NeZero d] (γ : SL(2, ℤ))
     (hγ : γ ∈ Gamma1 (d * M)) :
     levelRaiseConj d M γ hγ ∈ Gamma1 M := by
   obtain ⟨ha, he, hc⟩ := (Gamma1_mem _ _).mp hγ
+  -- the diagonal slots of the defining matrix literal are copied from `γ` unchanged,
+  -- so both are true by `rfl`; only the off-diagonal entries are rescaled
   have h00 : ((levelRaiseConj d M γ hγ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) 0 0 =
       γ.val 0 0 := (rfl)
   have h11 : ((levelRaiseConj d M γ hγ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ) 1 1 =
@@ -259,6 +263,7 @@ lemma slash_mapGL_levelRaiseFun (l : ℕ) [NeZero l] (k : ℤ) (γ : SL(2, ℤ))
     unfold UpperHalfPlane.σ
     rw [if_pos (show (0 : ℝ) < (Matrix.GeneralLinearGroup.det (mapGL ℝ γ)).val by
       rw [Matrix.SpecialLinearGroup.det_mapGL]; norm_num)]
+  -- unfold `levelRaiseFun` on the left: it *is* the scaled slash by `α_l`
   change ((l : ℂ) ^ (1 - k) • (f ∣[k] levelRaiseMatrix l)) ∣[k]
       (mapGL ℝ γ : GL (Fin 2) ℝ) = _
   rw [ModularForm.smul_slash, hσγ, ContinuousAlgEquiv.refl_apply, ← SlashAction.slash_mul,
@@ -270,6 +275,7 @@ evaluates to `f` at the scaled point `α_l • τ`; the `l^{1-k}` prefactor exac
 cancels the `l^{k-1}` factor from the slash action. -/
 lemma levelRaiseFun_apply (l : ℕ) [NeZero l] (k : ℤ) (f : UpperHalfPlane → ℂ) (τ : UpperHalfPlane) :
     levelRaiseFun l k f τ = f ((levelRaiseMatrix l) • τ) := by
+  -- unfold `levelRaiseFun` and push the coercion through the pointwise scalar action
   change ((l : ℂ) ^ (1 - k)) • ((f ∣[k] levelRaiseMatrix l) τ) = _
   rw [ModularForm.slash_apply, σ_levelRaiseMatrix, ContinuousAlgEquiv.refl_apply,
     abs_levelRaiseMatrix_det_val, denom_levelRaiseMatrix, one_zpow, mul_one,
@@ -474,15 +480,18 @@ lemma exists_T_levelRaiseConj_T_factor (l N : ℕ) [NeZero l] (h_dvd : l ∣ N)
   refine ⟨i, j, ⟨!![α, k; (l : ℤ) * c, d - c * j], ?det⟩,
     ?gamma0_mem, ?eq, ?diag⟩
   · rw [Matrix.det_fin_two_of]
+    -- read the four entries off the matrix literal
     change α * (d - c * j) - k * ((l : ℤ) * c) = 1
     linear_combination hdet + c * hk
   · refine Gamma0_mem.mpr ?_
+    -- the lower-left entry of the literal is `l * c`
     change (((l : ℤ) * c : ℤ) : ZMod N) = 0
     rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
     exact natCast_dvd_levelRaiseConj_lower_left h_dvd
       ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ'))
   · refine eq_T_zpow_mul_levelRaiseConj_mul_T_zpow l a b c d i j k γ' _
       (Matrix.eta_fin_two γ'.val) rfl ?_ _
+    -- `shiftJ` was chosen so that this is exactly `shiftJ_spec`
     change β - j * α = (l : ℤ) * k
     linear_combination hk
   · rfl
