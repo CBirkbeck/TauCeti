@@ -62,7 +62,10 @@ variable [NonUnitalNonAssocSemiring R]
 /-- The coefficient sum of the action of a ring basis element on a module basis element:
 the degree of the double coset appears as the orbit size. Only the additive structure and
 the single product `b * a` are involved, so no unit or associativity is needed. -/
-@[simp] lemma degree_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H)
+-- not `@[simp]`: the left-hand side is itself reduced by `single_smul_single`, `map_sum`,
+-- `Finsupp.degree_single` and `Finset.sum_const`, so the env linter rejects it as a
+-- non-normal form
+lemma degree_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H)
     (a b : R) :
     Finsupp.degree (MulOpposite.op (HeckeCosetModule.single R D a) •
       Finsupp.single q b) = (D.degree : ℕ) • (b * a) := by
