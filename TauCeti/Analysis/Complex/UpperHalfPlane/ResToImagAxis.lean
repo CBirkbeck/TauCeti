@@ -124,10 +124,12 @@ theorem resToImagAxis_smul (c : ℂ) (F : ℍ → ℂ) :
 @[simp]
 theorem resToImagAxis_real_smul (c : ℝ) (F : ℍ → ℂ) :
     resToImagAxis (c • F) = c • resToImagAxis F := by
-  funext t
-  rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
+  simpa [Complex.real_smul] using resToImagAxis_smul (c : ℂ) F
 
-/-- Powers need `0 < t`: at `t ≤ 0` the restriction of `F ^ 0 = 1` is `0`, not `1`. -/
+/-- Powers need `0 < t`: at `t ≤ 0` the restriction of `F ^ 0 = 1` is `0`, not `1`.
+
+Not `@[simp]`: `resToImagAxis_of_pos` together with `Pi.pow_apply` already reduces the
+left-hand side, so the attribute would be a duplicate (the `simpNF` linter rejects it). -/
 theorem resToImagAxis_pow (F : ℍ → ℂ) (n : ℕ) {t : ℝ} (ht : 0 < t) :
     resToImagAxis (F ^ n) t = resToImagAxis F t ^ n := by
   simp [resToImagAxis_of_pos _ ht]
