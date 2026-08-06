@@ -85,7 +85,7 @@ def PosOnImagAxis (F : ℍ → ℂ) : Prop :=
 def EventuallyPosOnImagAxis (F : ℍ → ℂ) : Prop :=
   RealOnImagAxis F ∧ ∀ᶠ t : ℝ in atTop, 0 < (resToImagAxis F t).re
 
-/-! ### Differentiability and the behaviour under `S` -/
+/-! ### Differentiability -/
 
 /-- The restriction is real-differentiable at `t > 0` whenever `F` is differentiable as a map
 of manifolds at the corresponding point: the restriction is the composite of `F` with
