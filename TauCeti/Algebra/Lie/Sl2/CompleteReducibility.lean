@@ -78,8 +78,8 @@ omit [CharZero K] [IsAlgClosed K] in
 irreducible.** The hypothesis quantifies over Lie submodules of `M` lying below `N`, whereas
 irreducibility speaks of Lie submodules of `N` itself; `LieSubmodule.map_incl_lt_iff_lt_top`
 transports between the two. -/
-private theorem isIrreducible_of_forall_ne_bot_of_le {M : Type v} [AddCommGroup M] [Module K M]
-    [LieRingModule L M] [LieModule K L M] {N : LieSubmodule K L M} (hNbot : N ≠ ⊥)
+private theorem isIrreducible_of_forall_not_le_of_ne_bot_of_ne {M : Type v} [AddCommGroup M]
+    [Module K M] [LieRingModule L M] [LieModule K L M] {N : LieSubmodule K L M} (hNbot : N ≠ ⊥)
     (hred : ∀ W : LieSubmodule K L M, W ≠ ⊥ → W ≠ N → ¬ W ≤ N) :
     LieModule.IsIrreducible K L N := by
   have : Nontrivial N := (LieSubmodule.nontrivial_iff_ne_bot K L _).2 hNbot
@@ -278,7 +278,7 @@ private theorem exists_invariant_notMem_aux (htop : t.toLieSubalgebra K = ⊤) (
     · -- `N` is irreducible: the Casimir operator supplies the invariant vector.
       push Not at hred
       exact exists_invariant_notMem_of_isIrreducible htop hN htriv hact
-        (isIrreducible_of_forall_ne_bot_of_le hNbot hred)
+        (isIrreducible_of_forall_not_le_of_ne_bot_of_ne hNbot hred)
 
 variable {M : Type v} [AddCommGroup M] [Module K M] [LieRingModule L M] [LieModule K L M]
 
