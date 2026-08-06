@@ -1,0 +1,100 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import Mathlib.Analysis.Calculus.LogDeriv
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Manifold
+public import Mathlib.NumberTheory.ModularForms.SlashInvariantForms
+
+import Mathlib.Analysis.Complex.UpperHalfPlane.MoebiusAction
+
+/-!
+# The `S`-transformation of the complex extension of a slash-invariant form
+
+For a weight-`k` slash-invariant form `f` whose group contains `S = !![0, -1; 1, 0]`, the
+transformation law `f (S • τ) = τ ^ k * f τ` transports through `ofComplex` to the
+identity `(⇑f ∘ ofComplex) (-1 / w) = w ^ k * (⇑f ∘ ofComplex) w` on the open upper
+half-plane, and differentiating it expresses the logarithmic derivative at `w` through
+the logarithmic derivative at `-1 / w` up to the weight term `k / w`. The latter is the
+integrand identity behind the arc self-pairing of the valence-formula contour integral.
+
+## Main declarations
+
+* `TauCeti.ModularForm.comp_ofComplex_neg_inv`: the `S`-transformation law of
+  `⇑f ∘ ofComplex`.
+* `TauCeti.ModularForm.logDeriv_comp_ofComplex_neg_inv`: its logarithmic-derivative form.
+-/
+
+public section
+
+open Complex UpperHalfPlane
+
+open scoped Manifold MatrixGroups
+
+namespace TauCeti
+
+namespace ModularForm
+
+variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup SL(2, ℤ)} {k : ℤ}
+
+/-- The `S`-transformation law of the complex extension of a slash-invariant form, at the
+points of the open upper half-plane. -/
+theorem comp_ofComplex_neg_inv [SlashInvariantFormClass F Γ k] (f : F)
+    (hS : ModularGroup.S ∈ Γ) {w : ℂ} (hw : 0 < w.im) :
+    (⇑f ∘ ofComplex) (-1 / w) = w ^ k * (⇑f ∘ ofComplex) w := by
+  have him : 0 < (-1 / w).im := by
+    simpa [neg_div, one_div, inv_neg] using (⟨w, hw⟩ : ℍ).im_inv_neg_coe_pos
+  have hSw : ModularGroup.S • (⟨w, hw⟩ : ℍ) = (⟨-1 / w, him⟩ : ℍ) := by
+    rw [modular_S_smul]
+    exact UpperHalfPlane.ext (by simp [neg_div, inv_neg])
+  simp only [Function.comp_apply, ofComplex_apply_of_im_pos him,
+    ofComplex_apply_of_im_pos hw]
+  rw [← hSw, SlashInvariantForm.slash_action_eqn_SL'' f hS, ModularGroup.denom_S]
+
+/-- The `S`-transformation law of the logarithmic derivative of the complex extension of
+a holomorphic slash-invariant form, at points of the open upper half-plane where the form
+does not vanish. -/
+theorem logDeriv_comp_ofComplex_neg_inv [SlashInvariantFormClass F Γ k] (f : F)
+    (hS : ModularGroup.S ∈ Γ) (hf : MDiff (⇑f : ℍ → ℂ)) {w : ℂ} (hw : 0 < w.im)
+    (hfw : (⇑f ∘ ofComplex) w ≠ 0) :
+    logDeriv (⇑f ∘ ofComplex) w =
+      logDeriv (⇑f ∘ ofComplex) (-1 / w) / w ^ 2 - k / w := by
+  have hw0 : w ≠ 0 := fun h ↦ absurd hw (by simp [h])
+  have him : 0 < (-1 / w).im := by
+    simpa [neg_div, one_div, inv_neg] using (⟨w, hw⟩ : ℍ).im_inv_neg_coe_pos
+  have h_diffOn : DifferentiableOn ℂ (⇑f ∘ ofComplex) {z : ℂ | 0 < z.im} :=
+    mdifferentiable_iff.mp hf
+  have h_eq_nhd : (fun v ↦ (⇑f ∘ ofComplex) (-1 / v)) =ᶠ[nhds w]
+      fun v ↦ v ^ k * (⇑f ∘ ofComplex) v := by
+    filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds hw] with v hv
+    exact comp_ofComplex_neg_inv f hS hv
+  have h_comp : logDeriv (fun v ↦ (⇑f ∘ ofComplex) (-1 / v)) w =
+      logDeriv (⇑f ∘ ofComplex) (-1 / w) * deriv (fun v ↦ -1 / v) w :=
+    logDeriv_comp
+      (h_diffOn.differentiableAt (isOpen_upperHalfPlaneSet.mem_nhds him))
+      ((differentiableAt_const _).div differentiableAt_id hw0)
+  have h_deriv_S : deriv (fun v : ℂ ↦ -1 / v) w = 1 / w ^ 2 := by
+    have h : HasDerivAt (fun v : ℂ ↦ -1 / v) (1 / w ^ 2) w := by
+      have hinv : HasDerivAt (fun v : ℂ ↦ -v⁻¹) (-(-(w ^ 2)⁻¹)) w :=
+        (hasDerivAt_inv hw0).neg
+      convert hinv using 1 <;> [ext v; skip] <;> field_simp
+    exact h.deriv
+  have h_mul : logDeriv (fun v ↦ v ^ k * (⇑f ∘ ofComplex) v) w =
+      logDeriv (· ^ k) w + logDeriv (⇑f ∘ ofComplex) w :=
+    logDeriv_mul w (zpow_ne_zero k hw0) hfw
+      (differentiableAt_zpow.mpr (.inl hw0))
+      (h_diffOn.differentiableAt (isOpen_upperHalfPlaneSet.mem_nhds hw))
+  have h_eq : logDeriv (fun v ↦ (⇑f ∘ ofComplex) (-1 / v)) w =
+      logDeriv (fun v ↦ v ^ k * (⇑f ∘ ofComplex) v) w := by
+    simp only [logDeriv_apply]
+    rw [h_eq_nhd.eq_of_nhds, h_eq_nhd.deriv.eq_of_nhds]
+  rw [h_eq, h_mul, logDeriv_zpow w k, h_deriv_S] at h_comp
+  linear_combination h_comp
+
+end ModularForm
+
+end TauCeti
+
+end
