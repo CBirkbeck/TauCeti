@@ -224,6 +224,7 @@ section Reflection
 
 /-- Differentiating the vertical reflection identity: on the interiors of the verticals,
 the reflection `t ↦ 4 - t` negates the derivative. -/
+@[simp]
 lemma deriv_fdBoundary_four_sub_vertical (H : ℝ) {t : ℝ} (ht : t ∈ Set.Ioo (0 : ℝ) 1) :
     deriv (fdBoundary H) (4 - t) = -deriv (fdBoundary H) t := by
   rw [deriv_fdBoundary_of_mem_Ioo_three_four ⟨by linarith [ht.2], by linarith [ht.1]⟩,
@@ -231,8 +232,10 @@ lemma deriv_fdBoundary_four_sub_vertical (H : ℝ) {t : ℝ} (ht : t ∈ Set.Ioo
   ring
 
 /-- Differentiating the arc reflection identity: on the interior of the arc, the
-reflection `t ↦ 4 - t` transforms the derivative by `w ↦ -w / z ^ 2`, the derivative of
-the inversion `z ↦ -1/z` along the curve. -/
+reflection `t ↦ 4 - t` transforms the derivative by `w ↦ -w / z ^ 2` — the inversion
+`z ↦ -1/z` contributes its derivative `w ↦ w / z ^ 2`, and the parameter reversal
+`t ↦ 4 - t` contributes the minus sign. -/
+@[simp]
 lemma deriv_fdBoundary_four_sub_arc (H : ℝ) {t : ℝ} (ht : t ∈ Set.Ioo (1 : ℝ) 3) :
     deriv (fdBoundary H) (4 - t) = -deriv (fdBoundary H) t / fdBoundary H t ^ 2 := by
   have hmem : (4 - t : ℝ) ∈ Set.Icc (1 : ℝ) 3 := ⟨by linarith [ht.2], by linarith [ht.1]⟩

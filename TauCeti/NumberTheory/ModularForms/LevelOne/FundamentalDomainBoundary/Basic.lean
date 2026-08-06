@@ -480,6 +480,7 @@ theorem isPiecewiseC1On_fdBoundary (H : ℝ) : Contour.IsPiecewiseC1On (fdBounda
 /-- The reflection `t ↦ 4 - t` of the parameter interval carries the right vertical onto
 the left vertical through the translation `z ↦ z - 1`: the two verticals of the
 fundamental-domain boundary are identified by `T⁻¹`. -/
+@[simp]
 theorem fdBoundary_four_sub_vertical (H : ℝ) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :
     fdBoundary H (4 - t) = fdBoundary H t - 1 := by
   rw [eqOn_fdBoundary_segment4 H ⟨by linarith [ht.2], by linarith [ht.1]⟩,
@@ -492,13 +493,14 @@ theorem fdBoundary_four_sub_vertical (H : ℝ) {t : ℝ} (ht : t ∈ Icc (0 : �
 /-- The reflection `t ↦ 4 - t` of the parameter interval carries the unit-circle arc onto
 itself, reversed, through the inversion `z ↦ -1/z`: the two halves of the arc of the
 fundamental-domain boundary are identified by `S`. -/
+@[simp]
 theorem fdBoundary_four_sub_arc (H : ℝ) {t : ℝ} (ht : t ∈ Icc (1 : ℝ) 3) :
     fdBoundary H (4 - t) = -1 / fdBoundary H t := by
   have hangle : (4 - t + 1) * (Real.pi / 6) + (t + 1) * (Real.pi / 6) = Real.pi := by ring
   rw [eqOn_fdBoundary_arc H ⟨by linarith [ht.2], by linarith [ht.1]⟩,
-    eqOn_fdBoundary_arc H ht, eq_div_iff (circleMap_ne_center one_ne_zero)]
-  simp only [circleMap, Complex.ofReal_one, one_mul, zero_add]
-  rw [← Complex.exp_add, ← add_mul, ← Complex.ofReal_add, hangle, Complex.exp_pi_mul_I]
+    eqOn_fdBoundary_arc H ht, eq_div_iff (circleMap_ne_center one_ne_zero),
+    circleMap_zero_mul, hangle]
+  simp [circleMap_zero, Complex.exp_pi_mul_I]
 
 end Regularity
 
