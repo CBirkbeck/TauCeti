@@ -14,16 +14,17 @@ import Mathlib.Tactic.Group
 # The action of the Hecke ring on the left-coset module
 
 The scalar operations of `LeftCosetModule` (defined with the module itself) satisfy the
-compatibility law of [Shimura][shimura1971], Proposition 3.2: acting by a convolution
+compatibility law of [Shimura][shimura1971], Proposition 3.4: acting by a convolution
 product is acting by its factors in sequence. Since `HgH` sends `βH` to `Σᵢ βσᵢgH` by right
 multiplication, this is a **right** action, encoded per Mathlib convention as a left action
 of the opposite ring `(𝕋 Δ H R)ᵐᵒᵖ` — so the compatibility law is `mul_smul` there, and the
 operations become a genuine `Module`.
 
-Vendored from the in-review mathlib4 PR
-[#41253](https://github.com/leanprover-community/mathlib4/pull/41253) (Chris Birkbeck), per
-the ModularForms roadmap's dependency policy; migrate to Mathlib and delete this file when
-that stack merges.
+Ported from the AINTLIB `LeanModularForms` project
+(`LeanModularForms/HeckeRIngs/AbstractHeckeRing/Module.lean`, Chris Birkbeck,
+<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), on top of the
+coset vocabulary vendored from the in-review mathlib4 PR
+[#41253](https://github.com/leanprover-community/mathlib4/pull/41253).
 
 ## Main results
 
@@ -268,28 +269,13 @@ private lemma exists_orbit_of_mem_orbit_orbit {g₁ g₂ β : Δ} {x i : HeckeCo
     ∃ D₀ : HeckeCoset Δ H H, x ∈ smulOrbit H D₀.rep β := by
   have hβη := mem_smulOrbit_iff_rep.mp hi
   have hηξ := mem_smulOrbit_iff_rep.mp hx
-  obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ := mem_doubleCoset.mp hηξ
-  have hfirst : (β : G)⁻¹ * ((i.rep : Δ) : G) * h₁ ∈
-      doubleCoset ((g₁ : Δ) : G) (H : Set G) H := by
-    obtain ⟨k₁, hk₁, k₂, hk₂, hkeq⟩ := mem_doubleCoset.mp hβη
-    exact mem_doubleCoset.mpr ⟨k₁, hk₁, k₂ * h₁, H.mul_mem hk₂ hh₁, by rw [hkeq]; group⟩
-  have hprod : (β : G)⁻¹ * ((x.rep : Δ) : G) ∈
-      doubleCoset ((g₂ : Δ) : G) (doubleCoset ((g₁ : Δ) : G) (H : Set G) H) H :=
-    mem_doubleCoset.mpr ⟨(β : G)⁻¹ * ((i.rep : Δ) : G) * h₁, hfirst, h₂, hh₂, by
-      -- factor through the intermediate coset: insert `i.rep⁻¹ · i.rep` at the seam
-      have hseam : (β : G)⁻¹ * ((x.rep : Δ) : G) =
-          ((β : G)⁻¹ * ((i.rep : Δ) : G)) * (((i.rep : Δ) : G)⁻¹ * ((x.rep : Δ) : G)) := by
-        group
-      rw [hseam, heq]
-      group⟩
+  -- each leg lies in `Δ` because a double coset of a `Δ`-element is absorbed by `Δ`, and
+  -- the two legs compose at `i.rep`
   have hΔ : (β : G)⁻¹ * ((x.rep : Δ) : G) ∈ Δ := by
-    obtain ⟨w, hw, k, hk, hkeq⟩ := mem_doubleCoset.mp hprod
-    obtain ⟨w₁, hw₁, w₂, hw₂, hweq⟩ := mem_doubleCoset.mp hw
-    rw [hkeq, hweq]
-    exact Δ.mul_mem (Δ.mul_mem (Δ.mul_mem (Δ.mul_mem
-      (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hw₁) g₁.2)
-      (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hw₂)) g₂.2)
-      (IsHeckeTriple.mem_of_mem_left (Δ := Δ) H hk)
+    rw [show (β : G)⁻¹ * ((x.rep : Δ) : G) =
+        ((β : G)⁻¹ * ((i.rep : Δ) : G)) * (((i.rep : Δ) : G)⁻¹ * ((x.rep : Δ) : G)) by group]
+    exact Δ.mul_mem (IsHeckeTriple.mem_of_mem_doubleCoset g₁.2 hβη)
+      (IsHeckeTriple.mem_of_mem_doubleCoset g₂.2 hηξ)
   refine ⟨HeckeCoset.mk H H ⟨(β : G)⁻¹ * ((x.rep : Δ) : G), hΔ⟩, ?_⟩
   rw [mem_smulOrbit_iff_rep]
   have hrep := HeckeCoset.rep_mem (HeckeCoset.mk H H ⟨(β : G)⁻¹ * ((x.rep : Δ) : G), hΔ⟩)

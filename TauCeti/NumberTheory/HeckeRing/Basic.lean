@@ -25,10 +25,12 @@ coset actions) can build on one shared vocabulary. Finally it defines the degree
 double coset, the number of left cosets in its decomposition, together with its
 relative-index form, since that count is read straight off `DecompQuotient`.
 
-Vendored from the in-review mathlib4 PR
+The coset vocabulary is vendored from the in-review mathlib4 PR
 [#41253](https://github.com/leanprover-community/mathlib4/pull/41253) (Chris Birkbeck), per the
-ModularForms roadmap's dependency policy; migrate to Mathlib and delete this file when that
-stack merges.
+ModularForms roadmap's dependency policy; migrate to Mathlib and delete it when that stack
+merges. The degree section is instead ported from the AINTLIB `LeanModularForms` project
+(`LeanModularForms/HeckeRIngs/AbstractHeckeRing/Degree.lean`, Chris Birkbeck,
+<https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>).
 
 ## Main definitions
 
@@ -40,7 +42,8 @@ stack merges.
   `single_apply`, `sum_single_index`, `smul_single_one`, `single_add`, `induction_linear`,
   and the `Module R` instance `HeckeCosetModule.instModule`.
 * `HeckeCoset.degree`: the number of left cosets in the decomposition of a double coset,
-  with `degree_eq_relIndex` and `degree_mk` presenting it as a relative index, and
+  with `degree_eq_relIndex` and `degree_mk` presenting it as a relative index,
+  `degree_eq_natCard_decompQuotient` as the (hypothesis-free) count of that quotient, and
   `degree_one` the identity coset.
 
 ## Main results
@@ -209,13 +212,21 @@ a double coset as `mk H H g`. -/
   rw [one_def H, degree_mk]
   simp
 
+/-- The degree counts the decomposition quotient. No finiteness is involved: a relative
+index is by definition the `Nat.card` of exactly this quotient, so the two sides are the
+same term. -/
+lemma degree_eq_natCard_decompQuotient (D : HeckeCoset Δ H₁ H₂) :
+    D.degree = Nat.card (DecompQuotient H₁ H₂ (D.rep : G)) :=
+  (rfl)
+
 variable [IsHeckeTriple Δ H₁ H₂]
 
-/-- The degree counts the decomposition quotient. This is where the Hecke-triple hypothesis
-is needed: it is what makes that quotient finite. -/
+/-- Under the Hecke-triple hypothesis the decomposition quotient is finite, so the degree is
+its `Fintype.card`. The hypothesis is needed only for the `Fintype` instance, not for the
+count itself — see `degree_eq_natCard_decompQuotient`. -/
 lemma degree_eq_card_decompQuotient (D : HeckeCoset Δ H₁ H₂) :
-    D.degree = Fintype.card (DecompQuotient H₁ H₂ (D.rep : G)) :=
-  Nat.card_eq_fintype_card
+    D.degree = Fintype.card (DecompQuotient H₁ H₂ (D.rep : G)) := by
+  rw [degree_eq_natCard_decompQuotient, Nat.card_eq_fintype_card]
 
 /-- Every double coset has positive degree. -/
 lemma degree_pos (D : HeckeCoset Δ H₁ H₂) : 0 < D.degree := by

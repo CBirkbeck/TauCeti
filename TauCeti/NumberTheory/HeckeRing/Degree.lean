@@ -29,7 +29,6 @@ AINTLIB's reversed scalar action.
 
 ## Main definitions
 
-* `HeckeCoset.degree D`: the number of left cosets in the decomposition of `D`.
 * `LeftCosetModule.deg`: the degree homomorphism `𝕋 Δ H R →+* R` over any semiring of
   coefficients, built on Mathlib's
   coefficient sum `Finsupp.degree` of the left-coset module.
@@ -38,6 +37,7 @@ AINTLIB's reversed scalar action.
 
 * `LeftCosetModule.degree_single_smul_single`, `LeftCosetModule.degree_smul`: the
   coefficient sum against the scalar operations — the bridge to the degree.
+* `LeftCosetModule.degree_smul_eq_deg`: the same law with the named degree on the right.
 * `LeftCosetModule.deg_single`, `RingHom` laws of `deg`: Proposition 3.3.
 -/
 
@@ -62,7 +62,8 @@ variable [NonUnitalNonAssocSemiring R]
 /-- The coefficient sum of the action of a ring basis element on a module basis element:
 the degree of the double coset appears as the orbit size. Only the additive structure and
 the single product `b * a` are involved, so no unit or associativity is needed. -/
-lemma degree_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b : R) :
+@[simp] lemma degree_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H)
+    (a b : R) :
     Finsupp.degree (MulOpposite.op (HeckeCosetModule.single R D a) •
       Finsupp.single q b) = (D.degree : ℕ) • (b * a) := by
   classical
@@ -116,6 +117,13 @@ lemma deg_apply (t : 𝕋 Δ H R) :
     deg Δ H R t =
       Finsupp.degree (MulOpposite.op t •
         (Finsupp.single 1 1 : LeftCosetModule Δ H R)) := (rfl)
+
+/-- `degree_smul` in terms of `deg`: acting by `t` multiplies the coefficient sum by
+`deg t`. This is the form consumers want — `degree_smul` leaves the right-hand factor as the
+unfolded action on the identity coset. -/
+lemma degree_smul_eq_deg (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R) :
+    Finsupp.degree (MulOpposite.op t • m) = Finsupp.degree m * deg Δ H R t :=
+  degree_smul t m
 
 /-- The degree of a basis element: the degree of its double coset, scaled by the
 coefficient. -/
