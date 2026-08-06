@@ -24,8 +24,9 @@ prime-power levels — the degree count of Shimura, Theorem 3.24 — which lives
 is congruence-subgroup arithmetic consumed by, but independent of, the Hecke-ring layer.
 
 Ported from the AINTLIB `LeanModularForms` project
-(`LeanModularForms/HeckeRIngs/GL2/Gamma1Pair.lean` and, for the index section,
-`LeanModularForms/HeckeRIngs/GL2/CongruenceIndex.lean`, Chris Birkbeck,
+(`LeanModularForms/HeckeRIngs/GL2/Gamma1Pair.lean`, for the index section
+`LeanModularForms/HeckeRIngs/GL2/CongruenceIndex.lean`, and for the level-antitonicity
+lemmas `LeanModularForms/HeckeRIngs/GL2/LevelEmbed.lean`, all Chris Birkbeck,
 <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), extracted from
 `TauCeti/NumberTheory/ModularForms/DiamondOperators.lean` as congruence-subgroup
 infrastructure independent of the diamond operators.
@@ -360,10 +361,8 @@ theorem Gamma0_prime_power_index (p : ℕ) (hp : Nat.Prime p) (k : ℕ) (hk : 0 
   induction k, hk using Nat.le_induction with
   | base => simpa using Gamma0_prime_index p hp
   | succ m hm ih =>
-    have h_le : Gamma0 (p ^ (m + 1)) ≤ Gamma0 (p ^ m) := fun σ hσ ↦ by
-      rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd] at hσ ⊢
-      exact (Int.natCast_dvd_natCast.mpr (pow_dvd_pow p m.le_succ)).trans hσ
-    rw [Nat.add_sub_cancel, ← Subgroup.relIndex_mul_index h_le,
+    rw [Nat.add_sub_cancel,
+      ← Subgroup.relIndex_mul_index (Gamma0_le_Gamma0_of_dvd (pow_dvd_pow p m.le_succ)),
       Gamma0_relIndex_pow_succ p hp.pos m hm, ih, ← mul_assoc, ← pow_succ',
       Nat.sub_add_cancel hm]
 
