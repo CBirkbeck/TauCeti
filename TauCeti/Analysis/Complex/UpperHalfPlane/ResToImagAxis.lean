@@ -20,9 +20,12 @@ restriction,
 
 The three predicates `RealOnImagAxis`, `PosOnImagAxis` and `EventuallyPosOnImagAxis` record
 that the restriction is real-valued, real and positive, or real and eventually positive along
-`atTop`. Each is closed under the pointwise algebraic operations, and the closure lemmas are
-tagged `@[fun_prop]` — except `PosOnImagAxis.const` and `EventuallyPosOnImagAxis.const`,
-whose constant is not determined by the goal.
+`atTop`. `RealOnImagAxis` is closed under all the pointwise algebraic operations; the two
+positivity predicates are closed under the operations that preserve strict positivity —
+positive constants, addition, multiplication, multiplication by a positive real scalar, and
+natural powers — but not under negation or subtraction. The closure lemmas are tagged
+`@[fun_prop]`, except `PosOnImagAxis.const` and `EventuallyPosOnImagAxis.const`, whose
+constant is not determined by the goal.
 
 ## Main definitions
 
@@ -77,31 +80,49 @@ theorem resToImagAxis_of_nonpos (F : ℍ → ℂ) {t : ℝ} (ht : t ≤ 0) :
 Each identity is unconditional in `t`: off the positive axis both sides are `0`.
 -/
 
+/-- The restriction of `0` is `0`. -/
+@[simp]
+theorem resToImagAxis_zero : resToImagAxis 0 = 0 := by
+  funext t
+  rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
+
+/-- The restriction commutes with negation. -/
 @[simp]
 theorem resToImagAxis_neg (F : ℍ → ℂ) : resToImagAxis (-F) = -resToImagAxis F := by
   funext t
   rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
 
+/-- The restriction commutes with addition. -/
 @[simp]
 theorem resToImagAxis_add (F G : ℍ → ℂ) :
     resToImagAxis (F + G) = resToImagAxis F + resToImagAxis G := by
   funext t
   rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
 
+/-- The restriction commutes with subtraction. -/
 @[simp]
 theorem resToImagAxis_sub (F G : ℍ → ℂ) :
     resToImagAxis (F - G) = resToImagAxis F - resToImagAxis G := by
   funext t
   rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
 
+/-- The restriction commutes with pointwise multiplication. -/
 @[simp]
 theorem resToImagAxis_mul (F G : ℍ → ℂ) :
     resToImagAxis (F * G) = resToImagAxis F * resToImagAxis G := by
   funext t
   rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
 
+/-- The restriction commutes with scalar multiplication. -/
 @[simp]
-theorem resToImagAxis_smul (c : ℝ) (F : ℍ → ℂ) :
+theorem resToImagAxis_smul (c : ℂ) (F : ℍ → ℂ) :
+    resToImagAxis (c • F) = c • resToImagAxis F := by
+  funext t
+  rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
+
+/-- The real-scalar form of `resToImagAxis_smul`, which the positivity predicates use. -/
+@[simp]
+theorem resToImagAxis_real_smul (c : ℝ) (F : ℍ → ℂ) :
     resToImagAxis (c • F) = c • resToImagAxis F := by
   funext t
   rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
