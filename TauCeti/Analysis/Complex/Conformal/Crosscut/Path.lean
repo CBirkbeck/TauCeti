@@ -94,52 +94,44 @@ private theorem unitInterval_eq_zero_or_eq_one_or_mem_Ioo (t : unitInterval) :
     lt_of_le_of_ne t.2.2 h1⟩)
 
 /-- **The angular parametrisation of a finite-length image crosscut extends continuously to the
-closed arc.** The composite `θ ↦ f (circleMap ζ ρ θ)` is continuous and bounded on `Ioo a b`, and
-has a single cluster value at each endpoint, so it extends to `closure (Ioo a b)`. -/
+closed arc.** The composite `θ ↦ f (circleMap ζ ρ θ)` is continuous on `Ioo a b` and has a limit at
+each endpoint, so `extendFrom` extends it to `closure (Ioo a b)`. -/
 private theorem exists_continuousOn_closure_eqOn_comp_circleMap
-    (hf : DifferentiableOn ℂ f (ball c r))
-    (hfin : circleImageLength f (ball c r) ζ ρ ≠ ⊤) {a b : ℝ}
+    (hf : DifferentiableOn ℂ f (ball c r)) {a b : ℝ} (hab : a < b)
     (hcrosscut : ball c r ∩ sphere ζ ρ = circleMap ζ ρ '' Ioo a b)
-    (hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) (ball c r))
     (hglim : ∀ θ ∈ frontier (Ioo a b), ∃ v,
       Tendsto (fun θ => f (circleMap ζ ρ θ)) (𝓝[Ioo a b] θ) (𝓝 v)) :
     ∃ F : ℝ → ℂ, ContinuousOn F (closure (Ioo a b)) ∧
       EqOn F (fun θ => f (circleMap ζ ρ θ)) (Ioo a b) := by
+  have hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) (ball c r) := fun θ hθ =>
+    (hcrosscut.ge ⟨θ, hθ, rfl⟩).1
   have hgcont : ContinuousOn (fun θ => f (circleMap ζ ρ θ)) (Ioo a b) := by
     intro θ hθ
     simpa only [Function.comp_def] using
       (hf.continuousOn _ (hmaps hθ)).comp
         (continuous_circleMap ζ ρ).continuousAt.continuousWithinAt hmaps
-  have hgb : IsBounded ((fun θ => f (circleMap ζ ρ θ)) '' Ioo a b) := by
-    have hb := isBounded_image_ball_inter_sphere_of_circleImageLength_ne_top hf hfin
-    rw [hcrosscut, image_image] at hb
-    simpa only [Function.comp_def] using hb
-  have hgsub : ∀ θ ∈ frontier (Ioo a b),
-      (clusterSetOn (fun θ => f (circleMap ζ ρ θ)) (Ioo a b) θ).Subsingleton := by
-    intro θ hθ
-    obtain ⟨v, hlim⟩ := hglim θ hθ
-    rw [clusterSetOn_eq_singleton_of_tendsto (frontier_subset_closure hθ) hlim]
-    exact subsingleton_singleton
-  exact exists_continuousOn_closure_eqOn_of_isBounded isOpen_Ioo hgcont hgb hgsub
+  obtain ⟨la, hla⟩ := hglim a (by simp [frontier_Ioo hab])
+  obtain ⟨lb, hlb⟩ := hglim b (by simp [frontier_Ioo hab])
+  rw [nhdsWithin_Ioo_eq_nhdsGT hab] at hla
+  rw [nhdsWithin_Ioo_eq_nhdsLT hab] at hlb
+  exact ⟨extendFrom (Ioo a b) fun θ => f (circleMap ζ ρ θ),
+    closure_Ioo hab.ne ▸ continuousOn_Icc_extendFrom_Ioo hgcont hla hlb,
+    extendFrom_extends hgcont⟩
 
-/-- **At any angle of the closed arc, the crosscut has a limit reached along both approaches.**
+/-- **At any angle landing on the closed crosscut, the limit is reached along both approaches.**
 The limit of `f` along the crosscut at `circleMap ζ ρ θ` is also the limit of the angular
 composite `θ ↦ f (circleMap ζ ρ θ)` along `Ioo a b`.
 
-Stated for `θ` anywhere in `Icc a b` rather than only at the two endpoints, which is all the
-frontier case needs and is no harder. -/
+The angle `θ` is constrained only through `he`: it may be any angle whose point lies on the closed
+crosscut, not merely one of the two endpoints. The frontier case is all that is used. -/
 private theorem exists_tendsto_nhdsWithin_and_tendsto_comp_circleMap
     (hζ : dist ζ c = r) (hρ : 0 < ρ) (hρr : ρ < 2 * r)
     (hf : DifferentiableOn ℂ f (ball c r))
     (hfin : circleImageLength f (ball c r) ζ ρ ≠ ⊤) {a b θ : ℝ}
     (hcrosscut : ball c r ∩ sphere ζ ρ = circleMap ζ ρ '' Ioo a b)
-    (hclosedCrosscut : closedBall c r ∩ sphere ζ ρ = circleMap ζ ρ '' Icc a b)
-    (hθ : θ ∈ Icc a b) :
+    (he : circleMap ζ ρ θ ∈ closedBall c r ∩ sphere ζ ρ) :
     ∃ v, Tendsto f (𝓝[ball c r ∩ sphere ζ ρ] (circleMap ζ ρ θ)) (𝓝 v) ∧
       Tendsto (fun θ => f (circleMap ζ ρ θ)) (𝓝[Ioo a b] θ) (𝓝 v) := by
-  have he : circleMap ζ ρ θ ∈ closedBall c r ∩ sphere ζ ρ := by
-    rw [hclosedCrosscut]
-    exact ⟨θ, hθ, rfl⟩
   obtain ⟨v, hv⟩ := exists_tendsto_nhdsWithin_ball_inter_sphere hζ hρ hρr hf hfin he
   have hcircle : Tendsto (circleMap ζ ρ) (𝓝[Ioo a b] θ)
       (𝓝[circleMap ζ ρ '' Ioo a b] (circleMap ζ ρ θ)) :=
@@ -186,15 +178,13 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
     simpa only [a, b, φ] using ball_inter_sphere_eq_circleMap_image_Ioo hζ hρ hρr
   have hclosedCrosscut : closedBall c r ∩ sphere ζ ρ = circleMap ζ ρ '' Icc a b := by
     simpa only [a, b, φ] using closedBall_inter_sphere_eq_circleMap_image_Icc hζ hρ hρr
-  have hmaps : MapsTo (circleMap ζ ρ) (Ioo a b) (ball c r) := fun θ hθ =>
-    (hcrosscut.ge ⟨θ, hθ, rfl⟩).1
   have hglim : ∀ θ ∈ frontier (Ioo a b), ∃ v,
       Tendsto f (𝓝[ball c r ∩ sphere ζ ρ] (circleMap ζ ρ θ)) (𝓝 v) ∧
         Tendsto g (𝓝[Ioo a b] θ) (𝓝 v) := fun θ hθ =>
     exists_tendsto_nhdsWithin_and_tendsto_comp_circleMap hζ hρ hρr hf hfin hcrosscut
-      hclosedCrosscut (closure_Ioo hab.ne ▸ frontier_subset_closure hθ)
+      (hclosedCrosscut.ge ⟨θ, closure_Ioo hab.ne ▸ frontier_subset_closure hθ, rfl⟩)
   obtain ⟨F, hFc, hFg⟩ :=
-    exists_continuousOn_closure_eqOn_comp_circleMap hf hfin hcrosscut hmaps
+    exists_continuousOn_closure_eqOn_comp_circleMap hf hab hcrosscut
       fun θ hθ => (hglim θ hθ).imp fun _ h => h.2
   have hcl : closure (Ioo a b) = Icc a b := closure_Ioo hab.ne
   have hFends : ∀ θ ∈ frontier (Ioo a b),
@@ -208,8 +198,8 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
   -- Traverse `Icc a b` by `Path.segment a b`, then push it forward along `F` with `Path.map'`.
   have hFcseg : ContinuousOn F (range (Path.segment a b)) := by
     rw [Path.range_segment, segment_eq_Icc hab.le, ← hcl]; exact hFc
-  have hcoe : ⇑((Path.segment a b).map' hFcseg) = F ∘ ⇑(Path.segment a b) := by
-    simp only [Path.map', Path.coe_mk_mk]
+  -- Mathlib has `Path.map_coe` for `Path.map` but no `map'_coe`, so unfold pointwise.
+  have hcoe : ⇑((Path.segment a b).map' hFcseg) = F ∘ ⇑(Path.segment a b) := by ext t; rfl
   have hγformula : ∀ t ∈ Ioo (0 : unitInterval) 1, ((Path.segment a b).map' hFcseg) t
       = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ))) := fun t ht => by
     rw [hcoe, Function.comp_apply, Path.segment_apply]
@@ -218,8 +208,8 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
     rw [← hcl, image_closure_of_isCompact (hcl ▸ isCompact_Icc) hFc, hFg.image_eq]
   have hgimage : g '' Ioo a b = f '' (ball c r ∩ sphere ζ ρ) := by
     rw [hcrosscut, image_image]
-  have ha : a ∈ frontier (Ioo a b) := by rw [frontier_Ioo hab]; exact mem_insert a {b}
-  have hb : b ∈ frontier (Ioo a b) := by rw [frontier_Ioo hab]; exact mem_insert_of_mem a rfl
+  have ha : a ∈ frontier (Ioo a b) := by simp [frontier_Ioo hab]
+  have hb : b ∈ frontier (Ioo a b) := by simp [frontier_Ioo hab]
   refine ⟨F a, F b, (Path.segment a b).map' hFcseg, ?_, ?_, ?_, ?_⟩
   · rw [hcoe, range_comp, Path.range_segment, segment_eq_Icc hab.le, hFimage, hgimage]
   · simpa only [a, b, φ] using hFends a ha
