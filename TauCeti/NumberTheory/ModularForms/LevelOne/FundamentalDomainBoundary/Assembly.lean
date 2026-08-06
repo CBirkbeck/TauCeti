@@ -9,7 +9,7 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.VerticalCancel
 
 import TauCeti.Analysis.Calculus.PeriodicDeriv
-import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
+
 
 /-!
 # The boundary contour integral of a level-one logarithmic derivative
@@ -43,35 +43,6 @@ namespace TauCeti
 namespace ModularForm
 
 variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup SL(2, ℤ)} {k : ℤ}
-
-/-- The right-vertical integrability reflects to the left vertical: the reflection
-carries the integrand to its negation through the translation and the periodicity. -/
-theorem intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_segment4
-    {g : UpperHalfPlane → ℂ} {H : ℝ} (hper : Function.Periodic (g ∘ ofComplex) 1)
-    (hint : IntervalIntegrable
-      (fun t ↦ deriv (fdBoundary H) t • logDeriv (g ∘ ofComplex) (fdBoundary H t))
-      volume 0 1) :
-    IntervalIntegrable
-      (fun t ↦ deriv (fdBoundary H) t • logDeriv (g ∘ ofComplex) (fdBoundary H t))
-      volume 3 4 := by
-  have hI := (hint.neg.comp_sub_left 4).symm
-  have h41 : (4 : ℝ) - 1 = 3 := by norm_num
-  have h40 : (4 : ℝ) - 0 = 4 := by norm_num
-  rw [h40, h41] at hI
-  refine hI.congr_uIoo ?_
-  rw [Set.uIoo_of_le (by norm_num : (3 : ℝ) ≤ 4)]
-  intro x hx
-  have hu : 4 - x ∈ Ioo (0 : ℝ) 1 := ⟨by linarith [hx.2], by linarith [hx.1]⟩
-  have hval := fdBoundary_four_sub_vertical H ⟨hu.1.le, hu.2.le⟩
-  have hder := deriv_fdBoundary_four_sub_vertical H hu
-  have hxx : (4 : ℝ) - (4 - x) = x := by ring
-  rw [hxx] at hval hder
-  have hval' : fdBoundary H (4 - x) = fdBoundary H x + 1 := by linear_combination -hval
-  have hder' : deriv (fdBoundary H) (4 - x) = -deriv (fdBoundary H) x := by
-    linear_combination hder
-  simp only [Pi.neg_apply, hval', hder',
-    TauCeti.Function.Periodic.logDeriv hper (fdBoundary H x), smul_eq_mul]
-  ring
 
 /-- **The boundary contour integral of a level-one logarithmic derivative**: the
 verticals cancel by periodicity, the arc collapses to its weight term, and the ceiling
