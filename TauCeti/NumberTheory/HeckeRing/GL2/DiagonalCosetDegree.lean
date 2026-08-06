@@ -12,13 +12,16 @@ public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
 # The degree of a rank-two diagonal double coset
 
 The degree of a double coset is the relative index of the conjugated copy of `SL₂(ℤ)`. For a
-diagonal representative `a = (a₀, a₁)` with `a₀ ∣ a₁`, conjugating `SL₂(ℤ)` by `natDiagGL 2 a`
-carves out exactly `Γ₀(N)` for the ratio `N = a₁ / a₀`, so
+diagonal representative `a = (a₀, a₁)` with `a₀ ∣ a₁` whose ratio `N = a₁ / a₀` is positive,
+conjugating `SL₂(ℤ)` by `natDiagGL 2 a` carves out exactly `Γ₀(N)`, so
 
 `deg T(a₀, a₁) = [SL₂(ℤ) : Γ₀(N)]`,
 
 and specializing to `N = pᵏ` with the index computed in
 `TauCeti.NumberTheory.ModularForms.CongruenceSubgroups` gives Shimura's `pᵏ⁻¹(p + 1)`.
+
+Positivity of the ratio is needed: it forces both entries positive, and so rules out the
+tuples on which `natDiagGL` takes its junk value `1` (for `a = (0, 0)` the ratio is `0`).
 
 Note that the degree is not the number of diagonal representatives: for `a = (1, p)` that
 count is `p`, while the true degree is `p + 1` — the double coset also contains
