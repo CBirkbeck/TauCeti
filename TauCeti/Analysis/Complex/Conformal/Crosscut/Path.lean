@@ -34,9 +34,11 @@ Write
 
 The open interval `Ioo a b` parametrises `ball c r ∩ sphere ζ ρ`. At every point of its frontier,
 the endpoint-limit theorem gives a limit of `f` along the crosscut. Composing with `circleMap`
-gives a limit in the angular parameter, so the general cluster-set extension criterion produces a
-continuous extension on `Icc a b`. Reparametrising that extension by
-`AffineMap.lineMap a b : [0, 1] → [a, b]` gives the path.
+turns those into limits of the angular composite at `a` and at `b`, which is what
+`continuousOn_Icc_extendFrom_Ioo` asks for: `extendFrom (Ioo a b)` is then continuous on `Icc a b`
+and agrees with the composite on `Ioo a b`. Pushing Mathlib's straight-line path `Path.segment a b`
+forward along that extension with `Path.map'` gives the path, parametrised by
+`AffineMap.lineMap a b : [0, 1] → [a, b]`.
 
 The range statement follows from compactness: the image of `Icc a b`, the closure of `Ioo a b`,
 is the closure of the image of `Ioo a b`. This construction does not need injectivity. When `f`
@@ -57,8 +59,9 @@ injectivity of `f`, Mathlib's `Complex.injOn_circleMap_of_abs_sub_le`, and the f
 Layer L5 is absent from
 [mathlib4#33505](https://github.com/leanprover-community/mathlib4/pull/33505), the in-progress
 human-curated Riemann-mapping-theorem effort, which stops at the mapping theorem itself. Mathlib
-supplies `Path`, affine segments, and the injectivity of `circleMap` on an interval shorter than a
-full turn; it has no boundary-crosscut or endpoint-limit result. No Mathlib source is vendored.
+supplies `Path`, affine segments, the `extendFrom` extension across an interval, and the injectivity
+of `circleMap` on an interval shorter than a full turn; it has no boundary-crosscut or
+endpoint-limit result. No Mathlib source is vendored.
 
 ## References
 
