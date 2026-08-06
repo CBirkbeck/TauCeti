@@ -14,15 +14,16 @@ import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
 # Degrees of the diagonal double cosets
 
 The degree of a diagonal double coset `T(a₁, ..., aₙ)`, in the two cases the Hecke-ring
-calculations need. The scalar case `deg T(c, ..., c) = 1` holds at every rank, because a
+calculations need. The scalar case `deg T(c, ..., c) = 1` holds at every positive rank, because a
 scalar matrix is central. The prime-power case `deg T(pⁱ, pⁱ⁺ᵏ) = pᵏ⁻¹(p + 1)` for `k ≥ 1`
 is specific to rank two: the degree of a double coset is the relative index of the
 conjugated copy of `SL₂(ℤ)`, which for a diagonal representative is exactly the index
 `[SL₂(ℤ) : Γ₀(pᵏ)]` computed in `TauCeti.NumberTheory.ModularForms.CongruenceSubgroups`.
 
-Both live here, below `GLn.CoprimeMul` and the `GL2` files that consume them, rather than
-under `GL2`: the rank-two formula is a shared prerequisite of `GL2.MultiplicationTable` and
-`GL2.Degree` alike, and the scalar formula is rank-general.
+Both live here rather than under `GL2` because the rank-two formula is a shared prerequisite
+of the planned `GL2.MultiplicationTable` and `GL2.Degree` developments alike and must sit
+below both, while the scalar formula is rank-general. Those consumers are not yet in the
+repository; this file is the prerequisite that unblocks them.
 
 Ported from the AINTLIB `LeanModularForms` project
 ([`LeanModularForms/HeckeRIngs/GLn/Degree.lean`](https://github.com/CBirkbeck/AINTLIB),
@@ -33,7 +34,7 @@ contains representatives with permuted diagonals.
 ## Main results
 
 * `degree_diagCoset_prime_pow`: `deg T(pⁱ, pⁱ⁺ᵏ) = pᵏ⁻¹(p + 1)` for prime `p`, `k ≥ 1`.
-* `degree_diagCoset_scalar`: `deg T(c, ..., c) = 1`, at every rank.
+* `degree_diagCoset_scalar`: `deg T(c, ..., c) = 1`, at every positive rank.
 
 ## References
 
@@ -154,30 +155,10 @@ theorem degree_diagCoset_prime_pow (p : ℕ) (hp : Nat.Prime p) (a : Fin 2 → �
     (ha : ∀ i, 0 < a i) (hdiv : IsDvdChain a) (k : ℕ) (hk : 0 < k)
     (h_ratio : a 1 / a 0 = p ^ k) :
     (diagCoset a).degree = p ^ (k - 1) * (p + 1) := by
-  set H := SLnZ 2
-  set α := (natDiagGL 2 a : GL (Fin 2) ℚ) with hα_def
-  set D := diagCoset a with hD_def
-  set δ := (HeckeCoset.rep D : GL (Fin 2) ℚ)
-  have h_dvd_a : a 0 ∣ a 1 := isDvdChain_iff.mp hdiv (Fin.zero_le 1)
-  have h_in_set : δ ∈ HeckeCoset.toSet D := HeckeCoset.rep_mem D
-  have h_D_set : HeckeCoset.toSet D = DoubleCoset.doubleCoset α ↑H ↑H := by
-    rw [hD_def]; exact diagCoset_toSet a
-  rw [h_D_set, DoubleCoset.mem_doubleCoset] at h_in_set
-  obtain ⟨σ₁, hσ₁, σ₂, hσ₂, hδ_eq⟩ := h_in_set
-  have h_smul_σ₁ : ConjAct.toConjAct σ₁ • H = H :=
-    Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hσ₁)
-  have h_δ_smul : ConjAct.toConjAct δ • H =
-      ConjAct.toConjAct σ₁ • (ConjAct.toConjAct α • H) := by
-    rw [hδ_eq, map_mul, map_mul, ← smul_smul, ← smul_smul,
-      Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hσ₂)]
-  have h_S1 : (ConjAct.toConjAct α • H).relIndex H =
-      (ConjAct.toConjAct δ • H).relIndex H := by
-    rw [h_δ_smul]
-    have := Subgroup.relIndex_pointwise_smul
-      (ConjAct.toConjAct σ₁) (ConjAct.toConjAct α • H) H
-    rw [h_smul_σ₁] at this; exact this.symm
-  rw [HeckeCoset.degree_eq_relIndex, ← h_S1,
-    conjDiag_relIndex_eq_Gamma0_index p a ha k h_ratio h_dvd_a,
+  -- `degree_mk` already computes the degree from an explicit representative, so only the
+  -- relative index at `natDiagGL` is left to identify
+  rw [diagCoset_def, HeckeCoset.degree_mk,
+    conjDiag_relIndex_eq_Gamma0_index p a ha k h_ratio (isDvdChain_iff.mp hdiv (Fin.zero_le 1)),
     Gamma0_prime_power_index p hp k hk]
 
 private lemma natDiagGL_comm_of_const (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
@@ -196,34 +177,18 @@ private lemma natDiagGL_comm_of_const (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
 
 /-- **The scalar degree**: a scalar diagonal matrix is central, so its double coset is a
 single coset and `deg T(c, ..., c) = 1`. -/
+@[simp]
 theorem degree_diagCoset_scalar (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
     (h_const : ∀ i, a i = a 0) : (diagCoset a).degree = 1 := by
-  set H := SLnZ n
-  set D := diagCoset a with hD_def
-  set δ := HeckeCoset.rep D
-  suffices hsmul : ConjAct.toConjAct (δ : GL (Fin n) ℚ) • H = H by
-    rw [HeckeCoset.degree_eq_relIndex]
-    rw [show ConjAct.toConjAct ((HeckeCoset.rep D : _) : GL (Fin n) ℚ) • H = H from hsmul,
-      Subgroup.relIndex_self]
-  have hδ_mem : (δ : GL (Fin n) ℚ) ∈ HeckeCoset.toSet D := HeckeCoset.rep_mem D
-  rw [show HeckeCoset.toSet D =
-      DoubleCoset.doubleCoset (natDiagGL n a) ↑H ↑H from by
-    rw [hD_def]; exact diagCoset_toSet a, DoubleCoset.mem_doubleCoset] at hδ_mem
-  obtain ⟨h₁, hh₁, h₂, hh₂, hδ_eq⟩ := hδ_mem
-  have h_comm : natDiagGL n a * h₂ = h₂ * natDiagGL n a :=
-    natDiagGL_comm_of_const n a ha h_const h₂
-  have hδ_simp : (δ : GL (Fin n) ℚ) = (h₁ * h₂) * natDiagGL n a := by
-    rw [hδ_eq, mul_assoc, h_comm, ← mul_assoc]
-  have h_diag_conj : ∀ (g : GL (Fin n) ℚ),
-      (natDiagGL n a)⁻¹ * g * natDiagGL n a = g := by
-    intro g; rw [mul_assoc, ← natDiagGL_comm_of_const n a ha h_const g, ← mul_assoc,
+  rw [diagCoset_def, HeckeCoset.degree_mk]
+  have h_diag_conj : ∀ g : GL (Fin n) ℚ,
+      (natDiagGL n a)⁻¹ * g * natDiagGL n a = g := fun g ↦ by
+    rw [mul_assoc, ← natDiagGL_comm_of_const n a ha h_const g, ← mul_assoc,
       inv_mul_cancel, one_mul]
-  rw [hδ_simp, map_mul, ← smul_smul]
-  have h_smul_diag : ConjAct.toConjAct (natDiagGL n a) • H = H := by
+  have h_smul_diag : ConjAct.toConjAct (natDiagGL n a) • SLnZ n = SLnZ n := by
     ext x
     simp only [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def,
       map_inv, ConjAct.ofConjAct_toConjAct, inv_inv, h_diag_conj]
-  rw [h_smul_diag]
-  exact Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer (H.mul_mem hh₁ hh₂))
+  rw [h_smul_diag, Subgroup.relIndex_self]
 
 end HeckeRing.GLn
