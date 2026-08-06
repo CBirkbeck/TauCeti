@@ -87,6 +87,7 @@ private lemma pi_mul_pos {a b : Fin n → ℕ} (ha : ∀ i, 0 < a i) (hb : ∀ i
   fun i ↦ Nat.mul_pos (ha i) (hb i)
 
 /-- The diagonal element is multiplicative in its tuple of entries. -/
+@[simp]
 lemma natDiagGL_mul (a b : Fin n → ℕ) (ha : ∀ i, 0 < a i) (hb : ∀ i, 0 < b i) :
     natDiagGL n a * natDiagGL n b = natDiagGL n (a * b) := by
   apply Units.ext

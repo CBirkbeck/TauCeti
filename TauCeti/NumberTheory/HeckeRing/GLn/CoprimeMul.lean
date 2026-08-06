@@ -64,11 +64,13 @@ lemma natDiagGL_const_coe (c : ℕ) (hc : 0 < c) :
   rw [natDiagGL_coe n _ (fun _ ↦ hc), ← Matrix.smul_one_eq_diagonal]
 
 /-- Conjugation by the scalar diagonal element is trivial. -/
+@[simp]
 lemma natDiagGL_const_conj_eq (c : ℕ) (x : GL (Fin n) ℚ) :
     (natDiagGL n (fun _ ↦ c))⁻¹ * x * natDiagGL n (fun _ ↦ c) = x := by
   rw [mul_assoc, ← natDiagGL_const_comm n c x, ← mul_assoc, inv_mul_cancel, one_mul]
 
 /-- The conjugation action of the scalar diagonal element fixes `SL_n(ℤ)`. -/
+@[simp]
 lemma conjAct_natDiagGL_const_smul_eq (c : ℕ) :
     ConjAct.toConjAct (natDiagGL n (fun _ ↦ c)) • SLnZ n = SLnZ n := by
   ext x
@@ -158,6 +160,7 @@ private lemma multiplicity_const_le_one (c : ℕ) (b : Fin n → ℕ)
 
 /-- Scalar multiplication in the Hecke ring (Shimura, Proposition 3.17):
 `T(c,...,c) · T(b) = T(c·b)`. -/
+@[simp]
 theorem diagElem_const_mul (c : ℕ) (hc : 0 < c) (b : Fin n → ℕ) (hb : ∀ i, 0 < b i) :
     diagElem (fun _ : Fin n ↦ c) * diagElem b = diagElem ((fun _ ↦ c) * b) := by
   classical
@@ -197,6 +200,7 @@ theorem diagElem_const_mul (c : ℕ) (hc : 0 < c) (b : Fin n → ℕ) (hb : ∀ 
 /-- **The scalar product, on the right**: `T(b) · T(c,...,c) = T(b·c)`. The Hecke ring of
 `GL_n` is commutative (transposition fixes every diagonal double coset), so this is the
 left-hand case read backwards. -/
+@[simp]
 theorem diagElem_mul_const (b : Fin n → ℕ) (hb : ∀ i, 0 < b i) (c : ℕ) (hc : 0 < c) :
     diagElem b * diagElem (fun _ ↦ c) = diagElem (b * fun _ ↦ c) := by
   rw [HeckeCosetModule.mul_comm_of_antiInvolution ℤ (transposeAntiInvolution n)
