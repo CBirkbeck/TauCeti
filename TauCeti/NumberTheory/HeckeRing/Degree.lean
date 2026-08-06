@@ -137,7 +137,7 @@ open HeckeCoset
 
 open scoped HeckeCosetModule
 
-variable [IsHeckeTriple Δ H H] {R : Type*} [CommSemiring R]
+variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
 
 /-- The scalar operations commute with the `R`-scalars of the module argument. Packaged as
 `instSMulCommClassOp`. -/
@@ -152,7 +152,7 @@ private lemma op_smul_comm (r : R) (t : 𝕋 Δ H R) (m : LeftCosetModule Δ H R
     rw [Finset.smul_sum]
     refine Finset.sum_congr rfl fun i _ ↦ ?_
     rw [Finsupp.smul_single, smul_eq_mul]
-    exact congrArg _ (by ring)
+    exact congrArg _ (mul_assoc _ _ _)
 
 /-- The scalar operations of the opposite Hecke ring commute with the `R`-scalars: the
 canonical `SMulCommClass` form. -/

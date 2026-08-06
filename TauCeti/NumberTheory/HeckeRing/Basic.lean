@@ -21,7 +21,9 @@ define the Hecke product in later files and is finite for a Hecke triple. It als
 the basis-element API of the coset module: `HeckeCosetModule.single` with its evaluation,
 summation, and additivity laws, the `induction_linear` principle, and the transported
 `Module` instance — placed at this layer so every later file (convolution, one, and the
-coset actions) can build on one shared vocabulary.
+coset actions) can build on one shared vocabulary. Finally it defines the degree of a
+double coset, the number of left cosets in its decomposition, together with its
+relative-index form, since that count is read straight off `DecompQuotient`.
 
 Vendored from the in-review mathlib4 PR
 [#41253](https://github.com/leanprover-community/mathlib4/pull/41253) (Chris Birkbeck), per the
@@ -37,6 +39,8 @@ stack merges.
 * `HeckeCosetModule.single`: the basis element `b • [D]` of the Hecke coset module, with
   `single_apply`, `sum_single_index`, `smul_single_one`, `single_add`, `induction_linear`,
   and the `Module R` instance `HeckeCosetModule.instModule`.
+* `HeckeCoset.degree`: the number of left cosets in the decomposition of a double coset,
+  with `degree_eq_relIndex` and `degree_mk` presenting it as a relative index.
 
 ## Main results
 
@@ -192,16 +196,16 @@ open scoped Pointwise in
 /-- The degree at an explicit representative: the count computed from any `g`, not only
 from the chosen `rep`. This is the form concrete coset calculations use, since they present
 a double coset as `mk H H g`. -/
-@[simp] lemma degree_mk {H : Subgroup G} [IsHeckeTriple Δ H H] (g : Δ) :
-    (HeckeCoset.mk H H g).degree = (ConjAct.toConjAct (g : G) • H).relIndex H := by
+@[simp] lemma degree_mk (g : Δ) :
+    (HeckeCoset.mk H₁ H₂ g).degree = (ConjAct.toConjAct (g : G) • H₂).relIndex H₁ := by
   obtain ⟨h₁, hh₁, h₂, hh₂, heq⟩ :=
-    DoubleCoset.mem_doubleCoset.mp (toSet_mk g ▸ rep_mem (HeckeCoset.mk H H g))
-  have hfix₂ : ConjAct.toConjAct h₂ • H = H :=
+    DoubleCoset.mem_doubleCoset.mp (toSet_mk g ▸ rep_mem (HeckeCoset.mk H₁ H₂ g))
+  have hfix₂ : ConjAct.toConjAct h₂ • H₂ = H₂ :=
     Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hh₂)
-  have hfix₁ : ConjAct.toConjAct h₁ • H = H :=
+  have hfix₁ : ConjAct.toConjAct h₁ • H₁ = H₁ :=
     Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hh₁)
   have htransport := Subgroup.relIndex_pointwise_smul
-    (ConjAct.toConjAct h₁) (ConjAct.toConjAct (g : G) • H) H
+    (ConjAct.toConjAct h₁) (ConjAct.toConjAct (g : G) • H₂) H₁
   rw [hfix₁] at htransport
   rw [degree_eq_relIndex, heq, map_mul, map_mul, ← smul_smul, ← smul_smul, hfix₂,
     htransport]
