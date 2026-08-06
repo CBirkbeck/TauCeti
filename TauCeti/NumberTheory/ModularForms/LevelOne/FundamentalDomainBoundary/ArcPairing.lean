@@ -23,8 +23,6 @@ formula.
 
 ## Main declarations
 
-* `TauCeti.ModularForm.logDeriv_comp_ofComplex_S_transform_reflected`: the
-  denominator-free reflected form of the `S`-transformation law.
 * `TauCeti.ModularForm.logDeriv_comp_ofComplex_fdBoundary_arc_pairing`: the direct and
   reflected arc contour integrands sum to the weight term.
 * `TauCeti.ModularForm.integral_deriv_div_fdBoundary_arc`: the arc integral of `γ' / γ`
@@ -42,19 +40,6 @@ namespace TauCeti
 namespace ModularForm
 
 variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup SL(2, ℤ)} {k : ℤ}
-
-/-- The reflected, denominator-free form of the `S`-transformation law of the
-logarithmic derivative. -/
-theorem logDeriv_comp_ofComplex_S_transform_reflected [SlashInvariantFormClass F Γ k]
-    (f : F) (hS : ModularGroup.S ∈ Γ) {w : ℂ} (hw : 0 < w.im)
-    (hd : DifferentiableAt ℂ (⇑f ∘ ofComplex) w) (hfw : (⇑f ∘ ofComplex) w ≠ 0) :
-    logDeriv (⇑f ∘ ofComplex) (-1 / w) =
-      w ^ 2 * logDeriv (⇑f ∘ ofComplex) w + k * w := by
-  have hw0 : w ≠ 0 := fun h ↦ absurd hw (by simp [h])
-  have h := logDeriv_comp_ofComplex_S_transform f hS hw hd hfw
-  rw [neg_div]
-  field_simp at h
-  linear_combination -h
 
 /-- The positivity of the imaginary part along the arc. -/
 lemma im_fdBoundary_arc_pos (H : ℝ) {t : ℝ} (ht : t ∈ Icc (1 : ℝ) 3) :
@@ -76,8 +61,7 @@ theorem logDeriv_comp_ofComplex_fdBoundary_arc_pairing [SlashInvariantFormClass 
   have him := im_fdBoundary_arc_pos H ⟨ht.1.le, ht.2.le⟩
   have h0 : fdBoundary H t ≠ 0 := fun h ↦ absurd him (by simp [h])
   rw [fdBoundary_four_sub_arc H ⟨ht.1.le, ht.2.le⟩, deriv_fdBoundary_four_sub_arc H ht,
-    logDeriv_comp_ofComplex_S_transform_reflected f hS him hd hne, smul_eq_mul,
-    smul_eq_mul]
+    smul_eq_mul, smul_eq_mul, logDeriv_comp_ofComplex_S_transform f hS him hd hne]
   field_simp
   ring
 
