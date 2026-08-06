@@ -257,10 +257,10 @@ lemma deriv_fdBoundary_four_sub_arc (H : ℝ) {t : ℝ} (ht : t ∈ Set.Ioo (1 :
 `π/6`. -/
 theorem logDeriv_fdBoundary_arc {H t : ℝ} (ht : t ∈ Set.Ioo (1 : ℝ) 3) :
     logDeriv (fdBoundary H) t = (Real.pi / 6 : ℝ) * Complex.I := by
+  have hne : circleMap 0 1 ((t + 1) * (Real.pi / 6)) ≠ 0 := circleMap_ne_center one_ne_zero
   rw [logDeriv_apply, deriv_fdBoundary_of_mem_Ioo_one_three ht,
-    eqOn_fdBoundary_arc H ⟨ht.1.le, ht.2.le⟩, Complex.real_smul,
-    mul_comm (circleMap 0 1 ((t + 1) * (Real.pi / 6))) Complex.I,
-    mul_div_assoc, mul_div_assoc, div_self (circleMap_ne_center one_ne_zero), mul_one]
+    eqOn_fdBoundary_arc H ⟨ht.1.le, ht.2.le⟩, Complex.real_smul]
+  field_simp
 
 /-- The arc integral of the contour's logarithmic derivative over any subinterval of the
 arc, in either orientation: the integrand is `π/6 · i` on the open arc
@@ -269,22 +269,14 @@ theorem integral_logDeriv_fdBoundary_arc (H : ℝ) {a b : ℝ} (ha : a ∈ Set.I
     (hb : b ∈ Set.Icc (1 : ℝ) 3) :
     ∫ t in a..b, logDeriv (fdBoundary H) t =
       (b - a) * ((Real.pi / 6 : ℝ) * Complex.I) := by
-  have key : ∀ c d : ℝ, c ∈ Set.Icc (1 : ℝ) 3 → d ∈ Set.Icc (1 : ℝ) 3 → c ≤ d →
-      ∫ t in c..d, logDeriv (fdBoundary H) t =
-        (d - c) * ((Real.pi / 6 : ℝ) * Complex.I) := by
-    intro c d hc hd hcd
-    rw [intervalIntegral.integral_congr_Ioo_of_le hcd
-        (g := fun _ ↦ ((Real.pi / 6 : ℝ) : ℂ) * Complex.I)
-        (fun t ht ↦ logDeriv_fdBoundary_arc
-          ⟨lt_of_le_of_lt hc.1 ht.1, lt_of_lt_of_le ht.2 hd.2⟩),
-      intervalIntegral.integral_const, Complex.real_smul]
-    push_cast
-    ring
-  rcases le_total a b with hab | hab
-  · exact key a b ha hb hab
-  · rw [intervalIntegral.integral_symm, key b a hb ha hab]
-    push_cast
-    ring
+  rw [intervalIntegral.integral_congr_uIoo
+      (g := fun _ ↦ ((Real.pi / 6 : ℝ) : ℂ) * Complex.I) fun t ht ↦
+        logDeriv_fdBoundary_arc
+          ⟨lt_of_le_of_lt (le_min ha.1 hb.1) ht.1,
+            lt_of_lt_of_le ht.2 (max_le ha.2 hb.2)⟩,
+    intervalIntegral.integral_const, Complex.real_smul]
+  push_cast
+  ring
 
 end Reflection
 

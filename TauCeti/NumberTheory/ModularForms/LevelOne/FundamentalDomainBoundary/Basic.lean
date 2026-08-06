@@ -454,9 +454,9 @@ theorem im_fdBoundary_arc_le (H : ℝ) {t : ℝ} (ht : t ∈ Icc (1 : ℝ) 3) :
 theorem im_fdBoundary_arc_pos (H : ℝ) {t : ℝ} (ht : t ∈ Icc (1 : ℝ) 3) :
     0 < (fdBoundary H t).im := by
   rw [eqOn_fdBoundary_arc H ht, circleMap_zero_im, one_mul]
-  exact Real.sin_pos_of_pos_of_lt_pi
-    (mul_pos (by linarith [ht.1]) (by positivity))
-    (by nlinarith [mul_pos Real.pi_pos (show (0 : ℝ) < 5 - t by linarith [ht.2])])
+  have h5 : (0 : ℝ) < 5 - t := by linarith [ht.2]
+  exact Real.sin_pos_of_pos_of_lt_pi (mul_pos (by linarith [ht.1]) (by positivity))
+    (by nlinarith [mul_pos Real.pi_pos h5])
 
 /-- The left vertical has constant real part `-1/2`. -/
 theorem re_fdBoundary_segment4 (H : ℝ) {t : ℝ} (ht : t ∈ Icc (3 : ℝ) 4) :
