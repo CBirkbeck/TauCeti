@@ -88,7 +88,7 @@ public lemma cuspFunction_isBigO_pow_of_qExpansion_coeff_eq_zero
   simpa [zero_add, hps] using hFPS.isBigO_sub_partialSum_pow N
 
 private lemma norm_cuspFunction_div_pow_le_of_ball_bound
-    [ModularFormClass F Γ k] [Γ.HasDetPlusMinusOne] [DiscreteTopology Γ]
+    [ModularFormClass F Γ k]
     (f : F) {C' δ : ℝ} {N n : ℕ} (hn : n < N) (hC' : 0 ≤ C')
     (hδ : Metric.ball (0 : ℂ) δ ⊆ {z | ‖cuspFunction h f z‖ ≤ C' * ‖z‖ ^ N})
     {R : ℝ} (hR0 : 0 < R) (hRltδ : R < δ) (hRlt1 : R < 1) {z : ℂ}
@@ -110,7 +110,7 @@ private lemma norm_cuspFunction_div_pow_le_of_ball_bound
     _ = C' := by field_simp
 
 private lemma norm_circleIntegral_cuspFunction_div_pow_le
-    [ModularFormClass F Γ k] [Γ.HasDetPlusMinusOne] [DiscreteTopology Γ]
+    [ModularFormClass F Γ k]
     (f : F) {C' δ : ℝ} {N n : ℕ} (hn : n < N) (hC' : 0 ≤ C')
     (hδ : Metric.ball (0 : ℂ) δ ⊆ {z | ‖cuspFunction h f z‖ ≤ C' * ‖z‖ ^ N})
     {R : ℝ} (hR0 : 0 < R) (hRltδ : R < δ) (hRlt1 : R < 1) :
@@ -120,7 +120,7 @@ private lemma norm_circleIntegral_cuspFunction_div_pow_le
 
 /-- If `cuspFunction h f = O(‖q‖^N)` near `0`, then the `n`-th `q`-coefficient vanishes. -/
 public lemma qExpansion_coeff_eq_zero_of_cuspFunction_isBigO_pow
-    [ModularFormClass F Γ k] [Γ.HasDetPlusMinusOne] [DiscreteTopology Γ]
+    [ModularFormClass F Γ k]
     (f : F) (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) {N n : ℕ} (hn : n < N)
     (hO : cuspFunction h f =O[𝓝 (0 : ℂ)] (fun q : ℂ ↦ ‖q‖ ^ N)) :
     (qExpansion h f).coeff n = 0 := by
