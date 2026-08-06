@@ -51,12 +51,17 @@ namespace LeftCosetModule
 
 open HeckeCoset
 
-open scoped HeckeCosetModule
+open scoped HeckeCosetModule Pointwise
 
-variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
+variable [IsHeckeTriple Δ H H] {R : Type*}
+
+section NonUnital
+
+variable [NonUnitalNonAssocSemiring R]
 
 /-- The coefficient sum of the action of a ring basis element on a module basis element:
-the degree of the double coset appears as the orbit size. -/
+the degree of the double coset appears as the orbit size. Only the additive structure and
+the single product `b * a` are involved, so no unit or associativity is needed. -/
 lemma degree_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H) (a b : R) :
     Finsupp.degree (MulOpposite.op (HeckeCosetModule.single R D a) •
       Finsupp.single q b) = (D.degree : ℕ) • (b * a) := by
@@ -64,16 +69,9 @@ lemma degree_single_smul_single (D : HeckeCoset Δ H H) (q : HeckeCoset Δ ⊥ H
   rw [single_smul_single, map_sum]
   simp [HeckeCoset.degree_def, smulOrbit_card]
 
-end LeftCosetModule
+end NonUnital
 
-
-namespace LeftCosetModule
-
-open HeckeCoset
-
-open scoped HeckeCosetModule Pointwise
-
-variable [IsHeckeTriple Δ H H] {R : Type*} [Semiring R]
+variable [Semiring R]
 
 /-- The coefficient sum is multiplicative against the action: the orbit-sum coefficient is
 independent of the acted-on coset, so the action factors through the degree. -/
