@@ -24,6 +24,12 @@ integrability.
 ## Main declarations
 
 * `TauCeti.ModularForm.intervalIntegral_fdBoundary_segment4_eq_neg_segment1`.
+
+## References
+
+* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the valence-formula
+  development (`ForMathlib/ValenceFormula/PVChain/Assembly.lean`, the vertical
+  cancellation) this file ports onto the current Mathlib pin.
 -/
 
 public section
