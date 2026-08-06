@@ -172,16 +172,17 @@ private theorem isUnit_det_of_columns (b : Module.Basis (Fin n) ℤ (Fin n → �
     simp only [Matrix.of_apply]
     rw [e.toMatrix_apply, he, Pi.basisFun_repr]
   rw [hb]
-  simpa [Module.Basis.det_apply] using e.isUnit_det b
+  have := e.invertibleToMatrix b
+  exact Matrix.isUnit_det_of_invertible _
 
 /-- **Preimages of a basis of the range under an injective `A` have unit determinant as columns.**
 `A.mulVecLin` restricts to a linear equivalence onto its range, and transporting the basis `ab'`
 back along it is the family `r`. -/
-private theorem isUnit_det_of_mulVec_columns (A : Matrix (Fin n) (Fin n) ℤ) (hdet_ne : A.det ≠ 0)
+private theorem isUnit_det_of_mulVec_columns (A : Matrix (Fin n) (Fin n) ℤ)
+    (hinj : Function.Injective A.mulVecLin)
     {ab' : Module.Basis (Fin n) ℤ ↥(LinearMap.range A.mulVecLin)} {r : Fin n → Fin n → ℤ}
     (hr : ∀ i, A.mulVecLin (r i) = ↑(ab' i)) :
     IsUnit (Matrix.of (fun k j ↦ r j k) : Matrix (Fin n) (Fin n) ℤ).det := by
-  have hinj := mulVecLin_injective_of_det_ne_zero A hdet_ne
   set r_basis : Module.Basis (Fin n) ℤ (Fin n → ℤ) :=
     ab'.map (LinearEquiv.ofInjective A.mulVecLin hinj).symm with hr_basis
   have hrb : ⇑r_basis = r := funext fun i ↦ hinj (by
@@ -226,7 +227,8 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
   have hmat_eq : A * Q_mat = P_mat * Matrix.diagonal a :=
     mul_of_columns_eq_of_mulVec A hkey
   have hP_unit : IsUnit P_mat.det := isUnit_det_of_columns b'
-  have hQ_unit : IsUnit Q_mat.det := isUnit_det_of_mulVec_columns A hdet_ne hr
+  have hQ_unit : IsUnit Q_mat.det :=
+    isUnit_det_of_mulVec_columns A (mulVecLin_injective_of_det_ne_zero A hdet_ne) hr
   have h_diag_eq : P_mat⁻¹ * A * Q_mat = Matrix.diagonal a := by
     rw [Matrix.mul_assoc, hmat_eq, ← Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hP_unit,
       Matrix.one_mul]
