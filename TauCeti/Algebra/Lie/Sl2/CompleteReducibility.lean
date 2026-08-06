@@ -150,21 +150,17 @@ private theorem exists_notMem_forall_lie_mem_of_le {d : ℕ}
       ∀ [FiniteDimensional K M'] (N' : LieSubmodule K L M'), finrank K M' ≤ d → N' ≠ ⊤ →
         (∀ (x : L) (m : M'), ⁅x, m⁆ ∈ N') → ∃ v : M', v ∉ N' ∧ ∀ x : L, ⁅x, v⁆ = 0)
     {M : Type v} [AddCommGroup M] [Module K M] [LieRingModule L M] [LieModule K L M]
-    [FiniteDimensional K M] {N W : LieSubmodule K L M} (hquot : finrank K (M ⧸ W) ≤ d)
+    {N W : LieSubmodule K L M} [FiniteDimensional K (M ⧸ W)] (hquot : finrank K (M ⧸ W) ≤ d)
     (hN : N ≠ ⊤) (htriv : ∀ (x : L) (m : M), ⁅x, m⁆ ∈ N) (hWle : W ≤ N) :
     ∃ v₀ : M, v₀ ∉ N ∧ ∀ x : L, ⁅x, v₀⁆ ∈ W := by
   have hNq : N.map (LieSubmodule.Quotient.mk' W) ≠ ⊤ := by
     intro hcon
-    refine hN (eq_top_iff.2 fun m _ ↦ ?_)
-    have hm : LieSubmodule.Quotient.mk' W m ∈ N.map (LieSubmodule.Quotient.mk' W) := by
-      rw [hcon]; exact LieSubmodule.mem_top _
-    obtain ⟨n, hn, hnm⟩ := hm
-    have hdiff : m - n ∈ W := by
-      have hz : (Submodule.Quotient.mk m : M ⧸ (W : Submodule K M))
-          = Submodule.Quotient.mk n := hnm.symm
-      exact (Submodule.Quotient.eq _).1 hz
-    have := N.add_mem hn (hWle hdiff)
-    simpa using this
+    refine hN ((LieSubmodule.toSubmodule_inj _ _).1 ?_)
+    have hmap : Submodule.map (W : Submodule K M).mkQ (N : Submodule K M) = ⊤ := by
+      have := congrArg LieSubmodule.toSubmodule hcon
+      rwa [LieSubmodule.toSubmodule_map, LieSubmodule.top_toSubmodule] at this
+    have hWN := (Submodule.map_mkQ_eq_top _ _).1 hmap
+    rwa [sup_eq_right.2 ((LieSubmodule.toSubmodule_le_toSubmodule _ _).2 hWle)] at hWN
   obtain ⟨w, hwmem, hwinv⟩ := ih (N.map (LieSubmodule.Quotient.mk' W)) hquot hNq
     (by
       intro x q
@@ -203,10 +199,8 @@ private theorem exists_invariant_notMem_of_forall_lie_mem {d : ℕ}
   have hv₀P : v₀ ∈ P :=
     (hPmem _).2 (Submodule.mem_sup_right (Submodule.mem_span_singleton_self v₀))
   have hPrank : finrank K P ≤ d := by
-    have hne : v₀ ≠ 0 := fun hc ↦ hv₀N (hc ▸ N.zero_mem)
-    have hsup := Submodule.finrank_sup_add_finrank_inf_eq
-      (W : Submodule K M) (Submodule.span K {v₀})
-    rw [finrank_span_singleton hne] at hsup
+    have hsup := Submodule.finrank_sup_span_singleton
+      (p := (W : Submodule K M)) (v := v₀) (fun hc ↦ hv₀N (hWle hc))
     have hP : finrank K (((W : Submodule K M) ⊔ Submodule.span K {v₀} :
         Submodule K M) : Type _) = finrank K P := rfl
     have hw : finrank K ((W : Submodule K M) : Type _) = finrank K W := rfl
