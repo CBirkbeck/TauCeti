@@ -285,10 +285,9 @@ is the constant `π/6 · i` on the open arc. -/
 theorem intervalIntegrable_logDeriv_fdBoundary_arc (H : ℝ) {a b : ℝ}
     (ha : a ∈ Set.Icc (1 : ℝ) 3) (hb : b ∈ Set.Icc (1 : ℝ) 3) :
     IntervalIntegrable (logDeriv (fdBoundary H)) MeasureTheory.volume a b := by
-  refine (intervalIntegrable_const
-    (c := ((Real.pi / 6 : ℝ) : ℂ) * Complex.I)).congr_uIoo fun t ht ↦ ?_
-  exact (logDeriv_fdBoundary_arc ⟨lt_of_le_of_lt (le_inf ha.1 hb.1) ht.1,
-    lt_of_lt_of_le ht.2 (sup_le ha.2 hb.2)⟩).symm
+  exact (intervalIntegrable_const
+    (c := ((Real.pi / 6 : ℝ) : ℂ) * Complex.I)).congr_uIoo fun t ht ↦
+    (logDeriv_fdBoundary_arc (Set.uIoo_subset_Ioo ha hb ht)).symm
 
 /-- Substituting the reflection `t ↦ 4 - t` in a boundary contour integral. -/
 theorem intervalIntegral_comp_fdBoundary_four_sub {E : Type*} [NormedAddCommGroup E]
