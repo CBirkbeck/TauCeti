@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 public import TauCeti.NumberTheory.ModularForms.STransform
 
@@ -18,8 +17,8 @@ own reversal through the inversion `S`. Composed with the `S`-transformation law
 logarithmic derivative of a weight-`k` form, the reflected integrand
 `logDeriv g (γ (4 - t)) · γ' (4 - t)` pairs with the direct one up to the weight term
 `-k · γ' / γ` — so the two halves of the arc integral collapse to the integral of
-`γ' / γ`, which is the constant `π/6 · i` producing the `k/12` term of the valence
-formula.
+`γ' / γ`, whose integrand is `π/6 · i` on the open arc and hence almost everywhere,
+producing the `k/12` term of the valence formula.
 
 ## Main declarations
 
