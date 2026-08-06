@@ -53,12 +53,10 @@ private lemma segment1_chord_ne_zero (hH : H ≠ Real.sqrt 3 / 2) :
 
 private lemma segment4_chord_ne_zero (hH : H ≠ Real.sqrt 3 / 2) :
     (-1 / 2 : ℂ) + H * Complex.I - (ρ : ℂ) ≠ 0 := by
-  intro h0
-  apply hH
-  have him : ((-1 / 2 : ℂ) + H * Complex.I - (ρ : ℂ)).im = H - Real.sqrt 3 / 2 := by
-    simp [ρ]
-  rw [h0, Complex.zero_im] at him
-  linarith
+  have h : (-1 / 2 : ℂ) + H * Complex.I - (ρ : ℂ) =
+      -((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)) := by ring
+  rw [h]
+  exact neg_ne_zero.mpr (segment1_chord_ne_zero hH)
 
 private lemma arc_deriv_ne_zero (t : ℝ) :
     (Real.pi / 6) • (circleMap 0 1 ((t + 1) * (Real.pi / 6)) * Complex.I) ≠ 0 := by
