@@ -255,6 +255,7 @@ lemma deriv_fdBoundary_four_sub_arc (H : ℝ) {t : ℝ} (ht : t ∈ Set.Ioo (1 :
 /-- On the open arc the contour's logarithmic derivative — its logarithmic speed
 `γ' / γ` — is the constant `π/6 · i`: the arc traverses the unit circle at angular speed
 `π/6`. -/
+@[simp]
 theorem logDeriv_fdBoundary_arc {H t : ℝ} (ht : t ∈ Set.Ioo (1 : ℝ) 3) :
     logDeriv (fdBoundary H) t = (Real.pi / 6 : ℝ) * Complex.I := by
   have hne : circleMap 0 1 ((t + 1) * (Real.pi / 6)) ≠ 0 := circleMap_ne_center one_ne_zero
