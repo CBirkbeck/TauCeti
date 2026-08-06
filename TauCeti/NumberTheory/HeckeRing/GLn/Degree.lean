@@ -34,7 +34,8 @@ contains representatives with permuted diagonals.
 ## Main results
 
 * `degree_diagCoset_prime_pow`: `deg T(pⁱ, pⁱ⁺ᵏ) = pᵏ⁻¹(p + 1)` for prime `p`, `k ≥ 1`.
-* `degree_diagCoset_scalar`: `deg T(c, ..., c) = 1`, at every positive rank.
+* `degree_diagCoset_scalar`: `deg T(c, ..., c) = 1`, at every positive rank and for every
+  constant tuple.
 
 ## References
 
@@ -161,25 +162,36 @@ theorem degree_diagCoset_prime_pow (p : ℕ) (hp : Nat.Prime p) (a : Fin 2 → �
     conjDiag_relIndex_eq_Gamma0_index p a ha k h_ratio (isDvdChain_iff.mp hdiv (Fin.zero_le 1)),
     Gamma0_prime_power_index p hp k hk]
 
+/-- A constant `natDiagGL` is Mathlib's scalar matrix, so it is central. -/
+private lemma natDiagGL_const_eq_scalar (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
+    (h_const : ∀ i, a i = a 0) :
+    natDiagGL n a =
+      Matrix.GeneralLinearGroup.scalar (Fin n)
+        (Units.mk0 (a 0 : ℚ) (by exact_mod_cast (ha 0).ne')) := by
+  apply Units.ext
+  ext i j
+  simp only [natDiagGL_coe n a ha, Matrix.GeneralLinearGroup.coe_scalar, Matrix.scalar_apply,
+    Matrix.diagonal_apply, Units.val_mk0]
+  split_ifs with h
+  · subst h; simp [h_const]
+  · rfl
+
 private lemma natDiagGL_comm_of_const (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
     (h_const : ∀ i, a i = a 0) (g : GL (Fin n) ℚ) :
     natDiagGL n a * g = g * natDiagGL n a := by
-  apply Units.ext
-  simp only [Units.val_mul, natDiagGL_coe n a ha]
-  have h_diag : Matrix.diagonal (fun i ↦ (a i : ℚ)) =
-      (a 0 : ℚ) • (1 : Matrix (Fin n) (Fin n) ℚ) := by
-    ext i j
-    simp only [Matrix.diagonal_apply, Matrix.smul_apply, Matrix.one_apply, smul_eq_mul]
-    split_ifs with h
-    · subst h; simp [h_const]
-    · simp
-  rw [h_diag, smul_mul_assoc, mul_smul_comm, one_mul, mul_one]
+  rw [natDiagGL_const_eq_scalar n a ha h_const]
+  exact Matrix.GeneralLinearGroup.scalar_commute _ _
 
 /-- **The scalar degree**: a scalar diagonal matrix is central, so its double coset is a
 single coset and `deg T(c, ..., c) = 1`. -/
 @[simp]
-theorem degree_diagCoset_scalar (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
-    (h_const : ∀ i, a i = a 0) : (diagCoset a).degree = 1 := by
+theorem degree_diagCoset_scalar (a : Fin n → ℕ) (h_const : ∀ i, a i = a 0) :
+    (diagCoset a).degree = 1 := by
+  by_cases ha : ∀ i, 0 < a i
+  swap
+  · -- the junk value of `natDiagGL` is `1`, whose double coset is the identity
+    rw [diagCoset_of_not_pos ha]
+    exact HeckeCoset.degree_one
   rw [diagCoset_def, HeckeCoset.degree_mk]
   have h_diag_conj : ∀ g : GL (Fin n) ℚ,
       (natDiagGL n a)⁻¹ * g * natDiagGL n a = g := fun g ↦ by
