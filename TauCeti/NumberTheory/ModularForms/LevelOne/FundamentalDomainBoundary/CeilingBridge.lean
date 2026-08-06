@@ -43,6 +43,37 @@ namespace TauCeti
 
 namespace ModularForm
 
+/-- The pointwise ceiling-integrand identification on the open ceiling: the chain rule
+substitutes the cusp function along the `q`-parameter, and the affine angle map matches
+the circle parametrization with Jacobian `2π`. -/
+private lemma ceiling_integrand_eq {g : UpperHalfPlane → ℂ} {H : ℝ}
+    (hper : Function.Periodic (g ∘ UpperHalfPlane.ofComplex) 1) {t : ℝ} (hgt : 4 < t) :
+    deriv (fdBoundary H) t • logDeriv (g ∘ UpperHalfPlane.ofComplex) (fdBoundary H t) =
+      (2 * π) • (deriv (circleMap 0 (fdBoundaryQRadius H)) (2 * π * t + -(9 * π)) •
+        logDeriv (Function.Periodic.cuspFunction 1 (g ∘ UpperHalfPlane.ofComplex))
+          (circleMap 0 (fdBoundaryQRadius H) (2 * π * t + -(9 * π)))) := by
+  have hangle : 2 * Real.pi * (t - 9 / 2) = 2 * π * t + -(9 * π) := by ring
+  have hqe : Function.Periodic.qParam 1 (fdBoundary_segment5 H t) =
+      circleMap 0 (fdBoundaryQRadius H) (2 * π * t + -(9 * π)) := by
+    rw [qParam_fdBoundary_segment5 H t, hangle]
+  calc deriv (fdBoundary H) t • logDeriv (g ∘ UpperHalfPlane.ofComplex) (fdBoundary H t)
+      = logDeriv (g ∘ UpperHalfPlane.ofComplex) (fdBoundary_segment5 H t) := by
+        rw [deriv_fdBoundary_of_gt_four hgt, one_smul, fdBoundary_of_gt_four hgt]
+    _ = logDeriv (Function.Periodic.cuspFunction 1 (g ∘ UpperHalfPlane.ofComplex))
+          (Function.Periodic.qParam 1 (fdBoundary_segment5 H t)) *
+          deriv (Function.Periodic.qParam 1) (fdBoundary_segment5 H t) :=
+        TauCeti.Periodic.logDeriv_eq_logDeriv_cuspFunction_mul_deriv_qParam one_ne_zero
+          hper (fdBoundary_segment5 H t)
+    _ = logDeriv (Function.Periodic.cuspFunction 1 (g ∘ UpperHalfPlane.ofComplex))
+          (circleMap 0 (fdBoundaryQRadius H) (2 * π * t + -(9 * π))) *
+          (circleMap 0 (fdBoundaryQRadius H) (2 * π * t + -(9 * π)) *
+            (2 * ↑π * Complex.I / (1 : ℝ))) := by
+        rw [TauCeti.Periodic.deriv_qParam, hqe]
+    _ = _ := by
+        rw [deriv_circleMap, smul_eq_mul, Complex.real_smul]
+        push_cast
+        ring
+
 /-- The ceiling contour integral of the logarithmic derivative of a width-`1` periodic
 function on the upper half-plane is the `q`-circle integral of its cusp function's
 logarithmic derivative: the contour derivative is `1` on the ceiling, the `q`-parameter
@@ -87,18 +118,8 @@ theorem intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunc
   -- identify the substituted integrand with the contour integrand on the open ceiling
   rw [hshift, hcov, ← intervalIntegral.integral_smul]
   refine intervalIntegral.integral_congr_Ioo_of_le (by norm_num) fun t ht ↦ ?_
-  have hgt : (4 : ℝ) < t := ht.1
-  have hchain := TauCeti.Periodic.logDeriv_eq_logDeriv_cuspFunction_mul_deriv_qParam
-    (one_ne_zero) hper (fdBoundary_segment5 H t)
-  have hangle : 2 * Real.pi * (t - 9 / 2) = 2 * π * t + -(9 * π) := by ring
-  have hqe : Function.Periodic.qParam 1 (fdBoundary_segment5 H t) =
-      circleMap 0 R (2 * π * t + -(9 * π)) := by
-    rw [qParam_fdBoundary_segment5 H t, hangle, hR]
-  rw [deriv_fdBoundary_of_gt_four hgt, one_smul, fdBoundary_of_gt_four hgt, hchain,
-    TauCeti.Periodic.deriv_qParam, hqe, hLc, hcusp, deriv_circleMap, smul_eq_mul,
-    Complex.real_smul]
-  push_cast
-  ring
+  rw [hLc, hcusp, hR]
+  exact ceiling_integrand_eq hper ht.1
 
 end ModularForm
 
