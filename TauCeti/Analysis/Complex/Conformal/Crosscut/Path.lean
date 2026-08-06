@@ -144,27 +144,6 @@ private theorem exists_path_range_eq_image_Icc {Y : Type*} [TopologicalSpace Y] 
       rw [range_comp, range_comp, Subtype.range_coe, ← segment_eq_image_lineMap ℝ a b,
         segment_eq_Icc hab.le]
 
-/-- **A continuous extension takes the value the function tends to.** If `F` is continuous on
-`closure (Ioo a b)` and agrees with `g` on `Ioo a b`, then at any point of the closure `F` takes
-whatever value `g` tends to along `Ioo a b`. -/
-private theorem eq_of_tendsto_of_continuousOn_closure {Y : Type*} [TopologicalSpace Y]
-    [T2Space Y] {a b θ : ℝ} {F g : ℝ → Y} {v : Y}
-    (hFc : ContinuousOn F (closure (Ioo a b))) (hFg : EqOn F g (Ioo a b))
-    (hθcl : θ ∈ closure (Ioo a b)) (hvangle : Tendsto g (𝓝[Ioo a b] θ) (𝓝 v)) :
-    F θ = v := by
-  have hFangle : Tendsto g (𝓝[Ioo a b] θ) (𝓝 (F θ)) :=
-    ((hFc θ hθcl).mono subset_closure).congr' (hFg.eventuallyEq_of_mem self_mem_nhdsWithin)
-  have hne : (𝓝[Ioo a b] θ).NeBot := mem_closure_iff_nhdsWithin_neBot.mp hθcl
-  exact tendsto_nhds_unique' hne hFangle hvangle
-
-/-- **The image of the closure under a continuous extension is the closure of the image.** -/
-private theorem image_closure_eq_closure_image_of_eqOn {Y : Type*} [TopologicalSpace Y]
-    [T2Space Y] {a b : ℝ} (hab : a < b) {F g : ℝ → Y}
-    (hFc : ContinuousOn F (closure (Ioo a b))) (hFg : EqOn F g (Ioo a b)) :
-    F '' closure (Ioo a b) = closure (g '' Ioo a b) := by
-  rw [image_closure_of_isCompact
-    (by rw [closure_Ioo hab.ne]; exact isCompact_Icc) hFc, hFg.image_eq]
-
 /-- **At any angle of the closed arc, the crosscut has a limit reached along both approaches.**
 The limit of `f` along the crosscut at `circleMap ζ ρ θ` is also the limit of the angular
 composite `θ ↦ f (circleMap ζ ρ θ)` along `Ioo a b`.
@@ -256,7 +235,8 @@ theorem exists_path_range_eq_closure_image_ball_inter_sphere (hζ : dist ζ c = 
       γ t = f (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ))) := fun t ht =>
     (hγpt t).trans (hFg (lineMap_mem_Ioo hab ht))
   have hFimage : F '' Icc a b = closure (g '' Ioo a b) :=
-    hcl ▸ image_closure_eq_closure_image_of_eqOn hab hFc hFg
+    hcl ▸ image_closure_eq_closure_image_of_eqOn
+      (by rw [closure_Ioo hab.ne]; exact isCompact_Icc) hFc hFg
   have hgimage : g '' Ioo a b = f '' (ball c r ∩ sphere ζ ρ) := by
     rw [hcrosscut, image_image]
   have ha : a ∈ frontier (Ioo a b) := by rw [frontier_Ioo hab]; exact mem_insert a {b}
