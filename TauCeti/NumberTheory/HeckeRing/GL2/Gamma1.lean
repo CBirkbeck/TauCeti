@@ -43,7 +43,7 @@ Chris Birkbeck).
 ## Main results
 
 * `HeckeRing.GL2.Gamma1Image_le_Delta0`: `Γ₁(N) ≤ Δ₀(N)`.
-* `HeckeRing.GL2.Gamma0Image_le_Delta0`: `Γ₀(N) ≤ Δ₀(N)`, so the diamond operators live in
+* `HeckeRing.GL2.Gamma0_map_le_Delta0`: `Γ₀(N) ≤ Δ₀(N)`, so the diamond operators live in
   the same Hecke ring.
 * `HeckeRing.GL2.Delta0_le_commensurator`: `Δ₀(N)` lies in the commensurator of `Γ₁(N)`.
 * the `IsHeckeTriple (Delta0 N) (Gamma1Image N) (Gamma1Image N)` instance.
@@ -120,7 +120,7 @@ lemma Gamma1Image_le_Delta0 : (Gamma1Image N).toSubmonoid ≤ Delta0 N := by
 /-- `Γ₀(N) ≤ Δ₀(N)`: an element of `Γ₀(N)` has `ad ≡ 1` modulo `N`, since `c ≡ 0` and the
 determinant is one, so its upper-left entry is a unit. This containment is what puts the
 diamond operators into the Hecke ring of `Γ₁(N)`. -/
-lemma Gamma0Image_le_Delta0 :
+lemma Gamma0_map_le_Delta0 :
     ((Gamma0 N).map (mapGL ℚ)).toSubmonoid ≤ Delta0 N := by
   intro g hg
   obtain ⟨σ, hσ, rfl⟩ := Subgroup.mem_map.mp hg
