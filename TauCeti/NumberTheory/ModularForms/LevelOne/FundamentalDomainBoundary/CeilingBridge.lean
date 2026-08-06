@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.MeasureTheory.Integral.CircleIntegral
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.CuspCircle
 
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Periodic
@@ -24,7 +23,8 @@ derivative.
 
 ## Main declarations
 
-* `TauCeti.ModularForm.intervalIntegral_ceiling_eq_circleIntegral_logDeriv_cuspFunction`.
+* `TauCeti.ModularForm.intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunction`
+  (the ceiling bridge).
 
 ## References
 
@@ -48,7 +48,7 @@ function on the upper half-plane is the `q`-circle integral of its cusp function
 logarithmic derivative: the contour derivative is `1` on the ceiling, the `q`-parameter
 carries the ceiling onto the `q`-circle, and the logarithmic derivative factors through
 the cusp function. -/
-theorem intervalIntegral_ceiling_eq_circleIntegral_logDeriv_cuspFunction
+theorem intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunction
     {g : UpperHalfPlane → ℂ} {H : ℝ}
     (hper : Function.Periodic (g ∘ UpperHalfPlane.ofComplex) 1) :
     ∫ t in (4 : ℝ)..5,
@@ -57,7 +57,8 @@ theorem intervalIntegral_ceiling_eq_circleIntegral_logDeriv_cuspFunction
   set R := fdBoundaryQRadius H with hR
   set Lc := logDeriv (UpperHalfPlane.cuspFunction 1 g) with hLc
   have hcusp : UpperHalfPlane.cuspFunction 1 g =
-      Function.Periodic.cuspFunction 1 (g ∘ UpperHalfPlane.ofComplex) := rfl
+      Function.Periodic.cuspFunction 1 (g ∘ UpperHalfPlane.ofComplex) := by
+    simp [UpperHalfPlane.cuspFunction]
   -- the circle integrand is `2π`-periodic
   have hcper : Function.Periodic
       (fun θ ↦ deriv (circleMap 0 R) θ • Lc (circleMap 0 R θ)) (2 * π) := fun θ ↦ by
@@ -72,17 +73,17 @@ theorem intervalIntegral_ceiling_eq_circleIntegral_logDeriv_cuspFunction
     rw [circleIntegral, ← h0π, ← Function.Periodic.intervalIntegral_add_eq hcper (-π) 0,
       h2π]
   -- substitute the affine angle map `θ = 2π·t + -(9π)`
-  have h := intervalIntegral.integral_comp_mul_add
-    (f := fun θ ↦ deriv (circleMap 0 R) θ • Lc (circleMap 0 R θ))
-    (by positivity : (2 * π : ℝ) ≠ 0) (-(9 * π)) (a := 4) (b := 5)
   have h4 : 2 * π * 4 + -(9 * π) = -π := by ring
   have h5 : 2 * π * 5 + -(9 * π) = π := by ring
-  rw [h4, h5] at h
   have hcov : (∫ θ in (-π)..π, deriv (circleMap 0 R) θ • Lc (circleMap 0 R θ)) =
       (2 * π) • ∫ t in (4 : ℝ)..5,
         deriv (circleMap 0 R) (2 * π * t + -(9 * π)) •
           Lc (circleMap 0 R (2 * π * t + -(9 * π))) := by
-    rw [h, smul_smul, mul_inv_cancel₀ (by positivity : (2 * π : ℝ) ≠ 0), one_smul]
+    have h := intervalIntegral.smul_integral_comp_mul_add
+      (f := fun θ ↦ deriv (circleMap 0 R) θ • Lc (circleMap 0 R θ))
+      (2 * π) (-(9 * π)) (a := 4) (b := 5)
+    rw [h4, h5] at h
+    exact h.symm
   -- identify the substituted integrand with the contour integrand on the open ceiling
   rw [hshift, hcov, ← intervalIntegral.integral_smul]
   refine intervalIntegral.integral_congr_Ioo_of_le (by norm_num) fun t ht ↦ ?_
