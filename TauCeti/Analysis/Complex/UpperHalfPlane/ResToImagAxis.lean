@@ -37,8 +37,8 @@ constant is not determined by the goal.
 
 * `UpperHalfPlane.resToImagAxis_of_pos`, `resToImagAxis_of_nonpos`: the characteristic
   equations of the restriction.
-* `UpperHalfPlane.resToImagAxis_add`, `_neg`, `_sub`, `_mul`, `_smul`: the restriction
-  commutes with the pointwise operations, unconditionally.
+* `UpperHalfPlane.resToImagAxis_zero`, `_add`, `_neg`, `_sub`, `_mul`, `_smul`: the
+  restriction commutes with the pointwise operations, unconditionally.
 * `UpperHalfPlane.differentiableAt_resToImagAxis`: the restriction is real-differentiable at
   `t > 0` when `F` is differentiable as a map of manifolds at the corresponding point.
 
@@ -120,19 +120,13 @@ theorem resToImagAxis_smul (c : ℂ) (F : ℍ → ℂ) :
   funext t
   rcases le_or_gt t 0 with ht | ht <;> simp [resToImagAxis_of_pos, resToImagAxis_of_nonpos, ht]
 
-/-- The real-scalar form of `resToImagAxis_smul`, which the positivity predicates use. -/
+/-- The real-scalar form of `resToImagAxis_smul`. Private: it is a thin specialization with
+no consumers outside this file, but the three `const_smul` closure lemmas below would
+otherwise repeat its two-line proof. -/
 @[simp]
-theorem resToImagAxis_real_smul (c : ℝ) (F : ℍ → ℂ) :
+private theorem resToImagAxis_real_smul (c : ℝ) (F : ℍ → ℂ) :
     resToImagAxis (c • F) = c • resToImagAxis F := by
   simpa [Complex.real_smul] using resToImagAxis_smul (c : ℂ) F
-
-/-- Powers need `0 < t`: at `t ≤ 0` the restriction of `F ^ 0 = 1` is `0`, not `1`.
-
-Not `@[simp]`: `resToImagAxis_of_pos` together with `Pi.pow_apply` already reduces the
-left-hand side, so the attribute would be a duplicate (the `simpNF` linter rejects it). -/
-theorem resToImagAxis_pow (F : ℍ → ℂ) (n : ℕ) {t : ℝ} (ht : 0 < t) :
-    resToImagAxis (F ^ n) t = resToImagAxis F t ^ n := by
-  simp [resToImagAxis_of_pos _ ht]
 
 /-! ### Real-valuedness, positivity, and eventual positivity -/
 
