@@ -50,7 +50,7 @@ variable (n : ℕ)
 
 /-- Transposition as an isomorphism `GL_n(ℚ) ≃* GL_n(ℚ)ᵐᵒᵖ`: it reverses products, so it
 lands in the opposite group. -/
-noncomputable def transposeGL : GL (Fin n) ℚ ≃* (GL (Fin n) ℚ)ᵐᵒᵖ :=
+def transposeGL : GL (Fin n) ℚ ≃* (GL (Fin n) ℚ)ᵐᵒᵖ :=
   (Units.mapEquiv (Matrix.transposeRingEquiv (Fin n) ℚ).toMulEquiv).trans Units.opEquiv
 
 /-- Transposition acts on the underlying matrix as `Matrix.transpose`. -/
