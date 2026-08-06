@@ -251,6 +251,38 @@ lemma deriv_fdBoundary_four_sub_arc (H : ℝ) {t : ℝ} (ht : t ∈ Set.Ioo (1 :
     Complex.real_smul]
   field_simp
 
+/-- On the open arc the contour's logarithmic speed `γ' / γ` is the constant `π/6 · i`:
+the arc traverses the unit circle at angular speed `π/6`. -/
+theorem deriv_div_fdBoundary_arc {H t : ℝ} (ht : t ∈ Set.Ioo (1 : ℝ) 3) :
+    deriv (fdBoundary H) t / fdBoundary H t = (Real.pi / 6 : ℝ) * Complex.I := by
+  rw [deriv_fdBoundary_of_mem_Ioo_one_three ht, eqOn_fdBoundary_arc H ⟨ht.1.le, ht.2.le⟩,
+    Complex.real_smul, mul_comm (circleMap 0 1 ((t + 1) * (Real.pi / 6))) Complex.I,
+    mul_div_assoc, mul_div_assoc, div_self (circleMap_ne_center one_ne_zero), mul_one]
+
+/-- The arc integral of `γ' / γ` over any subinterval of the arc, in either orientation:
+the integrand is `π/6 · i` on the open arc (`deriv_div_fdBoundary_arc`), hence almost
+everywhere for these interval integrals. -/
+theorem integral_deriv_div_fdBoundary_arc (H : ℝ) {a b : ℝ} (ha : a ∈ Set.Icc (1 : ℝ) 3)
+    (hb : b ∈ Set.Icc (1 : ℝ) 3) :
+    ∫ t in a..b, deriv (fdBoundary H) t / fdBoundary H t =
+      (b - a) * ((Real.pi / 6 : ℝ) * Complex.I) := by
+  have key : ∀ c d : ℝ, c ∈ Set.Icc (1 : ℝ) 3 → d ∈ Set.Icc (1 : ℝ) 3 → c ≤ d →
+      ∫ t in c..d, deriv (fdBoundary H) t / fdBoundary H t =
+        (d - c) * ((Real.pi / 6 : ℝ) * Complex.I) := by
+    intro c d hc hd hcd
+    rw [intervalIntegral.integral_congr_Ioo_of_le hcd
+        (g := fun _ ↦ ((Real.pi / 6 : ℝ) : ℂ) * Complex.I)
+        (fun t ht ↦ deriv_div_fdBoundary_arc
+          ⟨lt_of_le_of_lt hc.1 ht.1, lt_of_lt_of_le ht.2 hd.2⟩),
+      intervalIntegral.integral_const, Complex.real_smul]
+    push_cast
+    ring
+  rcases le_total a b with hab | hab
+  · exact key a b ha hb hab
+  · rw [intervalIntegral.integral_symm, key b a hb ha hab]
+    push_cast
+    ring
+
 end Reflection
 
 
