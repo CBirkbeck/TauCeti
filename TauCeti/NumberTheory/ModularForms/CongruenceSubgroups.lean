@@ -32,6 +32,8 @@ infrastructure independent of the diamond operators.
 
 ## Main results
 
+* `CongruenceSubgroup.Gamma1_le_Gamma1_of_dvd`, `CongruenceSubgroup.Gamma0_le_Gamma0_of_dvd`:
+  both families are antitone in the level, `Γ(N) ≤ Γ(M)` whenever `M ∣ N`.
 * `CongruenceSubgroup.Gamma0_normalizes_Gamma1`: conjugation by `Γ₀(N)` preserves `Γ₁(N)`.
 * `CongruenceSubgroup.Gamma1_map_le_Gamma0_map`: the inclusion `Γ₁(N) ≤ Γ₀(N)` after mapping to
   `GL₂(ℝ)`.
@@ -58,6 +60,21 @@ open scoped MatrixGroups Pointwise
 variable {N : ℕ}
 
 namespace CongruenceSubgroup
+
+/-- `Γ₁` is antitone in the level: if `M ∣ N` then `Γ₁(N) ≤ Γ₁(M)`, since reducing the
+congruences `a ≡ d ≡ 1`, `c ≡ 0` modulo `N` along `ZMod N → ZMod M` gives them modulo `M`. -/
+theorem Gamma1_le_Gamma1_of_dvd {M N : ℕ} (h : M ∣ N) : Gamma1 N ≤ Gamma1 M := by
+  intro A hA
+  rw [Gamma1_mem] at hA ⊢
+  exact ⟨by simpa [map_intCast, map_one, map_zero] using congr_arg (ZMod.castHom h (ZMod M)) hA.1,
+    by simpa [map_intCast, map_one, map_zero] using congr_arg (ZMod.castHom h (ZMod M)) hA.2.1,
+    by simpa [map_intCast, map_one, map_zero] using congr_arg (ZMod.castHom h (ZMod M)) hA.2.2⟩
+
+/-- `Γ₀` is antitone in the level: if `M ∣ N` then `Γ₀(N) ≤ Γ₀(M)`. -/
+theorem Gamma0_le_Gamma0_of_dvd {M N : ℕ} (h : M ∣ N) : Gamma0 N ≤ Gamma0 M := by
+  intro A hA
+  rw [Gamma0_mem] at hA ⊢
+  simpa [map_intCast, map_one, map_zero] using congr_arg (ZMod.castHom h (ZMod M)) hA
 
 /-- Conjugation by a `Gamma0 N` element preserves `Gamma1 N`.
 This is the foundation for the diamond operator `⟨d⟩` on modular forms. -/
