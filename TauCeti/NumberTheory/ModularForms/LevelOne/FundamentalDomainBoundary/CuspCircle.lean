@@ -10,6 +10,7 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 public import TauCeti.NumberTheory.ModularForms.Order.AtCusp
 
+import TauCeti.Analysis.Complex.IsolatedZero
 import TauCeti.Analysis.Contour.Argument.Principle
 
 /-!
@@ -28,6 +29,8 @@ value is `2πi` times the order at the cusp.
   `q`-circle, with `fdBoundaryQRadius_def`, `_pos`, and `_lt_one`.
 * `TauCeti.ModularForm.qParam_fdBoundary_segment5`: the ceiling parametrizes the
   `q`-circle.
+* `TauCeti.ModularForm.circleIntegral_logDeriv_cuspFunction`: the `q`-circle integral of
+  the cusp function's logarithmic derivative is `2πi` times the cusp order.
 
 ## References
 
@@ -89,10 +92,10 @@ theorem qParam_fdBoundary_segment5 (H t : ℝ) :
 
 /-- The `q`-circle integral of the logarithmic derivative of the cusp function is `2πi`
 times the `q`-expansion order at the cusp: the cusp function is analytic on the closed
-`q`-disc and vanishes there only at the origin, so the argument principle localizes to
-the central zero, whose multiplicity is the cusp order. The order is finite because a
-cusp function vanishing identically near `0` would also vanish somewhere on the
-punctured disc. -/
+`q`-disc and vanishes there at most at the origin, so the argument principle localizes
+the order contribution to the origin — the cusp order, which is `0` when the cusp
+function does not vanish there. The order is finite because a cusp function vanishing
+identically near `0` would also vanish somewhere on the punctured disc. -/
 theorem circleIntegral_logDeriv_cuspFunction {g : UpperHalfPlane → ℂ} {H : ℝ}
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (UpperHalfPlane.cuspFunction 1 g) q)
@@ -103,17 +106,9 @@ theorem circleIntegral_logDeriv_cuspFunction {g : UpperHalfPlane → ℂ} {H : �
   have hR := fdBoundaryQRadius_pos H
   have h0 : (0 : ℂ) ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H) :=
     Metric.mem_closedBall_self hR.le
-  have hfin : analyticOrderAt (UpperHalfPlane.cuspFunction 1 g) 0 ≠ ⊤ := by
-    intro htop
-    obtain ⟨ε, hε, hev⟩ := Metric.eventually_nhds_iff.mp (analyticOrderAt_eq_top.mp htop)
-    have hq0 : 0 < min (ε / 2) (fdBoundaryQRadius H) := lt_min (by linarith) hR
-    refine hgz ((min (ε / 2) (fdBoundaryQRadius H) : ℝ) : ℂ) ?_ ?_ (hev ?_)
-    · rw [Metric.mem_closedBall, dist_zero_right, Complex.norm_real,
-        Real.norm_of_nonneg hq0.le]
-      exact min_le_right _ _
-    · exact Complex.ofReal_ne_zero.mpr hq0.ne'
-    · rw [dist_zero_right, Complex.norm_real, Real.norm_of_nonneg hq0.le]
-      exact lt_of_le_of_lt (min_le_left _ _) (by linarith)
+  have hfin : analyticOrderAt (UpperHalfPlane.cuspFunction 1 g) 0 ≠ ⊤ :=
+    TauCeti.analyticOrderAt_ne_top_of_forall_ne_zero hR
+      (fun z hz hz0 => hgz z (Metric.ball_subset_closedBall hz) hz0)
   have hmer : MeromorphicOn (UpperHalfPlane.cuspFunction 1 g)
       (Metric.closedBall 0 (fdBoundaryQRadius H)) := fun q hq => (hga q hq).meromorphicAt
   have honly : ∀ z ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
