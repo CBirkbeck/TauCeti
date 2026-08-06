@@ -27,8 +27,9 @@ integral Hecke ring of `GL_n` is commutative.
 
 * `HeckeRing.GLn.transposeAntiInvolution_onHeckeCoset_eq_self`: transposition fixes every
   double coset.
-* `HeckeRing.GLn.commSemiringIntegralHeckeRing`: **Shimura's Proposition 3.8 for `GL_n`** —
-  the integral Hecke ring is commutative.
+* `HeckeRing.GLn.commSemiringHeckeRing`: **Shimura's Proposition 3.8 for `GL_n`** — the
+  Hecke ring is commutative over any commutative semiring of coefficients, with
+  `HeckeRing.GLn.commSemiringIntegralHeckeRing` the integral case.
 
 ## References
 
@@ -120,11 +121,18 @@ transposition fixes diagonal matrices. -/
   exact congrArg (HeckeCoset.mk (SLnZ n) (SLnZ n))
     (Subtype.ext ((transposeAntiInvolution_bar n _).trans (transposeGL_natDiagGL n a)))
 
-/-- **Shimura's Proposition 3.8 for `GL_n`**: the integral Hecke ring of `GL_n` is
-commutative, transposition being an anti-involution that fixes every double coset. -/
+/-- **Shimura's Proposition 3.8 for `GL_n`**: the Hecke ring of `GL_n` over any commutative
+semiring is commutative, transposition being an anti-involution that fixes every double
+coset. -/
+@[instance_reducible]
+noncomputable def commSemiringHeckeRing (R : Type*) [CommSemiring R] :
+    CommSemiring (𝕋 (posDetInt n) (SLnZ n) R) :=
+  commSemiringOfAntiInvolution R (transposeAntiInvolution n)
+    (transposeAntiInvolution_onHeckeCoset_eq_self n)
+
+/-- The integral Hecke ring of `GL_n` is commutative. -/
 @[instance_reducible]
 noncomputable def commSemiringIntegralHeckeRing : CommSemiring (IntegralHeckeRing n) :=
-  commSemiringOfAntiInvolution ℤ (transposeAntiInvolution n)
-    (transposeAntiInvolution_onHeckeCoset_eq_self n)
+  commSemiringHeckeRing n ℤ
 
 end HeckeRing.GLn
