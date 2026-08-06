@@ -13,8 +13,8 @@ public import Mathlib.Analysis.Complex.Periodic
 Identities for the local parameter `𝕢 h z = exp (2 π I z / h)` at a cusp: translating
 the argument multiplies by an exponential, the `m`-th power of the local parameter at
 period `m * h` is the local parameter at period `h`, the parameter differentiates to
-itself times `2πi/h`, and the logarithmic derivative of any width-`h` periodic function
-factors through its cusp function along the parameter.
+itself times `2πi/h`, and the logarithmic derivative of any periodic function of
+nonzero width `h` factors through its cusp function along the parameter.
 
 ## Main declarations
 
@@ -23,7 +23,8 @@ factors through its cusp function along the parameter.
 * `TauCeti.Periodic.hasDerivAt_qParam` (with `deriv_qParam`): the `q`-parameter
   differentiates to itself times `2πi/h`.
 * `TauCeti.Periodic.logDeriv_eq_logDeriv_cuspFunction_mul_deriv_qParam`: the chain rule
-  for the logarithmic derivative of a periodic function through its cusp function.
+  for the logarithmic derivative of a periodic function of nonzero width through its
+  cusp function.
 
 ## References
 
@@ -58,13 +59,12 @@ theorem qParam_nat_mul_pow {m : ℕ} (hm : m ≠ 0) (z : ℂ) : 𝕢 (m * h) z ^
 
 
 /-- The `q`-parameter differentiates to itself times `2πi/h`. For `h = 0` the parameter
-is the constant `1` and the claimed derivative is the junk value `0`, so the statement is
-unconditional. -/
+is the constant `1`, whose derivative is genuinely `0` — the value the division junk
+`2πi/0 = 0` also produces — so the statement is unconditional. -/
 theorem hasDerivAt_qParam (h : ℝ) (z : ℂ) :
     HasDerivAt (𝕢 h) (𝕢 h z * (2 * π * I / h)) z := by
-  have hd := (((hasDerivAt_id z).const_mul (2 * (π : ℂ) * I)).div_const h).cexp
-  simp only [id_eq, mul_one] at hd
-  with_unfolding_all exact hd
+  simpa only [Function.Periodic.qParam, id_eq, mul_one] using!
+    (((hasDerivAt_id z).const_mul (2 * (π : ℂ) * I)).div_const h).cexp
 
 /-- The derivative of the `q`-parameter, in rewrite form. -/
 @[simp]
@@ -73,7 +73,8 @@ theorem deriv_qParam (h : ℝ) (z : ℂ) : deriv (𝕢 h) z = 𝕢 h z * (2 * π
 
 /-- The chain rule for the logarithmic derivative of a periodic function through its
 cusp function: `logDeriv g` factors through `logDeriv (cuspFunction h g)` along the
-`q`-parameter. The statement needs no differentiability: where `g` is not
+`q`-parameter, for nonzero width `h`. The statement needs no differentiability: where
+`g` is not
 differentiable, neither is the cusp function at `𝕢 h z` — the composition
 `cuspFunction h g ∘ 𝕢 h` is `g` — so both logarithmic derivatives take the junk
 value `0`. -/
