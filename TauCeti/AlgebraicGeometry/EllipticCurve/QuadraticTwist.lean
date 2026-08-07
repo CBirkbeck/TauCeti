@@ -14,9 +14,10 @@ be thought of as the trace and norm of a generator `θ` of a separable quadratic
 `L/K`, with `D := t² - 4n` the discriminant of its minimal polynomial — together with the
 behaviour of the standard invariants under twisting, uniformly in the characteristic: over any
 commutative ring `b₂, b₄, b₆` scale by `D, D², D³`, `c₄, c₆` by `D², D³`, and `Δ` by `D⁶`, so
-over a field the twist of an elliptic curve is elliptic when `D ≠ 0`, with the same
-`j`-invariant. Twisting twice by `(t, n)`, or changing `(t, n)` to the trace and norm of
-another generator, moves the twist by an explicit change of variables over the base field.
+the twist of an elliptic curve is elliptic exactly when `D` is a unit (over a field, when
+`D ≠ 0`), with the same `j`-invariant. Twisting twice by `(t, n)`, or changing `(t, n)` to the
+trace and norm of another generator, moves the twist by an explicit change of variables over the
+base field.
 
 ## Main definitions
 
@@ -24,8 +25,8 @@ another generator, moves the twist by an explicit change of variables over the b
   an explicit Weierstrass model over any commutative ring.
 * `WeierstrassCurve.Δ_quadraticTwistOf`, `WeierstrassCurve.c₄_quadraticTwistOf`,
   `WeierstrassCurve.c₆_quadraticTwistOf`: the invariants of the twist.
-* `WeierstrassCurve.isElliptic_quadraticTwistOf`, `WeierstrassCurve.j_quadraticTwistOf`: over a
-  field, the twist of an elliptic curve is elliptic when `t² - 4n ≠ 0`, with equal `j`.
+* `WeierstrassCurve.isElliptic_quadraticTwistOf`, `WeierstrassCurve.j_quadraticTwistOf`: the
+  twist of an elliptic curve is elliptic when `t² - 4n` is a unit, with equal `j`.
 * `WeierstrassCurve.exists_smul_eq_quadraticTwistOf_quadraticTwistOf`,
   `WeierstrassCurve.exists_smul_quadraticTwistOf_eq`: the double twist is `K`-isomorphic to the
   original curve, and changing the generator moves the twist by a change of variables.
@@ -70,8 +71,8 @@ turns this relation into the Weierstrass model below of the twist:
 `y² + ta₁·xy + Dta₃·y = x³ + (Da₂ - na₁²)·x² + (D²a₄ - 2Dna₁a₃)·x + (D³a₆ - D²na₃²)`.
 
 Its discriminant is `D⁶·Δ(E)` (`Δ_quadraticTwistOf`), so the twist of an elliptic curve is
-elliptic when `D ≠ 0` (`isElliptic_quadraticTwistOf`), with the same `j`-invariant
-(`j_quadraticTwistOf`).
+elliptic when `D` is a unit (`isElliptic_quadraticTwistOf`) — over a field, when `D ≠ 0` — with
+the same `j`-invariant (`j_quadraticTwistOf`).
 
 Sanity checks. If `char K ≠ 2` we may take `θ = √d`, so `t = 0`, `n = -d`, `D = 4d`; for
 `E : y² = x³ + a₂x² + a₄x + a₆` the model is `y² = x³ + 4da₂x² + 16d²a₄x + 64d³a₆`, the
@@ -114,6 +115,14 @@ variable (t n : A)
       = (t ^ 2 - 4 * n) ^ 3 * E.a₆ - (t ^ 2 - 4 * n) ^ 2 * n * E.a₃ ^ 2 := by
   simp only [quadraticTwistOf]
 
+/-- Twisting by `(t, n) = (1, 0)` — the split quadratic `x² - x`, with `D = 1` — returns the
+curve itself. -/
+@[simp] theorem quadraticTwistOf_one_zero : E.quadraticTwistOf 1 0 = E := by
+  ext <;>
+    simp only [a₁_quadraticTwistOf, a₂_quadraticTwistOf, a₃_quadraticTwistOf,
+      a₄_quadraticTwistOf, a₆_quadraticTwistOf] <;>
+    ring
+
 /-- The invariant `b₂` of the quadratic twist: `b₂ ↦ Db₂` with `D = t² - 4n`. -/
 @[simp] theorem b₂_quadraticTwistOf : (E.quadraticTwistOf t n).b₂ = (t ^ 2 - 4 * n) * E.b₂ := by
   simp only [quadraticTwistOf, b₂]; ring
@@ -151,77 +160,40 @@ the `b₂`, `b₄` and `b₆` laws, since `c₆ = -b₂³ + 36b₂b₄ - 216b₆
 
 /-- The quadratic twist commutes with a ring homomorphism `f` (in particular with base change):
 `(E.quadraticTwistOf t n).map f = (E.map f).quadraticTwistOf (f t) (f n)`. -/
-@[simp] theorem quadraticTwistOf_map {B : Type*} [CommRing B] (f : A →+* B) :
+@[simp] theorem map_quadraticTwistOf {B : Type*} [CommRing B] (f : A →+* B) :
     (E.quadraticTwistOf t n).map f = (E.map f).quadraticTwistOf (f t) (f n) := by
   ext <;>
     simp only [quadraticTwistOf, map_a₁, map_a₂,
       map_a₃, map_a₄, map_a₆, map_mul, map_sub,
       map_pow, map_ofNat]
 
-/-- The constant term `54 b₆ - 3 b₂ b₄ + a₂ c₄` of the quadratic twist by `(t, n)`, in terms of
-that of `E`: it becomes `D³ · (54 b₆ - 3 b₂ b₄ + a₂ c₄) - D² n a₁² c₄` where `D = t² - 4n`.
-
-This is the constant term of the polynomial `c₄T² + a₁c₄T - (54 b₆ - 3 b₂ b₄ + a₂ c₄)` whose
-splitting characterises split multiplicative reduction (Mathlib's
-`WeierstrassCurve.HasSplitMultiplicativeReduction`), and which arises from the second-order
-Taylor expansion of the equation at the node. It is consumed by the twist-to-split-reduction
-theorem, a later milestone of the same roadmap layer. -/
-theorem nodeConst_quadraticTwistOf :
-    54 * (E.quadraticTwistOf t n).b₆
-      - 3 * (E.quadraticTwistOf t n).b₂ * (E.quadraticTwistOf t n).b₄
-      + (E.quadraticTwistOf t n).a₂ * (E.quadraticTwistOf t n).c₄
-      = (t ^ 2 - 4 * n) ^ 3 * (54 * E.b₆ - 3 * E.b₂ * E.b₄ + E.a₂ * E.c₄)
-        - (t ^ 2 - 4 * n) ^ 2 * n * E.a₁ ^ 2 * E.c₄ := by
-  rw [b₆_quadraticTwistOf, b₂_quadraticTwistOf, b₄_quadraticTwistOf, c₄_quadraticTwistOf,
-    a₂_quadraticTwistOf]
-  ring
-
-/-- The quadratic twist of an elliptic curve is elliptic when the discriminant `D = t² - 4n` of
-the twisting parameters is a unit, since `Δ ↦ D⁶Δ`. Over a field this hypothesis is `D ≠ 0`
-(`isUnit_iff_ne_zero`), the form in which the source states it; over a general commutative ring
-`D ≠ 0` is not enough, since `D⁶ · unit` is a unit only when `D` is (take `A = ℤ`, `D = 2`). -/
-theorem isElliptic_quadraticTwistOf [E.IsElliptic] (hD : IsUnit (t ^ 2 - 4 * n)) :
-    (E.quadraticTwistOf t n).IsElliptic := by
-  rw [isElliptic_iff, Δ_quadraticTwistOf]
-  exact (hD.pow 6).mul E.isUnit_Δ
-
-/-- The `j`-invariant is a twist invariant: `j(E_{t,n}) = j(E)`. Both `j`s are `Δ'⁻¹c₄³`, and the
-twist scales `Δ` by `D⁶` and `c₄` by `D²`, so the two `D`-powers cancel against each other. -/
-theorem j_quadraticTwistOf [E.IsElliptic] (h : (E.quadraticTwistOf t n).IsElliptic) :
-    (E.quadraticTwistOf t n).j = E.j := by
-  have hΔ : E.Δ * ((E.Δ'⁻¹ : Aˣ) : A) = 1 := by
-    rw [← coe_Δ']
-    exact E.Δ'.mul_inv
-  rw [j, j, Units.inv_mul_eq_iff_eq_mul, c₄_quadraticTwistOf, coe_Δ', Δ_quadraticTwistOf]
-  linear_combination (-((t ^ 2 - 4 * n) ^ 6 * E.c₄ ^ 3)) * hΔ
-
-end QuadraticTwistOfRing
-
-section QuadraticTwistOf
-
-variable {K : Type*} [Field K] (E : WeierstrassCurve K) (t n : K)
-
-/-- Twisting twice by the same parameters `(t, n)` gives a curve isomorphic to `E` over `K`:
-explicitly, the double twist is obtained from `E` by the change of variables
-`(x, y) ↦ (D²x, D³y - 2nD²(a₁x + a₃))`, where `D = t² - 4n`. -/
-theorem exists_smul_eq_quadraticTwistOf_quadraticTwistOf (hD : t ^ 2 - 4 * n ≠ 0) :
-    ∃ C : VariableChange K, C • E = (E.quadraticTwistOf t n).quadraticTwistOf t n := by
-  refine ⟨⟨(Units.mk0 _ hD)⁻¹, 0, 2 * n / (t ^ 2 - 4 * n) * E.a₁,
-    2 * n / (t ^ 2 - 4 * n) * E.a₃⟩, ?_⟩
+/-- Twisting twice by the same parameters `(t, n)` gives an isomorphic curve: explicitly, the
+double twist is obtained from `E` by the change of variables
+`(x, y) ↦ (D²x, D³y - 2nD²(a₁x + a₃))`, where `D = t² - 4n`. Over a field the hypothesis is
+`D ≠ 0` (`isUnit_iff_ne_zero`). -/
+theorem exists_smul_eq_quadraticTwistOf_quadraticTwistOf (hD : IsUnit (t ^ 2 - 4 * n)) :
+    ∃ C : VariableChange A, C • E = (E.quadraticTwistOf t n).quadraticTwistOf t n := by
+  obtain ⟨u, hu⟩ := hD
+  have hi : (↑u⁻¹ : A) * (u : A) = 1 := u.inv_mul
+  refine ⟨⟨u⁻¹, 0, 2 * n * (↑u⁻¹ : A) * E.a₁, 2 * n * (↑u⁻¹ : A) * E.a₃⟩, ?_⟩
   rw [variableChange_def]
-  ext <;> simp only [quadraticTwistOf, inv_inv, Units.val_mk0] <;> field
+  ext <;> simp only [quadraticTwistOf, inv_inv, ← hu] <;> grobner
 
 /-- Changing the parameters `(t, n)` — the trace and norm of a generator `θ` of a quadratic
 extension — into the trace and norm `(at + 2b, b² + abt + a²n)` of another generator `aθ + b`
-changes the quadratic twist by an explicit change of variables over `K`. -/
-theorem exists_smul_quadraticTwistOf_eq {a : K} (b : K) (ha : a ≠ 0) :
-    ∃ C : VariableChange K, C • E.quadraticTwistOf t n
+changes the quadratic twist by an explicit change of variables. Over a field the hypothesis is
+`a ≠ 0` (`isUnit_iff_ne_zero`). -/
+theorem exists_smul_quadraticTwistOf_eq {a : A} (b : A) (ha : IsUnit a) :
+    ∃ C : VariableChange A, C • E.quadraticTwistOf t n
       = E.quadraticTwistOf (a * t + 2 * b) (b ^ 2 + a * b * t + a ^ 2 * n) := by
-  refine ⟨⟨(Units.mk0 a ha)⁻¹, 0, a⁻¹ * b * E.a₁, a⁻¹ * b * (t ^ 2 - 4 * n) * E.a₃⟩, ?_⟩
+  obtain ⟨v, hv⟩ := ha
+  have hi : (↑v⁻¹ : A) * (v : A) = 1 := v.inv_mul
+  refine ⟨⟨v⁻¹, 0, (↑v⁻¹ : A) * b * E.a₁,
+    (↑v⁻¹ : A) * b * (t ^ 2 - 4 * n) * E.a₃⟩, ?_⟩
   rw [variableChange_def]
-  ext <;> simp only [quadraticTwistOf, inv_inv, Units.val_mk0] <;> field
+  ext <;> simp only [quadraticTwistOf, inv_inv, ← hv] <;> grobner
 
-end QuadraticTwistOf
+end QuadraticTwistOfRing
 
 end WeierstrassCurve
 
