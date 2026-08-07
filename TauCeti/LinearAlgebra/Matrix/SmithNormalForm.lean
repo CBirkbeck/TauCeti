@@ -162,8 +162,7 @@ private lemma exists_SL_diagonal_of_unit_diagonalization (A P Q : Matrix (Fin n)
   exact ⟨d, hd_pos, sign_correct_unit_transform A d L_mat Q hL_eq hLQ_one⟩
 
 /-- **The matrix whose columns are the vectors of a basis of `ℤⁿ` has unit determinant.** It is the
-change-of-basis matrix from the standard basis, whose determinant is a unit by
-`Module.Basis.isUnit_det`. -/
+change-of-basis matrix from the standard basis, and such a matrix is invertible. -/
 private theorem isUnit_det_of_columns (b : Module.Basis (Fin n) ℤ (Fin n → ℤ)) :
     IsUnit (Matrix.of (fun k j ↦ b j k) : Matrix (Fin n) (Fin n) ℤ).det := by
   set e := Pi.basisFun ℤ (Fin n) with he
