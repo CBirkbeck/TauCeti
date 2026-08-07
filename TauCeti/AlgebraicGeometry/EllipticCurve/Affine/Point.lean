@@ -209,8 +209,9 @@ namespace Point
 variable [DecidableEq F]
 
 /-- `AddEquiv.cast` between point groups sends an affine point to the affine point with the
-same coordinates. -/
-@[simp] lemma cast_some {V V' : WeierstrassCurve F} (h : V = V') {x y : F}
+same coordinates. Not a `simp` lemma: `simp` rewrites `AddEquiv.cast h` to a plain `cast`
+first, so this left-hand side is not in normal form and would never fire. -/
+lemma cast_some {V V' : WeierstrassCurve F} (h : V = V') {x y : F}
     (hns : V.toAffine.Nonsingular x y) :
     AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point) h (some x y hns)
       = some x y (h ▸ hns) := by
