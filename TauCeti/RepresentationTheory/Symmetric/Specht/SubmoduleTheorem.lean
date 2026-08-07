@@ -120,17 +120,19 @@ private theorem asAlgebraHom_columnAntisymmetrizer_single_eq_zero (s t : YoungTa
     exact add_neg_cancel _
   exact (smul_eq_zero.mp h2).resolve_left (by norm_num)
 
-/-- When no row of `relabel σ t` meets a column of `t` twice, the column antisymmetrizer of `t`
-sends the tabloid of `relabel σ t` to a signed multiple of the polytabloid `e_t`, the sign being
-that of some permutation. -/
-private theorem exists_asAlgebraHom_columnAntisymmetrizer_single_eq_sign_smul (t : YoungTableau μ)
-    {σ : Equiv.Perm (Fin μ.card)} (h : ¬ RowMeetsColumnTwice (relabel σ t) t) :
+/-- When no row of `s` meets a column of `t` twice, the column antisymmetrizer of `t` sends the
+tabloid of `s` to a signed multiple of the polytabloid `e_t`, the sign being that of some
+permutation. -/
+private theorem exists_asAlgebraHom_columnAntisymmetrizer_single_eq_sign_smul
+    (s t : YoungTableau μ) (h : ¬ RowMeetsColumnTwice s t) :
     ∃ q : Equiv.Perm (Fin μ.card),
       (permutationModule (shapePartition μ)).ρ.asAlgebraHom (columnAntisymmetrizer t)
-        (MonoidAlgebra.single (tabloid (relabel σ t)) 1)
+        (MonoidAlgebra.single (tabloid s) 1)
           = ((Equiv.Perm.sign q : ℤ) : ℚ) • polytabloid t := by
-  -- `σ⁻¹` factors as a row permutation times a column permutation; the row part fixes `{t}`,
-  -- and `b_t` absorbs the column part `q⁻¹` by its sign.
+  -- Writing `s = relabel σ t`, the permutation `σ⁻¹` factors as a row permutation times a
+  -- column permutation; the row part fixes `{t}`, and `b_t` absorbs the column part `q⁻¹` by
+  -- its sign.
+  obtain ⟨σ, rfl⟩ := exists_relabel_eq t s
   rw [rowMeetsColumnTwice_relabel_left_iff] at h
   obtain ⟨p, hp, q, hq, hpq⟩ := Set.mem_mul.mp (mem_mul_of_not_rowMeetsColumnTwice h)
   have hσ : σ = q⁻¹ * p⁻¹ := by rw [← mul_inv_rev, hpq, inv_inv]
@@ -158,11 +160,10 @@ theorem exists_eq_smul_polytabloid_single (t : YoungTableau μ)
       (permutationModule (shapePartition μ)).ρ.asAlgebraHom (columnAntisymmetrizer t)
           (MonoidAlgebra.single T 1) = κ • polytabloid t := by
   obtain ⟨s, rfl⟩ := tabloid_surjective T
-  obtain ⟨σ, rfl⟩ := exists_relabel_eq t s
-  by_cases h : RowMeetsColumnTwice (relabel σ t) t
+  by_cases h : RowMeetsColumnTwice s t
   · exact ⟨0, Or.inl rfl, by
-      rw [zero_smul]; exact asAlgebraHom_columnAntisymmetrizer_single_eq_zero _ t h⟩
-  · obtain ⟨q, hq⟩ := exists_asAlgebraHom_columnAntisymmetrizer_single_eq_sign_smul t h
+      rw [zero_smul]; exact asAlgebraHom_columnAntisymmetrizer_single_eq_zero s t h⟩
+  · obtain ⟨q, hq⟩ := exists_asAlgebraHom_columnAntisymmetrizer_single_eq_sign_smul s t h
     exact ⟨_, Or.inr (by rcases Int.units_eq_one_or (Equiv.Perm.sign q) with h | h <;> simp [h]),
       hq⟩
 
