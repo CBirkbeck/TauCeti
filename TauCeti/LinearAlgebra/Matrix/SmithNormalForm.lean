@@ -171,8 +171,7 @@ private theorem isUnit_det_of_columns (b : Module.Basis (Fin n) ℤ (Fin n → �
     simp only [Matrix.of_apply]
     rw [e.toMatrix_apply, he, Pi.basisFun_repr]
   rw [hb]
-  have := e.invertibleToMatrix b
-  exact Matrix.isUnit_det_of_invertible _
+  simpa [Module.Basis.det_apply] using e.isUnit_det b
 
 /-- **Preimages of a basis of the range under an injective `A` have unit determinant as columns.**
 `A.mulVecLin` restricts to a linear equivalence onto its range, and transporting the basis `ab'`
