@@ -20,10 +20,10 @@ For a short model `y² = x³ + Ax + B` we have `a₁ = a₃ = 0`, so `κ = 2y` a
 over a ring where `2` is a zero divisor the halving is unavailable, and for a long model `κ` is the
 honest invariant rather than `2y`.
 
-The proof is two polynomial identities and nothing else. On the curve, `κ² = Ψ₂Sq(x)` — the
-evaluated form of Mathlib's coordinate-ring identity `Affine.CoordinateRing.mk_ψ₂_sq`. And there is
-an explicit Bézout combination of `Ψ₂Sq(x)` and `Ψ₃(x)` equal to `4Δ`, so anything dividing both
-`κ²` and `4·Ψ₃(x)` divides `4Δ`. Both are `ring` identities in the `b`-invariants.
+The proof is short. On the curve `κ² = Ψ₂Sq(x)`, which is Mathlib's polynomial identity `ψ₂_sq`
+evaluated where the Weierstrass polynomial vanishes. And there is an explicit Bézout combination of
+`Ψ₂Sq(x)` and `Ψ₃(x)` equal to `4Δ` — a `ring` identity in the `b`-invariants — so anything
+dividing both `κ²` and `4·Ψ₃(x)` divides `4Δ`.
 
 ## Main results
 
@@ -65,16 +65,13 @@ variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve R) {x y : R}
 
 /-- On the curve, the square of `ψ₂` at a point is the univariate `Ψ₂Sq` at its `x`-coordinate.
 
-This is the evaluated form of Mathlib's coordinate-ring identity
-`Affine.CoordinateRing.mk_ψ₂_sq`; proved here directly from the Weierstrass equation, so that this
-file depends only on the division-polynomial definitions. -/
+This is Mathlib's polynomial identity `ψ₂_sq` — `ψ₂² = C Ψ₂Sq + 4 * polynomial` — evaluated at a
+point where the Weierstrass polynomial vanishes. -/
 theorem evalEval_ψ₂_sq (h : W.toAffine.Equation x y) :
     W.ψ₂.evalEval x y ^ 2 = (W.Ψ₂Sq).eval x := by
-  rw [_root_.WeierstrassCurve.Affine.equation_iff] at h
-  simp only [_root_.WeierstrassCurve.ψ₂, _root_.WeierstrassCurve.Affine.evalEval_polynomialY,
-    _root_.WeierstrassCurve.Ψ₂Sq, _root_.WeierstrassCurve.b₂, _root_.WeierstrassCurve.b₄,
-    _root_.WeierstrassCurve.b₆, eval_add, eval_mul, eval_pow, eval_C, eval_X]
-  linear_combination 4 * h
+  have hsq := congrArg (Polynomial.evalEval x y) W.ψ₂_sq
+  rw [_root_.WeierstrassCurve.Affine.Equation] at h
+  simpa [h, evalEval_C] using hsq
 
 /-- The Bézout combination exhibiting `4Δ` from `Ψ₂Sq(x)` and `Ψ₃(x)`.
 
