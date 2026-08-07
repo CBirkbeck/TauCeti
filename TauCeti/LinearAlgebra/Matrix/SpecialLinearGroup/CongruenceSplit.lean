@@ -9,9 +9,10 @@ public import Mathlib.Tactic.LinearCombination
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Transvection
 
 /-!
-# Chinese-remainder splitting of `SL_n(ℤ)`
+# Chinese-remainder splitting of `SL(ι, ℤ)`
 
-For coprime moduli `d, d'`, every `τ ∈ SL_n(ℤ)` factors as `τ₁ * τ₂` with `τ₁ ≡ 1 (mod d)`
+For coprime moduli `d, d'`, every `τ ∈ SL(ι, ℤ)` — `ι` any finite index type — factors as
+`τ₁ * τ₂` with `τ₁ ≡ 1 (mod d)`
 and `τ₂ ≡ 1 (mod d')`. The proof is by generators: `τ` is a product of transvections
 (`exists_list_transvec_prod`), a single transvection splits by Bézout, and splittings
 multiply.
@@ -32,19 +33,19 @@ open Matrix
 
 namespace Matrix.SpecialLinearGroup
 
-variable (n : ℕ)
+variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
-/-! ## Chinese-remainder splitting of `SL_n(ℤ)`
+/-! ## Chinese-remainder splitting of `SL(ι, ℤ)`
 
-Every `τ ∈ SL_n(ℤ)` factors as `τ₁ * τ₂` with `τ₁ ≡ 1 mod d` and `τ₂ ≡ 1 mod d'` for
+Every `τ ∈ SL(ι, ℤ)` factors as `τ₁ * τ₂` with `τ₁ ≡ 1 mod d` and `τ₂ ≡ 1 mod d'` for
 coprime `d, d'`: transvections split by Bézout, and splittings multiply. -/
 
 /-- `σ ≡ 1 (mod d)`, entrywise. -/
-private def congMod (d : ℕ) (σ : SpecialLinearGroup (Fin n) ℤ) : Prop :=
+private def congMod (d : ℕ) (σ : SpecialLinearGroup ι ℤ) : Prop :=
   ∀ i j, (d : ℤ) ∣ (σ.1 i j - if i = j then 1 else 0)
 
-private lemma congMod_transvection (d : ℕ) {i j : Fin n} (hij : i ≠ j) {c : ℤ}
-    (hdc : (d : ℤ) ∣ c) : congMod n d (SpecialLinearGroup.transvection hij c) := by
+private lemma congMod_transvection (d : ℕ) {i j : ι} (hij : i ≠ j) {c : ℤ}
+    (hdc : (d : ℤ) ∣ c) : congMod d (SpecialLinearGroup.transvection hij c) := by
   intro k l
   rw [SpecialLinearGroup.transvection_coe]
   simp only [Matrix.add_apply, Matrix.one_apply, Matrix.single, Matrix.of_apply,
@@ -54,10 +55,10 @@ private lemma congMod_transvection (d : ℕ) {i j : Fin n} (hij : i ≠ j) {c : 
   · exact dvd_zero _
 
 private lemma transvection_CRT (d d' : ℕ) (hcop : Nat.Coprime d d')
-    {i j : Fin n} (hij : i ≠ j) (c : ℤ) :
-    ∃ τ₁ τ₂ : SpecialLinearGroup (Fin n) ℤ,
+    {i j : ι} (hij : i ≠ j) (c : ℤ) :
+    ∃ τ₁ τ₂ : SpecialLinearGroup ι ℤ,
       SpecialLinearGroup.transvection hij c = τ₁ * τ₂ ∧
-        congMod n d τ₁ ∧ congMod n d' τ₂ := by
+        congMod d τ₁ ∧ congMod d' τ₂ := by
   have hbez : ↑(Nat.gcd d d') = (d : ℤ) * Nat.gcdA d d' + ↑d' * Nat.gcdB d d' :=
     Nat.gcd_eq_gcd_ab d d'
   rw [hcop.gcd_eq_one, Nat.cast_one] at hbez
@@ -66,14 +67,14 @@ private lemma transvection_CRT (d d' : ℕ) (hcop : Nat.Coprime d d')
   · rw [← SpecialLinearGroup.transvection_add]
     congr 1
     linear_combination c * hbez
-  · exact congMod_transvection n d hij ⟨c * Nat.gcdA d d', by ring⟩
-  · exact congMod_transvection n d' hij ⟨c * Nat.gcdB d d', by ring⟩
+  · exact congMod_transvection d hij ⟨c * Nat.gcdA d d', by ring⟩
+  · exact congMod_transvection d' hij ⟨c * Nat.gcdB d d', by ring⟩
 
-private lemma congMod_one (d : ℕ) : congMod n d 1 := fun i j ↦ by
+private lemma congMod_one (d : ℕ) : congMod d (1 : SpecialLinearGroup ι ℤ) := fun i j ↦ by
   simp [SpecialLinearGroup.coe_one, Matrix.one_apply]
 
-private lemma congMod_mul (d : ℕ) (a b : SpecialLinearGroup (Fin n) ℤ)
-    (ha : congMod n d a) (hb : congMod n d b) : congMod n d (a * b) := by
+private lemma congMod_mul (d : ℕ) (a b : SpecialLinearGroup ι ℤ)
+    (ha : congMod d a) (hb : congMod d b) : congMod d (a * b) := by
   intro i j
   simp only [SpecialLinearGroup.coe_mul, Matrix.mul_apply]
   have h2 : ∑ k, (a.1 i k - if i = k then 1 else 0) * b.1 k j =
@@ -85,17 +86,17 @@ private lemma congMod_mul (d : ℕ) (a b : SpecialLinearGroup (Fin n) ℤ)
   rw [h3]
   exact dvd_add (Finset.dvd_sum fun k _ ↦ dvd_mul_of_dvd_left (ha i k) _) (hb i j)
 
-private lemma congMod_conj (d : ℕ) (σ τ : SpecialLinearGroup (Fin n) ℤ)
-    (hτ : congMod n d τ) : congMod n d (σ⁻¹ * τ * σ) := by
+private lemma congMod_conj (d : ℕ) (σ τ : SpecialLinearGroup ι ℤ)
+    (hτ : congMod d τ) : congMod d (σ⁻¹ * τ * σ) := by
   intro i j
   have hassoc : σ⁻¹ * τ * σ = σ⁻¹ * (τ * σ) := by group
   simp only [hassoc, SpecialLinearGroup.coe_mul, Matrix.mul_apply]
-  have h_inv : ∀ i' j', ∑ k : Fin n, (σ⁻¹).1 i' k * σ.1 k j' =
+  have h_inv : ∀ i' j', ∑ k : ι, (σ⁻¹).1 i' k * σ.1 k j' =
       if i' = j' then 1 else 0 := by
     intro i' j'
     have hmul : (σ⁻¹).1 * σ.1 = 1 := by rw [← SpecialLinearGroup.coe_mul, inv_mul_cancel]; rfl
     simpa [Matrix.mul_apply, Matrix.one_apply] using congr_fun (congr_fun hmul i') j'
-  have h_inner : ∀ k, ∑ l : Fin n, τ.1 k l * σ.1 l j =
+  have h_inner : ∀ k, ∑ l : ι, τ.1 k l * σ.1 l j =
       (∑ l, (τ.1 k l - if k = l then 1 else 0) * σ.1 l j) + σ.1 k j := by
     intro k
     have h2 : ∑ l, (τ.1 k l - if k = l then 1 else 0) * σ.1 l j =
@@ -119,37 +120,35 @@ private lemma congMod_conj (d : ℕ) (σ τ : SpecialLinearGroup (Fin n) ℤ)
 
 /-- Elements admitting a CRT splitting are closed under products: conjugate the second
 `d`-part across the first `d'`-part. -/
-private lemma crtProd_mul (d d' : ℕ) (a b : SpecialLinearGroup (Fin n) ℤ)
-    (ha : ∃ p q, a = p * q ∧ congMod n d p ∧ congMod n d' q)
-    (hb : ∃ p q, b = p * q ∧ congMod n d p ∧ congMod n d' q) :
-    ∃ p q, a * b = p * q ∧ congMod n d p ∧ congMod n d' q := by
+private lemma crtProd_mul (d d' : ℕ) (a b : SpecialLinearGroup ι ℤ)
+    (ha : ∃ p q, a = p * q ∧ congMod d p ∧ congMod d' q)
+    (hb : ∃ p q, b = p * q ∧ congMod d p ∧ congMod d' q) :
+    ∃ p q, a * b = p * q ∧ congMod d p ∧ congMod d' q := by
   obtain ⟨p₁, q₁, rfl, hp₁, hq₁⟩ := ha
   obtain ⟨p₂, q₂, rfl, hp₂, hq₂⟩ := hb
   refine ⟨p₁ * (q₁ * p₂ * q₁⁻¹), q₁ * q₂, by group, ?_,
-    congMod_mul n d' _ _ hq₁ hq₂⟩
-  have h := congMod_conj n d q₁⁻¹ p₂ hp₂
+    congMod_mul d' _ _ hq₁ hq₂⟩
+  have h := congMod_conj d q₁⁻¹ p₂ hp₂
   rw [inv_inv] at h
-  exact congMod_mul n d _ _ hp₁ h
+  exact congMod_mul d _ _ hp₁ h
 
-/-- **Chinese remainder decomposition of `SL_n(ℤ)`**: for coprime `d, d'`, every element
+/-- **Chinese remainder decomposition of `SL(ι, ℤ)`**: for coprime `d, d'`, every element
 factors as `τ₁ * τ₂` with `τ₁ ≡ 1 mod d` and `τ₂ ≡ 1 mod d'`. -/
 lemma exists_mul_congMod_of_coprime (d d' : ℕ) (hcop : Nat.Coprime d d')
-    (τ : SpecialLinearGroup (Fin n) ℤ) :
-    ∃ τ₁ τ₂ : SpecialLinearGroup (Fin n) ℤ, τ = τ₁ * τ₂ ∧
-      (∀ i j, (d : ℤ) ∣ ((τ₁ : Matrix (Fin n) (Fin n) ℤ) i j - if i = j then 1 else 0)) ∧
-      (∀ i j, (d' : ℤ) ∣ ((τ₂ : Matrix (Fin n) (Fin n) ℤ) i j - if i = j then 1 else 0)) := by
+    (τ : SpecialLinearGroup ι ℤ) :
+    ∃ τ₁ τ₂ : SpecialLinearGroup ι ℤ, τ = τ₁ * τ₂ ∧
+      (∀ i j, (d : ℤ) ∣ ((τ₁ : Matrix (ι) (ι) ℤ) i j - if i = j then 1 else 0)) ∧
+      (∀ i j, (d' : ℤ) ∣ ((τ₂ : Matrix (ι) (ι) ℤ) i j - if i = j then 1 else 0)) := by
   obtain ⟨T, hT⟩ := SpecialLinearGroup.exists_list_transvec_prod τ
   rw [hT]
   clear hT
   induction T with
-  | nil => exact ⟨1, 1, (one_mul 1).symm, congMod_one n d, congMod_one n d'⟩
+  | nil => exact ⟨1, 1, (one_mul 1).symm, congMod_one d, congMod_one d'⟩
   | cons t T ihT =>
     simp only [List.map_cons, List.prod_cons]
-    refine crtProd_mul n d d' _ _ ?_ ihT
+    refine crtProd_mul d d' _ _ ?_ ihT
     obtain ⟨i, j, hij, c⟩ := t
-    have ht : TransvectionStruct.toSpecialLinearGroup ⟨i, j, hij, c⟩ =
-        SpecialLinearGroup.transvection hij c := Subtype.ext (rfl)
-    rw [ht]
-    exact transvection_CRT n d d' hcop hij c
+    rw [TransvectionStruct.toSpecialLinearGroup_def ⟨i, j, hij, c⟩]
+    exact transvection_CRT d d' hcop hij c
 
 end Matrix.SpecialLinearGroup

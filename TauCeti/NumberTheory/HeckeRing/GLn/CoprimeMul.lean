@@ -9,8 +9,6 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.CongruenceSplit
 public import TauCeti.NumberTheory.HeckeRing.GLn.Degree
 public import TauCeti.NumberTheory.HeckeRing.GLn.TransposeAntiInvolution
 
-import Mathlib.Tactic.LinearCombination
-import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Transvection
 import TauCeti.NumberTheory.HeckeRing.Multiplicity.Support
 
 /-!
@@ -39,7 +37,7 @@ Chris Birkbeck).
   and its mirror.
 * `HeckeRing.GLn.mul_mem_doubleCoset_of_coprime`: a product of representatives with coprime
   determinants lies in the double coset of the product tuple.
-* `HeckeRing.GLn.diagElem_mul_coprime`: `T(a) · T(b) = T(a * b)` for coprime determinants.
+* `HeckeRing.GLn.diagElem_mul_of_coprime`: `T(a) · T(b) = T(a * b)` for coprime determinants.
 
 ## References
 
@@ -311,7 +309,7 @@ lemma mul_mem_doubleCoset_of_coprime (a b : Fin n → ℕ)
     natDiagGL n a * mapGL ℚ τ * natDiagGL n b ∈
       doubleCoset (natDiagGL n (a * b) : GL (Fin n) ℚ) (SLnZ n) (SLnZ n) := by
   obtain ⟨τ₁, τ₂, hτ, hτ₁, hτ₂⟩ :=
-    exists_mul_congMod_of_coprime n (∏ i, a i) (∏ i, b i) hcop τ
+    exists_mul_congMod_of_coprime (∏ i, a i) (∏ i, b i) hcop τ
   have hτ₁_cong : ∀ i j, (∏ k, (a k : ℤ)) ∣
       ((τ₁ : Matrix (Fin n) (Fin n) ℤ) i j - if i = j then 1 else 0) := fun i j ↦ by
     rw [← Nat.cast_prod]; exact hτ₁ i j
@@ -621,7 +619,7 @@ private lemma multiplicity_coprime_le_one (a b : Fin n → ℕ) (ha_pos : ∀ i,
 
 /-- Coprime product in the integral `GL_n` Hecke ring (Shimura, Proposition 3.16):
 `T(a) · T(b) = T(a * b)` when the determinants are coprime. -/
-theorem diagElem_mul_coprime (a b : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i)
+theorem diagElem_mul_of_coprime (a b : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i)
     (hb_pos : ∀ i, 0 < b i) (hcop : Nat.Coprime (∏ i, a i) (∏ i, b i)) :
     diagElem a * diagElem b = diagElem (a * b) := by
   classical
