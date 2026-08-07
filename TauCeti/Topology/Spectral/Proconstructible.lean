@@ -6,7 +6,6 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.Topology.Spectral.ConstructibleTopology
-public import Mathlib.Topology.Spectral.Hom
 
 /-!
 # Pro-constructible subsets
@@ -52,6 +51,11 @@ constructible topology. -/
 def IsProconstructible (s : Set X) : Prop :=
   IsClosed[constructibleTopology X] s
 
+/-- Pro-constructibility unfolded, as closedness in the constructible topology. -/
+@[simp]
+theorem isProconstructible_iff {s : Set X} :
+    IsProconstructible s ↔ IsClosed[constructibleTopology X] s := Iff.rfl
+
 lemma isProconstructible_empty : IsProconstructible (∅ : Set X) :=
   @isClosed_empty X (constructibleTopology X)
 
@@ -78,8 +82,7 @@ lemma isProconstructible_iInter {ι : Sort*} {s : ι → Set X}
     (hs : ∀ i, IsProconstructible (s i)) : IsProconstructible (⋂ i, s i) :=
   @isClosed_iInter X ι (constructibleTopology X) s hs
 
-/-- A quasi-compact open set is pro-constructible: it is clopen in the constructible
-topology. -/
+/-- A quasi-compact open set is pro-constructible. -/
 lemma IsCompact.isProconstructible_of_isOpen {s : Set X} (hs : IsCompact s) (ho : IsOpen s) :
     IsProconstructible s := by
   have h : IsOpen[constructibleTopology X] sᶜ :=
