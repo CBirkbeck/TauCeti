@@ -64,8 +64,8 @@ variable {R : Type*} [CommRing R] [NoZeroDivisors R]
 /-- The descent behind the powerful-denominator theorem, over a commutative ring without zero
 divisors — no fraction field, no curve.
 
-The hypothesis is the Weierstrass equation of `(γ / (q * u), e)` with denominators cleared, the
-cubic in the numerator of the `x`-coordinate split as `α ^ 3 + q * c`. Dividing the identity by
+The hypothesis is the Weierstrass equation of the point `(α / (q * u), γ / e)` with denominators
+cleared, the cubic in the numerator of the `x`-coordinate split as `α ^ 3 + q * c`. Dividing by
 `q ^ 2` and then by `q` in turn shows `q ^ 2 ∣ e` and then `q ∣ γ`, so `γ / e` is not in lowest
 terms. -/
 private lemma not_isRelPrime_of_cleared_equation {q u γ e α c A B : R} (hq : Prime q)
