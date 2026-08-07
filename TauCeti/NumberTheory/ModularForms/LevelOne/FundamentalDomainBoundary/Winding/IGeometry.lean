@@ -22,8 +22,8 @@ time, and the exact endpoint logarithms beside the arc top.
 * `TauCeti.ModularForm.norm_fdBoundary_sub_I_arc` (the chord distance).
 * `TauCeti.ModularForm.leftVerticalCrossingI` (the height-`1` crossing parameter).
 * `TauCeti.ModularForm.eq_two_of_fdBoundary_eq_I` (crossing-time uniqueness).
-* `TauCeti.ModularForm.log_fdBoundary_sub_I_two_sub_sub_two_add` (the symmetric endpoint
-  log difference).
+* `TauCeti.ModularForm.log_fdBoundary_sub_I_two_sub_sub_log_fdBoundary_sub_I_two_add`
+  (the symmetric endpoint log difference).
 
 ## References
 
@@ -131,16 +131,21 @@ denominator vanishes. -/
 noncomputable def leftVerticalCrossingI (H : ℝ) : ℝ :=
   3 + (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2)
 
+/-- The crossing parameter, in normal form. -/
+@[simp]
+theorem leftVerticalCrossingI_def (H : ℝ) :
+    leftVerticalCrossingI H = 3 + (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2) := (rfl)
+
 /-- The corner row lies strictly below `1`. -/
 private lemma sqrt_three_div_two_lt_one : Real.sqrt 3 / 2 < 1 := by
   have h : Real.sqrt 3 < 2 := by
-    nlinarith [Real.sq_sqrt (show (3 : ℝ) ≥ 0 by norm_num), Real.sqrt_nonneg 3]
+    nlinarith [Real.sq_sqrt (by positivity : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
   linarith
 
 /-- The crossing parameter lies right of the corner. -/
-theorem three_lt_leftVerticalCrossingI (hH : 1 < H) : 3 < leftVerticalCrossingI H := by
-  have h_den : 0 < H - Real.sqrt 3 / 2 := by
-    linarith [sqrt_three_div_two_lt_one]
+theorem three_lt_leftVerticalCrossingI (hH : Real.sqrt 3 / 2 < H) :
+    3 < leftVerticalCrossingI H := by
+  have h_den : 0 < H - Real.sqrt 3 / 2 := by linarith
   have := div_pos (by linarith [sqrt_three_div_two_lt_one] : 0 < 1 - Real.sqrt 3 / 2)
     h_den
   rw [leftVerticalCrossingI]
@@ -161,7 +166,8 @@ theorem im_fdBoundary_sub_I_leftVerticalCrossingI (hH : 1 < H) :
   have h_den : (H - Real.sqrt 3 / 2) ≠ 0 :=
     ne_of_gt (by linarith [sqrt_three_div_two_lt_one])
   rw [Complex.sub_im, Complex.I_im,
-    im_fdBoundary_of_le_four (three_lt_leftVerticalCrossingI hH)
+    im_fdBoundary_of_le_four (three_lt_leftVerticalCrossingI
+      (by linarith [sqrt_three_div_two_lt_one]))
       (leftVerticalCrossingI_lt_four hH).le, leftVerticalCrossingI]
   have h2 : 2 * H - Real.sqrt 3 ≠ 0 := fun h ↦ h_den (by linarith)
   field_simp
@@ -175,7 +181,8 @@ theorem im_fdBoundary_sub_I_neg_of_lt_crossing (hH : 1 < H) (ht3 : 3 < t)
     im_fdBoundary_of_le_four ht3 (by linarith [leftVerticalCrossingI_lt_four hH])]
   have h0 := im_fdBoundary_sub_I_leftVerticalCrossingI hH
   rw [Complex.sub_im, Complex.I_im,
-    im_fdBoundary_of_le_four (three_lt_leftVerticalCrossingI hH)
+    im_fdBoundary_of_le_four (three_lt_leftVerticalCrossingI
+      (by linarith [sqrt_three_div_two_lt_one]))
       (leftVerticalCrossingI_lt_four hH).le] at h0
   nlinarith
 
@@ -185,10 +192,12 @@ theorem im_fdBoundary_sub_I_pos_of_crossing_lt (hH : 1 < H)
     0 < (fdBoundary H t - Complex.I).im := by
   have h_den : 0 < H - Real.sqrt 3 / 2 := by linarith [sqrt_three_div_two_lt_one]
   rw [Complex.sub_im, Complex.I_im,
-    im_fdBoundary_of_le_four (lt_trans (three_lt_leftVerticalCrossingI hH) ht0) ht4]
+    im_fdBoundary_of_le_four (lt_trans (three_lt_leftVerticalCrossingI
+      (by linarith [sqrt_three_div_two_lt_one])) ht0) ht4]
   have h0 := im_fdBoundary_sub_I_leftVerticalCrossingI hH
   rw [Complex.sub_im, Complex.I_im,
-    im_fdBoundary_of_le_four (three_lt_leftVerticalCrossingI hH)
+    im_fdBoundary_of_le_four (three_lt_leftVerticalCrossingI
+      (by linarith [sqrt_three_div_two_lt_one]))
       (leftVerticalCrossingI_lt_four hH).le] at h0
   nlinarith
 
@@ -268,7 +277,7 @@ private lemma sin_delta_pos (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
   Real.sin_pos_of_pos_of_lt_pi (by positivity) (by nlinarith [Real.pi_pos])
 
 /-- The principal logarithm of the shifted contour just right of the arc top. -/
-private lemma log_fdBoundary_two_sub_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
+theorem log_fdBoundary_two_sub_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     Complex.log (fdBoundary H (2 - δ) - Complex.I) =
       ((Real.log (2 * Real.sin (δ * (Real.pi / 12))) : ℝ) : ℂ) +
         ((-(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I := by
@@ -277,7 +286,7 @@ private lemma log_fdBoundary_two_sub_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ �
     Complex.log_exp (by simp; nlinarith [Real.pi_pos]) (by simp; nlinarith [Real.pi_pos])]
 
 /-- The principal logarithm of the shifted contour just left of the arc top. -/
-private lemma log_fdBoundary_two_add_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
+theorem log_fdBoundary_two_add_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     Complex.log (fdBoundary H (2 + δ) - Complex.I) =
       ((Real.log (2 * Real.sin (δ * (Real.pi / 12))) : ℝ) : ℂ) +
         ((δ * (Real.pi / 12) - Real.pi : ℝ) : ℂ) * Complex.I := by
@@ -288,7 +297,8 @@ private lemma log_fdBoundary_two_add_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ �
 /-- **The symmetric log difference at the arc top**: the two endpoint logarithms of the
 `δ`-excised arc differ by the pure phase `(π - δ·π/6)·i` — the chord norms agree, and only
 the argument difference survives. -/
-theorem log_fdBoundary_sub_I_two_sub_sub_two_add (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
+theorem log_fdBoundary_sub_I_two_sub_sub_log_fdBoundary_sub_I_two_add (H : ℝ)
+    (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     Complex.log (fdBoundary H (2 - δ) - Complex.I) -
       Complex.log (fdBoundary H (2 + δ) - Complex.I) =
       ((Real.pi - δ * (Real.pi / 6) : ℝ) : ℂ) * Complex.I := by
@@ -298,7 +308,7 @@ theorem log_fdBoundary_sub_I_two_sub_sub_two_add (H : ℝ) (hδ : 0 < δ) (hδ1 
 
 
 /-- The contour passes through `i` only at the arc top `t = 2`. -/
-theorem eq_two_of_fdBoundary_eq_I (hH : 1 < H) (ht : t ∈ Icc (0 : ℝ) 5)
+theorem eq_two_of_fdBoundary_eq_I (hH : H ≠ 1) (ht : t ∈ Icc (0 : ℝ) 5)
     (heq : fdBoundary H t = Complex.I) : t = 2 := by
   have h0 : ‖fdBoundary H t - Complex.I‖ = 0 := by
     rw [heq]
@@ -324,8 +334,9 @@ theorem eq_two_of_fdBoundary_eq_I (hH : 1 < H) (ht : t ∈ Icc (0 : ℝ) 5)
         rw [h0] at this
         norm_num at this
       · have := norm_fdBoundary_sub_I_segment5 H ⟨h4.le, ht.2⟩
-        rw [h0, abs_of_pos (by linarith : (0 : ℝ) < H - 1)] at this
-        linarith
+        rw [h0] at this
+        exact absurd (le_antisymm this (abs_nonneg _))
+          (abs_ne_zero.mpr (sub_ne_zero.mpr hH))
 
 end ModularForm
 
