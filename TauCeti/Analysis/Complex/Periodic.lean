@@ -20,6 +20,8 @@ nonzero width `h` factors through its cusp function along the parameter.
 
 * `TauCeti.Periodic.qParam_sub`: `𝕢 h (z - j) = 𝕢 h z * exp (-2 π I j / h)`.
 * `TauCeti.Periodic.qParam_nat_mul_pow`: `𝕢 (m * h) z ^ m = 𝕢 h z` for `m ≠ 0`.
+* `TauCeti.Periodic.qParam_natCast_mul_eq_pow`: dilating the ARGUMENT,
+  `𝕢 h (d * z) = 𝕢 h z ^ d` for `d : ℕ`.
 * `TauCeti.Periodic.hasDerivAt_qParam` (with `deriv_qParam`): the `q`-parameter
   differentiates to itself times `2πi/h`.
 * `TauCeti.Periodic.logDeriv_eq_logDeriv_cuspFunction_mul_deriv_qParam`: the chain rule
@@ -93,9 +95,10 @@ theorem logDeriv_eq_logDeriv_cuspFunction_mul_deriv_qParam {g : ℂ → ℂ} (hh
     rw [logDeriv_eq_zero_of_not_differentiableAt _ _ hd,
       logDeriv_eq_zero_of_not_differentiableAt _ _ hnc, zero_mul]
 
-/-- **qParam scaling under `d`-dilation.** For any real period `h` and any `d : ℕ`,
-`qParam h (d · z) = (qParam h z) ^ d`. -/
-lemma qParam_nat_mul_eq_pow (h : ℝ) (d : ℕ) (z : ℂ) :
+/-- **qParam under dilation of the ARGUMENT.** For any real period `h` and any `d : ℕ`,
+`𝕢 h (d · z) = (𝕢 h z) ^ d`. Contrast `qParam_nat_mul_pow`, which scales the *period* `h`
+rather than the argument `z`. -/
+@[simp] lemma qParam_natCast_mul_eq_pow (h : ℝ) (d : ℕ) (z : ℂ) :
     Function.Periodic.qParam h ((d : ℂ) * z) =
       (Function.Periodic.qParam h z) ^ d := by
   simp only [Function.Periodic.qParam, ← Complex.exp_nat_mul]

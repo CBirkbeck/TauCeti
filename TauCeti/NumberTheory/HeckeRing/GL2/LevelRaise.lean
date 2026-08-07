@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Analysis.Complex.Periodic
 public import Mathlib.RingTheory.Int.Basic
 public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import TauCeti.RepresentationTheory.ClassicalGroups.Diagonal
@@ -43,7 +42,7 @@ equals the Fourier coefficient of `f` at `q`. In matrix form:
   `γ ∈ Γ₁(d·M)` (Miyake Lemma 4.6.1), which is what makes `levelRaise` well defined.
 * `exists_T_levelRaiseConj_T_factor` — every `γ' ∈ Γ₀(N/l)` factors as
   `T^i · (α_l γ α_l⁻¹) · T^j` with `γ ∈ Γ₀(N)`.
-* `qExpansion_modularFormLevelRaise_coeff'`, `qExpansion_one_modularFormLevelRaise_coeff` —
+* `qExpansion_modularFormLevelRaise_coeff`, `qExpansion_one_modularFormLevelRaise_coeff` —
   the `q`-expansion of `ι_d f` is that of `f` reindexed by `d`.
 
 ## References
@@ -105,8 +104,10 @@ lemma dvd_lower_left_of_dvd {l N : ℕ} (h_dvd : l ∣ N) {γ : SL(2, ℤ)}
     (hγ : γ ∈ Gamma0 N) : (l : ℤ) ∣ γ.val 1 0 :=
   (Int.natCast_dvd_natCast.mpr h_dvd).trans
     ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ))
-/-- Construction of `α_d γ α_d⁻¹` as an explicit `SL(2, ℤ)` element when
-`d ∣ γ.val 1 0`. The formula `[[a, d*b], [c/d, e]]` is integer by hypothesis. -/
+/-- The explicit `SL(2, ℤ)` element `[[a, d*b], [c/d, e]]`, integer by hypothesis
+`d ∣ γ.val 1 0`. For `d ≠ 0` it is the conjugate `α_d γ α_d⁻¹`
+(`mapGL_levelRaiseConjOfDvd_mul_levelRaiseMatrix`); no invertibility of `α_d` is assumed
+here, so the definition also covers the degenerate `d = 0`, where `α_0` is singular. -/
 noncomputable def levelRaiseConjOfDvd (d : ℕ) (γ : SL(2, ℤ))
     (hdvd : (d : ℤ) ∣ γ.val 1 0) : SL(2, ℤ) :=
   ⟨!![γ.val 0 0, d * γ.val 0 1; γ.val 1 0 / d, γ.val 1 1], by
@@ -114,15 +115,16 @@ noncomputable def levelRaiseConjOfDvd (d : ℕ) (γ : SL(2, ℤ))
     linear_combination (Matrix.det_fin_two γ.val).symm.trans γ.property -
       γ.val 0 1 * Int.ediv_mul_cancel hdvd⟩
 
-/-- Construction of `α_d γ α_d⁻¹` as an explicit `SL(2, ℤ)` element when
-`γ ∈ Γ₁(d*M)`. The formula `[[a, d*b], [c/d, e]]` is integer because `d ∣ c`. -/
+/-- The explicit `SL(2, ℤ)` element `[[a, d*b], [c/d, e]]`, integer because `d ∣ c`
+for `γ ∈ Γ₁(d*M)`. As with `levelRaiseConjOfDvd`, it is the conjugate `α_d γ α_d⁻¹`
+only when `d ≠ 0`; the definition itself does not need `α_d` invertible. -/
 noncomputable def levelRaiseConj (d M : ℕ) (γ : SL(2, ℤ))
     (hγ : γ ∈ Gamma1 (d * M)) : SL(2, ℤ) :=
   levelRaiseConjOfDvd d γ (dvd_lower_left_of_dvd (dvd_mul_right d M) (Gamma1_in_Gamma0 _ hγ))
 
 /-- The conjugated matrix is in `Γ₀(M)` when `γ ∈ Γ₀(d*M)`. The (1,0) entry of
 `α_d γ α_d⁻¹` is `c/d`, which is divisible by `M` because `c` is divisible by `d*M`. -/
-lemma levelRaiseConjOfDvd_mem_Gamma0 (d M : ℕ) [NeZero d] (γ : SL(2, ℤ))
+lemma levelRaiseConjOfDvd_mem_Gamma0 (d M : ℕ) (γ : SL(2, ℤ))
     (hγ : γ ∈ Gamma0 (d * M)) :
     levelRaiseConjOfDvd d γ (dvd_lower_left_of_dvd (dvd_mul_right d M) hγ) ∈ Gamma0 M := by
   rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd]
@@ -140,7 +142,7 @@ lemma levelRaiseConjOfDvd_lower_right (d : ℕ) (γ : SL(2, ℤ))
 `α_d * γ * α_d⁻¹ = (levelRaiseConjOfDvd d γ hdvd : GL₂(ℝ))`, equivalently
 `levelRaiseMatrix d * mapGL ℝ γ =
 mapGL ℝ (levelRaiseConjOfDvd d γ hdvd) * levelRaiseMatrix d`. -/
-lemma levelRaiseMatrix_mul_mapGL (d : ℕ) [NeZero d] (γ : SL(2, ℤ))
+lemma mapGL_levelRaiseConjOfDvd_mul_levelRaiseMatrix (d : ℕ) [NeZero d] (γ : SL(2, ℤ))
     (hdvd : (d : ℤ) ∣ γ.val 1 0) :
     mapGL ℝ (levelRaiseConjOfDvd d γ hdvd) * levelRaiseMatrix d =
       levelRaiseMatrix d * mapGL ℝ γ := by
@@ -157,7 +159,7 @@ lemma levelRaiseMatrix_mul_mapGL (d : ℕ) [NeZero d] (γ : SL(2, ℤ))
 /-- The conjugated matrix is in `Γ₁(M)` (Miyake Lemma 4.6.1, conjugation step).
 
 If `γ ∈ Γ₁(d*M)` then `α_d γ α_d⁻¹ ∈ Γ₁(M)`. -/
-lemma levelRaiseConj_mem_Gamma1 (d M : ℕ) [NeZero d] (γ : SL(2, ℤ))
+lemma levelRaiseConj_mem_Gamma1 (d M : ℕ) (γ : SL(2, ℤ))
     (hγ : γ ∈ Gamma1 (d * M)) :
     levelRaiseConj d M γ hγ ∈ Gamma1 M := by
   obtain ⟨ha, he, hc⟩ := (Gamma1_mem _ _).mp hγ
@@ -193,7 +195,7 @@ lemma Gamma1_mul_le_conj (M d : ℕ) [NeZero d] :
   refine ⟨mapGL ℝ (levelRaiseConj d M γ hγ_mem),
     Subgroup.mem_map.mpr ⟨_, levelRaiseConj_mem_Gamma1 d M γ hγ_mem, rfl⟩, ?_⟩
   rw [ConjAct.toConjAct_smul, inv_inv, mul_assoc, inv_mul_eq_iff_eq_mul]
-  exact levelRaiseMatrix_mul_mapGL d γ
+  exact mapGL_levelRaiseConjOfDvd_mul_levelRaiseMatrix d γ
     (dvd_lower_left_of_dvd (dvd_mul_right d M) (Gamma1_in_Gamma0 _ hγ_mem))
 
 /-- The level-raising operator `ι_d : S_k(Γ₁(M)) → S_k(Γ₁(d*M))`, defined as
@@ -252,7 +254,7 @@ lemma coe_modularFormLevelRaise (M d : ℕ) [NeZero d] (k : ℤ)
 `γ̃ := levelRaiseConjOfDvd l γ hdvd = α_l γ α_l⁻¹`, the slash action by
 `mapGL ℝ γ` on `levelRaiseFun l k f` equals the level-raise of the slash
 action by `mapGL ℝ γ̃` on `f`. This is the slash-action incarnation of
-`levelRaiseMatrix_mul_mapGL`. -/
+`mapGL_levelRaiseConjOfDvd_mul_levelRaiseMatrix`. -/
 lemma slash_mapGL_levelRaiseFun (l : ℕ) [NeZero l] (k : ℤ) (γ : SL(2, ℤ))
     (hdvd : (l : ℤ) ∣ γ.val 1 0) (f : UpperHalfPlane → ℂ) :
     levelRaiseFun l k f ∣[k] (mapGL ℝ γ : GL (Fin 2) ℝ) =
@@ -264,7 +266,7 @@ lemma slash_mapGL_levelRaiseFun (l : ℕ) [NeZero l] (k : ℤ) (γ : SL(2, ℤ))
   change ((l : ℂ) ^ (1 - k) • (f ∣[k] levelRaiseMatrix l)) ∣[k]
       (mapGL ℝ γ : GL (Fin 2) ℝ) = _
   rw [ModularForm.smul_slash, hσγ, ContinuousAlgEquiv.refl_apply, ← SlashAction.slash_mul,
-    ← levelRaiseMatrix_mul_mapGL l γ hdvd, SlashAction.slash_mul]
+    ← mapGL_levelRaiseConjOfDvd_mul_levelRaiseMatrix l γ hdvd, SlashAction.slash_mul]
   rfl
 
 /-- **Pointwise evaluation of the level-raise operator.** `levelRaiseFun l k f`
@@ -296,8 +298,7 @@ lemma coe_levelRaiseMatrix_smul (l : ℕ) [NeZero l] (τ : UpperHalfPlane) :
 lemma modularFormLevelRaise_apply (M d : ℕ) [NeZero d] (k : ℤ)
     (f : ModularForm ((Gamma1 M).map (mapGL ℝ)) k) (τ : UpperHalfPlane) :
     modularFormLevelRaise M d k f τ = f ((levelRaiseMatrix d) • τ) := by
-  rw [show (modularFormLevelRaise M d k f : UpperHalfPlane → ℂ) = levelRaiseFun d k ⇑f from
-    coe_modularFormLevelRaise M d k f]
+  rw [coe_modularFormLevelRaise M d k f]
   exact levelRaiseFun_apply d k (⇑f) τ
 
 /-- **Injectivity of `levelRaiseFun l k`.** If two functions `f₁, f₂ : ℍ → ℂ`
@@ -498,7 +499,7 @@ For an arbitrary positive period `h` that is a strict period of both `Γ₁(N)`
 groups are `zmultiples 1` — the
 level-raised form `modularFormLevelRaise N d k f` has Fourier coefficients
 given by `d`-dilation of those of `f`. -/
-theorem qExpansion_modularFormLevelRaise_coeff'
+theorem qExpansion_modularFormLevelRaise_coeff
     {N : ℕ} [NeZero N] {d : ℕ} [NeZero d] {k : ℤ} {h : ℝ}
     (hh_pos : 0 < h)
     (hh_period_N : h ∈ ((Gamma1 N).map (mapGL ℝ)).strictPeriods)
@@ -517,7 +518,8 @@ theorem qExpansion_modularFormLevelRaise_coeff'
     have hfsum := ModularForm.hasSum_qExpansion f hh_pos hh_period_N
       (levelRaiseMatrix d • τ)
     simp only [← smul_eq_mul] at hfsum
-    rw [coe_levelRaiseMatrix_smul d τ, TauCeti.Periodic.qParam_nat_mul_eq_pow h d (τ : ℂ)] at hfsum
+    rw [coe_levelRaiseMatrix_smul d τ,
+      TauCeti.Periodic.qParam_natCast_mul_eq_pow h d (τ : ℂ)] at hfsum
     convert hasSum_pow_dvd_reindex (Nat.pos_of_neZero d) hfsum using 1
     funext j
     split_ifs with hdvd
@@ -526,7 +528,7 @@ theorem qExpansion_modularFormLevelRaise_coeff'
   exact (ModularFormClass.qExpansion_coeff_unique (f := modularFormLevelRaise N d k f)
     hh_pos hh_period_dN h_sum_g n).symm
 
-/-- **Period-1 specialisation** of `qExpansion_modularFormLevelRaise_coeff'`:
+/-- **Period-1 specialisation** of `qExpansion_modularFormLevelRaise_coeff`:
 the canonical Fourier expansion of `modularFormLevelRaise N d k f` is the
 `d`-dilation of that of `f`. -/
 theorem qExpansion_one_modularFormLevelRaise_coeff
@@ -534,7 +536,7 @@ theorem qExpansion_one_modularFormLevelRaise_coeff
     (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) (n : ℕ) :
     (UpperHalfPlane.qExpansion (1 : ℝ) ⇑(modularFormLevelRaise N d k f)).coeff n =
       if d ∣ n then (UpperHalfPlane.qExpansion (1 : ℝ) ⇑f).coeff (n / d) else 0 :=
-  qExpansion_modularFormLevelRaise_coeff' one_pos
+  qExpansion_modularFormLevelRaise_coeff one_pos
     (by rw [strictPeriods_Gamma1]; exact ⟨1, by simp⟩) f n
 
 /-- **Injectivity of the bundled cusp-form operator `levelRaise M d k`.** -/
