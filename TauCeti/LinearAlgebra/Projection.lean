@@ -88,10 +88,15 @@ theorem internalProjection_apply_of_ne (hQi : iSupIndep Q) (hQt : ⨆ i, Q i = �
     (hij : i ≠ j) (x : Q i) : internalProjection hQi hQt j (x : M) = 0 :=
   internalProjection_apply_eq_zero_of_mem_of_ne hQi hQt hij x.2
 
-/-- The projection onto `Q i` is surjective, being the identity on `Q i`. -/
+/-- The projection onto `Q i` is surjective, being the identity on `Q i`.
+
+The `simp only [internalProjection]` is the point of the lemma: it performs the unfolding to
+`Submodule.projectionOnto` here, in the module that defines `internalProjection` and can therefore
+see its body, so that consumers never have to. -/
 theorem internalProjection_surjective (hQi : iSupIndep Q) (hQt : ⨆ i, Q i = ⊤) (i : ι) :
-    Function.Surjective (internalProjection hQi hQt i) :=
-  Submodule.projectionOnto_surjective _
+    Function.Surjective (internalProjection hQi hQt i) := by
+  simpa only [internalProjection] using
+    Submodule.projectionOnto_surjective (isCompl_biSup_ne hQi hQt i)
 
 /-- The kernel of the projection onto `Q i` is the supremum of the other summands. -/
 @[simp]
