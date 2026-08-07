@@ -291,20 +291,14 @@ lemma modularFormLevelRaise_apply (M d : ℕ) [NeZero d] (k : ℤ)
     coe_modularFormLevelRaise M d k f]
   exact levelRaiseFun_apply d k (⇑f) τ
 
-/-- **Surjectivity of `α_l • _` on `ℍ`.** For every `τ' : ℍ` there exists `τ : ℍ` with
-`levelRaiseMatrix l • τ = τ'` — the action of a group, so `α_l⁻¹ • τ'` is the witness. -/
-lemma exists_levelRaiseMatrix_smul_eq (l : ℕ) [NeZero l] (τ' : UpperHalfPlane) :
-    ∃ τ : UpperHalfPlane, levelRaiseMatrix l • τ = τ' :=
-  ⟨(levelRaiseMatrix l)⁻¹ • τ', smul_inv_smul _ _⟩
-
 /-- **Injectivity of `levelRaiseFun l k`.** If two functions `f₁, f₂ : ℍ → ℂ`
 have the same level-raise, they are equal. -/
 lemma levelRaiseFun_injective (l : ℕ) [NeZero l] (k : ℤ) :
     Function.Injective (levelRaiseFun (k := k) l) := by
   intro f₁ f₂ heq
   funext τ'
-  obtain ⟨τ, hτ⟩ := exists_levelRaiseMatrix_smul_eq l τ'
-  simpa only [levelRaiseFun_apply, hτ] using congr_fun heq τ
+  simpa only [levelRaiseFun_apply, smul_inv_smul] using
+    congr_fun heq ((levelRaiseMatrix l)⁻¹ • τ')
 
 /-- **Coercion of the bundled `levelRaise` to its underlying function.**
 `⇑(levelRaise M d k g) = levelRaiseFun d k ⇑g` (definitional). -/
