@@ -49,25 +49,6 @@ variable (n : ℕ)
 
 section Scalar
 
-/-- The scalar diagonal element is the scalar multiple of the identity matrix. -/
-lemma natDiagGL_const_coe (c : ℕ) (hc : 0 < c) :
-    (natDiagGL n (fun _ ↦ c) : Matrix (Fin n) (Fin n) ℚ) = (c : ℚ) • 1 := by
-  rw [natDiagGL_coe n _ (fun _ ↦ hc), ← Matrix.smul_one_eq_diagonal]
-
-/-- Conjugation by the scalar diagonal element is trivial. -/
-@[simp]
-lemma natDiagGL_const_conj_eq (c : ℕ) (x : GL (Fin n) ℚ) :
-    (natDiagGL n (fun _ ↦ c))⁻¹ * x * natDiagGL n (fun _ ↦ c) = x := by
-  rw [mul_assoc, ← natDiagGL_const_comm n c x, ← mul_assoc, inv_mul_cancel, one_mul]
-
-/-- The conjugation action of the scalar diagonal element fixes `SL_n(ℤ)`. -/
-@[simp]
-lemma conjAct_natDiagGL_const_smul_eq (c : ℕ) :
-    ConjAct.toConjAct (natDiagGL n (fun _ ↦ c)) • SLnZ n = SLnZ n := by
-  ext x
-  simp only [Subgroup.mem_pointwise_smul_iff_inv_smul_mem, ConjAct.smul_def, map_inv,
-    ConjAct.ofConjAct_toConjAct, inv_inv, natDiagGL_const_conj_eq n c]
-
 /-- The chosen representative of a diagonal coset decomposes as `h₁ · diag(a) · h₂` with
 `h₁, h₂ ∈ SL_n(ℤ)`. -/
 lemma exists_rep_diagCoset_eq_mul_natDiagGL_mul (a : Fin n → ℕ) :
@@ -80,19 +61,6 @@ lemma exists_rep_diagCoset_eq_mul_natDiagGL_mul (a : Fin n → ℕ) :
   exact mem_doubleCoset.mp hmem
 
 variable [NeZero n]
-
-omit [NeZero n] in
-/-- Conjugation by the representative of a scalar double coset fixes `SL_n(ℤ)`. -/
-lemma conjAct_rep_diagCoset_const_smul_eq (c : ℕ) :
-    ConjAct.toConjAct ((diagCoset (fun _ : Fin n ↦ c)).rep : GL (Fin n) ℚ) • SLnZ n =
-      SLnZ n := by
-  obtain ⟨h₁, hh₁, h₂, hh₂, hrep⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul n (fun _ ↦ c)
-  have hrep' : ((diagCoset fun _ : Fin n ↦ c).rep : GL (Fin n) ℚ) =
-      (h₁ * h₂) * natDiagGL n (fun _ ↦ c) := by
-    rw [hrep, mul_assoc, natDiagGL_const_comm n c h₂, ← mul_assoc]
-  rw [hrep', map_mul, ← smul_smul, conjAct_natDiagGL_const_smul_eq n c,
-    Subgroup.conjAct_pointwise_smul_eq_self
-      (Subgroup.le_normalizer ((SLnZ n).mul_mem hh₁ hh₂))]
 
 private lemma mulMap_const_eq (c : ℕ) (hc : 0 < c) (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
     (p : DecompQuotient (SLnZ n) (SLnZ n)
