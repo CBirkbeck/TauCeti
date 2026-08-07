@@ -384,18 +384,12 @@ open DoubleCoset
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H₁ H₂ H₃ H₄ : Subgroup G}
   (R : Type*) [Semiring R]
 
-/-- `Finsupp.sum_smul_index`, restated for the wrapper type `HeckeCosetModule Δ H₁ H₂ R`. -/
-private lemma sum_smul_index_T {N : Type*} [AddCommMonoid N] (a : R)
-    (f : HeckeCosetModule Δ H₁ H₂ R) (F : HeckeCoset Δ H₁ H₂ → R → N) (h0 : ∀ D, F D 0 = 0) :
-    (a • f).sum F = f.sum fun D c ↦ F D (a * c) :=
-  Finsupp.sum_smul_index h0
-
 /-- The convolution product commutes with scalar multiplication on the left factor. (Note
 that the corresponding statement for the right factor fails over a noncommutative `R`.) -/
 lemma smul_mul [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃] (a : R)
     (f : HeckeCosetModule Δ H₁ H₂ R) (g : HeckeCosetModule Δ H₂ H₃ R) :
     mul R (a • f) g = a • mul R f g := by
-  rw [mul_eq_sum, mul_eq_sum, sum_smul_index_T R a f _ fun D₁ ↦ by
+  rw [mul_eq_sum, mul_eq_sum, sum_smul_index a f _ fun D₁ ↦ by
     simp only [zero_smul]; exact Finsupp.sum_fun_zero (f := g)]
   refine Eq.trans ?_ Finsupp.smul_sum.symm
   refine Finsupp.sum_congr fun D₁ c ↦ Eq.trans ?_ Finsupp.smul_sum.symm
@@ -440,8 +434,8 @@ theorem mul_assoc [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
       | hsingle D₃ b₃ =>
         rw [mul_single_single R D₁ D₂ b₁ b₂, smul_mul, smul_mul, mul_single,
           mul_single_single R D₂ D₃ b₂ b₃, single_mul,
-          sum_smul_index_T R b₂ _ _ fun F ↦ by simp,
-          sum_smul_index_T R b₃ _ _ fun F ↦ by simp]
+          sum_smul_index b₂ _ _ fun F ↦ by simp,
+          sum_smul_index b₃ _ _ fun F ↦ by simp]
         ext D
         rw [smul_apply, smul_apply, sum_apply, sum_apply, sum_def, sum_def,
           Finset.sum_subset (support_structureConstants_subset R D₁.rep D₂.rep)
