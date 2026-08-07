@@ -11,7 +11,7 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 
 Mathlib's affine `Point` API provides the group homomorphism `WeierstrassCurve.Affine.Point.map`
 induced by a change of the base field (for a *fixed* Weierstrass curve), but not the isomorphism
-of Mordell–Weil groups induced by an admissible change of variables between two *different*
+of point groups induced by an admissible change of variables between two *different*
 curves. This file supplies that: for `C : VariableChange F` and a Weierstrass curve `W` over a
 field `F` — no ellipticity hypothesis, matching Mathlib's point group — the admissible change of
 variables `(x, y) ↦ (u²x + r, u³y + u²sx + t)` gives a group isomorphism
