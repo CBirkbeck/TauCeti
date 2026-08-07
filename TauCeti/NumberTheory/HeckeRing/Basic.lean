@@ -41,8 +41,8 @@ merges. The degree section is instead ported from the AINTLIB `LeanModularForms`
 * `HeckeCosetModule.single`: the basis element `b • [D]` of the Hecke coset module, with
   `single_apply`, `sum_single_index`, `smul_single_one`, `single_add`, `induction_linear`,
   and the `Module R` instance `HeckeCosetModule.instModule`.
-* Pointwise evaluation of the coset module: `zero_apply`, `add_apply`, `smul_apply`,
-  `mem_support_iff`, `notMem_support_iff`, `sum_def`, `sum_apply` and `sum_smul_index`.
+* Pointwise evaluation of the coset module: `zero_apply`, `smul_apply`,
+  `notMem_support_iff`, `sum_def`, `sum_apply` and `sum_smul_index`.
   `HeckeCosetModule` is a `def` over `Finsupp`, so Mathlib's evaluation lemmas hold
   definitionally but cannot be matched through the wrapper by `rw`, `simp` or `grind`;
   these are the wrapper-level restatements.
@@ -329,11 +329,6 @@ section EvalSupport
 
 variable {R : Type*} [Zero R]
 
-/-- `Finsupp.mem_support_iff`, at the wrapper type. -/
-@[simp, grind =] lemma mem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R} {D : HeckeCoset Δ H₁ H₂} :
-    D ∈ f.support ↔ f D ≠ 0 :=
-  Finsupp.mem_support_iff
-
 /-- `Finsupp.notMem_support_iff`, at the wrapper type. -/
 lemma notMem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R} {D : HeckeCoset Δ H₁ H₂} :
     D ∉ f.support ↔ f D = 0 :=
@@ -353,7 +348,7 @@ target coefficients are independent of the source's. -/
 
 end EvalSupport
 
-section EvalAdd
+section EvalZero
 
 variable {R : Type*} [AddCommMonoid R]
 
@@ -361,11 +356,7 @@ variable {R : Type*} [AddCommMonoid R]
 @[simp] lemma zero_apply (D : HeckeCoset Δ H₁ H₂) :
     (0 : HeckeCosetModule Δ H₁ H₂ R) D = 0 := (rfl)
 
-/-- `Finsupp.add_apply`, at the wrapper type. -/
-@[simp, grind =] lemma add_apply (f g : HeckeCosetModule Δ H₁ H₂ R) (D : HeckeCoset Δ H₁ H₂) :
-    (f + g) D = f D + g D := (rfl)
-
-end EvalAdd
+end EvalZero
 
 section EvalSMul
 
