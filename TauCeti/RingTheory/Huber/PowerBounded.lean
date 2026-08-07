@@ -98,6 +98,7 @@ theorem isPowerBounded_mul_of_commute {a b : R} (hab : Commute a b) (ha : IsPowe
     (hb : IsPowerBounded b) : IsPowerBounded (a * b) := by
   refine (IsBounded.mul ha hb).subset ?_
   rintro _ ⟨n, rfl⟩
+  -- `rintro … ⟨n, rfl⟩` leaves the goal as a beta-redex `(fun x ↦ _ ^ x) n`, which blocks `rw`
   change (a * b) ^ n ∈ _
   rw [hab.mul_pow]
   exact Set.mul_mem_mul ⟨n, rfl⟩ ⟨n, rfl⟩
@@ -111,6 +112,7 @@ theorem IsPowerBounded.isTopologicallyNilpotent_mul_of_commute {a b : R} (hab : 
   obtain ⟨V, hV, hVU⟩ := ha U hU
   rw [Filter.mem_map]
   filter_upwards [hb.eventually_mem hV] with n hn
+  -- `rintro … ⟨n, rfl⟩` leaves the goal as a beta-redex `(fun x ↦ _ ^ x) n`, which blocks `rw`
   change (a * b) ^ n ∈ U
   rw [hab.mul_pow, (hab.pow_pow n n).eq]
   exact hVU (Set.mul_mem_mul hn ⟨n, rfl⟩)
@@ -178,6 +180,7 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
 theorem IsPowerBounded.neg {a : A} (ha : IsPowerBounded a) : IsPowerBounded (-a) := by
   refine (((isBounded_singleton (-1 : A)).union (isBounded_singleton 1)).mul ha).subset ?_
   rintro _ ⟨n, rfl⟩
+  -- `rintro … ⟨n, rfl⟩` leaves the goal as a beta-redex `(fun x ↦ _ ^ x) n`, which blocks `rw`
   change (-a) ^ n ∈ _
   rw [neg_pow]
   refine Set.mul_mem_mul ?_ ⟨n, rfl⟩
@@ -191,6 +194,7 @@ theorem IsPowerBounded.add {a b : A} (ha : IsPowerBounded a) (hb : IsPowerBounde
     IsPowerBounded (a + b) := by
   refine (IsBounded.mul ha hb).addSubgroupClosure.subset ?_
   rintro _ ⟨n, rfl⟩
+  -- `rintro … ⟨n, rfl⟩` leaves the goal as a beta-redex `(fun x ↦ _ ^ x) n`, which blocks `rw`
   change (a + b) ^ n ∈ _
   rw [SetLike.mem_coe]
   refine add_pow_mem_of_mul_pow_mem fun k _ ↦ AddSubgroup.subset_closure ?_

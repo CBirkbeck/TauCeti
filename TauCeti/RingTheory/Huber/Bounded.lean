@@ -153,6 +153,7 @@ theorem IsBounded.add {S T : Set A} (hS : IsBounded S) (hT : IsBounded T) : IsBo
   refine ⟨V₁ ∩ V₂, inter_mem hV₁ hV₂, ?_⟩
   rintro _ ⟨v, hv, _, ⟨s, hs, t, ht, rfl⟩, rfl⟩
   refine hGU ?_
+  -- `Set.mem_add` leaves the goal as a beta-redex, which blocks the `mul_add` rewrite
   change v * (s + t) ∈ (G : Set A)
   rw [mul_add]
   exact G.toAddSubgroup.add_mem (hSV (Set.mul_mem_mul hv.1 hs))
