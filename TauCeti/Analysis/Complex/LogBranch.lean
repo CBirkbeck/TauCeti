@@ -15,7 +15,7 @@ primitives along contours that cross the negative real axis.
 
 ## Main declarations
 
-* `TauCeti.log_neg_eq_log_add_pi_mul_I`.
+* `TauCeti.log_neg_eq_log_add_pi_mul_I_of_im_neg`.
 -/
 
 public section
@@ -25,7 +25,7 @@ open Complex
 namespace TauCeti
 
 /-- For a point below the real axis, the logarithm of the negation gains `π·i`. -/
-theorem log_neg_eq_log_add_pi_mul_I {z : ℂ} (hz : z.im < 0) :
+theorem log_neg_eq_log_add_pi_mul_I_of_im_neg {z : ℂ} (hz : z.im < 0) :
     Complex.log (-z) = Complex.log z + Real.pi * Complex.I := by
   refine Complex.ext ?_ ?_
   · simp [Complex.log_re, Complex.add_re, Complex.mul_re]

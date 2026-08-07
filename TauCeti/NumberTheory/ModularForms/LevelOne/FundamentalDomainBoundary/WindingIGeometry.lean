@@ -4,9 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding
+public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 
-import TauCeti.Analysis.Complex.CircleChord
 import TauCeti.Topology.Circle.Metric
 
 /-!
@@ -25,6 +24,14 @@ time, and the exact endpoint logarithms beside the arc top.
 * `TauCeti.ModularForm.eq_two_of_fdBoundary_eq_I` (crossing-time uniqueness).
 * `TauCeti.ModularForm.log_fdBoundary_sub_I_two_sub_sub_two_add` (the symmetric endpoint
   log difference).
+
+## References
+
+* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the valence-formula
+  development (`ForMathlib/ValenceFormula/WindingWeights/I.lean`) this file ports onto
+  the current Mathlib pin.
+* N. Hungerbühler, M. Wasem, *Non-integer valued winding numbers and a generalized
+  Residue Theorem*, arXiv:1808.00997.
 -/
 
 public section
@@ -88,8 +95,8 @@ theorem fdBoundary_sub_I_mem_slitPlane_of_two_lt (H : ℝ) (ht2 : 2 < t) (ht3 : 
     nlinarith [Real.sin_sq_add_cos_sq ((t + 1) * (Real.pi / 6))]
   linarith
 
-/-- On the right vertical the contour keeps distance `1/2` from `i`: its real part is
-constantly `1/2`. -/
+/-- On the right vertical the contour keeps distance at least `1/2` from `i`: its real part
+is constantly `1/2`. -/
 theorem norm_fdBoundary_sub_I_segment1 (H : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) :
     1 / 2 ≤ ‖fdBoundary H t - Complex.I‖ := by
   have hre : (fdBoundary H t - Complex.I).re = 1 / 2 := by
@@ -97,8 +104,8 @@ theorem norm_fdBoundary_sub_I_segment1 (H : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) :
   calc (1 : ℝ) / 2 = |(fdBoundary H t - Complex.I).re| := by rw [hre]; norm_num
     _ ≤ ‖fdBoundary H t - Complex.I‖ := Complex.abs_re_le_norm _
 
-/-- On the left vertical the contour keeps distance `1/2` from `i`: its real part is
-constantly `-1/2`. -/
+/-- On the left vertical the contour keeps distance at least `1/2` from `i`: its real part
+is constantly `-1/2`. -/
 theorem norm_fdBoundary_sub_I_segment4 (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
     1 / 2 ≤ ‖fdBoundary H t - Complex.I‖ := by
   have hre : (fdBoundary H t - Complex.I).re = -(1 / 2) := by
@@ -106,20 +113,19 @@ theorem norm_fdBoundary_sub_I_segment4 (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
   calc (1 : ℝ) / 2 = |(fdBoundary H t - Complex.I).re| := by rw [hre]; norm_num
     _ ≤ ‖fdBoundary H t - Complex.I‖ := Complex.abs_re_le_norm _
 
-/-- On the ceiling the contour keeps distance `H - 1` from `i`: its height is
-constantly `H`. -/
+/-- On the ceiling the contour keeps distance at least `|H - 1|` from `i`: its height
+is constantly `H`. -/
 theorem norm_fdBoundary_sub_I_segment5 (H : ℝ) (ht : t ∈ Icc (4 : ℝ) 5) :
-    H - 1 ≤ ‖fdBoundary H t - Complex.I‖ := by
+    |H - 1| ≤ ‖fdBoundary H t - Complex.I‖ := by
   have him : (fdBoundary H t - Complex.I).im = H - 1 := by
     rw [Complex.sub_im, Complex.I_im, im_fdBoundary_segment5 H ht]
-  calc H - 1 ≤ |(fdBoundary H t - Complex.I).im| := by
-        rw [him]
-        exact le_abs_self _
+  calc |H - 1| = |(fdBoundary H t - Complex.I).im| := by rw [him]
     _ ≤ ‖fdBoundary H t - Complex.I‖ := Complex.abs_im_le_norm _
 
 
-/-- The parameter on the left vertical where the contour crosses height `1`: the
-imaginary part of `fdBoundary H t - i` changes sign there. -/
+/-- The parameter on the left vertical where, for `1 < H`, the contour crosses height
+`1`: the imaginary part of `fdBoundary H t - i` changes sign there. The formula is junk
+at truncation heights at or below the corner row. -/
 noncomputable def leftVerticalCrossingI (H : ℝ) : ℝ :=
   3 + (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2)
 
@@ -198,7 +204,7 @@ theorem im_fdBoundary_sub_I_at_three_neg (H : ℝ) :
 
 
 /-- The polar form of the shifted contour just right of the arc top. -/
-private lemma fdBoundary_two_sub_sub_I_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+private lemma fdBoundary_two_sub_sub_I_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     fdBoundary H (2 - δ) - Complex.I =
       ((2 * Real.sin (δ * (Real.pi / 12)) : ℝ) : ℂ) *
         Complex.exp (((-(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I) := by
@@ -224,7 +230,7 @@ private lemma fdBoundary_two_sub_sub_I_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 
     Complex.exp (-((δ : ℂ) * ((Real.pi : ℂ) / 12)) * Complex.I))) * Complex.I_sq
 
 /-- The polar form of the shifted contour just left of the arc top. -/
-private lemma fdBoundary_two_add_sub_I_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+private lemma fdBoundary_two_add_sub_I_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     fdBoundary H (2 + δ) - Complex.I =
       ((2 * Real.sin (δ * (Real.pi / 12)) : ℝ) : ℂ) *
         Complex.exp (((δ * (Real.pi / 12) - Real.pi : ℝ) : ℂ) * Complex.I) := by
@@ -255,12 +261,12 @@ private lemma fdBoundary_two_add_sub_I_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 
     Complex.exp ((δ : ℂ) * ((Real.pi : ℂ) / 12) * Complex.I)) * Complex.I_sq
 
 /-- The half-angle sine of the excision half-width is positive. -/
-private lemma sin_delta_pos (hδ : 0 < δ) (hδ1 : δ < 1) :
+private lemma sin_delta_pos (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     0 < Real.sin (δ * (Real.pi / 12)) :=
   Real.sin_pos_of_pos_of_lt_pi (by positivity) (by nlinarith [Real.pi_pos])
 
 /-- The principal logarithm of the shifted contour just right of the arc top. -/
-private lemma log_fdBoundary_two_sub_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+private lemma log_fdBoundary_two_sub_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     Complex.log (fdBoundary H (2 - δ) - Complex.I) =
       ((Real.log (2 * Real.sin (δ * (Real.pi / 12))) : ℝ) : ℂ) +
         ((-(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I := by
@@ -269,7 +275,7 @@ private lemma log_fdBoundary_two_sub_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ <
     Complex.log_exp (by simp; nlinarith [Real.pi_pos]) (by simp; nlinarith [Real.pi_pos])]
 
 /-- The principal logarithm of the shifted contour just left of the arc top. -/
-private lemma log_fdBoundary_two_add_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+private lemma log_fdBoundary_two_add_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     Complex.log (fdBoundary H (2 + δ) - Complex.I) =
       ((Real.log (2 * Real.sin (δ * (Real.pi / 12))) : ℝ) : ℂ) +
         ((δ * (Real.pi / 12) - Real.pi : ℝ) : ℂ) * Complex.I := by
@@ -280,7 +286,7 @@ private lemma log_fdBoundary_two_add_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ <
 /-- **The symmetric log difference at the arc top**: the two endpoint logarithms of the
 `δ`-excised arc differ by the pure phase `(π - δ·π/6)·i` — the chord norms agree, and only
 the argument difference survives. -/
-theorem log_fdBoundary_sub_I_two_sub_sub_two_add (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+theorem log_fdBoundary_sub_I_two_sub_sub_two_add (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     Complex.log (fdBoundary H (2 - δ) - Complex.I) -
       Complex.log (fdBoundary H (2 + δ) - Complex.I) =
       ((Real.pi - δ * (Real.pi / 6) : ℝ) : ℂ) * Complex.I := by
@@ -316,7 +322,7 @@ theorem eq_two_of_fdBoundary_eq_I (hH : 1 < H) (ht : t ∈ Icc (0 : ℝ) 5)
         rw [h0] at this
         norm_num at this
       · have := norm_fdBoundary_sub_I_segment5 H ⟨h4.le, ht.2⟩
-        rw [h0] at this
+        rw [h0, abs_of_pos (by linarith : (0 : ℝ) < H - 1)] at this
         linarith
 
 end ModularForm
