@@ -92,55 +92,6 @@ namespace TauCeti
 
 open scoped TensorProduct
 
-section BimoduleMap
-
-variable (K : Type*) {A B : Type*} [CommSemiring K] [Semiring A] [Algebra K A] [Semiring B]
-  [Algebra K B]
-
-/-- Transported along `Bimodule.of`, a `B ⊗[K] Aᵐᵒᵖ`-linear map `Bimodule f →ₗ Bimodule g` sends
-`a` to its value at `1`, multiplied by `a`. -/
-private theorem symm_apply_eq_symm_apply_one_mul (f g : B →ₐ[K] A)
-    (φ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g) (a : A) :
-    (Bimodule.of g).symm (φ (Bimodule.of f a))
-      = (Bimodule.of g).symm (φ (Bimodule.of f 1)) * a := by
-  -- Linearity for the right action of `A` fixes `φ` everywhere from its value at `1`.
-  have ha : Bimodule.of f a = (1 ⊗ₜ MulOpposite.op a : B ⊗[K] Aᵐᵒᵖ) • Bimodule.of f 1 := by
-    rw [Bimodule.smul_of]; simp
-  rw [ha, map_smul, Bimodule.symm_smul]
-  simp
-
-/-- The transported value at `1` intertwines `f` and `g`: writing `u` for it, `u * f b = g b * u`
-for every `b : B`. -/
-private theorem symm_apply_one_mul_eq_mul_symm_apply_one (f g : B →ₐ[K] A)
-    (φ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g) (b : B) :
-    (Bimodule.of g).symm (φ (Bimodule.of f 1)) * f b
-      = g b * (Bimodule.of g).symm (φ (Bimodule.of f 1)) := by
-  -- Linearity for the left action of `B`, read through `symm_apply_eq_symm_apply_one_mul`.
-  set u : A := (Bimodule.of g).symm (φ (Bimodule.of f 1)) with hu
-  have hu' : φ (Bimodule.of f 1) = Bimodule.of g u := by rw [hu]; simp
-  have h1 : (b ⊗ₜ (1 : Aᵐᵒᵖ) : B ⊗[K] Aᵐᵒᵖ) • Bimodule.of f 1 = Bimodule.of f (f b) := by
-    rw [Bimodule.smul_of]; simp
-  calc u * f b = (Bimodule.of g).symm (φ (Bimodule.of f (f b))) :=
-        (symm_apply_eq_symm_apply_one_mul K f g φ (f b)).symm
-    _ = (Bimodule.of g).symm (φ ((b ⊗ₜ (1 : Aᵐᵒᵖ) : B ⊗[K] Aᵐᵒᵖ) • Bimodule.of f 1)) := by
-          rw [h1]
-    _ = (Bimodule.of g).symm ((b ⊗ₜ (1 : Aᵐᵒᵖ) : B ⊗[K] Aᵐᵒᵖ) • φ (Bimodule.of f 1)) := by
-          rw [map_smul]
-    _ = (Bimodule.of g).symm ((b ⊗ₜ (1 : Aᵐᵒᵖ) : B ⊗[K] Aᵐᵒᵖ) • Bimodule.of g u) := by rw [hu']
-    _ = g b * u := by rw [Bimodule.smul_of]; simp
-
-/-- For a surjective `φ`, the transported value at `1` has a right inverse in `A`. -/
-private theorem exists_symm_apply_one_mul_eq_one (f g : B →ₐ[K] A)
-    (φ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g) (hφ : Function.Surjective φ) :
-    ∃ v : A, (Bimodule.of g).symm (φ (Bimodule.of f 1)) * v = 1 := by
-  obtain ⟨y, hy⟩ := hφ (Bimodule.of g 1)
-  refine ⟨(Bimodule.of f).symm y, ?_⟩
-  have h := symm_apply_eq_symm_apply_one_mul K f g φ ((Bimodule.of f).symm y)
-  rw [LinearEquiv.apply_symm_apply, hy] at h
-  simpa using h.symm
-
-end BimoduleMap
-
 section SkolemNoether
 
 variable (K : Type*) {A B : Type*} [Field K] [Ring A] [Algebra K A] [Ring B] [Algebra K B]
@@ -165,7 +116,7 @@ theorem skolemNoether [IsSimpleRing A] [FiniteDimensional K A]
   -- The three steps below need only linearity and surjectivity, so use `φ` as a linear map.
   set ψ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g := φ.toLinearMap with hψ
   have hψsurj : Function.Surjective ψ := by rw [hψ]; simpa using φ.surjective
-  obtain ⟨v, huv⟩ := exists_symm_apply_one_mul_eq_one K f g ψ hψsurj
+  obtain ⟨v, huv⟩ := Bimodule.exists_symm_apply_one_mul_eq_one ψ hψsurj
   -- `A` is finite-dimensional over a field, hence Artinian, hence Dedekind-finite
   -- (`IsArtinianRing.of_finite` is a theorem, not an instance, so it is supplied by hand).
   -- A right inverse therefore already presents the conjugator as a unit.
@@ -177,7 +128,7 @@ theorem skolemNoether [IsSimpleRing A] [FiniteDimensional K A]
   have hUinv : (↑(Units.mkOfMulEqOne u v huv)⁻¹ : A) = v :=
     Units.inv_eq_of_mul_eq_one_right (by rw [hUval]; exact huv)
   refine ⟨Units.mkOfMulEqOne u v huv, fun x ↦ ?_⟩
-  rw [hUval, hUinv, hu, symm_apply_one_mul_eq_mul_symm_apply_one K f g ψ x, mul_assoc, ← hu, huv,
+  rw [hUval, hUinv, hu, Bimodule.symm_apply_one_mul_eq_mul_symm_apply_one ψ x, mul_assoc, ← hu, huv,
     mul_one]
 
 /-- **Every automorphism of a central simple algebra is inner.** A `K`-algebra automorphism of a

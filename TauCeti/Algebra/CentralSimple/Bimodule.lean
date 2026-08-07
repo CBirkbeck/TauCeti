@@ -41,6 +41,17 @@ instance.
   is Mathlib's `AlgHom.mulLeftRight` restricted along `f` on the left factor, so for
   `f = AlgHom.id K A` it is `AlgHom.mulLeftRight K A` itself.
 
+A `B ⊗[K] Aᵐᵒᵖ`-linear map `Bimodule f →ₗ Bimodule g`, transported along `of`, is determined by its
+value `u` at `1`, and that value intertwines `f` and `g`:
+
+* `TauCeti.Bimodule.symm_apply_eq_symm_apply_one_mul`: the transported map is `a ↦ u * a`.
+* `TauCeti.Bimodule.symm_apply_one_mul_eq_mul_symm_apply_one`: `u * f b = g b * u`.
+* `TauCeti.Bimodule.exists_symm_apply_one_mul_eq_one`: for a surjective map, `u` has a right
+  inverse.
+
+These are what the Skolem-Noether argument in
+`TauCeti/Algebra/CentralSimple/SkolemNoether.lean` runs on.
+
 ## Implementation notes
 
 `TauCeti.Bimodule.smul_of` and `TauCeti.Bimodule.symm_smul` are the working interface: they compute
@@ -139,6 +150,53 @@ is `x ↦ f b * x * a`. -/
 theorem symm_smul (b : B) (a : Aᵐᵒᵖ) (y : Bimodule f) :
     (of f).symm ((b ⊗ₜ a : B ⊗[K] Aᵐᵒᵖ) • y) = f b * (of f).symm y * a.unop :=
   toEnd_tmul_apply f b a ((of f).symm y)
+
+section Map
+
+variable {f g : B →ₐ[K] A}
+
+/-- Transported along `Bimodule.of`, a `B ⊗[K] Aᵐᵒᵖ`-linear map `Bimodule f →ₗ Bimodule g` sends
+`a` to its value at `1`, multiplied by `a`. -/
+theorem symm_apply_eq_symm_apply_one_mul (φ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g) (a : A) :
+    (of g).symm (φ (of f a))
+      = (of g).symm (φ (of f 1)) * a := by
+  -- Linearity for the right action of `A` fixes `φ` everywhere from its value at `1`.
+  have ha : of f a = (1 ⊗ₜ MulOpposite.op a : B ⊗[K] Aᵐᵒᵖ) • of f 1 := by
+    rw [smul_of]; simp
+  rw [ha, map_smul, symm_smul]
+  simp
+
+/-- The transported value at `1` intertwines `f` and `g`: writing `u` for it, `u * f b = g b * u`
+for every `b : B`. -/
+theorem symm_apply_one_mul_eq_mul_symm_apply_one
+    (φ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g) (b : B) :
+    (of g).symm (φ (of f 1)) * f b
+      = g b * (of g).symm (φ (of f 1)) := by
+  -- Linearity for the left action of `B`, read through `symm_apply_eq_symm_apply_one_mul`.
+  set u : A := (of g).symm (φ (of f 1)) with hu
+  have hu' : φ (of f 1) = of g u := by rw [hu]; simp
+  have h1 : (b ⊗ₜ (1 : Aᵐᵒᵖ) : B ⊗[K] Aᵐᵒᵖ) • of f 1 = of f (f b) := by
+    rw [smul_of]; simp
+  calc u * f b = (of g).symm (φ (of f (f b))) :=
+        (symm_apply_eq_symm_apply_one_mul φ (f b)).symm
+    _ = (of g).symm (φ ((b ⊗ₜ (1 : Aᵐᵒᵖ) : B ⊗[K] Aᵐᵒᵖ) • of f 1)) := by
+          rw [h1]
+    _ = (of g).symm ((b ⊗ₜ (1 : Aᵐᵒᵖ) : B ⊗[K] Aᵐᵒᵖ) • φ (of f 1)) := by
+          rw [map_smul]
+    _ = (of g).symm ((b ⊗ₜ (1 : Aᵐᵒᵖ) : B ⊗[K] Aᵐᵒᵖ) • of g u) := by rw [hu']
+    _ = g b * u := by rw [smul_of]; simp
+
+/-- For a surjective `φ`, the transported value at `1` has a right inverse in `A`. -/
+theorem exists_symm_apply_one_mul_eq_one (φ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g)
+    (hφ : Function.Surjective φ) :
+    ∃ v : A, (of g).symm (φ (of f 1)) * v = 1 := by
+  obtain ⟨y, hy⟩ := hφ (of g 1)
+  refine ⟨(of f).symm y, ?_⟩
+  have h := symm_apply_eq_symm_apply_one_mul φ ((of f).symm y)
+  rw [LinearEquiv.apply_symm_apply, hy] at h
+  simpa using h.symm
+
+end Map
 
 end Bimodule
 
