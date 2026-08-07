@@ -4,12 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.Analysis.Calculus.LogDeriv
-public import Mathlib.Analysis.Complex.UpperHalfPlane.Topology
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 
-import TauCeti.Analysis.Calculus.PeriodicDeriv
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
 
 /-!
