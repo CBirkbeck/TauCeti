@@ -4,8 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Mathlib.GroupTheory.SpecificGroups.Cyclic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.VariableChange
-public import TauCeti.GroupTheory.SpecificGroups.Cyclic
 
 /-!
 # Automorphisms of an elliptic curve with `j ∉ {0, 1728}`
@@ -21,14 +21,16 @@ proves the classical fact (Silverman, *The Arithmetic of Elliptic Curves*, III.1
 * `WeierstrassCurve.eq_one_or_eq_negVariableChange_of_smul_eq`: if `j(E) ∉ {0, 1728}` then any
   `C : VariableChange K` with `C • E = E` equals `1` or `negVariableChange E`.
 * `WeierstrassCurve.autGroup E`: the automorphism group of `E`, as the stabiliser of `E` under
-  the action of `VariableChange K`.
-* `WeierstrassCurve.autGroupMulEquiv`: for `j(E) ∉ {0, 1728}`, the (computable) isomorphism
-  `autGroup E ≃* Multiplicative (ZMod 2)`.
+  the action of `VariableChange K`. It is an `abbrev`, so Mathlib's `MulAction.stabilizer` API
+  applies to it unchanged.
+* `WeierstrassCurve.autGroupMulEquiv`: for `j(E) ∉ {0, 1728}`, the isomorphism
+  `autGroup E ≃* Multiplicative (ZMod 2)`, obtained from Mathlib's `zmodMulEquivOfGenerator`
+  with `negVariableChange E` as the generator.
 
 ## Implementation notes
 
 The proof is broken into pieces. `j ∉ {0, 1728}` is equivalent to `c₄ ≠ 0` and `c₆ ≠ 0`
-(`j_eq_zero_iff` and `c₆_eq_zero_iff_j_eq_1728`). From the transformation laws of `c₄` and `c₆`
+(`j_eq_zero_iff` and `j_eq_1728_iff`). From the transformation laws of `c₄` and `c₆`
 one gets `u² = 1` (`u_eq_one_or_eq_neg_one`), which reduces everything to the case `u = 1`. There
 `r = 0` follows from the transformation laws of `b₄`, `b₆`, `b₈` (`r_eq_zero_of_u_eq_one`), and
 then `s`, `t` are read off from those of `a₁`, `a₂`, `a₃`, `a₄`
@@ -45,7 +47,7 @@ Adapted from the FLT project (`ImperialCollegeLondon/FLT`,
 Michael Stoll and Claude).
 -/
 
-@[expose] public section
+public section
 
 namespace WeierstrassCurve
 
@@ -91,7 +93,8 @@ lemma eq_one_or_eq_negVariableChange_of_u_eq_one (hc4 : E.c₄ ≠ 0) (hc6 : E.c
       exact .inl (VariableChange.ext hu hr hs ht)
     · have ht : C.t = -E.a₃ := by grobner
       have hu1neg : (1 : Kˣ) = -1 := by ext; push_cast; linear_combination h2
-      exact .inr (VariableChange.ext (hu.trans hu1neg) hr hs ht)
+      exact .inr (VariableChange.ext (by simpa using hu.trans hu1neg) (by simpa using hr)
+        (by simpa using hs) (by simpa using ht))
   · -- characteristic `≠ 2`: `2s = 2t = 0`, so `s = t = 0` and `C = 1`.
     have hs : C.s = 0 := by grobner
     have ht : C.t = 0 := by grobner
@@ -110,7 +113,7 @@ lemma u_eq_one_or_eq_neg_one (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0) {C : Vari
   have hu2 : (C.u : K) * (C.u : K) = 1 := by linear_combination hu6 - (C.u : K) ^ 2 * hu4
   rcases mul_self_eq_one_iff.mp hu2 with h | h
   · exact .inl (Units.val_eq_one.mp h)
-  · exact .inr (Units.ext h)
+  · exact .inr (Units.val_eq_neg_one.mp h)
 
 /-- If `c₄ ≠ 0` and `c₆ ≠ 0` then the only admissible changes of variables fixing `E` are `1` and
 `negVariableChange E`. This is the form of `Aut(E) = {±1}` phrased via `c₄, c₆` (equivalent to
@@ -121,8 +124,7 @@ theorem eq_one_or_eq_negVariableChange_of_smul_eq_of_c₄_ne_zero (hc4 : E.c₄ 
   · exact E.eq_one_or_eq_negVariableChange_of_u_eq_one hc4 hc6 hu hC
   · -- Reduce `u = -1` to `u = 1` by composing with the involution `negVariableChange E`.
     have hDu : (E.negVariableChange * C).u = 1 := by
-      rw [show (E.negVariableChange * C).u = E.negVariableChange.u * C.u from rfl,
-        negVariableChange_u, hu, neg_one_mul, neg_neg]
+      simp [VariableChange.mul_def, hu]
     have hDE : (E.negVariableChange * C) • E = E := by
       rw [mul_smul, hC, negVariableChange_smul_self]
     have hCeq : C = E.negVariableChange * (E.negVariableChange * C) := by
@@ -137,28 +139,37 @@ theorem eq_one_or_eq_negVariableChange_of_smul_eq [E.IsElliptic] (hj₀ : E.j �
     (hj₁₇₂₈ : E.j ≠ 1728) {C : VariableChange K} (hC : C • E = E) :
     C = 1 ∨ C = E.negVariableChange :=
   E.eq_one_or_eq_negVariableChange_of_smul_eq_of_c₄_ne_zero (E.j_eq_zero_iff.not.mp hj₀)
-    (E.c₆_eq_zero_iff_j_eq_1728.not.mpr hj₁₇₂₈) hC
+    (E.j_eq_1728_iff.not.mp hj₁₇₂₈) hC
 
 /-! ### The automorphism group -/
 
-open MulAction in
-/-- The automorphism group of a Weierstrass curve `E` over a field: the admissible changes of
-variables fixing `E`, i.e. the stabiliser of `E` under the action of `VariableChange K`. -/
-def autGroup : Subgroup (VariableChange K) := stabilizer (VariableChange K) E
+section AutGroup
 
-lemma mem_autGroup {C : VariableChange K} : C ∈ E.autGroup ↔ C • E = E := Iff.rfl
+variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
+
+open MulAction in
+/-- The automorphism group of a Weierstrass curve `W`: the admissible changes of variables
+fixing `W`, i.e. the stabiliser of `W` under the action of `VariableChange R`. This is an
+`abbrev` rather than a `def` so that Mathlib's `MulAction.stabilizer` API applies to it
+unchanged — in particular the `simp` lemma `MulAction.mem_stabilizer_iff`, which is the
+membership normal form `C ∈ W.autGroup ↔ C • W = W`. -/
+abbrev autGroup : Subgroup (VariableChange R) := stabilizer (VariableChange R) W
+
+end AutGroup
 
 /-- **`Aut(E) ≅ ℤ/2` for `j(E) ∉ {0, 1728}`.** The automorphism group of `E` is `{±1}`, so it is
 isomorphic to `Multiplicative (ZMod 2)`: it has exactly two elements — `1` and
 `negVariableChange E` (`eq_one_or_eq_negVariableChange_of_smul_eq`), distinct by
-`negVariableChange_ne_one`. The isomorphism sends `negVariableChange E` to
-`Multiplicative.ofAdd 1`. -/
-def autGroupMulEquiv [DecidableEq K] [E.IsElliptic] (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728) :
+`negVariableChange_ne_one`. The isomorphism sends `Multiplicative.ofAdd 1` to
+`negVariableChange E`, by `zmodMulEquivOfGenerator_apply_ofAdd_one`. -/
+noncomputable def autGroupMulEquiv [E.IsElliptic] (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728) :
     E.autGroup ≃* Multiplicative (ZMod 2) :=
-  mulEquivMultiplicativeZModTwo ⟨E.negVariableChange, E.negVariableChange_smul_self⟩
-    (fun h ↦ E.negVariableChange_ne_one (congrArg Subtype.val h))
-    fun C ↦ (E.eq_one_or_eq_negVariableChange_of_smul_eq hj₀ hj₁₇₂₈
-      (E.mem_autGroup.mp C.2)).imp Subtype.ext Subtype.ext
+  let g : E.autGroup := ⟨E.negVariableChange, E.negVariableChange_smul_self⟩
+  have hg : g ≠ 1 := fun h ↦ E.negVariableChange_ne_one (congrArg Subtype.val h)
+  have key : ∀ C : E.autGroup, C = 1 ∨ C = g := fun C ↦
+    (E.eq_one_or_eq_negVariableChange_of_smul_eq hj₀ hj₁₇₂₈ C.2).imp Subtype.ext Subtype.ext
+  (zmodMulEquivOfGenerator (g := g) (fun x ↦ by rcases key x with h | h <;> subst h <;> simp)
+    ((Nat.card_eq_two_iff' 1).mpr ⟨g, hg, fun y hy ↦ (key y).resolve_left hy⟩)).symm
 
 end WeierstrassCurve
 
