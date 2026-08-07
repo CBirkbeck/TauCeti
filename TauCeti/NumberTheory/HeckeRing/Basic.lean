@@ -330,7 +330,7 @@ section EvalSupport
 variable {R : Type*} [Zero R]
 
 /-- `Finsupp.notMem_support_iff`, at the wrapper type. -/
-lemma notMem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R} {D : HeckeCoset Δ H₁ H₂} :
+@[grind =] lemma notMem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R} {D : HeckeCoset Δ H₁ H₂} :
     D ∉ f.support ↔ f D = 0 :=
   Finsupp.notMem_support_iff
 
@@ -340,7 +340,7 @@ lemma sum_def {N : Type*} [AddCommMonoid N] (f : HeckeCosetModule Δ H₁ H₂ R
 
 /-- `Finsupp.sum_apply`, at the wrapper type: evaluation commutes with a `Finsupp.sum`. The
 target coefficients are independent of the source's. -/
-@[simp] lemma sum_apply {S : Type*} [AddCommMonoid S] {H₃ H₄ : Subgroup G}
+@[simp, grind =] lemma sum_apply {S : Type*} [AddCommMonoid S] {H₃ H₄ : Subgroup G}
     (f : HeckeCosetModule Δ H₁ H₂ R)
     (F : HeckeCoset Δ H₁ H₂ → R → HeckeCosetModule Δ H₃ H₄ S) (D : HeckeCoset Δ H₃ H₄) :
     (f.sum F) D = f.sum fun E c ↦ F E c D :=
@@ -367,7 +367,7 @@ variable {R : Type*} [Semiring R]
     (D : HeckeCoset Δ H₁ H₂) : (a • f) D = a * f D := (rfl)
 
 /-- `Finsupp.sum_smul_index`, at the wrapper type: a scalar pushes into a `Finsupp.sum`. -/
-lemma sum_smul_index {N : Type*} [AddCommMonoid N] (a : R)
+@[grind =] lemma sum_smul_index {N : Type*} [AddCommMonoid N] (a : R)
     (f : HeckeCosetModule Δ H₁ H₂ R) (F : HeckeCoset Δ H₁ H₂ → R → N) (h0 : ∀ D, F D 0 = 0) :
     (a • f).sum F = f.sum fun D c ↦ F D (a * c) :=
   Finsupp.sum_smul_index h0
