@@ -171,7 +171,7 @@ theorem peterssonInner_self_eq_ofReal (k : ℤ) (D : Set ℍ) (h : ℍ → ℂ) 
   simp_rw [petersson_self_eq_ofReal]
   exact integral_ofReal
 
-/-- The Petersson self-pairing over a measurable domain is nonnegative, for any function:
+/-- The Petersson self-pairing over any domain is nonnegative, for any function:
 the integrand `‖h τ‖² (Im τ)^k` is. -/
 theorem peterssonInner_self_re_nonneg (k : ℤ) (D : Set ℍ)
     (h : ℍ → ℂ) : 0 ≤ (peterssonInner k D h h).re := by

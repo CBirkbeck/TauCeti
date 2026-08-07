@@ -71,15 +71,19 @@ open Matrix.SpecialLinearGroup
 
 open scoped MatrixGroups ModularForm ComplexConjugate
 
+namespace Subgroup
+
+/-- The coset space of `Γ.withCenter` is finite when `Γ` has finite index; this is what makes
+the defining sum of `CuspForm.peterssonInnerCosets` a finite one. -/
+noncomputable instance fintypeQuotientWithCenter {Γ : Subgroup SL(2, ℤ)} [Γ.FiniteIndex] :
+    Fintype (SL(2, ℤ) ⧸ Γ.withCenter) :=
+  Subgroup.fintypeQuotientOfFiniteIndex
+
+end Subgroup
+
 namespace CuspForm
 
 variable {Γ : Subgroup SL(2, ℤ)} [Γ.FiniteIndex] {k : ℤ}
-
-/-- The effective coset space is finite, which is what makes the defining sum below a finite
-one. -/
-noncomputable instance instFintypeQuotientWithCenter :
-    Fintype (SL(2, ℤ) ⧸ Γ.withCenter) :=
-  Subgroup.fintypeQuotientOfFiniteIndex
 
 /-- The **Petersson inner product** on `S_k(Γ)` for a finite-index `Γ ≤ SL₂(ℤ)`: the sum,
 over the cosets of `Γ·{±I}` in `SL₂(ℤ)`, of the level-one pairing of the correspondingly
