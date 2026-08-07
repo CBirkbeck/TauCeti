@@ -331,7 +331,8 @@ variable {R : Type*} [Zero R]
 
 /-- `Finsupp.mem_support_iff`, at the wrapper type.
 
-Deliberately carries no `@[simp]`/`@[grind =]`: `HeckeCosetModule` defines no `support` of its
+Deliberately unattributed, for the same reason as `add_apply` below; it carries no
+`@[simp]`/`@[grind =]`. `HeckeCosetModule` defines no `support` of its
 own, so the left-hand side `D ∈ f.support` elaborates to `Finsupp.support f` and would share a
 discrimination key with Mathlib's `@[simp, grind =] Finsupp.mem_support_iff`, whose right-hand
 side differs only by the wrapper coercion — making the normal form order-dependent. It is
@@ -367,9 +368,13 @@ variable {R : Type*} [AddCommMonoid R]
 @[simp] lemma zero_apply (D : HeckeCoset Δ H₁ H₂) :
     (0 : HeckeCosetModule Δ H₁ H₂ R) D = 0 := (rfl)
 
-/-- `Finsupp.add_apply`, at the wrapper type. Carries no `@[simp]` for the same
-normal-form reason as `mem_support_iff`: the wrapper's `+` is `Finsupp`'s, so Mathlib's
-`Finsupp.add_apply` already matches the same term. -/
+/-- `Finsupp.add_apply`, at the wrapper type, as a named lemma to cite.
+
+Deliberately unattributed. Unlike the `Finsupp.sum`-shaped lemmas above — where the wrapper
+genuinely blocks matching, which is why this section exists — `+` on the wrapper is the
+`Finsupp` addition itself, so a `@[simp]`/`@[grind =]` here would compete with Mathlib's own
+`Finsupp.add_apply` on the same left-hand side while carrying a right-hand side that differs
+only by the wrapper coercion, leaving the normal form order-dependent. -/
 lemma add_apply (f g : HeckeCosetModule Δ H₁ H₂ R) (D : HeckeCoset Δ H₁ H₂) :
     (f + g) D = f D + g D := (rfl)
 
