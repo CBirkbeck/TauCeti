@@ -14,9 +14,13 @@ Let `R` be a unique factorization domain with fraction field `K` and let `W : We
 have coefficients in `R`. Writing a `K`-point of `W` as a pair of reduced fractions
 `x = num x / den x` and `y = num y / den y` (Mathlib's `IsFractionRing.num` and
 `IsFractionRing.den`), the Weierstrass equation forces the denominator of the `x`-coordinate to
-be **powerful**: a prime dividing it divides it at least twice. Equivalently, `den x` is never a
+be **powerful**: a prime dividing it divides it at least twice. In particular `den x` is never a
 prime element — the form in which the Nagell–Lutz integrality argument uses it, where the rational
 root theorem has already bounded `den x` by a prime.
+
+This is weaker than the classical statement for a short model `y² = x³ + Ax + B` over `ℤ`, that
+`den x = d²` and `den y = d³` for some `d` — that needs the `q`-adic valuations to be *even*, not
+merely at least `2`, and goes through the formal group rather than the elementary descent below.
 
 The reason is a three-step descent. Clearing denominators in the Weierstrass equation gives an
 identity in `R`; if a prime `q` divides `den x` exactly once, then reducing that identity modulo
@@ -33,6 +37,14 @@ successive powers of `q` forces `q` to divide `den y` three times over, and fina
 This is the denominator input to the Nagell–Lutz integrality milestone of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 6, item "The torsion subgroup and Nagell–Lutz".
 No torsion hypothesis is needed here: the statements hold for every point.
+
+## Provenance
+
+Ported from the AINTLIB `NagellLutz` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), pinned by
+that roadmap at `dev/modular-curves @ 9fec8eba7652`: the descent follows
+`LutzNagell/LutzNagellTheorem/PIDDenominators.lean`
+(`den_no_simple_prime_factor_of_on_curve`, `den_not_prime_of_on_curve`) and its positive restatement
+`den_powerful_of_on_curve` in `LutzNagell/LutzNagellTheorem/PIDMain.lean`.
 -/
 
 public section
