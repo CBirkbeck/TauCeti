@@ -112,6 +112,10 @@ for `f, s : A`. -/
 instance instTopologicalSpace : TopologicalSpace (Spv A) :=
   TopologicalSpace.generateFrom {U | ∃ f s : A, U = basicOpen f s}
 
+/-- Each basic open subset is open in `Spv A`. -/
+lemma isOpen_basicOpen (f s : A) : IsOpen (basicOpen f s) :=
+  TopologicalSpace.isOpen_generateFrom_of_mem ⟨f, s, rfl⟩
+
 section Functoriality
 
 variable {A B C : Type*} [CommRing A] [CommRing B] [CommRing C]
@@ -121,11 +125,13 @@ variable {A B C : Type*} [CommRing A] [CommRing B] [CommRing C]
 def comap (φ : A →+* B) (v : Spv B) : Spv A :=
   ⟨ValuativeRel.comap φ v.toValuativeRel⟩
 
+/-- The relation of a pulled-back point compares images under `φ`. -/
 @[simp]
 lemma comap_vle (φ : A →+* B) (v : Spv B) {a₁ a₂ : A} :
     (comap φ v).toValuativeRel.vle a₁ a₂ = v.toValuativeRel.vle (φ a₁) (φ a₂) :=
   propext (ValuativeRel.comap_vle φ v.toValuativeRel a₁ a₂)
 
+/-- The strict relation of a pulled-back point compares images under `φ`. -/
 @[simp]
 lemma comap_vlt (φ : A →+* B) (v : Spv B) {a₁ a₂ : A} :
     (comap φ v).toValuativeRel.vlt a₁ a₂ = v.toValuativeRel.vlt (φ a₁) (φ a₂) :=
@@ -146,8 +152,7 @@ lemma comap_preimage_basicOpen (φ : A →+* B) (f s : A) :
 /-- `comap φ` is continuous. -/
 lemma continuous_comap (φ : A →+* B) : Continuous (comap φ) :=
   continuous_generateFrom_iff.mpr fun _ ⟨f, s, hU⟩ ↦
-    hU ▸ comap_preimage_basicOpen φ f s ▸
-      TopologicalSpace.isOpen_generateFrom_of_mem ⟨φ f, φ s, rfl⟩
+    hU ▸ comap_preimage_basicOpen φ f s ▸ isOpen_basicOpen (φ f) (φ s)
 
 /-- `comap` of the identity is the identity. -/
 @[simp]
@@ -177,6 +182,7 @@ def supp (v : Spv A) : Ideal A :=
   let := v.toValuativeRel
   ValuativeRel.supp A
 
+/-- Membership in the support, as the relation `v(x) ≤ v(0)`. -/
 @[simp]
 lemma mem_supp_iff (v : Spv A) (x : A) : x ∈ v.supp ↔ v.toValuativeRel.vle x 0 :=
   let := v.toValuativeRel
@@ -203,6 +209,13 @@ lemma supp_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 noncomputable def valuation (v : Spv A) :
     Valuation A (@ValuativeRel.ValueGroupWithZero A _ v.toValuativeRel) :=
   @ValuativeRel.valuation A _ v.toValuativeRel
+
+/-- Comparison under the canonical valuation of a point is the point's valuative relation. -/
+@[simp]
+lemma valuation_le_iff (v : Spv A) (x y : A) :
+    v.valuation x ≤ v.valuation y ↔ v.toValuativeRel.vle x y :=
+  let := v.toValuativeRel
+  ((ValuativeRel.valuation A).vle_iff_le (x := x) (y := y)).symm
 
 /-- The support of `v : Spv A` equals the support of its canonical valuation. -/
 lemma supp_eq_valuation_supp (v : Spv A) : v.supp = v.valuation.supp :=
@@ -245,7 +258,7 @@ lemma quotientLift_comap (w : Spv (A ⧸ 𝔞)) :
     (ValuativeRel.comap_vle (Ideal.Quotient.mk 𝔞) w.toValuativeRel a₁ a₂)
 
 /-- The range of `comap (mk 𝔞)` is `{v ∈ Spv A | 𝔞 ≤ supp v}`. -/
-lemma comap_quotient_range :
+lemma quotientMk_comap_range :
     Set.range (comap (Ideal.Quotient.mk 𝔞)) = {v : Spv A | 𝔞 ≤ v.supp} :=
   Set.ext fun _ ↦ ⟨fun ⟨w, hw⟩ ↦ hw ▸ self_le_supp_comap 𝔞 w,
     fun h ↦ ⟨quotientLift 𝔞 h, comap_quotientLift 𝔞 h⟩⟩
@@ -275,11 +288,8 @@ variable (S : Submonoid A) (B : Type*) [CommRing B] [Algebra A B] [IsLocalizatio
 /-- Transport `S ≤ (supp v).primeCompl` along `supp_eq_valuation_supp` to the support of the
 canonical valuation of `v`. -/
 lemma le_valuation_supp_primeCompl {v : Spv A} (hS : S ≤ v.supp.primeCompl) :
-    S ≤ v.valuation.supp.primeCompl := by
-  intro s hs
-  change s ∉ _
-  rw [← v.supp_eq_valuation_supp]
-  exact hS hs
+    S ≤ v.valuation.supp.primeCompl := fun _ hs ↦
+  Ideal.mem_primeCompl_iff.mpr (v.supp_eq_valuation_supp ▸ Ideal.mem_primeCompl_iff.mp (hS hs))
 
 /-- Send `v ∈ Spv A` with `S ≤ (supp v).primeCompl` to the localization `Spv B`, where `B` is a
 localization of `A` at the submonoid `S`. -/
@@ -315,7 +325,7 @@ lemma submonoid_le_supp_primeCompl_comap_algebraMap (w : Spv B) :
   exact ValuativeRel.not_vle_zero_of_isUnit (IsLocalization.map_units B ⟨s, hs⟩) hmem
 
 /-- The range of `comap (algebraMap A B)` is `{v | S ≤ supp(v).primeCompl}`. -/
-lemma comap_localization_range :
+lemma localization_comap_range :
     Set.range (comap (algebraMap A B)) = {v : Spv A | S ≤ v.supp.primeCompl} := by
   ext v
   simpa using ⟨fun ⟨w, hw⟩ ↦ hw ▸ submonoid_le_supp_primeCompl_comap_algebraMap S B w,
@@ -331,6 +341,7 @@ section PrimeSpectrum
 @[expose]
 def suppFun : Spv A → PrimeSpectrum A := fun v ↦ ⟨v.supp, inferInstance⟩
 
+/-- The prime ideal underlying `suppFun v` is the support of `v`. -/
 @[simp]
 lemma suppFun_asIdeal (v : Spv A) : (suppFun v).asIdeal = v.supp := rfl
 
@@ -343,8 +354,7 @@ lemma suppFun_preimage_basicOpen (f : A) :
 /-- `suppFun` is continuous. -/
 theorem continuous_suppFun : Continuous (suppFun : Spv A → PrimeSpectrum A) :=
   PrimeSpectrum.isTopologicalBasis_basic_opens.continuous_iff.mpr fun _ ⟨f, hf⟩ ↦
-    hf ▸ suppFun_preimage_basicOpen f ▸
-      TopologicalSpace.isOpen_generateFrom_of_mem ⟨f, f, rfl⟩
+    hf ▸ suppFun_preimage_basicOpen f ▸ isOpen_basicOpen f f
 
 /-- `supp ∘ Spv(φ) = Spec(φ) ∘ supp`. -/
 theorem suppFun_comap {B : Type*} [CommRing B] (φ : A →+* B) (v : Spv B) :
