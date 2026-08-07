@@ -236,8 +236,10 @@ private theorem lintegral_eq_lintegral_slabChart {w : EuclideanSpace ℝ (Fin (n
 
 omit [CompleteSpace F] in
 /-- Along the line `t ↦ slabChart i (t, y)`, the function `u` has derivative the directional
-derivative of `u` in the `i`-th coordinate direction. -/
-private theorem hasDerivAt_comp_slabChart (hu : ContDiff ℝ 1 u) (y : Fin n → ℝ) (t : ℝ) :
+derivative of `u` in the `i`-th coordinate direction. Only differentiability at the single point
+of the line is needed. -/
+private theorem hasDerivAt_comp_slabChart (y : Fin n → ℝ) {t : ℝ}
+    (hu : DifferentiableAt ℝ u (slabChart i (t, y))) :
     HasDerivAt (fun s => u (slabChart i (s, y)))
       (fderiv ℝ u (slabChart i (t, y)) (EuclideanSpace.single i 1)) t := by
   have hl : HasDerivAt (fun s : ℝ => slabChart i (s, y)) (EuclideanSpace.single i 1) t := by
@@ -245,21 +247,20 @@ private theorem hasDerivAt_comp_slabChart (hu : ContDiff ℝ 1 u) (y : Fin n →
     have hid : HasDerivAt (fun s : ℝ => s) 1 t := hasDerivAt_id t
     simpa using _root_.HasDerivAt.const_add (WithLp.toLp 2 (i.insertNth (0 : ℝ) y))
       (_root_.HasDerivAt.smul_const hid (EuclideanSpace.single i (1 : ℝ)))
-  exact (hu.differentiable one_ne_zero).differentiableAt.hasFDerivAt.comp_hasDerivAt t hl
+  exact hu.hasFDerivAt.comp_hasDerivAt t hl
 
 omit [CompleteSpace F] in
 /-- The one-dimensional estimate on a single line of the slab: the `r`-th power integral of `u`
-along the line is at most `(b - a) ^ r` times that of the full derivative. -/
-private theorem lintegral_enorm_rpow_comp_slabChart_le (hu : ContDiff ℝ 1 u) (hab : a ≤ b)
-    (hsupp : ∀ x ∈ Function.support u, x i ∈ Icc a b) {r : ℝ} (hr : 1 ≤ r) (y : Fin n → ℝ) :
+along the line is at most `(b - a) ^ r` times that of the full derivative. Only differentiability
+of `u` and continuity of its derivative *along that line* are needed. -/
+private theorem lintegral_enorm_rpow_comp_slabChart_le {y : Fin n → ℝ}
+    (hu : ∀ t : ℝ, DifferentiableAt ℝ u (slabChart i (t, y)))
+    (hfc : Continuous fun t : ℝ => fderiv ℝ u (slabChart i (t, y))) (hab : a ≤ b)
+    (hsupp : ∀ x ∈ Function.support u, x i ∈ Icc a b) {r : ℝ} (hr : 1 ≤ r) :
     ∫⁻ t, ‖u (slabChart i (t, y))‖ₑ ^ r
       ≤ ENNReal.ofReal ((b - a) ^ r) * ∫⁻ t, ‖fderiv ℝ u (slabChart i (t, y))‖ₑ ^ r := by
-  have hfc : Continuous (fderiv ℝ u) := hu.continuous_fderiv one_ne_zero
-  have hlinecont : Continuous fun t : ℝ => slabChart i (t, y) := by
-    simp only [slabChart_eq_add_smul_single]
-    fun_prop
   refine le_trans (lintegral_enorm_rpow_le_of_support_subset_Icc hab
-    (hasDerivAt_comp_slabChart hu y) ((hfc.comp hlinecont).clm_apply continuous_const)
+    (fun t => hasDerivAt_comp_slabChart y (hu t)) (hfc.clm_apply continuous_const)
     (fun t ht => by simpa using hsupp _ (Function.mem_support.2 ht)) hr) ?_
   gcongr with t
   rw [← ofReal_norm, ← ofReal_norm]
@@ -289,10 +290,15 @@ theorem eLpNorm_le_eLpNorm_fderiv_of_support_subset_slab (hu : ContDiff ℝ 1 u)
     (ENNReal.continuous_rpow_const.comp hu.continuous.enorm).measurable
   have hmf : Measurable fun x : EuclideanSpace ℝ (Fin (n + 1)) => ‖fderiv ℝ u x‖ₑ ^ r :=
     (ENNReal.continuous_rpow_const.comp hfc.enorm).measurable
+  have hline : ∀ y : Fin n → ℝ, ∫⁻ t, ‖u (slabChart i (t, y))‖ₑ ^ r
+      ≤ ENNReal.ofReal ((b - a) ^ r) * ∫⁻ t, ‖fderiv ℝ u (slabChart i (t, y))‖ₑ ^ r := fun y =>
+    lintegral_enorm_rpow_comp_slabChart_le
+      (fun _ => (hu.differentiable one_ne_zero).differentiableAt)
+      (hfc.comp (by simp only [slabChart_eq_add_smul_single]; fun_prop)) hab hsupp hr
   calc ∫⁻ x, ‖u x‖ₑ ^ r
       = ∫⁻ y, ∫⁻ t, ‖u (slabChart i (t, y))‖ₑ ^ r := lintegral_eq_lintegral_slabChart hmu
     _ ≤ ∫⁻ y, ENNReal.ofReal ((b - a) ^ r) * ∫⁻ t, ‖fderiv ℝ u (slabChart i (t, y))‖ₑ ^ r :=
-        lintegral_mono (lintegral_enorm_rpow_comp_slabChart_le hu hab hsupp hr)
+        lintegral_mono hline
     _ = ENNReal.ofReal ((b - a) ^ r) *
           ∫⁻ y, ∫⁻ t, ‖fderiv ℝ u (slabChart i (t, y))‖ₑ ^ r :=
         lintegral_const_mul' _ _ (by finiteness)
