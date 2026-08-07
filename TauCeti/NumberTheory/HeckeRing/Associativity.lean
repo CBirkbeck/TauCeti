@@ -443,7 +443,7 @@ theorem mul_assoc [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
           sum_smul_index_T R b₂ _ _ fun F ↦ by simp,
           sum_smul_index_T R b₃ _ _ fun F ↦ by simp]
         ext D
-        rw [smul_apply, smul_apply, sum_apply_eval, sum_apply_eval, sum_eq_sum, sum_eq_sum,
+        rw [smul_apply, smul_apply, sum_apply, sum_apply, sum_def, sum_def,
           Finset.sum_subset (support_structureConstants_subset R D₁.rep D₂.rep)
             (fun E _ hE ↦ by
               simp [apply_eq_zero_of_notMem_support _ hE, zero_apply]),

@@ -315,11 +315,39 @@ end SingleModule
 
 `HeckeCosetModule` is a `def` over `Finsupp`, so Mathlib's `Finsupp` evaluation lemmas hold
 definitionally but neither `rw` nor `simp` can match them through the wrapper. These are the
-wrapper-level restatements; without them every consumer re-derives its own private copies. -/
+wrapper-level restatements; without them every consumer re-derives its own private copies.
+Each is stated at the coefficient assumptions its underlying operation actually needs: the
+`FunLike` coercion and `Finsupp.support` need only `[Zero R]`, while the wrapper's `0`, `+`
+and `•` come from its `AddCommMonoid` and `Module` instances. -/
 
-section Eval
+section EvalSupport
 
-variable {R : Type*} [Semiring R]
+variable {R : Type*} [Zero R]
+
+/-- `Finsupp.mem_support_iff`, at the wrapper type. -/
+@[simp] lemma mem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R} {D : HeckeCoset Δ H₁ H₂} :
+    D ∈ f.support ↔ f D ≠ 0 :=
+  Finsupp.mem_support_iff
+
+/-- `Finsupp.notMem_support_iff`, at the wrapper type. -/
+lemma notMem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R} {D : HeckeCoset Δ H₁ H₂} :
+    D ∉ f.support ↔ f D = 0 :=
+  Finsupp.notMem_support_iff
+
+/-- The elimination direction of `notMem_support_iff`. -/
+lemma apply_eq_zero_of_notMem_support (f : HeckeCosetModule Δ H₁ H₂ R)
+    {D : HeckeCoset Δ H₁ H₂} (h : D ∉ f.support) : f D = 0 :=
+  notMem_support_iff.mp h
+
+/-- `Finsupp.sum` unfolded to a `Finset.sum`, at the wrapper type. -/
+lemma sum_def {N : Type*} [AddCommMonoid N] (f : HeckeCosetModule Δ H₁ H₂ R)
+    (F : HeckeCoset Δ H₁ H₂ → R → N) : f.sum F = ∑ D ∈ f.support, F D (f D) := (rfl)
+
+end EvalSupport
+
+section EvalAdd
+
+variable {R : Type*} [AddCommMonoid R]
 
 /-- `Finsupp.zero_apply`, at the wrapper type. -/
 @[simp] lemma zero_apply (D : HeckeCoset Δ H₁ H₂) :
@@ -329,25 +357,22 @@ variable {R : Type*} [Semiring R]
 @[simp] lemma add_apply (f g : HeckeCosetModule Δ H₁ H₂ R) (D : HeckeCoset Δ H₁ H₂) :
     (f + g) D = f D + g D := (rfl)
 
-/-- `Finsupp.smul_apply`, at the wrapper type. -/
-@[simp] lemma smul_apply (a : R) (f : HeckeCosetModule Δ H₁ H₂ R) (D : HeckeCoset Δ H₁ H₂) :
-    (a • f) D = a * f D := (rfl)
-
-/-- `Finsupp.notMem_support_iff`, at the wrapper type. -/
-lemma apply_eq_zero_of_notMem_support (f : HeckeCosetModule Δ H₁ H₂ R)
-    {D : HeckeCoset Δ H₁ H₂} (h : D ∉ f.support) : f D = 0 :=
-  Finsupp.notMem_support_iff.mp h
-
-/-- `Finsupp.sum` unfolded to a `Finset.sum`, at the wrapper type. -/
-lemma sum_eq_sum {N : Type*} [AddCommMonoid N] (f : HeckeCosetModule Δ H₁ H₂ R)
-    (F : HeckeCoset Δ H₁ H₂ → R → N) : f.sum F = ∑ D ∈ f.support, F D (f D) := (rfl)
-
 /-- `Finsupp.sum_apply`, at the wrapper type: evaluation commutes with a `Finsupp.sum`. -/
-lemma sum_apply_eval {H₃ H₄ : Subgroup G} (f : HeckeCosetModule Δ H₁ H₂ R)
+@[simp] lemma sum_apply {H₃ H₄ : Subgroup G} (f : HeckeCosetModule Δ H₁ H₂ R)
     (F : HeckeCoset Δ H₁ H₂ → R → HeckeCosetModule Δ H₃ H₄ R) (D : HeckeCoset Δ H₃ H₄) :
     (f.sum F) D = f.sum fun E c ↦ F E c D :=
   Finsupp.sum_apply
 
-end Eval
+end EvalAdd
+
+section EvalSMul
+
+variable {R : Type*} [Semiring R]
+
+/-- `Finsupp.smul_apply`, at the wrapper type. -/
+@[simp] lemma smul_apply (a : R) (f : HeckeCosetModule Δ H₁ H₂ R) (D : HeckeCoset Δ H₁ H₂) :
+    (a • f) D = a * f D := (rfl)
+
+end EvalSMul
 
 end HeckeCosetModule
