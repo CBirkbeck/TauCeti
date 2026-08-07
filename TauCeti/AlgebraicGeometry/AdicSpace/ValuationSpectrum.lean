@@ -34,6 +34,11 @@ We define the valuation spectrum `Spv A` following Wedhorn, *Adic Spaces*
 
 * T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, Definition 4.1, Remark 4.3, Remark 4.4,
   Proposition 4.7(2)
+
+Ported from the open Mathlib pull request
+[leanprover-community/mathlib4#38009](https://github.com/leanprover-community/mathlib4/pull/38009)
+(which supersedes an earlier draft in AINTLIB `projects/AdicSpaces`); this copy is deleted in
+favour of the Mathlib declarations once that pull request reaches the pinned Mathlib.
 -/
 
 public section
@@ -73,9 +78,13 @@ lemma ofValuation_eq_of_isEquiv {Γ₀ : Type*} [LinearOrderedCommGroupWithZero 
   ext' fun x y ↦ h x y
 
 /-- The basic open subset `Spv(A)(f/s) = {v ∈ Spv A | v(f) ≤ v(s) ∧ v(s) ≠ 0}`. -/
-@[expose]
 def basicOpen (f s : A) : Set (Spv A) :=
   {v | v.toValuativeRel.vle f s ∧ ¬ v.toValuativeRel.vle s 0}
+
+/-- Membership in the basic open subset `Spv(A)(f/s)`, as a normal form. -/
+@[simp]
+lemma mem_basicOpen_iff (f s : A) (v : Spv A) :
+    v ∈ basicOpen f s ↔ v.toValuativeRel.vle f s ∧ ¬ v.toValuativeRel.vle s 0 := Iff.rfl
 
 /-- Scaling numerator and denominator by `t` shrinks the basic open subset:
 `Spv(A)(tf/ts) ⊆ Spv(A)(f/s)`. -/
@@ -114,16 +123,19 @@ def comap (φ : A →+* B) (v : Spv B) : Spv A :=
 
 @[simp]
 lemma comap_vle (φ : A →+* B) (v : Spv B) {a₁ a₂ : A} :
-    (comap φ v).toValuativeRel.vle a₁ a₂ = v.toValuativeRel.vle (φ a₁) (φ a₂) := rfl
+    (comap φ v).toValuativeRel.vle a₁ a₂ = v.toValuativeRel.vle (φ a₁) (φ a₂) :=
+  propext (ValuativeRel.comap_vle φ v.toValuativeRel a₁ a₂)
 
 @[simp]
 lemma comap_vlt (φ : A →+* B) (v : Spv B) {a₁ a₂ : A} :
-    (comap φ v).toValuativeRel.vlt a₁ a₂ = v.toValuativeRel.vlt (φ a₁) (φ a₂) := rfl
+    (comap φ v).toValuativeRel.vlt a₁ a₂ = v.toValuativeRel.vlt (φ a₁) (φ a₂) :=
+  propext (ValuativeRel.comap_vlt φ v.toValuativeRel a₁ a₂)
 
 /-- `comap` is compatible with `ofValuation`. -/
 lemma comap_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (φ : A →+* B) (v : Valuation B Γ₀) :
-    comap φ (ofValuation v) = ofValuation (v.comap φ) := rfl
+    comap φ (ofValuation v) = ofValuation (v.comap φ) :=
+  ext' fun x y ↦ ValuativeRel.comap_vle φ (ValuativeRel.ofValuation v) x y
 
 /-- The preimage of `Spv(A)(f/s)` under `comap φ` is `Spv(B)(φ(f)/φ(s))`. -/
 lemma comap_preimage_basicOpen (φ : A →+* B) (f s : A) :
@@ -132,7 +144,7 @@ lemma comap_preimage_basicOpen (φ : A →+* B) (f s : A) :
   simp [basicOpen]
 
 /-- `comap φ` is continuous. -/
-lemma comap_continuous (φ : A →+* B) : Continuous (comap φ) :=
+lemma continuous_comap (φ : A →+* B) : Continuous (comap φ) :=
   continuous_generateFrom_iff.mpr fun _ ⟨f, s, hU⟩ ↦
     hU ▸ comap_preimage_basicOpen φ f s ▸
       TopologicalSpace.isOpen_generateFrom_of_mem ⟨φ f, φ s, rfl⟩
@@ -206,7 +218,7 @@ section Quotient
 variable (𝔞 : Ideal A)
 
 /-- `𝔞 ≤ supp(comap(mk 𝔞, w))` for all `w : Spv (A ⧸ 𝔞)`. -/
-lemma ideal_le_supp_comap_mk (w : Spv (A ⧸ 𝔞)) :
+lemma self_le_supp_comap (w : Spv (A ⧸ 𝔞)) :
     𝔞 ≤ (comap (Ideal.Quotient.mk 𝔞) w).supp :=
   fun a ha ↦ by simp [Ideal.Quotient.eq_zero_iff_mem.mpr ha]
 
@@ -222,19 +234,20 @@ lemma comap_quotientLift ⦃v : Spv A⦄ (h : 𝔞 ≤ v.supp) :
     Valuation.onQuot_comap_eq v.valuation (v.supp_eq_valuation_supp ▸ h)]
   exact ofValuation_valuation v
 
-/-- `quotientLift 𝔞 (ideal_le_supp_comap_mk 𝔞 w) = w`. -/
+/-- `quotientLift 𝔞 (self_le_supp_comap 𝔞 w) = w`. -/
 lemma quotientLift_comap (w : Spv (A ⧸ 𝔞)) :
-    quotientLift 𝔞 (ideal_le_supp_comap_mk 𝔞 w) = w := by
+    quotientLift 𝔞 (self_le_supp_comap 𝔞 w) = w := by
   refine ext' fun x y ↦ ?_
   obtain ⟨a₁, rfl⟩ := Ideal.Quotient.mk_surjective x
   obtain ⟨a₂, rfl⟩ := Ideal.Quotient.mk_surjective y
   let : ValuativeRel A := ValuativeRel.comap (Ideal.Quotient.mk 𝔞) w.toValuativeRel
-  exact (ValuativeRel.valuation A).vle_iff_le.symm
+  exact (ValuativeRel.valuation A).vle_iff_le.symm.trans
+    (ValuativeRel.comap_vle (Ideal.Quotient.mk 𝔞) w.toValuativeRel a₁ a₂)
 
 /-- The range of `comap (mk 𝔞)` is `{v ∈ Spv A | 𝔞 ≤ supp v}`. -/
 lemma comap_quotient_range :
     Set.range (comap (Ideal.Quotient.mk 𝔞)) = {v : Spv A | 𝔞 ≤ v.supp} :=
-  Set.ext fun _ ↦ ⟨fun ⟨w, hw⟩ ↦ hw ▸ ideal_le_supp_comap_mk 𝔞 w,
+  Set.ext fun _ ↦ ⟨fun ⟨w, hw⟩ ↦ hw ▸ self_le_supp_comap 𝔞 w,
     fun h ↦ ⟨quotientLift 𝔞 h, comap_quotientLift 𝔞 h⟩⟩
 
 /-- `comap (mk 𝔞) : Spv (A ⧸ 𝔞) → Spv A` is a topological embedding. -/
@@ -259,24 +272,38 @@ section Localization
 
 variable (S : Submonoid A) (B : Type*) [CommRing B] [Algebra A B] [IsLocalization S B]
 
+/-- Transport `S ≤ (supp v).primeCompl` along `supp_eq_valuation_supp` to the support of the
+canonical valuation of `v`. -/
+lemma le_valuation_supp_primeCompl {v : Spv A} (hS : S ≤ v.supp.primeCompl) :
+    S ≤ v.valuation.supp.primeCompl := by
+  intro s hs
+  change s ∉ _
+  rw [← v.supp_eq_valuation_supp]
+  exact hS hs
+
 /-- Send `v ∈ Spv A` with `S ≤ (supp v).primeCompl` to the localization `Spv B`, where `B` is a
 localization of `A` at the submonoid `S`. -/
 noncomputable def localizationComapSection (v : Spv A) (hS : S ≤ v.supp.primeCompl) : Spv B :=
-  have hS' : S ≤ v.valuation.supp.primeCompl := by
-    intro s hs; change s ∉ _
-    rw [← v.supp_eq_valuation_supp]; exact hS hs
-  ofValuation (v.valuation.extendToLocalization hS' B)
+  ofValuation (v.valuation.extendToLocalization (le_valuation_supp_primeCompl S hS) B)
+
+/-- The defining equation of `localizationComapSection`. -/
+private lemma localizationComapSection_def (v : Spv A) (hS : S ≤ v.supp.primeCompl) :
+    localizationComapSection S B v hS
+      = ofValuation (v.valuation.extendToLocalization (le_valuation_supp_primeCompl S hS) B) :=
+  rfl
+
+/-- Pulling the extended valuation of `Valuation.extendToLocalization` back along the algebra
+map recovers the original valuation. -/
+private lemma extendToLocalization_comap_algebraMap (v : Spv A)
+    (hS : S ≤ v.valuation.supp.primeCompl) :
+    (v.valuation.extendToLocalization hS B).comap (algebraMap A B) = v.valuation :=
+  Valuation.ext fun a ↦ Valuation.extendToLocalization_apply_map_apply _ hS B a
 
 /-- `comap (algebraMap A B) (localizationComapSection S B v hS) = v`. -/
 lemma comap_localizationComapSection (v : Spv A) (hS : S ≤ v.supp.primeCompl) :
     comap (algebraMap A B) (localizationComapSection S B v hS) = v := by
-  have hS' : S ≤ v.valuation.supp.primeCompl := by
-    intro s hs; change s ∉ _
-    rw [← v.supp_eq_valuation_supp]; exact hS hs
-  change comap (algebraMap A B) (ofValuation (v.valuation.extendToLocalization hS' B)) = v
-  rw [comap_ofValuation,
-    show (v.valuation.extendToLocalization hS' B).comap (algebraMap A B) = v.valuation from
-      Valuation.ext fun a ↦ Valuation.extendToLocalization_apply_map_apply _ hS' B a]
+  rw [localizationComapSection_def, comap_ofValuation,
+    extendToLocalization_comap_algebraMap S B v (le_valuation_supp_primeCompl S hS)]
   exact ofValuation_valuation v
 
 /-- `S` is disjoint from `supp(comap(algebraMap, w))` for `w : Spv B`. -/
@@ -314,7 +341,7 @@ lemma suppFun_preimage_basicOpen (f : A) :
   simp [basicOpen_self, mem_supp_iff]
 
 /-- `suppFun` is continuous. -/
-theorem suppFun_continuous : Continuous (suppFun : Spv A → PrimeSpectrum A) :=
+theorem continuous_suppFun : Continuous (suppFun : Spv A → PrimeSpectrum A) :=
   PrimeSpectrum.isTopologicalBasis_basic_opens.continuous_iff.mpr fun _ ⟨f, hf⟩ ↦
     hf ▸ suppFun_preimage_basicOpen f ▸
       TopologicalSpace.isOpen_generateFrom_of_mem ⟨f, f, rfl⟩
