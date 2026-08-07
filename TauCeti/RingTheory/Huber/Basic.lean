@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.Finiteness.Defs
+public import Mathlib.RingTheory.Finiteness.Basic
 public import Mathlib.Topology.Algebra.Nonarchimedean.AdicTopology
 public import TauCeti.RingTheory.Huber.PowerBounded
 
@@ -39,7 +39,10 @@ Huber ring is nonarchimedean, which is exactly the hypothesis under which
   boundedness half of Wedhorn Corollary 6.4.
 * `TauCeti.Huber.isOpen_powerBoundedSubring`: `A°` is open in a Huber ring.
 * `TauCeti.Huber.IsPseudoUniformizer.hasBasis_nhds_zero`: for a pseudouniformiser `ϖ` and a ring
-  of definition `A₀` of a Tate ring, the sets `ϖⁿ A₀` are a neighbourhood basis of zero.
+  of definition `A₀` of a Tate ring, the sets `ϖⁿ A₀` are a neighbourhood basis of zero; the
+  Tate-ring form is `TauCeti.Huber.IsTateRing.exists_hasBasis_nhds_zero`.
+* `TauCeti.Huber.IsHuberRing.of_discreteTopology`: a discrete ring is Huber, the first of the
+  roadmap's Layer-0 examples.
 
 ## Implementation notes
 
@@ -82,7 +85,11 @@ class IsHuberRing (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRi
   /-- A Huber ring admits at least one pair of definition. -/
   nonempty_pairOfDefinition : Nonempty (PairOfDefinition A)
 
-/-- A *pseudouniformiser* of a topological ring is a topologically nilpotent unit. -/
+/-- A *pseudouniformiser* of a topological ring is a topologically nilpotent unit.
+
+This is the topological notion, unrelated to Mathlib's `Valuation.IsUniformizer`, which asks a
+*discretely valued* field's element to have valuation the generator of the value group. A Tate
+ring need carry no valuation at all. -/
 def IsPseudoUniformizer {A : Type*} [CommRing A] [TopologicalSpace A] (a : A) : Prop :=
   IsUnit a ∧ IsTopologicallyNilpotent a
 
@@ -159,6 +166,25 @@ theorem le_powerBoundedSubring [NonarchimedeanRing A] (P : PairOfDefinition A) :
 
 end PairOfDefinition
 
+section Discrete
+
+variable (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] [DiscreteTopology A]
+
+/-- The pair of definition of a discrete ring: the whole ring, with the zero ideal. -/
+def PairOfDefinition.discrete : PairOfDefinition A where
+  ringOfDefinition := ⊤
+  isOpen_ringOfDefinition := by simp
+  ideal := ⊥
+  fg_ideal := Submodule.fg_bot
+  isAdic_ideal := is_bot_adic_iff.mpr inferInstance
+
+/-- A discrete ring is Huber, with `(A, 0)` as a pair of definition. This is the first of the
+roadmap's Layer-0 examples, and the witness that `IsHuberRing` is not vacuous. -/
+instance (priority := 100) IsHuberRing.of_discreteTopology : IsHuberRing A :=
+  ⟨⟨PairOfDefinition.discrete A⟩⟩
+
+end Discrete
+
 section HuberRing
 
 variable (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] [IsHuberRing A]
@@ -231,6 +257,15 @@ theorem hasBasis_nhds_zero (P : PairOfDefinition A) :
     exact Filter.mem_of_superset (ha.smul_ringOfDefinition_mem_nhds_zero P n) hn
 
 end IsPseudoUniformizer
+
+/-- In a Tate ring one may choose a pseudouniformiser `ϖ` and a ring of definition `A₀` whose
+scaled copies `ϖⁿ A₀` are a neighbourhood basis of zero. -/
+theorem IsTateRing.exists_hasBasis_nhds_zero (A : Type*) [CommRing A] [TopologicalSpace A]
+    [IsTopologicalRing A] [IsTateRing A] : ∃ (a : A) (P : PairOfDefinition A),
+      (𝓝 (0 : A)).HasBasis (fun _ : ℕ ↦ True) fun n ↦ (a ^ n) • (P.ringOfDefinition : Set A) := by
+  obtain ⟨a, ha⟩ := IsTateRing.exists_isPseudoUniformizer (A := A)
+  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
+  exact ⟨a, P, ha.hasBasis_nhds_zero P⟩
 
 end Tate
 
