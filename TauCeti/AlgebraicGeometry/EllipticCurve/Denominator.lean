@@ -19,13 +19,15 @@ prime element — the form in which the Nagell–Lutz integrality argument uses 
 root theorem has already bounded `den x` by a prime.
 
 This is weaker than the classical statement for a short model `y² = x³ + Ax + B` over `ℤ`, that
-`den x = d²` and `den y = d³` for some `d` — that needs the `q`-adic valuations to be *even*, not
-merely at least `2`, and goes through the formal group rather than the elementary descent below.
+`den x = d²` and `den y = d³` for some `d`: that needs each `q`-adic valuation of `den x` to be
+*even*, not merely at least `2`. For a short model that parity follows from comparing valuations
+across `y² = x³ + Ax + B`; no such argument is carried out here, and the statement below is the
+weaker one the Nagell–Lutz route consumes.
 
-The reason is a three-step descent. Clearing denominators in the Weierstrass equation gives an
-identity in `R`; if a prime `q` divides `den x` exactly once, then reducing that identity modulo
-successive powers of `q` forces `q` to divide `den y` three times over, and finally to divide
-`num y` as well — contradicting the reducedness of `y`.
+The proof is a descent in three steps. Clearing denominators in the Weierstrass equation gives an
+identity in `R`; if a prime `q` divides `den x` exactly once, then dividing that identity by
+successive powers of `q` forces `q ^ 2 ∣ den y` and then `q ∣ num y` — contradicting the reducedness
+of `y`.
 
 ## Main results
 
@@ -64,8 +66,8 @@ divisors — no fraction field, no curve.
 
 The hypothesis is the Weierstrass equation of `(γ / (q * u), e)` with denominators cleared, the
 cubic in the numerator of the `x`-coordinate split as `α ^ 3 + q * c`. Dividing the identity by
-`q ^ 2` and then by `q` in turn shows that `q` divides `e` three times over and divides `γ`, so
-`γ / e` is not in lowest terms. -/
+`q ^ 2` and then by `q` in turn shows `q ^ 2 ∣ e` and then `q ∣ γ`, so `γ / e` is not in lowest
+terms. -/
 private lemma not_isRelPrime_of_cleared_equation {q u γ e α c A B : R} (hq : Prime q)
     (hu : ¬q ∣ u) (hα : ¬q ∣ α) (h : γ ^ 2 * (q * u) ^ 3 + A * (q * u) ^ 2 * e
       + B * (q * u) ^ 3 * e = e ^ 2 * (α ^ 3 + q * c)) : ¬IsRelPrime γ e := by
