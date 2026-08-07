@@ -400,7 +400,7 @@ private lemma exists_shift_isCoprime (a c : ℤ) (l : ℕ) [NeZero l]
   by_cases hpa : (p : ℤ) ∣ a
   · rcases hp_isPrime.dvd_mul.mp (by simpa using dvd_sub hpa hp_dvd_x_int) with h | h
     · exact not_dvd_primeProductCoprime_of_dvd hp_prime hpa h
-    · exact hp_isPrime.not_unit (hac.isUnit_of_dvd' hpa h)
+    · exact hp_isPrime.not_isUnit (hac.isUnit_of_dvd' hpa h)
   · refine hpa ?_
     simpa using dvd_add hp_dvd_x_int
       ((dvd_primeProductCoprime_of_not_dvd
