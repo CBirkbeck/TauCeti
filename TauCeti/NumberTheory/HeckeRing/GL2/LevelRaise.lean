@@ -511,10 +511,9 @@ theorem qExpansion_modularFormLevelRaise_coeff'
           Function.Periodic.qParam h (τ : ℂ) ^ j)
         (modularFormLevelRaise N d k f τ) := fun τ ↦ by
     rw [modularFormLevelRaise_apply N d k f τ]
-    have hfsum := UpperHalfPlane.hasSum_qExpansion (f := ⇑f) hh_pos
-        (SlashInvariantFormClass.periodic_comp_ofComplex f hh_period_N)
-        (ModularFormClass.holo f) (ModularFormClass.bdd_at_infty f)
-        (levelRaiseMatrix d • τ)
+    have hfsum := ModularForm.hasSum_qExpansion f hh_pos hh_period_N
+      (levelRaiseMatrix d • τ)
+    simp only [← smul_eq_mul] at hfsum
     rw [coe_levelRaiseMatrix_smul d τ, qParam_nat_mul_eq_pow h d (τ : ℂ)] at hfsum
     convert hasSum_pow_dvd_reindex (Nat.pos_of_neZero d) hfsum using 1
     funext j
