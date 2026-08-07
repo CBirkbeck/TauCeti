@@ -7,10 +7,10 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 
 /-!
-# Divisibility of the discriminant by the square of `ψ₂` at a point
+# Divisibility of `4Δ` by the square of `ψ₂` at a point
 
-This is the second half of Nagell–Lutz: not that a torsion point is integral, but that its
-`y`-coordinate is constrained by the discriminant. For a point `(x, y)` on a Weierstrass curve `W`
+This is the algebraic content of the second half of Nagell–Lutz — that a point's `y`-coordinate is
+constrained by the discriminant. For a point `(x, y)` on a Weierstrass curve `W`
 over a commutative ring, write `κ = ψ₂(x, y) = 2y + a₁x + a₃` — Mathlib's `2`-division polynomial
 evaluated at the point. The theorem here is that if `κ² ∣ 4·Ψ₃(x)`, then either `κ = 0` or
 `κ² ∣ 4Δ`.
@@ -31,9 +31,12 @@ dividing both `κ²` and `4·Ψ₃(x)` divides `4Δ`.
 * `TauCeti.WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ`: on the curve, if
   `ψ₂(x, y)² ∣ 4·Ψ₃(x)` then `ψ₂(x, y) = 0` or `ψ₂(x, y)² ∣ 4Δ`.
 
-Stated over an arbitrary commutative ring: no domain, integrality or ellipticity hypothesis. The
-hypothesis `κ² ∣ 4·Ψ₃(x)` is what a torsion point supplies, through the coordinate formula for
-`2 • P`; that derivation is not part of this file.
+Stated over an arbitrary commutative ring: no domain, integrality or ellipticity hypothesis.
+
+⚠ **No torsion hypothesis appears here, and no part of `lutz_nagell` is proved.** The input
+`κ² ∣ 4·Ψ₃(x)` is what a torsion point would supply, through the coordinate formula for `2 • P` —
+but that derivation needs the point-level `[n]`-multiplication material (mathlib-track) and is not
+in this file. What follows is the algebraic implication alone.
 
 This advances the Nagell–Lutz milestone of `TauCetiRoadmap/EllipticCurves/README.md`, Layer 6,
 item "The torsion subgroup and Nagell–Lutz", whose short-model target `lutz_nagell` asks for
