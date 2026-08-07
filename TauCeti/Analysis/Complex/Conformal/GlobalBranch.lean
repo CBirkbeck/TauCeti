@@ -180,8 +180,8 @@ private lemma exists_continuous_path_dist_lt {w : ℂ} {r : ℝ} (hδ : Continuo
 
 /-- **The key step behind the monodromy theorem.** Given, for each `w ∈ U`, a chosen path `γ w`
 from `z₀` to `w` and a continuation `f w` along it, the candidate branch `w ↦ f w 1 w` agrees near
-the endpoint of *any* continuation `g` along *any* path `δ` from `z₀` with that continuation's
-terminal germ.
+the endpoint of *any* continuation `g` along *any* path `δ` that starts at `z₀` and stays in `U`,
+with that continuation's terminal germ.
 
 This is what makes the branch well defined: it says the value produced by the chosen paths does not
 depend on the choice. -/
