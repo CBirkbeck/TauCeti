@@ -87,17 +87,17 @@ noncomputable local instance (t : YoungTableau μ) : DecidablePred (· ∈ colSu
 
 /-! ### James's lemma: the column antisymmetrizer of a tabloid -/
 
-/-- **The vanishing case of James's lemma.** If a row of `relabel σ t` meets a column of `t` twice,
-the transposition of the two shared labels fixes the tabloid while `b_t` sees its sign, so the
-image is its own negative and hence zero. -/
-private theorem asAlgebraHom_columnAntisymmetrizer_single_eq_zero (t : YoungTableau μ)
-    {σ : Equiv.Perm (Fin μ.card)} (h : RowMeetsColumnTwice (relabel σ t) t) :
+/-- The column antisymmetrizer of `t` annihilates the tabloid of `s` when some row of `s` meets
+some column of `t` twice. -/
+private theorem asAlgebraHom_columnAntisymmetrizer_single_eq_zero (s t : YoungTableau μ)
+    (h : RowMeetsColumnTwice s t) :
     (permutationModule (shapePartition μ)).ρ.asAlgebraHom (columnAntisymmetrizer t)
-      (MonoidAlgebra.single (tabloid (relabel σ t)) 1) = 0 := by
+      (MonoidAlgebra.single (tabloid s) 1) = 0 := by
+  -- The transposition of the two shared labels fixes the tabloid but negates `b_t`, so the
+  -- image is its own negative; over `ℚ` that forces it to vanish.
   obtain ⟨x, y, hxy, hrow, hcol⟩ := (rowMeetsColumnTwice_def _ _).mp h
   have hfix : (permutationModule (shapePartition μ)).ρ (Equiv.swap x y)
-      (MonoidAlgebra.single (tabloid (relabel σ t)) (1 : ℚ)) =
-      MonoidAlgebra.single (tabloid (relabel σ t)) 1 := by
+      (MonoidAlgebra.single (tabloid s) (1 : ℚ)) = MonoidAlgebra.single (tabloid s) 1 := by
     rw [Representation.ofMulAction_single,
       smul_tabloid_eq_self_iff.mpr (swap_mem_rowSubgroup hrow)]
   have hneg : columnAntisymmetrizer t * MonoidAlgebra.single (Equiv.swap x y) (1 : ℚ) =
@@ -106,29 +106,31 @@ private theorem asAlgebraHom_columnAntisymmetrizer_single_eq_zero (t : YoungTabl
       Equiv.Perm.sign_swap hxy]
     simp
   have key : (permutationModule (shapePartition μ)).ρ.asAlgebraHom (columnAntisymmetrizer t)
-        (MonoidAlgebra.single (tabloid (relabel σ t)) 1) =
+        (MonoidAlgebra.single (tabloid s) 1) =
       -((permutationModule (shapePartition μ)).ρ.asAlgebraHom (columnAntisymmetrizer t)
-        (MonoidAlgebra.single (tabloid (relabel σ t)) 1)) := by
+        (MonoidAlgebra.single (tabloid s) 1)) := by
     conv_lhs => rw [← hfix]
     rw [← Representation.asAlgebraHom_single_one (permutationModule (shapePartition μ)).ρ,
       ← Module.End.mul_apply, ← map_mul, hneg, map_neg, LinearMap.neg_apply]
   have h2 : (2 : ℚ) •
       (permutationModule (shapePartition μ)).ρ.asAlgebraHom (columnAntisymmetrizer t)
-        (MonoidAlgebra.single (tabloid (relabel σ t)) 1) = 0 := by
+        (MonoidAlgebra.single (tabloid s) 1) = 0 := by
     rw [two_smul]
     nth_rewrite 2 [key]
     exact add_neg_cancel _
   exact (smul_eq_zero.mp h2).resolve_left (by norm_num)
 
-/-- **The sign case of James's lemma.** If no row of `relabel σ t` meets a column of `t` twice,
-then `σ⁻¹` factors through the row and column groups of `t`; the row part fixes `{t}` and `b_t`
-absorbs the column part by its sign. -/
-private theorem asAlgebraHom_columnAntisymmetrizer_single_eq_sign_smul (t : YoungTableau μ)
+/-- When no row of `relabel σ t` meets a column of `t` twice, the column antisymmetrizer of `t`
+sends the tabloid of `relabel σ t` to a signed multiple of the polytabloid `e_t`, the sign being
+that of some permutation. -/
+private theorem exists_asAlgebraHom_columnAntisymmetrizer_single_eq_sign_smul (t : YoungTableau μ)
     {σ : Equiv.Perm (Fin μ.card)} (h : ¬ RowMeetsColumnTwice (relabel σ t) t) :
     ∃ q : Equiv.Perm (Fin μ.card),
       (permutationModule (shapePartition μ)).ρ.asAlgebraHom (columnAntisymmetrizer t)
         (MonoidAlgebra.single (tabloid (relabel σ t)) 1)
           = ((Equiv.Perm.sign q : ℤ) : ℚ) • polytabloid t := by
+  -- `σ⁻¹` factors as a row permutation times a column permutation; the row part fixes `{t}`,
+  -- and `b_t` absorbs the column part `q⁻¹` by its sign.
   rw [rowMeetsColumnTwice_relabel_left_iff] at h
   obtain ⟨p, hp, q, hq, hpq⟩ := Set.mem_mul.mp (mem_mul_of_not_rowMeetsColumnTwice h)
   have hσ : σ = q⁻¹ * p⁻¹ := by rw [← mul_inv_rev, hpq, inv_inv]
@@ -159,8 +161,8 @@ theorem exists_eq_smul_polytabloid_single (t : YoungTableau μ)
   obtain ⟨σ, rfl⟩ := exists_relabel_eq t s
   by_cases h : RowMeetsColumnTwice (relabel σ t) t
   · exact ⟨0, Or.inl rfl, by
-      rw [zero_smul]; exact asAlgebraHom_columnAntisymmetrizer_single_eq_zero t h⟩
-  · obtain ⟨q, hq⟩ := asAlgebraHom_columnAntisymmetrizer_single_eq_sign_smul t h
+      rw [zero_smul]; exact asAlgebraHom_columnAntisymmetrizer_single_eq_zero _ t h⟩
+  · obtain ⟨q, hq⟩ := exists_asAlgebraHom_columnAntisymmetrizer_single_eq_sign_smul t h
     exact ⟨_, Or.inr (by rcases Int.units_eq_one_or (Equiv.Perm.sign q) with h | h <;> simp [h]),
       hq⟩
 
