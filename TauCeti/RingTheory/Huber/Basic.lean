@@ -1,0 +1,237 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import Mathlib.RingTheory.Finiteness.Defs
+public import Mathlib.Topology.Algebra.Nonarchimedean.AdicTopology
+public import TauCeti.RingTheory.Huber.PowerBounded
+
+/-!
+# Huber rings and Tate rings
+
+A *pair of definition* for a topological ring `A` is an open subring `A₀ ⊆ A` together with a
+finitely generated ideal `I ⊆ A₀` whose adic topology is the subspace topology of `A₀`. A ring
+admitting one is a *Huber ring* (Wedhorn's *f-adic* ring), and a Huber ring containing a
+topologically nilpotent unit is a *Tate ring*.
+
+Everything the later layers use about the topology of a Huber ring comes from one statement: the
+images in `A` of the powers `Iⁿ` are a neighbourhood basis of zero
+(`TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero`). They are open additive subgroups, so a
+Huber ring is nonarchimedean, which is exactly the hypothesis under which
+`TauCeti/RingTheory/Huber/PowerBounded.lean` makes `A°` a subring.
+
+## Main definitions
+
+* `TauCeti.Huber.PairOfDefinition`: a pair of definition `(A₀, I)` for `A`.
+* `TauCeti.Huber.IsHuberRing`: `A` admits a pair of definition.
+* `TauCeti.Huber.IsTateRing`: a Huber ring with a topologically nilpotent unit.
+* `TauCeti.Huber.IsPseudoUniformizer`: a topologically nilpotent unit of `A`.
+
+## Main results
+
+* `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero`: the images of `Iⁿ` are a neighbourhood
+  basis of zero.
+* `TauCeti.Huber.IsHuberRing.toNonarchimedeanRing`: a Huber ring is nonarchimedean.
+* `TauCeti.Huber.PairOfDefinition.isBounded_ringOfDefinition`: a ring of definition is bounded,
+  hence `A₀ ≤ A°` (`TauCeti.Huber.PairOfDefinition.le_powerBoundedSubring`). This is the
+  boundedness half of Wedhorn Corollary 6.4.
+* `TauCeti.Huber.isOpen_powerBoundedSubring`: `A°` is open in a Huber ring.
+* `TauCeti.Huber.IsPseudoUniformizer.hasBasis_nhds_zero`: for a pseudouniformiser `ϖ` and a ring
+  of definition `A₀` of a Tate ring, the sets `ϖⁿ A₀` are a neighbourhood basis of zero.
+
+## Implementation notes
+
+The pair of definition is *data*, not a `Prop`-valued field of the ring: a Huber ring has many
+pairs of definition and later layers choose between them. `IsHuberRing` is the `Prop` asserting
+that the type of pairs is nonempty, in the shape used by mathlib4#42312.
+
+## References
+
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition and Definition 6.1, Lemma 6.2 and
+  Corollary 6.4.
+-/
+
+@[expose] public section
+
+open Filter Pointwise Topology
+
+namespace TauCeti.Huber
+
+/-- A *pair of definition* `(A₀, I)` for a topological ring `A`: an open subring `A₀` together
+with a finitely generated ideal `I` of `A₀` whose adic topology is the subspace topology.
+
+This is data rather than a proposition, because a Huber ring generally has many pairs of
+definition and the later theory chooses among them. -/
+structure PairOfDefinition (A : Type*) [CommRing A] [TopologicalSpace A] where
+  /-- The ring of definition `A₀`. -/
+  ringOfDefinition : Subring A
+  /-- The ring of definition is open in `A`. -/
+  isOpen_ringOfDefinition : IsOpen (ringOfDefinition : Set A)
+  /-- The ideal of definition `I ⊆ A₀`. -/
+  ideal : Ideal ringOfDefinition
+  /-- The ideal of definition is finitely generated. -/
+  fg_ideal : ideal.FG
+  /-- The subspace topology on `A₀` is the `I`-adic topology. -/
+  isAdic_ideal : IsAdic ideal
+
+/-- A topological ring is a *Huber ring* — Wedhorn's *f-adic* ring — if it admits a pair of
+definition. -/
+class IsHuberRing (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] : Prop where
+  /-- A Huber ring admits at least one pair of definition. -/
+  nonempty_pairOfDefinition : Nonempty (PairOfDefinition A)
+
+/-- A *pseudouniformiser* of a topological ring is a topologically nilpotent unit. -/
+def IsPseudoUniformizer {A : Type*} [CommRing A] [TopologicalSpace A] (a : A) : Prop :=
+  IsUnit a ∧ IsTopologicallyNilpotent a
+
+/-- A *Tate ring* is a Huber ring containing a pseudouniformiser, that is, a topologically
+nilpotent unit. -/
+class IsTateRing (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] : Prop
+    extends IsHuberRing A where
+  /-- A Tate ring contains a topologically nilpotent unit. -/
+  exists_isPseudoUniformizer : ∃ a : A, IsPseudoUniformizer a
+
+namespace PairOfDefinition
+
+variable {A : Type*} [CommRing A] [TopologicalSpace A]
+
+/-- The image in `A` of the `n`-th power of the ideal of definition. These sets are the
+neighbourhood basis of zero of a Huber ring. -/
+def idealImage (P : PairOfDefinition A) (n : ℕ) : AddSubgroup A :=
+  (P.ideal ^ n).toAddSubgroup.map P.ringOfDefinition.subtype.toAddMonoidHom
+
+@[simp]
+theorem coe_idealImage (P : PairOfDefinition A) (n : ℕ) : (P.idealImage n : Set A) =
+    Subtype.val '' ((P.ideal ^ n : Ideal P.ringOfDefinition) : Set P.ringOfDefinition) := rfl
+
+/-- The inclusion of a ring of definition is an open embedding. -/
+theorem isOpenEmbedding_subtypeVal (P : PairOfDefinition A) :
+    IsOpenEmbedding ((↑) : P.ringOfDefinition → A) :=
+  P.isOpen_ringOfDefinition.isOpenEmbedding_subtypeVal
+
+/-- Each `Iⁿ` is open in `A`. -/
+theorem isOpen_idealImage [IsTopologicalRing A] (P : PairOfDefinition A) (n : ℕ) :
+    IsOpen (P.idealImage n : Set A) :=
+  P.isOpenEmbedding_subtypeVal.isOpenMap _ ((isAdic_iff.mp P.isAdic_ideal).1 n)
+
+/-- The image of `Iⁿ` as an open additive subgroup of `A`. -/
+def openAddSubgroup [IsTopologicalRing A] (P : PairOfDefinition A) (n : ℕ) :
+    OpenAddSubgroup A where
+  toAddSubgroup := P.idealImage n
+  isOpen' := P.isOpen_idealImage n
+
+/-- Wedhorn Proposition and Definition 6.1: the images in `A` of the powers of the ideal of
+definition are a neighbourhood basis of zero. -/
+theorem hasBasis_nhds_zero (P : PairOfDefinition A) :
+    (𝓝 (0 : A)).HasBasis (fun _ : ℕ ↦ True) fun n ↦ (P.idealImage n : Set A) := by
+  have hmap : Filter.map ((↑) : P.ringOfDefinition → A) (𝓝 0) = 𝓝 (0 : A) :=
+    P.isOpenEmbedding_subtypeVal.map_nhds_eq 0
+  rw [← hmap]
+  exact P.isAdic_ideal.hasBasis_nhds_zero.map _
+
+/-- A ring admitting a pair of definition is nonarchimedean: the images of the powers of the
+ideal of definition are open subgroups cofinal in the neighbourhoods of zero. -/
+theorem nonarchimedeanRing [IsTopologicalRing A] (P : PairOfDefinition A) :
+    NonarchimedeanRing A where
+  is_nonarchimedean U hU := by
+    obtain ⟨n, -, hn⟩ := P.hasBasis_nhds_zero.mem_iff.mp hU
+    exact ⟨P.openAddSubgroup n, hn⟩
+
+/-- Wedhorn Corollary 6.4: a ring of definition is bounded. The powers of the ideal of definition
+absorb it because each `Iⁿ` is an ideal of `A₀`. -/
+theorem isBounded_ringOfDefinition [IsTopologicalRing A] (P : PairOfDefinition A) :
+    IsBounded (P.ringOfDefinition : Set A) := by
+  intro U hU
+  obtain ⟨n, -, hn⟩ := P.hasBasis_nhds_zero.mem_iff.mp hU
+  refine ⟨P.idealImage n, (P.isOpen_idealImage n).mem_nhds (P.idealImage n).zero_mem, ?_⟩
+  rintro _ ⟨_, ⟨x, hx, rfl⟩, a, ha, rfl⟩
+  exact hn ⟨x * ⟨a, ha⟩, Ideal.mul_mem_right _ _ hx, rfl⟩
+
+/-- A ring of definition consists of power-bounded elements: `A₀ ≤ A°`. The nonarchimedean
+hypothesis is only needed to state it, since `P` itself supplies one. -/
+theorem le_powerBoundedSubring [NonarchimedeanRing A] (P : PairOfDefinition A) :
+    P.ringOfDefinition ≤ powerBoundedSubring A := fun a ha ↦
+  P.isBounded_ringOfDefinition.subset (by
+    rintro _ ⟨n, rfl⟩
+    exact P.ringOfDefinition.pow_mem ha n)
+
+end PairOfDefinition
+
+section HuberRing
+
+variable (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] [IsHuberRing A]
+
+/-- Every Huber ring is nonarchimedean. This is what makes `A°` a subring. -/
+instance (priority := 100) IsHuberRing.toNonarchimedeanRing : NonarchimedeanRing A :=
+  IsHuberRing.nonempty_pairOfDefinition.elim fun P ↦ P.nonarchimedeanRing
+
+/-- Wedhorn Corollary 6.4: the power-bounded subring of a Huber ring is open, because it contains
+the open subgroup underlying any ring of definition. -/
+theorem isOpen_powerBoundedSubring : IsOpen (powerBoundedSubring A : Set A) := by
+  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
+  exact AddSubgroup.isOpen_mono (H₁ := P.ringOfDefinition.toAddSubgroup)
+    (H₂ := (powerBoundedSubring A).toAddSubgroup) (fun x hx ↦ P.le_powerBoundedSubring hx)
+    P.isOpen_ringOfDefinition
+
+end HuberRing
+
+section Tate
+
+variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
+
+namespace IsPseudoUniformizer
+
+variable {a : A} (ha : IsPseudoUniformizer a)
+include ha
+
+/-- A pseudouniformiser is power-bounded. -/
+theorem isPowerBounded : IsPowerBounded a :=
+  IsPowerBounded.of_isTopologicallyNilpotent ha.2
+
+omit [IsTopologicalRing A] in
+/-- Wedhorn: sufficiently high powers of a pseudouniformiser lie in a given ring of definition,
+because they converge to zero and a ring of definition is a neighbourhood of zero. -/
+theorem eventually_pow_mem_ringOfDefinition (P : PairOfDefinition A) :
+    ∀ᶠ n in atTop, a ^ n ∈ P.ringOfDefinition :=
+  ha.2.eventually_mem (P.isOpen_ringOfDefinition.mem_nhds P.ringOfDefinition.zero_mem)
+
+/-- Multiplying a ring of definition by a power of a pseudouniformiser gives a neighbourhood of
+zero: multiplication by a unit is a homeomorphism, so `ϖⁿ A₀` is open. -/
+theorem smul_ringOfDefinition_mem_nhds_zero (P : PairOfDefinition A) (n : ℕ) :
+    (a ^ n) • (P.ringOfDefinition : Set A) ∈ 𝓝 (0 : A) := by
+  obtain ⟨u, rfl⟩ := ha.1
+  have hpre : ((u : A) ^ n) • (P.ringOfDefinition : Set A)
+      = (fun y ↦ ((↑u⁻¹ : A)) ^ n * y) ⁻¹' (P.ringOfDefinition : Set A) := by
+    ext y
+    simp only [Set.mem_preimage, Set.mem_smul_set, smul_eq_mul]
+    constructor
+    · rintro ⟨x, hx, rfl⟩
+      simpa [← mul_assoc, ← mul_pow] using hx
+    · exact fun hy ↦ ⟨((↑u⁻¹ : A)) ^ n * y, hy, by rw [← mul_assoc, ← mul_pow]; simp⟩
+  rw [hpre]
+  refine IsOpen.mem_nhds (P.isOpen_ringOfDefinition.preimage (by fun_prop)) ?_
+  simp
+
+/-- Wedhorn: in a Tate ring the sets `ϖⁿ A₀` are a neighbourhood basis of zero, for any
+pseudouniformiser `ϖ` and any ring of definition `A₀`.
+
+Cofinality is the boundedness of `A₀` (`PairOfDefinition.isBounded_ringOfDefinition`) together
+with `ϖⁿ → 0`; that each `ϖⁿ A₀` is itself a neighbourhood is
+`smul_ringOfDefinition_mem_nhds_zero`. -/
+theorem hasBasis_nhds_zero (P : PairOfDefinition A) :
+    (𝓝 (0 : A)).HasBasis (fun _ : ℕ ↦ True)
+      fun n ↦ (a ^ n) • (P.ringOfDefinition : Set A) := by
+  refine Filter.hasBasis_iff.mpr fun U ↦ ⟨fun hU ↦ ?_, ?_⟩
+  · obtain ⟨V, hV, hVU⟩ := P.isBounded_ringOfDefinition U hU
+    obtain ⟨n, hn⟩ := (ha.2.eventually_mem hV).exists
+    exact ⟨n, trivial, fun _ ⟨x, hx, hxy⟩ ↦ hxy ▸ hVU (Set.mul_mem_mul hn hx)⟩
+  · rintro ⟨n, -, hn⟩
+    exact Filter.mem_of_superset (ha.smul_ringOfDefinition_mem_nhds_zero P n) hn
+
+end IsPseudoUniformizer
+
+end Tate
+
+end TauCeti.Huber
