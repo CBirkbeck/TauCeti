@@ -22,9 +22,9 @@ another generator, moves the twist by an explicit change of variables over the b
 
 * `WeierstrassCurve.quadraticTwistOf`: the quadratic twist of a Weierstrass curve by `(t, n)`,
   an explicit Weierstrass model over any commutative ring.
-* `WeierstrassCurve.Δ_quadraticTwistOf`, `WeierstrassCurve.c₄_quadraticTwistOf`,
-  `WeierstrassCurve.c₆_quadraticTwistOf`: the invariants of the twist.
-* `WeierstrassCurve.isElliptic_quadraticTwistOf`, `WeierstrassCurve.j_quadraticTwistOf`: over a
+* `WeierstrassCurve.quadraticTwistOf_Δ`, `WeierstrassCurve.quadraticTwistOf_c₄`,
+  `WeierstrassCurve.quadraticTwistOf_c₆`: the invariants of the twist.
+* `WeierstrassCurve.isElliptic_quadraticTwistOf`, `WeierstrassCurve.quadraticTwistOf_j`: over a
   field, the twist of an elliptic curve is elliptic when `t² - 4n ≠ 0`, with equal `j`.
 * `WeierstrassCurve.exists_smul_eq_quadraticTwistOf_quadraticTwistOf`,
   `WeierstrassCurve.exists_smul_quadraticTwistOf_eq`: the double twist is `K`-isomorphic to the
@@ -44,7 +44,7 @@ Apache 2.0, by Kevin Buzzard and Claude; merged there through FLT PR #1088).
 * [J. Silverman, *The Arithmetic of Elliptic Curves*][silverman2009], III.§10, X.§2 and X.§5
 -/
 
-@[expose] public section
+public section
 
 namespace WeierstrassCurve
 
@@ -65,9 +65,9 @@ turns this relation into the Weierstrass model below of the twist:
 
 `y² + ta₁·xy + Dta₃·y = x³ + (Da₂ - na₁²)·x² + (D²a₄ - 2Dna₁a₃)·x + (D³a₆ - D²na₃²)`.
 
-Its discriminant is `D⁶·Δ(E)` (`Δ_quadraticTwistOf`), so the twist of an elliptic curve is
+Its discriminant is `D⁶·Δ(E)` (`quadraticTwistOf_Δ`), so the twist of an elliptic curve is
 elliptic when `D ≠ 0` (`isElliptic_quadraticTwistOf`), with the same `j`-invariant
-(`j_quadraticTwistOf`).
+(`quadraticTwistOf_j`).
 
 Sanity checks. If `char K ≠ 2` we may take `θ = √d`, so `t = 0`, `n = -d`, `D = 4d`; for
 `E : y² = x³ + a₂x² + a₄x + a₆` the model is `y² = x³ + 4da₂x² + 16d²a₄x + 64d³a₆`, the
@@ -84,31 +84,57 @@ def quadraticTwistOf (t n : A) : WeierstrassCurve A where
 
 variable (t n : A)
 
+/-- The coefficient `a₁` of the quadratic twist. -/
+@[simp] theorem quadraticTwistOf_a₁ : (E.quadraticTwistOf t n).a₁ = t * E.a₁ := by
+  simp only [quadraticTwistOf]
+
+/-- The coefficient `a₂` of the quadratic twist. -/
+@[simp] theorem quadraticTwistOf_a₂ :
+    (E.quadraticTwistOf t n).a₂ = (t ^ 2 - 4 * n) * E.a₂ - n * E.a₁ ^ 2 := by
+  simp only [quadraticTwistOf]
+
+/-- The coefficient `a₃` of the quadratic twist. -/
+@[simp] theorem quadraticTwistOf_a₃ :
+    (E.quadraticTwistOf t n).a₃ = (t ^ 2 - 4 * n) * t * E.a₃ := by
+  simp only [quadraticTwistOf]
+
+/-- The coefficient `a₄` of the quadratic twist. -/
+@[simp] theorem quadraticTwistOf_a₄ :
+    (E.quadraticTwistOf t n).a₄
+      = (t ^ 2 - 4 * n) ^ 2 * E.a₄ - 2 * (t ^ 2 - 4 * n) * n * E.a₁ * E.a₃ := by
+  simp only [quadraticTwistOf]
+
+/-- The coefficient `a₆` of the quadratic twist. -/
+@[simp] theorem quadraticTwistOf_a₆ :
+    (E.quadraticTwistOf t n).a₆
+      = (t ^ 2 - 4 * n) ^ 3 * E.a₆ - (t ^ 2 - 4 * n) ^ 2 * n * E.a₃ ^ 2 := by
+  simp only [quadraticTwistOf]
+
 /-- The invariant `c₄` of the quadratic twist: `c₄ ↦ D²c₄` with `D = t² - 4n`. -/
-theorem c₄_quadraticTwistOf : (E.quadraticTwistOf t n).c₄ = (t ^ 2 - 4 * n) ^ 2 * E.c₄ := by
+theorem quadraticTwistOf_c₄ : (E.quadraticTwistOf t n).c₄ = (t ^ 2 - 4 * n) ^ 2 * E.c₄ := by
   simp only [quadraticTwistOf, c₄, b₂, b₄]
   ring
 
 /-- The discriminant of the quadratic twist: `Δ ↦ D⁶Δ` with `D = t² - 4n`. -/
-theorem Δ_quadraticTwistOf : (E.quadraticTwistOf t n).Δ = (t ^ 2 - 4 * n) ^ 6 * E.Δ := by
+theorem quadraticTwistOf_Δ : (E.quadraticTwistOf t n).Δ = (t ^ 2 - 4 * n) ^ 6 * E.Δ := by
   simp only [quadraticTwistOf, Δ, b₂, b₄, b₆, b₈]
   ring
 
 /-- The invariant `c₆` of the quadratic twist: `c₆ ↦ D³c₆` with `D = t² - 4n`. -/
-theorem c₆_quadraticTwistOf : (E.quadraticTwistOf t n).c₆ = (t ^ 2 - 4 * n) ^ 3 * E.c₆ := by
+theorem quadraticTwistOf_c₆ : (E.quadraticTwistOf t n).c₆ = (t ^ 2 - 4 * n) ^ 3 * E.c₆ := by
   simp only [quadraticTwistOf, c₆, b₂, b₄, b₆]
   ring
 
 /-- The invariant `b₂` of the quadratic twist: `b₂ ↦ Db₂` with `D = t² - 4n`. -/
-theorem b₂_quadraticTwistOf : (E.quadraticTwistOf t n).b₂ = (t ^ 2 - 4 * n) * E.b₂ := by
+theorem quadraticTwistOf_b₂ : (E.quadraticTwistOf t n).b₂ = (t ^ 2 - 4 * n) * E.b₂ := by
   simp only [quadraticTwistOf, b₂]; ring
 
 /-- The invariant `b₄` of the quadratic twist: `b₄ ↦ D²b₄` with `D = t² - 4n`. -/
-theorem b₄_quadraticTwistOf : (E.quadraticTwistOf t n).b₄ = (t ^ 2 - 4 * n) ^ 2 * E.b₄ := by
+theorem quadraticTwistOf_b₄ : (E.quadraticTwistOf t n).b₄ = (t ^ 2 - 4 * n) ^ 2 * E.b₄ := by
   simp only [quadraticTwistOf, b₄]; ring
 
 /-- The invariant `b₆` of the quadratic twist: `b₆ ↦ D³b₆` with `D = t² - 4n`. -/
-theorem b₆_quadraticTwistOf : (E.quadraticTwistOf t n).b₆ = (t ^ 2 - 4 * n) ^ 3 * E.b₆ := by
+theorem quadraticTwistOf_b₆ : (E.quadraticTwistOf t n).b₆ = (t ^ 2 - 4 * n) ^ 3 * E.b₆ := by
   simp only [quadraticTwistOf, b₆]; ring
 
 /-- The quadratic twist commutes with a ring homomorphism `f` (in particular with base change):
@@ -128,8 +154,8 @@ theorem kappa_quadraticTwistOf :
       + (E.quadraticTwistOf t n).a₂ * (E.quadraticTwistOf t n).c₄
       = (t ^ 2 - 4 * n) ^ 3 * (54 * E.b₆ - 3 * E.b₂ * E.b₄ + E.a₂ * E.c₄)
         - (t ^ 2 - 4 * n) ^ 2 * n * E.a₁ ^ 2 * E.c₄ := by
-  rw [b₆_quadraticTwistOf, b₂_quadraticTwistOf, b₄_quadraticTwistOf, c₄_quadraticTwistOf,
-    show (E.quadraticTwistOf t n).a₂ = (t ^ 2 - 4 * n) * E.a₂ - n * E.a₁ ^ 2 from rfl]
+  rw [quadraticTwistOf_b₆, quadraticTwistOf_b₂, quadraticTwistOf_b₄, quadraticTwistOf_c₄,
+    quadraticTwistOf_a₂]
   ring
 
 end QuadraticTwistOfRing
@@ -142,16 +168,16 @@ variable {K : Type*} [Field K] (E : WeierstrassCurve K) (t n : K)
 discriminant `D = t² - 4n` of the twisting parameters is nonzero: `Δ ↦ D⁶Δ`. -/
 theorem isElliptic_quadraticTwistOf [E.IsElliptic] (hD : t ^ 2 - 4 * n ≠ 0) :
     (E.quadraticTwistOf t n).IsElliptic := by
-  rw [isElliptic_iff, Δ_quadraticTwistOf]
+  rw [isElliptic_iff, quadraticTwistOf_Δ]
   exact (isUnit_iff_ne_zero.mpr (pow_ne_zero 6 hD)).mul E.isUnit_Δ
 
 /-- The `j`-invariant is a twist invariant: `j(E_{t,n}) = j(E)`. -/
-theorem j_quadraticTwistOf [E.IsElliptic] (h : (E.quadraticTwistOf t n).IsElliptic) :
+theorem quadraticTwistOf_j [E.IsElliptic] (h : (E.quadraticTwistOf t n).IsElliptic) :
     (E.quadraticTwistOf t n).j = E.j := by
   have hD : t ^ 2 - 4 * n ≠ 0 := fun h0 ↦ (E.quadraticTwistOf t n).isUnit_Δ.ne_zero
-    (by rw [Δ_quadraticTwistOf, h0]; ring)
+    (by rw [quadraticTwistOf_Δ, h0]; ring)
   have hΔ : E.Δ ≠ 0 := E.isUnit_Δ.ne_zero
-  simp only [j, Units.val_inv_eq_inv_val, coe_Δ', Δ_quadraticTwistOf, c₄_quadraticTwistOf]
+  simp only [j, Units.val_inv_eq_inv_val, coe_Δ', quadraticTwistOf_Δ, quadraticTwistOf_c₄]
   field_simp
 
 /-- Twisting twice by the same parameters `(t, n)` gives a curve isomorphic to `E` over `K`:
