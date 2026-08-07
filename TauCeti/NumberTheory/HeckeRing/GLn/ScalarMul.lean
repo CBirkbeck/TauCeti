@@ -8,8 +8,6 @@ module
 public import TauCeti.NumberTheory.HeckeRing.GLn.Degree
 public import TauCeti.NumberTheory.HeckeRing.GLn.TransposeAntiInvolution
 
-import TauCeti.NumberTheory.HeckeRing.Multiplicity.Support
-
 /-!
 # Scalar multiplication in the `GL_n` Hecke ring
 
@@ -49,17 +47,6 @@ variable (n : ℕ)
 
 section Scalar
 
-/-- The chosen representative of a diagonal coset decomposes as `h₁ · diag(a) · h₂` with
-`h₁, h₂ ∈ SL_n(ℤ)`. -/
-lemma exists_rep_diagCoset_eq_mul_natDiagGL_mul (a : Fin n → ℕ) :
-    ∃ h₁ ∈ SLnZ n, ∃ h₂ ∈ SLnZ n,
-      ((diagCoset a).rep : GL (Fin n) ℚ) = h₁ * natDiagGL n a * h₂ := by
-  have hmem : ((diagCoset a).rep : GL (Fin n) ℚ) ∈
-      doubleCoset (natDiagGL n a) (SLnZ n) (SLnZ n) := by
-    rw [← diagCoset_toSet]
-    exact HeckeCoset.rep_mem _
-  exact mem_doubleCoset.mp hmem
-
 variable [NeZero n]
 
 private lemma mulMap_const_eq (c : ℕ) (hc : 0 < c) (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
@@ -69,8 +56,8 @@ private lemma mulMap_const_eq (c : ℕ) (hc : 0 < c) (b : Fin n → ℕ) (hb : �
     HeckeCoset.mulMap (SLnZ n) (SLnZ n) (SLnZ n)
       (diagCoset fun _ : Fin n ↦ c).rep (diagCoset b).rep p =
       diagCoset ((fun _ ↦ c) * b) := by
-  obtain ⟨L₁, hL₁, R₁, hR₁, hα⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul n (fun _ ↦ c)
-  obtain ⟨L₂, hL₂, R₂, hR₂, hβ⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul n b
+  obtain ⟨L₁, hL₁, R₁, hR₁, hα⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul (fun _ : Fin n ↦ c)
+  obtain ⟨L₂, hL₂, R₂, hR₂, hβ⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul b
   have hprod : (p.1.out : GL (Fin n) ℚ) *
       ((diagCoset fun _ : Fin n ↦ c).rep : GL (Fin n) ℚ) *
       ((p.2.out : GL (Fin n) ℚ) * ((diagCoset b).rep : GL (Fin n) ℚ)) =

@@ -189,6 +189,17 @@ lemma diagCoset_def (a : Fin n → ℕ) :
       HeckeCoset.mk (SLnZ n) (SLnZ n) ⟨natDiagGL n a, natDiagGL_mem_posDetInt n a⟩ :=
   (rfl)
 
+/-- The chosen representative of a diagonal coset decomposes as `h₁ · diag(a) · h₂` with
+`h₁, h₂ ∈ SL_n(ℤ)`. -/
+lemma exists_rep_diagCoset_eq_mul_natDiagGL_mul (a : Fin n → ℕ) :
+    ∃ h₁ ∈ SLnZ n, ∃ h₂ ∈ SLnZ n,
+      ((diagCoset a).rep : GL (Fin n) ℚ) = h₁ * natDiagGL n a * h₂ := by
+  have hmem : ((diagCoset a).rep : GL (Fin n) ℚ) ∈
+      doubleCoset (natDiagGL n a) (SLnZ n) (SLnZ n) := by
+    rw [← diagCoset_toSet]
+    exact HeckeCoset.rep_mem _
+  exact mem_doubleCoset.mp hmem
+
 /-- Defining equation for the sealed `diagElem`. -/
 lemma diagElem_def (a : Fin n → ℕ) :
     diagElem a = HeckeCosetModule.single ℤ (diagCoset a) 1 :=
