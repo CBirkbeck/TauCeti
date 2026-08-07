@@ -163,20 +163,17 @@ private lemma exists_SL_diagonal_of_unit_diagonalization (A P Q : Matrix (Fin n)
 
 /-- **The matrix whose columns are the vectors of a basis of `ℤⁿ` has unit determinant.** It is the
 change-of-basis matrix from the standard basis, and such a matrix is invertible. -/
-private theorem isUnit_det_of_columns (b : Module.Basis (Fin n) ℤ (Fin n → ℤ)) :
+private theorem isUnit_det_of_basis_cols (b : Module.Basis (Fin n) ℤ (Fin n → ℤ)) :
     IsUnit (Matrix.of (fun k j ↦ b j k) : Matrix (Fin n) (Fin n) ℤ).det := by
   set e := Pi.basisFun ℤ (Fin n) with he
-  have hb : (Matrix.of (fun k j ↦ b j k) : Matrix (Fin n) (Fin n) ℤ) = e.toMatrix b := by
-    ext k j
-    simp only [Matrix.of_apply]
-    rw [e.toMatrix_apply, he, Pi.basisFun_repr]
+  have hb : (Matrix.of (fun k j ↦ b j k) : Matrix (Fin n) (Fin n) ℤ) = e.toMatrix b := rfl
   rw [hb]
   simpa [Module.Basis.det_apply] using e.isUnit_det b
 
 /-- **Preimages of a basis of the range under an injective `A` have unit determinant as columns.**
 `A.mulVecLin` restricts to a linear equivalence onto its range, and transporting the basis `ab'`
 back along it is the family `r`. -/
-private theorem isUnit_det_of_mulVec_columns (A : Matrix (Fin n) (Fin n) ℤ)
+private theorem isUnit_det_of_cols_of_mulVecLin_eq_basis (A : Matrix (Fin n) (Fin n) ℤ)
     (hinj : Function.Injective A.mulVecLin)
     {ab' : Module.Basis (Fin n) ℤ ↥(LinearMap.range A.mulVecLin)} {r : Fin n → Fin n → ℤ}
     (hr : ∀ i, A.mulVecLin (r i) = ↑(ab' i)) :
@@ -185,10 +182,9 @@ private theorem isUnit_det_of_mulVec_columns (A : Matrix (Fin n) (Fin n) ℤ)
     ab'.map (LinearEquiv.ofInjective A.mulVecLin hinj).symm with hr_basis
   have hrb : ⇑r_basis = r := funext fun i ↦ hinj (by
     rw [hr i, hr_basis, Module.Basis.map_apply]
-    exact congrArg Subtype.val
-      ((LinearEquiv.ofInjective A.mulVecLin hinj).apply_symm_apply (ab' i)))
+    simp)
   rw [← hrb]
-  exact isUnit_det_of_columns r_basis
+  exact isUnit_det_of_basis_cols r_basis
 
 /-- **The column matrices of `r` and `b'` intertwine `A` with the diagonal of `a`**, given that `A`
 carries each `r j` to `a j • b' j`. -/
@@ -198,11 +194,10 @@ private theorem mul_columns_eq_columns_mul_diagonal_of_mulVec_eq_smul
     A * Matrix.of (fun k j ↦ r j k) =
       (Matrix.of fun k j ↦ b' j k) * Matrix.diagonal a := by
   ext k j
-  simp only [Matrix.mul_apply, Matrix.of_apply, Matrix.diagonal_apply]
-  -- fold the entry sum into a matrix-vector product to apply `hkey`
-  conv_lhs => rw [show ∑ l, A k l * r j l = (A *ᵥ r j) k by simp [mulVec, dotProduct]]
-  rw [hkey j]; simp only [Pi.smul_apply, smul_eq_mul]
-  simp [Finset.sum_ite_eq', Finset.mem_univ, mul_comm]
+  rw [Matrix.mul_diagonal, Matrix.mul_apply]
+  simp only [Matrix.of_apply]
+  rw [← A.mulVec_apply_eq_sum (r j) k, hkey j]
+  simp [mul_comm]
 
 /-- Every integer matrix with positive determinant is `SL_n(ℤ)`-equivalent to a positive
 diagonal. -/
@@ -221,13 +216,14 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
   choose r hr using fun i ↦ LinearMap.mem_range.mp (ab' i).2
   have hkey : ∀ j, A *ᵥ r j = a j • b' j := fun j ↦ by
     rw [← Matrix.mulVecLin_apply, hr j, hsnf j]
-  set P_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ b' j k) with hP_def
-  set Q_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ r j k) with hQ_def
+  set P_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ b' j k)
+  set Q_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ r j k)
   have hmat_eq : A * Q_mat = P_mat * Matrix.diagonal a :=
     mul_columns_eq_columns_mul_diagonal_of_mulVec_eq_smul A hkey
-  have hP_unit : IsUnit P_mat.det := isUnit_det_of_columns b'
+  have hP_unit : IsUnit P_mat.det := isUnit_det_of_basis_cols b'
   have hQ_unit : IsUnit Q_mat.det :=
-    isUnit_det_of_mulVec_columns A (mulVecLin_injective_of_det_ne_zero A hdet_ne) hr
+    isUnit_det_of_cols_of_mulVecLin_eq_basis A
+      (mulVecLin_injective_of_det_ne_zero A hdet_ne) hr
   have h_diag_eq : P_mat⁻¹ * A * Q_mat = Matrix.diagonal a := by
     rw [Matrix.mul_assoc, hmat_eq, ← Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hP_unit,
       Matrix.one_mul]
