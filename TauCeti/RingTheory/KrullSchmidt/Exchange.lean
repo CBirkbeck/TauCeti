@@ -77,44 +77,6 @@ private theorem sum_projectionOnto_comp_internalProjection_eq_one {ι : Type w} 
   rw [LinearMap.sum_apply]
   exact hx
 
-/-- Half of the exchange. If the projection onto `Q i₀` is injective on a submodule `N`, then `N`
-meets the remaining summands trivially, since those are exactly what that projection kills. -/
-private theorem disjoint_biSup_ne_of_injective {ι : Type w} {Q : ι → Submodule A M}
-    (hQi : iSupIndep Q) (hQt : ⨆ i, Q i = ⊤) {N : Submodule A M} {i₀ : ι}
-    (hinj : Function.Injective (internalProjection hQi hQt i₀ ∘ₗ N.subtype)) :
-    Disjoint N (⨆ j, ⨆ (_ : j ≠ i₀), Q j) := by
-  rw [Submodule.disjoint_def]
-  intro x hxN hxT
-  have hzero : (internalProjection hQi hQt i₀ ∘ₗ N.subtype) ⟨x, hxN⟩ = 0 := by
-    rw [LinearMap.comp_apply, Submodule.subtype_apply, ← LinearMap.mem_ker,
-      ker_internalProjection]
-    exact hxT
-  simpa using congrArg Subtype.val (hinj (hzero.trans (map_zero _).symm))
-
-/-- The other half of the exchange. If the projection onto `Q i₀` maps a submodule `N` onto all of
-`Q i₀`, then `N` and the remaining summands span, since every element of `M` differs from its
-`i₀`-component by an element of those summands. -/
-private theorem codisjoint_biSup_ne_of_surjective {ι : Type w} {Q : ι → Submodule A M}
-    (hQi : iSupIndep Q) (hQt : ⨆ i, Q i = ⊤) {N : Submodule A M} {i₀ : ι}
-    (hsurj : Function.Surjective (internalProjection hQi hQt i₀ ∘ₗ N.subtype)) :
-    Codisjoint N (⨆ j, ⨆ (_ : j ≠ i₀), Q j) := by
-  have hrest : ∀ x : M, x - ((internalProjection hQi hQt i₀ x : M)) ∈ ⨆ j, ⨆ (_ : j ≠ i₀), Q j :=
-    fun x ↦ by
-      rw [← ker_internalProjection hQi hQt i₀, LinearMap.mem_ker, map_sub,
-        internalProjection_apply, sub_self]
-  rw [codisjoint_iff, eq_top_iff]
-  intro m _
-  obtain ⟨n, hn⟩ := hsurj (internalProjection hQi hQt i₀ m)
-  have hcomp : ((internalProjection hQi hQt i₀ (n : M) : M)) =
-      ((internalProjection hQi hQt i₀ m : M)) := by
-    rw [← hn, LinearMap.comp_apply, Submodule.subtype_apply]
-  have hmem : ((internalProjection hQi hQt i₀ m : M)) ∈ N ⊔ ⨆ j, ⨆ (_ : j ≠ i₀), Q j := by
-    rw [← hcomp, ← sub_sub_cancel (n : M) ((internalProjection hQi hQt i₀ (n : M) : M))]
-    exact Submodule.sub_mem _ (Submodule.mem_sup_left n.2)
-      (Submodule.mem_sup_right (hrest (n : M)))
-  rw [← sub_add_cancel m ((internalProjection hQi hQt i₀ m : M))]
-  exact Submodule.add_mem _ (Submodule.mem_sup_right (hrest m)) hmem
-
 /-- **Azumaya's exchange lemma.** Let `M` be the internal direct sum of a finite family `Q` of
 indecomposable submodules, and let `N` be a direct summand of `M` whose endomorphism ring is local
 (so in particular `N` is nonzero). Then `N` is isomorphic to one of the `Q i₀`, and can be exchanged
@@ -138,7 +100,15 @@ theorem exists_linearEquiv_and_isCompl_biSup_ne
   have hbij : Function.Bijective (internalProjection hQi hQt i₀ ∘ₗ N.subtype) :=
     (hQind i₀).bijective_of_bijective_comp (g := N.projectionOnto S hNS ∘ₗ (Q i₀).subtype)
       ((Module.End.isUnit_iff _).mp hunit)
-  exact ⟨i₀, ⟨LinearEquiv.ofBijective _ hbij⟩, disjoint_biSup_ne_of_injective hQi hQt hbij.1,
-    codisjoint_biSup_ne_of_surjective hQi hQt hbij.2⟩
+  -- The projection onto `Q i₀` is surjective, being the identity there.
+  have hsurj : Function.Surjective (internalProjection hQi hQt i₀) :=
+    fun x ↦ ⟨(x : M), internalProjection_apply hQi hQt x⟩
+  -- The exchange is the kernel characterisation of injectivity and surjectivity on `N`,
+  -- since the remaining summands are exactly the kernel of the `i₀`-projection.
+  refine ⟨i₀, ⟨LinearEquiv.ofBijective _ hbij⟩, ?_, ?_⟩
+  · rw [← ker_internalProjection hQi hQt i₀]
+    exact LinearMap.injective_domRestrict_iff.mp hbij.1
+  · rw [← ker_internalProjection hQi hQt i₀]
+    exact (LinearMap.surjective_domRestrict_iff hsurj).mp hbij.2
 
 end TauCeti
