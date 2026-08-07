@@ -98,12 +98,12 @@ omit [CompleteSpace X] in
 the difference quotient of `u ↦ S (t - u) (T u x)` separates into the contribution of the inner
 semigroup `T`, pushed through `S (t - u)`, and that of the outer semigroup `S`. -/
 private theorem slope_interpolate_eq {S T : StronglyContinuousSemigroup X} {t : ℝ} {x : X}
-    {s : ℝ} (hs0 : 0 ≤ s) {u : ℝ} (hu : s < u) :
+    {s : ℝ} (hs0 : 0 ≤ s) {u : ℝ} (hu : s ≤ u) :
     slope (fun u : ℝ => S.realOperator (t - u) (T.realOperator u x)) s u
       = S.realOperator (t - u)
           ((u - s)⁻¹ • (T.realOperator (u - s) (T.realOperator s x) - T.realOperator s x))
         + slope (fun u : ℝ => S.realOperator (t - u) (T.realOperator s x)) s u := by
-  have hus : 0 ≤ u - s := (sub_pos.mpr hu).le
+  have hus : 0 ≤ u - s := sub_nonneg.mpr hu
   have hTu : T.realOperator u x = T.realOperator (u - s) (T.realOperator s x) := by
     rw [← ContinuousLinearMap.comp_apply, ← T.realOperator_add (u - s) s hus hs0, sub_add_cancel]
   simp only [slope_def_module, hTu, map_smul, map_sub, smul_sub]
@@ -133,7 +133,7 @@ private theorem hasDerivWithinAt_interpolate_of_tendsto {S T : StronglyContinuou
   have hsum := hterm1.add hterm2
   rw [add_neg_cancel] at hsum
   exact hsum.congr' (by
-    filter_upwards [self_mem_nhdsWithin] with u hu using (slope_interpolate_eq hs0 hu).symm)
+    filter_upwards [self_mem_nhdsWithin] with u hu using (slope_interpolate_eq hs0 hu.le).symm)
 
 /-- The interpolation `u ↦ S (t - u) (T u x)` between the two semigroups has vanishing right
 derivative at every `u ∈ [0, t)`.
