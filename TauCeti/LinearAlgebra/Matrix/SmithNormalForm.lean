@@ -194,8 +194,9 @@ private theorem isUnit_det_of_mulVec_columns (A : Matrix (Fin n) (Fin n) ℤ)
 
 /-- **The column matrices of `r` and `b'` intertwine `A` with the diagonal of `a`**, given that `A`
 carries each `r j` to `a j • b' j`. -/
-private theorem mul_of_columns_eq_of_mulVec (A : Matrix (Fin n) (Fin n) ℤ) {a : Fin n → ℤ}
-    {b' r : Fin n → Fin n → ℤ} (hkey : ∀ j, A *ᵥ r j = a j • b' j) :
+private theorem mul_columns_eq_columns_mul_diagonal_of_mulVec_eq_smul
+    (A : Matrix (Fin n) (Fin n) ℤ) {a : Fin n → ℤ} {b' r : Fin n → Fin n → ℤ}
+    (hkey : ∀ j, A *ᵥ r j = a j • b' j) :
     A * Matrix.of (fun k j ↦ r j k) =
       (Matrix.of fun k j ↦ b' j k) * Matrix.diagonal a := by
   ext k j
@@ -225,7 +226,7 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
   set P_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ b' j k) with hP_def
   set Q_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ r j k) with hQ_def
   have hmat_eq : A * Q_mat = P_mat * Matrix.diagonal a :=
-    mul_of_columns_eq_of_mulVec A hkey
+    mul_columns_eq_columns_mul_diagonal_of_mulVec_eq_smul A hkey
   have hP_unit : IsUnit P_mat.det := isUnit_det_of_columns b'
   have hQ_unit : IsUnit Q_mat.det :=
     isUnit_det_of_mulVec_columns A (mulVecLin_injective_of_det_ne_zero A hdet_ne) hr
