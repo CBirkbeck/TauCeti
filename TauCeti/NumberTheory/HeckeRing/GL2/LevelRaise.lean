@@ -96,18 +96,11 @@ lemma σ_levelRaiseMatrix (l : ℕ) [NeZero l] :
     UpperHalfPlane.σ (levelRaiseMatrix l) = ContinuousAlgEquiv.refl ℝ ℂ := by
   unfold UpperHalfPlane.σ; rw [if_pos (levelRaiseMatrix_det_pos l)]
 
-/-- For γ ∈ Γ₁(d*M), the entry `γ.val 1 0` is divisible by `d`. -/
-lemma Gamma1_dmul_lower_left_dvd (d M : ℕ) (γ : SL(2, ℤ)) (hγ : γ ∈ Gamma1 (d * M)) :
-    (d : ℤ) ∣ γ.val 1 0 :=
-  dvd_trans ⟨M, by push_cast; ring⟩
-    ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp ((Gamma1_mem _ _).mp hγ).2.2)
-
-/-- For `γ ∈ Γ₀(d*M)`, the entry `γ.val 1 0` is divisible by `d`. -/
-lemma Gamma0_dmul_lower_left_dvd (d M : ℕ) (γ : SL(2, ℤ)) (hγ : γ ∈ Gamma0 (d * M)) :
-    (d : ℤ) ∣ γ.val 1 0 :=
-  dvd_trans ⟨M, by push_cast; ring⟩
+/-- If `l ∣ N` then every `γ ∈ Γ₀(N)` has `l` dividing its lower-left entry. -/
+lemma dvd_lower_left_of_dvd {l N : ℕ} (h_dvd : l ∣ N) {γ : SL(2, ℤ)}
+    (hγ : γ ∈ Gamma0 N) : (l : ℤ) ∣ γ.val 1 0 :=
+  (Int.natCast_dvd_natCast.mpr h_dvd).trans
     ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ))
-
 /-- Construction of `α_d γ α_d⁻¹` as an explicit `SL(2, ℤ)` element when
 `d ∣ γ.val 1 0`. The formula `[[a, d*b], [c/d, e]]` is integer by hypothesis. -/
 noncomputable def levelRaiseConjOfDvd (d : ℕ) (γ : SL(2, ℤ))
@@ -121,13 +114,13 @@ noncomputable def levelRaiseConjOfDvd (d : ℕ) (γ : SL(2, ℤ))
 `γ ∈ Γ₁(d*M)`. The formula `[[a, d*b], [c/d, e]]` is integer because `d ∣ c`. -/
 noncomputable def levelRaiseConj (d M : ℕ) (γ : SL(2, ℤ))
     (hγ : γ ∈ Gamma1 (d * M)) : SL(2, ℤ) :=
-  levelRaiseConjOfDvd d γ (Gamma1_dmul_lower_left_dvd d M γ hγ)
+  levelRaiseConjOfDvd d γ (dvd_lower_left_of_dvd (dvd_mul_right d M) (Gamma1_in_Gamma0 _ hγ))
 
 /-- The conjugated matrix is in `Γ₀(M)` when `γ ∈ Γ₀(d*M)`. The (1,0) entry of
 `α_d γ α_d⁻¹` is `c/d`, which is divisible by `M` because `c` is divisible by `d*M`. -/
 lemma levelRaiseConjOfDvd_mem_Gamma0 (d M : ℕ) [NeZero d] (γ : SL(2, ℤ))
     (hγ : γ ∈ Gamma0 (d * M)) :
-    levelRaiseConjOfDvd d γ (Gamma0_dmul_lower_left_dvd d M γ hγ) ∈ Gamma0 M := by
+    levelRaiseConjOfDvd d γ (dvd_lower_left_of_dvd (dvd_mul_right d M) hγ) ∈ Gamma0 M := by
   rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd]
   exact Int.dvd_div_of_mul_dvd (by
     exact_mod_cast (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ))
@@ -197,7 +190,8 @@ lemma Gamma1_dmul_le_conj (M d : ℕ) [NeZero d] :
   refine ⟨mapGL ℝ (levelRaiseConj d M γ hγ_mem),
     Subgroup.mem_map.mpr ⟨_, levelRaiseConj_mem_Gamma1 d M γ hγ_mem, rfl⟩, ?_⟩
   rw [ConjAct.toConjAct_smul, inv_inv, mul_assoc, inv_mul_eq_iff_eq_mul]
-  exact levelRaiseMatrix_mul_mapGL d γ (Gamma1_dmul_lower_left_dvd d M γ hγ_mem)
+  exact levelRaiseMatrix_mul_mapGL d γ
+    (dvd_lower_left_of_dvd (dvd_mul_right d M) (Gamma1_in_Gamma0 _ hγ_mem))
 
 /-- The level-raising operator `ι_d : S_k(Γ₁(M)) → S_k(Γ₁(d*M))`, defined as
 `(ι_d f)(τ) = f(d·τ)`, equivalently `d^{1-k} · (f ∣[k] [[d,0],[0,1]])`
@@ -418,18 +412,6 @@ private lemma shiftJ_spec {α β : ℤ} {l : ℕ} (h : Int.gcd α (l : ℤ) = 1)
   rw [show ((Int.gcd α (l : ℤ) : ℕ) : ℤ) = 1 by exact_mod_cast h] at hBezout
   exact ⟨β * Int.gcdB α (l : ℤ), by linear_combination β * hBezout⟩
 
-/-- If `l ∣ N` then every `γ ∈ Γ₀(N)` has `l` dividing its lower-left entry. -/
-lemma dvd_lower_left_of_dvd {l N : ℕ} (h_dvd : l ∣ N) {γ : SL(2, ℤ)}
-    (hγ : γ ∈ Gamma0 N) : (l : ℤ) ∣ γ.val 1 0 :=
-  (Int.natCast_dvd_natCast.mpr h_dvd).trans
-    ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ))
-
-private lemma natCast_dvd_levelRaiseConj_lower_left {l N : ℕ} (h_dvd : l ∣ N) {c : ℤ}
-    (hc : ((N / l : ℕ) : ℤ) ∣ c) : (N : ℤ) ∣ (l : ℤ) * c := by
-  rw [show (N : ℤ) = (l : ℤ) * ((N / l : ℕ) : ℤ) by
-    rw [← Nat.cast_mul, Nat.mul_div_cancel' h_dvd]]
-  exact mul_dvd_mul_left _ hc
-
 private lemma eq_T_zpow_mul_levelRaiseConj_mul_T_zpow
     (l : ℕ) [NeZero l] (a b c d i j k : ℤ) (M γ : SL(2, ℤ))
     (hMval : (M.val : Matrix (Fin 2) (Fin 2) ℤ) = !![a, b; c, d])
@@ -479,8 +461,9 @@ lemma exists_T_levelRaiseConj_T_factor (l N : ℕ) [NeZero l] (h_dvd : l ∣ N)
     -- the lower-left entry of the literal is `l * c`
     change (((l : ℤ) * c : ℤ) : ZMod N) = 0
     rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
-    exact natCast_dvd_levelRaiseConj_lower_left h_dvd
-      ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ'))
+    refine Int.dvd_mul_of_div_dvd (Int.natCast_dvd_natCast.mpr h_dvd) ?_
+    have h := (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp hγ')
+    rwa [Int.natCast_div] at h
   · refine eq_T_zpow_mul_levelRaiseConj_mul_T_zpow l a b c d i j k γ' _
       (Matrix.eta_fin_two γ'.val) rfl ?_ _
     -- `shiftJ` was chosen so that this is exactly `shiftJ_spec`
