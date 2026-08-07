@@ -528,6 +528,46 @@ theorem qExpansion_modularFormLevelRaise_coeff
   exact (ModularFormClass.qExpansion_coeff_unique (f := modularFormLevelRaise N d k f)
     hh_pos hh_period_dN h_sum_g n).symm
 
+/-- **Pointwise evaluation of the bundled cusp-form operator.** -/
+@[simp]
+lemma levelRaise_apply (M d : ℕ) [NeZero d] (k : ℤ)
+    (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (τ : UpperHalfPlane) :
+    levelRaise M d k g τ = g ((levelRaiseMatrix d) • τ) := by
+  rw [coe_levelRaise M d k g]
+  exact levelRaiseFun_apply d k (⇑g) τ
+
+/-- **`q`-expansion of the level-raised cusp form.** The cusp-form counterpart of
+`qExpansion_modularFormLevelRaise_coeff`: the Fourier coefficients of `ι_d g` are those of
+`g` reindexed by `d`. This is the form of the statement the Hecke lane consumes, since the
+level-raising operator on cusp forms is the one that appears in the newform theory. -/
+theorem qExpansion_levelRaise_coeff
+    {M : ℕ} [NeZero M] {d : ℕ} [NeZero d] {k : ℤ} {h : ℝ}
+    (hh_pos : 0 < h)
+    (hh_period_M : h ∈ ((Gamma1 M).map (mapGL ℝ)).strictPeriods)
+    (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (n : ℕ) :
+    (UpperHalfPlane.qExpansion h ⇑(levelRaise M d k g)).coeff n =
+      if d ∣ n then (UpperHalfPlane.qExpansion h ⇑g).coeff (n / d) else 0 := by
+  have hh_period_dM : h ∈ ((Gamma1 (d * M)).map (mapGL ℝ)).strictPeriods := by
+    rw [strictPeriods_Gamma1] at hh_period_M ⊢; exact hh_period_M
+  have h_sum_g : ∀ τ : UpperHalfPlane,
+      HasSum (fun j : ℕ ↦
+        (if d ∣ j then (UpperHalfPlane.qExpansion h ⇑g).coeff (j / d) else 0) •
+          Function.Periodic.qParam h (τ : ℂ) ^ j)
+        (levelRaise M d k g τ) := fun τ ↦ by
+    rw [levelRaise_apply M d k g τ]
+    have hgsum := ModularForm.hasSum_qExpansion g hh_pos hh_period_M
+      (levelRaiseMatrix d • τ)
+    simp only [← smul_eq_mul] at hgsum
+    rw [coe_levelRaiseMatrix_smul d τ,
+      TauCeti.Periodic.qParam_natCast_mul_eq_pow h d (τ : ℂ)] at hgsum
+    convert hasSum_pow_dvd_reindex (Nat.pos_of_neZero d) hgsum using 1
+    funext j
+    split_ifs with hdvd
+    · rfl
+    · simp
+  exact (ModularFormClass.qExpansion_coeff_unique (f := levelRaise M d k g)
+    hh_pos hh_period_dM h_sum_g n).symm
+
 /-- **Period-1 specialisation** of `qExpansion_modularFormLevelRaise_coeff`:
 the canonical Fourier expansion of `modularFormLevelRaise N d k f` is the
 `d`-dilation of that of `f`. -/
