@@ -23,9 +23,8 @@ obtained from bijectivity via choice.
 * `WeierstrassCurve.Affine.Point.mapVariableChange`: the group homomorphism
   `(C • W).Point →+ W.Point`, `(x, y) ↦ (u²x + r, u³y + u²sx + t)`.
 * `WeierstrassCurve.Affine.Point.equivVariableChange`: the group isomorphism
-  `(C • W).Point ≃+ W.Point`, with inverse coming from `C⁻¹`.
-* `WeierstrassCurve.Affine.Point.equivOfEq`: transport of the point group along an equality of
-  Weierstrass curves.
+  `(C • W).Point ≃+ W.Point`, with inverse coming from `C⁻¹` (transported along
+  `inv_smul_smul` by Mathlib's `AddEquiv.cast`).
 
 This is the variable-change point isomorphism that the quadratic-twist layer of
 `TauCetiRoadmap/EllipticCurves/README.md` (§Layer 5) consumes: the twist point isomorphism
@@ -183,14 +182,19 @@ lemma mapVariableChangeFun_injective :
 
 variable [DecidableEq F]
 
-/-- Transport of the affine point group along an equality of Weierstrass curves. -/
-def equivOfEq {V V' : WeierstrassCurve F} (h : V = V') :
-    V.toAffine.Point ≃+ V'.toAffine.Point := by
-  subst h; exact AddEquiv.refl _
+/-- `AddEquiv.cast` between point groups sends the point at infinity to the point at
+infinity. -/
+@[simp] lemma cast_zero {V V' : WeierstrassCurve F} (h : V = V') :
+    AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point) h
+      (0 : V.toAffine.Point) = 0 := by
+  subst h; rfl
 
-@[simp] lemma equivOfEq_some {V V' : WeierstrassCurve F} (h : V = V') {x y : F}
+/-- `AddEquiv.cast` between point groups sends an affine point to the affine point with the
+same coordinates. -/
+@[simp] lemma cast_some {V V' : WeierstrassCurve F} (h : V = V') {x y : F}
     (hns : V.toAffine.Nonsingular x y) :
-    equivOfEq h (some x y hns) = some x y (h ▸ hns) := by
+    AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point) h (some x y hns)
+      = some x y (h ▸ hns) := by
   subst h; rfl
 
 /-- The group homomorphism `(C • W).Point →+ W.Point` induced by the admissible change of
@@ -215,16 +219,19 @@ def mapVariableChange : (C • W).toAffine.Point →+ W.toAffine.Point where
 /-- The group isomorphism `(C • W).Point ≃+ W.Point` induced by the admissible change of
 variables `(x, y) ↦ (u²x + r, u³y + u²sx + t)`, with inverse coming from `C⁻¹`. -/
 def equivVariableChange : (C • W).toAffine.Point ≃+ W.toAffine.Point :=
-  have hright : ∀ P, mapVariableChangeFun W C
-      (mapVariableChangeFun (C • W) C⁻¹ (equivOfEq (inv_smul_smul C W).symm P)) = P := by
+  have hright : ∀ P, mapVariableChangeFun W C (mapVariableChangeFun (C • W) C⁻¹
+      (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+        (inv_smul_smul C W).symm P)) = P := by
     have hu : (C.u : F) ≠ 0 := C.u.ne_zero
     rintro (_ | ⟨X, Y, h⟩)
-    · simp [← zero_def]
-    · rw [equivOfEq_some, mapVariableChangeFun_some, mapVariableChangeFun_some]
+    · rw [← zero_def, cast_zero, mapVariableChangeFun_zero, mapVariableChangeFun_zero]
+    · rw [cast_some, mapVariableChangeFun_some, mapVariableChangeFun_some]
       refine some_eq_some W ?_ ?_ <;>
         (simp only [VariableChange.inv_def, Units.val_inv_eq_inv_val]; field)
   { toFun := mapVariableChangeFun W C
-    invFun := fun P ↦ mapVariableChangeFun (C • W) C⁻¹ (equivOfEq (inv_smul_smul C W).symm P)
+    invFun := fun P ↦ mapVariableChangeFun (C • W) C⁻¹
+      (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+        (inv_smul_smul C W).symm P)
     left_inv := Function.RightInverse.leftInverse_of_injective hright
       (mapVariableChangeFun_injective W C)
     right_inv := hright
