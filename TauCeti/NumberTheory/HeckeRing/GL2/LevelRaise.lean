@@ -400,16 +400,6 @@ private lemma exists_shift_isCoprime (a c : ℤ) (l : ℕ) [NeZero l]
       ((dvd_primeProductCoprime_of_not_dvd
         (Nat.mem_primeFactors.mpr ⟨hp_prime, hp_dvd_l, NeZero.ne l⟩) hpa).mul_right c)
 
-private noncomputable def shiftJ (α β : ℤ) (l : ℤ) : ℤ :=
-  Int.gcdA α l * β
-
-private lemma shiftJ_spec {α β : ℤ} {l : ℕ} (h : Int.gcd α (l : ℤ) = 1) :
-    (l : ℤ) ∣ (β - shiftJ α β (l : ℤ) * α) := by
-  unfold shiftJ
-  have hBezout := Int.gcd_eq_gcd_ab α (l : ℤ)
-  rw [show ((Int.gcd α (l : ℤ) : ℕ) : ℤ) = 1 by exact_mod_cast h] at hBezout
-  exact ⟨β * Int.gcdB α (l : ℤ), by linear_combination β * hBezout⟩
-
 private lemma eq_T_zpow_mul_levelRaiseConj_mul_T_zpow
     (l : ℕ) [NeZero l] (a b c d i j k : ℤ) (M γ : SL(2, ℤ))
     (hMval : (M.val : Matrix (Fin 2) (Fin 2) ℤ) = !![a, b; c, d])
@@ -446,9 +436,12 @@ lemma exists_T_levelRaiseConj_T_factor (l N : ℕ) [NeZero l] (h_dvd : l ∣ N)
   set i := primeProductCoprime a l
   set α := a - i * c
   set β := b - i * d
-  set j := shiftJ α β (l : ℤ)
-  obtain ⟨k, hk⟩ := shiftJ_spec (β := β) (Int.isCoprime_iff_gcd_eq_one.mp
-    (exists_shift_isCoprime a c l (γ'.isCoprime_col 0)))
+  -- `IsCoprime α l` is the Bézout identity `u·α + v·l = 1`; take `j := u·β`
+  obtain ⟨u, v, huv⟩ := exists_shift_isCoprime a c l (γ'.isCoprime_col 0)
+  set j := u * β with hj_def
+  set k := β * v with hk_def
+  have hk : β - j * α = (l : ℤ) * k := by
+    simp only [hj_def, hk_def]; linear_combination -β * huv
   refine ⟨i, j, ⟨!![α, k; (l : ℤ) * c, d - c * j], ?det⟩,
     ?gamma0_mem, ?eq, ?diag⟩
   · rw [Matrix.det_fin_two_of]
@@ -464,7 +457,7 @@ lemma exists_T_levelRaiseConj_T_factor (l N : ℕ) [NeZero l] (h_dvd : l ∣ N)
     rwa [Int.natCast_div] at h
   · refine eq_T_zpow_mul_levelRaiseConj_mul_T_zpow l a b c d i j k γ' _
       (Matrix.eta_fin_two γ'.val) rfl ?_ _
-    -- `shiftJ` was chosen so that this is exactly `shiftJ_spec`
+    -- this is the Bézout identity, scaled by β
     change β - j * α = (l : ℤ) * k
     linear_combination hk
   · rfl
