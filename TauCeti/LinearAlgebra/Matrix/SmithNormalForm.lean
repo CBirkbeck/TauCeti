@@ -164,7 +164,7 @@ private lemma exists_SL_diagonal_of_unit_diagonalization (A P Q : Matrix (Fin n)
 /-- **Preimages of a basis of the range under an injective `A` have unit determinant as columns.**
 `A.mulVecLin` restricts to a linear equivalence onto its range, and transporting the basis `ab'`
 back along it is the family `r`. -/
-private theorem isUnit_det_of_cols_of_mulVecLin_eq_basis (A : Matrix (Fin n) (Fin n) ℤ)
+private theorem isUnit_det_cols_of_mulVecLin_eq_basis (A : Matrix (Fin n) (Fin n) ℤ)
     (hinj : Function.Injective A.mulVecLin)
     {ab' : Module.Basis (Fin n) ℤ ↥(LinearMap.range A.mulVecLin)} {r : Fin n → Fin n → ℤ}
     (hr : ∀ i, A.mulVecLin (r i) = ↑(ab' i)) :
@@ -185,7 +185,7 @@ private theorem isUnit_det_of_cols_of_mulVecLin_eq_basis (A : Matrix (Fin n) (Fi
 
 /-- **The column matrices of `r` and `b'` intertwine `A` with the diagonal of `a`**, given that `A`
 carries each `r j` to `a j • b' j`. -/
-private theorem mul_columns_eq_columns_mul_diagonal_of_mulVec_eq_smul
+private theorem mul_cols_eq_cols_mul_diagonal_of_mulVec_eq_smul
     (A : Matrix (Fin n) (Fin n) ℤ) {a : Fin n → ℤ} {b' r : Fin n → Fin n → ℤ}
     (hkey : ∀ j, A *ᵥ r j = a j • b' j) :
     A * Matrix.of (fun k j ↦ r j k) =
@@ -216,7 +216,7 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
   set P_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ b' j k)
   set Q_mat : Matrix (Fin n) (Fin n) ℤ := Matrix.of (fun k j ↦ r j k)
   have hmat_eq : A * Q_mat = P_mat * Matrix.diagonal a :=
-    mul_columns_eq_columns_mul_diagonal_of_mulVec_eq_smul A hkey
+    mul_cols_eq_cols_mul_diagonal_of_mulVec_eq_smul A hkey
   have hP_unit : IsUnit P_mat.det := by
     set e := Pi.basisFun ℤ (Fin n) with he
     have hb : P_mat = e.toMatrix b' := by
@@ -225,7 +225,7 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
     rw [hb]
     simpa [Module.Basis.det_apply] using e.isUnit_det b'
   have hQ_unit : IsUnit Q_mat.det :=
-    isUnit_det_of_cols_of_mulVecLin_eq_basis A
+    isUnit_det_cols_of_mulVecLin_eq_basis A
       (mulVecLin_injective_of_det_ne_zero A hdet_ne) hr
   have h_diag_eq : P_mat⁻¹ * A * Q_mat = Matrix.diagonal a := by
     rw [Matrix.mul_assoc, hmat_eq, ← Matrix.mul_assoc, Matrix.nonsing_inv_mul _ hP_unit,
