@@ -7,6 +7,7 @@ module
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding
 
 import TauCeti.Analysis.Complex.CircleChord
+import TauCeti.Topology.Circle.Metric
 
 /-!
 # The geometry of the shifted contour at `i`
@@ -42,17 +43,14 @@ variable {H t : ℝ}
 the absolute value inside the sine. -/
 theorem norm_fdBoundary_sub_I_arc (H : ℝ) (ht : t ∈ Icc (1 : ℝ) 3) :
     ‖fdBoundary H t - Complex.I‖ = 2 * |Real.sin ((t - 2) * (Real.pi / 12))| := by
-  have hc : circleMap 0 1 ((t + 1) * (Real.pi / 6)) =
-      Complex.exp ((((t + 1) * (Real.pi / 6) : ℝ) : ℂ) * Complex.I) := by
-    rw [circleMap_zero, Complex.ofReal_one, one_mul]
-  have hI : Complex.I = Complex.exp (((Real.pi / 2 : ℝ) : ℂ) * Complex.I) := by
-    rw [Complex.ofReal_div, Complex.ofReal_ofNat]
-    exact Complex.exp_pi_div_two_mul_I.symm
   have hcurve : fdBoundary H t = circleMap 0 1 ((t + 1) * (Real.pi / 6)) :=
     eqOn_fdBoundary_arc H ht
-  rw [hI, hcurve, hc, norm_exp_mul_I_sub_exp_mul_I]
-  congr 2
-  ring
+  have hI : Complex.I = circleMap 0 1 (Real.pi / 2) := by
+    rw [circleMap_zero, Complex.ofReal_one, one_mul, Complex.ofReal_div,
+      Complex.ofReal_ofNat, Complex.exp_pi_div_two_mul_I]
+  rw [← Complex.dist_eq, hcurve, hI, dist_circleMap_eq_two_mul_abs_sin,
+    (by ring : ((t + 1) * (Real.pi / 6) - Real.pi / 2) / 2 = (t - 2) * (Real.pi / 12))]
+  norm_num
 
 
 /-- Left of the crossing the shifted contour stays in the slit plane through its

@@ -7,17 +7,15 @@ module
 public import Mathlib.Analysis.SpecialFunctions.Complex.Log
 
 /-!
-# The chord identities on the unit circle
+# The polar chord identity on the unit circle
 
-The difference of two unit-circle points, in polar form and in norm: the half-angle
-sine, rotated a quarter turn past the midpoint direction, and its absolute value twice
-over. These are the pointwise inputs for chord-distance computations along circular
-contour arcs.
+The difference of two unit-circle points in polar form: the half-angle sine, rotated a
+quarter turn past the midpoint direction. This is the pointwise input for the endpoint
+logarithms of circular contour arcs; its norm is `TauCeti.dist_circleExp_eq_two_mul_abs_sin`.
 
 ## Main declarations
 
-* `TauCeti.exp_mul_I_sub_exp_mul_I` (the polar form).
-* `TauCeti.norm_exp_mul_I_sub_exp_mul_I` (the chord length).
+* `TauCeti.exp_mul_I_sub_exp_mul_I`.
 -/
 
 public section
@@ -49,15 +47,6 @@ theorem exp_mul_I_sub_exp_mul_I (α β : ℝ) :
     ring
   rw [h1, h2, Complex.exp_add, Complex.exp_add, ← mul_sub, hsin, ← Complex.ofReal_sin]
   ring
-
-/-- **The chord identity on the unit circle**: the distance between two unit-circle
-points is twice the absolute value of the half-angle sine. -/
-theorem norm_exp_mul_I_sub_exp_mul_I (α β : ℝ) :
-    ‖Complex.exp (α * Complex.I) - Complex.exp (β * Complex.I)‖ =
-      2 * |Real.sin ((α - β) / 2)| := by
-  rw [exp_mul_I_sub_exp_mul_I, norm_mul, norm_mul, norm_mul, Complex.norm_I,
-    Complex.norm_exp_ofReal_mul_I, Complex.norm_real, Real.norm_eq_abs]
-  norm_num
 
 end TauCeti
 
