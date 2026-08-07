@@ -56,17 +56,6 @@ variable (n : ℕ)
 
 section Scalar
 
-/-- The chosen representative of a diagonal coset decomposes as `h₁ · diag(a) · h₂` with
-`h₁, h₂ ∈ SL_n(ℤ)`. -/
-lemma exists_rep_diagCoset_eq_mul_natDiagGL_mul (a : Fin n → ℕ) :
-    ∃ h₁ ∈ SLnZ n, ∃ h₂ ∈ SLnZ n,
-      ((diagCoset a).rep : GL (Fin n) ℚ) = h₁ * natDiagGL n a * h₂ := by
-  have hmem : ((diagCoset a).rep : GL (Fin n) ℚ) ∈
-      doubleCoset (natDiagGL n a) (SLnZ n) (SLnZ n) := by
-    rw [← diagCoset_toSet]
-    exact HeckeCoset.rep_mem _
-  exact mem_doubleCoset.mp hmem
-
 variable [NeZero n]
 
 private lemma mulMap_const_eq (c : ℕ) (hc : 0 < c) (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
@@ -76,8 +65,8 @@ private lemma mulMap_const_eq (c : ℕ) (hc : 0 < c) (b : Fin n → ℕ) (hb : �
     HeckeCoset.mulMap (SLnZ n) (SLnZ n) (SLnZ n)
       (diagCoset fun _ : Fin n ↦ c).rep (diagCoset b).rep p =
       diagCoset ((fun _ ↦ c) * b) := by
-  obtain ⟨L₁, hL₁, R₁, hR₁, hα⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul n (fun _ ↦ c)
-  obtain ⟨L₂, hL₂, R₂, hR₂, hβ⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul n b
+  obtain ⟨L₁, hL₁, R₁, hR₁, hα⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul (fun _ : Fin n ↦ c)
+  obtain ⟨L₂, hL₂, R₂, hR₂, hβ⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul b
   have hprod : (p.1.out : GL (Fin n) ℚ) *
       ((diagCoset fun _ : Fin n ↦ c).rep : GL (Fin n) ℚ) *
       ((p.2.out : GL (Fin n) ℚ) * ((diagCoset b).rep : GL (Fin n) ℚ)) =
@@ -309,8 +298,8 @@ private lemma mulMap_coprime_eq (a b : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i)
       DecompQuotient (SLnZ n) (SLnZ n) (((diagCoset b).rep : GL (Fin n) ℚ))) :
     HeckeCoset.mulMap (SLnZ n) (SLnZ n) (SLnZ n) (diagCoset a).rep (diagCoset b).rep p =
       diagCoset (a * b) := by
-  obtain ⟨h₁a, hh₁a, h₂a, hh₂a, hδa⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul n a
-  obtain ⟨h₁b, hh₁b, h₂b, hh₂b, hδb⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul n b
+  obtain ⟨h₁a, hh₁a, h₂a, hh₂a, hδa⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul a
+  obtain ⟨h₁b, hh₁b, h₂b, hh₂b, hδb⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul b
   obtain ⟨σ, hσ⟩ := (mem_SLnZ_iff n).mp
     ((SLnZ n).mul_mem ((SLnZ n).mul_mem hh₂a p.2.out.2) hh₁b)
   have h_cop := mul_mem_doubleCoset_of_coprime n a b ha_pos hb_pos hcop σ
@@ -552,8 +541,8 @@ private lemma multiplicity_coprime_le_one (a b : Fin n → ℕ) (ha_pos : ∀ i,
       (((diagCoset a).rep : GL (Fin n) ℚ)) (((diagCoset b).rep : GL (Fin n) ℚ))
       ((A.rep : GL (Fin n) ℚ)) ≤ 1 := by
   classical
-  obtain ⟨h₁a, hh₁a, h₂a, hh₂a, hδa⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul n a
-  obtain ⟨h₁b, hh₁b, h₂b, hh₂b, hδb⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul n b
+  obtain ⟨h₁a, hh₁a, h₂a, hh₂a, hδa⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul a
+  obtain ⟨h₁b, hh₁b, h₂b, hh₂b, hδb⟩ := exists_rep_diagCoset_eq_mul_natDiagGL_mul b
   rw [multiplicity_def, Nat.card_eq_fintype_card]
   refine Fintype.card_le_one_iff_subsingleton.mpr ?_
   constructor
