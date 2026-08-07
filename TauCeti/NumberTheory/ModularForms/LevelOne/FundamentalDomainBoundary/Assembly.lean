@@ -72,8 +72,8 @@ theorem intervalIntegral_logDeriv_fdBoundary [SlashInvariantFormClass F Γ k] (f
         k * ((Real.pi / 6 : ℝ) * Complex.I) := by
   have hint23 := intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_segment3
     f hS hd hne hint12
-  have hint34 := intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_segment4
-    hper hint01
+  have hint34 := intervalIntegrable_deriv_smul_fdBoundary_segment4
+    (TauCeti.Function.Periodic.logDeriv hper) hint01
   have hint13 := hint12.trans hint23
   have hint35 := hint34.trans hint45
   have hint15 := hint13.trans hint35

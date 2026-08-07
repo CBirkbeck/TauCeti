@@ -63,15 +63,15 @@ theorem intervalIntegral_fdBoundary_segment4_eq_neg_segment1 {E : Type*}
   rw [fdBoundary_four_sub_vertical H ⟨hu.1.le, hu.2.le⟩,
     deriv_fdBoundary_four_sub_vertical H hu, hφ.sub_eq, neg_smul]
 
-/-- The right-vertical integrability reflects to the left vertical: the reflection
-carries the integrand to its negation through the translation and the periodicity. -/
-theorem intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_segment4
-    {g : UpperHalfPlane → ℂ} {H : ℝ} (hper : Function.Periodic (g ∘ UpperHalfPlane.ofComplex) 1)
-    (hint : IntervalIntegrable
-      (fun t ↦ deriv (fdBoundary H) t • logDeriv (g ∘ UpperHalfPlane.ofComplex) (fdBoundary H t))
+/-- The right-vertical integrability of a period-`1` integrand reflects to the left
+vertical: the reflection carries the integrand to its negation through the translation
+and the periodicity. -/
+theorem intervalIntegrable_deriv_smul_fdBoundary_segment4 {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℂ E] {H : ℝ} {φ : ℂ → E}
+    (hφ : Function.Periodic φ 1)
+    (hint : IntervalIntegrable (fun t ↦ deriv (fdBoundary H) t • φ (fdBoundary H t))
       volume 0 1) :
-    IntervalIntegrable
-      (fun t ↦ deriv (fdBoundary H) t • logDeriv (g ∘ UpperHalfPlane.ofComplex) (fdBoundary H t))
+    IntervalIntegrable (fun t ↦ deriv (fdBoundary H) t • φ (fdBoundary H t))
       volume 3 4 := by
   have hI := (hint.neg.comp_sub_left 4).symm
   have h41 : (4 : ℝ) - 1 = 3 := by norm_num
@@ -88,9 +88,7 @@ theorem intervalIntegrable_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_segment
   have hval' : fdBoundary H (4 - x) = fdBoundary H x + 1 := by linear_combination -hval
   have hder' : deriv (fdBoundary H) (4 - x) = -deriv (fdBoundary H) x := by
     linear_combination hder
-  simp only [Pi.neg_apply, hval', hder',
-    TauCeti.Function.Periodic.logDeriv hper (fdBoundary H x), smul_eq_mul]
-  ring
+  simp only [Pi.neg_apply, hval', hder', hφ (fdBoundary H x), neg_smul, neg_neg]
 
 end ModularForm
 
