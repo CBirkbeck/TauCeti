@@ -24,7 +24,20 @@ nonarchimedean, that is, to have a neighbourhood basis of zero by additive subgr
 open *ideals* would be too strong: a nonzero Tate ring has no proper open ideal.
 
 Together with `TauCeti/RingTheory/Huber/Bounded.lean` this is the boundedness prerequisite of the
-adic-spaces roadmap, stated to agree with mathlib4#40013.
+adic-spaces roadmap.
+
+## Provenance
+
+`IsPowerBounded`, `isPowerBounded_zero`, `isPowerBounded_one`, `isPowerBounded_mul_of_commute`,
+`IsPowerBounded.mul`, `IsPowerBounded.neg`, `IsPowerBounded.of_isTopologicallyNilpotent`,
+`IsPowerBounded.isTopologicallyNilpotent_mul_of_commute` and `powerBoundedSubring` are stated as
+in William Coram's mathlib4#40013 (there `PowerBounded.subring`, and the last two under different
+names), so that the two can be identified once that pull request lands. New here are
+`IsPowerBounded.pow`, the nonarchimedean `IsPowerBounded.add` and `isTopologicallyNilpotent_add`,
+`topologicallyNilpotentIdeal` and `coe_topologicallyNilpotentIdeal` — #40013 carries `A°°` as a
+`Set.range` of an inclusion rather than as an ideal of `A°` — and the transport lemmas. The
+selection and ordering of results follows AINTLIB's `Bounded.lean`, the roadmap's designated prior
+formalisation of this layer; its proofs were not used.
 
 ## Main definitions
 
@@ -54,6 +67,11 @@ nilpotent element.
 
 * [Wedhorn, *Adic Spaces*][wedhorn_adic], Definition 5.25, Definition 5.27, Remark 5.28 and
   Proposition 5.30.
+* William Coram, *feat: define bounded sets and power bounded elements*,
+  [mathlib4#40013](https://github.com/leanprover-community/mathlib4/pull/40013).
+* [AINTLIB](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
+  `projects/AdicSpaces/Adic spaces/Bounded.lean`.
+
 -/
 
 @[expose] public section
