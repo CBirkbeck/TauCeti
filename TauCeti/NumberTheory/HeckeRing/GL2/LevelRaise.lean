@@ -11,6 +11,7 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 public import TauCeti.RepresentationTheory.ClassicalGroups.Diagonal
 public import TauCeti.NumberTheory.ModularForms.Basic
 public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
+public import TauCeti.Analysis.Complex.Periodic
 
 public section
 
@@ -258,7 +259,8 @@ lemma slash_mapGL_levelRaiseFun (l : ℕ) [NeZero l] (k : ℤ) (γ : SL(2, ℤ))
       levelRaiseFun l k
         (f ∣[k] (mapGL ℝ (levelRaiseConjOfDvd l γ hdvd) : GL (Fin 2) ℝ)) := by
   have hσγ := σ_mapGL_real_eq_refl γ
-  -- unfold `levelRaiseFun` on the left: it *is* the scaled slash by `α_l`
+  -- `levelRaiseFun` is sealed (`public section`, no `@[expose]`), so `rw`/`simp` cannot
+  -- unfold it; `change` states the defeq body directly, which is the only route in
   change ((l : ℂ) ^ (1 - k) • (f ∣[k] levelRaiseMatrix l)) ∣[k]
       (mapGL ℝ γ : GL (Fin 2) ℝ) = _
   rw [ModularForm.smul_slash, hσγ, ContinuousAlgEquiv.refl_apply, ← SlashAction.slash_mul,
@@ -271,7 +273,8 @@ cancels the `l^{k-1}` factor from the slash action. -/
 @[simp]
 lemma levelRaiseFun_apply (l : ℕ) [NeZero l] (k : ℤ) (f : UpperHalfPlane → ℂ) (τ : UpperHalfPlane) :
     levelRaiseFun l k f τ = f ((levelRaiseMatrix l) • τ) := by
-  -- unfold `levelRaiseFun` and push the coercion through the pointwise scalar action
+  -- same sealed-body situation as above: `change` supplies the defeq unfolding, then the
+  -- coercion is pushed through the pointwise scalar action by `simp`
   change ((l : ℂ) ^ (1 - k)) • ((f ∣[k] levelRaiseMatrix l) τ) = _
   rw [ModularForm.slash_apply, σ_levelRaiseMatrix, ContinuousAlgEquiv.refl_apply,
     abs_levelRaiseMatrix_det_val, denom_levelRaiseMatrix, one_zpow, mul_one,
@@ -342,21 +345,22 @@ lemma levelRaiseFun_levelRaiseFun (d d' : ℕ) [NeZero d] [NeZero d'] (k : ℤ)
 /-- **Associativity of the bundled `levelRaise` operator.** Raising a cusp form `h` from
 level `M'` to `M = e·M'` and then to `d·M`, equals raising it directly from `M'` to
 `(d·e)·M'`.  Both produce a cusp form at level `d·M = (d·e)·M'`, identified via the level
-equality `heq3`.  This is the algebraic core that folds two iterated level-raises into a
-single one (Diamond–Shurman §5.6 Exercise 5.6.2; Miyake §4.6). -/
+equality `(d·e)·M' = d·M`, which follows from `heq1` by associativity.  This is the
+algebraic core that folds two iterated level-raises into a single one
+(Diamond–Shurman §5.6 Exercise 5.6.2; Miyake §4.6). -/
 lemma levelRaise_levelRaise {M' : ℕ} {e : ℕ} [NeZero e] {M : ℕ}
     {d : ℕ} [NeZero d] {k : ℤ}
-    (h : CuspForm ((Gamma1 M').map (mapGL ℝ)) k) (heq1 : e * M' = M)
-    (heq3 : (d * e) * M' = d * M) :
+    (h : CuspForm ((Gamma1 M').map (mapGL ℝ)) k) (heq1 : e * M' = M) :
     levelRaise M d k (CuspForm.mcast (Γ' := (Gamma1 M).map (mapGL ℝ)) rfl
         (levelRaise M' e k h) (by rw [heq1])) =
       CuspForm.mcast (Γ' := (Gamma1 (d * M)).map (mapGL ℝ)) rfl
-        (levelRaise M' (d * e) k h) (by rw [heq3]) := by
+        (levelRaise M' (d * e) k h) (by subst heq1; rw [mul_assoc]) := by
   subst heq1
   apply CuspForm.ext
   intro τ
   simp only [CuspForm.mcast_apply, coe_levelRaise]
-  -- `mcast` keeps the underlying function, so the transport is invisible here
+  -- `CuspForm.mcast` transports along a level equality but keeps the underlying function,
+  -- so the two sides are defeq; no rewrite exists to witness that, hence `change`
   change levelRaiseFun d k (⇑((levelRaise M' e k) h)) τ = _
   simp only [coe_levelRaise]
   rw [levelRaiseFun_levelRaiseFun]
@@ -446,11 +450,13 @@ lemma exists_T_levelRaiseConj_T_factor (l N : ℕ) [NeZero l] (h_dvd : l ∣ N)
   refine ⟨i, j, ⟨!![α, k; (l : ℤ) * c, d - c * j], ?det⟩,
     ?gamma0_mem, ?eq, ?diag⟩
   · rw [Matrix.det_fin_two_of]
-    -- read the four entries off the matrix literal
+    -- `Matrix.det_fin_two` leaves the entries as `!![…] i j` applications; `change` reads
+    -- them off the literal, which no simp lemma does in one step
     change α * (d - c * j) - k * ((l : ℤ) * c) = 1
     linear_combination hdet + c * hk
   · refine Gamma0_mem.mpr ?_
-    -- the lower-left entry of the literal is `l * c`
+    -- as above: the goal mentions the `(1,0)` entry of the matrix literal, and `change`
+    -- names it rather than routing through `Matrix.cons_val` unfolding
     change (((l : ℤ) * c : ℤ) : ZMod N) = 0
     rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
     refine Int.dvd_mul_of_div_dvd (Int.natCast_dvd_natCast.mpr h_dvd) ?_
@@ -458,24 +464,17 @@ lemma exists_T_levelRaiseConj_T_factor (l N : ℕ) [NeZero l] (h_dvd : l ∣ N)
     rwa [Int.natCast_div] at h
   · refine eq_T_zpow_mul_levelRaiseConj_mul_T_zpow l a b c d i j k γ' _
       (Matrix.eta_fin_two γ'.val) rfl ?_ _
-    -- this is the Bézout identity, scaled by β
+    -- restating the goal as the β-scaled Bézout identity; `linear_combination` below needs
+    -- this exact shape, which no rewrite produces from the coerced form
     change β - j * α = (l : ℤ) * k
     linear_combination hk
   · rfl
-
-/-- **qParam scaling under `d`-dilation.** For any real period `h` and any `d : ℕ`,
-`qParam h (d · z) = (qParam h z) ^ d`. -/
-lemma qParam_nat_mul_eq_pow (h : ℝ) (d : ℕ) (z : ℂ) :
-    Function.Periodic.qParam h ((d : ℂ) * z) =
-      (Function.Periodic.qParam h z) ^ d := by
-  simp only [Function.Periodic.qParam, ← Complex.exp_nat_mul]
-  ring_nf
 
 /-- **Sparse reindexing** of a HasSum over `(q^d)^j` as a HasSum over
 `q^n` with zero coefficients at non-multiples of `d`.  For
 `HasSum (j ↦ a j • (q ^ d) ^ j) S`, we obtain
 `HasSum (n ↦ if d ∣ n then a (n / d) • q ^ n else 0) S`. -/
-lemma hasSum_pow_dvd_reindex {d : ℕ} (hd : 0 < d) {a : ℕ → ℂ} {q : ℂ}
+private lemma hasSum_pow_dvd_reindex {d : ℕ} (hd : 0 < d) {a : ℕ → ℂ} {q : ℂ}
     {S : ℂ} (h : HasSum (fun j : ℕ ↦ a j • (q ^ d) ^ j) S) :
     HasSum (fun n : ℕ ↦ if d ∣ n then a (n / d) • q ^ n else 0) S := by
   have hinj : Function.Injective (fun j : ℕ ↦ d * j) :=
@@ -495,17 +494,20 @@ lemma hasSum_pow_dvd_reindex {d : ℕ} (hd : 0 < d) {a : ℕ → ℂ} {q : ℂ}
 
 /-- **Period-general q-expansion scaling formula for `modularFormLevelRaise`.**
 For an arbitrary positive period `h` that is a strict period of both `Γ₁(N)`
-(the source level of `f`) and `Γ₁(d · N)` (the target level of `ι_d f`), the
+(the source level of `f`) — equivalently of `Γ₁(d · N)`, since both strict-period
+groups are `zmultiples 1` — the
 level-raised form `modularFormLevelRaise N d k f` has Fourier coefficients
 given by `d`-dilation of those of `f`. -/
 theorem qExpansion_modularFormLevelRaise_coeff'
     {N : ℕ} [NeZero N] {d : ℕ} [NeZero d] {k : ℤ} {h : ℝ}
     (hh_pos : 0 < h)
     (hh_period_N : h ∈ ((Gamma1 N).map (mapGL ℝ)).strictPeriods)
-    (hh_period_dN : h ∈ ((Gamma1 (d * N)).map (mapGL ℝ)).strictPeriods)
     (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) (n : ℕ) :
     (UpperHalfPlane.qExpansion h ⇑(modularFormLevelRaise N d k f)).coeff n =
       if d ∣ n then (UpperHalfPlane.qExpansion h ⇑f).coeff (n / d) else 0 := by
+  -- the strict-period groups of `Γ₁(N)` and `Γ₁(d·N)` are both `zmultiples 1`
+  have hh_period_dN : h ∈ ((Gamma1 (d * N)).map (mapGL ℝ)).strictPeriods := by
+    rw [strictPeriods_Gamma1] at hh_period_N ⊢; exact hh_period_N
   have h_sum_g : ∀ τ : UpperHalfPlane,
       HasSum (fun j : ℕ ↦
         (if d ∣ j then (UpperHalfPlane.qExpansion h ⇑f).coeff (j / d) else 0) •
@@ -515,7 +517,7 @@ theorem qExpansion_modularFormLevelRaise_coeff'
     have hfsum := ModularForm.hasSum_qExpansion f hh_pos hh_period_N
       (levelRaiseMatrix d • τ)
     simp only [← smul_eq_mul] at hfsum
-    rw [coe_levelRaiseMatrix_smul d τ, qParam_nat_mul_eq_pow h d (τ : ℂ)] at hfsum
+    rw [coe_levelRaiseMatrix_smul d τ, TauCeti.Periodic.qParam_nat_mul_eq_pow h d (τ : ℂ)] at hfsum
     convert hasSum_pow_dvd_reindex (Nat.pos_of_neZero d) hfsum using 1
     funext j
     split_ifs with hdvd
@@ -533,7 +535,6 @@ theorem qExpansion_one_modularFormLevelRaise_coeff
     (UpperHalfPlane.qExpansion (1 : ℝ) ⇑(modularFormLevelRaise N d k f)).coeff n =
       if d ∣ n then (UpperHalfPlane.qExpansion (1 : ℝ) ⇑f).coeff (n / d) else 0 :=
   qExpansion_modularFormLevelRaise_coeff' one_pos
-    (by rw [strictPeriods_Gamma1]; exact ⟨1, by simp⟩)
     (by rw [strictPeriods_Gamma1]; exact ⟨1, by simp⟩) f n
 
 /-- **Injectivity of the bundled cusp-form operator `levelRaise M d k`.** -/

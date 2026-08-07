@@ -93,6 +93,15 @@ theorem logDeriv_eq_logDeriv_cuspFunction_mul_deriv_qParam {g : ℂ → ℂ} (hh
     rw [logDeriv_eq_zero_of_not_differentiableAt _ _ hd,
       logDeriv_eq_zero_of_not_differentiableAt _ _ hnc, zero_mul]
 
+/-- **qParam scaling under `d`-dilation.** For any real period `h` and any `d : ℕ`,
+`qParam h (d · z) = (qParam h z) ^ d`. -/
+lemma qParam_nat_mul_eq_pow (h : ℝ) (d : ℕ) (z : ℂ) :
+    Function.Periodic.qParam h ((d : ℂ) * z) =
+      (Function.Periodic.qParam h z) ^ d := by
+  simp only [Function.Periodic.qParam, ← Complex.exp_nat_mul]
+  ring_nf
+
+
 end TauCeti.Periodic
 
 end
