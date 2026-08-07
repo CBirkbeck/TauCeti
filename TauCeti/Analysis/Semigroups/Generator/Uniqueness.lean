@@ -85,16 +85,12 @@ private theorem hasDerivAt_realOperator_sub {S : StronglyContinuousSemigroup X} 
 omit [CompleteSpace X] in
 /-- **The generator difference quotient, based at `s`.** The defining quotient of `T.generator` at
 `y`, reparametrised so that it approaches `s` from the right rather than `0`. -/
-private theorem tendsto_generator_diffQuotient {T : StronglyContinuousSemigroup X} {y a : X}
+private theorem tendsto_generator_diff_quotient {T : StronglyContinuousSemigroup X} {y a : X}
     (hy : y ∈ T.generator.domain) (hTa : T.generator ⟨y, hy⟩ = a) (s : ℝ) :
     Tendsto (fun u : ℝ => (u - s)⁻¹ • (T.realOperator (u - s) y - y)) (𝓝[>] s) (𝓝 a) := by
   have hyT : y ∈ T.domain := by rwa [T.generator_domain] at hy
   have hshift : Tendsto (fun u : ℝ => u - s) (𝓝[>] s) (𝓝[>] 0) := by
-    refine tendsto_nhdsWithin_iff.mpr ⟨?_, ?_⟩
-    · simpa using ((continuous_sub_right s).tendsto s).mono_left nhdsWithin_le_nhds
-    · filter_upwards [self_mem_nhdsWithin] with u hu
-      simp only [Set.mem_Ioi] at hu ⊢
-      linarith
+    simpa [sub_eq_add_neg] using tendsto_map (f := fun u : ℝ => u + -s) (x := 𝓝[>] s)
   simpa [Function.comp_def, one_div, hTa] using (T.generator_tendsto ⟨y, hyT⟩).comp hshift
 
 omit [CompleteSpace X] in
@@ -165,7 +161,7 @@ private theorem hasDerivWithinAt_interpolate {S T : StronglyContinuousSemigroup 
     hasDerivAt_realOperator_sub hrpos hyS' hSa
   -- The inner factor: the defining difference quotient of the generator of `T` at `y`.
   have hquot : Tendsto (fun u : ℝ => (u - s)⁻¹ • (T.realOperator (u - s) y - y))
-      (𝓝[>] s) (𝓝 a) := tendsto_generator_diffQuotient hyT' rfl s
+      (𝓝[>] s) (𝓝 a) := tendsto_generator_diff_quotient hyT' rfl s
   exact hasDerivWithinAt_interpolate_of_tendsto hrpos hs0 hy_def.symm hquot hrho
 
 /-- Two strongly continuous semigroups with the same generator agree on the generator domain,
