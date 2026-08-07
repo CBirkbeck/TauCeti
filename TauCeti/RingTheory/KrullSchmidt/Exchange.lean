@@ -16,8 +16,8 @@ suppose `N` is an indecomposable direct summand of `M`. Then `N` is isomorphic t
 summands `Q i₀`, and it may be *exchanged* for it: `M` is also the direct sum of `N` and the
 remaining summands `⨆ j ≠ i₀, Q j`.
 
-The argument is the classical one. Writing `p` for the projection of `M` onto `N`, the
-endomorphisms of `N` obtained by projecting `N` into `Q i` and back sum to the identity, because the
+The argument is the classical one. The endomorphisms of `N` obtained by projecting `N` into `Q i`
+and back sum to the identity, because the
 projections `TauCeti.internalProjection` onto the summands do
 (`TauCeti.sum_coe_internalProjection`). The hypothesis is that `Module.End A N` is local, and in a
 local ring a finite sum can only be a unit if one of its terms is
