@@ -31,7 +31,7 @@ of `y`.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.sq_dvd_den_of_prime_dvd`: a prime dividing the denominator of the
+* `TauCeti.WeierstrassCurve.sq_dvd_den_of_prime_of_dvd`: a prime dividing the denominator of the
   `x`-coordinate of a point divides it at least twice.
 * `TauCeti.WeierstrassCurve.not_prime_den`: the denominator of the `x`-coordinate of a point is
   not a prime element.
@@ -124,7 +124,7 @@ private lemma num_den_equation (h : (W.baseChange K).toAffine.Equation x y) :
 
 If `(x, y)` is a point of `W` over the fraction field `K` of a unique factorization domain `R`,
 then a prime of `R` dividing the denominator of `x` divides it at least twice. -/
-theorem sq_dvd_den_of_prime_dvd (h : (W.baseChange K).toAffine.Equation x y) (hq : Prime q)
+theorem sq_dvd_den_of_prime_of_dvd (h : (W.baseChange K).toAffine.Equation x y) (hq : Prime q)
     (hqd : q ∣ (den R x : R)) : q ^ 2 ∣ (den R x : R) := by
   by_contra hq2
   obtain ⟨u, hu⟩ := hqd
@@ -143,13 +143,13 @@ theorem sq_dvd_den_of_prime_dvd (h : (W.baseChange K).toAffine.Equation x y) (hq
 
 /-- **The denominator of the `x`-coordinate of a point is not prime.**
 
-The Nagell–Lutz form of `TauCeti.WeierstrassCurve.sq_dvd_den_of_prime_dvd`: a prime element is
+The Nagell–Lutz form of `TauCeti.WeierstrassCurve.sq_dvd_den_of_prime_of_dvd`: a prime element is
 not divisible by its own square, so it cannot be the denominator of the `x`-coordinate of a
 point. -/
 theorem not_prime_den (h : (W.baseChange K).toAffine.Equation x y) :
     ¬Prime (den R x : R) := fun hp ↦
   hp.not_isUnit <| hp.irreducible.squarefree _ <| by
-    simpa [sq] using sq_dvd_den_of_prime_dvd W h hp dvd_rfl
+    simpa [sq] using sq_dvd_den_of_prime_of_dvd W h hp dvd_rfl
 
 end WeierstrassCurve
 
