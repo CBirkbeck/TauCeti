@@ -9,26 +9,23 @@ public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Mathlib.RingTheory.Localization.FractionRing
 
 /-!
-# Integrality from the division-polynomial description of the `x`-coordinate
+# An integral-root criterion for the division polynomials `Φₙ` and `ΨSqₙ`
 
-The `x`-coordinate of `n • P` is `Φₙ(x) / ΨSqₙ(x)`, where `x` is the `x`-coordinate of `P`. So if
-`n • P` has `x`-coordinate `x'`, the two are tied by
+This file is pure polynomial algebra about Mathlib's division polynomials. Its content is that
+`Φₙ − C c * ΨSqₙ` is **monic** whenever `(n : R) ≠ 0` — `Φₙ` is monic of degree `n²` while `ΨSqₙ`
+has degree `n² - 1`, so subtracting a constant multiple of the latter cannot disturb the leading
+term — together with the integral-root consequence: a solution of `c * ΨSqₙ(x) = Φₙ(x)` is a root of
+that monic polynomial, so it is integral over `R`, and lies in `R` when `R` is integrally closed in
+the ambient algebra.
 
-`x' * ΨSqₙ(x) = Φₙ(x)`,
-
-which says exactly that `x` is a root of `Φₙ − x' · ΨSqₙ`. This file proves that this polynomial is
-**monic** whenever `(n : R) ≠ 0` — `Φₙ` is monic of degree `n²` while `ΨSqₙ` has degree `n² - 1`, so
-subtracting a constant multiple of the latter cannot disturb the leading term — and draws the
-consequence: when `R` is integrally closed in the ambient algebra, an `x'` coming from `R` forces
-`x` to come from `R` as well. In words,
-*if a multiple of a point is integral then the point already was*, which is the descent step that
-lets the Nagell–Lutz argument reduce an arbitrary torsion point to one of prime order.
-
-The geometric input — that the `x`-coordinates really are related that way — is not proved here: it
-is the point-level `[n]`-multiplication formula, which is mathlib-track material (mathlib
-[#13782](https://github.com/leanprover-community/mathlib4/pull/13782) and its successors). It enters
-below as the hypothesis `hid`, so the algebraic half is available independently and the two can be
-composed once the `[n]`-formula lands.
+⚠ **No point of a curve occurs in any statement here, and nothing about `n • P` is proved.** The
+motivation is that the `x`-coordinate of `n • P` is `Φₙ(x)/ΨSqₙ(x)`, so the coordinates of `P` and
+`n • P` would satisfy exactly the hypothesis `c * ΨSqₙ(x) = Φₙ(x)`; feeding that in would give "an
+integral multiple forces an integral point", the descent step of Nagell–Lutz. But that link is the
+point-level `[n]`-multiplication formula — mathlib-track material (mathlib
+[#13782](https://github.com/leanprover-community/mathlib4/pull/13782) and its successors) — which is
+**not available and not proved here**. Until it lands, this file is the algebraic half alone, and
+the descent step is not a theorem of this repository.
 
 ## Main results
 
@@ -36,15 +33,17 @@ composed once the `[n]`-formula lands.
 * `TauCeti.WeierstrassCurve.aeval_Φ_sub_C_mul_ΨSq_eq_zero`: the coordinate identity says exactly
   that `x` is a root of that polynomial.
 * `TauCeti.WeierstrassCurve.isInteger_of_mul_eval_ΨSq_eq_eval_Φ`: in any `R`-algebra in which `R`
-  is integrally closed, if `x' * ΨSqₙ(x) = Φₙ(x)` with `x'` coming from `R`, then so does `x`.
+  is integrally closed, if `x' * ΨSqₙ(x) = Φₙ(x)` with `x'` coming from `R`, then so does `x` — a
+  statement about two elements satisfying that identity, not about a point and its multiple.
 
 The last needs only `IsIntegrallyClosedIn R A` — no fraction field, no domain, no unique
 factorization: it is an integral-root statement, not a rational-root one. Nontriviality of `R` is
 not assumed either; it follows from `(n : R) ≠ 0`.
 
-This advances the Nagell–Lutz integrality milestone of
+This supplies an ingredient for the Nagell–Lutz integrality milestone of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 6, item "The torsion subgroup and Nagell–Lutz",
-whose stated route is "division polynomials".
+whose stated route is "division polynomials". It does not by itself establish any part of that
+milestone's statement.
 
 ## Provenance
 
@@ -99,14 +98,14 @@ theorem aeval_Φ_sub_C_mul_ΨSq_eq_zero {n : ℤ} {x : A} {c : R}
     Polynomial.map_mul, Polynomial.map_C, eval_sub, eval_mul, eval_C] at hid ⊢
   linear_combination -hid
 
-/-- **An integral multiple forces an integral point, on `x`-coordinates.**
+/-- **An integral-root criterion for `Φₙ` and `ΨSqₙ`.**
 
-If `x' * ΨSqₙ(x) = Φₙ(x)` — the relation between the `x`-coordinates of `P` and `n • P` — and `x'`
-comes from `R`, then so does `x`: it is a root of the monic `Φₙ − C c * ΨSqₙ`, and `R` is
-integrally closed in `A`.
+If `x' * ΨSqₙ(x) = Φₙ(x)` and `x'` comes from `R`, then so does `x`: it is a root of the monic
+`Φₙ − C c * ΨSqₙ`, and `R` is integrally closed in `A`.
 
-Stated for an arbitrary `R`-algebra `A` in which `R` is integrally closed; the fraction field of an
-integrally closed domain is the case the Nagell–Lutz argument uses. -/
+That identity is the relation the `x`-coordinates of `P` and `n • P` would satisfy, which is why
+this is the algebraic half of the Nagell–Lutz descent step — but that reading is motivation only:
+no point, and no multiple, occurs in this statement. -/
 theorem isInteger_of_mul_eval_ΨSq_eq_eval_Φ [IsIntegrallyClosedIn R A] {n : ℤ} (hn : (n : R) ≠ 0)
     {x x' : A} (hx' : IsLocalization.IsInteger R x')
     (hid : x' * ((W.baseChange A).ΨSq n).eval x = ((W.baseChange A).Φ n).eval x) :
