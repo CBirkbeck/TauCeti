@@ -286,6 +286,7 @@ lemma levelRaiseFun_apply (l : ℕ) [NeZero l] (k : ℤ) (f : UpperHalfPlane →
 
 /-- The action of `levelRaiseMatrix l = [[l, 0], [0, 1]]` on `ℍ` is the diagonal
 scaling `(α_l • τ : ℂ) = l · (↑τ : ℂ)`. -/
+@[simp]
 lemma coe_levelRaiseMatrix_smul (l : ℕ) [NeZero l] (τ : UpperHalfPlane) :
     ((levelRaiseMatrix l • τ : UpperHalfPlane) : ℂ) = (l : ℂ) * (↑τ : ℂ) := by
   rw [UpperHalfPlane.coe_smul_of_det_pos (levelRaiseMatrix_det_pos l)]
@@ -547,26 +548,12 @@ theorem qExpansion_levelRaise_coeff
     (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (n : ℕ) :
     (UpperHalfPlane.qExpansion h ⇑(levelRaise M d k g)).coeff n =
       if d ∣ n then (UpperHalfPlane.qExpansion h ⇑g).coeff (n / d) else 0 := by
-  have hh_period_dM : h ∈ ((Gamma1 (d * M)).map (mapGL ℝ)).strictPeriods := by
-    rw [strictPeriods_Gamma1] at hh_period_M ⊢; exact hh_period_M
-  have h_sum_g : ∀ τ : UpperHalfPlane,
-      HasSum (fun j : ℕ ↦
-        (if d ∣ j then (UpperHalfPlane.qExpansion h ⇑g).coeff (j / d) else 0) •
-          Function.Periodic.qParam h (τ : ℂ) ^ j)
-        (levelRaise M d k g τ) := fun τ ↦ by
-    rw [levelRaise_apply M d k g τ]
-    have hgsum := ModularForm.hasSum_qExpansion g hh_pos hh_period_M
-      (levelRaiseMatrix d • τ)
-    simp only [← smul_eq_mul] at hgsum
-    rw [coe_levelRaiseMatrix_smul d τ,
-      TauCeti.Periodic.qParam_natCast_mul_eq_pow h d (τ : ℂ)] at hgsum
-    convert hasSum_pow_dvd_reindex (Nat.pos_of_neZero d) hgsum using 1
-    funext j
-    split_ifs with hdvd
-    · rfl
-    · simp
-  exact (ModularFormClass.qExpansion_coeff_unique (f := levelRaise M d k g)
-    hh_pos hh_period_dM h_sum_g n).symm
+  -- both operators have the same underlying function, and `qExpansion` sees only that, so
+  -- this is the modular-form statement transported along the coercion
+  have hfun : ⇑(levelRaise M d k g) = ⇑(modularFormLevelRaise M d k (g : ModularForm _ k)) := by
+    rw [coe_levelRaise, coe_modularFormLevelRaise]; rfl
+  rw [hfun]
+  exact qExpansion_modularFormLevelRaise_coeff hh_pos hh_period_M _ n
 
 /-- **Period-1 specialisation** of `qExpansion_modularFormLevelRaise_coeff`:
 the canonical Fourier expansion of `modularFormLevelRaise N d k f` is the
@@ -578,6 +565,16 @@ theorem qExpansion_one_modularFormLevelRaise_coeff
       if d ∣ n then (UpperHalfPlane.qExpansion (1 : ℝ) ⇑f).coeff (n / d) else 0 :=
   qExpansion_modularFormLevelRaise_coeff one_pos
     (by rw [strictPeriods_Gamma1]; exact ⟨1, by simp⟩) f n
+
+/-- **Period-1 specialisation** of `qExpansion_levelRaise_coeff`: the canonical Fourier
+expansion of `ι_d g` is the `d`-dilation of that of `g`. -/
+theorem qExpansion_one_levelRaise_coeff
+    {M : ℕ} [NeZero M] {d : ℕ} [NeZero d] {k : ℤ}
+    (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) (n : ℕ) :
+    (UpperHalfPlane.qExpansion (1 : ℝ) ⇑(levelRaise M d k g)).coeff n =
+      if d ∣ n then (UpperHalfPlane.qExpansion (1 : ℝ) ⇑g).coeff (n / d) else 0 :=
+  qExpansion_levelRaise_coeff one_pos
+    (by rw [strictPeriods_Gamma1]; exact ⟨1, by simp⟩) g n
 
 /-- **Injectivity of the bundled cusp-form operator `levelRaise M d k`.** -/
 lemma levelRaise_injective (M d : ℕ) [NeZero d] (k : ℤ) :
