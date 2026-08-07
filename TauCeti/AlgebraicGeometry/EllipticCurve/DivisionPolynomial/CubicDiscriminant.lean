@@ -14,7 +14,7 @@ For a Weierstrass model with `a₁ = a₃ = 0` — so the equation is the cubic
 **discriminant of that cubic**, Mathlib's `Cubic.discr ⟨1, a₂, a₄, a₆⟩`.
 
 This is sharper than dividing `Δ`. Mathlib's `twoTorsionPolynomial_discr` records
-`Cubic.discr ⟨4, b₂, 2b₄, b₆⟩ = 16Δ`, and for these models `Δ = −16 · Cubic.discr ⟨1, a₂, a₄, a₆⟩`,
+`Cubic.discr ⟨4, b₂, 2b₄, b₆⟩ = 16Δ`, and for these models `Δ = 16 · Cubic.discr ⟨1, a₂, a₄, a₆⟩`,
 so the cubic discriminant is the invariant with the factors of `16` divided out. It is the `Δ` of
 the classical statement of Nagell–Lutz for a short model, where `a₂ = 0` too and the conclusion
 reads `y² ∣ 4a₄³ + 27a₆²` up to sign.
@@ -26,8 +26,11 @@ and `Cubic.discr` is an explicit combination of `y²` and `f'(x)²`. So `y² ∣
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.sq_dvd_deriv_sq`: `y² ∣ (3x² + 2a₂x + a₄)²`.
-* `TauCeti.WeierstrassCurve.sq_dvd_cubic_discr`: `y² ∣ Cubic.discr ⟨1, a₂, a₄, a₆⟩`.
+* `TauCeti.WeierstrassCurve.sq_dvd_derivative_sq`: `y² ∣ (3x² + 2a₂x + a₄)²`.
+* `TauCeti.WeierstrassCurve.sq_dvd_cubic_discr_of_sq_dvd_derivative_sq`: the discriminant step on
+  its own — no `a₁ = a₃ = 0`, no `Ψ₃`, just the curve equation and that divisibility.
+* `TauCeti.WeierstrassCurve.sq_dvd_cubic_discr`: `y² ∣ Cubic.discr ⟨1, a₂, a₄, a₆⟩`, the two
+  composed.
 
 Both are over an arbitrary commutative ring, for an arbitrary point of the curve — no domain,
 torsion, integrality or ellipticity hypothesis. The input `y² ∣ Ψ₃(x)` is what a torsion point
@@ -60,7 +63,7 @@ variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve R) {x y : R}
 
 /-- For a model with `a₁ = a₃ = 0`, the square of the derivative of the defining cubic differs from
 `Ψ₃(x)` by a multiple of `y²`, so `y² ∣ Ψ₃(x)` forces `y² ∣ (3x² + 2a₂x + a₄)²`. -/
-theorem sq_dvd_deriv_sq (ha₁ : W.a₁ = 0) (ha₃ : W.a₃ = 0)
+theorem sq_dvd_derivative_sq (ha₁ : W.a₁ = 0) (ha₃ : W.a₃ = 0)
     (hcurve : y ^ 2 = x ^ 3 + W.a₂ * x ^ 2 + W.a₄ * x + W.a₆)
     (hΨ₃ : y ^ 2 ∣ (W.Ψ₃).eval x) : y ^ 2 ∣ (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 := by
   have hid : (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 =
@@ -71,14 +74,14 @@ theorem sq_dvd_deriv_sq (ha₁ : W.a₁ = 0) (ha₃ : W.a₃ = 0)
     rw [hcurve]; ring
   exact hid ▸ dvd_sub (Dvd.dvd.mul_left dvd_rfl _) hΨ₃
 
-/-- **The sharp discriminant divisibility.**
+/-- The discriminant of `x³ + a₂x² + a₄x + a₆` is a combination of `y²` and the square of the
+cubic's derivative, so `y²` divides it as soon as it divides that square.
 
-For a model with `a₁ = a₃ = 0`, a point whose `y²` divides `Ψ₃(x)` has `y²` dividing the
-discriminant of the defining cubic `x³ + a₂x² + a₄x + a₆`. For a short model (`a₂ = 0` as well)
-this is the classical `y² ∣ 4a₄³ + 27a₆²` up to sign. -/
-theorem sq_dvd_cubic_discr (ha₁ : W.a₁ = 0) (ha₃ : W.a₃ = 0)
+This step needs neither `a₁ = a₃ = 0` nor anything about `Ψ₃`: only the curve equation and the
+divisibility of the derivative square. -/
+theorem sq_dvd_cubic_discr_of_sq_dvd_derivative_sq
     (hcurve : y ^ 2 = x ^ 3 + W.a₂ * x ^ 2 + W.a₄ * x + W.a₆)
-    (hΨ₃ : y ^ 2 ∣ (W.Ψ₃).eval x) :
+    (hderiv : y ^ 2 ∣ (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2) :
     y ^ 2 ∣ (Cubic.mk 1 W.a₂ W.a₄ W.a₆).discr := by
   have hid : (Cubic.mk 1 W.a₂ W.a₄ W.a₆).discr =
       (27 * x ^ 3 + 27 * W.a₂ * x ^ 2 + 27 * W.a₄ * x - 4 * W.a₂ ^ 3 + 18 * W.a₂ * W.a₄
@@ -87,8 +90,19 @@ theorem sq_dvd_cubic_discr (ha₁ : W.a₁ = 0) (ha₃ : W.a₃ = 0)
           (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 := by
     simp only [Cubic.discr]
     rw [hcurve]; ring
-  exact hid ▸ dvd_sub (Dvd.dvd.mul_left dvd_rfl _)
-    (Dvd.dvd.mul_left (sq_dvd_deriv_sq W ha₁ ha₃ hcurve hΨ₃) _)
+  exact hid ▸ dvd_sub (Dvd.dvd.mul_left dvd_rfl _) (Dvd.dvd.mul_left hderiv _)
+
+/-- **The sharp discriminant divisibility.**
+
+For a model with `a₁ = a₃ = 0`, a point whose `y²` divides `Ψ₃(x)` has `y²` dividing the
+discriminant of the defining cubic `x³ + a₂x² + a₄x + a₆`. For a short model (`a₂ = 0` as well)
+this is the classical `y² ∣ 4a₄³ + 27a₆²` up to sign. -/
+theorem sq_dvd_cubic_discr (ha₁ : W.a₁ = 0) (ha₃ : W.a₃ = 0)
+    (hcurve : y ^ 2 = x ^ 3 + W.a₂ * x ^ 2 + W.a₄ * x + W.a₆)
+    (hΨ₃ : y ^ 2 ∣ (W.Ψ₃).eval x) :
+    y ^ 2 ∣ (Cubic.mk 1 W.a₂ W.a₄ W.a₆).discr :=
+  sq_dvd_cubic_discr_of_sq_dvd_derivative_sq W hcurve
+    (sq_dvd_derivative_sq W ha₁ ha₃ hcurve hΨ₃)
 
 end WeierstrassCurve
 
