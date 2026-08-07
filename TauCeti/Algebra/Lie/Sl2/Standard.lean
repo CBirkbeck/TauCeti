@@ -627,7 +627,7 @@ theorem finrank_eigenspace_diag (i : Fin (n + 1)) :
 operator is nilpotent, so the sequence `v, e·v, e²·v, …` starting from any nonzero `v` of the
 subspace has a last nonzero term; that term is killed by `e`, hence is a nonzero multiple of
 `basis K n 0`. -/
-private theorem basis_zero_mem_of_raise_mem (N : Submodule K (Sl2Std K n)) (hN : N ≠ ⊥)
+private theorem basis_zero_mem_of_ne_bot_of_raise_mem (N : Submodule K (Sl2Std K n)) (hN : N ≠ ⊥)
     (hraise : ∀ w ∈ N, raise K n w ∈ N) : basis K n 0 ∈ N := by
   classical
   obtain ⟨v, hvN, hv⟩ := Submodule.exists_mem_ne_zero_of_ne_bot hN
@@ -656,7 +656,7 @@ private theorem basis_zero_mem_of_raise_mem (N : Submodule K (Sl2Std K n)) (hN :
 /-- **A subspace stable under lowering and containing the highest weight vector contains the whole
 coordinate basis.** `Sl2Std.lower_pow_basis_zero` identifies `fⁱ · v₀` as `basis K n i` scaled by
 `n(n - 1)⋯(n - i + 1)`, and that product is nonzero because every factor has `j < i ≤ n`. -/
-private theorem basis_mem_of_lower_mem (N : Submodule K (Sl2Std K n))
+private theorem basis_mem_of_lower_mem_of_basis_zero_mem (N : Submodule K (Sl2Std K n))
     (hlower : ∀ w ∈ N, lower K n w ∈ N) (hbasis0 : basis K n 0 ∈ N) (i : Fin (n + 1)) :
     basis K n i ∈ N := by
   have hmem : ((lower K n) ^ (i : ℕ)) (basis K n 0) ∈ N :=
@@ -679,7 +679,8 @@ theorem eq_top_of_raise_mem_of_lower_mem (N : Submodule K (Sl2Std K n)) (hN : N 
   refine eq_top_iff.2 ?_
   rw [← (basis K n).span_eq, Submodule.span_le]
   rintro _ ⟨i, rfl⟩
-  exact basis_mem_of_lower_mem N hlower (basis_zero_mem_of_raise_mem N hN hraise) i
+  exact basis_mem_of_lower_mem_of_basis_zero_mem N hlower
+    (basis_zero_mem_of_ne_bot_of_raise_mem N hN hraise) i
 
 /-- **`V(n)` is an irreducible `sl (Fin 2) K`-module.** -/
 instance isIrreducible :
