@@ -4,28 +4,26 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding
 
-/-!
-# Distance of the boundary contour from `i`
+import TauCeti.Analysis.Complex.CircleChord
 
-Away from the arc crossing at parameter `2`, the boundary contour keeps its distance
-from `i`: the verticals by their constant real parts, the ceiling by its height. These
-bounds localize the principal-value truncation of the winding integral at `i` to a
-parameter window around the crossing — the geometric half of the generalized winding
-number `-1/2` at `i`.
+/-!
+# The geometry of the shifted contour at `i`
+
+The shifted contour `t ↦ fdBoundary H t - i` about the elliptic point `i` at parameter
+`t = 2`: the chord distance along the arc, the norm lower bounds on the far pieces, the
+slit-plane confinement on either side of the arc top, the left-vertical height-`1`
+crossing where the shifted contour meets the branch cut, the uniqueness of the crossing
+time, and the exact endpoint logarithms beside the arc top.
 
 ## Main declarations
 
-* `TauCeti.ModularForm.norm_fdBoundary_sub_I_segment1`, `…_segment4`, `…_segment5`: the
-  distance bounds off the arc.
-
-## References
-
-* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the valence-formula
-  development (`ForMathlib/ValenceFormula/WindingWeights/I.lean`) this file ports onto
-  the current Mathlib pin.
+* `TauCeti.ModularForm.norm_fdBoundary_sub_I_arc` (the chord distance).
+* `TauCeti.ModularForm.leftVerticalCrossingI` (the height-`1` crossing parameter).
+* `TauCeti.ModularForm.eq_two_of_fdBoundary_eq_I` (crossing-time uniqueness).
+* `TauCeti.ModularForm.log_fdBoundary_sub_I_two_sub_sub_two_add` (the symmetric endpoint
+  log difference).
 -/
 
 public section
@@ -37,39 +35,6 @@ namespace TauCeti
 namespace ModularForm
 
 variable {H t : ℝ}
-
-/-- **The polar chord identity on the unit circle**: the difference of two unit-circle
-points is the half-angle sine, rotated a quarter turn past the midpoint direction. -/
-theorem exp_mul_I_sub_exp_mul_I (α β : ℝ) :
-    Complex.exp (α * Complex.I) - Complex.exp (β * Complex.I) =
-      2 * (Real.sin ((α - β) / 2) : ℂ) * Complex.I *
-        Complex.exp ((((α + β) / 2 : ℝ) : ℂ) * Complex.I) := by
-  have hsin : Complex.exp ((((α - β) / 2 : ℝ) : ℂ) * Complex.I) -
-      Complex.exp (-(((α - β) / 2 : ℝ) : ℂ) * Complex.I) =
-      2 * Complex.sin (((α - β) / 2 : ℝ) : ℂ) * Complex.I := by
-    rw [Complex.sin]
-    field_simp
-    rw [Complex.I_sq]
-    ring
-  have h1 : (α : ℂ) * Complex.I =
-      ((α + β) / 2 : ℝ) * Complex.I + (((α - β) / 2 : ℝ) : ℂ) * Complex.I := by
-    push_cast
-    ring
-  have h2 : (β : ℂ) * Complex.I =
-      ((α + β) / 2 : ℝ) * Complex.I + -(((α - β) / 2 : ℝ) : ℂ) * Complex.I := by
-    push_cast
-    ring
-  rw [h1, h2, Complex.exp_add, Complex.exp_add, ← mul_sub, hsin, ← Complex.ofReal_sin]
-  ring
-
-/-- **The chord identity on the unit circle**: the distance between two unit-circle
-points is twice the sine of half the angle difference. -/
-theorem norm_exp_mul_I_sub_exp_mul_I (α β : ℝ) :
-    ‖Complex.exp (α * Complex.I) - Complex.exp (β * Complex.I)‖ =
-      2 * |Real.sin ((α - β) / 2)| := by
-  rw [exp_mul_I_sub_exp_mul_I, norm_mul, norm_mul, norm_mul, Complex.norm_I,
-    Complex.norm_exp_ofReal_mul_I, Complex.norm_real, Real.norm_eq_abs]
-  norm_num
 
 
 
@@ -145,12 +110,13 @@ theorem norm_fdBoundary_sub_I_segment4 (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
 
 /-- On the ceiling the contour keeps distance `H - 1` from `i`: its height is
 constantly `H`. -/
-theorem norm_fdBoundary_sub_I_segment5 (hH : 1 < H) (ht : t ∈ Icc (4 : ℝ) 5) :
+theorem norm_fdBoundary_sub_I_segment5 (H : ℝ) (ht : t ∈ Icc (4 : ℝ) 5) :
     H - 1 ≤ ‖fdBoundary H t - Complex.I‖ := by
   have him : (fdBoundary H t - Complex.I).im = H - 1 := by
     rw [Complex.sub_im, Complex.I_im, im_fdBoundary_segment5 H ht]
-  calc H - 1 = |(fdBoundary H t - Complex.I).im| := by
-        rw [him, abs_of_pos (by linarith)]
+  calc H - 1 ≤ |(fdBoundary H t - Complex.I).im| := by
+        rw [him]
+        exact le_abs_self _
     _ ≤ ‖fdBoundary H t - Complex.I‖ := Complex.abs_im_le_norm _
 
 
@@ -158,12 +124,6 @@ theorem norm_fdBoundary_sub_I_segment5 (hH : 1 < H) (ht : t ∈ Icc (4 : ℝ) 5)
 imaginary part of `fdBoundary H t - i` changes sign there. -/
 noncomputable def leftVerticalCrossingI (H : ℝ) : ℝ :=
   3 + (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2)
-
-/-- The defining equation of the crossing parameter. -/
-lemma leftVerticalCrossingI_def (H : ℝ) :
-    leftVerticalCrossingI H = 3 + (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2) := by
-  unfold leftVerticalCrossingI
-  rfl
 
 /-- The corner row lies strictly below `1`. -/
 private lemma sqrt_three_div_two_lt_one : Real.sqrt 3 / 2 < 1 := by
@@ -177,7 +137,7 @@ theorem three_lt_leftVerticalCrossingI (hH : 1 < H) : 3 < leftVerticalCrossingI 
     linarith [sqrt_three_div_two_lt_one]
   have := div_pos (by linarith [sqrt_three_div_two_lt_one] : 0 < 1 - Real.sqrt 3 / 2)
     h_den
-  rw [leftVerticalCrossingI_def]
+  rw [leftVerticalCrossingI]
   linarith
 
 /-- The crossing parameter lies below the ceiling corner. -/
@@ -186,7 +146,7 @@ theorem leftVerticalCrossingI_lt_four (hH : 1 < H) : leftVerticalCrossingI H < 4
   have : (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2) < 1 := by
     rw [div_lt_one h_den]
     linarith
-  rw [leftVerticalCrossingI_def]
+  rw [leftVerticalCrossingI]
   linarith
 
 /-- The imaginary part of the shifted contour vanishes at the crossing parameter. -/
@@ -196,7 +156,7 @@ theorem im_fdBoundary_sub_I_leftVerticalCrossingI (hH : 1 < H) :
     ne_of_gt (by linarith [sqrt_three_div_two_lt_one])
   rw [Complex.sub_im, Complex.I_im,
     im_fdBoundary_of_le_four (three_lt_leftVerticalCrossingI hH)
-      (leftVerticalCrossingI_lt_four hH).le, leftVerticalCrossingI_def]
+      (leftVerticalCrossingI_lt_four hH).le, leftVerticalCrossingI]
   have h2 : 2 * H - Real.sqrt 3 ≠ 0 := fun h ↦ h_den (by linarith)
   field_simp
   ring
@@ -226,14 +186,6 @@ theorem im_fdBoundary_sub_I_pos_of_crossing_lt (hH : 1 < H)
       (leftVerticalCrossingI_lt_four hH).le] at h0
   nlinarith
 
-
-/-- For a point below the real axis, the logarithm of the negation gains `π·i`. -/
-theorem log_neg_eq_log_add_pi_mul_I {z : ℂ} (hz : z.im < 0) :
-    Complex.log (-z) = Complex.log z + Real.pi * Complex.I := by
-  refine Complex.ext ?_ ?_
-  · simp [Complex.log_re, Complex.add_re, Complex.mul_re]
-  · simp [Complex.log_im, Complex.add_im, Complex.mul_im,
-      Complex.arg_neg_eq_arg_add_pi_of_im_neg hz]
 
 /-- At the corner `t = 3` the shifted contour has negative imaginary part: the corner
 value is `ρ - i` of height `√3/2 - 1`. -/
@@ -365,7 +317,7 @@ theorem eq_two_of_fdBoundary_eq_I (hH : 1 < H) (ht : t ∈ Icc (0 : ℝ) 5)
       · have := norm_fdBoundary_sub_I_segment4 H ⟨h3.le, h4⟩
         rw [h0] at this
         norm_num at this
-      · have := norm_fdBoundary_sub_I_segment5 hH ⟨h4.le, ht.2⟩
+      · have := norm_fdBoundary_sub_I_segment5 H ⟨h4.le, ht.2⟩
         rw [h0] at this
         linarith
 
