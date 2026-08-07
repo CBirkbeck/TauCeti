@@ -160,8 +160,9 @@ end AutGroup
 /-- **`Aut(E) ≅ ℤ/2` for `j(E) ∉ {0, 1728}`.** The automorphism group of `E` is `{±1}`, so it is
 isomorphic to `Multiplicative (ZMod 2)`: it has exactly two elements — `1` and
 `negVariableChange E` (`eq_one_or_eq_negVariableChange_of_smul_eq`), distinct by
-`negVariableChange_ne_one`. The isomorphism sends `Multiplicative.ofAdd 1` to
-`negVariableChange E`, by `zmodMulEquivOfGenerator_apply_ofAdd_one`. -/
+`negVariableChange_ne_one`. The isomorphism sends `negVariableChange E` to
+`Multiplicative.ofAdd 1` (`autGroupMulEquiv_negVariableChange`), its inverse sending
+`Multiplicative.ofAdd 1` back (`autGroupMulEquiv_symm_ofAdd_one`). -/
 noncomputable def autGroupMulEquiv [E.IsElliptic] (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728) :
     E.autGroup ≃* Multiplicative (ZMod 2) :=
   let g : E.autGroup := ⟨E.negVariableChange, E.negVariableChange_smul_self⟩
@@ -170,6 +171,21 @@ noncomputable def autGroupMulEquiv [E.IsElliptic] (hj₀ : E.j ≠ 0) (hj₁₇�
     (E.eq_one_or_eq_negVariableChange_of_smul_eq hj₀ hj₁₇₂₈ C.2).imp Subtype.ext Subtype.ext
   (zmodMulEquivOfGenerator (g := g) (fun x ↦ by rcases key x with h | h <;> subst h <;> simp)
     ((Nat.card_eq_two_iff' 1).mpr ⟨g, hg, fun y hy ↦ (key y).resolve_left hy⟩)).symm
+
+variable [E.IsElliptic] (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728)
+
+/-- The inverse of `autGroupMulEquiv` sends `Multiplicative.ofAdd 1` to the negation
+automorphism: it is `zmodMulEquivOfGenerator` for that generator. -/
+@[simp] lemma autGroupMulEquiv_symm_ofAdd_one :
+    (E.autGroupMulEquiv hj₀ hj₁₇₂₈).symm (Multiplicative.ofAdd 1)
+      = ⟨E.negVariableChange, E.negVariableChange_smul_self⟩ := by
+  simp only [autGroupMulEquiv, MulEquiv.symm_symm, zmodMulEquivOfGenerator_apply_ofAdd_one]
+
+/-- `autGroupMulEquiv` sends the negation automorphism to `Multiplicative.ofAdd 1`. -/
+@[simp] lemma autGroupMulEquiv_negVariableChange :
+    E.autGroupMulEquiv hj₀ hj₁₇₂₈ ⟨E.negVariableChange, E.negVariableChange_smul_self⟩
+      = Multiplicative.ofAdd 1 := by
+  rw [← autGroupMulEquiv_symm_ofAdd_one E hj₀ hj₁₇₂₈, MulEquiv.apply_symm_apply]
 
 end WeierstrassCurve
 

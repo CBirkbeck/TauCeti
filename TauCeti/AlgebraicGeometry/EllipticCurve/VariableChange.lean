@@ -53,14 +53,14 @@ def negVariableChange : VariableChange R :=
   simp only [negVariableChange]
 
 /-- The negation automorphism fixes the curve. -/
-lemma negVariableChange_smul_self : E.negVariableChange • E = E := by
+@[simp] lemma negVariableChange_smul_self : E.negVariableChange • E = E := by
   ext <;>
     simp only [negVariableChange, variableChange_def, inv_neg, inv_one, Units.val_neg,
       Units.val_one] <;>
     ring
 
 /-- The negation automorphism is an involution. -/
-lemma negVariableChange_mul_self : E.negVariableChange * E.negVariableChange = 1 := by
+@[simp] lemma negVariableChange_mul_self : E.negVariableChange * E.negVariableChange = 1 := by
   simp [VariableChange.mul_def, VariableChange.one_def, negVariableChange,
     Odd.neg_one_pow (by decide : Odd 3)]
 
