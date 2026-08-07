@@ -446,10 +446,10 @@ theorem mul_assoc [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
         rw [smul_apply, smul_apply, sum_apply, sum_apply, sum_def, sum_def,
           Finset.sum_subset (support_structureConstants_subset R D₁.rep D₂.rep)
             (fun E _ hE ↦ by
-              simp [apply_eq_zero_of_notMem_support _ hE, zero_apply]),
+              simp [notMem_support_iff.mp hE, zero_apply]),
           Finset.sum_subset (support_structureConstants_subset R D₂.rep D₃.rep)
             (fun F _ hF ↦ by
-              simp [apply_eq_zero_of_notMem_support _ hF, zero_apply])]
+              simp [notMem_support_iff.mp hF, zero_apply])]
         simp only [smul_apply, structureConstants_apply]
         have hL : ∀ E : HeckeCoset Δ H₁ H₃,
             ((multiplicity H₁ H₂ H₃ (D₁.rep : G) (D₂.rep : G) (E.rep : G) : R) *

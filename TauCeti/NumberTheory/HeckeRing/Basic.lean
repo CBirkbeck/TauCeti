@@ -334,14 +334,17 @@ lemma notMem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R} {D : HeckeCoset �
     D ∉ f.support ↔ f D = 0 :=
   Finsupp.notMem_support_iff
 
-/-- The elimination direction of `notMem_support_iff`. -/
-lemma apply_eq_zero_of_notMem_support (f : HeckeCosetModule Δ H₁ H₂ R)
-    {D : HeckeCoset Δ H₁ H₂} (h : D ∉ f.support) : f D = 0 :=
-  notMem_support_iff.mp h
-
 /-- `Finsupp.sum` unfolded to a `Finset.sum`, at the wrapper type. -/
 lemma sum_def {N : Type*} [AddCommMonoid N] (f : HeckeCosetModule Δ H₁ H₂ R)
     (F : HeckeCoset Δ H₁ H₂ → R → N) : f.sum F = ∑ D ∈ f.support, F D (f D) := (rfl)
+
+/-- `Finsupp.sum_apply`, at the wrapper type: evaluation commutes with a `Finsupp.sum`. The
+target coefficients are independent of the source's. -/
+@[simp] lemma sum_apply {S : Type*} [AddCommMonoid S] {H₃ H₄ : Subgroup G}
+    (f : HeckeCosetModule Δ H₁ H₂ R)
+    (F : HeckeCoset Δ H₁ H₂ → R → HeckeCosetModule Δ H₃ H₄ S) (D : HeckeCoset Δ H₃ H₄) :
+    (f.sum F) D = f.sum fun E c ↦ F E c D :=
+  Finsupp.sum_apply
 
 end EvalSupport
 
@@ -356,12 +359,6 @@ variable {R : Type*} [AddCommMonoid R]
 /-- `Finsupp.add_apply`, at the wrapper type. -/
 @[simp] lemma add_apply (f g : HeckeCosetModule Δ H₁ H₂ R) (D : HeckeCoset Δ H₁ H₂) :
     (f + g) D = f D + g D := (rfl)
-
-/-- `Finsupp.sum_apply`, at the wrapper type: evaluation commutes with a `Finsupp.sum`. -/
-@[simp] lemma sum_apply {H₃ H₄ : Subgroup G} (f : HeckeCosetModule Δ H₁ H₂ R)
-    (F : HeckeCoset Δ H₁ H₂ → R → HeckeCosetModule Δ H₃ H₄ R) (D : HeckeCoset Δ H₃ H₄) :
-    (f.sum F) D = f.sum fun E c ↦ F E c D :=
-  Finsupp.sum_apply
 
 end EvalAdd
 
