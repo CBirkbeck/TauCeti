@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.LinearAlgebra.Matrix.Integer
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.CongruenceSplit
 public import TauCeti.NumberTheory.HeckeRing.GLn.Degree
 public import TauCeti.NumberTheory.HeckeRing.GLn.ScalarMul
@@ -63,13 +64,15 @@ An element of `SL_n(ℤ)` congruent to `1` modulo the full diagonal product conj
 across `natDiagGL n a` — on either side — to an integral matrix of determinant one. -/
 
 private lemma map_intCast_mul (A B : Matrix (Fin n) (Fin n) ℤ) :
-    (A * B).map (Int.cast : ℤ → ℚ) = A.map Int.cast * B.map Int.cast := by
-  ext i j
-  simp [Matrix.mul_apply, Matrix.map_apply]
+    (A * B).map (Int.cast : ℤ → ℚ) = A.map Int.cast * B.map Int.cast :=
+  Matrix.map_mul_intCast A B
 
+/-- `mapGL_coe_matrix` states the coercion as `map (algebraMap ℤ ℚ)`; this is the same fact
+with the algebra map reduced to `Int.cast`, which is the form `Matrix.map_mul_intCast` and
+`Matrix.diagonal_map` below need in order to match. -/
 private lemma mapGL_coe (τ : SpecialLinearGroup (Fin n) ℤ) :
-    (↑(mapGL ℚ τ) : Matrix (Fin n) (Fin n) ℚ) = τ.val.map (Int.cast : ℤ → ℚ) := by
-  simp [mapGL_coe_matrix, algebraMap_int_eq, RingHom.mapMatrix_apply]
+    (↑(mapGL ℚ τ) : Matrix (Fin n) (Fin n) ℚ) = τ.val.map (Int.cast : ℤ → ℚ) :=
+  mapGL_coe_matrix τ
 
 private lemma conjugate_congruent_mem_SLnZ (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
     (τ : SpecialLinearGroup (Fin n) ℤ) (hcong : ∀ i j, (∏ k, (a k : ℤ)) ∣
