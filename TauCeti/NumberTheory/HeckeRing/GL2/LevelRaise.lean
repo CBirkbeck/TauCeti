@@ -8,6 +8,7 @@ module
 public import Mathlib.Analysis.Complex.Periodic
 public import Mathlib.RingTheory.Int.Basic
 public import Mathlib.NumberTheory.ModularForms.QExpansion
+public import TauCeti.RepresentationTheory.ClassicalGroups.Diagonal
 public import TauCeti.NumberTheory.ModularForms.Basic
 public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
 
@@ -61,9 +62,7 @@ namespace HeckeRing.GL2
 
 /-- The level-raising matrix `α_d = [[d, 0], [0, 1]]` in `GL(2, ℝ)`. -/
 def levelRaiseMatrix (d : ℕ) [NeZero d] : GL (Fin 2) ℝ :=
-  Matrix.GeneralLinearGroup.mkOfDetNeZero
-    !![(d : ℝ), 0; 0, 1]
-    (by simp [Matrix.det_fin_two, Nat.cast_ne_zero.mpr (NeZero.ne d)])
+  TauCeti.diagGL ![Units.mk0 (d : ℝ) (Nat.cast_ne_zero.mpr (NeZero.ne d)), 1]
 
 /-- The level-raising operator at the function level: `(ι_d f)(τ) = f(d·τ)`,
 realised as `ι_d f = d^{1-k} · (f ∣[k] α_d)` (the `d^{1-k}` scalar cancels the
@@ -76,19 +75,19 @@ def levelRaiseFun (d : ℕ) [NeZero d] (k : ℤ) (f : UpperHalfPlane → ℂ) :
 of `α_l` is `(0, 1)`). -/
 lemma denom_levelRaiseMatrix (l : ℕ) [NeZero l] (τ : UpperHalfPlane) :
     UpperHalfPlane.denom (levelRaiseMatrix l) (↑τ : ℂ) = 1 := by
-  simp [UpperHalfPlane.denom, levelRaiseMatrix, Matrix.GeneralLinearGroup.mkOfDetNeZero]
+  simp [UpperHalfPlane.denom, levelRaiseMatrix]
 
 /-- The determinant of `levelRaiseMatrix l` is positive (it equals `l > 0`). -/
 lemma levelRaiseMatrix_det_pos (l : ℕ) [NeZero l] :
     (0 : ℝ) < (Matrix.GeneralLinearGroup.det (levelRaiseMatrix l) : ℝ) := by
-  simp [levelRaiseMatrix, Matrix.GeneralLinearGroup.mkOfDetNeZero, Matrix.det_fin_two,
+  simp [levelRaiseMatrix,
     Nat.cast_pos.mpr (Nat.pos_of_neZero l)]
 
 /-- The real absolute determinant of `levelRaiseMatrix l` is `l`. -/
 lemma abs_levelRaiseMatrix_det_val (l : ℕ) [NeZero l] :
     |((Matrix.GeneralLinearGroup.det (levelRaiseMatrix l)) : ℝ)| = (l : ℝ) := by
   rw [abs_of_pos (levelRaiseMatrix_det_pos l)]
-  simp [levelRaiseMatrix, Matrix.GeneralLinearGroup.mkOfDetNeZero, Matrix.det_fin_two]
+  simp [levelRaiseMatrix]
 
 /-- The conjugation factor `σ` for `levelRaiseMatrix l` is the identity
 (positive determinant). -/
@@ -146,8 +145,7 @@ lemma levelRaiseMatrix_mul_mapGL (d : ℕ) [NeZero d] (γ : SL(2, ℤ))
   ext i j
   simp only [Matrix.GeneralLinearGroup.coe_mul, Matrix.SpecialLinearGroup.mapGL_coe_matrix,
     Matrix.SpecialLinearGroup.map_apply_coe, RingHom.mapMatrix_apply, levelRaiseMatrix,
-    Matrix.GeneralLinearGroup.val_mkOfDetNeZero, Matrix.map_apply, Matrix.mul_apply,
-    Fin.sum_univ_two]
+    Matrix.map_apply, Matrix.mul_apply, Fin.sum_univ_two]
   fin_cases i <;> fin_cases j <;>
     simp [levelRaiseConjOfDvd, mul_comm, hdvd_real]
 
@@ -281,8 +279,7 @@ scaling `(α_l • τ : ℂ) = l · (↑τ : ℂ)`. -/
 lemma coe_levelRaiseMatrix_smul (l : ℕ) [NeZero l] (τ : UpperHalfPlane) :
     ((levelRaiseMatrix l • τ : UpperHalfPlane) : ℂ) = (l : ℂ) * (↑τ : ℂ) := by
   rw [UpperHalfPlane.coe_smul_of_det_pos (levelRaiseMatrix_det_pos l)]
-  simp [UpperHalfPlane.num, UpperHalfPlane.denom, levelRaiseMatrix,
-    Matrix.GeneralLinearGroup.mkOfDetNeZero]
+  simp [UpperHalfPlane.num, UpperHalfPlane.denom, levelRaiseMatrix]
 
 /-- **Pointwise evaluation** of the `ModularForm` level-raising operator:
 `(modularFormLevelRaise M d k f) τ = f (α_d • τ)`, where `α_d` acts as
