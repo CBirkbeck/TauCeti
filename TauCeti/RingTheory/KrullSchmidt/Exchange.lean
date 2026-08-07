@@ -69,7 +69,7 @@ private theorem sum_projectionOnto_comp_internalProjection_eq_one {ι : Type w} 
     {Q : ι → Submodule A M} (hQi : iSupIndep Q) (hQt : ⨆ i, Q i = ⊤) {N S : Submodule A M}
     (hNS : IsCompl N S) :
     ∑ i, ((N.projectionOnto S hNS ∘ₗ (Q i).subtype) ∘ₗ
-      (internalProjection hQi hQt i ∘ₗ N.subtype)) = 1 := by
+      (internalProjection hQi hQt i).domRestrict N) = 1 := by
   refine LinearMap.ext fun x ↦ ?_
   have hx : N.projectionOnto S hNS (∑ i, ((internalProjection hQi hQt i (x : M) : M))) = x := by
     rw [sum_coe_internalProjection hQi hQt, Submodule.projectionOnto_apply_left]
@@ -93,22 +93,20 @@ theorem exists_linearEquiv_and_isCompl_biSup_ne
   have _ : Nontrivial N := nontrivial_of_isLocalRing_end (A := A)
   -- Locality of `Module.End A N` picks out an index whose component is invertible.
   obtain ⟨i₀, -, hunit⟩ : ∃ i₀ ∈ Finset.univ, IsUnit ((N.projectionOnto S hNS ∘ₗ (Q i₀).subtype)
-      ∘ₗ (internalProjection hQi hQt i₀ ∘ₗ N.subtype)) :=
+      ∘ₗ (internalProjection hQi hQt i₀).domRestrict N) :=
     IsLocalRing.exists_of_isUnit_sum
       (by rw [sum_projectionOnto_comp_internalProjection_eq_one]; exact isUnit_one)
   -- A split injection into the indecomposable `Q i₀` is already an isomorphism.
-  have hbij : Function.Bijective (internalProjection hQi hQt i₀ ∘ₗ N.subtype) :=
+  have hbij : Function.Bijective ((internalProjection hQi hQt i₀).domRestrict N) :=
     (hQind i₀).bijective_of_bijective_comp (g := N.projectionOnto S hNS ∘ₗ (Q i₀).subtype)
       ((Module.End.isUnit_iff _).mp hunit)
-  -- The projection onto `Q i₀` is surjective, being the identity there.
-  have hsurj : Function.Surjective (internalProjection hQi hQt i₀) :=
-    fun x ↦ ⟨(x : M), internalProjection_apply hQi hQt x⟩
   -- The exchange is the kernel characterisation of injectivity and surjectivity on `N`,
   -- since the remaining summands are exactly the kernel of the `i₀`-projection.
   refine ⟨i₀, ⟨LinearEquiv.ofBijective _ hbij⟩, ?_, ?_⟩
   · rw [← ker_internalProjection hQi hQt i₀]
     exact LinearMap.injective_domRestrict_iff.mp hbij.1
   · rw [← ker_internalProjection hQi hQt i₀]
-    exact (LinearMap.surjective_domRestrict_iff hsurj).mp hbij.2
+    exact (LinearMap.surjective_domRestrict_iff
+      (internalProjection_surjective hQi hQt i₀)).mp hbij.2
 
 end TauCeti
