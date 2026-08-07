@@ -252,8 +252,10 @@ lemma mapVariableChange_injective : Function.Injective (mapVariableChange W C) :
   have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩) h
   · rfl
-  · simp [mapVariableChange] at h
-  · simp [mapVariableChange] at h
+  · rw [← zero_def, (mapVariableChange W C).map_zero, mapVariableChange_some] at h
+    exact absurd h.symm (some_ne_zero _)
+  · rw [← zero_def, (mapVariableChange W C).map_zero, mapVariableChange_some] at h
+    exact absurd h (some_ne_zero _)
   · rw [mapVariableChange_some, mapVariableChange_some] at h
     simp only [some.injEq] at h ⊢
     obtain ⟨hX, hY⟩ := h
@@ -269,9 +271,7 @@ private lemma mapVariableChange_mapVariableChange_inv (P : W.toAffine.Point) :
         (inv_smul_smul C W).symm P)) = P := by
   have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   rcases P with _ | ⟨x, y, h⟩
-  · rw [← zero_def, show (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
-        (inv_smul_smul C W).symm) (0 : W.toAffine.Point) = 0 from _root_.map_zero _,
-      (mapVariableChange (C • W) C⁻¹).map_zero, (mapVariableChange W C).map_zero]
+  · simp only [← zero_def, _root_.map_zero]
   · rw [cast_some, mapVariableChange_some, mapVariableChange_some]
     simp only [some.injEq, VariableChange.inv_def, Units.val_inv_eq_inv_val]
     constructor <;> field
@@ -296,18 +296,25 @@ def equivVariableChange : (C • W).toAffine.Point ≃+ W.toAffine.Point where
   simp only [equivVariableChange]
   rfl
 
+/-- The inverse of `equivVariableChange` is literally the change of variables `C⁻¹`, transported
+along `C⁻¹ • C • W = W`. Not a `simp` lemma: it would rewrite the left-hand side of
+`equivVariableChange_symm_some`, which is the normal form worth having. -/
+lemma coe_equivVariableChange_symm :
+    ⇑(equivVariableChange W C).symm = fun P ↦ mapVariableChange (C • W) C⁻¹
+      (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+        (inv_smul_smul C W).symm P) := by
+  simp only [equivVariableChange]
+  rfl
+
 /-- The inverse of `equivVariableChange` acts on an affine point by the inverse change of
-variables `C⁻¹`, sending `(x, y)` to `(u⁻²(x - r), u⁻³(y - u⁻¹sx + sr - t))`. -/
+variables `C⁻¹`, sending `(x, y)` to `(u⁻²(x - r), u⁻³(y - sx + sr - t))`. -/
 @[simp] lemma equivVariableChange_symm_some {x y : F} (h : W.toAffine.Nonsingular x y) :
     (equivVariableChange W C).symm (.some x y h)
       = .some ((C⁻¹.u : F) ^ 2 * x + C⁻¹.r)
           ((C⁻¹.u : F) ^ 3 * y + (C⁻¹.u : F) ^ 2 * C⁻¹.s * x + C⁻¹.t)
           ((variableChange_nonsingular_iff (C • W) C⁻¹ x y).mpr
             ((inv_smul_smul C W).symm ▸ h)) := by
-  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
-  rw [AddEquiv.symm_apply_eq, coe_equivVariableChange, mapVariableChange_some]
-  simp only [some.injEq, VariableChange.inv_def, Units.val_inv_eq_inv_val]
-  constructor <;> field
+  simp only [coe_equivVariableChange_symm, cast_some, mapVariableChange_some]
 
 end Point
 
