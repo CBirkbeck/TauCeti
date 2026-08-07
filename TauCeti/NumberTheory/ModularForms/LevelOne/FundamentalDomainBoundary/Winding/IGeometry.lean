@@ -124,8 +124,10 @@ theorem norm_fdBoundary_sub_I_segment5 (H : ℝ) (ht : t ∈ Icc (4 : ℝ) 5) :
 
 
 /-- The parameter on the left vertical where, for `1 < H`, the contour crosses height
-`1`: the imaginary part of `fdBoundary H t - i` changes sign there. The formula is junk
-at truncation heights at or below the corner row. -/
+`1`: the imaginary part of `fdBoundary H t - i` changes sign there. For `H ≤ 1` the
+algebraic formula does not represent a crossing: the left vertical then never reaches
+height `1`, the value can leave the parameter interval `[3, 4]`, and at `H = √3/2` the
+denominator vanishes. -/
 noncomputable def leftVerticalCrossingI (H : ℝ) : ℝ :=
   3 + (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2)
 
