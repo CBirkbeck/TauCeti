@@ -288,8 +288,9 @@ variable {A B : Type*} [Ring A] [Ring B] [TopologicalSpace A] [TopologicalSpace 
 theorem isPowerBounded_ringEquiv_iff (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm)
     {a : A} : IsPowerBounded (e a) ↔ IsPowerBounded a :=
   ⟨fun h ↦ by
-      simpa using h.map_of_isOpenMap he' (isOpenMap_ringEquiv e.symm (by simpa using he)),
-    fun h ↦ h.map_of_isOpenMap he (isOpenMap_ringEquiv e he')⟩
+      have := e.symm.toEquiv.continuous_symm_iff.mp (by simpa using he)
+      simpa using h.map_of_isOpenMap he' this,
+    fun h ↦ h.map_of_isOpenMap he (e.toEquiv.continuous_symm_iff.mp he')⟩
 
 /-- Topological nilpotence transports along a topological ring isomorphism. -/
 theorem isTopologicallyNilpotent_ringEquiv_iff (e : A ≃+* B) (he : Continuous e)

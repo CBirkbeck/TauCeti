@@ -210,14 +210,10 @@ section Transport
 
 variable {A B : Type*} [Ring A] [Ring B] [TopologicalSpace A] [TopologicalSpace B]
 
-/-- A ring isomorphism whose inverse is continuous is an open map. -/
-theorem isOpenMap_ringEquiv (e : A ≃+* B) (he' : Continuous e.symm) : IsOpenMap e :=
-  .of_inverse he' e.apply_symm_apply e.symm_apply_apply
-
 /-- A topological ring isomorphism sends bounded sets to bounded sets. -/
 theorem IsBounded.ringEquiv (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm) {S : Set A}
     (hS : IsBounded S) : IsBounded (e '' S) :=
-  hS.image_of_isOpenMap he (isOpenMap_ringEquiv e he')
+  hS.image_of_isOpenMap he (e.toEquiv.continuous_symm_iff.mp he')
 
 /-- Boundedness transports along a topological ring isomorphism. -/
 theorem isBounded_image_ringEquiv_iff (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm)
