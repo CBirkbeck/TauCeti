@@ -338,13 +338,6 @@ lemma levelRaiseFun_levelRaiseFun (d d' : ℕ) [NeZero d] [NeZero d'] (k : ℤ)
   rw [levelRaiseFun_apply, levelRaiseFun_apply, levelRaiseFun_apply,
     levelRaiseMatrix_smul_levelRaiseMatrix_smul]
 
-/-- **The level-transport `▸` is invisible to the underlying function.** Transporting
-a cusp form across a level equality `A = B` does not change its values. -/
-lemma eqRec_cuspForm_apply {A B : ℕ} {k : ℤ} (heq : A = B)
-    (x : CuspForm ((Gamma1 A).map (mapGL ℝ)) k) (τ : UpperHalfPlane) :
-    (heq ▸ x : CuspForm ((Gamma1 B).map (mapGL ℝ)) k) τ = x τ := by
-  subst heq; rfl
-
 /-- **Associativity of the bundled `levelRaise` operator.** Raising a cusp form `h` from
 level `M'` to `M = e·M'` and then to `d·M`, equals raising it directly from `M'` to
 `(d·e)·M'`.  Both produce a cusp form at level `d·M = (d·e)·M'`, identified via the level
@@ -354,11 +347,16 @@ lemma levelRaise_levelRaise {M' : ℕ} {e : ℕ} [NeZero e] {M : ℕ}
     {d : ℕ} [NeZero d] {k : ℤ}
     (h : CuspForm ((Gamma1 M').map (mapGL ℝ)) k) (heq1 : e * M' = M)
     (heq3 : (d * e) * M' = d * M) :
-    levelRaise M d k (heq1 ▸ levelRaise M' e k h) = heq3 ▸ levelRaise M' (d * e) k h := by
+    levelRaise M d k (CuspForm.mcast (Γ' := (Gamma1 M).map (mapGL ℝ)) rfl
+        (levelRaise M' e k h) (by rw [heq1])) =
+      CuspForm.mcast (Γ' := (Gamma1 (d * M)).map (mapGL ℝ)) rfl
+        (levelRaise M' (d * e) k h) (by rw [heq3]) := by
   subst heq1
   apply CuspForm.ext
   intro τ
-  rw [eqRec_cuspForm_apply]
+  simp only [CuspForm.mcast_apply, coe_levelRaise]
+  -- `mcast` keeps the underlying function, so the transport is invisible here
+  change levelRaiseFun d k (⇑((levelRaise M' e k) h)) τ = _
   simp only [coe_levelRaise]
   rw [levelRaiseFun_levelRaiseFun]
 
