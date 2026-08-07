@@ -177,7 +177,9 @@ private theorem isUnit_det_of_cols_of_mulVecLin_eq_basis (A : Matrix (Fin n) (Fi
   rw [← hrb]
   set e := Pi.basisFun ℤ (Fin n) with he
   have hb : (Matrix.of (fun k j ↦ r_basis j k) : Matrix (Fin n) (Fin n) ℤ)
-      = e.toMatrix r_basis := rfl
+      = e.toMatrix r_basis := by
+    rw [he]
+    exact (congrFun Module.Basis.coePiBasisFun.toMatrix_eq_transpose _).symm
   rw [hb]
   simpa [Module.Basis.det_apply] using e.isUnit_det r_basis
 
@@ -217,7 +219,9 @@ private theorem exists_diagonal_of_det_pos (A : Matrix (Fin n) (Fin n) ℤ) (hde
     mul_columns_eq_columns_mul_diagonal_of_mulVec_eq_smul A hkey
   have hP_unit : IsUnit P_mat.det := by
     set e := Pi.basisFun ℤ (Fin n) with he
-    have hb : P_mat = e.toMatrix b' := rfl
+    have hb : P_mat = e.toMatrix b' := by
+      rw [he]
+      exact (congrFun Module.Basis.coePiBasisFun.toMatrix_eq_transpose _).symm
     rw [hb]
     simpa [Module.Basis.det_apply] using e.isUnit_det b'
   have hQ_unit : IsUnit Q_mat.det :=
