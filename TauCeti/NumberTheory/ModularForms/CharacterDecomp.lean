@@ -49,8 +49,9 @@ Layer 0 of the ModularForms roadmap.
   character spaces, with finsupp-indexed corollaries
   `exists_finsupp_of_diamondOp_invariant`/`exists_finsupp_of_diamondOpCusp_invariant`.
 * `linearMap_ext_of_mem_modFormCharSpace`, `linearMap_ext_of_mem_cuspFormCharSpace`: two
-  endomorphisms agreeing on every character space are equal — the gluing principle for
-  extending Hecke-operator identities proven per character space to the whole space.
+  linear maps with a common codomain agreeing on every character space are equal — the
+  gluing principle for extending identities proven per character space to the whole space
+  (Hecke endomorphisms being the motivating case).
 
 ## References
 
