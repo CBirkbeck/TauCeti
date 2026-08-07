@@ -94,21 +94,26 @@ lemma variableChange_addY (x₁ x₂ y₁ ℓ : R) :
         + (C.u : R) ^ 2 * C.s * (C • W).toAffine.addX x₁ x₂ ℓ + C.t := by
   simp only [addY, variableChange_negAddY, variableChange_addX, variableChange_negY]
 
+/-- The Weierstrass polynomial at the image point is `u⁶` times that of `C • W` at the original
+point. This is the scaling law behind `variableChange_equation_iff`, and the companion of the
+two partial-derivative laws below. -/
+lemma variableChange_evalEval_polynomial (x y : R) :
+    W.toAffine.polynomial.evalEval ((C.u : R) ^ 2 * x + C.r)
+        ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
+      = (C.u : R) ^ 6 * (C • W).toAffine.polynomial.evalEval x y := by
+  have hu := C.u.inv_mul
+  simp only [evalEval_polynomial, variableChange_a₁, variableChange_a₂, variableChange_a₃,
+    variableChange_a₄, variableChange_a₆]
+  grobner
+
 /-- A point `(x, y)` lies on `C • W` if and only if `(u²x + r, u³y + u²sx + t)` lies on `W`: the
 change of variables scales the Weierstrass polynomial by `u⁶`. -/
 lemma variableChange_equation_iff (x y : R) :
     W.toAffine.Equation ((C.u : R) ^ 2 * x + C.r)
         ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
       ↔ (C • W).toAffine.Equation x y := by
-  have hu := C.u.inv_mul
-  have key : W.toAffine.polynomial.evalEval ((C.u : R) ^ 2 * x + C.r)
-      ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
-      = (C.u : R) ^ 6 * (C • W).toAffine.polynomial.evalEval x y := by
-    simp only [evalEval_polynomial, variableChange_a₁, variableChange_a₂, variableChange_a₃,
-      variableChange_a₄, variableChange_a₆]
-    grobner
   unfold Equation
-  rw [key]
+  rw [variableChange_evalEval_polynomial]
   exact (C.u.isUnit.pow 6).mul_right_eq_zero
 
 /-- The partial derivative `∂/∂y` of the Weierstrass polynomial at the image point is `u³` times
@@ -154,6 +159,18 @@ end Ring
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F) (C : VariableChange F)
 
+/-- The change of variables is injective on `x`-coordinates: `u²x + r` determines `x`. -/
+private lemma variableChange_X_inj {x₁ x₂ : F}
+    (h : (C.u : F) ^ 2 * x₁ + C.r = (C.u : F) ^ 2 * x₂ + C.r) : x₁ = x₂ :=
+  mul_left_cancel₀ (pow_ne_zero 2 C.u.ne_zero) (by linear_combination h)
+
+/-- The change of variables is injective on `y`-coordinates once the `x`-coordinates agree. -/
+private lemma variableChange_Y_inj {x₁ x₂ y₁ y₂ : F} (hx : x₁ = x₂)
+    (h : (C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t
+      = (C.u : F) ^ 3 * y₂ + (C.u : F) ^ 2 * C.s * x₂ + C.t) : y₁ = y₂ :=
+  mul_left_cancel₀ (pow_ne_zero 3 C.u.ne_zero)
+    (by linear_combination h - (C.u : F) ^ 2 * C.s * hx)
+
 /-- The image of a pair of points under the change of variables satisfies the `y₁ = -y₂`
 degeneracy condition (`negY`) only if the original pair does. -/
 private lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : F}
@@ -161,12 +178,10 @@ private lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : F}
     ¬((C.u : F) ^ 2 * x₁ + C.r = (C.u : F) ^ 2 * x₂ + C.r ∧
       (C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t = W.toAffine.negY
         ((C.u : F) ^ 2 * x₂ + C.r) ((C.u : F) ^ 3 * y₂ + (C.u : F) ^ 2 * C.s * x₂ + C.t)) := by
-  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   rintro ⟨hX, hY⟩
-  have hx : x₁ = x₂ := mul_left_cancel₀ (pow_ne_zero 2 hu) (by linear_combination hX)
-  subst hx
+  obtain rfl := variableChange_X_inj C hX
   rw [variableChange_negY] at hY
-  exact hxy ⟨rfl, mul_left_cancel₀ (pow_ne_zero 3 hu) (by linear_combination hY)⟩
+  exact hxy ⟨rfl, variableChange_Y_inj C rfl hY⟩
 
 /-- The change of variables transforms the slope of the line through two points affinely:
 the slope through the image points is `u · ℓ + s` for `ℓ` the original slope. -/
@@ -181,11 +196,7 @@ lemma variableChange_slope [DecidableEq F] {x₁ x₂ y₁ y₂ : F}
   rcases eq_or_ne x₁ x₂ with rfl | hx
   · have hy : y₁ ≠ (C • W).toAffine.negY x₁ y₂ := fun h ↦ hxy ⟨rfl, h⟩
     obtain rfl := Y_eq_of_Y_ne h₁ h₂ rfl hy
-    have hΦy : (C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t
-        ≠ W.toAffine.negY ((C.u : F) ^ 2 * x₁ + C.r)
-            ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t) := by
-      rw [variableChange_negY]
-      exact fun h ↦ hy (mul_left_cancel₀ (pow_ne_zero 3 hu) (by linear_combination h))
+    have hΦy := fun h ↦ variableChange_negY_ne W C hxy ⟨rfl, h⟩
     -- The tangent slope is `-∂x/∂y`, and the change of variables scales the two partial
     -- derivatives by `u⁴` (up to a multiple of `∂y`) and `u³`.
     have hPY : (C • W).toAffine.polynomialY.evalEval x₁ y₁ ≠ 0 := by
@@ -195,8 +206,8 @@ lemma variableChange_slope [DecidableEq F] {x₁ x₂ y₁ y₂ : F}
       (C • W).toAffine.slope_of_Y_ne_eq_evalEval rfl hy,
       variableChange_evalEval_polynomialX, variableChange_evalEval_polynomialY]
     field
-  · have hΦx : (C.u : F) ^ 2 * x₁ + C.r ≠ (C.u : F) ^ 2 * x₂ + C.r := by
-      simpa [mul_right_inj' (pow_ne_zero 2 hu)] using hx
+  · have hΦx : (C.u : F) ^ 2 * x₁ + C.r ≠ (C.u : F) ^ 2 * x₂ + C.r :=
+      fun h ↦ hx (variableChange_X_inj C h)
     rw [W.toAffine.slope_of_X_ne hΦx, (C • W).toAffine.slope_of_X_ne hx]
     have h1 := sub_ne_zero.mpr hΦx
     have h2 := sub_ne_zero.mpr hx
@@ -249,7 +260,6 @@ def mapVariableChange : (C • W).toAffine.Point →+ W.toAffine.Point where
 /-- The change of variables is injective on points: it is inverted by the change of variables
 `C⁻¹`. -/
 lemma mapVariableChange_injective : Function.Injective (mapVariableChange W C) := by
-  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩) h
   · rfl
   · rw [← zero_def, (mapVariableChange W C).map_zero, mapVariableChange_some] at h
@@ -259,9 +269,8 @@ lemma mapVariableChange_injective : Function.Injective (mapVariableChange W C) :
   · rw [mapVariableChange_some, mapVariableChange_some] at h
     simp only [some.injEq] at h ⊢
     obtain ⟨hX, hY⟩ := h
-    have hx : x₁ = x₂ := mul_left_cancel₀ (pow_ne_zero 2 hu) (by linear_combination hX)
-    exact ⟨hx,
-      mul_left_cancel₀ (pow_ne_zero 3 hu) (by linear_combination hY - (C.u : F) ^ 2 * C.s * hx)⟩
+    have hx : x₁ = x₂ := variableChange_X_inj C hX
+    exact ⟨hx, variableChange_Y_inj C hx hY⟩
 
 /-- Applying the change of variables `C⁻¹` (transported along `C⁻¹ • C • W = W`) and then `C`
 recovers the original point. -/
