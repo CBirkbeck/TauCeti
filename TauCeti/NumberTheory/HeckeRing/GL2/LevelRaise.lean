@@ -49,6 +49,10 @@ equals the Fourier coefficient of `f` at `q`. In matrix form:
 
 * Miyake, *Modular Forms*, §4.6 (Lemma 4.6.1, p.162).
 * Diamond–Shurman, *A First Course in Modular Forms*, §5.7 (DS (5.16)).
+
+Ported from Chris Birkbeck's AINTLIB formalization,
+`projects/LeanModularForms/LeanModularForms/HeckeRIngs/GL2/LevelRaise.lean`
+(<https://github.com/CBirkbeck/AINTLIB>).
 -/
 
 open Matrix Matrix.SpecialLinearGroup CongruenceSubgroup CuspForm ModularFormClass
@@ -179,7 +183,7 @@ variable {N : ℕ} [NeZero N] {k : ℤ}
 /-- The conjugation inclusion `(Γ₁(d*M)).map (mapGL ℝ) ≤ α_d⁻¹ ((Γ₁(M)).map (mapGL ℝ)) α_d`.
 
 This is the key inclusion that lets us restrict the translated cusp form. -/
-lemma Gamma1_dmul_le_conj (M d : ℕ) [NeZero d] :
+lemma Gamma1_mul_le_conj (M d : ℕ) [NeZero d] :
     (Gamma1 (d * M)).map (mapGL ℝ) ≤
       ConjAct.toConjAct (levelRaiseMatrix d)⁻¹ • (Gamma1 M).map (mapGL ℝ) := by
   intro g hg
@@ -199,7 +203,7 @@ def levelRaise (M d : ℕ) [NeZero d] (k : ℤ) :
     CuspForm ((Gamma1 (d * M)).map (mapGL ℝ)) k where
   toFun f :=
     ((d : ℂ) ^ (1 - k)) •
-      (CuspForm.translate f (levelRaiseMatrix d)).ofLe (Gamma1_dmul_le_conj M d)
+      (CuspForm.translate f (levelRaiseMatrix d)).ofLe (Gamma1_mul_le_conj M d)
   map_add' f₁ f₂ := by
     ext z
     simp only [FunLike.coe_smul, CuspForm.coe_ofLe, CuspForm.coe_translate_gl,
@@ -221,7 +225,7 @@ def modularFormLevelRaise (M d : ℕ) [NeZero d] (k : ℤ) :
   toFun f :=
     ((d : ℂ) ^ (1 - k)) •
       (ModularForm.translate f (levelRaiseMatrix d)).ofLe
-        (Gamma1_dmul_le_conj M d)
+        (Gamma1_mul_le_conj M d)
   map_add' f₁ f₂ := by
     ext z
     simp only [FunLike.coe_smul, ModularForm.coe_ofLe, ModularForm.coe_translate,
@@ -264,6 +268,7 @@ lemma slash_mapGL_levelRaiseFun (l : ℕ) [NeZero l] (k : ℤ) (γ : SL(2, ℤ))
 /-- **Pointwise evaluation of the level-raise operator.** `levelRaiseFun l k f`
 evaluates to `f` at the scaled point `α_l • τ`; the `l^{1-k}` prefactor exactly
 cancels the `l^{k-1}` factor from the slash action. -/
+@[simp]
 lemma levelRaiseFun_apply (l : ℕ) [NeZero l] (k : ℤ) (f : UpperHalfPlane → ℂ) (τ : UpperHalfPlane) :
     levelRaiseFun l k f τ = f ((levelRaiseMatrix l) • τ) := by
   -- unfold `levelRaiseFun` and push the coercion through the pointwise scalar action
@@ -284,6 +289,7 @@ lemma coe_levelRaiseMatrix_smul (l : ℕ) [NeZero l] (τ : UpperHalfPlane) :
 /-- **Pointwise evaluation** of the `ModularForm` level-raising operator:
 `(modularFormLevelRaise M d k f) τ = f (α_d • τ)`, where `α_d` acts as
 `τ ↦ d · τ` on `ℍ`. -/
+@[simp]
 lemma modularFormLevelRaise_apply (M d : ℕ) [NeZero d] (k : ℤ)
     (f : ModularForm ((Gamma1 M).map (mapGL ℝ)) k) (τ : UpperHalfPlane) :
     modularFormLevelRaise M d k f τ = f ((levelRaiseMatrix d) • τ) := by
@@ -295,13 +301,17 @@ lemma modularFormLevelRaise_apply (M d : ℕ) [NeZero d] (k : ℤ)
 have the same level-raise, they are equal. -/
 lemma levelRaiseFun_injective (l : ℕ) [NeZero l] (k : ℤ) :
     Function.Injective (levelRaiseFun (k := k) l) := by
-  intro f₁ f₂ heq
-  funext τ'
-  simpa only [levelRaiseFun_apply, smul_inv_smul] using
-    congr_fun heq ((levelRaiseMatrix l)⁻¹ • τ')
+  -- `levelRaiseFun` is sealed, so route through its public evaluation equation: pointwise the
+  -- `l^{1-k}` prefactor cancels, leaving precomposition by the (bijective) action of `α_l`
+  have h : levelRaiseFun (k := k) l =
+      fun f : UpperHalfPlane → ℂ ↦ f ∘ (levelRaiseMatrix l • ·) :=
+    funext fun f ↦ funext fun τ ↦ levelRaiseFun_apply l k f τ
+  rw [h]
+  exact (MulAction.bijective (levelRaiseMatrix l)).surjective.injective_comp_right
 
 /-- **Coercion of the bundled `levelRaise` to its underlying function.**
 `⇑(levelRaise M d k g) = levelRaiseFun d k ⇑g` (definitional). -/
+@[simp]
 lemma coe_levelRaise (M d : ℕ) [NeZero d] (k : ℤ)
     (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k) :
     (⇑(levelRaise M d k g) : UpperHalfPlane → ℂ) = levelRaiseFun d k ⇑g := by
@@ -525,6 +535,21 @@ theorem qExpansion_one_modularFormLevelRaise_coeff
   qExpansion_modularFormLevelRaise_coeff' one_pos
     (by rw [strictPeriods_Gamma1]; exact ⟨1, by simp⟩)
     (by rw [strictPeriods_Gamma1]; exact ⟨1, by simp⟩) f n
+
+/-- **Injectivity of the bundled cusp-form operator `levelRaise M d k`.** -/
+lemma levelRaise_injective (M d : ℕ) [NeZero d] (k : ℤ) :
+    Function.Injective (levelRaise M d k) := fun f g hfg ↦ by
+  ext τ
+  exact congrFun (levelRaiseFun_injective d k (by
+    rw [← coe_levelRaise, ← coe_levelRaise, hfg])) τ
+
+/-- **Injectivity of the bundled modular-form operator `modularFormLevelRaise M d k`.** -/
+lemma modularFormLevelRaise_injective (M d : ℕ) [NeZero d] (k : ℤ) :
+    Function.Injective (modularFormLevelRaise M d k) := fun f g hfg ↦ by
+  ext τ
+  exact congrFun (levelRaiseFun_injective d k (by
+    rw [← coe_modularFormLevelRaise, ← coe_modularFormLevelRaise, hfg])) τ
+
 
 end HeckeRing.GL2
 
