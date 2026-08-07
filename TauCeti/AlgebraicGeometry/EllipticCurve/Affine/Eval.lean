@@ -11,9 +11,10 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 
 The coordinate ring `R[W]` of an affine Weierstrass curve `W` is `AdjoinRoot W.polynomial`, so at a
 point `(x, y)` satisfying the Weierstrass equation the evaluation map `Polynomial.evalEval x y`
-factors through it, by Mathlib's `AdjoinRoot.evalEval`. This file records the one consequence that
-factorisation is wanted for: an identity between bivariate polynomials that holds only in `R[W]`
-may be evaluated at any point of `W`.
+factors through it, by Mathlib's `AdjoinRoot.evalEval`. The statement below is about the affine
+model `WeierstrassCurve.Affine R` itself, not about a global `WeierstrassCurve R`. This file
+records the one consequence that factorisation is wanted for: an identity between bivariate
+polynomials that holds only in `R[W]` may be evaluated at any point of `W`.
 
 ## Main results
 
@@ -38,14 +39,14 @@ namespace TauCeti
 
 namespace WeierstrassCurve
 
-variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve R) {x y : R}
+variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve.Affine R) {x y : R}
 
 /-- Bivariate polynomials that are equal in the coordinate ring `R[W]` evaluate equally at a
 point `(x, y)` of `W`. -/
-theorem evalEval_eq_of_mk_eq (h : W.toAffine.Equation x y) {p q : R[X][Y]}
-    (hpq : Affine.CoordinateRing.mk W.toAffine p = Affine.CoordinateRing.mk W.toAffine q) :
+theorem evalEval_eq_of_mk_eq (h : W.Equation x y) {p q : R[X][Y]}
+    (hpq : Affine.CoordinateRing.mk W p = Affine.CoordinateRing.mk W q) :
     p.evalEval x y = q.evalEval x y := by
-  have hev := AdjoinRoot.evalEval_mk (p := W.toAffine.polynomial) h
+  have hev := AdjoinRoot.evalEval_mk (p := W.polynomial) h
   exact hev p ▸ hev q ▸ congrArg _ hpq
 
 end WeierstrassCurve
