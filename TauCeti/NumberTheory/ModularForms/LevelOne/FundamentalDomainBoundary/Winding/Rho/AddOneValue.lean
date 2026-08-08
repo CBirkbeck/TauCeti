@@ -8,7 +8,6 @@ public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
 public import TauCeti.Analysis.Contour.Winding.Number.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.AddOneGeometry
 
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
