@@ -31,6 +31,7 @@ prior formalisation of this layer; its proofs were not used.
 
 ## Main results
 
+* `TauCeti.Huber.isBounded_iff`: unfolding lemma for `IsBounded`.
 * `TauCeti.Huber.isBounded_finite`: finite sets are bounded.
 * `TauCeti.Huber.IsBounded.union`, `TauCeti.Huber.IsBounded.mul`: unions and pointwise products
   of bounded sets are bounded.
@@ -65,7 +66,7 @@ hypothesis that the morphism maps neighbourhoods of zero to neighbourhoods of ze
 
 -/
 
-@[expose] public section
+public section
 
 open Filter Pointwise Topology
 
@@ -78,6 +79,10 @@ variable {M : Type*} [MonoidWithZero M] [TopologicalSpace M]
 /-- A subset `S` of a topological monoid with zero is *bounded* if for every neighbourhood `U`
 of `0` there is a neighbourhood `V` of `0` with `V * S ⊆ U`. -/
 def IsBounded (S : Set M) : Prop := ∀ U ∈ 𝓝 (0 : M), ∃ V ∈ 𝓝 (0 : M), V * S ⊆ U
+
+/-- Unfolding lemma for `TauCeti.Huber.IsBounded`. -/
+theorem isBounded_iff {S : Set M} :
+    IsBounded S ↔ ∀ U ∈ 𝓝 (0 : M), ∃ V ∈ 𝓝 (0 : M), V * S ⊆ U := (Iff.rfl)
 
 /-- Subsets of bounded sets are bounded. -/
 theorem IsBounded.subset {S T : Set M} (hS : IsBounded S) (hTS : T ⊆ S) : IsBounded T :=

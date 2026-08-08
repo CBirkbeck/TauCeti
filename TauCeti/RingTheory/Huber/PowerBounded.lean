@@ -47,6 +47,7 @@ formalisation of this layer; its proofs were not used.
 
 ## Main results
 
+* `TauCeti.Huber.isPowerBounded_iff`: unfolding lemma for `IsPowerBounded`.
 * `TauCeti.Huber.IsPowerBounded.of_isTopologicallyNilpotent`: `A°° ⊆ A°`.
 * `TauCeti.Huber.isTopologicallyNilpotent_add`: over a nonarchimedean ring the topologically
   nilpotent elements are closed under addition. Mathlib's `IsTopologicallyNilpotent.add` instead
@@ -74,7 +75,7 @@ nilpotent element.
 
 -/
 
-@[expose] public section
+public section
 
 open Filter Pointwise Topology
 
@@ -86,6 +87,10 @@ variable {M : Type*} [MonoidWithZero M] [TopologicalSpace M]
 
 /-- An element is *power-bounded* if the set of its nonnegative powers is bounded. -/
 def IsPowerBounded (a : M) : Prop := IsBounded (Set.range (a ^ · : ℕ → M))
+
+/-- Unfolding lemma for `TauCeti.Huber.IsPowerBounded`. -/
+theorem isPowerBounded_iff {a : M} :
+    IsPowerBounded a ↔ IsBounded (Set.range (a ^ · : ℕ → M)) := (Iff.rfl)
 
 /-- `0` is power-bounded. -/
 theorem isPowerBounded_zero : IsPowerBounded (0 : M) := by
@@ -126,6 +131,7 @@ topologically nilpotent. -/
 theorem IsPowerBounded.isTopologicallyNilpotent_mul_of_commute {a b : R} (hab : Commute a b)
     (ha : IsPowerBounded a) (hb : IsTopologicallyNilpotent b) :
     IsTopologicallyNilpotent (a * b) := by
+  rw [isPowerBounded_iff, isBounded_iff] at ha
   intro U hU
   obtain ⟨V, hV, hVU⟩ := ha U hU
   rw [Filter.mem_map]
@@ -140,13 +146,15 @@ variable [ContinuousMul R]
 /-- Topologically nilpotent elements are power-bounded: `A°° ⊆ A°`. -/
 theorem IsPowerBounded.of_isTopologicallyNilpotent {a : R} (ha : IsTopologicallyNilpotent a) :
     IsPowerBounded a := by
+  rw [isPowerBounded_iff, isBounded_iff]
   intro U hU
   have hmul : (fun p : R × R ↦ p.1 * p.2) ⁻¹' U ∈ 𝓝 ((0 : R), (0 : R)) :=
     continuous_mul.continuousAt.preimage_mem_nhds (by simp [hU])
   rw [nhds_prod_eq] at hmul
   obtain ⟨U₁, hU₁, U₂, hU₂, hprod⟩ := Filter.mem_prod_iff.mp hmul
   obtain ⟨N, hN⟩ := (ha.eventually_mem hU₂).exists_forall_of_atTop
-  choose V hV hVU using fun i : Fin N ↦ isBounded_singleton (a ^ (i : ℕ)) U hU
+  choose V hV hVU using fun i : Fin N ↦
+    isBounded_iff.mp (isBounded_singleton (a ^ (i : ℕ))) U hU
   refine ⟨U₁ ∩ ⋂ i, V i, inter_mem hU₁ (Filter.iInter_mem.mpr hV), ?_⟩
   rintro _ ⟨v, hv, _, ⟨n, rfl⟩, rfl⟩
   by_cases hn : n < N
@@ -227,8 +235,11 @@ theorem isTopologicallyNilpotent_add {a b : A} (ha : IsTopologicallyNilpotent a)
   intro U hU
   obtain ⟨G, hGU⟩ := NonarchimedeanRing.is_nonarchimedean U hU
   have hG : (G : Set A) ∈ 𝓝 (0 : A) := G.isOpen.mem_nhds G.zero_mem
-  obtain ⟨Va, hVa, hVaG⟩ := IsPowerBounded.of_isTopologicallyNilpotent ha _ hG
-  obtain ⟨Vb, hVb, hVbG⟩ := IsPowerBounded.of_isTopologicallyNilpotent hb _ hG
+  have ha' := IsPowerBounded.of_isTopologicallyNilpotent ha
+  have hb' := IsPowerBounded.of_isTopologicallyNilpotent hb
+  rw [isPowerBounded_iff, isBounded_iff] at ha' hb'
+  obtain ⟨Va, hVa, hVaG⟩ := ha' _ hG
+  obtain ⟨Vb, hVb, hVbG⟩ := hb' _ hG
   obtain ⟨Na, hNa⟩ := (ha.eventually_mem hVb).exists_forall_of_atTop
   obtain ⟨Nb, hNb⟩ := (hb.eventually_mem hVa).exists_forall_of_atTop
   rw [Filter.mem_map]
