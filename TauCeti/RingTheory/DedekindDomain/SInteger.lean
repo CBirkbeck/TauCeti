@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.DedekindDomain.SInteger
-public import Mathlib.RingTheory.DedekindDomain.Ideal.Basic
 
 /-!
 # The ring of `S`-integers of a Dedekind domain is a Dedekind domain
@@ -91,17 +90,17 @@ example : IsFractionRing (S.integer K) K := inferInstance
 /-- The ring of `S`-integers is integrally closed: it is an intersection of valuation subrings
 of `K`, each of which is integrally closed in `K`. -/
 instance integer_isIntegrallyClosed : IsIntegrallyClosed (S.integer K) := by
-  rw [isIntegrallyClosed_iff K]
-  intro x hx
-  refine ⟨⟨x, fun v hv ↦ ?_⟩, rfl⟩
-  -- work inside the valuation subring `V` of `v`, which contains `𝒪_S`
-  set V := (v.valuation K).valuationSubring with hV
-  let _ : Algebra (S.integer K) V :=
-    (Subring.inclusion (integer_toSubring_le_valuationSubring K S hv)).toAlgebra
-  have _ : IsScalarTower (S.integer K) V K := .of_algebraMap_eq fun _ ↦ rfl
-  obtain ⟨y, hy⟩ := (isIntegrallyClosed_iff K).mp inferInstance (hx.tower_top (A := V))
-  rw [← hy]
-  exact y.property
+  -- `𝒪_S` is the intersection of the valuation subalgebras at the `v ∉ S`, each of which is
+  -- integrally closed, so `IsIntegrallyClosed.iInf` applies.
+  have he : S.integer K = ⨅ v : {v : HeightOneSpectrum R // v ∉ S},
+      ({ (v.1.valuation K).valuationSubring.toSubring with
+          algebraMap_mem' := fun r ↦ v.1.valuation_le_one r } : Subalgebra R K) := by
+    ext x
+    simp only [Algebra.mem_iInf, Subtype.forall]
+    rfl
+  rw [he]
+  exact IsIntegrallyClosed.iInf _ fun v ↦
+    inferInstanceAs (IsIntegrallyClosed (v.1.valuation K).valuationSubring)
 
 /-!
 ### Primes in `S` become the unit ideal
@@ -121,11 +120,9 @@ lemma _root_.IsDedekindDomain.HeightOneSpectrum.exists_mem_asIdeal_notMem_asIdea
   exact h (HeightOneSpectrum.ext (v.isMaximal.eq_of_le w.isPrime.ne_top hc).symm)
 
 /-- For `v ∈ S`, the fractional ideal `v⁻¹` consists of `S`-integers. -/
-lemma mem_integer_of_mem_inv {v : HeightOneSpectrum R} (hv : v ∈ S) {y : K}
-    (hy : y ∈ (v.asIdeal : FractionalIdeal R⁰ K)⁻¹) : y ∈ S.integer K := by
-  intro w hw
-  obtain ⟨a, ha, haw⟩ :=
-    HeightOneSpectrum.exists_mem_asIdeal_notMem_asIdeal (show w ≠ v by rintro rfl; exact hw hv)
+lemma valuation_le_one_of_mem_inv {v w : HeightOneSpectrum R} (hw : w ≠ v) {y : K}
+    (hy : y ∈ (v.asIdeal : FractionalIdeal R⁰ K)⁻¹) : w.valuation K y ≤ 1 := by
+  obtain ⟨a, ha, haw⟩ := HeightOneSpectrum.exists_mem_asIdeal_notMem_asIdeal hw
   have h1 : y * algebraMap R K a ∈ (1 : FractionalIdeal R⁰ K) :=
     (FractionalIdeal.mem_inv_iff (FractionalIdeal.coeIdeal_ne_zero.mpr v.ne_bot)).mp hy _
       (FractionalIdeal.mem_coeIdeal_of_mem R⁰ ha)
@@ -155,7 +152,8 @@ lemma mem_integer_of_mem_inv {v : HeightOneSpectrum R} (hv : v ∈ S) {y : K}
   refine Submodule.mul_induction_on hx (fun a ha y hy ↦ ?_) (fun x y hx hy ↦ ?_)
   · obtain ⟨a, ha', rfl⟩ := (FractionalIdeal.mem_coeIdeal R⁰).mp
       ((FractionalIdeal.mem_coe (I := (v.asIdeal : FractionalIdeal R⁰ K))).mpr ha)
-    have hyA : y ∈ A := mem_integer_of_mem_inv K S hv
+    have hyA : y ∈ A := fun w hw ↦ valuation_le_one_of_mem_inv K
+      (show w ≠ v by rintro rfl; exact hw hv)
       ((FractionalIdeal.mem_coe (I := (v.asIdeal : FractionalIdeal R⁰ K)⁻¹)).mpr hy)
     have haA : algebraMap R K a ∈ A := A.algebraMap_mem a
     refine ⟨mul_mem haA hyA, ?_⟩
@@ -181,10 +179,9 @@ is its extension `I`.
 
 /-- The denominator ideal of an `S`-integer is not contained in any prime off `S`: at such a
 prime `x` is integral, so it has a denominator away from the prime. -/
-lemma integer_denomIdeal_not_le {x : K} (hx : x ∈ S.integer K) {w : HeightOneSpectrum R}
-    (hw : w ∉ S) :
+lemma denomIdeal_not_le {x : K} {w : HeightOneSpectrum R} (hx : w.valuation K x ≤ 1) :
     ¬ Algebra.denomIdeal K x ≤ w.asIdeal := by
-  obtain ⟨n, d, hnd⟩ := HeightOneSpectrum.exists_primeCompl_mul_eq_of_integer w x (hx w hw)
+  obtain ⟨n, d, hnd⟩ := HeightOneSpectrum.exists_primeCompl_mul_eq_of_integer w x hx
   refine fun hle ↦ d.property (hle ?_)
   rw [Algebra.mem_denomIdeal_iff]
   exact ⟨n, by rw [mul_comm]; exact hnd⟩
@@ -201,7 +198,7 @@ factors lie in `S`, and each of those extends to the unit ideal by `integer_map_
     fun h0 ↦ Algebra.denomIdeal_ne_bot K x (le_bot_iff.mp (h0 ▸ h𝔭le))
   have hprime : (M.comap (algebraMap R (S.integer K))).IsPrime := hM.isPrime.comap _
   have hwS : (⟨_, hprime, h𝔭ne⟩ : HeightOneSpectrum R) ∈ S :=
-    by_contra fun hwn ↦ integer_denomIdeal_not_le K S hx hwn h𝔭le
+    by_contra fun hwn ↦ denomIdeal_not_le K (hx _ hwn) h𝔭le
   have htop := integer_map_asIdeal_eq_top K S hwS
   exact hM.ne_top (top_le_iff.mp (htop.ge.trans Ideal.map_comap_le))
 
