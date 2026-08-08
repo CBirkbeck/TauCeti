@@ -124,15 +124,12 @@ private theorem exists_atom_family_of_sup_eq {τ : Subrepresentation π.toRepres
   · rw [iSup_fin_succ]
     simp only [Fin.cons_zero, Fin.cons_succ]
     rw [hiSup, ← Subrepresentation.toSubmodule_sup, hsup]
-  · intro i j hij
-    rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨i', rfl⟩ <;>
-      rcases Fin.eq_zero_or_eq_succ j with rfl | ⟨j', rfl⟩
-    · exact absurd rfl hij
-    · simpa using hmix j'
-    · intro v hv w hw
-      simp only [Fin.cons_succ, Fin.cons_zero] at hv hw
-      exact inner_eq_zero_symm.mp (hmix i' w hw v hv)
-    · simpa using horth fun hc ↦ hij (by rw [hc])
+  · rw [pairwise_fin_succ_iff]
+    refine ⟨fun i v hv w hw ↦ ?_, fun j ↦ ?_, ?_⟩
+    · simp only [Fin.cons_succ, Fin.cons_zero] at hv hw
+      exact inner_eq_zero_symm.mp (hmix i w hw v hv)
+    · simpa using hmix j
+    · simpa using horth
 
 /-- The descent behind `exists_orthogonal_irreducible_decomposition`: every subrepresentation of a
 finite-dimensional unitary representation is the supremum of a finite, pairwise orthogonal family
