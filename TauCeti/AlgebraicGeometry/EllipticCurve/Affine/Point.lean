@@ -72,7 +72,7 @@ def mapVariableChange : (C • W).toAffine.Point →+ W.toAffine.Point where
     | .zero => .zero
     | .some x y h => .some ((C.u : F) ^ 2 * x + C.r)
         ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
-        ((variableChange_nonsingular_iff W C x y).mpr h)
+        ((variableChange_nonsingular W C x y).mpr h)
   map_zero' := rfl
   map_add' := by
     rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩)
@@ -90,7 +90,7 @@ def mapVariableChange : (C • W).toAffine.Point →+ W.toAffine.Point where
 @[simp] lemma mapVariableChange_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
     mapVariableChange W C (.some x y h)
       = .some ((C.u : F) ^ 2 * x + C.r) ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
-          ((variableChange_nonsingular_iff W C x y).mpr h) := by
+          ((variableChange_nonsingular W C x y).mpr h) := by
   simp only [mapVariableChange]
   rfl
 
@@ -106,8 +106,8 @@ lemma mapVariableChange_injective : Function.Injective (mapVariableChange W C) :
   · rw [mapVariableChange_some, mapVariableChange_some] at h
     simp only [some.injEq] at h ⊢
     obtain ⟨hX, hY⟩ := h
-    have hx : x₁ = x₂ := variableChange_X_inj C hX
-    exact ⟨hx, variableChange_Y_inj C hx hY⟩
+    have hx : x₁ = x₂ := (variableChange_X_inj C).mp hX
+    exact ⟨hx, (variableChange_Y_inj C hx).mp hY⟩
 
 /-- Applying the change of variables `C⁻¹` (transported along `C⁻¹ • C • W = W`) and then `C`
 recovers the original point. -/
@@ -158,7 +158,7 @@ variables `C⁻¹`, sending `(x, y)` to `(u⁻²(x - r), u⁻³(y - sx + sr - t)
     (equivVariableChange W C).symm (.some x y h)
       = .some ((C⁻¹.u : F) ^ 2 * x + C⁻¹.r)
           ((C⁻¹.u : F) ^ 3 * y + (C⁻¹.u : F) ^ 2 * C⁻¹.s * x + C⁻¹.t)
-          ((variableChange_nonsingular_iff (C • W) C⁻¹ x y).mpr
+          ((variableChange_nonsingular (C • W) C⁻¹ x y).mpr
             ((inv_smul_smul C W).symm ▸ h)) := by
   simp only [coe_equivVariableChange_symm, cast_some, mapVariableChange_some]
 

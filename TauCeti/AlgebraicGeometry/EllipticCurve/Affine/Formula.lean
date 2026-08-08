@@ -38,6 +38,11 @@ namespace WeierstrassCurve.Affine
 
 /-! ### Transformation of the group-law formulae under a change of variables
 
+`negY`, `addX` and `negAddY` are unfolded by `simp` (they are reducible definitions in Mathlib's
+`Affine.Formula`), so the laws whose left-hand sides are headed by them cannot be `simp` lemmas —
+their left-hand sides are not in simp-normal form and the `simpNF` linter rejects them. The
+remaining laws, whose heads survive simplification, are registered.
+
 Throughout, the change of variables carries a point `(x, y)` of `C • W` to the point
 `(u²x + r, u³y + u²sx + t)` of `W`. The laws in this section are stated over an arbitrary
 commutative ring; `↑C.u⁻¹ * ↑C.u = 1` is fed to `grobner` to cancel the unit. -/
@@ -76,7 +81,7 @@ lemma variableChange_negAddY (x₁ x₂ y₁ ℓ : R) :
   ring1
 
 /-- The change of variables intertwines the `y`-coordinate of addition (`addY`). -/
-lemma variableChange_addY (x₁ x₂ y₁ ℓ : R) :
+@[simp] lemma variableChange_addY (x₁ x₂ y₁ ℓ : R) :
     W.toAffine.addY ((C.u : R) ^ 2 * x₁ + C.r) ((C.u : R) ^ 2 * x₂ + C.r)
         ((C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t) ((C.u : R) * ℓ + C.s)
       = (C.u : R) ^ 3 * (C • W).toAffine.addY x₁ x₂ y₁ ℓ
@@ -84,9 +89,9 @@ lemma variableChange_addY (x₁ x₂ y₁ ℓ : R) :
   simp only [addY, variableChange_negAddY, variableChange_addX, variableChange_negY]
 
 /-- The Weierstrass polynomial at the image point is `u⁶` times that of `C • W` at the original
-point. This is the scaling law behind `variableChange_equation_iff`, and the companion of the
+point. This is the scaling law behind `variableChange_equation`, and the companion of the
 two partial-derivative laws below. -/
-lemma variableChange_evalEval_polynomial (x y : R) :
+@[simp] lemma variableChange_evalEval_polynomial (x y : R) :
     W.toAffine.polynomial.evalEval ((C.u : R) ^ 2 * x + C.r)
         ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
       = (C.u : R) ^ 6 * (C • W).toAffine.polynomial.evalEval x y := by
@@ -97,7 +102,7 @@ lemma variableChange_evalEval_polynomial (x y : R) :
 
 /-- A point `(x, y)` lies on `C • W` if and only if `(u²x + r, u³y + u²sx + t)` lies on `W`: the
 change of variables scales the Weierstrass polynomial by `u⁶`. -/
-lemma variableChange_equation_iff (x y : R) :
+@[simp] lemma variableChange_equation (x y : R) :
     W.toAffine.Equation ((C.u : R) ^ 2 * x + C.r)
         ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
       ↔ (C • W).toAffine.Equation x y := by
@@ -107,7 +112,7 @@ lemma variableChange_equation_iff (x y : R) :
 
 /-- The partial derivative `∂/∂y` of the Weierstrass polynomial at the image point is `u³` times
 that of `C • W` at the original point. -/
-lemma variableChange_evalEval_polynomialY (x y : R) :
+@[simp] lemma variableChange_evalEval_polynomialY (x y : R) :
     W.toAffine.polynomialY.evalEval ((C.u : R) ^ 2 * x + C.r)
         ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
       = (C.u : R) ^ 3 * (C • W).toAffine.polynomialY.evalEval x y := by
@@ -118,7 +123,7 @@ lemma variableChange_evalEval_polynomialY (x y : R) :
 /-- The partial derivative `∂/∂x` of the Weierstrass polynomial at the image point, in terms of
 the two partial derivatives of `C • W` at the original point (the chain rule for the change of
 variables). -/
-lemma variableChange_evalEval_polynomialX (x y : R) :
+@[simp] lemma variableChange_evalEval_polynomialX (x y : R) :
     W.toAffine.polynomialX.evalEval ((C.u : R) ^ 2 * x + C.r)
         ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
       = (C.u : R) ^ 4 * (C • W).toAffine.polynomialX.evalEval x y
@@ -131,30 +136,31 @@ lemma variableChange_evalEval_polynomialX (x y : R) :
 /-- A point `(x, y)` is a nonsingular point of `C • W` if and only if its image
 `(u²x + r, u³y + u²sx + t)` is a nonsingular point of `W`. This holds for an arbitrary
 Weierstrass curve over a commutative ring — no ellipticity hypothesis. -/
-lemma variableChange_nonsingular_iff (x y : R) :
+@[simp] lemma variableChange_nonsingular (x y : R) :
     W.toAffine.Nonsingular ((C.u : R) ^ 2 * x + C.r)
         ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
       ↔ (C • W).toAffine.Nonsingular x y := by
   have hX := variableChange_evalEval_polynomialX W C x y
   have hY := variableChange_evalEval_polynomialY W C x y
   unfold Nonsingular
-  rw [variableChange_equation_iff, hX, hY]
+  rw [variableChange_equation, hX, hY]
   refine and_congr_right fun _ ↦ ?_
   rcases eq_or_ne ((C • W).toAffine.polynomialY.evalEval x y) 0 with hy | hy
   · simp only [hy, mul_zero, sub_zero, ne_eq, (C.u.isUnit.pow 4).mul_right_eq_zero]
   · exact iff_of_true (.inr fun h ↦ hy ((C.u.isUnit.pow 3).mul_right_eq_zero.mp h)) (.inr hy)
 
 /-- The change of variables is injective on `x`-coordinates: `u²x + r` determines `x`. -/
-lemma variableChange_X_inj {x₁ x₂ : R}
-    (h : (C.u : R) ^ 2 * x₁ + C.r = (C.u : R) ^ 2 * x₂ + C.r) : x₁ = x₂ :=
-  (C.u.isUnit.pow 2).mul_right_inj.mp (add_right_cancel h)
+lemma variableChange_X_inj {x₁ x₂ : R} :
+    (C.u : R) ^ 2 * x₁ + C.r = (C.u : R) ^ 2 * x₂ + C.r ↔ x₁ = x₂ :=
+  ⟨fun h ↦ (C.u.isUnit.pow 2).mul_right_inj.mp (add_right_cancel h), fun h ↦ by rw [h]⟩
 
 /-- The change of variables is injective on `y`-coordinates once the `x`-coordinates agree. -/
-lemma variableChange_Y_inj {x₁ x₂ y₁ y₂ : R} (hx : x₁ = x₂)
-    (h : (C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t
-      = (C.u : R) ^ 3 * y₂ + (C.u : R) ^ 2 * C.s * x₂ + C.t) : y₁ = y₂ := by
+lemma variableChange_Y_inj {x₁ x₂ y₁ y₂ : R} (hx : x₁ = x₂) :
+    (C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t
+      = (C.u : R) ^ 3 * y₂ + (C.u : R) ^ 2 * C.s * x₂ + C.t ↔ y₁ = y₂ := by
   subst hx
-  exact (C.u.isUnit.pow 3).mul_right_inj.mp (add_right_cancel (add_right_cancel h))
+  exact ⟨fun h ↦ (C.u.isUnit.pow 3).mul_right_inj.mp (add_right_cancel (add_right_cancel h)),
+    fun h ↦ by rw [h]⟩
 
 /-- The image of a pair of points under the change of variables satisfies the `y₁ = -y₂`
 degeneracy condition (`negY`) only if the original pair does. -/
@@ -164,9 +170,9 @@ lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : R}
       (C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t = W.toAffine.negY
         ((C.u : R) ^ 2 * x₂ + C.r) ((C.u : R) ^ 3 * y₂ + (C.u : R) ^ 2 * C.s * x₂ + C.t)) := by
   rintro ⟨hX, hY⟩
-  obtain rfl := variableChange_X_inj C hX
+  obtain rfl := (variableChange_X_inj C).mp hX
   rw [variableChange_negY] at hY
-  exact hxy ⟨rfl, variableChange_Y_inj C rfl hY⟩
+  exact hxy ⟨rfl, (variableChange_Y_inj C rfl).mp hY⟩
 
 end Ring
 
@@ -196,7 +202,7 @@ lemma variableChange_slope [DecidableEq F] {x₁ x₂ y₁ y₂ : F}
       variableChange_evalEval_polynomialX, variableChange_evalEval_polynomialY]
     field
   · have hΦx : (C.u : F) ^ 2 * x₁ + C.r ≠ (C.u : F) ^ 2 * x₂ + C.r :=
-      fun h ↦ hx (variableChange_X_inj C h)
+      fun h ↦ hx ((variableChange_X_inj C).mp h)
     rw [W.toAffine.slope_of_X_ne hΦx, (C • W).toAffine.slope_of_X_ne hx]
     have h1 := sub_ne_zero.mpr hΦx
     have h2 := sub_ne_zero.mpr hx
