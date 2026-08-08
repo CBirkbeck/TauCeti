@@ -54,8 +54,8 @@ argument principle above all — into a statement about how often an image curve
 * `TauCeti.Contour.analyticAt_logDeriv_of_analyticAt` — `logDeriv f` is analytic wherever `f` is
   analytic and nonzero; the regularity input shared by the results below and by the argument
   principle.
-* `TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_im_nonneg` and
-  `TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_of_im_nonpos` —
+* `TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg`
+  and `intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_sub_log_neg_of_im_nonpos` —
   the boundary-tolerant comparison FTCs: the logarithmic integral of `g` is integrable and
   evaluates to an endpoint-log difference through a comparison `h` that agrees with `g` on the
   open interval, is differentiable there off a countable set with integrable logarithmic
@@ -301,7 +301,7 @@ strictly between them, differentiable there off a countable set, and with integr
 logarithmic integrand, the logarithmic integral of `g` is integrable and evaluates to the
 difference of endpoint logarithms — even when the endpoint values sit on the slit-plane
 boundary. -/
-theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_im_nonneg {P : Set ℝ}
+theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg {P : Set ℝ}
     (hP : P.Countable) (hh_cont : ContinuousOn h (Set.uIcc a b))
     (hh_diff : ∀ t ∈ Set.Ioo (min a b) (max a b) \ P, DifferentiableAt ℝ h t)
     (hh_int : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b)
@@ -322,8 +322,8 @@ theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_im_nonneg 
 to the closed lower half-plane, nonvanishing at the endpoints, whose negation is
 slit-plane-valued strictly between them, the logarithmic integral of `g` is integrable and
 evaluates to the difference of endpoint logarithms of the negations. -/
-theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_of_im_nonpos {P : Set ℝ}
-    (hP : P.Countable) (hh_cont : ContinuousOn h (Set.uIcc a b))
+theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_sub_log_neg_of_im_nonpos
+    {P : Set ℝ} (hP : P.Countable) (hh_cont : ContinuousOn h (Set.uIcc a b))
     (hh_diff : ∀ t ∈ Set.Ioo (min a b) (max a b) \ P, DifferentiableAt ℝ h t)
     (hh_int : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b)
     (hh_im_np : ∀ t ∈ Set.uIcc a b, (h t).im ≤ 0)
@@ -335,7 +335,7 @@ theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_of_im_non
     ∫ t in a..b, deriv g t / g t = Complex.log (-(g b)) - Complex.log (-(g a)) := by
   have hderiv_neg : ∀ k : ℝ → ℂ, (fun t ↦ deriv (-k) t / (-k) t) = fun t ↦ deriv k t / k t :=
     fun k ↦ funext fun t ↦ by rw [deriv.neg, Pi.neg_apply, neg_div_neg_eq]
-  have hkey := intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_im_nonneg
+  have hkey := intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg
     (g := -g) (h := -h) hP hh_cont.neg (fun t ht ↦ (hh_diff t ht).neg)
     (by rw [hderiv_neg h]; exact hh_int)
     (fun t ht ↦ by simpa using hh_im_np t ht)
