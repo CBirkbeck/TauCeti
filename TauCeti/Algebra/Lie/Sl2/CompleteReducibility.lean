@@ -186,9 +186,8 @@ private theorem lie_mem_of_mem_sup_span_singleton {M : Type v} [AddCommGroup M] 
 omit [CharZero K] [IsAlgClosed K] in
 /-- **A vector of `W + K v₀` lying outside `W` lies outside `N`**, when `W ≤ N` and `v₀ ∉ N`. -/
 private theorem notMem_of_mem_sup_span_singleton {M : Type v} [AddCommGroup M] [Module K M]
-    [LieRingModule L M] [LieModule K L M] {N W : LieSubmodule K L M} {v₀ p : M} (hWle : W ≤ N)
-    (hv₀N : v₀ ∉ N) (hp : p ∈ (W : Submodule K M) ⊔ Submodule.span K {v₀}) (hpW : p ∉ W) :
-    p ∉ N := by
+    {N W : Submodule K M} {v₀ p : M} (hWle : W ≤ N) (hv₀N : v₀ ∉ N)
+    (hp : p ∈ W ⊔ Submodule.span K {v₀}) (hpW : p ∉ W) : p ∉ N := by
   intro hcon
   obtain ⟨y, hy, z, hz, hyz⟩ := Submodule.mem_sup.1 hp
   obtain ⟨c, rfl⟩ := Submodule.mem_span_singleton.1 hz
