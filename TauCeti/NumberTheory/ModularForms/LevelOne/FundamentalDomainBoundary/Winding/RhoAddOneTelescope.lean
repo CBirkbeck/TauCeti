@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.RhoOneGeometry
+public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.AddOneGeometry
 
 import Mathlib.MeasureTheory.Integral.CircleIntegral
 import TauCeti.Analysis.Contour.LogDerivFTC
@@ -23,7 +23,7 @@ beside the corner.
 
 ## Main declarations
 
-* `TauCeti.ModularForm.ftc_logDeriv_telescope_rho_one` (the telescope; the analytic core
+* `TauCeti.ModularForm.ftc_logDeriv_telescope_rho_add_one` (the telescope; the analytic core
   of the generalized winding number `-1/6` at `ρ + 1`).
 
 ## References
@@ -77,7 +77,7 @@ private lemma slit_comparison {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
 
 /-- The right-vertical piece `[0, 1-δ_L]` of the telescope at `ρ + 1`, stopping short of
 the corner. -/
-private lemma telescope_rho_one_piece_right_vertical (hH : Real.sqrt 3 / 2 < H)
+private lemma telescope_rho_add_one_piece_right_vertical (hH : Real.sqrt 3 / 2 < H)
     (hδL : 0 < δL) (hδL1 : δL ≤ 1) :
     IntervalIntegrable
       (fun t ↦ deriv (fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) t /
@@ -103,7 +103,7 @@ private lemma telescope_rho_one_piece_right_vertical (hH : Real.sqrt 3 / 2 < H)
     (by rw [hd]; exact continuousOn_const)
     (fun t ht ↦ heval t ht ▸ (by
       refine Complex.mem_slitPlane_iff.mpr (Or.inr ?_)
-      rw [fdBoundary_sub_rho_one_of_mem_Icc_zero_one H ⟨ht.1, by linarith [ht.2]⟩]
+      rw [fdBoundary_sub_rho_add_one_of_mem_Icc_zero_one H ⟨ht.1, by linarith [ht.2]⟩]
       have him : ((((1 - t) * (H - Real.sqrt 3 / 2) : ℝ) : ℂ) * Complex.I).im =
           (1 - t) * (H - Real.sqrt 3 / 2) := by simp
       rw [him]
@@ -115,7 +115,7 @@ private lemma telescope_rho_one_piece_right_vertical (hH : Real.sqrt 3 / 2 < H)
 
 /-- The first arc piece `[1+δ_R, 2]` of the telescope at `ρ + 1`, starting past the
 corner. -/
-private lemma telescope_rho_one_piece_arc_first (H : ℝ) (hδR : 0 < δR) (hδR1 : δR < 1) :
+private lemma telescope_rho_add_one_piece_arc_first (H : ℝ) (hδR : 0 < δR) (hδR1 : δR < 1) :
     IntervalIntegrable
       (fun t ↦ deriv (fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) t /
         (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)))
@@ -146,14 +146,14 @@ private lemma telescope_rho_one_piece_arc_first (H : ℝ) (hδR : 0 < δR) (hδR
         (((continuous_circleMap 0 1).comp hθc).mul continuous_const)
         (Real.pi / 2 - Real.pi / 3)).continuousOn)
     (fun t ht ↦ heval t ht ▸ Complex.mem_slitPlane_iff.mpr (Or.inr (ne_of_gt
-      (im_fdBoundary_sub_rho_one_arc_pos H (by linarith [ht.1]) (by linarith [ht.2])))))
+      (im_fdBoundary_sub_rho_add_one_arc_pos H (by linarith [ht.1]) (by linarith [ht.2])))))
     (fun t ht ↦ congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval t ⟨ht.1.le, ht.2.le⟩))
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval (1 + δR) (left_mem_Icc.mpr hab)))
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval 2 (right_mem_Icc.mpr hab)))
 
 /-- The second arc piece `[2, 3]` of the telescope at `ρ + 1`: the shifted contour meets
 the branch cut at the right endpoint, so the boundary-tolerant upper form applies. -/
-private lemma telescope_rho_one_piece_arc_second (H : ℝ) :
+private lemma telescope_rho_add_one_piece_arc_second (H : ℝ) :
     IntervalIntegrable
       (fun t ↦ deriv (fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) t /
         (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)))
@@ -179,9 +179,9 @@ private lemma telescope_rho_one_piece_arc_second (H : ℝ) :
   have hne : ∀ t ∈ Icc (2 : ℝ) 3, fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1) ≠ 0 := by
     intro t ht
     rcases eq_or_lt_of_le ht.2 with h3 | h3
-    · rw [h3, fdBoundary_sub_rho_one_apply_three]
+    · rw [h3, fdBoundary_apply_three_sub_rho_add_one]
       norm_num
-    · have him := im_fdBoundary_sub_rho_one_arc_pos H (by linarith [ht.1]) h3
+    · have him := im_fdBoundary_sub_rho_add_one_arc_pos H (by linarith [ht.1]) h3
       exact fun h0 ↦ by rw [h0] at him; simp at him
   have hu : uIcc (2 : ℝ) 3 = Icc 2 3 := uIcc_of_le (by norm_num)
   have ho : Ioo (min (2 : ℝ) 3) (max (2 : ℝ) 3) = Ioo 2 3 := by
@@ -211,13 +211,13 @@ private lemma telescope_rho_one_piece_arc_second (H : ℝ) :
     hint
     (fun t ht ↦ by
       rw [hu] at ht
-      exact heval t ht ▸ im_fdBoundary_sub_rho_one_arc_nonneg H ⟨by linarith [ht.1], ht.2⟩)
+      exact heval t ht ▸ im_fdBoundary_sub_rho_add_one_arc_nonneg H ⟨by linarith [ht.1], ht.2⟩)
     (hne' 2 (left_mem_Icc.mpr (by norm_num)))
     (hne' 3 (right_mem_Icc.mpr (by norm_num)))
     (fun t ht ↦ by
       rw [ho] at ht
       exact heval t ⟨ht.1.le, ht.2.le⟩ ▸ Complex.mem_slitPlane_iff.mpr (Or.inr
-        (ne_of_gt (im_fdBoundary_sub_rho_one_arc_pos H (by linarith [ht.1]) ht.2))))
+        (ne_of_gt (im_fdBoundary_sub_rho_add_one_arc_pos H (by linarith [ht.1]) ht.2))))
     (fun t ht ↦ by
       rw [ho] at ht
       exact congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval t ⟨ht.1.le, ht.2.le⟩))
@@ -227,7 +227,7 @@ private lemma telescope_rho_one_piece_arc_second (H : ℝ) :
 /-- The left-vertical piece `[3, 4]` of the telescope at `ρ + 1`: the shifted contour
 leaves the branch cut at the left endpoint, so the boundary-tolerant upper form
 applies. -/
-private lemma telescope_rho_one_piece_left_vertical (hH : Real.sqrt 3 / 2 < H) :
+private lemma telescope_rho_add_one_piece_left_vertical (hH : Real.sqrt 3 / 2 < H) :
     IntervalIntegrable
       (fun t ↦ deriv (fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) t /
         (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)))
@@ -248,12 +248,12 @@ private lemma telescope_rho_one_piece_left_vertical (hH : Real.sqrt 3 / 2 < H) :
   have him : ∀ t ∈ Icc (3 : ℝ) 4,
       (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im =
         (t - 3) * (H - Real.sqrt 3 / 2) := fun t ht ↦ by
-    rw [fdBoundary_sub_rho_one_of_mem_Icc_three_four H ht]
+    rw [fdBoundary_sub_rho_add_one_of_mem_Icc_three_four H ht]
     simp
   have hne : ∀ t ∈ Icc (3 : ℝ) 4, fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1) ≠ 0 := by
     intro t ht h0
     have hre : (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).re = -1 := by
-      rw [fdBoundary_sub_rho_one_of_mem_Icc_three_four H ht]
+      rw [fdBoundary_sub_rho_add_one_of_mem_Icc_three_four H ht]
       simp
     rw [h0] at hre
     norm_num at hre
@@ -300,7 +300,7 @@ private lemma telescope_rho_one_piece_left_vertical (hH : Real.sqrt 3 / 2 < H) :
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval 4 (right_mem_Icc.mpr (by norm_num))))
 
 /-- The ceiling piece `[4, 5]` of the telescope at `ρ + 1`. -/
-private lemma telescope_rho_one_piece_ceiling (hH : Real.sqrt 3 / 2 < H) :
+private lemma telescope_rho_add_one_piece_ceiling (hH : Real.sqrt 3 / 2 < H) :
     IntervalIntegrable
       (fun t ↦ deriv (fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) t /
         (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)))
@@ -344,7 +344,7 @@ private lemma telescope_rho_one_piece_ceiling (hH : Real.sqrt 3 / 2 < H) :
 logarithmic integral of the shifted contour is integrable and evaluates to the
 difference of the endpoint logarithms beside the corner — the branch-cut touch at
 `t = 3` passes through the principal logarithm without a jump. -/
-theorem ftc_logDeriv_telescope_rho_one (H : ℝ) (hH : Real.sqrt 3 / 2 < H) {δL δR : ℝ}
+theorem ftc_logDeriv_telescope_rho_add_one (H : ℝ) (hH : Real.sqrt 3 / 2 < H) {δL δR : ℝ}
     (hδL : 0 < δL) (hδL1 : δL ≤ 1) (hδR : 0 < δR) (hδR1 : δR < 1) :
     IntervalIntegrable
       (fun t ↦ deriv (fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) t /
@@ -362,11 +362,11 @@ theorem ftc_logDeriv_telescope_rho_one (H : ℝ) (hH : Real.sqrt 3 / 2 < H) {δL
           (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1))) =
       Complex.log (fdBoundary H (1 - δL) - ((UpperHalfPlane.ρ : ℂ) + 1)) -
         Complex.log (fdBoundary H (1 + δR) - ((UpperHalfPlane.ρ : ℂ) + 1)) := by
-  obtain ⟨hi01, he01⟩ := telescope_rho_one_piece_right_vertical hH hδL hδL1
-  obtain ⟨hi12, he12⟩ := telescope_rho_one_piece_arc_first H hδR hδR1
-  obtain ⟨hi23, he23⟩ := telescope_rho_one_piece_arc_second H
-  obtain ⟨hi34, he34⟩ := telescope_rho_one_piece_left_vertical hH
-  obtain ⟨hi45, he45⟩ := telescope_rho_one_piece_ceiling hH
+  obtain ⟨hi01, he01⟩ := telescope_rho_add_one_piece_right_vertical hH hδL hδL1
+  obtain ⟨hi12, he12⟩ := telescope_rho_add_one_piece_arc_first H hδR hδR1
+  obtain ⟨hi23, he23⟩ := telescope_rho_add_one_piece_arc_second H
+  obtain ⟨hi34, he34⟩ := telescope_rho_add_one_piece_left_vertical hH
+  obtain ⟨hi45, he45⟩ := telescope_rho_add_one_piece_ceiling hH
   have hint13 := hi12.trans hi23
   have hint34 := hi34.trans hi45
   refine ⟨hi01, hint13.trans hint34, ?_⟩

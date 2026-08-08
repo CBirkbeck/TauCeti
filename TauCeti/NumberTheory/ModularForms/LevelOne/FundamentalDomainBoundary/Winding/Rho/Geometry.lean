@@ -17,7 +17,7 @@ along the left vertical, the norm lower bounds on the far pieces, the slit-plane
 confinement of every piece, and the exact polar forms and principal logarithms of the
 shifted contour beside the corner. The corner joins the arc to the vertical at the
 interior angle `2π/3`, and the two one-sided argument limits `π/6` and `π/2` differ by
-exactly that defect — the source of the winding value `-1/6` at `ρ`.
+the angular defect `π/3` — the source of the winding value `-1/6` at `ρ`.
 
 ## Main declarations
 
@@ -90,16 +90,15 @@ theorem norm_fdBoundary_sub_rho_segment1 (H : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) 
 
 /-- On the ceiling the contour keeps distance `H - √3/2` from `ρ`: the heights differ
 by exactly `H - √3/2`. -/
-theorem norm_fdBoundary_sub_rho_segment5 (hH : Real.sqrt 3 / 2 < H)
-    (ht : t ∈ Icc (4 : ℝ) 5) :
+theorem norm_fdBoundary_sub_rho_segment5 (ht : t ∈ Icc (4 : ℝ) 5) :
     H - Real.sqrt 3 / 2 ≤ ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ := by
   have him : (fdBoundary H t - (UpperHalfPlane.ρ : ℂ)).im = H - Real.sqrt 3 / 2 := by
     rw [Complex.sub_im, im_fdBoundary_segment5 H ht]
     simp [UpperHalfPlane.ρ]
   have h1 : |(fdBoundary H t - (UpperHalfPlane.ρ : ℂ)).im| ≤
       ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ := Complex.abs_im_le_norm _
-  rw [him, abs_of_pos (by linarith)] at h1
-  exact h1
+  calc H - Real.sqrt 3 / 2 ≤ |H - Real.sqrt 3 / 2| := le_abs_self _
+    _ ≤ ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ := him ▸ h1
 
 /-- Right of the corner column the shifted contour has real part `1`: slit plane. -/
 theorem fdBoundary_sub_rho_mem_slitPlane_of_le_one (H : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) :
@@ -151,8 +150,13 @@ theorem fdBoundary_sub_rho_mem_slitPlane_of_mem_Icc_four_five (hH : Real.sqrt 3 
   rw [hrho]
   positivity
 
+/-- Two factors of `I` negate: the algebraic step closing the endpoint polar form. -/
+private lemma two_neg_mul_I_mul_I_mul (z w : ℂ) :
+    2 * -z * Complex.I * (Complex.I * w) = 2 * z * w := by
+  linear_combination (-(2 * z * w)) * Complex.I_sq
+
 /-- The polar form of the shifted contour just before the corner. -/
-private lemma fdBoundary_three_sub_sub_rho_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+private lemma fdBoundary_three_sub_sub_rho_eq (H : ℝ) (hδ : 0 < δ) (hδ2 : δ ≤ 2) :
     fdBoundary H (3 - δ) - (UpperHalfPlane.ρ : ℂ) =
       ((2 * Real.sin (δ * (Real.pi / 12)) : ℝ) : ℂ) *
         Complex.exp (((Real.pi / 6 - δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I) := by
@@ -174,24 +178,22 @@ private lemma fdBoundary_three_sub_sub_rho_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : �
     ring
   rw [hsplit, Complex.exp_add, ← hI]
   push_cast
-  linear_combination (-(2 * Complex.sin ((δ : ℂ) * ((Real.pi : ℂ) / 12)) *
-    Complex.exp (((Real.pi : ℂ) / 6 - (δ : ℂ) * ((Real.pi : ℂ) / 12)) * Complex.I))) *
-    Complex.I_sq
+  exact two_neg_mul_I_mul_I_mul _ _
 
 /-- The principal logarithm of the shifted contour just before the corner. -/
-theorem log_fdBoundary_three_sub_sub_rho (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+theorem log_fdBoundary_three_sub_sub_rho (H : ℝ) (hδ : 0 < δ) (hδ2 : δ ≤ 2) :
     Complex.log (fdBoundary H (3 - δ) - (UpperHalfPlane.ρ : ℂ)) =
       ((Real.log (2 * Real.sin (δ * (Real.pi / 12))) : ℝ) : ℂ) +
         ((Real.pi / 6 - δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I := by
   have hsin_pos : 0 < Real.sin (δ * (Real.pi / 12)) :=
     Real.sin_pos_of_pos_of_lt_pi (by positivity) (by nlinarith [Real.pi_pos])
-  rw [fdBoundary_three_sub_sub_rho_eq H hδ hδ1,
+  rw [fdBoundary_three_sub_sub_rho_eq H hδ hδ2,
     Complex.log_ofReal_mul (by linarith) (Complex.exp_ne_zero _),
     Complex.log_exp (by simp; nlinarith [Real.pi_pos]) (by simp; nlinarith [Real.pi_pos])]
 
 /-- The principal logarithm of the shifted contour just after the corner. -/
 theorem log_fdBoundary_three_add_sub_rho (hH : Real.sqrt 3 / 2 < H) (hδ : 0 < δ)
-    (hδ1 : δ ≤ 1) :
+    (hδ2 : δ ≤ 1) :
     Complex.log (fdBoundary H (3 + δ) - (UpperHalfPlane.ρ : ℂ)) =
       ((Real.log (δ * (H - Real.sqrt 3 / 2)) : ℝ) : ℂ) +
         ((Real.pi / 2 : ℝ) : ℂ) * Complex.I := by
@@ -231,7 +233,7 @@ theorem eq_three_of_fdBoundary_eq_rho (hH : Real.sqrt 3 / 2 < H) (ht : t ∈ Icc
         rcases mul_eq_zero.mp h0 with h | h
         · linarith
         · linarith
-      · have := norm_fdBoundary_sub_rho_segment5 hH ⟨h4.le, ht.2⟩
+      · have := norm_fdBoundary_sub_rho_segment5 (H := H) ⟨h4.le, ht.2⟩
         rw [h0] at this
         linarith
 

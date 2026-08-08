@@ -111,7 +111,7 @@ private lemma lt_norm_of_far_right_rho (hH : Real.sqrt 3 / 2 < H) (hεH : ε < H
     linarith
   · calc ε < H - Real.sqrt 3 / 2 := hεH
       _ ≤ ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ :=
-        norm_fdBoundary_sub_rho_segment5 hH ⟨ht4.le, ht.2⟩
+        norm_fdBoundary_sub_rho_segment5 (H := H) ⟨ht4.le, ht.2⟩
 
 /-- Over the excised corner, the contour stays within distance `ε` of `ρ`. -/
 private lemma norm_le_of_near_rho {δL δR : ℝ} (hH : Real.sqrt 3 / 2 < H) (hδL : 0 < δL)
@@ -234,7 +234,7 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
     hmid0, add_zero,
     ← intervalIntegral.integral_congr_ae hae_left,
     ← intervalIntegral.integral_congr_ae hae_right,
-    hval, log_fdBoundary_three_sub_sub_rho H hδL_pos hδL_lt,
+    hval, log_fdBoundary_three_sub_sub_rho H hδL_pos (hδL_lt.le.trans one_le_two),
     log_fdBoundary_three_add_sub_rho hH hδR_pos hδR_le, h2sin, hlin, hδ12]
   push_cast
   ring
