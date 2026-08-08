@@ -160,15 +160,25 @@ theorem leftVerticalCrossingI_lt_four (hH : 1 < H) : leftVerticalCrossingI H < 4
   rw [leftVerticalCrossingI]
   linarith
 
-/-- The imaginary part of the shifted contour vanishes at the crossing parameter. -/
-theorem im_fdBoundary_sub_I_leftVerticalCrossingI (hH : 1 < H) :
+/-- The crossing parameter does not exceed the ceiling corner; at `H = 1` it reaches it. -/
+theorem leftVerticalCrossingI_le_four (hH : 1 ≤ H) : leftVerticalCrossingI H ≤ 4 := by
+  have h_den : 0 < H - Real.sqrt 3 / 2 := by linarith [sqrt_three_div_two_lt_one]
+  have : (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2) ≤ 1 := by
+    rw [div_le_one h_den]
+    linarith
+  rw [leftVerticalCrossingI]
+  linarith
+
+/-- The imaginary part of the shifted contour vanishes at the crossing parameter. At `H = 1`
+the crossing sits at the ceiling corner `t = 4` and the identity still holds. -/
+theorem im_fdBoundary_sub_I_leftVerticalCrossingI (hH : 1 ≤ H) :
     (fdBoundary H (leftVerticalCrossingI H) - Complex.I).im = 0 := by
   have h_den : (H - Real.sqrt 3 / 2) ≠ 0 :=
     ne_of_gt (by linarith [sqrt_three_div_two_lt_one])
   rw [Complex.sub_im, Complex.I_im,
     im_fdBoundary_of_le_four (three_lt_leftVerticalCrossingI
       (by linarith [sqrt_three_div_two_lt_one]))
-      (leftVerticalCrossingI_lt_four hH).le, leftVerticalCrossingI]
+      (leftVerticalCrossingI_le_four hH), leftVerticalCrossingI]
   have h2 : 2 * H - Real.sqrt 3 ≠ 0 := fun h ↦ h_den (by linarith)
   field_simp
   ring
@@ -179,7 +189,7 @@ theorem im_fdBoundary_sub_I_neg_of_lt_crossing (hH : 1 < H) (ht3 : 3 < t)
   have h_den : 0 < H - Real.sqrt 3 / 2 := by linarith [sqrt_three_div_two_lt_one]
   rw [Complex.sub_im, Complex.I_im,
     im_fdBoundary_of_le_four ht3 (by linarith [leftVerticalCrossingI_lt_four hH])]
-  have h0 := im_fdBoundary_sub_I_leftVerticalCrossingI hH
+  have h0 := im_fdBoundary_sub_I_leftVerticalCrossingI hH.le
   rw [Complex.sub_im, Complex.I_im,
     im_fdBoundary_of_le_four (three_lt_leftVerticalCrossingI
       (by linarith [sqrt_three_div_two_lt_one]))
@@ -194,7 +204,7 @@ theorem im_fdBoundary_sub_I_pos_of_crossing_lt (hH : 1 < H)
   rw [Complex.sub_im, Complex.I_im,
     im_fdBoundary_of_le_four (lt_trans (three_lt_leftVerticalCrossingI
       (by linarith [sqrt_three_div_two_lt_one])) ht0) ht4]
-  have h0 := im_fdBoundary_sub_I_leftVerticalCrossingI hH
+  have h0 := im_fdBoundary_sub_I_leftVerticalCrossingI hH.le
   rw [Complex.sub_im, Complex.I_im,
     im_fdBoundary_of_le_four (three_lt_leftVerticalCrossingI
       (by linarith [sqrt_three_div_two_lt_one]))
@@ -214,62 +224,58 @@ theorem im_fdBoundary_sub_I_at_three_neg (H : ℝ) :
   linarith
 
 
+/-- The polar form of the shifted contour beside the arc top, with signed offset: modulus
+`2·sin(ε·π/12)` and argument `π + ε·π/12`, both signed. The endpoint forms on either side
+are its specializations. -/
+private lemma fdBoundary_two_add_sub_I_polar (H : ℝ) {ε : ℝ} (hε : -1 ≤ ε) (hε1 : ε ≤ 1) :
+    fdBoundary H (2 + ε) - Complex.I =
+      ((2 * Real.sin (ε * (Real.pi / 12)) : ℝ) : ℂ) *
+        Complex.exp (((Real.pi + ε * (Real.pi / 12) : ℝ) : ℂ) * Complex.I) := by
+  have hI : Complex.I = Complex.exp (((Real.pi / 2 : ℝ) : ℂ) * Complex.I) := by
+    rw [Complex.ofReal_div, Complex.ofReal_ofNat]
+    exact Complex.exp_pi_div_two_mul_I.symm
+  have hcurve : fdBoundary H (2 + ε) = circleMap 0 1 ((2 + ε + 1) * (Real.pi / 6)) :=
+    eqOn_fdBoundary_arc H ⟨by linarith, by linarith⟩
+  conv_lhs => rw [hI, hcurve, circleMap_zero, Complex.ofReal_one, one_mul]
+  rw [exp_mul_I_sub_exp_mul_I,
+    (by ring : ((2 + ε + 1) * (Real.pi / 6) - Real.pi / 2) / 2 = ε * (Real.pi / 12)),
+    (by ring : ((2 + ε + 1) * (Real.pi / 6) + Real.pi / 2) / 2 =
+      Real.pi / 2 + ε * (Real.pi / 12))]
+  have hsplit : ((Real.pi + ε * (Real.pi / 12) : ℝ) : ℂ) * Complex.I =
+      ((Real.pi / 2 : ℝ) : ℂ) * Complex.I +
+        ((Real.pi / 2 + ε * (Real.pi / 12) : ℝ) : ℂ) * Complex.I := by
+    push_cast
+    ring
+  rw [hsplit, Complex.exp_add, ← hI]
+  push_cast
+  ring
+
 /-- The polar form of the shifted contour just right of the arc top. -/
 private lemma fdBoundary_two_sub_sub_I_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     fdBoundary H (2 - δ) - Complex.I =
       ((2 * Real.sin (δ * (Real.pi / 12)) : ℝ) : ℂ) *
         Complex.exp (((-(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I) := by
-  have hI : Complex.I = Complex.exp (((Real.pi / 2 : ℝ) : ℂ) * Complex.I) := by
-    rw [Complex.ofReal_div, Complex.ofReal_ofNat]
-    exact Complex.exp_pi_div_two_mul_I.symm
-  have hcurve : fdBoundary H (2 - δ) = circleMap 0 1 ((2 - δ + 1) * (Real.pi / 6)) :=
-    eqOn_fdBoundary_arc H ⟨by linarith, by linarith⟩
-  conv_lhs => rw [hI, hcurve, circleMap_zero, Complex.ofReal_one, one_mul]
-  rw [exp_mul_I_sub_exp_mul_I,
-    (by ring : ((2 - δ + 1) * (Real.pi / 6) - Real.pi / 2) / 2 = -(δ * (Real.pi / 12))),
-    (by ring : ((2 - δ + 1) * (Real.pi / 6) + Real.pi / 2) / 2 =
-      Real.pi / 2 + -(δ * (Real.pi / 12))),
-    Real.sin_neg]
-  have hsplit : ((Real.pi / 2 + -(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I =
-      ((Real.pi / 2 : ℝ) : ℂ) * Complex.I +
-        ((-(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I := by
-    push_cast
-    ring
-  rw [hsplit, Complex.exp_add, ← hI]
+  have h := fdBoundary_two_add_sub_I_polar H (ε := -δ) (by linarith) (by linarith)
+  rw [show (2 : ℝ) + -δ = 2 - δ by ring,
+    show -δ * (Real.pi / 12) = -(δ * (Real.pi / 12)) by ring, Real.sin_neg,
+    show ((Real.pi + -(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I =
+      ((Real.pi : ℝ) : ℂ) * Complex.I + ((-(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I from by
+        push_cast; ring,
+    Complex.exp_add, Complex.exp_pi_mul_I] at h
+  rw [h]
   push_cast
-  linear_combination (-(2 * Complex.sin ((δ : ℂ) * ((Real.pi : ℂ) / 12)) *
-    Complex.exp (-((δ : ℂ) * ((Real.pi : ℂ) / 12)) * Complex.I))) * Complex.I_sq
+  ring
 
 /-- The polar form of the shifted contour just left of the arc top. -/
 private lemma fdBoundary_two_add_sub_I_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     fdBoundary H (2 + δ) - Complex.I =
       ((2 * Real.sin (δ * (Real.pi / 12)) : ℝ) : ℂ) *
         Complex.exp (((δ * (Real.pi / 12) - Real.pi : ℝ) : ℂ) * Complex.I) := by
-  have hI : Complex.I = Complex.exp (((Real.pi / 2 : ℝ) : ℂ) * Complex.I) := by
-    rw [Complex.ofReal_div, Complex.ofReal_ofNat]
-    exact Complex.exp_pi_div_two_mul_I.symm
-  have hcurve : fdBoundary H (2 + δ) = circleMap 0 1 ((2 + δ + 1) * (Real.pi / 6)) :=
-    eqOn_fdBoundary_arc H ⟨by linarith, by linarith⟩
-  conv_lhs => rw [hI, hcurve, circleMap_zero, Complex.ofReal_one, one_mul]
-  rw [exp_mul_I_sub_exp_mul_I,
-    (by ring : ((2 + δ + 1) * (Real.pi / 6) - Real.pi / 2) / 2 = δ * (Real.pi / 12)),
-    (by ring : ((2 + δ + 1) * (Real.pi / 6) + Real.pi / 2) / 2 =
-      Real.pi / 2 + δ * (Real.pi / 12))]
-  have hsplit : ((Real.pi / 2 + δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I =
-      ((Real.pi / 2 : ℝ) : ℂ) * Complex.I + ((δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I := by
-    push_cast
-    ring
-  have hwrap : ((δ * (Real.pi / 12) - Real.pi : ℝ) : ℂ) * Complex.I =
-      ((δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I + -((Real.pi : ℝ) * Complex.I) := by
-    push_cast
-    ring
-  rw [hsplit, Complex.exp_add, ← hI, hwrap, Complex.exp_add, Complex.exp_neg,
-    Complex.exp_pi_mul_I]
-  push_cast
-  have hinv : ((-1 : ℂ))⁻¹ = -1 := by norm_num
-  rw [hinv]
-  linear_combination (2 * Complex.sin ((δ : ℂ) * ((Real.pi : ℂ) / 12)) *
-    Complex.exp ((δ : ℂ) * ((Real.pi : ℂ) / 12) * Complex.I)) * Complex.I_sq
+  rw [fdBoundary_two_add_sub_I_polar H (by linarith) hδ1,
+    show ((Real.pi + δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I =
+      ((δ * (Real.pi / 12) - Real.pi : ℝ) : ℂ) * Complex.I +
+        2 * (Real.pi : ℂ) * Complex.I from by push_cast; ring,
+    Complex.exp_add, Complex.exp_two_pi_mul_I, mul_one]
 
 /-- The half-angle sine of the excision half-width is positive. -/
 private lemma sin_delta_pos (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
