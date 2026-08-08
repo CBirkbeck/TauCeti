@@ -289,8 +289,13 @@ theorem eventually_pow_mem_ringOfDefinition (P : PairOfDefinition A) :
   ha.isTopologicallyNilpotent.eventually_mem
     (P.isOpen_ringOfDefinition.mem_nhds P.ringOfDefinition.zero_mem)
 
-/-- The scaled copy `ϖⁿ A₀` of a ring of definition is a neighbourhood of zero. -/
-theorem smul_ringOfDefinition_mem_nhds_zero (P : PairOfDefinition A) (n : ℕ) :
+omit [IsTopologicalRing A] in
+/-- The scaled copy `ϖⁿ A₀` of a ring of definition is a neighbourhood of zero.
+
+Only continuity of multiplication by a constant is needed: multiplication by the unit `ϖⁿ` is a
+homeomorphism, so it carries the neighbourhood `A₀` of zero to a neighbourhood of zero. -/
+theorem smul_ringOfDefinition_mem_nhds_zero [ContinuousConstSMul A A] (P : PairOfDefinition A)
+    (n : ℕ) :
     (a ^ n) • (P.ringOfDefinition : Set A) ∈ 𝓝 (0 : A) := by
   have h := (ha.isUnit.pow n).smul_mem_nhds_smul_iff
     (s := (P.ringOfDefinition : Set A)) (a := (0 : A))
