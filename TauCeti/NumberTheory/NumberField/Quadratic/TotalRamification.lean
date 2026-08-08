@@ -61,22 +61,12 @@ private theorem sum_ramificationIdx_mul_inertiaDeg_eq_two (hK : finrank ℚ K = 
       q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ = 2 := by
   rw [Ideal.sum_ramification_inertia_eq_finrank, NumberField.RingOfIntegers.rank K, hK]
 
-/-- A product of naturals equal to `2` whose first factor is at least `2` has factors `2` and
-`1`. -/
-private theorem eq_two_and_eq_one_of_two_le_of_mul_eq_two {e f : ℕ} (he : 2 ≤ e) (hef : e * f = 2) :
-    e = 2 ∧ f = 1 := by
-  have hf0 : f ≠ 0 := by rintro rfl; simp at hef
-  have hle : 2 * f ≤ e * f := Nat.mul_le_mul he le_rfl
-  have hf : f = 1 := by omega
-  exact ⟨by rw [hf, mul_one] at hef; exact hef, hf⟩
-
 /-- Every summand of a fundamental identity is at least `1`: over a finite algebra, ramification
 indices and inertia degrees of primes are positive. -/
-private theorem one_le_ramificationIdx_mul_inertiaDeg {R S : Type*} [CommRing R] [CommRing S]
-    [Algebra R S] [Module.Finite R S] {𝔞 : Ideal R} (q : 𝔞.primesOver S) :
-    1 ≤ q.1.ramificationIdx R * q.1.inertiaDeg R := by
-  obtain ⟨q, hq, hlo⟩ := q
-  exact Nat.one_le_iff_ne_zero.mpr (Nat.mul_ne_zero
+private theorem one_le_ramificationIdx_mul_inertiaDeg (R : Type*) {S : Type*} [CommRing R]
+    [CommRing S] [Algebra R S] [Module.Finite R S] (q : Ideal S) [q.IsPrime] :
+    1 ≤ q.ramificationIdx R * q.inertiaDeg R :=
+  Nat.one_le_iff_ne_zero.mpr (Nat.mul_ne_zero
     (Ideal.ramificationIdx_pos q R).ne' (Ideal.inertiaDeg_pos q R).ne')
 
 /-- **The engine of the file.** If some prime `𝔭` of `𝓞 K` above a rational prime `p` has
@@ -103,13 +93,17 @@ private theorem totallyRamified_aux (hK : finrank ℚ K = 2) (hp : p.Prime)
   -- The summand at `𝔭` already accounts for the whole sum, so the remaining ones vanish.
   have hrest : ∑ q ∈ Finset.univ.erase x, q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ = 0 := by omega
   have hxval : 𝔭.ramificationIdx ℤ * 𝔭.inertiaDeg ℤ = 2 := by omega
-  obtain ⟨heone, hfone⟩ := eq_two_and_eq_one_of_two_le_of_mul_eq_two he hxval
+  -- `e ∣ 2` and `2` is prime, so `e = 2`; then `f = 1`.
+  have heone : 𝔭.ramificationIdx ℤ = 2 :=
+    ((Nat.prime_two.eq_one_or_self_of_dvd _ ⟨_, hxval.symm⟩).resolve_left (by omega))
+  have hfone : 𝔭.inertiaDeg ℤ = 1 := by rw [heone] at hxval; omega
   -- A vanishing sum of terms that are each at least `1` has no terms, so `𝔭` is the only prime.
   have huniq : ∀ q : (span {(p : ℤ)} : Ideal ℤ).primesOver (𝓞 K), q = x := fun q => by
+    have := q.2.1
     by_contra hne
     exact absurd ((Finset.sum_eq_zero_iff.mp hrest) q
         (Finset.mem_erase.mpr ⟨hne, Finset.mem_univ q⟩))
-      (Nat.one_le_iff_ne_zero.mp (one_le_ramificationIdx_mul_inertiaDeg q))
+      (Nat.one_le_iff_ne_zero.mp (one_le_ramificationIdx_mul_inertiaDeg ℤ q.1))
   exact ⟨heone, hfone, hx1 ▸ Set.eq_singleton_iff_unique_mem.mpr
     ⟨x.2, fun q hq => congrArg Subtype.val (huniq ⟨q, hq.1, hq.2⟩)⟩⟩
 
