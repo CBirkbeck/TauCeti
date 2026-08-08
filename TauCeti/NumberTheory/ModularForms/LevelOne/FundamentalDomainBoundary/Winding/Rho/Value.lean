@@ -380,6 +380,47 @@ private lemma norm_le_of_near_rho {δL δR : ℝ} (hH : Real.sqrt 3 / 2 < H) (h�
       abs_of_nonneg (by nlinarith [h3] : (0 : ℝ) ≤ (t - 3) * (H - Real.sqrt 3 / 2)), ← hlin]
     exact mul_le_mul_of_nonneg_right (by linarith [ht.2]) (by linarith)
 
+/-- Away from the excised corner the truncated integrand is the logarithmic one: wherever
+the contour stays farther than `ε` from `ρ` the excision test passes, and the endpoint where
+it may fail is a single point, hence null. -/
+private lemma ae_truncated_eq_logDeriv_rho {a b : ℝ} (hab : a ≤ b)
+    (hfar : ∀ s ∈ Ioo a b, ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖) :
+    ∀ᵐ s ∂volume, s ∈ uIoc a b →
+      deriv (fun r ↦ fdBoundary H r - (UpperHalfPlane.ρ : ℂ)) s /
+        (fdBoundary H s - (UpperHalfPlane.ρ : ℂ)) =
+        (if ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖
+          then (fdBoundary H s - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) s
+          else 0) := by
+  have hb_ae : ({b} : Set ℝ)ᶜ ∈ ae volume := by simp [MeasureTheory.mem_ae_iff]
+  filter_upwards [hb_ae] with s hs_ne hmem
+  rw [uIoc_of_le hab] at hmem
+  rw [if_pos (hfar s ⟨hmem.1, lt_of_le_of_ne hmem.2 fun h ↦ hs_ne (mem_singleton_iff.mpr h)⟩),
+    deriv_sub_const, inv_mul_eq_div]
+
+/-- Over the excised window the truncated integrand vanishes identically, so it is
+integrable there and contributes nothing to the integral. -/
+private lemma excised_window_rho {δL δR : ℝ} (hH : Real.sqrt 3 / 2 < H) (hδL : 0 < δL)
+    (hδL1 : δL < 1) (h2sin : 2 * Real.sin (δL * (Real.pi / 12)) = ε)
+    (hδR1 : δR ≤ 1) (hlin : δR * (H - Real.sqrt 3 / 2) = ε) (hle : (3 - δL : ℝ) ≤ 3 + δR) :
+    IntervalIntegrable (fun s ↦ if ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖
+        then (fdBoundary H s - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) s else 0)
+      volume (3 - δL) (3 + δR) ∧
+      ∫ s in (3 - δL : ℝ)..(3 + δR),
+        (if ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖
+          then (fdBoundary H s - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) s
+          else 0) = 0 := by
+  have hmid : EqOn (fun s ↦ if ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖
+      then (fdBoundary H s - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) s else 0)
+      (fun _ ↦ (0 : ℂ)) (uIcc (3 - δL : ℝ) (3 + δR)) := fun s hs ↦
+    if_neg (not_lt.mpr (norm_le_of_near_rho hH hδL hδL1 h2sin hδR1 hlin
+      (by rwa [uIcc_of_le hle] at hs)))
+  refine ⟨(intervalIntegrable_const (c := (0 : ℂ))).congr_ae
+    ((ae_restrict_iff' measurableSet_uIoc).mpr (Eventually.of_forall fun s hs ↦ ?_)), ?_⟩
+  · rw [uIoc_of_le hle] at hs
+    exact (hmid (by rw [uIcc_of_le hle]; exact Ioc_subset_Icc_self hs)).symm
+  · rw [intervalIntegral.integral_congr hmid]
+    simp
+
 /-- The arc-side excision half-width `δ_L(ε) = 12/π · arcsin(ε/2)` is positive, below
 `1`, and turns the chord identity into the exact excision radius `ε`. -/
 private lemma delta_left_spec_rho (hε : 0 < ε) (hε₃ : ε < 2 * Real.sin (Real.pi / 12)) :
@@ -425,62 +466,18 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
     exact div_mul_cancel₀ ε hHpos.ne'
   obtain ⟨hi_left, hi_right, hval⟩ :=
     ftc_logDeriv_telescope_rho H hH hδL_pos hδL_lt hδR_pos hδR_le
-  have hconv : ∀ s : ℝ,
-      (fdBoundary H s - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) s =
-      deriv (fun r ↦ fdBoundary H r - (UpperHalfPlane.ρ : ℂ)) s /
-        (fdBoundary H s - (UpperHalfPlane.ρ : ℂ)) :=
-    fun s ↦ by rw [deriv_sub_const, inv_mul_eq_div]
-  have hae_left : ∀ᵐ s ∂volume, s ∈ uIoc (0 : ℝ) (3 - δL) →
-      deriv (fun r ↦ fdBoundary H r - (UpperHalfPlane.ρ : ℂ)) s /
-        (fdBoundary H s - (UpperHalfPlane.ρ : ℂ)) =
-        (if ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖
-          then (fdBoundary H s - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) s
-          else 0) := by
-    have hb_ae : ({3 - δL} : Set ℝ)ᶜ ∈ ae volume := by
-      simp [MeasureTheory.mem_ae_iff]
-    filter_upwards [hb_ae] with s hs_ne hmem
-    rw [uIoc_of_le (by linarith)] at hmem
-    have hsIco : s ∈ Ico (0 : ℝ) (3 - δL) := ⟨hmem.1.le,
-      lt_of_le_of_ne hmem.2 fun h ↦ hs_ne (mem_singleton_iff.mpr h)⟩
-    rw [if_pos (lt_norm_of_far_left_rho hε₁ hδL_pos hδL_lt h2sin hsIco), hconv s]
-  have hae_right : ∀ᵐ s ∂volume, s ∈ uIoc (3 + δR : ℝ) 5 →
-      deriv (fun r ↦ fdBoundary H r - (UpperHalfPlane.ρ : ℂ)) s /
-        (fdBoundary H s - (UpperHalfPlane.ρ : ℂ)) =
-        (if ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖
-          then (fdBoundary H s - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) s
-          else 0) := by
-    refine Eventually.of_forall fun s hmem ↦ ?_
-    rw [uIoc_of_le (by linarith)] at hmem
-    rw [if_pos (lt_norm_of_far_right_rho hH hεH hδR_pos hlin hmem), hconv s]
-  have hmid : EqOn (fun s ↦ if ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖
-      then (fdBoundary H s - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) s else 0)
-      (fun _ ↦ (0 : ℂ)) (uIcc (3 - δL : ℝ) (3 + δR)) := by
-    intro s hs
-    rw [uIcc_of_le (by linarith)] at hs
-    exact if_neg (not_lt.mpr (norm_le_of_near_rho hH hδL_pos hδL_lt h2sin hδR_le hlin hs))
+  have hae_left := ae_truncated_eq_logDeriv_rho (H := H) (a := (0 : ℝ)) (b := 3 - δL) (by linarith)
+    fun s hs ↦ lt_norm_of_far_left_rho hε₁ hδL_pos hδL_lt h2sin ⟨hs.1.le, hs.2⟩
+  have hae_right := ae_truncated_eq_logDeriv_rho (H := H) (a := (3 + δR : ℝ)) (b := 5) (by linarith)
+    fun s hs ↦ lt_norm_of_far_right_rho hH hεH hδR_pos hlin ⟨hs.1, hs.2.le⟩
+  obtain ⟨himid, hmid0⟩ :=
+    excised_window_rho hH hδL_pos hδL_lt h2sin hδR_le hlin (by linarith)
   have hi02 := hi_left.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_left)
   have hi25 := hi_right.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_right)
-  have himid : IntervalIntegrable (fun s ↦
-      if ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖
-        then (fdBoundary H s - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) s else 0)
-      volume (3 - δL) (3 + δR) := by
-    refine (intervalIntegrable_const (c := (0 : ℂ))).congr_ae
-      ((ae_restrict_iff' measurableSet_uIoc).mpr (Eventually.of_forall fun s hs ↦ ?_))
-    rw [uIoc_of_le (by linarith)] at hs
-    have hsub : s ∈ uIcc (3 - δL : ℝ) (3 + δR) := by
-      rw [uIcc_of_le (by linarith : (3 - δL : ℝ) ≤ 3 + δR)]
-      exact Ioc_subset_Icc_self hs
-    exact (hmid hsub).symm
   refine ⟨(hi02.trans himid).trans hi25, ?_⟩
   have hδ12 : δL * (Real.pi / 12) = Real.arcsin (ε / 2) := by
     rw [hδL_def]
     field_simp
-  have hmid0 : ∫ s in (3 - δL : ℝ)..(3 + δR),
-      (if ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖
-        then (fdBoundary H s - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) s
-        else 0) = 0 := by
-    rw [intervalIntegral.integral_congr hmid]
-    simp
   rw [← intervalIntegral.integral_add_adjacent_intervals (hi02.trans himid) hi25,
     ← intervalIntegral.integral_add_adjacent_intervals hi02 himid,
     hmid0, add_zero,
