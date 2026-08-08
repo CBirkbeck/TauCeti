@@ -20,7 +20,7 @@ be consumed on points of the valuation spectrum:
 * a value `v a` is *cofinal* if its powers fall below every positive element of the value
   group — the condition on ideals of definition in Wedhorn Lemma 7.1;
 * `v` *has full characteristic group* if every positive element of the value group is
-  bounded between `(v a)⁻¹` and `v a` for some `a` with `1 ≤ v a` — the elementwise
+  bounded between `(v a)⁻¹` and `v a` for some `a` — the elementwise
   reading of "`Γ_v = cΓ_v`", for the characteristic subgroup `cΓ_v` of Wedhorn 4.13.
 
 These are the two disjuncts of the membership criterion for `Spv (A, I)`: Wedhorn
@@ -108,32 +108,42 @@ theorem _root_.Valuation.IsEquiv.cofinalValue_iff {v : Valuation A Γ₀}
 /-! ### The full-characteristic-group condition -/
 
 /-- A valuation **has full characteristic group** if every positive element of its value
-group is bounded between `(v a)⁻¹` and `v a` for some `a` with `1 ≤ v a` — the elementwise
-form of "`Γ_v = cΓ_v`", for the characteristic subgroup `cΓ_v` of Wedhorn 4.13. This is
+group is bounded between `(v a)⁻¹` and `v a` for some `a` — the elementwise form of
+"`Γ_v = cΓ_v`", for the characteristic subgroup `cΓ_v` of Wedhorn 4.13. Such a witness
+automatically satisfies `1 ≤ v.restrict a` (`one_le_of_inv_le_of_le`). This is
 the second disjunct of Wedhorn Lemma 7.4(ii); it is weaker than the *microbial* condition
 of Wedhorn Definition 5.46 (on a field it holds for every valuation). -/
 def HasFullCharacteristicGroup (v : Valuation A Γ₀) : Prop :=
   ∀ γ : ValueGroup₀ (.ofClass v), 0 < γ →
-    ∃ a : A, 1 ≤ v.restrict a ∧ (v.restrict a)⁻¹ ≤ γ ∧ γ ≤ v.restrict a
+    ∃ a : A, (v.restrict a)⁻¹ ≤ γ ∧ γ ≤ v.restrict a
 
 /-- The defining property of the full-characteristic-group condition. -/
 @[simp]
 theorem hasFullCharacteristicGroup_iff {v : Valuation A Γ₀} :
     HasFullCharacteristicGroup v ↔
       ∀ γ : ValueGroup₀ (.ofClass v), 0 < γ →
-        ∃ a : A, 1 ≤ v.restrict a ∧ (v.restrict a)⁻¹ ≤ γ ∧ γ ≤ v.restrict a :=
+        ∃ a : A, (v.restrict a)⁻¹ ≤ γ ∧ γ ≤ v.restrict a :=
   Iff.rfl
+
+/-- A bounding witness is automatically at least `1`: the two bounds force
+`x⁻¹ ≤ x` at a positive element. -/
+theorem one_le_of_inv_le_of_le {v : Valuation A Γ₀}
+    {x γ : ValueGroup₀ (.ofClass v)} (hγ : 0 < γ)
+    (h1 : x⁻¹ ≤ γ) (h2 : γ ≤ x) : 1 ≤ x := by
+  by_contra hx
+  push Not at hx
+  have hx0 : 0 < x := hγ.trans_le h2
+  have h3 : (1 : ValueGroup₀ (.ofClass v)) < x⁻¹ := (one_lt_inv₀ hx0).mpr hx
+  exact absurd ((h1.trans h2).trans hx.le) (not_le.mpr h3)
 
 /-- The full-characteristic-group condition transports along an equivalence of
 valuations, through the ordered isomorphism of their value groups. -/
 theorem HasFullCharacteristicGroup.of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
     (h : v.IsEquiv w) (hv : HasFullCharacteristicGroup v) : HasFullCharacteristicGroup w := by
   intro γ hγ
-  obtain ⟨a, ha1, ha_lo, ha_hi⟩ := hv (h.orderMonoidIso.symm γ)
+  obtain ⟨a, ha_lo, ha_hi⟩ := hv (h.orderMonoidIso.symm γ)
     (zero_lt_iff.mpr fun heq ↦ hγ.ne' (by simpa using congrArg h.orderMonoidIso heq))
-  refine ⟨a, ?_, ?_, ?_⟩
-  · have := (map_le_map_iff h.orderMonoidIso).mpr ha1
-    rwa [map_one, Valuation.IsEquiv.orderMonoidIso_spec] at this
+  refine ⟨a, ?_, ?_⟩
   · have := (map_le_map_iff h.orderMonoidIso).mpr ha_lo
     rw [map_inv₀, Valuation.IsEquiv.orderMonoidIso_spec] at this
     simpa using this
@@ -154,7 +164,7 @@ theorem HasFullCharacteristicGroup.exists_inv_le {v : Valuation A Γ₀}
     (h : HasFullCharacteristicGroup v)
     {γ : ValueGroup₀ (.ofClass v)} (hγ : 0 < γ) :
     ∃ t : A, v.restrict t ≠ 0 ∧ (v.restrict t)⁻¹ ≤ γ := by
-  obtain ⟨a, ha_ge_one, ha_inv_le, -⟩ := h γ hγ
-  exact ⟨a, (zero_lt_one.trans_le ha_ge_one).ne', ha_inv_le⟩
+  obtain ⟨a, ha_inv_le, ha_le⟩ := h γ hγ
+  exact ⟨a, (hγ.trans_le ha_le).ne', ha_inv_le⟩
 
 end TauCeti.Valuation
