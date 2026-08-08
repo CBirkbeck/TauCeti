@@ -104,7 +104,7 @@ private theorem exists_isAtom_sup_eq_and_lt (hπ : IsUnitary π)
 omit [FiniteDimensional 𝕜 V] in
 /-- An orthogonal family of atoms spanning `ω` extends by an atom `τ` orthogonal to all of it to
 an orthogonal family of atoms spanning `τ ⊔ ω`. -/
-private theorem exists_atom_family_cons {τ : Subrepresentation π.toRepresentation}
+private theorem exists_atom_family_of_sup_eq {τ : Subrepresentation π.toRepresentation}
     (hτ : IsAtom τ) {n : ℕ} {U : Fin n → Subrepresentation π.toRepresentation}
     (hatom : ∀ i, IsAtom (U i)) {σ ω : Subrepresentation π.toRepresentation}
     (hiSup : ⨆ i, (U i).toSubmodule = ω.toSubmodule)
@@ -164,7 +164,7 @@ private theorem exists_atom_family_aux (hπ : IsUnitary π) :
     -- every block of the recursive decomposition lands in the orthogonal complement of the atom
     have hUorth : ∀ j : Fin n, (U j).toSubmodule ≤ τ.toSubmoduleᗮ := fun j ↦
       le_trans (hiSup ▸ le_iSup (fun i ↦ (U i).toSubmodule) j) (hωsub ▸ inf_le_left)
-    exact exists_atom_family_cons hτ hatom hiSup horth
+    exact exists_atom_family_of_sup_eq hτ hatom hiSup horth
       (fun j v hv w hw ↦ (Submodule.mem_orthogonal _ w).mp (hUorth j hw) v hv) hsup
 
 /-- **Complete reducibility, orthogonal internal form.** A finite-dimensional unitary continuous
