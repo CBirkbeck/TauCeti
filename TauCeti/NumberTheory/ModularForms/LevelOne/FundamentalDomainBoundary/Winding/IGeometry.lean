@@ -220,8 +220,8 @@ theorem im_fdBoundary_sub_I_at_three_neg (H : ℝ) :
 
 
 /-- The polar form of the shifted contour beside the arc top, with signed offset: radial
-coefficient `2·sin(ε·π/12)` and argument `π + ε·π/12`, both signed with `ε`. The endpoint forms on either side
-are its specializations. -/
+coefficient `2·sin(ε·π/12)` and argument `π + ε·π/12`, both signed with `ε`. The endpoint
+forms on either side are its specializations. -/
 private lemma fdBoundary_two_add_sub_I_polar (H : ℝ) {ε : ℝ} (hε : -1 ≤ ε) (hε1 : ε ≤ 1) :
     fdBoundary H (2 + ε) - Complex.I =
       ((2 * Real.sin (ε * (Real.pi / 12)) : ℝ) : ℂ) *
