@@ -16,10 +16,13 @@ One constant therefore bounds the whole contour.
 
 This is the growth input of the on-curve principal values at a fixed excision radius: on
 the complement of an `ε`-ball around a point of the contour, the winding integrand
-`(γ t - s)⁻¹ • deriv γ t` is bounded in norm by `ε⁻¹` times this bound. Integrability of
-that integrand is a separate matter, supplied by the contour's piecewise continuity; the
-bound degrades as `ε` shrinks, so it is not a dominator for the excision limit itself,
-which rests on the symmetric cancellation at the crossing.
+`(γ t - s)⁻¹ • deriv γ t` is bounded in norm by `ε⁻¹` times this bound. Integrability of that
+integrand is a separate matter, and needs the derivative rather than the contour: it is
+`TauCeti.Contour.intervalIntegrable_inv_sub_mul_deriv`, from the continuity of `γ`, its
+avoidance of `s`, and the interval integrability of `deriv γ` — the last of which the bound
+proved here does not by itself supply. The bound also degrades as `ε` shrinks, so it is not a
+dominator for the excision limit itself, which rests on the symmetric cancellation at the
+crossing.
 
 ## Main declarations
 
