@@ -556,7 +556,8 @@ lemma re_fdBoundary_of_le_one (h1 : t ≤ 1) : (fdBoundary H t).re = 1 / 2 := by
   rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero, zero_add]
   simp
 
-/-- The right vertical descends affinely from the ceiling to the corner row. -/
+/-- The right vertical runs affinely in height from the ceiling `H` to the corner row `√3/2`,
+descending when the ceiling is above that row and ascending when it is below. -/
 lemma im_fdBoundary_of_le_one (h1 : t ≤ 1) :
     (fdBoundary H t).im = H + t * (Real.sqrt 3 / 2 - H) := by
   rw [fdBoundary_of_le_one h1, fdBoundary_segment1_apply, AffineMap.lineMap_apply_module']
