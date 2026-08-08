@@ -168,7 +168,8 @@ theorem windingNumber_eq_of_pathHomotopy {x y w : ℂ} {p q : Path x y} (φ : p.
     hcurve']
 
 /-- Null-homology in `Ω` is invariant under a `C²` path homotopy whose image lies in `Ω`. -/
-theorem isNullHomologous_iff_of_pathHomotopy {x : ℂ} {p q : Path x x} {Ω : Set ℂ} (φ : p.Homotopy q)
+theorem isNullHomologous_iff_of_pathHomotopy {x y : ℂ} {p q : Path x y} {Ω : Set ℂ}
+    (φ : p.Homotopy q)
     (hφsmooth : ContDiffOn ℝ 2
       (fun st : ℝ × ℝ ↦ Set.IccExtend zero_le_one (φ.toHomotopy.extend st.1) st.2) (Set.Icc 0 1))
     (hφΩ : ∀ st : Set.Icc (0 : ℝ) 1 × Set.Icc (0 : ℝ) 1, φ st ∈ Ω) :
