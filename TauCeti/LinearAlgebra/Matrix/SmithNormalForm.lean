@@ -125,12 +125,9 @@ private lemma exists_involution_isUnit_det_mul_diagonal_pos {R : Type*} [CommRin
           (sign_ne_zero.mpr (ha_ne i))
     simp only [hsv_def, ← SignType.coe_mul, h, SignType.coe_one]
   have hss : Matrix.diagonal sv * Matrix.diagonal sv = 1 := by
-    rw [Matrix.diagonal_mul_diagonal]
-    ext i j
-    simp only [Matrix.diagonal_apply, Matrix.one_apply]
-    by_cases h : i = j
-    · subst h; simp [hsv_sq]
-    · simp [h]
+    rw [Matrix.diagonal_mul_diagonal, Matrix.diagonal_eq_one]
+    ext i
+    exact hsv_sq i
   refine ⟨Matrix.diagonal sv, fun i ↦ |a i|, fun i ↦ abs_pos.mpr (ha_ne i), hss,
     Matrix.isUnit_det_of_right_inverse hss, ?_⟩
   · rw [Matrix.diagonal_mul_diagonal]
