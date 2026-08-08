@@ -8,7 +8,7 @@ module
 public import TauCeti.MeasureTheory.Function.PolynomialMemLp
 public import TauCeti.Probability.Moments.Determinacy
 public import Mathlib.Analysis.RCLike.Basic
-public import Mathlib.MeasureTheory.VectorMeasure.WithDensity
+import Mathlib.MeasureTheory.VectorMeasure.WithDensity
 public import Mathlib.Probability.Moments.IntegrableExpMul
 
 /-!
