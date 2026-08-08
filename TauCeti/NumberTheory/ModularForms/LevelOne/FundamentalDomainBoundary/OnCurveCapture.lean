@@ -30,7 +30,8 @@ geometry decides which singular set receives it.
   `…_of_mem_Ioo_three_four` (the vertical captures).
 * `TauCeti.ModularForm.fdBoundary_mem_arcSingularSet_of_mem_Icc_one_three` (the arc capture).
 * `TauCeti.ModularForm.comp_ofComplex_fdBoundary_ne_zero_of_forall_im_lt` (no ceiling zeros).
-* `TauCeti.ModularForm.fdBoundary_mem_singularSets_of_comp_eq_zero` (the full capture).
+* `TauCeti.ModularForm.fdBoundary_mem_arcSingularSet_union_verticalSingularSet_of_comp_eq_zero`
+  (the full capture).
 
 ## References
 
@@ -123,7 +124,10 @@ theorem fdBoundary_mem_verticalSingularSet_of_mem_Ioo_three_four [ModularFormCla
   have hs_mem : s ∈ Ioo (0 : ℝ) 1 := ⟨by rw [hs]; linarith [ht.2], by rw [hs]; linarith [ht.1]⟩
   have hshift : fdBoundary H t = fdBoundary H s - 1 := by
     have h4 := fdBoundary_four_sub_vertical H ⟨hs_mem.1.le, hs_mem.2.le⟩
-    rw [show (4 : ℝ) - s = t by rw [hs]; ring] at h4
+    have hts : (4 : ℝ) - s = t := by
+      rw [hs]
+      ring
+    rw [hts] at h4
     exact h4
   have hper : Function.Periodic (⇑f ∘ ofComplex) 1 :=
     SlashInvariantFormClass.periodic_comp_ofComplex f (by simp)
@@ -140,7 +144,8 @@ theorem fdBoundary_mem_verticalSingularSet_of_mem_Ioo_three_four [ModularFormCla
 
 /-- **Full on-curve capture**: every zero of the form on the boundary contour lies in one
 of the two singular sets, once the height dominates the capturing set. -/
-theorem fdBoundary_mem_singularSets_of_comp_eq_zero [ModularFormClass F 𝒮ℒ k]
+theorem fdBoundary_mem_arcSingularSet_union_verticalSingularSet_of_comp_eq_zero
+    [ModularFormClass F 𝒮ℒ k]
     (hf : (⇑f : ℍ → ℂ) ≠ 0)
     (hS : ∀ p, p ∈ 𝒟 → orderOfVanishingAt (⇑f) p ≠ 0 → p ∈ S)
     (hH : 1 ≤ H) (hbound : ∀ p ∈ S, (p : ℂ).im < H) (ht : t ∈ Icc (0 : ℝ) 5)
