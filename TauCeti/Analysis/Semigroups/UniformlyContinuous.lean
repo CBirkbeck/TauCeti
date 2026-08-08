@@ -73,7 +73,7 @@ private theorem continuous_of_continuousAt_zero (S : StronglyContinuousSemigroup
   obtain ⟨δ, hδ, hsmall⟩ := Metric.continuousAt_iff.mp hS (ε / C) (div_pos hε hC)
   refine ⟨δ, hδ, fun t ht ↦ ?_⟩
   rcases le_total t₀ t with ht₀t | htt₀
-  · have hdiff := S.sub_eq_comp_sub_one ht₀t
+  · have hdiff := S.sub_eq_comp_sub_one_of_le ht₀t
     have hsmall' : ‖S (t - t₀) - 1‖ < ε / C := by
       simpa only [S.map_zero, ContinuousLinearMap.one_def, dist_eq_norm] using
         hsmall (by simpa [NNReal.dist_eq, NNReal.coe_sub ht₀t] using ht)
@@ -87,7 +87,7 @@ private theorem continuous_of_continuousAt_zero (S : StronglyContinuousSemigroup
         linarith [le_max_left ‖S t₀‖ (M * Real.exp (|ω| * t₀))]
       _ = ε := by field_simp
   · have hdiff : S t - S t₀ = (S t).comp (1 - S (t₀ - t)) := by
-      rw [← neg_sub (S t₀) (S t), S.sub_eq_comp_sub_one htt₀, ← ContinuousLinearMap.comp_neg,
+      rw [← neg_sub (S t₀) (S t), S.sub_eq_comp_sub_one_of_le htt₀, ← ContinuousLinearMap.comp_neg,
         neg_sub]
     have hsmall' : ‖1 - S (t₀ - t)‖ < ε / C := by
       rw [← norm_neg, neg_sub]

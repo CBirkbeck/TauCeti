@@ -96,7 +96,7 @@ theorem map_add_apply (S : StronglyContinuousSemigroup X) (s t : ℝ≥0) (x : X
 
 omit [CompleteSpace X] in
 /-- **The increment of a semigroup over `[a, b]` factors through its value at `a`.** -/
-theorem sub_eq_comp_sub_one (S : StronglyContinuousSemigroup X) {a b : ℝ≥0} (hab : a ≤ b) :
+theorem sub_eq_comp_sub_one_of_le (S : StronglyContinuousSemigroup X) {a b : ℝ≥0} (hab : a ≤ b) :
     S b - S a = (S a).comp (S (b - a) - 1) := by
   have hmap := S.map_add a (b - a)
   rw [add_tsub_cancel_of_le hab] at hmap
