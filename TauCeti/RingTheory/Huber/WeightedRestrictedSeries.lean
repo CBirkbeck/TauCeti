@@ -177,6 +177,41 @@ theorem weightMul_mul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {V W 
   | neg _ _ h => simpa [neg_mul] using (weightMul T (α + β) _).neg_mem h
 
 omit [TopologicalSpace A] in
+/-- Multiplying by a weight element shifts the multi-index: `T^β · (T^α · U) ⊆ T^(α+β) · U`. -/
+theorem weightPow_mul_weightMul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {U : AddSubgroup A}
+    {t x : A} (ht : t ∈ weightPow T β) (hx : x ∈ weightMul T α U) :
+    t * x ∈ weightMul T (α + β) U := by
+  induction hx using AddSubgroup.closure_induction with
+  | mem y hy =>
+      obtain ⟨t', ht', u, hu, rfl⟩ := hy
+      refine AddSubgroup.subset_closure ⟨t' * t, ?_, u, hu, by ring⟩
+      rw [weightPow_add]
+      exact Set.mul_mem_mul ht' ht
+  | zero => simp
+  | add _ _ _ _ h₁ h₂ => simpa [mul_add] using (weightMul T (α + β) U).add_mem h₁ h₂
+  | neg _ _ h => simpa [mul_neg] using (weightMul T (α + β) U).neg_mem h
+
+omit [TopologicalSpace A] in
+/-- **The absorption step.** If multiplication by `a` carries the subgroup `Z` into `T^α · U`,
+then it carries all of `T^β · Z` into `T^(α+β) · U`.
+
+This is what handles the finitely many coefficients that fail a given bound in the proof that
+`A⟨X⟩_T` is multiplicatively closed: Wedhorn's standing hypothesis
+(`TauCeti.Huber.IsWeightFamily`) makes `T^α · U` a neighbourhood of zero, so continuity of
+multiplication by the fixed bad coefficient `a` supplies such a `Z`. -/
+theorem weightMul_absorb {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {U Z : AddSubgroup A} {a b : A}
+    (ha : ∀ z ∈ Z, a * z ∈ weightMul T α U) (hb : b ∈ weightMul T β Z) :
+    a * b ∈ weightMul T (α + β) U := by
+  induction hb using AddSubgroup.closure_induction with
+  | mem y hy =>
+      obtain ⟨t, ht, z, hz, rfl⟩ := hy
+      rw [show a * (t * z) = t * (a * z) by ring]
+      exact weightPow_mul_weightMul_mem ht (ha z hz)
+  | zero => simp
+  | add _ _ _ _ h₁ h₂ => simpa [mul_add] using (weightMul T (α + β) U).add_mem h₁ h₂
+  | neg _ _ h => simpa [mul_neg] using (weightMul T (α + β) U).neg_mem h
+
+omit [TopologicalSpace A] in
 /-- With every weight equal to `{1}`, the weight of any multi-index is `{1}`. -/
 @[simp]
 theorem weightPow_one (ν : Fin k →₀ ℕ) :
