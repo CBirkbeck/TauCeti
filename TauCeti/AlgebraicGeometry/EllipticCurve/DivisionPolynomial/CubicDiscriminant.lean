@@ -109,6 +109,7 @@ variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve R) {x y : R}
 
 /-- For a model with `a₁ = a₃ = 0`, the univariate `Ψ₃` is the quartic
 `3x⁴ + 4a₂x³ + 6a₄x² + 12a₆x + (4a₂a₆ − a₄²)`. -/
+@[simp]
 theorem eval_Ψ₃_of_a₁_eq_zero_of_a₃_eq_zero (ha₁ : W.a₁ = 0) (ha₃ : W.a₃ = 0) :
     (W.Ψ₃).eval x = 3 * x ^ 4 + 4 * W.a₂ * x ^ 3 + 6 * W.a₄ * x ^ 2 + 12 * W.a₆ * x +
       (4 * W.a₂ * W.a₆ - W.a₄ ^ 2) := by
