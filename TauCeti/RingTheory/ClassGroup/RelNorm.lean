@@ -41,11 +41,10 @@ Ported from the AINTLIB `HasseWeil` project (Apache-2.0), revision `513e83879e2f
 Deviations from the source. It descends by `Function.surjInv` on `ClassGroup.mk0_surjective`, with
 `Function.surjInv_eq` rewrites discharging `map_one'` and `map_mul'`; the congruence route used
 here needs no choice plumbing in the proofs. It assumes `IsDomain` and `IsIntegrallyClosed`
-alongside `IsDedekindDomain` for both rings, which are implied. Its intermediate `mk0CompRelNorm0`
-is inlined, since `relNorm`'s body has to be exposed for `relNorm_mk0` and so cannot name a
-private declaration; the well-definedness lemma is stated directly about `mk0 ∘ relNorm0`
-instead. Finally its `relNorm_mk0'`, a restatement of `relNorm_mk0` with the membership proof
-spelled out inline, is not ported.
+alongside `IsDedekindDomain` for both rings, which are implied. Its intermediate
+`mk0CompRelNorm0` and that lemma's `_apply` are inlined, the well-definedness fact being stated
+directly about `mk0 ∘ relNorm0`. Finally its `relNorm_mk0'`, a restatement of `relNorm_mk0` with
+the membership proof spelled out inline, is not ported.
 -/
 
 public section
@@ -58,9 +57,6 @@ variable {R S : Type*} [CommRing R] [CommRing S] [IsDedekindDomain R] [IsDedekin
 variable (R) in
 /-- The relative ideal norm restricted to nonzero ideals, using that it reflects `⊥`
 (`Ideal.relNorm_eq_bot_iff`). -/
--- Exposed because `Ideal.coe_relNorm0` is a definitional equality and Mathlib has no coe lemma
--- for `MonoidHom.codRestrict` to route it through; without exposure that lemma does not compile.
-@[expose]
 noncomputable def Ideal.relNorm0 : (Ideal S)⁰ →* (Ideal R)⁰ :=
   ((Ideal.relNorm R).toMonoidHom.domRestrict (Ideal S)⁰).codRestrict (Ideal R)⁰ fun I =>
     mem_nonZeroDivisors_iff_ne_zero.mpr <|
@@ -69,7 +65,7 @@ noncomputable def Ideal.relNorm0 : (Ideal S)⁰ →* (Ideal R)⁰ :=
 @[simp]
 theorem Ideal.coe_relNorm0 (I : (Ideal S)⁰) :
     (Ideal.relNorm0 R I : Ideal R) = Ideal.relNorm R (I : Ideal S) :=
-  rfl
+  (rfl)
 
 namespace ClassGroup
 
@@ -110,6 +106,8 @@ noncomputable def relNorm : ClassGroup S →* ClassGroup R :=
       fun _ _ h => mk0_relNorm0_eq_of_mk0_eq h).comp
     (Con.quotientKerEquivOfSurjective _ ClassGroup.mk0_surjective).symm.toMonoidHom
 
+/-- The relative norm of the class represented by a nonzero ideal `I` is the class represented by
+`I`'s relative norm. This is the computation rule for `ClassGroup.relNorm`. -/
 @[simp]
 theorem relNorm_mk0 (I : (Ideal S)⁰) :
     relNorm (R := R) (ClassGroup.mk0 I) = ClassGroup.mk0 (Ideal.relNorm0 R I) := by
