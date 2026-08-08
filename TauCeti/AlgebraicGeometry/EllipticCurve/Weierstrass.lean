@@ -26,7 +26,7 @@ complement. Both are consumed by the automorphism-group development in
 Adapted from the FLT project (`ImperialCollegeLondon/FLT`,
 `FLT/Mathlib/AlgebraicGeometry/EllipticCurve/Weierstrass.lean` at the roadmap's pin
 `bc2fe8ff7396` (FLT PR #1088), Apache 2.0, by Kevin Buzzard and Claude), with both results
-generalised there from a field to a commutative ring.
+generalised here from FLT's field-level statements to a commutative ring.
 -/
 
 public section
