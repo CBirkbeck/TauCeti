@@ -24,8 +24,6 @@ field or to a universal polynomial ring.
 
 * `TauCeti.WeierstrassCurve.Φ_two_mem_range_expand`, `ΨSq_two_mem_range_expand`: characteristic
   two.
-* `TauCeti.WeierstrassCurve.b₈_eq_of_charP_three`: `b₈ = b₂b₆ − b₄²` in characteristic three,
-  the `4 = 1` specialisation of Mathlib's `b_relation`.
 * `TauCeti.WeierstrassCurve.Ψ₃_mem_range_expand`, `ΨSq_three_mem_range_expand`: characteristic
   three.
 
@@ -33,8 +31,11 @@ field or to a universal polynomial ring.
 
 Ported from the AINTLIB `HasseWeil` project (Apache-2.0), revision `513e83879e2f`, file
 `HasseWeil/Verschiebung/DivPolyExpand.lean`, declarations `Φ_two_mem_expand_two_charP`,
-`ΨSq_two_mem_expand_two_charP`, `b_relation_of_charP_three`, `Ψ₃_mem_expand_three_charP` and
+`ΨSq_two_mem_expand_two_charP`, `Ψ₃_mem_expand_three_charP` and
 `ΨSq_three_mem_expand_three_charP`.
+
+The source's `b_relation_of_charP_three` is not ported: Mathlib already has it verbatim as
+`WeierstrassCurve.b_relation_of_char_three` (`Weierstrass.lean:213`).
 
 That file's sixth declaration, `Φ_three_mem_expand_three_charP`, is **not** ported: it carries
 `set_option maxHeartbeats 1000000`, which this repository forbids, and making it elaborate within
@@ -71,14 +72,6 @@ theorem ΨSq_two_mem_range_expand [CharP R 2] : W.ΨSq 2 ∈ Set.range (⇑(expa
   have h4 : (4 : R) = 0 := by rw [show (4 : R) = 2 * 2 from by ring, h2, mul_zero]
   rw [h4, show (2 : R) * W.b₄ = 0 by rw [h2, zero_mul], map_zero, zero_mul, zero_mul]
   ring
-
-/-- In characteristic three, `b₈ = b₂b₆ − b₄²`.
-
-Mathlib's `b_relation` reads `4b₈ = b₂b₆ − b₄²`, and `4 = 1` here. -/
-theorem b₈_eq_of_charP_three [CharP R 3] : W.b₈ = W.b₂ * W.b₆ - W.b₄ ^ 2 := by
-  have h4 : (4 : R) = 1 := by
-    rw [show (4 : R) = 3 + 1 from by ring, show (3 : R) = 0 from CharP.cast_eq_zero R 3, zero_add]
-  simpa [h4] using W.b_relation
 
 /-- In characteristic three, `Ψ₃` is a polynomial in `X³`.
 
