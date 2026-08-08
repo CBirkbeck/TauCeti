@@ -17,7 +17,7 @@ that do not mention torsion.
 The first is the rational-root step. If the `x`-coordinate of a `K`-point is a root of some
 `f ∈ R[X]`, the rational root theorem bounds its denominator: `den x ∣ f.leadingCoeff`. On its own
 that is far from integrality — but the denominator of a point is *powerful*
-(`sq_dvd_den_of_prime_dvd`), so any prime dividing it divides it twice, hence divides
+(`sq_dvd_den_of_prime_of_dvd`), so any prime dividing it divides it twice, hence divides
 `f.leadingCoeff` twice. If that leading coefficient is squarefree, no prime can divide the
 denominator at all, so `den x` is a unit and `x` is integral.
 
@@ -93,7 +93,7 @@ variable {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K] {x y : K}
 `f ∈ R[X]` and `f.leadingCoeff` is squarefree, then `x` is integral.
 
 The rational root theorem gives `den x ∣ f.leadingCoeff`; powerfulness of the denominator
-(`sq_dvd_den_of_prime_dvd`) upgrades any prime factor `q` of `den x` to `q * q ∣ f.leadingCoeff`,
+(`sq_dvd_den_of_prime_of_dvd`) upgrades any prime factor `q` of `den x` to `q * q ∣ f.leadingCoeff`,
 which squarefreeness forbids. -/
 theorem isInteger_of_is_root_of_squarefree_leadingCoeff
     (h : (W.baseChange K).toAffine.Equation x y) {f : R[X]} (hroot : aeval x f = 0)
@@ -104,7 +104,7 @@ theorem isInteger_of_is_root_of_squarefree_leadingCoeff
     (mem_nonZeroDivisors_iff_ne_zero.mp (den R x).2)
   have hq : Prime q := UniqueFactorizationMonoid.irreducible_iff_prime.mp hq_irr
   have hden : q * q ∣ (den R x : R) := by
-    rw [← pow_two]; exact sq_dvd_den_of_prime_dvd W h hq hq_dvd
+    rw [← pow_two]; exact sq_dvd_den_of_prime_of_dvd W h hq hq_dvd
   exact hq.not_isUnit (hsf q (hden.trans (den_dvd_of_is_root hroot)))
 
 /-- **On the curve over a fraction field, an integral `x`-coordinate forces an integral
