@@ -26,10 +26,12 @@ needed once `c ≠ 0`; on the set where `f ≤ 0 ≤ m` the estimate is automati
 has to control the set where `f` is positive, where `c · f ≥ 0` makes `f` subharmonic.)
 
 The proof reuses the perturbation `f + ε‖·‖²` of the bare-Laplacian file, but replaces the
-strictly-subharmonic boundary principle by the second-derivative obstruction
-`TauCeti.laplacian_nonpos_of_isLocalMax` applied at an interior maximum of the perturbation: at
-such a point either `f` is already negative (so the bound is free) or `f ≥ 0` forces
-`Δ(f + ε‖·‖²) > 0`, a contradiction. Letting `ε → 0` gives the bound.
+strictly-subharmonic boundary principle by the maximizer step
+`TauCeti.le_of_isMaxOn_add_smul` of
+`TauCeti.Analysis.InnerProductSpace.Laplacian.BarrierMaximizer`, run here with no drift and the
+quadratic barrier: at an interior maximum of the perturbation either `f` is already negative (so
+the bound is free) or `f ≥ 0` forces `Δ(f + ε‖·‖²) > 0`, which contradicts local maximality
+through `TauCeti.not_isLocalMax_of_laplacian_add_fderiv_pos`. Letting `ε → 0` gives the bound.
 
 ## Main declarations
 
@@ -83,8 +85,8 @@ theorem le_of_mul_le_laplacian_le_frontier {K : Set E} (hK : IsCompact K) {c f :
   obtain ⟨z, hzK, hzmax⟩ := hK.exists_isMaxOn ⟨x, hxK⟩ hgcont
   -- The maximizer step is the shared one, run with no drift and the quadratic barrier `‖·‖²`,
   -- whose Laplacian `2 · finrank` is the strict positivity it asks for.
-  refine ⟨z, hzK, hzmax, le_of_isMaxOn_add_smul (b := 0) hε (fun h => hcd h)
-    (fun hz hlt => ?_) hbdry hzK (fun _ => (contDiff_norm_sq ℝ).contDiffAt) (fun _ => ?_) hzmax⟩
+  refine ⟨z, hzK, hzmax, le_of_isMaxOn_add_smul (v := 0) hε (fun h => hcd h) (fun hz hlt => ?_)
+    (fun hz => hbdry hz) hzK (fun _ => (contDiff_norm_sq ℝ).contDiffAt) (fun _ => ?_) hzmax⟩
   · simpa using (mul_nonneg (hc hz) (hm.trans hlt.le)).trans (hsub hz)
   · simpa [laplacian_norm_sq] using mul_pos two_pos hfrpos
 
