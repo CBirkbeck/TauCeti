@@ -60,19 +60,6 @@ private lemma mem_of_mem_fd_of_comp_eq_zero [ModularFormClass F 𝒮ℒ k]
   refine hS q hq (orderOfVanishingAt_ne_zero_of_eq_zero (ModularFormClass.holo f) hf ?_)
   simpa [Function.comp_apply, ofComplex_apply] using h0
 
-/-- The imaginary part along the right vertical interpolates linearly from the ceiling to
-the corner row. -/
-private lemma im_fdBoundary_segment1 (H t : ℝ) :
-    (fdBoundary_segment1 H t).im = H - t * (H - Real.sqrt 3 / 2) := by
-  rw [fdBoundary_segment1_apply, AffineMap.lineMap_apply_module]
-  have him : ((ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
-    rw [add_im, one_im, add_zero, UpperHalfPlane.coe_im]
-    norm_num [ρ]
-  simp only [add_im, smul_im, mul_im, Complex.I_re, Complex.I_im, ofReal_re, ofReal_im,
-    smul_eq_mul, him]
-  norm_num
-  ring
-
 /-- A zero on the open right vertical is captured by the vertical singular set. -/
 theorem fdBoundary_mem_verticalSingularSet_of_mem_Ioo_zero_one [ModularFormClass F 𝒮ℒ k]
     (hf : (⇑f : ℍ → ℂ) ≠ 0)
@@ -83,19 +70,15 @@ theorem fdBoundary_mem_verticalSingularSet_of_mem_Ioo_zero_one [ModularFormClass
   have ht05 : t ∈ Icc (0 : ℝ) 5 := ⟨ht.1.le, by linarith [ht.2]⟩
   obtain ⟨q, hq, hqe⟩ := fdBoundary_mem_coe_truncatedFundamentalDomain hH ht05
   have hre : (fdBoundary H t).re = 1 / 2 := re_fdBoundary_segment1 H ⟨ht.1.le, ht.2.le⟩
-  have him : (fdBoundary H t).im = H - t * (H - Real.sqrt 3 / 2) := by
-    rw [fdBoundary_of_le_one ht.2.le, im_fdBoundary_segment1]
   have hs32 : Real.sqrt 3 / 2 < 1 := by
     nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3), Real.sqrt_nonneg 3]
   have him_gt : Real.sqrt 3 / 2 < (fdBoundary H t).im := by
-    rw [him]
+    rw [im_fdBoundary_of_le_one ht.2.le]
     nlinarith [ht.1, ht.2]
   have hnorm : 1 < ‖fdBoundary H t‖ := by
-    have h2 : ‖fdBoundary H t‖ ^ 2 = (1 / 2 : ℝ) ^ 2 + (fdBoundary H t).im ^ 2 := by
-      rw [← Complex.normSq_eq_norm_sq, Complex.normSq_apply, hre]
-      ring
-    nlinarith [norm_nonneg (fdBoundary H t),
-      Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3), Real.sqrt_nonneg 3]
+    refine Complex.one_lt_normSq_iff.mp ?_
+    rw [Complex.normSq_apply, hre]
+    nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3), Real.sqrt_nonneg 3]
   have hq_S : q ∈ S := mem_of_mem_fd_of_comp_eq_zero hf hS hq.1 (by rwa [hqe])
   rw [Finset.mem_coe, mem_verticalSingularSet]
   exact Or.inl ⟨q, hq_S, ⟨by rw [hqe]; exact hre, by rw [hqe]; exact hnorm⟩, hqe⟩
@@ -109,15 +92,7 @@ theorem fdBoundary_mem_arcSingularSet_of_mem_Icc_one_three [ModularFormClass F �
     fdBoundary H t ∈ (arcSingularSet S : Set ℂ) := by
   have ht05 : t ∈ Icc (0 : ℝ) 5 := ⟨by linarith [ht.1], by linarith [ht.2]⟩
   obtain ⟨q, hq, hqe⟩ := fdBoundary_mem_coe_truncatedFundamentalDomain hH ht05
-  have hnorm : ‖fdBoundary H t‖ = 1 := by
-    have hangle : ((t : ℂ) + 1) * ((Real.pi : ℂ) / 6) * Complex.I
-        = (((t + 1) * (Real.pi / 6) : ℝ) : ℂ) * Complex.I := by
-      push_cast
-      ring
-    rw [eqOn_fdBoundary_arc H ht]
-    simp only [circleMap, Complex.ofReal_one, one_mul, zero_add, Complex.ofReal_mul,
-      Complex.ofReal_add, Complex.ofReal_div, Complex.ofReal_ofNat]
-    rw [hangle, Complex.norm_exp_ofReal_mul_I]
+  have hnorm : ‖fdBoundary H t‖ = 1 := norm_fdBoundary_arc ht.1 ht.2
   have hq_S : q ∈ S := mem_of_mem_fd_of_comp_eq_zero hf hS hq.1 (by rwa [hqe])
   rw [Finset.mem_coe, mem_arcSingularSet]
   exact Or.inl ⟨q, hq_S, by rw [hqe]; exact hnorm, hqe⟩
