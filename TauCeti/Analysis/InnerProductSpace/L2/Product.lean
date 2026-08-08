@@ -272,31 +272,28 @@ theorem setIntegral_prod_eq_zero_of_forall_inner [SFinite μ] [SFinite ν] {h : 
     _ = inner 𝕜 (L2prodMul F G) h := (L2.inner_def _ _).symm
     _ = 0 := hz F G
 
-/-- **Orthogonality kills the part of a measurable set inside a single box.** -/
-private theorem setIntegral_inter_prod_spanningSets_eq_zero [SigmaFinite μ] [SigmaFinite ν]
-    {h : Lp 𝕜 2 (μ.prod ν)}
+/-- **Orthogonality kills the part of a measurable set inside a finite-measure box.** -/
+private theorem setIntegral_inter_prod_eq_zero [SFinite μ] [SFinite ν] {h : Lp 𝕜 2 (μ.prod ν)}
     (hz : ∀ (F : Lp 𝕜 2 μ) (G : Lp 𝕜 2 ν), inner 𝕜 (L2prodMul F G) h = 0)
-    {u : Set (α × β)} (hu : MeasurableSet u) (n : ℕ) :
-    ∫ p in u ∩ (spanningSets μ n ×ˢ spanningSets ν n), h p ∂(μ.prod ν) = 0 := by
-  -- Inside a box the product measure is finite, so the rectangles on which the integral is known
-  -- to vanish generate the whole product σ-algebra.
-  have hboxfin : (μ.prod ν) (spanningSets μ n ×ˢ spanningSets ν n) < ⊤ := by
+    {u : Set (α × β)} (hu : MeasurableSet u)
+    {A : Set α} (hA : MeasurableSet A) (hμA : μ A ≠ ⊤)
+    {B : Set β} (hB : MeasurableSet B) (hνB : ν B ≠ ⊤) :
+    ∫ p in u ∩ (A ×ˢ B), h p ∂(μ.prod ν) = 0 := by
+  -- Inside a finite box the rectangles on which the integral is known to vanish generate the
+  -- whole product σ-algebra.
+  have hboxfin : (μ.prod ν) (A ×ˢ B) ≠ ⊤ := by
     rw [Measure.prod_prod]
-    exact ENNReal.mul_lt_top (measure_spanningSets_lt_top μ n) (measure_spanningSets_lt_top ν n)
+    exact (ENNReal.mul_lt_top hμA.lt_top hνB.lt_top).ne
   have hrect : ∀ s, MeasurableSet s → ∀ t, MeasurableSet t →
-      ∫ p in s ×ˢ t, h p ∂((μ.prod ν).restrict
-        (spanningSets μ n ×ˢ spanningSets ν n)) = 0 := by
+      ∫ p in s ×ˢ t, h p ∂((μ.prod ν).restrict (A ×ˢ B)) = 0 := by
     intro s hs t ht
     rw [Measure.restrict_restrict (hs.prod ht), Set.prod_inter_prod]
-    exact setIntegral_prod_eq_zero_of_forall_inner hz
-      (hs.inter (measurableSet_spanningSets μ n))
-      (lt_of_le_of_lt (measure_mono Set.inter_subset_right)
-        (measure_spanningSets_lt_top μ n)).ne
-      (ht.inter (measurableSet_spanningSets ν n))
-      (lt_of_le_of_lt (measure_mono Set.inter_subset_right)
-        (measure_spanningSets_lt_top ν n)).ne
+    exact setIntegral_prod_eq_zero_of_forall_inner hz (hs.inter hA)
+      (lt_of_le_of_lt (measure_mono Set.inter_subset_right) hμA.lt_top).ne
+      (ht.inter hB)
+      (lt_of_le_of_lt (measure_mono Set.inter_subset_right) hνB.lt_top).ne
   have hdyn := setIntegral_eq_zero_of_forall_prod
-    (integrableOn_Lp_of_measure_ne_top h one_le_two hboxfin.ne) hrect u hu
+    (integrableOn_Lp_of_measure_ne_top h one_le_two hboxfin) hrect u hu
   rwa [Measure.restrict_restrict hu] at hdyn
 
 /-- **Orthogonality kills every finite-measure set integral.** Exhaust the product space by finite
@@ -318,7 +315,9 @@ theorem setIntegral_eq_zero_of_forall_inner [SigmaFinite μ] [SigmaFinite ν] {h
     hmono
     (by rw [hcover]; exact integrableOn_Lp_of_measure_ne_top h one_le_two hfin.ne)
   rw [hcover] at htend
-  simp only [setIntegral_inter_prod_spanningSets_eq_zero hz hu] at htend
+  simp only [fun n ↦ setIntegral_inter_prod_eq_zero hz hu (measurableSet_spanningSets μ n)
+    (measure_spanningSets_lt_top μ n).ne (measurableSet_spanningSets ν n)
+    (measure_spanningSets_lt_top ν n).ne] at htend
   exact tendsto_nhds_unique htend tendsto_const_nhds
 
 /-- **Completeness of the tensor family.** The elementary tensors built from two Hilbert bases have
