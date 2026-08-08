@@ -281,21 +281,17 @@ section Localization
 
 variable (S : Submonoid A) (B : Type*) [CommRing B] [Algebra A B] [IsLocalization S B]
 
-/-- Transport `S ≤ (supp v).primeCompl` along `supp_eq_valuation_supp` to the support of the
-canonical valuation of `v`. -/
-lemma le_valuation_supp_primeCompl {v : Spv A} (hS : S ≤ v.supp.primeCompl) :
-    S ≤ v.valuation.supp.primeCompl := fun _ hs ↦
-  Ideal.mem_primeCompl_iff.mpr (v.supp_eq_valuation_supp ▸ Ideal.mem_primeCompl_iff.mp (hS hs))
-
 /-- Send `v ∈ Spv A` with `S ≤ (supp v).primeCompl` to the localization `Spv B`, where `B` is a
 localization of `A` at the submonoid `S`. -/
 noncomputable def localizationComapSection (v : Spv A) (hS : S ≤ v.supp.primeCompl) : Spv B :=
-  ofValuation (v.valuation.extendToLocalization (le_valuation_supp_primeCompl S hS) B)
+  ofValuation ((v.valuation.extendToLocalization (fun _ hs ↦ Ideal.mem_primeCompl_iff.mpr
+    (v.supp_eq_valuation_supp ▸ Ideal.mem_primeCompl_iff.mp (hS hs))) B))
 
 /-- `comap (algebraMap A B) (localizationComapSection S B v hS) = v`. -/
 lemma comap_localizationComapSection (v : Spv A) (hS : S ≤ v.supp.primeCompl) :
     comap (algebraMap A B) (localizationComapSection S B v hS) = v := by
-  have hS' := le_valuation_supp_primeCompl S hS
+  have hS' : S ≤ v.valuation.supp.primeCompl := fun _ hs ↦
+    Ideal.mem_primeCompl_iff.mpr (v.supp_eq_valuation_supp ▸ Ideal.mem_primeCompl_iff.mp (hS hs))
   unfold localizationComapSection
   rw [comap_ofValuation,
     show (v.valuation.extendToLocalization hS' B).comap (algebraMap A B) = v.valuation from
@@ -323,15 +319,12 @@ section PrimeSpectrum
 
 /-! ### The support map to the prime spectrum -/
 
-/-- The support map `Spv A → Spec A`. The body stays exposed: the normal form
-`suppFun_asIdeal` is an exported `rfl`, which the module system only accepts when the
-definition it unfolds is exposed. -/
-@[expose]
+/-- The support map `Spv A → Spec A`. -/
 def suppFun : Spv A → PrimeSpectrum A := fun v ↦ ⟨v.supp, inferInstance⟩
 
 /-- The prime ideal underlying `suppFun v` is the support of `v`. -/
 @[simp]
-lemma suppFun_asIdeal (v : Spv A) : (suppFun v).asIdeal = v.supp := rfl
+lemma suppFun_asIdeal (v : Spv A) : (suppFun v).asIdeal = v.supp := (rfl)
 
 /-- `suppFun ⁻¹' D(f) = Spv(A)(f/f)`. -/
 lemma suppFun_preimage_basicOpen (f : A) :
