@@ -166,8 +166,8 @@ end AutGroup
 isomorphic to `Multiplicative (ZMod 2)`: it has exactly two elements — `1` and
 `negVariableChange E` (`eq_one_or_eq_negVariableChange_of_smul_eq`), distinct by
 `negVariableChange_ne_one`. The isomorphism sends `negVariableChange E` to
-`Multiplicative.ofAdd 1` (`autGroupMulEquiv_negVariableChange`), its inverse sending
-`Multiplicative.ofAdd 1` back (`autGroupMulEquiv_symm_ofAdd_one`). -/
+`Multiplicative.ofAdd 1` (`autGroupMulEquiv_apply_negVariableChange`), its inverse sending
+`Multiplicative.ofAdd 1` back (`autGroupMulEquiv_symm_apply_ofAdd_one`). -/
 noncomputable def autGroupMulEquiv [E.IsElliptic] (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728) :
     E.autGroup ≃* Multiplicative (ZMod 2) :=
   let g : E.autGroup := ⟨E.negVariableChange, E.negVariableChange_smul_self⟩
@@ -181,16 +181,16 @@ variable [E.IsElliptic] (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728)
 
 /-- The inverse of `autGroupMulEquiv` sends `Multiplicative.ofAdd 1` to the negation
 automorphism: it is `zmodMulEquivOfGenerator` for that generator. -/
-@[simp] lemma autGroupMulEquiv_symm_ofAdd_one :
+@[simp] lemma autGroupMulEquiv_symm_apply_ofAdd_one :
     (E.autGroupMulEquiv hj₀ hj₁₇₂₈).symm (Multiplicative.ofAdd 1)
       = ⟨E.negVariableChange, E.negVariableChange_smul_self⟩ := by
   simp only [autGroupMulEquiv, MulEquiv.symm_symm, zmodMulEquivOfGenerator_apply_ofAdd_one]
 
 /-- `autGroupMulEquiv` sends the negation automorphism to `Multiplicative.ofAdd 1`. -/
-@[simp] lemma autGroupMulEquiv_negVariableChange :
+@[simp] lemma autGroupMulEquiv_apply_negVariableChange :
     E.autGroupMulEquiv hj₀ hj₁₇₂₈ ⟨E.negVariableChange, E.negVariableChange_smul_self⟩
       = Multiplicative.ofAdd 1 := by
-  rw [← autGroupMulEquiv_symm_ofAdd_one E hj₀ hj₁₇₂₈, MulEquiv.apply_symm_apply]
+  rw [← autGroupMulEquiv_symm_apply_ofAdd_one E hj₀ hj₁₇₂₈, MulEquiv.apply_symm_apply]
 
 end WeierstrassCurve
 

@@ -64,6 +64,10 @@ def negVariableChange : VariableChange R :=
   simp [VariableChange.mul_def, VariableChange.one_def, negVariableChange,
     Odd.neg_one_pow (by decide : Odd 3)]
 
+/-- The negation automorphism is its own inverse, being an involution. -/
+@[simp] lemma negVariableChange_inv : E.negVariableChange⁻¹ = E.negVariableChange :=
+  inv_eq_of_mul_eq_one_left E.negVariableChange_mul_self
+
 /-- The negation automorphism is nontrivial for an elliptic curve: where `2 ≠ 0` it has
 `u = -1 ≠ 1`, and where `2 = 0` it has `(s, t) = (-a₁, -a₃) ≠ (0, 0)`, since an elliptic curve
 over a ring in which `2 = 0` cannot have `a₁ = a₃ = 0`. -/
