@@ -348,6 +348,8 @@ lemma notMem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R} {D : HeckeCoset �
   Finsupp.notMem_support_iff
 
 /-- `Finsupp.sum` unfolded to a `Finset.sum`, at the wrapper type. -/
+-- `rfl` rather than a cited lemma: `Finsupp.sum` is a plain `def` for exactly this
+-- `Finset.sum`, and Mathlib exposes no unfolding lemma to name here.
 lemma sum_def {N : Type*} [AddCommMonoid N] (f : HeckeCosetModule Δ H₁ H₂ R)
     (F : HeckeCoset Δ H₁ H₂ → R → N) : f.sum F = ∑ D ∈ f.support, F D (f D) := (rfl)
 
@@ -365,9 +367,12 @@ section EvalZero
 
 variable {R : Type*} [AddCommMonoid R]
 
-/-- `Finsupp.zero_apply`, at the wrapper type. -/
+/-- `Finsupp.zero_apply`, at the wrapper type. Not `@[grind =]`: unlike Mathlib's
+`Finsupp.zero_apply`, where `M` is recoverable from `(0 : α →₀ M)`, the wrapper's coercion
+leaves `R` and its `AddCommMonoid` uninstantiable, and `grind` rejects the pattern. -/
 @[simp] lemma zero_apply (D : HeckeCoset Δ H₁ H₂) :
-    (0 : HeckeCosetModule Δ H₁ H₂ R) D = 0 := (rfl)
+    (0 : HeckeCosetModule Δ H₁ H₂ R) D = 0 :=
+  Finsupp.zero_apply
 
 /-- `Finsupp.add_apply`, at the wrapper type. -/
 @[simp, grind =] lemma add_apply (f g : HeckeCosetModule Δ H₁ H₂ R) (D : HeckeCoset Δ H₁ H₂) :
@@ -382,7 +387,8 @@ variable {R : Type*} [Semiring R]
 
 /-- `Finsupp.smul_apply`, at the wrapper type. -/
 @[simp, grind =] lemma smul_apply (a : R) (f : HeckeCosetModule Δ H₁ H₂ R)
-    (D : HeckeCoset Δ H₁ H₂) : (a • f) D = a * f D := (rfl)
+    (D : HeckeCoset Δ H₁ H₂) : (a • f) D = a * f D :=
+  (Finsupp.smul_apply a f D).trans (smul_eq_mul _ _)
 
 /-- `Finsupp.sum_smul_index`, at the wrapper type: a scalar pushes into a `Finsupp.sum`. -/
 @[grind =] lemma sum_smul_index {N : Type*} [AddCommMonoid N] (a : R)
