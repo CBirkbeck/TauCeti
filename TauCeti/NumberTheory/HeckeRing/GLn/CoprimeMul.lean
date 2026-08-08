@@ -7,9 +7,7 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.Integer
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.CongruenceSplit
-public import TauCeti.NumberTheory.HeckeRing.GLn.Degree
-public import TauCeti.NumberTheory.HeckeRing.GLn.ScalarMul
-public import TauCeti.NumberTheory.HeckeRing.GLn.TransposeAntiInvolution
+public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 
 import TauCeti.NumberTheory.HeckeRing.Multiplicity.Support
 
