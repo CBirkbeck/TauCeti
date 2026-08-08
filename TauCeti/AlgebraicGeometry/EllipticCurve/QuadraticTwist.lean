@@ -25,8 +25,10 @@ commutative ring in which the relevant parameter is a unit.
   an explicit Weierstrass model over any commutative ring.
 * `WeierstrassCurve.Δ_quadraticTwistOf`, `WeierstrassCurve.c₄_quadraticTwistOf`,
   `WeierstrassCurve.c₆_quadraticTwistOf`: the invariants of the twist.
-* `WeierstrassCurve.isElliptic_quadraticTwistOf`, `WeierstrassCurve.j_quadraticTwistOf`: the
-  twist of an elliptic curve is elliptic when `t² - 4n` is a unit, with equal `j`.
+* `WeierstrassCurve.isElliptic_quadraticTwistOf_of_isUnit` and its field specialisation
+  `WeierstrassCurve.isElliptic_quadraticTwistOf`, and `WeierstrassCurve.j_quadraticTwistOf`: the
+  twist of an elliptic curve is elliptic when `t² - 4n` is a unit — over a field, when it is
+  nonzero — with equal `j`.
 * `WeierstrassCurve.exists_smul_eq_quadraticTwistOf_quadraticTwistOf`,
   `WeierstrassCurve.exists_smul_quadraticTwistOf_eq`: the double twist is isomorphic to the
   original curve, and changing the generator moves the twist by a change of variables.
@@ -71,8 +73,8 @@ turns this relation into the Weierstrass model below of the twist:
 `y² + ta₁·xy + Dta₃·y = x³ + (Da₂ - na₁²)·x² + (D²a₄ - 2Dna₁a₃)·x + (D³a₆ - D²na₃²)`.
 
 Its discriminant is `D⁶·Δ(E)` (`Δ_quadraticTwistOf`), so the twist of an elliptic curve is
-elliptic when `D` is a unit (`isElliptic_quadraticTwistOf`) — over a field, when `D ≠ 0` — with
-the same `j`-invariant (`j_quadraticTwistOf`).
+elliptic when `D` is a unit (`isElliptic_quadraticTwistOf_of_isUnit`) — over a field, when
+`D ≠ 0` (`isElliptic_quadraticTwistOf`) — with the same `j`-invariant (`j_quadraticTwistOf`).
 
 Sanity checks. If `char K ≠ 2` we may take `θ = √d`, so `t = 0`, `n = -d`, `D = 4d`; for
 `E : y² = x³ + a₂x² + a₄x + a₆` the model is `y² = x³ + 4da₂x² + 16d²a₄x + 64d³a₆`, the
@@ -168,10 +170,10 @@ the `b₂`, `b₄` and `b₆` laws, since `c₆ = -b₂³ + 36b₂b₄ - 216b₆
       map_pow, map_ofNat]
 
 /-- The quadratic twist of an elliptic curve is elliptic when the discriminant `D = t² - 4n` of
-the twisting parameters is a unit, since `Δ ↦ D⁶Δ`. Over a field this hypothesis is `D ≠ 0`
-(`isUnit_iff_ne_zero`), the form in which the source states it; over a general commutative ring
-`D ≠ 0` is not enough, since `D⁶ · unit` is a unit only when `D` is (take `A = ℤ`, `D = 2`). -/
-theorem isElliptic_quadraticTwistOf [E.IsElliptic] (hD : IsUnit (t ^ 2 - 4 * n)) :
+the twisting parameters is a unit, since `Δ ↦ D⁶Δ`. Over a general commutative ring `D ≠ 0` is
+not enough, since `D⁶ · unit` is a unit only when `D` is (take `A = ℤ`, `D = 2`); over a field
+the two coincide, which is `isElliptic_quadraticTwistOf`. -/
+theorem isElliptic_quadraticTwistOf_of_isUnit [E.IsElliptic] (hD : IsUnit (t ^ 2 - 4 * n)) :
     (E.quadraticTwistOf t n).IsElliptic := by
   rw [isElliptic_iff, Δ_quadraticTwistOf]
   exact (hD.pow 6).mul E.isUnit_Δ
@@ -213,6 +215,19 @@ theorem exists_smul_quadraticTwistOf_eq {a : A} (b : A) (ha : IsUnit a) :
   ext <;> simp only [quadraticTwistOf, inv_inv, ← hv] <;> grobner
 
 end QuadraticTwistOfRing
+
+section Field
+
+variable {K : Type*} [Field K] (E : WeierstrassCurve K) (t n : K)
+
+/-- Over a field, the quadratic twist of an elliptic curve is elliptic when the discriminant
+`D = t² - 4n` of the twisting parameters is nonzero. This is the form the roadmap and the source
+state; `isElliptic_quadraticTwistOf_of_isUnit` is the ring-level strengthening it specialises. -/
+theorem isElliptic_quadraticTwistOf [E.IsElliptic] (hD : t ^ 2 - 4 * n ≠ 0) :
+    (E.quadraticTwistOf t n).IsElliptic :=
+  E.isElliptic_quadraticTwistOf_of_isUnit t n (isUnit_iff_ne_zero.mpr hD)
+
+end Field
 
 end WeierstrassCurve
 
