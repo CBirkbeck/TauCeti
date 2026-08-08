@@ -138,6 +138,7 @@ lemma comap_vlt (φ : A →+* B) (v : Spv B) {a₁ a₂ : A} :
   propext (ValuativeRel.comap_vlt φ v.toValuativeRel a₁ a₂)
 
 /-- `comap` is compatible with `ofValuation`. -/
+@[simp]
 lemma comap_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (φ : A →+* B) (v : Valuation B Γ₀) :
     comap φ (ofValuation v) = ofValuation (v.comap φ) :=
@@ -200,6 +201,7 @@ lemma vle_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (ofValuation v).toValuativeRel.vle x y ↔ v x ≤ v y := Iff.rfl
 
 /-- The support of `ofValuation v` equals `v.supp`. -/
+@[simp]
 lemma supp_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (v : Valuation A Γ₀) : (ofValuation v).supp = v.supp := by
   ext x
@@ -222,6 +224,7 @@ lemma supp_eq_valuation_supp (v : Spv A) : v.supp = v.valuation.supp :=
   @ValuativeRel.supp_eq_valuation_supp A _ v.toValuativeRel
 
 /-- The canonical valuation gives back the same point of `Spv`. -/
+@[simp]
 lemma ofValuation_valuation (v : Spv A) : ofValuation v.valuation = v := by
   let := v.toValuativeRel
   exact ext' fun x y ↦ (ValuativeRel.valuation A).vle_iff_le.symm
@@ -240,6 +243,7 @@ noncomputable def quotientLift ⦃v : Spv A⦄ (h : 𝔞 ≤ v.supp) : Spv (A �
   ofValuation (v.valuation.onQuot (v.supp_eq_valuation_supp ▸ h))
 
 /-- `comap (mk 𝔞) (quotientLift 𝔞 h) = v`. -/
+@[simp]
 lemma comap_quotientLift ⦃v : Spv A⦄ (h : 𝔞 ≤ v.supp) :
     comap (Ideal.Quotient.mk 𝔞) (quotientLift 𝔞 h) = v := by
   rw [quotientLift, comap_ofValuation,
@@ -247,6 +251,7 @@ lemma comap_quotientLift ⦃v : Spv A⦄ (h : 𝔞 ≤ v.supp) :
   exact ofValuation_valuation v
 
 /-- `quotientLift 𝔞 (self_le_supp_comap 𝔞 w) = w`. -/
+@[simp]
 lemma quotientLift_comap (w : Spv (A ⧸ 𝔞)) :
     quotientLift 𝔞 (self_le_supp_comap 𝔞 w) = w := by
   refine ext' fun x y ↦ ?_
@@ -291,6 +296,7 @@ noncomputable def localizationComapSection (v : Spv A) (hS : S ≤ v.supp.primeC
     (v.supp_eq_valuation_supp ▸ Ideal.mem_primeCompl_iff.mp (hS hs))) B))
 
 /-- `comap (algebraMap A B) (localizationComapSection S B v hS) = v`. -/
+@[simp]
 lemma comap_localizationComapSection (v : Spv A) (hS : S ≤ v.supp.primeCompl) :
     comap (algebraMap A B) (localizationComapSection S B v hS) = v := by
   have hS' : S ≤ v.valuation.supp.primeCompl := fun _ hs ↦

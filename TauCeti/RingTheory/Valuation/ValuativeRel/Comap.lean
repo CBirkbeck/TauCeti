@@ -32,11 +32,9 @@ namespace TauCeti.ValuativeRel
 variable {A B : Type*} [Semiring A] [Semiring B]
 
 /-- The pullback of a `ValuativeRel` along `φ : A →+* B`:
-`a₁ ≤ᵥ a₂ ↔ φ(a₁) ≤ᵥ φ(a₂)`.
-
-The body is not exposed; use `comap_vle` and `comap_vlt` instead. The `instance_reducible`
-attribute is the minimum reducibility Lean's `classDefReducibility` check accepts for a
-definition of class type. -/
+`a₁ ≤ᵥ a₂ ↔ φ(a₁) ≤ᵥ φ(a₂)`. Use `comap_vle` and `comap_vlt` to compute with it. -/
+-- `instance_reducible` is the minimum reducibility the `classDefReducibility` check accepts
+-- for a definition of class type; the body is deliberately not exposed.
 @[instance_reducible]
 def comap (φ : A →+* B) (v : ValuativeRel B) : ValuativeRel A where
   vle a₁ a₂ := (φ a₁) ≤ᵥ (φ a₂)
