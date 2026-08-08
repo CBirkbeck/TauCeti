@@ -281,7 +281,7 @@ section Quotient
 
 /-- The fibers of the projection to the quotient by a convex subgroup are the cosets, which
 are order-connected by convexity. -/
-theorem ordConnected_leftRel_fiber (H : ConvexSubgroup Γ) :
+private theorem ordConnected_leftRel_fiber (H : ConvexSubgroup Γ) :
     ∀ q : Γ ⧸ H.toSubgroup,
       Set.OrdConnected (Quotient.mk (QuotientGroup.leftRel H.toSubgroup) ⁻¹' {q}) := by
   intro q
@@ -301,7 +301,16 @@ variable (H : ConvexSubgroup Γ)
 of `Γ` along the order-connected cosets. -/
 noncomputable instance quotientLinearOrder : LinearOrder (Γ ⧸ H.toSubgroup) :=
   @Quotient.instLinearOrder Γ (QuotientGroup.leftRel H.toSubgroup) _
-    (ordConnected_leftRel_fiber H) (fun _ _ ↦ Classical.dec _)
+    (fun q ↦ by
+      constructor
+      induction q using Quotient.inductionOn with | _ b =>
+      intro x hx y hy z hz
+      have hx' : x⁻¹ * b ∈ H.toSubgroup := QuotientGroup.eq.mp hx
+      have hy' : y⁻¹ * b ∈ H.toSubgroup := QuotientGroup.eq.mp hy
+      exact QuotientGroup.eq.mpr
+        (H.convex hy' hx' (mul_le_mul_left (inv_le_inv' hz.2) b)
+          (mul_le_mul_left (inv_le_inv' hz.1) b)))
+    (fun _ _ ↦ Classical.dec _)
 
 omit [IsOrderedMonoid Γ] in
 /-- The coercion `Γ → Γ ⧸ H.toSubgroup` is `Quotient.mk` of the left-coset setoid; this
