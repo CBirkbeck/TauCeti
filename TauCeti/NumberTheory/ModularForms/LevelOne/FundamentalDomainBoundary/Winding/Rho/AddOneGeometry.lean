@@ -6,6 +6,7 @@ module
 
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.Geometry
 
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Basic
 import TauCeti.Topology.Circle.Metric
 
 /-!
@@ -167,13 +168,24 @@ theorem im_fdBoundary_sub_rho_add_one_arc_pos (H : ℝ) (ht1 : 1 < t) (ht3 : t <
   linarith
 
 /-- At the far corner `t = 3` the shifted contour touches the branch cut at `-1`. -/
-theorem fdBoundary_sub_rho_add_one_apply_three (H : ℝ) :
+theorem fdBoundary_apply_three_sub_rho_add_one (H : ℝ) :
     fdBoundary H 3 - ((UpperHalfPlane.ρ : ℂ) + 1) = -1 := by
   rw [fdBoundary_apply_three]
   ring
 
+/-- The shifted contour stays in the closed upper half-plane over the whole parameter
+range: the contour clears the corner row `√3/2`, which is the height of `ρ + 1`. -/
+theorem im_nonneg_fdBoundary_sub_rho_add_one (hH : Real.sqrt 3 / 2 ≤ H)
+    (ht : t ∈ Icc (0 : ℝ) 5) :
+    0 ≤ (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im := by
+  have h := sqrt_three_div_two_le_im_fdBoundary hH ht
+  have him : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
+    norm_num [UpperHalfPlane.ρ]
+  rw [Complex.sub_im, him]
+  linarith
+
 /-- The polar form of the shifted contour just after the corner. -/
-private lemma fdBoundary_one_add_sub_rho_add_one_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+private lemma fdBoundary_one_add_sub_rho_add_one_eq (H : ℝ) (hδ : 0 < δ) (hδ2 : δ ≤ 2) :
     fdBoundary H (1 + δ) - ((UpperHalfPlane.ρ : ℂ) + 1) =
       ((2 * Real.sin (δ * (Real.pi / 12)) : ℝ) : ℂ) *
         Complex.exp (((5 * Real.pi / 6 + δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I) := by
@@ -198,7 +210,7 @@ private lemma fdBoundary_one_add_sub_rho_add_one_eq (H : ℝ) (hδ : 0 < δ) (h�
 
 /-- The principal logarithm of the shifted contour just before the corner. -/
 theorem log_fdBoundary_one_sub_sub_rho_add_one (hH : Real.sqrt 3 / 2 < H) (hδ : 0 < δ)
-    (hδ1 : δ ≤ 1) :
+    (hδ2 : δ ≤ 1) :
     Complex.log (fdBoundary H (1 - δ) - ((UpperHalfPlane.ρ : ℂ) + 1)) =
       ((Real.log (δ * (H - Real.sqrt 3 / 2)) : ℝ) : ℂ) +
         ((Real.pi / 2 : ℝ) : ℂ) * Complex.I := by
@@ -210,13 +222,13 @@ theorem log_fdBoundary_one_sub_sub_rho_add_one (hH : Real.sqrt 3 / 2 < H) (hδ :
     Complex.ofReal_div, Complex.ofReal_ofNat]
 
 /-- The principal logarithm of the shifted contour just after the corner. -/
-theorem log_fdBoundary_one_add_sub_rho_add_one (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+theorem log_fdBoundary_one_add_sub_rho_add_one (H : ℝ) (hδ : 0 < δ) (hδ2 : δ ≤ 2) :
     Complex.log (fdBoundary H (1 + δ) - ((UpperHalfPlane.ρ : ℂ) + 1)) =
       ((Real.log (2 * Real.sin (δ * (Real.pi / 12))) : ℝ) : ℂ) +
         ((5 * Real.pi / 6 + δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I := by
   have hsin_pos : 0 < Real.sin (δ * (Real.pi / 12)) :=
     Real.sin_pos_of_pos_of_lt_pi (by positivity) (by nlinarith [Real.pi_pos])
-  rw [fdBoundary_one_add_sub_rho_add_one_eq H hδ hδ1,
+  rw [fdBoundary_one_add_sub_rho_add_one_eq H hδ hδ2,
     Complex.log_ofReal_mul (by linarith) (Complex.exp_ne_zero _),
     Complex.log_exp (by simp; nlinarith [Real.pi_pos]) (by simp; nlinarith [Real.pi_pos])]
 

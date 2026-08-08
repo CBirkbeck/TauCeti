@@ -156,7 +156,7 @@ private lemma two_neg_mul_I_mul_I_mul (z w : ℂ) :
   linear_combination (-(2 * z * w)) * Complex.I_sq
 
 /-- The polar form of the shifted contour just before the corner. -/
-private lemma fdBoundary_three_sub_sub_rho_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+private lemma fdBoundary_three_sub_sub_rho_eq (H : ℝ) (hδ : 0 < δ) (hδ2 : δ ≤ 2) :
     fdBoundary H (3 - δ) - (UpperHalfPlane.ρ : ℂ) =
       ((2 * Real.sin (δ * (Real.pi / 12)) : ℝ) : ℂ) *
         Complex.exp (((Real.pi / 6 - δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I) := by
@@ -181,19 +181,19 @@ private lemma fdBoundary_three_sub_sub_rho_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : �
   exact two_neg_mul_I_mul_I_mul _ _
 
 /-- The principal logarithm of the shifted contour just before the corner. -/
-theorem log_fdBoundary_three_sub_sub_rho (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+theorem log_fdBoundary_three_sub_sub_rho (H : ℝ) (hδ : 0 < δ) (hδ2 : δ ≤ 2) :
     Complex.log (fdBoundary H (3 - δ) - (UpperHalfPlane.ρ : ℂ)) =
       ((Real.log (2 * Real.sin (δ * (Real.pi / 12))) : ℝ) : ℂ) +
         ((Real.pi / 6 - δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I := by
   have hsin_pos : 0 < Real.sin (δ * (Real.pi / 12)) :=
     Real.sin_pos_of_pos_of_lt_pi (by positivity) (by nlinarith [Real.pi_pos])
-  rw [fdBoundary_three_sub_sub_rho_eq H hδ hδ1,
+  rw [fdBoundary_three_sub_sub_rho_eq H hδ hδ2,
     Complex.log_ofReal_mul (by linarith) (Complex.exp_ne_zero _),
     Complex.log_exp (by simp; nlinarith [Real.pi_pos]) (by simp; nlinarith [Real.pi_pos])]
 
 /-- The principal logarithm of the shifted contour just after the corner. -/
 theorem log_fdBoundary_three_add_sub_rho (hH : Real.sqrt 3 / 2 < H) (hδ : 0 < δ)
-    (hδ1 : δ ≤ 1) :
+    (hδ2 : δ ≤ 1) :
     Complex.log (fdBoundary H (3 + δ) - (UpperHalfPlane.ρ : ℂ)) =
       ((Real.log (δ * (H - Real.sqrt 3 / 2)) : ℝ) : ℂ) +
         ((Real.pi / 2 : ℝ) : ℂ) * Complex.I := by
