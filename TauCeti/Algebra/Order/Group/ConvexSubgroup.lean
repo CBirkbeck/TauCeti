@@ -120,9 +120,6 @@ theorem mem_bot {x : Γ} : x ∈ (⊥ : ConvexSubgroup Γ) ↔ x = 1 :=
 theorem mem_top {x : Γ} : x ∈ (⊤ : ConvexSubgroup Γ) :=
   trivial
 
-theorem inv_mem_iff_mem {H : ConvexSubgroup Γ} {γ : Γ} : γ⁻¹ ∈ H ↔ γ ∈ H :=
-  ⟨fun h ↦ inv_inv γ ▸ inv_mem h, inv_mem⟩
-
 /-- Convex subgroups are ordered by inclusion. -/
 instance : PartialOrder (ConvexSubgroup Γ) :=
   PartialOrder.ofSetLike (ConvexSubgroup Γ) Γ
@@ -215,7 +212,7 @@ theorem le_total_of_convex (H₁ H₂ : ConvexSubgroup Γ) : H₁ ≤ H₂ ∨ H
   obtain ⟨a, haH₁, haH₂⟩ := Set.not_subset.mp fun hsub ↦ hne₁ fun x hx ↦ hsub hx
   have ha1 : a ≠ 1 := fun h ↦ haH₂ (h ▸ one_mem H₂)
   refine hne₂ fun b hb ↦ ?_
-  have hainv : a⁻¹ ∉ H₂ := inv_mem_iff_mem.not.mpr haH₂
+  have hainv : a⁻¹ ∉ H₂ := inv_mem_iff.not.mpr haH₂
   rcases lt_or_gt_of_ne ha1 with ha_lt | ha_gt
   · have hab : a < b := H₂.lt_of_not_mem_of_lt_one haH₂ ha_lt hb
     have hba : b < a⁻¹ := H₂.lt_of_not_mem_of_one_lt hainv (one_lt_inv_of_inv ha_lt) hb
