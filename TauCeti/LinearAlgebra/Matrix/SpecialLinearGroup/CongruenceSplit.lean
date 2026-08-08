@@ -21,7 +21,7 @@ multiply.
 
 ## Main results
 
-* `Matrix.SpecialLinearGroup.exists_mul_congMod_of_coprime`: the factorization.
+* `Matrix.SpecialLinearGroup.exists_mul_modEq_one_of_coprime`: the factorization.
 
 Ported from the AINTLIB `LeanModularForms` project
 ([`LeanModularForms/HeckeRIngs/GLn/CoprimeMul.lean`](https://github.com/CBirkbeck/AINTLIB),
@@ -45,12 +45,15 @@ variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 Every `τ ∈ SL(ι, ℤ)` factors as `τ₁ * τ₂` with `τ₁ ≡ 1 mod d` and `τ₂ ≡ 1 mod d'` for
 coprime `d, d'`: transvections split by Bézout, and splittings multiply. -/
 
-/-- `σ ≡ 1 (mod d)`, entrywise. -/
-private def congMod (d : ℕ) (σ : SpecialLinearGroup ι ℤ) : Prop :=
+/-- `σ ≡ 1 (mod d)`, entrywise: every entry of `σ` is congruent mod `d` to the corresponding
+entry of the identity matrix. Spelled with divisibility rather than `Int.ModEq` (`≡ [ZMOD d]`)
+because the proofs below work with the difference directly; the two are interchangeable via
+`Int.modEq_iff_dvd`. -/
+private def modEqOne (d : ℕ) (σ : SpecialLinearGroup ι ℤ) : Prop :=
   ∀ i j, (d : ℤ) ∣ (σ.1 i j - if i = j then 1 else 0)
 
-private lemma congMod_transvection (d : ℕ) {i j : ι} (hij : i ≠ j) {c : ℤ}
-    (hdc : (d : ℤ) ∣ c) : congMod d (SpecialLinearGroup.transvection hij c) := by
+private lemma modEqOne_transvection (d : ℕ) {i j : ι} (hij : i ≠ j) {c : ℤ}
+    (hdc : (d : ℤ) ∣ c) : modEqOne d (SpecialLinearGroup.transvection hij c) := by
   intro k l
   rw [SpecialLinearGroup.transvection_coe]
   simp only [Matrix.add_apply, Matrix.one_apply, Matrix.single, Matrix.of_apply,
@@ -63,7 +66,7 @@ private lemma transvection_CRT (d d' : ℕ) (hcop : Nat.Coprime d d')
     {i j : ι} (hij : i ≠ j) (c : ℤ) :
     ∃ τ₁ τ₂ : SpecialLinearGroup ι ℤ,
       SpecialLinearGroup.transvection hij c = τ₁ * τ₂ ∧
-        congMod d τ₁ ∧ congMod d' τ₂ := by
+        modEqOne d τ₁ ∧ modEqOne d' τ₂ := by
   have hbez : ↑(Nat.gcd d d') = (d : ℤ) * Nat.gcdA d d' + ↑d' * Nat.gcdB d d' :=
     Nat.gcd_eq_gcd_ab d d'
   rw [hcop.gcd_eq_one, Nat.cast_one] at hbez
@@ -72,14 +75,14 @@ private lemma transvection_CRT (d d' : ℕ) (hcop : Nat.Coprime d d')
   · rw [← SpecialLinearGroup.transvection_add]
     congr 1
     linear_combination c * hbez
-  · exact congMod_transvection d hij ⟨c * Nat.gcdA d d', by ring⟩
-  · exact congMod_transvection d' hij ⟨c * Nat.gcdB d d', by ring⟩
+  · exact modEqOne_transvection d hij ⟨c * Nat.gcdA d d', by ring⟩
+  · exact modEqOne_transvection d' hij ⟨c * Nat.gcdB d d', by ring⟩
 
-private lemma congMod_one (d : ℕ) : congMod d (1 : SpecialLinearGroup ι ℤ) := fun i j ↦ by
+private lemma modEqOne_one (d : ℕ) : modEqOne d (1 : SpecialLinearGroup ι ℤ) := fun i j ↦ by
   simp [SpecialLinearGroup.coe_one, Matrix.one_apply]
 
-private lemma congMod_mul (d : ℕ) (a b : SpecialLinearGroup ι ℤ)
-    (ha : congMod d a) (hb : congMod d b) : congMod d (a * b) := by
+private lemma modEqOne_mul (d : ℕ) (a b : SpecialLinearGroup ι ℤ)
+    (ha : modEqOne d a) (hb : modEqOne d b) : modEqOne d (a * b) := by
   intro i j
   simp only [SpecialLinearGroup.coe_mul, Matrix.mul_apply]
   have h2 : ∑ k, (a.1 i k - if i = k then 1 else 0) * b.1 k j =
@@ -91,8 +94,8 @@ private lemma congMod_mul (d : ℕ) (a b : SpecialLinearGroup ι ℤ)
   rw [h3]
   exact dvd_add (Finset.dvd_sum fun k _ ↦ dvd_mul_of_dvd_left (ha i k) _) (hb i j)
 
-private lemma congMod_conj (d : ℕ) (σ τ : SpecialLinearGroup ι ℤ)
-    (hτ : congMod d τ) : congMod d (σ⁻¹ * τ * σ) := by
+private lemma modEqOne_conj (d : ℕ) (σ τ : SpecialLinearGroup ι ℤ)
+    (hτ : modEqOne d τ) : modEqOne d (σ⁻¹ * τ * σ) := by
   intro i j
   have hassoc : σ⁻¹ * τ * σ = σ⁻¹ * (τ * σ) := by group
   simp only [hassoc, SpecialLinearGroup.coe_mul, Matrix.mul_apply]
@@ -126,20 +129,20 @@ private lemma congMod_conj (d : ℕ) (σ τ : SpecialLinearGroup ι ℤ)
 /-- Elements admitting a CRT splitting are closed under products: conjugate the second
 `d`-part across the first `d'`-part. -/
 private lemma crtProd_mul (d d' : ℕ) (a b : SpecialLinearGroup ι ℤ)
-    (ha : ∃ p q, a = p * q ∧ congMod d p ∧ congMod d' q)
-    (hb : ∃ p q, b = p * q ∧ congMod d p ∧ congMod d' q) :
-    ∃ p q, a * b = p * q ∧ congMod d p ∧ congMod d' q := by
+    (ha : ∃ p q, a = p * q ∧ modEqOne d p ∧ modEqOne d' q)
+    (hb : ∃ p q, b = p * q ∧ modEqOne d p ∧ modEqOne d' q) :
+    ∃ p q, a * b = p * q ∧ modEqOne d p ∧ modEqOne d' q := by
   obtain ⟨p₁, q₁, rfl, hp₁, hq₁⟩ := ha
   obtain ⟨p₂, q₂, rfl, hp₂, hq₂⟩ := hb
   refine ⟨p₁ * (q₁ * p₂ * q₁⁻¹), q₁ * q₂, by group, ?_,
-    congMod_mul d' _ _ hq₁ hq₂⟩
-  have h := congMod_conj d q₁⁻¹ p₂ hp₂
+    modEqOne_mul d' _ _ hq₁ hq₂⟩
+  have h := modEqOne_conj d q₁⁻¹ p₂ hp₂
   rw [inv_inv] at h
-  exact congMod_mul d _ _ hp₁ h
+  exact modEqOne_mul d _ _ hp₁ h
 
 /-- **Chinese remainder decomposition of `SL(ι, ℤ)`**: for coprime `d, d'`, every element
 factors as `τ₁ * τ₂` with `τ₁ ≡ 1 mod d` and `τ₂ ≡ 1 mod d'`. -/
-lemma exists_mul_congMod_of_coprime (d d' : ℕ) (hcop : Nat.Coprime d d')
+lemma exists_mul_modEq_one_of_coprime (d d' : ℕ) (hcop : Nat.Coprime d d')
     (τ : SpecialLinearGroup ι ℤ) :
     ∃ τ₁ τ₂ : SpecialLinearGroup ι ℤ, τ = τ₁ * τ₂ ∧
       (∀ i j, (d : ℤ) ∣ ((τ₁ : Matrix (ι) (ι) ℤ) i j - if i = j then 1 else 0)) ∧
@@ -148,7 +151,7 @@ lemma exists_mul_congMod_of_coprime (d d' : ℕ) (hcop : Nat.Coprime d d')
   rw [hT]
   clear hT
   induction T with
-  | nil => exact ⟨1, 1, (one_mul 1).symm, congMod_one d, congMod_one d'⟩
+  | nil => exact ⟨1, 1, (one_mul 1).symm, modEqOne_one d, modEqOne_one d'⟩
   | cons t T ihT =>
     simp only [List.map_cons, List.prod_cons]
     refine crtProd_mul d d' _ _ ?_ ihT

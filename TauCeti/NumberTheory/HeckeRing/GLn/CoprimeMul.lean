@@ -29,7 +29,7 @@ The scalar row (Shimura 3.17) lives in `GLn/ScalarMul.lean`.
 The coprime case runs on a Chinese-remainder factorization of `SL_n(ℤ)`: modulo coprime
 `p`, `q` an element splits as a product of one element congruent to the identity mod `p` and
 one congruent to the identity mod `q`
-(`Matrix.SpecialLinearGroup.exists_mul_congMod_of_coprime`), which is what makes the two
+(`Matrix.SpecialLinearGroup.exists_mul_modEq_one_of_coprime`), which is what makes the two
 diagonal sandwiches commute past each other.
 
 Ported from the AINTLIB `LeanModularForms` project
@@ -163,7 +163,7 @@ lemma mul_mem_doubleCoset_of_coprime (a b : Fin n → ℕ)
     natDiagGL n a * mapGL ℚ τ * natDiagGL n b ∈
       doubleCoset (natDiagGL n (a * b) : GL (Fin n) ℚ) (SLnZ n) (SLnZ n) := by
   obtain ⟨τ₁, τ₂, hτ, hτ₁, hτ₂⟩ :=
-    exists_mul_congMod_of_coprime (∏ i, a i) (∏ i, b i) hcop τ
+    exists_mul_modEq_one_of_coprime (∏ i, a i) (∏ i, b i) hcop τ
   have hτ₁_cong : ∀ i j, (∏ k, (a k : ℤ)) ∣
       ((τ₁ : Matrix (Fin n) (Fin n) ℤ) i j - if i = j then 1 else 0) := fun i j ↦ by
     rw [← Nat.cast_prod]; exact hτ₁ i j
@@ -485,12 +485,46 @@ Deliberately **not** `@[simp]`, unlike the parallel scalar theorem `diagElem_con
 simp lemma on itself … this usually means that it will never apply" — because the side
 condition is coprimality of two products, which `simp` cannot discharge from the bare
 left-hand side. `diagElem_const_mul` differs materially: its side conditions are positivity,
-which `simp` can discharge. Cite this one explicitly instead. -/
-theorem diagElem_mul_of_coprime (a b : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i)
+which `simp` can discharge. Cite this one explicitly instead.
+
+This is the positive case; the public `diagElem_mul_of_coprime` below reduces to it. -/
+private theorem diagElem_mul_of_coprime_of_pos (a b : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i)
     (hb_pos : ∀ i, 0 < b i) (hcop : Nat.Coprime (∏ i, a i) (∏ i, b i)) :
     diagElem a * diagElem b = diagElem (a * b) :=
   diagElem_mul_of_mulMap_eq _ _ _ (mulMap_coprime_eq n a b ha_pos hb_pos hcop)
     (multiplicity_coprime_le_one n a b ha_pos hb_pos hcop _)
+
+/-- Coprime product in the integral `GL_n` Hecke ring (Shimura, Proposition 3.16):
+`T(a) · T(b) = T(a * b)` whenever the determinants `∏ aᵢ`, `∏ bᵢ` are coprime.
+
+Coprimality is the only hypothesis. `natDiagGL` sends a tuple with a zero entry to its junk
+value `1`, and coprimality forces the *other* tuple to be all ones there: a zero entry makes
+that determinant `0`, and `Nat.Coprime 0 m` holds only for `m = 1`. Both sides then collapse to
+the same element. -/
+theorem diagElem_mul_of_coprime (a b : Fin n → ℕ)
+    (hcop : Nat.Coprime (∏ i, a i) (∏ i, b i)) :
+    diagElem a * diagElem b = diagElem (a * b) := by
+  have hones : ∀ x y : Fin n → ℕ, Nat.Coprime (∏ i, x i) (∏ i, y i) →
+      ¬(∀ i, 0 < x i) → ∀ j, y j = 1 := by
+    intro x y hc hx j
+    obtain ⟨i, hi⟩ := not_forall.mp hx
+    have hx0 : (∏ i, x i) = 0 :=
+      Finset.prod_eq_zero (Finset.mem_univ i) (Nat.eq_zero_of_not_pos hi)
+    have hy1 : (∏ i, y i) = 1 := (Nat.coprime_zero_left _).mp (hx0 ▸ hc)
+    exact Nat.dvd_one.mp (hy1 ▸ Finset.dvd_prod_of_mem y (Finset.mem_univ j))
+  by_cases ha_pos : ∀ i, 0 < a i
+  · by_cases hb_pos : ∀ i, 0 < b i
+    · exact diagElem_mul_of_coprime_of_pos n a b ha_pos hb_pos hcop
+    · -- `b` is not positive, so coprimality forces `a` to be all ones
+      have ha1 : a = fun _ ↦ 1 := funext (hones b a hcop.symm hb_pos)
+      subst ha1
+      have hmul : ((fun _ : Fin n ↦ 1) * b) = b := funext fun i ↦ Nat.one_mul (b i)
+      rw [hmul, diagElem_one, one_mul]
+  · -- `a` is not positive, so coprimality forces `b` to be all ones
+    have hb1 : b = fun _ ↦ 1 := funext (hones a b hcop ha_pos)
+    subst hb1
+    have hmul : (a * fun _ : Fin n ↦ 1) = a := funext fun i ↦ Nat.mul_one (a i)
+    rw [hmul, diagElem_one, mul_one]
 
 end CoprimeIntegrality
 
