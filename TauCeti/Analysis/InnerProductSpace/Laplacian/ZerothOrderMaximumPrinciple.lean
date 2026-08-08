@@ -26,12 +26,11 @@ needed once `c ≠ 0`; on the set where `f ≤ 0 ≤ m` the estimate is automati
 has to control the set where `f` is positive, where `c · f ≥ 0` makes `f` subharmonic.)
 
 The proof reuses the perturbation `f + ε‖·‖²` of the bare-Laplacian file, but replaces the
-strictly-subharmonic boundary principle by the maximizer step
-`TauCeti.le_of_isMaxOn_add_smul` of
+strictly-subharmonic boundary principle by the maximizer step `TauCeti.le_of_isMaxOn_add_smul` of
 `TauCeti.Analysis.InnerProductSpace.Laplacian.BarrierMaximizer`, run here with no drift and the
-quadratic barrier: at an interior maximum of the perturbation either `f` is already negative (so
-the bound is free) or `f ≥ 0` forces `Δ(f + ε‖·‖²) > 0`, which contradicts local maximality
-through `TauCeti.not_isLocalMax_of_laplacian_add_fderiv_pos`. Letting `ε → 0` gives the bound.
+quadratic barrier. At a maximizer of the perturbation the bound `f z ≤ m` either holds already, or
+`m < f z` puts `f z` above the nonnegative `m`, which forces `Δ(f + ε‖·‖²) > 0` and so contradicts
+local maximality. Letting `ε → 0` gives the bound.
 
 ## Main declarations
 
