@@ -173,10 +173,10 @@ def equivVariableChange : (C • W).toAffine.Point ≃+ W.toAffine.Point where
   simp only [equivVariableChange]
   rfl
 
-/-- The inverse of `equivVariableChange` is literally the change of variables `C⁻¹`, transported
-along `C⁻¹ • C • W = W`. Not a `simp` lemma: it would rewrite the left-hand side of
-`equivVariableChange_symm_some`, which is the normal form worth having. -/
-lemma coe_equivVariableChange_symm :
+-- The inverse of `equivVariableChange` is literally the change of variables `C⁻¹`, transported
+-- along `C⁻¹ • C • W = W`. Private: it exists to prove `equivVariableChange_symm_some`, which is
+-- the normal form worth having — as a `simp` lemma this would rewrite that one's left-hand side.
+private lemma coe_equivVariableChange_symm :
     ⇑(equivVariableChange W C).symm = fun P ↦ mapVariableChange (C • W) C⁻¹
       (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
         (inv_smul_smul C W).symm P) := by
