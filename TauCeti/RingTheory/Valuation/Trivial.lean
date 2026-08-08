@@ -68,9 +68,4 @@ lemma trivialValuation_eq_one_iff [Nontrivial Γ₀] {𝔭 : Ideal A} [𝔭.IsPr
   rw [trivialValuation_apply]
   split <;> simp_all
 
-/-- Elements outside the prime ideal have value `1` under the trivial valuation. -/
-lemma trivialValuation_eq_one_of_notMem {𝔭 : Ideal A} [𝔭.IsPrime] {a : A}
-    (ha : a ∉ 𝔭) : trivialValuation (Γ₀ := Γ₀) 𝔭 a = 1 := by
-  simp [trivialValuation_apply, ha]
-
 end TauCeti.Valuation
