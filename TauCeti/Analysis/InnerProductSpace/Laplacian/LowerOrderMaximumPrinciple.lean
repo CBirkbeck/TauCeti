@@ -43,6 +43,48 @@ open InnerProductSpace Laplacian Topology RealInnerProductSpace
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [Nontrivial E]
 
+omit [FiniteDimensional ℝ E] [Nontrivial E] in
+/-- The barrier `y ↦ exp (α ⟪u, y⟫)` is twice continuously differentiable, being the exponential of
+a continuous linear functional. -/
+private theorem contDiff_exp_const_mul_inner (α : ℝ) (u : E) :
+    ContDiff ℝ 2 fun y : E => Real.exp (α * ⟪u, y⟫) := by
+  have hi : ContDiff ℝ 2 (fun y : E => (⟪u, y⟫ : ℝ)) := by
+    simpa only [coe_innerSL_apply] using (innerSL ℝ u).contDiff
+  exact (by simpa only [smul_eq_mul] using hi.const_smul α : ContDiff ℝ 2 _).exp
+
+omit [Nontrivial E] in
+/-- At a maximiser `z` of the perturbed function `f + ε • exp ((β + 1) ⟪u, ·⟫)` over `K`, the
+frontier bound already holds: on the frontier by hypothesis, and in the interior because the
+barrier's strict positivity under `-Δ - b·∇` contradicts `f z > m`. -/
+private theorem le_of_isMaxOn_add_smul_exp_inner {K : Set E} {c f : E → ℝ} {b : E → E}
+    {β m ε : ℝ} {u z : E} (hm : 0 ≤ m) (hu : ‖u‖ = 1) (hε : 0 < ε)
+    (hcd : ∀ ⦃x⦄, x ∈ interior K → ContDiffAt ℝ 2 f x) (hc : ∀ ⦃x⦄, x ∈ interior K → 0 ≤ c x)
+    (hb : ∀ ⦃x⦄, x ∈ interior K → ‖b x‖ ≤ β)
+    (hsub : ∀ ⦃x⦄, x ∈ interior K → c x * f x ≤ Δ f x + fderiv ℝ f x (b x))
+    (hbdry : ∀ ⦃x⦄, x ∈ frontier K → f x ≤ m) (hzK : z ∈ K)
+    (hzmax : IsMaxOn (fun y => f y + ε • Real.exp ((β + 1) * ⟪u, y⟫)) K z) :
+    f z ≤ m := by
+  by_cases hzint : z ∈ interior K
+  · by_contra hn
+    have hwcd : ContDiff ℝ 2 fun y : E => Real.exp ((β + 1) * ⟪u, y⟫) :=
+      contDiff_exp_const_mul_inner _ u
+    have hfz0 : 0 ≤ f z := hm.trans (not_le.mp hn).le
+    have hloc : IsLocalMax (fun y => f y + ε • Real.exp ((β + 1) * ⟪u, y⟫)) z :=
+      hzmax.isLocalMax (mem_interior_iff_mem_nhds.mp hzint)
+    have hLgnonpos : Δ (fun y => f y + ε • Real.exp ((β + 1) * ⟪u, y⟫)) z +
+        fderiv ℝ (fun y => f y + ε • Real.exp ((β + 1) * ⟪u, y⟫)) z (b z) ≤ 0 := by
+      rw [hloc.fderiv_eq_zero]
+      simpa using laplacian_nonpos_of_isLocalMax
+        ((hcd hzint).add (hwcd.contDiffAt.const_smul ε)) hloc
+    have hLwpos := laplacian_add_fderiv_exp_inner_pos_of_norm_le hu (hb hzint) z
+    have hLg := laplacian_add_fderiv_add_const_smul f
+      (fun y : E => Real.exp ((β + 1) * ⟪u, y⟫)) (b z) ε z (hcd hzint) hwcd.contDiffAt
+    rw [hLg] at hLgnonpos
+    have hLf0 : 0 ≤ Δ f z + fderiv ℝ f z (b z) :=
+      (mul_nonneg (hc hzint) hfz0).trans (hsub hzint)
+    nlinarith [mul_pos hε hLwpos]
+  · exact hbdry ⟨subset_closure hzK, hzint⟩
+
 /-- **Weak maximum principle for `-Δ - b·∇ + c`.**
 
 If `c` is nonnegative, `b` has norm at most `β` on the interior of a compact set, and
@@ -59,44 +101,19 @@ theorem le_of_mul_le_laplacian_add_fderiv_le_frontier {K : Set E} (hK : IsCompac
   obtain ⟨v, hv⟩ := exists_ne (0 : E)
   let u : E := ‖v‖⁻¹ • v
   have hu : ‖u‖ = 1 := norm_smul_inv_norm hv
-  let α : ℝ := β + 1
-  let w : E → ℝ := fun y => Real.exp (α * ⟪u, y⟫)
+  let w : E → ℝ := fun y => Real.exp ((β + 1) * ⟪u, y⟫)
   have hwpos (y : E) : 0 < w y := Real.exp_pos _
-  have hwcd : ContDiff ℝ 2 w := by
-    have hi : ContDiff ℝ 2 (fun y : E => (⟪u, y⟫ : ℝ)) := by
-      simpa only [coe_innerSL_apply] using (innerSL ℝ u).contDiff
-    exact (by simpa only [smul_eq_mul] using hi.const_smul α : ContDiff ℝ 2 _).exp
+  have hwcd : ContDiff ℝ 2 w := contDiff_exp_const_mul_inner _ u
   obtain ⟨C, hC⟩ := hK.bddAbove_image hwcd.continuous.continuousOn
   have hC0 : 0 ≤ C := (hwpos x).le.trans (hC (Set.mem_image_of_mem w hxK))
   apply le_of_forall_pos_mul_le hC0
   intro ε hε
-  let g : E → ℝ := fun y => f y + ε • w y
-  have hgcont : ContinuousOn g K := hcont.add (hwcd.continuous.continuousOn.const_smul ε)
-  obtain ⟨z, hzK, hzmax⟩ := hK.exists_isMaxOn ⟨x, hxK⟩ hgcont
-  have hfz : f z ≤ m := by
-    by_cases hzint : z ∈ interior K
-    · by_contra hn
-      have hfz0 : 0 ≤ f z := hm.trans (not_le.mp hn).le
-      have hgcd : ContDiffAt ℝ 2 g z := (hcd hzint).add (hwcd.contDiffAt.const_smul ε)
-      have hloc : IsLocalMax g z := hzmax.isLocalMax (mem_interior_iff_mem_nhds.mp hzint)
-      have hLgnonpos : Δ g z + fderiv ℝ g z (b z) ≤ 0 := by
-        rw [hloc.fderiv_eq_zero]
-        simpa using laplacian_nonpos_of_isLocalMax hgcd hloc
-      have hLwpos : 0 < Δ w z + fderiv ℝ w z (b z) := by
-        simpa only [w, α] using
-          laplacian_add_fderiv_exp_inner_pos_of_norm_le hu (hb hzint) z
-      have hLg : Δ g z + fderiv ℝ g z (b z) =
-          (Δ f z + fderiv ℝ f z (b z)) +
-            ε * (Δ w z + fderiv ℝ w z (b z)) := by
-        simpa only [g] using laplacian_add_fderiv_add_const_smul f w (b z) ε z
-          (hcd hzint) hwcd.contDiffAt
-      have hLf0 : 0 ≤ Δ f z + fderiv ℝ f z (b z) :=
-        (mul_nonneg (hc hzint) hfz0).trans (hsub hzint)
-      rw [hLg] at hLgnonpos
-      nlinarith [mul_pos hε hLwpos]
-    · exact hbdry ⟨subset_closure hzK, hzint⟩
+  obtain ⟨z, hzK, hzmax⟩ := hK.exists_isMaxOn ⟨x, hxK⟩
+    (hcont.add (hwcd.continuous.continuousOn.const_smul ε))
+  have hfz : f z ≤ m :=
+    le_of_isMaxOn_add_smul_exp_inner hm hu hε hcd hc hb hsub hbdry hzK hzmax
   have hxle : f x + ε * w x ≤ f z + ε * w z := by
-    simpa [g, smul_eq_mul] using hzmax hxK
+    simpa [smul_eq_mul] using hzmax hxK
   have hwzC : ε * w z ≤ ε * C :=
     mul_le_mul_of_nonneg_left (hC (Set.mem_image_of_mem w hzK)) hε.le
   nlinarith [mul_nonneg hε.le (hwpos x).le]
