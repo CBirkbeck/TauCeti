@@ -17,7 +17,7 @@ carries a point `(x, y)` of `C • W` to the point `(u²x + r, u³y + u²sx + t)
 
 Everything except the slope is stated over an arbitrary commutative ring, matching the
 generality of Mathlib's `Formula` file; `↑C.u⁻¹ * ↑C.u = 1` is fed to `grobner` to cancel the unit.
-Only `slope`, and the cancellation lemmas it rests on, need a field.
+Only `slope` needs a field.
 
 These are the coordinate-level laws that
 `TauCeti/AlgebraicGeometry/EllipticCurve/Affine/Point.lean` assembles into the induced
@@ -144,33 +144,33 @@ lemma variableChange_nonsingular_iff (x y : R) :
   · simp only [hy, mul_zero, sub_zero, ne_eq, (C.u.isUnit.pow 4).mul_right_eq_zero]
   · exact iff_of_true (.inr fun h ↦ hy ((C.u.isUnit.pow 3).mul_right_eq_zero.mp h)) (.inr hy)
 
-end Ring
-
-variable {F : Type*} [Field F] (W : WeierstrassCurve F) (C : VariableChange F)
-
 /-- The change of variables is injective on `x`-coordinates: `u²x + r` determines `x`. -/
-lemma variableChange_X_inj {x₁ x₂ : F}
-    (h : (C.u : F) ^ 2 * x₁ + C.r = (C.u : F) ^ 2 * x₂ + C.r) : x₁ = x₂ :=
-  mul_left_cancel₀ (pow_ne_zero 2 C.u.ne_zero) (by linear_combination h)
+lemma variableChange_X_inj {x₁ x₂ : R}
+    (h : (C.u : R) ^ 2 * x₁ + C.r = (C.u : R) ^ 2 * x₂ + C.r) : x₁ = x₂ :=
+  (C.u.isUnit.pow 2).mul_right_inj.mp (add_right_cancel h)
 
 /-- The change of variables is injective on `y`-coordinates once the `x`-coordinates agree. -/
-lemma variableChange_Y_inj {x₁ x₂ y₁ y₂ : F} (hx : x₁ = x₂)
-    (h : (C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t
-      = (C.u : F) ^ 3 * y₂ + (C.u : F) ^ 2 * C.s * x₂ + C.t) : y₁ = y₂ :=
-  mul_left_cancel₀ (pow_ne_zero 3 C.u.ne_zero)
-    (by linear_combination h - (C.u : F) ^ 2 * C.s * hx)
+lemma variableChange_Y_inj {x₁ x₂ y₁ y₂ : R} (hx : x₁ = x₂)
+    (h : (C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t
+      = (C.u : R) ^ 3 * y₂ + (C.u : R) ^ 2 * C.s * x₂ + C.t) : y₁ = y₂ := by
+  subst hx
+  exact (C.u.isUnit.pow 3).mul_right_inj.mp (add_right_cancel (add_right_cancel h))
 
 /-- The image of a pair of points under the change of variables satisfies the `y₁ = -y₂`
 degeneracy condition (`negY`) only if the original pair does. -/
-lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : F}
+lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : R}
     (hxy : ¬(x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂)) :
-    ¬((C.u : F) ^ 2 * x₁ + C.r = (C.u : F) ^ 2 * x₂ + C.r ∧
-      (C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t = W.toAffine.negY
-        ((C.u : F) ^ 2 * x₂ + C.r) ((C.u : F) ^ 3 * y₂ + (C.u : F) ^ 2 * C.s * x₂ + C.t)) := by
+    ¬((C.u : R) ^ 2 * x₁ + C.r = (C.u : R) ^ 2 * x₂ + C.r ∧
+      (C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t = W.toAffine.negY
+        ((C.u : R) ^ 2 * x₂ + C.r) ((C.u : R) ^ 3 * y₂ + (C.u : R) ^ 2 * C.s * x₂ + C.t)) := by
   rintro ⟨hX, hY⟩
   obtain rfl := variableChange_X_inj C hX
   rw [variableChange_negY] at hY
   exact hxy ⟨rfl, variableChange_Y_inj C rfl hY⟩
+
+end Ring
+
+variable {F : Type*} [Field F] (W : WeierstrassCurve F) (C : VariableChange F)
 
 /-- The change of variables transforms the slope of the line through two points affinely:
 the slope through the image points is `u · ℓ + s` for `ℓ` the original slope. -/
