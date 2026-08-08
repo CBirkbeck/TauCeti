@@ -7,8 +7,6 @@ module
 public import TauCeti.Analysis.Contour.InvSubCPVExistence
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Immersion
 
-import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Basic
-
 /-!
 # The boundary contour at the ceiling corner
 
@@ -45,9 +43,10 @@ namespace ModularForm
 variable {H t : ℝ}
 
 /-- **The contour reaches the ceiling corner only at `t = 4`.** Below the corner the real
-part is bounded away from `-1/2` except on the left vertical, where the height is below the
-ceiling until the corner itself; above it the height is the ceiling's but the real part
-increases. -/
+part is bounded away from `-1/2` except on the left vertical, where the height differs from
+the ceiling's until the corner itself — it runs monotonically from `√3/2` to `H`, so it
+meets `H` only at the end, whichever of the two heights is the larger; above the corner the
+height is the ceiling's but the real part increases. -/
 theorem eq_four_of_fdBoundary_eq_ceiling_corner (hH : H ≠ Real.sqrt 3 / 2)
     (heq : fdBoundary H t = -1 / 2 + H * Complex.I) : t = 4 := by
   have him : (fdBoundary H t).im = H := by rw [heq]; simp
