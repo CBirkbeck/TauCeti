@@ -39,13 +39,6 @@ namespace Matrix
 
 variable {n : Type*}
 
-/-- The quadratic form of a matrix, expanded as a double sum. Stated over any commutative ring
-with trivial star, so that the integer and rational forms are one lemma rather than two. -/
-private theorem star_dotProduct_mulVec_eq_sum {R : Type*} [CommRing R] [StarRing R]
-    [TrivialStar R] [Fintype n] (M : Matrix n n R) (y : n → R) :
-    star y ⬝ᵥ (M *ᵥ y) = ∑ i, ∑ j, y i * M i j * y j := by
-  simp [_root_.dotProduct, _root_.Matrix.mulVec_apply_eq_sum, Finset.mul_sum, mul_assoc]
-
 /-- Clearing denominators: a nonzero rational vector on a finite index type is a nonzero integer
 vector scaled by a common nonzero denominator. -/
 private theorem exists_intCast_mul_eq_of_ne_zero [Finite n] {x : n → ℚ} (hx : x ≠ 0) :
@@ -81,11 +74,9 @@ private theorem posDef_map_intCast_of_finite [Finite n] {A : Matrix n n ℤ} (hA
   -- The two quadratic forms differ by the square of the common denominator.
   have key : ((star z ⬝ᵥ (A *ᵥ z) : ℤ) : ℚ) =
       (c : ℚ) ^ 2 * (star x ⬝ᵥ ((A.map (Int.cast : ℤ → ℚ)) *ᵥ x)) := by
-    rw [star_dotProduct_mulVec_eq_sum, star_dotProduct_mulVec_eq_sum, Finset.mul_sum]
+    simp only [_root_.Matrix.dot_mulVec_eq_sum_sum, star_trivial, Finset.mul_sum]
     push_cast
-    refine Finset.sum_congr rfl fun i _ ↦ ?_
-    rw [Finset.mul_sum]
-    refine Finset.sum_congr rfl fun j _ ↦ ?_
+    refine Finset.sum_congr rfl fun j _ ↦ Finset.sum_congr rfl fun i _ ↦ ?_
     rw [hz, hz, _root_.Matrix.map_apply]
     ring
   have hpos : (0 : ℚ) < ((star z ⬝ᵥ (A *ᵥ z) : ℤ) : ℚ) := by
