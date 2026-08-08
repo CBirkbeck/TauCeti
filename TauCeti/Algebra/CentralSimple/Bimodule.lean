@@ -50,9 +50,12 @@ value `u` at `1`, and that value intertwines `f` and `g`:
 * `TauCeti.Bimodule.exists_symm_apply_one_mul_eq_one`: when `of g 1` is hit, `u` has a right
   inverse.
 
-The Skolem-Noether argument in `TauCeti/Algebra/CentralSimple/SkolemNoether.lean` runs on all of
-them; the centralizer theorem in `TauCeti/Algebra/CentralSimple/Centralizer.lean` uses
-`apply_of` and `symm_apply_one_mul_eq_mul_symm_apply_one` at `f = g = B.val`.
+The two consumers take different halves. The Skolem-Noether argument in
+`TauCeti/Algebra/CentralSimple/SkolemNoether.lean` uses the right-inverse lemma
+`exists_symm_apply_one_mul_eq_one` and the intertwining lemma
+`symm_apply_one_mul_eq_mul_symm_apply_one`; the centralizer theorem in
+`TauCeti/Algebra/CentralSimple/Centralizer.lean` uses `apply_of` and the same intertwining lemma, at
+`f = g = B.val`.
 
 ## Implementation notes
 
