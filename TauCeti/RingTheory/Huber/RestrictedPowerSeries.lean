@@ -130,24 +130,6 @@ theorem IsRestricted.finite_coeff_notMem {k : ℕ} {A : Type*} [Ring A]
   have := (tendsto_nhds.mp (isRestricted_iff.mp hf)) _ W.isOpen (SetLike.mem_coe.mpr W.zero_mem)
   rwa [Filter.mem_cofinite] at this
 
-/-- **A neighbourhood of `0` small enough that multiplying it by any of finitely many prescribed
-elements, on either side, lands in a prescribed neighbourhood `U` of `0`.** *Separate* continuity
-of multiplication is all this needs. -/
-private theorem exists_mem_nhds_zero_forall_mul_mem {A : Type*} [TopologicalSpace A]
-    [MulZeroClass A] [SeparatelyContinuousMul A] {ι : Type*} {U : Set A} (hU : U ∈ nhds (0 : A))
-    (S₁ S₂ : Finset ι) (c₁ c₂ : ι → A) :
-    ∃ T ∈ nhds (0 : A), (∀ a ∈ S₁, ∀ y ∈ T, c₁ a * y ∈ U) ∧
-      ∀ b ∈ S₂, ∀ x ∈ T, x * c₂ b ∈ U := by
-  refine ⟨(⋂ a ∈ S₁, (fun x => c₁ a * x) ⁻¹' U) ∩ (⋂ b ∈ S₂, (fun x => x * c₂ b) ⁻¹' U),
-    Filter.inter_mem ?_ ?_, fun a ha y hy => Set.mem_iInter₂.mp hy.1 a ha,
-    fun b hb x hx => Set.mem_iInter₂.mp hx.2 b hb⟩
-  · apply (Filter.biInter_finset_mem _).mpr
-    intro a _
-    exact (continuous_const_mul _).continuousAt.preimage_mem_nhds (by simpa using hU)
-  · apply (Filter.biInter_finset_mem _).mpr
-    intro b _
-    exact (continuous_mul_const _).continuousAt.preimage_mem_nhds (by simpa using hU)
-
 /-- The "bad" indices contributed by one side of a coefficient convolution form a finite set:
 for each `a` in a finite `S`, only finitely many `n` have `c (n - a) ∉ T`, and `n ↦ n - a` is
 injective on `{n | a ≤ n}`. Both halves of `IsRestricted.mul`'s bad set have this shape, with
@@ -212,9 +194,24 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
   set Sg := {s | MvPowerSeries.coeff s g ∉ (W : Set A)}
   have hSf : Sf.Finite := hf.finite_coeff_notMem W
   have hSg : Sg.Finite := hg.finite_coeff_notMem W
-  obtain ⟨T, hT_nhds, hT_left, hT_right⟩ :=
-    exists_mem_nhds_zero_forall_mul_mem (V.isOpen.mem_nhds V.zero_mem) hSf.toFinset hSg.toFinset
-      (fun a => MvPowerSeries.coeff a f) (fun b => MvPowerSeries.coeff b g)
+  -- A neighbourhood of `0` that the finitely many large coefficients multiply into `V`, on the
+  -- left directly and on the right through the opposite ring.
+  obtain ⟨T₁, hT₁mem, hT₁⟩ := exists_mem_nhds_zero_mul_subset
+    (hSf.image fun a => MvPowerSeries.coeff a f).isCompact (V.isOpen.mem_nhds V.zero_mem)
+  obtain ⟨T₂, hT₂mem, hT₂⟩ := exists_mem_nhds_zero_mul_subset
+    (hSg.image fun b => MulOpposite.op (MvPowerSeries.coeff b g)).isCompact
+    (show MulOpposite.unop ⁻¹' (V : Set A) ∈ nhds (0 : Aᵐᵒᵖ) from
+      MulOpposite.continuous_unop.continuousAt.preimage_mem_nhds
+        (by simpa using V.isOpen.mem_nhds V.zero_mem))
+  set T : Set A := T₁ ∩ MulOpposite.op ⁻¹' T₂ with hTdef
+  have hT_nhds : T ∈ nhds (0 : A) :=
+    Filter.inter_mem hT₁mem
+      (MulOpposite.continuous_op.continuousAt.preimage_mem_nhds (by simpa using hT₂mem))
+  have hT_left : ∀ a ∈ hSf.toFinset, ∀ y ∈ T, MvPowerSeries.coeff a f * y ∈ (V : Set A) :=
+    fun a ha y hy => hT₁ ⟨_, ⟨a, hSf.mem_toFinset.mp ha, rfl⟩, y, hy.1, rfl⟩
+  have hT_right : ∀ b ∈ hSg.toFinset, ∀ x ∈ T, x * MvPowerSeries.coeff b g ∈ (V : Set A) :=
+    fun b hb x hx =>
+      hT₂ ⟨_, ⟨b, hSg.mem_toFinset.mp hb, rfl⟩, MulOpposite.op x, hx.2, rfl⟩
   have hgT : {s | MvPowerSeries.coeff s g ∉ T}.Finite :=
     (Filter.mem_cofinite.mp (isRestricted_iff.mp hg hT_nhds)).subset (fun s hs => hs)
   have hfT : {s | MvPowerSeries.coeff s f ∉ T}.Finite :=
