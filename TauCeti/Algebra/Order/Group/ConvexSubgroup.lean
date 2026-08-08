@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Algebra.Order.Group.Defs
 public import Mathlib.Algebra.Order.Hom.Monoid
-public import Mathlib.Algebra.Order.Monoid.Unbundled.Basic
 public import Mathlib.GroupTheory.QuotientGroup.Basic
 public import Mathlib.Order.Quotient
 
@@ -34,7 +33,7 @@ built from `closure` in the forthcoming valuation-spectrum development of `Spv (
 
 ## Main results
 
-* `TauCeti.ConvexSubgroup.le_total_of_convex` : Convex subgroups are totally ordered by
+* `TauCeti.ConvexSubgroup.le_total` : Convex subgroups are totally ordered by
   inclusion.
 
 ## References
@@ -50,7 +49,7 @@ public section
 
 namespace TauCeti
 
-variable (Γ : Type*) [CommGroup Γ] [LinearOrder Γ]
+variable (Γ : Type*) [Group Γ] [LinearOrder Γ]
 
 /-- A **convex subgroup** of a linearly ordered commutative group `Γ` is a subgroup
 that is order-convex: if `a ≤ x ≤ b` and `a, b ∈ H`, then `x ∈ H`. -/
@@ -101,7 +100,10 @@ instance : Bot (ConvexSubgroup Γ) where
   bot :=
     { toSubgroup := ⊥
       ordConnected' := by
-        rw [show (⊥ : Subgroup Γ).carrier = ({1} : Set Γ) from rfl]
+        have h : (⊥ : Subgroup Γ).carrier = ({1} : Set Γ) := by
+          ext x
+          simp
+        rw [h]
         exact Set.ordConnected_singleton }
 
 /-- The full group is a convex subgroup. -/
@@ -109,7 +111,10 @@ instance : Top (ConvexSubgroup Γ) where
   top :=
     { toSubgroup := ⊤
       ordConnected' := by
-        rw [show (⊤ : Subgroup Γ).carrier = (Set.univ : Set Γ) from rfl]
+        have h : (⊤ : Subgroup Γ).carrier = (Set.univ : Set Γ) := by
+          ext x
+          simp
+        rw [h]
         exact Set.ordConnected_univ }
 
 @[simp]
@@ -180,32 +185,36 @@ theorem mem_closure {S : Set Γ} {x : Γ} :
 theorem subset_closure (S : Set Γ) : S ⊆ closure S :=
   fun _ hx _ hS ↦ hS hx
 
-/-- Universal property: `closure S` lies inside every convex subgroup containing `S`. -/
-theorem closure_le {S : Set Γ} {H : ConvexSubgroup Γ} (hS : S ⊆ H) : closure S ≤ H :=
-  fun _ hx ↦ hx H hS
+/-- Universal property: `closure S` lies inside a convex subgroup iff the generating set
+does. -/
+@[simp]
+theorem closure_le {S : Set Γ} {H : ConvexSubgroup Γ} : closure S ≤ H ↔ S ⊆ H :=
+  ⟨fun h ↦ (subset_closure S).trans h, fun hS _ hx ↦ hx H hS⟩
 
 /-! ### Preimages of convex subgroups -/
 
 /-- The preimage of a convex subgroup under an ordered group homomorphism is a convex
 subgroup. This lifts convex subgroups from quotient value groups back to the original
 value group. -/
-def comap {Δ : Type*} [CommGroup Δ] [LinearOrder Δ] (f : Γ →*o Δ)
+def comap {Δ : Type*} [Group Δ] [LinearOrder Δ] (f : Γ →*o Δ)
     (K : ConvexSubgroup Δ) : ConvexSubgroup Γ where
   toSubgroup := K.toSubgroup.comap f.toMonoidHom
   ordConnected' := K.ordConnected'.preimage_mono f.monotone'
 
 @[simp]
-theorem mem_comap {Δ : Type*} [CommGroup Δ] [LinearOrder Δ] {f : Γ →*o Δ}
+theorem mem_comap {Δ : Type*} [Group Δ] [LinearOrder Δ] {f : Γ →*o Δ}
     {K : ConvexSubgroup Δ} {x : Γ} :
     x ∈ comap f K ↔ f x ∈ K :=
   Iff.rfl
 
 /-! ### Total ordering of convex subgroups -/
 
-variable [IsOrderedMonoid Γ]
+section TotalOrder
 
-/-- Any two convex subgroups of a linearly ordered commutative group are comparable. -/
-theorem le_total_of_convex (H₁ H₂ : ConvexSubgroup Γ) : H₁ ≤ H₂ ∨ H₂ ≤ H₁ := by
+variable {Γ : Type*} [CommGroup Γ] [LinearOrder Γ] [IsOrderedMonoid Γ]
+
+/-- Any two convex subgroups are comparable. -/
+protected theorem le_total (H₁ H₂ : ConvexSubgroup Γ) : H₁ ≤ H₂ ∨ H₂ ≤ H₁ := by
   by_contra h
   push Not at h
   obtain ⟨hne₁, hne₂⟩ := h
@@ -223,7 +232,7 @@ theorem le_total_of_convex (H₁ H₂ : ConvexSubgroup Γ) : H₁ ≤ H₂ ∨ H
 
 noncomputable instance : LinearOrder (ConvexSubgroup Γ) :=
   { (inferInstance : PartialOrder (ConvexSubgroup Γ)) with
-    le_total := le_total_of_convex
+    le_total := ConvexSubgroup.le_total
     toDecidableLE := Classical.decRel _
     toDecidableEq := Classical.decEq _
     toDecidableLT := Classical.decRel _ }
@@ -237,7 +246,7 @@ noncomputable def maxAvoid {γ : Γ} (hγ : γ ≠ 1) : ConvexSubgroup Γ where
   toSubgroup :=
     { carrier := {x | ∃ H : ConvexSubgroup Γ, γ ∉ H ∧ x ∈ H}
       mul_mem' := fun {a b} ⟨H₁, hγ₁, ha⟩ ⟨H₂, hγ₂, hb⟩ ↦ by
-        rcases le_total_of_convex H₁ H₂ with h | h
+        rcases H₁.le_total H₂ with h | h
         · exact ⟨H₂, hγ₂, H₂.toSubgroup.mul_mem (h ha) hb⟩
         · exact ⟨H₁, hγ₁, H₁.toSubgroup.mul_mem ha (h hb)⟩
       one_mem' := ⟨⊥, mem_bot.not.mpr hγ, one_mem ⊥⟩
@@ -245,7 +254,7 @@ noncomputable def maxAvoid {γ : Γ} (hγ : γ ≠ 1) : ConvexSubgroup Γ where
   ordConnected' := by
     constructor
     rintro a ⟨H₁, hγ₁, ha⟩ b ⟨H₂, hγ₂, hb⟩ z hz
-    rcases le_total_of_convex H₁ H₂ with h | h
+    rcases H₁.le_total H₂ with h | h
     · exact ⟨H₂, hγ₂, H₂.ordConnected'.out (h ha) hb hz⟩
     · exact ⟨H₁, hγ₁, H₁.ordConnected'.out ha (h hb) hz⟩
 
@@ -259,10 +268,12 @@ theorem mem_maxAvoid_iff {γ : Γ} {hγ : γ ≠ 1} {x : Γ} :
 theorem not_mem_maxAvoid {γ : Γ} (hγ : γ ≠ 1) : γ ∉ maxAvoid hγ :=
   fun ⟨_, hγH, hγH'⟩ ↦ hγH hγH'
 
-/-- Universal property: every convex subgroup excluding `γ` lies inside `maxAvoid hγ`. -/
-theorem le_maxAvoid_of_not_mem {γ : Γ} {hγ : γ ≠ 1} {H : ConvexSubgroup Γ} (h : γ ∉ H) :
-    H ≤ maxAvoid hγ :=
-  fun _ hx ↦ ⟨H, h, hx⟩
+/-- Universal property: a convex subgroup lies inside `maxAvoid hγ` iff it excludes
+`γ`. -/
+@[simp]
+theorem le_maxAvoid {γ : Γ} {hγ : γ ≠ 1} {H : ConvexSubgroup Γ} :
+    H ≤ maxAvoid hγ ↔ γ ∉ H :=
+  ⟨fun h hγH ↦ not_mem_maxAvoid hγ (h hγH), fun h _ hx ↦ ⟨H, h, hx⟩⟩
 
 /-! ### The quotient linear order -/
 
@@ -329,6 +340,8 @@ instance quotientIsOrderedMonoid : IsOrderedMonoid (Γ ⧸ H.toSubgroup) where
     exact hab
 
 end Quotient
+
+end TotalOrder
 
 end ConvexSubgroup
 
