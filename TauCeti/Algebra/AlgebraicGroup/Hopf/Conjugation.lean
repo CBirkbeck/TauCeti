@@ -220,6 +220,52 @@ private theorem toConv_assoc_comp_map_comul_comp_includeLeft :
     ext h
     simp [up]
 
+/-- **The acted-on variable is untouched by comultiplying the conjugating variable.**
+Re-associating after comultiplying the first tensor factor sends the second universal point of
+`H ⊗[R] H` to the third universal point of `H ⊗[R] (H ⊗[R] H)`. -/
+private theorem toConv_assoc_comp_map_comul_comp_includeRight :
+    toConv
+        ((((Algebra.TensorProduct.assoc R R R H H H).toAlgHom.comp
+            (Algebra.TensorProduct.map (Bialgebra.comulAlgHom R H) (AlgHom.id R H))).comp
+          Algebra.TensorProduct.includeRight : H →ₐ[R] H ⊗[R] (H ⊗[R] H))) =
+      toConv
+        ((Algebra.TensorProduct.includeRight : H ⊗[R] H →ₐ[R] H ⊗[R] (H ⊗[R] H)).comp
+          (Algebra.TensorProduct.includeRight : H →ₐ[R] H ⊗[R] H)) := by
+  apply WithConv.ofConv_injective
+  ext h
+  simp [Algebra.TensorProduct.one_def]
+
+/-- **Conjugating the second variable leaves the first universal point alone.** Restricting
+`id ⊗ c♯` to the first tensor factor is the first universal point of `H ⊗[R] (H ⊗[R] H)`. -/
+private theorem toConv_map_id_conjugationAlgHom_comp_includeLeft :
+    toConv
+        ((Algebra.TensorProduct.map (AlgHom.id R H) (conjugationAlgHom (R := R) (H := H))).comp
+          Algebra.TensorProduct.includeLeft : H →ₐ[R] H ⊗[R] (H ⊗[R] H)) =
+      toConv (Algebra.TensorProduct.includeLeft : H →ₐ[R] H ⊗[R] (H ⊗[R] H)) := by
+  apply WithConv.ofConv_injective
+  simp
+
+/-- **Conjugating the second variable conjugates the third universal point by the second.**
+Restricting `id ⊗ c♯` to the second tensor factor is the conjugate of the third universal point
+of `H ⊗[R] (H ⊗[R] H)` by the second. -/
+private theorem toConv_map_id_conjugationAlgHom_comp_includeRight :
+    toConv
+        ((Algebra.TensorProduct.map (AlgHom.id R H) (conjugationAlgHom (R := R) (H := H))).comp
+          Algebra.TensorProduct.includeRight : H →ₐ[R] H ⊗[R] (H ⊗[R] H)) =
+      toConv
+          ((Algebra.TensorProduct.includeRight : H ⊗[R] H →ₐ[R] H ⊗[R] (H ⊗[R] H)).comp
+            (Algebra.TensorProduct.includeLeft : H →ₐ[R] H ⊗[R] H)) *
+        toConv
+          ((Algebra.TensorProduct.includeRight : H ⊗[R] H →ₐ[R] H ⊗[R] (H ⊗[R] H)).comp
+            (Algebra.TensorProduct.includeRight : H →ₐ[R] H ⊗[R] H)) *
+        (toConv
+          ((Algebra.TensorProduct.includeRight : H ⊗[R] H →ₐ[R] H ⊗[R] (H ⊗[R] H)).comp
+            (Algebra.TensorProduct.includeLeft : H →ₐ[R] H ⊗[R] H)))⁻¹ := by
+  -- The restriction is `c♯` post-composed with `Algebra.TensorProduct.includeRight`, and the two
+  -- points on the right are by definition that inclusion's own two restrictions.
+  rw [Algebra.TensorProduct.map_comp_includeRight (AlgHom.id R H)
+    (conjugationAlgHom (R := R) (H := H)), comp_conjugationAlgHom _, toConv_ofConv]
+
 /-- The coordinate morphism of left conjugation satisfies the action-associativity law.
 
 The left side represents conjugation by the product of the first two universal points, while the
@@ -251,22 +297,16 @@ theorem conjugationAlgHom_coassoc :
       toConv (mulFirst.comp Algebra.TensorProduct.includeLeft) = g₁ * g₂ :=
     toConv_assoc_comp_map_comul_comp_includeLeft
   have hmulFirstRight :
-      toConv (mulFirst.comp Algebra.TensorProduct.includeRight) = x := by
-    apply WithConv.ofConv_injective
-    ext h
-    simp [mulFirst, assoc, x, Algebra.TensorProduct.one_def]
+      toConv (mulFirst.comp Algebra.TensorProduct.includeRight) = x :=
+    toConv_assoc_comp_map_comul_comp_includeRight
   -- The two restrictions of `actSecond` are `g₁` and the inner conjugate of `x` by `g₂`.
   have hactSecondLeft :
-      toConv (actSecond.comp Algebra.TensorProduct.includeLeft) = g₁ := by
-    apply WithConv.ofConv_injective
-    simp [actSecond, g₁]
-  -- Restricting `id ⊗ c` to the second factor is `c` post-composed with the inclusion, and `g₂`
-  -- and `x` are by definition that inclusion's own two restrictions.
+      toConv (actSecond.comp Algebra.TensorProduct.includeLeft) = g₁ :=
+    toConv_map_id_conjugationAlgHom_comp_includeLeft
   have hactSecondRight :
       toConv (actSecond.comp Algebra.TensorProduct.includeRight) =
-        g₂ * x * g₂⁻¹ := by
-    rw [Algebra.TensorProduct.map_comp_includeRight (AlgHom.id R H) c,
-      comp_conjugationAlgHom _, toConv_ofConv]
+        g₂ * x * g₂⁻¹ :=
+    toConv_map_id_conjugationAlgHom_comp_includeRight
   -- The two coordinate maps now evaluate to the corresponding conjugates; associativity and
   -- `(g₁ * g₂)⁻¹ = g₂⁻¹ * g₁⁻¹` finish the comparison.
   have hcoassoc : mulFirst.comp c = actSecond.comp c := by
