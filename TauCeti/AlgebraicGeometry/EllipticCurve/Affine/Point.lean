@@ -125,7 +125,7 @@ private lemma mapVariableChange_mapVariableChange_inv (P : W.toAffine.Point) :
 
 /-- **Identity law.** The trivial change of variables induces the transport along
 `(1 : VariableChange F) • W = W`. -/
-lemma mapVariableChange_one :
+@[simp] lemma mapVariableChange_one :
     mapVariableChange W 1
       = (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
           (one_smul (VariableChange F) W)).toAddMonoidHom := by
@@ -139,7 +139,7 @@ lemma mapVariableChange_one :
 /-- **Cocycle law.** Composing changes of variables composes the induced maps: `C * C'` acts as
 `C` into `C' • W` followed by `C'`, transported along `(C * C') • W = C • (C' • W)`. This is
 what makes a family of variable changes a descent datum. -/
-lemma mapVariableChange_mul (C' : VariableChange F) :
+@[simp] lemma mapVariableChange_mul (C' : VariableChange F) :
     mapVariableChange W (C * C')
       = (mapVariableChange W C').comp ((mapVariableChange (C' • W) C).comp
           (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
