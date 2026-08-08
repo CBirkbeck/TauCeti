@@ -99,12 +99,14 @@ theorem isPowerBounded_iff {a : M} :
     IsPowerBounded a ↔ IsBounded (Set.range (a ^ · : ℕ → M)) := (Iff.rfl)
 
 /-- `0` is power-bounded. -/
+@[simp]
 theorem isPowerBounded_zero : IsPowerBounded (0 : M) := by
   refine isBounded_pair_zero_one.subset ?_
   rintro _ ⟨n, rfl⟩
   cases n <;> simp [zero_pow]
 
 /-- `1` is power-bounded. -/
+@[simp]
 theorem isPowerBounded_one : IsPowerBounded (1 : M) := by
   refine isBounded_pair_zero_one.subset ?_
   rintro _ ⟨n, rfl⟩
@@ -218,11 +220,16 @@ theorem IsPowerBounded.neg {a : A} (ha : IsPowerBounded a) : IsPowerBounded (-a)
   refine Set.mul_mem_mul ?_ ⟨n, rfl⟩
   rcases Nat.even_or_odd n with hn | hn <;> simp [hn.neg_one_pow]
 
+/-- Power-boundedness is invariant under negation. -/
+@[simp]
+theorem isPowerBounded_neg {a : A} : IsPowerBounded (-a) ↔ IsPowerBounded a :=
+  ⟨fun h ↦ by simpa using h.neg, IsPowerBounded.neg⟩
+
 end Ring
 
-section Nonarchimedean
+section NonarchimedeanAddGroup
 
-variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
+variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanAddGroup A]
 
 /-- A sum of power-bounded elements is power-bounded in a nonarchimedean ring.
 
@@ -238,6 +245,10 @@ theorem IsPowerBounded.add {a b : A} (ha : IsPowerBounded a) (hb : IsPowerBounde
   refine add_pow_mem_of_mul_pow_mem fun k _ ↦ AddSubgroup.subset_closure ?_
   exact Set.mul_mem_mul ⟨k, rfl⟩ ⟨n - k, rfl⟩
 
+section ContinuousMul
+
+variable [ContinuousMul A]
+
 /-- A sum of topologically nilpotent elements is topologically nilpotent in a nonarchimedean ring.
 
 Mathlib's `IsTopologicallyNilpotent.add` assumes a neighbourhood basis of zero by open *ideals*,
@@ -245,7 +256,7 @@ which no nonzero Tate ring has; a basis by additive subgroups is enough. -/
 theorem isTopologicallyNilpotent_add {a b : A} (ha : IsTopologicallyNilpotent a)
     (hb : IsTopologicallyNilpotent b) : IsTopologicallyNilpotent (a + b) := by
   intro U hU
-  obtain ⟨G, hGU⟩ := NonarchimedeanRing.is_nonarchimedean U hU
+  obtain ⟨G, hGU⟩ := NonarchimedeanAddGroup.is_nonarchimedean U hU
   have hG : (G : Set A) ∈ 𝓝 (0 : A) := G.isOpen.mem_nhds G.zero_mem
   have ha' := IsPowerBounded.of_isTopologicallyNilpotent ha
   have hb' := IsPowerBounded.of_isTopologicallyNilpotent hb
@@ -263,6 +274,14 @@ theorem isTopologicallyNilpotent_add {a b : A} (ha : IsTopologicallyNilpotent a)
   · exact hVbG (Set.mul_mem_mul (hNa k hk) ⟨n - k, rfl⟩)
   · rw [mul_comm (a ^ k) (b ^ (n - k))]
     exact hVaG (Set.mul_mem_mul (hNb (n - k) (by omega)) ⟨k, rfl⟩)
+
+end ContinuousMul
+
+end NonarchimedeanAddGroup
+
+section Nonarchimedean
+
+variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
 
 variable (A) in
 /-- The subring `A°` of power-bounded elements of a nonarchimedean commutative ring
@@ -360,7 +379,7 @@ def powerBoundedSubringEquiv (e : A ≃+* B) (he : Continuous e) (he' : Continuo
   e.restrict _ _ fun _ ↦ (isPowerBounded_ringEquiv_iff e he he').symm
 
 @[simp]
-theorem coe_powerBoundedSubringEquiv (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm)
+theorem powerBoundedSubringEquiv_apply (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm)
     (a : powerBoundedSubring A) :
     ((powerBoundedSubringEquiv e he he' a : powerBoundedSubring B) : B) = e (a : A) := (rfl)
 
@@ -372,7 +391,7 @@ theorem mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff (e : A ≃+
     powerBoundedSubringEquiv e he he' a ∈ topologicallyNilpotentIdeal B
       ↔ a ∈ topologicallyNilpotentIdeal A := by
   rw [mem_topologicallyNilpotentIdeal, mem_topologicallyNilpotentIdeal,
-    coe_powerBoundedSubringEquiv]
+    powerBoundedSubringEquiv_apply]
   exact isTopologicallyNilpotent_ringEquiv_iff e he he'
 
 /-- The restricted isomorphism `A° ≃+* B°` carries the ideal `A°°` onto `B°°`. This is the
