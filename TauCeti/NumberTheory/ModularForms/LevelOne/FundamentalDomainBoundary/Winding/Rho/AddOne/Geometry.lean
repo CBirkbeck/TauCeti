@@ -112,8 +112,10 @@ theorem norm_fdBoundary_sub_rho_add_one_arc_le (H : ℝ) (ht : t ∈ Icc (1 : �
   · rw [hgap, abs_of_nonneg (mul_nonneg hδ0 (by positivity))]
     nlinarith [Real.pi_pos]
 
-/-- On the left vertical the shifted contour is `-1` plus the imaginary linear form of
-the `ρ`-shift: it hugs the branch cut from above without crossing it. -/
+/-- On the left vertical the shifted contour is `-1` plus the imaginary linear form of the
+`ρ`-shift: its real part is constantly `-1`, so it runs alongside the branch cut and meets it
+only at `t = 3`, where the imaginary part vanishes — on the upper side when the ceiling clears
+the corner row, on the lower side otherwise. -/
 theorem fdBoundary_sub_rho_add_one_of_mem_Icc_three_four (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
     fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1) =
       -1 + (((t - 3) * (H - Real.sqrt 3 / 2) : ℝ) : ℂ) * Complex.I := by
