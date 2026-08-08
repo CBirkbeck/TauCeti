@@ -120,8 +120,8 @@ private noncomputable def ringOfIntegersQuadraticConjₐ (hmin : minpoly ℤ θ 
 `B ∣ A` follows from `A ≤ B`, so `A = B * C`; equal norms then force `relNorm C = 1`, and an ideal
 of norm one is the whole ring because its norm is below its contraction.
 
-The nonvanishing hypothesis is on the larger ideal, which is where the cancellation happens; it is
-automatic for the smaller one only if that one is itself nonzero. -/
+Only `B` is assumed nonzero, because that is the factor cancelled. Nothing is lost: with the norms
+equal, `A ≠ 0` follows from `hBne` through `Ideal.relNorm_eq_bot_iff`. -/
 private theorem eq_of_le_of_relNorm_eq {A B : Ideal (𝓞 K)} (hAB : A ≤ B) (hBne : B ≠ 0)
     (hnorm : Ideal.relNorm ℤ A = Ideal.relNorm ℤ B) : A = B := by
   obtain ⟨C, hC⟩ := Ideal.dvd_iff_le.mpr hAB
