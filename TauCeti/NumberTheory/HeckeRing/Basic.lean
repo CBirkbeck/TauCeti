@@ -42,12 +42,16 @@ merges. The degree section is instead ported from the AINTLIB `LeanModularForms`
   `single_apply`, `sum_single_index`, `smul_single_one`, `single_add`, `induction_linear`,
   and the `Module R` instance `HeckeCosetModule.instModule`.
 * Pointwise evaluation of the coset module: `zero_apply`, `smul_apply`,
-  `notMem_support_iff`, `sum_def`, `sum_apply` and `sum_smul_index`. These are the cases the
-  wrapper genuinely hides; `+` and `support` are `Finsupp`'s own, so Mathlib's
-  `Finsupp.add_apply` and `Finsupp.mem_support_iff` already apply at this type.
-  `HeckeCosetModule` is a `def` over `Finsupp`, so Mathlib's evaluation lemmas hold
-  definitionally but cannot be matched through the wrapper by `rw`, `simp` or `grind`;
-  these are the wrapper-level restatements.
+  `notMem_support_iff`, `sum_def`, `sum_apply` and `sum_smul_index`. `HeckeCosetModule` is a
+  `def` over `Finsupp` carrying transported instances, so Mathlib's `Finsupp` evaluation
+  lemmas hold *definitionally* — they can be applied in term mode — but `rw`, `simp` and
+  `grind` match syntactically and so cannot see through the wrapper. These restatements are
+  what makes those facts usable tactically.
+
+  No restatement is provided for `+` or `support`: nothing in the repository currently needs
+  to rewrite with `Finsupp.add_apply` or `Finsupp.mem_support_iff` at this type. That is a
+  statement about present consumers, not about the wrapper being transparent for them — if a
+  proof needs one, it should land together with that proof rather than standing unused.
 * `HeckeCoset.degree`: the number of left cosets in the decomposition of a double coset,
   with `degree_eq_relIndex` and `degree_mk` presenting it as a relative index,
   `degree_eq_natCard_decompQuotient` as the (hypothesis-free) count of that quotient, and
