@@ -174,8 +174,8 @@ curve itself. -/
 base change of the twist, by the images of the parameters. -/
 @[simp] theorem baseChange_quadraticTwistOf {B : Type*} [CommRing B] [Algebra A B] :
     (E.quadraticTwistOf t n).baseChange B
-      = (E.baseChange B).quadraticTwistOf (algebraMap A B t) (algebraMap A B n) :=
-  E.map_quadraticTwistOf t n (algebraMap A B)
+      = (E.baseChange B).quadraticTwistOf (algebraMap A B t) (algebraMap A B n) := by
+  simp only [WeierstrassCurve.baseChange, map_quadraticTwistOf]
 
 /-- The quadratic twist of an elliptic curve is elliptic exactly when the discriminant
 `D = t² - 4n` of the twisting parameters is a unit. Over a general commutative ring `D ≠ 0` is
