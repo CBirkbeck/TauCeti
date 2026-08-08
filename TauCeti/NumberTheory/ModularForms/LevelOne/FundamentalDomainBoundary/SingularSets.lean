@@ -239,16 +239,7 @@ theorem im_pos_of_mem_arcSingularSet {S : Finset ℍ} {s : ℂ}
     Finset.mem_insert, Finset.mem_singleton] at hs
   rcases hs with (⟨p, ⟨-, hp_norm⟩, rfl⟩ | ⟨p, ⟨-, hp_norm⟩, rfl⟩) | rfl | rfl
   · exact p.2
-  · have hne : (p : ℂ) ≠ 0 := by
-      intro h0
-      rw [h0] at hp_norm
-      simp at hp_norm
-    have : (-1 / (p : ℂ)).im = (p : ℂ).im / normSq (p : ℂ) := by
-      rw [div_im]
-      simp [normSq_apply]
-      ring
-    rw [this]
-    exact div_pos p.2 (normSq_pos.mpr hne)
+  · simpa [neg_div] using p.im_inv_neg_coe_pos
   · simpa using (ρ : ℍ).2
   · rw [add_im, one_im, add_zero]
     simpa using (ρ : ℍ).2
