@@ -50,9 +50,10 @@ formalisation of this layer; its proofs were not used.
 
 * `TauCeti.Huber.isPowerBounded_iff`: unfolding lemma for `IsPowerBounded`.
 * `TauCeti.Huber.IsPowerBounded.of_isTopologicallyNilpotent`: `A°° ⊆ A°`.
-* `TauCeti.Huber.isTopologicallyNilpotent_add`: over a nonarchimedean ring the topologically
-  nilpotent elements are closed under addition. Mathlib's `IsTopologicallyNilpotent.add` instead
-  assumes a basis of open ideals, which excludes the Tate rings this is aimed at.
+* `TauCeti.Huber.isTopologicallyNilpotent_add_of_commute` and
+  `TauCeti.Huber.isTopologicallyNilpotent_add`: commuting topologically nilpotent elements of a
+  nonarchimedean ring have topologically nilpotent sum. Mathlib's `IsTopologicallyNilpotent.add`
+  instead assumes a basis of open ideals, which excludes the Tate rings this is aimed at.
 * `TauCeti.Huber.map_powerBoundedSubring`, `TauCeti.Huber.powerBoundedSubringEquiv`: `A°` is
   carried onto `B°` by a topological ring isomorphism, which therefore restricts to
   `A° ≃+* B°`; that restriction carries `A°°` onto `B°°`
@@ -190,17 +191,18 @@ end CommMonoidWithZero
 
 section CommRing
 
-variable {A : Type*} [CommRing A]
+variable {A : Type*} [Ring A]
 
 /-- If every binomial term `a ^ k * b ^ (n - k)` lies in an additive subgroup, then so does
-`(a + b) ^ n`. This is the step shared by `IsPowerBounded.add` and
-`isTopologicallyNilpotent_add`. -/
-private theorem add_pow_mem_of_mul_pow_mem {G : AddSubgroup A} {a b : A} {n : ℕ}
-    (h : ∀ k ≤ n, a ^ k * b ^ (n - k) ∈ G) : (a + b) ^ n ∈ G := by
-  rw [add_pow]
+`(a + b) ^ n`. This is the step shared by `IsPowerBounded.add_of_commute` and
+`isTopologicallyNilpotent_add_of_commute`; only the two elements need to commute. -/
+private theorem add_pow_mem_of_mul_pow_mem {G : AddSubgroup A} {a b : A} (hab : Commute a b)
+    {n : ℕ} (h : ∀ k ≤ n, a ^ k * b ^ (n - k) ∈ G) : (a + b) ^ n ∈ G := by
+  rw [hab.add_pow]
   refine sum_mem fun k hk ↦ ?_
   have hterm : a ^ k * b ^ (n - k) * (n.choose k : A)
-      = (n.choose k) • (a ^ k * b ^ (n - k)) := by rw [nsmul_eq_mul, mul_comm]
+      = (n.choose k) • (a ^ k * b ^ (n - k)) := by
+    rw [nsmul_eq_mul, (Nat.cast_commute (n.choose k) _).eq]
   rw [hterm]
   exact nsmul_mem (h k (Nat.lt_succ_iff.mp (Finset.mem_range.mp hk))) _
 
@@ -229,21 +231,27 @@ end Ring
 
 section NonarchimedeanAddGroup
 
-variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanAddGroup A]
+variable {A : Type*} [Ring A] [TopologicalSpace A] [NonarchimedeanAddGroup A]
 
-/-- A sum of power-bounded elements is power-bounded in a nonarchimedean ring.
+/-- A sum of commuting power-bounded elements is power-bounded in a nonarchimedean ring.
 
 The binomial expansion writes `(a + b) ^ n` as an integer combination of products `aᵏ bᵐ`, so the
-statement follows from `IsBounded.addSubgroupClosure`. -/
-theorem IsPowerBounded.add {a b : A} (ha : IsPowerBounded a) (hb : IsPowerBounded b) :
-    IsPowerBounded (a + b) := by
+statement follows from `IsBounded.addSubgroupClosure`. Only `a` and `b` need to commute. -/
+theorem IsPowerBounded.add_of_commute {a b : A} (hab : Commute a b) (ha : IsPowerBounded a)
+    (hb : IsPowerBounded b) : IsPowerBounded (a + b) := by
   refine (IsBounded.mul ha hb).addSubgroupClosure.subset ?_
   rintro _ ⟨n, rfl⟩
   -- `rintro … ⟨n, rfl⟩` leaves the goal as a beta-redex `(fun x ↦ _ ^ x) n`, which blocks `rw`
   change (a + b) ^ n ∈ _
   rw [SetLike.mem_coe]
-  refine add_pow_mem_of_mul_pow_mem fun k _ ↦ AddSubgroup.subset_closure ?_
+  refine add_pow_mem_of_mul_pow_mem hab fun k _ ↦ AddSubgroup.subset_closure ?_
   exact Set.mul_mem_mul ⟨k, rfl⟩ ⟨n - k, rfl⟩
+
+/-- A sum of power-bounded elements of a nonarchimedean commutative ring is power-bounded. -/
+theorem IsPowerBounded.add {A : Type*} [CommRing A] [TopologicalSpace A]
+    [NonarchimedeanAddGroup A] {a b : A} (ha : IsPowerBounded a) (hb : IsPowerBounded b) :
+    IsPowerBounded (a + b) :=
+  ha.add_of_commute (Commute.all a b) hb
 
 section ContinuousMul
 
@@ -253,8 +261,9 @@ variable [ContinuousMul A]
 
 Mathlib's `IsTopologicallyNilpotent.add` assumes a neighbourhood basis of zero by open *ideals*,
 which no nonzero Tate ring has; a basis by additive subgroups is enough. -/
-theorem isTopologicallyNilpotent_add {a b : A} (ha : IsTopologicallyNilpotent a)
-    (hb : IsTopologicallyNilpotent b) : IsTopologicallyNilpotent (a + b) := by
+theorem isTopologicallyNilpotent_add_of_commute {a b : A} (hab : Commute a b)
+    (ha : IsTopologicallyNilpotent a) (hb : IsTopologicallyNilpotent b) :
+    IsTopologicallyNilpotent (a + b) := by
   intro U hU
   obtain ⟨G, hGU⟩ := NonarchimedeanAddGroup.is_nonarchimedean U hU
   have hG : (G : Set A) ∈ 𝓝 (0 : A) := G.isOpen.mem_nhds G.zero_mem
@@ -269,11 +278,19 @@ theorem isTopologicallyNilpotent_add {a b : A} (ha : IsTopologicallyNilpotent a)
   filter_upwards [eventually_ge_atTop (Na + Nb)] with n hn
   refine hGU (?_ : (a + b) ^ n ∈ (G : Set A))
   rw [SetLike.mem_coe]
-  refine add_pow_mem_of_mul_pow_mem fun k hkn ↦ ?_
+  refine add_pow_mem_of_mul_pow_mem hab fun k hkn ↦ ?_
   by_cases hk : Na ≤ k
   · exact hVbG (Set.mul_mem_mul (hNa k hk) ⟨n - k, rfl⟩)
-  · rw [mul_comm (a ^ k) (b ^ (n - k))]
+  · rw [(hab.pow_pow k (n - k)).eq]
     exact hVaG (Set.mul_mem_mul (hNb (n - k) (by omega)) ⟨k, rfl⟩)
+
+/-- Over a nonarchimedean commutative ring the topologically nilpotent elements are closed under
+addition. Mathlib's `IsTopologicallyNilpotent.add` instead assumes a basis of open ideals, which
+excludes the Tate rings this is aimed at. -/
+theorem isTopologicallyNilpotent_add {A : Type*} [CommRing A] [TopologicalSpace A]
+    [NonarchimedeanAddGroup A] [ContinuousMul A] {a b : A} (ha : IsTopologicallyNilpotent a)
+    (hb : IsTopologicallyNilpotent b) : IsTopologicallyNilpotent (a + b) :=
+  isTopologicallyNilpotent_add_of_commute (Commute.all a b) ha hb
 
 end ContinuousMul
 
@@ -314,6 +331,7 @@ theorem mem_topologicallyNilpotentIdeal {a : powerBoundedSubring A} :
 
 /-- `A°°` is exactly the set of topologically nilpotent elements of `A`: no topologically
 nilpotent element is lost by cutting down to `A°`. -/
+@[simp]
 theorem coe_topologicallyNilpotentIdeal :
     Subtype.val '' (topologicallyNilpotentIdeal A : Set (powerBoundedSubring A)) =
       {a : A | IsTopologicallyNilpotent a} :=
@@ -365,6 +383,7 @@ variable {A B : Type*} [CommRing A] [CommRing B] [TopologicalSpace A] [Topologic
 
 /-- `A°` is preserved by a topological ring isomorphism: `e` carries `A°` onto `B°`. This is the
 bundled form of `TauCeti.Huber.isPowerBounded_ringEquiv_iff`. -/
+@[simp]
 theorem map_powerBoundedSubring (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm) :
     (powerBoundedSubring A).map (e : A →+* B) = powerBoundedSubring B := by
   ext b

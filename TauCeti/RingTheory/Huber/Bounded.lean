@@ -101,6 +101,7 @@ theorem isBounded_singleton_zero : IsBounded ({0} : Set M) :=
   fun U hU ↦ ⟨Set.univ, univ_mem, fun _ hx ↦ by simp_all [mem_of_mem_nhds hU]⟩
 
 /-- The pair `{0, 1}` is bounded. -/
+@[simp]
 theorem isBounded_pair_zero_one : IsBounded ({0, 1} : Set M) :=
   fun U hU ↦ ⟨U, hU, fun _ hx ↦ by
     obtain ⟨a, ha, b, hb, rfl⟩ := Set.mem_mul.mp hx
@@ -117,6 +118,12 @@ theorem isBounded_iUnion {ι : Sort*} [Finite ι] {S : ι → Set M} (hS : ∀ i
   rw [Set.mul_iUnion]
   exact Set.iUnion_subset fun i ↦
     (Set.mul_subset_mul_right (Set.iInter_subset _ i)).trans (hVS i)
+
+/-- A finite indexed union is bounded exactly when every piece is. -/
+@[simp]
+theorem isBounded_iUnion_iff {ι : Sort*} [Finite ι] {S : ι → Set M} :
+    IsBounded (⋃ i, S i) ↔ ∀ i, IsBounded (S i) :=
+  ⟨fun h i ↦ h.subset (Set.subset_iUnion _ i), isBounded_iUnion⟩
 
 /-- The union of two bounded sets is bounded. -/
 theorem IsBounded.union {S T : Set M} (hS : IsBounded S) (hT : IsBounded T) :
