@@ -32,13 +32,13 @@ two ordinary winding numbers on either side of the branch, so any `k ± 1/2` occ
 The proof is the Hungerbühler–Wasem residue theorem in its simple-pole regime
 (`TauCeti.Contour.hungerbuhlerWasem_residueTheorem_of_simple_poles`) applied to `logDeriv f`,
 whose residue at each point is the order of `f` there
-(`TauCeti.Contour.residue_logDeriv_eq_meromorphicOrderAt`). What that regime asks for, and what
-this file supplies, is that `logDeriv f` has at worst a simple pole at each point of `S`: HW's
-conditions (A′) and (B) are then automatic, so no regularity hypothesis beyond the immersion
-survives into the statement. The bound is not an extra assumption on `f` but a fact about
-logarithmic derivatives — `f'/f` has a simple pole at a zero or pole of `f` whatever the order
-there — which is why the hypotheses below are those of the classical statement with the
-avoidance dropped.
+(`TauCeti.Contour.residue_logDeriv_eq_meromorphicOrderAt`). What that regime asks for is that
+`logDeriv f` have at worst a simple pole at each point of `S`, which is
+`TauCeti.Contour.neg_one_le_meromorphicOrderAt_logDeriv`: HW's conditions (A′) and (B) are then
+automatic, so no regularity hypothesis beyond the immersion survives into the statement. That
+bound is not an extra assumption on `f` but a fact about logarithmic derivatives — `f'/f` has a
+simple pole at a zero or pole of `f` whatever the order there — which is why the hypotheses below
+are those of the classical statement with the avoidance dropped.
 
 Immersion, rather than mere piecewise-`C¹` regularity, is what the principal value at an on-curve
 singularity needs: the curve must leave the point at a definite speed for the excised integrals to
@@ -46,8 +46,6 @@ converge.
 
 ## Main results
 
-* `TauCeti.Contour.neg_one_le_meromorphicOrderAt_logDeriv` — a logarithmic derivative has at
-  worst a simple pole.
 * `TauCeti.Contour.hasCauchyPV_logDeriv_nullHomologous` — the principal-value argument principle
   for a cycle through the zeros.
 
@@ -62,60 +60,6 @@ public section
 open Set
 
 namespace TauCeti.Contour
-
-/-- **A logarithmic derivative has at worst a simple pole.** If `f` is meromorphic at `z₀`, of
-whatever order, then `meromorphicOrderAt (logDeriv f) z₀ ≥ -1`.
-
-Near `z₀` the logarithmic derivative splits as `n · (· − z₀)⁻¹ + logDeriv g` with `g` analytic and
-non-vanishing (`TauCeti.Contour.logDeriv_eventuallyEq_principalPart`); *that first summand* has
-order at least `-1`, being exactly `-1` when `n ≠ 0` and `⊤` when `n = 0`, where it is the zero
-function; the second summand is analytic; so the order of the sum is at least `-1`.
-Differentiating cannot make the pole worse than simple however deep the zero or pole of `f` is: a
-zero of order `n` contributes `n/(z - z₀)`, whose order is `-1` irrespective of `n`.
-
-For `logDeriv f` itself the order is exactly `-1` when `ord_{z₀} f ≠ 0` — the analytic tail cannot
-cancel a nonzero principal coefficient — merely `≥ 0` when `ord_{z₀} f = 0`, where `f'/f = g'/g`
-is analytic, and `⊤` when `f` vanishes identically near `z₀`, where `f'/f = deriv f / 0` vanishes
-too. Only the last case is not covered by the splitting, and it is handled separately below.
-
-Meromorphy is essential rather than bookkeeping: at an essential singularity the bound fails, the
-logarithmic derivative of `z ↦ exp (-z⁻¹)` being `z ↦ (z ^ 2)⁻¹`, of order `-2` at `0`.
-
-This is the hypothesis that puts the argument principle into the unconditional regime of the
-Hungerbühler–Wasem residue theorem. -/
-theorem neg_one_le_meromorphicOrderAt_logDeriv {f : ℂ → ℂ} {z₀ : ℂ} (hf : MeromorphicAt f z₀) :
-    ((-1 : ℤ) : WithTop ℤ) ≤ meromorphicOrderAt (logDeriv f) z₀ := by
-  rcases eq_or_ne (meromorphicOrderAt f z₀) ⊤ with htop | hne
-  · -- `f` vanishes on a punctured neighbourhood, so `logDeriv f = deriv f / f` vanishes there too.
-    have hlog : meromorphicOrderAt (logDeriv f) z₀ = ⊤ := by
-      rw [meromorphicOrderAt_eq_top_iff] at htop ⊢
-      filter_upwards [htop] with z hz
-      simp [logDeriv, hz]
-    rw [hlog]
-    exact le_top
-  obtain ⟨n, hn⟩ := WithTop.ne_top_iff_exists.mp hne
-  obtain ⟨g, hg_an, hg_ne, hgerm⟩ := logDeriv_eventuallyEq_principalPart hf hn.symm
-  have hlogg_an : AnalyticAt ℂ (logDeriv g) z₀ := analyticAt_logDeriv_of_analyticAt hg_an hg_ne
-  have hinv : MeromorphicAt (fun z => (z - z₀)⁻¹) z₀ := meromorphicAt_sub_inv z₀
-  have hA : MeromorphicAt (fun z => (n : ℂ) * (z - z₀)⁻¹) z₀ :=
-    analyticAt_const.meromorphicAt.mul hinv
-  have hinv_order : meromorphicOrderAt (fun z : ℂ => (z - z₀)⁻¹) z₀ = ((-1 : ℤ) : WithTop ℤ) := by
-    rw [show (fun z : ℂ => (z - z₀)⁻¹) = ((· - z₀) ^ (-1 : ℤ)) from
-      funext fun z => (zpow_neg_one _).symm]
-    exact meromorphicOrderAt_zpow_id_sub_const
-  have hprincipal :
-      ((-1 : ℤ) : WithTop ℤ) ≤ meromorphicOrderAt (fun z => (n : ℂ) * (z - z₀)⁻¹) z₀ := by
-    rw [show (fun z => (n : ℂ) * (z - z₀)⁻¹)
-        = (fun _ => (n : ℂ)) * (fun z : ℂ => (z - z₀)⁻¹) from rfl,
-      meromorphicOrderAt_mul analyticAt_const.meromorphicAt hinv, hinv_order]
-    exact le_add_of_nonneg_left analyticAt_const.meromorphicOrderAt_nonneg
-  rw [meromorphicOrderAt_congr hgerm,
-    show (fun z => (n : ℂ) * (z - z₀)⁻¹ + logDeriv g z)
-        = (fun z => (n : ℂ) * (z - z₀)⁻¹) + logDeriv g from rfl]
-  exact le_trans (le_min hprincipal
-    (le_trans (by exact_mod_cast (by norm_num : (-1 : ℤ) ≤ (0 : ℤ)))
-      hlogg_an.meromorphicOrderAt_nonneg))
-    (meromorphicOrderAt_add hA hlogg_an.meromorphicAt)
 
 /-- **The argument principle for a cycle running through the zeros.** For `f` analytic and
 non-vanishing on `U` off a finite `S ⊆ U`, meromorphic at each point of `S` of order `ord`, and a
