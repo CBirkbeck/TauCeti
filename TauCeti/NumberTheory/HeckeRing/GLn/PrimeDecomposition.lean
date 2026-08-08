@@ -66,6 +66,7 @@ def primePowDiag (p : ℕ) (e : Fin n → ℕ) : Fin n → ℕ :=
 lemma primePowDiag_apply (p : ℕ) (e : Fin n → ℕ) (i : Fin n) :
     primePowDiag n p e i = p ^ e i := (rfl)
 
+/-- Every entry of a `p`-power diagonal is positive when `p` is. -/
 lemma primePowDiag_pos (p : ℕ) (hp : 0 < p) (e : Fin n → ℕ) :
     ∀ i, 0 < primePowDiag n p e i :=
   fun _ ↦ pow_pos hp _
@@ -104,6 +105,7 @@ noncomputable def diagOrdCompl (p : ℕ) (a : Fin n → ℕ) : Fin n → ℕ :=
 lemma diagOrdCompl_apply (p : ℕ) (a : Fin n → ℕ) (i : Fin n) :
     diagOrdCompl n p a i = ordCompl[p] (a i) := (rfl)
 
+/-- Removing the `p`-part preserves positivity of every entry. -/
 lemma diagOrdCompl_pos (p : ℕ) (a : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i) :
     ∀ i, 0 < diagOrdCompl n p a i :=
   fun i ↦ Nat.ordCompl_pos p (ha_pos i).ne'
