@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.RingTheory.Valuation.ValuativeRel.Basic
 public import TauCeti.RingTheory.Valuation.ValuativeRel.Basic
 
 /-!
@@ -67,6 +66,7 @@ theorem comap_id (v : ValuativeRel A) : comap (RingHom.id A) v = v := by
   ext a₁ a₂; rfl
 
 /-- Pulling back along a composite is the composite of the pullbacks. -/
+@[simp]
 theorem comap_comp {C : Type*} [Semiring C] (φ : A →+* B) (ψ : B →+* C) (v : ValuativeRel C) :
     comap (ψ.comp φ) v = comap φ (comap ψ v) := by
   ext a₁ a₂; rfl

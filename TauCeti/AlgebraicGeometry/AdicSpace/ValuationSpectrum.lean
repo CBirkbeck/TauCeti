@@ -25,7 +25,8 @@ We define the valuation spectrum `Spv A` following Wedhorn, *Adic Spaces*
 * `TauCeti.ValuationSpectrum.comap φ` : The continuous map `Spv B → Spv A` induced by
   `φ : A →+* B`.
 * `TauCeti.ValuationSpectrum.supp v` : The support ideal `{a ∈ A | v(a) = 0}`.
-* `TauCeti.ValuationSpectrum.quotientLift 𝔞 v h` : Lift `v` with `𝔞 ≤ supp v` to `Spv (A ⧸ 𝔞)`.
+* `TauCeti.ValuationSpectrum.quotientLift 𝔞 h` : Lift the implicitly inferred point `v` with
+  `𝔞 ≤ supp v` to `Spv (A ⧸ 𝔞)`.
 * `TauCeti.ValuationSpectrum.localizationComapSection S B v hS` : Lift `v` to a localization
   `Spv B`.
 * `TauCeti.ValuationSpectrum.suppFun` : The continuous support map `Spv A → Spec A`.
@@ -96,6 +97,7 @@ lemma basicOpen_mul_subset (t f s : A) : basicOpen (t * f) (t * s) ⊆ basicOpen
   · simpa [mul_comm s t] using v.toValuativeRel.mul_vle_mul_left hs t
 
 /-- The basic open subset for `f = s = 1` is the whole spectrum: `Spv(A)(1/1) = Spv A`. -/
+@[simp]
 lemma basicOpen_one : basicOpen (1 : A) 1 = Set.univ :=
   Set.eq_univ_iff_forall.mpr fun v ↦
     ⟨v.toValuativeRel.vle_refl 1, v.toValuativeRel.not_vle_one_zero⟩
@@ -159,6 +161,7 @@ lemma comap_id : comap (RingHom.id A) = id := by
   exact ValuationSpectrum.ext (ValuativeRel.comap_id v.toValuativeRel)
 
 /-- `comap` is contravariantly functorial: `comap (ψ ∘ φ) = comap φ ∘ comap ψ`. -/
+@[simp]
 lemma comap_comp (φ : A →+* B) (ψ : B →+* C) :
     comap (ψ.comp φ) = comap φ ∘ comap ψ := by
   funext v
@@ -292,10 +295,10 @@ lemma comap_localizationComapSection (v : Spv A) (hS : S ≤ v.supp.primeCompl) 
     comap (algebraMap A B) (localizationComapSection S B v hS) = v := by
   have hS' : S ≤ v.valuation.supp.primeCompl := fun _ hs ↦
     Ideal.mem_primeCompl_iff.mpr (v.supp_eq_valuation_supp ▸ Ideal.mem_primeCompl_iff.mp (hS hs))
+  have key : (v.valuation.extendToLocalization hS' B).comap (algebraMap A B) = v.valuation :=
+    Valuation.ext fun a ↦ Valuation.extendToLocalization_apply_map_apply _ hS' B a
   unfold localizationComapSection
-  rw [comap_ofValuation,
-    show (v.valuation.extendToLocalization hS' B).comap (algebraMap A B) = v.valuation from
-      Valuation.ext fun a ↦ Valuation.extendToLocalization_apply_map_apply _ hS' B a]
+  rw [comap_ofValuation, key]
   exact ofValuation_valuation v
 
 /-- `S` is disjoint from `supp(comap(algebraMap, w))` for `w : Spv B`. -/
