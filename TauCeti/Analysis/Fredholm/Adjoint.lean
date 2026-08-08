@@ -160,17 +160,10 @@ private theorem codRestrict_domRestrict_adjoint_surjective (T : E →L[𝕜] F)
     (ContinuousLinearMap.coe_codRestrict_apply _ _ _ y).trans
       (congrFun (ContinuousLinearMap.coe_domRestrict (T†) R) y)
   have hB : ((T†).domRestrict R).codRestrict Kᗮ (fun y => adjoint_mem_orthogonal_ker T y)
-      = ((e : Kᗮ →L[𝕜] R)†) := by
-    refine ContinuousLinearMap.ext fun y => ext_inner_left 𝕜 fun x => ?_
-    calc
-      inner 𝕜 x (((T†).domRestrict R).codRestrict Kᗮ (fun y => adjoint_mem_orthogonal_ker T y) y)
-          = inner 𝕜 (x : E) ((T†) (y : F)) := by
-        rw [Submodule.coe_inner, hcoe]
-      _ = inner 𝕜 (T (x : E)) (y : F) := T.adjoint_inner_right x y
-      _ = inner 𝕜 ((e x : R) : F) (y : F) := by rw [he_apply]
-      _ = inner 𝕜 (e x) y := (Submodule.coe_inner R (e x) y).symm
-      _ = inner 𝕜 x (((e : Kᗮ →L[𝕜] R)†) y) :=
-        (ContinuousLinearMap.adjoint_inner_right (e : Kᗮ →L[𝕜] R) x y).symm
+      = ((e : Kᗮ →L[𝕜] R)†) :=
+    (ContinuousLinearMap.eq_adjoint_iff _ _).2 fun y x => by
+      rw [Submodule.coe_inner, hcoe, Submodule.coe_inner, T.adjoint_inner_left,
+        ContinuousLinearEquiv.coe_coe, he_apply]
   rw [hB]
   exact (adjoint_bijective e).2
 
