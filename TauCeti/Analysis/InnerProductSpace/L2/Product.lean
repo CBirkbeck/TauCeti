@@ -272,17 +272,6 @@ theorem setIntegral_prod_eq_zero_of_forall_inner [SFinite μ] [SFinite ν] {h : 
     _ = inner 𝕜 (L2prodMul F G) h := (L2.inner_def _ _).symm
     _ = 0 := hz F G
 
-/-- **The boxes built from two spanning sequences exhaust the product space.** -/
-private theorem iUnion_prod_spanningSets [SigmaFinite μ] [SigmaFinite ν] :
-    ⋃ n, (spanningSets μ n ×ˢ spanningSets ν n) = (Set.univ : Set (α × β)) := by
-  refine Set.eq_univ_of_forall fun p => ?_
-  have h1 : p.1 ∈ ⋃ n, spanningSets μ n := by rw [iUnion_spanningSets]; trivial
-  have h2 : p.2 ∈ ⋃ n, spanningSets ν n := by rw [iUnion_spanningSets]; trivial
-  obtain ⟨i, hi⟩ := Set.mem_iUnion.1 h1
-  obtain ⟨j, hj⟩ := Set.mem_iUnion.1 h2
-  exact Set.mem_iUnion.2 ⟨max i j, monotone_spanningSets μ (le_max_left i j) hi,
-    monotone_spanningSets ν (le_max_right i j) hj⟩
-
 /-- **Orthogonality kills the part of a measurable set inside a single box.** -/
 private theorem setIntegral_inter_prod_spanningSets_eq_zero [SigmaFinite μ] [SigmaFinite ν]
     {h : Lp 𝕜 2 (μ.prod ν)}
@@ -321,7 +310,9 @@ theorem setIntegral_eq_zero_of_forall_inner [SigmaFinite μ] [SigmaFinite ν] {h
     Set.inter_subset_inter_right _
       (Set.prod_mono (monotone_spanningSets μ hmn) (monotone_spanningSets ν hmn))
   have hcover : ⋃ n, u ∩ (spanningSets μ n ×ˢ spanningSets ν n) = u := by
-    rw [← Set.inter_iUnion, iUnion_prod_spanningSets, Set.inter_univ]
+    rw [← Set.inter_iUnion,
+      Set.iUnion_prod_of_monotone (monotone_spanningSets μ) (monotone_spanningSets ν),
+      iUnion_spanningSets, iUnion_spanningSets, Set.univ_prod_univ, Set.inter_univ]
   have htend := tendsto_setIntegral_of_monotone
     (fun n => hu.inter ((measurableSet_spanningSets μ n).prod (measurableSet_spanningSets ν n)))
     hmono
