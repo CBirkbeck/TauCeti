@@ -65,24 +65,6 @@ section Conjugation
 An element of `SL_n(ℤ)` congruent to `1` modulo the full diagonal product conjugates
 across `natDiagGL n a` — on either side — to an integral matrix of determinant one. -/
 
-/-- `mapGL_coe_matrix` states the coercion as `map (algebraMap ℤ ℚ)`; this restates it with
-the algebra map reduced to `Int.cast`. The two are definitionally equal — the proof is just
-`mapGL_coe_matrix τ` — but they are *syntactically* different, and `Matrix.map_mul_intCast`
-and `Matrix.diagonal_map` below match only the `Int.cast` form.
-
-Inlining it is possible but not free. The full normalisation is
-`simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
-Int.coe_castRingHom]` (as `simp?` reports); with that set, five of the eight call sites below
-go through unchanged. The remaining three interleave the rewrite with `Matrix.map_mul_intCast`
-and need more than a substitution, because the simp set leaves `Int.cast` eta-expanded as
-`fun x => ↑x`, which `Matrix.map_mul_intCast` then does not match.
-
-The sibling `map_intCast_mul` *was* a plain redundant alias and has been removed in favour of
-`Matrix.map_mul_intCast`. -/
-private lemma mapGL_coe (τ : SpecialLinearGroup (Fin n) ℤ) :
-    (↑(mapGL ℚ τ) : Matrix (Fin n) (Fin n) ℚ) = τ.val.map (Int.cast : ℤ → ℚ) :=
-  mapGL_coe_matrix τ
-
 private lemma conjugate_congruent_mem_SLnZ (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
     (τ : SpecialLinearGroup (Fin n) ℤ) (hcong : ∀ i j, (∏ k, (a k : ℤ)) ∣
       ((τ : Matrix (Fin n) (Fin n) ℤ) i j - if i = j then 1 else 0)) :
@@ -112,10 +94,15 @@ private lemma conjugate_congruent_mem_SLnZ (a : Fin n → ℕ) (ha : ∀ i, 0 < 
   have h_Q_eq : natDiagGL n a * mapGL ℚ τ =
       mapGL ℚ (⟨M, hM_det⟩ : SpecialLinearGroup (Fin n) ℤ) * natDiagGL n a := by
     apply Units.ext
-    simp only [Units.val_mul, mapGL_coe n τ, mapGL_coe n ⟨M, hM_det⟩, natDiagGL_coe n a ha]
+    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Units.val_mul, natDiagGL_coe n a ha]
     have h_diag_map : (Matrix.diagonal fun i ↦ (a i : ℤ)).map (Int.cast : ℤ → ℚ) =
         Matrix.diagonal fun i ↦ (a i : ℚ) := Matrix.diagonal_map (by simp)
-    rw [← h_diag_map, ← Matrix.map_mul_intCast, ← Matrix.map_mul_intCast, h_int_eq]
+    have hmap : (↑(mapGL ℚ (⟨M, hM_det⟩ : SpecialLinearGroup (Fin n) ℤ)) :
+        Matrix (Fin n) (Fin n) ℚ) = M.map ⇑(Int.castRingHom ℚ) := rfl
+    rw [← h_diag_map]
+    simp only [← Int.coe_castRingHom, ← Matrix.map_mul]
+    rw [h_int_eq, Matrix.map_mul, hmap]
   exact eq_mul_inv_iff_mul_eq.mpr h_Q_eq.symm
 
 private lemma inv_conjugate_congruent_mem_SLnZ (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
@@ -150,10 +137,15 @@ private lemma inv_conjugate_congruent_mem_SLnZ (b : Fin n → ℕ) (hb : ∀ i, 
   have h_Q_eq : natDiagGL n b * mapGL ℚ (⟨N, hN_det⟩ : SpecialLinearGroup (Fin n) ℤ) =
       mapGL ℚ τ * natDiagGL n b := by
     apply Units.ext
-    simp only [Units.val_mul, mapGL_coe n τ, mapGL_coe n ⟨N, hN_det⟩, natDiagGL_coe n b hb]
+    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Units.val_mul, natDiagGL_coe n b hb]
     have h_diag_map : (Matrix.diagonal fun i ↦ (b i : ℤ)).map (Int.cast : ℤ → ℚ) =
         Matrix.diagonal fun i ↦ (b i : ℚ) := Matrix.diagonal_map (by simp)
-    rw [← h_diag_map, ← Matrix.map_mul_intCast, ← Matrix.map_mul_intCast, h_int_eq]
+    have hmap : (↑(mapGL ℚ (⟨N, hN_det⟩ : SpecialLinearGroup (Fin n) ℤ)) :
+        Matrix (Fin n) (Fin n) ℚ) = N.map ⇑(Int.castRingHom ℚ) := rfl
+    rw [← h_diag_map]
+    simp only [← Int.coe_castRingHom, ← Matrix.map_mul]
+    rw [h_int_eq, Matrix.map_mul, hmap]
   exact (eq_inv_mul_of_mul_eq h_Q_eq).trans (mul_assoc _ _ _).symm
 
 end Conjugation
@@ -263,7 +255,7 @@ private lemma mem_SLnZ_of_coprime_scaling (C : GL (Fin n) ℚ)
   have hN_det : N.det = 1 := by exact_mod_cast hN_detQ
   refine (mem_SLnZ_iff n).mpr ⟨⟨N, hN_det⟩, ?_⟩
   apply Units.ext
-  rw [mapGL_coe n ⟨N, hN_det⟩, hN_cast]
+  exact hN_cast.symm
 
 /-- Conjugating an integral matrix by the inverse-side diagonal scales entries by at worst
 the full diagonal product. -/
@@ -276,7 +268,8 @@ private lemma diagConj_scaling (a : Fin n → ℕ) (ha : ∀ i, 0 < a i)
   have h_mul : natDiagGL n a * C = mapGL ℚ σ * natDiagGL n a := by
     rw [hC_def, ← mul_assoc, ← mul_assoc, mul_inv_cancel, one_mul]
   have h_entry := congr_arg (fun g : GL (Fin n) ℚ ↦ (↑g : Matrix (Fin n) (Fin n) ℚ) i j) h_mul
-  simp only [Units.val_mul, natDiagGL_coe n a ha, mapGL_coe n σ,
+  simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Units.val_mul, natDiagGL_coe n a ha, 
     Matrix.diagonal_mul, Matrix.mul_diagonal, Matrix.map_apply] at h_entry
   have hai_ne : (a i : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (ha i).ne'
   have h_dvd : (a i : ℤ) ∣ ∏ k, (a k : ℤ) := Finset.dvd_prod_of_mem _ (Finset.mem_univ i)
@@ -322,7 +315,8 @@ private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
         group
       have h_entry := congr_arg
         (fun g : GL (Fin n) ℚ ↦ (↑g : Matrix (Fin n) (Fin n) ℚ) p q) h_Db
-      simp only [Units.val_mul, natDiagGL_coe n b hb, mapGL_coe n G,
+      simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Units.val_mul, natDiagGL_coe n b hb, 
         Matrix.mul_diagonal, Matrix.diagonal_mul, Matrix.map_apply] at h_entry
       have hbq_ne : (b q : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (hb q).ne'
       field_simp at h_entry ⊢
@@ -343,7 +337,8 @@ private lemma diagSandwich_scaling (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
   push_cast
   refine Finset.sum_congr rfl fun p _ ↦ Finset.sum_congr rfl fun q _ ↦ ?_
   have hDpq := (h_D_scale p q).choose_spec
-  simp only [mapGL_coe n F, mapGL_coe n E, Matrix.map_apply]
+  simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, Matrix.map_apply]
   -- name the chosen integer: its `Exists` argument mentions the term being rewritten,
   -- and rewriting under the bare `choose` breaks the motive
   set z := (h_D_scale p q).choose
@@ -366,7 +361,8 @@ private lemma coprime_coupling_mem_H (a b : Fin n → ℕ)
   have h_det : (↑C : Matrix (Fin n) (Fin n) ℚ).det = 1 := by
     have hσ_det : (σ.val.map (Int.cast : ℤ → ℚ)).det = 1 := by
       rw [← Int.cast_det, σ.prop, Int.cast_one]
-    simp only [hC_def, Units.val_mul, Matrix.det_mul, mapGL_coe n σ]
+    simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe,
+      RingHom.mapMatrix_apply, Int.coe_castRingHom, hC_def, Units.val_mul, Matrix.det_mul]
     rw [hσ_det, mul_one, ← Matrix.det_mul, ← Units.val_mul, inv_mul_cancel, Units.val_one,
       Matrix.det_one]
   have h_scale_a : ∀ i j, ∃ z : ℤ,
