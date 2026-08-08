@@ -10,11 +10,12 @@ public import Mathlib.RingTheory.Kaehler.Basic
 # Semilinear functoriality of Kähler differentials along algebra homomorphisms
 
 For an `R`-algebra homomorphism `f : A →ₐ[R] B`, the induced map on Kähler differentials sends
-`D x` to `D (f x)`. It is not linear but `f`-**semilinear** —
-`mapSemilinear f (a • ω) = f a • mapSemilinear f ω` — so it is packaged as a semilinear map
-`Ω[A⁄R] →ₛₗ[f.toRingHom] Ω[B⁄R]`, following the precedent of `LinearMap.frobenius`. The
-motivating special case is an algebra *endomorphism* `f : S →ₐ[R] S` (for instance Frobenius),
-where this is the pullback of differentials along `f`.
+`D x` to `D (f x)`. It is `R`-linear, since `f` fixes `R`, but it moves the `A`-action through
+`f` — it is `f`-**semilinear**, `mapSemilinear f (a • ω) = f a • mapSemilinear f ω` — so it is
+packaged as a semilinear map `Ω[A⁄R] →ₛₗ[f.toRingHom] Ω[B⁄R]`, following the precedent of
+`LinearMap.frobenius`. The motivating special case is an algebra *endomorphism*
+`f : S →ₐ[R] S` (for instance Frobenius), where this is the pullback of differentials along
+`f`, and where `A`-linearity genuinely fails.
 
 Mathlib's `KaehlerDifferential.map` is functoriality for a *tower* `[Algebra A B]`
 `[IsScalarTower R A B]`, so it cannot state this map: for an arbitrary `f : A →ₐ[R] B` no
@@ -100,7 +101,11 @@ theorem mapSemilinear_D (f : A →ₐ[R] B) (x : A) : mapSemilinear f (D R A x) 
   KaehlerDifferential.map_D R R A B x
 
 /-- The semilinearity law of `mapSemilinear`, stated with `f` applied rather than
-`f.toRingHom`. -/
+`f.toRingHom`.
+
+This is not interchangeable with the generic `map_smulₛₗ`: that lemma produces the coefficient
+`f.toRingHom a`, which is only *definitionally* `f a`, and it carries no `@[simp]` attribute, so
+`simp` alone leaves `mapSemilinear f (a • ω)` untouched. This is the simp-normal form. -/
 @[simp]
 theorem mapSemilinear_smul (f : A →ₐ[R] B) (a : A) (ω : Ω[A⁄R]) :
     mapSemilinear f (a • ω) = f a • mapSemilinear f ω := by
