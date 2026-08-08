@@ -208,10 +208,14 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     Filter.inter_mem hT₁mem
       (MulOpposite.continuous_op.continuousAt.preimage_mem_nhds (by simpa using hT₂mem))
   have hT_left : ∀ a ∈ hSf.toFinset, ∀ y ∈ T, MvPowerSeries.coeff a f * y ∈ (V : Set A) :=
-    fun a ha y hy => hT₁ ⟨_, ⟨a, hSf.mem_toFinset.mp ha, rfl⟩, y, hy.1, rfl⟩
-  have hT_right : ∀ b ∈ hSg.toFinset, ∀ x ∈ T, x * MvPowerSeries.coeff b g ∈ (V : Set A) :=
-    fun b hb x hx =>
-      hT₂ ⟨_, ⟨b, hSg.mem_toFinset.mp hb, rfl⟩, MulOpposite.op x, hx.2, rfl⟩
+    fun a ha y hy =>
+      hT₁ (Set.mul_mem_mul (Set.mem_image_of_mem _ (hSf.mem_toFinset.mp ha)) hy.1)
+  have hT_right : ∀ b ∈ hSg.toFinset, ∀ x ∈ T, x * MvPowerSeries.coeff b g ∈ (V : Set A) := by
+    intro b hb x hx
+    -- `hT₂` lives in `Aᵐᵒᵖ`, where the product is reversed; unopping it gives the `A`-statement.
+    have hmem := hT₂ (Set.mul_mem_mul (Set.mem_image_of_mem _ (hSg.mem_toFinset.mp hb))
+      (Set.mem_preimage.mp hx.2))
+    simpa only [Set.mem_preimage, MulOpposite.unop_mul, MulOpposite.unop_op] using hmem
   have hgT : {s | MvPowerSeries.coeff s g ∉ T}.Finite :=
     (Filter.mem_cofinite.mp (isRestricted_iff.mp hg hT_nhds)).subset (fun s hs => hs)
   have hfT : {s | MvPowerSeries.coeff s f ∉ T}.Finite :=
