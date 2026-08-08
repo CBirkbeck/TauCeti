@@ -58,6 +58,10 @@ variable {R : Type*} [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K] [Al
 `Set.integer S K` is a subalgebra of `K` over `R`. -/
 example : IsFractionRing (S.integer K) K := inferInstance
 
+/-- Membership in the `S`-integers is the valuation condition defining it. Mathlib states
+`Set.integer` through `Subalgebra.copy`, but provides no membership lemma; this is it. -/
+lemma mem_integer_iff {x : K} : x ∈ S.integer K ↔ ∀ v ∉ S, v.valuation K x ≤ 1 := Iff.rfl
+
 /-- The ring of `S`-integers is integrally closed: it is an intersection of valuation subrings
 of `K`, each of which is integrally closed in `K`. -/
 instance : IsIntegrallyClosed (S.integer K) := by
@@ -67,7 +71,9 @@ instance : IsIntegrallyClosed (S.integer K) := by
       ({ (v.1.valuation K).valuationSubring.toSubring with
           algebraMap_mem' := fun r ↦ v.1.valuation_le_one r } : Subalgebra R K) := by
     ext x
-    simp only [Algebra.mem_iInf, Subtype.forall]
+    simp only [Algebra.mem_iInf, Subtype.forall, mem_integer_iff]
+    -- What remains unfolds membership in the anonymous `Subalgebra` assembled above from
+    -- `valuationSubring.toSubring`; Mathlib has no membership lemma for that constructor.
     rfl
   rw [he]
   exact IsIntegrallyClosed.iInf _ fun v ↦
@@ -112,18 +118,21 @@ lemma HeightOneSpectrum.valuation_le_one_of_mem_inv_coeIdeal {v w : HeightOneSpe
   suffices H : ∀ x ∈ (v.asIdeal : FractionalIdeal R⁰ K) * (v.asIdeal : FractionalIdeal R⁰ K)⁻¹,
       ∃ hx : x ∈ A, (⟨x, hx⟩ : A) ∈ M by
     obtain ⟨hx, hx'⟩ := H 1 (by rwa [← FractionalIdeal.coe_mul, FractionalIdeal.mem_coe] at h1)
-    exact (show (⟨1, hx⟩ : A) = 1 from rfl) ▸ hx'
+    have h1A : (⟨1, hx⟩ : A) = 1 := Subtype.val_injective (Subalgebra.coe_one A).symm
+    exact h1A ▸ hx'
   intro x hx
   rw [← FractionalIdeal.mem_coe, FractionalIdeal.coe_mul] at hx
   refine Submodule.mul_induction_on hx (fun a ha y hy ↦ ?_) (fun x y hx hy ↦ ?_)
   · obtain ⟨a, ha', rfl⟩ := (FractionalIdeal.mem_coeIdeal R⁰).mp
       ((FractionalIdeal.mem_coe (I := (v.asIdeal : FractionalIdeal R⁰ K))).mpr ha)
-    have hyA : y ∈ A := fun w hw ↦ HeightOneSpectrum.valuation_le_one_of_mem_inv_coeIdeal K
-      (show w ≠ v by rintro rfl; exact hw hv)
-      ((FractionalIdeal.mem_coe (I := (v.asIdeal : FractionalIdeal R⁰ K)⁻¹)).mpr hy)
+    have hyA : y ∈ A := (mem_integer_iff K S).mpr fun w hw ↦
+      have hwv : w ≠ v := by rintro rfl; exact hw hv
+      HeightOneSpectrum.valuation_le_one_of_mem_inv_coeIdeal K hwv
+        ((FractionalIdeal.mem_coe (I := (v.asIdeal : FractionalIdeal R⁰ K)⁻¹)).mpr hy)
     have haA : algebraMap R K a ∈ A := A.algebraMap_mem a
     refine ⟨mul_mem haA hyA, ?_⟩
-    have he : (⟨algebraMap R K a * y, mul_mem haA hyA⟩ : A) = algebraMap R A a * ⟨y, hyA⟩ := rfl
+    have he : (⟨algebraMap R K a * y, mul_mem haA hyA⟩ : A) = algebraMap R A a * ⟨y, hyA⟩ :=
+      Subtype.ext (by rw [Subalgebra.coe_mul, Subalgebra.coe_algebraMap])
     rw [he]
     exact Ideal.mul_mem_right _ M (Ideal.mem_map_of_mem _ ha')
   · obtain ⟨hx, hx'⟩ := hx
@@ -174,17 +183,16 @@ factors lie in `S`, and each of those extends to the unit ideal by `integer_map_
   refine le_antisymm Ideal.map_comap_le fun x hx ↦ ?_
   set f := algebraMap R (S.integer K) with hf
   set J' := Ideal.map f (I.comap f) with hJ'
-  have coeval (r : R) : ((f r : S.integer K) : K) = algebraMap R K r := by
-    rw [IsScalarTower.algebraMap_apply R (S.integer K) K]; rfl
   -- for a denominator `d` of `x`, the product `f d * x` is extended from `R` and lies in `I`
   have key (d : R) (hd : d ∈ Algebra.denIdeal K (x : K)) : f d * x ∈ J' := by
     rw [Algebra.mem_denIdeal_iff] at hd
     obtain ⟨s, hs⟩ := hd
     have hfx : f d * x = f s := by
       apply Subtype.val_injective
-      rw [Subalgebra.coe_mul, coeval d, coeval s, hs]
+      rw [Subalgebra.coe_mul, Subalgebra.coe_algebraMap, Subalgebra.coe_algebraMap, hs]
     rw [hfx]
-    exact Ideal.mem_map_of_mem f (show f s ∈ I from hfx ▸ I.mul_mem_left _ hx)
+    have hsI : f s ∈ I := hfx ▸ I.mul_mem_left _ hx
+    exact Ideal.mem_map_of_mem f hsI
   -- the elements `r` with `r * x ∈ J'` form an ideal containing the extension of `denIdeal`
   let K' : Ideal (S.integer K) :=
     { carrier := {r | r * x ∈ J'}
