@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.MvPowerSeries.Basic
+public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 
 /-!
@@ -554,6 +555,30 @@ theorem weightedNhd_leftMul [NonarchimedeanRing A] {T : Fin k → Set A} (hT : I
       (weightMul_mono T p.2 (le_refl _) (hg p.2))
     rw [hsum] at this
     exact this
+
+/-- **The neighbourhood basis of `A⟨X⟩_T`**: the subgroups `U⟨X⟩`, as `U` ranges over the open
+subgroups of `A`, are a `RingSubgroupsBasis`. This is Wedhorn's assertion that they form a
+fundamental system of neighbourhoods of zero for a ring topology. -/
+theorem weightedNhd_ringSubgroupsBasis [NonarchimedeanRing A] {T : Fin k → Set A}
+    (hT : IsWeightFamily T) :
+    RingSubgroupsBasis fun U : OpenAddSubgroup A ↦ weightedNhd T hT U.toAddSubgroup :=
+  .of_comm _
+    (fun U V ↦ ⟨U ⊓ V, le_inf (weightedNhd_mono inf_le_left) (weightedNhd_mono inf_le_right)⟩)
+    (fun U ↦ by
+      obtain ⟨W, hWU⟩ := NonarchimedeanRing.mul_subset U
+      exact ⟨W, by
+        rintro _ ⟨f, hf, g, hg, rfl⟩
+        exact weightedNhd_mul_subset hWU hf hg⟩)
+    (fun x U ↦ by
+      obtain ⟨V, hV⟩ := weightedNhd_leftMul hT x U
+      exact ⟨V, fun g hg ↦ hV g hg⟩)
+
+/-- **Wedhorn's topology on `A⟨X⟩_T`** (Remark and Definition 5.48): the ring topology whose
+neighbourhoods of zero are the `U⟨X⟩`. -/
+@[reducible]
+noncomputable def weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
+    (hT : IsWeightFamily T) : TopologicalSpace (weightedRestrictedSubring T hT) :=
+  (weightedNhd_ringSubgroupsBasis hT).topology
 
 end
 
