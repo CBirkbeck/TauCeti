@@ -40,6 +40,16 @@ pointwise product set. Wedhorn's own statement forces this: he asserts that the 
 fundamental system of neighbourhoods of zero for a *ring* topology, so each must be an additive
 subgroup, and the pointwise set `{t * u}` is not closed under addition.
 
+The predicate carries no nonarchimedean hypothesis, matching (5.6.1), but it only *means*
+coefficient convergence when the open additive subgroups are a neighbourhood basis of zero — the
+setting Wedhorn works in throughout §5.6. Without that it can be vacuous: over `ℝ` with its usual
+topology the only open additive subgroup is `ℝ` itself, so every power series is `T`-restricted
+for the trivial weight. `TauCeti.Huber.isWeightedRestricted_one_weight_iff` therefore assumes
+`NonarchimedeanRing`.
+
+If some `Tᵢ` is empty and `νᵢ > 0` then `Tν` is empty and `Tν · U = ⊥`, so the condition forces
+those coefficients to vanish; the closure lemmas below need no nonemptiness hypothesis.
+
 This is *not* `TauCeti/RingTheory/Huber/ScaledTateTopology.lean`, which retopologises the
 ordinary `A⟨X⟩` by transporting along `X ↦ f X`; there the weight multiplies the coefficient
 rather than the neighbourhood, and the carrier does not vary with `T`.
