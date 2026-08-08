@@ -95,8 +95,9 @@ def mapVariableChange : (C • W).toAffine.Point →+ W.toAffine.Point where
   rfl
 
 /-- The change of variables is injective on points: it is inverted by the change of variables
-`C⁻¹`. -/
-lemma mapVariableChange_injective : Function.Injective (mapVariableChange W C) := by
+`C⁻¹`. Private: it exists to build `equivVariableChange`, which then carries the same
+injectivity for users. -/
+private lemma mapVariableChange_injective : Function.Injective (mapVariableChange W C) := by
   rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩) h
   · rfl
   · rw [← zero_def, (mapVariableChange W C).map_zero, mapVariableChange_some] at h
@@ -121,6 +122,35 @@ private lemma mapVariableChange_mapVariableChange_inv (P : W.toAffine.Point) :
   · rw [cast_some, mapVariableChange_some, mapVariableChange_some]
     simp only [some.injEq, VariableChange.inv_def, Units.val_inv_eq_inv_val]
     constructor <;> field
+
+/-- **Identity law.** The trivial change of variables induces the transport along
+`(1 : VariableChange F) • W = W`. -/
+lemma mapVariableChange_one :
+    mapVariableChange W 1
+      = (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+          (one_smul (VariableChange F) W)).toAddMonoidHom := by
+  ext P
+  rcases P with _ | ⟨x, y, h⟩
+  · simp only [← zero_def, _root_.map_zero]
+  · rw [mapVariableChange_some]
+    simp only [AddEquiv.coe_toAddMonoidHom, cast_some, some.injEq]
+    exact ⟨by simp [VariableChange.one_def], by simp [VariableChange.one_def]⟩
+
+/-- **Cocycle law.** Composing changes of variables composes the induced maps: `C * C'` acts as
+`C` into `C' • W` followed by `C'`, transported along `(C * C') • W = C • (C' • W)`. This is
+what makes a family of variable changes a descent datum. -/
+lemma mapVariableChange_mul (C' : VariableChange F) :
+    mapVariableChange W (C * C')
+      = (mapVariableChange W C').comp ((mapVariableChange (C' • W) C).comp
+          (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+            (mul_smul C C' W)).toAddMonoidHom) := by
+  ext P
+  rcases P with _ | ⟨x, y, h⟩
+  · simp only [← zero_def, _root_.map_zero]
+  · rw [mapVariableChange_some]
+    simp only [AddMonoidHom.coe_comp, Function.comp_apply, AddEquiv.coe_toAddMonoidHom,
+      cast_some, mapVariableChange_some, some.injEq]
+    exact ⟨variableChange_X_mul C C' x, variableChange_Y_mul C C' x y⟩
 
 /-- The group isomorphism `(C • W).Point ≃+ W.Point` induced by the admissible change of
 variables `(x, y) ↦ (u²x + r, u³y + u²sx + t)`. It is `mapVariableChange` upgraded to an
