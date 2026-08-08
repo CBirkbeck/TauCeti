@@ -22,7 +22,7 @@ of the principal value.
 ## Main declarations
 
 * `TauCeti.ModularForm.eq_four_of_fdBoundary_eq_ceiling_corner`: the contour reaches the
-  corner only at `t = 4`.
+  corner only at `t = 4`, at every parameter and for every height off the corner row.
 * `TauCeti.ModularForm.cauchyPVExistsAt_fdBoundary_ceiling_corner`: the Cauchy-kernel
   principal value at the corner exists.
 
@@ -44,51 +44,51 @@ namespace ModularForm
 
 variable {H t : ℝ}
 
-/-- The ceiling advances the real part affinely from the left corner. -/
-private lemma re_fdBoundary_of_mem_Icc_four_five (H : ℝ) {t : ℝ} (ht : t ∈ Icc (4 : ℝ) 5) :
-    (fdBoundary H t).re = t - 4 - 1 / 2 := by
-  rw [eqOn_fdBoundary_segment5 H ht, fdBoundary_segment5_apply, AffineMap.lineMap_apply]
-  simp [Complex.real_smul]
-  ring
-
 /-- **The contour reaches the ceiling corner only at `t = 4`.** Below the corner the real
 part is bounded away from `-1/2` except on the left vertical, where the height is below the
 ceiling until the corner itself; above it the height is the ceiling's but the real part
 increases. -/
-theorem eq_four_of_fdBoundary_eq_ceiling_corner (hH : Real.sqrt 3 / 2 < H)
-    (ht : t ∈ Icc (0 : ℝ) 5) (heq : fdBoundary H t = -1 / 2 + H * Complex.I) : t = 4 := by
+theorem eq_four_of_fdBoundary_eq_ceiling_corner (hH : H ≠ Real.sqrt 3 / 2)
+    (heq : fdBoundary H t = -1 / 2 + H * Complex.I) : t = 4 := by
   have him : (fdBoundary H t).im = H := by rw [heq]; simp
   have hre : (fdBoundary H t).re = -1 / 2 := by rw [heq]; simp
   rcases le_or_gt t 4 with h4 | h4
   · rcases le_or_gt t 1 with h1 | h1
     · rw [im_fdBoundary_of_le_one h1] at him
-      have ht0 : t = 0 := by nlinarith [ht.1]
+      have ht0 : t = 0 := by
+        rcases mul_eq_zero.mp (by linarith : t * (Real.sqrt 3 / 2 - H) = 0) with h | h
+        · exact h
+        · exact absurd (by linarith : H = Real.sqrt 3 / 2) hH
       rw [ht0, re_fdBoundary_segment1 H ⟨le_rfl, by norm_num⟩] at hre
       norm_num at hre
     · rcases le_or_gt t 3 with h3 | h3
       · exfalso
         have hnorm : ‖fdBoundary H t‖ = 1 := norm_fdBoundary_arc h1.le h3
+        have hpos : 0 < (fdBoundary H t).im := im_fdBoundary_arc_pos H ⟨h1.le, h3⟩
         have hsq : ‖fdBoundary H t‖ ^ 2 =
             (fdBoundary H t).re ^ 2 + (fdBoundary H t).im ^ 2 := by
           rw [← Complex.normSq_eq_norm_sq, Complex.normSq_apply]
           ring
         rw [hnorm, hre, him] at hsq
-        nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3), Real.sqrt_nonneg 3]
+        rw [him] at hpos
+        exact hH (by nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3),
+          Real.sqrt_nonneg 3])
       · rw [im_fdBoundary_of_le_four h3 h4] at him
-        have hpos : 0 < H - Real.sqrt 3 / 2 := by linarith
-        nlinarith
-  · rw [re_fdBoundary_of_mem_Icc_four_five H ⟨h4.le, ht.2⟩] at hre
+        rcases mul_eq_zero.mp (by linarith : (t - 4) * (H - Real.sqrt 3 / 2) = 0) with h | h
+        · linarith
+        · exact absurd (by linarith : H = Real.sqrt 3 / 2) hH
+  · rw [re_fdBoundary_of_gt_four h4] at hre
     linarith
 
 /-- **The Cauchy-kernel principal value at the ceiling corner exists.** The contour is a
 piecewise-`C¹` immersion meeting the corner only at the interior parameter `4`, so the
 contour library's immersion criterion applies directly. -/
-theorem cauchyPVExistsAt_fdBoundary_ceiling_corner (hH : Real.sqrt 3 / 2 < H) :
+theorem cauchyPVExistsAt_fdBoundary_ceiling_corner (hH : H ≠ Real.sqrt 3 / 2) :
     Contour.CauchyPVExistsAt (fdBoundary H) 0 5
       (fun z => (z - (-1 / 2 + H * Complex.I))⁻¹) (-1 / 2 + H * Complex.I) := by
-  refine (isPwC1ImmersionOn_fdBoundary (ne_of_gt hH)).cauchyPVExistsAt_inv_sub
-    (by norm_num) fun t ht heq => ?_
-  rw [eq_four_of_fdBoundary_eq_ceiling_corner hH ht heq]
+  refine (isPwC1ImmersionOn_fdBoundary hH).cauchyPVExistsAt_inv_sub
+    (by norm_num) fun t _ heq => ?_
+  rw [eq_four_of_fdBoundary_eq_ceiling_corner hH heq]
   exact ⟨by norm_num, by norm_num⟩
 
 end ModularForm
