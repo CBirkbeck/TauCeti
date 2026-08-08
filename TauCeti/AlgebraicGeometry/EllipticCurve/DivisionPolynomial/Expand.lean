@@ -24,22 +24,23 @@ field or to a universal polynomial ring.
 
 * `TauCeti.WeierstrassCurve.Φ_two_mem_range_expand`, `ΨSq_two_mem_range_expand`: characteristic
   two.
-* `TauCeti.WeierstrassCurve.Ψ₃_mem_range_expand`, `ΨSq_three_mem_range_expand`: characteristic
-  three.
+* `TauCeti.WeierstrassCurve.Ψ₃_mem_range_expand`, `ΨSq_three_mem_range_expand`,
+  `Φ_three_mem_range_expand`: characteristic three.
 
 ## Provenance
 
 Ported from the AINTLIB `HasseWeil` project (Apache-2.0), revision `513e83879e2f`, file
 `HasseWeil/Verschiebung/DivPolyExpand.lean`, declarations `Φ_two_mem_expand_two_charP`,
-`ΨSq_two_mem_expand_two_charP`, `Ψ₃_mem_expand_three_charP` and
-`ΨSq_three_mem_expand_three_charP`.
+`ΨSq_two_mem_expand_two_charP`, `Ψ₃_mem_expand_three_charP`,
+`ΨSq_three_mem_expand_three_charP` and `Φ_three_mem_expand_three_charP`.
 
 The source's `b_relation_of_charP_three` is not ported: Mathlib already has it verbatim as
 `WeierstrassCurve.b_relation_of_char_three` (`Weierstrass.lean:213`).
 
-That file's sixth declaration, `Φ_three_mem_expand_three_charP`, is **not** ported: it carries
-`set_option maxHeartbeats 1000000`, which this repository forbids, and making it elaborate within
-budget is a separate piece of work rather than a transcription.
+The source proves `Φ_three_mem_expand_three_charP` by exhibiting an explicit cubic witness,
+which needs `set_option maxHeartbeats 1000000`; this repository forbids raising the limit, so
+`Φ_three_mem_range_expand` is instead proved through `Polynomial.expand_contract` (whence its
+extra `NoZeroDivisors` hypothesis) and elaborates within the default budget.
 -/
 
 public section
@@ -82,6 +83,37 @@ multiplicative. -/
 theorem ΨSq_three_mem_range_expand [CharP R 3] : W.ΨSq 3 ∈ Set.range (⇑(expand R 3)) := by
   obtain ⟨g, hg⟩ := Ψ₃_mem_range_expand W
   exact ⟨g ^ 2, by rw [W.ΨSq_three, ← hg, map_pow]⟩
+
+/-- In characteristic three, `Φ₃` is a polynomial in `X³`.
+
+Unlike the cases above, this is proved through the derivative criterion: in characteristic `p` a
+polynomial with vanishing derivative lies in the image of `expand R p`
+(`Polynomial.expand_contract`, whence the `NoZeroDivisors` hypothesis), and
+`derivative (Φ 3) = 0` is a `linear_combination` over `3 = 0` and the characteristic-three
+`b`-relation `b₈ = b₂b₆ − b₄²`. The explicit-witness route this replaces does not elaborate
+within the repository heartbeat budget. -/
+theorem Φ_three_mem_range_expand [CharP R 3] [NoZeroDivisors R] :
+    W.Φ 3 ∈ Set.range (⇑(expand R 3)) := by
+  have hderiv : Polynomial.derivative (W.Φ 3) = 0 := by
+    have h3 : (3 : R[X]) = 0 := by exact_mod_cast CharP.cast_eq_zero R[X] 3
+    have hbC : C W.b₈ = C W.b₂ * C W.b₆ - C W.b₄ ^ 2 := by
+      rw [W.b_relation_of_char_three, map_sub, map_mul, map_pow]
+    rw [_root_.WeierstrassCurve.Φ_three]
+    simp only [_root_.WeierstrassCurve.Ψ₃, _root_.WeierstrassCurve.preΨ₄,
+      _root_.WeierstrassCurve.Ψ₂Sq, derivative_mul, derivative_X, derivative_pow, derivative_add,
+      derivative_C, derivative_ofNat, map_ofNat, map_sub, map_mul, map_pow, Nat.cast_ofNat]
+    rw [hbC]
+    -- The remaining identity is `3 * M = 0` for the explicit polynomial `M` below.
+    linear_combination (3 * X ^ 8 - 14 * C W.b₄ * X ^ 6 -
+      (2 * C W.b₂ * C W.b₄ + 48 * C W.b₆) * X ^ 5 -
+      (65 * C W.b₂ * C W.b₆ - 55 * C W.b₄ ^ 2) * X ^ 4 -
+      (16 * C W.b₂ ^ 2 * C W.b₆ - 16 * C W.b₂ * C W.b₄ ^ 2 + 4 * C W.b₄ * C W.b₆) * X ^ 3 -
+      (C W.b₂ ^ 3 * C W.b₆ - C W.b₂ ^ 2 * C W.b₄ ^ 2 + 17 * C W.b₂ * C W.b₄ * C W.b₆ -
+        18 * C W.b₄ ^ 3 - 3 * C W.b₆ ^ 2) * X ^ 2 -
+      (2 * C W.b₂ ^ 2 * C W.b₄ * C W.b₆ - 2 * C W.b₂ * C W.b₄ ^ 3 + 2 * C W.b₂ * C W.b₆ ^ 2 -
+        4 * C W.b₄ ^ 2 * C W.b₆) * X -
+      (C W.b₂ * C W.b₄ ^ 2 * C W.b₆ - C W.b₄ ^ 4 - C W.b₄ * C W.b₆ ^ 2)) * h3
+  exact ⟨contract 3 (W.Φ 3), expand_contract (p := 3) hderiv (by norm_num)⟩
 
 end WeierstrassCurve
 
