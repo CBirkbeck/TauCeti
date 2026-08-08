@@ -511,6 +511,50 @@ theorem weightedNhd_mul_subset [NonarchimedeanRing A] {T : Fin k → Set A}
   have := coeff_mul_mem_weightMul (T := T) (V := W) (W := W) hf hg ν
   exact weightMul_mono T ν ((AddSubgroup.closure_le _).mpr hWU) this
 
+/-- **The left-multiplication half of the neighbourhood basis**: for a fixed `x ∈ A⟨X⟩_T` and an
+open subgroup `U`, some `V⟨X⟩` is carried into `U⟨X⟩` by multiplication by `x`. This is the
+condition `RingSubgroupsBasis` calls `leftMul`.
+
+Unlike `TauCeti.Huber.weightedNhd_mul_subset` this does need the bad coefficients of `x` handled,
+since `x` is only restricted rather than uniformly bounded — but no exceptional set of `ν`
+survives, because the absorbing subgroup works for every `β` at once. -/
+theorem weightedNhd_leftMul [NonarchimedeanRing A] {T : Fin k → Set A} (hT : IsWeightFamily T)
+    (x : weightedRestrictedSubring T hT) (U : OpenAddSubgroup A) :
+    ∃ V : OpenAddSubgroup A, ∀ g : weightedRestrictedSubring T hT,
+      g ∈ weightedNhd T hT V.toAddSubgroup → x * g ∈ weightedNhd T hT U.toAddSubgroup := by
+  classical
+  have hUnhds : (U : Set A) ∈ nhds (0 : A) := U.isOpen.mem_nhds U.zero_mem
+  obtain ⟨W, hWU⟩ := NonarchimedeanRing.mul_subset U
+  have hx : IsWeightedRestricted T (x : MvPowerSeries (Fin k) A) := x.2
+  have hF : {α | MvPowerSeries.coeff α (x : MvPowerSeries (Fin k) A)
+      ∉ weightMul T α W.toAddSubgroup}.Finite := Filter.eventually_cofinite.mp (hx W)
+  obtain ⟨Zx, hZx⟩ := exists_openAddSubgroup_forall_mul_subset hF.toFinset
+    (fun α ↦ MvPowerSeries.coeff α (x : MvPowerSeries (Fin k) A))
+    (fun α ↦ weightMul T α U.toAddSubgroup) (fun α _ ↦ hT.weightMul_mem_nhds α hUnhds)
+  refine ⟨W ⊓ Zx, fun g hg ν ↦ ?_⟩
+  have hZleW : (W ⊓ Zx : OpenAddSubgroup A) ≤ W := inf_le_left
+  have hZleZx : (W ⊓ Zx : OpenAddSubgroup A) ≤ Zx := inf_le_right
+  rw [show ((x * g : weightedRestrictedSubring T hT) : MvPowerSeries (Fin k) A)
+      = (x : MvPowerSeries (Fin k) A) * (g : MvPowerSeries (Fin k) A) from rfl,
+    MvPowerSeries.coeff_mul]
+  refine sum_mem fun p hp ↦ ?_
+  have hsum : p.1 + p.2 = ν := Finset.mem_antidiagonal.mp hp
+  by_cases hp1 : MvPowerSeries.coeff p.1 (x : MvPowerSeries (Fin k) A)
+      ∈ weightMul T p.1 W.toAddSubgroup
+  · -- `p.1` meets the `W` bound, and every coefficient of `g` meets the `W ⊓ Zx` bound
+    have hp2 : MvPowerSeries.coeff p.2 (g : MvPowerSeries (Fin k) A)
+        ∈ weightMul T p.2 W.toAddSubgroup :=
+      weightMul_mono T p.2 hZleW (hg p.2)
+    have := weightMul_mul_mem hp1 hp2
+    rw [hsum] at this
+    exact weightMul_mono T ν ((AddSubgroup.closure_le _).mpr hWU) this
+  · -- `p.1` is one of the finitely many bad coefficients: absorb it
+    have := weightMul_absorb
+      (fun z hz ↦ hZx p.1 (hF.mem_toFinset.mpr hp1) z (hZleZx hz))
+      (weightMul_mono T p.2 (le_refl _) (hg p.2))
+    rw [hsum] at this
+    exact this
+
 end
 
 end TauCeti.Huber
