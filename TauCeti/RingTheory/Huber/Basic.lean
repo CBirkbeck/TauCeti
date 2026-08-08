@@ -139,7 +139,9 @@ def idealImage (P : PairOfDefinition A) (n : ℕ) : AddSubgroup A :=
 @[simp]
 theorem coe_idealImage (P : PairOfDefinition A) (n : ℕ) : (P.idealImage n : Set A) =
     Subtype.val ''
-      ((P.idealOfDefinition ^ n : Ideal P.ringOfDefinition) : Set P.ringOfDefinition) := (rfl)
+      ((P.idealOfDefinition ^ n : Ideal P.ringOfDefinition) : Set P.ringOfDefinition) := by
+  ext x
+  simp [idealImage]
 
 /-- Membership in the image of `Iⁿ`. -/
 @[simp]
@@ -163,6 +165,7 @@ There is no simpler characterisation: the image of `I` under `A₀ → A` is an 
 not in general an ideal of `A`, so `x ∈ I · A` is strictly weaker than `∃ y ∈ I, ↑y = x`. For
 `A₀ = ℤ_[p] ⊆ A = ℚ_[p]` and `I = p • ℤ_[p]` the image is `p • ℤ_[p]` while the ideal it
 generates is all of `ℚ_[p]`. -/
+@[simp]
 theorem mem_extendedIdealOfDefinition_iff (P : PairOfDefinition A) {x : A} :
     x ∈ P.extendedIdealOfDefinition ↔
       x ∈ Ideal.span (Subtype.val '' (P.idealOfDefinition : Set P.ringOfDefinition)) := by
@@ -228,13 +231,22 @@ section Discrete
 
 variable (A : Type*) [CommRing A] [TopologicalSpace A] [DiscreteTopology A]
 
-/-- The pair of definition of a discrete ring: the whole ring, with the zero ideal. -/
-def PairOfDefinition.discrete : PairOfDefinition A where
+/-- The pair of definition of a discrete ring: the whole ring, with the zero ideal. Exposed so
+that the projection lemmas below can state its ring and ideal of definition. -/
+@[expose] def PairOfDefinition.discrete : PairOfDefinition A where
   ringOfDefinition := ⊤
   isOpen_ringOfDefinition := by simp
   idealOfDefinition := ⊥
   fg_idealOfDefinition := Submodule.fg_bot
   isAdic_idealOfDefinition := is_bot_adic_iff.mpr inferInstance
+
+@[simp]
+theorem PairOfDefinition.discrete_ringOfDefinition :
+    (PairOfDefinition.discrete A).ringOfDefinition = ⊤ := (rfl)
+
+@[simp]
+theorem PairOfDefinition.discrete_idealOfDefinition :
+    (PairOfDefinition.discrete A).idealOfDefinition = ⊥ := (rfl)
 
 /-- A discrete ring is Huber, with `(A, 0)` as a pair of definition. This is the first of the
 roadmap's Layer-0 examples, and the witness that `IsHuberRing` is not vacuous. -/
