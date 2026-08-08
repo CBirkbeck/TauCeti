@@ -437,6 +437,24 @@ theorem IsWeightedRestricted.neg {T : Fin k → Set A} {f : MvPowerSeries (Fin k
   filter_upwards [hf U] with ν hfν
   simpa using (weightMul T ν U.toAddSubgroup).neg_mem hfν
 
+omit [TopologicalSpace A] in
+/-- If *every* coefficient of `f` meets the `V` bound and every coefficient of `g` meets the `W`
+bound, then every coefficient of `f * g` meets the `V · W` bound.
+
+Unlike `TauCeti.Huber.IsWeightedRestricted.mul` this needs no finiteness bookkeeping — there are
+no exceptional coefficients — which is why it is the form the neighbourhood subgroups use. -/
+theorem coeff_mul_mem_weightMul {T : Fin k → Set A} {V W : AddSubgroup A}
+    {f g : MvPowerSeries (Fin k) A}
+    (hf : ∀ α, MvPowerSeries.coeff α f ∈ weightMul T α V)
+    (hg : ∀ β, MvPowerSeries.coeff β g ∈ weightMul T β W) (ν : Fin k →₀ ℕ) :
+    MvPowerSeries.coeff ν (f * g)
+      ∈ weightMul T ν (AddSubgroup.closure ((V : Set A) * (W : Set A))) := by
+  classical
+  rw [MvPowerSeries.coeff_mul]
+  refine sum_mem fun p hp ↦ ?_
+  have hsum : p.1 + p.2 = ν := Finset.mem_antidiagonal.mp hp
+  exact hsum ▸ weightMul_mul_mem (hf p.1) (hg p.2)
+
 /-! ### The ring `A⟨X⟩_T` -/
 
 /-- **Wedhorn's `A⟨X⟩_T`**: the weighted restricted power series form a subring of `A[[X]]`.
@@ -475,6 +493,23 @@ theorem mem_weightedNhd [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWei
     {U : AddSubgroup A} {f : weightedRestrictedSubring T hT} :
     f ∈ weightedNhd T hT U ↔
       ∀ ν, MvPowerSeries.coeff ν (f : MvPowerSeries (Fin k) A) ∈ weightMul T ν U := (Iff.rfl)
+
+/-- The neighbourhood subgroups are antitone in `U`. -/
+theorem weightedNhd_mono [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T}
+    {U V : AddSubgroup A} (h : U ≤ V) : weightedNhd T hT U ≤ weightedNhd T hT V :=
+  fun _ hf ν ↦ weightMul_mono T ν h (hf ν)
+
+/-- **The multiplicative half of the neighbourhood basis**: if `W · W ⊆ U` then the product of two
+elements of `W⟨X⟩` lies in `U⟨X⟩`. This is the condition
+`RingSubgroupsBasis` calls `mul`, and unlike multiplicative closure of the ring it needs no
+finiteness argument. -/
+theorem weightedNhd_mul_subset [NonarchimedeanRing A] {T : Fin k → Set A}
+    {hT : IsWeightFamily T} {W U : AddSubgroup A} (hWU : (W : Set A) * (W : Set A) ⊆ (U : Set A))
+    {f g : weightedRestrictedSubring T hT} (hf : f ∈ weightedNhd T hT W)
+    (hg : g ∈ weightedNhd T hT W) : f * g ∈ weightedNhd T hT U := by
+  intro ν
+  have := coeff_mul_mem_weightMul (T := T) (V := W) (W := W) hf hg ν
+  exact weightMul_mono T ν ((AddSubgroup.closure_le _).mpr hWU) this
 
 end
 
