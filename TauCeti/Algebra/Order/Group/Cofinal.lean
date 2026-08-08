@@ -58,9 +58,9 @@ variable {Γ : Type*} [CommGroup Γ] [LinearOrder Γ] [IsOrderedMonoid Γ]
 eventually dominates the powers of `γ`: `∀ h ∈ H, ∃ n, γ ^ n < h`. This is the
 `γ ∈ Γ` case of Wedhorn Definition 1.16, which takes `H` to be any subgroup and
 lets the base range over `Γ ∪ {0}`; the adjoined base `0` is cofinal for every
-subgroup trivially, and the case that matters for valuations — where a value may
-vanish — is `TauCeti.Valuation.CofinalValue`, stated on the value group with zero.
-Membership of `γ` in `H` is not required. Distinct from Mathlib's `IsCofinal`,
+subgroup trivially, and the vanishing-base case belongs with the valuation-side
+theory, over a value group with zero, rather than here. Membership of `γ` in `H`
+is not required. Distinct from Mathlib's `IsCofinal`,
 a property of sets with respect to `≤`. -/
 def IsCofinalElement (H : Subgroup Γ) (γ : Γ) : Prop :=
   ∀ h ∈ H, ∃ n : ℕ, γ ^ n < h
@@ -89,15 +89,22 @@ theorem isCofinalElement_iff_subset_closure {H : Subgroup Γ} {γ : Γ} (hγ1 : 
   · intro hγ h hh
     obtain ⟨n, hn⟩ := hγ h hh
     obtain ⟨m, hm⟩ := hγ h⁻¹ (inv_mem hh)
-    rw [SetLike.mem_coe, mem_closure_singleton_of_le_one hγ1.le]
-    refine ⟨max n m, ?_, ?_⟩
-    · exact (pow_le_pow_right_of_le_one' hγ1.le (le_max_left n m)).trans hn.le
+    rw [SetLike.mem_coe, mem_closure_singleton, mabs_eq_inv_self.mpr hγ1.le]
+    refine ⟨max n m, mabs_le.mpr ⟨?_, ?_⟩⟩
+    · rw [inv_pow, inv_inv]
+      exact (pow_le_pow_right_of_le_one' hγ1.le (le_max_left n m)).trans hn.le
     · have h1 : h < (γ ^ m)⁻¹ := by
         have h2 := inv_lt_inv' hm
         rwa [inv_inv] at h2
-      exact h1.le.trans (inv_le_inv' (pow_le_pow_right_of_le_one' hγ1.le (le_max_right n m)))
+      refine h1.le.trans ?_
+      rw [inv_pow]
+      exact inv_le_inv' (pow_le_pow_right_of_le_one' hγ1.le (le_max_right n m))
   · intro hsub h hh
-    obtain ⟨n, hle, -⟩ := (mem_closure_singleton_of_le_one hγ1.le).mp (hsub hh)
+    obtain ⟨n, hbd⟩ := mem_closure_singleton.mp (hsub hh)
+    rw [mabs_eq_inv_self.mpr hγ1.le, inv_pow] at hbd
+    have hle : γ ^ n ≤ h := by
+      have := (mabs_le.mp hbd).1
+      rwa [inv_inv] at this
     have hstep : γ ^ (n + 1) < γ ^ n := by
       calc γ ^ (n + 1) = γ * γ ^ n := by rw [pow_succ, mul_comm]
         _ < 1 * γ ^ n := mul_lt_mul_left hγ1 (γ ^ n)
