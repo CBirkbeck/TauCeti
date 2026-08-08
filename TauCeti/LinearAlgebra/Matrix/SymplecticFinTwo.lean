@@ -7,76 +7,65 @@ module
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 
 /-!
-# A `2 × 2` matrix scales the standard symplectic form by its determinant
+# The standard symplectic form on a rank-two module, and determinants
 
-For `J = !![0, 1; -1, 0]` the standard alternating form on a rank-two module, every `2 × 2` matrix
-`φ` satisfies
+For `J = !![0, 1; -1, 0]` and any `2 × 2` matrix `φ` over a commutative ring, `φᵀ J φ = det φ • J`.
+The determinant is therefore *recoverable* from the way `φ` scales `J`: if `φᵀ J φ = d • J` for
+some scalar `d`, then `d = det φ`.
 
-`φᵀ * J * φ = φ.det • J`,
-
-and consequently a `φ` whose symplectic adjoint composes with it to a scalar has that scalar as its
-determinant.
-
-Mathlib's `Matrix.J` is not the right vehicle for this. It is defined on `l ⊕ l` for arbitrary `l`
-and characterises the symplectic *group* (`Matrix.mem_iff' : A ∈ symplecticGroup l R ↔ Aᵀ * J * A =
-J`), whereas the identity here holds for an **arbitrary** matrix with `det φ` on the right — a
-statement about the top exterior power, hence specific to rank two. It is false for larger `l`.
+That recovery is the point of the file. A pairing on a rank-two module which is known to scale by
+some quantity under a given endomorphism identifies that quantity as the determinant, without
+computing it — and, in particular, without needing the endomorphism to be part of any additive
+structure. Only the single endomorphism at hand is involved.
 
 ## Main results
 
-* `TauCeti.Matrix.transpose_mul_symplectic_mul_eq_det_smul`: `φᵀ * J * φ = φ.det • J`.
-* `TauCeti.Matrix.det_eq_of_symplectic_adjoint_of_mul_eq_smul_one`: if `φᵀ * J = J * ψ` and
-  `ψ * φ = d • 1`, then `φ.det = d`.
+* `Matrix.transpose_mul_symJFinTwo_mul`: `φᵀ J φ = det φ • J`.
+* `Matrix.det_eq_of_symplectic_scaling`: the scaling coefficient is the determinant.
+* `Matrix.det_eq_of_symplectic_adjoint`: the same conclusion from an adjoint `ψ` with
+  `φᵀ J = J ψ` and `ψ φ = d • 1`.
 
 ## Provenance
 
 Ported from the AINTLIB `HasseWeil` project (Apache-2.0), revision `513e83879e2f`, file
-`HasseWeil/WeilPairing/PairingDet.lean`, declarations `symJ`, `transpose_mul_symJ_mul` and
-`det_eq_of_symplectic_adjoint`. The source's `symJ` definition is not ported — the matrix is
-written literally, so no new name competes with Mathlib's `Matrix.J`.
-
-In the pinned Hasse development these are the linear-algebra core of Silverman III.8.6
-(`det φ_ℓ = deg φ`): on `E[ℓ] ≅ 𝔽_ℓ²` the Weil pairing is the standard symplectic form, its adjoint
-property reads `φᵀ J = J φ̂`, and the dual relation is `φ̂ φ = (deg φ) • 1`. **No elliptic-curve
-content appears here** — this file is matrices over a commutative ring.
+`HasseWeil/WeilPairing/PairingDet.lean`, declarations `symJ`, `transpose_mul_symJ_mul`,
+`det_eq_of_symplectic_adjoint` and `det_eq_of_symplectic_scaling`. The statements are unchanged;
+the names are qualified by the shape of the form, and the source's elliptic-curve commentary
+(where the scaling is the Weil pairing's `e(φS, φT) = e(S, T) ^ deg φ` and the conclusion is
+`det = deg`) is not reproduced, since no curve occurs in any statement here.
 -/
 
 public section
 
-open Matrix
+namespace Matrix
 
-namespace TauCeti.Matrix
+variable {F : Type*} [CommRing F]
 
-variable {R : Type*} [CommRing R]
+/-- The standard symplectic form `!![0, 1; -1, 0]` on a rank-two free module. -/
+def symJFinTwo (F : Type*) [CommRing F] : Matrix (Fin 2) (Fin 2) F := !![0, 1; -1, 0]
 
-/-- A `2 × 2` matrix scales the standard symplectic form `!![0, 1; -1, 0]` by its determinant. -/
 @[simp]
-theorem transpose_mul_symplectic_mul_eq_det_smul (φ : Matrix (Fin 2) (Fin 2) R) :
-    φᵀ * !![0, 1; -1, 0] * φ = φ.det • !![0, 1; -1, 0] := by
-  -- This is the rank-two case of the determinant transformation law
-  -- (`TauCeti.Matrix.detRowAlternating_mulVec`): both entries are the determinant form evaluated
-  -- on the `i`-th and `j`-th columns of `φ`. Deriving it from that lemma is not shorter, because
-  -- `detRowAlternating` is an `alternatization` that `simp` does not put into coordinates, so the
-  -- four entries have to be computed either way.
+theorem symJFinTwo_apply_zero_one : symJFinTwo F 0 1 = 1 := (rfl)
+
+/-- **A `2 × 2` matrix scales the symplectic form by its determinant.** -/
+theorem transpose_mul_symJFinTwo_mul (φ : Matrix (Fin 2) (Fin 2) F) :
+    φᵀ * symJFinTwo F * φ = φ.det • symJFinTwo F := by
   ext i j
   fin_cases i <;> fin_cases j <;>
-    simp [mul_apply, Fin.sum_univ_two, det_fin_two, transpose_apply] <;> ring
+    simp [symJFinTwo, mul_apply, Fin.sum_univ_two, det_fin_two, transpose_apply] <;> ring
 
-/-- If `ψ` is the symplectic adjoint of `φ`, in the sense `φᵀ * J = J * ψ`, and `ψ * φ` is the
-scalar `d`, then `d` is the determinant of `φ`.
+/-- **The scaling coefficient is the determinant.** If `φ` scales the symplectic form by `d`,
+then `d` is `det φ`. Only `φ` is involved: no adjoint, and no additivity in `φ`. -/
+theorem det_eq_of_symplectic_scaling {φ : Matrix (Fin 2) (Fin 2) F} {d : F}
+    (hscale : φᵀ * symJFinTwo F * φ = d • symJFinTwo F) : φ.det = d := by
+  rw [transpose_mul_symJFinTwo_mul] at hscale
+  simpa using congrFun (congrFun hscale 0) 1
 
-This is the matrix form of the argument that a pairing-adjoint together with a dual relation pins
-the determinant: `φᵀ J φ = J ψ φ = d • J`, and comparing with
-`transpose_mul_symplectic_mul_eq_det_smul` gives `det φ = d` by reading off one entry. -/
-theorem det_eq_of_symplectic_adjoint_of_mul_eq_smul_one {φ ψ : Matrix (Fin 2) (Fin 2) R} {d : R}
-    (hadj : φᵀ * !![0, 1; -1, 0] = !![0, 1; -1, 0] * ψ)
-    (hdual : ψ * φ = d • (1 : Matrix (Fin 2) (Fin 2) R)) : φ.det = d := by
-  have hkey : φ.det • (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) R)
-      = d • !![0, 1; -1, 0] := by
-    rw [← transpose_mul_symplectic_mul_eq_det_smul φ, hadj, Matrix.mul_assoc, hdual]
-    ext i j
-    fin_cases i <;> fin_cases j <;> simp [mul_apply, Fin.sum_univ_two]
-  have := congrArg (fun M => M 0 1) hkey
-  simpa using this
+/-- **The determinant from an adjoint.** If `ψ` is adjoint to `φ` for the symplectic form, in the
+sense that `φᵀ J = J ψ`, and `ψ φ = d • 1`, then `det φ = d`. -/
+theorem det_eq_of_symplectic_adjoint {φ ψ : Matrix (Fin 2) (Fin 2) F} {d : F}
+    (hadj : φᵀ * symJFinTwo F = symJFinTwo F * ψ)
+    (hψφ : ψ * φ = d • (1 : Matrix (Fin 2) (Fin 2) F)) : φ.det = d :=
+  det_eq_of_symplectic_scaling <| by rw [hadj, mul_assoc, hψφ, Matrix.mul_smul, mul_one]
 
-end TauCeti.Matrix
+end Matrix
