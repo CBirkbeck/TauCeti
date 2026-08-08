@@ -543,6 +543,30 @@ theorem mem_weightedRestrictedSubring [NonarchimedeanRing A] {T : Fin k → Set 
     {hT : IsWeightFamily T} {f : MvPowerSeries (Fin k) A} :
     f ∈ weightedRestrictedSubring T hT ↔ IsWeightedRestricted T f := (Iff.rfl)
 
+/-- The constant-series embedding `A → A⟨X⟩_T`. -/
+noncomputable def weightedC [NonarchimedeanRing A] (T : Fin k → Set A) (hT : IsWeightFamily T) :
+    A →+* weightedRestrictedSubring T hT where
+  toFun a := ⟨MvPowerSeries.C a, isWeightedRestricted_C T a⟩
+  map_one' := by ext; simp
+  map_mul' _ _ := by ext; simp
+  map_zero' := by ext; simp
+  map_add' _ _ := by ext; simp
+
+@[simp]
+theorem coe_weightedC [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T} (a : A) :
+    (weightedC T hT a : MvPowerSeries (Fin k) A) = MvPowerSeries.C a := (rfl)
+
+/-- `A⟨X⟩_T` is an `A`-algebra, via the constant series. -/
+noncomputable instance weightedRestrictedSubring.instAlgebra [NonarchimedeanRing A]
+    (T : Fin k → Set A) (hT : IsWeightFamily T) : Algebra A (weightedRestrictedSubring T hT) :=
+  (weightedC T hT).toAlgebra
+
+@[simp]
+theorem coe_algebraMap_weightedRestrictedSubring [NonarchimedeanRing A] {T : Fin k → Set A}
+    {hT : IsWeightFamily T} (a : A) :
+    ((algebraMap A (weightedRestrictedSubring T hT) a : weightedRestrictedSubring T hT) :
+      MvPowerSeries (Fin k) A) = MvPowerSeries.C a := (rfl)
+
 /-- **Wedhorn's neighbourhood subgroups** `U⟨X⟩`: the series all of whose coefficients — not
 merely almost all — satisfy the `U` bound. These are the fundamental system of neighbourhoods of
 zero for the topology on `A⟨X⟩_T`. -/
