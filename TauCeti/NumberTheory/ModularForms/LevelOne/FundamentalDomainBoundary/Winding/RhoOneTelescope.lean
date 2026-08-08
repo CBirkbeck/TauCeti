@@ -203,7 +203,7 @@ private lemma telescope_rho_one_piece_arc_second (H : ℝ) :
         (2 * Real.pi / 3 - Real.pi / 2)).continuousOn :
         ContinuousOn (deriv fun s ↦ fdBoundary_segment3 s - ((UpperHalfPlane.ρ : ℂ) + 1))
           (Icc (2 : ℝ) 3))).div hcont hne').mono (hu ▸ Set.Subset.rfl)).intervalIntegrable
-  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_im_nonneg
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg
     (g := fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))
     (h := fun s ↦ fdBoundary_segment3 s - ((UpperHalfPlane.ρ : ℂ) + 1)) countable_empty
     (hu ▸ hcont)
@@ -273,7 +273,7 @@ private lemma telescope_rho_one_piece_left_vertical (hH : Real.sqrt 3 / 2 < H) :
     ((((by rw [hd]; exact continuousOn_const :
         ContinuousOn (deriv fun s ↦ fdBoundary_segment4 H s - ((UpperHalfPlane.ρ : ℂ) + 1))
           (Icc (3 : ℝ) 4))).div hcont hne').mono (hu ▸ Set.Subset.rfl)).intervalIntegrable
-  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_im_nonneg
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg
     (g := fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))
     (h := fun s ↦ fdBoundary_segment4 H s - ((UpperHalfPlane.ρ : ℂ) + 1)) countable_empty
     (hu ▸ hcont)

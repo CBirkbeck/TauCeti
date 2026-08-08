@@ -229,7 +229,8 @@ private lemma telescope_piece_left_lower (hH : 1 < H) :
         ContinuousOn (deriv fun s ↦ fdBoundary_segment4 H s - Complex.I)
           (Icc (3 : ℝ) (leftVerticalCrossingI H)))).div hcont hne').mono
       (hu ▸ Set.Subset.rfl)).intervalIntegrable
-  refine Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_of_im_nonpos
+  refine
+    Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_sub_log_neg_of_im_nonpos
     (g := fun s ↦ fdBoundary H s - Complex.I)
     (h := fun s ↦ fdBoundary_segment4 H s - Complex.I) countable_empty
     (hu ▸ hcont)
@@ -311,7 +312,7 @@ private lemma telescope_piece_left_upper (hH : 1 < H) :
         ContinuousOn (deriv fun s ↦ fdBoundary_segment4 H s - Complex.I)
           (Icc (leftVerticalCrossingI H) (4 : ℝ)))).div hcont hne').mono
       (hu ▸ Set.Subset.rfl)).intervalIntegrable
-  refine Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_im_nonneg
+  refine Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg
     (g := fun s ↦ fdBoundary H s - Complex.I)
     (h := fun s ↦ fdBoundary_segment4 H s - Complex.I) countable_empty
     (hu ▸ hcont)

@@ -206,7 +206,7 @@ private lemma truncated_integral_spec (hH : 1 < H) (hε : 0 < ε) (hε₁ : ε <
     hmid0, add_zero,
     ← intervalIntegral.integral_congr_ae hae_left,
     ← intervalIntegral.integral_congr_ae hae_right,
-    hval, log_fdBoundary_sub_I_two_sub_sub_log_fdBoundary_sub_I_two_add H hδ_pos hδ_lt.le, hδ6.symm]
+    hval, log_fdBoundary_two_sub_sub_I_sub_log_fdBoundary_two_add_sub_I H hδ_pos hδ_lt.le, hδ6.symm]
   push_cast
   ring
 
