@@ -258,12 +258,12 @@ section DegreeCount
 
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H : Subgroup G} [IsHeckeTriple Δ H H]
 
-/-- The wrapper's addition evaluates pointwise. Mathlib's `Finsupp.add_apply` does not
-apply through the sealed `HeckeCosetModule` coercion, but the fact is definitional. -/
-private lemma coe_add_apply (f g : HeckeCosetModule Δ H H ℤ) (B : HeckeCoset Δ H H) :
-    (f + g) B = f B + g B := (rfl)
+/-- The wrapper's scalar multiplication evaluates pointwise, definitionally.
 
-/-- The wrapper's scalar multiplication evaluates pointwise, definitionally. -/
+NOT redundant with the public `HeckeCosetModule.smul_apply`, despite the identical statement:
+here the `ℤ`-action on `HeckeCosetModule Δ H H ℤ` arrives through a different instance path
+than the transported `Module R`, so the public lemma is defeq but does not match syntactically
+and `simp` reports it as unused. `(rfl)` bridges the two. -/
 private lemma coe_smul_apply (c : ℤ) (f : HeckeCosetModule Δ H H ℤ) (B : HeckeCoset Δ H H) :
     (c • f) B = c * f B := (rfl)
 
@@ -290,7 +290,7 @@ private lemma multiplicity_degree_sum_eq (D₁ D₂ Dout₁ Dout₂ : HeckeCoset
       HeckeCosetModule.single ℤ Dout₂
         (multiplicity H H H (D₁.rep : G) (D₂.rep : G) (Dout₂.rep : G) : ℤ) := by
     ext A
-    rw [HeckeCosetModule.structureConstants_apply, coe_add_apply,
+    rw [HeckeCosetModule.structureConstants_apply, HeckeCosetModule.add_apply,
       HeckeCosetModule.single_apply, HeckeCosetModule.single_apply]
     by_cases h1 : Dout₁ = A
     · rw [if_pos h1, if_neg (h1 ▸ fun h ↦ hne h.symm), add_zero, ← h1]
@@ -588,7 +588,7 @@ theorem heckeT_prime_mul_heckeTDiag (k : ℕ) :
   simp only [diagElem_def]
   rw [single_one_mul_single_one]
   ext A
-  rw [HeckeCosetModule.structureConstants_apply, coe_add_apply, coe_smul_apply,
+  rw [HeckeCosetModule.structureConstants_apply, HeckeCosetModule.add_apply, coe_smul_apply,
     HeckeCosetModule.single_apply, HeckeCosetModule.single_apply]
   by_cases h1 : diagCoset (![1, p ^ (k + 1)] : Fin 2 → ℕ) = A
   · have h12 : diagCoset (![p, p ^ k] : Fin 2 → ℕ) ≠ A := fun h ↦ hne (h1.trans h.symm)

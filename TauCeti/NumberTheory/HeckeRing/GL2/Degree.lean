@@ -142,7 +142,7 @@ theorem deg_heckeT (m : ℕ+) :
     have hp_pos : 0 < p := zero_lt_one.trans hp
     have hq_pos : 0 < q := zero_lt_one.trans hq
     rw [show heckeT ⟨p * q, hn⟩ = heckeT ⟨p, hp_pos⟩ * heckeT ⟨q, hq_pos⟩ from
-      (heckeT_mul_coprime ⟨p, hp_pos⟩ ⟨q, hq_pos⟩ hcop).symm, map_mul, ihp hp_pos, ihq hq_pos]
+      (heckeT_mul_of_coprime ⟨p, hp_pos⟩ ⟨q, hq_pos⟩ hcop).symm, map_mul, ihp hp_pos, ihq hq_pos]
     exact_mod_cast (ArithmeticFunction.isMultiplicative_sigma.map_mul_of_coprime hcop).symm
 
 end HeckeRing.GL2
