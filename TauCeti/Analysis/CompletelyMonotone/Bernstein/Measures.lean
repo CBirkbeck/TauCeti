@@ -768,6 +768,16 @@ lemma chafaiRescaled_prokhorov_mass_bound (f : ℝ → ℝ) (hcm : IsCompletelyM
 
 /-! ## Chafaï reconstruction and Bernstein-to-Laplace replacement -/
 
+/-- **The Chafaï rescaling recovers the Bernstein argument.** Evaluating at `((n : ℝ) - 1) / t`
+and dividing by `n - 1` leaves `x / t`. -/
+private lemma mul_div_natCast_sub_one (x : ℝ) {n : ℕ} (hn : 2 ≤ n) {t : ℝ} (ht : t ≠ 0) :
+    x * (((n : ℝ) - 1) / t) / ↑(n - 1) = x / t := by
+  have hne : ((n : ℝ) - 1) ≠ 0 := by
+    have : (2 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
+    linarith
+  rw [show (↑(n - 1) : ℝ) = ↑n - 1 by rw [Nat.cast_sub (by omega : 1 ≤ n)]; simp]
+  field_simp
+
 private lemma chafai_kernel_density_eq (f : ℝ → ℝ) (n : ℕ) (hn : 2 ≤ n) (x : ℝ) (hx : 0 ≤ x) :
     ∫ t in Ioi 0, bernsteinKernel n x (((n : ℝ) - 1) / t) *
       chafaiDensity f n t =
@@ -775,36 +785,23 @@ private lemma chafai_kernel_density_eq (f : ℝ → ℝ) (n : ℕ) (hn : 2 ≤ n
       (t - x) ^ (n - 1) * iteratedDerivWithin n f (Ici 0) t := by
   have hn0 : n ≠ 0 := by omega
   have hn1 : ¬ n ≤ 1 := by omega
-  have hne : ((n : ℝ) - 1) ≠ 0 := by
-    have : (2 : ℝ) ≤ (n : ℝ) := by exact_mod_cast hn
-    linarith
   have hsubset : Ioi x ⊆ Ioi 0 := Ioi_subset_Ioi hx
   have hvanish : ∀ t ∈ Ioi 0 \ Ioi x,
       bernsteinKernel n x (((n : ℝ) - 1) / t) * chafaiDensity f n t = 0 := by
     intro t ht
     simp only [Set.mem_sdiff, mem_Ioi, not_lt] at ht
     simp only [bernsteinKernel, hn1, ite_false]
-    have hcast : (↑(n - 1) : ℝ) = ↑n - 1 := by
-      rw [Nat.cast_sub (by omega : 1 ≤ n)]
-      simp
-    have hratio : x * (((n : ℝ) - 1) / t) / ↑(n - 1) = x / t := by
-      rw [hcast]
-      field_simp [hne, ne_of_gt ht.1]
-    rw [hratio, max_eq_right (by rw [sub_nonpos, le_div_iff₀ ht.1]; linarith)]
+    rw [mul_div_natCast_sub_one x hn (ne_of_gt ht.1),
+      max_eq_right (by rw [sub_nonpos, le_div_iff₀ ht.1]; linarith)]
     rw [zero_pow (by omega : n - 1 ≠ 0), zero_mul]
   rw [setIntegral_eq_of_subset_of_forall_sdiff_eq_zero measurableSet_Ioi hsubset hvanish]
   apply setIntegral_congr_fun measurableSet_Ioi
   intro t ht
   simp only [mem_Ioi] at ht
   have ht_pos : 0 < t := lt_of_le_of_lt hx ht
-  have hcast : (↑(n - 1) : ℝ) = ↑n - 1 := by
-    rw [Nat.cast_sub (by omega : 1 ≤ n)]
-    simp
   simp only [bernsteinKernel, hn1, ite_false]
-  have hratio : x * (((n : ℝ) - 1) / t) / ↑(n - 1) = x / t := by
-    rw [hcast]
-    field_simp [hne, ne_of_gt ht_pos]
-  rw [hratio, max_eq_left (by rw [sub_nonneg, div_le_one₀ ht_pos]; linarith)]
+  rw [mul_div_natCast_sub_one x hn (ne_of_gt ht_pos),
+    max_eq_left (by rw [sub_nonneg, div_le_one₀ ht_pos]; linarith)]
   rw [chafaiDensity_of_ne_zero hn0]
   have key : (1 - x / t) ^ (n - 1) * t ^ (n - 1) = (t - x) ^ (n - 1) := by
     rw [← mul_pow]
