@@ -12,18 +12,19 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 This is the algebraic content of the second half of Nagell–Lutz — that a point's `y`-coordinate is
 constrained by the discriminant. For a point `(x, y)` on a Weierstrass curve `W`
 over a commutative ring, write `κ = ψ₂(x, y) = 2y + a₁x + a₃` — Mathlib's `2`-division polynomial
-evaluated at the point. The theorem here is that if `κ² ∣ 4·Ψ₃(x)`, then either `κ = 0` or
-`κ² ∣ 4Δ`.
+evaluated at the point. The theorem here is that if `κ² ∣ 4·Ψ₃(x)`, then `κ² ∣ 4Δ`.
 
 For a short model `y² = x³ + Ax + B` we have `a₁ = a₃ = 0`, so `κ = 2y` and the conclusion reads
-exactly `2y = 0 ∨ (2y)² ∣ 4Δ`.
+exactly `(2y)² ∣ 4Δ`.
 
-⚠ That is **not** the classical `y = 0 ∨ y² ∣ Δ` over an arbitrary commutative ring, and neither
-cancellation is available in general. In `ZMod 4` the element `y = 2` has `2y = 0` but `y ≠ 0`, so
-the first disjunct does not simplify; and `4y² ∣ 4Δ` gives `y² ∣ Δ` only when `4` is a
-non-zero-divisor. Both do follow over a domain in which `2 ≠ 0` — in particular over `ℤ`, which is
-where Nagell–Lutz is stated — but that specialisation is not proved in this file, and `κ` rather
-than `2y` is the honest invariant for a long model anyway.
+⚠ That is **not** the classical `y = 0 ∨ y² ∣ Δ` over an arbitrary commutative ring. Cancelling
+`4y² ∣ 4Δ` down to `y² ∣ Δ` needs `4` to be a non-zero-divisor; that does hold over a domain of
+characteristic zero — in particular over `ℤ`, where Nagell–Lutz is stated — but the specialisation
+is not proved in this file, and `κ` rather than `2y` is the honest invariant for a long model.
+
+Nor does the classical `y = 0` disjunct come from here. When `κ = 0` the hypothesis `κ² ∣ 4·Ψ₃(x)`
+reads `4·Ψ₃(x) = 0`, so that branch is not something this lemma discharges — it is the case the
+classical proof treats separately, exactly because the hypothesis is unavailable there.
 
 The proof is short. On the curve `κ² = Ψ₂Sq(x)`, which is Mathlib's polynomial identity `ψ₂_sq`
 evaluated where the Weierstrass polynomial vanishes. And there is an explicit Bézout combination of
@@ -33,8 +34,8 @@ dividing both `κ²` and `4·Ψ₃(x)` divides `4Δ`.
 ## Main results
 
 * `TauCeti.WeierstrassCurve.evalEval_ψ₂_sq`: on the curve, `ψ₂(x, y)² = Ψ₂Sq(x)`.
-* `TauCeti.WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ`: on the curve, if
-  `ψ₂(x, y)² ∣ 4·Ψ₃(x)` then `ψ₂(x, y) = 0` or `ψ₂(x, y)² ∣ 4Δ`.
+* `TauCeti.WeierstrassCurve.evalEval_ψ₂_sq_dvd_four_mul_Δ`: on the curve, if
+  `ψ₂(x, y)² ∣ 4·Ψ₃(x)` then `ψ₂(x, y)² ∣ 4Δ`.
 
 Stated over an arbitrary commutative ring: no domain, integrality or ellipticity hypothesis.
 
@@ -43,10 +44,12 @@ Stated over an arbitrary commutative ring: no domain, integrality or ellipticity
 but that derivation needs the point-level `[n]`-multiplication material (mathlib-track) and is not
 in this file. What follows is the algebraic implication alone.
 
-This advances the Nagell–Lutz milestone of `TauCetiRoadmap/EllipticCurves/README.md`, Layer 6,
-item "The torsion subgroup and Nagell–Lutz", whose short-model target `lutz_nagell` asks for
-`x, y ∈ ℤ` and `y = 0 ∨ y² ∣ Δ` — this is the second conjunct, in the long-model form the roadmap
-also names (`lutz_nagell_integrality_general`, "with its discriminant companion").
+This is an ingredient for the Nagell–Lutz milestone of `TauCetiRoadmap/EllipticCurves/README.md`,
+Layer 6, item "The torsion subgroup and Nagell–Lutz", whose short-model target `lutz_nagell` asks
+for `x, y ∈ ℤ` and `y = 0 ∨ y² ∣ Δ`. It is the algebraic step feeding that target's second
+conjunct, in the long-model form the roadmap also names (`lutz_nagell_integrality_general`, "with
+its discriminant companion"); it is not that conjunct, which additionally needs the torsion input
+and the `y = 0` case.
 
 ## Provenance
 
@@ -75,6 +78,7 @@ variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve R) {x y : R}
 
 This is Mathlib's polynomial identity `ψ₂_sq` — `ψ₂² = C Ψ₂Sq + 4 * polynomial` — evaluated at a
 point where the Weierstrass polynomial vanishes. -/
+@[simp]
 theorem evalEval_ψ₂_sq (h : W.toAffine.Equation x y) :
     W.ψ₂.evalEval x y ^ 2 = (W.Ψ₂Sq).eval x := by
   have hsq := congrArg (Polynomial.evalEval x y) W.ψ₂_sq
@@ -107,16 +111,15 @@ private theorem dvd_sq_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ {d : R} (hd : d ∣ 
     ring
   exact hid ▸ dvd_sub (Dvd.dvd.mul_left hd _) hΨ₃
 
-/-- **The discriminant half of Nagell–Lutz.**
+/-- **A conditional divisibility toward the discriminant half of Nagell–Lutz.**
 
-For a point `(x, y)` of `W` whose `ψ₂`-value squared divides `4·Ψ₃(x)`, either that value is zero
-or its square divides `4Δ`. For a short model `ψ₂(x, y) = 2y`, so the conclusion reads
-`2y = 0 ∨ (2y)² ∣ 4Δ`; recovering the classical `y = 0 ∨ y² ∣ Δ` from that needs `2` to be a
-non-zero-divisor, which an arbitrary commutative ring does not supply. -/
-theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ (h : W.toAffine.Equation x y)
+For a point `(x, y)` of `W` whose `ψ₂`-value squared divides `4·Ψ₃(x)`, that square divides `4Δ`.
+For a short model `ψ₂(x, y) = 2y`, so the conclusion reads `(2y)² ∣ 4Δ`; recovering the classical
+`y² ∣ Δ` from that needs `4` to be a non-zero-divisor, which an arbitrary commutative ring does
+not supply. -/
+theorem evalEval_ψ₂_sq_dvd_four_mul_Δ (h : W.toAffine.Equation x y)
     (hΨ₃ : W.ψ₂.evalEval x y ^ 2 ∣ 4 * (W.Ψ₃).eval x) :
-    W.ψ₂.evalEval x y = 0 ∨ W.ψ₂.evalEval x y ^ 2 ∣ 4 * W.Δ := by
-  refine (eq_or_ne (W.ψ₂.evalEval x y) 0).imp id fun _ ↦ ?_
+    W.ψ₂.evalEval x y ^ 2 ∣ 4 * W.Δ := by
   have hκ : W.ψ₂.evalEval x y ^ 2 ∣ (W.Ψ₂Sq).eval x := (evalEval_ψ₂_sq W h) ▸ dvd_rfl
   rw [← bezout_four_mul_Δ W x]
   exact dvd_add (Dvd.dvd.mul_left hκ _)
