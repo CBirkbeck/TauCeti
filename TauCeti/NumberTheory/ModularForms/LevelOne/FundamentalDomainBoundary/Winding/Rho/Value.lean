@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Mathlib.Analysis.Complex.UpperHalfPlane.Basic
 public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
 public import TauCeti.Analysis.Contour.Winding.Number.Basic
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.Geometry
+public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.Geometry
 
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 import Mathlib.MeasureTheory.Integral.CircleIntegral
@@ -538,6 +540,7 @@ theorem hasCauchyPVAt_fdBoundary_rho (hH : Real.sqrt 3 / 2 < H) :
 /-- **The winding number of the boundary contour at `ρ` is `-1/6`**: the corner `ρ`
 sits on the contour with interior angle `2π/3`, and the principal-value normalization
 sees exactly the angle defect `π/3` of a clockwise turn. -/
+@[simp]
 theorem windingNumber_fdBoundary_rho (hH : Real.sqrt 3 / 2 < H) :
     Contour.windingNumber (fdBoundary H) 0 5 (UpperHalfPlane.ρ : ℂ) = -(1 / 6 : ℂ) := by
   rw [Contour.windingNumber_eq_of_hasCauchyPVAt (hasCauchyPVAt_fdBoundary_rho hH)]
