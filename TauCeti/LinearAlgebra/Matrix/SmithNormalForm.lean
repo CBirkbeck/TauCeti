@@ -113,9 +113,10 @@ private lemma sign_correct_unit_transform (A : Matrix (Fin n) (Fin n) ℤ) (d : 
 
 /-- **A diagonal matrix with nonzero entries in a strictly ordered commutative ring splits as a
 self-inverse matrix of unit determinant times a positive diagonal.** -/
-private lemma exists_involution_isUnit_det_mul_diagonal_pos {R : Type*} [CommRing R]
-    [LinearOrder R] [IsStrictOrderedRing R] {a : Fin n → R} (ha_ne : ∀ i, a i ≠ 0) :
-    ∃ (s : Matrix (Fin n) (Fin n) R) (d : Fin n → R), (∀ i, 0 < d i) ∧ s * s = 1 ∧
+private lemma exists_involution_isUnit_det_mul_diagonal_pos {ι R : Type*} [Fintype ι]
+    [DecidableEq ι] [CommRing R] [LinearOrder R] [IsStrictOrderedRing R] {a : ι → R}
+    (ha_ne : ∀ i, a i ≠ 0) :
+    ∃ (s : Matrix ι ι R) (d : ι → R), (∀ i, 0 < d i) ∧ s * s = 1 ∧
       IsUnit s.det ∧ Matrix.diagonal a = s * Matrix.diagonal d := by
   set sv := fun i ↦ ((SignType.sign (a i) : SignType) : R) with hsv_def
   have hsv_sq : ∀ i, sv i * sv i = 1 := fun i ↦ by
