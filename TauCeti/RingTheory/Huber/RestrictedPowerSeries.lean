@@ -11,9 +11,8 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 /-!
 # Restricted Power Series
 
-This file defines restricted power series `A⟨T₁, …, Tₖ⟩` and the notion of a strongly
-noetherian ring, following Wedhorn's *Adic Spaces*: the convergent/restricted power series ring is
-(5.6.1) in §5.6; strong noetherianity is Proposition & Definition 6.36 in §6.7.
+This file defines restricted power series `A⟨T₁, …, Tₖ⟩`, following Wedhorn's *Adic Spaces*,
+where the convergent/restricted power series ring is (5.6.1) in §5.6.
 
 ## Main definitions
 
@@ -21,11 +20,6 @@ noetherian ring, following Wedhorn's *Adic Spaces*: the convergent/restricted po
   converge to `0` along the cofinite filter on multi-indices.
 * `restrictedMvPowerSeriesSubring k A`: The subring of restricted power series in `k`
   variables over `A`, denoted `A⟨T₁, …, Tₖ⟩`.
-* `IsStronglyNoetherian A`: A topological ring `A` is **strongly noetherian** if
-  `restrictedMvPowerSeriesSubring k A` is noetherian for all `k ≥ 0`
-  (Proposition & Definition 6.36 of Wedhorn, stated here with `A`-level restricted
-  series; Definition 6.36(i) verbatim is the condition on the completion `Â` — see
-  `SheafyRing.lean`'s scope notes).
 
 ## Provenance
 
@@ -54,8 +48,7 @@ arbitrary finite sums of elements in an open additive subgroup remain in the sub
 
 ## References
 
-* [Wedhorn, *Adic Spaces*][wedhorn_adic], (5.6.1) in §5.6 and Proposition and Definition 6.36
-  in §6.7.
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], (5.6.1) in §5.6.
 * [AINTLIB](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
   `projects/AdicSpaces/Adic spaces/RestrictedPowerSeries.lean`.
 -/
@@ -318,42 +311,5 @@ noncomputable instance restrictedMvPowerSeriesSubring.instAlgebra (k : ℕ) (A :
       map_mul' := by intros; ext; simp only [map_mul, Subring.coe_mul]
       map_zero' := by ext; simp only [map_zero, ZeroMemClass.coe_zero]
       map_add' := by intros; ext; simp only [map_add, Subring.coe_add] }
-
-/-! ### Strongly noetherian rings -/
-
-/-- A topological ring `A` is **strongly noetherian** if the ring of restricted power series
-`A⟨T₁, …, Tₖ⟩` is noetherian for all `k ≥ 0` (Proposition & Definition 6.36 of Wedhorn, stated here
-  with `A`-level restricted
-  series; Definition 6.36(i) verbatim is the condition on the completion `Â` — see
-  `SheafyRing.lean`'s scope notes).
-
-This is a fundamental finiteness condition in nonarchimedean geometry, introduced by
-Huber. For a noetherian Tate ring, being strongly noetherian is equivalent to saying
-that the theory of formal models is well-behaved. -/
-class IsStronglyNoetherian (A : Type*) [CommRing A] [TopologicalSpace A]
-    [NonarchimedeanRing A] : Prop where
-  /-- The restricted power series ring in `k` variables is noetherian for all `k`. -/
-  isNoetherianRing_restricted : ∀ k : ℕ,
-    IsNoetherianRing (restrictedMvPowerSeriesSubring k A)
-
-/-- **Strongly noetherian implies noetherian** — the `k = 0` case: the index set
-`Fin 0 →₀ ℕ` is a singleton, so its cofinite filter is `⊥` and every power series in
-zero variables is restricted; `constantCoeff` is then a ring surjection
-`A⟨⟩ = A⦃⦄ → A`. -/
-theorem IsStronglyNoetherian.isNoetherianRing (A : Type*) [CommRing A]
-    [TopologicalSpace A] [NonarchimedeanRing A] [IsStronglyNoetherian A] :
-    IsNoetherianRing A := by
-  have h0 : IsNoetherianRing (restrictedMvPowerSeriesSubring 0 A) :=
-    IsStronglyNoetherian.isNoetherianRing_restricted 0
-  refine isNoetherianRing_of_surjective (restrictedMvPowerSeriesSubring 0 A) A
-    ((MvPowerSeries.constantCoeff (σ := Fin 0) (R := A)).comp
-      (restrictedMvPowerSeriesSubring 0 A).subtype) ?_
-  intro a
-  refine ⟨⟨MvPowerSeries.C (σ := Fin 0) (R := A) a, ?_⟩, ?_⟩
-  -- unfolds `IsRestrictedAdic` to the `Tendsto` it abbreviates
-  · change Filter.Tendsto _ _ _
-    rw [Filter.cofinite_eq_bot]
-    exact Filter.tendsto_bot
-  · simp [MvPowerSeries.constantCoeff_C]
 
 end TauCeti.Huber
