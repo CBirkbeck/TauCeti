@@ -109,7 +109,7 @@ theorem isPiecewiseC1On_eval_of_smoothPathHomotopy {x y : ℂ} {p q : Path x y} 
   exact hs.congr fun _ _ => by simp [Path.extend, Path.Homotopy.eval]
 
 /-- **A path homotopy avoiding `w` preserves the curve integral of the index form.** -/
-private theorem curveIntegral_indexForm_eq_of_pathHomotopy {x w : ℂ} {p q : Path x x}
+private theorem curveIntegral_indexForm_eq_of_pathHomotopy {x y w : ℂ} {p q : Path x y}
     (φ : p.Homotopy q)
     (hφsmooth : ContDiffOn ℝ 2
       (fun st : ℝ × ℝ ↦ Set.IccExtend zero_le_one (φ.toHomotopy.extend st.1) st.2) (Set.Icc 0 1))
@@ -133,7 +133,7 @@ private theorem curveIntegral_indexForm_eq_of_pathHomotopy {x w : ℂ} {p q : Pa
     ext t
     exact φ.source t
   have heval_one :
-      φ.toHomotopy.evalAt 1 = (Path.refl x).cast p.target q.target := by
+      φ.toHomotopy.evalAt 1 = (Path.refl y).cast p.target q.target := by
     ext t
     exact φ.target t
   rw [heval_zero, heval_one] at hboundary
