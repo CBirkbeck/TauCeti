@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.MvPowerSeries.Basic
+public import TauCeti.RingTheory.Huber.RestrictedPowerSeries
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 
@@ -558,6 +559,15 @@ theorem mem_weightedNhd [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWei
     {U : AddSubgroup A} {f : weightedRestrictedSubring T hT} :
     f ∈ weightedNhd T hT U ↔
       ∀ ν, MvPowerSeries.coeff ν (f : MvPowerSeries (Fin k) A) ∈ weightMul T ν U := (Iff.rfl)
+
+/-- **Wedhorn Example 5.54, bundled**: for the trivial weight, `A⟨X⟩_T` *is* the ordinary ring of
+restricted power series, not merely a predicate-level equivalent. -/
+theorem weightedRestrictedSubring_one [NonarchimedeanRing A] :
+    weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one
+      = restrictedMvPowerSeriesSubring k A := by
+  ext f
+  rw [mem_weightedRestrictedSubring, mem_restrictedMvPowerSeriesSubring,
+    isWeightedRestricted_one_weight_iff, isRestricted_iff]
 
 /-- The neighbourhood subgroups are antitone in `U`. -/
 theorem weightedNhd_mono [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T}
