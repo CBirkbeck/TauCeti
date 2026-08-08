@@ -300,16 +300,17 @@ private theorem exists_ne_and_apply_eq_of_lt_colLen (t : YoungTableau μ) (hn : 
       (by rw [hcard, Fintype.card_fin]; exact hn)
   exact ⟨a, b, a.2, b.2, fun h => hab (Subtype.ext h), hpab⟩
 
-/-- Transposing two first-column labels that `p` sends to the same basis index fixes the monomial
-basis vector at `p` while negating `c_t`, so the symmetrizer's value there is its own negative. -/
+/-- Transposing two labels of the same column that `p` sends to the same basis index fixes the
+monomial basis vector at `p` while negating `c_t`, so the symmetrizer's value there is its own
+negative. -/
 private theorem permTensorActionAlgHom_youngSymmetrizerOver_tensorPowerBasis_eq_neg
-    (t : YoungTableau μ) {p : Fin μ.card → Fin n} {a b : Fin μ.card} (ha : colIndex t a = 0)
-    (hb : colIndex t b = 0) (hab : a ≠ b) (hpab : p a = p b) :
+    (t : YoungTableau μ) {p : Fin μ.card → Fin n} {a b : Fin μ.card}
+    (hcol : colIndex t a = colIndex t b) (hab : a ≠ b) (hpab : p a = p b) :
     permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
         (tensorPowerBasis k n μ.card p) =
       -permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
         (tensorPowerBasis k n μ.card p) := by
-  have hτ : Equiv.swap a b ∈ colSubgroup t := swap_mem_colSubgroup (by rw [ha, hb])
+  have hτ : Equiv.swap a b ∈ colSubgroup t := swap_mem_colSubgroup hcol
   -- the transposition permutes the index function back to itself
   have hswap : (fun i => p ((Equiv.swap a b).symm i)) = p :=
     funext fun i => by rw [Equiv.symm_swap]; exact Equiv.apply_swap_eq_self hpab i
@@ -341,7 +342,8 @@ private theorem permTensorActionAlgHom_youngSymmetrizerOver_eq_zero (t : YoungTa
   rw [LinearMap.zero_apply]
   obtain ⟨a, b, ha, hb, hab, hpab⟩ := exists_ne_and_apply_eq_of_lt_colLen t hn p
   have hneg :=
-    permTensorActionAlgHom_youngSymmetrizerOver_tensorPowerBasis_eq_neg (k := k) t ha hb hab hpab
+    permTensorActionAlgHom_youngSymmetrizerOver_tensorPowerBasis_eq_neg (k := k) t
+      (ha.trans hb.symm) hab hpab
   have htwo : (2 : k) • permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
       (tensorPowerBasis k n μ.card p) = 0 := by
     rw [two_smul]
