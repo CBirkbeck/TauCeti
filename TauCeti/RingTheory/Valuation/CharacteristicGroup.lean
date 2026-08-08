@@ -8,30 +8,33 @@ module
 public import Mathlib.RingTheory.Valuation.Basic
 
 /-!
-# Cofinal values and microbial valuations
+# Cofinal values and the full-characteristic-group condition
 
-Two conditions on the values of a valuation `v : Valuation A Γ₀` that control continuity
-in the adic theory, following Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §4.3 and §7.1.
-Both are formulated on the **value group** of `v` — Mathlib's
-`ValueGroup₀ (.ofClass v)`, via the restricted valuation `v.restrict` — not on the ambient
-codomain, so they are invariant under valuation equivalence (`IsEquiv.cofinalValue_iff`,
-`IsEquiv.isMicrobial_iff`) and can be consumed on points of the valuation spectrum:
+Two conditions on the values of a valuation `v : Valuation A Γ₀` from the `Spv (A, I)`
+theory of Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §4.3 and §7.1. Both are formulated
+on the **value group** of `v` — Mathlib's `ValueGroup₀ (.ofClass v)`, via the restricted
+valuation `v.restrict` — not on the ambient codomain, so they are invariant under valuation
+equivalence (`IsEquiv.cofinalValue_iff`, `IsEquiv.hasFullCharacteristicGroup_iff`) and can
+be consumed on points of the valuation spectrum:
 
 * a value `v a` is *cofinal* if its powers fall below every positive element of the value
   group — the condition on ideals of definition in Wedhorn Lemma 7.1;
-* `v` is *microbial* if every positive element of the value group is bounded between
-  `(v a)⁻¹` and `v a` for some `a` with `1 ≤ v a` — the elementwise reading of "the
-  characteristic subgroup `cΓ_v` of Wedhorn 4.13 is the whole value group".
+* `v` *has full characteristic group* if every positive element of the value group is
+  bounded between `(v a)⁻¹` and `v a` for some `a` with `1 ≤ v a` — the elementwise
+  reading of "`Γ_v = cΓ_v`", for the characteristic subgroup `cΓ_v` of Wedhorn 4.13.
 
-These are the two disjuncts of the membership criterion for `Spv (A, I)` in Wedhorn
-Lemma 7.4, formalised with no topology on `A`.
+These are the two disjuncts of the membership criterion for `Spv (A, I)`: Wedhorn
+Lemma 7.4 proves `cΓ_v(I) = Γ_v` equivalent to "`v a` is cofinal for every `a ∈ I`, or
+`Γ_v = cΓ_v`". The *microbial* condition of Wedhorn Definition 5.46 (existence of a
+dependent height-one valuation) is a genuinely different notion and is deliberately not
+formalised here.
 
 ## Main definitions
 
 * `TauCeti.Valuation.CofinalValue v a` : Powers of `v a` fall below every positive element
   of the value group of `v`.
-* `TauCeti.Valuation.IsMicrobial v` : Every positive element of the value group of `v` is
-  bounded by attained values.
+* `TauCeti.Valuation.HasFullCharacteristicGroup v` : Every positive element of the value
+  group of `v` is bounded by attained values.
 
 ## References
 
@@ -39,8 +42,8 @@ Lemma 7.4, formalised with no topology on `A`.
 
 The statements are adapted from the AINTLIB development (Apache 2.0), files
 `projects/AdicSpaces/Adic spaces/SpvAI.lean` (the cofinal-value cluster) and
-`projects/AdicSpaces/Adic spaces/CharacteristicSubgroup.lean` (the microbial cluster),
-reformulated on the value group.
+`projects/AdicSpaces/Adic spaces/CharacteristicSubgroup.lean` (the characteristic-group
+cluster), reformulated on the value group.
 -/
 
 public section
@@ -102,28 +105,29 @@ theorem _root_.Valuation.IsEquiv.cofinalValue_iff {v : Valuation A Γ₀}
     CofinalValue v a ↔ CofinalValue w a :=
   ⟨fun hv ↦ hv.of_isEquiv h, fun hw ↦ hw.of_isEquiv h.symm⟩
 
-/-! ### Microbial valuations -/
+/-! ### The full-characteristic-group condition -/
 
-/-- A valuation is **microbial** if every positive element of its value group is bounded
-between `(v a)⁻¹` and `v a` for some `a` with `1 ≤ v a` — the elementwise form of "the
-characteristic subgroup `cΓ_v` of Wedhorn 4.13 is the whole value group" (see the
-discussion around Wedhorn Lemma 7.4). -/
-def IsMicrobial (v : Valuation A Γ₀) : Prop :=
+/-- A valuation **has full characteristic group** if every positive element of its value
+group is bounded between `(v a)⁻¹` and `v a` for some `a` with `1 ≤ v a` — the elementwise
+form of "`Γ_v = cΓ_v`", for the characteristic subgroup `cΓ_v` of Wedhorn 4.13. This is
+the second disjunct of Wedhorn Lemma 7.4(ii); it is weaker than the *microbial* condition
+of Wedhorn Definition 5.46 (on a field it holds for every valuation). -/
+def HasFullCharacteristicGroup (v : Valuation A Γ₀) : Prop :=
   ∀ γ : ValueGroup₀ (.ofClass v), 0 < γ →
     ∃ a : A, 1 ≤ v.restrict a ∧ (v.restrict a)⁻¹ ≤ γ ∧ γ ≤ v.restrict a
 
-/-- The defining property of a microbial valuation, on the value group of `v`. -/
+/-- The defining property of the full-characteristic-group condition. -/
 @[simp]
-theorem isMicrobial_iff {v : Valuation A Γ₀} :
-    IsMicrobial v ↔
+theorem hasFullCharacteristicGroup_iff {v : Valuation A Γ₀} :
+    HasFullCharacteristicGroup v ↔
       ∀ γ : ValueGroup₀ (.ofClass v), 0 < γ →
         ∃ a : A, 1 ≤ v.restrict a ∧ (v.restrict a)⁻¹ ≤ γ ∧ γ ≤ v.restrict a :=
   Iff.rfl
 
-/-- Microbiality transports along an equivalence of valuations, through the ordered
-isomorphism of their value groups. -/
-theorem IsMicrobial.of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
-    (h : v.IsEquiv w) (hv : IsMicrobial v) : IsMicrobial w := by
+/-- The full-characteristic-group condition transports along an equivalence of
+valuations, through the ordered isomorphism of their value groups. -/
+theorem HasFullCharacteristicGroup.of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
+    (h : v.IsEquiv w) (hv : HasFullCharacteristicGroup v) : HasFullCharacteristicGroup w := by
   intro γ hγ
   obtain ⟨a, ha1, ha_lo, ha_hi⟩ := hv (h.orderMonoidIso.symm γ)
     (zero_lt_iff.mpr fun heq ↦ hγ.ne' (by simpa using congrArg h.orderMonoidIso heq))
@@ -137,16 +141,16 @@ theorem IsMicrobial.of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
     rw [Valuation.IsEquiv.orderMonoidIso_spec] at this
     simpa using this
 
-/-- Microbiality is invariant under valuation equivalence. -/
-theorem _root_.Valuation.IsEquiv.isMicrobial_iff {v : Valuation A Γ₀}
+/-- The full-characteristic-group condition is invariant under valuation equivalence. -/
+theorem _root_.Valuation.IsEquiv.hasFullCharacteristicGroup_iff {v : Valuation A Γ₀}
     {w : Valuation A Γ₀'} (h : v.IsEquiv w) :
-    IsMicrobial v ↔ IsMicrobial w :=
+    HasFullCharacteristicGroup v ↔ HasFullCharacteristicGroup w :=
   ⟨fun hv ↦ hv.of_isEquiv h, fun hw ↦ hw.of_isEquiv h.symm⟩
 
-/-- For a microbial valuation, every positive element of the value group dominates the
-inverse of some nonzero value: the existence statement used in the microbial case of
-Wedhorn Lemma 7.10. -/
-theorem IsMicrobial.exists_inv_le {v : Valuation A Γ₀} (h : IsMicrobial v)
+/-- Under the full-characteristic-group condition, every positive element of the value
+group dominates the inverse of some nonzero value: the existence statement used in the
+`Γ_v = cΓ_v` case of Wedhorn Lemma 7.10. -/
+theorem HasFullCharacteristicGroup.exists_inv_le {v : Valuation A Γ₀} (h : HasFullCharacteristicGroup v)
     {γ : ValueGroup₀ (.ofClass v)} (hγ : 0 < γ) :
     ∃ t : A, v.restrict t ≠ 0 ∧ (v.restrict t)⁻¹ ≤ γ := by
   obtain ⟨a, ha_ge_one, ha_inv_le, -⟩ := h γ hγ
