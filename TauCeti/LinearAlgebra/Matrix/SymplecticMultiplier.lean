@@ -35,13 +35,15 @@ commutative ring. Only the rank-two case is proved here, that being the case in 
 ## Provenance
 
 Ported from the AINTLIB `HasseWeil` project (Apache-2.0), revision `513e83879e2f`, file
-`HasseWeil/WeilPairing/PairingDet.lean`, declarations `symJ`, `transpose_mul_symJ_mul`,
+`HasseWeil/WeilPairing/PairingDet.lean`, theorems `transpose_mul_symJ_mul`,
 `det_eq_of_symplectic_adjoint` and `det_eq_of_symplectic_scaling`.
 
-The source's own `symJ : Matrix (Fin 2) (Fin 2) F := !![0, 1; -1, 0]` is **not** reproduced:
-Mathlib's `Matrix.J` is already this form and the statements here are about it. Note the sign —
-`Matrix.J l R` is `fromBlocks 0 (-1) 1 0`, which in rank two reads `!![0, -1; 1, 0]`, the negative
-of the source's matrix. The identities are insensitive to it, both sides being linear in the form.
+The source states them for a matrix of its own,
+`symJ : Matrix (Fin 2) (Fin 2) F := !![0, 1; -1, 0]`. That definition is **replaced** by Mathlib's
+canonical `Matrix.J`, which the statements here are about, so nothing standing for `symJ` is
+added. The two differ by a sign: `Matrix.J l R` is
+`fromBlocks 0 (-1) 1 0`, which in rank two reads `!![0, -1; 1, 0]`. The identities are insensitive
+to it, both sides being linear in the form.
 The source's elliptic-curve reading — the scaling being the Weil pairing's
 `e (A S) (A T) = e S T ^ deg A`, and the conclusion `det = deg` — is likewise not reproduced, no
 curve occurring in any statement here.
@@ -69,6 +71,7 @@ private theorem det_sum_unique (A : Matrix (l ⊕ l) (l ⊕ l) R) :
   simp only [submatrix_apply, h0, h1]
 
 /-- **A rank-two matrix scales the standard symplectic form by its determinant.** -/
+@[simp]
 theorem transpose_mul_J_mul_eq_det_smul (A : Matrix (l ⊕ l) (l ⊕ l) R) :
     Aᵀ * J l R * A = A.det • J l R := by
   ext i j
