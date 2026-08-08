@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.FieldTheory.Finite.Basic
+public import Mathlib.FieldTheory.Finite.GaloisField
 
 /-!
 # The fixed points of the `q`-power map in an extension of a finite field
@@ -16,17 +16,15 @@ the `q`-power map exactly when it comes from `K`:
 
 ## Main results
 
-* `TauCeti.FiniteField.pow_card_eq_self_iff_mem_range`: the criterion above.
+* `TauCeti.FiniteField.pow_card_eq_self_iff_mem_range_algebraMap`: the criterion above.
 
 Mathlib has the easy direction (`FiniteField.pow_card`) but not the equivalence.
 `IsGalois.mem_range_algebraMap_iff_fixed` characterises the base field of a Galois extension by
 being fixed, but it needs `[FiniteDimensional F E]` and quantifies over the whole Galois group
 rather than the single `q`-power map.
 
-The argument is counting, and it needs nothing of `L`: the polynomial `X ^ q - X` has at most `q`
-roots in any field, and the `q` images of `K` are already roots, so those are all of them. In
-particular neither algebraic closedness nor separability is required — `X ^ q - X` is separable,
-but that fact is not needed, because passing to the finset of roots discards multiplicity anyway.
+Nothing is assumed of `L` beyond being a field extension: in particular it need not be
+algebraically closed, which is the only case the source states.
 
 This is the field-theoretic input to the Hasse route of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 3 ("elliptic curves over finite fields — the Hasse
@@ -40,12 +38,12 @@ Ported from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apa
 that roadmap at `dev/hasse-weil @ 513e83879e2f`),
 `HasseWeil/Curves/FrobeniusFixedLocus.lean`, declaration `frobenius_fixed_iff_mem_baseField`.
 
-Two changes from the source. It is stated there only for `L = AlgebraicClosure K`; here `L` is an
-arbitrary field extension, since the proof never uses algebraic closedness. And the source's
-separability argument (four auxiliary lemmas establishing that the derivative of `X ^ q - X` is
-`-1`) is dropped, being unnecessary for the count. What remains is one theorem rather than nine
-declarations, and the source's public theorem stated in terms of its own private finsets is not
-reproduced.
+Changes from the source. It is stated there only for `L = AlgebraicClosure K`; here `L` is an
+arbitrary field extension, since nothing in the argument uses algebraic closedness. The source
+builds the root-set transport by hand, through a separability argument and a finset count; here
+that is Mathlib's `Splits.image_rootSet` applied to `FiniteField.isSplittingField_sub`. And the
+source's other public theorem is stated in terms of its own `private` finsets, so it cannot be
+applied from outside; it is not reproduced. Nine declarations become one.
 -/
 
 public section
@@ -57,37 +55,25 @@ namespace TauCeti
 namespace FiniteField
 
 /-- **An element of a field extension of a finite field is fixed by the `q`-power map exactly when
-it comes from the base field**, where `q` is the cardinality of the base.
-
-The `q` images of `K` are roots of `X ^ q - X`, which has at most `q` roots; so they are all of
-them, and being fixed by the `q`-power map is exactly being such a root. -/
-theorem pow_card_eq_self_iff_mem_range {K L : Type*} [Field K] [Fintype K] [Field L] [Algebra K L]
-    (a : L) : a ^ Fintype.card K = a ↔ a ∈ Set.range (algebraMap K L) := by
+it comes from the base field**, where `q` is the cardinality of the base. -/
+theorem pow_card_eq_self_iff_mem_range_algebraMap {K L : Type*} [Field K] [Fintype K] [Field L]
+    [Algebra K L] (a : L) : a ^ Fintype.card K = a ↔ a ∈ Set.range (algebraMap K L) := by
   classical
-  have hne : (X ^ Fintype.card K - X : L[X]) ≠ 0 :=
-    _root_.FiniteField.X_pow_card_sub_X_ne_zero L Fintype.one_lt_card
-  have hmem_roots : ∀ b : L,
-      b ∈ (X ^ Fintype.card K - X : L[X]).roots.toFinset ↔ b ^ Fintype.card K = b := by
-    intro b
-    rw [Multiset.mem_toFinset, mem_roots hne, IsRoot.def]
-    simp only [eval_sub, eval_pow, eval_X, sub_eq_zero]
-  have hmem_image : ∀ b : L,
-      b ∈ Finset.univ.image (algebraMap K L) ↔ b ∈ Set.range (algebraMap K L) := by
-    simp [Set.mem_range, eq_comm]
-  have hsub : Finset.univ.image (algebraMap K L) ⊆
-      (X ^ Fintype.card K - X : L[X]).roots.toFinset := fun b hb => by
-    obtain ⟨c, rfl⟩ := (hmem_image b).mp hb
-    exact (hmem_roots _).mpr (by rw [← map_pow, _root_.FiniteField.pow_card])
-  have hcard : (Finset.univ.image (algebraMap K L)).card = Fintype.card K := by
-    rw [Finset.card_image_of_injective _ (algebraMap K L).injective, Finset.card_univ]
-  have hle : (X ^ Fintype.card K - X : L[X]).roots.toFinset.card ≤ Fintype.card K :=
-    calc (X ^ Fintype.card K - X : L[X]).roots.toFinset.card
-        ≤ Multiset.card (X ^ Fintype.card K - X : L[X]).roots := Multiset.toFinset_card_le _
-      _ ≤ (X ^ Fintype.card K - X : L[X]).natDegree := card_roots' _
-      _ = Fintype.card K :=
-          _root_.FiniteField.X_pow_card_sub_X_natDegree_eq L Fintype.one_lt_card
-  rw [← hmem_roots a, ← hmem_image a,
-    Finset.eq_of_subset_of_card_le hsub (hcard ▸ hle)]
+  -- `X ^ q - X` splits over `K` with every element a root, and `Splits.image_rootSet`
+  -- transports that root set along `K → L`
+  have hne : (X ^ Fintype.card K - X : K[X]) ≠ 0 :=
+    _root_.FiniteField.X_pow_card_sub_X_ne_zero K Fintype.one_lt_card
+  have hsplits : ((X ^ Fintype.card K - X : K[X]).map (algebraMap K K)).Splits :=
+    IsSplittingField.splits (L := K) (X ^ Fintype.card K - X)
+  have himg := hsplits.image_rootSet (Algebra.ofId K L)
+  have hK : (X ^ Fintype.card K - X : K[X]).rootSet K = Set.univ := by
+    ext b
+    simp [mem_rootSet_of_ne hne, _root_.FiniteField.pow_card]
+  rw [Set.ext_iff] at himg
+  have := himg a
+  simp only [hK, Set.image_univ, Algebra.ofId_apply, mem_rootSet_of_ne hne, aeval_def,
+    eval₂_sub, eval₂_X_pow, eval₂_X, sub_eq_zero] at this
+  exact this.symm
 
 end FiniteField
 
