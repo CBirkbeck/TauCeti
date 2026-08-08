@@ -142,20 +142,17 @@ curve itself. -/
 @[simp] theorem b₈_quadraticTwistOf : (E.quadraticTwistOf t n).b₈ = (t ^ 2 - 4 * n) ^ 4 * E.b₈ := by
   simp only [quadraticTwistOf, b₈]; ring
 
-/-- The invariant `c₄` of the quadratic twist: `c₄ ↦ D²c₄` with `D = t² - 4n`. Immediate from
-the `b₂` and `b₄` laws, since `c₄ = b₂² - 24b₄`. -/
+/-- The invariant `c₄` of the quadratic twist: `c₄ ↦ D²c₄` with `D = t² - 4n`. -/
 @[simp] theorem c₄_quadraticTwistOf : (E.quadraticTwistOf t n).c₄ = (t ^ 2 - 4 * n) ^ 2 * E.c₄ := by
   simp only [c₄, b₂_quadraticTwistOf, b₄_quadraticTwistOf]
   ring
 
-/-- The invariant `c₆` of the quadratic twist: `c₆ ↦ D³c₆` with `D = t² - 4n`. Immediate from
-the `b₂`, `b₄` and `b₆` laws, since `c₆ = -b₂³ + 36b₂b₄ - 216b₆`. -/
+/-- The invariant `c₆` of the quadratic twist: `c₆ ↦ D³c₆` with `D = t² - 4n`. -/
 @[simp] theorem c₆_quadraticTwistOf : (E.quadraticTwistOf t n).c₆ = (t ^ 2 - 4 * n) ^ 3 * E.c₆ := by
   simp only [c₆, b₂_quadraticTwistOf, b₄_quadraticTwistOf, b₆_quadraticTwistOf]
   ring
 
-/-- The discriminant of the quadratic twist: `Δ ↦ D⁶Δ` with `D = t² - 4n`. Immediate from the
-`b`-laws, since `Δ = -b₂²b₈ - 8b₄³ - 27b₆² + 9b₂b₄b₆`. -/
+/-- The discriminant of the quadratic twist: `Δ ↦ D⁶Δ` with `D = t² - 4n`. -/
 @[simp] theorem Δ_quadraticTwistOf : (E.quadraticTwistOf t n).Δ = (t ^ 2 - 4 * n) ^ 6 * E.Δ := by
   simp only [Δ, b₂_quadraticTwistOf, b₄_quadraticTwistOf, b₆_quadraticTwistOf,
     b₈_quadraticTwistOf]
@@ -171,17 +168,16 @@ the `b₂`, `b₄` and `b₆` laws, since `c₆ = -b₂³ + 36b₂b₄ - 216b₆
       map_pow, map_ofNat]
 
 /-- The quadratic twist of an elliptic curve is elliptic exactly when the discriminant
-`D = t² - 4n` of the twisting parameters is a unit, since `Δ ↦ D⁶Δ` and `D⁶ · unit` is a unit
-precisely when `D` is. Over a general commutative ring `D ≠ 0` is not the right criterion (take
-`A = ℤ`, `D = 2`); over a field the two coincide, which is `isElliptic_quadraticTwistOf`. -/
+`D = t² - 4n` of the twisting parameters is a unit. Over a general commutative ring `D ≠ 0` is
+not the right criterion (take `A = ℤ`, `D = 2`); over a field the two coincide, which is
+`isElliptic_quadraticTwistOf`. -/
 theorem isElliptic_quadraticTwistOf_iff [E.IsElliptic] :
     (E.quadraticTwistOf t n).IsElliptic ↔ IsUnit (t ^ 2 - 4 * n) := by
   rw [isElliptic_iff, Δ_quadraticTwistOf]
   exact ⟨fun h ↦ (isUnit_pow_iff (by norm_num)).mp (isUnit_of_mul_isUnit_left h),
     fun hD ↦ (hD.pow 6).mul E.isUnit_Δ⟩
 
-/-- The `j`-invariant is a twist invariant: `j(E_{t,n}) = j(E)`. Both `j`s are `Δ'⁻¹c₄³`, and the
-twist scales `Δ` by `D⁶` and `c₄` by `D²`, so the two `D`-powers cancel against each other. -/
+/-- The `j`-invariant is a twist invariant: `j(E_{t,n}) = j(E)`. -/
 theorem j_quadraticTwistOf [E.IsElliptic] (h : (E.quadraticTwistOf t n).IsElliptic) :
     (E.quadraticTwistOf t n).j = E.j := by
   have hΔ : E.Δ * ((E.Δ'⁻¹ : Aˣ) : A) = 1 := by
@@ -216,22 +212,23 @@ by its trace and norm `(r + s, rs)` is a change of variables away from `E`, prov
 difference of the roots is a unit (that difference squared is the discriminant). -/
 theorem exists_smul_eq_quadraticTwistOf_add_mul (r s : A) (h : IsUnit (s - r)) :
     ∃ C : VariableChange A, C • E = E.quadraticTwistOf (r + s) (r * s) := by
+  -- twisting by `(1, 0)` is the identity, and the generator change `a = s - r`, `b = r` sends
+  -- its parameters to `(r + s, rs)`; the two agree after polynomial normalisation.
   obtain ⟨C, hC⟩ := E.exists_smul_quadraticTwistOf_eq 1 0 (a := s - r) r h
-  refine ⟨C, ?_⟩
-  rwa [quadraticTwistOf_one_zero, show (s - r) * 1 + 2 * r = r + s by ring,
-    show r ^ 2 + (s - r) * r * 1 + (s - r) ^ 2 * 0 = r * s by ring] at hC
+  rw [quadraticTwistOf_one_zero] at hC
+  exact ⟨C, by convert hC using 2 <;> ring⟩
 
-/-- Twisting twice by the same parameters `(t, n)` gives an isomorphic curve. This is the split
-case `exists_smul_eq_quadraticTwistOf_add_mul` at roots `r = t² - 2n` and `s = 2n`, whose sum
-and product are the composite parameters of `quadraticTwistOf_quadraticTwistOf` and whose
-difference is `-(t² - 4n)`. -/
+/-- Twisting twice by the same parameters `(t, n)` gives an isomorphic curve, provided the
+discriminant `D = t² - 4n` is a unit. -/
 theorem exists_smul_eq_quadraticTwistOf_quadraticTwistOf (hD : IsUnit (t ^ 2 - 4 * n)) :
     ∃ C : VariableChange A, C • E = (E.quadraticTwistOf t n).quadraticTwistOf t n := by
-  obtain ⟨C, hC⟩ := E.exists_smul_eq_quadraticTwistOf_add_mul (t ^ 2 - 2 * n) (2 * n)
-    (by rwa [show 2 * n - (t ^ 2 - 2 * n) = -(t ^ 2 - 4 * n) by ring, IsUnit.neg_iff])
-  rw [show t ^ 2 - 2 * n + 2 * n = t ^ 2 by ring,
-    show (t ^ 2 - 2 * n) * (2 * n) = 2 * t ^ 2 * n - 4 * n ^ 2 by ring] at hC
-  exact ⟨C, by rw [quadraticTwistOf_quadraticTwistOf]; exact hC⟩
+  -- the split case at roots `t² - 2n` and `2n`: their difference is `-(t² - 4n)`, and their
+  -- sum and product are the composite parameters of `quadraticTwistOf_quadraticTwistOf`.
+  have hrs : IsUnit (2 * n - (t ^ 2 - 2 * n)) := by
+    rw [show 2 * n - (t ^ 2 - 2 * n) = -(t ^ 2 - 4 * n) by ring, IsUnit.neg_iff]; exact hD
+  obtain ⟨C, hC⟩ := E.exists_smul_eq_quadraticTwistOf_add_mul (t ^ 2 - 2 * n) (2 * n) hrs
+  rw [quadraticTwistOf_quadraticTwistOf]
+  exact ⟨C, by convert hC using 2 <;> ring⟩
 
 end QuadraticTwistOfRing
 
