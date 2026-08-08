@@ -222,7 +222,15 @@ end Characters
 
 section ClassFunctions
 
-variable {k : Type u} {G : Type v} [Field k] [Group G] {S : Subgroup G}
+variable {k : Type u} {G : Type v} [Group G] {S : Subgroup G}
+
+/-! Both steps of the double count are cleared-denominator identities, so they live at the
+semiring level alongside `TauCeti.natCard_mul_indClassFun`; only the normalized statements below
+divide, and only those need a field. -/
+
+section Semiring
+
+variable [Semiring k]
 
 open scoped Classical in
 /-- **The inner sum of the double count.** For a fixed conjugating element `x`, pairing the
@@ -281,6 +289,10 @@ private theorem natCard_mul_sum_indClassFun_mul [Fintype G] {f : S → k}
         Finset.sum_congr rfl fun x _ => sum_indTerm_mul_eq_sum_subtype f hh x
     _ = (Nat.card G : k) * ∑ s : S, f s * h ((s : G)⁻¹) := by
         simp [Nat.card_eq_fintype_card]
+
+end Semiring
+
+variable [Field k]
 
 open scoped Classical in
 /-- **Frobenius reciprocity for class functions.**  The normalized pairing over `G` of an induced
