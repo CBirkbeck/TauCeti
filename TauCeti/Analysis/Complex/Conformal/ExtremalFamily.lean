@@ -160,35 +160,34 @@ private theorem mapsTo_ball_of_forall_norm_le_one (hΩo : IsOpen Ω) (hconn : Is
 local uniform convergence, so `‖deriv g z₀‖` is the limit of the sequence `u` the family was
 chosen to approach. -/
 private theorem norm_deriv_eq_of_tendstoLocallyUniformlyOn (hΩo : IsOpen Ω) (hz₀ : z₀ ∈ Ω)
-    {F : ℕ → ℂ → ℂ} (hFd : ∀ n, DifferentiableOn ℂ (F n) Ω) {g : ℂ → ℂ} {M : ℝ} {u : ℕ → ℝ}
-    (hconv : TendstoLocallyUniformlyOn F g atTop Ω) (hu : Tendsto u atTop (𝓝 M))
-    (hFu : ∀ n, ‖deriv (F n) z₀‖ = u n) :
+    {F : ℕ → ℂ → ℂ} (hFd : ∀ᶠ n in atTop, DifferentiableOn ℂ (F n) Ω) {g : ℂ → ℂ} {M : ℝ}
+    {u : ℕ → ℝ} (hconv : TendstoLocallyUniformlyOn F g atTop Ω) (hu : Tendsto u atTop (𝓝 M))
+    (hFu : ∀ᶠ n in atTop, ‖deriv (F n) z₀‖ = u n) :
     ‖deriv g z₀‖ = M := by
   have hderiv : TendstoLocallyUniformlyOn (fun n => deriv (F n)) (deriv g) atTop Ω := by
-    have h := _root_.TendstoLocallyUniformlyOn.deriv hconv (Eventually.of_forall hFd) hΩo
+    have h := _root_.TendstoLocallyUniformlyOn.deriv hconv hFd hΩo
     simpa [Function.comp_def] using h
-  refine tendsto_nhds_unique (hderiv.tendsto_at hz₀).norm ?_
-  simpa [hFu] using hu
+  exact tendsto_nhds_unique (hderiv.tendsto_at hz₀).norm
+    (hu.congr' (hFu.mono fun n hn => hn.symm))
 
 /-- The family of pointed disc injections is closed under locally uniform limits, provided the
 limit's derivative at the base point does not vanish: that is exactly what excludes the constant
 alternative in Hurwitz's theorem. -/
 private theorem isPointedDiscInjectionOn_of_tendstoLocallyUniformlyOn (hΩo : IsOpen Ω)
     (hconn : IsPreconnected Ω) (hz₀ : z₀ ∈ Ω) {F : ℕ → ℂ → ℂ}
-    (hF : ∀ n, IsPointedDiscInjectionOn (F n) Ω z₀) {g : ℂ → ℂ}
-    (hgd : DifferentiableOn ℂ g Ω) (hconv : TendstoLocallyUniformlyOn F g atTop Ω)
-    (hderiv : deriv g z₀ ≠ 0) :
+    (hF : ∀ᶠ n in atTop, IsPointedDiscInjectionOn (F n) Ω z₀) {g : ℂ → ℂ}
+    (hconv : TendstoLocallyUniformlyOn F g atTop Ω) (hderiv : deriv g z₀ ≠ 0) :
     IsPointedDiscInjectionOn g Ω z₀ := by
-  have hg₀ : g z₀ = 0 := by
-    have h1 : Tendsto (fun n => F n z₀) atTop (𝓝 (g z₀)) := hconv.tendsto_at hz₀
-    rw [funext fun n => (hF n).map_base] at h1
-    exact tendsto_nhds_unique h1 tendsto_const_nhds
+  have hgd : DifferentiableOn ℂ g Ω :=
+    hconv.differentiableOn (hF.mono fun _ hn => hn.differentiableOn) hΩo
+  have hg₀ : g z₀ = 0 :=
+    tendsto_nhds_unique ((hconv.tendsto_at hz₀).congr' (hF.mono fun _ hn => hn.map_base))
+      tendsto_const_nhds
   have hle : ∀ z ∈ Ω, ‖g z‖ ≤ 1 := fun z hz =>
-    le_of_tendsto (hconv.tendsto_at hz).norm
-      (Eventually.of_forall fun n => (hF n).norm_le_one hz)
+    le_of_tendsto (hconv.tendsto_at hz).norm (hF.mono fun _ hn => hn.norm_le_one hz)
   refine ⟨hgd, mapsTo_ball_of_forall_norm_le_one hΩo hconn hgd hle hz₀ hg₀, ?_, hg₀⟩
-  rcases hurwitz_injOn hΩo hconn (Eventually.of_forall fun n => (hF n).differentiableOn) hconv
-    (Eventually.of_forall fun n => (hF n).injOn) with hinj | ⟨v, hv⟩
+  rcases hurwitz_injOn hΩo hconn (hF.mono fun _ hn => hn.differentiableOn) hconv
+    (hF.mono fun _ hn => hn.injOn) with hinj | ⟨v, hv⟩
   · exact hinj
   · exact absurd (deriv_eq_zero_of_forall_eq hΩo hz₀ hv) hderiv
 
@@ -222,16 +221,17 @@ theorem exists_isMaxOn_norm_deriv (hΩo : IsOpen Ω) (hconn : IsPreconnected Ω)
   choose F hF hFu using hu_mem
   have hb : IsLocallyBoundedOn F Ω :=
     isLocallyBoundedOn_of_forall_norm_le fun n z hz => (hF n).norm_le_one hz
-  obtain ⟨φ, g, hφ, hgd, hconv⟩ := montel hΩo (fun n => (hF n).differentiableOn) hb
+  obtain ⟨φ, g, hφ, -, hconv⟩ := montel hΩo (fun n => (hF n).differentiableOn) hb
   -- The derivatives converge locally uniformly, so the supremum is attained at the limit.
   have hMg : ‖deriv g z₀‖ =
       sSup ((fun f : ℂ → ℂ => ‖deriv f z₀‖) '' {f | IsPointedDiscInjectionOn f Ω z₀}) :=
     norm_deriv_eq_of_tendstoLocallyUniformlyOn hΩo hz₀
-      (fun n => (hF (φ n)).differentiableOn) hconv (hu_tendsto.comp hφ.tendsto_atTop)
-      fun n => hFu (φ n)
+      (Eventually.of_forall fun n => (hF (φ n)).differentiableOn) hconv
+      (hu_tendsto.comp hφ.tendsto_atTop) (Eventually.of_forall fun n => hFu (φ n))
   have hg : IsPointedDiscInjectionOn g Ω z₀ :=
-    isPointedDiscInjectionOn_of_tendstoLocallyUniformlyOn hΩo hconn hz₀ (fun n => hF (φ n)) hgd
-      hconv (by rw [← norm_ne_zero_iff, hMg]; exact hM₀.ne')
+    isPointedDiscInjectionOn_of_tendstoLocallyUniformlyOn hΩo hconn hz₀
+      (Eventually.of_forall fun n => hF (φ n)) hconv
+      (by rw [← norm_ne_zero_iff, hMg]; exact hM₀.ne')
   exact ⟨g, hg, fun f hf => hMg ▸ le_csSup hbdd ⟨f, hf, rfl⟩⟩
 
 /-- **The extremal problem has a solution on a simply connected proper subdomain.** This is the
