@@ -6,6 +6,8 @@ module
 
 public import Mathlib.Algebra.QuadraticDiscriminant
 import Mathlib.Algebra.Order.Ring.Abs
+import Mathlib.Algebra.Order.Round
+import Mathlib.Data.Rat.Floor
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
 
@@ -35,7 +37,6 @@ conclusion to every `(x, y)`.
 
 ## Main results
 
-* `Int.exists_two_mul_abs_sub_mul_le`: every integer lies within `m / 2` of a multiple of `m`.
 * `nonneg_of_discrim_le_zero`: `0 < a` and `discrim a b c ≤ 0` give `0 ≤ a x² + b x y + c y²`.
 * `Int.discrim_le_zero_of_nonneg_of_lt_abs`: for `0 < a` and `a < |y|`, non-negativity of
   `a x² + b x y + c y²` in `x` alone forces `discrim a b c ≤ 0`.
@@ -44,27 +45,28 @@ conclusion to every `(x, y)`.
 
 ## References
 
-* Silverman, *The Arithmetic of Elliptic Curves*, V.1.1, where positivity of the degree form on
-  a rank-two lattice is turned into the Hasse inequality by exactly this discriminant argument.
+* Silverman, *The Arithmetic of Elliptic Curves*, V.1.2 — the Cauchy–Schwarz step that turns
+  positivity of the degree form on a rank-two lattice into the Hasse inequality of V.1.1.
 -/
 
 public section
 
 /-- **Nearest multiple.** For a positive modulus `m`, every integer `a` lies within `m / 2` of a
-multiple of `m`, stated division-free as `2 * |a - m * r| ≤ m`. -/
-theorem Int.exists_two_mul_abs_sub_mul_le {m : ℤ} (hm : 0 < m) (a : ℤ) :
+multiple of `m`, stated division-free as `2 * |a - m * r| ≤ m`. This is Mathlib's `abs_sub_round`
+for `(a : ℚ) / m`, cleared of denominators. -/
+private theorem exists_two_mul_abs_sub_mul_le {m : ℤ} (hm : 0 < m) (a : ℤ) :
     ∃ r : ℤ, 2 * |a - m * r| ≤ m := by
-  have hm2 : (0 : ℤ) < 2 * m := by linarith
-  refine ⟨(2 * a + m) / (2 * m), ?_⟩
-  have h0 : 0 ≤ (2 * a + m) % (2 * m) := Int.emod_nonneg _ (ne_of_gt hm2)
-  have h1 : (2 * a + m) % (2 * m) < 2 * m := Int.emod_lt_of_pos _ hm2
-  have hd : (2 * a + m) % (2 * m) + 2 * m * ((2 * a + m) / (2 * m)) = 2 * a + m :=
-    Int.emod_add_mul_ediv (2 * a + m) (2 * m)
-  have habs : 2 * |a - m * ((2 * a + m) / (2 * m))|
-      = |2 * (a - m * ((2 * a + m) / (2 * m)))| := by
-    rw [abs_mul]; norm_num
-  rw [habs, abs_le]
-  constructor <;> linarith
+  have hm0 : (0 : ℚ) < (m : ℚ) := by exact_mod_cast hm
+  refine ⟨round ((a : ℚ) / (m : ℚ)), ?_⟩
+  set r : ℤ := round ((a : ℚ) / (m : ℚ)) with hrdef
+  have hr : |(a : ℚ) / (m : ℚ) - (r : ℚ)| ≤ 1 / 2 := abs_sub_round _
+  -- Clearing the denominator turns `|a/m - r| ≤ 1/2` into `2 * |a - m * r| ≤ m`.
+  have key : |(a : ℚ) - (m : ℚ) * (r : ℚ)| = (m : ℚ) * |(a : ℚ) / (m : ℚ) - (r : ℚ)| := by
+    have h : (a : ℚ) - (m : ℚ) * (r : ℚ) = (m : ℚ) * ((a : ℚ) / (m : ℚ) - (r : ℚ)) := by
+      field_simp
+    rw [h, abs_mul, abs_of_pos hm0]
+  have hq : (2 : ℚ) * |(a : ℚ) - (m : ℚ) * (r : ℚ)| ≤ (m : ℚ) := by rw [key]; nlinarith
+  exact_mod_cast (by push_cast; linarith : ((2 * |a - m * r| : ℤ) : ℚ) ≤ ((m : ℤ) : ℚ))
 
 /-- A binary quadratic form with positive leading coefficient and non-positive discriminant is
 non-negative. This is the implication opposite to Mathlib's `discrim_le_zero`, stated for the
@@ -87,27 +89,26 @@ discriminant would give `4a·Q ≤ a ^ 2 - y ^ 2 < 0`. Over `ℚ` or `ℝ` the n
 exact minimum and a single line carries no information about the discriminant at all.
 
 Consequently a form known to be non-negative only on `{(x, y) : ¬ d ∣ y}`, for some fixed `d`,
-still has non-positive discriminant: any single `y` avoiding `d` with `a < |y|` — such as
-`y = a * d ^ 2 + 1` when `1 < |d|` — may be used here. -/
+still has non-positive discriminant; that is `Int.discrim_le_zero_of_nonneg_of_not_dvd`. -/
 theorem Int.discrim_le_zero_of_nonneg_of_lt_abs {a b c y : ℤ} (ha : 0 < a) (hy : a < |y|)
     (h : ∀ x : ℤ, 0 ≤ a * x ^ 2 + b * x * y + c * y ^ 2) : discrim a b c ≤ 0 := by
   by_contra! hcon
   rw [discrim] at hcon
-  -- Pick `x` nearest to the minimum of the form along the line, so that `|2ax + by| ≤ a`.
-  obtain ⟨x, hx⟩ := Int.exists_two_mul_abs_sub_mul_le (by linarith : (0 : ℤ) < 2 * a) (-(b * y))
-  have hxa : |2 * a * x + b * y| ≤ a := by
-    rw [show 2 * a * x + b * y = -(-(b * y) - 2 * a * x) by ring, abs_neg]
-    linarith [hx]
-  have hsq : (2 * a * x + b * y) ^ 2 ≤ a ^ 2 := by
+  -- The multiple of `2a` nearest to `b * y` supplies the point `x = -r` on the line at which
+  -- the completed square `(2ax + by)²` is at most `a ^ 2`.
+  obtain ⟨r, hr⟩ := exists_two_mul_abs_sub_mul_le (by linarith : (0 : ℤ) < 2 * a) (b * y)
+  have hxa : |2 * a * (-r) + b * y| ≤ a := by
+    have hxr : 2 * a * (-r) + b * y = b * y - 2 * a * r := by ring
+    rw [hxr]
+    linarith [hr]
+  have hsq : (2 * a * (-r) + b * y) ^ 2 ≤ a ^ 2 := by
     have habs := abs_le.mp hxa
     nlinarith [habs.1, habs.2]
-  -- `a < |y|` makes the `(4ac − b²)y²` term outweigh it, so the form is negative at `(x, y)`.
-  have hy2 : a ^ 2 < y ^ 2 := by
-    have := abs_nonneg y
-    nlinarith [sq_abs y]
-  have hkey : 4 * a * (a * x ^ 2 + b * x * y + c * y ^ 2)
-      = (2 * a * x + b * y) ^ 2 + (4 * a * c - b ^ 2) * y ^ 2 := by ring
-  nlinarith [h x, hsq, hy2, hkey]
+  -- `a < |y|` makes the `(4ac − b²)y²` term outweigh it, so the form is negative at `(-r, y)`.
+  have hy2 : a ^ 2 < y ^ 2 := by nlinarith [sq_abs y, abs_nonneg y]
+  have hkey : 4 * a * (a * (-r) ^ 2 + b * (-r) * y + c * y ^ 2)
+      = (2 * a * (-r) + b * y) ^ 2 + (4 * a * c - b ^ 2) * y ^ 2 := by ring
+  nlinarith [h (-r), hsq, hy2, hkey]
 
 /-- **A sublattice already pins the discriminant.** If a binary quadratic form over `ℤ` with
 positive leading coefficient is non-negative at every `(x, y)` whose second coordinate avoids
