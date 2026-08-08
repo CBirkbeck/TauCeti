@@ -24,9 +24,10 @@ with the generalized (non-integer) winding numbers as weights. Where
 `TauCeti.Contour.argumentPrinciple_nullHomologous` requires `γ` to avoid `S` and produces an
 ordinary integral, here `γ` may run through the points of `S` — a zero on the contour is a pole
 of `f'/f` on the contour, so the integral exists only as a principal value, and the point
-contributes its order weighted by a winding number that need not be an integer: a contour that
-passes smoothly through a zero sees it with weight `1/2`, and one with a corner there sees the
-corresponding fraction of a full turn.
+contributes its order weighted by a winding number that need not be an integer. In the standard
+configuration — a positively oriented curve with a single smooth branch through the point — that
+weight is `1/2`; in general the generalized winding number at such a point is the average of the
+two ordinary winding numbers on either side of the branch, so any `k ± 1/2` occurs.
 
 The proof is the Hungerbühler–Wasem residue theorem in its simple-pole regime
 (`TauCeti.Contour.hungerbuhlerWasem_residueTheorem_of_simple_poles`) applied to `logDeriv f`,
@@ -66,12 +67,19 @@ namespace TauCeti.Contour
 whatever order, then `meromorphicOrderAt (logDeriv f) z₀ ≥ -1`.
 
 Near `z₀` the logarithmic derivative splits as `n · (· − z₀)⁻¹ + logDeriv g` with `g` analytic and
-non-vanishing (`TauCeti.Contour.logDeriv_eventuallyEq_principalPart`); that first summand has order
-at least `-1` — exactly `-1` when `n ≠ 0`, and `⊤` when `n = 0` — and the second is analytic, so
-the order of the sum is at least `-1`. Differentiating cannot make the pole worse than simple
-however deep the zero or pole of `f` is: a zero of order `n` contributes `n/(z - z₀)`, whose
-order is `-1` irrespective of `n`. The remaining case, `f` vanishing identically near `z₀`, has
-`logDeriv f` vanishing there too, of order `⊤`.
+non-vanishing (`TauCeti.Contour.logDeriv_eventuallyEq_principalPart`); *that first summand* has
+order at least `-1`, being exactly `-1` when `n ≠ 0` and `⊤` when `n = 0`, where it is the zero
+function; the second summand is analytic; so the order of the sum is at least `-1`.
+Differentiating cannot make the pole worse than simple however deep the zero or pole of `f` is: a
+zero of order `n` contributes `n/(z - z₀)`, whose order is `-1` irrespective of `n`.
+
+For `logDeriv f` itself the order is exactly `-1` when `ord_{z₀} f ≠ 0` — the analytic tail cannot
+cancel a nonzero principal coefficient — merely `≥ 0` when `ord_{z₀} f = 0`, where `f'/f = g'/g`
+is analytic, and `⊤` when `f` vanishes identically near `z₀`, where `f'/f = deriv f / 0` vanishes
+too. Only the last case is not covered by the splitting, and it is handled separately below.
+
+Meromorphy is essential rather than bookkeeping: at an essential singularity the bound fails, the
+logarithmic derivative of `z ↦ exp (-z⁻¹)` being `z ↦ (z ^ 2)⁻¹`, of order `-2` at `0`.
 
 This is the hypothesis that puts the argument principle into the unconditional regime of the
 Hungerbühler–Wasem residue theorem. -/
@@ -116,10 +124,11 @@ closed piecewise-`C¹` immersion `γ` in `U`, null-homologous there and based of
 `p.v. ∮_γ f'/f = 2πi · Σ_{z ∈ S} n_z(γ) · ord z`.
 
 Unlike `TauCeti.Contour.argumentPrinciple_nullHomologous`, the curve is free to pass through the
-points of `S`: at such a point `f'/f` has a pole on the contour, the integral exists only as a
-principal value, and the generalized winding number supplies the fractional weight — `1/2` where
-the curve passes smoothly through the point. Only the basepoint `γ a` is required to avoid `S`,
-as it is what the principal value is anchored at.
+points of `S`: where the order is nonzero `f'/f` then has a pole on the contour, the integral
+exists only as a principal value, and the generalized winding number supplies the weight, which
+need not be an integer — `1/2` in the standard configuration of a positively oriented curve with
+a single smooth branch through the point. Only the basepoint `γ a` is required to avoid `S`, as
+it is what the principal value is anchored at.
 
 The order function is prescribed at every point of `S`; `S` may list regular non-vanishing points
 of `f`, whose order is `0` and which therefore contribute nothing. -/
