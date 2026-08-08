@@ -46,6 +46,21 @@ the ellipticity hypothesis removed.
 
 public section
 
+namespace WeierstrassCurve
+
+/-- **Base change commutes with change of variables.** Base changing `D • W` to `A` is changing
+the base-changed curve `W⁄A` by the base-changed variable change `D⁄A`.
+
+This is `map_variableChange` at `algebraMap`, in the `baseChange` spelling the rest of this
+development uses. It is a statement about curves, so it lives at curve level rather than under
+`Affine.Point`. -/
+lemma baseChange_variableChange {R : Type*} [CommRing R] (W : WeierstrassCurve R)
+    (D : VariableChange R) (A : Type*) [CommRing A] [Algebra R A] :
+    (D.baseChange A) • (W.baseChange A) = (D • W).baseChange A :=
+  map_variableChange (W := W) (C := D) (φ := algebraMap R A)
+
+end WeierstrassCurve
+
 namespace WeierstrassCurve.Affine
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F) (C : VariableChange F)
@@ -202,16 +217,10 @@ variable {R S K : Type*} [CommRing R] [CommRing S] [Field K] [DecidableEq K]
   [Algebra R S] [Algebra R F] [Algebra S F] [IsScalarTower R S F] [Algebra R K] [Algebra S K]
   [IsScalarTower R S K] (D : VariableChange R)
 
-/-- The base-change form of `map_variableChange`: base changing `D • W'` to `A` is changing the
-base-changed curve `W'⁄A` by the base-changed variable change `D⁄A`. -/
-lemma baseChange_variableChange (A : Type*) [CommRing A] [Algebra R A] :
-    (D.baseChange A) • (W'.baseChange A) = (D • W').baseChange A :=
-  map_variableChange (W := W') (C := D) (φ := algebraMap R A)
-
 /-- **Naturality in the base field.** Changing variables by `D` and then extending scalars along
 `f` agrees with extending scalars and then changing variables by `D`. Both sides are transported
-along `baseChange_variableChange`, which identifies the base change of `D • W'` with the change
-of variables by `D⁄F` applied to the base change of `W'`.
+along `WeierstrassCurve.baseChange_variableChange`, which identifies the base change of `D • W'`
+with the change of variables by `D⁄F` applied to the base change of `W'`.
 
 The transports are spelled as plain `cast`s rather than `AddEquiv.cast`s, since `simp` rewrites
 the latter to the former: this way the left-hand side is in `simp` normal form and the lemma
@@ -220,19 +229,19 @@ fires. -/
 lemma map_mapVariableChange (f : F →ₐ[S] K) (P : ((D • W')⁄F).Point) :
     Point.map f (mapVariableChange (W'⁄F) (D.baseChange F)
         (cast (congrArg (fun V : WeierstrassCurve F ↦ V.toAffine.Point)
-          (baseChange_variableChange W' D F).symm) P))
+          (W'.baseChange_variableChange D F).symm) P))
       = mapVariableChange (W'⁄K) (D.baseChange K)
           (cast (congrArg (fun V : WeierstrassCurve K ↦ V.toAffine.Point)
-            (baseChange_variableChange W' D K).symm) (Point.map f P)) := by
+            (W'.baseChange_variableChange D K).symm) (Point.map f P)) := by
   -- The statement transports with a plain `cast`, which is the `simp`-normal form (see the
   -- module docstring); the proof needs the `AddEquiv.cast` spelling, to which it is definitionally
   -- equal, so that `cast_some` applies.
   change Point.map f (mapVariableChange (W'⁄F) (D.baseChange F)
       (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
-        (baseChange_variableChange W' D F).symm P))
+        (W'.baseChange_variableChange D F).symm P))
     = mapVariableChange (W'⁄K) (D.baseChange K)
         (AddEquiv.cast (M := fun V : WeierstrassCurve K ↦ V.toAffine.Point)
-          (baseChange_variableChange W' D K).symm (Point.map f P))
+          (W'.baseChange_variableChange D K).symm (Point.map f P))
   rcases P with _ | ⟨x, y, h⟩
   · simp only [← zero_def, _root_.map_zero]
   · rw [cast_some, mapVariableChange_some, Point.map_some, Point.map_some, cast_some,
