@@ -150,6 +150,7 @@ theorem nonarchimedeanRing [IsTopologicalRing A] (P : PairOfDefinition A) :
 absorb it because each `Iⁿ` is an ideal of `A₀`. -/
 theorem isBounded_ringOfDefinition [IsTopologicalRing A] (P : PairOfDefinition A) :
     IsBounded (P.ringOfDefinition : Set A) := by
+  rw [isBounded_iff]
   intro U hU
   obtain ⟨n, -, hn⟩ := P.hasBasis_nhds_zero.mem_iff.mp hU
   refine ⟨P.idealImage n, (P.isOpen_idealImage n).mem_nhds (P.idealImage n).zero_mem, ?_⟩
@@ -159,8 +160,10 @@ theorem isBounded_ringOfDefinition [IsTopologicalRing A] (P : PairOfDefinition A
 /-- A ring of definition consists of power-bounded elements: `A₀ ≤ A°`. The nonarchimedean
 hypothesis is only needed to state it, since `P` itself supplies one. -/
 theorem le_powerBoundedSubring [NonarchimedeanRing A] (P : PairOfDefinition A) :
-    P.ringOfDefinition ≤ powerBoundedSubring A := fun a ha ↦
-  P.isBounded_ringOfDefinition.subset (by
+    P.ringOfDefinition ≤ powerBoundedSubring A := by
+  intro a ha
+  rw [mem_powerBoundedSubring, isPowerBounded_iff]
+  exact P.isBounded_ringOfDefinition.subset (by
     rintro _ ⟨n, rfl⟩
     exact P.ringOfDefinition.pow_mem ha n)
 
@@ -250,7 +253,7 @@ theorem hasBasis_nhds_zero (P : PairOfDefinition A) :
     (𝓝 (0 : A)).HasBasis (fun _ : ℕ ↦ True)
       fun n ↦ (a ^ n) • (P.ringOfDefinition : Set A) := by
   refine Filter.hasBasis_iff.mpr fun U ↦ ⟨fun hU ↦ ?_, ?_⟩
-  · obtain ⟨V, hV, hVU⟩ := P.isBounded_ringOfDefinition U hU
+  · obtain ⟨V, hV, hVU⟩ := isBounded_iff.mp P.isBounded_ringOfDefinition U hU
     obtain ⟨n, hn⟩ := (ha.2.eventually_mem hV).exists
     exact ⟨n, trivial, fun _ ⟨x, hx, hxy⟩ ↦ hxy ▸ hVU (Set.mul_mem_mul hn hx)⟩
   · rintro ⟨n, -, hn⟩
