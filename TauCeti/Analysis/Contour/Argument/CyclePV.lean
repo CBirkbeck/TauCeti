@@ -8,13 +8,11 @@ module
 public import TauCeti.Analysis.Contour.HungerbuhlerWasem
 public import TauCeti.Analysis.Contour.Residue.LogDeriv
 
-import TauCeti.Analysis.Contour.Argument.Principle
-
 /-!
 # The argument principle for a cycle running through the zeros
 
 The argument principle in the form that tolerates zeros and poles **on** the contour. For `f`
-whose zeros and poles in an open `U` all lie in a finite `S ⊆ U`, and a closed piecewise-`C¹`
+whose zeros and poles in an open `U` all lie in a finite `S`, and a closed piecewise-`C¹`
 *immersion* `γ` null-homologous in `U` and based off `S`, the Cauchy principal value of the
 logarithmic integral is
 
@@ -49,6 +47,14 @@ converge.
 * `TauCeti.Contour.hasCauchyPV_logDeriv_nullHomologous` — the principal-value argument principle
   for a cycle through the zeros.
 
+## Provenance
+
+Adapted from the AINTLIB [`LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) valence-formula
+development, whose `ForMathlib/GeneralizedResidueTheory/Residue.lean` and
+`.../Residue/GeneralizedTheoremBase.lean` apply the generalized residue theorem to `logDeriv f`;
+here stated against Mathlib's `meromorphicOrderAt` and the raw-`γ` design of the
+contour-integration roadmap.
+
 ## References
 
 * N. Hungerbühler, M. Wasem, *Non-integer valued winding numbers and a generalized Residue
@@ -62,8 +68,8 @@ open Set
 namespace TauCeti.Contour
 
 /-- **The argument principle for a cycle running through the zeros.** For `f` analytic and
-non-vanishing on `U` off a finite `S ⊆ U`, meromorphic at each point of `S` of order `ord`, and a
-closed piecewise-`C¹` immersion `γ` in `U`, null-homologous there and based off `S`,
+non-vanishing on `U` off a finite `S`, meromorphic of order `ord` at each point of `S` lying in
+`U`, and a closed piecewise-`C¹` immersion `γ` in `U`, null-homologous there and based off `S`,
 
 `p.v. ∮_γ f'/f = 2πi · Σ_{z ∈ S} n_z(γ) · ord z`.
 
@@ -71,37 +77,56 @@ Unlike `TauCeti.Contour.argumentPrinciple_nullHomologous`, the curve is free to 
 points of `S`: where the order is nonzero `f'/f` then has a pole on the contour, the integral
 exists only as a principal value, and the generalized winding number supplies the weight, which
 need not be an integer — `1/2` in the standard configuration of a positively oriented curve with
-a single smooth branch through the point. Only the basepoint `γ a` is required to avoid `S`, as
-it is what the principal value is anchored at.
+a single smooth branch through the point. Of the curve, only the endpoint `γ a` is required to
+avoid `S`; that restriction is inherited from the Hungerbühler–Wasem theorem, not from the
+principal value, which excises symmetrically about each singularity.
 
-The order function is prescribed at every point of `S`; `S` may list regular non-vanishing points
-of `f`, whose order is `0` and which therefore contribute nothing. -/
+Nothing is asked of `f` at a point of `S` outside `U`: null-homology forces the winding number
+there to vanish, so such a term drops out whatever `ord` says. `S` may equally list regular
+non-vanishing points of `f`, whose order is `0`. -/
 theorem hasCauchyPV_logDeriv_nullHomologous {f : ℂ → ℂ} {S : Finset ℂ} {U : Set ℂ} {ord : ℂ → ℤ}
-    (hU : IsOpen U) (hSU : (S : Set ℂ) ⊆ U)
+    (hU : IsOpen U)
     (hoff : ∀ z ∈ U, z ∉ S → AnalyticAt ℂ f z ∧ f z ≠ 0)
-    (hmero : ∀ s ∈ S, MeromorphicAt f s)
-    (hord : ∀ s ∈ S, meromorphicOrderAt f s = (ord s : WithTop ℤ))
+    (hmero : ∀ s ∈ S, s ∈ U → MeromorphicAt f s)
+    (hord : ∀ s ∈ S, s ∈ U → meromorphicOrderAt f s = (ord s : WithTop ℤ))
     {γ : ℝ → ℂ} {a b : ℝ} (hγ_imm : IsPwC1ImmersionOn γ a b)
     (hγU : ∀ t ∈ uIcc a b, γ t ∈ U) (hclosed : γ a = γ b) (hγa : γ a ∉ (S : Set ℂ))
     (hnull : IsNullHomologous γ a b U) :
     HasCauchyPV γ a b (logDeriv f)
       (2 * (Real.pi : ℂ) * Complex.I * ∑ z ∈ S, windingNumber γ a b z * (ord z : ℂ)) := by
-  -- Off `S` the function is analytic and non-vanishing, so its logarithmic derivative is
-  -- holomorphic there; at a point of `S` it is meromorphic, being `deriv f / f`.
-  have hdiff : DifferentiableOn ℂ (logDeriv f) (U \ (↑S : Set ℂ)) := fun z hz =>
-    (analyticAt_logDeriv_of_analyticAt (hoff z hz.1 hz.2).1
+  classical
+  -- Only the points of `S` inside `U` can contribute: run the residue theorem on those, and let
+  -- null-homology kill the rest.
+  set T : Finset ℂ := S.filter (· ∈ U) with hT
+  have hTS : T ⊆ S := Finset.filter_subset _ _
+  have hmemT : ∀ {z : ℂ}, z ∈ T ↔ z ∈ S ∧ z ∈ U := by
+    intro z; rw [hT, Finset.mem_filter]
+  have hTU : (T : Set ℂ) ⊆ U := fun z hz => (hmemT.mp hz).2
+  -- On `U` the two exceptional sets agree, so the off-`S` hypothesis serves `T` unchanged.
+  have hUT : U \ (↑T : Set ℂ) = U \ (↑S : Set ℂ) := by
+    ext z
+    exact ⟨fun hz => ⟨hz.1, fun hzS => hz.2 (hmemT.mpr ⟨hzS, hz.1⟩)⟩,
+      fun hz => ⟨hz.1, fun hzT => hz.2 (hTS hzT)⟩⟩
+  have hdiff : DifferentiableOn ℂ (logDeriv f) (U \ (↑T : Set ℂ)) := by
+    rw [hUT]
+    exact fun z hz => (analyticAt_logDeriv_of_analyticAt (hoff z hz.1 hz.2).1
       (hoff z hz.1 hz.2).2).differentiableAt.differentiableWithinAt
-  have hmeroL : ∀ s ∈ S, MeromorphicAt (logDeriv f) s := fun s hs =>
-    (hmero s hs).deriv.div (hmero s hs)
-  -- `Res_s (f'/f) = ord_s f` at every point of `S`.
-  have hsum : ∑ s ∈ S, windingNumber γ a b s * residue (logDeriv f) s
-      = ∑ z ∈ S, windingNumber γ a b z * (ord z : ℂ) :=
-    Finset.sum_congr rfl fun s hs => by
-      rw [residue_logDeriv_eq_meromorphicOrderAt (hmero s hs) (hord s hs)]
+  have hmeroT : ∀ s ∈ T, MeromorphicAt f s := fun s hs =>
+    hmero s (hTS hs) (hmemT.mp hs).2
+  have hmeroL : ∀ s ∈ T, MeromorphicAt (logDeriv f) s := fun s hs =>
+    (hmeroT s hs).deriv.div (hmeroT s hs)
+  -- `Res_s (f'/f) = ord_s f` inside `U`, and outside it the winding number vanishes.
+  have hsum : ∑ s ∈ T, windingNumber γ a b s * residue (logDeriv f) s
+      = ∑ z ∈ S, windingNumber γ a b z * (ord z : ℂ) := by
+    rw [Finset.sum_congr rfl fun s hs => by
+      rw [residue_logDeriv_eq_meromorphicOrderAt (hmeroT s hs)
+        (hord s (hTS hs) (hmemT.mp hs).2)]]
+    refine Finset.sum_subset hTS fun z hzS hzT => ?_
+    rw [isNullHomologous_iff.mp hnull z fun hzU => hzT (hmemT.mpr ⟨hzS, hzU⟩), zero_mul]
   rw [← hsum]
-  exact hungerbuhlerWasem_residueTheorem_of_simple_poles hU S γ a b hγ_imm hSU hclosed hγa hγU
-    hdiff hmeroL hnull fun s hs =>
-      neg_one_le_meromorphicOrderAt_logDeriv (hmero s hs)
+  exact hungerbuhlerWasem_residueTheorem_of_simple_poles hU T γ a b hγ_imm hTU hclosed
+    (fun h => hγa (hTS h)) hγU hdiff hmeroL hnull fun s hs =>
+      neg_one_le_meromorphicOrderAt_logDeriv (hmeroT s hs)
 
 end TauCeti.Contour
 
