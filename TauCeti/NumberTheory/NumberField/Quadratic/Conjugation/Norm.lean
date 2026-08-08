@@ -16,9 +16,9 @@ For a quadratic number field `K = ℚ(√d)` with quadratic conjugation
 key fact that `I · σI` is principal for every ideal `I` of `𝓞 K`.  This is the hypothesis
 consumed by `TauCeti.NumberField.mulEquiv_ringOfIntegersQuadraticConj_apply_eq_inv`.
 
-The proof idea, for `I ≠ 0`, runs through the relative ideal norm: `I · σI` has the same relative
-norm as `(Ideal.relNorm ℤ I).map (algebraMap ℤ (𝓞 K))` and contains it, hence equals it, and that
-extension of a principal `ℤ`-ideal is principal.  (The zero ideal is trivially principal.)
+The proof runs through the relative ideal norm: `I · σI` has the same relative norm as
+`(Ideal.relNorm ℤ I).map (algebraMap ℤ (𝓞 K))` and contains it, hence equals it, and that
+extension of a principal `ℤ`-ideal is principal.  The zero ideal needs no separate treatment.
 
 See D. A. Cox, *Primes of the Form x² + ny²*, and F. Lemmermeyer, *Reciprocity Laws*, for the
 classical genus theory this norm-principality underlies.
@@ -142,14 +142,8 @@ genus-theoretic hypothesis fed to `mulEquiv_ringOfIntegersQuadraticConj_apply_eq
 theorem isPrincipal_mul_map_ringOfIntegersQuadraticConj
     (hmin : minpoly ℤ θ = X ^ 2 - C d) (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) (I : Ideal (𝓞 K)) :
     (I * Ideal.map (ringOfIntegersQuadraticConj hmin hgen) I).IsPrincipal := by
-  -- For `I ≠ 0`, `I · σI = (Ideal.relNorm ℤ I).map (algebraMap ℤ (𝓞 K))`, the extension of a
-  -- principal `ℤ`-ideal; the equality is obtained by matching relative norms and divisibility.
-  rcases eq_or_ne I 0 with rfl | hIne
-  · exact ⟨0, by simp⟩
-  have hBne : I * Ideal.map (ringOfIntegersQuadraticConj hmin hgen) I ≠ 0 :=
-    mul_ne_zero hIne (by
-      simpa [Ideal.zero_eq_bot, Ideal.map_eq_bot_iff_of_injective
-        (ringOfIntegersQuadraticConj hmin hgen).injective] using hIne)
+  -- `I · σI = (Ideal.relNorm ℤ I).map (algebraMap ℤ (𝓞 K))`, the extension of a principal
+  -- `ℤ`-ideal; the equality is obtained by matching relative norms and divisibility.
   -- Conjugation preserves the relative norm: rewrite to the `ℤ`-algebra form, which is what
   -- Mathlib's lemma takes.
   have hreln : Ideal.relNorm ℤ (Ideal.map (ringOfIntegersQuadraticConj hmin hgen) I) =
@@ -164,7 +158,7 @@ theorem isPrincipal_mul_map_ringOfIntegersQuadraticConj
   -- So the containment is an equality, and the left side is principal, being the extension of the
   -- principal `ℤ`-ideal `relNorm I`.
   rw [← Ideal.eq_of_le_of_relNorm_eq
-    (map_relNorm_le_mul_map_ringOfIntegersQuadraticConj hmin hgen I) hBne hnorm]
+    (map_relNorm_le_mul_map_ringOfIntegersQuadraticConj hmin hgen I) hnorm]
   have : (Ideal.relNorm ℤ I).IsPrincipal := IsPrincipalIdealRing.principal _
   infer_instance
 

@@ -32,10 +32,12 @@ variable {A B : Type*} [CommRing A] [IsDedekindDomain A]
   [CommRing B] [IsDedekindDomain B] [Algebra A B] [Module.Finite A B]
   [Module.IsTorsionFree A B]
 
-/-- **A containment of ideals with equal relative norms is an equality.** Only the larger ideal is
-assumed nonzero; the smaller one is then nonzero too, by the equality of norms. -/
-theorem eq_of_le_of_relNorm_eq {I J : Ideal B} (hIJ : I ≤ J) (hJne : J ≠ 0)
+/-- **A containment of ideals with equal relative norms is an equality.** -/
+theorem eq_of_le_of_relNorm_eq {I J : Ideal B} (hIJ : I ≤ J)
     (hnorm : relNorm A I = relNorm A J) : I = J := by
+  rcases eq_or_ne J 0 with rfl | hJne
+  · -- `I ≤ 0` leaves no room for `I`.
+    simpa [zero_eq_bot, le_bot_iff] using hIJ
   -- `J ∣ I`, so `I = J * C`; cancelling the norms gives `relNorm C = 1`, and an ideal whose norm
   -- is the unit ideal is itself the unit ideal, its norm lying below its contraction.
   obtain ⟨C, hC⟩ := dvd_iff_le.mpr hIJ
