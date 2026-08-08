@@ -122,9 +122,9 @@ omit [CompleteSpace X] in
 enough initial interval.** -/
 private theorem exists_pos_forall_norm_realOperator_sub_one_le
     (S : StronglyContinuousSemigroup X)
-    (hreal : Continuous fun t : ℝ ↦ S.realOperator t) {c : ℝ} (hc : 0 < c) :
+    (hreal : ContinuousAt (fun t : ℝ ↦ S.realOperator t) 0) {c : ℝ} (hc : 0 < c) :
     ∃ t : ℝ, 0 < t ∧ ∀ s ∈ Set.uIoc (0 : ℝ) t, ‖S.realOperator s - 1‖ ≤ c := by
-  obtain ⟨δ, hδ, hsmall⟩ := Metric.continuousAt_iff.mp hreal.continuousAt c hc
+  obtain ⟨δ, hδ, hsmall⟩ := Metric.continuousAt_iff.mp hreal c hc
   refine ⟨δ / 2, half_pos hδ, fun s hs ↦ ?_⟩
   rw [Set.uIoc_of_le (half_pos hδ).le] at hs
   have hsδ : dist s 0 < δ := by
@@ -158,15 +158,13 @@ theorem domain_eq_top_of_continuousAt_zero (S : StronglyContinuousSemigroup X)
   have hreal : Continuous fun t : ℝ ↦ S.realOperator t :=
     (hS'.comp continuous_real_toNNReal).congr fun t ↦ (S.realOperator_def t).symm
   obtain ⟨t, ht, hnorm⟩ :=
-    S.exists_pos_forall_norm_realOperator_sub_one_le hreal (c := 1 / 2) (by norm_num)
+    S.exists_pos_forall_norm_realOperator_sub_one_le hreal.continuousAt (c := 1 / 2) (by norm_num)
   have hint : IntervalIntegrable S.realOperator volume 0 t := hreal.intervalIntegrable 0 t
   have hB : ‖t⁻¹ • (∫ s in (0 : ℝ)..t, S.realOperator s) - 1‖ < 1 :=
     (S.norm_normalizedIntegral_sub_one_le ht hint hnorm).trans_lt (by norm_num)
   have hBunit : IsUnit (t⁻¹ • ∫ s in (0 : ℝ)..t, S.realOperator s) := by
     have hone_sub : ‖1 - t⁻¹ • (∫ s in (0 : ℝ)..t, S.realOperator s)‖ < 1 := by
-      rw [show (1 : X →L[ℝ] X) - t⁻¹ • (∫ s in (0 : ℝ)..t, S.realOperator s) =
-        -(t⁻¹ • (∫ s in (0 : ℝ)..t, S.realOperator s) - 1) by module, norm_neg]
-      exact hB
+      rwa [norm_sub_rev]
     simpa only [sub_sub_cancel] using isUnit_one_sub_of_norm_lt_one hone_sub
   apply top_unique
   intro y _
@@ -175,8 +173,7 @@ theorem domain_eq_top_of_continuousAt_zero (S : StronglyContinuousSemigroup X)
   have horbit : (∫ s in (0 : ℝ)..t, S.realOperator s) x =
       ∫ s in Set.Ioc 0 t, S.realOperator s x := by
     rw [ContinuousLinearMap.intervalIntegral_apply hint, intervalIntegral.integral_of_le ht.le]
-  change t⁻¹ • (∫ s in (0 : ℝ)..t, S.realOperator s) x ∈ S.domain
-  rw [horbit]
+  rw [smul_apply, horbit]
   exact S.domain.smul_mem t⁻¹ (S.integral_orbit_mem_domain x ht)
 
 /-- If a strongly continuous semigroup is continuous in operator norm, then every vector lies in
