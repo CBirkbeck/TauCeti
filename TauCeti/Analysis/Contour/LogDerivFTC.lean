@@ -12,7 +12,6 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import TauCeti.Analysis.Complex.UpperLogContinuity
 public import TauCeti.Analysis.Contour.Curve.Integrability
 
-import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
 public import TauCeti.Analysis.Contour.Winding.Number.Basic
 import Mathlib.Analysis.SpecialFunctions.Complex.LogDeriv
 import Mathlib.MeasureTheory.Integral.DivergenceTheorem
