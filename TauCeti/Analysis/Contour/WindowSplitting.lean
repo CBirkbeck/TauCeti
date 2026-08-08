@@ -183,25 +183,24 @@ private theorem integral_truncated_eq_of_right_exit {γ : ℝ → ℂ} {g : ℂ 
 the norm bounded below by `m > ε` outside that window, the `ε`-truncated integral over
 `[t₀ - r, t₀ + r]` is the sum of the two plain side integrals up to the exit points. -/
 private theorem truncated_integral_eq_add_of_exit_points {γ : ℝ → ℂ} {g : ℂ → ℂ} {s : ℂ}
-    {t₀ ρ r m ε cₗ cᵣ : ℝ} (hρ_le_r : ρ ≤ r)
+    {t₀ ρ r m ε cₗ cᵣ : ℝ} (h_lb : t₀ - r ≤ cₗ) (h_ub : cᵣ ≤ t₀ + r)
     (hmono : StrictMonoOn (fun t => ‖γ t - s‖) (Icc t₀ (t₀ + ρ)))
     (hanti : StrictAntiOn (fun t => ‖γ t - s‖) (Icc (t₀ - ρ) t₀))
     (h_far_L : ∀ t ∈ Icc (t₀ - r) (t₀ - ρ), m ≤ ‖γ t - s‖)
     (h_far_R : ∀ t ∈ Icc (t₀ + ρ) (t₀ + r), m ≤ ‖γ t - s‖)
     (hcₗ : cₗ ∈ Ioo (t₀ - ρ) t₀) (hcᵣ : cᵣ ∈ Ioo t₀ (t₀ + ρ))
-    (hεₗ : ‖γ cₗ - s‖ = ε) (hεᵣ : ‖γ cᵣ - s‖ = ε) (hε_pos : 0 < ε) (hεm : ε < m)
-    (h_int : ∀ ε : ℝ, 0 < ε → ∀ a b : ℝ, t₀ - r ≤ a → a ≤ b → b ≤ t₀ + r →
-      IntervalIntegrable (fun t => if ‖γ t - s‖ > ε then g (γ t) * deriv γ t else 0)
-        MeasureTheory.volume a b) :
+    (hεₗ : ‖γ cₗ - s‖ = ε) (hεᵣ : ‖γ cᵣ - s‖ = ε) (hεm : ε < m)
+    (h_int_left : IntervalIntegrable
+      (fun t => if ‖γ t - s‖ > ε then g (γ t) * deriv γ t else 0)
+      MeasureTheory.volume (t₀ - r) cₗ)
+    (h_int_mid : IntervalIntegrable
+      (fun t => if ‖γ t - s‖ > ε then g (γ t) * deriv γ t else 0) MeasureTheory.volume cₗ cᵣ)
+    (h_int_right : IntervalIntegrable
+      (fun t => if ‖γ t - s‖ > ε then g (γ t) * deriv γ t else 0)
+      MeasureTheory.volume cᵣ (t₀ + r)) :
     ∫ u in (t₀ - r)..(t₀ + r), (if ‖γ u - s‖ > ε then g (γ u) * deriv γ u else 0) =
       (∫ u in (t₀ - r)..cₗ, g (γ u) * deriv γ u) +
         (∫ u in cᵣ..(t₀ + r), g (γ u) * deriv γ u) := by
-  have h_lb : t₀ - r ≤ cₗ := by linarith [hcₗ.1]
-  have h_mid_le : cₗ ≤ cᵣ := by linarith [hcₗ.2, hcᵣ.1]
-  have h_ub : cᵣ ≤ t₀ + r := by linarith [hcᵣ.2]
-  have h_int_left := h_int ε hε_pos (t₀ - r) cₗ le_rfl h_lb (by linarith [hcₗ.2])
-  have h_int_mid := h_int ε hε_pos cₗ cᵣ h_lb h_mid_le h_ub
-  have h_int_right := h_int ε hε_pos cᵣ (t₀ + r) (h_lb.trans h_mid_le) h_ub le_rfl
   rw [← intervalIntegral.integral_add_adjacent_intervals
       (h_int_left.trans h_int_mid) h_int_right,
     ← intervalIntegral.integral_add_adjacent_intervals h_int_left h_int_mid,
@@ -268,8 +267,14 @@ theorem exists_exit_times_truncated_integral_split {γ : ℝ → ℂ} {s : ℂ} 
     exists_window_dist_lower_bound hγ_cont h_unique hρ_pos hρ_le_r
   filter_upwards [h_radL, h_radR, h_memL, h_memR, Ioo_mem_nhdsGT hm_pos]
     with ε hεL hεR hτL hτR hεm
-  exact truncated_integral_eq_add_of_exit_points hρ_le_r hmono hanti h_far_L h_far_R
-    hτL hτR hεL hεR hεm.1 hεm.2 h_int
+  have h_lb : t₀ - r ≤ τL ε := by linarith [hτL.1]
+  have h_mid_le : τL ε ≤ τR ε := by linarith [hτL.2, hτR.1]
+  have h_ub : τR ε ≤ t₀ + r := by linarith [hτR.2]
+  exact truncated_integral_eq_add_of_exit_points h_lb h_ub hmono hanti h_far_L h_far_R
+    hτL hτR hεL hεR hεm.2
+    (h_int ε hεm.1 (t₀ - r) (τL ε) le_rfl h_lb (by linarith [hτL.2]))
+    (h_int ε hεm.1 (τL ε) (τR ε) h_lb h_mid_le h_ub)
+    (h_int ε hεm.1 (τR ε) (t₀ + r) (h_lb.trans h_mid_le) h_ub le_rfl)
 
 end TauCeti.Contour
 
