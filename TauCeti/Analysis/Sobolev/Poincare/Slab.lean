@@ -251,17 +251,18 @@ private theorem hasDerivAt_comp_slabChart (y : Fin n → ℝ) {t : ℝ}
 
 omit [CompleteSpace F] in
 /-- The one-dimensional estimate on a single line of the slab: the `r`-th power integral of `u`
-along the line is at most `(b - a) ^ r` times that of the full derivative. Only differentiability
-of `u` and continuity of its derivative *along that line* are needed. -/
+along the line is at most `(b - a) ^ r` times that of the full derivative. Everything is asked of
+the restricted line only: differentiability of `u` along it, continuity of the *directional*
+derivative along it, and the support of the restriction. -/
 private theorem lintegral_enorm_rpow_comp_slabChart_le {y : Fin n → ℝ}
     (hu : ∀ t : ℝ, DifferentiableAt ℝ u (slabChart i (t, y)))
-    (hfc : Continuous fun t : ℝ => fderiv ℝ u (slabChart i (t, y))) (hab : a ≤ b)
-    (hsupp : ∀ x ∈ Function.support u, x i ∈ Icc a b) {r : ℝ} (hr : 1 ≤ r) :
+    (hfc : Continuous fun t : ℝ => fderiv ℝ u (slabChart i (t, y)) (EuclideanSpace.single i 1))
+    (hab : a ≤ b) (hsupp : Function.support (fun t : ℝ => u (slabChart i (t, y))) ⊆ Icc a b)
+    {r : ℝ} (hr : 1 ≤ r) :
     ∫⁻ t, ‖u (slabChart i (t, y))‖ₑ ^ r
       ≤ ENNReal.ofReal ((b - a) ^ r) * ∫⁻ t, ‖fderiv ℝ u (slabChart i (t, y))‖ₑ ^ r := by
   refine le_trans (lintegral_enorm_rpow_le_of_support_subset_Icc hab
-    (fun t => hasDerivAt_comp_slabChart y (hu t)) (hfc.clm_apply continuous_const)
-    (fun t ht => by simpa using hsupp _ (Function.mem_support.2 ht)) hr) ?_
+    (fun t => hasDerivAt_comp_slabChart y (hu t)) hfc hsupp hr) ?_
   gcongr with t
   rw [← ofReal_norm, ← ofReal_norm]
   refine ENNReal.ofReal_le_ofReal ?_
@@ -294,7 +295,9 @@ theorem eLpNorm_le_eLpNorm_fderiv_of_support_subset_slab (hu : ContDiff ℝ 1 u)
       ≤ ENNReal.ofReal ((b - a) ^ r) * ∫⁻ t, ‖fderiv ℝ u (slabChart i (t, y))‖ₑ ^ r := fun y =>
     lintegral_enorm_rpow_comp_slabChart_le
       (fun _ => (hu.differentiable one_ne_zero).differentiableAt)
-      (hfc.comp (by simp only [slabChart_eq_add_smul_single]; fun_prop)) hab hsupp hr
+      (((hfc.comp (by simp only [slabChart_eq_add_smul_single]; fun_prop)).clm_apply
+        continuous_const)) hab
+      (fun t ht => by simpa using hsupp _ (Function.mem_support.2 ht)) hr
   calc ∫⁻ x, ‖u x‖ₑ ^ r
       = ∫⁻ y, ∫⁻ t, ‖u (slabChart i (t, y))‖ₑ ^ r := lintegral_eq_lintegral_slabChart hmu
     _ ≤ ∫⁻ y, ENNReal.ofReal ((b - a) ^ r) * ∫⁻ t, ‖fderiv ℝ u (slabChart i (t, y))‖ₑ ^ r :=
