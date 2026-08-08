@@ -38,10 +38,14 @@ namespace WeierstrassCurve.Affine
 
 /-! ### Transformation of the group-law formulae under a change of variables
 
-`negY`, `addX` and `negAddY` are unfolded by `simp` (they are reducible definitions in Mathlib's
-`Affine.Formula`), so the laws whose left-hand sides are headed by them cannot be `simp` lemmas —
-their left-hand sides are not in simp-normal form and the `simpNF` linter rejects them. The
-remaining laws, whose heads survive simplification, are registered.
+Exactly six laws are registered as `simp` lemmas: `variableChange_addY`, the three
+`variableChange_evalEval_*`, `variableChange_equation` and `variableChange_nonsingular`. The
+others are deliberately not. `variableChange_negY`, `variableChange_addX`,
+`variableChange_negAddY` and `variableChange_X_inj` have left-hand sides that `simp` rewrites
+first — the first three are headed by `negY`, `addX` and `negAddY`, which `simp` unfolds, and
+the fourth is cancelled by `add_left_inj` — so those sides are never in simp-normal form and the
+`simpNF` linter rejects the attribute. `variableChange_Y_inj`, `variableChange_negY_ne` and
+`variableChange_slope` are conditional rather than unconditional normalisation laws.
 
 Throughout, the change of variables carries a point `(x, y)` of `C • W` to the point
 `(u²x + r, u³y + u²sx + t)` of `W`. The laws in this section are stated over an arbitrary
