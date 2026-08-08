@@ -191,8 +191,8 @@ theorem den_eq_one_of_dvd_squarefree {W : _root_.WeierstrassCurve ℤ} {x y : �
     refine isUnit_den_of_dvd_squarefree W h (m := (m : ℤ)) (Int.squarefree_natCast.mpr hsf) ?_
     rw [← Int.natAbs_dvd, Rat.isFractionRingDen x]
     exact Int.natCast_dvd_natCast.mpr hdvd
-  have hd := Rat.isFractionRingDen x
-  rcases Int.isUnit_iff.mp hunit with h1 | h1 <;> rw [h1] at hd <;> simpa using hd.symm
+  rw [← Rat.isFractionRingDen x]
+  exact Int.isUnit_iff_natAbs_eq.mp hunit
 
 end WeierstrassCurve
 
