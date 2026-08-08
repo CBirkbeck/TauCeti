@@ -6,6 +6,7 @@ module
 
 public import Mathlib.RingTheory.Ideal.Norm.RelNorm
 public import Mathlib.NumberTheory.NumberField.Norm
+public import TauCeti.NumberTheory.DedekindDomain.RelNorm
 public import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Basic
 
 /-!
@@ -116,33 +117,14 @@ private noncomputable def ringOfIntegersQuadraticConjₐ (hmin : minpoly ℤ θ 
   AlgEquiv.ofRingEquiv (f := ringOfIntegersQuadraticConj hmin hgen)
     (fun z => by rw [algebraMap_int_eq]; exact map_intCast _ z)
 
-section RelNorm
-
-variable {A B : Type*} [CommRing A] [IsDedekindDomain A]
-  [CommRing B] [IsDedekindDomain B] [Algebra A B] [Module.Finite A B]
-  [Module.IsTorsionFree A B]
-
-/-- **A containment of ideals with equal relative norms is an equality.** Only the larger ideal is
-assumed nonzero; the smaller one is then nonzero too, by the equality of norms. -/
-private theorem eq_of_le_of_relNorm_eq {I J : Ideal B} (hIJ : I ≤ J) (hJne : J ≠ 0)
-    (hnorm : Ideal.relNorm A I = Ideal.relNorm A J) : I = J := by
-  -- `J ∣ I`, so `I = J * C`; cancelling the norms gives `relNorm C = 1`, and an ideal whose norm
-  -- is the unit ideal is itself the unit ideal, its norm lying below its contraction.
-  obtain ⟨C, hC⟩ := Ideal.dvd_iff_le.mpr hIJ
-  have hJnorm_ne : Ideal.relNorm A J ≠ 0 := by
-    rw [Ne, Ideal.zero_eq_bot, Ideal.relNorm_eq_bot_iff, ← Ideal.zero_eq_bot]; exact hJne
-  have hC1 : Ideal.relNorm A C = 1 := by
-    apply mul_left_cancel₀ hJnorm_ne
-    rw [mul_one, ← map_mul (Ideal.relNorm A), ← hC, hnorm]
-  have hCtop : C = ⊤ := by
-    have hle : (⊤ : Ideal A) ≤ Ideal.comap (algebraMap A B) C := by
-      rw [← Ideal.one_eq_top, ← hC1]; exact Ideal.relNorm_le_comap A C
-    rw [Ideal.eq_top_iff_one]
-    have := hle (Submodule.mem_top (x := (1 : A)))
-    rwa [Ideal.mem_comap, map_one] at this
-  rw [hC, hCtop, Ideal.mul_top]
-
-end RelNorm
+/-- Pushing an ideal forward along quadratic conjugation and along its `ℤ`-algebra form
+`ringOfIntegersQuadraticConjₐ` give the same ideal: the two wrappers carry the same underlying
+ring homomorphism. -/
+private theorem map_ringOfIntegersQuadraticConjₐ (hmin : minpoly ℤ θ = X ^ 2 - C d)
+    (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) (J : Ideal (𝓞 K)) :
+    Ideal.map (ringOfIntegersQuadraticConjₐ hmin hgen) J =
+      Ideal.map (ringOfIntegersQuadraticConj hmin hgen) J :=
+  rfl
 
 /-- The extension of the norm ideal of `J` is contained in `J · σJ`. -/
 private theorem map_relNorm_le_mul_map_ringOfIntegersQuadraticConj
@@ -169,11 +151,12 @@ theorem isPrincipal_mul_map_ringOfIntegersQuadraticConj
     mul_ne_zero hIne (by
       simpa [Ideal.zero_eq_bot, Ideal.map_eq_bot_iff_of_injective
         (ringOfIntegersQuadraticConj hmin hgen).injective] using hIne)
-  -- Conjugation preserves the relative norm. The ascription is what identifies `Ideal.map` of the
-  -- ring equivalence with `Ideal.map` of its `ℤ`-algebra form, which is what Mathlib's lemma takes.
+  -- Conjugation preserves the relative norm: rewrite to the `ℤ`-algebra form, which is what
+  -- Mathlib's lemma takes.
   have hreln : Ideal.relNorm ℤ (Ideal.map (ringOfIntegersQuadraticConj hmin hgen) I) =
-      Ideal.relNorm ℤ I :=
-    Ideal.relNorm_map_algEquiv (ringOfIntegersQuadraticConjₐ hmin hgen) I
+      Ideal.relNorm ℤ I := by
+    rw [← map_ringOfIntegersQuadraticConjₐ hmin hgen I,
+      Ideal.relNorm_map_algEquiv (ringOfIntegersQuadraticConjₐ hmin hgen) I]
   -- So both ideals have relative norm `(relNorm I)²`.
   have hnorm : Ideal.relNorm ℤ (Ideal.map (algebraMap ℤ (𝓞 K)) (Ideal.relNorm ℤ I)) =
       Ideal.relNorm ℤ (I * Ideal.map (ringOfIntegersQuadraticConj hmin hgen) I) := by
@@ -181,7 +164,7 @@ theorem isPrincipal_mul_map_ringOfIntegersQuadraticConj
       map_mul (Ideal.relNorm ℤ), hreln, ← sq]
   -- So the containment is an equality, and the left side is principal, being the extension of the
   -- principal `ℤ`-ideal `relNorm I`.
-  rw [← eq_of_le_of_relNorm_eq
+  rw [← Ideal.eq_of_le_of_relNorm_eq
     (map_relNorm_le_mul_map_ringOfIntegersQuadraticConj hmin hgen I) hBne hnorm]
   have : (Ideal.relNorm ℤ I).IsPrincipal := IsPrincipalIdealRing.principal _
   infer_instance
