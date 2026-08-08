@@ -176,7 +176,7 @@ private theorem inducedCoact_coassoc :
 
 /-- **The counit law for the induced coaction.** This is the second comodule axiom for
 `Subcomodule.inducedCoact`, and the counit field of `Subcomodule.instComodule`. -/
-private theorem lTensor_counit_comp_inducedCoact :
+private theorem inducedCoact_counit :
     Coalgebra.counit.lTensor N ∘ₗ N.inducedCoact = (TensorProduct.mk R N R).flip 1 := by
   -- The inclusion is injective on `N ⊗[R] R`, so it suffices to check the identity in `M ⊗[R] R`.
   ext n
@@ -199,7 +199,7 @@ noncomputable instance instComodule : Comodule R C N where
   -- The two axioms are `by exact` rather than bare terms: this instance is public, so its body may
   -- not name a private declaration, while a tactic proof of a `Prop` field may.
   coassoc := by exact inducedCoact_coassoc N
-  lTensor_counit_comp_coact := by exact lTensor_counit_comp_inducedCoact N
+  lTensor_counit_comp_coact := by exact inducedCoact_counit N
 
 /-- The inherited coaction on a subcomodule is `Subcomodule.inducedCoact`. -/
 @[simp]
