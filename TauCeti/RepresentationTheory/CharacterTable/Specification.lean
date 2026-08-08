@@ -228,9 +228,10 @@ private theorem sq_mul_sum_mul_conj_eq_of_mul_eq_mul {e d : ℕ} {r t : ConjClas
     _ = (d : ℂ) ^ 2 * ((Nat.card C.carrier : ℂ) * t C * (starRingEnd ℂ) (t C)) := by ring
 
 omit hM in
-/-- The row of `M` and the row `j` of the character table are proportional, with their identity
-entries as the constants of proportionality. Nonvanishing of the identity entry is all that is
-needed of the row; the full specification never enters. -/
+/-- Given that the normalized row `i` of `M` is the central character row `j` (`hj`), and that its
+identity entry is nonzero with value `d`, the row of `M` and row `j` of the character table are
+proportional with those identity entries as the constants. The full specification
+`IsCharacterTableSpec` never enters. -/
 private theorem characterDegree_mul_apply_eq_mul_characterTable {d : ℕ}
     (hMi : M i (ConjClasses.mk 1) ≠ 0) (hMd : M i (ConjClasses.mk 1) = (d : ℂ))
     {j : Fin (Nat.card (ConjClasses G))}
