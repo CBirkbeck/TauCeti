@@ -26,7 +26,7 @@ extra condition — that `|y₀|` exceed the leading coefficient — repairs thi
 quantification needed.
 
 Together with the reverse implication this gives the upgrade that motivates the file: a form known
-to be non-negative only on some sparse subset of `ℤ ⨯ ℤ` — for instance the sublattice where a
+to be non-negative only on some sparse subset of `ℤ ⨯ ℤ` — for instance the locus where a
 fixed prime does not divide `y`, which is all that the degree form on an elliptic curve is
 directly known to satisfy — is non-negative everywhere. Any single `y₀` from that subset with
 `|y₀|` large enough feeds `Int.discrim_le_zero_of_nonneg_of_lt_abs`, and then
@@ -114,7 +114,7 @@ theorem discrim_pos_of_forall_int_nonneg :
   · nlinarith
   · nlinarith [Int.add_one_le_iff.mpr hx]
 
-/-- **A sublattice pins the discriminant.** If a binary quadratic form over `ℤ` with positive
+/-- **The locus `d ∤ y` pins the discriminant.** If a binary quadratic form over `ℤ` with positive
 leading coefficient is non-negative at every `(x, y)` whose second coordinate avoids the
 multiples of a non-unit `d` — in the intended application `d` is a prime, and the locus is the
 sublattice complement `{(x, y) : d ∤ y}` — then `discrim a b c ≤ 0`.
