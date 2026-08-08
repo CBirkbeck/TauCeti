@@ -6,7 +6,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Basic
 public import Mathlib.RingTheory.Localization.NumDen
-public import Mathlib.RingTheory.Localization.Rat
+import Mathlib.RingTheory.Localization.Rat
 
 /-!
 # Denominators of points on a Weierstrass curve over a unique factorization domain
@@ -36,9 +36,10 @@ of `y`.
   `x`-coordinate of a point divides it at least twice.
 * `TauCeti.WeierstrassCurve.not_prime_den`: the denominator of the `x`-coordinate of a point is
   not a prime element.
-* `TauCeti.WeierstrassCurve.den_eq_one_of_dvd_prime`: over `ℤ`, if the denominator of a rational
-  `x`-coordinate divides a prime then it is `1` — the integrality conclusion the rational root
-  theorem feeds into.
+* `TauCeti.WeierstrassCurve.isUnit_den_of_dvd_squarefree`: a squarefree bound on that denominator
+  forces it to be a unit.
+* `TauCeti.WeierstrassCurve.den_eq_one_of_dvd_squarefree`: the same over `ℤ`, where it says the
+  rational `x`-coordinate is an integer — the conclusion the rational root theorem feeds into.
 
 This is the denominator input to the Nagell–Lutz integrality milestone of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 6, item "The torsion subgroup and Nagell–Lutz".
@@ -51,6 +52,12 @@ that roadmap at `dev/modular-curves @ 9fec8eba7652`: the descent follows
 `LutzNagell/LutzNagellTheorem/PIDDenominators.lean`
 (`den_no_simple_prime_factor_of_on_curve`, `den_not_prime_of_on_curve`) and its positive restatement
 `den_powerful_of_on_curve` in `LutzNagell/LutzNagellTheorem/PIDMain.lean`.
+
+The `ℚ`/`ℤ` conclusion follows `LutzNagell/LutzNagellTheorem/GeneralDenominators.lean`,
+declaration `den_ne_prime_of_on_general_curve`. That source states the prime-denominator
+exclusion — extra hypothesis `x.den = p` for a prime `p`, conclusion `False` — and names the
+divisibility consequence in its docstring without stating it; `den_eq_one_of_dvd_squarefree` is
+that consequence, with a squarefree bound in place of a prime one.
 -/
 
 public section
@@ -145,6 +152,21 @@ theorem sq_dvd_den_of_prime_of_dvd (h : (W.baseChange K).toAffine.Equation x y) 
     linear_combination key
   exact not_isRelPrime_of_cleared_equation hq hu' hα hcl (num_den_reduced R y)
 
+/-- **A squarefree bound on the denominator forces it to be a unit.**
+
+A prime dividing the denominator divides it twice (`sq_dvd_den_of_prime_of_dvd`), so it would
+divide any bound twice as well; a squarefree bound admits no such prime, leaving the denominator
+without prime factors. -/
+theorem isUnit_den_of_dvd_squarefree (h : (W.baseChange K).toAffine.Equation x y) {m : R}
+    (hsf : Squarefree m) (hdvd : (den R x : R) ∣ m) : IsUnit (den R x : R) := by
+  by_contra hnu
+  obtain ⟨q, hq_irr, hq_dvd⟩ := WfDvdMonoid.exists_irreducible_factor hnu
+    (mem_nonZeroDivisors_iff_ne_zero.mp (den R x).2)
+  have hq : Prime q := UniqueFactorizationMonoid.irreducible_iff_prime.mp hq_irr
+  have hqq : q * q ∣ (den R x : R) := by
+    rw [← pow_two]; exact sq_dvd_den_of_prime_of_dvd W h hq hq_dvd
+  exact hq.not_isUnit (hsf q (hqq.trans hdvd))
+
 /-- **The denominator of the `x`-coordinate of a point is not prime.**
 
 The Nagell–Lutz form of `TauCeti.WeierstrassCurve.sq_dvd_den_of_prime_of_dvd`: a prime element is
@@ -155,21 +177,22 @@ theorem not_prime_den (h : (W.baseChange K).toAffine.Equation x y) :
   hp.not_isUnit <| hp.irreducible.squarefree _ <| by
     simpa [sq] using sq_dvd_den_of_prime_of_dvd W h hp dvd_rfl
 
--- The `Rat.den` form of `not_prime_den`: over `ℤ` the ring-theoretic denominator and the numeral
--- agree up to sign (`Rat.isFractionRingDen`). Only `den_eq_one_of_dvd_prime` consumes it.
-private theorem not_prime_rat_den {W : _root_.WeierstrassCurve ℤ} {x y : ℚ}
-    (h : (W.baseChange ℚ).toAffine.Equation x y) : ¬x.den.Prime := fun hp ↦
-  not_prime_den W h <| Int.prime_iff_natAbs_prime.mpr <| by rw [Rat.isFractionRingDen x]; exact hp
+/-- **A rational point whose `x`-denominator divides a squarefree number has an integral
+`x`-coordinate.**
 
-/-- **A rational point whose `x`-denominator divides a prime has an integral `x`-coordinate.**
-
-This is what the Nagell–Lutz integrality argument consumes: the rational root theorem bounds
-`x.den` by a prime `p`, and since a denominator is never prime
-(`TauCeti.WeierstrassCurve.not_prime_den`) the divisor `p` is excluded, leaving `x.den = 1`. -/
-theorem den_eq_one_of_dvd_prime {W : _root_.WeierstrassCurve ℤ} {x y : ℚ}
-    (h : (W.baseChange ℚ).toAffine.Equation x y) {p : ℕ} (hp : p.Prime) (hdvd : x.den ∣ p) :
-    x.den = 1 :=
-  (hp.eq_one_or_self_of_dvd _ hdvd).resolve_right fun hx ↦ not_prime_rat_den h (hx ▸ hp)
+The `ℚ`/`ℤ` form of `isUnit_den_of_dvd_squarefree`, which is what the Nagell–Lutz integrality
+argument consumes: the rational root theorem bounds `x.den`, and a squarefree bound leaves the
+denominator a unit, hence `1`. Over `ℤ` the ring-theoretic denominator and the numeral agree up
+to sign (`Rat.isFractionRingDen`). -/
+theorem den_eq_one_of_dvd_squarefree {W : _root_.WeierstrassCurve ℤ} {x y : ℚ}
+    (h : (W.baseChange ℚ).toAffine.Equation x y) {m : ℕ} (hsf : Squarefree m)
+    (hdvd : x.den ∣ m) : x.den = 1 := by
+  have hunit : IsUnit (den ℤ x : ℤ) := by
+    refine isUnit_den_of_dvd_squarefree W h (m := (m : ℤ)) (Int.squarefree_natCast.mpr hsf) ?_
+    rw [← Int.natAbs_dvd, Rat.isFractionRingDen x]
+    exact Int.natCast_dvd_natCast.mpr hdvd
+  have hd := Rat.isFractionRingDen x
+  rcases Int.isUnit_iff.mp hunit with h1 | h1 <;> rw [h1] at hd <;> simpa using hd.symm
 
 end WeierstrassCurve
 
