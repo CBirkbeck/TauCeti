@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.RingTheory.Valuation.ValuativeRel.Basic
+public import TauCeti.RingTheory.Valuation.ValuativeRel.Basic
 
 /-!
 # Comap for valuative relations
@@ -16,10 +17,6 @@ We define the pullback (comap) of a `ValuativeRel` along a ring homomorphism.
 
 * `TauCeti.ValuativeRel.comap φ v` : Given `φ : A →+* B` and a valuative relation `v` on `B`,
   the induced `ValuativeRel A` defined by `a₁ ≤ᵥ a₂ ↔ φ(a₁) ≤ᵥ φ(a₂)`.
-
-## Main results
-
-* `TauCeti.ValuativeRel.not_vle_zero_of_isUnit` : If `f` is a unit, then `¬ f ≤ᵥ 0`.
 
 ## References
 
@@ -73,13 +70,5 @@ theorem comap_id (v : ValuativeRel A) : comap (RingHom.id A) v = v := by
 theorem comap_comp {C : Type*} [Semiring C] (φ : A →+* B) (ψ : B →+* C) (v : ValuativeRel C) :
     comap (ψ.comp φ) v = comap φ (comap ψ v) := by
   ext a₁ a₂; rfl
-
-/-- If `f` is a unit, then `¬ f ≤ᵥ 0`. -/
-theorem not_vle_zero_of_isUnit {A : Type*} [Semiring A] [ValuativeRel A] {f : A} (hf : IsUnit f) :
-    ¬ f ≤ᵥ (0 : A) := by
-  obtain ⟨u, rfl⟩ := hf
-  intro h
-  simpa [Units.inv_mul, ValuativeRel.not_vle.mpr ValuativeRel.zero_vlt_one] using
-    ValuativeRel.mul_vle_mul_right h ↑u⁻¹
 
 end TauCeti.ValuativeRel
