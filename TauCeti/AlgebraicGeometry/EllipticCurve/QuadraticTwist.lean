@@ -14,10 +14,10 @@ be thought of as the trace and norm of a generator `θ` of a separable quadratic
 `L/K`, with `D := t² - 4n` the discriminant of its minimal polynomial — together with the
 behaviour of the standard invariants under twisting, uniformly in the characteristic: over any
 commutative ring `b₂, b₄, b₆` scale by `D, D², D³`, `c₄, c₆` by `D², D³`, and `Δ` by `D⁶`, so
-the twist of an elliptic curve is elliptic exactly when `D` is a unit (over a field, when
-`D ≠ 0`), with the same `j`-invariant. Twisting twice by `(t, n)`, or changing `(t, n)` to the
-trace and norm of another generator, moves the twist by an explicit change of variables over the
-base field.
+the twist of an elliptic curve is elliptic when `D` is a unit — over a field, when `D ≠ 0` —
+with the same `j`-invariant. Twisting twice by `(t, n)`, or changing `(t, n)` to the trace and
+norm of another generator, moves the twist by an explicit change of variables, again over any
+commutative ring in which the relevant parameter is a unit.
 
 ## Main definitions
 
@@ -28,7 +28,7 @@ base field.
 * `WeierstrassCurve.isElliptic_quadraticTwistOf`, `WeierstrassCurve.j_quadraticTwistOf`: the
   twist of an elliptic curve is elliptic when `t² - 4n` is a unit, with equal `j`.
 * `WeierstrassCurve.exists_smul_eq_quadraticTwistOf_quadraticTwistOf`,
-  `WeierstrassCurve.exists_smul_quadraticTwistOf_eq`: the double twist is `K`-isomorphic to the
+  `WeierstrassCurve.exists_smul_quadraticTwistOf_eq`: the double twist is isomorphic to the
   original curve, and changing the generator moves the twist by a change of variables.
 
 These are the `quadraticTwistOf` seeds of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 5
@@ -166,6 +166,25 @@ the `b₂`, `b₄` and `b₆` laws, since `c₆ = -b₂³ + 36b₂b₄ - 216b₆
     simp only [quadraticTwistOf, map_a₁, map_a₂,
       map_a₃, map_a₄, map_a₆, map_mul, map_sub,
       map_pow, map_ofNat]
+
+/-- The quadratic twist of an elliptic curve is elliptic when the discriminant `D = t² - 4n` of
+the twisting parameters is a unit, since `Δ ↦ D⁶Δ`. Over a field this hypothesis is `D ≠ 0`
+(`isUnit_iff_ne_zero`), the form in which the source states it; over a general commutative ring
+`D ≠ 0` is not enough, since `D⁶ · unit` is a unit only when `D` is (take `A = ℤ`, `D = 2`). -/
+theorem isElliptic_quadraticTwistOf [E.IsElliptic] (hD : IsUnit (t ^ 2 - 4 * n)) :
+    (E.quadraticTwistOf t n).IsElliptic := by
+  rw [isElliptic_iff, Δ_quadraticTwistOf]
+  exact (hD.pow 6).mul E.isUnit_Δ
+
+/-- The `j`-invariant is a twist invariant: `j(E_{t,n}) = j(E)`. Both `j`s are `Δ'⁻¹c₄³`, and the
+twist scales `Δ` by `D⁶` and `c₄` by `D²`, so the two `D`-powers cancel against each other. -/
+theorem j_quadraticTwistOf [E.IsElliptic] (h : (E.quadraticTwistOf t n).IsElliptic) :
+    (E.quadraticTwistOf t n).j = E.j := by
+  have hΔ : E.Δ * ((E.Δ'⁻¹ : Aˣ) : A) = 1 := by
+    rw [← coe_Δ']
+    exact E.Δ'.mul_inv
+  rw [j, j, Units.inv_mul_eq_iff_eq_mul, c₄_quadraticTwistOf, coe_Δ', Δ_quadraticTwistOf]
+  linear_combination (-((t ^ 2 - 4 * n) ^ 6 * E.c₄ ^ 3)) * hΔ
 
 /-- Twisting twice by the same parameters `(t, n)` gives an isomorphic curve: explicitly, the
 double twist is obtained from `E` by the change of variables
