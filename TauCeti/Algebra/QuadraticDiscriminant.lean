@@ -26,26 +26,28 @@ extra condition — that `|y₀|` exceed the leading coefficient — repairs thi
 quantification needed.
 
 Together with the reverse implication this gives the upgrade that motivates the file: a form known
-to be non-negative only on some sparse subset of `ℤ ⨯ ℤ` — for instance the locus where a
-fixed prime does not divide `y`, which is all that the degree form on an elliptic curve is
-directly known to satisfy — is non-negative everywhere. Any single `y₀` from that subset with
-`|y₀|` large enough feeds `Int.discrim_le_zero_of_nonneg_of_lt_abs`, and then
-`nonneg_of_discrim_le_zero` propagates the conclusion to every `(x, y)`.
+to be non-negative only on some sparse subset of `ℤ ⨯ ℤ` — the locus where a fixed prime divides
+neither coordinate, which is all that the degree form on an elliptic curve is directly known to
+satisfy — is non-negative everywhere. `Int.discrim_le_zero_of_nonneg_of_not_dvd_of_not_dvd` pins
+the discriminant from that locus alone, and `nonneg_of_discrim_le_zero` then propagates the
+conclusion to every `(x, y)`.
 
 ## Main results
 
 * `nonneg_of_discrim_le_zero`: `0 < a` and `discrim a b c ≤ 0` give `0 ≤ a x² + b x y + c y²`.
 * `Int.discrim_le_zero_of_nonneg_of_lt_abs`: for `a < |y|`, and with no sign condition on `a`,
   non-negativity of `a x² + b x y + c y²` in `x` alone forces `discrim a b c ≤ 0`.
-* `Int.discrim_le_zero_of_nonneg_of_not_dvd`: the same conclusion from non-negativity on
-  `{(x, y) : d ∤ y}`, for any non-unit `d`.
-* `Int.discrim_le_zero_of_nonneg_of_not_dvd_of_not_dvd`: from non-negativity on the smaller
-  `{(x, y) : d ∤ x ∧ d ∤ y}`.
+* `Int.discrim_le_zero_of_nonneg_of_not_dvd_of_not_dvd`: the same conclusion from non-negativity
+  on `{(x, y) : d ∤ x ∧ d ∤ y}`, for any non-unit `d`.
 
-The two `not_dvd` results are proved from a common lemma in which each coordinate runs over an
-arithmetic progression rather than all of `ℤ`. Only one `x` is ever used — the member of the
-progression nearest the minimum of the restricted form — so thinning the line to gap `m` costs
-exactly a factor `m` in the height hypothesis, which the choice of `y` absorbs.
+Both are proved from a common lemma in which `x` runs over an arithmetic progression rather than
+all of `ℤ`. Only one `x` is ever used — the member of the progression nearest the minimum of the
+restricted form — so thinning the line to gap `m` costs exactly a factor `m` in the height
+hypothesis, which the choice of `y` absorbs; `m = 1` is the full line.
+
+The weaker hypothesis constraining only `y` is not stated separately: it is strictly stronger
+than the one above, so a caller holding it applies the same theorem through
+`fun x y _ hy => h x y hy`.
 
 ## Provenance
 
@@ -56,9 +58,9 @@ are strictly stronger: the form is arbitrary rather than `q r² − t r s + s²`
 assumed, and a single `y` replaces an infinite family of prime powers.
 
 The source proves its two locus results independently, the `d ∤ y` one by an infinite family of
-prime powers together with a balanced-remainder lemma. Neither is reproduced: the `d ∤ y` result
-is the case `m = 1` of the progression lemma, and the balanced remainder it needed is Mathlib's
-`round`.
+prime powers together with a balanced-remainder lemma. Neither is reproduced. The `d ∤ y`
+statement is not carried at all: it follows from the `d ∤ x ∧ d ∤ y` one in a line, its hypothesis
+being the stronger of the two. The balanced remainder it needed is Mathlib's `round`.
 
 ## References
 
@@ -123,22 +125,8 @@ private theorem discrim_le_zero_of_pos_of_nonneg_on_progression {a b c m x₀ y 
       = (2 * a * x + b * y) ^ 2 + (4 * a * c - b ^ 2) * y ^ 2 := by ring
   nlinarith [h k, hsq, hy2, hkey]
 
-/-- **A single line of large enough height pins the discriminant.** If a binary quadratic form
-over `ℤ` with positive leading coefficient `a` is non-negative at `(x, y)` for a fixed `y` with
-`a < |y|` and every integer `x`, then `discrim a b c ≤ 0`, that is `b ^ 2 ≤ 4 * a * c`.
-
-The height hypothesis `a < |y|` is necessary, not an artefact of the proof: without it the
-integer-valued hypothesis is strictly weaker than its field counterpart, as
-`forall_int_nonneg_and_discrim_pos` witnesses. -/
-private theorem discrim_le_zero_of_pos_of_nonneg_of_lt_abs {a b c y : ℤ} (ha : 0 < a)
-    (hy : a < |y|) (h : ∀ x : ℤ, 0 ≤ a * x ^ 2 + b * x * y + c * y ^ 2) :
-    discrim a b c ≤ 0 :=
-  discrim_le_zero_of_pos_of_nonneg_on_progression (x₀ := 0) ha one_pos (by simpa using hy)
-    fun k => by simpa using h k
-
-/-- A form with negative leading coefficient is eventually negative along any line, so the
-non-negativity hypothesis is unsatisfiable. Evaluating at `x = |b * y| + |c * y ^ 2| + 1` is
-already enough. -/
+/-- A form with negative leading coefficient is eventually negative along any progression, so the
+non-negativity hypothesis is unsatisfiable. -/
 private theorem not_forall_nonneg_on_progression_of_neg {a b c m x₀ y : ℤ} (ha : a < 0)
     (hm : 0 < m) :
     ¬ ∀ k : ℤ, 0 ≤ a * (x₀ + m * k) ^ 2 + b * (x₀ + m * k) * y + c * y ^ 2 := fun h => by
@@ -162,12 +150,6 @@ private theorem not_forall_nonneg_on_progression_of_neg {a b c m x₀ y : ℤ} (
   have h4 : |b * y| * x + |c * y ^ 2| + 1 ≤ x ^ 2 := by nlinarith
   linarith [h k]
 
-/-- A form with negative leading coefficient is eventually negative along any line, so the
-non-negativity hypothesis is unsatisfiable. -/
-private theorem not_forall_nonneg_of_neg {a b c y : ℤ} (ha : a < 0) :
-    ¬ ∀ x : ℤ, 0 ≤ a * x ^ 2 + b * x * y + c * y ^ 2 := fun h =>
-  not_forall_nonneg_on_progression_of_neg (x₀ := 0) ha one_pos fun k => by simpa using h k
-
 /-- A form with zero leading coefficient is linear along a progression, so non-negativity there
 forces the slope `b * y * m` to vanish; with `y ≠ 0` and `0 < m` that makes `b = 0`. -/
 private theorem eq_zero_of_forall_nonneg_on_progression_of_ne {b c m x₀ y : ℤ} (hy : y ≠ 0)
@@ -187,12 +169,6 @@ private theorem eq_zero_of_forall_nonneg_on_progression_of_ne {b c m x₀ y : �
   nlinarith [mul_nonneg (by linarith : (0 : ℤ) ≤ |C| + 1)
     (by linarith : (0 : ℤ) ≤ (b * y * m) ^ 2 - 1)]
 
-/-- A form with zero leading coefficient is linear in `x`, so non-negativity for every integer
-`x` forces the linear coefficient `b * y` to vanish; with `y ≠ 0` that makes `b = 0`. -/
-private theorem eq_zero_of_forall_nonneg_of_ne {b c y : ℤ} (hy : y ≠ 0)
-    (h : ∀ x : ℤ, 0 ≤ 0 * x ^ 2 + b * x * y + c * y ^ 2) : b = 0 :=
-  eq_zero_of_forall_nonneg_on_progression_of_ne (x₀ := 0) hy one_pos fun k => by simpa using h k
-
 /-- **A single line of large enough height pins the discriminant.** If a binary quadratic form
 over `ℤ` is non-negative at `(x, y)` for a fixed `y` with `a < |y|` and every integer `x`, then
 `discrim a b c ≤ 0`, that is `b ^ 2 ≤ 4 * a * c`.
@@ -205,13 +181,16 @@ integer-valued hypothesis is strictly weaker than its field counterpart, as
 `forall_int_nonneg_and_discrim_pos` witnesses. -/
 theorem Int.discrim_le_zero_of_nonneg_of_lt_abs {a b c y : ℤ} (hy : a < |y|)
     (h : ∀ x : ℤ, 0 ≤ a * x ^ 2 + b * x * y + c * y ^ 2) : discrim a b c ≤ 0 := by
+  -- The whole line is the progression of gap `1` through `0`.
+  have hprog : ∀ k : ℤ, 0 ≤ a * (0 + 1 * k) ^ 2 + b * (0 + 1 * k) * y + c * y ^ 2 :=
+    fun k => by simpa using h k
   rcases lt_trichotomy a 0 with ha | ha | ha
-  · exact absurd h (not_forall_nonneg_of_neg ha)
+  · exact absurd hprog (not_forall_nonneg_on_progression_of_neg ha one_pos)
   · subst ha
     have hy0 : y ≠ 0 := by rintro rfl; simp at hy
-    rw [discrim, eq_zero_of_forall_nonneg_of_ne hy0 h]
+    rw [discrim, eq_zero_of_forall_nonneg_on_progression_of_ne hy0 one_pos hprog]
     simp
-  · exact discrim_le_zero_of_pos_of_nonneg_of_lt_abs ha hy h
+  · exact discrim_le_zero_of_pos_of_nonneg_on_progression ha one_pos (by simpa using hy) hprog
 
 /-- The height hypothesis of `Int.discrim_le_zero_of_nonneg_of_lt_abs` cannot be dropped:
 `x ↦ x ^ 2 - x` is non-negative at every integer, yet its discriminant is positive. Here the
@@ -222,37 +201,6 @@ private theorem forall_int_nonneg_and_discrim_pos :
   rcases le_or_gt x 0 with hx | hx
   · nlinarith
   · nlinarith [Int.add_one_le_iff.mpr hx]
-
-/-- **The locus `d ∤ y` pins the discriminant.** If a binary quadratic form over `ℤ` is
-non-negative at every `(x, y)` whose second coordinate avoids the multiples of a non-unit `d` —
-in the intended application `d` is a prime, and the locus is the sublattice complement
-`{(x, y) : d ∤ y}` — then `discrim a b c ≤ 0`.
-
-`d = 0` is allowed, the hypothesis then being non-negativity at every `y ≠ 0`. -/
-theorem Int.discrim_le_zero_of_nonneg_of_not_dvd {a b c d : ℤ} (hd : ¬ IsUnit d)
-    (h : ∀ x y : ℤ, ¬ d ∣ y → 0 ≤ a * x ^ 2 + b * x * y + c * y ^ 2) : discrim a b c ≤ 0 := by
-  have hA : 0 ≤ |a| := abs_nonneg a
-  have haA : a ≤ |a| := le_abs_self a
-  rcases eq_or_ne d 0 with rfl | hd0
-  · -- Only `y = 0` is excluded, so `y = |a| + 1` is available.
-    refine Int.discrim_le_zero_of_nonneg_of_lt_abs (y := |a| + 1) ?_
-      fun x => h x _ fun hc => by simp only [zero_dvd_iff] at hc; omega
-    rw [abs_of_pos (by omega)]
-    omega
-  · -- Otherwise `1 < |d|`, and `y = |a| * d ^ 2 + 1` avoids `d` while exceeding `a`.
-    have hd2 : 1 < |d| := by
-      have h1 : d.natAbs ≠ 1 := fun hh => hd (Int.isUnit_iff_natAbs_eq.mpr hh)
-      have h0 : d.natAbs ≠ 0 := fun hh => hd0 (Int.natAbs_eq_zero.mp hh)
-      have : (1 : ℤ) < (d.natAbs : ℤ) := by
-        exact_mod_cast Nat.lt_of_le_of_ne (by omega) (by omega)
-      rwa [Int.abs_eq_natAbs]
-    have hnd : ¬ d ∣ |a| * d ^ 2 + 1 := fun hc => by
-      have hd1 : d ∣ (1 : ℤ) := (dvd_add_right (Dvd.intro (|a| * d) (by ring))).mp hc
-      exact absurd (Int.le_of_dvd one_pos ((abs_dvd d 1).mpr hd1)) (by omega)
-    refine Int.discrim_le_zero_of_nonneg_of_lt_abs (y := |a| * d ^ 2 + 1) ?_ fun x => h x _ hnd
-    have hsq : 1 ≤ d ^ 2 := by nlinarith [sq_abs d, abs_nonneg d]
-    rw [abs_of_pos (by nlinarith)]
-    nlinarith
 
 /-- Every member of the progression `1 + max |d| 2 * ℤ` avoids the multiples of a non-unit `d`.
 
