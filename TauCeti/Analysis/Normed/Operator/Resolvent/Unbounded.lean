@@ -294,9 +294,11 @@ private theorem exists_inverse_one_sub_smul_resolvent
   · have h1 : (((u⁻¹ : (X →L[ℝ] X)ˣ) : X →L[ℝ] X) * (u : X →L[ℝ] X)) = 1 := u.inv_mul
     rw [hu] at h1
     simpa [hB] using congrArg (fun S : X →L[ℝ] X => S y) h1
-  · have hcomm : Commute ((u : X →L[ℝ] X)) (resolvent A lambda) := by
-      rw [hu, Commute, SemiconjBy, hB, sub_mul, mul_sub, smul_mul_assoc, mul_smul_comm,
-        one_mul, mul_one]
+  · -- `1 - (lambda - mu) • R(lambda)` is a polynomial in `R(lambda)`, hence commutes with it.
+    have hcomm : Commute ((u : X →L[ℝ] X)) (resolvent A lambda) := by
+      rw [hu, hB]
+      exact (Commute.one_left _).sub_left
+        ((Commute.refl (resolvent A lambda)).smul_left (lambda - mu))
     simpa [mul_apply_eq_comp] using
       congrArg (fun S : X →L[ℝ] X => S y) hcomm.units_inv_left.symm
 
