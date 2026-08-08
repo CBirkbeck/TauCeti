@@ -397,6 +397,7 @@ theorem mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff (e : A ≃+
 /-- The restricted isomorphism `A° ≃+* B°` carries the ideal `A°°` onto `B°°`. This is the
 bundled form of
 `TauCeti.Huber.mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff`. -/
+@[simp]
 theorem map_topologicallyNilpotentIdeal (e : A ≃+* B) (he : Continuous e)
     (he' : Continuous e.symm) :
     (topologicallyNilpotentIdeal A).map
