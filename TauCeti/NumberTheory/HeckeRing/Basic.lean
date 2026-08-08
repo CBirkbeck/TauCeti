@@ -42,7 +42,7 @@ merges. The degree section is instead ported from the AINTLIB `LeanModularForms`
   `single_apply`, `sum_single_index`, `smul_single_one`, `single_add`, `induction_linear`,
   and the `Module R` instance `HeckeCosetModule.instModule`.
 * Pointwise evaluation of the coset module: `zero_apply`, `add_apply`, `smul_apply`,
-  `mem_support_iff`, `notMem_support_iff`, `sum_def`, `sum_apply` and `sum_smul_index`.
+  `mem_support_iff`, `sum_def`, `sum_apply` and `sum_smul_index`.
   `HeckeCosetModule` is a `def` over `Finsupp` carrying transported instances, so Mathlib's
   `Finsupp` evaluation lemmas hold *definitionally* — they can be applied in term mode — but
   `rw`, `simp` and `grind` match syntactically and so cannot see through the wrapper. These
@@ -339,11 +339,6 @@ variable {R : Type*} [Zero R]
 @[simp, grind =] lemma mem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R}
     {D : HeckeCoset Δ H₁ H₂} : D ∈ f.support ↔ f D ≠ 0 :=
   Finsupp.mem_support_iff
-
-/-- `Finsupp.notMem_support_iff`, at the wrapper type. -/
-@[grind =] lemma notMem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R} {D : HeckeCoset Δ H₁ H₂} :
-    D ∉ f.support ↔ f D = 0 :=
-  Finsupp.notMem_support_iff
 
 /-- `Finsupp.sum` unfolded to a `Finset.sum`, at the wrapper type. -/
 lemma sum_def {N : Type*} [AddCommMonoid N] (f : HeckeCosetModule Δ H₁ H₂ R)
