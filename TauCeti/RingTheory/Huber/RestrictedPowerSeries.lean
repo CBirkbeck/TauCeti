@@ -61,18 +61,6 @@ universe u
 
 namespace TauCeti.Huber
 
-/-! ### Nonarchimedean ring instance
-
-`NonarchimedeanRing` extends `IsTopologicalRing` and requires the same `is_nonarchimedean`
-condition as `NonarchimedeanAddGroup`. This instance combines the two. -/
-
-/-- A topological ring whose underlying additive group is nonarchimedean is a nonarchimedean
-ring. This bridges `IsTopologicalRing` + `NonarchimedeanAddGroup` to `NonarchimedeanRing`. -/
-instance (priority := 100) NonarchimedeanRing.ofNonarchimedeanAddGroup
-    (R : Type*) [Ring R] [TopologicalSpace R] [IsTopologicalRing R] [NonarchimedeanAddGroup R] :
-    NonarchimedeanRing R where
-  is_nonarchimedean := NonarchimedeanAddGroup.is_nonarchimedean
-
 /-! ### Restricted power series -/
 
 /-- An element `f` of the multivariate power series ring `A⦃X₁, …, Xₖ⦄` is **restricted**
@@ -119,7 +107,8 @@ theorem IsRestricted.add {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
     (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f + g) := by
   rw [isRestricted_iff]
   have : Tendsto (fun s => MvPowerSeries.coeff s f + MvPowerSeries.coeff s g)
-      cofinite (nhds 0) := by simpa using Filter.Tendsto.add hf hg
+      cofinite (nhds 0) := by
+    simpa using (isRestricted_iff.mp hf).add (isRestricted_iff.mp hg)
   exact this.congr (fun s => by simp [map_add])
 
 /-- The negation of a restricted series is restricted. -/
@@ -128,7 +117,7 @@ theorem IsRestricted.neg {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     (hf : IsRestricted f) : IsRestricted (-f) := by
   rw [isRestricted_iff]
   have : Tendsto (fun s => -(MvPowerSeries.coeff s f)) cofinite (nhds 0) := by
-    simpa using Filter.Tendsto.neg hf
+    simpa using (isRestricted_iff.mp hf).neg
   exact this.congr (fun s => by simp [map_neg])
 
 /-- Restrictedness, restated: for every open additive subgroup `W`, all but finitely many
@@ -136,7 +125,7 @@ coefficients lie in `W`. This is the form the convolution argument actually cons
 theorem IsRestricted.finite_coeff_notMem {k : ℕ} {A : Type*} [Ring A]
     [TopologicalSpace A] {f : MvPowerSeries (Fin k) A} (hf : IsRestricted f)
     (W : OpenAddSubgroup A) : {s | MvPowerSeries.coeff s f ∉ (W : Set A)}.Finite := by
-  have := (tendsto_nhds.mp hf) _ W.isOpen (SetLike.mem_coe.mpr W.zero_mem)
+  have := (tendsto_nhds.mp (isRestricted_iff.mp hf)) _ W.isOpen (SetLike.mem_coe.mpr W.zero_mem)
   rwa [Filter.mem_cofinite] at this
 
 /-- The neighbourhood of `0` used to control a coefficient convolution: inside the open
@@ -286,7 +275,7 @@ theorem mem_restrictedMvPowerSeriesSubring {k : ℕ} {A : Type*} [Ring A] [Topol
 
 /-- Constant power series are restricted: the `algebraMap` image of any `a : A` has
 coefficient `a` at multi-index `0` and `0` elsewhere, so it trivially tends to `0`. -/
-theorem isRestricted_algebraMap {k : ℕ} {A : Type*} [CommRing A]
+theorem isRestricted_algebraMap {k : ℕ} {A : Type*} [CommSemiring A]
     [TopologicalSpace A] (a : A) :
     IsRestricted (algebraMap A (MvPowerSeries (Fin k) A) a) := by
   rw [isRestricted_iff]
@@ -312,5 +301,15 @@ noncomputable instance restrictedMvPowerSeriesSubring.instAlgebra (k : ℕ) (A :
       map_mul' := by intros; ext; simp only [map_mul, Subring.coe_mul]
       map_zero' := by ext; simp only [map_zero, ZeroMemClass.coe_zero]
       map_add' := by intros; ext; simp only [map_add, Subring.coe_add] }
+
+/-- The algebra structure on `A⟨T₁, …, Tₖ⟩` is the one inherited from `MvPowerSeries`: a constant
+is sent to the constant power series. This characterises the instance, whose body is not
+exposed. -/
+@[simp]
+theorem coe_algebraMap_restrictedMvPowerSeriesSubring {k : ℕ} {A : Type*} [CommRing A]
+    [TopologicalSpace A] [NonarchimedeanRing A] (a : A) :
+    ((algebraMap A (restrictedMvPowerSeriesSubring k A) a :
+        restrictedMvPowerSeriesSubring k A) : MvPowerSeries (Fin k) A) =
+      algebraMap A (MvPowerSeries (Fin k) A) a := (rfl)
 
 end TauCeti.Huber
