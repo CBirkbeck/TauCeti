@@ -56,11 +56,6 @@ private lemma isClopen_sInter_of_subset (hU : ∀ s ∈ U, @IsClopen X t' s) {f 
   rw [Set.sInter_eq_biInter]
   exact @Set.Finite.isClopen_biInter X t' (Set X) f hf id fun s hs ↦ hU s (hfU hs)
 
-/-- A `t'`-closed set is `t'`-compact when `t'` is compact. -/
-private lemma isCompact_patch_of_isClosed (hcomp : @CompactSpace X t') {s : Set X}
-    (hs : @IsClosed X t' s) : @IsCompact X t' s :=
-  @IsClosed.isCompact X t' s hcomp hs
-
 /-- A finite union of `t'`-clopen sets is `t'`-clopen. -/
 private lemma isClopen_sUnion_of_finite {S : Set (Set X)} (hS : S.Finite)
     (h : ∀ s ∈ S, @IsClopen X t' s) : @IsClopen X t' (⋃₀ S) := by
@@ -90,17 +85,18 @@ lemma compactSpace_of_isOpen_generateFrom (hU' : ∀ s ∈ U, IsOpen[t'] s) : Co
   exact @CompactSpace.mk X (generateFrom U)
     (isCompact_generateFrom_of_isOpen hU' (@CompactSpace.isCompact_univ X t' hcomp))
 
-/-- Every member of `U` is quasi-compact for the generated topology. -/
-lemma isCompact_of_isClopen_generateFrom {s : Set X} (hs : s ∈ U) : IsCompact s :=
-  isCompact_of_patch htU hU
-    (isCompact_patch_of_isClosed hcomp (@IsClopen.isClosed X t' s (hU s hs)))
-
 /-- Every finite intersection of members of `U` is quasi-compact for the generated topology. -/
 lemma isCompact_sInter_of_isClopen_generateFrom {f : Set (Set X)} (hf : f.Finite)
     (hfU : f ⊆ U) : IsCompact (⋂₀ f) :=
   isCompact_of_patch htU hU
-    (isCompact_patch_of_isClosed hcomp
+    (@IsClosed.isCompact X t' _ hcomp
       (@IsClopen.isClosed X t' _ (isClopen_sInter_of_subset hU hf hfU)))
+
+/-- Every member of `U` is quasi-compact for the generated topology. -/
+lemma isCompact_of_isClopen_generateFrom {s : Set X} (hs : s ∈ U) : IsCompact s := by
+  rw [← Set.sInter_singleton s]
+  exact isCompact_sInter_of_isClopen_generateFrom htU hcomp hU (Set.finite_singleton s)
+    (Set.singleton_subset_iff.mpr hs)
 
 omit hcomp hU in
 /-- The finite intersections of members of `U` form a basis of the generated topology. -/
@@ -185,7 +181,7 @@ lemma quasiSober_of_isClopen_generateFrom : QuasiSober X := by
   have hZc' : @IsClosed X t' Z := by
     have hle : t' ≤ t := htU ▸ le_generateFrom fun s hs ↦ @IsClopen.isOpen X t' s (hU s hs)
     exact (@isOpen_compl_iff X Z t').mp (hZc.isOpen_compl.mono hle)
-  have hZcomp : @IsCompact X t' Z := isCompact_patch_of_isClosed hcomp hZc'
+  have hZcomp : @IsCompact X t' Z := @IsClosed.isCompact X t' Z hcomp hZc'
   -- extract a finite subcover of `Z` by complements of the chosen basic opens
   obtain ⟨T, hT⟩ := @IsCompact.elim_finite_subcover X t' Z Z hZcomp (fun z ↦ (b z)ᶜ)
     (fun z ↦ @IsClopen.isOpen X t' _ (@IsClopen.compl X t' _ (isClopen_patch_of_mem_basis
