@@ -216,6 +216,40 @@ end Ring
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F) (C : VariableChange F)
 
+/-- **Secant case.** For distinct `x`-coordinates the change of variables scales the slope
+affinely: the secant through the image points is `u · ℓ + s`. -/
+lemma variableChange_slope_of_X_ne [DecidableEq F] {x₁ x₂ y₁ y₂ : F} (hx : x₁ ≠ x₂) :
+    W.toAffine.slope ((C.u : F) ^ 2 * x₁ + C.r) ((C.u : F) ^ 2 * x₂ + C.r)
+        ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t)
+        ((C.u : F) ^ 3 * y₂ + (C.u : F) ^ 2 * C.s * x₂ + C.t)
+      = (C.u : F) * (C • W).toAffine.slope x₁ x₂ y₁ y₂ + C.s := by
+  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
+  have hΦx : (C.u : F) ^ 2 * x₁ + C.r ≠ (C.u : F) ^ 2 * x₂ + C.r :=
+    fun h ↦ hx ((variableChange_X_inj C).mp h)
+  rw [W.toAffine.slope_of_X_ne hΦx, (C • W).toAffine.slope_of_X_ne hx]
+  have h1 := sub_ne_zero.mpr hΦx
+  have h2 := sub_ne_zero.mpr hx
+  field
+
+/-- **Tangent case.** At a point that is not its own negative the change of variables scales the
+tangent slope affinely. Both slopes are `-∂x/∂y`, and the change of variables scales the two
+partial derivatives by `u⁴` (up to a multiple of `∂y`) and `u³`. -/
+lemma variableChange_slope_of_Y_ne [DecidableEq F] {x₁ y₁ : F}
+    (hy : y₁ ≠ (C • W).toAffine.negY x₁ y₁) :
+    W.toAffine.slope ((C.u : F) ^ 2 * x₁ + C.r) ((C.u : F) ^ 2 * x₁ + C.r)
+        ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t)
+        ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t)
+      = (C.u : F) * (C • W).toAffine.slope x₁ x₁ y₁ y₁ + C.s := by
+  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
+  have hΦy := fun h ↦ variableChange_negY_ne W C (fun hc ↦ hy hc.2) ⟨rfl, h⟩
+  have hPY : (C • W).toAffine.polynomialY.evalEval x₁ y₁ ≠ 0 := by
+    rw [evalEval_polynomialY]
+    exact fun h ↦ hy (by rw [negY]; linear_combination h)
+  rw [W.toAffine.slope_of_Y_ne_eq_evalEval rfl hΦy,
+    (C • W).toAffine.slope_of_Y_ne_eq_evalEval rfl hy,
+    variableChange_evalEval_polynomialX, variableChange_evalEval_polynomialY]
+  field
+
 /-- The change of variables transforms the slope of the line through two points affinely:
 the slope through the image points is `u · ℓ + s` for `ℓ` the original slope. -/
 lemma variableChange_slope [DecidableEq F] {x₁ x₂ y₁ y₂ : F}
@@ -225,26 +259,11 @@ lemma variableChange_slope [DecidableEq F] {x₁ x₂ y₁ y₂ : F}
         ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t)
         ((C.u : F) ^ 3 * y₂ + (C.u : F) ^ 2 * C.s * x₂ + C.t)
       = (C.u : F) * (C • W).toAffine.slope x₁ x₂ y₁ y₂ + C.s := by
-  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   rcases eq_or_ne x₁ x₂ with rfl | hx
   · have hy : y₁ ≠ (C • W).toAffine.negY x₁ y₂ := fun h ↦ hxy ⟨rfl, h⟩
     obtain rfl := Y_eq_of_Y_ne h₁ h₂ rfl hy
-    have hΦy := fun h ↦ variableChange_negY_ne W C hxy ⟨rfl, h⟩
-    -- The tangent slope is `-∂x/∂y`, and the change of variables scales the two partial
-    -- derivatives by `u⁴` (up to a multiple of `∂y`) and `u³`.
-    have hPY : (C • W).toAffine.polynomialY.evalEval x₁ y₁ ≠ 0 := by
-      rw [evalEval_polynomialY]
-      exact fun h ↦ hy (by rw [negY]; linear_combination h)
-    rw [W.toAffine.slope_of_Y_ne_eq_evalEval rfl hΦy,
-      (C • W).toAffine.slope_of_Y_ne_eq_evalEval rfl hy,
-      variableChange_evalEval_polynomialX, variableChange_evalEval_polynomialY]
-    field
-  · have hΦx : (C.u : F) ^ 2 * x₁ + C.r ≠ (C.u : F) ^ 2 * x₂ + C.r :=
-      fun h ↦ hx ((variableChange_X_inj C).mp h)
-    rw [W.toAffine.slope_of_X_ne hΦx, (C • W).toAffine.slope_of_X_ne hx]
-    have h1 := sub_ne_zero.mpr hΦx
-    have h2 := sub_ne_zero.mpr hx
-    field
+    exact variableChange_slope_of_Y_ne W C hy
+  · exact variableChange_slope_of_X_ne W C hx
 
 end WeierstrassCurve.Affine
 
