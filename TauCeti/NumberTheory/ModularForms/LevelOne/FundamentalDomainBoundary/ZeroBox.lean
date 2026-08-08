@@ -76,8 +76,7 @@ theorem coe_truncatedFundamentalDomain_subset_fdBox {H M : ℝ} (hHM : H < M) :
   refine mem_fdBox.mpr ⟨⟨by linarith, by linarith⟩, by nlinarith, by linarith⟩
 
 /-- **Finiteness of the zeros in the box.** A function analytic on the upper half-plane and
-nonzero at some point of it has finitely many zeros in `fdBox M`: the closed box is a compact
-subset of the half-plane, so `TauCeti.finite_setOf_mem_and_eq_zero_of_isCompact` applies. -/
+nonzero at some point of it has finitely many zeros in `fdBox M`. -/
 theorem finite_setOf_mem_fdBox_and_eq_zero {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] {g : ℂ → E} {x : ℂ} (M : ℝ)
     (hg : AnalyticOnNhd ℂ g upperHalfPlaneSet) (hx : 0 < x.im) (hgx : g x ≠ 0) :

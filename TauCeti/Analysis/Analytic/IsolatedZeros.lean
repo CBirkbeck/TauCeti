@@ -43,9 +43,7 @@ variable {𝕜 : Type*} [NontriviallyNormedField 𝕜]
 
 /-- **An analytic function somewhere nonzero has finitely many zeros in a compact.** If `f` is
 analytic on a neighbourhood of a preconnected set `U` and nonzero at some point of `U`, then
-every compact subset of `U` contains only finitely many zeros of `f`: the zeros are isolated, so
-the complement of the zero set is codiscrete within `U`, and a compact meets the complement of a
-codiscrete set in a finite set.
+every compact subset of `U` contains only finitely many zeros of `f`.
 
 Generalized from the modular-form-specific finiteness of the AINTLIB `LeanModularForms`
 valence-formula development (`ForMathlib/ValenceFormula/PVChain/ResidueSideInfra.lean`) to
