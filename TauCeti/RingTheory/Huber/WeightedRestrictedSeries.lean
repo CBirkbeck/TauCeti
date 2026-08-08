@@ -121,6 +121,39 @@ theorem isWeightedRestricted_one (T : Fin k → Set A) :
   exact (weightMul T ν U.toAddSubgroup).zero_mem
 
 omit [TopologicalSpace A] in
+/-- Weights are multiplicative in the multi-index: `T^(α+β) = T^α · T^β`. This is the algebraic
+identity that any proof of multiplicative closure has to run on. -/
+theorem weightPow_add (T : Fin k → Set A) (α β : Fin k →₀ ℕ) :
+    weightPow T (α + β) = weightPow T α * weightPow T β := by
+  simp only [weightPow, Finsupp.add_apply, pow_add]
+  exact Finset.prod_mul_distrib
+
+omit [TopologicalSpace A] in
+/-- A product of an element of `T^α · V` with an element of `T^β · W` lies in
+`T^(α+β) · (V · W)`. Together with `TauCeti.Huber.weightPow_add` this is the algebraic half of
+multiplicative closure; the analytic half — controlling the finitely many coefficients that fail
+a given bound — is what Wedhorn flags as not entirely clear. -/
+theorem weightMul_mul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {V W : AddSubgroup A} {x y : A}
+    (hx : x ∈ weightMul T α V) (hy : y ∈ weightMul T β W) :
+    x * y ∈ weightMul T (α + β) (AddSubgroup.closure ((V : Set A) * (W : Set A))) := by
+  induction hx using AddSubgroup.closure_induction with
+  | mem u hu =>
+      induction hy using AddSubgroup.closure_induction with
+      | mem v hv =>
+          obtain ⟨t, ht, a, ha, rfl⟩ := hu
+          obtain ⟨t', ht', b, hb, rfl⟩ := hv
+          refine AddSubgroup.subset_closure ⟨t * t', ?_, a * b, ?_, by ring⟩
+          · rw [weightPow_add]
+            exact Set.mul_mem_mul ht ht'
+          · exact AddSubgroup.subset_closure (Set.mul_mem_mul ha hb)
+      | zero => simp
+      | add _ _ _ _ h₁ h₂ => simpa [mul_add] using (weightMul T (α + β) _).add_mem h₁ h₂
+      | neg _ _ h => simpa [mul_neg] using (weightMul T (α + β) _).neg_mem h
+  | zero => simp
+  | add _ _ _ _ h₁ h₂ => simpa [add_mul] using (weightMul T (α + β) _).add_mem h₁ h₂
+  | neg _ _ h => simpa [neg_mul] using (weightMul T (α + β) _).neg_mem h
+
+omit [TopologicalSpace A] in
 /-- With every weight equal to `{1}`, the weight of any multi-index is `{1}`. -/
 @[simp]
 theorem weightPow_one (ν : Fin k →₀ ℕ) :
