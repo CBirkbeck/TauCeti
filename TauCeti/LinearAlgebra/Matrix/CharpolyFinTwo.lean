@@ -32,6 +32,9 @@ middle coefficient `-M.trace` and constant coefficient `1`, so its discriminant 
 ## Main results
 
 * `TauCeti.Matrix.det_smul_sub_smul_one_fin_two`: the identity displayed above.
+* `TauCeti.Matrix.det_smul_sub_smul_one_of_card_eq_two`: the same for a square matrix on any
+  index type of cardinality two, matching the relationship Mathlib's
+  `Matrix.charpoly_of_card_eq_two` bears to `Matrix.charpoly_fin_two`.
 
 ## Provenance
 
@@ -52,8 +55,8 @@ namespace TauCeti.Matrix
 in `(r, s)` whose coefficients are the determinant and the trace of `M`.
 
 This is the homogeneous form of `Matrix.charpoly_fin_two`, from which it can also be derived by
-evaluating at `r • M`; stated directly it needs no `[Nontrivial R]` hypothesis and no
-`Polynomial`. -/
+applying that lemma to the matrix `r • M` and evaluating the resulting polynomial at the scalar
+`s`; stated directly it needs no `[Nontrivial R]` hypothesis and no `Polynomial`. -/
 theorem det_smul_sub_smul_one_fin_two {R : Type*} [CommRing R]
     (M : Matrix (Fin 2) (Fin 2) R) (r s : R) :
     (r • M - s • (1 : Matrix (Fin 2) (Fin 2) R)).det
@@ -64,5 +67,23 @@ theorem det_smul_sub_smul_one_fin_two {R : Type*} [CommRing R]
     fin_cases i <;> fin_cases j <;> simp
   rw [hlit, det_fin_two_of, det_fin_two M, trace_fin_two M]
   ring
+
+/-- The pencil determinant of a square matrix on any index type of cardinality two, as a binary
+quadratic form in `(r, s)` with coefficients the determinant and trace of `M`.
+
+This is `det_smul_sub_smul_one_fin_two` transported along an equivalence `n ≃ Fin 2`, in the same
+relationship that Mathlib's `Matrix.charpoly_of_card_eq_two` bears to `Matrix.charpoly_fin_two`. -/
+theorem det_smul_sub_smul_one_of_card_eq_two {n R : Type*} [Fintype n] [DecidableEq n]
+    [CommRing R] (M : Matrix n n R) (hn : Fintype.card n = 2) (r s : R) :
+    (r • M - s • (1 : Matrix n n R)).det = M.det * r ^ 2 - M.trace * (r * s) + s ^ 2 := by
+  let e : n ≃ Fin 2 := Fintype.equivFinOfCardEq hn
+  have hsub : (r • M - s • (1 : Matrix n n R)).submatrix e.symm e.symm
+      = r • M.submatrix e.symm e.symm - s • (1 : Matrix (Fin 2) (Fin 2) R) := by
+    simp [Matrix.submatrix_sub, Matrix.submatrix_smul]
+  -- `trace` is transported by hand: Mathlib has `det_submatrix_equiv_self` but no trace analogue.
+  have htr : (M.submatrix e.symm e.symm).trace = M.trace :=
+    Equiv.sum_comp e.symm fun j => M j j
+  rw [← det_submatrix_equiv_self e.symm, hsub, det_smul_sub_smul_one_fin_two,
+    det_submatrix_equiv_self e.symm, htr]
 
 end TauCeti.Matrix
