@@ -7,7 +7,7 @@ module
 public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
 public import TauCeti.Analysis.Contour.Winding.Number.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.IGeometry
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.I.Geometry
 
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 import Mathlib.MeasureTheory.Integral.CircleIntegral
@@ -254,7 +254,10 @@ private lemma telescope_piece_left_lower (hH : 1 < H) :
       (heval t ⟨(ho ▸ ht).1.le, (ho ▸ ht).2.le⟩))
     (congrArg (· - Complex.I) (heval 3 (left_mem_Icc.mpr hab)))
     (congrArg (· - Complex.I) (heval _ (right_mem_Icc.mpr hab)))
-  · show (fdBoundary_segment4 H t - Complex.I).im ≤ 0
+  · -- The comparison hypothesis is stated for the abstract `h` of the comparison FTC, so the
+    -- goal arrives as that function applied at `t`; naming the beta-reduced form is what lets
+    -- the segment lemmas below apply to it.
+    show (fdBoundary_segment4 H t - Complex.I).im ≤ 0
     rw [hu] at ht
     rw [← heval t ht]
     rcases eq_or_lt_of_le ht.1 with h3 | h3
@@ -264,7 +267,8 @@ private lemma telescope_piece_left_lower (hH : 1 < H) :
       · rw [ht0]
         exact (im_fdBoundary_sub_I_leftVerticalCrossingI hH.le).le
       · exact (im_fdBoundary_sub_I_neg_of_lt_crossing hH h3 ht0).le
-  · show -(fdBoundary_segment4 H t - Complex.I) ∈ Complex.slitPlane
+  · -- Likewise for the negated slit-plane hypothesis of the lower comparison form.
+    show -(fdBoundary_segment4 H t - Complex.I) ∈ Complex.slitPlane
     rw [ho] at ht
     rw [← heval t ⟨ht.1.le, ht.2.le⟩]
     refine Complex.mem_slitPlane_iff.mpr (Or.inr ?_)
@@ -646,6 +650,7 @@ theorem hasCauchyPVAt_fdBoundary_I (hH : 1 < H) :
 /-- **The winding number of the boundary contour at `i` is `-1/2`**: the elliptic point
 `i` sits on the contour, and the principal-value normalization sees exactly half a
 clockwise turn. -/
+@[simp]
 theorem windingNumber_fdBoundary_I (hH : 1 < H) :
     Contour.windingNumber (fdBoundary H) 0 5 Complex.I = -(1 / 2 : ℂ) := by
   rw [Contour.windingNumber_eq_of_hasCauchyPVAt (hasCauchyPVAt_fdBoundary_I hH)]
