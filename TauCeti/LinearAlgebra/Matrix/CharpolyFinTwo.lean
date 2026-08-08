@@ -27,7 +27,7 @@ which is the shape a caller with matrix data in hand wants to rewrite with.
 
 Read as a binary quadratic form in `(r, s)`, the right-hand side has leading coefficient `M.det`,
 middle coefficient `-M.trace` and constant coefficient `1`, so its discriminant is
-`M.trace ^ 2 - 4 * M.det` — which is Mathlib's `Matrix.discr` by `Matrix.disc_fin_two`.
+`M.trace ^ 2 - 4 * M.det` — which is Mathlib's `Matrix.discr` by `Matrix.discr_fin_two`.
 
 ## Main results
 
