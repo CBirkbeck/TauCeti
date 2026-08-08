@@ -61,14 +61,6 @@ private theorem sum_ramificationIdx_mul_inertiaDeg_eq_two (hK : finrank ℚ K = 
       q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ = 2 := by
   rw [Ideal.sum_ramification_inertia_eq_finrank, NumberField.RingOfIntegers.rank K, hK]
 
-/-- Every summand of a fundamental identity is at least `1`: over a finite algebra, ramification
-indices and inertia degrees of primes are positive. -/
-private theorem one_le_ramificationIdx_mul_inertiaDeg (R : Type*) {S : Type*} [CommRing R]
-    [CommRing S] [Algebra R S] [Module.Finite R S] (q : Ideal S) [q.IsPrime] :
-    1 ≤ q.ramificationIdx R * q.inertiaDeg R :=
-  Nat.one_le_iff_ne_zero.mpr (Nat.mul_ne_zero
-    (Ideal.ramificationIdx_pos q R).ne' (Ideal.inertiaDeg_pos q R).ne')
-
 /-- **The engine of the file.** If some prime `𝔭` of `𝓞 K` above a rational prime `p` has
 ramification index different from `1`, then in the quadratic field `K` it is the only prime above
 `p`, and its ramification index and inertia degree are `2` and `1`. -/
@@ -103,7 +95,7 @@ private theorem totallyRamified_aux (hK : finrank ℚ K = 2) (hp : p.Prime)
     by_contra hne
     exact absurd ((Finset.sum_eq_zero_iff.mp hrest) q
         (Finset.mem_erase.mpr ⟨hne, Finset.mem_univ q⟩))
-      (Nat.one_le_iff_ne_zero.mp (one_le_ramificationIdx_mul_inertiaDeg ℤ q.1))
+      (Nat.mul_ne_zero (Ideal.ramificationIdx_pos q.1 ℤ).ne' (Ideal.inertiaDeg_pos q.1 ℤ).ne')
   exact ⟨heone, hfone, hx1 ▸ Set.eq_singleton_iff_unique_mem.mpr
     ⟨x.2, fun q hq => congrArg Subtype.val (huniq ⟨q, hq.1, hq.2⟩)⟩⟩
 
