@@ -5,7 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.NumberTheory.Modular
-public import TauCeti.Analysis.Complex.IsolatedZero
+public import Mathlib.Analysis.Complex.Basic
+public import TauCeti.Analysis.Analytic.Order
 
 import Mathlib.Analysis.Complex.Convex
 import Mathlib.Analysis.Complex.ReImTopology
@@ -76,7 +77,7 @@ theorem coe_truncatedFundamentalDomain_subset_fdBox {H M : ℝ} (hHM : H < M) :
 
 /-- **Finiteness of the zeros in the box.** A function analytic on the upper half-plane and
 nonzero at some point of it has finitely many zeros in `fdBox M`: the closed box is a compact
-subset of the half-plane, so `TauCeti.finite_setOfPred_eq_zero_of_isCompact` applies. -/
+subset of the half-plane, so `TauCeti.finite_setOfPred_mem_and_eq_zero_of_isCompact` applies. -/
 theorem finite_setOfPred_mem_fdBox_eq_zero {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] {g : ℂ → E} {x : ℂ} (M : ℝ)
     (hg : AnalyticOnNhd ℂ g upperHalfPlaneSet) (hx : 0 < x.im) (hgx : g x ≠ 0) :
@@ -85,7 +86,8 @@ theorem finite_setOfPred_mem_fdBox_eq_zero {E : Type*} [NormedAddCommGroup E]
   have hKU : Icc (-1 : ℝ) 1 ×ℂ Icc (1 / 2) M ⊆ upperHalfPlaneSet := fun z hz =>
     lt_of_lt_of_le (by norm_num) (mem_reProdIm.mp hz).2.1
   have hconn : IsPreconnected upperHalfPlaneSet := (convex_halfSpace_im_gt 0).isPreconnected
-  refine (finite_setOfPred_eq_zero_of_isCompact hg hconn hx hgx hK hKU).subset fun z hz => ?_
+  refine (finite_setOfPred_mem_and_eq_zero_of_isCompact hg hconn hx hgx hK hKU).subset
+    fun z hz => ?_
   obtain ⟨hbox, hgz⟩ := hz
   obtain ⟨hre, him⟩ := mem_reProdIm.mp hbox
   exact ⟨mem_reProdIm.mpr ⟨Ioo_subset_Icc_self hre, Ioo_subset_Icc_self him⟩, hgz⟩

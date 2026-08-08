@@ -11,9 +11,8 @@ public import Mathlib.Analysis.Complex.Basic
 /-!
 # Estimates near an isolated zero
 
-A lower bound on a circle around a point at whose centre the function has its only zero, two
-ways of concluding that the analytic order at a point is finite, and the finiteness of the zero
-set on a compact.
+A lower bound on a circle around a point at whose centre the function has its only zero and two
+ways of concluding that the analytic order at a point is finite.
 
 The first two are the standing hypotheses of every Rouché comparison made on such a disc: both
 `TauCeti.Analysis.Complex.Conformal.LocalDegree` and
@@ -32,8 +31,6 @@ Rouché's theorem, so this module does not import it:
   so the count Rouché produces is a natural number rather than `⊤`.
 * `TauCeti.analyticOrderAt_ne_top_of_zeros_subset`: the same finiteness under the hypothesis a
   global zero count comes with, that the zeros in an open set lie in a finite set.
-* `TauCeti.finite_setOfPred_eq_zero_of_isCompact`: an analytic function somewhere nonzero on a
-  preconnected open set has finitely many zeros in any compact subset.
 
 They are separated here only because several files need them.
 -/
@@ -96,24 +93,5 @@ theorem analyticOrderAt_ne_top_of_zeros_subset {f : ℂ → ℂ} {U : Set ℂ} {
   obtain ⟨ρ, hρ, hball⟩ := Metric.isOpen_iff.mp hopen z ⟨hz, by simp⟩
   exact analyticOrderAt_ne_top_of_forall_ne_zero hρ fun w hw hwz hw0 =>
     (hball hw).2 ⟨hzeros w (hball hw).1 hw0, hwz⟩
-
-/-- **An analytic function somewhere nonzero has finitely many zeros in a compact.** If `f` is
-analytic on a neighbourhood of a preconnected set `U` and nonzero at some point of `U`, then
-every compact subset of `U` contains only finitely many zeros of `f`: the zeros are isolated, so
-the complement of the zero set is codiscrete within `U`, and a compact meets the complement of a
-codiscrete set in a finite set.
-
-Generalized from the modular-form-specific finiteness of the AINTLIB `LeanModularForms`
-valence-formula development (`ForMathlib/ValenceFormula/PVChain/ResidueSideInfra.lean`) to
-arbitrary analytic functions on a preconnected set. -/
-theorem finite_setOfPred_eq_zero_of_isCompact {𝕜 : Type*} [NontriviallyNormedField 𝕜]
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace 𝕜 E] {f : 𝕜 → E} {U K : Set 𝕜} {x : 𝕜}
-    (hf : AnalyticOnNhd 𝕜 f U) (hU : IsPreconnected U) (hx : x ∈ U) (hfx : f x ≠ 0)
-    (hK : IsCompact K) (hKU : K ⊆ U) : {z ∈ K | f z = 0}.Finite := by
-  have hcod : f ⁻¹' {0}ᶜ ∈ Filter.codiscreteWithin K :=
-    Filter.codiscreteWithin_mono hKU
-      (hf.preimage_zero_mem_codiscreteWithin hfx hx ⟨⟨x, hx⟩, hU⟩)
-  exact (hK.finite_sdiff_of_mem_codiscreteWithin hcod).subset fun z hz =>
-    ⟨hz.1, by simpa using hz.2⟩
 
 end TauCeti
