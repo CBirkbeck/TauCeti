@@ -99,7 +99,8 @@ private lemma conjugate_congruent_mem_SLnZ (a : Fin n → ℕ) (ha : ∀ i, 0 < 
     have h_diag_map : (Matrix.diagonal fun i ↦ (a i : ℤ)).map (Int.cast : ℤ → ℚ) =
         Matrix.diagonal fun i ↦ (a i : ℚ) := Matrix.diagonal_map (by simp)
     have hmap : (↑(mapGL ℚ (⟨M, hM_det⟩ : SpecialLinearGroup (Fin n) ℤ)) :
-        Matrix (Fin n) (Fin n) ℚ) = M.map ⇑(Int.castRingHom ℚ) := rfl
+        Matrix (Fin n) (Fin n) ℚ) = M.map ⇑(Int.castRingHom ℚ) :=
+      mapGL_coe_matrix _
     rw [← h_diag_map]
     simp only [← Int.coe_castRingHom, ← Matrix.map_mul]
     rw [h_int_eq, Matrix.map_mul, hmap]
@@ -142,7 +143,8 @@ private lemma inv_conjugate_congruent_mem_SLnZ (b : Fin n → ℕ) (hb : ∀ i, 
     have h_diag_map : (Matrix.diagonal fun i ↦ (b i : ℤ)).map (Int.cast : ℤ → ℚ) =
         Matrix.diagonal fun i ↦ (b i : ℚ) := Matrix.diagonal_map (by simp)
     have hmap : (↑(mapGL ℚ (⟨N, hN_det⟩ : SpecialLinearGroup (Fin n) ℤ)) :
-        Matrix (Fin n) (Fin n) ℚ) = N.map ⇑(Int.castRingHom ℚ) := rfl
+        Matrix (Fin n) (Fin n) ℚ) = N.map ⇑(Int.castRingHom ℚ) :=
+      mapGL_coe_matrix _
     rw [← h_diag_map]
     simp only [← Int.coe_castRingHom, ← Matrix.map_mul]
     rw [h_int_eq, Matrix.map_mul, hmap]
@@ -476,7 +478,14 @@ private lemma multiplicity_coprime_le_one (a b : Fin n → ℕ) (ha_pos : ∀ i,
 /-- Coprime product in the integral `GL_n` Hecke ring (Shimura, Proposition 3.16):
 `T(a) · T(b) = T(a * b)` for entrywise positive `a`, `b` whose determinants `∏ aᵢ`, `∏ bᵢ`
 are coprime. Positivity is required — without it `natDiagGL` takes its junk value. The
-`[NeZero n]` in scope is what multiplication in `IntegralHeckeRing n` needs. -/
+`[NeZero n]` in scope is what multiplication in `IntegralHeckeRing n` needs.
+
+Deliberately **not** `@[simp]`, unlike the parallel scalar theorem `diagElem_const_mul`. The
+`simpNF` linter rejects the attribute here — "left-hand side does not simplify, when using the
+simp lemma on itself … this usually means that it will never apply" — because the side
+condition is coprimality of two products, which `simp` cannot discharge from the bare
+left-hand side. `diagElem_const_mul` differs materially: its side conditions are positivity,
+which `simp` can discharge. Cite this one explicitly instead. -/
 theorem diagElem_mul_of_coprime (a b : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i)
     (hb_pos : ∀ i, 0 < b i) (hcop : Nat.Coprime (∏ i, a i) (∏ i, b i)) :
     diagElem a * diagElem b = diagElem (a * b) :=
