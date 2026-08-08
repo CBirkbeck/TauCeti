@@ -437,6 +437,45 @@ theorem IsWeightedRestricted.neg {T : Fin k → Set A} {f : MvPowerSeries (Fin k
   filter_upwards [hf U] with ν hfν
   simpa using (weightMul T ν U.toAddSubgroup).neg_mem hfν
 
+/-! ### The ring `A⟨X⟩_T` -/
+
+/-- **Wedhorn's `A⟨X⟩_T`**: the weighted restricted power series form a subring of `A[[X]]`.
+
+The weight family must satisfy Wedhorn's standing hypothesis
+(`TauCeti.Huber.IsWeightFamily`); without it the carrier is not closed under multiplication, and
+the docstring of that definition records the counterexample. -/
+def weightedRestrictedSubring [NonarchimedeanRing A] (T : Fin k → Set A) (hT : IsWeightFamily T) :
+    Subring (MvPowerSeries (Fin k) A) where
+  carrier := {f | IsWeightedRestricted T f}
+  mul_mem' := IsWeightedRestricted.mul hT
+  one_mem' := isWeightedRestricted_one T
+  add_mem' := IsWeightedRestricted.add
+  zero_mem' := isWeightedRestricted_zero T
+  neg_mem' := IsWeightedRestricted.neg
+
+/-- Membership in `A⟨X⟩_T` is `T`-restrictedness. -/
+@[simp]
+theorem mem_weightedRestrictedSubring [NonarchimedeanRing A] {T : Fin k → Set A}
+    {hT : IsWeightFamily T} {f : MvPowerSeries (Fin k) A} :
+    f ∈ weightedRestrictedSubring T hT ↔ IsWeightedRestricted T f := (Iff.rfl)
+
+/-- **Wedhorn's neighbourhood subgroups** `U⟨X⟩`: the series all of whose coefficients — not
+merely almost all — satisfy the `U` bound. These are the fundamental system of neighbourhoods of
+zero for the topology on `A⟨X⟩_T`. -/
+def weightedNhd [NonarchimedeanRing A] (T : Fin k → Set A) (hT : IsWeightFamily T)
+    (U : AddSubgroup A) : AddSubgroup (weightedRestrictedSubring T hT) where
+  carrier := {f | ∀ ν, MvPowerSeries.coeff ν (f : MvPowerSeries (Fin k) A) ∈ weightMul T ν U}
+  add_mem' hf hg ν := by simpa using (weightMul T ν U).add_mem (hf ν) (hg ν)
+  zero_mem' ν := by simp
+  neg_mem' hf ν := by simpa using (weightMul T ν U).neg_mem (hf ν)
+
+/-- Membership in `U⟨X⟩` is the `U` bound on every coefficient. -/
+@[simp]
+theorem mem_weightedNhd [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T}
+    {U : AddSubgroup A} {f : weightedRestrictedSubring T hT} :
+    f ∈ weightedNhd T hT U ↔
+      ∀ ν, MvPowerSeries.coeff ν (f : MvPowerSeries (Fin k) A) ∈ weightMul T ν U := (Iff.rfl)
+
 end
 
 end TauCeti.Huber
