@@ -38,7 +38,7 @@ outside the `letI` scope.
   `KaehlerDifferential.map`.
 * `KaehlerDifferential.mapSemilinear_smul`: the semilinearity law, with `f` applied rather than
   `f.toRingHom`.
-* `KaehlerDifferential.mapSemilinear_id_apply`, `mapSemilinear_id`: the identity acts as the
+* `KaehlerDifferential.mapSemilinear_id`, `mapSemilinear_id_apply`: the identity acts as the
   identity.
 * `KaehlerDifferential.mapSemilinear_comp_apply`, `mapSemilinear_comp`: compatibility with
   composition.
@@ -59,21 +59,6 @@ namespace KaehlerDifferential
 
 variable {R A B C : Type*} [CommRing R] [CommRing A] [CommRing B] [CommRing C]
   [Algebra R A] [Algebra R B] [Algebra R C]
-
--- The scalar bridge between the semilinearity index `f.toRingHom` and `f` itself, in applied
--- form: the unapplied `AlgHom.toRingHom_eq_coe` cannot be used by `rw` here, since `f.toRingHom`
--- also occurs in the *type* of `mapSemilinear f` and abstracting it breaks the motive.
-theorem toRingHom_apply (f : A →ₐ[R] B) (a : A) : f.toRingHom a = f a := rfl
-
--- Every differential is in the span of the range of `D`, so pointwise identities may be proved
--- by span induction; the scalar step is `mapSemilinear_smul`.
-theorem mem_span_range (ω : Ω[A⁄R]) : ω ∈ Submodule.span A (Set.range (D R A)) := by
-  rw [span_range_derivation]; trivial
-
--- Proofs below use receiver-explicit lemmas (`map_add`, `map_smulₛₗ`, …) rather than
--- unrestricted `simp`: `simp` first normalises the semilinearity index
--- `(AlgHom.id R A).toRingHom` to `RingHom.id A` inside the *type* of the map, retyping the
--- application so that no lemma matches afterwards.
 
 public section
 
@@ -108,54 +93,52 @@ This is not interchangeable with the generic `map_smulₛₗ`: that lemma produc
 `simp` alone leaves `mapSemilinear f (a • ω)` untouched. This is the simp-normal form. -/
 @[simp]
 theorem mapSemilinear_smul (f : A →ₐ[R] B) (a : A) (ω : Ω[A⁄R]) :
-    mapSemilinear f (a • ω) = f a • mapSemilinear f ω := by
-  rw [map_smulₛₗ, toRingHom_apply]
+    mapSemilinear f (a • ω) = f a • mapSemilinear f ω :=
+  (mapSemilinear f).map_smulₛₗ a ω
+
+/-- The map along the identity is the identity, as (plainly linear) maps. -/
+theorem mapSemilinear_id :
+    (mapSemilinear (AlgHom.id R A) : Ω[A⁄R] →ₗ[A] Ω[A⁄R]) = LinearMap.id :=
+  LinearMap.ext_on (span_range_derivation R A) <| by
+    rintro _ ⟨x, rfl⟩; exact mapSemilinear_D _ x
 
 /-- The map along the identity fixes every differential. -/
 @[simp]
-theorem mapSemilinear_id_apply (ω : Ω[A⁄R]) : mapSemilinear (AlgHom.id R A) ω = ω := by
-  induction mem_span_range ω using Submodule.span_induction with
-  | mem ω hω => obtain ⟨x, rfl⟩ := hω; rw [mapSemilinear_D, AlgHom.id_apply]
-  | zero => exact map_zero _
-  | add ω₁ ω₂ _ _ ih₁ ih₂ => rw [map_add, ih₁, ih₂]
-  | smul a ω _ ih => rw [mapSemilinear_smul, ih, AlgHom.id_apply]
+theorem mapSemilinear_id_apply (ω : Ω[A⁄R]) : mapSemilinear (AlgHom.id R A) ω = ω :=
+  DFunLike.congr_fun mapSemilinear_id ω
+
+/-- Functoriality of `mapSemilinear`, at map level. -/
+theorem mapSemilinear_comp (f : B →ₐ[R] C) (g : A →ₐ[R] B) :
+    mapSemilinear (f.comp g) = (mapSemilinear f).comp (mapSemilinear g) :=
+  LinearMap.ext_on (span_range_derivation R A) <| by
+    rintro _ ⟨x, rfl⟩
+    rw [mapSemilinear_D, LinearMap.comp_apply, mapSemilinear_D, mapSemilinear_D, AlgHom.comp_apply]
 
 /-- `mapSemilinear` is functorial: mapping along `f.comp g` is mapping along `g`, then along
 `f`. -/
 @[simp]
 theorem mapSemilinear_comp_apply (f : B →ₐ[R] C) (g : A →ₐ[R] B) (ω : Ω[A⁄R]) :
-    mapSemilinear (f.comp g) ω = mapSemilinear f (mapSemilinear g ω) := by
-  induction mem_span_range ω using Submodule.span_induction with
-  | mem ω hω => obtain ⟨x, rfl⟩ := hω; rw [mapSemilinear_D, mapSemilinear_D, mapSemilinear_D,
-      AlgHom.comp_apply]
-  | zero => rw [map_zero, map_zero, map_zero]
-  | add ω₁ ω₂ _ _ ih₁ ih₂ => rw [map_add, map_add, map_add, ih₁, ih₂]
-  | smul a ω _ ih => rw [mapSemilinear_smul, mapSemilinear_smul, mapSemilinear_smul, ih,
-      AlgHom.comp_apply]
+    mapSemilinear (f.comp g) ω = mapSemilinear f (mapSemilinear g ω) :=
+  DFunLike.congr_fun (mapSemilinear_comp f g) ω
 
 /-- On a tower, `mapSemilinear` along the structure map is Mathlib's `KaehlerDifferential.map`
 — the sense in which this construction extends the tower functoriality to arbitrary algebra
-homomorphisms. -/
+homomorphisms.
+
+Unlike the identity and composition laws this cannot be stated at map level and transported: the
+two sides are semilinear over `algebraMap A B` and linear over `A` respectively, so they are the
+same function at different types, and `LinearMap.ext_on` does not apply. Hence the induction. -/
 @[simp]
 theorem mapSemilinear_toAlgHom_apply [Algebra A B] [IsScalarTower R A B] (ω : Ω[A⁄R]) :
     mapSemilinear (IsScalarTower.toAlgHom R A B) ω = KaehlerDifferential.map R R A B ω := by
-  induction mem_span_range ω using Submodule.span_induction with
+  induction (span_range_derivation R A ▸ Submodule.mem_top :
+      ω ∈ Submodule.span A (Set.range (D R A))) using Submodule.span_induction with
   | mem ω hω => obtain ⟨x, rfl⟩ := hω; rw [mapSemilinear_D, KaehlerDifferential.map_D]; rfl
   | zero => rw [map_zero, map_zero]
   | add ω₁ ω₂ _ _ ih₁ ih₂ => rw [map_add, map_add, ih₁, ih₂]
   | smul a ω _ ih =>
     rw [mapSemilinear_smul, LinearMap.map_smul, ih]
     exact IsScalarTower.algebraMap_smul B a _
-
-/-- The map along the identity is the identity, as (plainly linear) maps. -/
-theorem mapSemilinear_id :
-    (mapSemilinear (AlgHom.id R A) : Ω[A⁄R] →ₗ[A] Ω[A⁄R]) = LinearMap.id :=
-  LinearMap.ext mapSemilinear_id_apply
-
-/-- Functoriality of `mapSemilinear`, at map level. -/
-theorem mapSemilinear_comp (f : B →ₐ[R] C) (g : A →ₐ[R] B) :
-    mapSemilinear (f.comp g) = (mapSemilinear f).comp (mapSemilinear g) :=
-  LinearMap.ext (mapSemilinear_comp_apply f g)
 
 end
 
