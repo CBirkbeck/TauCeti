@@ -91,7 +91,8 @@ private theorem sum_sum_reflect_eq {W : Type*} [Fintype W] [DecidableEq W] (i : 
     ∑ a : W, ∑ b : W, N' a b * (d' a * e' b)
       = d' i * (∑ w : W, N w i * e w)
         + ∑ a ∈ Finset.univ.erase i, ∑ b ∈ Finset.univ.erase i, N a b * (d a * e b) := by
-  -- The diagonal entry vanishes because `i` is both a source and a sink of the reflected data.
+  -- The diagonal entry vanishes: the row correspondence reads `N' i i = N i i`, and the reflected
+  -- column at `i` is zero.
   have hNii : N i i = 0 := (hN'row i).symm.trans (hN'col i)
   have hsplit : ∀ f : W → ℤ, ∑ w : W, f w = f i + ∑ w ∈ Finset.univ.erase i, f w := fun f ↦
     (Finset.add_sum_erase _ f (Finset.mem_univ i)).symm
