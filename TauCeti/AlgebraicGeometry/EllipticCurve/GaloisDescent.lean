@@ -12,13 +12,13 @@ public import TauCeti.FieldTheory.Galois.Basic
 
 Let `L/K` be a separable quadratic extension. Data attached to a Weierstrass curve over `L` and
 fixed by the nontrivial `σ ∈ Gal(L/K)` descends to `K`, because an element of `L` fixed by `σ` is
-already in `K` (`Algebra.IsQuadraticExtension.mem_range_algebraMap_of_apply_eq`). Two instances
-are proved here:
+already in `K` (`Algebra.IsQuadraticExtension.mem_range_algebraMap_of_apply_eq`). Two descent
+results are proved here:
 
-* `WeierstrassCurve.exists_baseChange_eq_of_map_eq`: an admissible change of variables over `L`
-  fixed by `σ` is the base change of one over `K`;
-* `WeierstrassCurve.exists_baseChange_point_eq_of_map_eq`: an affine point of `W` over `L` fixed
-  by `σ` is the base change of a point over `K`.
+* `WeierstrassCurve.VariableChange.exists_baseChange_eq_of_map_eq`: an admissible change of
+  variables over `L` fixed by `σ` is the base change of one over `K`;
+* `WeierstrassCurve.Affine.Point.exists_baseChange_eq_of_map_eq`: an affine point of `W` over
+  `L` fixed by `σ` is the base change of a point over `K`.
 
 Both are stated with `σ` an explicit nontrivial automorphism rather than a quantifier over
 `Gal(L/K)`: for a quadratic extension the two are equivalent, and the consumers have a
@@ -48,6 +48,8 @@ open scoped WeierstrassCurve.Affine
 variable {K : Type*} [Field K] (L : Type*) [Field L] [Algebra K L]
 variable [Algebra.IsQuadraticExtension K L] [Algebra.IsSeparable K L]
 
+namespace VariableChange
+
 /-- **Galois descent for changes of variables.** A change of variables over `L` fixed by the
 nontrivial `σ ∈ Gal(L/K)` has all its coefficients in `K`, so it is the base change of a change
 of variables over `K`. -/
@@ -72,10 +74,14 @@ lemma exists_baseChange_eq_of_map_eq {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) {C : 
   refine ⟨⟨Units.mk0 uK huK', rK, sK, tK⟩, VariableChange.ext (Units.ext ?_) hrK hsK htK⟩
   simpa [VariableChange.baseChange, VariableChange.map] using huK
 
+end VariableChange
+
+namespace Affine.Point
+
 /-- **Galois descent for points.** A point of `W(L)` fixed by the nontrivial `σ ∈ Gal(L/K)`
 (hence, as `[L : K] = 2`, by all of `Gal(L/K)`) is the base change of a point of `W(K)`: its
 coordinates, being fixed by `σ`, lie in `K`. -/
-theorem exists_baseChange_point_eq_of_map_eq [DecidableEq K] [DecidableEq L]
+theorem exists_baseChange_eq_of_map_eq [DecidableEq K] [DecidableEq L]
     {W : WeierstrassCurve K} {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) {R : (W⁄L).Point}
     (hR : Affine.Point.map σ.toAlgHom R = R) :
     ∃ Q : (W⁄K).Point, Affine.Point.baseChange K L Q = R := by
@@ -87,6 +93,8 @@ theorem exists_baseChange_point_eq_of_map_eq [DecidableEq K] [DecidableEq L]
     obtain ⟨y₀, rfl⟩ := mem_range_algebraMap_of_apply_eq K L hσ hy
     exact ⟨.some x₀ y₀ ((Affine.baseChange_nonsingular W
       (f := Algebra.ofId K L) (FaithfulSMul.algebraMap_injective K L) x₀ y₀).mp h), rfl⟩
+
+end Affine.Point
 
 end WeierstrassCurve
 
