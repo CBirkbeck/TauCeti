@@ -42,8 +42,9 @@ Chris Birkbeck), on top of the matrix-level Smith normal form
   cosets.
 * `span_diagElem_eq_top`: the elements `T(a₁,...,aₙ)` span the Hecke ring.
 * `diagElem_mul_of_mulMap_eq`: the product criterion `T(a) · T(b) = T(c)`, given that the
-  coset decomposition multiplies into `T(c)` alone and does so with multiplicity at most
-  one. This is the structure-constant computation every concrete product result shares.
+  coset decomposition multiplies into `T(c)` alone and does so with multiplicity at most one.
+  The `GL_n` reading of `HeckeCosetModule.single_mul_single_of_mulMap_eq`, which carries the
+  argument at the level of arbitrary Hecke cosets and coefficients.
 
 ## References
 
@@ -400,36 +401,8 @@ theorem diagElem_mul_of_mulMap_eq (a b c : Fin n → ℕ)
       (((diagCoset a).rep : GL (Fin n) ℚ)) (((diagCoset b).rep : GL (Fin n) ℚ))
       (((diagCoset c).rep : GL (Fin n) ℚ)) ≤ 1) :
     diagElem a * diagElem b = diagElem c := by
-  classical
-  have hSC : HeckeCosetModule.structureConstants ℤ (SLnZ n) (SLnZ n) (SLnZ n)
-      (diagCoset a).rep (diagCoset b).rep =
-      HeckeCosetModule.single ℤ (diagCoset c) 1 := by
-    ext A
-    rw [HeckeCosetModule.structureConstants_apply, HeckeCosetModule.single_apply]
-    split_ifs with h
-    · rw [← h]
-      have hne : multiplicity (SLnZ n) (SLnZ n) (SLnZ n)
-          (((diagCoset a).rep : GL (Fin n) ℚ)) (((diagCoset b).rep : GL (Fin n) ℚ))
-          (((diagCoset c).rep : GL (Fin n) ℚ)) ≠ 0 := by
-        rw [← HeckeCoset.mem_image_mulMap_iff]
-        simp only [Finset.mem_image, Finset.mem_univ, true_and]
-        exact ⟨(Classical.arbitrary _, Classical.arbitrary _), hmulMap _⟩
-      have heq : multiplicity (SLnZ n) (SLnZ n) (SLnZ n)
-          (((diagCoset a).rep : GL (Fin n) ℚ)) (((diagCoset b).rep : GL (Fin n) ℚ))
-          (((diagCoset c).rep : GL (Fin n) ℚ)) = 1 := by omega
-      rw [heq, Nat.cast_one]
-    · have hzero : multiplicity (SLnZ n) (SLnZ n) (SLnZ n)
-          (((diagCoset a).rep : GL (Fin n) ℚ)) (((diagCoset b).rep : GL (Fin n) ℚ))
-          ((A.rep : GL (Fin n) ℚ)) = 0 := by
-        by_contra h0
-        refine h ?_
-        have hmem := (HeckeCoset.mem_image_mulMap_iff _ _ A).mpr h0
-        simp only [Finset.mem_image, Finset.mem_univ, true_and] at hmem
-        obtain ⟨p, hp⟩ := hmem
-        rw [← hp, hmulMap p]
-      rw [hzero, Nat.cast_zero]
-  rw [diagElem_def, diagElem_def, diagElem_def, HeckeCosetModule.single_mul_single, hSC,
-    HeckeCosetModule.smul_single_one, HeckeCosetModule.smul_single_one]
+  rw [diagElem_def, diagElem_def, diagElem_def]
+  exact HeckeCosetModule.single_mul_single_of_mulMap_eq ℤ _ _ _ hmulMap hmul
 
 end ProductCriterion
 

@@ -32,6 +32,8 @@ stack merges.
 ## Main results
 
 * `HeckeCosetModule.single_mul_single`: the product of two basis elements.
+* `HeckeCosetModule.single_mul_single_of_mulMap_eq`: when the coset decomposition of `D₁ · D₂`
+  multiplies into a single coset `D₃` with multiplicity at most one, `[D₁] · [D₂] = [D₃]`.
 * the `NonUnitalNonAssocSemiring (𝕋 Δ H R)` instance.
 -/
 
@@ -105,6 +107,39 @@ lemma single_mul_single {H : Subgroup G} [IsHeckeTriple Δ H H]
     (D₁ D₂ : HeckeCoset Δ H H) (a b : R) :
     single R D₁ a * single R D₂ b = a • b • structureConstants R H H H D₁.rep D₂.rep :=
   mul_single_single R D₁ D₂ a b
+
+/-- **The single-basis-element product criterion.** If every pair in the coset decomposition of
+`D₁ · D₂` multiplies into the single double coset `D₃`, and `D₃` occurs there with multiplicity
+at most one, then the product of the two basis elements is the third basis element.
+
+This is the structure-constant computation shared by every "a product of basis elements is
+again a basis element" result: only the two hypotheses vary between them. -/
+lemma single_mul_single_of_mulMap_eq {H : Subgroup G} [IsHeckeTriple Δ H H]
+    (D₁ D₂ D₃ : HeckeCoset Δ H H)
+    (hmulMap : ∀ p, HeckeCoset.mulMap H H H D₁.rep D₂.rep p = D₃)
+    (hmul : multiplicity H H H (D₁.rep : G) (D₂.rep : G) (D₃.rep : G) ≤ 1) :
+    single R D₁ 1 * single R D₂ 1 = single R D₃ 1 := by
+  classical
+  have hSC : structureConstants R H H H D₁.rep D₂.rep = single R D₃ 1 := by
+    ext A
+    rw [structureConstants_apply, single_apply]
+    split_ifs with h
+    · rw [← h]
+      have hne : multiplicity H H H (D₁.rep : G) (D₂.rep : G) (D₃.rep : G) ≠ 0 := by
+        rw [← HeckeCoset.mem_image_mulMap_iff]
+        simp only [Finset.mem_image, Finset.mem_univ, true_and]
+        exact ⟨(Classical.arbitrary _, Classical.arbitrary _), hmulMap _⟩
+      have heq : multiplicity H H H (D₁.rep : G) (D₂.rep : G) (D₃.rep : G) = 1 := by omega
+      rw [heq, Nat.cast_one]
+    · have hzero : multiplicity H H H (D₁.rep : G) (D₂.rep : G) ((A.rep : G)) = 0 := by
+        by_contra h0
+        refine h ?_
+        have hmem := (HeckeCoset.mem_image_mulMap_iff _ _ A).mpr h0
+        simp only [Finset.mem_image, Finset.mem_univ, true_and] at hmem
+        obtain ⟨p, hp⟩ := hmem
+        rw [← hp, hmulMap p]
+      rw [hzero, Nat.cast_zero]
+  rw [single_mul_single, hSC, smul_single_one, smul_single_one]
 
 /-- The convolution product distributes over addition on the right. -/
 lemma mul_add [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
