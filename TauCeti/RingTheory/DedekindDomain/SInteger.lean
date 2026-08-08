@@ -72,8 +72,11 @@ instance : IsIntegrallyClosed (S.integer K) := by
           algebraMap_mem' := fun r ↦ v.1.valuation_le_one r } : Subalgebra R K) := by
     ext x
     simp only [Algebra.mem_iInf, Subtype.forall, mem_integer_iff]
-    -- What remains unfolds membership in the anonymous `Subalgebra` assembled above from
-    -- `valuationSubring.toSubring`; Mathlib has no membership lemma for that constructor.
+    -- What remains is membership in the anonymous `Subalgebra` assembled above. Mathlib has no
+    -- membership lemma for that constructor, and the candidates for the layers underneath it
+    -- (`Subalgebra.mem_mk`, `ValuationSubring.mem_toSubring`,
+    -- `Valuation.mem_valuationSubring_iff`) are each reported unused by the simp linter here;
+    -- the last two are `Iff.refl _` upstream, so they could not add robustness in any case.
     rfl
   rw [he]
   exact IsIntegrallyClosed.iInf _ fun v ↦
