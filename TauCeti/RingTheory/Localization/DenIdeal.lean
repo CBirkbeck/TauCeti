@@ -37,8 +37,16 @@ variable {R : Type*} [CommSemiring R] (K : Type*) [Semiring K] [Algebra R K]
 
 It is an opaque `def` rather than an `abbrev` so that `simp` cannot rewrite through it with
 `Submodule.mem_colon_singleton` before `mem_denIdeal_iff` fires; membership is accessed
-through that lemma throughout. -/
+through that lemma throughout, and the colon-ideal description through `denIdeal_def`. -/
 def Algebra.denIdeal (x : K) : Ideal R := (1 : Submodule R K).colon {x}
+
+/-- The defining equality of `Algebra.denIdeal`, exported because the definition is opaque:
+consumers reaching for colon-ideal operations rewrite with this, while `mem_denIdeal_iff`
+remains the membership normal form. Not a `simp` lemma — rewriting with it would undo
+`mem_denIdeal_iff`. -/
+lemma Algebra.denIdeal_def (x : K) :
+    Algebra.denIdeal K x = (1 : Submodule R K).colon {x} := by
+  simp only [Algebra.denIdeal]
 
 /-- Membership in the denominator ideal: `r` clears `x` into the image of `R`, in the sense that
 `r * x` is the image of some `s : R`. -/
