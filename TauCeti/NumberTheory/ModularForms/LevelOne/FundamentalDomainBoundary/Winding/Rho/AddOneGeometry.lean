@@ -175,7 +175,7 @@ theorem fdBoundary_apply_three_sub_rho_add_one (H : ℝ) :
 
 /-- The shifted contour stays in the closed upper half-plane over the whole parameter
 range: the contour clears the corner row `√3/2`, which is the height of `ρ + 1`. -/
-theorem im_nonneg_fdBoundary_sub_rho_add_one (hH : Real.sqrt 3 / 2 ≤ H)
+theorem im_fdBoundary_sub_rho_add_one_nonneg (hH : Real.sqrt 3 / 2 ≤ H)
     (ht : t ∈ Icc (0 : ℝ) 5) :
     0 ≤ (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im := by
   have h := sqrt_three_div_two_le_im_fdBoundary hH ht
