@@ -108,25 +108,21 @@ theorem isPiecewiseC1On_eval_of_smoothPathHomotopy {x y : ℂ} {p q : Path x y} 
         simpa [Prod.le_def] using ⟨⟨s.2.1, ht.1⟩, ⟨s.2.2, ht.2⟩⟩)
   exact hs.congr fun _ _ => by simp [Path.extend, Path.Homotopy.eval]
 
-/-- **Homotopy invariance of the winding number off the curve.** Two closed paths joined through
-`ℂ \ {w}` by a path homotopy whose extension to the unit square is `C²` have the same winding number
-about `w`. -/
-theorem windingNumber_eq_of_pathHomotopy {x w : ℂ} {p q : Path x x} (φ : p.Homotopy q)
+/-- **A path homotopy avoiding `w` preserves the curve integral of the index form.** -/
+private theorem curveIntegral_indexForm_eq_of_pathHomotopy {x w : ℂ} {p q : Path x x}
+    (φ : p.Homotopy q)
     (hφsmooth : ContDiffOn ℝ 2
       (fun st : ℝ × ℝ ↦ Set.IccExtend zero_le_one (φ.toHomotopy.extend st.1) st.2) (Set.Icc 0 1))
-    (havoid : ∀ st : Set.Icc (0 : ℝ) 1 × Set.Icc (0 : ℝ) 1, φ st ≠ w) :
-    windingNumber p.extend 0 1 w = windingNumber q.extend 0 1 w := by
+    (haway : ∀ z ∈ Set.range φ, z ≠ w) :
+    (∫ᶜ z in p, indexForm w z) = ∫ᶜ z in q, indexForm w z := by
   have hrange : IsClosed (Set.range φ) :=
     (isCompact_range φ.toHomotopy.continuous).isClosed
-  have haway {z : ℂ} (hz : z ∈ Set.range φ) : z ≠ w := by
-    obtain ⟨st, rfl⟩ := hz
-    exact havoid st
   have hclosedForm : ∀ z ∈ Set.range φ,
       HasFDerivWithinAt (indexForm w) (indexFormDeriv w z) (Set.range φ) z :=
-    fun z hz ↦ (hasFDerivAt_indexForm (haway hz)).hasFDerivWithinAt
+    fun z hz ↦ (hasFDerivAt_indexForm (haway z hz)).hasFDerivWithinAt
   have hcontinuousForm : ContinuousOn (indexForm w) (closure (Set.range φ)) := by
     rw [hrange.closure_eq]
-    exact fun z hz ↦ (hasFDerivAt_indexForm (haway hz)).continuousAt.continuousWithinAt
+    exact fun z hz ↦ (hasFDerivAt_indexForm (haway z hz)).continuousAt.continuousWithinAt
   have hboundary :=
     φ.toHomotopy.curveIntegral_add_curveIntegral_eq_of_hasFDerivWithinAt
       (t := Set.range φ) (ω := indexForm w) (dω := indexFormDeriv w)
@@ -141,8 +137,20 @@ theorem windingNumber_eq_of_pathHomotopy {x w : ℂ} {p q : Path x x} (φ : p.Ho
     ext t
     exact φ.target t
   rw [heval_zero, heval_one] at hboundary
-  have hcurve : (∫ᶜ z in p, indexForm w z) = ∫ᶜ z in q, indexForm w z := by
-    simpa only [curveIntegral_cast, curveIntegral_refl, add_zero] using hboundary
+  simpa only [curveIntegral_cast, curveIntegral_refl, add_zero] using hboundary
+
+/-- **Homotopy invariance of the winding number off the curve.** Two closed paths joined through
+`ℂ \ {w}` by a path homotopy whose extension to the unit square is `C²` have the same winding number
+about `w`. -/
+theorem windingNumber_eq_of_pathHomotopy {x w : ℂ} {p q : Path x x} (φ : p.Homotopy q)
+    (hφsmooth : ContDiffOn ℝ 2
+      (fun st : ℝ × ℝ ↦ Set.IccExtend zero_le_one (φ.toHomotopy.extend st.1) st.2) (Set.Icc 0 1))
+    (havoid : ∀ st : Set.Icc (0 : ℝ) 1 × Set.Icc (0 : ℝ) 1, φ st ≠ w) :
+    windingNumber p.extend 0 1 w = windingNumber q.extend 0 1 w := by
+  have haway : ∀ z ∈ Set.range φ, z ≠ w := by
+    rintro _ ⟨st, rfl⟩
+    exact havoid st
+  have hcurve := curveIntegral_indexForm_eq_of_pathHomotopy φ hφsmooth haway
   have hcurve' :
       (∫ᶜ z in p, (z - w)⁻¹ • ContinuousLinearMap.id ℂ ℂ) =
         ∫ᶜ z in q, (z - w)⁻¹ • ContinuousLinearMap.id ℂ ℂ := by
@@ -153,10 +161,10 @@ theorem windingNumber_eq_of_pathHomotopy {x w : ℂ} {p q : Path x x} (φ : p.Ho
     simpa using isPiecewiseC1On_eval_of_smoothPathHomotopy φ hφsmooth (1 : I)
   rw [windingNumber_eq_two_pi_I_inv_mul_curveIntegral
       hp
-      (fun t ↦ haway ⟨(0, t), by simp⟩),
+      (fun t ↦ haway _ ⟨(0, t), by simp⟩),
     windingNumber_eq_two_pi_I_inv_mul_curveIntegral
       hq
-      (fun t ↦ haway ⟨(1, t), by simp⟩),
+      (fun t ↦ haway _ ⟨(1, t), by simp⟩),
     hcurve']
 
 /-- Null-homology in `Ω` is invariant under a `C²` path homotopy whose image lies in `Ω`. -/
