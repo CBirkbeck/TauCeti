@@ -9,6 +9,7 @@ public import Mathlib.LinearAlgebra.Matrix.GeneralLinearGroup.Defs
 
 import Mathlib.Algebra.EuclideanDomain.Int
 import Mathlib.Data.Int.GCD
+import Mathlib.Data.Sign.Basic
 import Mathlib.LinearAlgebra.Determinant
 import Mathlib.LinearAlgebra.FreeModule.PID
 import Mathlib.LinearAlgebra.Matrix.Basis
@@ -110,20 +111,19 @@ private lemma sign_correct_unit_transform (A : Matrix (Fin n) (Fin n) ℤ) (d : 
     rw [show flip * L_mat * A * (Q_mat * flip) = flip * (L_mat * A * Q_mat) * flip from by
       simp only [Matrix.mul_assoc], hL_eq, hflip_diag]
 
-/-- **A diagonal matrix with nonzero integer entries splits as a sign involution times a positive
-diagonal.** -/
-private lemma exists_sign_involution_mul_diagonal_pos {R : Type*} [CommRing R] [LinearOrder R]
-    [IsStrictOrderedRing R] {a : Fin n → R} (ha_ne : ∀ i, a i ≠ 0) :
+/-- **A diagonal matrix with nonzero entries in a strictly ordered commutative ring splits as a
+self-inverse matrix of unit determinant times a positive diagonal.** -/
+private lemma exists_involution_isUnit_det_mul_diagonal_pos {R : Type*} [CommRing R]
+    [LinearOrder R] [IsStrictOrderedRing R] {a : Fin n → R} (ha_ne : ∀ i, a i ≠ 0) :
     ∃ (s : Matrix (Fin n) (Fin n) R) (d : Fin n → R), (∀ i, 0 < d i) ∧ s * s = 1 ∧
       IsUnit s.det ∧ Matrix.diagonal a = s * Matrix.diagonal d := by
-  classical
-  set sv := fun i ↦ if (0 : R) < a i then (1 : R) else -1 with hsv_def
-  have hsv_sq : ∀ i, sv i * sv i = 1 := fun i ↦ by simp only [hsv_def]; split_ifs <;> ring
-  have hsv_mul_abs : ∀ i, sv i * |a i| = a i := fun i ↦ by
-    simp only [hsv_def]; rcases lt_trichotomy (a i) 0 with h | h | h
-    · rw [if_neg (not_lt.mpr h.le), abs_of_neg h]; ring
+  set sv := fun i ↦ ((SignType.sign (a i) : SignType) : R) with hsv_def
+  have hsv_sq : ∀ i, sv i * sv i = 1 := fun i ↦ by
+    simp only [hsv_def]
+    rcases lt_trichotomy (a i) 0 with h | h | h
+    · rw [sign_neg h]; simp
     · exact absurd h (ha_ne i)
-    · rw [if_pos h, abs_of_pos h, one_mul]
+    · rw [sign_pos h]; simp
   have hss : Matrix.diagonal sv * Matrix.diagonal sv = 1 := by
     rw [Matrix.diagonal_mul_diagonal]
     ext i j
@@ -138,7 +138,7 @@ private lemma exists_sign_involution_mul_diagonal_pos {R : Type*} [CommRing R] [
   · rw [Matrix.diagonal_mul_diagonal]
     congr 1
     ext i
-    exact (hsv_mul_abs i).symm
+    exact (sign_mul_abs (a i)).symm
 
 /-- Refine a unit-determinant diagonalization `P⁻¹ * A * Q = diag a` (with `a i ≠ 0`) of a
 positive-determinant matrix to an `SL_n(ℤ)`-diagonalization with the positive diagonal `|a|`:
@@ -149,7 +149,8 @@ private lemma exists_SL_diagonal_of_unit_diagonalization (A P Q : Matrix (Fin n)
     ∃ (d : Fin n → ℤ) (_ : ∀ i, 0 < d i), ∃ (L R : SpecialLinearGroup (Fin n) ℤ),
       (L : Matrix (Fin n) (Fin n) ℤ) * A * (R : Matrix (Fin n) (Fin n) ℤ) =
       Matrix.diagonal d := by
-  obtain ⟨s, d, hd_pos, hss, hs_det_unit, h_sd⟩ := exists_sign_involution_mul_diagonal_pos ha_ne
+  obtain ⟨s, d, hd_pos, hss, hs_det_unit, h_sd⟩ :=
+    exists_involution_isUnit_det_mul_diagonal_pos ha_ne
   set L_mat := s * P⁻¹ with hL_def
   have hL_eq : L_mat * A * Q = Matrix.diagonal d := by
     calc L_mat * A * Q
