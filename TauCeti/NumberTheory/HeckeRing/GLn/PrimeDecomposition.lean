@@ -179,6 +179,7 @@ lemma pLocalSubring_def (p : ℕ) :
 
 /-- A diagonal Hecke operator with `p`-power entries lies in `R_p`, provided its exponent
 vector is monotone — that is the generating set of `pLocalSubring`. -/
+@[simp]
 lemma diagElem_primePowDiag_mem_pLocalSubring (p : ℕ) (e : Fin n → ℕ)
     (hmono : Monotone e) : diagElem (primePowDiag n p e) ∈ pLocalSubring n p :=
   Subring.subset_closure ⟨e, hmono, rfl⟩
