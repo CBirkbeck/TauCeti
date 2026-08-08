@@ -231,15 +231,6 @@ private theorem exists_invariant_notMem_of_forall_lie_mem {d : ℕ}
     rfl
 
 omit [CharZero K] [IsAlgClosed K] in
-/-- The rank identity for a quotient by a Lie submodule, stated through the Lie submodule itself.
-Both sides are definitionally the corresponding statement for the underlying `Submodule`; naming
-the identity keeps the dimension arithmetic below from resting on that coercion. -/
-private theorem finrank_quotient_add_finrank_lieSubmodule {M : Type v} [AddCommGroup M]
-    [Module K M] [LieRingModule L M] [LieModule K L M] [FiniteDimensional K M]
-    (W : LieSubmodule K L M) : finrank K (M ⧸ W) + finrank K W = finrank K M :=
-  Submodule.finrank_quotient_add_finrank (W : Submodule K M)
-
-omit [CharZero K] [IsAlgClosed K] in
 /-- The reducible step. If `N` has a Lie submodule `W` that is neither `⊥` nor `N` itself, the
 inductive hypothesis applies twice: once on the quotient `M ⧸ W`, which is strictly smaller
 because `W` is nonzero, to produce a vector outside `N` whose brackets land in `W`, and then —
@@ -265,7 +256,10 @@ private theorem exists_invariant_notMem_of_ne_bot_of_ne_of_le {d : ℕ}
       (fun hc ↦ hWN ((LieSubmodule.toSubmodule_inj _ _).1 hc))
   have hWlt : finrank K W < finrank K N := Submodule.finrank_lt_finrank_of_lt hWsub
   have hquot : finrank K (M ⧸ W) ≤ d := by
-    have := finrank_quotient_add_finrank_lieSubmodule (L := L) W
+    -- Ascribing the type states Mathlib's rank identity at the Lie quotient, so the arithmetic
+    -- below never has to see through the `LieSubmodule → Submodule` coercion.
+    have hadd : finrank K (M ⧸ W) + finrank K W = finrank K M :=
+      Submodule.finrank_quotient_add_finrank (W : Submodule K M)
     omega
   obtain ⟨v₀, hv₀N, hv₀W⟩ := exists_notMem_forall_lie_mem_of_le ih hquot hN htriv hWle
   exact exists_invariant_notMem_of_forall_lie_mem ih (by omega) hWle hv₀N hv₀W
