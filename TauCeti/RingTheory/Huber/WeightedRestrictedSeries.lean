@@ -243,6 +243,20 @@ theorem weightMul_add_eq (T : Fin k → Set A) (α β : Fin k →₀ ℕ) (U : A
     rintro _ ⟨t, ht, x, hx, rfl⟩
     exact add_comm α β ▸ weightPow_mul_weightMul_mem ht hx
 
+/-- **Wedhorn's derived hypothesis**: from the per-variable assumption that each `Tᵢ^m · U` is a
+neighbourhood of zero it follows that `Tν · U` is one for every multi-index `ν`. Wedhorn states
+this in a sentence ("Then `Tν U` is a neighborhood of `0` for all `ν`"); the proof is induction
+on `ν`, splitting off one variable at a time with
+`TauCeti.Huber.weightMul_add_eq` and `TauCeti.Huber.weightPow_single`. -/
+theorem IsWeightFamily.weightMul_mem_nhds {T : Fin k → Set A} (hT : IsWeightFamily T)
+    (ν : Fin k →₀ ℕ) {U : AddSubgroup A} (hU : (U : Set A) ∈ nhds (0 : A)) :
+    (weightMul T ν U : Set A) ∈ nhds (0 : A) := by
+  induction ν using Finsupp.induction with
+  | zero => rwa [weightMul_zero]
+  | single_add i m ν' _ _ ih =>
+      rw [weightMul_add_eq, weightPow_single]
+      exact hT i m _ ih
+
 omit [TopologicalSpace A] in
 /-- **The absorption step.** If multiplication by `a` carries the subgroup `Z` into `T^α · U`,
 then it carries all of `T^β · Z` into `T^(α+β) · U`.
