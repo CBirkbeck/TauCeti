@@ -142,13 +142,6 @@ private theorem eq_of_le_of_relNorm_eq {I J : Ideal B} (hIJ : I ≤ J) (hJne : J
     rwa [Ideal.mem_comap, map_one] at this
   rw [hC, hCtop, Ideal.mul_top]
 
-/-- The product of an ideal with its image under an `A`-algebra automorphism has relative norm the
-square of the ideal's. -/
-private theorem relNorm_mul_map_algEquiv (σ : B ≃ₐ[A] B) (I : Ideal B) :
-    Ideal.relNorm A (I * Ideal.map σ I) = Ideal.relNorm A I ^ 2 := by
-  -- An automorphism preserves the relative norm, so both factors contribute the same.
-  rw [map_mul (Ideal.relNorm A), Ideal.relNorm_map_algEquiv σ I, ← sq]
-
 end RelNorm
 
 /-- The extension of the norm ideal of `J` is contained in `J · σJ`. -/
@@ -176,15 +169,16 @@ theorem isPrincipal_mul_map_ringOfIntegersQuadraticConj
     mul_ne_zero hIne (by
       simpa [Ideal.zero_eq_bot, Ideal.map_eq_bot_iff_of_injective
         (ringOfIntegersQuadraticConj hmin hgen).injective] using hIne)
-  -- `relNorm_mul_map_algEquiv` applies to the `ℤ`-algebra form of conjugation; the type ascription
-  -- is what identifies its `Ideal.map` with the ring-equivalence one in the goal.
-  have hsq : Ideal.relNorm ℤ (I * Ideal.map (ringOfIntegersQuadraticConj hmin hgen) I) =
-      Ideal.relNorm ℤ I ^ 2 :=
-    relNorm_mul_map_algEquiv (ringOfIntegersQuadraticConjₐ hmin hgen) I
-  -- Both ideals then have relative norm `(relNorm I)²`.
+  -- Conjugation preserves the relative norm. The ascription is what identifies `Ideal.map` of the
+  -- ring equivalence with `Ideal.map` of its `ℤ`-algebra form, which is what Mathlib's lemma takes.
+  have hreln : Ideal.relNorm ℤ (Ideal.map (ringOfIntegersQuadraticConj hmin hgen) I) =
+      Ideal.relNorm ℤ I :=
+    Ideal.relNorm_map_algEquiv (ringOfIntegersQuadraticConjₐ hmin hgen) I
+  -- So both ideals have relative norm `(relNorm I)²`.
   have hnorm : Ideal.relNorm ℤ (Ideal.map (algebraMap ℤ (𝓞 K)) (Ideal.relNorm ℤ I)) =
       Ideal.relNorm ℤ (I * Ideal.map (ringOfIntegersQuadraticConj hmin hgen) I) := by
-    rw [Ideal.relNorm_algebraMap, finrank_int_eq_two hmin hgen, hsq]
+    rw [Ideal.relNorm_algebraMap, finrank_int_eq_two hmin hgen,
+      map_mul (Ideal.relNorm ℤ), hreln, ← sq]
   -- So the containment is an equality, and the left side is principal, being the extension of the
   -- principal `ℤ`-ideal `relNorm I`.
   rw [← eq_of_le_of_relNorm_eq
