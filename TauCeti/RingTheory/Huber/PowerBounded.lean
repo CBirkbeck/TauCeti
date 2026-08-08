@@ -363,6 +363,7 @@ theorem IsPowerBounded.map_of_isOpenMap {F : Type*} [FunLike F M N] [MonoidWithZ
 variable {A B : Type*} [Semiring A] [Semiring B] [TopologicalSpace A] [TopologicalSpace B]
 
 /-- Power-boundedness transports along a topological ring isomorphism. -/
+@[simp]
 theorem isPowerBounded_ringEquiv_iff (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm)
     {a : A} : IsPowerBounded (e a) ↔ IsPowerBounded a :=
   ⟨fun h ↦ by
@@ -371,6 +372,7 @@ theorem isPowerBounded_ringEquiv_iff (e : A ≃+* B) (he : Continuous e) (he' : 
     fun h ↦ h.map_of_isOpenMap he.continuousAt (e.toEquiv.continuous_symm_iff.mp he')⟩
 
 /-- Topological nilpotence transports along a topological ring isomorphism. -/
+@[simp]
 theorem isTopologicallyNilpotent_ringEquiv_iff (e : A ≃+* B) (he : Continuous e)
     (he' : Continuous e.symm) {a : A} :
     IsTopologicallyNilpotent (e a) ↔ IsTopologicallyNilpotent a :=
