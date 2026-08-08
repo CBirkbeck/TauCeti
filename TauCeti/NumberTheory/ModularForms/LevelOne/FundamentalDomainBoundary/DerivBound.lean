@@ -24,7 +24,9 @@ which rests on the symmetric cancellation at the crossing.
 ## Main declarations
 
 * `TauCeti.ModularForm.not_differentiableAt_fdBoundary_one`, `…_three`, `…_four`: the
-  contour is not differentiable at its corners.
+  contour is not differentiable at its corners, with the `@[simp]` normal forms
+  `TauCeti.ModularForm.deriv_fdBoundary_one`, `…_three`, `…_four` recording that `deriv`
+  is `0` there.
 * `TauCeti.ModularForm.exists_norm_deriv_fdBoundary_le`: a bound on `‖deriv (fdBoundary H)‖`
   valid at every parameter.
 
@@ -44,6 +46,16 @@ namespace TauCeti
 namespace ModularForm
 
 variable {H t : ℝ}
+
+/-- The real part of the arc's tangent at a corner angle: `-(π/6)·sin θ`, negative wherever
+the angle lies strictly between `0` and `π`. This is what distinguishes the arc's tangent
+from the verticals' purely imaginary chords. -/
+private lemma re_arc_tangent (θ : ℝ) :
+    ((Real.pi / 6) • (circleMap 0 1 θ * Complex.I) : ℂ).re = -(Real.pi / 6 * Real.sin θ) := by
+  simp only [circleMap, Complex.smul_re, zero_add, Complex.ofReal_one, one_mul,
+    Complex.mul_re, Complex.I_re, Complex.I_im, Complex.exp_ofReal_mul_I_re,
+    Complex.exp_ofReal_mul_I_im, smul_eq_mul]
+  ring
 
 /-- The one-sided derivative from the left at the ceiling corner: the left vertical's
 chord. -/
@@ -102,13 +114,10 @@ theorem not_differentiableAt_fdBoundary_one (H : ℝ) :
   have hre : (((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)) : ℂ).re =
       ((Real.pi / 6) • (circleMap 0 1 ((1 + 1) * (Real.pi / 6)) * Complex.I) : ℂ).re := by
     rw [hLd, hRd]
-  rw [circleMap, show ((1 : ℝ) + 1) * (Real.pi / 6) = Real.pi / 3 by ring] at hre
-  simp only [Complex.add_re, Complex.sub_re, Complex.mul_re, Complex.I_re, Complex.I_im,
-    Complex.ofReal_re, Complex.ofReal_im, Complex.one_re, Complex.smul_re, zero_add,
-    Complex.ofReal_one, one_mul, Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im,
-    smul_eq_mul] at hre
-  have hsin : Real.sin (Real.pi / 3) = Real.sqrt 3 / 2 := Real.sin_pi_div_three
-  rw [hsin] at hre
+  have hangle : ((1 : ℝ) + 1) * (Real.pi / 6) = Real.pi / 3 := by ring
+  rw [hangle, re_arc_tangent, Real.sin_pi_div_three] at hre
+  simp only [Complex.sub_re, Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
+    Complex.ofReal_re, Complex.ofReal_im, Complex.one_re] at hre
   norm_num [ρ] at hre
 
 /-- **The contour is not differentiable at the second corner.** The arc arrives with a
@@ -130,15 +139,30 @@ theorem not_differentiableAt_fdBoundary_three (H : ℝ) :
   have hre : ((Real.pi / 6) • (circleMap 0 1 ((3 + 1) * (Real.pi / 6)) * Complex.I) : ℂ).re =
       ((-1 / 2 + H * Complex.I - (ρ : ℂ)) : ℂ).re := by
     rw [hLd, hRd]
-  rw [circleMap, show ((3 : ℝ) + 1) * (Real.pi / 6) = 2 * Real.pi / 3 by ring] at hre
-  simp only [Complex.add_re, Complex.sub_re, Complex.mul_re, Complex.I_re, Complex.I_im,
-    Complex.ofReal_re, Complex.ofReal_im, Complex.smul_re, zero_add, Complex.ofReal_one,
-    one_mul, Complex.exp_ofReal_mul_I_re, Complex.exp_ofReal_mul_I_im, smul_eq_mul] at hre
+  have hangle : ((3 : ℝ) + 1) * (Real.pi / 6) = 2 * Real.pi / 3 := by ring
   have hsin : Real.sin (2 * Real.pi / 3) = Real.sqrt 3 / 2 := by
-    rw [show 2 * Real.pi / 3 = Real.pi - Real.pi / 3 by ring, Real.sin_pi_sub]
+    have hsplit : 2 * Real.pi / 3 = Real.pi - Real.pi / 3 := by ring
+    rw [hsplit, Real.sin_pi_sub]
     exact Real.sin_pi_div_three
-  rw [hsin] at hre
+  rw [hangle, re_arc_tangent, hsin] at hre
+  simp only [Complex.sub_re, Complex.add_re, Complex.mul_re, Complex.I_re, Complex.I_im,
+    Complex.ofReal_re, Complex.ofReal_im] at hre
   norm_num [ρ] at hre
+
+/-- The contour's derivative at the first corner is the junk value `0`. -/
+@[simp]
+theorem deriv_fdBoundary_one (H : ℝ) : deriv (fdBoundary H) 1 = 0 :=
+  deriv_zero_of_not_differentiableAt (not_differentiableAt_fdBoundary_one H)
+
+/-- The contour's derivative at the second corner is the junk value `0`. -/
+@[simp]
+theorem deriv_fdBoundary_three (H : ℝ) : deriv (fdBoundary H) 3 = 0 :=
+  deriv_zero_of_not_differentiableAt (not_differentiableAt_fdBoundary_three H)
+
+/-- The contour's derivative at the ceiling corner is the junk value `0`. -/
+@[simp]
+theorem deriv_fdBoundary_four (H : ℝ) : deriv (fdBoundary H) 4 = 0 :=
+  deriv_zero_of_not_differentiableAt (not_differentiableAt_fdBoundary_four H)
 
 /-- **A uniform bound on the contour's derivative.** Every parameter has
 `‖deriv (fdBoundary H) t‖ ≤ ‖ρ + 1 - (1/2 + H·i)‖ + π/6 + ‖-1/2 + H·i - ρ‖ + 1`: off the
@@ -156,13 +180,13 @@ theorem exists_norm_deriv_fdBoundary_le (H : ℝ) :
   have hn1 : (0 : ℝ) ≤ ‖(ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)‖ := norm_nonneg _
   have hn2 : (0 : ℝ) ≤ ‖-1 / 2 + H * Complex.I - (ρ : ℂ)‖ := norm_nonneg _
   rcases eq_or_ne t 1 with rfl | h1
-  · rw [deriv_zero_of_not_differentiableAt (not_differentiableAt_fdBoundary_one H), norm_zero]
+  · rw [deriv_fdBoundary_one, norm_zero]
     linarith
   rcases eq_or_ne t 3 with rfl | h3
-  · rw [deriv_zero_of_not_differentiableAt (not_differentiableAt_fdBoundary_three H), norm_zero]
+  · rw [deriv_fdBoundary_three, norm_zero]
     linarith
   rcases eq_or_ne t 4 with rfl | h4
-  · rw [deriv_zero_of_not_differentiableAt (not_differentiableAt_fdBoundary_four H), norm_zero]
+  · rw [deriv_fdBoundary_four, norm_zero]
     linarith
   rcases lt_or_gt_of_ne h1 with hlt1 | hgt1
   · rw [deriv_fdBoundary_of_lt_one hlt1]
