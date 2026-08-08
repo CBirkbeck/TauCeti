@@ -30,10 +30,10 @@ which the trace is read off.
 
 ## Main results
 
-* `eq_frobenius_quadratic_form_of_det_trace`: from per-prime data with `det` and `trace`.
-* `eq_frobenius_quadratic_form_of_det_det_one_sub`: the same from `det` data alone.
-* `frobenius_quadratic_form_nonneg_of_det_trace`: the non-negativity corollary, when `D` is a
-  degree and hence non-negative.
+* `eq_quadratic_form_of_det_trace`: from per-prime data with `det` and `trace`.
+* `eq_quadratic_form_of_det_det_one_sub`: the same from `det` data alone.
+* `quadratic_form_nonneg_of_det_trace`, `quadratic_form_nonneg_of_det_det_one_sub`: the
+  non-negativity corollaries, when `D` is a degree and hence non-negative.
 
 ## Provenance
 
@@ -61,7 +61,7 @@ variable {p ℓ : ℕ} {q t D r s : ℤ}
 /-- **The per-prime congruence.** If `M` has determinant `q`, trace `t`, and the pencil
 `r • M - s • 1` has determinant `D`, then `D` agrees with `q * r ^ 2 - t * (r * s) + s ^ 2`
 modulo `ℓ`. -/
-theorem intCast_eq_of_det_trace {M : Matrix (Fin 2) (Fin 2) (ZMod ℓ)}
+theorem intCast_eq_quadratic_form_of_det_trace {M : Matrix (Fin 2) (Fin 2) (ZMod ℓ)}
     (hdet : M.det = (q : ZMod ℓ)) (htrace : M.trace = (t : ZMod ℓ))
     (hpencil : ((r : ZMod ℓ) • M - (s : ZMod ℓ) • 1).det = (D : ZMod ℓ)) :
     (D : ZMod ℓ) = ((q * r ^ 2 - t * (r * s) + s ^ 2 : ℤ) : ZMod ℓ) := by
@@ -71,11 +71,11 @@ theorem intCast_eq_of_det_trace {M : Matrix (Fin 2) (Fin 2) (ZMod ℓ)}
 
 /-- **The per-prime congruence, from determinants alone.** A Weil pairing supplies determinants
 rather than traces, so the trace hypothesis is replaced by `(1 - M).det = q + 1 - t`. -/
-theorem intCast_eq_of_det_det_one_sub {M : Matrix (Fin 2) (Fin 2) (ZMod ℓ)}
+theorem intCast_eq_quadratic_form_of_det_det_one_sub {M : Matrix (Fin 2) (Fin 2) (ZMod ℓ)}
     (hdet : M.det = (q : ZMod ℓ)) (hdetOneSub : (1 - M).det = ((q + 1 - t : ℤ) : ZMod ℓ))
     (hpencil : ((r : ZMod ℓ) • M - (s : ZMod ℓ) • 1).det = (D : ZMod ℓ)) :
     (D : ZMod ℓ) = ((q * r ^ 2 - t * (r * s) + s ^ 2 : ℤ) : ZMod ℓ) := by
-  refine intCast_eq_of_det_trace hdet ?_ hpencil
+  refine intCast_eq_quadratic_form_of_det_trace hdet ?_ hpencil
   -- `1 - M` is the pencil at `r = s = -1`, so the trace is read off the two determinants.
   have h : (1 - M).det = M.det * (-1) ^ 2 - M.trace * (-1 * -1) + (-1 : ZMod ℓ) ^ 2 := by
     simpa [neg_add_eq_sub] using det_smul_sub_smul_one_fin_two M (-1) (-1)
@@ -86,32 +86,41 @@ theorem intCast_eq_of_det_det_one_sub {M : Matrix (Fin 2) (Fin 2) (ZMod ℓ)}
 /-- **The quadratic form is forced.** If for every prime `ℓ ≠ p` the integer `D` is realised
 modulo `ℓ` as the pencil determinant of a `2 × 2` matrix with determinant `q` and trace `t`, then
 `D = q * r ^ 2 - t * (r * s) + s ^ 2` as integers. -/
-theorem eq_frobenius_quadratic_form_of_det_trace
+theorem eq_quadratic_form_of_det_trace
     (h : ∀ ℓ : ℕ, ℓ.Prime → ℓ ≠ p → ∃ M : Matrix (Fin 2) (Fin 2) (ZMod ℓ),
       M.det = (q : ZMod ℓ) ∧ M.trace = (t : ZMod ℓ) ∧
         ((r : ZMod ℓ) • M - (s : ZMod ℓ) • 1).det = (D : ZMod ℓ)) :
     D = q * r ^ 2 - t * (r * s) + s ^ 2 :=
   Int.eq_of_intCast_eq_all_primes_ne (p := p) fun ℓ hℓ hℓne ↦
     let ⟨_, hdet, htrace, hpencil⟩ := h ℓ hℓ hℓne
-    intCast_eq_of_det_trace hdet htrace hpencil
+    intCast_eq_quadratic_form_of_det_trace hdet htrace hpencil
 
 /-- **The quadratic form is forced, from determinants alone.** -/
-theorem eq_frobenius_quadratic_form_of_det_det_one_sub
+theorem eq_quadratic_form_of_det_det_one_sub
     (h : ∀ ℓ : ℕ, ℓ.Prime → ℓ ≠ p → ∃ M : Matrix (Fin 2) (Fin 2) (ZMod ℓ),
       M.det = (q : ZMod ℓ) ∧ (1 - M).det = ((q + 1 - t : ℤ) : ZMod ℓ) ∧
         ((r : ZMod ℓ) • M - (s : ZMod ℓ) • 1).det = (D : ZMod ℓ)) :
     D = q * r ^ 2 - t * (r * s) + s ^ 2 :=
   Int.eq_of_intCast_eq_all_primes_ne (p := p) fun ℓ hℓ hℓne ↦
     let ⟨_, hdet, hdetOneSub, hpencil⟩ := h ℓ hℓ hℓne
-    intCast_eq_of_det_det_one_sub hdet hdetOneSub hpencil
+    intCast_eq_quadratic_form_of_det_det_one_sub hdet hdetOneSub hpencil
+
+/-- **Non-negativity, from determinants alone.** The det-only companion of
+`quadratic_form_nonneg_of_det_trace`, which is the branch a pairing supplies. -/
+theorem quadratic_form_nonneg_of_det_det_one_sub (hD : 0 ≤ D)
+    (h : ∀ ℓ : ℕ, ℓ.Prime → ℓ ≠ p → ∃ M : Matrix (Fin 2) (Fin 2) (ZMod ℓ),
+      M.det = (q : ZMod ℓ) ∧ (1 - M).det = ((q + 1 - t : ℤ) : ZMod ℓ) ∧
+        ((r : ZMod ℓ) • M - (s : ZMod ℓ) • 1).det = (D : ZMod ℓ)) :
+    0 ≤ q * r ^ 2 - t * (r * s) + s ^ 2 :=
+  eq_quadratic_form_of_det_det_one_sub h ▸ hD
 
 /-- **Non-negativity.** When the realised integer is non-negative — as a degree is — the quadratic
 form is non-negative. -/
-theorem frobenius_quadratic_form_nonneg_of_det_trace (hD : 0 ≤ D)
+theorem quadratic_form_nonneg_of_det_trace (hD : 0 ≤ D)
     (h : ∀ ℓ : ℕ, ℓ.Prime → ℓ ≠ p → ∃ M : Matrix (Fin 2) (Fin 2) (ZMod ℓ),
       M.det = (q : ZMod ℓ) ∧ M.trace = (t : ZMod ℓ) ∧
         ((r : ZMod ℓ) • M - (s : ZMod ℓ) • 1).det = (D : ZMod ℓ)) :
     0 ≤ q * r ^ 2 - t * (r * s) + s ^ 2 :=
-  eq_frobenius_quadratic_form_of_det_trace h ▸ hD
+  eq_quadratic_form_of_det_trace h ▸ hD
 
 end TauCeti
