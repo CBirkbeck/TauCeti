@@ -607,11 +607,9 @@ private lemma divChain_prepend (k : ℕ) (c : ℤ) (d_tail' : Fin (k + 1) → �
     change d_tail' ⟨i, by omega⟩ ∣ d_tail' ⟨i + 1, by omega⟩
     exact htail i (by omega)
 
-/-- The inductive step of `exists_divChain_of_pos_diagonal`. `make_first_divide_all` puts an entry
-dividing the whole tail in position `0`; the inductive hypothesis puts the tail in divisibility
-chain form; and `divChain_prepend` glues the two, the transported divisibility coming from
-`dvd_diag_of_SL_transform`. -/
-private lemma exists_divChain_succ {k : ℕ}
+/-- Assuming the divisibility-chain normalisation in dimension `k + 1`, every positive diagonal of
+length `k + 2` is `SL`-equivalent to a positive diagonal in divisibility-chain form. -/
+private lemma exists_divChain_of_pos_diagonal_succ {k : ℕ}
     (ih : ∀ d : Fin (k + 1) → ℤ, (∀ i, 0 < d i) →
       ∃ (d' : Fin (k + 1) → ℤ) (_ : ∀ i, 0 < d' i)
         (_ : ∀ (i : ℕ) (hi : i + 1 < k + 1), d' ⟨i, by omega⟩ ∣ d' ⟨i + 1, hi⟩),
@@ -667,7 +665,7 @@ private lemma exists_divChain_of_pos_diagonal (d : Fin n → ℤ) (hd : ∀ i, 0
   | succ m ih =>
     cases m with
     | zero => exact fun d hd ↦ ⟨d, hd, fun i hi ↦ by omega, 1, 1, by simp⟩
-    | succ k => exact exists_divChain_succ ih
+    | succ k => exact exists_divChain_of_pos_diagonal_succ ih
 
 /-- Successive divisibility upgrades to divisibility along any `i ≤ j`. -/
 private lemma dvd_of_le_of_chain {d : Fin n → ℤ}
