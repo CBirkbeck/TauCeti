@@ -109,6 +109,39 @@ theorem quotientPointsSubgroup_normal (H : _root_.CommHopfAlgCat.{v} R)
     simpa using hn y ((HopfIdeal.mem_toIdeal (I := I)).mp hy)
   exact RingHom.mem_ker.mp (hker (hI.conjugation_mem hx))
 
+/-- **The quotient-map point lies in the quotient points subgroup.** The point of
+`H ⊗ H/I` given by the right inclusion after `Ideal.Quotient.mkₐ` kills `I`, so it belongs to
+`quotientPointsSubgroup`. -/
+private theorem toConv_includeRight_comp_mkₐ_mem_quotientPointsSubgroup
+    (H : _root_.CommHopfAlgCat.{v} R) (I : HopfIdeal R H) :
+    (toConv (Algebra.TensorProduct.includeRight.comp (Ideal.Quotient.mkₐ R I.toIdeal)) :
+        HopfAlgebra.points (R := R) (H := H)
+          (CommAlgCat.of R (TensorProduct R H (H ⧸ I.toIdeal)))) ∈
+      quotientPointsSubgroup H I (CommAlgCat.of R (TensorProduct R H (H ⧸ I.toIdeal))) := by
+  rw [mem_quotientPointsSubgroup_iff]
+  intro y hy
+  simp only [AlgHom.comp_apply, Algebra.TensorProduct.includeRight_apply]
+  have hyzero : (Ideal.Quotient.mkₐ R I.toIdeal) y = 0 :=
+    Ideal.Quotient.eq_zero_iff_mem.mpr ((HopfIdeal.mem_toIdeal (I := I)).mpr hy)
+  rw [hyzero, TensorProduct.tmul_zero]
+
+/-- **The product of the two canonical points of `H ⊗ H/I` is the quotient map on the right
+factor.** Pairing the left inclusion with the right inclusion after `Ideal.Quotient.mkₐ` gives
+`id ⊗ mk`. -/
+private theorem productMap_includeLeft_includeRight_comp_mkₐ
+    (H : _root_.CommHopfAlgCat.{v} R) (I : HopfIdeal R H) :
+    Algebra.TensorProduct.productMap
+        (Algebra.TensorProduct.includeLeft :
+          H →ₐ[R] TensorProduct R H (H ⧸ I.toIdeal))
+        (Algebra.TensorProduct.includeRight.comp (Ideal.Quotient.mkₐ R I.toIdeal)) =
+      Algebra.TensorProduct.map (AlgHom.id R H) (Ideal.Quotient.mkₐ R I.toIdeal) := by
+  apply Algebra.TensorProduct.ext'
+  intro y z
+  rw [Algebra.TensorProduct.productMap_apply_tmul, Algebra.TensorProduct.map_tmul]
+  simp only [AlgHom.comp_apply, AlgHom.id_apply, Algebra.TensorProduct.includeRight_apply]
+  rw [Algebra.TensorProduct.includeLeft_apply, Algebra.TensorProduct.tmul_mul_tmul,
+    mul_one, one_mul]
+
 /-- A Hopf ideal is normal if and only if it cuts out a normal subgroup over every
 commutative value algebra. -/
 theorem isNormal_iff_quotientPointsSubgroup_normal
@@ -126,14 +159,8 @@ theorem isNormal_iff_quotientPointsSubgroup_normal
       toConv Algebra.TensorProduct.includeLeft
     let n : HopfAlgebra.points (R := R) (H := H) A :=
       toConv (Algebra.TensorProduct.includeRight.comp (Ideal.Quotient.mkₐ R I.toIdeal))
-    have hn : n ∈ quotientPointsSubgroup H I A := by
-      rw [mem_quotientPointsSubgroup_iff]
-      intro y hy
-      simp only [n, AlgHom.comp_apply,
-        Algebra.TensorProduct.includeRight_apply]
-      have hyzero : (Ideal.Quotient.mkₐ R I.toIdeal) y = 0 :=
-        Ideal.Quotient.eq_zero_iff_mem.mpr ((HopfIdeal.mem_toIdeal (I := I)).mpr hy)
-      rw [hyzero, TensorProduct.tmul_zero]
+    have hn : n ∈ quotientPointsSubgroup H I A :=
+      toConv_includeRight_comp_mkₐ_mem_quotientPointsSubgroup H I
     have hconj := (hnormal A).conj_mem n hn g
     rw [mem_quotientPointsSubgroup_iff] at hconj
     have hzero := hconj x hx
@@ -146,14 +173,8 @@ theorem isNormal_iff_quotientPointsSubgroup_normal
             hzero
     have hproduct :
         Algebra.TensorProduct.productMap g.ofConv n.ofConv =
-          Algebra.TensorProduct.map (AlgHom.id R H) (Ideal.Quotient.mkₐ R I.toIdeal) := by
-      apply Algebra.TensorProduct.ext'
-      intro y z
-      rw [Algebra.TensorProduct.productMap_apply_tmul, Algebra.TensorProduct.map_tmul]
-      simp only [g, n, Q, AlgHom.comp_apply, AlgHom.id_apply,
-        Algebra.TensorProduct.includeRight_apply]
-      rw [Algebra.TensorProduct.includeLeft_apply, Algebra.TensorProduct.tmul_mul_tmul,
-        mul_one, one_mul]
+          Algebra.TensorProduct.map (AlgHom.id R H) (Ideal.Quotient.mkₐ R I.toIdeal) :=
+      productMap_includeLeft_includeRight_comp_mkₐ H I
     rw [hproduct] at heval
     have hmem := RingHom.mem_ker.mpr heval
     rw [HopfIdeal.ker_tensorProduct_map_id_quotient I.toIdeal] at hmem
