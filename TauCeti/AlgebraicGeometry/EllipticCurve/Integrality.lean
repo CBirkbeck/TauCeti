@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Mathlib.RingTheory.Polynomial.IsIntegral
 public import Mathlib.RingTheory.Polynomial.RationalRoot
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Denominator
 
@@ -30,8 +31,8 @@ arbitrary `R`-algebra, with the fraction-field version as a corollary.
 
 * `TauCeti.WeierstrassCurve.isInteger_of_is_root_of_squarefree_leadingCoeff`: the `x`-coordinate of
   a point is integral if it is a root of a polynomial over `R` with squarefree leading coefficient.
-* `TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_mem_range`: over **any** `R`-algebra, a
-  point whose `x`-coordinate comes from `R` has `y`-coordinate integral over `R`.
+* `TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral`: over **any** `R`-algebra, a
+  point whose `x`-coordinate is integral over `R` has `y`-coordinate integral over `R`.
 * `TauCeti.WeierstrassCurve.isInteger_y_of_equation_of_isInteger_x`: its fraction-field corollary,
   the shape the Nagell–Lutz argument consumes.
 
@@ -63,26 +64,37 @@ variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve R)
 
 /-- **An integral `x`-coordinate forces an integral `y`-coordinate**, over any `R`-algebra.
 
-On the curve, `y` is a root of the monic quadratic `Y² + (a₁x₀ + a₃)Y − (x₀³ + a₂x₀² + a₄x₀ + a₆)`
-over `R`, so `y` is integral over `R`. No domain, fraction-field or factorisation hypothesis is
-needed — only that the `x`-coordinate comes from `R`.
-
-(The variant assuming merely `IsIntegral R x` also holds, by running this argument over
-`Algebra.adjoin R {x}` and applying `isIntegral_trans`; it is not needed by the Nagell–Lutz route,
-where the `x`-coordinate is genuinely an element of `R`.) -/
-theorem isIntegral_y_of_equation_of_mem_range {A : Type*} [CommRing A] [Algebra R A] {x y : A}
-    (h : (W.baseChange A).toAffine.Equation x y) {x₀ : R} (hx₀ : algebraMap R A x₀ = x) :
-    IsIntegral R y := by
-  refine ⟨X ^ 2 + (C (W.a₁ * x₀ + W.a₃) * X + C (-(x₀ ^ 3 + W.a₂ * x₀ ^ 2 + W.a₄ * x₀ + W.a₆))),
-    monic_X_pow_add (by compute_degree!), ?_⟩
+On the curve, `y` is a root of the monic quadratic `Y² + (a₁x + a₃)Y − (x³ + a₂x² + a₄x + a₆)`,
+whose coefficients are polynomial in `x` and so are integral whenever `x` is. No domain,
+fraction-field or factorisation hypothesis is needed, and `x` need not come from `R` itself. -/
+theorem isIntegral_y_of_equation_of_isIntegral {A : Type*} [CommRing A] [Algebra R A] {x y : A}
+    (h : (W.baseChange A).toAffine.Equation x y) (hx : IsIntegral R x) : IsIntegral R y := by
+  nontriviality A
   rw [_root_.WeierstrassCurve.Affine.equation_iff] at h
   simp only [_root_.WeierstrassCurve.baseChange, _root_.WeierstrassCurve.map_a₁,
     _root_.WeierstrassCurve.map_a₂, _root_.WeierstrassCurve.map_a₃,
     _root_.WeierstrassCurve.map_a₄, _root_.WeierstrassCurve.map_a₆] at h
-  simp only [eval₂_add, eval₂_mul, eval₂_pow, eval₂_X, eval₂_C, eval₂_neg, map_add, map_mul,
-    map_pow, map_neg]
-  rw [← hx₀] at h
-  linear_combination h
+  set b : A := algebraMap R A W.a₁ * x + algebraMap R A W.a₃ with hb
+  set c : A := -(x ^ 3 + algebraMap R A W.a₂ * x ^ 2 + algebraMap R A W.a₄ * x
+    + algebraMap R A W.a₆) with hc
+  have hbI : IsIntegral R b := (isIntegral_algebraMap.mul hx).add isIntegral_algebraMap
+  have hcI : IsIntegral R c :=
+    (((hx.pow 3).add (isIntegral_algebraMap.mul (hx.pow 2))).add
+      (isIntegral_algebraMap.mul hx)).add isIntegral_algebraMap |>.neg
+  have hdeg : (X ^ 2 + (C b * X + C c) : A[X]).natDegree = 2 := by compute_degree!
+  refine IsIntegral.of_aeval_monic_of_isIntegral_coeff
+    (p := X ^ 2 + (C b * X + C c)) (monic_X_pow_add (by compute_degree!)) (by omega) ?_ ?_
+  · have heval : Polynomial.eval y (X ^ 2 + (C b * X + C c) : A[X]) = 0 := by
+      simp only [eval_add, eval_pow, eval_X, eval_mul, eval_C, hb, hc]
+      linear_combination h
+    rw [heval]
+    exact isIntegral_zero
+  · intro i
+    match i with
+    | 0 => simpa using hcI
+    | 1 => simpa using hbI
+    | 2 => simpa using (isIntegral_one : IsIntegral R (1 : A))
+    | (n + 3) => simpa using (isIntegral_zero : IsIntegral R (0 : A))
 
 section FractionField
 
@@ -108,13 +120,13 @@ theorem isInteger_of_is_root_of_squarefree_leadingCoeff
   exact hq.not_isUnit (hsf q (hden.trans (den_dvd_of_is_root hroot)))
 
 /-- **On the curve over a fraction field, an integral `x`-coordinate forces an integral
-`y`-coordinate.** The `IsLocalization.IsInteger` form of `isIntegral_y_of_equation_of_mem_range`,
+`y`-coordinate.** The `IsLocalization.IsInteger` form of `isIntegral_y_of_equation_of_isIntegral`,
 which is the shape the Nagell–Lutz argument consumes. -/
 theorem isInteger_y_of_equation_of_isInteger_x (h : (W.baseChange K).toAffine.Equation x y)
     (hx : IsLocalization.IsInteger R x) : IsLocalization.IsInteger R y := by
   obtain ⟨x₀, hx₀⟩ := hx
   exact RingHom.mem_rangeS.mpr (IsIntegrallyClosed.isIntegral_iff.mp
-    (isIntegral_y_of_equation_of_mem_range W h hx₀))
+    (isIntegral_y_of_equation_of_isIntegral W h (hx₀ ▸ isIntegral_algebraMap)))
 
 end FractionField
 
