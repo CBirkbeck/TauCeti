@@ -83,6 +83,36 @@ private lemma slit_comparison {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
           (fun t ht ↦ hh_slit t (hu ▸ ht)) hint
     _ = Complex.log (g b) - Complex.log (g a) := by rw [heq_a, heq_b]
 
+/-- The ordered boundary-tolerant comparison step of the telescope: the upper form
+`TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg`
+applied to the comparison function, its integrability from the continuous derivative and the
+nonvanishing, both transported to the contour across the interior agreement.
+
+This is `slit_comparison` for a comparison function that meets the branch cut at an
+endpoint: the interior is still slit-plane-valued, but at the ends only the closed upper
+half-plane and nonvanishing are available. -/
+private lemma upper_comparison {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
+    (hh_cont : ContinuousOn h (Icc a b))
+    (hh_diff : ∀ t ∈ Icc a b, DifferentiableAt ℝ h t)
+    (hh_deriv_cont : ContinuousOn (deriv h) (Icc a b))
+    (hh_ne : ∀ t ∈ Icc a b, h t ≠ 0)
+    (hh_im : ∀ t ∈ Icc a b, 0 ≤ (h t).im)
+    (hh_slit : ∀ t ∈ Ioo a b, h t ∈ Complex.slitPlane)
+    (heq : Set.EqOn g h (Ioo a b)) (heq_a : g a = h a) (heq_b : g b = h b) :
+    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
+    ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) := by
+  have hu : uIcc a b = Icc a b := uIcc_of_le hab
+  have ho : Ioo (min a b) (max a b) = Ioo a b := by
+    rw [min_eq_left hab, max_eq_right hab]
+  have hint : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b :=
+    ((hh_deriv_cont.div hh_cont hh_ne).mono (hu ▸ Set.Subset.rfl)).intervalIntegrable
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg
+    countable_empty (hu ▸ hh_cont)
+    (fun t ht ↦ hh_diff t (by rw [ho] at ht; exact ⟨ht.1.1.le, ht.1.2.le⟩)) hint
+    (fun t ht ↦ hh_im t (by rwa [hu] at ht))
+    (hh_ne a (left_mem_Icc.mpr hab)) (hh_ne b (right_mem_Icc.mpr hab))
+    (fun t ht ↦ hh_slit t (by rwa [ho] at ht))
+    (fun t ht ↦ heq (by rwa [ho] at ht)) heq_a heq_b
 
 /-- The right-vertical piece `[0, 1-δ_L]` of the telescope at `ρ + 1`, stopping short of
 the corner. -/
@@ -192,44 +222,26 @@ private lemma telescope_rho_add_one_piece_arc_second (H : ℝ) :
       norm_num
     · have him := im_fdBoundary_sub_rho_add_one_arc_pos H (by linarith [ht.1]) h3
       exact fun h0 ↦ by rw [h0] at him; simp at him
-  have hu : uIcc (2 : ℝ) 3 = Icc 2 3 := uIcc_of_le (by norm_num)
-  have ho : Ioo (min (2 : ℝ) 3) (max (2 : ℝ) 3) = Ioo 2 3 := by
-    rw [min_eq_left (by norm_num : (2 : ℝ) ≤ 3), max_eq_right (by norm_num : (2 : ℝ) ≤ 3)]
-  have hcont : ContinuousOn (fun s ↦ fdBoundary_segment3 s - ((UpperHalfPlane.ρ : ℂ) + 1))
-      (Icc (2 : ℝ) 3) :=
-    Continuous.continuousOn (Differentiable.continuous fun s ↦
-      (hasDerivAt_fdBoundary_segment3 s).differentiableAt.sub_const _)
   have hne' : ∀ t ∈ Icc (2 : ℝ) 3,
       fdBoundary_segment3 t - ((UpperHalfPlane.ρ : ℂ) + 1) ≠ 0 := fun t ht ↦
     heval t ht ▸ hne t ht
-  have hint : IntervalIntegrable (fun t ↦
-      deriv (fun s ↦ fdBoundary_segment3 s - ((UpperHalfPlane.ρ : ℂ) + 1)) t /
-        (fdBoundary_segment3 t - ((UpperHalfPlane.ρ : ℂ) + 1))) volume 2 3 :=
-    ((((by
+  exact upper_comparison
+    (g := fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))
+    (h := fun s ↦ fdBoundary_segment3 s - ((UpperHalfPlane.ρ : ℂ) + 1)) (by norm_num)
+    (Continuous.continuousOn (Differentiable.continuous fun s ↦
+      (hasDerivAt_fdBoundary_segment3 s).differentiableAt.sub_const _))
+    (fun t _ ↦ (hasDerivAt_fdBoundary_segment3 t).differentiableAt.sub_const _)
+    (by
       rw [hd]
       exact (Continuous.const_smul
         (((continuous_circleMap 0 1).comp hθc).mul continuous_const)
-        (2 * Real.pi / 3 - Real.pi / 2)).continuousOn :
-        ContinuousOn (deriv fun s ↦ fdBoundary_segment3 s - ((UpperHalfPlane.ρ : ℂ) + 1))
-          (Icc (2 : ℝ) 3))).div hcont hne').mono (hu ▸ Set.Subset.rfl)).intervalIntegrable
-  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg
-    (g := fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))
-    (h := fun s ↦ fdBoundary_segment3 s - ((UpperHalfPlane.ρ : ℂ) + 1)) countable_empty
-    (hu ▸ hcont)
-    (fun t ht ↦ (hasDerivAt_fdBoundary_segment3 t).differentiableAt.sub_const _)
-    hint
-    (fun t ht ↦ by
-      rw [hu] at ht
-      exact heval t ht ▸ im_fdBoundary_sub_rho_add_one_arc_nonneg H ⟨by linarith [ht.1], ht.2⟩)
-    (hne' 2 (left_mem_Icc.mpr (by norm_num)))
-    (hne' 3 (right_mem_Icc.mpr (by norm_num)))
-    (fun t ht ↦ by
-      rw [ho] at ht
-      exact heval t ⟨ht.1.le, ht.2.le⟩ ▸ Complex.mem_slitPlane_iff.mpr (Or.inr
-        (ne_of_gt (im_fdBoundary_sub_rho_add_one_arc_pos H (by linarith [ht.1]) ht.2))))
-    (fun t ht ↦ by
-      rw [ho] at ht
-      exact congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval t ⟨ht.1.le, ht.2.le⟩))
+        (2 * Real.pi / 3 - Real.pi / 2)).continuousOn)
+    hne'
+    (fun t ht ↦
+      heval t ht ▸ im_fdBoundary_sub_rho_add_one_arc_nonneg H ⟨by linarith [ht.1], ht.2⟩)
+    (fun t ht ↦ heval t ⟨ht.1.le, ht.2.le⟩ ▸ Complex.mem_slitPlane_iff.mpr (Or.inr
+      (ne_of_gt (im_fdBoundary_sub_rho_add_one_arc_pos H (by linarith [ht.1]) ht.2))))
+    (fun t ht ↦ congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval t ⟨ht.1.le, ht.2.le⟩))
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval 2 (left_mem_Icc.mpr (by norm_num))))
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval 3 (right_mem_Icc.mpr (by norm_num))))
 
@@ -266,45 +278,26 @@ private lemma telescope_rho_add_one_piece_left_vertical (hH : Real.sqrt 3 / 2 < 
       simp
     rw [h0] at hre
     norm_num at hre
-  have hu : uIcc (3 : ℝ) 4 = Icc 3 4 := uIcc_of_le (by norm_num)
-  have ho : Ioo (min (3 : ℝ) 4) (max (3 : ℝ) 4) = Ioo 3 4 := by
-    rw [min_eq_left (by norm_num : (3 : ℝ) ≤ 4), max_eq_right (by norm_num : (3 : ℝ) ≤ 4)]
-  have hcont : ContinuousOn (fun s ↦ fdBoundary_segment4 H s - ((UpperHalfPlane.ρ : ℂ) + 1))
-      (Icc (3 : ℝ) 4) :=
-    Continuous.continuousOn (Differentiable.continuous fun s ↦
-      (hasDerivAt_fdBoundary_segment4 H s).differentiableAt.sub_const _)
   have hne' : ∀ t ∈ Icc (3 : ℝ) 4,
       fdBoundary_segment4 H t - ((UpperHalfPlane.ρ : ℂ) + 1) ≠ 0 := fun t ht ↦
     heval t ht ▸ hne t ht
-  have hint : IntervalIntegrable (fun t ↦
-      deriv (fun s ↦ fdBoundary_segment4 H s - ((UpperHalfPlane.ρ : ℂ) + 1)) t /
-        (fdBoundary_segment4 H t - ((UpperHalfPlane.ρ : ℂ) + 1))) volume 3 4 :=
-    ((((by rw [hd]; exact continuousOn_const :
-        ContinuousOn (deriv fun s ↦ fdBoundary_segment4 H s - ((UpperHalfPlane.ρ : ℂ) + 1))
-          (Icc (3 : ℝ) 4))).div hcont hne').mono (hu ▸ Set.Subset.rfl)).intervalIntegrable
-  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg
+  exact upper_comparison
     (g := fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))
-    (h := fun s ↦ fdBoundary_segment4 H s - ((UpperHalfPlane.ρ : ℂ) + 1)) countable_empty
-    (hu ▸ hcont)
-    (fun t ht ↦ (hasDerivAt_fdBoundary_segment4 H t).differentiableAt.sub_const _)
-    hint
-    (fun t ht ↦ by
-      rw [hu] at ht
-      exact heval t ht ▸ (by
-        rw [him t ht]
-        exact mul_nonneg (by linarith [ht.1]) (by linarith)))
-    (hne' 3 (left_mem_Icc.mpr (by norm_num)))
-    (hne' 4 (right_mem_Icc.mpr (by norm_num)))
-    (fun t ht ↦ by
-      rw [ho] at ht
-      exact heval t ⟨ht.1.le, ht.2.le⟩ ▸ Complex.mem_slitPlane_iff.mpr (Or.inr (by
-        rw [him t ⟨ht.1.le, ht.2.le⟩]
-        have := mul_pos (by linarith [ht.1] : (0 : ℝ) < t - 3) (by linarith :
-          (0 : ℝ) < H - Real.sqrt 3 / 2)
-        linarith)))
-    (fun t ht ↦ by
-      rw [ho] at ht
-      exact congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval t ⟨ht.1.le, ht.2.le⟩))
+    (h := fun s ↦ fdBoundary_segment4 H s - ((UpperHalfPlane.ρ : ℂ) + 1)) (by norm_num)
+    (Continuous.continuousOn (Differentiable.continuous fun s ↦
+      (hasDerivAt_fdBoundary_segment4 H s).differentiableAt.sub_const _))
+    (fun t _ ↦ (hasDerivAt_fdBoundary_segment4 H t).differentiableAt.sub_const _)
+    (by rw [hd]; exact continuousOn_const)
+    hne'
+    (fun t ht ↦ heval t ht ▸ (by
+      rw [him t ht]
+      exact mul_nonneg (by linarith [ht.1]) (by linarith)))
+    (fun t ht ↦ heval t ⟨ht.1.le, ht.2.le⟩ ▸ Complex.mem_slitPlane_iff.mpr (Or.inr (by
+      rw [him t ⟨ht.1.le, ht.2.le⟩]
+      have := mul_pos (by linarith [ht.1] : (0 : ℝ) < t - 3) (by linarith :
+        (0 : ℝ) < H - Real.sqrt 3 / 2)
+      linarith)))
+    (fun t ht ↦ congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval t ⟨ht.1.le, ht.2.le⟩))
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval 3 (left_mem_Icc.mpr (by norm_num))))
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval 4 (right_mem_Icc.mpr (by norm_num))))
 
@@ -405,22 +398,6 @@ private lemma lt_norm_fdBoundary_sub_rho_add_one_arc_of_far (harc : t ∈ Icc (1
     exact mul_lt_mul_of_pos_right hfar (by positivity)
   linarith
 
-/-- Near the corner along the arc, the chord distance is at most the excision chord. -/
-private lemma norm_fdBoundary_sub_rho_add_one_arc_le_of_near (harc : t ∈ Icc (1 : ℝ) 3)
-    (hd1 : δ < 1) (hnear : t - 1 ≤ δ) :
-    ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ ≤
-      2 * Real.sin (δ * (Real.pi / 12)) := by
-  have hd0 : 0 ≤ δ := le_trans (by linarith [harc.1]) hnear
-  rw [norm_fdBoundary_sub_rho_add_one_arc H harc,
-    abs_of_nonneg (Real.sin_nonneg_of_nonneg_of_le_pi
-      (by nlinarith [Real.pi_pos, harc.1]) (by nlinarith [Real.pi_pos, harc.2]))]
-  have hmono : Real.sin ((t - 1) * (Real.pi / 12)) ≤ Real.sin (δ * (Real.pi / 12)) := by
-    refine Real.strictMonoOn_sin.monotoneOn
-      ⟨by nlinarith [Real.pi_pos, harc.1], by nlinarith [Real.pi_pos, harc.2]⟩
-      ⟨by nlinarith [Real.pi_pos], by nlinarith [Real.pi_pos]⟩ ?_
-    exact mul_le_mul_of_nonneg_right hnear (by positivity)
-  linarith
-
 /-- Left of the excised corner, the contour keeps distance more than `ε` from `ρ + 1`. -/
 private lemma lt_norm_of_far_left_rho_add_one (hH : Real.sqrt 3 / 2 < H) (hd : 0 < δ)
     (hlin : δ * (H - Real.sqrt 3 / 2) = ε) (ht : t ∈ Ico (0 : ℝ) (1 - δ)) :
@@ -460,8 +437,8 @@ private lemma norm_le_of_near_rho_add_one {δL δR : ℝ} (hH : Real.sqrt 3 / 2 
       abs_of_nonneg (mul_nonneg (by linarith) (by linarith)), ← hlin]
     exact mul_le_mul_of_nonneg_right (by linarith [ht.1]) (by linarith)
   · rw [← h2sin]
-    refine norm_fdBoundary_sub_rho_add_one_arc_le_of_near
-      ⟨h1.le, by linarith [ht.2]⟩ hδR1 (by linarith [ht.2])
+    exact norm_fdBoundary_sub_rho_add_one_arc_le H ⟨h1.le, by linarith [ht.2]⟩
+      (by linarith) (by linarith [ht.2])
 
 /-- The arc-side excision half-width `δ_R(ε) = 12/π · arcsin(ε/2)` is positive, below
 `1`, and turns the chord identity into the exact excision radius `ε`. -/
@@ -483,6 +460,49 @@ private lemma delta_right_spec_rho_add_one (hε : 0 < ε)
       field_simp
     rw [hδπ, Real.sin_arcsin (by linarith) (by linarith)]
     ring
+
+/-- Away from the excised corner the truncated integrand is the logarithmic one: wherever
+the contour stays farther than `ε` from `ρ + 1` the excision test passes, and the endpoint
+where it may fail is a single point, hence null. -/
+private lemma ae_truncated_eq_logDeriv_rho_add_one {a b : ℝ} (hab : a ≤ b)
+    (hfar : ∀ s ∈ Ioo a b, ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖) :
+    ∀ᵐ s ∂volume, s ∈ uIoc a b →
+      deriv (fun r ↦ fdBoundary H r - ((UpperHalfPlane.ρ : ℂ) + 1)) s /
+        (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) =
+        (if ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖
+          then (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s
+          else 0) := by
+  have hb_ae : ({b} : Set ℝ)ᶜ ∈ ae volume := by simp [MeasureTheory.mem_ae_iff]
+  filter_upwards [hb_ae] with s hs_ne hmem
+  rw [uIoc_of_le hab] at hmem
+  rw [if_pos (hfar s ⟨hmem.1, lt_of_le_of_ne hmem.2 fun h ↦ hs_ne (mem_singleton_iff.mpr h)⟩),
+    deriv_sub_const, inv_mul_eq_div]
+
+/-- Over the excised window the truncated integrand vanishes identically, so it is
+integrable there and contributes nothing to the integral. -/
+private lemma excised_window_rho_add_one {δL δR : ℝ} (hH : Real.sqrt 3 / 2 < H)
+    (hδL1 : δL ≤ 1) (hlin : δL * (H - Real.sqrt 3 / 2) = ε)
+    (hδR1 : δR < 1) (h2sin : 2 * Real.sin (δR * (Real.pi / 12)) = ε)
+    (hle : (1 - δL : ℝ) ≤ 1 + δR) :
+    IntervalIntegrable (fun s ↦ if ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖
+        then (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s
+        else 0) volume (1 - δL) (1 + δR) ∧
+      ∫ s in (1 - δL : ℝ)..(1 + δR),
+          (if ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖
+            then (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s
+            else 0) = 0 := by
+  have hmid : EqOn (fun s ↦ if ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖
+      then (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s
+      else 0)
+      (fun _ ↦ (0 : ℂ)) (uIcc (1 - δL : ℝ) (1 + δR)) := fun s hs ↦
+    if_neg (not_lt.mpr (norm_le_of_near_rho_add_one hH hδL1 hlin hδR1 h2sin
+      (by rwa [uIcc_of_le hle] at hs)))
+  refine ⟨(intervalIntegrable_const (c := (0 : ℂ))).congr_ae
+    ((ae_restrict_iff' measurableSet_uIoc).mpr (Eventually.of_forall fun s hs ↦ ?_)), ?_⟩
+  · rw [uIoc_of_le hle] at hs
+    exact (hmid (by rw [uIcc_of_le hle]; exact Ioc_subset_Icc_self hs)).symm
+  · rw [intervalIntegral.integral_congr hmid]
+    simp
 
 /-- **The excision collapse at `ρ + 1`**: for small `ε`, the `ε`-excised index integrand
 of the boundary contour about `ρ + 1` is interval integrable, and its integral is
@@ -511,64 +531,19 @@ private lemma truncated_integral_spec_rho_add_one (hH : Real.sqrt 3 / 2 < H) (h�
     exact div_mul_cancel₀ ε hHpos.ne'
   obtain ⟨hi_left, hi_right, hval⟩ :=
     ftc_logDeriv_telescope_rho_add_one H hH hδL_pos hδL_le hδR_pos hδR_lt
-  have hconv : ∀ s : ℝ,
-      (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s =
-      deriv (fun r ↦ fdBoundary H r - ((UpperHalfPlane.ρ : ℂ) + 1)) s /
-        (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) :=
-    fun s ↦ by rw [deriv_sub_const, inv_mul_eq_div]
-  have hae_left : ∀ᵐ s ∂volume, s ∈ uIoc (0 : ℝ) (1 - δL) →
-      deriv (fun r ↦ fdBoundary H r - ((UpperHalfPlane.ρ : ℂ) + 1)) s /
-        (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) =
-        (if ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖
-          then (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s
-          else 0) := by
-    have hb_ae : ({1 - δL} : Set ℝ)ᶜ ∈ ae volume := by
-      simp [MeasureTheory.mem_ae_iff]
-    filter_upwards [hb_ae] with s hs_ne hmem
-    rw [uIoc_of_le (by linarith)] at hmem
-    have hsIco : s ∈ Ico (0 : ℝ) (1 - δL) := ⟨hmem.1.le,
-      lt_of_le_of_ne hmem.2 fun h ↦ hs_ne (mem_singleton_iff.mpr h)⟩
-    rw [if_pos (lt_norm_of_far_left_rho_add_one hH hδL_pos hlin hsIco), hconv s]
-  have hae_right : ∀ᵐ s ∂volume, s ∈ uIoc (1 + δR : ℝ) 5 →
-      deriv (fun r ↦ fdBoundary H r - ((UpperHalfPlane.ρ : ℂ) + 1)) s /
-        (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) =
-        (if ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖
-          then (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s
-          else 0) := by
-    refine Eventually.of_forall fun s hmem ↦ ?_
-    rw [uIoc_of_le (by linarith)] at hmem
-    rw [if_pos (lt_norm_of_far_right_rho_add_one hε₁ hεH hδR_pos hδR_lt h2sin hmem), hconv s]
-  have hmid : EqOn (fun s ↦ if ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖
-      then (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s
-      else 0)
-      (fun _ ↦ (0 : ℂ)) (uIcc (1 - δL : ℝ) (1 + δR)) := by
-    intro s hs
-    rw [uIcc_of_le (by linarith)] at hs
-    exact if_neg (not_lt.mpr (norm_le_of_near_rho_add_one hH hδL_le hlin hδR_lt h2sin hs))
+  have hae_left := ae_truncated_eq_logDeriv_rho_add_one (a := (0 : ℝ)) (b := 1 - δL)
+    (by linarith) fun s hs ↦ lt_norm_of_far_left_rho_add_one hH hδL_pos hlin ⟨hs.1.le, hs.2⟩
+  have hae_right := ae_truncated_eq_logDeriv_rho_add_one (a := (1 + δR : ℝ)) (b := 5)
+    (by linarith) fun s hs ↦
+      lt_norm_of_far_right_rho_add_one hε₁ hεH hδR_pos hδR_lt h2sin ⟨hs.1, hs.2.le⟩
+  obtain ⟨himid, hmid0⟩ :=
+    excised_window_rho_add_one hH hδL_le hlin hδR_lt h2sin (by linarith)
   have hi02 := hi_left.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_left)
   have hi25 := hi_right.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_right)
-  have himid : IntervalIntegrable (fun s ↦
-      if ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖
-        then (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s
-        else 0)
-      volume (1 - δL) (1 + δR) := by
-    refine (intervalIntegrable_const (c := (0 : ℂ))).congr_ae
-      ((ae_restrict_iff' measurableSet_uIoc).mpr (Eventually.of_forall fun s hs ↦ ?_))
-    rw [uIoc_of_le (by linarith)] at hs
-    have hsub : s ∈ uIcc (1 - δL : ℝ) (1 + δR) := by
-      rw [uIcc_of_le (by linarith : (1 - δL : ℝ) ≤ 1 + δR)]
-      exact Ioc_subset_Icc_self hs
-    exact (hmid hsub).symm
   refine ⟨(hi02.trans himid).trans hi25, ?_⟩
   have hδ12 : δR * (Real.pi / 12) = Real.arcsin (ε / 2) := by
     rw [hδR_def]
     field_simp
-  have hmid0 : ∫ s in (1 - δL : ℝ)..(1 + δR),
-      (if ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖
-        then (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s
-        else 0) = 0 := by
-    rw [intervalIntegral.integral_congr hmid]
-    simp
   rw [← intervalIntegral.integral_add_adjacent_intervals (hi02.trans himid) hi25,
     ← intervalIntegral.integral_add_adjacent_intervals hi02 himid,
     hmid0, add_zero,
