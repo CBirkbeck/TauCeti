@@ -114,6 +114,28 @@ theorem isWeightFamily_one [NonarchimedeanRing A] :
   refine le_trans ?_ (AddSubgroup.closure_mono (Set.mul_subset_mul_left hVU))
   exact fun v hv ↦ AddSubgroup.subset_closure ⟨1, by simp, v, hv, by simp⟩
 
+/-- A weight subgroup that is a neighbourhood of zero is open, and so packages as an
+`OpenAddSubgroup`. Wedhorn's standing hypothesis is exactly what supplies the neighbourhood
+premise, and the open form is what continuity of multiplication consumes. -/
+def weightMul.toOpenAddSubgroup [IsTopologicalAddGroup A] (T : Fin k → Set A) (ν : Fin k →₀ ℕ)
+    (U : AddSubgroup A) (h : (weightMul T ν U : Set A) ∈ nhds (0 : A)) : OpenAddSubgroup A where
+  toAddSubgroup := weightMul T ν U
+  isOpen' := (weightMul T ν U).isOpen_of_mem_nhds h
+
+@[simp]
+theorem weightMul.coe_toOpenAddSubgroup [IsTopologicalAddGroup A] (T : Fin k → Set A)
+    (ν : Fin k →₀ ℕ) (U : AddSubgroup A) (h : (weightMul T ν U : Set A) ∈ nhds (0 : A)) :
+    (weightMul.toOpenAddSubgroup T ν U h : Set A) = weightMul T ν U := (rfl)
+
+omit [TopologicalSpace A] in
+/-- At the zero multi-index the weight is trivial, so `T⁰ · U` is just `U`; in particular it is a
+neighbourhood of zero whenever `U` is. This is the base case of Wedhorn's remark that `Tν · U` is
+a neighbourhood of zero for every `ν`. -/
+theorem weightMul_zero (T : Fin k → Set A) (U : AddSubgroup A) :
+    weightMul T 0 U = U := by
+  rw [weightMul_eq, weightPow, show (0 : Fin k →₀ ℕ) = 0 from rfl]
+  simp
+
 /-- Wedhorn (5.6.1): a power series is *`T`-restricted* if, for every open subgroup `U` of `A`,
 all but finitely many of its coefficients lie in `Tν · U`. -/
 def IsWeightedRestricted (T : Fin k → Set A) (f : MvPowerSeries (Fin k) A) : Prop :=
