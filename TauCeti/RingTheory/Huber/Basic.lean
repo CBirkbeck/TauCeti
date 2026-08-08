@@ -157,6 +157,18 @@ def extendedIdealOfDefinition (P : PairOfDefinition A) : Ideal A :=
 theorem extendedIdealOfDefinition_eq (P : PairOfDefinition A) :
     P.extendedIdealOfDefinition = P.idealOfDefinition.map P.ringOfDefinition.subtype := (rfl)
 
+/-- Membership in `I · A` is membership in the ideal *spanned* by the image of `I`.
+
+There is no simpler characterisation: the image of `I` under `A₀ → A` is an additive subgroup but
+not in general an ideal of `A`, so `x ∈ I · A` is strictly weaker than `∃ y ∈ I, ↑y = x`. For
+`A₀ = ℤ_[p] ⊆ A = ℚ_[p]` and `I = p • ℤ_[p]` the image is `p • ℤ_[p]` while the ideal it
+generates is all of `ℚ_[p]`. -/
+theorem mem_extendedIdealOfDefinition_iff (P : PairOfDefinition A) {x : A} :
+    x ∈ P.extendedIdealOfDefinition ↔
+      x ∈ Ideal.span (Subtype.val '' (P.idealOfDefinition : Set P.ringOfDefinition)) := by
+  rw [P.extendedIdealOfDefinition_eq, ← Ideal.span_eq P.idealOfDefinition, Ideal.map_span]
+  simp
+
 /-- The extended ideal `I · A` is finitely generated, because `I` is. -/
 theorem fg_extendedIdealOfDefinition (P : PairOfDefinition A) :
     P.extendedIdealOfDefinition.FG :=
