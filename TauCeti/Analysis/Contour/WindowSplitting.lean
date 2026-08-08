@@ -182,7 +182,7 @@ private theorem integral_truncated_eq_of_right_exit {γ : ℝ → ℂ} {g : ℂ 
 `t₀` on the window of radius `ρ`, exit points `cₗ`, `cᵣ` on either side at radius exactly `ε`, and
 the norm bounded below by `m > ε` outside that window, the `ε`-truncated integral over
 `[t₀ - r, t₀ + r]` is the sum of the two plain side integrals up to the exit points. -/
-private theorem truncated_integral_eq_add_of_exit_points {γ : ℝ → ℂ} {g : ℂ → ℂ} {s : ℂ}
+private theorem integral_truncated_eq_add_of_exit_points {γ : ℝ → ℂ} {g : ℂ → ℂ} {s : ℂ}
     {t₀ ρ r m ε cₗ cᵣ : ℝ} (h_lb : t₀ - r ≤ cₗ) (h_ub : cᵣ ≤ t₀ + r)
     (hmono : StrictMonoOn (fun t => ‖γ t - s‖) (Icc t₀ (t₀ + ρ)))
     (hanti : StrictAntiOn (fun t => ‖γ t - s‖) (Icc (t₀ - ρ) t₀))
@@ -270,7 +270,7 @@ theorem exists_exit_times_truncated_integral_split {γ : ℝ → ℂ} {s : ℂ} 
   have h_lb : t₀ - r ≤ τL ε := by linarith [hτL.1]
   have h_mid_le : τL ε ≤ τR ε := by linarith [hτL.2, hτR.1]
   have h_ub : τR ε ≤ t₀ + r := by linarith [hτR.2]
-  exact truncated_integral_eq_add_of_exit_points h_lb h_ub hmono hanti h_far_L h_far_R
+  exact integral_truncated_eq_add_of_exit_points h_lb h_ub hmono hanti h_far_L h_far_R
     hτL hτR hεL hεR hεm.2
     (h_int ε hεm.1 (t₀ - r) (τL ε) le_rfl h_lb (by linarith [hτL.2]))
     (h_int ε hεm.1 (τL ε) (τR ε) h_lb h_mid_le h_ub)
