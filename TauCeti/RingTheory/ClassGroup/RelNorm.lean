@@ -28,8 +28,6 @@ descent instead goes through the monoid congruence `Con.ker` and
 
 ## Main results
 
-* `ClassGroup.mk0_relNorm0_eq_of_mk0_eq`: the norms of two integral ideals in the same class are
-  themselves in the same class — the well-definedness of the descent.
 * `ClassGroup.relNorm_mk0`: `relNorm (mk0 I) = mk0 (relNorm0 I)`, the defining computation on an
   integral representative.
 
@@ -59,10 +57,9 @@ variable {R S : Type*} [CommRing R] [CommRing S] [IsDedekindDomain R] [IsDedekin
 
 variable (R) in
 /-- The relative ideal norm restricted to nonzero ideals, using that it reflects `⊥`
-(`Ideal.relNorm_eq_bot_iff`).
-
-Exposed because `Ideal.coe_relNorm0` is a definitional equality and Mathlib has no coe lemma for
-`MonoidHom.codRestrict` to route it through; without exposure that lemma does not compile. -/
+(`Ideal.relNorm_eq_bot_iff`). -/
+-- Exposed because `Ideal.coe_relNorm0` is a definitional equality and Mathlib has no coe lemma
+-- for `MonoidHom.codRestrict` to route it through; without exposure that lemma does not compile.
 @[expose]
 noncomputable def Ideal.relNorm0 : (Ideal S)⁰ →* (Ideal R)⁰ :=
   ((Ideal.relNorm R).toMonoidHom.domRestrict (Ideal S)⁰).codRestrict (Ideal R)⁰ fun I =>
@@ -106,8 +103,8 @@ private theorem mk0_relNorm0_eq_of_mk0_eq {I J : (Ideal S)⁰}
 /-- The **relative norm on class groups**, induced by `Ideal.relNorm`.
 
 Every class has an integral representative, since `ClassGroup.mk0` is surjective, and the class of
-the norm does not depend on the representative (`mk0_relNorm0_eq_of_mk0_eq`); see
-`ClassGroup.relNorm_mk0`. -/
+the norm does not depend on the representative; `ClassGroup.relNorm_mk0` is the resulting
+computation. -/
 noncomputable def relNorm : ClassGroup S →* ClassGroup R :=
   ((Con.ker (ClassGroup.mk0 (R := S))).lift ((ClassGroup.mk0 (R := R)).comp (Ideal.relNorm0 R))
       fun _ _ h => mk0_relNorm0_eq_of_mk0_eq h).comp
