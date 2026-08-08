@@ -41,17 +41,17 @@ merges. The degree section is instead ported from the AINTLIB `LeanModularForms`
 * `HeckeCosetModule.single`: the basis element `b • [D]` of the Hecke coset module, with
   `single_apply`, `sum_single_index`, `smul_single_one`, `single_add`, `induction_linear`,
   and the `Module R` instance `HeckeCosetModule.instModule`.
-* Pointwise evaluation of the coset module: `zero_apply`, `smul_apply`,
-  `notMem_support_iff`, `sum_def`, `sum_apply` and `sum_smul_index`. `HeckeCosetModule` is a
-  `def` over `Finsupp` carrying transported instances, so Mathlib's `Finsupp` evaluation
-  lemmas hold *definitionally* — they can be applied in term mode — but `rw`, `simp` and
-  `grind` match syntactically and so cannot see through the wrapper. These restatements are
-  what makes those facts usable tactically.
+* Pointwise evaluation of the coset module: `zero_apply`, `add_apply`, `smul_apply`,
+  `mem_support_iff`, `notMem_support_iff`, `sum_def`, `sum_apply` and `sum_smul_index`.
+  `HeckeCosetModule` is a `def` over `Finsupp` carrying transported instances, so Mathlib's
+  `Finsupp` evaluation lemmas hold *definitionally* — they can be applied in term mode — but
+  `rw`, `simp` and `grind` match syntactically and so cannot see through the wrapper. These
+  restatements are what makes those facts usable tactically.
 
-  No restatement is provided for `+` or `support`: nothing in the repository currently needs
-  to rewrite with `Finsupp.add_apply` or `Finsupp.mem_support_iff` at this type. That is a
-  statement about present consumers, not about the wrapper being transparent for them — if a
-  proof needs one, it should land together with that proof rather than standing unused.
+  In particular these do not compete with their `Finsupp` originals: at this type
+  `simp [Finsupp.mem_support_iff]` reports the argument as unused and `simp [Finsupp.add_apply]`
+  makes no progress, because neither left-hand side matches through the wrapper. The wrapper
+  restatement is the only form `simp` can apply.
 * `HeckeCoset.degree`: the number of left cosets in the decomposition of a double coset,
   with `degree_eq_relIndex` and `degree_mk` presenting it as a relative index,
   `degree_eq_natCard_decompQuotient` as the (hypothesis-free) count of that quotient, and
@@ -335,6 +335,11 @@ section EvalSupport
 
 variable {R : Type*} [Zero R]
 
+/-- `Finsupp.mem_support_iff`, at the wrapper type. -/
+@[simp, grind =] lemma mem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R}
+    {D : HeckeCoset Δ H₁ H₂} : D ∈ f.support ↔ f D ≠ 0 :=
+  Finsupp.mem_support_iff
+
 /-- `Finsupp.notMem_support_iff`, at the wrapper type. -/
 @[grind =] lemma notMem_support_iff {f : HeckeCosetModule Δ H₁ H₂ R} {D : HeckeCoset Δ H₁ H₂} :
     D ∉ f.support ↔ f D = 0 :=
@@ -361,6 +366,11 @@ variable {R : Type*} [AddCommMonoid R]
 /-- `Finsupp.zero_apply`, at the wrapper type. -/
 @[simp] lemma zero_apply (D : HeckeCoset Δ H₁ H₂) :
     (0 : HeckeCosetModule Δ H₁ H₂ R) D = 0 := (rfl)
+
+/-- `Finsupp.add_apply`, at the wrapper type. -/
+@[simp, grind =] lemma add_apply (f g : HeckeCosetModule Δ H₁ H₂ R) (D : HeckeCoset Δ H₁ H₂) :
+    (f + g) D = f D + g D :=
+  Finsupp.add_apply f g D
 
 end EvalZero
 
