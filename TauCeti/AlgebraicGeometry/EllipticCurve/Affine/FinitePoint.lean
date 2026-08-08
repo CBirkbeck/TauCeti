@@ -13,17 +13,14 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 anything: `Nat.card` reads `0` on an infinite type, so a statement like the Hasse bound is only the
 honest count when accompanied by finiteness.
 
-The proof is the obvious one — a point is either the point at infinity or a pair `(x, y)` of ring
-elements, and `Nonsingular` is a proposition, so `Point` injects into `Option (R × R)`.
-
 ## Main results
 
 * `TauCeti.WeierstrassCurve.Affine.finite_point`: `W.Point` is finite whenever the base is.
 
 Stated over an arbitrary finite commutative ring and an arbitrary affine Weierstrass curve: neither
-a field nor `IsElliptic` is needed, since the argument never leaves the underlying inductive type.
-The roadmap seeds this over a finite field with `[W.IsElliptic]`; that form is discharged by
-`inferInstance` from the instance below, which I checked before writing this.
+a field nor `IsElliptic` is needed. The roadmap seeds this over a finite field with
+`[W.IsElliptic]`; that form is discharged by `inferInstance` from the instance below, which I
+checked before writing this.
 
 It is an `instance`, so `Nat.card`/`Finset` arguments about `E(𝔽_q)` pick it up without being
 handed a proof. It is named — contrary to the usual preference for anonymous instances — because
@@ -51,16 +48,14 @@ namespace Affine
 
 variable {R : Type*} [CommRing R] [Finite R] (W : _root_.WeierstrassCurve.Affine R)
 
-/-- **The affine points of a Weierstrass curve over a finite ring form a finite type.**
-
-A point is the point at infinity or a pair of ring elements together with a proof of
-`Nonsingular`, which is a proposition; so `Point` injects into `Option (R × R)`. -/
+/-- **The affine points of a Weierstrass curve over a finite ring form a finite type.** -/
 instance finite_point : Finite W.Point :=
-  Finite.of_injective
-    (fun P => match P with
-      | .zero => none
-      | .some x y _ => some (x, y))
-    (by rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩) hP <;> simp_all)
+  -- transport along Mathlib's decomposition of `Point` as the point at infinity together with the
+  -- pairs satisfying `Nonsingular`; `WithZero` carries no `Finite` instance of its own, so it is
+  -- taken from the `Option` it unfolds to
+  have : Finite (WithZero {xy : R × R // W.Nonsingular xy.1 xy.2}) :=
+    inferInstanceAs (Finite (Option _))
+  .of_equiv _ W.nonsingularPointEquiv.symm
 
 end Affine
 
