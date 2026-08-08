@@ -9,7 +9,7 @@ public import Mathlib.Analysis.Calculus.FDeriv.Analytic
 public import Mathlib.Analysis.Calculus.LogDeriv
 public import Mathlib.Analysis.SpecialFunctions.Complex.Log
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
-public import TauCeti.Analysis.Complex.UpperLogContinuity
+import TauCeti.Analysis.Complex.UpperLogContinuity
 public import TauCeti.Analysis.Contour.Curve.Integrability
 
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.FundThmCalculus
@@ -54,6 +54,11 @@ argument principle above all — into a statement about how often an image curve
 * `TauCeti.Contour.analyticAt_logDeriv_of_analyticAt` — `logDeriv f` is analytic wherever `f` is
   analytic and nonzero; the regularity input shared by the results below and by the argument
   principle.
+* `TauCeti.Contour.intervalIntegrable_and_integral_deriv_div_eq_log_of_slitPlane`,
+  `…_eq_log_of_im_nonneg`, `…_eq_log_neg_of_im_nonpos` — the boundary-tolerant comparison
+  FTCs: the logarithmic integral of `g` evaluated through a smooth comparison `h` that
+  agrees with `g` on the open interval, confined to the slit plane or to a closed
+  half-plane, so endpoint values may sit on the negative-real boundary.
 * `TauCeti.Contour.integral_deriv_div_eq_log_sub_log` — the slit-plane logarithmic-derivative FTC in
   general `f' / f` form.
 * `TauCeti.Contour.integral_deriv_div_sub_eq_log` — its contour specialization to
@@ -237,39 +242,27 @@ section BoundaryTolerant
 
 open MeasureTheory
 
-/-- Transport of the logarithmic integrand across an interior agreement: if `g = h` with
-equal derivatives on the open interval, the integrands agree almost everywhere on the
-interval and integrability transports. -/
-private lemma aeEq_and_intervalIntegrable_of_eqOn_Ioo {g h : ℝ → ℂ} {a b : ℝ}
-    (hab : a ≤ b) (heq : ∀ t ∈ Set.Ioo a b, g t = h t ∧ deriv g t = deriv h t)
-    (hint_h : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b) :
-    (∀ᵐ t ∂volume, t ∈ Set.uIoc a b → deriv g t / g t = deriv h t / h t) ∧
-    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b := by
-  have hb_ae : ({b} : Set ℝ)ᶜ ∈ ae volume := by
-    simp [MeasureTheory.mem_ae_iff]
-  have h_congr : ∀ᵐ t ∂volume, t ∈ Set.uIoc a b → deriv g t / g t = deriv h t / h t := by
-    filter_upwards [hb_ae] with t ht_ne_b ht_mem
-    rw [Set.uIoc_of_le hab] at ht_mem
-    obtain ⟨hval, hderiv⟩ := heq t
-      ⟨ht_mem.1, lt_of_le_of_ne ht_mem.2 fun h ↦ ht_ne_b (Set.mem_singleton_iff.mpr h)⟩
-    rw [hval, hderiv]
-  refine ⟨h_congr, hint_h.congr_ae ?_⟩
-  exact (MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mpr
-    (h_congr.mono fun t ht hm ↦ (ht hm).symm)
+variable {g h : ℝ → ℂ} {a b : ℝ}
+
+/-- Interior agreement transports the logarithmic integrand to the open interval. -/
+private lemma eqOn_uIoo_deriv_div (hab : a ≤ b) (heq : Set.EqOn g h (Set.Ioo a b)) :
+    Set.EqOn (fun t ↦ deriv g t / g t) (fun t ↦ deriv h t / h t) (Set.uIoo a b) := by
+  intro t ht
+  rw [Set.uIoo_of_le hab] at ht
+  simp only [heq ht, heq.deriv isOpen_Ioo ht]
 
 /-- **The boundary-tolerant logarithmic FTC, upper form**: for a comparison function `h`
 confined to the closed upper half-plane, nonvanishing, and slit-plane-valued on the
-interior, the logarithmic integral of `g` evaluates to the difference of logarithms —
-even when the endpoint values sit on the slit-plane boundary. -/
-theorem integral_deriv_div_eq_log_of_im_nonneg {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
+interior, the logarithmic integral of `g` is integrable and evaluates to the difference
+of logarithms — even when the endpoint values sit on the slit-plane boundary. -/
+theorem intervalIntegrable_and_integral_deriv_div_eq_log_of_im_nonneg (hab : a ≤ b)
     (hh_cont : ContinuousOn h (Set.Icc a b))
     (hh_diff : ∀ t ∈ Set.Ioo a b, DifferentiableAt ℝ h t)
     (hh_deriv_cont : ContinuousOn (deriv h) (Set.Icc a b))
     (hh_im_nn : ∀ t ∈ Set.Icc a b, 0 ≤ (h t).im)
     (hh_ne : ∀ t ∈ Set.Icc a b, h t ≠ 0)
     (hh_slit : ∀ t ∈ Set.Ioo a b, h t ∈ Complex.slitPlane)
-    (heq : ∀ t ∈ Set.Ioo a b, g t = h t ∧ deriv g t = deriv h t)
-    (heq_a : g a = h a) (heq_b : g b = h b) :
+    (heq : Set.EqOn g h (Set.Ioo a b)) (heq_a : g a = h a) (heq_b : g b = h b) :
     IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
     ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) := by
   have hh_log_cont : ContinuousOn (fun t ↦ Complex.log (h t)) (Set.Icc a b) :=
@@ -278,28 +271,28 @@ theorem integral_deriv_div_eq_log_of_im_nonneg {g h : ℝ → ℂ} {a b : ℝ} (
   have hint_h : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b :=
     ((hh_deriv_cont.div hh_cont hh_ne).mono
       (Set.uIcc_of_le hab ▸ Set.Subset.rfl)).intervalIntegrable
-  obtain ⟨h_congr, hint_g⟩ :=
-    aeEq_and_intervalIntegrable_of_eqOn_Ioo hab heq hint_h
+  have hint_g : IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b :=
+    hint_h.congr_uIoo fun t ht ↦ (eqOn_uIoo_deriv_div hab heq ht).symm
   have h_ftc := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hab hh_log_cont
     (fun t ht ↦ (hh_diff t ht).hasDerivAt.clog_real (hh_slit t ht)) hint_h
   refine ⟨hint_g, ?_⟩
   calc ∫ t in a..b, deriv g t / g t
-      = ∫ t in a..b, deriv h t / h t := intervalIntegral.integral_congr_ae h_congr
+      = ∫ t in a..b, deriv h t / h t :=
+        intervalIntegral.integral_congr_uIoo (eqOn_uIoo_deriv_div hab heq)
     _ = Complex.log (h b) - Complex.log (h a) := h_ftc
     _ = Complex.log (g b) - Complex.log (g a) := by rw [heq_a, heq_b]
 
 /-- **The boundary-tolerant logarithmic FTC, lower form**: for a comparison function
 confined to the closed lower half-plane with strictly negative interior imaginary part,
 the logarithmic integral evaluates against the negated arguments. -/
-theorem integral_deriv_div_eq_log_neg_of_im_nonpos {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
+theorem intervalIntegrable_and_integral_deriv_div_eq_log_neg_of_im_nonpos (hab : a ≤ b)
     (hh_cont : ContinuousOn h (Set.Icc a b))
     (hh_diff : ∀ t ∈ Set.Ioo a b, DifferentiableAt ℝ h t)
     (hh_deriv_cont : ContinuousOn (deriv h) (Set.Icc a b))
     (hh_im_np : ∀ t ∈ Set.Icc a b, (h t).im ≤ 0)
     (hh_ne : ∀ t ∈ Set.Icc a b, h t ≠ 0)
     (hh_im_neg : ∀ t ∈ Set.Ioo a b, (h t).im < 0)
-    (heq : ∀ t ∈ Set.Ioo a b, g t = h t ∧ deriv g t = deriv h t)
-    (heq_a : g a = h a) (heq_b : g b = h b) :
+    (heq : Set.EqOn g h (Set.Ioo a b)) (heq_a : g a = h a) (heq_b : g b = h b) :
     IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
     ∫ t in a..b, deriv g t / g t =
       Complex.log (-(g b)) - Complex.log (-(g a)) := by
@@ -309,48 +302,50 @@ theorem integral_deriv_div_eq_log_neg_of_im_nonpos {g h : ℝ → ℂ} {a b : �
   have hint_h : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b :=
     ((hh_deriv_cont.div hh_cont hh_ne).mono
       (Set.uIcc_of_le hab ▸ Set.Subset.rfl)).intervalIntegrable
-  obtain ⟨h_congr, hint_g⟩ :=
-    aeEq_and_intervalIntegrable_of_eqOn_Ioo hab heq hint_h
+  have hint_g : IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b :=
+    hint_h.congr_uIoo fun t ht ↦ (eqOn_uIoo_deriv_div hab heq ht).symm
   have h_ftc := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hab hnh_log_cont
     (fun t ht ↦ by
       have hslit : -(h t) ∈ Complex.slitPlane := Complex.mem_slitPlane_iff.mpr
         (Or.inr (by simpa using ne_of_lt (hh_im_neg t ht)))
-      have := (hh_diff t ht).hasDerivAt.neg.clog_real hslit
-      exact (show -deriv h t / -h t = deriv h t / h t by rw [neg_div_neg_eq]) ▸ this)
+      exact neg_div_neg_eq (deriv h t) (h t) ▸
+        (hh_diff t ht).hasDerivAt.neg.clog_real hslit)
     hint_h
   refine ⟨hint_g, ?_⟩
   calc ∫ t in a..b, deriv g t / g t
-      = ∫ t in a..b, deriv h t / h t := intervalIntegral.integral_congr_ae h_congr
+      = ∫ t in a..b, deriv h t / h t :=
+        intervalIntegral.integral_congr_uIoo (eqOn_uIoo_deriv_div hab heq)
     _ = Complex.log (-(h b)) - Complex.log (-(h a)) := h_ftc
     _ = Complex.log (-(g b)) - Complex.log (-(g a)) := by rw [heq_a, heq_b]
 
-
-/-- **The comparison logarithmic FTC on the slit plane**: for a comparison function `h`
-slit-plane-valued on the closed interval, the logarithmic integral of `g` evaluates to
-the difference of endpoint logarithms. -/
-theorem integral_deriv_div_eq_log_of_slitPlane {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
+/-- **The comparison logarithmic FTC on the slit plane**: the slit-plane FTC
+`TauCeti.Contour.integral_deriv_div_eq_log_sub_log`, applied to the comparison `h` and
+transported to `g` across the interior agreement. -/
+theorem intervalIntegrable_and_integral_deriv_div_eq_log_of_slitPlane (hab : a ≤ b)
     (hh_cont : ContinuousOn h (Set.Icc a b))
     (hh_diff : ∀ t ∈ Set.Ioo a b, DifferentiableAt ℝ h t)
     (hh_deriv_cont : ContinuousOn (deriv h) (Set.Icc a b))
     (hh_slit : ∀ t ∈ Set.Icc a b, h t ∈ Complex.slitPlane)
-    (heq : ∀ t ∈ Set.Ioo a b, g t = h t ∧ deriv g t = deriv h t)
-    (heq_a : g a = h a) (heq_b : g b = h b) :
+    (heq : Set.EqOn g h (Set.Ioo a b)) (heq_a : g a = h a) (heq_b : g b = h b) :
     IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
     ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) := by
   have hh_ne : ∀ t ∈ Set.Icc a b, h t ≠ 0 := fun t ht ↦
     Complex.slitPlane_ne_zero (hh_slit t ht)
-  have hh_log_cont : ContinuousOn (fun t ↦ Complex.log (h t)) (Set.Icc a b) := fun t ht ↦
-    (continuousAt_clog (hh_slit t ht)).comp_continuousWithinAt (hh_cont t ht)
+  have hIcc : Set.uIcc a b = Set.Icc a b := Set.uIcc_of_le hab
   have hint_h : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b :=
-    ((hh_deriv_cont.div hh_cont hh_ne).mono
-      (Set.uIcc_of_le hab ▸ Set.Subset.rfl)).intervalIntegrable
-  obtain ⟨h_congr, hint_g⟩ :=
-    aeEq_and_intervalIntegrable_of_eqOn_Ioo hab heq hint_h
-  have h_ftc := intervalIntegral.integral_eq_sub_of_hasDerivAt_of_le hab hh_log_cont
-    (fun t ht ↦ (hh_diff t ht).hasDerivAt.clog_real (hh_slit t ⟨ht.1.le, ht.2.le⟩)) hint_h
+    ((hh_deriv_cont.div hh_cont hh_ne).mono (hIcc ▸ Set.Subset.rfl)).intervalIntegrable
+  have hint_g : IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b :=
+    hint_h.congr_uIoo fun t ht ↦ (eqOn_uIoo_deriv_div hab heq ht).symm
+  have h_ftc : ∫ t in a..b, deriv h t / h t = Complex.log (h b) - Complex.log (h a) :=
+    integral_deriv_div_eq_log_sub_log Set.countable_empty (hIcc ▸ hh_cont)
+      (fun t ht ↦ (hh_diff t (by
+        rw [min_eq_left hab, max_eq_right hab] at ht
+        exact ht.1)).hasDerivAt)
+      (fun t ht ↦ hh_slit t (hIcc ▸ ht)) hint_h
   refine ⟨hint_g, ?_⟩
   calc ∫ t in a..b, deriv g t / g t
-      = ∫ t in a..b, deriv h t / h t := intervalIntegral.integral_congr_ae h_congr
+      = ∫ t in a..b, deriv h t / h t :=
+        intervalIntegral.integral_congr_uIoo (eqOn_uIoo_deriv_div hab heq)
     _ = Complex.log (h b) - Complex.log (h a) := h_ftc
     _ = Complex.log (g b) - Complex.log (g a) := by rw [heq_a, heq_b]
 
