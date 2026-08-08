@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.MvPowerSeries.Basic
-public import Mathlib.RingTheory.Noetherian.Basic
 public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 
 /-!
@@ -16,7 +15,7 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
 
 ## Main definitions
 
-* `IsRestrictedAdic`: A power series is **restricted** if its coefficients
+* `IsRestricted`: A power series is **restricted** if its coefficients
   converge to `0` along the cofinite filter on multi-indices.
 * `restrictedMvPowerSeriesSubring k A`: The subring of restricted power series in `k`
   variables over `A`, denoted `A⟨T₁, …, Tₖ⟩`.
@@ -27,19 +26,20 @@ This module is a port of AINTLIB's `projects/AdicSpaces/Adic spaces/RestrictedPo
 the roadmap's designated prior formalisation of this material; the definitions, the statements and
 the convolution argument are all its work. The port moves the declarations into the `TauCeti.Huber`
 namespace, opts into the Lean module system with the definition bodies unexposed — hence the added
-`mem_restrictedMvPowerSeriesSubring` — tracks two Mathlib renames, and drops a `NonarchimedeanRing`
-hypothesis that `isRestrictedAdic_zero` and `isRestrictedAdic_one` never used.
+`isRestricted_iff` and `mem_restrictedMvPowerSeriesSubring` — tracks the Mathlib rename of
+`Set.mem_setOf_eq` to `Set.mem_ofPred_eq`, renames the predicate from AINTLIB's `IsRestrictedAdic`
+(nothing here is adic), and drops hypotheses that the individual proofs never used.
 
 This is *not* Mathlib's `PowerSeries.IsRestricted`, which asks a one-variable series over a ring
-with a linear topology to be restricted with respect to a submodule filtration. `IsRestrictedAdic`
-is Wedhorn's multivariate cofinite-tendsto condition and needs only `NonarchimedeanRing`.
+with a linear topology to be restricted with respect to a submodule filtration. `IsRestricted`
+here is Wedhorn's multivariate cofinite-tendsto condition, and needs only a topology on `A`; the
+nonarchimedean hypothesis enters only for closure under multiplication and hence for the subring.
 
 ## Implementation notes
 
 The restricted power series ring is defined as a subring of `MvPowerSeries (Fin k) A`
 (the formal power series ring), cut out by the condition that coefficients tend to `0`.
-This is the canonical concrete definition; the opaque/axiom-based placeholders in the
-Scottish Book problem files are replaced by imports from this module.
+This is the canonical concrete definition.
 
 The closure of the restricted power series under multiplication (convolution) requires
 that `A` is a topological ring. The proof that the convolution of two sequences tending
@@ -81,20 +81,27 @@ for every open neighborhood `U` of `0` in `A`, all but finitely many coefficient
 lie in `U`. This is the defining property of elements of `A⟨T₁, …, Tₖ⟩`.
 
 See Wedhorn, (5.6.1) and §6.7. -/
-def IsRestrictedAdic {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A]
+def IsRestricted {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
     (f : MvPowerSeries (Fin k) A) : Prop :=
   Tendsto (fun s : Fin k →₀ ℕ => MvPowerSeries.coeff s f) cofinite (nhds 0)
 
+/-- Unfolding lemma for `TauCeti.Huber.IsRestricted`: the body is not exposed, so this is how
+consumers recover the defining convergence condition. -/
+theorem isRestricted_iff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
+    {f : MvPowerSeries (Fin k) A} :
+    IsRestricted f ↔
+      Tendsto (fun s : Fin k →₀ ℕ => MvPowerSeries.coeff s f) cofinite (nhds 0) := (Iff.rfl)
+
 /-- `0` is restricted: its coefficients are constantly `0`. -/
-theorem isRestrictedAdic_zero (k : ℕ) (A : Type*) [CommRing A] [TopologicalSpace A] :
-    IsRestrictedAdic (0 : MvPowerSeries (Fin k) A) := by
+theorem isRestricted_zero (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A] :
+    IsRestricted (0 : MvPowerSeries (Fin k) A) := by
   change Tendsto _ cofinite (nhds 0)
   simp only [map_zero]
   exact tendsto_const_nhds
 
 /-- `1` is restricted: every coefficient but the `0`-th vanishes. -/
-theorem isRestrictedAdic_one (k : ℕ) (A : Type*) [CommRing A] [TopologicalSpace A] :
-    IsRestrictedAdic (1 : MvPowerSeries (Fin k) A) := by
+theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A] :
+    IsRestricted (1 : MvPowerSeries (Fin k) A) := by
   change Tendsto _ cofinite (nhds 0)
   apply tendsto_nhds.mpr
   intro U hU h0U
@@ -107,9 +114,9 @@ theorem isRestrictedAdic_one (k : ℕ) (A : Type*) [CommRing A] [TopologicalSpac
   exact hs (by rw [MvPowerSeries.coeff_one, if_neg h]; exact h0U)
 
 /-- A sum of restricted series is restricted. -/
-theorem IsRestrictedAdic.add {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A]
+theorem IsRestricted.add {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
     [ContinuousAdd A] {f g : MvPowerSeries (Fin k) A}
-    (hf : IsRestrictedAdic f) (hg : IsRestrictedAdic g) : IsRestrictedAdic (f + g) := by
+    (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f + g) := by
   change Tendsto _ cofinite (nhds 0)
   have : Tendsto (fun s => MvPowerSeries.coeff s f + MvPowerSeries.coeff s g)
       cofinite (nhds 0) := by
@@ -118,9 +125,9 @@ theorem IsRestrictedAdic.add {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpac
   exact this.congr (fun s => by simp [map_add])
 
 /-- The negation of a restricted series is restricted. -/
-theorem IsRestrictedAdic.neg {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A]
+theorem IsRestricted.neg {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     [ContinuousNeg A] {f : MvPowerSeries (Fin k) A}
-    (hf : IsRestrictedAdic f) : IsRestrictedAdic (-f) := by
+    (hf : IsRestricted f) : IsRestricted (-f) := by
   change Tendsto _ cofinite (nhds 0)
   have : Tendsto (fun s => -(MvPowerSeries.coeff s f)) cofinite (nhds 0) := by
     rw [show (0 : A) = -0 from neg_zero.symm]
@@ -129,8 +136,8 @@ theorem IsRestrictedAdic.neg {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpac
 
 /-- Restrictedness, restated: for every open additive subgroup `W`, all but finitely many
 coefficients lie in `W`. This is the form the convolution argument actually consumes. -/
-theorem IsRestrictedAdic.finite_coeff_notMem {k : ℕ} {A : Type*} [CommRing A]
-    [TopologicalSpace A] {f : MvPowerSeries (Fin k) A} (hf : IsRestrictedAdic f)
+theorem IsRestricted.finite_coeff_notMem {k : ℕ} {A : Type*} [Ring A]
+    [TopologicalSpace A] {f : MvPowerSeries (Fin k) A} (hf : IsRestricted f)
     (W : OpenAddSubgroup A) : {s | MvPowerSeries.coeff s f ∉ (W : Set A)}.Finite := by
   have := (tendsto_nhds.mp hf) _ W.isOpen (SetLike.mem_coe.mpr W.zero_mem)
   rwa [Filter.mem_cofinite] at this
@@ -138,7 +145,7 @@ theorem IsRestrictedAdic.finite_coeff_notMem {k : ℕ} {A : Type*} [CommRing A]
 /-- The neighbourhood of `0` used to control a coefficient convolution: inside the open
 subgroup `W`, and small enough that multiplying by any of finitely many fixed coefficients
 lands in `V`. Openness of `V` and `W` plus continuity of multiplication is all this needs. -/
-private theorem inter_preimage_mul_mem_nhds {A : Type*} [CommRing A] [TopologicalSpace A]
+private theorem inter_preimage_mul_mem_nhds {A : Type*} [Ring A] [TopologicalSpace A]
     [NonarchimedeanRing A] {ι : Type*} (V W : OpenAddSubgroup A) (S₁ S₂ : Finset ι)
     (c₁ c₂ : ι → A) :
     ((W : Set A) ∩ (⋂ a ∈ S₁, (fun x => c₁ a * x) ⁻¹' (V : Set A))
@@ -156,9 +163,9 @@ private theorem inter_preimage_mul_mem_nhds {A : Type*} [CommRing A] [Topologica
 
 /-- The "bad" indices contributed by one side of a coefficient convolution form a finite set:
 for each `a` in a finite `S`, only finitely many `n` have `c (n - a) ∉ T`, and `n ↦ n - a` is
-injective on `{n | a ≤ n}`. Both halves of `IsRestrictedAdic.mul`'s bad set have this shape, with
+injective on `{n | a ≤ n}`. Both halves of `IsRestricted.mul`'s bad set have this shape, with
 the roles of the two series swapped. -/
-private theorem finite_shift_bad_set {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A]
+private theorem finite_shift_bad_set {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     (S : Finset (Fin k →₀ ℕ)) (T : Set A) (c : (Fin k →₀ ℕ) → A)
     (hcT : {s | c s ∉ T}.Finite) : {n | ∃ a ∈ S, a ≤ n ∧ c (n - a) ∉ T}.Finite := by
   apply Set.Finite.subset (S.finite_toSet.biUnion (fun a _ => hcT.image (· + a)))
@@ -169,7 +176,7 @@ private theorem finite_shift_bad_set {k : ℕ} {A : Type*} [CommRing A] [Topolog
 /-- Each term of the coefficient convolution lands in `V`. The trichotomy is on where the two
 factors sit relative to `W`: if either is outside `W` then the *other* is in `T` by the
 bad-set hypotheses, and `hT_left` / `hT_right` apply; if both are inside `W` then `hWV` does. -/
-private theorem coeff_mul_mem_of_forall_mem {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A]
+private theorem coeff_mul_mem_of_forall_mem {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     {f g : MvPowerSeries (Fin k) A} (V W : OpenAddSubgroup A) (T : Set A)
     (hWV : ∀ x ∈ (W : Set A), ∀ y ∈ (W : Set A), x * y ∈ (V : Set A))
     (hT_left : ∀ a, MvPowerSeries.coeff a f ∉ (W : Set A) →
@@ -207,9 +214,9 @@ private theorem coeff_mul_mem_of_forall_mem {k : ℕ} {A : Type*} [CommRing A] [
 /-- A product of restricted series is restricted. This is the only field of
 `restrictedMvPowerSeriesSubring` that needs `A` nonarchimedean: the coefficient convolution is
 a finite sum, and it is nonarchimedeanness that keeps such a sum inside an open subgroup. -/
-theorem IsRestrictedAdic.mul {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A]
+theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     [NonarchimedeanRing A] {f g : MvPowerSeries (Fin k) A}
-    (hf : IsRestrictedAdic f) (hg : IsRestrictedAdic g) : IsRestrictedAdic (f * g) := by
+    (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f * g) := by
   classical
   change Tendsto _ cofinite (nhds 0)
   rw [tendsto_nhds]
@@ -266,28 +273,28 @@ The closure under multiplication (convolution of tendsto-0 coefficient sequences
 requires that `A` is a nonarchimedean topological ring (so that finite sums of elements in an
 open additive subgroup remain in the subgroup). This is the canonical definition of
 `A⟨T₁, …, Tₖ⟩` (Wedhorn, (5.6.1)/§5.6). -/
-def restrictedMvPowerSeriesSubring (k : ℕ) (A : Type*) [CommRing A] [TopologicalSpace A]
+def restrictedMvPowerSeriesSubring (k : ℕ) (A : Type*) [Ring A] [TopologicalSpace A]
     [NonarchimedeanRing A] : Subring (MvPowerSeries (Fin k) A) where
-  carrier := {f | IsRestrictedAdic f}
-  zero_mem' := isRestrictedAdic_zero k A
-  one_mem' := isRestrictedAdic_one k A
-  add_mem' := IsRestrictedAdic.add
-  neg_mem' := IsRestrictedAdic.neg
-  mul_mem' := IsRestrictedAdic.mul
+  carrier := {f | IsRestricted f}
+  zero_mem' := isRestricted_zero k A
+  one_mem' := isRestricted_one k A
+  add_mem' := IsRestricted.add
+  neg_mem' := IsRestricted.neg
+  mul_mem' := IsRestricted.mul
 
 /-- Membership in `A⟨T₁, …, Tₖ⟩` is restrictedness. -/
 @[simp]
-theorem mem_restrictedMvPowerSeriesSubring {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A]
+theorem mem_restrictedMvPowerSeriesSubring {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     [NonarchimedeanRing A] {f : MvPowerSeries (Fin k) A} :
-    f ∈ restrictedMvPowerSeriesSubring k A ↔ IsRestrictedAdic f := (Iff.rfl)
+    f ∈ restrictedMvPowerSeriesSubring k A ↔ IsRestricted f := (Iff.rfl)
 
 /-! ### Algebra instance -/
 
 /-- Constant power series are restricted: the `algebraMap` image of any `a : A` has
 coefficient `a` at multi-index `0` and `0` elsewhere, so it trivially tends to `0`. -/
-theorem isRestrictedAdic_algebraMap {k : ℕ} {A : Type*} [CommRing A]
+theorem isRestricted_algebraMap {k : ℕ} {A : Type*} [CommRing A]
     [TopologicalSpace A] (a : A) :
-    IsRestrictedAdic (algebraMap A (MvPowerSeries (Fin k) A) a) := by
+    IsRestricted (algebraMap A (MvPowerSeries (Fin k) A) a) := by
   change Tendsto _ cofinite (nhds 0)
   apply tendsto_nhds.mpr
   intro U hU h0U
@@ -306,7 +313,7 @@ noncomputable instance restrictedMvPowerSeriesSubring.instAlgebra (k : ℕ) (A :
     Algebra A (restrictedMvPowerSeriesSubring k A) :=
   RingHom.toAlgebra
     { toFun := fun a => ⟨algebraMap A (MvPowerSeries (Fin k) A) a,
-        mem_restrictedMvPowerSeriesSubring.mpr (isRestrictedAdic_algebraMap a)⟩
+        mem_restrictedMvPowerSeriesSubring.mpr (isRestricted_algebraMap a)⟩
       map_one' := by ext; simp only [map_one, OneMemClass.coe_one]
       map_mul' := by intros; ext; simp only [map_mul, Subring.coe_mul]
       map_zero' := by ext; simp only [map_zero, ZeroMemClass.coe_zero]
