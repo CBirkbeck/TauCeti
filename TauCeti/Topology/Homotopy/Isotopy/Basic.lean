@@ -337,7 +337,7 @@ private theorem isInducing_totalMap_trans {f₂ : C(X, Y)} (F : Isotopy f₀ f�
 
 /-- The total map of a concatenation is injective: on each half it agrees with the corresponding
 factor's total map, which is injective, and the time coordinate is preserved. -/
-private theorem injective_totalMap_trans {f₂ : C(X, Y)} (F : Isotopy f₀ f₁) (G : Isotopy f₁ f₂) :
+private theorem totalMap_trans_injective {f₂ : C(X, Y)} (F : Isotopy f₀ f₁) (G : Isotopy f₁ f₂) :
     Function.Injective fun p : I × X => (p.1, (F.toHomotopy.trans G.toHomotopy) p) := by
   rintro ⟨t, x⟩ ⟨t', x'⟩ hpp
   have ht : t = t' := congrArg Prod.fst hpp
@@ -358,7 +358,7 @@ glue along the closed cover `{(t, y) | t ≤ 1 / 2}`, `{(t, y) | 1 / 2 ≤ t}` o
 noncomputable def trans {f₂ : C(X, Y)} (F : Isotopy f₀ f₁) (G : Isotopy f₁ f₂) :
     Isotopy f₀ f₂ where
   toHomotopy := F.toHomotopy.trans G.toHomotopy
-  isEmbedding_total' := ⟨isInducing_totalMap_trans F G, injective_totalMap_trans F G⟩
+  isEmbedding_total' := ⟨isInducing_totalMap_trans F G, totalMap_trans_injective F G⟩
 
 /-- The value of a concatenated isotopy is given by the first isotopy on `[0, 1 / 2]`
 and by the second isotopy on `[1 / 2, 1]`, with the time parameter rescaled linearly. -/
