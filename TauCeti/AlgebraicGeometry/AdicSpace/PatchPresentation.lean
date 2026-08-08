@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.ValuationSpectrum
-public import TauCeti.Topology.Spectral.PatchCriterion
+import TauCeti.Topology.Spectral.PatchCriterion
 
 /-!
 # The patch presentation of the valuation spectrum
