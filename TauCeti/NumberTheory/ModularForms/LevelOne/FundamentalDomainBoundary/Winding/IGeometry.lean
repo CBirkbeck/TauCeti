@@ -255,13 +255,14 @@ private lemma fdBoundary_two_sub_sub_I_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ �
     fdBoundary H (2 - δ) - Complex.I =
       ((2 * Real.sin (δ * (Real.pi / 12)) : ℝ) : ℂ) *
         Complex.exp (((-(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I) := by
+  have harg : (2 : ℝ) + -δ = 2 - δ := by ring
+  have hneg : -δ * (Real.pi / 12) = -(δ * (Real.pi / 12)) := by ring
+  have hsplit : ((Real.pi + -(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I =
+      ((Real.pi : ℝ) : ℂ) * Complex.I + ((-(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I := by
+    push_cast
+    ring
   have h := fdBoundary_two_add_sub_I_polar H (ε := -δ) (by linarith) (by linarith)
-  rw [show (2 : ℝ) + -δ = 2 - δ by ring,
-    show -δ * (Real.pi / 12) = -(δ * (Real.pi / 12)) by ring, Real.sin_neg,
-    show ((Real.pi + -(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I =
-      ((Real.pi : ℝ) : ℂ) * Complex.I + ((-(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I from by
-        push_cast; ring,
-    Complex.exp_add, Complex.exp_pi_mul_I] at h
+  rw [harg, hneg, Real.sin_neg, hsplit, Complex.exp_add, Complex.exp_pi_mul_I] at h
   rw [h]
   push_cast
   ring
@@ -271,11 +272,13 @@ private lemma fdBoundary_two_add_sub_I_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ �
     fdBoundary H (2 + δ) - Complex.I =
       ((2 * Real.sin (δ * (Real.pi / 12)) : ℝ) : ℂ) *
         Complex.exp (((δ * (Real.pi / 12) - Real.pi : ℝ) : ℂ) * Complex.I) := by
-  rw [fdBoundary_two_add_sub_I_polar H (by linarith) hδ1,
-    show ((Real.pi + δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I =
+  have hwrap : ((Real.pi + δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I =
       ((δ * (Real.pi / 12) - Real.pi : ℝ) : ℂ) * Complex.I +
-        2 * (Real.pi : ℂ) * Complex.I from by push_cast; ring,
-    Complex.exp_add, Complex.exp_two_pi_mul_I, mul_one]
+        2 * (Real.pi : ℂ) * Complex.I := by
+    push_cast
+    ring
+  rw [fdBoundary_two_add_sub_I_polar H (by linarith) hδ1, hwrap, Complex.exp_add,
+    Complex.exp_two_pi_mul_I, mul_one]
 
 /-- The half-angle sine of the excision half-width is positive. -/
 private lemma sin_delta_pos (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
