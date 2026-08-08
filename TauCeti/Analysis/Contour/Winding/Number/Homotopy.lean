@@ -26,6 +26,8 @@ integrals on the compact image of the homotopy.
   number of a piecewise-`C¹` path with Mathlib's curve integral of the Cauchy-kernel `1`-form.
 * `isPiecewiseC1On_eval_of_smoothPathHomotopy` supplies piecewise-`C¹` regularity for every path
   in a smooth homotopy.
+* `curveIntegral_inv_sub_smul_id_eq_of_pathHomotopy` is the Stokes step: a homotopy through
+  `ℂ \ {w}` preserves the curve integral of the Cauchy-kernel `1`-form.
 * `windingNumber_eq_of_pathHomotopy` proves the Layer 0 homotopy invariance result.
 * `isNullHomologous_iff_of_pathHomotopy` transfers null-homology across a homotopy in the ambient
   set.
@@ -108,13 +110,19 @@ theorem isPiecewiseC1On_eval_of_smoothPathHomotopy {x y : ℂ} {p q : Path x y} 
         simpa [Prod.le_def] using ⟨⟨s.2.1, ht.1⟩, ⟨s.2.2, ht.2⟩⟩)
   exact hs.congr fun _ _ => by simp [Path.extend, Path.Homotopy.eval]
 
-/-- **A path homotopy avoiding `w` preserves the curve integral of the index form.** -/
-private theorem curveIntegral_indexForm_eq_of_pathHomotopy {x y w : ℂ} {p q : Path x y}
+/-- **A path homotopy avoiding `w` preserves the curve integral of the Cauchy kernel.** Paths with
+the same endpoints, joined by a `C²` homotopy through `ℂ \ {w}`, have equal integrals of the
+`1`-form `z ↦ (z - w)⁻¹ dz`. -/
+theorem curveIntegral_inv_sub_smul_id_eq_of_pathHomotopy {x y w : ℂ} {p q : Path x y}
     (φ : p.Homotopy q)
     (hφsmooth : ContDiffOn ℝ 2
       (fun st : ℝ × ℝ ↦ Set.IccExtend zero_le_one (φ.toHomotopy.extend st.1) st.2) (Set.Icc 0 1))
     (haway : ∀ z ∈ Set.range φ, z ≠ w) :
-    (∫ᶜ z in p, indexForm w z) = ∫ᶜ z in q, indexForm w z := by
+    (∫ᶜ z in p, (z - w)⁻¹ • ContinuousLinearMap.id ℂ ℂ) =
+      ∫ᶜ z in q, (z - w)⁻¹ • ContinuousLinearMap.id ℂ ℂ := by
+  -- `indexForm w` is the private abbreviation for this integrand; fold it so the closedness and
+  -- derivative lemmas below, which are stated for it, apply.
+  change (∫ᶜ z in p, indexForm w z) = ∫ᶜ z in q, indexForm w z
   have hrange : IsClosed (Set.range φ) :=
     (isCompact_range φ.toHomotopy.continuous).isClosed
   have hclosedForm : ∀ z ∈ Set.range φ,
@@ -150,11 +158,7 @@ theorem windingNumber_eq_of_pathHomotopy {x y w : ℂ} {p q : Path x y} (φ : p.
   have haway : ∀ z ∈ Set.range φ, z ≠ w := by
     rintro _ ⟨st, rfl⟩
     exact havoid st
-  have hcurve := curveIntegral_indexForm_eq_of_pathHomotopy φ hφsmooth haway
-  have hcurve' :
-      (∫ᶜ z in p, (z - w)⁻¹ • ContinuousLinearMap.id ℂ ℂ) =
-        ∫ᶜ z in q, (z - w)⁻¹ • ContinuousLinearMap.id ℂ ℂ := by
-    simpa only [indexForm] using hcurve
+  have hcurve' := curveIntegral_inv_sub_smul_id_eq_of_pathHomotopy φ hφsmooth haway
   have hp : IsPiecewiseC1On p.extend 0 1 := by
     simpa using isPiecewiseC1On_eval_of_smoothPathHomotopy φ hφsmooth (0 : I)
   have hq : IsPiecewiseC1On q.extend 0 1 := by
