@@ -15,14 +15,19 @@ import TauCeti.NumberTheory.HeckeRing.Multiplicity.Support
 # Coprime multiplication in the `GL_n` Hecke ring
 
 One row of the multiplication table of the integral Hecke ring of the arithmetic Hecke
-triple (Shimura, Proposition 3.16): for entrywise positive tuples `a`, `b` whose
-determinants `∏ aᵢ`, `∏ bᵢ` are coprime, the product of the two diagonal double cosets is
-again a single diagonal coset, `T(a) · T(b) = T(a * b)`.
+triple (Shimura, Proposition 3.16): when the determinants `∏ aᵢ`, `∏ bᵢ` are coprime, the
+product of the two diagonal double cosets is again a single diagonal coset,
+`T(a) · T(b) = T(a * b)`.
 
-Positivity is not decoration: `natDiagGL` sends a tuple with a zero entry to its junk value
-`1`, so every statement here carries `∀ i, 0 < a i` explicitly. The ring-level theorem
-additionally assumes `[NeZero n]`, which is what the arithmetic Hecke triple instance — and
-hence multiplication in `IntegralHeckeRing n` — requires.
+The two levels differ in what they assume. The **set-level** results — the double-coset
+statements and their supporting lemmas — carry `∀ i, 0 < a i` explicitly, because
+`natDiagGL` sends a tuple with a zero entry to its junk value `1` and those statements are
+about genuine diagonal representatives. The **ring-level** theorem
+`diagElem_mul_of_coprime` needs no positivity at all: on a tuple with a zero entry both
+sides degenerate, and coprimality forces the *other* tuple to be all ones (a zero entry makes
+that determinant `0`, and `Nat.Coprime 0 m` holds only for `m = 1`), so the identity survives.
+It does assume `[NeZero n]`, which is what the arithmetic Hecke triple instance — and hence
+multiplication in `IntegralHeckeRing n` — requires.
 
 The scalar row (Shimura 3.17) lives in `GLn/ScalarMul.lean`.
 
@@ -38,10 +43,12 @@ Chris Birkbeck).
 
 ## Main results
 
-* `HeckeRing.GLn.mul_mem_doubleCoset_of_coprime`: for positive tuples with coprime
-  determinants, a product of representatives lies in the double coset of the product tuple.
-* `HeckeRing.GLn.diagElem_mul_of_coprime`: `T(a) · T(b) = T(a * b)`, for positive tuples with
-  coprime determinants and `[NeZero n]`.
+* `HeckeRing.GLn.mul_mem_doubleCoset_of_coprime`: the set-level statement — for **positive**
+  tuples with coprime determinants, a product of representatives lies in the double coset of
+  the product tuple.
+* `HeckeRing.GLn.diagElem_mul_of_coprime`: the ring-level statement — `T(a) · T(b) = T(a * b)`
+  from **coprimality alone**, given `[NeZero n]`; the zero-entry case degenerates as described
+  above.
 
 ## References
 
