@@ -62,51 +62,22 @@ noncomputable def verticalSingularSet (S : Finset ℍ) : Finset ℂ :=
     (S.filter fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖).image
       (fun p : ℍ ↦ (p : ℂ) + 1)
 
-/-- The real part of the corner `ρ`. -/
-private lemma rho_re : (ρ : ℂ).re = -(1 / 2) := by
-  norm_num [ρ]
-
-/-- The imaginary part of the corner `ρ`. -/
-private lemma rho_im : (ρ : ℂ).im = Real.sqrt 3 / 2 := by
-  simp [ρ]
-
-/-- The square norm of the corner `ρ` is `1`. -/
-private lemma normSq_rho : normSq (ρ : ℂ) = 1 := by
-  rw [normSq_apply, rho_re, rho_im]
-  nlinarith [Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
-
-/-- The corner `ρ` has norm `1`. -/
-private lemma norm_rho : ‖(ρ : ℂ)‖ = 1 := by
-  have h2 : ‖(ρ : ℂ)‖ ^ 2 = 1 := by rw [← Complex.normSq_eq_norm_sq, normSq_rho]
-  nlinarith [norm_nonneg ((ρ : ℂ))]
-
-private lemma rho_ne_zero : (ρ : ℂ) ≠ 0 := by
-  intro h0
-  have := normSq_rho
-  rw [h0] at this
-  simp at this
+private lemma rho_ne_zero : (ρ : ℂ) ≠ 0 := fun h0 ↦ by
+  simpa [h0] using UpperHalfPlane.norm_ρ
 
 /-- The inversion carries `ρ` to `ρ + 1`. -/
 private lemma neg_one_div_rho : -1 / (ρ : ℂ) = (ρ : ℂ) + 1 := by
   rw [div_eq_iff rho_ne_zero]
-  apply Complex.ext <;>
-    simp only [neg_re, neg_im, one_re, one_im, mul_re, mul_im, add_re, add_im,
-      rho_re, rho_im] <;>
-    nlinarith [Real.mul_self_sqrt (by norm_num : (0 : ℝ) ≤ 3)]
+  linear_combination -UpperHalfPlane.ρ_sq
 
 private lemma rho_add_one_ne_zero : (ρ : ℂ) + 1 ≠ 0 := by
-  intro h0
-  have him : ((ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by rw [add_im, one_im, add_zero, rho_im]
-  rw [h0, zero_im] at him
-  have := Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 3)
-  linarith
+  rw [← neg_one_div_rho]
+  exact div_ne_zero (by norm_num) rho_ne_zero
 
 /-- The inversion carries `ρ + 1` to `ρ`. -/
 private lemma neg_one_div_rho_add_one : -1 / ((ρ : ℂ) + 1) = (ρ : ℂ) := by
-  have h := neg_one_div_rho
-  rw [div_eq_iff rho_ne_zero] at h
   rw [div_eq_iff rho_add_one_ne_zero]
-  linear_combination h
+  linear_combination -UpperHalfPlane.ρ_sq
 
 /-- The corner `ρ` belongs to the arc singular set. -/
 theorem rho_mem_arcSingularSet (S : Finset ℍ) : (ρ : ℂ) ∈ arcSingularSet S := by
@@ -125,8 +96,8 @@ theorem norm_eq_one_of_mem_arcSingularSet {S : Finset ℍ} {s : ℂ}
   rcases hs with (⟨p, ⟨-, hp_norm⟩, rfl⟩ | ⟨p, ⟨-, hp_norm⟩, rfl⟩) | rfl | rfl
   · exact hp_norm
   · rw [norm_div, norm_neg, norm_one, hp_norm, div_one]
-  · exact norm_rho
-  · rw [← neg_one_div_rho, norm_div, norm_neg, norm_one, norm_rho, div_one]
+  · exact UpperHalfPlane.norm_ρ
+  · rw [← neg_one_div_rho, norm_div, norm_neg, norm_one, UpperHalfPlane.norm_ρ, div_one]
 
 /-- The arc singular set is closed under the inversion `z ↦ -1/z`. -/
 theorem neg_one_div_mem_arcSingularSet {S : Finset ℍ} {s : ℂ}
