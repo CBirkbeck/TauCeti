@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.RingTheory.Valuation.Basic
-public import Mathlib.RingTheory.Ideal.Quotient.Operations
+public import Mathlib.RingTheory.Ideal.Quotient.Basic
 
 /-!
 # The trivial valuation attached to a prime ideal
@@ -19,7 +19,8 @@ the support map of the valuation spectrum.
 ## Main definitions
 
 * `TauCeti.Valuation.trivialValuation 𝔭` : The trivial valuation attached to a prime
-  ideal `𝔭`, with values in `WithZero (Multiplicative ℤ)`.
+  ideal `𝔭`, with values in any linearly ordered commutative monoid with zero `Γ₀`
+  (the valuation-spectrum section specializes it to `WithZero (Multiplicative ℤ)`).
 
 ## Main results
 
@@ -68,8 +69,8 @@ lemma trivialValuation_eq_one_iff [Nontrivial Γ₀] {𝔭 : Ideal A} [𝔭.IsPr
   split <;> simp_all
 
 /-- Elements outside the prime ideal have value `1` under the trivial valuation. -/
-lemma trivialValuation_eq_one_of_notMem [Nontrivial Γ₀] {𝔭 : Ideal A} [𝔭.IsPrime] {a : A}
-    (ha : a ∉ 𝔭) : trivialValuation (Γ₀ := Γ₀) 𝔭 a = 1 :=
-  trivialValuation_eq_one_iff.mpr ha
+lemma trivialValuation_eq_one_of_notMem {𝔭 : Ideal A} [𝔭.IsPrime] {a : A}
+    (ha : a ∉ 𝔭) : trivialValuation (Γ₀ := Γ₀) 𝔭 a = 1 := by
+  simp [trivialValuation_apply, ha]
 
 end TauCeti.Valuation
