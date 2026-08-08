@@ -91,10 +91,12 @@ theorem IsBounded.subset {S T : Set M} (hS : IsBounded S) (hTS : T ⊆ S) : IsBo
     ⟨V, hV, (Set.mul_subset_mul_left hTS).trans hVS⟩
 
 /-- The empty set is bounded. -/
+@[simp]
 theorem isBounded_empty : IsBounded (∅ : Set M) :=
   fun _ _ ↦ ⟨Set.univ, univ_mem, by simp⟩
 
 /-- The singleton `{0}` is bounded. -/
+@[simp]
 theorem isBounded_singleton_zero : IsBounded ({0} : Set M) :=
   fun U hU ↦ ⟨Set.univ, univ_mem, fun _ hx ↦ by simp_all [mem_of_mem_nhds hU]⟩
 
@@ -122,6 +124,12 @@ theorem IsBounded.union {S T : Set M} (hS : IsBounded S) (hT : IsBounded T) :
   rw [Set.union_eq_iUnion]
   exact isBounded_iUnion (by rintro (_ | _) <;> assumption)
 
+/-- A union is bounded exactly when both parts are. -/
+@[simp]
+theorem isBounded_union {S T : Set M} : IsBounded (S ∪ T) ↔ IsBounded S ∧ IsBounded T :=
+  ⟨fun h ↦ ⟨h.subset Set.subset_union_left, h.subset Set.subset_union_right⟩,
+    fun h ↦ h.1.union h.2⟩
+
 /-- The pointwise product of two bounded sets is bounded. -/
 theorem IsBounded.mul {S T : Set M} (hS : IsBounded S) (hT : IsBounded T) : IsBounded (S * T) := by
   intro U hU
@@ -134,6 +142,7 @@ section ContinuousMul
 variable [ContinuousMul M]
 
 /-- Every singleton is bounded. -/
+@[simp]
 theorem isBounded_singleton (a : M) : IsBounded ({a} : Set M) :=
   fun U hU ↦ ⟨(· * a) ⁻¹' U, (continuous_id.mul continuous_const).continuousAt.preimage_mem_nhds
     (by simp [hU]), by simp⟩
@@ -209,7 +218,7 @@ end Image
 
 section Transport
 
-variable {A B : Type*} [Ring A] [Ring B] [TopologicalSpace A] [TopologicalSpace B]
+variable {A B : Type*} [Semiring A] [Semiring B] [TopologicalSpace A] [TopologicalSpace B]
 
 /-- A topological ring isomorphism sends bounded sets to bounded sets. -/
 theorem IsBounded.image_ringEquiv (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm)

@@ -342,7 +342,7 @@ theorem IsPowerBounded.map_of_isOpenMap {F : Type*} [FunLike F M N] [MonoidWithZ
     IsPowerBounded (f a) :=
   ha.map hf fun _ hV ↦ map_zero f ▸ hf₀.image_mem_nhds hV
 
-variable {A B : Type*} [Ring A] [Ring B] [TopologicalSpace A] [TopologicalSpace B]
+variable {A B : Type*} [Semiring A] [Semiring B] [TopologicalSpace A] [TopologicalSpace B]
 
 /-- Power-boundedness transports along a topological ring isomorphism. -/
 theorem isPowerBounded_ringEquiv_iff (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm)
