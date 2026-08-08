@@ -136,6 +136,14 @@ private theorem one_le_of_inv_le_of_le {v : Valuation A Γ₀}
   have h3 : (1 : ValueGroup₀ (.ofClass v)) < x⁻¹ := (one_lt_inv₀ hx0).mpr hx
   exact absurd ((h1.trans h2).trans hx.le) (not_le.mpr h3)
 
+/-- Strengthened elimination: a bounding witness for a positive `γ` can be taken with
+`1 ≤ v.restrict a` alongside the two bounds. -/
+theorem HasFullCharacteristicGroup.exists_one_le {v : Valuation A Γ₀}
+    (h : HasFullCharacteristicGroup v) {γ : ValueGroup₀ (.ofClass v)} (hγ : 0 < γ) :
+    ∃ a : A, 1 ≤ v.restrict a ∧ (v.restrict a)⁻¹ ≤ γ ∧ γ ≤ v.restrict a := by
+  obtain ⟨a, h1, h2⟩ := h γ hγ
+  exact ⟨a, one_le_of_inv_le_of_le hγ h1 h2, h1, h2⟩
+
 /-- The full-characteristic-group condition transports along an equivalence of
 valuations, through the ordered isomorphism of their value groups. -/
 theorem HasFullCharacteristicGroup.of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
