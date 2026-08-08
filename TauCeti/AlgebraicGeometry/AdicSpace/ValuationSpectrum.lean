@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.RingTheory.Valuation.ValuativeRel.Comap
+public import TauCeti.RingTheory.Valuation.Trivial
 public import Mathlib.RingTheory.Valuation.Quotient
 public import Mathlib.RingTheory.Valuation.ExtendToLocalization
 public import Mathlib.Topology.Order
@@ -356,73 +357,46 @@ theorem suppFun_comap {B : Type*} [CommRing B] (φ : A →+* B) (v : Spv B) :
 
 /-! ### The trivial-valuation section of the support map -/
 
-open scoped Classical in
-/-- The trivial valuation attached to a prime ideal `𝔭`: it is `0` on `𝔭` and `1` off it. -/
-noncomputable def trivialValuation (𝔭 : Ideal A) [hp : 𝔭.IsPrime] :
-    Valuation A (WithZero (Multiplicative ℤ)) where
-  toFun a := if a ∈ 𝔭 then 0 else 1
-  map_zero' := if_pos 𝔭.zero_mem
-  map_one' := if_neg (𝔭.ne_top_iff_one.mp hp.ne_top)
-  map_mul' a b := by
-    by_cases ha : a ∈ 𝔭
-    · simp [Ideal.mul_mem_right b 𝔭 ha, ha]
-    · by_cases hb : b ∈ 𝔭
-      · simp [Ideal.mul_mem_left 𝔭 a hb, hb]
-      · have hab : a * b ∉ 𝔭 := fun h ↦ (hp.mem_or_mem h).elim ha hb
-        simp [hab, ha, hb]
-  map_add_le_max' a b := by
-    by_cases hab : a + b ∈ 𝔭
-    · simp [hab]
-    · have : a ∉ 𝔭 ∨ b ∉ 𝔭 := by
-        by_contra h
-        rw [not_or, not_not, not_not] at h
-        exact hab (𝔭.add_mem h.1 h.2)
-      rcases this with ha | hb
-      · simp [hab, ha]
-      · simp [hab, hb]
-
-open scoped Classical in
-/-- The value of the trivial valuation, as an `if`. -/
-lemma trivialValuation_apply {𝔭 : Ideal A} [𝔭.IsPrime] (a : A) :
-    trivialValuation 𝔭 a = if a ∈ 𝔭 then 0 else 1 := (rfl)
-
-@[simp]
-lemma trivialValuation_eq_zero_iff {𝔭 : Ideal A} [𝔭.IsPrime] {a : A} :
-    trivialValuation 𝔭 a = 0 ↔ a ∈ 𝔭 := by
-  rw [trivialValuation_apply]
-  split <;> simp_all
-
-lemma trivialValuation_eq_one_of_notMem {𝔭 : Ideal A} [𝔭.IsPrime] {a : A} (ha : a ∉ 𝔭) :
-    trivialValuation 𝔭 a = 1 := by
-  rw [trivialValuation_apply, if_neg ha]
-
 /-- The trivial-valuation section of the support map (Wedhorn, Remark 4.6): the point of
 `Spv A` given by the trivial valuation attached to a prime ideal. -/
 noncomputable def trivialSection (p : PrimeSpectrum A) : Spv A :=
-  ofValuation (trivialValuation p.asIdeal)
+  ofValuation (Valuation.trivialValuation p.asIdeal)
+
+/-- The valuative relation of a trivial-valuation point: `v(f) ≤ v(s)` holds precisely
+when `f` lies in the prime or `s` does not. -/
+@[simp]
+lemma trivialSection_vle_iff (p : PrimeSpectrum A) (f s : A) :
+    (trivialSection p).toValuativeRel.vle f s ↔ f ∈ p.asIdeal ∨ s ∉ p.asIdeal := by
+  rw [trivialSection, vle_ofValuation, Valuation.trivialValuation_apply,
+    Valuation.trivialValuation_apply]
+  constructor
+  · intro h
+    by_cases hf : f ∈ p.asIdeal
+    · exact Or.inl hf
+    · refine Or.inr fun hs ↦ ?_
+      rw [if_neg hf, if_pos hs] at h
+      simp at h
+  · rintro (hf | hs)
+    · simp [hf]
+    · rw [if_neg hs]
+      split <;> simp
 
 /-- `trivialSection` is a section of the support map. -/
 @[simp]
 lemma suppFun_trivialSection (p : PrimeSpectrum A) : suppFun (trivialSection p) = p := by
   ext x
   rw [suppFun_asIdeal, trivialSection, supp_ofValuation, Valuation.mem_supp_iff,
-    trivialValuation_eq_zero_iff]
+    Valuation.trivialValuation_eq_zero_iff]
 
 /-- The preimage of a basic open under `trivialSection` is the corresponding basic open of
 the prime spectrum: `trivialSection ⁻¹' Spv(A)(f/s) = D(s)`. -/
 lemma trivialSection_preimage_basicOpen (f s : A) :
     trivialSection ⁻¹' basicOpen f s = (PrimeSpectrum.basicOpen s : Set (PrimeSpectrum A)) := by
   ext p
-  simp only [Set.mem_preimage, mem_basicOpen_iff, trivialSection, vle_ofValuation, map_zero,
-    SetLike.mem_coe, PrimeSpectrum.mem_basicOpen]
-  constructor
-  · rintro ⟨-, hs0⟩ hs
-    exact hs0 (le_of_eq (trivialValuation_eq_zero_iff.mpr hs))
-  · intro hs
-    rw [trivialValuation_eq_one_of_notMem hs]
-    refine ⟨?_, by simp⟩
-    rw [trivialValuation_apply]
-    split <;> simp
+  have h0 : (0 : A) ∈ p.asIdeal := p.asIdeal.zero_mem
+  simp only [Set.mem_preimage, mem_basicOpen_iff, trivialSection_vle_iff, SetLike.mem_coe,
+    PrimeSpectrum.mem_basicOpen, h0, not_true_eq_false, or_false]
+  tauto
 
 /-- `trivialSection` is continuous. -/
 lemma continuous_trivialSection :
