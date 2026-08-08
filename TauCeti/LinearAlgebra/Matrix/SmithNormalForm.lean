@@ -119,11 +119,11 @@ private lemma exists_involution_isUnit_det_mul_diagonal_pos {R : Type*} [CommRin
       IsUnit s.det ∧ Matrix.diagonal a = s * Matrix.diagonal d := by
   set sv := fun i ↦ ((SignType.sign (a i) : SignType) : R) with hsv_def
   have hsv_sq : ∀ i, sv i * sv i = 1 := fun i ↦ by
-    simp only [hsv_def]
-    rcases lt_trichotomy (a i) 0 with h | h | h
-    · rw [sign_neg h]; simp
-    · exact absurd h (ha_ne i)
-    · rw [sign_pos h]; simp
+    have h : SignType.sign (a i) * SignType.sign (a i) = 1 := by
+      simpa [pow_two] using
+        SignType.pow_even (SignType.sign (a i)) (by decide : Even 2)
+          (sign_ne_zero.mpr (ha_ne i))
+    simp only [hsv_def, ← SignType.coe_mul, h, SignType.coe_one]
   have hss : Matrix.diagonal sv * Matrix.diagonal sv = 1 := by
     rw [Matrix.diagonal_mul_diagonal]
     ext i j
@@ -131,10 +131,8 @@ private lemma exists_involution_isUnit_det_mul_diagonal_pos {R : Type*} [CommRin
     by_cases h : i = j
     · subst h; simp [hsv_sq]
     · simp [h]
-  refine ⟨Matrix.diagonal sv, fun i ↦ |a i|, fun i ↦ abs_pos.mpr (ha_ne i), hss, ?_, ?_⟩
-  · rw [Matrix.det_diagonal]
-    exact IsUnit.of_mul_eq_one _
-      (by rw [← Finset.prod_mul_distrib]; exact Finset.prod_eq_one fun i _ ↦ hsv_sq i)
+  refine ⟨Matrix.diagonal sv, fun i ↦ |a i|, fun i ↦ abs_pos.mpr (ha_ne i), hss,
+    Matrix.isUnit_det_of_right_inverse hss, ?_⟩
   · rw [Matrix.diagonal_mul_diagonal]
     congr 1
     ext i
