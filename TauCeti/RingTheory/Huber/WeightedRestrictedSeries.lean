@@ -359,6 +359,42 @@ theorem isWeightedRestricted_one_weight_iff [NonarchimedeanRing A]
     filter_upwards [this] with ν hν
     simpa using hν
 
+/-- Anything with only finitely many nonzero coefficients is `T`-restricted, whatever the weight:
+the zero coefficients meet every bound. This is the source of all the polynomial constructors
+below. -/
+theorem isWeightedRestricted_of_finite_support (T : Fin k → Set A)
+    {f : MvPowerSeries (Fin k) A} (h : {ν | MvPowerSeries.coeff ν f ≠ 0}.Finite) :
+    IsWeightedRestricted T f := by
+  intro U
+  rw [Filter.eventually_cofinite]
+  refine h.subset fun ν hν ↦ ?_
+  simp only [Set.mem_ofPred_eq] at hν ⊢
+  exact fun hz ↦ hν (hz ▸ (weightMul T ν U.toAddSubgroup).zero_mem)
+
+/-- A monomial is `T`-restricted. -/
+@[simp]
+theorem isWeightedRestricted_monomial (T : Fin k → Set A) (μ : Fin k →₀ ℕ) (a : A) :
+    IsWeightedRestricted T (MvPowerSeries.monomial μ a) := by
+  classical
+  refine isWeightedRestricted_of_finite_support T ((Set.finite_singleton μ).subset fun ν hν ↦ ?_)
+  simp only [Set.mem_ofPred_eq, MvPowerSeries.coeff_monomial] at hν
+  by_contra hne
+  simp only [Set.mem_singleton_iff] at hne
+  exact hν (if_neg hne)
+
+/-- A constant series is `T`-restricted. -/
+@[simp]
+theorem isWeightedRestricted_C (T : Fin k → Set A) (a : A) :
+    IsWeightedRestricted T (MvPowerSeries.C a) := by
+  simpa using isWeightedRestricted_monomial T 0 a
+
+/-- Each variable is `T`-restricted. -/
+@[simp]
+theorem isWeightedRestricted_X (T : Fin k → Set A) (i : Fin k) :
+    IsWeightedRestricted T (MvPowerSeries.X i : MvPowerSeries (Fin k) A) := by
+  classical
+  exact isWeightedRestricted_monomial T (Finsupp.single i 1) (1 : A)
+
 /-- A sum of `T`-restricted series is `T`-restricted. -/
 theorem IsWeightedRestricted.add {T : Fin k → Set A} {f g : MvPowerSeries (Fin k) A}
     (hf : IsWeightedRestricted T f) (hg : IsWeightedRestricted T g) :
