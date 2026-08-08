@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.Ideal.Norm.RelNorm
 public import Mathlib.NumberTheory.NumberField.Norm
 public import TauCeti.NumberTheory.DedekindDomain.RelNorm
 public import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Basic
