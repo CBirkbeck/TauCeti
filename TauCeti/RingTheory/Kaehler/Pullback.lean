@@ -85,7 +85,7 @@ private theorem out_add (f : S →ₐ[R] S) (m n : Twisted f) :
 
 private theorem out_zero (f : S →ₐ[R] S) : (0 : Twisted f).out = 0 := rfl
 
-/-- The twisted `S`-action: `s` acts as `f s` does on the underlying differential. -/
+-- The twisted `S`-action: `s` acts as `f s` does on the underlying differential.
 private noncomputable instance (f : S →ₐ[R] S) : SMul S (Twisted f) :=
   ⟨fun s m => ⟨f s • m.out⟩⟩
 
@@ -103,7 +103,7 @@ private noncomputable instance (f : S →ₐ[R] S) : Module S (Twisted f) where
     rw [out_smul, out_add, out_smul, out_smul, map_add, add_smul]
   zero_smul m := out_injective f <| by rw [out_smul, out_zero, map_zero, zero_smul]
 
-/-- The untwisted `R`-action: `f` fixes `R`, so twisting through `f` changes nothing over `R`. -/
+-- The untwisted `R`-action: `f` fixes `R`, so twisting through `f` changes nothing over `R`.
 private noncomputable instance (f : S →ₐ[R] S) : SMul R (Twisted f) :=
   ⟨fun r m => ⟨r • m.out⟩⟩
 
@@ -126,8 +126,8 @@ private instance (f : S →ₐ[R] S) : IsScalarTower R S (Twisted f) where
     rw [out_smul, out_smul_r, out_smul, Algebra.smul_def, map_mul, f.commutes,
       ← Algebra.smul_def, smul_assoc]
 
-/-- `x ↦ D (f x)`, as a derivation into the twisted carrier: the Leibniz rule
-`D (f (a b)) = f a • D (f b) + f b • D (f a)` is exactly the twisted `S`-linearity. -/
+-- `x ↦ D (f x)`, as a derivation into the twisted carrier: the Leibniz rule
+-- `D (f (a b)) = f a • D (f b) + f b • D (f a)` is exactly the twisted `S`-linearity.
 private noncomputable def twistedD (f : S →ₐ[R] S) : Derivation R S (Twisted f) where
   toFun x := ⟨D R S (f x)⟩
   map_add' x y := out_injective f <| by rw [out_add]; simp
@@ -146,15 +146,17 @@ noncomputable def pullback (f : S →ₐ[R] S) : Ω[S⁄R] →ₛₗ[f.toRingHom
     -- `S`-linearity of the lift into the twisted carrier is `f`-semilinearity downstairs.
     rw [LinearMap.map_smul, out_smul]; rfl
 
+/-- The characterising property of the pullback: `pullback f` sends `D x` to `D (f x)`. -/
 @[simp]
 theorem pullback_D (f : S →ₐ[R] S) (x : S) : pullback f (D R S x) = D R S (f x) :=
   congrArg Twisted.out ((twistedD f).liftKaehlerDifferential_comp_D x)
 
-/-- Every differential is in the span of the range of `D`, so pointwise identities may be proved
-by span induction; the scalar step uses the semilinearity `map_smulₛₗ`. -/
+-- Every differential is in the span of the range of `D`, so pointwise identities may be proved
+-- by span induction; the scalar step uses the semilinearity `map_smulₛₗ`.
 private theorem mem_span_range (ω : Ω[S⁄R]) : ω ∈ Submodule.span S (Set.range (D R S)) := by
   rw [span_range_derivation]; trivial
 
+/-- The pullback along the identity fixes every differential. -/
 @[simp]
 theorem pullback_id_apply (ω : Ω[S⁄R]) : pullback (AlgHom.id R S) ω = ω := by
   induction mem_span_range ω using Submodule.span_induction with
@@ -165,6 +167,8 @@ theorem pullback_id_apply (ω : Ω[S⁄R]) : pullback (AlgHom.id R S) ω = ω :=
     -- `map_smulₛₗ` produces `(AlgHom.id R S).toRingHom s • ω`, which is `s • ω` definitionally.
     rw [map_smulₛₗ, ih]; rfl
 
+/-- Pullback preserves composition: pulling back along `f.comp g` is pulling back along `g`,
+then along `f`. -/
 theorem pullback_comp_apply (f g : S →ₐ[R] S) (ω : Ω[S⁄R]) :
     pullback (f.comp g) ω = pullback f (pullback g ω) := by
   induction mem_span_range ω using Submodule.span_induction with
@@ -179,15 +183,13 @@ theorem pullback_comp_apply (f g : S →ₐ[R] S) (ω : Ω[S⁄R]) :
 /-- The pullback along the identity is the identity, as (plainly linear) maps. The ascription is
 what lets the elaborator compare both sides over `RingHom.id S`. -/
 theorem pullback_id :
-    (pullback (AlgHom.id R S) : Ω[S⁄R] →ₗ[S] Ω[S⁄R]) = LinearMap.id := by
-  ext ω
-  exact pullback_id_apply ω
+    (pullback (AlgHom.id R S) : Ω[S⁄R] →ₗ[S] Ω[S⁄R]) = LinearMap.id :=
+  LinearMap.ext pullback_id_apply
 
 /-- Contravariant functoriality at map level; the composite's scalar law is supplied by Mathlib's
 `RingHomCompTriple` instance for composed algebra maps. -/
 theorem pullback_comp (f g : S →ₐ[R] S) :
-    pullback (f.comp g) = (pullback f).comp (pullback g) := by
-  ext ω
-  exact pullback_comp_apply f g ω
+    pullback (f.comp g) = (pullback f).comp (pullback g) :=
+  LinearMap.ext (pullback_comp_apply f g)
 
 end KaehlerDifferential
