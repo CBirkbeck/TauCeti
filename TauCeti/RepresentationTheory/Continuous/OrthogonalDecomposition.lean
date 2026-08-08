@@ -80,13 +80,18 @@ section FiniteDimensional
 
 variable [FiniteDimensional 𝕜 V]
 
+omit [FiniteDimensional 𝕜 V] in
 /-- Inside a nonzero subrepresentation `σ` there is an atom `τ` whose orthogonal complement in
-`σ` is a subrepresentation `ω` with `τ ⊔ ω = σ` and strictly smaller dimension. -/
+`σ` is a subrepresentation `ω` with `τ ⊔ ω = σ` and strictly smaller dimension. Only `σ` itself
+need be finite-dimensional; the ambient space may not be. -/
 private theorem exists_isAtom_sup_eq_and_lt (hπ : IsUnitary π)
-    {σ : Subrepresentation π.toRepresentation} (hσ : σ ≠ ⊥) :
+    {σ : Subrepresentation π.toRepresentation} [FiniteDimensional 𝕜 σ.toSubmodule] (hσ : σ ≠ ⊥) :
     ∃ τ ω : Subrepresentation π.toRepresentation, IsAtom τ ∧ τ ⊔ ω = σ ∧
       ω.toSubmodule = τ.toSubmoduleᗮ ⊓ σ.toSubmodule ∧ ω.toSubmodule < σ.toSubmodule := by
   obtain ⟨τ, hτσ, hτ⟩ := Representation.exists_isAtom_le hσ
+  -- The atom sits inside `σ`, so it inherits finite-dimensionality, hence a projection.
+  have : FiniteDimensional 𝕜 τ.toSubmodule :=
+    Submodule.finiteDimensional_of_le (Subrepresentation.toSubmodule_le_toSubmodule.mpr hτσ)
   have hτbot : τ.toSubmodule ≠ ⊥ := fun hc ↦ hτ.1 (Subrepresentation.toSubmodule_injective
     (hc.trans Subrepresentation.toSubmodule_bot.symm))
   refine ⟨τ, hπ.orthogonalSubrepresentation τ ⊓ σ, hτ,
