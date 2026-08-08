@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.RingTheory.Huber.Bounded
+public import Mathlib.RingTheory.Ideal.Maps
 public import Mathlib.Topology.Algebra.TopologicallyNilpotent
 
 /-!
@@ -54,8 +55,9 @@ formalisation of this layer; its proofs were not used.
   assumes a basis of open ideals, which excludes the Tate rings this is aimed at.
 * `TauCeti.Huber.map_powerBoundedSubring`, `TauCeti.Huber.powerBoundedSubringEquiv`: `A°` is
   carried onto `B°` by a topological ring isomorphism, which therefore restricts to
-  `A° ≃+* B°`; that restriction preserves `A°°`
-  (`TauCeti.Huber.mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff`).
+  `A° ≃+* B°`; that restriction carries `A°°` onto `B°°`
+  (`TauCeti.Huber.mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff` pointwise,
+  `TauCeti.Huber.map_topologicallyNilpotentIdeal` as an equality of ideals).
 * `TauCeti.Huber.isPowerBounded_ringEquiv_iff`,
   `TauCeti.Huber.isTopologicallyNilpotent_ringEquiv_iff`: both constructions transport along a
   topological ring isomorphism.
@@ -306,18 +308,18 @@ section Transport
 variable {M N : Type*} [MonoidWithZero M] [MonoidWithZero N]
   [TopologicalSpace M] [TopologicalSpace N]
 
-/-- A continuous morphism which carries neighbourhoods of zero to neighbourhoods of zero preserves
-power-boundedness. As for `IsBounded.image`, continuity alone is not enough. -/
+/-- A morphism continuous at zero which carries neighbourhoods of zero to neighbourhoods of zero
+preserves power-boundedness. As for `IsBounded.image`, continuity at zero alone is not enough. -/
 theorem IsPowerBounded.map {F : Type*} [FunLike F M N] [MonoidWithZeroHomClass F M N] {f : F}
-    (hf : Continuous f) (hf₀ : ∀ V ∈ 𝓝 (0 : M), f '' V ∈ 𝓝 (0 : N)) {a : M}
+    (hf : ContinuousAt f 0) (hf₀ : ∀ V ∈ 𝓝 (0 : M), f '' V ∈ 𝓝 (0 : N)) {a : M}
     (ha : IsPowerBounded a) : IsPowerBounded (f a) := by
   refine (ha.image hf hf₀).subset ?_
   rintro _ ⟨n, rfl⟩
   exact ⟨a ^ n, ⟨n, rfl⟩, map_pow f a n⟩
 
-/-- A continuous open morphism preserves power-boundedness. -/
+/-- An open morphism continuous at zero preserves power-boundedness. -/
 theorem IsPowerBounded.map_of_isOpenMap {F : Type*} [FunLike F M N] [MonoidWithZeroHomClass F M N]
-    {f : F} (hf : Continuous f) (hf₀ : IsOpenMap f) {a : M} (ha : IsPowerBounded a) :
+    {f : F} (hf : ContinuousAt f 0) (hf₀ : IsOpenMap f) {a : M} (ha : IsPowerBounded a) :
     IsPowerBounded (f a) :=
   ha.map hf fun _ hV ↦ map_zero f ▸ hf₀.image_mem_nhds hV
 
@@ -328,8 +330,8 @@ theorem isPowerBounded_ringEquiv_iff (e : A ≃+* B) (he : Continuous e) (he' : 
     {a : A} : IsPowerBounded (e a) ↔ IsPowerBounded a :=
   ⟨fun h ↦ by
       have := e.symm.toEquiv.continuous_symm_iff.mp (by simpa using he)
-      simpa using h.map_of_isOpenMap he' this,
-    fun h ↦ h.map_of_isOpenMap he (e.toEquiv.continuous_symm_iff.mp he')⟩
+      simpa using h.map_of_isOpenMap he'.continuousAt this,
+    fun h ↦ h.map_of_isOpenMap he.continuousAt (e.toEquiv.continuous_symm_iff.mp he')⟩
 
 /-- Topological nilpotence transports along a topological ring isomorphism. -/
 theorem isTopologicallyNilpotent_ringEquiv_iff (e : A ≃+* B) (he : Continuous e)
@@ -363,8 +365,8 @@ theorem coe_powerBoundedSubringEquiv (e : A ≃+* B) (he : Continuous e) (he' : 
     ((powerBoundedSubringEquiv e he he' a : powerBoundedSubring B) : B) = e (a : A) := (rfl)
 
 /-- `A°°` is preserved by a topological ring isomorphism: the restricted isomorphism `A° ≃+* B°`
-carries `A°°` exactly onto `B°°`. Since the map is a bijection, this pointwise statement is
-equivalent to the corresponding `Ideal.map` equality. -/
+carries `A°°` exactly onto `B°°`. See `TauCeti.Huber.map_topologicallyNilpotentIdeal` for the
+bundled form. -/
 theorem mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff (e : A ≃+* B)
     (he : Continuous e) (he' : Continuous e.symm) (a : powerBoundedSubring A) :
     powerBoundedSubringEquiv e he he' a ∈ topologicallyNilpotentIdeal B
@@ -372,6 +374,21 @@ theorem mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff (e : A ≃+
   rw [mem_topologicallyNilpotentIdeal, mem_topologicallyNilpotentIdeal,
     coe_powerBoundedSubringEquiv]
   exact isTopologicallyNilpotent_ringEquiv_iff e he he'
+
+/-- The restricted isomorphism `A° ≃+* B°` carries the ideal `A°°` onto `B°°`. This is the
+bundled form of
+`TauCeti.Huber.mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff`. -/
+theorem map_topologicallyNilpotentIdeal (e : A ≃+* B) (he : Continuous e)
+    (he' : Continuous e.symm) :
+    (topologicallyNilpotentIdeal A).map
+        (powerBoundedSubringEquiv e he he' : powerBoundedSubring A →+* powerBoundedSubring B) =
+      topologicallyNilpotentIdeal B := by
+  refine le_antisymm (Ideal.map_le_iff_le_comap.mpr fun a ha ↦ ?_) fun b hb ↦ ?_
+  · exact (mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff e he he' a).mpr ha
+  · rw [← (powerBoundedSubringEquiv e he he').apply_symm_apply b]
+    exact Ideal.mem_map_of_mem _
+      ((mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff e he he' _).mp
+        (by rwa [RingEquiv.apply_symm_apply]))
 
 end TransportSubring
 

@@ -38,7 +38,7 @@ prior formalisation of this layer; its proofs were not used.
 * `TauCeti.Huber.IsBounded.add`, `TauCeti.Huber.IsBounded.addSubgroupClosure`: over a ring with a
   nonarchimedean additive group, sums and the generated additive subgroup of bounded sets stay
   bounded.
-* `TauCeti.Huber.IsBounded.image`: a continuous morphism which is open at zero preserves
+* `TauCeti.Huber.IsBounded.image`: a morphism continuous at zero which is open at zero preserves
   boundedness, and `TauCeti.Huber.isBounded_image_ringEquiv_iff` transports boundedness along a
   topological ring isomorphism.
 
@@ -184,23 +184,24 @@ section Image
 variable {M N : Type*} [MonoidWithZero M] [MonoidWithZero N]
   [TopologicalSpace M] [TopologicalSpace N]
 
-/-- A continuous morphism which carries neighbourhoods of zero to neighbourhoods of zero sends
-bounded sets to bounded sets.
+/-- A morphism continuous at zero which carries neighbourhoods of zero to neighbourhoods of zero
+sends bounded sets to bounded sets.
 
-Continuity alone is not enough: refining the topology on the source only creates bounded sets. -/
+Boundedness is a condition at zero only, so continuity away from zero is irrelevant; but
+continuity at zero alone is not enough, since refining the topology on the source only creates
+bounded sets. -/
 theorem IsBounded.image {F : Type*} [FunLike F M N] [MonoidWithZeroHomClass F M N] {f : F}
-    (hf : Continuous f) (hf₀ : ∀ V ∈ 𝓝 (0 : M), f '' V ∈ 𝓝 (0 : N)) {S : Set M}
+    (hf : ContinuousAt f 0) (hf₀ : ∀ V ∈ 𝓝 (0 : M), f '' V ∈ 𝓝 (0 : N)) {S : Set M}
     (hS : IsBounded S) : IsBounded (f '' S) := by
   intro U hU
-  obtain ⟨V, hV, hVS⟩ := hS (f ⁻¹' U)
-    (hf.continuousAt.preimage_mem_nhds (by rwa [map_zero]))
+  obtain ⟨V, hV, hVS⟩ := hS (f ⁻¹' U) (hf.preimage_mem_nhds (by rwa [map_zero]))
   exact ⟨f '' V, hf₀ V hV, by
     rw [← Set.image_mul]
     exact (Set.image_mono hVS).trans (Set.image_preimage_subset f U)⟩
 
-/-- A continuous open morphism sends bounded sets to bounded sets. -/
+/-- An open morphism continuous at zero sends bounded sets to bounded sets. -/
 theorem IsBounded.image_of_isOpenMap {F : Type*} [FunLike F M N] [MonoidWithZeroHomClass F M N]
-    {f : F} (hf : Continuous f) (hf₀ : IsOpenMap f) {S : Set M} (hS : IsBounded S) :
+    {f : F} (hf : ContinuousAt f 0) (hf₀ : IsOpenMap f) {S : Set M} (hS : IsBounded S) :
     IsBounded (f '' S) :=
   hS.image hf fun _ hV ↦ map_zero f ▸ hf₀.image_mem_nhds hV
 
@@ -213,7 +214,7 @@ variable {A B : Type*} [Ring A] [Ring B] [TopologicalSpace A] [TopologicalSpace 
 /-- A topological ring isomorphism sends bounded sets to bounded sets. -/
 theorem IsBounded.image_ringEquiv (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm)
     {S : Set A} (hS : IsBounded S) : IsBounded (e '' S) :=
-  hS.image_of_isOpenMap he (e.toEquiv.continuous_symm_iff.mp he')
+  hS.image_of_isOpenMap he.continuousAt (e.toEquiv.continuous_symm_iff.mp he')
 
 /-- Boundedness transports along a topological ring isomorphism. -/
 theorem isBounded_image_ringEquiv_iff (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm)
