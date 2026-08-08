@@ -6,7 +6,7 @@ module
 
 public import Mathlib.NumberTheory.Modular
 public import Mathlib.Analysis.Complex.Basic
-public import TauCeti.Analysis.Analytic.Order
+public import TauCeti.Analysis.Analytic.Zeros
 
 import Mathlib.Analysis.Complex.Convex
 import Mathlib.Analysis.Complex.ReImTopology
@@ -28,7 +28,7 @@ logarithmic derivative be traded for a finite winding-weighted sum over the zero
 * `TauCeti.ModularForm.fdBox`: the open box.
 * `TauCeti.ModularForm.coe_truncatedFundamentalDomain_subset_fdBox`: the truncated fundamental
   domain lies in the box.
-* `TauCeti.ModularForm.finite_setOfPred_mem_fdBox_and_eq_zero`: an analytic function on the upper
+* `TauCeti.ModularForm.finite_setOf_mem_fdBox_and_eq_zero`: an analytic function on the upper
   half-plane that is nonzero somewhere has finitely many zeros in the box.
 
 ## References
@@ -77,8 +77,8 @@ theorem coe_truncatedFundamentalDomain_subset_fdBox {H M : ℝ} (hHM : H < M) :
 
 /-- **Finiteness of the zeros in the box.** A function analytic on the upper half-plane and
 nonzero at some point of it has finitely many zeros in `fdBox M`: the closed box is a compact
-subset of the half-plane, so `TauCeti.finite_setOfPred_mem_and_eq_zero_of_isCompact` applies. -/
-theorem finite_setOfPred_mem_fdBox_and_eq_zero {E : Type*} [NormedAddCommGroup E]
+subset of the half-plane, so `TauCeti.finite_setOf_mem_and_eq_zero_of_isCompact` applies. -/
+theorem finite_setOf_mem_fdBox_and_eq_zero {E : Type*} [NormedAddCommGroup E]
     [NormedSpace ℂ E] {g : ℂ → E} {x : ℂ} (M : ℝ)
     (hg : AnalyticOnNhd ℂ g upperHalfPlaneSet) (hx : 0 < x.im) (hgx : g x ≠ 0) :
     {z ∈ fdBox M | g z = 0}.Finite := by
@@ -86,7 +86,7 @@ theorem finite_setOfPred_mem_fdBox_and_eq_zero {E : Type*} [NormedAddCommGroup E
   have hKU : Icc (-1 : ℝ) 1 ×ℂ Icc (1 / 2) M ⊆ upperHalfPlaneSet := fun z hz =>
     lt_of_lt_of_le (by norm_num) (mem_reProdIm.mp hz).2.1
   have hconn : IsPreconnected upperHalfPlaneSet := (convex_halfSpace_im_gt 0).isPreconnected
-  refine (finite_setOfPred_mem_and_eq_zero_of_isCompact hg hconn hx hgx hK hKU).subset
+  refine (finite_setOf_mem_and_eq_zero_of_isCompact hg hconn hx hgx hK hKU).subset
     fun z hz => ?_
   obtain ⟨hbox, hgz⟩ := hz
   obtain ⟨hre, him⟩ := mem_reProdIm.mp hbox

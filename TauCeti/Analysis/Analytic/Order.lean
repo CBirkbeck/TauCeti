@@ -7,22 +7,17 @@ module
 public import Mathlib.Analysis.Analytic.Order
 
 /-!
-# The analytic order of products and power-compositions, and finiteness of the zeros
+# The analytic order of products and power-compositions
 
-Two extensions of Mathlib's `analyticOrderAt` calculus — the order is additive over finite
-products, and composing with `q ↦ q ^ N` at `0` multiplies the order by `N` — together with
-the finiteness they are used alongside: an analytic function somewhere nonzero on a
-preconnected set has finitely many zeros in any compact subset. The finiteness does not
-mention the order, but it is the companion fact wherever a zero count is taken: the order is
-what each zero contributes, and this is what makes the count finite.
+Two extensions of Mathlib's `analyticOrderAt` calculus: the order is additive over finite
+products, and composing with `q ↦ q ^ N` at `0` multiplies the order by `N`. The finiteness of
+the zeros a zero count also needs is `TauCeti.Analysis.Analytic.Zeros`, which mentions no order.
 
 ## Main declarations
 
 * `TauCeti.analyticOrderAt_prod`: the order of `∏ i ∈ s, F i` is `∑ i ∈ s`, of the orders.
 * `TauCeti.analyticOrderAt_comp_pow_zero`: the order of `q ↦ f (q ^ N)` at `0` is `N` times
   the order of `f` at `0`.
-* `TauCeti.finite_setOfPred_mem_and_eq_zero_of_isCompact`: an analytic function somewhere
-  nonzero on a preconnected set has finitely many zeros in any compact subset.
 
 ## References
 
@@ -61,26 +56,6 @@ lemma analyticOrderAt_comp_pow_zero (hf : AnalyticAt 𝕜 f 0) {N : ℕ} (hN : 0
     AnalyticAt.analyticOrderAt_comp (hzero.symm ▸ hf) (analyticAt_id.pow N), hzero, h_sub_eq,
     analyticOrderAt_pow analyticAt_id, analyticOrderAt_id]
   simp
-
-
-/-- **An analytic function somewhere nonzero has finitely many zeros in a compact.** If `f` is
-analytic on a neighbourhood of a preconnected set `U` and nonzero at some point of `U`, then
-every compact subset of `U` contains only finitely many zeros of `f`: the zeros are isolated, so
-the complement of the zero set is codiscrete within `U`, and a compact meets the complement of a
-codiscrete set in a finite set.
-
-Generalized from the modular-form-specific finiteness of the AINTLIB `LeanModularForms`
-valence-formula development (`ForMathlib/ValenceFormula/PVChain/ResidueSideInfra.lean`) to
-arbitrary analytic functions on a preconnected set. -/
-theorem finite_setOfPred_mem_and_eq_zero_of_isCompact {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace 𝕜 E] {g : 𝕜 → E} {U K : Set 𝕜} {x : 𝕜}
-    (hg : AnalyticOnNhd 𝕜 g U) (hU : IsPreconnected U) (hx : x ∈ U) (hgx : g x ≠ 0)
-    (hK : IsCompact K) (hKU : K ⊆ U) : {z ∈ K | g z = 0}.Finite := by
-  have hcod : g ⁻¹' {0}ᶜ ∈ Filter.codiscreteWithin K :=
-    Filter.codiscreteWithin_mono hKU
-      (hg.preimage_zero_mem_codiscreteWithin hgx hx ⟨⟨x, hx⟩, hU⟩)
-  exact (hK.finite_sdiff_of_mem_codiscreteWithin hcod).subset fun z hz =>
-    ⟨hz.1, by simpa using hz.2⟩
 
 end TauCeti
 
