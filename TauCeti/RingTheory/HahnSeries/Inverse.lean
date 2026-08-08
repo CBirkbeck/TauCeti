@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.HahnSeries.Multiplication
 public import Mathlib.RingTheory.HahnSeries.Summable
 
 /-!
@@ -22,8 +21,11 @@ without any nonzero hypothesis, since `-⊤ = ⊤` in the value group.
 
 ## Main results
 
-* `HahnSeries.leadingCoeff_inv`: `s⁻¹.leadingCoeff = s.leadingCoeff⁻¹` for `s ≠ 0`.
+* `HahnSeries.leadingCoeff_inv`: `s⁻¹.leadingCoeff = s.leadingCoeff⁻¹`.
 * `HahnSeries.leadingCoeff_div`: `(s / t).leadingCoeff = s.leadingCoeff / t.leadingCoeff`.
+
+Both hold with no nonzero hypothesis, since inversion and division by zero return zero on both
+sides, and both are `@[simp]`.
 
 ## Provenance
 
@@ -40,17 +42,20 @@ namespace HahnSeries
 variable {Γ : Type*} [AddCommGroup Γ] [LinearOrder Γ] [IsOrderedAddMonoid Γ]
 variable {R : Type*} [Field R] {s t : HahnSeries Γ R}
 
-/-- The leading coefficient of the inverse of a nonzero Hahn series over a field is the inverse of
-its leading coefficient. -/
-theorem leadingCoeff_inv (hs : s ≠ 0) : s⁻¹.leadingCoeff = s.leadingCoeff⁻¹ := by
+/-- The leading coefficient of the inverse of a Hahn series over a field is the inverse of its
+leading coefficient. No nonzero hypothesis is needed: at `s = 0` both sides are `0`. -/
+@[simp]
+theorem leadingCoeff_inv : s⁻¹.leadingCoeff = s.leadingCoeff⁻¹ := by
+  rcases eq_or_ne s 0 with rfl | hs
+  · simp
   have hmul : (s * s⁻¹).leadingCoeff = s.leadingCoeff * s⁻¹.leadingCoeff := leadingCoeff_mul s s⁻¹
   rw [mul_inv_cancel₀ hs, leadingCoeff_one] at hmul
   exact eq_inv_of_mul_eq_one_left (by rw [mul_comm, ← hmul])
 
 /-- The leading coefficient of a quotient of Hahn series over a field is the quotient of the
-leading coefficients. -/
-theorem leadingCoeff_div (ht : t ≠ 0) :
-    (s / t).leadingCoeff = s.leadingCoeff / t.leadingCoeff := by
-  rw [div_eq_mul_inv, leadingCoeff_mul, leadingCoeff_inv ht, div_eq_mul_inv]
+leading coefficients, with no nonzero hypothesis: at `t = 0` both sides are `0`. -/
+@[simp]
+theorem leadingCoeff_div : (s / t).leadingCoeff = s.leadingCoeff / t.leadingCoeff := by
+  rw [div_eq_mul_inv, leadingCoeff_mul, leadingCoeff_inv, div_eq_mul_inv]
 
 end HahnSeries
