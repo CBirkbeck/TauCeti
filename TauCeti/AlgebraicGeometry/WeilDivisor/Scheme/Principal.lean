@@ -54,12 +54,13 @@ private lemma eq_genericPoint_of_isMax [IrreducibleSpace X] {y : X} (hy : IsMax 
   Inseparable.eq <| inseparable_iff_specializes_and.mpr
     ⟨hy (genericPoint_specializes y), genericPoint_specializes y⟩
 
-/-- A codimension-one point lying in a closed irreducible set that avoids a nonempty open `U` is
-that set's generic point. A strict specialisation from it would have coheight zero, hence be
-maximal, hence be the generic point of `X` — which lies in `U`, contradicting the avoidance. -/
+/-- A codimension-one point lying in a set that avoids a nonempty open `U` equals that set's
+generic point. -/
 private lemma eq_of_isGenericPoint_of_subset_compl [IrreducibleSpace X] {U : X.Opens} [Nonempty U]
     {T : Set X} (hTU : T ⊆ (U : Set X)ᶜ) {y : X} (hyGeneric : IsGenericPoint y T)
     {x : CodimensionOnePoint X} (hxT : (x : X) ∈ T) : (x : X) = y := by
+  -- A strict specialisation from `x` would have coheight zero, hence be maximal, hence be the
+  -- generic point of `X` — which lies in `U`, contradicting `T ⊆ Uᶜ`.
   by_contra hne
   have hxylt : (x : X) < y := by
     refine ⟨hyGeneric.specializes hxT, ?_⟩
