@@ -43,8 +43,8 @@ attribute [local instance] LieGroup.minSmoothnessThree
 
 /-- **In identity coordinates the exponential along a ray is the integral curve of its
 direction.** -/
-private theorem extChartAt_mulInvariantExp_smul_eq [CompleteSpace E] [LieGroup I ∞ G]
-    [T2Space G] [BoundarylessManifold I G] (v : E) :
+private theorem extChartAt_mulInvariantExp_smul_eq [CompleteSpace E]
+    [LieGroup I (minSmoothness ℝ 3) G] [T2Space G] [BoundarylessManifold I G] (v : E) :
     (fun t : ℝ => extChartAt I (1 : G)
         (mulInvariantExp (I := I) (G := G) (((t • v : E) : GroupLieAlgebra I G)))) =
       (extChartAt I (1 : G)) ∘
