@@ -192,6 +192,44 @@ variables `C⁻¹`, sending `(x, y)` to `(u⁻²(x - r), u⁻³(y - sx + sr - t)
             ((inv_smul_smul C W).symm ▸ h)) := by
   simp only [coe_equivVariableChange_symm, cast_some, mapVariableChange_some]
 
+/-! ### Compatibility with base change -/
+
+section BaseChange
+
+variable {R S K : Type*} [CommRing R] [CommRing S] [Field K] [DecidableEq K]
+  (W' : WeierstrassCurve R)
+  [Algebra R S] [Algebra R F] [Algebra S F] [IsScalarTower R S F] [Algebra R K] [Algebra S K]
+  [IsScalarTower R S K] (D : VariableChange R)
+
+/-- The base-change form of `map_variableChange`: base changing `D • W'` to `A` is changing the
+base-changed curve `W'⁄A` by the base-changed variable change `D⁄A`. -/
+lemma baseChange_variableChange (A : Type*) [CommRing A] [Algebra R A] :
+    (D.baseChange A) • (W'.baseChange A) = (D • W').baseChange A :=
+  map_variableChange (W := W') (C := D) (φ := algebraMap R A)
+
+/-- **Naturality in the base field.** Changing variables by `D` and then extending scalars along
+`f` agrees with extending scalars and then changing variables by `D`. Both sides are transported
+along `baseChange_variableChange`, which identifies the base change of `D • W'` with the change
+of variables by `D⁄F` applied to the base change of `W'`. -/
+lemma map_mapVariableChange (f : F →ₐ[S] K) (P : ((D • W')⁄F).Point) :
+    Point.map f (mapVariableChange (W'⁄F) (D.baseChange F)
+        (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+          (baseChange_variableChange W' D F).symm P))
+      = mapVariableChange (W'⁄K) (D.baseChange K)
+          (AddEquiv.cast (M := fun V : WeierstrassCurve K ↦ V.toAffine.Point)
+            (baseChange_variableChange W' D K).symm (Point.map f P)) := by
+  rcases P with _ | ⟨x, y, h⟩
+  · simp only [← zero_def, _root_.map_zero]
+  · rw [cast_some, mapVariableChange_some, Point.map_some, Point.map_some, cast_some,
+      mapVariableChange_some]
+    simp only [some.injEq]
+    exact ⟨by simpa only [VariableChange.map_baseChange, RingHom.coe_coe] using
+        (variableChange_X_map (C := D.baseChange F) (f : F →+* K) x).symm,
+      by simpa only [VariableChange.map_baseChange, RingHom.coe_coe] using
+        (variableChange_Y_map (C := D.baseChange F) (f : F →+* K) x y).symm⟩
+
+end BaseChange
+
 end Point
 
 end WeierstrassCurve.Affine
