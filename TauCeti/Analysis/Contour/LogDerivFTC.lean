@@ -77,6 +77,10 @@ argument principle above all — into a statement about how often an image curve
 
 Adapted from `segment_log_FTC` in `WindingInteger.lean` of the AINTLIB `LeanModularForms`
 development, split from the argument-lift PR (#759) as an independent contour prerequisite.
+The boundary-tolerant comparison forms port the corner FTC pieces of AINTLIB's
+valence-formula winding-weight development
+(`ForMathlib/ValenceFormula/WindingWeights/I.lean`, `Rho.lean`, `RhoPlusOne.lean`)
+onto the current Mathlib pin.
 -/
 
 public section
@@ -251,11 +255,8 @@ private lemma eqOn_uIoo_deriv_div (hab : a ≤ b) (heq : Set.EqOn g h (Set.Ioo a
   rw [Set.uIoo_of_le hab] at ht
   simp only [heq ht, heq.deriv isOpen_Ioo ht]
 
-/-- **The boundary-tolerant logarithmic FTC, upper form**: for a comparison function `h`
-confined to the closed upper half-plane, nonvanishing, and slit-plane-valued on the
-interior, the logarithmic integral of `g` is integrable and evaluates to the difference
-of logarithms — even when the endpoint values sit on the slit-plane boundary. -/
-theorem intervalIntegrable_and_integral_deriv_div_eq_log_of_im_nonneg (hab : a ≤ b)
+/-- The ordered core of the upper form. -/
+private lemma im_nonneg_core (hab : a ≤ b)
     (hh_cont : ContinuousOn h (Set.Icc a b))
     (hh_diff : ∀ t ∈ Set.Ioo a b, DifferentiableAt ℝ h t)
     (hh_deriv_cont : ContinuousOn (deriv h) (Set.Icc a b))
@@ -289,11 +290,8 @@ theorem intervalIntegrable_and_integral_deriv_div_eq_log_of_im_nonneg (hab : a �
     _ = Complex.log (h b) - Complex.log (h a) := h_ftc
     _ = Complex.log (g b) - Complex.log (g a) := by rw [heq_a, heq_b]
 
-/-- **The boundary-tolerant logarithmic FTC, lower form**: for a comparison function
-confined to the closed lower half-plane whose negation is slit-plane-valued on the
-interior, the logarithmic integral evaluates against the negated arguments. This is the
-upper form applied to the negated pair. -/
-theorem intervalIntegrable_and_integral_deriv_div_eq_log_neg_of_im_nonpos (hab : a ≤ b)
+/-- The ordered core of the lower form. -/
+private lemma im_nonpos_core (hab : a ≤ b)
     (hh_cont : ContinuousOn h (Set.Icc a b))
     (hh_diff : ∀ t ∈ Set.Ioo a b, DifferentiableAt ℝ h t)
     (hh_deriv_cont : ContinuousOn (deriv h) (Set.Icc a b))
@@ -306,7 +304,7 @@ theorem intervalIntegrable_and_integral_deriv_div_eq_log_neg_of_im_nonpos (hab :
       Complex.log (-(g b)) - Complex.log (-(g a)) := by
   have hderiv_neg : (fun t ↦ deriv (-g) t / (-g) t) = fun t ↦ deriv g t / g t :=
     funext fun t ↦ by rw [deriv.neg, Pi.neg_apply, neg_div_neg_eq]
-  have hkey := intervalIntegrable_and_integral_deriv_div_eq_log_of_im_nonneg
+  have hkey := im_nonneg_core
     (g := -g) (h := -h) hab hh_cont.neg
     (fun t ht ↦ (hh_diff t ht).neg)
     (by rw [deriv.neg']; exact hh_deriv_cont.neg)
@@ -316,6 +314,120 @@ theorem intervalIntegrable_and_integral_deriv_div_eq_log_neg_of_im_nonpos (hab :
     (fun t ht ↦ by simp only [Pi.neg_apply, heq ht]) (by simp only [Pi.neg_apply, heq_a])
     (by simp only [Pi.neg_apply, heq_b])
   rwa [hderiv_neg] at hkey
+
+
+/-- The ordered core of the slit-plane form. -/
+private lemma slitPlane_core (hab : a ≤ b)
+    (hh_cont : ContinuousOn h (Set.Icc a b))
+    (hh_diff : ∀ t ∈ Set.Ioo a b, DifferentiableAt ℝ h t)
+    (hh_deriv_cont : ContinuousOn (deriv h) (Set.Icc a b))
+    (hh_slit : ∀ t ∈ Set.Icc a b, h t ∈ Complex.slitPlane)
+    (heq : Set.EqOn g h (Set.Ioo a b)) (heq_a : g a = h a) (heq_b : g b = h b) :
+    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
+    ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) := by
+  have hh_ne : ∀ t ∈ Set.Icc a b, h t ≠ 0 := fun t ht ↦
+    Complex.slitPlane_ne_zero (hh_slit t ht)
+  have hIcc : Set.uIcc a b = Set.Icc a b := Set.uIcc_of_le hab
+  have hint_h : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b :=
+    ((hh_deriv_cont.div hh_cont hh_ne).mono (hIcc ▸ Set.Subset.rfl)).intervalIntegrable
+  have hint_g : IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b :=
+    hint_h.congr_uIoo fun t ht ↦ (eqOn_uIoo_deriv_div hab heq ht).symm
+  have h_ftc : ∫ t in a..b, deriv h t / h t = Complex.log (h b) - Complex.log (h a) :=
+    integral_deriv_div_eq_log_sub_log Set.countable_empty (hIcc ▸ hh_cont)
+      (fun t ht ↦ (hh_diff t (by
+        rw [min_eq_left hab, max_eq_right hab] at ht
+        exact ht.1)).hasDerivAt)
+      (fun t ht ↦ hh_slit t (hIcc ▸ ht)) hint_h
+  refine ⟨hint_g, ?_⟩
+  calc ∫ t in a..b, deriv g t / g t
+      = ∫ t in a..b, deriv h t / h t :=
+        intervalIntegral.integral_congr_uIoo (eqOn_uIoo_deriv_div hab heq)
+    _ = Complex.log (h b) - Complex.log (h a) := h_ftc
+    _ = Complex.log (g b) - Complex.log (g a) := by rw [heq_a, heq_b]
+
+
+
+/-- **The boundary-tolerant logarithmic FTC, upper form**: for a comparison function `h`
+confined to the closed upper half-plane, nonvanishing at the endpoints, and
+slit-plane-valued strictly between them, the logarithmic integral of `g` is integrable
+and evaluates to the difference of endpoint logarithms — even when the endpoint values
+sit on the slit-plane boundary. -/
+theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_im_nonneg
+    (hh_cont : ContinuousOn h (Set.uIcc a b))
+    (hh_diff : ∀ t ∈ Set.Ioo (min a b) (max a b), DifferentiableAt ℝ h t)
+    (hh_deriv_cont : ContinuousOn (deriv h) (Set.uIcc a b))
+    (hh_im_nn : ∀ t ∈ Set.uIcc a b, 0 ≤ (h t).im)
+    (ha_ne : h a ≠ 0) (hb_ne : h b ≠ 0)
+    (hh_slit : ∀ t ∈ Set.Ioo (min a b) (max a b), h t ∈ Complex.slitPlane)
+    (heq : Set.EqOn g h (Set.Ioo (min a b) (max a b)))
+    (heq_a : g a = h a) (heq_b : g b = h b) :
+    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
+    ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) := by
+  rcases le_total a b with hab | hba
+  · rw [Set.uIcc_of_le hab] at hh_cont hh_deriv_cont hh_im_nn
+    rw [min_eq_left hab, max_eq_right hab] at hh_diff hh_slit heq
+    exact im_nonneg_core hab hh_cont hh_diff hh_deriv_cont hh_im_nn ha_ne hb_ne hh_slit
+      heq heq_a heq_b
+  · rw [Set.uIcc_comm, Set.uIcc_of_le hba] at hh_cont hh_deriv_cont hh_im_nn
+    rw [min_comm, min_eq_left hba, max_comm, max_eq_right hba] at hh_diff hh_slit heq
+    obtain ⟨hi, he⟩ := im_nonneg_core hba hh_cont hh_diff hh_deriv_cont hh_im_nn
+      hb_ne ha_ne hh_slit heq heq_b heq_a
+    refine ⟨hi.symm, ?_⟩
+    rw [intervalIntegral.integral_symm, he]
+    ring
+
+/-- **The boundary-tolerant logarithmic FTC, lower form**: for a comparison function
+confined to the closed lower half-plane, nonvanishing at the endpoints, whose negation
+is slit-plane-valued strictly between them, the logarithmic integral of `g` is
+integrable and evaluates to the difference of endpoint logarithms of the negations. -/
+theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_of_im_nonpos
+    (hh_cont : ContinuousOn h (Set.uIcc a b))
+    (hh_diff : ∀ t ∈ Set.Ioo (min a b) (max a b), DifferentiableAt ℝ h t)
+    (hh_deriv_cont : ContinuousOn (deriv h) (Set.uIcc a b))
+    (hh_im_np : ∀ t ∈ Set.uIcc a b, (h t).im ≤ 0)
+    (ha_ne : h a ≠ 0) (hb_ne : h b ≠ 0)
+    (hh_slit_neg : ∀ t ∈ Set.Ioo (min a b) (max a b), -(h t) ∈ Complex.slitPlane)
+    (heq : Set.EqOn g h (Set.Ioo (min a b) (max a b)))
+    (heq_a : g a = h a) (heq_b : g b = h b) :
+    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
+    ∫ t in a..b, deriv g t / g t =
+      Complex.log (-(g b)) - Complex.log (-(g a)) := by
+  rcases le_total a b with hab | hba
+  · rw [Set.uIcc_of_le hab] at hh_cont hh_deriv_cont hh_im_np
+    rw [min_eq_left hab, max_eq_right hab] at hh_diff hh_slit_neg heq
+    exact im_nonpos_core hab hh_cont hh_diff hh_deriv_cont hh_im_np ha_ne hb_ne
+      hh_slit_neg heq heq_a heq_b
+  · rw [Set.uIcc_comm, Set.uIcc_of_le hba] at hh_cont hh_deriv_cont hh_im_np
+    rw [min_comm, min_eq_left hba, max_comm, max_eq_right hba] at hh_diff hh_slit_neg heq
+    obtain ⟨hi, he⟩ := im_nonpos_core hba hh_cont hh_diff hh_deriv_cont hh_im_np
+      hb_ne ha_ne hh_slit_neg heq heq_b heq_a
+    refine ⟨hi.symm, ?_⟩
+    rw [intervalIntegral.integral_symm, he]
+    ring
+
+/-- **The comparison logarithmic FTC on the slit plane**: the slit-plane FTC
+`TauCeti.Contour.integral_deriv_div_eq_log_sub_log`, applied to a smooth comparison `h`
+and transported to `g` across the interior agreement. -/
+theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_slitPlane
+    (hh_cont : ContinuousOn h (Set.uIcc a b))
+    (hh_diff : ∀ t ∈ Set.Ioo (min a b) (max a b), DifferentiableAt ℝ h t)
+    (hh_deriv_cont : ContinuousOn (deriv h) (Set.uIcc a b))
+    (hh_slit : ∀ t ∈ Set.uIcc a b, h t ∈ Complex.slitPlane)
+    (heq : Set.EqOn g h (Set.Ioo (min a b) (max a b)))
+    (heq_a : g a = h a) (heq_b : g b = h b) :
+    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
+    ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) := by
+  rcases le_total a b with hab | hba
+  · rw [Set.uIcc_of_le hab] at hh_cont hh_deriv_cont hh_slit
+    rw [min_eq_left hab, max_eq_right hab] at hh_diff heq
+    exact slitPlane_core hab hh_cont hh_diff hh_deriv_cont hh_slit heq heq_a heq_b
+  · rw [Set.uIcc_comm, Set.uIcc_of_le hba] at hh_cont hh_deriv_cont hh_slit
+    rw [min_comm, min_eq_left hba, max_comm, max_eq_right hba] at hh_diff heq
+    obtain ⟨hi, he⟩ := slitPlane_core hba hh_cont hh_diff hh_deriv_cont hh_slit
+      heq heq_b heq_a
+    refine ⟨hi.symm, ?_⟩
+    rw [intervalIntegral.integral_symm, he]
+    ring
 
 end BoundaryTolerant
 
