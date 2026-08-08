@@ -85,11 +85,11 @@ structure PairOfDefinition (A : Type*) [CommRing A] [TopologicalSpace A] where
   /-- The ring of definition is open in `A`. -/
   isOpen_ringOfDefinition : IsOpen (ringOfDefinition : Set A)
   /-- The ideal of definition `I ⊆ A₀`. -/
-  ideal : Ideal ringOfDefinition
+  idealOfDefinition : Ideal ringOfDefinition
   /-- The ideal of definition is finitely generated. -/
-  fg_ideal : ideal.FG
+  fg_idealOfDefinition : idealOfDefinition.FG
   /-- The subspace topology on `A₀` is the `I`-adic topology. -/
-  isAdic_ideal : IsAdic ideal
+  isAdic_idealOfDefinition : IsAdic idealOfDefinition
 
 /-- A topological ring is a *Huber ring* — Wedhorn's *f-adic* ring — if it admits a pair of
 definition. -/
@@ -133,23 +133,25 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A]
 /-- The image in `A` of the `n`-th power of the ideal of definition. These sets are the
 neighbourhood basis of zero of a Huber ring. -/
 def idealImage (P : PairOfDefinition A) (n : ℕ) : AddSubgroup A :=
-  (P.ideal ^ n).toAddSubgroup.map P.ringOfDefinition.subtype.toAddMonoidHom
+  (P.idealOfDefinition ^ n).toAddSubgroup.map P.ringOfDefinition.subtype.toAddMonoidHom
 
 /-- As a set, `Iⁿ`'s image in `A` is the image of `Iⁿ ⊆ A₀` under the inclusion `A₀ → A`. -/
 @[simp]
 theorem coe_idealImage (P : PairOfDefinition A) (n : ℕ) : (P.idealImage n : Set A) =
-    Subtype.val '' ((P.ideal ^ n : Ideal P.ringOfDefinition) : Set P.ringOfDefinition) := (rfl)
+    Subtype.val ''
+      ((P.idealOfDefinition ^ n : Ideal P.ringOfDefinition) : Set P.ringOfDefinition) := (rfl)
 
 /-- Membership in the image of `Iⁿ`. -/
 @[simp]
 theorem mem_idealImage (P : PairOfDefinition A) (n : ℕ) {x : A} :
-    x ∈ P.idealImage n ↔ ∃ y ∈ (P.ideal ^ n : Ideal P.ringOfDefinition), (y : A) = x := (Iff.rfl)
+    x ∈ P.idealImage n ↔
+      ∃ y ∈ (P.idealOfDefinition ^ n : Ideal P.ringOfDefinition), (y : A) = x := (Iff.rfl)
 
 /-- Each `Iⁿ` is open in `A`. -/
 theorem isOpen_idealImage [IsTopologicalRing A] (P : PairOfDefinition A) (n : ℕ) :
     IsOpen (P.idealImage n : Set A) :=
   P.isOpen_ringOfDefinition.isOpenEmbedding_subtypeVal.isOpenMap _
-    ((isAdic_iff.mp P.isAdic_ideal).1 n)
+    ((isAdic_iff.mp P.isAdic_idealOfDefinition).1 n)
 
 /-- The image of `Iⁿ` as an open additive subgroup of `A`. -/
 def openAddSubgroup [IsTopologicalRing A] (P : PairOfDefinition A) (n : ℕ) :
@@ -164,7 +166,7 @@ theorem hasBasis_nhds_zero (P : PairOfDefinition A) :
   have hmap : Filter.map ((↑) : P.ringOfDefinition → A) (𝓝 0) = 𝓝 (0 : A) :=
     P.isOpen_ringOfDefinition.isOpenEmbedding_subtypeVal.map_nhds_eq 0
   rw [← hmap]
-  exact P.isAdic_ideal.hasBasis_nhds_zero.map _
+  exact P.isAdic_idealOfDefinition.hasBasis_nhds_zero.map _
 
 /-- A ring admitting a pair of definition is nonarchimedean. -/
 theorem toNonarchimedeanRing [IsTopologicalRing A] (P : PairOfDefinition A) :
@@ -203,9 +205,9 @@ variable (A : Type*) [CommRing A] [TopologicalSpace A] [DiscreteTopology A]
 def PairOfDefinition.discrete : PairOfDefinition A where
   ringOfDefinition := ⊤
   isOpen_ringOfDefinition := by simp
-  ideal := ⊥
-  fg_ideal := Submodule.fg_bot
-  isAdic_ideal := is_bot_adic_iff.mpr inferInstance
+  idealOfDefinition := ⊥
+  fg_idealOfDefinition := Submodule.fg_bot
+  isAdic_idealOfDefinition := is_bot_adic_iff.mpr inferInstance
 
 /-- A discrete ring is Huber, with `(A, 0)` as a pair of definition. This is the first of the
 roadmap's Layer-0 examples, and the witness that `IsHuberRing` is not vacuous. -/
