@@ -6,7 +6,7 @@ module
 
 public import TauCeti.Analysis.InnerProductSpace.Laplacian.DriftMaximumPrinciple
 -- Support only: the shared maximizer step is proof machinery, not part of this file's API.
-import TauCeti.Analysis.InnerProductSpace.Laplacian.BarrierMaximiser
+import TauCeti.Analysis.InnerProductSpace.Laplacian.BarrierMaximizer
 
 /-!
 # Maximum principles with drift and a nonnegative zeroth-order term
@@ -71,7 +71,8 @@ theorem le_of_mul_le_laplacian_add_fderiv_le_frontier {K : Set E} (hK : IsCompac
   obtain ⟨z, hzK, hzmax⟩ := hK.exists_isMaxOn ⟨x, hxK⟩
     (hcont.add (hwcd.continuous.continuousOn.const_smul ε))
   have hfz : f z ≤ m :=
-    le_of_isMaxOn_add_smul hm hε (fun h => hcd h) (fun h => hc h) (fun h => hsub h) hbdry hzK
+    le_of_isMaxOn_add_smul hε (fun h => hcd h)
+      (fun h hlt => (mul_nonneg (hc h) (hm.trans hlt.le)).trans (hsub h)) hbdry hzK
       (fun _ => hwcd.contDiffAt)
       (fun hz => laplacian_add_fderiv_exp_inner_pos_of_norm_le hu (hb hz) z) hzmax
   have hxle : f x + ε * w x ≤ f z + ε * w z := by

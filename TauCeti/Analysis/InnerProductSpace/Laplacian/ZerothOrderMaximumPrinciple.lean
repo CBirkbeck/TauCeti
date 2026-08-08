@@ -7,7 +7,7 @@ module
 public import Mathlib.Analysis.InnerProductSpace.Calculus
 public import TauCeti.Analysis.InnerProductSpace.Laplacian.WeakMaximumPrinciple
 -- Support only: the shared maximizer step is proof machinery, not part of this file's API.
-import TauCeti.Analysis.InnerProductSpace.Laplacian.BarrierMaximiser
+import TauCeti.Analysis.InnerProductSpace.Laplacian.BarrierMaximizer
 
 /-!
 # The weak maximum principle for `-Δ + c` with a nonnegative zeroth-order term
@@ -83,10 +83,9 @@ theorem le_of_mul_le_laplacian_le_frontier {K : Set E} (hK : IsCompact K) {c f :
   obtain ⟨z, hzK, hzmax⟩ := hK.exists_isMaxOn ⟨x, hxK⟩ hgcont
   -- The maximizer step is the shared one, run with no drift and the quadratic barrier `‖·‖²`,
   -- whose Laplacian `2 · finrank` is the strict positivity it asks for.
-  refine ⟨z, hzK, hzmax, le_of_isMaxOn_add_smul (c := c) (b := 0) hm hε (fun h => hcd h)
-    (fun h => hc h) (fun hz => ?_) hbdry hzK (fun _ => (contDiff_norm_sq ℝ).contDiffAt)
-    (fun _ => ?_) hzmax⟩
-  · simpa using hsub hz
+  refine ⟨z, hzK, hzmax, le_of_isMaxOn_add_smul (b := 0) hε (fun h => hcd h)
+    (fun hz hlt => ?_) hbdry hzK (fun _ => (contDiff_norm_sq ℝ).contDiffAt) (fun _ => ?_) hzmax⟩
+  · simpa using (mul_nonneg (hc hz) (hm.trans hlt.le)).trans (hsub hz)
   · simpa [laplacian_norm_sq] using mul_pos two_pos hfrpos
 
 /-- **Comparison principle for `-Δ + c` with `c ≥ 0`.**
