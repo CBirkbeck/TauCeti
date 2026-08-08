@@ -257,6 +257,21 @@ theorem IsWeightFamily.weightMul_mem_nhds {T : Fin k → Set A} (hT : IsWeightFa
       rw [weightMul_add_eq, weightPow_single]
       exact hT i m _ ih
 
+/-- Multiplication by a fixed element is continuous, so any subgroup that is a neighbourhood of
+zero absorbs it: there is an open subgroup `Z` with `a * Z ⊆ V`.
+
+Applied with `V = Tα · U`, which
+`TauCeti.Huber.IsWeightFamily.weightMul_mem_nhds` makes a neighbourhood of zero, this is what
+produces the subgroup that `TauCeti.Huber.weightMul_absorb` consumes for a coefficient that fails
+a given bound. -/
+theorem exists_openAddSubgroup_mul_subset [NonarchimedeanRing A] (a : A)
+    (V : AddSubgroup A) (hV : (V : Set A) ∈ nhds (0 : A)) :
+    ∃ Z : OpenAddSubgroup A, ∀ z ∈ Z, a * z ∈ V := by
+  have hmul : (fun x ↦ a * x) ⁻¹' (V : Set A) ∈ nhds (0 : A) :=
+    (continuous_const.mul continuous_id).continuousAt.preimage_mem_nhds (by simpa using hV)
+  obtain ⟨Z, hZ⟩ := NonarchimedeanAddGroup.is_nonarchimedean _ hmul
+  exact ⟨Z, fun z hz ↦ hZ hz⟩
+
 omit [TopologicalSpace A] in
 /-- **The absorption step.** If multiplication by `a` carries the subgroup `Z` into `T^α · U`,
 then it carries all of `T^β · Z` into `T^(α+β) · U`.
