@@ -60,8 +60,9 @@ private theorem eq_of_dist_intCast_lt_one {m n : ℤ} (h : dist (m : ℂ) (n : �
 /-- **Near a point off a closed curve the winding number is an integer.** If `ρ` bounds the
 distance from `w₀` to the curve below, then every `w` within `ρ / 2` of `w₀` is itself off the
 curve, so the winding number of the closed curve about it is an integer. -/
-private theorem exists_int_windingNumber_of_dist_lt {γ : ℝ → ℂ} {a b : ℝ} {P : Set ℝ} {w₀ w : ℂ}
-    {ρ : ℝ} (hclosed : γ a = γ b) (hP : P.Countable) (hγ_cont : ContinuousOn γ (uIcc a b))
+private theorem exists_int_windingNumber_of_closed_of_dist_lt {γ : ℝ → ℂ} {a b : ℝ} {P : Set ℝ}
+    {w₀ w : ℂ} {ρ : ℝ} (hclosed : γ a = γ b) (hP : P.Countable)
+    (hγ_cont : ContinuousOn γ (uIcc a b))
     (hγ_diff : ∀ t ∈ Ioo (min a b) (max a b) \ P, DifferentiableAt ℝ γ t)
     (hderiv_int : IntervalIntegrable (fun t ↦ deriv γ t) volume a b)
     (h_dist : ∀ t ∈ uIcc a b, ρ ≤ ‖γ t - w₀‖) (hw : dist w w₀ < ρ / 2) :
@@ -92,8 +93,8 @@ theorem isLocallyConstant_windingNumber_of_closed {γ : ℝ → ℂ} {a b : ℝ}
   -- A uniform lower bound `ρ ≤ ‖γ t - w₀‖`, so the winding number is an integer on `ball w₀ (ρ/2)`.
   obtain ⟨ρ, hρ_pos, h_dist⟩ := exists_curve_dist_lower_bound hγ_cont hw₀
   have key : ∀ w'' : ℂ, dist w'' w₀ < ρ / 2 → ∃ n : ℤ, windingNumber γ a b w'' = n :=
-    fun _ hw'' ↦
-      exists_int_windingNumber_of_dist_lt hclosed hP hγ_cont hγ_diff hderiv_int h_dist hw''
+    fun _ hw'' ↦ exists_int_windingNumber_of_closed_of_dist_lt hclosed hP hγ_cont hγ_diff
+      hderiv_int h_dist hw''
   obtain ⟨n₀, hn₀⟩ := key w₀ (by rw [dist_self]; exact half_pos hρ_pos)
   -- Continuity of the winding number at `w₀` gives a tolerance-`1 / 2` ball.
   have h_cont := continuousAt_windingNumber_of_avoidance hγ_cont hw₀
