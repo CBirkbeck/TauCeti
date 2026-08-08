@@ -166,10 +166,9 @@ theorem eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_e
   have h6 : (E.map φ).c₆ ≠ 0 := by rw [map_c₆]; exact fun h ↦ hc6 (hinj (by simpa using h))
   rcases (E.map φ).eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq_field
     h4 h6 hC' with h | h
-  · refine .inl (VariableChange.map_injective hinj ?_)
-    change C.map φ = (1 : VariableChange A).map φ
-    rw [h]
-    ext <;> simp [VariableChange.map, VariableChange.one_def]
+  · -- `VariableChange.mapHom` is a monoid hom, so it carries `1` to `1`.
+    have hone : (1 : VariableChange A).map φ = 1 := map_one (VariableChange.mapHom φ)
+    exact .inl (VariableChange.map_injective hinj (by simpa only [hone] using h))
   · refine .inr (VariableChange.map_injective hinj ?_)
     rwa [negVariableChange_map] at h
 
