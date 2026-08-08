@@ -16,9 +16,14 @@ evaluated at the point. The theorem here is that if `κ² ∣ 4·Ψ₃(x)`, then
 `κ² ∣ 4Δ`.
 
 For a short model `y² = x³ + Ax + B` we have `a₁ = a₃ = 0`, so `κ = 2y` and the conclusion reads
-`y = 0` or `4y² ∣ 4Δ`, i.e. the classical `y = 0 ∨ y² ∣ Δ`. The `4`s are not removable in general:
-over a ring where `2` is a zero divisor the halving is unavailable, and for a long model `κ` is the
-honest invariant rather than `2y`.
+exactly `2y = 0 ∨ (2y)² ∣ 4Δ`.
+
+⚠ That is **not** the classical `y = 0 ∨ y² ∣ Δ` over an arbitrary commutative ring, and neither
+cancellation is available in general. In `ZMod 4` the element `y = 2` has `2y = 0` but `y ≠ 0`, so
+the first disjunct does not simplify; and `4y² ∣ 4Δ` gives `y² ∣ Δ` only when `4` is a
+non-zero-divisor. Both do follow over a domain in which `2 ≠ 0` — in particular over `ℤ`, which is
+where Nagell–Lutz is stated — but that specialisation is not proved in this file, and `κ` rather
+than `2y` is the honest invariant for a long model anyway.
 
 The proof is short. On the curve `κ² = Ψ₂Sq(x)`, which is Mathlib's polynomial identity `ψ₂_sq`
 evaluated where the Weierstrass polynomial vanishes. And there is an explicit Bézout combination of
@@ -105,8 +110,9 @@ private theorem dvd_sq_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ {d : R} (hd : d ∣ 
 /-- **The discriminant half of Nagell–Lutz.**
 
 For a point `(x, y)` of `W` whose `ψ₂`-value squared divides `4·Ψ₃(x)`, either that value is zero
-or its square divides `4Δ`. For a short model `ψ₂(x, y) = 2y`, so this is `y = 0 ∨ y² ∣ Δ` up to the
-factor of `4`. -/
+or its square divides `4Δ`. For a short model `ψ₂(x, y) = 2y`, so the conclusion reads
+`2y = 0 ∨ (2y)² ∣ 4Δ`; recovering the classical `y = 0 ∨ y² ∣ Δ` from that needs `2` to be a
+non-zero-divisor, which an arbitrary commutative ring does not supply. -/
 theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ (h : W.toAffine.Equation x y)
     (hΨ₃ : W.ψ₂.evalEval x y ^ 2 ∣ 4 * (W.Ψ₃).eval x) :
     W.ψ₂.evalEval x y = 0 ∨ W.ψ₂.evalEval x y ^ 2 ∣ 4 * W.Δ := by
