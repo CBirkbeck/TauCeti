@@ -6,7 +6,6 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
-import Mathlib.Algebra.Order.Monoid.Unbundled.Pow
 
 /-!
 # Cofinal elements and the Archimedean characterization of convex subgroups
@@ -50,9 +49,11 @@ namespace TauCeti
 
 open ConvexSubgroup
 
-variable {Γ : Type*} [CommGroup Γ] [LinearOrder Γ] [IsOrderedMonoid Γ]
-
 /-! ### Cofinal elements -/
+
+section Definition
+
+variable {Γ : Type*} [Group Γ] [LT Γ]
 
 /-- An element `γ` is **cofinal** for the subgroup `H` if every member of `H`
 eventually dominates the powers of `γ`: `∀ h ∈ H, ∃ n, γ ^ n < h`. This is the
@@ -65,12 +66,15 @@ a property of sets with respect to `≤`. -/
 def IsCofinalElement (H : Subgroup Γ) (γ : Γ) : Prop :=
   ∀ h ∈ H, ∃ n : ℕ, γ ^ n < h
 
-omit [IsOrderedMonoid Γ] in
 /-- The defining property of a cofinal element. -/
 @[simp]
 theorem isCofinalElement_def {H : Subgroup Γ} {γ : Γ} :
     IsCofinalElement H γ ↔ ∀ h ∈ H, ∃ n : ℕ, γ ^ n < h :=
   Iff.rfl
+
+end Definition
+
+variable {Γ : Type*} [CommGroup Γ] [LinearOrder Γ] [IsOrderedMonoid Γ]
 
 /-- No element `≥ 1` is cofinal for any subgroup (Wedhorn's remark after
 Definition 1.16): a cofinal element lies strictly below `1`. -/
