@@ -8,6 +8,7 @@ module
 public import TauCeti.MeasureTheory.Function.PolynomialMemLp
 public import TauCeti.Probability.Moments.Determinacy
 public import Mathlib.Analysis.RCLike.Basic
+public import Mathlib.MeasureTheory.VectorMeasure.WithDensity
 public import Mathlib.Probability.Moments.IntegrableExpMul
 
 /-!
@@ -205,31 +206,6 @@ private theorem withDensity_ofReal_eq_withDensity_ofReal_neg {g : ℝ → ℝ} {
       (integrable_toReal_ofReal_smul_pow ha hexpa hmeasp hlep n)
       (integrable_toReal_ofReal_smul_pow ha hexpa hmeasn hlen n) (hmom n)
 
-/-- An integrable function whose positive and negative parts define the same measure vanishes almost
-everywhere.
-
-Integrability of `g` bounds the positive density's lintegral, which is what replaces σ-finiteness of
-`ν` in reading the density equality back off the measure equality. -/
-private theorem ae_eq_zero_of_withDensity_ofReal_eq {g : ℝ → ℝ} (hg : Integrable g ν)
-    (hEq : (ν.withDensity fun x => ENNReal.ofReal (g x))
-      = ν.withDensity fun x => ENNReal.ofReal (-g x)) :
-    g =ᵐ[ν] 0 := by
-  have hgm : AEMeasurable g ν := hg.aestronglyMeasurable.aemeasurable
-  have hmeasp : AEMeasurable (fun x => ENNReal.ofReal (g x)) ν :=
-    ENNReal.measurable_ofReal.comp_aemeasurable hgm
-  have hmeasn : AEMeasurable (fun x => ENNReal.ofReal (-g x)) ν :=
-    ENNReal.measurable_ofReal.comp_aemeasurable hgm.neg
-  have hfin : ∫⁻ x, ENNReal.ofReal (g x) ∂ν ≠ ⊤ := by
-    refine ne_of_lt (lt_of_le_of_lt (lintegral_mono_ae ?_) hg.hasFiniteIntegral)
-    filter_upwards with x
-    rw [← ofReal_norm, Real.norm_eq_abs]
-    exact ENNReal.ofReal_le_ofReal (le_abs_self _)
-  rw [withDensity_eq_iff hmeasp hmeasn hfin] at hEq
-  filter_upwards [hEq] with x hx
-  have h := congrArg ENNReal.toReal hx
-  rw [ENNReal.toReal_ofReal', ENNReal.toReal_ofReal'] at h
-  exact (max_zero_sub_max_neg_zero_eq_self (g x)).symm.trans (sub_eq_zero.mpr h)
-
 /-- **Roadmap B1 (function level).** A real function on `ℝ` whose exponentially-weighted product
 `e^{a|x|} · g` is integrable for some `a > 0`, and all of whose polynomial moments `∫ xⁿ g` vanish,
 is a.e. zero.
@@ -255,9 +231,13 @@ theorem ae_eq_zero_of_forall_moment_eq_zero (g : ℝ → ℝ)
     (hmom : ∀ n : ℕ, ∫ x : ℝ, x ^ n * g x ∂ν = 0) :
     g =ᵐ[ν] 0 := by
   obtain ⟨a, ha, hexpa⟩ := hexp
-  exact ae_eq_zero_of_withDensity_ofReal_eq
-    (integrable_of_integrable_exp_mul_abs_mul ha.le hexpa)
-    (withDensity_ofReal_eq_withDensity_ofReal_neg ha hexpa hmom)
+  have hg : Integrable g ν := integrable_of_integrable_exp_mul_abs_mul ha.le hexpa
+  -- `g` and `0` have the same vector measure, because the two parts of `g` cancel.
+  refine hg.ae_eq_of_withDensityᵥ_eq (integrable_zero _ _ _) ?_
+  rw [withDensityᵥ_zero, withDensityᵥ_eq_withDensity_pos_part_sub_withDensity_neg_part hg,
+    sub_eq_zero]
+  congr 1
+  exact withDensity_ofReal_eq_withDensity_ofReal_neg ha hexpa hmom
 
 /-! ## Vanishing moments at the level of measures -/
 
