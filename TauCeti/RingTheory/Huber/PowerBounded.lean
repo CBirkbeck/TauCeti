@@ -52,6 +52,10 @@ formalisation of this layer; its proofs were not used.
 * `TauCeti.Huber.isTopologicallyNilpotent_add`: over a nonarchimedean ring the topologically
   nilpotent elements are closed under addition. Mathlib's `IsTopologicallyNilpotent.add` instead
   assumes a basis of open ideals, which excludes the Tate rings this is aimed at.
+* `TauCeti.Huber.map_powerBoundedSubring`, `TauCeti.Huber.powerBoundedSubringEquiv`: `A°` is
+  carried onto `B°` by a topological ring isomorphism, which therefore restricts to
+  `A° ≃+* B°`; that restriction preserves `A°°`
+  (`TauCeti.Huber.mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff`).
 * `TauCeti.Huber.isPowerBounded_ringEquiv_iff`,
   `TauCeti.Huber.isTopologicallyNilpotent_ringEquiv_iff`: both constructions transport along a
   topological ring isomorphism.
@@ -106,9 +110,9 @@ theorem isPowerBounded_one : IsPowerBounded (1 : M) := by
 
 end MonoidWithZero
 
-section Semiring
+section MonoidWithZeroLemmas
 
-variable {R : Type*} [Semiring R] [TopologicalSpace R]
+variable {R : Type*} [MonoidWithZero R] [TopologicalSpace R]
 
 /-- A power of a power-bounded element is power-bounded. -/
 theorem IsPowerBounded.pow {a : R} (ha : IsPowerBounded a) (m : ℕ) : IsPowerBounded (a ^ m) := by
@@ -161,11 +165,11 @@ theorem IsPowerBounded.of_isTopologicallyNilpotent {a : R} (ha : IsTopologically
   · exact hVU ⟨n, hn⟩ (Set.mul_mem_mul (Set.mem_iInter.mp hv.2 ⟨n, hn⟩) rfl)
   · exact hprod (Set.mk_mem_prod hv.1 (hN n (by omega)))
 
-end Semiring
+end MonoidWithZeroLemmas
 
-section CommSemiring
+section CommMonoidWithZero
 
-variable {R : Type*} [CommSemiring R] [TopologicalSpace R]
+variable {R : Type*} [CommMonoidWithZero R] [TopologicalSpace R]
 
 /-- A product of power-bounded elements is power-bounded. -/
 theorem IsPowerBounded.mul {a b : R} (ha : IsPowerBounded a) (hb : IsPowerBounded b) :
@@ -178,7 +182,7 @@ theorem IsPowerBounded.isTopologicallyNilpotent_mul {a b : R} (ha : IsPowerBound
     (hb : IsTopologicallyNilpotent b) : IsTopologicallyNilpotent (a * b) :=
   ha.isTopologicallyNilpotent_mul_of_commute (Commute.all ..) hb
 
-end CommSemiring
+end CommMonoidWithZero
 
 section CommRing
 
@@ -198,9 +202,9 @@ private theorem add_pow_mem_of_mul_pow_mem {G : AddSubgroup A} {a b : A} {n : �
 
 end CommRing
 
-section Nonarchimedean
+section Ring
 
-variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
+variable {A : Type*} [Ring A] [TopologicalSpace A] [ContinuousMul A]
 
 /-- The negative of a power-bounded element is power-bounded. -/
 theorem IsPowerBounded.neg {a : A} (ha : IsPowerBounded a) : IsPowerBounded (-a) := by
@@ -211,6 +215,12 @@ theorem IsPowerBounded.neg {a : A} (ha : IsPowerBounded a) : IsPowerBounded (-a)
   rw [neg_pow]
   refine Set.mul_mem_mul ?_ ⟨n, rfl⟩
   rcases Nat.even_or_odd n with hn | hn <;> simp [hn.neg_one_pow]
+
+end Ring
+
+section Nonarchimedean
+
+variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
 
 /-- A sum of power-bounded elements is power-bounded in a nonarchimedean ring.
 
@@ -326,6 +336,44 @@ theorem isTopologicallyNilpotent_ringEquiv_iff (e : A ≃+* B) (he : Continuous 
     (he' : Continuous e.symm) {a : A} :
     IsTopologicallyNilpotent (e a) ↔ IsTopologicallyNilpotent a :=
   ⟨fun h ↦ by simpa using h.map (φ := (e.symm : B →+* A)) he', fun h ↦ h.map he⟩
+
+section TransportSubring
+
+variable {A B : Type*} [CommRing A] [CommRing B] [TopologicalSpace A] [TopologicalSpace B]
+  [NonarchimedeanRing A] [NonarchimedeanRing B]
+
+/-- `A°` is preserved by a topological ring isomorphism: `e` carries `A°` onto `B°`. This is the
+bundled form of `TauCeti.Huber.isPowerBounded_ringEquiv_iff`. -/
+theorem map_powerBoundedSubring (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm) :
+    (powerBoundedSubring A).map (e : A →+* B) = powerBoundedSubring B := by
+  ext b
+  refine ⟨?_, fun hb ↦ ⟨e.symm b, ?_, e.apply_symm_apply b⟩⟩
+  · rintro ⟨a, ha, rfl⟩
+    exact (isPowerBounded_ringEquiv_iff e he he').mpr ha
+  · exact (isPowerBounded_ringEquiv_iff e he he').mp (by simpa using hb)
+
+/-- A topological ring isomorphism restricts to an isomorphism `A° ≃+* B°`. -/
+def powerBoundedSubringEquiv (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm) :
+    powerBoundedSubring A ≃+* powerBoundedSubring B :=
+  e.restrict _ _ fun _ ↦ (isPowerBounded_ringEquiv_iff e he he').symm
+
+@[simp]
+theorem coe_powerBoundedSubringEquiv (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm)
+    (a : powerBoundedSubring A) :
+    ((powerBoundedSubringEquiv e he he' a : powerBoundedSubring B) : B) = e (a : A) := (rfl)
+
+/-- `A°°` is preserved by a topological ring isomorphism: the restricted isomorphism `A° ≃+* B°`
+carries `A°°` exactly onto `B°°`. Since the map is a bijection, this pointwise statement is
+equivalent to the corresponding `Ideal.map` equality. -/
+theorem mem_topologicallyNilpotentIdeal_powerBoundedSubringEquiv_iff (e : A ≃+* B)
+    (he : Continuous e) (he' : Continuous e.symm) (a : powerBoundedSubring A) :
+    powerBoundedSubringEquiv e he he' a ∈ topologicallyNilpotentIdeal B
+      ↔ a ∈ topologicallyNilpotentIdeal A := by
+  rw [mem_topologicallyNilpotentIdeal, mem_topologicallyNilpotentIdeal,
+    coe_powerBoundedSubringEquiv]
+  exact isTopologicallyNilpotent_ringEquiv_iff e he he'
+
+end TransportSubring
 
 end Transport
 

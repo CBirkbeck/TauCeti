@@ -129,23 +129,23 @@ theorem IsBounded.mul {S T : Set M} (hS : IsBounded S) (hT : IsBounded T) : IsBo
   obtain ⟨V, hV, hSV⟩ := hS W hW
   exact ⟨V, hV, by simpa [← mul_assoc] using (Set.mul_subset_mul_right hSV).trans hTW⟩
 
-end MonoidWithZero
+section ContinuousMul
 
-section Semiring
-
-variable {R : Type*} [Semiring R] [TopologicalSpace R] [ContinuousMul R]
+variable [ContinuousMul M]
 
 /-- Every singleton is bounded. -/
-theorem isBounded_singleton (a : R) : IsBounded ({a} : Set R) :=
+theorem isBounded_singleton (a : M) : IsBounded ({a} : Set M) :=
   fun U hU ↦ ⟨(· * a) ⁻¹' U, (continuous_id.mul continuous_const).continuousAt.preimage_mem_nhds
     (by simp [hU]), by simp⟩
 
 /-- Every finite subset is bounded. -/
-theorem isBounded_finite {S : Set R} (hS : S.Finite) : IsBounded S := by
+theorem isBounded_finite {S : Set M} (hS : S.Finite) : IsBounded S := by
   refine Set.Finite.induction_on S hS isBounded_empty fun {a s} _ _ ih ↦ ?_
   exact Set.insert_eq a s ▸ (isBounded_singleton a).union ih
 
-end Semiring
+end ContinuousMul
+
+end MonoidWithZero
 
 section Nonarchimedean
 
