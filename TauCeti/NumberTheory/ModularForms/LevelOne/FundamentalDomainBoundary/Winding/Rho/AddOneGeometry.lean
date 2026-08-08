@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.RhoGeometry
+public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.Geometry
 
 import TauCeti.Topology.Circle.Metric
 
@@ -22,10 +22,10 @@ defect `π/3` — the source of the winding value `-1/6` at `ρ + 1`.
 
 ## Main declarations
 
-* `TauCeti.ModularForm.fdBoundary_sub_rho_one_of_mem_Icc_zero_one` (the linear form).
-* `TauCeti.ModularForm.norm_fdBoundary_sub_rho_one_arc` (the chord distance).
-* `TauCeti.ModularForm.log_fdBoundary_one_sub_sub_rho_one`,
-  `TauCeti.ModularForm.log_fdBoundary_one_add_sub_rho_one` (the endpoint logarithms).
+* `TauCeti.ModularForm.fdBoundary_sub_rho_add_one_of_mem_Icc_zero_one` (the linear form).
+* `TauCeti.ModularForm.norm_fdBoundary_sub_rho_add_one_arc` (the chord distance).
+* `TauCeti.ModularForm.log_fdBoundary_one_sub_sub_rho_add_one`,
+  `TauCeti.ModularForm.log_fdBoundary_one_add_sub_rho_add_one` (the endpoint logarithms).
 
 ## References
 
@@ -45,7 +45,7 @@ namespace ModularForm
 variable {H δ t : ℝ}
 
 /-- The corner `ρ + 1` is the unit-circle point of angle `π/3`. -/
-private lemma rho_one_eq_exp :
+private lemma rho_add_one_eq_exp :
     (UpperHalfPlane.ρ : ℂ) + 1 = Complex.exp (((Real.pi / 3 : ℝ) : ℂ) * Complex.I) := by
   refine Complex.ext ?_ ?_
   · rw [Complex.exp_ofReal_mul_I_re, Real.cos_pi_div_three]
@@ -55,7 +55,7 @@ private lemma rho_one_eq_exp :
 
 /-- On the right vertical the shifted contour is the purely imaginary linear form
 `(1 - t)·(H - √3/2)·i`. -/
-theorem fdBoundary_sub_rho_one_of_mem_Icc_zero_one (H : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) :
+theorem fdBoundary_sub_rho_add_one_of_mem_Icc_zero_one (H : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) :
     fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1) =
       (((1 - t) * (H - Real.sqrt 3 / 2) : ℝ) : ℂ) * Complex.I := by
   rw [eqOn_fdBoundary_segment1 H ht, fdBoundary_segment1_apply, AffineMap.lineMap_apply]
@@ -67,21 +67,21 @@ theorem fdBoundary_sub_rho_one_of_mem_Icc_zero_one (H : ℝ) (ht : t ∈ Icc (0 
 
 /-- On the arc the distance from `ρ + 1` is the chord distance: `2·sin(|t - 1|·π/12)`
 up to the absolute value inside the sine. -/
-theorem norm_fdBoundary_sub_rho_one_arc (H : ℝ) (ht : t ∈ Icc (1 : ℝ) 3) :
+theorem norm_fdBoundary_sub_rho_add_one_arc (H : ℝ) (ht : t ∈ Icc (1 : ℝ) 3) :
     ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ =
       2 * |Real.sin ((t - 1) * (Real.pi / 12))| := by
   have hcurve : fdBoundary H t = circleMap 0 1 ((t + 1) * (Real.pi / 6)) :=
     eqOn_fdBoundary_arc H ht
   have hρ1 : (UpperHalfPlane.ρ : ℂ) + 1 = circleMap 0 1 (Real.pi / 3) := by
     rw [circleMap_zero, Complex.ofReal_one, one_mul]
-    exact rho_one_eq_exp
+    exact rho_add_one_eq_exp
   rw [← Complex.dist_eq, hcurve, hρ1, dist_circleMap_eq_two_mul_abs_sin,
     (by ring : ((t + 1) * (Real.pi / 6) - Real.pi / 3) / 2 = (t - 1) * (Real.pi / 12))]
   norm_num
 
 /-- On the left vertical the shifted contour is `-1` plus the imaginary linear form of
 the `ρ`-shift: it hugs the branch cut from above without crossing it. -/
-theorem fdBoundary_sub_rho_one_of_mem_Icc_three_four (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
+theorem fdBoundary_sub_rho_add_one_of_mem_Icc_three_four (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
     fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1) =
       -1 + (((t - 3) * (H - Real.sqrt 3 / 2) : ℝ) : ℂ) * Complex.I := by
   have hsplit : fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1) =
@@ -91,10 +91,10 @@ theorem fdBoundary_sub_rho_one_of_mem_Icc_three_four (H : ℝ) (ht : t ∈ Icc (
 
 /-- On the left vertical the contour keeps distance `1` from `ρ + 1`: the real parts
 differ by exactly `1`. -/
-theorem norm_fdBoundary_sub_rho_one_segment4 (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
+theorem norm_fdBoundary_sub_rho_add_one_segment4 (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
     1 ≤ ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := by
   have hre : (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).re = -1 := by
-    rw [fdBoundary_sub_rho_one_of_mem_Icc_three_four H ht]
+    rw [fdBoundary_sub_rho_add_one_of_mem_Icc_three_four H ht]
     simp
   have h1 : |(fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).re| ≤
       ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := Complex.abs_re_le_norm _
@@ -102,16 +102,15 @@ theorem norm_fdBoundary_sub_rho_one_segment4 (H : ℝ) (ht : t ∈ Icc (3 : ℝ)
   simpa using h1
 
 /-- On the ceiling the contour keeps distance `H - √3/2` from `ρ + 1`. -/
-theorem norm_fdBoundary_sub_rho_one_segment5 (hH : Real.sqrt 3 / 2 < H)
-    (ht : t ∈ Icc (4 : ℝ) 5) :
+theorem norm_fdBoundary_sub_rho_add_one_segment5 (ht : t ∈ Icc (4 : ℝ) 5) :
     H - Real.sqrt 3 / 2 ≤ ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := by
   have him : (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im = H - Real.sqrt 3 / 2 := by
     rw [Complex.sub_im, im_fdBoundary_segment5 H ht]
     norm_num [UpperHalfPlane.ρ]
   have h1 : |(fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im| ≤
       ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := Complex.abs_im_le_norm _
-  rw [him, abs_of_pos (by linarith)] at h1
-  exact h1
+  calc H - Real.sqrt 3 / 2 ≤ |H - Real.sqrt 3 / 2| := le_abs_self _
+    _ ≤ ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := him ▸ h1
 
 /-- On the closed middle arc range, the sine stays above the corner row `√3/2`. -/
 private lemma sqrt_three_div_two_le_sin {θ : ℝ} (h1 : Real.pi / 3 ≤ θ)
@@ -144,7 +143,7 @@ private lemma sqrt_three_div_two_lt_sin {θ : ℝ} (h1 : Real.pi / 3 < θ)
       (by nlinarith [Real.pi_pos])
 
 /-- On the arc the shifted contour stays in the closed upper half-plane. -/
-theorem im_fdBoundary_sub_rho_one_arc_nonneg (H : ℝ) (ht : t ∈ Icc (1 : ℝ) 3) :
+theorem im_fdBoundary_sub_rho_add_one_arc_nonneg (H : ℝ) (ht : t ∈ Icc (1 : ℝ) 3) :
     0 ≤ (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im := by
   have hcurve : fdBoundary H t = circleMap 0 1 ((t + 1) * (Real.pi / 6)) :=
     eqOn_fdBoundary_arc H ht
@@ -156,7 +155,7 @@ theorem im_fdBoundary_sub_rho_one_arc_nonneg (H : ℝ) (ht : t ∈ Icc (1 : ℝ)
   linarith
 
 /-- Strictly inside the arc the shifted contour has positive height. -/
-theorem im_fdBoundary_sub_rho_one_arc_pos (H : ℝ) (ht1 : 1 < t) (ht3 : t < 3) :
+theorem im_fdBoundary_sub_rho_add_one_arc_pos (H : ℝ) (ht1 : 1 < t) (ht3 : t < 3) :
     0 < (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im := by
   have hcurve : fdBoundary H t = circleMap 0 1 ((t + 1) * (Real.pi / 6)) :=
     eqOn_fdBoundary_arc H ⟨ht1.le, ht3.le⟩
@@ -168,13 +167,13 @@ theorem im_fdBoundary_sub_rho_one_arc_pos (H : ℝ) (ht1 : 1 < t) (ht3 : t < 3) 
   linarith
 
 /-- At the far corner `t = 3` the shifted contour touches the branch cut at `-1`. -/
-theorem fdBoundary_sub_rho_one_apply_three (H : ℝ) :
+theorem fdBoundary_sub_rho_add_one_apply_three (H : ℝ) :
     fdBoundary H 3 - ((UpperHalfPlane.ρ : ℂ) + 1) = -1 := by
   rw [fdBoundary_apply_three]
   ring
 
 /-- The polar form of the shifted contour just after the corner. -/
-private lemma fdBoundary_one_add_sub_rho_one_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+private lemma fdBoundary_one_add_sub_rho_add_one_eq (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
     fdBoundary H (1 + δ) - ((UpperHalfPlane.ρ : ℂ) + 1) =
       ((2 * Real.sin (δ * (Real.pi / 12)) : ℝ) : ℂ) *
         Complex.exp (((5 * Real.pi / 6 + δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I) := by
@@ -183,7 +182,7 @@ private lemma fdBoundary_one_add_sub_rho_one_eq (H : ℝ) (hδ : 0 < δ) (hδ1 :
     exact Complex.exp_pi_div_two_mul_I.symm
   have hcurve : fdBoundary H (1 + δ) = circleMap 0 1 ((1 + δ + 1) * (Real.pi / 6)) :=
     eqOn_fdBoundary_arc H ⟨by linarith, by linarith⟩
-  rw [hcurve, circleMap_zero, Complex.ofReal_one, one_mul, rho_one_eq_exp,
+  rw [hcurve, circleMap_zero, Complex.ofReal_one, one_mul, rho_add_one_eq_exp,
     exp_mul_I_sub_exp_mul_I,
     (by ring : ((1 + δ + 1) * (Real.pi / 6) - Real.pi / 3) / 2 = δ * (Real.pi / 12)),
     (by ring : ((1 + δ + 1) * (Real.pi / 6) + Real.pi / 3) / 2 =
@@ -198,44 +197,44 @@ private lemma fdBoundary_one_add_sub_rho_one_eq (H : ℝ) (hδ : 0 < δ) (hδ1 :
   ring
 
 /-- The principal logarithm of the shifted contour just before the corner. -/
-theorem log_fdBoundary_one_sub_sub_rho_one (hH : Real.sqrt 3 / 2 < H) (hδ : 0 < δ)
+theorem log_fdBoundary_one_sub_sub_rho_add_one (hH : Real.sqrt 3 / 2 < H) (hδ : 0 < δ)
     (hδ1 : δ ≤ 1) :
     Complex.log (fdBoundary H (1 - δ) - ((UpperHalfPlane.ρ : ℂ) + 1)) =
       ((Real.log (δ * (H - Real.sqrt 3 / 2)) : ℝ) : ℂ) +
         ((Real.pi / 2 : ℝ) : ℂ) * Complex.I := by
   have heval : fdBoundary H (1 - δ) - ((UpperHalfPlane.ρ : ℂ) + 1) =
       ((δ * (H - Real.sqrt 3 / 2) : ℝ) : ℂ) * Complex.I := by
-    rw [fdBoundary_sub_rho_one_of_mem_Icc_zero_one H ⟨by linarith, by linarith⟩]
+    rw [fdBoundary_sub_rho_add_one_of_mem_Icc_zero_one H ⟨by linarith, by linarith⟩]
     norm_num
   rw [heval, Complex.log_ofReal_mul (by positivity) Complex.I_ne_zero, Complex.log_I,
     Complex.ofReal_div, Complex.ofReal_ofNat]
 
 /-- The principal logarithm of the shifted contour just after the corner. -/
-theorem log_fdBoundary_one_add_sub_rho_one (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
+theorem log_fdBoundary_one_add_sub_rho_add_one (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) :
     Complex.log (fdBoundary H (1 + δ) - ((UpperHalfPlane.ρ : ℂ) + 1)) =
       ((Real.log (2 * Real.sin (δ * (Real.pi / 12))) : ℝ) : ℂ) +
         ((5 * Real.pi / 6 + δ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I := by
   have hsin_pos : 0 < Real.sin (δ * (Real.pi / 12)) :=
     Real.sin_pos_of_pos_of_lt_pi (by positivity) (by nlinarith [Real.pi_pos])
-  rw [fdBoundary_one_add_sub_rho_one_eq H hδ hδ1,
+  rw [fdBoundary_one_add_sub_rho_add_one_eq H hδ hδ1,
     Complex.log_ofReal_mul (by linarith) (Complex.exp_ne_zero _),
     Complex.log_exp (by simp; nlinarith [Real.pi_pos]) (by simp; nlinarith [Real.pi_pos])]
 
 
 /-- The contour passes through `ρ + 1` only at the corner `t = 1`. -/
-theorem eq_one_of_fdBoundary_eq_rho_one (hH : Real.sqrt 3 / 2 < H) (ht : t ∈ Icc (0 : ℝ) 5)
+theorem eq_one_of_fdBoundary_eq_rho_add_one (hH : Real.sqrt 3 / 2 < H) (ht : t ∈ Icc (0 : ℝ) 5)
     (heq : fdBoundary H t = (UpperHalfPlane.ρ : ℂ) + 1) : t = 1 := by
   have h0 : ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ = 0 := by
     rw [heq]
     simp
   rcases le_or_gt t 1 with h1 | h1
-  · rw [fdBoundary_sub_rho_one_of_mem_Icc_zero_one H ⟨ht.1, h1⟩, norm_mul,
+  · rw [fdBoundary_sub_rho_add_one_of_mem_Icc_zero_one H ⟨ht.1, h1⟩, norm_mul,
       Complex.norm_real, Complex.norm_I, mul_one, Real.norm_eq_abs, abs_eq_zero] at h0
     rcases mul_eq_zero.mp h0 with h | h
     · linarith
     · linarith
   · rcases le_or_gt t 3 with h3 | h3
-    · rw [norm_fdBoundary_sub_rho_one_arc H ⟨h1.le, h3⟩] at h0
+    · rw [norm_fdBoundary_sub_rho_add_one_arc H ⟨h1.le, h3⟩] at h0
       have hsin : Real.sin ((t - 1) * (Real.pi / 12)) = 0 :=
         abs_eq_zero.mp (by linarith)
       have habs : |t - 1| ≤ 2 := abs_le.mpr ⟨by linarith, by linarith⟩
@@ -247,10 +246,10 @@ theorem eq_one_of_fdBoundary_eq_rho_one (hH : Real.sqrt 3 / 2 < H) (ht : t ∈ I
       · linarith
       · exact absurd h (by positivity)
     · rcases le_or_gt t 4 with h4 | h4
-      · have := norm_fdBoundary_sub_rho_one_segment4 H ⟨h3.le, h4⟩
+      · have := norm_fdBoundary_sub_rho_add_one_segment4 H ⟨h3.le, h4⟩
         rw [h0] at this
         norm_num at this
-      · have := norm_fdBoundary_sub_rho_one_segment5 hH ⟨h4.le, ht.2⟩
+      · have := norm_fdBoundary_sub_rho_add_one_segment5 (H := H) ⟨h4.le, ht.2⟩
         rw [h0] at this
         linarith
 
