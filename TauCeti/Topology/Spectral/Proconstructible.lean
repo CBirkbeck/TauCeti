@@ -85,20 +85,20 @@ lemma isProconstructible_iInter {ι : Sort*} {s : ι → Set X}
   @isClosed_iInter X ι (constructibleTopology X) s hs
 
 /-- Finite indexed unions of pro-constructible sets are pro-constructible. -/
-lemma isProconstructible_iUnion {ι : Sort*} [Finite ι] {s : ι → Set X}
+lemma isProconstructible_iUnion_of_finite {ι : Sort*} [Finite ι] {s : ι → Set X}
     (hs : ∀ i, IsProconstructible (s i)) : IsProconstructible (⋃ i, s i) :=
   @isClosed_iUnion_of_finite X ι (constructibleTopology X) _ s hs
 
 /-- Finite bounded unions of pro-constructible sets are pro-constructible. -/
-lemma isProconstructible_biUnion {ι : Type*} {I : Set ι} (hI : I.Finite) {s : ι → Set X}
+lemma isProconstructible_biUnion_of_finite {ι : Type*} {I : Set ι} (hI : I.Finite) {s : ι → Set X}
     (hs : ∀ i ∈ I, IsProconstructible (s i)) : IsProconstructible (⋃ i ∈ I, s i) :=
   @Set.Finite.isClosed_biUnion X ι (constructibleTopology X) I s hI hs
 
 /-- Finite unions of pro-constructible sets are pro-constructible. -/
-lemma isProconstructible_sUnion {S : Set (Set X)} (hS : S.Finite)
+lemma isProconstructible_sUnion_of_finite {S : Set (Set X)} (hS : S.Finite)
     (h : ∀ s ∈ S, IsProconstructible s) : IsProconstructible (⋃₀ S) := by
   rw [Set.sUnion_eq_biUnion]
-  exact isProconstructible_biUnion hS h
+  exact isProconstructible_biUnion_of_finite hS h
 
 /-- A quasi-compact open set is pro-constructible. -/
 lemma IsCompact.isProconstructible_of_isOpen {s : Set X} (hs : IsCompact s) (ho : IsOpen s) :
