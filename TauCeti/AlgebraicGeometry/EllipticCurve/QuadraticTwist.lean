@@ -174,11 +174,11 @@ curve itself. -/
 `D = t² - 4n` of the twisting parameters is a unit. Over a general commutative ring `D ≠ 0` is
 not the right criterion (take `A = ℤ`, `D = 2`); over a field the two coincide, which is
 `isElliptic_quadraticTwistOf`. -/
-theorem isElliptic_quadraticTwistOf_iff [E.IsElliptic] :
-    (E.quadraticTwistOf t n).IsElliptic ↔ IsUnit (t ^ 2 - 4 * n) := by
-  rw [isElliptic_iff, Δ_quadraticTwistOf]
-  exact ⟨fun h ↦ (isUnit_pow_iff (by norm_num)).mp (isUnit_of_mul_isUnit_left h),
-    fun hD ↦ (hD.pow 6).mul E.isUnit_Δ⟩
+theorem isElliptic_quadraticTwistOf_iff :
+    (E.quadraticTwistOf t n).IsElliptic ↔ IsUnit (t ^ 2 - 4 * n) ∧ E.IsElliptic := by
+  rw [isElliptic_iff, isElliptic_iff, Δ_quadraticTwistOf]
+  refine ⟨fun h ↦ ⟨(isUnit_pow_iff (by norm_num)).mp (isUnit_of_mul_isUnit_left h),
+    isUnit_of_mul_isUnit_right h⟩, fun ⟨hD, hΔ⟩ ↦ (hD.pow 6).mul hΔ⟩
 
 /-- The `j`-invariant is a twist invariant: `j(E_{t,n}) = j(E)`. -/
 theorem j_quadraticTwistOf [E.IsElliptic] (h : (E.quadraticTwistOf t n).IsElliptic) :
@@ -190,7 +190,9 @@ theorem j_quadraticTwistOf [E.IsElliptic] (h : (E.quadraticTwistOf t n).IsEllipt
   linear_combination (-((t ^ 2 - 4 * n) ^ 6 * E.c₄ ^ 3)) * hΔ
 
 /-- Twisting twice by the same parameters is twisting once by their composite: the quadratic
-`x² - t²x + (2t²n - 4n²)` is the norm form of the composite extension. No hypothesis. -/
+`x² - t²x + (2t²n - 4n²)` is *split*, with roots `t² - 2n` and `2n` — it represents the trivial
+twist, which is why the double twist is isomorphic to `E` whenever `t² - 4n` is a unit. No
+hypothesis. -/
 theorem quadraticTwistOf_quadraticTwistOf :
     (E.quadraticTwistOf t n).quadraticTwistOf t n
       = E.quadraticTwistOf (t ^ 2) (2 * t ^ 2 * n - 4 * n ^ 2) := by
@@ -243,7 +245,7 @@ variable {K : Type*} [Field K] (E : WeierstrassCurve K) (t n : K)
 state; `isElliptic_quadraticTwistOf_iff` is the ring-level equivalence it specialises. -/
 theorem isElliptic_quadraticTwistOf [E.IsElliptic] (hD : t ^ 2 - 4 * n ≠ 0) :
     (E.quadraticTwistOf t n).IsElliptic :=
-  (E.isElliptic_quadraticTwistOf_iff t n).mpr (isUnit_iff_ne_zero.mpr hD)
+  (E.isElliptic_quadraticTwistOf_iff t n).mpr ⟨isUnit_iff_ne_zero.mpr hD, ‹E.IsElliptic›⟩
 
 end Field
 
