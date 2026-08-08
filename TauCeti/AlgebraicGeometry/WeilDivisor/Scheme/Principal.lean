@@ -56,7 +56,7 @@ private lemma eq_genericPoint_of_isMax [IrreducibleSpace X] {y : X} (hy : IsMax 
 
 /-- A codimension-one point lying in a set that avoids a nonempty open `U` equals that set's
 generic point. -/
-private lemma eq_of_isGenericPoint_of_subset_compl [IrreducibleSpace X] {U : X.Opens} [Nonempty U]
+private lemma eq_of_subset_compl_of_isGenericPoint [IrreducibleSpace X] {U : X.Opens} [Nonempty U]
     {T : Set X} (hTU : T ⊆ (U : Set X)ᶜ) {y : X} (hyGeneric : IsGenericPoint y T)
     {x : CodimensionOnePoint X} (hxT : (x : X) ∈ T) : (x : X) = y := by
   -- A strict specialisation from `x` would have coheight zero, hence be maximal, hence be the
@@ -97,7 +97,7 @@ lemma finite_setOfPred_not_mem [IrreducibleSpace X] [NoetherianSpace X]
     have hyGeneric : IsGenericPoint (g ⟨T, hTS⟩) T :=
       (hSirreducible T hTS).isGenericPoint_genericPoint (hSclosed T hTS)
     have hTcompl : T ⊆ (U : Set X)ᶜ := hSunion ▸ Set.subset_sUnion_of_mem hTS
-    exact ⟨⟨T, hTS⟩, (eq_of_isGenericPoint_of_subset_compl hTcompl hyGeneric hxT).symm⟩
+    exact ⟨⟨T, hTS⟩, (eq_of_subset_compl_of_isGenericPoint hTcompl hyGeneric hxT).symm⟩
   · exact Set.injOn_of_injective Subtype.val_injective
 
 variable [IsIntegral X] [IsNoetherian X]
