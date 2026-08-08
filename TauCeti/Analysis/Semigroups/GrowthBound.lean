@@ -57,6 +57,18 @@ theorem StronglyContinuousSemigroup.HasGrowthBound.bound
   exact hb.2 t ht
 
 omit [CompleteSpace X] in
+/-- **A growth bound controls the semigroup on all of `[0, t₀]` by its value at `t₀`.** -/
+theorem StronglyContinuousSemigroup.HasGrowthBound.norm_le_mul_exp_abs_mul_of_le
+    {S : StronglyContinuousSemigroup X} {ω M : ℝ} (hb : S.HasGrowthBound ω M) {t t₀ : ℝ≥0}
+    (htt₀ : t ≤ t₀) : ‖S t‖ ≤ M * Real.exp (|ω| * t₀) := by
+  have hω : ω * (t : ℝ) ≤ |ω| * (t₀ : ℝ) := calc
+    ω * (t : ℝ) ≤ |ω| * (t : ℝ) := mul_le_mul_of_nonneg_right (le_abs_self ω) t.2
+    _ ≤ |ω| * (t₀ : ℝ) := mul_le_mul_of_nonneg_left (by exact_mod_cast htt₀) (abs_nonneg ω)
+  rw [← S.realOperator_coe]
+  exact (hb.bound t t.2).trans (mul_le_mul_of_nonneg_left
+    (Real.exp_le_exp.mpr hω) (zero_le_one.trans hb.one_le))
+
+omit [CompleteSpace X] in
 /-- Constructor for a growth bound from the multiplicative lower bound and operator-norm
 estimate. -/
 public theorem StronglyContinuousSemigroup.hasGrowthBound_of_bound

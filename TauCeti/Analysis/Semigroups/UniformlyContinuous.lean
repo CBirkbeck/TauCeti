@@ -59,27 +59,6 @@ private theorem normalizedIntegral_sub_one_eq (S : StronglyContinuousSemigroup X
     intervalIntegral.integral_const, smul_sub, smul_smul, sub_zero,
     inv_mul_cancel₀ ht.ne', one_smul]
 
-omit [CompleteSpace X] in
-/-- **A growth bound at `t₀` bounds the semigroup on all of `[0, t₀]`.** -/
-private theorem norm_le_of_le {S : StronglyContinuousSemigroup X} {ω M : ℝ}
-    (hb : S.HasGrowthBound ω M) {t t₀ : NNReal} (htt₀ : t ≤ t₀) :
-    ‖S t‖ ≤ M * Real.exp (|ω| * t₀) := by
-  have hω : ω * (t : ℝ) ≤ |ω| * (t₀ : ℝ) := calc
-    ω * (t : ℝ) ≤ |ω| * (t : ℝ) := mul_le_mul_of_nonneg_right (le_abs_self ω) t.2
-    _ ≤ |ω| * (t₀ : ℝ) := mul_le_mul_of_nonneg_left (by exact_mod_cast htt₀) (abs_nonneg ω)
-  rw [← S.realOperator_coe]
-  exact (hb.bound t t.2).trans (mul_le_mul_of_nonneg_left
-    (Real.exp_le_exp.mpr hω) (zero_le_one.trans hb.one_le))
-
-omit [CompleteSpace X] in
-/-- **The increment of a semigroup over `[a, b]` factors through its value at `a`.** -/
-private theorem sub_eq_comp_sub_one (S : StronglyContinuousSemigroup X) {a b : NNReal}
-    (hab : a ≤ b) : S b - S a = (S a).comp (S (b - a) - 1) := by
-  have hmap := S.map_add a (b - a)
-  rw [add_tsub_cancel_of_le hab] at hmap
-  rw [hmap, ContinuousLinearMap.comp_sub]
-  congr 1
-
 private theorem continuous_of_continuousAt_zero (S : StronglyContinuousSemigroup X)
     (hS : ContinuousAt (fun t : NNReal ↦ S t) 0) : Continuous fun t : NNReal ↦ S t := by
   obtain ⟨ω, M, hb⟩ := S.existsGrowthBound
@@ -116,7 +95,8 @@ private theorem continuous_of_continuousAt_zero (S : StronglyContinuousSemigroup
         hsmall (by simpa [NNReal.dist_eq, NNReal.coe_sub htt₀, abs_sub_comm] using ht)
     have hSt : ‖S t‖ < C := by
       dsimp [C]
-      linarith [norm_le_of_le hb htt₀, le_max_right ‖S t₀‖ (M * Real.exp (|ω| * t₀))]
+      linarith [hb.norm_le_mul_exp_abs_mul_of_le htt₀,
+        le_max_right ‖S t₀‖ (M * Real.exp (|ω| * t₀))]
     rw [dist_eq_norm, hdiff]
     calc
       ‖(S t).comp (1 - S (t₀ - t))‖
