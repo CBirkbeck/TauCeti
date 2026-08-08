@@ -30,20 +30,17 @@ outside the `letI` scope.
 
 ## Main results
 
-* `KaehlerDifferential.mapSemilinear_D`: `mapSemilinear f (D x) = D (f x)`.
+* `KaehlerDifferential.mapSemilinear_D`: `mapSemilinear f (D x) = D (f x)`. This
+  characterises the map: `Ω[A⁄R]` is spanned by the range of `D` (`span_range_derivation`), so
+  two semilinear maps agreeing there are equal by `LinearMap.ext_on`.
+* `KaehlerDifferential.mapSemilinear_toAlgHom_apply`: on a tower it agrees with Mathlib's
+  `KaehlerDifferential.map`.
 * `KaehlerDifferential.mapSemilinear_smul`: the semilinearity law, with `f` applied rather than
   `f.toRingHom`.
-* `KaehlerDifferential.mapSemilinear_ext`: semilinear maps agreeing on the range of `D` are
-  equal.
 * `KaehlerDifferential.mapSemilinear_id_apply`, `mapSemilinear_id`: the identity acts as the
   identity.
 * `KaehlerDifferential.mapSemilinear_comp_apply`, `mapSemilinear_comp`: compatibility with
   composition.
-
-Proofs about `mapSemilinear` use receiver-explicit lemmas (`map_add`, `map_smulₛₗ`, …) rather
-than unrestricted `simp`: `simp` first normalises the semilinearity index
-`(AlgHom.id R A).toRingHom` to `RingHom.id A` inside the *type* of the map, retyping the
-application so that no lemma matches afterwards.
 
 ## Provenance
 
@@ -71,6 +68,11 @@ theorem toRingHom_apply (f : A →ₐ[R] B) (a : A) : f.toRingHom a = f a := rfl
 -- by span induction; the scalar step is `mapSemilinear_smul`.
 theorem mem_span_range (ω : Ω[A⁄R]) : ω ∈ Submodule.span A (Set.range (D R A)) := by
   rw [span_range_derivation]; trivial
+
+-- Proofs below use receiver-explicit lemmas (`map_add`, `map_smulₛₗ`, …) rather than
+-- unrestricted `simp`: `simp` first normalises the semilinearity index
+-- `(AlgHom.id R A).toRingHom` to `RingHom.id A` inside the *type* of the map, retyping the
+-- application so that no lemma matches afterwards.
 
 public section
 
@@ -104,13 +106,6 @@ theorem mapSemilinear_smul (f : A →ₐ[R] B) (a : A) (ω : Ω[A⁄R]) :
     mapSemilinear f (a • ω) = f a • mapSemilinear f ω := by
   rw [map_smulₛₗ, toRingHom_apply]
 
-/-- Semilinear maps out of `Ω[A⁄R]` are determined by their values on the range of `D`
-(which spans, `span_range_derivation`); this is the sense in which `mapSemilinear_D`
-characterises `mapSemilinear`. -/
-theorem mapSemilinear_ext {f : A →ₐ[R] B} {φ ψ : Ω[A⁄R] →ₛₗ[f.toRingHom] Ω[B⁄R]}
-    (h : ∀ x, φ (D R A x) = ψ (D R A x)) : φ = ψ :=
-  LinearMap.ext_on (span_range_derivation R A) (by rintro _ ⟨x, rfl⟩; exact h x)
-
 /-- The map along the identity fixes every differential. -/
 @[simp]
 theorem mapSemilinear_id_apply (ω : Ω[A⁄R]) : mapSemilinear (AlgHom.id R A) ω = ω := by
@@ -133,13 +128,26 @@ theorem mapSemilinear_comp_apply (f : B →ₐ[R] C) (g : A →ₐ[R] B) (ω : �
   | smul a ω _ ih => rw [mapSemilinear_smul, mapSemilinear_smul, mapSemilinear_smul, ih,
       AlgHom.comp_apply]
 
+/-- On a tower, `mapSemilinear` along the structure map is Mathlib's `KaehlerDifferential.map`
+— the sense in which this construction extends the tower functoriality to arbitrary algebra
+homomorphisms. -/
+@[simp]
+theorem mapSemilinear_toAlgHom_apply [Algebra A B] [IsScalarTower R A B] (ω : Ω[A⁄R]) :
+    mapSemilinear (IsScalarTower.toAlgHom R A B) ω = KaehlerDifferential.map R R A B ω := by
+  induction mem_span_range ω using Submodule.span_induction with
+  | mem ω hω => obtain ⟨x, rfl⟩ := hω; rw [mapSemilinear_D, KaehlerDifferential.map_D]; rfl
+  | zero => rw [map_zero, map_zero]
+  | add ω₁ ω₂ _ _ ih₁ ih₂ => rw [map_add, map_add, ih₁, ih₂]
+  | smul a ω _ ih =>
+    rw [mapSemilinear_smul, LinearMap.map_smul, ih]
+    exact IsScalarTower.algebraMap_smul B a _
+
 /-- The map along the identity is the identity, as (plainly linear) maps. -/
 theorem mapSemilinear_id :
     (mapSemilinear (AlgHom.id R A) : Ω[A⁄R] →ₗ[A] Ω[A⁄R]) = LinearMap.id :=
   LinearMap.ext mapSemilinear_id_apply
 
-/-- Functoriality of `mapSemilinear` at map level; the composite's scalar law is supplied by
-Mathlib's `RingHomCompTriple` instance for composed algebra maps. -/
+/-- Functoriality of `mapSemilinear`, at map level. -/
 theorem mapSemilinear_comp (f : B →ₐ[R] C) (g : A →ₐ[R] B) :
     mapSemilinear (f.comp g) = (mapSemilinear f).comp (mapSemilinear g) :=
   LinearMap.ext (mapSemilinear_comp_apply f g)
