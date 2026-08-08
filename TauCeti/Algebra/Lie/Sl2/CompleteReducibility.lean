@@ -231,25 +231,24 @@ private theorem exists_invariant_notMem_of_forall_lie_mem {d : ℕ}
     rfl
 
 omit [CharZero K] [IsAlgClosed K] in
-/-- A module of dimension zero has no proper Lie submodule. -/
-private theorem eq_top_of_finrank_le_zero {M : Type v} [AddCommGroup M] [Module K M]
-    [LieRingModule L M] [LieModule K L M] [FiniteDimensional K M] (N : LieSubmodule K L M)
-    (hrank : finrank K M ≤ 0) : N = ⊤ := by
-  refine (LieSubmodule.toSubmodule_inj _ _).1 ?_
-  rw [LieSubmodule.top_toSubmodule]
-  refine Submodule.eq_top_of_finrank_eq ?_
-  have := Submodule.finrank_le (N : Submodule K M)
-  omega
+/-- The rank identity for a quotient by a Lie submodule, stated through the Lie submodule itself.
+Both sides are definitionally the corresponding statement for the underlying `Submodule`; naming
+the identity keeps the dimension arithmetic below from resting on that coercion. -/
+private theorem finrank_quotient_add_finrank_lieSubmodule {M : Type v} [AddCommGroup M]
+    [Module K M] [LieRingModule L M] [LieModule K L M] [FiniteDimensional K M]
+    (W : LieSubmodule K L M) : finrank K (M ⧸ W) + finrank K W = finrank K M :=
+  Submodule.finrank_quotient_add_finrank (W : Submodule K M)
 
 omit [CharZero K] [IsAlgClosed K] in
 /-- The reducible step. If `N` has a Lie submodule `W` that is neither `⊥` nor `N` itself, the
 inductive hypothesis applies twice: once on the quotient `M ⧸ W`, which is strictly smaller
-because `W` is nonzero, to produce a vector outside `N` whose brackets land in `W`, and then to
-`W` itself, which is strictly smaller than `N`.
+because `W` is nonzero, to produce a vector outside `N` whose brackets land in `W`, and then —
+through `exists_invariant_notMem_of_forall_lie_mem` — to the submodule `W + K v₀`, whose rank is
+`finrank K W + 1`.
 
 Neither algebraic closure nor characteristic zero is needed here; those enter only through the
 Casimir argument on the irreducible branch. -/
-private theorem exists_invariant_notMem_of_lt {d : ℕ}
+private theorem exists_invariant_notMem_of_ne_bot_of_ne_of_le {d : ℕ}
     (ih : ∀ {M' : Type v} [AddCommGroup M'] [Module K M'] [LieRingModule L M'] [LieModule K L M'],
       ∀ [FiniteDimensional K M'] (N' : LieSubmodule K L M'), finrank K M' ≤ d → N' ≠ ⊤ →
         (∀ (x : L) (m : M'), ⁅x, m⁆ ∈ N') → ∃ v : M', v ∉ N' ∧ ∀ x : L, ⁅x, v⁆ = 0)
@@ -266,9 +265,7 @@ private theorem exists_invariant_notMem_of_lt {d : ℕ}
       (fun hc ↦ hWN ((LieSubmodule.toSubmodule_inj _ _).1 hc))
   have hWlt : finrank K W < finrank K N := Submodule.finrank_lt_finrank_of_lt hWsub
   have hquot : finrank K (M ⧸ W) ≤ d := by
-    have hadd := Submodule.finrank_quotient_add_finrank (W : Submodule K M)
-    have hq : finrank K (M ⧸ (W : Submodule K M)) = finrank K (M ⧸ W) := rfl
-    have hw : finrank K ((W : Submodule K M) : Type _) = finrank K W := rfl
+    have := finrank_quotient_add_finrank_lieSubmodule (L := L) W
     omega
   obtain ⟨v₀, hv₀N, hv₀W⟩ := exists_notMem_forall_lie_mem_of_le ih hquot hN htriv hWle
   exact exists_invariant_notMem_of_forall_lie_mem ih (by omega) hWle hv₀N hv₀W
@@ -282,7 +279,11 @@ private theorem exists_invariant_notMem_aux (htop : t.toLieSubalgebra K = ⊤) (
   induction d with
   | zero =>
     intro M _ _ _ _ _ N hrank hN _
-    exact absurd (eq_top_of_finrank_le_zero N hrank) hN
+    refine absurd ((LieSubmodule.toSubmodule_inj _ _).1 ?_) hN
+    rw [LieSubmodule.top_toSubmodule]
+    refine Submodule.eq_top_of_finrank_eq ?_
+    have := Submodule.finrank_le (N : Submodule K M)
+    omega
   | succ d ih =>
     intro M _ _ _ _ _ N hrank hN htriv
     obtain ⟨u, hu⟩ : ∃ u : M, u ∉ N := by
@@ -299,7 +300,7 @@ private theorem exists_invariant_notMem_aux (htop : t.toLieSubalgebra K = ⊤) (
     by_cases hred : ∃ W : LieSubmodule K L M, W ≠ ⊥ ∧ W ≠ N ∧ W ≤ N
     · -- `N` is reducible: pass to `M ⧸ W`, then to the submodule `W + K v₀`.
       obtain ⟨W, hWbot, hWN, hWle⟩ := hred
-      exact exists_invariant_notMem_of_lt ih hrank hN htriv hWbot hWN hWle
+      exact exists_invariant_notMem_of_ne_bot_of_ne_of_le ih hrank hN htriv hWbot hWN hWle
     · -- `N` is irreducible: the Casimir operator supplies the invariant vector.
       push Not at hred
       exact exists_invariant_notMem_of_isIrreducible htop hN htriv hact
