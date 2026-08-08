@@ -43,7 +43,7 @@ Chris Birkbeck), on top of the matrix-level Smith normal form
 * `span_diagElem_eq_top`: the elements `T(a₁,...,aₙ)` span the Hecke ring.
 * `diagElem_mul_of_mulMap_eq`: the product criterion `T(a) · T(b) = T(c)`, given that the
   coset decomposition multiplies into `T(c)` alone and does so with multiplicity at most one.
-  The `GL_n` reading of `HeckeCosetModule.single_mul_single_of_mulMap_eq`, which carries the
+  The `GL_n` reading of `HeckeCosetModule.mul_single_single_of_mulMap_eq`, which carries the
   argument at the level of arbitrary Hecke cosets and coefficients.
 
 ## References
@@ -402,7 +402,7 @@ theorem diagElem_mul_of_mulMap_eq (a b c : Fin n → ℕ)
       (((diagCoset c).rep : GL (Fin n) ℚ)) ≤ 1) :
     diagElem a * diagElem b = diagElem c := by
   rw [diagElem_def, diagElem_def, diagElem_def]
-  exact HeckeCosetModule.single_mul_single_of_mulMap_eq ℤ _ _ _ hmulMap hmul
+  exact HeckeCosetModule.mul_single_single_of_mulMap_eq ℤ _ _ _ hmulMap hmul
 
 end ProductCriterion
 

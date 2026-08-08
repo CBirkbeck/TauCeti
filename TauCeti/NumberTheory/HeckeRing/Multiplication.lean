@@ -32,7 +32,7 @@ stack merges.
 ## Main results
 
 * `HeckeCosetModule.single_mul_single`: the product of two basis elements.
-* `HeckeCosetModule.single_mul_single_of_mulMap_eq`: when the coset decomposition of `D₁ · D₂`
+* `HeckeCosetModule.mul_single_single_of_mulMap_eq`: when the coset decomposition of `D₁ · D₂`
   multiplies into a single coset `D₃` with multiplicity at most one, `[D₁] · [D₂] = [D₃]` —
   stated for three subgroups and `mul`, so it covers the bimodule case, not only the ring.
 * the `NonUnitalNonAssocSemiring (𝕋 Δ H R)` instance.
@@ -117,7 +117,7 @@ Stated at the natural level of the convolution: three subgroups and `mul R`, so 
 the whole `HeckeCosetModule` bimodule API and not only to the ring case `H₁ = H₂ = H₃`. This is
 the structure-constant computation shared by every "a product of basis elements is again a
 basis element" result; only the two hypotheses vary between them. -/
-lemma single_mul_single_of_mulMap_eq [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
+lemma mul_single_single_of_mulMap_eq [IsHeckeTriple Δ H₁ H₂] [IsHeckeTriple Δ H₂ H₃]
     (D₁ : HeckeCoset Δ H₁ H₂) (D₂ : HeckeCoset Δ H₂ H₃) (D₃ : HeckeCoset Δ H₁ H₃)
     (hmulMap : ∀ p, HeckeCoset.mulMap H₁ H₂ H₃ D₁.rep D₂.rep p = D₃)
     (hmul : multiplicity H₁ H₂ H₃ (D₁.rep : G) (D₂.rep : G) (D₃.rep : G) ≤ 1) :

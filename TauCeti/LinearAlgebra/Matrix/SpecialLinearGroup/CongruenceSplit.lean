@@ -102,7 +102,8 @@ private lemma modEqOne_conj (d : ℕ) (σ τ : SpecialLinearGroup ι ℤ)
   have h_inv : ∀ i' j', ∑ k : ι, (σ⁻¹).1 i' k * σ.1 k j' =
       if i' = j' then 1 else 0 := by
     intro i' j'
-    have hmul : (σ⁻¹).1 * σ.1 = 1 := by rw [← SpecialLinearGroup.coe_mul, inv_mul_cancel]; rfl
+    have hmul : (σ⁻¹).1 * σ.1 = 1 := by
+      rw [← SpecialLinearGroup.coe_mul, inv_mul_cancel, SpecialLinearGroup.coe_one]
     simpa [Matrix.mul_apply, Matrix.one_apply] using congr_fun (congr_fun hmul i') j'
   have h_inner : ∀ k, ∑ l : ι, τ.1 k l * σ.1 l j =
       (∑ l, (τ.1 k l - if k = l then 1 else 0) * σ.1 l j) + σ.1 k j := by
