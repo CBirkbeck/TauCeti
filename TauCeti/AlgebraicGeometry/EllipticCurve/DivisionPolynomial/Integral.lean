@@ -6,13 +6,12 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Degree
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
-public import Mathlib.RingTheory.Localization.FractionRing
 
 /-!
 # An integral-root criterion for the division polynomials `Φₙ` and `ΨSqₙ`
 
 This file is pure polynomial algebra about Mathlib's division polynomials. Its content is that
-`Φₙ − C c * ΨSqₙ` is **monic** whenever `(n : R) ≠ 0` — `Φₙ` is monic of degree `n²` while `ΨSqₙ`
+`Φₙ − C c * ΨSqₙ` is **monic**, for every `n` and `c` — `Φₙ` is monic of degree `n²` while `ΨSqₙ`
 has degree `n² - 1`, so subtracting a constant multiple of the latter cannot disturb the leading
 term — together with the integral-root consequence: a solution of `c * ΨSqₙ(x) = Φₙ(x)` is a root of
 that monic polynomial, so it is integral over `R`, and lies in `R` when `R` is integrally closed in
@@ -29,7 +28,7 @@ the descent step is not a theorem of this repository.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.monic_Φ_sub_C_mul_ΨSq`: `Φₙ − C c * ΨSqₙ` is monic when `(n : R) ≠ 0`.
+* `TauCeti.WeierstrassCurve.monic_Φ_sub_C_mul_ΨSq`: `Φₙ − C c * ΨSqₙ` is monic, unconditionally.
 * `TauCeti.WeierstrassCurve.aeval_Φ_sub_C_mul_ΨSq_eq_zero`: the coordinate identity says exactly
   that `x` is a root of that polynomial.
 * `TauCeti.WeierstrassCurve.isInteger_of_mul_eval_ΨSq_eq_eval_Φ`: in any `R`-algebra in which `R`
@@ -37,8 +36,10 @@ the descent step is not a theorem of this repository.
   statement about two elements satisfying that identity, not about a point and its multiple.
 
 The last needs only `IsIntegrallyClosedIn R A` — no fraction field, no domain, no unique
-factorization: it is an integral-root statement, not a rational-root one. Nontriviality of `R` is
-not assumed either; it follows from `(n : R) ≠ 0`.
+factorization: it is an integral-root statement, not a rational-root one. Nor is any condition on
+`n` or on the characteristic required: monicity holds for every `n : ℤ`, including when the
+characteristic divides `n` and when `n = 0`, because Mathlib's degree bound `natDegree_ΨSq_le` is
+itself unconditional.
 
 This supplies an ingredient for the Nagell–Lutz integrality milestone of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 6, item "The torsion subgroup and Nagell–Lutz",
@@ -61,30 +62,30 @@ namespace TauCeti
 
 namespace WeierstrassCurve
 
-variable {R : Type*} [CommRing R] [NoZeroDivisors R] (W : _root_.WeierstrassCurve R)
+variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve R)
 
-/-- `Φₙ − C c * ΨSqₙ` is monic, for any `c : R`, whenever `(n : R) ≠ 0`.
+/-- `Φₙ − C c * ΨSqₙ` is monic, for every `n : ℤ` and every `c : R`.
 
-`Φₙ` is monic of degree `n²` (`leadingCoeff_Φ`, `natDegree_Φ`) and `ΨSqₙ` has degree `n² - 1`
-(`natDegree_ΨSq`, which is where `(n : R) ≠ 0` is used), so the subtracted term has strictly
-smaller degree and the leading coefficient survives. Nontriviality of `R` is not assumed: it
-follows from `(n : R) ≠ 0`. -/
-theorem monic_Φ_sub_C_mul_ΨSq {n : ℤ} (hn : (n : R) ≠ 0) (c : R) :
-    (W.Φ n - C c * W.ΨSq n).Monic := by
-  have : Nontrivial R := nontrivial_of_ne _ _ hn
-  have hn0 : n ≠ 0 := by rintro rfl; simp at hn
-  refine Polynomial.Monic.sub_of_left (W.leadingCoeff_Φ n) (degree_lt_degree ?_)
-  calc (C c * W.ΨSq n).natDegree
-    _ ≤ (W.ΨSq n).natDegree := natDegree_C_mul_le _ _
-    _ = n.natAbs ^ 2 - 1 := W.natDegree_ΨSq hn
-    _ < n.natAbs ^ 2 := Nat.pred_lt (pow_ne_zero 2 (Int.natAbs_ne_zero.mpr hn0))
-    _ = (W.Φ n).natDegree := (W.natDegree_Φ n).symm
+`Φₙ` is monic of degree `n²` (`leadingCoeff_Φ`, `natDegree_Φ`) while `ΨSqₙ` has degree at most
+`n² − 1` (`natDegree_ΨSq_le`), so the subtracted term has strictly smaller degree and the leading
+coefficient survives. At `n = 0` the second polynomial vanishes (`ΨSq_zero`) and the first is `1`
+(`Φ_zero`). No hypothesis is needed: the degree bound `natDegree_ΨSq_le` is unconditional, and
+over a subsingleton every polynomial is monic. -/
+theorem monic_Φ_sub_C_mul_ΨSq (n : ℤ) (c : R) : (W.Φ n - C c * W.ΨSq n).Monic := by
+  nontriviality R
+  rcases eq_or_ne n 0 with rfl | hn0
+  · simp [_root_.WeierstrassCurve.ΨSq_zero, _root_.WeierstrassCurve.Φ_zero]
+  · refine Polynomial.Monic.sub_of_left (W.leadingCoeff_Φ n) (degree_lt_degree ?_)
+    calc (C c * W.ΨSq n).natDegree
+      _ ≤ (W.ΨSq n).natDegree := natDegree_C_mul_le _ _
+      _ ≤ n.natAbs ^ 2 - 1 := W.natDegree_ΨSq_le n
+      _ < n.natAbs ^ 2 := Nat.pred_lt (pow_ne_zero 2 (Int.natAbs_ne_zero.mpr hn0))
+      _ = (W.Φ n).natDegree := (W.natDegree_Φ n).symm
 
 section Root
 
 variable {A : Type*} [CommRing A] [Algebra R A]
 
-omit [NoZeroDivisors R] in
 /-- The coordinate identity `c * ΨSqₙ(x) = Φₙ(x)` says exactly that `x` is a root of the
 polynomial `Φₙ − C c * ΨSqₙ` over `R`.
 
@@ -106,13 +107,13 @@ If `x' * ΨSqₙ(x) = Φₙ(x)` and `x'` comes from `R`, then so does `x`: it is
 That identity is the relation the `x`-coordinates of `P` and `n • P` would satisfy, which is why
 this is the algebraic half of the Nagell–Lutz descent step — but that reading is motivation only:
 no point, and no multiple, occurs in this statement. -/
-theorem isInteger_of_mul_eval_ΨSq_eq_eval_Φ [IsIntegrallyClosedIn R A] {n : ℤ} (hn : (n : R) ≠ 0)
+theorem isInteger_of_mul_eval_ΨSq_eq_eval_Φ [IsIntegrallyClosedIn R A] (n : ℤ)
     {x x' : A} (hx' : IsLocalization.IsInteger R x')
     (hid : x' * ((W.baseChange A).ΨSq n).eval x = ((W.baseChange A).Φ n).eval x) :
     IsLocalization.IsInteger R x := by
   obtain ⟨c, hc⟩ := hx'
   exact RingHom.mem_rangeS.mpr (IsIntegrallyClosedIn.isIntegral_iff.mp
-    ⟨_, monic_Φ_sub_C_mul_ΨSq W hn c, aeval_Φ_sub_C_mul_ΨSq_eq_zero W (hc ▸ hid)⟩)
+    ⟨_, monic_Φ_sub_C_mul_ΨSq W n c, aeval_Φ_sub_C_mul_ΨSq_eq_zero W (hc ▸ hid)⟩)
 
 end Root
 
