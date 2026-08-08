@@ -84,7 +84,7 @@ universe u
 `N`-combination `∑ i, N j i • B i`, then `∑ j, N.adjugate i j • T j = N.det • B i`. Neither family
 need be a basis. -/
 private theorem sum_adjugate_smul_eq_det_smul {R ι M : Type*} [CommRing R] [Fintype ι]
-    [DecidableEq ι] [AddCommGroup M] [Module R M] (N : Matrix ι ι R) (B T : ι → M)
+    [DecidableEq ι] [AddCommMonoid M] [Module R M] (N : Matrix ι ι R) (B T : ι → M)
     (hMN : ∀ j, ∑ i, N j i • B i = T j) (i : ι) :
     ∑ j, N.adjugate i j • T j = N.det • B i :=
   calc ∑ j, N.adjugate i j • T j
