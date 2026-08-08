@@ -39,7 +39,7 @@ variable [Algebra.IsQuadraticExtension K L] [Algebra.IsSeparable K L]
 namespace Algebra.IsQuadraticExtension
 
 /-- A separable quadratic extension has exactly two automorphisms. -/
-theorem card_algEquiv : Nat.card (L ≃ₐ[K] L) = 2 := by
+theorem card_algEquiv_eq_two : Nat.card (L ≃ₐ[K] L) = 2 := by
   rw [IsGalois.card_aut_eq_finrank]
   exact finrank_eq_two K L
 
@@ -48,7 +48,7 @@ nontrivial automorphism. -/
 theorem algEquiv_eq_one_or_eq {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) (φ : L ≃ₐ[K] L) : φ = 1 ∨ φ = σ := by
   rcases eq_or_ne φ 1 with h1 | h1
   · exact .inl h1
-  · exact .inr (((Nat.card_eq_two_iff' 1).mp (card_algEquiv K L)).unique h1 hσ)
+  · exact .inr (((Nat.card_eq_two_iff' 1).mp (card_algEquiv_eq_two K L)).unique h1 hσ)
 
 /-- An element fixed by a nontrivial automorphism — hence, `Gal(L/K)` having order two, by all of
 `Gal(L/K)` — lies in the base field. -/

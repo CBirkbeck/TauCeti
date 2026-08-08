@@ -55,7 +55,7 @@ nontrivial `σ ∈ Gal(L/K)` has all its coefficients in `K`, so it is the base 
 of variables over `K`. -/
 lemma exists_baseChange_eq_of_map_eq {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) {C : VariableChange L}
     (hCinv : C.map σ.toAlgHom.toRingHom = C) : ∃ CK : VariableChange K, CK.baseChange L = C := by
-  have hap : ⇑σ.toAlgHom.toRingHom = ⇑σ := rfl
+  have hap : ⇑σ.toAlgHom.toRingHom = ⇑σ := AlgEquiv.coe_toAlgHom σ
   have mem : ∀ x : L, σ x = x → x ∈ Set.range (algebraMap K L) :=
     fun x hx ↦ mem_range_algebraMap_of_apply_eq K L hσ hx
   have hu : σ (C.u : L) = (C.u : L) := by
@@ -86,13 +86,14 @@ theorem exists_baseChange_eq_of_map_eq [DecidableEq K] [DecidableEq L]
     (hR : Affine.Point.map σ.toAlgHom R = R) :
     ∃ Q : (W⁄K).Point, Affine.Point.baseChange K L Q = R := by
   rcases R with _ | ⟨x, y, h⟩
-  · exact ⟨0, rfl⟩
+  · exact ⟨0, Affine.Point.map_zero _⟩
   · rw [Affine.Point.map_some] at hR
     injection hR with hx hy
     obtain ⟨x₀, rfl⟩ := mem_range_algebraMap_of_apply_eq K L hσ hx
     obtain ⟨y₀, rfl⟩ := mem_range_algebraMap_of_apply_eq K L hσ hy
     exact ⟨.some x₀ y₀ ((Affine.baseChange_nonsingular W
-      (f := Algebra.ofId K L) (FaithfulSMul.algebraMap_injective K L) x₀ y₀).mp h), rfl⟩
+      (f := Algebra.ofId K L) (FaithfulSMul.algebraMap_injective K L) x₀ y₀).mp h),
+      Affine.Point.map_some _ _⟩
 
 end Affine.Point
 
