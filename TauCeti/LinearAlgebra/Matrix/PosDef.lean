@@ -41,7 +41,7 @@ variable {n : Type*}
 
 /-- Clearing denominators: a nonzero rational vector on a finite index type is a nonzero integer
 vector scaled by a common nonzero denominator. -/
-private theorem exists_intCast_mul_eq_of_ne_zero [Finite n] {x : n → ℚ} (hx : x ≠ 0) :
+private theorem exists_intCast_eq_mul_of_ne_zero [Finite n] {x : n → ℚ} (hx : x ≠ 0) :
     ∃ (c : ℤ) (z : n → ℤ), c ≠ 0 ∧ z ≠ 0 ∧ ∀ i, (z i : ℚ) = (c : ℚ) * x i := by
   classical
   have _i : Fintype n := Fintype.ofFinite n
@@ -69,7 +69,7 @@ private theorem posDef_map_intCast_of_finite [Finite n] {A : Matrix n n ℤ} (hA
   · ext i j
     simpa using congrArg (fun m : ℤ ↦ (m : ℚ)) (hA.isHermitian.apply i j)
   -- Clear the denominators of `x`, producing a nonzero integer vector `z = c • x`.
-  obtain ⟨c, z, hc0, hzne, hz⟩ := exists_intCast_mul_eq_of_ne_zero hx
+  obtain ⟨c, z, hc0, hzne, hz⟩ := exists_intCast_eq_mul_of_ne_zero hx
   have hcQ : (c : ℚ) ≠ 0 := Int.cast_ne_zero.mpr hc0
   -- The two quadratic forms differ by the square of the common denominator.
   have key : ((star z ⬝ᵥ (A *ᵥ z) : ℤ) : ℚ) =
