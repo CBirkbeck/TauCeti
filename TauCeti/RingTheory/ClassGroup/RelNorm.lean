@@ -59,8 +59,10 @@ variable {R S : Type*} [CommRing R] [CommRing S] [IsDedekindDomain R] [IsDedekin
 
 variable (R) in
 /-- The relative ideal norm restricted to nonzero ideals, using that it reflects `⊥`
-(`Ideal.relNorm_eq_bot_iff`). Exposed, so that `Ideal.coe_relNorm0` — a definitional
-equality — is provable downstream of the module boundary. -/
+(`Ideal.relNorm_eq_bot_iff`).
+
+Exposed because `Ideal.coe_relNorm0` is a definitional equality and Mathlib has no coe lemma for
+`MonoidHom.codRestrict` to route it through; without exposure that lemma does not compile. -/
 @[expose]
 noncomputable def Ideal.relNorm0 : (Ideal S)⁰ →* (Ideal R)⁰ :=
   ((Ideal.relNorm R).toMonoidHom.domRestrict (Ideal S)⁰).codRestrict (Ideal R)⁰ fun I =>
@@ -81,7 +83,8 @@ By `ClassGroup.mk0_eq_mk0_iff` the hypothesis says `span {x} * I = span {y} * J`
 `x y : S`; applying `Ideal.relNorm` and using `Ideal.relNorm_singleton` turns this into the same
 relation between the norms, with the nonzero elements `Algebra.intNorm R S x` and
 `Algebra.intNorm R S y`. -/
-theorem mk0_relNorm0_eq_of_mk0_eq {I J : (Ideal S)⁰} (h : ClassGroup.mk0 I = ClassGroup.mk0 J) :
+private theorem mk0_relNorm0_eq_of_mk0_eq {I J : (Ideal S)⁰}
+    (h : ClassGroup.mk0 I = ClassGroup.mk0 J) :
     ClassGroup.mk0 (Ideal.relNorm0 R I) = ClassGroup.mk0 (Ideal.relNorm0 R J) := by
   -- `Algebra.intNorm_ne_zero` needs the fraction fields to form a finite extension; the lifted
   -- algebra is deliberately not an instance, so it is supplied here.
@@ -104,10 +107,7 @@ theorem mk0_relNorm0_eq_of_mk0_eq {I J : (Ideal S)⁰} (h : ClassGroup.mk0 I = C
 
 Every class has an integral representative, since `ClassGroup.mk0` is surjective, and the class of
 the norm does not depend on the representative (`mk0_relNorm0_eq_of_mk0_eq`); see
-`ClassGroup.relNorm_mk0`.
-
-Exposed so that `ClassGroup.relNorm_mk0`, which computes it on a representative, can unfold it. -/
-@[expose]
+`ClassGroup.relNorm_mk0`. -/
 noncomputable def relNorm : ClassGroup S →* ClassGroup R :=
   ((Con.ker (ClassGroup.mk0 (R := S))).lift ((ClassGroup.mk0 (R := R)).comp (Ideal.relNorm0 R))
       fun _ _ h => mk0_relNorm0_eq_of_mk0_eq h).comp
