@@ -153,6 +153,10 @@ a pair of definition; `TauCeti/RingTheory/Huber/OpenIdeal.lean` characterises th
 def extendedIdealOfDefinition (P : PairOfDefinition A) : Ideal A :=
   P.idealOfDefinition.map P.ringOfDefinition.subtype
 
+/-- Unfolding lemma for `TauCeti.Huber.PairOfDefinition.extendedIdealOfDefinition`. -/
+theorem extendedIdealOfDefinition_eq (P : PairOfDefinition A) :
+    P.extendedIdealOfDefinition = P.idealOfDefinition.map P.ringOfDefinition.subtype := (rfl)
+
 /-- The extended ideal `I · A` is finitely generated, because `I` is. -/
 theorem fg_extendedIdealOfDefinition (P : PairOfDefinition A) :
     P.extendedIdealOfDefinition.FG :=
