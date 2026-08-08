@@ -95,14 +95,14 @@ theorem isRestricted_iff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
 /-- `0` is restricted: its coefficients are constantly `0`. -/
 theorem isRestricted_zero (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A] :
     IsRestricted (0 : MvPowerSeries (Fin k) A) := by
-  change Tendsto _ cofinite (nhds 0)
+  rw [isRestricted_iff]
   simp only [map_zero]
   exact tendsto_const_nhds
 
 /-- `1` is restricted: every coefficient but the `0`-th vanishes. -/
 theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A] :
     IsRestricted (1 : MvPowerSeries (Fin k) A) := by
-  change Tendsto _ cofinite (nhds 0)
+  rw [isRestricted_iff]
   apply tendsto_nhds.mpr
   intro U hU h0U
   rw [Filter.mem_cofinite]
@@ -117,21 +117,18 @@ theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A]
 theorem IsRestricted.add {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
     [ContinuousAdd A] {f g : MvPowerSeries (Fin k) A}
     (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f + g) := by
-  change Tendsto _ cofinite (nhds 0)
+  rw [isRestricted_iff]
   have : Tendsto (fun s => MvPowerSeries.coeff s f + MvPowerSeries.coeff s g)
-      cofinite (nhds 0) := by
-    rw [show (0 : A) = 0 + 0 from (add_zero 0).symm]
-    exact Filter.Tendsto.add hf hg
+      cofinite (nhds 0) := by simpa using Filter.Tendsto.add hf hg
   exact this.congr (fun s => by simp [map_add])
 
 /-- The negation of a restricted series is restricted. -/
 theorem IsRestricted.neg {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     [ContinuousNeg A] {f : MvPowerSeries (Fin k) A}
     (hf : IsRestricted f) : IsRestricted (-f) := by
-  change Tendsto _ cofinite (nhds 0)
+  rw [isRestricted_iff]
   have : Tendsto (fun s => -(MvPowerSeries.coeff s f)) cofinite (nhds 0) := by
-    rw [show (0 : A) = -0 from neg_zero.symm]
-    exact Filter.Tendsto.neg hf
+    simpa using Filter.Tendsto.neg hf
   exact this.congr (fun s => by simp [map_neg])
 
 /-- Restrictedness, restated: for every open additive subgroup `W`, all but finitely many
@@ -191,10 +188,7 @@ private theorem coeff_mul_mem_of_forall_mem {k : ℕ} {A : Type*} [Ring A] [Topo
     MvPowerSeries.coeff n (f * g) ∈ (V : Set A) := by
   classical
   rw [SetLike.mem_coe]
-  rw [show MvPowerSeries.coeff n (f * g) =
-    ∑ p ∈ Finset.antidiagonal n,
-      MvPowerSeries.coeff p.1 f * MvPowerSeries.coeff p.2 g
-    from MvPowerSeries.coeff_mul (n := n) (φ := f) (ψ := g)]
+  rw [MvPowerSeries.coeff_mul]
   apply V.toAddSubgroup.sum_mem
   intro ⟨a, b⟩ hab
   rw [Finset.mem_antidiagonal] at hab
@@ -218,7 +212,7 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     [NonarchimedeanRing A] {f g : MvPowerSeries (Fin k) A}
     (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f * g) := by
   classical
-  change Tendsto _ cofinite (nhds 0)
+  rw [isRestricted_iff]
   rw [tendsto_nhds]
   intro U hU h0U
   rw [Filter.mem_cofinite]
@@ -295,7 +289,7 @@ coefficient `a` at multi-index `0` and `0` elsewhere, so it trivially tends to `
 theorem isRestricted_algebraMap {k : ℕ} {A : Type*} [CommRing A]
     [TopologicalSpace A] (a : A) :
     IsRestricted (algebraMap A (MvPowerSeries (Fin k) A) a) := by
-  change Tendsto _ cofinite (nhds 0)
+  rw [isRestricted_iff]
   apply tendsto_nhds.mpr
   intro U hU h0U
   rw [Filter.mem_cofinite]
