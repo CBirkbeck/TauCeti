@@ -210,14 +210,25 @@ lemma baseChange_variableChange (A : Type*) [CommRing A] [Algebra R A] :
 /-- **Naturality in the base field.** Changing variables by `D` and then extending scalars along
 `f` agrees with extending scalars and then changing variables by `D`. Both sides are transported
 along `baseChange_variableChange`, which identifies the base change of `D • W'` with the change
-of variables by `D⁄F` applied to the base change of `W'`. -/
+of variables by `D⁄F` applied to the base change of `W'`.
+
+The transports are spelled as plain `cast`s rather than `AddEquiv.cast`s, since `simp` rewrites
+the latter to the former: this way the left-hand side is in `simp` normal form and the lemma
+fires. -/
+@[simp]
 lemma map_mapVariableChange (f : F →ₐ[S] K) (P : ((D • W')⁄F).Point) :
     Point.map f (mapVariableChange (W'⁄F) (D.baseChange F)
-        (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
-          (baseChange_variableChange W' D F).symm P))
+        (cast (congrArg (fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+          (baseChange_variableChange W' D F).symm) P))
       = mapVariableChange (W'⁄K) (D.baseChange K)
-          (AddEquiv.cast (M := fun V : WeierstrassCurve K ↦ V.toAffine.Point)
-            (baseChange_variableChange W' D K).symm (Point.map f P)) := by
+          (cast (congrArg (fun V : WeierstrassCurve K ↦ V.toAffine.Point)
+            (baseChange_variableChange W' D K).symm) (Point.map f P)) := by
+  change Point.map f (mapVariableChange (W'⁄F) (D.baseChange F)
+      (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+        (baseChange_variableChange W' D F).symm P))
+    = mapVariableChange (W'⁄K) (D.baseChange K)
+        (AddEquiv.cast (M := fun V : WeierstrassCurve K ↦ V.toAffine.Point)
+          (baseChange_variableChange W' D K).symm (Point.map f P))
   rcases P with _ | ⟨x, y, h⟩
   · simp only [← zero_def, _root_.map_zero]
   · rw [cast_some, mapVariableChange_some, Point.map_some, Point.map_some, cast_some,
