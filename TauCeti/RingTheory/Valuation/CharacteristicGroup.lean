@@ -110,7 +110,7 @@ theorem _root_.Valuation.IsEquiv.cofinalValue_iff {v : Valuation A Γ₀}
 /-- A valuation **has full characteristic group** if every positive element of its value
 group is bounded between `(v a)⁻¹` and `v a` for some `a` — the elementwise form of
 "`Γ_v = cΓ_v`", for the characteristic subgroup `cΓ_v` of Wedhorn 4.13. Such a witness
-automatically satisfies `1 ≤ v.restrict a` (`one_le_of_inv_le_of_le`). This is
+automatically satisfies `1 ≤ v.restrict a`, since the two bounds force `x⁻¹ ≤ x`. This is
 the second disjunct of Wedhorn Lemma 7.4(ii); it is weaker than the *microbial* condition
 of Wedhorn Definition 5.46 (on a field it holds for every valuation). -/
 def HasFullCharacteristicGroup (v : Valuation A Γ₀) : Prop :=
@@ -127,7 +127,7 @@ theorem hasFullCharacteristicGroup_iff {v : Valuation A Γ₀} :
 
 /-- A bounding witness is automatically at least `1`: the two bounds force
 `x⁻¹ ≤ x` at a positive element. -/
-theorem one_le_of_inv_le_of_le {v : Valuation A Γ₀}
+private theorem one_le_of_inv_le_of_le {v : Valuation A Γ₀}
     {x γ : ValueGroup₀ (.ofClass v)} (hγ : 0 < γ)
     (h1 : x⁻¹ ≤ γ) (h2 : γ ≤ x) : 1 ≤ x := by
   by_contra hx
