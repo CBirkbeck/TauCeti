@@ -273,8 +273,8 @@ private theorem card_perfectMatching_of_isEmpty (α : Type u) [Fintype α] [Deci
     uniqueOfSubsingleton ⟨1, fun a => isEmptyElim a, fun a => isEmptyElim a⟩
   exact Fintype.card_unique
 
-/-- The perfect matchings pairing a fixed `a` with a fixed `b ≠ a` are exactly the perfect
-matchings of the complement of `{a, b}`. -/
+/-- There are as many perfect matchings pairing a fixed `a` with a fixed `b ≠ a` as there are
+perfect matchings of the complement of `{a, b}`. -/
 private theorem card_filter_val_eq_card_perfectMatching_compl {α : Type u} [Fintype α]
     [DecidableEq α] {a b : α} (hba : b ≠ a) :
     (Finset.univ.filter fun D : PerfectMatching α => D.val a = b).card
@@ -282,8 +282,8 @@ private theorem card_filter_val_eq_card_perfectMatching_compl {α : Type u} [Fin
   (Fintype.card_subtype _).symm.trans
     (Fintype.card_congr (PerfectMatching.fiberEquiv hba.symm))
 
-/-- The inductive step: splitting the perfect matchings of a `2 * (m + 1)`-element type by the
-partner of a fixed element `a` gives `2 * m + 1` fibres, each with `(2 * m - 1)‼` elements. -/
+/-- If every `2 * m`-element type has `(2 * m - 1)‼` perfect matchings, then every
+`2 * (m + 1)`-element type has `(2 * (m + 1) - 1)‼` of them. -/
 private theorem card_perfectMatching_succ {m : ℕ} (α : Type u) [Fintype α] [DecidableEq α]
     (hcard : Fintype.card α = 2 * (m + 1))
     (ih : ∀ (β : Type u) [Fintype β] [DecidableEq β], Fintype.card β = 2 * m →
@@ -301,6 +301,7 @@ private theorem card_perfectMatching_succ {m : ℕ} (α : Type u) [Fintype α] [
   have hmem : ∀ D ∈ (Finset.univ : Finset (PerfectMatching α)),
       D.val a ∈ Finset.univ.erase a :=
     fun D _ => Finset.mem_erase.mpr ⟨D.apply_ne a, Finset.mem_univ _⟩
+  have hodd : 2 * (m + 1) - 1 = 2 * m + 1 := by omega
   have herase : (Finset.univ.erase a).card = 2 * m + 1 := by
     rw [Finset.card_erase_of_mem (Finset.mem_univ _), Finset.card_univ, hcard]
     omega
@@ -312,7 +313,7 @@ private theorem card_perfectMatching_succ {m : ℕ} (α : Type u) [Fintype α] [
     _ = (Finset.univ.erase a).card * (2 * m - 1)‼ := Finset.sum_const_nat key
     _ = (2 * m + 1) * (2 * m - 1)‼ := by rw [herase]
     _ = (2 * m + 1)‼ := (Nat.doubleFactorial_add_one (2 * m)).symm
-    _ = (2 * (m + 1) - 1)‼ := by rw [show 2 * (m + 1) - 1 = 2 * m + 1 by omega]
+    _ = (2 * (m + 1) - 1)‼ := by rw [hodd]
 
 private theorem card_perfectMatching_aux :
     ∀ (m : ℕ) {α : Type u} [Fintype α] [DecidableEq α], Fintype.card α = 2 * m →
