@@ -89,8 +89,9 @@ instance : IsIntegrallyClosed (S.integer K) := by
 For `v ∈ S` the inverse `v⁻¹` of `v` as a fractional ideal consists of `S`-integers, because an
 element `y` with `y * v ⊆ R` can have a pole only at `v`. As `v * v⁻¹ = 1`, the extension of
 `v`
-to `𝒪_S` is therefore the unit ideal. This is the one place where the Dedekind property of `R`
-enters, and it is what makes `𝒪_S` bigger than `R`.
+to `𝒪_S` is therefore the unit ideal, which is what makes `𝒪_S` bigger than `R`. This is where
+the *invertibility* of nonzero ideals is used — the Dedekind property enters elsewhere too,
+through Noetherianity and dimension one.
 -/
 
 /-- An element of the inverse fractional ideal `v⁻¹` is `w`-integral at every height-one prime
