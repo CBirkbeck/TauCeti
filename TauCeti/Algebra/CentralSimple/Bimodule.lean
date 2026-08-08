@@ -46,7 +46,7 @@ value `u` at `1`, and that value intertwines `f` and `g`:
 
 * `TauCeti.Bimodule.symm_apply_eq_symm_apply_one_mul`: the transported map is `a ↦ u * a`.
 * `TauCeti.Bimodule.symm_apply_one_mul_eq_mul_symm_apply_one`: `u * f b = g b * u`.
-* `TauCeti.Bimodule.exists_symm_apply_one_mul_eq_one`: for a surjective map, `u` has a right
+* `TauCeti.Bimodule.exists_symm_apply_one_mul_eq_one`: when `of g 1` is hit, `u` has a right
   inverse.
 
 These are what the Skolem-Noether argument in
@@ -157,6 +157,7 @@ variable {f g : B →ₐ[K] A}
 
 /-- Transported along `Bimodule.of`, a `B ⊗[K] Aᵐᵒᵖ`-linear map `Bimodule f →ₗ Bimodule g` sends
 `a` to its value at `1`, multiplied by `a`. -/
+@[grind =]
 theorem symm_apply_eq_symm_apply_one_mul (φ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g) (a : A) :
     (of g).symm (φ (of f a))
       = (of g).symm (φ (of f 1)) * a := by
@@ -168,6 +169,7 @@ theorem symm_apply_eq_symm_apply_one_mul (φ : Bimodule f →ₗ[B ⊗[K] Aᵐ�
 
 /-- The transported value at `1` intertwines `f` and `g`: writing `u` for it, `u * f b = g b * u`
 for every `b : B`. -/
+@[grind =]
 theorem symm_apply_one_mul_eq_mul_symm_apply_one
     (φ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g) (b : B) :
     (of g).symm (φ (of f 1)) * f b
@@ -186,11 +188,12 @@ theorem symm_apply_one_mul_eq_mul_symm_apply_one
     _ = (of g).symm ((b ⊗ₜ (1 : Aᵐᵒᵖ) : B ⊗[K] Aᵐᵒᵖ) • of g u) := by rw [hu']
     _ = g b * u := by rw [smul_of]; simp
 
-/-- For a surjective `φ`, the transported value at `1` has a right inverse in `A`. -/
+/-- Whenever `of g 1` is in the range of `φ`, the transported value at `1` has a right inverse
+in `A`. Surjectivity of `φ` is more than is needed: only this one value must be hit. -/
 theorem exists_symm_apply_one_mul_eq_one (φ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g)
-    (hφ : Function.Surjective φ) :
+    (h1 : of g 1 ∈ LinearMap.range φ) :
     ∃ v : A, (of g).symm (φ (of f 1)) * v = 1 := by
-  obtain ⟨y, hy⟩ := hφ (of g 1)
+  obtain ⟨y, hy⟩ := h1
   refine ⟨(of f).symm y, ?_⟩
   have h := symm_apply_eq_symm_apply_one_mul φ ((of f).symm y)
   rw [LinearEquiv.apply_symm_apply, hy] at h

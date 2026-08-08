@@ -116,7 +116,7 @@ theorem skolemNoether [IsSimpleRing A] [FiniteDimensional K A]
   -- The three steps below need only linearity and surjectivity, so use `φ` as a linear map.
   set ψ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g := φ.toLinearMap with hψ
   have hψsurj : Function.Surjective ψ := by rw [hψ]; simpa using φ.surjective
-  obtain ⟨v, huv⟩ := Bimodule.exists_symm_apply_one_mul_eq_one ψ hψsurj
+  obtain ⟨v, huv⟩ := Bimodule.exists_symm_apply_one_mul_eq_one ψ (hψsurj _)
   -- `A` is finite-dimensional over a field, hence Artinian, hence Dedekind-finite
   -- (`IsArtinianRing.of_finite` is a theorem, not an instance, so it is supplied by hand).
   -- A right inverse therefore already presents the conjugator as a unit.
