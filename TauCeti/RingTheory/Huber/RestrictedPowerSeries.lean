@@ -108,7 +108,7 @@ theorem isRestrictedAdic_one (k : ℕ) (A : Type*) [CommRing A] [TopologicalSpac
 
 /-- A sum of restricted series is restricted. -/
 theorem IsRestrictedAdic.add {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A]
-    [NonarchimedeanRing A] {f g : MvPowerSeries (Fin k) A}
+    [ContinuousAdd A] {f g : MvPowerSeries (Fin k) A}
     (hf : IsRestrictedAdic f) (hg : IsRestrictedAdic g) : IsRestrictedAdic (f + g) := by
   change Tendsto _ cofinite (nhds 0)
   have : Tendsto (fun s => MvPowerSeries.coeff s f + MvPowerSeries.coeff s g)
@@ -119,7 +119,7 @@ theorem IsRestrictedAdic.add {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpac
 
 /-- The negation of a restricted series is restricted. -/
 theorem IsRestrictedAdic.neg {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A]
-    [NonarchimedeanRing A] {f : MvPowerSeries (Fin k) A}
+    [ContinuousNeg A] {f : MvPowerSeries (Fin k) A}
     (hf : IsRestrictedAdic f) : IsRestrictedAdic (-f) := by
   change Tendsto _ cofinite (nhds 0)
   have : Tendsto (fun s => -(MvPowerSeries.coeff s f)) cofinite (nhds 0) := by
