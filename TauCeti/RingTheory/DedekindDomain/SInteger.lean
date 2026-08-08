@@ -198,17 +198,16 @@ factors lie in `S`, and each of those extends to the unit ideal by `integer_map_
     rw [hfx]
     have hsI : f s ∈ I := hfx ▸ I.mul_mem_left _ hx
     exact Ideal.mem_map_of_mem f hsI
-  -- the elements `r` with `r * x ∈ J'` form an ideal containing the extension of `denIdeal`
-  let K' : Ideal (S.integer K) :=
-    { carrier := {r | r * x ∈ J'}
-      zero_mem' := by simp
-      add_mem' := fun {a b} ha hb ↦ by simpa [add_mul] using J'.add_mem ha hb
-      smul_mem' := fun c {a} ha ↦ by
-        simpa only [smul_eq_mul, Set.mem_ofPred_eq, mul_assoc] using J'.mul_mem_left c ha }
-  have hsub : Ideal.map f (Algebra.denIdeal K (x : K)) ≤ K' := Ideal.map_le_iff_le_comap.mpr key
+  -- the elements `r` with `r * x ∈ J'` are the colon ideal `(J' : x)`, and it contains the
+  -- extension of `denIdeal`
+  have hsub : Ideal.map f (Algebra.denIdeal K (x : K)) ≤ J'.colon {x} :=
+    Ideal.map_le_iff_le_comap.mpr fun d hd ↦ by
+      simpa only [Ideal.mem_comap, Submodule.mem_colon_singleton, smul_eq_mul] using key d hd
   have hmtop : Ideal.map f (Algebra.denIdeal K (x : K)) = ⊤ :=
     integer_map_denIdeal_eq_top K S x.property
-  have h1 : (1 : S.integer K) * x ∈ J' := hsub (hmtop.ge Submodule.mem_top)
+  have h1 : (1 : S.integer K) * x ∈ J' := by
+    simpa only [smul_eq_mul] using
+      Submodule.mem_colon_singleton.mp (hsub (hmtop.ge Submodule.mem_top))
   simpa using h1
 
 /-!
