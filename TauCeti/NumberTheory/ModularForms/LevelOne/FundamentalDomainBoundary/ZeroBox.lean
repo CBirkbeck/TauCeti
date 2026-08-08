@@ -50,13 +50,16 @@ floor `1/2` sits strictly below the fundamental domain's lowest point `√3/2` w
 closed box inside the upper half-plane. -/
 def fdBox (M : ℝ) : Set ℂ := Ioo (-1) 1 ×ℂ Ioo (1 / 2) M
 
+/-- Membership in the box, unfolded to the coordinate bounds. -/
 @[simp]
 theorem mem_fdBox {M : ℝ} {z : ℂ} :
     z ∈ fdBox M ↔ (-1 < z.re ∧ z.re < 1) ∧ 1 / 2 < z.im ∧ z.im < M := by
   simp [fdBox, mem_reProdIm]
 
+/-- The box is open. -/
 theorem isOpen_fdBox (M : ℝ) : IsOpen (fdBox M) := isOpen_Ioo.reProdIm isOpen_Ioo
 
+/-- The box lies inside the open upper half-plane: its floor is positive. -/
 theorem fdBox_subset_upperHalfPlaneSet {M : ℝ} : fdBox M ⊆ upperHalfPlaneSet := fun z hz =>
   lt_trans (by norm_num) (mem_fdBox.mp hz).2.1
 
