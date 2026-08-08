@@ -7,12 +7,14 @@ module
 public import Mathlib.Analysis.Analytic.Order
 
 /-!
-# The analytic order of products and power-compositions
+# The analytic order of products and power-compositions, and finiteness of the zeros
 
-Three extensions of Mathlib's `analyticOrderAt` calculus: the order is additive over finite
-products, composing with `q ↦ q ^ N` at `0` multiplies the order by `N`, and an analytic
-function somewhere nonzero on a preconnected set has finitely many zeros in any compact
-subset.
+Two extensions of Mathlib's `analyticOrderAt` calculus — the order is additive over finite
+products, and composing with `q ↦ q ^ N` at `0` multiplies the order by `N` — together with
+the finiteness they are used alongside: an analytic function somewhere nonzero on a
+preconnected set has finitely many zeros in any compact subset. The finiteness does not
+mention the order, but it is the companion fact wherever a zero count is taken: the order is
+what each zero contributes, and this is what makes the count finite.
 
 ## Main declarations
 
