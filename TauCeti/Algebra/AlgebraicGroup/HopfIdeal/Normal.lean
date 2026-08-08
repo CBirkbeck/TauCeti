@@ -109,26 +109,6 @@ theorem quotientPointsSubgroup_normal (H : _root_.CommHopfAlgCat.{v} R)
     simpa using hn y ((HopfIdeal.mem_toIdeal (I := I)).mp hy)
   exact RingHom.mem_ker.mp (hker (hI.conjugation_mem hx))
 
-section
-
-variable {S A B C : Type*} [CommSemiring S] [CommSemiring A] [Algebra S A] [Semiring B]
-  [Algebra S B] [CommSemiring C] [Algebra S C]
-
-/-- The product of the left inclusion with the right inclusion after `f` is the functorial
-map `AlgHom.id ⊗ f`. -/
-private theorem productMap_includeLeft_includeRight_comp (f : B →ₐ[S] C) :
-    Algebra.TensorProduct.productMap
-        (Algebra.TensorProduct.includeLeft : A →ₐ[S] TensorProduct S A C)
-        (Algebra.TensorProduct.includeRight.comp f) =
-      Algebra.TensorProduct.map (AlgHom.id S A) f := by
-  refine Algebra.TensorProduct.ext ?_ ?_
-  · rw [Algebra.TensorProduct.productMap_left, Algebra.TensorProduct.map_comp_includeLeft,
-      AlgHom.comp_id]
-  · exact (Algebra.TensorProduct.productMap_right _ _).trans
-      (Algebra.TensorProduct.map_comp_includeRight _ _).symm
-
-end
-
 /-- A Hopf ideal is normal if and only if it cuts out a normal subgroup over every
 commutative value algebra. -/
 theorem isNormal_iff_quotientPointsSubgroup_normal
@@ -166,7 +146,11 @@ theorem isNormal_iff_quotientPointsSubgroup_normal
         Algebra.TensorProduct.productMap g.ofConv n.ofConv =
           Algebra.TensorProduct.map (AlgHom.id R H) (Ideal.Quotient.mkₐ R I.toIdeal) := by
       rw [hgof, hnof]
-      exact productMap_includeLeft_includeRight_comp (A := H) (Ideal.Quotient.mkₐ R I.toIdeal)
+      refine Algebra.TensorProduct.ext ?_ ?_
+      · rw [Algebra.TensorProduct.productMap_left,
+          Algebra.TensorProduct.map_comp_includeLeft, AlgHom.comp_id]
+      · exact (Algebra.TensorProduct.productMap_right _ _).trans
+          (Algebra.TensorProduct.map_comp_includeRight _ _).symm
     rw [hproduct] at heval
     have hmem := RingHom.mem_ker.mpr heval
     rw [HopfIdeal.ker_tensorProduct_map_id_quotient I.toIdeal] at hmem
