@@ -7,7 +7,7 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 
 /-!
-# Divisibility of `4Δ` by the square of `ψ₂` at a point
+# A common divisor of `Ψ₂Sq(x)` and `4·Ψ₃(x)` divides `4Δ`
 
 The headline is a divisibility transfer between Mathlib's division polynomials: for any
 commutative ring, any `x`, and any `d`,
@@ -19,44 +19,26 @@ proof is an explicit Bézout certificate in the `b`-invariants. Its two divisibi
 course assumptions; what it needs *beyond* them is nothing — no point of a curve, no ellipticity,
 no domain or factorisation hypothesis on the ring.
 
-Specialising `d` to `κ² = ψ₂(x, y)²` at a point of the curve — where `κ² = Ψ₂Sq(x)` — gives the
-form the Nagell–Lutz argument consumes: if `κ² ∣ 4·Ψ₃(x)` then `κ² ∣ 4Δ`. Here
-`κ = ψ₂(x, y) = 2y + a₁x + a₃` is Mathlib's `2`-division polynomial evaluated at the point.
-
-For a short model `y² = x³ + Ax + B` we have `a₁ = a₃ = 0`, so `κ = 2y` and the conclusion reads
-exactly `(2y)² ∣ 4Δ`.
-
-⚠ That is **not** the classical `y = 0 ∨ y² ∣ Δ` over an arbitrary commutative ring. Cancelling
-`4y² ∣ 4Δ` down to `y² ∣ Δ` needs `4` to be a non-zero-divisor; that does hold over a domain of
-characteristic zero — in particular over `ℤ`, where Nagell–Lutz is stated — but the specialisation
-is not proved in this file, and `κ` rather than `2y` is the honest invariant for a long model.
-
-Nor does the classical `y = 0` disjunct come from here. When `κ = 0` the hypothesis `κ² ∣ 4·Ψ₃(x)`
-reads `4·Ψ₃(x) = 0`, so that branch is not something this lemma discharges — it is the case the
-classical proof treats separately, exactly because the hypothesis is unavailable there.
-
-The proof is short. On the curve `κ² = Ψ₂Sq(x)`, which is Mathlib's polynomial identity `ψ₂_sq`
-evaluated where the Weierstrass polynomial vanishes. And there is an explicit Bézout combination of
-`Ψ₂Sq(x)` and `Ψ₃(x)` equal to `4Δ` — a `ring` identity in the `b`-invariants — so anything
-dividing both `κ²` and `4·Ψ₃(x)` divides `4Δ`.
+When the Nagell–Lutz route later needs the on-curve form — with `κ = ψ₂(x, y) = 2y + a₁x + a₃`
+Mathlib's `2`-division polynomial at a point, take `d = κ²`, which on the curve *is* `Ψ₂Sq(x)` by
+`evalEval_ψ₂_sq` — that is a one-line specialisation. It is deliberately **not** stated here: its
+hypothesis `κ² ∣ 4·Ψ₃(x)` is supplied by point-level `[n]`-multiplication material that is not yet
+in this repository, and a theorem whose premise nothing can yet discharge is not API this file
+should export. For a short model (`a₁ = a₃ = 0`, so `κ = 2y`) that future conclusion reads
+`(2y)² ∣ 4Δ`.
 
 ## Main results
 
 * `TauCeti.WeierstrassCurve.dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃`: over any commutative
   ring, a common divisor of `Ψ₂Sq(x)` and `4·Ψ₃(x)` divides `4Δ`.
 * `TauCeti.WeierstrassCurve.evalEval_ψ₂_sq`: on the curve, `ψ₂(x, y)² = Ψ₂Sq(x)`.
-* `TauCeti.WeierstrassCurve.evalEval_ψ₂_sq_dvd_four_mul_Δ_of_dvd_four_mul_Ψ₃`: the specialisation
-  of the first to `d = ψ₂(x, y)²` at a point of the curve.
 
 Stated over an arbitrary commutative ring: no domain, integrality or ellipticity hypothesis.
 
-⚠ **No torsion hypothesis appears here, and no part of `lutz_nagell` is proved.** The specialised
-form takes `κ² ∣ 4·Ψ₃(x)` as an assumption, and torsion by itself does not give it: over an
-arbitrary commutative ring finite order says nothing about divisibility. The classical route
-obtains it in the arithmetic setting — an integrally closed base with a fraction field, integral
-coordinates, and the point-level `[n]`-multiplication formula for `2 • P` — none of which is in
-this file. The headline result does not depend on any of that: it is a statement about
-polynomials, usable by any caller with a common divisor in hand.
+⚠ **No torsion hypothesis appears here, and no part of `lutz_nagell` is proved.** Nothing in this
+file takes a premise that awaits absent material: the headline is a statement about polynomials,
+usable by any caller with a common divisor in hand, and `evalEval_ψ₂_sq` is an unconditional
+on-curve evaluation.
 
 This is an ingredient for the Nagell–Lutz milestone of `TauCetiRoadmap/EllipticCurves/README.md`,
 Layer 6, item "The torsion subgroup and Nagell–Lutz", whose short-model target `lutz_nagell` asks
@@ -137,17 +119,6 @@ theorem dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ {d : R} (hd : d ∣
   rw [← bezout_four_mul_Δ W x]
   exact dvd_add (Dvd.dvd.mul_left hd _)
     (Dvd.dvd.mul_left (dvd_sq_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ W hd hΨ₃) _)
-
-/-- The on-curve specialisation of `dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃` at
-`d = ψ₂(x, y)²`, which on the curve *is* `Ψ₂Sq(x)`.
-
-For a short model `ψ₂(x, y) = 2y`, so the conclusion reads `(2y)² ∣ 4Δ`; recovering the classical
-`y² ∣ Δ` from that needs `4` to be a non-zero-divisor, which an arbitrary commutative ring does
-not supply. -/
-theorem evalEval_ψ₂_sq_dvd_four_mul_Δ_of_dvd_four_mul_Ψ₃ (h : W.toAffine.Equation x y)
-    (hΨ₃ : W.ψ₂.evalEval x y ^ 2 ∣ 4 * (W.Ψ₃).eval x) :
-    W.ψ₂.evalEval x y ^ 2 ∣ 4 * W.Δ :=
-  dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ W ((evalEval_ψ₂_sq W h) ▸ dvd_rfl) hΨ₃
 
 end WeierstrassCurve
 
