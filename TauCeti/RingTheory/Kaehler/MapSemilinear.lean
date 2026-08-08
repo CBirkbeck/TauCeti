@@ -14,8 +14,8 @@ For an `R`-algebra homomorphism `f : A →ₐ[R] B`, the induced map on Kähler 
 `f` — it is `f`-**semilinear**, `mapSemilinear f (a • ω) = f a • mapSemilinear f ω` — so it is
 packaged as a semilinear map `Ω[A⁄R] →ₛₗ[f.toRingHom] Ω[B⁄R]`, following the precedent of
 `LinearMap.frobenius`. The motivating special case is an algebra *endomorphism*
-`f : S →ₐ[R] S` (for instance Frobenius), where this is the pullback of differentials along
-`f`, and where `A`-linearity genuinely fails.
+`f : S →ₐ[R] S` (for instance Frobenius), where this is the pullback of differentials along `f`
+and where the map need not be `S`-linear.
 
 Mathlib's `KaehlerDifferential.map` is functoriality for a *tower* `[Algebra A B]`
 `[IsScalarTower R A B]`, so it cannot state this map: for an arbitrary `f : A →ₐ[R] B` no
@@ -123,17 +123,18 @@ theorem mapSemilinear_comp_apply (f : B →ₐ[R] C) (g : A →ₐ[R] B) (ω : �
 
 /-- On a tower, `mapSemilinear` along the structure map is Mathlib's `KaehlerDifferential.map`
 — the sense in which this construction extends the tower functoriality to arbitrary algebra
-homomorphisms.
-
-Unlike the identity and composition laws this cannot be stated at map level and transported: the
-two sides are semilinear over `algebraMap A B` and linear over `A` respectively, so they are the
-same function at different types, and `LinearMap.ext_on` does not apply. Hence the induction. -/
+homomorphisms. -/
 @[simp]
 theorem mapSemilinear_toAlgHom_apply [Algebra A B] [IsScalarTower R A B] (ω : Ω[A⁄R]) :
     mapSemilinear (IsScalarTower.toAlgHom R A B) ω = KaehlerDifferential.map R R A B ω := by
+  -- Unlike the identity and composition laws this cannot be proved at map level: the two sides
+  -- are semilinear over `algebraMap A B` and linear over `A`, i.e. the same function at different
+  -- types, so `LinearMap.ext_on` has no equation to prove. Hence the induction.
   induction (span_range_derivation R A ▸ Submodule.mem_top :
       ω ∈ Submodule.span A (Set.range (D R A))) using Submodule.span_induction with
-  | mem ω hω => obtain ⟨x, rfl⟩ := hω; rw [mapSemilinear_D, KaehlerDifferential.map_D]; rfl
+  | mem ω hω =>
+    obtain ⟨x, rfl⟩ := hω
+    rw [mapSemilinear_D, KaehlerDifferential.map_D, IsScalarTower.toAlgHom_apply]
   | zero => rw [map_zero, map_zero]
   | add ω₁ ω₂ _ _ ih₁ ih₂ => rw [map_add, map_add, ih₁, ih₂]
   | smul a ω _ ih =>
