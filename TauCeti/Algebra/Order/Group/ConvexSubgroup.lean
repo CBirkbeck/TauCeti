@@ -55,7 +55,7 @@ variable (Γ : Type*) [CommGroup Γ] [LinearOrder Γ]
 /-- A **convex subgroup** of a linearly ordered commutative group `Γ` is a subgroup
 that is order-convex: if `a ≤ x ≤ b` and `a, b ∈ H`, then `x ∈ H`. -/
 structure ConvexSubgroup extends Subgroup Γ where
-  convex' : ∀ {a b x : Γ}, a ∈ carrier → b ∈ carrier → a ≤ x → x ≤ b → x ∈ carrier
+  ordConnected' : carrier.OrdConnected
 
 namespace ConvexSubgroup
 
@@ -77,14 +77,14 @@ instance : SubgroupClass (ConvexSubgroup Γ) Γ where
 theorem ext {H₁ H₂ : ConvexSubgroup Γ} (h : ∀ x, x ∈ H₁ ↔ x ∈ H₂) : H₁ = H₂ :=
   SetLike.ext h
 
+/-- A convex subgroup is an order-connected subset. -/
+theorem ordConnected (H : ConvexSubgroup Γ) : (H : Set Γ).OrdConnected :=
+  H.ordConnected'
+
 /-- Convexity: if `a, b ∈ H` and `a ≤ x ≤ b`, then `x ∈ H`. -/
 theorem convex (H : ConvexSubgroup Γ) {a b x : Γ} (ha : a ∈ H) (hb : b ∈ H)
     (h₁ : a ≤ x) (h₂ : x ≤ b) : x ∈ H :=
-  H.convex' ha hb h₁ h₂
-
-/-- A convex subgroup is an order-connected subset. -/
-theorem ordConnected (H : ConvexSubgroup Γ) : (H : Set Γ).OrdConnected :=
-  ⟨fun _ hx _ hy _ hz ↦ H.convex hx hy hz.1 hz.2⟩
+  H.ordConnected'.out ha hb ⟨h₁, h₂⟩
 
 /-- A convex subgroup contains every element between `1` and one of its members. -/
 theorem mem_of_one_le_le {H : ConvexSubgroup Γ} {x h : Γ}
@@ -100,17 +100,17 @@ theorem mem_of_le_le_one {H : ConvexSubgroup Γ} {x h : Γ}
 instance : Bot (ConvexSubgroup Γ) where
   bot :=
     { toSubgroup := ⊥
-      convex' := by
-        intro a b x ha hb h₁ h₂
-        have ha' : a = 1 := Subgroup.mem_bot.mp ha
-        have hb' : b = 1 := Subgroup.mem_bot.mp hb
-        exact Subgroup.mem_bot.mpr (le_antisymm (h₂.trans hb'.le) (ha'.ge.trans h₁)) }
+      ordConnected' := by
+        rw [show (⊥ : Subgroup Γ).carrier = ({1} : Set Γ) from rfl]
+        exact Set.ordConnected_singleton }
 
 /-- The full group is a convex subgroup. -/
 instance : Top (ConvexSubgroup Γ) where
   top :=
     { toSubgroup := ⊤
-      convex' := fun _ _ _ _ ↦ trivial }
+      ordConnected' := by
+        rw [show (⊤ : Subgroup Γ).carrier = (Set.univ : Set Γ) from rfl]
+        exact Set.ordConnected_univ }
 
 @[simp]
 theorem mem_bot {x : Γ} : x ∈ (⊥ : ConvexSubgroup Γ) ↔ x = 1 :=
@@ -140,14 +140,14 @@ theorem lt_of_not_mem_of_lt_one (H : ConvexSubgroup Γ) {γ : Γ} (hγ : γ ∉ 
     {h : Γ} (hh : h ∈ H) : γ < h := by
   by_contra hle
   push Not at hle
-  exact hγ (H.convex' hh (one_mem H) hle hγ1.le)
+  exact hγ (H.convex hh (one_mem H) hle hγ1.le)
 
 /-- An excluded element above `1` lies above every member. -/
 theorem lt_of_not_mem_of_one_lt (H : ConvexSubgroup Γ) {γ : Γ} (hγ : γ ∉ H) (hγ1 : 1 < γ)
     {h : Γ} (hh : h ∈ H) : h < γ := by
   by_contra hle
   push Not at hle
-  exact hγ (H.convex' (one_mem H) hh hγ1.le hle)
+  exact hγ (H.convex (one_mem H) hh hγ1.le hle)
 
 /-- Elements above an excluded element above `1` are excluded, by convexity. -/
 theorem not_mem_of_not_mem_of_one_lt_le (H : ConvexSubgroup Γ)
@@ -170,7 +170,7 @@ def closure (S : Set Γ) : ConvexSubgroup Γ where
       one_mem' := fun H _ ↦ one_mem H
       mul_mem' := fun ha hb H hS ↦ mul_mem (ha H hS) (hb H hS)
       inv_mem' := fun ha H hS ↦ inv_mem (ha H hS) }
-  convex' := fun ha hb h₁ h₂ H hS ↦ H.convex (ha H hS) (hb H hS) h₁ h₂
+  ordConnected' := ⟨fun _ ha _ hb _ hz H hS ↦ H.ordConnected'.out (ha H hS) (hb H hS) hz⟩
 
 /-- Membership in the convex closure: membership in every convex subgroup containing the
 generating set. -/
@@ -195,7 +195,7 @@ value group. -/
 def comap {Δ : Type*} [CommGroup Δ] [LinearOrder Δ] (f : Γ →*o Δ)
     (K : ConvexSubgroup Δ) : ConvexSubgroup Γ where
   toSubgroup := K.toSubgroup.comap f.toMonoidHom
-  convex' := fun ha hb hax hxb ↦ K.convex ha hb (f.monotone' hax) (f.monotone' hxb)
+  ordConnected' := K.ordConnected'.preimage_mono f.monotone'
 
 @[simp]
 theorem mem_comap {Δ : Type*} [CommGroup Δ] [LinearOrder Δ] {f : Γ →*o Δ}
@@ -245,11 +245,12 @@ noncomputable def maxAvoid {γ : Γ} (hγ : γ ≠ 1) : ConvexSubgroup Γ where
         · exact ⟨H₁, hγ₁, H₁.toSubgroup.mul_mem ha (h hb)⟩
       one_mem' := ⟨⊥, mem_bot.not.mpr hγ, one_mem ⊥⟩
       inv_mem' := fun {a} ⟨H, hγH, ha⟩ ↦ ⟨H, hγH, H.toSubgroup.inv_mem ha⟩ }
-  convex' := by
-    rintro a b x ⟨H₁, hγ₁, ha⟩ ⟨H₂, hγ₂, hb⟩ h₁ h₂
+  ordConnected' := by
+    constructor
+    rintro a ⟨H₁, hγ₁, ha⟩ b ⟨H₂, hγ₂, hb⟩ z hz
     rcases le_total_of_convex H₁ H₂ with h | h
-    · exact ⟨H₂, hγ₂, H₂.convex (h ha) hb h₁ h₂⟩
-    · exact ⟨H₁, hγ₁, H₁.convex ha (h hb) h₁ h₂⟩
+    · exact ⟨H₂, hγ₂, H₂.ordConnected'.out (h ha) hb hz⟩
+    · exact ⟨H₁, hγ₁, H₁.ordConnected'.out ha (h hb) hz⟩
 
 /-- Membership in `maxAvoid hγ`: some convex subgroup excludes `γ` but contains `x`. -/
 @[simp]
@@ -272,7 +273,7 @@ section Quotient
 
 /-- The fibers of the projection to the quotient by a convex subgroup are the cosets, which
 are order-connected by convexity. -/
-instance ordConnected_leftRel_fiber (H : ConvexSubgroup Γ) :
+theorem ordConnected_leftRel_fiber (H : ConvexSubgroup Γ) :
     ∀ q : Γ ⧸ H.toSubgroup,
       Set.OrdConnected (Quotient.mk (QuotientGroup.leftRel H.toSubgroup) ⁻¹' {q}) := by
   intro q
