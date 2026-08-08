@@ -90,7 +90,7 @@ theorem fdBoundary_sub_rho_add_one_of_mem_Icc_three_four (H : ℝ) (ht : t ∈ I
   rw [hsplit, fdBoundary_sub_rho_of_mem_Icc_three_four H ht]
   ring
 
-/-- On the left vertical the contour keeps distance `1` from `ρ + 1`: the real parts
+/-- On the left vertical the contour keeps distance at least `1` from `ρ + 1`: the real parts
 differ by exactly `1`. -/
 theorem norm_fdBoundary_sub_rho_add_one_segment4 (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
     1 ≤ ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := by
@@ -102,7 +102,7 @@ theorem norm_fdBoundary_sub_rho_add_one_segment4 (H : ℝ) (ht : t ∈ Icc (3 : 
   rw [hre] at h1
   simpa using h1
 
-/-- On the ceiling the contour keeps distance `H - √3/2` from `ρ + 1`. -/
+/-- On the ceiling the contour keeps distance at least `H - √3/2` from `ρ + 1`. -/
 theorem norm_fdBoundary_sub_rho_add_one_segment5 (ht : t ∈ Icc (4 : ℝ) 5) :
     H - Real.sqrt 3 / 2 ≤ ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := by
   have him : (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im = H - Real.sqrt 3 / 2 := by

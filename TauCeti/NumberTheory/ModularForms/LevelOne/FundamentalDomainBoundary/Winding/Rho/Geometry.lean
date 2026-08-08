@@ -76,7 +76,7 @@ theorem fdBoundary_sub_rho_of_mem_Icc_three_four (H : ℝ) (ht : t ∈ Icc (3 : 
   · simp [UpperHalfPlane.ρ, Complex.real_smul]
   · simp [UpperHalfPlane.ρ, Complex.real_smul]
 
-/-- On the right vertical the contour keeps distance `1` from `ρ`: the real parts differ
+/-- On the right vertical the contour keeps distance at least `1` from `ρ`: the real parts differ
 by exactly `1`. -/
 theorem norm_fdBoundary_sub_rho_segment1 (H : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) :
     1 ≤ ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ := by
@@ -88,7 +88,7 @@ theorem norm_fdBoundary_sub_rho_segment1 (H : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) 
   rw [hre] at h1
   simpa using h1
 
-/-- On the ceiling the contour keeps distance `H - √3/2` from `ρ`: the heights differ
+/-- On the ceiling the contour keeps distance at least `H - √3/2` from `ρ`: the heights differ
 by exactly `H - √3/2`. -/
 theorem norm_fdBoundary_sub_rho_segment5 (ht : t ∈ Icc (4 : ℝ) 5) :
     H - Real.sqrt 3 / 2 ≤ ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ := by
