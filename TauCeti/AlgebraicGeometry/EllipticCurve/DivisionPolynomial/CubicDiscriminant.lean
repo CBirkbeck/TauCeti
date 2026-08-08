@@ -19,18 +19,28 @@ so the cubic discriminant is the invariant with the factors of `16` divided out.
 the classical statement of Nagell–Lutz for a short model, where `a₂ = 0` too and the conclusion
 reads `y² ∣ 4a₄³ + 27a₆²` up to sign.
 
-The proof is two ring identities over the cubic. Writing `f(x) = x³ + a₂x² + a₄x + a₆`, the
-derivative square `f'(x)² = (3x² + 2a₂x + a₄)²` differs from `Ψ₃(x)` by a multiple of `f(x) = y²`;
-and `Cubic.discr` is an explicit combination of `y²` and `f'(x)²`. So `y² ∣ Ψ₃(x)` propagates to
-`y² ∣ f'(x)²` and then to the discriminant.
+The proof is two ring identities, and neither mentions a curve. Writing
+`f(x) = x³ + a₂x² + a₄x + a₆`, the first is
+
+`f'(x)² + Q(x) = (12x + 4a₂) · f(x)`,   `Q(x) = 3x⁴ + 4a₂x³ + 6a₄x² + 12a₆x + (4a₂a₆ − a₄²)`,
+
+so anything dividing `f(x)` and `Q(x)` divides `f'(x)²`; the second expresses
+`Cubic.discr ⟨1, a₂, a₄, a₆⟩` as a combination of `f(x)` and `f'(x)²`. Both are stated for an
+arbitrary divisor `d`, in a namespace about cubics rather than curves. `Ψ₃` enters only at the end:
+for `a₁ = a₃ = 0` it evaluates to exactly that `Q(x)`, and the curve equation makes `y²` a divisor
+of `f(x)`.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.sq_dvd_derivative_sq`: `y² ∣ (3x² + 2a₂x + a₄)²`.
-* `TauCeti.WeierstrassCurve.sq_dvd_cubic_discr_of_sq_dvd_derivative_sq`: the discriminant step on
-  its own — no `a₁ = a₃ = 0`, no `Ψ₃`, just the curve equation and that divisibility.
-* `TauCeti.WeierstrassCurve.sq_dvd_cubic_discr`: `y² ∣ Cubic.discr ⟨1, a₂, a₄, a₆⟩`, the two
+* `TauCeti.Cubic.dvd_derivative_sq`: a divisor of `f(x)` and of `Q(x)` divides `f'(x)²`.
+* `TauCeti.Cubic.dvd_discr`: a divisor of `f(x)` and of `f'(x)²` divides
+  `Cubic.discr ⟨1, a₂, a₄, a₆⟩`.
+* `TauCeti.WeierstrassCurve.eval_Ψ₃_of_a₁_eq_zero_of_a₃_eq_zero`: for `a₁ = a₃ = 0`, `Ψ₃` is `Q`.
+* `TauCeti.WeierstrassCurve.sq_dvd_cubic_discr`: `y² ∣ Cubic.discr ⟨1, a₂, a₄, a₆⟩`, the three
   composed.
+
+The first two are about coefficients `a₂ a₄ a₆ : R` and an arbitrary divisor `d`, with no
+Weierstrass curve and no `y²` in sight; only the last is curve-specific.
 
 Both are over an arbitrary commutative ring, for an arbitrary point of the curve — no domain,
 torsion, integrality or ellipticity hypothesis. The input `y² ∣ Ψ₃(x)` is what a torsion point
@@ -57,40 +67,55 @@ open Polynomial
 
 namespace TauCeti
 
+namespace Cubic
+
+variable {R : Type*} [CommRing R] {d a₂ a₄ a₆ x : R}
+
+/-- If `d` divides both the monic cubic `f(x) = x³ + a₂x² + a₄x + a₆` and the quartic
+`3x⁴ + 4a₂x³ + 6a₄x² + 12a₆x + (4a₂a₆ − a₄²)`, then it divides `f'(x)²`.
+
+The two are related by `f'(x)² + (that quartic) = (12x + 4a₂) · f(x)`, an identity in `x`. -/
+theorem dvd_derivative_sq (hf : d ∣ x ^ 3 + a₂ * x ^ 2 + a₄ * x + a₆)
+    (hq : d ∣ 3 * x ^ 4 + 4 * a₂ * x ^ 3 + 6 * a₄ * x ^ 2 + 12 * a₆ * x + (4 * a₂ * a₆ - a₄ ^ 2)) :
+    d ∣ (3 * x ^ 2 + 2 * a₂ * x + a₄) ^ 2 := by
+  have hid : (3 * x ^ 2 + 2 * a₂ * x + a₄) ^ 2 =
+      (12 * x + 4 * a₂) * (x ^ 3 + a₂ * x ^ 2 + a₄ * x + a₆) -
+        (3 * x ^ 4 + 4 * a₂ * x ^ 3 + 6 * a₄ * x ^ 2 + 12 * a₆ * x + (4 * a₂ * a₆ - a₄ ^ 2)) := by
+    ring
+  exact hid ▸ dvd_sub (Dvd.dvd.mul_left hf _) hq
+
+/-- If `d` divides both the monic cubic `f(x) = x³ + a₂x² + a₄x + a₆` and `f'(x)²`, then it divides
+the cubic's discriminant.
+
+`Cubic.discr ⟨1, a₂, a₄, a₆⟩` is an explicit combination of `f(x)` and `f'(x)²`, an identity in
+`x`. -/
+theorem dvd_discr (hf : d ∣ x ^ 3 + a₂ * x ^ 2 + a₄ * x + a₆)
+    (hderiv : d ∣ (3 * x ^ 2 + 2 * a₂ * x + a₄) ^ 2) :
+    d ∣ (_root_.Cubic.mk 1 a₂ a₄ a₆).discr := by
+  have hid : (_root_.Cubic.mk 1 a₂ a₄ a₆).discr =
+      (27 * x ^ 3 + 27 * a₂ * x ^ 2 + 27 * a₄ * x - 4 * a₂ ^ 3 + 18 * a₂ * a₄ - 27 * a₆) *
+          (x ^ 3 + a₂ * x ^ 2 + a₄ * x + a₆)
+        - (3 * x ^ 2 + 2 * a₂ * x - a₂ ^ 2 + 4 * a₄) * (3 * x ^ 2 + 2 * a₂ * x + a₄) ^ 2 := by
+    simp only [_root_.Cubic.discr]; ring
+  exact hid ▸ dvd_sub (Dvd.dvd.mul_left hf _) (Dvd.dvd.mul_left hderiv _)
+
+end Cubic
+
 namespace WeierstrassCurve
+
+open Polynomial
 
 variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve R) {x y : R}
 
-/-- For a model with `a₁ = a₃ = 0`, the square of the derivative of the defining cubic differs from
-`Ψ₃(x)` by a multiple of `y²`, so `y² ∣ Ψ₃(x)` forces `y² ∣ (3x² + 2a₂x + a₄)²`. -/
-theorem sq_dvd_derivative_sq (ha₁ : W.a₁ = 0) (ha₃ : W.a₃ = 0)
-    (hcurve : y ^ 2 = x ^ 3 + W.a₂ * x ^ 2 + W.a₄ * x + W.a₆)
-    (hΨ₃ : y ^ 2 ∣ (W.Ψ₃).eval x) : y ^ 2 ∣ (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 := by
-  have hid : (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 =
-      (12 * x + 4 * W.a₂) * y ^ 2 - (W.Ψ₃).eval x := by
-    simp only [_root_.WeierstrassCurve.Ψ₃, _root_.WeierstrassCurve.b₂,
-      _root_.WeierstrassCurve.b₄, _root_.WeierstrassCurve.b₆, _root_.WeierstrassCurve.b₈,
-      ha₁, ha₃, eval_add, eval_mul, eval_pow, eval_C, eval_X, eval_ofNat]
-    rw [hcurve]; ring
-  exact hid ▸ dvd_sub (Dvd.dvd.mul_left dvd_rfl _) hΨ₃
-
-/-- The discriminant of `x³ + a₂x² + a₄x + a₆` is a combination of `y²` and the square of the
-cubic's derivative, so `y²` divides it as soon as it divides that square.
-
-This step needs neither `a₁ = a₃ = 0` nor anything about `Ψ₃`: only the curve equation and the
-divisibility of the derivative square. -/
-theorem sq_dvd_cubic_discr_of_sq_dvd_derivative_sq
-    (hcurve : y ^ 2 = x ^ 3 + W.a₂ * x ^ 2 + W.a₄ * x + W.a₆)
-    (hderiv : y ^ 2 ∣ (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2) :
-    y ^ 2 ∣ (Cubic.mk 1 W.a₂ W.a₄ W.a₆).discr := by
-  have hid : (Cubic.mk 1 W.a₂ W.a₄ W.a₆).discr =
-      (27 * x ^ 3 + 27 * W.a₂ * x ^ 2 + 27 * W.a₄ * x - 4 * W.a₂ ^ 3 + 18 * W.a₂ * W.a₄
-          - 27 * W.a₆) * y ^ 2
-        - (3 * x ^ 2 + 2 * W.a₂ * x - W.a₂ ^ 2 + 4 * W.a₄) *
-          (3 * x ^ 2 + 2 * W.a₂ * x + W.a₄) ^ 2 := by
-    simp only [Cubic.discr]
-    rw [hcurve]; ring
-  exact hid ▸ dvd_sub (Dvd.dvd.mul_left dvd_rfl _) (Dvd.dvd.mul_left hderiv _)
+/-- For a model with `a₁ = a₃ = 0`, the univariate `Ψ₃` is the quartic
+`3x⁴ + 4a₂x³ + 6a₄x² + 12a₆x + (4a₂a₆ − a₄²)`. -/
+theorem eval_Ψ₃_of_a₁_eq_zero_of_a₃_eq_zero (ha₁ : W.a₁ = 0) (ha₃ : W.a₃ = 0) :
+    (W.Ψ₃).eval x = 3 * x ^ 4 + 4 * W.a₂ * x ^ 3 + 6 * W.a₄ * x ^ 2 + 12 * W.a₆ * x +
+      (4 * W.a₂ * W.a₆ - W.a₄ ^ 2) := by
+  simp only [_root_.WeierstrassCurve.Ψ₃, _root_.WeierstrassCurve.b₂, _root_.WeierstrassCurve.b₄,
+    _root_.WeierstrassCurve.b₆, _root_.WeierstrassCurve.b₈, ha₁, ha₃, eval_add, eval_mul,
+    eval_pow, eval_C, eval_X, eval_ofNat]
+  ring
 
 /-- **The sharp discriminant divisibility.**
 
@@ -100,9 +125,10 @@ this is the classical `y² ∣ 4a₄³ + 27a₆²` up to sign. -/
 theorem sq_dvd_cubic_discr (ha₁ : W.a₁ = 0) (ha₃ : W.a₃ = 0)
     (hcurve : y ^ 2 = x ^ 3 + W.a₂ * x ^ 2 + W.a₄ * x + W.a₆)
     (hΨ₃ : y ^ 2 ∣ (W.Ψ₃).eval x) :
-    y ^ 2 ∣ (Cubic.mk 1 W.a₂ W.a₄ W.a₆).discr :=
-  sq_dvd_cubic_discr_of_sq_dvd_derivative_sq W hcurve
-    (sq_dvd_derivative_sq W ha₁ ha₃ hcurve hΨ₃)
+    y ^ 2 ∣ (_root_.Cubic.mk 1 W.a₂ W.a₄ W.a₆).discr :=
+  have hf : y ^ 2 ∣ x ^ 3 + W.a₂ * x ^ 2 + W.a₄ * x + W.a₆ := hcurve ▸ dvd_rfl
+  Cubic.dvd_discr hf
+    (Cubic.dvd_derivative_sq hf (eval_Ψ₃_of_a₁_eq_zero_of_a₃_eq_zero W ha₁ ha₃ ▸ hΨ₃))
 
 end WeierstrassCurve
 
