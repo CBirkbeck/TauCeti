@@ -141,6 +141,7 @@ theorem coe_idealImage (P : PairOfDefinition A) (n : ℕ) : (P.idealImage n : Se
     Subtype.val '' ((P.ideal ^ n : Ideal P.ringOfDefinition) : Set P.ringOfDefinition) := (rfl)
 
 /-- Membership in the image of `Iⁿ`. -/
+@[simp]
 theorem mem_idealImage (P : PairOfDefinition A) (n : ℕ) {x : A} :
     x ∈ P.idealImage n ↔ ∃ y ∈ (P.ideal ^ n : Ideal P.ringOfDefinition), (y : A) = x := (Iff.rfl)
 
@@ -196,7 +197,7 @@ end PairOfDefinition
 
 section Discrete
 
-variable (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] [DiscreteTopology A]
+variable (A : Type*) [CommRing A] [TopologicalSpace A] [DiscreteTopology A]
 
 /-- The pair of definition of a discrete ring: the whole ring, with the zero ideal. -/
 def PairOfDefinition.discrete : PairOfDefinition A where
@@ -208,7 +209,8 @@ def PairOfDefinition.discrete : PairOfDefinition A where
 
 /-- A discrete ring is Huber, with `(A, 0)` as a pair of definition. This is the first of the
 roadmap's Layer-0 examples, and the witness that `IsHuberRing` is not vacuous. -/
-instance (priority := 100) IsHuberRing.of_discreteTopology : IsHuberRing A :=
+instance (priority := 100) IsHuberRing.of_discreteTopology [IsTopologicalRing A] :
+    IsHuberRing A :=
   ⟨⟨PairOfDefinition.discrete A⟩⟩
 
 end Discrete
