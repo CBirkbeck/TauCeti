@@ -15,8 +15,14 @@ import TauCeti.NumberTheory.HeckeRing.Multiplicity.Support
 # Coprime multiplication in the `GL_n` Hecke ring
 
 One row of the multiplication table of the integral Hecke ring of the arithmetic Hecke
-triple (Shimura, Proposition 3.16): when the determinants are coprime, the product of two
-diagonal double cosets is again a single diagonal coset, `T(a) · T(b) = T(a * b)`.
+triple (Shimura, Proposition 3.16): for entrywise positive tuples `a`, `b` whose
+determinants `∏ aᵢ`, `∏ bᵢ` are coprime, the product of the two diagonal double cosets is
+again a single diagonal coset, `T(a) · T(b) = T(a * b)`.
+
+Positivity is not decoration: `natDiagGL` sends a tuple with a zero entry to its junk value
+`1`, so every statement here carries `∀ i, 0 < a i` explicitly. The ring-level theorem
+additionally assumes `[NeZero n]`, which is what the arithmetic Hecke triple instance — and
+hence multiplication in `IntegralHeckeRing n` — requires.
 
 The scalar row (Shimura 3.17) lives in `GLn/ScalarMul.lean`.
 
@@ -32,9 +38,10 @@ Chris Birkbeck).
 
 ## Main results
 
-* `HeckeRing.GLn.mul_mem_doubleCoset_of_coprime`: a product of representatives with coprime
-  determinants lies in the double coset of the product tuple.
-* `HeckeRing.GLn.diagElem_mul_of_coprime`: `T(a) · T(b) = T(a * b)` for coprime determinants.
+* `HeckeRing.GLn.mul_mem_doubleCoset_of_coprime`: for positive tuples with coprime
+  determinants, a product of representatives lies in the double coset of the product tuple.
+* `HeckeRing.GLn.diagElem_mul_of_coprime`: `T(a) · T(b) = T(a * b)`, for positive tuples with
+  coprime determinants and `[NeZero n]`.
 
 ## References
 
@@ -58,13 +65,16 @@ section Conjugation
 An element of `SL_n(ℤ)` congruent to `1` modulo the full diagonal product conjugates
 across `natDiagGL n a` — on either side — to an integral matrix of determinant one. -/
 
-private lemma map_intCast_mul (A B : Matrix (Fin n) (Fin n) ℤ) :
-    (A * B).map (Int.cast : ℤ → ℚ) = A.map Int.cast * B.map Int.cast :=
-  Matrix.map_mul_intCast A B
+/-- `mapGL_coe_matrix` states the coercion as `map (algebraMap ℤ ℚ)`; this restates it with
+the algebra map reduced to `Int.cast`. The two are definitionally equal — the proof is just
+`mapGL_coe_matrix τ` — but they are *syntactically* different, and `Matrix.map_mul_intCast`
+and `Matrix.diagonal_map` below match only the `Int.cast` form.
 
-/-- `mapGL_coe_matrix` states the coercion as `map (algebraMap ℤ ℚ)`; this is the same fact
-with the algebra map reduced to `Int.cast`, which is the form `Matrix.map_mul_intCast` and
-`Matrix.diagonal_map` below need in order to match. -/
+That syntactic difference is the whole point, so this is not a redundant alias: substituting
+`simp only [mapGL_coe_matrix _, algebraMap_int_eq]` (with or without `Int.coe_castRingHom`)
+at the eight call sites below fails, leaving 12 unsolved goals and unused-simp-argument
+errors. The sibling `map_intCast_mul` *was* a redundant alias and has been removed in favour
+of `Matrix.map_mul_intCast`. -/
 private lemma mapGL_coe (τ : SpecialLinearGroup (Fin n) ℤ) :
     (↑(mapGL ℚ τ) : Matrix (Fin n) (Fin n) ℚ) = τ.val.map (Int.cast : ℤ → ℚ) :=
   mapGL_coe_matrix τ
@@ -101,7 +111,7 @@ private lemma conjugate_congruent_mem_SLnZ (a : Fin n → ℕ) (ha : ∀ i, 0 < 
     simp only [Units.val_mul, mapGL_coe n τ, mapGL_coe n ⟨M, hM_det⟩, natDiagGL_coe n a ha]
     have h_diag_map : (Matrix.diagonal fun i ↦ (a i : ℤ)).map (Int.cast : ℤ → ℚ) =
         Matrix.diagonal fun i ↦ (a i : ℚ) := Matrix.diagonal_map (by simp)
-    rw [← h_diag_map, ← map_intCast_mul, ← map_intCast_mul, h_int_eq]
+    rw [← h_diag_map, ← Matrix.map_mul_intCast, ← Matrix.map_mul_intCast, h_int_eq]
   exact eq_mul_inv_iff_mul_eq.mpr h_Q_eq.symm
 
 private lemma inv_conjugate_congruent_mem_SLnZ (b : Fin n → ℕ) (hb : ∀ i, 0 < b i)
@@ -139,7 +149,7 @@ private lemma inv_conjugate_congruent_mem_SLnZ (b : Fin n → ℕ) (hb : ∀ i, 
     simp only [Units.val_mul, mapGL_coe n τ, mapGL_coe n ⟨N, hN_det⟩, natDiagGL_coe n b hb]
     have h_diag_map : (Matrix.diagonal fun i ↦ (b i : ℤ)).map (Int.cast : ℤ → ℚ) =
         Matrix.diagonal fun i ↦ (b i : ℚ) := Matrix.diagonal_map (by simp)
-    rw [← h_diag_map, ← map_intCast_mul, ← map_intCast_mul, h_int_eq]
+    rw [← h_diag_map, ← Matrix.map_mul_intCast, ← Matrix.map_mul_intCast, h_int_eq]
   exact (eq_inv_mul_of_mul_eq h_Q_eq).trans (mul_assoc _ _ _).symm
 
 end Conjugation
@@ -464,7 +474,9 @@ private lemma multiplicity_coprime_le_one (a b : Fin n → ℕ) (ha_pos : ∀ i,
   rfl
 
 /-- Coprime product in the integral `GL_n` Hecke ring (Shimura, Proposition 3.16):
-`T(a) · T(b) = T(a * b)` when the determinants are coprime. -/
+`T(a) · T(b) = T(a * b)` for entrywise positive `a`, `b` whose determinants `∏ aᵢ`, `∏ bᵢ`
+are coprime. Positivity is required — without it `natDiagGL` takes its junk value. The
+`[NeZero n]` in scope is what multiplication in `IntegralHeckeRing n` needs. -/
 theorem diagElem_mul_of_coprime (a b : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i)
     (hb_pos : ∀ i, 0 < b i) (hcop : Nat.Coprime (∏ i, a i) (∏ i, b i)) :
     diagElem a * diagElem b = diagElem (a * b) :=

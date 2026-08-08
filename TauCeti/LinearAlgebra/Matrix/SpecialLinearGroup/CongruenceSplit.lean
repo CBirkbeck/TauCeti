@@ -5,8 +5,10 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.LinearAlgebra.Matrix.SpecialLinearGroup
+
 import Mathlib.Tactic.LinearCombination
-public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Transvection
+import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Transvection
 
 /-!
 # Chinese-remainder splitting of `SL(ι, ℤ)`
@@ -33,6 +35,9 @@ open Matrix
 
 namespace Matrix.SpecialLinearGroup
 
+-- `DecidableEq ι` is not a strengthening we chose: `Matrix.SpecialLinearGroup ι ℤ` is itself
+-- defined only for `[DecidableEq ι] [Fintype ι]`, so the statements below cannot be written
+-- without it. It is not removable by proving things classically inside.
 variable {ι : Type*} [Fintype ι] [DecidableEq ι]
 
 /-! ## Chinese-remainder splitting of `SL(ι, ℤ)`
