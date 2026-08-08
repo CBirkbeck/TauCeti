@@ -30,6 +30,12 @@ Adapted from the FLT project's quadratic-twist development (`ImperialCollegeLond
 for adapted material, the source authorship is credited here rather than in the copyright
 header. Ported with the transformation laws generalised from a field to a commutative ring and
 the ellipticity hypothesis removed.
+
+The cocycle laws `variableChange_X_mul`/`variableChange_Y_mul` and the base-change naturality
+`variableChange_X_map`/`variableChange_Y_map` are not in the FLT source; they follow
+`ModularCurves/ForMathlib/AffinePointVariableChange.lean` (`vcX_comp`, `vcY_comp`, `vcX_map`,
+`vcY_map`) in `CBirkbeck/AINTLIB` (Apache 2.0, by Chris Birkbeck), restated here for the
+`(x, y) ↦ (u²x + r, u³y + u²sx + t)` direction this file uses.
 -/
 
 public section
@@ -152,6 +158,34 @@ Weierstrass curve over a commutative ring — no ellipticity hypothesis. -/
   rcases eq_or_ne ((C • W).toAffine.polynomialY.evalEval x y) 0 with hy | hy
   · simp only [hy, mul_zero, sub_zero, ne_eq, (C.u.isUnit.pow 4).mul_right_eq_zero]
   · exact iff_of_true (.inr fun h ↦ hy ((C.u.isUnit.pow 3).mul_right_eq_zero.mp h)) (.inr hy)
+
+/-- **Cocycle law for the `x`-coordinate.** Composing changes of variables composes their
+coordinate maps: `Φ_{C * C'} = Φ_{C'} ∘ Φ_C`. -/
+lemma variableChange_X_mul (C' : VariableChange R) (x : R) :
+    ((C * C').u : R) ^ 2 * x + (C * C').r
+      = (C'.u : R) ^ 2 * ((C.u : R) ^ 2 * x + C.r) + C'.r := by
+  simp only [VariableChange.mul_def, Units.val_mul]
+  ring
+
+/-- **Cocycle law for the `y`-coordinate.** -/
+lemma variableChange_Y_mul (C' : VariableChange R) (x y : R) :
+    ((C * C').u : R) ^ 3 * y + ((C * C').u : R) ^ 2 * (C * C').s * x + (C * C').t
+      = (C'.u : R) ^ 3 * ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
+        + (C'.u : R) ^ 2 * C'.s * ((C.u : R) ^ 2 * x + C.r) + C'.t := by
+  simp only [VariableChange.mul_def, Units.val_mul]
+  ring
+
+/-- **Naturality in the base ring** for the `x`-coordinate: the coordinate map commutes with a
+ring homomorphism, so it is compatible with base change. -/
+lemma variableChange_X_map {A : Type*} [CommRing A] (φ : R →+* A) (x : R) :
+    ((C.map φ).u : A) ^ 2 * φ x + (C.map φ).r = φ ((C.u : R) ^ 2 * x + C.r) := by
+  simp [VariableChange.map_u, VariableChange.map_r]
+
+/-- **Naturality in the base ring** for the `y`-coordinate. -/
+lemma variableChange_Y_map {A : Type*} [CommRing A] (φ : R →+* A) (x y : R) :
+    ((C.map φ).u : A) ^ 3 * φ y + ((C.map φ).u : A) ^ 2 * (C.map φ).s * φ x + (C.map φ).t
+      = φ ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t) := by
+  simp [VariableChange.map_u, VariableChange.map_s, VariableChange.map_t]
 
 /-- The change of variables is injective on `x`-coordinates: `u²x + r` determines `x`. -/
 lemma variableChange_X_inj {x₁ x₂ : R} :
