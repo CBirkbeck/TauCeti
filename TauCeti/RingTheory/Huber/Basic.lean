@@ -31,6 +31,8 @@ Huber ring is nonarchimedean, which is exactly the hypothesis under which
 
 ## Main results
 
+* `TauCeti.Huber.PairOfDefinition.mem_idealImage` and
+  `TauCeti.Huber.PairOfDefinition.coe_idealImage`: membership in the image of `Iⁿ`.
 * `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero`: the images of `Iⁿ` are a neighbourhood
   basis of zero.
 * `TauCeti.Huber.IsHuberRing.toNonarchimedeanRing`: a Huber ring is nonarchimedean.
@@ -134,6 +136,10 @@ def idealImage (P : PairOfDefinition A) (n : ℕ) : AddSubgroup A :=
 @[simp]
 theorem coe_idealImage (P : PairOfDefinition A) (n : ℕ) : (P.idealImage n : Set A) =
     Subtype.val '' ((P.ideal ^ n : Ideal P.ringOfDefinition) : Set P.ringOfDefinition) := (rfl)
+
+/-- Membership in the image of `Iⁿ`. -/
+theorem mem_idealImage (P : PairOfDefinition A) (n : ℕ) {x : A} :
+    x ∈ P.idealImage n ↔ ∃ y ∈ (P.ideal ^ n : Ideal P.ringOfDefinition), (y : A) = x := (Iff.rfl)
 
 /-- Each `Iⁿ` is open in `A`. -/
 theorem isOpen_idealImage [IsTopologicalRing A] (P : PairOfDefinition A) (n : ℕ) :
