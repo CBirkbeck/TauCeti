@@ -150,7 +150,8 @@ theorem _root_.Valuation.IsEquiv.hasFullCharacteristicGroup_iff {v : Valuation A
 /-- Under the full-characteristic-group condition, every positive element of the value
 group dominates the inverse of some nonzero value: the existence statement used in the
 `Γ_v = cΓ_v` case of Wedhorn Lemma 7.10. -/
-theorem HasFullCharacteristicGroup.exists_inv_le {v : Valuation A Γ₀} (h : HasFullCharacteristicGroup v)
+theorem HasFullCharacteristicGroup.exists_inv_le {v : Valuation A Γ₀}
+    (h : HasFullCharacteristicGroup v)
     {γ : ValueGroup₀ (.ofClass v)} (hγ : 0 < γ) :
     ∃ t : A, v.restrict t ≠ 0 ∧ (v.restrict t)⁻¹ ≤ γ := by
   obtain ⟨a, ha_ge_one, ha_inv_le, -⟩ := h γ hγ
