@@ -22,7 +22,7 @@ time, and the exact endpoint logarithms beside the arc top.
 * `TauCeti.ModularForm.norm_fdBoundary_sub_I_arc` (the chord distance).
 * `TauCeti.ModularForm.leftVerticalCrossingI` (the height-`1` crossing parameter).
 * `TauCeti.ModularForm.eq_two_of_fdBoundary_eq_I` (crossing-time uniqueness).
-* `TauCeti.ModularForm.log_fdBoundary_sub_I_two_sub_sub_log_fdBoundary_sub_I_two_add`
+* `TauCeti.ModularForm.log_fdBoundary_two_sub_sub_I_sub_log_fdBoundary_two_add_sub_I`
   (the symmetric endpoint log difference).
 
 ## References
@@ -131,11 +131,6 @@ denominator vanishes. -/
 noncomputable def leftVerticalCrossingI (H : ℝ) : ℝ :=
   3 + (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2)
 
-/-- The crossing parameter, in normal form. -/
-@[simp]
-theorem leftVerticalCrossingI_def (H : ℝ) :
-    leftVerticalCrossingI H = 3 + (1 - Real.sqrt 3 / 2) / (H - Real.sqrt 3 / 2) := (rfl)
-
 /-- The corner row lies strictly below `1`. -/
 private lemma sqrt_three_div_two_lt_one : Real.sqrt 3 / 2 < 1 := by
   have h : Real.sqrt 3 < 2 := by
@@ -224,8 +219,8 @@ theorem im_fdBoundary_sub_I_at_three_neg (H : ℝ) :
   linarith
 
 
-/-- The polar form of the shifted contour beside the arc top, with signed offset: modulus
-`2·sin(ε·π/12)` and argument `π + ε·π/12`, both signed. The endpoint forms on either side
+/-- The polar form of the shifted contour beside the arc top, with signed offset: radial
+coefficient `2·sin(ε·π/12)` and argument `π + ε·π/12`, both signed with `ε`. The endpoint forms on either side
 are its specializations. -/
 private lemma fdBoundary_two_add_sub_I_polar (H : ℝ) {ε : ℝ} (hε : -1 ≤ ε) (hε1 : ε ≤ 1) :
     fdBoundary H (2 + ε) - Complex.I =
@@ -306,7 +301,7 @@ theorem log_fdBoundary_two_add_sub_I (H : ℝ) (hδ : 0 < δ) (hδ1 : δ ≤ 1) 
 /-- **The symmetric log difference at the arc top**: the two endpoint logarithms of the
 `δ`-excised arc differ by the pure phase `(π - δ·π/6)·i` — the chord norms agree, and only
 the argument difference survives. -/
-theorem log_fdBoundary_sub_I_two_sub_sub_log_fdBoundary_sub_I_two_add (H : ℝ)
+theorem log_fdBoundary_two_sub_sub_I_sub_log_fdBoundary_two_add_sub_I (H : ℝ)
     (hδ : 0 < δ) (hδ1 : δ ≤ 1) :
     Complex.log (fdBoundary H (2 - δ) - Complex.I) -
       Complex.log (fdBoundary H (2 + δ) - Complex.I) =
