@@ -131,10 +131,11 @@ theorem IsRestricted.finite_coeff_notMem {k : ℕ} {A : Type*} [Ring A]
   rwa [Filter.mem_cofinite] at this
 
 /-- **A neighbourhood of `0` small enough that multiplying it by any of finitely many prescribed
-elements, on either side, lands in the open subgroup `V`.** Openness of `V` plus continuity of
-multiplication is all this needs. -/
-private theorem exists_mem_nhds_zero_forall_mul_mem {A : Type*} [Ring A] [TopologicalSpace A]
-    [ContinuousMul A] {ι : Type*} (V : OpenAddSubgroup A) (S₁ S₂ : Finset ι) (c₁ c₂ : ι → A) :
+elements, on either side, lands in the open subgroup `V`.** Openness of `V` plus *separate*
+continuity of multiplication is all this needs. -/
+private theorem exists_mem_nhds_zero_forall_mul_mem {A : Type*} [NonUnitalNonAssocRing A]
+    [TopologicalSpace A] [SeparatelyContinuousMul A] {ι : Type*} (V : OpenAddSubgroup A)
+    (S₁ S₂ : Finset ι) (c₁ c₂ : ι → A) :
     ∃ T ∈ nhds (0 : A), (∀ a ∈ S₁, ∀ y ∈ T, c₁ a * y ∈ (V : Set A)) ∧
       ∀ b ∈ S₂, ∀ x ∈ T, x * c₂ b ∈ (V : Set A) := by
   refine ⟨(⋂ a ∈ S₁, (fun x => c₁ a * x) ⁻¹' (V : Set A))
