@@ -231,11 +231,8 @@ private theorem exists_invariant_notMem_of_forall_lie_mem {d : ℕ}
     rfl
 
 omit [CharZero K] [IsAlgClosed K] in
-/-- The reducible step. If `N` has a Lie submodule `W` that is neither `⊥` nor `N` itself, the
-inductive hypothesis applies twice: once on the quotient `M ⧸ W`, which is strictly smaller
-because `W` is nonzero, to produce a vector outside `N` whose brackets land in `W`, and then —
-through `exists_invariant_notMem_of_forall_lie_mem` — to the submodule `W + K v₀`, whose rank is
-`finrank K W + 1`.
+/-- **The reducible step.** If the proper submodule `N` admits a Lie submodule `W` that is neither
+`⊥` nor `N`, then `M` has an invariant vector outside `N`.
 
 Neither algebraic closure nor characteristic zero is needed here; those enter only through the
 Casimir argument on the irreducible branch. -/
@@ -247,6 +244,9 @@ private theorem exists_invariant_notMem_of_ne_bot_of_ne_of_le {d : ℕ}
     [FiniteDimensional K M] {N W : LieSubmodule K L M} (hrank : finrank K M ≤ d + 1)
     (hN : N ≠ ⊤) (htriv : ∀ (x : L) (m : M), ⁅x, m⁆ ∈ N) (hWbot : W ≠ ⊥) (hWN : W ≠ N)
     (hWle : W ≤ N) : ∃ v : M, v ∉ N ∧ ∀ x : L, ⁅x, v⁆ = 0 := by
+  -- The inductive hypothesis is used twice: on the quotient `M ⧸ W`, which is strictly smaller
+  -- because `W` is nonzero, to get a vector outside `N` whose brackets land in `W`; and then,
+  -- through `exists_invariant_notMem_of_forall_lie_mem`, on `W + K v₀`.
   have hNlt : finrank K N < finrank K M := Submodule.finrank_lt (fun hc ↦ hN
     ((LieSubmodule.toSubmodule_inj _ _).1 (by rw [hc, LieSubmodule.top_toSubmodule])))
   have hWnt : Nontrivial W := (LieSubmodule.nontrivial_iff_ne_bot K L _).2 hWbot
