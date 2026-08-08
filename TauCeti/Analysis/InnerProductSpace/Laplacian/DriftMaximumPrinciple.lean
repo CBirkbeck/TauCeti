@@ -26,7 +26,9 @@ The two ingredients, both classical:
 * **The strict principle needs no hypothesis on `b`.** At an interior local maximum the
   gradient vanishes (`IsLocalMax.fderiv_eq_zero`), so the drift term `fderiv ℝ u x (b x)`
   drops out and only `Δ u x ≤ 0` survives; a strict sign `0 < Δ u x + fderiv ℝ u x (b x)`
-  is therefore impossible there. This is `not_isLocalMax_of_laplacian_add_fderiv_pos`.
+  is therefore impossible there. That is `TauCeti.not_isLocalMax_of_laplacian_add_fderiv_pos`,
+  which lives in `TauCeti.Analysis.InnerProductSpace.Laplacian.WeakMaximumPrinciple` because the
+  zeroth-order principle needs it too.
 * **The weak principle needs a bounded drift** `‖b x‖ ≤ β`. Perturbing by the barrier
   `w = exp (α ⟪u, ·⟫)` for a unit vector `u` and `α = β + 1` gives
   `Δ w + ⟪b, ∇w⟫ = α (α + ⟪u, b⟫) w > 0`, because `⟪u, b x⟫ ≥ -‖b x‖ ≥ -β`; letting the
@@ -40,9 +42,6 @@ Gilbarg--Trudinger, *Elliptic Partial Differential Equations of Second Order*, C
 * `TauCeti.laplacian_exp_inner`: `Δ (exp (α ⟪u, ·⟫)) x = α² ‖u‖² exp (α ⟪u, x⟫)`, the
   exponential barrier's Laplacian.
 * `TauCeti.fderiv_exp_inner_apply`: the directional derivative of the same barrier.
-* `TauCeti.not_isLocalMax_of_laplacian_add_fderiv_pos` /
-  `TauCeti.not_isLocalMin_of_laplacian_add_fderiv_neg`: a strict sign of `Δ u + ⟪b, ∇u⟫`
-  forbids an interior local extremum, with no hypothesis on `b`.
 * `TauCeti.exists_mem_frontier_isMaxOn_of_laplacian_add_fderiv_pos` /
   `TauCeti.exists_mem_frontier_isMinOn_of_laplacian_add_fderiv_neg`: strict boundary
   extremum principles.
@@ -133,30 +132,6 @@ maximum principle with drift. -/
         rw [(stdOrthonormalBasis ℝ E).sum_sq_inner_left u]
     _ = α ^ 2 * ‖u‖ ^ 2 * Real.exp (α * ⟪u, x⟫) := by ring
 
-/-- **Strict interior obstruction.** If `0 < Δ f x + fderiv ℝ f x v` at a point where `f` is
-`C²`, then `f` has no local maximum at `x`. The direction `v` is arbitrary: at a local
-maximum the derivative `fderiv ℝ f x` vanishes, so the first-order term contributes nothing
-and only the Laplacian's nonpositivity survives. -/
-theorem not_isLocalMax_of_laplacian_add_fderiv_pos {f : E → ℝ} {x v : E}
-    (hf : ContDiffAt ℝ 2 f x) (hpos : 0 < Δ f x + fderiv ℝ f x v) :
-    ¬ IsLocalMax f x := by
-  intro hmax
-  have hlap : Δ f x ≤ 0 := laplacian_nonpos_of_isLocalMax hf hmax
-  rw [hmax.fderiv_eq_zero] at hpos
-  simp only [zero_apply, add_zero] at hpos
-  exact absurd hlap (not_le.2 hpos)
-
-/-- **Strict interior obstruction, minimum form.** If `Δ f x + fderiv ℝ f x v < 0` at a point
-where `f` is `C²`, then `f` has no local minimum at `x`. -/
-theorem not_isLocalMin_of_laplacian_add_fderiv_neg {f : E → ℝ} {x v : E}
-    (hf : ContDiffAt ℝ 2 f x) (hneg : Δ f x + fderiv ℝ f x v < 0) :
-    ¬ IsLocalMin f x := by
-  intro hmin
-  have hlap : 0 ≤ Δ f x := laplacian_nonneg_of_isLocalMin hf hmin
-  rw [hmin.fderiv_eq_zero] at hneg
-  simp only [zero_apply, add_zero] at hneg
-  exact absurd hlap (not_le.2 hneg)
-
 /-- **Strict boundary maximum principle for `Δ + b·∇`.** Let `K` be compact and nonempty. If
 `f` is continuous on `K`, is `C²` on `interior K`, and satisfies
 `0 < Δ f x + fderiv ℝ f x (b x)` throughout `interior K`, then some maximum point of `f` on
@@ -203,31 +178,6 @@ theorem laplacian_add_fderiv_exp_inner_pos_of_norm_le {u b : E} {β : ℝ}
   rw [hL]
   have : 0 < β + 1 + ⟪u, b⟫ := by linarith
   positivity
-
-omit [Nontrivial E] in
-/-- The operator `Δ + b·∇` is linear under addition of a constant multiple. -/
-theorem laplacian_add_fderiv_add_const_smul (f w : E → ℝ) (b : E) (ε : ℝ) (x : E)
-    (hf : ContDiffAt ℝ 2 f x) (hw : ContDiffAt ℝ 2 w x) :
-    Δ (fun y => f y + ε • w y) x + fderiv ℝ (fun y => f y + ε • w y) x b =
-      (Δ f x + fderiv ℝ f x b) + ε * (Δ w x + fderiv ℝ w x b) := by
-  have hfd : DifferentiableAt ℝ f x := hf.differentiableAt (by norm_num)
-  have hwd : DifferentiableAt ℝ w x := hw.differentiableAt (by norm_num)
-  have hΔ : Δ (fun y => f y + ε • w y) x = Δ f x + ε * Δ w x := by
-    have hadd : Δ (fun y => f y + ε • w y) x =
-        Δ f x + Δ (fun y => ε • w y) x := hf.laplacian_add (hw.const_smul ε)
-    have hsmul : Δ (fun y => ε • w y) x = ε • Δ w x := laplacian_smul ε hw
-    rw [hadd, hsmul, smul_eq_mul]
-  have hderiv : fderiv ℝ (fun y => f y + ε • w y) x b =
-      fderiv ℝ f x b + ε * fderiv ℝ w x b := by
-    have hadd : fderiv ℝ (fun y => f y + ε • w y) x =
-        fderiv ℝ f x + fderiv ℝ (fun y => ε • w y) x :=
-      fderiv_add hfd (hwd.const_smul ε)
-    have hsmul : fderiv ℝ (fun y => ε • w y) x = ε • fderiv ℝ w x :=
-      fderiv_const_smul hwd ε
-    rw [hadd, hsmul]
-    simp only [add_apply, smul_apply, smul_eq_mul]
-  rw [hΔ, hderiv]
-  ring
 
 omit [Nontrivial E] in
 /-- **Weak maximum principle via a strict-subsolution barrier.** Let `K` be compact and `f`

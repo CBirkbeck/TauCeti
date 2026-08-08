@@ -43,38 +43,6 @@ open InnerProductSpace Laplacian Topology RealInnerProductSpace
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E] [FiniteDimensional ℝ E]
   [Nontrivial E]
 
-omit [Nontrivial E] in
-/-- At a maximiser `z` of `f + ε • w` over `K`, where `w` is a `C²` barrier that is strictly
-positive under `Δ + b·∇` at `z`, the frontier bound already holds. On the frontier that is the
-hypothesis; in the interior, `f z > m ≥ 0` makes `Δ f + ∇_b f` nonnegative there, so the perturbed
-sum is strictly positive and `z` cannot be a local maximum.
-
-The barrier is arbitrary: only its regularity and the sign of `Δ w + ∇_b w` at `z` are used, so
-neither the exponential form nor the drift bound `β` appears. Both are needed only when `z` is
-interior, since the frontier branch is the hypothesis `hbdry` outright. -/
-private theorem le_of_isMaxOn_add_smul {K : Set E} {c f w : E → ℝ} {b : E → E} {m ε : ℝ} {z : E}
-    (hm : 0 ≤ m) (hε : 0 < ε) (hcd : ∀ ⦃x⦄, x ∈ interior K → ContDiffAt ℝ 2 f x)
-    (hc : ∀ ⦃x⦄, x ∈ interior K → 0 ≤ c x)
-    (hsub : ∀ ⦃x⦄, x ∈ interior K → c x * f x ≤ Δ f x + fderiv ℝ f x (b x))
-    (hbdry : ∀ ⦃x⦄, x ∈ frontier K → f x ≤ m) (hzK : z ∈ K)
-    (hwcd : z ∈ interior K → ContDiffAt ℝ 2 w z)
-    (hwpos : z ∈ interior K → 0 < Δ w z + fderiv ℝ w z (b z))
-    (hzmax : IsMaxOn (fun y => f y + ε • w y) K z) :
-    f z ≤ m := by
-  by_cases hzint : z ∈ interior K
-  · by_contra hn
-    have hfz0 : 0 ≤ f z := hm.trans (not_le.mp hn).le
-    have hLf0 : 0 ≤ Δ f z + fderiv ℝ f z (b z) :=
-      (mul_nonneg (hc hzint) hfz0).trans (hsub hzint)
-    have hpos : 0 < Δ (fun y => f y + ε • w y) z +
-        fderiv ℝ (fun y => f y + ε • w y) z (b z) := by
-      rw [laplacian_add_fderiv_add_const_smul f w (b z) ε z (hcd hzint) (hwcd hzint)]
-      nlinarith [mul_pos hε (hwpos hzint)]
-    exact not_isLocalMax_of_laplacian_add_fderiv_pos
-      ((hcd hzint).add ((hwcd hzint).const_smul ε)) hpos
-      (hzmax.isLocalMax (mem_interior_iff_mem_nhds.mp hzint))
-  · exact hbdry ⟨subset_closure hzK, hzint⟩
-
 /-- **Weak maximum principle for `-Δ - b·∇ + c`.**
 
 If `c` is nonnegative, `b` has norm at most `β` on the interior of a compact set, and
