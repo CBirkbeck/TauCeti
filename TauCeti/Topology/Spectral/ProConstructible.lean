@@ -113,7 +113,6 @@ def IsProConstructible (s : Set X) : Prop :=
 /-- Pro-constructibility of `s` is closedness of `s` for the constructible topology of `X`,
 carried explicitly as `IsClosed[constructibleTopology X] s` rather than through the type synonym
 `WithConstructibleTopology X` used in the definition. -/
-@[simp]
 theorem isProConstructible_iff_isClosed {s : Set X} :
     IsProConstructible s ↔ IsClosed[constructibleTopology X] s :=
   WithConstructibleTopology.isClosed_iff
