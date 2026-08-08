@@ -4,10 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.MvPowerSeries.Basic
 public import TauCeti.RingTheory.Huber.RestrictedPowerSeries
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
-public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 
 /-!
 # Weighted restricted power series `A⟨X⟩_T`
@@ -31,9 +29,15 @@ the ordinary restricted series `A⟨X⟩`.
 
 ## Main results
 
-* `TauCeti.Huber.isWeightedRestricted_zero`, `TauCeti.Huber.isWeightedRestricted_one`,
-  `TauCeti.Huber.IsWeightedRestricted.add`, `TauCeti.Huber.IsWeightedRestricted.neg`: the
-  condition is closed under the additive-group operations.
+* `TauCeti.Huber.IsWeightedRestricted.mul`: `A⟨X⟩_T` is closed under multiplication, the point
+  Wedhorn flags as not entirely clear; with the additive closure lemmas this gives the subring
+  `TauCeti.Huber.weightedRestrictedSubring`.
+* `TauCeti.Huber.weightedNhd_ringSubgroupsBasis` and `TauCeti.Huber.weightedTopology`: the
+  `U⟨X⟩` are a fundamental system of neighbourhoods of zero for a ring topology, together with
+  its contract (`weightedTopology_hasBasis_nhds_zero`, `weightedTopology_isTopologicalRing`,
+  `weightedTopology_nonarchimedean`).
+* `TauCeti.Huber.weightedRestrictedSubring_one`: for the trivial weight this is the ordinary
+  ring of restricted power series (Wedhorn Example 5.54).
 
 ## Scope
 
@@ -62,9 +66,10 @@ This is *not* `TauCeti/RingTheory/Huber/ScaledTateTopology.lean`, which retopolo
 ordinary `A⟨X⟩` by transporting along `X ↦ f X`; there the weight multiplies the coefficient
 rather than the neighbourhood, and the carrier does not vary with `T`.
 
-Closure of `A⟨X⟩_T` under multiplication is not yet formalised. Wedhorn flags it as the one
-non-obvious point of the construction ("note that it is not entirely clear that `A⟨X⟩_T` is
-multiplicatively closed").
+Closure of `A⟨X⟩_T` under multiplication is the one non-obvious point of the construction —
+Wedhorn writes "note that it is not entirely clear that `A⟨X⟩_T` is multiplicatively closed" — and
+is `TauCeti.Huber.IsWeightedRestricted.mul` here. It is exactly what the standing hypothesis is
+for.
 
 ## References
 
@@ -144,26 +149,13 @@ theorem isWeightFamily_one : IsWeightFamily (fun _ : Fin k ↦ ({1} : Set A)) :=
   refine Filter.mem_of_superset hU fun u hu ↦ ?_
   exact AddSubgroup.subset_closure ⟨1, by simp, u, hu, by simp⟩
 
-/-- A weight subgroup that is a neighbourhood of zero is open, and so packages as an
-`OpenAddSubgroup`. Wedhorn's standing hypothesis is exactly what supplies the neighbourhood
-premise, and the open form is what continuity of multiplication consumes. -/
-def weightMul.toOpenAddSubgroup [IsTopologicalAddGroup A] (T : Fin k → Set A) (ν : Fin k →₀ ℕ)
-    (U : AddSubgroup A) (h : (weightMul T ν U : Set A) ∈ nhds (0 : A)) : OpenAddSubgroup A where
-  toAddSubgroup := weightMul T ν U
-  isOpen' := (weightMul T ν U).isOpen_of_mem_nhds h
-
-@[simp]
-theorem weightMul.coe_toOpenAddSubgroup [IsTopologicalAddGroup A] (T : Fin k → Set A)
-    (ν : Fin k →₀ ℕ) (U : AddSubgroup A) (h : (weightMul T ν U : Set A) ∈ nhds (0 : A)) :
-    (weightMul.toOpenAddSubgroup T ν U h : Set A) = weightMul T ν U := (rfl)
-
 omit [TopologicalSpace A] in
 /-- At the zero multi-index the weight is trivial, so `T⁰ · U` is just `U`; in particular it is a
 neighbourhood of zero whenever `U` is. This is the base case of Wedhorn's remark that `Tν · U` is
 a neighbourhood of zero for every `ν`. -/
 theorem weightMul_zero (T : Fin k → Set A) (U : AddSubgroup A) :
     weightMul T 0 U = U := by
-  rw [weightMul_eq, weightPow, show (0 : Fin k →₀ ℕ) = 0 from rfl]
+  rw [weightMul_eq, weightPow]
   simp
 
 /-- Wedhorn (5.6.1): a power series is *`T`-restricted* if, for every open subgroup `U` of `A`,
@@ -344,7 +336,7 @@ theorem weightMul_absorb {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {U Z :
   induction hb using AddSubgroup.closure_induction with
   | mem y hy =>
       obtain ⟨t, ht, z, hz, rfl⟩ := hy
-      rw [show a * (t * z) = t * (a * z) by ring]
+      rw [mul_left_comm]
       exact weightPow_mul_weightMul_mem ht (ha z hz)
   | zero => simp
   | add _ _ _ _ h₁ h₂ => simpa [mul_add] using (weightMul T (α + β) U).add_mem h₁ h₂
@@ -556,6 +548,17 @@ noncomputable def weightedC [NonarchimedeanRing A] (T : Fin k → Set A) (hT : I
 theorem coe_weightedC [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T} (a : A) :
     (weightedC T hT a : MvPowerSeries (Fin k) A) = MvPowerSeries.C a := (rfl)
 
+/-- The variable `Xᵢ`, as an element of `A⟨X⟩_T`. -/
+noncomputable def weightedX [NonarchimedeanRing A] (T : Fin k → Set A) (hT : IsWeightFamily T)
+    (i : Fin k) :
+    weightedRestrictedSubring T hT :=
+  ⟨MvPowerSeries.X i, isWeightedRestricted_X T i⟩
+
+@[simp]
+theorem coe_weightedX [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T}
+    (i : Fin k) :
+    (weightedX T hT i : MvPowerSeries (Fin k) A) = MvPowerSeries.X i := (rfl)
+
 /-- `A⟨X⟩_T` is an `A`-algebra, via the constant series. -/
 noncomputable instance weightedRestrictedSubring.instAlgebra [NonarchimedeanRing A]
     (T : Fin k → Set A) (hT : IsWeightFamily T) : Algebra A (weightedRestrictedSubring T hT) :=
@@ -633,9 +636,7 @@ theorem weightedNhd_leftMul [NonarchimedeanRing A] {T : Fin k → Set A} (hT : I
   refine ⟨W ⊓ Zx, fun g hg ν ↦ ?_⟩
   have hZleW : (W ⊓ Zx : OpenAddSubgroup A) ≤ W := inf_le_left
   have hZleZx : (W ⊓ Zx : OpenAddSubgroup A) ≤ Zx := inf_le_right
-  rw [show ((x * g : weightedRestrictedSubring T hT) : MvPowerSeries (Fin k) A)
-      = (x : MvPowerSeries (Fin k) A) * (g : MvPowerSeries (Fin k) A) from rfl,
-    MvPowerSeries.coeff_mul]
+  rw [Subring.coe_mul, MvPowerSeries.coeff_mul]
   refine sum_mem fun p hp ↦ ?_
   have hsum : p.1 + p.2 = ν := Finset.mem_antidiagonal.mp hp
   by_cases hp1 : MvPowerSeries.coeff p.1 (x : MvPowerSeries (Fin k) A)
@@ -673,7 +674,7 @@ theorem weightedNhd_ringSubgroupsBasis [NonarchimedeanRing A] {T : Fin k → Set
 
 /-- **Wedhorn's topology on `A⟨X⟩_T`** (Remark and Definition 5.48): the ring topology whose
 neighbourhoods of zero are the `U⟨X⟩`. -/
-@[reducible]
+@[instance_reducible]
 noncomputable def weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) : TopologicalSpace (weightedRestrictedSubring T hT) :=
   (weightedNhd_ringSubgroupsBasis hT).topology
