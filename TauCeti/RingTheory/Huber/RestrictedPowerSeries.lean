@@ -131,25 +131,22 @@ theorem IsRestricted.finite_coeff_notMem {k : ℕ} {A : Type*} [Ring A]
   rwa [Filter.mem_cofinite] at this
 
 /-- **A neighbourhood of `0` small enough that multiplying it by any of finitely many prescribed
-elements, on either side, lands in the open subgroup `V`.** Openness of `V` plus *separate*
-continuity of multiplication is all this needs. -/
-private theorem exists_mem_nhds_zero_forall_mul_mem {A : Type*} [NonUnitalNonAssocRing A]
-    [TopologicalSpace A] [SeparatelyContinuousMul A] {ι : Type*} (V : OpenAddSubgroup A)
+elements, on either side, lands in a prescribed neighbourhood `U` of `0`.** *Separate* continuity
+of multiplication is all this needs. -/
+private theorem exists_mem_nhds_zero_forall_mul_mem {A : Type*} [TopologicalSpace A]
+    [MulZeroClass A] [SeparatelyContinuousMul A] {ι : Type*} {U : Set A} (hU : U ∈ nhds (0 : A))
     (S₁ S₂ : Finset ι) (c₁ c₂ : ι → A) :
-    ∃ T ∈ nhds (0 : A), (∀ a ∈ S₁, ∀ y ∈ T, c₁ a * y ∈ (V : Set A)) ∧
-      ∀ b ∈ S₂, ∀ x ∈ T, x * c₂ b ∈ (V : Set A) := by
-  refine ⟨(⋂ a ∈ S₁, (fun x => c₁ a * x) ⁻¹' (V : Set A))
-      ∩ (⋂ b ∈ S₂, (fun x => x * c₂ b) ⁻¹' (V : Set A)), Filter.inter_mem ?_ ?_,
-    fun a ha y hy => Set.mem_iInter₂.mp hy.1 a ha,
+    ∃ T ∈ nhds (0 : A), (∀ a ∈ S₁, ∀ y ∈ T, c₁ a * y ∈ U) ∧
+      ∀ b ∈ S₂, ∀ x ∈ T, x * c₂ b ∈ U := by
+  refine ⟨(⋂ a ∈ S₁, (fun x => c₁ a * x) ⁻¹' U) ∩ (⋂ b ∈ S₂, (fun x => x * c₂ b) ⁻¹' U),
+    Filter.inter_mem ?_ ?_, fun a ha y hy => Set.mem_iInter₂.mp hy.1 a ha,
     fun b hb x hx => Set.mem_iInter₂.mp hx.2 b hb⟩
   · apply (Filter.biInter_finset_mem _).mpr
     intro a _
-    exact (continuous_const_mul _).continuousAt.preimage_mem_nhds
-      (by simpa using V.isOpen.mem_nhds V.zero_mem)
+    exact (continuous_const_mul _).continuousAt.preimage_mem_nhds (by simpa using hU)
   · apply (Filter.biInter_finset_mem _).mpr
     intro b _
-    exact (continuous_mul_const _).continuousAt.preimage_mem_nhds
-      (by simpa using V.isOpen.mem_nhds V.zero_mem)
+    exact (continuous_mul_const _).continuousAt.preimage_mem_nhds (by simpa using hU)
 
 /-- The "bad" indices contributed by one side of a coefficient convolution form a finite set:
 for each `a` in a finite `S`, only finitely many `n` have `c (n - a) ∉ T`, and `n ↦ n - a` is
@@ -216,7 +213,7 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
   have hSf : Sf.Finite := hf.finite_coeff_notMem W
   have hSg : Sg.Finite := hg.finite_coeff_notMem W
   obtain ⟨T, hT_nhds, hT_left, hT_right⟩ :=
-    exists_mem_nhds_zero_forall_mul_mem V hSf.toFinset hSg.toFinset
+    exists_mem_nhds_zero_forall_mul_mem (V.isOpen.mem_nhds V.zero_mem) hSf.toFinset hSg.toFinset
       (fun a => MvPowerSeries.coeff a f) (fun b => MvPowerSeries.coeff b g)
   have hgT : {s | MvPowerSeries.coeff s g ∉ T}.Finite :=
     (Filter.mem_cofinite.mp (isRestricted_iff.mp hg hT_nhds)).subset (fun s hs => hs)
