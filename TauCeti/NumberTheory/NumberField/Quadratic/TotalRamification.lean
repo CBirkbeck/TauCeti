@@ -91,7 +91,6 @@ private theorem totallyRamified_aux (hK : finrank ℚ K = 2) (hp : p.Prime)
   have hfone : 𝔭.inertiaDeg ℤ = 1 := by rw [heone] at hxval; omega
   -- A vanishing sum of terms that are each at least `1` has no terms, so `𝔭` is the only prime.
   have huniq : ∀ q : (span {(p : ℤ)} : Ideal ℤ).primesOver (𝓞 K), q = x := fun q => by
-    have := q.2.1
     by_contra hne
     exact absurd ((Finset.sum_eq_zero_iff.mp hrest) q
         (Finset.mem_erase.mpr ⟨hne, Finset.mem_univ q⟩))
