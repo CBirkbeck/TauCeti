@@ -81,6 +81,7 @@ theorem isRestricted_iff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
       Tendsto (fun s : Fin k →₀ ℕ => MvPowerSeries.coeff s f) cofinite (nhds 0) := (Iff.rfl)
 
 /-- `0` is restricted: its coefficients are constantly `0`. -/
+@[simp]
 theorem isRestricted_zero (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A] :
     IsRestricted (0 : MvPowerSeries (Fin k) A) := by
   rw [isRestricted_iff]
@@ -88,6 +89,7 @@ theorem isRestricted_zero (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A
   exact tendsto_const_nhds
 
 /-- `1` is restricted: every coefficient but the `0`-th vanishes. -/
+@[simp]
 theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A] :
     IsRestricted (1 : MvPowerSeries (Fin k) A) := by
   rw [isRestricted_iff]
@@ -132,7 +134,7 @@ theorem IsRestricted.finite_coeff_notMem {k : ℕ} {A : Type*} [Ring A]
 subgroup `W`, and small enough that multiplying by any of finitely many fixed coefficients
 lands in `V`. Openness of `V` and `W` plus continuity of multiplication is all this needs. -/
 private theorem inter_preimage_mul_mem_nhds {A : Type*} [Ring A] [TopologicalSpace A]
-    [NonarchimedeanRing A] {ι : Type*} (V W : OpenAddSubgroup A) (S₁ S₂ : Finset ι)
+    [ContinuousMul A] {ι : Type*} (V W : OpenAddSubgroup A) (S₁ S₂ : Finset ι)
     (c₁ c₂ : ι → A) :
     ((W : Set A) ∩ (⋂ a ∈ S₁, (fun x => c₁ a * x) ⁻¹' (V : Set A))
         ∩ (⋂ b ∈ S₂, (fun x => x * c₂ b) ⁻¹' (V : Set A))) ∈ nhds (0 : A) := by
@@ -151,7 +153,7 @@ private theorem inter_preimage_mul_mem_nhds {A : Type*} [Ring A] [TopologicalSpa
 for each `a` in a finite `S`, only finitely many `n` have `c (n - a) ∉ T`, and `n ↦ n - a` is
 injective on `{n | a ≤ n}`. Both halves of `IsRestricted.mul`'s bad set have this shape, with
 the roles of the two series swapped. -/
-private theorem finite_shift_bad_set {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
+private theorem finite_shift_bad_set {k : ℕ} {A : Type*}
     (S : Finset (Fin k →₀ ℕ)) (T : Set A) (c : (Fin k →₀ ℕ) → A)
     (hcT : {s | c s ∉ T}.Finite) : {n | ∃ a ∈ S, a ≤ n ∧ c (n - a) ∉ T}.Finite := by
   apply Set.Finite.subset (S.finite_toSet.biUnion (fun a _ => hcT.image (· + a)))
@@ -228,9 +230,9 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     intro b hb x hx
     exact (Set.mem_iInter₂.mp hx.2 b hb : _)
   have hgT : {s | MvPowerSeries.coeff s g ∉ T}.Finite :=
-    (Filter.mem_cofinite.mp (hg hT_nhds)).subset (fun s hs => hs)
+    (Filter.mem_cofinite.mp (isRestricted_iff.mp hg hT_nhds)).subset (fun s hs => hs)
   have hfT : {s | MvPowerSeries.coeff s f ∉ T}.Finite :=
-    (Filter.mem_cofinite.mp (hf hT_nhds)).subset (fun s hs => hs)
+    (Filter.mem_cofinite.mp (isRestricted_iff.mp hf hT_nhds)).subset (fun s hs => hs)
   set B := {n | ∃ a ∈ hSf.toFinset, a ≤ n ∧ MvPowerSeries.coeff (n - a) g ∉ T} ∪
            {n | ∃ b ∈ hSg.toFinset, b ≤ n ∧ MvPowerSeries.coeff (n - b) f ∉ T}
   have hB_finite : B.Finite :=
@@ -275,6 +277,7 @@ theorem mem_restrictedMvPowerSeriesSubring {k : ℕ} {A : Type*} [Ring A] [Topol
 
 /-- Constant power series are restricted: the `algebraMap` image of any `a : A` has
 coefficient `a` at multi-index `0` and `0` elsewhere, so it trivially tends to `0`. -/
+@[simp]
 theorem isRestricted_algebraMap {k : ℕ} {A : Type*} [CommSemiring A]
     [TopologicalSpace A] (a : A) :
     IsRestricted (algebraMap A (MvPowerSeries (Fin k) A) a) := by
