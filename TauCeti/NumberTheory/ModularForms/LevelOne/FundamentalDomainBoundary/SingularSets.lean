@@ -12,8 +12,9 @@ import Mathlib.Analysis.Real.Sqrt
 /-!
 # The singular sets on the boundary contour
 
-The two finite sets of complex points at which a level-one form's zeros meet the boundary
-contour, closed under the identifications the contour pairings use: the arc singular set —
+The two candidate exceptional sets the on-curve principal values excise, built from any
+finite set of upper half-plane points and closed under the identifications the contour
+pairings use: the arc singular set —
 the unit-norm points of a finite set `S ⊆ ℍ` together with their images under the inversion
 `z ↦ -1/z` and the corners `ρ`, `ρ + 1` — and the vertical singular set — the `re = ±1/2`,
 norm-above-one points of `S` together with their translates onto the opposite vertical
@@ -78,6 +79,54 @@ private lemma rho_add_one_ne_zero : (ρ : ℂ) + 1 ≠ 0 := by
 private lemma neg_one_div_rho_add_one : -1 / ((ρ : ℂ) + 1) = (ρ : ℂ) := by
   rw [div_eq_iff rho_add_one_ne_zero]
   linear_combination -UpperHalfPlane.ρ_sq
+
+/-- Membership in the arc singular set, by branch: an original unit-norm point, an inversion
+image, or one of the two corners. -/
+@[simp]
+theorem mem_arcSingularSet {S : Finset ℍ} {s : ℂ} :
+    s ∈ arcSingularSet S ↔
+      (∃ p ∈ S, ‖(p : ℂ)‖ = 1 ∧ (p : ℂ) = s) ∨
+        (∃ p ∈ S, ‖(p : ℂ)‖ = 1 ∧ -1 / (p : ℂ) = s) ∨ s = (ρ : ℂ) ∨ s = (ρ : ℂ) + 1 := by
+  simp only [arcSingularSet, Finset.mem_union, Finset.mem_image, Finset.mem_filter,
+    Finset.mem_insert, Finset.mem_singleton, and_assoc, or_assoc]
+
+/-- Membership in the vertical singular set, by branch: an original point on either line or a
+translate onto the opposite line. -/
+@[simp]
+theorem mem_verticalSingularSet {S : Finset ℍ} {s : ℂ} :
+    s ∈ verticalSingularSet S ↔
+      (∃ p ∈ S, ((p : ℂ).re = 1 / 2 ∧ 1 < ‖(p : ℂ)‖) ∧ (p : ℂ) = s) ∨
+        (∃ p ∈ S, ((p : ℂ).re = 1 / 2 ∧ 1 < ‖(p : ℂ)‖) ∧ (p : ℂ) - 1 = s) ∨
+        (∃ p ∈ S, ((p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖) ∧ (p : ℂ) = s) ∨
+        (∃ p ∈ S, ((p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖) ∧ (p : ℂ) + 1 = s) := by
+  simp only [verticalSingularSet, Finset.mem_union, Finset.mem_image, Finset.mem_filter,
+    and_assoc, or_assoc]
+
+/-- Every point of the vertical singular set has norm above `1`: the translates keep the
+square norm because they only flip the sign of the real part. -/
+theorem one_lt_norm_of_mem_verticalSingularSet {S : Finset ℍ} {s : ℂ}
+    (hs : s ∈ verticalSingularSet S) : 1 < ‖s‖ := by
+  rw [mem_verticalSingularSet] at hs
+  have key : ∀ (p : ℍ) (c : ℝ), (p : ℂ).re = c → ‖(p : ℂ)‖ ^ 2 = c ^ 2 + (p : ℂ).im ^ 2 := by
+    intro p c hc
+    rw [← Complex.normSq_eq_norm_sq, Complex.normSq_apply, hc]
+    ring
+  rcases hs with ⟨p, -, ⟨hre, hn⟩, rfl⟩ | ⟨p, -, ⟨hre, hn⟩, rfl⟩ |
+    ⟨p, -, ⟨hre, hn⟩, rfl⟩ | ⟨p, -, ⟨hre, hn⟩, rfl⟩
+  · exact hn
+  · have h1 := key p _ hre
+    have h2 : ‖(p : ℂ) - 1‖ ^ 2 = (-(1 / 2) : ℝ) ^ 2 + (p : ℂ).im ^ 2 := by
+      rw [← Complex.normSq_eq_norm_sq, Complex.normSq_apply, sub_re, sub_im, one_re, one_im,
+        hre]
+      ring
+    nlinarith [norm_nonneg ((p : ℂ) - 1)]
+  · exact hn
+  · have h1 := key p _ hre
+    have h2 : ‖(p : ℂ) + 1‖ ^ 2 = ((1 / 2) : ℝ) ^ 2 + (p : ℂ).im ^ 2 := by
+      rw [← Complex.normSq_eq_norm_sq, Complex.normSq_apply, add_re, add_im, one_re, one_im,
+        hre]
+      ring
+    nlinarith [norm_nonneg ((p : ℂ) + 1)]
 
 /-- The corner `ρ` belongs to the arc singular set. -/
 theorem rho_mem_arcSingularSet (S : Finset ℍ) : (ρ : ℂ) ∈ arcSingularSet S := by
