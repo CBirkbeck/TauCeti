@@ -116,51 +116,51 @@ private noncomputable def ringOfIntegersQuadraticConjₐ (hmin : minpoly ℤ θ 
   AlgEquiv.ofRingEquiv (f := ringOfIntegersQuadraticConj hmin hgen)
     (fun z => by rw [algebraMap_int_eq]; exact map_intCast _ z)
 
-/-- **A containment of ideals with equal relative norms is an equality.** In the ring of integers
-`B ∣ A` follows from `A ≤ B`, so `A = B * C`; equal norms then force `relNorm C = 1`, and an ideal
-of norm one is the whole ring because its norm is below its contraction.
+section RelNorm
 
-Only `B` is assumed nonzero, because that is the factor cancelled. Nothing is lost: with the norms
-equal, `A ≠ 0` follows from `hBne` through `Ideal.relNorm_eq_bot_iff`. -/
-private theorem eq_of_le_of_relNorm_eq {A B : Ideal (𝓞 K)} (hAB : A ≤ B) (hBne : B ≠ 0)
-    (hnorm : Ideal.relNorm ℤ A = Ideal.relNorm ℤ B) : A = B := by
-  obtain ⟨C, hC⟩ := Ideal.dvd_iff_le.mpr hAB
-  have hBnorm_ne : Ideal.relNorm ℤ B ≠ 0 := by
-    rw [Ne, Ideal.zero_eq_bot, Ideal.relNorm_eq_bot_iff, ← Ideal.zero_eq_bot]; exact hBne
-  have hC1 : Ideal.relNorm ℤ C = 1 := by
-    apply mul_left_cancel₀ hBnorm_ne
-    rw [mul_one, ← map_mul (Ideal.relNorm ℤ), ← hC, hnorm]
+variable {A B : Type*} [CommRing A] [IsDedekindDomain A]
+  [CommRing B] [IsDedekindDomain B] [Algebra A B] [Module.Finite A B]
+  [Module.IsTorsionFree A B]
+
+/-- **A containment of ideals with equal relative norms is an equality.** Only the larger ideal is
+assumed nonzero; the smaller one is then nonzero too, by the equality of norms. -/
+private theorem eq_of_le_of_relNorm_eq {I J : Ideal B} (hIJ : I ≤ J) (hJne : J ≠ 0)
+    (hnorm : Ideal.relNorm A I = Ideal.relNorm A J) : I = J := by
+  -- `J ∣ I`, so `I = J * C`; cancelling the norms gives `relNorm C = 1`, and an ideal whose norm
+  -- is the unit ideal is itself the unit ideal, its norm lying below its contraction.
+  obtain ⟨C, hC⟩ := Ideal.dvd_iff_le.mpr hIJ
+  have hJnorm_ne : Ideal.relNorm A J ≠ 0 := by
+    rw [Ne, Ideal.zero_eq_bot, Ideal.relNorm_eq_bot_iff, ← Ideal.zero_eq_bot]; exact hJne
+  have hC1 : Ideal.relNorm A C = 1 := by
+    apply mul_left_cancel₀ hJnorm_ne
+    rw [mul_one, ← map_mul (Ideal.relNorm A), ← hC, hnorm]
   have hCtop : C = ⊤ := by
-    have hle : (⊤ : Ideal ℤ) ≤ Ideal.comap (algebraMap ℤ (𝓞 K)) C := by
-      rw [← Ideal.one_eq_top, ← hC1]; exact Ideal.relNorm_le_comap ℤ C
+    have hle : (⊤ : Ideal A) ≤ Ideal.comap (algebraMap A B) C := by
+      rw [← Ideal.one_eq_top, ← hC1]; exact Ideal.relNorm_le_comap A C
     rw [Ideal.eq_top_iff_one]
-    have := hle (Submodule.mem_top (x := (1 : ℤ)))
+    have := hle (Submodule.mem_top (x := (1 : A)))
     rwa [Ideal.mem_comap, map_one] at this
   rw [hC, hCtop, Ideal.mul_top]
 
-/-- **The norm ideal, extended, sits inside `J · σJ`.** Each generator of the extension is
-`N(x) = x · σx` for some `x ∈ J`, which is visibly a product of an element of `J` and one of
-`σJ`. -/
+/-- The product of an ideal with its image under an `A`-algebra automorphism has relative norm the
+square of the ideal's. -/
+private theorem relNorm_mul_map_algEquiv (σ : B ≃ₐ[A] B) (I : Ideal B) :
+    Ideal.relNorm A (I * Ideal.map σ I) = Ideal.relNorm A I ^ 2 := by
+  -- An automorphism preserves the relative norm, so both factors contribute the same.
+  rw [map_mul (Ideal.relNorm A), Ideal.relNorm_map_algEquiv σ I, ← sq]
+
+end RelNorm
+
+/-- The extension of the norm ideal of `J` is contained in `J · σJ`. -/
 private theorem map_relNorm_le_mul_map_ringOfIntegersQuadraticConj
     (hmin : minpoly ℤ θ = X ^ 2 - C d) (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) (J : Ideal (𝓞 K)) :
     Ideal.map (algebraMap ℤ (𝓞 K)) (Ideal.relNorm ℤ J) ≤
       J * Ideal.map (ringOfIntegersQuadraticConj hmin hgen) J := by
+  -- Each generator of the extension is `N(x) = x · σx` for some `x ∈ J`.
   rw [Ideal.map_relNorm, Ideal.span_le]
   rintro _ ⟨x, hx, rfl⟩
   rw [Function.comp_apply, algebraMap_intNorm_eq hmin hgen]
   exact Ideal.mul_mem_mul hx (Ideal.mem_map_of_mem _ hx)
-
-/-- **`J · σJ` has norm `(relNorm J)²`.** Quadratic conjugation preserves the relative norm — it is
-a `ℤ`-algebra automorphism, so `Ideal.relNorm_map_algEquiv` applies to
-`ringOfIntegersQuadraticConjₐ` — so the two factors contribute the same norm. -/
-private theorem relNorm_mul_map_ringOfIntegersQuadraticConj
-    (hmin : minpoly ℤ θ = X ^ 2 - C d) (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) (J : Ideal (𝓞 K)) :
-    Ideal.relNorm ℤ (J * Ideal.map (ringOfIntegersQuadraticConj hmin hgen) J) =
-      Ideal.relNorm ℤ J ^ 2 := by
-  have hreln : Ideal.relNorm ℤ (Ideal.map (ringOfIntegersQuadraticConj hmin hgen) J) =
-      Ideal.relNorm ℤ J :=
-    Ideal.relNorm_map_algEquiv (ringOfIntegersQuadraticConjₐ hmin hgen) J
-  rw [map_mul (Ideal.relNorm ℤ), hreln, ← sq]
 
 /-- **Norm-principality (Lemma A).** For quadratic conjugation `σ = ringOfIntegersQuadraticConj`,
 the product `I · σI` is a principal ideal, for every ideal `I` of `𝓞 K`. This is the
@@ -176,11 +176,15 @@ theorem isPrincipal_mul_map_ringOfIntegersQuadraticConj
     mul_ne_zero hIne (by
       simpa [Ideal.zero_eq_bot, Ideal.map_eq_bot_iff_of_injective
         (ringOfIntegersQuadraticConj hmin hgen).injective] using hIne)
-  -- Both ideals have relative norm `(relNorm I)²`.
+  -- `relNorm_mul_map_algEquiv` applies to the `ℤ`-algebra form of conjugation; the type ascription
+  -- is what identifies its `Ideal.map` with the ring-equivalence one in the goal.
+  have hsq : Ideal.relNorm ℤ (I * Ideal.map (ringOfIntegersQuadraticConj hmin hgen) I) =
+      Ideal.relNorm ℤ I ^ 2 :=
+    relNorm_mul_map_algEquiv (ringOfIntegersQuadraticConjₐ hmin hgen) I
+  -- Both ideals then have relative norm `(relNorm I)²`.
   have hnorm : Ideal.relNorm ℤ (Ideal.map (algebraMap ℤ (𝓞 K)) (Ideal.relNorm ℤ I)) =
       Ideal.relNorm ℤ (I * Ideal.map (ringOfIntegersQuadraticConj hmin hgen) I) := by
-    rw [Ideal.relNorm_algebraMap, finrank_int_eq_two hmin hgen,
-      relNorm_mul_map_ringOfIntegersQuadraticConj hmin hgen I]
+    rw [Ideal.relNorm_algebraMap, finrank_int_eq_two hmin hgen, hsq]
   -- So the containment is an equality, and the left side is principal, being the extension of the
   -- principal `ℤ`-ideal `relNorm I`.
   rw [← eq_of_le_of_relNorm_eq
