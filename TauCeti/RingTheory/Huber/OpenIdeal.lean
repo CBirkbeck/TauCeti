@@ -58,7 +58,7 @@ image `TauCeti.Huber.PairOfDefinition.idealImage n` of `Iⁿ` in `A`. -/
 theorem extendedIdealOfDefinition_pow (P : PairOfDefinition A) (n : ℕ) :
     P.extendedIdealOfDefinition ^ n = Ideal.span (P.idealImage n : Set A) := by
   -- both sides are the pushforward of `Iⁿ`, since `Ideal.map` is the span of the image
-  rw [P.coe_idealImage, P.extendedIdealOfDefinition_eq, ← Ideal.map_pow]
+  rw [P.coe_idealImage, P.extendedIdealOfDefinition_def, ← Ideal.map_pow]
   rfl
 
 variable [IsTopologicalRing A]
