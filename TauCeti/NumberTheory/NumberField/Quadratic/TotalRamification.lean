@@ -61,6 +61,35 @@ private theorem sum_ramificationIdx_mul_inertiaDeg_eq_two (hK : finrank ℚ K = 
       q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ = 2 := by
   rw [Ideal.sum_ramification_inertia_eq_finrank, NumberField.RingOfIntegers.rank K, hK]
 
+/-- A product of naturals equal to `2` whose first factor is at least `2` has factors `2` and
+`1`. -/
+private theorem eq_two_and_eq_one_of_mul_eq_two {e f : ℕ} (he : 2 ≤ e) (hef : e * f = 2) :
+    e = 2 ∧ f = 1 := by
+  have hf0 : f ≠ 0 := by rintro rfl; simp at hef
+  have hle : 2 * f ≤ e * f := Nat.mul_le_mul he le_rfl
+  have hf : f = 1 := by omega
+  exact ⟨by rw [hf, mul_one] at hef; exact hef, hf⟩
+
+/-- Every summand of the fundamental identity is at least `1`: ramification indices and inertia
+degrees of primes above a maximal ideal are positive. -/
+private theorem one_le_ramificationIdx_mul_inertiaDeg [(span {(p : ℤ)} : Ideal ℤ).IsMaximal]
+    (q : (span {(p : ℤ)} : Ideal ℤ).primesOver (𝓞 K)) :
+    1 ≤ q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ := by
+  obtain ⟨q, hq, hlo⟩ := q
+  exact Nat.one_le_iff_ne_zero.mpr (Nat.mul_ne_zero
+    (Ideal.ramificationIdx_pos q ℤ).ne' (Ideal.inertiaDeg_pos q ℤ).ne')
+
+omit [NumberField K] in
+/-- If every prime of `𝓞 K` above `p` is `x`, then the set of primes above `p` is `{x}`. -/
+private theorem primesOver_eq_singleton_of_forall_eq
+    (x : (span {(p : ℤ)} : Ideal ℤ).primesOver (𝓞 K))
+    (huniq : ∀ q : (span {(p : ℤ)} : Ideal ℤ).primesOver (𝓞 K), q = x) :
+    (span {(p : ℤ)} : Ideal ℤ).primesOver (𝓞 K) = {(x : Ideal (𝓞 K))} := by
+  ext q
+  refine ⟨fun hq => congrArg Subtype.val (huniq ⟨q, hq.1, hq.2⟩), ?_⟩
+  rintro rfl
+  exact ⟨x.2.1, x.2.2⟩
+
 /-- **The engine of the file.** If some prime `𝔭` of `𝓞 K` above a rational prime `p` has
 ramification index different from `1`, then in the quadratic field `K` it is the only prime above
 `p`, and its ramification index and inertia degree are `2` and `1`. -/
@@ -77,12 +106,6 @@ private theorem totallyRamified_aux (hK : finrank ℚ K = 2) (hp : p.Prime)
   have he : 2 ≤ 𝔭.ramificationIdx ℤ :=
     (Nat.two_le_iff _).mpr ⟨(Ideal.ramificationIdx_pos 𝔭 ℤ).ne', hram⟩
   have hf0 : 1 ≤ 𝔭.inertiaDeg ℤ := Ideal.inertiaDeg_pos 𝔭 ℤ
-  -- Every summand of the fundamental identity is at least `1`.
-  have hone : ∀ q : (span {(p : ℤ)} : Ideal ℤ).primesOver (𝓞 K),
-      1 ≤ q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ := by
-    rintro ⟨q, hq, hlo⟩
-    exact Nat.one_le_iff_ne_zero.mpr (Nat.mul_ne_zero
-      (Ideal.ramificationIdx_pos q ℤ).ne' (Ideal.inertiaDeg_pos q ℤ).ne')
   -- The summand at `𝔭` is at least `2`, since `e(𝔭) ≥ 2` and `f(𝔭) ≥ 1`.
   have htwo : 2 ≤ 𝔭.ramificationIdx ℤ * 𝔭.inertiaDeg ℤ :=
     le_trans (by omega) (Nat.mul_le_mul he hf0)
@@ -91,27 +114,13 @@ private theorem totallyRamified_aux (hK : finrank ℚ K = 2) (hp : p.Prime)
   -- The summand at `𝔭` already accounts for the whole sum, so the remaining ones vanish.
   have hrest : ∑ q ∈ Finset.univ.erase x, q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ = 0 := by omega
   have hxval : 𝔭.ramificationIdx ℤ * 𝔭.inertiaDeg ℤ = 2 := by omega
-  -- With `e(𝔭) ≥ 2` this pins down `f(𝔭) = 1` and then `e(𝔭) = 2`.
-  have hfone : 𝔭.inertiaDeg ℤ = 1 := by
-    have hle : 2 * 𝔭.inertiaDeg ℤ ≤ 𝔭.ramificationIdx ℤ * 𝔭.inertiaDeg ℤ :=
-      Nat.mul_le_mul he le_rfl
-    omega
-  have heone : 𝔭.ramificationIdx ℤ = 2 := by rw [hfone, mul_one] at hxval; exact hxval
-  -- A vanishing sum of positive terms has no terms, so `𝔭` is the only prime above `p`.
-  have huniq : ∀ q : (span {(p : ℤ)} : Ideal ℤ).primesOver (𝓞 K), q = x := by
-    intro q
-    by_contra hne
-    have hmemq : q ∈ Finset.univ.erase x := Finset.mem_erase.mpr ⟨hne, Finset.mem_univ q⟩
-    exact absurd ((Finset.sum_eq_zero_iff.mp hrest) q hmemq)
-      (Nat.one_le_iff_ne_zero.mp (hone q))
-  refine ⟨heone, hfone, ?_⟩
-  ext q
-  refine ⟨fun hq => ?_, ?_⟩
-  · have := congrArg Subtype.val (huniq ⟨q, hq.1, hq.2⟩)
-    rw [hx1] at this
-    exact this
-  · rintro rfl
-    exact ⟨‹_›, ‹_›⟩
+  obtain ⟨heone, hfone⟩ := eq_two_and_eq_one_of_mul_eq_two he hxval
+  refine ⟨heone, hfone, hx1 ▸ primesOver_eq_singleton_of_forall_eq x fun q => ?_⟩
+  -- A vanishing sum of terms that are each at least `1` has no terms, so `𝔭` is the only prime.
+  by_contra hne
+  exact absurd ((Finset.sum_eq_zero_iff.mp hrest) q
+      (Finset.mem_erase.mpr ⟨hne, Finset.mem_univ q⟩))
+    (Nat.one_le_iff_ne_zero.mp (one_le_ramificationIdx_mul_inertiaDeg q))
 
 /-- A ramified rational prime admits a prime of `𝓞 K` above it with ramification index `≠ 1`. -/
 private theorem exists_ramificationIdx_ne_one (hmem : p ∈ ramifiedPrimes K) :
