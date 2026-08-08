@@ -272,6 +272,28 @@ theorem exists_openAddSubgroup_mul_subset [NonarchimedeanRing A] (a : A)
   obtain ⟨Z, hZ⟩ := NonarchimedeanAddGroup.is_nonarchimedean _ hmul
   exact ⟨Z, fun z hz ↦ hZ hz⟩
 
+/-- The finite-family form of `TauCeti.Huber.exists_openAddSubgroup_mul_subset`: one open
+subgroup `Z` absorbs each of finitely many fixed elements into its own target.
+
+In the proof that `A⟨X⟩_T` is multiplicatively closed this is applied to the finitely many
+coefficients that fail a given bound, producing the single subgroup against which the whole
+antidiagonal is estimated. -/
+theorem exists_openAddSubgroup_forall_mul_subset [NonarchimedeanRing A] {ι : Type*}
+    (s : Finset ι) (a : ι → A) (V : ι → AddSubgroup A)
+    (hV : ∀ i ∈ s, (V i : Set A) ∈ nhds (0 : A)) :
+    ∃ Z : OpenAddSubgroup A, ∀ i ∈ s, ∀ z ∈ Z, a i * z ∈ V i := by
+  classical
+  induction s using Finset.induction with
+  | empty => exact ⟨⊤, by simp⟩
+  | insert i s' hi ih =>
+      obtain ⟨Z', hZ'⟩ := ih fun j hj ↦ hV j (Finset.mem_insert_of_mem hj)
+      obtain ⟨Z, hZ⟩ :=
+        exists_openAddSubgroup_mul_subset (a i) (V i) (hV i (Finset.mem_insert_self i s'))
+      refine ⟨Z ⊓ Z', fun j hj z hz ↦ ?_⟩
+      rcases Finset.mem_insert.mp hj with rfl | hj'
+      · exact hZ z hz.1
+      · exact hZ' j hj' z hz.2
+
 omit [TopologicalSpace A] in
 /-- **The absorption step.** If multiplication by `a` carries the subgroup `Z` into `T^α · U`,
 then it carries all of `T^β · Z` into `T^(α+β) · U`.
