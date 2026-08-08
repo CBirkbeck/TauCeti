@@ -33,10 +33,12 @@ instance resolution then cannot keep the twisted and untwisted `S`-actions apart
 * `KaehlerDifferential.pullback_id_apply`: `pullback (AlgHom.id R S) ω = ω`.
 * `KaehlerDifferential.pullback_comp_apply`: `pullback (f.comp g) ω = pullback f (pullback g ω)`.
 
-Functoriality is stated pointwise: the map-level equalities relate semilinear maps over
-`(AlgHom.id R S).toRingHom` and `RingHom.id S` (respectively a `RingHom.comp` and
-`(f.comp g).toRingHom`), which are definitionally but not syntactically equal, so the bundled
-forms are awkward to even state; the pointwise forms are what a caller rewrites with anyway.
+* `KaehlerDifferential.pullback_id`, `pullback_comp`: the same at map level.
+
+Proofs about `pullback` use receiver-explicit lemmas (`(pullback f).map_add`, `map_smulₛₗ`, …)
+rather than unrestricted `simp`: `simp` first normalises the semilinearity index
+`(AlgHom.id R S).toRingHom` to `RingHom.id S` inside the *type* of the map, retyping the
+application so that no lemma matches afterwards.
 
 ## Provenance
 
@@ -55,11 +57,14 @@ namespace KaehlerDifferential
 
 variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
 
-/-- Private carrier: a copy of `Ω[S⁄R]` whose `S`-action will be twisted through `f`, so that
-`x ↦ D (f x)` becomes an honest `S`-derivation into it. A structure rather than a type synonym:
-a synonym is definitionally equal to `Ω[S⁄R]`, and instance resolution then conflates the twisted
-and untwisted actions. -/
-private structure Twisted (f : S →ₐ[R] S) : Type _ where
+/-- Implementation carrier for `KaehlerDifferential.pullback` — **not intended for use**: a copy
+of `Ω[S⁄R]` whose `S`-action is twisted through `f`, so that `x ↦ D (f x)` becomes an honest
+`S`-derivation into it. Every instance and lemma about it is private, so nothing can be built on
+it from outside this file; only the structure itself is public, because the environment linter
+cannot process a private projection. A structure rather than a type synonym: a synonym is
+definitionally equal to `Ω[S⁄R]`, and instance resolution then conflates the twisted and
+untwisted actions. -/
+structure Twisted (f : S →ₐ[R] S) : Type _ where
   /-- The underlying differential. -/
   out : Ω[S⁄R]
 
@@ -153,17 +158,36 @@ private theorem mem_span_range (ω : Ω[S⁄R]) : ω ∈ Submodule.span S (Set.r
 @[simp]
 theorem pullback_id_apply (ω : Ω[S⁄R]) : pullback (AlgHom.id R S) ω = ω := by
   induction mem_span_range ω using Submodule.span_induction with
-  | mem ω hω => obtain ⟨x, rfl⟩ := hω; simp
-  | zero => simp
-  | add ω₁ ω₂ _ _ ih₁ ih₂ => simp [ih₁, ih₂]
-  | smul s ω _ ih => simp [ih]
+  | mem ω hω => obtain ⟨x, rfl⟩ := hω; rw [pullback_D, AlgHom.id_apply]
+  | zero => exact map_zero _
+  | add ω₁ ω₂ _ _ ih₁ ih₂ => rw [map_add, ih₁, ih₂]
+  | smul s ω _ ih =>
+    -- `map_smulₛₗ` produces `(AlgHom.id R S).toRingHom s • ω`, which is `s • ω` definitionally.
+    rw [map_smulₛₗ, ih]; rfl
 
 theorem pullback_comp_apply (f g : S →ₐ[R] S) (ω : Ω[S⁄R]) :
     pullback (f.comp g) ω = pullback f (pullback g ω) := by
   induction mem_span_range ω using Submodule.span_induction with
-  | mem ω hω => obtain ⟨x, rfl⟩ := hω; simp
-  | zero => simp
-  | add ω₁ ω₂ _ _ ih₁ ih₂ => simp [ih₁, ih₂]
-  | smul s ω _ ih => simp [ih]
+  | mem ω hω => obtain ⟨x, rfl⟩ := hω; rw [pullback_D, pullback_D, pullback_D, AlgHom.comp_apply]
+  | zero => rw [map_zero, map_zero, map_zero]
+  | add ω₁ ω₂ _ _ ih₁ ih₂ => rw [map_add, map_add, map_add, ih₁, ih₂]
+  | smul s ω _ ih =>
+    -- The three semilinear scalar laws compose: `(f.comp g).toRingHom s` is `f (g s)`
+    -- definitionally.
+    rw [map_smulₛₗ, map_smulₛₗ, map_smulₛₗ, ih]; rfl
+
+/-- The pullback along the identity is the identity, as (plainly linear) maps. The ascription is
+what lets the elaborator compare both sides over `RingHom.id S`. -/
+theorem pullback_id :
+    (pullback (AlgHom.id R S) : Ω[S⁄R] →ₗ[S] Ω[S⁄R]) = LinearMap.id := by
+  ext ω
+  exact pullback_id_apply ω
+
+/-- Contravariant functoriality at map level; the composite's scalar law is supplied by Mathlib's
+`RingHomCompTriple` instance for composed algebra maps. -/
+theorem pullback_comp (f g : S →ₐ[R] S) :
+    pullback (f.comp g) = (pullback f).comp (pullback g) := by
+  ext ω
+  exact pullback_comp_apply f g ω
 
 end KaehlerDifferential
