@@ -198,11 +198,11 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
   -- left directly and on the right through the opposite ring.
   obtain ⟨T₁, hT₁mem, hT₁⟩ := exists_mem_nhds_zero_mul_subset
     (hSf.image fun a => MvPowerSeries.coeff a f).isCompact (V.isOpen.mem_nhds V.zero_mem)
+  have hVop : MulOpposite.unop ⁻¹' (V : Set A) ∈ nhds (0 : Aᵐᵒᵖ) :=
+    MulOpposite.continuous_unop.continuousAt.preimage_mem_nhds
+      (by simpa using V.isOpen.mem_nhds V.zero_mem)
   obtain ⟨T₂, hT₂mem, hT₂⟩ := exists_mem_nhds_zero_mul_subset
-    (hSg.image fun b => MulOpposite.op (MvPowerSeries.coeff b g)).isCompact
-    (show MulOpposite.unop ⁻¹' (V : Set A) ∈ nhds (0 : Aᵐᵒᵖ) from
-      MulOpposite.continuous_unop.continuousAt.preimage_mem_nhds
-        (by simpa using V.isOpen.mem_nhds V.zero_mem))
+    (hSg.image fun b => MulOpposite.op (MvPowerSeries.coeff b g)).isCompact hVop
   set T : Set A := T₁ ∩ MulOpposite.op ⁻¹' T₂ with hTdef
   have hT_nhds : T ∈ nhds (0 : A) :=
     Filter.inter_mem hT₁mem
