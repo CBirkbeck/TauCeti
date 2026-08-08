@@ -15,8 +15,8 @@ import Mathlib.MeasureTheory.Integral.CurveIntegral.Poincare
 /-!
 # Homotopy invariance of the winding number
 
-The winding number of a closed path about `w` is invariant under a twice continuously
-differentiable path homotopy through `ℂ \ {w}`. The proof represents the Cauchy kernel as the closed
+The winding number of a path about `w` is invariant under a twice continuously differentiable
+fixed-endpoint homotopy through `ℂ \ {w}`. The proof represents the Cauchy kernel as the closed
 complex-linear `1`-form `z ↦ (z - w)⁻¹ dz`, then applies Mathlib's Poincaré theorem for curve
 integrals on the compact image of the homotopy.
 
@@ -139,10 +139,10 @@ private theorem curveIntegral_indexForm_eq_of_pathHomotopy {x y w : ℂ} {p q : 
   rw [heval_zero, heval_one] at hboundary
   simpa only [curveIntegral_cast, curveIntegral_refl, add_zero] using hboundary
 
-/-- **Homotopy invariance of the winding number off the curve.** Two closed paths joined through
-`ℂ \ {w}` by a path homotopy whose extension to the unit square is `C²` have the same winding number
-about `w`. -/
-theorem windingNumber_eq_of_pathHomotopy {x w : ℂ} {p q : Path x x} (φ : p.Homotopy q)
+/-- **Homotopy invariance of the winding number off the curve.** Two paths with the same endpoints,
+joined through `ℂ \ {w}` by a path homotopy whose extension to the unit square is `C²`, have the
+same winding number about `w`. -/
+theorem windingNumber_eq_of_pathHomotopy {x y w : ℂ} {p q : Path x y} (φ : p.Homotopy q)
     (hφsmooth : ContDiffOn ℝ 2
       (fun st : ℝ × ℝ ↦ Set.IccExtend zero_le_one (φ.toHomotopy.extend st.1) st.2) (Set.Icc 0 1))
     (havoid : ∀ st : Set.Icc (0 : ℝ) 1 × Set.Icc (0 : ℝ) 1, φ st ≠ w) :
