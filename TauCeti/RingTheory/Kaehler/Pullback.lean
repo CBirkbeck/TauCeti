@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.Kaehler.Basic
+import Mathlib.Algebra.Group.TransferInstance
 
 /-!
 # Pullback of Kähler differentials along an algebra endomorphism
@@ -16,9 +17,11 @@ For an `R`-algebra endomorphism `f : S →ₐ[R] S`, the pullback on Kähler dif
 
 Mathlib's `KaehlerDifferential.map` does not specialise to this: instantiating its target algebra
 at `S` with the structure given by `f` would install a second `Algebra S S` instance clashing with
-`Algebra.id`. Instead the map is obtained from the universal property: `x ↦ D (f x)` is a
-derivation into `Ω[S⁄R]` carrying the `S`-action twisted through `f` (a private carrier below),
-and `Derivation.liftKaehlerDifferential` linearises it.
+`Algebra.id`. Instead the map comes from the universal property: `x ↦ D (f x)` is a derivation
+into a copy of `Ω[S⁄R]` whose `S`-action is twisted through `f`, and
+`Derivation.liftKaehlerDifferential` linearises it. The twisted copy is a private one-field
+structure — a type synonym will not do, because a synonym is definitionally equal to `Ω[S⁄R]` and
+instance resolution then cannot keep the twisted and untwisted `S`-actions apart.
 
 ## Main definitions
 
@@ -27,8 +30,13 @@ and `Derivation.liftKaehlerDifferential` linearises it.
 ## Main results
 
 * `KaehlerDifferential.pullback_D`: `pullback f (D x) = D (f x)`.
-* `KaehlerDifferential.pullback_id`: `pullback (AlgHom.id R S) = LinearMap.id`.
-* `KaehlerDifferential.pullback_comp`: `pullback (f.comp g) = (pullback f).comp (pullback g)`.
+* `KaehlerDifferential.pullback_id_apply`: `pullback (AlgHom.id R S) ω = ω`.
+* `KaehlerDifferential.pullback_comp_apply`: `pullback (f.comp g) ω = pullback f (pullback g ω)`.
+
+Functoriality is stated pointwise: the map-level equalities relate semilinear maps over
+`(AlgHom.id R S).toRingHom` and `RingHom.id S` (respectively a `RingHom.comp` and
+`(f.comp g).toRingHom`), which are definitionally but not syntactically equal, so the bundled
+forms are awkward to even state; the pointwise forms are what a caller rewrites with anyway.
 
 ## Provenance
 
@@ -47,90 +55,115 @@ namespace KaehlerDifferential
 
 variable {R S : Type*} [CommRing R] [CommRing S] [Algebra R S]
 
-/-- Private carrier: `Ω[S⁄R]` with the `S`-action twisted through `f`, so that `x ↦ D (f x)`
-becomes an honest `S`-derivation into it. -/
-private def Twisted (_f : S →ₐ[R] S) : Type _ := Ω[S⁄R]
+/-- Private carrier: a copy of `Ω[S⁄R]` whose `S`-action will be twisted through `f`, so that
+`x ↦ D (f x)` becomes an honest `S`-derivation into it. A structure rather than a type synonym:
+a synonym is definitionally equal to `Ω[S⁄R]`, and instance resolution then conflates the twisted
+and untwisted actions. -/
+private structure Twisted (f : S →ₐ[R] S) : Type _ where
+  /-- The underlying differential. -/
+  out : Ω[S⁄R]
+
+private def twistedEquiv (f : S →ₐ[R] S) : Twisted f ≃ Ω[S⁄R] where
+  toFun := Twisted.out
+  invFun := Twisted.mk
+  left_inv _ := rfl
+  right_inv _ := rfl
 
 private noncomputable instance (f : S →ₐ[R] S) : AddCommGroup (Twisted f) :=
-  inferInstanceAs (AddCommGroup (Ω[S⁄R]))
+  (twistedEquiv f).addCommGroup
 
-/-- The twisted action: `s • m` is `f s • m` in `Ω[S⁄R]`. Built field-by-field rather than via
-`Module.compHom`, whose `with`-merged structure does not reduce under heterogeneous `SMul` (see
-the porting note on `Module.compHom` itself). -/
-private noncomputable instance instSMulTwisted (f : S →ₐ[R] S) : SMul S (Twisted f) :=
-  ⟨fun s m => (f s • (m : Ω[S⁄R]) : Ω[S⁄R])⟩
+private theorem out_injective (f : S →ₐ[R] S) : Function.Injective (Twisted.out (f := f)) :=
+  fun a b h => by cases a; cases b; cases h; rfl
 
-/-- The twisted scalar action, read in `Ω[S⁄R]`: definitional, and the single bridge every proof
-below rewrites through. -/
-private theorem twisted_smul_def (f : S →ₐ[R] S) (s : S) (m : Twisted f) :
-    s • m = (f s • (m : Ω[S⁄R]) : Ω[S⁄R]) := rfl
+private theorem out_add (f : S →ₐ[R] S) (m n : Twisted f) :
+    (m + n).out = m.out + n.out := rfl
 
-/-- Addition on the twisted carrier, read in `Ω[S⁄R]`: definitional. -/
-private theorem twisted_add_def (f : S →ₐ[R] S) (m n : Twisted f) :
-    m + n = ((m : Ω[S⁄R]) + (n : Ω[S⁄R]) : Ω[S⁄R]) := rfl
+private theorem out_zero (f : S →ₐ[R] S) : (0 : Twisted f).out = 0 := rfl
 
-/-- Zero on the twisted carrier, read in `Ω[S⁄R]`: definitional. -/
-private theorem twisted_zero_def (f : S →ₐ[R] S) :
-    (0 : Twisted f) = ((0 : Ω[S⁄R]) : Ω[S⁄R]) := rfl
+/-- The twisted `S`-action: `s` acts as `f s` does on the underlying differential. -/
+private noncomputable instance (f : S →ₐ[R] S) : SMul S (Twisted f) :=
+  ⟨fun s m => ⟨f s • m.out⟩⟩
+
+private theorem out_smul (f : S →ₐ[R] S) (s : S) (m : Twisted f) :
+    (s • m).out = f s • m.out := rfl
 
 private noncomputable instance (f : S →ₐ[R] S) : Module S (Twisted f) where
-  one_smul m := by rw [twisted_smul_def, map_one, one_smul]
-  mul_smul a b m := by
-    rw [twisted_smul_def, twisted_smul_def, twisted_smul_def, map_mul, mul_smul]
-  smul_zero s := by rw [twisted_smul_def, twisted_zero_def, smul_zero]
-  smul_add s m n := by
-    rw [twisted_smul_def, twisted_smul_def, twisted_smul_def, twisted_add_def, twisted_add_def,
-      smul_add]
-  add_smul a b m := by
-    rw [twisted_smul_def, twisted_smul_def, twisted_smul_def, twisted_add_def, map_add, add_smul]
-  zero_smul m := by rw [twisted_smul_def, twisted_zero_def, map_zero, zero_smul]
+  one_smul m := out_injective f <| by rw [out_smul, map_one, one_smul]
+  mul_smul a b m := out_injective f <| by
+    rw [out_smul, out_smul, out_smul, map_mul, mul_smul]
+  smul_zero s := out_injective f <| by rw [out_smul, out_zero, smul_zero]
+  smul_add s m n := out_injective f <| by
+    rw [out_smul, out_add, out_add, out_smul, out_smul, smul_add]
+  add_smul a b m := out_injective f <| by
+    rw [out_smul, out_add, out_smul, out_smul, map_add, add_smul]
+  zero_smul m := out_injective f <| by rw [out_smul, out_zero, map_zero, zero_smul]
+
+/-- The untwisted `R`-action: `f` fixes `R`, so twisting through `f` changes nothing over `R`. -/
+private noncomputable instance (f : S →ₐ[R] S) : SMul R (Twisted f) :=
+  ⟨fun r m => ⟨r • m.out⟩⟩
+
+private theorem out_smul_r (f : S →ₐ[R] S) (r : R) (m : Twisted f) :
+    (r • m).out = r • m.out := rfl
+
+private noncomputable instance (f : S →ₐ[R] S) : Module R (Twisted f) where
+  one_smul m := out_injective f <| by rw [out_smul_r, one_smul]
+  mul_smul a b m := out_injective f <| by rw [out_smul_r, out_smul_r, out_smul_r, mul_smul]
+  smul_zero r := out_injective f <| by rw [out_smul_r, out_zero, smul_zero]
+  smul_add r m n := out_injective f <| by
+    rw [out_smul_r, out_add, out_add, out_smul_r, out_smul_r, smul_add]
+  add_smul a b m := out_injective f <| by
+    rw [out_smul_r, out_add, out_smul_r, out_smul_r, add_smul]
+  zero_smul m := out_injective f <| by rw [out_smul_r, out_zero, zero_smul]
 
 private instance (f : S →ₐ[R] S) : IsScalarTower R S (Twisted f) where
-  smul_assoc r s m := by
-    -- Both `R`-actions are the untwisted one; the `S`-action applies `f`, which fixes `R`.
-    show (r • s) • m = r • (s • m : Twisted f)
-    rw [twisted_smul_def, twisted_smul_def, Algebra.smul_def, map_mul, f.commutes,
-      ← Algebra.smul_def]
-    exact smul_assoc r (f s) (m : Ω[S⁄R])
+  smul_assoc r s m := out_injective f <| by
+    -- The `S`-action applies `f`, which fixes `R` (`f.commutes`); the `R`-action is untwisted.
+    rw [out_smul, out_smul_r, out_smul, Algebra.smul_def, map_mul, f.commutes,
+      ← Algebra.smul_def, smul_assoc]
 
 /-- `x ↦ D (f x)`, as a derivation into the twisted carrier: the Leibniz rule
 `D (f (a b)) = f a • D (f b) + f b • D (f a)` is exactly the twisted `S`-linearity. -/
 private noncomputable def twistedD (f : S →ₐ[R] S) : Derivation R S (Twisted f) where
-  toFun x := (D R S (f x) : Ω[S⁄R])
-  map_add' x y := by
-    change (D R S (f (x + y)) : Ω[S⁄R]) = D R S (f x) + D R S (f y)
-    rw [map_add, map_add]
-  map_smul' r x := by
-    change (D R S (f (r • x)) : Ω[S⁄R]) = r • D R S (f x)
-    rw [map_smul, Derivation.map_smul]
-  map_one_eq_zero' := by
-    change (D R S (f 1) : Ω[S⁄R]) = 0
-    rw [map_one, Derivation.map_one_eq_zero]
-  leibniz' a b := by
-    change (D R S (f (a * b)) : Ω[S⁄R]) = f a • D R S (f b) + f b • D R S (f a)
-    rw [map_mul, Derivation.leibniz]
+  toFun x := ⟨D R S (f x)⟩
+  map_add' x y := out_injective f <| by rw [out_add]; simp
+  map_smul' r x := out_injective f <| by rw [RingHom.id_apply, out_smul_r]; simp
+  map_one_eq_zero' := out_injective f <| by rw [out_zero]; simp
+  leibniz' a b := out_injective f <| by
+    rw [out_add, out_smul, out_smul]
+    simp [Derivation.leibniz]
 
 /-- **Pullback of Kähler differentials along an algebra endomorphism**, characterised by
 `pullback f (D x) = D (f x)`. It is `f`-semilinear: `pullback f (s • ω) = f s • pullback f ω`. -/
 noncomputable def pullback (f : S →ₐ[R] S) : Ω[S⁄R] →ₛₗ[f.toRingHom] Ω[S⁄R] where
-  toFun ω := ((twistedD f).liftKaehlerDifferential ω : Ω[S⁄R])
-  map_add' := map_add _
-  map_smul' s ω :=
-    -- `S`-linearity of the lift into the twisted carrier IS `f`-semilinearity in `Ω[S⁄R]`.
-    (twistedD f).liftKaehlerDifferential.map_smul s ω
+  toFun ω := ((twistedD f).liftKaehlerDifferential ω).out
+  map_add' ω₁ ω₂ := by rw [map_add, out_add]
+  map_smul' s ω := by
+    -- `S`-linearity of the lift into the twisted carrier is `f`-semilinearity downstairs.
+    rw [LinearMap.map_smul, out_smul]; rfl
 
 @[simp]
 theorem pullback_D (f : S →ₐ[R] S) (x : S) : pullback f (D R S x) = D R S (f x) :=
-  (twistedD f).liftKaehlerDifferential_comp_D x
+  congrArg Twisted.out ((twistedD f).liftKaehlerDifferential_comp_D x)
+
+/-- Every differential is in the span of the range of `D`, so pointwise identities may be proved
+by span induction; the scalar step uses the semilinearity `map_smulₛₗ`. -/
+private theorem mem_span_range (ω : Ω[S⁄R]) : ω ∈ Submodule.span S (Set.range (D R S)) := by
+  rw [span_range_derivation]; trivial
 
 @[simp]
-theorem pullback_id : pullback (AlgHom.id R S) = LinearMap.id := by
-  refine LinearMap.ext_on_range (span_range_derivation R S) fun x => ?_
-  simp
+theorem pullback_id_apply (ω : Ω[S⁄R]) : pullback (AlgHom.id R S) ω = ω := by
+  induction mem_span_range ω using Submodule.span_induction with
+  | mem ω hω => obtain ⟨x, rfl⟩ := hω; simp
+  | zero => simp
+  | add ω₁ ω₂ _ _ ih₁ ih₂ => simp [ih₁, ih₂]
+  | smul s ω _ ih => simp [ih]
 
-theorem pullback_comp (f g : S →ₐ[R] S) :
-    pullback (f.comp g) = (pullback f).comp (pullback g) := by
-  refine LinearMap.ext_on_range (span_range_derivation R S) fun x => ?_
-  simp
+theorem pullback_comp_apply (f g : S →ₐ[R] S) (ω : Ω[S⁄R]) :
+    pullback (f.comp g) ω = pullback f (pullback g ω) := by
+  induction mem_span_range ω using Submodule.span_induction with
+  | mem ω hω => obtain ⟨x, rfl⟩ := hω; simp
+  | zero => simp
+  | add ω₁ ω₂ _ _ ih₁ ih₂ => simp [ih₁, ih₂]
+  | smul s ω _ ih => simp [ih]
 
 end KaehlerDifferential
