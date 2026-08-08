@@ -102,20 +102,22 @@ class IsHuberRing (A : Type*) [CommRing A] [TopologicalSpace A] [IsTopologicalRi
 This is the topological notion, unrelated to Mathlib's `Valuation.IsUniformizer`, which asks a
 *discretely valued* ring's element to have valuation the generator of the value group. A Tate
 ring need carry no valuation at all. -/
-def IsPseudoUniformizer {A : Type*} [CommRing A] [TopologicalSpace A] (a : A) : Prop :=
+def IsPseudoUniformizer {A : Type*} [MonoidWithZero A] [TopologicalSpace A] (a : A) : Prop :=
   IsUnit a ∧ IsTopologicallyNilpotent a
 
 /-- Unfolding lemma for `TauCeti.Huber.IsPseudoUniformizer`. -/
-theorem isPseudoUniformizer_iff {A : Type*} [CommRing A] [TopologicalSpace A] {a : A} :
+@[simp]
+theorem isPseudoUniformizer_iff {A : Type*} [MonoidWithZero A] [TopologicalSpace A] {a : A} :
     IsPseudoUniformizer a ↔ IsUnit a ∧ IsTopologicallyNilpotent a := (Iff.rfl)
 
 /-- A pseudouniformiser is a unit. -/
-theorem IsPseudoUniformizer.isUnit {A : Type*} [CommRing A] [TopologicalSpace A] {a : A}
+theorem IsPseudoUniformizer.isUnit {A : Type*} [MonoidWithZero A] [TopologicalSpace A] {a : A}
     (ha : IsPseudoUniformizer a) : IsUnit a := ha.1
 
 /-- A pseudouniformiser is topologically nilpotent. -/
-theorem IsPseudoUniformizer.isTopologicallyNilpotent {A : Type*} [CommRing A] [TopologicalSpace A]
-    {a : A} (ha : IsPseudoUniformizer a) : IsTopologicallyNilpotent a := ha.2
+theorem IsPseudoUniformizer.isTopologicallyNilpotent {A : Type*} [MonoidWithZero A]
+    [TopologicalSpace A] {a : A} (ha : IsPseudoUniformizer a) :
+    IsTopologicallyNilpotent a := ha.2
 
 /-- A *Tate ring* is a Huber ring containing a pseudouniformiser, that is, a topologically
 nilpotent unit. -/
@@ -133,6 +135,7 @@ neighbourhood basis of zero of a Huber ring. -/
 def idealImage (P : PairOfDefinition A) (n : ℕ) : AddSubgroup A :=
   (P.ideal ^ n).toAddSubgroup.map P.ringOfDefinition.subtype.toAddMonoidHom
 
+/-- As a set, `Iⁿ`'s image in `A` is the image of `Iⁿ ⊆ A₀` under the inclusion `A₀ → A`. -/
 @[simp]
 theorem coe_idealImage (P : PairOfDefinition A) (n : ℕ) : (P.idealImage n : Set A) =
     Subtype.val '' ((P.ideal ^ n : Ideal P.ringOfDefinition) : Set P.ringOfDefinition) := (rfl)
@@ -273,10 +276,11 @@ end IsPseudoUniformizer
 scaled copies `ϖⁿ A₀` are a neighbourhood basis of zero. -/
 theorem IsTateRing.exists_hasBasis_nhds_zero (A : Type*) [CommRing A] [TopologicalSpace A]
     [IsTopologicalRing A] [IsTateRing A] : ∃ (a : A) (P : PairOfDefinition A),
-      (𝓝 (0 : A)).HasBasis (fun _ : ℕ ↦ True) fun n ↦ (a ^ n) • (P.ringOfDefinition : Set A) := by
+      IsPseudoUniformizer a ∧
+        (𝓝 (0 : A)).HasBasis (fun _ : ℕ ↦ True) fun n ↦ (a ^ n) • (P.ringOfDefinition : Set A) := by
   obtain ⟨a, ha⟩ := IsTateRing.exists_isPseudoUniformizer (A := A)
   obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
-  exact ⟨a, P, ha.hasBasis_nhds_zero P⟩
+  exact ⟨a, P, ha, ha.hasBasis_nhds_zero P⟩
 
 end Tate
 
