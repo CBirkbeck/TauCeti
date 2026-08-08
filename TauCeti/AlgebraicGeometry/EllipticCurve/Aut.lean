@@ -55,6 +55,8 @@ public section
 
 namespace WeierstrassCurve
 
+section Field
+
 variable {K : Type*} [Field K] (E : WeierstrassCurve K)
 
 /-! ### `Aut(E) = {±1}` for `j ∉ {0, 1728}`
@@ -64,7 +66,7 @@ Throughout, `C • E = E` is an automorphism of `E`; the nonvanishing of `c₄` 
 
 /-- An automorphism `C` of `E` with `C.u = 1` has no `x`-translation: `C.r = 0`. This follows
 from the transformation laws of `b₄`, `b₆`, `b₈` together with `c₆ ≠ 0`. -/
-lemma r_eq_zero_of_u_eq_one (hc6 : E.c₆ ≠ 0) {C : VariableChange K} (hu : C.u = 1)
+private lemma r_eq_zero_of_u_eq_one (hc6 : E.c₆ ≠ 0) {C : VariableChange K} (hu : C.u = 1)
     (hCE : C • E = E) : C.r = 0 := by
   rw [c₆] at hc6
   have eb4 := congrArg b₄ hCE
@@ -78,7 +80,7 @@ lemma r_eq_zero_of_u_eq_one (hc6 : E.c₆ ≠ 0) {C : VariableChange K} (hu : C.
 After `r_eq_zero_of_u_eq_one`, the `a₁` and `a₃` laws give `2s = 2t = 0`; in characteristic `≠ 2`
 this forces `s = t = 0`, and in characteristic `2` the `a₂`, `a₄` laws pin `(s, t)` down to either
 `(0, 0)` or `(-a₁, -a₃)`. -/
-lemma eq_one_or_eq_negVariableChange_of_u_eq_one (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0)
+private lemma eq_one_or_eq_negVariableChange_of_u_eq_one (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0)
     {C : VariableChange K} (hu : C.u = 1) (hCE : C • E = E) :
     C = 1 ∨ C = E.negVariableChange := by
   have hr : C.r = 0 := E.r_eq_zero_of_u_eq_one hc6 hu hCE
@@ -106,7 +108,7 @@ lemma eq_one_or_eq_negVariableChange_of_u_eq_one (hc4 : E.c₄ ≠ 0) (hc6 : E.c
 
 /-- The `u`-coefficient of an automorphism `C` of `E` (with `c₄, c₆ ≠ 0`) satisfies `u² = 1`:
 the `c₄` and `c₆` laws give `u⁴ = u⁶ = 1`. -/
-lemma u_eq_one_or_eq_neg_one (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0) {C : VariableChange K}
+private lemma u_eq_one_or_eq_neg_one (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0) {C : VariableChange K}
     (hCE : C • E = E) : C.u = 1 ∨ C.u = -1 := by
   have hu4 : (C.u : K) ^ 4 = 1 := by
     have h := congrArg c₄ hCE
@@ -122,7 +124,7 @@ lemma u_eq_one_or_eq_neg_one (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0) {C : Vari
 /-- If `c₄ ≠ 0` and `c₆ ≠ 0` then the only admissible changes of variables fixing `E` are `1` and
 `negVariableChange E`. This is the form of `Aut(E) = {±1}` phrased via `c₄, c₆` (equivalent to
 `j ∉ {0, 1728}` for an elliptic curve, see `eq_one_or_eq_negVariableChange_of_smul_eq`). -/
-theorem eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq
+private theorem eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq_field
     (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0) {C : VariableChange K} (hC : C • E = E) :
     C = 1 ∨ C = E.negVariableChange := by
   rcases E.u_eq_one_or_eq_neg_one hc4 hc6 hC with hu | hu
@@ -138,13 +140,47 @@ theorem eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_e
     · right; rw [hCeq, h, mul_one]
     · left; rw [hCeq, h, negVariableChange_mul_self]
 
+end Field
+
+section Domain
+
+variable {A : Type*} [CommRing A] [IsDomain A] (E : WeierstrassCurve A)
+
+/-- If `c₄ ≠ 0` and `c₆ ≠ 0` then the only admissible changes of variables fixing `E` are `1`
+and `negVariableChange E`.
+
+The classification is a statement about an integral domain, not a field: the argument is
+cancellation and zero-product reasoning throughout. It is obtained here from the field case by
+base change to the fraction field, where every hypothesis and conclusion transfers along the
+injection — `c₄`, `c₆` by `map_c₄`/`map_c₆`, the fixing equation by
+`VariableChange.map_variableChange`, and the conclusion back down by
+`VariableChange.map_injective`. -/
+theorem eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq
+    (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0) {C : VariableChange A} (hC : C • E = E) :
+    C = 1 ∨ C = E.negVariableChange := by
+  set φ := algebraMap A (FractionRing A) with hφ
+  have hinj : Function.Injective φ := IsFractionRing.injective A (FractionRing A)
+  have hC' : (C.map φ) • (E.map φ) = E.map φ := by
+    rw [map_variableChange, hC]
+  have h4 : (E.map φ).c₄ ≠ 0 := by rw [map_c₄]; exact fun h ↦ hc4 (hinj (by simpa using h))
+  have h6 : (E.map φ).c₆ ≠ 0 := by rw [map_c₆]; exact fun h ↦ hc6 (hinj (by simpa using h))
+  rcases (E.map φ).eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq_field
+    h4 h6 hC' with h | h
+  · refine .inl (VariableChange.map_injective hinj ?_)
+    change C.map φ = (1 : VariableChange A).map φ
+    rw [h]
+    ext <;> simp [VariableChange.map, VariableChange.one_def]
+  · refine .inr (VariableChange.map_injective hinj ?_)
+    rwa [negVariableChange_map] at h
+
 /-- If `j(E) ∉ {0, 1728}` then the only admissible changes of variables fixing `E` are `1` and
 `negVariableChange E`; that is, `Aut(E) = {±1}`. -/
 theorem eq_one_or_eq_negVariableChange_of_smul_eq [E.IsElliptic] (hj₀ : E.j ≠ 0)
-    (hj₁₇₂₈ : E.j ≠ 1728) {C : VariableChange K} (hC : C • E = E) :
+    (hj₁₇₂₈ : E.j ≠ 1728) {C : VariableChange A} (hC : C • E = E) :
     C = 1 ∨ C = E.negVariableChange :=
   E.eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq
     (E.j_eq_zero_iff.not.mp hj₀) (E.j_eq_1728_iff.not.mp hj₁₇₂₈) hC
+
 
 /-! ### The automorphism group -/
 
@@ -191,6 +227,8 @@ automorphism: it is `zmodMulEquivOfGenerator` for that generator. -/
     E.autGroupMulEquiv hj₀ hj₁₇₂₈ ⟨E.negVariableChange, E.negVariableChange_smul_self⟩
       = Multiplicative.ofAdd 1 := by
   rw [← autGroupMulEquiv_symm_apply_ofAdd_one E hj₀ hj₁₇₂₈, MulEquiv.apply_symm_apply]
+
+end Domain
 
 end WeierstrassCurve
 

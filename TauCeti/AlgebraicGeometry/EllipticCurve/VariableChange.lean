@@ -64,6 +64,11 @@ def negVariableChange : VariableChange R :=
   simp [VariableChange.mul_def, VariableChange.one_def, negVariableChange,
     Odd.neg_one_pow (by decide : Odd 3)]
 
+/-- The negation automorphism commutes with base change along a ring homomorphism. -/
+@[simp] lemma negVariableChange_map {A : Type*} [CommRing A] (φ : R →+* A) :
+    (E.map φ).negVariableChange = E.negVariableChange.map φ := by
+  ext <;> simp [negVariableChange, VariableChange.map, map_a₁, map_a₃]
+
 /-- The negation automorphism is its own inverse, being an involution. -/
 @[simp] lemma negVariableChange_inv : E.negVariableChange⁻¹ = E.negVariableChange :=
   inv_eq_of_mul_eq_one_left E.negVariableChange_mul_self
