@@ -56,10 +56,12 @@ argument principle above all — into a statement about how often an image curve
 * `TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg`
   and `intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_sub_log_neg_of_im_nonpos` —
   the boundary-tolerant comparison FTCs: the logarithmic integral of `g` is integrable and
-  evaluates to an endpoint-log difference through a comparison `h` that agrees with `g` on the
-  open interval, is differentiable there off a countable set with integrable logarithmic
-  integrand, and is confined to a closed half-plane — so endpoint values may sit on the
-  negative-real boundary. A comparison confined to the slit plane on the whole closed interval
+  evaluates to an endpoint-log difference through a comparison `h` that is continuous on the
+  closed interval, differentiable on the open one off a countable set, has integrable logarithmic
+  integrand, is confined to a closed half-plane, is nonvanishing at the two endpoints and
+  slit-plane-valued strictly between them, and agrees with `g` both on the open interval and at
+  each endpoint — so endpoint values may sit on the negative-real boundary. A comparison confined
+  to the slit plane on the whole closed interval
   needs no dedicated form: `integral_deriv_div_eq_log_sub_log` applies to it directly, and
   `IntervalIntegrable.congr_uIoo` with `intervalIntegral.integral_congr_uIoo` transport its
   conclusion across the interior agreement.
@@ -295,11 +297,14 @@ private lemma ne_zero_on_uIcc (ha_ne : h a ≠ 0) (hb_ne : h b ≠ 0)
   exact Complex.slitPlane_ne_zero (hh_slit t ⟨hlt1, hlt2⟩)
 
 /-- **The boundary-tolerant logarithmic FTC, upper form**: for a comparison function `h`
-confined to the closed upper half-plane, nonvanishing at the endpoints, slit-plane-valued
-strictly between them, differentiable there off a countable set, and with integrable
-logarithmic integrand, the logarithmic integral of `g` is integrable and evaluates to the
-difference of endpoint logarithms — even when the endpoint values sit on the slit-plane
-boundary. -/
+continuous on the closed interval, confined to the closed upper half-plane, nonvanishing at the
+endpoints, slit-plane-valued strictly between them, differentiable there off a countable set, and
+with integrable logarithmic integrand, and for a `g` agreeing with `h` on the open interval and
+at both endpoints, the logarithmic integral of `g` is integrable and evaluates to the difference
+of its endpoint logarithms — even when the endpoint values sit on the slit-plane boundary.
+
+The conclusion is about `g`, which is otherwise unconstrained: it is the agreement with `h`, at
+the endpoints as well as inside, that carries the regularity across. -/
 theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg {P : Set ℝ}
     (hP : P.Countable) (hh_cont : ContinuousOn h (Set.uIcc a b))
     (hh_diff : ∀ t ∈ Set.Ioo (min a b) (max a b) \ P, DifferentiableAt ℝ h t)
@@ -317,10 +322,12 @@ theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im
     (fun t ht ↦ (hh_diff t ht).hasDerivAt.clog_real (hh_slit t ht.1))
     hh_int heq heq_a heq_b
 
-/-- **The boundary-tolerant logarithmic FTC, lower form**: for a comparison function confined
-to the closed lower half-plane, nonvanishing at the endpoints, whose negation is
-slit-plane-valued strictly between them, the logarithmic integral of `g` is integrable and
-evaluates to the difference of endpoint logarithms of the negations. -/
+/-- **The boundary-tolerant logarithmic FTC, lower form**: for a comparison function `h`
+continuous on the closed interval, differentiable on the open one off a countable set, with
+integrable logarithmic integrand, confined to the closed lower half-plane, nonvanishing at the
+endpoints and whose negation is slit-plane-valued strictly between them, and for a `g` agreeing
+with `h` on the open interval and at both endpoints, the logarithmic integral of `g` is
+integrable and evaluates to the difference of the endpoint logarithms of the negations. -/
 theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_sub_log_neg_of_im_nonpos
     {P : Set ℝ} (hP : P.Countable) (hh_cont : ContinuousOn h (Set.uIcc a b))
     (hh_diff : ∀ t ∈ Set.Ioo (min a b) (max a b) \ P, DifferentiableAt ℝ h t)
