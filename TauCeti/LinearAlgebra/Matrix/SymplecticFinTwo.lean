@@ -24,9 +24,9 @@ statement about the top exterior power, hence specific to rank two. It is false 
 
 ## Main results
 
-* `TauCeti.Matrix.transpose_mul_symplectic_mul`: `φᵀ * J * φ = φ.det • J`.
-* `TauCeti.Matrix.det_eq_of_symplectic_adjoint`: if `φᵀ * J = J * ψ` and `ψ * φ = d • 1`, then
-  `φ.det = d`.
+* `TauCeti.Matrix.transpose_mul_symplectic_mul_eq_det_smul`: `φᵀ * J * φ = φ.det • J`.
+* `TauCeti.Matrix.det_eq_of_symplectic_adjoint_of_mul_eq_smul_one`: if `φᵀ * J = J * ψ` and
+  `ψ * φ = d • 1`, then `φ.det = d`.
 
 ## Provenance
 
@@ -50,8 +50,14 @@ namespace TauCeti.Matrix
 variable {R : Type*} [CommRing R]
 
 /-- A `2 × 2` matrix scales the standard symplectic form `!![0, 1; -1, 0]` by its determinant. -/
-theorem transpose_mul_symplectic_mul (φ : Matrix (Fin 2) (Fin 2) R) :
+@[simp]
+theorem transpose_mul_symplectic_mul_eq_det_smul (φ : Matrix (Fin 2) (Fin 2) R) :
     φᵀ * !![0, 1; -1, 0] * φ = φ.det • !![0, 1; -1, 0] := by
+  -- This is the rank-two case of the determinant transformation law
+  -- (`TauCeti.Matrix.detRowAlternating_mulVec`): both entries are the determinant form evaluated
+  -- on the `i`-th and `j`-th columns of `φ`. Deriving it from that lemma is not shorter, because
+  -- `detRowAlternating` is an `alternatization` that `simp` does not put into coordinates, so the
+  -- four entries have to be computed either way.
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [mul_apply, Fin.sum_univ_two, det_fin_two, transpose_apply] <;> ring
@@ -61,13 +67,13 @@ scalar `d`, then `d` is the determinant of `φ`.
 
 This is the matrix form of the argument that a pairing-adjoint together with a dual relation pins
 the determinant: `φᵀ J φ = J ψ φ = d • J`, and comparing with
-`transpose_mul_symplectic_mul` gives `det φ = d` by reading off one entry. -/
-theorem det_eq_of_symplectic_adjoint {φ ψ : Matrix (Fin 2) (Fin 2) R} {d : R}
+`transpose_mul_symplectic_mul_eq_det_smul` gives `det φ = d` by reading off one entry. -/
+theorem det_eq_of_symplectic_adjoint_of_mul_eq_smul_one {φ ψ : Matrix (Fin 2) (Fin 2) R} {d : R}
     (hadj : φᵀ * !![0, 1; -1, 0] = !![0, 1; -1, 0] * ψ)
     (hdual : ψ * φ = d • (1 : Matrix (Fin 2) (Fin 2) R)) : φ.det = d := by
   have hkey : φ.det • (!![0, 1; -1, 0] : Matrix (Fin 2) (Fin 2) R)
       = d • !![0, 1; -1, 0] := by
-    rw [← transpose_mul_symplectic_mul φ, hadj, Matrix.mul_assoc, hdual]
+    rw [← transpose_mul_symplectic_mul_eq_det_smul φ, hadj, Matrix.mul_assoc, hdual]
     ext i j
     fin_cases i <;> fin_cases j <;> simp [mul_apply, Fin.sum_univ_two]
   have := congrArg (fun M => M 0 1) hkey
