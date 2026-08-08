@@ -242,12 +242,13 @@ theorem exists_analyticOnNhd (hUo : IsOpen U) (hUc : IsSimplyConnected U) (hz₀
   · -- Analyticity at `z`: `F` agrees near `z` with the terminal germ of the continuation to `z`.
     have han : AnalyticAt ℂ (f z 1) z := by
       simpa [hγ1 z hz] using (hf z hz).analyticAt 1 (mem_univ 1)
-    exact han.congr
+    simpa only [hFdef] using han.congr
       (eventuallyEq_terminal_germ hUo hUc H hγc hγU hγ0 hγ1 hf hf₀'
         (hγc z hz) (hγU z hz) (hγ0 z hz) (hγ1 z hz) (hf z hz) (hf₀' z hz)).symm
   · -- The prescribed germ at `z₀`: apply the key step to the constant path.
-    exact eventuallyEq_terminal_germ hUo hUc H hγc hγU hγ0 hγ1 hf hf₀' continuous_const
-      (fun _ => hz₀) rfl rfl (.const continuousOn_const fun _ _ => H.analyticAt hz₀) .rfl
+    simpa only [hFdef] using
+      eventuallyEq_terminal_germ hUo hUc H hγc hγU hγ0 hγ1 hf hf₀' continuous_const
+        (fun _ => hz₀) rfl rfl (.const continuousOn_const fun _ _ => H.analyticAt hz₀) .rfl
 
 end ContinuesInside
 
