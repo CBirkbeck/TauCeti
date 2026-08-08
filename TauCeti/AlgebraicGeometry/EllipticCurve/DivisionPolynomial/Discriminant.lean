@@ -45,23 +45,26 @@ dividing both `κ²` and `4·Ψ₃(x)` divides `4Δ`.
 * `TauCeti.WeierstrassCurve.dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃`: over any commutative
   ring, a common divisor of `Ψ₂Sq(x)` and `4·Ψ₃(x)` divides `4Δ`.
 * `TauCeti.WeierstrassCurve.evalEval_ψ₂_sq`: on the curve, `ψ₂(x, y)² = Ψ₂Sq(x)`.
-* `TauCeti.WeierstrassCurve.evalEval_ψ₂_sq_dvd_four_mul_Δ`: the specialisation of the first to
-  `d = ψ₂(x, y)²` at a point of the curve.
+* `TauCeti.WeierstrassCurve.evalEval_ψ₂_sq_dvd_four_mul_Δ_of_dvd_four_mul_Ψ₃`: the specialisation
+  of the first to `d = ψ₂(x, y)²` at a point of the curve.
 
 Stated over an arbitrary commutative ring: no domain, integrality or ellipticity hypothesis.
 
-⚠ **No torsion hypothesis appears here, and no part of `lutz_nagell` is proved.** In the
-specialised form the input `κ² ∣ 4·Ψ₃(x)` is what a torsion point would supply, through the
-coordinate formula for `2 • P` — but that derivation needs the point-level `[n]`-multiplication
-material (mathlib-track) and is not in this file. The headline result does not depend on it: it is
-a statement about polynomials, usable by any caller with a common divisor in hand.
+⚠ **No torsion hypothesis appears here, and no part of `lutz_nagell` is proved.** The specialised
+form takes `κ² ∣ 4·Ψ₃(x)` as an assumption, and torsion by itself does not give it: over an
+arbitrary commutative ring finite order says nothing about divisibility. The classical route
+obtains it in the arithmetic setting — an integrally closed base with a fraction field, integral
+coordinates, and the point-level `[n]`-multiplication formula for `2 • P` — none of which is in
+this file. The headline result does not depend on any of that: it is a statement about
+polynomials, usable by any caller with a common divisor in hand.
 
 This is an ingredient for the Nagell–Lutz milestone of `TauCetiRoadmap/EllipticCurves/README.md`,
 Layer 6, item "The torsion subgroup and Nagell–Lutz", whose short-model target `lutz_nagell` asks
-for `x, y ∈ ℤ` and `y = 0 ∨ y² ∣ Δ`. It is the algebraic step feeding that target's second
-conjunct, in the long-model form the roadmap also names (`lutz_nagell_integrality_general`, "with
-its discriminant companion"); it is not that conjunct, which additionally needs the torsion input
-and the `y = 0` case.
+for `x, y ∈ ℤ` together with `y = 0 ∨ y² ∣ Δ`. It is the algebraic step feeding the **second
+disjunct** of that disjunction, in the long-model form the roadmap also names
+(`lutz_nagell_integrality_general`, "with its discriminant companion"). Establishing the full
+disjunction additionally requires the torsion input above and a separate treatment of the `y = 0`
+branch.
 
 ## Provenance
 
@@ -141,7 +144,7 @@ theorem dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ {d : R} (hd : d ∣
 For a short model `ψ₂(x, y) = 2y`, so the conclusion reads `(2y)² ∣ 4Δ`; recovering the classical
 `y² ∣ Δ` from that needs `4` to be a non-zero-divisor, which an arbitrary commutative ring does
 not supply. -/
-theorem evalEval_ψ₂_sq_dvd_four_mul_Δ (h : W.toAffine.Equation x y)
+theorem evalEval_ψ₂_sq_dvd_four_mul_Δ_of_dvd_four_mul_Ψ₃ (h : W.toAffine.Equation x y)
     (hΨ₃ : W.ψ₂.evalEval x y ^ 2 ∣ 4 * (W.Ψ₃).eval x) :
     W.ψ₂.evalEval x y ^ 2 ∣ 4 * W.Δ :=
   dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ W ((evalEval_ψ₂_sq W h) ▸ dvd_rfl) hΨ₃
