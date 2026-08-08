@@ -51,9 +51,14 @@ namespace WeierstrassCurve
 /-- **Base change commutes with change of variables.** Base changing `D • W` to `A` is changing
 the base-changed curve `W⁄A` by the base-changed variable change `D⁄A`.
 
-This is `map_variableChange` at `algebraMap`, in the `baseChange` spelling the rest of this
-development uses. It is a statement about curves, so it lives at curve level rather than under
-`Affine.Point`. -/
+This is `map_variableChange` at `algebraMap`, restated in the `baseChange` spelling. The
+restatement is load-bearing rather than cosmetic: `WeierstrassCurve.baseChange` is a plain `def`,
+not `abbrev` or `@[reducible]`, so `W⁄A` and `W.map (algebraMap R A)` are definitionally equal but
+**not** interchangeable for `rw` and `simp only`, which match up to reducible transparency. Every
+consumer below — and `Point.map`, whose type is already phrased with `⁄` — is in the `baseChange`
+vocabulary, so substituting `map_variableChange` at the call sites does not elaborate.
+
+It is a statement about curves, so it lives at curve level rather than under `Affine.Point`. -/
 lemma baseChange_variableChange {R : Type*} [CommRing R] (W : WeierstrassCurve R)
     (D : VariableChange R) (A : Type*) [CommRing A] [Algebra R A] :
     (D.baseChange A) • (W.baseChange A) = (D • W).baseChange A :=
