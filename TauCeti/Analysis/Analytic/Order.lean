@@ -11,7 +11,8 @@ public import Mathlib.Analysis.Analytic.Order
 
 Two extensions of Mathlib's `analyticOrderAt` calculus: the order is additive over finite
 products, and composing with `q ↦ q ^ N` at `0` multiplies the order by `N`. The finiteness of
-the zeros a zero count also needs is `TauCeti.Analysis.Analytic.Zeros`, which mentions no order.
+the zeros a zero count also needs is `TauCeti.Analysis.Analytic.IsolatedZeros`, which mentions
+no order.
 
 ## Main declarations
 

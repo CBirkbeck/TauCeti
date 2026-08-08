@@ -5,7 +5,12 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Analysis.Analytic.Order
+public import Mathlib.Analysis.Analytic.Basic
+
+-- Proof-only: the zero set's codiscreteness comes from
+-- `AnalyticOnNhd.preimage_zero_mem_codiscreteWithin`, which Mathlib declares in its order module.
+-- The statement below mentions no order, so this import is not public.
+import Mathlib.Analysis.Analytic.Order
 
 /-!
 # The zero set of an analytic function
@@ -14,7 +19,9 @@ An analytic function that does not vanish identically has isolated zeros, and th
 what that gives on a compact set: only finitely many zeros lie there. It is the fact any zero
 count rests on, and it mentions neither the analytic order nor any particular field, so it lives
 apart from both the order calculus of `TauCeti.Analysis.Analytic.Order` and the complex-specific
-estimates of `TauCeti.Analysis.Complex.IsolatedZero`.
+estimates of `TauCeti.Analysis.Complex.IsolatedZero`. The name follows Mathlib's own
+`Mathlib.Analysis.Analytic.IsolatedZeros`, where the identity principle and the codiscreteness of
+the zero set live.
 
 ## Main declarations
 

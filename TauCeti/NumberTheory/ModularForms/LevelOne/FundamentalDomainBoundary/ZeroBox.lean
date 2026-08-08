@@ -6,7 +6,7 @@ module
 
 public import Mathlib.NumberTheory.Modular
 public import Mathlib.Analysis.Complex.Basic
-public import TauCeti.Analysis.Analytic.Zeros
+public import TauCeti.Analysis.Analytic.IsolatedZeros
 
 import Mathlib.Analysis.Complex.Convex
 import Mathlib.Analysis.Complex.ReImTopology
