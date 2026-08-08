@@ -217,9 +217,10 @@ end Ring
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve F) (C : VariableChange F)
 
-/-- **Secant case.** For distinct `x`-coordinates the change of variables scales the slope
-affinely: the secant through the image points is `u · ℓ + s`. -/
-lemma variableChange_slope_of_X_ne [DecidableEq F] {x₁ x₂ y₁ y₂ : F} (hx : x₁ ≠ x₂) :
+-- Secant case of `variableChange_slope`: for distinct `x`-coordinates the change of variables
+-- scales the slope affinely, the secant through the image points being `u · ℓ + s`. Private: one
+-- of the two branches of that lemma's case split, and its only consumer.
+private lemma variableChange_slope_of_X_ne [DecidableEq F] {x₁ x₂ y₁ y₂ : F} (hx : x₁ ≠ x₂) :
     W.toAffine.slope ((C.u : F) ^ 2 * x₁ + C.r) ((C.u : F) ^ 2 * x₂ + C.r)
         ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t)
         ((C.u : F) ^ 3 * y₂ + (C.u : F) ^ 2 * C.s * x₂ + C.t)
@@ -232,10 +233,11 @@ lemma variableChange_slope_of_X_ne [DecidableEq F] {x₁ x₂ y₁ y₂ : F} (hx
   have h2 := sub_ne_zero.mpr hx
   field
 
-/-- **Tangent case.** At a point that is not its own negative the change of variables scales the
-tangent slope affinely. Both slopes are `-∂x/∂y`, and the change of variables scales the two
-partial derivatives by `u⁴` (up to a multiple of `∂y`) and `u³`. -/
-lemma variableChange_slope_of_Y_ne [DecidableEq F] {x₁ y₁ : F}
+-- Tangent case of `variableChange_slope`: at a point that is not its own negative the change of
+-- variables scales the tangent slope affinely. Both slopes are `-∂x/∂y`, and the change of
+-- variables scales the two partial derivatives by `u⁴` (up to a multiple of `∂y`) and `u³`.
+-- Private: the other branch of that lemma's case split, and its only consumer.
+private lemma variableChange_slope_of_Y_ne [DecidableEq F] {x₁ y₁ : F}
     (hy : y₁ ≠ (C • W).toAffine.negY x₁ y₁) :
     W.toAffine.slope ((C.u : F) ^ 2 * x₁ + C.r) ((C.u : F) ^ 2 * x₁ + C.r)
         ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t)
