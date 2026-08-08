@@ -214,9 +214,8 @@ private theorem centralizerAlgHom_bijective : Function.Bijective (centralizerAlg
   · -- Surjectivity: `φ` is left multiplication by `c = φ 1`, which centralizes `B`.
     set c : A := (Bimodule.of B.val).symm (φ (Bimodule.of B.val 1)) with hc
     -- `φ` is multiplication by `c`: this is the shared bimodule-map API at `f = g = B.val`.
-    have key : ∀ x : A, φ (Bimodule.of B.val x) = Bimodule.of B.val (c * x) := fun x =>
-      (Bimodule.of B.val).symm.injective (by
-        simpa [hc] using Bimodule.symm_apply_eq_symm_apply_one_mul (φ := φ) x)
+    have key : ∀ x : A, φ (Bimodule.of B.val x) = Bimodule.of B.val (c * x) := fun x => by
+      simpa [hc] using Bimodule.apply_of (φ := φ) x
     -- Linearity for the left action of `B` says exactly that `c` centralizes `B`.
     have hcomm : ∀ b ∈ (B : Set A), b * c = c * b := fun b hb => by
       simpa [hc] using

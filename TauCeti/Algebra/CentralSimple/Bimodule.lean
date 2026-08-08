@@ -45,12 +45,14 @@ A `B ⊗[K] Aᵐᵒᵖ`-linear map `Bimodule f →ₗ Bimodule g`, transported a
 value `u` at `1`, and that value intertwines `f` and `g`:
 
 * `TauCeti.Bimodule.symm_apply_eq_symm_apply_one_mul`: the transported map is `a ↦ u * a`.
+* `TauCeti.Bimodule.apply_of`: the untransported form, `φ (of f a) = of g (u * a)`.
 * `TauCeti.Bimodule.symm_apply_one_mul_eq_mul_symm_apply_one`: `u * f b = g b * u`.
 * `TauCeti.Bimodule.exists_symm_apply_one_mul_eq_one`: when `of g 1` is hit, `u` has a right
   inverse.
 
-These are what the Skolem-Noether argument in
-`TauCeti/Algebra/CentralSimple/SkolemNoether.lean` runs on.
+The Skolem-Noether argument in `TauCeti/Algebra/CentralSimple/SkolemNoether.lean` runs on all of
+them; the centralizer theorem in `TauCeti/Algebra/CentralSimple/Centralizer.lean` uses
+`apply_of` and `symm_apply_one_mul_eq_mul_symm_apply_one` at `f = g = B.val`.
 
 ## Implementation notes
 
@@ -166,6 +168,14 @@ theorem symm_apply_eq_symm_apply_one_mul (φ : Bimodule f →ₗ[B ⊗[K] Aᵐ�
     rw [smul_of]; simp
   rw [ha, map_smul, symm_smul]
   simp
+
+/-- The untransported form of `symm_apply_eq_symm_apply_one_mul`: `φ` sends `of f a` to
+`of g (u * a)`, where `u` is its transported value at `1`. This is the `of`-side companion, in the
+same way that `smul_of` is the companion of `symm_smul`. -/
+@[grind =]
+theorem apply_of (φ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g) (a : A) :
+    φ (of f a) = of g ((of g).symm (φ (of f 1)) * a) :=
+  (of g).symm.injective (by simpa using symm_apply_eq_symm_apply_one_mul φ a)
 
 /-- The transported value at `1` intertwines `f` and `g`: writing `u` for it, `u * f b = g b * u`
 for every `b : B`. -/

@@ -113,7 +113,7 @@ theorem skolemNoether [IsSimpleRing A] [FiniteDimensional K A]
   have hrank : Module.finrank K (Bimodule f) = Module.finrank K (Bimodule g) :=
     ((Bimodule.of f).symm.trans (Bimodule.of g)).finrank_eq
   obtain ⟨φ⟩ := IsSimpleRing.nonempty_linearEquiv_of_finrank_eq (R := B ⊗[K] Aᵐᵒᵖ) K hrank
-  -- The three steps below need only linearity and surjectivity, so use `φ` as a linear map.
+  -- The two steps below need only linearity and that `of g 1` is hit, so use `φ` as a linear map.
   set ψ : Bimodule f →ₗ[B ⊗[K] Aᵐᵒᵖ] Bimodule g := φ.toLinearMap with hψ
   have hψsurj : Function.Surjective ψ := by rw [hψ]; simpa using φ.surjective
   obtain ⟨v, huv⟩ := Bimodule.exists_symm_apply_one_mul_eq_one ψ (hψsurj _)
@@ -127,9 +127,11 @@ theorem skolemNoether [IsSimpleRing A] [FiniteDimensional K A]
   have hUval : ((Units.mkOfMulEqOne u v huv : Aˣ) : A) = u := Units.val_mkOfMulEqOne huv
   have hUinv : (↑(Units.mkOfMulEqOne u v huv)⁻¹ : A) = v :=
     Units.inv_eq_of_mul_eq_one_right (by rw [hUval]; exact huv)
+  -- Name the conjugation relation at the abstraction boundary, so `u` never has to be unfolded.
+  have hb : ∀ b : B, u * f b = g b * u :=
+    Bimodule.symm_apply_one_mul_eq_mul_symm_apply_one ψ
   refine ⟨Units.mkOfMulEqOne u v huv, fun x ↦ ?_⟩
-  rw [hUval, hUinv, hu, Bimodule.symm_apply_one_mul_eq_mul_symm_apply_one ψ x, mul_assoc, ← hu, huv,
-    mul_one]
+  rw [hUval, hUinv, hb x, mul_assoc, huv, mul_one]
 
 /-- **Every automorphism of a central simple algebra is inner.** A `K`-algebra automorphism of a
 finite-dimensional central simple `K`-algebra `A` is conjugation by a unit of `A`. -/
