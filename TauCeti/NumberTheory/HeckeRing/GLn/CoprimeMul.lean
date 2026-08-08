@@ -70,11 +70,15 @@ the algebra map reduced to `Int.cast`. The two are definitionally equal — the 
 `mapGL_coe_matrix τ` — but they are *syntactically* different, and `Matrix.map_mul_intCast`
 and `Matrix.diagonal_map` below match only the `Int.cast` form.
 
-That syntactic difference is the whole point, so this is not a redundant alias: substituting
-`simp only [mapGL_coe_matrix _, algebraMap_int_eq]` (with or without `Int.coe_castRingHom`)
-at the eight call sites below fails, leaving 12 unsolved goals and unused-simp-argument
-errors. The sibling `map_intCast_mul` *was* a redundant alias and has been removed in favour
-of `Matrix.map_mul_intCast`. -/
+Inlining it is possible but not free. The full normalisation is
+`simp only [mapGL_coe_matrix, algebraMap_int_eq, map_apply_coe, RingHom.mapMatrix_apply,
+Int.coe_castRingHom]` (as `simp?` reports); with that set, five of the eight call sites below
+go through unchanged. The remaining three interleave the rewrite with `Matrix.map_mul_intCast`
+and need more than a substitution, because the simp set leaves `Int.cast` eta-expanded as
+`fun x => ↑x`, which `Matrix.map_mul_intCast` then does not match.
+
+The sibling `map_intCast_mul` *was* a plain redundant alias and has been removed in favour of
+`Matrix.map_mul_intCast`. -/
 private lemma mapGL_coe (τ : SpecialLinearGroup (Fin n) ℤ) :
     (↑(mapGL ℚ τ) : Matrix (Fin n) (Fin n) ℚ) = τ.val.map (Int.cast : ℤ → ℚ) :=
   mapGL_coe_matrix τ
