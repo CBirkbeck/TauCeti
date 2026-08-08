@@ -467,39 +467,9 @@ private lemma multiplicity_coprime_le_one (a b : Fin n → ℕ) (ha_pos : ∀ i,
 `T(a) · T(b) = T(a * b)` when the determinants are coprime. -/
 theorem diagElem_mul_of_coprime (a b : Fin n → ℕ) (ha_pos : ∀ i, 0 < a i)
     (hb_pos : ∀ i, 0 < b i) (hcop : Nat.Coprime (∏ i, a i) (∏ i, b i)) :
-    diagElem a * diagElem b = diagElem (a * b) := by
-  classical
-  have hSC : HeckeCosetModule.structureConstants ℤ (SLnZ n) (SLnZ n) (SLnZ n)
-      (diagCoset a).rep (diagCoset b).rep =
-      HeckeCosetModule.single ℤ (diagCoset (a * b)) 1 := by
-    ext A
-    rw [HeckeCosetModule.structureConstants_apply, HeckeCosetModule.single_apply]
-    split_ifs with h
-    · rw [← h]
-      have hne : multiplicity (SLnZ n) (SLnZ n) (SLnZ n)
-          (((diagCoset a).rep : GL (Fin n) ℚ)) (((diagCoset b).rep : GL (Fin n) ℚ))
-          (((diagCoset (a * b)).rep : GL (Fin n) ℚ)) ≠ 0 := by
-        rw [← HeckeCoset.mem_image_mulMap_iff]
-        simp only [Finset.mem_image, Finset.mem_univ, true_and]
-        exact ⟨(Classical.arbitrary _, Classical.arbitrary _),
-          mulMap_coprime_eq n a b ha_pos hb_pos hcop _⟩
-      have hle := multiplicity_coprime_le_one n a b ha_pos hb_pos hcop (diagCoset (a * b))
-      have heq : multiplicity (SLnZ n) (SLnZ n) (SLnZ n)
-          (((diagCoset a).rep : GL (Fin n) ℚ)) (((diagCoset b).rep : GL (Fin n) ℚ))
-          (((diagCoset (a * b)).rep : GL (Fin n) ℚ)) = 1 := by omega
-      rw [heq, Nat.cast_one]
-    · have hzero : multiplicity (SLnZ n) (SLnZ n) (SLnZ n)
-          (((diagCoset a).rep : GL (Fin n) ℚ)) (((diagCoset b).rep : GL (Fin n) ℚ))
-          ((A.rep : GL (Fin n) ℚ)) = 0 := by
-        by_contra h0
-        refine h ?_
-        have hmem := (HeckeCoset.mem_image_mulMap_iff _ _ A).mpr h0
-        simp only [Finset.mem_image, Finset.mem_univ, true_and] at hmem
-        obtain ⟨p, hp⟩ := hmem
-        rw [← hp, mulMap_coprime_eq n a b ha_pos hb_pos hcop p]
-      rw [hzero, Nat.cast_zero]
-  rw [diagElem_def, diagElem_def, diagElem_def, HeckeCosetModule.single_mul_single, hSC,
-    HeckeCosetModule.smul_single_one, HeckeCosetModule.smul_single_one]
+    diagElem a * diagElem b = diagElem (a * b) :=
+  diagElem_mul_of_mulMap_eq _ _ _ (mulMap_coprime_eq n a b ha_pos hb_pos hcop)
+    (multiplicity_coprime_le_one n a b ha_pos hb_pos hcop _)
 
 end CoprimeIntegrality
 
