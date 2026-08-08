@@ -59,8 +59,8 @@ theorem eq_zero_of_self_eq_mul_self {f g : R⟦X⟧} (hg : constantCoeff g = 0) 
 /-- **Self-multiplication cancellation, other side.** If `f = f * g` in `R⟦X⟧` and `g` has zero
 constant coefficient, then `f = 0`.
 
-No commutativity is needed: `order` is subadditive in each argument separately, so this runs the
-same argument as `eq_zero_of_self_eq_mul_self` with the factors in the other order. -/
+No commutativity is needed: `order f + order g ≤ order (f * g)` holds with the factors in either
+order, so this runs the same argument as `eq_zero_of_self_eq_mul_self`. -/
 theorem eq_zero_of_self_eq_self_mul {f g : R⟦X⟧} (hg : constantCoeff g = 0) (h : f = f * g) :
     f = 0 := by
   refine eq_zero_of_order_add_one_le ?_
