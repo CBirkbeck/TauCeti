@@ -63,7 +63,10 @@ variable {A : Type*} [CommRing A] (E : WeierstrassCurve A)
 /-- The quadratic twist of a Weierstrass curve `E` over `K` by parameters `t`, `n`, to be
 thought of as the trace and norm of a generator `θ` of a separable quadratic extension `L/K`
 (so that `θ² = tθ - n`, and `D := t² - 4n` is the discriminant of the minimal polynomial of
-`θ`, nonzero exactly when `θ` is separable).
+`θ`). The parameters are arbitrary elements of any commutative ring `A`; the reading of `(t, n)`
+as the trace and norm of a generator of a separable quadratic extension, with `D ≠ 0` the
+separability criterion, is the field case. Over a general commutative ring the condition that
+makes the twist behave — and the hypothesis the results below take — is that `D` be a *unit*.
 
 The construction: writing the equation of `E` as `y² + A(x)y = f(x)` with `A(x) = a₁x + a₃`,
 the functions `x` and `Y := (t - 2θ)y - θ·A(x)` on `E` are invariant under the Galois action
@@ -224,8 +227,7 @@ theorem exists_smul_eq_quadraticTwistOf_quadraticTwistOf (hD : IsUnit (t ^ 2 - 4
     ∃ C : VariableChange A, C • E = (E.quadraticTwistOf t n).quadraticTwistOf t n := by
   -- the split case at roots `t² - 2n` and `2n`: their difference is `-(t² - 4n)`, and their
   -- sum and product are the composite parameters of `quadraticTwistOf_quadraticTwistOf`.
-  have hrs : IsUnit (2 * n - (t ^ 2 - 2 * n)) := by
-    rw [show 2 * n - (t ^ 2 - 2 * n) = -(t ^ 2 - 4 * n) by ring, IsUnit.neg_iff]; exact hD
+  have hrs : IsUnit (2 * n - (t ^ 2 - 2 * n)) := by convert hD.neg using 1; ring
   obtain ⟨C, hC⟩ := E.exists_smul_eq_quadraticTwistOf_add_mul (t ^ 2 - 2 * n) (2 * n) hrs
   rw [quadraticTwistOf_quadraticTwistOf]
   exact ⟨C, by convert hC using 2 <;> ring⟩
