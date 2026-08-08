@@ -291,6 +291,13 @@ theorem closure_singleton_inv (y : Γ) : closure {y⁻¹} = closure ({y} : Set �
     rw [hz]
     exact inv_mem_iff.mp (subset_closure ({y⁻¹} : Set Γ) rfl)
 
+/-- The dual form of `mem_closure_singleton` for a generator `y ≤ 1`, the side the
+cofinality theory uses. -/
+theorem mem_closure_singleton_of_le_one {y : Γ} (hy : y ≤ 1) {x : Γ} :
+    x ∈ closure {y} ↔ ∃ n : ℕ, y ^ n ≤ x ∧ x ≤ (y ^ n)⁻¹ := by
+  rw [← closure_singleton_inv y, mem_closure_singleton (one_le_inv_of_le_one hy)]
+  simp only [inv_pow, inv_inv]
+
 /-! ### The largest convex subgroup avoiding an element -/
 
 /-- The largest convex subgroup avoiding an element `γ ≠ 1`, as the union of all convex
