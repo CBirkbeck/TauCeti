@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.Polynomial.IsIntegral
-public import Mathlib.RingTheory.Polynomial.RationalRoot
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Denominator
 
 /-!
@@ -29,9 +28,10 @@ arbitrary `R`-algebra, with the fraction-field version as a corollary.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.isInteger_of_is_root_of_squarefree_leadingCoeff`: the `x`-coordinate of
-  a point is integral if it is a root of a polynomial over `R` with squarefree leading coefficient.
-* `TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral`: over **any** `R`-algebra, a
+* `TauCeti.WeierstrassCurve.isInteger_x_of_equation_of_is_root_of_squarefree_leadingCoeff`: the
+  `x`-coordinate of a point is integral if it is a root of a polynomial over `R` with squarefree
+  leading coefficient.
+* `TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral_x`: over **any** `R`-algebra, a
   point whose `x`-coordinate is integral over `R` has `y`-coordinate integral over `R`.
 * `TauCeti.WeierstrassCurve.isInteger_y_of_equation_of_isInteger_x`: its fraction-field corollary,
   the shape the Nagell–Lutz argument consumes.
@@ -67,7 +67,7 @@ variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve R)
 On the curve, `y` is a root of the monic quadratic `Y² + (a₁x + a₃)Y − (x³ + a₂x² + a₄x + a₆)`,
 whose coefficients are polynomial in `x` and so are integral whenever `x` is. No domain,
 fraction-field or factorisation hypothesis is needed, and `x` need not come from `R` itself. -/
-theorem isIntegral_y_of_equation_of_isIntegral {A : Type*} [CommRing A] [Algebra R A] {x y : A}
+theorem isIntegral_y_of_equation_of_isIntegral_x {A : Type*} [CommRing A] [Algebra R A] {x y : A}
     (h : (W.baseChange A).toAffine.Equation x y) (hx : IsIntegral R x) : IsIntegral R y := by
   nontriviality A
   rw [_root_.WeierstrassCurve.Affine.equation_iff] at h
@@ -98,8 +98,11 @@ theorem isIntegral_y_of_equation_of_isIntegral {A : Type*} [CommRing A] [Algebra
 
 section FractionField
 
-variable [IsDomain R] [UniqueFactorizationMonoid R]
 variable {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K] {x y : K}
+
+section UniqueFactorization
+
+variable [IsDomain R] [UniqueFactorizationMonoid R]
 
 /-- **The rational-root integrality step.** If the `x`-coordinate of a point of `W` is a root of
 `f ∈ R[X]` and `f.leadingCoeff` is squarefree, then `x` is integral.
@@ -107,7 +110,7 @@ variable {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K] {x y : K}
 The rational root theorem gives `den x ∣ f.leadingCoeff`; powerfulness of the denominator
 (`sq_dvd_den_of_prime_of_dvd`) upgrades any prime factor `q` of `den x` to `q * q ∣ f.leadingCoeff`,
 which squarefreeness forbids. -/
-theorem isInteger_of_is_root_of_squarefree_leadingCoeff
+theorem isInteger_x_of_equation_of_is_root_of_squarefree_leadingCoeff
     (h : (W.baseChange K).toAffine.Equation x y) {f : R[X]} (hroot : aeval x f = 0)
     (hsf : Squarefree f.leadingCoeff) : IsLocalization.IsInteger R x := by
   refine isInteger_of_isUnit_den ?_
@@ -119,14 +122,22 @@ theorem isInteger_of_is_root_of_squarefree_leadingCoeff
     rw [← pow_two]; exact sq_dvd_den_of_prime_of_dvd W h hq hq_dvd
   exact hq.not_isUnit (hsf q (hden.trans (den_dvd_of_is_root hroot)))
 
+end UniqueFactorization
+
+section IntegrallyClosed
+
+variable [IsIntegrallyClosed R]
+
 /-- **On the curve over a fraction field, an integral `x`-coordinate forces an integral
-`y`-coordinate.** The `IsLocalization.IsInteger` form of `isIntegral_y_of_equation_of_isIntegral`,
+`y`-coordinate.** The `IsLocalization.IsInteger` form of `isIntegral_y_of_equation_of_isIntegral_x`,
 which is the shape the Nagell–Lutz argument consumes. -/
 theorem isInteger_y_of_equation_of_isInteger_x (h : (W.baseChange K).toAffine.Equation x y)
     (hx : IsLocalization.IsInteger R x) : IsLocalization.IsInteger R y := by
   obtain ⟨x₀, hx₀⟩ := hx
   exact RingHom.mem_rangeS.mpr (IsIntegrallyClosed.isIntegral_iff.mp
-    (isIntegral_y_of_equation_of_isIntegral W h (hx₀ ▸ isIntegral_algebraMap)))
+    (isIntegral_y_of_equation_of_isIntegral_x W h (hx₀ ▸ isIntegral_algebraMap)))
+
+end IntegrallyClosed
 
 end FractionField
 
