@@ -199,6 +199,12 @@ theorem weightMul_mul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {V W 
   | neg _ _ h => simpa [neg_mul] using (weightMul T (α + β) _).neg_mem h
 
 omit [TopologicalSpace A] in
+/-- `Tν · U` is monotone in `U`. -/
+theorem weightMul_mono (T : Fin k → Set A) (ν : Fin k →₀ ℕ) {U V : AddSubgroup A} (h : U ≤ V) :
+    weightMul T ν U ≤ weightMul T ν V :=
+  AddSubgroup.closure_mono (Set.mul_subset_mul_left h)
+
+omit [TopologicalSpace A] in
 /-- Multiplying by a weight element shifts the multi-index: `T^β · (T^α · U) ⊆ T^(α+β) · U`. -/
 theorem weightPow_mul_weightMul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {U : AddSubgroup A}
     {t x : A} (ht : t ∈ weightPow T β) (hx : x ∈ weightMul T α U) :
@@ -356,6 +362,73 @@ theorem IsWeightedRestricted.add {T : Fin k → Set A} {f g : MvPowerSeries (Fin
   intro U
   filter_upwards [hf U, hg U] with ν hfν hgν
   simpa using (weightMul T ν U.toAddSubgroup).add_mem hfν hgν
+
+/-- **`A⟨X⟩_T` is closed under multiplication** (Wedhorn 5.48, the point he flags as "not
+entirely clear").
+
+Fix an open subgroup `U` and choose `W` with `W · W ⊆ U`. The coefficients of `f` and `g` that
+fail the `W` bound form finite sets `F` and `G`. Wedhorn's standing hypothesis makes each
+`Tα · U` a neighbourhood of zero, so one open subgroup `Z ≤ W` absorbs every bad coefficient into
+its own `Tα · U`. Writing `F_Z`, `G_Z` for the bad sets against `Z`, put
+`E = (F + G_Z) ∪ (F_Z + G)`, a finite set. For `ν ∉ E` every splitting `α + β = ν` falls into one
+of three cases — `α` bad, `β` bad, or neither — and each lands in `Tν · U`. -/
+theorem IsWeightedRestricted.mul [NonarchimedeanRing A] {T : Fin k → Set A}
+    (hT : IsWeightFamily T) {f g : MvPowerSeries (Fin k) A}
+    (hf : IsWeightedRestricted T f) (hg : IsWeightedRestricted T g) :
+    IsWeightedRestricted T (f * g) := by
+  classical
+  intro U
+  have hUnhds : (U : Set A) ∈ nhds (0 : A) := U.isOpen.mem_nhds U.zero_mem
+  obtain ⟨W, hWU⟩ := NonarchimedeanRing.mul_subset U
+  have hF : {α | MvPowerSeries.coeff α f ∉ weightMul T α W.toAddSubgroup}.Finite :=
+    Filter.eventually_cofinite.mp (hf W)
+  have hG : {β | MvPowerSeries.coeff β g ∉ weightMul T β W.toAddSubgroup}.Finite :=
+    Filter.eventually_cofinite.mp (hg W)
+  obtain ⟨Zf, hZf⟩ := exists_openAddSubgroup_forall_mul_subset hF.toFinset
+    (fun α ↦ MvPowerSeries.coeff α f) (fun α ↦ weightMul T α U.toAddSubgroup)
+    (fun α _ ↦ hT.weightMul_mem_nhds α hUnhds)
+  obtain ⟨Zg, hZg⟩ := exists_openAddSubgroup_forall_mul_subset hG.toFinset
+    (fun β ↦ MvPowerSeries.coeff β g) (fun β ↦ weightMul T β U.toAddSubgroup)
+    (fun β _ ↦ hT.weightMul_mem_nhds β hUnhds)
+  set Z : OpenAddSubgroup A := W ⊓ Zf ⊓ Zg with hZdef
+  have hZle_f : Z ≤ Zf := le_trans inf_le_left inf_le_right
+  have hZle_g : Z ≤ Zg := inf_le_right
+  have hFZ : {α | MvPowerSeries.coeff α f ∉ weightMul T α Z.toAddSubgroup}.Finite :=
+    Filter.eventually_cofinite.mp (hf Z)
+  have hGZ : {β | MvPowerSeries.coeff β g ∉ weightMul T β Z.toAddSubgroup}.Finite :=
+    Filter.eventually_cofinite.mp (hg Z)
+  rw [Filter.eventually_cofinite]
+  refine Set.Finite.subset ((hF.add hGZ).union (hFZ.add hG)) ?_
+  intro ν hν
+  by_contra hνE
+  refine hν ?_
+  rw [MvPowerSeries.coeff_mul]
+  refine sum_mem fun p hp ↦ ?_
+  have hsum : p.1 + p.2 = ν := Finset.mem_antidiagonal.mp hp
+  by_cases hp1 : MvPowerSeries.coeff p.1 f ∈ weightMul T p.1 W.toAddSubgroup
+  · by_cases hp2 : MvPowerSeries.coeff p.2 g ∈ weightMul T p.2 W.toAddSubgroup
+    · -- both coefficients meet the `W` bound
+      have := weightMul_mul_mem hp1 hp2
+      rw [hsum] at this
+      exact weightMul_mono T ν (AddSubgroup.closure_le _ |>.mpr hWU) this
+    · -- `p.2` is bad: absorb it, after commuting
+      have hgood : MvPowerSeries.coeff p.1 f ∈ weightMul T p.1 Z.toAddSubgroup := by
+        by_contra hbad
+        exact hνE (Or.inr ⟨p.1, hbad, p.2, hp2, hsum⟩)
+      have := weightMul_absorb
+        (fun z hz ↦ hZg p.2 (hG.mem_toFinset.mpr hp2) z (hZle_g hz))
+        hgood
+      rw [mul_comm, add_comm, hsum] at this
+      exact this
+  · -- `p.1` is bad: absorb it
+    have hgood : MvPowerSeries.coeff p.2 g ∈ weightMul T p.2 Z.toAddSubgroup := by
+      by_contra hbad
+      exact hνE (Or.inl ⟨p.1, hp1, p.2, hbad, hsum⟩)
+    have := weightMul_absorb
+      (fun z hz ↦ hZf p.1 (hF.mem_toFinset.mpr hp1) z (hZle_f hz))
+      hgood
+    rw [hsum] at this
+    exact this
 
 /-- The negation of a `T`-restricted series is `T`-restricted. -/
 theorem IsWeightedRestricted.neg {T : Fin k → Set A} {f : MvPowerSeries (Fin k) A}
