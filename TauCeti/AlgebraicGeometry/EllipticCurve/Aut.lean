@@ -43,8 +43,12 @@ over: for `j ∉ {0, 1728}` the pointed twists are exactly the quadratic twists 
 is `{±1}`.
 
 Adapted from the FLT project (`ImperialCollegeLondon/FLT`,
-`FLT/Mathlib/AlgebraicGeometry/EllipticCurve/Aut.lean` at `d18b563029f3`, Apache 2.0, by
-Michael Stoll and Claude).
+`FLT/Mathlib/AlgebraicGeometry/EllipticCurve/Aut.lean` at the roadmap's pin `bc2fe8ff7396`,
+FLT PR #1088, Apache 2.0). That file's own header reads `Authors: Michael Stoll, Claude`, and it
+has not been touched in FLT since `bc2fe8ff7396`, so the pin and the working clone
+(`d18b563029f3`, a later Mathlib bump) agree on it verbatim. Following this repository's
+convention for adapted material, the upstream authorship is credited here rather than in the
+copyright header.
 -/
 
 public section
@@ -118,8 +122,9 @@ lemma u_eq_one_or_eq_neg_one (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0) {C : Vari
 /-- If `c₄ ≠ 0` and `c₆ ≠ 0` then the only admissible changes of variables fixing `E` are `1` and
 `negVariableChange E`. This is the form of `Aut(E) = {±1}` phrased via `c₄, c₆` (equivalent to
 `j ∉ {0, 1728}` for an elliptic curve, see `eq_one_or_eq_negVariableChange_of_smul_eq`). -/
-theorem eq_one_or_eq_negVariableChange_of_smul_eq_of_c₄_ne_zero (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0)
-    {C : VariableChange K} (hC : C • E = E) : C = 1 ∨ C = E.negVariableChange := by
+theorem eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq
+    (hc4 : E.c₄ ≠ 0) (hc6 : E.c₆ ≠ 0) {C : VariableChange K} (hC : C • E = E) :
+    C = 1 ∨ C = E.negVariableChange := by
   rcases E.u_eq_one_or_eq_neg_one hc4 hc6 hC with hu | hu
   · exact E.eq_one_or_eq_negVariableChange_of_u_eq_one hc4 hc6 hu hC
   · -- Reduce `u = -1` to `u = 1` by composing with the involution `negVariableChange E`.
@@ -138,8 +143,8 @@ theorem eq_one_or_eq_negVariableChange_of_smul_eq_of_c₄_ne_zero (hc4 : E.c₄ 
 theorem eq_one_or_eq_negVariableChange_of_smul_eq [E.IsElliptic] (hj₀ : E.j ≠ 0)
     (hj₁₇₂₈ : E.j ≠ 1728) {C : VariableChange K} (hC : C • E = E) :
     C = 1 ∨ C = E.negVariableChange :=
-  E.eq_one_or_eq_negVariableChange_of_smul_eq_of_c₄_ne_zero (E.j_eq_zero_iff.not.mp hj₀)
-    (E.j_eq_1728_iff.not.mp hj₁₇₂₈) hC
+  E.eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq
+    (E.j_eq_zero_iff.not.mp hj₀) (E.j_eq_1728_iff.not.mp hj₁₇₂₈) hC
 
 /-! ### The automorphism group -/
 
