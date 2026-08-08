@@ -54,14 +54,16 @@ argument principle above all — into a statement about how often an image curve
 * `TauCeti.Contour.analyticAt_logDeriv_of_analyticAt` — `logDeriv f` is analytic wherever `f` is
   analytic and nonzero; the regularity input shared by the results below and by the argument
   principle.
-* `TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_im_nonneg`,
-  `TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_of_im_nonpos`,
-  and `TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_slitPlane` —
+* `TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_im_nonneg` and
+  `TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_of_im_nonpos` —
   the boundary-tolerant comparison FTCs: the logarithmic integral of `g` is integrable and
   evaluates to an endpoint-log difference through a comparison `h` that agrees with `g` on the
   open interval, is differentiable there off a countable set with integrable logarithmic
-  integrand, and is confined to a closed half-plane or the slit plane — so endpoint values may
-  sit on the negative-real boundary.
+  integrand, and is confined to a closed half-plane — so endpoint values may sit on the
+  negative-real boundary. A comparison confined to the slit plane on the whole closed interval
+  needs no dedicated form: `integral_deriv_div_eq_log_sub_log` applies to it directly, and
+  `IntervalIntegrable.congr_uIoo` with `intervalIntegral.integral_congr_uIoo` transport its
+  conclusion across the interior agreement.
 * `TauCeti.Contour.integral_deriv_div_eq_log_sub_log` — the slit-plane logarithmic-derivative FTC in
   general `f' / f` form.
 * `TauCeti.Contour.integral_deriv_div_sub_eq_log` — its contour specialization to
@@ -342,23 +344,6 @@ theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_of_im_non
     (fun t ht ↦ by simp only [Pi.neg_apply, heq ht])
     (by simp only [Pi.neg_apply, heq_a]) (by simp only [Pi.neg_apply, heq_b])
   rwa [hderiv_neg g] at hkey
-
-/-- **The comparison logarithmic FTC on the slit plane**: the boundary-tolerant comparison
-form whose branch continuity comes from slit-plane confinement on the whole closed interval,
-transported to `g` across the interior agreement. -/
-theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_of_slitPlane {P : Set ℝ}
-    (hP : P.Countable) (hh_cont : ContinuousOn h (Set.uIcc a b))
-    (hh_diff : ∀ t ∈ Set.Ioo (min a b) (max a b) \ P, DifferentiableAt ℝ h t)
-    (hh_int : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b)
-    (hh_slit : ∀ t ∈ Set.uIcc a b, h t ∈ Complex.slitPlane)
-    (heq : Set.EqOn g h (Set.Ioo (min a b) (max a b)))
-    (heq_a : g a = h a) (heq_b : g b = h b) :
-    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
-    ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) :=
-  comparison_core hP (hh_cont.clog hh_slit)
-    (fun t ht ↦ (hh_diff t ht).hasDerivAt.clog_real
-      (hh_slit t (by rw [← Set.Icc_min_max]; exact Set.Ioo_subset_Icc_self ht.1)))
-    hh_int heq heq_a heq_b
 
 end BoundaryTolerant
 
