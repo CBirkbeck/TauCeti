@@ -234,7 +234,7 @@ theorem log_fdBoundary_one_add_sub_rho_add_one (H : ℝ) (hδ : 0 < δ) (hδ2 : 
 
 
 /-- The contour passes through `ρ + 1` only at the corner `t = 1`. -/
-theorem eq_one_of_fdBoundary_eq_rho_add_one (hH : Real.sqrt 3 / 2 < H) (ht : t ∈ Icc (0 : ℝ) 5)
+theorem eq_one_of_fdBoundary_eq_rho_add_one (hH : H ≠ Real.sqrt 3 / 2) (ht : t ∈ Icc (0 : ℝ) 5)
     (heq : fdBoundary H t = (UpperHalfPlane.ρ : ℂ) + 1) : t = 1 := by
   have h0 : ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ = 0 := by
     rw [heq]
@@ -244,7 +244,7 @@ theorem eq_one_of_fdBoundary_eq_rho_add_one (hH : Real.sqrt 3 / 2 < H) (ht : t �
       Complex.norm_real, Complex.norm_I, mul_one, Real.norm_eq_abs, abs_eq_zero] at h0
     rcases mul_eq_zero.mp h0 with h | h
     · linarith
-    · linarith
+    · exact absurd (by linarith) hH
   · rcases le_or_gt t 3 with h3 | h3
     · rw [norm_fdBoundary_sub_rho_add_one_arc H ⟨h1.le, h3⟩] at h0
       have hsin : Real.sin ((t - 1) * (Real.pi / 12)) = 0 :=
@@ -261,9 +261,12 @@ theorem eq_one_of_fdBoundary_eq_rho_add_one (hH : Real.sqrt 3 / 2 < H) (ht : t �
       · have := norm_fdBoundary_sub_rho_add_one_segment4 H ⟨h3.le, h4⟩
         rw [h0] at this
         norm_num at this
-      · have := norm_fdBoundary_sub_rho_add_one_segment5 (H := H) ⟨h4.le, ht.2⟩
-        rw [h0] at this
-        linarith
+      · have hz : fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1) = 0 := norm_eq_zero.mp h0
+        have him := congrArg Complex.im hz
+        have hρ : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
+          norm_num [UpperHalfPlane.ρ]
+        rw [Complex.sub_im, im_fdBoundary_segment5 H ⟨h4.le, ht.2⟩, hρ, Complex.zero_im] at him
+        exact absurd (by linarith) hH
 
 end ModularForm
 

@@ -206,7 +206,7 @@ theorem log_fdBoundary_three_add_sub_rho (hH : Real.sqrt 3 / 2 < H) (hδ : 0 < �
 
 
 /-- The contour passes through `ρ` only at the corner `t = 3`. -/
-theorem eq_three_of_fdBoundary_eq_rho (hH : Real.sqrt 3 / 2 < H) (ht : t ∈ Icc (0 : ℝ) 5)
+theorem eq_three_of_fdBoundary_eq_rho (hH : H ≠ Real.sqrt 3 / 2) (ht : t ∈ Icc (0 : ℝ) 5)
     (heq : fdBoundary H t = (UpperHalfPlane.ρ : ℂ)) : t = 3 := by
   have h0 : ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ = 0 := by
     rw [heq]
@@ -232,10 +232,12 @@ theorem eq_three_of_fdBoundary_eq_rho (hH : Real.sqrt 3 / 2 < H) (ht : t ∈ Icc
           Complex.norm_real, Complex.norm_I, mul_one, Real.norm_eq_abs, abs_eq_zero] at h0
         rcases mul_eq_zero.mp h0 with h | h
         · linarith
-        · linarith
-      · have := norm_fdBoundary_sub_rho_segment5 (H := H) ⟨h4.le, ht.2⟩
-        rw [h0] at this
-        linarith
+        · exact absurd (by linarith) hH
+      · have hz : fdBoundary H t - (UpperHalfPlane.ρ : ℂ) = 0 := norm_eq_zero.mp h0
+        have him := congrArg Complex.im hz
+        have hρ : (UpperHalfPlane.ρ : ℂ).im = Real.sqrt 3 / 2 := by norm_num [UpperHalfPlane.ρ]
+        rw [Complex.sub_im, im_fdBoundary_segment5 H ⟨h4.le, ht.2⟩, hρ, Complex.zero_im] at him
+        exact absurd (by linarith) hH
 
 end ModularForm
 
