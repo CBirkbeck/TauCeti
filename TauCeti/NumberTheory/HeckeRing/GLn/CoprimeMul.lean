@@ -5,21 +5,20 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.LinearAlgebra.Matrix.Integer
-public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.CongruenceSplit
 public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 
+import Mathlib.LinearAlgebra.Matrix.Integer
+import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.CongruenceSplit
 import TauCeti.NumberTheory.HeckeRing.Multiplicity.Support
 
 /-!
-# Scalar and coprime multiplication in the `GL_n` Hecke ring
+# Coprime multiplication in the `GL_n` Hecke ring
 
-Two rows of the multiplication table of the integral Hecke ring of the arithmetic Hecke
-triple. The scalar case (Shimura, Proposition 3.17): the scalar double coset `T(c,...,c)`
-has degree `1`, so multiplying by it merely rescales diagonal cosets,
-`T(c,...,c) · T(b₁,...,bₙ) = T(cb₁,...,cbₙ)`. The coprime case (Shimura, Proposition 3.16):
-when the determinants are coprime the product is again a single diagonal coset,
-`T(a) · T(b) = T(a * b)`.
+One row of the multiplication table of the integral Hecke ring of the arithmetic Hecke
+triple (Shimura, Proposition 3.16): when the determinants are coprime, the product of two
+diagonal double cosets is again a single diagonal coset, `T(a) · T(b) = T(a * b)`.
+
+The scalar row (Shimura 3.17) lives in `GLn/ScalarMul.lean`.
 
 The coprime case runs on a Chinese-remainder factorization of `SL_n(ℤ)`: modulo coprime
 `p`, `q` an element splits as a product of one element congruent to the identity mod `p` and
@@ -33,8 +32,6 @@ Chris Birkbeck).
 
 ## Main results
 
-* `HeckeRing.GLn.diagElem_const_mul` and `diagElem_mul_const`: `T(c,...,c) · T(b) = T(c·b)`
-  and its mirror.
 * `HeckeRing.GLn.mul_mem_doubleCoset_of_coprime`: a product of representatives with coprime
   determinants lies in the double coset of the product tuple.
 * `HeckeRing.GLn.diagElem_mul_of_coprime`: `T(a) · T(b) = T(a * b)` for coprime determinants.
@@ -42,7 +39,7 @@ Chris Birkbeck).
 ## References
 
 * [G. Shimura, *Introduction to the arithmetic theory of automorphic functions*][shimura1971],
-  Propositions 3.16 and 3.17.
+  Proposition 3.16.
 -/
 
 public section

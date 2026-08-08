@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Tactic.LinearCombination
+import Mathlib.Tactic.LinearCombination
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Transvection
 
 /-!
