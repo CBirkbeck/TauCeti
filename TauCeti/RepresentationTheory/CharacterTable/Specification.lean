@@ -227,15 +227,18 @@ private theorem sq_mul_sum_mul_conj_eq_of_mul_eq_mul {e d : ℕ} {r t : ConjClas
           ((d : ℂ) * (starRingEnd ℂ) (t C)) := by rw [key C, hconj]
     _ = (d : ℂ) ^ 2 * ((Nat.card C.carrier : ℂ) * t C * (starRingEnd ℂ) (t C)) := by ring
 
+omit hM in
 /-- The row of `M` and the row `j` of the character table are proportional, with their identity
-entries as the constants of proportionality. -/
+entries as the constants of proportionality. Nonvanishing of the identity entry is all that is
+needed of the row; the full specification never enters. -/
 private theorem characterDegree_mul_apply_eq_mul_characterTable {d : ℕ}
-    (hMd : M i (ConjClasses.mk 1) = (d : ℂ)) {j : Fin (Nat.card (ConjClasses G))}
+    (hMi : M i (ConjClasses.mk 1) ≠ 0) (hMd : M i (ConjClasses.mk 1) = (d : ℂ))
+    {j : Fin (Nat.card (ConjClasses G))}
     (hj : centralCharacterTable ℂ G j = centralCharacterRow M i) (C : ConjClasses G) :
     (characterDegree ℂ j : ℂ) * M i C = (d : ℂ) * characterTable ℂ G j C := by
   have hcard : (Nat.card (ConjClasses.carrier C) : ℂ) ≠ 0 :=
     Nat.cast_ne_zero.mpr (ConjClasses.card_carrier_pos C).ne'
-  have h₁ := centralCharacterRow_mul (hM.apply_mk_one_ne_zero i) C
+  have h₁ := centralCharacterRow_mul hMi C
   have h₂ := centralCharacterTable_mul_characterDegree (k := ℂ) j C
   rw [hMd] at h₁
   rw [hj] at h₂
@@ -259,7 +262,7 @@ theorem exists_eq_characterTable : ∃ j, ∀ C, M i C = characterTable ℂ G j 
   have he : (characterDegree ℂ j : ℂ) ≠ 0 :=
     Nat.cast_ne_zero.mpr (characterDegree_pos ℂ j).ne'
   have hG : (Nat.card G : ℂ) ≠ 0 := Nat.cast_ne_zero.mpr Nat.card_pos.ne'
-  have key := hM.characterDegree_mul_apply_eq_mul_characterTable i hMd hj
+  have key := characterDegree_mul_apply_eq_mul_characterTable i (hM.apply_mk_one_ne_zero i) hMd hj
   -- Both rows have self-pairing `1`, so the two constants of proportionality have equal squares.
   have hsum := sq_mul_sum_mul_conj_eq_of_mul_eq_mul (G := G) key
   have hMii := hM.row_orthonormal i i
