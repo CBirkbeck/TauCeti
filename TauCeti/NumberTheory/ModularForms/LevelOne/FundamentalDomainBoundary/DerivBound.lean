@@ -13,10 +13,12 @@ The derivative of the boundary contour is bounded off the three corner parameter
 piece has a constant derivative or a scaled unit tangent, so one constant bounds them all,
 uniformly in the parameter.
 
-This is the growth input of the on-curve principal values: on the complement of an
-`ε`-ball around a point of the contour, the winding integrand `(γ t - s)⁻¹ • deriv γ t` is
-bounded by `ε⁻¹` times this bound, which is what makes the excised integrals uniformly
-integrable as the excision closes.
+This is the growth input of the on-curve principal values at a fixed excision radius: on
+the complement of an `ε`-ball around a point of the contour, the winding integrand
+`(γ t - s)⁻¹ • deriv γ t` is bounded by `ε⁻¹` times this bound, so each excised integrand
+is bounded and hence integrable. The bound degrades as `ε` shrinks, so it is not a
+dominator for the excision limit itself: that limit rests on the symmetric cancellation at
+the crossing, not on this estimate.
 
 ## Main declarations
 
@@ -47,8 +49,8 @@ of the four piecewise values — the two vertical chords, the arc's `π/6`-scale
 and the ceiling's `1` — and each is bounded by one summand.
 
 The corners are excluded rather than handled: the contour is not differentiable there, and
-a three-point set is null, so the consumers — which bound excised integrands for dominated
-convergence — need nothing at those parameters. The bound is an existential over a positive
+a three-point set is null, so the consumers — which bound excised integrands at a fixed
+excision radius — need nothing at those parameters. The bound is an existential over a positive
 constant, the form those consumers use. -/
 theorem exists_norm_deriv_fdBoundary_le (H : ℝ) :
     ∃ M : ℝ, 0 < M ∧ ∀ t ∉ fdBoundaryCorners, ‖deriv (fdBoundary H) t‖ ≤ M := by
