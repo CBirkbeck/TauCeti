@@ -10,7 +10,7 @@ public import TauCeti.LinearAlgebra.Matrix.CharpolyFinTwo
 import Mathlib.Tactic.LinearCombination
 
 /-!
-# The Frobenius quadratic form from per-prime matrix data
+# A quadratic form forced by per-prime matrix congruences
 
 Let `q` and `t` be integers, thought of as the size of the base field and the trace of Frobenius.
 This file shows that an integer `D` is *forced* to equal the binary quadratic form
@@ -32,8 +32,9 @@ which the trace is read off.
 
 * `eq_quadratic_form_of_det_trace`: from per-prime data with `det` and `trace`.
 * `eq_quadratic_form_of_det_det_one_sub`: the same from `det` data alone.
-* `quadratic_form_nonneg_of_det_trace`, `quadratic_form_nonneg_of_det_det_one_sub`: the
-  non-negativity corollaries, when `D` is a degree and hence non-negative.
+When the realised integer is non-negative — as a degree is — non-negativity of the form follows
+by rewriting, `eq_quadratic_form_of_det_trace h ▸ hD`; that is left to consumers rather than
+exported as a corollary.
 
 ## Provenance
 
@@ -54,7 +55,7 @@ public section
 
 open Matrix TauCeti.Matrix
 
-namespace TauCeti
+namespace TauCeti.Matrix
 
 variable {p ℓ : ℕ} {q t D r s : ℤ}
 
@@ -105,22 +106,4 @@ theorem eq_quadratic_form_of_det_det_one_sub
     let ⟨_, hdet, hdetOneSub, hpencil⟩ := h ℓ hℓ hℓne
     intCast_eq_quadratic_form_of_det_det_one_sub hdet hdetOneSub hpencil
 
-/-- **Non-negativity, from determinants alone.** The det-only companion of
-`quadratic_form_nonneg_of_det_trace`, which is the branch a pairing supplies. -/
-theorem quadratic_form_nonneg_of_det_det_one_sub (hD : 0 ≤ D)
-    (h : ∀ ℓ : ℕ, ℓ.Prime → ℓ ≠ p → ∃ M : Matrix (Fin 2) (Fin 2) (ZMod ℓ),
-      M.det = (q : ZMod ℓ) ∧ (1 - M).det = ((q + 1 - t : ℤ) : ZMod ℓ) ∧
-        ((r : ZMod ℓ) • M - (s : ZMod ℓ) • 1).det = (D : ZMod ℓ)) :
-    0 ≤ q * r ^ 2 - t * (r * s) + s ^ 2 :=
-  eq_quadratic_form_of_det_det_one_sub h ▸ hD
-
-/-- **Non-negativity.** When the realised integer is non-negative — as a degree is — the quadratic
-form is non-negative. -/
-theorem quadratic_form_nonneg_of_det_trace (hD : 0 ≤ D)
-    (h : ∀ ℓ : ℕ, ℓ.Prime → ℓ ≠ p → ∃ M : Matrix (Fin 2) (Fin 2) (ZMod ℓ),
-      M.det = (q : ZMod ℓ) ∧ M.trace = (t : ZMod ℓ) ∧
-        ((r : ZMod ℓ) • M - (s : ZMod ℓ) • 1).det = (D : ZMod ℓ)) :
-    0 ≤ q * r ^ 2 - t * (r * s) + s ^ 2 :=
-  eq_quadratic_form_of_det_trace h ▸ hD
-
-end TauCeti
+end TauCeti.Matrix

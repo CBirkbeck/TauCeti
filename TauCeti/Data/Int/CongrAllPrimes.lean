@@ -17,7 +17,7 @@ and exceeds its absolute value.
 
 The exception is what makes these usable: an argument that produces congruences one prime at a
 time is typically forced to omit a characteristic, and may omit it without weakening the
-conclusion. `TauCeti.eq_quadratic_form_of_det_trace` is such an argument.
+conclusion. `TauCeti.Matrix.eq_quadratic_form_of_det_trace` is such an argument.
 
 ## Main results
 
