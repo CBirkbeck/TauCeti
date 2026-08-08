@@ -52,14 +52,14 @@ variable {R : Type*} [CommRing R] (K : Type*) [CommRing K] [Algebra R K]
 
 /-- The denominator ideal of `x : K`: the colon ideal `(R : x) = {r : R | r • x ∈ R}`.
 
-`mem_denomIdeal_iff` below is deliberately not a `simp` lemma: `denomIdeal` is an `abbrev`, so
-`simp` rewrites through it with `Submodule.mem_colon_singleton` and `Submodule.mem_one` before
-the lemma could fire, and its left-hand side is therefore not in simp-normal form. -/
-abbrev Algebra.denomIdeal (x : K) : Ideal R := (1 : Submodule R K).colon {x}
+It is an opaque `def` rather than an `abbrev` so that `simp` cannot rewrite through it with
+`Submodule.mem_colon_singleton` before `mem_denomIdeal_iff` fires; membership is accessed
+through that lemma throughout. -/
+def Algebra.denomIdeal (x : K) : Ideal R := (1 : Submodule R K).colon {x}
 
-lemma Algebra.mem_denomIdeal_iff {x : K} {r : R} :
+@[simp] lemma Algebra.mem_denomIdeal_iff {x : K} {r : R} :
     r ∈ Algebra.denomIdeal K x ↔ ∃ s : R, algebraMap R K r * x = algebraMap R K s := by
-  rw [Submodule.mem_colon_singleton, Algebra.smul_def, Submodule.mem_one]
+  rw [Algebra.denomIdeal, Submodule.mem_colon_singleton, Algebra.smul_def, Submodule.mem_one]
   exact exists_congr fun s ↦ eq_comm
 
 /-- The denominator ideal of an element of a localization at the non-zero-divisors is nonzero:
@@ -78,10 +78,6 @@ namespace IsDedekindDomain
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K] [Algebra R K]
   [IsFractionRing R K] (S : Set (HeightOneSpectrum R))
-
-lemma integer_toSubring_le_valuationSubring {v : HeightOneSpectrum R} (hv : v ∉ S) :
-    (S.integer K).toSubring ≤ (v.valuation K).valuationSubring.toSubring :=
-  fun _ hx ↦ hx v hv
 
 /-- The fraction field of the ring of `S`-integers is `K`. This is already an instance, as
 `Set.integer S K` is a subalgebra of `K` over `R`. -/
