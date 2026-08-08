@@ -54,8 +54,9 @@ the fourth is cancelled by `add_left_inj` — so those sides are never in simp-n
 `variableChange_slope` are conditional rather than unconditional normalisation laws.
 
 Throughout, the change of variables carries a point `(x, y)` of `C • W` to the point
-`(u²x + r, u³y + u²sx + t)` of `W`. The laws in this section are stated over an arbitrary
-commutative ring; `↑C.u⁻¹ * ↑C.u = 1` is fed to `grobner` to cancel the unit. -/
+`(u²x + r, u³y + u²sx + t)` of `W`. Every law here except the three slope laws is stated over an
+arbitrary commutative ring, with `↑C.u⁻¹ * ↑C.u = 1` fed to `grobner` to cancel the unit; the
+slope laws need a field, since `slope` itself is only defined over one. -/
 
 section Ring
 
