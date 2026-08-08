@@ -71,8 +71,8 @@ theorem pow_card_eq_self_iff_mem_range_algebraMap {K L : Type*} [Field K] [Finty
     IsSplittingField.splits (L := K) (X ^ Fintype.card K - X)
   have himg := hsplits.image_rootSet (Algebra.ofId K L)
   have hK : (X ^ Fintype.card K - X : K[X]).rootSet K = Set.univ := by
-    ext b
-    simp [mem_rootSet_of_ne hne, _root_.FiniteField.pow_card]
+    simp [Polynomial.rootSet_def, Polynomial.aroots_def, Algebra.algebraMap_self,
+      _root_.FiniteField.roots_X_pow_card_sub_X K]
   rw [Set.ext_iff] at himg
   have := himg a
   simp only [hK, Set.image_univ, Algebra.ofId_apply, mem_rootSet_of_ne hne, aeval_def,
