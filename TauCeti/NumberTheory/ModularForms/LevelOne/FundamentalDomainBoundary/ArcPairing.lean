@@ -147,6 +147,19 @@ theorem intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
   push_cast
   ring
 
+/-- The inversion `z ↦ -1/z` turns a difference into the negated difference of inverses, the
+shape `dist_inv_inv₀` reads. Division by zero being zero, no nonvanishing is needed. -/
+private lemma neg_one_div_sub_neg_one_div (z w : ℂ) :
+    -1 / z - -1 / w = -(z⁻¹ - w⁻¹) := by
+  rw [neg_div, neg_div, one_div, one_div]
+  ring
+
+/-- The inversion `z ↦ -1/z` is an involution. -/
+private lemma neg_one_div_neg_one_div (z : ℂ) : -1 / (-1 / z) = z := by
+  rcases eq_or_ne z 0 with rfl | hz
+  · norm_num
+  · field_simp
+
 /-- **The arc excision is symmetric under the reflection.** For an excision set of unit-modulus
 points closed under the inversion `z ↦ -1/z`, a point of the arc lies within `ε` of the set
 exactly when its reflection `t ↦ 4 - t` does.
@@ -165,8 +178,7 @@ private theorem excised_fdBoundary_arc_reflection_iff {H : ℝ} {S : Finset ℂ}
     intro w hw
     have hw0 : w ≠ 0 := norm_ne_zero_iff.mp (by rw [hw]; norm_num)
     -- The inversion-distance formula is Mathlib's; only the unit-modulus factors are ours.
-    rw [fdBoundary_four_sub_arc H ht,
-      show -1 / fdBoundary H t - -1 / w = -((fdBoundary H t)⁻¹ - w⁻¹) by field_simp; ring,
+    rw [fdBoundary_four_sub_arc H ht, neg_one_div_sub_neg_one_div,
       norm_neg, ← dist_eq_norm, dist_inv_inv₀ h0 hw0, dist_eq_norm, harc, hw]
     ring
   constructor
@@ -174,7 +186,7 @@ private theorem excised_fdBoundary_arc_reflection_iff {H : ℝ} {S : Finset ℂ}
     refine ⟨-1 / s, hinv s hs, ?_⟩
     have hs0 : s ≠ 0 := norm_ne_zero_iff.mp (by rw [hnorm s hs]; norm_num)
     rwa [← hkey (-1 / s) (by rw [norm_div, norm_neg, norm_one, hnorm s hs, div_one]),
-      show -1 / (-1 / s) = s by field_simp]
+      neg_one_div_neg_one_div]
   · rintro ⟨s, hs, hle⟩
     exact ⟨-1 / s, hinv s hs, by rwa [hkey s (hnorm s hs)]⟩
 
