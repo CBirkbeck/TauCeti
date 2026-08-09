@@ -21,9 +21,19 @@ periodicity and the derivatives by the reflection, up to the orientation sign. T
 statement is unconditional: the substitution and the interior congruence need no
 integrability.
 
+The cancellation also survives `ε`-excision, which is what the principal-value assembly of
+the valence formula needs: when the form vanishes at a point *on* the contour the integrand
+is not interval-integrable there, so the boundary integral is assembled from an excised
+integrand and the limit taken only after the pieces are combined. The excised cancellation
+holds whenever the excision set is invariant under the reflection `z ↦ -conj z` that
+exchanges the two verticals — reflection invariance, not translation closure, is the usable
+hypothesis, since a finite set closed under `s ↦ s + 1` is empty.
+
 ## Main declarations
 
 * `TauCeti.ModularForm.intervalIntegral_fdBoundary_segment4_eq_neg_segment1`.
+* `TauCeti.ModularForm.intervalIntegral_excised_fdBoundary_segment4_eq_neg_segment1`: the
+  same cancellation for a reflection-invariantly excised integrand.
 
 ## References
 
@@ -99,23 +109,22 @@ closed under the bare translation `s ↦ s + 1` would have to be empty, since a 
 element of largest real part.) For `TauCeti.ModularForm.verticalSingularSet` the invariance is the
 composite of `re_eq_of_mem_verticalSingularSet` with `sub_one_mem_verticalSingularSet` or
 `add_one_mem_verticalSingularSet`, whose translations are conditional on the real part. -/
-theorem intervalIntegral_excised_fdBoundary_segment4_eq_neg_segment1 (H : ℝ) {φ : ℂ → ℂ}
+theorem intervalIntegral_excised_fdBoundary_segment4_eq_neg_segment1 {E : Type*}
+    [NormedAddCommGroup E] [NormedSpace ℂ E] (H : ℝ) {φ : ℂ → E}
     (hφ : Function.Periodic φ 1) {S : Finset ℂ} {ε : ℝ}
     (hrefl : ∀ s ∈ S, -(starRingEnd ℂ) s ∈ S) :
-    (∫ t in (3 : ℝ)..4, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-        else φ (fdBoundary H t) * deriv (fdBoundary H) t) =
-      -∫ t in (0 : ℝ)..1, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-        else φ (fdBoundary H t) * deriv (fdBoundary H) t := by
-  have hcomp : (∫ t in (3 : ℝ)..4, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-      else φ (fdBoundary H t) * deriv (fdBoundary H) t) =
-      ∫ u in (0 : ℝ)..1, if ∃ s ∈ S, ‖fdBoundary H (4 - u) - s‖ ≤ ε then 0
-        else φ (fdBoundary H (4 - u)) * deriv (fdBoundary H) (4 - u) := by
-    have h := intervalIntegral.integral_comp_sub_left
-      (a := (0 : ℝ)) (b := 1) (d := (4 : ℝ))
-      (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ)
-        else φ (fdBoundary H t) * deriv (fdBoundary H) t)
-    norm_num at h
-    exact h.symm
+    (∫ t in (3 : ℝ)..4, deriv (fdBoundary H) t •
+        (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0 else φ (fdBoundary H t))) =
+      -∫ t in (0 : ℝ)..1, deriv (fdBoundary H) t •
+        (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0 else φ (fdBoundary H t)) := by
+  -- The substitution is the boundary-specific combinator, applied to the excised integrand.
+  have h41 : (4 : ℝ) - 1 = 3 := by norm_num
+  have h40 : (4 : ℝ) - 0 = 4 := by norm_num
+  have hcomp := intervalIntegral_comp_fdBoundary_four_sub H
+    (fun z => if ∃ s ∈ S, ‖z - s‖ ≤ ε then (0 : E) else φ z) (a := 0) (b := 1)
+  -- Only the endpoints need normalizing; `norm_num` here would also distribute the
+  -- scalar into the branches of the `if` and stop matching the goal.
+  simp only [h41, h40] at hcomp
   rw [hcomp, ← intervalIntegral.integral_neg]
   refine intervalIntegral.integral_congr_Ioo_of_le (by norm_num) fun u hu => ?_
   have hval : fdBoundary H (4 - u) = fdBoundary H u - 1 :=
@@ -129,10 +138,11 @@ theorem intervalIntegral_excised_fdBoundary_segment4_eq_neg_segment1 (H : ℝ) {
   have hdist : ∀ s : ℂ, ‖fdBoundary H (4 - u) - s‖
       = ‖fdBoundary H u - -(starRingEnd ℂ) s‖ := by
     intro s
+    have hneg : -fdBoundary H u - (starRingEnd ℂ) s
+        = -(fdBoundary H u - -(starRingEnd ℂ) s) := by ring
     rw [hconj, ← Complex.norm_conj (-(starRingEnd ℂ) (fdBoundary H u) - s)]
     simp only [map_sub, map_neg, Complex.conj_conj]
-    rw [show -fdBoundary H u - (starRingEnd ℂ) s
-        = -(fdBoundary H u - -(starRingEnd ℂ) s) by ring, norm_neg]
+    rw [hneg, norm_neg]
   have hiff : (∃ s ∈ S, ‖fdBoundary H (4 - u) - s‖ ≤ ε) ↔
       ∃ s ∈ S, ‖fdBoundary H u - s‖ ≤ ε := by
     refine ⟨fun ⟨s, hs, hle⟩ => ⟨-(starRingEnd ℂ) s, hrefl s hs, by rwa [← hdist s]⟩,
@@ -140,10 +150,9 @@ theorem intervalIntegral_excised_fdBoundary_segment4_eq_neg_segment1 (H : ℝ) {
     rw [hdist, map_neg, Complex.conj_conj, neg_neg]
     exact hle
   by_cases hc : ∃ s ∈ S, ‖fdBoundary H u - s‖ ≤ ε
-  · rw [if_pos (hiff.mpr hc), if_pos hc, neg_zero]
+  · rw [if_pos (hiff.mpr hc), if_pos hc, smul_zero, smul_zero, neg_zero]
   · rw [if_neg fun h => hc (hiff.mp h), if_neg hc, hval,
-      deriv_fdBoundary_four_sub_vertical H hu, hφ.sub_eq]
-    ring
+      deriv_fdBoundary_four_sub_vertical H hu, hφ.sub_eq, neg_smul]
 
 end ModularForm
 
