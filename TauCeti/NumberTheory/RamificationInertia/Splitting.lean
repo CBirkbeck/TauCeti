@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Mathlib.NumberTheory.RamificationInertia.Inertia
+public import Mathlib.RingTheory.Ideal.GoingUp
 public import Mathlib.RingTheory.RamificationInertia.Basic
 
 /-!
@@ -23,11 +25,16 @@ In the `TauCeti.RamificationInertia` namespace:
 
 * `ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank` — a maximal count
   of primes above `P` makes `e = f = 1` at each of them.
+* `bijective_algebraMap_quotient_of_ncard_primesOver_eq_finrank` — for `P` maximal, the same count
+  makes the residue map `R ⧸ P → S ⧸ Q` bijective.
 
 ## Provenance
 
 Built directly on Mathlib's fundamental identity for finite flat extensions of domains
-(`Ideal.sum_ramification_inertia_eq_finrank`).
+(`Ideal.sum_ramification_inertia_eq_finrank`). The residue-field consequence additionally uses
+Mathlib's identification of the inertia degree with the rank of the residue extension
+(`Ideal.inertiaDeg'_algebraMap`) and its characterisation of rank-one algebras over a field
+(`Algebra.finrank_eq_one_iff_bijective_algebraMap`).
 -/
 
 public section
@@ -63,5 +70,23 @@ theorem ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finr
     Finset.mem_univ _
   have := (Finset.sum_eq_sum_iff_of_le hone).mp hEqSum _ hQ
   exact ⟨Nat.eq_one_of_mul_eq_one_right this.symm, Nat.eq_one_of_mul_eq_one_left this.symm⟩
+
+/-- **A maximal count of primes above `P` makes the residue extension trivial.** If `P` is maximal
+and the number of primes of `S` lying over `P` equals the rank of `S` over `R`, then the residue
+map `R ⧸ P → S ⧸ Q` is bijective. No Galois hypothesis is needed. -/
+theorem bijective_algebraMap_quotient_of_ncard_primesOver_eq_finrank
+    {R S : Type*} [CommRing R] [IsDomain R] [CommRing S] [Algebra R S] [Module.Finite R S]
+    [Module.Flat R S] (P : Ideal R) [P.IsMaximal] (Q : Ideal S) [Q.IsPrime] [Q.LiesOver P]
+    (hsplit : (P.primesOver S).ncard = finrank R S) :
+    Function.Bijective (algebraMap (R ⧸ P) (S ⧸ Q)) := by
+  have : Q.IsMaximal := Ideal.IsMaximal.of_liesOver_isMaximal Q P
+  have hfQ : finrank (R ⧸ P) (S ⧸ Q) = 1 := by
+    rw [← Ideal.inertiaDeg'_algebraMap (p := P) (P := Q), Ideal.inertiaDeg'_eq_inertiaDeg]
+    exact (ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank P Q
+      hsplit).2
+  let fld : Field (R ⧸ P) := Ideal.Quotient.field _
+  -- a one-dimensional algebra over a field is free, so `finrank = 1` gives bijectivity
+  have : Module.Free (R ⧸ P) (S ⧸ Q) := @Module.Free.of_divisionRing _ _ fld.toDivisionRing _ _
+  exact (Algebra.finrank_eq_one_iff_bijective_algebraMap (F := R ⧸ P) (E := S ⧸ Q)).mp hfQ
 
 end TauCeti.RamificationInertia

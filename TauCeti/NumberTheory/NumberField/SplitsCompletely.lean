@@ -140,17 +140,7 @@ theorem bijective_algebraMap_quotient_of_ncard_primesOver_eq_finrank {K : Type*}
     Ideal.IsPrime.isMaximal
       ((Ideal.span_singleton_prime hpne).mpr (Nat.prime_iff_prime_int.mp Fact.out))
       (by simpa [Ideal.span_singleton_eq_bot] using hpne)
-  have : Q.IsMaximal := Ideal.IsMaximal.of_liesOver_isMaximal Q (span {(p : ℤ)})
-  have hfQ : finrank (ℤ ⧸ span {(p : ℤ)}) (𝓞 K ⧸ Q) = 1 := by
-    rw [← Ideal.inertiaDeg'_algebraMap (p := span {(p : ℤ)}) (P := Q),
-      Ideal.inertiaDeg'_eq_inertiaDeg]
-    exact (ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank Q
-      hsplit).2
-  let fld : Field (ℤ ⧸ span {(p : ℤ)}) := Ideal.Quotient.field _
-  -- A one-dimensional algebra over a field is free, so `finrank = 1` gives bijectivity.
-  have : Module.Free (ℤ ⧸ span {(p : ℤ)}) (𝓞 K ⧸ Q) :=
-    @Module.Free.of_divisionRing _ _ fld.toDivisionRing _ _
-  exact (Algebra.finrank_eq_one_iff_bijective_algebraMap
-    (F := ℤ ⧸ span {(p : ℤ)}) (E := 𝓞 K ⧸ Q)).mp hfQ
+  exact RamificationInertia.bijective_algebraMap_quotient_of_ncard_primesOver_eq_finrank
+    (span {(p : ℤ)}) Q (by rwa [NumberField.RingOfIntegers.rank])
 
 end TauCeti.NumberField
