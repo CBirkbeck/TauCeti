@@ -80,6 +80,18 @@ theorem norm_algebraMap_add_algebraMap_mul (a b : K) (θ : L) :
     Algebra.norm_eq_matrix_det bs, key, TauCeti.Matrix.det_smul_sub_smul_one_fin_two]
   ring
 
+/-- The discriminant vanishes on the base field: for `θ = c ∈ K` the trace is `2c` and the norm
+is `c²`, so `t² - 4n = 0`. Separability is not needed. This is the converse of `discrim_ne_zero`,
+and it is what lets a construction that chose `θ` by *nonzero discriminant* recover that `θ`
+generates the extension. -/
+theorem discrim_eq_zero_of_mem_range {θ : L} (hθ : θ ∈ Set.range (algebraMap K L)) :
+    Algebra.trace K L θ ^ 2 - 4 * Algebra.norm K θ = 0 := by
+  obtain ⟨c, rfl⟩ := hθ
+  rw [Algebra.trace_algebraMap, Algebra.norm_algebraMap,
+    Algebra.IsQuadraticExtension.finrank_eq_two]
+  simp only [nsmul_eq_mul, Nat.cast_ofNat]
+  ring
+
 variable [Algebra.IsSeparable K L]
 
 /-- In a separable quadratic extension, the trace of `x` is `x + σx`, where `σ` is the
