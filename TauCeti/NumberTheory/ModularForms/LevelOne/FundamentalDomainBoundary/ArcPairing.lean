@@ -155,7 +155,7 @@ Inversion is not an isometry in general — `‖z⁻¹ - w⁻¹‖ = ‖z - w‖
 between points of unit modulus, which is why `TauCeti.ModularForm.arcSingularSet` is built from
 unit-modulus points: on the arc both `fdBoundary H t` and the excision centres have norm `1`, so
 the two distances agree and the truncated integrand pairs with itself under the reflection. -/
-theorem exists_norm_fdBoundary_four_sub_sub_le_iff {H : ℝ} {S : Finset ℂ} {ε : ℝ} {t : ℝ}
+private theorem excised_fdBoundary_arc_reflection_iff {H : ℝ} {S : Finset ℂ} {ε : ℝ} {t : ℝ}
     (ht : t ∈ Icc (1 : ℝ) 3) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) :
     (∃ s ∈ S, ‖fdBoundary H (4 - t) - s‖ ≤ ε) ↔ ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε := by
   have harc : ‖fdBoundary H t‖ = 1 := norm_fdBoundary_arc ht.1 ht.2
@@ -163,11 +163,11 @@ theorem exists_norm_fdBoundary_four_sub_sub_le_iff {H : ℝ} {S : Finset ℂ} {�
   -- On unit-modulus arguments the inversion preserves distances.
   have hkey : ∀ w : ℂ, ‖w‖ = 1 → ‖fdBoundary H (4 - t) - (-1 / w)‖ = ‖fdBoundary H t - w‖ := by
     intro w hw
-    have hw0 : w ≠ 0 := fun h => by simp [h] at hw
+    have hw0 : w ≠ 0 := norm_ne_zero_iff.mp (by rw [hw]; norm_num)
+    -- The inversion-distance formula is Mathlib's; only the unit-modulus factors are ours.
     rw [fdBoundary_four_sub_arc H ht,
-      show -1 / fdBoundary H t - -1 / w = (fdBoundary H t - w) / (fdBoundary H t * w) by
-        field_simp; ring,
-      norm_div, norm_mul, harc, hw]
+      show -1 / fdBoundary H t - -1 / w = -((fdBoundary H t)⁻¹ - w⁻¹) by field_simp; ring,
+      norm_neg, ← dist_eq_norm, dist_inv_inv₀ h0 hw0, dist_eq_norm, harc, hw]
     ring
   constructor
   · rintro ⟨s, hs, hle⟩
@@ -184,9 +184,10 @@ as in `TauCeti.ModularForm.logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_e
 
 Regularity is asked only where the integrand is retained: at an excised parameter the form may
 vanish or fail to be differentiable, which is the point of excising it. -/
-theorem truncated_logDeriv_fdBoundary_arc_add_four_sub [SlashInvariantFormClass F Γ k]
-    (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ} {t : ℝ}
-    (ht : t ∈ Ioo (1 : ℝ) 3) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
+theorem excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg
+    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ)
+    {H : ℝ} {S : Finset ℂ} {ε : ℝ} {t : ℝ} (ht : t ∈ Ioo (1 : ℝ) 3)
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hd : ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
       DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
     (hne : ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
@@ -197,7 +198,7 @@ theorem truncated_logDeriv_fdBoundary_arc_add_four_sub [SlashInvariantFormClass 
         else deriv (fdBoundary H) (4 - t) • logDeriv (⇑f ∘ ofComplex) (fdBoundary H (4 - t))) =
       if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
         else -((k : ℂ) * logDeriv (fdBoundary H) t) := by
-  have hsymm := exists_norm_fdBoundary_four_sub_sub_le_iff (H := H) (S := S) (ε := ε)
+  have hsymm := excised_fdBoundary_arc_reflection_iff (H := H) (S := S) (ε := ε)
     ⟨ht.1.le, ht.2.le⟩ hnorm hinv
   by_cases hc : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε
   · simp only [if_pos hc, if_pos (hsymm.mpr hc), add_zero]
@@ -208,11 +209,14 @@ theorem truncated_logDeriv_fdBoundary_arc_add_four_sub [SlashInvariantFormClass 
 over `[1, 3]`, where the reflection `t ↦ 4 - t` maps the interval to itself, the excised arc
 integral is `-k/2` times the excised integral of the contour's own logarithmic derivative.
 
-Letting `ε → 0` recovers the untruncated
-`TauCeti.ModularForm.intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc`: the
-contour's own logarithmic derivative is integrable along the arc, so its excised integral tends
-to the full one. -/
-theorem intervalIntegral_truncated_fdBoundary_arc [SlashInvariantFormClass F Γ k]
+As `ε → 0` the right-hand side tends to `-k` times the full integral of the contour's own
+logarithmic derivative, which is integrable along the arc; that identifies the *principal value*
+of the left-hand integrand. It does **not** in general identify an ordinary integral: where the
+form vanishes on the arc the unexcised integrand is not interval-integrable, which is why the
+assembly works with excised integrals throughout. Only when the form is zero-free on the arc does
+this specialize to the untruncated
+`TauCeti.ModularForm.intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc`. -/
+theorem two_mul_intervalIntegral_excised_fdBoundary_arc [SlashInvariantFormClass F Γ k]
     (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hd : ∀ t ∈ Ioo (1 : ℝ) 3, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
@@ -242,7 +246,8 @@ theorem intervalIntegral_truncated_fdBoundary_arc [SlashInvariantFormClass F Γ 
       ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
         else -((k : ℂ) * logDeriv (fdBoundary H) t)) :=
     intervalIntegral.integral_congr_Ioo_of_le (by norm_num) fun t htt =>
-      truncated_logDeriv_fdBoundary_arc_add_four_sub f hS htt hnorm hinv (hd t htt) (hne t htt)
+      excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS htt hnorm hinv
+        (hd t htt) (hne t htt)
   rw [intervalIntegral.integral_add hint hintrefl, hrefl] at hsum
   rw [two_mul, hsum, ← intervalIntegral.integral_const_mul]
   refine intervalIntegral.integral_congr fun t _ => ?_
