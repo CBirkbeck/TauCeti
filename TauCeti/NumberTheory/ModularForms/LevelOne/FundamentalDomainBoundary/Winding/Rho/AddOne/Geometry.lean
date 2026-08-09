@@ -35,8 +35,6 @@ angle `π/3`, which is exactly the gap between the one-sided argument limits `π
 * `TauCeti.ModularForm.norm_fdBoundary_sub_rho_add_one_arc` (the chord distance) and
   `TauCeti.ModularForm.norm_fdBoundary_sub_rho_add_one_arc_le` (its monotonicity in the
   angular gap).
-* `TauCeti.ModularForm.fdBoundary_apply_three_sub_rho_add_one` (the value `-1` at the far
-  corner).
 * `TauCeti.ModularForm.log_fdBoundary_one_sub_sub_rho_add_one`,
   `TauCeti.ModularForm.log_fdBoundary_one_add_sub_rho_add_one` (the endpoint logarithms).
 
@@ -202,13 +200,6 @@ theorem im_fdBoundary_sub_rho_add_one_arc_pos (H : ℝ) (ht1 : 1 < t) (ht3 : t <
   have := sqrt_three_div_two_lt_sin (θ := (t + 1) * (Real.pi / 6))
     (by nlinarith [Real.pi_pos]) (by nlinarith [Real.pi_pos])
   linarith
-
-/-- At the far corner `t = 3` the shifted contour touches the branch cut at `-1`. -/
-@[simp]
-theorem fdBoundary_apply_three_sub_rho_add_one (H : ℝ) :
-    fdBoundary H 3 - ((UpperHalfPlane.ρ : ℂ) + 1) = -1 := by
-  rw [fdBoundary_apply_three]
-  ring
 
 /-- The shifted contour stays in the closed upper half-plane over the whole parameter
 range: the contour clears the corner row `√3/2`, which is the height of `ρ + 1`. -/

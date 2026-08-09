@@ -159,7 +159,7 @@ private lemma telescope_rho_add_one_piece_arc_second (H : ℝ) :
   have hne : ∀ t ∈ Icc (2 : ℝ) 3, fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1) ≠ 0 := by
     intro t ht
     rcases eq_or_lt_of_le ht.2 with h3 | h3
-    · rw [h3, fdBoundary_apply_three_sub_rho_add_one]
+    · rw [h3, fdBoundary_apply_three]
       norm_num
     · have him := im_fdBoundary_sub_rho_add_one_arc_pos H (by linarith [ht.1]) h3
       exact fun h0 ↦ by rw [h0] at him; simp at him
