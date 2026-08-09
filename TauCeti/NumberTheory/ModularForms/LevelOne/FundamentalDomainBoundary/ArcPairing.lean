@@ -307,7 +307,7 @@ theorem two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBo
       have hu3 : 4 - t ∈ Ioo (1 : ℝ) 3 := ⟨hu.1, by linarith [hu.2]⟩
       have h := excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS hu3
         hnorm hinv (hd _ hu) (hne _ hu)
-      rw [show (4 : ℝ) - (4 - t) = t by ring, hweight t ht3] at h
+      rw [sub_sub_self (4 : ℝ) t, hweight t ht3] at h
       rw [hG]
       linear_combination h
   rw [intervalIntegral.integral_add hint hintrefl, hrefl] at hsum
