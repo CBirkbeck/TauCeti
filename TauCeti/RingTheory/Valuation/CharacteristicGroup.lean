@@ -369,6 +369,7 @@ theorem hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top {v : Valuat
 /-- The generators correspond **exactly** under the induced value-group isomorphism: both
 sides are indexed by the same ring, and `orderMonoidIso_spec` matches `v.restrict a` with
 `w.restrict a`. -/
+@[simp]
 theorem valueGroupOrderIso_mem_characteristicGenerators_iff {v : Valuation A Γ₀}
     {w : Valuation A Γ₀'} (h : v.IsEquiv w) {γ : valueGroup (.ofClass v)} :
     h.valueGroupOrderIso γ ∈ characteristicGenerators w ↔ γ ∈ characteristicGenerators v := by
@@ -379,6 +380,7 @@ theorem valueGroupOrderIso_mem_characteristicGenerators_iff {v : Valuation A Γ�
     exact h.orderMonoidIso.toMulEquiv.injective hspec
 
 /-- **`cΓ_v` is an invariant of the equivalence class**, in membership form. -/
+@[simp]
 theorem valueGroupOrderIso_mem_characteristicSubgroup_iff {v : Valuation A Γ₀}
     {w : Valuation A Γ₀'} (h : v.IsEquiv w) {γ : valueGroup (.ofClass v)} :
     h.valueGroupOrderIso γ ∈ characteristicSubgroup w ↔ γ ∈ characteristicSubgroup v := by
