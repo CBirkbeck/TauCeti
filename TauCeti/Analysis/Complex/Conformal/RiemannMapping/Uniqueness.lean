@@ -36,21 +36,18 @@ namespace TauCeti
 open _root_.Complex Filter Function Metric Set
 open scoped ComplexConjugate Topology
 
-/-- **The transition map between two conformal parametrisations of the disc.** If `f` and `g` are
-injective and differentiable on `U` with image the unit disc, then `g ∘ f⁻¹` is differentiable on
-the disc, maps it into itself, and is inverted there by `f ∘ g⁻¹`. -/
-private theorem differentiableOn_mapsTo_leftInvOn_comp_invFunOn {U : Set ℂ} (hU : IsOpen U)
+/-- **The transition map between two parametrisations of a common target.** If `f` and `g` are
+injective and differentiable on `U`, with `f` surjecting onto `V` and `g` mapping into it, then
+`g ∘ f⁻¹` is differentiable on `V`, maps `V` into itself, and is left-inverted there by
+`f ∘ g⁻¹`. -/
+private theorem differentiableOn_mapsTo_leftInvOn_comp_invFunOn {U V : Set ℂ} (hU : IsOpen U)
     {f g : ℂ → ℂ} (hf : DifferentiableOn ℂ f U) (hg : DifferentiableOn ℂ g U)
-    (hfi : InjOn f U) (hgi : InjOn g U)
-    (hfimage : f '' U = ball (0 : ℂ) 1) (hgimage : g '' U = ball (0 : ℂ) 1) :
-    DifferentiableOn ℂ (g ∘ Function.invFunOn f U) (ball (0 : ℂ) 1) ∧
-      MapsTo (g ∘ Function.invFunOn f U) (ball (0 : ℂ) 1) (ball (0 : ℂ) 1) ∧
-      LeftInvOn (f ∘ Function.invFunOn g U) (g ∘ Function.invFunOn f U) (ball (0 : ℂ) 1) := by
-  obtain ⟨hf_surj, -⟩ := image_eq_iff_surjOn_mapsTo.mp hfimage
-  obtain ⟨-, hg_maps⟩ := image_eq_iff_surjOn_mapsTo.mp hgimage
-  have hfinv : DifferentiableOn ℂ (Function.invFunOn f U) (ball (0 : ℂ) 1) := by
-    rw [← hfimage]
-    exact DifferentiableOn.invFunOn hf hU hfi
+    (hfi : InjOn f U) (hgi : InjOn g U) (hf_surj : SurjOn f U V) (hg_maps : MapsTo g U V) :
+    DifferentiableOn ℂ (g ∘ Function.invFunOn f U) V ∧
+      MapsTo (g ∘ Function.invFunOn f U) V V ∧
+      LeftInvOn (f ∘ Function.invFunOn g U) (g ∘ Function.invFunOn f U) V := by
+  have hfinv : DifferentiableOn ℂ (Function.invFunOn f U) V :=
+    (DifferentiableOn.invFunOn hf hU hfi).mono hf_surj
   refine ⟨hg.comp hfinv hf_surj.mapsTo_invFunOn, hg_maps.comp hf_surj.mapsTo_invFunOn,
     fun z hz => ?_⟩
   simp only [Function.comp_apply]
@@ -76,12 +73,13 @@ theorem exists_eqOn_unitDiscStandardAutomorphismFormula_comp {U : Set ℂ} (hU :
           (u : ℂ) *
             ((f z - (a : ℂ)) / (1 - (starRingEnd ℂ) (a : ℂ) * f z)))
         U := by
-  obtain ⟨-, hf_maps⟩ := image_eq_iff_surjOn_mapsTo.mp hfimage
-  -- the two transition maps, each the inverse of the other on the disc
+  obtain ⟨hf_surj, hf_maps⟩ := image_eq_iff_surjOn_mapsTo.mp hfimage
+  obtain ⟨hg_surj, hg_maps⟩ := image_eq_iff_surjOn_mapsTo.mp hgimage
+  -- the two transition maps, each left-inverting the other on the disc
   obtain ⟨hFdiff, hFmaps, hGF⟩ :=
-    differentiableOn_mapsTo_leftInvOn_comp_invFunOn hU hf hg hfi hgi hfimage hgimage
+    differentiableOn_mapsTo_leftInvOn_comp_invFunOn hU hf hg hfi hgi hf_surj hg_maps
   obtain ⟨hGdiff, hGmaps, hFG⟩ :=
-    differentiableOn_mapsTo_leftInvOn_comp_invFunOn hU hg hf hgi hfi hgimage hfimage
+    differentiableOn_mapsTo_leftInvOn_comp_invFunOn hU hg hf hgi hfi hg_surj hf_maps
   obtain ⟨u, a, _, hclass⟩ :=
     exists_forall_unitDisc_eq_unitDiscStandardAutomorphismEquiv
       hFdiff hGdiff hFmaps hGmaps hGF hFG
