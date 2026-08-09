@@ -44,13 +44,17 @@ namespace TauCeti.Contour
 
 open Complex Filter Topology
 
-/-- **The winding integrand of a normalized chord expansion.** For `τ ≠ 0`, `q ≠ 0` and
-`q - L = τ r`, the real winding integrand at position `τ q` and velocity `L + τ d` is
-`(r.re * L.im - r.im * L.re + (q.re * d.im - q.im * d.re)) / ‖q‖²`. -/
-private theorem realWindingIntegrand_mul_add_eq_div {τ : ℝ} {q r d L : ℂ} (hτ : τ ≠ 0)
-    (hq : q ≠ 0) (hqr : q - L = (τ : ℂ) * r) :
+/-- **The winding integrand of a normalized chord expansion.** For `τ ≠ 0` and `q - L = τ r`, the
+real winding integrand at position `τ q` and velocity `L + τ d` is
+`(r.re * L.im - r.im * L.re + (q.re * d.im - q.im * d.re)) / ‖q‖²`.
+
+At `q = 0` both sides are `0`, by the junk value of division. -/
+private theorem realWindingIntegrand_mul_add_eq_div_of_sub_eq_mul {τ : ℝ} {q r d L : ℂ}
+    (hτ : τ ≠ 0) (hqr : q - L = (τ : ℂ) * r) :
     realWindingIntegrand ((τ : ℂ) * q) (L + (τ : ℂ) * d)
       = (r.re * L.im - r.im * L.re + (q.re * d.im - q.im * d.re)) / Complex.normSq q := by
+  rcases eq_or_ne q 0 with rfl | hq
+  · simp
   obtain rfl : L = q - (τ : ℂ) * r := by linear_combination -hqr
   rw [realWindingIntegrand_eq_div]
   simp only [Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im, zero_mul,
@@ -88,13 +92,11 @@ private theorem tendsto_realWindingIntegrand_mul_add {α : Type*} {l : Filter α
       ((hq_re.mul hd_im).sub (hq_im.mul hd_re))) using 1
     all_goals simp <;> ring_nf
   have hdiv := hnum.div hnorm ((Complex.normSq_eq_zero.not.mpr hL))
-  have hq_ne : ∀ᶠ i in l, q i ≠ 0 :=
-    hq.eventually (isOpen_compl_singleton.mem_nhds hL)
   convert hdiv.congr' ?_ using 1
   · ring_nf
-  filter_upwards [hqr, hτ, hq_ne] with i hqi hτi hqi_ne
+  filter_upwards [hqr, hτ] with i hqi hτi
   simp only [Pi.div_apply]
-  exact (realWindingIntegrand_mul_add_eq_div hτi hqi_ne hqi).symm
+  exact (realWindingIntegrand_mul_add_eq_div_of_sub_eq_mul hτi hqi).symm
 
 /-- **Hungerbühler–Wasem Proposition 2.3, crossing value.** At a crossing `γ t₀ = s`,
 a normalized second-order chord expansion with coefficients `L` and `A`, together with the
