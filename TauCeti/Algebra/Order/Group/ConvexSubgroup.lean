@@ -175,8 +175,9 @@ def closure (S : Set Γ) : ConvexSubgroup Γ where
   ordConnected' := ⟨fun _ ha _ hb _ hz H hS ↦ H.ordConnected'.out (ha H hS) (hb H hS) hz⟩
 
 /-- Membership in the convex closure: membership in every convex subgroup containing the
-generating set. -/
-@[simp]
+generating set. Deliberately not a `simp` lemma — as a normal form it would rewrite every
+`x ∈ closure S` into the defining intersection, exposing the construction. `closure_le` is
+the universal property `simp` should use instead. -/
 theorem mem_closure {S : Set Γ} {x : Γ} :
     x ∈ closure S ↔ ∀ H : ConvexSubgroup Γ, S ⊆ H → x ∈ H :=
   Iff.rfl
