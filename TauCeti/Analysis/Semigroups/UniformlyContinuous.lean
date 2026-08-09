@@ -95,8 +95,10 @@ private theorem continuous_of_continuousAt_zero (S : StronglyContinuousSemigroup
         hsmall (by simpa [NNReal.dist_eq, NNReal.coe_sub htt₀, abs_sub_comm] using ht)
     have hSt : ‖S t‖ < C := by
       dsimp [C]
-      linarith [hb.norm_le_mul_exp_max_zero_mul_of_le htt₀,
-        le_max_right ‖S t₀‖ (M * Real.exp (max ω 0 * t₀))]
+      have hbt : ‖S t‖ ≤ M * Real.exp (max ω 0 * t₀) := by
+        rw [← S.realOperator_coe]
+        exact hb.norm_le_mul_exp_max_zero_mul_of_le t.2 (by exact_mod_cast htt₀)
+      linarith [hbt, le_max_right ‖S t₀‖ (M * Real.exp (max ω 0 * t₀))]
     rw [dist_eq_norm, hdiff]
     calc
       ‖(S t).comp (1 - S (t₀ - t))‖
