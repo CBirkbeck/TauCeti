@@ -71,7 +71,7 @@ variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZer
 for `H`. -/
 def IdealCofinalFor (v : Valuation A Γ₀)
     (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) (I : Ideal A) : Prop :=
-  ∀ a ∈ I, CofinalValueFor v H a
+  ∀ a ∈ I, CofinalValueFor v H.toSubgroup a
 
 /-- The defining property, as a restatement.
 
@@ -79,7 +79,7 @@ Deliberately not `@[simp]`: the right-hand side is the unfolded bounded quantifi
 it would expand goals about `IdealCofinalFor` rather than simplify them. -/
 theorem idealCofinalFor_def {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {I : Ideal A} :
-    IdealCofinalFor v H I ↔ ∀ a ∈ I, CofinalValueFor v H a :=
+    IdealCofinalFor v H I ↔ ∀ a ∈ I, CofinalValueFor v H.toSubgroup a :=
   Iff.rfl
 
 /-- The trivial ideal is cofinal for every convex subgroup. -/
@@ -136,7 +136,7 @@ theorem lt_one_of_not_idealMeetsCharacteristic {v : Valuation A Γ₀} {I : Idea
 monotonicity that makes the family in Wedhorn Lemma 7.2 downward closed. -/
 theorem CofinalValueFor.mono {v : Valuation A Γ₀}
     {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A}
-    (h : CofinalValueFor v K a) (hHK : H ≤ K) : CofinalValueFor v H a :=
+    (h : CofinalValueFor v K.toSubgroup a) (hHK : H ≤ K) : CofinalValueFor v H.toSubgroup a :=
   cofinalValueFor_def.mpr fun g hg ↦ cofinalValueFor_def.mp h g (hHK hg)
 
 /-- The ideal condition inherits that monotonicity. -/
@@ -220,7 +220,7 @@ ideal structure, not through an inequality. -/
 theorem idealCofinalFor_of_span {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hH : characteristicSubgroup v < H) {T : Set A} {I : Ideal A} (hspan : Ideal.span T = I)
-    (hT : ∀ t ∈ T, CofinalValueFor v H t) : IdealCofinalFor v H I :=
+    (hT : ∀ t ∈ T, CofinalValueFor v H.toSubgroup t) : IdealCofinalFor v H I :=
   (idealCofinalFor_iff_le_cofinalIdeal hH).mpr <| by
     rw [← hspan, Ideal.span_le]
     exact fun t ht ↦ mem_cofinalIdeal.mpr (hT t ht)
@@ -232,7 +232,7 @@ every generator is cofinal for. -/
 theorem cofinalValueFor_closure_singleton_of_le {v : Valuation A Γ₀} {a : A}
     {h : valueGroup (.ofClass v)} (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0)
     (hle : valueGroup.mk (.ofClass v) 1 a (by simp) h0 ≤ h) (hlt : h < 1) :
-    CofinalValueFor v (TauCeti.ConvexSubgroup.closure {h}) a := by
+    CofinalValueFor v (TauCeti.ConvexSubgroup.closure {h}).toSubgroup a := by
   refine (cofinalValueFor_iff_isCofinalElement h0).mpr ?_
   have hgreatest : IsGreatest {valueGroup.mk (.ofClass v) 1 a (by simp) h0, h} h :=
     ⟨Set.mem_insert_of_mem _ rfl, by rintro x (rfl | rfl) <;> simp [hle]⟩
@@ -494,7 +494,9 @@ theorem characteristicSubgroupOfIdeal_eq_top_iff {v : Valuation A Γ₀} {I : Id
     · exact hfull
   · have hg := isGreatestIdealCofinal_characteristicSubgroupOfIdeal hfg hm
     refine ⟨fun htop ↦ Or.inl fun a ha ↦ ?_, ?_⟩
-    · exact cofinalValueFor_top_iff.mp (htop ▸ hg.1 a ha)
+    · have hcof := hg.1 a ha
+      rw [htop] at hcof
+      exact cofinalValueFor_top_iff.mp hcof
     · rintro (hall | hfull)
       · exact top_le_iff.mp (hg.2 ⊤ fun a ha ↦ cofinalValueFor_top_iff.mpr (hall a ha))
       · -- `cΓ_v = ⊤` and disjointness force every value on `I` to vanish
