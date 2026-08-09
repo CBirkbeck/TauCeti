@@ -247,6 +247,29 @@ private lemma min_sin_div_two_le_sin_div_two {m t w : ℝ} (hm : 0 < m) (hmt : m
     exact Real.sin_le_sin_of_le_of_le_pi_div_two (by linarith [Real.pi_pos]) (by linarith)
       (by linarith)
 
+/-- **On a non-wrapping arc, closeness in the plane is closeness in angle.** A point of the arc
+`circleMap ζ ρ '' Ioo a b` lying within `2 * |ρ| * min (sin (m / 2)) (sin ((b - a) / 2))` of
+`circleMap ζ ρ θ₀` is the image of an angle within `m` of `θ₀`. -/
+private lemma exists_angle_sub_lt_of_mem_ball_circleMap (ζ : ℂ) (ρ : ℝ) {a b θ₀ m : ℝ}
+    (hab2π : b - a < 2 * π) (hθ₀ : θ₀ ∈ Icc a b) (hm0 : 0 < m) {x : ℂ}
+    (hx : x ∈ circleMap ζ ρ '' Ioo a b ∩
+      ball (circleMap ζ ρ θ₀) (2 * |ρ| * min (Real.sin (m / 2)) (Real.sin ((b - a) / 2)))) :
+    ∃ θ ∈ Ioo a b, circleMap ζ ρ θ = x ∧ |θ - θ₀| < m := by
+  obtain ⟨⟨θ, hθ, rfl⟩, hx⟩ := hx
+  refine ⟨θ, hθ, rfl, ?_⟩
+  have hwidth : |θ - θ₀| ≤ b - a := by
+    rw [abs_le]
+    constructor <;> [linarith [hθ.1, hθ₀.2]; linarith [hθ.2, hθ₀.1]]
+  have hπ : |θ - θ₀| ≤ 2 * π := by linarith
+  rw [mem_ball, dist_circleMap_eq_two_mul_sin_abs ζ ρ hπ] at hx
+  rcases lt_or_ge |θ - θ₀| m with hlt | hcon
+  · exact hlt
+  · exfalso
+    -- the chord grows with the angular gap up to the width of the arc
+    have hmono : min (Real.sin (m / 2)) (Real.sin ((b - a) / 2)) ≤ Real.sin (|θ - θ₀| / 2) :=
+      min_sin_div_two_le_sin_div_two hm0 hcon hwidth hab2π
+    nlinarith [abs_nonneg ρ]
+
 /-- **An arc of finite image length has at most one cluster value at each of its points.** For `f`
 holomorphic on an open set containing the open arc `circleMap ζ ρ '' Ioo a b`, of angular width
 below a full turn and of finite image length, and for any angle `θ₀` of the *closed* arc, `f` has at
@@ -279,7 +302,7 @@ theorem subsingleton_clusterSetOn_circleMap_image_Ioo (hUo : IsOpen U)
   obtain ⟨η, hη, hmod⟩ :=
     exists_pos_forall_dist_le_of_lintegral_ne_top hUo hf ζ hmemU hfin hε
   -- the angular gap actually used: below half the modulus, and below the width of the arc
-  set m : ℝ := min (η / 2) (b - a) with hm
+  set m : ℝ := min (η / 2) (b - a)
   have hm0 : 0 < m := lt_min (by linarith) (by linarith)
   have hmw : m ≤ b - a := min_le_right _ _
   -- the arc not wrapping around the circle puts both half-angles in `(0, π)`
@@ -289,26 +312,11 @@ theorem subsingleton_clusterSetOn_circleMap_image_Ioo (hUo : IsOpen U)
     Real.sin_pos_of_pos_of_lt_pi (by linarith) (by linarith)
   refine ⟨2 * |ρ| * min (Real.sin (m / 2)) (Real.sin ((b - a) / 2)),
     mul_pos (by linarith) (lt_min hsinm hsinw), ?_⟩
-  -- a point of the arc close to `circleMap ζ ρ θ₀` is close to `θ₀` in angle
-  have hangle : ∀ x ∈ circleMap ζ ρ '' Ioo a b ∩
-      ball (circleMap ζ ρ θ₀) (2 * |ρ| * min (Real.sin (m / 2)) (Real.sin ((b - a) / 2))),
-      ∃ θ ∈ Ioo a b, circleMap ζ ρ θ = x ∧ |θ - θ₀| < m := by
-    rintro _ ⟨⟨θ, hθ, rfl⟩, hx⟩
-    refine ⟨θ, hθ, rfl, ?_⟩
-    have hwidth : |θ - θ₀| ≤ b - a := by
-      rw [abs_le]
-      constructor <;> [linarith [hθ.1, hθ₀.2]; linarith [hθ.2, hθ₀.1]]
-    have hπ : |θ - θ₀| ≤ 2 * π := by linarith
-    rw [mem_ball, dist_circleMap_eq_two_mul_sin_abs ζ ρ hπ] at hx
-    rcases lt_or_ge |θ - θ₀| m with hlt | hcon
-    · exact hlt
-    · exfalso
-      have hmono : min (Real.sin (m / 2)) (Real.sin ((b - a) / 2)) ≤ Real.sin (|θ - θ₀| / 2) :=
-        min_sin_div_two_le_sin_div_two hm0 hcon hwidth hab2π
-      nlinarith [hρpos.le]
   rintro x hx y hy
-  obtain ⟨θx, hθx, rfl, hdx⟩ := hangle x hx
-  obtain ⟨θy, hθy, rfl, hdy⟩ := hangle y hy
+  obtain ⟨θx, hθx, rfl, hdx⟩ :=
+    exists_angle_sub_lt_of_mem_ball_circleMap ζ ρ hab2π hθ₀ hm0 hx
+  obtain ⟨θy, hθy, rfl, hdy⟩ :=
+    exists_angle_sub_lt_of_mem_ball_circleMap ζ ρ hab2π hθ₀ hm0 hy
   refine hmod θx hθx θy hθy ?_
   have htri : |θx - θy| ≤ |θx - θ₀| + |θ₀ - θy| := abs_sub_le _ _ _
   have hsymm : |θ₀ - θy| = |θy - θ₀| := abs_sub_comm _ _
