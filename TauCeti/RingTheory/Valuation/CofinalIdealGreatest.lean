@@ -291,7 +291,7 @@ theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal A}
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
     (hdisj : ¬ IdealMeetsCharacteristic v I)
     (hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0) :
-    ∃ H, IsGreatestIdealCofinal v I H := by
+    ∃ H, IsGreatestIdealCofinal v I H ∧ characteristicSubgroup v ≤ H := by
   obtain ⟨J, ⟨T, hT⟩, hrad⟩ := hfg
   -- every element of I has a power in J
   have hIJ : ∀ a ∈ I, ∃ n, n ≠ 0 ∧ a ^ n ∈ J := by
@@ -365,7 +365,8 @@ theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal A}
         exact_mod_cast this
       rw [this]
       exact pow_mem hmem n⟩
-  refine ⟨TauCeti.ConvexSubgroup.closure {h}, ?_⟩
+  refine ⟨TauCeti.ConvexSubgroup.closure {h}, ?_,
+    (TauCeti.ConvexSubgroup.lt_closure_singleton hnot).le⟩
   refine isGreatestIdealCofinal_closure_singleton_of_span
     (TauCeti.ConvexSubgroup.lt_closure_singleton hnot) hT hrad hlt hn0 ?_ hatt
   intro t ht
@@ -378,11 +379,11 @@ is covered separately by `⊤`. -/
 theorem exists_isGreatestIdealCofinal_of_not_meets {v : Valuation A Γ₀} {I : Ideal A}
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
     (hdisj : ¬ IdealMeetsCharacteristic v I) :
-    ∃ H, IsGreatestIdealCofinal v I H := by
+    ∃ H, IsGreatestIdealCofinal v I H ∧ characteristicSubgroup v ≤ H := by
   by_cases hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0
   · exact exists_isGreatestIdealCofinal hfg hdisj hne
   · push Not at hne
-    exact ⟨⊤, isGreatestIdealCofinal_top_of_forall_eq_zero hne⟩
+    exact ⟨⊤, isGreatestIdealCofinal_top_of_forall_eq_zero hne, le_top⟩
 
 /-! ### Wedhorn Definition 7.3 -/
 
@@ -414,6 +415,18 @@ theorem isGreatestIdealCofinal_characteristicSubgroupOfIdeal {v : Valuation A Γ
     IsGreatestIdealCofinal v I (characteristicSubgroupOfIdeal v I hfg) := by
   classical
   rw [characteristicSubgroupOfIdeal, dif_neg h]
-  exact (exists_isGreatestIdealCofinal_of_not_meets hfg h).choose_spec
+  exact (exists_isGreatestIdealCofinal_of_not_meets hfg h).choose_spec.1
+
+/-- **`cΓ_v(I)` always contains `cΓ_v`** — the sentence Wedhorn records immediately after
+Definition 7.3. On the first branch the two are equal; on the second, being *greatest* is what
+forces the containment, since smaller convex subgroups also satisfy the cofinality condition. -/
+theorem characteristicSubgroup_le_characteristicSubgroupOfIdeal (v : Valuation A Γ₀)
+    (I : Ideal A) (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
+    characteristicSubgroup v ≤ characteristicSubgroupOfIdeal v I hfg := by
+  classical
+  by_cases h : IdealMeetsCharacteristic v I
+  · rw [characteristicSubgroupOfIdeal_of_meets hfg h]
+  · rw [characteristicSubgroupOfIdeal, dif_neg h]
+    exact (exists_isGreatestIdealCofinal_of_not_meets hfg h).choose_spec.2
 
 end TauCeti.Valuation
