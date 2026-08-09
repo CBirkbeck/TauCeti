@@ -147,6 +147,37 @@ theorem intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
   push_cast
   ring
 
+/-- **The arc excision is symmetric under the reflection.** For an excision set of unit-modulus
+points closed under the inversion `z ↦ -1/z`, a point of the arc lies within `ε` of the set
+exactly when its reflection `t ↦ 4 - t` does.
+
+Inversion is not an isometry in general — `‖z⁻¹ - w⁻¹‖ = ‖z - w‖ / (‖z‖·‖w‖)` — but it is one
+between points of unit modulus, which is why `TauCeti.ModularForm.arcSingularSet` is built from
+unit-modulus points: on the arc both `fdBoundary H t` and the excision centres have norm `1`, so
+the two distances agree and the truncated integrand pairs with itself under the reflection. -/
+theorem exists_norm_fdBoundary_four_sub_sub_le_iff {H : ℝ} {S : Finset ℂ} {ε : ℝ} {t : ℝ}
+    (ht : t ∈ Icc (1 : ℝ) 3) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) :
+    (∃ s ∈ S, ‖fdBoundary H (4 - t) - s‖ ≤ ε) ↔ ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε := by
+  have harc : ‖fdBoundary H t‖ = 1 := norm_fdBoundary_arc ht.1 ht.2
+  have h0 : fdBoundary H t ≠ 0 := fun h => by simp [h] at harc
+  -- On unit-modulus arguments the inversion preserves distances.
+  have hkey : ∀ w : ℂ, ‖w‖ = 1 → ‖fdBoundary H (4 - t) - (-1 / w)‖ = ‖fdBoundary H t - w‖ := by
+    intro w hw
+    have hw0 : w ≠ 0 := fun h => by simp [h] at hw
+    rw [fdBoundary_four_sub_arc H ht,
+      show -1 / fdBoundary H t - -1 / w = (fdBoundary H t - w) / (fdBoundary H t * w) by
+        field_simp; ring,
+      norm_div, norm_mul, harc, hw]
+    ring
+  constructor
+  · rintro ⟨s, hs, hle⟩
+    refine ⟨-1 / s, hinv s hs, ?_⟩
+    have hs0 : s ≠ 0 := norm_ne_zero_iff.mp (by rw [hnorm s hs]; norm_num)
+    rwa [← hkey (-1 / s) (by rw [norm_div, norm_neg, norm_one, hnorm s hs, div_one]),
+      show -1 / (-1 / s) = s by field_simp]
+  · rintro ⟨s, hs, hle⟩
+    exact ⟨-1 / s, hinv s hs, by rwa [hkey s (hnorm s hs)]⟩
+
 end ModularForm
 
 end TauCeti
