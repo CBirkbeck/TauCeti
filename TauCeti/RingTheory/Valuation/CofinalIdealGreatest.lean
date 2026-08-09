@@ -73,7 +73,10 @@ def IdealCofinalFor (v : Valuation A Γ₀)
     (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) (I : Ideal A) : Prop :=
   ∀ a ∈ I, CofinalValueFor v H a
 
-@[simp]
+/-- The defining property, as a restatement.
+
+Deliberately not `@[simp]`: the right-hand side is the unfolded bounded quantifier, so tagging
+it would expand goals about `IdealCofinalFor` rather than simplify them. -/
 theorem idealCofinalFor_def {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {I : Ideal A} :
     IdealCofinalFor v H I ↔ ∀ a ∈ I, CofinalValueFor v H a :=
@@ -105,7 +108,10 @@ def IdealMeetsCharacteristic (v : Valuation A Γ₀) (I : Ideal A) : Prop :=
   ∃ (a : A) (_ : a ∈ I) (h : (MonoidWithZeroHom.ofClass v) a ≠ 0),
     valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v
 
-@[simp]
+/-- The defining property, as a restatement.
+
+Deliberately not `@[simp]`: the right-hand side is a nested existential carrying a proof
+binder, which is a poor normal form to rewrite goals into. -/
 theorem idealMeetsCharacteristic_def {v : Valuation A Γ₀} {I : Ideal A} :
     IdealMeetsCharacteristic v I ↔
       ∃ (a : A) (_ : a ∈ I) (h : (MonoidWithZeroHom.ofClass v) a ≠ 0),
