@@ -221,11 +221,9 @@ lemma valuation_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉ S
         = (integerPrimeOverOfNotMem K S hv).intValuationDef
             (algebraMap R (S.integer K) a) := by
       rw [IsScalarTower.algebraMap_apply R (S.integer K) K a,
-        HeightOneSpectrum.valuation_of_algebraMap]
-      rfl
+        HeightOneSpectrum.valuation_of_algebraMap, HeightOneSpectrum.intValuation_apply]
     rw [e1, intValuationDef_integerPrimeOverOfNotMem K S hv a,
-      HeightOneSpectrum.valuation_of_algebraMap]
-    rfl
+      HeightOneSpectrum.valuation_of_algebraMap, HeightOneSpectrum.intValuation_apply]
   obtain ⟨a, b, -, rfl⟩ := IsFractionRing.div_surjective (A := R) x
   rw [map_div₀, map_div₀, hR a, hR b]
 
