@@ -12,6 +12,7 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Wind
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 import Mathlib.MeasureTheory.Integral.CircleIntegral
 import TauCeti.Analysis.Complex.LogBranch
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Basic
 import TauCeti.Analysis.Contour.LogDerivFTC
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
 
@@ -482,26 +483,6 @@ private lemma norm_le_of_near (hd1 : δ < 1)
   · linarith [ht.1]
   · linarith [ht.2]
 
-/-- The excision half-width `δ(ε) = 12/π · arcsin(ε/2)` is positive, below `1`, and
-turns the chord identity into the exact excision radius `ε`. -/
-private lemma delta_spec (hε : 0 < ε) (hε₁ : ε < 1 / 2)
-    (hε₃ : ε < 2 * Real.sin (Real.pi / 12)) :
-    0 < 12 / Real.pi * Real.arcsin (ε / 2) ∧ 12 / Real.pi * Real.arcsin (ε / 2) < 1 ∧
-      2 * Real.sin (12 / Real.pi * Real.arcsin (ε / 2) * (Real.pi / 12)) = ε := by
-  have hπ := Real.pi_pos
-  have harc_pos : 0 < Real.arcsin (ε / 2) := Real.arcsin_pos.mpr (by linarith)
-  have harc_lt : Real.arcsin (ε / 2) < Real.pi / 12 := by
-    have h1 : Real.arcsin (ε / 2) < Real.arcsin (Real.sin (Real.pi / 12)) :=
-      Real.arcsin_lt_arcsin (by linarith) (by linarith) (Real.sin_le_one _)
-    rwa [Real.arcsin_sin (by linarith) (by linarith)] at h1
-  refine ⟨by positivity, ?_, ?_⟩
-  · rw [div_mul_eq_mul_div, div_lt_one hπ]
-    linarith
-  · have hδπ : 12 / Real.pi * Real.arcsin (ε / 2) * (Real.pi / 12) = Real.arcsin (ε / 2) := by
-      field_simp
-    rw [hδπ, Real.sin_arcsin (by linarith) (by linarith)]
-    ring
-
 /-- **The excision collapse**: for small `ε`, the `ε`-excised index integrand of the
 boundary contour about `i` is interval integrable, and its integral is exactly
 `-πi - 2·arcsin(ε/2)·i` — the telescope value at the matched half-width `δ(ε)`. -/
@@ -513,7 +494,7 @@ private lemma truncated_integral_spec (hH : 1 < H) (hε : 0 < ε) (hε₁ : ε <
     ∫ t in (0 : ℝ)..5, (if ε < ‖fdBoundary H t - Complex.I‖
         then (fdBoundary H t - Complex.I)⁻¹ * deriv (fdBoundary H) t else 0) =
       -(Real.pi : ℂ) * Complex.I - ((2 * Real.arcsin (ε / 2) : ℝ) : ℂ) * Complex.I := by
-  obtain ⟨hδ_pos, hδ_lt, h2sin⟩ := delta_spec hε hε₁ hε₃
+  obtain ⟨hδ_pos, hδ_lt, h2sin⟩ := excisionHalfWidth_spec hε hε₃
   set δ := 12 / Real.pi * Real.arcsin (ε / 2) with hδ_def
   obtain ⟨hi_left, hi_right, hval⟩ := ftc_logDeriv_telescope_I H hH hδ_pos hδ_lt
   have hconv : ∀ s : ℝ, (fdBoundary H s - Complex.I)⁻¹ * deriv (fdBoundary H) s =

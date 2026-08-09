@@ -309,6 +309,31 @@ lemma fdBoundary_mem_coe_truncatedFundamentalDomain (hH : 1 ≤ H) {t : ℝ}
 
 end ModularForm
 
+/-- **The chord-matched excision half-width.** For an excision radius `ε` below the corner
+chord `2·sin(π/12)`, the half-width `δ = 12/π · arcsin(ε/2)` lies strictly between `0` and
+`1` and reproduces `ε` as its own chord: `2·sin(δ·π/12) = ε`.
+
+This is the trigonometric content shared by the excision constructions at `i`, at `ρ` and at
+`ρ + 1`; it needs no upper bound on `ε` beyond the chord bound. -/
+lemma excisionHalfWidth_spec {ε : ℝ} (hε : 0 < ε) (hε₃ : ε < 2 * Real.sin (Real.pi / 12)) :
+    0 < 12 / Real.pi * Real.arcsin (ε / 2) ∧ 12 / Real.pi * Real.arcsin (ε / 2) < 1 ∧
+      2 * Real.sin (12 / Real.pi * Real.arcsin (ε / 2) * (Real.pi / 12)) = ε := by
+  have hπ := Real.pi_pos
+  have hsin1 : Real.sin (Real.pi / 12) ≤ 1 := Real.sin_le_one _
+  have harc_pos : 0 < Real.arcsin (ε / 2) := Real.arcsin_pos.mpr (by linarith)
+  have harc_lt : Real.arcsin (ε / 2) < Real.pi / 12 := by
+    have h1 : Real.arcsin (ε / 2) < Real.arcsin (Real.sin (Real.pi / 12)) :=
+      Real.arcsin_lt_arcsin (by linarith) (by linarith) hsin1
+    rwa [Real.arcsin_sin (by linarith) (by linarith)] at h1
+  refine ⟨by positivity, ?_, ?_⟩
+  · rw [div_mul_eq_mul_div, div_lt_one hπ]
+    linarith
+  · have hδπ : 12 / Real.pi * Real.arcsin (ε / 2) * (Real.pi / 12) = Real.arcsin (ε / 2) := by
+      field_simp
+    rw [hδπ, Real.sin_arcsin (by linarith) (by linarith)]
+    ring
+
+
 end TauCeti
 
 end

@@ -12,6 +12,7 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Wind
 
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 import Mathlib.MeasureTheory.Integral.CircleIntegral
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Basic
 import TauCeti.Analysis.Contour.LogDerivFTC
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
 
@@ -410,27 +411,6 @@ private lemma norm_le_of_near_rho_add_one {δL δR : ℝ} (hH : Real.sqrt 3 / 2 
     exact norm_fdBoundary_sub_rho_add_one_arc_le H ⟨h1.le, by linarith [ht.2]⟩
       (by linarith) (by linarith [ht.2])
 
-/-- The arc-side excision half-width `δ_R(ε) = 12/π · arcsin(ε/2)` is positive, below
-`1`, and turns the chord identity into the exact excision radius `ε`. -/
-private lemma delta_right_spec_rho_add_one (hε : 0 < ε)
-    (hε₃ : ε < 2 * Real.sin (Real.pi / 12)) :
-    0 < 12 / Real.pi * Real.arcsin (ε / 2) ∧ 12 / Real.pi * Real.arcsin (ε / 2) < 1 ∧
-      2 * Real.sin (12 / Real.pi * Real.arcsin (ε / 2) * (Real.pi / 12)) = ε := by
-  have hπ := Real.pi_pos
-  have hsin1 : Real.sin (Real.pi / 12) ≤ 1 := Real.sin_le_one _
-  have harc_pos : 0 < Real.arcsin (ε / 2) := Real.arcsin_pos.mpr (by linarith)
-  have harc_lt : Real.arcsin (ε / 2) < Real.pi / 12 := by
-    have h1 : Real.arcsin (ε / 2) < Real.arcsin (Real.sin (Real.pi / 12)) :=
-      Real.arcsin_lt_arcsin (by linarith) (by linarith) hsin1
-    rwa [Real.arcsin_sin (by linarith) (by linarith)] at h1
-  refine ⟨by positivity, ?_, ?_⟩
-  · rw [div_mul_eq_mul_div, div_lt_one hπ]
-    linarith
-  · have hδπ : 12 / Real.pi * Real.arcsin (ε / 2) * (Real.pi / 12) = Real.arcsin (ε / 2) := by
-      field_simp
-    rw [hδπ, Real.sin_arcsin (by linarith) (by linarith)]
-    ring
-
 /-- Away from the excised corner the truncated integrand is the logarithmic one: wherever
 the contour stays farther than `ε` from `ρ + 1` the excision test passes, and the endpoint
 where it may fail is a single point, hence null. -/
@@ -488,7 +468,7 @@ private lemma truncated_integral_spec_rho_add_one (hH : Real.sqrt 3 / 2 < H) (h�
         then (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) t
         else 0) =
       -((Real.pi : ℂ) / 3) * Complex.I - ((Real.arcsin (ε / 2) : ℝ) : ℂ) * Complex.I := by
-  obtain ⟨hδR_pos, hδR_lt, h2sin⟩ := delta_right_spec_rho_add_one hε hε₃
+  obtain ⟨hδR_pos, hδR_lt, h2sin⟩ := excisionHalfWidth_spec hε hε₃
   set δR := 12 / Real.pi * Real.arcsin (ε / 2) with hδR_def
   have hHpos : (0 : ℝ) < H - Real.sqrt 3 / 2 := by linarith
   set δL := ε / (H - Real.sqrt 3 / 2) with hδL_def
