@@ -29,8 +29,8 @@ commutative ring. Only the rank-two case is proved here, that being the case in 
 
 * `Matrix.transpose_mul_J_mul_eq_det_smul`: `Aᵀ J A = det A • J`.
 * `Matrix.det_eq_of_transpose_mul_J_mul_eq_smul`: the multiplier is the determinant.
-* `Matrix.det_eq_of_symplectic_adjoint`: the same, from an adjoint `B` with `Aᵀ J = J B` and
-  `B A = d • 1`.
+* `Matrix.det_eq_of_symplectic_adjoint_of_mul_eq_smul_one`: the same, from an adjoint `B` with
+  `Aᵀ J = J B` and `B A = d • 1`.
 
 ## Provenance
 
@@ -90,7 +90,7 @@ theorem det_eq_of_transpose_mul_J_mul_eq_smul {A : Matrix (l ⊕ l) (l ⊕ l) R}
 
 /-- **The determinant from a symplectic adjoint.** If `B` is adjoint to `A` for the form, meaning
 `Aᵀ J = J B`, and `B A = d • 1`, then `det A = d`. -/
-theorem det_eq_of_symplectic_adjoint {A B : Matrix (l ⊕ l) (l ⊕ l) R} {d : R}
+theorem det_eq_of_symplectic_adjoint_of_mul_eq_smul_one {A B : Matrix (l ⊕ l) (l ⊕ l) R} {d : R}
     (hadj : Aᵀ * J l R = J l R * B) (hBA : B * A = d • (1 : Matrix (l ⊕ l) (l ⊕ l) R)) :
     A.det = d :=
   det_eq_of_transpose_mul_J_mul_eq_smul <| by rw [hadj, mul_assoc, hBA, Matrix.mul_smul, mul_one]
