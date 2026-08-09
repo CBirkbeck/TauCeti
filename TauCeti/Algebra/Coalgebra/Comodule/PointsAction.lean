@@ -34,13 +34,13 @@ the functor of points on scalar extensions of `V`.
   convolution monoid of points on the scalar extension.
 * `TauCeti.Comodule.baseChange_comp_endOfPoint`: the action is functorial in the
   comodule.
-* `TauCeti.Comodule.rid_lTensor_counit_comm_lTensor_comul`: the counit recovers a linear
-  map from its transport along the comultiplication.
 * `TauCeti.Comodule.rid_lTensor_counit_endOfPoint_one_tmul` and
   `TauCeti.Comodule.endOfPoint_self_injective`: on the regular comodule the counit
   recovers a point from the endomorphism it induces, so distinct points induce distinct
   endomorphisms. (Over a bialgebra, where the action laws hold, this is faithfulness of
-  the action.)
+  the action.) The underlying map-level counit law is Mathlib's
+  `CoassocSimps.map_counit_comp_comul_left`, which already states the arbitrary-linear-map
+  form, so nothing is restated here.
 
 ## References
 
@@ -55,49 +55,6 @@ namespace TauCeti
 namespace Comodule
 
 open Coalgebra WithConv TensorProduct
-
-section Recovery
-
-variable {R H A : Type*} [CommSemiring R] [AddCommMonoid H] [Module R H] [Coalgebra R H]
-  [AddCommMonoid A] [Module R A]
-
-/-- **Recovery of a linear map from its comultiplication transport.** Pushing `comul h`
-through `f` on the right leg, swapping the factors and contracting the remaining `H`-leg
-with the counit returns `f h`.
-
-This is Mathlib's map-level counit law `CoassocSimps.map_counit_comp_comul_left` read
-through the swap: no algebra structure on either side is involved, only the coalgebra `H`,
-the module `A`, and the `R`-linearity of `f`. It is the engine behind
-`rid_lTensor_counit_endOfPoint_one_tmul`, where `f` is the linear map of a point. -/
-@[simp↓]
-theorem rid_lTensor_counit_comm_lTensor_comul (f : H →ₗ[R] A) (h : H) :
-    TensorProduct.rid R A (LinearMap.lTensor A (counit (R := R) (A := H))
-        (TensorProduct.comm R H A
-          (LinearMap.lTensor H f (Coalgebra.comul (R := R) (A := H) h)))) =
-      f h := by
-  -- The swap turns the `H`-column contraction into the left contraction Mathlib states.
-  have hswap : ∀ z : H ⊗[R] A,
-      TensorProduct.rid R A (LinearMap.lTensor A (counit (R := R) (A := H))
-          (TensorProduct.comm R H A z)) =
-        TensorProduct.lid R A (TensorProduct.map (counit (R := R) (A := H)) LinearMap.id z) := by
-    intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul x a => simp
-    | add x y hx hy => simp [hx, hy]
-  -- Fusing the two legs puts the goal in the shape Mathlib's map-level counit law states.
-  have hmap : ∀ z : H ⊗[R] H,
-      TensorProduct.map (counit (R := R) (A := H)) LinearMap.id (LinearMap.lTensor H f z) =
-        TensorProduct.map (counit (R := R) (A := H)) f z := by
-    intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul x y => simp
-    | add x y hx hy => simp [hx, hy]
-  rw [hswap, hmap, ← LinearMap.comp_apply, _root_.CoassocSimps.map_counit_comp_comul_left]
-  simp
-
-end Recovery
 
 section Coalgebra
 
@@ -194,17 +151,41 @@ theorem rid_lTensor_counit_endOfPoint_one_tmul (g : H →ₐ[R] A) (h : H) :
         (LinearMap.lTensor A (counit (R := R) (A := H)) (endOfPoint H g (1 ⊗ₜ[R] h))) =
       g h := by
   rw [endOfPoint_tmul, instSelf_coact, one_smul]
-  exact rid_lTensor_counit_comm_lTensor_comul g.toLinearMap h
+  -- The swap turns the `H`-column contraction into the left contraction Mathlib states, and
+  -- fusing the two legs puts the goal in the shape of its map-level counit law.
+  have hswap : ∀ z : H ⊗[R] A,
+      TensorProduct.rid R A (LinearMap.lTensor A (counit (R := R) (A := H))
+          (TensorProduct.comm R H A z)) =
+        TensorProduct.lid R A (TensorProduct.map (counit (R := R) (A := H)) LinearMap.id z) := by
+    intro z
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | tmul x a => simp
+    | add x y hx hy => simp [hx, hy]
+  have hmap : ∀ z : H ⊗[R] H,
+      TensorProduct.map (counit (R := R) (A := H)) LinearMap.id
+          (LinearMap.lTensor H g.toLinearMap z) =
+        TensorProduct.map (counit (R := R) (A := H)) g.toLinearMap z := by
+    intro z
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | tmul x y => simp
+    | add x y hx hy => simp [hx, hy]
+  rw [hswap, hmap, ← LinearMap.comp_apply, _root_.CoassocSimps.map_counit_comp_comul_left]
+  simp
 
-/-- **A point is determined by its action on the regular comodule.** Two `A`-points of
-`H` that act identically on the scalar extension of the regular comodule are equal, so
-the map sending a point to its action is injective.
+/-- **A point is determined by the endomorphism it induces on the regular comodule.** Two
+`A`-points of `H` inducing the same endomorphism of the scalar extension of the regular
+comodule are equal, so the map sending a point to that endomorphism is injective.
 
-Over a Hopf algebra this is the faithfulness of the points action on the category of *all*
-comodules, the first half of a Tannakian reconstruction. It is not by itself faithfulness
-against the fibre functor of the *finite* comodule category: the regular comodule need not
-be finite. Bridging the two needs in addition that, over a free coefficient coalgebra,
-every comodule is the supremum of its finite subcomodules
+Only a coalgebra and an algebra structure on `H` are assumed here, so `endOfPoint` is an
+endomorphism-valued map rather than an action: the action laws need the bialgebra
+compatibility supplied in the `Bialgebra` section below. Over a bialgebra the statement
+therefore reads as faithfulness of the points action on the category of *all* comodules,
+the first half of a Tannakian reconstruction — but not yet faithfulness against the fibre
+functor of the *finite* comodule category, since the regular comodule need not be finite.
+Bridging that needs in addition that, over a free coefficient coalgebra, every comodule is
+the supremum of its finite subcomodules
 (`TauCeti.Subcomodule.sSup_finiteSubcomodules_eq_top`, which assumes `[Module.Free R C]`);
 that is not used here. -/
 theorem endOfPoint_self_injective :
