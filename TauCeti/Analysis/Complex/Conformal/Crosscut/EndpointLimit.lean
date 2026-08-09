@@ -230,46 +230,6 @@ theorem isBounded_image_circleMap_image_Ioo_of_lintegral_ne_top (hUo : IsOpen U)
 
 /-! ## The cluster sets of an arc of finite image length -/
 
-/-- **The sine of a half-angle is smallest at an end of the range of angles.** For
-`0 < m ≤ t ≤ w < 2 * π`, `sin (t / 2)` is at least `min (sin (m / 2)) (sin (w / 2))`, a positive
-number: the half-angle stays in `[0, π]`, where the sine rises to `π / 2` and falls back, so it is
-bounded below by its value at whichever end of `[m / 2, w / 2]` the half-angle has not passed.
-
-If `w ≤ π` the first of the two is the binding one and the second is slack; both are needed exactly
-because an arc of angular width beyond `π` is allowed. -/
-private lemma min_sin_div_two_le_sin_div_two {m t w : ℝ} (hm : 0 < m) (hmt : m ≤ t) (htw : t ≤ w)
-    (hw : w < 2 * π) : min (Real.sin (m / 2)) (Real.sin (w / 2)) ≤ Real.sin (t / 2) := by
-  rcases le_total (t / 2) (π / 2) with h | h
-  · exact (min_le_left _ _).trans
-      (Real.sin_le_sin_of_le_of_le_pi_div_two (by linarith [Real.pi_pos]) h (by linarith))
-  · refine (min_le_right _ _).trans ?_
-    rw [← Real.sin_pi_sub (w / 2), ← Real.sin_pi_sub (t / 2)]
-    exact Real.sin_le_sin_of_le_of_le_pi_div_two (by linarith [Real.pi_pos]) (by linarith)
-      (by linarith)
-
-/-- **On a non-wrapping arc, closeness in the plane is closeness in angle.** A point of the arc
-`circleMap ζ ρ '' Ioo a b` lying within `2 * |ρ| * min (sin (m / 2)) (sin ((b - a) / 2))` of
-`circleMap ζ ρ θ₀` is the image of an angle within `m` of `θ₀`. -/
-private lemma exists_abs_sub_lt_of_mem_ball_circleMap_image_Ioo (ζ : ℂ) (ρ : ℝ) {a b θ₀ m : ℝ}
-    (hab2π : b - a < 2 * π) (hθ₀ : θ₀ ∈ Icc a b) (hm0 : 0 < m) {x : ℂ}
-    (hx : x ∈ circleMap ζ ρ '' Ioo a b ∩
-      ball (circleMap ζ ρ θ₀) (2 * |ρ| * min (Real.sin (m / 2)) (Real.sin ((b - a) / 2)))) :
-    ∃ θ ∈ Ioo a b, circleMap ζ ρ θ = x ∧ |θ - θ₀| < m := by
-  obtain ⟨⟨θ, hθ, rfl⟩, hx⟩ := hx
-  refine ⟨θ, hθ, rfl, ?_⟩
-  have hwidth : |θ - θ₀| ≤ b - a := by
-    rw [abs_le]
-    constructor <;> [linarith [hθ.1, hθ₀.2]; linarith [hθ.2, hθ₀.1]]
-  have hπ : |θ - θ₀| ≤ 2 * π := by linarith
-  rw [mem_ball, dist_circleMap_eq_two_mul_sin_abs ζ ρ hπ] at hx
-  rcases lt_or_ge |θ - θ₀| m with hlt | hcon
-  · exact hlt
-  · exfalso
-    -- the chord grows with the angular gap up to the width of the arc
-    have hmono : min (Real.sin (m / 2)) (Real.sin ((b - a) / 2)) ≤ Real.sin (|θ - θ₀| / 2) :=
-      min_sin_div_two_le_sin_div_two hm0 hcon hwidth hab2π
-    nlinarith [abs_nonneg ρ]
-
 /-- **An arc of finite image length has at most one cluster value at each of its points.** For `f`
 holomorphic on an open set containing the open arc `circleMap ζ ρ '' Ioo a b`, of angular width
 below a full turn and of finite image length, and for any angle `θ₀` of the *closed* arc, `f` has at
