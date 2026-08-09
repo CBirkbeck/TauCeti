@@ -151,27 +151,11 @@ theorem rid_lTensor_counit_endOfPoint_one_tmul (g : H →ₐ[R] A) (h : H) :
         (LinearMap.lTensor A (counit (R := R) (A := H)) (endOfPoint H g (1 ⊗ₜ[R] h))) =
       g h := by
   rw [endOfPoint_tmul, instSelf_coact, one_smul]
-  -- The swap turns the `H`-column contraction into the left contraction Mathlib states, and
-  -- fusing the two legs puts the goal in the shape of its map-level counit law.
-  have hswap : ∀ z : H ⊗[R] A,
-      TensorProduct.rid R A (LinearMap.lTensor A (counit (R := R) (A := H))
-          (TensorProduct.comm R H A z)) =
-        TensorProduct.lid R A (TensorProduct.map (counit (R := R) (A := H)) LinearMap.id z) := by
-    intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul x a => simp
-    | add x y hx hy => simp [hx, hy]
-  have hmap : ∀ z : H ⊗[R] H,
-      TensorProduct.map (counit (R := R) (A := H)) LinearMap.id
-          (LinearMap.lTensor H g.toLinearMap z) =
-        TensorProduct.map (counit (R := R) (A := H)) g.toLinearMap z := by
-    intro z
-    induction z using TensorProduct.induction_on with
-    | zero => simp
-    | tmul x y => simp
-    | add x y hx hy => simp [hx, hy]
-  rw [hswap, hmap, ← LinearMap.comp_apply, _root_.CoassocSimps.map_counit_comp_comul_left]
+  -- Push the counit through the swap and fuse the two legs, so that the goal is exactly
+  -- Mathlib's map-level counit law; all three steps are Mathlib's tensor plumbing.
+  rw [LinearMap.lTensor_comm, TensorProduct.rid_comm, LinearMap.rTensor,
+    LinearMap.map_lTensor, ← LinearMap.comp_apply,
+    _root_.CoassocSimps.map_counit_comp_comul_left]
   simp
 
 /-- **A point is determined by the endomorphism it induces on the regular comodule.** Two
