@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.Localization.Away.Basic
+public import TauCeti.RingTheory.Localization.Away
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 public import Mathlib.RingTheory.Adjoin.Polynomial.Basic
 public import TauCeti.RingTheory.Huber.Basic
@@ -17,7 +17,6 @@ and Definition 5.51, §5.6, of Wedhorn's *Adic Spaces*.
 
 ## Main definitions
 
-* `divByS t s` : The element `t/s` in `Localization.Away s`.
 * `locSubring P T s` : The ring of definition `D = A₀[t₁/s, …, tₙ/s]`.
 * `locIdeal P T s` : The ideal of definition `J = I · D` in `D`.
 * `locNhd P T s n` : The `n`-th neighborhood `image(Jⁿ)` in `Aₛ`.
@@ -63,41 +62,13 @@ open Pointwise Topology
 
 namespace TauCeti.Huber
 
+open TauCeti.Localization
+
 public section
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A]
 
 /-! ### The ring of definition `D` -/
-
-/-- The element `t/s` in `Localization.Away s`. -/
-noncomputable def divByS (t s : A) : Localization.Away s :=
-  IsLocalization.mk' (Localization.Away s) t
-    (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s)
-
-omit [TopologicalSpace A] in
-/-- `t/s` is the fraction `mk' t s`. The body of `divByS` is not exported, so this is how a
-consumer reaches Mathlib's `IsLocalization` API for it. -/
-theorem divByS_def (t s : A) :
-    divByS t s = IsLocalization.mk' (Localization.Away s) t
-      (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s) := (rfl)
-
-omit [TopologicalSpace A] in
-/-- Scaling `1/s` by `t` gives `t/s`. -/
-@[simp]
-theorem divByS_one_mul_algebraMap (t s : A) :
-    divByS 1 s * algebraMap A (Localization.Away s) t = divByS t s := by
-  rw [divByS_def, divByS_def, ← IsLocalization.mk'_one (M := Submonoid.powers s)
-    (S := Localization.Away s) t, ← IsLocalization.mk'_mul, one_mul, mul_one]
-
-omit [TopologicalSpace A] in
-/-- **Clearing the denominator**: `s · (t/s) = t` in `Localization.Away s`. -/
-@[simp]
-theorem algebraMap_mul_divByS (t s : A) :
-    algebraMap A (Localization.Away s) s * divByS t s =
-      algebraMap A (Localization.Away s) t := by
-  rw [divByS_def]
-  exact IsLocalization.mk'_spec' (Localization.Away s) t
-    (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s)
 
 /-- The ring of definition `D = A₀[t₁/s, …, tₙ/s]` of `Localization.Away s`. -/
 noncomputable def locSubring (P : PairOfDefinition A) (T : Finset A)
@@ -304,7 +275,7 @@ theorem locNhd_leftMul [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finse
       have hk : s ^ k ∈ Submonoid.powers s := ⟨k, rfl⟩
       have hdecomp : Localization.mk a ⟨s ^ (k + 1), hk₁⟩ =
           Localization.mk a ⟨s ^ k, hk⟩ * divByS 1 s := by
-        rw [divByS, ← Localization.mk_eq_mk', Localization.mk_mul, mul_one]
+        rw [divByS_def, ← Localization.mk_eq_mk', Localization.mk_mul, mul_one]
         congr 1
         exact Subtype.ext (pow_succ s k)
       obtain ⟨j₁, hj₁⟩ := ih a
@@ -378,17 +349,27 @@ theorem isBounded_locSubring [IsTopologicalRing A] (P : PairOfDefinition A) (T :
     (locNhd_mul_locSubring_subset P T s n).trans hn⟩
 
 /-- The distinguished fractions `t/s` are power-bounded: they lie in `D`, which is bounded. -/
+theorem isPowerBounded_of_mem_locSubring [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A)
+    (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s)
+    {x : Localization.Away s} (hx : x ∈ locSubring P T s) :
+    letI := locTopology P T s hopen
+    IsPowerBounded x := by
+  let _ := locTopology P T s hopen
+  rw [isPowerBounded_iff]
+  refine (isBounded_locSubring P T s hopen).subset ?_
+  rintro _ ⟨m, rfl⟩
+  exact pow_mem hx m
+
+/-- The distinguished fractions `t/s` are power-bounded: they lie in `D`, and every element of
+`D` is. -/
 theorem isPowerBounded_divByS [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A)
     (s : A)
     (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s)
     {t : A} (ht : t ∈ T) :
     letI := locTopology P T s hopen
-    IsPowerBounded (divByS t s) := by
-  let _ := locTopology P T s hopen
-  rw [isPowerBounded_iff]
-  refine (isBounded_locSubring P T s hopen).subset ?_
-  rintro _ ⟨m, rfl⟩
-  exact pow_mem (divByS_mem_locSubring P T s ht) m
+    IsPowerBounded (divByS t s) :=
+  isPowerBounded_of_mem_locSubring P T s hopen (divByS_mem_locSubring P T s ht)
 
 /-- The structure map `A → Aₛ` is continuous for the localisation topology: the image of `Iⁿ`
 already lands in the `n`-th basic neighbourhood. -/
