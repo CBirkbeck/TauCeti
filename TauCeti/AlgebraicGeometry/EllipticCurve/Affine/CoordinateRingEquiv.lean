@@ -10,21 +10,18 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 # A ring equivalence of the base induces one of the coordinate rings
 
 Mathlib's `WeierstrassCurve.Affine.CoordinateRing.map` sends a ring homomorphism `f : R →+* S` to
-`R[W] →+* S[W.map f]`, and proves it injective when `f` is (`CoordinateRing.map_injective`). When
-`f` is an equivalence the induced map is an equivalence, and Mathlib already has the construction
-generically: `R[W]` is by definition `AdjoinRoot W.polynomial`, so `AdjoinRoot.mapRingEquiv`
-applies. What is missing is the bridge — that the generic equivalence *is* `CoordinateRing.map` —
-without which the equivalence is cut off from the `map_mk`, `map_smul` and `map_injective` API
-stated about `CoordinateRing.map`.
+`R[W] →+* S[W.map f]`, and proves it injective when `f` is (`CoordinateRing.map_injective`). This
+file adds the two companions Mathlib does not state — surjectivity and bijectivity, at the same
+generality — and packages the bijective case as a ring equivalence.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.CoordinateRing.mapEquiv`: the induced ring equivalence
-  `R[W] ≃+* S[W.map e]`, as `AdjoinRoot.mapRingEquiv` along `map_polynomial`.
-* `WeierstrassCurve.Affine.CoordinateRing.mapEquiv_apply`: it agrees with `CoordinateRing.map`.
 * `WeierstrassCurve.Affine.CoordinateRing.map_surjective` and
-  `WeierstrassCurve.Affine.CoordinateRing.map_bijective`: the companions of Mathlib's
-  `CoordinateRing.map_injective`, stated like it for an arbitrary `f : R →+* S`.
+  `WeierstrassCurve.Affine.CoordinateRing.map_bijective`: stated, like Mathlib's
+  `CoordinateRing.map_injective`, for an arbitrary `f : R →+* S`.
+* `WeierstrassCurve.Affine.CoordinateRing.mapEquiv`: the induced `R[W] ≃+* S[W.map e]`, with
+  `mapEquiv_apply` identifying it with `CoordinateRing.map` so that the `map_mk`, `map_smul` and
+  `map_injective` API applies to it unchanged.
 
 Stated over arbitrary commutative rings; the curve need not be elliptic.
 
@@ -43,10 +40,10 @@ The need for this step, and the surjectivity argument (lift `e.symm` through `Ad
 `Polynomial.map`), are from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`,
 Apache-2.0, pinned by that roadmap at `dev/hasse-weil @ 513e83879e2f`),
 `HasseWeil/WeilPairing/FrobeniusFunctionFieldEquiv.lean`, declaration `coordRingMap_bijective`.
-There the equivalence is rebuilt by hand — injectivity from `map_injective`, surjectivity by
-lifting `e.symm` through `AdjoinRoot.mk` — inside a 267-line file that also constructs the
-function-field Frobenius. Here neither half is reproved: the equivalence is Mathlib's
-`AdjoinRoot.mapRingEquiv`, and the only new content is that it agrees with `CoordinateRing.map`.
+There it is bundled as bijectivity of one map, for a ring equivalence only, inside a 267-line file
+that also constructs the function-field Frobenius. Here it is split out and generalised: the
+surjectivity is stated for any surjective `f : R →+* S`, matching the generality of Mathlib's
+`CoordinateRing.map_injective`, and the equivalence is the packaging of the bijective case.
 -/
 
 public section
@@ -58,26 +55,6 @@ open scoped Polynomial.Bivariate
 namespace WeierstrassCurve.Affine.CoordinateRing
 
 variable {R S : Type*} [CommRing R] [CommRing S] (W : WeierstrassCurve.Affine R)
-
-/-- **A ring equivalence of the base induces one of the coordinate rings.** This is Mathlib's
-generic `AdjoinRoot.mapRingEquiv`, specialised along `map_polynomial`: `R[W]` is by definition
-`AdjoinRoot W.polynomial`, and `(W.map e).polynomial` is `W.polynomial.map (mapRingHom e)`. -/
-noncomputable def mapEquiv (e : R ≃+* S) :
-    W.CoordinateRing ≃+* (W.map (e : R →+* S)).CoordinateRing :=
-  AdjoinRoot.mapRingEquiv (Polynomial.mapEquiv e) W.polynomial (W.map (e : R →+* S)).polynomial
-    (by rw [WeierstrassCurve.Affine.map_polynomial]; rfl)
-
-/-- **The induced equivalence is Mathlib's `CoordinateRing.map`.** Without this the equivalence
-would be cut off from the `map_mk`, `map_smul` and `map_injective` API stated about
-`CoordinateRing.map`. -/
-@[simp]
-lemma mapEquiv_apply (e : R ≃+* S) (x : W.CoordinateRing) :
-    mapEquiv W e x = map W (e : R →+* S) x := by
-  induction x using AdjoinRoot.induction_on with
-  | _ p =>
-    simp only [mapEquiv, AdjoinRoot.mapRingEquiv, RingEquiv.ofRingHom_apply, AdjoinRoot.map, map,
-      AdjoinRoot.lift_mk]
-    rfl
 
 /-- **`CoordinateRing.map` is surjective when the base map is**, the companion of Mathlib's
 `CoordinateRing.map_injective`. A class upstairs is `mk` of a polynomial, and a polynomial over
@@ -92,6 +69,19 @@ lemma map_surjective {f : R →+* S} (hf : Function.Surjective f) :
 lemma map_bijective {f : R →+* S} (hf : Function.Bijective f) :
     Function.Bijective (map W f) :=
   ⟨map_injective hf.1, map_surjective W hf.2⟩
+
+/-- **A ring equivalence of the base induces one of the coordinate rings**, packaging
+`map_bijective`. -/
+noncomputable def mapEquiv (e : R ≃+* S) :
+    W.CoordinateRing ≃+* (W.map (e : R →+* S)).CoordinateRing :=
+  RingEquiv.ofBijective (map W (e : R →+* S)) (map_bijective W e.bijective)
+
+/-- The induced equivalence is `CoordinateRing.map`, so all of `map_mk`, `map_smul` and
+`map_injective` apply to it. -/
+@[simp]
+lemma mapEquiv_apply (e : R ≃+* S) (x : W.CoordinateRing) :
+    mapEquiv W e x = map W (e : R →+* S) x :=
+  RingEquiv.ofBijective_apply _ _ _
 
 end WeierstrassCurve.Affine.CoordinateRing
 
