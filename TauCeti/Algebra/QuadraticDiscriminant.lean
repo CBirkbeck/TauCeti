@@ -86,13 +86,15 @@ quadratic form over `ℤ` with positive leading coefficient `a` is non-negative 
 fixed `y` and every `x` in the progression `x₀ + m * ℤ`, and `a * m < |y|`, then
 `discrim a b c ≤ 0`.
 
-Only one `x` is used: the member of the progression nearest the minimum of the restricted form,
-which satisfies `|2 a x + b y| ≤ a * m`. Thinning the line to a progression of gap `m` therefore
-costs exactly a factor `m` in the height hypothesis, and `m = 1` is the full line. -/
+The height hypothesis carries a factor `m` that the single-line version does not; `m = 1` is the
+full line. -/
 private theorem discrim_le_zero_of_pos_of_nonneg_on_progression {a b c m x₀ y : ℤ} (ha : 0 < a)
     (hm : 0 < m) (hy : a * m < |y|)
     (h : ∀ k : ℤ, 0 ≤ a * (x₀ + m * k) ^ 2 + b * (x₀ + m * k) * y + c * y ^ 2) :
     discrim a b c ≤ 0 := by
+  -- Only one `x` is used: the member of the progression nearest the minimum of the restricted
+  -- form, which satisfies `|2 a x + b y| ≤ a * m`. That is why thinning the line to gap `m` costs
+  -- exactly a factor `m` in the height.
   by_contra! hcon
   rw [discrim] at hcon
   have ham : (0 : ℚ) < 2 * (a : ℚ) * (m : ℚ) := by
@@ -169,14 +171,14 @@ private theorem eq_zero_of_forall_nonneg_on_progression_of_ne {b c m x₀ y : �
   nlinarith [mul_nonneg (by linarith : (0 : ℤ) ≤ |C| + 1)
     (by linarith : (0 : ℤ) ≤ (b * y * m) ^ 2 - 1)]
 
-/-- **A progression of large enough height pins the discriminant, whatever the sign of `a`.**
-This is the sign dispatch shared by the two public theorems: a negative leading coefficient makes
-the hypothesis unsatisfiable, a zero one collapses the form to a linear function forcing `b = 0`,
-and a positive one is the case that does the work. -/
+/-- **A progression of large enough height pins the discriminant, whatever the sign of `a`.** No
+sign hypothesis on `a` is needed; this is the form both public theorems specialise. -/
 private theorem discrim_le_zero_of_nonneg_on_progression {a b c m x₀ y : ℤ} (hm : 0 < m)
     (hy : a * m < |y|)
     (h : ∀ k : ℤ, 0 ≤ a * (x₀ + m * k) ^ 2 + b * (x₀ + m * k) * y + c * y ^ 2) :
     discrim a b c ≤ 0 := by
+  -- A negative leading coefficient makes the hypothesis unsatisfiable; a zero one collapses the
+  -- form to a linear function, forcing `b = 0`; a positive one is the case that does the work.
   rcases lt_trichotomy a 0 with ha | ha | ha
   · exact absurd h (not_forall_nonneg_on_progression_of_neg ha hm)
   · subst ha
@@ -243,13 +245,13 @@ applies this theorem through `fun x y _ hy => h x y hy`. The implication does no
 way, and it is this form that an elliptic curve supplies, the pencil `r π − s` being known to be
 an isogeny only away from both coordinates.
 
-Both coordinates are taken in the progression `1 + max |d| 2 * ℤ`, every member of which avoids
-the multiples of `d`; the widened gap costs a factor `max |d| 2` in the height, which the choice
-of `y` absorbs. `d = 0` is allowed, the hypothesis then being non-negativity at every
-`(x, y)` with `x ≠ 0` and `y ≠ 0`. -/
+`d = 0` is allowed, the hypothesis then being non-negativity at every `(x, y)` with `x ≠ 0` and
+`y ≠ 0`. -/
 theorem Int.discrim_le_zero_of_nonneg_of_not_dvd_of_not_dvd {a b c d : ℤ} (hd : ¬ IsUnit d)
     (h : ∀ x y : ℤ, ¬ d ∣ x → ¬ d ∣ y → 0 ≤ a * x ^ 2 + b * x * y + c * y ^ 2) :
     discrim a b c ≤ 0 := by
+  -- Both coordinates run over `1 + max |d| 2 * ℤ`, every member of which avoids the multiples of
+  -- `d`; the widened gap costs a factor `max |d| 2` in the height, which the choice of `y` absorbs.
   set m : ℤ := max |d| 2 with hmdef
   have hm2 : 2 ≤ m := le_max_right _ _
   have hm0 : 0 < m := by omega
