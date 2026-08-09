@@ -5,9 +5,9 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.Analysis.Contour.Chord.TangentBound
 public import TauCeti.Analysis.Contour.PwC1ImmersionOn
 public import TauCeti.Analysis.Contour.RegularityConditions
+import TauCeti.Analysis.Contour.Chord.TangentBound
 
 /-!
 # Immersions are flat of order one
