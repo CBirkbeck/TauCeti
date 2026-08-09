@@ -19,8 +19,8 @@ closed-upper-half-plane confinement — the shifted contour touches the branch c
 `t = 3`, where its value is `-1`, but never crosses it, and at the degenerate height
 `H = √3/2` the whole left vertical degenerates to that point — and the exact endpoint
 logarithms beside the corner. The corner joins the vertical to the arc at the interior
-angle `2π/3`, and the one-sided argument limits `π/2` and `5π/6` differ by exactly the
-defect `π/3` — the source of the winding value `-1/6` at `ρ + 1`.
+angle `π/3`, which is exactly the gap between the one-sided argument limits `π/2` and
+`5π/6` — the source of the winding value `-1/6` at `ρ + 1`.
 
 ## Main declarations
 
