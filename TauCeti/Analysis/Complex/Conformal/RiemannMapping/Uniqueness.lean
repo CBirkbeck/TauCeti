@@ -48,11 +48,9 @@ private theorem differentiableOn_mapsTo_leftInvOn_comp_invFunOn {U V : Set ℂ} 
       LeftInvOn (f ∘ Function.invFunOn g U) (g ∘ Function.invFunOn f U) V := by
   have hfinv : DifferentiableOn ℂ (Function.invFunOn f U) V :=
     (DifferentiableOn.invFunOn hf hU hfi).mono hf_surj
-  refine ⟨hg.comp hfinv hf_surj.mapsTo_invFunOn, hg_maps.comp hf_surj.mapsTo_invFunOn,
-    fun z hz => ?_⟩
-  simp only [Function.comp_apply]
-  rw [hgi.leftInvOn_invFunOn (hf_surj.mapsTo_invFunOn hz)]
-  exact hf_surj.rightInvOn_invFunOn hz
+  exact ⟨hg.comp hfinv hf_surj.mapsTo_invFunOn, hg_maps.comp hf_surj.mapsTo_invFunOn,
+    Set.LeftInvOn.comp hf_surj.rightInvOn_invFunOn hgi.leftInvOn_invFunOn
+      hf_surj.mapsTo_invFunOn⟩
 
 /--
 **Uniqueness in the Riemann mapping theorem, up to a disc automorphism.** If `f` and `g` are
