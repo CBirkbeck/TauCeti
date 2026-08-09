@@ -43,7 +43,7 @@ the two uses Wedhorn makes of it, and both appear here.
   `TauCeti.Valuation.le_closure_singleton_of_idealCofinalFor` : the two halves of **Lemma 7.2**.
 * `TauCeti.Valuation.idealCofinalFor_radical_iff` : cofinality depends only on the radical.
 * `TauCeti.Valuation.isGreatestIdealCofinal_closure_singleton_of_span` : **Lemma 7.2** from a
-  finite generating set, with `exists_isGreatestIdealCofinal_of_not_meets` its existence form,
+  generating set, with `exists_isGreatestIdealCofinal_of_not_meets` its existence form,
   which is what Definition 7.3 presupposes.
 * `TauCeti.Valuation.characteristicSubgroup_le_characteristicSubgroupOfIdeal` : `cΓ_v(I)` always
   contains `cΓ_v`.
@@ -53,6 +53,16 @@ the two uses Wedhorn makes of it, and both appear here.
 * `TauCeti.Valuation.characteristicSubgroupOfIdeal_eq_top_congr_of_isEquiv` : that criterion is
   an invariant of the valuation class, which is what lets `Spv (A, I)` be carved out of the
   valuation spectrum.
+
+## Implementation notes
+
+The §7.1 development here — Lemma 7.2's two halves, the case split of Definition 7.3, and
+Lemma 7.4 — follows Wedhorn directly; no prior formalisation of it was available to draw on.
+The one piece with a formalised antecedent is the convex-subgroup notion it rests on, which
+came from the AINTLIB adic-spaces development (`aintlib-adic-spaces`, revision `37bbdaeb9`,
+`projects/AdicSpaces/Adic spaces/ValuationContinuity.lean`, `ConvexSubgroup` and
+`ConvexSubgroup.minContain`) and reached this file through
+`TauCeti.Algebra.Order.Group.ConvexSubgroup`.
 
 ## References
 
@@ -65,7 +75,7 @@ namespace TauCeti.Valuation
 
 open MonoidWithZeroHom
 
-variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+variable {A : Type*} [Ring A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
 /-- The predicate cut out by Wedhorn Lemma 7.2: every element of `I` has value cofinal
 for `H`. -/
@@ -83,6 +93,7 @@ theorem idealCofinalFor_def {v : Valuation A Γ₀}
   Iff.rfl
 
 /-- The trivial ideal is cofinal for every convex subgroup. -/
+@[simp]
 theorem idealCofinalFor_bot (v : Valuation A Γ₀)
     (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : IdealCofinalFor v H ⊥ := by
   intro a ha
@@ -135,8 +146,8 @@ theorem lt_one_of_not_idealMeetsCharacteristic {v : Valuation A Γ₀} {I : Idea
 /-- Cofinality for a larger convex subgroup implies cofinality for a smaller one: the
 monotonicity that makes the family in Wedhorn Lemma 7.2 downward closed. -/
 theorem CofinalValueFor.mono {v : Valuation A Γ₀}
-    {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A}
-    (h : CofinalValueFor v K.toSubgroup a) (hHK : H ≤ K) : CofinalValueFor v H.toSubgroup a :=
+    {H K : Subgroup (valueGroup (.ofClass v))} {a : A}
+    (h : CofinalValueFor v K a) (hHK : H ≤ K) : CofinalValueFor v H a :=
   cofinalValueFor_def.mpr fun g hg ↦ cofinalValueFor_def.mp h g (hHK hg)
 
 /-- The ideal condition inherits that monotonicity. -/
@@ -151,10 +162,28 @@ def IsGreatestIdealCofinal (v : Valuation A Γ₀) (I : Ideal A)
     (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : Prop :=
   IdealCofinalFor v H I ∧ ∀ K, IdealCofinalFor v K I → K ≤ H
 
+/-- The defining conjunction, as a restatement. Deliberately not `@[simp]`: the right-hand
+side is the unfolded conjunction, so tagging it would expand goals rather than simplify them. -/
+theorem isGreatestIdealCofinal_iff {v : Valuation A Γ₀} {I : Ideal A}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} :
+    IsGreatestIdealCofinal v I H ↔
+      IdealCofinalFor v H I ∧ ∀ K, IdealCofinalFor v K I → K ≤ H :=
+  Iff.rfl
+
+/-- The greatest subgroup is itself one for which `I` is cofinal. -/
+theorem IsGreatestIdealCofinal.idealCofinalFor {v : Valuation A Γ₀} {I : Ideal A}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (h : IsGreatestIdealCofinal v I H) : IdealCofinalFor v H I := h.1
+
+/-- The greatest subgroup dominates every other one for which `I` is cofinal. -/
+theorem IsGreatestIdealCofinal.le {v : Valuation A Γ₀} {I : Ideal A}
+    {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (h : IsGreatestIdealCofinal v I H) (hK : IdealCofinalFor v K I) : K ≤ H := h.2 K hK
+
 theorem IsGreatestIdealCofinal.unique {v : Valuation A Γ₀} {I : Ideal A}
     {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hH : IsGreatestIdealCofinal v I H) (hK : IsGreatestIdealCofinal v I K) : H = K :=
-  le_antisymm (hK.2 H hH.1) (hH.2 K hK.1)
+  (show IsGreatest {L | IdealCofinalFor v L I} H from hH).unique hK
 
 /-- For the zero ideal the greatest element is the whole value group (Wedhorn's first
 reduction: "if `v(I) = {0}` we may choose `H = Γ_v`"). -/
@@ -164,8 +193,10 @@ theorem isGreatestIdealCofinal_bot (v : Valuation A Γ₀) :
 
 /-! ### Reduction to the value set -/
 
-/-- The nonzero values attained by `v` on an ideal, as a subset of the value group. This is
-the set Wedhorn takes the maximum over in the proof of Lemma 7.2. -/
+/-- The nonzero values attained by `v` on an ideal, as a subset of the value group. It carries
+the attainment hypothesis of Lemma 7.2 and the maximality half; note that no maximum is taken
+over it — Wedhorn maximises over a finite generating set, which is why the standing
+finite-generation hypothesis is needed at all. -/
 def valueSet (v : Valuation A Γ₀) (I : Ideal A) : Set (valueGroup (.ofClass v)) :=
   {γ | ∃ a ∈ I, v.restrict a = (γ : ValueGroup₀ (.ofClass v))}
 
@@ -241,6 +272,15 @@ theorem cofinalValueFor_closure_singleton_of_le {v : Valuation A Γ₀} {a : A}
 
 /-! ### Reduction along the radical -/
 
+/-! ### Reduction along the radical
+
+From here commutativity is needed: the radical of an ideal is Mathlib's `Ideal.radical`, which
+is defined over a commutative semiring. Everything above needs only a ring. -/
+
+section CommRing
+
+variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+
 /-- **Cofinality of an ideal depends only on its radical.** Immediate from Lemma 7.1: the
 cofinal elements form a *radical* ideal, so containment in it is insensitive to passing to the
 radical. This is the step that lets Wedhorn replace `I` by a finitely generated ideal with the
@@ -263,7 +303,7 @@ theorem idealCofinalFor_congr_of_radical_eq {v : Valuation A Γ₀}
 
 /-- **Wedhorn Lemma 7.2**, in the form the standing hypothesis of §7.1 supplies it.
 
-Given a finite generating set `T` of an ideal `J` with the same radical as `I`, and a value
+Given a generating set `T` of an ideal `J` with the same radical as `I`, and a value
 `h < 1` dominating the values on `T` and attained (up to a power) on `I`, the convex subgroup
 generated by `h` is the greatest one for which `I` is cofinal.
 
@@ -505,7 +545,7 @@ theorem characteristicSubgroupOfIdeal_eq_top_iff {v : Valuation A Γ₀} {I : Id
         · exact cofinalValueFor_of_eq_zero h0
         · exact absurd ⟨a, ha, h0, hfull ▸ TauCeti.ConvexSubgroup.mem_top⟩ hm
 
-/-- **Wedhorn Lemma 7.4, (ii) ⟺ (iii).** The criterion may be checked on any generating set of
+/-- **Wedhorn Lemma 7.4, (i) ⟺ (iii)**, proved through (ii).
 any ideal with the same radical — which is the form the `Spv (A, I)` development uses, since it
 turns a condition on all of `I` into finitely many checks.
 
@@ -525,12 +565,9 @@ theorem characteristicSubgroupOfIdeal_eq_top_iff_forall_span {v : Valuation A Γ
   · -- values on `I` cofinal ⇒ values on `T` cofinal, since `T ⊆ J ⊆ √I`
     intro hall t ht
     have htJ : t ∈ J := hspan ▸ Ideal.subset_span ht
-    obtain ⟨n, hn⟩ := Ideal.mem_radical_iff.mp (hrad.symm ▸ Ideal.le_radical htJ)
-    rcases Nat.eq_zero_or_pos n with rfl | hp
-    · rw [pow_zero] at hn
-      exact hall t (by simp [(Ideal.eq_top_iff_one I).mpr hn])
-    · refine cofinalValueFor_top_iff.mp ((cofinalValueFor_pow_iff hp).mp ?_)
-      exact cofinalValueFor_top_iff.mpr (hall _ hn)
+    obtain ⟨n, hn0, hn⟩ := exists_pow_ne_zero_mem_of_radical_eq hrad.symm htJ
+    refine cofinalValueFor_top_iff.mp ((cofinalValueFor_pow_iff (Nat.pos_of_ne_zero hn0)).mp ?_)
+    exact cofinalValueFor_top_iff.mpr (hall _ hn)
   · -- generators cofinal ⇒ all of `I` cofinal, through Lemma 7.1 and the radical
     intro hT a ha
     refine cofinalValueFor_top_iff.mp ?_
@@ -553,5 +590,7 @@ theorem characteristicSubgroupOfIdeal_eq_top_congr_of_isEquiv {Γ₀' : Type*}
   rw [← hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top,
     ← hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top]
   exact h.hasFullCharacteristicGroup_iff
+
+end CommRing
 
 end TauCeti.Valuation
