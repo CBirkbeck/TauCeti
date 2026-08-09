@@ -154,8 +154,13 @@ omit [Fact p.Prime] in
     using compat_of_adjacentCompat p x.property k₁ k₂ hk
 
 omit [Fact p.Prime] in
-/-- The element-level form of `compatProj_compat`. -/
-@[simp] theorem compatProj_compat_apply (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) (x : compatSubring p) :
+/-- The element-level form of `compatProj_compat`.
+
+Not a `simp` lemma: `compatProj_apply` is itself `simp` and rewrites the left-hand side's
+`compatProj p k₂ x` to `x.val k₂` first, so this side is never in simp-normal form and the
+`simpNF` linter rejects the attribute. Callers wanting the component form should use
+`x.property` through `compat_of_adjacentCompat`. -/
+theorem compatProj_compat_apply (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) (x : compatSubring p) :
     ZMod.castHom (pow_dvd_pow p hk) (ZMod (p ^ k₁)) (compatProj p k₂ x) = compatProj p k₁ x :=
   RingHom.congr_fun (compatProj_compat p k₁ k₂ hk) x
 
