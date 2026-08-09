@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import TauCeti.Probability.Exchangeability.ConditionallyIID.Basic
+public import TauCeti.Probability.Process.BlockAverage
 -- Non-public: the `measurable_probabilityMeasure_toMeasure_apply` lemmas evaluate a random measure
 -- at a fixed measurable set, in the `ℝ≥0∞` and `.toReal` forms.
 import TauCeti.MeasureTheory.Measure.ProbabilityMeasureExt
@@ -192,19 +193,6 @@ private theorem integral_sub_mul_sub {u v q : Ω → ℝ}
   have hiA : Integrable (fun ω => u ω * v ω - q ω * u ω - q ω * v ω) μ := hiB.sub hi3
   rw [integral_congr_ae (ae_of_all _ hexp), integral_add hiA hi4,
     integral_sub hiB hi3, integral_sub hi1 hi2]
-
-/-- **The squared deviation of an average, as a double sum.** For `n ≠ 0`, the square of
-`n⁻¹ * ∑ i ∈ range n, a i - b` is `n⁻¹ ^ 2` times the double sum of `(a i - b) * (a j - b)`
-over `range n × range n`. -/
-private theorem sq_average_sub_eq_sum_sum {n : ℕ} (hn : n ≠ 0) (a : ℕ → ℝ) (b : ℝ) :
-    ((n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, a i) - b) ^ 2
-      = (n : ℝ)⁻¹ ^ 2 * ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, (a i - b) * (a j - b) := by
-  have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn
-  have h1 : (n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, a i) - b
-      = (n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, (a i - b) := by
-    rw [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-    field_simp
-  rw [h1, mul_pow, sq (∑ i ∈ Finset.range n, (a i - b)), Finset.sum_mul_sum]
 
 /-- The abstract second-moment computation behind the `L²` rate: if the centred variables
 `eᵢ - q` are uncorrelated with common variance `c`, then their average over `Fin n` has mean
