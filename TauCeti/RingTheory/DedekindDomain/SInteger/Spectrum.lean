@@ -4,14 +4,15 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.RingTheory.DedekindDomain.SInteger
+public import TauCeti.RingTheory.DedekindDomain.SInteger.Basic
 
 /-!
 # The height one spectrum of a ring of `S`-integers
 
 Let `R` be a Dedekind domain with fraction field `K` and `S` a set of height-one primes of `R`.
-`TauCeti/RingTheory/DedekindDomain/SInteger.lean` shows that the ring of `S`-integers is again a
-Dedekind domain, so it has a height one spectrum of its own. This file identifies that spectrum:
+`TauCeti/RingTheory/DedekindDomain/SInteger/Basic.lean` shows that the ring of `S`-integers is
+again a Dedekind domain, so it has a height one spectrum of its own. This file identifies that
+spectrum:
 the primes of `𝒪_S` are exactly the primes of `R` **not** in `S`, via `v ↦ v · 𝒪_S`
 (`integerHeightOneSpectrumEquiv`), and the correspondence carries the valuations across unchanged
 (`valuation_integerHeightOneSpectrumEquiv`).
