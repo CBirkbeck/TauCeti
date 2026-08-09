@@ -71,10 +71,8 @@ structure IsRingOfIntegralElements [NonarchimedeanRing A] (Aplus : Subring A) : 
 omit [IsTopologicalRing A] in
 /-- Wedhorn: an open integrally closed subring contains every topologically nilpotent element.
 
-The powers of a topologically nilpotent `a` eventually land in the subring, which is a
-neighbourhood of zero; from `aⁿ` in it with `n` positive, `a` is integral over it and integral
-closedness finishes. Neither power-boundedness nor a nonarchimedean topology plays any part, so
-this is stated for an arbitrary open integrally closed subring. -/
+Neither power-boundedness nor a nonarchimedean topology plays any part, so this is stated for an
+arbitrary open subring integrally closed in `A`, not just for a ring of integral elements. -/
 theorem mem_of_isTopologicallyNilpotent_of_isIntegrallyClosedIn {Aplus : Subring A}
     (hopen : IsOpen (Aplus : Set A)) [IsIntegrallyClosedIn Aplus A] {a : A}
     (ha : IsTopologicallyNilpotent a) : a ∈ Aplus := by
@@ -82,10 +80,7 @@ theorem mem_of_isTopologicallyNilpotent_of_isIntegrallyClosedIn {Aplus : Subring
     ((ha.eventually_mem (hopen.mem_nhds Aplus.zero_mem)).and (eventually_gt_atTop 0)).exists
   have hpow : IsIntegral Aplus (a ^ n) :=
     isIntegral_algebraMap (R := Aplus) (x := (⟨a ^ n, hmem⟩ : Aplus))
-  obtain ⟨y, hy⟩ :=
-    (IsIntegralClosure.isIntegral_iff (R := Aplus) (A := Aplus) (B := A)).mp
-      (IsIntegral.of_pow hn hpow)
-  exact hy ▸ y.2
+  exact Subring.isIntegrallyClosedIn_iff.mp ‹_› (hpow.of_pow hn)
 
 omit [IsTopologicalRing A] in
 /-- `A°° ⊆ A⁺` for every ring of integral elements. -/
@@ -106,6 +101,12 @@ structure Pair [IsHuberRing A] where
 
 namespace Pair
 
+/-- Two Huber pairs on the same Huber ring agree as soon as their rings of integral elements
+do: `A⁺` is the only data a Huber pair carries. -/
+@[ext]
+theorem ext [IsHuberRing A] {S T : Pair A} (h : S.plus = T.plus) : S = T := by
+  cases S; cases T; congr
+
 variable {B : Type*} [CommRing B] [TopologicalSpace B] [IsTopologicalRing B]
 
 /-- A morphism of Huber pairs is a continuous ring homomorphism carrying `A⁺` into `B⁺`. -/
@@ -120,27 +121,25 @@ structure Hom [IsHuberRing A] [IsHuberRing B] (S : Pair A) (T : Pair B) where
 variable {C : Type*} [CommRing C] [TopologicalSpace C] [IsTopologicalRing C]
 variable [IsHuberRing A] [IsHuberRing B] [IsHuberRing C]
 
-/-- The identity morphism of a Huber pair. Exposed so that `Hom.toRingHom_id` can state its
-underlying ring homomorphism. -/
-@[expose] def Hom.id (S : Pair A) : Hom S S where
+/-- The identity morphism of a Huber pair. -/
+def Hom.id (S : Pair A) : Hom S S where
   toRingHom := RingHom.id A
   continuous_toRingHom := continuous_id
   map_mem_plus _ ha := ha
 
-/-- Morphisms of Huber pairs compose. Exposed so that `Hom.toRingHom_comp` can state the
-underlying ring homomorphism. -/
-@[expose] def Hom.comp {S : Pair A} {T : Pair B} {U : Pair C} (g : Hom T U) (f : Hom S T) :
+/-- Morphisms of Huber pairs compose. -/
+def Hom.comp {S : Pair A} {T : Pair B} {U : Pair C} (g : Hom T U) (f : Hom S T) :
     Hom S U where
   toRingHom := g.toRingHom.comp f.toRingHom
   continuous_toRingHom := g.continuous_toRingHom.comp f.continuous_toRingHom
   map_mem_plus _ ha := g.map_mem_plus _ (f.map_mem_plus _ ha)
 
 @[simp]
-theorem Hom.toRingHom_id (S : Pair A) : (Hom.id S).toRingHom = RingHom.id A := rfl
+theorem Hom.toRingHom_id (S : Pair A) : (Hom.id S).toRingHom = RingHom.id A := (rfl)
 
 @[simp]
 theorem Hom.toRingHom_comp {S : Pair A} {T : Pair B} {U : Pair C} (g : Hom T U) (f : Hom S T) :
-    (g.comp f).toRingHom = g.toRingHom.comp f.toRingHom := rfl
+    (g.comp f).toRingHom = g.toRingHom.comp f.toRingHom := (rfl)
 
 @[ext]
 theorem Hom.ext {S : Pair A} {T : Pair B} {f g : Hom S T}
@@ -151,15 +150,17 @@ theorem Hom.ext {S : Pair A} {T : Pair B} {f g : Hom S T}
 theorem Hom.comp_assoc {D : Type*} [CommRing D] [TopologicalSpace D] [IsTopologicalRing D]
     [IsHuberRing D] {S : Pair A} {T : Pair B} {U : Pair C} {V : Pair D}
     (h : Hom U V) (g : Hom T U) (f : Hom S T) : (h.comp g).comp f = h.comp (g.comp f) := by
-  ext; rfl
+  ext; simp
 
+/-- The identity morphism is a left unit for composition of morphisms of Huber pairs. -/
 @[simp]
 theorem Hom.id_comp {S : Pair A} {T : Pair B} (f : Hom S T) : (Hom.id T).comp f = f := by
-  ext; rfl
+  ext; simp
 
+/-- The identity morphism is a right unit for composition of morphisms of Huber pairs. -/
 @[simp]
 theorem Hom.comp_id {S : Pair A} {T : Pair B} (f : Hom S T) : f.comp (Hom.id S) = f := by
-  ext; rfl
+  ext; simp
 
 variable (A) in
 /-- A discrete ring is a Huber pair with `A⁺ = A`: every element is power-bounded, the whole
@@ -169,9 +170,12 @@ def discrete [DiscreteTopology A] : Pair A where
   plus := ⊤
   isRingOfIntegralElements :=
     { isOpen := by simp
-      isIntegrallyClosedIn :=
-        isIntegrallyClosedIn_iff.mpr ⟨Subtype.val_injective, fun _ ↦ ⟨⟨_, trivial⟩, rfl⟩⟩
+      isIntegrallyClosedIn := Subring.isIntegrallyClosedIn_iff.mpr fun _ _ ↦ trivial
       le_powerBoundedSubring := by simp }
+
+/-- The ring of integral elements of the discrete Huber pair is the whole ring. -/
+@[simp]
+theorem discrete_plus [DiscreteTopology A] : (discrete A).plus = ⊤ := (rfl)
 
 end Pair
 
