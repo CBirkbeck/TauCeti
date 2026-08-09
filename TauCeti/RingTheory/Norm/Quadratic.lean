@@ -7,6 +7,7 @@ module
 public import Mathlib.RingTheory.Norm.Transitivity
 public import Mathlib.RingTheory.Trace.Basic
 public import TauCeti.FieldTheory.Galois.Basic
+public import TauCeti.LinearAlgebra.Dimension.IsQuadraticExtension
 public import TauCeti.LinearAlgebra.Matrix.CharpolyFinTwo
 
 /-!
@@ -125,6 +126,15 @@ theorem discrim_ne_zero {θ : L} (hθ : θ ∉ Set.range (algebraMap K L)) :
     linear_combination h2
   exact hθ (mem_range_algebraMap_of_apply_eq K L hσ
     (sub_eq_zero.mp ((pow_eq_zero_iff two_ne_zero).mp h1)).symm)
+
+
+/-- A separable quadratic extension has a generator whose minimal polynomial has nonzero
+discriminant — indeed every generator does, by `discrim_ne_zero`. Stating it as an existence
+result is what lets a construction over `L/K` choose such a `θ`, and makes separability a real
+hypothesis of that construction rather than decoration. -/
+theorem exists_discrim_ne_zero :
+    ∃ θ : L, Algebra.trace K L θ ^ 2 - 4 * Algebra.norm K θ ≠ 0 :=
+  ⟨_, discrim_ne_zero K L (exists_notMem_range_algebraMap K L).choose_spec⟩
 
 end Algebra.IsQuadraticExtension
 
