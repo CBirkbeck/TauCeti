@@ -469,7 +469,7 @@ private lemma truncated_integral_spec_rho_add_one (hH : Real.sqrt 3 / 2 < H) (h�
         else 0) =
       -((Real.pi : ℂ) / 3) * Complex.I - ((Real.arcsin (ε / 2) : ℝ) : ℂ) * Complex.I := by
   obtain ⟨hδR_pos, hδR_lt, h2sin⟩ := excisionHalfWidth_spec hε hε₃
-  set δR := 12 / Real.pi * Real.arcsin (ε / 2) with hδR_def
+  set δR := excisionHalfWidth ε with hδR_def
   have hHpos : (0 : ℝ) < H - Real.sqrt 3 / 2 := by linarith
   set δL := ε / (H - Real.sqrt 3 / 2) with hδL_def
   have hδL_pos : 0 < δL := by rw [hδL_def]; positivity
@@ -492,7 +492,7 @@ private lemma truncated_integral_spec_rho_add_one (hH : Real.sqrt 3 / 2 < H) (h�
   have hi25 := hi_right.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_right)
   refine ⟨(hi02.trans himid).trans hi25, ?_⟩
   have hδ12 : δR * (Real.pi / 12) = Real.arcsin (ε / 2) := by
-    rw [hδR_def]
+    simp only [hδR_def, excisionHalfWidth_def]
     field_simp
   rw [← intervalIntegral.integral_add_adjacent_intervals (hi02.trans himid) hi25,
     ← intervalIntegral.integral_add_adjacent_intervals hi02 himid,
