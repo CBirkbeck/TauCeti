@@ -122,8 +122,7 @@ noncomputable def factorization :
 
 @[simp] lemma factorization_apply (I : (FractionalIdeal R⁰ K)ˣ) (v : HeightOneSpectrum R) :
     Multiplicative.toAdd (factorization I) v = count K v (I : FractionalIdeal R⁰ K) := by
-  change Multiplicative.toAdd (Multiplicative.ofAdd (toFinsupp I)) v = _
-  rw [toAdd_ofAdd, toFinsupp_apply]
+  simp only [factorization, MulEquiv.coe_mk, Equiv.coe_fn_mk, toAdd_ofAdd, toFinsupp_apply]
 
 @[simp] lemma factorization_symm_apply (g : Multiplicative (HeightOneSpectrum R →₀ ℤ)) :
     (factorization (R := R) (K := K)).symm g = ofFinsupp (Multiplicative.toAdd g) := by
@@ -162,6 +161,9 @@ lemma mk_mem_closure_of_count_eq_zero {T : Set (HeightOneSpectrum R)}
   have hvT : v ∈ T := by
     by_contra hvn
     exact Finsupp.mem_support_iff.mp hv (by rw [toFinsupp_apply, h v hvn])
+  -- `Subgroup.prod_mem` leaves the `Finsupp.prod` body as a beta-redex
+  -- `(fun v e ↦ unitOfPrime v ^ e) v (toFinsupp I v)`; `change` only beta-reduces it, so that
+  -- `map_zpow` below has a `_ ^ _` to match. No unfolding of any definition is involved.
   change ClassGroup.mk K (unitOfPrime v ^ toFinsupp I v) ∈
     Subgroup.closure (HeightOneSpectrum.classGroupMk '' T)
   rw [map_zpow, ← v.classGroupMk_eq_mk_unitOfPrime K]
