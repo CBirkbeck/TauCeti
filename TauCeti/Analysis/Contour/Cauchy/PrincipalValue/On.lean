@@ -722,7 +722,7 @@ private theorem isClosed_setOf_mem_uIcc_exists_norm_sub_le {γ : ℝ → ℂ} {a
     simp only [Set.mem_ofPred_eq, Set.mem_iUnion, exists_prop]
     tauto
   rw [he]
-  refine Set.Finite.isClosed_biUnion S'.finite_toSet fun s _ => ?_
+  refine isClosed_biUnion_finset fun s _ => ?_
   exact ((hγ_cont.sub continuousOn_const).norm).preimage_isClosed_of_isClosed
     (by rw [← Set.Icc_min_max]; exact isClosed_Icc) isClosed_Iic
 
@@ -733,15 +733,8 @@ private theorem truncatedIntegrand_union_eq_indicator {γ : ℝ → ℂ} {f : �
     truncatedIntegrand γ f (S ∪ S') ε
       = Set.indicator {t : ℝ | ¬ ∃ s ∈ S', ‖γ t - s‖ ≤ ε} (truncatedIntegrand γ f S ε) := by
   funext t
-  have hunion : (∃ s ∈ S ∪ S', ‖γ t - s‖ ≤ ε)
-      ↔ (∃ s ∈ S, ‖γ t - s‖ ≤ ε) ∨ ∃ s ∈ S', ‖γ t - s‖ ≤ ε := by
-    constructor
-    · rintro ⟨s, hs, hle⟩
-      rcases Finset.mem_union.mp hs with h' | h'
-      exacts [Or.inl ⟨s, h', hle⟩, Or.inr ⟨s, h', hle⟩]
-    · rintro (⟨s, hs, hle⟩ | ⟨s, hs, hle⟩)
-      exacts [⟨s, Finset.mem_union_left _ hs, hle⟩, ⟨s, Finset.mem_union_right _ hs, hle⟩]
-  simp only [truncatedIntegrand, hunion, Set.indicator_apply, Set.mem_ofPred_eq]
+  simp only [truncatedIntegrand, Finset.mem_union, or_and_right, exists_or,
+    Set.indicator_apply, Set.mem_ofPred_eq]
   by_cases h1 : ∃ s ∈ S, ‖γ t - s‖ ≤ ε <;> by_cases h2 : ∃ s ∈ S', ‖γ t - s‖ ≤ ε <;>
     simp [h1, h2]
 
