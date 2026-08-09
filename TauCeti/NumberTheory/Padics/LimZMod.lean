@@ -162,14 +162,15 @@ omit [Fact p.Prime] in
 /-- **The universal property.** A family of ring homs into the tower that commutes with the
 connecting maps factors through the limit. The name is qualified to avoid `PadicInt.lift`,
 which is Mathlib's universal property of `ℤ_[p]` itself. -/
-def compatSubring.lift {S : Type*} [CommRing S] (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
+def compatSubring.lift {S : Type*} [NonAssocSemiring S] (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
     (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n) :
     S →+* compatSubring p :=
   RingHom.codRestrict (RingHom.pi g) (compatSubring p) fun s n => RingHom.congr_fun (hg n) s
 
 omit [Fact p.Prime] in
 /-- Projecting the factorisation at `n` recovers the given map `g n`. -/
-@[simp] theorem compatProj_comp_lift {S : Type*} [CommRing S] (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
+@[simp] theorem compatProj_comp_lift {S : Type*} [NonAssocSemiring S]
+    (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
     (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
     (n : ℕ) : (compatProj p n).comp (compatSubring.lift p g hg) = g n :=
   (rfl)
@@ -177,7 +178,7 @@ omit [Fact p.Prime] in
 omit [Fact p.Prime] in
 omit [Fact p.Prime] in
 /-- The element-level form of `compatProj_comp_lift`. -/
-@[simp] theorem compatSubring.lift_apply_val {S : Type*} [CommRing S]
+@[simp] theorem compatSubring.lift_apply_val {S : Type*} [NonAssocSemiring S]
     (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
     (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
     (s : S) (n : ℕ) : (compatSubring.lift p g hg s).val n = g n s :=
@@ -185,7 +186,7 @@ omit [Fact p.Prime] in
 
 omit [Fact p.Prime] in
 /-- The factorisation is unique: the projections determine a map into the limit. -/
-theorem compatSubring.lift_unique {S : Type*} [CommRing S] (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
+theorem compatSubring.lift_unique {S : Type*} [NonAssocSemiring S] (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
     (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
     (F : S →+* compatSubring p) (hF : ∀ n, (compatProj p n).comp F = g n) :
     F = compatSubring.lift p g hg := by
