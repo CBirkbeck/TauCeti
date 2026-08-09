@@ -8,20 +8,37 @@ public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import TauCeti.RingTheory.Huber.Basic
 
 /-!
-# The p-adic integers and numbers as Huber rings
+# The p-adic integers are a Huber ring, and not a Tate ring
 
-`ℤ_[p]` is a Huber ring which is not Tate, and `ℚ_[p]` is a Tate ring. These are the roadmap's
-Layer-0 examples after the discrete case, and the first to separate `IsHuberRing` from
-`IsTateRing`: `ℤ_[p]` has no topologically nilpotent unit, because its units are exactly the
-elements of norm one.
+`ℤ_[p]` with its norm topology is a Huber ring, with `(ℤ_[p], (p))` as a pair of definition, and
+it is not a Tate ring. It is the roadmap's Layer-0 example after the discrete case, and the first
+to separate `TauCeti.Huber.IsHuberRing` from `TauCeti.Huber.IsTateRing`: the units of `ℤ_[p]` are
+exactly the elements of norm one, whose powers again have norm one, so no unit is topologically
+nilpotent.
+
+## Main definitions
+
+* `TauCeti.Huber.PadicInt.pairOfDefinition`: the pair of definition `(ℤ_[p], (p))`.
 
 ## Main results
 
-* `TauCeti.Huber.IsAdic.comap`: an adic topology transports along a ring equivalence that is
-  also an inducing map, which is what puts a ring of definition's ideal where
-  `TauCeti.Huber.PairOfDefinition` wants it.
+* `TauCeti.Huber.fg_comap_of_equiv` and `TauCeti.Huber.IsAdic.comap`: finite generation and
+  adicity transport along a ring equivalence that is also an inducing map. This is what lets a
+  ring of definition carry an ideal that natively lives in a merely equivalent ring, which is
+  what `TauCeti.Huber.PairOfDefinition` needs here.
+* `TauCeti.Huber.PadicInt.coe_maximalIdeal_pow` and
+  `TauCeti.Huber.PadicInt.isOpen_maximalIdeal_pow`: `(p)ⁿ` is the closed ball of radius `p⁻ⁿ`,
+  and is open.
 * `TauCeti.Huber.PadicInt.isAdic_maximalIdeal`: the norm topology of `ℤ_[p]` is the `(p)`-adic
-  topology.
+  topology. Mathlib has `IsAdicComplete (maximalIdeal ℤ_[p]) ℤ_[p]` but not this comparison of
+  topologies, which is what a pair of definition requires.
+* `TauCeti.Huber.PadicInt.isHuberRing` and `TauCeti.Huber.PadicInt.not_isTateRing`: the two
+  halves of the example.
+
+## Scope
+
+Only `ℤ_[p]` is treated here. The roadmap's remaining Layer-0 examples — `ℚ_[p]` and `F⸨t⸩` are
+Tate, and `ℚ_p⟨T₁,…,Tₙ⟩` is complete and strongly noetherian — are not proved in this file.
 
 ## References
 
@@ -40,15 +57,10 @@ variable {A B : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   [CommRing B] [TopologicalSpace B] [IsTopologicalRing B]
 
 omit [TopologicalSpace A] [IsTopologicalRing A] [TopologicalSpace B] [IsTopologicalRing B] in
-/-- Finite generation transports along a ring equivalence.
-
-Stated in the abstract so the `Ideal.map_symm` rewrite is elaborated once here rather than against
-a concrete subring instance, where unification is expensive. -/
-theorem fg_comap_of_equiv (e : B ≃+* A) {I : Ideal A} (h : I.FG) : (I.comap e).FG := by
-  classical
-  obtain ⟨s, hs⟩ := h
-  refine ⟨s.image e.symm, ?_⟩
-  rw [← Ideal.map_symm, ← hs, Finset.coe_image, Ideal.map_span]
+/-- Finite generation transports along a ring equivalence. -/
+private theorem fg_comap_of_equiv (e : B ≃+* A) {I : Ideal A} (h : I.FG) : (I.comap e).FG := by
+  rw [← Ideal.map_symm]
+  exact Ideal.FG.map h e.symm.toRingHom
 
 omit [TopologicalSpace A] [IsTopologicalRing A] [TopologicalSpace B] [IsTopologicalRing B] in
 /-- The powers of a comapped ideal are the comapped powers, along a ring equivalence. -/
@@ -95,10 +107,10 @@ theorem coe_maximalIdeal_pow (n : ℕ) :
   rw [_root_.PadicInt.maximalIdeal_eq_span_p, Ideal.span_singleton_pow,
     ← _root_.PadicInt.norm_le_pow_iff_mem_span_pow]
 
-/-- Every power of the maximal ideal of `ℤ_[p]` is open: the ultrametric inequality carries the
-whole ball of radius `p⁻ⁿ` around any of its points back into it. -/
+/-- Every power of the maximal ideal of `ℤ_[p]` is open. -/
 theorem isOpen_maximalIdeal_pow (n : ℕ) :
     IsOpen ((maximalIdeal ℤ_[p] ^ n : Ideal ℤ_[p]) : Set ℤ_[p]) := by
+  -- the ultrametric inequality carries the ball of radius `p⁻ⁿ` about any point back into the set
   have hp0 : (0 : ℝ) < p := mod_cast (Fact.out : p.Prime).pos
   rw [coe_maximalIdeal_pow, Metric.isOpen_iff]
   intro x hx
@@ -133,12 +145,27 @@ noncomputable def pairOfDefinition : PairOfDefinition ℤ_[p] where
   isAdic_idealOfDefinition :=
     IsAdic.comap _ Topology.IsInducing.subtypeVal isAdic_maximalIdeal
 
+/-- The ring of definition of `pairOfDefinition` is all of `ℤ_[p]`. -/
+@[simp]
+theorem pairOfDefinition_ringOfDefinition :
+    (pairOfDefinition (p := p)).ringOfDefinition = ⊤ := (rfl)
+
+/-- Membership in the ideal of definition of `pairOfDefinition` is membership in `(p)`.
+
+Stated as a membership characterisation rather than an equation because the type of
+`idealOfDefinition` depends on `ringOfDefinition`. -/
+@[simp]
+theorem mem_pairOfDefinition_idealOfDefinition
+    {x : (pairOfDefinition (p := p)).ringOfDefinition} :
+    x ∈ (pairOfDefinition (p := p)).idealOfDefinition ↔ (x : ℤ_[p]) ∈ maximalIdeal ℤ_[p] :=
+  (Iff.rfl)
+
 /-- **`ℤ_[p]` is a Huber ring**, with `(ℤ_[p], (p))` as a pair of definition. -/
 instance isHuberRing : IsHuberRing ℤ_[p] :=
   ⟨⟨pairOfDefinition⟩⟩
 
-/-- **`ℤ_[p]` is not a Tate ring.** Its units are exactly the elements of norm one, whose powers
-all have norm one, so no unit is topologically nilpotent and there is no pseudouniformiser. -/
+/-- **`ℤ_[p]` is not a Tate ring**: it admits no pseudouniformiser. Together with
+`TauCeti.Huber.PadicInt.isHuberRing` this separates `IsHuberRing` from `IsTateRing`. -/
 theorem not_isTateRing : ¬ IsTateRing ℤ_[p] := by
   intro h
   obtain ⟨a, ha⟩ := h.exists_isPseudoUniformizer
