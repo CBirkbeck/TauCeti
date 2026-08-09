@@ -103,7 +103,7 @@ private lemma diagElem_mul_diagElem (a b : Fin 2 → ℕ) :
 private lemma heckeGen_pow_one (p : ℕ) (hp : p.Prime) (k : ℕ) :
     heckeGen 1 p (0 : Fin 1) ^ k = diagElem (fun _ : Fin 1 ↦ p ^ k) := by
   rw [show heckeGen 1 p (0 : Fin 1) = diagElem (fun _ : Fin 1 ↦ p) from by
-    unfold heckeGen; exact congrArg diagElem (heckeGenDiag_one_eq p)]
+    rw [heckeGen_def]; exact congrArg diagElem (heckeGenDiag_one_eq_const p)]
   exact diagElem_const_pow 1 p hp.pos k
 
 /-- An integer scalar times the basis element `diagElem a` is the single `Finsupp` at
@@ -765,7 +765,7 @@ noncomputable def R_p_isPolynomialRing_one :
     MvPolynomial (Fin 1) ℤ ≃+* pLocalSubring 1 p :=
   RingEquiv.ofBijective (Inj.evalHomR 1 p)
     ⟨Inj.evalHomR_injective 1 p hp (Inj.evalHom_injective_one p hp),
-     Inj.evalHomR_surjective 1 p hp (SurjOne.heckeGen_generates_pLocalSubring_one p hp)⟩
+     Inj.evalHomR_surjective 1 p hp (SurjOne.pLocalSubring_one_subset_evalHom_range p hp)⟩
 
 /-- **Shimura, Theorem 3.20 for `n = 2`**: the `p`-local Hecke ring of `GL₂` is the
 polynomial ring `ℤ[X₁, X₂]` on the generators `T(1, p)` and `T(p, p)`. This is the case the
@@ -774,6 +774,6 @@ noncomputable def R_p_isPolynomialRing_two :
     MvPolynomial (Fin 2) ℤ ≃+* pLocalSubring 2 p :=
   RingEquiv.ofBijective (Inj.evalHomR 2 p)
     ⟨Inj.evalHomR_injective 2 p hp (Inj.evalHom_injective_two p hp),
-     Inj.evalHomR_surjective 2 p hp (Surj.heckeGen_generates_pLocalSubring_two p hp)⟩
+     Inj.evalHomR_surjective 2 p hp (Surj.pLocalSubring_two_subset_evalHom_range p hp)⟩
 
 end HeckeRing.GLn
