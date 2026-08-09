@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.LaurentSeries
+public import Mathlib.Topology.Algebra.Valued.WithZeroMulInt
 public import TauCeti.RingTheory.Huber.Basic
 
 /-!
@@ -14,10 +15,7 @@ For a field `K` the formal Laurent series `K⸨X⸩`, with the `X`-adic topology
 `LaurentSeries.valued` instance, are a Tate ring: the power series are an open subring, the
 ideal `(X)` is a finitely generated ideal of definition, and `X` itself is a pseudouniformiser.
 
-This is the equal-characteristic half of the roadmap's Layer-0 examples separating Huber from
-Tate. The mixed-characteristic half — `ℤ_[p]` Huber but not Tate, and `ℚ_[p]` Tate — is separate
-unmerged work (TauCetiProject/TauCeti#2508 and #2538) and is deliberately not referenced by name
-here, since nothing in this repository provides it yet.
+`K⸨X⸩` is the equal-characteristic Tate example of the roadmap's Layer-0 Examples row.
 
 ## Main definitions
 
@@ -44,9 +42,7 @@ form and the `ℤᵐ⁰` bounds the rest of the file uses.
 
 ## Provenance
 
-New work; the roadmap names no source for this row. The file's shape deliberately mirrors the
-`ℤ_[p]` example being prepared in TauCetiProject/TauCeti#2508, so that the Layer-0 examples end
-up presenting the same interface; that module is not in this repository yet.
+New work; the roadmap names no source for this row.
 
 ## References
 
@@ -212,17 +208,14 @@ theorem mem_pairOfDefinition_idealImage (n : ℕ) (f : K⸨X⸩) :
 
 /-- **`X` is a pseudouniformiser of `K⸨X⸩`**: it is a unit, since `K⸨X⸩` is a field, and
 `v (Xⁿ) = exp (-n)` tends to zero. -/
-theorem isPseudoUniformizer_X : IsPseudoUniformizer ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) := by
-  refine isPseudoUniformizer_iff.mpr ⟨isUnit_iff_ne_zero.mpr (coe_X_ne_zero K), ?_⟩
-  refine Filter.tendsto_def.mpr fun s hs ↦ ?_
-  obtain ⟨c, hc, hcs⟩ := exists_ball_subset K hs
-  filter_upwards [eventually_ge_atTop (1 - log c).toNat] with n hn
-  refine hcs ?_
-  rw [Set.mem_ofPred_eq, valuation_X_pow, ← lt_log_iff_exp_lt hc]
-  omega
+theorem isPseudoUniformizer_X : IsPseudoUniformizer ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) :=
+  isPseudoUniformizer_iff.mpr ⟨isUnit_iff_ne_zero.mpr (coe_X_ne_zero K),
+    Valued.tendsto_zero_pow_of_le_exp_neg_one (by simpa using (valuation_X_pow (K := K) 1).le)⟩
 
+/-- **`K⸨X⸩` is a Huber ring**, with `(K⟦X⟧, (X))` as a pair of definition. -/
 instance isHuberRing : IsHuberRing K⸨X⸩ := ⟨⟨pairOfDefinition K⟩⟩
 
+/-- **`K⸨X⸩` is a Tate ring**: `X` is a pseudouniformiser. -/
 instance isTateRing : IsTateRing K⸨X⸩ where
   exists_isPseudoUniformizer := ⟨_, isPseudoUniformizer_X K⟩
 
