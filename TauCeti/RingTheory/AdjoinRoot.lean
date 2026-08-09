@@ -25,6 +25,16 @@ Stated over arbitrary commutative rings.
 This is consumed by `TauCeti/AlgebraicGeometry/EllipticCurve/Affine/CoordinateRingMap.lean`, which
 specialises it to the coordinate ring of a Weierstrass curve for the Hasse strand of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 3.
+
+## Provenance
+
+The surjectivity argument — lift a class to a polynomial, then lift that polynomial along `f` — is
+adapted from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned by
+that roadmap at `dev/hasse-weil @ 513e83879e2f`),
+`HasseWeil/WeilPairing/FrobeniusFunctionFieldEquiv.lean`, declaration `coordRingMap_bijective`.
+There it is carried out for the coordinate ring of a Weierstrass curve and only for a base ring
+*equivalence*; here it is stated for `AdjoinRoot.map` along any surjective base homomorphism, with
+`map_mk` — which the source does not isolate — extracted as the step that makes it routine.
 -/
 
 public section
