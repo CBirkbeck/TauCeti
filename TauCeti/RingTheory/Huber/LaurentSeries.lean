@@ -14,8 +14,10 @@ For a field `K` the formal Laurent series `K⸨X⸩`, with the `X`-adic topology
 `LaurentSeries.valued` instance, are a Tate ring: the power series are an open subring, the
 ideal `(X)` is a finitely generated ideal of definition, and `X` itself is a pseudouniformiser.
 
-Together with `TauCeti.Huber.PadicInt.not_isTateRing` and `TauCeti.Huber.Padic.isTateRing` this
-is the equal-characteristic half of the roadmap's Layer-0 examples separating Huber from Tate.
+This is the equal-characteristic half of the roadmap's Layer-0 examples separating Huber from
+Tate. The mixed-characteristic half — `ℤ_[p]` Huber but not Tate, and `ℚ_[p]` Tate — is separate
+unmerged work (TauCetiProject/TauCeti#2508 and #2538) and is deliberately not referenced by name
+here, since nothing in this repository provides it yet.
 
 ## Main definitions
 
@@ -42,9 +44,9 @@ form and the `ℤᵐ⁰` bounds the rest of the file uses.
 
 ## Provenance
 
-New work; the roadmap names no source for this row. The file's shape follows
-`TauCeti/RingTheory/Huber/Padic.lean`, the `ℤ_[p]` example, so that the two Layer-0 examples
-present the same interface.
+New work; the roadmap names no source for this row. The file's shape deliberately mirrors the
+`ℤ_[p]` example being prepared in TauCetiProject/TauCeti#2508, so that the Layer-0 examples end
+up presenting the same interface; that module is not in this repository yet.
 
 ## References
 
@@ -101,6 +103,7 @@ variable {K}
 
 /-- **The bridge to the valuation**: a power series lies in `(X)ⁿ` exactly when its valuation is
 at most `exp (-n)`. -/
+@[simp]
 theorem mem_idealOfDefinition_pow_iff (n : ℕ) (f : powerSeries_as_subring K) :
     f ∈ idealOfDefinition K ^ n ↔ Valued.v (f : K⸨X⸩) ≤ exp (-(n : ℤ)) := by
   rw [idealOfDefinition_def, Ideal.span_singleton_pow, Ideal.mem_span_singleton']
@@ -187,6 +190,23 @@ the two ideals does not typecheck. The bridge
 theorem pairOfDefinition_ringOfDefinition :
     (pairOfDefinition K).ringOfDefinition = powerSeries_as_subring K := (rfl)
 
+/-- **The pair of definition is `(K⟦X⟧, (X))`**, said without touching the dependent field:
+`PairOfDefinition.idealImage n` is the image of `(X)ⁿ` in `K⸨X⸩`, so it can be compared with a
+valuation bound directly. -/
+@[simp]
+theorem mem_pairOfDefinition_idealImage (n : ℕ) (f : K⸨X⸩) :
+    f ∈ (pairOfDefinition K).idealImage n ↔ Valued.v f ≤ exp (-(n : ℤ)) := by
+  rw [PairOfDefinition.mem_idealImage]
+  refine ⟨?_, fun hf ↦ ?_⟩
+  · rintro ⟨y, hy, rfl⟩
+    exact (mem_idealOfDefinition_pow_iff n y).mp hy
+  · have hle : Valued.v f ≤ 1 :=
+      hf.trans (by simpa using exp_le_exp.mpr (by omega : (-(n : ℤ)) ≤ 0))
+    have hmem : f ∈ powerSeries_as_subring K := by
+      rw [← SetLike.mem_coe, coe_powerSeries_as_subring]
+      exact hle
+    exact ⟨⟨f, hmem⟩, (mem_idealOfDefinition_pow_iff n _).mpr hf, rfl⟩
+
 /-- **`X` is a pseudouniformiser of `K⸨X⸩`**: it is a unit, since `K⸨X⸩` is a field, and
 `v (Xⁿ) = exp (-n)` tends to zero. -/
 theorem isPseudoUniformizer_X : IsPseudoUniformizer ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) := by
@@ -194,8 +214,8 @@ theorem isPseudoUniformizer_X : IsPseudoUniformizer ((PowerSeries.X : K⟦X⟧) 
   refine Filter.tendsto_def.mpr fun s hs ↦ ?_
   obtain ⟨c, hc, hcs⟩ := exists_ball_subset K hs
   filter_upwards [eventually_ge_atTop (1 - log c).toNat] with n hn
-  refine hcs (show Valued.v (((PowerSeries.X : K⟦X⟧) : K⸨X⸩) ^ n) < c from ?_)
-  rw [valuation_X_pow, ← lt_log_iff_exp_lt hc]
+  refine hcs ?_
+  rw [Set.mem_ofPred_eq, valuation_X_pow, ← lt_log_iff_exp_lt hc]
   omega
 
 instance isHuberRing : IsHuberRing K⸨X⸩ := ⟨⟨pairOfDefinition K⟩⟩
