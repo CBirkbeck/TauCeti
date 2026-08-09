@@ -140,7 +140,7 @@ omit [Fact p.Prime] in
 omit [Fact p.Prime] in
 /-- The projections commute with the tower's connecting maps, which is the hypothesis
 `PadicInt.lift` requires. -/
-theorem compatProj_compat (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) :
+@[simp] theorem compatProj_compat (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) :
     (ZMod.castHom (pow_dvd_pow p hk) (ZMod (p ^ k₁))).comp (compatProj p k₂) = compatProj p k₁ := by
   ext x
   simpa only [RingHom.comp_apply, compatProj_apply]
