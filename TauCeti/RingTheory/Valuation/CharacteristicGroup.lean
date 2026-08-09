@@ -43,6 +43,8 @@ formalised here.
   subgroup `cΓ_v` they generate.
 * `TauCeti.Valuation.HasFullCharacteristicGroup v` : Every positive element of the value
   group of `v` is bounded by attained values.
+* `Valuation.IsEquiv.valueGroupOrderIso` : The order isomorphism of value groups induced by
+  an equivalence of valuations, restricting Mathlib's `orderMonoidIso` to the unit groups.
 
 ## References
 
@@ -233,5 +235,64 @@ theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le {v : Valuation A Γ�
     (h1 : 1 ≤ valueGroup.mk (.ofClass v) 1 a (by simp) h) :
     valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v :=
   mem_characteristicSubgroup_of_restrict h1 (v.restrict_eq_mk h)
+
+/-! ### Transport along valuation equivalence -/
+
+/-- The order isomorphism of **value groups** induced by an equivalence of valuations.
+Mathlib's `IsEquiv.orderMonoidIso` is an isomorphism of the value monoids *with zero*;
+since `ValueGroup₀ f = WithZero ↥(valueGroup f)`, it restricts to the unit groups. -/
+noncomputable def _root_.Valuation.IsEquiv.valueGroupOrderIso {v : Valuation A Γ₀}
+    {w : Valuation A Γ₀'} (h : v.IsEquiv w) :
+    valueGroup (.ofClass v) ≃*o valueGroup (.ofClass w) where
+  __ := (WithZero.unitsWithZeroEquiv (α := valueGroup (.ofClass v))).symm.trans
+    ((Units.mapEquiv h.orderMonoidIso.toMulEquiv).trans
+      (WithZero.unitsWithZeroEquiv (α := valueGroup (.ofClass w))))
+  map_le_map_iff' {a b} :=
+    calc _ ↔ ((_ : valueGroup (.ofClass w)) : ValueGroup₀ (.ofClass w))
+              ≤ ((_ : valueGroup (.ofClass w)) : ValueGroup₀ (.ofClass w)) :=
+            WithZero.coe_le_coe.symm
+      _ ↔ h.orderMonoidIso (a : ValueGroup₀ (.ofClass v))
+            ≤ h.orderMonoidIso (b : ValueGroup₀ (.ofClass v)) := by
+          simp [WithZero.unitsWithZeroEquiv]
+      _ ↔ ((a : ValueGroup₀ (.ofClass v)) ≤ (b : ValueGroup₀ (.ofClass v))) :=
+          h.orderMonoidIso.map_le_map_iff'
+      _ ↔ a ≤ b := WithZero.coe_le_coe
+
+/-- The induced value-group isomorphism agrees with `orderMonoidIso` under the coercion. -/
+@[simp]
+theorem _root_.Valuation.IsEquiv.valueGroupOrderIso_coe {v : Valuation A Γ₀}
+    {w : Valuation A Γ₀'} (h : v.IsEquiv w) (γ : valueGroup (.ofClass v)) :
+    ((h.valueGroupOrderIso γ : valueGroup (.ofClass w)) : ValueGroup₀ (.ofClass w))
+      = h.orderMonoidIso (γ : ValueGroup₀ (.ofClass v)) := by
+  simp [Valuation.IsEquiv.valueGroupOrderIso, WithZero.unitsWithZeroEquiv]
+
+/-- Equivalent valuations have corresponding characteristic generators. -/
+theorem characteristicGenerators_map_of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
+    (h : v.IsEquiv w) {γ : valueGroup (.ofClass v)} (hγ : γ ∈ characteristicGenerators v) :
+    h.valueGroupOrderIso γ ∈ characteristicGenerators w := by
+  obtain ⟨h1, a, ha⟩ := hγ
+  refine ⟨?_, a, ?_⟩
+  · simpa using h.valueGroupOrderIso.map_le_map_iff'.mpr h1
+  · rw [h.valueGroupOrderIso_coe, ← ha, h.orderMonoidIso_spec]
+
+/-- **Invariance under valuation equivalence.** The characteristic subgroup is carried into
+the characteristic subgroup by the induced value-group isomorphism. Applying this to `h.symm`
+gives the converse inclusion, so `cΓ_v` is a genuine invariant of the equivalence class and
+may be used on points of the valuation spectrum. -/
+theorem characteristicSubgroup_le_comap_of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
+    (h : v.IsEquiv w) :
+    characteristicSubgroup v ≤
+      TauCeti.ConvexSubgroup.comap h.valueGroupOrderIso (characteristicSubgroup w) := by
+  rw [characteristicSubgroup_le_iff]
+  intro γ hγ
+  exact TauCeti.ConvexSubgroup.mem_comap.mpr
+    (characteristicGenerators_subset_characteristicSubgroup w
+      (characteristicGenerators_map_of_isEquiv h hγ))
+
+/-- Membership form of the invariance. -/
+theorem mem_characteristicSubgroup_of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
+    (h : v.IsEquiv w) {γ : valueGroup (.ofClass v)} (hγ : γ ∈ characteristicSubgroup v) :
+    h.valueGroupOrderIso γ ∈ characteristicSubgroup w :=
+  TauCeti.ConvexSubgroup.mem_comap.mp (characteristicSubgroup_le_comap_of_isEquiv h hγ)
 
 end TauCeti.Valuation
