@@ -16,7 +16,9 @@ public import Mathlib.Algebra.Order.Monoid.Submonoid
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Lemma 7.1.** For a valuation `v` on a
 commutative ring and a convex subgroup `H` of its value group strictly containing the
 characteristic subgroup `cΓ_v`, the elements whose value is cofinal for `H` form a radical
-ideal. This is the object Wedhorn's §7.1 uses to reduce the construction of `cΓ_v(I)`
+ideal. The cofinality predicate itself and its closure properties need only a ring;
+commutativity enters exactly where the ideal is formed. This is the object Wedhorn's §7.1
+uses to reduce the construction of `cΓ_v(I)`
 (Definition 7.3) to a finite generating set, and it is used twice in the proof of Lemma 7.2:
 once to pass from generators to the whole ideal, and once to replace `I` by its radical.
 
@@ -48,7 +50,7 @@ namespace TauCeti.Valuation
 
 open MonoidWithZeroHom
 
-variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+variable {A : Type*} [Ring A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
 /-- `v a` is **cofinal for the convex subgroup `H`** of the value group: its powers fall
 below every member of `H` (Wedhorn Definition 1.16, at a value that may vanish). -/
@@ -148,23 +150,6 @@ theorem CofinalValueFor.mul {v : Valuation A Γ₀}
     rw [WithZero.coe_inj.mp hcoe]
     exact this
 
-/-- **Wedhorn Lemma 7.1.** For a convex subgroup `H` of the value group strictly containing
-the characteristic subgroup, the elements whose value is cofinal for `H` form an ideal. -/
-def cofinalIdeal (v : Valuation A Γ₀)
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
-    (hH : characteristicSubgroup v < H) : Ideal A where
-  carrier := {a | CofinalValueFor v H a}
-  zero_mem' := cofinalValueFor_zero v H
-  add_mem' ha hb := CofinalValueFor.add ha hb
-  smul_mem' b _ ha := CofinalValueFor.mul hH ha b
-
-@[simp]
-theorem mem_cofinalIdeal {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
-    {hH : characteristicSubgroup v < H} {a : A} :
-    a ∈ cofinalIdeal v hH ↔ CofinalValueFor v H a :=
-  Iff.rfl
-
 /-- A cofinal value lies strictly below `1`. -/
 theorem CofinalValueFor.lt_one {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A}
@@ -190,5 +175,30 @@ theorem cofinalValueFor_pow_iff {v : Valuation A Γ₀}
     refine ⟨n, lt_of_le_of_lt ?_ hn⟩
     rw [map_pow, ← pow_mul]
     exact pow_le_pow_right_of_le_one' h.lt_one.le (Nat.le_mul_of_pos_left n hm)
+
+/-! ### The ideal of cofinal values -/
+
+section Ideal
+
+variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+
+/-- **Wedhorn Lemma 7.1.** For a convex subgroup `H` of the value group strictly containing
+the characteristic subgroup, the elements whose value is cofinal for `H` form an ideal. -/
+def cofinalIdeal (v : Valuation A Γ₀)
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (hH : characteristicSubgroup v < H) : Ideal A where
+  carrier := {a | CofinalValueFor v H a}
+  zero_mem' := cofinalValueFor_zero v H
+  add_mem' ha hb := CofinalValueFor.add ha hb
+  smul_mem' b _ ha := CofinalValueFor.mul hH ha b
+
+@[simp]
+theorem mem_cofinalIdeal {v : Valuation A Γ₀}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    {hH : characteristicSubgroup v < H} {a : A} :
+    a ∈ cofinalIdeal v hH ↔ CofinalValueFor v H a :=
+  Iff.rfl
+
+end Ideal
 
 end TauCeti.Valuation
