@@ -7,8 +7,6 @@ module
 
 public import TauCeti.Algebra.Order.Group.Cofinal
 public import TauCeti.RingTheory.Valuation.CharacteristicGroup
-public import Mathlib.Algebra.Order.Group.Units
-public import Mathlib.Algebra.Order.Monoid.Submonoid
 
 /-!
 # The ideal of cofinal values
@@ -16,9 +14,11 @@ public import Mathlib.Algebra.Order.Monoid.Submonoid
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Lemma 7.1.** For a valuation `v` on a
 commutative ring and a convex subgroup `H` of its value group strictly containing the
 characteristic subgroup `cΓ_v`, the elements whose value is cofinal for `H` form a radical
-ideal. The cofinality predicate, its closure properties, and the ideal itself need only a
-ring; commutativity enters only for the radicality statement, since `Ideal.IsRadical` is
-stated over a commutative semiring. This is the object Wedhorn's §7.1
+ideal. The cofinality predicate and its closure properties need only a ring; the ideal and
+everything named for Lemma 7.1 are stated over a **commutative** ring, because `Ideal A` is
+`Submodule A A` — a *left* ideal — and left absorption is all the multiplicative step gives,
+so the noncommutative object would not be the one Wedhorn's lemma is about. This is the
+object Wedhorn's §7.1
 uses to reduce the construction of `cΓ_v(I)`
 (Definition 7.3) to a finite generating set, and it is used twice in the proof of Lemma 7.2:
 once to pass from generators to the whole ideal, and once to replace `I` by its radical.
@@ -40,7 +40,18 @@ something derivable from cofinality.
   This is what lets Wedhorn Proposition 1.20 apply.
 * `TauCeti.Valuation.cofinalIdeal_isRadical` : The ideal is radical — the `rad(c) = c` half
   of Lemma 7.1 — with `cofinalValueFor_pow_iff` the elementwise form behind it.
-* `TauCeti.Valuation.cofinalIdeal_ne_top` : It is proper.
+* `TauCeti.Valuation.cofinalIdeal_ne_top` : It is proper, a corollary of the ring-level
+  `TauCeti.Valuation.not_cofinalValueFor_one`.
+* `TauCeti.Valuation.cofinalValueFor_top_iff` : At the whole value group the predicate is the
+  ambient `CofinalValue`.
+
+## Implementation notes
+
+Ported from the AINTLIB AdicSpaces development (`AINTLIB`, Apache-2.0), whose treatment of
+Wedhorn §7.1 supplied the statement shapes and the proof skeleton for the cofinality predicate
+and its closure properties. The cofinality bridge is rebuilt here against Mathlib's
+`MonoidWithZeroHom.valueGroup` API rather than the parallel value-group construction used
+there.
 
 ## References
 
@@ -122,6 +133,17 @@ theorem cofinalValueFor_iff_isCofinalElement {v : Valuation A Γ₀}
   refine forall_congr' fun g ↦ forall_congr' fun _ ↦ exists_congr fun n ↦ ?_
   rw [v.restrict_eq_mk h, ← WithZero.coe_pow, WithZero.coe_lt_coe]
 
+/-- The class of a product is the product of the classes. Isolates the coercion step between
+`valueGroup.mk` and multiplication, which `CofinalValueFor.mul` would otherwise do inline. -/
+theorem valueGroup_mk_one_mul {v : Valuation A Γ₀} {a b : A}
+    (ha : (MonoidWithZeroHom.ofClass v) a ≠ 0) (hb : (MonoidWithZeroHom.ofClass v) b ≠ 0)
+    (hab : (MonoidWithZeroHom.ofClass v) (a * b) ≠ 0) :
+    valueGroup.mk (.ofClass v) 1 (a * b) (by simp) hab
+      = valueGroup.mk (.ofClass v) 1 a (by simp) ha * valueGroup.mk (.ofClass v) 1 b (by simp) hb :=
+  WithZero.coe_inj.mp (by
+    rw [← v.restrict_eq_mk hab, WithZero.coe_mul, ← v.restrict_eq_mk ha, ← v.restrict_eq_mk hb,
+      ← map_mul])
+
 /-- **Wedhorn Lemma 7.1, the multiplicative step.** If `cΓ_v` is strictly smaller than `H`
 and `v a` is cofinal for `H`, then so is `v (b * a)` for every `b` — the case `1 < v b`
 going through the characteristic subgroup and Wedhorn Remark 1.20. -/
@@ -140,20 +162,13 @@ theorem CofinalValueFor.mul {v : Valuation A Γ₀}
     have hab0 : (MonoidWithZeroHom.ofClass v) (b * a) ≠ 0 := by
       simpa [map_mul] using mul_ne_zero hb0 ha0
     have hmem : valueGroup.mk (.ofClass v) 1 b (by simp) hb0 ∈ characteristicSubgroup v := by
-      refine mem_characteristicSubgroup_of_restrict ?_ (v.restrict_eq_mk hb0)
+      refine valueGroup_mk_mem_characteristicSubgroup_of_one_le hb0 ?_
       rw [← WithZero.coe_le_coe, ← v.restrict_eq_mk hb0]
       have : v.restrict 1 ≤ v.restrict b := v.restrict_le_iff.mpr (by simpa using hb.le)
       simpa using this
     rw [cofinalValueFor_iff_isCofinalElement hab0]
     have := ((cofinalValueFor_iff_isCofinalElement ha0).mp ha).mul_of_lt_of_mem hH hmem
-    have hcoe : ((valueGroup.mk (.ofClass v) 1 (b * a) (by simp) hab0 :
-        valueGroup (.ofClass v)) : ValueGroup₀ (.ofClass v))
-        = ((valueGroup.mk (.ofClass v) 1 b (by simp) hb0 *
-            valueGroup.mk (.ofClass v) 1 a (by simp) ha0 :
-            valueGroup (.ofClass v)) : ValueGroup₀ (.ofClass v)) := by
-      rw [← v.restrict_eq_mk hab0, WithZero.coe_mul, ← v.restrict_eq_mk hb0,
-        ← v.restrict_eq_mk ha0, ← map_mul]
-    rw [WithZero.coe_inj.mp hcoe]
+    rw [valueGroup_mk_one_mul hb0 ha0 hab0]
     exact this
 
 /-- A cofinal value lies strictly below `1`. -/
@@ -182,7 +197,35 @@ theorem cofinalValueFor_pow_iff {v : Valuation A Γ₀}
     rw [map_pow, ← pow_mul]
     exact pow_le_pow_right_of_le_one' h.lt_one.le (Nat.le_mul_of_pos_left n hm)
 
-/-! ### The ideal of cofinal values -/
+/-- Cofinality for the whole value group is the ambient `CofinalValue`: the positive elements
+of `ValueGroup₀` are exactly the coercions of the group elements. This is the bridge between
+the subgroup-relative predicate here and the one already on `main`. -/
+@[simp]
+theorem cofinalValueFor_top_iff {v : Valuation A Γ₀} {a : A} :
+    CofinalValueFor v ⊤ a ↔ CofinalValue v a := by
+  rw [cofinalValueFor_def, cofinalValue_iff]
+  constructor
+  · intro h γ hγ
+    obtain ⟨g, rfl⟩ := WithZero.ne_zero_iff_exists.mp hγ.ne'
+    exact h g TauCeti.ConvexSubgroup.mem_top
+  · intro h g _
+    exact h (g : ValueGroup₀ (.ofClass v)) (by simp)
+
+/-- `1` never has cofinal value: `v 1 = 1`, which is not below itself. Stated for the predicate
+so that it needs only a ring — properness of the ideal below is a corollary. -/
+theorem not_cofinalValueFor_one (v : Valuation A Γ₀)
+    (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : ¬ CofinalValueFor v H 1 :=
+  fun h ↦ absurd h.lt_one (by simp)
+
+/-! ### The ideal of cofinal values
+
+`Ideal A` is `Submodule A A`, i.e. a *left* ideal, and `CofinalValueFor.mul` gives exactly left
+absorption. Wedhorn's Lemma 7.1 is about a commutative ring, so the ideal and everything named
+for the lemma are stated over `[CommRing A]`; only the predicate above is at `[Ring A]`. -/
+
+section CommRing
+
+variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
 /-- **Wedhorn Lemma 7.1.** For a convex subgroup `H` of the value group strictly containing
 the characteristic subgroup, the elements whose value is cofinal for `H` form an ideal. -/
@@ -203,12 +246,7 @@ theorem mem_cofinalIdeal {v : Valuation A Γ₀}
 
 /-! ### Radicality -/
 
-section Radical
-
-variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
-
-/-- **Wedhorn Lemma 7.1, second half: `rad(c) = c`.** Commutativity appears only here, because
-`Ideal.IsRadical` is stated over a commutative semiring; the ideal itself needs only a ring. -/
+/-- **Wedhorn Lemma 7.1, second half: `rad(c) = c`.** -/
 theorem cofinalIdeal_isRadical {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hH : characteristicSubgroup v < H) : (cofinalIdeal v hH).IsRadical := by
@@ -223,11 +261,9 @@ theorem cofinalIdeal_isRadical {v : Valuation A Γ₀}
 /-- The ideal of cofinal values is proper: `1` has value `1`, which is not cofinal. -/
 theorem cofinalIdeal_ne_top {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
-    (hH : characteristicSubgroup v < H) : cofinalIdeal v hH ≠ ⊤ := by
-  intro htop
-  have h1 : (1 : A) ∈ cofinalIdeal v hH := htop ▸ Submodule.mem_top
-  exact absurd (mem_cofinalIdeal.mp h1).lt_one (by simp)
+    (hH : characteristicSubgroup v < H) : cofinalIdeal v hH ≠ ⊤ := fun htop ↦
+  not_cofinalValueFor_one v H (mem_cofinalIdeal.mp (htop ▸ Submodule.mem_top))
 
-end Radical
+end CommRing
 
 end TauCeti.Valuation
