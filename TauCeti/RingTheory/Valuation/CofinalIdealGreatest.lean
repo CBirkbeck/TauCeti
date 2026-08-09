@@ -326,10 +326,7 @@ theorem isGreatestIdealCofinal_closure_singleton_of_span {v : Valuation A Γ₀}
       rwa [v.restrict_eq_mk h0, WithZero.coe_le_coe] at this
   · -- maximality: `h ^ n` is attained on `I`, and generates the same subgroup as `h`
     intro K hK
-    have := le_closure_singleton_of_idealCofinalFor hatt (by
-      calc h ^ n ≤ h ^ 1 := pow_le_pow_right_of_le_one' hlt.le (Nat.one_le_iff_ne_zero.mpr hn)
-        _ = h := pow_one h
-        _ < 1 := hlt) hK
+    have := le_closure_singleton_of_idealCofinalFor hatt ((pow_lt_one_iff hn).mpr hlt) hK
     rwa [TauCeti.ConvexSubgroup.closure_singleton_pow hn] at this
 
 /-- If `v` vanishes on the whole of `I` then every convex subgroup works, so the greatest one
@@ -366,6 +363,17 @@ private theorem mem_supp_of_radical_eq_of_forall_mem_supp {v : Valuation A Γ₀
   rw [v.mem_supp_iff, map_pow] at hpow
   exact (v.mem_supp_iff _).mpr ((pow_eq_zero_iff hn0).mp hpow)
 
+/-- The value of a power is the power of the value, read in the value group rather than in
+`ValueGroup₀`. Both the disjointness argument and the construction below need it, at the two
+different generators they work with. -/
+private theorem restrict_pow_eq_mk_pow {v : Valuation A Γ₀} {t : A}
+    (ht0 : (MonoidWithZeroHom.ofClass v) t ≠ 0) (n : ℕ) :
+    v.restrict (t ^ n)
+      = ((valueGroup.mk (.ofClass v) 1 t (by simp) ht0 ^ n : valueGroup (.ofClass v)) :
+          ValueGroup₀ (.ofClass v)) := by
+  rw [map_pow, v.restrict_eq_mk ht0]
+  simp
+
 /-- Under Wedhorn's disjointness hypothesis the class of a generator stays out of `cΓ_v`: were
 it inside, so would be its `n`-th power, which is the class of `t ^ n ∈ I` — exactly the
 meeting that is excluded. -/
@@ -378,12 +386,8 @@ private theorem not_mem_characteristicSubgroup_of_pow_mem {v : Valuation A Γ₀
     simpa [map_pow] using pow_ne_zero n ht0
   refine hdisj ⟨t ^ n, hn, hn0, ?_⟩
   have hclass : valueGroup.mk (.ofClass v) 1 (t ^ n) (by simp) hn0
-      = valueGroup.mk (.ofClass v) 1 t (by simp) ht0 ^ n := by
-    have hpow : v.restrict (t ^ n)
-        = ((valueGroup.mk (.ofClass v) 1 t (by simp) ht0 ^ n :
-            valueGroup (.ofClass v)) : ValueGroup₀ _) := by
-      rw [map_pow, v.restrict_eq_mk ht0]; simp
-    exact_mod_cast (v.restrict_eq_mk hn0).symm.trans hpow
+      = valueGroup.mk (.ofClass v) 1 t (by simp) ht0 ^ n :=
+    mod_cast (v.restrict_eq_mk hn0).symm.trans (restrict_pow_eq_mk_pow ht0 n)
   rw [hclass]
   exact pow_mem hmem n
 
@@ -419,17 +423,14 @@ theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal A}
   have hrestr : v.restrict t₀ = (h : ValueGroup₀ (.ofClass v)) := v.restrict_eq_mk ht₀0
   have ht₀J : t₀ ∈ J := hT ▸ Ideal.subset_span ht₀T
   obtain ⟨n, hn0, hn⟩ := exists_pow_ne_zero_mem_of_radical_eq hrad.symm ht₀J
-  have hpow : v.restrict (t₀ ^ n) = ((h ^ n : valueGroup (.ofClass v)) : ValueGroup₀ _) := by
-    rw [map_pow, hrestr]; simp
+  have hpow : v.restrict (t₀ ^ n) = ((h ^ n : valueGroup (.ofClass v)) : ValueGroup₀ _) :=
+    restrict_pow_eq_mk_pow ht₀0 n
   have hatt : h ^ n ∈ valueSet v I := ⟨t₀ ^ n, hn, hpow⟩
   have hlt_n : (h ^ n : valueGroup (.ofClass v)) < 1 := by
     have h2 : v.restrict (t₀ ^ n) < 1 :=
       v.restrict_lt_one_iff.mpr (lt_one_of_not_idealMeetsCharacteristic hdisj hn)
     rwa [hpow, ← WithZero.coe_one, WithZero.coe_lt_coe] at h2
-  have hlt : h < 1 := by
-    by_contra hge
-    push Not at hge
-    exact absurd hlt_n (not_lt.mpr (one_le_pow_of_one_le' hge n))
+  have hlt : h < 1 := (pow_lt_one_iff hn0).mp hlt_n
   have hnot : h ∉ characteristicSubgroup v :=
     not_mem_characteristicSubgroup_of_pow_mem hdisj ht₀0 hn
   refine ⟨TauCeti.ConvexSubgroup.closure {h}, ?_,
