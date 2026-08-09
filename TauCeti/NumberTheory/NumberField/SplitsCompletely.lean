@@ -30,8 +30,6 @@ off from residues.
 ## Main results
 
 * `TauCeti.NumberField.ncard_primesOver_eq_finrank_iff`: the rational-prime specialization.
-* `TauCeti.NumberField.ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank`:
-  the forward direction without a Galois hypothesis.
 * `TauCeti.NumberField.bijective_algebraMap_quotient_of_ncard_primesOver_eq_finrank`:
   complete splitting makes each residue field the prime field.
 * `TauCeti.NumberField.ncard_primesOver_eq_finrank_iff_stabilizer_eq_bot`: the orbit–stabilizer
@@ -110,22 +108,6 @@ theorem ncard_primesOver_eq_finrank_iff_stabilizer_eq_bot (L : Type*) [Field L]
   · intro hst
     rw [hst] at hkey
     simpa using hkey
-
-/-- **Complete splitting forces `e = f = 1` at every prime above `p`.** If `p` has as many primes
-above it as the degree of `K`, then each is unramified with trivial inertia degree. No Galois
-hypothesis is needed. -/
-theorem ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank {K : Type*}
-    [Field K] [NumberField K] {p : ℕ} [Fact p.Prime] (Q : Ideal (𝓞 K)) [Q.IsPrime]
-    [Q.LiesOver (span {(p : ℤ)})]
-    (hsplit : (primesOver (span {(p : ℤ)}) (𝓞 K)).ncard = finrank ℚ K) :
-    Q.ramificationIdx ℤ = 1 ∧ Q.inertiaDeg ℤ = 1 := by
-  have hpne : (p : ℤ) ≠ 0 := by exact_mod_cast (Fact.out : p.Prime).ne_zero
-  have : (span {(p : ℤ)} : Ideal ℤ).IsPrime :=
-    (Ideal.span_singleton_prime hpne).mpr (Nat.prime_iff_prime_int.mp Fact.out)
-  refine
-    RamificationInertia.ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank
-      (span {(p : ℤ)}) Q ?_
-  rwa [NumberField.RingOfIntegers.rank]
 
 /-- **Complete splitting makes the residue field at `Q` the prime field.** If `p` splits
 completely then `algebraMap (ℤ ⧸ (p)) (𝓞 K ⧸ Q)` is bijective. No Galois hypothesis is needed. -/
