@@ -250,7 +250,7 @@ private lemma min_sin_div_two_le_sin_div_two {m t w : ℝ} (hm : 0 < m) (hmt : m
 /-- **On a non-wrapping arc, closeness in the plane is closeness in angle.** A point of the arc
 `circleMap ζ ρ '' Ioo a b` lying within `2 * |ρ| * min (sin (m / 2)) (sin ((b - a) / 2))` of
 `circleMap ζ ρ θ₀` is the image of an angle within `m` of `θ₀`. -/
-private lemma exists_angle_sub_lt_of_mem_ball_circleMap (ζ : ℂ) (ρ : ℝ) {a b θ₀ m : ℝ}
+private lemma exists_abs_sub_lt_of_mem_ball_circleMap_image_Ioo (ζ : ℂ) (ρ : ℝ) {a b θ₀ m : ℝ}
     (hab2π : b - a < 2 * π) (hθ₀ : θ₀ ∈ Icc a b) (hm0 : 0 < m) {x : ℂ}
     (hx : x ∈ circleMap ζ ρ '' Ioo a b ∩
       ball (circleMap ζ ρ θ₀) (2 * |ρ| * min (Real.sin (m / 2)) (Real.sin ((b - a) / 2)))) :
@@ -314,9 +314,9 @@ theorem subsingleton_clusterSetOn_circleMap_image_Ioo (hUo : IsOpen U)
     mul_pos (by linarith) (lt_min hsinm hsinw), ?_⟩
   rintro x hx y hy
   obtain ⟨θx, hθx, rfl, hdx⟩ :=
-    exists_angle_sub_lt_of_mem_ball_circleMap ζ ρ hab2π hθ₀ hm0 hx
+    exists_abs_sub_lt_of_mem_ball_circleMap_image_Ioo ζ ρ hab2π hθ₀ hm0 hx
   obtain ⟨θy, hθy, rfl, hdy⟩ :=
-    exists_angle_sub_lt_of_mem_ball_circleMap ζ ρ hab2π hθ₀ hm0 hy
+    exists_abs_sub_lt_of_mem_ball_circleMap_image_Ioo ζ ρ hab2π hθ₀ hm0 hy
   refine hmod θx hθx θy hθy ?_
   have htri : |θx - θy| ≤ |θx - θ₀| + |θ₀ - θy| := abs_sub_le _ _ _
   have hsymm : |θ₀ - θy| = |θy - θ₀| := abs_sub_comm _ _
