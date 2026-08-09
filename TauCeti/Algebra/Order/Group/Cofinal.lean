@@ -8,12 +8,13 @@ module
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 
 /-!
-# Cofinal elements and the Archimedean characterization of convex subgroups
+# Cofinal elements of an ordered group
 
-The cofinality theory of linearly ordered commutative groups following Wedhorn,
-*Adic Spaces* (arXiv:1910.05934v1), §1.4: an element is cofinal for a convex subgroup
-if its powers eventually fall below every member. This is the order-theoretic input
-to the continuity criterion for valuations (Wedhorn §7.2) and the retraction
+Cofinality following Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §1.4: an element is
+cofinal for a subgroup if its powers eventually fall below every member. The definition
+needs only a group with a strict order; the results relating cofinality to convex
+subgroups are stated for linearly ordered commutative groups. This is the order-theoretic
+input to the continuity criterion for valuations (Wedhorn §7.2) and the retraction
 `r_I : Spv A → Spv(A, I)` of §7.1.2.
 
 ## Main definitions
