@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.FieldTheory.SeparableDegree
+public import Mathlib.FieldTheory.Separable
 public import Mathlib.RingTheory.DedekindDomain.Basic
 public import Mathlib.RingTheory.Unramified.Locus
 import Mathlib.RingTheory.DedekindDomain.Different
@@ -75,7 +75,7 @@ theorem finite_compl_unramifiedLocus : (unramifiedLocus A B)ᶜ.Finite := by
   refine ((Ideal.finite_factors (differentIdeal_ne_bot (A := A) (B := B))).image
     _root_.IsDedekindDomain.HeightOneSpectrum.asIdeal).subset ?_
   rintro _ ⟨p, hp, rfl⟩
-  have := p.isPrime
+  have : p.asIdeal.IsPrime := p.isPrime
   have hdvd : p.asIdeal ∣ differentIdeal A B := dvd_differentIdeal_iff.mpr hp
   -- a ramified prime is nonzero: `⊥` divides only `⊥`, and the different ideal is not `⊥`
   have hbot : p.asIdeal ≠ ⊥ := fun h =>
