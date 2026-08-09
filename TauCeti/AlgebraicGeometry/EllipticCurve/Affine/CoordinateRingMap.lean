@@ -5,21 +5,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
+public import TauCeti.RingTheory.AdjoinRoot
 
 /-!
 # Surjectivity of the coordinate-ring map
 
 Mathlib's `WeierstrassCurve.Affine.CoordinateRing.map` sends a ring homomorphism `f : R →+* S` to
 `R[W] →+* S[W.map f]`, and proves it injective when `f` is (`CoordinateRing.map_injective`). It
-states no surjectivity. Since `R[W]` is `AdjoinRoot W.polynomial`, the natural home for that
-argument is `AdjoinRoot.map`, where Mathlib states neither the action on a class nor surjectivity;
-both are supplied here, and the coordinate-ring statements follow in a line.
+states no surjectivity. Since `R[W]` is `AdjoinRoot W.polynomial`, the argument lives at the
+`AdjoinRoot` level in `TauCeti/RingTheory/AdjoinRoot.lean`; the coordinate-ring statements follow
+in a line each.
 
 ## Main results
 
-* `AdjoinRoot.map_mk`: `AdjoinRoot.map` on the class of a polynomial is the class of its image —
-  the `AdjoinRoot`-level form of Mathlib's `CoordinateRing.map_mk`.
-* `AdjoinRoot.map_surjective`: `AdjoinRoot.map` is surjective when the base map is.
 * `WeierstrassCurve.Affine.CoordinateRing.map_surjective` and
   `WeierstrassCurve.Affine.CoordinateRing.map_bijective`: the coordinate-ring specialisations,
   stated like Mathlib's `CoordinateRing.map_injective` for an arbitrary `f : R →+* S`.
@@ -56,26 +54,6 @@ public section
 open Polynomial
 
 open scoped Polynomial.Bivariate
-
-namespace AdjoinRoot
-
-variable {R S : Type*} [CommRing R] [CommRing S]
-
-/-- `AdjoinRoot.map` on the class of a polynomial is the class of its image. Mathlib states this
-for `WeierstrassCurve.Affine.CoordinateRing.map` but not for the underlying `AdjoinRoot.map`. -/
-lemma map_mk {f : R →+* S} {p : R[X]} {q : S[X]} (h : q ∣ p.map f) (x : R[X]) :
-    map f p q h (mk p x) = mk q (x.map f) := by
-  rw [map, lift_mk, ← Polynomial.eval₂_map]
-  exact aeval_eq (x.map f)
-
-/-- **`AdjoinRoot.map` is surjective when the base map is.** -/
-lemma map_surjective {f : R →+* S} (hf : Function.Surjective f) {p : R[X]} {q : S[X]}
-    (h : q ∣ p.map f) : Function.Surjective (map f p q h) := fun y => by
-  obtain ⟨t, rfl⟩ := mk_surjective y
-  obtain ⟨u, rfl⟩ := Polynomial.map_surjective f hf t
-  exact ⟨mk p u, map_mk h u⟩
-
-end AdjoinRoot
 
 namespace WeierstrassCurve.Affine.CoordinateRing
 
