@@ -10,11 +10,11 @@ public import Mathlib.RingTheory.Algebraic.Integral
 /-!
 # The function field of a Weierstrass curve has degree two over `K(x)`
 
-Mathlib gives the coordinate ring `K[W]` a power basis `{1, Y}` over `K[X]`, so it is free of rank
-two, and defines the function field `K(W)` as its fraction field. It says nothing about `K(W)` as
-an extension of `K(x) = FractionRing K[X]` — indeed it provides no algebra structure for that pair,
-so the statement cannot even be written against Mathlib alone. This file supplies the structure and
-the degree.
+Mathlib gives the coordinate ring `R[W]` a power basis `{1, Y}` over `R[X]`, so it is free of rank
+two, and defines the function field `R(W)` as its fraction field. It says nothing about `R(W)` as
+an extension of `R(x) = FractionRing R[X]` — indeed it provides no algebra structure for that pair,
+so the statement cannot even be written against Mathlib alone. This file exports the structure and
+proves the degree.
 
 ## Main results
 
@@ -22,12 +22,19 @@ the degree.
   coordinate ring is module-finite and integral over `R[X]`, over any commutative ring.
 * `WeierstrassCurve.Affine.finrank_coordinateRing`: it has rank two, under
   `[StrongRankCondition R[X]]` — the hypothesis `Module.finrank` actually needs, automatic over a
-  field.
-* `WeierstrassCurve.Affine.finrank_functionField`: `[K(W) : K(x)] = 2`.
+  domain.
+* `WeierstrassCurve.Affine.algebraFractionRingFunctionField` and
+  `isScalarTowerFractionRingFunctionField`: the `R(x)`-algebra structure on `R(W)` and the tower
+  `R[X] ⊆ R(x) ⊆ R(W)`, over any integral domain.
+* `WeierstrassCurve.Affine.finrank_functionField`: `[R(W) : R(x)] = 2`.
 
 The base change itself is Mathlib's `Algebra.IsAlgebraic.isBaseChange_of_isFractionRing`; what is
-missing from Mathlib is the `K(x)`-algebra structure on `K(W)` that lets the statement be written
-at all, and the instances feeding that generic theorem.
+missing from Mathlib is the `R(x)`-algebra structure on `R(W)` that lets the statement be written
+at all, and the instances feeding that generic theorem. Mathlib supplies the algebra as
+`FractionRing.liftAlgebra` but deliberately keeps it out of the instance graph, since for a general
+target it collides with the identity structure on `FractionRing R[X]` itself; `R(W)` is a quadratic
+extension of `R(x)`, so that collision cannot arise here and the instance is exported rather than
+activated locally.
 
 ## Roadmap
 
@@ -50,10 +57,12 @@ that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/FrobeniusIsogeny.le
 together with the algebra and localization instances they rest on.
 
 Changes from the source. Those instances are stated there inside a file that also builds the
-Frobenius isogeny; here they are separated out, since the degree of `K(W)` over `K(x)` is a fact
-about the curve and not about any isogeny. The source's `FaithfulSMul K[X] K[W]` instance and its
-`algebraMap_poly_injective` are dropped: Mathlib now supplies both, the first as an instance in
-`Affine/Point.lean` and the second as `FaithfulSMul.algebraMap_injective`.
+Frobenius isogeny; here they are separated out, since the degree of `R(W)` over `R(x)` is a fact
+about the curve and not about any isogeny. The source states everything over a field; here the
+coordinate-ring half is over an arbitrary commutative ring and the function-field half over an
+integral domain, which is all either argument uses. The source's `FaithfulSMul K[X] K[W]` instance
+and its `algebraMap_poly_injective` are dropped: Mathlib now supplies both, the first as an
+instance in `Affine/Point.lean` and the second as `FaithfulSMul.algebraMap_injective`.
 -/
 
 public section
@@ -61,10 +70,6 @@ public section
 open Polynomial
 
 open scoped nonZeroDivisors
-
--- `FractionRing.liftAlgebra` is deliberately not an instance in Mathlib, to avoid diamonds; it is
--- activated locally here exactly as `Mathlib/RingTheory/DedekindDomain/Different.lean` does.
-attribute [local instance] FractionRing.liftAlgebra FractionRing.isScalarTower_liftAlgebra
 
 namespace WeierstrassCurve.Affine
 
@@ -88,19 +93,32 @@ lemma finrank_coordinateRing [StrongRankCondition R[X]] :
 
 end CommRing
 
-section Field
+section Domain
 
-variable {K : Type*} [Field K] (W : WeierstrassCurve.Affine K)
+variable {R : Type*} [CommRing R] [IsDomain R] (W : WeierstrassCurve.Affine R)
 
-/-- **The function field of a Weierstrass curve is a quadratic extension of `K(x)`.** The function
-field is the base change of the coordinate ring along `K[X] → K(x)`, by Mathlib's
+/-- **The rational function field `R(x)` acts on the function field `R(W)`.** Mathlib keeps
+`FractionRing.liftAlgebra` out of the instance graph because it collides with the identity
+structure when the target *is* `FractionRing R[X]`; `R(W)` is a quadratic extension of `R(x)`, so
+that collision cannot arise for this pair and the instance is exported. -/
+noncomputable instance algebraFractionRingFunctionField :
+    Algebra (FractionRing R[X]) W.FunctionField :=
+  FractionRing.liftAlgebra R[X] W.FunctionField
+
+/-- `R(x)` sits between `R[X]` and `R(W)`. -/
+instance isScalarTowerFractionRingFunctionField :
+    IsScalarTower R[X] (FractionRing R[X]) W.FunctionField :=
+  FractionRing.isScalarTower_liftAlgebra R[X] W.FunctionField
+
+/-- **The function field of a Weierstrass curve is a quadratic extension of `R(x)`.** The function
+field is the base change of the coordinate ring along `R[X] → R(x)`, by Mathlib's
 `Algebra.IsAlgebraic.isBaseChange_of_isFractionRing`, and the coordinate ring has rank two. -/
 theorem finrank_functionField :
-    Module.finrank (FractionRing K[X]) W.FunctionField = 2 := by
-  rw [(Algebra.IsAlgebraic.isBaseChange_of_isFractionRing K[X] W.CoordinateRing
-    (FractionRing K[X]) W.FunctionField).finrank_eq, finrank_coordinateRing]
+    Module.finrank (FractionRing R[X]) W.FunctionField = 2 := by
+  rw [(Algebra.IsAlgebraic.isBaseChange_of_isFractionRing R[X] W.CoordinateRing
+    (FractionRing R[X]) W.FunctionField).finrank_eq, finrank_coordinateRing]
 
-end Field
+end Domain
 
 end WeierstrassCurve.Affine
 
