@@ -30,6 +30,10 @@ Wedhorn's *Adic Spaces*.
   basis needs.
 * `locBasis`: The neighborhoods form a `RingSubgroupsBasis`, so they are the zero-neighbourhood
   basis of a ring topology on `Aₛ`, namely `locTopology`.
+* `locTopology_hasBasis_nhds_zero`, `locTopology_isTopologicalRing` and
+  `locTopology_nonarchimedean`: the contract of `locTopology`, to be used in place of unfolding
+  the construction.
+* `continuous_algebraMap_locTopology`: the structure map `A → Aₛ` is continuous.
 * `continuous_locTopology_of_continuous_algebraMap_of_isPowerBounded`: a sufficient criterion
   for a ring homomorphism out of `Aₛ` to be continuous — its restriction along `algebraMap` is
   continuous and the fractions `t/s` go to power-bounded elements. The converse is not proved
@@ -318,6 +322,23 @@ theorem locTopology_nonarchimedean [IsTopologicalRing A] (P : PairOfDefinition A
     (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
     @NonarchimedeanRing _ _ (locTopology P T s hopen) :=
   (locBasis P T s hopen).nonarchimedean
+
+/-- The structure map `A → Aₛ` is continuous for the localisation topology: the image of `Iⁿ`
+already lands in the `n`-th basic neighbourhood. -/
+theorem continuous_algebraMap_locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A)
+    (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
+    Continuous[_, locTopology P T s hopen] (algebraMap A (Localization.Away s)) := by
+  let _ := locTopology P T s hopen
+  have _ := locTopology_isTopologicalRing P T s hopen
+  refine continuous_of_continuousAt_zero (algebraMap A (Localization.Away s)) ?_
+  rw [ContinuousAt, map_zero,
+    (locTopology_hasBasis_nhds_zero P T s hopen).tendsto_right_iff]
+  intro n _
+  filter_upwards [P.hasBasis_nhds_zero.mem_of_mem (i := n) trivial] with a ha
+  obtain ⟨b, hb, rfl⟩ := (P.mem_idealImage n).mp ha
+  exact ⟨algebraMapD P T s b,
+    by rw [locIdeal, ← Ideal.map_pow]; exact Ideal.mem_map_of_mem _ hb, rfl⟩
 
 /-! ### A sufficient criterion for continuity -/
 
