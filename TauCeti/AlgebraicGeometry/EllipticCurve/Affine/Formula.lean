@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Formula
+public import TauCeti.AlgebraicGeometry.EllipticCurve.VariableChange
 
 /-!
 # Transformation of the affine group-law formulae under a change of variables
@@ -30,12 +31,6 @@ Adapted from the FLT project's quadratic-twist development (`ImperialCollegeLond
 for adapted material, the source authorship is credited here rather than in the copyright
 header. Ported with the transformation laws generalised from a field to a commutative ring and
 the ellipticity hypothesis removed.
-
-The cocycle laws `variableChange_X_mul`/`variableChange_Y_mul` and the base-change naturality
-`variableChange_X_map`/`variableChange_Y_map` are not in the FLT source; they follow
-`ModularCurves/ForMathlib/AffinePointVariableChange.lean` (`vcX_comp`, `vcY_comp`, `vcX_map`,
-`vcY_map`) in `CBirkbeck/AINTLIB` (Apache 2.0, by Chris Birkbeck), restated here for the
-`(x, y) ↦ (u²x + r, u³y + u²sx + t)` direction this file uses.
 -/
 
 public section
@@ -46,12 +41,11 @@ namespace WeierstrassCurve.Affine
 
 Exactly six laws are registered as `simp` lemmas: `variableChange_addY`, the three
 `variableChange_evalEval_*`, `variableChange_equation` and `variableChange_nonsingular`. The
-others are deliberately not. `variableChange_negY`, `variableChange_addX`,
-`variableChange_negAddY` and `variableChange_X_inj` have left-hand sides that `simp` rewrites
-first — the first three are headed by `negY`, `addX` and `negAddY`, which `simp` unfolds, and
-the fourth is cancelled by `add_left_inj` — so those sides are never in simp-normal form and the
-`simpNF` linter rejects the attribute. `variableChange_Y_inj`, `variableChange_negY_iff` and
-`variableChange_slope` are conditional rather than unconditional normalisation laws.
+others are deliberately not. `variableChange_negY`, `variableChange_addX` and
+`variableChange_negAddY` are headed by `negY`, `addX` and `negAddY`, which `simp` unfolds, so
+their left-hand sides are never in simp-normal form and the `simpNF` linter rejects the
+attribute. `variableChange_negY_iff` and `variableChange_slope` are conditional rather than
+unconditional normalisation laws.
 
 Throughout, the change of variables carries a point `(x, y)` of `C • W` to the point
 `(u²x + r, u³y + u²sx + t)` of `W`. Every law here except the three slope laws is stated over an
@@ -161,47 +155,6 @@ Weierstrass curve over a commutative ring — no ellipticity hypothesis. -/
   rcases eq_or_ne ((C • W).toAffine.polynomialY.evalEval x y) 0 with hy | hy
   · simp only [hy, mul_zero, sub_zero, ne_eq, (C.u.isUnit.pow 4).mul_right_eq_zero]
   · exact iff_of_true (.inr fun h ↦ hy ((C.u.isUnit.pow 3).mul_right_eq_zero.mp h)) (.inr hy)
-
-/-- **Cocycle law for the `x`-coordinate.** Composing changes of variables composes their
-coordinate maps: `Φ_{C * C'} = Φ_{C'} ∘ Φ_C`. -/
-lemma variableChange_X_mul (C' : VariableChange R) (x : R) :
-    ((C * C').u : R) ^ 2 * x + (C * C').r
-      = (C'.u : R) ^ 2 * ((C.u : R) ^ 2 * x + C.r) + C'.r := by
-  simp only [VariableChange.mul_def, Units.val_mul]
-  ring
-
-/-- **Cocycle law for the `y`-coordinate.** -/
-lemma variableChange_Y_mul (C' : VariableChange R) (x y : R) :
-    ((C * C').u : R) ^ 3 * y + ((C * C').u : R) ^ 2 * (C * C').s * x + (C * C').t
-      = (C'.u : R) ^ 3 * ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
-        + (C'.u : R) ^ 2 * C'.s * ((C.u : R) ^ 2 * x + C.r) + C'.t := by
-  simp only [VariableChange.mul_def, Units.val_mul]
-  ring
-
-/-- **Naturality in the base ring** for the `x`-coordinate: the coordinate map commutes with a
-ring homomorphism, so it is compatible with base change. -/
-lemma variableChange_X_map {A : Type*} [CommRing A] (φ : R →+* A) (x : R) :
-    ((C.map φ).u : A) ^ 2 * φ x + (C.map φ).r = φ ((C.u : R) ^ 2 * x + C.r) := by
-  simp [VariableChange.map_u, VariableChange.map_r]
-
-/-- **Naturality in the base ring** for the `y`-coordinate. -/
-lemma variableChange_Y_map {A : Type*} [CommRing A] (φ : R →+* A) (x y : R) :
-    ((C.map φ).u : A) ^ 3 * φ y + ((C.map φ).u : A) ^ 2 * (C.map φ).s * φ x + (C.map φ).t
-      = φ ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t) := by
-  simp [VariableChange.map_u, VariableChange.map_s, VariableChange.map_t]
-
-/-- The change of variables is injective on `x`-coordinates: `u²x + r` determines `x`. -/
-lemma variableChange_X_inj {x₁ x₂ : R} :
-    (C.u : R) ^ 2 * x₁ + C.r = (C.u : R) ^ 2 * x₂ + C.r ↔ x₁ = x₂ :=
-  ⟨fun h ↦ (C.u.isUnit.pow 2).mul_right_inj.mp (add_right_cancel h), fun h ↦ by rw [h]⟩
-
-/-- The change of variables is injective on `y`-coordinates once the `x`-coordinates agree. -/
-lemma variableChange_Y_inj {x₁ x₂ y₁ y₂ : R} (hx : x₁ = x₂) :
-    (C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t
-      = (C.u : R) ^ 3 * y₂ + (C.u : R) ^ 2 * C.s * x₂ + C.t ↔ y₁ = y₂ := by
-  subst hx
-  exact ⟨fun h ↦ (C.u.isUnit.pow 3).mul_right_inj.mp (add_right_cancel (add_right_cancel h)),
-    fun h ↦ by rw [h]⟩
 
 /-- **The change of variables preserves and reflects the `y₁ = -y₂` degeneracy condition.** The
 image pair satisfies the condition (`negY`) that makes the group law take its vertical-line branch
