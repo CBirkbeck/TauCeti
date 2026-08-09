@@ -41,13 +41,10 @@ namespace HeckeRing.GL2
 
 variable (p : ℕ) (hp : p.Prime)
 
-/-- Scaling a diagonal Hecke element: `T(c,c) · T(a,d) = T(c·a, c·d)` whenever `a ∣ d` and all
-three are positive.
-
-Primality plays no role, and neither does the shape of `a` and `d`: the argument is the
-scalar-multiplication rule for diagonal Hecke elements, which never inspects a factorization. -/
-lemma heckeTScalar_mul_heckeTDiag {c a d : ℕ} (hc : 0 < c) (ha : 0 < a) (hd : 0 < d)
-    (had : a ∣ d) :
+/-- Scaling a diagonal Hecke element in the good range: `T(c,c) · T(a,d) = T(c·a, c·d)` when
+`a ∣ d` and all three are positive. -/
+private lemma heckeTScalar_mul_heckeTDiag_of_pos {c a d : ℕ} (hc : 0 < c) (ha : 0 < a)
+    (hd : 0 < d) (had : a ∣ d) :
     heckeTScalar c * heckeTDiag a d = heckeTDiag (c * a) (c * d) := by
   rw [heckeTDiag_eq_diagElem ha hd had,
     heckeTDiag_eq_diagElem (Nat.mul_pos hc ha) (Nat.mul_pos hc hd) (mul_dvd_mul_left c had),
@@ -57,15 +54,39 @@ lemma heckeTScalar_mul_heckeTDiag {c a d : ℕ} (hc : 0 < c) (ha : 0 < a) (hd : 
     diagElem_mul_const 2 ![a, d] (fun i ↦ by fin_cases i <;> assumption) c hc]
   exact congrArg diagElem (funext fun i ↦ by fin_cases i <;> simp [Pi.mul_apply, Nat.mul_comm])
 
-/-- The index shift: `T(p,p) · T(pʲ, p^d) = T(p^(j+1), p^(d+1))` for `j ≤ d`.
+/-- Scaling a diagonal Hecke element: `T(c,c) · T(a,d) = T(c·a, c·d)`, with **no hypotheses**.
 
-The prime-power case of `heckeTScalar_mul_heckeTDiag`; it needs only `0 < p`, not primality. -/
+`heckeTDiag` is zero-extended off the divisor-pair range, and that extension is compatible with
+scaling: outside the range both sides vanish, since `0 < c·a` forces `0 < a`, and for `0 < c` the
+divisibility `c·a ∣ c·d` is equivalent to `a ∣ d`. Primality plays no role, and neither does the
+shape of `a` and `d`. -/
+lemma heckeTScalar_mul_heckeTDiag (c a d : ℕ) :
+    heckeTScalar c * heckeTDiag a d = heckeTDiag (c * a) (c * d) := by
+  rcases Nat.eq_zero_or_pos c with rfl | hc
+  · simp [heckeTScalar_def, heckeTDiag_def]
+  by_cases hcond : 0 < a ∧ 0 < d ∧ a ∣ d
+  · exact heckeTScalar_mul_heckeTDiag_of_pos hc hcond.1 hcond.2.1 hcond.2.2
+  · have hzero : heckeTDiag a d = 0 := by rw [heckeTDiag_def]; exact if_neg hcond
+    have hzero' : heckeTDiag (c * a) (c * d) = 0 := by
+      rw [heckeTDiag_def]
+      refine if_neg fun h ↦ hcond ⟨?_, ?_, ?_⟩
+      · rcases Nat.eq_zero_or_pos a with rfl | ha
+        · simp at h
+        · exact ha
+      · rcases Nat.eq_zero_or_pos d with rfl | hd
+        · simp at h
+        · exact hd
+      · exact (Nat.mul_dvd_mul_iff_left hc).mp h.2.2
+    rw [hzero, hzero', mul_zero]
+
+/-- The index shift: `T(p,p) · T(pʲ, p^d) = T(p^(j+1), p^(d+1))`, for arbitrary `p`, `j`, `d`.
+
+The prime-power case of `heckeTScalar_mul_heckeTDiag`; like it, unconditional. -/
 @[simp]
-lemma heckeTScalar_mul_heckeTDiag_prime_pow (hp0 : 0 < p) (j d : ℕ) (hjd : j ≤ d) :
+lemma heckeTScalar_mul_heckeTDiag_prime_pow (j d : ℕ) :
     heckeTScalar p * heckeTDiag (p ^ j) (p ^ d) =
       heckeTDiag (p ^ (j + 1)) (p ^ (d + 1)) := by
-  rw [heckeTScalar_mul_heckeTDiag hp0 (pow_pos hp0 j) (pow_pos hp0 d)
-    (Nat.pow_dvd_pow p hjd), ← pow_succ' p j, ← pow_succ' p d]
+  rw [heckeTScalar_mul_heckeTDiag, ← pow_succ' p j, ← pow_succ' p d]
 
 include hp in
 /-- **Shimura, Theorem 3.24(2)**: `T(1, pᵏ) = T(pᵏ) − T(p,p) · T(p^(k−2))` for `k ≥ 2`:
@@ -82,7 +103,7 @@ theorem heckeTDiag_one_prime_pow_eq (k : ℕ) (hk : 2 ≤ k) :
       heckeTDiag (p ^ (j + 1)) (p ^ (k - (j + 1))) := fun j hj ↦ by
     rw [Finset.mem_range] at hj
     have harith : k - 2 - j + 1 = k - (j + 1) := by omega
-    rw [heckeTScalar_mul_heckeTDiag_prime_pow p hp.pos j (k - 2 - j) (by omega), harith]
+    rw [heckeTScalar_mul_heckeTDiag_prime_pow p j (k - 2 - j), harith]
   rw [Finset.sum_congr rfl shift,
     show Finset.range ((k - 2) / 2 + 1) = Finset.range (k / 2) from by congr 1; omega,
     Finset.sum_range_succ']
@@ -606,5 +627,22 @@ theorem heckeT_prime_mul_heckeTDiag_one_prime_pow (k : ℕ) :
         hzero A (fun h ↦ h1 h.symm) (fun h ↦ h2 h.symm), Nat.cast_zero]
 
 end SupportSubset
+
+include hp in
+/-- The characteristic product rule in simp normal form:
+`T(1, p) · T(1, pᵏ) = T(1, p^(k+1)) + m · T(p, pᵏ)`.
+
+`heckeT_prime_mul_heckeTDiag_one_prime_pow` states the same identity with `T(p)` on the left,
+but `@[simp] heckeT_prime` rewrites that `T(p)` to `T(1, p)` first, so the rule can never fire
+during simplification. This restatement is the form simp actually meets, and carries the
+attribute. -/
+@[simp]
+theorem heckeTDiag_one_prime_mul_heckeTDiag_one_prime_pow (k : ℕ) :
+    heckeTDiag 1 p * heckeTDiag 1 (p ^ k) =
+      heckeTDiag 1 (p ^ (k + 1)) +
+        (if k = 1 then ((p : ℤ) + 1) else (p : ℤ)) • heckeTDiag p (p ^ k) := by
+  rw [← heckeT_prime p hp]
+  exact heckeT_prime_mul_heckeTDiag_one_prime_pow p hp k
+
 
 end HeckeRing.GL2
