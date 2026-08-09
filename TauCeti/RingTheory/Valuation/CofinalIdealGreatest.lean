@@ -214,4 +214,24 @@ theorem cofinalValueFor_closure_singleton_of_le {v : Valuation A Γ₀} {a : A}
   exact (TauCeti.isGreatest_convexSubgroup_isCofinalElement hgreatest hlt).1 _
     (Set.mem_insert _ _)
 
+/-! ### Reduction along the radical -/
+
+/-- **Cofinality of an ideal depends only on its radical.** Immediate from Lemma 7.1: the
+cofinal elements form a *radical* ideal, so containment in it is insensitive to passing to the
+radical. This is the step that lets Wedhorn replace `I` by a finitely generated ideal with the
+same radical — the standing hypothesis of §7.1. -/
+theorem idealCofinalFor_radical_iff {v : Valuation A Γ₀}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (hH : characteristicSubgroup v < H) {I : Ideal A} :
+    IdealCofinalFor v H I.radical ↔ IdealCofinalFor v H I := by
+  rw [idealCofinalFor_iff_le_cofinalIdeal hH, idealCofinalFor_iff_le_cofinalIdeal hH]
+  exact (cofinalIdeal_isRadical hH).radical_le_iff
+
+/-- Two ideals with the same radical are cofinal for exactly the same convex subgroups. -/
+theorem idealCofinalFor_congr_of_radical_eq {v : Valuation A Γ₀}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (hH : characteristicSubgroup v < H) {I J : Ideal A} (hIJ : I.radical = J.radical) :
+    IdealCofinalFor v H I ↔ IdealCofinalFor v H J := by
+  rw [← idealCofinalFor_radical_iff hH (I := I), ← idealCofinalFor_radical_iff hH (I := J), hIJ]
+
 end TauCeti.Valuation
