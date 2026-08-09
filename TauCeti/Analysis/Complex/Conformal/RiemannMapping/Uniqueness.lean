@@ -36,6 +36,27 @@ namespace TauCeti
 open _root_.Complex Filter Function Metric Set
 open scoped ComplexConjugate Topology
 
+/-- **The transition map between two conformal parametrisations of the disc.** If `f` and `g` are
+injective and differentiable on `U` with image the unit disc, then `g ∘ f⁻¹` is differentiable on
+the disc, maps it into itself, and is inverted there by `f ∘ g⁻¹`. -/
+private theorem differentiableOn_mapsTo_leftInvOn_comp_invFunOn {U : Set ℂ} (hU : IsOpen U)
+    {f g : ℂ → ℂ} (hf : DifferentiableOn ℂ f U) (hg : DifferentiableOn ℂ g U)
+    (hfi : InjOn f U) (hgi : InjOn g U)
+    (hfimage : f '' U = ball (0 : ℂ) 1) (hgimage : g '' U = ball (0 : ℂ) 1) :
+    DifferentiableOn ℂ (g ∘ Function.invFunOn f U) (ball (0 : ℂ) 1) ∧
+      MapsTo (g ∘ Function.invFunOn f U) (ball (0 : ℂ) 1) (ball (0 : ℂ) 1) ∧
+      LeftInvOn (f ∘ Function.invFunOn g U) (g ∘ Function.invFunOn f U) (ball (0 : ℂ) 1) := by
+  obtain ⟨hf_surj, -⟩ := image_eq_iff_surjOn_mapsTo.mp hfimage
+  obtain ⟨-, hg_maps⟩ := image_eq_iff_surjOn_mapsTo.mp hgimage
+  have hfinv : DifferentiableOn ℂ (Function.invFunOn f U) (ball (0 : ℂ) 1) := by
+    rw [← hfimage]
+    exact DifferentiableOn.invFunOn hf hU hfi
+  refine ⟨hg.comp hfinv hf_surj.mapsTo_invFunOn, hg_maps.comp hf_surj.mapsTo_invFunOn,
+    fun z hz => ?_⟩
+  simp only [Function.comp_apply]
+  rw [hgi.leftInvOn_invFunOn (hf_surj.mapsTo_invFunOn hz)]
+  exact hf_surj.rightInvOn_invFunOn hz
+
 /--
 **Uniqueness in the Riemann mapping theorem, up to a disc automorphism.** If `f` and `g` are
 holomorphic injections from an open set `U` onto the open unit disc, then there are `u` on the
@@ -55,34 +76,12 @@ theorem exists_eqOn_unitDiscStandardAutomorphismFormula_comp {U : Set ℂ} (hU :
           (u : ℂ) *
             ((f z - (a : ℂ)) / (1 - (starRingEnd ℂ) (a : ℂ) * f z)))
         U := by
-  obtain ⟨hf_surj, hf_maps⟩ := image_eq_iff_surjOn_mapsTo.mp hfimage
-  obtain ⟨hg_surj, hg_maps⟩ := image_eq_iff_surjOn_mapsTo.mp hgimage
-  let F : ℂ → ℂ := g ∘ Function.invFunOn f U
-  let G : ℂ → ℂ := f ∘ Function.invFunOn g U
-  have hfinv : DifferentiableOn ℂ (Function.invFunOn f U) (ball (0 : ℂ) 1) := by
-    rw [← hfimage]
-    exact DifferentiableOn.invFunOn hf hU hfi
-  have hginv : DifferentiableOn ℂ (Function.invFunOn g U) (ball (0 : ℂ) 1) := by
-    rw [← hgimage]
-    exact DifferentiableOn.invFunOn hg hU hgi
-  have hFdiff : DifferentiableOn ℂ F (ball (0 : ℂ) 1) :=
-    hg.comp hfinv hf_surj.mapsTo_invFunOn
-  have hGdiff : DifferentiableOn ℂ G (ball (0 : ℂ) 1) :=
-    hf.comp hginv hg_surj.mapsTo_invFunOn
-  have hFmaps : MapsTo F (ball (0 : ℂ) 1) (ball (0 : ℂ) 1) :=
-    hg_maps.comp hf_surj.mapsTo_invFunOn
-  have hGmaps : MapsTo G (ball (0 : ℂ) 1) (ball (0 : ℂ) 1) :=
-    hf_maps.comp hg_surj.mapsTo_invFunOn
-  have hGF : LeftInvOn G F (ball (0 : ℂ) 1) := by
-    intro z hz
-    simp only [F, G, Function.comp_apply]
-    rw [hgi.leftInvOn_invFunOn (hf_surj.mapsTo_invFunOn hz)]
-    exact hf_surj.rightInvOn_invFunOn hz
-  have hFG : RightInvOn G F (ball (0 : ℂ) 1) := by
-    intro z hz
-    simp only [F, G, Function.comp_apply]
-    rw [hfi.leftInvOn_invFunOn (hg_surj.mapsTo_invFunOn hz)]
-    exact hg_surj.rightInvOn_invFunOn hz
+  obtain ⟨-, hf_maps⟩ := image_eq_iff_surjOn_mapsTo.mp hfimage
+  -- the two transition maps, each the inverse of the other on the disc
+  obtain ⟨hFdiff, hFmaps, hGF⟩ :=
+    differentiableOn_mapsTo_leftInvOn_comp_invFunOn hU hf hg hfi hgi hfimage hgimage
+  obtain ⟨hGdiff, hGmaps, hFG⟩ :=
+    differentiableOn_mapsTo_leftInvOn_comp_invFunOn hU hg hf hgi hfi hgimage hfimage
   obtain ⟨u, a, _, hclass⟩ :=
     exists_forall_unitDisc_eq_unitDiscStandardAutomorphismEquiv
       hFdiff hGdiff hFmaps hGmaps hGF hFG
@@ -91,8 +90,7 @@ theorem exists_eqOn_unitDiscStandardAutomorphismFormula_comp {U : Set ℂ} (hU :
     simpa [mem_ball_zero_iff] using hf_maps hz
   have hclass_z := hclass (Complex.UnitDisc.mk (f z) hfz)
   rw [coe_unitDiscStandardAutomorphismEquiv_apply] at hclass_z
-  have hFz : F (f z) = g z := by
-    simp only [F, Function.comp_apply]
+  have hFz : g (Function.invFunOn f U (f z)) = g z := by
     rw [hfi.leftInvOn_invFunOn hz]
   rw [← hFz]
   simpa using hclass_z
