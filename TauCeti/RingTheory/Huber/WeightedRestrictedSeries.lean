@@ -34,8 +34,8 @@ the ordinary restricted series `A⟨X⟩`.
   `TauCeti.Huber.weightedRestrictedSubring`.
 * `TauCeti.Huber.weightedNhd_ringSubgroupsBasis` and `TauCeti.Huber.weightedTopology`: the
   `U⟨X⟩` are a fundamental system of neighbourhoods of zero for a ring topology, together with
-  its contract (`weightedTopology_hasBasis_nhds_zero`, `weightedTopology_isTopologicalRing`,
-  `weightedTopology_nonarchimedean`).
+  its contract (`weightedTopology_hasBasis_nhds_zero`, `isTopologicalRing_weightedTopology`,
+  `nonarchimedeanRing_weightedTopology`).
 * `TauCeti.Huber.weightedRestrictedSubring_one`: for the trivial weight this is the ordinary
   ring of restricted power series (Wedhorn Example 5.54).
 
@@ -676,8 +676,8 @@ theorem weightedNhd_ringSubgroupsBasis [NonarchimedeanRing A] {T : Fin k → Set
 neighbourhoods of zero are the `U⟨X⟩`.
 
 Consumers should go through the contract lemmas below rather than unfolding this: the basis is
-`weightedTopology_hasBasis_nhds_zero`, and `weightedTopology_isTopologicalRing` /
-`weightedTopology_nonarchimedean` give the structure. `@[instance_reducible]` rather than plain
+`weightedTopology_hasBasis_nhds_zero`, and `isTopologicalRing_weightedTopology` /
+`nonarchimedeanRing_weightedTopology` give the structure. `@[instance_reducible]` rather than plain
 `@[reducible]` is what the `classDefReducibility` linter requires of a class-valued `def`; it
 opens the body to instance synthesis only, not to general definitional unfolding. -/
 @[instance_reducible]
@@ -693,14 +693,14 @@ theorem weightedTopology_hasBasis_nhds_zero [NonarchimedeanRing A] {T : Fin k �
   (weightedNhd_ringSubgroupsBasis hT).hasBasis_nhds_zero
 
 /-- `weightedTopology` is a ring topology. -/
-theorem weightedTopology_isTopologicalRing [NonarchimedeanRing A] {T : Fin k → Set A}
+theorem isTopologicalRing_weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) :
     @IsTopologicalRing _ (weightedTopology hT) _ :=
   (weightedNhd_ringSubgroupsBasis hT).toRingFilterBasis.isTopologicalRing
 
 /-- `weightedTopology` is nonarchimedean: `A⟨X⟩_T` inherits a basis of open additive subgroups at
 zero, as every ring built from a `RingSubgroupsBasis` does. -/
-theorem weightedTopology_nonarchimedean [NonarchimedeanRing A] {T : Fin k → Set A}
+theorem nonarchimedeanRing_weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) :
     @NonarchimedeanRing _ _ (weightedTopology hT) :=
   (weightedNhd_ringSubgroupsBasis hT).nonarchimedean
@@ -713,7 +713,7 @@ theorem continuous_weightedC [NonarchimedeanRing A] {T : Fin k → Set A} (hT : 
     @Continuous _ _ _ (weightedTopology hT) (weightedC T hT) := by
   classical
   let _ := weightedTopology hT
-  have _ := weightedTopology_isTopologicalRing hT
+  have _ := isTopologicalRing_weightedTopology hT
   refine continuous_of_continuousAt_zero (weightedC T hT) ?_
   rw [ContinuousAt, map_zero, (weightedTopology_hasBasis_nhds_zero hT).tendsto_right_iff]
   intro U _
