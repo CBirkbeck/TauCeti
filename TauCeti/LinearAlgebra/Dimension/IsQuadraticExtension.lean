@@ -56,9 +56,8 @@ element rational the extension would be trivial, contradicting `finrank = 2`. Th
 construction over `L/K` *choose* a generator. -/
 theorem exists_notMem_range_algebraMap : ∃ θ : L, θ ∉ Set.range (algebraMap K L) := by
   by_contra! h
-  have hbot : (⊥ : Subalgebra K L) = ⊤ :=
-    Algebra.eq_top_iff.mpr fun x ↦ Algebra.mem_bot.mpr (h x)
-  have h1 := Subalgebra.bot_eq_top_iff_finrank_eq_one.mp hbot
+  have h1 : Module.finrank K L = 1 :=
+    Module.finrank_of_bijective_algebraMap ⟨FaithfulSMul.algebraMap_injective K L, h⟩
   have h2 := finrank_eq_two K L
   omega
 
