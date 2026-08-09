@@ -26,7 +26,7 @@ Mathlib's `Ideal.comap_map_eq_self_of_isMaximal` in one direction — the extens
 
 The valuations transfer through Mathlib's `HeightOneSpectrum.valuation_liesOver`, which relates the
 valuation at a prime to the valuation at the prime below it by the ramification index. Here that
-index is `1` (`ramificationIdx'_integerPrimeOverOfNotMem`): the extended ideal *is* the prime
+index is `1` (`ramificationIdx'_integerPrimeOverOfNotMem_eq_one`): the extended ideal *is* the prime
 above, and a nonzero prime of a Dedekind domain does not lie in its own square. Both readings of
 the transfer are supplied — `valuation_integerPrimeOverOfNotMem` for a prime of `R` avoiding `S`,
 and `valuation_integerPrimeUnder` for an arbitrary prime of `𝒪_S`.
@@ -161,7 +161,7 @@ instance liesOver_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉
 /-- **Inverting `S` is unramified away from `S`**: for `v ∉ S` the extension `R → 𝒪_S` has
 ramification index `1` at the prime above `v`. The extended ideal *is* that prime, and a nonzero
 prime of a Dedekind domain does not lie in its own square. -/
-lemma ramificationIdx'_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉ S) :
+lemma ramificationIdx'_integerPrimeOverOfNotMem_eq_one {v : HeightOneSpectrum R} (hv : v ∉ S) :
     Ideal.ramificationIdx' v.asIdeal (integerPrimeOverOfNotMem K S hv).asIdeal = 1 := by
   have hle : Ideal.map (algebraMap R (S.integer K)) v.asIdeal
       ≤ (integerPrimeOverOfNotMem K S hv).asIdeal := le_of_eq (by simp)
@@ -178,7 +178,7 @@ lemma valuation_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉ S
     (integerPrimeOverOfNotMem K S hv).valuation K x = v.valuation K x := by
   have h := HeightOneSpectrum.valuation_liesOver (A := R) (B := S.integer K) K v
     (integerPrimeOverOfNotMem K S hv) x
-  rwa [ramificationIdx'_integerPrimeOverOfNotMem K S hv, pow_one, Algebra.algebraMap_self,
+  rwa [ramificationIdx'_integerPrimeOverOfNotMem_eq_one K S hv, pow_one, Algebra.algebraMap_self,
     RingHom.id_apply, eq_comm] at h
 
 /-- The correspondence preserves valuations, phrased through the equivalence. Not a `simp` lemma:
