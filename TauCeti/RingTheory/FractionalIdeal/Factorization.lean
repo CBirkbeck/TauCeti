@@ -148,6 +148,59 @@ lemma count_injective {I J : (FractionalIdeal R⁰ K)ˣ}
   rw [← prod_count (Units.ne_zero I), ← prod_count (Units.ne_zero J)]
   exact finprod_congr fun v ↦ by rw [h v]
 
+/-- **The group of nonzero fractional ideals of a Dedekind domain is free abelian on the height
+one primes.** -/
+noncomputable def factorization :
+    (FractionalIdeal R⁰ K)ˣ ≃* Multiplicative (HeightOneSpectrum R →₀ ℤ) where
+  toFun I := Multiplicative.ofAdd (toFinsupp I)
+  invFun g := ofFinsupp (Multiplicative.toAdd g)
+  left_inv I := count_injective fun v ↦ by rw [count_ofFinsupp, toAdd_ofAdd, toFinsupp_apply]
+  right_inv g := by
+    apply Multiplicative.toAdd.injective
+    ext
+    simp only [toAdd_ofAdd, toFinsupp_apply, count_ofFinsupp]
+  map_mul' I J := by
+    apply Multiplicative.toAdd.injective
+    ext v
+    simp only [toAdd_ofAdd, Finsupp.coe_add, Pi.add_apply, toFinsupp_apply, Units.val_mul,
+      toAdd_mul]
+    exact count_mul K v (Units.ne_zero I) (Units.ne_zero J)
+
+@[simp] lemma factorization_apply (I : (FractionalIdeal R⁰ K)ˣ) (v : HeightOneSpectrum R) :
+    Multiplicative.toAdd (factorization I) v = count K v (I : FractionalIdeal R⁰ K) := by
+  change Multiplicative.toAdd (Multiplicative.ofAdd (toFinsupp I)) v = _
+  rw [toAdd_ofAdd, toFinsupp_apply]
+
+lemma ofFinsupp_single (v : HeightOneSpectrum R) (m : ℤ) :
+    (ofFinsupp (Finsupp.single v m) : (FractionalIdeal R⁰ K)ˣ) = unitOfPrime v ^ m := by
+  rw [ofFinsupp, Finsupp.prod_single_index (zpow_zero _)]
+
+/-- Under `factorization`, a prime corresponds to a basis vector of the free abelian group. -/
+@[simp]
+lemma factorization_unitOfPrime (v : HeightOneSpectrum R) :
+    factorization (unitOfPrime v : (FractionalIdeal R⁰ K)ˣ) =
+      Multiplicative.ofAdd (Finsupp.single v 1) := by
+  classical
+  apply Multiplicative.toAdd.injective
+  ext w
+  rw [toAdd_ofAdd, factorization_apply, coe_unitOfPrime, Finsupp.single_apply,
+    count_maximal K w v]
+
+/-- The class of a height one prime in the class group. -/
+noncomputable def _root_.IsDedekindDomain.HeightOneSpectrum.classGroupMk
+    (v : HeightOneSpectrum R) : ClassGroup R :=
+  ClassGroup.mk0 ⟨v.asIdeal, mem_nonZeroDivisors_of_ne_zero v.ne_bot⟩
+
+lemma _root_.IsDedekindDomain.HeightOneSpectrum.classGroupMk_eq_one_iff
+    (v : HeightOneSpectrum R) : v.classGroupMk = 1 ↔ v.asIdeal.IsPrincipal :=
+  ClassGroup.mk0_eq_one_iff _
+
+lemma _root_.IsDedekindDomain.HeightOneSpectrum.classGroupMk_eq_mk_unitOfPrime (K : Type*)
+    [Field K] [Algebra R K] [IsFractionRing R K] (v : HeightOneSpectrum R) :
+    v.classGroupMk = ClassGroup.mk K (unitOfPrime v) := by
+  rw [HeightOneSpectrum.classGroupMk, ← ClassGroup.mk_mk0 K]
+  exact congrArg _ (Units.ext rfl)
+
 end FractionalIdeal
 
 end
