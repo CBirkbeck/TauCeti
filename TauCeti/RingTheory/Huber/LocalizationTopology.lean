@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.Finiteness.Ideal
 public import Mathlib.RingTheory.Localization.Away.Basic
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 public import Mathlib.RingTheory.Adjoin.Polynomial.Basic
