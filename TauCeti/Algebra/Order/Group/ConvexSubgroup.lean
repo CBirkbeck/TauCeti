@@ -175,6 +175,18 @@ theorem coe_toSubgroup (H : ConvexSubgroup Γ) : ((H.toSubgroup : Subgroup Γ) :
 theorem toSubgroup_le {H K : ConvexSubgroup Γ} : H.toSubgroup ≤ K.toSubgroup ↔ H ≤ K :=
   Iff.rfl
 
+/-- A convex subgroup is determined by the subgroup underlying it: convexity is a property,
+not extra data. -/
+theorem toSubgroup_injective : Function.Injective (toSubgroup (Γ := Γ)) := by
+  intro H K h
+  ext x
+  rw [← mem_toSubgroup, ← mem_toSubgroup, h]
+
+/-- Two convex subgroups are equal exactly when their underlying subgroups are. -/
+@[simp]
+theorem toSubgroup_inj {H K : ConvexSubgroup Γ} : H.toSubgroup = K.toSubgroup ↔ H = K :=
+  toSubgroup_injective.eq_iff
+
 /-- The underlying subgroup of the trivial convex subgroup is the trivial subgroup. -/
 @[simp]
 theorem toSubgroup_bot : (⊥ : ConvexSubgroup Γ).toSubgroup = ⊥ :=
@@ -412,9 +424,8 @@ private noncomputable def archimedeanBall (y : Γ) : ConvexSubgroup Γ where
     · exact (hx.2.trans (mabs_le.mp hn).2).trans
         (pow_le_pow_right' (one_le_mabs y) (le_max_right m n))
 
-/-- The underlying subgroup of the archimedean ball. This names only the projection, so that
-proofs cross the `ConvexSubgroup`/`Subgroup` boundary by rewriting and then apply Mathlib's
-`MulArchimedeanClass.mem_closedBallSubgroup_iff` themselves. -/
+/-- The underlying subgroup of `archimedeanBall y` is Mathlib's closed ball subgroup at the
+archimedean class of `y`. -/
 @[simp]
 private theorem archimedeanBall_toSubgroup (y : Γ) :
     (archimedeanBall y).toSubgroup
