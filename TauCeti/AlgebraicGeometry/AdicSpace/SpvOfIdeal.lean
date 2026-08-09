@@ -36,6 +36,8 @@ by that representative and `mem_spvOfIdeal_ofValuation` transfers the test to an
 
 * `TauCeti.ValuationSpectrum.isEquiv_valuation_ofValuation` : the canonical valuation of the
   point of a valuation `w` is equivalent to `w`.
+* `TauCeti.ValuationSpectrum.mem_spvOfIdeal_iff_forall_cofinalValue` : **Lemma 7.4** at the
+  `Spv` level — the criterion in the form a consumer can actually check.
 * `TauCeti.ValuationSpectrum.mem_spvOfIdeal_iff` : membership unfolded through the canonical
   valuation, and `TauCeti.ValuationSpectrum.mem_spvOfIdeal_ofValuation` : membership tested on
   an arbitrary representative, which is what makes the definition usable.
@@ -79,10 +81,21 @@ theorem mem_spvOfIdeal_iff {I : Ideal A} {hfg : ∃ J : Ideal A, J.FG ∧ I.radi
 /-- **Membership is testable on any representative.** This is where Lemma 7.4's class-invariance
 does its work: the defining condition is stated through the canonical valuation of a point, but
 any valuation representing that point gives the same answer. -/
+@[simp]
 theorem mem_spvOfIdeal_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (w : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     ofValuation w ∈ spvOfIdeal I hfg ↔ characteristicSubgroupOfIdeal w I hfg = ⊤ :=
   characteristicSubgroupOfIdeal_eq_top_congr_of_isEquiv (isEquiv_valuation_ofValuation w) hfg
+
+/-- **The criterion, in checkable form (Wedhorn Lemma 7.4).** A point lies in `Spv (A, I)`
+exactly when every element of `I` has cofinal value, or the characteristic subgroup is already
+everything. Stated at the level of `Spv A`, so consumers need not reach for
+`characteristicSubgroupOfIdeal`. -/
+theorem mem_spvOfIdeal_iff_forall_cofinalValue {I : Ideal A}
+    {hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical} {v : Spv A} :
+    v ∈ spvOfIdeal I hfg ↔
+      (∀ a ∈ I, CofinalValue v.valuation a) ∨ characteristicSubgroup v.valuation = ⊤ :=
+  characteristicSubgroupOfIdeal_eq_top_iff hfg
 
 end TauCeti.ValuationSpectrum
