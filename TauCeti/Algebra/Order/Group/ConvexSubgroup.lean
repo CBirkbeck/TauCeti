@@ -144,24 +144,6 @@ theorem mem_bot {x : Γ} : x ∈ (⊥ : ConvexSubgroup Γ) ↔ x = 1 :=
 theorem mem_top {x : Γ} : x ∈ (⊤ : ConvexSubgroup Γ) :=
   trivial
 
-/-- The underlying subgroup of the trivial convex subgroup is the trivial subgroup.
-
-True by `rfl`, since `⊥` is built as `{ toSubgroup := ⊥, .. }`. It is stated and tagged
-`@[simp]` so that proofs passing between the two levels rewrite explicitly instead of relying
-on the definitional unfolding. -/
-@[simp]
-theorem toSubgroup_bot : (⊥ : ConvexSubgroup Γ).toSubgroup = ⊥ :=
-  rfl
-
-/-- The underlying subgroup of the full convex subgroup is the full subgroup.
-
-True by `rfl`, since `⊤` is built as `{ toSubgroup := ⊤, .. }`. As with `toSubgroup_bot`, it is
-named so that a hypothesis `H = ⊤` about a convex subgroup can be transported to the subgroup
-level by rewriting rather than by definitional unfolding. -/
-@[simp]
-theorem toSubgroup_top : (⊤ : ConvexSubgroup Γ).toSubgroup = ⊤ :=
-  rfl
-
 /-- Convex subgroups are ordered by inclusion. -/
 instance : PartialOrder (ConvexSubgroup Γ) :=
   PartialOrder.ofSetLike (ConvexSubgroup Γ) Γ
@@ -171,6 +153,37 @@ instance : OrderBot (ConvexSubgroup Γ) where
 
 instance : OrderTop (ConvexSubgroup Γ) where
   le_top _ _ _ := mem_top
+
+/-! ### The underlying subgroup
+
+Membership, the underlying set, the order and the two lattice ends all agree with their
+`Subgroup` counterparts definitionally. Naming them lets proofs move between a convex
+subgroup and `H.toSubgroup` by rewriting. -/
+
+/-- Membership in the underlying subgroup is membership in the convex subgroup. -/
+@[simp]
+theorem mem_toSubgroup {H : ConvexSubgroup Γ} {x : Γ} : x ∈ H.toSubgroup ↔ x ∈ H :=
+  Iff.rfl
+
+/-- The underlying subgroup has the same underlying set. -/
+@[simp]
+theorem coe_toSubgroup (H : ConvexSubgroup Γ) : ((H.toSubgroup : Subgroup Γ) : Set Γ) = H :=
+  rfl
+
+/-- Inclusion of convex subgroups is inclusion of the underlying subgroups. -/
+@[simp]
+theorem toSubgroup_le {H K : ConvexSubgroup Γ} : H.toSubgroup ≤ K.toSubgroup ↔ H ≤ K :=
+  Iff.rfl
+
+/-- The underlying subgroup of the trivial convex subgroup is the trivial subgroup. -/
+@[simp]
+theorem toSubgroup_bot : (⊥ : ConvexSubgroup Γ).toSubgroup = ⊥ :=
+  rfl
+
+/-- The underlying subgroup of the full convex subgroup is the full subgroup. -/
+@[simp]
+theorem toSubgroup_top : (⊤ : ConvexSubgroup Γ).toSubgroup = ⊤ :=
+  rfl
 
 /-! ### Elements outside a convex subgroup -/
 
