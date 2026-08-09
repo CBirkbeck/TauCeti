@@ -562,12 +562,9 @@ theorem characteristicSubgroupOfIdeal_eq_top_iff_forall_span {v : Valuation A Γ
   · -- values on `I` cofinal ⇒ values on `T` cofinal, since `T ⊆ J ⊆ √I`
     intro hall t ht
     have htJ : t ∈ J := hspan ▸ Ideal.subset_span ht
-    obtain ⟨n, hn⟩ := Ideal.mem_radical_iff.mp (hrad.symm ▸ Ideal.le_radical htJ)
-    rcases Nat.eq_zero_or_pos n with rfl | hp
-    · rw [pow_zero] at hn
-      exact hall t (by simp [(Ideal.eq_top_iff_one I).mpr hn])
-    · refine cofinalValueFor_top_iff.mp ((cofinalValueFor_pow_iff hp).mp ?_)
-      exact cofinalValueFor_top_iff.mpr (hall _ hn)
+    obtain ⟨n, hn0, hn⟩ := exists_pow_ne_zero_mem_of_radical_eq hrad.symm htJ
+    refine cofinalValueFor_top_iff.mp ((cofinalValueFor_pow_iff (Nat.pos_of_ne_zero hn0)).mp ?_)
+    exact cofinalValueFor_top_iff.mpr (hall _ hn)
   · -- generators cofinal ⇒ all of `I` cofinal, through Lemma 7.1 and the radical
     intro hT a ha
     refine cofinalValueFor_top_iff.mp ?_
