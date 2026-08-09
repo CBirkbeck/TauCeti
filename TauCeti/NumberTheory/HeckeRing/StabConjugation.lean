@@ -6,36 +6,34 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.NumberTheory.HeckeRing.Basic
-
-import Mathlib.Tactic.Group
+public import TauCeti.GroupTheory.DoubleCoset.Basic
 
 /-!
 # Moving the base point of a decomposition quotient
 
 `DoubleCoset.DecompQuotient Γ₁ Γ₂ g` is `Γ₁ ⧸ (gΓ₂g⁻¹).subgroupOf Γ₁`, so it depends on `g`
-only through the conjugate `gΓ₂g⁻¹`. This file records how that conjugate — and hence the
-quotient — responds to multiplying `g` on either side by a group element:
+only through the conjugate `gΓ₂g⁻¹`. The conjugation facts themselves are general subgroup
+theory and live in `TauCeti.GroupTheory.DoubleCoset.Basic`
+(`conjAct_smul_mul_right_of_mem_normalizer` and the two `subgroupOf_…` lemmas); this file turns
+them into equivalences of the quotients:
 
-* multiplying on the **right** by anything normalizing `Γ₂` changes nothing at all, since
-  `(gh)Γ₂(gh)⁻¹ = gΓ₂g⁻¹` (`conjAct_smul_mul_right_of_mem_normalizer`,
-  `subgroupOf_conjAct_smul_mul_right_of_mem_normalizer`);
-* multiplying on the **left** by `h ∈ Γ₁` conjugates the stabilizer by `h`
-  (`subgroupOf_conjAct_smul_mul_left_of_mem_normalizer`).
+* moving the base point on the **left** by anything normalizing `Γ₁` conjugates the stabilizer,
+  hence gives `Γ₁/Stab(hg) ≃ Γ₁/Stab(g)`;
+* moving it on the **right** by anything normalizing `Γ₂` changes the stabilizer not at all, so
+  the two-sided move reduces to the left one.
 
 Ported from the AINTLIB [`LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) project,
 `LeanModularForms/HeckeRIngs/AbstractHeckeRing/StabConjugation.lean`
 (Chris Birkbeck). The source states these for a bundled `HeckePair` and for `g` in the
-ambient submonoid `Δ`; neither is used by the arguments, which are facts about conjugation
-of subgroups, so they are stated here for arbitrary subgroups and an arbitrary `g : G`.
+ambient submonoid `Δ`; neither is used by the arguments, so they are stated here for arbitrary
+subgroups, an arbitrary `g : G`, and multipliers taken from the normalizers.
 
 ## Main results
 
-* `DoubleCoset.conjAct_smul_mul_right_of_mem_normalizer`: `(gh)Γ(gh)⁻¹ = gΓg⁻¹` whenever `h`
-  normalizes `Γ`.
-* `DoubleCoset.subgroupOf_conjAct_smul_mul_left_of_mem_normalizer`: left multiplication by `h ∈ Γ₁`
-  conjugates the stabilizer by `h`.
 * `DoubleCoset.decompQuotientEquivMulLeft`, `DoubleCoset.decompQuotientEquivMulLeftRight`:
-  the induced equivalences of decomposition quotients.
+  the equivalences of decomposition quotients induced by moving the base point.
+* `DoubleCoset.decompQuotientEquivMulLeft_mk`,
+  `DoubleCoset.decompQuotientEquivMulLeftRight_mk`: what each does to a representative.
 -/
 
 public section
@@ -45,43 +43,6 @@ open scoped Pointwise
 namespace DoubleCoset
 
 variable {G : Type*} [Group G]
-
-/-- Conjugation only sees `g` modulo the normalizer on the right: `(gh)Γ(gh)⁻¹ = gΓg⁻¹`
-whenever `h` normalizes `Γ`. Membership in `Γ` itself is the special case
-`Subgroup.le_normalizer`. -/
-lemma conjAct_smul_mul_right_of_mem_normalizer (Γ : Subgroup G) (g : G) {h : G}
-    (hh : h ∈ Subgroup.normalizer Γ) :
-    ConjAct.toConjAct (g * h) • Γ = ConjAct.toConjAct g • Γ := by
-  rw [map_mul, ← smul_smul, Subgroup.conjAct_pointwise_smul_eq_self hh]
-
-/-- The stabilizer cut out inside `Γ₁` is unchanged by right multiplication of the base point
-by anything normalizing `Γ₂`. -/
-lemma subgroupOf_conjAct_smul_mul_right_of_mem_normalizer (Γ₁ Γ₂ : Subgroup G) (g : G) {h : G}
-    (hh : h ∈ Subgroup.normalizer Γ₂) :
-    (ConjAct.toConjAct (g * h) • Γ₂).subgroupOf Γ₁ =
-      (ConjAct.toConjAct g • Γ₂).subgroupOf Γ₁ := by
-  rw [conjAct_smul_mul_right_of_mem_normalizer Γ₂ g hh]
-
-/-- Left multiplication of the base point by anything normalizing `Γ₁` conjugates the
-stabilizer by it: `x` stabilizes `hg` exactly when `h⁻¹xh` stabilizes `g`. Membership in `Γ₁`
-itself is the special case `Subgroup.le_normalizer`.
-
-The conjugating automorphism of `↥Γ₁` is `Subgroup.normalizerMonoidHom`, which is defined for
-exactly this: `MulAut.conj h` would need `h` to be an element of `Γ₁`. -/
-lemma subgroupOf_conjAct_smul_mul_left_of_mem_normalizer (Γ₁ Γ₂ : Subgroup G) (g : G)
-    (h : Subgroup.normalizer (Γ₁ : Set G)) :
-    (ConjAct.toConjAct ((h : G) * g) • Γ₂).subgroupOf Γ₁ =
-      ((ConjAct.toConjAct g • Γ₂).subgroupOf Γ₁).map
-        (Γ₁.normalizerMonoidHom h).toMonoidHom := by
-  ext x
-  rw [Subgroup.mem_map_equiv]
-  simp only [Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
-    ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv,
-    Subgroup.normalizerMonoidHom_apply_symm_apply_coe]
-  -- Both sides are membership of the *same* element of `Γ₂`, written with different
-  -- bracketing: `(hg)⁻¹x(hg)` versus `g⁻¹(h⁻¹xh)g`. `group` proves that identity; the `iff`
-  -- is then congruence along it, so no rewriting has to find a redex.
-  exact iff_of_eq (congrArg (· ∈ Γ₂) (by group))
 
 /-- Moving the base point on the left by anything normalizing `Γ₁` is an equivalence of
 decomposition quotients, `Γ₁/Stab(hg) ≃ Γ₁/Stab(g)`, induced by `σ ↦ h⁻¹σh`.
