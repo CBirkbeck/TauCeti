@@ -151,6 +151,12 @@ omit [Fact p.Prime] in
   simpa only [RingHom.comp_apply, compatProj_apply]
     using compat_of_adjacentCompat p x.property k₁ k₂ hk
 
+omit [Fact p.Prime] in
+/-- The element-level form of `compatProj_compat`. -/
+@[simp] theorem compatProj_compat_apply (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) (x : compatSubring p) :
+    ZMod.castHom (pow_dvd_pow p hk) (ZMod (p ^ k₁)) (compatProj p k₂ x) = compatProj p k₁ x :=
+  RingHom.congr_fun (compatProj_compat p k₁ k₂ hk) x
+
 /-- **The universal property.** A family of ring homs into the tower that commutes with the
 connecting maps factors through the limit. The name is qualified to avoid `PadicInt.lift`,
 which is Mathlib's universal property of `ℤ_[p]` itself. -/
@@ -160,9 +166,19 @@ def compatSubring.lift {S : Type*} [CommRing S] (g : ∀ n : ℕ, S →+* ZMod (
   RingHom.codRestrict (RingHom.pi g) (compatSubring p) fun s n => RingHom.congr_fun (hg n) s
 
 omit [Fact p.Prime] in
+/-- Projecting the factorisation at `n` recovers the given map `g n`. -/
 @[simp] theorem compatProj_comp_lift {S : Type*} [CommRing S] (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
     (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
     (n : ℕ) : (compatProj p n).comp (compatSubring.lift p g hg) = g n :=
+  (rfl)
+
+omit [Fact p.Prime] in
+omit [Fact p.Prime] in
+/-- The element-level form of `compatProj_comp_lift`. -/
+@[simp] theorem compatSubring.lift_apply_val {S : Type*} [CommRing S]
+    (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
+    (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
+    (s : S) (n : ℕ) : (compatSubring.lift p g hg s).val n = g n s :=
   (rfl)
 
 omit [Fact p.Prime] in
