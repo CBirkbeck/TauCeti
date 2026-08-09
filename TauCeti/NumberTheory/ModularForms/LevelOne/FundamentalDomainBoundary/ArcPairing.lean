@@ -29,6 +29,20 @@ the term that lands as `k/12` on the divisor side of the valence formula.
   the arc contour integral of the form's logarithmic derivative evaluates to
   `-(k * (π/6 * I))`, the arc's `-k/12` contribution to the normalized valence contour.
 
+The same pairing survives `ε`-excision, which is what the principal-value assembly needs:
+when the form vanishes at a point *on* the arc the unexcised integrand is not
+interval-integrable there, so the boundary integral is assembled from an excised integrand.
+Excision is compatible with the reflection whenever the excision set consists of
+unit-modulus points closed under the inversion `z ↦ -1/z`.
+
+* `TauCeti.ModularForm.excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg`:
+  the excised pointwise pairing — at an excised parameter both terms vanish, at a retained
+  one the direct and reflected excised integrands sum to the excised weight term.
+* `two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc`
+  (in `TauCeti.ModularForm`, unqualified here only to stay inside the line limit) — the
+  excised arc integral is `-k/2` times the excised integral of the contour's own
+  logarithmic derivative.
+
 ## References
 
 * [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the valence-formula
@@ -221,14 +235,18 @@ theorem excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg
 over `[1, 3]`, where the reflection `t ↦ 4 - t` maps the interval to itself, the excised arc
 integral is `-k/2` times the excised integral of the contour's own logarithmic derivative.
 
-As `ε → 0` the right-hand side tends to `-k` times the full integral of the contour's own
-logarithmic derivative, which is integrable along the arc; that identifies the *principal value*
-of the left-hand integrand. It does **not** in general identify an ordinary integral: where the
-form vanishes on the arc the unexcised integrand is not interval-integrable, which is why the
-assembly works with excised integrals throughout. Only when the form is zero-free on the arc does
-this specialize to the untruncated
+The statement is for one fixed `ε` and one fixed excision set `S`; it asserts nothing about a
+limit. Its intended use is as the `ε`-uniform input to the principal-value assembly, which
+supplies the extra hypotheses that identify a principal value — that `S` captures every zero
+of the form on the arc, and the convergence of the excised right-hand side as the excision
+shrinks. Neither is assumed here, and neither follows from this statement alone.
+
+The excised form is what the assembly needs because where the form vanishes on the arc the
+unexcised integrand is not interval-integrable. Only when the form is zero-free on the arc
+does this specialize to the untruncated
 `TauCeti.ModularForm.intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc`. -/
-theorem two_mul_intervalIntegral_excised_fdBoundary_arc [SlashInvariantFormClass F Γ k]
+theorem two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
+    [SlashInvariantFormClass F Γ k]
     (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hd : ∀ t ∈ Ioo (1 : ℝ) 3, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
