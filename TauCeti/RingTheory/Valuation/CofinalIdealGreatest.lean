@@ -50,6 +50,9 @@ the two uses Wedhorn makes of it, and both appear here.
 * `TauCeti.Valuation.characteristicSubgroupOfIdeal_eq_top_iff` and
   `TauCeti.Valuation.characteristicSubgroupOfIdeal_eq_top_iff_forall_span` : **Lemma 7.4**, in
   the all-of-`I` and generating-set forms.
+* `TauCeti.Valuation.characteristicSubgroupOfIdeal_eq_top_congr_of_isEquiv` : that criterion is
+  an invariant of the valuation class, which is what lets `Spv (A, I)` be carved out of the
+  valuation spectrum.
 
 ## References
 
@@ -527,5 +530,23 @@ theorem characteristicSubgroupOfIdeal_eq_top_iff_forall_span {v : Valuation A Γ
     refine cofinalValueFor_top_iff.mp ?_
     refine (idealCofinalFor_congr_of_radical_eq hHlt hrad).mpr ?_ a ha
     exact idealCofinalFor_of_span hHlt hspan fun t ht ↦ cofinalValueFor_top_iff.mpr (hT t ht)
+
+/-- **The `Spv (A, I)` criterion is an invariant of the valuation class.** This is what lets
+`Spv (A, I)` be carved out of `Spv A`, whose points are equivalence classes.
+
+It follows from Lemma 7.4 rather than from any transport of `cΓ_v(I)` itself: both disjuncts of
+the criterion are already known to be invariant — cofinality of values by
+`Valuation.IsEquiv.cofinalValue_iff`, and `Γ_v = cΓ_v` through the fullness bridge. -/
+theorem characteristicSubgroupOfIdeal_eq_top_congr_of_isEquiv {Γ₀' : Type*}
+    [LinearOrderedCommGroupWithZero Γ₀'] {v : Valuation A Γ₀}
+    {w : Valuation A Γ₀'} (h : v.IsEquiv w) {I : Ideal A}
+    (hfgv : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
+    (hfgw : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
+    characteristicSubgroupOfIdeal v I hfgv = ⊤ ↔ characteristicSubgroupOfIdeal w I hfgw = ⊤ := by
+  rw [characteristicSubgroupOfIdeal_eq_top_iff hfgv, characteristicSubgroupOfIdeal_eq_top_iff hfgw]
+  refine or_congr (forall_congr' fun a ↦ imp_congr_right fun _ ↦ h.cofinalValue_iff) ?_
+  rw [← hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top,
+    ← hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top]
+  exact h.hasFullCharacteristicGroup_iff
 
 end TauCeti.Valuation
