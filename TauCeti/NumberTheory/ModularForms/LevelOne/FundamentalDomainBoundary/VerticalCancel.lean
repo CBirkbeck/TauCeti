@@ -87,6 +87,50 @@ theorem intervalIntegrable_deriv_smul_fdBoundary_segment4 {E : Type*}
     linear_combination hder
   simp only [Pi.neg_apply, hval', hder', hφ (fdBoundary H x), neg_smul, neg_neg]
 
+/-- **The vertical cancellation survives excision.** The reflection `t ↦ 4 - t` carries the
+right vertical onto the left through the translation `z ↦ z - 1`, so an integrand excised
+within `ε` of a set closed under `s ↦ s ± 1` is excised at matching parameters on the two
+verticals, and the cancellation of the untruncated integrals
+(`TauCeti.ModularForm.intervalIntegral_fdBoundary_segment4_eq_neg_segment1`) persists.
+
+Translation-closure of the excision set is exactly what
+`TauCeti.ModularForm.verticalSingularSet` provides. -/
+theorem intervalIntegral_truncated_fdBoundary_segment4_eq_neg_segment1 (H : ℝ) {φ : ℂ → ℂ}
+    (hφ : Function.Periodic φ 1) {S : Finset ℂ} {ε : ℝ}
+    (hadd : ∀ s ∈ S, s + 1 ∈ S) (hsub : ∀ s ∈ S, s - 1 ∈ S) :
+    (∫ t in (3 : ℝ)..4, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else φ (fdBoundary H t) * deriv (fdBoundary H) t) =
+      -∫ t in (0 : ℝ)..1, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else φ (fdBoundary H t) * deriv (fdBoundary H) t := by
+  have hcomp : (∫ t in (3 : ℝ)..4, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+      else φ (fdBoundary H t) * deriv (fdBoundary H) t) =
+      ∫ u in (0 : ℝ)..1, if ∃ s ∈ S, ‖fdBoundary H (4 - u) - s‖ ≤ ε then 0
+        else φ (fdBoundary H (4 - u)) * deriv (fdBoundary H) (4 - u) := by
+    have h := intervalIntegral.integral_comp_sub_left
+      (a := (0 : ℝ)) (b := 1) (d := (4 : ℝ))
+      (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ)
+        else φ (fdBoundary H t) * deriv (fdBoundary H) t)
+    norm_num at h
+    exact h.symm
+  rw [hcomp, ← intervalIntegral.integral_neg]
+  refine intervalIntegral.integral_congr_Ioo_of_le (by norm_num) fun u hu => ?_
+  have hval : fdBoundary H (4 - u) = fdBoundary H u - 1 :=
+    fdBoundary_four_sub_vertical H ⟨hu.1.le, hu.2.le⟩
+  -- The excision test transports along the translation, in both directions.
+  have hiff : (∃ s ∈ S, ‖fdBoundary H (4 - u) - s‖ ≤ ε) ↔
+      ∃ s ∈ S, ‖fdBoundary H u - s‖ ≤ ε := by
+    rw [hval]
+    refine ⟨fun ⟨s, hs, hle⟩ => ⟨s + 1, hadd s hs, ?_⟩, fun ⟨s, hs, hle⟩ => ⟨s - 1, hsub s hs, ?_⟩⟩
+    · rwa [show fdBoundary H u - (s + 1) = fdBoundary H u - 1 - s by ring]
+    · rwa [show fdBoundary H u - 1 - (s - 1) = fdBoundary H u - s by ring]
+  -- Split on the excision test before rewriting: the `ite`'s decidability instance mentions
+  -- the condition, so rewriting inside it is not motive-correct.
+  by_cases hc : ∃ s ∈ S, ‖fdBoundary H u - s‖ ≤ ε
+  · rw [if_pos (hiff.mpr hc), if_pos hc, neg_zero]
+  · rw [if_neg fun h => hc (hiff.mp h), if_neg hc, hval,
+      deriv_fdBoundary_four_sub_vertical H hu, hφ.sub_eq]
+    ring
+
 end ModularForm
 
 end TauCeti
