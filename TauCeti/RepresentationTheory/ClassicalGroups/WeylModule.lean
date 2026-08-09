@@ -214,7 +214,7 @@ private theorem rowIndex_lt_of_colLen_le (t : YoungTableau μ) (hn : μ.colLen 0
 /-- **The symmetrizer's diagonal coefficient is the order of the row group.** Write `r ℓ` for the
 row of the label `ℓ`. The `r`-coordinate of `c_t • e_r` in the monomial basis is the number of
 permutations lying in the row group of `t`. -/
-private theorem repr_symmetrizer_tensorPowerBasis_eq_card (t : YoungTableau μ)
+private theorem repr_symmetrizer_tensorPowerBasis_eq_card_rowSubgroup (t : YoungTableau μ)
     (hn : μ.colLen 0 ≤ n) :
     (tensorPowerBasis k n μ.card).repr
         (permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
@@ -276,7 +276,7 @@ private theorem repr_symmetrizer_tensorPowerBasis_ne_zero [Nontrivial k] (t : Yo
   classical
   -- the coefficient is the order of the row group, and characteristic zero keeps it nonzero
   have : CharZero k := charZero_of_injective_algebraMap (algebraMap ℚ k).injective
-  rw [repr_symmetrizer_tensorPowerBasis_eq_card t hn]
+  rw [repr_symmetrizer_tensorPowerBasis_eq_card_rowSubgroup t hn]
   exact Nat.cast_ne_zero.mpr (Nat.card_ne_zero.mpr ⟨inferInstance, inferInstance⟩)
 
 /-- The Weyl module of a `μ`-tableau is nonzero as soon as `μ` has at most `n` rows.
