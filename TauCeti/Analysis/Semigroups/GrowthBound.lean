@@ -57,7 +57,9 @@ theorem StronglyContinuousSemigroup.HasGrowthBound.bound
   exact hb.2 t ht
 
 omit [CompleteSpace X] in
-/-- **A growth bound controls the semigroup on all of `[0, t₀]` by its value at `t₀`.** -/
+/-- **A growth bound controls the semigroup on `[0, t₀]` by the absolute-rate envelope
+`M * exp (|ω| * t₀)`.** Taking `|ω|` makes the envelope monotone in the time, which the signed
+rate `ω` need not be. -/
 theorem StronglyContinuousSemigroup.HasGrowthBound.norm_le_mul_exp_abs_mul_of_le
     {S : StronglyContinuousSemigroup X} {ω M : ℝ} (hb : S.HasGrowthBound ω M) {t t₀ : ℝ≥0}
     (htt₀ : t ≤ t₀) : ‖S t‖ ≤ M * Real.exp (|ω| * t₀) := by
