@@ -179,17 +179,9 @@ lemma heckeT_prime_eq_heckeGen_zero (p : ℕ) (hp : p.Prime) :
     heckeT ⟨p, hp.pos⟩ = heckeGen 2 p (0 : Fin 2) := by
   rw [heckeGen_zero_eq_heckeTDiag p hp, heckeT_prime p hp]
 
-private lemma heckeGen_zero_mem_evalHom_range (p : ℕ) :
-    heckeGen 2 p (0 : Fin 2) ∈ (evalHom 2 p).range :=
-  ⟨MvPolynomial.X 0, MvPolynomial.eval₂Hom_X' _ _ _⟩
-
-private lemma heckeGen_one_mem_evalHom_range (p : ℕ) :
-    heckeGen 2 p (1 : Fin 2) ∈ (evalHom 2 p).range :=
-  ⟨MvPolynomial.X 1, MvPolynomial.eval₂Hom_X' _ _ _⟩
-
 private lemma heckeTScalar_mem_range (p : ℕ) (hp : p.Prime) :
     heckeTScalar p ∈ (evalHom 2 p).range := by
-  rw [← heckeGen_one_eq_heckeTScalar p hp]; exact heckeGen_one_mem_evalHom_range p
+  rw [← heckeGen_one_eq_heckeTScalar p hp]; exact heckeGen_mem_evalHom_range 2 p 1
 
 /-- `heckeT(p^k)` lies in the range of the evaluation homomorphism, for all `k`. -/
 lemma heckeT_prime_pow_mem_evalHom_range (p : ℕ) (hp : p.Prime) (k : ℕ) :
@@ -198,18 +190,22 @@ lemma heckeT_prime_pow_mem_evalHom_range (p : ℕ) (hp : p.Prime) (k : ℕ) :
   | ind k ih =>
   match k with
   | 0 =>
+    -- `p ^ 0` also occurs inside the `ℕ+` index's positivity proof, so `pow_zero` cannot
+    -- rewrite it; `congr 1` reduces to the index equality, which is decided structurally.
     rw [show heckeT ⟨p ^ 0, pow_pos hp.pos 0⟩ = heckeT 1 from by congr 1, heckeT_one]
     exact (evalHom 2 p).range.one_mem
   | 1 =>
     have h1 : heckeT ⟨p ^ 1, pow_pos hp.pos 1⟩ = heckeT ⟨p, hp.pos⟩ := by
       congr 1; exact Subtype.ext (pow_one p)
-    rw [h1, heckeT_prime_eq_heckeGen_zero p hp]; exact heckeGen_zero_mem_evalHom_range p
+    rw [h1, heckeT_prime_eq_heckeGen_zero p hp]; exact heckeGen_mem_evalHom_range 2 p 0
   | k + 2 =>
     have h_rec := heckeT_prime_pow_recurrence p hp (k + 1) (by omega)
+    -- The recurrence is stated at index `k + 1`; truncated ℕ-subtraction writes its two
+    -- exponents as `k + 1 - 1` and `k + 1 + 1`, which only `omega` identifies with `k`/`k + 2`.
     rw [show k + 1 - 1 = k from by omega, show k + 1 + 1 = k + 2 from by omega] at h_rec
     rw [h_rec, heckeT_prime_eq_heckeGen_zero p hp]
     exact (evalHom 2 p).range.sub_mem
-      ((evalHom 2 p).range.mul_mem (heckeGen_zero_mem_evalHom_range p) (ih (k + 1) (by omega)))
+      ((evalHom 2 p).range.mul_mem (heckeGen_mem_evalHom_range 2 p 0) (ih (k + 1) (by omega)))
       ((evalHom 2 p).range.zsmul_mem
         ((evalHom 2 p).range.mul_mem (heckeTScalar_mem_range p hp) (ih k (by omega))) (p : ℤ))
 
@@ -218,8 +214,11 @@ lemma heckeTDiag_one_prime_pow_mem_evalHom_range (p : ℕ) (hp : p.Prime) (k : �
     heckeTDiag 1 (p ^ k) ∈ (evalHom 2 p).range := by
   match k with
   | 0 => simp only [pow_zero, heckeTDiag_one_one]; exact (evalHom 2 p).range.one_mem
-  | 1 => rw [pow_one, ← heckeGen_zero_eq_heckeTDiag p hp]; exact heckeGen_zero_mem_evalHom_range p
+  | 1 =>
+    rw [pow_one, ← heckeGen_zero_eq_heckeTDiag p hp]
+    exact heckeGen_mem_evalHom_range 2 p 0
   | k + 2 =>
+    -- Same truncated-subtraction normalisation: the telescoping identity returns `k + 2 - 2`.
     rw [heckeTDiag_one_prime_pow_eq p hp (k + 2) (by omega), show k + 2 - 2 = k from by omega]
     exact (evalHom 2 p).range.sub_mem (heckeT_prime_pow_mem_evalHom_range p hp (k + 2))
       ((evalHom 2 p).range.mul_mem (heckeTScalar_mem_range p hp)
@@ -249,7 +248,7 @@ lemma diagElem_prime_pow_mem_evalHom_range (p : ℕ) (hp : p.Prime) (e : Fin 2 �
         (primePowDiag_pos 2 p hp.pos _)]
     apply (evalHom 2 p).range.mul_mem
     · rw [← heckeTScalar_pow p hp.pos (e 0), ← heckeGen_one_eq_heckeTScalar p hp]
-      exact (evalHom 2 p).range.pow_mem (heckeGen_one_mem_evalHom_range p) _
+      exact (evalHom 2 p).range.pow_mem (heckeGen_mem_evalHom_range 2 p 1) _
     · have h2 : primePowDiag 2 p ![0, e 1 - e 0] = ![1, p ^ (e 1 - e 0)] := by
         funext i; simp only [primePowDiag_apply]; fin_cases i <;> simp
       rw [congrArg diagElem h2,
@@ -287,6 +286,8 @@ theorem pLocalSubring_one_subset_evalHom_range (p : ℕ) (hp : p.Prime) :
     congr 1
     exact congr_arg e (Subsingleton.elim i 0)
   rw [congrArg diagElem he, ← diagElem_const_pow 1 p hp.pos (e 0),
+    -- `heckeGenDiag 1 p 0` is a `Fin 1 → ℕ` that is only *extensionally* the constant `p`,
+    -- so the two `diagElem` arguments are not syntactically equal and `rw` cannot match them.
     show diagElem (fun _ : Fin 1 ↦ p) = heckeGen 1 p (0 : Fin 1) from by
       rw [heckeGen_def]; exact (congrArg diagElem (heckeGenDiag_one_eq_const p)).symm]
   exact (evalHom 1 p).range.pow_mem (heckeGen_mem_evalHom_range 1 p 0) _
