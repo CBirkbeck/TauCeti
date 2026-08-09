@@ -32,14 +32,16 @@ just as well but could not start that argument. So a sequence is chosen once, as
   everything below ranges over the same countable family.
 * `TauCeti.Huber.HasZeroSequenceOfUnits.exists_seq_mul_mem`: some term of the sequence carries a
   given element into a given neighbourhood of zero.
-* `TauCeti.Huber.HasZeroSequenceOfUnits.iUnion_seq_smul_eq_univ`: the dilates `uₙ⁻¹ • U` cover
+* `TauCeti.Huber.HasZeroSequenceOfUnits.iUnion_seq_inv_smul_eq_univ`: the dilates `uₙ⁻¹ • U` cover
   the ring, indexed by `ℕ`.
 
 ## References
 
+* A. Henkel, *An Open Mapping Theorem for rings which have a zero sequence of units*,
+  [arXiv:1407.5647](https://arxiv.org/abs/1407.5647). The hypothesis formalised here, the
+  terminology, and both results below are its setup.
 * [Wedhorn, *Adic Spaces*][wedhorn_adic], Theorem 6.16 and Propositions 6.17–6.18, which are
-  proved from Henkel's open mapping theorem; this file states the hypothesis that theorem places
-  on the base ring.
+  proved from Henkel's theorem; downstream context for this file rather than its source.
 -/
 
 public section
@@ -48,7 +50,7 @@ open Filter Topology Pointwise
 
 namespace TauCeti.Huber
 
-variable (A : Type*) [CommRing A] [TopologicalSpace A]
+variable (A : Type*) [MonoidWithZero A] [TopologicalSpace A]
 
 /-- Henkel's hypothesis on the base ring: there is a sequence of units converging to zero.
 
@@ -64,10 +66,8 @@ theorem hasZeroSequenceOfUnits_iff :
 
 variable {A}
 
-/-- **A Tate ring has a zero sequence of units**: the powers of a pseudouniformiser.
-
-This is where the Tate condition enters Henkel's theorem — a Huber ring that is not Tate need
-not admit such a sequence, `ℤ_[p]` being the example. -/
+/-- **The powers of a pseudouniformiser are a zero sequence of units.** No Huber or Tate
+hypothesis is needed: a topologically nilpotent unit is exactly what the definition asks for. -/
 theorem IsPseudoUniformizer.hasZeroSequenceOfUnits {a : A} (ha : IsPseudoUniformizer a) :
     HasZeroSequenceOfUnits A :=
   ⟨fun n ↦ ha.isUnit.unit ^ n, by
@@ -75,15 +75,19 @@ theorem IsPseudoUniformizer.hasZeroSequenceOfUnits {a : A} (ha : IsPseudoUniform
     have hnil : Tendsto (fun n ↦ a ^ n) atTop (nhds 0) := ha.isTopologicallyNilpotent
     simpa only [Units.val_pow_eq_pow_val, IsUnit.unit_spec] using hnil⟩
 
-/-- A Tate ring satisfies Henkel's hypothesis on the base ring. -/
-theorem IsTateRing.hasZeroSequenceOfUnits [IsTopologicalRing A] [IsTateRing A] :
-    HasZeroSequenceOfUnits A :=
+/-- **A Tate ring satisfies Henkel's hypothesis on the base ring**, via the powers of a
+pseudouniformiser.
+
+This is where the Tate condition enters Henkel's theorem: a Huber ring that is not Tate need not
+admit such a sequence, `ℤ_[p]` being the example. -/
+theorem IsTateRing.hasZeroSequenceOfUnits {A : Type*} [CommRing A] [TopologicalSpace A]
+    [IsTopologicalRing A] [IsTateRing A] : HasZeroSequenceOfUnits A :=
   let ⟨_, ha⟩ := IsTateRing.exists_isPseudoUniformizer (A := A)
   ha.hasZeroSequenceOfUnits
 
 namespace HasZeroSequenceOfUnits
 
-variable [IsTopologicalRing A] (h : HasZeroSequenceOfUnits A)
+variable [ContinuousMul A] (h : HasZeroSequenceOfUnits A)
 include h
 
 /-- A choice of zero sequence of units, fixed once.
@@ -94,7 +98,7 @@ not serve. Everything downstream therefore goes through this sequence rather tha
 unquantified unit. -/
 noncomputable def seq : ℕ → Aˣ := h.choose
 
-omit [IsTopologicalRing A] in
+omit [ContinuousMul A] in
 /-- The chosen sequence converges to zero. This is the characteristic property of
 `TauCeti.Huber.HasZeroSequenceOfUnits.seq`; its body is not exposed. -/
 theorem tendsto_seq : Tendsto (fun n ↦ ((seq h n : A))) atTop (nhds 0) := h.choose_spec
@@ -112,11 +116,11 @@ theorem exists_seq_mul_mem (x : A) {U : Set A} (hU : U ∈ nhds (0 : A)) :
 /-- **The countable covering Henkel's Baire argument runs on**: the dilates `uₙ⁻¹ • U` of a
 neighbourhood of zero, over the chosen sequence, exhaust the ring. The index is `ℕ`, which is
 what makes the cover usable in a Baire argument. -/
-theorem iUnion_seq_smul_eq_univ {U : Set A} (hU : U ∈ nhds (0 : A)) :
+theorem iUnion_seq_inv_smul_eq_univ {U : Set A} (hU : U ∈ nhds (0 : A)) :
     ⋃ n : ℕ, ((seq h n)⁻¹ : Aˣ) • U = Set.univ := by
   refine Set.eq_univ_of_forall fun x ↦ Set.mem_iUnion.mpr ?_
   obtain ⟨n, hn⟩ := exists_seq_mul_mem h x hU
-  exact ⟨n, ⟨(seq h n : A) * x, hn, by simp [smul_eq_mul, ← mul_assoc]⟩⟩
+  exact ⟨n, Set.mem_inv_smul_set_iff.mpr (by rwa [Units.smul_def, smul_eq_mul])⟩
 
 end HasZeroSequenceOfUnits
 
