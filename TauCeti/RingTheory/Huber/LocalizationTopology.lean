@@ -34,6 +34,9 @@ Wedhorn's *Adic Spaces*.
   `locTopology_nonarchimedean`: the contract of `locTopology`, to be used in place of unfolding
   the construction.
 * `continuous_algebraMap_locTopology`: the structure map `A → Aₛ` is continuous.
+* `isBounded_locSubring` and `isPowerBounded_divByS`: `D` is bounded and the distinguished
+  fractions `t/s` are power-bounded — the two facts a converse to the continuity criterion
+  needs.
 * `continuous_locTopology_of_continuous_algebraMap_of_isPowerBounded`: a sufficient criterion
   for a ring homomorphism out of `Aₛ` to be continuous — its restriction along `algebraMap` is
   continuous and the fractions `t/s` go to power-bounded elements. The converse is not proved
@@ -322,6 +325,39 @@ theorem locTopology_nonarchimedean [IsTopologicalRing A] (P : PairOfDefinition A
     (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
     @NonarchimedeanRing _ _ (locTopology P T s hopen) :=
   (locBasis P T s hopen).nonarchimedean
+
+/-- `Jⁿ`'s image absorbs multiplication by `D`, because `Jⁿ` is an ideal of `D`. -/
+theorem locNhd_mul_locSubring_subset (P : PairOfDefinition A) (T : Finset A) (s : A) (n : ℕ) :
+    (locNhd P T s n : Set (Localization.Away s)) *
+        (locSubring P T s : Set (Localization.Away s))
+      ⊆ (locNhd P T s n : Set (Localization.Away s)) := by
+  rintro _ ⟨_, ⟨j, hj, rfl⟩, d, hd, rfl⟩
+  exact ⟨j * ⟨d, hd⟩, Ideal.mul_mem_right _ _ hj, MulMemClass.coe_mul ..⟩
+
+/-- **The ring of definition is bounded**: each `Jⁿ` already absorbs it. -/
+theorem isBounded_locSubring [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A)
+    (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
+    letI := locTopology P T s hopen
+    IsBounded (locSubring P T s : Set (Localization.Away s)) := by
+  let _ := locTopology P T s hopen
+  rw [isBounded_iff]
+  intro U hU
+  obtain ⟨n, -, hn⟩ := (locTopology_hasBasis_nhds_zero P T s hopen).mem_iff.mp hU
+  exact ⟨_, (locTopology_hasBasis_nhds_zero P T s hopen).mem_of_mem (i := n) trivial,
+    (locNhd_mul_locSubring_subset P T s n).trans hn⟩
+
+/-- The distinguished fractions `t/s` are power-bounded: they lie in `D`, which is bounded. -/
+theorem isPowerBounded_divByS [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A)
+    (s : A)
+    (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s)
+    {t : A} (ht : t ∈ T) :
+    letI := locTopology P T s hopen
+    IsPowerBounded (divByS t s) := by
+  let _ := locTopology P T s hopen
+  rw [isPowerBounded_iff]
+  refine (isBounded_locSubring P T s hopen).subset ?_
+  rintro _ ⟨m, rfl⟩
+  exact pow_mem (divByS_mem_locSubring P T s ht) m
 
 /-- The structure map `A → Aₛ` is continuous for the localisation topology: the image of `Iⁿ`
 already lands in the `n`-th basic neighbourhood. -/
