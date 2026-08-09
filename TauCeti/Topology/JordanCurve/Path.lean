@@ -69,13 +69,6 @@ open Set
 variable {X : Type*} [TopologicalSpace X] [T2Space X] {x : X}
 
 omit [T2Space X] in
-/-- **The circle lift of a closed path computes on representatives in `[0, 1)`.** At the class of
-`t ∈ [0, 1)` the lift `AddCircle.liftIco 1 0 γ.extend` takes the value `γ t`. -/
-private theorem liftIco_extend_coe_apply (γ : Path x x) {t : ℝ} (ht : t ∈ Ico (0 : ℝ) 1) :
-    AddCircle.liftIco 1 0 γ.extend (t : AddCircle (1 : ℝ)) = γ ⟨t, ht.1, ht.2.le⟩ :=
-  (AddCircle.liftIco_zero_coe_apply ht).trans (γ.extend_extends' ⟨t, ht.1, ht.2.le⟩)
-
-omit [T2Space X] in
 /-- **A simple closed path lifts injectively to the circle.** If equality `γ s = γ t` forces `s = t`
 or the unordered pair of parameters to be `{0, 1}`, then `AddCircle.liftIco 1 0 γ.extend` is
 injective. -/
@@ -87,7 +80,8 @@ private theorem liftIco_extend_injective (γ : Path x x)
   -- representatives in `[0, 1)` cannot form the exceptional endpoint pair
   obtain ⟨s, hs, rfl⟩ := AddCircle.eq_coe_Ico q
   obtain ⟨t, ht, rfl⟩ := AddCircle.eq_coe_Ico q'
-  rw [liftIco_extend_coe_apply γ hs, liftIco_extend_coe_apply γ ht] at hqq'
+  rw [(AddCircle.liftIco_zero_coe_apply hs).trans (γ.extend_extends' ⟨s, hs.1, hs.2.le⟩),
+    (AddCircle.liftIco_zero_coe_apply ht).trans (γ.extend_extends' ⟨t, ht.1, ht.2.le⟩)] at hqq'
   rcases hγ hqq' with hst | hends | hends
   · exact congrArg (fun u : unitInterval => ((u : ℝ) : AddCircle (1 : ℝ))) hst
   · exact absurd (congrArg ((↑) : unitInterval → ℝ) hends.2) ht.2.ne
