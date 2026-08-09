@@ -169,6 +169,22 @@ private theorem eq_zero_of_forall_nonneg_on_progression_of_ne {b c m x₀ y : �
   nlinarith [mul_nonneg (by linarith : (0 : ℤ) ≤ |C| + 1)
     (by linarith : (0 : ℤ) ≤ (b * y * m) ^ 2 - 1)]
 
+/-- **A progression of large enough height pins the discriminant, whatever the sign of `a`.**
+This is the sign dispatch shared by the two public theorems: a negative leading coefficient makes
+the hypothesis unsatisfiable, a zero one collapses the form to a linear function forcing `b = 0`,
+and a positive one is the case that does the work. -/
+private theorem discrim_le_zero_of_nonneg_on_progression {a b c m x₀ y : ℤ} (hm : 0 < m)
+    (hy : a * m < |y|)
+    (h : ∀ k : ℤ, 0 ≤ a * (x₀ + m * k) ^ 2 + b * (x₀ + m * k) * y + c * y ^ 2) :
+    discrim a b c ≤ 0 := by
+  rcases lt_trichotomy a 0 with ha | ha | ha
+  · exact absurd h (not_forall_nonneg_on_progression_of_neg ha hm)
+  · subst ha
+    have hy0 : y ≠ 0 := by rintro rfl; simp at hy
+    rw [discrim, eq_zero_of_forall_nonneg_on_progression_of_ne hy0 hm h]
+    simp
+  · exact discrim_le_zero_of_pos_of_nonneg_on_progression ha hm hy h
+
 /-- **A single line of large enough height pins the discriminant.** If a binary quadratic form
 over `ℤ` is non-negative at `(x, y)` for a fixed `y` with `a < |y|` and every integer `x`, then
 `discrim a b c ≤ 0`, that is `b ^ 2 ≤ 4 * a * c`.
@@ -180,17 +196,10 @@ The height hypothesis `a < |y|` is necessary, not an artefact of the proof: with
 integer-valued hypothesis is strictly weaker than its field counterpart, as
 `forall_int_nonneg_and_discrim_pos` witnesses. -/
 theorem Int.discrim_le_zero_of_nonneg_of_lt_abs {a b c y : ℤ} (hy : a < |y|)
-    (h : ∀ x : ℤ, 0 ≤ a * x ^ 2 + b * x * y + c * y ^ 2) : discrim a b c ≤ 0 := by
+    (h : ∀ x : ℤ, 0 ≤ a * x ^ 2 + b * x * y + c * y ^ 2) : discrim a b c ≤ 0 :=
   -- The whole line is the progression of gap `1` through `0`.
-  have hprog : ∀ k : ℤ, 0 ≤ a * (0 + 1 * k) ^ 2 + b * (0 + 1 * k) * y + c * y ^ 2 :=
+  discrim_le_zero_of_nonneg_on_progression (x₀ := 0) one_pos (by simpa using hy)
     fun k => by simpa using h k
-  rcases lt_trichotomy a 0 with ha | ha | ha
-  · exact absurd hprog (not_forall_nonneg_on_progression_of_neg ha one_pos)
-  · subst ha
-    have hy0 : y ≠ 0 := by rintro rfl; simp at hy
-    rw [discrim, eq_zero_of_forall_nonneg_on_progression_of_ne hy0 one_pos hprog]
-    simp
-  · exact discrim_le_zero_of_pos_of_nonneg_on_progression ha one_pos (by simpa using hy) hprog
 
 /-- The height hypothesis of `Int.discrim_le_zero_of_nonneg_of_lt_abs` cannot be dropped:
 `x ↦ x ^ 2 - x` is non-negative at every integer, yet its discriminant is positive. Here the
@@ -228,10 +237,11 @@ private theorem not_dvd_one_add_max_mul {d : ℤ} (hd : ¬ IsUnit d) (k : ℤ) :
 quadratic form over `ℤ` is non-negative at every `(x, y)` with `d ∤ x` and `d ∤ y`, for a non-unit
 `d`, then `discrim a b c ≤ 0`.
 
-This strengthens `Int.discrim_le_zero_of_nonneg_of_not_dvd`, whose hypothesis constrains only `y`
-and so is available on a strictly larger set of points; the conclusion here is drawn from less.
-The two are not interderivable in the other direction, and it is this form that an elliptic curve
-supplies when the pencil `r π − s` is known to be an isogeny only away from both coordinates.
+The one-coordinate variant, constraining only `y`, is not stated separately: its hypothesis holds
+on a strictly larger set of points, so it is the stronger of the two and a caller holding it
+applies this theorem through `fun x y _ hy => h x y hy`. The implication does not run the other
+way, and it is this form that an elliptic curve supplies, the pencil `r π − s` being known to be
+an isogeny only away from both coordinates.
 
 Both coordinates are taken in the progression `1 + max |d| 2 * ℤ`, every member of which avoids
 the multiples of `d`; the widened gap costs a factor `max |d| 2` in the height, which the choice
@@ -257,11 +267,4 @@ theorem Int.discrim_le_zero_of_nonneg_of_not_dvd_of_not_dvd {a b c d : ℤ} (hd 
     have h2 : |a| * m ≤ m * (|a| * m) := by nlinarith
     linarith
   have hyd : ¬ d ∣ y := hdm _
-  have hprog : ∀ k : ℤ, 0 ≤ a * (1 + m * k) ^ 2 + b * (1 + m * k) * y + c * y ^ 2 :=
-    fun k => h _ y (hdm k) hyd
-  rcases lt_trichotomy a 0 with ha | ha | ha
-  · exact absurd hprog (not_forall_nonneg_on_progression_of_neg ha hm0)
-  · subst ha
-    rw [discrim, eq_zero_of_forall_nonneg_on_progression_of_ne hy0.ne' hm0 hprog]
-    simp
-  · exact discrim_le_zero_of_pos_of_nonneg_on_progression ha hm0 hheight hprog
+  exact discrim_le_zero_of_nonneg_on_progression hm0 hheight fun k => h _ y (hdm k) hyd
