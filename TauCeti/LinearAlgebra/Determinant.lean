@@ -14,11 +14,12 @@ public section
 # Determinant transformation laws
 
 Precomposing an alternating form of top degree with an endomorphism `φ` multiplies it by
-`LinearMap.det φ`, and — the direction that is actually used — a form which is merely known to be
-*scaled* by some `d` thereby identifies `d` as the determinant, without computing it. This file
-records that law in three vocabularies: for an `AlternatingMap` indexed by a basis' index type,
-for an alternating bilinear form on a rank-two module, and for the standard-basis determinant form
-under matrix multiplication.
+`LinearMap.det φ`, and — the direction that is actually used — a *nonzero* form merely known to be
+*scaled* by some `d` thereby identifies `d` as the determinant, without computing it, as soon as
+scalars cancel on the codomain (`NoZeroSMulDivisors R N`; see the implementation notes, where
+`ω ≠ 0` alone is shown to be insufficient). This file records that law in three vocabularies: for
+an `AlternatingMap` indexed by a basis' index type, for an alternating bilinear form on a rank-two
+module, and for the standard-basis determinant form under matrix multiplication.
 
 Mathlib's `Module.Basis.det_comp` is the case `ω = b.det` of the first statement. The step taken
 here is that every top-degree alternating form is a multiple of `b.det`
@@ -30,7 +31,8 @@ pairing.
 
 * `AlternatingMap.eq_smulRight_basis_det`: `ω = b.det.smulRight (ω b)` for `ω` of top degree.
 * `AlternatingMap.compLinearMap_eq_det_smul`: `ω ∘ φ = det φ • ω` for `ω` of top degree.
-* `LinearMap.det_eq_of_compLinearMap_eq_smul`: if `ω ≠ 0` and `ω ∘ φ = d • ω` then `det φ = d`.
+* `LinearMap.det_eq_of_compLinearMap_eq_smul`: if `ω ≠ 0` and `ω ∘ φ = d • ω` then `det φ = d`,
+  assuming `NoZeroSMulDivisors R N`.
 * `LinearMap.IsAlt.compl₁₂_self_eq_det_smul` and `LinearMap.det_eq_of_compl₁₂_self_eq_smul`: the
   same two statements for an alternating bilinear form on a module of rank two.
 * `TauCeti.Matrix.detRowAlternating_mulVec`: multiplication by a square matrix scales the
