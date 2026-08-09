@@ -11,9 +11,9 @@ public import Mathlib.GroupTheory.QuotientGroup.Basic
 public import Mathlib.Order.Quotient
 
 /-!
-# Convex subgroups of linearly ordered commutative groups
+# Convex subgroups of linearly ordered groups
 
-A subgroup of a linearly ordered commutative group is *convex* if it contains every element
+A subgroup of a group with a linear order is *convex* if it contains every element
 lying between two of its members. Convex subgroups are the kernels of the order-compatible
 quotients of the value group of a valuation: the quotient by a convex subgroup carries a
 linear order making it an ordered group again, and any two convex subgroups are comparable.
@@ -51,7 +51,7 @@ namespace TauCeti
 
 variable (Γ : Type*) [Group Γ] [LinearOrder Γ]
 
-/-- A **convex subgroup** of a linearly ordered commutative group `Γ` is a subgroup
+/-- A **convex subgroup** of a group `Γ` with a linear order is a subgroup
 that is order-convex: if `a ≤ x ≤ b` and `a, b ∈ H`, then `x ∈ H`. -/
 structure ConvexSubgroup extends Subgroup Γ where
   ordConnected' : carrier.OrdConnected
