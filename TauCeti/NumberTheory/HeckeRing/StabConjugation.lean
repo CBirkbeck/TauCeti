@@ -105,7 +105,13 @@ noncomputable def decompQuotientEquivMulLeft (Γ₁ Γ₂ : Subgroup G) (g : G) 
       simp only [QuotientGroup.leftRel_apply, Subgroup.mem_map_equiv,
         MulEquiv.toEquiv_eq_coe, EquivLike.coe_coe, ← map_inv, ← map_mul]
 
-@[simp]
+/-- What `decompQuotientEquivMulLeft` does to a representative: it conjugates by `h⁻¹`.
+
+Deliberately *not* `@[simp]`. The left-hand side is not in simp normal form and cannot be
+made so: `QuotientGroup.mk`'s implicit subgroup argument comes from the type index
+`DecompQuotient Γ₁ Γ₂ (↑h * g)`, and simp rewrites `ConjAct.toConjAct (↑h * g)` inside it to
+`ConjAct.toConjAct ↑h * ConjAct.toConjAct g` via `ConjAct.toConjAct_mul`. `scripts/lint-env.sh`
+reports exactly that as a `simpNF` violation. Rewrite with this lemma by name. -/
 lemma decompQuotientEquivMulLeft_mk (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁) (x : Γ₁) :
     decompQuotientEquivMulLeft Γ₁ Γ₂ g h (QuotientGroup.mk x) =
       QuotientGroup.mk ((MulAut.conj h).symm x) :=
@@ -125,7 +131,8 @@ noncomputable def decompQuotientEquivMulLeftRight (Γ₁ Γ₂ : Subgroup G) (g 
       (Subgroup.quotientEquivOfEq
         (subgroupOf_conjAct_smul_mul_right_of_mem_normalizer Γ₁ Γ₂ g hk)))
 
-@[simp]
+/-- What `decompQuotientEquivMulLeftRight` does to a representative. Not `@[simp]`, for the
+same reason as `decompQuotientEquivMulLeft_mk`. -/
 lemma decompQuotientEquivMulLeftRight_mk (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁) {k : G}
     (hk : k ∈ Subgroup.normalizer Γ₂) (x : Γ₁) :
     decompQuotientEquivMulLeftRight Γ₁ Γ₂ g h hk (QuotientGroup.mk x) =
