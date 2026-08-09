@@ -24,8 +24,7 @@ fundamental domain, the exterior input to the valence-formula residue count.
 The file also carries the arc-excision geometry shared by the corner winding computations
 at `i`, at `ρ` and at `ρ + 1`. Each excises a parameter window around its corner and needs
 that window's chord to be exactly the excision radius `ε`. The half-width realising this for
-a radius below the corner chord `2·sin(π/12)`, and the trigonometric identity behind it, are
-stated once here rather than three times.
+a radius below the corner chord `2·sin(π/12)` is stated once here rather than three times.
 
 ## Main declarations
 
@@ -38,8 +37,6 @@ stated once here rather than three times.
 * `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth`: the parameter half-width whose
   chord along the arc is a prescribed `ε` below the corner chord, characterised under that
   bound by `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth_spec`.
-* `Real.abs_sin_mul_pi_div_twelve`: the sine of a multiple of `π/12` factors through
-  the absolute value, the identity that specification rests on.
 
 ## References
 
@@ -58,20 +55,6 @@ public noncomputable section
 open Complex Set UpperHalfPlane TauCeti.Contour
 
 open scoped Real
-
-namespace Real
-
-/-- **The sine of a multiple of `π/12` factors through the absolute value**, for any
-multiplier up to a half turn. The bound `|u| ≤ 12` is exactly what puts `u * π/12` inside
-`[-π, π]`, where `Real.abs_sin_eq_sin_abs_of_abs_le_pi` applies. -/
-theorem abs_sin_mul_pi_div_twelve {u : ℝ} (hu : |u| ≤ 12) :
-    |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
-  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
-      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
-      nlinarith [Real.pi_pos, abs_nonneg u]),
-    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
-
-end Real
 
 namespace TauCeti
 
