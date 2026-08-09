@@ -198,18 +198,6 @@ theorem idealCofinalFor_iff_forall_isCofinalElement {v : Valuation A Γ₀}
     · refine (cofinalValueFor_iff_isCofinalElement h0).mpr (hS _ ⟨a, haI, ?_⟩)
       exact v.restrict_eq_mk h0
 
-/-- Cofinality for the whole value group is Mathlib-side `CofinalValue`: the positive elements
-of `ValueGroup₀` are exactly the coercions of the group elements. -/
-theorem cofinalValueFor_top_iff {v : Valuation A Γ₀} {a : A} :
-    CofinalValueFor v ⊤ a ↔ CofinalValue v a := by
-  rw [cofinalValueFor_def, cofinalValue_iff]
-  constructor
-  · intro h γ hγ
-    obtain ⟨g, rfl⟩ := WithZero.ne_zero_iff_exists.mp hγ.ne'
-    exact h g TauCeti.ConvexSubgroup.mem_top
-  · intro h g _
-    exact h (g : ValueGroup₀ (.ofClass v)) (by simp)
-
 /-! ### The two halves of Wedhorn Lemma 7.2 -/
 
 /-- **Maximality half.** Any convex subgroup for which `I` is cofinal is contained in the one
@@ -262,7 +250,7 @@ theorem idealCofinalFor_radical_iff {v : Valuation A Γ₀}
     (hH : characteristicSubgroup v < H) {I : Ideal A} :
     IdealCofinalFor v H I.radical ↔ IdealCofinalFor v H I := by
   rw [idealCofinalFor_iff_le_cofinalIdeal hH, idealCofinalFor_iff_le_cofinalIdeal hH]
-  exact (cofinalIdeal_isRadical hH).radical_le_iff
+  exact (isRadical_cofinalIdeal hH).radical_le_iff
 
 /-- Two ideals with the same radical are cofinal for exactly the same convex subgroups. -/
 theorem idealCofinalFor_congr_of_radical_eq {v : Valuation A Γ₀}
