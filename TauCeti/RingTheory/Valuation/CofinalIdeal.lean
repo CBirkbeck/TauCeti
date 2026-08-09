@@ -45,6 +45,8 @@ something derivable from cofinality.
   `TauCeti.Valuation.not_cofinalValueFor_one`.
 * `TauCeti.Valuation.cofinalValueFor_top_iff` : At the whole value group the predicate is the
   ambient `CofinalValue`.
+* `TauCeti.Valuation.cofinalValueFor_neg_iff` : cofinality is invariant under negation, with
+  `CofinalValueFor.sub` the resulting difference closure.
 
 ## Implementation notes
 
@@ -115,6 +117,21 @@ theorem CofinalValueFor.add {v : Valuation A Γ₀}
   rcases le_total (v a) (v b) with hab | hab
   · exact hb.of_le ((map_add_le_max v a b).trans (max_le hab le_rfl))
   · exact ha.of_le ((map_add_le_max v a b).trans (max_le le_rfl hab))
+
+/-- Cofinality is invariant under negation, since `v (-a) = v a`. -/
+@[simp]
+theorem cofinalValueFor_neg_iff {v : Valuation A Γ₀}
+    {H : Subgroup (valueGroup (.ofClass v))} {a : A} :
+    CofinalValueFor v H (-a) ↔ CofinalValueFor v H a := by
+  constructor <;> exact fun h ↦ h.of_le (le_of_eq (by simp [Valuation.map_neg]))
+
+/-- A difference of cofinal-value elements has cofinal value. -/
+theorem CofinalValueFor.sub {v : Valuation A Γ₀}
+    {H : Subgroup (valueGroup (.ofClass v))} {a b : A}
+    (ha : CofinalValueFor v H a) (hb : CofinalValueFor v H b) :
+    CofinalValueFor v H (a - b) := by
+  rw [sub_eq_add_neg]
+  exact ha.add (cofinalValueFor_neg_iff.mpr hb)
 
 /-- Multiplying by an element of value at most `1` preserves cofinality. -/
 theorem CofinalValueFor.mul_of_le_one {v : Valuation A Γ₀}
