@@ -30,8 +30,8 @@ Wedhorn's *Adic Spaces*.
   basis needs.
 * `locBasis`: The neighborhoods form a `RingSubgroupsBasis`, so they are the zero-neighbourhood
   basis of a ring topology on `Aₛ`, namely `locTopology`.
-* `locTopology_hasBasis_nhds_zero`, `locTopology_isTopologicalRing` and
-  `locTopology_nonarchimedean`: the contract of `locTopology`, to be used in place of unfolding
+* `locTopology_hasBasis_nhds_zero`, `isTopologicalRing_locTopology` and
+  `nonarchimedeanRing_locTopology`: the contract of `locTopology`, to be used in place of unfolding
   the construction.
 * `continuous_algebraMap_locTopology`: the structure map `A → Aₛ` is continuous.
 * `isBounded_locSubring` and `isPowerBounded_divByS`: `D` is bounded and the distinguished
@@ -313,14 +313,14 @@ theorem locTopology_hasBasis_nhds_zero [IsTopologicalRing A] (P : PairOfDefiniti
   (locBasis P T s hopen).hasBasis_nhds_zero
 
 /-- `locTopology` is a ring topology. -/
-theorem locTopology_isTopologicalRing [IsTopologicalRing A] (P : PairOfDefinition A)
+theorem isTopologicalRing_locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
     (T : Finset A) (s : A)
     (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
     @IsTopologicalRing _ (locTopology P T s hopen) _ :=
   (locBasis P T s hopen).toRingFilterBasis.isTopologicalRing
 
 /-- `locTopology` is nonarchimedean: `Aₛ` inherits a basis of open additive subgroups at zero. -/
-theorem locTopology_nonarchimedean [IsTopologicalRing A] (P : PairOfDefinition A)
+theorem nonarchimedeanRing_locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
     (T : Finset A) (s : A)
     (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
     @NonarchimedeanRing _ _ (locTopology P T s hopen) :=
@@ -366,7 +366,7 @@ theorem continuous_algebraMap_locTopology [IsTopologicalRing A] (P : PairOfDefin
     (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
     Continuous[_, locTopology P T s hopen] (algebraMap A (Localization.Away s)) := by
   let _ := locTopology P T s hopen
-  have _ := locTopology_isTopologicalRing P T s hopen
+  have _ := isTopologicalRing_locTopology P T s hopen
   refine continuous_of_continuousAt_zero (algebraMap A (Localization.Away s)) ?_
   rw [ContinuousAt, map_zero,
     (locTopology_hasBasis_nhds_zero P T s hopen).tendsto_right_iff]
