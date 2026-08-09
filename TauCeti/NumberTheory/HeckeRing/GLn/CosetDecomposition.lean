@@ -13,7 +13,8 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 
 For a tuple `a` of positive naturals, this file exhibits a family of elements of the double
 coset `SL_n(ℤ) · diag(a) · SL_n(ℤ)`, indexed by the bounded entry assignments
-`B_{ij} ∈ {0, …, a_j / a_i - 1}` for `i < j`, and shows the family is injective.
+`B_{ij} ∈ {0, …, a_j / a_i - 1}` for `i < j`, and shows that they lie in pairwise distinct
+left `SL_n(ℤ)`-cosets — so the double coset contains at least `∏_{i < j} (a_j / a_i)` of them.
 
 The representative attached to `B` is *defined* as `diag(a) · U(B)`, where `U(B)` is the
 unipotent upper-triangular integral matrix with off-diagonal entries `B`. Two things follow
@@ -35,6 +36,10 @@ the representative lies in the double coset with no further argument.
 * `upperTriGL_mem_doubleCoset` — every representative lies in `SL_n(ℤ) · diag(a) · SL_n(ℤ)`.
 * `unitriMat_injective`, `upperTriGL_injective` — distinct entry assignments give distinct
   matrices, hence distinct representatives.
+* `upperTriGL_eq_of_dvd` — the representatives lie in *distinct* left `SL_n(ℤ)`-cosets: two of
+  them are left-equivalent only when their entry assignments agree. Left equivalence says the
+  comparison matrix `C = U(B₁) · U(B₂)⁻¹` satisfies `(a_j / a_i) ∣ C_{ij}`, and the entry bound
+  then forces `C = 1` by induction on `j - i`.
 
 ## References
 
@@ -156,5 +161,115 @@ lemma upperTriGL_injective {a : Fin n → ℕ} (ha : ∀ i, 0 < a i) :
     exact_mod_cast mul_left_cancel₀ hai hE
   · simp
   · rw [unitriMat_apply_of_lt B₁ hij, unitriMat_apply_of_lt B₂ hij]
+
+/-! ## Distinctness of the left cosets
+
+Two representatives lie in the same left `SL_n(ℤ)`-coset exactly when the conjugate
+`diag(a)⁻¹ · S · diag(a)` of the connecting element `S` is integral, which says
+`(a_j / a_i) ∣ C_{ij}` for the comparison matrix `C = U(B₁) · U(B₂)⁻¹`. The entry bound
+`B_{ij} < a_j / a_i` then forces `C = 1`. -/
+
+section Triangular
+
+variable {R : Type*} [CommRing R] {M N : Matrix (Fin n) (Fin n) R}
+
+/-- On the diagonal, a product of upper-triangular matrices multiplies entrywise: only the
+`k = i` term of `∑ k, M i k * N k i` survives. -/
+lemma mul_apply_diag_of_isUpperTriangular (hM : Matrix.IsUpperTriangular M)
+    (hN : Matrix.IsUpperTriangular N) (i : Fin n) : (M * N) i i = M i i * N i i := by
+  rw [Matrix.mul_apply]
+  refine Finset.sum_eq_single i (fun k _ hk ↦ ?_) fun h ↦ absurd (Finset.mem_univ i) h
+  rcases lt_or_gt_of_ne hk with h | h
+  · rw [hM h, zero_mul]
+  · rw [hN h, mul_zero]
+
+/-- The inverse of an upper-triangular matrix with `1` on the diagonal again has `1` on the
+diagonal. -/
+lemma inv_apply_diag_of_isUpperTriangular [Invertible M] (hM : Matrix.IsUpperTriangular M)
+    (hdiag : ∀ i, M i i = 1) (i : Fin n) : M⁻¹ i i = 1 := by
+  have hinv : Matrix.IsUpperTriangular M⁻¹ := Matrix.blockTriangular_inv_of_blockTriangular hM
+  have h := congrFun (congrFun (Matrix.nonsing_inv_mul M (Matrix.isUnit_det_of_invertible M)) i) i
+  rwa [mul_apply_diag_of_isUpperTriangular hinv hM i, hdiag i, mul_one,
+    Matrix.one_apply_eq] at h
+
+end Triangular
+
+/-- The comparison matrix `C` between two representatives is the identity above the diagonal.
+
+Strong induction on `j - i`. Reading `C · U(B₂) = U(B₁)` at `(i, j)`, every term of the sum
+except `k = i` and `k = j` drops: below `i` because `C` is upper triangular, strictly between
+because the inductive hypothesis has already killed those entries, and above `j` because
+`U(B₂)` is upper triangular. What is left is `(B₂)_{ij} + C_{ij} = (B₁)_{ij}`, so `C_{ij}` is a
+difference of two entries each below `a_j / a_i`; being divisible by `a_j / a_i` it vanishes. -/
+private lemma comparison_apply_eq_zero {a : Fin n → ℕ} {B₁ B₂ : UpperTriRep n a}
+    {C : Matrix (Fin n) (Fin n) ℤ} (hmul : C * unitriMat B₂ = unitriMat B₁)
+    (hup : Matrix.IsUpperTriangular C) (hdiag : ∀ i, C i i = 1)
+    (hdvd : ∀ ⦃i j : Fin n⦄, i < j → ((a j / a i : ℕ) : ℤ) ∣ C i j) :
+    ∀ ⦃i j : Fin n⦄, i < j → C i j = 0 := by
+  suffices H : ∀ d : ℕ, ∀ i j : Fin n, (j : ℕ) - (i : ℕ) = d → i < j → C i j = 0 from
+    fun i j hij ↦ H _ i j rfl hij
+  intro d
+  induction d using Nat.strong_induction_on with
+  | _ d ih =>
+    intro i j hd hij
+    have hne : i ≠ j := hij.ne
+    -- Only `k = i` and `k = j` contribute to `(C * U(B₂)) i j`.
+    have hvanish : ∀ k ∈ Finset.univ, k ∉ ({i, j} : Finset (Fin n)) →
+        C i k * unitriMat B₂ k j = 0 := by
+      intro k _ hk
+      simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hk
+      rcases lt_trichotomy k i with hki | rfl | hik
+      · rw [hup hki, zero_mul]
+      · exact absurd rfl hk.1
+      · rcases lt_trichotomy k j with hkj | rfl | hjk
+        · rw [ih ((k : ℕ) - (i : ℕ)) (by omega) i k rfl hik, zero_mul]
+        · exact absurd rfl hk.2
+        · rw [unitriMat_apply_of_lt B₂ hjk, mul_zero]
+    have hkey := congrFun (congrFun hmul i) j
+    rw [Matrix.mul_apply, ← Finset.sum_subset (Finset.subset_univ ({i, j} : Finset (Fin n)))
+      hvanish, Finset.sum_pair hne, hdiag i, one_mul, unitriMat_apply_diag, mul_one,
+      unitriMat_apply_lt B₂ hij, unitriMat_apply_lt B₁ hij] at hkey
+    -- `C i j` is a difference of two entries, each strictly below `a j / a i`.
+    have hb₁ : (B₁ ⟨(i, j), hij⟩ : ℕ) < a j / a i := (B₁ ⟨(i, j), hij⟩).isLt
+    have hb₂ : (B₂ ⟨(i, j), hij⟩ : ℕ) < a j / a i := (B₂ ⟨(i, j), hij⟩).isLt
+    refine Int.eq_zero_of_abs_lt_dvd (hdvd hij) ?_
+    have hCij : C i j = ((B₁ ⟨(i, j), hij⟩ : ℕ) : ℤ) - ((B₂ ⟨(i, j), hij⟩ : ℕ) : ℤ) := by
+      linarith
+    rw [hCij, abs_lt]
+    omega
+
+/-- Two upper-triangular representatives lie in the same left `SL_n(ℤ)`-coset only if their
+entry assignments agree.
+
+The connecting element is `S = M₁ M₂⁻¹`; conjugating, `diag(a)⁻¹ S diag(a) = U(B₁) U(B₂)⁻¹`,
+whose `(i,j)` entry is `S_{ij} · a_j / a_i`. Integrality of `S` is therefore exactly the
+divisibility hypothesis fed to `comparison_apply_eq_zero`. -/
+lemma upperTriGL_eq_of_dvd {a : Fin n → ℕ} {B₁ B₂ : UpperTriRep n a}
+    (hdvd : ∀ ⦃i j : Fin n⦄, i < j →
+      ((a j / a i : ℕ) : ℤ) ∣ (unitriMat B₁ * (unitriMat B₂)⁻¹) i j) :
+    B₁ = B₂ := by
+  have : Invertible (unitriMat B₂) :=
+    Matrix.invertibleOfIsUnitDet _ (by rw [det_unitriMat]; exact isUnit_one)
+  have hup₂ : Matrix.IsUpperTriangular (unitriMat B₂)⁻¹ :=
+    Matrix.blockTriangular_inv_of_blockTriangular (isUpperTriangular_unitriMat B₂)
+  set C : Matrix (Fin n) (Fin n) ℤ := unitriMat B₁ * (unitriMat B₂)⁻¹ with hC
+  have hup : Matrix.IsUpperTriangular C :=
+    Matrix.BlockTriangular.mul (isUpperTriangular_unitriMat B₁) hup₂
+  have hdiag : ∀ i, C i i = 1 := fun i ↦ by
+    rw [hC, mul_apply_diag_of_isUpperTriangular (isUpperTriangular_unitriMat B₁) hup₂ i,
+      unitriMat_apply_diag,
+      inv_apply_diag_of_isUpperTriangular (isUpperTriangular_unitriMat B₂)
+        (unitriMat_apply_diag B₂) i, one_mul]
+  have hmul : C * unitriMat B₂ = unitriMat B₁ := by
+    rw [hC, Matrix.mul_assoc, Matrix.nonsing_inv_mul _ (Matrix.isUnit_det_of_invertible _),
+      Matrix.mul_one]
+  have hzero := comparison_apply_eq_zero hmul hup hdiag hdvd
+  have hC1 : C = 1 := by
+    ext i j
+    rcases lt_trichotomy i j with h | rfl | h
+    · rw [hzero h, Matrix.one_apply_ne h.ne]
+    · rw [hdiag, Matrix.one_apply_eq]
+    · rw [hup h, Matrix.one_apply_ne h.ne']
+  exact unitriMat_injective (by rw [← hmul, hC1, Matrix.one_mul])
 
 end HeckeRing.GLn
