@@ -275,13 +275,15 @@ private lemma det_rep_T_gen_zero_pow_mul (q : {p : ℕ // p.Prime}) (a₀ b₀ :
           (funext fun i ↦ by fin_cases i <;> simp [heckeGenDiag_apply])] at hD'
     obtain ⟨D₂, hD₂_mem, hD₂_ne⟩ := Finset.exists_ne_zero_of_sum_ne_zero (by
       rw [show (HeckeCosetModule.single ℤ (diagCoset (![1, q.1])) 1 * g') D' =
-          ∑ D₂ ∈ g'.support, g' D₂ * (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+          ∑ D₂ ∈ g'.support, g' D₂ *
+            (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
             (HeckeCoset.rep (diagCoset (![1, q.1]))) (HeckeCoset.rep D₂)) D' from by
           rw [HeckeCosetModule.mul_def, HeckeCosetModule.single_mul,
             HeckeCosetModule.sum_apply, HeckeCosetModule.sum_def]
           simp only [HeckeCosetModule.smul_apply, one_mul]] at hD'
       exact hD')
-    have hm_ne : (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2) (HeckeCoset.rep (diagCoset (![1, q.1])))
+    have hm_ne : (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+        (HeckeCoset.rep (diagCoset (![1, q.1])))
         (HeckeCoset.rep D₂)) D' ≠ 0 := fun h ↦ hD₂_ne (by rw [h, mul_zero])
     rw [det_rep_eq_mul_of_m_ne_zero _ _ _ hm_ne,
       show (↑(↑(HeckeCoset.rep (diagCoset (![1, q.1]))) : GL (Fin 2) ℚ) :
@@ -358,7 +360,7 @@ lemma support_mul_exists (f g : IntegralHeckeRing 2)
 
 /-- `T_single(diagCoset a, α) * diagElem(c,c) = T_single(diagCoset(a * c), α)`. -/
 lemma T_single_diag_mul_T_scalar (c : ℕ) (hc : 0 < c)
-    (a : Fin 2 → ℕ) (ha_pos : ∀ i, 0 < a i) (ha_div : IsDvdChain a) (α : ℤ) :
+    (a : Fin 2 → ℕ) (ha_pos : ∀ i, 0 < a i) (α : ℤ) :
     HeckeCosetModule.single ℤ (diagCoset a) α * diagElem (fun _ : Fin 2 ↦ c) =
     HeckeCosetModule.single ℤ (diagCoset (a * (fun _ : Fin 2 ↦ c))) α := by
   have h_single : HeckeCosetModule.single ℤ (diagCoset a) α =
@@ -397,7 +399,7 @@ lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 
       ihg, ihh]
   | hsingle D α =>
     obtain ⟨a, ha_pos, ha_div, hD_eq⟩ := exists_diagonal_representative D
-    rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos ha_div α]
+    rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos α]
     rw [HeckeCosetModule.single_apply, HeckeCosetModule.single_apply]
     by_cases hab : a = b
     · subst hab; rw [if_pos rfl, if_pos rfl]
@@ -437,7 +439,7 @@ lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHe
       ihg, ihh, add_zero]
   | hsingle D α =>
     obtain ⟨a, ha_pos, ha_div, hD_eq⟩ := exists_diagonal_representative D
-    rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos ha_div α]
+    rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos α]
     rw [HeckeCosetModule.single_apply]
     have h_ne : diagCoset (a * fun _ : Fin 2 ↦ c) ≠ diagCoset d := by
       intro heq
@@ -607,13 +609,16 @@ lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
       rw [T_ad_one_p_mul_supp_ne_leading_eval_zero p hp n D₂
         (HeckeCosetModule.mem_support_iff.mp hD₂.2) hD₂.1, mul_zero]
     have h_sum_zero :
-        ∑ x ∈ g.support.erase D_leading, (g x • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+        ∑ x ∈ g.support.erase D_leading, (g x •
+          HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
           (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep x)) D_target = 0 :=
       Finset.sum_eq_zero h_erased
     -- Goal: ∑ + (g D_leading • m ...) D_target = 1
     -- Strategy: prove the leading term equals 1, then linarith with h_sum_zero
-    have h_leading_eq : (g D_leading • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
-          (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep D_leading)) D_target = 1 := by
+    have h_leading_eq : (g D_leading •
+        HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+          (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep D_leading))
+          D_target = 1 := by
       have hs : (g D_leading • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
             (diagCoset (![1, p] : Fin 2 → ℕ)).rep D_leading.rep) D_target =
           g D_leading * (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
@@ -625,15 +630,18 @@ lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
         show diagElem (![1, p ^ n] : Fin 2 → ℕ) = heckeTDiag 1 (p ^ n) from
           (heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp.pos n) (one_dvd _)).symm]
       exact T_ad_one_p_mul_T_ad_one_ppow_eval_leading p hp n
-    calc ∑ x ∈ g.support.erase D_leading, (g x • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+    calc ∑ x ∈ g.support.erase D_leading, (g x •
+          HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
             (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep x)) D_target +
           (g D_leading • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
             (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep D_leading)) D_target
         = 0 + (g D_leading • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
-              (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep D_leading)) D_target :=
+              (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep D_leading))
+              D_target :=
           by rw [h_sum_zero]
       _ = (g D_leading • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
-            (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep D_leading)) D_target :=
+            (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep D_leading))
+            D_target :=
           zero_add _
       _ = 1 := h_leading_eq
 
@@ -679,7 +687,8 @@ lemma monomial_eval_kronecker (p : ℕ) (hp : p.Prime)
     if a₁ = a₂ ∧ b₁ = b₂ then 1 else 0 := by
   rw [show (primePowDiag 2 p ![b₂, a₂ + b₂] : Fin 2 → ℕ) = (![p ^ b₂, p ^ (a₂ + b₂)] : Fin 2 → ℕ)
       from by funext i; fin_cases i <;> simp [primePowDiag_apply],
-    HeckeRing.GLn.Surj.heckeGen_zero_eq_heckeTDiag p hp, HeckeRing.GLn.Surj.heckeGen_one_eq_heckeTScalar p hp,
+    HeckeRing.GLn.Surj.heckeGen_zero_eq_heckeTDiag p hp,
+    HeckeRing.GLn.Surj.heckeGen_one_eq_heckeTScalar p hp,
     HeckeRing.GL2.heckeTScalar_pow p hp.pos b₁]
   by_cases hmatch : a₁ = a₂ ∧ b₁ = b₂
   · obtain ⟨ha, hb⟩ := hmatch
@@ -755,7 +764,7 @@ theorem evalHom_injective_two (p : ℕ) (hp : p.Prime) :
   exact hs_coeff h_zero
 
 /-- Surjectivity of `evalHomR` follows from surjectivity onto `pLocalSubring`. -/
-lemma evalHomR_surjective (n : ℕ) [NeZero n] (p : ℕ) (hp : p.Prime)
+lemma evalHomR_surjective (n : ℕ) [NeZero n] (p : ℕ)
     (h_surj : ∀ f ∈ pLocalSubring n p, f ∈ (evalHom n p).range) :
     Function.Surjective (evalHomR n p) := by
   intro ⟨f, hf⟩
@@ -781,7 +790,7 @@ noncomputable def R_p_isPolynomialRing_one :
     MvPolynomial (Fin 1) ℤ ≃+* pLocalSubring 1 p :=
   RingEquiv.ofBijective (Inj.evalHomR 1 p)
     ⟨Inj.evalHomR_injective 1 p hp (Inj.evalHom_injective_one p hp),
-     Inj.evalHomR_surjective 1 p hp (SurjOne.pLocalSubring_one_subset_evalHom_range p hp)⟩
+     Inj.evalHomR_surjective 1 p (SurjOne.pLocalSubring_one_subset_evalHom_range p hp)⟩
 
 /-- **Shimura, Theorem 3.20 for `n = 2`**: the `p`-local Hecke ring of `GL₂` is the
 polynomial ring `ℤ[X₁, X₂]` on the generators `T(1, p)` and `T(p, p)`. This is the case the
@@ -790,6 +799,6 @@ noncomputable def R_p_isPolynomialRing_two :
     MvPolynomial (Fin 2) ℤ ≃+* pLocalSubring 2 p :=
   RingEquiv.ofBijective (Inj.evalHomR 2 p)
     ⟨Inj.evalHomR_injective 2 p hp (Inj.evalHom_injective_two p hp),
-     Inj.evalHomR_surjective 2 p hp (Surj.pLocalSubring_two_subset_evalHom_range p hp)⟩
+     Inj.evalHomR_surjective 2 p (Surj.pLocalSubring_two_subset_evalHom_range p hp)⟩
 
 end HeckeRing.GLn
