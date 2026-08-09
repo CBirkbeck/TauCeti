@@ -596,7 +596,7 @@ theorem weightedRestrictedSubring_one [NonarchimedeanRing A] :
   rw [mem_weightedRestrictedSubring, mem_restrictedMvPowerSeriesSubring,
     isWeightedRestricted_one_weight_iff, isRestricted_iff]
 
-/-- The neighbourhood subgroups are antitone in `U`. -/
+/-- The neighbourhood subgroups are monotone in `U`. -/
 theorem weightedNhd_mono [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T}
     {U V : AddSubgroup A} (h : U ≤ V) : weightedNhd T hT U ≤ weightedNhd T hT V :=
   fun _ hf ν ↦ weightMul_mono T ν h (hf ν)
