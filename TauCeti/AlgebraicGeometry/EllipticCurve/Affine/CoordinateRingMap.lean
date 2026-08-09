@@ -7,21 +7,22 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 
 /-!
-# A ring equivalence of the base induces one of the coordinate rings
+# Surjectivity of the coordinate-ring map
 
 Mathlib's `WeierstrassCurve.Affine.CoordinateRing.map` sends a ring homomorphism `f : R →+* S` to
 `R[W] →+* S[W.map f]`, and proves it injective when `f` is (`CoordinateRing.map_injective`). This
-file adds the two companions Mathlib does not state — surjectivity and bijectivity, at the same
-generality — and packages the bijective case as a ring equivalence.
+file adds the two companions Mathlib does not state, at the same generality: surjectivity and
+bijectivity.
 
 ## Main results
 
 * `WeierstrassCurve.Affine.CoordinateRing.map_surjective` and
   `WeierstrassCurve.Affine.CoordinateRing.map_bijective`: stated, like Mathlib's
   `CoordinateRing.map_injective`, for an arbitrary `f : R →+* S`.
-* `WeierstrassCurve.Affine.CoordinateRing.mapEquiv`: the induced `R[W] ≃+* S[W.map e]`, with
-  `mapEquiv_apply` identifying it with `CoordinateRing.map` so that the `map_mk`, `map_smul` and
-  `map_injective` API applies to it unchanged.
+
+For a base *equivalence* `e` these give `RingEquiv.ofBijective (map W e) (map_bijective W
+e.bijective)` in one line at the use site, so no equivalence is defined here; Mathlib's generic
+`AdjoinRoot.mapRingEquiv` is the other route to the same object.
 
 Stated over arbitrary commutative rings; the curve need not be elliptic.
 
@@ -43,7 +44,8 @@ Apache-2.0, pinned by that roadmap at `dev/hasse-weil @ 513e83879e2f`),
 There it is bundled as bijectivity of one map, for a ring equivalence only, inside a 267-line file
 that also constructs the function-field Frobenius. Here it is split out and generalised: the
 surjectivity is stated for any surjective `f : R →+* S`, matching the generality of Mathlib's
-`CoordinateRing.map_injective`, and the equivalence is the packaging of the bijective case.
+`CoordinateRing.map_injective`, and the equivalence it was bundled
+for is left to the use site.
 -/
 
 public section
@@ -68,19 +70,6 @@ lemma map_surjective {f : R →+* S} (hf : Function.Surjective f) :
 lemma map_bijective {f : R →+* S} (hf : Function.Bijective f) :
     Function.Bijective (map W f) :=
   ⟨map_injective hf.1, map_surjective W hf.2⟩
-
-/-- **A ring equivalence of the base induces one of the coordinate rings**, packaging
-`map_bijective`. -/
-noncomputable def mapEquiv (e : R ≃+* S) :
-    W.CoordinateRing ≃+* (W.map (e : R →+* S)).CoordinateRing :=
-  RingEquiv.ofBijective (map W (e : R →+* S)) (map_bijective W e.bijective)
-
-/-- The induced equivalence is `CoordinateRing.map`, so all of `map_mk`, `map_smul` and
-`map_injective` apply to it. -/
-@[simp]
-lemma mapEquiv_apply (e : R ≃+* S) (x : W.CoordinateRing) :
-    mapEquiv W e x = map W (e : R →+* S) x :=
-  RingEquiv.ofBijective_apply _ _ _
 
 end WeierstrassCurve.Affine.CoordinateRing
 
