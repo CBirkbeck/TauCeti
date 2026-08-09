@@ -16,8 +16,9 @@ public import Mathlib.Algebra.Order.Monoid.Submonoid
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Lemma 7.1.** For a valuation `v` on a
 commutative ring and a convex subgroup `H` of its value group strictly containing the
 characteristic subgroup `cΓ_v`, the elements whose value is cofinal for `H` form a radical
-ideal. The cofinality predicate itself and its closure properties need only a ring;
-commutativity enters exactly where the ideal is formed. This is the object Wedhorn's §7.1
+ideal. The cofinality predicate, its closure properties, and the ideal itself need only a
+ring; commutativity enters only for the radicality statement, since `Ideal.IsRadical` is
+stated over a commutative semiring. This is the object Wedhorn's §7.1
 uses to reduce the construction of `cΓ_v(I)`
 (Definition 7.3) to a finite generating set, and it is used twice in the proof of Lemma 7.2:
 once to pass from generators to the whole ideal, and once to replace `I` by its radical.
@@ -60,8 +61,11 @@ def CofinalValueFor (v : Valuation A Γ₀)
     (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) (a : A) : Prop :=
   ∀ h ∈ H, ∃ n : ℕ, v.restrict a ^ n < (h : ValueGroup₀ (.ofClass v))
 
-/-- The defining property of cofinality relative to a convex subgroup. -/
-@[simp]
+/-- The defining property of cofinality relative to a convex subgroup.
+
+Deliberately not `@[simp]`: the right-hand side is the unfolded bounded quantifier, so tagging
+it would rewrite `a ∈ cofinalIdeal v hH` past the named predicate and into raw `∀ … ∃ …` form.
+`mem_cofinalIdeal` is the intended normal form. -/
 theorem cofinalValueFor_def {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A} :
     CofinalValueFor v H a ↔
@@ -196,7 +200,6 @@ theorem mem_cofinalIdeal {v : Valuation A Γ₀}
     {hH : characteristicSubgroup v < H} {a : A} :
     a ∈ cofinalIdeal v hH ↔ CofinalValueFor v H a :=
   Iff.rfl
-
 
 /-! ### Radicality -/
 
