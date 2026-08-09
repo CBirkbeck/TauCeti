@@ -16,7 +16,8 @@ The geometry of the shifted contour `t ↦ fdBoundary H t - (ρ + 1)` about the 
 `ρ + 1` at parameter `t = 1`: the purely imaginary linear form along the right vertical,
 the chord distance along the arc, the norm lower bounds on the far pieces, the
 closed-upper-half-plane confinement — the shifted contour touches the branch cut at
-`t = 3`, where its value is `-1`, but never crosses it — and the exact endpoint
+`t = 3`, where its value is `-1`, but never crosses it, and at the degenerate height
+`H = √3/2` the whole left vertical degenerates to that point — and the exact endpoint
 logarithms beside the corner. The corner joins the vertical to the arc at the interior
 angle `2π/3`, and the one-sided argument limits `π/2` and `5π/6` differ by exactly the
 defect `π/3` — the source of the winding value `-1/6` at `ρ + 1`.
@@ -113,9 +114,11 @@ theorem norm_fdBoundary_sub_rho_add_one_arc_le (H : ℝ) (ht : t ∈ Icc (1 : �
     nlinarith [Real.pi_pos]
 
 /-- On the left vertical the shifted contour is `-1` plus the imaginary linear form of the
-`ρ`-shift: its real part is constantly `-1`, so it runs alongside the branch cut and meets it
-only at `t = 3`, where the imaginary part vanishes — on the upper side when the ceiling clears
-the corner row, on the lower side otherwise. -/
+`ρ`-shift, so its real part is constantly `-1` and it runs alongside the branch cut. Where the
+ceiling misses the corner row the imaginary part vanishes only at `t = 3`, so the cut is met
+there alone — above it when the ceiling clears the row, below it otherwise. At the degenerate
+height `H = √3/2` the imaginary part vanishes identically and the whole segment is the point
+`-1`, lying on the cut throughout. -/
 theorem fdBoundary_sub_rho_add_one_of_mem_Icc_three_four (H : ℝ) (ht : t ∈ Icc (3 : ℝ) 4) :
     fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1) =
       -1 + (((t - 3) * (H - Real.sqrt 3 / 2) : ℝ) : ℂ) * Complex.I := by
