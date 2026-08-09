@@ -37,7 +37,9 @@ something derivable from cofinality.
 * `TauCeti.Valuation.cofinalValueFor_iff_isCofinalElement` : For a non-vanishing value, the
   valuation-side predicate agrees with the group-side `IsCofinalElement` on the value group.
   This is what lets Wedhorn Proposition 1.20 apply.
-* `TauCeti.Valuation.cofinalValueFor_pow_iff` : The ideal is radical.
+* `TauCeti.Valuation.cofinalIdeal_isRadical` : The ideal is radical — the `rad(c) = c` half
+  of Lemma 7.1 — with `cofinalValueFor_pow_iff` the elementwise form behind it.
+* `TauCeti.Valuation.cofinalIdeal_ne_top` : It is proper.
 
 ## References
 
@@ -178,10 +180,6 @@ theorem cofinalValueFor_pow_iff {v : Valuation A Γ₀}
 
 /-! ### The ideal of cofinal values -/
 
-section Ideal
-
-variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
-
 /-- **Wedhorn Lemma 7.1.** For a convex subgroup `H` of the value group strictly containing
 the characteristic subgroup, the elements whose value is cofinal for `H` form an ideal. -/
 def cofinalIdeal (v : Valuation A Γ₀)
@@ -199,6 +197,34 @@ theorem mem_cofinalIdeal {v : Valuation A Γ₀}
     a ∈ cofinalIdeal v hH ↔ CofinalValueFor v H a :=
   Iff.rfl
 
-end Ideal
+
+/-! ### Radicality -/
+
+section Radical
+
+variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+
+/-- **Wedhorn Lemma 7.1, second half: `rad(c) = c`.** Commutativity appears only here, because
+`Ideal.IsRadical` is stated over a commutative semiring; the ideal itself needs only a ring. -/
+theorem cofinalIdeal_isRadical {v : Valuation A Γ₀}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (hH : characteristicSubgroup v < H) : (cofinalIdeal v hH).IsRadical := by
+  intro x hx
+  obtain ⟨n, hn⟩ := Ideal.mem_radical_iff.mp hx
+  rw [mem_cofinalIdeal] at hn ⊢
+  rcases Nat.eq_zero_or_pos n with rfl | hp
+  · rw [pow_zero] at hn
+    exact absurd hn.lt_one (by simp)
+  · exact (cofinalValueFor_pow_iff hp).mp hn
+
+/-- The ideal of cofinal values is proper: `1` has value `1`, which is not cofinal. -/
+theorem cofinalIdeal_ne_top {v : Valuation A Γ₀}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (hH : characteristicSubgroup v < H) : cofinalIdeal v hH ≠ ⊤ := by
+  intro htop
+  have h1 : (1 : A) ∈ cofinalIdeal v hH := htop ▸ Submodule.mem_top
+  exact absurd (mem_cofinalIdeal.mp h1).lt_one (by simp)
+
+end Radical
 
 end TauCeti.Valuation
