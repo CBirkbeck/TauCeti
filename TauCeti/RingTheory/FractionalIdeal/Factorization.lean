@@ -93,13 +93,12 @@ lemma coe_ofFinsupp (g : HeightOneSpectrum R →₀ ℤ) :
     count K v ((ofFinsupp g : (FractionalIdeal R⁰ K)ˣ) : FractionalIdeal R⁰ K) = g v := by
   rw [coe_ofFinsupp, count_finsuppProd]
 
-/-- A unit fractional ideal is determined by its valuations. -/
-lemma count_injective {I J : (FractionalIdeal R⁰ K)ˣ}
-    (h : ∀ v, count K v (I : FractionalIdeal R⁰ K) = count K v (J : FractionalIdeal R⁰ K)) :
-    I = J := by
-  apply Units.ext
-  rw [← finprod_heightOneSpectrum_factorization' K (Units.ne_zero I),
-    ← finprod_heightOneSpectrum_factorization' K (Units.ne_zero J)]
+/-- A nonzero fractional ideal is determined by its valuations. Both nonvanishing hypotheses are
+needed: `count` is identically zero on `0` as well as on `1`. -/
+lemma count_injective {I J : FractionalIdeal R⁰ K} (hI : I ≠ 0) (hJ : J ≠ 0)
+    (h : ∀ v, count K v I = count K v J) : I = J := by
+  rw [← finprod_heightOneSpectrum_factorization' K hI,
+    ← finprod_heightOneSpectrum_factorization' K hJ]
   exact finprod_congr fun v ↦ by rw [h v]
 
 /-- **The group of nonzero fractional ideals of a Dedekind domain is free abelian on the height
@@ -108,7 +107,8 @@ noncomputable def factorization :
     (FractionalIdeal R⁰ K)ˣ ≃* Multiplicative (HeightOneSpectrum R →₀ ℤ) where
   toFun I := Multiplicative.ofAdd (toFinsupp I)
   invFun g := ofFinsupp (Multiplicative.toAdd g)
-  left_inv I := count_injective fun v ↦ by rw [count_ofFinsupp, toAdd_ofAdd, toFinsupp_apply]
+  left_inv I := Units.ext (count_injective (Units.ne_zero _) (Units.ne_zero _) fun v ↦ by
+    rw [count_ofFinsupp, toAdd_ofAdd, toFinsupp_apply])
   right_inv g := by
     apply Multiplicative.toAdd.injective
     ext
