@@ -567,11 +567,11 @@ private lemma T_ad_one_p_mul_supp_ne_leading_eval_zero (p : ℕ) (hp : p.Prime) 
 `diagCoset ![1, p^a]` equals 1. -/
 lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
     ((heckeTDiag 1 p) ^ a) (diagCoset (![1, p ^ a] : Fin 2 → ℕ)) = 1 := by
+  classical
   induction a with
   | zero =>
     rw [pow_zero, pow_zero, show (![1, 1] : Fin 2 → ℕ) = (fun _ : Fin 2 ↦ 1) from by
         funext i; fin_cases i <;> rfl, ← diagElem_one]
-    classical
     rw [diagElem_def, HeckeCosetModule.single_apply, if_pos rfl]
   | succ n ih =>
     rw [pow_succ']
@@ -582,27 +582,30 @@ lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
       diagCoset (![1, p ^ n] : Fin 2 → ℕ)
     rw [show heckeTDiag 1 p = HeckeCosetModule.single ℤ (diagCoset (![1, p] : Fin 2 → ℕ)) 1 from
         (heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _)).trans (diagElem_def _),
-      HeckeCosetModule.mul_def, HeckeCosetModule.mul_eq_sum,
-      HeckeCosetModule.sum_single_index (by simp [Finsupp.sum])]
-    simp only [one_smul]
-    show (Finsupp.sum g fun D2 b₂ ↦ b₂ • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
-          (diagCoset (![1, p] : Fin 2 → ℕ)).rep D2.rep) D_target = 1
-    rw [show (Finsupp.sum g fun D2 b₂ ↦ b₂ • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
-          (diagCoset (![1, p] : Fin 2 → ℕ)).rep D2.rep) D_target =
-        g.sum (fun D2 b₂ ↦ (b₂ • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
-          (diagCoset (![1, p] : Fin 2 → ℕ)).rep D2.rep) D_target) from
-      Finsupp.sum_apply, Finsupp.sum]
+      HeckeCosetModule.mul_def, HeckeCosetModule.single_mul]
+    -- Evaluate the convolution at `D_target` in the wrapper's own vocabulary: push the
+    -- evaluation in with `sum_apply` first, then let `sum_def` expose the `Finset.sum`.
+    rw [HeckeCosetModule.sum_apply, HeckeCosetModule.sum_def]
+    simp only [HeckeCosetModule.smul_apply, one_mul]
     have h_leading_in_supp : D_leading ∈ g.support :=
-      Finsupp.mem_support_iff.mpr (ih ▸ one_ne_zero)
+      HeckeCosetModule.mem_support_iff.mpr (ih ▸ one_ne_zero)
     rw [← Finset.sum_erase_add _ _ h_leading_in_supp]
     have h_erased : ∀ D₂ ∈ g.support.erase D_leading,
         (g D₂ • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
           (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep D₂)) D_target = 0 := by
       intro D₂ hD₂
       rw [Finset.mem_erase] at hD₂
-      simp only [Finsupp.smul_apply, smul_eq_mul]
+      -- The `•` here and the one in `smul_apply` print alike but sit on different instance
+      -- paths, so `rw`/`simp` cannot match it. Writing the equation out lets it elaborate
+      -- with the goal's instances, and `smul_apply` then checks against it up to defeq.
+      have hs : (g D₂ • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+            (diagCoset (![1, p] : Fin 2 → ℕ)).rep D₂.rep) D_target =
+          g D₂ * (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+            (diagCoset (![1, p] : Fin 2 → ℕ)).rep D₂.rep) D_target :=
+        HeckeCosetModule.smul_apply _ _ _
+      rw [hs]
       rw [T_ad_one_p_mul_supp_ne_leading_eval_zero p hp n D₂
-        (Finsupp.mem_support_iff.mp hD₂.2) hD₂.1, mul_zero]
+        (HeckeCosetModule.mem_support_iff.mp hD₂.2) hD₂.1, mul_zero]
     have h_sum_zero :
         ∑ x ∈ g.support.erase D_leading, (g x • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
           (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep x)) D_target = 0 :=
@@ -611,10 +614,13 @@ lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
     -- Strategy: prove the leading term equals 1, then linarith with h_sum_zero
     have h_leading_eq : (g D_leading • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
           (HeckeCoset.rep (diagCoset (![1, p] : Fin 2 → ℕ))) (HeckeCoset.rep D_leading)) D_target = 1 := by
-      rw [Finsupp.smul_apply, ih, ← diagElem_mul_diagElem]
-      show (1 : ℤ) • (diagElem (![1, p] : Fin 2 → ℕ) * diagElem (![1, p ^ n] : Fin 2 → ℕ)) D_target = 1
-      rw [one_smul,
-        show diagElem (![1, p] : Fin 2 → ℕ) = heckeTDiag 1 p from
+      have hs : (g D_leading • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+            (diagCoset (![1, p] : Fin 2 → ℕ)).rep D_leading.rep) D_target =
+          g D_leading * (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+            (diagCoset (![1, p] : Fin 2 → ℕ)).rep D_leading.rep) D_target :=
+        HeckeCosetModule.smul_apply _ _ _
+      rw [hs, ih, one_mul, ← diagElem_mul_diagElem]
+      rw [show diagElem (![1, p] : Fin 2 → ℕ) = heckeTDiag 1 p from
           (heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _)).symm,
         show diagElem (![1, p ^ n] : Fin 2 → ℕ) = heckeTDiag 1 (p ^ n) from
           (heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp.pos n) (one_dvd _)).symm]
