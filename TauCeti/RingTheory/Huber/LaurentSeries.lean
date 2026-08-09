@@ -27,7 +27,7 @@ ideal `(X)` is a finitely generated ideal of definition, and `X` itself is a pse
 * `TauCeti.Huber.LaurentSeries.mem_idealOfDefinition_pow_iff`: membership of `(X)ⁿ` is the
   valuation bound `v f ≤ exp (-n)`. `isAdic_idealOfDefinition` and
   `mem_pairOfDefinition_idealImage` are read off it; the openness of the ring of definition and
-  the nilpotence of `X` come from Mathlib's valuation API instead.
+  the topological nilpotence of `X` come from Mathlib's valuation API instead.
 * `TauCeti.Huber.LaurentSeries.isPseudoUniformizer_X`: `X` is a pseudouniformiser.
 * `TauCeti.Huber.LaurentSeries.isHuberRing` and `TauCeti.Huber.LaurentSeries.isTateRing`.
 
@@ -105,8 +105,7 @@ noncomputable def idealOfDefinition : Ideal (powerSeries_as_subring K) := Ideal.
 /-- Unfolding lemma for `TauCeti.Huber.LaurentSeries.idealOfDefinition`. -/
 theorem idealOfDefinition_def : idealOfDefinition K = Ideal.span {subringX K} := (rfl)
 
-/-- `X` is nonzero in `K⸨X⸩`. Only nontriviality of the coefficients is involved; that its
-powers are then invertible is separate, and uses that `K⸨X⸩` is a field. -/
+/-- `X` is nonzero in `K⸨X⸩`. -/
 theorem coe_X_ne_zero : ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) ≠ 0 := by
   simp only [HahnSeries.ofPowerSeries_X, ne_eq, HahnSeries.single_eq_zero_iff, one_ne_zero,
     not_false_eq_true]
@@ -176,17 +175,18 @@ noncomputable def pairOfDefinition : PairOfDefinition K⸨X⸩ where
 /-- The ring of definition of `TauCeti.Huber.LaurentSeries.pairOfDefinition` is the power series.
 
 The ideal is characterised by `TauCeti.Huber.LaurentSeries.mem_pairOfDefinition_idealOfDefinition`
-in membership form; an *equation* between the two ideals does not typecheck, since
-`idealOfDefinition`'s type depends on `ringOfDefinition`. -/
+in membership form. An equation is avoided rather than impossible: `idealOfDefinition`'s type
+depends on `ringOfDefinition`, so an equation would be between two `Ideal` types that the
+elaborator identifies only through that projection. -/
 @[simp]
 theorem pairOfDefinition_ringOfDefinition :
     (pairOfDefinition K).ringOfDefinition = powerSeries_as_subring K := (rfl)
 
 /-- **The ideal of definition of `pairOfDefinition` is `(X)`**, in membership form.
 
-An *equation* between `idealOfDefinition` and `idealOfDefinition K` does not typecheck, since
-the former's type depends on the pair's `ringOfDefinition`; a membership statement is unaffected,
-because `f` is already taken in that dependent type. -/
+The membership form is used because `idealOfDefinition`'s type depends on the pair's
+`ringOfDefinition`; `f` is already taken in that dependent type, so nothing has to be
+transported. -/
 @[simp]
 theorem mem_pairOfDefinition_idealOfDefinition {n : ℕ}
     {f : (pairOfDefinition K).ringOfDefinition} :
