@@ -38,8 +38,9 @@ circle.
   with the angular gap, so the distance to a fixed point of the circle is unimodal along it, and
   `TauCeti.ordConnected_inter_setOf_dist_circleMap_lt` — consequently a ball meets an arc of
   angular width at most `π` in a set of angles that is order connected.
-* `TauCeti.exists_abs_sub_lt_of_mem_ball_circleMap_image_Ioo` — the inverse comparison on an arc
-  that does not wrap: a point of the arc close enough to a fixed point of it is the image of a
+* `TauCeti.exists_mem_Ioo_circleMap_eq_and_abs_sub_lt_of_mem_ball_circleMap_image_Ioo` — the
+  inverse comparison on an arc that does not wrap: a point of the arc close enough to a fixed
+  point of it is the image of a
   nearby angle, so closeness in the plane is closeness in angle.
 * `TauCeti.dist_circleMap_sq` — the law of cosines: the point of `circleMap ζ ρ` at angle `θ` is at
   distance `ρ ^ 2 + dist ζ c ^ 2 - 2 * ρ * dist ζ c * cos (θ - arg (c - ζ))`, squared, from an
@@ -200,7 +201,8 @@ private lemma min_sin_div_two_le_sin_div_two {m t w : ℝ} (hm : 0 < m) (hmt : m
 /-- **On a non-wrapping arc, closeness in the plane is closeness in angle.** A point of the arc
 `circleMap ζ ρ '' Ioo a b` lying within `2 * |ρ| * min (sin (m / 2)) (sin ((b - a) / 2))` of
 `circleMap ζ ρ θ₀` is the image of an angle within `m` of `θ₀`. -/
-theorem exists_abs_sub_lt_of_mem_ball_circleMap_image_Ioo (ζ : ℂ) (ρ : ℝ) {a b θ₀ m : ℝ}
+theorem exists_mem_Ioo_circleMap_eq_and_abs_sub_lt_of_mem_ball_circleMap_image_Ioo (ζ : ℂ)
+    (ρ : ℝ) {a b θ₀ m : ℝ}
     (hab2π : b - a < 2 * π) (hθ₀ : θ₀ ∈ Icc a b) (hm0 : 0 < m) {x : ℂ}
     (hx : x ∈ circleMap ζ ρ '' Ioo a b ∩
       ball (circleMap ζ ρ θ₀) (2 * |ρ| * min (Real.sin (m / 2)) (Real.sin ((b - a) / 2)))) :

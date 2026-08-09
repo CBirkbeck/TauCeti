@@ -274,9 +274,9 @@ theorem subsingleton_clusterSetOn_circleMap_image_Ioo (hUo : IsOpen U)
     mul_pos (by linarith) (lt_min hsinm hsinw), ?_⟩
   rintro x hx y hy
   obtain ⟨θx, hθx, rfl, hdx⟩ :=
-    exists_abs_sub_lt_of_mem_ball_circleMap_image_Ioo ζ ρ hab2π hθ₀ hm0 hx
+    exists_mem_Ioo_circleMap_eq_and_abs_sub_lt_of_mem_ball_circleMap_image_Ioo ζ ρ hab2π hθ₀ hm0 hx
   obtain ⟨θy, hθy, rfl, hdy⟩ :=
-    exists_abs_sub_lt_of_mem_ball_circleMap_image_Ioo ζ ρ hab2π hθ₀ hm0 hy
+    exists_mem_Ioo_circleMap_eq_and_abs_sub_lt_of_mem_ball_circleMap_image_Ioo ζ ρ hab2π hθ₀ hm0 hy
   refine hmod θx hθx θy hθy ?_
   have htri : |θx - θy| ≤ |θx - θ₀| + |θ₀ - θy| := abs_sub_le _ _ _
   have hsymm : |θ₀ - θy| = |θy - θ₀| := abs_sub_comm _ _
