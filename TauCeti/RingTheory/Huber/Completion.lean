@@ -19,9 +19,11 @@ Everything rests on one identity: the `n`-th power `Îⁿ` is *exactly* the clos
 basis of zero in `Â`, so the identity gives both halves of `IsAdic Î` at once.
 
 The inclusion `Îⁿ ⊆ closure (Iⁿ)` is formal. The reverse inclusion is the substantial point, and
-it is the only place where finite generation of `I` is used: fixing a finite family `G` generating
-`Iⁿ`, an element of the closure is approximated to order `n + k`, for every `k`, by a combination
-of the *same* family `G` with coefficients in `Iᵏ`. The coefficients accumulate to series which
+it is the only place where finite generation of `I` enters the proof of `completionIdeal_pow`:
+fixing a finite family `G` generating `Iⁿ`, an element of the closure is approximated to order
+`n + k`, for every `k`, by a combination of the *same* family `G` with coefficients in `Iᵏ`.
+Finite generation is used once more, and directly, to see that `Î` is itself finitely generated
+(`TauCeti.Huber.PairOfDefinition.fg_completionIdeal`). The coefficients accumulate to series which
 converge because `Â` is complete, and their sums exhibit the element as a combination of `G`.
 
 ## Main definitions
