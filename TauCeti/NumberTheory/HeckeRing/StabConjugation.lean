@@ -71,6 +71,10 @@ lemma subgroupOf_conjAct_smul_mul_left_of_mem (Γ₁ Γ₂ : Subgroup G) (g : G)
   simp only [Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
     ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv, Subgroup.mem_map,
     MulEquiv.coe_toMonoidHom, MulAut.conj_apply]
+  -- Both directions produce a membership stated about a `↥Γ₁` element whose value is a
+  -- product; `change` names the underlying `G`-element so `group` can normalise it. The
+  -- `Subgroup.mem_subgroupOf` simp step above leaves the coercion implicit, which is what
+  -- makes the explicit form necessary rather than merely convenient.
   constructor
   · intro hx
     refine ⟨⟨(h : G)⁻¹ * (x : G) * (h : G),
@@ -79,7 +83,8 @@ lemma subgroupOf_conjAct_smul_mul_left_of_mem (Γ₁ Γ₂ : Subgroup G) (g : G)
       rw [show (g : G)⁻¹ * ((h : G)⁻¹ * (x : G) * (h : G)) * g =
         ((h : G) * g)⁻¹ * (x : G) * ((h : G) * g) by group]
       exact hx
-    · apply Subtype.ext
+    · -- the witness conjugates back to `x`; check it on underlying elements
+      apply Subtype.ext
       simp only [Subgroup.coe_mul, Subgroup.coe_inv]
       group
   · rintro ⟨y, hy, rfl⟩
@@ -100,6 +105,14 @@ noncomputable def decompQuotientEquivMulLeft (Γ₁ Γ₂ : Subgroup G) (g : G) 
       simp only [QuotientGroup.leftRel_apply, Subgroup.mem_map_equiv,
         MulEquiv.toEquiv_eq_coe, EquivLike.coe_coe, ← map_inv, ← map_mul]
 
+@[simp]
+lemma decompQuotientEquivMulLeft_mk (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁) (x : Γ₁) :
+    decompQuotientEquivMulLeft Γ₁ Γ₂ g h (QuotientGroup.mk x) =
+      QuotientGroup.mk ((MulAut.conj h).symm x) :=
+  -- `(rfl)` rather than `rfl`: the equivalences are not `@[expose]`, so the parentheses opt
+  -- out of exporting the definitional equality that this lemma exists to replace.
+  (rfl)
+
 /-- Moving the base point on both sides — by `h ∈ Γ₁` on the left and by anything normalizing
 `Γ₂` on the right — is again an equivalence of decomposition quotients. Right multiplication
 contributes nothing (`subgroupOf_conjAct_smul_mul_right_of_mem_normalizer`), so this is
@@ -111,5 +124,14 @@ noncomputable def decompQuotientEquivMulLeftRight (Γ₁ Γ₂ : Subgroup G) (g 
     ((decompQuotientEquivMulLeft Γ₁ Γ₂ (g * k) h).trans
       (Subgroup.quotientEquivOfEq
         (subgroupOf_conjAct_smul_mul_right_of_mem_normalizer Γ₁ Γ₂ g hk)))
+
+@[simp]
+lemma decompQuotientEquivMulLeftRight_mk (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁) {k : G}
+    (hk : k ∈ Subgroup.normalizer Γ₂) (x : Γ₁) :
+    decompQuotientEquivMulLeftRight Γ₁ Γ₂ g h hk (QuotientGroup.mk x) =
+      QuotientGroup.mk ((MulAut.conj h).symm x) :=
+  -- `(rfl)` rather than `rfl`: the equivalences are not `@[expose]`, so the parentheses opt
+  -- out of exporting the definitional equality that this lemma exists to replace.
+  (rfl)
 
 end DoubleCoset
