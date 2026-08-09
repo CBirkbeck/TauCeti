@@ -22,8 +22,9 @@ stated about `CoordinateRing.map`.
 * `WeierstrassCurve.Affine.CoordinateRing.mapEquiv`: the induced ring equivalence
   `R[W] ≃+* S[W.map e]`, as `AdjoinRoot.mapRingEquiv` along `map_polynomial`.
 * `WeierstrassCurve.Affine.CoordinateRing.mapEquiv_apply`: it agrees with `CoordinateRing.map`.
-* `WeierstrassCurve.Affine.CoordinateRing.map_bijective`: hence `CoordinateRing.map` along an
-  equivalence is bijective.
+* `WeierstrassCurve.Affine.CoordinateRing.map_surjective` and
+  `WeierstrassCurve.Affine.CoordinateRing.map_bijective`: the companions of Mathlib's
+  `CoordinateRing.map_injective`, stated like it for an arbitrary `f : R →+* S`.
 
 Stated over arbitrary commutative rings; the curve need not be elliptic.
 
@@ -78,9 +79,19 @@ lemma mapEquiv_apply (e : R ≃+* S) (x : W.CoordinateRing) :
       AdjoinRoot.lift_mk]
     rfl
 
-/-- `CoordinateRing.map` along a ring equivalence is bijective. -/
-lemma map_bijective (e : R ≃+* S) : Function.Bijective (map W (e : R →+* S)) := by
-  simpa only [funext (mapEquiv_apply W e)] using (mapEquiv W e).bijective
+/-- **`CoordinateRing.map` is surjective when the base map is**, the companion of Mathlib's
+`CoordinateRing.map_injective`. A class upstairs is `mk` of a polynomial, and a polynomial over
+`S` is the image of one over `R`. -/
+lemma map_surjective {f : R →+* S} (hf : Function.Surjective f) :
+    Function.Surjective (map W f) := fun y => by
+  obtain ⟨p, rfl⟩ := AdjoinRoot.mk_surjective y
+  obtain ⟨q, rfl⟩ := Polynomial.map_surjective (mapRingHom f) (Polynomial.map_surjective f hf) p
+  exact ⟨mk W q, map_mk f q⟩
+
+/-- **`CoordinateRing.map` is bijective when the base map is.** -/
+lemma map_bijective {f : R →+* S} (hf : Function.Bijective f) :
+    Function.Bijective (map W f) :=
+  ⟨map_injective hf.1, map_surjective W hf.2⟩
 
 end WeierstrassCurve.Affine.CoordinateRing
 
