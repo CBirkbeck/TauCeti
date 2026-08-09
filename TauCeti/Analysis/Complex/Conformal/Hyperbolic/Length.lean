@@ -508,7 +508,7 @@ theorem hyperbolicLength_comp_eq_of_leftInvOn {f g : ℂ → ℂ}
 `γ a = 0` there are real functions `ψ` and `ψ'` with `ψ a = 0` and `ψ b = ‖γ b‖`, dominated
 pointwise by `‖γ‖` and `‖γ'‖`, with `ψ` continuous wherever `γ` is and `ψ'` its derivative
 wherever `γ'` is that of `γ`. -/
-private theorem exists_re_comparison_of_eq_zero {s u : Set ℝ} (hγ : ContinuousOn γ s)
+private theorem exists_real_comparison_of_eq_zero {s u : Set ℝ} (hγ : ContinuousOn γ s)
     (hderiv : ∀ x ∈ u, HasDerivAt γ (γ' x) x) (h0 : γ a = 0) :
     ∃ ψ ψ' : ℝ → ℝ, ψ a = 0 ∧ ψ b = ‖γ b‖ ∧ (∀ x, |ψ x| ≤ ‖γ x‖) ∧
       (∀ x, |ψ' x| ≤ ‖γ' x‖) ∧ ContinuousOn ψ s ∧
@@ -558,7 +558,7 @@ private theorem artanh_norm_le_hyperbolicLength (hab : a ≤ b) (hγ : Continuou
       intervalIntegrable_norm_deriv_div_one_sub_norm_sq hγu hγ'u hderivu hmemu
   -- compare with a real function `ψ` rather than with `t ↦ ‖γ t‖`, which need not be differentiable
   obtain ⟨ψ, ψ', hψa, hψb, hψbound, hψ'bound, hψcont, hψderiv⟩ :=
-    exists_re_comparison_of_eq_zero (b := b) hγ hderiv h0
+    exists_real_comparison_of_eq_zero (b := b) hγ hderiv h0
   have hψmem : ∀ t ∈ Icc a b, ψ t ∈ Ioo (-1 : ℝ) 1 := fun t ht =>
     abs_lt.mp ((hψbound t).trans_lt (hmem t ht))
   -- `Real.artanh ∘ ψ` runs from `0` to `Real.artanh ‖γ b‖` with speed at most the
