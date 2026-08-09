@@ -52,37 +52,6 @@ namespace ModularForm
 
 variable {H δL δR : ℝ}
 
-/-- The ordered slit-plane comparison step of the telescope: the canonical logarithmic FTC
-`TauCeti.Contour.integral_deriv_div_eq_log_sub_log` applied to the comparison function, its
-integrability from the continuous derivative, both transported to the contour across the
-interior agreement. -/
-private lemma slit_comparison {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
-    (hh_cont : ContinuousOn h (Icc a b))
-    (hh_diff : ∀ t ∈ Ioo a b, DifferentiableAt ℝ h t)
-    (hh_deriv_cont : ContinuousOn (deriv h) (Icc a b))
-    (hh_slit : ∀ t ∈ Icc a b, h t ∈ Complex.slitPlane)
-    (heq : Set.EqOn g h (Ioo a b)) (heq_a : g a = h a) (heq_b : g b = h b) :
-    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
-    ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) := by
-  have hu : uIcc a b = Icc a b := uIcc_of_le hab
-  have hne : ∀ t ∈ Icc a b, h t ≠ 0 := fun t ht ↦ Complex.slitPlane_ne_zero (hh_slit t ht)
-  have heq' : Set.EqOn (fun t ↦ deriv g t / g t) (fun t ↦ deriv h t / h t) (uIoo a b) := by
-    intro t ht
-    rw [uIoo_of_le hab] at ht
-    simp only [heq ht, heq.deriv isOpen_Ioo ht]
-  have hint : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b :=
-    ((hh_deriv_cont.div hh_cont hne).mono (hu ▸ Set.Subset.rfl)).intervalIntegrable
-  refine ⟨hint.congr_uIoo fun t ht ↦ (heq' ht).symm, ?_⟩
-  calc ∫ t in a..b, deriv g t / g t
-      = ∫ t in a..b, deriv h t / h t := intervalIntegral.integral_congr_uIoo heq'
-    _ = Complex.log (h b) - Complex.log (h a) :=
-        Contour.integral_deriv_div_eq_log_sub_log countable_empty (hu ▸ hh_cont)
-          (fun t ht ↦ (hh_diff t (by
-            rw [min_eq_left hab, max_eq_right hab] at ht
-            exact ht.1)).hasDerivAt)
-          (fun t ht ↦ hh_slit t (hu ▸ ht)) hint
-    _ = Complex.log (g b) - Complex.log (g a) := by rw [heq_a, heq_b]
-
 
 /-- The right-vertical piece `[0, 1]` of the telescope at `ρ`. -/
 private lemma telescope_rho_piece_right_vertical (H : ℝ) :
@@ -100,7 +69,7 @@ private lemma telescope_rho_piece_right_vertical (H : ℝ) :
   have hd : deriv (fun s ↦ fdBoundary_segment1 H s - (UpperHalfPlane.ρ : ℂ)) =
       fun _ ↦ (UpperHalfPlane.ρ : ℂ) + 1 - (1 / 2 + H * Complex.I) :=
     funext fun s ↦ by rw [deriv_sub_const, deriv_fdBoundary_segment1]
-  exact slit_comparison
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane
     (g := fun s ↦ fdBoundary H s - (UpperHalfPlane.ρ : ℂ))
     (h := fun s ↦ fdBoundary_segment1 H s - (UpperHalfPlane.ρ : ℂ)) (by norm_num)
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
@@ -134,7 +103,7 @@ private lemma telescope_rho_piece_arc_first (H : ℝ) :
     funext fun s ↦ by rw [deriv_sub_const, deriv_fdBoundary_segment2]
   have hθc : Continuous fun s : ℝ ↦ Real.pi / 3 + (s - 1) * (Real.pi / 2 - Real.pi / 3) := by
     fun_prop
-  exact slit_comparison
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane
     (g := fun s ↦ fdBoundary H s - (UpperHalfPlane.ρ : ℂ))
     (h := fun s ↦ fdBoundary_segment2 s - (UpperHalfPlane.ρ : ℂ)) (by norm_num)
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
@@ -177,7 +146,7 @@ private lemma telescope_rho_piece_arc_second (H : ℝ) (hδL : 0 < δL) (hδL1 :
   have hθc : Continuous fun s : ℝ ↦
       Real.pi / 2 + (s - 2) * (2 * Real.pi / 3 - Real.pi / 2) := by
     fun_prop
-  exact slit_comparison
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane
     (g := fun s ↦ fdBoundary H s - (UpperHalfPlane.ρ : ℂ))
     (h := fun s ↦ fdBoundary_segment3 s - (UpperHalfPlane.ρ : ℂ)) hab
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
@@ -214,7 +183,7 @@ private lemma telescope_rho_piece_left_vertical (hH : Real.sqrt 3 / 2 < H) (hδR
   have hd : deriv (fun s ↦ fdBoundary_segment4 H s - (UpperHalfPlane.ρ : ℂ)) =
       fun _ ↦ -1 / 2 + H * Complex.I - (UpperHalfPlane.ρ : ℂ) :=
     funext fun s ↦ by rw [deriv_sub_const, deriv_fdBoundary_segment4]
-  exact slit_comparison
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane
     (g := fun s ↦ fdBoundary H s - (UpperHalfPlane.ρ : ℂ))
     (h := fun s ↦ fdBoundary_segment4 H s - (UpperHalfPlane.ρ : ℂ)) hab
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
@@ -246,7 +215,7 @@ private lemma telescope_rho_piece_ceiling (hH : Real.sqrt 3 / 2 < H) :
   have hd : deriv (fun s ↦ fdBoundary_segment5 H s - (UpperHalfPlane.ρ : ℂ)) =
       fun _ ↦ (1 : ℂ) :=
     funext fun s ↦ by rw [deriv_sub_const, deriv_fdBoundary_segment5]
-  exact slit_comparison
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane
     (g := fun s ↦ fdBoundary H s - (UpperHalfPlane.ρ : ℂ))
     (h := fun s ↦ fdBoundary_segment5 H s - (UpperHalfPlane.ρ : ℂ)) (by norm_num)
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
@@ -301,12 +270,10 @@ variable {H ε δ t : ℝ}
 /-- The sine of a sub-half-turn multiple of `π/12` factors through the absolute value. -/
 private lemma abs_sin_mul_pi_div_twelve_rho {u : ℝ} (hu : |u| ≤ 6) :
     |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
-  obtain ⟨hu₁, hu₂⟩ := abs_le.mp hu
-  rcases le_or_gt 0 u with h | h
-  · rw [abs_of_nonneg h, abs_of_nonneg (Real.sin_nonneg_of_nonneg_of_le_pi (by positivity)
-      (by nlinarith [Real.pi_pos]))]
-  · rw [abs_of_neg h, abs_of_neg (Real.sin_neg_of_neg_of_neg_pi_lt (by nlinarith [Real.pi_pos])
-      (by nlinarith [Real.pi_pos])), neg_mul, Real.sin_neg]
+  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
+      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
+      nlinarith [Real.pi_pos, abs_nonneg u]),
+    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
 
 /-- Far from the corner along the arc, the chord distance strictly exceeds the excision
 chord. -/

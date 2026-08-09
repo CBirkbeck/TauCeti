@@ -56,37 +56,6 @@ variable {H δ : ℝ}
 private lemma sqrt_three_div_two_lt_one : Real.sqrt 3 / 2 < 1 := by
   nlinarith [Real.sq_sqrt (by positivity : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
 
-/-- The ordered slit-plane comparison step of the telescope: the canonical logarithmic FTC
-`TauCeti.Contour.integral_deriv_div_eq_log_sub_log` applied to the comparison function, its
-integrability from the continuous derivative, both transported to the contour across the
-interior agreement. -/
-private lemma slit_comparison {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
-    (hh_cont : ContinuousOn h (Icc a b))
-    (hh_diff : ∀ t ∈ Ioo a b, DifferentiableAt ℝ h t)
-    (hh_deriv_cont : ContinuousOn (deriv h) (Icc a b))
-    (hh_slit : ∀ t ∈ Icc a b, h t ∈ Complex.slitPlane)
-    (heq : Set.EqOn g h (Ioo a b)) (heq_a : g a = h a) (heq_b : g b = h b) :
-    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
-    ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) := by
-  have hu : uIcc a b = Icc a b := uIcc_of_le hab
-  have hne : ∀ t ∈ Icc a b, h t ≠ 0 := fun t ht ↦ Complex.slitPlane_ne_zero (hh_slit t ht)
-  have heq' : Set.EqOn (fun t ↦ deriv g t / g t) (fun t ↦ deriv h t / h t) (uIoo a b) := by
-    intro t ht
-    rw [uIoo_of_le hab] at ht
-    simp only [heq ht, heq.deriv isOpen_Ioo ht]
-  have hint : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b :=
-    ((hh_deriv_cont.div hh_cont hne).mono (hu ▸ Set.Subset.rfl)).intervalIntegrable
-  refine ⟨hint.congr_uIoo fun t ht ↦ (heq' ht).symm, ?_⟩
-  calc ∫ t in a..b, deriv g t / g t
-      = ∫ t in a..b, deriv h t / h t := intervalIntegral.integral_congr_uIoo heq'
-    _ = Complex.log (h b) - Complex.log (h a) :=
-        Contour.integral_deriv_div_eq_log_sub_log countable_empty (hu ▸ hh_cont)
-          (fun t ht ↦ (hh_diff t (by
-            rw [min_eq_left hab, max_eq_right hab] at ht
-            exact ht.1)).hasDerivAt)
-          (fun t ht ↦ hh_slit t (hu ▸ ht)) hint
-    _ = Complex.log (g b) - Complex.log (g a) := by rw [heq_a, heq_b]
-
 /-- The right-vertical piece `[0, 1]` of the telescope: the shifted contour stays in the
 right half-plane, so the logarithmic integral is a difference of principal logarithms. -/
 private lemma telescope_piece_right_vertical (H : ℝ) :
@@ -101,7 +70,7 @@ private lemma telescope_piece_right_vertical (H : ℝ) :
   have hd : deriv (fun s ↦ fdBoundary_segment1 H s - Complex.I) =
       fun _ ↦ (UpperHalfPlane.ρ : ℂ) + 1 - (1 / 2 + H * Complex.I) :=
     funext fun s ↦ by rw [deriv_sub_const, deriv_fdBoundary_segment1]
-  exact slit_comparison
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane
     (g := fun s ↦ fdBoundary H s - Complex.I)
     (h := fun s ↦ fdBoundary_segment1 H s - Complex.I) (by norm_num)
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
@@ -136,7 +105,7 @@ private lemma telescope_piece_arc_left (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1) 
     funext fun s ↦ by rw [deriv_sub_const, deriv_fdBoundary_segment2]
   have hθc : Continuous fun s : ℝ ↦ Real.pi / 3 + (s - 1) * (Real.pi / 2 - Real.pi / 3) := by
     fun_prop
-  exact slit_comparison
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane
     (g := fun s ↦ fdBoundary H s - Complex.I)
     (h := fun s ↦ fdBoundary_segment2 s - Complex.I) hab
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
@@ -174,7 +143,7 @@ private lemma telescope_piece_arc_right (H : ℝ) (hδ : 0 < δ) (hδ1 : δ < 1)
   have hθc : Continuous fun s : ℝ ↦
       Real.pi / 2 + (s - 2) * (2 * Real.pi / 3 - Real.pi / 2) := by
     fun_prop
-  exact slit_comparison
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane
     (g := fun s ↦ fdBoundary H s - Complex.I)
     (h := fun s ↦ fdBoundary_segment3 s - Complex.I) hab
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
@@ -366,7 +335,7 @@ private lemma telescope_piece_ceiling (hH : 1 < H) :
     refine Complex.mem_slitPlane_iff.mpr (Or.inr ?_)
     rw [Complex.sub_im, Complex.I_im, im_fdBoundary_segment5 H ht]
     linarith
-  exact slit_comparison
+  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane
     (g := fun s ↦ fdBoundary H s - Complex.I)
     (h := fun s ↦ fdBoundary_segment5 H s - Complex.I) (by norm_num)
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
