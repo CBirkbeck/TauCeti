@@ -42,6 +42,9 @@ AINTLIB `LeanModularForms` project
 
 * `SlashInvariantFormClass.SL_slash_eq`: a form invariant under the image of `Γ ≤ SL(2, ℤ)`
   is fixed by the slash action of every element of `Γ`.
+* `SlashInvariantForm.slash_action_eqn_of_det_pos`: the transformation law
+  `f (γ • τ) = |det γ| ^ (1 - k) * denom γ τ ^ k * f τ` for `γ` of positive determinant,
+  generalising Mathlib's `slash_action_eqn''`, which assumes `det γ = 1`.
 * `Subgroup.IsArithmetic.isCusp_of_isCusp`: any two arithmetic groups have the same cusps.
 * `ModularForm.mem_range_ofLeₗ_iff`, `CuspForm.mem_range_ofLeₗ_iff`: for `Γ' ≤ Γ` with every
   cusp of `Γ` a cusp of `Γ'`, a form for `Γ'` extends to `Γ` exactly when it is `Γ`-slash
@@ -99,6 +102,33 @@ theorem _root_.SlashInvariantFormClass.SL_slash_eq {F : Type*} [FunLike F ℍ �
     (γ : SL(2, ℤ)) (hγ : γ ∈ Γ) : ⇑f ∣[k] γ = ⇑f := by
   rw [ModularForm.SL_slash]
   exact SlashInvariantFormClass.slash_action_eq f _ ⟨γ, hγ, rfl⟩
+
+/-- **The transformation law of a slash-invariant form under a positive-determinant element.**
+For `γ ∈ Γ` with `0 < det γ`, `f (γ • τ) = |det γ| ^ (1 - k) * denom γ τ ^ k * f τ`.
+
+Mathlib's `SlashInvariantForm.slash_action_eqn''` is the `det = 1` case, in which the first
+factor is `1` and disappears. -/
+theorem _root_.SlashInvariantForm.slash_action_eqn_of_det_pos {F : Type*} [FunLike F ℍ ℂ]
+    {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [SlashInvariantFormClass F Γ k] (f : F) {γ}
+    (hγ : γ ∈ Γ) (hdet : 0 < γ.val.det) (τ : ℍ) :
+    f (γ • τ) = ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (1 - k) * denom γ (τ : ℂ) ^ k * f τ := by
+  have h := congr_fun (SlashInvariantForm.slash_action_eqn f γ hγ) τ
+  rw [ModularForm.slash_def] at h
+  have hdet' : (0 : ℝ) < ↑(Matrix.GeneralLinearGroup.det γ) := by
+    rwa [Matrix.GeneralLinearGroup.val_det_apply]
+  have hσ : σ γ = ContinuousAlgEquiv.refl ℝ ℂ := by rw [σ, if_pos hdet']
+  rw [hσ] at h
+  have hden : denom γ (τ : ℂ) ≠ 0 := denom_ne_zero γ τ
+  have hdet_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ≠ 0 := by
+    exact_mod_cast (abs_pos.mpr (γ.det : ℝˣ).ne_zero).ne'
+  have h2 : f (γ • τ) =
+      f τ * (((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1))⁻¹ * (denom γ (τ : ℂ) ^ (-k))⁻¹ := by
+    rw [← h]
+    field_simp
+    rfl
+  have hexp : -(k - 1) = 1 - k := by ring
+  rw [h2, ← zpow_neg, ← zpow_neg, neg_neg, hexp]
+  ring
 
 /-! ### Changing the invariance group
 
