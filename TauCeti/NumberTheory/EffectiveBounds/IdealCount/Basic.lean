@@ -156,13 +156,13 @@ variable (F : Type*) [Field F] [NumberField F]
 /-- The norm of the rational prime below a prime ideal `P` of `𝓞 F`. -/
 private def absNormUnder (P : Ideal (𝓞 F)) : ℕ := Ideal.absNorm (Ideal.under ℤ P)
 
-omit [NumberField F] in
-/-- The norm of the rational prime below a nonzero prime ideal is a prime number. -/
-private theorem prime_absNormUnder {P : Ideal (𝓞 F)} (hP : P.IsPrime) (hP0 : P ≠ ⊥) :
-    (absNormUnder F P).Prime := by
-  have := hP
-  have : NeZero P := ⟨hP0⟩
-  simpa [absNormUnder] using Nat.absNorm_under_prime P
+/-- The norm of the rational prime below a prime factor of an ideal is a prime number. -/
+private theorem prime_absNormUnder_of_mem_normalizedFactors {I Q : Ideal (𝓞 F)}
+    (hQ : Q ∈ normalizedFactors I) : (absNormUnder F Q).Prime := by
+  have hQp : Q.IsPrime := isPrime_of_prime (prime_of_normalized_factor Q hQ)
+  have := hQp
+  have : NeZero Q := ⟨ne_zero_of_mem_normalizedFactors hQ⟩
+  simpa [absNormUnder] using Nat.absNorm_under_prime Q
 
 /-- The coordinate (index in `Fin [F:ℚ]`) assigned to a prime ideal `P`: its
 position in the list of primes above the rational prime below `P`. -/
@@ -260,8 +260,7 @@ private theorem encodeIdeal_pos {I : Ideal (𝓞 F)}
     (i : Fin (Module.finrank ℚ F)) : 0 < encodeIdeal F I i := by
   refine Finset.prod_pos fun P hP => ?_
   rw [Finset.mem_filter, Multiset.mem_toFinset] at hP
-  exact pow_pos (prime_absNormUnder F (isPrime_of_prime (prime_of_normalized_factor P hP.1))
-    (ne_zero_of_mem_normalizedFactors hP.1)).pos _
+  exact pow_pos (prime_absNormUnder_of_mem_normalizedFactors F hP.1).pos _
 
 /-
 Regrouping: the product of all coordinates is the product over all prime
@@ -324,15 +323,15 @@ private theorem count_eq_padicValNat {I : Ideal (𝓞 F)} {P : Ideal (𝓞 F)}
       padicValNat (absNormUnder F P)
         (encodeIdeal F I ⟨primeCoord F P, primeCoord_lt F hP hP0⟩) := by
   classical
-  have hpp : (absNormUnder F P).Prime := prime_absNormUnder F hP hP0
+  have := hP
+  have : NeZero P := ⟨hP0⟩
+  have hpp : (absNormUnder F P).Prime := by simpa [absNormUnder] using Nat.absNorm_under_prime P
   have hfact : ∀ Q ∈ (normalizedFactors I).toFinset.filter
       (fun Q => primeCoord F Q = primeCoord F P),
       (absNormUnder F Q) ^ ((normalizedFactors I).count Q) ≠ 0 := by
     intro Q hQ
     rw [Finset.mem_filter, Multiset.mem_toFinset] at hQ
-    exact pow_ne_zero _ (prime_absNormUnder F
-      (isPrime_of_prime (prime_of_normalized_factor Q hQ.1))
-      (ne_zero_of_mem_normalizedFactors hQ.1)).pos.ne'
+    exact pow_ne_zero _ (prime_absNormUnder_of_mem_normalizedFactors F hQ.1).pos.ne'
   rw [eq_comm, ← Nat.factorization_def _ hpp]
   simp only [encodeIdeal]
   rw [Nat.factorization_prod hfact]
@@ -346,7 +345,8 @@ private theorem count_eq_padicValNat {I : Ideal (𝓞 F)} {P : Ideal (𝓞 F)}
     have hQ0 : Q ≠ ⊥ := ne_zero_of_mem_normalizedFactors hQ.1
     have hrb : absNormUnder F Q ≠ absNormUnder F P := fun h =>
       hQP (prime_eq_of_absNormUnder_eq_of_primeCoord_eq F hQp hQ0 hP hP0 h hQ.2)
-    rw [(prime_absNormUnder F hQp hQ0).factorization_pow, Finsupp.single_apply]
+    rw [(prime_absNormUnder_of_mem_normalizedFactors F hQ.1).factorization_pow,
+      Finsupp.single_apply]
     simp [hrb]
   · intro hPnot
     rw [Finset.mem_filter, Multiset.mem_toFinset] at hPnot
