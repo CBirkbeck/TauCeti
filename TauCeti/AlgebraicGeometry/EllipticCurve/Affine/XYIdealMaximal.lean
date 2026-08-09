@@ -16,8 +16,11 @@ records the consequence: that ideal is maximal.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal`: `XYIdeal W x (C y)` is a
-  maximal ideal whenever `(x, y)` lies on `W`.
+* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal`: `XYIdeal W x y` is maximal
+  for any `y : F[X]` solving the Weierstrass equation at `x`, matching the generality of
+  `XYIdeal` and `quotientXYIdealEquiv` themselves.
+* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal_of_equation`: the point case,
+  `XYIdeal W x (C y)` for `(x, y)` on `W`.
 
 Mathlib has the quotient isomorphism but records nothing about the ideal itself; the many `XYIdeal`
 lemmas it does state (`XYIdeal_eq₁`, `XYIdeal_eq₂`, `XYIdeal_mul_XYIdeal`, `XYIdeal_neg_mul`) are
@@ -53,14 +56,21 @@ namespace TauCeti
 
 namespace WeierstrassCurve.Affine.CoordinateRing
 
-variable {F : Type*} [Field F] {W : _root_.WeierstrassCurve.Affine F} {x y : F}
+variable {F : Type*} [Field F] {W : _root_.WeierstrassCurve.Affine F} {x : F}
 
-/-- **The ideal `⟨X - x, Y - y⟩` of a point on a Weierstrass curve is maximal.** Its quotient is
-the base field, by Mathlib's `CoordinateRing.quotientXYIdealEquiv`. -/
-theorem XYIdeal_isMaximal (h : W.Equation x y) :
-    (CoordinateRing.XYIdeal W x (C y)).IsMaximal :=
+/-- **The ideal `⟨X - x, Y - y(X)⟩` of the coordinate ring is maximal** whenever `y` is a
+polynomial solving the Weierstrass equation at `x`. Equivalently, the quotient by it is the base
+field. -/
+theorem XYIdeal_isMaximal {y : F[X]} (h : (W.polynomial.eval y).eval x = 0) :
+    (CoordinateRing.XYIdeal W x y).IsMaximal :=
   Ideal.Quotient.maximal_of_isField _
     ((CoordinateRing.quotientXYIdealEquiv h).toRingEquiv.isField (Field.toIsField F))
+
+/-- **The ideal of a point of a Weierstrass curve is maximal**, the constant-polynomial case of
+`XYIdeal_isMaximal`. -/
+theorem XYIdeal_isMaximal_of_equation {y : F} (h : W.Equation x y) :
+    (CoordinateRing.XYIdeal W x (C y)).IsMaximal :=
+  XYIdeal_isMaximal h
 
 end WeierstrassCurve.Affine.CoordinateRing
 
