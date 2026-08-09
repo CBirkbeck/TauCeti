@@ -53,7 +53,12 @@ lemma integer_map_asIdeal_ne_top {v : HeightOneSpectrum R} (hv : v ∉ S) :
   -- contain `1`.
   set f := algebraMap R (S.integer K) with hf
   -- the `S`-integers of `v`-valuation `< 1` form an ideal, because `v` is bounded by `1` on all
-  -- of `𝒪_S` when `v ∉ S`
+  -- of `𝒪_S` when `v ∉ S`.
+  -- This is deliberately built by hand rather than pulled back from
+  -- `IsLocalRing.maximalIdeal (v.valuation K).valuationSubring`: that comap needs an algebra map
+  -- `𝒪_S → 𝒪_v`, and no such instance exists, because the inclusion holds precisely *because*
+  -- `v ∉ S`. Supplying it is Stoll's `toSubring_le_valuationSubring`, which is not ported — and
+  -- it is the same fact this proof establishes inline from `Set.mem_integer_iff`.
   let 𝔪 : Ideal (S.integer K) :=
     { carrier := {x | v.valuation K (x : K) < 1}
       zero_mem' := by simp
