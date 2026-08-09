@@ -135,7 +135,11 @@ section Regular
 
 /-- The counit collapses the action on the regular comodule back onto the point: the
 `H`-column of `endOfPoint H g (1 ⊗ₜ h)` carries the left Sweedler leg, so applying the
-counit there contracts `Σ ε(h₍₁₎) • g(h₍₂₎)` to `g h`. -/
+counit there contracts `Σ ε(h₍₁₎) • g(h₍₂₎)` to `g h`.
+
+This is the coalgebra counit identity `(ε ⊗ id) ∘ comul = id`
+(`Coalgebra.rTensor_counit_comp_comul`) transported through `endOfPoint`; only the
+`R`-linearity of `g` is used, not its multiplicativity. -/
 theorem rid_lTensor_counit_endOfPoint_one_tmul (g : H →ₐ[R] A) (h : H) :
     TensorProduct.rid R A
         (LinearMap.lTensor A (counit (R := R) (A := H)) (endOfPoint H g (1 ⊗ₜ[R] h))) =
@@ -157,9 +161,14 @@ theorem rid_lTensor_counit_endOfPoint_one_tmul (g : H →ₐ[R] A) (h : H) :
 
 /-- **A point is determined by its action on the regular comodule.** Two `A`-points of
 `H` that act identically on the scalar extension of the regular comodule are equal, so
-the map sending a point to its action is injective. Over a Hopf algebra this is the
-injectivity of `G(A) → Aut(ω_A)` for the fibre functor `ω`, the first half of a Tannakian
-reconstruction. -/
+the map sending a point to its action is injective.
+
+Over a Hopf algebra this is the faithfulness of the points action on the category of *all*
+comodules, the first half of a Tannakian reconstruction. It is not by itself faithfulness
+against the fibre functor of the *finite* comodule category: the regular comodule need not
+be finite. Bridging the two needs in addition that every comodule is the supremum of its
+finite subcomodules (`TauCeti.Subcomodule.sSup_finiteSubcomodules_eq_top`), which is not
+used here. -/
 theorem endOfPoint_self_injective :
     Function.Injective fun g : H →ₐ[R] A => endOfPoint H g := by
   intro g g' hg
