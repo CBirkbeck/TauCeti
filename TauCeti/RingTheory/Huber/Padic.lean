@@ -5,6 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.NumberTheory.Padics.PadicIntegers
+public import Mathlib.NumberTheory.Padics.ProperSpace
+public import Mathlib.Topology.Algebra.Ring.Compact
 public import TauCeti.RingTheory.Huber.Basic
 
 /-!
@@ -26,9 +28,8 @@ nilpotent.
   adicity transport along a ring equivalence that is also an inducing map. This is what lets a
   ring of definition carry an ideal that natively lives in a merely equivalent ring, which is
   what `TauCeti.Huber.PairOfDefinition` needs here.
-* `TauCeti.Huber.PadicInt.coe_maximalIdeal_pow` and
-  `TauCeti.Huber.PadicInt.isOpen_maximalIdeal_pow`: `(p)ⁿ` is the closed ball of radius `p⁻ⁿ`,
-  and is open.
+* `TauCeti.Huber.PadicInt.coe_maximalIdeal_pow`: `(p)ⁿ` is the closed ball of radius `p⁻ⁿ`.
+  Openness is Mathlib's `IsLocalRing.isOpen_maximalIdeal_pow`.
 * `TauCeti.Huber.PadicInt.isAdic_maximalIdeal`: the norm topology of `ℤ_[p]` is the `(p)`-adic
   topology. Mathlib has `IsAdicComplete (maximalIdeal ℤ_[p]) ℤ_[p]` but not this comparison of
   topologies, which is what a pair of definition requires.
@@ -109,23 +110,11 @@ theorem coe_maximalIdeal_pow (n : ℕ) :
   rw [_root_.PadicInt.maximalIdeal_eq_span_p, Ideal.span_singleton_pow,
     ← _root_.PadicInt.norm_le_pow_iff_mem_span_pow]
 
-/-- Every power of the maximal ideal of `ℤ_[p]` is open. -/
-theorem isOpen_maximalIdeal_pow (n : ℕ) :
-    IsOpen ((maximalIdeal ℤ_[p] ^ n : Ideal ℤ_[p]) : Set ℤ_[p]) := by
-  -- the ultrametric inequality carries the ball of radius `p⁻ⁿ` about any point back into the set
-  have hp0 : (0 : ℝ) < p := mod_cast (Fact.out : p.Prime).pos
-  rw [coe_maximalIdeal_pow, Metric.isOpen_iff]
-  intro x hx
-  refine ⟨(p : ℝ) ^ (-n : ℤ), zpow_pos hp0 _, fun y hy ↦ ?_⟩
-  rw [Set.mem_ofPred_eq, show y = y - x + x by ring]
-  refine (_root_.PadicInt.nonarchimedean _ _).trans (max_le (le_of_lt ?_) hx)
-  simpa [dist_eq_norm] using hy
-
 /-- **The norm topology of `ℤ_[p]` is the `(p)`-adic topology.** -/
 theorem isAdic_maximalIdeal : IsAdic (maximalIdeal ℤ_[p]) := by
   have hp1 : (p : ℝ)⁻¹ < 1 := inv_lt_one_of_one_lt₀ <| mod_cast (Fact.out : p.Prime).one_lt
   rw [isAdic_iff]
-  refine ⟨isOpen_maximalIdeal_pow, fun s hs ↦ ?_⟩
+  refine ⟨IsLocalRing.isOpen_maximalIdeal_pow ℤ_[p], fun s hs ↦ ?_⟩
   obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp hs
   obtain ⟨n, hn⟩ := exists_pow_lt_of_lt_one hε hp1
   refine ⟨n, fun x hx ↦ hball ?_⟩
