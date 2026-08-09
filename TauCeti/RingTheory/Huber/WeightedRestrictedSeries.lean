@@ -673,7 +673,13 @@ theorem weightedNhd_ringSubgroupsBasis [NonarchimedeanRing A] {T : Fin k → Set
       exact ⟨V, fun g hg ↦ hV g hg⟩)
 
 /-- **Wedhorn's topology on `A⟨X⟩_T`** (Remark and Definition 5.48): the ring topology whose
-neighbourhoods of zero are the `U⟨X⟩`. -/
+neighbourhoods of zero are the `U⟨X⟩`.
+
+Consumers should go through the contract lemmas below rather than unfolding this: the basis is
+`weightedTopology_hasBasis_nhds_zero`, and `weightedTopology_isTopologicalRing` /
+`weightedTopology_nonarchimedean` give the structure. `@[instance_reducible]` rather than plain
+`@[reducible]` is what the `classDefReducibility` linter requires of a class-valued `def`; it
+opens the body to instance synthesis only, not to general definitional unfolding. -/
 @[instance_reducible]
 noncomputable def weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) : TopologicalSpace (weightedRestrictedSubring T hT) :=
