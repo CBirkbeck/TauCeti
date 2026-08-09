@@ -170,6 +170,11 @@ theorem evalHom_injective_one (p : ℕ) (hp : p.Prime) : Function.Injective (eva
     (fun hns ↦ absurd hs hns)]
   simp
 
+/-- Scaling a divisibility chain by a constant keeps it a chain. -/
+private lemma isDvdChain_mul_const {n : ℕ} {a : Fin n → ℕ} (ha : IsDvdChain a) (c : ℕ) :
+    IsDvdChain (a * fun _ : Fin n ↦ c) :=
+  isDvdChain_iff.mpr fun _ _ hij ↦ mul_dvd_mul (isDvdChain_iff.mp ha hij) dvd_rfl
+
 /-- A two-entry diagonal `![a, b]` is a divisibility chain iff `a ∣ b`. -/
 private lemma divChain_two_of_dvd {a b : ℕ} (hab : a ∣ b) :
     IsDvdChain (![a, b] : Fin 2 → ℕ) :=
@@ -365,12 +370,13 @@ divisibility-chain `b`, evaluating `f * diagElem(c,c)` at `diagCoset(b * c)` equ
 lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 2) (b : Fin 2 → ℕ)
     (hb_pos : ∀ i, 0 < b i) (hb_div : IsDvdChain b) :
     (f * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * (fun _ : Fin 2 ↦ c))) = f (diagCoset b) := by
-  induction f using Finsupp.induction_linear with
-  | zero =>
+  classical
+  induction f using HeckeCosetModule.induction_linear with
+  | h0 =>
     change ((0 : IntegralHeckeRing 2) * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) =
       (0 : IntegralHeckeRing 2) (diagCoset b)
     rw [zero_mul]; rfl
-  | add g h ihg ihh =>
+  | hadd g h ihg ihh =>
     set g' : IntegralHeckeRing 2 := g
     set h' : IntegralHeckeRing 2 := h
     change ((g' + h') * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) =
@@ -381,25 +387,21 @@ lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 
             (g' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) +
             (h' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) from
         Finsupp.add_apply _ _ _,
-      show (g' + h') (diagCoset b) = g' (diagCoset b) + h' (diagCoset b) from Finsupp.add_apply _ _ _,
+      show (g' + h') (diagCoset b) = g' (diagCoset b) + h' (diagCoset b) from
+        Finsupp.add_apply _ _ _,
       ihg, ihh]
-  | single D α =>
+  | hsingle D α =>
     obtain ⟨a, ha_pos, ha_div, hD_eq⟩ := exists_diagonal_representative D
-    change (HeckeCosetModule.single ℤ D α * diagElem (fun _ : Fin 2 ↦ c))
-        (diagCoset (b * fun _ : Fin 2 ↦ c)) =
-      HeckeCosetModule.single ℤ D α (diagCoset b)
     rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos ha_div α]
-    show Finsupp.single (diagCoset (a * fun _ : Fin 2 ↦ c)) α (diagCoset (b * fun _ : Fin 2 ↦ c)) =
-      Finsupp.single (diagCoset a) α (diagCoset b)
-    rw [Finsupp.single_apply, Finsupp.single_apply]
+    rw [HeckeCosetModule.single_apply, HeckeCosetModule.single_apply]
     by_cases hab : a = b
     · subst hab; rw [if_pos rfl, if_pos rfl]
     · have h_ne_1 : diagCoset (a * fun _ : Fin 2 ↦ c) ≠ diagCoset (b * fun _ : Fin 2 ↦ c) := by
         intro heq
         have h1_eq : a * (fun _ : Fin 2 ↦ c) = b * (fun _ : Fin 2 ↦ c) :=
           eq_of_diagCoset_eq (fun i ↦ Nat.mul_pos (ha_pos i) hc)
-            (fun i ↦ Nat.mul_pos (hb_pos i) hc) (IsDvdChain.mul ha_div (isDvdChain_const c))
-            (IsDvdChain.mul hb_div (isDvdChain_const c)) heq
+            (fun i ↦ Nat.mul_pos (hb_pos i) hc) (isDvdChain_mul_const ha_div c)
+            (isDvdChain_mul_const hb_div c) heq
         apply hab
         funext i
         have := congr_fun h1_eq i
@@ -414,11 +416,12 @@ lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHe
     (d : Fin 2 → ℕ)
     (hd_pos : ∀ i, 0 < d i) (hd_div : IsDvdChain d) (i₀ : Fin 2) (hi₀ : ¬ c ∣ d i₀) :
     (f * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0 := by
-  induction f using Finsupp.induction_linear with
-  | zero =>
+  classical
+  induction f using HeckeCosetModule.induction_linear with
+  | h0 =>
     change ((0 : IntegralHeckeRing 2) * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0
     rw [zero_mul]; rfl
-  | add g h ihg ihh =>
+  | hadd g h ihg ihh =>
     set g' : IntegralHeckeRing 2 := g
     set h' : IntegralHeckeRing 2 := h
     change ((g' + h') * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0
@@ -427,17 +430,15 @@ lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHe
             (g' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) +
             (h' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) from Finsupp.add_apply _ _ _,
       ihg, ihh, add_zero]
-  | single D α =>
+  | hsingle D α =>
     obtain ⟨a, ha_pos, ha_div, hD_eq⟩ := exists_diagonal_representative D
-    change (HeckeCosetModule.single ℤ D α * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0
     rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos ha_div α]
-    show Finsupp.single (diagCoset (a * fun _ : Fin 2 ↦ c)) α (diagCoset d) = 0
-    rw [Finsupp.single_apply]
+    rw [HeckeCosetModule.single_apply]
     have h_ne : diagCoset (a * fun _ : Fin 2 ↦ c) ≠ diagCoset d := by
       intro heq
       have h_eq : a * (fun _ : Fin 2 ↦ c) = d :=
         eq_of_diagCoset_eq (fun i ↦ Nat.mul_pos (ha_pos i) hc) hd_pos
-          (IsDvdChain.mul ha_div (isDvdChain_const c)) hd_div heq
+          (isDvdChain_mul_const ha_div c) hd_div heq
       apply hi₀
       have := congr_fun h_eq i₀
       simp only [Pi.mul_apply] at this
@@ -574,7 +575,8 @@ lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
       diagCoset (![1, p ^ n] : Fin 2 → ℕ)
     rw [show heckeTDiag 1 p = HeckeCosetModule.single ℤ (diagCoset (![1, p] : Fin 2 → ℕ)) 1 from
         (heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _)).trans (diagElem_def _),
-      HeckeRing.mul_def, Finsupp.sum_single_index (by simp [Finsupp.sum])]
+      HeckeCosetModule.mul_def, HeckeCosetModule.mul_eq_sum,
+      HeckeCosetModule.sum_single_index (by simp [Finsupp.sum])]
     simp only [one_smul]
     show (Finsupp.sum g fun D2 b₂ ↦ b₂ • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
           (diagCoset (![1, p] : Fin 2 → ℕ)).rep D2.rep) D_target = 1
