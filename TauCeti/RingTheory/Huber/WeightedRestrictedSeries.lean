@@ -10,8 +10,8 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 /-!
 # Weighted restricted power series `A⟨X⟩_T`
 
-For a topological ring `A` and a family `T` of subsets of `A` indexed by the variables, Wedhorn
-defines the *weighted* restricted power series ring
+For a commutative nonarchimedean ring `A` and a family `T` of subsets of `A` indexed by the
+variables, Wedhorn defines the *weighted* restricted power series ring
 
 ```text
 A⟨X⟩_T := { ∑ aν Xν ∈ A[[X]] ; aν ∈ Tν · U for every open subgroup U of A and almost all ν },
@@ -21,22 +21,33 @@ with the subgroups `U⟨X⟩ := { ∑ aν Xν ∈ A⟨X⟩_T ; aν ∈ Tν · U 
 system of neighbourhoods of zero. Here `Tν := T₁^ν₁ ⋯ Tₖ^νₖ`. Taking every `Tᵢ = {1}` recovers
 the ordinary restricted series `A⟨X⟩`.
 
+**Both of those claims need Wedhorn's standing hypothesis** `TauCeti.Huber.IsWeightFamily T`,
+fixed at the start of his §5.6: without it `A⟨X⟩_T` is not multiplicatively closed and the
+`U⟨X⟩` are not neighbourhoods of zero. Every definition below therefore takes it as an argument,
+and the counterexample in `IsWeightFamily`'s docstring shows it is not automatic.
+
 ## Main definitions
 
 * `TauCeti.Huber.weightPow`: the subset `Tν = T₁^ν₁ ⋯ Tₖ^νₖ` of `A`.
 * `TauCeti.Huber.weightMul`: the additive subgroup `Tν · U`.
+* `TauCeti.Huber.IsWeightFamily`: Wedhorn's standing hypothesis on `T` — for every variable `i`,
+  every `m` and every neighbourhood `U` of zero, the subgroup `Tᵢ^m · U` is again one. The
+  subring and the topology below are defined only under it.
 * `TauCeti.Huber.IsWeightedRestricted`: Wedhorn's condition (5.6.1) on a power series.
+* `TauCeti.Huber.weightedRestrictedSubring`: `A⟨X⟩_T` as a subring of `A[[X]]`.
+* `TauCeti.Huber.weightedNhd`: the subgroup `U⟨X⟩` of `A⟨X⟩_T`.
+* `TauCeti.Huber.weightedTopology`: the ring topology they generate.
+* `TauCeti.Huber.weightedC` and `TauCeti.Huber.weightedX`: the constant series and the variables.
 
 ## Main results
 
 * `TauCeti.Huber.IsWeightedRestricted.mul`: `A⟨X⟩_T` is closed under multiplication, the point
-  Wedhorn flags as not entirely clear; with the additive closure lemmas this gives the subring
-  `TauCeti.Huber.weightedRestrictedSubring`.
-* `TauCeti.Huber.weightedNhd_ringSubgroupsBasis` and `TauCeti.Huber.weightedTopology`: the
-  `U⟨X⟩` are a fundamental system of neighbourhoods of zero for a ring topology, together with
-  its contract (`weightedTopology_hasBasis_nhds_zero`, `isTopologicalRing_weightedTopology`,
-  `nonarchimedeanRing_weightedTopology`).
-* `TauCeti.Huber.weightedRestrictedSubring_one`: for the trivial weight this is the ordinary
+  Wedhorn flags as not entirely clear; with the additive closure lemmas this gives the subring.
+* `TauCeti.Huber.weightedNhd_ringSubgroupsBasis`: the `U⟨X⟩` are a fundamental system of
+  neighbourhoods of zero for a ring topology, with its contract
+  (`weightedTopology_hasBasis_nhds_zero`, `isTopologicalRing_weightedTopology`,
+  `nonarchimedeanRing_weightedTopology`, `continuous_weightedC`).
+* `TauCeti.Huber.weightedRestrictedSubring_one_weight`: for the trivial weight this is the ordinary
   ring of restricted power series (Wedhorn Example 5.54).
 
 ## Scope
@@ -71,6 +82,19 @@ Wedhorn writes "note that it is not entirely clear that `A⟨X⟩_T` is multipli
 is `TauCeti.Huber.IsWeightedRestricted.mul` here. It is exactly what the standing hypothesis is
 for.
 
+## Provenance
+
+New work. The roadmap designates AINTLIB as the existing source for this row, so its
+`AdicSpaces` weighted-series and localisation files were checked first: they contain no
+`A⟨X⟩_T`, and AINTLIB's `TateAlgebraWedhorn` is a different object — it retopologises the
+ordinary `A⟨X⟩` by transporting along a substitution rather than letting the carrier depend on
+`T`. The multiplicative-closure argument here is therefore new.
+
+The API layout — the `isWeightedRestricted_zero/one/add/neg/mul` series, the subring with its
+`mem_` lemma, and the algebra-map coercion — follows
+`TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean` (TauCetiProject/TauCeti#2348), which is
+itself AINTLIB-derived.
+
 ## References
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic], Remark and Definition 5.48, equation (5.6.1), and
@@ -103,6 +127,21 @@ omit [TopologicalSpace A] in
 /-- Unfolding lemma for `TauCeti.Huber.weightMul`. -/
 theorem weightMul_def (T : Fin k → Set A) (ν : Fin k →₀ ℕ) (U : AddSubgroup A) :
     weightMul T ν U = AddSubgroup.closure (weightPow T ν * (U : Set A)) := (rfl)
+
+omit [TopologicalSpace A] in
+/-- **Introduction for `weightMul`**: a product of a weight element and a `U` element lies in it. -/
+theorem mul_mem_weightMul (T : Fin k → Set A) (ν : Fin k →₀ ℕ) (U : AddSubgroup A) {t u : A}
+    (ht : t ∈ weightPow T ν) (hu : u ∈ U) : t * u ∈ weightMul T ν U :=
+  AddSubgroup.subset_closure ⟨t, ht, u, hu, rfl⟩
+
+omit [TopologicalSpace A] in
+/-- **Elimination for `weightMul`**: it is the least subgroup containing those products. -/
+theorem weightMul_le {T : Fin k → Set A} {ν : Fin k →₀ ℕ} {U V : AddSubgroup A} :
+    weightMul T ν U ≤ V ↔ ∀ t ∈ weightPow T ν, ∀ u ∈ U, t * u ∈ V := by
+  rw [weightMul_def, AddSubgroup.closure_le]
+  refine ⟨fun h t ht u hu ↦ h ⟨t, ht, u, hu, rfl⟩, ?_⟩
+  rintro h _ ⟨t, ht, u, hu, rfl⟩
+  exact h t ht u hu
 
 /-- Wedhorn's standing hypothesis on the weight family, fixed at the start of his §5.6: for every
 variable `i`, every `m`, and every neighbourhood `U` of zero, the subgroup `Tᵢ^m · U` is again a
@@ -143,15 +182,23 @@ theorem IsWeightFamily.of_exists_isUnit [IsTopologicalRing A] {T : Fin k → Set
 
 /-- Wedhorn: the standing hypothesis is automatic when every `Tᵢ` is `{1}`, the important special
 case, since then `Tᵢ^m · U` is the subgroup generated by `U`. -/
-theorem isWeightFamily_one : IsWeightFamily (fun _ : Fin k ↦ ({1} : Set A)) := by
+theorem isWeightFamily_one_weight : IsWeightFamily (fun _ : Fin k ↦ ({1} : Set A)) := by
   intro _ m U hU
   refine Filter.mem_of_superset hU fun u hu ↦ ?_
   exact AddSubgroup.subset_closure ⟨1, by simp, u, hu, by simp⟩
 
 omit [TopologicalSpace A] in
+/-- At the zero multi-index every factor is `T i ^ 0 = 1`, so the weight is the trivial
+set `1 = {1}`. -/
+@[simp]
+theorem weightPow_zero (T : Fin k → Set A) : weightPow T 0 = 1 := by
+  simp [weightPow]
+
+omit [TopologicalSpace A] in
 /-- At the zero multi-index the weight is trivial, so `T⁰ · U` is just `U`; in particular it is a
 neighbourhood of zero whenever `U` is. This is the base case of Wedhorn's remark that `Tν · U` is
 a neighbourhood of zero for every `ν`. -/
+@[simp]
 theorem weightMul_zero (T : Fin k → Set A) (U : AddSubgroup A) :
     weightMul T 0 U = U := by
   rw [weightMul_def, weightPow]
@@ -289,7 +336,8 @@ zero absorbs it: there is an open subgroup `Z` with `a * Z ⊆ V`.
 
 Applied with `V = Tα · U`, which
 `TauCeti.Huber.IsWeightFamily.weightMul_mem_nhds` makes a neighbourhood of zero, this is what
-produces the subgroup that `TauCeti.Huber.weightMul_absorb` consumes for a coefficient that fails
+produces the subgroup that `TauCeti.Huber.mul_mem_weightMul_of_forall_mul_mem` consumes for a
+coefficient that fails
 a given bound. -/
 theorem exists_openAddSubgroup_mul_subset [NonarchimedeanRing A] (a : A)
     (V : AddSubgroup A) (hV : (V : Set A) ∈ nhds (0 : A)) :
@@ -327,7 +375,8 @@ This is what handles the finitely many coefficients that fail a given bound in t
 `A⟨X⟩_T` is multiplicatively closed: Wedhorn's standing hypothesis
 (`TauCeti.Huber.IsWeightFamily`) makes `T^α · U` a neighbourhood of zero, so continuity of
 multiplication by the fixed bad coefficient `a` supplies such a `Z`. -/
-theorem weightMul_absorb {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {U Z : AddSubgroup A} {a b : A}
+theorem mul_mem_weightMul_of_forall_mul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ}
+    {U Z : AddSubgroup A} {a b : A}
     (ha : ∀ z ∈ Z, a * z ∈ weightMul T α U) (hb : b ∈ weightMul T β Z) :
     a * b ∈ weightMul T (α + β) U := by
   induction hb using AddSubgroup.closure_induction with
@@ -342,16 +391,16 @@ theorem weightMul_absorb {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {U Z :
 omit [TopologicalSpace A] in
 /-- With every weight equal to `{1}`, the weight of any multi-index is `{1}`. -/
 @[simp]
-theorem weightPow_one (ν : Fin k →₀ ℕ) :
+theorem weightPow_one_weight (ν : Fin k →₀ ℕ) :
     weightPow (fun _ : Fin k ↦ ({1} : Set A)) ν = {1} := by
   simp [weightPow]
 
 omit [TopologicalSpace A] in
 /-- With every weight equal to `{1}`, the subgroup `Tν · U` is `U` itself. -/
 @[simp]
-theorem weightMul_one (ν : Fin k →₀ ℕ) (U : AddSubgroup A) :
+theorem weightMul_one_weight (ν : Fin k →₀ ℕ) (U : AddSubgroup A) :
     weightMul (fun _ : Fin k ↦ ({1} : Set A)) ν U = U := by
-  rw [weightMul_def, weightPow_one, Set.singleton_mul]
+  rw [weightMul_def, weightPow_one_weight, Set.singleton_mul]
   simp
 
 /-- **Wedhorn Example 5.54**: for the trivial weight `Tᵢ = {1}` the condition is the ordinary
@@ -470,7 +519,7 @@ theorem IsWeightedRestricted.mul [NonarchimedeanRing A] {T : Fin k → Set A}
       have hgood : MvPowerSeries.coeff p.1 f ∈ weightMul T p.1 Z.toAddSubgroup := by
         by_contra hbad
         exact hνE (Or.inr ⟨p.1, hbad, p.2, hp2, hsum⟩)
-      have := weightMul_absorb
+      have := mul_mem_weightMul_of_forall_mul_mem
         (fun z hz ↦ hZg p.2 (hG.mem_toFinset.mpr hp2) z (hZle_g hz))
         hgood
       rw [mul_comm, add_comm, hsum] at this
@@ -479,7 +528,7 @@ theorem IsWeightedRestricted.mul [NonarchimedeanRing A] {T : Fin k → Set A}
     have hgood : MvPowerSeries.coeff p.2 g ∈ weightMul T p.2 Z.toAddSubgroup := by
       by_contra hbad
       exact hνE (Or.inl ⟨p.1, hp1, p.2, hbad, hsum⟩)
-    have := weightMul_absorb
+    have := mul_mem_weightMul_of_forall_mul_mem
       (fun z hz ↦ hZf p.1 (hF.mem_toFinset.mpr hp1) z (hZle_f hz))
       hgood
     rw [hsum] at this
@@ -582,8 +631,8 @@ theorem mem_weightedNhd [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWei
 
 /-- **Wedhorn Example 5.54, bundled**: for the trivial weight, `A⟨X⟩_T` *is* the ordinary ring of
 restricted power series, not merely a predicate-level equivalent. -/
-theorem weightedRestrictedSubring_one [NonarchimedeanRing A] :
-    weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one
+theorem weightedRestrictedSubring_one_weight [NonarchimedeanRing A] :
+    weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight
       = restrictedMvPowerSeriesSubring k A := by
   ext f
   rw [mem_weightedRestrictedSubring, mem_restrictedMvPowerSeriesSubring,
@@ -598,7 +647,7 @@ theorem weightedNhd_mono [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWe
 elements of `W⟨X⟩` lies in `U⟨X⟩`. This is the condition
 `RingSubgroupsBasis` calls `mul`, and unlike multiplicative closure of the ring it needs no
 finiteness argument. -/
-theorem weightedNhd_mul_subset [NonarchimedeanRing A] {T : Fin k → Set A}
+theorem mul_mem_weightedNhd [NonarchimedeanRing A] {T : Fin k → Set A}
     {hT : IsWeightFamily T} {W U : AddSubgroup A} (hWU : (W : Set A) * (W : Set A) ⊆ (U : Set A))
     {f g : weightedRestrictedSubring T hT} (hf : f ∈ weightedNhd T hT W)
     (hg : g ∈ weightedNhd T hT W) : f * g ∈ weightedNhd T hT U := by
@@ -610,10 +659,11 @@ theorem weightedNhd_mul_subset [NonarchimedeanRing A] {T : Fin k → Set A}
 open subgroup `U`, some `V⟨X⟩` is carried into `U⟨X⟩` by multiplication by `x`. This is the
 condition `RingSubgroupsBasis` calls `leftMul`.
 
-Unlike `TauCeti.Huber.weightedNhd_mul_subset` this does need the bad coefficients of `x` handled,
+Unlike `TauCeti.Huber.mul_mem_weightedNhd` this does need the bad coefficients of `x` handled,
 since `x` is only restricted rather than uniformly bounded — but no exceptional set of `ν`
 survives, because the absorbing subgroup works for every `β` at once. -/
-theorem weightedNhd_leftMul [NonarchimedeanRing A] {T : Fin k → Set A} (hT : IsWeightFamily T)
+theorem exists_weightedNhd_mul_mem [NonarchimedeanRing A] {T : Fin k → Set A}
+    (hT : IsWeightFamily T)
     (x : weightedRestrictedSubring T hT) (U : OpenAddSubgroup A) :
     ∃ V : OpenAddSubgroup A, ∀ g : weightedRestrictedSubring T hT,
       g ∈ weightedNhd T hT V.toAddSubgroup → x * g ∈ weightedNhd T hT U.toAddSubgroup := by
@@ -642,7 +692,7 @@ theorem weightedNhd_leftMul [NonarchimedeanRing A] {T : Fin k → Set A} (hT : I
     rw [hsum] at this
     exact weightMul_mono T ν ((AddSubgroup.closure_le _).mpr hWU) this
   · -- `p.1` is one of the finitely many bad coefficients: absorb it
-    have := weightMul_absorb
+    have := mul_mem_weightMul_of_forall_mul_mem
       (fun z hz ↦ hZx p.1 (hF.mem_toFinset.mpr hp1) z (hZleZx hz))
       (weightMul_mono T p.2 (le_refl _) (hg p.2))
     rw [hsum] at this
@@ -660,9 +710,9 @@ theorem weightedNhd_ringSubgroupsBasis [NonarchimedeanRing A] {T : Fin k → Set
       obtain ⟨W, hWU⟩ := NonarchimedeanRing.mul_subset U
       exact ⟨W, by
         rintro _ ⟨f, hf, g, hg, rfl⟩
-        exact weightedNhd_mul_subset hWU hf hg⟩)
+        exact mul_mem_weightedNhd hWU hf hg⟩)
     (fun x U ↦ by
-      obtain ⟨V, hV⟩ := weightedNhd_leftMul hT x U
+      obtain ⟨V, hV⟩ := exists_weightedNhd_mul_mem hT x U
       exact ⟨V, fun g hg ↦ hV g hg⟩)
 
 /-- **Wedhorn's topology on `A⟨X⟩_T`** (Remark and Definition 5.48): the ring topology whose
