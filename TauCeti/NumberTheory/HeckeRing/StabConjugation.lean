@@ -20,7 +20,7 @@ quotient — responds to multiplying `g` on either side by a group element:
   `(gh)Γ₂(gh)⁻¹ = gΓ₂g⁻¹` (`conjAct_smul_mul_right_of_mem_normalizer`,
   `subgroupOf_conjAct_smul_mul_right_of_mem_normalizer`);
 * multiplying on the **left** by `h ∈ Γ₁` conjugates the stabilizer by `h`
-  (`subgroupOf_conjAct_smul_mul_left_of_mem`).
+  (`subgroupOf_conjAct_smul_mul_left_of_mem_normalizer`).
 
 Ported from the AINTLIB [`LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) project,
 `LeanModularForms/HeckeRIngs/AbstractHeckeRing/StabConjugation.lean`
@@ -32,7 +32,7 @@ of subgroups, so they are stated here for arbitrary subgroups and an arbitrary `
 
 * `DoubleCoset.conjAct_smul_mul_right_of_mem_normalizer`: `(gh)Γ(gh)⁻¹ = gΓg⁻¹` whenever `h`
   normalizes `Γ`.
-* `DoubleCoset.subgroupOf_conjAct_smul_mul_left_of_mem`: left multiplication by `h ∈ Γ₁`
+* `DoubleCoset.subgroupOf_conjAct_smul_mul_left_of_mem_normalizer`: left multiplication by `h ∈ Γ₁`
   conjugates the stabilizer by `h`.
 * `DoubleCoset.decompQuotientEquivMulLeft`, `DoubleCoset.decompQuotientEquivMulLeftRight`:
   the induced equivalences of decomposition quotients.
@@ -78,8 +78,10 @@ lemma subgroupOf_conjAct_smul_mul_left_of_mem_normalizer (Γ₁ Γ₂ : Subgroup
   simp only [Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
     ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv,
     Subgroup.normalizerMonoidHom_apply_symm_apply_coe]
-  rw [show ((h : G) * g)⁻¹ * (x : G) * ((h : G) * g) =
-    g⁻¹ * ((h : G)⁻¹ * (x : G) * (h : G)) * g by group]
+  -- Both sides are membership of the *same* element of `Γ₂`, written with different
+  -- bracketing: `(hg)⁻¹x(hg)` versus `g⁻¹(h⁻¹xh)g`. `group` proves that identity; the `iff`
+  -- is then congruence along it, so no rewriting has to find a redex.
+  exact iff_of_eq (congrArg (· ∈ Γ₂) (by group))
 
 /-- Moving the base point on the left by anything normalizing `Γ₁` is an equivalence of
 decomposition quotients, `Γ₁/Stab(hg) ≃ Γ₁/Stab(g)`, induced by `σ ↦ h⁻¹σh`.
