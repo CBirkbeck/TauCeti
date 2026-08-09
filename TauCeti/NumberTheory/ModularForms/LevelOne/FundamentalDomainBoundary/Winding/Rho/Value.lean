@@ -535,8 +535,8 @@ theorem hasCauchyPVAt_fdBoundary_rho (hH : Real.sqrt 3 / 2 < H) :
     exact ((hspec ε hε).2).symm
 
 /-- **The winding number of the boundary contour at `ρ` is `-1/6`**: the corner `ρ`
-sits on the contour with interior angle `2π/3`, and the principal-value normalization
-sees exactly the angle defect `π/3` of a clockwise turn. -/
+sits on the contour with interior angle `π/3`, and the principal-value normalization
+sees exactly that angle as a clockwise turn, giving `-(π/3) / (2π) = -1/6`. -/
 @[simp]
 theorem windingNumber_fdBoundary_rho (hH : Real.sqrt 3 / 2 < H) :
     Contour.windingNumber (fdBoundary H) 0 5 (UpperHalfPlane.ρ : ℂ) = -(1 / 6 : ℂ) := by
