@@ -37,8 +37,9 @@ change of variables, again over any commutative ring in which the relevant param
   original curve, and changing the generator moves the twist by a change of variables.
 * `WeierstrassCurve.isElliptic_quadraticTwistOf_trace_norm`,
   `WeierstrassCurve.exists_smul_quadraticTwistOf_trace_norm_eq`: the twist by the trace and norm
-  of a generator `θ` of a quadratic extension `L/K` is elliptic, and changing the generator moves
-  it by a change of variables — which is what makes the twist by the extension well posed.
+  of a generator `θ` of a *separable* quadratic extension `L/K` is elliptic when `E` is, and
+  changing the generator moves it by a change of variables — which is what makes the twist by the
+  extension well posed.
 
 These are the `quadraticTwistOf` seeds of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 5
 (twists), pinned in that roadmap's `Suggested.lean`; the extension twist `quadraticTwist E L`
@@ -48,7 +49,7 @@ reduction theorem are later milestones of the same layer and build on this file.
 The twist by a generator is deliberately **not** given its own constructor here. Such a
 definition would accept any field extension, and outside the finite-dimensional case Mathlib's
 `Algebra.trace` and `Algebra.norm` are `0` and `1`, so every `θ` would yield the same unrelated
-`(0, 1)` twist. The results below instead name `Algebra.trace K L θ` and `Algebra.norm K L θ`
+`(0, 1)` twist. The results below instead name `Algebra.trace K L θ` and `Algebra.norm K θ`
 directly and carry `[Algebra.IsQuadraticExtension K L]`, where the construction has its intended
 meaning.
 

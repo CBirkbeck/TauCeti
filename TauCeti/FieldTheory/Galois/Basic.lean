@@ -68,7 +68,7 @@ theorem exists_algEquiv_ne_one : ∃ σ : L ≃ₐ[K] L, σ ≠ 1 :=
 
 /-- The automorphism group of a separable quadratic extension consists of the identity and one
 nontrivial element. -/
-theorem univ_algEquiv [DecidableEq (L ≃ₐ[K] L)] {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
+theorem univ_eq_pair [DecidableEq (L ≃ₐ[K] L)] {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
     (Finset.univ : Finset (L ≃ₐ[K] L)) = {1, σ} :=
   (Finset.eq_univ_of_forall fun φ ↦ by simpa using algEquiv_eq_one_or_eq K L hσ φ).symm
 

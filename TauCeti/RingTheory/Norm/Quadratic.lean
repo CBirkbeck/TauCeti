@@ -49,6 +49,7 @@ namespace Algebra.IsQuadraticExtension
 
 /-- The trace of `b + aθ` in a quadratic extension is `a·tr(θ) + 2b`. Separability is not
 needed: this is `K`-linearity of the trace together with `tr(b) = [L : K]·b = 2b`. -/
+@[simp]
 theorem trace_algebraMap_add_algebraMap_mul (a b : K) (θ : L) :
     Algebra.trace K L (algebraMap K L b + algebraMap K L a * θ)
       = a * Algebra.trace K L θ + 2 * b := by
@@ -61,6 +62,7 @@ theorem trace_algebraMap_add_algebraMap_mul (a b : K) (θ : L) :
 not needed: in any `K`-basis of `L`, multiplication by `b + aθ` has matrix `b • 1 + a • M` where
 `M` is the matrix of multiplication by `θ`, and for a `2 × 2` matrix
 `det (b • 1 + a • M) = b² + ab · tr M + a² · det M`. -/
+@[simp]
 theorem norm_algebraMap_add_algebraMap_mul (a b : K) (θ : L) :
     Algebra.norm K (algebraMap K L b + algebraMap K L a * θ)
       = b ^ 2 + a * b * Algebra.trace K L θ + a ^ 2 * Algebra.norm K θ := by
@@ -84,7 +86,7 @@ nontrivial automorphism. -/
 theorem algebraMap_trace_eq_add {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) (x : L) :
     algebraMap K L (Algebra.trace K L x) = x + σ x := by
   classical
-  rw [trace_eq_sum_automorphisms, univ_algEquiv K L hσ, Finset.sum_pair (Ne.symm hσ)]
+  rw [trace_eq_sum_automorphisms, univ_eq_pair K L hσ, Finset.sum_pair (Ne.symm hσ)]
   simp
 
 /-- In a separable quadratic extension, the norm of `x` is `x * σx`, where `σ` is the
@@ -92,7 +94,7 @@ nontrivial automorphism. -/
 theorem algebraMap_norm_eq_mul {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) (x : L) :
     algebraMap K L (Algebra.norm K x) = x * σ x := by
   classical
-  rw [Algebra.norm_eq_prod_automorphisms, univ_algEquiv K L hσ, Finset.prod_pair (Ne.symm hσ)]
+  rw [Algebra.norm_eq_prod_automorphisms, univ_eq_pair K L hσ, Finset.prod_pair (Ne.symm hσ)]
   simp
 
 /-- If `θ` generates a separable quadratic extension of `K` — that is, lies outside `K` — and
