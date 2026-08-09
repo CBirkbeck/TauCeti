@@ -60,7 +60,7 @@ private theorem quadraticConj_ne_one (hmin : minpoly ℤ θ = X ^ 2 - C d)
 private theorem norm_eq_mul_conj (hmin : minpoly ℤ θ = X ^ 2 - C d)
     (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) (y : K) :
     algebraMap ℚ K (Algebra.norm ℚ y) = y * quadraticConj hmin hgen y := by
-  have := isQuadraticExtension_rat hmin hgen
+  have : Algebra.IsQuadraticExtension ℚ K := ⟨finrank_rat_eq_two hmin hgen⟩
   exact Algebra.IsQuadraticExtension.algebraMap_norm_eq_mul ℚ K
     (quadraticConj_ne_one hmin hgen) y
 

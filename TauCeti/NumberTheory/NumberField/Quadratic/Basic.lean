@@ -9,7 +9,6 @@ public import Mathlib.FieldTheory.Minpoly.IsIntegrallyClosed
 public import Mathlib.RingTheory.Discriminant
 public import Mathlib.LinearAlgebra.Matrix.Notation
 public import TauCeti.FieldTheory.Trace
-public import TauCeti.LinearAlgebra.Dimension.IsQuadraticExtension
 
 /-!
 # Basics for quadratic number fields
@@ -59,12 +58,6 @@ theorem finrank_rat_eq_two (hmin : minpoly ℤ θ = X ^ 2 - C d)
   rw [(PowerBasis.ofAdjoinEqTop' hint hgen).finrank,
     ← (PowerBasis.ofAdjoinEqTop' hint hgen).natDegree_minpoly, PowerBasis.ofAdjoinEqTop'_gen,
     minpoly_rat_quadratic hmin, natDegree_X_pow_sub_C]
-
-/-- A quadratic number field is a quadratic extension of `ℚ`, packaged as the
-`Algebra.IsQuadraticExtension` instance that the general trace and norm API consumes. -/
-theorem isQuadraticExtension_rat (hmin : minpoly ℤ θ = X ^ 2 - C d)
-    (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) : Algebra.IsQuadraticExtension ℚ K :=
-  ⟨finrank_rat_eq_two hmin hgen⟩
 
 omit [NumberField K] in
 /-- The generator squares to the radicand in `K`: `θ² = d`. -/
