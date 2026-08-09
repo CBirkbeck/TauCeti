@@ -25,8 +25,9 @@ the existence proof itself reduces to a finite generating set and is completed s
   of Wedhorn Definition 7.3.
 * `TauCeti.Valuation.IsGreatestIdealCofinal v I H` : `H` is greatest with that property.
 * `TauCeti.Valuation.characteristicSubgroupOfIdeal` : **Wedhorn Definition 7.3**, `cΓ_v(I)`.
-* `TauCeti.Valuation.characteristicSubgroupOfIdeal_eq_top_iff` : **Wedhorn Lemma 7.4**, the
-  criterion `cΓ_v(I) = Γ_v` that cuts out `Spv (A, I)`.
+* `TauCeti.Valuation.characteristicSubgroupOfIdeal_eq_top_iff` and
+  `…_eq_top_iff_forall_span` : **Wedhorn Lemma 7.4**, the criterion `cΓ_v(I) = Γ_v` that cuts
+  out `Spv (A, I)`, in both the all-of-`I` and the generating-set forms.
 * `TauCeti.Valuation.valueSet v I` : the nonzero values of `v` on `I`, the set Wedhorn takes
   the maximum over.
 
@@ -483,5 +484,37 @@ theorem characteristicSubgroupOfIdeal_eq_top_iff {v : Valuation A Γ₀} {I : Id
         by_cases h0 : (MonoidWithZeroHom.ofClass v) a = 0
         · exact cofinalValueFor_of_eq_zero h0
         · exact absurd ⟨a, ha, h0, hfull ▸ TauCeti.ConvexSubgroup.mem_top⟩ hm
+
+/-- **Wedhorn Lemma 7.4, (ii) ⟺ (iii).** The criterion may be checked on any generating set of
+any ideal with the same radical — which is the form the `Spv (A, I)` development uses, since it
+turns a condition on all of `I` into finitely many checks.
+
+The passage between the two is Lemma 7.1 once more: cofinality propagates from generators
+through the cofinal *ideal*, and across the radical because that ideal is radical. -/
+theorem characteristicSubgroupOfIdeal_eq_top_iff_forall_span {v : Valuation A Γ₀} {I : Ideal A}
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {J : Ideal A} {T : Set A}
+    (hspan : Ideal.span T = J) (hrad : I.radical = J.radical) :
+    characteristicSubgroupOfIdeal v I hfg = ⊤ ↔
+      (∀ t ∈ T, CofinalValue v t) ∨ characteristicSubgroup v = ⊤ := by
+  rw [characteristicSubgroupOfIdeal_eq_top_iff hfg]
+  by_cases hfull : characteristicSubgroup v = ⊤
+  · simp [hfull]
+  refine or_congr_left ?_
+  have hHlt : characteristicSubgroup v < ⊤ := lt_of_le_of_ne le_top hfull
+  constructor
+  · -- values on `I` cofinal ⇒ values on `T` cofinal, since `T ⊆ J ⊆ √I`
+    intro hall t ht
+    have htJ : t ∈ J := hspan ▸ Ideal.subset_span ht
+    obtain ⟨n, hn⟩ := Ideal.mem_radical_iff.mp (hrad.symm ▸ Ideal.le_radical htJ)
+    rcases Nat.eq_zero_or_pos n with rfl | hp
+    · rw [pow_zero] at hn
+      exact hall t (by simp [(Ideal.eq_top_iff_one I).mpr hn])
+    · refine cofinalValueFor_top_iff.mp ((cofinalValueFor_pow_iff hp).mp ?_)
+      exact cofinalValueFor_top_iff.mpr (hall _ hn)
+  · -- generators cofinal ⇒ all of `I` cofinal, through Lemma 7.1 and the radical
+    intro hT a ha
+    refine cofinalValueFor_top_iff.mp ?_
+    refine (idealCofinalFor_congr_of_radical_eq hHlt hrad).mpr ?_ a ha
+    exact idealCofinalFor_of_span hHlt hspan fun t ht ↦ cofinalValueFor_top_iff.mpr (hT t ht)
 
 end TauCeti.Valuation
