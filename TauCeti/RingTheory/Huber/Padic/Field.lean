@@ -21,7 +21,7 @@ No transport is needed here, unlike for `ℤ_[p]`: Mathlib defines `ℤ_[p]` as 
 
 ## Main definitions
 
-* `TauCeti.Huber.PairOfDefinition.padic`: the pair of definition `(ℤ_[p], (p))` of `ℚ_[p]`.
+* `TauCeti.Huber.pairOfDefinition`: the pair of definition `(ℤ_[p], (p))` of `ℚ_[p]`.
 
 ## Main results
 
@@ -54,16 +54,14 @@ private theorem isOpen_padicIntSubring :
 
 /-- `p` is a pseudouniformiser of `ℚ_[p]`: it is a unit, and its powers have norm `p⁻ⁿ → 0`. -/
 theorem isPseudoUniformizer_p : IsPseudoUniformizer (p : ℚ_[p]) := by
-  have hlt : (p : ℝ)⁻¹ < 1 := inv_lt_one_of_one_lt₀ <| mod_cast (Fact.out : p.Prime).one_lt
-  -- `IsTopologicallyNilpotent` is by definition this convergence, so `exact` accepts it
+  -- `IsTopologicalNilpotent` is by definition this convergence, so `exact` accepts it
   have hnil : Filter.Tendsto (fun n : ℕ ↦ (p : ℚ_[p]) ^ n) Filter.atTop (𝓝 0) :=
-    tendsto_pow_atTop_nhds_zero_of_norm_lt_one (by rw [_root_.Padic.norm_p]; exact hlt)
+    tendsto_pow_atTop_nhds_zero_of_norm_lt_one _root_.Padic.norm_p_lt_one
   exact isPseudoUniformizer_iff.mpr
     ⟨Ne.isUnit (by exact_mod_cast (Fact.out : p.Prime).ne_zero), hnil⟩
 
 /-- The pair of definition `(ℤ_[p], (p))` exhibiting `ℚ_[p]` as a Huber ring. -/
-noncomputable def _root_.TauCeti.Huber.PairOfDefinition.padic :
-    PairOfDefinition ℚ_[p] where
+noncomputable def pairOfDefinition : PairOfDefinition ℚ_[p] where
   ringOfDefinition := _root_.PadicInt.subring p
   isOpen_ringOfDefinition := isOpen_padicIntSubring
   idealOfDefinition := maximalIdeal ℤ_[p]
@@ -71,31 +69,32 @@ noncomputable def _root_.TauCeti.Huber.PairOfDefinition.padic :
     rw [_root_.PadicInt.maximalIdeal_eq_span_p]; exact Submodule.fg_span_singleton _
   isAdic_idealOfDefinition := PadicInt.isAdic_maximalIdeal
 
-/-- The ring of definition of `PairOfDefinition.padic` is `ℤ_[p]`.
+/-- The ring of definition of `pairOfDefinition` is `ℤ_[p]`.
 
-There is no companion equation for `idealOfDefinition`: its type is `Ideal ↥ringOfDefinition`, so
-an equation with `maximalIdeal ℤ_[p]` only typechecks once `ringOfDefinition` has been rewritten,
-which the opaque body does not permit. Rewrite with this lemma first. -/
+The ideal of definition is characterised by
+`TauCeti.Huber.Padic.mem_pairOfDefinition_idealOfDefinition`; an equation is avoided because
+`idealOfDefinition`'s type depends on `ringOfDefinition`. -/
 @[simp]
-theorem _root_.TauCeti.Huber.PairOfDefinition.padic_ringOfDefinition :
-    (PairOfDefinition.padic (p := p)).ringOfDefinition = _root_.PadicInt.subring p := (rfl)
+theorem pairOfDefinition_ringOfDefinition :
+    (pairOfDefinition (p := p)).ringOfDefinition = _root_.PadicInt.subring p := (rfl)
 
-/-- **The ideal of definition of `PairOfDefinition.padic` is `(p)`**, in membership form.
+/-- **The ideal of definition of `pairOfDefinition` is `(p)`**, in membership form: an element
+belongs exactly when its norm is less than one.
 
-`idealOfDefinition` has type `Ideal ↥ringOfDefinition`, so an equation with `maximalIdeal ℤ_[p]`
-does not typecheck while the body is opaque. Saying which elements belong avoids the dependent
-type altogether, and unlike a statement transported along an equivalence it determines the ideal
-for a downstream user: `‖x‖ < 1` is checkable. -/
+The membership form is used because `idealOfDefinition`'s type depends on `ringOfDefinition`, so
+an equation with `maximalIdeal ℤ_[p]` would be between two different `Ideal` types. It also
+leaves the ideal decidable downstream, which a statement transported along an equivalence would
+not. -/
 @[simp]
-theorem _root_.TauCeti.Huber.PairOfDefinition.mem_padic_idealOfDefinition
-    {x : (PairOfDefinition.padic (p := p)).ringOfDefinition} :
-    x ∈ (PairOfDefinition.padic (p := p)).idealOfDefinition ↔ ‖(x : ℚ_[p])‖ < 1 := by
-  simp only [PairOfDefinition.padic]
+theorem mem_pairOfDefinition_idealOfDefinition
+    {x : (pairOfDefinition (p := p)).ringOfDefinition} :
+    x ∈ (pairOfDefinition (p := p)).idealOfDefinition ↔ ‖(x : ℚ_[p])‖ < 1 := by
+  simp only [pairOfDefinition]
   exact _root_.PadicInt.mem_nonunits
 
 /-- **`ℚ_[p]` is a Huber ring**, with `(ℤ_[p], (p))` as a pair of definition. -/
 instance isHuberRing : IsHuberRing ℚ_[p] :=
-  ⟨⟨PairOfDefinition.padic⟩⟩
+  ⟨⟨pairOfDefinition⟩⟩
 
 /-- **`ℚ_[p]` is a Tate ring**, with `p` as a pseudouniformiser. -/
 instance isTateRing : IsTateRing ℚ_[p] :=
