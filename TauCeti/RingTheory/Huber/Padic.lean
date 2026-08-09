@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.NumberTheory.Padics.PadicIntegers
 public import Mathlib.NumberTheory.Padics.ProperSpace
 public import Mathlib.Topology.Algebra.Ring.Compact
 public import TauCeti.RingTheory.Huber.Basic
@@ -24,10 +23,6 @@ nilpotent.
 
 ## Main results
 
-* `TauCeti.Huber.fg_comap_of_equiv` and `TauCeti.Huber.IsAdic.comap`: finite generation and
-  adicity transport along a ring equivalence that is also an inducing map. This is what lets a
-  ring of definition carry an ideal that natively lives in a merely equivalent ring, which is
-  what `TauCeti.Huber.PairOfDefinition` needs here.
 * `TauCeti.Huber.PadicInt.coe_maximalIdeal_pow`: `(p)ⁿ` is the closed ball of radius `p⁻ⁿ`.
   Openness is Mathlib's `IsLocalRing.isOpen_maximalIdeal_pow`.
 * `TauCeti.Huber.PadicInt.isAdic_maximalIdeal`: the norm topology of `ℤ_[p]` is the `(p)`-adic
@@ -35,6 +30,12 @@ nilpotent.
   topologies, which is what a pair of definition requires.
 * `TauCeti.Huber.PadicInt.isHuberRing` and `TauCeti.Huber.PadicInt.not_isTateRing`: the two
   halves of the example.
+
+## Implementation notes
+
+The ring of definition is all of `ℤ_[p]`, so the ideal of definition has to be carried across
+`Subring.topEquiv`; `TauCeti.Huber.IsAdic.comap` in `TauCeti/RingTheory/Huber/Basic.lean` is the
+general transport that does it.
 
 ## Scope
 
@@ -53,48 +54,6 @@ public section
 open Topology IsLocalRing
 
 namespace TauCeti.Huber
-
-section Transport
-
-variable {A B : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
-  [CommRing B] [TopologicalSpace B] [IsTopologicalRing B]
-
-omit [TopologicalSpace A] [IsTopologicalRing A] [TopologicalSpace B] [IsTopologicalRing B] in
-/-- Finite generation transports along a ring equivalence. -/
-private theorem fg_comap_of_equiv (e : B ≃+* A) {I : Ideal A} (h : I.FG) : (I.comap e).FG := by
-  rw [← Ideal.map_symm]
-  exact Ideal.FG.map h e.symm.toRingHom
-
-omit [TopologicalSpace A] [IsTopologicalRing A] [TopologicalSpace B] [IsTopologicalRing B] in
-/-- The powers of a comapped ideal are the comapped powers, along a ring equivalence. -/
-private theorem comap_pow_of_equiv (e : B ≃+* A) (I : Ideal A) (n : ℕ) :
-    (I ^ n).comap e = I.comap e ^ n := by
-  rw [← Ideal.map_symm, ← Ideal.map_symm, Ideal.map_pow]
-
-/-- An adic topology transports along a ring equivalence that is also an inducing map.
-
-This is what lets a ring of definition carry an ideal of definition: `PairOfDefinition` asks for
-an `Ideal A₀` whose adic topology is the subspace topology, while the ideal at hand usually lives
-in a ring that is only equivalent to `A₀`. -/
-theorem IsAdic.comap (e : B ≃+* A) (he : IsInducing e) {I : Ideal A} (h : IsAdic I) :
-    IsAdic (I.comap e) := by
-  rw [isAdic_iff] at h ⊢
-  obtain ⟨hopen, hnhds⟩ := h
-  have hset : ∀ n : ℕ,
-      ((I.comap e ^ n : Ideal B) : Set B) = e ⁻¹' ((I ^ n : Ideal A) : Set A) := by
-    intro n
-    ext b
-    rw [← comap_pow_of_equiv e I n]
-    exact Iff.rfl
-  refine ⟨fun n ↦ ?_, fun s hs ↦ ?_⟩
-  · rw [hset n, he.isOpen_iff]
-    exact ⟨_, hopen n, rfl⟩
-  · rw [he.nhds_eq_comap (0 : B), map_zero, Filter.mem_comap] at hs
-    obtain ⟨t, ht, hts⟩ := hs
-    obtain ⟨n, hn⟩ := hnhds t ht
-    exact ⟨n, by rw [hset n]; exact fun b hb ↦ hts (hn hb)⟩
-
-end Transport
 
 namespace PadicInt
 
@@ -148,8 +107,9 @@ Stated as a membership characterisation rather than an equation because the type
 @[simp]
 theorem mem_pairOfDefinition_idealOfDefinition
     {x : (pairOfDefinition (p := p)).ringOfDefinition} :
-    x ∈ (pairOfDefinition (p := p)).idealOfDefinition ↔ (x : ℤ_[p]) ∈ maximalIdeal ℤ_[p] :=
-  (Iff.rfl)
+    x ∈ (pairOfDefinition (p := p)).idealOfDefinition ↔ (x : ℤ_[p]) ∈ maximalIdeal ℤ_[p] := by
+  simp only [pairOfDefinition]
+  exact Ideal.mem_comap
 
 /-- **`ℤ_[p]` is a Huber ring**, with `(ℤ_[p], (p))` as a pair of definition. -/
 instance isHuberRing : IsHuberRing ℤ_[p] :=
