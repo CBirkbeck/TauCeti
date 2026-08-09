@@ -14,9 +14,13 @@ public import Mathlib.Order.Quotient
 # Convex subgroups of linearly ordered groups
 
 A subgroup of a group with a linear order is *convex* if it contains every element
-lying between two of its members. Convex subgroups are the kernels of the order-compatible
-quotients of the value group of a valuation: the quotient by a convex subgroup carries a
-linear order making it an ordered group again, and any two convex subgroups are comparable.
+lying between two of its members. That definition, the closure and preimage constructions
+and the elementary exclusion lemmas need no more than a group with a linear order. The
+results that make convex subgroups useful for valuation theory need the value-group
+setting, a linearly ordered commutative group: there any two convex subgroups are
+comparable, each has a largest convex subgroup avoiding a given element, and the quotient
+by one carries a linear order making it an ordered group again — so convex subgroups are
+exactly the kernels of the order-compatible quotients of a value group.
 This file develops the basic theory following Wedhorn, *Adic Spaces* (arXiv:1910.05934v1),
 §1.4 and §7.1; the convex subgroup `cΓ_v(I)` of Wedhorn Definition 7.3 is intended to be
 built from `closure` in the forthcoming valuation-spectrum development of `Spv (A, I)`.
@@ -25,11 +29,13 @@ built from `closure` in the forthcoming valuation-spectrum development of `Spv (
 
 * `TauCeti.ConvexSubgroup Γ` : The type of order-convex subgroups of `Γ`.
 * `TauCeti.ConvexSubgroup.quotientLinearOrder` : The linear order on `Γ ⧸ H.toSubgroup`
-  induced by a convex subgroup `H`, with `IsOrderedMonoid` compatibility.
+  induced by a convex subgroup `H`.
+* `TauCeti.ConvexSubgroup.quotientIsOrderedMonoid` : That order is compatible with the
+  quotient group structure.
 * `TauCeti.ConvexSubgroup.closure S` : The smallest convex subgroup containing a set.
 * `TauCeti.ConvexSubgroup.maxAvoid hγ` : The largest convex subgroup avoiding `γ ≠ 1`.
-* `TauCeti.ConvexSubgroup.comap` : The preimage of a convex subgroup under an ordered
-  group homomorphism.
+* `TauCeti.ConvexSubgroup.comap` : The preimage of a convex subgroup under a monotone
+  monoid homomorphism.
 
 ## Main results
 
@@ -197,13 +203,15 @@ theorem closure_le {S : Set Γ} {H : ConvexSubgroup Γ} : closure S ≤ H ↔ S 
 /-- The preimage of a convex subgroup under an ordered group homomorphism is a convex
 subgroup. This lifts convex subgroups from quotient value groups back to the original
 value group. -/
-def comap {Δ : Type*} [Group Δ] [LinearOrder Δ] (f : Γ →*o Δ)
+def comap {Δ F : Type*} [Group Δ] [LinearOrder Δ] [FunLike F Γ Δ]
+    [MonoidHomClass F Γ Δ] [OrderHomClass F Γ Δ] (f : F)
     (K : ConvexSubgroup Δ) : ConvexSubgroup Γ where
-  toSubgroup := K.toSubgroup.comap f.toMonoidHom
-  ordConnected' := K.ordConnected'.preimage_mono f.monotone'
+  toSubgroup := K.toSubgroup.comap (MonoidHomClass.toMonoidHom f)
+  ordConnected' := K.ordConnected'.preimage_mono (OrderHomClass.monotone f)
 
 @[simp]
-theorem mem_comap {Δ : Type*} [Group Δ] [LinearOrder Δ] {f : Γ →*o Δ}
+theorem mem_comap {Δ F : Type*} [Group Δ] [LinearOrder Δ] [FunLike F Γ Δ]
+    [MonoidHomClass F Γ Δ] [OrderHomClass F Γ Δ] {f : F}
     {K : ConvexSubgroup Δ} {x : Γ} :
     x ∈ comap f K ↔ f x ∈ K :=
   Iff.rfl
