@@ -65,22 +65,6 @@ noncomputable def divByS (t s : A) : Localization.Away s :=
   IsLocalization.mk' (Localization.Away s) t
     (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s)
 
-omit [TopologicalSpace A] in
-/-- When `s = 1`, the fraction `t/1` equals `algebraMap t`. -/
-theorem divByS_eq_algebraMap (t : A) :
-    divByS t (1 : A) = algebraMap A (Localization.Away (1 : A)) t := by
-  unfold divByS
-  exact IsLocalization.mk'_one (M := Submonoid.powers (1 : A))
-    (S := Localization.Away (1 : A)) t
-
-/-- **Clearing the denominator**: `s · (t/s) = t` in `Localization.Away s`. -/
-theorem algebraMap_mul_divByS {R : Type*} [CommRing R] (t s : R) :
-    algebraMap R (Localization.Away s) s * divByS t s =
-      algebraMap R (Localization.Away s) t := by
-  unfold divByS
-  exact IsLocalization.mk'_spec' (Localization.Away s) t
-    (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s)
-
 /-- The ring of definition `D = A₀[t₁/s, …, tₙ/s]` of `Localization.Away s`. -/
 noncomputable def locSubring (P : PairOfDefinition A) (T : Finset A)
     (s : A) : Subring (Localization.Away s) :=
@@ -139,12 +123,7 @@ theorem locNhd_preimage_eq_locIdeal_pow (P : PairOfDefinition A) (T : Finset A)
     (s : A) (n : ℕ) :
     (locSubring P T s).subtype ⁻¹' (locNhd P T s n : Set (Localization.Away s)) =
       ((locIdeal P T s) ^ n : Ideal (locSubring P T s)) := by
-  ext d
-  constructor
-  · rintro ⟨d', hd', heq⟩
-    exact (Subtype.val_injective heq) ▸ hd'
-  · intro hd
-    exact ⟨d, hd, rfl⟩
+  exact Set.preimage_image_eq _ Subtype.val_injective
 
 /-- Products of the `n`-th neighbourhood land in the `n`-th neighbourhood: this is the
 multiplicative half of the subgroup basis. -/
