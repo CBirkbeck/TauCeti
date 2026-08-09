@@ -139,12 +139,12 @@ theorem ContractionSemigroup.hasGrowthBound_of_nonneg_omega_of_one_le_const
 /-! ## Growth Bounds and Exponential Type -/
 
 omit [CompleteSpace X] in
-/-- **The integer-time bound from the unit-interval bound.** If `‖S t‖ ≤ M` for every `t` in
-`[0, 1]`, then `‖S k‖ ≤ M ^ k` at every natural time `k`. -/
+/-- **The integer-time bound from the one-step bound.** If `‖S 1‖ ≤ M`, then `‖S k‖ ≤ M ^ k` at
+every natural time `k`. -/
 private theorem norm_realOperator_natCast_le_pow (S : StronglyContinuousSemigroup X) {M : ℝ}
-    (hMbound : ∀ t : ℝ, 0 ≤ t → t ≤ 1 → ‖S.realOperator t‖ ≤ M) (k : ℕ) :
+    (hM_one : ‖S.realOperator 1‖ ≤ M) (k : ℕ) :
     ‖S.realOperator (k : ℝ)‖ ≤ M ^ k := by
-  have hM : 0 ≤ M := (norm_nonneg _).trans (hMbound 0 le_rfl zero_le_one)
+  have hM : 0 ≤ M := (norm_nonneg _).trans hM_one
   induction k with
   | zero =>
     simp only [Nat.cast_zero, S.realOperator_zero]
@@ -156,7 +156,7 @@ private theorem norm_realOperator_natCast_le_pow (S : StronglyContinuousSemigrou
       _ ≤ ‖S.realOperator 1‖ * ‖S.realOperator ↑k‖ :=
           S.norm_realOperator_add_le 1 ↑k zero_le_one (Nat.cast_nonneg k)
       _ ≤ M * M ^ k :=
-          mul_le_mul (hMbound 1 zero_le_one le_rfl) ih (norm_nonneg _) hM
+          mul_le_mul hM_one ih (norm_nonneg _) hM
       _ = M ^ (k + 1) := by ring
 
 /-- Every C₀-semigroup has a finite exponential growth bound
@@ -178,7 +178,8 @@ theorem StronglyContinuousSemigroup.existsGrowthBound (S : StronglyContinuousSem
         S.norm_realOperator_add_le _ _ hfrac_nn (Nat.cast_nonneg n)
     _ ≤ M * M ^ n :=
         mul_le_mul (hMbound _ hfrac_nn hfrac_le1)
-          (norm_realOperator_natCast_le_pow S hMbound n) (norm_nonneg _) (by linarith)
+          (norm_realOperator_natCast_le_pow S (hMbound 1 zero_le_one le_rfl) n)
+          (norm_nonneg _) (by linarith)
     _ ≤ M * Real.exp (Real.log M * t) := by
         apply mul_le_mul_of_nonneg_left _ (by linarith)
         calc (M : ℝ) ^ n
