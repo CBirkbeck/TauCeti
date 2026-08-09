@@ -192,8 +192,11 @@ theorem pairOfDefinition_ringOfDefinition :
 
 /-- **The pair of definition is `(K⟦X⟧, (X))`**, said without touching the dependent field:
 `PairOfDefinition.idealImage n` is the image of `(X)ⁿ` in `K⸨X⸩`, so it can be compared with a
-valuation bound directly. -/
-@[simp]
+valuation bound directly.
+
+Deliberately not `@[simp]`: `PairOfDefinition.mem_idealImage` is itself a simp lemma, so simp
+rewrites this left-hand side further, to an existential over the subring, and the `simpNF`
+linter rejects the attribute. Rewrite with this lemma explicitly. -/
 theorem mem_pairOfDefinition_idealImage (n : ℕ) (f : K⸨X⸩) :
     f ∈ (pairOfDefinition K).idealImage n ↔ Valued.v f ≤ exp (-(n : ℤ)) := by
   rw [PairOfDefinition.mem_idealImage]
