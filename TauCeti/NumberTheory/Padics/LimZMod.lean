@@ -154,12 +154,10 @@ omit [Fact p.Prime] in
     using compat_of_adjacentCompat p x.property k₁ k₂ hk
 
 omit [Fact p.Prime] in
-/-- The element-level form of `compatProj_compat`.
-
-Not a `simp` lemma: `compatProj_apply` is itself `simp` and rewrites the left-hand side's
-`compatProj p k₂ x` to `x.val k₂` first, so this side is never in simp-normal form and the
-`simpNF` linter rejects the attribute. Callers wanting the component form should use
-`x.property` through `compat_of_adjacentCompat`. -/
+-- Not tagged `@[simp]`: `compatProj_apply` is itself `simp` and rewrites this left-hand side's
+-- `compatProj p k₂ x` to `x.val k₂`, so the side is never in simp-normal form and `simpNF`
+-- rejects the attribute.
+/-- The element-level form of `compatProj_compat`. -/
 theorem compatProj_compat_apply (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) (x : compatSubring p) :
     ZMod.castHom (pow_dvd_pow p hk) (ZMod (p ^ k₁)) (compatProj p k₂ x) = compatProj p k₁ x :=
   RingHom.congr_fun (compatProj_compat p k₁ k₂ hk) x
@@ -190,13 +188,20 @@ omit [Fact p.Prime] in
   (rfl)
 
 omit [Fact p.Prime] in
-/-- The factorisation is unique: the projections determine a map into the limit. -/
+/-- **The projections are jointly injective**: two maps into the limit agreeing after every
+projection are equal. -/
+theorem compatProj_comp_injective {S : Type*} [NonAssocSemiring S] {F G : S →+* compatSubring p}
+    (h : ∀ n, (compatProj p n).comp F = (compatProj p n).comp G) : F = G := by
+  ext s n
+  exact RingHom.congr_fun (h n) s
+
+omit [Fact p.Prime] in
+/-- The factorisation is unique. -/
 theorem compatSubring.lift_unique {S : Type*} [NonAssocSemiring S] (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
     (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
     (F : S →+* compatSubring p) (hF : ∀ n, (compatProj p n).comp F = g n) :
-    F = compatSubring.lift p g hg := by
-  ext s n
-  exact RingHom.congr_fun (hF n) s
+    F = compatSubring.lift p g hg :=
+  compatProj_comp_injective p fun n => by rw [hF n, compatProj_comp_lift]
 
 /-- The map out of the limit into `ℤ_[p]`, from the universal property. -/
 private noncomputable def limZModToPadic : compatSubring p →+* ℤ_[p] :=
