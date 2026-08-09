@@ -17,7 +17,8 @@ a general polynomial, and says nothing about surjectivity. Both are added here.
 ## Main results
 
 * `AdjoinRoot.map_mk`: the map sends the class of `x` to the class of `x.map f`. Mathlib states
-  this only in the specialised form `WeierstrassCurve.Affine.CoordinateRing.map_mk`.
+  this only in the specialised form `WeierstrassCurve.Affine.CoordinateRing.map_mk`. Marked
+  `@[simp]`, like its neighbours `AdjoinRoot.map_of` and `AdjoinRoot.map_root`.
 * `AdjoinRoot.map_surjective`: the map is surjective when `f` is.
 
 Stated over arbitrary commutative rings.
@@ -47,6 +48,7 @@ variable {R S : Type*} [CommRing R] [CommRing S]
 
 /-- `AdjoinRoot.map` on the class of a polynomial is the class of its image. Mathlib states this
 for `WeierstrassCurve.Affine.CoordinateRing.map` but not for the underlying `AdjoinRoot.map`. -/
+@[simp]
 lemma map_mk {f : R →+* S} {p : R[X]} {q : S[X]} (h : q ∣ p.map f) (x : R[X]) :
     map f p q h (mk p x) = mk q (x.map f) := by
   rw [map, lift_mk, ← Polynomial.eval₂_map]
