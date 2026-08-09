@@ -35,6 +35,9 @@ something derivable from cofinality.
 * `TauCeti.Valuation.cofinalIdeal v hH` : Those elements, as an ideal.
 
 ## Main results
+* `TauCeti.Valuation.cofinalValueFor_closure_singleton_of_le` : A value bounded by
+  `h < 1` is cofinal for the convex subgroup `h` generates — below `1`, a larger value
+  generates a smaller subgroup.
 
 * `TauCeti.Valuation.cofinalValueFor_iff_isCofinalElement` : For a non-vanishing value, the
   valuation-side predicate agrees with the group-side `IsCofinalElement` on the value group.
@@ -92,6 +95,13 @@ theorem CofinalValueFor.of_le {v : Valuation A Γ₀}
     (h : CofinalValueFor v H a) (hba : v b ≤ v a) : CofinalValueFor v H b := fun γ hγ ↦
   let ⟨n, hn⟩ := h γ hγ
   ⟨n, lt_of_le_of_lt (pow_le_pow_left' (v.restrict_le_iff.mpr hba) n) hn⟩
+
+/-- Cofinality for a larger convex subgroup implies cofinality for a smaller one: the
+monotonicity that makes the family in Wedhorn Lemma 7.2 downward closed. -/
+theorem CofinalValueFor.mono {v : Valuation A Γ₀}
+    {H K : Subgroup (valueGroup (.ofClass v))} {a : A}
+    (h : CofinalValueFor v K a) (hHK : H ≤ K) : CofinalValueFor v H a :=
+  cofinalValueFor_def.mpr fun g hg ↦ cofinalValueFor_def.mp h g (hHK hg)
 
 /-- A vanishing value is cofinal for every subgroup (Wedhorn's remark after
 Definition 1.16: the adjoined base `0` is cofinal for every subgroup). -/
@@ -181,6 +191,20 @@ theorem CofinalValueFor.mul_left {v : Valuation A Γ₀}
       rw [valueGroup.mk_mul]; simp
     rw [← hmul]
     exact this
+
+/-- A value bounded above by `h < 1` is cofinal for the convex subgroup `h` generates. This is
+the inversion at the heart of Wedhorn's choice of `h := max { v t : t ∈ T }`: below `1` a
+*larger* value generates a *smaller* convex subgroup, so the maximum yields the subgroup that
+every generator is cofinal for. -/
+theorem cofinalValueFor_closure_singleton_of_le {v : Valuation A Γ₀} {a : A}
+    {h : valueGroup (.ofClass v)} (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0)
+    (hle : valueGroup.mk (.ofClass v) 1 a (by simp) h0 ≤ h) (hlt : h < 1) :
+    CofinalValueFor v (TauCeti.ConvexSubgroup.closure {h}).toSubgroup a := by
+  refine (cofinalValueFor_iff_isCofinalElement h0).mpr ?_
+  have hgreatest : IsGreatest {valueGroup.mk (.ofClass v) 1 a (by simp) h0, h} h :=
+    ⟨Set.mem_insert_of_mem _ rfl, by rintro x (rfl | rfl) <;> simp [hle]⟩
+  exact (TauCeti.isGreatest_convexSubgroup_isCofinalElement hgreatest hlt).1 _
+    (Set.mem_insert _ _)
 
 /-- A cofinal value lies strictly below `1`. -/
 theorem CofinalValueFor.lt_one {v : Valuation A Γ₀}
