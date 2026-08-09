@@ -213,22 +213,30 @@ lemma intValuationDef_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v
 /-- **The correspondence preserves valuations**: the valuation of `𝒪_S` at the prime above `v` is
 the valuation of `R` at `v`. -/
 @[simp]
-lemma valuation_integerHeightOneSpectrumEquiv (v : {v : HeightOneSpectrum R // v ∉ S}) (x : K) :
-    (integerHeightOneSpectrumEquiv K S v).valuation K x
-      = (v : HeightOneSpectrum R).valuation K x := by
-  have hR (a : R) : (integerHeightOneSpectrumEquiv K S v).valuation K (algebraMap R K a)
-      = (v : HeightOneSpectrum R).valuation K (algebraMap R K a) := by
-    have e1 : (integerHeightOneSpectrumEquiv K S v).valuation K (algebraMap R K a)
-        = (integerPrimeOverOfNotMem K S v.property).intValuationDef
+lemma valuation_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉ S) (x : K) :
+    (integerPrimeOverOfNotMem K S hv).valuation K x = v.valuation K x := by
+  have hR (a : R) : (integerPrimeOverOfNotMem K S hv).valuation K (algebraMap R K a)
+      = v.valuation K (algebraMap R K a) := by
+    have e1 : (integerPrimeOverOfNotMem K S hv).valuation K (algebraMap R K a)
+        = (integerPrimeOverOfNotMem K S hv).intValuationDef
             (algebraMap R (S.integer K) a) := by
       rw [IsScalarTower.algebraMap_apply R (S.integer K) K a,
         HeightOneSpectrum.valuation_of_algebraMap]
       rfl
-    rw [e1, intValuationDef_integerPrimeOverOfNotMem K S v.property a,
+    rw [e1, intValuationDef_integerPrimeOverOfNotMem K S hv a,
       HeightOneSpectrum.valuation_of_algebraMap]
     rfl
   obtain ⟨a, b, -, rfl⟩ := IsFractionRing.div_surjective (A := R) x
   rw [map_div₀, map_div₀, hR a, hR b]
+
+/-- The correspondence preserves valuations, phrased through the equivalence. Not a `simp` lemma:
+`integerHeightOneSpectrumEquiv_apply` rewrites the left-hand side to
+`integerPrimeOverOfNotMem` first, so this form is never in normal form — the `simp` lemma is
+`valuation_integerPrimeOverOfNotMem` above. -/
+lemma valuation_integerHeightOneSpectrumEquiv (v : {v : HeightOneSpectrum R // v ∉ S}) (x : K) :
+    (integerHeightOneSpectrumEquiv K S v).valuation K x
+      = (v : HeightOneSpectrum R).valuation K x := by
+  rw [integerHeightOneSpectrumEquiv_apply, valuation_integerPrimeOverOfNotMem]
 
 end IsDedekindDomain
 
