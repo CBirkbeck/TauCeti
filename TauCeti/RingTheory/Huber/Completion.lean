@@ -396,6 +396,7 @@ private theorem completionIdealImageIdeal_le (P : PairOfDefinition A) (n : ℕ) 
 
 /-- Wedhorn Remark 6.8: the `n`-th power of the ideal of definition of the completion is exactly
 the closure of the image of `Iⁿ`. -/
+@[simp]
 theorem completionIdeal_pow (P : PairOfDefinition A) (n : ℕ) :
     P.completionIdeal ^ n = P.completionIdealImageIdeal n :=
   le_antisymm (P.completionIdeal_pow_le n) (P.completionIdealImageIdeal_le n)
@@ -427,11 +428,20 @@ noncomputable def completion (P : PairOfDefinition A) :
 theorem completion_ringOfDefinition (P : PairOfDefinition A) :
     P.completion.ringOfDefinition = P.completionRingOfDefinition := (rfl)
 
-/-- Membership in the ideal of definition of the completed pair is membership in `I · Â₀`.
+/-- The ideal of definition of the completed pair is `Î`, transported along
+`TauCeti.Huber.PairOfDefinition.completion_ringOfDefinition`.
 
-Stated as a membership characterisation rather than an equation because the type of
-`idealOfDefinition` depends on `ringOfDefinition`, which the opaque body of `completion` does not
-expose. -/
+A bare equation `P.completion.idealOfDefinition = P.completionIdeal` does not typecheck: the two
+sides live in `Ideal ↥P.completion.ringOfDefinition` and `Ideal P.completionRingOfDefinition`,
+and the opaque body of `completion` does not let the elaborator identify those. Comapping along
+the subring congruence puts both in the same type. -/
+theorem completion_idealOfDefinition (P : PairOfDefinition A) :
+    P.completion.idealOfDefinition =
+      P.completionIdeal.comap
+        (RingEquiv.subringCongr (completion_ringOfDefinition P)).toRingHom := (rfl)
+
+/-- Membership in the ideal of definition of the completed pair is membership in `I · Â₀`, the
+pointwise form of `TauCeti.Huber.PairOfDefinition.completion_idealOfDefinition`. -/
 @[simp]
 theorem mem_completion_idealOfDefinition (P : PairOfDefinition A)
     {x : P.completion.ringOfDefinition} :
