@@ -133,13 +133,17 @@ def compatProj (n : ℕ) : compatSubring p →+* ZMod (p ^ n) :=
   (Pi.evalRingHom (fun n : ℕ => ZMod (p ^ n)) n).comp (compatSubring p).subtype
 
 omit [Fact p.Prime] in
+/-- The `n`-th projection reads off the `n`-th component. -/
+@[simp] theorem compatProj_apply (n : ℕ) (x : compatSubring p) : compatProj p n x = x.val n :=
+  (rfl)
+
+omit [Fact p.Prime] in
 /-- The projections commute with the tower's connecting maps, which is the hypothesis
 `PadicInt.lift` requires. -/
 theorem compatProj_compat (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) :
     (ZMod.castHom (pow_dvd_pow p hk) (ZMod (p ^ k₁))).comp (compatProj p k₂) = compatProj p k₁ := by
   ext x
-  simpa only [RingHom.comp_apply, compatProj, Pi.evalRingHom_apply, RingHom.coe_comp,
-    Function.comp_apply, Subring.coe_subtype]
+  simpa only [RingHom.comp_apply, compatProj_apply]
     using compat_of_adjacentCompat p x.property k₁ k₂ hk
 
 /-- The map out of the limit into `ℤ_[p]`, from the universal property. -/
@@ -150,10 +154,6 @@ private noncomputable def limZModToPadic : compatSubring p →+* ℤ_[p] :=
 private noncomputable def padicToLimZMod : ℤ_[p] →+* compatSubring p :=
   RingHom.codRestrict (RingHom.pi fun n : ℕ => PadicInt.toZModPow n) (compatSubring p)
     fun z n => RingHom.congr_fun (PadicInt.zmod_cast_comp_toZModPow n (n + 1) n.le_succ) z
-
-omit [Fact p.Prime] in
-private theorem compatProj_apply (n : ℕ) (x : compatSubring p) : compatProj p n x = x.val n :=
-  (rfl)
 
 private theorem padicToLimZMod_val (z : ℤ_[p]) (n : ℕ) :
     (padicToLimZMod p z).val n = PadicInt.toZModPow n z :=
