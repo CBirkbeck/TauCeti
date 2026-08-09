@@ -116,7 +116,7 @@ lemma mapAlong_id (P : W.toAffine.Point) :
 lemma mapAlong_mapAlong {T : Type*} [CommRing T] (g : S →+* T) (hg : Function.Injective g)
     (P : W.toAffine.Point) :
     mapAlong g hg (mapAlong f hf P) = mapAlong (g.comp f) (hg.comp hf) P := by
-  rcases P with _ | ⟨x, y, h⟩ <;> simp [mapAlong] <;> rfl
+  rcases P with _ | ⟨x, y, h⟩ <;> rfl
 
 /-- **The point map is injective.** -/
 lemma mapAlong_injective : Function.Injective (mapAlong f hf (W := W)) := by
@@ -138,7 +138,14 @@ variable {F K : Type*} [Field F] [Field K] [DecidableEq F] [DecidableEq K] [Alge
 lemma mapAlong_eq_map (P : W.toAffine.Point) :
     mapAlong (algebraMap F K) (algebraMap F K).injective P
       = Affine.Point.map (W' := W) (Algebra.ofId F K) P := by
-  rcases P with _ | ⟨x, y, h⟩ <;> rfl
+  -- The statement typechecks on two curve identifications: `W⁄F` is `W`, since `algebraMap F F`
+  -- is `RingHom.id F`, and `W⁄K` is `W.map (algebraMap F K)`, which is `baseChange` unfolded.
+  -- `map_some` is applied with `W'`, `F` and `K` given explicitly: left to unification those
+  -- identifications are solved by `whnf` and exceed the elaboration budget.
+  rcases P with _ | ⟨x, y, h⟩
+  · exact (Affine.Point.map_zero (Algebra.ofId F K)).symm
+  · rw [mapAlong_some]
+    exact (Affine.Point.map_some (W' := W) (F := F) (K := K) (Algebra.ofId F K) h).symm
 
 end Field
 
