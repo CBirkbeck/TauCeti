@@ -54,6 +54,13 @@ the two uses Wedhorn makes of it, and both appear here.
   an invariant of the valuation class, which is what lets `Spv (A, I)` be carved out of the
   valuation spectrum.
 
+## Implementation notes
+
+Ported from the AINTLIB AdicSpaces development (`AINTLIB`, Apache-2.0), which supplied the
+statement shapes and proof skeleton for Wedhorn's §7.1 — Lemma 7.2's two halves, the case split
+of Definition 7.3, and Lemma 7.4. The value-group side is rebuilt here against Mathlib's
+`MonoidWithZeroHom.valueGroup` API rather than the parallel construction used there.
+
 ## References
 
 * T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, Lemma 7.1, Lemma 7.2, Definition 7.3, Lemma 7.4
@@ -154,7 +161,7 @@ def IsGreatestIdealCofinal (v : Valuation A Γ₀) (I : Ideal A)
 theorem IsGreatestIdealCofinal.unique {v : Valuation A Γ₀} {I : Ideal A}
     {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hH : IsGreatestIdealCofinal v I H) (hK : IsGreatestIdealCofinal v I K) : H = K :=
-  le_antisymm (hK.2 H hH.1) (hH.2 K hK.1)
+  (show IsGreatest {L | IdealCofinalFor v L I} H from hH).unique hK
 
 /-- For the zero ideal the greatest element is the whole value group (Wedhorn's first
 reduction: "if `v(I) = {0}` we may choose `H = Γ_v`"). -/
