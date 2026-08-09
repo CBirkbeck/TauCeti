@@ -79,6 +79,7 @@ lemma mapRingHom_some {x y : R} (h : W.toAffine.Nonsingular x y) :
   simp [mapRingHom]
 
 /-- **The point map preserves negation**, over any commutative ring. -/
+@[simp]
 lemma mapRingHom_neg (P : W.toAffine.Point) :
     mapRingHom f hf (-P) = -mapRingHom f hf P := by
   rcases P with _ | ⟨x, y, h⟩
@@ -118,6 +119,7 @@ variable {F K : Type*} [Field F] [Field K] [DecidableEq F] [DecidableEq K]
   {W : _root_.WeierstrassCurve F} (f : F →+* K)
 
 /-- **The point map is additive**: over a field it commutes with the group law. -/
+@[simp]
 lemma mapRingHom_add (P Q : W.toAffine.Point) :
     mapRingHom f f.injective (P + Q)
       = mapRingHom f f.injective P + mapRingHom f f.injective Q := by
@@ -158,6 +160,7 @@ lemma mapRingHomAddMonoidHom_apply (P : W.toAffine.Point) :
 
 /-- **The point map commutes with `ℤ`-multiples**, which is what a multiplication-by-`n` argument
 transported along `f` needs. -/
+@[simp]
 lemma mapRingHom_zsmul (n : ℤ) (P : W.toAffine.Point) :
     mapRingHom f f.injective (n • P) = n • mapRingHom f f.injective P :=
   (mapRingHomAddMonoidHom W f).map_zsmul n P
