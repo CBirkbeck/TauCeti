@@ -96,6 +96,14 @@ noncomputable def locSubring (P : PairOfDefinition A) (T : Finset A)
     ((algebraMap A (Localization.Away s)) '' (P.ringOfDefinition : Set A) ∪
      Set.range (fun t : T ↦ divByS (t : A) s))
 
+/-- The subring coercion carries the `D`-action on itself to multiplication in `Aₛ`. Factored out
+because the span inductions below hit this step repeatedly. -/
+private theorem coe_smul_locSubring (P : PairOfDefinition A) (T : Finset A) (s : A)
+    (r d : locSubring P T s) :
+    ((r • d : locSubring P T s) : Localization.Away s) =
+      (r : Localization.Away s) * (d : Localization.Away s) :=
+  MulMemClass.coe_mul ..
+
 /-- The image of `A₀` under `algebraMap` is contained in `D`. -/
 theorem algebraMap_ringOfDefinition_subset_locSubring (P : PairOfDefinition A)
     (T : Finset A) (s : A) :
@@ -178,8 +186,7 @@ private theorem locNhd_invS_mem (P : PairOfDefinition A) (T : Finset A) (s : A) 
     simp only [AddMemClass.coe_add, mul_add]
     exact (locSubring P T s).add_mem h₁ h₂
   · intro r d₁ _ h₁
-    rw [show (↑(r • d₁) : Localization.Away s) = ↑r * ↑d₁ from MulMemClass.coe_mul ..,
-      mul_left_comm]
+    rw [coe_smul_locSubring, mul_left_comm]
     exact (locSubring P T s).mul_mem r.property h₁
 
 /-- Multiplying `1/s` by an element of `locNhd (n + N)` lands in `locNhd n`, once `N` is large
@@ -222,6 +229,8 @@ private theorem locNhd_algMap_step [IsTopologicalRing A] (P : PairOfDefinition A
     obtain ⟨c, hc, hval⟩ := (P.mem_idealImage i).mp (hm₀ ((P.mem_idealImage m₀).mpr ⟨b, hb, rfl⟩))
     -- `algebraMapD` is a codomain restriction of `algebraMap`, so its value coerces to that map
     change algebraMap A _ a * algebraMap A _ ↑b ∈ _
+    -- `hval`'s right side is the beta-redex `(fun x => a * x) ↑b`, which `rw` cannot match;
+    -- `show` states the reduced form and is the only step that reaches this goal.
     rw [← map_mul, show a * (↑b : A) = ↑c from hval.symm]
     exact ⟨algebraMapD P T s c,
       by rw [locIdeal, ← Ideal.map_pow]; exact Ideal.mem_map_of_mem _ hc, rfl⟩
@@ -230,8 +239,7 @@ private theorem locNhd_algMap_step [IsTopologicalRing A] (P : PairOfDefinition A
     simp only [AddMemClass.coe_add, mul_add]
     exact (locNhd P T s i).add_mem h₁ h₂
   · intro r d₁ _ h₁
-    rw [show (↑(r • d₁) : Localization.Away s) = ↑r * ↑d₁ from MulMemClass.coe_mul ..,
-      mul_left_comm]
+    rw [coe_smul_locSubring, mul_left_comm]
     obtain ⟨e, he, he_eq⟩ := h₁
     exact ⟨r * e, Ideal.mul_mem_left _ r he,
       congrArg ((↑r : Localization.Away s) * ·) he_eq⟩
@@ -408,10 +416,7 @@ theorem continuous_locTopology_of_continuous_algebraMap_of_isPowerBounded {B : T
       rw [← hp, Polynomial.aeval_eq_sum_range, Finset.sum_mul, map_sum]
       refine G.toAddSubgroup.sum_mem fun i _ ↦ ?_
       rw [Algebra.smul_def, Algebra.algebraMap_ofSubsemiring_apply,
-        show ((p.coeff i : Localization.Away s) * divByS t s ^ i) *
-              algebraMap A (Localization.Away s) (b : A) =
-            ((p.coeff i : Localization.Away s) *
-              algebraMap A (Localization.Away s) (b : A)) * divByS t s ^ i from by ring,
+        mul_right_comm,
         map_mul, map_pow]
       exact hzV (Set.mul_mem_mul (hWV (hm _ (p.coeff i).property b hb)) ⟨i, rfl⟩)
   let _ : TopologicalSpace (Localization.Away s) := locTopology P T s hopen
@@ -437,13 +442,10 @@ theorem continuous_locTopology_of_continuous_algebraMap_of_isPowerBounded {B : T
   · intro r
     simp
   · intro d₁ d₂ _ _ h₁ h₂ r
-    rw [show (locSubring P T s).subtype (r * (d₁ + d₂)) =
-      (locSubring P T s).subtype (r * d₁) + (locSubring P T s).subtype (r * d₂) by
-        simp [mul_add], map_add]
+    rw [mul_add, map_add, map_add]
     exact W.toAddSubgroup.add_mem (h₁ r) (h₂ r)
   · intro c d _ hd r
-    rw [show (locSubring P T s).subtype (r * c • d) =
-      (locSubring P T s).subtype ((r * c) * d) by congr 1; rw [smul_eq_mul, mul_assoc]]
+    rw [smul_eq_mul, ← mul_assoc]
     exact hd (r * c)
 
 end
