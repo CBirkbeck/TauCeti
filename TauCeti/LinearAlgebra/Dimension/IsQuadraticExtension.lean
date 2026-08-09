@@ -10,9 +10,11 @@ public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
 # Generators of a quadratic extension
 
 Mathlib's `Algebra.IsQuadraticExtension K L` records that `L/K` has degree two but says nothing
-about the elements realising that degree. This file supplies the two facts a consumer needs in
+about the elements realising that degree. This file supplies the facts a consumer needs in
 order to *choose* and *change* a generator:
 
+`Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap`: a generator exists at all, so a
+construction over `L/K` may pick one.
 `Algebra.IsQuadraticExtension.exists_eq_algebraMap_add_algebraMap_mul`: any two generators of a
 quadratic extension differ by `θ' = b + aθ` with `a ≠ 0`, so a statement proved for one generator
 transfers to every other. This is what makes a construction defined by "pick any `θ ∈ L ∖ K`"
@@ -28,8 +30,8 @@ Adapted from the FLT project (`ImperialCollegeLondon/FLT`,
 `FLT/Mathlib/LinearAlgebra/Dimension/IsQuadraticExtension.lean` at the roadmap's pin
 `bc2fe8ff7396`, FLT PR #1088, Apache 2.0). That file's own header reads
 `Authors: Kevin Buzzard, Claude`; following this repository's convention for adapted material,
-the upstream authorship is credited here rather than in the copyright header. Only the two
-results the twist consumes are ported; the rest of the source file — which restates
+the upstream authorship is credited here rather than in the copyright header. Only the results
+the twist consumes are ported; the rest of the source file — which restates
 `Algebra.IsQuadraticExtension` itself, already in Mathlib — is not needed.
 -/
 
@@ -48,6 +50,17 @@ theorem linearIndependent_one_of_notMem_range_algebraMap [Ring L] [Nontrivial L]
 variable [Field L] [Algebra K L] [Algebra.IsQuadraticExtension K L]
 
 namespace Algebra.IsQuadraticExtension
+
+/-- A quadratic extension has a generator: some element lies outside the base field. Were every
+element rational the extension would be trivial, contradicting `finrank = 2`. This is what lets a
+construction over `L/K` *choose* a generator. -/
+theorem exists_notMem_range_algebraMap : ∃ θ : L, θ ∉ Set.range (algebraMap K L) := by
+  by_contra! h
+  have hbot : (⊥ : Subalgebra K L) = ⊤ :=
+    Algebra.eq_top_iff.mpr fun x ↦ Algebra.mem_bot.mpr (h x)
+  have h1 := Subalgebra.bot_eq_top_iff_finrank_eq_one.mp hbot
+  have h2 := finrank_eq_two K L
+  omega
 
 /-- Any element of a quadratic extension `L/K` is a `K`-linear combination of `1` and a given
 generator `θ`, and the `θ`-coefficient is nonzero if the element also lies outside `K`. So any
