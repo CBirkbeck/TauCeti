@@ -169,19 +169,13 @@ lemma norm_energyIntegrand_apply_le_of_bounds (hLam : 0 ≤ Lam)
     (hb : ‖b₀‖ ≤ beta) (hc : ‖c₀‖ ≤ gamma) (U V : ℝ × EuclideanSpace ℝ n) :
     ‖energyIntegrand A b₀ c₀ U V‖ ≤ (Lam + beta + gamma) * ‖U‖ * ‖V‖ := by
   have step : ∀ {K p q : ℝ}, 0 ≤ K → 0 ≤ p → 0 ≤ q → p ≤ ‖U‖ → q ≤ ‖V‖ →
-      K * p * q ≤ K * ‖U‖ * ‖V‖ := by
-    intro K p q hK hp hq hpU hqV
-    calc K * p * q = K * (p * q) := by ring
-      _ ≤ K * (‖U‖ * ‖V‖) :=
-          mul_le_mul_of_nonneg_left (mul_le_mul hpU hqV hq (hp.trans hpU)) hK
-      _ = K * ‖U‖ * ‖V‖ := by ring
+      K * p * q ≤ K * ‖U‖ * ‖V‖ := fun hK hp hq hpU hqV => by gcongr
   have hbeta : 0 ≤ beta := (norm_nonneg b₀).trans hb
   have hgamma : 0 ≤ gamma := (norm_nonneg c₀).trans hc
   have hmat : ‖matrixBilinearForm A V.2 U.2‖ ≤ Lam * ‖U‖ * ‖V‖ := by
     have h := norm_matrixBilinearForm_le_of_upper_bound A ha V.2 U.2
     rw [mul_right_comm] at h
-    exact h.trans (step hLam (norm_nonneg _) (norm_nonneg _)
-      (norm_snd_le U) (norm_snd_le V))
+    exact h.trans (step hLam (norm_nonneg _) (norm_nonneg _) (norm_snd_le U) (norm_snd_le V))
   have hdrift : ‖driftForm b₀ V.1 U.2‖ ≤ beta * ‖U‖ * ‖V‖ := by
     rw [driftForm_apply, norm_mul]
     calc
