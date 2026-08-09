@@ -211,33 +211,23 @@ section Centrality
 The scalar operator commutes with every summed operator, hence so do its powers. -/
 
 include hp in
-/-- Powers of the scalar operator commute with `T(pᵏ)`. -/
-private lemma heckeTScalar_pow_comm_heckeT_prime_pow (i k : ℕ) :
-    heckeTScalar p ^ i * heckeT ⟨p ^ k, pow_pos hp.pos k⟩ =
-      heckeT ⟨p ^ k, pow_pos hp.pos k⟩ * heckeTScalar p ^ i := by
-  induction i with
-  | zero => simp
-  | succ i ih =>
-    rw [pow_succ', mul_assoc, ih, ← mul_assoc,
-      HeckeCosetModule.mul_comm_of_antiInvolution ℤ (transposeAntiInvolution 2)
-      (transposeAntiInvolution_onHeckeCoset_eq_self 2) (heckeTScalar p)
-        (heckeT ⟨p ^ k, pow_pos hp.pos k⟩),
-      mul_assoc, ← pow_succ']
+/-- Powers of the scalar operator commute with `T(pᵏ)`.
 
-include hp in
-/-- `T(p)` commutes with powers of the scalar operator. -/
-private lemma heckeT_prime_comm_heckeTScalar_pow (i : ℕ) :
-    heckeT ⟨p, hp.pos⟩ * heckeTScalar p ^ i =
-      heckeTScalar p ^ i * heckeT ⟨p, hp.pos⟩ := by
-  rw [← heckeT_prime_pow_one p hp]
-  exact (heckeTScalar_pow_comm_heckeT_prime_pow p hp i 1).symm
+The scalar operator is central by `mul_comm_of_antiInvolution`; that a commuting element's
+powers still commute is `Commute.pow_left`, so there is nothing to induct on here. -/
+private lemma commute_heckeTScalar_pow_heckeT_prime_pow (i k : ℕ) :
+    Commute (heckeTScalar p ^ i) (heckeT ⟨p ^ k, pow_pos hp.pos k⟩) :=
+  Commute.pow_left (HeckeCosetModule.mul_comm_of_antiInvolution ℤ (transposeAntiInvolution 2)
+    (transposeAntiInvolution_onHeckeCoset_eq_self 2) (heckeTScalar p)
+      (heckeT ⟨p ^ k, pow_pos hp.pos k⟩)) i
 
 include hp in
 /-- `T(p)` passes through a scalar power in front of any `T(pᵏ)`. -/
 private lemma heckeT_prime_mul_scalar_pow_mul (i k : ℕ) :
     heckeT ⟨p, hp.pos⟩ * (heckeTScalar p ^ i * heckeT ⟨p ^ k, pow_pos hp.pos k⟩) =
       heckeTScalar p ^ i * (heckeT ⟨p, hp.pos⟩ * heckeT ⟨p ^ k, pow_pos hp.pos k⟩) := by
-  rw [← mul_assoc, heckeT_prime_comm_heckeTScalar_pow p hp i, mul_assoc]
+  rw [← mul_assoc, ← heckeT_prime_pow_one p hp,
+    (commute_heckeTScalar_pow_heckeT_prime_pow p hp i 1).symm.eq, mul_assoc]
 
 include hp in
 /-- Each summand of `T(p) · S` splits in two through the recurrence. -/
