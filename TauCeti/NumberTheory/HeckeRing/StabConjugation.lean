@@ -62,46 +62,36 @@ lemma subgroupOf_conjAct_smul_mul_right_of_mem_normalizer (Γ₁ Γ₂ : Subgrou
       (ConjAct.toConjAct g • Γ₂).subgroupOf Γ₁ := by
   rw [conjAct_smul_mul_right_of_mem_normalizer Γ₂ g hh]
 
-/-- Left multiplication of the base point by `h ∈ Γ₁` conjugates the stabilizer by `h`:
-`x` stabilizes `hg` exactly when `h⁻¹xh` stabilizes `g`. -/
-lemma subgroupOf_conjAct_smul_mul_left_of_mem (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁) :
+/-- Left multiplication of the base point by anything normalizing `Γ₁` conjugates the
+stabilizer by it: `x` stabilizes `hg` exactly when `h⁻¹xh` stabilizes `g`. Membership in `Γ₁`
+itself is the special case `Subgroup.le_normalizer`.
+
+The conjugating automorphism of `↥Γ₁` is `Subgroup.normalizerMonoidHom`, which is defined for
+exactly this: `MulAut.conj h` would need `h` to be an element of `Γ₁`. -/
+lemma subgroupOf_conjAct_smul_mul_left_of_mem_normalizer (Γ₁ Γ₂ : Subgroup G) (g : G)
+    (h : Subgroup.normalizer (Γ₁ : Set G)) :
     (ConjAct.toConjAct ((h : G) * g) • Γ₂).subgroupOf Γ₁ =
-      ((ConjAct.toConjAct g • Γ₂).subgroupOf Γ₁).map (MulAut.conj h).toMonoidHom := by
+      ((ConjAct.toConjAct g • Γ₂).subgroupOf Γ₁).map
+        (Γ₁.normalizerMonoidHom h).toMonoidHom := by
   ext x
+  rw [Subgroup.mem_map_equiv]
   simp only [Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
-    ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv, Subgroup.mem_map,
-    MulEquiv.coe_toMonoidHom, MulAut.conj_apply]
-  -- Both directions produce a membership stated about a `↥Γ₁` element whose value is a
-  -- product; `change` names the underlying `G`-element so `group` can normalise it. The
-  -- `Subgroup.mem_subgroupOf` simp step above leaves the coercion implicit, which is what
-  -- makes the explicit form necessary rather than merely convenient.
-  constructor
-  · intro hx
-    refine ⟨⟨(h : G)⁻¹ * (x : G) * (h : G),
-      Γ₁.mul_mem (Γ₁.mul_mem (Γ₁.inv_mem h.2) x.2) h.2⟩, ?_, ?_⟩
-    · change (g : G)⁻¹ * ((h : G)⁻¹ * (x : G) * (h : G)) * g ∈ Γ₂
-      rw [show (g : G)⁻¹ * ((h : G)⁻¹ * (x : G) * (h : G)) * g =
-        ((h : G) * g)⁻¹ * (x : G) * ((h : G) * g) by group]
-      exact hx
-    · -- the witness conjugates back to `x`; check it on underlying elements
-      apply Subtype.ext
-      simp only [Subgroup.coe_mul, Subgroup.coe_inv]
-      group
-  · rintro ⟨y, hy, rfl⟩
-    change ((h : G) * g)⁻¹ * ((h : G) * (y : G) * (h : G)⁻¹) * ((h : G) * g) ∈ Γ₂
-    rw [show ((h : G) * g)⁻¹ * ((h : G) * (y : G) * (h : G)⁻¹) * ((h : G) * g) =
-      g⁻¹ * (y : G) * g by group]
-    exact hy
+    ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv,
+    Subgroup.normalizerMonoidHom_apply_symm_apply_coe]
+  rw [show ((h : G) * g)⁻¹ * (x : G) * ((h : G) * g) =
+    g⁻¹ * ((h : G)⁻¹ * (x : G) * (h : G)) * g by group]
 
-/-- Moving the base point by `h ∈ Γ₁` on the left is an equivalence of decomposition
-quotients, `Γ₁/Stab(hg) ≃ Γ₁/Stab(g)`, induced by `σ ↦ h⁻¹σh`.
+/-- Moving the base point on the left by anything normalizing `Γ₁` is an equivalence of
+decomposition quotients, `Γ₁/Stab(hg) ≃ Γ₁/Stab(g)`, induced by `σ ↦ h⁻¹σh`.
 
-Well-definedness is `subgroupOf_conjAct_smul_mul_left_of_mem`: the two stabilizers differ by
-conjugation by `h`, so that conjugation carries one coset relation to the other. -/
-noncomputable def decompQuotientEquivMulLeft (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁) :
+Well-definedness is `subgroupOf_conjAct_smul_mul_left_of_mem_normalizer`: the two stabilizers
+differ by that conjugation, so it carries one coset relation to the other. -/
+noncomputable def decompQuotientEquivMulLeft (Γ₁ Γ₂ : Subgroup G) (g : G)
+    (h : Subgroup.normalizer (Γ₁ : Set G)) :
     DecompQuotient Γ₁ Γ₂ ((h : G) * g) ≃ DecompQuotient Γ₁ Γ₂ g :=
-  (Subgroup.quotientEquivOfEq (subgroupOf_conjAct_smul_mul_left_of_mem Γ₁ Γ₂ g h)).trans <|
-    Quotient.congr (MulAut.conj h).symm.toEquiv fun a b ↦ by
+  (Subgroup.quotientEquivOfEq
+      (subgroupOf_conjAct_smul_mul_left_of_mem_normalizer Γ₁ Γ₂ g h)).trans <|
+    Quotient.congr (Γ₁.normalizerMonoidHom h).symm.toEquiv fun a b ↦ by
       simp only [QuotientGroup.leftRel_apply, Subgroup.mem_map_equiv,
         MulEquiv.toEquiv_eq_coe, EquivLike.coe_coe, ← map_inv, ← map_mul]
 
@@ -112,19 +102,20 @@ made so: `QuotientGroup.mk`'s implicit subgroup argument comes from the type ind
 `DecompQuotient Γ₁ Γ₂ (↑h * g)`, and simp rewrites `ConjAct.toConjAct (↑h * g)` inside it to
 `ConjAct.toConjAct ↑h * ConjAct.toConjAct g` via `ConjAct.toConjAct_mul`. `scripts/lint-env.sh`
 reports exactly that as a `simpNF` violation. Rewrite with this lemma by name. -/
-lemma decompQuotientEquivMulLeft_mk (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁) (x : Γ₁) :
+lemma decompQuotientEquivMulLeft_mk (Γ₁ Γ₂ : Subgroup G) (g : G)
+    (h : Subgroup.normalizer (Γ₁ : Set G)) (x : Γ₁) :
     decompQuotientEquivMulLeft Γ₁ Γ₂ g h (QuotientGroup.mk x) =
-      QuotientGroup.mk ((MulAut.conj h).symm x) :=
+      QuotientGroup.mk ((Γ₁.normalizerMonoidHom h).symm x) :=
   -- `(rfl)` rather than `rfl`: the equivalences are not `@[expose]`, so the parentheses opt
   -- out of exporting the definitional equality that this lemma exists to replace.
   (rfl)
 
-/-- Moving the base point on both sides — by `h ∈ Γ₁` on the left and by anything normalizing
-`Γ₂` on the right — is again an equivalence of decomposition quotients. Right multiplication
-contributes nothing (`subgroupOf_conjAct_smul_mul_right_of_mem_normalizer`), so this is
-`decompQuotientEquivMulLeft` after re-associating. -/
-noncomputable def decompQuotientEquivMulLeftRight (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁)
-    {k : G} (hk : k ∈ Subgroup.normalizer Γ₂) :
+/-- Moving the base point on both sides — on the left by anything normalizing `Γ₁`, on the
+right by anything normalizing `Γ₂` — is again an equivalence of decomposition quotients. Right
+multiplication contributes nothing (`subgroupOf_conjAct_smul_mul_right_of_mem_normalizer`), so
+this is `decompQuotientEquivMulLeft` after re-associating. -/
+noncomputable def decompQuotientEquivMulLeftRight (Γ₁ Γ₂ : Subgroup G) (g : G)
+    (h : Subgroup.normalizer (Γ₁ : Set G)) {k : G} (hk : k ∈ Subgroup.normalizer Γ₂) :
     DecompQuotient Γ₁ Γ₂ ((h : G) * g * k) ≃ DecompQuotient Γ₁ Γ₂ g :=
   (Subgroup.quotientEquivOfEq (by rw [mul_assoc])).trans
     ((decompQuotientEquivMulLeft Γ₁ Γ₂ (g * k) h).trans
@@ -133,12 +124,10 @@ noncomputable def decompQuotientEquivMulLeftRight (Γ₁ Γ₂ : Subgroup G) (g 
 
 /-- What `decompQuotientEquivMulLeftRight` does to a representative. Not `@[simp]`, for the
 same reason as `decompQuotientEquivMulLeft_mk`. -/
-lemma decompQuotientEquivMulLeftRight_mk (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁) {k : G}
-    (hk : k ∈ Subgroup.normalizer Γ₂) (x : Γ₁) :
+lemma decompQuotientEquivMulLeftRight_mk (Γ₁ Γ₂ : Subgroup G) (g : G)
+    (h : Subgroup.normalizer (Γ₁ : Set G)) {k : G} (hk : k ∈ Subgroup.normalizer Γ₂) (x : Γ₁) :
     decompQuotientEquivMulLeftRight Γ₁ Γ₂ g h hk (QuotientGroup.mk x) =
-      QuotientGroup.mk ((MulAut.conj h).symm x) :=
-  -- `(rfl)` rather than `rfl`: the equivalences are not `@[expose]`, so the parentheses opt
-  -- out of exporting the definitional equality that this lemma exists to replace.
+      QuotientGroup.mk ((Γ₁.normalizerMonoidHom h).symm x) :=
   (rfl)
 
 end DoubleCoset
