@@ -72,7 +72,7 @@ namespace TauCeti.Valuation
 
 open MonoidWithZeroHom
 
-variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+variable {A : Type*} [Ring A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
 /-- The predicate cut out by Wedhorn Lemma 7.2: every element of `I` has value cofinal
 for `H`. -/
@@ -268,6 +268,15 @@ theorem cofinalValueFor_closure_singleton_of_le {v : Valuation A Γ₀} {a : A}
     (Set.mem_insert _ _)
 
 /-! ### Reduction along the radical -/
+
+/-! ### Reduction along the radical
+
+From here commutativity is needed: the radical of an ideal is Mathlib's `Ideal.radical`, which
+is defined over a commutative semiring. Everything above needs only a ring. -/
+
+section CommRing
+
+variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
 /-- **Cofinality of an ideal depends only on its radical.** Immediate from Lemma 7.1: the
 cofinal elements form a *radical* ideal, so containment in it is insensitive to passing to the
@@ -581,5 +590,7 @@ theorem characteristicSubgroupOfIdeal_eq_top_congr_of_isEquiv {Γ₀' : Type*}
   rw [← hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top,
     ← hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top]
   exact h.hasFullCharacteristicGroup_iff
+
+end CommRing
 
 end TauCeti.Valuation
