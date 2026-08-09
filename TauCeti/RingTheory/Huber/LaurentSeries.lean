@@ -78,6 +78,21 @@ theorem isOpen_powerSeries_as_subring :
     IsOpen ((powerSeries_as_subring K : Subring K⸨X⸩) : Set K⸨X⸩) :=
   (coe_powerSeries_as_subring K) ▸ Valued.isOpen_integer K⸨X⸩
 
+/-- The power series are the valuation integers of `K⸨X⸩`, packaged as
+`Valuation.Integers`. This is what lets the divisibility/valuation dictionary
+(`Valuation.Integers.dvd_iff_le`) apply to `(X)ⁿ` directly, with no transport and no
+coefficient bookkeeping. -/
+theorem integers_powerSeries_as_subring :
+    Valuation.Integers (Valued.v : Valuation K⸨X⸩ ℤᵐ⁰) (powerSeries_as_subring K) where
+  hom_inj := Subtype.val_injective
+  map_le_one x := by
+    have hmem := x.2
+    rwa [← SetLike.mem_coe, coe_powerSeries_as_subring, SetLike.mem_coe,
+      Valuation.mem_integer_iff] at hmem
+  exists_of_le_one {r} hr := by
+    obtain ⟨F, hF⟩ := (val_le_one_iff_eq_coe K r).mp hr
+    exact ⟨powerSeriesEquivSubring K F, hF⟩
+
 /-- The variable `X`, viewed inside the ring of definition `K⟦X⟧ ⊆ K⸨X⸩`. -/
 noncomputable def subringX : powerSeries_as_subring K := powerSeriesEquivSubring K PowerSeries.X
 
@@ -102,32 +117,13 @@ at most `exp (-n)`. -/
 @[simp]
 theorem mem_idealOfDefinition_pow_iff (n : ℕ) (f : powerSeries_as_subring K) :
     f ∈ idealOfDefinition K ^ n ↔ Valued.v (f : K⸨X⸩) ≤ exp (-(n : ℤ)) := by
-  rw [idealOfDefinition_def, Ideal.span_singleton_pow, Ideal.mem_span_singleton']
-  constructor
-  · rintro ⟨g, rfl⟩
-    have hg : Valued.v (g : K⸨X⸩) ≤ 1 := by
-      have hmem := g.2
-      rwa [← SetLike.mem_coe, coe_powerSeries_as_subring, SetLike.mem_coe,
-        Valuation.mem_integer_iff] at hmem
-    have hcoe : ((g * subringX K ^ n : powerSeries_as_subring K) : K⸨X⸩)
-        = (g : K⸨X⸩) * ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) ^ n := by
-      push_cast [coe_subringX]
-      rfl
-    rw [hcoe, map_mul, valuation_X_pow]
-    calc Valued.v (g : K⸨X⸩) * exp (-(n : ℤ)) ≤ 1 * exp (-(n : ℤ)) := by gcongr
-      _ = exp (-(n : ℤ)) := one_mul _
-  · intro hf
-    have hu : Valued.v ((f : K⸨X⸩) * (((PowerSeries.X : K⟦X⟧) : K⸨X⸩) ^ n)⁻¹) ≤ 1 := by
-      rw [map_mul, map_inv₀, valuation_X_pow, ← le_div_iff₀ (by simp), div_eq_mul_inv, one_mul,
-        inv_inv]
-      exact hf
-    obtain ⟨F, hF⟩ := (val_le_one_iff_eq_coe K _).mp hu
-    refine ⟨powerSeriesEquivSubring K F, Subtype.ext ?_⟩
-    have hcoe : ((powerSeriesEquivSubring K F * subringX K ^ n : powerSeries_as_subring K) : K⸨X⸩)
-        = (F : K⸨X⸩) * ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) ^ n := by
-      push_cast [coe_subringX]
-      rfl
-    rw [hcoe, hF, inv_mul_cancel_right₀ (pow_ne_zero n (coe_X_ne_zero K))]
+  rw [idealOfDefinition_def, Ideal.span_singleton_pow, Ideal.mem_span_singleton,
+    (integers_powerSeries_as_subring K).dvd_iff_le]
+  -- `algebraMap ↥(powerSeries_as_subring K) K⸨X⸩` is `Subtype.val`, so both sides are already
+  -- the coercions; only the weight has to be evaluated.
+  change Valued.v (f : K⸨X⸩) ≤ Valued.v ((subringX K : K⸨X⸩) ^ n) ↔
+    Valued.v (f : K⸨X⸩) ≤ exp (-(n : ℤ))
+  rw [coe_subringX, valuation_X_pow]
 
 variable (K)
 
