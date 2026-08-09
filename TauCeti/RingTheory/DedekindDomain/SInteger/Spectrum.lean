@@ -26,8 +26,8 @@ Mathlib's `Ideal.comap_map_eq_self_of_isMaximal` in one direction — the extens
 
 The valuations transfer through Mathlib's `HeightOneSpectrum.valuation_liesOver`, which relates the
 valuation at a prime to the valuation at the prime below it by the ramification index. Here that
-index is `1` (`ramificationIdx'_integerPrimeOverOfNotMem_eq_one`): the extended ideal *is* the prime
-above, and a nonzero prime of a Dedekind domain does not lie in its own square. Both readings of
+index is `1` by Mathlib's `Ideal.ramificationIdx'_map_self_eq_one`, the extended ideal *being* the
+prime above. Both readings of
 the transfer are supplied — `valuation_integerPrimeOverOfNotMem` for a prime of `R` avoiding `S`,
 and `valuation_integerPrimeUnder` for an arbitrary prime of `𝒪_S`.
 
@@ -158,18 +158,6 @@ instance liesOver_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉
     rw [Ideal.under, integerPrimeOverOfNotMem_asIdeal,
       Ideal.comap_map_eq_self_of_isMaximal _ (integer_map_asIdeal_ne_top K S hv)]
 
-/-- **Inverting `S` is unramified away from `S`**: for `v ∉ S` the extension `R → 𝒪_S` has
-ramification index `1` at the prime above `v`. The extended ideal *is* that prime, and a nonzero
-prime of a Dedekind domain does not lie in its own square. -/
-lemma ramificationIdx'_integerPrimeOverOfNotMem_eq_one {v : HeightOneSpectrum R} (hv : v ∉ S) :
-    Ideal.ramificationIdx' v.asIdeal (integerPrimeOverOfNotMem K S hv).asIdeal = 1 := by
-  have hle : Ideal.map (algebraMap R (S.integer K)) v.asIdeal
-      ≤ (integerPrimeOverOfNotMem K S hv).asIdeal := le_of_eq (by simp)
-  refine not_ne_iff.mp fun h => ?_
-  rw [Ideal.ramificationIdx'_ne_one_iff hle, integerPrimeOverOfNotMem_asIdeal] at h
-  exact absurd (lt_of_lt_of_le (Ideal.pow_lt_self _ (Ideal.map_ne_bot_of_ne_bot v.ne_bot)
-    (integer_map_asIdeal_ne_top K S hv) 2 le_rfl) h) (lt_irrefl _)
-
 /-- **The correspondence preserves valuations**: the valuation of `𝒪_S` at the prime above `v` is
 the valuation of `R` at `v`. Mathlib's `valuation_liesOver` relates the two by the ramification
 index, which is `1` here. -/
@@ -178,8 +166,13 @@ lemma valuation_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉ S
     (integerPrimeOverOfNotMem K S hv).valuation K x = v.valuation K x := by
   have h := HeightOneSpectrum.valuation_liesOver (A := R) (B := S.integer K) K v
     (integerPrimeOverOfNotMem K S hv) x
-  rwa [ramificationIdx'_integerPrimeOverOfNotMem_eq_one K S hv, pow_one, Algebra.algebraMap_self,
-    RingHom.id_apply, eq_comm] at h
+  -- the extended ideal *is* the prime above, so Mathlib's `ramificationIdx'_map_self_eq_one` gives
+  -- the index directly
+  have hone : Ideal.ramificationIdx' v.asIdeal (integerPrimeOverOfNotMem K S hv).asIdeal = 1 := by
+    rw [integerPrimeOverOfNotMem_asIdeal]
+    exact Ideal.ramificationIdx'_map_self_eq_one (integer_map_asIdeal_ne_top K S hv)
+      (Ideal.map_ne_bot_of_ne_bot v.ne_bot)
+  rwa [hone, pow_one, Algebra.algebraMap_self, RingHom.id_apply, eq_comm] at h
 
 /-- The correspondence preserves valuations, phrased through the equivalence. Not a `simp` lemma:
 `integerHeightOneSpectrumEquiv_apply` rewrites the left-hand side to
