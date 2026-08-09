@@ -326,10 +326,7 @@ theorem isGreatestIdealCofinal_closure_singleton_of_span {v : Valuation A Γ₀}
       rwa [v.restrict_eq_mk h0, WithZero.coe_le_coe] at this
   · -- maximality: `h ^ n` is attained on `I`, and generates the same subgroup as `h`
     intro K hK
-    have := le_closure_singleton_of_idealCofinalFor hatt (by
-      calc h ^ n ≤ h ^ 1 := pow_le_pow_right_of_le_one' hlt.le (Nat.one_le_iff_ne_zero.mpr hn)
-        _ = h := pow_one h
-        _ < 1 := hlt) hK
+    have := le_closure_singleton_of_idealCofinalFor hatt ((pow_lt_one_iff hn).mpr hlt) hK
     rwa [TauCeti.ConvexSubgroup.closure_singleton_pow hn] at this
 
 /-- If `v` vanishes on the whole of `I` then every convex subgroup works, so the greatest one
@@ -426,10 +423,7 @@ theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal A}
     have h2 : v.restrict (t₀ ^ n) < 1 :=
       v.restrict_lt_one_iff.mpr (lt_one_of_not_idealMeetsCharacteristic hdisj hn)
     rwa [hpow, ← WithZero.coe_one, WithZero.coe_lt_coe] at h2
-  have hlt : h < 1 := by
-    by_contra hge
-    push Not at hge
-    exact absurd hlt_n (not_lt.mpr (one_le_pow_of_one_le' hge n))
+  have hlt : h < 1 := (pow_lt_one_iff hn0).mp hlt_n
   have hnot : h ∉ characteristicSubgroup v :=
     not_mem_characteristicSubgroup_of_pow_mem hdisj ht₀0 hn
   refine ⟨TauCeti.ConvexSubgroup.closure {h}, ?_,
