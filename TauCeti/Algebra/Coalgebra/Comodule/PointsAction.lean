@@ -32,6 +32,9 @@ the functor of points on scalar extensions of `V`.
   convolution monoid of points on the scalar extension.
 * `TauCeti.Comodule.baseChange_comp_endOfPoint`: the action is functorial in the
   comodule.
+* `TauCeti.Comodule.rid_lTensor_counit_endOfPoint_one_tmul` and
+  `TauCeti.Comodule.endOfPoint_self_injective`: on the regular comodule the counit
+  recovers the point from its action, so a point is determined by how it acts.
 
 ## References
 
@@ -133,31 +136,41 @@ end Functorial
 
 section Regular
 
+/-- **Recovery of a linear map from its comultiplication transport.** Pushing `comul h`
+through `f` on the right leg, swapping the factors and contracting the remaining `H`-leg
+with the counit returns `f h`: it is the counit identity `(ε ⊗ id) ∘ comul = id`
+(`Coalgebra.rTensor_counit_comul`) read through `f`.
+
+Only `R`-linearity of `f` is used. This is the engine behind
+`rid_lTensor_counit_endOfPoint_one_tmul`; `endOfPoint` keeps an `H →ₐ[R] A` argument
+because it is an action *of points*, whose action laws do need multiplicativity. -/
+theorem rid_lTensor_counit_comm_lTensor_comul (f : H →ₗ[R] A) (h : H) :
+    TensorProduct.rid R A (LinearMap.lTensor A (counit (R := R) (A := H))
+        (TensorProduct.comm R H A
+          (LinearMap.lTensor H f (Coalgebra.comul (R := R) (A := H) h)))) =
+      f h := by
+  have key : (TensorProduct.rid R A).toLinearMap ∘ₗ
+      LinearMap.lTensor A (counit (R := R) (A := H)) ∘ₗ
+        (TensorProduct.comm R H A).toLinearMap ∘ₗ LinearMap.lTensor H f =
+      f ∘ₗ (TensorProduct.lid R H).toLinearMap ∘ₗ
+        LinearMap.rTensor H (counit (R := R) (A := H)) := by
+    refine TensorProduct.ext' fun x y => ?_
+    -- Both sides are `ε x • f y`; on the right it is `f`'s linearity that pulls the scalar out.
+    simp [map_smul]
+  have hkey := LinearMap.congr_fun key (Coalgebra.comul (R := R) (A := H) h)
+  simp only [LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_toLinearMap] at hkey
+  rw [hkey, Coalgebra.rTensor_counit_comul]
+  simp
+
 /-- The counit collapses the action on the regular comodule back onto the point: the
 `H`-column of `endOfPoint H g (1 ⊗ₜ h)` carries the left Sweedler leg, so applying the
-counit there contracts `Σ ε(h₍₁₎) • g(h₍₂₎)` to `g h`.
-
-This is the coalgebra counit identity `(ε ⊗ id) ∘ comul = id`
-(`Coalgebra.rTensor_counit_comp_comul`) transported through `endOfPoint`; only the
-`R`-linearity of `g` is used, not its multiplicativity. -/
+counit there contracts `Σ ε(h₍₁₎) • g(h₍₂₎)` to `g h`. -/
 theorem rid_lTensor_counit_endOfPoint_one_tmul (g : H →ₐ[R] A) (h : H) :
     TensorProduct.rid R A
         (LinearMap.lTensor A (counit (R := R) (A := H)) (endOfPoint H g (1 ⊗ₜ[R] h))) =
       g h := by
-  have key : (TensorProduct.rid R A).toLinearMap ∘ₗ
-      LinearMap.lTensor A (counit (R := R) (A := H)) ∘ₗ
-        (TensorProduct.comm R H A).toLinearMap ∘ₗ LinearMap.lTensor H g.toLinearMap =
-      g.toLinearMap ∘ₗ (TensorProduct.lid R H).toLinearMap ∘ₗ
-        LinearMap.rTensor H (counit (R := R) (A := H)) := by
-    refine TensorProduct.ext' fun x y => ?_
-    simp [Algebra.smul_def]
-  have hkey := LinearMap.congr_fun key (Coalgebra.comul (R := R) (A := H) h)
-  simp only [LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_toLinearMap] at hkey
-  rw [endOfPoint_tmul, instSelf_coact, one_smul, hkey]
-  rw [show LinearMap.rTensor H (counit (R := R) (A := H))
-      (Coalgebra.comul (R := R) (A := H) h) = (1 : R) ⊗ₜ[R] h from
-    LinearMap.congr_fun Coalgebra.rTensor_counit_comp_comul h]
-  simp
+  rw [endOfPoint_tmul, instSelf_coact, one_smul]
+  exact rid_lTensor_counit_comm_lTensor_comul g.toLinearMap h
 
 /-- **A point is determined by its action on the regular comodule.** Two `A`-points of
 `H` that act identically on the scalar extension of the regular comodule are equal, so
@@ -166,9 +179,10 @@ the map sending a point to its action is injective.
 Over a Hopf algebra this is the faithfulness of the points action on the category of *all*
 comodules, the first half of a Tannakian reconstruction. It is not by itself faithfulness
 against the fibre functor of the *finite* comodule category: the regular comodule need not
-be finite. Bridging the two needs in addition that every comodule is the supremum of its
-finite subcomodules (`TauCeti.Subcomodule.sSup_finiteSubcomodules_eq_top`), which is not
-used here. -/
+be finite. Bridging the two needs in addition that, over a free coefficient coalgebra,
+every comodule is the supremum of its finite subcomodules
+(`TauCeti.Subcomodule.sSup_finiteSubcomodules_eq_top`, which assumes `[Module.Free R C]`);
+that is not used here. -/
 theorem endOfPoint_self_injective :
     Function.Injective fun g : H →ₐ[R] A => endOfPoint H g := by
   intro g g' hg
