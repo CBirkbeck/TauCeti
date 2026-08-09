@@ -26,7 +26,10 @@ mentions a pair of definition or an adic topology.
 
 ## References
 
-* [Mathlib's `Mathlib/Topology/Algebra/Nonarchimedean/Completion.lean`][mathlib], whose
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition and Definition 5.32 and Example 5.33, for
+  the completion of a topological group and ring; `ker_coeRingHom` is the statement there that
+  the completion map has kernel `closure {0}`.
+* Mathlib's `Mathlib/Topology/Algebra/Nonarchimedean/Completion.lean`, whose
   `Completion.isDenseInducing_coe` neighbourhood arguments both proofs follow.
 -/
 
