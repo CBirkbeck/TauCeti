@@ -13,7 +13,7 @@ public import Mathlib.Topology.Algebra.ConstMulAction
 
 This file records generic transfer instances for actions whose pointwise orbit maps are
 continuous. A submonoid, and hence a subgroup, inherits `ContinuousConstSMul` from an ambient
-scalar action.
+scalar action, and the orbit space of a second-countable space inherits second countability.
 -/
 
 public section
@@ -41,5 +41,21 @@ instance continuousConstSMul {G X : Type*} [Group G] [TopologicalSpace X] [SMul 
   TauCeti.Submonoid.continuousConstSMul S.toSubmonoid
 
 end Subgroup
+
+namespace MulAction
+
+/-- The orbit space of a second-countable space by a continuous action is second countable.
+
+The quotient map `X → Quotient (orbitRel G X)` is open for any action by continuous maps, so a
+countable basis of `X` pushes forward to a countable basis of the quotient. Note that no
+separation or discreteness hypothesis is needed: openness of the quotient map is what carries
+second countability, not properness of the action. -/
+instance secondCountableTopology_orbitRel {G X : Type*} [Group G] [MulAction G X]
+    [TopologicalSpace X] [SecondCountableTopology X] [ContinuousConstSMul G X] :
+    SecondCountableTopology (Quotient (MulAction.orbitRel G X)) :=
+  TopologicalSpace.Quotient.secondCountableTopology
+    MulAction.isOpenQuotientMap_quotientMk.isOpenMap
+
+end MulAction
 
 end TauCeti
