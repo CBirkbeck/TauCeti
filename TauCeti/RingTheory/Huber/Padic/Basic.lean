@@ -34,7 +34,8 @@ nilpotent.
 ## Implementation notes
 
 The ring of definition is all of `ℤ_[p]`, so the ideal of definition has to be carried across
-`Subring.topEquiv`; `TauCeti.Huber.IsAdic.comap` in `TauCeti/RingTheory/Huber/Basic.lean` is the
+`Subring.topEquiv`; `IsAdic.comap` in `TauCeti/Topology/Algebra/Nonarchimedean/AdicTopology.lean`
+is the
 general transport that does it.
 
 ## Scope
