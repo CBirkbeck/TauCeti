@@ -72,6 +72,18 @@ theorem MixedIIDWith.map_eq_of_const {μ : Measure Ω} [IsProbabilityMeasure μ]
         rw [← blockLaw_def, hblock]
     _ = (p : Measure α) := (measurePreserving_eval (fun _ : Fin 1 => (p : Measure α)) 0).map_eq
 
+/-- **On a constant family, the measurable `piCongrLeft` is plain reindexing.** For an equivalence
+`e : ι ≃ κ`, the measurable equivalence `MeasurableEquiv.piCongrLeft (fun _ : κ => α) e` sends `g`
+to `fun j ↦ g (e.symm j)`. -/
+private theorem coe_piCongrLeft_const {κ : Type*} (e : ι ≃ κ) :
+    ⇑(MeasurableEquiv.piCongrLeft (fun _ : κ => α) e) = fun g (j : κ) => g (e.symm j) := by
+  -- `piCongrLeft` reindexes *and* casts each coordinate along the resulting type equality; on a
+  -- constant family that cast is the identity, but only propositionally, which is why neither
+  -- `rw` nor `convert` aligns the two functions without naming the identification.
+  funext g j
+  rw [MeasurableEquiv.coe_piCongrLeft]
+  simpa using Equiv.piCongrLeft_apply_apply (fun _ : κ => α) e g (e.symm j)
+
 /-- The coordinates of a process with a constant mixing representative are independent. Along an
 injective selection the block law is a product measure, and `Measure.pi` on a finite index set is
 exactly what independence of that finite subfamily means. -/
@@ -104,17 +116,7 @@ theorem MixedIIDWith.iIndepFun_of_const {μ : Measure Ω} [IsProbabilityMeasure 
     _ = (Measure.pi fun _ : Fin s.card => (p : Measure α)).map fun g (j : s) => g (e.symm j) := by
         rw [← blockLaw_def, hblock]
     _ = Measure.pi fun _ : s => (p : Measure α) := by
-      -- `Measure.pi_map_piCongrLeft` transports along `MeasurableEquiv.piCongrLeft`, which
-      -- reindexes by `e.symm` *and* casts each coordinate along the resulting type equality.
-      -- Here the family `fun _ : s => α` is constant, so that cast is the identity and the
-      -- equiv is just reindexing — but only propositionally, so neither `rw` nor `convert`
-      -- aligns the two map functions on its own. Name the identification instead.
-      have hpiCongrLeft : ⇑(MeasurableEquiv.piCongrLeft (fun _ : s => α) e) =
-          fun g (j : s) => g (e.symm j) := by
-        funext g j
-        rw [MeasurableEquiv.coe_piCongrLeft]
-        simpa using Equiv.piCongrLeft_apply_apply (fun _ : s => α) e g (e.symm j)
-      rw [← hpiCongrLeft]
+      rw [← coe_piCongrLeft_const e]
       exact Measure.pi_map_piCongrLeft e fun _ : s => (p : Measure α)
     _ = Measure.pi fun j : s => μ.map (X (j : ι)) :=
         congrArg Measure.pi (funext fun j => (h.map_eq_of_const j).symm)
