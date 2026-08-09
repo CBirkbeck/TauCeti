@@ -286,7 +286,7 @@ private lemma heckeT_scalar_mul_sum_shift (r s : ℕ) :
 
 include hp in
 /-- The top-index summand expands through the recurrence at `p^(s−r−1)`. -/
-private lemma heckeT_prime_pow_mul_last_two_terms (r s : ℕ) (hrs : r + 2 ≤ s) :
+private lemma heckeT_prime_pow_mul_summand_split_succ (r s : ℕ) (hrs : r + 2 ≤ s) :
     (p : ℤ) ^ (r + 1) • (heckeTScalar p ^ (r + 1) *
         (heckeT ⟨p, hp.pos⟩ *
           heckeT ⟨p ^ (r + 1 + s - 2 * (r + 1)),
@@ -365,7 +365,7 @@ private lemma heckeT_prime_pow_mul_step (r s : ℕ) (hrs : r + 2 ≤ s)
     show r + 2 + 1 = r + 1 + 1 + 1 by omega,
     Finset.sum_range_succ, Finset.sum_range_succ, add_assoc]
   congr 1
-  exact heckeT_prime_pow_mul_last_two_terms p hp r s hrs
+  exact heckeT_prime_pow_mul_summand_split_succ p hp r s hrs
 
 include hp in
 /-- **Shimura, Theorem 3.24(4)** — the prime-power product formula:
