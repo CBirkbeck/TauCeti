@@ -35,8 +35,7 @@ Huber ring is nonarchimedean, which is exactly the hypothesis under which
   `TauCeti.Huber.PairOfDefinition.coe_idealImage`: membership in the image of `Iⁿ`.
 * `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero`: the images of `Iⁿ` are a neighbourhood
   basis of zero.
-* `TauCeti.Huber.fg_comap_of_equiv` and `TauCeti.Huber.IsAdic.comap`: finite generation and an
-  adic topology transport along a ring equivalence that is an
+* `TauCeti.Huber.IsAdic.comap`: an adic topology transports along a ring equivalence that is an
   inducing map. This is what lets a ring of definition carry an ideal of definition that natively
   lives in a merely equivalent ring, which is what `TauCeti.Huber.PairOfDefinition` needs.
 * `TauCeti.Huber.IsHuberRing.toNonarchimedeanRing`: a Huber ring is nonarchimedean.
@@ -134,12 +133,6 @@ section Transport
 
 variable {A B : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   [CommRing B] [TopologicalSpace B] [IsTopologicalRing B]
-
-omit [TopologicalSpace A] [IsTopologicalRing A] [TopologicalSpace B] [IsTopologicalRing B] in
-/-- Finite generation transports along a ring equivalence. -/
-theorem fg_comap_of_equiv (e : B ≃+* A) {I : Ideal A} (h : I.FG) : (I.comap e).FG := by
-  rw [← Ideal.map_symm]
-  exact Ideal.FG.map h e.symm.toRingHom
 
 omit [TopologicalSpace A] [IsTopologicalRing A] [TopologicalSpace B] [IsTopologicalRing B] in
 /-- The powers of a comapped ideal are the comapped powers, along a ring equivalence. -/

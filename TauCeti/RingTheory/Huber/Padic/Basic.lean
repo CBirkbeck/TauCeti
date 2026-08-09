@@ -89,9 +89,11 @@ noncomputable def pairOfDefinition : PairOfDefinition ℤ_[p] where
   isOpen_ringOfDefinition := by simp
   idealOfDefinition :=
     (maximalIdeal ℤ_[p]).comap (Subring.topEquiv : (⊤ : Subring ℤ_[p]) ≃+* ℤ_[p])
-  fg_idealOfDefinition :=
-    fg_comap_of_equiv _ (by
-      rw [_root_.PadicInt.maximalIdeal_eq_span_p]; exact Submodule.fg_span_singleton _)
+  fg_idealOfDefinition := by
+    rw [← Ideal.map_symm]
+    exact Ideal.FG.map
+      (by rw [_root_.PadicInt.maximalIdeal_eq_span_p]; exact Submodule.fg_span_singleton _)
+      (Subring.topEquiv : (⊤ : Subring ℤ_[p]) ≃+* ℤ_[p]).symm.toRingHom
   isAdic_idealOfDefinition :=
     IsAdic.comap _ Topology.IsInducing.subtypeVal isAdic_maximalIdeal
 
