@@ -57,8 +57,7 @@ namespace WeierstrassCurve.Affine.CoordinateRing
 variable {R S : Type*} [CommRing R] [CommRing S] (W : WeierstrassCurve.Affine R)
 
 /-- **`CoordinateRing.map` is surjective when the base map is**, the companion of Mathlib's
-`CoordinateRing.map_injective`. A class upstairs is `mk` of a polynomial, and a polynomial over
-`S` is the image of one over `R`. -/
+`CoordinateRing.map_injective`. -/
 lemma map_surjective {f : R →+* S} (hf : Function.Surjective f) :
     Function.Surjective (map W f) := fun y => by
   obtain ⟨p, rfl⟩ := AdjoinRoot.mk_surjective y
