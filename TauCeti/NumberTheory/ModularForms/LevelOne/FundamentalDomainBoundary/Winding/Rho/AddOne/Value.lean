@@ -190,8 +190,8 @@ private lemma telescope_rho_add_one_piece_arc_first (H : ℝ) (hδR : 0 < δR) (
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval (1 + δR) (left_mem_Icc.mpr hab)))
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval 2 (right_mem_Icc.mpr hab)))
 
-/-- The second arc piece `[2, 3]` of the telescope at `ρ + 1`: the shifted contour meets
-the branch cut at the right endpoint, so the boundary-tolerant upper form applies. -/
+/-- The second arc piece `[2, 3]` of the telescope at `ρ + 1`, over which the shifted contour
+meets the branch cut at the right endpoint. -/
 private lemma telescope_rho_add_one_piece_arc_second (H : ℝ) :
     IntervalIntegrable
       (fun t ↦ deriv (fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) t /
@@ -245,9 +245,8 @@ private lemma telescope_rho_add_one_piece_arc_second (H : ℝ) :
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval 2 (left_mem_Icc.mpr (by norm_num))))
     (congrArg (· - ((UpperHalfPlane.ρ : ℂ) + 1)) (heval 3 (right_mem_Icc.mpr (by norm_num))))
 
-/-- The left-vertical piece `[3, 4]` of the telescope at `ρ + 1`: the shifted contour
-leaves the branch cut at the left endpoint, so the boundary-tolerant upper form
-applies. -/
+/-- The left-vertical piece `[3, 4]` of the telescope at `ρ + 1`, over which the shifted contour
+leaves the branch cut at the left endpoint. -/
 private lemma telescope_rho_add_one_piece_left_vertical (hH : Real.sqrt 3 / 2 < H) :
     IntervalIntegrable
       (fun t ↦ deriv (fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) t /
