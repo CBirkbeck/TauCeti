@@ -49,10 +49,13 @@ formalised here.
 
 ## Main results
 
+* `TauCeti.Valuation.mem_characteristicSubgroup_iff` : Membership in `cΓ_v` is bounding by a
+  single attained value `≥ 1`.
 * `TauCeti.Valuation.hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top` : The
   elementwise fullness condition is exactly `cΓ_v = Γ_v`.
-* `TauCeti.Valuation.characteristicSubgroup_le_comap_of_isEquiv` : `cΓ_v` is invariant under
-  valuation equivalence, so it descends to points of the valuation spectrum.
+* `TauCeti.Valuation.characteristicSubgroup_eq_comap_of_isEquiv` and
+  `TauCeti.Valuation.valueGroupOrderIso_mem_characteristicSubgroup_iff` : `cΓ_v` is invariant
+  under valuation equivalence, so it descends to points of the valuation spectrum.
 
 ## References
 
@@ -290,31 +293,16 @@ private theorem mul_mem_characteristicGenerators {v : Valuation A Γ₀}
   rw [map_mul, ha, hb]
   simp
 
-/-- The elements bounded by a *single* attained value `≥ 1`. Because the generators are
-multiplicatively closed this is already a convex subgroup, which is what makes one witness
-enough in `HasFullCharacteristicGroup`. -/
-private def generatorBall (v : Valuation A Γ₀) :
-    TauCeti.ConvexSubgroup (valueGroup (.ofClass v)) where
-  toSubgroup :=
-    { carrier := {γ | ∃ g ∈ characteristicGenerators v, g⁻¹ ≤ γ ∧ γ ≤ g}
-      one_mem' := ⟨1, one_mem_characteristicGenerators v, by simp, le_rfl⟩
-      mul_mem' := fun {a b} ⟨g, hg, hga, hag⟩ ⟨h, hh, hhb, hbh⟩ ↦
-        ⟨g * h, mul_mem_characteristicGenerators hg hh, by
-          rw [mul_inv]; exact mul_le_mul' hga hhb, mul_le_mul' hag hbh⟩
-      inv_mem' := fun {a} ⟨g, hg, hga, hag⟩ ↦
-        ⟨g, hg, by simpa using inv_le_inv' hag, by simpa using inv_le_inv' hga⟩ }
-  ordConnected' := by
-    constructor
-    rintro x ⟨g, hg, hgx, hxg⟩ y ⟨h, hh, hhy, hyh⟩ z hz
-    refine ⟨g * h, mul_mem_characteristicGenerators hg hh, ?_, ?_⟩
-    · refine le_trans ?_ (hgx.trans hz.1)
-      rw [mul_inv]
-      exact mul_le_of_le_one_right' (inv_le_one'.mpr hh.1)
-    · exact (hz.2.trans hyh).trans (le_mul_of_one_le_left' hg.1)
-
-private theorem characteristicSubgroup_le_generatorBall (v : Valuation A Γ₀) :
-    characteristicSubgroup v ≤ generatorBall v :=
-  characteristicSubgroup_le_iff.mpr fun g hg ↦ ⟨g, hg, (inv_le_one'.mpr hg.1).trans hg.1, le_rfl⟩
+/-- **Elimination rule.** Membership in `cΓ_v` is bounding by a *single* attained value `≥ 1`.
+The non-obvious direction is that one generator suffices: the attained values `≥ 1` are closed
+under multiplication, so the elements they bound already form a convex subgroup. -/
+theorem mem_characteristicSubgroup_iff {v : Valuation A Γ₀}
+    {γ : valueGroup (.ofClass v)} :
+    γ ∈ characteristicSubgroup v ↔
+      ∃ g ∈ characteristicGenerators v, g⁻¹ ≤ γ ∧ γ ≤ g := by
+  exact TauCeti.ConvexSubgroup.mem_closure_of_nonempty_of_mul_mem_of_one_le
+    ⟨1, one_mem_characteristicGenerators v⟩
+    (fun _ hx _ hy ↦ mul_mem_characteristicGenerators hx hy) (fun _ hg ↦ hg.1)
 
 /-- **Fullness is exactly `Γ_v = cΓ_v`.** The elementwise condition of
 `HasFullCharacteristicGroup` says every positive value is bounded by a *single* attained
@@ -346,10 +334,54 @@ theorem hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top {v : Valuat
   · intro hv γ hγ
     obtain ⟨δ, rfl⟩ := WithZero.ne_zero_iff_exists.mp hγ.ne'
     obtain ⟨g, hg, hgd, hdg⟩ :=
-      characteristicSubgroup_le_generatorBall v (hv ▸ TauCeti.ConvexSubgroup.mem_top)
+      mem_characteristicSubgroup_iff.mp (hv ▸ TauCeti.ConvexSubgroup.mem_top)
     obtain ⟨_, a, ha⟩ := hg
     refine ⟨a, ?_, ?_⟩
     · rw [ha, ← WithZero.coe_inv, WithZero.coe_le_coe]; exact hgd
     · rw [ha, WithZero.coe_le_coe]; exact hdg
+
+/-- The generators correspond **exactly** under the induced value-group isomorphism: both
+sides are indexed by the same ring, and `orderMonoidIso_spec` matches `v.restrict a` with
+`w.restrict a`.
+
+Not a `simp` lemma, though its subgroup counterpart is: `mem_characteristicGenerators` is
+already the `simp` normal form for the left-hand side, so tagging this one fails `simpNF`
+(the left-hand side rewrites to `1 ≤ …  ∧ ∃ a, w.restrict a = …` before it can fire). -/
+theorem valueGroupOrderIso_mem_characteristicGenerators_iff {v : Valuation A Γ₀}
+    {w : Valuation A Γ₀'} (h : v.IsEquiv w) {γ : valueGroup (.ofClass v)} :
+    h.valueGroupOrderIso γ ∈ characteristicGenerators w ↔ γ ∈ characteristicGenerators v := by
+  refine ⟨fun ⟨h1, a, ha⟩ ↦ ⟨?_, a, ?_⟩, characteristicGenerators_map_of_isEquiv h⟩
+  · simpa using h.valueGroupOrderIso.map_le_map_iff'.mp (by simpa using h1)
+  · have hspec : h.orderMonoidIso (v.restrict a) = w.restrict a := h.orderMonoidIso_spec a
+    rw [ha, h.valueGroupOrderIso_coe] at hspec
+    exact h.orderMonoidIso.toMulEquiv.injective hspec
+
+/-- **`cΓ_v` is an invariant of the equivalence class**, in membership form. -/
+@[simp]
+theorem valueGroupOrderIso_mem_characteristicSubgroup_iff {v : Valuation A Γ₀}
+    {w : Valuation A Γ₀'} (h : v.IsEquiv w) {γ : valueGroup (.ofClass v)} :
+    h.valueGroupOrderIso γ ∈ characteristicSubgroup w ↔ γ ∈ characteristicSubgroup v := by
+  rw [mem_characteristicSubgroup_iff, mem_characteristicSubgroup_iff]
+  constructor
+  · rintro ⟨g, hg, hgγ, hγg⟩
+    refine ⟨h.valueGroupOrderIso.symm g, ?_, ?_, ?_⟩
+    · rw [← valueGroupOrderIso_mem_characteristicGenerators_iff h]
+      simpa using hg
+    · simpa using h.valueGroupOrderIso.symm.map_le_map_iff'.mpr hgγ
+    · simpa using h.valueGroupOrderIso.symm.map_le_map_iff'.mpr hγg
+  · rintro ⟨g, hg, hgγ, hγg⟩
+    exact ⟨h.valueGroupOrderIso g,
+      (valueGroupOrderIso_mem_characteristicGenerators_iff h).mpr hg,
+      by simpa using h.valueGroupOrderIso.map_le_map_iff'.mpr hgγ,
+      h.valueGroupOrderIso.map_le_map_iff'.mpr hγg⟩
+
+/-- Equality form of the invariance: `cΓ_v` is the pullback of `cΓ_w`. -/
+theorem characteristicSubgroup_eq_comap_of_isEquiv {v : Valuation A Γ₀}
+    {w : Valuation A Γ₀'} (h : v.IsEquiv w) :
+    characteristicSubgroup v =
+      TauCeti.ConvexSubgroup.comap h.valueGroupOrderIso (characteristicSubgroup w) :=
+  TauCeti.ConvexSubgroup.ext fun _ ↦
+    ((valueGroupOrderIso_mem_characteristicSubgroup_iff h).symm.trans
+      TauCeti.ConvexSubgroup.mem_comap.symm)
 
 end TauCeti.Valuation
