@@ -136,9 +136,11 @@ theorem norm_tangentDeviation {L : ℂ} (hL : L ≠ 0) (w : ℂ) :
   exact hnorm
 
 /-- The deviation norm is bounded by the vector norm: the perpendicular component is no longer
-than the vector. -/
-theorem norm_tangentDeviation_le {L : ℂ} (hL : L ≠ 0) (w : ℂ) :
+than the vector. At `L = 0` the deviation is `w` itself and the bound is an equality. -/
+theorem norm_tangentDeviation_le (w L : ℂ) :
     ‖tangentDeviation w L‖ ≤ ‖w‖ := by
+  rcases eq_or_ne L 0 with rfl | hL
+  · simp [tangentDeviation, orthogonalProjectionComplex]
   rw [norm_tangentDeviation hL]
   calc |(w * starRingEnd ℂ L).im| / ‖L‖ ≤ ‖w * starRingEnd ℂ L‖ / ‖L‖ := by
         gcongr; exact Complex.abs_im_le_norm _
@@ -161,7 +163,7 @@ theorem norm_tangentDeviation_le_norm_sub_smul (w L : ℂ) (r : ℝ) :
     rw [tangentDeviation_real_smul, hLL, smul_zero]
   calc ‖tangentDeviation w L‖ = ‖tangentDeviation (w - r • L) L‖ := by
         rw [tangentDeviation_sub, hself, sub_zero]
-    _ ≤ ‖w - r • L‖ := norm_tangentDeviation_le hL _
+    _ ≤ ‖w - r • L‖ := norm_tangentDeviation_le _ _
 
 /-- The deviation norm is direction-line invariant: measuring against `-L` gives the same
 distance to the line `ℝ • L`. -/
