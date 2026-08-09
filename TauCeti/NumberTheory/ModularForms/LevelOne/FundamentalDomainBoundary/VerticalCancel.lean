@@ -87,17 +87,21 @@ theorem intervalIntegrable_deriv_smul_fdBoundary_segment4 {E : Type*}
     linear_combination hder
   simp only [Pi.neg_apply, hval', hder', hφ (fdBoundary H x), neg_smul, neg_neg]
 
-/-- **The vertical cancellation survives excision.** The reflection `t ↦ 4 - t` carries the
-right vertical onto the left through the translation `z ↦ z - 1`, so an integrand excised
-within `ε` of a set closed under `s ↦ s ± 1` is excised at matching parameters on the two
-verticals, and the cancellation of the untruncated integrals
+/-- **The vertical cancellation survives excision.** The reflection `t ↦ 4 - t` carries the right
+vertical onto the left by `z ↦ -conj z`, an isometry of `ℂ`, so an integrand excised within `ε`
+of a set invariant under that reflection is excised at matching parameters on the two verticals,
+and the cancellation of the untruncated integrals
 (`TauCeti.ModularForm.intervalIntegral_fdBoundary_segment4_eq_neg_segment1`) persists.
 
-Translation-closure of the excision set is exactly what
-`TauCeti.ModularForm.verticalSingularSet` provides. -/
-theorem intervalIntegral_truncated_fdBoundary_segment4_eq_neg_segment1 (H : ℝ) {φ : ℂ → ℂ}
+Reflection invariance, not translation closure, is the right hypothesis: the two verticals are
+exchanged by `z ↦ -conj z`, and being an isometry it moves an `ε`-ball to an `ε`-ball. (A set
+closed under the bare translation `s ↦ s + 1` would have to be empty, since a finite set has an
+element of largest real part.) For `TauCeti.ModularForm.verticalSingularSet` the invariance is the
+composite of `re_eq_of_mem_verticalSingularSet` with `sub_one_mem_verticalSingularSet` or
+`add_one_mem_verticalSingularSet`, whose translations are conditional on the real part. -/
+theorem intervalIntegral_excised_fdBoundary_segment4_eq_neg_segment1 (H : ℝ) {φ : ℂ → ℂ}
     (hφ : Function.Periodic φ 1) {S : Finset ℂ} {ε : ℝ}
-    (hadd : ∀ s ∈ S, s + 1 ∈ S) (hsub : ∀ s ∈ S, s - 1 ∈ S) :
+    (hrefl : ∀ s ∈ S, -(starRingEnd ℂ) s ∈ S) :
     (∫ t in (3 : ℝ)..4, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
         else φ (fdBoundary H t) * deriv (fdBoundary H) t) =
       -∫ t in (0 : ℝ)..1, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
@@ -116,15 +120,25 @@ theorem intervalIntegral_truncated_fdBoundary_segment4_eq_neg_segment1 (H : ℝ)
   refine intervalIntegral.integral_congr_Ioo_of_le (by norm_num) fun u hu => ?_
   have hval : fdBoundary H (4 - u) = fdBoundary H u - 1 :=
     fdBoundary_four_sub_vertical H ⟨hu.1.le, hu.2.le⟩
-  -- The excision test transports along the translation, in both directions.
+  -- On the right vertical the reflection is `z ↦ -conj z`, since the real part is `1/2`.
+  have hconj : fdBoundary H (4 - u) = -(starRingEnd ℂ) (fdBoundary H u) := by
+    rw [hval]
+    refine Complex.ext ?_ ?_ <;> simp [re_fdBoundary_of_le_one hu.2.le]
+    norm_num
+  -- An isometry moves the excision test to the reflected centre.
+  have hdist : ∀ s : ℂ, ‖fdBoundary H (4 - u) - s‖
+      = ‖fdBoundary H u - -(starRingEnd ℂ) s‖ := by
+    intro s
+    rw [hconj, ← Complex.norm_conj (-(starRingEnd ℂ) (fdBoundary H u) - s)]
+    simp only [map_sub, map_neg, Complex.conj_conj]
+    rw [show -fdBoundary H u - (starRingEnd ℂ) s
+        = -(fdBoundary H u - -(starRingEnd ℂ) s) by ring, norm_neg]
   have hiff : (∃ s ∈ S, ‖fdBoundary H (4 - u) - s‖ ≤ ε) ↔
       ∃ s ∈ S, ‖fdBoundary H u - s‖ ≤ ε := by
-    rw [hval]
-    refine ⟨fun ⟨s, hs, hle⟩ => ⟨s + 1, hadd s hs, ?_⟩, fun ⟨s, hs, hle⟩ => ⟨s - 1, hsub s hs, ?_⟩⟩
-    · rwa [show fdBoundary H u - (s + 1) = fdBoundary H u - 1 - s by ring]
-    · rwa [show fdBoundary H u - 1 - (s - 1) = fdBoundary H u - s by ring]
-  -- Split on the excision test before rewriting: the `ite`'s decidability instance mentions
-  -- the condition, so rewriting inside it is not motive-correct.
+    refine ⟨fun ⟨s, hs, hle⟩ => ⟨-(starRingEnd ℂ) s, hrefl s hs, by rwa [← hdist s]⟩,
+      fun ⟨s, hs, hle⟩ => ⟨-(starRingEnd ℂ) s, hrefl s hs, ?_⟩⟩
+    rw [hdist, map_neg, Complex.conj_conj, neg_neg]
+    exact hle
   by_cases hc : ∃ s ∈ S, ‖fdBoundary H u - s‖ ≤ ε
   · rw [if_pos (hiff.mpr hc), if_pos hc, neg_zero]
   · rw [if_neg fun h => hc (hiff.mp h), if_neg hc, hval,
