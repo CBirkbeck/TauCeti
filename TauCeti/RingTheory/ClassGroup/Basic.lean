@@ -61,12 +61,10 @@ noncomputable def IsDedekindDomain.HeightOneSpectrum.classGroupMk (v : HeightOne
     ClassGroup R :=
   ClassGroup.mk0 ⟨v.asIdeal, mem_nonZeroDivisors_of_ne_zero v.ne_bot⟩
 
-/-- The defining formula for `classGroupMk`, so that consumers working with `ClassGroup.mk0` never
-need to unfold the definition (whose body a `public section` leaves unexposed).
-
-Deliberately not `@[simp]`: the statements that matter here are phrased in the folded form, and
-in `HeightOneSpectrum.classGroupMk '' T` the occurrence is unapplied, so `simp` could not unfold
-it there anyway — tagging this would only leave goals in mixed normal forms. -/
+-- Deliberately not `@[simp]`: the statements that matter here are phrased in the folded form,
+-- and in `HeightOneSpectrum.classGroupMk '' T` the occurrence is unapplied, so `simp` could not
+-- unfold it there anyway — tagging this would only leave goals in mixed normal forms.
+/-- The class of `v` is the class of the nonzero ideal `v.asIdeal`. -/
 lemma IsDedekindDomain.HeightOneSpectrum.classGroupMk_eq_mk0 (v : HeightOneSpectrum R) :
     v.classGroupMk = ClassGroup.mk0 ⟨v.asIdeal, mem_nonZeroDivisors_of_ne_zero v.ne_bot⟩ := by
   -- Not `rfl`: a `public section` leaves the body of `classGroupMk` unexposed, so the equation
