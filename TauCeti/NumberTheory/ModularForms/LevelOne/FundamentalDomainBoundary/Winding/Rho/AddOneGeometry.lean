@@ -114,31 +114,17 @@ theorem norm_fdBoundary_sub_rho_add_one_segment4 (H : ℝ) (ht : t ∈ Icc (3 : 
   rw [hre] at h1
   simpa using h1
 
-/-- On the ceiling the contour keeps distance at least `H - √3/2` from `ρ + 1`. -/
+/-- On the ceiling the contour keeps distance at least `|H - √3/2|` from `ρ + 1`. The
+absolute value is what the height difference gives, and it is the only form with content
+below the corner row, where `H - √3/2 < 0` makes the signed bound vacuous. -/
 theorem norm_fdBoundary_sub_rho_add_one_segment5 (ht : t ∈ Icc (4 : ℝ) 5) :
-    H - Real.sqrt 3 / 2 ≤ ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := by
+    |H - Real.sqrt 3 / 2| ≤ ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := by
   have him : (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im = H - Real.sqrt 3 / 2 := by
     rw [Complex.sub_im, im_fdBoundary_segment5 H ht]
     norm_num [UpperHalfPlane.ρ]
   have h1 : |(fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im| ≤
       ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := Complex.abs_im_le_norm _
-  calc H - Real.sqrt 3 / 2 ≤ |H - Real.sqrt 3 / 2| := le_abs_self _
-    _ ≤ ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := him ▸ h1
-
-/-- On the closed middle arc range, the sine stays above the corner row `√3/2`. -/
-private lemma sqrt_three_div_two_le_sin {θ : ℝ} (h1 : Real.pi / 3 ≤ θ)
-    (h2 : θ ≤ 2 * Real.pi / 3) :
-    Real.sqrt 3 / 2 ≤ Real.sin θ := by
-  rcases le_or_gt θ (Real.pi / 2) with hle | hgt
-  · rw [← Real.sin_pi_div_three]
-    exact Real.strictMonoOn_sin.monotoneOn
-      ⟨by nlinarith [Real.pi_pos], by nlinarith [Real.pi_pos]⟩
-      ⟨by nlinarith [Real.pi_pos], hle⟩ h1
-  · rw [← Real.sin_pi_div_three, ← Real.sin_pi_sub θ]
-    exact Real.strictMonoOn_sin.monotoneOn
-      ⟨by nlinarith [Real.pi_pos], by nlinarith [Real.pi_pos]⟩
-      ⟨by nlinarith [Real.pi_pos], by nlinarith [Real.pi_pos]⟩
-      (by nlinarith [Real.pi_pos])
+  exact him ▸ h1
 
 /-- Strictly inside the middle arc range, the sine stays strictly above `√3/2`. -/
 private lemma sqrt_three_div_two_lt_sin {θ : ℝ} (h1 : Real.pi / 3 < θ)
@@ -158,13 +144,15 @@ private lemma sqrt_three_div_two_lt_sin {θ : ℝ} (h1 : Real.pi / 3 < θ)
 /-- On the arc the shifted contour stays in the closed upper half-plane. -/
 theorem im_fdBoundary_sub_rho_add_one_arc_nonneg (H : ℝ) (ht : t ∈ Icc (1 : ℝ) 3) :
     0 ≤ (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im := by
-  have hcurve : fdBoundary H t = circleMap 0 1 ((t + 1) * (Real.pi / 6)) :=
-    eqOn_fdBoundary_arc H ht
   have him1 : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
     norm_num [UpperHalfPlane.ρ]
-  rw [Complex.sub_im, hcurve, circleMap_zero_im, one_mul, him1]
-  have := sqrt_three_div_two_le_sin (θ := (t + 1) * (Real.pi / 6))
-    (by nlinarith [Real.pi_pos, ht.1]) (by nlinarith [Real.pi_pos, ht.2])
+  -- On the arc the contour does not depend on the height, so the corner-row bound already
+  -- proved for a contour at the corner height transports to this one.
+  have htransport : fdBoundary H t = fdBoundary (Real.sqrt 3 / 2) t := by
+    rw [eqOn_fdBoundary_arc H ht, eqOn_fdBoundary_arc (Real.sqrt 3 / 2) ht]
+  have ht05 : t ∈ Icc (0 : ℝ) 5 := ⟨by linarith [ht.1], by linarith [ht.2]⟩
+  have hbase := sqrt_three_div_two_le_im_fdBoundary (H := Real.sqrt 3 / 2) le_rfl ht05
+  rw [Complex.sub_im, him1, htransport]
   linarith
 
 /-- Strictly inside the arc the shifted contour has positive height. -/
@@ -178,12 +166,6 @@ theorem im_fdBoundary_sub_rho_add_one_arc_pos (H : ℝ) (ht1 : 1 < t) (ht3 : t <
   have := sqrt_three_div_two_lt_sin (θ := (t + 1) * (Real.pi / 6))
     (by nlinarith [Real.pi_pos]) (by nlinarith [Real.pi_pos])
   linarith
-
-/-- At the far corner `t = 3` the shifted contour touches the branch cut at `-1`. -/
-theorem fdBoundary_apply_three_sub_rho_add_one (H : ℝ) :
-    fdBoundary H 3 - ((UpperHalfPlane.ρ : ℂ) + 1) = -1 := by
-  rw [fdBoundary_apply_three]
-  ring
 
 /-- The shifted contour stays in the closed upper half-plane over the whole parameter
 range: the contour clears the corner row `√3/2`, which is the height of `ρ + 1`. -/
