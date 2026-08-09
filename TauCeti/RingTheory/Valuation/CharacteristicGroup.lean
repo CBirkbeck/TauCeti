@@ -5,6 +5,8 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.Algebra.Order.Group.Units
+public import Mathlib.Algebra.Order.Monoid.Submonoid
 public import Mathlib.RingTheory.Valuation.Basic
 public import TauCeti.RingTheory.Valuation.ValueGroupTransport
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
@@ -44,6 +46,13 @@ formalised here.
   subgroup `cΓ_v` they generate.
 * `TauCeti.Valuation.HasFullCharacteristicGroup v` : Every positive element of the value
   group of `v` is bounded by attained values.
+
+## Main results
+
+* `TauCeti.Valuation.hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top` : The
+  elementwise fullness condition is exactly `cΓ_v = Γ_v`.
+* `TauCeti.Valuation.characteristicSubgroup_le_comap_of_isEquiv` : `cΓ_v` is invariant under
+  valuation equivalence, so it descends to points of the valuation spectrum.
 
 ## References
 
@@ -263,5 +272,84 @@ theorem mem_characteristicSubgroup_of_isEquiv {v : Valuation A Γ₀} {w : Valua
     (h : v.IsEquiv w) {γ : valueGroup (.ofClass v)} (hγ : γ ∈ characteristicSubgroup v) :
     h.valueGroupOrderIso γ ∈ characteristicSubgroup w :=
   TauCeti.ConvexSubgroup.mem_comap.mp (characteristicSubgroup_le_comap_of_isEquiv h hγ)
+
+/-! ### Fullness as a statement about the characteristic subgroup -/
+
+/-- `1` is an attained value `≥ 1`. -/
+private theorem one_mem_characteristicGenerators (v : Valuation A Γ₀) :
+    (1 : valueGroup (.ofClass v)) ∈ characteristicGenerators v :=
+  ⟨le_rfl, 1, by simp⟩
+
+/-- The attained values `≥ 1` are closed under multiplication, because `v` is. -/
+private theorem mul_mem_characteristicGenerators {v : Valuation A Γ₀}
+    {γ δ : valueGroup (.ofClass v)} (hγ : γ ∈ characteristicGenerators v)
+    (hδ : δ ∈ characteristicGenerators v) : γ * δ ∈ characteristicGenerators v := by
+  obtain ⟨h1, a, ha⟩ := hγ
+  obtain ⟨h2, b, hb⟩ := hδ
+  refine ⟨one_le_mul h1 h2, a * b, ?_⟩
+  rw [map_mul, ha, hb]
+  simp
+
+/-- The elements bounded by a *single* attained value `≥ 1`. Because the generators are
+multiplicatively closed this is already a convex subgroup, which is what makes one witness
+enough in `HasFullCharacteristicGroup`. -/
+private def generatorBall (v : Valuation A Γ₀) :
+    TauCeti.ConvexSubgroup (valueGroup (.ofClass v)) where
+  toSubgroup :=
+    { carrier := {γ | ∃ g ∈ characteristicGenerators v, g⁻¹ ≤ γ ∧ γ ≤ g}
+      one_mem' := ⟨1, one_mem_characteristicGenerators v, by simp, le_rfl⟩
+      mul_mem' := fun {a b} ⟨g, hg, hga, hag⟩ ⟨h, hh, hhb, hbh⟩ ↦
+        ⟨g * h, mul_mem_characteristicGenerators hg hh, by
+          rw [mul_inv]; exact mul_le_mul' hga hhb, mul_le_mul' hag hbh⟩
+      inv_mem' := fun {a} ⟨g, hg, hga, hag⟩ ↦
+        ⟨g, hg, by simpa using inv_le_inv' hag, by simpa using inv_le_inv' hga⟩ }
+  ordConnected' := by
+    constructor
+    rintro x ⟨g, hg, hgx, hxg⟩ y ⟨h, hh, hhy, hyh⟩ z hz
+    refine ⟨g * h, mul_mem_characteristicGenerators hg hh, ?_, ?_⟩
+    · refine le_trans ?_ (hgx.trans hz.1)
+      rw [mul_inv]
+      exact mul_le_of_le_one_right' (inv_le_one'.mpr hh.1)
+    · exact (hz.2.trans hyh).trans (le_mul_of_one_le_left' hg.1)
+
+private theorem characteristicSubgroup_le_generatorBall (v : Valuation A Γ₀) :
+    characteristicSubgroup v ≤ generatorBall v :=
+  characteristicSubgroup_le_iff.mpr fun g hg ↦ ⟨g, hg, (inv_le_one'.mpr hg.1).trans hg.1, le_rfl⟩
+
+/-- **Fullness is exactly `Γ_v = cΓ_v`.** The elementwise condition of
+`HasFullCharacteristicGroup` says every positive value is bounded by a *single* attained
+value; that is equivalent to the characteristic subgroup exhausting the value group, because
+the attained values `≥ 1` are multiplicatively closed and so a single bound already suffices
+for the whole convex subgroup they generate. -/
+theorem hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top {v : Valuation A Γ₀} :
+    HasFullCharacteristicGroup v ↔ characteristicSubgroup v = ⊤ := by
+  constructor
+  · intro hv
+    refine eq_top_iff.mpr fun γ _ ↦ ?_
+    obtain ⟨a, hinv, hle⟩ := hv (γ : ValueGroup₀ (.ofClass v)) (by simp)
+    have hne : v.restrict a ≠ 0 := by
+      intro hz
+      rw [hz] at hle
+      simp at hle
+    have h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := fun hz ↦
+      hne (v.restrict_eq_zero_iff.mpr hz)
+    have hga : v.restrict a = ((valueGroup.mk (.ofClass v) 1 a (by simp) h0 :
+      valueGroup (.ofClass v)) : ValueGroup₀ (.ofClass v)) := v.restrict_eq_mk h0
+    rw [hga, ← WithZero.coe_inv, WithZero.coe_le_coe] at hinv
+    rw [hga, WithZero.coe_le_coe] at hle
+    have h1g : (1 : valueGroup (.ofClass v)) ≤ valueGroup.mk (.ofClass v) 1 a (by simp) h0 := by
+      rcases le_total 1 (valueGroup.mk (.ofClass v) 1 a (by simp) h0) with h | h
+      · exact h
+      · exact (one_le_inv'.mpr h).trans (hinv.trans hle)
+    have hmem := mem_characteristicSubgroup_of_restrict h1g hga
+    exact (characteristicSubgroup v).convex (inv_mem hmem) hmem hinv hle
+  · intro hv γ hγ
+    obtain ⟨δ, rfl⟩ := WithZero.ne_zero_iff_exists.mp hγ.ne'
+    obtain ⟨g, hg, hgd, hdg⟩ :=
+      characteristicSubgroup_le_generatorBall v (hv ▸ TauCeti.ConvexSubgroup.mem_top)
+    obtain ⟨_, a, ha⟩ := hg
+    refine ⟨a, ?_, ?_⟩
+    · rw [ha, ← WithZero.coe_inv, WithZero.coe_le_coe]; exact hgd
+    · rw [ha, WithZero.coe_le_coe]; exact hdg
 
 end TauCeti.Valuation
