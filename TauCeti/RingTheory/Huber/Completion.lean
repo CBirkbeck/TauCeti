@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.Topology.Algebra.GroupCompletion
-public import TauCeti.Topology.Algebra.UniformRing
 public import TauCeti.RingTheory.Huber.Basic
 
 /-!

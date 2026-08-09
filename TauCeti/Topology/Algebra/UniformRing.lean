@@ -6,7 +6,6 @@ module
 
 public import Mathlib.Topology.Algebra.UniformRing
 public import Mathlib.RingTheory.Ideal.Maps
-public import Mathlib.Topology.Algebra.Ring.Ideal
 
 /-!
 # The kernel of the completion map of a uniform ring
