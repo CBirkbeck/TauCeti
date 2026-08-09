@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.RingTheory.Finiteness.Defs
 public import TauCeti.RingTheory.Valuation.CofinalIdeal
 
 /-!
@@ -272,5 +273,96 @@ theorem isGreatestIdealCofinal_closure_singleton_of_span {v : Valuation A Γ₀}
         _ = h := pow_one h
         _ < 1 := hlt) hK
     rwa [TauCeti.ConvexSubgroup.closure_singleton_pow hn] at this
+
+/-- **Wedhorn Lemma 7.2, existence form.** Under the standing hypothesis of §7.1 — that `I` has
+the same radical as some finitely generated ideal — with `v(I)` missing `cΓ_v` and not
+identically zero, a greatest convex subgroup for which `I` is cofinal exists.
+
+This is what makes Definition 7.3 well posed: its second branch names *the* greatest such
+subgroup, so the definition presupposes exactly this statement. -/
+theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal A}
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
+    (hdisj : ¬ IdealMeetsCharacteristic v I)
+    (hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0) :
+    ∃ H, IsGreatestIdealCofinal v I H := by
+  obtain ⟨J, ⟨T, hT⟩, hrad⟩ := hfg
+  -- every element of I has a power in J
+  have hIJ : ∀ a ∈ I, ∃ n, n ≠ 0 ∧ a ^ n ∈ J := by
+    intro a ha
+    obtain ⟨n, hn⟩ := Ideal.mem_radical_iff.mp (hrad ▸ Ideal.le_radical ha)
+    rcases Nat.eq_zero_or_pos n with rfl | hp
+    · refine ⟨1, one_ne_zero, ?_⟩
+      have h1 : (1 : A) ∈ J := by simpa using hn
+      simp [(Ideal.eq_top_iff_one J).mpr h1]
+    · exact ⟨n, hp.ne', hn⟩
+  -- `T` is nonempty, else every value on `I` would vanish
+  have hTne : T.Nonempty := by
+    rcases T.eq_empty_or_nonempty with rfl | hne'
+    · exfalso
+      obtain ⟨a, haI, ha0⟩ := hne
+      obtain ⟨n, hn0, hn⟩ := hIJ a haI
+      rw [← hT] at hn
+      simp only [Finset.coe_empty, Ideal.span_empty, Ideal.mem_bot] at hn
+      refine ha0 ?_
+      have hv := congrArg (MonoidWithZeroHom.ofClass v) hn
+      rw [map_pow, map_zero] at hv
+      exact (pow_eq_zero_iff hn0).mp hv
+    · exact hne'
+  obtain ⟨t₀, ht₀T, ht₀max⟩ := T.exists_max_image (fun t ↦ v.restrict t) hTne
+  -- the maximising value cannot vanish, else `v` would vanish on all of `I`
+  have ht₀0 : (MonoidWithZeroHom.ofClass v) t₀ ≠ 0 := by
+    intro hz
+    obtain ⟨a, haI, ha0⟩ := hne
+    obtain ⟨n, hn0, hn⟩ := hIJ a haI
+    refine ha0 ?_
+    have hTsupp : (T : Set A) ⊆ (v.supp : Set A) := by
+      intro t ht
+      rw [SetLike.mem_coe, v.mem_supp_iff]
+      have hle : v.restrict t ≤ v.restrict t₀ := ht₀max t ht
+      rw [v.restrict_eq_zero_iff.mpr hz] at hle
+      exact v.restrict_eq_zero_iff.mp (le_antisymm hle zero_le)
+    have : a ^ n ∈ v.supp := by
+      rw [← hT] at hn
+      exact Ideal.span_le.mpr hTsupp hn
+    rw [v.mem_supp_iff, map_pow] at this
+    exact (pow_eq_zero_iff hn0).mp this
+  -- the witness and the power of it that lands in `I`
+  set h : valueGroup (.ofClass v) := valueGroup.mk (.ofClass v) 1 t₀ (by simp) ht₀0 with hdef
+  have hrestr : v.restrict t₀ = (h : ValueGroup₀ (.ofClass v)) := v.restrict_eq_mk ht₀0
+  have ht₀J : t₀ ∈ J := hT ▸ Ideal.subset_span ht₀T
+  obtain ⟨n, hn0, hn⟩ : ∃ n, n ≠ 0 ∧ t₀ ^ n ∈ I := by
+    obtain ⟨m, hm⟩ := Ideal.mem_radical_iff.mp (hrad.symm ▸ Ideal.le_radical ht₀J)
+    rcases Nat.eq_zero_or_pos m with rfl | hp
+    · rw [pow_zero] at hm
+      exact ⟨1, one_ne_zero, by simp [(Ideal.eq_top_iff_one I).mpr hm]⟩
+    · exact ⟨m, hp.ne', hm⟩
+  have hpow : v.restrict (t₀ ^ n) = ((h ^ n : valueGroup (.ofClass v)) : ValueGroup₀ _) := by
+    rw [map_pow, hrestr]; simp
+  have hatt : h ^ n ∈ valueSet v I := ⟨t₀ ^ n, hn, hpow⟩
+  have hlt_n : (h ^ n : valueGroup (.ofClass v)) < 1 := by
+    have h2 : v.restrict (t₀ ^ n) < 1 :=
+      v.restrict_lt_one_iff.mpr (lt_one_of_not_idealMeetsCharacteristic hdisj hn)
+    rwa [hpow, ← WithZero.coe_one, WithZero.coe_lt_coe] at h2
+  have hlt : h < 1 := by
+    by_contra hge
+    push Not at hge
+    exact absurd hlt_n (not_lt.mpr (one_le_pow_of_one_le' hge n))
+  -- `h` is outside `cΓ_v`: otherwise its power, attained on `I`, would meet it
+  have hnot : h ∉ characteristicSubgroup v := by
+    intro hmem
+    exact hdisj ⟨t₀ ^ n, hn, by simpa [map_pow] using pow_ne_zero n ht₀0, by
+      have : valueGroup.mk (.ofClass v) 1 (t₀ ^ n) (by simp) (by
+        simpa [map_pow] using pow_ne_zero n ht₀0) = h ^ n := by
+        have := (v.restrict_eq_mk (by simpa [map_pow] using pow_ne_zero n ht₀0 :
+          (MonoidWithZeroHom.ofClass v) (t₀ ^ n) ≠ 0)).symm.trans hpow
+        exact_mod_cast this
+      rw [this]
+      exact pow_mem hmem n⟩
+  refine ⟨TauCeti.ConvexSubgroup.closure {h}, ?_⟩
+  refine isGreatestIdealCofinal_closure_singleton_of_span
+    (TauCeti.ConvexSubgroup.lt_closure_singleton hnot) hT hrad hlt hn0 ?_ hatt
+  intro t ht
+  rw [← hrestr]
+  exact ht₀max t ht
 
 end TauCeti.Valuation
