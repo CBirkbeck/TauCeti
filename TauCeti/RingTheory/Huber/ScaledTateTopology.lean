@@ -14,7 +14,10 @@ public import TauCeti.RingTheory.Huber.RestrictedPowerSeries
 
 For a nonarchimedean ring `A` and a scaling parameter `f : A`, this file puts on the restricted
 power series `A⟨X⟩` the topology in which a series is small when its *scaled* coefficients
-`fⁿ aₙ` are uniformly small. It is the topology induced along the substitution `X ↦ f X`.
+`fⁿ aₙ` converge coefficientwise: it is the topology induced along the substitution `X ↦ f X`
+from the product topology, so a basic neighbourhood of zero constrains only *finitely many*
+scaled coefficients. That is weaker than Wedhorn's `U⟨X⟩`, which constrains all of them, and is
+part of why the two constructions differ — see below.
 
 ## Main definitions
 
@@ -98,16 +101,17 @@ theorem scaleIncl_apply (f : A) (g : restrictedMvPowerSeriesSubring 1 A) (s : Fi
     Fin.prod_univ_one]
   rfl
 
-/-! ### The weighted topology -/
+/-! ### The scaled topology -/
 
-/-- The topology on `A⟨X⟩` in which a series is close to zero when all of its scaled
-coefficients `fⁿ aₙ` are. See the module docstring: this is *not* Wedhorn's `A⟨X⟩_T`. -/
+/-- The topology on `A⟨X⟩` pulled back along `X ↦ f X` from the product topology: a series is
+near zero when finitely many prescribed scaled coefficients `fⁿ aₙ` are.  See the module
+docstring: this is *not* Wedhorn's `A⟨X⟩_T`. -/
 @[reducible]
 noncomputable def scaledTateTopology (f : A) :
     TopologicalSpace (restrictedMvPowerSeriesSubring 1 A) :=
   TopologicalSpace.induced (scaleIncl f) (WithPiTopology.instTopologicalSpace A)
 
-/-- The weighted topology is a ring topology: it is induced along a ring homomorphism from the
+/-- The scaled topology is a ring topology: it is induced along a ring homomorphism from the
 product topology, which is one. -/
 theorem scaledTateTopology_isTopologicalRing (f : A) :
     @IsTopologicalRing _ (scaledTateTopology f) _ := by
@@ -124,7 +128,7 @@ theorem scaledTateTopology_isTopologicalRing (f : A) :
           continuous_mul := continuous_mul
           continuous_neg := continuous_neg }
 
-/-- The weighted topology is nonarchimedean: every neighbourhood of zero contains an open
+/-- The scaled topology is nonarchimedean: every neighbourhood of zero contains an open
 additive subgroup, obtained by pulling back a finite product of such subgroups of `A`. -/
 theorem scaledTateTopology_nonarchimedean (f : A) :
     @NonarchimedeanRing _ _ (scaledTateTopology f) := by
@@ -164,7 +168,7 @@ theorem scaledTateTopology_nonarchimedean (f : A) :
       hSopen.preimage continuous_induced_dom⟩,
     fun g hg ↦ hWU (hIt fun i hi ↦ hV i (hg i hi))⟩
 
-/-- The constant-series embedding `A → A⟨X⟩` is continuous for the weighted topology. -/
+/-- The constant-series embedding `A → A⟨X⟩` is continuous for the scaled topology. -/
 theorem continuous_algebraMap_scaledTateTopology (f : A) :
     @Continuous _ _ _ (scaledTateTopology f)
       (algebraMap A (restrictedMvPowerSeriesSubring 1 A)) := by
