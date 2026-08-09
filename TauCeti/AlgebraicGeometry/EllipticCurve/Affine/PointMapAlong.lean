@@ -10,26 +10,26 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 # The point map induced by a ring homomorphism
 
 Mathlib's `WeierstrassCurve.Affine.Point.map` moves the points of a *fixed* curve between two
-**field** extensions of a base, along an `AlgHom` in a scalar tower. This file supplies the other
+**field** extensions of a base, along an `AlgHom` in a scalar tower — which covers the `q`-power
+Frobenius, Mathlib bundling that as `FiniteField.frobeniusAlgHom`. This file supplies the other
 functoriality: an injective ring homomorphism `f : R →+* S` carries the points of `W` over `R` to
 the points of the curve `W.map f` over `S`, with no fields and no tower involved.
 
 ## Main definitions and results
 
-* `TauCeti.WeierstrassCurve.Affine.Point.mapRingHom`: the map `W.Point → (W.map f).Point`, over
+* `TauCeti.WeierstrassCurve.Affine.Point.mapAlong`: the map `W.Point → (W.map f).Point`, over
   arbitrary commutative rings.
-* `TauCeti.WeierstrassCurve.Affine.Point.mapRingHom_neg`, `mapRingHom_id`,
-  `mapRingHom_mapRingHom` and `mapRingHom_injective`: the functorial API, over arbitrary
+* `TauCeti.WeierstrassCurve.Affine.Point.mapAlong_neg`, `mapAlong_id`,
+  `mapAlong_mapAlong` and `mapAlong_injective`: the functorial API, over arbitrary
   commutative rings, mirroring Mathlib's
   `Affine.Point.map_id`, `map_map` and `map_injective` for the `AlgHom` version. The identity and
   composition laws transport their codomains along Mathlib's `WeierstrassCurve.map_id` and
   `map_map`.
 
-* `TauCeti.WeierstrassCurve.Affine.Point.mapRingHom_eq_map`: over a field, for **any** ring
-  homomorphism `f` — in particular a `q`-power Frobenius, which is not an ambient `algebraMap` —
-  the transport *is* Mathlib's `Affine.Point.map` once `K` carries the `F`-algebra structure `f`
-  induces.
-Over a field, `mapRingHom_eq_map` is the whole story: the transport *is* Mathlib's
+* `TauCeti.WeierstrassCurve.Affine.Point.mapAlong_eq_map`: over a field, for **any** ring
+  homomorphism `f`, the transport *is* Mathlib's `Affine.Point.map` once `K` carries the
+  `F`-algebra structure `f` induces.
+Over a field, `mapAlong_eq_map` is the whole story: the transport *is* Mathlib's
 `Affine.Point.map`, which is already an `AddMonoidHom`. Rewriting with it gives `map_add`,
 `map_zero` and `map_zsmul` from Mathlib directly. Nothing field-level is defined or restated
 here — a bundled hom or `add`/`zsmul` lemmas would be a wrapper around Mathlib's.
@@ -55,7 +55,7 @@ that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/EC/AffinePointMap.l
 declarations `map`, `map_zero`, `map_some` and `map_neg`.
 
 The source's `map_add`, `mapAddMonoidHom` and `map_zsmul` are **not** ported. Over a field all
-three are Mathlib's `Affine.Point.map` under `f.toAlgebra`, and `mapRingHom_eq_map` is the bridge
+three are Mathlib's `Affine.Point.map` under `f.toAlgebra`, and `mapAlong_eq_map` is the bridge
 to it; anything more here would be a wrapper.
 
 Changes from the source. The names take a `RingHom` suffix, Mathlib having since taken
@@ -78,49 +78,49 @@ variable {R S : Type*} [CommRing R] [CommRing S] {W : _root_.WeierstrassCurve R}
 /-- **The points of `W` map to the points of `W.map f` along an injective ring homomorphism.**
 Nonsingularity transports by Mathlib's `Affine.map_nonsingular`, which is what injectivity is
 for. -/
-noncomputable def mapRingHom : W.toAffine.Point → (W.map f).toAffine.Point
+noncomputable def mapAlong : W.toAffine.Point → (W.map f).toAffine.Point
   | .zero => .zero
   | .some x y h => .some (f x) (f y) ((Affine.map_nonsingular W.toAffine hf x y).mpr h)
 
 /-- The point map sends the point at infinity to the point at infinity. -/
 @[simp]
-lemma mapRingHom_zero : mapRingHom f hf (0 : W.toAffine.Point) = 0 := by
+lemma mapAlong_zero : mapAlong f hf (0 : W.toAffine.Point) = 0 := by
   rfl
 
 /-- The point map sends an affine point to the point with image coordinates. -/
 @[simp]
-lemma mapRingHom_some {x y : R} (h : W.toAffine.Nonsingular x y) :
-    mapRingHom f hf (.some x y h)
+lemma mapAlong_some {x y : R} (h : W.toAffine.Nonsingular x y) :
+    mapAlong f hf (.some x y h)
       = .some (f x) (f y) ((Affine.map_nonsingular W.toAffine hf x y).mpr h) := by
-  simp [mapRingHom]
+  simp [mapAlong]
 
 /-- **The point map preserves negation**, over any commutative ring. -/
 @[simp]
-lemma mapRingHom_neg (P : W.toAffine.Point) :
-    mapRingHom f hf (-P) = -mapRingHom f hf P := by
+lemma mapAlong_neg (P : W.toAffine.Point) :
+    mapAlong f hf (-P) = -mapAlong f hf P := by
   rcases P with _ | ⟨x, y, h⟩
   · rfl
-  · rw [Affine.Point.neg_some, mapRingHom_some, mapRingHom_some, Affine.Point.neg_some]
+  · rw [Affine.Point.neg_some, mapAlong_some, mapAlong_some, Affine.Point.neg_some]
     simp only [Affine.map_negY]
 
-/-- **The point map along the identity is the identity**, after Mathlib's `WeierstrassCurve.map_id`
-identifies the codomain. -/
+/-- **The point map along the identity is the identity.** `W.map (RingHom.id R)` is `W` by
+definition, so no transport is needed. -/
 @[simp]
-lemma mapRingHom_id (P : W.toAffine.Point) :
-    mapRingHom (RingHom.id R) (fun _ _ h => h) P = _root_.WeierstrassCurve.map_id W ▸ P := by
-  rcases P with _ | ⟨x, y, h⟩ <;> simp [mapRingHom]
+lemma mapAlong_id (P : W.toAffine.Point) :
+    mapAlong (RingHom.id R) (fun _ _ h => h) P = P := by
+  rcases P with _ | ⟨x, y, h⟩ <;> simp [mapAlong]
 
-/-- **The point map is functorial in the ring homomorphism**, after Mathlib's
-`WeierstrassCurve.map_map` identifies the codomain. -/
-lemma mapRingHom_mapRingHom {T : Type*} [CommRing T] (g : S →+* T) (hg : Function.Injective g)
+/-- **The point map is functorial in the ring homomorphism.** `(W.map f).map g` is
+`W.map (g.comp f)` by definition, so no transport is needed. -/
+@[simp]
+lemma mapAlong_mapAlong {T : Type*} [CommRing T] (g : S →+* T) (hg : Function.Injective g)
     (P : W.toAffine.Point) :
-    mapRingHom g hg (mapRingHom f hf P)
-      = _root_.WeierstrassCurve.map_map W f g ▸ mapRingHom (g.comp f) (hg.comp hf) P := by
-  rcases P with _ | ⟨x, y, h⟩ <;> simp [mapRingHom] <;> rfl
+    mapAlong g hg (mapAlong f hf P) = mapAlong (g.comp f) (hg.comp hf) P := by
+  rcases P with _ | ⟨x, y, h⟩ <;> simp [mapAlong] <;> rfl
 
 /-- **The point map is injective.** -/
-lemma mapRingHom_injective : Function.Injective (mapRingHom f hf (W := W)) := by
-  rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩) hP <;> simp only [mapRingHom] at hP
+lemma mapAlong_injective : Function.Injective (mapAlong f hf (W := W)) := by
+  rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩) hP <;> simp only [mapAlong] at hP
   · rfl
   · exact absurd hP (by simp)
   · exact absurd hP (by simp)
@@ -136,9 +136,9 @@ variable {F K : Type*} [Field F] [Field K] [DecidableEq F] [DecidableEq K]
 /-- **Over a field the transport is Mathlib's `Affine.Point.map`**, for *any* ring homomorphism —
 in particular for a `q`-power Frobenius, which is not an ambient `algebraMap`. Giving `K` the
 `F`-algebra structure `f` induces makes the two constructions the same map. -/
-lemma mapRingHom_eq_map (P : W.toAffine.Point) :
+lemma mapAlong_eq_map (P : W.toAffine.Point) :
     letI : Algebra F K := f.toAlgebra
-    mapRingHom f f.injective P = Affine.Point.map (W' := W) (Algebra.ofId F K) P := by
+    mapAlong f f.injective P = Affine.Point.map (W' := W) (Algebra.ofId F K) P := by
   let : Algebra F K := f.toAlgebra
   rcases P with _ | ⟨x, y, h⟩ <;> rfl
 
