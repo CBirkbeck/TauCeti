@@ -38,7 +38,7 @@ stated once here rather than three times.
 * `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth`: the parameter half-width whose
   chord along the arc is a prescribed `ε` below the corner chord, characterised under that
   bound by `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth_spec`.
-* `TauCeti.abs_sin_mul_pi_div_twelve`: the sine of a multiple of `π/12` factors through
+* `Real.abs_sin_mul_pi_div_twelve`: the sine of a multiple of `π/12` factors through
   the absolute value, the identity that specification rests on.
 
 ## References
@@ -53,6 +53,20 @@ public noncomputable section
 open Complex Set UpperHalfPlane TauCeti.Contour
 
 open scoped Real
+
+namespace Real
+
+/-- **The sine of a multiple of `π/12` factors through the absolute value**, for any
+multiplier up to a half turn. The bound `|u| ≤ 12` is exactly what puts `u * π/12` inside
+`[-π, π]`, where `Real.abs_sin_eq_sin_abs_of_abs_le_pi` applies. -/
+theorem abs_sin_mul_pi_div_twelve {u : ℝ} (hu : |u| ≤ 12) :
+    |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
+  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
+      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
+      nlinarith [Real.pi_pos, abs_nonneg u]),
+    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
+
+end Real
 
 namespace TauCeti
 
@@ -360,16 +374,6 @@ lemma fdBoundaryArcExcisionHalfWidth_spec {ε : ℝ} (hε : 0 < ε)
     ring
 
 end ModularForm
-
-/-- **The sine of a multiple of `π/12` factors through the absolute value**, for any
-multiplier up to a half turn. The bound `|u| ≤ 12` is exactly what puts `u · π/12` inside
-`[-π, π]`, where `Real.abs_sin_eq_sin_abs_of_abs_le_pi` applies. -/
-lemma abs_sin_mul_pi_div_twelve {u : ℝ} (hu : |u| ≤ 12) :
-    |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
-  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
-      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
-      nlinarith [Real.pi_pos, abs_nonneg u]),
-    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
 end TauCeti
 
 end

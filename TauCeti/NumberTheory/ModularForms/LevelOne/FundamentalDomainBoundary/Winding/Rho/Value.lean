@@ -276,7 +276,7 @@ private lemma lt_norm_fdBoundary_sub_rho_arc_of_far (harc : t ∈ Icc (1 : ℝ) 
     2 * Real.sin (δ * (Real.pi / 12)) < ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ := by
   have habs2 : |t - 3| ≤ 2 := abs_le.mpr ⟨by linarith [harc.1], by linarith [harc.2]⟩
   rw [norm_fdBoundary_sub_rho_arc H harc,
-    abs_sin_mul_pi_div_twelve (habs2.trans (by norm_num))]
+    Real.abs_sin_mul_pi_div_twelve (habs2.trans (by norm_num))]
   have hmono : Real.sin (δ * (Real.pi / 12)) < Real.sin (|t - 3| * (Real.pi / 12)) := by
     refine Real.strictMonoOn_sin ⟨by nlinarith [Real.pi_pos], by nlinarith [Real.pi_pos]⟩
       ⟨by nlinarith [Real.pi_pos, abs_nonneg (t - 3)], by nlinarith [Real.pi_pos]⟩ ?_
@@ -290,7 +290,7 @@ private lemma norm_fdBoundary_sub_rho_arc_le_of_near (harc : t ∈ Icc (1 : ℝ)
   have habs1 : |t - 3| ≤ 1 := hnear.trans hd1.le
   have hd0 : 0 ≤ δ := (abs_nonneg _).trans hnear
   rw [norm_fdBoundary_sub_rho_arc H harc,
-    abs_sin_mul_pi_div_twelve (habs1.trans (by norm_num))]
+    Real.abs_sin_mul_pi_div_twelve (habs1.trans (by norm_num))]
   have hmono : Real.sin (|t - 3| * (Real.pi / 12)) ≤ Real.sin (δ * (Real.pi / 12)) := by
     refine Real.strictMonoOn_sin.monotoneOn
       ⟨by nlinarith [Real.pi_pos, abs_nonneg (t - 3)], by nlinarith [Real.pi_pos]⟩
