@@ -25,6 +25,8 @@ the existence proof itself reduces to a finite generating set and is completed s
   of Wedhorn Definition 7.3.
 * `TauCeti.Valuation.IsGreatestIdealCofinal v I H` : `H` is greatest with that property.
 * `TauCeti.Valuation.characteristicSubgroupOfIdeal` : **Wedhorn Definition 7.3**, `cΓ_v(I)`.
+* `TauCeti.Valuation.characteristicSubgroupOfIdeal_eq_top_iff` : **Wedhorn Lemma 7.4**, the
+  criterion `cΓ_v(I) = Γ_v` that cuts out `Spv (A, I)`.
 * `TauCeti.Valuation.valueSet v I` : the nonzero values of `v` on `I`, the set Wedhorn takes
   the maximum over.
 
@@ -440,5 +442,46 @@ theorem characteristicSubgroup_le_characteristicSubgroupOfIdeal (v : Valuation A
   · rw [characteristicSubgroupOfIdeal_of_meets hfg h]
   · rw [characteristicSubgroupOfIdeal, dif_neg h]
     exact (exists_isGreatestIdealCofinal_of_not_meets hfg h).choose_spec.2
+
+/-! ### Wedhorn Lemma 7.4 -/
+
+/-- **Wedhorn Lemma 7.4, (i) ⟺ (ii).** `cΓ_v(I) = Γ_v` exactly when either every value of `I`
+is cofinal for the whole value group, or `Γ_v = cΓ_v` already.
+
+The two branches of Definition 7.3 are not exclusive here: when `v(I)` meets `cΓ_v`, the left
+disjunct *implies* the right one, because a cofinal element lying in a convex subgroup forces
+that subgroup to be everything. -/
+theorem characteristicSubgroupOfIdeal_eq_top_iff {v : Valuation A Γ₀} {I : Ideal A}
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
+    characteristicSubgroupOfIdeal v I hfg = ⊤ ↔
+      (∀ a ∈ I, CofinalValue v a) ∨ characteristicSubgroup v = ⊤ := by
+  classical
+  by_cases hm : IdealMeetsCharacteristic v I
+  · rw [characteristicSubgroupOfIdeal_of_meets hfg hm]
+    refine ⟨fun h ↦ Or.inr h, ?_⟩
+    rintro (hall | hfull)
+    · -- an attained value inside `cΓ_v` that is cofinal for everything forces `cΓ_v = ⊤`
+      obtain ⟨a, haI, ha0, hmem⟩ := hm
+      have hcof : CofinalValueFor v ⊤ a := cofinalValueFor_top_iff.mpr (hall a haI)
+      have hlt : valueGroup.mk (.ofClass v) 1 a (by simp) ha0 < 1 := by
+        have := hcof.lt_one
+        rwa [v.restrict_eq_mk ha0, ← WithZero.coe_one, WithZero.coe_lt_coe] at this
+      have hsub := (TauCeti.isCofinalElement_iff_subset_closure hlt).mp
+        ((cofinalValueFor_iff_isCofinalElement ha0).mp hcof)
+      refine top_le_iff.mp fun x _ ↦ ?_
+      exact TauCeti.ConvexSubgroup.closure_le.mpr
+        (fun y hy ↦ by rw [Set.mem_singleton_iff] at hy; exact hy ▸ hmem)
+        (hsub (TauCeti.ConvexSubgroup.mem_top (x := x)))
+    · exact hfull
+  · have hg := isGreatestIdealCofinal_characteristicSubgroupOfIdeal hfg hm
+    refine ⟨fun htop ↦ Or.inl fun a ha ↦ ?_, ?_⟩
+    · exact cofinalValueFor_top_iff.mp (htop ▸ hg.1 a ha)
+    · rintro (hall | hfull)
+      · exact top_le_iff.mp (hg.2 ⊤ fun a ha ↦ cofinalValueFor_top_iff.mpr (hall a ha))
+      · -- `cΓ_v = ⊤` and disjointness force every value on `I` to vanish
+        refine top_le_iff.mp (hg.2 ⊤ fun a ha ↦ ?_)
+        by_cases h0 : (MonoidWithZeroHom.ofClass v) a = 0
+        · exact cofinalValueFor_of_eq_zero h0
+        · exact absurd ⟨a, ha, h0, hfull ▸ TauCeti.ConvexSubgroup.mem_top⟩ hm
 
 end TauCeti.Valuation
