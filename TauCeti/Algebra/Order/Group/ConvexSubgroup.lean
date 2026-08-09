@@ -280,7 +280,10 @@ theorem le_maxAvoid {γ : Γ} {hγ : γ ≠ 1} {H : ConvexSubgroup Γ} :
 section Quotient
 
 /-- The fibers of the projection to the quotient by a convex subgroup are the cosets, which
-are order-connected by convexity. -/
+are order-connected by convexity. This is the hypothesis Mathlib's condensation API takes as
+an instance (`Quotient.mk_le_mk`, `Quotient.instLinearOrder`); it is supplied explicitly at
+both call sites rather than registered globally, since as an instance its head would match
+every quotient of a linear order and send synthesis down a blind alley. -/
 private theorem ordConnected_leftRel_fiber (H : ConvexSubgroup Γ) :
     ∀ q : Γ ⧸ H.toSubgroup,
       Set.OrdConnected (Quotient.mk (QuotientGroup.leftRel H.toSubgroup) ⁻¹' {q}) := by
@@ -298,19 +301,12 @@ private theorem ordConnected_leftRel_fiber (H : ConvexSubgroup Γ) :
 variable (H : ConvexSubgroup Γ)
 
 /-- The quotient of `Γ` by a convex subgroup `H` is linearly ordered, as the condensation
-of `Γ` along the order-connected cosets. -/
+of `Γ` along the order-connected cosets. The body is not exposed: consumers work through
+`quotient_le_iff` rather than by unfolding the condensation. -/
+@[no_expose]
 noncomputable instance quotientLinearOrder : LinearOrder (Γ ⧸ H.toSubgroup) :=
   @Quotient.instLinearOrder Γ (QuotientGroup.leftRel H.toSubgroup) _
-    (fun q ↦ by
-      constructor
-      induction q using Quotient.inductionOn with | _ b =>
-      intro x hx y hy z hz
-      have hx' : x⁻¹ * b ∈ H.toSubgroup := QuotientGroup.eq.mp hx
-      have hy' : y⁻¹ * b ∈ H.toSubgroup := QuotientGroup.eq.mp hy
-      exact QuotientGroup.eq.mpr
-        (H.convex hy' hx' (mul_le_mul_left (inv_le_inv' hz.2) b)
-          (mul_le_mul_left (inv_le_inv' hz.1) b)))
-    (fun _ _ ↦ Classical.dec _)
+    (ordConnected_leftRel_fiber H) (fun _ _ ↦ Classical.dec _)
 
 omit [IsOrderedMonoid Γ] in
 /-- The coercion `Γ → Γ ⧸ H.toSubgroup` is `Quotient.mk` of the left-coset setoid; this
