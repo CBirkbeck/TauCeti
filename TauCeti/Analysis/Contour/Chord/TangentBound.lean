@@ -37,6 +37,8 @@ direction, not the inner-product-space machinery.
 
 * `Contour.norm_tangentDeviation` — `‖tangentDeviation w L‖ = |(w * conj L).im| / ‖L‖`, the
   bridge to the inline form used by `Contour.FlatOfOrder`.
+* `Contour.norm_tangentDeviation_le_norm_sub_smul` — the deviation norm is at most the distance
+  to any point `r • L` of the line, generalising `Contour.norm_tangentDeviation_le`.
 * `Contour.norm_chord_to_tangent_target_le` — the chord-to-tangent-target bound (the Pythagoras
   decomposition and square-root estimates behind it are private implementation steps).
 
@@ -142,6 +144,22 @@ theorem norm_tangentDeviation_le {L : ℂ} (hL : L ≠ 0) (w : ℂ) :
         gcongr; exact Complex.abs_im_le_norm _
     _ = ‖w‖ := by rw [norm_mul, RCLike.norm_conj, mul_div_assoc,
         div_self (norm_ne_zero_iff.mpr hL), mul_one]
+
+/-- **The deviation norm is at most the distance to any point of the line.** For `L ≠ 0`, the
+perpendicular component of `w` is bounded by `‖w - r • L‖` for every real `r`; the case `r = 0` is
+`norm_tangentDeviation_le`. -/
+theorem norm_tangentDeviation_le_norm_sub_smul {L : ℂ} (hL : L ≠ 0) (w : ℂ) (r : ℝ) :
+    ‖tangentDeviation w L‖ ≤ ‖w - r • L‖ := by
+  have hLL : tangentDeviation L L = 0 := by
+    have h : ‖tangentDeviation L L‖ = 0 := by
+      rw [norm_tangentDeviation hL, Complex.mul_conj]
+      simp
+    exact norm_eq_zero.mp h
+  have hself : tangentDeviation (r • L) L = 0 := by
+    rw [tangentDeviation_real_smul, hLL, smul_zero]
+  calc ‖tangentDeviation w L‖ = ‖tangentDeviation (w - r • L) L‖ := by
+        rw [tangentDeviation_sub, hself, sub_zero]
+    _ ≤ ‖w - r • L‖ := norm_tangentDeviation_le hL _
 
 /-- The deviation norm is direction-line invariant: measuring against `-L` gives the same
 distance to the line `ℝ • L`. -/

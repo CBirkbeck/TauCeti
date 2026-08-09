@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import TauCeti.Analysis.Contour.Chord.TangentBound
 public import TauCeti.Analysis.Contour.PwC1ImmersionOn
 public import TauCeti.Analysis.Contour.RegularityConditions
 
@@ -44,25 +45,6 @@ open Asymptotics Filter Set Topology
 
 variable {γ : ℝ → ℂ} {a b : ℝ}
 
-/-- **The perpendicular component is at most the distance to the direction.** For `L ≠ 0`, the
-component of `z` perpendicular to `L`, namely `|(z * star L).im| / ‖L‖`, is bounded by `‖z - r • L‖`
-for every real `r`. -/
-private theorem abs_im_mul_star_div_norm_le_norm_sub_smul {L : ℂ} (hL : L ≠ 0) (z : ℂ) (r : ℝ) :
-    |(z * star L).im| / ‖L‖ ≤ ‖z - r • L‖ := by
-  have hsplit : z * star L = (z - r • L) * star L + (r • L) * star L := by ring
-  -- the component along `L` is real, so it contributes nothing to the imaginary part
-  have him : ((r • L) * star L).im = 0 := by
-    rw [smul_mul_assoc, Complex.star_def, Complex.mul_conj]
-    simp [Complex.real_smul]
-  rw [hsplit, Complex.add_im, him, add_zero]
-  calc |((z - r • L) * star L).im| / ‖L‖
-      ≤ ‖(z - r • L) * star L‖ / ‖L‖ := by
-        gcongr
-        exact Complex.abs_im_le_norm _
-    _ = ‖z - r • L‖ := by
-        rw [norm_mul, norm_star, mul_div_assoc,
-          div_self (norm_ne_zero_iff.mpr hL), mul_one]
-
 /-- The one-sided first-order tangency computation: if `γ` has one-sided derivative `L ≠ 0` at
 `t₀` within a set `s`, then along any filter `l ≤ 𝓝[s] t₀`, the perpendicular
 deviation of `γ t` from the tangent line through `γ t₀` in direction `L` is `o(‖γ t - γ t₀‖)`. -/
@@ -72,8 +54,10 @@ private theorem perp_isLittleO_of_hasDerivWithinAt {s : Set ℝ} {t₀ : ℝ} {L
   have herr : (fun t => γ t - γ t₀ - (t - t₀) • L) =o[l] (fun t => t - t₀) :=
     (hasDerivWithinAt_iff_isLittleO.mp hd).mono hl
   -- the perpendicular part of the linear term vanishes, so perp ≤ ‖error‖
-  have hperp_le : ∀ t, |((γ t - γ t₀) * star L).im| / ‖L‖ ≤ ‖γ t - γ t₀ - (t - t₀) • L‖ :=
-    fun t => abs_im_mul_star_div_norm_le_norm_sub_smul hL (γ t - γ t₀) (t - t₀)
+  have hperp_le : ∀ t, |((γ t - γ t₀) * star L).im| / ‖L‖ ≤ ‖γ t - γ t₀ - (t - t₀) • L‖ := by
+    intro t
+    rw [Complex.star_def, ← norm_tangentDeviation hL]
+    exact norm_tangentDeviation_le_norm_sub_smul hL _ _
   -- perp =o (t - t₀)
   have h1 : (fun t => |((γ t - γ t₀) * star L).im| / ‖L‖) =o[l] (fun t => t - t₀) :=
     (isBigO_of_le l fun t => by
