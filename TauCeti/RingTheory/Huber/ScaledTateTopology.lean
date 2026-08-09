@@ -161,25 +161,18 @@ theorem continuous_algebraMap_scaledTateTopology (f : A) :
   let _ : TopologicalSpace (restrictedMvPowerSeriesSubring 1 A) := scaledTateTopology f
   let _ : TopologicalSpace (MvPowerSeries (Fin 1) A) := WithPiTopology.instTopologicalSpace A
   refine continuous_induced_rng.mpr ?_
-  change Continuous (scaleIncl f ∘ algebraMap A (restrictedMvPowerSeriesSubring 1 A))
-  refine continuous_pi fun s ↦ ?_
-  simp only [Function.comp_apply, scaleIncl_apply]
-  by_cases hs : s = 0
-  · subst hs
-    simp only [Finsupp.zero_apply, pow_zero, one_mul]
-    change Continuous fun a ↦ (algebraMap A (MvPowerSeries (Fin 1) A) a) 0
-    exact (WithPiTopology.continuous_coeff A 0).comp WithPiTopology.continuous_C
-  · have hzero : (fun a : A ↦ f ^ (s 0) *
-        ((algebraMap A (restrictedMvPowerSeriesSubring 1 A) a :
-          MvPowerSeries (Fin 1) A)) s) = fun _ ↦ 0 := by
-      ext a
-      classical
-      change f ^ (s 0) * (algebraMap A (MvPowerSeries (Fin 1) A) a) s = 0
-      rw [show (algebraMap A (MvPowerSeries (Fin 1) A) a) s =
-        MvPowerSeries.coeff s (MvPowerSeries.C (σ := Fin 1) a) from rfl,
-        MvPowerSeries.coeff_C, if_neg hs, mul_zero]
-    rw [hzero]
-    exact continuous_const
+  -- `rescale` fixes the constant series, which is `AlgHom.commutes` for Mathlib's
+  -- `MvPowerSeries.rescaleAlgHom`; no coefficientwise case split is needed.
+  have hconst : scaleIncl f ∘ (algebraMap A (restrictedMvPowerSeriesSubring 1 A))
+      = algebraMap A (MvPowerSeries (Fin 1) A) := by
+    funext a
+    change MvPowerSeries.rescale (fun _ : Fin 1 ↦ f)
+      ((algebraMap A (restrictedMvPowerSeriesSubring 1 A) a : MvPowerSeries (Fin 1) A)) = _
+    rw [coe_algebraMap_restrictedMvPowerSeriesSubring,
+      ← MvPowerSeries.rescaleAlgHom_apply (fun _ : Fin 1 ↦ f)]
+    exact (MvPowerSeries.rescaleAlgHom (fun _ : Fin 1 ↦ f)).commutes a
+  rw [hconst]
+  exact WithPiTopology.continuous_C
 
 end Topology
 
