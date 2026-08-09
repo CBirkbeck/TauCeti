@@ -64,24 +64,31 @@ lemma heckeTDiag_p_prime_pow_eq (k : ℕ) (hk : 0 < k) :
   simpa [pow_zero, zero_add, pow_one] using h0.symm
 
 include hp in
-/-- `T(p⁰) = 1`. -/
+/-- `T(p⁰) = 1`.
+
+Not a restatement of `heckeT_one`: the work is normalizing the `ℕ+` *index* `⟨p ^ 0, _⟩` to
+`1`, which needs `Subtype.ext` and so cannot be reached by rewriting `pow_zero` under the
+positivity proof. Used at four call sites. -/
 private lemma heckeT_prime_pow_zero : heckeT ⟨p ^ 0, pow_pos hp.pos 0⟩ = 1 := by
   rw [show (⟨p ^ 0, pow_pos hp.pos 0⟩ : ℕ+) = 1 from Subtype.ext (pow_zero p)]
   exact heckeT_one
 
 omit hp in
-/-- `T(1, p⁰) = 1`. -/
-private lemma heckeTDiag_one_prime_pow_zero : heckeTDiag 1 (p ^ 0) = 1 := by
-  rw [pow_zero]
-  exact heckeTDiag_one_one
+/-- `T(1, p¹) = T(1, p)`.
 
-omit hp in
-/-- `T(1, p¹) = T(1, p)`. -/
+Deliberately *not* inlined as `pow_one`. In the goals where it is used, `p ^ 1` also occurs as
+`heckeT ⟨p ^ 1, _⟩`, where the exponent appears inside the positivity proof; rewriting with
+`pow_one` there fails with "motive is not type correct". Stating the rewrite against
+`heckeTDiag` confines it to the one occurrence that carries no dependent proof. -/
 private lemma heckeTDiag_one_prime_pow_one : heckeTDiag 1 (p ^ 1) = heckeTDiag 1 p := by
   rw [pow_one]
 
 include hp in
-/-- `T(p¹) = T(p)`: normalizing the exponent in the index. -/
+/-- `T(p¹) = T(p)`: normalizing the exponent in the index.
+
+As with `heckeT_prime_pow_zero`, the content is the `ℕ+` index equality `⟨p ^ 1, _⟩ = ⟨p, _⟩`,
+which `Subtype.ext` supplies and a bare `pow_one` rewrite cannot, since the exponent also
+occurs inside the positivity proof. Used at four call sites. -/
 private lemma heckeT_prime_pow_one : heckeT ⟨p ^ 1, pow_pos hp.pos 1⟩ = heckeT ⟨p, hp.pos⟩ := by
   congr 1
   exact Subtype.ext (pow_one p)
@@ -167,7 +174,7 @@ theorem heckeT_prime_pow_recurrence : ∀ k : ℕ, 0 < k →
   · omega
   rcases k with _ | k
   · simp only [show (1 : ℕ) - 1 = 0 from rfl, ite_true] at h5 ⊢
-    rw [heckeT_prime_pow_zero p hp, heckeTDiag_one_prime_pow_zero, mul_one] at h5
+    rw [heckeT_prime_pow_zero p hp, pow_zero, heckeTDiag_one_one, mul_one] at h5
     rw [heckeT_prime_pow_zero p hp, mul_one, heckeT_prime_pow_one p hp]
     rw [heckeTDiag_one_prime_pow_one, heckeT_prime p hp] at h5
     rw [heckeT_prime p hp]
