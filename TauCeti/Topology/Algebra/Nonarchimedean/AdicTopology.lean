@@ -20,6 +20,7 @@ equivalent to `A₀`.
 
 ## Main results
 
+* `Ideal.comap_pow_of_equiv`: the powers of a comapped ideal are the comapped powers.
 * `IsAdic.comap`: an adic topology transports along an inducing ring equivalence.
 
 ## References
@@ -37,7 +38,7 @@ variable {A B : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
 omit [TopologicalSpace A] [IsTopologicalRing A] [TopologicalSpace B] [IsTopologicalRing B] in
 /-- The powers of a comapped ideal are the comapped powers, along a ring equivalence. -/
-private theorem comap_pow_of_equiv (e : B ≃+* A) (I : Ideal A) (n : ℕ) :
+theorem comap_pow_of_equiv (e : B ≃+* A) (I : Ideal A) (n : ℕ) :
     (I ^ n).comap e = I.comap e ^ n := by
   rw [← Ideal.map_symm, ← Ideal.map_symm, Ideal.map_pow]
 

@@ -23,7 +23,8 @@ nilpotent.
 
 ## Main results
 
-* `TauCeti.Huber.PadicInt.coe_maximalIdeal_pow`: `(p)ⁿ` is the closed ball of radius `p⁻ⁿ`.
+* `TauCeti.Huber.PadicInt.coe_maximalIdeal_pow_eq_setOf_norm_le`:
+  `(p)ⁿ` is the closed ball of radius `p⁻ⁿ`.
   Openness is Mathlib's `IsLocalRing.isOpen_maximalIdeal_pow`.
 * `TauCeti.Huber.PadicInt.isAdic_maximalIdeal`: the norm topology of `ℤ_[p]` is the `(p)`-adic
   topology. Mathlib has `IsAdicComplete (maximalIdeal ℤ_[p]) ℤ_[p]` but not this comparison of
@@ -62,7 +63,7 @@ variable {p : ℕ} [Fact p.Prime]
 
 /-- The `n`-th power of the maximal ideal of `ℤ_[p]` is the closed ball of radius `p⁻ⁿ`: this is
 what ties the norm topology to the `(p)`-adic one. -/
-theorem coe_maximalIdeal_pow (n : ℕ) :
+theorem coe_maximalIdeal_pow_eq_setOf_norm_le (n : ℕ) :
     ((maximalIdeal ℤ_[p] ^ n : Ideal ℤ_[p]) : Set ℤ_[p])
       = {x : ℤ_[p] | ‖x‖ ≤ (p : ℝ) ^ (-n : ℤ)} := by
   ext x
@@ -78,7 +79,7 @@ theorem isAdic_maximalIdeal : IsAdic (maximalIdeal ℤ_[p]) := by
   obtain ⟨ε, hε, hball⟩ := Metric.mem_nhds_iff.mp hs
   obtain ⟨n, hn⟩ := exists_pow_lt_of_lt_one hε hp1
   refine ⟨n, fun x hx ↦ hball ?_⟩
-  rw [coe_maximalIdeal_pow, Set.mem_ofPred_eq] at hx
+  rw [coe_maximalIdeal_pow_eq_setOf_norm_le, Set.mem_ofPred_eq] at hx
   refine Metric.mem_ball.mpr (lt_of_le_of_lt ?_ hn)
   simpa [zpow_neg, zpow_natCast, ← inv_pow, dist_eq_norm] using hx
 
