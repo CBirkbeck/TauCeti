@@ -45,35 +45,6 @@ public theorem SemilocallySimplyConnectedAt.of_simplyConnectedSpace
     ext
     exact Subsingleton.elim (α := Path.Homotopic.Quotient base.val base.val) _ _⟩
 
-/-- **The map induced by an inclusion is trivial exactly loop by loop.** For a subspace `U` and a
-basepoint in it, the map `π₁(U, base) → π₁(X, base)` induced by the inclusion has trivial range if
-and only if every loop at `base` in `U` is nullhomotopic in `X`. -/
-private theorem range_fundamentalGroupMap_subtypeVal_eq_bot_iff {U : Set X} (base : U) :
-    (FundamentalGroup.map (⟨Subtype.val, continuous_subtype_val⟩ : C(U, X)) base).range = ⊥ ↔
-      ∀ γ : Path base base, (γ.map continuous_subtype_val).Homotopic (Path.refl base.val) := by
-  rw [MonoidHom.range_eq_bot_iff]
-  constructor
-  · intro h γ
-    -- `fromPath ⟦Path.refl _⟧` is the identity wrapper, which is `1`
-    have h_map_eq : FundamentalGroup.map (⟨Subtype.val, continuous_subtype_val⟩ : C(U, X)) base
-          (FundamentalGroup.fromPath ⟦γ⟧) =
-        FundamentalGroup.fromPath ⟦γ.map continuous_subtype_val⟧ :=
-      FundamentalGroup.map_fromPath (⟨Subtype.val, continuous_subtype_val⟩ : C(U, X)) base γ
-    have h_map : FundamentalGroup.fromPath ⟦γ.map continuous_subtype_val⟧ =
-        FundamentalGroup.fromPath ⟦Path.refl base.val⟧ := by
-      rw [← h_map_eq, h]
-      exact FundamentalGroupoid.id_eq_path_refl (FundamentalGroupoid.mk base.val)
-    exact Quotient.eq.mp h_map
-  · intro h
-    ext p
-    obtain ⟨γ, rfl⟩ := Quotient.exists_rep (FundamentalGroup.toPath p)
-    have h_map_eq : FundamentalGroup.map (⟨Subtype.val, continuous_subtype_val⟩ : C(U, X)) base
-          (FundamentalGroup.fromPath ⟦γ⟧) =
-        FundamentalGroup.fromPath ⟦γ.map continuous_subtype_val⟧ :=
-      FundamentalGroup.map_fromPath (⟨Subtype.val, continuous_subtype_val⟩ : C(U, X)) base γ
-    rw [h_map_eq, Quotient.sound (h γ)]
-    exact (FundamentalGroupoid.id_eq_path_refl (FundamentalGroupoid.mk base.val)).symm
-
 /-- Characterization of `SemilocallySimplyConnectedAt x` by open neighborhoods whose loops are
 nullhomotopic in the ambient space. -/
 public theorem semilocallySimplyConnectedAt_iff {x : X} :
@@ -88,13 +59,13 @@ public theorem semilocallySimplyConnectedAt_iff {x : X} :
     refine ⟨V, hV_open, hx_in_V, ?_⟩
     intro u γ hγ_range
     have hγ_mem : ∀ t, γ t ∈ U := fun t ↦ hVU (hγ_range ⟨t, rfl⟩)
-    have h := (range_fundamentalGroupMap_subtypeVal_eq_bot_iff
+    have h := (FundamentalGroup.map_range_eq_bot_iff ⟨Subtype.val, continuous_subtype_val⟩
       (⟨u, γ.source ▸ hγ_mem 0⟩ : U)).mp (hU_loops _) (γ.codRestrict hγ_mem)
     rwa [Path.map_codRestrict] at h
   · -- Backward direction: the neighborhood is already open, and every loop in it is null
     intro ⟨U, hU_open, hx_in_U, hU_loops_null⟩
     refine ⟨U, hU_open.mem_nhds hx_in_U, fun base ↦
-      (range_fundamentalGroupMap_subtypeVal_eq_bot_iff base).mpr fun γ ↦
+      (FundamentalGroup.map_range_eq_bot_iff ⟨Subtype.val, continuous_subtype_val⟩ base).mpr fun γ ↦
         hU_loops_null (γ.map continuous_subtype_val) ?_⟩
     rintro _ ⟨t, rfl⟩
     exact (γ t).property
