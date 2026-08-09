@@ -1,6 +1,7 @@
 /-
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Kim Morrison
 -/
 module
 
@@ -12,6 +13,14 @@ public import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 This file records when a map induced on fundamental groups is trivial: a characterization of
 trivial range loop by loop, and the basic consequences of triviality of the *source* fundamental
 group.
+
+`TauCeti.FundamentalGroup.map_range_eq_bot_iff` was extracted from the proof of
+`TauCeti.semilocallySimplyConnectedAt_iff` in
+`TauCeti/AlgebraicTopology/SemilocallySimplyConnected/On.lean`, which is adapted from the Mathlib
+drafts [#31449](https://github.com/leanprover-community/mathlib4/pull/31449),
+[#31576](https://github.com/leanprover-community/mathlib4/pull/31576), and
+[#38292](https://github.com/leanprover-community/mathlib4/pull/38292) by Kim Morrison, for
+Stage 0.1 of the `TauCetiRoadmap/UniversalCovers` roadmap.
 
 ## Main declarations
 
