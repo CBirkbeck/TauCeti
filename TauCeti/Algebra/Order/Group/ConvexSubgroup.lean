@@ -577,17 +577,20 @@ instance quotientIsOrderedMonoid : IsOrderedMonoid (Γ ⧸ H.toSubgroup) where
 
 /-- The quotient map to `Γ ⧸ H.toSubgroup` is monotone: passing to the quotient by a convex
 subgroup coarsens the order rather than reversing any part of it. -/
-theorem quotientMk_monotone : Monotone (QuotientGroup.mk' H.toSubgroup) := by
-  intro a b hab
-  exact (quotient_le_iff H a b).mpr (Or.inl (by simpa using mul_le_mul_left hab b⁻¹))
+theorem quotientMk_monotone : Monotone (QuotientGroup.mk' H.toSubgroup) :=
+  fun _ _ h ↦ Quotient.mk_monotone h
 
 /-- An element below `1` that avoids `H` is still below `1` in the quotient: the classes it
 is squeezed between are distinct precisely because it is not a member. -/
 theorem quotientMk_lt_one_of_notMem {u : Γ} (hu : u < 1) (hnot : u ∉ H) :
-    QuotientGroup.mk' H.toSubgroup u < 1 := by
-  refine lt_of_le_of_ne ?_ ?_
-  · simpa using (quotient_le_iff H u 1).mpr (Or.inl (by simpa using hu.le))
-  · simpa using fun h ↦ hnot (QuotientGroup.eq_one_iff u |>.mp h)
+    QuotientGroup.mk' H.toSubgroup u < 1 :=
+  (Quotient.mk_lt_mk (H := ordConnected_leftRel_fiber H)).mpr
+    ⟨hu, fun h ↦ hnot (by
+      have h1 : u⁻¹ ∈ H.toSubgroup := by
+        simpa using QuotientGroup.leftRel_apply.mp h
+      have h2 := H.toSubgroup.inv_mem h1
+      rw [inv_inv] at h2
+      exact h2)⟩
 
 end Quotient
 

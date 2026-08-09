@@ -60,10 +60,6 @@ theorem coarsenMap_monotone (H : ConvexSubgroup Γ₀ˣ) : Monotone (coarsenMap 
   WithZero.map'_mono (ConvexSubgroup.quotientMk_monotone H)
     ((OrderMonoidIso.withZeroUnits (α := Γ₀)).symm.toOrderIso.monotone hab)
 
-@[simp]
-theorem coarsenMap_zero (H : ConvexSubgroup Γ₀ˣ) : coarsenMap H 0 = 0 :=
-  map_zero _
-
 /-- On a unit, the coarsening map is the quotient map. -/
 @[simp]
 theorem coarsenMap_coe_unit (H : ConvexSubgroup Γ₀ˣ) (g : Γ₀ˣ) :
