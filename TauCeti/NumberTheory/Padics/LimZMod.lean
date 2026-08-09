@@ -160,15 +160,7 @@ def compatSubring.lift {S : Type*} [NonAssocSemiring S] (g : ∀ n : ℕ, S →+
   RingHom.codRestrict (RingHom.pi g) (compatSubring p) fun s n => RingHom.congr_fun (hg n) s
 
 omit [Fact p.Prime] in
-/-- Projecting the factorisation at `n` recovers the given map `g n`. -/
-@[simp] theorem compatProj_comp_lift {S : Type*} [NonAssocSemiring S]
-    (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
-    (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
-    (n : ℕ) : (compatProj p n).comp (compatSubring.lift p g hg) = g n :=
-  (rfl)
-
-omit [Fact p.Prime] in
-/-- The element-level form of `compatProj_comp_lift`. -/
+/-- The factorisation reads off componentwise: its `n`-th component is `g n`. -/
 @[simp] theorem compatSubring.lift_apply_val {S : Type*} [NonAssocSemiring S]
     (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
     (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
@@ -176,9 +168,18 @@ omit [Fact p.Prime] in
   (rfl)
 
 omit [Fact p.Prime] in
+/-- Projecting the factorisation at `n` recovers the given map `g n`. -/
+@[simp] theorem compatProj_comp_lift {S : Type*} [NonAssocSemiring S]
+    (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
+    (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
+    (n : ℕ) : (compatProj p n).comp (compatSubring.lift p g hg) = g n := by
+  ext s
+  exact compatSubring.lift_apply_val p g hg s n
+
+omit [Fact p.Prime] in
 /-- **Extensionality for maps into the limit**: two maps agreeing after every projection
 are equal. -/
-theorem compatSubring.ringHom_ext {S : Type*} [NonAssocSemiring S] {F G : S →+* compatSubring p}
+theorem compatSubring.hom_ext {S : Type*} [NonAssocSemiring S] {F G : S →+* compatSubring p}
     (h : ∀ n, (compatProj p n).comp F = (compatProj p n).comp G) : F = G := by
   ext s n
   exact RingHom.congr_fun (h n) s
@@ -189,7 +190,7 @@ theorem compatSubring.lift_unique {S : Type*} [NonAssocSemiring S] (g : ∀ n : 
     (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
     (F : S →+* compatSubring p) (hF : ∀ n, (compatProj p n).comp F = g n) :
     F = compatSubring.lift p g hg :=
-  compatSubring.ringHom_ext p fun n => by rw [hF n, compatProj_comp_lift]
+  compatSubring.hom_ext p fun n => by rw [hF n, compatProj_comp_lift]
 
 /-- The map out of the limit into `ℤ_[p]`, from the universal property. -/
 private noncomputable def limZModToPadic : compatSubring p →+* ℤ_[p] :=
@@ -221,7 +222,7 @@ noncomputable def equivLimZMod : ℤ_[p] ≃+* compatSubring p :=
 /-- The isomorphism reads off the truncations: its `n`-th component is `toZModPow n`. -/
 @[simp] theorem equivLimZMod_apply_val (z : ℤ_[p]) (n : ℕ) :
     (equivLimZMod p z).val n = PadicInt.toZModPow n z :=
-  (rfl)
+  padicToLimZMod_val p z n
 
 /-- The inverse is characterised by its truncations, which are the given components. -/
 @[simp] theorem toZModPow_equivLimZMod_symm (n : ℕ) (x : compatSubring p) :
