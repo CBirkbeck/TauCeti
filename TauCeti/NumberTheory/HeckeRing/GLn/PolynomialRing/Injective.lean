@@ -296,13 +296,13 @@ lemma T_gen_pow_support_qpower (q : {p : ℕ // p.Prime}) (e : Fin 2 → ℕ)
   have hf_det : ∀ D'', (heckeGen 2 q.1 1 ^ (e 1)) D'' ≠ 0 →
       (↑(↑(HeckeCoset.rep D'') : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det =
         ↑(q.1 ^ (2 * e 1) : ℕ) := by
+    classical
     intro D'' hD''
-    rw [HeckeRing.GLn.Surj.heckeGen_one_eq_heckeTScalar q.1 q.2, HeckeRing.GL2.heckeTScalar_pow q.1 q.2.pos (e 1)] at hD''
+    rw [HeckeRing.GLn.Surj.heckeGen_one_eq_heckeTScalar q.1 q.2,
+      HeckeRing.GL2.heckeTScalar_pow q.1 q.2.pos (e 1)] at hD''
     have h_eq : diagCoset (fun _ : Fin 2 ↦ q.1 ^ (e 1)) = D'' := by
       by_contra h
-      exact hD'' (by rw [show (diagElem (fun _ : Fin 2 ↦ q.1 ^ (e 1))) D'' =
-        (Finsupp.single (diagCoset (fun _ : Fin 2 ↦ q.1 ^ (e 1))) (1 : ℤ)) D'' from rfl,
-        Finsupp.single_apply, if_neg h])
+      exact hD'' (by rw [diagElem_def, HeckeCosetModule.single_apply, if_neg h])
     rw [← h_eq, prod_rep_T_diag _ (fun i ↦ by fin_cases i <;> simp [pow_pos q.2.pos])]
     push_cast [Fin.prod_univ_two, ← pow_add]; ring_nf
   have h_result := det_rep_T_gen_zero_pow_mul q (2 * e 1) (e 0) _ D hf_det hD
@@ -332,9 +332,9 @@ lemma support_mul_exists (f g : IntegralHeckeRing 2)
     (hD : (f * g) D ≠ 0) :
     ∃ D₁ D₂, f D₁ ≠ 0 ∧ g D₂ ≠ 0 ∧
       D ∈ (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2) (HeckeCoset.rep D₁) (HeckeCoset.rep D₂)).support := by
-  have h : (Finsupp.sum f (fun D₁ b₁ ↦ Finsupp.sum g (fun D₂ b₂ ↦
-      b₁ • b₂ • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2) (HeckeCoset.rep D₁)
-        (HeckeCoset.rep D₂)))) D ≠ 0 := hD
+  -- `HeckeCosetModule.mul` is sealed, so unfold it through its API rather than by defeq.
+  have h := hD
+  rw [HeckeCosetModule.mul_def, HeckeCosetModule.mul_eq_sum] at h
   simp only [Finsupp.sum, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul] at h
   obtain ⟨D₁, hD₁_mem, h₁⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
   obtain ⟨D₂, hD₂_mem, h₂⟩ := Finset.exists_ne_zero_of_sum_ne_zero h₁
@@ -353,12 +353,11 @@ lemma T_single_diag_mul_T_scalar (c : ℕ) (hc : 0 < c)
     HeckeCosetModule.single ℤ (diagCoset (a * (fun _ : Fin 2 ↦ c))) α := by
   have h_single : HeckeCosetModule.single ℤ (diagCoset a) α =
       α • diagElem a := by
-    show HeckeCosetModule.single ℤ (diagCoset a) α =
-         α • HeckeCosetModule.single ℤ (diagCoset a) 1
-    rw [HeckeCosetModule.single_smul]; congr 1; ring
-  rw [h_single, smul_mul_assoc, diagElem_mul_const a ha_pos ha_div c hc]
-  show α • HeckeCosetModule.single ℤ (diagCoset (a * fun _ ↦ c)) 1 = _
-  rw [HeckeCosetModule.single_smul]; congr 1; ring
+    -- `diagElem` is sealed, so `show` cannot see through it; `diagElem_def` is the bridge.
+    rw [diagElem_def]
+    exact (HeckeCosetModule.smul_single_one ℤ (diagCoset a) α).symm
+  rw [h_single, smul_mul_assoc, diagElem_mul_const 2 a ha_pos c hc, diagElem_def]
+  exact HeckeCosetModule.smul_single_one ℤ (diagCoset (a * fun _ ↦ c)) α
 
 /-- Scalar shift identity: for any `f : IntegralHeckeRing 2`, scalar `c > 0`, and positive
 divisibility-chain `b`, evaluating `f * diagElem(c,c)` at `diagCoset(b * c)` equals
@@ -453,9 +452,7 @@ lemma T_mul_T_pp_pow_eval_at_one_zero (p : ℕ) (hp : p.Prime) (i k : ℕ) (hi :
   rw [HeckeRing.GL2.heckeTScalar_pow p hp.pos i]
   apply T_mul_T_scalar_eval_zero_of_not_dvd (p^i) (pow_pos hp.pos i) f
     (![1, k] : Fin 2 → ℕ) (fun idx ↦ by fin_cases idx <;> simp [hk])
-    (fun j hj ↦ by
-      have : j = 0 := by omega
-      subst this; simp) 0
+    (divChain_two_of_dvd (one_dvd k)) 0
   simp only [Matrix.cons_val_zero]
   intro hdvd
   have hle : p ^ i ≤ 1 := Nat.le_of_dvd Nat.one_pos hdvd
@@ -473,11 +470,7 @@ lemma T_elem_ppow_factor (p : ℕ) (hp : p.Prime) (i j : ℕ) (hij : i ≤ j) :
     intro idx; fin_cases idx
     · simp
     · simp [pow_pos hp.pos]
-  have h_ji_div : IsDvdChain (![1, p^(j-i)] : Fin 2 → ℕ) := by
-    intro k hk
-    have hk0 : k = 0 := by omega
-    subst hk0; simp
-  rw [diagElem_mul_const (![1, p^(j-i)] : Fin 2 → ℕ) h_ji_pos h_ji_div (p^i) (pow_pos hp.pos _)]
+  rw [diagElem_mul_const 2 (![1, p^(j-i)] : Fin 2 → ℕ) h_ji_pos (p^i) (pow_pos hp.pos _)]
   apply congrArg diagElem
   funext idx; fin_cases idx
   · simp [Pi.mul_apply]
@@ -487,8 +480,9 @@ lemma T_elem_ppow_factor (p : ℕ) (hp : p.Prime) (i j : ℕ) (hij : i ≤ j) :
 private lemma T_elem_p_ppow_eval_at_one_ppow_succ_zero (p : ℕ) (hp : p.Prime) {n : ℕ}
     (hn : n ≠ 0) :
     (diagElem (![p, p ^ n] : Fin 2 → ℕ)) (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) = 0 := by
-  show (Finsupp.single (diagCoset (![p, p ^ n] : Fin 2 → ℕ)) (1 : ℤ)) _ = 0
-  refine Finsupp.single_eq_of_ne' (fun heq ↦ ?_)
+  classical
+  rw [diagElem_def, HeckeCosetModule.single_apply]
+  refine if_neg (fun heq ↦ ?_)
   have h_eq : (![p, p ^ n] : Fin 2 → ℕ) = (![1, p ^ (n + 1)] : Fin 2 → ℕ) :=
     eq_of_diagCoset_eq (fun i ↦ by fin_cases i <;> simp [hp.pos, pow_pos hp.pos])
       (fun i ↦ by fin_cases i <;> simp [pow_pos hp.pos])
@@ -500,15 +494,14 @@ private lemma T_elem_p_ppow_eval_at_one_ppow_succ_zero (p : ℕ) (hp : p.Prime) 
 /-- `(T(1,p) · T(1, pⁿ))` evaluated at the leading coset `T(1, p^{n+1})` equals `1`. -/
 private lemma T_ad_one_p_mul_T_ad_one_ppow_eval_leading (p : ℕ) (hp : p.Prime) (n : ℕ) :
     (heckeTDiag 1 p * heckeTDiag 1 (p ^ n)) (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) = 1 := by
+  classical
   rcases eq_or_ne n 0 with hn | hn
   · subst hn
     rw [pow_zero, heckeTDiag_one_one, mul_one,
-      heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _)]
-    show (Finsupp.single (diagCoset (![1, p] : Fin 2 → ℕ)) (1 : ℤ))
-         (diagCoset (![1, p ^ (0 + 1)] : Fin 2 → ℕ)) = 1
-    rw [show (![1, p ^ (0 + 1)] : Fin 2 → ℕ) = (![1, p] : Fin 2 → ℕ) from by
-        funext i; fin_cases i <;> simp]
-    exact Finsupp.single_eq_same
+      heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _), diagElem_def,
+      show (![1, p ^ (0 + 1)] : Fin 2 → ℕ) = (![1, p] : Fin 2 → ℕ) from by
+        funext i; fin_cases i <;> simp,
+      HeckeCosetModule.single_apply, if_pos rfl]
   · rw [show heckeTDiag 1 p = heckeT ⟨p, hp.pos⟩ from (heckeT_prime p hp).symm,
       heckeT_prime_mul_heckeTDiag_one_prime_pow p hp n]
     rw [show (heckeTDiag 1 (p ^ (n + 1)) + (if n = 1 then ((p + 1 : ℕ) : ℤ) else (p : ℤ)) •
@@ -556,7 +549,7 @@ private lemma T_ad_one_p_mul_supp_ne_leading_eval_zero (p : ℕ) (hp : p.Prime) 
     obtain rfl : i = 0 := by omega
     exact hD₂_ne (by rw [hDa, ha_form]; simp [pow_zero])
   have hi_le_sub : i ≤ n - i := by
-    have h_div := ha_form ▸ ha_div 0 (by omega : 0 + 1 < 2)
+    have h_div := ha_form ▸ isDvdChain_iff.mp ha_div (by decide : (0 : Fin 2) ≤ 1)
     exact (Nat.pow_dvd_pow_iff_le_right hp.one_lt).mp h_div
   rw [hDa, ha_form, ← diagElem_mul_diagElem]
   change (diagElem (![1, p] : Fin 2 → ℕ) * diagElem (![p^i, p^(n-i)] : Fin 2 → ℕ)) _ = 0
@@ -580,7 +573,7 @@ lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
     set D_leading : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2) :=
       diagCoset (![1, p ^ n] : Fin 2 → ℕ)
     rw [show heckeTDiag 1 p = HeckeCosetModule.single ℤ (diagCoset (![1, p] : Fin 2 → ℕ)) 1 from
-        heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _),
+        (heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _)).trans (diagElem_def _),
       HeckeRing.mul_def, Finsupp.sum_single_index (by simp [Finsupp.sum])]
     simp only [one_smul]
     show (Finsupp.sum g fun D2 b₂ ↦ b₂ • HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
