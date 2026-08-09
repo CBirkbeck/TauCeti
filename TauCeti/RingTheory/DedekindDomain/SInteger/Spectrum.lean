@@ -136,15 +136,25 @@ lemma integerPrimeUnder_notMem (P : HeightOneSpectrum (S.integer K)) :
   rw [integerPrimeUnder_asIdeal, integer_map_comap_eq] at h1
   exact P.isPrime.ne_top h1
 
+/-- Extending `v ∉ S` to `𝒪_S` and contracting back returns `v`. -/
+@[simp] lemma integerPrimeUnder_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉ S) :
+    integerPrimeUnder K S (integerPrimeOverOfNotMem K S hv) = v :=
+  have := v.isMaximal
+  HeightOneSpectrum.ext <|
+    Ideal.comap_map_eq_self_of_isMaximal _ (integer_map_asIdeal_ne_top K S hv)
+
+/-- Contracting a prime of `𝒪_S` and extending back returns it. -/
+@[simp] lemma integerPrimeOverOfNotMem_integerPrimeUnder (P : HeightOneSpectrum (S.integer K)) :
+    integerPrimeOverOfNotMem K S (integerPrimeUnder_notMem K S P) = P :=
+  HeightOneSpectrum.ext <| integer_map_comap_eq K S P.asIdeal
+
 /-- **The primes of `𝒪_S` are exactly the primes of `R` not in `S`.** -/
 noncomputable def integerHeightOneSpectrumEquiv :
     {v : HeightOneSpectrum R // v ∉ S} ≃ HeightOneSpectrum (S.integer K) where
   toFun v := integerPrimeOverOfNotMem K S v.property
   invFun P := ⟨integerPrimeUnder K S P, integerPrimeUnder_notMem K S P⟩
-  left_inv v := Subtype.ext <| HeightOneSpectrum.ext <|
-    have := (v : HeightOneSpectrum R).isMaximal
-    Ideal.comap_map_eq_self_of_isMaximal _ (integer_map_asIdeal_ne_top K S v.property)
-  right_inv P := HeightOneSpectrum.ext <| integer_map_comap_eq K S P.asIdeal
+  left_inv v := Subtype.ext <| integerPrimeUnder_integerPrimeOverOfNotMem K S v.property
+  right_inv P := integerPrimeOverOfNotMem_integerPrimeUnder K S P
 
 @[simp] lemma integerHeightOneSpectrumEquiv_apply (v : {v : HeightOneSpectrum R // v ∉ S}) :
     integerHeightOneSpectrumEquiv K S v = integerPrimeOverOfNotMem K S v.property := by
@@ -197,15 +207,16 @@ lemma valuation_integerHeightOneSpectrumEquiv (v : {v : HeightOneSpectrum R // v
 
 /-- **The correspondence preserves valuations, read downwards**: the valuation of `𝒪_S` at an
 arbitrary prime `P` is the valuation of `R` at the prime under `P`. This is the form a consumer
-holding a prime of `𝒪_S` — rather than one of `R` avoiding `S` — can apply directly. -/
-@[simp]
+holding a prime of `𝒪_S` — rather than one of `R` avoiding `S` — can apply directly.
+
+Not a `simp` lemma: its left-hand side is an unrestricted `P.valuation K x`, so tagging it would
+rewrite every valuation on `𝒪_S`, including the one `valuation_integerPrimeOverOfNotMem` is the
+normal form for. -/
 lemma valuation_integerPrimeUnder (P : HeightOneSpectrum (S.integer K)) (x : K) :
-    P.valuation K x = (integerPrimeUnder K S P).valuation K x := by
-  have hP : integerPrimeOverOfNotMem K S (integerPrimeUnder_notMem K S P) = P :=
-    HeightOneSpectrum.ext (integer_map_comap_eq K S P.asIdeal)
+    P.valuation K x = (integerPrimeUnder K S P).valuation K x :=
   calc P.valuation K x
       = (integerPrimeOverOfNotMem K S (integerPrimeUnder_notMem K S P)).valuation K x := by
-        rw [hP]
+        rw [integerPrimeOverOfNotMem_integerPrimeUnder]
     _ = (integerPrimeUnder K S P).valuation K x := valuation_integerPrimeOverOfNotMem K S _ x
 
 end IsDedekindDomain
