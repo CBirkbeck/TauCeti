@@ -117,13 +117,10 @@ private theorem map_eval_family_compl_pi_Icc_eq_zero {k : ℕ} (B : Fin k → Se
       (Set.univ.pi fun _ : Fin k => Set.Icc (0 : ℝ) 1)ᶜ = 0 := by
   have hKc : IsCompact (Set.univ.pi fun _ : Fin k => Set.Icc (0 : ℝ) 1) :=
     isCompact_univ_pi fun _ => isCompact_Icc
-  rw [Measure.map_apply (measurable_probabilityMeasure_eval_family B hB)
-    hKc.isClosed.measurableSet.compl]
-  convert measure_empty (μ := π)
-  ext P
-  simp only [Set.mem_preimage, Set.mem_compl_iff, Set.mem_pi, Set.mem_univ, Set.mem_Icc,
-    forall_const, Set.mem_empty_iff_false, iff_false, not_not]
-  exact fun j => ⟨(P (B j)).coe_nonneg, by exact_mod_cast (P.apply_le_one (B j))⟩
+  rw [← mem_ae_iff, _root_.MeasureTheory.mem_ae_map_iff
+    (measurable_probabilityMeasure_eval_family B hB).aemeasurable hKc.isClosed.measurableSet]
+  exact Filter.Eventually.of_forall fun P j _ =>
+    ⟨(P (B j)).coe_nonneg, by exact_mod_cast (P.apply_le_one (B j))⟩
 
 /-- **A monomial moment of the evaluation family is a mixed moment of the set measures.** The
 integral of `∏ j, x j ^ m j` against the pushforward along `P ↦ (P (B 0), …)` is
