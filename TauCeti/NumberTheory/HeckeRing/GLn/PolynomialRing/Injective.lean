@@ -336,20 +336,25 @@ lemma support_mul_exists (f g : IntegralHeckeRing 2)
     (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
     (hD : (f * g) D ≠ 0) :
     ∃ D₁ D₂, f D₁ ≠ 0 ∧ g D₂ ≠ 0 ∧
-      D ∈ (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2) (HeckeCoset.rep D₁) (HeckeCoset.rep D₂)).support := by
+      D ∈ (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+        (HeckeCoset.rep D₁) (HeckeCoset.rep D₂)).support := by
   -- `HeckeCosetModule.mul` is sealed, so unfold it through its API rather than by defeq.
+  -- The evaluation lemmas have to be applied by `rw`, outermost sum first: `simp only` cannot
+  -- match `sum_apply` through the wrapper's `FunLike` coercion, so it silently does nothing.
   have h := hD
-  rw [HeckeCosetModule.mul_def, HeckeCosetModule.mul_eq_sum] at h
-  simp only [Finsupp.sum, Finsupp.finsetSum_apply, Finsupp.smul_apply, smul_eq_mul] at h
+  rw [HeckeCosetModule.mul_def, HeckeCosetModule.mul_eq_sum, HeckeCosetModule.sum_apply,
+    HeckeCosetModule.sum_def] at h
   obtain ⟨D₁, hD₁_mem, h₁⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
+  rw [HeckeCosetModule.sum_apply, HeckeCosetModule.sum_def] at h₁
   obtain ⟨D₂, hD₂_mem, h₂⟩ := Finset.exists_ne_zero_of_sum_ne_zero h₁
+  rw [HeckeCosetModule.smul_apply, HeckeCosetModule.smul_apply] at h₂
   have hfD₁ := Finsupp.mem_support_iff.mp hD₁_mem
   have hgD₂ := Finsupp.mem_support_iff.mp hD₂_mem
-  have hm_ne : (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2) (HeckeCoset.rep D₁) (HeckeCoset.rep D₂)) D ≠ 0 := by
+  have hm_ne : (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+      (HeckeCoset.rep D₁) (HeckeCoset.rep D₂)) D ≠ 0 := by
     intro h; exact h₂ (by rw [h, mul_zero, mul_zero])
   refine ⟨D₁, D₂, hfD₁, hgD₂, ?_⟩
-  rw [← HeckeRing.m_support]
-  exact Finsupp.mem_support_iff.mpr hm_ne
+  exact HeckeCosetModule.mem_support_iff.mpr hm_ne
 
 /-- `T_single(diagCoset a, α) * diagElem(c,c) = T_single(diagCoset(a * c), α)`. -/
 lemma T_single_diag_mul_T_scalar (c : ℕ) (hc : 0 < c)
