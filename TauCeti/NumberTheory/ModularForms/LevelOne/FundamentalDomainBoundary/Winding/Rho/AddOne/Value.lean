@@ -66,7 +66,7 @@ slit-plane-valued, but at the ends only the closed upper half-plane and nonvanis
 available. -/
 private lemma upper_comparison {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
     (hh_cont : ContinuousOn h (Icc a b))
-    (hh_diff : ∀ t ∈ Icc a b, DifferentiableAt ℝ h t)
+    (hh_diff : ∀ t ∈ Ioo a b, DifferentiableAt ℝ h t)
     (hh_deriv_cont : ContinuousOn (deriv h) (Icc a b))
     (hh_ne : ∀ t ∈ Icc a b, h t ≠ 0)
     (hh_im : ∀ t ∈ Icc a b, 0 ≤ (h t).im)
@@ -81,7 +81,7 @@ private lemma upper_comparison {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
     ((hh_deriv_cont.div hh_cont hh_ne).mono (hu ▸ Set.Subset.rfl)).intervalIntegrable
   exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg
     countable_empty (hu ▸ hh_cont)
-    (fun t ht ↦ hh_diff t (by rw [ho] at ht; exact ⟨ht.1.1.le, ht.1.2.le⟩)) hint
+    (fun t ht ↦ hh_diff t (by rw [ho] at ht; exact ht.1)) hint
     (fun t ht ↦ hh_im t (by rwa [hu] at ht))
     (hh_ne a (left_mem_Icc.mpr hab)) (hh_ne b (right_mem_Icc.mpr hab))
     (fun t ht ↦ hh_slit t (by rwa [ho] at ht))
