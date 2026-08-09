@@ -119,11 +119,8 @@ theorem scaledTateTopology_isTopologicalRing (f : A) :
   have : IsTopologicalRing (MvPowerSeries (Fin 1) A) :=
     WithPiTopology.instIsTopologicalRing (Fin 1) A
   let _ : TopologicalSpace (restrictedMvPowerSeriesSubring 1 A) := scaledTateTopology f
-  have hind : Topology.IsInducing (scaleIncl f) := ⟨rfl⟩
+  have := topologicalAddGroup_induced (scaleIncl f)
   have : ContinuousMul (restrictedMvPowerSeriesSubring 1 A) := continuousMul_induced (scaleIncl f)
-  have : ContinuousAdd (restrictedMvPowerSeriesSubring 1 A) := continuousAdd_induced (scaleIncl f)
-  have : ContinuousNeg (restrictedMvPowerSeriesSubring 1 A) :=
-    ContinuousNeg.induced (scaleIncl f)
   exact { continuous_add := continuous_add
           continuous_mul := continuous_mul
           continuous_neg := continuous_neg }
@@ -150,22 +147,11 @@ theorem scaledTateTopology_nonarchimedean (f : A) :
   have hVi : ∀ i : Fin 1 →₀ ℕ, ∃ V : OpenAddSubgroup A, (V : Set A) ⊆ t i := fun i ↦
     NonarchimedeanRing.is_nonarchimedean (t i) (ht i)
   choose V hV using hVi
-  set S : Set (MvPowerSeries (Fin 1) A) := {φ | ∀ i ∈ I, φ i ∈ V i} with hS
-  have hSopen : IsOpen S := isOpen_set_pi hI fun i _ ↦ (V i).isOpen
-  refine ⟨⟨{ carrier := scaleIncl f ⁻¹' S
-             add_mem' := fun {a b} ha hb i hi ↦ by
-               change scaleIncl f (a + b) i ∈ _
-               rw [map_add]
-               exact (V i).toAddSubgroup.add_mem (ha i hi) (hb i hi)
-             zero_mem' := fun i _ ↦ by
-               change scaleIncl f 0 i ∈ _
-               rw [map_zero]
-               exact (V i).toAddSubgroup.zero_mem
-             neg_mem' := fun {a} ha i hi ↦ by
-               change scaleIncl f (-a) i ∈ _
-               rw [map_neg]
-               exact (V i).toAddSubgroup.neg_mem (ha i hi) },
-      hSopen.preimage continuous_induced_dom⟩,
+  -- Build the open subgroup upstairs as a finite product, then pull it back: both steps are
+  -- Mathlib's (`AddSubgroup.pi`, `isOpen_set_pi`, `OpenAddSubgroup.comap`).
+  let S : OpenAddSubgroup (MvPowerSeries (Fin 1) A) :=
+    ⟨AddSubgroup.pi I fun i ↦ (V i).toAddSubgroup, isOpen_set_pi hI fun i _ ↦ (V i).isOpen⟩
+  exact ⟨S.comap (scaleIncl f).toAddMonoidHom continuous_induced_dom,
     fun g hg ↦ hWU (hIt fun i hi ↦ hV i (hg i hi))⟩
 
 /-- The constant-series embedding `A → A⟨X⟩` is continuous for the scaled topology. -/
