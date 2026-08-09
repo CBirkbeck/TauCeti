@@ -87,7 +87,7 @@ theorem IsTateRing.hasZeroSequenceOfUnits {A : Type*} [CommRing A] [TopologicalS
 
 namespace HasZeroSequenceOfUnits
 
-variable [ContinuousMul A] (h : HasZeroSequenceOfUnits A)
+variable [SeparatelyContinuousMul A] (h : HasZeroSequenceOfUnits A)
 include h
 
 /-- A choice of zero sequence of units, fixed once.
@@ -98,14 +98,14 @@ not serve. Everything downstream therefore goes through this sequence rather tha
 unquantified unit. -/
 noncomputable def seq : ℕ → Aˣ := h.choose
 
-omit [ContinuousMul A] in
-/-- The chosen sequence converges to zero. This is the characteristic property of
-`TauCeti.Huber.HasZeroSequenceOfUnits.seq`; its body is not exposed. -/
+omit [SeparatelyContinuousMul A] in
+/-- The chosen sequence converges to zero: the characteristic property of
+`TauCeti.Huber.HasZeroSequenceOfUnits.seq`, which is all any consumer needs of it. -/
 theorem tendsto_seq : Tendsto (fun n ↦ ((seq h n : A))) atTop (nhds 0) := h.choose_spec
 
 /-- Every element is absorbed into every neighbourhood of zero by some term of the sequence.
 
-Only continuity of multiplication by a constant is used: `uₙ · x → 0 · x = 0`. -/
+Separate continuity of multiplication suffices, and is what the section assumes. -/
 theorem exists_seq_mul_mem (x : A) {U : Set A} (hU : U ∈ nhds (0 : A)) :
     ∃ n : ℕ, ((seq h n : A)) * x ∈ U := by
   have hmul : Tendsto (fun n ↦ ((seq h n : A)) * x) atTop (nhds ((0 : A) * x)) :=
