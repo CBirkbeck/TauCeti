@@ -24,7 +24,6 @@ and the resulting isomorphism are in `PolynomialRing/Injective.lean`.
 
 * `HeckeRing.GLn.heckeGen k` — the `k`-th generator `T(1, …, 1, p, …, p)`, with `k + 1` entries
   equal to `p`.
-* `HeckeRing.GLn.ppowWeight` — the weight of a `p`-power diagonal (the sum of exponents).
 * `HeckeRing.GLn.evalHom` — evaluation of `ℤ[X₁, …, Xₙ]` at the generators.
 
 ## Main results
@@ -85,13 +84,6 @@ lemma heckeGenDiag_apply (k : Fin n) (i : Fin n) :
 lemma heckeGenDiag_one_eq_const (p : ℕ) : heckeGenDiag 1 p (0 : Fin 1) = fun _ ↦ p := by
   funext i; simp [heckeGenDiag_apply]
 
-/-- The heckeGen diagonal satisfies the divisibility chain condition. -/
-lemma isDvdChain_heckeGenDiag (k : Fin n) : IsDvdChain (heckeGenDiag n p k) := by
-  refine isDvdChain_iff.mpr fun i j hij ↦ ?_
-  have hij' : (i : ℕ) ≤ (j : ℕ) := hij
-  simp only [heckeGenDiag_apply]
-  split_ifs <;> first | rfl | exact one_dvd _ | omega
-
 /-- The heckeGen diagonal has p-power entries (each entry is 1 = p^0 or p = p^1). -/
 lemma heckeGenDiag_eq_primePowDiag (k : Fin n) :
     heckeGenDiag n p k =
@@ -130,13 +122,6 @@ lemma heckeGen_mem_pLocalSubring (k : Fin n) : heckeGen n p k ∈ pLocalSubring 
 omit hp
 
 end TGen
-
-section Weight
-
-/-- Weight of a p-power diagonal: the sum of all exponents. -/
-def ppowWeight (e : Fin n → ℕ) : ℕ := ∑ i, e i
-
-end Weight
 
 section PolynomialRing
 
@@ -305,7 +290,7 @@ theorem pLocalSubring_one_subset_evalHom_range (p : ℕ) (hp : p.Prime) :
     exact congr_arg e (Subsingleton.elim i 0)
   rw [congrArg diagElem he, ← diagElem_const_pow 1 p hp.pos (e 0),
     show diagElem (fun _ : Fin 1 ↦ p) = heckeGen 1 p (0 : Fin 1) from by
-      unfold heckeGen; exact (congrArg diagElem (heckeGenDiag_one_eq_const p)).symm]
+      rw [heckeGen_def]; exact (congrArg diagElem (heckeGenDiag_one_eq_const p)).symm]
   exact (evalHom 1 p).range.pow_mem (heckeGen_mem_evalHom_range 1 p 0) _
 
 end HeckeRing.GLn.SurjOne
