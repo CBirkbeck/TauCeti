@@ -68,6 +68,49 @@ open Set
 
 variable {X : Type*} [TopologicalSpace X] [T2Space X] {x : X}
 
+omit [T2Space X] in
+/-- **The circle lift of a closed path computes on representatives in `[0, 1)`.** At the class of
+`t ∈ [0, 1)` the lift `AddCircle.liftIco 1 0 γ.extend` takes the value `γ t`. -/
+private theorem liftIco_extend_coe (γ : Path x x) {t : ℝ} (ht : t ∈ Ico (0 : ℝ) 1) :
+    AddCircle.liftIco 1 0 γ.extend (t : AddCircle (1 : ℝ)) = γ ⟨t, ht.1, ht.2.le⟩ :=
+  (AddCircle.liftIco_zero_coe_apply ht).trans (γ.extend_extends' ⟨t, ht.1, ht.2.le⟩)
+
+omit [T2Space X] in
+/-- **A simple closed path lifts injectively to the circle.** If equality `γ s = γ t` forces `s = t`
+or the unordered pair of parameters to be `{0, 1}`, then `AddCircle.liftIco 1 0 γ.extend` is
+injective. -/
+private theorem injective_liftIco_extend (γ : Path x x)
+    (hγ : ∀ ⦃s t : unitInterval⦄, γ s = γ t →
+      s = t ∨ (s = 0 ∧ t = 1) ∨ (s = 1 ∧ t = 0)) :
+    Function.Injective (AddCircle.liftIco 1 0 γ.extend) := by
+  intro q q' hqq'
+  -- representatives in `[0, 1)` cannot form the exceptional endpoint pair
+  obtain ⟨s, hs, rfl⟩ := AddCircle.eq_coe_Ico q
+  obtain ⟨t, ht, rfl⟩ := AddCircle.eq_coe_Ico q'
+  rw [liftIco_extend_coe γ hs, liftIco_extend_coe γ ht] at hqq'
+  rcases hγ hqq' with hst | hends | hends
+  · exact congrArg (fun u : unitInterval => ((u : ℝ) : AddCircle (1 : ℝ))) hst
+  · exact absurd (congrArg ((↑) : unitInterval → ℝ) hends.2) ht.2.ne
+  · exact absurd (congrArg ((↑) : unitInterval → ℝ) hends.1) hs.2.ne
+
+omit [T2Space X] in
+/-- **The circle lift of a closed path traces the same set as the path.** This needs no simplicity
+hypothesis on `γ`. -/
+private theorem range_liftIco_extend (γ : Path x x) :
+    range (AddCircle.liftIco 1 0 γ.extend) = range γ := by
+  -- the endpoint `1` is missed by the representatives in `[0, 1)`, but is represented by `0`
+  apply Subset.antisymm
+  · rintro y ⟨q, rfl⟩
+    obtain ⟨t, ht, rfl⟩ := AddCircle.eq_coe_Ico q
+    exact ⟨⟨t, ht.1, ht.2.le⟩, (liftIco_extend_coe γ ht).symm⟩
+  · rintro y ⟨t, rfl⟩
+    by_cases ht : (t : ℝ) < 1
+    · exact ⟨((t : ℝ) : AddCircle (1 : ℝ)), liftIco_extend_coe γ ⟨t.2.1, ht⟩⟩
+    · have ht1 : t = 1 := Subtype.ext (le_antisymm t.2.2 (not_lt.mp ht))
+      refine ⟨(0 : AddCircle (1 : ℝ)), ?_⟩
+      subst t
+      exact (liftIco_extend_coe (t := 0) γ (by simp)).trans (γ.source.trans γ.target.symm)
+
 /-- **The range of a simple closed path is a Jordan curve.** Let `γ : Path x x` be a closed path.
 If equality `γ s = γ t` forces either `s = t` or the unordered pair of parameters to be `{0, 1}`,
 then `range γ` is homeomorphic to the circle.
@@ -79,47 +122,16 @@ theorem isJordanCurve_range_of_eq_or_eq_endpoints (γ : Path x x)
     (hγ : ∀ ⦃s t : unitInterval⦄, γ s = γ t →
       s = t ∨ (s = 0 ∧ t = 1) ∨ (s = 1 ∧ t = 0)) :
     IsJordanCurve (range γ) := by
-  -- Factor the extended path through `[0, 1]` with its endpoints identified.
-  let g : AddCircle (1 : ℝ) → X := AddCircle.liftIco 1 0 γ.extend
+  -- Factor the extended path through `[0, 1]` with its endpoints identified; the additive circle
+  -- is a Jordan curve, and the factor carries it onto the range of `γ`.
   have hg0 : γ.extend 0 = γ.extend 1 := by rw [γ.extend_zero, γ.extend_one]
-  have hgc : Continuous g :=
+  have hgc : Continuous (AddCircle.liftIco 1 0 γ.extend) :=
     AddCircle.liftIco_zero_continuous hg0 γ.continuous_extend.continuousOn
-  -- At the class of a representative in `[0, 1)` the lift is the extended path, which on `[0, 1]`
-  -- is the path itself.
-  have hgcoe {t : ℝ} (ht : t ∈ Ico (0 : ℝ) 1) :
-      g (t : AddCircle (1 : ℝ)) = γ ⟨t, ht.1, ht.2.le⟩ :=
-    (AddCircle.liftIco_zero_coe_apply ht).trans (γ.extend_extends' ⟨t, ht.1, ht.2.le⟩)
-  -- Representatives in `[0, 1)` cannot form the exceptional endpoint pair, so the factor is
-  -- injective on the quotient.
-  have hgi : Function.Injective g := by
-    intro q q' hqq'
-    obtain ⟨s, hs, rfl⟩ := AddCircle.eq_coe_Ico q
-    obtain ⟨t, ht, rfl⟩ := AddCircle.eq_coe_Ico q'
-    rw [hgcoe hs, hgcoe ht] at hqq'
-    rcases hγ hqq' with hst | hends | hends
-    · exact congrArg (fun u : unitInterval => ((u : ℝ) : AddCircle (1 : ℝ))) hst
-    · exact absurd (congrArg ((↑) : unitInterval → ℝ) hends.2) ht.2.ne
-    · exact absurd (congrArg ((↑) : unitInterval → ℝ) hends.1) hs.2.ne
-  -- The quotient factor traces exactly the original path range; the endpoint `1` is represented
-  -- by `0` in the additive circle.
-  have hgrange : range g = range γ := by
-    apply Subset.antisymm
-    · rintro y ⟨q, rfl⟩
-      obtain ⟨t, ht, rfl⟩ := AddCircle.eq_coe_Ico q
-      exact ⟨⟨t, ht.1, ht.2.le⟩, (hgcoe ht).symm⟩
-    · rintro y ⟨t, rfl⟩
-      by_cases ht : (t : ℝ) < 1
-      · exact ⟨((t : ℝ) : AddCircle (1 : ℝ)), hgcoe ⟨t.2.1, ht⟩⟩
-      · have ht1 : t = 1 := Subtype.ext (le_antisymm t.2.2 (not_lt.mp ht))
-        refine ⟨(0 : AddCircle (1 : ℝ)), ?_⟩
-        subst t
-        exact (hgcoe (t := 0) (by simp)).trans (γ.source.trans γ.target.symm)
-  -- The additive circle is a Jordan curve, and `g` carries it onto the range of `γ`.
   have huniv : IsJordanCurve (univ : Set (AddCircle (1 : ℝ))) :=
     isJordanCurve_iff.mpr
       ⟨(Homeomorph.Set.univ (AddCircle (1 : ℝ))).trans (AddCircle.homeomorphCircle one_ne_zero)⟩
-  have himage := huniv.image hgc.continuousOn hgi.injOn
-  rwa [image_univ, hgrange] at himage
+  have himage := huniv.image hgc.continuousOn (injective_liftIco_extend γ hγ).injOn
+  rwa [image_univ, range_liftIco_extend γ] at himage
 
 /-! ### Gluing two arcs along their endpoints -/
 
