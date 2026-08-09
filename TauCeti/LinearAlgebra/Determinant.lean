@@ -75,10 +75,12 @@ variable {ι R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommG
   [Module R N]
 
 /-- **A top-degree alternating form is its basis determinant times its value on the basis.** This
-is Mathlib's `AlternatingMap.eq_smul_basis_det` with the codomain no longer required to be `R`:
-the argument reads off the coordinates and never touches the values. -/
+is Mathlib's `AlternatingMap.eq_smul_basis_det` with the codomain an arbitrary module rather than
+`R`. -/
 theorem eq_smulRight_basis_det [Fintype ι] [DecidableEq ι] (b : Basis ι R M)
     (ω : M [⋀^ι]→ₗ[R] N) : ω = b.det.smulRight (ω ⇑b) := by
+  -- Mathlib's proof generalises unchanged: it reads off the coordinates and never touches the
+  -- values, and `Module.Basis.ext_alternating` is already stated for an arbitrary codomain.
   refine Module.Basis.ext_alternating b fun i h => ?_
   let σ : Equiv.Perm ι := Equiv.ofBijective i (Finite.injective_iff_bijective.1 h)
   -- `ext_alternating` hands back the arguments as `fun i => b (i j)`, whereas `map_perm` and
@@ -192,16 +194,15 @@ variable (k : Type u)
 namespace Matrix
 
 /-- Multiplication by a square matrix scales the standard-basis determinant form by its
-determinant.
-
-This is `AlternatingMap.compLinearMap_eq_det_smul` at `ω = (Pi.basisFun k ι).det`, but it is
-proved from `Module.Basis.det_comp` instead: that lands directly in the matrix vocabulary its
-`simp`-normal form needs, where the general law would have to be transported into it. -/
+determinant. This is `AlternatingMap.compLinearMap_eq_det_smul` at `ω = (Pi.basisFun k ι).det`,
+in matrix vocabulary. -/
 @[simp]
 theorem detRowAlternating_mulVec [CommRing k] {ι : Type*} [Fintype ι] [DecidableEq ι]
     (M : Matrix ι ι k) (v : ι → ι → k) :
     Matrix.detRowAlternating (fun i => M *ᵥ v i) =
       M.det * Matrix.detRowAlternating v := by
+  -- Taken from `Module.Basis.det_comp` rather than from the general law above: it lands directly
+  -- in the matrix vocabulary this `simp`-normal form needs, with nothing to transport.
   simpa only [Pi.basisFun_det, Function.comp_def, Matrix.toLin'_apply, Matrix.mulVecBilin_apply,
     LinearMap.det_toLin'] using
     (Module.Basis.det_comp (Pi.basisFun k ι) (Matrix.toLin' M) v)
