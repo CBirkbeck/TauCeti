@@ -52,8 +52,8 @@ Hecke elements, which never inspects the factorization of `p`. -/
 lemma heckeTScalar_mul_heckeTDiag_prime_pow (hp0 : 0 < p) (j d : ℕ) (hjd : j ≤ d) :
     heckeTScalar p * heckeTDiag (p ^ j) (p ^ d) =
       heckeTDiag (p ^ (j + 1)) (p ^ (d + 1)) := by
-  rw [heckeTDiag_of_pos (pow_pos hp0 j) (pow_pos hp0 d) (Nat.pow_dvd_pow p hjd),
-    heckeTDiag_of_pos (pow_pos hp0 (j + 1)) (pow_pos hp0 (d + 1))
+  rw [heckeTDiag_eq_diagElem (pow_pos hp0 j) (pow_pos hp0 d) (Nat.pow_dvd_pow p hjd),
+    heckeTDiag_eq_diagElem (pow_pos hp0 (j + 1)) (pow_pos hp0 (d + 1))
       (Nat.pow_dvd_pow p (by omega)),
     HeckeCosetModule.mul_comm_of_antiInvolution ℤ (transposeAntiInvolution 2)
       (transposeAntiInvolution_onHeckeCoset_eq_self 2),
@@ -581,10 +581,10 @@ theorem heckeT_prime_mul_heckeTDiag (k : ℕ) :
     by_contra h0
     exact ((mulSupport_pp_subset p hp k A h0).elim h1 h2)
   rw [heckeT_prime p hp,
-    heckeTDiag_of_pos one_pos hp.pos (one_dvd _),
-    heckeTDiag_of_pos one_pos (pow_pos hp.pos k) (one_dvd _),
-    heckeTDiag_of_pos one_pos (pow_pos hp.pos (k + 1)) (one_dvd _),
-    heckeTDiag_of_pos hp.pos (pow_pos hp.pos k) (dvd_pow_self p (by omega))]
+    heckeTDiag_eq_diagElem one_pos hp.pos (one_dvd _),
+    heckeTDiag_eq_diagElem one_pos (pow_pos hp.pos k) (one_dvd _),
+    heckeTDiag_eq_diagElem one_pos (pow_pos hp.pos (k + 1)) (one_dvd _),
+    heckeTDiag_eq_diagElem hp.pos (pow_pos hp.pos k) (dvd_pow_self p (by omega))]
   simp only [diagElem_def]
   rw [single_one_mul_single_one]
   ext A

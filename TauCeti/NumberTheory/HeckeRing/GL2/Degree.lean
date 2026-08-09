@@ -63,7 +63,7 @@ theorem degree_diagCoset_prime_pow (hp : p.Prime) (i k : ℕ) (hk : 0 < k) :
 /-- The degree of a nonzero diagonal operator is the degree of its double coset. -/
 private lemma deg_heckeTDiag_of_pos {a d : ℕ} (ha : 0 < a) (hd : 0 < d) (hdvd : a ∣ d) :
     deg (posDetInt 2) (SLnZ 2) ℤ (heckeTDiag a d) = ((diagCoset ![a, d]).degree : ℤ) := by
-  rw [heckeTDiag_of_pos ha hd hdvd, diagElem_def, deg_single, nsmul_eq_mul, mul_one]
+  rw [heckeTDiag_eq_diagElem ha hd hdvd, diagElem_def, deg_single, nsmul_eq_mul, mul_one]
 
 /-- A term of the `T(pᵏ)` expansion strictly below the middle has degree
 `p^(k - 2i - 1)(p + 1)`. -/
