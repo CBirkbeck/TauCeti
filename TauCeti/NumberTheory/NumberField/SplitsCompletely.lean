@@ -31,7 +31,7 @@ off from residues.
 * `TauCeti.NumberField.ncard_primesOver_eq_finrank_iff`: the rational-prime specialization.
 * `TauCeti.NumberField.ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank`:
   the forward direction without a Galois hypothesis.
-* `TauCeti.NumberField.bijective_algebraMap_quotient_of_ncard_primesOver_eq_finrank`:
+* `TauCeti.NumberField.algebraMap_quotient_bijective_of_ncard_primesOver_eq_finrank`:
   complete splitting makes each residue field the prime field.
 * `TauCeti.NumberField.ncard_primesOver_eq_finrank_iff_stabilizer_eq_bot`: the orbit–stabilizer
   form — `p` splits completely iff the decomposition group of a prime above it is trivial.
@@ -139,7 +139,7 @@ theorem ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finr
 
 /-- **Complete splitting makes the residue field at `Q` the prime field.** If `p` splits
 completely then `algebraMap (ℤ ⧸ (p)) (𝓞 K ⧸ Q)` is bijective. No Galois hypothesis is needed. -/
-theorem bijective_algebraMap_quotient_of_ncard_primesOver_eq_finrank {K : Type*} [Field K]
+theorem algebraMap_quotient_bijective_of_ncard_primesOver_eq_finrank {K : Type*} [Field K]
     [NumberField K]
     {p : ℕ} [Fact p.Prime] (Q : Ideal (𝓞 K)) [Q.IsPrime]
     [Q.LiesOver (span {(p : ℤ)})]
