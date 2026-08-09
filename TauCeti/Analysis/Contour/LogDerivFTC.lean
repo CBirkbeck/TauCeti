@@ -355,10 +355,15 @@ theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_neg_sub_log_n
   rwa [hderiv_neg g] at hkey
 
 /-- **The comparison logarithmic FTC on the slit plane**: for a comparison function `h` that
-stays in the slit plane on the whole closed interval — endpoints included — is continuous
-there with continuous derivative and is differentiable strictly inside, and for a `g`
-agreeing with `h` on the open interval and at both endpoints, the logarithmic integral of
-`g` is integrable and evaluates to the difference of its endpoint logarithms.
+stays in the slit plane on the whole oriented closed interval — endpoints included — is
+continuous there, is differentiable strictly inside off a countable exceptional set `P`, and
+has interval-integrable logarithmic derivative, and for a `g` agreeing with `h` on the open
+interval and at both endpoints, the logarithmic integral of `g` is integrable and evaluates
+to the difference of its endpoint logarithms.
+
+Integrability of `deriv h / h` is assumed rather than derived: callers that have a continuous
+derivative and nonvanishing `h` get it from `ContinuousOn.div` plus
+`ContinuousOn.intervalIntegrable`.
 
 This is the sibling of the two half-plane forms above: there the comparison may touch the
 branch cut at an endpoint and is held off it by a half-plane condition, whereas here it is
