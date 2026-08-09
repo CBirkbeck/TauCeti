@@ -15,8 +15,10 @@ the two facts about it that the theorem uses — that a Tate ring satisfies it, 
 that satisfies it every element is absorbed into every neighbourhood of zero, so the dilates of
 a neighbourhood cover the ring.
 
-The covering is the point. Henkel's proof applies a Baire argument to the sets `uₙ⁻¹ • U`, and
-what makes that argument start is exactly that they exhaust the ring.
+The covering is the point, and it must be **countable**. Henkel's proof applies a Baire argument
+to the sets `uₙ⁻¹ • U` indexed by `n : ℕ`; a cover indexed by all of `Aˣ` would exhaust the ring
+just as well but could not start that argument. So a sequence is chosen once, as
+`HasZeroSequenceOfUnits.seq`, and the absorption step and the covering both range over it.
 
 ## Main definitions
 
@@ -26,10 +28,12 @@ what makes that argument start is exactly that they exhaust the ring.
 
 * `TauCeti.Huber.IsTateRing.hasZeroSequenceOfUnits`: a Tate ring has one, namely the powers of a
   pseudouniformiser.
-* `TauCeti.Huber.HasZeroSequenceOfUnits.exists_unit_mul_mem`: some term of the sequence carries a
+* `TauCeti.Huber.HasZeroSequenceOfUnits.seq`: a choice of such a sequence, fixed once so that
+  everything below ranges over the same countable family.
+* `TauCeti.Huber.HasZeroSequenceOfUnits.exists_seq_mul_mem`: some term of the sequence carries a
   given element into a given neighbourhood of zero.
-* `TauCeti.Huber.HasZeroSequenceOfUnits.iUnion_smul_eq_univ`: the dilates of a neighbourhood of
-  zero cover the ring.
+* `TauCeti.Huber.HasZeroSequenceOfUnits.iUnion_seq_smul_eq_univ`: the dilates `uₙ⁻¹ • U` cover
+  the ring, indexed by `ℕ`.
 
 ## References
 
@@ -82,24 +86,37 @@ namespace HasZeroSequenceOfUnits
 variable [IsTopologicalRing A] (h : HasZeroSequenceOfUnits A)
 include h
 
-/-- Every element is absorbed into every neighbourhood of zero by some unit of the sequence.
+/-- A choice of zero sequence of units, fixed once.
+
+The absorption step and the covering below must range over the *same* countable family: Baire
+needs a countable cover, and a cover indexed by all of `Aˣ` — which may be uncountable — would
+not serve. Everything downstream therefore goes through this sequence rather than through an
+unquantified unit. -/
+noncomputable def seq : ℕ → Aˣ := h.choose
+
+omit [IsTopologicalRing A] in
+/-- The chosen sequence converges to zero. This is the characteristic property of
+`TauCeti.Huber.HasZeroSequenceOfUnits.seq`; its body is not exposed. -/
+theorem tendsto_seq : Tendsto (fun n ↦ ((seq h n : A))) atTop (nhds 0) := h.choose_spec
+
+/-- Every element is absorbed into every neighbourhood of zero by some term of the sequence.
 
 Only continuity of multiplication by a constant is used: `uₙ · x → 0 · x = 0`. -/
-theorem exists_unit_mul_mem (x : A) {U : Set A} (hU : U ∈ nhds (0 : A)) :
-    ∃ u : Aˣ, (u : A) * x ∈ U := by
-  obtain ⟨u, hu⟩ := h
-  have hmul : Tendsto (fun n ↦ ((u n : A)) * x) atTop (nhds ((0 : A) * x)) := hu.mul_const x
+theorem exists_seq_mul_mem (x : A) {U : Set A} (hU : U ∈ nhds (0 : A)) :
+    ∃ n : ℕ, ((seq h n : A)) * x ∈ U := by
+  have hmul : Tendsto (fun n ↦ ((seq h n : A)) * x) atTop (nhds ((0 : A) * x)) :=
+    (tendsto_seq h).mul_const x
   rw [zero_mul] at hmul
-  obtain ⟨n, hn⟩ := (hmul.eventually_mem hU).exists
-  exact ⟨u n, hn⟩
+  exact (hmul.eventually_mem hU).exists
 
-/-- **The covering Henkel's Baire argument runs on**: the dilates `u⁻¹ • U` of a neighbourhood of
-zero, as `u` ranges over the units, exhaust the ring. -/
-theorem iUnion_smul_eq_univ {U : Set A} (hU : U ∈ nhds (0 : A)) :
-    ⋃ u : Aˣ, (u⁻¹ : Aˣ) • U = Set.univ := by
+/-- **The countable covering Henkel's Baire argument runs on**: the dilates `uₙ⁻¹ • U` of a
+neighbourhood of zero, over the chosen sequence, exhaust the ring. The index is `ℕ`, which is
+what makes the cover usable in a Baire argument. -/
+theorem iUnion_seq_smul_eq_univ {U : Set A} (hU : U ∈ nhds (0 : A)) :
+    ⋃ n : ℕ, ((seq h n)⁻¹ : Aˣ) • U = Set.univ := by
   refine Set.eq_univ_of_forall fun x ↦ Set.mem_iUnion.mpr ?_
-  obtain ⟨u, hu⟩ := h.exists_unit_mul_mem x hU
-  exact ⟨u, ⟨(u : A) * x, hu, by simp [smul_eq_mul, ← mul_assoc]⟩⟩
+  obtain ⟨n, hn⟩ := exists_seq_mul_mem h x hU
+  exact ⟨n, ⟨(seq h n : A) * x, hn, by simp [smul_eq_mul, ← mul_assoc]⟩⟩
 
 end HasZeroSequenceOfUnits
 
