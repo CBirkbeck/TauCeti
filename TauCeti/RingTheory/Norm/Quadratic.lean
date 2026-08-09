@@ -16,13 +16,16 @@ public import TauCeti.LinearAlgebra.Matrix.CharpolyFinTwo
 For a separable quadratic extension `L/K` the trace and norm are the two elementary symmetric
 functions of the pair `{x, σx}`, where `σ` is the nontrivial automorphism: `tr x = x + σx` and
 `N x = x · σx` (`algebraMap_trace_eq_add`, `algebraMap_norm_eq_mul`). Everything else here is a
-consequence, except the two evaluations of `b + aθ`, which need no separability at all:
+consequence, except three results that need no separability at all:
 
 * `trace_algebraMap_add_algebraMap_mul` and `norm_algebraMap_add_algebraMap_mul` evaluate the
   trace and norm of `b + aθ` over any quadratic extension, separable or not — the first by
   `K`-linearity of the trace, the second from the `2 × 2` identity
   `det (b • 1 + a • M) = b² + ab · tr M + a² · det M`. This is how a statement about one
   generator transfers to another;
+* `discrim_eq_zero_of_mem_range` runs the other way and needs no separability either: a rational
+  `θ = c` has `t = 2c` and `n = c²`, so `t² - 4n = 0`. Together with the next result it says that,
+  over a separable quadratic extension, nonzero discriminant characterises the generators;
 * `discrim_ne_zero`: for `θ` outside `K`, the discriminant `t² - 4n` of its minimal polynomial
   `X² - tX + n` is nonzero, since it equals `(θ - σθ)²` and `σ` moves `θ`.
 
@@ -128,10 +131,9 @@ theorem discrim_ne_zero {θ : L} (hθ : θ ∉ Set.range (algebraMap K L)) :
     (sub_eq_zero.mp ((pow_eq_zero_iff two_ne_zero).mp h1)).symm)
 
 
-/-- A separable quadratic extension has a generator whose minimal polynomial has nonzero
-discriminant — indeed every generator does, by `discrim_ne_zero`. Stating it as an existence
-result is what lets a construction over `L/K` choose such a `θ`, and makes separability a real
-hypothesis of that construction rather than decoration. -/
+/-- A separable quadratic extension has an element of nonzero discriminant `t² - 4n`. Such an
+element is automatically a generator, by `discrim_eq_zero_of_mem_range`. Stating it as an
+existence result is what lets a construction over `L/K` choose one. -/
 theorem exists_discrim_ne_zero :
     ∃ θ : L, Algebra.trace K L θ ^ 2 - 4 * Algebra.norm K θ ≠ 0 :=
   ⟨_, discrim_ne_zero K L (exists_notMem_range_algebraMap K L).choose_spec⟩

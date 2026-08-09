@@ -42,9 +42,9 @@ change of variables, again over any commutative ring in which the relevant param
   extension well posed.
 * `WeierstrassCurve.quadraticTwist`: **the** quadratic twist of `E` by a *separable* quadratic
   extension `L/K`, the twist by the trace and norm of a generator chosen by
-  `Algebra.IsQuadraticExtension.exists_discrim_ne_zero`. Separability is required and used:
-  without it the extension could be purely inseparable, where the trace form vanishes and the
-  model degenerates exactly as the twist-by-a-generator constructor would.
+  `Algebra.IsQuadraticExtension.exists_discrim_ne_zero`. Separability is required: without it the
+  extension could be purely inseparable, where the trace form vanishes and the model is singular
+  for every `E`.
 * `WeierstrassCurve.exists_quadraticTwist_eq`: elimination — the twist *equals* the twist by the
   trace and norm of some generator, so everything above about `quadraticTwistOf` transfers.
   `WeierstrassCurve.exists_smul_quadraticTwist_eq` adds that any other generator gives the same
@@ -327,12 +327,13 @@ the same curve up to a change of variables over `K`.
 
 Separability is not decoration. On a purely inseparable quadratic extension the trace form
 vanishes, so `t = 0` and — in characteristic `2`, the only characteristic where such an extension
-exists — the discriminant `D = t² - 4n` is `0`; the model would then be singular for every `E`
-and would barely depend on `E`, which is exactly the degeneracy the module docstring cites for
-refusing a twist-by-a-generator constructor. The generator is therefore chosen by
-`Algebra.IsQuadraticExtension.exists_discrim_ne_zero`, whose proof consumes the separability
-instance, so the hypothesis is genuinely used in the body and the model is non-degenerate by
-construction. -/
+exists — the discriminant `D = t² - 4n` is `0`, and the model is singular for every `E` and
+barely depends on `E`. This is a different failure from the one the module docstring gives for
+refusing a twist-by-a-generator constructor, which is `(t, n) = (0, 1)` and so `D = -4`: there
+the parameters cease to reflect the extension but the twist stays generically nonsingular. The
+two coincide only in characteristic `2`. Choosing the generator by
+`Algebra.IsQuadraticExtension.exists_discrim_ne_zero` rules this case out, so the model is
+non-degenerate by construction. -/
 noncomputable def quadraticTwist (E : WeierstrassCurve K) (L : Type*) [Field L] [Algebra K L]
     [Algebra.IsQuadraticExtension K L] [Algebra.IsSeparable K L] : WeierstrassCurve K :=
   E.quadraticTwistOf (Algebra.trace K L (exists_discrim_ne_zero K L).choose)
