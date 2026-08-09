@@ -74,10 +74,13 @@ naturality it would need.
 
 Ported from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0,
 pinned by `TauCetiRoadmap/EllipticCurves` at `dev/hasse-weil @ 513e83879e2f`), file
-`HasseWeil/TateModule/PadicLimZMod.lean`, declarations `limZModCast`,
-`adjacentCompat_of_compat`, `compat_of_adjacentCompat`, `compatSubring`, `mem_compatSubring`,
-`compatProj`, `compatProj_compat`, `limZModToPadic`, `padicToLimZMod`, `compatProj_apply`,
-`padicToLimZMod_val`, `toZModPow_limZModToPadic` and `padicIntEquivLimZMod` (© Chris Birkbeck).
+`HasseWeil/TateModule/PadicLimZMod.lean`, declarations `compat_of_adjacentCompat`,
+`compatSubring`, `mem_compatSubring`, `compatProj`, `compatProj_compat`, `limZModToPadic`,
+`padicToLimZMod`, `compatProj_apply`, `padicToLimZMod_val`, `toZModPow_limZModToPadic` and
+`padicIntEquivLimZMod` (© Chris Birkbeck). The source's `limZModCast` abbreviation and its
+`adjacentCompat_of_compat` are **not** reproduced: the connecting reduction is written out
+inline so the adjacency condition is literally `compatSubring`'s carrier, and the
+compat-implies-adjacent direction had no consumer here.
 Following this repository's convention for adapted material, the upstream authorship is
 credited here rather than in the copyright header.
 
@@ -95,14 +98,6 @@ namespace PadicInt
 variable (p : ℕ) [Fact p.Prime]
 
 omit [Fact p.Prime] in
-/-- Compatibility for all `k₁ ≤ k₂` implies compatibility of adjacent terms. -/
-theorem adjacentCompat_of_compat {f : ∀ n : ℕ, ZMod (p ^ n)}
-    (h : ∀ (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂),
-      ZMod.castHom (pow_dvd_pow p hk) (ZMod (p ^ k₁)) (f k₂) = f k₁) (n : ℕ) :
-    ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n)) (f (n + 1)) = f n :=
-  h n (n + 1) n.le_succ
-
-omit [Fact p.Prime] in
 /-- Compatibility of adjacent terms implies compatibility for all `k₁ ≤ k₂`. -/
 theorem compat_of_adjacentCompat {f : ∀ n : ℕ, ZMod (p ^ n)}
     (h : ∀ n, ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n)) (f (n + 1)) = f n)
@@ -117,6 +112,7 @@ theorem compat_of_adjacentCompat {f : ∀ n : ℕ, ZMod (p ^ n)}
       rw [h k₂]; exact ih
     rw [← hstep, ← RingHom.comp_apply, ZMod.castHom_comp]
 
+omit [Fact p.Prime] in
 /-- The subring of compatible sequences in `Π n, ZMod (p ^ n)` — the projective limit of the
 `ZMod` tower. Its element type is definitionally the subtype of sequences satisfying the
 displayed compatibility condition, so `mem_compatSubring` is `Iff.rfl`. -/
@@ -135,6 +131,7 @@ this condition, so a compatible sequence needs no further proof to be an element
     f ∈ compatSubring p ↔
       ∀ n, ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n)) (f (n + 1)) = f n := Iff.rfl
 
+omit [Fact p.Prime] in
 /-- The `n`-th projection out of the limit, as a ring hom. -/
 def compatProj (n : ℕ) : compatSubring p →+* ZMod (p ^ n) :=
   (Pi.evalRingHom (fun n : ℕ => ZMod (p ^ n)) n).comp (compatSubring p).subtype
@@ -154,14 +151,6 @@ omit [Fact p.Prime] in
     using compat_of_adjacentCompat p x.property k₁ k₂ hk
 
 omit [Fact p.Prime] in
--- Not tagged `@[simp]`: `compatProj_apply` is itself `simp` and rewrites this left-hand side's
--- `compatProj p k₂ x` to `x.val k₂`, so the side is never in simp-normal form and `simpNF`
--- rejects the attribute.
-/-- The element-level form of `compatProj_compat`. -/
-theorem compatProj_compat_apply (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) (x : compatSubring p) :
-    ZMod.castHom (pow_dvd_pow p hk) (ZMod (p ^ k₁)) (compatProj p k₂ x) = compatProj p k₁ x :=
-  RingHom.congr_fun (compatProj_compat p k₁ k₂ hk) x
-
 /-- **The universal property.** A family of ring homs into the tower that commutes with the
 connecting maps factors through the limit. The name is qualified to avoid `PadicInt.lift`,
 which is Mathlib's universal property of `ℤ_[p]` itself. -/
@@ -179,7 +168,6 @@ omit [Fact p.Prime] in
   (rfl)
 
 omit [Fact p.Prime] in
-omit [Fact p.Prime] in
 /-- The element-level form of `compatProj_comp_lift`. -/
 @[simp] theorem compatSubring.lift_apply_val {S : Type*} [NonAssocSemiring S]
     (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
@@ -188,9 +176,9 @@ omit [Fact p.Prime] in
   (rfl)
 
 omit [Fact p.Prime] in
-/-- **The projections are jointly injective**: two maps into the limit agreeing after every
-projection are equal. -/
-theorem compatProj_comp_injective {S : Type*} [NonAssocSemiring S] {F G : S →+* compatSubring p}
+/-- **Extensionality for maps into the limit**: two maps agreeing after every projection
+are equal. -/
+theorem compatSubring.ringHom_ext {S : Type*} [NonAssocSemiring S] {F G : S →+* compatSubring p}
     (h : ∀ n, (compatProj p n).comp F = (compatProj p n).comp G) : F = G := by
   ext s n
   exact RingHom.congr_fun (h n) s
@@ -201,7 +189,7 @@ theorem compatSubring.lift_unique {S : Type*} [NonAssocSemiring S] (g : ∀ n : 
     (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
     (F : S →+* compatSubring p) (hF : ∀ n, (compatProj p n).comp F = g n) :
     F = compatSubring.lift p g hg :=
-  compatProj_comp_injective p fun n => by rw [hF n, compatProj_comp_lift]
+  compatSubring.ringHom_ext p fun n => by rw [hF n, compatProj_comp_lift]
 
 /-- The map out of the limit into `ℤ_[p]`, from the universal property. -/
 private noncomputable def limZModToPadic : compatSubring p →+* ℤ_[p] :=
@@ -218,7 +206,7 @@ private theorem padicToLimZMod_val (z : ℤ_[p]) (n : ℕ) :
 
 private theorem toZModPow_limZModToPadic (n : ℕ) (x : compatSubring p) :
     PadicInt.toZModPow n (limZModToPadic p x) = x.val n := by
-  simpa [limZModToPadic, compatProj]
+  simpa only [limZModToPadic, RingHom.comp_apply, compatProj_apply]
     using RingHom.congr_fun (PadicInt.lift_spec (f := compatProj p) (compatProj_compat p) n) x
 
 /-- **`ℤ_[p]` is the projective limit of the `ZMod` tower.** -/
