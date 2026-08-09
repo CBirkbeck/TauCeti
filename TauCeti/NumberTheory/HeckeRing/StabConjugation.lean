@@ -94,31 +94,11 @@ quotients, `Γ₁/Stab(hg) ≃ Γ₁/Stab(g)`, induced by `σ ↦ h⁻¹σh`.
 Well-definedness is `subgroupOf_conjAct_smul_mul_left_of_mem`: the two stabilizers differ by
 conjugation by `h`, so that conjugation carries one coset relation to the other. -/
 noncomputable def decompQuotientEquivMulLeft (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁) :
-    DecompQuotient Γ₁ Γ₂ ((h : G) * g) ≃ DecompQuotient Γ₁ Γ₂ g := by
-  set K := (ConjAct.toConjAct g • Γ₂).subgroupOf Γ₁ with hK
-  refine (Subgroup.quotientEquivOfEq
-    (subgroupOf_conjAct_smul_mul_left_of_mem Γ₁ Γ₂ g h)).trans ?_
-  have hwd : ∀ a b : Γ₁, QuotientGroup.leftRel (K.map (MulAut.conj h).toMonoidHom) a b →
-      QuotientGroup.leftRel K ((MulAut.conj h).symm a) ((MulAut.conj h).symm b) := by
-    intro a b hab
-    rw [QuotientGroup.leftRel_apply] at hab ⊢
-    simp only [← map_inv, ← map_mul]
-    obtain ⟨k, hk, hkeq⟩ := Subgroup.mem_map.mp hab
-    rw [show a⁻¹ * b = MulAut.conj h k from hkeq.symm, MulEquiv.symm_apply_apply]
-    exact hk
-  refine Equiv.ofBijective (Quotient.map' (MulAut.conj h).symm hwd) ⟨?_, ?_⟩
-  · refine Quotient.ind₂ fun a b hab ↦ ?_
-    simp only [Quotient.map'_mk''] at hab
-    rw [Quotient.eq''] at hab ⊢
-    rw [QuotientGroup.leftRel_apply] at hab ⊢
-    simp only [← map_inv, ← map_mul] at hab
-    exact Subgroup.mem_map.mpr ⟨(MulAut.conj h).symm (a⁻¹ * b), hab, by
-      rw [MulEquiv.coe_toMonoidHom, MulEquiv.apply_symm_apply]⟩
-  · refine Quotient.ind fun b ↦ ⟨Quotient.mk'' (MulAut.conj h b), ?_⟩
-    simp only [Quotient.map'_mk'']
-    rw [Quotient.eq'', QuotientGroup.leftRel_apply, MulEquiv.symm_apply_apply,
-      inv_mul_cancel]
-    exact K.one_mem
+    DecompQuotient Γ₁ Γ₂ ((h : G) * g) ≃ DecompQuotient Γ₁ Γ₂ g :=
+  (Subgroup.quotientEquivOfEq (subgroupOf_conjAct_smul_mul_left_of_mem Γ₁ Γ₂ g h)).trans <|
+    Quotient.congr (MulAut.conj h).symm.toEquiv fun a b ↦ by
+      simp only [QuotientGroup.leftRel_apply, Subgroup.mem_map_equiv,
+        MulEquiv.toEquiv_eq_coe, EquivLike.coe_coe, ← map_inv, ← map_mul]
 
 /-- Moving the base point on both sides — by `h ∈ Γ₁` on the left and by anything normalizing
 `Γ₂` on the right — is again an equivalence of decomposition quotients. Right multiplication
