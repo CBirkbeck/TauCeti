@@ -214,15 +214,17 @@ private theorem rowIndex_lt_of_colLen_le (t : YoungTableau μ) (hn : μ.colLen 0
 /-- **The symmetrizer's diagonal coefficient is the order of the row group.** Write `r ℓ` for the
 row of the label `ℓ`. The `r`-coordinate of `c_t • e_r` in the monomial basis is the number of
 permutations lying in the row group of `t`. -/
-private theorem repr_symmetrizer_tensorPowerBasis_eq_card [Nontrivial k] (t : YoungTableau μ)
-    (hn : μ.colLen 0 ≤ n) [DecidablePred (· ∈ rowSubgroup t)] :
+private theorem repr_symmetrizer_tensorPowerBasis_eq_card (t : YoungTableau μ)
+    (hn : μ.colLen 0 ≤ n) :
     (tensorPowerBasis k n μ.card).repr
         (permTensorActionAlgHom k n μ.card (youngSymmetrizerOver k t)
           (tensorPowerBasis k n μ.card fun ℓ =>
             (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n)))
         (fun ℓ => (⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩ : Fin n)) =
-      (({σ | σ ∈ rowSubgroup t} : Finset (Equiv.Perm (Fin μ.card))).card : k) := by
+      (Nat.card (rowSubgroup t) : k) := by
   classical
+  rcases subsingleton_or_nontrivial k with hk | hk
+  · exact Subsingleton.elim _ _
   set r : Fin μ.card → Fin n := fun ℓ => ⟨rowIndex t ℓ, rowIndex_lt_of_colLen_le t hn ℓ⟩
   -- the row group is exactly the set of permutations surviving the evaluation
   set S : Finset (Equiv.Perm (Fin μ.card)) := {σ | σ ∈ rowSubgroup t} with hSdef
@@ -233,7 +235,9 @@ private theorem repr_symmetrizer_tensorPowerBasis_eq_card [Nontrivial k] (t : Yo
     intro σ
     rw [← inv_mem_iff (G := Equiv.Perm (Fin μ.card)), mem_rowSubgroup]
     exact ⟨fun h ℓ => congrArg Fin.val (congrFun h ℓ), fun h => funext fun ℓ => Fin.ext (h ℓ)⟩
-  rw [permTensorActionAlgHom_apply_tensorPowerBasis, map_sum, Finset.sum_apply']
+  have hSNat : Nat.card (rowSubgroup t) = S.card := by
+    rw [Nat.card_eq_fintype_card, Fintype.card_subtype]
+  rw [hSNat, permTensorActionAlgHom_apply_tensorPowerBasis, map_sum, Finset.sum_apply']
   have hterm : ∀ σ ∈ (youngSymmetrizerOver k t).coeff.support,
       ((tensorPowerBasis k n μ.card).repr
           ((youngSymmetrizerOver k t).coeff σ •
@@ -273,7 +277,7 @@ private theorem repr_symmetrizer_tensorPowerBasis_ne_zero [Nontrivial k] (t : Yo
   -- the coefficient is the order of the row group, and characteristic zero keeps it nonzero
   have : CharZero k := charZero_of_injective_algebraMap (algebraMap ℚ k).injective
   rw [repr_symmetrizer_tensorPowerBasis_eq_card t hn]
-  exact Nat.cast_ne_zero.mpr (Finset.card_ne_zero_of_mem (a := 1) (by simp))
+  exact Nat.cast_ne_zero.mpr (Nat.card_ne_zero.mpr ⟨inferInstance, inferInstance⟩)
 
 /-- The Weyl module of a `μ`-tableau is nonzero as soon as `μ` has at most `n` rows.
 
