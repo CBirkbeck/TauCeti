@@ -38,7 +38,7 @@ something derivable from cofinality.
 * `TauCeti.Valuation.cofinalValueFor_iff_isCofinalElement` : For a non-vanishing value, the
   valuation-side predicate agrees with the group-side `IsCofinalElement` on the value group.
   This is what lets Wedhorn Proposition 1.20 apply.
-* `TauCeti.Valuation.cofinalIdeal_isRadical` : The ideal is radical — the `rad(c) = c` half
+* `TauCeti.Valuation.isRadical_cofinalIdeal` : The ideal is radical — the `rad(c) = c` half
   of Lemma 7.1 — with `cofinalValueFor_pow_iff` the elementwise form behind it.
 * `TauCeti.Valuation.cofinalIdeal_ne_top` : It is proper, a corollary of the ring-level
   `TauCeti.Valuation.not_cofinalValueFor_one`.
@@ -243,7 +243,7 @@ theorem mem_cofinalIdeal {v : Valuation A Γ₀}
 /-! ### Radicality -/
 
 /-- **Wedhorn Lemma 7.1, second half: `rad(c) = c`.** -/
-theorem cofinalIdeal_isRadical {v : Valuation A Γ₀}
+theorem isRadical_cofinalIdeal {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hH : characteristicSubgroup v < H) : (cofinalIdeal v hH).IsRadical := by
   intro x hx
