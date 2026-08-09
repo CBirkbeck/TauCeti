@@ -16,8 +16,8 @@ parameter `t = 3`: the chord distance along the arc, the purely imaginary linear
 along the left vertical, the norm lower bounds on the far pieces, the slit-plane
 confinement of every piece, and the exact polar forms and principal logarithms of the
 shifted contour beside the corner. The corner joins the arc to the vertical at the
-interior angle `2π/3`, and the two one-sided argument limits `π/6` and `π/2` differ by
-the angular defect `π/3` — the source of the winding value `-1/6` at `ρ`.
+interior angle `π/3`, which is exactly the gap between the two one-sided argument limits
+`π/6` and `π/2` — the source of the winding value `-1/6` at `ρ`.
 
 ## Main declarations
 
