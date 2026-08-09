@@ -414,13 +414,6 @@ private lemma mulSupport_pp_subset (k : ℕ)
   rw [hA_eq]
   exact mulSupport_pp_case_split p hp k a h_det h_dvd
 
-private lemma degree_diagCoset_p_p : (diagCoset (![p, p ^ 1] : Fin 2 → ℕ)).degree = 1 := by
-  have hconst : (![p, p ^ 1] : Fin 2 → ℕ) = fun _ ↦ p := by
-    funext i
-    fin_cases i <;> simp
-  rw [hconst]
-  exact degree_diagCoset_const 2 p
-
 include hp in
 /-- The two support cosets are distinct: their invariant factors differ at the top. -/
 private lemma diagCoset_one_prime_pow_succ_ne (k : ℕ) (hk : 0 < k) :
@@ -549,7 +542,9 @@ private lemma multiplicity_values (k : ℕ) (hk : 0 < k) :
   have hp2 : (2 : ℤ) ≤ (p : ℤ) := by exact_mod_cast hp.two_le
   by_cases hk1 : k = 1
   · subst hk1
-    rw [degree_diagCoset_p_p p] at h_deg
+    -- `![p, p ^ 1]` is the constant vector, so the generic `degree_diagCoset_const` applies.
+    rw [show (![p, p ^ 1] : Fin 2 → ℕ) = fun _ ↦ p from by funext i; fin_cases i <;> simp,
+      degree_diagCoset_const 2 p] at h_deg
     have h_degZ : (m1 : ℤ) * ((p : ℤ) ^ 1 * ((p : ℤ) + 1)) + (m2 : ℤ) * 1 =
         ((p : ℤ) + 1) * ((p : ℤ) + 1) := by
       have := h_deg
