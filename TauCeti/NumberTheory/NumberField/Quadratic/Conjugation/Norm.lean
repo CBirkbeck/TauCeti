@@ -46,11 +46,12 @@ private theorem coe_gen_ne_zero (hmin : minpoly ℤ θ = X ^ 2 - C d) : (θ : K)
 /-- Quadratic conjugation is a nontrivial automorphism: it does not equal the identity, since it
 sends the nonzero generator `θ` to its negative `-θ`. -/
 private theorem quadraticConj_ne_one (hmin : minpoly ℤ θ = X ^ 2 - C d)
-    (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) : (1 : K ≃ₐ[ℚ] K) ≠ quadraticConj hmin hgen := by
+    (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) : quadraticConj hmin hgen ≠ 1 := by
   intro h
   have hθ : (θ : K) = -(θ : K) := by
     have := DFunLike.congr_fun h (θ : K)
-    rwa [AlgEquiv.one_apply, quadraticConj_gen] at this
+    rw [quadraticConj_gen, AlgEquiv.one_apply] at this
+    exact this.symm
   have h2 : (θ : K) + (θ : K) = 0 := by nth_rewrite 2 [hθ]; ring
   exact coe_gen_ne_zero hmin (add_self_eq_zero.mp h2)
 
@@ -59,9 +60,9 @@ private theorem quadraticConj_ne_one (hmin : minpoly ℤ θ = X ^ 2 - C d)
 private theorem norm_eq_mul_conj (hmin : minpoly ℤ θ = X ^ 2 - C d)
     (hgen : Algebra.adjoin ℚ {(θ : K)} = ⊤) (y : K) :
     algebraMap ℚ K (Algebra.norm ℚ y) = y * quadraticConj hmin hgen y := by
-  have : Algebra.IsQuadraticExtension ℚ K := ⟨finrank_rat_eq_two hmin hgen⟩
+  have := isQuadraticExtension_rat hmin hgen
   exact Algebra.IsQuadraticExtension.algebraMap_norm_eq_mul ℚ K
-    (quadraticConj_ne_one hmin hgen).symm y
+    (quadraticConj_ne_one hmin hgen) y
 
 /-- **Key norm identity.** For `x : 𝓞 K`, the extension of its integral norm equals `x · σx`, the
 product of `x` with its quadratic conjugate. -/
