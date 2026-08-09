@@ -249,9 +249,9 @@ theorem two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBo
     [SlashInvariantFormClass F Γ k]
     (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
-    (hd : ∀ t ∈ Ioo (1 : ℝ) 3, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
+    (hd : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
       DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
-    (hne : ∀ t ∈ Ioo (1 : ℝ) 3, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
+    (hne : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
       (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
     (hint : IntervalIntegrable (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
       else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) volume 1 3) :
@@ -271,13 +271,46 @@ theorem two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBo
     have h := hint.comp_sub_left 4
     rw [h43, h41] at h
     exact h.symm
-  -- Add the pointwise pairing over the interval.
+  -- The weight term is itself reflection-invariant: the excision test is, by
+  -- `excised_fdBoundary_arc_reflection_iff`, and the contour's own logarithmic derivative is
+  -- the constant `π/6 · I` on the whole open arc.
+  have hweight : ∀ t ∈ Ioo (1 : ℝ) 3,
+      (if ∃ s ∈ S, ‖fdBoundary H (4 - t) - s‖ ≤ ε then 0
+        else -((k : ℂ) * logDeriv (fdBoundary H) (4 - t))) =
+      (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else -((k : ℂ) * logDeriv (fdBoundary H) t)) := by
+    intro t ht
+    have h4t : 4 - t ∈ Ioo (1 : ℝ) 3 := ⟨by linarith [ht.2], by linarith [ht.1]⟩
+    have hsymm := excised_fdBoundary_arc_reflection_iff (H := H) (S := S) (ε := ε)
+      ⟨ht.1.le, ht.2.le⟩ hnorm hinv
+    by_cases hc : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε
+    · rw [if_pos hc, if_pos (hsymm.mpr hc)]
+    · rw [if_neg hc, if_neg fun h => hc (hsymm.mp h), logDeriv_fdBoundary_arc ht,
+        logDeriv_fdBoundary_arc h4t]
+  -- Add the pointwise pairing over the interval. It is only assumed on the first half: the
+  -- identity is symmetric under `t ↦ 4 - t`, so on the second half it follows from the first
+  -- through `hweight`. The two fixed points `t = 2, 3` are null, hence the a.e. congruence.
   have hsum : (∫ t in (1 : ℝ)..3, (G t + G (4 - t))) =
       ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-        else -((k : ℂ) * logDeriv (fdBoundary H) t)) :=
-    intervalIntegral.integral_congr_Ioo_of_le (by norm_num) fun t htt =>
-      excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS htt hnorm hinv
-        (hd t htt) (hne t htt)
+        else -((k : ℂ) * logDeriv (fdBoundary H) t)) := by
+    refine intervalIntegral.integral_congr_ae ?_
+    have h23 : ∀ᵐ t : ℝ, t ≠ 2 ∧ t ≠ 3 := by
+      filter_upwards [compl_mem_ae_iff.mpr (measure_singleton (2 : ℝ)),
+        compl_mem_ae_iff.mpr (measure_singleton (3 : ℝ))] with t h2 h3 using ⟨h2, h3⟩
+    filter_upwards [h23] with t ht2 htI
+    have ht3 : t ∈ Ioo (1 : ℝ) 3 := by
+      rw [Set.uIoc_of_le (by norm_num : (1 : ℝ) ≤ 3)] at htI
+      exact ⟨htI.1, lt_of_le_of_ne htI.2 ht2.2⟩
+    rcases lt_or_gt_of_ne ht2.1 with h2 | h2
+    · exact excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS ht3 hnorm hinv
+        (hd t ⟨ht3.1, h2⟩) (hne t ⟨ht3.1, h2⟩)
+    · have hu : 4 - t ∈ Ioo (1 : ℝ) 2 := ⟨by linarith [ht3.2], by linarith⟩
+      have hu3 : 4 - t ∈ Ioo (1 : ℝ) 3 := ⟨hu.1, by linarith [hu.2]⟩
+      have h := excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS hu3
+        hnorm hinv (hd _ hu) (hne _ hu)
+      rw [show (4 : ℝ) - (4 - t) = t by ring, hweight t ht3] at h
+      rw [hG]
+      linear_combination h
   rw [intervalIntegral.integral_add hint hintrefl, hrefl] at hsum
   rw [two_mul, hsum, ← intervalIntegral.integral_const_mul]
   refine intervalIntegral.integral_congr fun t _ => ?_
