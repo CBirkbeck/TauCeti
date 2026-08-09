@@ -177,7 +177,7 @@ lemma heckeGen_zero_eq_heckeTDiag (p : ℕ) (hp : p.Prime) :
   change diagElem (heckeGenDiag 2 p 0) = _
   have h : heckeGenDiag 2 p (0 : Fin 2) = ![1, p] := by
     funext i; simp only [heckeGenDiag_apply]; fin_cases i <;> simp
-  rw [h, heckeTDiag_of_pos Nat.one_pos hp.pos (one_dvd _)]
+  rw [h, heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _)]
 
 /-- `heckeGen 2 p 1 = heckeTScalar p`: the second generator is the diamond operator. -/
 lemma heckeGen_one_eq_heckeTScalar (p : ℕ) (hp : p.Prime) :
@@ -246,7 +246,7 @@ lemma diagElem_prime_pow_in_range (p : ℕ) (hp : p.Prime) (e : Fin 2 → ℕ) (
   · have h_eq : primePowDiag 2 p e = ![1, p ^ (e 1)] := by
       funext i; simp only [primePowDiag_apply]; fin_cases i <;> simp [he0]
     rw [congrArg diagElem h_eq,
-      ← heckeTDiag_of_pos Nat.one_pos (pow_pos hp.pos _) (one_dvd _)]
+      ← heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp.pos _) (one_dvd _)]
     exact heckeTDiag_one_prime_pow_in_range p hp (e 1)
   · have h_le : e 0 ≤ e 1 := hmono (Fin.zero_le _)
     have h_eq : primePowDiag 2 p e = (fun _ ↦ p ^ (e 0)) * primePowDiag 2 p ![0, e 1 - e 0] := by
@@ -266,7 +266,7 @@ lemma diagElem_prime_pow_in_range (p : ℕ) (hp : p.Prime) (e : Fin 2 → ℕ) (
     · have h2 : primePowDiag 2 p ![0, e 1 - e 0] = ![1, p ^ (e 1 - e 0)] := by
         funext i; simp only [primePowDiag_apply]; fin_cases i <;> simp
       rw [congrArg diagElem h2,
-        ← heckeTDiag_of_pos Nat.one_pos (pow_pos hp.pos _) (one_dvd _)]
+        ← heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp.pos _) (one_dvd _)]
       exact heckeTDiag_one_prime_pow_in_range p hp (e 1 - e 0)
 
 /-- Surjectivity of `evalHom` at n=2: every element of `pLocalSubring 2 p` is in the range
