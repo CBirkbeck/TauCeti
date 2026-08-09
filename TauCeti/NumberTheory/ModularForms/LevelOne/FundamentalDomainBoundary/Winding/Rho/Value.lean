@@ -327,7 +327,7 @@ private lemma lt_norm_of_far_right_rho (hH : Real.sqrt 3 / 2 < H) (hεH : ε < H
         (le_abs_self _).trans (norm_fdBoundary_sub_rho_segment5 (H := H) ⟨ht4.le, ht.2⟩)
 
 /-- Over the excised corner, the contour stays within distance `ε` of `ρ`. -/
-private lemma norm_le_of_near_rho {δL δR : ℝ} (hH : Real.sqrt 3 / 2 < H) (hδL : 0 < δL)
+private lemma norm_le_of_near_rho {δL δR : ℝ} (hH : Real.sqrt 3 / 2 < H) (hδL : 0 ≤ δL)
     (hδL1 : δL < 1) (h2sin : 2 * Real.sin (δL * (Real.pi / 12)) = ε)
     (hδR1 : δR ≤ 1) (hlin : δR * (H - Real.sqrt 3 / 2) = ε)
     (ht : t ∈ Icc (3 - δL : ℝ) (3 + δR)) :
@@ -360,7 +360,7 @@ private lemma ae_truncated_eq_logDeriv_rho {a b : ℝ} (hab : a ≤ b)
 
 /-- Over the excised window the truncated integrand vanishes identically, so it is
 integrable there and contributes nothing to the integral. -/
-private lemma excised_window_rho {δL δR : ℝ} (hH : Real.sqrt 3 / 2 < H) (hδL : 0 < δL)
+private lemma excised_window_rho {δL δR : ℝ} (hH : Real.sqrt 3 / 2 < H) (hδL : 0 ≤ δL)
     (hδL1 : δL < 1) (h2sin : 2 * Real.sin (δL * (Real.pi / 12)) = ε)
     (hδR1 : δR ≤ 1) (hlin : δR * (H - Real.sqrt 3 / 2) = ε) (hle : (3 - δL : ℝ) ≤ 3 + δR) :
     IntervalIntegrable (fun s ↦ if ε < ‖fdBoundary H s - (UpperHalfPlane.ρ : ℂ)‖
@@ -412,7 +412,7 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
   have hae_right := ae_truncated_eq_logDeriv_rho (H := H) (a := (3 + δR : ℝ)) (b := 5) (by linarith)
     fun s hs ↦ lt_norm_of_far_right_rho hH hεH hδR_pos hlin ⟨hs.1, hs.2.le⟩
   obtain ⟨himid, hmid0⟩ :=
-    excised_window_rho hH hδL_pos hδL_lt h2sin hδR_le hlin (by linarith)
+    excised_window_rho hH hδL_pos.le hδL_lt h2sin hδR_le hlin (by linarith)
   have hi02 := hi_left.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_left)
   have hi25 := hi_right.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_right)
   refine ⟨(hi02.trans himid).trans hi25, ?_⟩
