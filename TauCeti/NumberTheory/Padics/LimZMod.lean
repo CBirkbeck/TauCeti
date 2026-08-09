@@ -24,6 +24,25 @@ Its element type is definitionally the projective-limit subtype
 so `mem_compatSubring` is `Iff.rfl` and a compatible sequence may be handed to
 `compatSubring p` directly.
 
+## Why a concrete subring rather than `RingCat.sectionsSubring`
+
+Mathlib has a categorical limit of rings, `RingCat.sectionsSubring`, and this limit is an
+instance of it. It is not used here, for three reasons.
+
+The carrier here is the **adjacent** condition `n + 1 → n`; `sectionsSubring`'s is quantified
+over all morphisms of the index category. The two are equivalent — that is
+`compat_of_adjacentCompat` — but not definitionally, so routing through the categorical version
+would cost `mem_compatSubring` its `Iff.rfl` and force every caller with an adjacent-compatible
+sequence through the telescoping lemma first.
+
+An element of `sectionsSubring F` has its component at `n` in the bundled carrier
+`↥(F.obj (op n))` rather than in `ZMod (p ^ n)`. The consumer here is the Tate module
+`T_ℓ E = lim_n E[ℓⁿ]`, which wants the plain `ZMod` spelling.
+
+Mathlib's own practice agrees: `Mathlib/NumberTheory/Padics/` never imports `CategoryTheory`,
+and `sectionsSubring` has a single consumer in the library outside its defining file. The
+categorical API is for limit *theory*; concrete comparisons like this one are kept concrete.
+
 ## Main definitions
 
 * `PadicInt.compatSubring`: the subring of compatible sequences in `Π n, ZMod (p ^ n)`.
@@ -141,5 +160,15 @@ noncomputable def equivLimZMod : ℤ_[p] ≃+* compatSubring p :=
   RingEquiv.ofRingHom (padicToLimZMod p) (limZModToPadic p)
     (by ext x n; simp)
     (by ext z; exact PadicInt.ext_of_toZModPow.mp fun n => by simp)
+
+/-- The isomorphism reads off the truncations: its `n`-th component is `toZModPow n`. -/
+@[simp] theorem equivLimZMod_apply_val (z : ℤ_[p]) (n : ℕ) :
+    (equivLimZMod p z).val n = PadicInt.toZModPow n z :=
+  (rfl)
+
+/-- The inverse is characterised by its truncations, which are the given components. -/
+@[simp] theorem toZModPow_equivLimZMod_symm (n : ℕ) (x : compatSubring p) :
+    PadicInt.toZModPow n ((equivLimZMod p).symm x) = x.val n :=
+  toZModPow_limZModToPadic p n x
 
 end PadicInt
