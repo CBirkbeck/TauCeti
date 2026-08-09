@@ -38,15 +38,16 @@ reimplementation of it.
 
 ## Provenance
 
-The need for this step, and the surjectivity argument (lift `e.symm` through `AdjoinRoot.mk` and
-`Polynomial.map`), are from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`,
-Apache-2.0, pinned by that roadmap at `dev/hasse-weil @ 513e83879e2f`),
-`HasseWeil/WeilPairing/FrobeniusFunctionFieldEquiv.lean`, declaration `coordRingMap_bijective`.
-There it is bundled as bijectivity of one map, for a ring equivalence only, inside a 267-line file
-that also constructs the function-field Frobenius. Here it is split out and generalised: the
-surjectivity is stated for any surjective `f : R →+* S`, matching the generality of Mathlib's
-`CoordinateRing.map_injective`, and the equivalence it was bundled
-for is left to the use site.
+The need for these statements is from the AINTLIB `HasseWeil` project
+(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned by that roadmap at
+`dev/hasse-weil @ 513e83879e2f`), `HasseWeil/WeilPairing/FrobeniusFunctionFieldEquiv.lean`,
+declaration `coordRingMap_bijective`. There they are bundled as bijectivity of one map, for a ring
+*equivalence* only — surjectivity being obtained by lifting along `e.symm` — inside a 267-line
+file that also constructs the function-field Frobenius. Here there is no inverse to lift along:
+the statement is for an arbitrary surjective `f : R →+* S`, matching the generality of Mathlib's
+`CoordinateRing.map_injective`, and preimages come from `Polynomial.map_surjective`. The argument
+itself lives one level down, in `TauCeti/RingTheory/AdjoinRoot.lean`; the equivalence the source
+bundled it for is left to the use site.
 -/
 
 public section
