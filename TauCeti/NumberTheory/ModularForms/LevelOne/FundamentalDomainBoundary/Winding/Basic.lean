@@ -319,13 +319,14 @@ lemma fdBoundary_mem_coe_truncatedFundamentalDomain (hH : 1 ≤ H) {t : ℝ}
   nlinarith [Real.sqrt_nonneg 3]
 
 
-/-- **The chord-matched excision half-width.** The parameter half-width intended to have
-chord exactly `ε` along the unit-circle arc.
+/-- **The chord-matched excision half-width.** The parameter half-width whose chord along
+the unit-circle arc is the excision radius `ε`.
 
-It has that property only for `0 < ε < 2·sin(π/12)`, which is what
-`fdBoundaryArcExcisionHalfWidth_spec` assumes and what every caller supplies: `Real.arcsin`
-saturates outside `[-1, 1]`, so for `ε ≥ 2` the chord is not `ε` at all. The definition is
-total because a junk value off that range is easier to carry than a subtype. -/
+The chord identity `2·sin(δ·π/12) = ε` holds throughout `|ε| ≤ 2`, the range on which
+`Real.arcsin` inverts the sine, and fails beyond it because `Real.arcsin` saturates.
+`fdBoundaryArcExcisionHalfWidth_spec` nonetheless assumes the narrower
+`0 < ε < 2·sin(π/12)`: that is the range the excision arguments need, because it also places
+the half-width strictly between `0` and `1`, inside the corner's own arc window. -/
 noncomputable def fdBoundaryArcExcisionHalfWidth (ε : ℝ) : ℝ := 12 / Real.pi * Real.arcsin (ε / 2)
 
 /-- The chord-matched excision half-width, unfolded. -/
