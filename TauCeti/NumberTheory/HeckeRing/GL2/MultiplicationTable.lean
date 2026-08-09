@@ -14,7 +14,7 @@ The first multiplication identity of Shimura's Theorem 3.24 for the `GL₂` Heck
 `T(1, pᵏ) = T(pᵏ) − T(p,p) · T(p^(k−2))` for `k ≥ 2`, by telescoping the divisor-pair
 expansion of `T(pᵏ)` against the index shift `T(p,p) · T(pʲ, p^d) = T(p^(j+1), p^(d+1))`.
 
-The file also proves `heckeT_prime_mul_heckeTDiag`, Shimura's Theorem 3.24(5):
+The file also proves `heckeT_prime_mul_heckeTDiag_one_prime_pow`, Shimura's Theorem 3.24(5):
 `T(p) · T(1, pᵏ) = T(1, p^(k+1)) + m · T(p, pᵏ)`, with multiplicity `m = p + 1` at
 `k = 1` and `m = p` otherwise. No positivity hypothesis on `k` is needed: at `k = 0` the
 identity reads `T(p) = T(1, p)`, since `T(1,1) = 1` and `T(p,1) = 0` for prime `p`.
@@ -556,7 +556,7 @@ private lemma multiplicity_values (k : ℕ) (hk : 0 < k) :
 include hp in
 /-- **Shimura, Theorem 3.24(5)**: `T(p) · T(1, pᵏ) = T(1, p^(k+1)) + m · T(p, pᵏ)`, where
 the multiplicity `m` is `p + 1` for `k = 1` and `p` for `k ≥ 2`. -/
-theorem heckeT_prime_mul_heckeTDiag (k : ℕ) :
+theorem heckeT_prime_mul_heckeTDiag_one_prime_pow (k : ℕ) :
     heckeT ⟨p, hp.pos⟩ * heckeTDiag 1 (p ^ k) =
       heckeTDiag 1 (p ^ (k + 1)) +
         (if k = 1 then ((p : ℤ) + 1) else (p : ℤ)) • heckeTDiag p (p ^ k) := by
