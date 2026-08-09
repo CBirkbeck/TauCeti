@@ -23,13 +23,17 @@ the points of the curve `W.map f` over `S`, with no fields and no tower involved
   `Affine.Point.map_id`, `map_map` and `map_injective` for the `AlgHom` version. The identity and
   composition laws transport their codomains along Mathlib's `WeierstrassCurve.map_id` and
   `map_map`.
-* `TauCeti.WeierstrassCurve.Affine.Point.mapRingHomAddMonoidHom`: over a field, it is additive, so
-  it packages as an `AddMonoidHom`; `mapRingHom_zsmul` is the resulting compatibility with `ℤ`
-  scalars.
+
+Nothing is stated here about the group law. Over a **field** `f : F →+* K` Mathlib already supplies
+the additive transport: `letI : Algebra F K := f.toAlgebra` makes
+`Affine.Point.map (W' := W) (Algebra.ofId F K)` an `AddMonoidHom` of type
+`W.Point →+ (W.map f).Point` directly, with no transport needed, and `AddMonoidHom.map_zsmul`
+follows from it. What Mathlib lacks, and what this file adds, is the transport over arbitrary
+commutative rings.
 
 The definition needs only injectivity, since that is what `Affine.map_nonsingular` needs to carry
-nonsingularity across. Only additivity is stated over a field, that being where Mathlib gives
-`W.Point` its group law; negation and the functorial laws hold over any commutative ring.
+nonsingularity across. Negation and the functorial laws hold over any commutative ring and are
+proved here at that generality.
 
 This supports the Hasse strand of `TauCetiRoadmap/EllipticCurves/README.md`, Layer 3: the Silverman
 V.1 route counts `#E(𝔽_q)` as the fixed points of Frobenius, which means transporting points along
@@ -110,60 +114,6 @@ lemma mapRingHom_injective : Function.Injective (mapRingHom f hf (W := W)) := by
   · exact absurd hP (by simp)
   · obtain ⟨hx, hy⟩ := Affine.Point.some.inj hP
     simp only [hf hx, hf hy]
-
-end WeierstrassCurve.Affine.Point
-
-namespace WeierstrassCurve.Affine.Point
-
-variable {F K : Type*} [Field F] [Field K] [DecidableEq F] [DecidableEq K]
-  {W : _root_.WeierstrassCurve F} (f : F →+* K)
-
-/-- **The point map is additive**: over a field it commutes with the group law. -/
-@[simp]
-lemma mapRingHom_add (P Q : W.toAffine.Point) :
-    mapRingHom f f.injective (P + Q)
-      = mapRingHom f f.injective P + mapRingHom f f.injective Q := by
-  -- `rcases` presents the zero point as the constructor `Point.zero`, which is not syntactically
-  -- the `0` of the `AddCommGroup` instance, so `zero_add`/`add_zero` cannot fire until the goal is
-  -- restated. `rfl`, `simp [mapRingHom]` and `rw [zero_add]` all fail here for that reason.
-  rcases P with _ | ⟨x₁, y₁, h₁⟩
-  · change mapRingHom f f.injective ((0 : W.toAffine.Point) + Q)
-      = mapRingHom f f.injective (0 : W.toAffine.Point) + mapRingHom f f.injective Q
-    rw [zero_add, mapRingHom_zero, zero_add]
-  rcases Q with _ | ⟨x₂, y₂, h₂⟩
-  · change mapRingHom f f.injective (_ + (0 : W.toAffine.Point))
-      = mapRingHom f f.injective _ + mapRingHom f f.injective (0 : W.toAffine.Point)
-    rw [add_zero, mapRingHom_zero, add_zero]
-  by_cases hxy : x₁ = x₂ ∧ y₁ = W.toAffine.negY x₂ y₂
-  · obtain ⟨hx, hy⟩ := hxy
-    have hy' : f y₁ = (W.map f).toAffine.negY (f x₂) (f y₂) := by rw [hy, Affine.map_negY]
-    rw [Affine.Point.add_of_Y_eq hx hy, mapRingHom_zero, mapRingHom_some, mapRingHom_some,
-      Affine.Point.add_of_Y_eq (congrArg f hx) hy']
-  · have hxy' : ¬(f x₁ = f x₂ ∧ f y₁ = (W.map f).toAffine.negY (f x₂) (f y₂)) := by
-      rintro ⟨hfx, hfy⟩
-      exact hxy ⟨f.injective hfx, f.injective (by rwa [Affine.map_negY] at hfy)⟩
-    rw [Affine.Point.add_some hxy, mapRingHom_some, mapRingHom_some, mapRingHom_some,
-      Affine.Point.add_some hxy']
-    simp only [Affine.map_slope, Affine.map_addX, Affine.map_addY]
-
-variable (W) in
-/-- The point map packaged as an `AddMonoidHom`. -/
-noncomputable def mapRingHomAddMonoidHom : W.toAffine.Point →+ (W.map f).toAffine.Point where
-  toFun := mapRingHom f f.injective
-  map_zero' := mapRingHom_zero f f.injective
-  map_add' := mapRingHom_add f
-
-@[simp]
-lemma mapRingHomAddMonoidHom_apply (P : W.toAffine.Point) :
-    mapRingHomAddMonoidHom W f P = mapRingHom f f.injective P := by
-  simp [mapRingHomAddMonoidHom]
-
-/-- **The point map commutes with `ℤ`-multiples**, which is what a multiplication-by-`n` argument
-transported along `f` needs. -/
-@[simp]
-lemma mapRingHom_zsmul (n : ℤ) (P : W.toAffine.Point) :
-    mapRingHom f f.injective (n • P) = n • mapRingHom f f.injective P :=
-  (mapRingHomAddMonoidHom W f).map_zsmul n P
 
 end WeierstrassCurve.Affine.Point
 
