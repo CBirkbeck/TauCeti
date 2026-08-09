@@ -311,11 +311,11 @@ end ModularForm
 
 /-- **The chord-matched excision half-width.** For an excision radius `ε`, the parameter
 half-width whose chord along the unit-circle arc is exactly `ε`: it is characterised by
-`excisionHalfWidth_spec`, which is what callers use. -/
+`fdBoundaryArcExcisionHalfWidth_spec`, which is what callers use. -/
 noncomputable def fdBoundaryArcExcisionHalfWidth (ε : ℝ) : ℝ := 12 / Real.pi * Real.arcsin (ε / 2)
 
 /-- The chord-matched excision half-width, unfolded. -/
-@[simp] lemma excisionHalfWidth_def (ε : ℝ) :
+@[simp] lemma fdBoundaryArcExcisionHalfWidth_def (ε : ℝ) :
     fdBoundaryArcExcisionHalfWidth ε = 12 / Real.pi * Real.arcsin (ε / 2) := (rfl)
 
 /-- **The chord-matched excision half-width does what it is for.** For an excision radius `ε`
@@ -324,10 +324,11 @@ reproduces `ε` as its own chord: `2·sin(δ·π/12) = ε`.
 
 This is the trigonometric content shared by the excision constructions at `i`, at `ρ` and at
 `ρ + 1`; it needs no upper bound on `ε` beyond the chord bound. -/
-lemma excisionHalfWidth_spec {ε : ℝ} (hε : 0 < ε) (hε₃ : ε < 2 * Real.sin (Real.pi / 12)) :
+lemma fdBoundaryArcExcisionHalfWidth_spec {ε : ℝ} (hε : 0 < ε)
+    (hε₃ : ε < 2 * Real.sin (Real.pi / 12)) :
     0 < fdBoundaryArcExcisionHalfWidth ε ∧ fdBoundaryArcExcisionHalfWidth ε < 1 ∧
       2 * Real.sin (fdBoundaryArcExcisionHalfWidth ε * (Real.pi / 12)) = ε := by
-  rw [excisionHalfWidth_def]
+  rw [fdBoundaryArcExcisionHalfWidth_def]
   have hπ := Real.pi_pos
   have hsin1 : Real.sin (Real.pi / 12) ≤ 1 := Real.sin_le_one _
   have harc_pos : 0 < Real.arcsin (ε / 2) := Real.arcsin_pos.mpr (by linarith)
