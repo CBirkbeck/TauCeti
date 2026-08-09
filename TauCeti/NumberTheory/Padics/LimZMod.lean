@@ -129,6 +129,8 @@ def compatSubring : Subring (∀ n : ℕ, ZMod (p ^ n)) where
   neg_mem' {f} hf n := by simp only [Pi.neg_apply, map_neg, hf n]
 
 omit [Fact p.Prime] in
+/-- Membership in the limit is adjacent compatibility, definitionally: the carrier is exactly
+this condition, so a compatible sequence needs no further proof to be an element. -/
 @[simp] theorem mem_compatSubring (f : ∀ n : ℕ, ZMod (p ^ n)) :
     f ∈ compatSubring p ↔
       ∀ n, ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n)) (f (n + 1)) = f n := Iff.rfl
