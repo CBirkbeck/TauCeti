@@ -80,7 +80,8 @@ theorem mem_of_isTopologicallyNilpotent_of_isIntegrallyClosedIn {Aplus : Subring
     ((ha.eventually_mem (hopen.mem_nhds Aplus.zero_mem)).and (eventually_gt_atTop 0)).exists
   have hpow : IsIntegral Aplus (a ^ n) :=
     isIntegral_algebraMap (R := Aplus) (x := (⟨a ^ n, hmem⟩ : Aplus))
-  exact Subring.isIntegrallyClosedIn_iff.mp ‹_› (hpow.of_pow hn)
+  obtain ⟨y, hy⟩ := IsIntegrallyClosedIn.exists_algebraMap_eq_of_isIntegral_pow hn hpow
+  exact hy ▸ y.2
 
 omit [IsTopologicalRing A] in
 /-- `A°° ⊆ A⁺` for every ring of integral elements. -/
