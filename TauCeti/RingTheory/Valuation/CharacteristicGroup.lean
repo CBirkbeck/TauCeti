@@ -220,10 +220,27 @@ theorem characteristicGenerators_subset_characteristicSubgroup (v : Valuation A 
   TauCeti.ConvexSubgroup.subset_closure _
 
 /-- An attained value `≥ 1` lies in the characteristic subgroup. -/
-theorem valueGroup_mk_mem_characteristicSubgroup {v : Valuation A Γ₀} {a : A}
+theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le {v : Valuation A Γ₀} {a : A}
     (h : (MonoidWithZeroHom.ofClass v) a ≠ 0)
     (h1 : 1 ≤ valueGroup.mk (.ofClass v) 1 a (by simp) h) :
     valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v :=
   characteristicGenerators_subset_characteristicSubgroup v ⟨h1, a, h, rfl⟩
+
+/-- The generating set in terms of the ordinary restricted value: `γ` is a generator exactly
+when `γ ≥ 1` and `γ` is attained as `v.restrict a`. This is the form consumers use, since it
+carries no representation proof. -/
+theorem mem_characteristicGenerators_iff_restrict {v : Valuation A Γ₀}
+    {γ : valueGroup (.ofClass v)} :
+    γ ∈ characteristicGenerators v ↔
+      1 ≤ γ ∧ ∃ a : A, v.restrict a = (γ : ValueGroup₀ (.ofClass v)) := by
+  rw [mem_characteristicGenerators]
+  refine and_congr_right fun _ ↦ ⟨fun ⟨a, h, hmk⟩ ↦ ⟨a, ?_⟩, fun ⟨a, ha⟩ ↦ ?_⟩
+  · rw [v.restrict_eq_mk h, hmk]
+  · have hne : v.restrict a ≠ 0 := ha ▸ WithZero.coe_ne_zero
+    have h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := fun hz ↦
+      hne (v.restrict_eq_zero_iff.mpr hz)
+    refine ⟨a, h0, ?_⟩
+    have := (v.restrict_eq_mk h0).symm.trans ha
+    exact_mod_cast this
 
 end TauCeti.Valuation
