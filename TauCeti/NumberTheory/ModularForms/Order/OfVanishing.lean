@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Analysis.Meromorphic.NormalForm
-public import Mathlib.NumberTheory.ModularForms.Basic
 public import TauCeti.NumberTheory.ModularForms.Basic
 public import TauCeti.Analysis.Complex.UpperHalfPlane.Manifold
 
