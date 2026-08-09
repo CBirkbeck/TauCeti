@@ -143,8 +143,8 @@ theorem im_fdBoundary_sub_rho_add_one_arc_nonneg (H : ℝ) (ht : t ∈ Icc (1 : 
   -- proved for a contour at the corner height transports to this one.
   have htransport : fdBoundary H t = fdBoundary (Real.sqrt 3 / 2) t := by
     rw [eqOn_fdBoundary_arc H ht, eqOn_fdBoundary_arc (Real.sqrt 3 / 2) ht]
-  have hbase := sqrt_three_div_two_le_im_fdBoundary (H := Real.sqrt 3 / 2) le_rfl
-    (show t ∈ Icc (0 : ℝ) 5 from ⟨by linarith [ht.1], by linarith [ht.2]⟩)
+  have ht05 : t ∈ Icc (0 : ℝ) 5 := ⟨by linarith [ht.1], by linarith [ht.2]⟩
+  have hbase := sqrt_three_div_two_le_im_fdBoundary (H := Real.sqrt 3 / 2) le_rfl ht05
   rw [Complex.sub_im, him1, htransport]
   linarith
 
