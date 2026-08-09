@@ -6,7 +6,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.RingTheory.Algebraic.Integral
-public import Mathlib.RingTheory.LocalProperties.Basic
+public import Mathlib.RingTheory.Localization.BaseChange
 
 /-!
 # The function field of a Weierstrass curve has degree two over `K(x)`
@@ -19,14 +19,15 @@ the degree.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.finrank_coordinateRing`: the coordinate ring is free of rank two over
-  `K[X]`.
-* `WeierstrassCurve.Affine.isBaseChange_functionField`: `K(W)` is the base change of `K[W]` along
-  `K[X] → K(x)`.
+* `WeierstrassCurve.Affine.moduleFinite_coordinateRing` and `isIntegral_coordinateRing`: the
+  coordinate ring is module-finite and integral over `R[X]`, over any commutative ring.
+* `WeierstrassCurve.Affine.finrank_coordinateRing`: it has rank two. Stated over a field, since
+  `Module.finrank` needs `StrongRankCondition K[X]`, which `R[X]` inherits only from `R`.
 * `WeierstrassCurve.Affine.finrank_functionField`: `[K(W) : K(x)] = 2`.
 
-This is Silverman II.2: the function field of a Weierstrass curve is a quadratic extension of the
-rational function field in `x`, the nontrivial element of the extension being `y`.
+The base change itself is Mathlib's `Algebra.IsAlgebraic.isBaseChange_of_isFractionRing`; what is
+missing from Mathlib is the `K(x)`-algebra structure on `K(W)` that lets the statement be written
+at all, and the instances feeding that generic theorem.
 
 ## Roadmap
 
@@ -59,53 +60,49 @@ open scoped nonZeroDivisors
 
 namespace WeierstrassCurve.Affine
 
+section CommRing
+
+variable {R : Type*} [CommRing R] (W : WeierstrassCurve.Affine R)
+
+/-- The coordinate ring is module-finite over `R[X]`, on Mathlib's power basis `{1, Y}`. -/
+instance moduleFinite_coordinateRing : Module.Finite R[X] W.CoordinateRing :=
+  Module.Finite.of_basis (CoordinateRing.basis W)
+
+/-- The coordinate ring is integral over `R[X]`, being module-finite. -/
+instance isIntegral_coordinateRing : Algebra.IsIntegral R[X] W.CoordinateRing :=
+  Algebra.IsIntegral.of_finite R[X] W.CoordinateRing
+
+end CommRing
+
+section Field
+
 variable {K : Type*} [Field K] (W : WeierstrassCurve.Affine K)
 
-/-- **The coordinate ring is free of rank two over `K[X]`**, on Mathlib's power basis `{1, Y}`. -/
+/-- **The coordinate ring is free of rank two over `K[X]`.** Stated over a field rather than an
+arbitrary commutative ring: `Module.finrank` needs `StrongRankCondition K[X]`, which `R[X]` has
+only when `R` does. -/
 lemma finrank_coordinateRing : Module.finrank K[X] W.CoordinateRing = 2 :=
   (Module.finrank_eq_card_basis (CoordinateRing.basis W)).trans (Fintype.card_fin 2)
 
 /-- `K(x) = FractionRing K[X]` acts on the function field, through the coordinate ring. -/
-noncomputable instance algebraFractionRingFunctionField :
+noncomputable instance algebra_fractionRing_functionField :
     Algebra (FractionRing K[X]) W.FunctionField :=
   FractionRing.liftAlgebra K[X] W.FunctionField
 
-noncomputable instance isScalarTowerFractionRingFunctionField :
+/-- The action of `K(x)` on the function field extends the action of `K[X]`. -/
+noncomputable instance isScalarTower_fractionRing_functionField :
     IsScalarTower K[X] (FractionRing K[X]) W.FunctionField :=
   FractionRing.isScalarTower_liftAlgebra K[X] W.FunctionField
 
-instance moduleFiniteCoordinateRing : Module.Finite K[X] W.CoordinateRing :=
-  Module.Finite.of_basis (CoordinateRing.basis W)
-
-instance isIntegralCoordinateRing : Algebra.IsIntegral K[X] W.CoordinateRing :=
-  Algebra.IsIntegral.of_finite K[X] W.CoordinateRing
-
-private noncomputable instance isLocalizationFunctionField : IsLocalization
-    (Algebra.algebraMapSubmonoid W.CoordinateRing K[X]⁰) W.FunctionField := by
-  have : Algebra.IsAlgebraic K[X] W.CoordinateRing := Algebra.IsIntegral.isAlgebraic
-  have := (FaithfulSMul.algebraMap_injective K[X] W.CoordinateRing).noZeroDivisors _
-    (map_zero _) (map_mul _)
-  exact (IsLocalization.iff_of_le_of_exists_dvd _ (nonZeroDivisors W.CoordinateRing)
-    (map_le_nonZeroDivisors_of_injective _
-      (FaithfulSMul.algebraMap_injective K[X] W.CoordinateRing) le_rfl)
-    fun s hs ↦
-      have ⟨r, ne, eq⟩ := (Algebra.IsAlgebraic.isAlgebraic (R := K[X]) s).exists_nonzero_dvd hs
-      ⟨_, ⟨r, mem_nonZeroDivisors_of_ne_zero ne, rfl⟩, eq⟩).mpr inferInstance
-
-private noncomputable instance isLocalizedModuleCoordToFunc : IsLocalizedModule K[X]⁰
-    (IsScalarTower.toAlgHom K[X] W.CoordinateRing W.FunctionField).toLinearMap :=
-  isLocalizedModule_iff_isLocalization.mpr inferInstance
-
-/-- **The function field is the base change of the coordinate ring along `K[X] → K(x)`.** -/
-theorem isBaseChange_functionField :
-    IsBaseChange (FractionRing K[X])
-      (IsScalarTower.toAlgHom K[X] W.CoordinateRing W.FunctionField).toLinearMap :=
-  (isLocalizedModule_iff_isBaseChange K[X]⁰ ..).mp inferInstance
-
-/-- **The function field of a Weierstrass curve is a quadratic extension of `K(x)`.** -/
+/-- **The function field of a Weierstrass curve is a quadratic extension of `K(x)`.** The function
+field is the base change of the coordinate ring along `K[X] → K(x)`, by Mathlib's
+`Algebra.IsAlgebraic.isBaseChange_of_isFractionRing`, and the coordinate ring has rank two. -/
 theorem finrank_functionField :
     Module.finrank (FractionRing K[X]) W.FunctionField = 2 := by
-  rw [(isBaseChange_functionField W).finrank_eq, finrank_coordinateRing]
+  rw [(Algebra.IsAlgebraic.isBaseChange_of_isFractionRing K[X] W.CoordinateRing
+    (FractionRing K[X]) W.FunctionField).finrank_eq, finrank_coordinateRing]
+
+end Field
 
 end WeierstrassCurve.Affine
 
