@@ -15,11 +15,8 @@ fractional ideal is trivial and when a unit fractional ideal has trivial class.
 Let `R` be a domain with fraction field `K`. The principal fractional ideal `(x)` is the unit
 ideal exactly when `x` is the image of a unit of `R` (`FractionalIdeal.spanSingleton_eq_one_iff`),
 so the kernel of `toPrincipalIdeal` is the image of `Rˣ`
-(`FractionalIdeal.toPrincipalIdeal_eq_one_iff`). Consequently a unit fractional ideal has trivial
-class exactly when it is `toPrincipalIdeal x` for some `x : Kˣ`
-(`ClassGroup.mk_eq_one_iff_exists`) — the variant of Mathlib's `ClassGroup.mk_eq_one_iff` that
-hands back the generator instead of a `Submodule.IsPrincipal` witness, which is the form the
-class-group computations consume.
+(`FractionalIdeal.toPrincipalIdeal_eq_one_iff`), and a principal fractional ideal has trivial
+class (`ClassGroup.mk_toPrincipalIdeal`).
 
 Adapted from Michael Stoll's elliptic-curves formalisation
 (`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/FractionalIdeal.lean`
@@ -63,29 +60,16 @@ map is the image of `Rˣ`. -/
 lemma toPrincipalIdeal_eq_one_iff (u : Kˣ) :
     toPrincipalIdeal R K u = 1 ↔ ∃ a : Rˣ, Units.map (algebraMap R K : R →* K) a = u := by
   rw [← Units.val_inj, coe_toPrincipalIdeal, Units.val_one, spanSingleton_eq_one_iff]
-  exact ⟨fun ⟨a, ha⟩ ↦ ⟨a, Units.ext ha⟩, fun ⟨a, ha⟩ ↦ ⟨a, by rw [← ha]; rfl⟩⟩
+  -- Both directions move across `Units.coe_map`, the characteristic lemma for `Units.map`;
+  -- the residual `rfl` is only the `MonoidHom`-vs-`RingHom` coercion of `algebraMap R K`.
+  exact ⟨fun ⟨a, ha⟩ ↦ ⟨a, Units.ext ((Units.coe_map _ a).trans ha)⟩,
+    fun ⟨a, ha⟩ ↦ ⟨a, by rw [← ha, Units.coe_map]; rfl⟩⟩
 
-/-- `ClassGroup.mk I = 1` exactly when the unit fractional ideal `I` is principal, with the
-generator handed back as a unit of `K`. Variant of `ClassGroup.mk_eq_one_iff` avoiding
-`Submodule.IsPrincipal`. -/
-lemma _root_.ClassGroup.mk_eq_one_iff_exists {I : (FractionalIdeal R⁰ K)ˣ} :
-    ClassGroup.mk K I = 1 ↔ ∃ x : Kˣ, toPrincipalIdeal R K x = I := by
-  rw [ClassGroup.mk_eq_one_iff]
-  constructor
-  · intro hI
-    obtain ⟨x, hx⟩ := hI.principal
-    have hx' : (I : FractionalIdeal R⁰ K) = spanSingleton R⁰ x := by
-      apply Subtype.coe_injective
-      simp only [val_eq_coe, hx, coe_spanSingleton]
-    have hx0 : x ≠ 0 := fun h ↦ Units.ne_zero I (by rw [hx', h, spanSingleton_zero])
-    exact ⟨Units.mk0 x hx0, by rw [← Units.val_inj, coe_toPrincipalIdeal, hx']; rfl⟩
-  · rintro ⟨x, rfl⟩
-    exact ⟨⟨(x : K), by rw [coe_toPrincipalIdeal, coe_spanSingleton]⟩⟩
-
+/-- A principal fractional ideal has trivial class. -/
 @[simp]
 lemma _root_.ClassGroup.mk_toPrincipalIdeal (x : Kˣ) :
     ClassGroup.mk K (toPrincipalIdeal R K x) = 1 :=
-  ClassGroup.mk_eq_one_iff_exists.mpr ⟨x, rfl⟩
+  ClassGroup.mk_eq_one_iff.mpr ⟨⟨(x : K), by rw [coe_toPrincipalIdeal, coe_spanSingleton]⟩⟩
 
 end FractionalIdeal
 

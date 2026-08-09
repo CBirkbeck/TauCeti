@@ -20,8 +20,6 @@ itself.
 
 ## Main definitions and results
 
-* `FractionalIdeal.count_injective`: a nonzero fractional ideal is determined by its valuations,
-  read off Mathlib's `finprod_heightOneSpectrum_factorization'`.
 * `FractionalIdeal.factorization`: the isomorphism
   `(FractionalIdeal R⁰ K)ˣ ≃* Multiplicative (HeightOneSpectrum R →₀ ℤ)`, sending a fractional
   ideal to its tuple of valuations.
@@ -81,8 +79,10 @@ noncomputable def toFinsupp (I : (FractionalIdeal R⁰ K)ˣ) : HeightOneSpectrum
 noncomputable def ofFinsupp (g : HeightOneSpectrum R →₀ ℤ) : (FractionalIdeal R⁰ K)ˣ :=
   g.prod (fun v e ↦ unitOfPrime v ^ e)
 
-/-- Not `@[simp]`: it would rewrite the left-hand side of `count_ofFinsupp` into a `Finsupp.prod`
-and stop that sharper lemma firing (the `simpNF` linter reports exactly this). -/
+/-- The fractional ideal underlying `ofFinsupp g` is the finitely supported product
+`∏ v ^ g v` of prime powers. -/
+-- Not `@[simp]`: it would rewrite the left-hand side of `count_ofFinsupp` into a `Finsupp.prod`
+-- and stop that sharper lemma firing (the `simpNF` linter reports exactly this).
 lemma coe_ofFinsupp (g : HeightOneSpectrum R →₀ ℤ) :
     ((ofFinsupp g : (FractionalIdeal R⁰ K)ˣ) : FractionalIdeal R⁰ K)
       = g.prod (fun v e ↦ (v.asIdeal : FractionalIdeal R⁰ K) ^ e) := by
@@ -93,22 +93,20 @@ lemma coe_ofFinsupp (g : HeightOneSpectrum R →₀ ℤ) :
     count K v ((ofFinsupp g : (FractionalIdeal R⁰ K)ˣ) : FractionalIdeal R⁰ K) = g v := by
   rw [coe_ofFinsupp, count_finsuppProd]
 
-/-- A nonzero fractional ideal is determined by its valuations. Both nonvanishing hypotheses are
-needed: `count` is identically zero on `0` as well as on `1`. -/
-lemma count_injective {I J : FractionalIdeal R⁰ K} (hI : I ≠ 0) (hJ : J ≠ 0)
-    (h : ∀ v, count K v I = count K v J) : I = J := by
-  rw [← finprod_heightOneSpectrum_factorization' K hI,
-    ← finprod_heightOneSpectrum_factorization' K hJ]
-  exact finprod_congr fun v ↦ by rw [h v]
-
 /-- **The group of nonzero fractional ideals of a Dedekind domain is free abelian on the height
 one primes.** -/
 noncomputable def factorization :
     (FractionalIdeal R⁰ K)ˣ ≃* Multiplicative (HeightOneSpectrum R →₀ ℤ) where
   toFun I := Multiplicative.ofAdd (toFinsupp I)
   invFun g := ofFinsupp (Multiplicative.toAdd g)
-  left_inv I := Units.ext (count_injective (Units.ne_zero _) (Units.ne_zero _) fun v ↦ by
-    rw [count_ofFinsupp, toAdd_ofAdd, toFinsupp_apply])
+  left_inv I := Units.ext <| by
+    simp only [toAdd_ofAdd]
+    rw [← finprod_heightOneSpectrum_factorization' (K := K)
+        (I := ((ofFinsupp (toFinsupp I) : (FractionalIdeal R⁰ K)ˣ) : FractionalIdeal R⁰ K))
+        (Units.ne_zero _),
+      ← finprod_heightOneSpectrum_factorization' (K := K)
+        (I := ((I : (FractionalIdeal R⁰ K)ˣ) : FractionalIdeal R⁰ K)) (Units.ne_zero _)]
+    exact finprod_congr fun v ↦ by rw [count_ofFinsupp, toFinsupp_apply]
   right_inv g := by
     apply Multiplicative.toAdd.injective
     ext
