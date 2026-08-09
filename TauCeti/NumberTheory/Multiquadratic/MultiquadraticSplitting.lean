@@ -34,10 +34,10 @@ public section
 
 variable {K : Type*} [Field K] [NumberField K]
 
-/-- Forward direction (pointwise): for `K` Galois over `ℚ`, if `p` splits completely
-(`#{primes over p} = [K : ℚ]`) and `p ∤ d i`, then `d i` is a quadratic residue mod `p`. -/
+/-- Forward direction (pointwise): if `p` splits completely (`#{primes over p} = [K : ℚ]`) and
+`p ∤ d i`, then `d i` is a quadratic residue mod `p`. -/
 private theorem legendreSym_eq_one_of_ncard_primesOver_eq_finrank {ι : Type*} (d : ι → ℤ)
-    (r : ι → K) (hr : ∀ i, r i ^ 2 = algebraMap ℤ K (d i)) [IsGalois ℚ K]
+    (r : ι → K) (hr : ∀ i, r i ^ 2 = algebraMap ℤ K (d i))
     {p : ℕ} [Fact p.Prime] {i : ι} (hcop_i : ¬ (p : ℤ) ∣ d i)
     (Q : Ideal (𝓞 K)) [Q.IsPrime] [Q.LiesOver (span {(p : ℤ)})]
     (hsplit : (primesOver (span {(p : ℤ)}) (𝓞 K)).ncard = finrank ℚ K) :

@@ -97,10 +97,41 @@ theorem ncard_primesOver_eq_finrank_iff_stabilizer_eq_bot (L : Type*) [Field L]
     rw [hst] at hkey
     simpa using hkey
 
-/-- **Complete splitting makes the residue field at `Q` the prime field.** For `K` Galois over
-`ℚ`, if `p` splits completely then `algebraMap (ℤ ⧸ (p)) (𝓞 K ⧸ Q)` is bijective. -/
+/-- **Complete splitting forces inertia degree one, with no Galois hypothesis.** Each prime above
+`p` contributes a factor `e · f ≥ 1` to the fundamental identity, so a full complement of primes
+leaves every factor equal to `1`. -/
+theorem inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank {K : Type*} [Field K] [NumberField K]
+    {p : ℕ} [Fact p.Prime] (Q : Ideal (𝓞 K)) [Q.IsPrime] [Q.LiesOver (span {(p : ℤ)})]
+    (hsplit : (primesOver (span {(p : ℤ)}) (𝓞 K)).ncard = finrank ℚ K) :
+    Q.inertiaDeg ℤ = 1 := by
+  have hpne : (p : ℤ) ≠ 0 := by exact_mod_cast (Fact.out : p.Prime).ne_zero
+  have : (span {(p : ℤ)} : Ideal ℤ).IsPrime :=
+    (Ideal.span_singleton_prime hpne).mpr (Nat.prime_iff_prime_int.mp Fact.out)
+  have hfin : Fintype (primesOver (span {(p : ℤ)}) (𝓞 K)) :=
+    (Algebra.QuasiFinite.finite_primesOver (R := ℤ) (S := 𝓞 K) (span {(p : ℤ)})).fintype
+  have hsum := Ideal.sum_ramification_inertia_eq_finrank (R := ℤ) (S := 𝓞 K)
+    (p := span {(p : ℤ)})
+  rw [NumberField.RingOfIntegers.rank] at hsum
+  have hcard : Fintype.card (primesOver (span {(p : ℤ)}) (𝓞 K)) = finrank ℚ K := by
+    rw [← hsplit, Set.ncard_eq_toFinset_card']
+    simp
+  have hone : ∀ q ∈ (Finset.univ : Finset (primesOver (span {(p : ℤ)}) (𝓞 K))),
+      1 ≤ q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ := fun q _ =>
+    Nat.one_le_iff_ne_zero.mpr
+      (Nat.mul_ne_zero (Ideal.ramificationIdx_pos (R := ℤ) (q := q.1)).ne'
+        (Ideal.inertiaDeg_pos (R := ℤ) (q := q.1)).ne')
+  have hEqSum : ∑ q : primesOver (span {(p : ℤ)}) (𝓞 K), (1 : ℕ) =
+      ∑ q : primesOver (span {(p : ℤ)}) (𝓞 K), q.1.ramificationIdx ℤ * q.1.inertiaDeg ℤ := by
+    rw [hsum, Finset.sum_const, Finset.card_univ, smul_eq_mul, mul_one, hcard]
+  have hQ : (⟨Q, ⟨inferInstance, inferInstance⟩⟩ :
+      primesOver (span {(p : ℤ)}) (𝓞 K)) ∈ Finset.univ := Finset.mem_univ _
+  have := (Finset.sum_eq_sum_iff_of_le hone).mp hEqSum _ hQ
+  exact Nat.eq_one_of_mul_eq_one_left this.symm
+
+/-- **Complete splitting makes the residue field at `Q` the prime field.** If `p` splits
+completely then `algebraMap (ℤ ⧸ (p)) (𝓞 K ⧸ Q)` is bijective. No Galois hypothesis is needed. -/
 theorem bijective_algebraMap_quotient_of_splitsCompletely {K : Type*} [Field K] [NumberField K]
-    [IsGalois ℚ K] {p : ℕ} [Fact p.Prime] (Q : Ideal (𝓞 K)) [Q.IsPrime]
+    {p : ℕ} [Fact p.Prime] (Q : Ideal (𝓞 K)) [Q.IsPrime]
     [Q.LiesOver (span {(p : ℤ)})]
     (hsplit : (primesOver (span {(p : ℤ)}) (𝓞 K)).ncard = finrank ℚ K) :
     Function.Bijective (algebraMap (ℤ ⧸ span {(p : ℤ)}) (𝓞 K ⧸ Q)) := by
@@ -110,12 +141,10 @@ theorem bijective_algebraMap_quotient_of_splitsCompletely {K : Type*} [Field K] 
       ((Ideal.span_singleton_prime hpne).mpr (Nat.prime_iff_prime_int.mp Fact.out))
       (by simpa [Ideal.span_singleton_eq_bot] using hpne)
   have : Q.IsMaximal := Ideal.IsMaximal.of_liesOver_isMaximal Q (span {(p : ℤ)})
-  rw [ncard_primesOver_eq_finrank_iff K p] at hsplit
   have hfQ : finrank (ℤ ⧸ span {(p : ℤ)}) (𝓞 K ⧸ Q) = 1 := by
     rw [← Ideal.inertiaDeg'_algebraMap (p := span {(p : ℤ)}) (P := Q),
-      Ideal.inertiaDeg'_eq_inertiaDeg,
-      ← Ideal.inertiaDegIn_eq_inertiaDeg (span {(p : ℤ)}) Q (K ≃ₐ[ℚ] K)]
-    exact hsplit.2
+      Ideal.inertiaDeg'_eq_inertiaDeg]
+    exact inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank Q hsplit
   let fld : Field (ℤ ⧸ span {(p : ℤ)}) := Ideal.Quotient.field _
   -- A one-dimensional algebra over a field is free, so `finrank = 1` gives bijectivity.
   have : Module.Free (ℤ ⧸ span {(p : ℤ)}) (𝓞 K ⧸ Q) :=
