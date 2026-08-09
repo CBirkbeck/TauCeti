@@ -133,17 +133,6 @@ theorem cofinalValueFor_iff_isCofinalElement {v : Valuation A Γ₀}
   refine forall_congr' fun g ↦ forall_congr' fun _ ↦ exists_congr fun n ↦ ?_
   rw [v.restrict_eq_mk h, ← WithZero.coe_pow, WithZero.coe_lt_coe]
 
-/-- The class of a product is the product of the classes. Isolates the coercion step between
-`valueGroup.mk` and multiplication, which `CofinalValueFor.mul` would otherwise do inline. -/
-theorem valueGroup_mk_one_mul {v : Valuation A Γ₀} {a b : A}
-    (ha : (MonoidWithZeroHom.ofClass v) a ≠ 0) (hb : (MonoidWithZeroHom.ofClass v) b ≠ 0)
-    (hab : (MonoidWithZeroHom.ofClass v) (a * b) ≠ 0) :
-    valueGroup.mk (.ofClass v) 1 (a * b) (by simp) hab
-      = valueGroup.mk (.ofClass v) 1 a (by simp) ha * valueGroup.mk (.ofClass v) 1 b (by simp) hb :=
-  WithZero.coe_inj.mp (by
-    rw [← v.restrict_eq_mk hab, WithZero.coe_mul, ← v.restrict_eq_mk ha, ← v.restrict_eq_mk hb,
-      ← map_mul])
-
 /-- **Wedhorn Lemma 7.1, the multiplicative step.** If `cΓ_v` is strictly smaller than `H`
 and `v a` is cofinal for `H`, then so is `v (b * a)` for every `b` — the case `1 < v b`
 going through the characteristic subgroup and Wedhorn Remark 1.20. -/
@@ -168,7 +157,11 @@ theorem CofinalValueFor.mul {v : Valuation A Γ₀}
       simpa using this
     rw [cofinalValueFor_iff_isCofinalElement hab0]
     have := ((cofinalValueFor_iff_isCofinalElement ha0).mp ha).mul_of_lt_of_mem hH hmem
-    rw [valueGroup_mk_one_mul hb0 ha0 hab0]
+    have hmul : valueGroup.mk (.ofClass v) 1 b (by simp) hb0 *
+        valueGroup.mk (.ofClass v) 1 a (by simp) ha0
+        = valueGroup.mk (.ofClass v) 1 (b * a) (by simp) hab0 := by
+      rw [valueGroup.mk_mul]; simp
+    rw [← hmul]
     exact this
 
 /-- A cofinal value lies strictly below `1`. -/
