@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import TauCeti.RingTheory.Huber.Basic
 
 /-!
@@ -188,8 +187,7 @@ def powerBounded : Pair A where
   plus := powerBoundedSubring A
   isRingOfIntegralElements :=
     { isOpen := isOpen_powerBoundedSubring A
-      isIntegrallyClosedIn := Subring.isIntegrallyClosedIn_iff.mpr fun _ hx ↦
-        mem_powerBoundedSubring.mpr (isPowerBounded_of_isIntegral hx)
+      isIntegrallyClosedIn := inferInstance
       le_powerBoundedSubring := le_rfl }
 
 /-- The ring of integral elements of the largest Huber pair is `A°`. -/
