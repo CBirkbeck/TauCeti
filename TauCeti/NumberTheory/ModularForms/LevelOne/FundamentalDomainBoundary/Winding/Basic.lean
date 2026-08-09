@@ -308,15 +308,6 @@ lemma fdBoundary_mem_coe_truncatedFundamentalDomain (hH : 1 ≤ H) {t : ℝ}
   nlinarith [Real.sqrt_nonneg 3]
 
 end ModularForm
-/-- **The sine of a multiple of `π/12` factors through the absolute value**, for any
-multiplier up to a half turn. The bound `|u| ≤ 12` is exactly what puts `u · π/12` inside
-`[-π, π]`, where `Real.abs_sin_eq_sin_abs_of_abs_le_pi` applies. -/
-lemma abs_sin_mul_pi_div_twelve {u : ℝ} (hu : |u| ≤ 12) :
-    |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
-  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
-      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
-      nlinarith [Real.pi_pos, abs_nonneg u]),
-    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
 
 /-- **The chord-matched excision half-width.** For an excision radius `ε`, the parameter
 half-width whose chord along the unit-circle arc is exactly `ε`: it is characterised by
