@@ -160,14 +160,13 @@ theorem IdealCofinalFor.mono_subgroup {v : Valuation A Γ₀}
 upper bound within the family — the statement the case split of Definition 7.3 consumes. -/
 def IsGreatestIdealCofinal (v : Valuation A Γ₀) (I : Ideal A)
     (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : Prop :=
-  IdealCofinalFor v H I ∧ ∀ K, IdealCofinalFor v K I → K ≤ H
+  IsGreatest {K | IdealCofinalFor v K I} H
 
-/-- The defining conjunction, as a restatement. Deliberately not `@[simp]`: the right-hand
-side is the unfolded conjunction, so tagging it would expand goals rather than simplify them. -/
+/-- Unfolding to Mathlib's `IsGreatest`, which is what this is. Consumers get the whole
+`IsGreatest` API — `IsGreatest.unique` in particular — without further work. -/
 theorem isGreatestIdealCofinal_iff {v : Valuation A Γ₀} {I : Ideal A}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} :
-    IsGreatestIdealCofinal v I H ↔
-      IdealCofinalFor v H I ∧ ∀ K, IdealCofinalFor v K I → K ≤ H :=
+    IsGreatestIdealCofinal v I H ↔ IsGreatest {K | IdealCofinalFor v K I} H :=
   Iff.rfl
 
 /-- The greatest subgroup is itself one for which `I` is cofinal. -/
@@ -178,12 +177,7 @@ theorem IsGreatestIdealCofinal.idealCofinalFor {v : Valuation A Γ₀} {I : Idea
 /-- The greatest subgroup dominates every other one for which `I` is cofinal. -/
 theorem IsGreatestIdealCofinal.le {v : Valuation A Γ₀} {I : Ideal A}
     {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
-    (h : IsGreatestIdealCofinal v I H) (hK : IdealCofinalFor v K I) : K ≤ H := h.2 K hK
-
-theorem IsGreatestIdealCofinal.unique {v : Valuation A Γ₀} {I : Ideal A}
-    {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
-    (hH : IsGreatestIdealCofinal v I H) (hK : IsGreatestIdealCofinal v I K) : H = K :=
-  (show IsGreatest {L | IdealCofinalFor v L I} H from hH).unique hK
+    (h : IsGreatestIdealCofinal v I H) (hK : IdealCofinalFor v K I) : K ≤ H := h.2 hK
 
 /-- For the zero ideal the greatest element is the whole value group (Wedhorn's first
 reduction: "if `v(I) = {0}` we may choose `H = Γ_v`"). -/
@@ -538,9 +532,9 @@ theorem characteristicSubgroupOfIdeal_eq_top_iff {v : Valuation A Γ₀} {I : Id
       rw [htop] at hcof
       exact cofinalValueFor_top_iff.mp hcof
     · rintro (hall | hfull)
-      · exact top_le_iff.mp (hg.2 ⊤ fun a ha ↦ cofinalValueFor_top_iff.mpr (hall a ha))
+      · exact top_le_iff.mp (hg.2 fun a ha ↦ cofinalValueFor_top_iff.mpr (hall a ha))
       · -- `cΓ_v = ⊤` and disjointness force every value on `I` to vanish
-        refine top_le_iff.mp (hg.2 ⊤ fun a ha ↦ ?_)
+        refine top_le_iff.mp (hg.2 fun a ha ↦ ?_)
         by_cases h0 : (MonoidWithZeroHom.ofClass v) a = 0
         · exact cofinalValueFor_of_eq_zero h0
         · exact absurd ⟨a, ha, h0, hfull ▸ TauCeti.ConvexSubgroup.mem_top⟩ hm
