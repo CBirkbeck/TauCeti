@@ -39,7 +39,7 @@ this file supplies. Layer 2's `E[N]` and Layer 3's Hasse kernel count consume th
 ## Provenance
 
 Ported from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned by
-that roadmap at `dev/hasse-weil @ 94f6d72eeea3`), `HasseWeil/Curves/RamificationFinite.lean`,
+that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/Curves/RamificationFinite.lean`,
 declarations `finite_setOf_dvd_differentIdeal`, `finite_setOf_ramificationIdx_ne_one` and
 `finite_setOf_under_ramified`.
 
