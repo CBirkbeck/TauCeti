@@ -54,6 +54,9 @@ built from `closure` in the forthcoming valuation-spectrum development of `Spv (
 * `TauCeti.ConvexSubgroup.mulArchimedean_iff_forall_eq_bot_or_eq_top` : A linearly ordered
   commutative group is `MulArchimedean` exactly when its only convex subgroups are `⊥`
   and `⊤`.
+* `TauCeti.ConvexSubgroup.quotientMk_monotone` and
+  `TauCeti.ConvexSubgroup.quotientMk_lt_one_of_notMem` : The quotient map is monotone, and
+  keeps below `1` exactly those elements below `1` that the subgroup does not absorb.
 
 ## References
 
@@ -571,6 +574,20 @@ instance quotientIsOrderedMonoid : IsOrderedMonoid (Γ ⧸ H.toSubgroup) where
       simp [mul_inv_rev, mul_comm, mul_assoc]
     rw [h]
     exact hab
+
+/-- The quotient map to `Γ ⧸ H.toSubgroup` is monotone: passing to the quotient by a convex
+subgroup coarsens the order rather than reversing any part of it. -/
+theorem quotientMk_monotone : Monotone (QuotientGroup.mk' H.toSubgroup) := by
+  intro a b hab
+  exact (quotient_le_iff H a b).mpr (Or.inl (by simpa using mul_le_mul_left hab b⁻¹))
+
+/-- An element below `1` that avoids `H` is still below `1` in the quotient: the classes it
+is squeezed between are distinct precisely because it is not a member. -/
+theorem quotientMk_lt_one_of_notMem {u : Γ} (hu : u < 1) (hnot : u ∉ H) :
+    QuotientGroup.mk' H.toSubgroup u < 1 := by
+  refine lt_of_le_of_ne ?_ ?_
+  · simpa using (quotient_le_iff H u 1).mpr (Or.inl (by simpa using hu.le))
+  · simpa using fun h ↦ hnot (QuotientGroup.eq_one_iff u |>.mp h)
 
 end Quotient
 
