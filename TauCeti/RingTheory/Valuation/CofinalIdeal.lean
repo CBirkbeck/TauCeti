@@ -30,7 +30,7 @@ something derivable from cofinality.
 ## Main definitions
 
 * `TauCeti.Valuation.CofinalValueFor v H a` : The powers of `v a` fall below every member
-  of the convex subgroup `H` of the value group.
+  of the subgroup `H` of the value group.
 * `TauCeti.Valuation.cofinalIdeal v hH` : Those elements, as an ideal.
 
 ## Main results
@@ -66,13 +66,13 @@ open MonoidWithZeroHom
 
 variable {A : Type*} [Ring A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
-/-- `v a` is **cofinal for the convex subgroup `H`** of the value group: its powers fall
+/-- `v a` is **cofinal for the subgroup `H`** of the value group: its powers fall
 below every member of `H` (Wedhorn Definition 1.16, at a value that may vanish). -/
 def CofinalValueFor (v : Valuation A Γ₀)
     (H : Subgroup (valueGroup (.ofClass v))) (a : A) : Prop :=
   ∀ h ∈ H, ∃ n : ℕ, v.restrict a ^ n < (h : ValueGroup₀ (.ofClass v))
 
-/-- The defining property of cofinality relative to a convex subgroup.
+/-- The defining property of cofinality relative to a subgroup.
 
 Deliberately not `@[simp]`: the right-hand side is the unfolded bounded quantifier, so tagging
 it would rewrite `a ∈ cofinalIdeal v hH` past the named predicate and into raw `∀ … ∃ …` form.
@@ -90,7 +90,7 @@ theorem CofinalValueFor.of_le {v : Valuation A Γ₀}
   let ⟨n, hn⟩ := h γ hγ
   ⟨n, lt_of_le_of_lt (pow_le_pow_left' (v.restrict_le_iff.mpr hba) n) hn⟩
 
-/-- A vanishing value is cofinal for every convex subgroup (Wedhorn's remark after
+/-- A vanishing value is cofinal for every subgroup (Wedhorn's remark after
 Definition 1.16: the adjoined base `0` is cofinal for every subgroup). -/
 theorem cofinalValueFor_of_eq_zero {v : Valuation A Γ₀}
     {H : Subgroup (valueGroup (.ofClass v))} {a : A} (ha : v a = 0) :
