@@ -261,6 +261,13 @@ lemma bernsteinKernelBoundedContinuous_apply (n : ℕ) {x : ℝ} (hx : 0 ≤ x) 
     bernsteinKernelBoundedContinuous n hx p = bernsteinKernel n x (p : ℝ) := by
   rw [bernsteinKernelBoundedContinuous]; rfl
 
+/-- **The Bernstein kernel is integrable against a finite measure.** The companion of
+`TauCeti.integrable_exp_neg_mul`, which says the same of the Laplace kernel. -/
+lemma integrable_bernsteinKernel (μ : Measure ℝ≥0) [IsFiniteMeasure μ] (n : ℕ) {x : ℝ}
+    (hx : 0 ≤ x) : Integrable (fun p : ℝ≥0 => bernsteinKernel n x (p : ℝ)) μ := by
+  have h := (bernsteinKernelBoundedContinuous n hx).integrable μ
+  rwa [funext (bernsteinKernelBoundedContinuous_apply n hx)] at h
+
 /-- **An atom at `0` shifts the Laplace transform by its mass.** The kernel takes the value `1` at
 `p = 0`, so adjoining `c • δ₀` to a finite measure adds exactly `c`. -/
 @[simp]

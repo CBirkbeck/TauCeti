@@ -71,6 +71,21 @@ namespace TauCeti
 
 variable {f : ℝ → ℝ}
 
+/-- **The error integral splits.** Along a filter where the Chafaï measures have bounded mass,
+the integral of the difference of the two kernels is the difference of their integrals. -/
+private theorem eventually_integral_bernsteinKernel_sub_exp_neg_mul_eq {f : ℝ → ℝ} {C : ℝ≥0}
+    {U : Ultrafilter ℕ} (hmass' : ∀ᶠ n in atTop, (chafaiRescaled f n) univ ≤ (C : ℝ≥0∞))
+    (hU : (U : Filter ℕ) ≤ atTop) {t : ℝ} (ht : 0 ≤ t) :
+    ∀ᶠ n in (U : Filter ℕ), ∫ p : ℝ≥0,
+      (bernsteinKernel n t (p : ℝ) - Real.exp (-(t * (p : ℝ)))) ∂(chafaiRescaled f n)
+        = (∫ p, bernsteinKernel n t (p : ℝ) ∂(chafaiRescaled f n))
+          - ∫ p, Real.exp (-(t * (p : ℝ))) ∂(chafaiRescaled f n) := by
+  filter_upwards [hU hmass'] with n hn
+  -- finiteness on the tail comes from the mass bound itself
+  have : IsFiniteMeasure (chafaiRescaled f n) := ⟨hn.trans_lt ENNReal.coe_lt_top⟩
+  exact integral_sub (integrable_bernsteinKernel (chafaiRescaled f n) n ht)
+    (integrable_exp_neg_mul (chafaiRescaled f n) ht)
+
 /-- **The weak limit represents the non-constant part.** Along the ultrafilter `U`, the Chafaï
 measures converge weakly to `μ₀`; passing the reconstruction identity to that limit replaces the
 Bernstein kernel by `e^{-tp}` and exhibits `μ₀` as a representing measure for `f - L`, where `L` is
@@ -95,19 +110,7 @@ private theorem sub_eq_integral_exp_neg_mul_of_weak_limit {L : ℝ} {C : ℝ≥0
       (C := (C : ℝ)) (chafaiRescaled f)
       (hmass'.mono fun n hn => hn.trans
         (by simp [ENNReal.ofReal_coe_nnreal])) t ht).mono_left hU
-  -- Split the error integral, using that both kernels are bounded continuous.
-  have hsplit : ∀ᶠ n in (U : Filter ℕ), ∫ p : ℝ≥0,
-      (bernsteinKernel n t (p : ℝ) - Real.exp (-(t * (p : ℝ)))) ∂(chafaiRescaled f n)
-        = (∫ p, bernsteinKernel n t (p : ℝ) ∂(chafaiRescaled f n))
-          - ∫ p, Real.exp (-(t * (p : ℝ))) ∂(chafaiRescaled f n) := by
-    filter_upwards [hU hmass'] with n hn
-    -- Finiteness on the tail comes from the mass bound itself.
-    have : IsFiniteMeasure (chafaiRescaled f n) := ⟨hn.trans_lt ENNReal.coe_lt_top⟩
-    have hb : Integrable (fun p : ℝ≥0 => bernsteinKernel n t (p : ℝ))
-        (chafaiRescaled f n) := by
-      have h := (bernsteinKernelBoundedContinuous n ht).integrable (chafaiRescaled f n)
-      rwa [funext (bernsteinKernelBoundedContinuous_apply n ht)] at h
-    exact integral_sub hb (integrable_exp_neg_mul (chafaiRescaled f n) ht)
+  have hsplit := eventually_integral_bernsteinKernel_sub_exp_neg_mul_eq hmass' hU ht
   -- The Bernstein integral is constantly `f t - L` once `n ≥ 2`.
   have hconst : ∀ᶠ n in (U : Filter ℕ),
       ∫ p, bernsteinKernel n t (p : ℝ) ∂(chafaiRescaled f n) = f t - L := by
