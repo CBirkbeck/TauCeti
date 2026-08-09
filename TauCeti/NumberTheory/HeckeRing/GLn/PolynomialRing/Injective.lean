@@ -327,7 +327,8 @@ lemma T_gen_pow_entries_qpower (q : {p : ℕ // p.Prime})
 
 /-- If `(f * g)(D) ≠ 0` in the Hecke ring, there exist `D₁ ∈ supp(f)` and `D₂ ∈ supp(g)`
 with `D ∈ mulSupport(rep D₁, rep D₂)`. -/
-lemma support_mul_exists (f g : IntegralHeckeRing 2) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
+lemma support_mul_exists (f g : IntegralHeckeRing 2)
+    (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
     (hD : (f * g) D ≠ 0) :
     ∃ D₁ D₂, f D₁ ≠ 0 ∧ g D₂ ≠ 0 ∧
       D ∈ (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2) (HeckeCoset.rep D₁) (HeckeCoset.rep D₂)).support := by
@@ -360,7 +361,8 @@ lemma T_single_diag_mul_T_scalar (c : ℕ) (hc : 0 < c)
   rw [HeckeCosetModule.single_smul]; congr 1; ring
 
 /-- Scalar shift identity: for any `f : IntegralHeckeRing 2`, scalar `c > 0`, and positive
-divisibility-chain `b`, evaluating `f * diagElem(c,c)` at `diagCoset(b * c)` equals `f(diagCoset b)`. -/
+divisibility-chain `b`, evaluating `f * diagElem(c,c)` at `diagCoset(b * c)` equals
+`f(diagCoset b)`. -/
 lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 2) (b : Fin 2 → ℕ)
     (hb_pos : ∀ i, 0 < b i) (hb_div : IsDvdChain b) :
     (f * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * (fun _ : Fin 2 ↦ c))) = f (diagCoset b) := by
@@ -409,7 +411,8 @@ lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 
       rw [if_neg h_ne_1, if_neg h_ne_2]
 
 /-- If `c ∤ d i` for some `i`, the evaluation of `f * diagElem(c,c)` at `diagCoset d` is zero. -/
-lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 2) (d : Fin 2 → ℕ)
+lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 2)
+    (d : Fin 2 → ℕ)
     (hd_pos : ∀ i, 0 < d i) (hd_div : IsDvdChain d) (i₀ : Fin 2) (hi₀ : ¬ c ∣ d i₀) :
     (f * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0 := by
   induction f using Finsupp.induction_linear with
@@ -442,7 +445,8 @@ lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHe
       exact ⟨a i₀, by linarith [this.symm]⟩
     rw [if_neg h_ne]
 
-/-- For `i ≥ 1`, evaluation of `f * heckeTScalar(p)^i` at `diagCoset ![1, k]` is zero (since `p^i ∤ 1`). -/
+/-- For `i ≥ 1`, evaluation of `f * heckeTScalar(p)^i` at `diagCoset ![1, k]` is zero
+(since `p^i ∤ 1`). -/
 lemma T_mul_T_pp_pow_eval_at_one_zero (p : ℕ) (hp : p.Prime) (i k : ℕ) (hi : 1 ≤ i)
     (hk : 0 < k) (f : IntegralHeckeRing 2) :
     (f * heckeTScalar p ^ i) (diagCoset (![1, k] : Fin 2 → ℕ)) = 0 := by
@@ -459,7 +463,8 @@ lemma T_mul_T_pp_pow_eval_at_one_zero (p : ℕ) (hp : p.Prime) (i k : ℕ) (hi :
   have hp2 : 2 ≤ p := hp.two_le
   omega
 
-/-- `diagElem ![p^i, p^j] = heckeTDiag(1, p^{j-i}) * heckeTScalar(p)^i` for `i ≤ j` with `p` prime. -/
+/-- `diagElem ![p^i, p^j] = heckeTDiag(1, p^{j-i}) * heckeTScalar(p)^i` for `i ≤ j` with `p`
+prime. -/
 lemma T_elem_ppow_factor (p : ℕ) (hp : p.Prime) (i j : ℕ) (hij : i ≤ j) :
     diagElem (![p^i, p^j] : Fin 2 → ℕ) = heckeTDiag 1 (p ^ (j - i)) * heckeTScalar p ^ i := by
   rw [heckeTDiag_of_pos 1 (p^(j-i)) Nat.one_pos (pow_pos hp.pos _) (one_dvd _),
@@ -570,8 +575,10 @@ lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
   | succ n ih =>
     rw [pow_succ']
     set g := (heckeTDiag 1 p) ^ n
-    set D_target : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2) := diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)
-    set D_leading : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2) := diagCoset (![1, p ^ n] : Fin 2 → ℕ)
+    set D_target : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2) :=
+      diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)
+    set D_leading : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2) :=
+      diagCoset (![1, p ^ n] : Fin 2 → ℕ)
     rw [show heckeTDiag 1 p = HeckeCosetModule.single ℤ (diagCoset (![1, p] : Fin 2 → ℕ)) 1 from
         heckeTDiag_of_pos Nat.one_pos hp.pos (one_dvd _),
       HeckeRing.mul_def, Finsupp.sum_single_index (by simp [Finsupp.sum])]
@@ -723,7 +730,8 @@ theorem evalHom_injective_two (p : ℕ) (hp : p.Prime) :
   obtain ⟨s, hs_mem, hs_min⟩ := Finset.exists_min_image R.support
     (fun d : Fin 2 →₀ ℕ ↦ d 1) (MvPolynomial.support_nonempty.mpr hR_ne)
   have hs_coeff : R.coeff s ≠ 0 := MvPolynomial.mem_support_iff.mp hs_mem
-  have h_zero : (evalHom 2 p R) (diagCoset (primePowDiag 2 p ![s 1, s 0 + s 1])) = 0 := by rw [hR]; rfl
+  have h_zero : (evalHom 2 p R) (diagCoset (primePowDiag 2 p ![s 1, s 0 + s 1])) = 0 := by
+    rw [hR]; rfl
   rw [evalHom_apply_eq_sum_monomial] at h_zero
   have h_delta : ∀ d ∈ R.support,
       R.coeff d * (heckeGen 2 p 0 ^ (d 0) * heckeGen 2 p 1 ^ (d 1))
