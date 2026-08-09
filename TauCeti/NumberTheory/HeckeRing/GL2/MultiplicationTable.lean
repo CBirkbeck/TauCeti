@@ -60,6 +60,7 @@ private lemma heckeTScalar_mul_heckeTDiag_of_pos {c a d : ℕ} (hc : 0 < c) (ha 
 scaling: outside the range both sides vanish, since `0 < c·a` forces `0 < a`, and for `0 < c` the
 divisibility `c·a ∣ c·d` is equivalent to `a ∣ d`. Primality plays no role, and neither does the
 shape of `a` and `d`. -/
+@[simp]
 lemma heckeTScalar_mul_heckeTDiag (c a d : ℕ) :
     heckeTScalar c * heckeTDiag a d = heckeTDiag (c * a) (c * d) := by
   rcases Nat.eq_zero_or_pos c with rfl | hc
@@ -81,8 +82,12 @@ lemma heckeTScalar_mul_heckeTDiag (c a d : ℕ) :
 
 /-- The index shift: `T(p,p) · T(pʲ, p^d) = T(p^(j+1), p^(d+1))`, for arbitrary `p`, `j`, `d`.
 
-The prime-power case of `heckeTScalar_mul_heckeTDiag`; like it, unconditional. -/
-@[simp]
+The prime-power case of `heckeTScalar_mul_heckeTDiag`; like it, unconditional.
+
+Deliberately *not* `@[simp]`: the general rule carries the attribute, and it already rewrites
+this left-hand side (to `T(p·pʲ, p·p^d)`), so annotating the specialisation too would leave its
+left-hand side outside simp normal form — `simpNF` rejects exactly that. Callers wanting the
+`p^(j+1)` form rewrite with this lemma by name. -/
 lemma heckeTScalar_mul_heckeTDiag_prime_pow (j d : ℕ) :
     heckeTScalar p * heckeTDiag (p ^ j) (p ^ d) =
       heckeTDiag (p ^ (j + 1)) (p ^ (d + 1)) := by
@@ -104,6 +109,9 @@ theorem heckeTDiag_one_prime_pow_eq (k : ℕ) (hk : 2 ≤ k) :
     rw [Finset.mem_range] at hj
     have harith : k - 2 - j + 1 = k - (j + 1) := by omega
     rw [heckeTScalar_mul_heckeTDiag_prime_pow p j (k - 2 - j), harith]
+  -- The two ranges are equal but not syntactically so — `(k - 2) / 2 + 1` and `k / 2` involve
+  -- truncated subtraction and division, which only `omega` sees through, so `rw` needs the
+  -- equality supplied explicitly before `sum_range_succ'` can peel off the first term.
   rw [Finset.sum_congr rfl shift,
     show Finset.range ((k - 2) / 2 + 1) = Finset.range (k / 2) from by congr 1; omega,
     Finset.sum_range_succ']
@@ -117,21 +125,6 @@ section SupportAnalysis
 Every double coset in the support of the product `T(1,p) · T(1,pᵏ)` is `T(1, p^(k+1))` or
 `T(p, pᵏ)`: the determinant balances to `p^(k+1)`, and the first invariant factor divides
 `p` because the conjugated middle matrix stays integral. -/
-
-/-- The **matrix** determinant of a mapped `SL₂` element is `1`, as a one-line citation of
-Mathlib's `Matrix.SpecialLinearGroup.det_mapGL`.
-
-`det_mapGL` is about the *unit* determinant `(mapGL S g).det : Sˣ`, while every goal here is
-about `(↑(mapGL ℚ S)).det : ℚ`. Pushing the former through `Units.val` and simplifying with
-`GeneralLinearGroup.val_det_apply` bridges the two, which is exactly this proof — so this is a
-coercion-shape restatement, not an independent derivation.
-
-It is kept rather than inlined only because one use is inside a `simp only` set, where a
-tactic block cannot go. -/
-private lemma mapGL_val_det (S : SpecialLinearGroup (Fin 2) ℤ) :
-    (mapGL ℚ S).val.det = 1 := by
-  simpa only [Matrix.GeneralLinearGroup.val_det_apply, Units.val_one] using
-    congrArg Units.val (Matrix.SpecialLinearGroup.det_mapGL (S := ℚ) S)
 
 private lemma matrix_isolate_middle (L_ℤ M R_ℤ D : Matrix (Fin 2) (Fin 2) ℤ)
     (hLadj : L_ℤ.adjugate * L_ℤ = 1) (hRadj : R_ℤ * R_ℤ.adjugate = 1)
@@ -169,6 +162,8 @@ private lemma first_invariant_dvd_p_of_product (p : ℕ) (S : SpecialLinearGroup
       mul_ite, mul_zero, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
     apply dvd_add
     · exact dvd_mul_of_dvd_left (dvd_mul_of_dvd_right (dvd_refl _) _) _
+    -- The chain hypothesis is about ℕ-divisibility, but this goal is over ℤ; the `show` names
+    -- the cast form so `Int.natCast_dvd_natCast` has something to transport it into.
     · exact dvd_mul_of_dvd_left (dvd_mul_of_dvd_right
         (show (a 0 : ℤ) ∣ (a 1 : ℤ) from
           Int.natCast_dvd_natCast.mpr (isDvdChain_iff.mp hdiv (Fin.zero_le 1))) _) _
@@ -202,7 +197,10 @@ private lemma diag_entries_mul_eq_pow_succ (p : ℕ) (k : ℕ) (a : Fin 2 → �
     ring
   have h_rhs : (g₁ * g₂ * (g₃ * g₄)).val.det = (a 0 : ℚ) * (a 1 : ℚ) := by
     rw [h_eq, Units.val_mul, Units.val_mul, Matrix.det_mul, Matrix.det_mul]
-    simp only [mapGL_val_det, natDiagGL_det 2 a ha_pos, Fin.prod_univ_two, one_mul, mul_one]
+    -- `det_mapGL` is about the *unit* determinant, so `← val_det_apply` moves the matrix
+    -- determinant into that form before it can fire.
+    simp only [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL,
+      Units.val_one, natDiagGL_det 2 a ha_pos, Fin.prod_univ_two, one_mul, mul_one]
   exact_mod_cast h_rhs.symm.trans h_lhs
 
 private lemma mulSupport_pp_dvd_p_aux (p : ℕ) (hp : p.Prime)
@@ -284,12 +282,6 @@ section DegreeCount
 
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H : Subgroup G} [IsHeckeTriple Δ H H]
 
-private lemma single_one_mul_single_one (D₁ D₂ : HeckeCoset Δ H H) :
-    HeckeCosetModule.single ℤ D₁ 1 * HeckeCosetModule.single ℤ D₂ 1 =
-      HeckeCosetModule.structureConstants ℤ H H H D₁.rep D₂.rep := by
-  rw [HeckeCosetModule.single_mul_single]
-  exact (one_smul ℤ _).trans (one_smul ℤ _)
-
 /-- Counting degrees through the degree homomorphism: when the product of two double cosets
 is supported on exactly two cosets, the multiplicity-weighted degrees of the two outputs
 add up to the product of the input degrees. -/
@@ -325,8 +317,14 @@ private lemma multiplicity_degree_sum_eq (D₁ D₂ Dout₁ Dout₂ : HeckeCoset
       (HeckeCosetModule.single ℤ D₁ 1 * HeckeCosetModule.single ℤ D₂ 1) =
       (multiplicity H H H (D₁.rep : G) (D₂.rep : G) (Dout₁.rep : G) : ℤ) * Dout₁.degree +
       (multiplicity H H H (D₁.rep : G) (D₂.rep : G) (Dout₂.rep : G) : ℤ) * Dout₂.degree := by
-    rw [single_one_mul_single_one, hSC2, map_add, LeftCosetModule.deg_single,
-      LeftCosetModule.deg_single]
+    -- `single_mul_single` yields `1 • 1 • …` on the `Module ℤ` instance transported to
+    -- `HeckeCosetModule`, which is not the instance `one_smul` picks for `ℤ`, so neither `rw`
+    -- nor `simp` matches it. Stating the product `•`-free lets unification supply the instance.
+    have hmul : HeckeCosetModule.single ℤ D₁ 1 * HeckeCosetModule.single ℤ D₂ 1 =
+        HeckeCosetModule.structureConstants ℤ H H H D₁.rep D₂.rep := by
+      rw [HeckeCosetModule.single_mul_single]
+      exact (one_smul ℤ _).trans (one_smul ℤ _)
+    rw [hmul, hSC2, map_add, LeftCosetModule.deg_single, LeftCosetModule.deg_single]
     simp [mul_comm]
   exact_mod_cast (h1.symm.trans h2).symm
 
@@ -343,11 +341,20 @@ private lemma mulSupport_pp_subset (k : ℕ)
       (((diagCoset ![1, p ^ k]).rep : GL (Fin 2) ℚ)) ((A.rep : GL (Fin 2) ℚ)) ≠ 0) :
     A = diagCoset ![1, p ^ (k + 1)] ∨ A = diagCoset ![p, p ^ k] := by
   classical
+  -- Mathlib's `det_mapGL` is about the *unit* determinant `(mapGL ℚ S).det : ℚˣ`, while every
+  -- goal below is about the matrix determinant `(↑(mapGL ℚ S)).det : ℚ`. This is the bridge
+  -- between the two, used four times in the determinant bookkeeping of stage 4.
+  have hdet : ∀ S : SpecialLinearGroup (Fin 2) ℤ, (mapGL ℚ S).val.det = 1 := fun S ↦ by
+    simpa only [Matrix.GeneralLinearGroup.val_det_apply, Units.val_one] using
+      congrArg Units.val (Matrix.SpecialLinearGroup.det_mapGL (S := ℚ) S)
+  -- Stage 1: positivity of the two input diagonals, and a diagonal representative `a` for `A`.
   have h1p_pos : ∀ i : Fin 2, 0 < (![1, p] : Fin 2 → ℕ) i := fun i ↦ by
     fin_cases i <;> simp [hp.pos]
   have h1pk_pos : ∀ i : Fin 2, 0 < (![1, p ^ k] : Fin 2 → ℕ) i := fun i ↦ by
     fin_cases i <;> simp [pow_pos hp.pos k]
   obtain ⟨a, ha_pos, hdiv, hA_eq⟩ := exists_diagonal_representative A
+  -- Stage 2: `A` occurs in the product, so some pair `q` of coset representatives multiplies
+  -- into the double coset of `natDiagGL 2 a`; unpack that into an explicit `La · D · Ra`.
   have hmem := (HeckeCoset.mem_image_mulMap_iff (diagCoset ![1, p]).rep
     (diagCoset ![1, p ^ k]).rep A).mpr hA
   simp only [Finset.mem_image, Finset.mem_univ, true_and] at hmem
@@ -364,6 +371,8 @@ private lemma mulSupport_pp_subset (k : ℕ)
     rwa [hq, hA_eq, diagCoset_toSet] at hself
   rw [mem_doubleCoset] at h_prod_mem
   obtain ⟨La, hLa, Ra, hRa, h_prod_eq⟩ := h_prod_mem
+  -- Stage 3: every `SLnZ 2` element appearing above is `mapGL ℚ` of an honest integral `SL₂`
+  -- matrix; name those lifts, and likewise for the two input cosets' own decompositions.
   obtain ⟨SL_La, hSL_La⟩ := (mem_SLnZ_iff 2).mp hLa
   obtain ⟨SL_Ra, hSL_Ra⟩ := (mem_SLnZ_iff 2).mp hRa
   obtain ⟨SL_i₀, hSL_i₀⟩ := (mem_SLnZ_iff 2).mp q.1.out.2
@@ -380,18 +389,22 @@ private lemma mulSupport_pp_subset (k : ℕ)
       mapGL ℚ SL_La * natDiagGL 2 a * mapGL ℚ SL_Ra := by
     rw [hSL_La, hSL_Ra]
     exact h_prod_eq
+  -- Stage 4: determinants. Both sides of the product have determinant `p^(k+1)`, which pins
+  -- `a 0 * a 1`; the four `hdet` uses discharge the `SL₂` factors' determinants.
   have h_det := diag_entries_mul_eq_pow_succ p k a ha_pos (q.1.out : GL (Fin 2) ℚ)
     ((diagCoset ![1, p]).rep : GL (Fin 2) ℚ) (q.2.out : GL (Fin 2) ℚ)
     ((diagCoset ![1, p ^ k]).rep : GL (Fin 2) ℚ)
-    (by rw [← hSL_i₀]; exact mapGL_val_det SL_i₀)
+    (by rw [← hSL_i₀]; exact hdet SL_i₀)
     (by rw [hD1, ← hSL_L₁, ← hSL_R₁, Units.val_mul, Units.val_mul, Matrix.det_mul,
-          Matrix.det_mul, mapGL_val_det, mapGL_val_det, natDiagGL_det 2 _ h1p_pos]
+          Matrix.det_mul, hdet, hdet, natDiagGL_det 2 _ h1p_pos]
         simp [Fin.prod_univ_two])
-    (by rw [← hSL_j₀]; exact mapGL_val_det SL_j₀)
+    (by rw [← hSL_j₀]; exact hdet SL_j₀)
     (by rw [hD2, ← hSL_L₂, ← hSL_R₂, Units.val_mul, Units.val_mul, Matrix.det_mul,
-          Matrix.det_mul, mapGL_val_det, mapGL_val_det, natDiagGL_det 2 _ h1pk_pos]
+          Matrix.det_mul, hdet, hdet, natDiagGL_det 2 _ h1pk_pos]
         simp [Fin.prod_univ_two])
     SL_La SL_Ra h_prod_eq'
+  -- Stage 5: the first invariant factor divides `p`, because conjugating the middle matrix
+  -- keeps it integral. With `a 0 * a 1 = p^(k+1)` that leaves only the two claimed cosets.
   have h_dvd := mulSupport_pp_dvd_p p hp k a ha_pos hdiv
     ((diagCoset ![1, p]).rep : GL (Fin 2) ℚ) ((diagCoset ![1, p ^ k]).rep : GL (Fin 2) ℚ)
     (q.1.out : GL (Fin 2) ℚ) (q.2.out : GL (Fin 2) ℚ)
@@ -400,22 +413,6 @@ private lemma mulSupport_pp_subset (k : ℕ)
     hSL_i₀.symm hSL_j₀.symm h_prod_eq'
   rw [hA_eq]
   exact mulSupport_pp_case_split p hp k a h_det h_dvd
-
-include hp in
-/-- The degree of `T(1, pʲ)` is `p^(j-1)(p+1)` for `j ≥ 1` — the `i = 0` case of
-`degree_diagCoset_prime_pow`. -/
-private lemma degree_diagCoset_one_prime_pow (j : ℕ) (hj : 0 < j) :
-    (diagCoset (![1, p ^ j] : Fin 2 → ℕ)).degree = p ^ (j - 1) * (p + 1) := by
-  simpa using degree_diagCoset_prime_pow p hp 0 j hj
-
-include hp in
-/-- The degree of `T(p, pᵏ)` is `p^(k-2)(p+1)` for `k ≥ 2` — the `i = 1` case of
-`degree_diagCoset_prime_pow`. -/
-private lemma degree_diagCoset_p_prime_pow (k : ℕ) (hk2 : 2 ≤ k) :
-    (diagCoset (![p, p ^ k] : Fin 2 → ℕ)).degree = p ^ (k - 2) * (p + 1) := by
-  have h := degree_diagCoset_prime_pow p hp 1 (k - 1) (by omega)
-  rw [show 1 + (k - 1) = k by omega, pow_one] at h
-  rw [h, show k - 1 - 1 = k - 2 by omega]
 
 private lemma degree_diagCoset_p_p : (diagCoset (![p, p ^ 1] : Fin 2 → ℕ)).degree = 1 := by
   have hconst : (![p, p ^ 1] : Fin 2 → ℕ) = fun _ ↦ p := by
@@ -540,11 +537,14 @@ private lemma multiplicity_values (k : ℕ) (hk : 0 < k) :
   have h_deg := multiplicity_degree_sum_eq (diagCoset ![1, p]) (diagCoset ![1, p ^ k])
     (diagCoset ![1, p ^ (k + 1)]) (diagCoset ![p, p ^ k]) h_ne h_zero
   rw [← hm1_def, ← hm2_def] at h_deg
+  -- All three degrees are the `i = 0` case of `degree_diagCoset_prime_pow`; `simpa` absorbs
+  -- the `p ^ 0 = 1` and `0 + j = j` normalisations.
   rw [show (diagCoset (![1, p] : Fin 2 → ℕ)).degree = p ^ 0 * (p + 1) by
-      simpa using degree_diagCoset_one_prime_pow p hp 1 one_pos,
-    degree_diagCoset_one_prime_pow p hp k hk,
+      simpa using degree_diagCoset_prime_pow p hp 0 1 one_pos,
+    show (diagCoset (![1, p ^ k] : Fin 2 → ℕ)).degree = p ^ (k - 1) * (p + 1) by
+      simpa using degree_diagCoset_prime_pow p hp 0 k hk,
     show (diagCoset (![1, p ^ (k + 1)] : Fin 2 → ℕ)).degree = p ^ k * (p + 1) by
-      simpa using degree_diagCoset_one_prime_pow p hp (k + 1) (by omega)] at h_deg
+      simpa using degree_diagCoset_prime_pow p hp 0 (k + 1) (by omega)] at h_deg
   have hm1_pos : 0 < m1 := multiplicity_one_prime_pow_succ_pos p hp k
   have hp2 : (2 : ℤ) ≤ (p : ℤ) := by exact_mod_cast hp.two_le
   by_cases hk1 : k = 1
@@ -561,7 +561,11 @@ private lemma multiplicity_values (k : ℕ) (hk : 0 < k) :
     simp only [ite_true]
     exact ⟨by exact_mod_cast h1, by exact_mod_cast h2⟩
   · have hk2 : 2 ≤ k := by omega
-    rw [degree_diagCoset_p_prime_pow p hp k hk2] at h_deg
+    -- The `i = 1` case of `degree_diagCoset_prime_pow`, re-indexed from `1 + (k - 1)` to `k`.
+    rw [show (diagCoset (![p, p ^ k] : Fin 2 → ℕ)).degree = p ^ (k - 2) * (p + 1) by
+        have h := degree_diagCoset_prime_pow p hp 1 (k - 1) (by omega)
+        rw [show 1 + (k - 1) = k by omega, pow_one] at h
+        rw [h, show k - 1 - 1 = k - 2 by omega]] at h_deg
     have h_degZ : (m1 : ℤ) * ((p : ℤ) ^ k * ((p : ℤ) + 1)) +
         (m2 : ℤ) * ((p : ℤ) ^ (k - 2) * ((p : ℤ) + 1)) =
         ((p : ℤ) + 1) * ((p : ℤ) ^ (k - 1) * ((p : ℤ) + 1)) := by
@@ -602,8 +606,16 @@ theorem heckeT_prime_mul_heckeTDiag_one_prime_pow (k : ℕ) :
     heckeTDiag_eq_diagElem one_pos (pow_pos hp.pos k) (one_dvd _),
     heckeTDiag_eq_diagElem one_pos (pow_pos hp.pos (k + 1)) (one_dvd _),
     heckeTDiag_eq_diagElem hp.pos (pow_pos hp.pos k) (dvd_pow_self p (by omega))]
-  simp only [diagElem_def]
-  rw [single_one_mul_single_one]
+  -- As in `multiplicity_degree_sum_eq`, the `1 • 1 •` that `single_mul_single` produces sits on
+  -- the transported `Module ℤ` instance, which `one_smul` does not match by `rw`/`simp`; a
+  -- `•`-free restatement lets unification supply it.
+  have hmul : HeckeCosetModule.single ℤ (diagCoset (![1, p] : Fin 2 → ℕ)) 1 *
+      HeckeCosetModule.single ℤ (diagCoset (![1, p ^ k] : Fin 2 → ℕ)) 1 =
+      HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+        (diagCoset (![1, p] : Fin 2 → ℕ)).rep (diagCoset (![1, p ^ k] : Fin 2 → ℕ)).rep := by
+    rw [HeckeCosetModule.single_mul_single]
+    exact (one_smul ℤ _).trans (one_smul ℤ _)
+  rw [diagElem_def, diagElem_def, diagElem_def, diagElem_def, hmul]
   ext A
   rw [HeckeCosetModule.structureConstants_apply, HeckeCosetModule.add_apply]
   -- The `ℤ`-action here reaches `HeckeCosetModule` by a different instance path than the

@@ -70,6 +70,9 @@ private lemma deg_heckeTDiag_eq_diagCoset_degree {a d : ℕ} (ha : 0 < a) (hd : 
 private lemma deg_prime_pow_term_lt (hp : p.Prime) (i k : ℕ) (h2i : 2 * i < k) :
     deg (posDetInt 2) (SLnZ 2) ℤ (heckeTDiag (p ^ i) (p ^ (k - i))) =
       ((p ^ (k - 2 * i - 1) * (p + 1) : ℕ) : ℤ) := by
+  -- `degree_diagCoset_prime_pow` is stated at `![p ^ i, p ^ (i + k')]`. Truncated ℕ-subtraction
+  -- hides that shape inside `k - i`, and `rw` matches syntactically, so re-index the exponent
+  -- with `omega` before the degree lemmas can fire.
   rw [show k - i = i + (k - 2 * i) by omega,
     deg_heckeTDiag_eq_diagCoset_degree (pow_pos hp.pos i) (pow_pos hp.pos _)
       (Nat.pow_dvd_pow p (Nat.le_add_right i _)),
@@ -79,6 +82,9 @@ private lemma deg_prime_pow_term_lt (hp : p.Prime) (i k : ℕ) (h2i : 2 * i < k)
 one. -/
 private lemma deg_prime_pow_term_eq (hp : p.Prime) (i k : ℕ) (h2i : 2 * i = k) :
     deg (posDetInt 2) (SLnZ 2) ℤ (heckeTDiag (p ^ i) (p ^ (k - i))) = 1 := by
+  -- Two shape mismatches `rw` cannot bridge on its own: truncated ℕ-subtraction hides `k - i = i`,
+  -- and `degree_diagCoset_const` is stated for a constant *function*, which `![x, x]` is only
+  -- extensionally — hence the `funext`.
   rw [show k - i = i by omega,
     deg_heckeTDiag_eq_diagCoset_degree (pow_pos hp.pos i) (pow_pos hp.pos i) dvd_rfl,
     show ![p ^ i, p ^ i] = (fun _ : Fin 2 ↦ p ^ i) from funext fun j ↦ by fin_cases j <;> rfl,
@@ -90,7 +96,9 @@ private lemma deg_prime_pow_shift (hp : p.Prime) (i k : ℕ) (hi : i < k / 2 + 1
     deg (posDetInt 2) (SLnZ 2) ℤ (heckeTDiag (p ^ (i + 1)) (p ^ (k + 2 - (i + 1)))) =
       deg (posDetInt 2) (SLnZ 2) ℤ (heckeTDiag (p ^ i) (p ^ (k - i))) := by
   rcases lt_or_ge (2 * i) k with h2i | h2i
-  · rw [deg_prime_pow_term_lt p hp (i + 1) (k + 2) (by omega),
+  · -- Both sides are now `p ^ _ * (p + 1)` and differ only in how truncated ℕ-subtraction
+    -- writes the exponent, which `omega` reconciles.
+    rw [deg_prime_pow_term_lt p hp (i + 1) (k + 2) (by omega),
       deg_prime_pow_term_lt p hp i k h2i, show k + 2 - 2 * (i + 1) - 1 = k - 2 * i - 1 by omega]
   · rw [deg_prime_pow_term_eq p hp (i + 1) (k + 2) (by omega),
       deg_prime_pow_term_eq p hp i k (by omega)]
@@ -109,6 +117,8 @@ private lemma deg_heckeT_prime_pow_step (hp : p.Prime) (k : ℕ)
         deg (posDetInt 2) (SLnZ 2) ℤ (heckeTDiag (p ^ i) (p ^ (k - i))) :=
     Finset.sum_congr rfl fun i hi ↦ deg_prime_pow_shift p hp i k (Finset.mem_range.mp hi)
   rw [heckeT_prime_pow_expansion p hp k, map_sum] at ih
+  -- `Finset.sum_range_succ'` peels off the `i = 0` term, which `deg_prime_pow_term_lt` returns
+  -- with the exponent written as `k + 2 - 2 * 0 - 1`; `omega` normalises that to `k + 1`.
   rw [h_tail, ih, show deg (posDetInt 2) (SLnZ 2) ℤ (heckeTDiag (p ^ 0) (p ^ (k + 2 - 0))) =
       ((p ^ (k + 1) * (p + 1) : ℕ) : ℤ) by
     simpa [show k + 2 - 2 * 0 - 1 = k + 1 by omega] using
