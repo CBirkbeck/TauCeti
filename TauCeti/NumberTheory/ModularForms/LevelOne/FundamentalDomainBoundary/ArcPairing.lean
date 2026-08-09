@@ -168,11 +168,10 @@ private lemma neg_one_div_sub_neg_one_div (z w : ℂ) :
   rw [neg_div, neg_div, one_div, one_div]
   ring
 
-/-- The inversion `z ↦ -1/z` is an involution. -/
+/-- The inversion `z ↦ -1/z` is an involution: the two sign flips cancel and the reciprocal
+is Mathlib's `one_div_one_div`, so no nonvanishing hypothesis is needed. -/
 private lemma neg_one_div_neg_one_div (z : ℂ) : -1 / (-1 / z) = z := by
-  rcases eq_or_ne z 0 with rfl | hz
-  · norm_num
-  · field_simp
+  rw [neg_div, neg_div, div_neg, one_div_one_div, neg_neg]
 
 /-- **The arc excision is symmetric under the reflection.** For an excision set of unit-modulus
 points closed under the inversion `z ↦ -1/z`, a point of the arc lies within `ε` of the set
