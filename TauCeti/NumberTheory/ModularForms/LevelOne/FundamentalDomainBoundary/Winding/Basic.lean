@@ -23,8 +23,9 @@ fundamental domain, the exterior input to the valence-formula residue count.
 
 The file also carries the arc-excision geometry shared by the corner winding computations
 at `i`, at `ρ` and at `ρ + 1`. Each excises a parameter window around its corner and needs
-that window's chord to be exactly the excision radius `ε`; the half-width realising this,
-and the trigonometric identity behind it, are stated once here rather than three times.
+that window's chord to be exactly the excision radius `ε`. The half-width realising this for
+a radius below the corner chord `2·sin(π/12)`, and the trigonometric identity behind it, are
+stated once here rather than three times.
 
 ## Main declarations
 
@@ -35,8 +36,8 @@ and the trigonometric identity behind it, are stated once here rather than three
   (`_of_norm_lt_one`).
 * `TauCeti.ModularForm.isNullHomologous_fdBoundary`: the packaged null-homology.
 * `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth`: the parameter half-width whose
-  chord along the arc is a prescribed `ε`, characterised by
-  `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth_spec`.
+  chord along the arc is a prescribed `ε` below the corner chord, characterised under that
+  bound by `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth_spec`.
 * `TauCeti.abs_sin_mul_pi_div_twelve`: the sine of a multiple of `π/12` factors through
   the absolute value, the identity that specification rests on.
 
@@ -318,9 +319,13 @@ lemma fdBoundary_mem_coe_truncatedFundamentalDomain (hH : 1 ≤ H) {t : ℝ}
   nlinarith [Real.sqrt_nonneg 3]
 
 
-/-- **The chord-matched excision half-width.** For an excision radius `ε`, the parameter
-half-width whose chord along the unit-circle arc is exactly `ε`: it is characterised by
-`fdBoundaryArcExcisionHalfWidth_spec`, which is what callers use. -/
+/-- **The chord-matched excision half-width.** The parameter half-width intended to have
+chord exactly `ε` along the unit-circle arc.
+
+It has that property only for `0 < ε < 2·sin(π/12)`, which is what
+`fdBoundaryArcExcisionHalfWidth_spec` assumes and what every caller supplies: `Real.arcsin`
+saturates outside `[-1, 1]`, so for `ε ≥ 2` the chord is not `ε` at all. The definition is
+total because a junk value off that range is easier to carry than a subtype. -/
 noncomputable def fdBoundaryArcExcisionHalfWidth (ε : ℝ) : ℝ := 12 / Real.pi * Real.arcsin (ε / 2)
 
 /-- The chord-matched excision half-width, unfolded. -/

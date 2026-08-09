@@ -379,6 +379,36 @@ theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_me
       (hh_slit t (Set.Ioo_subset_Icc_self ht.1)))
     hh_int heq heq_a heq_b
 
+/-- **The comparison logarithmic FTC on the slit plane, ordered-interval form.** The form
+callers actually have to hand: an oriented interval `a ≤ b`, a comparison function `h`
+continuous with continuous derivative on `Icc a b`, slit-plane-valued there and
+differentiable strictly inside, and a `g` agreeing with `h` on `Ioo a b` and at both
+endpoints.
+
+Integrability of `deriv h / h` is derived rather than assumed — slit-plane confinement
+already forces `h` to be nonvanishing — and the interval hypotheses read on `Set.Icc a b`
+and `Set.Ioo a b` instead of through `min` and `max`. Everything else is
+`intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane`, which
+remains the general statement to reach for when the interval is unoriented, the
+exceptional set is nonempty, or integrability comes from somewhere other than a continuous
+derivative. -/
+theorem intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane_of_le
+    (hab : a ≤ b) (hh_cont : ContinuousOn h (Set.Icc a b))
+    (hh_diff : ∀ t ∈ Set.Ioo a b, DifferentiableAt ℝ h t)
+    (hh_deriv_cont : ContinuousOn (deriv h) (Set.Icc a b))
+    (hh_slit : ∀ t ∈ Set.Icc a b, h t ∈ Complex.slitPlane)
+    (heq : Set.EqOn g h (Set.Ioo a b)) (heq_a : g a = h a) (heq_b : g b = h b) :
+    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
+    ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) := by
+  have hu : Set.uIcc a b = Set.Icc a b := uIcc_of_le hab
+  have ho : Set.Ioo (min a b) (max a b) = Set.Ioo a b := by
+    rw [min_eq_left hab, max_eq_right hab]
+  have hne : ∀ t ∈ Set.Icc a b, h t ≠ 0 := fun t ht ↦ Complex.slitPlane_ne_zero (hh_slit t ht)
+  exact intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane
+    countable_empty (hu ▸ hh_cont) (fun t ht ↦ hh_diff t (ho ▸ ht.1))
+    ((hh_deriv_cont.div hh_cont hne).mono (hu ▸ Set.Subset.rfl)).intervalIntegrable
+    (fun t ht ↦ hh_slit t (hu ▸ ht)) (fun t ht ↦ heq (ho ▸ ht)) heq_a heq_b
+
 end BoundaryTolerant
 
 
