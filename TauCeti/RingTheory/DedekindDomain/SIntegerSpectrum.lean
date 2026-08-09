@@ -45,10 +45,11 @@ namespace IsDedekindDomain
 variable {R : Type*} [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K] [Algebra R K]
   [IsFractionRing R K] (S : Set (HeightOneSpectrum R))
 
-/-- For `v ∉ S`, the extension of `v` to `𝒪_S` is a proper ideal: it lands inside the ideal of
-`S`-integers of `v`-valuation `< 1`, which does not contain `1`. -/
+/-- For `v ∉ S`, the extension of `v` to `𝒪_S` is a proper ideal. -/
 lemma integer_map_asIdeal_ne_top {v : HeightOneSpectrum R} (hv : v ∉ S) :
     Ideal.map (algebraMap R (S.integer K)) v.asIdeal ≠ ⊤ := by
+  -- The extension lands inside the ideal of `S`-integers of `v`-valuation `< 1`, which does not
+  -- contain `1`.
   set f := algebraMap R (S.integer K) with hf
   -- the `S`-integers of `v`-valuation `< 1` form an ideal, because `v` is bounded by `1` on all
   -- of `𝒪_S` when `v ∉ S`
@@ -93,10 +94,10 @@ lemma integer_isMaximal_map_asIdeal {v : HeightOneSpectrum R} (hv : v ∉ S) :
     (v.isMaximal.eq_of_le (hM.isPrime.comap f).ne_top hcle).symm
   rwa [← integer_map_comap_eq K S M, hceq] at hM
 
-/-- For `v ∉ S`, the extension of `v` to `𝒪_S` is nonzero: `v` is nonzero and `R → 𝒪_S` is
-injective. -/
+/-- For `v ∉ S`, the extension of `v` to `𝒪_S` is nonzero. -/
 lemma integer_map_asIdeal_ne_bot {v : HeightOneSpectrum R} (hv : v ∉ S) :
     Ideal.map (algebraMap R (S.integer K)) v.asIdeal ≠ ⊥ := by
+  -- `v` is nonzero and `R → 𝒪_S` is injective.
   intro h
   refine v.ne_bot ?_
   rw [← integer_comap_map_asIdeal K S hv, h,
@@ -125,9 +126,10 @@ noncomputable def integerPrimeUnder (P : HeightOneSpectrum (S.integer K)) :
     (integerPrimeUnder K S P).asIdeal = P.asIdeal.comap (algebraMap R (S.integer K)) := by
   simp only [integerPrimeUnder]
 
-/-- A prime below a prime of `𝒪_S` never lies in `S`: the primes of `S` become the unit ideal. -/
+/-- A prime under a prime of `𝒪_S` never lies in `S`. -/
 lemma integerPrimeUnder_notMem (P : HeightOneSpectrum (S.integer K)) :
     integerPrimeUnder K S P ∉ S := by
+  -- The primes of `S` become the unit ideal in `𝒪_S`, and a prime is not the unit ideal.
   intro hv
   have h1 := integer_map_asIdeal_eq_top K S hv
   rw [integerPrimeUnder_asIdeal, integer_map_comap_eq] at h1
@@ -150,11 +152,11 @@ noncomputable def integerHeightOneSpectrumEquiv :
       = integerPrimeUnder K S P := by
   simp only [integerHeightOneSpectrumEquiv, Equiv.coe_fn_symm_mk]
 
-/-- For `v ∉ S`, the contraction of the extension of `v ^ n` is `v ^ n`: the contraction divides
-`v ^ n`, so it is `v ^ j`, and extending back forces `j = n`. -/
+/-- For `v ∉ S`, the contraction of the extension of `v ^ n` is `v ^ n`. -/
 lemma integer_comap_map_pow {v : HeightOneSpectrum R} (hv : v ∉ S) (n : ℕ) :
     (Ideal.map (algebraMap R (S.integer K)) (v.asIdeal ^ n)).comap
         (algebraMap R (S.integer K)) = v.asIdeal ^ n := by
+  -- The contraction divides `v ^ n`, so it is `v ^ j` for some `j`; extending back forces `j = n`.
   set f := algebraMap R (S.integer K) with hf
   have hP0 : Ideal.map f v.asIdeal ≠ 0 := integer_map_asIdeal_ne_bot K S hv
   have hPnu : ¬ IsUnit (Ideal.map f v.asIdeal) :=
@@ -181,10 +183,13 @@ private lemma le_count_iff_mem_pow {A : Type*} [CommRing A] [IsDedekindDomain A]
     WithZero.exp_le_exp, neg_le_neg_iff, Nat.cast_le]
 
 /-- For `v ∉ S`, the `Pᵥ`-adic valuation of an element of `R`, computed in `𝒪_S`, is its `v`-adic
-valuation: the prime-power chains `v ^ k` and `Pᵥ ^ k` have matching membership. -/
+valuation. -/
+@[simp]
 lemma intValuationDef_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉ S) (a : R) :
     (integerPrimeOverOfNotMem K S hv).intValuationDef (algebraMap R (S.integer K) a)
       = v.intValuationDef a := by
+  -- The prime-power chains `v ^ k` and `Pᵥ ^ k` have matching membership, so the two
+  -- factorisation counts agree, and each valuation is `exp` of minus its count.
   rcases eq_or_ne a 0 with rfl | ha
   · simp
   have hfa : algebraMap R (S.integer K) a ≠ 0 := fun h ↦ ha
@@ -207,6 +212,7 @@ lemma intValuationDef_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v
 
 /-- **The correspondence preserves valuations**: the valuation of `𝒪_S` at the prime above `v` is
 the valuation of `R` at `v`. -/
+@[simp]
 lemma valuation_integerHeightOneSpectrumEquiv (v : {v : HeightOneSpectrum R // v ∉ S}) (x : K) :
     (integerHeightOneSpectrumEquiv K S v).valuation K x
       = (v : HeightOneSpectrum R).valuation K x := by
