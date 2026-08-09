@@ -50,7 +50,7 @@ others are deliberately not. `variableChange_negY`, `variableChange_addX`,
 `variableChange_negAddY` and `variableChange_X_inj` have left-hand sides that `simp` rewrites
 first — the first three are headed by `negY`, `addX` and `negAddY`, which `simp` unfolds, and
 the fourth is cancelled by `add_left_inj` — so those sides are never in simp-normal form and the
-`simpNF` linter rejects the attribute. `variableChange_Y_inj`, `variableChange_negY_ne` and
+`simpNF` linter rejects the attribute. `variableChange_Y_inj`, `variableChange_negY_iff` and
 `variableChange_slope` are conditional rather than unconditional normalisation laws.
 
 Throughout, the change of variables carries a point `(x, y)` of `C • W` to the point
@@ -203,17 +203,25 @@ lemma variableChange_Y_inj {x₁ x₂ y₁ y₂ : R} (hx : x₁ = x₂) :
   exact ⟨fun h ↦ (C.u.isUnit.pow 3).mul_right_inj.mp (add_right_cancel (add_right_cancel h)),
     fun h ↦ by rw [h]⟩
 
-/-- The image of a pair of points under the change of variables satisfies the `y₁ = -y₂`
-degeneracy condition (`negY`) only if the original pair does. -/
-lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : R}
-    (hxy : ¬(x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂)) :
-    ¬((C.u : R) ^ 2 * x₁ + C.r = (C.u : R) ^ 2 * x₂ + C.r ∧
+/-- **The change of variables preserves and reflects the `y₁ = -y₂` degeneracy condition.** The
+image pair satisfies the condition (`negY`) that makes the group law take its vertical-line branch
+exactly when the original pair does.
+
+Stated as the equivalence rather than as the contrapositive a caller needs: the negated form is
+`mt (variableChange_negY_iff W C).mp`, and both directions are used — the forward one to transport
+a non-degenerate pair, the backward one to transport a degenerate one. -/
+lemma variableChange_negY_iff {x₁ x₂ y₁ y₂ : R} :
+    ((C.u : R) ^ 2 * x₁ + C.r = (C.u : R) ^ 2 * x₂ + C.r ∧
       (C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t = W.toAffine.negY
-        ((C.u : R) ^ 2 * x₂ + C.r) ((C.u : R) ^ 3 * y₂ + (C.u : R) ^ 2 * C.s * x₂ + C.t)) := by
-  rintro ⟨hX, hY⟩
-  obtain rfl := (variableChange_X_inj C).mp hX
-  rw [variableChange_negY] at hY
-  exact hxy ⟨rfl, (variableChange_Y_inj C rfl).mp hY⟩
+        ((C.u : R) ^ 2 * x₂ + C.r) ((C.u : R) ^ 3 * y₂ + (C.u : R) ^ 2 * C.s * x₂ + C.t))
+      ↔ (x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂) := by
+  constructor
+  · rintro ⟨hX, hY⟩
+    obtain rfl := (variableChange_X_inj C).mp hX
+    rw [variableChange_negY] at hY
+    exact ⟨rfl, (variableChange_Y_inj C rfl).mp hY⟩
+  · rintro ⟨rfl, rfl⟩
+    exact ⟨rfl, by rw [variableChange_negY]⟩
 
 end Ring
 
@@ -246,7 +254,7 @@ private lemma variableChange_slope_of_Y_ne [DecidableEq F] {x₁ y₁ : F}
         ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t)
       = (C.u : F) * (C • W).toAffine.slope x₁ x₁ y₁ y₁ + C.s := by
   have hu : (C.u : F) ≠ 0 := C.u.ne_zero
-  have hΦy := fun h ↦ variableChange_negY_ne W C (fun hc ↦ hy hc.2) ⟨rfl, h⟩
+  have hΦy := fun h ↦ mt (variableChange_negY_iff W C).mp (fun hc ↦ hy hc.2) ⟨rfl, h⟩
   have hPY : (C • W).toAffine.polynomialY.evalEval x₁ y₁ ≠ 0 := by
     rw [evalEval_polynomialY]
     exact fun h ↦ hy (by rw [negY]; linear_combination h)

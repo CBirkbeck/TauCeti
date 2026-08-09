@@ -103,7 +103,7 @@ def mapVariableChange : (C • W).toAffine.Point →+ W.toAffine.Point where
       refine (add_of_Y_eq ?_ ?_).symm
       · rw [hxy.1]
       · rw [variableChange_negY, hxy.2, hxy.1]
-    · rw [add_some hxy, add_some (variableChange_negY_ne W C hxy)]
+    · rw [add_some hxy, add_some (mt (variableChange_negY_iff W C).mp hxy)]
       simp only [variableChange_slope W C h₁.1 h₂.1 hxy, variableChange_addX,
         variableChange_addY]
 
