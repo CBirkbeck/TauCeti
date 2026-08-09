@@ -21,12 +21,13 @@ unipotent upper-triangular integral matrix with off-diagonal entries `B`. Two th
 from that shape, and are the reason for choosing it over an entrywise definition: `U(B)` is
 upper triangular with ones on the diagonal, so `det U(B) = 1` and `U(B) ∈ SL_n(ℤ)`; and hence
 the representative lies in the double coset with no further argument.
-`upperTriGL_apply_lt` and `upperTriGL_apply_diag` recover the entrywise description
-`M_{ij} = a_i · B_{ij}`, which is what the injectivity argument uses.
+`upperTriGL_apply_lt`, `upperTriGL_apply_diag` and `upperTriGL_apply_eq_zero_of_lt` recover the
+entrywise description `M_{ij} = a_i · B_{ij}` for consumers that need it; injectivity itself
+does not, since `upperTriGL` is visibly a composition of injective maps.
 
 ## Main definitions
 
-* `UpperTriRep` — the bounded entry assignments `B_{ij} ∈ Fin (a j / a i)` for `i < j`.
+* `UpperTriEntries` — the bounded entry assignments `B_{ij} ∈ Fin (a j / a i)` for `i < j`.
 * `unitriMat`, `unitriSL` — the unipotent upper-triangular matrix `U(B)`, and its packaging as
   an element of `SL_n(ℤ)`.
 * `upperTriGL` — the representative `diag(a) · U(B)` in `GL_n(ℚ)`.
@@ -69,73 +70,81 @@ variable (n : ℕ)
 `B_{ij} ∈ {0, …, a_j / a_i - 1}` for each pair `i < j`.
 
 Stated for an arbitrary tuple `a`, with no chain or positivity hypothesis: those are needed by
-the results, not to name the index type, and `Fin (a j / a i)` is already empty exactly when
-`a j < a i`. -/
-abbrev UpperTriRep (a : Fin n → ℕ) : Type :=
+the results, not to name the index type. The component `Fin (a j / a i)` is empty exactly when
+`a j / a i = 0`, which for positive `a i` means `a j < a i`. -/
+abbrev UpperTriEntries (a : Fin n → ℕ) : Type :=
   (p : {ij : Fin n × Fin n // ij.1 < ij.2}) → Fin (a p.val.2 / a p.val.1)
 
 variable {n}
 
 /-- The unipotent upper-triangular integral matrix `U(B)`: ones on the diagonal, `B_{ij}`
 above it, zeros below. -/
-def unitriMat {a : Fin n → ℕ} (B : UpperTriRep n a) : Matrix (Fin n) (Fin n) ℤ :=
+def unitriMat {a : Fin n → ℕ} (B : UpperTriEntries n a) : Matrix (Fin n) (Fin n) ℤ :=
   fun i j ↦ if h : i < j then (B ⟨(i, j), h⟩ : ℕ) else if i = j then 1 else 0
 
-@[simp] lemma unitriMat_apply_lt {a : Fin n → ℕ} (B : UpperTriRep n a) {i j : Fin n}
+@[simp] lemma unitriMat_apply_lt {a : Fin n → ℕ} (B : UpperTriEntries n a) {i j : Fin n}
     (h : i < j) : unitriMat B i j = (B ⟨(i, j), h⟩ : ℕ) := by
   simp [unitriMat, h]
 
-@[simp] lemma unitriMat_apply_diag {a : Fin n → ℕ} (B : UpperTriRep n a) (i : Fin n) :
+@[simp] lemma unitriMat_apply_diag {a : Fin n → ℕ} (B : UpperTriEntries n a) (i : Fin n) :
     unitriMat B i i = 1 := by
   simp [unitriMat]
 
-lemma unitriMat_apply_of_lt {a : Fin n → ℕ} (B : UpperTriRep n a) {i j : Fin n} (h : j < i) :
-    unitriMat B i j = 0 := by
+@[simp] lemma unitriMat_apply_eq_zero_of_lt {a : Fin n → ℕ} (B : UpperTriEntries n a)
+    {i j : Fin n} (h : j < i) : unitriMat B i j = 0 := by
   simp [unitriMat, h.asymm, h.ne']
 
-lemma isUpperTriangular_unitriMat {a : Fin n → ℕ} (B : UpperTriRep n a) :
+lemma isUpperTriangular_unitriMat {a : Fin n → ℕ} (B : UpperTriEntries n a) :
     Matrix.IsUpperTriangular (unitriMat B) :=
-  fun _ _ h ↦ unitriMat_apply_of_lt B h
+  fun _ _ h ↦ unitriMat_apply_eq_zero_of_lt B h
 
 /-- `U(B)` is upper triangular with ones on the diagonal, so its determinant is `1`. -/
-@[simp] lemma det_unitriMat {a : Fin n → ℕ} (B : UpperTriRep n a) : (unitriMat B).det = 1 := by
+@[simp] lemma det_unitriMat {a : Fin n → ℕ} (B : UpperTriEntries n a) : (unitriMat B).det = 1 := by
   rw [Matrix.det_of_isUpperTriangular (isUpperTriangular_unitriMat B)]
   simp
 
 /-- `U(B)` packaged as an element of `SL_n(ℤ)`. -/
-def unitriSL {a : Fin n → ℕ} (B : UpperTriRep n a) : SpecialLinearGroup (Fin n) ℤ :=
+def unitriSL {a : Fin n → ℕ} (B : UpperTriEntries n a) : SpecialLinearGroup (Fin n) ℤ :=
   ⟨unitriMat B, det_unitriMat B⟩
 
-@[simp] lemma unitriSL_coe {a : Fin n → ℕ} (B : UpperTriRep n a) :
+@[simp] lemma unitriSL_coe {a : Fin n → ℕ} (B : UpperTriEntries n a) :
     (unitriSL B : Matrix (Fin n) (Fin n) ℤ) = unitriMat B := (rfl)
 
 /-- The upper-triangular representative `diag(a) · U(B)` attached to a bounded entry
 assignment. -/
-noncomputable def upperTriGL {a : Fin n → ℕ} (B : UpperTriRep n a) : GL (Fin n) ℚ :=
+noncomputable def upperTriGL {a : Fin n → ℕ} (B : UpperTriEntries n a) : GL (Fin n) ℚ :=
   natDiagGL n a * (mapGL ℚ (unitriSL B))
 
 /-- Each upper-triangular representative lies in the double coset of `diag(a)`.
 
 Immediate from the definition: `U(B) ∈ SL_n(ℤ)`, so `diag(a) · U(B)` is already of the form
 `h₁ · diag(a) · h₂` with `h₁ = 1`. -/
-lemma upperTriGL_mem_doubleCoset {a : Fin n → ℕ} (B : UpperTriRep n a) :
+lemma upperTriGL_mem_doubleCoset {a : Fin n → ℕ} (B : UpperTriEntries n a) :
     upperTriGL B ∈ doubleCoset (natDiagGL n a) (SLnZ n) (SLnZ n) :=
   mem_doubleCoset.mpr ⟨1, one_mem _, mapGL ℚ (unitriSL B), coe_mem_SLnZ n _,
     by rw [upperTriGL, one_mul]⟩
 
 /-- The entrywise description of the representative above the diagonal: `M_{ij} = a_i · B_{ij}`.
 -/
-lemma upperTriGL_apply_lt {a : Fin n → ℕ} (ha : ∀ i, 0 < a i) (B : UpperTriRep n a)
+@[simp] lemma upperTriGL_apply_lt {a : Fin n → ℕ} (ha : ∀ i, 0 < a i) (B : UpperTriEntries n a)
     {i j : Fin n} (h : i < j) :
     (upperTriGL B : Matrix (Fin n) (Fin n) ℚ) i j = (a i : ℚ) * (B ⟨(i, j), h⟩ : ℕ) := by
   rw [upperTriGL]
   simp [natDiagGL_coe n a ha, Matrix.diagonal_mul, unitriMat_apply_lt B h]
 
 /-- The entrywise description on the diagonal: `M_{ii} = a_i`. -/
-lemma upperTriGL_apply_diag {a : Fin n → ℕ} (ha : ∀ i, 0 < a i) (B : UpperTriRep n a)
-    (i : Fin n) : (upperTriGL B : Matrix (Fin n) (Fin n) ℚ) i i = (a i : ℚ) := by
+@[simp] lemma upperTriGL_apply_diag {a : Fin n → ℕ} (ha : ∀ i, 0 < a i)
+    (B : UpperTriEntries n a) (i : Fin n) :
+    (upperTriGL B : Matrix (Fin n) (Fin n) ℚ) i i = (a i : ℚ) := by
   rw [upperTriGL]
   simp [natDiagGL_coe n a ha, Matrix.diagonal_mul]
+
+/-- The representative is upper triangular: entries below the diagonal vanish. -/
+@[simp] lemma upperTriGL_apply_eq_zero_of_lt {a : Fin n → ℕ} (ha : ∀ i, 0 < a i)
+    (B : UpperTriEntries n a) {i j : Fin n} (h : j < i) :
+    (upperTriGL B : Matrix (Fin n) (Fin n) ℚ) i j = 0 := by
+  rw [upperTriGL]
+  simp [natDiagGL_coe n a ha, Matrix.diagonal_mul, unitriMat_apply_eq_zero_of_lt B h]
 
 /-- Distinct entry assignments give distinct unipotent matrices. -/
 lemma unitriMat_injective {a : Fin n → ℕ} : Function.Injective (unitriMat (a := a)) := by
@@ -146,21 +155,16 @@ lemma unitriMat_injective {a : Fin n → ℕ} : Function.Injective (unitriMat (a
   rw [unitriMat_apply_lt B₁ hij, unitriMat_apply_lt B₂ hij] at hE
   exact Fin.ext (by exact_mod_cast hE)
 
-/-- Distinct entry assignments give distinct representatives: the entries `a_i · B_{ij}`
-determine `B`, because every `a_i` is nonzero. -/
-lemma upperTriGL_injective {a : Fin n → ℕ} (ha : ∀ i, 0 < a i) :
-    Function.Injective (upperTriGL (a := a)) := by
+/-- Distinct entry assignments give distinct representatives.
+
+`upperTriGL` is a composition of injective maps — left multiplication by the fixed unit
+`diag(a)`, then `mapGL ℚ`, then `unitriMat` — so no positivity hypothesis is needed: even at a
+tuple where `natDiagGL` takes its junk value `1`, left multiplication is still injective. -/
+lemma upperTriGL_injective {a : Fin n → ℕ} : Function.Injective (upperTriGL (a := a)) := by
   intro B₁ B₂ h
-  refine unitriMat_injective (funext fun i ↦ funext fun j ↦ ?_)
-  rcases lt_trichotomy i j with hij | rfl | hij
-  · have hE : (upperTriGL B₁ : Matrix (Fin n) (Fin n) ℚ) i j =
-        (upperTriGL B₂ : Matrix (Fin n) (Fin n) ℚ) i j := by rw [h]
-    rw [upperTriGL_apply_lt ha B₁ hij, upperTriGL_apply_lt ha B₂ hij] at hE
-    have hai : (a i : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (ha i).ne'
-    rw [unitriMat_apply_lt B₁ hij, unitriMat_apply_lt B₂ hij]
-    exact_mod_cast mul_left_cancel₀ hai hE
-  · simp
-  · rw [unitriMat_apply_of_lt B₁ hij, unitriMat_apply_of_lt B₂ hij]
+  rw [upperTriGL, upperTriGL] at h
+  have hSL := mapGL_injective (mul_left_cancel h)
+  exact unitriMat_injective (by rw [← unitriSL_coe, ← unitriSL_coe, hSL])
 
 /-! ## Distinctness of the left cosets
 
@@ -201,7 +205,7 @@ except `k = i` and `k = j` drops: below `i` because `C` is upper triangular, str
 because the inductive hypothesis has already killed those entries, and above `j` because
 `U(B₂)` is upper triangular. What is left is `(B₂)_{ij} + C_{ij} = (B₁)_{ij}`, so `C_{ij}` is a
 difference of two entries each below `a_j / a_i`; being divisible by `a_j / a_i` it vanishes. -/
-private lemma comparison_apply_eq_zero {a : Fin n → ℕ} {B₁ B₂ : UpperTriRep n a}
+private lemma comparison_apply_eq_zero {a : Fin n → ℕ} {B₁ B₂ : UpperTriEntries n a}
     {C : Matrix (Fin n) (Fin n) ℤ} (hmul : C * unitriMat B₂ = unitriMat B₁)
     (hup : Matrix.IsUpperTriangular C) (hdiag : ∀ i, C i i = 1)
     (hdvd : ∀ ⦃i j : Fin n⦄, i < j → ((a j / a i : ℕ) : ℤ) ∣ C i j) :
@@ -224,7 +228,7 @@ private lemma comparison_apply_eq_zero {a : Fin n → ℕ} {B₁ B₂ : UpperTri
       · rcases lt_trichotomy k j with hkj | rfl | hjk
         · rw [ih ((k : ℕ) - (i : ℕ)) (by omega) i k rfl hik, zero_mul]
         · exact absurd rfl hk.2
-        · rw [unitriMat_apply_of_lt B₂ hjk, mul_zero]
+        · rw [unitriMat_apply_eq_zero_of_lt B₂ hjk, mul_zero]
     have hkey := congrFun (congrFun hmul i) j
     rw [Matrix.mul_apply, ← Finset.sum_subset (Finset.subset_univ ({i, j} : Finset (Fin n)))
       hvanish, Finset.sum_pair hne, hdiag i, one_mul, unitriMat_apply_diag, mul_one,
@@ -244,7 +248,7 @@ entry assignments agree.
 The connecting element is `S = M₁ M₂⁻¹`; conjugating, `diag(a)⁻¹ S diag(a) = U(B₁) U(B₂)⁻¹`,
 whose `(i,j)` entry is `S_{ij} · a_j / a_i`. Integrality of `S` is therefore exactly the
 divisibility hypothesis fed to `comparison_apply_eq_zero`. -/
-lemma upperTriGL_eq_of_dvd {a : Fin n → ℕ} {B₁ B₂ : UpperTriRep n a}
+lemma upperTriGL_eq_of_dvd {a : Fin n → ℕ} {B₁ B₂ : UpperTriEntries n a}
     (hdvd : ∀ ⦃i j : Fin n⦄, i < j →
       ((a j / a i : ℕ) : ℤ) ∣ (unitriMat B₁ * (unitriMat B₂)⁻¹) i j) :
     B₁ = B₂ := by
