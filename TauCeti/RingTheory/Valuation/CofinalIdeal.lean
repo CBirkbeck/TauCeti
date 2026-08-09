@@ -176,6 +176,7 @@ theorem CofinalValueFor.lt_one {v : Valuation A Γ₀}
 
 /-- A power has cofinal value exactly when the element does (for a positive exponent):
 the ingredient of `rad c = c` in Wedhorn Lemma 7.1. -/
+@[simp]
 theorem cofinalValueFor_pow_iff {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A} {m : ℕ} (hm : 0 < m) :
     CofinalValueFor v H (a ^ m) ↔ CofinalValueFor v H a := by
@@ -230,6 +231,8 @@ def cofinalIdeal (v : Valuation A Γ₀)
   add_mem' ha hb := CofinalValueFor.add ha hb
   smul_mem' b _ ha := CofinalValueFor.mul hH ha b
 
+/-- Membership in the ideal is the cofinality predicate. This is the intended simp-normal form
+for `cofinalIdeal`; `cofinalValueFor_def` deliberately does not unfold it further. -/
 @[simp]
 theorem mem_cofinalIdeal {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
