@@ -131,6 +131,45 @@ lemma baseChange_comp_endOfPoint (f : Hom R H V W) (g : H →ₐ[R] A) :
 
 end Functorial
 
+section Regular
+
+/-- The counit collapses the action on the regular comodule back onto the point: the
+`H`-column of `endOfPoint H g (1 ⊗ₜ h)` carries the left Sweedler leg, so applying the
+counit there contracts `Σ ε(h₍₁₎) • g(h₍₂₎)` to `g h`. -/
+theorem rid_lTensor_counit_endOfPoint_one_tmul (g : H →ₐ[R] A) (h : H) :
+    TensorProduct.rid R A
+        (LinearMap.lTensor A (counit (R := R) (A := H)) (endOfPoint H g (1 ⊗ₜ[R] h))) =
+      g h := by
+  have key : (TensorProduct.rid R A).toLinearMap ∘ₗ
+      LinearMap.lTensor A (counit (R := R) (A := H)) ∘ₗ
+        (TensorProduct.comm R H A).toLinearMap ∘ₗ LinearMap.lTensor H g.toLinearMap =
+      g.toLinearMap ∘ₗ (TensorProduct.lid R H).toLinearMap ∘ₗ
+        LinearMap.rTensor H (counit (R := R) (A := H)) := by
+    refine TensorProduct.ext' fun x y => ?_
+    simp [Algebra.smul_def]
+  have hkey := LinearMap.congr_fun key (Coalgebra.comul (R := R) (A := H) h)
+  simp only [LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_toLinearMap] at hkey
+  rw [endOfPoint_tmul, instSelf_coact, one_smul, hkey]
+  rw [show LinearMap.rTensor H (counit (R := R) (A := H))
+      (Coalgebra.comul (R := R) (A := H) h) = (1 : R) ⊗ₜ[R] h from
+    LinearMap.congr_fun Coalgebra.rTensor_counit_comp_comul h]
+  simp
+
+/-- **A point is determined by its action on the regular comodule.** Two `A`-points of
+`H` that act identically on the scalar extension of the regular comodule are equal, so
+the map sending a point to its action is injective. Over a Hopf algebra this is the
+injectivity of `G(A) → Aut(ω_A)` for the fibre functor `ω`, the first half of a Tannakian
+reconstruction. -/
+theorem endOfPoint_self_injective :
+    Function.Injective fun g : H →ₐ[R] A => endOfPoint H g := by
+  intro g g' hg
+  ext h
+  rw [← rid_lTensor_counit_endOfPoint_one_tmul g h,
+    ← rid_lTensor_counit_endOfPoint_one_tmul g' h]
+  exact congrArg _ (congrArg _ (LinearMap.congr_fun hg (1 ⊗ₜ[R] h)))
+
+end Regular
+
 end Coalgebra
 
 section Bialgebra
