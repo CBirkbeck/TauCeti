@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.ValuationSpectrum
-public import TauCeti.RingTheory.Valuation.CofinalIdealGreatest
+public import TauCeti.RingTheory.Valuation.CofinalIdeal.Greatest
 
 /-!
 # The subspace `Spv (A, I)` of the valuation spectrum
