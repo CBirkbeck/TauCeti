@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.RingTheory.Finiteness.Defs
-public import TauCeti.RingTheory.Valuation.CofinalIdeal
+public import TauCeti.RingTheory.Valuation.CofinalIdeal.Basic
 
 /-!
 # The ideal-indexed characteristic subgroup `cΓ_v(I)`
@@ -20,7 +20,7 @@ the same radical as some finitely generated ideal — Wedhorn attaches to `I` a 
 cofinal. Lemma 7.2 is what makes the second branch well posed, and Lemma 7.4 characterises when
 `cΓ_v(I)` is everything — the condition that cuts out `Spv (A, I)`.
 
-The engine throughout is Lemma 7.1 (`TauCeti.RingTheory.Valuation.CofinalIdeal`): the elements
+The engine throughout is Lemma 7.1 (`TauCeti.RingTheory.Valuation.CofinalIdeal.Basic`): the elements
 whose value is cofinal form a *radical ideal*. Being an ideal propagates cofinality from a
 generating set to the ideal it spans; being radical propagates it across `√I = √J`. Those are
 the two uses Wedhorn makes of it, and both appear here.
@@ -35,6 +35,9 @@ the two uses Wedhorn makes of it, and both appear here.
 * `TauCeti.Valuation.characteristicSubgroupOfIdeal` : **Definition 7.3**, `cΓ_v(I)`.
 
 ## Main results
+* `TauCeti.Valuation.idealMeetsCharacteristic_iff` and
+  `TauCeti.Valuation.idealMeetsCharacteristic_of_one_le` : the branch condition of Definition
+  7.3 restated on `valueSet`, and the introduction rule discharging it from a value `≥ 1`.
 
 * `TauCeti.Valuation.idealCofinalFor_iff_forall_isCofinalElement` : the ideal condition is
   cofinality of each nonzero value as an element of the value group; vanishing values are
@@ -143,13 +146,6 @@ theorem lt_one_of_not_idealMeetsCharacteristic {v : Valuation A Γ₀} {I : Idea
   have : v.restrict 1 ≤ v.restrict a := v.restrict_le_iff.mpr (by simpa using hge)
   simpa using this
 
-/-- Cofinality for a larger convex subgroup implies cofinality for a smaller one: the
-monotonicity that makes the family in Wedhorn Lemma 7.2 downward closed. -/
-theorem CofinalValueFor.mono {v : Valuation A Γ₀}
-    {H K : Subgroup (valueGroup (.ofClass v))} {a : A}
-    (h : CofinalValueFor v K a) (hHK : H ≤ K) : CofinalValueFor v H a :=
-  cofinalValueFor_def.mpr fun g hg ↦ cofinalValueFor_def.mp h g (hHK hg)
-
 /-- The ideal condition inherits that monotonicity. -/
 theorem IdealCofinalFor.mono_subgroup {v : Valuation A Γ₀}
     {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {I : Ideal A}
@@ -198,6 +194,36 @@ def valueSet (v : Valuation A Γ₀) (I : Ideal A) : Set (valueGroup (.ofClass v
 theorem mem_valueSet {v : Valuation A Γ₀} {I : Ideal A} {γ : valueGroup (.ofClass v)} :
     γ ∈ valueSet v I ↔ ∃ a ∈ I, v.restrict a = (γ : ValueGroup₀ (.ofClass v)) :=
   Iff.rfl
+
+/-- The branch condition of Definition 7.3, restated on `valueSet`: `v(I)` meets `cΓ_v`. The
+definition quantifies over ring elements, this form over the values they attain; they carry the
+same data through `Valuation.restrict_eq_mk`. -/
+theorem idealMeetsCharacteristic_iff {v : Valuation A Γ₀} {I : Ideal A} :
+    IdealMeetsCharacteristic v I ↔ ∃ γ ∈ valueSet v I, γ ∈ characteristicSubgroup v := by
+  constructor
+  · rintro ⟨a, haI, h0, hmem⟩
+    exact ⟨_, ⟨a, haI, v.restrict_eq_mk h0⟩, hmem⟩
+  · rintro ⟨γ, ⟨a, haI, hval⟩, hmem⟩
+    have h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := by
+      intro h
+      rw [v.restrict_eq_zero_iff.mpr (by simpa using h)] at hval
+      exact WithZero.coe_ne_zero hval.symm
+    refine ⟨a, haI, h0, ?_⟩
+    have hγ : valueGroup.mk (.ofClass v) 1 a (by simp) h0 = γ := by
+      exact_mod_cast (v.restrict_eq_mk h0).symm.trans hval
+    rwa [hγ]
+
+/-- An element of `I` with value at least `1` puts `v(I)` into `cΓ_v`. This is the positive
+counterpart of `lt_one_of_not_idealMeetsCharacteristic`, and the introduction rule callers use
+to discharge the first branch of Definition 7.3. -/
+theorem idealMeetsCharacteristic_of_one_le {v : Valuation A Γ₀} {I : Ideal A} {a : A}
+    (haI : a ∈ I) (ha : 1 ≤ v.restrict a) : IdealMeetsCharacteristic v I := by
+  have h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := by
+    intro h
+    rw [v.restrict_eq_zero_iff.mpr (by simpa using h)] at ha
+    exact absurd ha (by simp)
+  refine ⟨a, haI, h0, valueGroup_mk_mem_characteristicSubgroup_of_one_le h0 ?_⟩
+  rwa [v.restrict_eq_mk h0, ← WithZero.coe_one, WithZero.coe_le_coe] at ha
 
 /-- **The bridge from the ideal to the group.** An ideal is cofinal for `H` exactly when every
 one of its nonzero values is a cofinal *element* of the value group. The vanishing values need
@@ -250,21 +276,11 @@ theorem idealCofinalFor_of_span {v : Valuation A Γ₀}
     rw [← hspan, Ideal.span_le]
     exact fun t ht ↦ mem_cofinalIdeal.mpr (hT t ht)
 
-/-- A value bounded above by `h < 1` is cofinal for the convex subgroup `h` generates. This is
-the inversion at the heart of Wedhorn's choice of `h := max { v t : t ∈ T }`: below `1` a
-*larger* value generates a *smaller* convex subgroup, so the maximum yields the subgroup that
-every generator is cofinal for. -/
-theorem cofinalValueFor_closure_singleton_of_le {v : Valuation A Γ₀} {a : A}
-    {h : valueGroup (.ofClass v)} (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0)
-    (hle : valueGroup.mk (.ofClass v) 1 a (by simp) h0 ≤ h) (hlt : h < 1) :
-    CofinalValueFor v (TauCeti.ConvexSubgroup.closure {h}).toSubgroup a := by
-  refine (cofinalValueFor_iff_isCofinalElement h0).mpr ?_
-  have hgreatest : IsGreatest {valueGroup.mk (.ofClass v) 1 a (by simp) h0, h} h :=
-    ⟨Set.mem_insert_of_mem _ rfl, by rintro x (rfl | rfl) <;> simp [hle]⟩
-  exact (TauCeti.isGreatest_convexSubgroup_isCofinalElement hgreatest hlt).1 _
-    (Set.mem_insert _ _)
-
-/-! ### Reduction along the radical -/
+/-- If `v` vanishes on the whole of `I` then every convex subgroup works, so the greatest one
+is `⊤`. This is Wedhorn's "if `v(I) = {0}`, we may choose `H = Γv`". -/
+theorem isGreatestIdealCofinal_top_of_forall_eq_zero {v : Valuation A Γ₀} {I : Ideal A}
+    (h : ∀ a ∈ I, (MonoidWithZeroHom.ofClass v) a = 0) : IsGreatestIdealCofinal v I ⊤ :=
+  ⟨fun a ha ↦ cofinalValueFor_of_eq_zero (h a ha), fun _ _ ↦ le_top⟩
 
 /-! ### Reduction along the radical
 
@@ -329,12 +345,6 @@ theorem isGreatestIdealCofinal_closure_singleton_of_span {v : Valuation A Γ₀}
     have := le_closure_singleton_of_idealCofinalFor hatt ((pow_lt_one_iff hn).mpr hlt) hK
     rwa [TauCeti.ConvexSubgroup.closure_singleton_pow hn] at this
 
-/-- If `v` vanishes on the whole of `I` then every convex subgroup works, so the greatest one
-is `⊤`. This is Wedhorn's "if `v(I) = {0}`, we may choose `H = Γv`". -/
-theorem isGreatestIdealCofinal_top_of_forall_eq_zero {v : Valuation A Γ₀} {I : Ideal A}
-    (h : ∀ a ∈ I, (MonoidWithZeroHom.ofClass v) a = 0) : IsGreatestIdealCofinal v I ⊤ :=
-  ⟨fun a ha ↦ cofinalValueFor_of_eq_zero (h a ha), fun _ _ ↦ le_top⟩
-
 /-- Radical membership upgraded to a *nonzero* exponent: if `√I = √J` then every element of `I`
 has a positive power in `J`. The exponent `0` is harmless to exclude, since `a ^ 0 ∈ J` forces
 `J = ⊤`, and then `a ^ 1 ∈ J` too.
@@ -397,7 +407,7 @@ identically zero, a greatest convex subgroup for which `I` is cofinal exists.
 
 This is what makes Definition 7.3 well posed: its second branch names *the* greatest such
 subgroup, so the definition presupposes exactly this statement. -/
-theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal A}
+private theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal A}
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
     (hdisj : ¬ IdealMeetsCharacteristic v I)
     (hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0) :
@@ -540,9 +550,11 @@ theorem characteristicSubgroupOfIdeal_eq_top_iff {v : Valuation A Γ₀} {I : Id
         · exact cofinalValueFor_of_eq_zero h0
         · exact absurd ⟨a, ha, h0, hfull ▸ TauCeti.ConvexSubgroup.mem_top⟩ hm
 
-/-- **Wedhorn Lemma 7.4, (i) ⟺ (iii)**, proved through (ii).
-any ideal with the same radical — which is the form the `Spv (A, I)` development uses, since it
-turns a condition on all of `I` into finitely many checks.
+/-- **Wedhorn Lemma 7.4, (i) ⟺ (iii)**, proved through (ii). Clause (iii) checks cofinality
+only on a generating set `T` of any ideal with the same radical — which is the form the
+`Spv (A, I)` development uses, since it turns a condition on all of `I` into a condition on
+generators. (`T` carries no finiteness hypothesis here; finiteness comes from the standing
+hypothesis of §7.1 when the caller supplies a finitely generated `J`.)
 
 The passage between the two is Lemma 7.1 once more: cofinality propagates from generators
 through the cofinal *ideal*, and across the radical because that ideal is radical. -/
