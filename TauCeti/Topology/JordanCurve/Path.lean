@@ -93,14 +93,20 @@ private theorem liftIco_extend_injective (γ : Path x x)
   · exact absurd (congrArg ((↑) : unitInterval → ℝ) hends.2) ht.2.ne
   · exact absurd (congrArg ((↑) : unitInterval → ℝ) hends.1) hs.2.ne
 
+/-- **The range of a circle lift is the image of one period.** For `f` agreeing at the two ends of
+a period, the range of `AddCircle.liftIco p a f` is the image of `Icc a (a + p)` under `f`. -/
+private theorem range_liftIco {B : Type*} {p a : ℝ} [Fact (0 < p)] {f : ℝ → B}
+    (h : f a = f (a + p)) :
+    range (AddCircle.liftIco p a f) = f '' Icc a (a + p) := by
+  rw [AddCircle.liftIco_eq_lift_Icc h, (Equiv.surjective _).range_comp, Set.range_quot_lift,
+    Set.range_domRestrict]
+
 omit [T2Space X] in
 /-- **The circle lift of a closed path traces the same set as the path.** This needs no simplicity
 hypothesis on `γ`. -/
 private theorem range_liftIco_extend (γ : Path x x) :
     range (AddCircle.liftIco 1 0 γ.extend) = range γ := by
-  -- present the lift as a quotient map off `[0, 1]` and read the range through the quotient
-  rw [AddCircle.liftIco_eq_lift_Icc (by simp), (Equiv.surjective _).range_comp,
-    Set.range_quot_lift, Set.range_domRestrict, γ.image_extend_of_subset (by norm_num)]
+  rw [range_liftIco (by simp), γ.image_extend_of_subset (by norm_num)]
 
 /-- **The range of a simple closed path is a Jordan curve.** Let `γ : Path x x` be a closed path.
 If equality `γ s = γ t` forces either `s = t` or the unordered pair of parameters to be `{0, 1}`,
