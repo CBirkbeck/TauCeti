@@ -57,20 +57,6 @@ theorem StronglyContinuousSemigroup.HasGrowthBound.bound
   exact hb.2 t ht
 
 omit [CompleteSpace X] in
-/-- **A growth bound controls the semigroup on `[0, t₀]` by the absolute-rate envelope
-`M * exp (|ω| * t₀)`.** Taking `|ω|` makes the envelope monotone in the time, which the signed
-rate `ω` need not be. -/
-theorem StronglyContinuousSemigroup.HasGrowthBound.norm_le_mul_exp_abs_mul_of_le
-    {S : StronglyContinuousSemigroup X} {ω M : ℝ} (hb : S.HasGrowthBound ω M) {t t₀ : ℝ≥0}
-    (htt₀ : t ≤ t₀) : ‖S t‖ ≤ M * Real.exp (|ω| * t₀) := by
-  have hω : ω * (t : ℝ) ≤ |ω| * (t₀ : ℝ) := calc
-    ω * (t : ℝ) ≤ |ω| * (t : ℝ) := mul_le_mul_of_nonneg_right (le_abs_self ω) t.2
-    _ ≤ |ω| * (t₀ : ℝ) := mul_le_mul_of_nonneg_left (by exact_mod_cast htt₀) (abs_nonneg ω)
-  rw [← S.realOperator_coe]
-  exact (hb.bound t t.2).trans (mul_le_mul_of_nonneg_left
-    (Real.exp_le_exp.mpr hω) (zero_le_one.trans hb.one_le))
-
-omit [CompleteSpace X] in
 /-- Constructor for a growth bound from the multiplicative lower bound and operator-norm
 estimate. -/
 public theorem StronglyContinuousSemigroup.hasGrowthBound_of_bound
@@ -100,6 +86,20 @@ theorem StronglyContinuousSemigroup.HasGrowthBound.mono_omega
     {S : StronglyContinuousSemigroup X} {ω M ω' : ℝ} (hb : S.HasGrowthBound ω M) (hω : ω ≤ ω') :
     S.HasGrowthBound ω' M :=
   hb.mono hω le_rfl
+
+omit [CompleteSpace X] in
+/-- **A growth bound controls the semigroup on `[0, t₀]` by the envelope
+`M * exp (max ω 0 * t₀)`.** Replacing the signed rate `ω` by `max ω 0` makes the envelope
+nondecreasing in the time, so the bound at `t₀` covers every earlier `t`. -/
+theorem StronglyContinuousSemigroup.HasGrowthBound.norm_le_mul_exp_max_zero_mul_of_le
+    {S : StronglyContinuousSemigroup X} {ω M : ℝ} (hb : S.HasGrowthBound ω M) {t t₀ : ℝ≥0}
+    (htt₀ : t ≤ t₀) : ‖S t‖ ≤ M * Real.exp (max ω 0 * t₀) := by
+  rw [← S.realOperator_coe]
+  refine ((hb.mono_omega (le_max_left ω 0)).bound t t.2).trans ?_
+  exact mul_le_mul_of_nonneg_left
+    (Real.exp_le_exp.mpr
+      (mul_le_mul_of_nonneg_left (by exact_mod_cast htt₀) (le_max_right ω 0)))
+    (zero_le_one.trans hb.one_le)
 
 omit [CompleteSpace X] in
 /-- A growth bound can be weakened by increasing the multiplicative constant. -/

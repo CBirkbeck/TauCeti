@@ -66,7 +66,7 @@ private theorem continuous_of_continuousAt_zero (S : StronglyContinuousSemigroup
   intro t₀
   rw [Metric.continuousAt_iff]
   intro ε hε
-  let C := max ‖S t₀‖ (M * Real.exp (|ω| * t₀)) + 1
+  let C := max ‖S t₀‖ (M * Real.exp (max ω 0 * t₀)) + 1
   have hC : 0 < C := by
     dsimp [C]
     positivity
@@ -84,7 +84,7 @@ private theorem continuous_of_continuousAt_zero (S : StronglyContinuousSemigroup
       _ < C * (ε / C) := by
         gcongr
         dsimp [C]
-        linarith [le_max_left ‖S t₀‖ (M * Real.exp (|ω| * t₀))]
+        linarith [le_max_left ‖S t₀‖ (M * Real.exp (max ω 0 * t₀))]
       _ = ε := by field_simp
   · have hdiff : S t - S t₀ = (S t).comp (1 - S (t₀ - t)) := by
       rw [← neg_sub (S t₀) (S t), S.sub_eq_comp_sub_one_of_le htt₀, ← ContinuousLinearMap.comp_neg,
@@ -95,8 +95,8 @@ private theorem continuous_of_continuousAt_zero (S : StronglyContinuousSemigroup
         hsmall (by simpa [NNReal.dist_eq, NNReal.coe_sub htt₀, abs_sub_comm] using ht)
     have hSt : ‖S t‖ < C := by
       dsimp [C]
-      linarith [hb.norm_le_mul_exp_abs_mul_of_le htt₀,
-        le_max_right ‖S t₀‖ (M * Real.exp (|ω| * t₀))]
+      linarith [hb.norm_le_mul_exp_max_zero_mul_of_le htt₀,
+        le_max_right ‖S t₀‖ (M * Real.exp (max ω 0 * t₀))]
     rw [dist_eq_norm, hdiff]
     calc
       ‖(S t).comp (1 - S (t₀ - t))‖
