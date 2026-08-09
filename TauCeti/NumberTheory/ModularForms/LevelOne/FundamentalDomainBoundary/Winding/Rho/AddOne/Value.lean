@@ -26,7 +26,7 @@ boundary-tolerant logarithmic fundamental theorem, and the `ε`-excision of the 
 value collapses to exactly those ranges with asymmetric half-widths — linear
 `δ_L(ε) = ε/(H - √3/2)` on the vertical side and chord-matched
 `δ_R(ε) = 12/π·arcsin(ε/2)` on the arc side. Both endpoint distances are then exactly `ε`,
-the log-norm parts cancel, and only the corner angle defect `π/3` survives the limit.
+the log-norm parts cancel, and only the corner's interior angle `π/3` survives the limit.
 
 ## Main declarations
 
@@ -509,7 +509,7 @@ private lemma truncated_integral_spec_rho_add_one (hH : Real.sqrt 3 / 2 < H) (h�
 
 /-- **The principal value at `ρ + 1`**: the Cauchy principal value of the index
 integrand of the boundary contour about the corner `ρ + 1` is `-πi/3` — the corner's
-angle defect. -/
+interior angle `π/3`, taken clockwise. -/
 theorem hasCauchyPVAt_fdBoundary_rho_add_one (hH : Real.sqrt 3 / 2 < H) :
     Contour.HasCauchyPVAt (fdBoundary H) 0 5
       (fun z ↦ (z - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹) ((UpperHalfPlane.ρ : ℂ) + 1)
@@ -556,8 +556,8 @@ theorem hasCauchyPVAt_fdBoundary_rho_add_one (hH : Real.sqrt 3 / 2 < H) :
     exact ((hspec ε hε).2).symm
 
 /-- **The winding number of the boundary contour at `ρ + 1` is `-1/6`**: the corner
-`ρ + 1` sits on the contour with interior angle `2π/3`, and the principal-value
-normalization sees exactly the angle defect `π/3` of a clockwise turn. -/
+`ρ + 1` sits on the contour with interior angle `π/3` — the gap between the one-sided
+argument limits `π/2` and `5π/6` — and the clockwise traversal turns that into `-1/6`. -/
 @[simp]
 theorem windingNumber_fdBoundary_rho_add_one (hH : Real.sqrt 3 / 2 < H) :
     Contour.windingNumber (fdBoundary H) 0 5 ((UpperHalfPlane.ρ : ℂ) + 1) =

@@ -24,8 +24,7 @@ fundamental domain, the exterior input to the valence-formula residue count.
 The file also carries the arc-excision geometry shared by the corner winding computations
 at `i`, at `ρ` and at `ρ + 1`. Each excises a parameter window around its corner and needs
 that window's chord to be exactly the excision radius `ε`. The half-width realising this for
-a radius below the corner chord `2·sin(π/12)`, and the trigonometric identity behind it, are
-stated once here rather than three times.
+a radius below the corner chord `2·sin(π/12)` is stated once here rather than three times.
 
 ## Main declarations
 
@@ -38,8 +37,6 @@ stated once here rather than three times.
 * `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth`: the parameter half-width whose
   chord along the arc is a prescribed `ε` below the corner chord, characterised under that
   bound by `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth_spec`.
-* `TauCeti.abs_sin_mul_pi_div_twelve`: the sine of a multiple of `π/12` factors through
-  the absolute value, the identity that specification rests on.
 
 ## References
 
@@ -319,13 +316,14 @@ lemma fdBoundary_mem_coe_truncatedFundamentalDomain (hH : 1 ≤ H) {t : ℝ}
   nlinarith [Real.sqrt_nonneg 3]
 
 
-/-- **The chord-matched excision half-width.** The parameter half-width intended to have
-chord exactly `ε` along the unit-circle arc.
+/-- **The chord-matched excision half-width.** The parameter half-width whose chord along
+the unit-circle arc is the excision radius `ε`.
 
-It has that property only for `0 < ε < 2·sin(π/12)`, which is what
-`fdBoundaryArcExcisionHalfWidth_spec` assumes and what every caller supplies: `Real.arcsin`
-saturates outside `[-1, 1]`, so for `ε ≥ 2` the chord is not `ε` at all. The definition is
-total because a junk value off that range is easier to carry than a subtype. -/
+The chord identity `2·sin(δ·π/12) = ε` holds throughout `|ε| ≤ 2`, the range on which
+`Real.arcsin` inverts the sine, and fails beyond it because `Real.arcsin` saturates.
+`fdBoundaryArcExcisionHalfWidth_spec` nonetheless assumes the narrower
+`0 < ε < 2·sin(π/12)`: that is the range the excision arguments need, because it also places
+the half-width strictly between `0` and `1`, inside the corner's own arc window. -/
 noncomputable def fdBoundaryArcExcisionHalfWidth (ε : ℝ) : ℝ := 12 / Real.pi * Real.arcsin (ε / 2)
 
 /-- The chord-matched excision half-width, unfolded. -/
@@ -359,16 +357,6 @@ lemma fdBoundaryArcExcisionHalfWidth_spec {ε : ℝ} (hε : 0 < ε)
     ring
 
 end ModularForm
-
-/-- **The sine of a multiple of `π/12` factors through the absolute value**, for any
-multiplier up to a half turn. The bound `|u| ≤ 12` is exactly what puts `u · π/12` inside
-`[-π, π]`, where `Real.abs_sin_eq_sin_abs_of_abs_le_pi` applies. -/
-lemma abs_sin_mul_pi_div_twelve {u : ℝ} (hu : |u| ≤ 12) :
-    |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
-  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
-      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
-      nlinarith [Real.pi_pos, abs_nonneg u]),
-    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
 end TauCeti
 
 end
