@@ -757,14 +757,13 @@ private theorem truncatedIntegrand_union_integrable {γ : ℝ → ℂ} {a b : �
     ε).measurableSet.compl).congr_fun (fun t ht => ?_) measurableSet_uIoc
   have htIcc : t ∈ Set.uIcc a b := Set.uIoc_subset_uIcc ht
   by_cases h2 : ∃ s ∈ S', ‖γ t - s‖ ≤ ε
-  · rw [Set.indicator_of_notMem
-      (show t ∉ {t ∈ Set.uIcc a b | ∃ s ∈ S', ‖γ t - s‖ ≤ ε}ᶜ from
-        fun hKc => hKc ⟨htIcc, h2⟩),
-      Set.indicator_of_notMem
-        (by simp only [Set.mem_ofPred_eq, not_not]; exact h2)]
-  · rw [Set.indicator_of_mem
-      (show t ∈ {t ∈ Set.uIcc a b | ∃ s ∈ S', ‖γ t - s‖ ≤ ε}ᶜ from
-        fun hK => absurd hK.2 h2),
+  · have hnot : t ∉ {t ∈ Set.uIcc a b | ∃ s ∈ S', ‖γ t - s‖ ≤ ε}ᶜ :=
+      fun hKc => hKc ⟨htIcc, h2⟩
+    rw [Set.indicator_of_notMem hnot,
+      Set.indicator_of_notMem (by simp only [Set.mem_ofPred_eq, not_not]; exact h2)]
+  · have hmem : t ∈ {t ∈ Set.uIcc a b | ∃ s ∈ S', ‖γ t - s‖ ≤ ε}ᶜ :=
+      fun hK => absurd hK.2 h2
+    rw [Set.indicator_of_mem hmem,
       Set.indicator_of_mem (by simp only [Set.mem_ofPred_eq]; exact h2)]
 
 /-- **Additivity.** The set-level principal value is additive: if `f₁` and `f₂` each have a
