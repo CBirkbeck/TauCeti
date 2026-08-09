@@ -44,6 +44,21 @@ namespace TauCeti.Contour
 
 open Complex Filter Topology
 
+/-- **The winding integrand of a normalized chord expansion.** For `τ ≠ 0`, `q ≠ 0` and
+`q - L = τ r`, the real winding integrand at position `τ q` and velocity `L + τ d` is
+`(r.re * L.im - r.im * L.re + (q.re * d.im - q.im * d.re)) / ‖q‖²`. -/
+private theorem realWindingIntegrand_mul_add_eq_div {τ : ℝ} {q r d L : ℂ} (hτ : τ ≠ 0)
+    (hq : q ≠ 0) (hqr : q - L = (τ : ℂ) * r) :
+    realWindingIntegrand ((τ : ℂ) * q) (L + (τ : ℂ) * d)
+      = (r.re * L.im - r.im * L.re + (q.re * d.im - q.im * d.re)) / Complex.normSq q := by
+  obtain rfl : L = q - (τ : ℂ) * r := by linear_combination -hqr
+  rw [realWindingIntegrand_eq_div]
+  simp only [Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im, zero_mul,
+    add_zero, sub_zero, Complex.add_re, Complex.add_im, Complex.sub_re, Complex.sub_im,
+    Complex.normSq_mul, Complex.normSq_ofReal]
+  field_simp [hτ, Complex.normSq_eq_zero.not.mpr hq]
+  ring
+
 /-- Algebraic form of the crossing limit. If `q → L`, `(q - L) / τ → A/2`, and
 `d → A`, then the real winding integrand of position `τq` and velocity `L + τd` tends to
 `(L.re * A.im - L.im * A.re) / (2‖L‖²)`.
@@ -78,24 +93,8 @@ private theorem tendsto_realWindingIntegrand_mul_add {α : Type*} {l : Filter α
   convert hdiv.congr' ?_ using 1
   · ring_nf
   filter_upwards [hqr, hτ, hq_ne] with i hqi hτi hqi_ne
-  rw [realWindingIntegrand_eq_div]
-  simp only [Complex.mul_re, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im, zero_mul,
-    add_zero, Complex.add_re, Complex.add_im, Complex.normSq_mul, Complex.normSq_ofReal]
-  have hτsq : τ i ^ 2 ≠ 0 := pow_ne_zero _ hτi
-  have hLre : L.re = (q i).re - τ i * (r i).re := by
-    have := congrArg Complex.re hqi
-    simp only [Complex.sub_re, Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, zero_mul,
-      sub_zero] at this
-    linarith
-  have hLim : L.im = (q i).im - τ i * (r i).im := by
-    have := congrArg Complex.im hqi
-    simp only [Complex.sub_im, Complex.mul_im, Complex.ofReal_re, Complex.ofReal_im, zero_mul,
-      add_zero] at this
-    linarith
-  rw [hLre, hLim]
   simp only [Pi.div_apply]
-  field_simp [hτi, Complex.normSq_eq_zero.not.mpr hqi_ne]
-  ring
+  exact (realWindingIntegrand_mul_add_eq_div hτi hqi_ne hqi).symm
 
 /-- **Hungerbühler–Wasem Proposition 2.3, crossing value.** At a crossing `γ t₀ = s`,
 a normalized second-order chord expansion with coefficients `L` and `A`, together with the
