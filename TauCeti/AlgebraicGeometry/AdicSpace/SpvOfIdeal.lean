@@ -36,8 +36,9 @@ by that representative and `mem_spvOfIdeal_ofValuation` transfers the test to an
 
 * `TauCeti.ValuationSpectrum.isEquiv_valuation_ofValuation` : the canonical valuation of the
   point of a valuation `w` is equivalent to `w`.
-* `TauCeti.ValuationSpectrum.mem_spvOfIdeal_ofValuation` : membership may be tested on an
-  arbitrary representative, which is what makes the definition usable.
+* `TauCeti.ValuationSpectrum.mem_spvOfIdeal_iff` : membership unfolded through the canonical
+  valuation, and `TauCeti.ValuationSpectrum.mem_spvOfIdeal_ofValuation` : membership tested on
+  an arbitrary representative, which is what makes the definition usable.
 
 ## References
 
@@ -68,6 +69,8 @@ def spvOfIdeal (I : Ideal A) (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radi
     Set (Spv A) :=
   {v | characteristicSubgroupOfIdeal v.valuation I hfg = ⊤}
 
+/-- Membership in `Spv (A, I)`, unfolded through the canonical valuation of the point. The
+usable form is `mem_spvOfIdeal_ofValuation`, which tests an arbitrary representative. -/
 theorem mem_spvOfIdeal_iff {I : Ideal A} {hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical}
     {v : Spv A} :
     v ∈ spvOfIdeal I hfg ↔ characteristicSubgroupOfIdeal v.valuation I hfg = ⊤ :=
