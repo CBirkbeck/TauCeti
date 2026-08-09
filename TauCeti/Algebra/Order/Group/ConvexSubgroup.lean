@@ -144,6 +144,24 @@ theorem mem_bot {x : Γ} : x ∈ (⊥ : ConvexSubgroup Γ) ↔ x = 1 :=
 theorem mem_top {x : Γ} : x ∈ (⊤ : ConvexSubgroup Γ) :=
   trivial
 
+/-- The underlying subgroup of the trivial convex subgroup is the trivial subgroup.
+
+True by `rfl`, since `⊥` is built as `{ toSubgroup := ⊥, .. }`. It is stated and tagged
+`@[simp]` so that proofs passing between the two levels rewrite explicitly instead of relying
+on the definitional unfolding. -/
+@[simp]
+theorem toSubgroup_bot : (⊥ : ConvexSubgroup Γ).toSubgroup = ⊥ :=
+  rfl
+
+/-- The underlying subgroup of the full convex subgroup is the full subgroup.
+
+True by `rfl`, since `⊤` is built as `{ toSubgroup := ⊤, .. }`. As with `toSubgroup_bot`, it is
+named so that a hypothesis `H = ⊤` about a convex subgroup can be transported to the subgroup
+level by rewriting rather than by definitional unfolding. -/
+@[simp]
+theorem toSubgroup_top : (⊤ : ConvexSubgroup Γ).toSubgroup = ⊤ :=
+  rfl
+
 /-- Convex subgroups are ordered by inclusion. -/
 instance : PartialOrder (ConvexSubgroup Γ) :=
   PartialOrder.ofSetLike (ConvexSubgroup Γ) Γ
