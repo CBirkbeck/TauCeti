@@ -21,9 +21,9 @@ quotient — responds to multiplying `g` on either side by a group element:
 * multiplying on the **left** by `h ∈ Γ₁` conjugates the stabilizer by `h`
   (`subgroupOf_conjAct_smul_mul_left_of_mem`).
 
-Ported from the AINTLIB `LeanModularForms` project
-([`LeanModularForms/HeckeRIngs/AbstractHeckeRing/StabConjugation.lean`](https://github.com/CBirkbeck/AINTLIB),
-Chris Birkbeck). The source states these for a bundled `HeckePair` and for `g` in the
+Ported from the AINTLIB [`LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) project,
+`LeanModularForms/HeckeRIngs/AbstractHeckeRing/StabConjugation.lean`
+(Chris Birkbeck). The source states these for a bundled `HeckePair` and for `g` in the
 ambient submonoid `Δ`; neither is used by the arguments, which are facts about conjugation
 of subgroups, so they are stated here for arbitrary subgroups and an arbitrary `g : G`.
 
