@@ -174,11 +174,12 @@ private lemma fdBoundary_three_sub_sub_rho_eq (H : ℝ) (hδ : 0 < δ) (hδ2 : �
     ring
   rw [hsplit, Complex.exp_add, ← hI]
   push_cast
-  -- The two factors of `I` cancel; `ring` alone cannot do it, since `I² = -1` is not a ring
-  -- identity, so the squaring lemma is supplied explicitly.
-  have hII : ∀ z w : ℂ, 2 * -z * Complex.I * (Complex.I * w) = 2 * z * w := fun z w => by
-    linear_combination (-(2 * z * w)) * Complex.I_sq
-  exact hII _ _
+  -- The two factors of `I` are separated by the exponential, so `Complex.I_mul_I` has no
+  -- `I * I` to match; `ring_nf` collects them into `I ^ 2` first, and the squaring lemma
+  -- supplies the value `ring` cannot know.
+  ring_nf
+  rw [Complex.I_sq]
+  ring
 
 /-- The principal logarithm of the shifted contour just before the corner. -/
 theorem log_fdBoundary_three_sub_sub_rho (H : ℝ) (hδ : 0 < δ) (hδ2 : δ ≤ 2) :

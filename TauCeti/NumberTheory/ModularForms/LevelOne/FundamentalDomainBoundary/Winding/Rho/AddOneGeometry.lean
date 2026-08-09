@@ -15,10 +15,17 @@ import TauCeti.Topology.Circle.Metric
 The geometry of the shifted contour `t ↦ fdBoundary H t - (ρ + 1)` about the corner
 `ρ + 1` at parameter `t = 1`: the purely imaginary linear form along the right vertical,
 the chord distance along the arc, the norm lower bounds on the far pieces, the
-closed-upper-half-plane confinement — the shifted contour touches the branch cut at
-`t = 3`, where its value is `-1`, but never crosses it, and at the degenerate height
-`H = √3/2` the whole left vertical degenerates to that point — and the exact endpoint
-logarithms beside the corner. The corner joins the vertical to the arc at the interior
+closed-upper-half-plane confinement — and the exact endpoint logarithms beside the corner.
+
+The confinement holds only once the ceiling clears the corner row, and the confinement
+results accordingly carry `√3/2 ≤ H`. Under that hypothesis the shifted contour touches the
+branch cut at `t = 3`, where its value is `-1`, but never crosses it; at the degenerate
+height `H = √3/2` the whole left vertical degenerates to that point and lies on the cut
+throughout. Below the corner row the claim fails outright: on the left vertical the shifted
+contour is `-1 + (t - 3)(H - √3/2)i`, so for `H < √3/2` the imaginary part is negative
+immediately after `t = 3` and the contour does cross the cut.
+
+The corner joins the vertical to the arc at the interior
 angle `π/3`, which is exactly the gap between the one-sided argument limits `π/2` and
 `5π/6` — the source of the winding value `-1/6` at `ρ + 1`.
 
