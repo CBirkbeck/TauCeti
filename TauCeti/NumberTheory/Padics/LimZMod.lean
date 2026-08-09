@@ -35,13 +35,24 @@ over all morphisms of the index category. The two are equivalent — that is
 would cost `mem_compatSubring` its `Iff.rfl` and force every caller with an adjacent-compatible
 sequence through the telescoping lemma first.
 
-An element of `sectionsSubring F` has its component at `n` in the bundled carrier
-`↥(F.obj (op n))` rather than in `ZMod (p ^ n)`. The consumer here is the Tate module
-`T_ℓ E = lim_n E[ℓⁿ]`, which wants the plain `ZMod` spelling.
+The friction is in the index rather than the carrier: `CommRingCat.of (ZMod (p ^ n))` has
+carrier definitionally `ZMod (p ^ n)` (`CommRingCat.coe_of` is `rfl`), but `∀ n : ℕ, ZMod (p ^ n)`
+is not definitionally `∀ j : ℕᵒᵖ, F.obj j`, since `Opposite ℕ` is a structure. So `op`, `unop`
+and `homOfLE` would appear throughout, including for the intended consumer, the Tate module
+`T_ℓ E = lim_n E[ℓⁿ]`.
 
-Mathlib's own practice agrees: `Mathlib/NumberTheory/Padics/` never imports `CategoryTheory`,
-and `sectionsSubring` has a single consumer in the library outside its defining file. The
-categorical API is for limit *theory*; concrete comparisons like this one are kept concrete.
+Mathlib's own practice agrees. `Mathlib/NumberTheory/Padics/` never imports `CategoryTheory`,
+and `RingCat.sectionsSubring` is used only inside its defining file, to install ring structures
+on generic limits. Concrete inverse limits are spelled concretely throughout: `Perfection` is
+`{f : ℕ → α // ∀ n, f (n + 1) ^ p = f n}` — the same adjacent-compatible shape as here —
+`AdicCompletion` is a subtype of compatible families, `PadicInt.lift` takes an explicitly
+quantified compatible family, and `WittVector.liftEquiv` likewise.
+
+A genuine categorical bridge would not be this substitution but a limiting cone —
+`zmodTower : ℕᵒᵖ ⥤ CommRingCat` with `compatCone` and `compatConeIsLimit`, from which the
+comparison with Mathlib's chosen limit follows by `IsLimit.conePointUniqueUpToIso`. That is a
+separate topic from the isomorphism proved here, and `compatProj_compat` is already the
+naturality it would need.
 
 ## Main definitions
 
@@ -78,30 +89,28 @@ namespace PadicInt
 
 variable (p : ℕ) [Fact p.Prime]
 
-/-- The connecting reduction `ZMod (p ^ (n + 1)) →+* ZMod (p ^ n)` of the tower. -/
-abbrev limZModCast (n : ℕ) : ZMod (p ^ (n + 1)) →+* ZMod (p ^ n) :=
-  ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))
-
 omit [Fact p.Prime] in
 /-- Compatibility for all `k₁ ≤ k₂` implies compatibility of adjacent terms. -/
 theorem adjacentCompat_of_compat {f : ∀ n : ℕ, ZMod (p ^ n)}
     (h : ∀ (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂),
       ZMod.castHom (pow_dvd_pow p hk) (ZMod (p ^ k₁)) (f k₂) = f k₁) (n : ℕ) :
-    limZModCast p n (f (n + 1)) = f n :=
+    ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n)) (f (n + 1)) = f n :=
   h n (n + 1) n.le_succ
 
 omit [Fact p.Prime] in
 /-- Compatibility of adjacent terms implies compatibility for all `k₁ ≤ k₂`. -/
 theorem compat_of_adjacentCompat {f : ∀ n : ℕ, ZMod (p ^ n)}
-    (h : ∀ n, limZModCast p n (f (n + 1)) = f n) (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) :
+    (h : ∀ n, ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n)) (f (n + 1)) = f n)
+    (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) :
     ZMod.castHom (pow_dvd_pow p hk) (ZMod (p ^ k₁)) (f k₂) = f k₁ := by
   -- Telescope down the tower: each step composes one connecting reduction onto the cast.
   induction k₂, hk using Nat.le_induction with
   | base => simp [ZMod.castHom_self]
   | succ k₂ hk ih =>
     have hstep : ZMod.castHom (pow_dvd_pow p hk) (ZMod (p ^ k₁))
-        (limZModCast p k₂ (f (k₂ + 1))) = f k₁ := by rw [h k₂]; exact ih
-    rw [← hstep, limZModCast, ← RingHom.comp_apply, ZMod.castHom_comp]
+        (ZMod.castHom (pow_dvd_pow p k₂.le_succ) (ZMod (p ^ k₂)) (f (k₂ + 1))) = f k₁ := by
+      rw [h k₂]; exact ih
+    rw [← hstep, ← RingHom.comp_apply, ZMod.castHom_comp]
 
 /-- The subring of compatible sequences in `Π n, ZMod (p ^ n)` — the projective limit of the
 `ZMod` tower. Its element type is definitionally the subtype of sequences satisfying the
@@ -134,23 +143,23 @@ theorem compatProj_compat (k₁ k₂ : ℕ) (hk : k₁ ≤ k₂) :
     using compat_of_adjacentCompat p x.property k₁ k₂ hk
 
 /-- The map out of the limit into `ℤ_[p]`, from the universal property. -/
-noncomputable def limZModToPadic : compatSubring p →+* ℤ_[p] :=
+private noncomputable def limZModToPadic : compatSubring p →+* ℤ_[p] :=
   PadicInt.lift (f := compatProj p) (compatProj_compat p)
 
 /-- The map into the limit: `z ↦ (n ↦ toZModPow n z)`. -/
-noncomputable def padicToLimZMod : ℤ_[p] →+* compatSubring p :=
+private noncomputable def padicToLimZMod : ℤ_[p] →+* compatSubring p :=
   RingHom.codRestrict (RingHom.pi fun n : ℕ => PadicInt.toZModPow n) (compatSubring p)
     fun z n => RingHom.congr_fun (PadicInt.zmod_cast_comp_toZModPow n (n + 1) n.le_succ) z
 
 omit [Fact p.Prime] in
-@[simp] theorem compatProj_apply (n : ℕ) (x : compatSubring p) : compatProj p n x = x.val n :=
+private theorem compatProj_apply (n : ℕ) (x : compatSubring p) : compatProj p n x = x.val n :=
   (rfl)
 
-@[simp] theorem padicToLimZMod_val (z : ℤ_[p]) (n : ℕ) :
+private theorem padicToLimZMod_val (z : ℤ_[p]) (n : ℕ) :
     (padicToLimZMod p z).val n = PadicInt.toZModPow n z :=
   (rfl)
 
-@[simp] theorem toZModPow_limZModToPadic (n : ℕ) (x : compatSubring p) :
+private theorem toZModPow_limZModToPadic (n : ℕ) (x : compatSubring p) :
     PadicInt.toZModPow n (limZModToPadic p x) = x.val n := by
   simpa [limZModToPadic, compatProj]
     using RingHom.congr_fun (PadicInt.lift_spec (f := compatProj p) (compatProj_compat p) n) x
@@ -158,8 +167,11 @@ omit [Fact p.Prime] in
 /-- **`ℤ_[p]` is the projective limit of the `ZMod` tower.** -/
 noncomputable def equivLimZMod : ℤ_[p] ≃+* compatSubring p :=
   RingEquiv.ofRingHom (padicToLimZMod p) (limZModToPadic p)
-    (by ext x n; simp)
-    (by ext z; exact PadicInt.ext_of_toZModPow.mp fun n => by simp)
+    (by ext x n; simp [padicToLimZMod_val, toZModPow_limZModToPadic])
+    (by
+      ext z
+      exact PadicInt.ext_of_toZModPow.mp fun n => by
+        simp [toZModPow_limZModToPadic, padicToLimZMod_val])
 
 /-- The isomorphism reads off the truncations: its `n`-th component is `toZModPow n`. -/
 @[simp] theorem equivLimZMod_apply_val (z : ℤ_[p]) (n : ℕ) :
