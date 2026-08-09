@@ -163,6 +163,11 @@ lemma isDvdChain_iff {n : ℕ} {a : Fin n → ℕ} :
 lemma isDvdChain_const (c : ℕ) : IsDvdChain (fun _ : Fin n ↦ c) :=
   fun _ _ _ ↦ dvd_refl _
 
+/-- Scaling a divisibility chain by a constant keeps it a chain. -/
+lemma isDvdChain_mul_const {a : Fin n → ℕ} (ha : IsDvdChain a) (c : ℕ) :
+    IsDvdChain (a * fun _ : Fin n ↦ c) :=
+  isDvdChain_iff.mpr fun _ _ hij ↦ mul_dvd_mul (isDvdChain_iff.mp ha hij) dvd_rfl
+
 /-- The positive divisibility chains of length `n`: the parameter space of the diagonal
 double cosets. -/
 abbrev CanonicalDiagonal (n : ℕ) : Type :=

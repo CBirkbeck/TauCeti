@@ -170,11 +170,6 @@ theorem evalHom_injective_one (p : ℕ) (hp : p.Prime) : Function.Injective (eva
     (fun hns ↦ absurd hs hns)]
   simp
 
-/-- Scaling a divisibility chain by a constant keeps it a chain. -/
-private lemma isDvdChain_mul_const {n : ℕ} {a : Fin n → ℕ} (ha : IsDvdChain a) (c : ℕ) :
-    IsDvdChain (a * fun _ : Fin n ↦ c) :=
-  isDvdChain_iff.mpr fun _ _ hij ↦ mul_dvd_mul (isDvdChain_iff.mp ha hij) dvd_rfl
-
 /-- A two-entry diagonal `![a, b]` is a divisibility chain iff `a ∣ b`. -/
 private lemma divChain_two_of_dvd {a b : ℕ} (hab : a ∣ b) :
     IsDvdChain (![a, b] : Fin 2 → ℕ) :=
@@ -407,8 +402,8 @@ lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 
         intro heq
         have h1_eq : a * (fun _ : Fin 2 ↦ c) = b * (fun _ : Fin 2 ↦ c) :=
           eq_of_diagCoset_eq (fun i ↦ Nat.mul_pos (ha_pos i) hc)
-            (fun i ↦ Nat.mul_pos (hb_pos i) hc) (isDvdChain_mul_const ha_div c)
-            (isDvdChain_mul_const hb_div c) heq
+            (fun i ↦ Nat.mul_pos (hb_pos i) hc) (isDvdChain_mul_const 2 ha_div c)
+            (isDvdChain_mul_const 2 hb_div c) heq
         apply hab
         funext i
         have := congr_fun h1_eq i
@@ -445,7 +440,7 @@ lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHe
       intro heq
       have h_eq : a * (fun _ : Fin 2 ↦ c) = d :=
         eq_of_diagCoset_eq (fun i ↦ Nat.mul_pos (ha_pos i) hc) hd_pos
-          (isDvdChain_mul_const ha_div c) hd_div heq
+          (isDvdChain_mul_const 2 ha_div c) hd_div heq
       apply hi₀
       have := congr_fun h_eq i₀
       simp only [Pi.mul_apply] at this
