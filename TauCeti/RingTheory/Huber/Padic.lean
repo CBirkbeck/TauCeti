@@ -42,7 +42,9 @@ Tate, and `ℚ_p⟨T₁,…,Tₙ⟩` is complete and strongly noetherian — are
 
 ## References
 
-* [Wedhorn, *Adic Spaces*][wedhorn_adic], Example 6.3.
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], §6, where Huber and Tate rings are introduced
+  (Proposition and Definition 6.1) and `ℤ_[p]` is the standard example of a Huber ring that
+  is not Tate.
 -/
 
 public section
