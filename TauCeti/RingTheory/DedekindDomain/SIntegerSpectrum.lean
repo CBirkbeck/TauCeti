@@ -12,14 +12,15 @@ public import TauCeti.RingTheory.DedekindDomain.SInteger
 Let `R` be a Dedekind domain with fraction field `K` and `S` a set of height-one primes of `R`.
 `TauCeti/RingTheory/DedekindDomain/SInteger.lean` shows that the ring of `S`-integers is again a
 Dedekind domain, so it has a height one spectrum of its own. This file identifies that spectrum:
-the primes of `𝒪_S` are exactly the primes of `R` **not** in `S`, via `v ↦ 𝒪_S ∩ v`
+the primes of `𝒪_S` are exactly the primes of `R` **not** in `S`, via `v ↦ v · 𝒪_S`
 (`integerHeightOneSpectrumEquiv`), and the correspondence carries the valuations across unchanged
 (`valuation_integerHeightOneSpectrumEquiv`).
 
-The two directions are `integerPrimeOverOfNotMem`, extending `v ∉ S` to `𝒪_S`,
-and `integerPrimeUnder`, contracting a prime of `𝒪_S` to `R`. That they are mutually inverse is
-`integer_comap_map_asIdeal` in one direction and `integer_map_comap_eq` — every ideal of `𝒪_S` is
-extended — in the other.
+The two directions are `integerPrimeOverOfNotMem`, extending `v ∉ S` to `𝒪_S`, and
+`integerPrimeUnder`, contracting a prime of `𝒪_S` back to `R`. That they are mutually inverse is
+Mathlib's `Ideal.comap_map_eq_self_of_isMaximal` in one direction — the extension of a maximal
+`v ∉ S` stays proper, so contracting it returns `v` — and `integer_map_comap_eq` — every ideal of
+`𝒪_S` is extended — in the other.
 
 Inverting `S` therefore removes exactly the primes of `S` from the spectrum and changes nothing
 else, which is why the Selmer group of `𝒪_S` relative to `∅` is the Selmer group of `R` relative
@@ -75,40 +76,31 @@ lemma integer_map_asIdeal_ne_top {v : HeightOneSpectrum R} (hv : v ∉ S) :
   have h1 : v.valuation K ((1 : S.integer K) : K) < 1 := le_trans htop.ge hle Submodule.mem_top
   simp at h1
 
-/-- For `v ∉ S`, contracting the extension of `v` returns `v`. -/
-lemma integer_comap_map_asIdeal {v : HeightOneSpectrum R} (hv : v ∉ S) :
-    (Ideal.map (algebraMap R (S.integer K)) v.asIdeal).comap (algebraMap R (S.integer K))
-      = v.asIdeal := by
-  refine (v.isMaximal.eq_of_le ?_ Ideal.le_comap_map).symm
-  rw [Ne, Ideal.comap_eq_top_iff]
-  exact integer_map_asIdeal_ne_top K S hv
-
 /-- For `v ∉ S`, the extension of `v` to `𝒪_S` is maximal. -/
-lemma integer_isMaximal_map_asIdeal {v : HeightOneSpectrum R} (hv : v ∉ S) :
+lemma isMaximal_integer_map_asIdeal {v : HeightOneSpectrum R} (hv : v ∉ S) :
     (Ideal.map (algebraMap R (S.integer K)) v.asIdeal).IsMaximal := by
   set f := algebraMap R (S.integer K) with hf
+  have := v.isMaximal
   obtain ⟨M, hM, hle⟩ := Ideal.exists_le_maximal _ (integer_map_asIdeal_ne_top K S hv)
   have hcle : v.asIdeal ≤ M.comap f :=
-    (integer_comap_map_asIdeal K S hv).ge.trans (Ideal.comap_mono hle)
+    (Ideal.comap_map_eq_self_of_isMaximal f (integer_map_asIdeal_ne_top K S hv)).ge.trans
+      (Ideal.comap_mono hle)
   have hceq : M.comap f = v.asIdeal :=
     (v.isMaximal.eq_of_le (hM.isPrime.comap f).ne_top hcle).symm
   rwa [← integer_map_comap_eq K S M, hceq] at hM
 
-/-- For `v ∉ S`, the extension of `v` to `𝒪_S` is nonzero. -/
-lemma integer_map_asIdeal_ne_bot {v : HeightOneSpectrum R} (hv : v ∉ S) :
-    Ideal.map (algebraMap R (S.integer K)) v.asIdeal ≠ ⊥ := by
-  -- `v` is nonzero and `R → 𝒪_S` is injective.
-  intro h
-  refine v.ne_bot ?_
-  rw [← integer_comap_map_asIdeal K S hv, h,
-    Ideal.comap_bot_of_injective _ (FaithfulSMul.algebraMap_injective R (S.integer K))]
+/-- The extension of a nonzero ideal of `R` to `𝒪_S` is nonzero, `v ∈ S` or not: `R → 𝒪_S` is
+injective. (For `v ∈ S` the extension is all of `𝒪_S`, which is still nonzero.) -/
+lemma integer_map_asIdeal_ne_bot (v : HeightOneSpectrum R) :
+    Ideal.map (algebraMap R (S.integer K)) v.asIdeal ≠ ⊥ :=
+  Ideal.map_ne_bot_of_ne_bot v.ne_bot
 
 /-- The prime of `𝒪_S` above a prime `v ∉ S` of `R`: the extension of `v`. -/
 noncomputable def integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉ S) :
     HeightOneSpectrum (S.integer K) where
   asIdeal := Ideal.map (algebraMap R (S.integer K)) v.asIdeal
-  isPrime := (integer_isMaximal_map_asIdeal K S hv).isPrime
-  ne_bot := integer_map_asIdeal_ne_bot K S hv
+  isPrime := (isMaximal_integer_map_asIdeal K S hv).isPrime
+  ne_bot := integer_map_asIdeal_ne_bot K S v
 
 @[simp] lemma integerPrimeOverOfNotMem_asIdeal {v : HeightOneSpectrum R} (hv : v ∉ S) :
     (integerPrimeOverOfNotMem K S hv).asIdeal
@@ -140,7 +132,9 @@ noncomputable def integerHeightOneSpectrumEquiv :
     {v : HeightOneSpectrum R // v ∉ S} ≃ HeightOneSpectrum (S.integer K) where
   toFun v := integerPrimeOverOfNotMem K S v.property
   invFun P := ⟨integerPrimeUnder K S P, integerPrimeUnder_notMem K S P⟩
-  left_inv v := Subtype.ext <| HeightOneSpectrum.ext <| integer_comap_map_asIdeal K S v.property
+  left_inv v := Subtype.ext <| HeightOneSpectrum.ext <|
+    have := (v : HeightOneSpectrum R).isMaximal
+    Ideal.comap_map_eq_self_of_isMaximal _ (integer_map_asIdeal_ne_top K S v.property)
   right_inv P := HeightOneSpectrum.ext <| integer_map_comap_eq K S P.asIdeal
 
 @[simp] lemma integerHeightOneSpectrumEquiv_apply (v : {v : HeightOneSpectrum R // v ∉ S}) :
@@ -158,7 +152,7 @@ lemma integer_comap_map_pow {v : HeightOneSpectrum R} (hv : v ∉ S) (n : ℕ) :
         (algebraMap R (S.integer K)) = v.asIdeal ^ n := by
   -- The contraction divides `v ^ n`, so it is `v ^ j` for some `j`; extending back forces `j = n`.
   set f := algebraMap R (S.integer K) with hf
-  have hP0 : Ideal.map f v.asIdeal ≠ 0 := integer_map_asIdeal_ne_bot K S hv
+  have hP0 : Ideal.map f v.asIdeal ≠ 0 := integer_map_asIdeal_ne_bot K S v
   have hPnu : ¬ IsUnit (Ideal.map f v.asIdeal) :=
     fun h ↦ integer_map_asIdeal_ne_top K S hv (Ideal.isUnit_iff.mp h)
   refine le_antisymm ?_ Ideal.le_comap_map
@@ -170,17 +164,6 @@ lemma integer_comap_map_pow {v : HeightOneSpectrum R} (hv : v ∉ S) (n : ℕ) :
       Ideal.map f (v.asIdeal ^ n) := integer_map_comap_eq K S _
   rw [hassoc, Ideal.map_pow, Ideal.map_pow] at hmapQ
   rw [hassoc, (pow_inj_of_not_isUnit hPnu hP0).mp hmapQ]
-
--- The count form of Mathlib's `intValuation_le_pow_iff_mem`, which characterises membership of a
--- prime power by the valuation: unfolding the valuation of a nonzero element to `exp (-count)`
--- turns that characterisation into the count comparison below. Private: it is a spelling change
--- for this one proof, not API — Mathlib's valuation form is the statement to use.
-private lemma le_count_iff_mem_pow {A : Type*} [CommRing A] [IsDedekindDomain A]
-    (w : HeightOneSpectrum A) {b : A} (hb : b ≠ 0) (k : ℕ) :
-    k ≤ Associates.count (Associates.mk w.asIdeal) (Associates.mk (Ideal.span {b})).factors
-      ↔ b ∈ w.asIdeal ^ k := by
-  rw [← w.intValuation_le_pow_iff_mem, w.intValuation_apply, w.intValuationDef_if_neg hb,
-    WithZero.exp_le_exp, neg_le_neg_iff, Nat.cast_le]
 
 /-- For `v ∉ S`, the `Pᵥ`-adic valuation of an element of `R`, computed in `𝒪_S`, is its `v`-adic
 valuation. -/
@@ -199,16 +182,27 @@ lemma intValuationDef_integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v
       algebraMap R (S.integer K) a ∈ (integerPrimeOverOfNotMem K S hv).asIdeal ^ k := by
     rw [integerPrimeOverOfNotMem_asIdeal, ← Ideal.map_pow, ← Ideal.mem_comap,
       integer_comap_map_pow K S hv]
+  -- Mathlib's `intValuation_le_pow_iff_mem` characterises membership of `wᵏ` by the valuation;
+  -- for a nonzero element that valuation is `exp (-count)`, so it reads as a count comparison.
+  have hcv (k : ℕ) : k ≤ Associates.count (Associates.mk v.asIdeal)
+      (Associates.mk (Ideal.span {a})).factors ↔ a ∈ v.asIdeal ^ k := by
+    rw [← v.intValuation_le_pow_iff_mem, v.intValuation_apply, v.intValuationDef_if_neg ha,
+      WithZero.exp_le_exp, neg_le_neg_iff, Nat.cast_le]
+  have hcP (k : ℕ) :
+      k ≤ Associates.count (Associates.mk (integerPrimeOverOfNotMem K S hv).asIdeal)
+        (Associates.mk (Ideal.span {algebraMap R (S.integer K) a})).factors
+      ↔ algebraMap R (S.integer K) a ∈ (integerPrimeOverOfNotMem K S hv).asIdeal ^ k := by
+    rw [← (integerPrimeOverOfNotMem K S hv).intValuation_le_pow_iff_mem,
+      (integerPrimeOverOfNotMem K S hv).intValuation_apply,
+      (integerPrimeOverOfNotMem K S hv).intValuationDef_if_neg hfa,
+      WithZero.exp_le_exp, neg_le_neg_iff, Nat.cast_le]
   suffices h : Associates.count (Associates.mk (integerPrimeOverOfNotMem K S hv).asIdeal)
         (Associates.mk (Ideal.span {algebraMap R (S.integer K) a})).factors =
       Associates.count (Associates.mk v.asIdeal) (Associates.mk (Ideal.span {a})).factors by
     rw [v.intValuationDef_if_neg ha,
       (integerPrimeOverOfNotMem K S hv).intValuationDef_if_neg hfa, h]
-  refine Nat.le_antisymm ?_ ?_
-  · exact (le_count_iff_mem_pow v ha _).mpr
-      ((hmem _).mpr ((le_count_iff_mem_pow (integerPrimeOverOfNotMem K S hv) hfa _).mp le_rfl))
-  · exact (le_count_iff_mem_pow (integerPrimeOverOfNotMem K S hv) hfa _).mpr
-      ((hmem _).mp ((le_count_iff_mem_pow v ha _).mp le_rfl))
+  exact Nat.le_antisymm ((hcv _).mpr ((hmem _).mpr ((hcP _).mp le_rfl)))
+    ((hcP _).mpr ((hmem _).mp ((hcv _).mp le_rfl)))
 
 /-- **The correspondence preserves valuations**: the valuation of `𝒪_S` at the prime above `v` is
 the valuation of `R` at `v`. -/
