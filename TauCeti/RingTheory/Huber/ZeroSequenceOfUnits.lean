@@ -33,6 +33,12 @@ pseudouniformiser, say — keeps it rather than trading it for an opaque choice.
   a given element into a given neighbourhood of zero.
 * `TauCeti.Huber.iUnion_inv_smul_eq_univ_of_tendsto`: its dilates `uₙ⁻¹ • U` cover the ring,
   indexed by `ℕ`.
+* `TauCeti.Huber.IsPseudoUniformizer.hasZeroSequenceOfUnits` and
+  `TauCeti.Huber.IsTateRing.hasZeroSequenceOfUnits`: the powers of a pseudouniformiser are such
+  a sequence, so a Tate ring satisfies the hypothesis.
+* `TauCeti.Huber.HasZeroSequenceOfUnits.exists_unit_mul_mem` and
+  `TauCeti.Huber.HasZeroSequenceOfUnits.exists_iUnion_inv_smul_eq_univ`: the two facts above
+  read off the hypothesis rather than a given sequence.
 
 ## References
 
@@ -119,18 +125,27 @@ namespace HasZeroSequenceOfUnits
 variable [SeparatelyContinuousMul A] (h : HasZeroSequenceOfUnits A)
 include h
 
-/-- Some zero sequence of units absorbs a given element into a given neighbourhood of zero. -/
-theorem exists_mul_mem (x : A) {U : Set A} (hU : U ∈ nhds (0 : A)) :
-    ∃ (u : ℕ → Aˣ) (n : ℕ), ((u n : A)) * x ∈ U := by
+/-- Some unit carries a given element into a given neighbourhood of zero.
+
+Deliberately not phrased with a sequence: quantifying over an unconstrained `u : ℕ → Aˣ` would
+say no more than this, since a constant sequence witnesses it. The sequence matters only for the
+covering below, where it is carried with its convergence hypothesis. -/
+theorem exists_unit_mul_mem (x : A) {U : Set A} (hU : U ∈ nhds (0 : A)) :
+    ∃ v : Aˣ, (v : A) * x ∈ U := by
   obtain ⟨u, hu⟩ := h
   obtain ⟨n, hn⟩ := exists_mul_mem_of_tendsto hu x hU
-  exact ⟨u, n, hn⟩
+  exact ⟨u n, hn⟩
 
-/-- Some zero sequence of units has its dilates of a neighbourhood of zero covering the ring. -/
+/-- Some *zero* sequence of units has its dilates of a neighbourhood of zero covering the ring.
+
+The convergence hypothesis is carried inside the existential: without it the sequence binder
+would be vacuous, and a caller destructing the result would get a sequence with no relation to
+the topology. -/
 theorem exists_iUnion_inv_smul_eq_univ {U : Set A} (hU : U ∈ nhds (0 : A)) :
-    ∃ u : ℕ → Aˣ, ⋃ n : ℕ, ((u n)⁻¹ : Aˣ) • U = Set.univ := by
+    ∃ u : ℕ → Aˣ, Tendsto (fun n ↦ ((u n : A))) atTop (nhds 0) ∧
+      ⋃ n : ℕ, ((u n)⁻¹ : Aˣ) • U = Set.univ := by
   obtain ⟨u, hu⟩ := h
-  exact ⟨u, iUnion_inv_smul_eq_univ_of_tendsto hu hU⟩
+  exact ⟨u, hu, iUnion_inv_smul_eq_univ_of_tendsto hu hU⟩
 
 end HasZeroSequenceOfUnits
 
