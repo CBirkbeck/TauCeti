@@ -21,7 +21,7 @@ the fundamental identity alone forces each summand `e * f` down to `1`.
 
 In the `TauCeti.RamificationInertia` namespace:
 
-* `ramificationIdx_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank` — a maximal count
+* `ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank` — a maximal count
   of primes above `P` makes `e = f = 1` at each of them.
 
 ## Provenance
@@ -38,11 +38,8 @@ namespace TauCeti.RamificationInertia
 
 /-- **A maximal count of primes above `P` forces `e = f = 1`.** If the number of primes of `S`
 lying over a prime `P` of `R` equals the rank of `S` over `R`, then each such prime is unramified
-over `P` and has trivial inertia degree.
-
-No Galois hypothesis is needed: the fundamental identity writes the rank as `∑ e * f` over the
-primes above `P`, so a summand count equal to the rank leaves every summand equal to `1`. -/
-theorem ramificationIdx_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank
+over `P` and has trivial inertia degree. No Galois hypothesis is needed. -/
+theorem ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank
     {R S : Type*} [CommRing R] [IsDomain R] [CommRing S] [Algebra R S] [Module.Finite R S]
     [Module.Flat R S] (P : Ideal R) [P.IsPrime] (Q : Ideal S)
     [Q.IsPrime] [Q.LiesOver P] (hsplit : (P.primesOver S).ncard = finrank R S) :
@@ -52,7 +49,8 @@ theorem ramificationIdx_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank
   have hcard : Fintype.card (P.primesOver S) = finrank R S := by
     rw [← hsplit, Set.ncard_eq_toFinset_card']
     simp
-  -- each `e * f` is at least `1`, and their number already accounts for the whole rank
+  -- the fundamental identity writes the rank as `∑ e * f` over the primes above `P`; each
+  -- summand is at least `1`, and their number already accounts for the whole rank
   have hone : ∀ q ∈ (Finset.univ : Finset (P.primesOver S)),
       1 ≤ q.1.ramificationIdx R * q.1.inertiaDeg R := fun q _ =>
     Nat.one_le_iff_ne_zero.mpr

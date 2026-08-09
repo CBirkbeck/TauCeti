@@ -45,7 +45,7 @@ available. The splitting criterion itself rests on the Galois identity
 a Galois hypothesis — that complete splitting forces `e = f = 1`, and hence that the residue field
 at `Q` is the prime field — rest instead on the general identity for finite flat extensions of
 domains (`Ideal.sum_ramification_inertia_eq_finrank`), applied through
-`TauCeti.RamificationInertia.ramificationIdx_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank`.
+the general theorem in `TauCeti.RamificationInertia.Splitting`.
 The criterion is assembled here for the Tau Ceti library.
 -/
 
@@ -111,9 +111,9 @@ theorem ncard_primesOver_eq_finrank_iff_stabilizer_eq_bot (L : Type*) [Field L]
     rw [hst] at hkey
     simpa using hkey
 
-/-- **Complete splitting forces `e = f = 1` at every prime above `p`, with no Galois
-hypothesis.** Each prime contributes a factor `e · f ≥ 1` to the fundamental identity, so a full
-complement of primes leaves every factor equal to `1`. -/
+/-- **Complete splitting forces `e = f = 1` at every prime above `p`.** If `p` has as many primes
+above it as the degree of `K`, then each is unramified with trivial inertia degree. No Galois
+hypothesis is needed. -/
 theorem ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank {K : Type*}
     [Field K] [NumberField K] {p : ℕ} [Fact p.Prime] (Q : Ideal (𝓞 K)) [Q.IsPrime]
     [Q.LiesOver (span {(p : ℤ)})]
@@ -122,8 +122,9 @@ theorem ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finr
   have hpne : (p : ℤ) ≠ 0 := by exact_mod_cast (Fact.out : p.Prime).ne_zero
   have : (span {(p : ℤ)} : Ideal ℤ).IsPrime :=
     (Ideal.span_singleton_prime hpne).mpr (Nat.prime_iff_prime_int.mp Fact.out)
-  refine RamificationInertia.ramificationIdx_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank
-    (span {(p : ℤ)}) Q ?_
+  refine
+    RamificationInertia.ramificationIdx_eq_one_and_inertiaDeg_eq_one_of_ncard_primesOver_eq_finrank
+      (span {(p : ℤ)}) Q ?_
   rwa [NumberField.RingOfIntegers.rank]
 
 /-- **Complete splitting makes the residue field at `Q` the prime field.** If `p` splits
