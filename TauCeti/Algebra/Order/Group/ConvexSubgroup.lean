@@ -189,12 +189,12 @@ theorem toSubgroup_inj {H K : ConvexSubgroup Γ} : H.toSubgroup = K.toSubgroup �
 
 /-- The underlying subgroup of the trivial convex subgroup is the trivial subgroup. -/
 @[simp]
-theorem toSubgroup_bot : (⊥ : ConvexSubgroup Γ).toSubgroup = ⊥ :=
+theorem bot_toSubgroup : (⊥ : ConvexSubgroup Γ).toSubgroup = ⊥ :=
   rfl
 
 /-- The underlying subgroup of the full convex subgroup is the full subgroup. -/
 @[simp]
-theorem toSubgroup_top : (⊤ : ConvexSubgroup Γ).toSubgroup = ⊤ :=
+theorem top_toSubgroup : (⊤ : ConvexSubgroup Γ).toSubgroup = ⊤ :=
   rfl
 
 /-! ### Elements outside a convex subgroup -/
