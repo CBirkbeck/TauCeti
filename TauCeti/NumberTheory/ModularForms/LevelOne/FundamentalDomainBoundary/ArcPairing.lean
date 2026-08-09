@@ -204,6 +204,50 @@ theorem truncated_logDeriv_fdBoundary_arc_add_four_sub [SlashInvariantFormClass 
   · simp only [if_neg hc, if_neg fun h => hc (hsymm.mp h)]
     exact logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS ht (hd hc) (hne hc)
 
+/-- **The excised arc integral collapses to the weight term.** Integrating the pointwise pairing
+over `[1, 3]`, where the reflection `t ↦ 4 - t` maps the interval to itself, the excised arc
+integral is `-k/2` times the excised integral of the contour's own logarithmic derivative.
+
+Letting `ε → 0` recovers the untruncated
+`TauCeti.ModularForm.intervalIntegral_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc`: the
+contour's own logarithmic derivative is integrable along the arc, so its excised integral tends
+to the full one. -/
+theorem intervalIntegral_truncated_fdBoundary_arc [SlashInvariantFormClass F Γ k]
+    (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ}
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
+    (hd : ∀ t ∈ Ioo (1 : ℝ) 3, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
+      DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
+    (hne : ∀ t ∈ Ioo (1 : ℝ) 3, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
+      (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hint : IntervalIntegrable (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+      else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) volume 1 3) :
+    2 * ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) =
+      -(k : ℂ) * ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else logDeriv (fdBoundary H) t) := by
+  set G : ℝ → ℂ := fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+    else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t) with hG
+  -- The reflection maps `[1, 3]` to itself, so the reflected integral is the same integral.
+  have h43 : (4 : ℝ) - 3 = 1 := by norm_num
+  have h41 : (4 : ℝ) - 1 = 3 := by norm_num
+  have hrefl : (∫ t in (1 : ℝ)..3, G (4 - t)) = ∫ t in (1 : ℝ)..3, G t := by
+    have h := intervalIntegral.integral_comp_sub_left (a := (1 : ℝ)) (b := 3) (d := (4 : ℝ)) G
+    rwa [h43, h41] at h
+  have hintrefl : IntervalIntegrable (fun t => G (4 - t)) volume 1 3 := by
+    have h := hint.comp_sub_left 4
+    rw [h43, h41] at h
+    exact h.symm
+  -- Add the pointwise pairing over the interval.
+  have hsum : (∫ t in (1 : ℝ)..3, (G t + G (4 - t))) =
+      ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else -((k : ℂ) * logDeriv (fdBoundary H) t)) :=
+    intervalIntegral.integral_congr_Ioo_of_le (by norm_num) fun t htt =>
+      truncated_logDeriv_fdBoundary_arc_add_four_sub f hS htt hnorm hinv (hd t htt) (hne t htt)
+  rw [intervalIntegral.integral_add hint hintrefl, hrefl] at hsum
+  rw [two_mul, hsum, ← intervalIntegral.integral_const_mul]
+  refine intervalIntegral.integral_congr fun t _ => ?_
+  by_cases hc : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε <;> simp [hc]
+
 end ModularForm
 
 end TauCeti
