@@ -90,6 +90,7 @@ theorem idealCofinalFor_def {v : Valuation A Γ₀}
   Iff.rfl
 
 /-- The trivial ideal is cofinal for every convex subgroup. -/
+@[simp]
 theorem idealCofinalFor_bot (v : Valuation A Γ₀)
     (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : IdealCofinalFor v H ⊥ := by
   intro a ha
@@ -142,8 +143,8 @@ theorem lt_one_of_not_idealMeetsCharacteristic {v : Valuation A Γ₀} {I : Idea
 /-- Cofinality for a larger convex subgroup implies cofinality for a smaller one: the
 monotonicity that makes the family in Wedhorn Lemma 7.2 downward closed. -/
 theorem CofinalValueFor.mono {v : Valuation A Γ₀}
-    {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A}
-    (h : CofinalValueFor v K.toSubgroup a) (hHK : H ≤ K) : CofinalValueFor v H.toSubgroup a :=
+    {H K : Subgroup (valueGroup (.ofClass v))} {a : A}
+    (h : CofinalValueFor v K a) (hHK : H ≤ K) : CofinalValueFor v H a :=
   cofinalValueFor_def.mpr fun g hg ↦ cofinalValueFor_def.mp h g (hHK hg)
 
 /-- The ideal condition inherits that monotonicity. -/
@@ -157,6 +158,24 @@ upper bound within the family — the statement the case split of Definition 7.3
 def IsGreatestIdealCofinal (v : Valuation A Γ₀) (I : Ideal A)
     (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : Prop :=
   IdealCofinalFor v H I ∧ ∀ K, IdealCofinalFor v K I → K ≤ H
+
+/-- The defining conjunction, as a restatement. Deliberately not `@[simp]`: the right-hand
+side is the unfolded conjunction, so tagging it would expand goals rather than simplify them. -/
+theorem isGreatestIdealCofinal_iff {v : Valuation A Γ₀} {I : Ideal A}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} :
+    IsGreatestIdealCofinal v I H ↔
+      IdealCofinalFor v H I ∧ ∀ K, IdealCofinalFor v K I → K ≤ H :=
+  Iff.rfl
+
+/-- The greatest subgroup is itself one for which `I` is cofinal. -/
+theorem IsGreatestIdealCofinal.idealCofinalFor {v : Valuation A Γ₀} {I : Ideal A}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (h : IsGreatestIdealCofinal v I H) : IdealCofinalFor v H I := h.1
+
+/-- The greatest subgroup dominates every other one for which `I` is cofinal. -/
+theorem IsGreatestIdealCofinal.le {v : Valuation A Γ₀} {I : Ideal A}
+    {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (h : IsGreatestIdealCofinal v I H) (hK : IdealCofinalFor v K I) : K ≤ H := h.2 K hK
 
 theorem IsGreatestIdealCofinal.unique {v : Valuation A Γ₀} {I : Ideal A}
     {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
