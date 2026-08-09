@@ -29,9 +29,9 @@ the points of the curve `W.map f` over `S`, with no fields and no tower involved
   homomorphism `f` — in particular a `q`-power Frobenius, which is not an ambient `algebraMap` —
   the transport *is* Mathlib's `Affine.Point.map` once `K` carries the `F`-algebra structure `f`
   induces.
-* `TauCeti.WeierstrassCurve.Affine.Point.mapRingHom_add` and `mapRingHom_zsmul`: compatibility
-  with the group law and with `ℤ`-multiples, each a one-line consequence of that bridge and
-  Mathlib's `AddMonoidHom` structure, not a second case analysis.
+* `TauCeti.WeierstrassCurve.Affine.Point.mapRingHomAddMonoidHom`: the transport bundled as an
+  `AddMonoidHom` over a field — defined *as* Mathlib's `Affine.Point.map`, so `map_add`,
+  `map_zero` and `map_zsmul` for it are Mathlib's own and are not restated.
 
 What Mathlib lacks, and what this file adds, is the transport over arbitrary commutative rings,
 where `W.Point` has no group law to speak of.
@@ -53,9 +53,9 @@ Ported from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apa
 that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/EC/AffinePointMap.lean`,
 declarations `map`, `map_zero`, `map_some` and `map_neg`.
 
-The source's `map_add`, `mapAddMonoidHom` and `map_zsmul` are deliberately **not** ported. Over a
-field they are Mathlib's `Affine.Point.map` under `f.toAlgebra`, and `mapRingHom_eq_map` below is
-the bridge to it; restating them here would duplicate Mathlib's own case analysis.
+The source's `map_add` and `map_zsmul` are **not** ported as lemmas: over a field they are
+Mathlib's, reached through `mapRingHom_eq_map`. Its `mapAddMonoidHom` is ported, but defined as
+Mathlib's `Affine.Point.map` under `f.toAlgebra` rather than by rebuilding the additivity proof.
 
 Changes from the source. The names take a `RingHom` suffix, Mathlib having since taken
 `Point.map` for the `AlgHom` version. The computation rules are stated in simp-normal form, and
@@ -141,21 +141,18 @@ lemma mapRingHom_eq_map (P : W.toAffine.Point) :
   let : Algebra F K := f.toAlgebra
   rcases P with _ | ⟨x, y, h⟩ <;> rfl
 
-/-- **The transport is additive over a field**, inherited from Mathlib's `Affine.Point.map` rather
-than reproved. -/
-lemma mapRingHom_add (P Q : W.toAffine.Point) :
-    mapRingHom f f.injective (P + Q)
-      = mapRingHom f f.injective P + mapRingHom f f.injective Q := by
-  let : Algebra F K := f.toAlgebra
-  simp only [mapRingHom_eq_map]
-  exact (Affine.Point.map (W' := W) (Algebra.ofId F K)).map_add P Q
+/-- **The transport bundled as an `AddMonoidHom`**, over a field. It *is* Mathlib's
+`Affine.Point.map` for the algebra structure `f` induces, so additivity, `map_zero` and
+`map_zsmul` are Mathlib's and are not restated here. -/
+noncomputable def mapRingHomAddMonoidHom :
+    W.toAffine.Point →+ (W.map f).toAffine.Point :=
+  letI : Algebra F K := f.toAlgebra
+  Affine.Point.map (W' := W) (Algebra.ofId F K)
 
-/-- **The transport respects `ℤ`-multiples**, inherited from Mathlib's `Affine.Point.map`. -/
-lemma mapRingHom_zsmul (n : ℤ) (P : W.toAffine.Point) :
-    mapRingHom f f.injective (n • P) = n • mapRingHom f f.injective P := by
-  let : Algebra F K := f.toAlgebra
-  simp only [mapRingHom_eq_map]
-  exact (Affine.Point.map (W' := W) (Algebra.ofId F K)).map_zsmul n P
+@[simp]
+lemma mapRingHomAddMonoidHom_apply (P : W.toAffine.Point) :
+    mapRingHomAddMonoidHom f P = mapRingHom f f.injective P :=
+  (mapRingHom_eq_map f P).symm
 
 end Field
 
