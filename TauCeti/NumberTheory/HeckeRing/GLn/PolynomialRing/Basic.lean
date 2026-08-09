@@ -160,8 +160,7 @@ open HeckeRing.GLn HeckeRing.GL2
 /-- `heckeGen 2 p 0 = heckeTDiag 1 p`: the first generator is `T(1,p)`. -/
 lemma heckeGen_zero_eq_heckeTDiag (p : ℕ) (hp : p.Prime) :
     heckeGen 2 p (0 : Fin 2) = heckeTDiag 1 p := by
-  -- unfold `heckeGen` to the diagonal element it is defined as
-  change diagElem (heckeGenDiag 2 p 0) = _
+  rw [heckeGen_def]
   have h : heckeGenDiag 2 p (0 : Fin 2) = ![1, p] := by
     funext i; simp only [heckeGenDiag_apply]; fin_cases i <;> simp
   rw [h, heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _)]
@@ -169,8 +168,7 @@ lemma heckeGen_zero_eq_heckeTDiag (p : ℕ) (hp : p.Prime) :
 /-- `heckeGen 2 p 1 = heckeTScalar p`: the second generator is the diamond operator. -/
 lemma heckeGen_one_eq_heckeTScalar (p : ℕ) (hp : p.Prime) :
     heckeGen 2 p (1 : Fin 2) = heckeTScalar p := by
-  -- unfold `heckeGen` to the diagonal element it is defined as
-  change diagElem (heckeGenDiag 2 p 1) = _
+  rw [heckeGen_def]
   have h : heckeGenDiag 2 p (1 : Fin 2) = ![p, p] := by
     funext i; simp only [heckeGenDiag_apply]; fin_cases i <;> simp
   rw [h, heckeTScalar_of_pos hp.pos]
