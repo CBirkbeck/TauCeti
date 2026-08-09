@@ -145,11 +145,13 @@ theorem norm_tangentDeviation_le {L : ℂ} (hL : L ≠ 0) (w : ℂ) :
     _ = ‖w‖ := by rw [norm_mul, RCLike.norm_conj, mul_div_assoc,
         div_self (norm_ne_zero_iff.mpr hL), mul_one]
 
-/-- **The deviation norm is at most the distance to any point of the line.** For `L ≠ 0`, the
-perpendicular component of `w` is bounded by `‖w - r • L‖` for every real `r`; the case `r = 0` is
-`norm_tangentDeviation_le`. -/
-theorem norm_tangentDeviation_le_norm_sub_smul {L : ℂ} (hL : L ≠ 0) (w : ℂ) (r : ℝ) :
+/-- **The deviation norm is at most the distance to any point of the line.** The perpendicular
+component of `w` is bounded by `‖w - r • L‖` for every real `r`. At `L = 0` both sides are `‖w‖`,
+and at `r = 0` this is `norm_tangentDeviation_le`. -/
+theorem norm_tangentDeviation_le_norm_sub_smul (w L : ℂ) (r : ℝ) :
     ‖tangentDeviation w L‖ ≤ ‖w - r • L‖ := by
+  rcases eq_or_ne L 0 with rfl | hL
+  · simp [tangentDeviation, orthogonalProjectionComplex]
   have hLL : tangentDeviation L L = 0 := by
     have h : ‖tangentDeviation L L‖ = 0 := by
       rw [norm_tangentDeviation hL, Complex.mul_conj]

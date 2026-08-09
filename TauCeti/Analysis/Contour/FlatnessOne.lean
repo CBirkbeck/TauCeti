@@ -57,7 +57,7 @@ private theorem perp_isLittleO_of_hasDerivWithinAt {s : Set ℝ} {t₀ : ℝ} {L
   have hperp_le : ∀ t, |((γ t - γ t₀) * star L).im| / ‖L‖ ≤ ‖γ t - γ t₀ - (t - t₀) • L‖ := by
     intro t
     rw [Complex.star_def, ← norm_tangentDeviation hL]
-    exact norm_tangentDeviation_le_norm_sub_smul hL _ _
+    exact norm_tangentDeviation_le_norm_sub_smul _ _ _
   -- perp =o (t - t₀)
   have h1 : (fun t => |((γ t - γ t₀) * star L).im| / ‖L‖) =o[l] (fun t => t - t₀) :=
     (isBigO_of_le l fun t => by
