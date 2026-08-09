@@ -1,0 +1,86 @@
+/-
+Copyright (c) 2024 Chris Birkbeck. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Chris Birkbeck
+-/
+module
+
+public import TauCeti.NumberTheory.HeckeRing.Basic
+
+import Mathlib.Tactic.Group
+
+/-!
+# Moving the base point of a decomposition quotient
+
+`DoubleCoset.DecompQuotient Γ₁ Γ₂ g` is `Γ₁ ⧸ (gΓ₂g⁻¹).subgroupOf Γ₁`, so it depends on `g`
+only through the conjugate `gΓ₂g⁻¹`. This file records how that conjugate — and hence the
+quotient — responds to multiplying `g` on either side by a group element:
+
+* multiplying on the **right** by `h ∈ Γ₂` changes nothing at all, since `(gh)Γ₂(gh)⁻¹ = gΓ₂g⁻¹`
+  (`conjAct_smul_mul_right_of_mem`, `subgroupOf_conjAct_smul_mul_right_of_mem`);
+* multiplying on the **left** by `h ∈ Γ₁` conjugates the stabilizer by `h`
+  (`subgroupOf_conjAct_smul_mul_left_of_mem`).
+
+Ported from the AINTLIB `LeanModularForms` project
+([`LeanModularForms/HeckeRIngs/AbstractHeckeRing/StabConjugation.lean`](https://github.com/CBirkbeck/AINTLIB),
+Chris Birkbeck). The source states these for a bundled `HeckePair` and for `g` in the
+ambient submonoid `Δ`; neither is used by the arguments, which are facts about conjugation
+of subgroups, so they are stated here for arbitrary subgroups and an arbitrary `g : G`.
+
+## Main results
+
+* `DoubleCoset.conjAct_smul_mul_right_of_mem`: `(gh)Γ(gh)⁻¹ = gΓg⁻¹` for `h ∈ Γ`.
+* `DoubleCoset.subgroupOf_conjAct_smul_mul_left_of_mem`: left multiplication by `h ∈ Γ₁`
+  conjugates the stabilizer by `h`.
+-/
+
+public section
+
+open scoped Pointwise
+
+namespace DoubleCoset
+
+variable {G : Type*} [Group G]
+
+/-- Conjugation only sees `g` modulo `Γ` on the right: `(gh)Γ(gh)⁻¹ = gΓg⁻¹` for `h ∈ Γ`,
+because `h` normalizes `Γ`. -/
+lemma conjAct_smul_mul_right_of_mem (Γ : Subgroup G) (g : G) {h : G} (hh : h ∈ Γ) :
+    ConjAct.toConjAct (g * h) • Γ = ConjAct.toConjAct g • Γ := by
+  rw [map_mul, ← smul_smul,
+    Subgroup.conjAct_pointwise_smul_eq_self (Subgroup.le_normalizer hh)]
+
+/-- The stabilizer cut out inside `Γ₁` is unchanged by right multiplication of the base point
+by an element of `Γ₂`. -/
+lemma subgroupOf_conjAct_smul_mul_right_of_mem (Γ₁ Γ₂ : Subgroup G) (g : G) {h : G}
+    (hh : h ∈ Γ₂) :
+    (ConjAct.toConjAct (g * h) • Γ₂).subgroupOf Γ₁ =
+      (ConjAct.toConjAct g • Γ₂).subgroupOf Γ₁ := by
+  rw [conjAct_smul_mul_right_of_mem Γ₂ g hh]
+
+/-- Left multiplication of the base point by `h ∈ Γ₁` conjugates the stabilizer by `h`:
+`x` stabilizes `hg` exactly when `h⁻¹xh` stabilizes `g`. -/
+lemma subgroupOf_conjAct_smul_mul_left_of_mem (Γ₁ Γ₂ : Subgroup G) (g : G) (h : Γ₁) :
+    (ConjAct.toConjAct ((h : G) * g) • Γ₂).subgroupOf Γ₁ =
+      ((ConjAct.toConjAct g • Γ₂).subgroupOf Γ₁).map (MulAut.conj h).toMonoidHom := by
+  ext x
+  simp only [Subgroup.mem_subgroupOf, Subgroup.mem_pointwise_smul_iff_inv_smul_mem,
+    ConjAct.smul_def, map_inv, ConjAct.ofConjAct_toConjAct, inv_inv, Subgroup.mem_map,
+    MulEquiv.coe_toMonoidHom, MulAut.conj_apply]
+  constructor
+  · intro hx
+    refine ⟨⟨(h : G)⁻¹ * (x : G) * (h : G),
+      Γ₁.mul_mem (Γ₁.mul_mem (Γ₁.inv_mem h.2) x.2) h.2⟩, ?_, ?_⟩
+    · change (g : G)⁻¹ * ((h : G)⁻¹ * (x : G) * (h : G)) * g ∈ Γ₂
+      rw [show (g : G)⁻¹ * ((h : G)⁻¹ * (x : G) * (h : G)) * g =
+        ((h : G) * g)⁻¹ * (x : G) * ((h : G) * g) by group]
+      exact hx
+    · apply Subtype.ext
+      simp only [Subgroup.coe_mul, Subgroup.coe_inv]
+      group
+  · rintro ⟨y, hy, rfl⟩
+    change ((h : G) * g)⁻¹ * ((h : G) * (y : G) * (h : G)⁻¹) * ((h : G) * g) ∈ Γ₂
+    rw [show ((h : G) * g)⁻¹ * ((h : G) * (y : G) * (h : G)⁻¹) * ((h : G) * g) =
+      g⁻¹ * (y : G) * g by group]
+    exact hy
+
+end DoubleCoset
