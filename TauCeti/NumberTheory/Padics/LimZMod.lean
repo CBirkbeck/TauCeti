@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.NumberTheory.Padics.RingHoms
-public import Mathlib.Algebra.Ring.Pi
+import Mathlib.Algebra.Ring.Pi
 
 /-!
 # The `p`-adic integers as the projective limit of the `ZMod` tower
