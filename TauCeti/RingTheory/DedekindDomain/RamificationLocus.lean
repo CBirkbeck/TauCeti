@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.DedekindDomain.Factorization
+public import Mathlib.FieldTheory.SeparableDegree
+public import Mathlib.RingTheory.DedekindDomain.Basic
 public import Mathlib.RingTheory.Unramified.Locus
 import Mathlib.RingTheory.DedekindDomain.Different
+import Mathlib.RingTheory.DedekindDomain.Factorization
 
 /-!
 # A separable extension of Dedekind domains ramifies at only finitely many primes
