@@ -47,7 +47,7 @@ counterexample in `IsWeightFamily`'s docstring shows the hypothesis is not autom
 
 * `TauCeti.Huber.IsWeightedRestricted.mul`: `A⟨X⟩_T` is closed under multiplication, the point
   Wedhorn flags as not entirely clear; with the additive closure lemmas this gives the subring.
-* `TauCeti.Huber.weightedNhd_ringSubgroupsBasis`: the `U⟨X⟩` are a fundamental system of
+* `TauCeti.Huber.weightedNhd_subgroups_basis`: the `U⟨X⟩` are a fundamental system of
   neighbourhoods of zero for a ring topology, with its contract
   (`weightedTopology_hasBasis_nhds_zero`, `isTopologicalRing_weightedTopology`,
   `nonarchimedeanRing_weightedTopology`, `continuous_weightedC`).
@@ -81,11 +81,10 @@ This construction is not the same as retopologising the ordinary `A⟨X⟩` by t
 substitution `X ↦ f X`: there the weight multiplies the coefficient rather than the
 neighbourhood, and the carrier does not vary with `T`. Here the carrier itself depends on `T`.
 
-The two absorption facts the multiplicative arguments run on — a zero-neighbourhood subgroup
-absorbs a fixed element, and finitely many fixed elements are absorbed by a single open
-subgroup — mention no weight, so they live in
-`TauCeti/Topology/Algebra/Nonarchimedean/Absorption.lean` next to Mathlib's
-`NonarchimedeanRing.left_mul_subset`.
+The finite-family absorption fact the multiplicative arguments run on — finitely many fixed
+elements are absorbed into their own targets by a single open subgroup — mentions no weight, so
+it lives in `TauCeti/Topology/Algebra/Nonarchimedean/Absorption.lean`, built on Mathlib's
+single-element `NonarchimedeanRing.left_mul_subset`.
 
 Closure of `A⟨X⟩_T` under multiplication is the one non-obvious point of the construction —
 Wedhorn writes "note that it is not entirely clear that `A⟨X⟩_T` is multiplicatively closed" — and
@@ -463,8 +462,9 @@ theorem IsWeightedRestricted.add {T : Fin k → Set A} {f g : MvPowerSeries (Fin
 /-- **`A⟨X⟩_T` is closed under multiplication** (Wedhorn 5.48, the point he flags as "not
 entirely clear").
 
-This is the one place the standing hypothesis `TauCeti.Huber.IsWeightFamily` is needed, and the
-docstring of that definition records what goes wrong without it. -/
+This is the substantive use of the standing hypothesis `TauCeti.Huber.IsWeightFamily` — the
+neighbourhood half, `TauCeti.Huber.exists_weightedNhd_mul_mem`, uses it too — and the docstring
+of that definition records what goes wrong without it. -/
 theorem IsWeightedRestricted.mul [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) {f g : MvPowerSeries (Fin k) A}
     (hf : IsWeightedRestricted T f) (hg : IsWeightedRestricted T g) :
@@ -681,7 +681,7 @@ theorem exists_weightedNhd_mul_mem [NonarchimedeanRing A] {T : Fin k → Set A}
 /-- **The neighbourhood basis of `A⟨X⟩_T`**: the subgroups `U⟨X⟩`, as `U` ranges over the open
 subgroups of `A`, are a `RingSubgroupsBasis`. This is Wedhorn's assertion that they form a
 fundamental system of neighbourhoods of zero for a ring topology. -/
-theorem weightedNhd_ringSubgroupsBasis [NonarchimedeanRing A] {T : Fin k → Set A}
+theorem weightedNhd_subgroups_basis [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) :
     RingSubgroupsBasis fun U : OpenAddSubgroup A ↦ weightedNhd T hT U.toAddSubgroup :=
   .of_comm _
@@ -706,27 +706,27 @@ opens the body to instance synthesis only, not to general definitional unfolding
 @[instance_reducible]
 noncomputable def weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) : TopologicalSpace (weightedRestrictedSubring T hT) :=
-  (weightedNhd_ringSubgroupsBasis hT).topology
+  (weightedNhd_subgroups_basis hT).topology
 
 /-- The `U⟨X⟩` are a basis of neighbourhoods of zero for `weightedTopology`. -/
 theorem weightedTopology_hasBasis_nhds_zero [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) :
     (@nhds _ (weightedTopology hT) 0).HasBasis (fun _ : OpenAddSubgroup A ↦ True)
       fun U ↦ (weightedNhd T hT U.toAddSubgroup : Set (weightedRestrictedSubring T hT)) :=
-  (weightedNhd_ringSubgroupsBasis hT).hasBasis_nhds_zero
+  (weightedNhd_subgroups_basis hT).hasBasis_nhds_zero
 
 /-- `weightedTopology` is a ring topology. -/
 theorem isTopologicalRing_weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) :
     @IsTopologicalRing _ (weightedTopology hT) _ :=
-  (weightedNhd_ringSubgroupsBasis hT).toRingFilterBasis.isTopologicalRing
+  (weightedNhd_subgroups_basis hT).toRingFilterBasis.isTopologicalRing
 
 /-- `weightedTopology` is nonarchimedean: `A⟨X⟩_T` inherits a basis of open additive subgroups at
 zero, as every ring built from a `RingSubgroupsBasis` does. -/
 theorem nonarchimedeanRing_weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) :
     @NonarchimedeanRing _ _ (weightedTopology hT) :=
-  (weightedNhd_ringSubgroupsBasis hT).nonarchimedean
+  (weightedNhd_subgroups_basis hT).nonarchimedean
 
 /-- The constant-series embedding `A → A⟨X⟩_T` is continuous.
 

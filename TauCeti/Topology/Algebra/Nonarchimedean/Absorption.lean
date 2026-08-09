@@ -11,8 +11,9 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 
 In a nonarchimedean ring multiplication by a fixed element `a` is continuous, so every
 neighbourhood `V` of zero absorbs `a`: some open additive subgroup `Z` satisfies `a * Z ⊆ V`.
-That is Mathlib's `NonarchimedeanRing.left_mul_subset`. What an estimate over a finite set of
-coefficients needs is its finite-family form, proved here by induction.
+That single-element fact is Mathlib's `NonarchimedeanRing.left_mul_subset`. This file adds the
+one thing Mathlib does not have: the finite-family form, that one open subgroup absorbs each of
+finitely many fixed elements into its own target.
 
 It mentions no weight family, power series or Huber ring, so it is stated here rather than
 alongside the theory that uses it.
