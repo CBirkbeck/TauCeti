@@ -531,7 +531,7 @@ private lemma truncated_integral_spec (hH : 1 < H) (hε : 0 < ε) (hε₁ : ε <
         then (fdBoundary H t - Complex.I)⁻¹ * deriv (fdBoundary H) t else 0) =
       -(Real.pi : ℂ) * Complex.I - ((2 * Real.arcsin (ε / 2) : ℝ) : ℂ) * Complex.I := by
   obtain ⟨hδ_pos, hδ_lt, h2sin⟩ := excisionHalfWidth_spec hε hε₃
-  set δ := excisionHalfWidth ε with hδ_def
+  set δ := fdBoundaryArcExcisionHalfWidth ε with hδ_def
   obtain ⟨hi_left, hi_right, hval⟩ := ftc_logDeriv_telescope_I H hH hδ_pos hδ_lt
   have hconv : ∀ s : ℝ, (fdBoundary H s - Complex.I)⁻¹ * deriv (fdBoundary H) s =
       deriv (fun r ↦ fdBoundary H r - Complex.I) s / (fdBoundary H s - Complex.I) :=
