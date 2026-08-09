@@ -8,7 +8,6 @@ module
 public import TauCeti.NumberTheory.HeckeRing.Degree
 public import TauCeti.NumberTheory.HeckeRing.GL2.Basic
 public import TauCeti.NumberTheory.HeckeRing.GL2.DiagonalCosetDegree
-public import TauCeti.NumberTheory.HeckeRing.GLn.Degree
 public import Mathlib.NumberTheory.ArithmeticFunction.Misc
 
 /-!
@@ -131,6 +130,9 @@ theorem deg_heckeT_prime_pow (hp : p.Prime) (k : ℕ) :
   | more k ih _ => exact deg_heckeT_prime_pow_step p hp k ih
 
 /-- **The degree of `T(m)`** (Shimura, Theorem 3.24(7)): `deg T(m) = σ₁(m)`. -/
+-- `@[simp]` on the unconditional formula only: `deg_heckeT_prime_pow` is the instance
+-- `m = ⟨p ^ k, _⟩` of this one, so annotating both would leave the specialized form unreachable.
+@[simp]
 theorem deg_heckeT (m : ℕ+) :
     deg (posDetInt 2) (SLnZ 2) ℤ (heckeT m) = (σ 1) (m : ℕ) := by
   obtain ⟨n, hn⟩ := m

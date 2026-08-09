@@ -5,9 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.Degree
-public import TauCeti.NumberTheory.HeckeRing.GL2.Basic
-public import TauCeti.NumberTheory.HeckeRing.GL2.DiagonalCosetDegree
 public import TauCeti.NumberTheory.HeckeRing.GL2.Degree
 
 /-!
@@ -44,23 +41,31 @@ namespace HeckeRing.GL2
 
 variable (p : ℕ) (hp : p.Prime)
 
+/-- Scaling a diagonal Hecke element: `T(c,c) · T(a,d) = T(c·a, c·d)` whenever `a ∣ d` and all
+three are positive.
+
+Primality plays no role, and neither does the shape of `a` and `d`: the argument is the
+scalar-multiplication rule for diagonal Hecke elements, which never inspects a factorization. -/
+lemma heckeTScalar_mul_heckeTDiag {c a d : ℕ} (hc : 0 < c) (ha : 0 < a) (hd : 0 < d)
+    (had : a ∣ d) :
+    heckeTScalar c * heckeTDiag a d = heckeTDiag (c * a) (c * d) := by
+  rw [heckeTDiag_eq_diagElem ha hd had,
+    heckeTDiag_eq_diagElem (Nat.mul_pos hc ha) (Nat.mul_pos hc hd) (mul_dvd_mul_left c had),
+    HeckeCosetModule.mul_comm_of_antiInvolution ℤ (transposeAntiInvolution 2)
+      (transposeAntiInvolution_onHeckeCoset_eq_self 2),
+    heckeTScalar_of_pos hc,
+    diagElem_mul_const 2 ![a, d] (fun i ↦ by fin_cases i <;> assumption) c hc]
+  exact congrArg diagElem (funext fun i ↦ by fin_cases i <;> simp [Pi.mul_apply, Nat.mul_comm])
+
 /-- The index shift: `T(p,p) · T(pʲ, p^d) = T(p^(j+1), p^(d+1))` for `j ≤ d`.
 
-Needs only `0 < p`, not primality: the argument is the scalar-multiplication rule for diagonal
-Hecke elements, which never inspects the factorization of `p`. -/
+The prime-power case of `heckeTScalar_mul_heckeTDiag`; it needs only `0 < p`, not primality. -/
 @[simp]
 lemma heckeTScalar_mul_heckeTDiag_prime_pow (hp0 : 0 < p) (j d : ℕ) (hjd : j ≤ d) :
     heckeTScalar p * heckeTDiag (p ^ j) (p ^ d) =
       heckeTDiag (p ^ (j + 1)) (p ^ (d + 1)) := by
-  rw [heckeTDiag_eq_diagElem (pow_pos hp0 j) (pow_pos hp0 d) (Nat.pow_dvd_pow p hjd),
-    heckeTDiag_eq_diagElem (pow_pos hp0 (j + 1)) (pow_pos hp0 (d + 1))
-      (Nat.pow_dvd_pow p (by omega)),
-    HeckeCosetModule.mul_comm_of_antiInvolution ℤ (transposeAntiInvolution 2)
-      (transposeAntiInvolution_onHeckeCoset_eq_self 2),
-    heckeTScalar_of_pos hp0,
-    diagElem_mul_const 2 ![p ^ j, p ^ d]
-      (fun i ↦ by fin_cases i <;> exact pow_pos hp0 _) p hp0]
-  exact congrArg diagElem (funext fun i ↦ by fin_cases i <;> simp [Pi.mul_apply, pow_succ])
+  rw [heckeTScalar_mul_heckeTDiag hp0 (pow_pos hp0 j) (pow_pos hp0 d)
+    (Nat.pow_dvd_pow p hjd), ← pow_succ' p j, ← pow_succ' p d]
 
 include hp in
 /-- **Shimura, Theorem 3.24(2)**: `T(1, pᵏ) = T(pᵏ) − T(p,p) · T(p^(k−2))` for `k ≥ 2`:
@@ -257,15 +262,6 @@ end SupportAnalysis
 section DegreeCount
 
 variable {G : Type*} [Group G] {Δ : Submonoid G} {H : Subgroup G} [IsHeckeTriple Δ H H]
-
-/-- The wrapper's scalar multiplication evaluates pointwise, definitionally.
-
-NOT redundant with the public `HeckeCosetModule.smul_apply`, despite the identical statement:
-here the `ℤ`-action on `HeckeCosetModule Δ H H ℤ` arrives through a different instance path
-than the transported `Module R`, so the public lemma is defeq but does not match syntactically
-and `simp` reports it as unused. `(rfl)` bridges the two. -/
-private lemma coe_smul_apply (c : ℤ) (f : HeckeCosetModule Δ H H ℤ) (B : HeckeCoset Δ H H) :
-    (c • f) B = c * f B := (rfl)
 
 private lemma single_one_mul_single_one (D₁ D₂ : HeckeCoset Δ H H) :
     HeckeCosetModule.single ℤ D₁ 1 * HeckeCosetModule.single ℤ D₂ 1 =
@@ -588,8 +584,17 @@ theorem heckeT_prime_mul_heckeTDiag (k : ℕ) :
   simp only [diagElem_def]
   rw [single_one_mul_single_one]
   ext A
-  rw [HeckeCosetModule.structureConstants_apply, HeckeCosetModule.add_apply, coe_smul_apply,
-    HeckeCosetModule.single_apply, HeckeCosetModule.single_apply]
+  rw [HeckeCosetModule.structureConstants_apply, HeckeCosetModule.add_apply]
+  -- The `ℤ`-action here reaches `HeckeCosetModule` by a different instance path than the
+  -- transported `Module R` that `HeckeCosetModule.smul_apply` is stated for, so `rw` and
+  -- `simp only` both fail to match it. Naming the instance in a `have` applies the public
+  -- lemma anyway, which is why no private restatement is needed.
+  have hsmul : ((if k = 1 then (p : ℤ) + 1 else (p : ℤ)) •
+      HeckeCosetModule.single ℤ (diagCoset (![p, p ^ k] : Fin 2 → ℕ)) 1) A
+      = (if k = 1 then (p : ℤ) + 1 else (p : ℤ)) *
+        HeckeCosetModule.single ℤ (diagCoset (![p, p ^ k] : Fin 2 → ℕ)) 1 A :=
+    HeckeCosetModule.smul_apply _ _ _
+  rw [hsmul, HeckeCosetModule.single_apply, HeckeCosetModule.single_apply]
   by_cases h1 : diagCoset (![1, p ^ (k + 1)] : Fin 2 → ℕ) = A
   · have h12 : diagCoset (![p, p ^ k] : Fin 2 → ℕ) ≠ A := fun h ↦ hne (h1.trans h.symm)
     rw [if_pos h1, if_neg h12, mul_zero, add_zero, ← h1, hm1, Nat.cast_one]
