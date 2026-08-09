@@ -11,6 +11,7 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Wind
 
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 import Mathlib.MeasureTheory.Integral.CircleIntegral
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Basic
 import TauCeti.Analysis.Contour.LogDerivFTC
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
 
@@ -337,14 +338,6 @@ private theorem ftc_logDeriv_telescope_rho (H : ℝ) (hH : Real.sqrt 3 / 2 < H) 
 
 variable {H ε δ t : ℝ}
 
-/-- The sine of a sub-half-turn multiple of `π/12` factors through the absolute value. -/
-private lemma abs_sin_mul_pi_div_twelve_rho {u : ℝ} (hu : |u| ≤ 6) :
-    |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
-  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
-      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
-      nlinarith [Real.pi_pos, abs_nonneg u]),
-    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
-
 /-- Far from the corner along the arc, the chord distance strictly exceeds the excision
 chord. -/
 private lemma lt_norm_fdBoundary_sub_rho_arc_of_far (harc : t ∈ Icc (1 : ℝ) 3)
@@ -352,7 +345,7 @@ private lemma lt_norm_fdBoundary_sub_rho_arc_of_far (harc : t ∈ Icc (1 : ℝ) 
     2 * Real.sin (δ * (Real.pi / 12)) < ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ := by
   have habs2 : |t - 3| ≤ 2 := abs_le.mpr ⟨by linarith [harc.1], by linarith [harc.2]⟩
   rw [norm_fdBoundary_sub_rho_arc H harc,
-    abs_sin_mul_pi_div_twelve_rho (habs2.trans (by norm_num))]
+    abs_sin_mul_pi_div_twelve (habs2.trans (by norm_num))]
   have hmono : Real.sin (δ * (Real.pi / 12)) < Real.sin (|t - 3| * (Real.pi / 12)) := by
     refine Real.strictMonoOn_sin ⟨by nlinarith [Real.pi_pos], by nlinarith [Real.pi_pos]⟩
       ⟨by nlinarith [Real.pi_pos, abs_nonneg (t - 3)], by nlinarith [Real.pi_pos]⟩ ?_
@@ -366,7 +359,7 @@ private lemma norm_fdBoundary_sub_rho_arc_le_of_near (harc : t ∈ Icc (1 : ℝ)
   have habs1 : |t - 3| ≤ 1 := hnear.trans hd1.le
   have hd0 : 0 ≤ δ := (abs_nonneg _).trans hnear
   rw [norm_fdBoundary_sub_rho_arc H harc,
-    abs_sin_mul_pi_div_twelve_rho (habs1.trans (by norm_num))]
+    abs_sin_mul_pi_div_twelve (habs1.trans (by norm_num))]
   have hmono : Real.sin (|t - 3| * (Real.pi / 12)) ≤ Real.sin (δ * (Real.pi / 12)) := by
     refine Real.strictMonoOn_sin.monotoneOn
       ⟨by nlinarith [Real.pi_pos, abs_nonneg (t - 3)], by nlinarith [Real.pi_pos]⟩
@@ -458,26 +451,6 @@ private lemma excised_window_rho {δL δR : ℝ} (hH : Real.sqrt 3 / 2 < H) (hδ
   · rw [intervalIntegral.integral_congr hmid]
     simp
 
-/-- The arc-side excision half-width `δ_L(ε) = 12/π · arcsin(ε/2)` is positive, below
-`1`, and turns the chord identity into the exact excision radius `ε`. -/
-private lemma delta_left_spec_rho (hε : 0 < ε) (hε₃ : ε < 2 * Real.sin (Real.pi / 12)) :
-    0 < 12 / Real.pi * Real.arcsin (ε / 2) ∧ 12 / Real.pi * Real.arcsin (ε / 2) < 1 ∧
-      2 * Real.sin (12 / Real.pi * Real.arcsin (ε / 2) * (Real.pi / 12)) = ε := by
-  have hπ := Real.pi_pos
-  have hsin1 : Real.sin (Real.pi / 12) ≤ 1 := Real.sin_le_one _
-  have harc_pos : 0 < Real.arcsin (ε / 2) := Real.arcsin_pos.mpr (by linarith)
-  have harc_lt : Real.arcsin (ε / 2) < Real.pi / 12 := by
-    have h1 : Real.arcsin (ε / 2) < Real.arcsin (Real.sin (Real.pi / 12)) :=
-      Real.arcsin_lt_arcsin (by linarith) (by linarith) hsin1
-    rwa [Real.arcsin_sin (by linarith) (by linarith)] at h1
-  refine ⟨by positivity, ?_, ?_⟩
-  · rw [div_mul_eq_mul_div, div_lt_one hπ]
-    linarith
-  · have hδπ : 12 / Real.pi * Real.arcsin (ε / 2) * (Real.pi / 12) = Real.arcsin (ε / 2) := by
-      field_simp
-    rw [hδπ, Real.sin_arcsin (by linarith) (by linarith)]
-    ring
-
 /-- **The excision collapse at `ρ`**: for small `ε`, the `ε`-excised index integrand of
 the boundary contour about `ρ` is interval integrable, and its integral is exactly
 `-πi/3 - arcsin(ε/2)·i` — the telescope value at the matched asymmetric half-widths. -/
@@ -490,8 +463,8 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
     ∫ t in (0 : ℝ)..5, (if ε < ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖
         then (fdBoundary H t - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) t else 0) =
       -((Real.pi : ℂ) / 3) * Complex.I - ((Real.arcsin (ε / 2) : ℝ) : ℂ) * Complex.I := by
-  obtain ⟨hδL_pos, hδL_lt, h2sin⟩ := delta_left_spec_rho hε hε₃
-  set δL := 12 / Real.pi * Real.arcsin (ε / 2) with hδL_def
+  obtain ⟨hδL_pos, hδL_lt, h2sin⟩ := excisionHalfWidth_spec hε hε₃
+  set δL := excisionHalfWidth ε with hδL_def
   have hHpos : (0 : ℝ) < H - Real.sqrt 3 / 2 := by linarith
   set δR := ε / (H - Real.sqrt 3 / 2) with hδR_def
   have hδR_pos : 0 < δR := by rw [hδR_def]; positivity
@@ -513,7 +486,7 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
   have hi25 := hi_right.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_right)
   refine ⟨(hi02.trans himid).trans hi25, ?_⟩
   have hδ12 : δL * (Real.pi / 12) = Real.arcsin (ε / 2) := by
-    rw [hδL_def]
+    simp only [hδL_def, excisionHalfWidth_def]
     field_simp
   rw [← intervalIntegral.integral_add_adjacent_intervals (hi02.trans himid) hi25,
     ← intervalIntegral.integral_add_adjacent_intervals hi02 himid,

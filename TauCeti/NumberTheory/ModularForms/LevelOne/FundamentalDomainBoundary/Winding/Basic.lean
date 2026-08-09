@@ -308,6 +308,50 @@ lemma fdBoundary_mem_coe_truncatedFundamentalDomain (hH : 1 ≤ H) {t : ℝ}
   nlinarith [Real.sqrt_nonneg 3]
 
 end ModularForm
+/-- **The sine of a multiple of `π/12` factors through the absolute value**, for any
+multiplier up to a half turn. The bound `|u| ≤ 12` is exactly what puts `u · π/12` inside
+`[-π, π]`, where `Real.abs_sin_eq_sin_abs_of_abs_le_pi` applies. -/
+lemma abs_sin_mul_pi_div_twelve {u : ℝ} (hu : |u| ≤ 12) :
+    |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
+  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
+      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
+      nlinarith [Real.pi_pos, abs_nonneg u]),
+    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
+
+/-- **The chord-matched excision half-width.** For an excision radius `ε`, the parameter
+half-width whose chord along the unit-circle arc is exactly `ε`: it is characterised by
+`excisionHalfWidth_spec`, which is what callers use. -/
+@[expose] noncomputable def excisionHalfWidth (ε : ℝ) : ℝ := 12 / Real.pi * Real.arcsin (ε / 2)
+
+/-- The chord-matched excision half-width, unfolded. -/
+@[simp] lemma excisionHalfWidth_def (ε : ℝ) :
+    excisionHalfWidth ε = 12 / Real.pi * Real.arcsin (ε / 2) := rfl
+
+/-- **The chord-matched excision half-width does what it is for.** For an excision radius `ε`
+below the corner chord `2·sin(π/12)`, the half-width lies strictly between `0` and `1` and
+reproduces `ε` as its own chord: `2·sin(δ·π/12) = ε`.
+
+This is the trigonometric content shared by the excision constructions at `i`, at `ρ` and at
+`ρ + 1`; it needs no upper bound on `ε` beyond the chord bound. -/
+lemma excisionHalfWidth_spec {ε : ℝ} (hε : 0 < ε) (hε₃ : ε < 2 * Real.sin (Real.pi / 12)) :
+    0 < excisionHalfWidth ε ∧ excisionHalfWidth ε < 1 ∧
+      2 * Real.sin (excisionHalfWidth ε * (Real.pi / 12)) = ε := by
+  rw [excisionHalfWidth_def]
+  have hπ := Real.pi_pos
+  have hsin1 : Real.sin (Real.pi / 12) ≤ 1 := Real.sin_le_one _
+  have harc_pos : 0 < Real.arcsin (ε / 2) := Real.arcsin_pos.mpr (by linarith)
+  have harc_lt : Real.arcsin (ε / 2) < Real.pi / 12 := by
+    have h1 : Real.arcsin (ε / 2) < Real.arcsin (Real.sin (Real.pi / 12)) :=
+      Real.arcsin_lt_arcsin (by linarith) (by linarith) hsin1
+    rwa [Real.arcsin_sin (by linarith) (by linarith)] at h1
+  refine ⟨by positivity, ?_, ?_⟩
+  · rw [div_mul_eq_mul_div, div_lt_one hπ]
+    linarith
+  · have hδπ : 12 / Real.pi * Real.arcsin (ε / 2) * (Real.pi / 12) = Real.arcsin (ε / 2) := by
+      field_simp
+    rw [hδπ, Real.sin_arcsin (by linarith) (by linarith)]
+    ring
+
 
 end TauCeti
 
