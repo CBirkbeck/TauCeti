@@ -47,10 +47,10 @@ converge because `Â` is complete, and their sums exhibit the element as a combi
 * [Wedhorn, *Adic Spaces*][wedhorn_adic], Remark 6.8.
 * [The Stacks Project][stacks], Lemma 10.96.3 (tag
   [05GG](https://stacks.math.columbia.edu/tag/05GG)), the successive-approximation argument
-  behind `TauCeti.Huber.completionIdealImageIdeal_le`.
+  behind the private `completionIdealImageIdeal_le` below.
 * Mathlib's `Mathlib/Topology/Algebra/Nonarchimedean/Completion.lean`, whose
   `Completion.isDenseInducing_coe` neighbourhood pattern is what
-  `TauCeti.Topology.isOpen_closure_image_coe` adapts, and which
+  `UniformSpace.Completion.isOpen_closure_image_coe` adapts, and which
   `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_completion` then builds on.
 -/
 
@@ -111,7 +111,7 @@ theorem mem_completionRingOfDefinition_iff (P : PairOfDefinition A) {x : Complet
 /-- The ring of definition of the completion is open. -/
 theorem isOpen_completionRingOfDefinition (P : PairOfDefinition A) :
     IsOpen (P.completionRingOfDefinition : Set (Completion A)) :=
-  TauCeti.Topology.isOpen_closure_image_coe (G := P.ringOfDefinition.toAddSubgroup)
+  UniformSpace.Completion.isOpen_closure_image_coe (G := P.ringOfDefinition.toAddSubgroup)
     P.isOpen_ringOfDefinition
 
 /-- The closure in `Â` of the image of `Iⁿ`, as an additive subgroup. These closures are the
@@ -130,7 +130,7 @@ theorem coe_completionIdealImage (P : PairOfDefinition A) (n : ℕ) :
 /-- The closure of the image of `Iⁿ` is open in `Â`. -/
 theorem isOpen_completionIdealImage (P : PairOfDefinition A) (n : ℕ) :
     IsOpen (P.completionIdealImage n : Set (Completion A)) :=
-  TauCeti.Topology.isOpen_closure_image_coe (P.isOpen_idealImage n)
+  UniformSpace.Completion.isOpen_closure_image_coe (P.isOpen_idealImage n)
 
 /-- The image of `Iⁿ` lies in its closure. -/
 theorem coe_mem_completionIdealImage (P : PairOfDefinition A) {n : ℕ} {a : A}
@@ -226,6 +226,23 @@ noncomputable def completionIdeal (P : PairOfDefinition A) :
     Ideal P.completionRingOfDefinition :=
   P.idealOfDefinition.map P.toCompletionRingOfDefinition
 
+/-- Unfolding lemma for `TauCeti.Huber.PairOfDefinition.completionIdeal`. -/
+theorem completionIdeal_def (P : PairOfDefinition A) :
+    P.completionIdeal = P.idealOfDefinition.map P.toCompletionRingOfDefinition := (rfl)
+
+/-- Membership in `Î` is membership in the ideal spanned by the image of `I`. -/
+@[simp]
+theorem mem_completionIdeal_iff (P : PairOfDefinition A)
+    {x : P.completionRingOfDefinition} : x ∈ P.completionIdeal ↔ x ∈ Ideal.span
+      (P.toCompletionRingOfDefinition '' (P.idealOfDefinition : Set P.ringOfDefinition)) :=
+  (Iff.rfl)
+
+/-- The image of an element of `I` lies in `Î`. -/
+theorem toCompletionRingOfDefinition_mem_completionIdeal (P : PairOfDefinition A)
+    {x : P.ringOfDefinition} (hx : x ∈ P.idealOfDefinition) :
+    P.toCompletionRingOfDefinition x ∈ P.completionIdeal :=
+  Ideal.mem_map_of_mem _ hx
+
 /-- The ideal of definition of the completion is finitely generated. -/
 theorem fg_completionIdeal (P : PairOfDefinition A) : P.completionIdeal.FG :=
   P.fg_idealOfDefinition.map _
@@ -243,16 +260,13 @@ private theorem coe_sum_mul (P : PairOfDefinition A) (G : Finset P.ringOfDefinit
     (c : P.ringOfDefinition → P.ringOfDefinition) :
     ∑ z ∈ G, ((z : A) : Completion A) * ((c z : A) : Completion A)
       = (((∑ z ∈ G, z * c z : P.ringOfDefinition) : A) : Completion A) := by
-  classical
-  -- The term carries two coercions, `A₀ → A → Â`, so this is not a single `map_sum`; and
-  -- `UniformSpace.Completion`'s additive coercion lemmas are not simp-normal, so `simp`,
-  -- `push_cast` and `ring` all leave the `↑(x + y) = ↑x + ↑y` steps open. Hence the explicit
-  -- chain.
-  induction G using Finset.induction with
-  | empty => simp [Completion.coe_zero]
-  | insert z G' hz ih =>
-      rw [Finset.sum_insert hz, Finset.sum_insert hz, ih, Subring.coe_add, Completion.coe_add,
-        Subring.coe_mul, Completion.coe_mul]
+  calc ∑ z ∈ G, ((z : A) : Completion A) * ((c z : A) : Completion A)
+      = ∑ z ∈ G, (((z * c z : P.ringOfDefinition) : A) : Completion A) :=
+        Finset.sum_congr rfl fun z _ ↦ by rw [Subring.coe_mul, Completion.coe_mul]
+    _ = ((∑ z ∈ G, ((z * c z : P.ringOfDefinition) : A) : A) : Completion A) :=
+        (map_sum (Completion.coeRingHom : A →+* Completion A) _ G).symm
+    _ = (((∑ z ∈ G, z * c z : P.ringOfDefinition) : A) : Completion A) := by
+        rw [AddSubmonoidClass.coe_finsetSum]
 
 /-- One step of the successive approximation behind Wedhorn Remark 6.8: an element of the closure
 of the image of `Iⁿ⁺ᵏ` agrees, modulo the closure of the image of `Iⁿ⁺ᵏ⁺¹`, with a combination of

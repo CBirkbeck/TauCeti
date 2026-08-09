@@ -16,13 +16,14 @@ the closure of the image of an open additive subgroup is open, and the kernel of
 map is the closure of the zero ideal.
 
 They are stated here rather than alongside the Huber-ring theory that uses them, since neither
-mentions a pair of definition or an adic topology.
+mentions a pair of definition or an adic topology, and they live in the `UniformSpace.Completion`
+namespace of the construction they describe rather than in a `TauCeti` one.
 
 ## Main results
 
-* `TauCeti.Topology.isOpen_closure_image_coe`: the closure in `Â` of the image of an open additive
-  subgroup of `A` is open.
-* `TauCeti.Topology.ker_coeRingHom`: the kernel of `A → Â` is the closure of `⊥`.
+* `UniformSpace.Completion.isOpen_closure_image_coe`: the closure in `Â` of the image of an open
+  additive subgroup of `A` is open.
+* `UniformSpace.Completion.ker_coeRingHom`: the kernel of `A → Â` is the closure of `⊥`.
 
 ## References
 
@@ -37,7 +38,7 @@ public section
 
 open UniformSpace
 
-namespace TauCeti.Topology
+namespace UniformSpace.Completion
 
 section AddGroup
 
@@ -71,4 +72,4 @@ theorem ker_coeRingHom :
 
 end Ker
 
-end TauCeti.Topology
+end UniformSpace.Completion
