@@ -7,6 +7,7 @@ module
 public import Mathlib.RingTheory.Norm.Transitivity
 public import Mathlib.RingTheory.Trace.Basic
 public import TauCeti.FieldTheory.Galois.Basic
+public import TauCeti.LinearAlgebra.Matrix.CharpolyFinTwo
 
 /-!
 # Trace and norm in a separable quadratic extension
@@ -59,9 +60,10 @@ theorem trace_algebraMap_add_algebraMap_mul (a b : K) (θ : L) :
   ring
 
 /-- The norm of `b + aθ` in a quadratic extension is `b² + ab·tr(θ) + a²·N(θ)`. Separability is
-not needed: in any `K`-basis of `L`, multiplication by `b + aθ` has matrix `b • 1 + a • M` where
-`M` is the matrix of multiplication by `θ`, and for a `2 × 2` matrix
-`det (b • 1 + a • M) = b² + ab · tr M + a² · det M`. -/
+not needed: in any `K`-basis of `L`, multiplication by `b + aθ` has matrix `a • M - (-b) • 1`
+where `M` is the matrix of multiplication by `θ`, and
+`TauCeti.Matrix.det_smul_sub_smul_one_fin_two` evaluates that pencil determinant as
+`det M · a² + tr M · ab + b²`. -/
 @[simp]
 theorem norm_algebraMap_add_algebraMap_mul (a b : K) (θ : L) :
     Algebra.norm K (algebraMap K L b + algebraMap K L a * θ)
@@ -70,13 +72,12 @@ theorem norm_algebraMap_add_algebraMap_mul (a b : K) (θ : L) :
   let bs : Module.Basis (Fin 2) K L :=
     Module.finBasisOfFinrankEq K L (finrank_eq_two K L)
   have key : Algebra.leftMulMatrix bs (algebraMap K L b + algebraMap K L a * θ)
-      = b • (1 : Matrix (Fin 2) (Fin 2) K) + a • Algebra.leftMulMatrix bs θ := by
-    rw [map_add, map_mul, AlgHom.commutes, AlgHom.commutes, Algebra.algebraMap_eq_smul_one,
-      Algebra.smul_def]
+      = a • Algebra.leftMulMatrix bs θ - (-b) • (1 : Matrix (Fin 2) (Fin 2) K) := by
+    rw [neg_smul, sub_neg_eq_add, add_comm, map_add, map_mul, AlgHom.commutes, AlgHom.commutes,
+      Algebra.algebraMap_eq_smul_one, Algebra.smul_def]
     simp [Algebra.smul_def]
   rw [Algebra.norm_eq_matrix_det bs, Algebra.trace_eq_matrix_trace bs,
-    Algebra.norm_eq_matrix_det bs, key]
-  simp [Matrix.det_fin_two, Matrix.trace_fin_two]
+    Algebra.norm_eq_matrix_det bs, key, TauCeti.Matrix.det_smul_sub_smul_one_fin_two]
   ring
 
 variable [Algebra.IsSeparable K L]
