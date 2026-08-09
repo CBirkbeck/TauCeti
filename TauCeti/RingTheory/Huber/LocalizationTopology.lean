@@ -185,11 +185,16 @@ theorem locNhd_antitone (P : PairOfDefinition A) (T : Finset A) (s : A) :
     Antitone (locNhd P T s) :=
   fun _ _ h ↦ AddSubgroup.map_mono (Submodule.toAddSubgroup_mono (Ideal.pow_le_pow_right h))
 
-/-- The preimage of `locNhd n` under the subtype embedding equals `locIdeal^n`. -/
+/-- The preimage of `locNhd n` under the subtype embedding equals `locIdeal^n`.
+
+The embedding is spelled `Subtype.val` rather than `(locSubring P T s).subtype`, which is the
+simp-normal form: `Subring.coe_subtype` rewrites the latter to the former, so stating it the
+other way round would leave this `@[simp]` lemma's left-hand side unable to fire. -/
 @[simp]
 theorem locNhd_preimage_eq_locIdeal_pow (P : PairOfDefinition A) (T : Finset A)
     (s : A) (n : ℕ) :
-    (locSubring P T s).subtype ⁻¹' (locNhd P T s n : Set (Localization.Away s)) =
+    (Subtype.val : locSubring P T s → Localization.Away s) ⁻¹'
+        (locNhd P T s n : Set (Localization.Away s)) =
       ((locIdeal P T s) ^ n : Ideal (locSubring P T s)) := by
   exact Set.preimage_image_eq _ Subtype.val_injective
 
