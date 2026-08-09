@@ -112,22 +112,18 @@ theorem _root_.SlashInvariantForm.slash_action_eqn_of_det_pos {F : Type*} [FunLi
     {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [SlashInvariantFormClass F Γ k] (f : F) {γ}
     (hγ : γ ∈ Γ) (hdet : 0 < γ.val.det) (τ : ℍ) :
     f (γ • τ) = ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (1 - k) * denom γ (τ : ℂ) ^ k * f τ := by
-  have h := congr_fun (SlashInvariantForm.slash_action_eqn f γ hγ) τ
-  rw [ModularForm.slash_def] at h
-  have hdet' : (0 : ℝ) < ↑(Matrix.GeneralLinearGroup.det γ) := by
-    rwa [Matrix.GeneralLinearGroup.val_det_apply]
-  have hσ : σ γ = ContinuousAlgEquiv.refl ℝ ℂ := by rw [σ, if_pos hdet']
-  rw [hσ] at h
-  have hden : denom γ (τ : ℂ) ≠ 0 := denom_ne_zero γ τ
   have hdet_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ≠ 0 := by
     exact_mod_cast (abs_pos.mpr (γ.det : ℝˣ).ne_zero).ne'
-  have h2 : f (γ • τ) =
-      f τ * (((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1))⁻¹ * (denom γ (τ : ℂ) ^ (-k))⁻¹ := by
-    rw [← h]
-    field_simp
-    rfl
-  have hexp : -(k - 1) = 1 - k := by ring
-  rw [h2, ← zpow_neg, ← zpow_neg, neg_neg, hexp]
+  have h := congr_fun (SlashInvariantForm.slash_action_eqn f γ hγ) τ
+  have hdet' : (0 : ℝ) < ↑(Matrix.GeneralLinearGroup.det γ) := by
+    rwa [Matrix.GeneralLinearGroup.val_det_apply]
+  rw [ModularForm.slash_def, σ, if_pos hdet'] at h
+  simp only [ContinuousAlgEquiv.refl_apply] at h
+  -- clear the two inverse factors of the slash action in turn, then read off the exponents
+  have hden : denom γ (τ : ℂ) ^ (-k) ≠ 0 := zpow_ne_zero _ (denom_ne_zero γ τ)
+  have hpow : ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1) ≠ 0 := zpow_ne_zero _ hdet_ne
+  rw [(eq_mul_inv_iff_mul_eq₀ hpow).mpr ((eq_mul_inv_iff_mul_eq₀ hden).mpr h),
+    ← zpow_neg, ← zpow_neg, neg_neg, neg_sub]
   ring
 
 /-! ### Changing the invariance group
