@@ -204,6 +204,7 @@ theorem im_fdBoundary_sub_rho_add_one_arc_pos (H : ℝ) (ht1 : 1 < t) (ht3 : t <
   linarith
 
 /-- At the far corner `t = 3` the shifted contour touches the branch cut at `-1`. -/
+@[simp]
 theorem fdBoundary_apply_three_sub_rho_add_one (H : ℝ) :
     fdBoundary H 3 - ((UpperHalfPlane.ρ : ℂ) + 1) = -1 := by
   rw [fdBoundary_apply_three]
