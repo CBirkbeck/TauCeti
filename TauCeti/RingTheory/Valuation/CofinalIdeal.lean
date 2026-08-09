@@ -134,7 +134,7 @@ theorem CofinalValueFor.mul {v : Valuation A Γ₀}
     have hab0 : (MonoidWithZeroHom.ofClass v) (b * a) ≠ 0 := by
       simpa [map_mul] using mul_ne_zero hb0 ha0
     have hmem : valueGroup.mk (.ofClass v) 1 b (by simp) hb0 ∈ characteristicSubgroup v := by
-      refine valueGroup_mk_mem_characteristicSubgroup hb0 ?_
+      refine mem_characteristicSubgroup_of_restrict ?_ (v.restrict_eq_mk hb0)
       rw [← WithZero.coe_le_coe, ← v.restrict_eq_mk hb0]
       have : v.restrict 1 ≤ v.restrict b := v.restrict_le_iff.mpr (by simpa using hb.le)
       simpa using this
