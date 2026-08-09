@@ -30,9 +30,10 @@ Wedhorn's *Adic Spaces*.
   basis needs.
 * `locBasis`: The neighborhoods form a `RingSubgroupsBasis`, so they are the zero-neighbourhood
   basis of a ring topology on `Aₛ`, namely `locTopology`.
-* `continuous_lift_locTopology`: the universal property of that topology — a ring homomorphism
-  out of `Aₛ` is continuous once its restriction along `algebraMap` is continuous and the
-  fractions `t/s` go to power-bounded elements.
+* `continuous_locTopology_of_continuous_algebraMap_of_isPowerBounded`: a sufficient criterion
+  for a ring homomorphism out of `Aₛ` to be continuous — its restriction along `algebraMap` is
+  continuous and the fractions `t/s` go to power-bounded elements. The converse is not proved
+  here.
 
 ## Provenance
 
@@ -63,6 +64,29 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A]
 /-- The element `t/s` in `Localization.Away s`. -/
 noncomputable def divByS (t s : A) : Localization.Away s :=
   IsLocalization.mk' (Localization.Away s) t
+    (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s)
+
+omit [TopologicalSpace A] in
+/-- `t/s` is the fraction `mk' t s`. The body of `divByS` is not exported, so this is how a
+consumer reaches Mathlib's `IsLocalization` API for it. -/
+theorem divByS_def (t s : A) :
+    divByS t s = IsLocalization.mk' (Localization.Away s) t
+      (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s) := (rfl)
+
+omit [TopologicalSpace A] in
+/-- Scaling `1/s` by `t` gives `t/s`. -/
+theorem divByS_one_mul_algebraMap (t s : A) :
+    divByS 1 s * algebraMap A (Localization.Away s) t = divByS t s := by
+  rw [divByS_def, divByS_def, ← IsLocalization.mk'_one (M := Submonoid.powers s)
+    (S := Localization.Away s) t, ← IsLocalization.mk'_mul, one_mul, mul_one]
+
+omit [TopologicalSpace A] in
+/-- **Clearing the denominator**: `s · (t/s) = t` in `Localization.Away s`. -/
+theorem algebraMap_mul_divByS (t s : A) :
+    algebraMap A (Localization.Away s) s * divByS t s =
+      algebraMap A (Localization.Away s) t := by
+  rw [divByS_def]
+  exact IsLocalization.mk'_spec' (Localization.Away s) t
     (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s)
 
 /-- The ring of definition `D = A₀[t₁/s, …, tₙ/s]` of `Localization.Away s`. -/
@@ -147,10 +171,7 @@ private theorem locNhd_invS_mem (P : PairOfDefinition A) (T : Finset A) (s : A) 
   · rintro d ⟨b, hb, rfl⟩
     -- `algebraMapD` is a codomain restriction of `algebraMap`, so its value coerces to that map
     change divByS 1 s * algebraMap A _ ↑b ∈ _
-    rw [show divByS 1 s * algebraMap A (Localization.Away s) ↑b = divByS (↑b) s by
-      unfold divByS
-      rw [← IsLocalization.mk'_one (M := Submonoid.powers s) (S := Localization.Away s)
-        (↑b : A), ← IsLocalization.mk'_mul, one_mul, mul_one]]
+    rw [divByS_one_mul_algebraMap]
     exact hN b hb
   · simp [(locSubring P T s).zero_mem]
   · intro d₁ d₂ _ _ h₁ h₂
@@ -261,24 +282,50 @@ theorem locBasis [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (
 
 /-- Wedhorn's topological localisation: the topology on `Aₛ` whose neighbourhoods of zero are the
 images of the powers of the ideal of definition of `D = A₀[t₁/s, …, tₙ/s]`. -/
-@[reducible] noncomputable def locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
+@[instance_reducible] noncomputable def locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
     (T : Finset A) (s : A)
     (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
     TopologicalSpace (Localization.Away s) :=
   (locBasis P T s hopen).topology
 
-/-! ### The universal property -/
+/-- The contract of `locTopology`: the `locNhd n` are a basis of neighbourhoods of zero. Consumers
+should use this rather than unfolding the definition. -/
+theorem locTopology_hasBasis_nhds_zero [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A)
+    (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
+    (@nhds _ (locTopology P T s hopen) 0).HasBasis (fun _ : ℕ ↦ True)
+      fun n ↦ (locNhd P T s n : Set (Localization.Away s)) :=
+  (locBasis P T s hopen).hasBasis_nhds_zero
+
+/-- `locTopology` is a ring topology. -/
+theorem locTopology_isTopologicalRing [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A)
+    (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
+    @IsTopologicalRing _ (locTopology P T s hopen) _ :=
+  (locBasis P T s hopen).toRingFilterBasis.isTopologicalRing
+
+/-- `locTopology` is nonarchimedean: `Aₛ` inherits a basis of open additive subgroups at zero. -/
+theorem locTopology_nonarchimedean [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A)
+    (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s) :
+    @NonarchimedeanRing _ _ (locTopology P T s hopen) :=
+  (locBasis P T s hopen).nonarchimedean
+
+/-! ### A sufficient criterion for continuity -/
 
 /-- A ring homomorphism out of `Aₛ` is continuous for the localisation topology as soon as its
 restriction along `algebraMap` is continuous and the fractions `t/s` are sent to power-bounded
-elements. Both hypotheses are needed: continuity of `f ∘ algebraMap` alone does not bound the
-image of `D`, which is generated over `A₀` by exactly those fractions.
+elements. This is a sufficient criterion only; no converse is proved here.
+
+The second hypothesis does real work rather than following from the first: `D` is generated over
+`A₀` by exactly those fractions, so continuity of `f ∘ algebraMap` alone says nothing about the
+image of `D`.
 
 The argument reduces to showing `f (D · Iᵐ) ⊆ W` for a suitable `m`, which is proved by
 induction on the finite set `T`, adjoining one fraction at a time and absorbing its powers into
 a nested chain of open subgroups supplied by power-boundedness. -/
-theorem continuous_lift_locTopology {B : Type*} [CommRing B] [TopologicalSpace B]
-    [NonarchimedeanRing B] [IsTopologicalRing A]
+theorem continuous_locTopology_of_continuous_algebraMap_of_isPowerBounded {B : Type*}
+    [CommRing B] [TopologicalSpace B] [NonarchimedeanRing B] [IsTopologicalRing A]
     (P : PairOfDefinition A) (T : Finset A) (s : A)
     (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s)
     (f : Localization.Away s →+* B)
