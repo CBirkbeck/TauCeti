@@ -8,6 +8,8 @@ public import TauCeti.Algebra.Coalgebra.Comodule.Basic
 public import Mathlib.RingTheory.Bialgebra.Convolution
 public import Mathlib.RepresentationTheory.Basic
 
+import Mathlib.RingTheory.Coalgebra.CoassocSimps
+
 /-!
 # The points action of a comodule
 
@@ -32,9 +34,13 @@ the functor of points on scalar extensions of `V`.
   convolution monoid of points on the scalar extension.
 * `TauCeti.Comodule.baseChange_comp_endOfPoint`: the action is functorial in the
   comodule.
+* `TauCeti.Comodule.rid_lTensor_counit_comm_lTensor_comul`: the counit recovers a linear
+  map from its transport along the comultiplication.
 * `TauCeti.Comodule.rid_lTensor_counit_endOfPoint_one_tmul` and
   `TauCeti.Comodule.endOfPoint_self_injective`: on the regular comodule the counit
-  recovers the point from its action, so a point is determined by how it acts.
+  recovers a point from the endomorphism it induces, so distinct points induce distinct
+  endomorphisms. (Over a bialgebra, where the action laws hold, this is faithfulness of
+  the action.)
 
 ## References
 
@@ -49,6 +55,49 @@ namespace TauCeti
 namespace Comodule
 
 open Coalgebra WithConv TensorProduct
+
+section Recovery
+
+variable {R H A : Type*} [CommSemiring R] [AddCommMonoid H] [Module R H] [Coalgebra R H]
+  [AddCommMonoid A] [Module R A]
+
+/-- **Recovery of a linear map from its comultiplication transport.** Pushing `comul h`
+through `f` on the right leg, swapping the factors and contracting the remaining `H`-leg
+with the counit returns `f h`.
+
+This is Mathlib's map-level counit law `CoassocSimps.map_counit_comp_comul_left` read
+through the swap: no algebra structure on either side is involved, only the coalgebra `H`,
+the module `A`, and the `R`-linearity of `f`. It is the engine behind
+`rid_lTensor_counit_endOfPoint_one_tmul`, where `f` is the linear map of a point. -/
+@[simp↓]
+theorem rid_lTensor_counit_comm_lTensor_comul (f : H →ₗ[R] A) (h : H) :
+    TensorProduct.rid R A (LinearMap.lTensor A (counit (R := R) (A := H))
+        (TensorProduct.comm R H A
+          (LinearMap.lTensor H f (Coalgebra.comul (R := R) (A := H) h)))) =
+      f h := by
+  -- The swap turns the `H`-column contraction into the left contraction Mathlib states.
+  have hswap : ∀ z : H ⊗[R] A,
+      TensorProduct.rid R A (LinearMap.lTensor A (counit (R := R) (A := H))
+          (TensorProduct.comm R H A z)) =
+        TensorProduct.lid R A (TensorProduct.map (counit (R := R) (A := H)) LinearMap.id z) := by
+    intro z
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | tmul x a => simp
+    | add x y hx hy => simp [hx, hy]
+  -- Fusing the two legs puts the goal in the shape Mathlib's map-level counit law states.
+  have hmap : ∀ z : H ⊗[R] H,
+      TensorProduct.map (counit (R := R) (A := H)) LinearMap.id (LinearMap.lTensor H f z) =
+        TensorProduct.map (counit (R := R) (A := H)) f z := by
+    intro z
+    induction z using TensorProduct.induction_on with
+    | zero => simp
+    | tmul x y => simp
+    | add x y hx hy => simp [hx, hy]
+  rw [hswap, hmap, ← LinearMap.comp_apply, _root_.CoassocSimps.map_counit_comp_comul_left]
+  simp
+
+end Recovery
 
 section Coalgebra
 
@@ -136,35 +185,10 @@ end Functorial
 
 section Regular
 
-/-- **Recovery of a linear map from its comultiplication transport.** Pushing `comul h`
-through `f` on the right leg, swapping the factors and contracting the remaining `H`-leg
-with the counit returns `f h`: it is the counit identity `(ε ⊗ id) ∘ comul = id`
-(`Coalgebra.rTensor_counit_comul`) read through `f`.
-
-Only `R`-linearity of `f` is used. This is the engine behind
-`rid_lTensor_counit_endOfPoint_one_tmul`; `endOfPoint` keeps an `H →ₐ[R] A` argument
-because it is an action *of points*, whose action laws do need multiplicativity. -/
-theorem rid_lTensor_counit_comm_lTensor_comul (f : H →ₗ[R] A) (h : H) :
-    TensorProduct.rid R A (LinearMap.lTensor A (counit (R := R) (A := H))
-        (TensorProduct.comm R H A
-          (LinearMap.lTensor H f (Coalgebra.comul (R := R) (A := H) h)))) =
-      f h := by
-  have key : (TensorProduct.rid R A).toLinearMap ∘ₗ
-      LinearMap.lTensor A (counit (R := R) (A := H)) ∘ₗ
-        (TensorProduct.comm R H A).toLinearMap ∘ₗ LinearMap.lTensor H f =
-      f ∘ₗ (TensorProduct.lid R H).toLinearMap ∘ₗ
-        LinearMap.rTensor H (counit (R := R) (A := H)) := by
-    refine TensorProduct.ext' fun x y => ?_
-    -- Both sides are `ε x • f y`; on the right it is `f`'s linearity that pulls the scalar out.
-    simp [map_smul]
-  have hkey := LinearMap.congr_fun key (Coalgebra.comul (R := R) (A := H) h)
-  simp only [LinearMap.coe_comp, Function.comp_apply, LinearEquiv.coe_toLinearMap] at hkey
-  rw [hkey, Coalgebra.rTensor_counit_comul]
-  simp
-
-/-- The counit collapses the action on the regular comodule back onto the point: the
-`H`-column of `endOfPoint H g (1 ⊗ₜ h)` carries the left Sweedler leg, so applying the
-counit there contracts `Σ ε(h₍₁₎) • g(h₍₂₎)` to `g h`. -/
+/-- The counit collapses the endomorphism attached to a point on the regular comodule back
+onto the point: the `H`-column of `endOfPoint H g (1 ⊗ₜ h)` carries the left Sweedler leg,
+so applying the counit there contracts `Σ ε(h₍₁₎) • g(h₍₂₎)` to `g h`. -/
+@[simp↓]
 theorem rid_lTensor_counit_endOfPoint_one_tmul (g : H →ₐ[R] A) (h : H) :
     TensorProduct.rid R A
         (LinearMap.lTensor A (counit (R := R) (A := H)) (endOfPoint H g (1 ⊗ₜ[R] h))) =
