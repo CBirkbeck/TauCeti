@@ -80,21 +80,22 @@ theorem isOpen_powerSeries_as_subring :
     IsOpen ((powerSeries_as_subring K : Subring K⸨X⸩) : Set K⸨X⸩) :=
   (coe_powerSeries_as_subring K) ▸ Valued.isOpen_integer K⸨X⸩
 
-/-- The variable `X`, viewed inside the ring of definition. -/
-noncomputable def XD : powerSeries_as_subring K := powerSeriesEquivSubring K PowerSeries.X
+/-- The variable `X`, viewed inside the ring of definition `K⟦X⟧ ⊆ K⸨X⸩`. -/
+noncomputable def subringX : powerSeries_as_subring K := powerSeriesEquivSubring K PowerSeries.X
 
 @[simp]
-theorem coe_XD : (XD K : K⸨X⸩) = ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) := (rfl)
+theorem coe_subringX : (subringX K : K⸨X⸩) = ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) := (rfl)
 
 /-- The ideal of definition `(X)` of `K⟦X⟧ ⊆ K⸨X⸩`. -/
-noncomputable def idealOfDefinition : Ideal (powerSeries_as_subring K) := Ideal.span {XD K}
+noncomputable def idealOfDefinition : Ideal (powerSeries_as_subring K) := Ideal.span {subringX K}
 
 /-- Unfolding lemma for `TauCeti.Huber.LaurentSeries.idealOfDefinition`. -/
-theorem idealOfDefinition_def : idealOfDefinition K = Ideal.span {XD K} := (rfl)
+theorem idealOfDefinition_def : idealOfDefinition K = Ideal.span {subringX K} := (rfl)
 
-/-- `X` is nonzero in `K⸨X⸩`, so all its powers are invertible. -/
+/-- `X` is nonzero in `K⸨X⸩`, so, `K⸨X⸩` being a field, all its powers are invertible. -/
 theorem coe_X_ne_zero : ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) ≠ 0 := by
-  simp
+  simp only [HahnSeries.ofPowerSeries_X, ne_eq, HahnSeries.single_eq_zero_iff, one_ne_zero,
+    not_false_eq_true]
 
 variable {K}
 
@@ -109,9 +110,9 @@ theorem mem_idealOfDefinition_pow_iff (n : ℕ) (f : powerSeries_as_subring K) :
       have hmem := g.2
       rwa [← SetLike.mem_coe, coe_powerSeries_as_subring, SetLike.mem_coe,
         Valuation.mem_integer_iff] at hmem
-    have hcoe : ((g * XD K ^ n : powerSeries_as_subring K) : K⸨X⸩)
+    have hcoe : ((g * subringX K ^ n : powerSeries_as_subring K) : K⸨X⸩)
         = (g : K⸨X⸩) * ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) ^ n := by
-      push_cast [coe_XD]
+      push_cast [coe_subringX]
       rfl
     rw [hcoe, map_mul, valuation_X_pow]
     calc Valued.v (g : K⸨X⸩) * exp (-(n : ℤ)) ≤ 1 * exp (-(n : ℤ)) := by gcongr
@@ -123,9 +124,9 @@ theorem mem_idealOfDefinition_pow_iff (n : ℕ) (f : powerSeries_as_subring K) :
       exact hf
     obtain ⟨F, hF⟩ := (val_le_one_iff_eq_coe K _).mp hu
     refine ⟨powerSeriesEquivSubring K F, Subtype.ext ?_⟩
-    have hcoe : ((powerSeriesEquivSubring K F * XD K ^ n : powerSeries_as_subring K) : K⸨X⸩)
+    have hcoe : ((powerSeriesEquivSubring K F * subringX K ^ n : powerSeries_as_subring K) : K⸨X⸩)
         = (F : K⸨X⸩) * ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) ^ n := by
-      push_cast [coe_XD]
+      push_cast [coe_subringX]
       rfl
     rw [hcoe, hF, inv_mul_cancel_right₀ (pow_ne_zero n (coe_X_ne_zero K))]
 
@@ -173,9 +174,15 @@ noncomputable def pairOfDefinition : PairOfDefinition K⸨X⸩ where
   ringOfDefinition := powerSeries_as_subring K
   isOpen_ringOfDefinition := isOpen_powerSeries_as_subring K
   idealOfDefinition := idealOfDefinition K
-  fg_idealOfDefinition := ⟨{XD K}, by simp [idealOfDefinition_def]⟩
+  fg_idealOfDefinition := ⟨{subringX K}, by simp [idealOfDefinition_def]⟩
   isAdic_idealOfDefinition := isAdic_idealOfDefinition K
 
+/-- The ring of definition of `TauCeti.Huber.LaurentSeries.pairOfDefinition` is the power series.
+
+There is deliberately no companion lemma for the ideal: `PairOfDefinition.idealOfDefinition` is
+dependent on `ringOfDefinition`, so with the body hidden by the module system an equation between
+the two ideals does not typecheck. The bridge
+`TauCeti.Huber.LaurentSeries.mem_idealOfDefinition_pow_iff` is what consumers use instead. -/
 @[simp]
 theorem pairOfDefinition_ringOfDefinition :
     (pairOfDefinition K).ringOfDefinition = powerSeries_as_subring K := (rfl)
