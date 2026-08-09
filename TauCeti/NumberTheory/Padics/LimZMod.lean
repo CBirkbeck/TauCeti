@@ -58,12 +58,17 @@ naturality it would need.
 
 * `PadicInt.compatSubring`: the subring of compatible sequences in `Π n, ZMod (p ^ n)`.
 * `PadicInt.compatProj`: the `n`-th projection out of it, as a ring hom.
+* `PadicInt.compatSubring.lift`: the universal property — a compatible family of ring homs into
+  the tower factors through the limit.
 
 ## Main results
 
 * `PadicInt.equivLimZMod`: `ℤ_[p] ≃+* compatSubring p`.
 * `PadicInt.compat_of_adjacentCompat`: adjacent compatibility gives compatibility for all
   `k₁ ≤ k₂`, which is what `PadicInt.lift` requires of the projection family.
+* `PadicInt.compatProj_comp_lift` and `PadicInt.compatSubring.lift_unique`: the factorisation
+  exists and is unique, so `compatSubring` is a projective limit in the usual sense and not
+  merely a ring isomorphic to `ℤ_[p]`.
 
 ## Provenance
 
@@ -145,6 +150,29 @@ omit [Fact p.Prime] in
   ext x
   simpa only [RingHom.comp_apply, compatProj_apply]
     using compat_of_adjacentCompat p x.property k₁ k₂ hk
+
+/-- **The universal property.** A family of ring homs into the tower that commutes with the
+connecting maps factors through the limit. The name is qualified to avoid `PadicInt.lift`,
+which is Mathlib's universal property of `ℤ_[p]` itself. -/
+def compatSubring.lift {S : Type*} [CommRing S] (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
+    (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n) :
+    S →+* compatSubring p :=
+  RingHom.codRestrict (RingHom.pi g) (compatSubring p) fun s n => RingHom.congr_fun (hg n) s
+
+omit [Fact p.Prime] in
+@[simp] theorem compatProj_comp_lift {S : Type*} [CommRing S] (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
+    (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
+    (n : ℕ) : (compatProj p n).comp (compatSubring.lift p g hg) = g n :=
+  (rfl)
+
+omit [Fact p.Prime] in
+/-- The factorisation is unique: the projections determine a map into the limit. -/
+theorem compatSubring.lift_unique {S : Type*} [CommRing S] (g : ∀ n : ℕ, S →+* ZMod (p ^ n))
+    (hg : ∀ n, (ZMod.castHom (pow_dvd_pow p n.le_succ) (ZMod (p ^ n))).comp (g (n + 1)) = g n)
+    (F : S →+* compatSubring p) (hF : ∀ n, (compatProj p n).comp F = g n) :
+    F = compatSubring.lift p g hg := by
+  ext s n
+  exact RingHom.congr_fun (hF n) s
 
 /-- The map out of the limit into `ℤ_[p]`, from the universal property. -/
 private noncomputable def limZModToPadic : compatSubring p →+* ℤ_[p] :=
