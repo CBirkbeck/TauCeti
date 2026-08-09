@@ -95,6 +95,24 @@ private theorem mapsTo_of_mem_support {C : Cycle} {U : Set ℂ} (hCU : IsIn C U)
   intro t ht
   exact isIn_iff.mp hCU (mem_trace_iff.mpr ⟨γ, hγ, t, ht, rfl⟩)
 
+/-- **The Dixon identity for one generator of a cycle.** For a generator `γ` of a cycle lying in
+`U` and a point `w` off the cycle's trace, `dixonH1` and `dixonH2` for `γ` differ by `2πi` times
+the winding number of `γ` about `w` times `f w`. -/
+private theorem dixonH1_eq_dixonH2_sub_windingNumber_mul_f_of_mem_support {f : ℂ → ℂ} {C : Cycle}
+    {U : Set ℂ} (hf : ContinuousOn f U) (hCU : IsIn C U) {w : ℂ} (hw : w ∉ trace C)
+    {γ : PiecewiseC1ClosedCurve} (hγ : γ ∈ FreeAbelianGroup.support C) :
+    TauCeti.Contour.dixonH1 f γ γ.a γ.b w =
+      TauCeti.Contour.dixonH2 f γ γ.a γ.b w -
+        2 * (Real.pi : ℂ) * Complex.I *
+          TauCeti.Contour.windingNumber γ γ.a γ.b w * f w := by
+  have hoff := avoids_of_mem_support hw hγ
+  have hγU := mapsTo_of_mem_support hCU hγ
+  exact TauCeti.Contour.dixonH1_eq_dixonH2_sub_windingNumber_mul_f γ.continuousOn hoff
+    (TauCeti.Contour.cauchy_integrand_intervalIntegrable hf γ.continuousOn hγU
+      γ.intervalIntegrable_deriv hoff)
+    (TauCeti.Contour.intervalIntegrable_inv_sub_mul_deriv γ.continuousOn hoff
+      γ.intervalIntegrable_deriv)
+
 /-- The cycle `h₁`/`h₂` identity. Away from the trace, their difference is the winding number
 of the whole cycle, not a separate hypothesis on each generator. -/
 private theorem cycleDixonH1_eq_cycleDixonH2_sub {f : ℂ → ℂ} {C : Cycle} {U : Set ℂ}
@@ -102,26 +120,14 @@ private theorem cycleDixonH1_eq_cycleDixonH2_sub {f : ℂ → ℂ} {C : Cycle} {
     cycleDixonH1 f C w = cycleDixonH2 f C w -
       2 * (Real.pi : ℂ) * Complex.I * windingNumber w C * f w := by
   rw [cycleDixonH1, cycleDixonH2, windingNumber_eq_sum_support]
-  have hterm : ∀ γ ∈ FreeAbelianGroup.support C,
-      TauCeti.Contour.dixonH1 f γ γ.a γ.b w =
-        TauCeti.Contour.dixonH2 f γ γ.a γ.b w -
-          2 * (Real.pi : ℂ) * Complex.I *
-            TauCeti.Contour.windingNumber γ γ.a γ.b w * f w := by
-    intro γ hγ
-    have hoff := avoids_of_mem_support hw hγ
-    have hγU := mapsTo_of_mem_support hCU hγ
-    exact TauCeti.Contour.dixonH1_eq_dixonH2_sub_windingNumber_mul_f γ.continuousOn hoff
-      (TauCeti.Contour.cauchy_integrand_intervalIntegrable hf γ.continuousOn hγU
-        γ.intervalIntegrable_deriv hoff)
-      (TauCeti.Contour.intervalIntegrable_inv_sub_mul_deriv γ.continuousOn hoff
-        γ.intervalIntegrable_deriv)
   calc
     ∑ γ ∈ FreeAbelianGroup.support C,
         (FreeAbelianGroup.coeff γ C : ℂ) * TauCeti.Contour.dixonH1 f γ γ.a γ.b w =
       ∑ γ ∈ FreeAbelianGroup.support C, (FreeAbelianGroup.coeff γ C : ℂ) *
         (TauCeti.Contour.dixonH2 f γ γ.a γ.b w - 2 * (Real.pi : ℂ) * Complex.I *
           TauCeti.Contour.windingNumber γ γ.a γ.b w * f w) :=
-      Finset.sum_congr rfl fun γ hγ ↦ by rw [hterm γ hγ]
+      Finset.sum_congr rfl fun γ hγ ↦ by
+        rw [dixonH1_eq_dixonH2_sub_windingNumber_mul_f_of_mem_support hf hCU hw hγ]
     _ = ∑ γ ∈ FreeAbelianGroup.support C,
         ((FreeAbelianGroup.coeff γ C : ℂ) * TauCeti.Contour.dixonH2 f γ γ.a γ.b w -
           (FreeAbelianGroup.coeff γ C : ℂ) * (2 * (Real.pi : ℂ) * Complex.I *
