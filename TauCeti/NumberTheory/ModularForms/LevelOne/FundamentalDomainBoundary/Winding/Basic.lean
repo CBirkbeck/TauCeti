@@ -46,6 +46,11 @@ stated once here rather than three times.
 The truncated-contour strategy follows the fundamental-domain boundary development of
 AINTLIB's `LeanModularForms` (`ForMathlib/FDBoundary.lean`, `FDBoundaryH.lean`,
 `FDBoundaryPath.lean`); the winding transport is Tau Ceti's Hungerbühler–Wasem machinery.
+
+The arc-excision geometry is not from those files: it is extracted from the same project's
+winding-value development (`ForMathlib/ValenceFormula/WindingWeights/I.lean`, `Rho.lean` and
+`RhoPlusOne.lean`), where each corner computation built its own chord-matched half-width.
+It is stated once here so the three share it.
 -/
 
 public noncomputable section
