@@ -193,6 +193,19 @@ private theorem integral_sub_mul_sub {u v q : Ω → ℝ}
   rw [integral_congr_ae (ae_of_all _ hexp), integral_add hiA hi4,
     integral_sub hiB hi3, integral_sub hi1 hi2]
 
+/-- **The squared deviation of an average, as a double sum.** For `n ≠ 0`, the square of
+`n⁻¹ * ∑ i ∈ range n, a i - b` is `n⁻¹ ^ 2` times the double sum of `(a i - b) * (a j - b)`
+over `range n × range n`. -/
+private theorem sq_average_sub_eq_sum_sum {n : ℕ} (hn : n ≠ 0) (a : ℕ → ℝ) (b : ℝ) :
+    ((n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, a i) - b) ^ 2
+      = (n : ℝ)⁻¹ ^ 2 * ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, (a i - b) * (a j - b) := by
+  have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn
+  have h1 : (n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, a i) - b
+      = (n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, (a i - b) := by
+    rw [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
+    field_simp
+  rw [h1, mul_pow, sq (∑ i ∈ Finset.range n, (a i - b)), Finset.sum_mul_sum]
+
 /-- The abstract second-moment computation behind the `L²` rate: if the centred variables
 `eᵢ - q` are uncorrelated with common variance `c`, then their average over `Fin n` has mean
 square `c / n`. Private: it is an algebraic repackaging with no probabilistic content of its own. -/
@@ -205,7 +218,6 @@ private theorem integral_sq_average_sub [IsProbabilityMeasure μ] {e : ℕ → �
     (hn : n ≠ 0) :
     ∫ ω, ((n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, e i ω) - q ω) ^ 2 ∂μ = (n : ℝ)⁻¹ * c := by
   classical
-  have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn
   have hdb : ∀ i ∈ Finset.range n, ∀ ω, |e i ω - q ω| ≤ 2 := by
     intro i hi ω
     have h1 := abs_le.mp (heb i hi ω)
@@ -220,15 +232,7 @@ private theorem integral_sq_average_sub [IsProbabilityMeasure μ] {e : ℕ → �
     rw [Real.norm_eq_abs, abs_mul]
     nlinarith [hdb i hi ω, hdb j hj ω, abs_nonneg (e i ω - q ω),
       abs_nonneg (e j ω - q ω)]
-  have hstep : ∀ ω, ((n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, e i ω) - q ω) ^ 2
-      = (n : ℝ)⁻¹ ^ 2 * ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n,
-          (e i ω - q ω) * (e j ω - q ω) := by
-    intro ω
-    have h1 : (n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, e i ω) - q ω
-        = (n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, (e i ω - q ω) := by
-      rw [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_range, nsmul_eq_mul]
-      field_simp
-    rw [h1, mul_pow, sq (∑ i ∈ Finset.range n, (e i ω - q ω)), Finset.sum_mul_sum]
+  have hstep := fun ω => sq_average_sub_eq_sum_sum hn (fun i => e i ω) (q ω)
   simp_rw [hstep]
   rw [integral_const_mul,
     integral_finsetSum _ fun i hi => integrable_finsetSum _ fun j hj => hInt i hi j hj]
