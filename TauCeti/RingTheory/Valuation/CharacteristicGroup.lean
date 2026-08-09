@@ -5,9 +5,8 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Algebra.Order.Hom.MonoidWithZero
-public import Mathlib.Algebra.Order.Hom.Units
 public import Mathlib.RingTheory.Valuation.Basic
+public import TauCeti.RingTheory.Valuation.ValueGroupTransport
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 
 /-!
@@ -45,8 +44,6 @@ formalised here.
   subgroup `cΓ_v` they generate.
 * `TauCeti.Valuation.HasFullCharacteristicGroup v` : Every positive element of the value
   group of `v` is bounded by attained values.
-* `Valuation.IsEquiv.valueGroupOrderIso` : The order isomorphism of value groups induced by
-  an equivalence of valuations, restricting Mathlib's `orderMonoidIso` to the unit groups.
 
 ## References
 
@@ -237,26 +234,6 @@ theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le {v : Valuation A Γ�
     (h1 : 1 ≤ valueGroup.mk (.ofClass v) 1 a (by simp) h) :
     valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v :=
   mem_characteristicSubgroup_of_restrict h1 (v.restrict_eq_mk h)
-
-/-! ### Transport along valuation equivalence -/
-
-/-- The order isomorphism of **value groups** induced by an equivalence of valuations.
-Mathlib's `IsEquiv.orderMonoidIso` is an isomorphism of the value monoids *with zero*, and
-`ValueGroup₀ f = WithZero ↥(valueGroup f)`, so this is exactly the inverse of Mathlib's
-`OrderMonoidIso.withZero`, which identifies order isomorphisms of two groups with those of
-the groups with zero adjoined. -/
-noncomputable def _root_.Valuation.IsEquiv.valueGroupOrderIso {v : Valuation A Γ₀}
-    {w : Valuation A Γ₀'} (h : v.IsEquiv w) :
-    valueGroup (.ofClass v) ≃*o valueGroup (.ofClass w) :=
-  OrderMonoidIso.withZero.symm h.orderMonoidIso
-
-/-- The induced value-group isomorphism agrees with `orderMonoidIso` under the coercion. -/
-@[simp]
-theorem _root_.Valuation.IsEquiv.valueGroupOrderIso_coe {v : Valuation A Γ₀}
-    {w : Valuation A Γ₀'} (h : v.IsEquiv w) (γ : valueGroup (.ofClass v)) :
-    ((h.valueGroupOrderIso γ : valueGroup (.ofClass w)) : ValueGroup₀ (.ofClass w))
-      = h.orderMonoidIso (γ : ValueGroup₀ (.ofClass v)) :=
-  (rfl)
 
 /-- Equivalent valuations have corresponding characteristic generators. -/
 theorem characteristicGenerators_map_of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
