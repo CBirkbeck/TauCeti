@@ -23,6 +23,15 @@ the existence proof itself reduces to a finite generating set and is completed s
 * `TauCeti.Valuation.IdealMeetsCharacteristic v I` : `v(I)` meets `cΓ_v`, the branch condition
   of Wedhorn Definition 7.3.
 * `TauCeti.Valuation.IsGreatestIdealCofinal v I H` : `H` is greatest with that property.
+* `TauCeti.Valuation.valueSet v I` : the nonzero values of `v` on `I`, the set Wedhorn takes
+  the maximum over.
+
+## Main results
+
+* `TauCeti.Valuation.idealCofinalFor_iff_forall_isCofinalElement` : the ideal condition is
+  cofinality of every nonzero value, as an element of the value group.
+* `TauCeti.Valuation.isGreatestIdealCofinal_closure_singleton` : the core step of Lemma 7.2 —
+  a greatest value below `1` generates the greatest convex subgroup for which `I` is cofinal.
 
 ## References
 
@@ -125,5 +134,57 @@ reduction: "if `v(I) = {0}` we may choose `H = Γ_v`"). -/
 theorem isGreatestIdealCofinal_bot (v : Valuation A Γ₀) :
     IsGreatestIdealCofinal v ⊥ ⊤ :=
   ⟨idealCofinalFor_bot v ⊤, fun _ _ ↦ le_top⟩
+
+/-! ### Reduction to the value set -/
+
+/-- The nonzero values attained by `v` on an ideal, as a subset of the value group. This is
+the set Wedhorn takes the maximum over in the proof of Lemma 7.2. -/
+def valueSet (v : Valuation A Γ₀) (I : Ideal A) : Set (valueGroup (.ofClass v)) :=
+  {γ | ∃ a ∈ I, v.restrict a = (γ : ValueGroup₀ (.ofClass v))}
+
+@[simp]
+theorem mem_valueSet {v : Valuation A Γ₀} {I : Ideal A} {γ : valueGroup (.ofClass v)} :
+    γ ∈ valueSet v I ↔ ∃ a ∈ I, v.restrict a = (γ : ValueGroup₀ (.ofClass v)) :=
+  Iff.rfl
+
+/-- **The bridge from the ideal to the group.** An ideal is cofinal for `H` exactly when every
+one of its nonzero values is a cofinal *element* of the value group. The vanishing values need
+no condition, since `0` is cofinal for every subgroup — which is why they are excluded from
+`valueSet` rather than constrained. -/
+theorem idealCofinalFor_iff_forall_isCofinalElement {v : Valuation A Γ₀}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {I : Ideal A} :
+    IdealCofinalFor v H I ↔
+      ∀ γ ∈ valueSet v I, TauCeti.IsCofinalElement H.toSubgroup γ := by
+  constructor
+  · rintro hI γ ⟨a, haI, ha⟩
+    have h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := by
+      intro hz
+      exact absurd (ha ▸ v.restrict_eq_zero_iff.mpr hz) WithZero.coe_ne_zero
+    have := (cofinalValueFor_iff_isCofinalElement h0).mp (hI a haI)
+    have hmk : valueGroup.mk (.ofClass v) 1 a (by simp) h0 = γ := by
+      have := (v.restrict_eq_mk h0).symm.trans ha
+      exact_mod_cast this
+    exact hmk ▸ this
+  · intro hS a haI
+    by_cases h0 : (MonoidWithZeroHom.ofClass v) a = 0
+    · exact cofinalValueFor_of_eq_zero h0
+    · refine (cofinalValueFor_iff_isCofinalElement h0).mpr (hS _ ⟨a, haI, ?_⟩)
+      exact v.restrict_eq_mk h0
+
+/-! ### The core step of Wedhorn Lemma 7.2 -/
+
+/-- **Wedhorn Lemma 7.2, core step.** If the nonzero values of `I` have a greatest element `h`,
+necessarily below `1`, then the convex subgroup it generates is the *greatest* one for which
+`I` is cofinal.
+
+The inversion is the point: below `1` a smaller value generates a larger convex subgroup, so
+the largest value gives the smallest subgroup — and that is the one every value is cofinal for.
+This is why Wedhorn's proof takes `max { v t : t ∈ T }` over a finite generating set. -/
+theorem isGreatestIdealCofinal_closure_singleton {v : Valuation A Γ₀} {I : Ideal A}
+    {h : valueGroup (.ofClass v)} (hh : IsGreatest (valueSet v I) h) (hlt : h < 1) :
+    IsGreatestIdealCofinal v I (TauCeti.ConvexSubgroup.closure {h}) := by
+  obtain ⟨hmem, hub⟩ := TauCeti.isGreatest_convexSubgroup_isCofinalElement hh hlt
+  refine ⟨idealCofinalFor_iff_forall_isCofinalElement.mpr hmem, fun K hK ↦ ?_⟩
+  exact hub (idealCofinalFor_iff_forall_isCofinalElement.mp hK)
 
 end TauCeti.Valuation
