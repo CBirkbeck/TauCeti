@@ -310,6 +310,55 @@ theorem isGreatestIdealCofinal_top_of_forall_eq_zero {v : Valuation A Γ₀} {I 
     (h : ∀ a ∈ I, (MonoidWithZeroHom.ofClass v) a = 0) : IsGreatestIdealCofinal v I ⊤ :=
   ⟨fun a ha ↦ cofinalValueFor_of_eq_zero (h a ha), fun _ _ ↦ le_top⟩
 
+/-- Radical membership upgraded to a *nonzero* exponent: if `√I = √J` then every element of `I`
+has a positive power in `J`. The exponent `0` is harmless to exclude, since `a ^ 0 ∈ J` forces
+`J = ⊤`, and then `a ^ 1 ∈ J` too.
+
+Used in both directions below — to move from `I` into the finitely generated `J`, and back. -/
+private theorem exists_pow_ne_zero_mem_of_radical_eq {I J : Ideal A}
+    (hrad : I.radical = J.radical) {a : A} (ha : a ∈ I) : ∃ n, n ≠ 0 ∧ a ^ n ∈ J := by
+  obtain ⟨n, hn⟩ := Ideal.mem_radical_iff.mp (hrad ▸ Ideal.le_radical ha)
+  rcases Nat.eq_zero_or_pos n with rfl | hp
+  · refine ⟨1, one_ne_zero, ?_⟩
+    have h1 : (1 : A) ∈ J := by simpa using hn
+    simp [(Ideal.eq_top_iff_one J).mpr h1]
+  · exact ⟨n, hp.ne', hn⟩
+
+/-- If `v` vanishes on a generating set of `J` and `√I = √J`, then `v` vanishes on all of `I`.
+
+Both places where the construction below needs a nonvanishing value are contrapositives of this:
+the generating set is nonempty, and the value-maximising generator is nonzero. -/
+private theorem mem_supp_of_radical_eq_of_forall_mem_supp {v : Valuation A Γ₀} {I J : Ideal A}
+    {T : Finset A} (hT : Ideal.span (T : Set A) = J) (hrad : I.radical = J.radical)
+    (hsupp : ∀ t ∈ T, t ∈ v.supp) {a : A} (ha : a ∈ I) : a ∈ v.supp := by
+  obtain ⟨n, hn0, hn⟩ := exists_pow_ne_zero_mem_of_radical_eq hrad ha
+  have hpow : a ^ n ∈ v.supp := by
+    rw [← hT] at hn
+    exact Ideal.span_le.mpr (fun t ht ↦ hsupp t ht) hn
+  rw [v.mem_supp_iff, map_pow] at hpow
+  exact (v.mem_supp_iff _).mpr ((pow_eq_zero_iff hn0).mp hpow)
+
+/-- Under Wedhorn's disjointness hypothesis the class of a generator stays out of `cΓ_v`: were
+it inside, so would be its `n`-th power, which is the class of `t ^ n ∈ I` — exactly the
+meeting that is excluded. -/
+private theorem not_mem_characteristicSubgroup_of_pow_mem {v : Valuation A Γ₀} {I : Ideal A}
+    (hdisj : ¬ IdealMeetsCharacteristic v I) {t : A}
+    (ht0 : (MonoidWithZeroHom.ofClass v) t ≠ 0) {n : ℕ} (hn : t ^ n ∈ I) :
+    valueGroup.mk (.ofClass v) 1 t (by simp) ht0 ∉ characteristicSubgroup v := by
+  intro hmem
+  have hn0 : (MonoidWithZeroHom.ofClass v) (t ^ n) ≠ 0 := by
+    simpa [map_pow] using pow_ne_zero n ht0
+  refine hdisj ⟨t ^ n, hn, hn0, ?_⟩
+  have hclass : valueGroup.mk (.ofClass v) 1 (t ^ n) (by simp) hn0
+      = valueGroup.mk (.ofClass v) 1 t (by simp) ht0 ^ n := by
+    have hpow : v.restrict (t ^ n)
+        = ((valueGroup.mk (.ofClass v) 1 t (by simp) ht0 ^ n :
+            valueGroup (.ofClass v)) : ValueGroup₀ _) := by
+      rw [map_pow, v.restrict_eq_mk ht0]; simp
+    exact_mod_cast (v.restrict_eq_mk hn0).symm.trans hpow
+  rw [hclass]
+  exact pow_mem hmem n
+
 /-- **Wedhorn Lemma 7.2, existence form.** Under the standing hypothesis of §7.1 — that `I` has
 the same radical as some finitely generated ideal — with `v(I)` missing `cΓ_v` and not
 identically zero, a greatest convex subgroup for which `I` is cofinal exists.
@@ -322,56 +371,26 @@ theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal A}
     (hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0) :
     ∃ H, IsGreatestIdealCofinal v I H ∧ characteristicSubgroup v ≤ H := by
   obtain ⟨J, ⟨T, hT⟩, hrad⟩ := hfg
-  -- every element of I has a power in J
-  have hIJ : ∀ a ∈ I, ∃ n, n ≠ 0 ∧ a ^ n ∈ J := by
-    intro a ha
-    obtain ⟨n, hn⟩ := Ideal.mem_radical_iff.mp (hrad ▸ Ideal.le_radical ha)
-    rcases Nat.eq_zero_or_pos n with rfl | hp
-    · refine ⟨1, one_ne_zero, ?_⟩
-      have h1 : (1 : A) ∈ J := by simpa using hn
-      simp [(Ideal.eq_top_iff_one J).mpr h1]
-    · exact ⟨n, hp.ne', hn⟩
-  -- `T` is nonempty, else every value on `I` would vanish
+  obtain ⟨a₀, ha₀I, ha₀0⟩ := hne
+  -- a generator off the support exists, else `v` would vanish on all of `I`
+  have hsupp : ¬ ∀ t ∈ T, t ∈ v.supp := fun hall ↦
+    ha₀0 ((v.mem_supp_iff _).mp (mem_supp_of_radical_eq_of_forall_mem_supp hT hrad hall ha₀I))
   have hTne : T.Nonempty := by
     rcases T.eq_empty_or_nonempty with rfl | hne'
-    · exfalso
-      obtain ⟨a, haI, ha0⟩ := hne
-      obtain ⟨n, hn0, hn⟩ := hIJ a haI
-      rw [← hT] at hn
-      simp only [Finset.coe_empty, Ideal.span_empty, Ideal.mem_bot] at hn
-      refine ha0 ?_
-      have hv := congrArg (MonoidWithZeroHom.ofClass v) hn
-      rw [map_pow, map_zero] at hv
-      exact (pow_eq_zero_iff hn0).mp hv
+    · exact absurd (by simp) hsupp
     · exact hne'
   obtain ⟨t₀, ht₀T, ht₀max⟩ := T.exists_max_image (fun t ↦ v.restrict t) hTne
-  -- the maximising value cannot vanish, else `v` would vanish on all of `I`
-  have ht₀0 : (MonoidWithZeroHom.ofClass v) t₀ ≠ 0 := by
-    intro hz
-    obtain ⟨a, haI, ha0⟩ := hne
-    obtain ⟨n, hn0, hn⟩ := hIJ a haI
-    refine ha0 ?_
-    have hTsupp : (T : Set A) ⊆ (v.supp : Set A) := by
-      intro t ht
-      rw [SetLike.mem_coe, v.mem_supp_iff]
-      have hle : v.restrict t ≤ v.restrict t₀ := ht₀max t ht
-      rw [v.restrict_eq_zero_iff.mpr hz] at hle
-      exact v.restrict_eq_zero_iff.mp (le_antisymm hle zero_le)
-    have : a ^ n ∈ v.supp := by
-      rw [← hT] at hn
-      exact Ideal.span_le.mpr hTsupp hn
-    rw [v.mem_supp_iff, map_pow] at this
-    exact (pow_eq_zero_iff hn0).mp this
+  -- the maximising value cannot vanish: it dominates every generator
+  have ht₀0 : (MonoidWithZeroHom.ofClass v) t₀ ≠ 0 := fun hz ↦ hsupp fun t ht ↦ by
+    rw [v.mem_supp_iff]
+    have hle : v.restrict t ≤ v.restrict t₀ := ht₀max t ht
+    rw [v.restrict_eq_zero_iff.mpr hz] at hle
+    exact v.restrict_eq_zero_iff.mp (le_antisymm hle zero_le)
   -- the witness and the power of it that lands in `I`
   set h : valueGroup (.ofClass v) := valueGroup.mk (.ofClass v) 1 t₀ (by simp) ht₀0 with hdef
   have hrestr : v.restrict t₀ = (h : ValueGroup₀ (.ofClass v)) := v.restrict_eq_mk ht₀0
   have ht₀J : t₀ ∈ J := hT ▸ Ideal.subset_span ht₀T
-  obtain ⟨n, hn0, hn⟩ : ∃ n, n ≠ 0 ∧ t₀ ^ n ∈ I := by
-    obtain ⟨m, hm⟩ := Ideal.mem_radical_iff.mp (hrad.symm ▸ Ideal.le_radical ht₀J)
-    rcases Nat.eq_zero_or_pos m with rfl | hp
-    · rw [pow_zero] at hm
-      exact ⟨1, one_ne_zero, by simp [(Ideal.eq_top_iff_one I).mpr hm]⟩
-    · exact ⟨m, hp.ne', hm⟩
+  obtain ⟨n, hn0, hn⟩ := exists_pow_ne_zero_mem_of_radical_eq hrad.symm ht₀J
   have hpow : v.restrict (t₀ ^ n) = ((h ^ n : valueGroup (.ofClass v)) : ValueGroup₀ _) := by
     rw [map_pow, hrestr]; simp
   have hatt : h ^ n ∈ valueSet v I := ⟨t₀ ^ n, hn, hpow⟩
@@ -383,17 +402,8 @@ theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal A}
     by_contra hge
     push Not at hge
     exact absurd hlt_n (not_lt.mpr (one_le_pow_of_one_le' hge n))
-  -- `h` is outside `cΓ_v`: otherwise its power, attained on `I`, would meet it
-  have hnot : h ∉ characteristicSubgroup v := by
-    intro hmem
-    exact hdisj ⟨t₀ ^ n, hn, by simpa [map_pow] using pow_ne_zero n ht₀0, by
-      have : valueGroup.mk (.ofClass v) 1 (t₀ ^ n) (by simp) (by
-        simpa [map_pow] using pow_ne_zero n ht₀0) = h ^ n := by
-        have := (v.restrict_eq_mk (by simpa [map_pow] using pow_ne_zero n ht₀0 :
-          (MonoidWithZeroHom.ofClass v) (t₀ ^ n) ≠ 0)).symm.trans hpow
-        exact_mod_cast this
-      rw [this]
-      exact pow_mem hmem n⟩
+  have hnot : h ∉ characteristicSubgroup v :=
+    not_mem_characteristicSubgroup_of_pow_mem hdisj ht₀0 hn
   refine ⟨TauCeti.ConvexSubgroup.closure {h}, ?_,
     (TauCeti.ConvexSubgroup.lt_closure_singleton hnot).le⟩
   refine isGreatestIdealCofinal_closure_singleton_of_span
