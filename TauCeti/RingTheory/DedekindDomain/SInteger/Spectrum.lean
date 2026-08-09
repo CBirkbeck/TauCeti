@@ -14,7 +14,8 @@ Let `R` be a Dedekind domain with fraction field `K` and `S` a set of height-one
 `TauCeti/RingTheory/DedekindDomain/SInteger/Basic.lean` shows that the ring of `S`-integers is
 again a Dedekind domain, so it has a height one spectrum of its own. This file identifies that
 spectrum:
-the primes of `𝒪_S` are exactly the primes of `R` **not** in `S`, via `v ↦ v · 𝒪_S`
+the height-one primes of `𝒪_S` are exactly the height-one primes of `R` **not** in `S`, via
+`v ↦ v · 𝒪_S`
 (`integerHeightOneSpectrumEquiv`), and the correspondence carries the valuations across unchanged
 (`valuation_integerHeightOneSpectrumEquiv`).
 
@@ -133,7 +134,7 @@ lemma integerPrimeUnder_notMem (P : HeightOneSpectrum (S.integer K)) :
     integerPrimeOverOfNotMem K S (integerPrimeUnder_notMem K S P) = P :=
   HeightOneSpectrum.ext <| integer_map_comap_eq K S P.asIdeal
 
-/-- **The primes of `𝒪_S` are exactly the primes of `R` not in `S`.** -/
+/-- **The height-one primes of `𝒪_S` are exactly the height-one primes of `R` not in `S`.** -/
 noncomputable def integerHeightOneSpectrumEquiv :
     {v : HeightOneSpectrum R // v ∉ S} ≃ HeightOneSpectrum (S.integer K) where
   toFun v := integerPrimeOverOfNotMem K S v.property
