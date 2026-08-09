@@ -21,6 +21,11 @@ component of the contour's complement, where the winding number vanishes. Togeth
 five determinations package as null-homology of the boundary contour in the truncated
 fundamental domain, the exterior input to the valence-formula residue count.
 
+The file also carries the arc-excision geometry shared by the corner winding computations
+at `i`, at `ρ` and at `ρ + 1`. Each excises a parameter window around its corner and needs
+that window's chord to be exactly the excision radius `ε`; the half-width realising this,
+and the trigonometric identity behind it, are stated once here rather than three times.
+
 ## Main declarations
 
 * `TauCeti.ModularForm.sqrt_three_div_two_le_im_fdBoundary`: the image height bound.
@@ -29,6 +34,11 @@ fundamental domain, the exterior input to the valence-formula residue count.
   (`_of_half_lt_re`, `_of_re_lt_neg_half`, `_of_lt_im`) and in the unit disc
   (`_of_norm_lt_one`).
 * `TauCeti.ModularForm.isNullHomologous_fdBoundary`: the packaged null-homology.
+* `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth`: the parameter half-width whose
+  chord along the arc is a prescribed `ε`, characterised by
+  `TauCeti.ModularForm.fdBoundaryArcExcisionHalfWidth_spec`.
+* `TauCeti.abs_sin_mul_pi_div_twelve`: the sine of a multiple of `π/12` factors through
+  the absolute value, the identity that specification rests on.
 
 ## References
 
@@ -307,16 +317,6 @@ lemma fdBoundary_mem_coe_truncatedFundamentalDomain (hH : 1 ≤ H) {t : ℝ}
   have := sqrt_three_div_two_le_im_fdBoundary (h32.trans hH) ht
   nlinarith [Real.sqrt_nonneg 3]
 
-end ModularForm
-/-- **The sine of a multiple of `π/12` factors through the absolute value**, for any
-multiplier up to a half turn. The bound `|u| ≤ 12` is exactly what puts `u · π/12` inside
-`[-π, π]`, where `Real.abs_sin_eq_sin_abs_of_abs_le_pi` applies. -/
-lemma abs_sin_mul_pi_div_twelve {u : ℝ} (hu : |u| ≤ 12) :
-    |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
-  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
-      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
-      nlinarith [Real.pi_pos, abs_nonneg u]),
-    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
 
 /-- **The chord-matched excision half-width.** For an excision radius `ε`, the parameter
 half-width whose chord along the unit-circle arc is exactly `ε`: it is characterised by
@@ -353,7 +353,17 @@ lemma fdBoundaryArcExcisionHalfWidth_spec {ε : ℝ} (hε : 0 < ε)
     rw [hδπ, Real.sin_arcsin (by linarith) (by linarith)]
     ring
 
+end ModularForm
 
+/-- **The sine of a multiple of `π/12` factors through the absolute value**, for any
+multiplier up to a half turn. The bound `|u| ≤ 12` is exactly what puts `u · π/12` inside
+`[-π, π]`, where `Real.abs_sin_eq_sin_abs_of_abs_le_pi` applies. -/
+lemma abs_sin_mul_pi_div_twelve {u : ℝ} (hu : |u| ≤ 12) :
+    |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
+  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
+      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
+      nlinarith [Real.pi_pos, abs_nonneg u]),
+    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
 end TauCeti
 
 end
