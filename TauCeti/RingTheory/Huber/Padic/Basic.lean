@@ -19,7 +19,8 @@ nilpotent.
 
 ## Main definitions
 
-* `TauCeti.Huber.PadicInt.pairOfDefinition`: the pair of definition `(ℤ_[p], (p))`.
+* `TauCeti.Huber.PairOfDefinition.padicInt`: the pair of definition `(ℤ_[p], (p))`, named to
+  match the sibling Layer-0 example `TauCeti.Huber.PairOfDefinition.discrete`.
 
 ## Main results
 
@@ -86,7 +87,8 @@ theorem isAdic_maximalIdeal : IsAdic (maximalIdeal ℤ_[p]) := by
 /-- The pair of definition `(ℤ_[p], (p))` exhibiting `ℤ_[p]` as a Huber ring. The ring of
 definition is everything, and the ideal of definition is the maximal ideal carried across
 `Subring.topEquiv`. -/
-noncomputable def pairOfDefinition : PairOfDefinition ℤ_[p] where
+noncomputable def _root_.TauCeti.Huber.PairOfDefinition.padicInt :
+    PairOfDefinition ℤ_[p] where
   ringOfDefinition := ⊤
   isOpen_ringOfDefinition := by simp
   idealOfDefinition :=
@@ -99,25 +101,26 @@ noncomputable def pairOfDefinition : PairOfDefinition ℤ_[p] where
   isAdic_idealOfDefinition :=
     IsAdic.comap _ Topology.IsInducing.subtypeVal isAdic_maximalIdeal
 
-/-- The ring of definition of `pairOfDefinition` is all of `ℤ_[p]`. -/
+/-- The ring of definition of `PairOfDefinition.padicInt` is all of `ℤ_[p]`. -/
 @[simp]
-theorem pairOfDefinition_ringOfDefinition :
-    (pairOfDefinition (p := p)).ringOfDefinition = ⊤ := (rfl)
+theorem _root_.TauCeti.Huber.PairOfDefinition.padicInt_ringOfDefinition :
+    (PairOfDefinition.padicInt (p := p)).ringOfDefinition = ⊤ := (rfl)
 
-/-- Membership in the ideal of definition of `pairOfDefinition` is membership in `(p)`.
+/-- Membership in the ideal of definition of `PairOfDefinition.padicInt` is membership in `(p)`.
 
 Stated as a membership characterisation rather than an equation because the type of
 `idealOfDefinition` depends on `ringOfDefinition`. -/
 @[simp]
-theorem mem_pairOfDefinition_idealOfDefinition
-    {x : (pairOfDefinition (p := p)).ringOfDefinition} :
-    x ∈ (pairOfDefinition (p := p)).idealOfDefinition ↔ (x : ℤ_[p]) ∈ maximalIdeal ℤ_[p] := by
-  simp only [pairOfDefinition]
+theorem _root_.TauCeti.Huber.PairOfDefinition.mem_padicInt_idealOfDefinition
+    {x : (PairOfDefinition.padicInt (p := p)).ringOfDefinition} :
+    x ∈ (PairOfDefinition.padicInt (p := p)).idealOfDefinition ↔
+      (x : ℤ_[p]) ∈ maximalIdeal ℤ_[p] := by
+  simp only [PairOfDefinition.padicInt]
   exact Ideal.mem_comap
 
 /-- **`ℤ_[p]` is a Huber ring**, with `(ℤ_[p], (p))` as a pair of definition. -/
 instance isHuberRing : IsHuberRing ℤ_[p] :=
-  ⟨⟨pairOfDefinition⟩⟩
+  ⟨⟨PairOfDefinition.padicInt⟩⟩
 
 /-- **`ℤ_[p]` is not a Tate ring**: it admits no pseudouniformiser. Together with
 `TauCeti.Huber.PadicInt.isHuberRing` this separates `IsHuberRing` from `IsTateRing`. -/
