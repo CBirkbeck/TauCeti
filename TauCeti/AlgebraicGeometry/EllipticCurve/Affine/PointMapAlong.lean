@@ -22,17 +22,17 @@ the points of the curve `W.map f` over `S`, with no fields and no tower involved
 * `TauCeti.WeierstrassCurve.Affine.Point.mapAlong_neg`, `mapAlong_id`,
   `mapAlong_mapAlong` and `mapAlong_injective`: the functorial API, over arbitrary
   commutative rings, mirroring Mathlib's
-  `Affine.Point.map_id`, `map_map` and `map_injective` for the `AlgHom` version. The identity and
-  composition laws transport their codomains along Mathlib's `WeierstrassCurve.map_id` and
-  `map_map`.
+  `Affine.Point.map_id`, `map_map` and `map_injective` for the `AlgHom` version. Both curve
+  equalities — `W.map (RingHom.id R) = W` and `(W.map f).map g = W.map (g.comp f)` — hold by
+  definition, so the identity and composition laws are stated with no transport.
+* `TauCeti.WeierstrassCurve.Affine.Point.mapAlong_eq_map`: over a field, when `K` is an
+  `F`-algebra, the transport along `algebraMap F K` *is* Mathlib's `Affine.Point.map`. A user
+  holding only a ring homomorphism `f : F →+* K` writes `letI := f.toAlgebra` and gets the same
+  statement for `f`.
 
-* `TauCeti.WeierstrassCurve.Affine.Point.mapAlong_eq_map`: over a field, for **any** ring
-  homomorphism `f`, the transport *is* Mathlib's `Affine.Point.map` once `K` carries the
-  `F`-algebra structure `f` induces.
-Over a field, `mapAlong_eq_map` is the whole story: the transport *is* Mathlib's
-`Affine.Point.map`, which is already an `AddMonoidHom`. Rewriting with it gives `map_add`,
-`map_zero` and `map_zsmul` from Mathlib directly. Nothing field-level is defined or restated
-here — a bundled hom or `add`/`zsmul` lemmas would be a wrapper around Mathlib's.
+`Affine.Point.map` is already an `AddMonoidHom`, so rewriting with `mapAlong_eq_map` gives
+`map_add`, `map_zero` and `map_zsmul` from Mathlib directly. Nothing field-level is defined or
+restated here — a bundled hom or `add`/`zsmul` lemmas would be a wrapper around Mathlib's.
 
 What Mathlib lacks, and what this file adds, is the transport over arbitrary commutative rings,
 where `W.Point` has no group law to speak of.
@@ -58,7 +58,7 @@ The source's `map_add`, `mapAddMonoidHom` and `map_zsmul` are **not** ported. Ov
 three are Mathlib's `Affine.Point.map` under `f.toAlgebra`, and `mapAlong_eq_map` is the bridge
 to it; anything more here would be a wrapper.
 
-Changes from the source. The names take a `RingHom` suffix, Mathlib having since taken
+Changes from the source. The names take an `Along` suffix (`mapAlong`), Mathlib having taken
 `Point.map` for the `AlgHom` version. The computation rules are stated in simp-normal form, and
 negation and the functorial laws are stated over an arbitrary commutative ring rather than a field.
 The identity, composition and injectivity laws have no counterpart in the source.
@@ -127,19 +127,17 @@ lemma mapAlong_injective : Function.Injective (mapAlong f hf (W := W)) := by
   · obtain ⟨hx, hy⟩ := Affine.Point.some.inj hP
     simp only [hf hx, hf hy]
 
-
 section Field
 
-variable {F K : Type*} [Field F] [Field K] [DecidableEq F] [DecidableEq K]
-  {W : _root_.WeierstrassCurve F} (f : F →+* K)
+variable {F K : Type*} [Field F] [Field K] [DecidableEq F] [DecidableEq K] [Algebra F K]
+  {W : _root_.WeierstrassCurve F}
 
-/-- **Over a field the transport is Mathlib's `Affine.Point.map`**, for *any* ring homomorphism —
-in particular for a `q`-power Frobenius, which is not an ambient `algebraMap`. Giving `K` the
-`F`-algebra structure `f` induces makes the two constructions the same map. -/
+/-- **Over a field the transport is Mathlib's `Affine.Point.map`.** For a ring homomorphism
+`f : F →+* K` that is not an ambient `algebraMap`, apply this under `letI := f.toAlgebra`, where
+`algebraMap F K` is `f` by definition. -/
 lemma mapAlong_eq_map (P : W.toAffine.Point) :
-    letI : Algebra F K := f.toAlgebra
-    mapAlong f f.injective P = Affine.Point.map (W' := W) (Algebra.ofId F K) P := by
-  let : Algebra F K := f.toAlgebra
+    mapAlong (algebraMap F K) (algebraMap F K).injective P
+      = Affine.Point.map (W' := W) (Algebra.ofId F K) P := by
   rcases P with _ | ⟨x, y, h⟩ <;> rfl
 
 end Field
