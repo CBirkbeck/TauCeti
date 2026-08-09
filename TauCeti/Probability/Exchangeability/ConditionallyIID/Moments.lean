@@ -6,10 +6,10 @@ Authors: Claude
 module
 
 public import TauCeti.Probability.Exchangeability.ConditionallyIID.Basic
-public import TauCeti.Probability.Process.BlockAverage
 -- Non-public: the `measurable_probabilityMeasure_toMeasure_apply` lemmas evaluate a random measure
 -- at a fixed measurable set, in the `ℝ≥0∞` and `.toReal` forms.
 import TauCeti.MeasureTheory.Measure.ProbabilityMeasureExt
+import TauCeti.Probability.Process.BlockAverage
 
 /-!
 # Conditional moment identities and the empirical-frequency rate
