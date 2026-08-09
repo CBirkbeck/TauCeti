@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.WeilDivisor.FractionalIdealDivisor.ClassGroup
+public import TauCeti.AlgebraicGeometry.WeilDivisor.FractionalIdealDivisor.Basic
+public import TauCeti.RingTheory.ClassGroup.Basic
 
 /-!
 # The divisor class group of a Dedekind domain is its ideal class group
@@ -36,7 +37,7 @@ This is the affine, scheme-free form of the Jacobian roadmap's `Cl(X) ≅ Pic X`
 bundles` ... `Cl(X) ≅ Pic X`"), realized for the Dedekind model before the global Picard scheme
 exists. It reuses Tau Ceti's `fractionalIdealDivisorAddEquiv` and `OrderSystem.ofDedekindDomain`
 API, the class `IsDedekindDomain.HeightOneSpectrum.classGroupMk v` of a height one prime from
-`TauCeti.AlgebraicGeometry.WeilDivisor.FractionalIdealDivisor.ClassGroup`, and Mathlib's
+`TauCeti.RingTheory.ClassGroup.Basic`, and Mathlib's
 `ClassGroup R`, `ClassGroup.equiv` (independence of the fraction field) and
 `QuotientAddGroup.congr`; no external mathematics is vendored.
 -/

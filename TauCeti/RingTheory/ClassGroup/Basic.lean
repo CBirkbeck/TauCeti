@@ -26,6 +26,12 @@ over `[IsDomain R]`, since nothing in it is Dedekind-specific — and neither me
 divisors, so consumers in `RingTheory` and `NumberTheory` can reach them. The Weil-divisor side,
 which needs the factorization API, lives in
 `TauCeti.AlgebraicGeometry.WeilDivisor.FractionalIdealDivisor.ClassGroup`.
+
+Split out of material adapted from Michael Stoll's elliptic-curves formalisation
+(`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/FractionalIdeal.lean`
+at the roadmap's pin `66889eada51a`, Apache 2.0, by Michael Stoll). Following this repository's
+convention for adapted material, the upstream authorship is credited here rather than in the
+copyright header.
 -/
 
 public section
@@ -48,13 +54,22 @@ noncomputable def IsDedekindDomain.HeightOneSpectrum.classGroupMk (v : HeightOne
     ClassGroup R :=
   ClassGroup.mk0 ⟨v.asIdeal, mem_nonZeroDivisors_of_ne_zero v.ne_bot⟩
 
+/-- The defining formula for `classGroupMk`, so that consumers working with `ClassGroup.mk0` never
+need to unfold the definition (whose body a `public section` leaves unexposed). -/
+@[simp]
+lemma IsDedekindDomain.HeightOneSpectrum.classGroupMk_eq_mk0 (v : HeightOneSpectrum R) :
+    v.classGroupMk = ClassGroup.mk0 ⟨v.asIdeal, mem_nonZeroDivisors_of_ne_zero v.ne_bot⟩ := by
+  -- Not `rfl`: a `public section` leaves the body of `classGroupMk` unexposed, so the equation
+  -- has to come from the definition's own equation lemma.
+  simp only [IsDedekindDomain.HeightOneSpectrum.classGroupMk]
+
 /-- The class of `v` is the class of `v.asIdeal` viewed as an invertible fractional ideal of a
 fraction field `K`. -/
 lemma IsDedekindDomain.HeightOneSpectrum.classGroupMk_eq_mk (K : Type*) [Field K] [Algebra R K]
     [IsFractionRing R K] (v : HeightOneSpectrum R) :
     v.classGroupMk = ClassGroup.mk K (Units.mk0 (v.asIdeal : FractionalIdeal R⁰ K)
       (FractionalIdeal.coeIdeal_ne_zero.mpr v.ne_bot)) := by
-  rw [HeightOneSpectrum.classGroupMk, ← ClassGroup.mk_mk0 K]
+  rw [classGroupMk_eq_mk0, ← ClassGroup.mk_mk0 K]
   exact congrArg _ (Units.ext (FractionalIdeal.coe_mk0 K _))
 
 end
