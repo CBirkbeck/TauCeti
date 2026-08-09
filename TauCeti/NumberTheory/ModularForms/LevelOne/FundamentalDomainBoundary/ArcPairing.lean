@@ -253,7 +253,7 @@ theorem two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBo
     (hne : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
       (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
     (hint : IntervalIntegrable (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-      else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) volume 1 3) :
+      else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) volume 1 2) :
     2 * ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
         else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) =
       -(k : ℂ) * ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
@@ -266,8 +266,59 @@ theorem two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBo
   have hrefl : (∫ t in (1 : ℝ)..3, G (4 - t)) = ∫ t in (1 : ℝ)..3, G t := by
     have h := intervalIntegral.integral_comp_sub_left (a := (1 : ℝ)) (b := 3) (d := (4 : ℝ)) G
     rwa [h43, h41] at h
+  -- The excision test cuts out a measurable set: a finite union of preimages of closed balls
+  -- under the continuous contour.
+  have hexc : MeasurableSet {t : ℝ | ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε} := by
+    have hset : {t : ℝ | ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε}
+        = ⋃ s ∈ (S : Set ℂ), {t : ℝ | ‖fdBoundary H t - s‖ ≤ ε} := by
+      ext t; simp
+    rw [hset]
+    refine S.finite_toSet.measurableSet_biUnion fun s _ => ?_
+    exact measurableSet_le
+      (((continuous_fdBoundary H).sub continuous_const).norm).measurable measurable_const
+  -- The excised weight is bounded, hence integrable on the first half.
+  have hWc : ∀ c : ℂ, IntervalIntegrable
+      (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ) else c) volume 1 2 := by
+    intro c
+    have hmeas : Measurable
+        (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ) else c) :=
+      measurable_const.ite hexc measurable_const
+    have hbdd : ∀ t : ℝ,
+        ‖(if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ) else c)‖ ≤ ‖c‖ := by
+      intro t
+      by_cases h : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε <;> simp [h]
+    exact ⟨(integrable_const ‖c‖).mono' hmeas.aestronglyMeasurable
+        (Filter.Eventually.of_forall fun t => hbdd t),
+      (integrable_const ‖c‖).mono' hmeas.aestronglyMeasurable
+        (Filter.Eventually.of_forall fun t => hbdd t)⟩
+  -- On the arc the contour's logarithmic derivative is constant, so the excised weight is one
+  -- of those bounded models.
+  have hWint : IntervalIntegrable
+      (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ)
+        else -((k : ℂ) * logDeriv (fdBoundary H) t)) volume 1 2 :=
+    (hWc (-((k : ℂ) * (((Real.pi / 6 : ℝ) : ℂ) * Complex.I)))).congr_uIoo fun t ht => by
+      rw [Set.uIoo_of_le (by norm_num : (1 : ℝ) ≤ 2)] at ht
+      have ht3 : t ∈ Ioo (1 : ℝ) 3 := ⟨ht.1, by linarith [ht.2]⟩
+      by_cases hc : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε
+      · simp [hc]
+      · simp [hc, logDeriv_fdBoundary_arc ht3]
+  -- The pairing rewrites the reflected integrand as weight minus direct, so integrability on
+  -- the second half is derived rather than assumed.
+  have hreflint12 : IntervalIntegrable (fun t => G (4 - t)) volume 1 2 :=
+    (hWint.sub hint).congr_uIoo fun t ht => by
+      rw [Set.uIoo_of_le (by norm_num : (1 : ℝ) ≤ 2)] at ht
+      have ht3 : t ∈ Ioo (1 : ℝ) 3 := ⟨ht.1, by linarith [ht.2]⟩
+      have hp := excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS ht3
+        hnorm hinv (hd t ht) (hne t ht)
+      rw [hG]
+      linear_combination -hp
+  have hint23 : IntervalIntegrable G volume 2 3 := by
+    have h := hreflint12.comp_sub_left 4
+    rw [(by norm_num : (4 : ℝ) - 1 = 3), (by norm_num : (4 : ℝ) - 2 = 2)] at h
+    simpa only [sub_sub_self] using h.symm
+  have hint13 : IntervalIntegrable G volume 1 3 := hint.trans hint23
   have hintrefl : IntervalIntegrable (fun t => G (4 - t)) volume 1 3 := by
-    have h := hint.comp_sub_left 4
+    have h := hint13.comp_sub_left 4
     rw [h43, h41] at h
     exact h.symm
   -- The weight term is itself reflection-invariant: the excision test is, by
@@ -310,7 +361,7 @@ theorem two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBo
       rw [sub_sub_self (4 : ℝ) t, hweight t ht3] at h
       rw [hG]
       linear_combination h
-  rw [intervalIntegral.integral_add hint hintrefl, hrefl] at hsum
+  rw [intervalIntegral.integral_add hint13 hintrefl, hrefl] at hsum
   rw [two_mul, hsum, ← intervalIntegral.integral_const_mul]
   refine intervalIntegral.integral_congr fun t _ => ?_
   by_cases hc : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε <;> simp [hc]
