@@ -25,7 +25,9 @@ ideal `(X)` is a finitely generated ideal of definition, and `X` itself is a pse
 ## Main results
 
 * `TauCeti.Huber.LaurentSeries.mem_idealOfDefinition_pow_iff`: membership of `(X)ⁿ` is the
-  valuation bound `v f ≤ exp (-n)`. Every topological statement here is read off this.
+  valuation bound `v f ≤ exp (-n)`. `isAdic_idealOfDefinition` and
+  `mem_pairOfDefinition_idealImage` are read off it; the openness of the ring of definition and
+  the nilpotence of `X` come from Mathlib's valuation API instead.
 * `TauCeti.Huber.LaurentSeries.isPseudoUniformizer_X`: `X` is a pseudouniformiser.
 * `TauCeti.Huber.LaurentSeries.isHuberRing` and `TauCeti.Huber.LaurentSeries.isTateRing`.
 
@@ -78,20 +80,18 @@ theorem isOpen_powerSeries_as_subring :
     IsOpen ((powerSeries_as_subring K : Subring K⸨X⸩) : Set K⸨X⸩) :=
   (coe_powerSeries_as_subring K) ▸ Valued.isOpen_integer K⸨X⸩
 
-/-- The power series are the valuation integers of `K⸨X⸩`, packaged as
-`Valuation.Integers`. This is what lets the divisibility/valuation dictionary
-(`Valuation.Integers.dvd_iff_le`) apply to `(X)ⁿ` directly, with no transport and no
-coefficient bookkeeping. -/
+/-- The power series *are* the valuation subring of `K⸨X⸩`, as subrings. -/
+theorem powerSeries_as_subring_eq_integer :
+    (powerSeries_as_subring K : Subring K⸨X⸩) = (Valued.v (R := K⸨X⸩)).integer :=
+  SetLike.ext' (coe_powerSeries_as_subring K)
+
+/-- The power series are the valuation integers of `K⸨X⸩`, packaged as `Valuation.Integers`.
+This is Mathlib's `Valuation.integer.integers` transported along
+`TauCeti.Huber.LaurentSeries.powerSeries_as_subring_eq_integer`, and is what lets the
+divisibility/valuation dictionary `Valuation.Integers.dvd_iff_le` apply to `(X)ⁿ` directly. -/
 theorem integers_powerSeries_as_subring :
-    Valuation.Integers (Valued.v : Valuation K⸨X⸩ ℤᵐ⁰) (powerSeries_as_subring K) where
-  hom_inj := Subtype.val_injective
-  map_le_one x := by
-    have hmem := x.2
-    rwa [← SetLike.mem_coe, coe_powerSeries_as_subring, SetLike.mem_coe,
-      Valuation.mem_integer_iff] at hmem
-  exists_of_le_one {r} hr := by
-    obtain ⟨F, hF⟩ := (val_le_one_iff_eq_coe K r).mp hr
-    exact ⟨powerSeriesEquivSubring K F, hF⟩
+    Valuation.Integers (Valued.v : Valuation K⸨X⸩ ℤᵐ⁰) (powerSeries_as_subring K) :=
+  powerSeries_as_subring_eq_integer K ▸ Valuation.integer.integers _
 
 /-- The variable `X`, viewed inside the ring of definition `K⟦X⟧ ⊆ K⸨X⸩`. -/
 noncomputable def subringX : powerSeries_as_subring K := powerSeriesEquivSubring K PowerSeries.X
@@ -105,7 +105,8 @@ noncomputable def idealOfDefinition : Ideal (powerSeries_as_subring K) := Ideal.
 /-- Unfolding lemma for `TauCeti.Huber.LaurentSeries.idealOfDefinition`. -/
 theorem idealOfDefinition_def : idealOfDefinition K = Ideal.span {subringX K} := (rfl)
 
-/-- `X` is nonzero in `K⸨X⸩`, so, `K⸨X⸩` being a field, all its powers are invertible. -/
+/-- `X` is nonzero in `K⸨X⸩`. Only nontriviality of the coefficients is involved; that its
+powers are then invertible is separate, and uses that `K⸨X⸩` is a field. -/
 theorem coe_X_ne_zero : ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) ≠ 0 := by
   simp only [HahnSeries.ofPowerSeries_X, ne_eq, HahnSeries.single_eq_zero_iff, one_ne_zero,
     not_false_eq_true]
@@ -174,13 +175,23 @@ noncomputable def pairOfDefinition : PairOfDefinition K⸨X⸩ where
 
 /-- The ring of definition of `TauCeti.Huber.LaurentSeries.pairOfDefinition` is the power series.
 
-There is deliberately no companion lemma for the ideal: `PairOfDefinition.idealOfDefinition` is
-dependent on `ringOfDefinition`, so with the body hidden by the module system an equation between
-the two ideals does not typecheck. The bridge
-`TauCeti.Huber.LaurentSeries.mem_idealOfDefinition_pow_iff` is what consumers use instead. -/
+The ideal is characterised by `TauCeti.Huber.LaurentSeries.mem_pairOfDefinition_idealOfDefinition`
+in membership form; an *equation* between the two ideals does not typecheck, since
+`idealOfDefinition`'s type depends on `ringOfDefinition`. -/
 @[simp]
 theorem pairOfDefinition_ringOfDefinition :
     (pairOfDefinition K).ringOfDefinition = powerSeries_as_subring K := (rfl)
+
+/-- **The ideal of definition of `pairOfDefinition` is `(X)`**, in membership form.
+
+An *equation* between `idealOfDefinition` and `idealOfDefinition K` does not typecheck, since
+the former's type depends on the pair's `ringOfDefinition`; a membership statement is unaffected,
+because `f` is already taken in that dependent type. -/
+@[simp]
+theorem mem_pairOfDefinition_idealOfDefinition {n : ℕ}
+    {f : (pairOfDefinition K).ringOfDefinition} :
+    f ∈ (pairOfDefinition K).idealOfDefinition ^ n ↔ Valued.v (f : K⸨X⸩) ≤ exp (-(n : ℤ)) :=
+  mem_idealOfDefinition_pow_iff n f
 
 /-- **The pair of definition is `(K⟦X⟧, (X))`**, said without touching the dependent field:
 `PairOfDefinition.idealImage n` is the image of `(X)ⁿ` in `K⸨X⸩`, so it can be compared with a
