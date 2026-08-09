@@ -463,7 +463,7 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
     ∫ t in (0 : ℝ)..5, (if ε < ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖
         then (fdBoundary H t - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) t else 0) =
       -((Real.pi : ℂ) / 3) * Complex.I - ((Real.arcsin (ε / 2) : ℝ) : ℂ) * Complex.I := by
-  obtain ⟨hδL_pos, hδL_lt, h2sin⟩ := excisionHalfWidth_spec hε hε₃
+  obtain ⟨hδL_pos, hδL_lt, h2sin⟩ := fdBoundaryArcExcisionHalfWidth_spec hε hε₃
   set δL := fdBoundaryArcExcisionHalfWidth ε with hδL_def
   have hHpos : (0 : ℝ) < H - Real.sqrt 3 / 2 := by linarith
   set δR := ε / (H - Real.sqrt 3 / 2) with hδR_def
@@ -486,7 +486,7 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
   have hi25 := hi_right.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_right)
   refine ⟨(hi02.trans himid).trans hi25, ?_⟩
   have hδ12 : δL * (Real.pi / 12) = Real.arcsin (ε / 2) := by
-    simp only [hδL_def, excisionHalfWidth_def]
+    simp only [hδL_def, fdBoundaryArcExcisionHalfWidth_def]
     field_simp
   rw [← intervalIntegral.integral_add_adjacent_intervals (hi02.trans himid) hi25,
     ← intervalIntegral.integral_add_adjacent_intervals hi02 himid,
