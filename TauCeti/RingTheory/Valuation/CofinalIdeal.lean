@@ -101,6 +101,7 @@ theorem cofinalValueFor_of_eq_zero {v : Valuation A Γ₀}
   exact zero_lt_iff.mpr WithZero.coe_ne_zero
 
 /-- Zero has cofinal value. -/
+@[simp]
 theorem cofinalValueFor_zero (v : Valuation A Γ₀)
     (H : Subgroup (valueGroup (.ofClass v))) : CofinalValueFor v H 0 :=
   cofinalValueFor_of_eq_zero (map_zero v)
@@ -206,6 +207,7 @@ theorem cofinalValueFor_top_iff {v : Valuation A Γ₀} {a : A} :
 
 /-- `1` never has cofinal value: `v 1 = 1`, which is not below itself. Stated for the predicate
 so that it needs only a ring — properness of the ideal below is a corollary. -/
+@[simp]
 theorem not_cofinalValueFor_one (v : Valuation A Γ₀)
     (H : Subgroup (valueGroup (.ofClass v))) : ¬ CofinalValueFor v H 1 :=
   fun h ↦ absurd h.lt_one (by simp)
