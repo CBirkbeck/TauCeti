@@ -48,14 +48,23 @@ The recovery statements need a cancellation hypothesis, not just `ω ≠ 0`: ove
 `NoZeroSMulDivisors R N` is assumed for them, and for nothing else; for `N = R` it is implied by
 `NoZeroDivisors R`.
 
-None of the transformation laws is a `simp` lemma: the basis they are proved from does not occur
-in the statement, so `simp` could not infer it.
+None of the transformation laws is a `simp` lemma: the basis is a hypothesis and does not occur in
+the conclusion, so `simp` could not infer it.
 
 The bilinear statements go through a private reading of an alternating bilinear form as an
 `AlternatingMap` on `Fin 2`. That conversion is deliberately not exported. The converse direction
 already exists, as `TauCeti.MultilinearMap.toBilinForm`, and an exported version of this one
 should be the matching half of that correspondence — over a `CommSemiring`, with the round trips —
 rather than the one-way, proof-indexed constructor needed here.
+
+## Provenance
+
+The four transformation and recovery laws are ported from the AINTLIB `HasseWeil` project
+(Apache-2.0), revision `513e83879e2f`, file `HasseWeil/WeilPairing/PairingDet.lean`, declarations
+`alternating_comp_eq_det_smul` and `det_eq_of_alternating_scaling`. The source states them over a
+field, for a scalar-valued form, evaluated at a basis, and proves the first by expanding `φ (b j)`
+in coordinates; none of that is reproduced here. `TauCeti.Matrix.detRowAlternating_mulVec` predates
+that port and is not from the source.
 -/
 
 open Module
@@ -72,12 +81,15 @@ theorem eq_smulRight_basis_det [Fintype ι] [DecidableEq ι] (b : Basis ι R M)
     (ω : M [⋀^ι]→ₗ[R] N) : ω = b.det.smulRight (ω ⇑b) := by
   refine Module.Basis.ext_alternating b fun i h => ?_
   let σ : Equiv.Perm ι := Equiv.ofBijective i (Finite.injective_iff_bijective.1 h)
+  -- `ext_alternating` hands back the arguments as `fun i => b (i j)`, whereas `map_perm` and
+  -- `Basis.det_self` are stated for the composite `⇑b ∘ σ`. The two are the same function, so
+  -- the `change` is definitional; Mathlib's own `eq_smul_basis_det` opens with the same step.
   change ω (⇑b ∘ σ) = (b.det.smulRight (ω ⇑b)) (⇑b ∘ σ)
   simp [map_perm, Basis.det_self]
 
 /-- **An endomorphism scales a top-degree alternating form by its determinant.** Here `ω` is of
-top degree in the sense that its index type indexes a basis of `M`; the basis itself does not
-occur in the statement. -/
+top degree in the sense that its index type indexes a basis of `M`; that basis is a hypothesis and
+does not occur in the conclusion, which is an equality of alternating maps. -/
 theorem compLinearMap_eq_det_smul [Finite ι] (b : Basis ι R M) (ω : M [⋀^ι]→ₗ[R] N)
     (φ : M →ₗ[R] M) : ω.compLinearMap φ = LinearMap.det φ • ω := by
   cases nonempty_fintype ι
@@ -96,7 +108,10 @@ variable {ι R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommG
 
 /-- **The multiplier of a nonzero top-degree alternating form is the determinant.** An
 endomorphism which scales `ω` by `d` has `det φ = d`; the scaling identifies the determinant
-without computing it, and only the one endomorphism is involved. -/
+without computing it, and only the one endomorphism is involved.
+
+`NoZeroSMulDivisors R N` is required, not incidental: `ω ≠ 0` alone leaves the multiplier
+ambiguous, as the `ZMod 4` example in the module docstring shows. -/
 theorem det_eq_of_compLinearMap_eq_smul [Finite ι] [NoZeroSMulDivisors R N] (b : Basis ι R M)
     {ω : M [⋀^ι]→ₗ[R] N} (hω : ω ≠ 0) {φ : M →ₗ[R] M} {d : R}
     (h : ω.compLinearMap φ = d • ω) : LinearMap.det φ = d := by
@@ -135,16 +150,22 @@ private theorem IsAlt.toAlternatingMap_ne_zero {ω : M →ₗ[R] M →ₗ[R] N} 
   exact congrArg (fun f : M [⋀^Fin 2]→ₗ[R] N => f ![x, y]) hω
 
 /-- **An endomorphism of a rank-two module scales an alternating bilinear form by its
-determinant.** The basis witnesses that the rank is two and does not occur in the statement. -/
+determinant.** The basis is a hypothesis witnessing that the rank is two; it does not occur in the
+conclusion, which is an equality of bilinear maps. -/
 theorem IsAlt.compl₁₂_self_eq_det_smul (b : Basis (Fin 2) R M) {ω : M →ₗ[R] M →ₗ[R] N}
     (halt : ω.IsAlt) (φ : M →ₗ[R] M) : ω.compl₁₂ φ φ = LinearMap.det φ • ω := by
   ext x y
   have h := AlternatingMap.compLinearMap_eq_det_smul b halt.toAlternatingMap φ
-  simpa using congrArg (fun f : M [⋀^Fin 2]→ₗ[R] N => f ![x, y]) h
+  simpa only [compl₁₂_apply, smul_apply, AlternatingMap.compLinearMap_apply,
+    IsAlt.toAlternatingMap_apply, Fin.isValue, Matrix.cons_val_zero, Matrix.cons_val_one,
+    Matrix.cons_val_fin_one, AlternatingMap.smul_apply] using
+    congrArg (fun f : M [⋀^Fin 2]→ₗ[R] N => f ![x, y]) h
 
 /-- **The multiplier of a nonzero alternating bilinear form on a rank-two module is the
 determinant.** This is the form the additivised Weil pairing supplies: its scaling by an isogeny's
-degree identifies that degree as a determinant. -/
+degree identifies that degree as a determinant.
+
+As above, `NoZeroSMulDivisors R N` is required and `ω ≠ 0` alone does not suffice. -/
 theorem det_eq_of_compl₁₂_self_eq_smul [NoZeroSMulDivisors R N] (b : Basis (Fin 2) R M)
     {ω : M →ₗ[R] M →ₗ[R] N} (halt : ω.IsAlt) (hω : ω ≠ 0) {φ : M →ₗ[R] M} {d : R}
     (h : ω.compl₁₂ φ φ = d • ω) : LinearMap.det φ = d := by
@@ -152,7 +173,9 @@ theorem det_eq_of_compl₁₂_self_eq_smul [NoZeroSMulDivisors R N] (b : Basis (
   ext v
   have hv : v = ![v 0, v 1] := by ext i; fin_cases i <;> rfl
   rw [hv]
-  simpa using DFunLike.congr_fun (DFunLike.congr_fun h (v 0)) (v 1)
+  simpa only [Fin.isValue, AlternatingMap.compLinearMap_apply, IsAlt.toAlternatingMap_apply,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val_fin_one, AlternatingMap.smul_apply,
+    compl₁₂_apply, smul_apply] using DFunLike.congr_fun (DFunLike.congr_fun h (v 0)) (v 1)
 
 end RankTwo
 
