@@ -5,6 +5,8 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.Algebra.Order.Hom.MonoidWithZero
+public import Mathlib.Algebra.Order.Hom.Units
 public import Mathlib.RingTheory.Valuation.Basic
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 
@@ -239,32 +241,22 @@ theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le {v : Valuation A Γ�
 /-! ### Transport along valuation equivalence -/
 
 /-- The order isomorphism of **value groups** induced by an equivalence of valuations.
-Mathlib's `IsEquiv.orderMonoidIso` is an isomorphism of the value monoids *with zero*;
-since `ValueGroup₀ f = WithZero ↥(valueGroup f)`, it restricts to the unit groups. -/
+Mathlib's `IsEquiv.orderMonoidIso` is an isomorphism of the value monoids *with zero*, and
+`ValueGroup₀ f = WithZero ↥(valueGroup f)`, so this is exactly the inverse of Mathlib's
+`OrderMonoidIso.withZero`, which identifies order isomorphisms of two groups with those of
+the groups with zero adjoined. -/
 noncomputable def _root_.Valuation.IsEquiv.valueGroupOrderIso {v : Valuation A Γ₀}
     {w : Valuation A Γ₀'} (h : v.IsEquiv w) :
-    valueGroup (.ofClass v) ≃*o valueGroup (.ofClass w) where
-  __ := (WithZero.unitsWithZeroEquiv (α := valueGroup (.ofClass v))).symm.trans
-    ((Units.mapEquiv h.orderMonoidIso.toMulEquiv).trans
-      (WithZero.unitsWithZeroEquiv (α := valueGroup (.ofClass w))))
-  map_le_map_iff' {a b} :=
-    calc _ ↔ ((_ : valueGroup (.ofClass w)) : ValueGroup₀ (.ofClass w))
-              ≤ ((_ : valueGroup (.ofClass w)) : ValueGroup₀ (.ofClass w)) :=
-            WithZero.coe_le_coe.symm
-      _ ↔ h.orderMonoidIso (a : ValueGroup₀ (.ofClass v))
-            ≤ h.orderMonoidIso (b : ValueGroup₀ (.ofClass v)) := by
-          simp [WithZero.unitsWithZeroEquiv]
-      _ ↔ ((a : ValueGroup₀ (.ofClass v)) ≤ (b : ValueGroup₀ (.ofClass v))) :=
-          h.orderMonoidIso.map_le_map_iff'
-      _ ↔ a ≤ b := WithZero.coe_le_coe
+    valueGroup (.ofClass v) ≃*o valueGroup (.ofClass w) :=
+  OrderMonoidIso.withZero.symm h.orderMonoidIso
 
 /-- The induced value-group isomorphism agrees with `orderMonoidIso` under the coercion. -/
 @[simp]
 theorem _root_.Valuation.IsEquiv.valueGroupOrderIso_coe {v : Valuation A Γ₀}
     {w : Valuation A Γ₀'} (h : v.IsEquiv w) (γ : valueGroup (.ofClass v)) :
     ((h.valueGroupOrderIso γ : valueGroup (.ofClass w)) : ValueGroup₀ (.ofClass w))
-      = h.orderMonoidIso (γ : ValueGroup₀ (.ofClass v)) := by
-  simp [Valuation.IsEquiv.valueGroupOrderIso, WithZero.unitsWithZeroEquiv]
+      = h.orderMonoidIso (γ : ValueGroup₀ (.ofClass v)) :=
+  (rfl)
 
 /-- Equivalent valuations have corresponding characteristic generators. -/
 theorem characteristicGenerators_map_of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
