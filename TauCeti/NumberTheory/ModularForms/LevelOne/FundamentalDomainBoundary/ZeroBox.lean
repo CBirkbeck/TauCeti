@@ -65,8 +65,7 @@ theorem fdBox_subset_upperHalfPlaneSet {M : ℝ} : fdBox M ⊆ upperHalfPlaneSet
   lt_trans (by norm_num) (mem_fdBox.mp hz).2.1
 
 /-- The standard fundamental domain truncated at height `H` lies inside the open box of any
-height `M > H`: its real part is pinned in `[-1/2, 1/2]`, and its imaginary part lies in
-`[√3/2, H]` because on `|re| ≤ 1/2` the unit-norm bound forces `im² ≥ 3/4`. -/
+height `M > H`. -/
 theorem coe_truncatedFundamentalDomain_subset_fdBox {H M : ℝ} (hHM : H < M) :
     UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ fdBox M := by
   rw [ModularGroup.coe_truncatedFundamentalDomain]
