@@ -18,8 +18,9 @@ the points of the curve `W.map f` over `S`, with no fields and no tower involved
 
 * `TauCeti.WeierstrassCurve.Affine.Point.mapRingHom`: the map `W.Point → (W.map f).Point`, over
   arbitrary commutative rings.
-* `TauCeti.WeierstrassCurve.Affine.Point.mapRingHom_neg`, `mapRingHom_id`, `mapRingHom_comp` and
-  `mapRingHom_injective`: the functorial API, over arbitrary commutative rings, mirroring Mathlib's
+* `TauCeti.WeierstrassCurve.Affine.Point.mapRingHom_neg`, `mapRingHom_id`,
+  `mapRingHom_mapRingHom` and `mapRingHom_injective`: the functorial API, over arbitrary
+  commutative rings, mirroring Mathlib's
   `Affine.Point.map_id`, `map_map` and `map_injective` for the `AlgHom` version. The identity and
   composition laws transport their codomains along Mathlib's `WeierstrassCurve.map_id` and
   `map_map`.
@@ -72,10 +73,12 @@ noncomputable def mapRingHom : W.toAffine.Point → (W.map f).toAffine.Point
   | .zero => .zero
   | .some x y h => .some (f x) (f y) ((Affine.map_nonsingular W.toAffine hf x y).mpr h)
 
+/-- The point map sends the point at infinity to the point at infinity. -/
 @[simp]
 lemma mapRingHom_zero : mapRingHom f hf (0 : W.toAffine.Point) = 0 := by
   rfl
 
+/-- The point map sends an affine point to the point with image coordinates. -/
 @[simp]
 lemma mapRingHom_some {x y : R} (h : W.toAffine.Nonsingular x y) :
     mapRingHom f hf (.some x y h)
@@ -100,7 +103,7 @@ lemma mapRingHom_id (P : W.toAffine.Point) :
 
 /-- **The point map is functorial in the ring homomorphism**, after Mathlib's
 `WeierstrassCurve.map_map` identifies the codomain. -/
-lemma mapRingHom_comp {T : Type*} [CommRing T] (g : S →+* T) (hg : Function.Injective g)
+lemma mapRingHom_mapRingHom {T : Type*} [CommRing T] (g : S →+* T) (hg : Function.Injective g)
     (P : W.toAffine.Point) :
     mapRingHom g hg (mapRingHom f hf P)
       = _root_.WeierstrassCurve.map_map W f g ▸ mapRingHom (g.comp f) (hg.comp hf) P := by
