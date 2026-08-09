@@ -14,11 +14,12 @@ public import TauCeti.RingTheory.Valuation.CharacteristicGroup
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Lemma 7.1.** For a valuation `v` on a
 commutative ring and a convex subgroup `H` of its value group strictly containing the
 characteristic subgroup `cΓ_v`, the elements whose value is cofinal for `H` form a radical
-ideal. The cofinality predicate and its closure properties need only a ring; the ideal and
-everything named for Lemma 7.1 are stated over a **commutative** ring, because `Ideal A` is
-`Submodule A A` — a *left* ideal — and left absorption is all the multiplicative step gives,
-so the noncommutative object would not be the one Wedhorn's lemma is about. This is the
-object Wedhorn's §7.1
+ideal. Almost all of this needs only a ring: `Ideal A` is `Submodule A A`, a *left* ideal,
+and left absorption is exactly what the multiplicative step supplies, so the predicate, the
+ideal, its membership lemma and its properness are all stated at `[Ring A]`. Commutativity
+enters at one point, radicality, where Mathlib's `Ideal.IsRadical` requires it — and that is
+the statement carrying Wedhorn's name, since Lemma 7.1 is about a commutative ring. This is
+the object Wedhorn's §7.1
 uses to reduce the construction of `cΓ_v(I)`
 (Definition 7.3) to a finite generating set, and it is used twice in the proof of Lemma 7.2:
 once to pass from generators to the whole ideal, and once to replace `I` by its radical.
@@ -215,15 +216,15 @@ theorem not_cofinalValueFor_one (v : Valuation A Γ₀)
 /-! ### The ideal of cofinal values
 
 `Ideal A` is `Submodule A A`, i.e. a *left* ideal, and `CofinalValueFor.mul` gives exactly left
-absorption. Wedhorn's Lemma 7.1 is about a commutative ring, so the ideal and everything named
-for the lemma are stated over `[CommRing A]`; only the predicate above is at `[Ring A]`. -/
+absorption — which is exactly what `Ideal A = Submodule A A` asks for. So the ideal and its
+membership and properness statements need only a ring; commutativity enters one step later,
+at radicality, where Mathlib's `Ideal.IsRadical` requires it. Wedhorn states Lemma 7.1 over a
+commutative ring, and it is `isRadical_cofinalIdeal` below that carries the lemma's name. -/
 
-section CommRing
-
-variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
-
-/-- **Wedhorn Lemma 7.1.** For a convex subgroup `H` of the value group strictly containing
-the characteristic subgroup, the elements whose value is cofinal for `H` form an ideal. -/
+/-- The elements whose value is cofinal for `H`, as an ideal — a *left* ideal in general,
+since `Ideal A` is `Submodule A A` and `CofinalValueFor.mul` supplies left absorption.
+Over a commutative ring this is the ideal of **Wedhorn, Lemma 7.1**, whose radicality is
+`isRadical_cofinalIdeal`. -/
 def cofinalIdeal (v : Valuation A Γ₀)
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hH : characteristicSubgroup v < H) : Ideal A where
@@ -241,9 +242,20 @@ theorem mem_cofinalIdeal {v : Valuation A Γ₀}
     a ∈ cofinalIdeal v hH ↔ CofinalValueFor v H.toSubgroup a :=
   Iff.rfl
 
+/-- The ideal of cofinal values is proper: `1` has value `1`, which is not cofinal. -/
+theorem cofinalIdeal_ne_top {v : Valuation A Γ₀}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (hH : characteristicSubgroup v < H) : cofinalIdeal v hH ≠ ⊤ := fun htop ↦
+  not_cofinalValueFor_one v H.toSubgroup (mem_cofinalIdeal.mp (htop ▸ Submodule.mem_top))
+
 /-! ### Radicality -/
 
-/-- **Wedhorn Lemma 7.1, second half: `rad(c) = c`.** -/
+section CommRing
+
+variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+
+/-- **Wedhorn Lemma 7.1.** Over a commutative ring the ideal of cofinal values is radical.
+Commutativity is needed only here, for Mathlib's `Ideal.IsRadical`. -/
 theorem isRadical_cofinalIdeal {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hH : characteristicSubgroup v < H) : (cofinalIdeal v hH).IsRadical := by
@@ -254,12 +266,6 @@ theorem isRadical_cofinalIdeal {v : Valuation A Γ₀}
   · rw [pow_zero] at hn
     exact absurd hn.lt_one (by simp)
   · exact (cofinalValueFor_pow_iff hp).mp hn
-
-/-- The ideal of cofinal values is proper: `1` has value `1`, which is not cofinal. -/
-theorem cofinalIdeal_ne_top {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
-    (hH : characteristicSubgroup v < H) : cofinalIdeal v hH ≠ ⊤ := fun htop ↦
-  not_cofinalValueFor_one v H.toSubgroup (mem_cofinalIdeal.mp (htop ▸ Submodule.mem_top))
 
 end CommRing
 
