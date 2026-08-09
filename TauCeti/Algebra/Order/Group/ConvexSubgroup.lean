@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.Algebra.Order.Archimedean.Class
 public import Mathlib.Algebra.Order.Group.Defs
 public import Mathlib.Algebra.Order.Hom.Monoid
 public import Mathlib.GroupTheory.QuotientGroup.Basic
@@ -248,41 +249,52 @@ noncomputable instance : LinearOrder (ConvexSubgroup Γ) :=
 
 /-! ### The largest convex subgroup avoiding an element -/
 
-/-- The largest convex subgroup avoiding an element `γ ≠ 1`, as the union of all convex
-subgroups excluding `γ` — a union which is directed because convex subgroups are totally
-ordered. -/
-noncomputable def maxAvoid {γ : Γ} (hγ : γ ≠ 1) : ConvexSubgroup Γ where
-  toSubgroup :=
-    { carrier := {x | ∃ H : ConvexSubgroup Γ, γ ∉ H ∧ x ∈ H}
-      mul_mem' := fun {a b} ⟨H₁, hγ₁, ha⟩ ⟨H₂, hγ₂, hb⟩ ↦ by
-        rcases H₁.le_total H₂ with h | h
-        · exact ⟨H₂, hγ₂, H₂.toSubgroup.mul_mem (h ha) hb⟩
-        · exact ⟨H₁, hγ₁, H₁.toSubgroup.mul_mem ha (h hb)⟩
-      one_mem' := ⟨⊥, mem_bot.not.mpr hγ, one_mem ⊥⟩
-      inv_mem' := fun {a} ⟨H, hγH, ha⟩ ↦ ⟨H, hγH, H.toSubgroup.inv_mem ha⟩ }
-  ordConnected' := by
-    constructor
-    rintro a ⟨H₁, hγ₁, ha⟩ b ⟨H₂, hγ₂, hb⟩ z hz
-    rcases H₁.le_total H₂ with h | h
-    · exact ⟨H₂, hγ₂, H₂.ordConnected'.out (h ha) hb hz⟩
-    · exact ⟨H₁, hγ₁, H₁.ordConnected'.out ha (h hb) hz⟩
+/-- An element bounded in absolute value by a member of a convex subgroup is a member. -/
+theorem mem_of_mabs_le_mabs {H : ConvexSubgroup Γ} {x h : Γ} (hh : h ∈ H)
+    (hx : |x|ₘ ≤ |h|ₘ) : x ∈ H := by
+  have habs : |h|ₘ ∈ H := by
+    rcases mabs_choice h with e | e <;> rw [e]
+    · exact hh
+    · exact inv_mem hh
+  exact H.convex (inv_mem habs) habs (by simpa using (mabs_le.mp hx).1) (mabs_le.mp hx).2
 
-/-- Membership in `maxAvoid hγ`: some convex subgroup excludes `γ` but contains `x`. -/
+/-- The largest convex subgroup avoiding an element `γ ≠ 1`: Mathlib's Archimedean open ball
+at the class of `γ`, that is, the elements of strictly larger Archimedean class. Reusing
+`MulArchimedeanClass.ballSubgroup` rather than building the directed union of all convex
+subgroups avoiding `γ` gives the same subgroup with the group structure already in place. -/
+noncomputable def maxAvoid {γ : Γ} (hγ : γ ≠ 1) : ConvexSubgroup Γ where
+  toSubgroup := MulArchimedeanClass.ballSubgroup (MulArchimedeanClass.mk γ)
+  ordConnected' := by
+    have htop : MulArchimedeanClass.mk γ ≠ ⊤ := fun h ↦ hγ (MulArchimedeanClass.mk_eq_top_iff.mp h)
+    constructor
+    intro a ha b hb x hx
+    simp only [Subgroup.mem_carrier, MulArchimedeanClass.mem_ballSubgroup_iff htop] at ha hb ⊢
+    exact lt_of_lt_of_le (lt_min ha hb)
+      (MulArchimedeanClass.min_le_mk_of_le_of_le hx.1 hx.2)
+
+/-- Membership in `maxAvoid hγ`: a strictly larger Archimedean class than `γ`. -/
 @[simp]
 theorem mem_maxAvoid_iff {γ : Γ} {hγ : γ ≠ 1} {x : Γ} :
-    x ∈ maxAvoid hγ ↔ ∃ H : ConvexSubgroup Γ, γ ∉ H ∧ x ∈ H :=
-  Iff.rfl
+    x ∈ maxAvoid hγ ↔ MulArchimedeanClass.mk γ < MulArchimedeanClass.mk x :=
+  MulArchimedeanClass.mem_ballSubgroup_iff
+    (fun h ↦ hγ (MulArchimedeanClass.mk_eq_top_iff.mp h))
 
 /-- The avoided element is not a member. -/
-theorem not_mem_maxAvoid {γ : Γ} (hγ : γ ≠ 1) : γ ∉ maxAvoid hγ :=
-  fun ⟨_, hγH, hγH'⟩ ↦ hγH hγH'
+theorem not_mem_maxAvoid {γ : Γ} (hγ : γ ≠ 1) : γ ∉ maxAvoid hγ := by
+  rw [mem_maxAvoid_iff (hγ := hγ)]
+  exact lt_irrefl _
 
 /-- Universal property: a convex subgroup lies inside `maxAvoid hγ` iff it excludes
 `γ`. -/
 @[simp]
 theorem le_maxAvoid {γ : Γ} {hγ : γ ≠ 1} {H : ConvexSubgroup Γ} :
-    H ≤ maxAvoid hγ ↔ γ ∉ H :=
-  ⟨fun h hγH ↦ not_mem_maxAvoid hγ (h hγH), fun h _ hx ↦ ⟨H, h, hx⟩⟩
+    H ≤ maxAvoid hγ ↔ γ ∉ H := by
+  refine ⟨fun h hγH ↦ not_mem_maxAvoid hγ (h hγH), fun h x hx ↦ ?_⟩
+  rw [mem_maxAvoid_iff (hγ := hγ)]
+  by_contra hle
+  rw [not_lt, MulArchimedeanClass.mk_le_mk] at hle
+  obtain ⟨n, hn⟩ := hle
+  exact h (mem_of_mabs_le_mabs (H.toSubgroup.pow_mem hx n) (hn.trans_eq (mabs_pow n x).symm))
 
 /-! ### The quotient linear order -/
 
