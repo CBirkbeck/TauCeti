@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.Topology.Algebra.Nonarchimedean.Completion
+public import TauCeti.Topology.Algebra.GroupCompletion
+public import TauCeti.Topology.Algebra.UniformRing
 public import TauCeti.RingTheory.Huber.Basic
 
 /-!
@@ -30,8 +31,8 @@ converge because `Â` is complete, and their sums exhibit the element as a combi
 
 * `TauCeti.Huber.PairOfDefinition.completionRingOfDefinition` and
   `TauCeti.Huber.PairOfDefinition.completionIdeal`: the ring and the ideal of definition of `Â`.
-* `TauCeti.Huber.PairOfDefinition.completionIdealImage`: the closure in `Â` of the image of `Iⁿ`,
-  and `TauCeti.Huber.PairOfDefinition.completionIdealImageIdeal`, the ideal of `Â₀` it cuts out.
+* `TauCeti.Huber.PairOfDefinition.completionIdealClosure`: the closure in `Â` of the image of `Iⁿ`,
+  and `TauCeti.Huber.PairOfDefinition.completionIdealClosureIdeal`, the ideal of `Â₀` it cuts out.
 * `TauCeti.Huber.PairOfDefinition.toCompletionRingOfDefinition`: the completion map restricted to
   `A₀` and corestricted to `Â₀`.
 * `TauCeti.Huber.PairOfDefinition.completion`: the pair of definition of `Â` they assemble into.
@@ -44,16 +45,26 @@ converge because `Â` is complete, and their sums exhibit the element as a combi
 * `TauCeti.Huber.IsHuberRing.completion`: the completion of a Huber ring is a Huber ring, and
   `TauCeti.Huber.IsTateRing.completion`: the completion of a Tate ring is a Tate ring.
 
+## Provenance
+
+New work. The roadmap designates AINTLIB's `projects/AdicSpaces/` as the existing source for
+this layer (`AdicSpaces/README.md`, row "Huber and Tate rings"); its `HuberRings.lean`,
+`OpenIdeals.lean` and `PseudoUniformizer.lean` were consulted and contain no completion of a
+Huber ring, so the successive-approximation argument here is new. The bundling of
+`PairOfDefinition.completion` follows the shape of sfingali's mathlib4#42312, as
+`TauCeti/RingTheory/Huber/Basic.lean` records for `PairOfDefinition` itself.
+
 ## References
 
 * [Wedhorn, *Adic Spaces*][wedhorn_adic], Remark 6.8.
 * [The Stacks Project][stacks], Lemma 10.96.3 (tag
   [05GG](https://stacks.math.columbia.edu/tag/05GG)), the successive-approximation argument
-  behind the private `completionIdealImageIdeal_le` below.
-* Mathlib's `Mathlib/Topology/Algebra/Nonarchimedean/Completion.lean`, whose
-  `Completion.isDenseInducing_coe` neighbourhood pattern is what
-  `UniformSpace.Completion.isOpen_closure_image_coe` adapts, and which
+  behind the private `completionIdealClosureIdeal_le` below.
+* `UniformSpace.Completion.isOpen_closure_image_coe` adapts the neighbourhood argument of
+  `UniformSpace.Completion.isDenseInducing_coe`
+  (`Mathlib/Topology/UniformSpace/Completion.lean`), which
   `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_completion` then builds on.
+  `UniformSpace.Completion.ker_coeRingHom` is instead an inseparability argument.
 -/
 
 public section
@@ -119,36 +130,36 @@ theorem isOpen_completionRingOfDefinition (P : PairOfDefinition A) :
 /-- The closure in `Â` of the image of `Iⁿ`, as an additive subgroup. These closures are the
 neighbourhood basis of zero of the completion, and they turn out to be the powers of the ideal of
 definition of the completion (`completionIdeal_pow`). -/
-noncomputable def completionIdealImage (P : PairOfDefinition A) (n : ℕ) :
+noncomputable def completionIdealClosure (P : PairOfDefinition A) (n : ℕ) :
     AddSubgroup (Completion A) :=
   ((P.idealImage n).map Completion.toCompl).topologicalClosure
 
-/-- `completionIdealImage` is the closure of the image of `Iⁿ`, by definition. -/
+/-- `completionIdealClosure` is the closure of the image of `Iⁿ`, by definition. -/
 @[simp]
-theorem coe_completionIdealImage (P : PairOfDefinition A) (n : ℕ) :
-    (P.completionIdealImage n : Set (Completion A))
+theorem coe_completionIdealClosure (P : PairOfDefinition A) (n : ℕ) :
+    (P.completionIdealClosure n : Set (Completion A))
       = closure (((↑) : A → Completion A) '' (P.idealImage n : Set A)) := (rfl)
 
 /-- The closure of the image of `Iⁿ` is open in `Â`. -/
-theorem isOpen_completionIdealImage (P : PairOfDefinition A) (n : ℕ) :
-    IsOpen (P.completionIdealImage n : Set (Completion A)) :=
+theorem isOpen_completionIdealClosure (P : PairOfDefinition A) (n : ℕ) :
+    IsOpen (P.completionIdealClosure n : Set (Completion A)) :=
   UniformSpace.Completion.isOpen_closure_image_coe (P.isOpen_idealImage n)
 
 /-- The image of `Iⁿ` lies in its closure. -/
-theorem coe_mem_completionIdealImage (P : PairOfDefinition A) {n : ℕ} {a : A}
-    (ha : a ∈ P.idealImage n) : (a : Completion A) ∈ P.completionIdealImage n :=
+theorem coe_mem_completionIdealClosure (P : PairOfDefinition A) {n : ℕ} {a : A}
+    (ha : a ∈ P.idealImage n) : (a : Completion A) ∈ P.completionIdealClosure n :=
   subset_closure ⟨a, ha, rfl⟩
 
 /-- The closures of the images of the `Iⁿ` decrease with `n`. -/
-theorem completionIdealImage_anti (P : PairOfDefinition A) {m n : ℕ} (h : m ≤ n) :
-    P.completionIdealImage n ≤ P.completionIdealImage m := by
+theorem completionIdealClosure_anti (P : PairOfDefinition A) {m n : ℕ} (h : m ≤ n) :
+    P.completionIdealClosure n ≤ P.completionIdealClosure m := by
   refine fun x hx ↦ closure_mono (Set.image_mono ?_) hx
   rw [P.coe_idealImage, P.coe_idealImage]
   exact Set.image_mono fun z hz ↦ Ideal.pow_le_pow_right h hz
 
 /-- The closure of the image of `Iⁿ` lies in the ring of definition of the completion. -/
-theorem completionIdealImage_le (P : PairOfDefinition A) (n : ℕ) :
-    (P.completionIdealImage n : Set (Completion A))
+theorem completionIdealClosure_le (P : PairOfDefinition A) (n : ℕ) :
+    (P.completionIdealClosure n : Set (Completion A))
       ⊆ (P.completionRingOfDefinition : Set (Completion A)) := by
   refine closure_mono (Set.image_mono ?_)
   rw [P.coe_idealImage]
@@ -159,7 +170,7 @@ theorem completionIdealImage_le (P : PairOfDefinition A) (n : ℕ) :
 neighbourhood basis of zero in the completion. -/
 theorem hasBasis_nhds_zero_completion (P : PairOfDefinition A) :
     (𝓝 (0 : Completion A)).HasBasis (fun _ : ℕ ↦ True)
-      fun n ↦ (P.completionIdealImage n : Set (Completion A)) := by
+      fun n ↦ (P.completionIdealClosure n : Set (Completion A)) := by
   refine Filter.hasBasis_iff.mpr fun U ↦ ⟨fun hU ↦ ?_, ?_⟩
   · obtain ⟨C, ⟨hC, hCclosed⟩, hCU⟩ := (closed_nhds_basis (0 : Completion A)).mem_iff.mp hU
     have hpre : ((↑) : A → Completion A) ⁻¹' C ∈ 𝓝 (0 : A) :=
@@ -170,14 +181,14 @@ theorem hasBasis_nhds_zero_completion (P : PairOfDefinition A) :
     rwa [hCclosed.closure_eq] at hx'
   · rintro ⟨n, -, hn⟩
     exact Filter.mem_of_superset
-      ((P.isOpen_completionIdealImage n).mem_nhds (P.completionIdealImage n).zero_mem) hn
+      ((P.isOpen_completionIdealClosure n).mem_nhds (P.completionIdealClosure n).zero_mem) hn
 
 /-- The closure of the image of `Iⁿ` absorbs multiplication by the ring of definition of the
 completion, because `Iⁿ` is an ideal of `A₀` and multiplication is continuous. -/
-theorem mul_mem_completionIdealImage (P : PairOfDefinition A) {n : ℕ} {t y : Completion A}
-    (ht : t ∈ P.completionRingOfDefinition) (hy : y ∈ P.completionIdealImage n) :
-    t * y ∈ P.completionIdealImage n := by
-  have key : ∀ a ∈ P.idealImage n, t * (a : Completion A) ∈ P.completionIdealImage n := by
+theorem mul_mem_completionIdealClosure (P : PairOfDefinition A) {n : ℕ} {t y : Completion A}
+    (ht : t ∈ P.completionRingOfDefinition) (hy : y ∈ P.completionIdealClosure n) :
+    t * y ∈ P.completionIdealClosure n := by
+  have key : ∀ a ∈ P.idealImage n, t * (a : Completion A) ∈ P.completionIdealClosure n := by
     intro a ha
     rw [← SetLike.mem_coe, P.coe_idealImage] at ha
     obtain ⟨b, hb, rfl⟩ := ha
@@ -198,18 +209,19 @@ theorem mul_mem_completionIdealImage (P : PairOfDefinition A) {n : ℕ} {t y : C
 
 /-- The closure of the image of `Iⁿ`, viewed as an ideal of the ring of definition of the
 completion. -/
-noncomputable def completionIdealImageIdeal (P : PairOfDefinition A) (n : ℕ) :
+noncomputable def completionIdealClosureIdeal (P : PairOfDefinition A) (n : ℕ) :
     Ideal P.completionRingOfDefinition where
-  carrier := {y | (y : Completion A) ∈ P.completionIdealImage n}
+  carrier := {y | (y : Completion A) ∈ P.completionIdealClosure n}
   add_mem' hx hy := by simpa using AddSubgroup.add_mem _ hx hy
-  zero_mem' := (P.completionIdealImage n).zero_mem
-  smul_mem' c x hx := by simpa [smul_eq_mul] using P.mul_mem_completionIdealImage c.2 hx
+  zero_mem' := (P.completionIdealClosure n).zero_mem
+  smul_mem' c x hx := by simpa [smul_eq_mul] using P.mul_mem_completionIdealClosure c.2 hx
 
 /-- Membership in the ideal cut out by the closure of the image of `Iⁿ`. -/
 @[simp]
-theorem mem_completionIdealImageIdeal_iff (P : PairOfDefinition A) (n : ℕ)
+theorem mem_completionIdealClosureIdeal_iff (P : PairOfDefinition A) (n : ℕ)
     {y : P.completionRingOfDefinition} :
-    y ∈ P.completionIdealImageIdeal n ↔ (y : Completion A) ∈ P.completionIdealImage n := (Iff.rfl)
+    y ∈ P.completionIdealClosureIdeal n ↔
+      (y : Completion A) ∈ P.completionIdealClosure n := (Iff.rfl)
 
 /-- The completion map, restricted to a ring of definition and corestricted to the ring of
 definition of the completion. -/
@@ -252,10 +264,10 @@ theorem fg_completionIdeal (P : PairOfDefinition A) : P.completionIdeal.FG :=
 /-- The formal half of `completionIdeal_pow`: `Îⁿ` is generated by the image of `Iⁿ`, which lies
 in its closure. -/
 private theorem completionIdeal_pow_le (P : PairOfDefinition A) (n : ℕ) :
-    P.completionIdeal ^ n ≤ P.completionIdealImageIdeal n := by
+    P.completionIdeal ^ n ≤ P.completionIdealClosureIdeal n := by
   rw [completionIdeal, ← Ideal.map_pow, Ideal.map_le_iff_le_comap]
   intro x hx
-  exact P.coe_mem_completionIdealImage (a := (x : A)) ((P.mem_idealImage n).mpr ⟨x, hx, rfl⟩)
+  exact P.coe_mem_completionIdealClosure (a := (x : A)) ((P.mem_idealImage n).mpr ⟨x, hx, rfl⟩)
 
 /-- A finite `A₀`-combination of elements of `A₀` maps to the corresponding combination in `Â`. -/
 private theorem coe_sum_mul (P : PairOfDefinition A) (G : Finset P.ringOfDefinition)
@@ -281,18 +293,18 @@ private theorem exists_sub_sum_mem (P : PairOfDefinition A) {n : ℕ}
     (hG : Ideal.span (G : Set P.ringOfDefinition) = P.idealOfDefinition ^ n)
     (k : ℕ) (x : Completion A) :
     ∃ c : P.ringOfDefinition → P.ringOfDefinition, (∀ z, c z ∈ P.idealOfDefinition ^ k) ∧
-      (x ∈ P.completionIdealImage (n + k) →
+      (x ∈ P.completionIdealClosure (n + k) →
         x - ∑ z ∈ G, ((z : A) : Completion A) * ((c z : A) : Completion A)
-          ∈ P.completionIdealImage (n + k + 1)) := by
-  by_cases hx : x ∈ P.completionIdealImage (n + k)
+          ∈ P.completionIdealClosure (n + k + 1)) := by
+  by_cases hx : x ∈ P.completionIdealClosure (n + k)
   · have hVopen : IsOpen ((fun w : Completion A ↦ w - x) ⁻¹'
-        (P.completionIdealImage (n + k + 1) : Set (Completion A))) :=
-      (P.isOpen_completionIdealImage _).preimage (by fun_prop)
+        (P.completionIdealClosure (n + k + 1) : Set (Completion A))) :=
+      (P.isOpen_completionIdealClosure _).preimage (by fun_prop)
     have hxV : x ∈ (fun w : Completion A ↦ w - x) ⁻¹'
-        (P.completionIdealImage (n + k + 1) : Set (Completion A)) := by
+        (P.completionIdealClosure (n + k + 1) : Set (Completion A)) := by
       simp only [Set.mem_preimage, sub_self, SetLike.mem_coe]
-      exact (P.completionIdealImage _).zero_mem
-    rw [← SetLike.mem_coe, P.coe_completionIdealImage] at hx
+      exact (P.completionIdealClosure _).zero_mem
+    rw [← SetLike.mem_coe, P.coe_completionIdealClosure] at hx
     obtain ⟨w, hwV, a, ha, rfl⟩ := mem_closure_iff_nhds.mp hx _ (hVopen.mem_nhds hxV)
     rw [P.coe_idealImage] at ha
     obtain ⟨b, hb, rfl⟩ := ha
@@ -301,7 +313,7 @@ private theorem exists_sub_sum_mem (P : PairOfDefinition A) {n : ℕ}
     obtain ⟨c, hc, hcsum⟩ := exists_sum_eq_of_mem_span_mul G (P.idealOfDefinition ^ k) hb'
     refine ⟨c, hc, fun _ ↦ ?_⟩
     rw [P.coe_sum_mul, hcsum, ← neg_sub]
-    exact (P.completionIdealImage (n + k + 1)).neg_mem hwV
+    exact (P.completionIdealClosure (n + k + 1)).neg_mem hwV
   · exact ⟨0, fun _ ↦ Ideal.zero_mem _, fun h ↦ absurd h hx⟩
 
 /-- Partial sums whose `k`-th term lies in the image of `Iᵏ` are a Cauchy sequence in `Â`. -/
@@ -309,17 +321,17 @@ private theorem cauchySeq_sum_coe (P : PairOfDefinition A) (d : ℕ → A)
     (hd : ∀ k, d k ∈ P.idealImage k) :
     CauchySeq fun m ↦ ∑ k ∈ Finset.range m, ((d k : A) : Completion A) := by
   have hsub : ∀ j m, j ≤ m → (∑ k ∈ Finset.range m, ((d k : A) : Completion A))
-      - ∑ k ∈ Finset.range j, ((d k : A) : Completion A) ∈ P.completionIdealImage j := by
+      - ∑ k ∈ Finset.range j, ((d k : A) : Completion A) ∈ P.completionIdealClosure j := by
     intro j m hjm
     induction m, hjm using Nat.le_induction with
     | base => simp
     | succ m hjm ih =>
         rw [Finset.sum_range_succ, add_sub_right_comm]
-        exact (P.completionIdealImage j).add_mem ih
-          (P.completionIdealImage_anti hjm (P.coe_mem_completionIdealImage (hd m)))
+        exact (P.completionIdealClosure j).add_mem ih
+          (P.completionIdealClosure_anti hjm (P.coe_mem_completionIdealClosure (hd m)))
   refine P.hasBasis_nhds_zero_completion.uniformity_of_nhds_zero.cauchySeq_iff.mpr fun j _ ↦ ?_
   refine ⟨j, fun m hm p hp ↦ ?_⟩
-  have h := (P.completionIdealImage j).sub_mem (hsub j p hp) (hsub j m hm)
+  have h := (P.completionIdealClosure j).sub_mem (hsub j p hp) (hsub j m hm)
   rw [sub_sub_sub_cancel_right] at h
   exact h
 
@@ -328,9 +340,9 @@ private theorem cauchySeq_sum_coe (P : PairOfDefinition A) (d : ℕ → A)
 private theorem exists_approx_seq (P : PairOfDefinition A) {n : ℕ}
     (G : Finset P.ringOfDefinition)
     (hG : Ideal.span (G : Set P.ringOfDefinition) = P.idealOfDefinition ^ n)
-    {x : Completion A} (hx : x ∈ P.completionIdealImage n) :
+    {x : Completion A} (hx : x ∈ P.completionIdealClosure n) :
     ∃ (d : ℕ → P.ringOfDefinition → P.ringOfDefinition) (u : ℕ → Completion A),
-      (∀ k z, d k z ∈ P.idealOfDefinition ^ k) ∧ (∀ k, u k ∈ P.completionIdealImage (n + k)) ∧
+      (∀ k z, d k z ∈ P.idealOfDefinition ^ k) ∧ (∀ k, u k ∈ P.completionIdealClosure (n + k)) ∧
         ∀ m, x - u m = ∑ z ∈ G, ((z : A) : Completion A)
           * ∑ k ∈ Finset.range m, ((d k z : A) : Completion A) := by
   choose c hc1 hc2 using P.exists_sub_sum_mem G hG
@@ -339,7 +351,7 @@ private theorem exists_approx_seq (P : PairOfDefinition A) {n : ℕ}
     ⟨fun m ↦ Nat.rec (motive := fun _ ↦ Completion A) x
       (fun k v ↦ v - ∑ z ∈ G, ((z : A) : Completion A) * ((c k v z : A) : Completion A)) m,
       rfl, fun _ ↦ rfl⟩
-  have huK : ∀ k, u k ∈ P.completionIdealImage (n + k) := by
+  have huK : ∀ k, u k ∈ P.completionIdealClosure (n + k) := by
     intro k
     induction k with
     | zero => rw [hu0]; exact hx
@@ -361,8 +373,8 @@ Fix a finite family `G` generating `Iⁿ`. By `exists_approx_seq`, an element `x
 `∑_{z ∈ G} z * ∑_{k < m} d k z` up to an error tending to zero, with `d k z ∈ Iᵏ`. For each `z`
 the series `∑ₖ d k z` is Cauchy, hence converges in `Â` to an element of `Â₀`, and `x` is the
 corresponding combination of `G`. -/
-private theorem completionIdealImageIdeal_le (P : PairOfDefinition A) (n : ℕ) :
-    P.completionIdealImageIdeal n ≤ P.completionIdeal ^ n := by
+private theorem completionIdealClosureIdeal_le (P : PairOfDefinition A) (n : ℕ) :
+    P.completionIdealClosureIdeal n ≤ P.completionIdeal ^ n := by
   classical
   obtain ⟨G, hG⟩ := P.fg_idealOfDefinition.pow (n := n)
   intro y hy
@@ -378,7 +390,7 @@ private theorem completionIdealImageIdeal_le (P : PairOfDefinition A) (n : ℕ) 
   have hulim : Tendsto u atTop (𝓝 0) := by
     refine P.hasBasis_nhds_zero_completion.tendsto_right_iff.mpr fun j _ ↦ ?_
     filter_upwards [eventually_ge_atTop j] with k hk
-    exact P.completionIdealImage_anti (hk.trans (Nat.le_add_left k n)) (huK k)
+    exact P.completionIdealClosure_anti (hk.trans (Nat.le_add_left k n)) (huK k)
   have hyeq : (y : Completion A) = ∑ z ∈ G, ((z : A) : Completion A) * L z := by
     have h := tendsto_nhds_unique
       (((tendsto_const_nhds (x := (y : Completion A))).sub hulim).congr hpartial)
@@ -398,15 +410,15 @@ private theorem completionIdealImageIdeal_le (P : PairOfDefinition A) (n : ℕ) 
 the closure of the image of `Iⁿ`. -/
 @[simp]
 theorem completionIdeal_pow (P : PairOfDefinition A) (n : ℕ) :
-    P.completionIdeal ^ n = P.completionIdealImageIdeal n :=
-  le_antisymm (P.completionIdeal_pow_le n) (P.completionIdealImageIdeal_le n)
+    P.completionIdeal ^ n = P.completionIdealClosureIdeal n :=
+  le_antisymm (P.completionIdeal_pow_le n) (P.completionIdealClosureIdeal_le n)
 
 /-- Wedhorn Remark 6.8: the subspace topology on the ring of definition of the completion is the
 adic topology of the ideal of definition of the completion. -/
 theorem isAdic_completionIdeal (P : PairOfDefinition A) : IsAdic P.completionIdeal := by
   refine isAdic_iff.mpr ⟨fun n ↦ ?_, fun s hs ↦ ?_⟩
   · rw [P.completionIdeal_pow]
-    exact (P.isOpen_completionIdealImage n).preimage continuous_subtype_val
+    exact (P.isOpen_completionIdealClosure n).preimage continuous_subtype_val
   · rw [mem_nhds_subtype] at hs
     obtain ⟨V, hV, hVs⟩ := hs
     obtain ⟨n, -, hn⟩ := P.hasBasis_nhds_zero_completion.mem_iff.mp hV
