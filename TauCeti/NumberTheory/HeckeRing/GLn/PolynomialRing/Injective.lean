@@ -510,7 +510,7 @@ private lemma T_ad_one_p_mul_T_ad_one_ppow_eval_leading (p : ℕ) (hp : p.Prime)
         funext i; fin_cases i <;> simp]
     exact Finsupp.single_eq_same
   · rw [show heckeTDiag 1 p = heckeT ⟨p, hp.pos⟩ from (heckeT_prime p hp).symm,
-      heckeT_prime_mul_heckeTDiag p hp n]
+      heckeT_prime_mul_heckeTDiag_one_prime_pow p hp n]
     rw [show (heckeTDiag 1 (p ^ (n + 1)) + (if n = 1 then ((p + 1 : ℕ) : ℤ) else (p : ℤ)) •
               heckeTDiag p (p ^ n)) (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) =
           heckeTDiag 1 (p ^ (n + 1)) (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) +
