@@ -556,10 +556,9 @@ the criterion are already known to be invariant — cofinality of values by
 theorem characteristicSubgroupOfIdeal_eq_top_congr_of_isEquiv {Γ₀' : Type*}
     [LinearOrderedCommGroupWithZero Γ₀'] {v : Valuation A Γ₀}
     {w : Valuation A Γ₀'} (h : v.IsEquiv w) {I : Ideal A}
-    (hfgv : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
-    (hfgw : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
-    characteristicSubgroupOfIdeal v I hfgv = ⊤ ↔ characteristicSubgroupOfIdeal w I hfgw = ⊤ := by
-  rw [characteristicSubgroupOfIdeal_eq_top_iff hfgv, characteristicSubgroupOfIdeal_eq_top_iff hfgw]
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
+    characteristicSubgroupOfIdeal v I hfg = ⊤ ↔ characteristicSubgroupOfIdeal w I hfg = ⊤ := by
+  rw [characteristicSubgroupOfIdeal_eq_top_iff hfg, characteristicSubgroupOfIdeal_eq_top_iff hfg]
   refine or_congr (forall_congr' fun a ↦ imp_congr_right fun _ ↦ h.cofinalValue_iff) ?_
   rw [← hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top,
     ← hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top]
