@@ -175,6 +175,18 @@ theorem idealCofinalFor_iff_forall_isCofinalElement {v : Valuation A Γ₀}
     · refine (cofinalValueFor_iff_isCofinalElement h0).mpr (hS _ ⟨a, haI, ?_⟩)
       exact v.restrict_eq_mk h0
 
+/-- Cofinality for the whole value group is Mathlib-side `CofinalValue`: the positive elements
+of `ValueGroup₀` are exactly the coercions of the group elements. -/
+theorem cofinalValueFor_top_iff {v : Valuation A Γ₀} {a : A} :
+    CofinalValueFor v ⊤ a ↔ CofinalValue v a := by
+  rw [cofinalValueFor_def, cofinalValue_iff]
+  constructor
+  · intro h γ hγ
+    obtain ⟨g, rfl⟩ := WithZero.ne_zero_iff_exists.mp hγ.ne'
+    exact h g TauCeti.ConvexSubgroup.mem_top
+  · intro h g _
+    exact h (g : ValueGroup₀ (.ofClass v)) (by simp)
+
 /-! ### The two halves of Wedhorn Lemma 7.2 -/
 
 /-- **Maximality half.** Any convex subgroup for which `I` is cofinal is contained in the one
