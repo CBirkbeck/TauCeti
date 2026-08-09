@@ -62,9 +62,9 @@ for the trivial weight. `TauCeti.Huber.isWeightedRestricted_one_weight_iff` ther
 If some `Tᵢ` is empty and `νᵢ > 0` then `Tν` is empty and `Tν · U = ⊥`, so the condition forces
 those coefficients to vanish; the closure lemmas below need no nonemptiness hypothesis.
 
-This is *not* `TauCeti/RingTheory/Huber/ScaledTateTopology.lean`, which retopologises the
-ordinary `A⟨X⟩` by transporting along `X ↦ f X`; there the weight multiplies the coefficient
-rather than the neighbourhood, and the carrier does not vary with `T`.
+This construction is not the same as retopologising the ordinary `A⟨X⟩` by transporting along a
+substitution `X ↦ f X`: there the weight multiplies the coefficient rather than the
+neighbourhood, and the carrier does not vary with `T`. Here the carrier itself depends on `T`.
 
 Closure of `A⟨X⟩_T` under multiplication is the one non-obvious point of the construction —
 Wedhorn writes "note that it is not entirely clear that `A⟨X⟩_T` is multiplicatively closed" — and
@@ -122,18 +122,17 @@ theorem isWeightFamily_iff {T : Fin k → Set A} :
     IsWeightFamily T ↔ ∀ (i : Fin k) (m : ℕ) (U : Set A), U ∈ nhds (0 : A) →
       (AddSubgroup.closure (T i ^ m * U) : Set A) ∈ nhds (0 : A) := (Iff.rfl)
 
-/-- **Wedhorn's automatic case**: the standing hypothesis holds when every weight consists of
-units.
+/-- **Wedhorn's automatic case**: the standing hypothesis holds as soon as each weight contains a
+unit.
 
-The nonemptiness hypothesis is not decoration. The empty set consists of units vacuously, but
-`(∅ : Set A) ^ m` is empty for `m > 0`, so the subgroup it generates is `⊥`, which is a
-neighbourhood of zero only for the discrete topology. -/
-theorem IsWeightFamily.of_forall_isUnit [IsTopologicalRing A] {T : Fin k → Set A}
-    (hne : ∀ i, (T i).Nonempty)
-    (hu : ∀ i, ∀ t ∈ T i, IsUnit t) : IsWeightFamily T := by
+One unit per index suffices — the other elements of `T i` are never used — and the existential
+also carries the nonemptiness the statement needs: `(∅ : Set A) ^ m` is empty for `m > 0`, so the
+subgroup it generates is `⊥`, a neighbourhood of zero only for the discrete topology. -/
+theorem IsWeightFamily.of_exists_isUnit [IsTopologicalRing A] {T : Fin k → Set A}
+    (hu : ∀ i, ∃ t ∈ T i, IsUnit t) : IsWeightFamily T := by
   intro i m U hU
-  obtain ⟨t, ht⟩ := hne i
-  have hunit : IsUnit (t ^ m) := (hu i t ht).pow m
+  obtain ⟨t, ht, htu⟩ := hu i
+  have hunit : IsUnit (t ^ m) := htu.pow m
   have hsmul : (t ^ m) • U ∈ nhds (0 : A) := by
     have h := hunit.smul_mem_nhds_smul_iff (s := U) (a := (0 : A))
     rw [smul_zero] at h
@@ -295,10 +294,8 @@ a given bound. -/
 theorem exists_openAddSubgroup_mul_subset [NonarchimedeanRing A] (a : A)
     (V : AddSubgroup A) (hV : (V : Set A) ∈ nhds (0 : A)) :
     ∃ Z : OpenAddSubgroup A, ∀ z ∈ Z, a * z ∈ V := by
-  have hmul : (fun x ↦ a * x) ⁻¹' (V : Set A) ∈ nhds (0 : A) :=
-    (continuous_const.mul continuous_id).continuousAt.preimage_mem_nhds (by simpa using hV)
-  obtain ⟨Z, hZ⟩ := NonarchimedeanAddGroup.is_nonarchimedean _ hmul
-  exact ⟨Z, fun z hz ↦ hZ hz⟩
+  obtain ⟨Z, hZ⟩ := NonarchimedeanRing.left_mul_subset ⟨V, V.isOpen_of_mem_nhds hV⟩ a
+  exact ⟨Z, fun z hz ↦ hZ ⟨z, hz, rfl⟩⟩
 
 /-- The finite-family form of `TauCeti.Huber.exists_openAddSubgroup_mul_subset`: one open
 subgroup `Z` absorbs each of finitely many fixed elements into its own target.
@@ -537,12 +534,8 @@ theorem mem_weightedRestrictedSubring [NonarchimedeanRing A] {T : Fin k → Set 
 
 /-- The constant-series embedding `A → A⟨X⟩_T`. -/
 noncomputable def weightedC [NonarchimedeanRing A] (T : Fin k → Set A) (hT : IsWeightFamily T) :
-    A →+* weightedRestrictedSubring T hT where
-  toFun a := ⟨MvPowerSeries.C a, isWeightedRestricted_C T a⟩
-  map_one' := by ext; simp
-  map_mul' _ _ := by ext; simp
-  map_zero' := by ext; simp
-  map_add' _ _ := by ext; simp
+    A →+* weightedRestrictedSubring T hT :=
+  (MvPowerSeries.C : A →+* MvPowerSeries (Fin k) A).codRestrict _ (isWeightedRestricted_C T)
 
 @[simp]
 theorem coe_weightedC [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T} (a : A) :
