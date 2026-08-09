@@ -21,7 +21,7 @@ No transport is needed here, unlike for `ℤ_[p]`: Mathlib defines `ℤ_[p]` as 
 
 ## Main definitions
 
-* `TauCeti.Huber.pairOfDefinition`: the pair of definition `(ℤ_[p], (p))` of `ℚ_[p]`.
+* `TauCeti.Huber.Padic.pairOfDefinition`: the pair of definition `(ℤ_[p], (p))` of `ℚ_[p]`.
 
 ## Main results
 
