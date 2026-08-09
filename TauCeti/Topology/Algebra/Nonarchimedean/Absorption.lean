@@ -11,17 +11,14 @@ public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 
 In a nonarchimedean ring multiplication by a fixed element `a` is continuous, so every
 neighbourhood `V` of zero absorbs `a`: some open additive subgroup `Z` satisfies `a * Z ⊆ V`.
-Mathlib's `NonarchimedeanRing.left_mul_subset` says this for a bundled `OpenAddSubgroup` target;
-the two results here are the unbundled and the finite-family forms, which is the shape an
-estimate over a finite set of coefficients needs.
+That is Mathlib's `NonarchimedeanRing.left_mul_subset`. What an estimate over a finite set of
+coefficients needs is its finite-family form, proved here by induction.
 
-Neither result mentions a weight family, a power series or a Huber ring, so they are stated
-here rather than alongside the theory that uses them.
+It mentions no weight family, power series or Huber ring, so it is stated here rather than
+alongside the theory that uses it.
 
 ## Main results
 
-* `NonarchimedeanRing.exists_openAddSubgroup_mul_subset`: an additive subgroup that is a
-  neighbourhood of zero absorbs any fixed element.
 * `NonarchimedeanRing.exists_openAddSubgroup_forall_mul_subset`: finitely many fixed elements
   are absorbed into their own targets by a single open subgroup.
 
@@ -37,16 +34,12 @@ namespace NonarchimedeanRing
 
 variable {A : Type*} [Ring A] [TopologicalSpace A] [NonarchimedeanRing A]
 
-/-- An additive subgroup that is a neighbourhood of zero absorbs any fixed element: there is an
-open subgroup `Z` with `a * Z ⊆ V`. This is `NonarchimedeanRing.left_mul_subset` with the target
-unbundled, using that a subgroup which is a neighbourhood of zero is open. -/
-theorem exists_openAddSubgroup_mul_subset (a : A) (V : AddSubgroup A)
-    (hV : (V : Set A) ∈ nhds (0 : A)) : ∃ Z : OpenAddSubgroup A, ∀ z ∈ Z, a * z ∈ V := by
-  obtain ⟨Z, hZ⟩ := left_mul_subset ⟨V, V.isOpen_of_mem_nhds hV⟩ a
-  exact ⟨Z, fun z hz ↦ hZ ⟨z, hz, rfl⟩⟩
+/-- **The finite-family absorption lemma**: one open subgroup absorbs each of finitely many fixed
+elements into its own target.
 
-/-- The finite-family form of `NonarchimedeanRing.exists_openAddSubgroup_mul_subset`: one open
-subgroup absorbs each of finitely many fixed elements into its own target. -/
+The single-element case is Mathlib's `NonarchimedeanRing.left_mul_subset`, used directly in the
+induction below; only the target has to be unbundled, since a subgroup that is a neighbourhood of
+zero is open. -/
 theorem exists_openAddSubgroup_forall_mul_subset {ι : Type*} (s : Finset ι) (a : ι → A)
     (V : ι → AddSubgroup A) (hV : ∀ i ∈ s, (V i : Set A) ∈ nhds (0 : A)) :
     ∃ Z : OpenAddSubgroup A, ∀ i ∈ s, ∀ z ∈ Z, a i * z ∈ V i := by
@@ -55,11 +48,11 @@ theorem exists_openAddSubgroup_forall_mul_subset {ι : Type*} (s : Finset ι) (a
   | empty => exact ⟨⊤, by simp⟩
   | insert i s' hi ih =>
       obtain ⟨Z', hZ'⟩ := ih fun j hj ↦ hV j (Finset.mem_insert_of_mem hj)
-      obtain ⟨Z, hZ⟩ :=
-        exists_openAddSubgroup_mul_subset (a i) (V i) (hV i (Finset.mem_insert_self i s'))
+      obtain ⟨Z, hZ⟩ := left_mul_subset
+        ⟨V i, (V i).isOpen_of_mem_nhds (hV i (Finset.mem_insert_self i s'))⟩ (a i)
       refine ⟨Z ⊓ Z', fun j hj z hz ↦ ?_⟩
       rcases Finset.mem_insert.mp hj with rfl | hj'
-      · exact hZ z hz.1
+      · exact hZ ⟨z, hz.1, rfl⟩
       · exact hZ' j hj' z hz.2
 
 end NonarchimedeanRing

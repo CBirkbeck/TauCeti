@@ -24,8 +24,11 @@ the ordinary restricted series `A⟨X⟩`.
 
 **Both of those claims need Wedhorn's standing hypothesis** `TauCeti.Huber.IsWeightFamily T`,
 fixed at the start of his §5.6: without it `A⟨X⟩_T` is not multiplicatively closed and the
-`U⟨X⟩` are not neighbourhoods of zero. Every definition below therefore takes it as an argument,
-and the counterexample in `IsWeightFamily`'s docstring shows it is not automatic.
+`U⟨X⟩` are not neighbourhoods of zero. The subring and topology constructions
+(`weightedRestrictedSubring`, `weightedNhd`, `weightedTopology` and the maps into them) therefore
+take it as an argument; the underlying weight operations `weightPow` and `weightMul` and the
+predicate `IsWeightedRestricted` do not, since they are defined for any family. The
+counterexample in `IsWeightFamily`'s docstring shows the hypothesis is not automatic.
 
 ## Main definitions
 
@@ -265,6 +268,8 @@ theorem weightMul_mul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {V W 
   refine mul_mem_of_forall_mul_mul_mem (fun t ht v hv ↦ ?_) hx
   rw [mul_comm y (t * v)]
   refine mul_mem_of_forall_mul_mul_mem (fun t' ht' w hw ↦ ?_) hy
+  -- Regroup to `(weight) * (subgroup)`.  `ring_nf` normalises both sides to a common form that
+  -- is neither of the two the next step needs, so the target shape is stated explicitly.
   rw [show t * v * (t' * w) = t * t' * (v * w) by ring]
   exact mul_mem_weightMul _ _ _ (weightPow_add T α β ▸ Set.mul_mem_mul ht ht')
     (AddSubgroup.subset_closure (Set.mul_mem_mul hv hw))
@@ -289,6 +294,8 @@ theorem weightPow_mul_weightMul_mem {T : Fin k → Set A} {α β : Fin k →₀ 
     {t x : A} (ht : t ∈ weightPow T β) (hx : x ∈ weightMul T α U) :
     t * x ∈ weightMul T (α + β) U := by
   refine mul_mem_of_forall_mul_mul_mem (fun t' ht' u hu ↦ ?_) hx
+  -- As above: the goal must present as `(weight) * u` for `mul_mem_weightMul`, and only the
+  -- weight factors commute past `u`, so the regrouping is stated rather than normalised.
   rw [show t * (t' * u) = t' * t * u by ring]
   exact mul_mem_weightMul _ _ _ (weightPow_add T α β ▸ Set.mul_mem_mul ht' ht) hu
 
@@ -350,6 +357,18 @@ theorem IsWeightFamily.isOpen_weightMul [NonarchimedeanRing A] {T : Fin k → Se
     (hT : IsWeightFamily T) (ν : Fin k →₀ ℕ) {U : AddSubgroup A}
     (hU : (U : Set A) ∈ nhds (0 : A)) : IsOpen (weightMul T ν U : Set A) :=
   AddSubgroup.isOpen_of_mem_nhds _ (hT.weightMul_mem_nhds ν hU)
+
+/-- **The roadmap's phrasing of the standing hypothesis**: each `Tᵢ^m · A` is an open additive
+subgroup of `A`. This is the `U = ⊤` case of `TauCeti.Huber.IsWeightFamily.isOpen_weightMul`.
+
+Only this direction is proved. The roadmap (`AdicSpaces/README.md`, Layer 0.4) states the two
+phrasings as equivalent, but recovering the condition for every neighbourhood `U` from the single
+case `U = ⊤` is not derivable from the definitions here, and Wedhorn fixes the all-neighbourhoods
+form as the standing hypothesis, so that is what `IsWeightFamily` says. -/
+theorem IsWeightFamily.isOpen_weightMul_top [NonarchimedeanRing A] {T : Fin k → Set A}
+    (hT : IsWeightFamily T) (i : Fin k) (m : ℕ) :
+    IsOpen ((weightMul T (Finsupp.single i m) ⊤ : AddSubgroup A) : Set A) :=
+  IsWeightFamily.isOpen_weightMul hT _ (by simp)
 
 omit [TopologicalSpace A] in
 /-- **The absorption step.** If multiplication by `a` carries the subgroup `Z` into `T^α · U`,
