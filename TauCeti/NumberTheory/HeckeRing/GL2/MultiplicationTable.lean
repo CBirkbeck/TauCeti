@@ -164,7 +164,7 @@ private lemma first_invariant_dvd_p_of_product (p : ℕ) (S : SpecialLinearGroup
 
 /-- Determinant balance: if a `T(1,p) · T(1,pᵏ)`-shaped product lies in the double coset
 of `diag a`, then `a 0 * a 1 = p ^ (k + 1)`. -/
-private lemma mulSupport_pp_det_eq (p : ℕ) (k : ℕ) (a : Fin 2 → ℕ) (ha_pos : ∀ i, 0 < a i)
+private lemma diag_entries_mul_eq_pow_succ (p : ℕ) (k : ℕ) (a : Fin 2 → ℕ) (ha_pos : ∀ i, 0 < a i)
     (g₁ g₂ g₃ g₄ : GL (Fin 2) ℚ) (h1 : g₁.val.det = 1) (h2 : g₂.val.det = (p : ℚ))
     (h3 : g₃.val.det = 1) (h4 : g₄.val.det = (p : ℚ) ^ k)
     (SL_La SL_Ra : SpecialLinearGroup (Fin 2) ℤ)
@@ -363,7 +363,7 @@ private lemma mulSupport_pp_subset (k : ℕ)
       mapGL ℚ SL_La * natDiagGL 2 a * mapGL ℚ SL_Ra := by
     rw [hSL_La, hSL_Ra]
     exact h_prod_eq
-  have h_det := mulSupport_pp_det_eq p k a ha_pos (q.1.out : GL (Fin 2) ℚ)
+  have h_det := diag_entries_mul_eq_pow_succ p k a ha_pos (q.1.out : GL (Fin 2) ℚ)
     ((diagCoset ![1, p]).rep : GL (Fin 2) ℚ) (q.2.out : GL (Fin 2) ℚ)
     ((diagCoset ![1, p ^ k]).rep : GL (Fin 2) ℚ)
     (by rw [← hSL_i₀]; exact mapGL_val_det SL_i₀)
