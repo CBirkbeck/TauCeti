@@ -11,7 +11,7 @@ import Mathlib.RingTheory.DedekindDomain.Different
 import Mathlib.RingTheory.DedekindDomain.Factorization
 
 /-!
-# A separable extension of Dedekind domains ramifies at only finitely many primes
+# Finiteness of the ramification locus of an extension of Dedekind domains
 
 Let `B` be a Dedekind domain, module-finite and torsion-free over a Dedekind domain `A`, with the
 extension of fraction fields separable. Mathlib's `Algebra.unramifiedLocus A B` is the set of
@@ -65,9 +65,10 @@ variable (A B : Type*) [CommRing A] [IsDedekindDomain A] [CommRing B] [Algebra A
   [IsDedekindDomain B] [Module.IsTorsionFree A B] [Module.Finite A B]
   [Algebra.IsSeparable (FractionRing A) (FractionRing B)]
 
-/-- **A separable extension of Dedekind domains ramifies at only finitely many primes**: the
-complement of `Algebra.unramifiedLocus` is finite. A ramified prime divides the different ideal,
-which is nonzero and so, being an ideal of a Dedekind domain, has finitely many divisors. -/
+/-- **A module-finite, torsion-free extension of Dedekind domains whose fraction-field extension
+is separable ramifies at only finitely many primes**: the complement of
+`Algebra.unramifiedLocus` is finite. A ramified prime divides the different ideal, which is
+nonzero and so, being an ideal of a Dedekind domain, has finitely many divisors. -/
 theorem finite_compl_unramifiedLocus : (unramifiedLocus A B)ᶜ.Finite := by
   refine Set.Finite.of_finite_image (f := PrimeSpectrum.asIdeal) ?_
     fun _ _ _ _ h => PrimeSpectrum.ext h
