@@ -18,13 +18,18 @@ the points of the curve `W.map f` over `S`, with no fields and no tower involved
 
 * `TauCeti.WeierstrassCurve.Affine.Point.mapRingHom`: the map `W.Point → (W.map f).Point`, over
   arbitrary commutative rings.
+* `TauCeti.WeierstrassCurve.Affine.Point.mapRingHom_neg`, `mapRingHom_id`, `mapRingHom_comp` and
+  `mapRingHom_injective`: the functorial API, over arbitrary commutative rings, mirroring Mathlib's
+  `Affine.Point.map_id`, `map_map` and `map_injective` for the `AlgHom` version. The identity and
+  composition laws transport their codomains along Mathlib's `WeierstrassCurve.map_id` and
+  `map_map`.
 * `TauCeti.WeierstrassCurve.Affine.Point.mapRingHomAddMonoidHom`: over a field, it is additive, so
   it packages as an `AddMonoidHom`; `mapRingHom_zsmul` is the resulting compatibility with `ℤ`
   scalars.
 
 The definition needs only injectivity, since that is what `Affine.map_nonsingular` needs to carry
-nonsingularity across. Additivity is stated over a field because that is where Mathlib gives
-`W.Point` its group law.
+nonsingularity across. Only additivity is stated over a field, that being where Mathlib gives
+`W.Point` its group law; negation and the functorial laws hold over any commutative ring.
 
 This supports the Hasse strand of `TauCetiRoadmap/EllipticCurves/README.md`, Layer 3: the Silverman
 V.1 route counts `#E(𝔽_q)` as the fixed points of Frobenius, which means transporting points along
@@ -75,6 +80,40 @@ lemma mapRingHom_some {x y : R} (h : W.toAffine.Nonsingular x y) :
       = .some (f x) (f y) ((Affine.map_nonsingular W.toAffine hf x y).mpr h) := by
   simp [mapRingHom]
 
+/-- **The point map preserves negation.** Unlike additivity this needs no field and no
+decidability, negation of affine points being defined over any commutative ring. -/
+lemma mapRingHom_neg (P : W.toAffine.Point) :
+    mapRingHom f hf (-P) = -mapRingHom f hf P := by
+  rcases P with _ | ⟨x, y, h⟩
+  · change mapRingHom f hf (-(0 : W.toAffine.Point)) = -mapRingHom f hf (0 : W.toAffine.Point)
+    simp
+  · rw [Affine.Point.neg_some, mapRingHom_some, mapRingHom_some, Affine.Point.neg_some]
+    simp only [Affine.map_negY]
+
+/-- **The point map along the identity is the identity**, after Mathlib's `WeierstrassCurve.map_id`
+identifies the codomain. -/
+@[simp]
+lemma mapRingHom_id (P : W.toAffine.Point) :
+    mapRingHom (RingHom.id R) (fun _ _ h => h) P = _root_.WeierstrassCurve.map_id W ▸ P := by
+  rcases P with _ | ⟨x, y, h⟩ <;> simp [mapRingHom]
+
+/-- **The point map is functorial in the ring homomorphism**, after Mathlib's
+`WeierstrassCurve.map_map` identifies the codomain. -/
+lemma mapRingHom_comp {T : Type*} [CommRing T] (g : S →+* T) (hg : Function.Injective g)
+    (P : W.toAffine.Point) :
+    mapRingHom g hg (mapRingHom f hf P)
+      = _root_.WeierstrassCurve.map_map W f g ▸ mapRingHom (g.comp f) (hg.comp hf) P := by
+  rcases P with _ | ⟨x, y, h⟩ <;> simp [mapRingHom] <;> rfl
+
+/-- **The point map is injective.** -/
+lemma mapRingHom_injective : Function.Injective (mapRingHom f hf (W := W)) := by
+  rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩) hP <;> simp only [mapRingHom] at hP
+  · rfl
+  · exact absurd hP (by simp)
+  · exact absurd hP (by simp)
+  · obtain ⟨hx, hy⟩ := Affine.Point.some.inj hP
+    simp only [hf hx, hf hy]
+
 end WeierstrassCurve.Affine.Point
 
 namespace WeierstrassCurve.Affine.Point
@@ -105,18 +144,6 @@ lemma mapRingHom_add (P Q : W.toAffine.Point) :
     rw [Affine.Point.add_some hxy, mapRingHom_some, mapRingHom_some, mapRingHom_some,
       Affine.Point.add_some hxy']
     simp only [Affine.map_slope, Affine.map_addX, Affine.map_addY]
-
-omit [DecidableEq F] [DecidableEq K] in
-/-- **The point map preserves negation.** Unlike additivity this needs no decidability, negation
-being defined without a case split. -/
-lemma mapRingHom_neg (P : W.toAffine.Point) :
-    mapRingHom f f.injective (-P) = -mapRingHom f f.injective P := by
-  rcases P with _ | ⟨x, y, h⟩
-  · change mapRingHom f f.injective (-(0 : W.toAffine.Point))
-      = -mapRingHom f f.injective (0 : W.toAffine.Point)
-    simp
-  · rw [Affine.Point.neg_some, mapRingHom_some, mapRingHom_some, Affine.Point.neg_some]
-    simp only [Affine.map_negY]
 
 variable (W) in
 /-- The point map packaged as an `AddMonoidHom`. -/
