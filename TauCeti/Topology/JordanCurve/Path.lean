@@ -71,7 +71,7 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X] {x : X}
 omit [T2Space X] in
 /-- **The circle lift of a closed path computes on representatives in `[0, 1)`.** At the class of
 `t ∈ [0, 1)` the lift `AddCircle.liftIco 1 0 γ.extend` takes the value `γ t`. -/
-private theorem liftIco_extend_coe (γ : Path x x) {t : ℝ} (ht : t ∈ Ico (0 : ℝ) 1) :
+private theorem liftIco_extend_coe_apply (γ : Path x x) {t : ℝ} (ht : t ∈ Ico (0 : ℝ) 1) :
     AddCircle.liftIco 1 0 γ.extend (t : AddCircle (1 : ℝ)) = γ ⟨t, ht.1, ht.2.le⟩ :=
   (AddCircle.liftIco_zero_coe_apply ht).trans (γ.extend_extends' ⟨t, ht.1, ht.2.le⟩)
 
@@ -79,7 +79,7 @@ omit [T2Space X] in
 /-- **A simple closed path lifts injectively to the circle.** If equality `γ s = γ t` forces `s = t`
 or the unordered pair of parameters to be `{0, 1}`, then `AddCircle.liftIco 1 0 γ.extend` is
 injective. -/
-private theorem injective_liftIco_extend (γ : Path x x)
+private theorem liftIco_extend_injective (γ : Path x x)
     (hγ : ∀ ⦃s t : unitInterval⦄, γ s = γ t →
       s = t ∨ (s = 0 ∧ t = 1) ∨ (s = 1 ∧ t = 0)) :
     Function.Injective (AddCircle.liftIco 1 0 γ.extend) := by
@@ -87,7 +87,7 @@ private theorem injective_liftIco_extend (γ : Path x x)
   -- representatives in `[0, 1)` cannot form the exceptional endpoint pair
   obtain ⟨s, hs, rfl⟩ := AddCircle.eq_coe_Ico q
   obtain ⟨t, ht, rfl⟩ := AddCircle.eq_coe_Ico q'
-  rw [liftIco_extend_coe γ hs, liftIco_extend_coe γ ht] at hqq'
+  rw [liftIco_extend_coe_apply γ hs, liftIco_extend_coe_apply γ ht] at hqq'
   rcases hγ hqq' with hst | hends | hends
   · exact congrArg (fun u : unitInterval => ((u : ℝ) : AddCircle (1 : ℝ))) hst
   · exact absurd (congrArg ((↑) : unitInterval → ℝ) hends.2) ht.2.ne
@@ -102,14 +102,14 @@ private theorem range_liftIco_extend (γ : Path x x) :
   apply Subset.antisymm
   · rintro y ⟨q, rfl⟩
     obtain ⟨t, ht, rfl⟩ := AddCircle.eq_coe_Ico q
-    exact ⟨⟨t, ht.1, ht.2.le⟩, (liftIco_extend_coe γ ht).symm⟩
+    exact ⟨⟨t, ht.1, ht.2.le⟩, (liftIco_extend_coe_apply γ ht).symm⟩
   · rintro y ⟨t, rfl⟩
     by_cases ht : (t : ℝ) < 1
-    · exact ⟨((t : ℝ) : AddCircle (1 : ℝ)), liftIco_extend_coe γ ⟨t.2.1, ht⟩⟩
+    · exact ⟨((t : ℝ) : AddCircle (1 : ℝ)), liftIco_extend_coe_apply γ ⟨t.2.1, ht⟩⟩
     · have ht1 : t = 1 := Subtype.ext (le_antisymm t.2.2 (not_lt.mp ht))
       refine ⟨(0 : AddCircle (1 : ℝ)), ?_⟩
       subst t
-      exact (liftIco_extend_coe (t := 0) γ (by simp)).trans (γ.source.trans γ.target.symm)
+      exact (liftIco_extend_coe_apply (t := 0) γ (by simp)).trans (γ.source.trans γ.target.symm)
 
 /-- **The range of a simple closed path is a Jordan curve.** Let `γ : Path x x` be a closed path.
 If equality `γ s = γ t` forces either `s = t` or the unordered pair of parameters to be `{0, 1}`,
@@ -130,7 +130,7 @@ theorem isJordanCurve_range_of_eq_or_eq_endpoints (γ : Path x x)
   have huniv : IsJordanCurve (univ : Set (AddCircle (1 : ℝ))) :=
     isJordanCurve_iff.mpr
       ⟨(Homeomorph.Set.univ (AddCircle (1 : ℝ))).trans (AddCircle.homeomorphCircle one_ne_zero)⟩
-  have himage := huniv.image hgc.continuousOn (injective_liftIco_extend γ hγ).injOn
+  have himage := huniv.image hgc.continuousOn (liftIco_extend_injective γ hγ).injOn
   rwa [image_univ, range_liftIco_extend γ] at himage
 
 /-! ### Gluing two arcs along their endpoints -/
