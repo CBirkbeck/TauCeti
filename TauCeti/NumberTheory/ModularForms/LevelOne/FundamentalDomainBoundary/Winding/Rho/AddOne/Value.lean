@@ -55,38 +55,6 @@ namespace ModularForm
 
 variable {H δL δR : ℝ}
 
-/-- The ordered boundary-tolerant comparison step of the telescope: the upper form
-`TauCeti.Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg`
-applied to the comparison function, its integrability from the continuous derivative and the
-nonvanishing, both transported to the contour across the interior agreement.
-
-This is the ordered-interval slit-plane comparison FTC, `..._of_mem_slitPlane_of_le`, for a
-comparison function that meets the branch cut at an endpoint: the interior is still
-slit-plane-valued, but at the ends only the closed upper half-plane and nonvanishing are
-available. -/
-private lemma upper_comparison {g h : ℝ → ℂ} {a b : ℝ} (hab : a ≤ b)
-    (hh_cont : ContinuousOn h (Icc a b))
-    (hh_diff : ∀ t ∈ Ioo a b, DifferentiableAt ℝ h t)
-    (hh_deriv_cont : ContinuousOn (deriv h) (Icc a b))
-    (hh_ne : ∀ t ∈ Icc a b, h t ≠ 0)
-    (hh_im : ∀ t ∈ Icc a b, 0 ≤ (h t).im)
-    (hh_slit : ∀ t ∈ Ioo a b, h t ∈ Complex.slitPlane)
-    (heq : Set.EqOn g h (Ioo a b)) (heq_a : g a = h a) (heq_b : g b = h b) :
-    IntervalIntegrable (fun t ↦ deriv g t / g t) volume a b ∧
-    ∫ t in a..b, deriv g t / g t = Complex.log (g b) - Complex.log (g a) := by
-  have hu : uIcc a b = Icc a b := uIcc_of_le hab
-  have ho : Ioo (min a b) (max a b) = Ioo a b := by
-    rw [min_eq_left hab, max_eq_right hab]
-  have hint : IntervalIntegrable (fun t ↦ deriv h t / h t) volume a b :=
-    ((hh_deriv_cont.div hh_cont hh_ne).mono (hu ▸ Set.Subset.rfl)).intervalIntegrable
-  exact Contour.intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg
-    countable_empty (hu ▸ hh_cont)
-    (fun t ht ↦ hh_diff t (by rw [ho] at ht; exact ht.1)) hint
-    (fun t ht ↦ hh_im t (by rwa [hu] at ht))
-    (hh_ne a (left_mem_Icc.mpr hab)) (hh_ne b (right_mem_Icc.mpr hab))
-    (fun t ht ↦ hh_slit t (by rwa [ho] at ht))
-    (fun t ht ↦ heq (by rwa [ho] at ht)) heq_a heq_b
-
 /-- The right-vertical piece `[0, 1-δ_L]` of the telescope at `ρ + 1`, stopping short of
 the corner. -/
 private lemma telescope_rho_add_one_piece_right_vertical (hH : Real.sqrt 3 / 2 < H)
@@ -198,7 +166,7 @@ private lemma telescope_rho_add_one_piece_arc_second (H : ℝ) :
   have hne' : ∀ t ∈ Icc (2 : ℝ) 3,
       fdBoundary_segment3 t - ((UpperHalfPlane.ρ : ℂ) + 1) ≠ 0 := fun t ht ↦
     heval t ht ▸ hne t ht
-  exact upper_comparison
+  exact intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg_of_le
     (g := fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))
     (h := fun s ↦ fdBoundary_segment3 s - ((UpperHalfPlane.ρ : ℂ) + 1)) (by norm_num)
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
@@ -253,7 +221,7 @@ private lemma telescope_rho_add_one_piece_left_vertical (hH : Real.sqrt 3 / 2 < 
   have hne' : ∀ t ∈ Icc (3 : ℝ) 4,
       fdBoundary_segment4 H t - ((UpperHalfPlane.ρ : ℂ) + 1) ≠ 0 := fun t ht ↦
     heval t ht ▸ hne t ht
-  exact upper_comparison
+  exact intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_im_nonneg_of_le
     (g := fun s ↦ fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))
     (h := fun s ↦ fdBoundary_segment4 H s - ((UpperHalfPlane.ρ : ℂ) + 1)) (by norm_num)
     (Continuous.continuousOn (Differentiable.continuous fun s ↦
