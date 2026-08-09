@@ -22,7 +22,6 @@ is nonzero; a nonzero ideal of a Dedekind domain has only finitely many divisors
 
 ## Main results
 
-* `Algebra.finite_setOf_dvd_differentIdeal`: the different ideal has finitely many divisors.
 * `Algebra.finite_compl_unramifiedLocus`: the ramification locus is finite.
 
 Stated over Dedekind domains directly rather than in an AKLB tower: no ambient fraction fields
@@ -47,8 +46,10 @@ Changes from the source. The source works in an AKLB tower and rebuilds the stan
 along the way, including `differentIdeal_ne_bot`, which Mathlib now proves; those are dropped, and
 with them the tower. The ramification locus is named by Mathlib's `Algebra.unramifiedLocus` and
 the criterion by Mathlib's `Algebra.IsUnramifiedAt`, in place of the source's hand-rolled
-`ramifiedUnderLocus` and its `Ideal.ramificationIdx _ _ ≠ 1` spelling. Sixteen declarations become
-two.
+`ramifiedUnderLocus` and its `Ideal.ramificationIdx _ _ ≠ 1` spelling. The source's
+divisor-finiteness step is a specialisation of Mathlib's
+`UniqueFactorizationMonoid.fintypeSubtypeDvd` with no consumer of its own, so it stays inside the
+one proof rather than becoming public API. Sixteen declarations become one.
 -/
 
 public section
@@ -63,21 +64,16 @@ variable (A B : Type*) [CommRing A] [IsDedekindDomain A] [CommRing B] [Algebra A
   [IsDedekindDomain B] [Module.IsTorsionFree A B] [Module.Finite A B]
   [Algebra.IsSeparable (FractionRing A) (FractionRing B)]
 
-/-- **The different ideal has only finitely many divisors**, being a nonzero ideal of a Dedekind
-domain. -/
-theorem finite_setOf_dvd_differentIdeal : {P : Ideal B | P ∣ differentIdeal A B}.Finite := by
-  have h : Finite {P : Ideal B // P ∣ differentIdeal A B} :=
-    @Finite.of_fintype _ (UniqueFactorizationMonoid.fintypeSubtypeDvd _
-      (differentIdeal_ne_bot (A := A) (B := B)))
-  exact Set.finite_coe_iff.mp h
-
 /-- **A separable extension of Dedekind domains ramifies at only finitely many primes**: the
 complement of `Algebra.unramifiedLocus` is finite. A ramified prime divides the different ideal,
-which is nonzero and so has finitely many divisors. -/
+which is nonzero and so, being an ideal of a Dedekind domain, has finitely many divisors. -/
 theorem finite_compl_unramifiedLocus : (unramifiedLocus A B)ᶜ.Finite := by
+  have hdvd : {P : Ideal B | P ∣ differentIdeal A B}.Finite :=
+    Set.finite_coe_iff.mp (@Finite.of_fintype _ (UniqueFactorizationMonoid.fintypeSubtypeDvd _
+      (differentIdeal_ne_bot (A := A) (B := B))))
   refine Set.Finite.of_finite_image (f := PrimeSpectrum.asIdeal) ?_
     fun _ _ _ _ h => PrimeSpectrum.ext h
-  refine (finite_setOf_dvd_differentIdeal A B).subset ?_
+  refine hdvd.subset ?_
   rintro _ ⟨p, hp, rfl⟩
   have := p.isPrime
   exact dvd_differentIdeal_iff.mpr hp
