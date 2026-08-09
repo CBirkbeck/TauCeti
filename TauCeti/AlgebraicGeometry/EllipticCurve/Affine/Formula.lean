@@ -81,8 +81,10 @@ lemma variableChange_addX (x₁ x₂ ℓ : R) :
   simp only [addX, variableChange_a₁, variableChange_a₂]
   grobner
 
-/-- The change of variables intertwines the negated `y`-coordinate of addition (`negAddY`). -/
-lemma variableChange_negAddY (x₁ x₂ y₁ ℓ : R) :
+-- The change of variables intertwines the negated `y`-coordinate of addition (`negAddY`).
+-- Private: `negAddY` is the un-negated intermediate of `addY`, so this exists only as the step
+-- from which `variableChange_addY` below is read off, and has no consumer outside this file.
+private lemma variableChange_negAddY (x₁ x₂ y₁ ℓ : R) :
     W.toAffine.negAddY ((C.u : R) ^ 2 * x₁ + C.r) ((C.u : R) ^ 2 * x₂ + C.r)
         ((C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t) ((C.u : R) * ℓ + C.s)
       = (C.u : R) ^ 3 * (C • W).toAffine.negAddY x₁ x₂ y₁ ℓ
