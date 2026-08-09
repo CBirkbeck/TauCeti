@@ -186,11 +186,11 @@ theorem CofinalValueFor.mul {v : Valuation A Γ₀}
 theorem CofinalValueFor.lt_one {v : Valuation A Γ₀}
     {H : Subgroup (valueGroup (.ofClass v))} {a : A}
     (h : CofinalValueFor v H a) : v.restrict a < 1 := by
-  obtain ⟨n, hn⟩ := h 1 (one_mem H)
-  simp only [WithZero.coe_one] at hn
-  by_contra hge
-  push Not at hge
-  exact absurd hn (not_lt.mpr (one_le_pow_of_one_le' hge n))
+  rcases eq_or_ne ((MonoidWithZeroHom.ofClass v) a) 0 with h0 | h0
+  · rw [v.restrict_eq_zero_iff.mpr (by simpa using h0)]
+    exact zero_lt_one
+  · rw [v.restrict_eq_mk h0, ← WithZero.coe_one, WithZero.coe_lt_coe]
+    exact ((cofinalValueFor_iff_isCofinalElement h0).mp h).lt_one
 
 /-- A power has cofinal value exactly when the element does (for a positive exponent):
 the ingredient of `rad c = c` in Wedhorn Lemma 7.1. -/
