@@ -49,6 +49,8 @@ formalised here.
 
 ## Main results
 
+* `TauCeti.Valuation.mem_characteristicSubgroup_iff` : Membership in `cΓ_v` is bounding by a
+  single attained value `≥ 1`.
 * `TauCeti.Valuation.hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top` : The
   elementwise fullness condition is exactly `cΓ_v = Γ_v`.
 * `TauCeti.Valuation.characteristicSubgroup_le_comap_of_isEquiv` : `cΓ_v` is invariant under
@@ -315,6 +317,17 @@ private def generatorBall (v : Valuation A Γ₀) :
 private theorem characteristicSubgroup_le_generatorBall (v : Valuation A Γ₀) :
     characteristicSubgroup v ≤ generatorBall v :=
   characteristicSubgroup_le_iff.mpr fun g hg ↦ ⟨g, hg, (inv_le_one'.mpr hg.1).trans hg.1, le_rfl⟩
+
+/-- **Elimination rule.** Membership in `cΓ_v` is bounding by a *single* attained value `≥ 1`.
+The non-obvious direction is that one generator suffices: the attained values `≥ 1` are closed
+under multiplication, so the elements they bound already form a convex subgroup. -/
+theorem mem_characteristicSubgroup_iff {v : Valuation A Γ₀}
+    {γ : valueGroup (.ofClass v)} :
+    γ ∈ characteristicSubgroup v ↔
+      ∃ g ∈ characteristicGenerators v, g⁻¹ ≤ γ ∧ γ ≤ g := by
+  refine ⟨fun hγ ↦ characteristicSubgroup_le_generatorBall v hγ, fun ⟨g, hg, hgγ, hγg⟩ ↦ ?_⟩
+  have hmem := characteristicGenerators_subset_characteristicSubgroup v hg
+  exact (characteristicSubgroup v).convex (inv_mem hmem) hmem hgγ hγg
 
 /-- **Fullness is exactly `Γ_v = cΓ_v`.** The elementwise condition of
 `HasFullCharacteristicGroup` says every positive value is bounded by a *single* attained

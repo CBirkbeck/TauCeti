@@ -6,7 +6,6 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.Algebra.Order.Hom.MonoidWithZero
-public import Mathlib.Algebra.Order.Hom.Units
 public import Mathlib.RingTheory.Valuation.Basic
 
 /-!
