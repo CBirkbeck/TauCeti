@@ -12,8 +12,8 @@ public import TauCeti.RingTheory.Huber.Basic
 /-!
 # Localization Topology for Huber Rings
 
-We construct the non-archimedean ring topology on `Localization.Away s` following §8.1 of
-Wedhorn's *Adic Spaces*.
+We construct the non-archimedean ring topology on `Localization.Away s` following Proposition
+and Definition 5.51, §5.6, of Wedhorn's *Adic Spaces*.
 
 ## Main definitions
 
@@ -37,7 +37,7 @@ Wedhorn's *Adic Spaces*.
 * `isBounded_locSubring` and `isPowerBounded_divByS`: `D` is bounded and the distinguished
   fractions `t/s` are power-bounded — the two facts a converse to the continuity criterion
   needs.
-* `continuous_locTopology_of_continuous_algebraMap_of_isPowerBounded`: a sufficient criterion
+* `continuous_of_continuous_algebraMap_of_isPowerBounded`: a sufficient criterion
   for a ring homomorphism out of `Aₛ` to be continuous — its restriction along `algebraMap` is
   continuous and the fractions `t/s` go to power-bounded elements. The converse is not proved
   here.
@@ -54,8 +54,9 @@ changes are:
 
 ## References
 
-* [T. Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition and Definition 5.51, §8.1
-* [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), commit `d9f2fbbb`
+* [T. Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition and Definition 5.51, §5.6
+* [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
+  commit `d9f2fbbb`, `projects/AdicSpaces/Adic spaces/LocalizationTopology.lean`
 -/
 
 open Pointwise Topology
@@ -185,17 +186,16 @@ theorem locNhd_antitone (P : PairOfDefinition A) (T : Finset A) (s : A) :
     Antitone (locNhd P T s) :=
   fun _ _ h ↦ AddSubgroup.map_mono (Submodule.toAddSubgroup_mono (Ideal.pow_le_pow_right h))
 
-/-- The preimage of `locNhd n` under the subtype embedding equals `locIdeal^n`.
-
-The embedding is spelled `Subtype.val` rather than `(locSubring P T s).subtype`, which is the
-simp-normal form: `Subring.coe_subtype` rewrites the latter to the former, so stating it the
-other way round would leave this `@[simp]` lemma's left-hand side unable to fire. -/
+/-- The preimage of `locNhd n` under the subtype embedding equals `locIdeal^n`. -/
 @[simp]
 theorem locNhd_preimage_eq_locIdeal_pow (P : PairOfDefinition A) (T : Finset A)
     (s : A) (n : ℕ) :
     (Subtype.val : locSubring P T s → Localization.Away s) ⁻¹'
         (locNhd P T s n : Set (Localization.Away s)) =
       ((locIdeal P T s) ^ n : Ideal (locSubring P T s)) := by
+  -- The embedding is spelled `Subtype.val`, not `(locSubring P T s).subtype`: the former is the
+  -- simp-normal form (`Subring.coe_subtype` rewrites the latter to it), so the other spelling
+  -- would leave this `@[simp]` lemma's left-hand side unable to fire.
   exact Set.preimage_image_eq _ Subtype.val_injective
 
 /-- Products of the `n`-th neighbourhood land in the `n`-th neighbourhood: this is the
@@ -416,7 +416,7 @@ elements. This is a sufficient criterion only; no converse is proved here.
 The second hypothesis does real work rather than following from the first: `D` is generated over
 `A₀` by exactly those fractions, so continuity of `f ∘ algebraMap` alone says nothing about the
 image of `D`. -/
-theorem continuous_locTopology_of_continuous_algebraMap_of_isPowerBounded {B : Type*}
+theorem continuous_of_continuous_algebraMap_of_isPowerBounded {B : Type*}
     [Ring B] [TopologicalSpace B] [NonarchimedeanRing B] [IsTopologicalRing A]
     (P : PairOfDefinition A) (T : Finset A) (s : A)
     (hopen : ∃ N : ℕ, ∀ b ∈ P.idealOfDefinition ^ N, divByS ((b : A)) s ∈ locSubring P T s)
