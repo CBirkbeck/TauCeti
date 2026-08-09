@@ -58,37 +58,22 @@ variable {R : Type*} [CommRing R] [IsDedekindDomain R] (K : Type*) [Field K] [Al
 /-- For `v ∉ S`, the extension of `v` to `𝒪_S` is a proper ideal. -/
 lemma integer_map_asIdeal_ne_top {v : HeightOneSpectrum R} (hv : v ∉ S) :
     Ideal.map (algebraMap R (S.integer K)) v.asIdeal ≠ ⊤ := by
-  -- The extension lands inside the ideal of `S`-integers of `v`-valuation `< 1`, which does not
-  -- contain `1`.
+  -- Since `v ∉ S`, the `S`-integers lie in the valuation ring of `v`; the extension of `v` lands
+  -- in the pullback of that local ring's maximal ideal, which is proper because `1` does not.
   set f := algebraMap R (S.integer K) with hf
-  -- the `S`-integers of `v`-valuation `< 1` form an ideal, because `v` is bounded by `1` on all
-  -- of `𝒪_S` when `v ∉ S`.
-  -- This is deliberately built by hand rather than pulled back from
-  -- `IsLocalRing.maximalIdeal (v.valuation K).valuationSubring`: that comap needs an algebra map
-  -- `𝒪_S → 𝒪_v`, and no such instance exists, because the inclusion holds precisely *because*
-  -- `v ∉ S`. Supplying it is Stoll's `toSubring_le_valuationSubring`, which is not ported — and
-  -- it is the same fact this proof establishes inline from `Set.mem_integer_iff`.
+  have hsub : (S.integer K).toSubring ≤ (v.valuation K).valuationSubring.toSubring :=
+    fun x hx ↦ (Set.mem_integer_iff K S).mp hx v hv
   let 𝔪 : Ideal (S.integer K) :=
-    { carrier := {x | v.valuation K (x : K) < 1}
-      zero_mem' := by simp
-      add_mem' := fun {a b} ha hb ↦ by
-        rw [Set.mem_ofPred_eq, Subalgebra.coe_add]
-        exact lt_of_le_of_lt ((v.valuation K).map_add _ _) (max_lt ha hb)
-      smul_mem' := fun c {a} ha ↦ by
-        have hc : v.valuation K (c : K) ≤ 1 := (Set.mem_integer_iff K S).mp c.property v hv
-        rw [Set.mem_ofPred_eq, smul_eq_mul, Subalgebra.coe_mul, map_mul]
-        calc v.valuation K (c : K) * v.valuation K (a : K)
-            ≤ 1 * v.valuation K (a : K) := by gcongr
-          _ = v.valuation K (a : K) := one_mul _
-          _ < 1 := ha }
+    (IsLocalRing.maximalIdeal (v.valuation K).valuationSubring).comap (Subring.inclusion hsub)
   have hle : Ideal.map f v.asIdeal ≤ 𝔪 :=
-    -- membership of `𝔪` is by construction the valuation bound, so the `show` is the only step
     Ideal.map_le_iff_le_comap.mpr fun a ha ↦
-      show v.valuation K ((f a : S.integer K) : K) < 1 by
-        rw [Subalgebra.coe_algebraMap]; exact (v.valuation_lt_one_iff_mem a).mpr ha
+      (_root_.Valuation.mem_maximalIdeal_iff K (v.valuation K)).mpr <| by
+        rw [Subring.coe_inclusion, Subalgebra.coe_algebraMap]
+        exact (v.valuation_lt_one_iff_mem a).mpr ha
   intro htop
   -- if the extension were `⊤` then `1` would lie in `𝔪`, i.e. would have `v`-valuation `< 1`
-  have h1 : v.valuation K ((1 : S.integer K) : K) < 1 := le_trans htop.ge hle Submodule.mem_top
+  have hmem : (1 : S.integer K) ∈ 𝔪 := le_trans htop.ge hle Submodule.mem_top
+  have h1 := (_root_.Valuation.mem_maximalIdeal_iff K (v.valuation K)).mp hmem
   simp at h1
 
 /-- For `v ∉ S`, the extension of `v` to `𝒪_S` is maximal. -/
