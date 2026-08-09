@@ -6,8 +6,7 @@ module
 
 public import Mathlib.NumberTheory.NumberField.Basic
 public import Mathlib.LinearAlgebra.FiniteDimensional.Lemmas
-public import Mathlib.LinearAlgebra.LinearIndependent.Lemmas
-public import TauCeti.LinearAlgebra.Dimension.IsQuadraticExtension
+import TauCeti.LinearAlgebra.Dimension.IsQuadraticExtension
 
 /-!
 # The `{1, x}` rational basis of algebraic integers in a quadratic number field

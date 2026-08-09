@@ -8,7 +8,7 @@ public import TauCeti.NumberTheory.NumberField.Quadratic.Basic
 public import TauCeti.NumberTheory.NumberField.Internal.QuadraticIntegralBasis
 public import TauCeti.NumberTheory.NumberField.Discriminant.OfIntegralBasis
 public import Mathlib.NumberTheory.NumberField.Norm
-public import TauCeti.RingTheory.Norm.Quadratic
+import TauCeti.RingTheory.Norm.Quadratic
 
 /-!
 # The ring of integers of a quadratic field

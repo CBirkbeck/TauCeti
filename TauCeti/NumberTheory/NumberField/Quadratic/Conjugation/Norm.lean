@@ -7,7 +7,7 @@ module
 public import Mathlib.NumberTheory.NumberField.Norm
 public import TauCeti.NumberTheory.DedekindDomain.RelNorm
 public import TauCeti.NumberTheory.NumberField.Quadratic.Conjugation.Basic
-public import TauCeti.RingTheory.Norm.Quadratic
+import TauCeti.RingTheory.Norm.Quadratic
 
 /-!
 # Norm-principality for quadratic conjugation
