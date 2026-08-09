@@ -23,13 +23,13 @@ module, and for the standard-basis determinant form under matrix multiplication.
 
 Mathlib's `Module.Basis.det_comp` is the case `ω = b.det` of the first statement. The step taken
 here is that every top-degree alternating form is a multiple of `b.det`
-(`AlternatingMap.eq_smulRight_basis_det`), so the same law holds for all of them; that is what
+(`AlternatingMap.eq_basis_det_smulRight`), so the same law holds for all of them; that is what
 makes the converse available for a form supplied by something other than a basis, such as a
 pairing.
 
 ## Main results
 
-* `AlternatingMap.eq_smulRight_basis_det`: `ω = b.det.smulRight (ω b)` for `ω` of top degree.
+* `AlternatingMap.eq_basis_det_smulRight`: `ω = b.det.smulRight (ω b)` for `ω` of top degree.
 * `AlternatingMap.compLinearMap_eq_det_smul`: `ω ∘ φ = det φ • ω` for `ω` of top degree.
 * `LinearMap.det_eq_of_compLinearMap_eq_smul`: if `ω ≠ 0` and `ω ∘ φ = d • ω` then `det φ = d`,
   assuming `NoZeroSMulDivisors R N`.
@@ -79,7 +79,7 @@ variable {ι R M N : Type*} [CommRing R] [AddCommGroup M] [Module R M] [AddCommG
 /-- **A top-degree alternating form is its basis determinant times its value on the basis.** This
 is Mathlib's `AlternatingMap.eq_smul_basis_det` with the codomain an arbitrary module rather than
 `R`. -/
-theorem eq_smulRight_basis_det [Fintype ι] [DecidableEq ι] (b : Basis ι R M)
+theorem eq_basis_det_smulRight [Fintype ι] [DecidableEq ι] (b : Basis ι R M)
     (ω : M [⋀^ι]→ₗ[R] N) : ω = b.det.smulRight (ω ⇑b) := by
   -- Mathlib's proof generalises unchanged: it reads off the coordinates and never touches the
   -- values, and `Module.Basis.ext_alternating` is already stated for an arbitrary codomain.
@@ -99,7 +99,7 @@ theorem compLinearMap_eq_det_smul [Finite ι] (b : Basis ι R M) (ω : M [⋀^ι
   cases nonempty_fintype ι
   classical
   ext v
-  rw [compLinearMap_apply, eq_smulRight_basis_det b ω]
+  rw [compLinearMap_apply, eq_basis_det_smulRight b ω]
   simp only [smulRight_apply, smul_apply]
   rw [← Function.comp_def, Basis.det_comp, mul_smul]
 
@@ -122,7 +122,7 @@ theorem det_eq_of_compLinearMap_eq_smul [Finite ι] [NoZeroSMulDivisors R N] (b 
   cases nonempty_fintype ι
   classical
   have hb : ω ⇑b ≠ 0 := fun h0 =>
-    hω (by rw [AlternatingMap.eq_smulRight_basis_det b ω, h0]; ext v; simp)
+    hω (by rw [AlternatingMap.eq_basis_det_smulRight b ω, h0]; ext v; simp)
   rw [AlternatingMap.compLinearMap_eq_det_smul b ω φ] at h
   have h2 := congrArg (fun f : M [⋀^ι]→ₗ[R] N => f ⇑b) h
   simp only [AlternatingMap.smul_apply] at h2
