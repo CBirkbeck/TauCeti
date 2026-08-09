@@ -178,6 +178,32 @@ theorem exists_norm_fdBoundary_four_sub_sub_le_iff {H : ℝ} {S : Finset ℂ} {�
   · rintro ⟨s, hs, hle⟩
     exact ⟨-1 / s, hinv s hs, by rwa [hkey s (hnorm s hs)]⟩
 
+/-- **The arc pairing under excision.** At an excised parameter both terms vanish; at a
+retained one the direct and reflected excised integrands sum to the excised weight term, exactly
+as in `TauCeti.ModularForm.logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg`.
+
+Regularity is asked only where the integrand is retained: at an excised parameter the form may
+vanish or fail to be differentiable, which is the point of excising it. -/
+theorem truncated_logDeriv_fdBoundary_arc_add_four_sub [SlashInvariantFormClass F Γ k]
+    (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ} {t : ℝ}
+    (ht : t ∈ Ioo (1 : ℝ) 3) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
+    (hd : ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
+      DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
+    (hne : ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
+      (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0) :
+    (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) +
+      (if ∃ s ∈ S, ‖fdBoundary H (4 - t) - s‖ ≤ ε then 0
+        else deriv (fdBoundary H) (4 - t) • logDeriv (⇑f ∘ ofComplex) (fdBoundary H (4 - t))) =
+      if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else -((k : ℂ) * logDeriv (fdBoundary H) t) := by
+  have hsymm := exists_norm_fdBoundary_four_sub_sub_le_iff (H := H) (S := S) (ε := ε)
+    ⟨ht.1.le, ht.2.le⟩ hnorm hinv
+  by_cases hc : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε
+  · simp only [if_pos hc, if_pos (hsymm.mpr hc), add_zero]
+  · simp only [if_neg hc, if_neg fun h => hc (hsymm.mp h)]
+    exact logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS ht (hd hc) (hne hc)
+
 end ModularForm
 
 end TauCeti
