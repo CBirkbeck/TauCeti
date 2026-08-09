@@ -134,7 +134,7 @@ theorem CofinalValueFor.sub {v : Valuation A Γ₀}
   exact ha.add (cofinalValueFor_neg_iff.mpr hb)
 
 /-- Multiplying by an element of value at most `1` preserves cofinality. -/
-theorem CofinalValueFor.mul_of_le_one {v : Valuation A Γ₀}
+theorem CofinalValueFor.mul_left_of_le_one {v : Valuation A Γ₀}
     {H : Subgroup (valueGroup (.ofClass v))} {a b : A}
     (ha : CofinalValueFor v H a) (hb : v b ≤ 1) : CofinalValueFor v H (b * a) :=
   ha.of_le (by
@@ -154,12 +154,12 @@ theorem cofinalValueFor_iff_isCofinalElement {v : Valuation A Γ₀}
 
 /-- **Wedhorn Lemma 7.1, the multiplicative step.** Below the strict-containment threshold
 `cΓ_v < H`, cofinality for `H` is preserved by multiplication by an arbitrary ring element. -/
-theorem CofinalValueFor.mul {v : Valuation A Γ₀}
+theorem CofinalValueFor.mul_left {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hH : characteristicSubgroup v < H) {a : A} (ha : CofinalValueFor v H.toSubgroup a) (b : A) :
     CofinalValueFor v H.toSubgroup (b * a) := by
   rcases le_or_gt (v b) 1 with hb | hb
-  · exact ha.mul_of_le_one hb
+  · exact ha.mul_left_of_le_one hb
   · -- `v b > 1` is an attained value `≥ 1`, hence lies in `cΓ_v ⊊ H`.
     have hb0 : (MonoidWithZeroHom.ofClass v) b ≠ 0 := by
       simpa using (zero_lt_one.trans hb).ne'
@@ -232,14 +232,14 @@ theorem not_cofinalValueFor_one (v : Valuation A Γ₀)
 
 /-! ### The ideal of cofinal values
 
-`Ideal A` is `Submodule A A`, i.e. a *left* ideal, and `CofinalValueFor.mul` gives exactly left
+`Ideal A` is `Submodule A A`, i.e. a *left* ideal, and `CofinalValueFor.mul_left` gives exactly left
 absorption — which is exactly what `Ideal A = Submodule A A` asks for. So the ideal and its
 membership and properness statements need only a ring; commutativity enters one step later,
 at radicality, where Mathlib's `Ideal.IsRadical` requires it. Wedhorn states Lemma 7.1 over a
 commutative ring, and it is `isRadical_cofinalIdeal` below that carries the lemma's name. -/
 
 /-- The elements whose value is cofinal for `H`, as an ideal — a *left* ideal in general,
-since `Ideal A` is `Submodule A A` and `CofinalValueFor.mul` supplies left absorption.
+since `Ideal A` is `Submodule A A` and `CofinalValueFor.mul_left` supplies left absorption.
 Over a commutative ring this is the ideal of **Wedhorn, Lemma 7.1**, whose radicality is
 `isRadical_cofinalIdeal`. -/
 def cofinalIdeal (v : Valuation A Γ₀)
@@ -248,7 +248,7 @@ def cofinalIdeal (v : Valuation A Γ₀)
   carrier := {a | CofinalValueFor v H.toSubgroup a}
   zero_mem' := cofinalValueFor_zero v H.toSubgroup
   add_mem' ha hb := CofinalValueFor.add ha hb
-  smul_mem' b _ ha := CofinalValueFor.mul hH ha b
+  smul_mem' b _ ha := CofinalValueFor.mul_left hH ha b
 
 /-- Membership in the ideal is the cofinality predicate. This is the intended simp-normal form
 for `cofinalIdeal`; `cofinalValueFor_def` deliberately does not unfold it further. -/
