@@ -98,18 +98,9 @@ omit [T2Space X] in
 hypothesis on `γ`. -/
 private theorem range_liftIco_extend (γ : Path x x) :
     range (AddCircle.liftIco 1 0 γ.extend) = range γ := by
-  -- the endpoint `1` is missed by the representatives in `[0, 1)`, but is represented by `0`
-  apply Subset.antisymm
-  · rintro y ⟨q, rfl⟩
-    obtain ⟨t, ht, rfl⟩ := AddCircle.eq_coe_Ico q
-    exact ⟨⟨t, ht.1, ht.2.le⟩, (liftIco_extend_coe_apply γ ht).symm⟩
-  · rintro y ⟨t, rfl⟩
-    by_cases ht : (t : ℝ) < 1
-    · exact ⟨((t : ℝ) : AddCircle (1 : ℝ)), liftIco_extend_coe_apply γ ⟨t.2.1, ht⟩⟩
-    · have ht1 : t = 1 := Subtype.ext (le_antisymm t.2.2 (not_lt.mp ht))
-      refine ⟨(0 : AddCircle (1 : ℝ)), ?_⟩
-      subst t
-      exact (liftIco_extend_coe_apply (t := 0) γ (by simp)).trans (γ.source.trans γ.target.symm)
+  -- present the lift as a quotient map off `[0, 1]` and read the range through the quotient
+  rw [AddCircle.liftIco_eq_lift_Icc (by simp), (Equiv.surjective _).range_comp,
+    Set.range_quot_lift, Set.range_domRestrict, γ.image_extend_of_subset (by norm_num)]
 
 /-- **The range of a simple closed path is a Jordan curve.** Let `γ : Path x x` be a closed path.
 If equality `γ s = γ t` forces either `s = t` or the unordered pair of parameters to be `{0, 1}`,
