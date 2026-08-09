@@ -56,10 +56,13 @@ the two uses Wedhorn makes of it, and both appear here.
 
 ## Implementation notes
 
-Ported from the AINTLIB AdicSpaces development (`AINTLIB`, Apache-2.0), which supplied the
-statement shapes and proof skeleton for Wedhorn's §7.1 — Lemma 7.2's two halves, the case split
-of Definition 7.3, and Lemma 7.4. The value-group side is rebuilt here against Mathlib's
-`MonoidWithZeroHom.valueGroup` API rather than the parallel construction used there.
+The §7.1 development here — Lemma 7.2's two halves, the case split of Definition 7.3, and
+Lemma 7.4 — follows Wedhorn directly; no prior formalisation of it was available to draw on.
+The one piece with a formalised antecedent is the convex-subgroup notion it rests on, which
+came from the AINTLIB adic-spaces development (`aintlib-adic-spaces`, revision `37bbdaeb9`,
+`projects/AdicSpaces/Adic spaces/ValuationContinuity.lean`, `ConvexSubgroup` and
+`ConvexSubgroup.minContain`) and reached this file through
+`TauCeti.Algebra.Order.Group.ConvexSubgroup`.
 
 ## References
 
