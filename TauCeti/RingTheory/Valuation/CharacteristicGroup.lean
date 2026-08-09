@@ -368,8 +368,11 @@ theorem hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top {v : Valuat
 
 /-- The generators correspond **exactly** under the induced value-group isomorphism: both
 sides are indexed by the same ring, and `orderMonoidIso_spec` matches `v.restrict a` with
-`w.restrict a`. -/
-@[simp]
+`w.restrict a`.
+
+Not a `simp` lemma, though its subgroup counterpart is: `mem_characteristicGenerators` is
+already the `simp` normal form for the left-hand side, so tagging this one fails `simpNF`
+(the left-hand side rewrites to `1 ≤ …  ∧ ∃ a, w.restrict a = …` before it can fire). -/
 theorem valueGroupOrderIso_mem_characteristicGenerators_iff {v : Valuation A Γ₀}
     {w : Valuation A Γ₀'} (h : v.IsEquiv w) {γ : valueGroup (.ofClass v)} :
     h.valueGroupOrderIso γ ∈ characteristicGenerators w ↔ γ ∈ characteristicGenerators v := by
