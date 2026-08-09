@@ -54,9 +54,11 @@ built from `closure` in the forthcoming valuation-spectrum development of `Spv (
 * `TauCeti.ConvexSubgroup.mulArchimedean_iff_forall_eq_bot_or_eq_top` : A linearly ordered
   commutative group is `MulArchimedean` exactly when its only convex subgroups are `⊥`
   and `⊤`.
-* `TauCeti.ConvexSubgroup.quotientMk_monotone` and
-  `TauCeti.ConvexSubgroup.quotientMk_lt_one_of_notMem` : The quotient map is monotone, and
-  keeps below `1` exactly those elements below `1` that the subgroup does not absorb.
+* `TauCeti.ConvexSubgroup.quotient_lt_iff` and
+  `TauCeti.ConvexSubgroup.quotientMk_lt_one_iff` : The strict order on the quotient, and the
+  case that matters for coarsening — an element stays below `1` exactly when it is below `1`
+  and the subgroup does not absorb it.
+* `TauCeti.ConvexSubgroup.quotientMk_monotone` : The quotient map is monotone.
 
 ## References
 
@@ -563,6 +565,24 @@ theorem quotient_le_iff (a b : Γ) :
       exact QuotientGroup.leftRel_apply.mpr
         (by simpa [mul_inv_rev] using H.toSubgroup.inv_mem h)
 
+/-- The defining unfolding of `<` on the quotient by a convex subgroup:
+`[a] < [b]` iff `b⁻¹ * a < 1` and `b⁻¹ * a ∉ H`. The second conjunct is what separates this
+from `quotient_le_iff`: members of `H` collapse to the same class. -/
+@[simp]
+theorem quotient_lt_iff (a b : Γ) :
+    ((a : Γ ⧸ H.toSubgroup) < (b : Γ ⧸ H.toSubgroup)) ↔
+      (b⁻¹ * a < 1 ∧ b⁻¹ * a ∉ H.toSubgroup) := by
+  rw [coe_eq_mk, coe_eq_mk, Quotient.mk_lt_mk (H := ordConnected_leftRel_fiber H)]
+  refine and_congr ⟨fun h ↦ ?_, fun h ↦ ?_⟩ (not_congr ?_)
+  · simpa using mul_lt_mul_left h b⁻¹
+  · simpa using mul_lt_mul_left h b
+  · constructor
+    · intro h
+      simpa [mul_inv_rev] using H.toSubgroup.inv_mem (QuotientGroup.leftRel_apply.mp h)
+    · intro h
+      exact QuotientGroup.leftRel_apply.mpr
+        (by simpa [mul_inv_rev] using H.toSubgroup.inv_mem h)
+
 /-- The quotient linear order is compatible with the group operation. -/
 instance quotientIsOrderedMonoid : IsOrderedMonoid (Γ ⧸ H.toSubgroup) where
   mul_le_mul_left a b hab c := by
@@ -577,20 +597,16 @@ instance quotientIsOrderedMonoid : IsOrderedMonoid (Γ ⧸ H.toSubgroup) where
 
 /-- The quotient map to `Γ ⧸ H.toSubgroup` is monotone: passing to the quotient by a convex
 subgroup coarsens the order rather than reversing any part of it. -/
-theorem quotientMk_monotone : Monotone (QuotientGroup.mk' H.toSubgroup) :=
-  fun _ _ h ↦ Quotient.mk_monotone h
+theorem quotientMk_monotone : Monotone (QuotientGroup.mk' H.toSubgroup) := by
+  intro a b hab
+  rw [QuotientGroup.mk'_apply, QuotientGroup.mk'_apply, coe_eq_mk, coe_eq_mk]
+  exact Quotient.mk_monotone hab
 
-/-- An element below `1` that avoids `H` is still below `1` in the quotient: the classes it
-is squeezed between are distinct precisely because it is not a member. -/
-theorem quotientMk_lt_one_of_notMem {u : Γ} (hu : u < 1) (hnot : u ∉ H) :
-    QuotientGroup.mk' H.toSubgroup u < 1 :=
-  (Quotient.mk_lt_mk (H := ordConnected_leftRel_fiber H)).mpr
-    ⟨hu, fun h ↦ hnot (by
-      have h1 : u⁻¹ ∈ H.toSubgroup := by
-        simpa using QuotientGroup.leftRel_apply.mp h
-      have h2 := H.toSubgroup.inv_mem h1
-      rw [inv_inv] at h2
-      exact h2)⟩
+/-- An element stays below `1` in the quotient exactly when it is below `1` and avoids `H`.
+The `b = 1` case of `quotient_lt_iff`. -/
+theorem quotientMk_lt_one_iff {u : Γ} :
+    QuotientGroup.mk' H.toSubgroup u < 1 ↔ u < 1 ∧ u ∉ H.toSubgroup := by
+  simpa using quotient_lt_iff H u 1
 
 end Quotient
 
