@@ -200,4 +200,18 @@ theorem idealCofinalFor_of_span {v : Valuation A Γ₀}
     rw [← hspan, Ideal.span_le]
     exact fun t ht ↦ mem_cofinalIdeal.mpr (hT t ht)
 
+/-- A value bounded above by `h < 1` is cofinal for the convex subgroup `h` generates. This is
+the inversion at the heart of Wedhorn's choice of `h := max { v t : t ∈ T }`: below `1` a
+*larger* value generates a *smaller* convex subgroup, so the maximum yields the subgroup that
+every generator is cofinal for. -/
+theorem cofinalValueFor_closure_singleton_of_le {v : Valuation A Γ₀} {a : A}
+    {h : valueGroup (.ofClass v)} (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0)
+    (hle : valueGroup.mk (.ofClass v) 1 a (by simp) h0 ≤ h) (hlt : h < 1) :
+    CofinalValueFor v (TauCeti.ConvexSubgroup.closure {h}) a := by
+  refine (cofinalValueFor_iff_isCofinalElement h0).mpr ?_
+  have hgreatest : IsGreatest {valueGroup.mk (.ofClass v) 1 a (by simp) h0, h} h :=
+    ⟨Set.mem_insert_of_mem _ rfl, by rintro x (rfl | rfl) <;> simp [hle]⟩
+  exact (TauCeti.isGreatest_convexSubgroup_isCofinalElement hgreatest hlt).1 _
+    (Set.mem_insert _ _)
+
 end TauCeti.Valuation
