@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.MvPowerSeries.PiTopology
+public import Mathlib.RingTheory.MvPowerSeries.Substitution
 public import Mathlib.Topology.Algebra.OpenSubgroup
 public import TauCeti.RingTheory.Huber.RestrictedPowerSeries
 
@@ -17,9 +18,8 @@ power series `A⟨X⟩` the topology in which a series is small when its *scaled
 
 ## Main definitions
 
-* `TauCeti.Huber.scaleHom`: the substitution `X ↦ f X` on `MvPowerSeries (Fin 1) A`, as a ring
-  homomorphism.
-* `TauCeti.Huber.scaleIncl`: its restriction to `A⟨X⟩`, valued in `MvPowerSeries (Fin 1) A`.
+* `TauCeti.Huber.scaleIncl`: the substitution `X ↦ f X`, which is Mathlib's
+  `MvPowerSeries.rescale` at a constant scaling family, restricted to `A⟨X⟩`.
 * `TauCeti.Huber.scaledTateTopology`: the topology induced along `scaleIncl f`.
 
 ## Main results
@@ -76,41 +76,6 @@ section Scaling
 
 variable {A : Type*} [CommRing A]
 
-/-! ### The scaling homomorphism -/
-
-/-- The substitution `X ↦ f X` on `MvPowerSeries (Fin 1) A`: it multiplies the coefficient at
-the multi-index `s` by `f ^ s 0`. -/
-noncomputable def scaleHom (f : A) :
-    MvPowerSeries (Fin 1) A →+* MvPowerSeries (Fin 1) A where
-  toFun g s := f ^ (s 0) * g s
-  map_zero' := funext fun _ ↦ mul_zero _
-  map_one' := funext fun s ↦ by
-    change f ^ (s 0) * (1 : MvPowerSeries (Fin 1) A) s = (1 : MvPowerSeries (Fin 1) A) s
-    rw [show (1 : MvPowerSeries (Fin 1) A) s = MvPowerSeries.coeff s 1 from rfl,
-      MvPowerSeries.coeff_one]
-    split
-    · rename_i h; subst h; simp
-    · ring
-  map_add' _ _ := funext fun _ ↦ mul_add _ _ _
-  map_mul' g h := funext fun s ↦ by
-    classical
-    let φ : MvPowerSeries (Fin 1) A := fun s ↦ f ^ (s 0) * g s
-    let ψ : MvPowerSeries (Fin 1) A := fun s ↦ f ^ (s 0) * h s
-    change f ^ (s 0) * MvPowerSeries.coeff s (g * h) = MvPowerSeries.coeff s (φ * ψ)
-    rw [MvPowerSeries.coeff_mul (φ := g) (ψ := h),
-      MvPowerSeries.coeff_mul (φ := φ) (ψ := ψ), Finset.mul_sum]
-    refine Finset.sum_congr rfl fun p hp ↦ ?_
-    change f ^ (s 0) * (g p.1 * h p.2) = (f ^ (p.1 0) * g p.1) * (f ^ (p.2 0) * h p.2)
-    have hs : p.1 0 + p.2 0 = s 0 := by
-      rw [← Finsupp.add_apply, Finset.mem_antidiagonal.mp hp]
-    calc f ^ (s 0) * (g p.1 * h p.2)
-        = f ^ (p.1 0 + p.2 0) * (g p.1 * h p.2) := by rw [hs]
-      _ = _ := by rw [pow_add]; ring
-
-@[simp]
-theorem scaleHom_apply (f : A) (g : MvPowerSeries (Fin 1) A) (s : Fin 1 →₀ ℕ) :
-    scaleHom f g s = f ^ (s 0) * g s := (rfl)
-
 end Scaling
 
 section Topology
@@ -121,10 +86,17 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
 topology is the one this map induces. -/
 noncomputable def scaleIncl (f : A) :
     restrictedMvPowerSeriesSubring 1 A →+* MvPowerSeries (Fin 1) A :=
-  (scaleHom f).comp (restrictedMvPowerSeriesSubring 1 A).subtype
+  (MvPowerSeries.rescale (fun _ : Fin 1 ↦ f)).comp
+    (restrictedMvPowerSeriesSubring 1 A).subtype
 
+@[simp]
 theorem scaleIncl_apply (f : A) (g : restrictedMvPowerSeriesSubring 1 A) (s : Fin 1 →₀ ℕ) :
-    scaleIncl f g s = f ^ (s 0) * (g : MvPowerSeries (Fin 1) A) s := (rfl)
+    scaleIncl f g s = f ^ (s 0) * (g : MvPowerSeries (Fin 1) A) s := by
+  change MvPowerSeries.coeff s (MvPowerSeries.rescale (fun _ : Fin 1 ↦ f)
+    (g : MvPowerSeries (Fin 1) A)) = _
+  rw [MvPowerSeries.coeff_rescale, Finsupp.prod_fintype _ _ (fun _ ↦ pow_zero f),
+    Fin.prod_univ_one]
+  rfl
 
 /-! ### The weighted topology -/
 
@@ -134,14 +106,6 @@ coefficients `fⁿ aₙ` are. See the module docstring: this is *not* Wedhorn's 
 noncomputable def scaledTateTopology (f : A) :
     TopologicalSpace (restrictedMvPowerSeriesSubring 1 A) :=
   TopologicalSpace.induced (scaleIncl f) (WithPiTopology.instTopologicalSpace A)
-
-private theorem scaleIncl_comp_neg (f : A) :
-    scaleIncl f ∘ (- · : restrictedMvPowerSeriesSubring 1 A → _) = (- ·) ∘ scaleIncl f := by
-  ext x s
-  change f ^ (s 0) * ((-x : restrictedMvPowerSeriesSubring 1 A) :
-    MvPowerSeries (Fin 1) A) s = -(f ^ (s 0) * (x : MvPowerSeries (Fin 1) A) s)
-  rw [NegMemClass.coe_neg, show (-(x : MvPowerSeries (Fin 1) A)) s =
-    -((x : MvPowerSeries (Fin 1) A) s) from rfl, mul_neg]
 
 /-- The weighted topology is a ring topology: it is induced along a ring homomorphism from the
 product topology, which is one. -/
@@ -154,12 +118,8 @@ theorem scaledTateTopology_isTopologicalRing (f : A) :
   have hind : Topology.IsInducing (scaleIncl f) := ⟨rfl⟩
   have : ContinuousMul (restrictedMvPowerSeriesSubring 1 A) := continuousMul_induced (scaleIncl f)
   have : ContinuousAdd (restrictedMvPowerSeriesSubring 1 A) := continuousAdd_induced (scaleIncl f)
-  have : ContinuousNeg (restrictedMvPowerSeriesSubring 1 A) := by
-    constructor
-    rw [hind.continuous_iff]
-    change Continuous (scaleIncl f ∘ (- ·))
-    rw [scaleIncl_comp_neg]
-    exact continuous_neg.comp continuous_induced_dom
+  have : ContinuousNeg (restrictedMvPowerSeriesSubring 1 A) :=
+    ContinuousNeg.induced (scaleIncl f)
   exact { continuous_add := continuous_add
           continuous_mul := continuous_mul
           continuous_neg := continuous_neg }
@@ -213,9 +173,7 @@ theorem continuous_algebraMap_scaledTateTopology (f : A) :
   refine continuous_induced_rng.mpr ?_
   change Continuous (scaleIncl f ∘ algebraMap A (restrictedMvPowerSeriesSubring 1 A))
   refine continuous_pi fun s ↦ ?_
-  change Continuous fun a ↦
-    f ^ (s 0) * ((algebraMap A (restrictedMvPowerSeriesSubring 1 A) a :
-      MvPowerSeries (Fin 1) A)) s
+  simp only [Function.comp_apply, scaleIncl_apply]
   by_cases hs : s = 0
   · subst hs
     simp only [Finsupp.zero_apply, pow_zero, one_mul]
