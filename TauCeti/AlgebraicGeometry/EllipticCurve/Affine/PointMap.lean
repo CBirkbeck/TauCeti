@@ -44,11 +44,10 @@ Ported from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apa
 that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/EC/AffinePointMap.lean`, declarations
 `map`, `map_zero`, `map_some`, `map_add`, `map_neg`, `mapAddMonoidHom` and `map_zsmul`.
 
-Changes from the source. The names carry a `RingHom` suffix, Mathlib having taken `Point.map` for
-the `AlgHom` version since. The source's `map_add` is a chain of `change` steps naming the
-constructor arguments in full; here the two degenerate cases go through `Point.zero_add`/`add_zero`
-after a single `cases`, and the `Y`-cancellation branch is derived from
-`Affine.map_negY` rather than restated.
+Changes from the source. The names take a `RingHom` suffix, Mathlib having since taken
+`Point.map` for the `AlgHom` version. The computation rules are stated in simp-normal form, and
+negation and the functorial laws are stated over an arbitrary commutative ring rather than a field.
+The identity, composition and injectivity laws have no counterpart in the source.
 -/
 
 public section
@@ -71,8 +70,7 @@ noncomputable def mapRingHom : W.toAffine.Point → (W.map f).toAffine.Point
 
 @[simp]
 lemma mapRingHom_zero : mapRingHom f hf (0 : W.toAffine.Point) = 0 := by
-  change mapRingHom f hf .zero = .zero
-  simp [mapRingHom]
+  rfl
 
 @[simp]
 lemma mapRingHom_some {x y : R} (h : W.toAffine.Nonsingular x y) :
@@ -80,13 +78,11 @@ lemma mapRingHom_some {x y : R} (h : W.toAffine.Nonsingular x y) :
       = .some (f x) (f y) ((Affine.map_nonsingular W.toAffine hf x y).mpr h) := by
   simp [mapRingHom]
 
-/-- **The point map preserves negation.** Unlike additivity this needs no field and no
-decidability, negation of affine points being defined over any commutative ring. -/
+/-- **The point map preserves negation**, over any commutative ring. -/
 lemma mapRingHom_neg (P : W.toAffine.Point) :
     mapRingHom f hf (-P) = -mapRingHom f hf P := by
   rcases P with _ | ⟨x, y, h⟩
-  · change mapRingHom f hf (-(0 : W.toAffine.Point)) = -mapRingHom f hf (0 : W.toAffine.Point)
-    simp
+  · rfl
   · rw [Affine.Point.neg_some, mapRingHom_some, mapRingHom_some, Affine.Point.neg_some]
     simp only [Affine.map_negY]
 
@@ -125,6 +121,9 @@ variable {F K : Type*} [Field F] [Field K] [DecidableEq F] [DecidableEq K]
 lemma mapRingHom_add (P Q : W.toAffine.Point) :
     mapRingHom f f.injective (P + Q)
       = mapRingHom f f.injective P + mapRingHom f f.injective Q := by
+  -- `rcases` presents the zero point as the constructor `Point.zero`, which is not syntactically
+  -- the `0` of the `AddCommGroup` instance, so `zero_add`/`add_zero` cannot fire until the goal is
+  -- restated. `rfl`, `simp [mapRingHom]` and `rw [zero_add]` all fail here for that reason.
   rcases P with _ | ⟨x₁, y₁, h₁⟩
   · change mapRingHom f f.injective ((0 : W.toAffine.Point) + Q)
       = mapRingHom f f.injective (0 : W.toAffine.Point) + mapRingHom f f.injective Q
