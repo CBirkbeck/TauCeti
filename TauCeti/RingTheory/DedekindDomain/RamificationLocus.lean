@@ -4,9 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.DedekindDomain.Different
+public import Mathlib.RingTheory.DedekindDomain.Factorization
 public import Mathlib.RingTheory.Unramified.Locus
-public import Mathlib.RingTheory.UniqueFactorizationDomain.Finite
+import Mathlib.RingTheory.DedekindDomain.Different
 
 /-!
 # A separable extension of Dedekind domains ramifies at only finitely many primes
@@ -47,9 +47,8 @@ along the way, including `differentIdeal_ne_bot`, which Mathlib now proves; thos
 with them the tower. The ramification locus is named by Mathlib's `Algebra.unramifiedLocus` and
 the criterion by Mathlib's `Algebra.IsUnramifiedAt`, in place of the source's hand-rolled
 `ramifiedUnderLocus` and its `Ideal.ramificationIdx _ _ ≠ 1` spelling. The source's
-divisor-finiteness step is a specialisation of Mathlib's
-`UniqueFactorizationMonoid.fintypeSubtypeDvd` with no consumer of its own, so it stays inside the
-one proof rather than becoming public API. Sixteen declarations become one.
+divisor-finiteness step is Mathlib's `Ideal.finite_factors`, so it neither is rebuilt from the
+`UniqueFactorizationMonoid` plumbing nor becomes public API here. Sixteen declarations become one.
 -/
 
 public section
@@ -68,15 +67,18 @@ variable (A B : Type*) [CommRing A] [IsDedekindDomain A] [CommRing B] [Algebra A
 complement of `Algebra.unramifiedLocus` is finite. A ramified prime divides the different ideal,
 which is nonzero and so, being an ideal of a Dedekind domain, has finitely many divisors. -/
 theorem finite_compl_unramifiedLocus : (unramifiedLocus A B)ᶜ.Finite := by
-  have hdvd : {P : Ideal B | P ∣ differentIdeal A B}.Finite :=
-    Set.finite_coe_iff.mp (@Finite.of_fintype _ (UniqueFactorizationMonoid.fintypeSubtypeDvd _
-      (differentIdeal_ne_bot (A := A) (B := B))))
   refine Set.Finite.of_finite_image (f := PrimeSpectrum.asIdeal) ?_
     fun _ _ _ _ h => PrimeSpectrum.ext h
-  refine hdvd.subset ?_
+  refine ((Ideal.finite_factors (differentIdeal_ne_bot (A := A) (B := B))).image
+    _root_.IsDedekindDomain.HeightOneSpectrum.asIdeal).subset ?_
   rintro _ ⟨p, hp, rfl⟩
   have := p.isPrime
-  exact dvd_differentIdeal_iff.mpr hp
+  have hdvd : p.asIdeal ∣ differentIdeal A B := dvd_differentIdeal_iff.mpr hp
+  -- a ramified prime is nonzero: `⊥` divides only `⊥`, and the different ideal is not `⊥`
+  have hbot : p.asIdeal ≠ ⊥ := fun h =>
+    differentIdeal_ne_bot (A := A) (B := B) (eq_bot_iff.mpr (h ▸ Ideal.le_of_dvd hdvd))
+  exact ⟨_root_.IsDedekindDomain.HeightOneSpectrum.ofPrime
+    (Ideal.prime_of_isPrime hbot p.isPrime), hdvd, rfl⟩
 
 end Algebra
 
