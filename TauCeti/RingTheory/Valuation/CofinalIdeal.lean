@@ -69,7 +69,7 @@ variable {A : Type*} [Ring A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ
 /-- `v a` is **cofinal for the convex subgroup `H`** of the value group: its powers fall
 below every member of `H` (Wedhorn Definition 1.16, at a value that may vanish). -/
 def CofinalValueFor (v : Valuation A Γ₀)
-    (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) (a : A) : Prop :=
+    (H : Subgroup (valueGroup (.ofClass v))) (a : A) : Prop :=
   ∀ h ∈ H, ∃ n : ℕ, v.restrict a ^ n < (h : ValueGroup₀ (.ofClass v))
 
 /-- The defining property of cofinality relative to a convex subgroup.
@@ -78,14 +78,14 @@ Deliberately not `@[simp]`: the right-hand side is the unfolded bounded quantifi
 it would rewrite `a ∈ cofinalIdeal v hH` past the named predicate and into raw `∀ … ∃ …` form.
 `mem_cofinalIdeal` is the intended normal form. -/
 theorem cofinalValueFor_def {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A} :
+    {H : Subgroup (valueGroup (.ofClass v))} {a : A} :
     CofinalValueFor v H a ↔
       ∀ h ∈ H, ∃ n : ℕ, v.restrict a ^ n < (h : ValueGroup₀ (.ofClass v)) :=
   Iff.rfl
 
 /-- Cofinality for `H` is downward closed in the value. -/
 theorem CofinalValueFor.of_le {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a b : A}
+    {H : Subgroup (valueGroup (.ofClass v))} {a b : A}
     (h : CofinalValueFor v H a) (hba : v b ≤ v a) : CofinalValueFor v H b := fun γ hγ ↦
   let ⟨n, hn⟩ := h γ hγ
   ⟨n, lt_of_le_of_lt (pow_le_pow_left' (v.restrict_le_iff.mpr hba) n) hn⟩
@@ -93,7 +93,7 @@ theorem CofinalValueFor.of_le {v : Valuation A Γ₀}
 /-- A vanishing value is cofinal for every convex subgroup (Wedhorn's remark after
 Definition 1.16: the adjoined base `0` is cofinal for every subgroup). -/
 theorem cofinalValueFor_of_eq_zero {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A} (ha : v a = 0) :
+    {H : Subgroup (valueGroup (.ofClass v))} {a : A} (ha : v a = 0) :
     CofinalValueFor v H a := by
   intro h _
   refine ⟨1, ?_⟩
@@ -102,12 +102,12 @@ theorem cofinalValueFor_of_eq_zero {v : Valuation A Γ₀}
 
 /-- Zero has cofinal value. -/
 theorem cofinalValueFor_zero (v : Valuation A Γ₀)
-    (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : CofinalValueFor v H 0 :=
+    (H : Subgroup (valueGroup (.ofClass v))) : CofinalValueFor v H 0 :=
   cofinalValueFor_of_eq_zero (map_zero v)
 
 /-- A sum of cofinal-value elements has cofinal value: `v (a + b) ≤ max (v a) (v b)`. -/
 theorem CofinalValueFor.add {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a b : A}
+    {H : Subgroup (valueGroup (.ofClass v))} {a b : A}
     (ha : CofinalValueFor v H a) (hb : CofinalValueFor v H b) :
     CofinalValueFor v H (a + b) := by
   rcases le_total (v a) (v b) with hab | hab
@@ -116,7 +116,7 @@ theorem CofinalValueFor.add {v : Valuation A Γ₀}
 
 /-- Multiplying by an element of value at most `1` preserves cofinality. -/
 theorem CofinalValueFor.mul_of_le_one {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a b : A}
+    {H : Subgroup (valueGroup (.ofClass v))} {a b : A}
     (ha : CofinalValueFor v H a) (hb : v b ≤ 1) : CofinalValueFor v H (b * a) :=
   ha.of_le (by
     rw [map_mul]
@@ -125,21 +125,20 @@ theorem CofinalValueFor.mul_of_le_one {v : Valuation A Γ₀}
 /-- For a nonzero value, cofinality for `H` is cofinality of the corresponding element of
 the value group: the bridge between the valuation-side and group-side predicates. -/
 theorem cofinalValueFor_iff_isCofinalElement {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A}
+    {H : Subgroup (valueGroup (.ofClass v))} {a : A}
     (h : (MonoidWithZeroHom.ofClass v) a ≠ 0) :
     CofinalValueFor v H a ↔
-      TauCeti.IsCofinalElement H.toSubgroup (valueGroup.mk (.ofClass v) 1 a (by simp) h) := by
+      TauCeti.IsCofinalElement H (valueGroup.mk (.ofClass v) 1 a (by simp) h) := by
   rw [cofinalValueFor_def, TauCeti.isCofinalElement_def]
   refine forall_congr' fun g ↦ forall_congr' fun _ ↦ exists_congr fun n ↦ ?_
   rw [v.restrict_eq_mk h, ← WithZero.coe_pow, WithZero.coe_lt_coe]
 
-/-- **Wedhorn Lemma 7.1, the multiplicative step.** If `cΓ_v` is strictly smaller than `H`
-and `v a` is cofinal for `H`, then so is `v (b * a)` for every `b` — the case `1 < v b`
-going through the characteristic subgroup and Wedhorn Remark 1.20. -/
+/-- **Wedhorn Lemma 7.1, the multiplicative step.** Below the strict-containment threshold
+`cΓ_v < H`, cofinality for `H` is preserved by multiplication by an arbitrary ring element. -/
 theorem CofinalValueFor.mul {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
-    (hH : characteristicSubgroup v < H) {a : A} (ha : CofinalValueFor v H a) (b : A) :
-    CofinalValueFor v H (b * a) := by
+    (hH : characteristicSubgroup v < H) {a : A} (ha : CofinalValueFor v H.toSubgroup a) (b : A) :
+    CofinalValueFor v H.toSubgroup (b * a) := by
   rcases le_or_gt (v b) 1 with hb | hb
   · exact ha.mul_of_le_one hb
   · -- `v b > 1` is an attained value `≥ 1`, hence lies in `cΓ_v ⊊ H`.
@@ -166,7 +165,7 @@ theorem CofinalValueFor.mul {v : Valuation A Γ₀}
 
 /-- A cofinal value lies strictly below `1`. -/
 theorem CofinalValueFor.lt_one {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A}
+    {H : Subgroup (valueGroup (.ofClass v))} {a : A}
     (h : CofinalValueFor v H a) : v.restrict a < 1 := by
   obtain ⟨n, hn⟩ := h 1 (one_mem H)
   simp only [WithZero.coe_one] at hn
@@ -178,7 +177,7 @@ theorem CofinalValueFor.lt_one {v : Valuation A Γ₀}
 the ingredient of `rad c = c` in Wedhorn Lemma 7.1. -/
 @[simp]
 theorem cofinalValueFor_pow_iff {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {a : A} {m : ℕ} (hm : 0 < m) :
+    {H : Subgroup (valueGroup (.ofClass v))} {a : A} {m : ℕ} (hm : 0 < m) :
     CofinalValueFor v H (a ^ m) ↔ CofinalValueFor v H a := by
   constructor
   · intro h g hg
@@ -208,7 +207,7 @@ theorem cofinalValueFor_top_iff {v : Valuation A Γ₀} {a : A} :
 /-- `1` never has cofinal value: `v 1 = 1`, which is not below itself. Stated for the predicate
 so that it needs only a ring — properness of the ideal below is a corollary. -/
 theorem not_cofinalValueFor_one (v : Valuation A Γ₀)
-    (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : ¬ CofinalValueFor v H 1 :=
+    (H : Subgroup (valueGroup (.ofClass v))) : ¬ CofinalValueFor v H 1 :=
   fun h ↦ absurd h.lt_one (by simp)
 
 /-! ### The ideal of cofinal values
@@ -226,8 +225,8 @@ the characteristic subgroup, the elements whose value is cofinal for `H` form an
 def cofinalIdeal (v : Valuation A Γ₀)
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hH : characteristicSubgroup v < H) : Ideal A where
-  carrier := {a | CofinalValueFor v H a}
-  zero_mem' := cofinalValueFor_zero v H
+  carrier := {a | CofinalValueFor v H.toSubgroup a}
+  zero_mem' := cofinalValueFor_zero v H.toSubgroup
   add_mem' ha hb := CofinalValueFor.add ha hb
   smul_mem' b _ ha := CofinalValueFor.mul hH ha b
 
@@ -237,7 +236,7 @@ for `cofinalIdeal`; `cofinalValueFor_def` deliberately does not unfold it furthe
 theorem mem_cofinalIdeal {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     {hH : characteristicSubgroup v < H} {a : A} :
-    a ∈ cofinalIdeal v hH ↔ CofinalValueFor v H a :=
+    a ∈ cofinalIdeal v hH ↔ CofinalValueFor v H.toSubgroup a :=
   Iff.rfl
 
 /-! ### Radicality -/
@@ -258,7 +257,7 @@ theorem isRadical_cofinalIdeal {v : Valuation A Γ₀}
 theorem cofinalIdeal_ne_top {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hH : characteristicSubgroup v < H) : cofinalIdeal v hH ≠ ⊤ := fun htop ↦
-  not_cofinalValueFor_one v H (mem_cofinalIdeal.mp (htop ▸ Submodule.mem_top))
+  not_cofinalValueFor_one v H.toSubgroup (mem_cofinalIdeal.mp (htop ▸ Submodule.mem_top))
 
 end CommRing
 
