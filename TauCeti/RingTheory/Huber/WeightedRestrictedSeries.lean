@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.RingTheory.Huber.RestrictedPowerSeries
+public import TauCeti.Topology.Algebra.Nonarchimedean.Absorption
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 
 /-!
@@ -143,6 +144,17 @@ theorem weightMul_le {T : Fin k → Set A} {ν : Fin k →₀ ℕ} {U V : AddSub
   rintro h _ ⟨t, ht, u, hu, rfl⟩
   exact h t ht u hu
 
+omit [TopologicalSpace A] in
+/-- **Elimination through a multiplication.** To land the whole of `a * (Tν · U)` inside a
+subgroup `V` it is enough to land the generators `a * (t * u)`.  This is
+`TauCeti.Huber.weightMul_le` read in `V.comap (AddMonoidHom.mulLeft a)`, and it is what replaces
+the four-case `AddSubgroup.closure_induction` in every lemma below that multiplies a `weightMul`
+by a fixed element. -/
+theorem mul_mem_of_forall_mul_mul_mem {T : Fin k → Set A} {ν : Fin k →₀ ℕ} {U V : AddSubgroup A}
+    {a x : A} (h : ∀ t ∈ weightPow T ν, ∀ u ∈ U, a * (t * u) ∈ V) (hx : x ∈ weightMul T ν U) :
+    a * x ∈ V :=
+  weightMul_le (V := V.comap (AddMonoidHom.mulLeft a)) |>.mpr h hx
+
 /-- Wedhorn's standing hypothesis on the weight family, fixed at the start of his §5.6: for every
 variable `i`, every `m`, and every neighbourhood `U` of zero, the subgroup `Tᵢ^m · U` is again a
 neighbourhood of zero.
@@ -249,22 +261,13 @@ a given bound — is what Wedhorn flags as not entirely clear. -/
 theorem weightMul_mul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {V W : AddSubgroup A} {x y : A}
     (hx : x ∈ weightMul T α V) (hy : y ∈ weightMul T β W) :
     x * y ∈ weightMul T (α + β) (AddSubgroup.closure ((V : Set A) * (W : Set A))) := by
-  induction hx using AddSubgroup.closure_induction with
-  | mem u hu =>
-      induction hy using AddSubgroup.closure_induction with
-      | mem v hv =>
-          obtain ⟨t, ht, a, ha, rfl⟩ := hu
-          obtain ⟨t', ht', b, hb, rfl⟩ := hv
-          refine AddSubgroup.subset_closure ⟨t * t', ?_, a * b, ?_, by ring⟩
-          · rw [weightPow_add]
-            exact Set.mul_mem_mul ht ht'
-          · exact AddSubgroup.subset_closure (Set.mul_mem_mul ha hb)
-      | zero => simp
-      | add _ _ _ _ h₁ h₂ => simpa [mul_add] using (weightMul T (α + β) _).add_mem h₁ h₂
-      | neg _ _ h => simpa [mul_neg] using (weightMul T (α + β) _).neg_mem h
-  | zero => simp
-  | add _ _ _ _ h₁ h₂ => simpa [add_mul] using (weightMul T (α + β) _).add_mem h₁ h₂
-  | neg _ _ h => simpa [neg_mul] using (weightMul T (α + β) _).neg_mem h
+  rw [mul_comm x y]
+  refine mul_mem_of_forall_mul_mul_mem (fun t ht v hv ↦ ?_) hx
+  rw [mul_comm y (t * v)]
+  refine mul_mem_of_forall_mul_mul_mem (fun t' ht' w hw ↦ ?_) hy
+  rw [show t * v * (t' * w) = t * t' * (v * w) by ring]
+  exact mul_mem_weightMul _ _ _ (weightPow_add T α β ▸ Set.mul_mem_mul ht ht')
+    (AddSubgroup.subset_closure (Set.mul_mem_mul hv hw))
 
 omit [TopologicalSpace A] in
 /-- `Tν · U` is monotone in `U`. -/
@@ -273,19 +276,21 @@ theorem weightMul_mono (T : Fin k → Set A) (ν : Fin k →₀ ℕ) {U V : AddS
   AddSubgroup.closure_mono (Set.mul_subset_mul_left h)
 
 omit [TopologicalSpace A] in
+/-- **The unexceptional term of a convolution.** If `W · W ⊆ U`, then a product of an element of
+`Tα · W` with an element of `Tβ · W` lies in `Tν · U` whenever `α + β = ν`. -/
+theorem mul_mem_weightMul_of_mul_subset {T : Fin k → Set A} {α β ν : Fin k →₀ ℕ} (hν : α + β = ν)
+    {W U : AddSubgroup A} (hWU : (W : Set A) * (W : Set A) ⊆ (U : Set A)) {a b : A}
+    (ha : a ∈ weightMul T α W) (hb : b ∈ weightMul T β W) : a * b ∈ weightMul T ν U :=
+  hν ▸ weightMul_mono T (α + β) ((AddSubgroup.closure_le _).mpr hWU) (weightMul_mul_mem ha hb)
+
+omit [TopologicalSpace A] in
 /-- Multiplying by a weight element shifts the multi-index: `T^β · (T^α · U) ⊆ T^(α+β) · U`. -/
 theorem weightPow_mul_weightMul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {U : AddSubgroup A}
     {t x : A} (ht : t ∈ weightPow T β) (hx : x ∈ weightMul T α U) :
     t * x ∈ weightMul T (α + β) U := by
-  induction hx using AddSubgroup.closure_induction with
-  | mem y hy =>
-      obtain ⟨t', ht', u, hu, rfl⟩ := hy
-      refine AddSubgroup.subset_closure ⟨t' * t, ?_, u, hu, by ring⟩
-      rw [weightPow_add]
-      exact Set.mul_mem_mul ht' ht
-  | zero => simp
-  | add _ _ _ _ h₁ h₂ => simpa [mul_add] using (weightMul T (α + β) U).add_mem h₁ h₂
-  | neg _ _ h => simpa [mul_neg] using (weightMul T (α + β) U).neg_mem h
+  refine mul_mem_of_forall_mul_mul_mem (fun t' ht' u hu ↦ ?_) hx
+  rw [show t * (t' * u) = t' * t * u by ring]
+  exact mul_mem_weightMul _ _ _ (weightPow_add T α β ▸ Set.mul_mem_mul ht' ht) hu
 
 omit [TopologicalSpace A] in
 /-- At a single-variable multi-index the weight is the corresponding power: `T^(single i m)` is
@@ -331,42 +336,6 @@ theorem IsWeightFamily.weightMul_mem_nhds {T : Fin k → Set A} (hT : IsWeightFa
       rw [weightMul_add_eq, weightPow_single]
       exact hT i m _ ih
 
-/-- Multiplication by a fixed element is continuous, so any subgroup that is a neighbourhood of
-zero absorbs it: there is an open subgroup `Z` with `a * Z ⊆ V`.
-
-Applied with `V = Tα · U`, which
-`TauCeti.Huber.IsWeightFamily.weightMul_mem_nhds` makes a neighbourhood of zero, this is what
-produces the subgroup that `TauCeti.Huber.mul_mem_weightMul_of_forall_mul_mem` consumes for a
-coefficient that fails
-a given bound. -/
-theorem exists_openAddSubgroup_mul_subset [NonarchimedeanRing A] (a : A)
-    (V : AddSubgroup A) (hV : (V : Set A) ∈ nhds (0 : A)) :
-    ∃ Z : OpenAddSubgroup A, ∀ z ∈ Z, a * z ∈ V := by
-  obtain ⟨Z, hZ⟩ := NonarchimedeanRing.left_mul_subset ⟨V, V.isOpen_of_mem_nhds hV⟩ a
-  exact ⟨Z, fun z hz ↦ hZ ⟨z, hz, rfl⟩⟩
-
-/-- The finite-family form of `TauCeti.Huber.exists_openAddSubgroup_mul_subset`: one open
-subgroup `Z` absorbs each of finitely many fixed elements into its own target.
-
-In the proof that `A⟨X⟩_T` is multiplicatively closed this is applied to the finitely many
-coefficients that fail a given bound, producing the single subgroup against which the whole
-antidiagonal is estimated. -/
-theorem exists_openAddSubgroup_forall_mul_subset [NonarchimedeanRing A] {ι : Type*}
-    (s : Finset ι) (a : ι → A) (V : ι → AddSubgroup A)
-    (hV : ∀ i ∈ s, (V i : Set A) ∈ nhds (0 : A)) :
-    ∃ Z : OpenAddSubgroup A, ∀ i ∈ s, ∀ z ∈ Z, a i * z ∈ V i := by
-  classical
-  induction s using Finset.induction with
-  | empty => exact ⟨⊤, by simp⟩
-  | insert i s' hi ih =>
-      obtain ⟨Z', hZ'⟩ := ih fun j hj ↦ hV j (Finset.mem_insert_of_mem hj)
-      obtain ⟨Z, hZ⟩ :=
-        exists_openAddSubgroup_mul_subset (a i) (V i) (hV i (Finset.mem_insert_self i s'))
-      refine ⟨Z ⊓ Z', fun j hj z hz ↦ ?_⟩
-      rcases Finset.mem_insert.mp hj with rfl | hj'
-      · exact hZ z hz.1
-      · exact hZ' j hj' z hz.2
-
 omit [TopologicalSpace A] in
 /-- **The absorption step.** If multiplication by `a` carries the subgroup `Z` into `T^α · U`,
 then it carries all of `T^β · Z` into `T^(α+β) · U`.
@@ -379,14 +348,9 @@ theorem mul_mem_weightMul_of_forall_mul_mem {T : Fin k → Set A} {α β : Fin k
     {U Z : AddSubgroup A} {a b : A}
     (ha : ∀ z ∈ Z, a * z ∈ weightMul T α U) (hb : b ∈ weightMul T β Z) :
     a * b ∈ weightMul T (α + β) U := by
-  induction hb using AddSubgroup.closure_induction with
-  | mem y hy =>
-      obtain ⟨t, ht, z, hz, rfl⟩ := hy
-      rw [mul_left_comm]
-      exact weightPow_mul_weightMul_mem ht (ha z hz)
-  | zero => simp
-  | add _ _ _ _ h₁ h₂ => simpa [mul_add] using (weightMul T (α + β) U).add_mem h₁ h₂
-  | neg _ _ h => simpa [mul_neg] using (weightMul T (α + β) U).neg_mem h
+  refine mul_mem_of_forall_mul_mul_mem (fun t ht z hz ↦ ?_) hb
+  rw [mul_left_comm]
+  exact weightPow_mul_weightMul_mem ht (ha z hz)
 
 omit [TopologicalSpace A] in
 /-- With every weight equal to `{1}`, the weight of any multi-index is `{1}`. -/
@@ -472,7 +436,7 @@ entirely clear").
 
 Fix an open subgroup `U` and choose `W` with `W · W ⊆ U`. The coefficients of `f` and `g` that
 fail the `W` bound form finite sets `F` and `G`. Wedhorn's standing hypothesis makes each
-`Tα · U` a neighbourhood of zero, so one open subgroup `Z ≤ W` absorbs every bad coefficient into
+`Tα · U` a neighbourhood of zero, so one open subgroup `Z` absorbs every bad coefficient into
 its own `Tα · U`. Writing `F_Z`, `G_Z` for the bad sets against `Z`, put
 `E = (F + G_Z) ∪ (F_Z + G)`, a finite set. For `ν ∉ E` every splitting `α + β = ν` falls into one
 of three cases — `α` bad, `β` bad, or neither — and each lands in `Tν · U`. -/
@@ -488,14 +452,14 @@ theorem IsWeightedRestricted.mul [NonarchimedeanRing A] {T : Fin k → Set A}
     Filter.eventually_cofinite.mp (hf W)
   have hG : {β | MvPowerSeries.coeff β g ∉ weightMul T β W.toAddSubgroup}.Finite :=
     Filter.eventually_cofinite.mp (hg W)
-  obtain ⟨Zf, hZf⟩ := exists_openAddSubgroup_forall_mul_subset hF.toFinset
+  obtain ⟨Zf, hZf⟩ := NonarchimedeanRing.exists_openAddSubgroup_forall_mul_subset hF.toFinset
     (fun α ↦ MvPowerSeries.coeff α f) (fun α ↦ weightMul T α U.toAddSubgroup)
     (fun α _ ↦ hT.weightMul_mem_nhds α hUnhds)
-  obtain ⟨Zg, hZg⟩ := exists_openAddSubgroup_forall_mul_subset hG.toFinset
+  obtain ⟨Zg, hZg⟩ := NonarchimedeanRing.exists_openAddSubgroup_forall_mul_subset hG.toFinset
     (fun β ↦ MvPowerSeries.coeff β g) (fun β ↦ weightMul T β U.toAddSubgroup)
     (fun β _ ↦ hT.weightMul_mem_nhds β hUnhds)
-  set Z : OpenAddSubgroup A := W ⊓ Zf ⊓ Zg with hZdef
-  have hZle_f : Z ≤ Zf := le_trans inf_le_left inf_le_right
+  set Z : OpenAddSubgroup A := Zf ⊓ Zg
+  have hZle_f : Z ≤ Zf := inf_le_left
   have hZle_g : Z ≤ Zg := inf_le_right
   have hFZ : {α | MvPowerSeries.coeff α f ∉ weightMul T α Z.toAddSubgroup}.Finite :=
     Filter.eventually_cofinite.mp (hf Z)
@@ -512,27 +476,21 @@ theorem IsWeightedRestricted.mul [NonarchimedeanRing A] {T : Fin k → Set A}
   by_cases hp1 : MvPowerSeries.coeff p.1 f ∈ weightMul T p.1 W.toAddSubgroup
   · by_cases hp2 : MvPowerSeries.coeff p.2 g ∈ weightMul T p.2 W.toAddSubgroup
     · -- both coefficients meet the `W` bound
-      have := weightMul_mul_mem hp1 hp2
-      rw [hsum] at this
-      exact weightMul_mono T ν (AddSubgroup.closure_le _ |>.mpr hWU) this
+      exact mul_mem_weightMul_of_mul_subset hsum hWU hp1 hp2
     · -- `p.2` is bad: absorb it, after commuting
       have hgood : MvPowerSeries.coeff p.1 f ∈ weightMul T p.1 Z.toAddSubgroup := by
         by_contra hbad
         exact hνE (Or.inr ⟨p.1, hbad, p.2, hp2, hsum⟩)
-      have := mul_mem_weightMul_of_forall_mul_mem
-        (fun z hz ↦ hZg p.2 (hG.mem_toFinset.mpr hp2) z (hZle_g hz))
-        hgood
-      rw [mul_comm, add_comm, hsum] at this
-      exact this
+      rw [mul_comm, ← hsum, add_comm]
+      exact mul_mem_weightMul_of_forall_mul_mem
+        (fun z hz ↦ hZg p.2 (hG.mem_toFinset.mpr hp2) z (hZle_g hz)) hgood
   · -- `p.1` is bad: absorb it
     have hgood : MvPowerSeries.coeff p.2 g ∈ weightMul T p.2 Z.toAddSubgroup := by
       by_contra hbad
       exact hνE (Or.inl ⟨p.1, hp1, p.2, hbad, hsum⟩)
-    have := mul_mem_weightMul_of_forall_mul_mem
-      (fun z hz ↦ hZf p.1 (hF.mem_toFinset.mpr hp1) z (hZle_f hz))
-      hgood
-    rw [hsum] at this
-    exact this
+    rw [← hsum]
+    exact mul_mem_weightMul_of_forall_mul_mem
+      (fun z hz ↦ hZf p.1 (hF.mem_toFinset.mpr hp1) z (hZle_f hz)) hgood
 
 /-- The negation of a `T`-restricted series is `T`-restricted. -/
 theorem IsWeightedRestricted.neg {T : Fin k → Set A} {f : MvPowerSeries (Fin k) A}
@@ -673,7 +631,7 @@ theorem exists_weightedNhd_mul_mem [NonarchimedeanRing A] {T : Fin k → Set A}
   have hx : IsWeightedRestricted T (x : MvPowerSeries (Fin k) A) := x.2
   have hF : {α | MvPowerSeries.coeff α (x : MvPowerSeries (Fin k) A)
       ∉ weightMul T α W.toAddSubgroup}.Finite := Filter.eventually_cofinite.mp (hx W)
-  obtain ⟨Zx, hZx⟩ := exists_openAddSubgroup_forall_mul_subset hF.toFinset
+  obtain ⟨Zx, hZx⟩ := NonarchimedeanRing.exists_openAddSubgroup_forall_mul_subset hF.toFinset
     (fun α ↦ MvPowerSeries.coeff α (x : MvPowerSeries (Fin k) A))
     (fun α ↦ weightMul T α U.toAddSubgroup) (fun α _ ↦ hT.weightMul_mem_nhds α hUnhds)
   refine ⟨W ⊓ Zx, fun g hg ν ↦ ?_⟩
@@ -685,18 +643,11 @@ theorem exists_weightedNhd_mul_mem [NonarchimedeanRing A] {T : Fin k → Set A}
   by_cases hp1 : MvPowerSeries.coeff p.1 (x : MvPowerSeries (Fin k) A)
       ∈ weightMul T p.1 W.toAddSubgroup
   · -- `p.1` meets the `W` bound, and every coefficient of `g` meets the `W ⊓ Zx` bound
-    have hp2 : MvPowerSeries.coeff p.2 (g : MvPowerSeries (Fin k) A)
-        ∈ weightMul T p.2 W.toAddSubgroup :=
-      weightMul_mono T p.2 hZleW (hg p.2)
-    have := weightMul_mul_mem hp1 hp2
-    rw [hsum] at this
-    exact weightMul_mono T ν ((AddSubgroup.closure_le _).mpr hWU) this
+    exact mul_mem_weightMul_of_mul_subset hsum hWU hp1 (weightMul_mono T p.2 hZleW (hg p.2))
   · -- `p.1` is one of the finitely many bad coefficients: absorb it
-    have := mul_mem_weightMul_of_forall_mul_mem
-      (fun z hz ↦ hZx p.1 (hF.mem_toFinset.mpr hp1) z (hZleZx hz))
-      (weightMul_mono T p.2 (le_refl _) (hg p.2))
-    rw [hsum] at this
-    exact this
+    rw [← hsum]
+    exact mul_mem_weightMul_of_forall_mul_mem
+      (fun z hz ↦ hZx p.1 (hF.mem_toFinset.mpr hp1) z (hZleZx hz)) (hg p.2)
 
 /-- **The neighbourhood basis of `A⟨X⟩_T`**: the subgroups `U⟨X⟩`, as `U` ranges over the open
 subgroups of `A`, are a `RingSubgroupsBasis`. This is Wedhorn's assertion that they form a
