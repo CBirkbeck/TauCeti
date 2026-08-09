@@ -25,12 +25,12 @@ the points of the curve `W.map f` over `S`, with no fields and no tower involved
   composition laws transport their codomains along Mathlib's `WeierstrassCurve.map_id` and
   `map_map`.
 
-Nothing is stated here about the group law. Over a **field** `f : F →+* K` Mathlib already supplies
-the additive transport: `letI : Algebra F K := f.toAlgebra` makes
-`Affine.Point.map (W' := W) (Algebra.ofId F K)` an `AddMonoidHom` of type
-`W.Point →+ (W.map f).Point` directly, with no transport needed, and `AddMonoidHom.map_zsmul`
-follows from it. What Mathlib lacks, and what this file adds, is the transport over arbitrary
-commutative rings.
+* `TauCeti.WeierstrassCurve.Affine.Point.mapRingHom_eq_map`: over a field, the transport *is*
+  Mathlib's `Affine.Point.map`, which is an `AddMonoidHom` — so compatibility with the group law
+  and with `ℤ`-multiples comes from Mathlib rather than being restated here.
+
+What Mathlib lacks, and what this file adds, is the transport over arbitrary commutative rings,
+where `W.Point` has no group law to speak of.
 
 The definition needs only injectivity, since that is what `Affine.map_nonsingular` needs to carry
 nonsingularity across. Negation and the functorial laws hold over any commutative ring and are
@@ -46,8 +46,12 @@ detail"; this is a complement to that API, not a reimplementation of it.
 ## Provenance
 
 Ported from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned by
-that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/EC/AffinePointMap.lean`, declarations
-`map`, `map_zero`, `map_some`, `map_add`, `map_neg`, `mapAddMonoidHom` and `map_zsmul`.
+that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/EC/AffinePointMap.lean`,
+declarations `map`, `map_zero`, `map_some` and `map_neg`.
+
+The source's `map_add`, `mapAddMonoidHom` and `map_zsmul` are deliberately **not** ported. Over a
+field they are Mathlib's `Affine.Point.map` under `f.toAlgebra`, and `mapRingHom_eq_map` below is
+the bridge to it; restating them here would duplicate Mathlib's own case analysis.
 
 Changes from the source. The names take a `RingHom` suffix, Mathlib having since taken
 `Point.map` for the `AlgHom` version. The computation rules are stated in simp-normal form, and
@@ -117,6 +121,22 @@ lemma mapRingHom_injective : Function.Injective (mapRingHom f hf (W := W)) := by
   · exact absurd hP (by simp)
   · obtain ⟨hx, hy⟩ := Affine.Point.some.inj hP
     simp only [hf hx, hf hy]
+
+
+section Field
+
+variable {F K : Type*} [Field F] [Field K] [DecidableEq F] [DecidableEq K]
+  {W : _root_.WeierstrassCurve F} [Algebra F K]
+
+/-- **Over a field the transport is Mathlib's `Affine.Point.map`**, which is an `AddMonoidHom`. So
+`mapRingHom` respects the group law and `ℤ`-multiples there without any of that being restated:
+rewrite with this and use `map_add`, `map_zsmul`. -/
+lemma mapRingHom_eq_map (P : W.toAffine.Point) :
+    mapRingHom (algebraMap F K) (FaithfulSMul.algebraMap_injective F K) P
+      = Affine.Point.map (W' := W) (Algebra.ofId F K) P := by
+  rcases P with _ | ⟨x, y, h⟩ <;> rfl
+
+end Field
 
 end WeierstrassCurve.Affine.Point
 
