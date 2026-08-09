@@ -38,9 +38,15 @@ namespace FractionalIdeal
 
 variable [IsDomain R]
 
-/-- The principal fractional ideal `(x)` is trivial exactly when `x` comes from a unit of `R`. -/
-lemma spanSingleton_eq_one_iff {x : K} (hx : x ≠ 0) :
+/-- The principal fractional ideal `(x)` is trivial exactly when `x` comes from a unit of `R`.
+At `x = 0` both sides are false, so no nonvanishing hypothesis is needed. -/
+lemma spanSingleton_eq_one_iff {x : K} :
     spanSingleton R⁰ x = 1 ↔ ∃ a : Rˣ, algebraMap R K a = x := by
+  rcases eq_or_ne x 0 with rfl | hx
+  · rw [spanSingleton_zero]
+    refine ⟨fun h ↦ absurd h zero_ne_one, ?_⟩
+    rintro ⟨a, ha⟩
+    exact absurd ((_root_.map_eq_zero_iff _ (IsFractionRing.injective R K)).mp ha) a.ne_zero
   constructor
   · intro h
     have hinv : spanSingleton R⁰ x⁻¹ = 1 := by rw [← spanSingleton_inv, h, inv_one]
@@ -56,7 +62,7 @@ lemma spanSingleton_eq_one_iff {x : K} (hx : x ≠ 0) :
 map is the image of `Rˣ`. -/
 lemma toPrincipalIdeal_eq_one_iff (u : Kˣ) :
     toPrincipalIdeal R K u = 1 ↔ ∃ a : Rˣ, Units.map (algebraMap R K : R →* K) a = u := by
-  rw [← Units.val_inj, coe_toPrincipalIdeal, Units.val_one, spanSingleton_eq_one_iff u.ne_zero]
+  rw [← Units.val_inj, coe_toPrincipalIdeal, Units.val_one, spanSingleton_eq_one_iff]
   exact ⟨fun ⟨a, ha⟩ ↦ ⟨a, Units.ext ha⟩, fun ⟨a, ha⟩ ↦ ⟨a, by rw [← ha]; rfl⟩⟩
 
 /-- `ClassGroup.mk I = 1` exactly when the unit fractional ideal `I` is principal, with the

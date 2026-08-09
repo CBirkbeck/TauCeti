@@ -14,7 +14,7 @@ public import TauCeti.RingTheory.ClassGroup.Basic
 Let `R` be a Dedekind domain with fraction field `K`. The nonzero fractional ideals of `R` form a
 group `(FractionalIdeal R⁰ K)ˣ`, every nonzero fractional ideal being invertible, and unique
 factorization says that group is free abelian on the height one primes. Mathlib has the valuation
-bookkeeping — `IsDedekindDomain.HeightOneSpectrum.count` and the factorization lemmas in
+bookkeeping — `FractionalIdeal.count` and the factorization lemmas in
 `Mathlib/RingTheory/DedekindDomain/Factorization.lean` — but does not package the isomorphism
 itself.
 
@@ -81,13 +81,15 @@ noncomputable def toFinsupp (I : (FractionalIdeal R⁰ K)ˣ) : HeightOneSpectrum
 noncomputable def ofFinsupp (g : HeightOneSpectrum R →₀ ℤ) : (FractionalIdeal R⁰ K)ˣ :=
   g.prod (fun v e ↦ unitOfPrime v ^ e)
 
+/-- Not `@[simp]`: it would rewrite the left-hand side of `count_ofFinsupp` into a `Finsupp.prod`
+and stop that sharper lemma firing (the `simpNF` linter reports exactly this). -/
 lemma coe_ofFinsupp (g : HeightOneSpectrum R →₀ ℤ) :
     ((ofFinsupp g : (FractionalIdeal R⁰ K)ˣ) : FractionalIdeal R⁰ K)
       = g.prod (fun v e ↦ (v.asIdeal : FractionalIdeal R⁰ K) ^ e) := by
   rw [ofFinsupp, ← Units.coeHom_apply, map_finsuppProd]
   simp only [Units.coeHom_apply, map_zpow, coe_unitOfPrime]
 
-lemma count_ofFinsupp (g : HeightOneSpectrum R →₀ ℤ) (v : HeightOneSpectrum R) :
+@[simp] lemma count_ofFinsupp (g : HeightOneSpectrum R →₀ ℤ) (v : HeightOneSpectrum R) :
     count K v ((ofFinsupp g : (FractionalIdeal R⁰ K)ˣ) : FractionalIdeal R⁰ K) = g v := by
   rw [coe_ofFinsupp, count_finsuppProd]
 
@@ -122,6 +124,10 @@ noncomputable def factorization :
     Multiplicative.toAdd (factorization I) v = count K v (I : FractionalIdeal R⁰ K) := by
   change Multiplicative.toAdd (Multiplicative.ofAdd (toFinsupp I)) v = _
   rw [toAdd_ofAdd, toFinsupp_apply]
+
+@[simp] lemma factorization_symm_apply (g : Multiplicative (HeightOneSpectrum R →₀ ℤ)) :
+    (factorization (R := R) (K := K)).symm g = ofFinsupp (Multiplicative.toAdd g) := by
+  simp only [factorization, MulEquiv.symm_mk, MulEquiv.coe_mk, Equiv.coe_fn_symm_mk]
 
 /-- Under `factorization`, a prime corresponds to a basis vector of the free abelian group. -/
 @[simp]
