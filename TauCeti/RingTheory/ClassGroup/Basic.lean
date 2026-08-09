@@ -13,15 +13,20 @@ public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 Two facts about Mathlib's `ClassGroup R` that its own file does not carry: that a principal
 fractional ideal has trivial class, and the class `[v]` of a height one prime.
 
+## Main definitions
+
+* `IsDedekindDomain.HeightOneSpectrum.classGroupMk`: the class `[v]` of a height one prime of a
+  Dedekind domain.
+
 ## Main results
 
 * `ClassGroup.mk_toPrincipalIdeal`: a principal fractional ideal has trivial class. This is the
   `simp` form of `ClassGroup.mk_eq_one_iff` for the one witness that arises in practice, and it
   holds over any domain.
-* `IsDedekindDomain.HeightOneSpectrum.classGroupMk`: the class `[v]` of a height one prime of a
-  Dedekind domain, with `classGroupMk_eq_mk0` giving its defining formula and `classGroupMk_eq_mk`
-  identifying it with the class of `v.asIdeal` seen as an invertible fractional ideal of any
-  fraction field.
+* `IsDedekindDomain.HeightOneSpectrum.classGroupMk_eq_mk0`: the defining formula for `[v]`, as
+  `ClassGroup.mk0` of `v.asIdeal`. This needs no fraction field.
+* `IsDedekindDomain.HeightOneSpectrum.classGroupMk_eq_mk`: `[v]` is the class of `v.asIdeal` seen
+  as an invertible fractional ideal of any fraction field `K`.
 
 Both are stated at the weakest hypotheses their proofs need — `ClassGroup.mk_toPrincipalIdeal`
 over `[IsDomain R]`, since nothing in it is Dedekind-specific. Neither needs the factorization
