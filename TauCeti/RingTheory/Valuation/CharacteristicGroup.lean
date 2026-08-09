@@ -293,32 +293,6 @@ private theorem mul_mem_characteristicGenerators {v : Valuation A Γ₀}
   rw [map_mul, ha, hb]
   simp
 
-/-- The elements bounded by a *single* attained value `≥ 1`. Because the generators are
-multiplicatively closed this is already a convex subgroup, which is what makes one witness
-enough in `HasFullCharacteristicGroup`. -/
-private def generatorBall (v : Valuation A Γ₀) :
-    TauCeti.ConvexSubgroup (valueGroup (.ofClass v)) where
-  toSubgroup :=
-    { carrier := {γ | ∃ g ∈ characteristicGenerators v, g⁻¹ ≤ γ ∧ γ ≤ g}
-      one_mem' := ⟨1, one_mem_characteristicGenerators v, by simp, le_rfl⟩
-      mul_mem' := fun {a b} ⟨g, hg, hga, hag⟩ ⟨h, hh, hhb, hbh⟩ ↦
-        ⟨g * h, mul_mem_characteristicGenerators hg hh, by
-          rw [mul_inv]; exact mul_le_mul' hga hhb, mul_le_mul' hag hbh⟩
-      inv_mem' := fun {a} ⟨g, hg, hga, hag⟩ ↦
-        ⟨g, hg, by simpa using inv_le_inv' hag, by simpa using inv_le_inv' hga⟩ }
-  ordConnected' := by
-    constructor
-    rintro x ⟨g, hg, hgx, hxg⟩ y ⟨h, hh, hhy, hyh⟩ z hz
-    refine ⟨g * h, mul_mem_characteristicGenerators hg hh, ?_, ?_⟩
-    · refine le_trans ?_ (hgx.trans hz.1)
-      rw [mul_inv]
-      exact mul_le_of_le_one_right' (inv_le_one'.mpr hh.1)
-    · exact (hz.2.trans hyh).trans (le_mul_of_one_le_left' hg.1)
-
-private theorem characteristicSubgroup_le_generatorBall (v : Valuation A Γ₀) :
-    characteristicSubgroup v ≤ generatorBall v :=
-  characteristicSubgroup_le_iff.mpr fun g hg ↦ ⟨g, hg, (inv_le_one'.mpr hg.1).trans hg.1, le_rfl⟩
-
 /-- **Elimination rule.** Membership in `cΓ_v` is bounding by a *single* attained value `≥ 1`.
 The non-obvious direction is that one generator suffices: the attained values `≥ 1` are closed
 under multiplication, so the elements they bound already form a convex subgroup. -/
@@ -326,9 +300,9 @@ theorem mem_characteristicSubgroup_iff {v : Valuation A Γ₀}
     {γ : valueGroup (.ofClass v)} :
     γ ∈ characteristicSubgroup v ↔
       ∃ g ∈ characteristicGenerators v, g⁻¹ ≤ γ ∧ γ ≤ g := by
-  refine ⟨fun hγ ↦ characteristicSubgroup_le_generatorBall v hγ, fun ⟨g, hg, hgγ, hγg⟩ ↦ ?_⟩
-  have hmem := characteristicGenerators_subset_characteristicSubgroup v hg
-  exact (characteristicSubgroup v).convex (inv_mem hmem) hmem hgγ hγg
+  exact TauCeti.ConvexSubgroup.mem_closure_of_nonempty_of_mul_mem_of_one_le
+    ⟨1, one_mem_characteristicGenerators v⟩
+    (fun _ hx _ hy ↦ mul_mem_characteristicGenerators hx hy) (fun _ hg ↦ hg.1)
 
 /-- **Fullness is exactly `Γ_v = cΓ_v`.** The elementwise condition of
 `HasFullCharacteristicGroup` says every positive value is bounded by a *single* attained
@@ -360,7 +334,7 @@ theorem hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top {v : Valuat
   · intro hv γ hγ
     obtain ⟨δ, rfl⟩ := WithZero.ne_zero_iff_exists.mp hγ.ne'
     obtain ⟨g, hg, hgd, hdg⟩ :=
-      characteristicSubgroup_le_generatorBall v (hv ▸ TauCeti.ConvexSubgroup.mem_top)
+      mem_characteristicSubgroup_iff.mp (hv ▸ TauCeti.ConvexSubgroup.mem_top)
     obtain ⟨_, a, ha⟩ := hg
     refine ⟨a, ?_, ?_⟩
     · rw [ha, ← WithZero.coe_inv, WithZero.coe_le_coe]; exact hgd
