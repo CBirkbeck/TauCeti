@@ -48,8 +48,10 @@ untouched for whoever builds Layer 1's isogeny API.
 Ported from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned by
 that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/FrobeniusIsogeny.lean`, the `private`
 declarations `frobFracRange` — the model for `frobeniusRatFuncRange` — together with
-`finrank_frobFracRange_functionField`, `frobFracRange_le_frobRange` and
-`finrank_over_frobenius_image`.
+`frobeniusAlgHom_comp_comm`, `finrank_frobFracRange_functionField`, `frobFracRange_le_frobRange`,
+`finrank_over_frobenius_image` and `frobenius_finrank_functionField`. The commuting square of the
+`q`-power map with the embedding of the rational function field, inside
+`relfinrank_frobeniusFieldRange`, is `frobeniusAlgHom_comp_comm`.
 
 Changes from the source. They are `private` there, inside the file that builds the Frobenius
 isogeny, and work over `FractionRing K[X]`; a large part of their length is spent transporting the
