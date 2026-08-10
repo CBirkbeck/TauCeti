@@ -111,8 +111,7 @@ private lemma T_diag_one_ppow_inj (p : ℕ) (hp : 1 < p) {b s : Fin 1 →₀ ℕ
     (fun _ ↦ Nat.pow_pos hpos) (hdiv b) (hdiv s) hb
   exact Nat.pow_right_injective hp (congr_fun heq 0)
 
-/-- n=1: evalHom is injective. Different monomials map to distinct basis elements,
-    so the images are ℤ-linearly independent. -/
+/-- For `n = 1` and any base `1 < p`, evaluation at the Hecke generator is injective. -/
 theorem evalHom_one_injective (p : ℕ) (hp : 1 < p) : Function.Injective (evalHom 1 p) := by
   intro P Q hPQ
   rw [← sub_eq_zero]
@@ -221,23 +220,23 @@ private lemma det_rep_eq_mul_of_m_ne_zero (D₁ D₂ D' : HeckeCoset (posDetInt 
 
 /-- Determinant tracking: if `f` is supported on cosets of determinant `q^{a₀}`, then
 `heckeGen(q,0)^{b₀} · f` is supported on cosets of determinant `q^{b₀ + a₀}`. -/
-private lemma det_rep_T_gen_zero_pow_mul (q : {p : ℕ // p.Prime}) (a₀ b₀ : ℕ)
+private lemma det_rep_T_gen_zero_pow_mul (q : ℕ) (hq : 0 < q) (a₀ b₀ : ℕ)
     (f : IntegralHeckeRing 2) (D' : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
     (hf_det : ∀ D'', f D'' ≠ 0 →
-      (↑(↑(HeckeCoset.rep D'') : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det = ↑(q.1 ^ a₀ : ℕ))
-    (hD' : (heckeGen 2 q.1 0 ^ b₀ * f) D' ≠ 0) :
+      (↑(↑(HeckeCoset.rep D'') : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det = ↑(q ^ a₀ : ℕ))
+    (hD' : (heckeGen 2 q 0 ^ b₀ * f) D' ≠ 0) :
     (↑(↑(HeckeCoset.rep D') : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det =
-      ↑(q.1 ^ (b₀ + a₀) : ℕ) := by
+      ↑(q ^ (b₀ + a₀) : ℕ) := by
   induction b₀ generalizing f D' with
   | zero =>
     rw [pow_zero, one_mul] at hD'
     simpa only [Nat.zero_add] using hf_det D' hD'
   | succ n ih =>
     rw [pow_succ', mul_assoc] at hD'
-    set g' := heckeGen 2 q.1 0 ^ n * f
+    set g' := heckeGen 2 q 0 ^ n * f
     -- `heckeGen` and `diagElem` are both sealed, so neither side reduces here; the `_def`
     -- lemmas bridge them and this states the single-`Finsupp` spelling to rewrite with.
-    rw [show heckeGen 2 q.1 0 = HeckeCosetModule.single ℤ (diagCoset (![1, q.1])) 1 from by
+    rw [show heckeGen 2 q 0 = HeckeCosetModule.single ℤ (diagCoset (![1, q])) 1 from by
         rw [heckeGen_def, diagElem_def]
         exact congrArg (fun a ↦ HeckeCosetModule.single ℤ (diagCoset a) 1)
           (funext fun i ↦ by fin_cases i <;> simp [heckeGenDiag_apply])] at hD'
@@ -245,23 +244,23 @@ private lemma det_rep_T_gen_zero_pow_mul (q : {p : ℕ // p.Prime}) (a₀ b₀ :
       -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a convolution at a coset
       -- holds by defeq but matches no `Finsupp` lemma through the wrapper; the expansion is
       -- stated and closed by the wrapper's own `mul_def`/`single_mul`/`sum_apply` chain.
-      rw [show (HeckeCosetModule.single ℤ (diagCoset (![1, q.1])) 1 * g') D' =
+      rw [show (HeckeCosetModule.single ℤ (diagCoset (![1, q])) 1 * g') D' =
           ∑ D₂ ∈ g'.support, g' D₂ *
             (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
-            (HeckeCoset.rep (diagCoset (![1, q.1]))) (HeckeCoset.rep D₂)) D' from by
+            (HeckeCoset.rep (diagCoset (![1, q]))) (HeckeCoset.rep D₂)) D' from by
           rw [HeckeCosetModule.mul_def, HeckeCosetModule.single_mul,
             HeckeCosetModule.sum_apply, HeckeCosetModule.sum_def]
           simp only [HeckeCosetModule.smul_apply, one_mul]] at hD'
       exact hD')
     have hm_ne : (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
-        (HeckeCoset.rep (diagCoset (![1, q.1])))
+        (HeckeCoset.rep (diagCoset (![1, q])))
         (HeckeCoset.rep D₂)) D' ≠ 0 := fun h ↦ hD₂_ne (by rw [h, mul_zero])
     rw [det_rep_eq_mul_of_m_ne_zero _ _ _ hm_ne,
       -- `![…]` literals that are only extensionally equal do not unify syntactically, so the
       -- intended spelling is stated here for the following rewrite to match.
-      show (↑(↑(HeckeCoset.rep (diagCoset (![1, q.1]))) : GL (Fin 2) ℚ) :
-          Matrix (Fin 2) (Fin 2) ℚ).det = (q.1 : ℚ) from by
-        rw [prod_rep_T_diag (![1, q.1]) (fun i ↦ by fin_cases i <;> simp [q.2.pos])]
+      show (↑(↑(HeckeCoset.rep (diagCoset (![1, q]))) : GL (Fin 2) ℚ) :
+          Matrix (Fin 2) (Fin 2) ℚ).det = (q : ℚ) from by
+        rw [prod_rep_T_diag (![1, q]) (fun i ↦ by fin_cases i <;> simp [hq])]
         simp [Fin.prod_univ_two],
       ih f D₂ hf_det (Finsupp.mem_support_iff.mp hD₂_mem)]
     push_cast; ring
@@ -272,26 +271,26 @@ representative — is `q^(e₀ + 2·e₁)`.
 
 This is what makes the exponent pair recoverable: the determinant pins `e₀ + 2·e₁`, and the
 elementary-divisor order then separates the individual exponents. -/
-private lemma T_gen_pow_support_qpower (q : {p : ℕ // p.Prime}) (e : Fin 2 → ℕ)
+private lemma T_gen_pow_support_qpower (q : ℕ) (hq : 0 < q) (e : Fin 2 → ℕ)
     (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
-    (hD : (heckeGen 2 q.1 0 ^ (e 0) * heckeGen 2 q.1 1 ^ (e 1)) D ≠ 0) :
+    (hD : (heckeGen 2 q 0 ^ (e 0) * heckeGen 2 q 1 ^ (e 1)) D ≠ 0) :
     ∃ a : Fin 2 → ℕ, D = diagCoset a ∧ (∀ i, 0 < a i) ∧ IsDvdChain a ∧
-      (∏ i, a i) = q.1 ^ (e 0 + 2 * e 1) := by
+      (∏ i, a i) = q ^ (e 0 + 2 * e 1) := by
   obtain ⟨a, ha_pos, ha_div, hD_eq⟩ := exists_diagonal_representative D
   refine ⟨a, hD_eq, ha_pos, ha_div, ?_⟩
-  have hf_det : ∀ D'', (heckeGen 2 q.1 1 ^ (e 1)) D'' ≠ 0 →
+  have hf_det : ∀ D'', (heckeGen 2 q 1 ^ (e 1)) D'' ≠ 0 →
       (↑(↑(HeckeCoset.rep D'') : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det =
-        ↑(q.1 ^ (2 * e 1) : ℕ) := by
+        ↑(q ^ (2 * e 1) : ℕ) := by
     classical
     intro D'' hD''
-    rw [heckeGen_one_eq_heckeTScalar q.1 q.2.pos,
-      HeckeRing.GL2.heckeTScalar_pow q.1 q.2.pos (e 1)] at hD''
-    have h_eq : diagCoset (fun _ : Fin 2 ↦ q.1 ^ (e 1)) = D'' := by
+    rw [heckeGen_one_eq_heckeTScalar q hq,
+      HeckeRing.GL2.heckeTScalar_pow q hq (e 1)] at hD''
+    have h_eq : diagCoset (fun _ : Fin 2 ↦ q ^ (e 1)) = D'' := by
       by_contra h
       exact hD'' (by rw [diagElem_def, HeckeCosetModule.single_apply, if_neg h])
-    rw [← h_eq, prod_rep_T_diag _ (fun i ↦ by fin_cases i <;> simp [pow_pos q.2.pos])]
+    rw [← h_eq, prod_rep_T_diag _ (fun i ↦ by fin_cases i <;> simp [pow_pos hq])]
     push_cast [Fin.prod_univ_two, ← pow_add]; ring_nf
-  have h_result := det_rep_T_gen_zero_pow_mul q (2 * e 1) (e 0) _ D hf_det hD
+  have h_result := det_rep_T_gen_zero_pow_mul q hq (2 * e 1) (e 0) _ D hf_det hD
   rw [hD_eq, prod_rep_T_diag a ha_pos] at h_result
   exact mod_cast h_result
 
@@ -308,6 +307,39 @@ private lemma T_single_diag_mul_T_scalar (c : ℕ) (hc : 0 < c)
   rw [h_single, smul_mul_assoc, diagElem_mul_const 2 a ha_pos c hc, diagElem_def]
   exact HeckeCosetModule.smul_single_one ℤ (diagCoset (a * fun _ ↦ c)) α
 
+/-- **Reduction to the basis for products with a scalar coset.** Both statements below about
+`f * diagElem (fun _ ↦ c)` evaluated at a fixed coset `D` are additive in `f`, so it is enough
+to check them on the `single` basis. This lemma performs that reduction once: the `zero` and
+`add` cases are pure `Finsupp`-through-the-wrapper bookkeeping and carry no content.
+
+The target is packaged as an `F : IntegralHeckeRing 2 →+ ℤ` because additivity of the target is
+exactly what the induction consumes. -/
+private lemma eval_mul_diagElem_const_of_single (c : ℕ)
+    (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2)) (F : IntegralHeckeRing 2 →+ ℤ)
+    (hsingle : ∀ (D' : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2)) (α : ℤ),
+      (HeckeCosetModule.single ℤ D' α * diagElem (fun _ : Fin 2 ↦ c)) D =
+        F (HeckeCosetModule.single ℤ D' α))
+    (f : IntegralHeckeRing 2) : (f * diagElem (fun _ : Fin 2 ↦ c)) D = F f := by
+  classical
+  induction f using HeckeCosetModule.induction_linear with
+  | h0 =>
+    -- `IntegralHeckeRing` is a `def` over `Finsupp`, so a ring element applied at a coset is
+    -- `Finsupp` application through the wrapper: true by defeq, but nothing matches
+    -- syntactically, so the shape is stated once here rather than at every use.
+    change ((0 : IntegralHeckeRing 2) * diagElem (fun _ : Fin 2 ↦ c)) D = F 0
+    rw [zero_mul, map_zero]; rfl
+  | hadd g h ihg ihh =>
+    set g' : IntegralHeckeRing 2 := g
+    set h' : IntegralHeckeRing 2 := h
+    change ((g' + h') * diagElem (fun _ : Fin 2 ↦ c)) D = F (g' + h')
+    rw [add_mul, HeckeCosetModule.add_apply, map_add, ihg, ihh]
+  | hsingle D' α => exact hsingle D' α
+
+/-- Evaluation at a fixed coset, as an additive map on the Hecke ring. -/
+private noncomputable def evalAddHom (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2)) :
+    IntegralHeckeRing 2 →+ ℤ :=
+  AddMonoidHom.mk' (fun f ↦ f D) (fun g h ↦ HeckeCosetModule.add_apply g h D)
+
 /-- Scalar shift identity: for any `f : IntegralHeckeRing 2`, scalar `c > 0`, and positive
 divisibility-chain `b`, evaluating `f * diagElem(c,c)` at `diagCoset(b * c)` equals
 `f(diagCoset b)`. -/
@@ -316,57 +348,26 @@ private lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHe
     (hb_pos : ∀ i, 0 < b i) (hb_div : IsDvdChain b) :
     (f * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * (fun _ : Fin 2 ↦ c))) = f (diagCoset b) := by
   classical
-  induction f using HeckeCosetModule.induction_linear with
-  | h0 =>
-    -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
-    -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
-    -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
-    change ((0 : IntegralHeckeRing 2) * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) =
-      (0 : IntegralHeckeRing 2) (diagCoset b)
-    rw [zero_mul]; rfl
-  | hadd g h ihg ihh =>
-    set g' : IntegralHeckeRing 2 := g
-    set h' : IntegralHeckeRing 2 := h
-    -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
-    -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
-    -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
-    change ((g' + h') * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) =
-      (g' + h') (diagCoset b)
-    rw [add_mul,
-      -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
-      -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
-      -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
-      show (g' * diagElem (fun _ : Fin 2 ↦ c) + h' * diagElem (fun _ : Fin 2 ↦ c))
-            (diagCoset (b * fun _ ↦ c)) =
-            (g' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) +
-            (h' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) from
-        Finsupp.add_apply _ _ _,
-      -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
-      -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
-      -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
-      show (g' + h') (diagCoset b) = g' (diagCoset b) + h' (diagCoset b) from
-        Finsupp.add_apply _ _ _,
-      ihg, ihh]
-  | hsingle D α =>
-    obtain ⟨a, ha_pos, ha_div, hD_eq⟩ := exists_diagonal_representative D
-    rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos α]
-    rw [HeckeCosetModule.single_apply, HeckeCosetModule.single_apply]
-    by_cases hab : a = b
-    · subst hab; rw [if_pos rfl, if_pos rfl]
-    · have h_ne_1 : diagCoset (a * fun _ : Fin 2 ↦ c) ≠ diagCoset (b * fun _ : Fin 2 ↦ c) := by
-        intro heq
-        have h1_eq : a * (fun _ : Fin 2 ↦ c) = b * (fun _ : Fin 2 ↦ c) :=
-          eq_of_diagCoset_eq (fun i ↦ Nat.mul_pos (ha_pos i) hc)
-            (fun i ↦ Nat.mul_pos (hb_pos i) hc) (isDvdChain_mul 2 ha_div (isDvdChain_const 2 c))
-            (isDvdChain_mul 2 hb_div (isDvdChain_const 2 c)) heq
-        apply hab
-        funext i
-        have := congr_fun h1_eq i
-        simp only [Pi.mul_apply] at this
-        exact Nat.eq_of_mul_eq_mul_right hc this
-      have h_ne_2 : diagCoset a ≠ diagCoset b := fun heq ↦ hab
-        (eq_of_diagCoset_eq ha_pos hb_pos ha_div hb_div heq)
-      rw [if_neg h_ne_1, if_neg h_ne_2]
+  refine eval_mul_diagElem_const_of_single c _ (evalAddHom (diagCoset b)) ?_ f
+  intro D α
+  obtain ⟨a, ha_pos, ha_div, hD_eq⟩ := exists_diagonal_representative D
+  rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos α]
+  change HeckeCosetModule.single ℤ (diagCoset (a * fun _ : Fin 2 ↦ c)) α
+      (diagCoset (b * fun _ : Fin 2 ↦ c)) =
+    HeckeCosetModule.single ℤ (diagCoset a) α (diagCoset b)
+  rw [HeckeCosetModule.single_apply, HeckeCosetModule.single_apply]
+  by_cases hab : a = b
+  · subst hab; rw [if_pos rfl, if_pos rfl]
+  · have h_ne_1 : diagCoset (a * fun _ : Fin 2 ↦ c) ≠ diagCoset (b * fun _ : Fin 2 ↦ c) := by
+      intro heq
+      have h1_eq : a * (fun _ : Fin 2 ↦ c) = b * (fun _ : Fin 2 ↦ c) :=
+        eq_of_diagCoset_eq (fun i ↦ Nat.mul_pos (ha_pos i) hc)
+          (fun i ↦ Nat.mul_pos (hb_pos i) hc) (isDvdChain_mul 2 ha_div (isDvdChain_const 2 c))
+          (isDvdChain_mul 2 hb_div (isDvdChain_const 2 c)) heq
+      exact hab (funext fun i ↦ Nat.eq_of_mul_eq_mul_right hc (congr_fun h1_eq i))
+    have h_ne_2 : diagCoset a ≠ diagCoset b := fun heq ↦ hab
+      (eq_of_diagCoset_eq ha_pos hb_pos ha_div hb_div heq)
+    rw [if_neg h_ne_1, if_neg h_ne_2]
 
 /-- If `c ∤ d i` for some `i`, the evaluation of `f * diagElem(c,c)` at `diagCoset d` is zero. -/
 private lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 2)
@@ -374,89 +375,69 @@ private lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : In
     (hd_pos : ∀ i, 0 < d i) (hd_div : IsDvdChain d) (i₀ : Fin 2) (hi₀ : ¬ c ∣ d i₀) :
     (f * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0 := by
   classical
-  induction f using HeckeCosetModule.induction_linear with
-  | h0 =>
-    -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
-    -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
-    -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
-    change ((0 : IntegralHeckeRing 2) * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0
-    rw [zero_mul]; rfl
-  | hadd g h ihg ihh =>
-    set g' : IntegralHeckeRing 2 := g
-    set h' : IntegralHeckeRing 2 := h
-    -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
-    -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
-    -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
-    change ((g' + h') * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0
-    rw [add_mul,
-      -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
-      -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
-      -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
-      show (g' * diagElem (fun _ : Fin 2 ↦ c) + h' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) =
-            (g' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) +
-            (h' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) from Finsupp.add_apply _ _ _,
-      ihg, ihh, add_zero]
-  | hsingle D α =>
-    obtain ⟨a, ha_pos, ha_div, hD_eq⟩ := exists_diagonal_representative D
-    rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos α]
-    rw [HeckeCosetModule.single_apply]
-    have h_ne : diagCoset (a * fun _ : Fin 2 ↦ c) ≠ diagCoset d := by
-      intro heq
-      have h_eq : a * (fun _ : Fin 2 ↦ c) = d :=
-        eq_of_diagCoset_eq (fun i ↦ Nat.mul_pos (ha_pos i) hc) hd_pos
-          (isDvdChain_mul 2 ha_div (isDvdChain_const 2 c)) hd_div heq
-      apply hi₀
-      have := congr_fun h_eq i₀
-      simp only [Pi.mul_apply] at this
-      exact ⟨a i₀, by linarith [this.symm]⟩
-    rw [if_neg h_ne]
+  refine eval_mul_diagElem_const_of_single c _ 0 ?_ f
+  intro D α
+  obtain ⟨a, ha_pos, ha_div, hD_eq⟩ := exists_diagonal_representative D
+  rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos α, HeckeCosetModule.single_apply]
+  have h_ne : diagCoset (a * fun _ : Fin 2 ↦ c) ≠ diagCoset d := by
+    intro heq
+    have h_eq : a * (fun _ : Fin 2 ↦ c) = d :=
+      eq_of_diagCoset_eq (fun i ↦ Nat.mul_pos (ha_pos i) hc) hd_pos
+        (isDvdChain_mul 2 ha_div (isDvdChain_const 2 c)) hd_div heq
+    refine hi₀ ⟨a i₀, ?_⟩
+    have h := congr_fun h_eq i₀
+    simp only [Pi.mul_apply] at h
+    linarith [h.symm]
+  rw [if_neg h_ne]
+  rfl
 
 /-- For `i ≥ 1`, evaluation of `f * heckeTScalar(p)^i` at `diagCoset ![1, k]` is zero
 (since `p^i ∤ 1`). -/
-private lemma T_mul_T_pp_pow_eval_at_one_zero (p : ℕ) (hp : p.Prime) (i k : ℕ) (hi : 1 ≤ i)
+private lemma T_mul_T_pp_pow_eval_at_one_zero (p : ℕ) (hp : 1 < p) (i k : ℕ) (hi : 1 ≤ i)
     (hk : 0 < k) (f : IntegralHeckeRing 2) :
     (f * heckeTScalar p ^ i) (diagCoset (![1, k] : Fin 2 → ℕ)) = 0 := by
-  rw [HeckeRing.GL2.heckeTScalar_pow p hp.pos i]
-  apply T_mul_T_scalar_eval_zero_of_not_dvd (p^i) (pow_pos hp.pos i) f
+  rw [HeckeRing.GL2.heckeTScalar_pow p (Nat.zero_lt_of_lt hp) i]
+  apply T_mul_T_scalar_eval_zero_of_not_dvd (p^i) (pow_pos (Nat.zero_lt_of_lt hp) i) f
     (![1, k] : Fin 2 → ℕ) (fun idx ↦ by fin_cases idx <;> simp [hk])
     (divChain_two_of_dvd (one_dvd k)) 0
   simp only [Matrix.cons_val_zero]
   intro hdvd
   have hle : p ^ i ≤ 1 := Nat.le_of_dvd Nat.one_pos hdvd
   have hge : p ≤ p ^ i := Nat.le_self_pow (by omega) p
-  have hp2 : 2 ≤ p := hp.two_le
+  have hp2 : 2 ≤ p := hp
   omega
 
 /-- `diagElem ![p^i, p^j] = heckeTDiag(1, p^{j-i}) * heckeTScalar(p)^i` for `i ≤ j` with `p`
 prime. -/
-private lemma T_elem_ppow_factor (p : ℕ) (hp : p.Prime) (i j : ℕ) (hij : i ≤ j) :
+private lemma T_elem_ppow_factor (p : ℕ) (hp : 0 < p) (i j : ℕ) (hij : i ≤ j) :
     diagElem (![p^i, p^j] : Fin 2 → ℕ) = heckeTDiag 1 (p ^ (j - i)) * heckeTScalar p ^ i := by
-  rw [heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp.pos _) (one_dvd _),
-      HeckeRing.GL2.heckeTScalar_pow p hp.pos i]
+  rw [heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp _) (one_dvd _),
+      HeckeRing.GL2.heckeTScalar_pow p hp i]
   have h_ji_pos : ∀ idx : Fin 2, 0 < (![1, p^(j-i)] : Fin 2 → ℕ) idx := by
     intro idx; fin_cases idx
     · simp
-    · simp [pow_pos hp.pos]
-  rw [diagElem_mul_const 2 (![1, p^(j-i)] : Fin 2 → ℕ) h_ji_pos (p^i) (pow_pos hp.pos _)]
+    · simp [pow_pos hp]
+  rw [diagElem_mul_const 2 (![1, p^(j-i)] : Fin 2 → ℕ) h_ji_pos (p^i) (pow_pos hp _)]
   apply congrArg diagElem
   funext idx; fin_cases idx
   · simp [Pi.mul_apply]
   · simp [Pi.mul_apply, ← pow_add]; congr 1; omega
 
 /-- The element `T(p, pⁿ)` does not contribute at `T(1, p^{n+1})` (for `n ≥ 1`). -/
-private lemma T_elem_p_ppow_eval_at_one_ppow_succ_zero (p : ℕ) (hp : p.Prime) {n : ℕ}
+private lemma T_elem_p_ppow_eval_at_one_ppow_succ_zero (p : ℕ) (hp : 1 < p) {n : ℕ}
     (hn : n ≠ 0) :
     (diagElem (![p, p ^ n] : Fin 2 → ℕ)) (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) = 0 := by
   classical
   rw [diagElem_def, HeckeCosetModule.single_apply]
   refine if_neg (fun heq ↦ ?_)
   have h_eq : (![p, p ^ n] : Fin 2 → ℕ) = (![1, p ^ (n + 1)] : Fin 2 → ℕ) :=
-    eq_of_diagCoset_eq (fun i ↦ by fin_cases i <;> simp [hp.pos, pow_pos hp.pos])
-      (fun i ↦ by fin_cases i <;> simp [pow_pos hp.pos])
+    eq_of_diagCoset_eq
+      (fun i ↦ by fin_cases i <;> simp [Nat.zero_lt_of_lt hp, pow_pos (Nat.zero_lt_of_lt hp)])
+      (fun i ↦ by fin_cases i <;> simp [pow_pos (Nat.zero_lt_of_lt hp)])
       (divChain_two_of_dvd (dvd_pow_self p hn)) (divChain_two_of_dvd (one_dvd _)) heq
   have := congr_fun h_eq 0
   simp only [Matrix.cons_val_zero] at this
-  have := hp.one_lt; omega
+  have := hp; omega
 
 /-- `(T(1,p) · T(1, pⁿ))` evaluated at the leading coset `T(1, p^{n+1})` equals `1`. -/
 private lemma T_ad_one_p_mul_T_ad_one_ppow_eval_leading (p : ℕ) (hp : p.Prime) (n : ℕ) :
@@ -493,7 +474,7 @@ private lemma T_ad_one_p_mul_T_ad_one_ppow_eval_leading (p : ℕ) (hp : p.Prime)
         (if n = 1 then ((p : ℤ) + 1) else (p : ℤ)) •
           diagElem (![p, p ^ n] : Fin 2 → ℕ) (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) from
         Finsupp.smul_apply _ _ _,
-      T_elem_p_ppow_eval_at_one_ppow_succ_zero p hp hn,
+      T_elem_p_ppow_eval_at_one_ppow_succ_zero p hp.one_lt hn,
       smul_zero, add_zero]
 
 /-- A non-leading support element `D₂` of `(T(1,p))ⁿ` contributes `0` to the product
@@ -506,7 +487,7 @@ private lemma T_ad_one_p_mul_supp_ne_leading_eval_zero (p : ℕ) (hp : p.Prime) 
       (HeckeCoset.rep D₂)) (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) = 0 := by
   have hg_eq : (heckeTDiag 1 p) ^ n = (heckeGen 2 p 0) ^ n * (heckeGen 2 p 1) ^ 0 := by
     simp only [pow_zero, mul_one, heckeGen_zero_eq_heckeTDiag p hp.pos]
-  obtain ⟨a, hDa, ha_pos, ha_div, ha_det⟩ := T_gen_pow_support_qpower ⟨p, hp⟩
+  obtain ⟨a, hDa, ha_pos, ha_div, ha_det⟩ := T_gen_pow_support_qpower p hp.pos
       ![n, 0] D₂ (hg_eq ▸ hD₂_ne_zero)
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, mul_zero, add_zero] at ha_det
   have ha_prod : a 0 * a 1 = p ^ n := Fin.prod_univ_two a ▸ ha_det
@@ -533,8 +514,8 @@ private lemma T_ad_one_p_mul_supp_ne_leading_eval_zero (p : ℕ) (hp : p.Prime) 
   -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
   -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
   change (diagElem (![1, p] : Fin 2 → ℕ) * diagElem (![p^i, p^(n-i)] : Fin 2 → ℕ)) _ = 0
-  rw [T_elem_ppow_factor p hp i (n - i) hi_le_sub, ← mul_assoc]
-  exact T_mul_T_pp_pow_eval_at_one_zero p hp i (p ^ (n + 1)) hi_ge (pow_pos hp.pos _) _
+  rw [T_elem_ppow_factor p hp.pos i (n - i) hi_le_sub, ← mul_assoc]
+  exact T_mul_T_pp_pow_eval_at_one_zero p hp.one_lt i (p ^ (n + 1)) hi_ge (pow_pos hp.pos _) _
 
 /-- Leading coefficient of `T(1,p)^a`: `(heckeTDiag 1 p)^a` evaluated at the leading coset
 `diagCoset ![1, p^a]` equals 1. -/
@@ -626,7 +607,7 @@ private lemma T_ad_one_p_pow_eval_at_one_ppow_of_ne (p : ℕ) (hp : p.Prime) {a�
   by_contra h_ne_zero
   have hg_eq : (heckeTDiag 1 p) ^ a₁ = (heckeGen 2 p 0) ^ a₁ * (heckeGen 2 p 1) ^ 0 := by
     simp only [pow_zero, mul_one, heckeGen_zero_eq_heckeTDiag p hp.pos]
-  obtain ⟨a, hDa, ha_pos, ha_div, ha_det⟩ := T_gen_pow_support_qpower ⟨p, hp⟩
+  obtain ⟨a, hDa, ha_pos, ha_div, ha_det⟩ := T_gen_pow_support_qpower p hp.pos
       ![a₁, 0] (diagCoset (![1, p ^ a₂] : Fin 2 → ℕ)) (hg_eq ▸ h_ne_zero)
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, mul_zero, add_zero] at ha_det
   have h_a_eq : a = (![1, p ^ a₂] : Fin 2 → ℕ) :=
@@ -639,7 +620,7 @@ private lemma T_ad_one_p_pow_eval_at_one_ppow_of_ne (p : ℕ) (hp : p.Prime) {a�
 
 /-- `(heckeTDiag 1 p)^a₁` times the scalar `T(p^b, p^b)`, evaluated at the shifted leading coset
 `T(p^b, p^{a₂+b})`, equals `(heckeTDiag 1 p)^a₁` evaluated at `T(1, p^{a₂})`. -/
-private lemma T_ad_one_p_pow_mul_scalar_eval_at_one_ppow (p : ℕ) (hp : p.Prime) (a₁ a₂ b : ℕ) :
+private lemma T_ad_one_p_pow_mul_scalar_eval_at_one_ppow (p : ℕ) (hp : 0 < p) (a₁ a₂ b : ℕ) :
     ((heckeTDiag 1 p) ^ a₁ * diagElem (fun _ : Fin 2 ↦ p ^ b))
         (diagCoset (![p ^ b, p ^ (a₂ + b)] : Fin 2 → ℕ)) =
     ((heckeTDiag 1 p) ^ a₁) (diagCoset (![1, p ^ a₂] : Fin 2 → ℕ)) := by
@@ -650,8 +631,8 @@ private lemma T_ad_one_p_pow_mul_scalar_eval_at_one_ppow (p : ℕ) (hp : p.Prime
         funext i; fin_cases i
         · simp [Pi.mul_apply]
         · simp [Pi.mul_apply, pow_add]]
-  exact T_mul_T_scalar_eval_shifted (p ^ b) (pow_pos hp.pos _) _ _
-    (fun i ↦ by fin_cases i <;> simp [pow_pos hp.pos]) (divChain_two_of_dvd (one_dvd _))
+  exact T_mul_T_scalar_eval_shifted (p ^ b) (pow_pos hp _) _ _
+    (fun i ↦ by fin_cases i <;> simp [pow_pos hp]) (divChain_two_of_dvd (one_dvd _))
 
 /-- Kronecker delta lemma: evaluating the monomial `heckeGen(p,0)^a₁ * heckeGen(p,1)^b₁` at the
 diagonal coset `T(p^b₂, p^(a₂+b₂))` gives 1 iff `(a₁, b₁) = (a₂, b₂)`, and 0 otherwise,
@@ -670,12 +651,12 @@ private lemma monomial_eval_kronecker (p : ℕ) (hp : p.Prime)
     HeckeRing.GL2.heckeTScalar_pow p hp.pos b₁]
   by_cases hmatch : a₁ = a₂ ∧ b₁ = b₂
   · obtain ⟨ha, hb⟩ := hmatch
-    rw [if_pos ⟨ha, hb⟩, ha, ← hb, T_ad_one_p_pow_mul_scalar_eval_at_one_ppow p hp,
+    rw [if_pos ⟨ha, hb⟩, ha, ← hb, T_ad_one_p_pow_mul_scalar_eval_at_one_ppow p hp.pos,
       T_ad_one_p_pow_eval_leading p hp a₂]
   · rw [if_neg hmatch]
     by_cases hbeq : b₁ = b₂
     · subst hbeq
-      rw [T_ad_one_p_pow_mul_scalar_eval_at_one_ppow p hp,
+      rw [T_ad_one_p_pow_mul_scalar_eval_at_one_ppow p hp.pos,
         T_ad_one_p_pow_eval_at_one_ppow_of_ne p hp (fun heq ↦ hmatch ⟨heq, rfl⟩)]
     · have h_not_dvd : ¬ p ^ b₁ ∣ (![p ^ b₂, p ^ (a₂ + b₂)] : Fin 2 → ℕ) 0 := by
         simp only [Matrix.cons_val_zero, Nat.pow_dvd_pow_iff_le_right hp.one_lt]
