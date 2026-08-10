@@ -1011,7 +1011,9 @@ private lemma density_tail_lower_bound_eventually (f : ℝ → ℝ)
   calc
     (T - x) ^ k * h T ≤ (2 * T) ^ k * h T := by gcongr
     _ = (4 : ℝ) ^ k * ((T / 2) ^ k * h T) := by
-      rw [show (4 : ℝ) = 2 * 2 by norm_num, mul_pow, mul_pow, div_pow]
+      -- doubling the bound and halving the argument each cost a factor `2 ^ k`
+      have h4 : (4 : ℝ) ^ k = 2 ^ k * 2 ^ k := by rw [← mul_pow]; norm_num
+      rw [mul_pow, div_pow, h4]
       field_simp
     _ ≤ (4 : ℝ) ^ k * (↑((k - 1).factorial) * ∫ t in Ioi (T / 2), chafaiDensity f k t) := by gcongr
     _ = ((4 : ℝ) ^ k * ↑((k - 1).factorial)) *
