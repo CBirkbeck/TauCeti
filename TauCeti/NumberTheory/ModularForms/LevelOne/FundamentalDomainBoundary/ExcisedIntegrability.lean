@@ -23,8 +23,9 @@ globally bounded (`exists_norm_deriv_fdBoundary_le`), and off the excision the c
 the open set where the form is analytic and nonvanishing, so its logarithmic derivative is
 analytic there (`analyticAt_logDeriv_of_analyticAt`) and in particular continuous.
 
-The hypotheses are exactly those of `hasCauchyPV_fdBoundary_logDeriv`, so one block of
-assumptions serves both the excised assembly and the principal value it converges to.
+This shares `hH`, `hUdom` and `hoff` with `hasCauchyPV_fdBoundary_logDeriv` — deliberately, so
+that one analyticity block serves both the excised assembly and the principal value it converges
+to — while each theorem also carries hypotheses the other does not.
 
 ## Main results
 
