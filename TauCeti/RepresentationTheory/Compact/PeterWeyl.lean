@@ -220,11 +220,13 @@ If `W` is invariant under `π` and the restriction of `π` to `W` is irreducible
 and any `w` the matrix coefficient of `π` at `x`, `w` lies in the span of the skeleton's
 coefficients. -/
 private theorem matrixCoeff_mem_of_mem_of_isIrreducible (h : IsIrrepSkeleton models) {V : Type*}
-    [NormedAddCommGroup V] [InnerProductSpace 𝕜 V] [FiniteDimensional 𝕜 V]
-    {π : ContRepresentation 𝕜 G V} (hπ : Continuous π) (hu : ContRepresentation.IsUnitary π)
-    {W : Submodule 𝕜 V} (hU : ∀ g, ∀ y ∈ W, π g y ∈ W)
+    [NormedAddCommGroup V] [InnerProductSpace 𝕜 V]
+    {π : ContRepresentation 𝕜 G V} (hπ : Continuous π)
+    {W : Submodule 𝕜 V} [FiniteDimensional 𝕜 W] (hU : ∀ g, ∀ y ∈ W, π g y ∈ W)
+    (hu : ContRepresentation.IsUnitary (ContRepresentation.subrepresentation π W hU))
+    {x : V} (hx : x ∈ W)
     (hirr : (ContRepresentation.subrepresentation π W hU).toRepresentation.IsIrreducible)
-    {x : V} (hx : x ∈ W) (w : V) :
+    (w : V) :
     ContRepresentation.matrixCoeff π hπ x w ∈ modelSubmodule models := by
   -- Only the component of `w` in the subspace is seen.
   have hproj : ContRepresentation.matrixCoeff π hπ x w
@@ -237,7 +239,7 @@ private theorem matrixCoeff_mem_of_mem_of_isIrreducible (h : IsIrrepSkeleton mod
           Submodule.inner_starProjection_left_eq_right _ _ _
   have hblock := h.matrixCoeff_mem_of_isIrreducible
     (π := ContRepresentation.subrepresentation π W hU)
-    (ContRepresentation.continuous_subrepresentation hπ) (hu.subrepresentation hU) hirr
+    (ContRepresentation.continuous_subrepresentation hπ) hu hirr
     ⟨x, hx⟩ ⟨W.starProjection w, W.starProjection_apply_mem w⟩
   have heq := ContRepresentation.matrixCoeff_subrepresentation (π := π) (hπ := hπ) hU
     (⟨x, hx⟩ : W) ⟨W.starProjection w, W.starProjection_apply_mem w⟩
@@ -274,7 +276,7 @@ theorem matrixCoeff_mem (h : IsIrrepSkeleton models) {V : Type*} [NormedAddCommG
         hU).toRepresentation.IsIrreducible := by
       rw [ContRepresentation.toRepresentation_subrepresentation]
       exact hirr i
-    exact h.matrixCoeff_mem_of_mem_of_isIrreducible hπ hu hU hirr' hx w
+    exact h.matrixCoeff_mem_of_mem_of_isIrreducible hπ hU (hu.subrepresentation hU) hx hirr' w
   have htop : (⊤ : Submodule 𝕜 V) ≤ S := hint.submodule_iSup_eq_top ▸ iSup_le hle
   exact htop Submodule.mem_top w
 
