@@ -28,8 +28,12 @@ it to summability, through Mathlib's
 ## Main definitions
 
 * `TauCeti.Huber.weightedEvalTerm`: the term `φ(coeff ν f) · bν` of the evaluation.
+* `TauCeti.Huber.weightedVar` and `TauCeti.Huber.IsWeightedVarPowerBounded`: Wedhorn's own
+  coordinatewise hypothesis — each weighted variable `φ(Tᵢ) · bᵢ` is power-bounded as a set.
 * `TauCeti.Huber.IsWeightBounded`: the weighted monomials `φ(Tν) · bν` form a bounded set. This is
-  the hypothesis on `b`. At the one-weight family it is *equivalent* to each `bᵢ` being
+  the hypothesis the summability proof uses, and
+  `TauCeti.Huber.isWeightBounded_of_isWeightedVarPowerBounded` derives it from the coordinatewise
+  one for an arbitrary `T`. At the one-weight family it is *equivalent* to each `bᵢ` being
   power-bounded, which is Wedhorn's condition —
   `TauCeti.Huber.isWeightBounded_one_weight_iff_forall_isPowerBounded`.
 
@@ -39,8 +43,10 @@ it to summability, through Mathlib's
   cofinite filter. This is the analytic input, and it needs no completeness.
 * `TauCeti.Huber.summable_weightedEvalTerm`: completeness upgrades that convergence to
   summability.
-* `TauCeti.Huber.summable_weightedEvalTerm_of_forall_isPowerBounded`: the same at the one-weight
-  family, stated with Wedhorn's own hypothesis that each variable is power-bounded.
+* `TauCeti.Huber.summable_weightedEvalTerm_of_isWeightedVarPowerBounded`: the same stated with
+  Wedhorn's coordinatewise hypothesis, for an arbitrary weight family.
+* `TauCeti.Huber.summable_weightedEvalTerm_of_forall_isPowerBounded`: its one-weight reading, where
+  the hypothesis is that each variable is power-bounded.
 
 The evaluation map itself, its continuity, and the uniqueness that makes Proposition 5.50 a
 universal property are not proved here.
@@ -128,6 +134,67 @@ theorem isWeightBounded_one_weight_iff_forall_isPowerBounded (φ : A →+* B)
     exact Set.finsetProd_mem_finsetProd Finset.univ _ _ fun i _ ↦ ⟨ν i, rfl⟩
 
 
+/-- The **weighted variables** of Proposition 5.50: the sets `φ(Tᵢ) · bᵢ`. The hypothesis 5.50
+places on the tuple is about these, not about the `bᵢ` alone. -/
+def weightedVar (φ : A →+* B) (T : Fin k → Set A) (b : Fin k → B) (i : Fin k) : Set B :=
+  φ '' T i * {b i}
+
+omit [TopologicalSpace A] [TopologicalSpace B] in
+/-- Unfolding lemma for `TauCeti.Huber.weightedVar`. -/
+@[simp]
+theorem weightedVar_def (φ : A →+* B) (T : Fin k → Set A) (b : Fin k → B) (i : Fin k) :
+    weightedVar φ T b i = φ '' T i * {b i} := (rfl)
+
+/-- **Wedhorn's coordinatewise hypothesis**: each weighted variable is power-bounded *as a set*,
+its powers all lying in one bounded subset of `B`.
+
+This is the condition Proposition 5.50 actually states, one index at a time, and
+`TauCeti.Huber.isWeightBounded_of_isWeightedVarPowerBounded` derives the uniform bound
+`TauCeti.Huber.IsWeightBounded` from it. At the one-weight family `weightedVar` is `{bᵢ}`, so it
+reduces to each `bᵢ` being power-bounded. -/
+def IsWeightedVarPowerBounded (φ : A →+* B) (T : Fin k → Set A) (b : Fin k → B) : Prop :=
+  ∀ i, IsBounded (⋃ n : ℕ, weightedVar φ T b i ^ n)
+
+omit [TopologicalSpace A] in
+/-- Unfolding lemma for `TauCeti.Huber.IsWeightedVarPowerBounded`. The body is not exported, so
+this is how a consumer supplies one or takes one apart. -/
+theorem isWeightedVarPowerBounded_iff (φ : A →+* B) (T : Fin k → Set A) (b : Fin k → B) :
+    IsWeightedVarPowerBounded φ T b ↔
+      ∀ i, IsBounded (⋃ n : ℕ, weightedVar φ T b i ^ n) := (Iff.rfl)
+
+omit [TopologicalSpace A] [TopologicalSpace B] in
+/-- The weighted monomials at `ν` are the pointwise product of the `νᵢ`-th powers of the weighted
+variables. Private: it is the bookkeeping behind the bridge below and says nothing on its own. -/
+private theorem image_weightPow_mul_monomial (φ : A →+* B) (T : Fin k → Set A) (b : Fin k → B)
+    (ν : Fin k →₀ ℕ) :
+    (fun t ↦ φ t * ∏ i, b i ^ ν i) '' weightPow T ν = ∏ i, weightedVar φ T b i ^ ν i := by
+  have h1 : (fun t ↦ φ t * ∏ i, b i ^ ν i) '' weightPow T ν
+      = (φ '' weightPow T ν) * {∏ i, b i ^ ν i} := by
+    rw [Set.mul_singleton, Set.image_image]
+  have h2 : φ '' weightPow T ν = ∏ i, (φ '' T i) ^ ν i := by
+    rw [weightPow_def, Set.image_finsetProd]
+    exact Finset.prod_congr rfl fun i _ ↦ Set.image_pow ..
+  have h3 : ({∏ i, b i ^ ν i} : Set B) = ∏ i, ({b i} : Set B) ^ ν i := by
+    rw [← Set.finsetProd_singleton]
+    exact Finset.prod_congr rfl fun i _ ↦ (Set.singleton_pow ..).symm
+  rw [h1, h2, h3, ← Finset.prod_mul_distrib]
+  exact Finset.prod_congr rfl fun i _ ↦ by rw [weightedVar_def, mul_pow]
+
+omit [TopologicalSpace A] in
+/-- **Wedhorn's coordinatewise hypothesis gives the uniform bound.** Each weighted monomial set is
+a finite pointwise product of powers of the weighted variables, so it lies in the product of the
+bounded sets containing those powers — and a finite pointwise product of bounded sets is bounded.
+
+This is what makes `TauCeti.Huber.IsWeightBounded` the right hypothesis for the summability
+theorem rather than a stronger one invented for it: the two are reached from the same place. -/
+theorem isWeightBounded_of_isWeightedVarPowerBounded {φ : A →+* B} {T : Fin k → Set A}
+    {b : Fin k → B} (h : IsWeightedVarPowerBounded φ T b) : IsWeightBounded φ T b := by
+  rw [isWeightBounded_iff]
+  refine (isBounded_finset_prod Finset.univ
+    (fun i _ ↦ (isWeightedVarPowerBounded_iff φ T b).mp h i)).subset (Set.iUnion_subset fun ν ↦ ?_)
+  rw [image_weightPow_mul_monomial]
+  exact Set.finsetProd_subset_finsetProd _ _ _ fun i _ ↦ Set.subset_iUnion _ _
+
 variable [NonarchimedeanAddGroup A] [NonarchimedeanAddGroup B]
 
 /-- **The terms of the evaluation tend to zero along the cofinite filter.** This is the whole
@@ -185,6 +252,16 @@ theorem summable_weightedEvalTerm {φ : A →+* B} (hφ : Continuous φ) {T : Fi
     Summable (weightedEvalTerm φ b f) :=
   NonarchimedeanAddGroup.summable_of_tendsto_cofinite_zero
     (tendsto_weightedEvalTerm_cofinite_zero hφ hb hf)
+
+/-- **Summability under Wedhorn's coordinatewise hypothesis**, for an arbitrary weight family:
+each weighted variable power-bounded as a set is enough. This is the theorem above read through
+`TauCeti.Huber.isWeightBounded_of_isWeightedVarPowerBounded`, and it is the form Proposition 5.50
+states. -/
+theorem summable_weightedEvalTerm_of_isWeightedVarPowerBounded {φ : A →+* B} (hφ : Continuous φ)
+    {T : Fin k → Set A} {b : Fin k → B} (hb : IsWeightedVarPowerBounded φ T b)
+    {f : MvPowerSeries (Fin k) A} (hf : IsWeightedRestricted T f) :
+    Summable (weightedEvalTerm φ b f) :=
+  summable_weightedEvalTerm hφ (isWeightBounded_of_isWeightedVarPowerBounded hb) hf
 
 /-- **Summability under Wedhorn's own hypothesis.** At the one-weight family the condition on the
 tuple is that each variable be power-bounded, which is how Proposition 5.50 states it; this is the
