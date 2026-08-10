@@ -65,6 +65,7 @@ def HasZeroSequenceOfUnits : Prop :=
   ∃ u : ℕ → Aˣ, Tendsto (fun n ↦ ((u n : A))) atTop (nhds 0)
 
 /-- Unfolding lemma for `TauCeti.Huber.HasZeroSequenceOfUnits`. -/
+@[simp]
 theorem hasZeroSequenceOfUnits_iff :
     HasZeroSequenceOfUnits A ↔ ∃ u : ℕ → Aˣ, Tendsto (fun n ↦ ((u n : A))) atTop (nhds 0) :=
   (Iff.rfl)
