@@ -24,9 +24,17 @@ integrability criterion, for instance — need not import winding numbers.
 
 * `TauCeti.ModularForm.fdBoundary_mem_coe_truncatedFundamentalDomain`: the contour lies in the
   closed truncated fundamental domain.
-* `TauCeti.ModularForm.sqrt_three_div_two_le_one`: the corner height lies below the apex.
+* `TauCeti.ModularForm.sqrt_three_div_two_lt_one`: the corner height lies below the apex.
 * `TauCeti.ModularForm.sqrt_three_div_two_le_im_fdBoundary`, `…im_fdBoundary_le`,
   `…abs_re_fdBoundary_le_half`, `…one_le_norm_fdBoundary`: the four coordinate estimates.
+
+## References
+
+The contour geometry follows the fundamental-domain boundary development of AINTLIB's
+`LeanModularForms` (`ForMathlib/FDBoundary.lean`, `FDBoundaryH.lean`, `FDBoundaryPath.lean`),
+ported onto the current Mathlib pin; these declarations were first written in Tau Ceti's
+`Winding/Basic.lean` and are collected here so that consumers needing only the containment do
+not import winding theory.
 -/
 
 public section
@@ -42,9 +50,8 @@ namespace ModularForm
 variable {H t : ℝ}
 
 
-/-- The corner height `√3/2` lies below `1`, the height of the arc's apex. -/
-lemma sqrt_three_div_two_le_one : Real.sqrt 3 / 2 ≤ 1 := by
-  rw [div_le_one (by norm_num)]
+/-- The corner height `√3/2` lies strictly below `1`, the height of the arc's apex. -/
+lemma sqrt_three_div_two_lt_one : Real.sqrt 3 / 2 < 1 := by
   nlinarith [Real.sq_sqrt (by norm_num : (3 : ℝ) ≥ 0), Real.sqrt_nonneg 3]
 
 -- `simpNF` rejects `simp` annotations on the affine coordinate rewrites below: the
@@ -112,7 +119,7 @@ lemma abs_re_fdBoundary_le_half (ht : t ≤ 5) : |(fdBoundary H t).re| ≤ 1 / 2
 lemma im_fdBoundary_le (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
     (fdBoundary H t).im ≤ H := by
   obtain ⟨ht0, ht5⟩ := ht
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_lt_one.le
   rcases le_or_gt t 1 with h1 | h1
   · rw [im_fdBoundary_of_le_one h1]
     nlinarith [mul_nonneg ht0 (by linarith : (0 : ℝ) ≤ H - Real.sqrt 3 / 2)]
@@ -131,7 +138,7 @@ lemma one_le_norm_fdBoundary (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
     1 ≤ ‖fdBoundary H t‖ := by
   obtain ⟨ht0, ht5⟩ := ht
   have hsq : Real.sqrt 3 ^ 2 = 3 := Real.sq_sqrt (by norm_num)
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_lt_one.le
   have him := sqrt_three_div_two_le_im_fdBoundary (h32.trans hH) ⟨ht0, ht5⟩
   have hnn := norm_nonneg (fdBoundary H t)
   rcases le_or_gt t 1 with h1 | h1
@@ -154,7 +161,7 @@ lemma one_le_norm_fdBoundary (hH : 1 ≤ H) (ht : t ∈ Icc (0 : ℝ) 5) :
 lemma fdBoundary_mem_coe_truncatedFundamentalDomain (hH : 1 ≤ H) {t : ℝ}
     (ht : t ∈ Icc (0 : ℝ) 5) :
     fdBoundary H t ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H := by
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_lt_one.le
   rw [ModularGroup.coe_truncatedFundamentalDomain, Set.mem_ofPred_eq]
   refine ⟨?_, im_fdBoundary_le hH ht, abs_re_fdBoundary_le_half ht.2,
     one_le_norm_fdBoundary hH ht⟩

@@ -71,8 +71,7 @@ theorem fdBoundary_mem_verticalSingularSet_of_mem_Ioo_zero_one [ModularFormClass
   have ht05 : t ∈ Icc (0 : ℝ) 5 := ⟨ht.1.le, by linarith [ht.2]⟩
   obtain ⟨q, hq, hqe⟩ := fdBoundary_mem_coe_truncatedFundamentalDomain hH ht05
   have hre : (fdBoundary H t).re = 1 / 2 := re_fdBoundary_segment1 H ⟨ht.1.le, ht.2.le⟩
-  have hs32 : Real.sqrt 3 / 2 < 1 := by
-    nlinarith [Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 3), Real.sqrt_nonneg 3]
+  have hs32 : Real.sqrt 3 / 2 < 1 := sqrt_three_div_two_lt_one
   have him_gt : Real.sqrt 3 / 2 < (fdBoundary H t).im := by
     rw [im_fdBoundary_of_le_one ht.2.le]
     nlinarith [ht.1, ht.2]

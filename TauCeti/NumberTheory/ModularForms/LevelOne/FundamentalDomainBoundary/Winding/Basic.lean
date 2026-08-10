@@ -163,7 +163,7 @@ theorem windingNumber_fdBoundary_eq_zero_of_norm_lt_one (hH : 1 ≤ H) {w : ℂ}
       (convex_ball 0 1).isPreconnected (convex_halfSpace_im_lt _).isPreconnected
     rw [Set.mem_ofPred_eq, Complex.zero_im]
     positivity
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_lt_one.le
   refine windingNumber_fdBoundary_eq_zero_of_mem_preconnected hconn ?_
     (fun R ↦ ⟨((-(max R 0 + 1) : ℝ) : ℂ) * Complex.I, Or.inr ?_, ?_⟩)
     (Or.inl (by rwa [Metric.mem_ball, dist_zero_right]))
@@ -184,7 +184,7 @@ winding number vanishes. -/
 theorem isNullHomologous_fdBoundary (hH : 1 ≤ H) :
     IsNullHomologous (fdBoundary H) 0 5
       (UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H) := by
-  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_le_one
+  have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_lt_one.le
   rw [isNullHomologous_iff]
   intro z hz
   rw [ModularGroup.coe_truncatedFundamentalDomain, Set.mem_ofPred_eq, not_and_or, not_and_or,
