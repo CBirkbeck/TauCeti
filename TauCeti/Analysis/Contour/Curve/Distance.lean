@@ -24,6 +24,10 @@ a uniform positive lower bound `ρ` on `‖γ t - w‖` over `[a, b]`.
   whole ball of points around the avoided point.
 * `TauCeti.Contour.exists_mem_off_curve` — an open set containing a curve contains a point off the
   curve: the compact image cannot exhaust a nonempty open subset of the noncompact connected `ℂ`.
+* `TauCeti.Contour.isClosed_setOfPred_mem_uIcc_norm_sub_le` — the parameters at which a curve stays
+  within `ε` of a point form a closed set. Where the lemmas above give lower bounds on the distance
+  to an avoided point, this one describes the near-point parameter set itself, which is what the
+  excision arguments of the principal-value theory need.
 
 These small support lemmas are shared by the argument-lift partition
 (`exists_uniform_modulus_avoiding`, feeding the integer-valuedness of the winding number), by the
@@ -91,8 +95,8 @@ theorem exists_mem_off_curve {γ : ℝ → ℂ} {Ω : Set ℂ} {a b : ℝ} (hΩ 
 
 /-- **The set where a curve stays near a point is closed.** For a curve continuous on `[[a, b]]`,
 the set of parameters at which it stays within `ε` of a point `s` is closed. -/
-theorem isClosed_setOfPred_mem_uIcc_norm_sub_le {γ : ℝ → ℂ} {a b : ℝ}
-    (hγ_cont : ContinuousOn γ (uIcc a b)) (s : ℂ) (ε : ℝ) :
+theorem isClosed_setOfPred_mem_uIcc_norm_sub_le {E : Type*} [SeminormedAddCommGroup E]
+    {γ : ℝ → E} {a b : ℝ} (hγ_cont : ContinuousOn γ (uIcc a b)) (s : E) (ε : ℝ) :
     IsClosed {t ∈ uIcc a b | ‖γ t - s‖ ≤ ε} := by
   have huIcc : IsClosed (uIcc a b) := by rw [← Icc_min_max]; exact isClosed_Icc
   exact huIcc.isClosed_le ((hγ_cont.sub continuousOn_const).norm) continuousOn_const
