@@ -7,7 +7,6 @@ module
 
 public import Mathlib.Algebra.Order.Hom.MonoidWithZero
 public import Mathlib.RingTheory.Valuation.Basic
-public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 
 /-!
 # Transporting the value group along an equivalence of valuations

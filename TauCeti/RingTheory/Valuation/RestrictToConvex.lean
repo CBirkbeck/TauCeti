@@ -292,8 +292,9 @@ theorem one_le_restrictToConvex (v : Valuation R Γ₀) (H : ConvexSubgroup Γ�
 which is exactly the characteristic values of `v`. -/
 theorem mk0_mem_of_inv_le_of_le (v : Valuation R Γ₀) {H : ConvexSubgroup Γ₀ˣ}
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
-    {b c : R} (hb : v b ≠ 0) (hc : v c ≠ 0) (h1 : 1 ≤ v c)
+    {b c : R} (hb : v b ≠ 0) (h1 : 1 ≤ v c)
     (hlo : (v c)⁻¹ ≤ v b) (hhi : v b ≤ v c) : Units.mk0 (v b) hb ∈ H := by
+  have hc : v c ≠ 0 := (zero_lt_one.trans_le h1).ne'
   have hmc : Units.mk0 (v c) hc ∈ H := hH c hc h1
   refine H.convex (inv_mem hmc) hmc ?_ ?_
   · simpa [← Units.val_le_val] using hlo
