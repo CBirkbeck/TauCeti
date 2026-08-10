@@ -127,17 +127,15 @@ finitely generated is itself finitely generated.** The `AddSubgroup` analogue of
 `Submodule.fg_of_fg_map_of_fg_inf_ker`. -/]
 theorem Subgroup.fg_of_fg_map_of_fg_inf_ker {G H : Type*} [Group G] [Group H] (φ : G →* H)
     {K : Subgroup G} (h₁ : (K.map φ).FG) (h₂ : (K ⊓ φ.ker).FG) : K.FG := by
-  set ψ : K →* H := φ.comp K.subtype with hψ
-  have hrange : ψ.range = K.map φ := by rw [hψ, MonoidHom.range_comp, Subgroup.range_subtype]
-  have hker : ψ.ker = φ.ker.subgroupOf K := Subgroup.map_subtype_inj.mp rfl
   have h2' : Group.FG (φ.ker ⊓ K : Subgroup G) := by
     rw [inf_comm]; exact (Group.fg_iff_subgroup_fg _).mpr h₂
-  have : Group.FG ψ.ker := by
-    rw [hker, ← Subgroup.inf_subgroupOf_right]
+  have : Group.FG (φ.domRestrict K).ker := by
+    rw [MonoidHom.ker_domRestrict, ← Subgroup.inf_subgroupOf_right]
     exact Group.fg_of_surjective
       (f := (Subgroup.subgroupOfEquivOfLe (inf_le_right : φ.ker ⊓ K ≤ K)).symm.toMonoidHom)
       (Subgroup.subgroupOfEquivOfLe (inf_le_right : φ.ker ⊓ K ≤ K)).symm.surjective
-  have : Group.FG ψ.range := by rw [hrange]; exact (Group.fg_iff_subgroup_fg _).mpr h₁
-  exact (Group.fg_iff_subgroup_fg K).mp (Group.fg_of_fg_ker_of_fg_range ψ)
+  have : Group.FG (φ.domRestrict K).range := by
+    rw [MonoidHom.domRestrict_range]; exact (Group.fg_iff_subgroup_fg _).mpr h₁
+  exact (Group.fg_iff_subgroup_fg K).mp (Group.fg_of_fg_ker_of_fg_range (φ.domRestrict K))
 
 end
