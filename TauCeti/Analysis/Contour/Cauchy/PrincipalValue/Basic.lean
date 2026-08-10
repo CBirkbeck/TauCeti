@@ -186,6 +186,33 @@ theorem ae_logDeriv_sub_eq_truncated {γ : ℝ → ℂ} {z₀ : ℂ} {a b ε : �
   rw [if_pos (hfar s ⟨hmem.1, lt_of_le_of_ne hmem.2 fun h ↦ hs_ne (Set.mem_singleton_iff.mpr h)⟩),
     deriv_sub_const, inv_mul_eq_div]
 
+/-- **Inside the truncation the integrand vanishes.** Where the curve stays within `ε` of the
+centre `z₀`, the `ε`-truncated winding integrand is identically `0`, so it is integrable there
+and integrates to `0`.
+
+This is the excised corner window: the truncation is exactly what removes the corner's
+contribution, and the whole content is that nothing survives it. -/
+theorem intervalIntegrable_and_integral_truncated_eq_zero_of_near {γ : ℝ → ℂ} {z₀ : ℂ}
+    {a b ε : ℝ} (hab : a ≤ b) (hnear : ∀ s ∈ Set.Icc a b, ‖γ s - z₀‖ ≤ ε) :
+    IntervalIntegrable
+        (fun s => if ε < ‖γ s - z₀‖ then (γ s - z₀)⁻¹ * deriv γ s else 0)
+        MeasureTheory.volume a b ∧
+      ∫ s in a..b, (if ε < ‖γ s - z₀‖ then (γ s - z₀)⁻¹ * deriv γ s else 0) = 0 := by
+  have hzero : Set.EqOn (fun s => if ε < ‖γ s - z₀‖ then (γ s - z₀)⁻¹ * deriv γ s else 0)
+      (fun _ => (0 : ℂ)) (Set.uIcc a b) := fun s hs => by
+    rw [Set.uIcc_of_le hab] at hs
+    exact if_neg (not_lt.mpr (hnear s hs))
+  have hint : IntervalIntegrable
+      (fun s => if ε < ‖γ s - z₀‖ then (γ s - z₀)⁻¹ * deriv γ s else 0)
+      MeasureTheory.volume a b :=
+    (intervalIntegrable_const (c := (0 : ℂ))).congr_ae
+      ((MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mpr
+        (Filter.Eventually.of_forall fun s hs => by
+          rw [Set.uIoc_of_le hab] at hs
+          exact (hzero (by rw [Set.uIcc_of_le hab]; exact Set.Ioc_subset_Icc_self hs)).symm))
+  refine ⟨hint, ?_⟩
+  rw [intervalIntegral.integral_congr hzero, intervalIntegral.integral_const, smul_zero]
+
 /-- Constructor for `HasCauchyPVAt` from its two clauses — eventual integrability of the excised
 integrand and convergence of the excised integrals — without unfolding the definition. -/
 theorem HasCauchyPVAt.intro {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ : ℂ} {L : ℂ}
