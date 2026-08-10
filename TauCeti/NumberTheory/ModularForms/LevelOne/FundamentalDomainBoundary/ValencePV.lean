@@ -63,11 +63,11 @@ private theorem eventually_forall_im_add_lt {H : ℝ} {S : Finset ℂ} (hHgt : �
 boundary integral is `2πi·ord_∞` minus `(k/2)` times the excised arc integral. The two
 `ε`-dependent side conditions of the assembly are supplied here from their `ε`-free sources. -/
 private theorem eventually_intervalIntegral_excised_eq [SlashInvariantFormClass F Γ k] (f : F)
-    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {U : Set ℂ} (hH : 1 ≤ H)
+    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
     (hper : Periodic (⇑f ∘ ofComplex) 1)
-    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
-    (hoff : ∀ z ∈ U, z ∉ S → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
     (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
@@ -81,7 +81,7 @@ private theorem eventually_intervalIntegral_excised_eq [SlashInvariantFormClass 
   have hside : ∀ {ε t : ℝ}, 0 < ε → ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) → t ∈ Icc (0 : ℝ) 5 →
       AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0 := by
     intro ε t hε hex ht
-    refine hoff _ (hUdom (fdBoundary_mem_coe_truncatedFundamentalDomain hH ht)) fun hs => hex ?_
+    refine hoffγ t ht fun hs => hex ?_
     exact ⟨_, hs, by rw [sub_self, norm_zero]; exact hε.le⟩
   filter_upwards [eventually_forall_im_add_lt hHgt, self_mem_nhdsWithin] with ε hlt hε
   simpa only [smul_eq_mul, mul_comm] using
@@ -90,12 +90,12 @@ private theorem eventually_intervalIntegral_excised_eq [SlashInvariantFormClass 
         (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).1.differentiableAt)
       (fun t ht hex => (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).2)
       hga hgz
-      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hH hε hUdom hoff
+      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hoffγ
         (by rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)]; exact Icc_subset_Icc le_rfl (by norm_num)))
-      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hH hε hUdom hoff
+      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hoffγ
         (by rw [uIcc_of_le (by norm_num : (1 : ℝ) ≤ 2)]
             exact Icc_subset_Icc (by norm_num) (by norm_num)))
-      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hH hε hUdom hoff
+      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hoffγ
         (by rw [uIcc_of_le (by norm_num : (4 : ℝ) ≤ 5)]
             exact Icc_subset_Icc (by norm_num) le_rfl))
 
@@ -108,11 +108,11 @@ is small, and `hoff` (analytic and nonvanishing off the centres on an open `U` c
 truncated fundamental domain) gives the differentiability and nonvanishing side conditions at
 every `ε`, as well as the integrability. -/
 theorem hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex [SlashInvariantFormClass F Γ k] (f : F)
-    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {U : Set ℂ} (hH : 1 ≤ H)
+    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
     (hper : Periodic (⇑f ∘ ofComplex) 1)
-    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
-    (hoff : ∀ z ∈ U, z ∉ S → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
     (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
@@ -123,10 +123,10 @@ theorem hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex [SlashInvariantFormCl
   refine Contour.hasCauchyPVWith_iff.mpr ⟨?_, ?_⟩
   · filter_upwards [self_mem_nhdsWithin] with ε hε
     simpa only [smul_eq_mul, mul_comm] using
-      intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hH hε hUdom hoff
+      intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hoffγ
         (by rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
   · refine Tendsto.congr' (Filter.EventuallyEq.symm
-      (eventually_intervalIntegral_excised_eq f hS hH hnorm hinv hHgt hper hUdom hoff hga hgz)) ?_
+      (eventually_intervalIntegral_excised_eq f hS hnorm hinv hHgt hper hoffγ hga hgz)) ?_
     have hval : 2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
         (k : ℂ) / 2 * ((Real.pi / 3 : ℝ) * Complex.I) =
         2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
@@ -138,35 +138,42 @@ theorem hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex [SlashInvariantFormCl
 
 /-- **The weighted zero count equals the cusp order minus the weight term.** Both sides are the
 same Cauchy principal value along the boundary contour: `hasCauchyPV_fdBoundary_logDeriv`
-evaluates it by the argument principle, as `2πi` times the winding-weighted sum of orders, while
-`hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex` evaluates it by the excised assembly, as
-`2πi·ord_∞ − k·(π/6)·I`. Principal values are unique — even across different excision sets — so
-the two agree.
+evaluates it by the argument principle, as `2πi` times the winding-weighted sum of orders over
+the **divisor** set `T`, while `hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex` evaluates it
+by the excised assembly, excising the **boundary** set `S`. Principal values are unique even
+across different excision sets, so the two agree.
+
+Keeping `S` and `T` separate is what makes the statement useful: the assembly forces its excision
+set onto the unit circle (`hnorm`, `hinv` — the arc pairing and vertical cancellation need those
+symmetries), whereas the divisor set is unrestricted, so zeros in the interior are allowed. The
+assembly's side conditions are needed only *along the contour*, which is what `hoffγ` states.
 
 This is the analytic identity the valence formula rests on: dividing by `2πi` and reading off the
 corner winding numbers (`½` at `i`, `1/6` at each `ρ`-corner) turns it into
 `ord_∞ + ½·ord_i + ⅓·ord_ρ + Σ ord_q = k/12`. -/
 theorem two_pi_I_mul_sum_windingNumber_mul_order_eq [SlashInvariantFormClass F Γ k] (f : F)
-    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {U : Set ℂ} {ord : ℂ → ℤ} (hH : 1 ≤ H)
+    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ} {ord : ℂ → ℤ} (hH : 1 ≤ H)
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
-    (hper : Periodic (⇑f ∘ ofComplex) 1) (hU : IsOpen U)
+    (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hU : IsOpen U)
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
-    (hoff : ∀ z ∈ U, z ∉ S → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
-    (hmero : ∀ s ∈ S, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hord : ∀ s ∈ S, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s = (ord s : WithTop ℤ))
-    (hbase : fdBoundary H 0 ∉ (S : Set ℂ))
+    (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
+    (hord : ∀ s ∈ T, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s = (ord s : WithTop ℤ))
+    (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
     (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
       cuspFunction 1 ⇑f q ≠ 0) :
     2 * (Real.pi : ℂ) * Complex.I *
-        ∑ z ∈ S, Contour.windingNumber (fdBoundary H) 0 5 z * (ord z : ℂ) =
+        ∑ z ∈ T, Contour.windingNumber (fdBoundary H) 0 5 z * (ord z : ℂ) =
       2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
         (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I) :=
   (hasCauchyPV_fdBoundary_logDeriv hH hU hUdom hoff hmero hord hbase).unique
-    (hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex f hS hH hnorm hinv hHgt hper hUdom
-      hoff hga hgz).hasCauchyPV
-
+    (hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex f hS hnorm hinv hHgt hper hoffγ hga
+      hgz).hasCauchyPV
 
 end ModularForm
 

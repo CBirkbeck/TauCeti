@@ -51,9 +51,9 @@ criterion applies.
 
 `hε` is needed to know that a point at distance `≥ ε` from every centre is not itself a centre. -/
 theorem intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary {g : ℂ → ℂ}
-    {H ε : ℝ} (hH : 1 ≤ H) (hε : 0 < ε) {S : Finset ℂ} {U : Set ℂ}
-    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
-    (hoff : ∀ z ∈ U, z ∉ S → AnalyticAt ℂ g z ∧ g z ≠ 0)
+    {H ε : ℝ} (hε : 0 < ε) {S : Finset ℂ}
+    (hoff : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+      AnalyticAt ℂ g (fdBoundary H t) ∧ g (fdBoundary H t) ≠ 0)
     {a b : ℝ} (hab : uIcc a b ⊆ Icc (0 : ℝ) 5) :
     IntervalIntegrable (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
         else deriv (fdBoundary H) t • logDeriv g (fdBoundary H t)) volume a b := by
@@ -65,14 +65,12 @@ theorem intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary
   have hφ : ContinuousOn (logDeriv g)
       (fdBoundary H '' uIcc a b ∩ {z | ∀ s ∈ S, ε ≤ ‖z - s‖}) := by
     rintro z ⟨⟨t, ht, rfl⟩, hfar⟩
-    have hmemU : fdBoundary H t ∈ U :=
-      hUdom (fdBoundary_mem_coe_truncatedFundamentalDomain hH (hab ht))
     have hnotS : fdBoundary H t ∉ S := fun hs => by
       have := hfar _ hs
       rw [sub_self, norm_zero] at this
       exact absurd this (not_le.mpr hε)
-    exact (Contour.analyticAt_logDeriv_of_analyticAt (hoff _ hmemU hnotS).1
-      (hoff _ hmemU hnotS).2).continuousAt.continuousWithinAt
+    exact (Contour.analyticAt_logDeriv_of_analyticAt (hoff t (hab ht) hnotS).1
+      (hoff t (hab ht) hnotS).2).continuousAt.continuousWithinAt
   simpa only [smul_eq_mul, mul_comm] using
     Contour.intervalIntegrable_excised_of_continuousOn (continuous_fdBoundary H).continuousOn
       hd hφ
