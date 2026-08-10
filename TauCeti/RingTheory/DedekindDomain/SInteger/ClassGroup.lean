@@ -88,19 +88,6 @@ lemma integer_count_coeIdeal_map {v : HeightOneSpectrum R} (hv : v ∉ S) {J : I
   rw [(integerPrimeOverOfNotMem K S hv).le_count_iff_le_pow hmJ k,
     integer_map_le_map_pow_iff K S hv, ← v.le_count_iff_le_pow hJ k]
 
-/-- The multiplicity of `x / y` is the difference of the multiplicities of `x` and `y`. Stated over
-an arbitrary Dedekind domain with fraction field `K` so that `integer_count_spanSingleton` can use
-it at both `R` and `𝒪_S` rather than repeating the denominator-clearing argument. -/
-private lemma count_spanSingleton_div {A : Type*} [CommRing A] [IsDedekindDomain A] [Algebra A K]
-    [IsFractionRing A K] (w : HeightOneSpectrum A) {x y : K} (hx : x ≠ 0) (hy : y ≠ 0) :
-    count K w (spanSingleton A⁰ (x / y)) =
-      count K w (spanSingleton A⁰ x) - count K w (spanSingleton A⁰ y) := by
-  rw [div_eq_mul_inv, ← spanSingleton_mul_spanSingleton, ← spanSingleton_inv,
-    count_mul K w (by simpa only [ne_eq, spanSingleton_eq_zero_iff] using hx)
-      (by simpa only [ne_eq, inv_eq_zero, spanSingleton_eq_zero_iff] using hy),
-    count_inv]
-  ring
-
 /-- The multiplicity of a principal fractional ideal at the prime above `v ∉ S` is the
 multiplicity at `v`. -/
 @[simp]
@@ -128,7 +115,8 @@ lemma integer_count_spanSingleton {v : HeightOneSpectrum R} (hv : v ∉ S) {x : 
   have ha0 : algebraMap R K a ≠ 0 := by
     rintro h; exact hx (by rw [h, zero_div])
   -- clearing the denominator turns each side into a difference of two integral counts, and `key`
-  -- settles those; `count_spanSingleton_div` is stated once and used at both rings.
+  -- settles those; `FractionalIdeal.count_spanSingleton_div` is stated once, in
+  -- `TauCeti/RingTheory/DedekindDomain/Factorization.lean`, and used here at both rings.
   rw [count_spanSingleton_div K _ ha0 hb0, count_spanSingleton_div K v ha0 hb0, key a, key b]
 
 /-- The classes of the primes in `S` lie in the kernel of extension: such primes extend to `⊤`. -/
