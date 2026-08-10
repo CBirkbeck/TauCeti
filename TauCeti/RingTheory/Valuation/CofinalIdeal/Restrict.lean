@@ -192,9 +192,10 @@ theorem restrictToIdeal_eq_zero_iff (v : Valuation A Γ₀) (I : Ideal A)
 
 /-- On values kept by the restriction, the order is both preserved and reflected — stated
 through membership in `cΓ_v(I)` itself. -/
+@[simp]
 theorem restrictToIdeal_le_iff (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a b : A}
-    (h0a : (MonoidWithZeroHom.ofClass v) a ≠ 0) (h0b : (MonoidWithZeroHom.ofClass v) b ≠ 0)
+    (h0a : v a ≠ 0) (h0b : v b ≠ 0)
     (hma : valueGroup.mk (.ofClass v) 1 a (by simp) h0a ∈ characteristicSubgroupOfIdeal v I hfg)
     (hmb : valueGroup.mk (.ofClass v) 1 b (by simp) h0b ∈ characteristicSubgroupOfIdeal v I hfg) :
     v.restrictToIdeal I hfg a ≤ v.restrictToIdeal I hfg b ↔ v.restrict a ≤ v.restrict b :=
