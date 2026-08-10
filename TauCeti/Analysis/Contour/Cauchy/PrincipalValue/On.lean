@@ -713,7 +713,7 @@ theorem cauchyPV_symm {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} (h : Cauc
 
 /-- The set of parameters in `[[a, b]]` at which the curve comes within `ε` of some point of a
 finite set `S'` is closed. -/
-private theorem isClosed_setOf_mem_uIcc_exists_norm_sub_le {γ : ℝ → ℂ} {a b : ℝ}
+private theorem isClosed_setOfPred_mem_uIcc_exists_norm_sub_le {γ : ℝ → ℂ} {a b : ℝ}
     (hγ_cont : ContinuousOn γ (Set.uIcc a b)) (S' : Finset ℂ) (ε : ℝ) :
     IsClosed {t ∈ Set.uIcc a b | ∃ s ∈ S', ‖γ t - s‖ ≤ ε} := by
   have he : {t ∈ Set.uIcc a b | ∃ s ∈ S', ‖γ t - s‖ ≤ ε}
@@ -746,7 +746,7 @@ private theorem truncatedIntegrand_union_integrable {γ : ℝ → ℂ} {a b : �
     IntervalIntegrable (truncatedIntegrand γ f (S ∪ S') ε) MeasureTheory.volume a b := by
   rw [intervalIntegrable_iff] at h ⊢
   rw [truncatedIntegrand_union_eq_indicator]
-  refine (h.indicator (isClosed_setOf_mem_uIcc_exists_norm_sub_le hγ_cont S'
+  refine (h.indicator (isClosed_setOfPred_mem_uIcc_exists_norm_sub_le hγ_cont S'
     ε).measurableSet.compl).congr_fun (fun t ht => ?_) measurableSet_uIoc
   have htIcc : t ∈ Set.uIcc a b := Set.uIoc_subset_uIcc ht
   by_cases h2 : ∃ s ∈ S', ‖γ t - s‖ ≤ ε
