@@ -62,13 +62,24 @@ open Matrix Subgroup.Commensurable Pointwise HeckeRing DoubleCoset Matrix.Specia
 
 open scoped Pointwise
 
--- The Hecke ring's commutativity (Shimura, Proposition 3.8) is a `def` rather than a global
--- instance; the polynomial-ring statements below need it for typeclass search.
-attribute [local instance] HeckeRing.GLn.commSemiringIntegralHeckeRing
-
 namespace HeckeRing.GLn
 
 variable (n : ℕ)
+
+/-- The `CommSemiring` structure this module needs on `IntegralHeckeRing n`, rebuilt **locally**
+from the two public ingredients `HeckeCosetModule.instSemiringHeckeRing` and
+`HeckeCosetModule.mul_comm_of_antiInvolution`.
+
+`commSemiringIntegralHeckeRing` already packages exactly this, but as a sealed `def`: its body
+does not reduce across the module boundary, so the `NonAssocSemiring` it carries is not
+*definitionally* the ambient one and `MvPolynomial.eval₂Hom` will not typecheck against it.
+Writing the same structure here makes its body transparent where it is needed and nowhere else,
+which is why the upstream definitions stay sealed rather than `@[expose]`d. -/
+noncomputable local instance commSemiringIntegralHeckeRingLocal [NeZero n] :
+    CommSemiring (IntegralHeckeRing n) :=
+  { (HeckeCosetModule.instSemiringHeckeRing ℤ : Semiring (IntegralHeckeRing n)) with
+    mul_comm := HeckeCosetModule.mul_comm_of_antiInvolution ℤ (transposeAntiInvolution n)
+      (transposeAntiInvolution_onHeckeCoset_eq_self n) }
 
 section TGen
 
@@ -151,18 +162,6 @@ Deliberately not `@[simp]`: `simp` already discharges this through `eq_intCast` 
 lemma is kept as the named computation rule for `rw`. -/
 lemma evalHom_C (a : ℤ) : evalHom n p (MvPolynomial.C a) = (a : IntegralHeckeRing n) :=
   MvPolynomial.eval₂Hom_C _ _ _
-
-/-- `T(c,...,c)^k = T(c^k,...,c^k)`: scalar diagonal elements are closed under powers. -/
-lemma diagElem_const_pow (c : ℕ) (hc : 0 < c) (k : ℕ) :
-    diagElem (fun _ : Fin n ↦ c) ^ k = diagElem (fun _ : Fin n ↦ c ^ k) := by
-  induction k with
-  | zero =>
-    simp only [pow_zero]
-    symm
-    exact (congrArg diagElem (funext fun _ ↦ by simp)).trans diagElem_one
-  | succ k ih =>
-    rw [pow_succ', ih, diagElem_const_mul n c hc (fun _ ↦ c ^ k) (fun _ ↦ pow_pos hc k)]
-    exact congrArg diagElem (funext fun _ ↦ by simp only [Pi.mul_apply]; ring)
 
 /-- Each `heckeGen k` lies in the range of `evalHom`. -/
 lemma heckeGen_mem_evalHom_range (k : Fin n) :
