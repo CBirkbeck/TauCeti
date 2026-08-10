@@ -5,75 +5,59 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Algebra.EuclideanDomain.Int
-public import Mathlib.Algebra.Module.ZMod
+public import Mathlib.GroupTheory.Finiteness
 public import Mathlib.RingTheory.Noetherian.Basic
 public import Mathlib.RingTheory.PrincipalIdealDomain
 
 /-!
-# Finitely generated commutative groups
+# Two closure properties of finitely generated groups
 
-Mathlib knows that a finitely generated commutative group is a finitely generated `ℤ`-module
-(`Module.Finite.iff_addGroup_fg`) and has the structure theory of modules over a PID, but it does
-not carry the three closure properties that a descent argument needs. This file supplies them:
+Mathlib has a substantial theory of finitely generated commutative groups in
+`Mathlib/GroupTheory/FiniteAbelian/Basic.lean` — the structure theorem, `finite_of_fg_isMulTorsion`,
+and `Subgroup.finiteIndex_range_powMonoidHom_of_fg`, which is the finiteness of `G ⧸ Gⁿ`. Two
+closure properties it does not carry are collected here:
 
 ## Main results
 
 * `Subgroup.fg_of_commGroup_fg`: a subgroup of a finitely generated commutative group is finitely
-  generated. This is Noetherianity of `ℤ` transported through `Additive`.
+  generated. This is Noetherianity of `ℤ` transported through `Additive`; because the proof passes
+  through `Additive G`, `to_additive` cannot produce it and an additive version would have to be
+  written by hand.
 * `Group.fg_of_fg_ker_of_fg_range`: an extension of finitely generated groups is finitely
-  generated — if the kernel and the range of `φ : G →* H` are finitely generated then so is `G`.
-  Unlike the previous one this needs no commutativity, and it is `@[to_additive]`.
-* `CommGroup.finite_modPow`: **the group of `n`-th power classes of a finitely generated
-  commutative group is finite**, i.e. `G ⧸ Gⁿ` is finite.
+  generated — if the kernel and the range of `φ : G →* H` are finitely generated then so is `G`,
+  the generators being preimages of generators of the range together with generators of the
+  kernel. This one needs no commutativity and *is* `@[to_additive]`.
 
-`CommGroup.finite_modPow` is the group-theoretic heart of the weak Mordell–Weil theorem: with
-`G = E(K)` and `n = 2` it is the statement `E(K)/2E(K)` finite that
-`TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 asks for, once the Kummer argument has bounded
-`E(K)/2E(K)` inside a group known to be finitely generated. The other two are what make the
-`S`-unit group finitely generated, the second input that argument needs; the `S`-class group, the
-first, is `IsDedekindDomain.integerClassGroupEquiv`.
-
-Three supporting results are exported alongside them. `Module.finite_int_additive` and
-`Group.fg_of_module_finite_int` are the two directions of the translation between "finitely
-generated as a group" and "finitely generated as a `ℤ`-module"; they are stated separately
-because the proofs below pass through `Additive G` in both directions and Mathlib's
-`Module.Finite.iff_addGroup_fg` is phrased for an `AddCommGroup`.
-`CommGroup.finite_of_fg_of_pow_eq_one` — a finitely generated commutative group of finite
-exponent is finite — is the step that makes `CommGroup.finite_modPow` work, and is the form to
-use when the exponent bound is already in hand rather than obtained from a quotient.
+Both are steps towards the `S`-unit group being finitely generated, which
+`TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 names as an input to the weak Mordell–Weil
+theorem: the group of `S`-units sits in an extension whose kernel is the unit group of the base
+and whose range is a subgroup of a free group of rank `|S|`, so establishing finite generation
+needs exactly these two facts. The finiteness that the descent then applies to it is Mathlib's
+`Subgroup.finiteIndex_range_powMonoidHom_of_fg`, read through
+`Subgroup.finiteIndex_iff_finite_quotient`; nothing here reproves it.
 
 Adapted from Michael Stoll's elliptic-curves formalisation
-(`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/SelmerGroup.lean` lines
-99–170 at the roadmap's pin `66889eada51a`, Apache 2.0, by Michael Stoll), the source the
-roadmap's §Provenance names for the Layer 6 Mordell–Weil lane. Following this repository's
-convention for adapted material, the upstream authorship is credited here rather than in the
-copyright header.
+(`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/SelmerGroup.lean` at the
+roadmap's pin `66889eada51a`, Apache 2.0, by Michael Stoll). Following this repository's convention
+for adapted material, the upstream authorship is credited here rather than in the copyright header.
 
-Note for a future Mathlib bump: that source is being upstreamed piecemeal by its author —
-`Mathlib/GroupTheory/IndexNSmul.lean` at our pin is his — so check whether these have landed
-before extending this file.
+That source file also carries `finite_modPow`, `finite_of_fg_of_pow_eq_one` and two `ℤ`-module
+translation helpers. **None of them is ported: all four are now in Mathlib** — as
+`Subgroup.finiteIndex_range_powMonoidHom_of_fg`, `CommGroup.finite_of_fg_isMulTorsion`, the
+instance `AddMonoid.FG.to_moduleFinite_int`, and `Module.Finite.iff_addGroup_fg` composed with
+`AddGroup.fg_iff_mul_fg`. The source predates those additions, some of which its own author
+upstreamed, so check Mathlib again before porting anything further from it.
 -/
 
 public section
 
-/-- A finitely generated commutative group is a finitely generated `ℤ`-module. -/
-theorem Module.finite_int_additive (G : Type*) [CommGroup G] [Group.FG G] :
-    Module.Finite ℤ (Additive G) :=
-  Module.Finite.iff_addGroup_fg.mpr (AddGroup.fg_iff_mul_fg.mpr ‹_›)
-
-/-- A commutative group that is finitely generated as a `ℤ`-module is finitely generated as a
-group; the converse direction of `Module.finite_int_additive`. -/
-theorem Group.fg_of_module_finite_int {G : Type*} [CommGroup G]
-    (h : Module.Finite ℤ (Additive G)) : Group.FG G :=
-  AddGroup.fg_iff_mul_fg.mp (Module.Finite.iff_addGroup_fg.mp h)
-
 /-- A subgroup of a finitely generated commutative group is finitely generated, as `ℤ` is a
-Noetherian ring. (The proof passes through `Additive G`, so `to_additive` cannot translate it; an
-additive version would have to be stated by hand.) -/
+Noetherian ring: `Additive G` is then a finitely generated `ℤ`-module, hence Noetherian, so the
+submodule corresponding to `H` is finitely generated. (The proof passes through `Additive G`, so
+`to_additive` cannot translate it.) -/
 theorem Subgroup.fg_of_commGroup_fg {G : Type*} [CommGroup G] [Group.FG G] (H : Subgroup G) :
     Group.FG H :=
-  have : Module.Finite ℤ (Additive G) := Module.finite_int_additive G
-  Group.fg_of_module_finite_int <| Module.Finite.iff_fg.mpr <|
+  AddGroup.fg_iff_mul_fg.mp <| Module.Finite.iff_addGroup_fg.mp <| Module.Finite.iff_fg.mpr <|
     IsNoetherian.noetherian (R := ℤ) (AddSubgroup.toIntSubmodule H.toAddSubgroup)
 
 /-- An extension of finitely generated groups is finitely generated: if the kernel and the range
@@ -106,29 +90,5 @@ theorem Group.fg_of_fg_ker_of_fg_range {G H : Type*} [Group G] [Group H] (φ : G
   have h := Subgroup.comap_map_eq φ.rangeRestrict (Subgroup.closure U)
   rw [hmap, Subgroup.comap_top, MonoidHom.ker_rangeRestrict, sup_eq_left.mpr hkerle] at h
   exact h.symm
-
-/-- A finitely generated commutative group of finite exponent is finite. -/
-theorem CommGroup.finite_of_fg_of_pow_eq_one {G : Type*} [CommGroup G] [Group.FG G] (n : ℕ)
-    [NeZero n] (hn : ∀ x : G, x ^ n = 1) : Finite G := by
-  -- bounded exponent makes `G` a module over `ZMod n`, and a finite ring with a finitely
-  -- generated module over it has a finite module
-  let _ : Module (ZMod n) (Additive G) := AddCommGroup.zmodModule (n := n) hn
-  have h₁ : Module.Finite ℤ (Additive G) :=
-    Module.Finite.iff_addGroup_fg.mpr (by rwa [AddGroup.fg_iff_mul_fg])
-  have h₂ : Module.Finite (ZMod n) (Additive G) :=
-    Module.Finite.of_restrictScalars_finite ℤ (ZMod n) (Additive G)
-  have := Module.finite_of_finite (ZMod n) (M := Additive G)
-  exact Finite.of_equiv _ (Additive.toMul (α := G))
-
-/-- **The group of `n`-th power classes of a finitely generated commutative group is finite.**
-With `G = E(K)` and `n = 2` this is the finiteness of `E(K)/2E(K)` that weak Mordell–Weil
-asserts. -/
-theorem CommGroup.finite_modPow {G : Type*} [CommGroup G] [Group.FG G] (n : ℕ) [NeZero n] :
-    Finite (G ⧸ (powMonoidHom n : G →* G).range) := by
-  have : Group.FG (G ⧸ (powMonoidHom n : G →* G).range) :=
-    Group.fg_of_surjective (QuotientGroup.mk'_surjective _)
-  refine finite_of_fg_of_pow_eq_one n fun x ↦ ?_
-  induction x using QuotientGroup.induction_on with
-  | H g => exact (QuotientGroup.eq_one_iff _).mpr ⟨g, rfl⟩
 
 end
