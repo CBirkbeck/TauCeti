@@ -158,6 +158,7 @@ theorem locSubring_le_iff (P : PairOfDefinition A) (T : Finset A) (s : A)
   · exact h₂ t ht
 
 /-- With no fractions adjoined, `D` is just the image of `A₀`. -/
+@[simp]
 theorem locSubring_empty (P : PairOfDefinition A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] :
     locSubring P ∅ s S = P.ringOfDefinition.map (algebraMap A S) := by

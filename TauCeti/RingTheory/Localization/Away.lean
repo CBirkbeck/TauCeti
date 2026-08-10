@@ -132,6 +132,7 @@ theorem divBy_zero : (divBy 0 s : S) = 0 := by
   simp only [← invSelf_mul_algebraMap, map_zero, mul_zero]
 
 /-- `t/s` is additive in the numerator. -/
+@[simp]
 theorem divBy_add (u : A) : divBy (t + u) s = (divBy t s : S) + divBy u s := by
   simp only [← invSelf_mul_algebraMap, map_add, mul_add]
 
