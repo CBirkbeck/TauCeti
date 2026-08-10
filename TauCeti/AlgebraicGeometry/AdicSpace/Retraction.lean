@@ -9,7 +9,7 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.ValuationSpectrum
 public import TauCeti.RingTheory.Valuation.CofinalIdeal.Restrict
 
 /-!
-# The retraction `r_I : Spv A → Spv (A, I)`
+# The restriction underlying the retraction `r_I`
 
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §7.1.2.**
 

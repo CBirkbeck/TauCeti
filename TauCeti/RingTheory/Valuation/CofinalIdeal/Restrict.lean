@@ -125,25 +125,29 @@ theorem mk0_restrict_mem_comapUnitsWithZero_iff (v : Valuation A Γ₀) (I : Ide
       valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∈ characteristicSubgroupOfIdeal v I hfg := by
   rw [ConvexSubgroup.mem_comapUnitsWithZero, unitsWithZeroEquiv_mk0_restrict v h0 _]
 
-/-- On a value kept by the restriction, the restriction is that value. -/
+/-- On a value kept by the restriction, the restriction is that value. The hypothesis is
+membership in `cΓ_v(I)` itself; the transport is applied internally. -/
 theorem restrictToIdeal_apply_of_mem (v : Valuation A Γ₀) (I : Ideal A)
-    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A} (ha : v.restrict a ≠ 0)
-    (hm : Units.mk0 (v.restrict a) ha ∈
-      ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg)) :
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
+    (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0)
+    (hm : valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∈ characteristicSubgroupOfIdeal v I hfg) :
     v.restrictToIdeal I hfg a =
-      ((⟨Units.mk0 (v.restrict a) ha, hm⟩ :
+      ((⟨Units.mk0 (v.restrict a) (fun h => h0 (v.restrict_eq_zero_iff.mp h)),
+          (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0).mpr hm⟩ :
         (ConvexSubgroup.comapUnitsWithZero
           (characteristicSubgroupOfIdeal v I hfg)).toSubgroup) : RestrictedValues v I hfg) :=
-  _root_.Valuation.restrictToConvex_apply_of_mem _ _ _ ha hm
+  _root_.Valuation.restrictToConvex_apply_of_mem _ _ _ _ _
 
-/-- Off `cΓ_v(I)`, the restriction vanishes. -/
+/-- Off `cΓ_v(I)`, the restriction vanishes. The hypothesis is non-membership in `cΓ_v(I)`
+itself; the transport is applied internally. -/
 @[simp]
 theorem restrictToIdeal_apply_of_notMem (v : Valuation A Γ₀) (I : Ideal A)
-    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A} (ha : v.restrict a ≠ 0)
-    (hm : Units.mk0 (v.restrict a) ha ∉
-      ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg)) :
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
+    (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0)
+    (hm : valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∉ characteristicSubgroupOfIdeal v I hfg) :
     v.restrictToIdeal I hfg a = 0 :=
-  _root_.Valuation.restrictToConvex_apply_of_notMem _ _ _ ha hm
+  _root_.Valuation.restrictToConvex_apply_of_notMem _ _ _ _
+    (fun hmem => hm ((mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0).mp hmem))
 
 /-- The restriction vanishes wherever `v` does. -/
 @[simp]
@@ -154,6 +158,7 @@ theorem restrictToIdeal_apply_of_eq_zero (v : Valuation A Γ₀) (I : Ideal A)
 
 /-- **Where the restriction vanishes at a nonzero value**, stated through `cΓ_v(I)` itself.
 `restrictToIdeal_eq_zero_iff` is the total form. -/
+@[simp]
 theorem restrictToIdeal_eq_zero_iff_of_ne (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
     (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) :
