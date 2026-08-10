@@ -121,6 +121,41 @@ theorem intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunc
   rw [hLc, hcusp, hR]
   exact ceiling_integrand_eq hper ht.1
 
+/-- **The excision never fires on the ceiling.** The excision centres lie on the unit circle,
+so their heights are at most `1`, while the ceiling runs at height `H`; once `ε < H - 1` no
+ceiling point is within `ε` of a centre. -/
+theorem not_exists_norm_fdBoundary_sub_le_of_mem_Icc_four_five {H ε : ℝ} {S : Finset ℂ}
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hε : ε < H - 1) {t : ℝ} (ht : t ∈ Icc (4 : ℝ) 5) :
+    ¬ ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε := by
+  rintro ⟨s, hs, hle⟩
+  have hsim : |s.im| ≤ 1 := (Complex.abs_im_le_norm s).trans (hnorm s hs).le
+  have himle : |(fdBoundary H t - s).im| ≤ ‖fdBoundary H t - s‖ := Complex.abs_im_le_norm _
+  rw [Complex.sub_im, im_fdBoundary_segment5 H ht] at himle
+  have : H - s.im ≤ ε := (le_abs_self _).trans (himle.trans hle)
+  cases abs_le.mp hsim
+  linarith
+
+/-- **The excised ceiling integral is the plain one.** The excision never fires on the
+ceiling, so the excised integrand agrees with the unexcised one there and the ceiling still
+evaluates through the `q`-circle to `2πi · ord_∞`. -/
+theorem intervalIntegral_excised_logDeriv_fdBoundary_segment5_eq_qExpansionOrderAtCusp
+    {g : UpperHalfPlane → ℂ} {H ε : ℝ} {S : Finset ℂ}
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hε : ε < H - 1)
+    (hper : Function.Periodic (g ∘ UpperHalfPlane.ofComplex) 1)
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (UpperHalfPlane.cuspFunction 1 g) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      UpperHalfPlane.cuspFunction 1 g q ≠ 0) :
+    ∫ t in (4 : ℝ)..5, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else deriv (fdBoundary H) t • logDeriv (g ∘ UpperHalfPlane.ofComplex) (fdBoundary H t)) =
+      2 * Real.pi * Complex.I * qExpansionOrderAtCusp 1 g := by
+  rw [intervalIntegral.integral_congr (g := fun t ↦ deriv (fdBoundary H) t •
+        logDeriv (g ∘ UpperHalfPlane.ofComplex) (fdBoundary H t)) fun t ht ↦ ?_,
+    (intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunction hper).trans
+      (circleIntegral_logDeriv_cuspFunction hga hgz)]
+  rw [uIcc_of_le (by norm_num : (4 : ℝ) ≤ 5)] at ht
+  exact if_neg (not_exists_norm_fdBoundary_sub_le_of_mem_Icc_four_five hnorm hε ht)
+
 end ModularForm
 
 end TauCeti
