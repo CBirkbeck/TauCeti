@@ -33,8 +33,11 @@ the remaining step before 5.50 can be stated as a universal property.
   terms have `weightedEval` as their sum. This is what `TauCeti.Huber.weightedEval_add` is read
   off, and what a consumer facing a genuine infinite sum should reach for rather than `tsum`
   lemmas.
-* `TauCeti.Huber.weightedEval_zero` and `TauCeti.Huber.weightedEval_add`: the evaluation is
-  additive in the series.
+* `TauCeti.Huber.weightedEval_zero` and `TauCeti.Huber.weightedEval_add_of_summable`: the
+  evaluation is additive in the series, the latter stated where additivity is actually true — two
+  summable term families, with no weights, completeness or restrictedness in sight.
+  `TauCeti.Huber.weightedEval_add` and its corollaries are that composed with a way of producing
+  summability.
 
 ## References
 
@@ -97,6 +100,30 @@ theorem weightedEval_X (φ : A →+* B) (b : Fin k → B) (i : Fin k) :
 
 end Values
 
+section Additive
+
+variable {k : ℕ} {A B : Type*} [CommRing A] [CommRing B] [TopologicalSpace B] [ContinuousAdd B]
+  [T2Space B] {φ : A →+* B} {b : Fin k → B}
+
+/-- **The evaluation is additive in the series**, at the level where that is actually true: two
+summable term families. Nothing topological about `A`, no completeness, no weights and no
+restrictedness enter — those hypotheses exist only to *produce* summability, and every result
+below is this one composed with a way of producing it.
+
+Both summability hypotheses are needed: a sum of two families is the sum of their sums only when
+each converges. -/
+theorem weightedEval_add_of_summable {f g : MvPowerSeries (Fin k) A}
+    (hf : Summable (weightedEvalTerm φ b f)) (hg : Summable (weightedEvalTerm φ b g)) :
+    weightedEval φ b (f + g) = weightedEval φ b f + weightedEval φ b g := by
+  have hterm : weightedEvalTerm φ b (f + g)
+      = fun ν ↦ weightedEvalTerm φ b f ν + weightedEvalTerm φ b g ν := by
+    funext ν
+    simp [weightedEvalTerm_def, add_mul]
+  rw [weightedEval_def, hterm]
+  exact (hf.hasSum.add hg.hasSum).tsum_eq
+
+end Additive
+
 section Sums
 
 variable {k : ℕ} {A B : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanAddGroup A]
@@ -128,18 +155,15 @@ theorem hasSum_weightedEvalTerm_of_forall_isPowerBounded (hφ : ContinuousAt φ 
 
 variable [T2Space B]
 
-/-- **The evaluation is additive in the series.** Both summability hypotheses are needed: a sum of
-two families is the sum of their sums only when each converges. -/
+/-- **The evaluation is additive on `T`-restricted series.** This is
+`TauCeti.Huber.weightedEval_add_of_summable` with summability supplied by
+`TauCeti.Huber.summable_weightedEvalTerm`. -/
 theorem weightedEval_add (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b)
     {f g : MvPowerSeries (Fin k) A} (hf : IsWeightedRestricted T f)
     (hg : IsWeightedRestricted T g) :
-    weightedEval φ b (f + g) = weightedEval φ b f + weightedEval φ b g := by
-  have hterm : weightedEvalTerm φ b (f + g)
-      = fun ν ↦ weightedEvalTerm φ b f ν + weightedEvalTerm φ b g ν := by
-    funext ν
-    simp [weightedEvalTerm_def, add_mul]
-  rw [weightedEval_def, hterm]
-  exact ((hasSum_weightedEvalTerm hφ hb hf).add (hasSum_weightedEvalTerm hφ hb hg)).tsum_eq
+    weightedEval φ b (f + g) = weightedEval φ b f + weightedEval φ b g :=
+  weightedEval_add_of_summable (summable_weightedEvalTerm hφ hb hf)
+    (summable_weightedEvalTerm hφ hb hg)
 
 /-- `TauCeti.Huber.weightedEval_add` under Wedhorn's coordinatewise hypothesis. -/
 theorem weightedEval_add_of_isWeightedVarPowerBounded (hφ : ContinuousAt φ 0)
