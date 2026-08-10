@@ -86,12 +86,16 @@ theorem pairOfDefinition_ringOfDefinition :
 /-- **The ideal of definition of `pairOfDefinition` is `(p)`**, in membership form: an element
 belongs exactly when its norm is less than one.
 
-The membership form is used because `pairOfDefinition`'s body is not exposed, so the projection
-`pairOfDefinition.ringOfDefinition` does not reduce. The equation
-`pairOfDefinition.idealOfDefinition = maximalIdeal ℤ_[p]` is therefore rejected — the elaborator
-reports `Ideal ℤ_[p]` against `Ideal ↥pairOfDefinition.ringOfDefinition`, noting that
-`pairOfDefinition` "was not unfolded because their definition is not exposed". Membership avoids
-the issue: `x` already inhabits the dependent type, so nothing has to be transported. -/
+The membership form is used because the equation
+`pairOfDefinition.idealOfDefinition = maximalIdeal ℤ_[p]` does not elaborate. The two sides *are*
+definitionally equal — marking `pairOfDefinition` `@[expose]` makes that very statement typecheck
+and closes it by `rfl` — but at the transparency the elaborator uses it will not unfold a
+definition whose body is unexposed, so checking `Ideal ℤ_[p]` against
+`Ideal ↥pairOfDefinition.ringOfDefinition` fails with the note that `pairOfDefinition` "was not
+unfolded because their definition is not exposed". This is a limit on elaboration, not a
+statement that the projection cannot reduce. Exposing the body is not worth it here, since it
+would force the proof-only `isOpen_padicIntSubring` public too; membership sidesteps the issue
+entirely, as `x` already inhabits the dependent type. -/
 @[simp]
 theorem mem_pairOfDefinition_idealOfDefinition
     {x : (pairOfDefinition (p := p)).ringOfDefinition} :
