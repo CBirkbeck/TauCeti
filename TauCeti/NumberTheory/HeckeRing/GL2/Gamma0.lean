@@ -29,7 +29,6 @@ is what identifies the level-`N` operators with their level-one preimages.
 
 ## Main results
 
-* `HeckeRing.GL2.Gamma0Image_le_Delta0`: `Γ₀(N) ≤ Δ₀(N)`.
 * `HeckeRing.GL2.Delta0_le_commensurator_Gamma0Image`: `Δ₀(N)` lies in the commensurator of
   `Γ₀(N)`.
 * the `IsHeckeTriple (Delta0 N) (Gamma0Image N) (Gamma0Image N)` instance.
@@ -60,11 +59,6 @@ noncomputable def Gamma0Image : Subgroup (GL (Fin 2) ℚ) :=
     g ∈ Gamma0Image N ↔ ∃ σ ∈ Gamma0 N, mapGL ℚ σ = g := by
   rw [Gamma0Image, Subgroup.mem_map]
 
-/-- `Γ₀(N) ≤ Δ₀(N)`: the congruence subgroup embeds in the submonoid, because an element of
-`Γ₀(N)` has `ad ≡ 1` modulo `N` and hence unit upper-left entry. -/
-lemma Gamma0Image_le_Delta0 : (Gamma0Image N).toSubmonoid ≤ Delta0 N :=
-  Gamma0_map_le_Delta0 N
-
 variable [NeZero N]
 
 /-- `Γ₀(N)` is commensurable with `SL₂(ℤ)`: it has finite index in it. -/
@@ -81,6 +75,6 @@ lemma Delta0_le_commensurator_Gamma0Image :
 /-- **The Hecke triple of `Γ₀(N)`**: `Γ₀(N) ≤ Δ₀(N) ≤ commensurator(Γ₀(N))` inside `GL₂(ℚ)` —
 the setting of Shimura §3.3, in which the Hecke ring `R(Γ₀(N), Δ₀(N))` is formed. -/
 instance : IsHeckeTriple (Delta0 N) (Gamma0Image N) (Gamma0Image N) :=
-  IsHeckeTriple.of_diagonal (Gamma0Image_le_Delta0 N) (Delta0_le_commensurator_Gamma0Image N)
+  IsHeckeTriple.of_diagonal (Gamma0_map_le_Delta0 N) (Delta0_le_commensurator_Gamma0Image N)
 
 end HeckeRing.GL2
