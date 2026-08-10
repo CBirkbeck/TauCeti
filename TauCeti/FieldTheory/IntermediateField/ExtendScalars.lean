@@ -29,6 +29,7 @@ namespace IntermediateField
 /-- **Re-basing an intermediate field does not change the degree above it**: for `E ≤ E'` in
 `L / F`, the degree of `L` over `E'` viewed as an intermediate field of `L / E` is the degree of
 `L` over `E'`. -/
+@[simp]
 theorem finrank_extendScalars {F L : Type*} [Field F] [Field L] [Algebra F L]
     {E E' : IntermediateField F L} (h : E ≤ E') :
     Module.finrank (extendScalars h) L = Module.finrank E' L :=
