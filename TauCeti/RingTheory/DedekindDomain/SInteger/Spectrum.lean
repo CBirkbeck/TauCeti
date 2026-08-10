@@ -102,6 +102,26 @@ noncomputable def integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉
       = Ideal.map (algebraMap R (S.integer K)) v.asIdeal := by
   simp only [integerPrimeOverOfNotMem]
 
+/-- For `v ∉ S`, the contraction of the extension of `v ^ n` is `v ^ n` again. Mathlib's
+`Ideal.comap_map_eq_self_of_isMaximal` gives this only for `n = 1`. -/
+@[simp] lemma integer_comap_map_pow {v : HeightOneSpectrum R} (hv : v ∉ S) (n : ℕ) :
+    (Ideal.map (algebraMap R (S.integer K)) (v.asIdeal ^ n)).comap
+        (algebraMap R (S.integer K)) = v.asIdeal ^ n := by
+  set f := algebraMap R (S.integer K) with hf
+  have hP0 : Ideal.map f v.asIdeal ≠ 0 := Ideal.map_ne_bot_of_ne_bot v.ne_bot
+  have hPnu : ¬ IsUnit (Ideal.map f v.asIdeal) :=
+    fun h ↦ integer_map_asIdeal_ne_top K S hv (Ideal.isUnit_iff.mp h)
+  refine le_antisymm ?_ Ideal.le_comap_map
+  have hdvd : (Ideal.map f (v.asIdeal ^ n)).comap f ∣ v.asIdeal ^ n :=
+    Ideal.dvd_iff_le.mpr Ideal.le_comap_map
+  obtain ⟨j, -, hassoc⟩ := (dvd_prime_pow v.prime n).mp hdvd
+  rw [associated_iff_eq] at hassoc
+  have hmapQ : Ideal.map f ((Ideal.map f (v.asIdeal ^ n)).comap f) =
+      Ideal.map f (v.asIdeal ^ n) := integer_map_comap_eq K S _
+  rw [hassoc] at hmapQ
+  simp only [Ideal.map_pow] at hmapQ
+  rw [hassoc, (pow_inj_of_not_isUnit hPnu hP0).mp hmapQ]
+
 /-- The prime of `R` below a prime `P` of `𝒪_S`: its contraction. -/
 noncomputable def integerPrimeUnder (P : HeightOneSpectrum (S.integer K)) :
     HeightOneSpectrum R where

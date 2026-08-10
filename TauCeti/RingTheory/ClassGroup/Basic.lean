@@ -10,8 +10,9 @@ public import Mathlib.RingTheory.DedekindDomain.Ideal.Lemmas
 /-!
 # Complements on the ideal class group
 
-Two facts about Mathlib's `ClassGroup R` that its own file does not carry: that a principal
-fractional ideal has trivial class, and the class `[v]` of a height one prime.
+Three facts about Mathlib's `ClassGroup R` that its own file does not carry: the generator form of
+triviality of a class, that a principal fractional ideal has trivial class, and the class `[v]` of
+a height one prime.
 
 ## Main definitions
 
@@ -46,13 +47,32 @@ public section
 open IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
 open scoped nonZeroDivisors
 
+/-- A unit fractional ideal has trivial class exactly when it is principal, with the generator
+delivered as a unit of `K`. This is Mathlib's `ClassGroup.mk_eq_one_iff` with
+`Submodule.IsPrincipal` traded for the range of `toPrincipalIdeal`, which is the form a consumer
+that wants to *name* the generator can use. -/
+lemma ClassGroup.mk_eq_one_iff_exists {R : Type*} [CommRing R] [IsDomain R] {K : Type*} [Field K]
+    [Algebra R K] [IsFractionRing R K] {I : (FractionalIdeal R⁰ K)ˣ} :
+    ClassGroup.mk K I = 1 ↔ ∃ x : Kˣ, toPrincipalIdeal R K x = I := by
+  rw [ClassGroup.mk_eq_one_iff]
+  constructor
+  · intro hI
+    obtain ⟨x, hx⟩ := hI.principal
+    have hx' : (I : FractionalIdeal R⁰ K) = FractionalIdeal.spanSingleton R⁰ x := by
+      apply Subtype.coe_injective
+      simp only [FractionalIdeal.val_eq_coe, hx, FractionalIdeal.coe_spanSingleton]
+    have hx0 : x ≠ 0 := fun h ↦ Units.ne_zero I (by
+      rw [hx', h, FractionalIdeal.spanSingleton_zero])
+    exact ⟨Units.mk0 x hx0, by rw [← Units.val_inj, coe_toPrincipalIdeal, hx']; rfl⟩
+  · rintro ⟨x, rfl⟩
+    exact ⟨⟨(x : K), by rw [coe_toPrincipalIdeal, FractionalIdeal.coe_spanSingleton]⟩⟩
+
 /-- A principal fractional ideal has trivial ideal class. -/
 @[simp]
 lemma ClassGroup.mk_toPrincipalIdeal {R : Type*} [CommRing R] [IsDomain R] {K : Type*} [Field K]
     [Algebra R K] [IsFractionRing R K] (x : Kˣ) :
     ClassGroup.mk K (toPrincipalIdeal R K x) = 1 :=
-  ClassGroup.mk_eq_one_iff.mpr
-    ⟨⟨(x : K), by rw [coe_toPrincipalIdeal, FractionalIdeal.coe_spanSingleton]⟩⟩
+  ClassGroup.mk_eq_one_iff_exists.mpr ⟨x, rfl⟩
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
 
