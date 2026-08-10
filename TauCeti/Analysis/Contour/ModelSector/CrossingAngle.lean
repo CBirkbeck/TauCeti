@@ -7,6 +7,7 @@ module
 
 public import TauCeti.Analysis.Contour.ModelSector.Closed
 public import TauCeti.Analysis.Contour.RegularityConditions
+import TauCeti.Analysis.SpecialFunctions.Trigonometric.Angle
 
 /-!
 # The model sector's crossing angle is its opening angle
@@ -89,7 +90,7 @@ theorem crossingAngle_modelSector (hr : 0 < r) (φ : ℝ) (α : ℝ) :
     rw [hderiv (ne_of_lt hs.2) (by rw [abs_of_neg hs.2]; linarith [hs.1]), if_pos hs.2]
   rw [crossingAngle_eq_of_tendsto h_R h_L, neg_neg]
   -- `arg u - arg v` is `α` in `Real.Angle`; the shared transport reads that back.
-  refine toIcoMod_eq_toIcoMod_of_angle_eq ?_
+  refine Real.Angle.toIcoMod_eq_toIcoMod_iff_coe_eq.mpr ?_
   rw [Real.Angle.coe_sub, hu, hv, Complex.arg_exp_mul_I, Complex.arg_exp_mul_I,
     Real.Angle.coe_toIocMod, Real.Angle.coe_toIocMod, ← Real.Angle.coe_sub]
   norm_num
