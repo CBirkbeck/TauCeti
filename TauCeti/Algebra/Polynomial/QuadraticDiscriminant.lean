@@ -21,7 +21,7 @@ Over a field, with `a ≠ 0`:
 
 * `Polynomial.separable_quadratic_iff_discrim_ne_zero`: separable exactly when `discrim a b c ≠ 0`;
 * `Polynomial.splits_quadratic_iff_exists_root`: splits exactly when it has a root — the
-  characteristic-free core, and the only one that mentions no discriminant;
+  characteristic-free core the other two are read off from;
 * `Polynomial.splits_quadratic_iff_isSquare`: away from characteristic two, splits exactly when
   `discrim a b c` is a square;
 * `Polynomial.splits_quadratic_iff_exists_artinSchreier_of_two_eq_zero`: in characteristic two,
@@ -108,8 +108,10 @@ theorem separable_quadratic_iff_discrim_ne_zero {k : Type*} [Field k] {a b c : k
       by linear_combination C (discrim a b c)⁻¹ * hid + hdinv⟩
 
 /-- A quadratic `a X² + b X + c` (`a ≠ 0`) over a field splits exactly when it has a root. This is
-the characteristic-free core of the two split criteria below, neither of which adds anything
-beyond restating "has a root" in terms of the discriminant. -/
+the characteristic-free core of the two split criteria below, which only restate "has a root":
+`splits_quadratic_iff_isSquare` in terms of the discriminant, and
+`splits_quadratic_iff_exists_artinSchreier_of_two_eq_zero` in terms of the Artin-Schreier
+invariant `a c / b²`. -/
 theorem splits_quadratic_iff_exists_root {k : Type*} [Field k] {a b c : k} (ha : a ≠ 0) :
     (C a * X ^ 2 + C b * X + C c).Splits ↔ ∃ x, a * x ^ 2 + b * x + c = 0 := by
   set p := C a * X ^ 2 + C b * X + C c with hp

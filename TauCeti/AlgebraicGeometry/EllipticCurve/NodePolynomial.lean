@@ -186,9 +186,10 @@ lemma variableChange_nodePoly_map_splits_iff (φ : A →+* k) (W : WeierstrassCu
 provided `c₄` does not die under `φ` — the condition that makes the reduced polynomial genuinely
 quadratic, and which multiplicative reduction supplies — the node polynomial splits, i.e. the two
 tangent directions at the node are `k`-rational, exactly when `φ (-(c₄ * c₆))`, the image of its
-discriminant (`nodePoly_discrim`), is a square in `k`. This is the characterization Mathlib's
-TODO in `Reduction.lean` asks for, and is the tool that, applied to a quadratic twist via the
-scaling
+discriminant (`nodePoly_discrim`), is a square in `k`. This answers Mathlib's TODO in
+`Reduction.lean` at the level of the node polynomial; restating
+`HasSplitMultiplicativeReduction` itself through it needs `integralModel`. It is also the tool
+that, applied to a quadratic twist via the scaling
 `-c₄' c₆' = (t² - 4n)⁵ · (-c₄ c₆)`, turns a nonsplit reduction into a split one after twisting by
 the right square class. -/
 lemma nodePoly_map_splits_iff_isSquare [NeZero (2 : k)] (φ : A →+* k) (W : WeierstrassCurve A)
