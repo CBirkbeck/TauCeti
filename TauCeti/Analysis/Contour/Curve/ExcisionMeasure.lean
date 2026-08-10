@@ -54,19 +54,19 @@ private theorem exists_pos_le_norm_sub_of_notMem {S : Finset ℂ} {z : ℂ} (hz 
     ∃ δ > 0, ∀ s ∈ S, δ ≤ ‖z - s‖ := by
   rcases S.eq_empty_or_nonempty with rfl | hne
   · exact ⟨1, one_pos, by simp⟩
-  · exact ⟨S.inf' hne fun s => ‖z - s‖,
-      (Finset.lt_inf'_iff _).2 fun s hs =>
-        norm_pos_iff.mpr (sub_ne_zero.mpr fun h => hz (h ▸ hs)),
-      fun s hs => Finset.inf'_le _ hs⟩
+  · refine ⟨Metric.infDist z S, ?_, fun s hs => ?_⟩
+    · exact (S.finite_toSet.isClosed.notMem_iff_infDist_pos (by exact_mod_cast hne)).mp
+        (by exact_mod_cast hz)
+    · rw [← dist_eq_norm]
+      exact Metric.infDist_le_dist_of_mem (by exact_mod_cast hs)
 
 /-- **An injective curve meets a finite set at a null set of times.** It meets it at finitely
 many times — at most one per centre — so those times carry no length. This is the convenient
 sufficient condition for `tendsto_intervalIntegral_excisionIndicator`'s hypothesis. -/
 theorem measure_setOf_mem_eq_zero_of_injOn {γ : ℝ → ℂ} {a b : ℝ} (hγ : InjOn γ (Icc a b))
     (S : Finset ℂ) : volume {t ∈ Icc a b | γ t ∈ S} = 0 :=
-  (Set.Finite.of_finite_image
-    (S.finite_toSet.subset (by rintro _ ⟨t, ht, rfl⟩; exact ht.2))
-    (hγ.mono fun _ ht => ht.1)).measure_zero volume
+  (Set.Finite.of_injOn (fun _ ht => ht.2) (hγ.mono fun _ ht => ht.1)
+    S.finite_toSet).measure_zero volume
 
 /-- **The excised parameter set shrinks to nothing.** Deleting from `[a, b]` the times at which
 the curve comes within `ε` of one of finitely many centres costs no length as `ε → 0⁺`: what
@@ -90,10 +90,8 @@ theorem tendsto_intervalIntegral_excisionIndicator {γ : ℝ → ℂ} (hγc : Co
       = volume.real (As ε) := fun ε => by
     have hcongr : EqOn (fun t => if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then (0 : ℝ) else 1)
         ((As ε).indicator 1) (Ioc a b) := fun t ht => by
-      change (if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then (0 : ℝ) else 1) = _
-      by_cases hb : ∃ s ∈ S, ‖γ t - s‖ ≤ ε
-      · rw [if_pos hb, Set.indicator_of_notMem (fun h : t ∈ As ε => h.2 hb)]
-      · rw [if_neg hb, Set.indicator_of_mem (show t ∈ As ε from ⟨ht, hb⟩), Pi.one_apply]
+      by_cases hb : ∃ s ∈ S, ‖γ t - s‖ ≤ ε <;>
+        simp [hAs_def, ht, hb]
     rw [intervalIntegral.integral_of_le hab, setIntegral_congr_fun measurableSet_Ioc hcongr,
       setIntegral_indicator (hAs ε), Set.inter_eq_self_of_subset_right Set.sdiff_subset]
     simp [hAs_def]
