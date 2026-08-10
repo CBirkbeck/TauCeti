@@ -17,8 +17,9 @@ opening `α` winding number `α / 2π` about its corner. Nothing connected the t
 value was stated in terms of the *parameter* `α`, and the crossing angle in terms of *tangents*,
 with no theorem saying they agree.
 
-This file supplies that bridge — `crossingAngle_modelSector` — and with it the model sector's
-winding number in intrinsic form, `windingNumber_closedModelSector_eq_crossingAngle`: the
+This file supplies that bridge — `crossingAngle_modelSector`, for every real `α` — and with
+  angle `α` at its corner — stated for every real `α` as the `[0, 2π)` normalisation of
+  `α`, which is `α` itself exactly when `0 ≤ α < 2π`.
 winding about the corner is the crossing angle over `2π`, with no reference to the
 parametrisation. That is the shape a general curve can be compared against, since a curve is
 tangent to a model sector without being equal to one.
@@ -26,14 +27,16 @@ tangent to a model sector without being equal to one.
 ## Main declarations
 
 * `TauCeti.Contour.crossingAngle_modelSector`: the model sector of opening `α` has crossing
-  angle `α` at its corner.
+  angle `α` at its corner — stated for every real `α` as the `[0, 2π)` normalisation of `α`,
+  which is `α` itself exactly when `0 ≤ α < 2π`.
 * `TauCeti.Contour.windingNumber_closedModelSector_eq_crossingAngle`: hence its winding number
   about the corner is `crossingAngle / (2π)`.
 
 ## References
 
-* K. Hungerbühler, J. Wasem, *A generalized notion of winding numbers* — the crossing-angle
-  reading of the model sector's index.
+* N. Hungerbühler, M. Wasem, *Non-integer valued winding numbers and a generalized Residue
+  Theorem*, arXiv:1808.00997 — the model sector is their equation (2.4), and the crossing-angle
+  reading of its index is what this file supplies.
 -/
 
 public section
@@ -64,8 +67,9 @@ private theorem modelSector_deriv_eventuallyEq (hr : 0 < r) (φ α : ℝ) {t : �
 tangent is `-exp((φ + α)i)` and the outgoing one is `exp(φ i)`, so the normalised angle from the
 exit ray to the reversed entry ray is `α` itself — for `0 ≤ α < 2π`, the range on which the
 opening angle determines the sector. -/
-theorem crossingAngle_modelSector (hr : 0 < r) (φ : ℝ) (hα : 0 ≤ α) (hα2 : α < 2 * Real.pi) :
-    crossingAngle (modelSector z₀ r φ α) 0 = α := by
+@[simp]
+theorem crossingAngle_modelSector (hr : 0 < r) (φ : ℝ) (α : ℝ) :
+    crossingAngle (modelSector z₀ r φ α) 0 = toIcoMod Real.two_pi_pos 0 α := by
   set u : ℂ := Complex.exp ((φ + α : ℝ) * Complex.I) with hu
   set v : ℂ := Complex.exp ((φ : ℝ) * Complex.I) with hv
   -- The one-sided tangent limits are the two ray directions: the derivative is locally constant
@@ -82,16 +86,11 @@ theorem crossingAngle_modelSector (hr : 0 < r) (φ : ℝ) (hα : 0 ≤ α) (hα2
     filter_upwards [Ioo_mem_nhdsLT (neg_lt_zero.mpr hr)] with s hs
     rw [hderiv (ne_of_lt hs.2) (by rw [abs_of_neg hs.2]; linarith [hs.1]), if_pos hs.2]
   rw [crossingAngle_eq_of_tendsto h_R h_L, neg_neg]
-  -- `arg u - arg v` is `α` modulo `2π`, and the `[0, 2π)` normalisation picks out `α`.
-  have hangle : ((Complex.arg u - Complex.arg v : ℝ) : Real.Angle) = (α : ℝ) := by
-    rw [Real.Angle.coe_sub, hu, hv, Complex.arg_exp_mul_I, Complex.arg_exp_mul_I,
-      Real.Angle.coe_toIocMod, Real.Angle.coe_toIocMod, ← Real.Angle.coe_sub]
-    norm_num
-  obtain ⟨k, hk⟩ := Real.Angle.angle_eq_iff_two_pi_dvd_sub.mp hangle
-  have hshift : Complex.arg u - Complex.arg v = α + k • (2 * Real.pi) := by
-    rw [zsmul_eq_mul]; linarith
-  rw [hshift, toIcoMod_add_zsmul]
-  exact (toIcoMod_eq_self Real.two_pi_pos).mpr (Set.mem_Ico.mpr ⟨hα, by rw [zero_add]; exact hα2⟩)
+  -- `arg u - arg v` is `α` in `Real.Angle`; the shared transport reads that back.
+  refine toIcoMod_eq_toIcoMod_of_angle_eq ?_
+  rw [Real.Angle.coe_sub, hu, hv, Complex.arg_exp_mul_I, Complex.arg_exp_mul_I,
+    Real.Angle.coe_toIocMod, Real.Angle.coe_toIocMod, ← Real.Angle.coe_sub]
+  norm_num
 
 /-- **The model sector's winding number, read off its crossing angle.** Combining
 `windingNumber_closedModelSector` with `crossingAngle_modelSector`: the winding number about the
@@ -100,7 +99,8 @@ theorem windingNumber_closedModelSector_eq_crossingAngle (hr : 0 < r) (φ : ℝ)
     (hα2 : α < 2 * Real.pi) :
     windingNumber (modelSector z₀ r φ α) (-r) (r + α) z₀ =
       (crossingAngle (modelSector z₀ r φ α) 0 : ℂ) / (2 * (Real.pi : ℂ)) := by
-  rw [crossingAngle_modelSector hr φ hα hα2, windingNumber_closedModelSector hr φ hα]
+  rw [crossingAngle_modelSector hr φ α, windingNumber_closedModelSector hr φ hα,
+    (toIcoMod_eq_self Real.two_pi_pos).mpr (Set.mem_Ico.mpr ⟨hα, by rw [zero_add]; exact hα2⟩)]
 
 end Contour
 

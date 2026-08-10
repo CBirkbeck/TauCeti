@@ -121,20 +121,24 @@ def basepointAngle (γ : ℝ → ℂ) (a b : ℝ) : ℝ :=
   toIcoMod Real.two_pi_pos 0
     (Complex.arg (-limUnder (𝓝[<] b) (deriv γ)) - Complex.arg (limUnder (𝓝[>] a) (deriv γ)))
 
+/-- **Equal angles have equal normalisations.** Two reals that agree in `Real.Angle` differ by an
+integer multiple of `2π`, which the `[0, 2π)` normalisation discards. This is the transport step
+behind every crossing-angle computation: the angle identity is proved in `Real.Angle`, where
+`2π` is invisible, and then read back as a `toIcoMod` equality. -/
+theorem toIcoMod_eq_toIcoMod_of_angle_eq {x y : ℝ} (h : (x : Real.Angle) = (y : Real.Angle)) :
+    toIcoMod Real.two_pi_pos 0 x = toIcoMod Real.two_pi_pos 0 y := by
+  obtain ⟨k, hk⟩ := Real.Angle.angle_eq_iff_two_pi_dvd_sub.mp h
+  have hshift : x = y + k • (2 * Real.pi) := by rw [zsmul_eq_mul]; linarith
+  rw [hshift, toIcoMod_add_zsmul]
+
 /-- For a nonzero `L : ℂ`, the normalized angle from `L` to `−L` is `π`. This is the engine behind
 the smooth-crossing values of `crossingAngle` and `basepointAngle`. -/
 private theorem toIcoMod_arg_neg_sub_arg {L : ℂ} (hL : L ≠ 0) :
     toIcoMod Real.two_pi_pos 0 (Complex.arg (-L) - Complex.arg L) = Real.pi := by
-  -- `arg (-L) = arg L + π` holds in `Real.Angle`; transporting back to `ℝ` leaves `π` up to a
-  -- multiple of `2π`, which the `[0, 2π)` normalization discards.
   have hangle : ((Complex.arg (-L) - Complex.arg L : ℝ) : Real.Angle) = (Real.pi : ℝ) := by
     rw [Real.Angle.coe_sub, Complex.arg_neg_coe_angle hL]
     abel
-  obtain ⟨k, hk⟩ := Real.Angle.angle_eq_iff_two_pi_dvd_sub.mp hangle
-  have hshift : Complex.arg (-L) - Complex.arg L = Real.pi + k • (2 * Real.pi) := by
-    rw [zsmul_eq_mul]
-    linarith
-  rw [hshift, toIcoMod_add_zsmul]
+  rw [toIcoMod_eq_toIcoMod_of_angle_eq hangle]
   exact (toIcoMod_eq_self Real.two_pi_pos).mpr
     (Set.mem_Ico.mpr ⟨Real.pi_nonneg, by rw [zero_add]; linarith [Real.pi_pos]⟩)
 
