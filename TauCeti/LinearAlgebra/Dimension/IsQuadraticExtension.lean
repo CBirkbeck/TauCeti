@@ -21,13 +21,15 @@ transfers to every other. This is what makes a construction defined by "pick any
 well posed up to the ambiguity that `b + aθ` describes.
 `linearIndependent_one_of_notMem_range_algebraMap` is the linear-algebra step behind the second.
 
-Two of the three need only a *ring* over `K`, not a field, and are stated that way:
-`linearIndependent_one_of_notMem_range_algebraMap`, which carries no rank hypothesis at all — its
-argument is just that `θ` is not a `K`-multiple of `1`, so it does ask for `L` nontrivial — and
-`Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap`, which sees `L` only as a free
-`K`-module of rank two and derives nontriviality from that rank rather than assuming it. So both
-cover the split and non-reduced quadratic algebras `K × K` and `K[X]/(X²)`. Only
-`exists_eq_algebraMap_add_algebraMap_mul` asks for a field.
+Two of the three ask for no field structure on `L`, and each is stated at the weakest level its
+proof supports. `Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap` needs only a
+*semiring*, the level Mathlib states `Algebra.IsQuadraticExtension` itself at, because it sees
+`L` only as a free `K`-module of rank two and derives nontriviality from that rank rather than
+assuming it. `linearIndependent_one_of_notMem_range_algebraMap` carries no rank hypothesis at
+all — its argument is just that `θ` is not a `K`-multiple of `1`, so it does ask for `L`
+nontrivial — but it stops at a *ring*, because the `LinearIndependent.pair_iff'` it applies is
+stated over an `AddCommGroup`. So both cover the split and non-reduced quadratic algebras
+`K × K` and `K[X]/(X²)`. Only `exists_eq_algebraMap_add_algebraMap_mul` asks for a field.
 
 These are consumed by the extension quadratic twist in
 `TauCeti/AlgebraicGeometry/EllipticCurve/QuadraticTwist.lean`, which advances
@@ -56,11 +58,11 @@ theorem linearIndependent_one_of_notMem_range_algebraMap [Ring L] [Nontrivial L]
 
 /-- A quadratic algebra has a generator: some element lies outside the base field. Were every
 element in the image of `algebraMap` the algebra would have rank one, contradicting
-`finrank = 2`. This is what lets a construction over `L/K` *choose* a generator. Like
-`linearIndependent_one_of_notMem_range_algebraMap`, it needs only a ring: `L` is free of rank `2`
-over the field `K` either way, nontriviality follows from that rank, and the injectivity of
-`algebraMap` comes from `K` being simple. -/
-theorem Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap [Ring L] [Algebra K L]
+`finrank = 2`. This is what lets a construction over `L/K` *choose* a generator. It needs only a
+semiring, the level `Algebra.IsQuadraticExtension` is stated at: `L` is free of rank `2` over the
+field `K` either way, nontriviality follows from that rank, and the injectivity of `algebraMap`
+comes from `K` being simple. -/
+theorem Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap [Semiring L] [Algebra K L]
     [Algebra.IsQuadraticExtension K L] : ∃ θ : L, θ ∉ Set.range (algebraMap K L) := by
   have h2 := Algebra.IsQuadraticExtension.finrank_eq_two K L
   have : Nontrivial L := Module.nontrivial_of_finrank_pos (R := K) (by rw [h2]; norm_num)
