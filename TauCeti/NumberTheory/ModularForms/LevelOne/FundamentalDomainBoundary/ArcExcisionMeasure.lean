@@ -17,9 +17,11 @@ within `ε` of the elliptic points. On the arc the excised integral turns out to
 multiple of the *length* of the surviving parameter set, so its `ε → 0` limit is governed by
 that length alone.
 
-This file supplies the limit. The arc runs once around a `π/3` sector of the unit circle, so it
+This file supplies both halves. The arc runs once around a `π/3` sector of the unit circle, so it
 meets each excision centre at most once (`injOn_fdBoundary_arc`), and
 `TauCeti.Contour.tendsto_intervalIntegral_excisionIndicator` applies with the whole length `2`.
+The constant is the contour's own logarithmic derivative, which on the arc is `(π/6)·I`
+(`logDeriv_fdBoundary_arc`), so the excised integral tends to `(π/3)·I`.
 
 ## References
 
@@ -33,6 +35,10 @@ meets each excision centre at most once (`injOn_fdBoundary_arc`), and
 
 * `TauCeti.ModularForm.tendsto_intervalIntegral_excisionIndicator_fdBoundary_arc`: the surviving
   length of `[1, 3]` tends to `2` as `ε → 0⁺`.
+* `TauCeti.ModularForm.intervalIntegral_excised_logDeriv_fdBoundary_arc`: at a fixed `ε`, the
+  excised arc integral of `logDeriv (fdBoundary H)` is `(π/6)·I` times the surviving length.
+* `TauCeti.ModularForm.tendsto_intervalIntegral_excised_logDeriv_fdBoundary_arc`: hence it tends
+  to `(π/3)·I`.
 -/
 
 public section
