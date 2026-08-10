@@ -5,8 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.Analysis.Complex.Conformal.Hyperbolic.Distance
-public import TauCeti.Analysis.Calculus.DSlope.Basic
 public import TauCeti.Analysis.Complex.Conformal.UnitDisc.Automorphism.Classification
+import TauCeti.Analysis.Calculus.DSlope.Basic
 
 /-!
 # Rigidity in the Schwarz--Pick theorem

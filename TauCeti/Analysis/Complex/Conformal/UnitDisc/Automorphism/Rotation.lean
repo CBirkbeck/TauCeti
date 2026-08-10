@@ -7,8 +7,8 @@ module
 public import Mathlib.Analysis.Complex.Schwarz
 public import Mathlib.Data.Set.Function
 public import TauCeti.Analysis.Complex.Conformal.SchwarzPick.Isometry
-public import TauCeti.Analysis.Calculus.DSlope.Basic
 import Mathlib.Analysis.Calculus.Deriv.Mul
+import TauCeti.Analysis.Calculus.DSlope.Basic
 
 /-!
 # A holomorphic automorphism of the unit disc fixing the origin is a rotation
