@@ -1,0 +1,137 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Chris Birkbeck
+-/
+module
+
+public import Mathlib.RingTheory.Valuation.Basic
+public import TauCeti.Algebra.Order.Group.ConvexSubgroup
+
+/-!
+# Restricting a valuation to a convex subgroup
+
+**Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §7.1.2.**
+
+Given a valuation `v` and a convex subgroup `H` of the units of its value monoid, the
+**restriction of `v` to `H`** keeps those values whose unit lies in `H` and sends every other
+value to `0`. It is the construction underlying the retraction `r_I : Spv A → Spv (A, I)`.
+
+That this is again a valuation is not formal: multiplicativity fails for an arbitrary subgroup,
+because two units outside `H` can have a product inside it. Convexity of `H` together with the
+hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out — see
+`Valuation.lt_one_of_unit_notMem`.
+
+## Main definitions
+
+* `Valuation.restrictToConvex` : the restricted valuation, with codomain
+  `WithZero H.toSubgroup`.
+
+## Main results
+
+* `Valuation.restrictToConvex_apply_of_mem`, `Valuation.restrictToConvex_apply_of_notMem` and
+  `Valuation.restrictToConvex_apply_of_eq_zero` : the three branches, which are the intended
+  interface — the definition itself is a `dite` chain and is not meant to be unfolded.
+
+## References
+
+* T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, §7.1.2
+
+Ported from the AINTLIB adic-spaces development (`aintlib-adic-spaces`,
+`projects/AdicSpaces/Adic spaces/ValuationContinuity.lean`, `convexRestrictFun` and
+`restrictToConvexBounded`). That development carries
+`set_option backward.isDefEq.respectTransparency false` on the definition and several proofs;
+TauCeti's CI forbids `set_option`, and it turns out not to be needed — stating the `dite` chain
+as `restrictToConvexFun_unfold` and rewriting through it, rather than unfolding the definition in
+place, lets the instances be synthesised in the consumer's context.
+-/
+
+public section
+
+namespace Valuation
+
+variable {R : Type*} [Ring R] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+
+open TauCeti
+
+open Classical in
+/-- The underlying function of `Valuation.restrictToConvex`: keep a value when its unit lies in
+`H`, and send everything else to `0`. -/
+private noncomputable def restrictToConvexFun (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (r : R) : WithZero H.toSubgroup :=
+  if h : v r = 0 then 0
+  else if hm : Units.mk0 (v r) h ∈ H then ((⟨Units.mk0 (v r) h, hm⟩ : H.toSubgroup) : WithZero _)
+  else 0
+
+open Classical in
+private theorem restrictToConvexFun_unfold (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (r : R) :
+    restrictToConvexFun v H r =
+      (if h : v r = 0 then (0 : WithZero H.toSubgroup)
+       else if hm : Units.mk0 (v r) h ∈ H
+            then ((⟨Units.mk0 (v r) h, hm⟩ : H.toSubgroup) : WithZero _)
+            else 0) :=
+  rfl
+
+/-- If `H` absorbs every attained value `≥ 1`, then a unit outside `H` is below `1`. This is
+what makes the restriction multiplicative: it forces both factors below `1`, and convexity then
+keeps their product outside `H` too. -/
+theorem lt_one_of_unit_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup Γ₀ˣ}
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {r : R} (hr : v r ≠ 0) (hm : Units.mk0 (v r) hr ∉ H) : v r < 1 := by
+  by_contra hge
+  push Not at hge
+  exact hm (hH r hr hge)
+
+/-- A unit of `H` dominated by something itself below `1` forces that something into `H`. This
+is the only way convexity is used below, and it is what stops two units outside `H` from having
+a product inside it. -/
+private theorem mem_of_le_of_le_one {H : ConvexSubgroup Γ₀ˣ} {u w : Γ₀ˣ}
+    (hu : u ∈ H) (huw : u ≤ w) (hw : w ≤ 1) : w ∈ H :=
+  H.convex hu (one_mem H) huw hw
+
+/-- The restriction is `0` at `r` exactly when `v r` vanishes or its unit avoids `H`. -/
+private theorem restrictToConvexFun_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    {r : R} (hr : v r ≠ 0) :
+    restrictToConvexFun v H r = 0 ↔ Units.mk0 (v r) hr ∉ H := by
+  classical
+  rw [restrictToConvexFun_unfold, dif_neg hr]
+  by_cases hm : Units.mk0 (v r) hr ∈ H
+  · simp [hm]
+  · simp [hm]
+
+/-- On a value whose unit lies in `H`, the restriction is that unit. -/
+private theorem restrictToConvexFun_of_mem (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    {r : R} (hr : v r ≠ 0) (hm : Units.mk0 (v r) hr ∈ H) :
+    restrictToConvexFun v H r = ((⟨Units.mk0 (v r) hr, hm⟩ : H.toSubgroup) : WithZero _) := by
+  classical
+  rw [restrictToConvexFun_unfold, dif_neg hr, dif_pos hm]
+
+/-- Units outside `H` are absorbing for the product, given that `H` takes every attained value
+`≥ 1`. Two units outside a general subgroup can multiply back into it; convexity is what rules
+that out here. -/
+private theorem mul_notMem_of_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup Γ₀ˣ}
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {x y : R} (hx : v x ≠ 0) (hy : v y ≠ 0) (hxy : v (x * y) ≠ 0)
+    (hm : Units.mk0 (v x) hx ∉ H) : Units.mk0 (v (x * y)) hxy ∉ H := by
+  intro hmem
+  have hfac : Units.mk0 (v (x * y)) hxy = Units.mk0 (v x) hx * Units.mk0 (v y) hy := by
+    ext; simp
+  by_cases hy' : Units.mk0 (v y) hy ∈ H
+  · -- the product and `y`'s unit are both in `H`, so `x`'s unit is too
+    refine hm ?_
+    have hxeq : Units.mk0 (v x) hx = Units.mk0 (v (x * y)) hxy * (Units.mk0 (v y) hy)⁻¹ := by
+      rw [hfac, mul_inv_cancel_right]
+    rw [hxeq]
+    exact mul_mem hmem (inv_mem hy')
+  · -- both units are below `1`, so the product is below `x`'s unit, and convexity lifts it
+    have hy1 : Units.mk0 (v y) hy ≤ 1 := by
+      have := lt_one_of_unit_notMem hH hy hy'
+      simpa [← Units.val_le_val] using this.le
+    refine hm (mem_of_le_of_le_one hmem ?_ ?_)
+    · rw [hfac]
+      exact mul_le_of_le_one_right' (a := Units.mk0 (v x) hx) hy1
+    · have := lt_one_of_unit_notMem hH hx hm
+      simpa [← Units.val_le_val] using this.le
+
+end Valuation
