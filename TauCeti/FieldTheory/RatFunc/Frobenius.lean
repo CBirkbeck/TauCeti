@@ -16,11 +16,13 @@ subfield `K(X^q)`, and `K(X)` has degree exactly `q` over it.
 
 ## Main results
 
+* `TauCeti.RatFunc.finrank_adjoin_X_pow`: `[K(X) : K(X^n)] = n`, over any field and for any `n`.
 * `TauCeti.FiniteField.fieldRange_frobeniusAlgHom_ratFunc`: the image of the `q`-power map on
   `K(X)` is `K⟮X ^ q⟯`.
-* `TauCeti.FiniteField.finrank_fieldRange_frobeniusAlgHom_ratFunc`: `[K(X) : K(X^q)] = q`.
+* `TauCeti.FiniteField.finrank_fieldRange_frobeniusAlgHom_ratFunc`: `[K(X) : K(X^q)] = q`, the two
+  above combined.
 
-Both are `@[simp]`.
+The last two are `@[simp]`.
 
 ## Roadmap
 
@@ -59,6 +61,21 @@ open Polynomial
 
 namespace TauCeti
 
+namespace RatFunc
+
+/-- **`[K(X) : K(X ^ n)] = n`** for any field `K` and any `n`. At `n = 0` both sides read `0`:
+`K⟮1⟯` is `K`, over which `K(X)` is infinite-dimensional, and `Module.finrank` reports `0`. -/
+theorem finrank_adjoin_X_pow (K : Type*) [Field K] (n : ℕ) :
+    Module.finrank (IntermediateField.adjoin K {(_root_.RatFunc.X : _root_.RatFunc K) ^ n})
+      (_root_.RatFunc K) = n := by
+  -- `X ^ n` as the image of a polynomial, so that `finrank_eq_max_natDegree` reads its
+  -- numerator and denominator off `X ^ n` and `1`
+  rw [← _root_.RatFunc.algebraMap_X, ← map_pow, _root_.RatFunc.finrank_eq_max_natDegree,
+    _root_.RatFunc.num_algebraMap, _root_.RatFunc.denom_algebraMap, natDegree_X_pow,
+    natDegree_one, Nat.max_zero]
+
+end RatFunc
+
 namespace FiniteField
 
 variable (K : Type*) [Field K] [Fintype K]
@@ -87,18 +104,16 @@ theorem fieldRange_frobeniusAlgHom_ratFunc :
     exact div_mem (algebraMap_expand_mem_adjoin K p) (algebraMap_expand_mem_adjoin K r)
   · intro x hx
     rw [Set.mem_singleton_iff.mp hx]
-    exact ⟨RatFunc.X, rfl⟩
+    exact ⟨RatFunc.X, by
+      simp only [AlgHom.toRingHom_eq_coe, RingHom.coe_coe,
+        _root_.FiniteField.frobeniusAlgHom_apply]⟩
 
 /-- **The rational function field has degree `q` over its subfield of `q`-th powers.** -/
 @[simp]
 theorem finrank_fieldRange_frobeniusAlgHom_ratFunc :
     Module.finrank (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange (RatFunc K) =
       Fintype.card K := by
-  -- `X ^ q` as the image of a polynomial, so that `finrank_eq_max_natDegree` reads its
-  -- numerator and denominator off `X ^ q` and `1`
-  rw [fieldRange_frobeniusAlgHom_ratFunc K, ← RatFunc.algebraMap_X, ← map_pow,
-    RatFunc.finrank_eq_max_natDegree, RatFunc.num_algebraMap, RatFunc.denom_algebraMap,
-    natDegree_X_pow, natDegree_one, Nat.max_zero]
+  rw [fieldRange_frobeniusAlgHom_ratFunc K, TauCeti.RatFunc.finrank_adjoin_X_pow]
 
 end FiniteField
 
