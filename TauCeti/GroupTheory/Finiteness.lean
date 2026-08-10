@@ -4,10 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.Algebra.EuclideanDomain.Int
 public import Mathlib.GroupTheory.Finiteness
-public import Mathlib.RingTheory.Noetherian.Basic
-public import Mathlib.RingTheory.PrincipalIdealDomain
+
+import Mathlib.Algebra.EuclideanDomain.Int
+import Mathlib.RingTheory.Noetherian.Basic
+import Mathlib.RingTheory.PrincipalIdealDomain
 
 /-!
 # Two closure properties of finitely generated groups
@@ -15,18 +16,22 @@ public import Mathlib.RingTheory.PrincipalIdealDomain
 Mathlib has a substantial theory of finitely generated commutative groups in
 `Mathlib/GroupTheory/FiniteAbelian/Basic.lean` — the structure theorem, `finite_of_fg_isMulTorsion`,
 and `Subgroup.finiteIndex_range_powMonoidHom_of_fg`, which is the finiteness of `G ⧸ Gⁿ`. Two
-closure properties it does not carry are collected here:
+closure properties it does not carry are collected here, each in both forms and each an
+`instance`, matching how Mathlib states its other `FG` closure properties (`Group.fg_range`,
+`QuotientGroup.fg`):
 
 ## Main results
 
-* `Subgroup.fg_of_commGroup_fg`: a subgroup of a finitely generated commutative group is finitely
-  generated. This is Noetherianity of `ℤ` transported through `Additive`; because the proof passes
-  through `Additive G`, `to_additive` cannot produce it and an additive version would have to be
-  written by hand.
+* `AddSubgroup.fg_of_addCommGroup` and `Subgroup.fg_of_commGroup`: a subgroup of a finitely
+  generated commutative group is finitely generated. The argument is Noetherianity of `ℤ`, so the
+  *additive* statement is the foundational one and the multiplicative statement is transported
+  from it through `Additive`. `to_additive` cannot relate them — it would have to translate the
+  `ℤ`-module argument itself — so the pair is written out by hand.
 * `Group.fg_of_fg_ker_of_fg_range`: an extension of finitely generated groups is finitely
   generated — if the kernel and the range of `φ : G →* H` are finitely generated then so is `G`,
   the generators being preimages of generators of the range together with generators of the
-  kernel. This one needs no commutativity and *is* `@[to_additive]`.
+  kernel. This one needs no commutativity and *is* `@[to_additive]`, giving
+  `AddGroup.fg_of_fg_ker_of_fg_range`.
 
 Both are steps towards the `S`-unit group being finitely generated, which
 `TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 names as an input to the weak Mordell–Weil
@@ -51,14 +56,25 @@ upstreamed, so check Mathlib again before porting anything further from it.
 
 public section
 
-/-- A subgroup of a finitely generated commutative group is finitely generated, as `ℤ` is a
-Noetherian ring: `Additive G` is then a finitely generated `ℤ`-module, hence Noetherian, so the
-submodule corresponding to `H` is finitely generated. (The proof passes through `Additive G`, so
-`to_additive` cannot translate it.) -/
-theorem Subgroup.fg_of_commGroup_fg {G : Type*} [CommGroup G] [Group.FG G] (H : Subgroup G) :
-    Group.FG H :=
-  AddGroup.fg_iff_mul_fg.mp <| Module.Finite.iff_addGroup_fg.mp <| Module.Finite.iff_fg.mpr <|
-    IsNoetherian.noetherian (R := ℤ) (AddSubgroup.toIntSubmodule H.toAddSubgroup)
+/-- A subgroup of a finitely generated additive commutative group is finitely generated, as `ℤ`
+is a Noetherian ring: `G` is then a finitely generated `ℤ`-module, hence Noetherian, so the
+submodule corresponding to `H` is finitely generated.
+
+This is the foundational form — the argument is about `ℤ`-modules, so it is naturally additive —
+and `Subgroup.fg_of_commGroup` is transported from it. An instance, matching how Mathlib
+states its other `FG` closure properties (`Group.fg_range`, `QuotientGroup.fg`). -/
+instance (priority := 100) AddSubgroup.fg_of_addCommGroup {G : Type*} [AddCommGroup G]
+    [AddGroup.FG G] (H : AddSubgroup G) : AddGroup.FG H :=
+  Module.Finite.iff_addGroup_fg.mp <| Module.Finite.iff_fg.mpr <|
+    IsNoetherian.noetherian (R := ℤ) (AddSubgroup.toIntSubmodule H)
+
+/-- A subgroup of a finitely generated commutative group is finitely generated: the additive
+statement `AddSubgroup.fg_of_addCommGroup` transported through `Additive G`. -/
+instance (priority := 100) Subgroup.fg_of_commGroup {G : Type*} [CommGroup G] [Group.FG G]
+    (H : Subgroup G) : Group.FG H :=
+  have : AddGroup.FG (Additive G) := AddGroup.fg_iff_mul_fg.mpr ‹_›
+  (Group.fg_iff_subgroup_fg H).mpr <| (Subgroup.fg_iff_add_fg H).mpr <|
+    (AddGroup.fg_iff_addSubgroup_fg (Subgroup.toAddSubgroup H)).mp inferInstance
 
 /-- An extension of finitely generated groups is finitely generated: if the kernel and the range
 of `φ : G →* H` are finitely generated, then so is `G`. The generators are preimages of
