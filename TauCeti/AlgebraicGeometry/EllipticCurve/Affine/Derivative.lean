@@ -78,15 +78,6 @@ lemma derivative_polynomial : derivative W.polynomial = W.polynomialY := by
   simp [WeierstrassCurve.Affine.polynomial, WeierstrassCurve.Affine.polynomialY, map_ofNat,
     derivative_pow, Nat.cast_ofNat]
 
-/-- Evaluating a `PolynomialModule` is evaluating the polynomial it corresponds to. -/
-private lemma eval_eq_eval_equivPolynomial {A : Type*} [CommRing A]
-    (m : PolynomialModule A A) (a : A) :
-    PolynomialModule.eval a m = eval a (PolynomialModule.equivPolynomial m) := by
-  have h := PolynomialModule.aeval_equivPolynomial (S := A) (R := A) m a
-  rw [Polynomial.coe_aeval_eq_eval] at h
-  rw [h]
-  simp
-
 private lemma equivPolynomialSelf_mapCoeffs_polynomial :
     PolynomialModule.equivPolynomialSelf ((derivative' (R := R)).mapCoeffs W.polynomial)
       = W.polynomialX := by
@@ -118,7 +109,12 @@ coefficient-wise derivative of `W(X, Y)`. -/
 lemma eval_mapCoeffs_polynomial (y : R[X]) :
     PolynomialModule.eval y ((derivative' (R := R)).mapCoeffs W.polynomial)
       = W.polynomialX.eval y := by
-  rw [eval_eq_eval_equivPolynomial, equivPolynomial_mapCoeffs_polynomial]
+  -- Mathlib's `aeval_equivPolynomial` at `S = R = R[X]` is the bridge from `PolynomialModule.eval`
+  -- to evaluating the corresponding polynomial.
+  have h := PolynomialModule.aeval_equivPolynomial (S := R[X]) (R := R[X])
+    ((derivative' (R := R)).mapCoeffs W.polynomial) y
+  rw [Polynomial.coe_aeval_eq_eval] at h
+  simpa [equivPolynomial_mapCoeffs_polynomial] using h.symm
 
 /-- **The chain rule for the Weierstrass polynomial.** Substituting `Y = y` for a polynomial
 `y : R[X]` lands `W(X, Y)` in `R[X]`, where `Polynomial.derivative` is the derivative in `X`, and
