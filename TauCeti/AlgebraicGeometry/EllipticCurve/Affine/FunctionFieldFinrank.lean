@@ -178,7 +178,8 @@ theorem finrank_ratFuncRange : Module.finrank (ratFuncRange W) W.FunctionField =
         (algebraMap (RatFunc F) W.FunctionField) := by
     -- both sides send `r` to its image in `F(W)`; `equivFieldRange` is the range restriction
     ext x
-    rfl
+    exact AlgHom.equivFieldRange_apply_coe
+      (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField) x
   have h := Algebra.finrank_eq_of_equiv_equiv
     (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).equivFieldRange.toRingEquiv
     (RingEquiv.refl W.FunctionField) hsquare
