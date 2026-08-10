@@ -178,11 +178,8 @@ theorem CofinalValueFor.mul_left {v : Valuation A Γ₀}
     have ha0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := by simpa using ha0'
     have hab0 : (MonoidWithZeroHom.ofClass v) (b * a) ≠ 0 := by
       simpa [map_mul] using mul_ne_zero hb0 ha0
-    have hmem : valueGroup.mk (.ofClass v) 1 b (by simp) hb0 ∈ characteristicSubgroup v := by
-      refine valueGroup_mk_mem_characteristicSubgroup_of_one_le hb0 ?_
-      rw [← WithZero.coe_le_coe, ← v.restrict_eq_mk hb0]
-      have : v.restrict 1 ≤ v.restrict b := v.restrict_le_iff.mpr (by simpa using hb.le)
-      simpa using this
+    have hmem : valueGroup.mk (.ofClass v) 1 b (by simp) hb0 ∈ characteristicSubgroup v :=
+      valueGroup_mk_mem_characteristicSubgroup_of_one_le_apply hb0 hb.le
     rw [cofinalValueFor_iff_isCofinalElement hab0]
     have := ((cofinalValueFor_iff_isCofinalElement ha0).mp ha).mul_of_lt_of_mem hH hmem
     have hmul : valueGroup.mk (.ofClass v) 1 b (by simp) hb0 *

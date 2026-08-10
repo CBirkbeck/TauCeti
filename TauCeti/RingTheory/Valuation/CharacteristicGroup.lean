@@ -229,6 +229,17 @@ theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le {v : Valuation A Γ�
     valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v :=
   mem_characteristicSubgroup_of_restrict h1 (v.restrict_eq_mk h)
 
+/-- The same introduction rule stated on the valuation: an attained value at least `1` puts its
+class in `cΓ_v`. This is the form consumers hold, since they meet `1 ≤ v a` rather than a
+bound in the value group. -/
+theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le_apply {v : Valuation A Γ₀} {a : A}
+    (h : (MonoidWithZeroHom.ofClass v) a ≠ 0) (h1 : 1 ≤ v a) :
+    valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v := by
+  refine valueGroup_mk_mem_characteristicSubgroup_of_one_le h ?_
+  rw [← WithZero.coe_le_coe, ← v.restrict_eq_mk h]
+  have : v.restrict 1 ≤ v.restrict a := v.restrict_le_iff.mpr (by simpa using h1)
+  simpa using this
+
 /-- Equivalent valuations have corresponding characteristic generators. -/
 theorem characteristicGenerators_map_of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
     (h : v.IsEquiv w) {γ : valueGroup (.ofClass v)} (hγ : γ ∈ characteristicGenerators v) :
