@@ -380,9 +380,11 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
     (z₀ := (UpperHalfPlane.ρ : ℂ)) (a := (3 + δR : ℝ)) (b := 5) (by linarith)
     fun s hs ↦ lt_norm_of_far_right_rho hH hεH hδR_pos hlin ⟨hs.1, hs.2.le⟩
   obtain ⟨himid, hmid0⟩ :=
-    Contour.intervalIntegrable_and_integral_truncated_eq_zero_of_near
+    Contour.intervalIntegrable_truncated_and_integral_truncated_eq_zero_of_norm_le
+      (f := fun z => (z - (UpperHalfPlane.ρ : ℂ))⁻¹)
       fun s hs => norm_le_of_near_rho hH hδL_pos.le hδL_lt h2sin hδR_le hlin
-        (by rwa [Set.uIcc_of_le (by linarith : (3 - δL : ℝ) ≤ 3 + δR)] at hs)
+        (Set.Ioc_subset_Icc_self
+          (by rwa [Set.uIoc_of_le (by linarith : (3 - δL : ℝ) ≤ 3 + δR)] at hs))
   have hi02 := hi_left.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_left)
   have hi25 := hi_right.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_right)
   refine ⟨(hi02.trans himid).trans hi25, ?_⟩

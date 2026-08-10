@@ -187,27 +187,33 @@ theorem ae_logDeriv_sub_eq_truncated {γ : ℝ → ℂ} {z₀ : ℂ} {a b ε : �
     deriv_sub_const, inv_mul_eq_div]
 
 /-- **Inside the truncation the integrand vanishes.** Where the curve stays within `ε` of the
-centre `z₀`, the `ε`-truncated winding integrand is identically `0`, so it is integrable there
+centre `z₀`, the `ε`-truncated contour integrand is identically `0`, so it is integrable there
 and integrates to `0`.
 
-This is the excised corner window: the truncation is exactly what removes the corner's
-contribution, and the whole content is that nothing survives it. -/
-theorem intervalIntegrable_and_integral_truncated_eq_zero_of_near {γ : ℝ → ℂ} {z₀ : ℂ}
-    {a b ε : ℝ} (hnear : ∀ s ∈ Set.uIcc a b, ‖γ s - z₀‖ ≤ ε) :
+Nothing is used but the falsity of the truncation condition, so the integrand's nonzero branch
+is an arbitrary `f (γ s) * deriv γ s`, and the hypothesis need only hold on `Set.uIoc a b` —
+the endpoints form a null set. This is the excised corner window: the truncation is exactly
+what removes the corner's contribution, and the whole content is that nothing survives it. -/
+theorem intervalIntegrable_truncated_and_integral_truncated_eq_zero_of_norm_le {γ : ℝ → ℂ}
+    {f : ℂ → ℂ} {z₀ : ℂ} {a b ε : ℝ} (hnear : ∀ s ∈ Set.uIoc a b, ‖γ s - z₀‖ ≤ ε) :
     IntervalIntegrable
-        (fun s => if ε < ‖γ s - z₀‖ then (γ s - z₀)⁻¹ * deriv γ s else 0)
+        (fun s => if ε < ‖γ s - z₀‖ then f (γ s) * deriv γ s else 0)
         MeasureTheory.volume a b ∧
-      ∫ s in a..b, (if ε < ‖γ s - z₀‖ then (γ s - z₀)⁻¹ * deriv γ s else 0) = 0 := by
-  have hzero : Set.EqOn (fun s => if ε < ‖γ s - z₀‖ then (γ s - z₀)⁻¹ * deriv γ s else 0)
-      (fun _ => (0 : ℂ)) (Set.uIcc a b) := fun s hs => if_neg (not_lt.mpr (hnear s hs))
+      ∫ s in a..b, (if ε < ‖γ s - z₀‖ then f (γ s) * deriv γ s else 0) = 0 := by
+  have hpt : ∀ s ∈ Set.uIoc a b,
+      (if ε < ‖γ s - z₀‖ then f (γ s) * deriv γ s else 0) = 0 :=
+    fun s hs => if_neg (not_lt.mpr (hnear s hs))
   have hint : IntervalIntegrable
-      (fun s => if ε < ‖γ s - z₀‖ then (γ s - z₀)⁻¹ * deriv γ s else 0)
+      (fun s => if ε < ‖γ s - z₀‖ then f (γ s) * deriv γ s else 0)
       MeasureTheory.volume a b :=
     (intervalIntegrable_const (c := (0 : ℂ))).congr_ae
       ((MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mpr
-        (Filter.Eventually.of_forall fun s hs => (hzero (Set.uIoc_subset_uIcc hs)).symm))
+        (Filter.Eventually.of_forall fun s hs => (hpt s hs).symm))
   refine ⟨hint, ?_⟩
-  rw [intervalIntegral.integral_congr hzero, intervalIntegral.integral_const, smul_zero]
+  have h0 : ∫ s in a..b, (if ε < ‖γ s - z₀‖ then f (γ s) * deriv γ s else 0) =
+      ∫ _ in a..b, (0 : ℂ) :=
+    intervalIntegral.integral_congr_ae (Filter.Eventually.of_forall hpt)
+  rw [h0, intervalIntegral.integral_const, smul_zero]
 
 /-- Constructor for `HasCauchyPVAt` from its two clauses — eventual integrability of the excised
 integrand and convergence of the excised integrals — without unfolding the definition. -/
