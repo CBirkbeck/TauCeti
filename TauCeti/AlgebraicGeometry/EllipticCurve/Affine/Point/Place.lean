@@ -26,6 +26,8 @@ type of nonzero primes and carries the adic valuation on the function field.
 
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal`: a `@[simp]` lemma
   identifying its underlying ideal as `XYIdeal W x (C y)`.
+* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace_inj`: distinct points of the curve
+  give distinct places, so the point–place correspondence is injective.
 
 `(pointPlace h).valuation W.FunctionField` is then the associated multiplicative adic valuation on
 the function field, taking values in `ℤᵐ⁰` and normalised so that a uniformiser has value
@@ -76,6 +78,14 @@ noncomputable def pointPlace {y : F} (h : W.Equation x y) :
 theorem pointPlace_asIdeal {y : F} (h : W.Equation x y) :
     (pointPlace h).asIdeal = CoordinateRing.XYIdeal W x (C y) := by
   simp [pointPlace]
+
+/-- **Distinct points of the curve have distinct places.** With `pointPlace` itself, this is the
+point–place dictionary in both directions: a point of the curve determines a place, and the point
+is recoverable from it. -/
+theorem pointPlace_inj {x₁ x₂ y₁ y₂ : F} (h₁ : W.Equation x₁ y₁) (h₂ : W.Equation x₂ y₂)
+    (h : pointPlace h₁ = pointPlace h₂) : x₁ = x₂ ∧ y₁ = y₂ :=
+  XYIdeal_inj h₁ <| by
+    rw [← pointPlace_asIdeal h₁, ← pointPlace_asIdeal h₂, h]
 
 end WeierstrassCurve.Affine.CoordinateRing
 
