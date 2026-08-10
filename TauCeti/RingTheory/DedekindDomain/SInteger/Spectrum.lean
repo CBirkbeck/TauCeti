@@ -22,7 +22,8 @@ the height-one primes of `𝒪_S` are exactly the height-one primes of `R` **not
 Two companion facts record what extension does to prime *powers* for `v ∉ S`:
 `integer_comap_map_pow`, that contracting the extension of `v ^ n` returns `v ^ n`, and
 `integer_map_le_map_pow_iff`, that containment in a prime power transfers along the extension in
-both directions. Multiplicities are turned into such containments by `le_count_iff_le_pow` in
+both directions. Multiplicities are turned into such containments by
+`le_count_associates_iff_le_pow` in
 `TauCeti/RingTheory/DedekindDomain/Factorization.lean`; `integer_map_le_map_pow_iff` is what then
 carries them across the extension.
 

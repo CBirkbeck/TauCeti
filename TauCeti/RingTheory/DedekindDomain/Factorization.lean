@@ -11,19 +11,23 @@ public import Mathlib.RingTheory.DedekindDomain.Factorization
 
 Two ways of handling `Associates.count` / `FractionalIdeal.count` that Mathlib does not carry.
 
-* `IsDedekindDomain.HeightOneSpectrum.le_count_iff_le_pow`: the multiplicity of `v` in a nonzero
-  `J` is at least `k` exactly when `v ^ k` contains `J`. Mathlib already reads the multiplicity of a
-  prime as divisibility — `Associates.prime_pow_dvd_iff_le` gives
+* `IsDedekindDomain.HeightOneSpectrum.le_count_associates_iff_le_pow`: the multiplicity of `v` in
+  a nonzero `J` is at least `k` exactly when `v ^ k` contains `J`. The multiplicity here is
+  `Associates.count`, not `FractionalIdeal.count` — hence the `associates` token, matching
+  Mathlib's `Ideal.count_associates_factors_eq` for the same expression.
+  Mathlib already reads the multiplicity of a prime as divisibility —
+  `Associates.prime_pow_dvd_iff_le` gives
   `p ^ k ∣ m ↔ k ≤ count p m.factors` and is the first step of the proof — but that is a statement
   about `Associates`, while a consumer
   comparing two multiplicities wants a containment of *ideals*. This packages the two together,
   through `Associates.mk_le_mk_iff_dvd` and `Ideal.dvd_iff_le`. It is the form in which
   multiplicities are compared across a ring extension: one shows the two ideals contain the same
   prime powers and concludes the multiplicities agree.
-* `FractionalIdeal.count_spanSingleton_div`: the multiplicity of `x / y` is the difference of the
-  multiplicities of `x` and `y`. Mathlib's `count` API has `count_mul`, `count_inv`, `count_pow`
-  and `count_zpow` but no division form, so every consumer that clears a denominator repeats the
-  same three rewrites; this states them once.
+* `FractionalIdeal.count_div`: the multiplicity of `I / J` is the difference of the multiplicities
+  of `I` and `J`. Mathlib's `count` API has `count_mul`, `count_inv`, `count_pow` and `count_zpow`
+  but no division form, so every consumer that clears a denominator repeats the same rewrites;
+  this states them once. `FractionalIdeal.count_spanSingleton_div` reads it on principal fractional
+  ideals, which is the shape the class-group computation below needs.
 
 Both are general facts about an arbitrary Dedekind domain, mentioning no particular ring extension.
 The `S`-integer class-group computation in
@@ -43,8 +47,8 @@ namespace IsDedekindDomain.HeightOneSpectrum
 
 /-- The multiplicity of `v` in a nonzero ideal `J` is at least `k` exactly when `v ^ k` contains
 `J`. -/
-theorem le_count_iff_le_pow {A : Type*} [CommRing A] [IsDedekindDomain A] (v : HeightOneSpectrum A)
-    {J : Ideal A} (hJ : J ≠ ⊥) (k : ℕ) :
+theorem le_count_associates_iff_le_pow {A : Type*} [CommRing A] [IsDedekindDomain A]
+    (v : HeightOneSpectrum A) {J : Ideal A} (hJ : J ≠ ⊥) (k : ℕ) :
     k ≤ (Associates.mk v.asIdeal).count (Associates.mk J).factors ↔ J ≤ v.asIdeal ^ k := by
   rw [← Associates.prime_pow_dvd_iff_le (Associates.mk_ne_zero.mpr hJ) v.associates_irreducible,
     ← Associates.mk_pow, Associates.mk_le_mk_iff_dvd, Ideal.dvd_iff_le]
@@ -57,18 +61,28 @@ open IsDedekindDomain
 
 open scoped nonZeroDivisors
 
-/-- The multiplicity of `x / y` is the difference of the multiplicities of `x` and `y`. Mathlib's
-`count` API has `count_mul` and `count_inv` but no division form. -/
+/-- **The multiplicity of a quotient is the difference of the multiplicities.** Mathlib's `count`
+API has `count_mul`, `count_inv`, `count_pow` and `count_zpow` but no division form, so every
+consumer that clears a denominator repeats the same rewrites. Fractional ideals over a Dedekind
+domain form a `Semifield` (`FractionalIdeal.semifield`), so this is `count_mul` and `count_inv`
+composed through `div_eq_mul_inv`. -/
+theorem count_div {A : Type*} [CommRing A] [IsDedekindDomain A] (K : Type*) [Field K] [Algebra A K]
+    [IsFractionRing A K] (w : HeightOneSpectrum A) {I J : FractionalIdeal A⁰ K} (hI : I ≠ 0)
+    (hJ : J ≠ 0) : count K w (I / J) = count K w I - count K w J := by
+  rw [div_eq_mul_inv, count_mul K w hI (inv_ne_zero hJ), count_inv]
+  ring
+
+/-- The multiplicity of `x / y` is the difference of the multiplicities of `x` and `y`: `count_div`
+read on principal fractional ideals, which is the form the `S`-integer class-group computation
+uses. -/
 theorem count_spanSingleton_div {A : Type*} [CommRing A] [IsDedekindDomain A] (K : Type*) [Field K]
     [Algebra A K] [IsFractionRing A K] (w : HeightOneSpectrum A) {x y : K} (hx : x ≠ 0)
     (hy : y ≠ 0) :
     count K w (spanSingleton A⁰ (x / y)) =
       count K w (spanSingleton A⁰ x) - count K w (spanSingleton A⁰ y) := by
-  rw [div_eq_mul_inv, ← spanSingleton_mul_spanSingleton, ← spanSingleton_inv,
-    count_mul K w (by simpa only [ne_eq, spanSingleton_eq_zero_iff] using hx)
-      (by simpa only [ne_eq, inv_eq_zero, spanSingleton_eq_zero_iff] using hy),
-    count_inv]
-  ring
+  rw [← spanSingleton_div_spanSingleton, count_div K w
+    (by simpa only [ne_eq, spanSingleton_eq_zero_iff] using hx)
+    (by simpa only [ne_eq, spanSingleton_eq_zero_iff] using hy)]
 
 end FractionalIdeal
 
