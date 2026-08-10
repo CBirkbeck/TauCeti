@@ -6,6 +6,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionFieldFinrank
 public import TauCeti.FieldTheory.RatFunc.Frobenius
+public import TauCeti.FieldTheory.IntermediateField.ExtendScalars
 
 /-!
 # The function field of a curve over the `q`-th powers of the rational function field
@@ -67,14 +68,15 @@ variable {K : Type*} [Field K] (W : _root_.WeierstrassCurve.Affine K)
 
 variable [Fintype K]
 
-/-- The image of `K(x^q)`, the `q`-th powers of the rational function field, inside `K(W)`. The
-body is exposed so that `frobeniusRatFuncRange_def` is available; without it that `rfl` does not
-typecheck. -/
+/-- The image of `K(x^q)`, the `q`-th powers of the rational function field, inside `K(W)`. -/
+-- exposed so that `frobeniusRatFuncRange_def` below can be stated by `rfl`
 @[expose]
 noncomputable def frobeniusRatFuncRange : IntermediateField K W.FunctionField :=
   (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange.map
     (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
 
+/-- `frobeniusRatFuncRange` is the image in `K(W)` of the field range of the `q`-power map on the
+rational function field. -/
 theorem frobeniusRatFuncRange_def :
     frobeniusRatFuncRange W =
       (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange.map
@@ -126,14 +128,6 @@ theorem finrank_extendScalars_ratFuncRange :
   have h := Algebra.finrank_eq_of_equiv_equiv i j hsquare
   rw [TauCeti.FiniteField.finrank_fieldRange_frobeniusAlgHom_ratFunc] at h
   exact h.symm
-
-/-- **Re-basing an intermediate field does not change the degree above it**: for `E ≤ E'` in
-`L / F`, the degree of `L` over `E'` viewed as an intermediate field of `L / E` is the degree of
-`L` over `E'`. -/
-theorem _root_.IntermediateField.finrank_extendScalars {F L : Type*} [Field F] [Field L]
-    [Algebra F L] {E E' : IntermediateField F L} (h : E ≤ E') :
-    Module.finrank (IntermediateField.extendScalars h) L = Module.finrank E' L :=
-  rfl
 
 /-- **`[K(W) : K(x^q)] = 2q`.** The tower `K(x^q) ⊆ K(x) ⊆ K(W)` has degrees `q` and `2`. -/
 @[simp]

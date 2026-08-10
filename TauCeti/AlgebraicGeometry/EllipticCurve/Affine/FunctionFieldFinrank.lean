@@ -147,13 +147,13 @@ open scoped RatFunc
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
-/-- The image of the rational function field `F(x)` inside the function field `F(W)`. The body is
-exposed so that `ratFuncRange_def` — and hence any downstream identification with another field
-range — is available; without it that `rfl` does not typecheck. -/
+/-- The image of the rational function field `F(x)` inside the function field `F(W)`. -/
+-- exposed so that `ratFuncRange_def` below can be stated by `rfl`
 @[expose]
 noncomputable def ratFuncRange : IntermediateField F W.FunctionField :=
   (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).fieldRange
 
+/-- `ratFuncRange` is the field range of the scalar-tower map `F(x) → F(W)`. -/
 theorem ratFuncRange_def :
     ratFuncRange W = (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).fieldRange :=
   rfl
