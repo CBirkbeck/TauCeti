@@ -61,6 +61,16 @@ translation helpers. **None of them is ported: all four are now in Mathlib** —
 instance `AddMonoid.FG.to_moduleFinite_int`, and `Module.Finite.iff_addGroup_fg` composed with
 `AddGroup.fg_iff_mul_fg`. The source predates those additions, some of which its own author
 upstreamed, so check Mathlib again before porting anything further from it.
+
+**Concurrent work upstream.** The open Mathlib pull request
+[mathlib4#40791](https://github.com/leanprover-community/mathlib4/pull/40791) ("dirichlet's s-unit
+theorem", by `vvvv-ops`, open since 2026-06-19) carries two of the results here as file-local
+helpers of `Mathlib/RingTheory/DedekindDomain/SUnit.lean`, under different names:
+`Subgroup.fg_of_commGroup` as `Subgroup.fg_of_fg_commGroup`, and
+`Group.fg_of_fg_ker_of_fg_range` as `CommGroup.fg_of_fg_ker_of_fg_range` — the latter
+`CommGroup`-only, where the version here needs no commutativity. On a bump that lands #40791, drop
+`Subgroup.fg_of_commGroup` in favour of upstream's; the extension lemma here is strictly more
+general, and `Subgroup.fg_of_fg_map_of_fg_inf_ker` has no counterpart there at all.
 -/
 
 public section
