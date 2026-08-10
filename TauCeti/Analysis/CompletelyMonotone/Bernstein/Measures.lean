@@ -1012,15 +1012,17 @@ private lemma density_tail_lower_bound_eventually (f : ℝ → ℝ)
     _ = ((2 : ℝ) ^ k * ↑((k - 1).factorial)) *
           ∫ t in Ioi (T / 2), chafaiDensity f k t := by ring
 
-/-- **The weighted normalized derivative vanishes at infinity.** Let `f` be completely monotone
-with a limit at infinity, let `k` be a nonzero order and let `0 ≤ x`. Writing `h T` for the
-normalized derivative `(-1) ^ k * iteratedDerivWithin k f (Ici 0) T`, the products
-`(T - x) ^ k * h T` tend to `0` as `T → ∞`. -/
+/-- **The weighted normalized derivative vanishes at infinity.** Let `f` be completely monotone,
+let `k` be a nonzero order and let `0 ≤ x`. Writing `h T` for the normalized derivative
+`(-1) ^ k * iteratedDerivWithin k f (Ici 0) T`, the products `(T - x) ^ k * h T` tend to `0` as
+`T → ∞`. -/
 private lemma tendsto_sub_pow_mul_normalized_iteratedDerivWithin (f : ℝ → ℝ)
-    (hcm : IsCompletelyMonotone f) (k : ℕ) (hk : k ≠ 0) (x : ℝ) (hx : 0 ≤ x)
-    (L : ℝ) (hL : Tendsto f atTop (nhds L)) :
+    (hcm : IsCompletelyMonotone f) (k : ℕ) (hk : k ≠ 0) (x : ℝ) (hx : 0 ≤ x) :
     Tendsto (fun T => (T - x) ^ k * ((-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) T))
       atTop (nhds 0) := by
+  -- complete monotonicity already supplies the limit at infinity that integrability needs
+  obtain ⟨L, hL, -⟩ :=
+    (IsCompletelyMonotoneOnIci.of_isCompletelyMonotone hcm).exists_nonneg_tendsto_atTop
   set h := fun T => (-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) T
   have hk1 : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk
   obtain ⟨h_nonneg₀, h_antitone₀⟩ :=
@@ -1152,7 +1154,7 @@ private lemma chafai_repeated_ibp_succ (f : ℝ → ℝ) (hcm : IsCompletelyMono
         simp only [pow_succ]
         ring
       simpa using
-        (((tendsto_sub_pow_mul_normalized_iteratedDerivWithin f hcm k hk x hx L hL).const_mul
+        (((tendsto_sub_pow_mul_normalized_iteratedDerivWithin f hcm k hk x hx).const_mul
           (-(1 / (k.factorial : ℝ)))).congr heq)
     simpa [zero_add] using hbdry.add htend_k
   have htend_via_ibp : Tendsto (fun T => ∫ t in x..T,
