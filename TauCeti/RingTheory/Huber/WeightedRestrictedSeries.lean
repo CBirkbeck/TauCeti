@@ -117,7 +117,7 @@ What is new there is the weighting, and it is not cosmetic: the target `Tν · U
 index, so the absorbing subgroup has to work against a *family* of targets — which is what
 `TauCeti.Huber.IsWeightFamily` is for and what
 `NonarchimedeanRing.exists_openAddSubgroup_forall_mul_subset` was factored out to supply — and
-the trichotomy has to land in `Tα · U` and `Tβ · U` separately before `weightMul_mul_mem`
+the trichotomy has to land in `Tα · U` and `Tβ · U` separately before `mul_mem_weightMul_add`
 recombines them at `α + β`. The unweighted proof needs none of that.
 
 The API layout — the `isWeightedRestricted_zero/one/add/neg/mul` series, the subring with its

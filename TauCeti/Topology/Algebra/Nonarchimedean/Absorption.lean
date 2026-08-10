@@ -26,7 +26,7 @@ alongside the theory that uses it.
 ## References
 
 * Mathlib's `Mathlib/Topology/Algebra/Nonarchimedean/Basic.lean`, whose
-  `NonarchimedeanRing.left_mul_subset` both proofs run on.
+  `NonarchimedeanRing.left_mul_subset` the proof below runs on.
 -/
 
 public section
