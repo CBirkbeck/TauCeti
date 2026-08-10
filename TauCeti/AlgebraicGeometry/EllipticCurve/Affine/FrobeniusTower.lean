@@ -59,18 +59,11 @@ namespace TauCeti
 
 namespace WeierstrassCurve.Affine
 
-variable {K : Type*} [Field K] [Fintype K] (W : _root_.WeierstrassCurve.Affine K)
+variable {K : Type*} [Field K] (W : _root_.WeierstrassCurve.Affine K)
 
 /-- The image of the rational function field `K(x)` inside the function field `K(W)`. -/
 noncomputable def ratFuncRange : IntermediateField K W.FunctionField :=
   (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField).fieldRange
-
-/-- The image of `K(x^q)`, the `q`-th powers of the rational function field, inside `K(W)`. -/
-noncomputable def frobeniusRatFuncRange : IntermediateField K W.FunctionField :=
-  (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange.map
-    (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
-
-variable [W.IsElliptic]
 
 /-- **`[K(W) : K(x)] = 2`**, for the copy of the rational function field inside `K(W)`. -/
 theorem finrank_ratFuncRange : Module.finrank (ratFuncRange W) W.FunctionField = 2 := by
@@ -80,6 +73,13 @@ theorem finrank_ratFuncRange : Module.finrank (ratFuncRange W) W.FunctionField =
     (RingEquiv.refl W.FunctionField) (by ext x; rfl)
   rw [_root_.WeierstrassCurve.Affine.finrank_functionField W (RatFunc K)] at h
   exact h.symm
+
+variable [Fintype K]
+
+/-- The image of `K(x^q)`, the `q`-th powers of the rational function field, inside `K(W)`. -/
+noncomputable def frobeniusRatFuncRange : IntermediateField K W.FunctionField :=
+  (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange.map
+    (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
 
 end WeierstrassCurve.Affine
 
