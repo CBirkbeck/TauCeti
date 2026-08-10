@@ -72,10 +72,11 @@ variable {f : ℂ → ℂ} {z w : ℂ}
 Schwarz--Pick conjugate at `w` has unit difference quotient at some point of the disc. -/
 private theorem exists_mem_ball_norm_dslope_schwarzPickConjugate_eq_one
     (hz : z ∈ ball (0 : ℂ) 1) (hw_norm : ‖w‖ < 1) (hne : z ≠ w)
-    (hg0 : schwarzPickConjugate f w 0 = 0)
     (heq : pseudoHyperbolicExpr (f z) (f w) = pseudoHyperbolicExpr z w) :
     ∃ ξ ∈ ball (0 : ℂ) 1, ‖dslope (schwarzPickConjugate f w) 0 ξ‖ = 1 / 1 := by
   have hz_norm : ‖z‖ < 1 := by simpa [mem_ball_zero_iff] using hz
+  -- the conjugate fixes the origin outright: its outer numerator there is `f w - f w`
+  have hg0 : schwarzPickConjugate f w 0 = 0 := by simp
   -- the Moebius image of `z` is where the conjugate attains its bound
   refine ⟨(z - w) / (1 - (starRingEnd ℂ) w * z),
     mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := w) hw_norm hz, ?_⟩
@@ -120,7 +121,7 @@ theorem exists_norm_eq_one_forall_eq_of_pseudoHyperbolicExpr_map_eq
   -- Mathlib's equality case of the Schwarz lemma, in its existence form
   obtain ⟨C, hC_norm, haffine⟩ :=
     Complex.affine_of_mapsTo_ball_of_exists_norm_dslope_eq_div' hgd hg_maps_closed
-      (exists_mem_ball_norm_dslope_schwarzPickConjugate_eq_one hz hw_norm hne hg0 heq)
+      (exists_mem_ball_norm_dslope_schwarzPickConjugate_eq_one hz hw_norm hne heq)
   refine ⟨C, by simpa using hC_norm, fun ζ hζ => ?_⟩
   have hζ' : (ζ - w) / (1 - (starRingEnd ℂ) w * ζ) ∈ ball (0 : ℂ) 1 :=
     mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := w) hw_norm hζ
