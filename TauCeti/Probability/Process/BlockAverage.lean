@@ -14,7 +14,7 @@ public import Mathlib.Data.Real.Basic
 The empirical mean of a process over a finite selection of coordinates, with its elementary
 algebra. Nothing here involves a measure: `blockAverage X k` is a function of `ω`, and the three
 lemmas below are the pointwise formula, the scaled-sum normal form, and the value on a constant
-block. `sq_average_sub_eq_sum_sum` records the one further piece of average algebra used
+block. `average_sub_sq_eq_sum_sum` records the one further piece of average algebra used
 downstream: the square of a deviation from an average, expanded as a double sum.
 
 It also carries the two standard selections — `prefixAverage X n` over the first `n` coordinates
@@ -116,7 +116,7 @@ theorem prod_blockAverage_eq_expect {m N : ℕ} (Y : Fin m → ℕ → Ω → �
 /-- **The squared deviation of an average, as a double sum.** For a nonempty finite index set `s`,
 the square of `(#s)⁻¹ * ∑ i ∈ s, a i - b` is `(#s)⁻¹ ^ 2` times the double sum of
 `(a i - b) * (a j - b)` over `s × s`. -/
-theorem sq_average_sub_eq_sum_sum {ι : Type*} {s : Finset ι} (hs : s.Nonempty) (a : ι → ℝ)
+theorem average_sub_sq_eq_sum_sum {ι : Type*} {s : Finset ι} (hs : s.Nonempty) (a : ι → ℝ)
     (b : ℝ) :
     ((s.card : ℝ)⁻¹ * (∑ i ∈ s, a i) - b) ^ 2
       = (s.card : ℝ)⁻¹ ^ 2 * ∑ i ∈ s, ∑ j ∈ s, (a i - b) * (a j - b) := by

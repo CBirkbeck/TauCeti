@@ -222,7 +222,7 @@ private theorem integral_sq_average_sub [IsProbabilityMeasure μ] {e : ℕ → �
       abs_nonneg (e j ω - q ω)]
   have hne : (Finset.range n).Nonempty := Finset.nonempty_range_iff.mpr hn
   have hstep := fun ω => by
-    simpa [Finset.card_range] using sq_average_sub_eq_sum_sum hne (fun i => e i ω) (q ω)
+    simpa [Finset.card_range] using average_sub_sq_eq_sum_sum hne (fun i => e i ω) (q ω)
   simp_rw [hstep]
   rw [integral_const_mul,
     integral_finsetSum _ fun i hi => integrable_finsetSum _ fun j hj => hInt i hi j hj]
