@@ -25,6 +25,8 @@ which have no business importing Lie-algebra theory use it.
 
 * `Matrix.mul_apply_diag_of_isUpperTriangular` — the diagonal of a product of upper-triangular
   matrices is the pointwise product of the diagonals.
+* `Matrix.inv_apply_diag_mul_of_isUpperTriangular` — on the diagonal, the inverse inverts
+  entrywise: `M⁻¹ i i * M i i = 1`.
 * `Matrix.inv_apply_diag_of_isUpperTriangular` — where an upper-triangular matrix carries a `1`
   on the diagonal, so does its inverse.
 * `TauCeti.vecMul_injective_of_submatrix_isUpperTriangular` — a rectangular matrix has injective
@@ -52,13 +54,20 @@ theorem mul_apply_diag_of_isUpperTriangular (hA : A.IsUpperTriangular)
 
 variable {S : Type*} [CommRing S] {M : Matrix n n S}
 
+/-- On the diagonal, the inverse of an invertible upper-triangular matrix inverts entrywise:
+`M⁻¹ i i * M i i = 1`. Read `M⁻¹ * M = 1` at `(i, i)`, where the product's diagonal is the
+pointwise product because `M⁻¹` is upper triangular too. -/
+theorem inv_apply_diag_mul_of_isUpperTriangular [Invertible M] (hM : M.IsUpperTriangular)
+    (i : n) : M⁻¹ i i * M i i = 1 := by
+  have hinv : M⁻¹.IsUpperTriangular := blockTriangular_inv_of_blockTriangular hM
+  have h := congrFun (congrFun (nonsing_inv_mul M (isUnit_det_of_invertible M)) i) i
+  rwa [mul_apply_diag_of_isUpperTriangular hinv hM i, one_apply_eq] at h
+
 /-- Where an invertible upper-triangular matrix has a `1` on the diagonal, so does its inverse.
 The hypothesis is needed only at the entry asked about. -/
 theorem inv_apply_diag_of_isUpperTriangular [Invertible M] (hM : M.IsUpperTriangular) {i : n}
     (hdiag : M i i = 1) : M⁻¹ i i = 1 := by
-  have hinv : M⁻¹.IsUpperTriangular := blockTriangular_inv_of_blockTriangular hM
-  have h := congrFun (congrFun (nonsing_inv_mul M (isUnit_det_of_invertible M)) i) i
-  rwa [mul_apply_diag_of_isUpperTriangular hinv hM i, hdiag, mul_one, one_apply_eq] at h
+  simpa [hdiag] using inv_apply_diag_mul_of_isUpperTriangular hM i
 
 end Matrix
 

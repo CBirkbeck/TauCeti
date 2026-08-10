@@ -43,10 +43,10 @@ does not, since `upperTriGL` is visibly a composition of injective maps.
 * `upperTriGL_mem_doubleCoset` — every representative lies in `SL_n(ℤ) · diag(a) · SL_n(ℤ)`.
 * `unitriMat_injective`, `upperTriGL_injective` — distinct entry assignments give distinct
   matrices, hence distinct representatives.
-* `eq_of_upperTriGL_eq`, `eq_of_mul_inv_mem_SLnZ` — the representatives lie in *distinct* left
-  `SL_n(ℤ)`-cosets: two of them are left-equivalent only when their entry assignments already
-  agree. So for a positive `IsDvdChain` the double coset meets at least `∏_{i < j} (a_j / a_i)`
-  distinct left cosets.
+* `eq_of_upperTriGL_eq`, `eq_of_upperTriGL_mul_inv_mem_SLnZ` — the representatives lie in
+  *distinct* left `SL_n(ℤ)`-cosets: two of them are left-equivalent only when their entry
+  assignments already agree. So for a positive `IsDvdChain` the double coset meets at least
+  `∏_{i < j} (a_j / a_i)` distinct left cosets.
 
 The two steps behind that conclusion are also stated separately, since each is reusable:
 `dvd_comparison_of_upperTriGL_eq` turns left equivalence into `(a_j / a_i) ∣ C_{ij}` for the
@@ -324,8 +324,8 @@ theorem eq_of_upperTriGL_eq {a : Fin n → ℕ} (ha : ∀ i, 0 < a i) (hchain : 
 
 /-- The same statement phrased with the subgroup `SLnZ n` of `GL_n(ℚ)`: distinct entry
 assignments give representatives in distinct left cosets of `SL_n(ℤ)`. -/
-theorem eq_of_mul_inv_mem_SLnZ {a : Fin n → ℕ} (ha : ∀ i, 0 < a i) (hchain : IsDvdChain a)
-    {B₁ B₂ : UpperTriEntries n a}
+theorem eq_of_upperTriGL_mul_inv_mem_SLnZ {a : Fin n → ℕ} (ha : ∀ i, 0 < a i)
+    (hchain : IsDvdChain a) {B₁ B₂ : UpperTriEntries n a}
     (h : upperTriGL B₁ * (upperTriGL B₂)⁻¹ ∈ SLnZ n) : B₁ = B₂ := by
   obtain ⟨S, hSeq⟩ := (mem_SLnZ_iff n).mp h
   exact eq_of_upperTriGL_eq ha hchain (by rw [hSeq]; group)
