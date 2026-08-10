@@ -37,7 +37,8 @@ on the contour.
 * `TauCeti.ModularForm.sum_windingNumber_mul_orderOfVanishingAt_eq`: that identity divided by
   `2πi`, giving `Σ n_z·ord z = ord_∞ − k/12`.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq`: the valence formula
-  `Σ_q ord_q + ord_∞ = k/12` for a form whose zeros all lie in the strict interior.
+  `Σ_q ord_q + ord_∞ = k/12` when every divisor point — zero or pole — lies in the strict
+  interior of the truncated fundamental domain.
 
 ## References
 
@@ -286,15 +287,17 @@ theorem sum_windingNumber_mul_orderOfVanishingAt_eq [SlashInvariantFormClass F �
   push_cast
   ring
 
-/-- **The valence formula for a form with no elliptic zeros.** When every divisor point lies in
-the strict interior of the truncated fundamental domain, each winding number is `-1`
-(`windingNumber_fdBoundary_eq_neg_one_of_interior`), so the weighted count collapses to the plain
-sum of orders and the identity reads
+/-- **The valence formula for a divisor supported in the strict interior.** When every divisor
+point — pole as well as zero — lies in the strict interior of the truncated fundamental domain,
+each winding number is `-1` (`windingNumber_fdBoundary_eq_neg_one_of_interior`), so the weighted
+count collapses to the plain sum of orders and the identity reads
 
 `Σ_q ord_q + ord_∞ = k/12`.
 
-This is the valence formula in the case the elliptic points contribute nothing; the general case
-adds the `½` and `⅓` terms coming from the corner winding numbers at `i` and `ρ`. -/
+The hypothesis is stronger than merely having no *elliptic* zeros: `hin` excludes every boundary
+divisor point, elliptic or not, and poles along with zeros. The general case allows divisor
+points on the boundary, and picks up the `½` and `⅓` terms from the corner winding numbers at
+`i` and `ρ`. -/
 theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq [SlashInvariantFormClass F Γ k]
     (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ} (hH : 1 < H)
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
