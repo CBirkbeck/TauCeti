@@ -59,8 +59,14 @@ theorem tendsto_intervalIntegral_excisionIndicator {γ : ℝ → ℂ} (hγc : Co
     (hab : a ≤ b) (hγ : InjOn γ (Icc a b)) (S : Finset ℂ) :
     Tendsto (fun ε => ∫ t in a..b, if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then (0 : ℝ) else 1)
       (𝓝[>] 0) (𝓝 (b - a)) := by
-  rw [show b - a = ∫ _ in a..b, (1 : ℝ) by
-    rw [intervalIntegral.integral_const, smul_eq_mul, mul_one]]
+  -- Dominated convergence compares an integral with an integral, so the limit `b - a` is first
+  -- presented as one. (Mathlib's `tendsto_measure_of_ae_tendsto_indicator` proves the companion
+  -- statement about the surviving set's *measure*; the integral form is what the arc's excised
+  -- integral consumes, and reaching it from the measure needs the same two facts below plus a
+  -- measure-to-integral and an `ENNReal.toReal` conversion.)
+  have hconst : ∫ _ in a..b, (1 : ℝ) = b - a := by
+    rw [intervalIntegral.integral_const, smul_eq_mul, mul_one]
+  rw [← hconst]
   refine intervalIntegral.tendsto_integral_filter_of_dominated_convergence (fun _ => (1 : ℝ))
     (Eventually.of_forall fun ε => ?_) (Eventually.of_forall fun ε => ?_)
     intervalIntegrable_const ?_
