@@ -77,13 +77,17 @@ private lemma diagElem_mul_diagElem (a b : Fin 2 → ℕ) :
     diagElem a * diagElem b =
       HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
         (diagCoset a).rep (diagCoset b).rep := by
-  rw [diagElem_def, diagElem_def, HeckeCosetModule.mul_def, HeckeCosetModule.single_mul]
-  -- `rw` cannot match a `Finsupp` lemma through the `HeckeCosetModule` wrapper, so the
-  -- summation equation is supplied as a term
-  have h := HeckeCosetModule.sum_single_index (R := ℤ) (D := diagCoset b) (b := (1 : ℤ))
-    (F := fun D₂ b₂ ↦ (1 : ℤ) • b₂ • HeckeCosetModule.structureConstants ℤ (SLnZ 2)
-      (SLnZ 2) (SLnZ 2) (diagCoset a).rep D₂.rep) (by simp)
-  exact h.trans (by simp)
+  rw [diagElem_def, diagElem_def]
+  -- `single_mul_single` yields `1 • 1 • …` on the `Module ℤ` instance transported to
+  -- `HeckeCosetModule`, which is not the instance `one_smul` picks for `ℤ`, so neither `rw`
+  -- nor `simp` matches it in place. Stating the product `•`-free lets unification supply the
+  -- instance — the idiom already used in `GL2/MultiplicationTable.lean`.
+  have hmul : HeckeCosetModule.single ℤ (diagCoset a) 1 * HeckeCosetModule.single ℤ (diagCoset b) 1
+      = HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
+          (diagCoset a).rep (diagCoset b).rep := by
+    rw [HeckeCosetModule.single_mul_single]
+    exact (one_smul ℤ _).trans (one_smul ℤ _)
+  exact hmul
 
 /-- For n=1, `heckeGen(0)^k = diagElem(fun _ => p^k)`. -/
 private lemma heckeGen_pow_one (p : ℕ) (hp : 0 < p) (k : ℕ) :
