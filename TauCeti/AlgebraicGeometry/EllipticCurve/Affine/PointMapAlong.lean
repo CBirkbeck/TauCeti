@@ -135,6 +135,7 @@ variable {F K : Type*} [Field F] [Field K] [DecidableEq F] [DecidableEq K] [Alge
 /-- **Over a field the transport is Mathlib's `Affine.Point.map`.** For a ring homomorphism
 `f : F →+* K` that is not an ambient `algebraMap`, apply this under `letI := f.toAlgebra`, where
 `algebraMap F K` is `f` by definition. -/
+@[simp]
 lemma mapAlong_eq_map (P : W.toAffine.Point) :
     mapAlong (algebraMap F K) (algebraMap F K).injective P
       = Affine.Point.map (W' := W) (Algebra.ofId F K) P := by
