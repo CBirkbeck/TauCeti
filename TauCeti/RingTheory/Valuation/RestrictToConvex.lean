@@ -267,6 +267,10 @@ theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup
     v.restrictToConvex H hH r = 0 ↔ Units.mk0 (v r) hr ∉ H :=
   restrictToConvexFun_eq_zero_iff v H hr
 
+end Valuation
+
+namespace TauCeti
+
 /-! ### Transporting a convex subgroup across the units of a `WithZero` -/
 
 /-- The identification `(WithZero G)ˣ ≃* G` is monotone. Mathlib states the multiplicative
@@ -304,4 +308,4 @@ theorem mem_convexSubgroup_ofValueGroup {G : Type*} [CommGroup G] [LinearOrder G
     u ∈ ConvexSubgroup.ofValueGroup K ↔ WithZero.unitsWithZeroEquiv u ∈ K :=
   ConvexSubgroup.mem_comap
 
-end Valuation
+end TauCeti
