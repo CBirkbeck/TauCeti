@@ -290,8 +290,8 @@ theorem mul_mem_weightMul_of_mul_subset {T : Fin k → Set A} {α β ν : Fin k 
 
 omit [TopologicalSpace A] in
 /-- Multiplying by a weight element shifts the multi-index: `T^β · (T^α · U) ⊆ T^(α+β) · U`. -/
-theorem weightPow_mul_weightMul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {U : AddSubgroup A}
-    {t x : A} (ht : t ∈ weightPow T β) (hx : x ∈ weightMul T α U) :
+theorem mul_mem_weightMul_add_of_mem_weightPow {T : Fin k → Set A} {α β : Fin k →₀ ℕ}
+    {U : AddSubgroup A} {t x : A} (ht : t ∈ weightPow T β) (hx : x ∈ weightMul T α U) :
     t * x ∈ weightMul T (α + β) U := by
   refine mul_mem_of_forall_mul_mul_mem (fun t' ht' u hu ↦ ?_) hx
   -- As above: the goal must present as `(weight) * u` for `mul_mem_weightMul`, and only the
@@ -325,7 +325,7 @@ theorem weightMul_add_eq (T : Fin k → Set A) (α β : Fin k →₀ ℕ) (U : A
       ⟨a, ha, b * u, AddSubgroup.subset_closure ⟨b, hb, u, hu, rfl⟩, by ring⟩
   · rw [AddSubgroup.closure_le]
     rintro _ ⟨t, ht, x, hx, rfl⟩
-    exact add_comm α β ▸ weightPow_mul_weightMul_mem ht hx
+    exact add_comm α β ▸ mul_mem_weightMul_add_of_mem_weightPow ht hx
 
 /-- **Wedhorn's derived hypothesis**: from the per-variable assumption that each `Tᵢ^m · U` is a
 neighbourhood of zero it follows that `Tν · U` is one for every multi-index `ν`. Wedhorn states
@@ -379,7 +379,7 @@ theorem mul_mem_weightMul_of_forall_mul_mem {T : Fin k → Set A} {α β : Fin k
     a * b ∈ weightMul T (α + β) U := by
   refine mul_mem_of_forall_mul_mul_mem (fun t ht z hz ↦ ?_) hb
   rw [mul_left_comm]
-  exact weightPow_mul_weightMul_mem ht (ha z hz)
+  exact mul_mem_weightMul_add_of_mem_weightPow ht (ha z hz)
 
 omit [TopologicalSpace A] in
 /-- With every weight equal to `{1}`, the weight of any multi-index is `{1}`. -/
