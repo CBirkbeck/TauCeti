@@ -186,7 +186,7 @@ end Nhds
 
 section Approximation
 
-variable {M N : Type*} [AddGroup N] [TopologicalSpace N] [IsTopologicalAddGroup N]
+variable {M N : Type*} [AddGroup N] [TopologicalSpace N] [ContinuousSub N]
 
 /-- **One step of Henkel's approximation.** If `y` lies in the closure of `f '' U`, and the closure
 of `f '' V` is a neighbourhood of zero, then some `x ∈ U` brings `y` within that closure: the
