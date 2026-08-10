@@ -24,10 +24,11 @@ it was built from.
   `XYIdeal` and `quotientXYIdealEquiv` themselves.
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_isMaximal_of_equation`: the point case,
   `XYIdeal W x (C y)` for `(x, y)` on `W`.
-* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_inj_of_ne_top`: equal `XYIdeal`s have
-  equal coordinates as soon as the ideal is proper. Both `X - x₁` and `X - x₂` lie in it, so the
-  constant `x₂ - x₁` does too, and a nonzero constant would be a unit; likewise for `Y`.
-* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_inj`: the point case, where properness
+* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_eq_iff_of_ne_top`: two such ideals are
+  equal exactly when their coordinates are, as soon as the first is proper. Forward: both
+  `X - x₁` and `X - x₂` lie in the ideal, so the constant `x₂ - x₁` does too, and a nonzero
+  constant would be a unit; likewise for `Y`.
+* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_eq_iff`: the point case, where properness
   comes from maximality.
 
 Mathlib has the quotient isomorphism but records nothing about the ideal itself; the many `XYIdeal`
@@ -41,7 +42,7 @@ Only the curve equation is needed, not nonsingularity: the quotient is the base 
 This supports `TauCetiRoadmap/EllipticCurves/README.md`, Layer 0, whose point–place dictionary
 identifies the affine places of `W` with the maximal ideals of its coordinate ring — "the affine
 places are the maximal ideals of the coordinate ring". Maximality of `XYIdeal` is the direction
-that sends a point to a place, and `XYIdeal_inj` says that map is injective. Classifying *all*
+that sends a point to a place, and `XYIdeal_eq_iff` says that map is injective. Classifying *all*
 maximal ideals as coming from points is a separate statement, not proved here.
 
 The roadmap's §"What Mathlib already has (consume)" lists `Affine.CoordinateRing` as consumed
@@ -52,7 +53,7 @@ implementation detail"; this is a complement to that API, not a reimplementation
 
 Ported from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned by
 that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/Curves/Basic.lean`, declaration
-`maximalIdealAt_isMaximal`. `XYIdeal_inj` is not in the source.
+`maximalIdealAt_isMaximal`. The two `XYIdeal_eq_iff` lemmas are not in the source.
 
 Changes from the source. There the ideal is reached through a `SmoothPlaneCurve` structure wrapping
 `WeierstrassCurve.Affine` and a `SmoothPoint` structure bundling the coordinates with their
@@ -106,9 +107,14 @@ private theorem eq_zero_of_algebraMap_mem {I : Ideal W.CoordinateRing} (hI : I �
   by_contra hne
   exact hI (I.eq_top_of_isUnit_mem hc ((IsUnit.mk0 c hne).map (algebraMap F W.CoordinateRing)))
 
-/-- The image of a base-field element in the coordinate ring is `mk` of the double constant. -/
+/-- The image of a base-field element in the coordinate ring is `mk` of the double constant. Proved
+through `AdjoinRoot`'s own `algebraMap` API rather than by `rfl`, so it does not depend on how the
+algebra instances happen to unfold. -/
 private theorem algebraMap_eq_mk (c : F) :
-    algebraMap F W.CoordinateRing c = CoordinateRing.mk W (C (C c)) :=
+    algebraMap F W.CoordinateRing c = CoordinateRing.mk W (C (C c)) := by
+  rw [AdjoinRoot.algebraMap_eq' (S := F), RingHom.comp_apply, Polynomial.algebraMap_eq]
+  -- all that is left is `CoordinateRing.mk W = AdjoinRoot.mk W.polynomial`, which is what
+  -- `CoordinateRing.mk` is defined to be; no algebra instance is being unfolded here
   rfl
 
 /-- Two `XClass` generators differ by the constant `x₂ - x₁`. -/
@@ -120,42 +126,89 @@ private theorem XClass_sub_XClass (x₁ x₂ : F) :
   simp only [map_sub]
   ring
 
-/-- Two `YClass` generators at constants differ by the constant `y₂ - y₁`. -/
-private theorem YClass_sub_YClass (y₁ y₂ : F) :
-    CoordinateRing.YClass W (C y₁) - CoordinateRing.YClass W (C y₂) =
-      algebraMap F W.CoordinateRing (y₂ - y₁) := by
-  simp only [CoordinateRing.YClass, algebraMap_eq_mk, ← map_sub]
+/-- Two `YClass` generators differ by the image of the polynomial `y₂ - y₁`. -/
+private theorem YClass_sub_YClass (y₁ y₂ : F[X]) :
+    CoordinateRing.YClass W y₁ - CoordinateRing.YClass W y₂ =
+      CoordinateRing.mk W (C (y₂ - y₁)) := by
+  simp only [CoordinateRing.YClass, ← map_sub]
   congr 1
   simp only [map_sub]
   ring
 
-/-- **Equal ideals have equal coordinates**, given only that the ideal is proper. Both `X - x₁` and
-`X - x₂` lie in it, so their difference — the constant `x₂ - x₁` — does too, and a nonzero constant
-would be a unit; the same for the `Y` generators. No curve equation is needed. -/
-theorem XYIdeal_inj_of_ne_top {x₁ x₂ y₁ y₂ : F}
-    (hI : CoordinateRing.XYIdeal W x₁ (C y₁) ≠ ⊤)
-    (h : CoordinateRing.XYIdeal W x₁ (C y₁) = CoordinateRing.XYIdeal W x₂ (C y₂)) :
-    x₁ = x₂ ∧ y₁ = y₂ := by
-  have hmemX : CoordinateRing.XClass W x₁ - CoordinateRing.XClass W x₂ ∈
-      CoordinateRing.XYIdeal W x₁ (C y₁) :=
-    Ideal.sub_mem _ (Ideal.subset_span (Set.mem_insert _ _))
-      (h ▸ Ideal.subset_span (Set.mem_insert _ _))
-  have hmemY : CoordinateRing.YClass W (C y₁) - CoordinateRing.YClass W (C y₂) ∈
-      CoordinateRing.XYIdeal W x₁ (C y₁) :=
-    Ideal.sub_mem _ (Ideal.subset_span (Set.mem_insert_of_mem _ rfl))
-      (h ▸ Ideal.subset_span (Set.mem_insert_of_mem _ rfl))
-  rw [XClass_sub_XClass] at hmemX
-  rw [YClass_sub_YClass] at hmemY
-  exact ⟨(sub_eq_zero.mp (eq_zero_of_algebraMap_mem hI hmemX)).symm,
-    (sub_eq_zero.mp (eq_zero_of_algebraMap_mem hI hmemY)).symm⟩
+/-- Modulo `X - x`, a polynomial in `X` is its value at `x`: the two differ by an explicit multiple
+of the `XClass` generator. -/
+private theorem mk_C_sub_algebraMap_eval (x : F) (y : F[X]) :
+    ∃ q : F[X], CoordinateRing.mk W (C y) - algebraMap F W.CoordinateRing (y.eval x) =
+      CoordinateRing.XClass W x * CoordinateRing.mk W (C q) := by
+  obtain ⟨q, hq⟩ := X_sub_C_dvd_sub_C_eval (a := x) (p := y)
+  refine ⟨q, ?_⟩
+  rw [algebraMap_eq_mk, CoordinateRing.XClass, ← map_mul, ← map_sub, ← map_sub, ← C_mul, ← hq]
 
-/-- **The ideal of a point determines the point**: equal `XYIdeal`s attached to points of the curve
-have equal coordinates, so `fun (x, y) ↦ XYIdeal W x (C y)` is injective on points. The point case
-of `XYIdeal_inj_of_ne_top`, whose properness comes from `XYIdeal_isMaximal_of_equation`. -/
-theorem XYIdeal_inj {x₁ x₂ y₁ y₂ : F} (h₁ : W.Equation x₁ y₁)
-    (h : CoordinateRing.XYIdeal W x₁ (C y₁) = CoordinateRing.XYIdeal W x₂ (C y₂)) :
-    x₁ = x₂ ∧ y₁ = y₂ :=
-  XYIdeal_inj_of_ne_top (XYIdeal_isMaximal_of_equation h₁).ne_top h
+/-- **Two such ideals are equal exactly when their data agree at the point**, given only that the
+first is proper: the `X`-coordinates must coincide, and the two `Y`-polynomials must take the same
+value there. For the forward direction, both `X - x₁` and `X - x₂` lie in the ideal, so their
+difference — the constant `x₂ - x₁` — does too, and a nonzero constant would be a unit; the `Y`
+generators differ by `y₂ - y₁`, which reduces modulo `X - x₁` to its value at `x₁`. Stated for
+polynomial `y`, matching `XYIdeal` and `XYIdeal_isMaximal`; no curve equation is needed. -/
+theorem XYIdeal_eq_iff_of_ne_top {x₁ x₂ : F} {y₁ y₂ : F[X]}
+    (hI : CoordinateRing.XYIdeal W x₁ y₁ ≠ ⊤) :
+    CoordinateRing.XYIdeal W x₁ y₁ = CoordinateRing.XYIdeal W x₂ y₂ ↔
+      x₁ = x₂ ∧ y₁.eval x₁ = y₂.eval x₂ := by
+  have hX₁ : CoordinateRing.XClass W x₁ ∈ CoordinateRing.XYIdeal W x₁ y₁ :=
+    Ideal.subset_span (Set.mem_insert _ _)
+  constructor
+  · intro h
+    have hmemX : CoordinateRing.XClass W x₁ - CoordinateRing.XClass W x₂ ∈
+        CoordinateRing.XYIdeal W x₁ y₁ :=
+      Ideal.sub_mem _ hX₁ (h ▸ Ideal.subset_span (Set.mem_insert _ _))
+    rw [XClass_sub_XClass] at hmemX
+    have hx : x₁ = x₂ := (sub_eq_zero.mp (eq_zero_of_algebraMap_mem hI hmemX)).symm
+    have hmemY : CoordinateRing.mk W (C (y₂ - y₁)) ∈ CoordinateRing.XYIdeal W x₁ y₁ := by
+      rw [← YClass_sub_YClass]
+      exact Ideal.sub_mem _ (Ideal.subset_span (Set.mem_insert_of_mem _ rfl))
+        (h ▸ Ideal.subset_span (Set.mem_insert_of_mem _ rfl))
+    obtain ⟨q, hq⟩ := mk_C_sub_algebraMap_eval (W := W) x₁ (y₂ - y₁)
+    have : algebraMap F W.CoordinateRing ((y₂ - y₁).eval x₁) ∈
+        CoordinateRing.XYIdeal W x₁ y₁ := by
+      have := Ideal.sub_mem _ hmemY (hq ▸ Ideal.mul_mem_right (CoordinateRing.mk W (C q)) _ hX₁)
+      simpa using this
+    have := eq_zero_of_algebraMap_mem hI this
+    rw [eval_sub, sub_eq_zero] at this
+    exact ⟨hx, by rw [← hx, this]⟩
+  · rintro ⟨rfl, hy⟩
+    -- the two `Y` generators differ by a multiple of `X - x₁`, so the spans agree
+    obtain ⟨q, hq⟩ := mk_C_sub_algebraMap_eval (W := W) x₁ (y₂ - y₁)
+    rw [eval_sub, sub_eq_zero.mpr hy.symm, map_zero, sub_zero] at hq
+    have hdiff : CoordinateRing.YClass W y₁ - CoordinateRing.YClass W y₂ ∈
+        Ideal.span {CoordinateRing.XClass W x₁} := by
+      rw [YClass_sub_YClass, hq]
+      exact Ideal.mul_mem_right _ _ (Ideal.subset_span rfl)
+    have hle : ∀ z₁ z₂ : F[X], CoordinateRing.YClass W z₁ - CoordinateRing.YClass W z₂ ∈
+        Ideal.span {CoordinateRing.XClass W x₁} →
+        CoordinateRing.XYIdeal W x₁ z₁ ≤ CoordinateRing.XYIdeal W x₁ z₂ := by
+      intro z₁ z₂ hz
+      rw [CoordinateRing.XYIdeal, Ideal.span_le]
+      rintro w (rfl | rfl)
+      · exact Ideal.subset_span (Set.mem_insert _ _)
+      · have hsub : Ideal.span {CoordinateRing.XClass W x₁} ≤ CoordinateRing.XYIdeal W x₁ z₂ := by
+          rw [Ideal.span_le]
+          rintro _ rfl
+          exact Ideal.subset_span (Set.mem_insert _ _)
+        have := Ideal.add_mem _ (hsub hz)
+          (Ideal.subset_span (Set.mem_insert_of_mem _ rfl) :
+            CoordinateRing.YClass W z₂ ∈ CoordinateRing.XYIdeal W x₁ z₂)
+        simpa using this
+    exact le_antisymm (hle y₁ y₂ hdiff) (hle y₂ y₁ (by simpa using neg_mem hdiff))
+
+/-- **The ideal of a point determines the point**: for points of the curve, equality of the ideals
+`⟨X - x, Y - y⟩` is equality of the coordinates, so `fun (x, y) ↦ XYIdeal W x (C y)` is injective
+on points. The point case of `XYIdeal_eq_iff_of_ne_top`, whose properness comes from
+`XYIdeal_isMaximal_of_equation`. -/
+theorem XYIdeal_eq_iff {x₁ x₂ y₁ y₂ : F} (h₁ : W.Equation x₁ y₁) :
+    CoordinateRing.XYIdeal W x₁ (C y₁) = CoordinateRing.XYIdeal W x₂ (C y₂) ↔
+      x₁ = x₂ ∧ y₁ = y₂ := by
+  simpa only [eval_C] using XYIdeal_eq_iff_of_ne_top (x₂ := x₂) (y₂ := C y₂)
+    (XYIdeal_isMaximal_of_equation h₁).ne_top
 
 end WeierstrassCurve.Affine.CoordinateRing
 

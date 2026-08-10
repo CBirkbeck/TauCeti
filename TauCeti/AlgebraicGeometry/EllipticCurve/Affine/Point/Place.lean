@@ -26,8 +26,8 @@ type of nonzero primes and carries the adic valuation on the function field.
 
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace_asIdeal`: a `@[simp]` lemma
   identifying its underlying ideal as `XYIdeal W x (C y)`.
-* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace_inj`: `pointPlace` is injective —
-  equal places have equal coordinates.
+* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace_eq_iff`: `pointPlace` is injective —
+  two points have the same place exactly when they have the same coordinates.
 
 `(pointPlace h).valuation W.FunctionField` is then the associated multiplicative adic valuation on
 the function field, taking values in `ℤᵐ⁰` and normalised so that a uniformiser has value
@@ -79,13 +79,14 @@ theorem pointPlace_asIdeal {y : F} (h : W.Equation x y) :
     (pointPlace h).asIdeal = CoordinateRing.XYIdeal W x (C y) := by
   simp [pointPlace]
 
-/-- **`pointPlace` is injective**: equality of the places attached to two points of the curve
-recovers equality of their coordinates. Whether every place arises this way is a separate
-statement, not proved here. -/
-theorem pointPlace_inj {x₁ x₂ y₁ y₂ : F} (h₁ : W.Equation x₁ y₁) (h₂ : W.Equation x₂ y₂)
-    (h : pointPlace h₁ = pointPlace h₂) : x₁ = x₂ ∧ y₁ = y₂ :=
-  XYIdeal_inj h₁ <| by
-    rw [← pointPlace_asIdeal h₁, ← pointPlace_asIdeal h₂, h]
+/-- **`pointPlace` is injective**: two points of the curve have the same place exactly when they
+have the same coordinates. Whether every place arises from a point is a separate statement, not
+proved here. -/
+@[simp]
+theorem pointPlace_eq_iff {x₁ x₂ y₁ y₂ : F} (h₁ : W.Equation x₁ y₁) (h₂ : W.Equation x₂ y₂) :
+    pointPlace h₁ = pointPlace h₂ ↔ x₁ = x₂ ∧ y₁ = y₂ := by
+  refine ⟨fun h => (XYIdeal_eq_iff h₁).mp ?_, fun ⟨hx, hy⟩ => by subst hx; subst hy; rfl⟩
+  rw [← pointPlace_asIdeal h₁, ← pointPlace_asIdeal h₂, h]
 
 end WeierstrassCurve.Affine.CoordinateRing
 
