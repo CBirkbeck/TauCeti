@@ -141,7 +141,8 @@ theorem ContractionSemigroup.hasGrowthBound_of_nonneg_omega_of_one_le_const
 omit [CompleteSpace X] in
 /-- **The multi-step bound from a one-step bound.** If `‖S t‖ ≤ M` at a nonnegative time `t`, then
 `‖S (k • t)‖ ≤ M ^ k` at every natural multiple of `t`. -/
-private theorem norm_realOperator_nsmul_le_pow (S : StronglyContinuousSemigroup X) {M t : ℝ}
+theorem StronglyContinuousSemigroup.norm_realOperator_nsmul_le_pow
+    (S : StronglyContinuousSemigroup X) {M t : ℝ}
     (ht : 0 ≤ t) (hMt : ‖S.realOperator t‖ ≤ M) (k : ℕ) :
     ‖S.realOperator (k • t)‖ ≤ M ^ k := by
   have hM : 0 ≤ M := (norm_nonneg _).trans hMt
@@ -170,7 +171,7 @@ theorem StronglyContinuousSemigroup.existsGrowthBound (S : StronglyContinuousSem
   have hfrac_le1 : t - ↑n ≤ 1 := by
     have := Nat.lt_floor_add_one t; linarith
   have hint : ‖S.realOperator (n : ℝ)‖ ≤ M ^ n := by
-    simpa using norm_realOperator_nsmul_le_pow S zero_le_one (hMbound 1 zero_le_one le_rfl) n
+    simpa using S.norm_realOperator_nsmul_le_pow zero_le_one (hMbound 1 zero_le_one le_rfl) n
   calc ‖S.realOperator t‖
       = ‖S.realOperator ((t - ↑n) + ↑n)‖ := by
         rw [sub_add_cancel]
