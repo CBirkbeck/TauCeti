@@ -30,8 +30,8 @@ are such a sequence, so a Tate ring qualifies — is in
 `TauCeti/RingTheory/Huber/ZeroSequenceOfUnits.lean`.
 
 The covering is the point, and it must be **countable**. Henkel's proof applies a Baire argument
-to the sets `uₙ⁻¹ • U` indexed by `n : ℕ`; a cover indexed by all of `Aˣ` would exhaust the ring
-just as well but could not start that argument. Both results are therefore stated for an
+to the sets `uₙ⁻¹ • U` indexed by `n : ℕ`; a cover indexed by all of `Aˣ` would exhaust `M` just
+as well but could not start that argument. Both results are therefore stated for an
 arbitrary zero sequence, so that a caller holding a concrete one — the powers of a
 pseudouniformiser, say — keeps it rather than trading it for an opaque choice.
 
@@ -56,7 +56,7 @@ the two pointwise results only at their own.
 
 * L. Henkel, *An Open Mapping Theorem for rings which have a zero sequence of units*,
   [arXiv:1407.5647](https://arxiv.org/abs/1407.5647). The hypothesis formalised here, the
-  terminology, and both results below are its setup.
+  terminology, and the results below are its setup.
 -/
 
 public section
