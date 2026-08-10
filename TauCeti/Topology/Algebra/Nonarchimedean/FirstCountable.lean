@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
-public import Mathlib.Topology.Algebra.OpenSubgroup
 
 /-!
 # A first-countable nonarchimedean group has a decreasing basis of open subgroups
@@ -16,16 +15,16 @@ used and neither comes for free: its terms must be **subgroups**, so that a sum 
 from one term stays inside it, and it must be **decreasing**, so that the tail of the construction
 stays inside the neighbourhood it started in.
 
-Nonarchimedean gives the first, first countability the second, and this file combines them:
-`TauCeti.exists_antitone_basis_openAddSubgroup`. Neither hypothesis alone suffices — a
+Nonarchimedean gives the first, countable generation of `𝓝 0` the second, and this file combines
+them. Neither hypothesis alone suffices — a
 nonarchimedean group has open subgroups arbitrarily close to zero but possibly uncountably many
 with no cofinal sequence among them, and a first-countable group has a decreasing countable basis
 whose terms need not be subgroups.
 
 ## Main results
 
-* `TauCeti.exists_antitone_basis_openAddSubgroup`: the neighbourhoods of zero admit an antitone
-  basis consisting of open subgroups, indexed by `ℕ`.
+* `NonarchimedeanAddGroup.exists_antitone_basis_openAddSubgroup`: the neighbourhoods of zero
+  admit an antitone basis consisting of open subgroups, indexed by `ℕ`.
 
 ## References
 
@@ -38,41 +37,28 @@ public section
 
 open Filter Topology
 
-namespace TauCeti
+namespace NonarchimedeanAddGroup
 
 variable {G : Type*} [AddGroup G] [TopologicalSpace G]
 
 /-- **A first-countable nonarchimedean additive group has an antitone basis of open subgroups at
 zero.**
 
-Both hypotheses are used. Nonarchimedean supplies an open *subgroup* inside each member of some
-countable basis; first countability supplies the countable basis, and lets the subgroups be
-intersected downwards into an antitone sequence — a finite intersection of open subgroups is again
-one, so nothing is lost. -/
-theorem exists_antitone_basis_openAddSubgroup [FirstCountableTopology G]
+Both hypotheses are used, and only where stated: nonarchimedean makes the open subgroups a basis
+of `𝓝 0` at all, and countable generation of `𝓝 0` is what extracts an antitone *sequence* from
+that basis. Global first countability is more than is needed and is not assumed. -/
+theorem exists_antitone_basis_openAddSubgroup [(𝓝 (0 : G)).IsCountablyGenerated]
     [NonarchimedeanAddGroup G] :
     ∃ V : ℕ → OpenAddSubgroup G, (𝓝 (0 : G)).HasAntitoneBasis fun n ↦ (V n : Set G) := by
-  obtain ⟨U, hU⟩ := (𝓝 (0 : G)).exists_antitone_basis
-  -- An open subgroup inside each basic neighbourhood.
-  choose W hW using fun n ↦ NonarchimedeanAddGroup.is_nonarchimedean (U n)
-    (hU.toHasBasis.mem_of_mem (i := n) trivial)
-  -- Intersecting the first `n + 1` of them makes the sequence antitone without leaving `U n`.
-  set V : ℕ → OpenAddSubgroup G := fun n ↦ Nat.rec (W 0) (fun m Vm ↦ Vm ⊓ W (m + 1)) n
-  have hstep : ∀ n, V (n + 1) ≤ V n := fun n ↦ inf_le_left
-  have hanti : Antitone fun n ↦ (V n : Set G) :=
-    antitone_nat_of_succ_le fun n ↦ hstep n
-  have hVW : ∀ n, (V n : Set G) ⊆ (W n : Set G) := by
-    intro n
-    cases n with
-    | zero => exact le_rfl
-    | succ m => exact inf_le_right
-  refine ⟨V, ⟨?_, hanti⟩⟩
-  refine Filter.hasBasis_iff.mpr fun S ↦ ⟨fun hS ↦ ?_, ?_⟩
-  · obtain ⟨n, -, hn⟩ := hU.toHasBasis.mem_iff.mp hS
-    exact ⟨n, trivial, ((hVW n).trans (hW n)).trans hn⟩
-  · rintro ⟨n, -, hn⟩
-    exact Filter.mem_of_superset ((V n).isOpen.mem_nhds (V n).zero_mem) hn
+  have hb : (𝓝 (0 : G)).HasBasis (fun _ : OpenAddSubgroup G ↦ True) fun V ↦ (V : Set G) := by
+    refine Filter.hasBasis_iff.mpr fun S ↦ ⟨fun hS ↦ ?_, ?_⟩
+    · obtain ⟨V, hV⟩ := NonarchimedeanAddGroup.is_nonarchimedean S hS
+      exact ⟨V, trivial, hV⟩
+    · rintro ⟨V, -, hV⟩
+      exact Filter.mem_of_superset (V.isOpen.mem_nhds V.zero_mem) hV
+  obtain ⟨V, -, hV⟩ := hb.exists_antitone_subbasis
+  exact ⟨V, hV⟩
 
-end TauCeti
+end NonarchimedeanAddGroup
 
 end
