@@ -19,13 +19,15 @@ therefore gives a discrete valuation ring.
 ## Main results
 
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.isDiscreteValuationRing_localizationAtPrime`: the
-  localisation of the coordinate ring at the ideal of a point is a discrete valuation ring, from
-  the curve equation alone.
+  localisation of the coordinate ring at `⟨X - x, Y - y(X)⟩` is a discrete valuation ring, for any
+  `y : F[X]` solving the Weierstrass equation at `x`.
+* `…CoordinateRing.isDiscreteValuationRing_localizationAtPrime_of_equation`: the point case, with
+  `y` constant.
 
 Mathlib's `IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain` is applied directly;
-what this file contributes is that both of its hypotheses hold at a point of the curve — primality
-from `XYIdeal_isMaximal_of_equation` and non-vanishing from `XYIdeal_ne_bot` — over a coordinate
-ring already known to be Dedekind.
+what this file contributes is that both of its hypotheses hold at such an ideal — primality from
+`XYIdeal_isMaximal` and non-vanishing from `XYIdeal_ne_bot` — over a coordinate ring already known
+to be Dedekind.
 
 No valuation is defined here: the result gives the `IsDiscreteValuationRing` structure, which is
 what an order-of-vanishing and uniformiser API would be built on.
@@ -61,17 +63,26 @@ namespace WeierstrassCurve.Affine.CoordinateRing
 
 variable {F : Type*} [Field F] {W : _root_.WeierstrassCurve.Affine F} {x : F}
 
-/-- **The local ring at a point of an elliptic curve is a discrete valuation ring.** The primality
-of the point's ideal is a consequence of the curve equation, through
-`XYIdeal_isMaximal_of_equation`, so it is installed in the statement rather than assumed. -/
-theorem isDiscreteValuationRing_localizationAtPrime [W.IsElliptic] {y : F}
+/-- **The local ring of an elliptic curve at `⟨X - x, Y - y(X)⟩` is a discrete valuation ring**,
+whenever `y` solves the Weierstrass equation at `x`. The primality of the ideal is a consequence of
+that hypothesis, through `XYIdeal_isMaximal`, so it is installed in the statement rather than
+assumed. -/
+theorem isDiscreteValuationRing_localizationAtPrime [W.IsElliptic] {y : F[X]}
+    (h : (W.polynomial.eval y).eval x = 0) :
+    haveI : (CoordinateRing.XYIdeal W x y).IsPrime := (XYIdeal_isMaximal h).isPrime
+    IsDiscreteValuationRing (Localization.AtPrime (CoordinateRing.XYIdeal W x y)) :=
+  haveI : (CoordinateRing.XYIdeal W x y).IsPrime := (XYIdeal_isMaximal h).isPrime
+  have := isDedekindDomain_coordinateRing W
+  IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain W.CoordinateRing
+    (XYIdeal_ne_bot x y) _
+
+/-- **The local ring at a point of an elliptic curve is a discrete valuation ring**, the
+constant-polynomial case of `isDiscreteValuationRing_localizationAtPrime`. -/
+theorem isDiscreteValuationRing_localizationAtPrime_of_equation [W.IsElliptic] {y : F}
     (h : W.Equation x y) :
     haveI : (CoordinateRing.XYIdeal W x (C y)).IsPrime := (XYIdeal_isMaximal_of_equation h).isPrime
     IsDiscreteValuationRing (Localization.AtPrime (CoordinateRing.XYIdeal W x (C y))) :=
-  haveI : (CoordinateRing.XYIdeal W x (C y)).IsPrime := (XYIdeal_isMaximal_of_equation h).isPrime
-  have := isDedekindDomain_coordinateRing W
-  IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain W.CoordinateRing
-    (XYIdeal_ne_bot x (C y)) _
+  isDiscreteValuationRing_localizationAtPrime h
 
 end WeierstrassCurve.Affine.CoordinateRing
 
