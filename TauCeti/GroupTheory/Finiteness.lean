@@ -11,27 +11,31 @@ import Mathlib.RingTheory.Noetherian.Basic
 import Mathlib.RingTheory.PrincipalIdealDomain
 
 /-!
-# Two closure properties of finitely generated groups
+# Closure properties of finitely generated groups
 
 Mathlib has a substantial theory of finitely generated commutative groups in
 `Mathlib/GroupTheory/FiniteAbelian/Basic.lean` — the structure theorem, `finite_of_fg_isMulTorsion`,
-and `Subgroup.finiteIndex_range_powMonoidHom_of_fg`, which is the finiteness of `G ⧸ Gⁿ`. Two
-closure properties it does not carry are collected here, each in both forms and each an
-`instance`, matching how Mathlib states its other `FG` closure properties (`Group.fg_range`,
-`QuotientGroup.fg`):
+and `Subgroup.finiteIndex_range_powMonoidHom_of_fg`, which is the finiteness of `G ⧸ Gⁿ`. Three
+closure properties it does not carry are collected here.
 
 ## Main results
 
 * `AddSubgroup.fg_of_addCommGroup` and `Subgroup.fg_of_commGroup`: a subgroup of a finitely
   generated commutative group is finitely generated. The argument is Noetherianity of `ℤ`, so the
   *additive* statement is the foundational one and the multiplicative statement is transported
-  from it through `Additive`. `to_additive` cannot relate them — it would have to translate the
-  `ℤ`-module argument itself — so the pair is written out by hand.
+  from it through `Additive`; `to_additive` cannot relate them — it would have to translate the
+  `ℤ`-module argument itself — so the pair is written out by hand and registered with
+  `to_additive existing`. Both are `instance`s, matching how Mathlib states its other `FG` closure
+  properties (`Group.fg_range`, `QuotientGroup.fg`, `Subgroup.fg_of_index_ne_zero`).
 * `Group.fg_of_fg_ker_of_fg_range`: an extension of finitely generated groups is finitely
-  generated — if the kernel and the range of `φ : G →* H` are finitely generated then so is `G`,
-  the generators being preimages of generators of the range together with generators of the
-  kernel. This one needs no commutativity and *is* `@[to_additive]`, giving
-  `AddGroup.fg_of_fg_ker_of_fg_range`.
+  generated — if the kernel and the range of `φ : G →* H` are finitely generated then so is `G`.
+  This needs no commutativity and *is* `@[to_additive]`. It is a plain theorem rather than an
+  instance, because `φ` is an explicit argument that typeclass resolution cannot infer.
+* `Subgroup.fg_of_fg_map_of_fg_inf_ker`: the relativization of the previous result to an arbitrary
+  subgroup `K`, of which it is the `K = ⊤` case. This is the `Subgroup` analogue of Mathlib's
+  `Submodule.fg_of_fg_map_of_fg_inf_ker`, an absence Mathlib records explicitly — a comment in
+  `Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean` restructures a proof "due to no
+  `Subgroup` version of `Submodule.fg_of_fg_map_of_fg_inf_ker` existing". Also `@[to_additive]`.
 
 Both are steps towards the `S`-unit group being finitely generated, which
 `TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 names as an input to the weak Mordell–Weil
@@ -69,10 +73,13 @@ instance (priority := 100) AddSubgroup.fg_of_addCommGroup {G : Type*} [AddCommGr
     IsNoetherian.noetherian (R := ℤ) (AddSubgroup.toIntSubmodule H)
 
 /-- A subgroup of a finitely generated commutative group is finitely generated: the additive
-statement `AddSubgroup.fg_of_addCommGroup` transported through `Additive G`. -/
+statement `AddSubgroup.fg_of_addCommGroup` transported through `Additive G`. Registered with
+`to_additive existing` so the hand-written pair is in the dictionary and downstream
+`@[to_additive]` proofs using this instance can translate. -/
+@[to_additive existing]
 instance (priority := 100) Subgroup.fg_of_commGroup {G : Type*} [CommGroup G] [Group.FG G]
     (H : Subgroup G) : Group.FG H :=
-  have : AddGroup.FG (Additive G) := AddGroup.fg_iff_mul_fg.mpr ‹_›
+  -- `AddGroup.FG (Additive G)` is Mathlib's instance `AddGroup.fg_of_group_fg`, found by search
   (Group.fg_iff_subgroup_fg H).mpr <| (Subgroup.fg_iff_add_fg H).mpr <|
     (AddGroup.fg_iff_addSubgroup_fg (Subgroup.toAddSubgroup H)).mp inferInstance
 
@@ -83,9 +90,9 @@ generators of the range together with generators of the kernel. -/
 kernel and the range of `φ : G →+ H` are finitely generated, then so is `G`. The generators are
 preimages of generators of the range together with generators of the kernel. -/]
 theorem Group.fg_of_fg_ker_of_fg_range {G H : Type*} [Group G] [Group H] (φ : G →* H)
-    (hker : Group.FG φ.ker) (hrange : Group.FG φ.range) : Group.FG G := by
-  obtain ⟨T, hT, hTfin⟩ := Group.fg_iff.mp hrange
-  obtain ⟨S, hS, hSfin⟩ := Group.fg_iff.mp hker
+    [Group.FG φ.ker] [Group.FG φ.range] : Group.FG G := by
+  obtain ⟨T, hT, hTfin⟩ := Group.fg_iff.mp ‹Group.FG φ.range›
+  obtain ⟨S, hS, hSfin⟩ := Group.fg_iff.mp ‹Group.FG φ.ker›
   set σ : φ.range → G := Function.surjInv φ.rangeRestrict_surjective with hσ
   set U : Set G := σ '' T ∪ (φ.ker.subtype '' S) with hU
   refine Group.fg_iff.mpr ⟨U, ?_, (hTfin.image σ).union (hSfin.image _)⟩
@@ -106,5 +113,31 @@ theorem Group.fg_of_fg_ker_of_fg_range {G H : Type*} [Group G] [Group H] (φ : G
   have h := Subgroup.comap_map_eq φ.rangeRestrict (Subgroup.closure U)
   rw [hmap, Subgroup.comap_top, MonoidHom.ker_rangeRestrict, sup_eq_left.mpr hkerle] at h
   exact h.symm
+
+/-- **A subgroup whose image and whose intersection with the kernel are finitely generated is
+itself finitely generated.** The `Subgroup` analogue of Mathlib's
+`Submodule.fg_of_fg_map_of_fg_inf_ker`, whose absence Mathlib records explicitly: a comment in
+`Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean` restructures a proof "due to no
+`Subgroup` version of `Submodule.fg_of_fg_map_of_fg_inf_ker` existing".
+
+Restricting `φ` to `K` turns this into `Group.fg_of_fg_ker_of_fg_range`, of which it is the
+relativization: at `K = ⊤` the hypotheses read `φ.range` and `φ.ker`. -/
+@[to_additive /-- **An additive subgroup whose image and whose intersection with the kernel are
+finitely generated is itself finitely generated.** The `AddSubgroup` analogue of Mathlib's
+`Submodule.fg_of_fg_map_of_fg_inf_ker`. -/]
+theorem Subgroup.fg_of_fg_map_of_fg_inf_ker {G H : Type*} [Group G] [Group H] (φ : G →* H)
+    {K : Subgroup G} (h₁ : (K.map φ).FG) (h₂ : (K ⊓ φ.ker).FG) : K.FG := by
+  set ψ : K →* H := φ.comp K.subtype with hψ
+  have hrange : ψ.range = K.map φ := by rw [hψ, MonoidHom.range_comp, Subgroup.range_subtype]
+  have hker : ψ.ker = φ.ker.subgroupOf K := Subgroup.map_subtype_inj.mp rfl
+  have h2' : Group.FG (φ.ker ⊓ K : Subgroup G) := by
+    rw [inf_comm]; exact (Group.fg_iff_subgroup_fg _).mpr h₂
+  have : Group.FG ψ.ker := by
+    rw [hker, ← Subgroup.inf_subgroupOf_right]
+    exact Group.fg_of_surjective
+      (f := (Subgroup.subgroupOfEquivOfLe (inf_le_right : φ.ker ⊓ K ≤ K)).symm.toMonoidHom)
+      (Subgroup.subgroupOfEquivOfLe (inf_le_right : φ.ker ⊓ K ≤ K)).symm.surjective
+  have : Group.FG ψ.range := by rw [hrange]; exact (Group.fg_iff_subgroup_fg _).mpr h₁
+  exact (Group.fg_iff_subgroup_fg K).mp (Group.fg_of_fg_ker_of_fg_range ψ)
 
 end
