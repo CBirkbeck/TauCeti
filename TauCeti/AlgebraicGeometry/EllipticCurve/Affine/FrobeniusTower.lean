@@ -90,6 +90,24 @@ theorem frobeniusRatFuncRange_le_ratFuncRange :
       simpa using congrArg (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
         (AlgHom.mem_fieldRange.mp hz).choose_spec⟩
 
+/-- **`[K(x) : K(x^q)] = q`**, transported into `K(W)`: the copy of the rational function field is
+of degree `q` over the copy of its subfield of `q`-th powers. -/
+theorem finrank_extendScalars_ratFuncRange :
+    Module.finrank (frobeniusRatFuncRange W)
+      (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W)) =
+      Fintype.card K := by
+  let i : (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange ≃+*
+      frobeniusRatFuncRange W :=
+    (IntermediateField.equivMap (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange
+      (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)).toRingEquiv
+  let j : RatFunc K ≃+*
+      IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W) :=
+    (AlgEquiv.ofInjective (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
+      (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField).toRingHom.injective).toRingEquiv
+  have h := Algebra.finrank_eq_of_equiv_equiv i j (by ext x; rfl)
+  rw [TauCeti.FiniteField.finrank_fieldRange_frobeniusAlgHom_ratFunc] at h
+  exact h.symm
+
 end WeierstrassCurve.Affine
 
 end TauCeti
