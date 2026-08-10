@@ -77,14 +77,12 @@ private lemma algebraMap_expand_mem_adjoin (f : K[X]) :
     (Polynomial.aeval_mem_adjoin_singleton K _)
 
 /-- **The `q`-th powers in `K(X)` are the rational functions in `X ^ q`.** -/
+@[simp]
 theorem fieldRange_frobeniusAlgHom_ratFunc :
     (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange =
       IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ Fintype.card K} := by
-  refine le_antisymm ?_ (IntermediateField.adjoin_le_iff.mpr ?_)
-  · rw [AlgHom.fieldRange_eq_map, IntermediateField.map_le_iff_le_comap]
-    intro g _
-    change _root_.FiniteField.frobeniusAlgHom K (RatFunc K) g ∈
-      IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ Fintype.card K}
+  refine le_antisymm (fun x hx => ?_) (IntermediateField.adjoin_le_iff.mpr ?_)
+  · obtain ⟨g, rfl⟩ := AlgHom.mem_fieldRange.mp hx
     obtain ⟨p, r, -, rfl⟩ : ∃ p r : K[X], algebraMap K[X] (RatFunc K) r ≠ 0 ∧
         g = algebraMap K[X] (RatFunc K) p / algebraMap K[X] (RatFunc K) r :=
       ⟨g.num, g.denom, RatFunc.algebraMap_ne_zero g.denom_ne_zero, g.num_div_denom.symm⟩
@@ -97,12 +95,13 @@ theorem fieldRange_frobeniusAlgHom_ratFunc :
     exact ⟨RatFunc.X, rfl⟩
 
 /-- **The rational function field has degree `q` over its subfield of `q`-th powers.** -/
+@[simp]
 theorem finrank_fieldRange_frobeniusAlgHom_ratFunc :
     Module.finrank (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange (RatFunc K) =
       Fintype.card K := by
-  rw [fieldRange_frobeniusAlgHom_ratFunc K,
-    show (RatFunc.X : RatFunc K) ^ Fintype.card K
-      = algebraMap K[X] (RatFunc K) (X ^ Fintype.card K) by simp,
+  -- `X ^ q` as the image of a polynomial, so that `finrank_eq_max_natDegree` reads its
+  -- numerator and denominator off `X ^ q` and `1`
+  rw [fieldRange_frobeniusAlgHom_ratFunc K, ← RatFunc.algebraMap_X, ← map_pow,
     RatFunc.finrank_eq_max_natDegree, RatFunc.num_algebraMap, RatFunc.denom_algebraMap,
     natDegree_X_pow, natDegree_one, Nat.max_zero]
 
