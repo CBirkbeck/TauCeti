@@ -314,11 +314,11 @@ theorem isElliptic_quadraticTwistOf_trace_norm [E.IsElliptic] {θ : L}
   E.isElliptic_quadraticTwistOf _ _ (discrim_ne_zero K L hθ)
 
 variable (K L) in
-/-- The generator `quadraticTwist` picks does generate: a rational element has vanishing
-discriminant (`discrim_eq_zero_of_mem_range`), so a nonzero one cannot be rational. -/
+/-- The generator `quadraticTwist` picks does generate: nonzero discriminant characterises the
+generators (`discrim_eq_zero_iff_mem_range`), and the chosen element has nonzero discriminant. -/
 private theorem choose_exists_discrim_notMem_range :
     (exists_discrim_ne_zero K L).choose ∉ Set.range (algebraMap K L) :=
-  fun h => (exists_discrim_ne_zero K L).choose_spec (discrim_eq_zero_of_mem_range K L h)
+  fun h => (exists_discrim_ne_zero K L).choose_spec ((discrim_eq_zero_iff_mem_range K L).mpr h)
 
 /-- **The quadratic twist of `E` by the separable quadratic extension `L/K`**: the twist by the
 trace and norm of a generator of `L/K`. The choice of generator is harmless —
@@ -339,10 +339,12 @@ noncomputable def quadraticTwist (E : WeierstrassCurve K) (L : Type*) [Field L] 
   E.quadraticTwistOf (Algebra.trace K L (exists_discrim_ne_zero K L).choose)
     (Algebra.norm K (exists_discrim_ne_zero K L).choose)
 
+variable (L) in
 /-- **Elimination for `quadraticTwist`.** The twist *is* the twist by the trace and norm of some
 generator — an equation, not merely an isomorphism, so that everything the file proves about
 `quadraticTwistOf` (the coefficients, `Δ`, `c₄`, `c₆`) transfers to `quadraticTwist`. The body of
-the definition is unexposed, so this is the only way out of it. -/
+the definition is unexposed, so this is the only way out of it. `L` is explicit: it occurs only
+inside the existential, so nothing else could determine it. -/
 theorem exists_quadraticTwist_eq :
     ∃ θ : L, θ ∉ Set.range (algebraMap K L) ∧
       E.quadraticTwist L = E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ) :=
@@ -351,13 +353,19 @@ theorem exists_quadraticTwist_eq :
 /-- The twist of an elliptic curve by a separable quadratic extension is elliptic. Registered as
 an instance so that downstream statements needing `[(E.quadraticTwist L).IsElliptic]` discharge it
 by typeclass inference. -/
-instance isElliptic_quadraticTwist [E.IsElliptic] : (E.quadraticTwist L).IsElliptic :=
-  E.isElliptic_quadraticTwistOf_trace_norm (choose_exists_discrim_notMem_range K L)
+instance isElliptic_quadraticTwist [E.IsElliptic] : (E.quadraticTwist L).IsElliptic := by
+  obtain ⟨θ, hθ, h⟩ := E.exists_quadraticTwist_eq L
+  rw [h]
+  exact E.isElliptic_quadraticTwistOf_trace_norm hθ
 
+variable (L) in
 /-- Twisting does not change the `j`-invariant. -/
+@[simp]
 theorem j_quadraticTwist [E.IsElliptic] : (E.quadraticTwist L).j = E.j := by
-  -- `j` takes the `IsElliptic` instance of its argument, so rewriting the curve is a dependent
-  -- rewrite; `simp only` unfolds the definition and carries the instance along.
+  -- The elimination lemma `exists_quadraticTwist_eq` is unusable here, unlike in the two
+  -- statements above: `j` takes the `IsElliptic` instance of its argument, so rewriting the
+  -- curve with it is a dependent rewrite and fails with `motive is not type correct`.
+  -- `simp only` unfolds the definition and carries the instance along.
   simp only [quadraticTwist]
   exact E.j_quadraticTwistOf _ _
     (E.isElliptic_quadraticTwistOf_trace_norm (choose_exists_discrim_notMem_range K L))
@@ -366,8 +374,10 @@ theorem j_quadraticTwist [E.IsElliptic] : (E.quadraticTwist L).j = E.j := by
 *any* generator `θ`: the arbitrary choice in `quadraticTwist` is harmless. -/
 theorem exists_smul_quadraticTwist_eq {θ : L} (hθ : θ ∉ Set.range (algebraMap K L)) :
     ∃ C : VariableChange K, C • E.quadraticTwist L
-      = E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ) :=
-  E.exists_smul_quadraticTwistOf_trace_norm_eq (choose_exists_discrim_notMem_range K L) hθ
+      = E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ) := by
+  obtain ⟨θ', hθ', h⟩ := E.exists_quadraticTwist_eq L
+  rw [h]
+  exact E.exists_smul_quadraticTwistOf_trace_norm_eq hθ' hθ
 
 end QuadraticTwistBy
 

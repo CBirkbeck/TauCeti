@@ -19,8 +19,12 @@ construction over `L/K` may pick one.
 quadratic extension differ by `θ' = b + aθ` with `a ≠ 0`, so a statement proved for one generator
 transfers to every other. This is what makes a construction defined by "pick any `θ ∈ L ∖ K`"
 well posed up to the ambiguity that `b + aθ` describes.
-`linearIndependent_one_of_notMem_range_algebraMap` is the linear-algebra step behind it, and
-needs only a nontrivial ring over `K`, not a field.
+`linearIndependent_one_of_notMem_range_algebraMap` is the linear-algebra step behind the second.
+
+The first two of those need only a nontrivial *ring* over `K`, not a field, and are stated that
+way: they see `L` only as a free `K`-module of rank two, so they also cover the split and
+non-reduced quadratic algebras `K × K` and `K[X]/(X²)`. Only
+`exists_eq_algebraMap_add_algebraMap_mul` asks for a field.
 
 These are consumed by the extension quadratic twist in
 `TauCeti/AlgebraicGeometry/EllipticCurve/QuadraticTwist.lean`, which advances
@@ -47,19 +51,23 @@ theorem linearIndependent_one_of_notMem_range_algebraMap [Ring L] [Nontrivial L]
   (LinearIndependent.pair_iff' one_ne_zero).mpr fun a ha ↦
     hθ ⟨a, by rwa [Algebra.algebraMap_eq_smul_one]⟩
 
-variable [Field L] [Algebra K L] [Algebra.IsQuadraticExtension K L]
-
-namespace Algebra.IsQuadraticExtension
-
-/-- A quadratic extension has a generator: some element lies outside the base field. Were every
-element rational the extension would be trivial, contradicting `finrank = 2`. This is what lets a
-construction over `L/K` *choose* a generator. -/
-theorem exists_notMem_range_algebraMap : ∃ θ : L, θ ∉ Set.range (algebraMap K L) := by
+/-- A quadratic algebra has a generator: some element lies outside the base field. Were every
+element in the image of `algebraMap` the algebra would have rank one, contradicting
+`finrank = 2`. This is what lets a construction over `L/K` *choose* a generator. Like
+`linearIndependent_one_of_notMem_range_algebraMap`, it needs only a nontrivial ring: `L` is free
+of rank `2` over the field `K` either way, and the injectivity of `algebraMap` comes from `K`
+being simple. -/
+theorem Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap [Ring L] [Nontrivial L]
+    [Algebra K L] [Algebra.IsQuadraticExtension K L] : ∃ θ : L, θ ∉ Set.range (algebraMap K L) := by
   by_contra! h
   have h1 : Module.finrank K L = 1 :=
     Module.finrank_of_bijective_algebraMap ⟨FaithfulSMul.algebraMap_injective K L, h⟩
-  have h2 := finrank_eq_two K L
+  have h2 := Algebra.IsQuadraticExtension.finrank_eq_two K L
   omega
+
+variable [Field L] [Algebra K L] [Algebra.IsQuadraticExtension K L]
+
+namespace Algebra.IsQuadraticExtension
 
 /-- Any element of a quadratic extension `L/K` is a `K`-linear combination of `1` and a given
 generator `θ`, and the `θ`-coefficient is nonzero if the element also lies outside `K`. So any
