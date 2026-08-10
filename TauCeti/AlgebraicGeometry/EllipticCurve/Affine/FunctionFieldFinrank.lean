@@ -19,6 +19,9 @@ introducing it. This file exports it as an instance and proves the degree.
 
 ## Main results
 
+* `WeierstrassCurve.Affine.moduleFinite_coordinateRing`: the coordinate ring is a finite
+  `R[X]`-module — the companion of Mathlib's `Module.Free` instance, which Mathlib has only as a
+  lemma, so instance search cannot reach it.
 * `WeierstrassCurve.Affine.finrank_coordinateRing`: the coordinate ring's `Module.finrank` over
   `R[X]` is two, needing only `[Nontrivial R]` — which discharges the `StrongRankCondition R[X]`
   that `Module.finrank` wants, through `commRing_strongRankCondition`.
@@ -29,8 +32,8 @@ introducing it. This file exports it as an instance and proves the degree.
   `FractionRing.algebraMap_liftAlgebra R[X] W.FunctionField`; neither needs restating here.
 * `WeierstrassCurve.Affine.finrank_functionField`: `[R(W) : L] = 2` for any fraction field `L` of
   `R[X]` — so it serves `RatFunc R` as well as `FractionRing R[X]`.
-* `WeierstrassCurve.Affine.finiteDimensional_functionField`: the extension is finite-dimensional,
-  which `finrank = 2` does not give by instance search.
+* `WeierstrassCurve.Affine.finiteDimensional_functionField`: the extension is finite-dimensional
+  over the same arbitrary `L`, which `finrank = 2` does not give by instance search.
 
 Exporting the algebra instance is safe here for the reason Mathlib withholds it in general: the
 collision is with the identity structure on `FractionRing R[X]`, and `R(W)` is a *quadratic*
@@ -54,21 +57,25 @@ reimplementation of it.
 ## Provenance
 
 Ported from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned by
-that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/FrobeniusIsogeny.lean`, declarations
-`finrank_coordinateRing_eq_two` and `finrank_functionField_eq_two`.
+that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/FrobeniusIsogeny.lean`: the
+declarations `coordinateRing_finite`, `finrank_coordinateRing_eq_two`, its anonymous
+`Algebra (FractionRing K[X]) K(W)` instance, and `finrank_functionField_eq_two`.
+`finiteDimensional_functionField` is not in the source.
 
 Changes from the source. They are stated there inside a file that also builds the Frobenius
 isogeny; here they are separated out, since the degree of `R(W)` over the rational function field
 is a fact about the curve and not about any isogeny. The source states everything over a field;
 here the coordinate-ring half needs only a nontrivial commutative ring and the function-field half
-an integral domain, which is all either argument uses.
+an integral domain, which is all either argument uses, and the degree is stated over an arbitrary
+fraction field of `R[X]` rather than over `FractionRing R[X]` alone.
 
-Four of the source's declarations are **not** ported, Mathlib having since supplied each: its
-`FaithfulSMul K[X] K[W]` instance and `algebraMap_poly_injective` (now an instance in
-`Affine/Point.lean`, and `FaithfulSMul.algebraMap_injective`); and its `isBaseChange_coordToFunc`
-together with the two private localization instances beneath it. That base-change route is not
-taken at all here — Mathlib's `IsFractionRing.finrank_eq` states the degree equality outright, and
-Mathlib has deprecated its own base-change-flavoured version in favour of it.
+The source's remaining declarations are **not** ported, each being reachable without them: its
+`Module K[X] K[W]`, `IsScalarTower K[X] K(x) K(W)`, `Algebra.IsIntegral K[X] K[W]` and two
+`FaithfulSMul` instances are all found by instance search (`algebraMap_poly_injective` is now an
+instance in `Affine/Point.lean`, and Mathlib has `FaithfulSMul.algebraMap_injective`); and its
+`isBaseChange_coordToFunc`, with the two private localization instances beneath it, is not needed
+at all — Mathlib's `IsFractionRing.finrank_eq` states the degree equality outright, and Mathlib has
+deprecated its own base-change-flavoured version in favour of it.
 -/
 
 public section
@@ -82,6 +89,14 @@ namespace WeierstrassCurve.Affine
 section CommRing
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve.Affine R)
+
+/-- **The coordinate ring is a finite `R[X]`-module.** -/
+-- Mathlib registers `Module.Free R[X] R[W]` off the same basis (`Affine/Point.lean`) but not
+-- `Module.Finite`, which it has only as the lemma `Polynomial.Monic.finite_adjoinRoot`; instance
+-- search cannot reach a lemma. This is what `Algebra.IsIntegral.of_finite` and the norm and trace
+-- API consume, and what makes the rank below the rank of a finite module.
+instance moduleFinite_coordinateRing : Module.Finite R[X] W.CoordinateRing :=
+  .of_basis (CoordinateRing.basis W)
 
 /-- **The coordinate ring has rank two over `R[X]`.** `Nontrivial R` is what `Module.finrank`
 needs: it gives `StrongRankCondition R[X]` through `commRing_strongRankCondition`. -/
@@ -115,10 +130,11 @@ theorem finrank_functionField (L : Type*) [Field L] [Algebra R[X] L] [IsFraction
   -- `L` and `R(W)` are fraction rings of `R[X]` and `R[W]`, so their degrees agree.
   rw [IsFractionRing.finrank_eq R[X] L W.CoordinateRing W.FunctionField, finrank_coordinateRing]
 
-/-- The function field is finite-dimensional over the rational function field. `finrank = 2` does
+/-- The function field is finite-dimensional over any fraction field of `R[X]`. `finrank = 2` does
 not give this by instance search, and downstream norm/trace/separability arguments need it. -/
-instance finiteDimensional_functionField :
-    FiniteDimensional (FractionRing R[X]) W.FunctionField :=
+instance finiteDimensional_functionField (L : Type*) [Field L] [Algebra R[X] L]
+    [IsFractionRing R[X] L] [Algebra L W.FunctionField] [IsScalarTower R[X] L W.FunctionField] :
+    FiniteDimensional L W.FunctionField :=
   .of_finrank_pos (by simp)
 
 end Domain
