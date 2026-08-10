@@ -27,7 +27,9 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 * `TauCeti.Localization.divByS_one`: `1/s` is Mathlib's `IsLocalization.Away.invSelf`.
 * `TauCeti.Localization.invSelf_mul_algebraMap`: scaling `1/s` by `t` gives `t/s`.
 * `TauCeti.Localization.algebraMap_mul_divByS`: `s · (t/s) = t`.
-* `TauCeti.Localization.divByS_self_mul`: `(s · t)/s = t`.
+* `TauCeti.Localization.divByS_self_mul` and `TauCeti.Localization.divByS_mul_self`:
+  `(s · t)/s = t` and `(t · s)/s = t`.
+* `TauCeti.Localization.divByS_self`: `s/s = 1`.
 
 ## Provenance
 
@@ -88,5 +90,19 @@ theorem algebraMap_mul_divByS :
 theorem divByS_self_mul : divByS (s * t) s = algebraMap A S t := by
   rw [divByS_def]
   exact IsLocalization.mk'_mul_cancel_left t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s)
+
+/-- The same on the other side: `(t · s)/s = t`. -/
+@[simp]
+theorem divByS_mul_self : divByS (t * s) s = algebraMap A S t := by
+  rw [divByS_def]
+  exact IsLocalization.mk'_mul_cancel_right t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s)
+
+/-- `s/s = 1`. Without this the simp set turns `invSelf s * algebraMap A S s` into `divByS s s`
+and stops, where before `invSelf_mul_algebraMap` it could reach `1` through Mathlib's
+`IsLocalization.Away.mul_invSelf`. -/
+@[simp]
+theorem divByS_self : (divByS s s : S) = 1 := by
+  rw [divByS_def]
+  exact IsLocalization.mk'_self S (Submonoid.mem_powers s)
 
 end TauCeti.Localization
