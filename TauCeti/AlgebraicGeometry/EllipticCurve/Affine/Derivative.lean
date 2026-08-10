@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Basic
-public import Mathlib.Algebra.Polynomial.Derivation
 public import Mathlib.RingTheory.Derivation.MapCoeffs
 
 /-!
@@ -76,10 +75,8 @@ variable {R : Type*} [CommRing R] (W : _root_.WeierstrassCurve.Affine R)
 `Y` is the outer variable of `R[X][Y]`, so no specialisation is needed. -/
 @[simp]
 lemma derivative_polynomial : derivative W.polynomial = W.polynomialY := by
-  simp only [WeierstrassCurve.Affine.polynomial, WeierstrassCurve.Affine.polynomialY,
-    derivative_add, derivative_sub, derivative_mul, derivative_pow, derivative_C, derivative_X,
-    Nat.cast_ofNat, map_ofNat]
-  ring
+  simp [WeierstrassCurve.Affine.polynomial, WeierstrassCurve.Affine.polynomialY, map_ofNat,
+    derivative_pow, Nat.cast_ofNat]
 
 /-- Evaluating a `PolynomialModule` is evaluating the polynomial it corresponds to. -/
 private lemma eval_eq_eval_equivPolynomial {A : Type*} [CommRing A]
@@ -90,23 +87,12 @@ private lemma eval_eq_eval_equivPolynomial {A : Type*} [CommRing A]
   rw [h]
   simp
 
-/-- **The `X`-partial derivative of the Weierstrass polynomial is its coefficient-wise
-derivative.** Differentiating the coefficients of a polynomial in `R[X][Y]` is Mathlib's
-`Derivation.mapCoeffs` applied to `Polynomial.derivative'`; read back as a bivariate polynomial,
-it is `W_X`. This is the pairing of `derivative_polynomial`: Mathlib's
-`pderiv_zero_equivMvPolynomial` and `pderiv_one_equivMvPolynomial` identify these two
-constructions with the two partial derivatives of the corresponding `MvPolynomial`.
-
-Stated through `PolynomialModule.equivPolynomial` rather than `equivPolynomialSelf`: the two are
-interchangeable by Mathlib's `equivPolynomialSelf_apply_eq`, but only this side is in simp normal
-form, since that lemma rewrites the other one away. -/
-@[simp]
-lemma equivPolynomial_mapCoeffs_polynomial :
-    PolynomialModule.equivPolynomial ((derivative' (R := R)).mapCoeffs W.polynomial)
+private lemma equivPolynomialSelf_mapCoeffs_polynomial :
+    PolynomialModule.equivPolynomialSelf ((derivative' (R := R)).mapCoeffs W.polynomial)
       = W.polynomialX := by
-  -- `equivPolynomial` is only `R`-linear, so the `R[X][Y]`-scalars have to be pushed through the
-  -- `R[X][Y]`-linear `equivPolynomialSelf`; the two agree by `equivPolynomialSelf_apply_eq`.
-  rw [← PolynomialModule.equivPolynomialSelf_apply_eq]
+  -- The rewrite list is explicit on purpose: a broad `simp` fires Mathlib's
+  -- `equivPolynomialSelf_apply_eq` first, and the resulting `equivPolynomial` is only `R`-linear,
+  -- so the `R[X][Y]`-scalars can no longer be pushed through it and the goal sticks.
   simp only [WeierstrassCurve.Affine.polynomial, WeierstrassCurve.Affine.polynomialX,
     map_add, map_sub, map_mul, map_pow, map_smul, map_nsmul,
     Derivation.leibniz, Derivation.leibniz_pow, Derivation.mapCoeffs_X, Derivation.mapCoeffs_C,
@@ -116,8 +102,23 @@ lemma equivPolynomial_mapCoeffs_polynomial :
     map_ofNat, nsmul_eq_mul, Nat.cast_ofNat]
   ring
 
-/-- The evaluated form of `equivPolynomial_mapCoeffs_polynomial`, which is the shape Mathlib's
-`Derivation.apply_eval_eq` produces. -/
+/-- **The `X`-partial derivative of the Weierstrass polynomial is its coefficient-wise
+derivative.** Differentiating the coefficients of a polynomial in `R[X][Y]` is Mathlib's
+`Derivation.mapCoeffs` applied to `Polynomial.derivative'`; read back as a bivariate polynomial,
+it is `W_X`. This is the pairing of `derivative_polynomial`: Mathlib's
+`pderiv_zero_equivMvPolynomial` and `pderiv_one_equivMvPolynomial` identify these two
+constructions with the two partial derivatives of the corresponding `MvPolynomial`. -/
+@[simp]
+lemma equivPolynomial_mapCoeffs_polynomial :
+    PolynomialModule.equivPolynomial ((derivative' (R := R)).mapCoeffs W.polynomial)
+      = W.polynomialX :=
+  -- `equivPolynomialSelf` is `equivPolynomial` by definition. The statement takes the latter,
+  -- which is the simp-normal side; the computation above needs the former, which is the
+  -- `R[X][Y]`-linear one.
+  equivPolynomialSelf_mapCoeffs_polynomial W
+
+/-- **The `X`-partial derivative, evaluated.** `W_X(X, y)` is the value at `y` of the
+coefficient-wise derivative of `W(X, Y)`. -/
 @[simp]
 lemma eval_mapCoeffs_polynomial (y : R[X]) :
     PolynomialModule.eval y ((derivative' (R := R)).mapCoeffs W.polynomial)
@@ -126,22 +127,19 @@ lemma eval_mapCoeffs_polynomial (y : R[X]) :
 
 /-- **The chain rule for the Weierstrass polynomial.** Substituting `Y = y` for a polynomial
 `y : R[X]` lands `W(X, Y)` in `R[X]`, where `Polynomial.derivative` is the derivative in `X`, and
-it differentiates to `W_X(X, y) + W_Y(X, y) · y'`.
-
-This is Mathlib's `Derivation.apply_eval_eq` instantiated at `Polynomial.derivative'`, with the
-two partial derivatives identified by the lemmas above. -/
+it differentiates to `W_X(X, y) + W_Y(X, y) · y'`. -/
 @[simp]
 lemma derivative_eval_polynomial (y : R[X]) :
     derivative (W.polynomial.eval y)
       = W.polynomialX.eval y + W.polynomialY.eval y * derivative y := by
+  -- Mathlib's generic chain rule for a derivation applied to `eval`, at `Polynomial.derivative'`.
   have h := (derivative' (R := R)).apply_eval_eq y W.polynomial
   simp only [derivative'_apply] at h
   rw [h, eval_mapCoeffs_polynomial, derivative_polynomial, smul_eq_mul]
 
 /-- **The `X`-partial derivative of the Weierstrass polynomial is the `Polynomial.derivative` of
-its specialisation at a constant.** This is the chain rule with `y' = 0`.
-
-Not `@[simp]`: `simp` reaches it from `derivative_eval_polynomial` and `derivative_C`. -/
+its specialisation at a constant.** This is the chain rule with `y' = 0`. -/
+-- Not `@[simp]`: `simp` reaches it from `derivative_eval_polynomial` and `derivative_C`.
 lemma derivative_eval_polynomial_C (y : R) :
     derivative (W.polynomial.eval (C y)) = W.polynomialX.eval (C y) := by
   simp
