@@ -73,8 +73,8 @@ noncomputable def pointPlace {y : F} (h : W.Equation x y) :
 /-- The ideal underlying the place of a point is `⟨X - x, Y - y⟩`. -/
 @[simp]
 theorem pointPlace_asIdeal {y : F} (h : W.Equation x y) :
-    (pointPlace h).asIdeal = CoordinateRing.XYIdeal W x (C y) :=
-  (rfl)
+    (pointPlace h).asIdeal = CoordinateRing.XYIdeal W x (C y) := by
+  simp [pointPlace]
 
 end WeierstrassCurve.Affine.CoordinateRing
 
