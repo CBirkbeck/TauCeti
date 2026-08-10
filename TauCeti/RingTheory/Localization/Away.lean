@@ -26,7 +26,11 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 
 * `TauCeti.Localization.divByS_one`: `1/s` is Mathlib's `IsLocalization.Away.invSelf`.
 * `TauCeti.Localization.invSelf_mul_algebraMap`: scaling `1/s` by `t` gives `t/s`.
-* `TauCeti.Localization.algebraMap_mul_divByS`: `s · (t/s) = t`.
+* `TauCeti.Localization.algebraMap_mul_divByS` and
+  `TauCeti.Localization.divByS_mul_algebraMap`: `s · (t/s) = t` in both orders.
+* `TauCeti.Localization.divByS_zero`, `TauCeti.Localization.divByS_add` and
+  `TauCeti.Localization.algebraMap_mul_divByS_numerator`: `t/s` is additive and `A`-linear in the
+  numerator.
 * `TauCeti.Localization.divByS_self_mul` and `TauCeti.Localization.divByS_mul_self`:
   `(s · t)/s = t` and `(t · s)/s = t`.
 * `TauCeti.Localization.divByS_self`: `s/s = 1`.
@@ -96,6 +100,44 @@ theorem divByS_self_mul : divByS (s * t) s = algebraMap A S t := by
 theorem divByS_mul_self : divByS (t * s) s = algebraMap A S t := by
   rw [divByS_def]
   exact IsLocalization.mk'_mul_cancel_right t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s)
+
+/-- **Clearing the denominator on the right**: `(t/s) · s = t`. The mirror of
+`algebraMap_mul_divByS`; `S` is only a `CommSemiring`, `mul_comm` is not `simp`, and Mathlib's
+`IsLocalization.Away.mul_invSelf` fixes the other order, so without this the reversed goal is
+left open. -/
+@[simp]
+theorem divByS_mul_algebraMap :
+    divByS t s * algebraMap A S s = algebraMap A S t := by
+  rw [divByS_def]
+  exact IsLocalization.mk'_spec S t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s)
+
+/-- The mirror of `invSelf_mul_algebraMap`, for the same reason. -/
+@[simp]
+theorem algebraMap_mul_invSelf :
+    algebraMap A S t * (IsLocalization.Away.invSelf s : S) = divByS t s := by
+  rw [mul_comm]; exact invSelf_mul_algebraMap t s
+
+/-! ### The numerator
+
+`divByS` is additive and `A`-linear in its numerator. The body is not exported, so without these
+a consumer computing with `t/s` — products of the generators of a localisation subring are
+exactly such fractions — has to `rw [divByS_def]` down to `IsLocalization.mk'`. Each is read off
+`invSelf_mul_algebraMap`, which turns the fraction into a product with a fixed left factor. -/
+
+/-- `0/s = 0`. -/
+@[simp]
+theorem divByS_zero : (divByS 0 s : S) = 0 := by
+  simp only [← invSelf_mul_algebraMap, map_zero, mul_zero]
+
+/-- `t/s` is additive in the numerator. -/
+theorem divByS_add (u : A) : divByS (t + u) s = (divByS t s : S) + divByS u s := by
+  simp only [← invSelf_mul_algebraMap, map_add, mul_add]
+
+/-- `t/s` is `A`-linear in the numerator. -/
+theorem algebraMap_mul_divByS_numerator (a : A) :
+    divByS (a * t) s = algebraMap A S a * divByS t s := by
+  simp only [← invSelf_mul_algebraMap, map_mul]
+  ring
 
 /-- `s/s = 1`. Without this the simp set turns `invSelf s * algebraMap A S s` into `divByS s s`
 and stops, where before `invSelf_mul_algebraMap` it could reach `1` through Mathlib's

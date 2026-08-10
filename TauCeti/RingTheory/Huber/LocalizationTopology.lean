@@ -256,7 +256,7 @@ rule for `locNhd`, and what continuity of the structure map is read off. -/
 theorem algebraMap_mem_locNhd (P : PairOfDefinition A) (T : Finset A) (s : A) {n : ℕ}
     {b : P.ringOfDefinition} (hb : b ∈ P.idealOfDefinition ^ n) :
     algebraMap A (Localization.Away s) (b : A) ∈ locNhd P T s n :=
-  ⟨algebraMapD P T s b, algebraMapD_mem_locIdeal_pow P T s hb, rfl⟩
+  ⟨algebraMapD P T s b, algebraMapD_mem_locIdeal_pow P T s hb, coe_algebraMapD P T s b⟩
 
 /-- The zeroth neighbourhood is `D` itself, because `J⁰ = ⊤`. -/
 @[simp]
@@ -281,8 +281,12 @@ theorem locNhd_preimage_eq_locIdeal_pow (P : PairOfDefinition A) (T : Finset A)
       ((locIdeal P T s) ^ n : Ideal (locSubring P T s)) := by
   -- The embedding is spelled `Subtype.val`, not `(locSubring P T s).subtype`: the former is the
   -- simp-normal form (`Subring.coe_subtype` rewrites the latter to it), so the other spelling
-  -- would leave this `@[simp]` lemma's left-hand side unable to fire.
-  exact Set.preimage_image_eq _ Subtype.val_injective
+  -- would leave this `@[simp]` lemma's left-hand side unable to fire. The proof goes through the
+  -- file's own `mem_locNhd_iff` rather than crossing the `AddSubgroup.map`/`Subring.subtype`
+  -- wrappers by definitional equality.
+  ext d
+  simp only [Set.mem_preimage, SetLike.mem_coe, mem_locNhd_iff]
+  refine ⟨fun ⟨e, he, heq⟩ ↦ Subtype.val_injective heq ▸ he, fun hd ↦ ⟨d, hd, rfl⟩⟩
 
 /-- **The basis is graded**: the `i`-th and `j`-th neighbourhoods multiply into the `(i + j)`-th,
 because `Jⁱ · Jʲ ⊆ Jⁱ⁺ʲ` in `D`. The two special cases the subgroup basis needs follow. -/
@@ -300,6 +304,18 @@ theorem locNhd_mul_subset (P : PairOfDefinition A) (T : Finset A) (s : A) (i : �
       ⊆ (locNhd P T s i : Set (Localization.Away s)) :=
   (locNhd_mul_subset_add P T s i i).trans
     fun _ h ↦ locNhd_antitone P T s (Nat.le_add_left i i) h
+
+/-- `Jⁿ`'s image absorbs multiplication by `D`, because `D` is the zeroth neighbourhood and the
+basis is graded. -/
+theorem locNhd_mul_locSubring_subset (P : PairOfDefinition A) (T : Finset A) (s : A) (n : ℕ) :
+    (locNhd P T s n : Set (Localization.Away s)) *
+        (locSubring P T s : Set (Localization.Away s))
+      ⊆ (locNhd P T s n : Set (Localization.Away s)) := by
+  have h : (locSubring P T s : Set (Localization.Away s)) =
+      (locNhd P T s 0 : Set (Localization.Away s)) := by
+    rw [locNhd_zero, Subring.coe_toAddSubgroup]
+  rw [h]
+  exact locNhd_mul_subset_add P T s n 0
 
 /-- Multiplying `1/s` by an element of `Jᴺ` lands back in `D`, once `N` is large enough that
 `b/s ∈ D` for every `b ∈ Iᴺ`. -/
@@ -365,10 +381,9 @@ private theorem locNhd_algMap_step [IsTopologicalRing A] (P : PairOfDefinition A
     simp only [AddMemClass.coe_add, mul_add]
     exact (locNhd P T s i).add_mem h₁ h₂
   · intro r d₁ _ h₁
-    rw [coe_smul_locSubring, mul_left_comm]
-    obtain ⟨e, he, he_eq⟩ := h₁
-    exact ⟨r * e, Ideal.mul_mem_left _ r he,
-      congrArg ((↑r : Localization.Away s) * ·) he_eq⟩
+    -- `D` absorbs `locNhd i` on the right, which the file already states.
+    rw [coe_smul_locSubring, mul_left_comm, mul_comm]
+    exact locNhd_mul_locSubring_subset P T s i (Set.mul_mem_mul h₁ r.property)
 
 /-- **Left multiplication is continuous** for the localization topology: multiplication by a
 fixed `x` pulls some neighbourhood `locNhd j` back inside `locNhd i`. -/
@@ -449,18 +464,6 @@ theorem nonarchimedeanRing_locTopology [IsTopologicalRing A] (P : PairOfDefiniti
     @NonarchimedeanRing _ _ (locTopology P T s hopen) :=
   (locBasis P T s hopen).nonarchimedean
 
-/-- `Jⁿ`'s image absorbs multiplication by `D`, because `D` is the zeroth neighbourhood and the
-basis is graded. -/
-theorem locNhd_mul_locSubring_subset (P : PairOfDefinition A) (T : Finset A) (s : A) (n : ℕ) :
-    (locNhd P T s n : Set (Localization.Away s)) *
-        (locSubring P T s : Set (Localization.Away s))
-      ⊆ (locNhd P T s n : Set (Localization.Away s)) := by
-  have h : (locSubring P T s : Set (Localization.Away s)) =
-      (locNhd P T s 0 : Set (Localization.Away s)) := by
-    rw [locNhd_zero, Subring.coe_toAddSubgroup]
-  rw [h]
-  exact locNhd_mul_subset_add P T s n 0
-
 /-- **Every basic neighbourhood is open**: it is a subgroup that is a neighbourhood of zero. -/
 theorem isOpen_locNhd [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A)
     (hopen : HasDenominatorPower P T s) (n : ℕ) :
@@ -536,7 +539,7 @@ theorem continuous_algebraMap_locTopology [IsTopologicalRing A] (P : PairOfDefin
 any prescribed open subgroup of `B`. This is the `A₀`-level base case of
 `exists_pow_mul_locSubring_mem`. -/
 private theorem exists_pow_mul_algebraMap_mem {B : Type*} [Ring B] [TopologicalSpace B]
-    [IsTopologicalRing A] (P : PairOfDefinition A) (s : A) (f : Localization.Away s →+* B)
+    (P : PairOfDefinition A) (s : A) (f : Localization.Away s →+* B)
     (hf : Continuous (f.comp (algebraMap A (Localization.Away s)))) (G : OpenAddSubgroup B) :
     ∃ m : ℕ, ∀ x ∈ P.ringOfDefinition.map (algebraMap A (Localization.Away s)),
       ∀ b ∈ P.idealOfDefinition ^ m,
@@ -561,7 +564,7 @@ element of the larger ring as a polynomial in it, whose powers a bounded set abs
 Stated over an arbitrary `U : Finset A` rather than the `T` of the theorem that uses it, because
 that is what the `Finset.induction` needs. -/
 private theorem exists_pow_mul_locSubring_mem {B : Type*} [Ring B] [TopologicalSpace B]
-    [NonarchimedeanRing B] [IsTopologicalRing A] (P : PairOfDefinition A) (s : A)
+    [NonarchimedeanRing B] (P : PairOfDefinition A) (s : A)
     (f : Localization.Away s →+* B)
     (hf : Continuous (f.comp (algebraMap A (Localization.Away s)))) (U : Finset A) :
     (∀ t ∈ U, IsPowerBounded (f (divByS t s))) →
