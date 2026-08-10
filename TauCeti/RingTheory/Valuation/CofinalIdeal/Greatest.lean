@@ -427,6 +427,7 @@ noncomputable def characteristicSubgroupOfIdeal (v : Valuation A Γ₀) (I : Ide
   else (exists_isGreatestIdealCofinal_of_not_meets hfg h).choose
 
 /-- First branch of Definition 7.3. -/
+@[simp]
 theorem characteristicSubgroupOfIdeal_of_meets {v : Valuation A Γ₀} {I : Ideal A}
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (h : IdealMeetsCharacteristicSubgroup v I) :
     characteristicSubgroupOfIdeal v I hfg = characteristicSubgroup v := by
