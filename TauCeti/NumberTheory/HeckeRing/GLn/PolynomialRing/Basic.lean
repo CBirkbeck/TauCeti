@@ -139,8 +139,12 @@ noncomputable def evalHom : MvPolynomial (Fin n) ℤ →+* IntegralHeckeRing n :
 @[simp] lemma evalHom_X (k : Fin n) : evalHom n p (MvPolynomial.X k) = heckeGen n p k :=
   MvPolynomial.eval₂Hom_X' _ _ _
 
-/-- `evalHom` sends a constant to its image under `ℤ → IntegralHeckeRing n`. -/
-@[simp] lemma evalHom_C (a : ℤ) : evalHom n p (MvPolynomial.C a) = (a : IntegralHeckeRing n) :=
+/-- `evalHom` sends a constant to its image under `ℤ → IntegralHeckeRing n`.
+
+Deliberately not `@[simp]`: `simp` already discharges this through `eq_intCast` and
+`map_intCast`, `evalHom` being a ring hom, and `simpNF` rejects the redundant marking. The
+lemma is kept as the named computation rule for `rw`. -/
+lemma evalHom_C (a : ℤ) : evalHom n p (MvPolynomial.C a) = (a : IntegralHeckeRing n) :=
   MvPolynomial.eval₂Hom_C _ _ _
 
 /-- `T(c,...,c)^k = T(c^k,...,c^k)`: scalar diagonal elements are closed under powers. -/
