@@ -26,6 +26,13 @@ These are the multiplicative analogue of the valuation-transfer lemmas
 `SInteger/ClassGroup.lean` runs on. They live in their own module rather than in `Spectrum.lean`
 because they need `FractionalIdeal.count`, and `Spectrum.lean` does not otherwise depend on the
 factorization layer — a consumer of the valuation transfer alone should not pay for it.
+
+Both are adapted from Michael Stoll's elliptic-curves formalisation
+(`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/SIntegers.lean` at the
+roadmap's §Provenance pin `66889eada51a`, Apache 2.0, by Michael Stoll). Following this
+repository's convention for adapted material, the upstream authorship is credited here rather than
+in the copyright header. Stoll's unprefixed names are given the `integer` prefix that
+`TauCeti/RingTheory/DedekindDomain/SInteger/` already uses.
 -/
 
 public section
