@@ -75,14 +75,6 @@ noncomputable def frobeniusRatFuncRange : IntermediateField K W.FunctionField :=
   (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange.map
     (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
 
-/-- `frobeniusRatFuncRange` is the image in `K(W)` of the field range of the `q`-power map on the
-rational function field. -/
-theorem frobeniusRatFuncRange_def :
-    frobeniusRatFuncRange W =
-      (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange.map
-        (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField) :=
-  rfl
-
 /-- An element of `K(W)` lies in the copy of `K(x^q)` exactly when it is the image there of a
 `q`-th power from the rational function field. -/
 @[simp]

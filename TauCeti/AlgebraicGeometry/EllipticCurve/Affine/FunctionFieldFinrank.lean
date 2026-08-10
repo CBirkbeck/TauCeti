@@ -153,11 +153,6 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 noncomputable def ratFuncRange : IntermediateField F W.FunctionField :=
   (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).fieldRange
 
-/-- `ratFuncRange` is the field range of the scalar-tower map `F(x) → F(W)`. -/
-theorem ratFuncRange_def :
-    ratFuncRange W = (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).fieldRange :=
-  rfl
-
 /-- An element of `F(W)` lies in the copy of the rational function field exactly when it is the
 image of a rational function. -/
 @[simp]
