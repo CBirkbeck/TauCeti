@@ -105,11 +105,6 @@ noncomputable def idealOfDefinition : Ideal (powerSeries_as_subring K) := Ideal.
 /-- Unfolding lemma for `TauCeti.Huber.LaurentSeries.idealOfDefinition`. -/
 theorem idealOfDefinition_def : idealOfDefinition K = Ideal.span {subringX K} := (rfl)
 
-/-- `X` is nonzero in `K⸨X⸩`. -/
-theorem coe_X_ne_zero : ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) ≠ 0 := by
-  simp only [HahnSeries.ofPowerSeries_X, ne_eq, HahnSeries.single_eq_zero_iff, one_ne_zero,
-    not_false_eq_true]
-
 variable {K}
 
 /-- **The bridge to the valuation**: a power series lies in `(X)ⁿ` exactly when its valuation is
@@ -216,7 +211,8 @@ theorem mem_pairOfDefinition_idealImage (n : ℕ) (f : K⸨X⸩) :
 /-- **`X` is a pseudouniformiser of `K⸨X⸩`**: it is a unit, since `K⸨X⸩` is a field, and
 `v (Xⁿ) = exp (-n)` tends to zero. -/
 theorem isPseudoUniformizer_X : IsPseudoUniformizer ((PowerSeries.X : K⟦X⟧) : K⸨X⸩) :=
-  isPseudoUniformizer_iff.mpr ⟨isUnit_iff_ne_zero.mpr (coe_X_ne_zero K),
+  isPseudoUniformizer_iff.mpr ⟨isUnit_iff_ne_zero.mpr
+      (by simp),
     Valued.tendsto_zero_pow_of_le_exp_neg_one (by simpa using (valuation_X_pow (K := K) 1).le)⟩
 
 /-- **`K⸨X⸩` is a Huber ring**, with `(K⟦X⟧, (X))` as a pair of definition. -/
