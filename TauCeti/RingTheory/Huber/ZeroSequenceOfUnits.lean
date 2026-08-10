@@ -36,10 +36,10 @@ pseudouniformiser, say — keeps it rather than trading it for an opaque choice.
   `TauCeti.Huber.IsTateRing.hasZeroSequenceOfUnits`: the powers of a pseudouniformiser converge
   to zero as units, so a pseudouniformiser — hence a Tate ring, by instance search — satisfies
   the hypothesis.
-* `TauCeti.Huber.HasZeroSequenceOfUnits.exists_iUnion_inv_smul_eq_univ`: the covering, read off
-  the class rather than a given sequence, with the convergence carried inside the existential.
 * `TauCeti.Huber.HasZeroSequenceOfUnits.exists_unit_mul_mem`: the weaker unit-only form of
-  absorption — it produces some `v : Aˣ`, with no sequence and no term index.
+  absorption — it produces some `v : Aˣ`, with no sequence and no term index. The covering is
+  *not* restated at class level: destructing `exists_tendsto` and applying
+  `iUnion_inv_smul_eq_univ_of_tendsto_zero` is the same two steps.
 
 ## References
 
@@ -104,7 +104,7 @@ instance IsTateRing.hasZeroSequenceOfUnits {A : Type*} [CommRing A] [Topological
 
 section Absorption
 
-variable [SeparatelyContinuousMul A] {u : ℕ → Aˣ}
+variable [ContinuousConstSMul Aᵐᵒᵖ A] {u : ℕ → Aˣ}
   (hu : Tendsto (fun n ↦ ((u n : A))) atTop (𝓝 0))
 include hu
 
@@ -113,10 +113,13 @@ neighbourhood of zero by some term of the sequence.
 
 Stated for an arbitrary such sequence rather than a chosen one, so a caller holding a concrete
 sequence — the powers of a pseudouniformiser, say — gets the conclusion for *that* sequence.
-Separate continuity of multiplication is all the proof uses: `uₙ · x → 0 · x = 0`. -/
+Only continuity of right multiplication by the fixed `x` is used — `uₙ · x → 0 · x = 0` — which
+is why the hypothesis is the opposite-action `ContinuousConstSMul Aᵐᵒᵖ A` rather than
+`SeparatelyContinuousMul A`; the latter implies it, so a topological ring still qualifies. -/
 theorem exists_mul_mem_of_tendsto_zero (x : A) {U : Set A} (hU : U ∈ 𝓝 (0 : A)) :
     ∃ n : ℕ, ((u n : A)) * x ∈ U := by
-  have hmul : Tendsto (fun n ↦ ((u n : A)) * x) atTop (𝓝 ((0 : A) * x)) := hu.mul_const x
+  have hmul : Tendsto (fun n ↦ ((u n : A)) * x) atTop (𝓝 ((0 : A) * x)) := by
+    simpa only [op_smul_eq_mul] using hu.const_smul (MulOpposite.op x)
   rw [zero_mul] at hmul
   exact (hmul.eventually_mem hU).exists
 
@@ -134,29 +137,19 @@ end Absorption
 
 namespace HasZeroSequenceOfUnits
 
-variable [SeparatelyContinuousMul A] [HasZeroSequenceOfUnits A]
+variable [ContinuousConstSMul Aᵐᵒᵖ A] [HasZeroSequenceOfUnits A]
 
 /-- Some unit carries a given element into a given neighbourhood of zero.
 
 Deliberately not phrased with a sequence: quantifying over an unconstrained `u : ℕ → Aˣ` would
-say no more than this, since a constant sequence witnesses it. The sequence matters only for the
-covering below, where it is carried with its convergence hypothesis. -/
+say no more than this, since a constant sequence witnesses it. The sequence matters only for
+`iUnion_inv_smul_eq_univ_of_tendsto_zero`, which is stated for a given sequence carrying its own
+convergence hypothesis rather than restated at class level. -/
 theorem exists_unit_mul_mem (x : A) {U : Set A} (hU : U ∈ 𝓝 (0 : A)) :
     ∃ v : Aˣ, (v : A) * x ∈ U := by
   obtain ⟨u, hu⟩ := ‹HasZeroSequenceOfUnits A›.exists_tendsto
   obtain ⟨n, hn⟩ := exists_mul_mem_of_tendsto_zero hu x hU
   exact ⟨u n, hn⟩
-
-/-- Some *zero* sequence of units has its dilates of a neighbourhood of zero covering the ring.
-
-The convergence hypothesis is carried inside the existential: without it the sequence binder
-would be vacuous, and a caller destructing the result would get a sequence with no relation to
-the topology. -/
-theorem exists_iUnion_inv_smul_eq_univ {U : Set A} (hU : U ∈ 𝓝 (0 : A)) :
-    ∃ u : ℕ → Aˣ, Tendsto (fun n ↦ ((u n : A))) atTop (𝓝 0) ∧
-      ⋃ n : ℕ, ((u n)⁻¹ : Aˣ) • U = Set.univ := by
-  obtain ⟨u, hu⟩ := ‹HasZeroSequenceOfUnits A›.exists_tendsto
-  exact ⟨u, hu, iUnion_inv_smul_eq_univ_of_tendsto_zero hu hU⟩
 
 end HasZeroSequenceOfUnits
 
