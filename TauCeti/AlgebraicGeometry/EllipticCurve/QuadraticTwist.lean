@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.VariableChange
-public import TauCeti.LinearAlgebra.Dimension.IsQuadraticExtension
 public import TauCeti.RingTheory.Norm.Quadratic
 
 /-!
