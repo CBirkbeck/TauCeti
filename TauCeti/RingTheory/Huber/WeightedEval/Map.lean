@@ -142,8 +142,10 @@ summability, and the form a consumer should use: it names the sum rather than le
 `tsum` to be manipulated. -/
 theorem hasSum_weightedEvalTerm (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b)
     {f : MvPowerSeries (Fin k) A} (hf : IsWeightedRestricted T f) :
-    HasSum (weightedEvalTerm φ b f) (weightedEval φ b f) :=
-  (summable_weightedEvalTerm hφ hb hf).hasSum
+    HasSum (weightedEvalTerm φ b f) (weightedEval φ b f) := by
+  -- `weightedEval` is the `tsum`, but say so through its unfolding lemma rather than relying on
+  -- the wrapper being transparent.
+  simpa only [weightedEval_def] using (summable_weightedEvalTerm hφ hb hf).hasSum
 
 /-- `TauCeti.Huber.hasSum_weightedEvalTerm` under Wedhorn's coordinatewise hypothesis. -/
 theorem hasSum_weightedEvalTerm_of_isWeightedVarPowerBounded (hφ : ContinuousAt φ 0)
