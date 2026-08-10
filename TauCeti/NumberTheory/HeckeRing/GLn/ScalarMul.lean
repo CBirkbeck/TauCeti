@@ -124,8 +124,8 @@ theorem diagElem_mul_const (b : Fin n → ℕ) (hb : ∀ i, 0 < b i) (c : ℕ) (
       (transposeAntiInvolution_onHeckeCoset_eq_self n),
     diagElem_const_mul n c hc b hb, mul_comm (fun _ : Fin n ↦ c) b]
 
-/-- `T(c, …, c)^k = T(c^k, …, c^k)`: the scalar double cosets are closed under powers.
-Induction on `k`, each step an application of `diagElem_const_mul`. -/
+/-- `T(c, …, c)^k = T(c^k, …, c^k)`: the scalar double cosets are closed under powers, the
+iterate of `diagElem_const_mul`. -/
 theorem diagElem_const_pow (c : ℕ) (hc : 0 < c) (k : ℕ) :
     diagElem (fun _ : Fin n ↦ c) ^ k = diagElem (fun _ : Fin n ↦ c ^ k) := by
   induction k with
