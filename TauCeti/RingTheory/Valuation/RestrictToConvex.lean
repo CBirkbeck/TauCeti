@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.Algebra.Order.Monoid.Submonoid
 public import Mathlib.RingTheory.Valuation.Basic
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 
@@ -219,5 +220,48 @@ private theorem restrictToConvexFun_map_add_le_max (v : Valuation R Γ₀)
         (le_max_right _ _)
   · rw [(restrictToConvexFun_eq_zero_iff v H hxy).mpr hmxy]
     exact zero_le
+
+/-- **The restriction of `v` to a convex subgroup `H` of its value units.** Values whose unit
+lies in `H` are kept; every other value is sent to `0`.
+
+The hypothesis says that `H` absorbs each attained value `≥ 1`. It cannot be dropped: without it
+the result is not multiplicative, since two units outside `H` may have a product inside it. -/
+noncomputable def restrictToConvex (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) :
+    Valuation R (WithZero H.toSubgroup) where
+  toFun := restrictToConvexFun v H
+  map_zero' := restrictToConvexFun_map_zero v H
+  map_one' := restrictToConvexFun_map_one v H
+  map_mul' := restrictToConvexFun_map_mul v H hH
+  map_add_le_max' := restrictToConvexFun_map_add_le_max v H hH
+
+/-- On a value whose unit lies in `H`, the restriction keeps that unit. -/
+theorem restrictToConvex_apply_of_mem (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {r : R} (hr : v r ≠ 0) (hm : Units.mk0 (v r) hr ∈ H) :
+    v.restrictToConvex H hH r = ((⟨Units.mk0 (v r) hr, hm⟩ : H.toSubgroup) : WithZero _) :=
+  restrictToConvexFun_of_mem v H hr hm
+
+/-- Off `H`, the restriction vanishes. -/
+theorem restrictToConvex_apply_of_notMem (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {r : R} (hr : v r ≠ 0) (hm : Units.mk0 (v r) hr ∉ H) :
+    v.restrictToConvex H hH r = 0 :=
+  (restrictToConvexFun_eq_zero_iff v H hr).mpr hm
+
+/-- The restriction vanishes wherever `v` does. -/
+@[simp]
+theorem restrictToConvex_apply_of_eq_zero (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {r : R} (hr : v r = 0) : v.restrictToConvex H hH r = 0 := by
+  classical
+  exact (restrictToConvexFun_unfold v H r).trans (dif_pos hr)
+
+/-- The restriction vanishes exactly where `v` does or where the unit avoids `H`. -/
+theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {r : R} (hr : v r ≠ 0) :
+    v.restrictToConvex H hH r = 0 ↔ Units.mk0 (v r) hr ∉ H :=
+  restrictToConvexFun_eq_zero_iff v H hr
 
 end Valuation
