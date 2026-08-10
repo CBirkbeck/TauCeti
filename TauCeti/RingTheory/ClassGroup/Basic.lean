@@ -58,17 +58,9 @@ that wants to *name* the generator can use. -/
 lemma ClassGroup.mk_eq_one_iff_exists {R : Type*} [CommRing R] [IsDomain R] {K : Type*} [Field K]
     [Algebra R K] [IsFractionRing R K] {I : (FractionalIdeal R⁰ K)ˣ} :
     ClassGroup.mk K I = 1 ↔ ∃ x : Kˣ, toPrincipalIdeal R K x = I := by
-  rw [ClassGroup.mk_eq_one_iff]
-  constructor
-  · intro hI
-    obtain ⟨x, hx⟩ := hI.principal
-    have hx' : (I : FractionalIdeal R⁰ K) = FractionalIdeal.spanSingleton R⁰ x := by
-      apply Subtype.coe_injective
-      simp only [FractionalIdeal.val_eq_coe, hx, FractionalIdeal.coe_spanSingleton]
-    -- Mathlib's `mem_principal_ideals_iff` already does the `Units.mk0` nonzero bookkeeping
-    exact MonoidHom.mem_range.mp (mem_principal_ideals_iff.mpr ⟨x, hx'.symm⟩)
-  · rintro ⟨x, rfl⟩
-    exact ⟨⟨(x : K), by rw [coe_toPrincipalIdeal, FractionalIdeal.coe_spanSingleton]⟩⟩
+  rw [ClassGroup.mk_eq_one_iff, FractionalIdeal.isPrincipal_iff, ← MonoidHom.mem_range,
+    mem_principal_ideals_iff]
+  exact exists_congr fun _ ↦ eq_comm
 
 /-- A principal fractional ideal has trivial ideal class. -/
 @[simp]
