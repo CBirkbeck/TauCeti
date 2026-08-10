@@ -169,6 +169,28 @@ lemma is kept as the named computation rule for `rw`. -/
 lemma evalHom_C (a : ℤ) : evalHom n p (MvPolynomial.C a) = (a : IntegralHeckeRing n) :=
   MvPolynomial.eval₂Hom_C _ _ _
 
+/-- **Evaluation rule for `evalHom` at a double coset.** The coefficient of `evalHom P` at `D`
+is the sum, over the support of `P`, of `P.coeff d` times the coefficient of the monomial
+`∏ heckeGen i ^ d i` at `D`.
+
+This is the wrapper-level counterpart of `evalHom_def`: it is stated here, where `evalHom` and
+`IntegralHeckeRing` are both transparent, so that consumers can evaluate a polynomial image at
+a coset without depending on either definition reducing at their own use site. -/
+lemma evalHom_apply (P : MvPolynomial (Fin n) ℤ)
+    (D : HeckeCoset (posDetInt n) (SLnZ n) (SLnZ n)) :
+    evalHom n p P D =
+      ∑ d ∈ P.support, P.coeff d • (∏ i, heckeGen n p i ^ d i : IntegralHeckeRing n) D := by
+  rw [evalHom_def]
+  change (MvPolynomial.eval₂ (Int.castRingHom (IntegralHeckeRing n))
+    (fun k : Fin n ↦ heckeGen n p k) P) D = _
+  rw [MvPolynomial.eval₂_eq']
+  refine (Finset.sum_apply' D).trans (Finset.sum_congr rfl fun d _ ↦ ?_)
+  -- beta-reduce the cast left by `eval₂_eq'`, then turn the `ℤ`-multiple into a `ℤ`-scalar so
+  -- that the wrapper's own `smul_apply` closes the goal
+  change (((P.coeff d : ℤ) : IntegralHeckeRing n) * ∏ i, heckeGen n p i ^ d i) D = _
+  rw [← zsmul_one (P.coeff d), smul_mul_assoc, one_mul]
+  exact HeckeCosetModule.smul_apply _ _ _
+
 /-- Each `heckeGen k` lies in the range of `evalHom`. -/
 lemma heckeGen_mem_evalHom_range (k : Fin n) :
     heckeGen n p k ∈ (evalHom n p).range :=

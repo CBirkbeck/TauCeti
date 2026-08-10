@@ -133,44 +133,24 @@ theorem evalHom_one_injective (p : ℕ) (hp : 1 < p) : Function.Injective (evalH
   obtain ⟨s, hs⟩ := MvPolynomial.support_nonempty.mpr hne
   have hcoeff : R.coeff s ≠ 0 := MvPolynomial.mem_support_iff.mp hs
   set D := diagCoset (n := 1) (fun _ ↦ p ^ (s 0))
-  have h0 : (evalHom 1 p R).toFun D = 0 := by rw [hR]; rfl
+  have h0 : evalHom 1 p R D = 0 := by rw [hR]; rfl
   apply hcoeff
-  suffices h : ((evalHom 1 p) R).toFun D = MvPolynomial.coeff s R from h ▸ h0
-  rw [evalHom_def]
-  -- `evalHom` is sealed (`public section`, no `@[expose]`), so it does not reduce to
-  -- `eval₂Hom` by `rw`/`unfold` here; `evalHom_def` names the equation and this `change`
-  -- takes the resulting term to its `Finsupp` application form.
-  change Finsupp.toFun (MvPolynomial.eval₂Hom (Int.castRingHom (IntegralHeckeRing 1))
-    (fun k ↦ heckeGen 1 p k) R) D = _
-  simp only [MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_eq', Fin.prod_univ_one]
-  have h_sum_eq : (∑ x ∈ R.support,
-      (Int.castRingHom (IntegralHeckeRing 1)) (MvPolynomial.coeff x R) * heckeGen 1 p 0 ^ x 0) =
-    (∑ x ∈ R.support, HeckeCosetModule.single ℤ
-      (diagCoset (n := 1) (fun _ ↦ p ^ x 0)) (MvPolynomial.coeff x R)) :=
-    Finset.sum_congr rfl (fun x _ ↦ by
-      rw [heckeGen_pow_one p (Nat.lt_of_lt_of_le Nat.zero_lt_one hp.le)]
-      exact intCast_mul_diagElem_eq_single (n := 1) (fun _ ↦ p ^ x 0) (R.coeff x))
-  -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
-  -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
-  -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
-  change (∑ x ∈ R.support,
-      (Int.castRingHom (IntegralHeckeRing 1)) (MvPolynomial.coeff x R) * heckeGen 1 p 0 ^ x 0)
-        D = MvPolynomial.coeff s R
-  rw [h_sum_eq]
-  -- `HeckeCosetModule` is a `Finsupp` by definition, so evaluation commutes with the sum;
-  -- `rw` cannot match through the definition, but the lemma applies by defeq
-  have happ : (∑ x ∈ R.support, HeckeCosetModule.single ℤ
-        (diagCoset (n := 1) (fun _ ↦ p ^ x 0)) (MvPolynomial.coeff x R)) D =
-      ∑ x ∈ R.support, HeckeCosetModule.single ℤ
-        (diagCoset (n := 1) (fun _ ↦ p ^ x 0)) (MvPolynomial.coeff x R) D :=
-    Finsupp.finsetSum_apply _ _ _
-  rw [happ]
+  suffices h : evalHom 1 p R D = MvPolynomial.coeff s R from h ▸ h0
+  rw [evalHom_apply]
   classical
-  simp only [HeckeCosetModule.single_apply, D]
-  rw [Finset.sum_eq_single s (fun b _ hbs ↦ if_neg (fun hb ↦ hbs
-    (Finsupp.ext (fun j ↦ by rw [Fin.fin_one_eq_zero j]; exact T_diag_one_ppow_inj p hp hb))))
-    (fun hns ↦ absurd hs hns)]
-  simp
+  -- each monomial `X^k` evaluates to the basis element at `T(p^k)`, so its contribution at
+  -- `D = T(p^{s 0})` is its own coefficient when `k = s 0` and zero otherwise
+  have hterm : ∀ x ∈ R.support,
+      R.coeff x • (∏ i, heckeGen 1 p i ^ x i : IntegralHeckeRing 1) D =
+        if x = s then R.coeff s else 0 := by
+    intro x _
+    rw [Fin.prod_univ_one, heckeGen_pow_one p (Nat.lt_of_lt_of_le Nat.zero_lt_one hp.le),
+      diagElem_def, HeckeCosetModule.single_apply]
+    by_cases hxs : x = s
+    · subst hxs; simp [D]
+    · rw [if_neg (fun hb ↦ hxs (Finsupp.ext fun j ↦ by
+        rw [Fin.fin_one_eq_zero j]; exact T_diag_one_ppow_inj p hp hb)), if_neg hxs, smul_zero]
+  rw [Finset.sum_congr rfl hterm, Finset.sum_ite_eq_of_mem' R.support s _ hs]
 
 /-- A two-entry diagonal `![a, b]` is a divisibility chain iff `a ∣ b`. -/
 private lemma divChain_two_of_dvd {a b : ℕ} (hab : a ∣ b) :
@@ -388,8 +368,8 @@ private lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHe
         intro heq
         have h1_eq : a * (fun _ : Fin 2 ↦ c) = b * (fun _ : Fin 2 ↦ c) :=
           eq_of_diagCoset_eq (fun i ↦ Nat.mul_pos (ha_pos i) hc)
-            (fun i ↦ Nat.mul_pos (hb_pos i) hc) (isDvdChain_mul_const 2 ha_div c)
-            (isDvdChain_mul_const 2 hb_div c) heq
+            (fun i ↦ Nat.mul_pos (hb_pos i) hc) (isDvdChain_mul 2 ha_div (isDvdChain_const 2 c))
+            (isDvdChain_mul 2 hb_div (isDvdChain_const 2 c)) heq
         apply hab
         funext i
         have := congr_fun h1_eq i
@@ -435,7 +415,7 @@ private lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : In
       intro heq
       have h_eq : a * (fun _ : Fin 2 ↦ c) = d :=
         eq_of_diagCoset_eq (fun i ↦ Nat.mul_pos (ha_pos i) hc) hd_pos
-          (isDvdChain_mul_const 2 ha_div c) hd_div heq
+          (isDvdChain_mul 2 ha_div (isDvdChain_const 2 c)) hd_div heq
       apply hi₀
       have := congr_fun h_eq i₀
       simp only [Pi.mul_apply] at this
@@ -729,33 +709,9 @@ private lemma evalHom_apply_eq_sum_monomial (p : ℕ) (R : MvPolynomial (Fin 2) 
     (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2)) :
     (evalHom 2 p R) D =
     ∑ d ∈ R.support, R.coeff d * (heckeGen 2 p 0 ^ (d 0) * heckeGen 2 p 1 ^ (d 1)) D := by
-  rw [evalHom_def]
-  -- `evalHom` is sealed (`public section`, no `@[expose]`), so it does not reduce to
-  -- `eval₂Hom` by `rw`/`unfold` here; `evalHom_def` names the equation and this `change`
-  -- takes the resulting term to its `Finsupp` application form.
-  change (MvPolynomial.eval₂ (Int.castRingHom (IntegralHeckeRing 2))
-    (fun k : Fin 2 ↦ heckeGen 2 p k) R) D = _
-  rw [MvPolynomial.eval₂_eq]
-  -- `evalHom` is sealed (`public section`, no `@[expose]`), so it does not reduce to
-  -- `eval₂Hom` by `rw`/`unfold` here; `evalHom_def` names the equation and this `change`
-  -- takes the resulting term to its `Finsupp` application form.
-  change (∑ d ∈ R.support, (Int.castRingHom (IntegralHeckeRing 2)) (MvPolynomial.coeff d R) *
-    ∏ i ∈ d.support, heckeGen 2 p i ^ d i) D = _
-  rw [show (∑ d ∈ R.support, (Int.castRingHom (IntegralHeckeRing 2)) (MvPolynomial.coeff d R) *
-        ∏ i ∈ d.support, heckeGen 2 p i ^ d i) D =
-      ∑ d ∈ R.support, ((Int.castRingHom (IntegralHeckeRing 2)) (MvPolynomial.coeff d R) *
-        ∏ i ∈ d.support, heckeGen 2 p i ^ d i) D from Finset.sum_apply' _]
-  refine Finset.sum_congr rfl (fun d _ ↦ ?_)
-  -- `evalHom` is sealed (`public section`, no `@[expose]`), so it does not reduce to
-  -- `eval₂Hom` by `rw`/`unfold` here; `evalHom_def` names the equation and this `change`
-  -- takes the resulting term to its `Finsupp` application form.
-  change (((R.coeff d : ℤ) : IntegralHeckeRing 2) * (∏ k ∈ d.support, heckeGen 2 p k ^ d k)) D = _
-  rw [← zsmul_one (R.coeff d), smul_mul_assoc, one_mul]
-  -- `Finsupp.smul_apply` again: it holds through the `IntegralHeckeRing` wrapper by defeq but
-  -- does not match syntactically, so the pushed-in form is stated and closed by it.
-  rw [show ((R.coeff d) • (∏ k ∈ d.support, heckeGen 2 p k ^ d k : IntegralHeckeRing 2)) D =
-    R.coeff d • (∏ k ∈ d.support, heckeGen 2 p k ^ d k : IntegralHeckeRing 2) D from
-    Finsupp.smul_apply _ _ _, smul_eq_mul, prod_T_gen_pow_eq_two]
+  rw [evalHom_apply]
+  refine Finset.sum_congr rfl fun d _ ↦ ?_
+  rw [Fin.prod_univ_two, smul_eq_mul]
 
 /-- n=2: evalHom is injective. -/
 theorem evalHom_two_injective (p : ℕ) (hp : p.Prime) :
@@ -783,19 +739,16 @@ theorem evalHom_two_injective (p : ℕ) (hp : p.Prime) :
   rw [Finset.sum_congr rfl h_delta, Finset.sum_ite_eq_of_mem' R.support s _ hs_mem] at h_zero
   exact hs_coeff h_zero
 
-/-- Injectivity of `evalHomLocal` follows from injectivity of `evalHom`.
-
-This is *not* an instance of `RingHom.injective_codRestrict`, even though `evalHomLocal` is
-defined as a `codRestrict`: that lemma's `f`, `s` and `h` are implicit and can only be solved
-by unfolding `evalHomLocal`, which is `public` with no `@[expose]` and therefore opaque to
-this module. Elaborating it here reports `evalHomLocal ↦ 662` under "definitions were not
-unfolded because their definition is not exposed". `evalHomLocal_coe` is the exported
-characteristic lemma that replaces the unfolding, so the argument runs through it. -/
+/-- Injectivity transfers from `evalHom` to its codomain restriction `evalHomLocal`: two
+polynomials with the same image in `pLocalSubring` have the same image in the ambient ring. -/
 lemma evalHomLocal_injective (n : ℕ) [NeZero n] (p : ℕ)
     (h_inj : Function.Injective (evalHom n p)) :
     Function.Injective (evalHomLocal n p) := by
   intro P Q hPQ
   refine h_inj ?_
+  -- not `RingHom.injective_codRestrict`: its `f`, `s`, `h` are implicit and only solvable by
+  -- unfolding `evalHomLocal`, which is sealed here ("definition is not exposed").
+  -- `evalHomLocal_coe` is the exported stand-in for that unfolding.
   rw [← evalHomLocal_coe n p P, ← evalHomLocal_coe n p Q, hPQ]
 
 variable (p : ℕ)
