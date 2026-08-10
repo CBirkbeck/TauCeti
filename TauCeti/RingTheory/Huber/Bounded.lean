@@ -174,18 +174,20 @@ end MonoidWithZero
 
 section CommMonoidWithZero
 
-variable {M : Type*} [CommMonoidWithZero M] [TopologicalSpace M] [ContinuousMul M]
+variable {M : Type*} [CommMonoidWithZero M] [TopologicalSpace M]
 
 /-- **A finite pointwise product of bounded sets is bounded.** This iterates
 `TauCeti.Huber.IsBounded.mul` from the bounded singleton `{1}`; commutativity is what makes the
-`Finset` product of sets available in the first place. -/
+`Finset` product of sets available in the first place. No continuity is needed: the empty product
+is `{1}`, which `TauCeti.Huber.isBounded_pair_zero_one` already bounds. -/
 theorem isBounded_finset_prod {ι : Type*} (s : Finset ι) {S : ι → Set M}
     (hS : ∀ i ∈ s, IsBounded (S i)) : IsBounded (∏ i ∈ s, S i) := by
   classical
   induction s using Finset.induction with
   | empty =>
-    rw [Finset.prod_empty, show (1 : Set M) = {1} from rfl]
-    exact isBounded_singleton (1 : M)
+    rw [Finset.prod_empty]
+    exact isBounded_pair_zero_one.subset
+      (Set.singleton_subset_iff.mpr (Set.mem_insert_iff.mpr (Or.inr rfl)))
   | insert i s hi ih =>
     rw [Finset.prod_insert hi]
     exact (hS i (Finset.mem_insert_self i s)).mul

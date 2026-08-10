@@ -78,9 +78,9 @@ multi-indices at once, form a bounded subset of `B`.
 This is Wedhorn's requirement that the variables be power-bounded *relative to the weights*, in
 the form the summability argument uses. It is a condition on the whole family rather than on each
 `bᵢ` separately, because the bound has to be uniform in `ν`. For the one-weight family `T ≡ {1}`
-it is equivalent to each `bᵢ` being power-bounded, which is Wedhorn's condition; recovering it
-from the individual bounds is where continuity of multiplication is needed, since the bounds have
-to be multiplied together. -/
+it is equivalent to each `bᵢ` being power-bounded, which is Wedhorn's condition: every monomial
+`bν` lies in the pointwise product of the power-sets, and a finite pointwise product of bounded
+sets is bounded. -/
 def IsWeightBounded (φ : A →+* B) (T : Fin k → Set A) (b : Fin k → B) : Prop :=
   IsBounded (⋃ ν : Fin k →₀ ℕ, (fun t ↦ φ t * ∏ i, b i ^ ν i) '' weightPow T ν)
 
@@ -107,19 +107,6 @@ theorem isWeightBounded_one_weight_iff (φ : A →+* B) (b : Fin k → B) :
     simp [weightPow_one_weight]
   rw [isWeightBounded_iff, hset]
 
-omit [TopologicalSpace B] in
-/-- A product of members of finitely many sets lies in their pointwise product. Private: it is
-elementary, Mathlib does not name it, and it is used only to prove the characterisation below. -/
-private theorem prod_mem_finset_prod {ι : Type*} (s : Finset ι) {S : ι → Set B} {f : ι → B}
-    (hf : ∀ i ∈ s, f i ∈ S i) : (∏ i ∈ s, f i) ∈ ∏ i ∈ s, S i := by
-  classical
-  induction s using Finset.induction with
-  | empty => simp
-  | insert i s hi ih =>
-    rw [Finset.prod_insert hi, Finset.prod_insert hi]
-    exact Set.mul_mem_mul (hf i (Finset.mem_insert_self i s))
-      (ih fun j hj ↦ hf j (Finset.mem_insert_of_mem hj))
-
 omit [TopologicalSpace A] in
 /-- **At the one-weight family the hypothesis is exactly Wedhorn's**: the weighted monomials are
 bounded precisely when every variable is power-bounded.
@@ -127,9 +114,8 @@ bounded precisely when every variable is power-bounded.
 Both directions are elementary once the monomials are in view. Forwards, the monomial at
 `ν = Finsupp.single i n` is `bᵢ ^ n`, so the one bounded set already contains every power of every
 `bᵢ`. Backwards, every monomial `bν` lies in the pointwise product of the power-sets, which is
-bounded by `TauCeti.Huber.isBounded_finset_prod` — this is the direction that needs the
-multiplication of `B` to be continuous, since it multiplies the individual bounds together. -/
-theorem isWeightBounded_one_weight_iff_forall_isPowerBounded [ContinuousMul B] (φ : A →+* B)
+bounded by `TauCeti.Huber.isBounded_finset_prod`. -/
+theorem isWeightBounded_one_weight_iff_forall_isPowerBounded (φ : A →+* B)
     (b : Fin k → B) :
     IsWeightBounded φ (fun _ : Fin k ↦ ({1} : Set A)) b ↔ ∀ i, IsPowerBounded (b i) := by
   rw [isWeightBounded_one_weight_iff]
@@ -139,7 +125,7 @@ theorem isWeightBounded_one_weight_iff_forall_isPowerBounded [ContinuousMul B] (
   · refine (isBounded_finset_prod Finset.univ
       (fun i _ ↦ isPowerBounded_iff.mp (hb i))).subset ?_
     rintro _ ⟨ν, rfl⟩
-    exact prod_mem_finset_prod Finset.univ fun i _ ↦ ⟨ν i, rfl⟩
+    exact Set.finsetProd_mem_finsetProd Finset.univ _ _ fun i _ ↦ ⟨ν i, rfl⟩
 
 
 variable [NonarchimedeanAddGroup A] [NonarchimedeanAddGroup B]
@@ -204,7 +190,7 @@ theorem summable_weightedEvalTerm {φ : A →+* B} (hφ : Continuous φ) {T : Fi
 tuple is that each variable be power-bounded, which is how Proposition 5.50 states it; this is the
 theorem above read through
 `TauCeti.Huber.isWeightBounded_one_weight_iff_forall_isPowerBounded`. -/
-theorem summable_weightedEvalTerm_of_forall_isPowerBounded [ContinuousMul B] {φ : A →+* B}
+theorem summable_weightedEvalTerm_of_forall_isPowerBounded {φ : A →+* B}
     (hφ : Continuous φ) {b : Fin k → B} (hb : ∀ i, IsPowerBounded (b i))
     {f : MvPowerSeries (Fin k) A}
     (hf : IsWeightedRestricted (fun _ : Fin k ↦ ({1} : Set A)) f) :
