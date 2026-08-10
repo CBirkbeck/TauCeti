@@ -136,27 +136,13 @@ theorem IdealCofinalFor.mono_subgroup {v : Valuation A Γ₀}
   fun a ha ↦ (h a ha).mono hHK
 
 /-- Wedhorn Lemma 7.2's greatest element, when it exists, is characterized by being an
-upper bound within the family — the statement the case split of Definition 7.3 consumes. -/
+upper bound within the family — the statement the case split of Definition 7.3 consumes.
+
+This is Mathlib's `IsGreatest` at the family of convex subgroups for which `I` is cofinal, so
+consumers use the `IsGreatest` API directly (`.1`, `.2`, `IsGreatest.unique`). -/
 def IsGreatestIdealCofinal (v : Valuation A Γ₀) (I : Ideal A)
     (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : Prop :=
   IsGreatest {K | IdealCofinalFor v K I} H
-
-/-- Unfolding to Mathlib's `IsGreatest`, which is what this is. Consumers get the whole
-`IsGreatest` API — `IsGreatest.unique` in particular — without further work. -/
-theorem isGreatestIdealCofinal_iff {v : Valuation A Γ₀} {I : Ideal A}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} :
-    IsGreatestIdealCofinal v I H ↔ IsGreatest {K | IdealCofinalFor v K I} H :=
-  Iff.rfl
-
-/-- The greatest subgroup is itself one for which `I` is cofinal. -/
-theorem IsGreatestIdealCofinal.idealCofinalFor {v : Valuation A Γ₀} {I : Ideal A}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
-    (h : IsGreatestIdealCofinal v I H) : IdealCofinalFor v H I := h.1
-
-/-- The greatest subgroup dominates every other one for which `I` is cofinal. -/
-theorem IsGreatestIdealCofinal.le {v : Valuation A Γ₀} {I : Ideal A}
-    {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
-    (h : IsGreatestIdealCofinal v I H) (hK : IdealCofinalFor v K I) : K ≤ H := h.2 hK
 
 /-! ### Reduction to the value set -/
 
