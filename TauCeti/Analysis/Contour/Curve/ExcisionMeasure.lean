@@ -17,8 +17,8 @@ An `ε`-excision deletes from the parameter interval every time at which the cur
 `ε` of one of finitely many centres. This file records that the deleted set carries no length in
 the limit: the integral of the excision's indicator over `[a, b]` tends to `b - a` as `ε → 0⁺`.
 
-Two properties of the curve are used, for two different parts of the argument. **Continuity**
-makes each excised set closed, hence measurable. **Nullity of the times the curve spends exactly
+Two properties of the curve are used, for two different parts of the argument. **Measurability**
+makes each excised set measurable. **Nullity of the times the curve spends exactly
 at a centre** gives the almost-everywhere convergence: away from those times the curve keeps a
 positive distance from the finite centre set, so the excision condition eventually fails
 outright. Injectivity on `[a, b]` is one convenient sufficient condition for the second — it
@@ -72,9 +72,9 @@ theorem measure_setOf_mem_eq_zero_of_injOn {γ : ℝ → ℂ} {a b : ℝ} (hγ :
 the curve comes within `ε` of one of finitely many centres costs no length as `ε → 0⁺`: what
 survives tends to the whole length `b - a`.
 
-The curve must be continuous, and must spend only a null set of times exactly at a centre —
+The curve must be measurable, and must spend only a null set of times exactly at a centre —
 `measure_setOf_mem_eq_zero_of_injOn` supplies the latter from injectivity. -/
-theorem tendsto_intervalIntegral_excisionIndicator {γ : ℝ → ℂ} (hγc : Continuous γ) {a b : ℝ}
+theorem tendsto_intervalIntegral_excisionIndicator {γ : ℝ → ℂ} (hγm : Measurable γ) {a b : ℝ}
     (hab : a ≤ b) (S : Finset ℂ) (hnull : volume {t ∈ Icc a b | γ t ∈ S} = 0) :
     Tendsto (fun ε => ∫ t in a..b, if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then (0 : ℝ) else 1)
       (𝓝[>] 0) (𝓝 (b - a)) := by
@@ -82,7 +82,7 @@ theorem tendsto_intervalIntegral_excisionIndicator {γ : ℝ → ℂ} (hγc : Co
     have h : {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} = ⋃ s ∈ S, {t | ‖γ t - s‖ ≤ ε} := by ext; simp
     rw [h]
     exact Finset.measurableSet_biUnion _ fun s _ =>
-      (isClosed_le (by fun_prop) continuous_const).measurableSet
+      measurableSet_le ((hγm.sub_const s).norm) measurable_const
   set As : ℝ → Set ℝ := fun ε => Ioc a b \ {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} with hAs_def
   have hAs : ∀ ε, MeasurableSet (As ε) := fun ε => measurableSet_Ioc.diff (hmS ε)
   -- The integral is exactly the surviving set's length.

@@ -64,7 +64,7 @@ at which the boundary comes within `ε` of one of finitely many centres costs no
 theorem tendsto_intervalIntegral_excisionIndicator_fdBoundary_arc (H : ℝ) (S : Finset ℂ) :
     Tendsto (fun ε => ∫ t in (1 : ℝ)..3,
         if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℝ) else 1) (𝓝[>] 0) (𝓝 2) := by
-  have h := Contour.tendsto_intervalIntegral_excisionIndicator (continuous_fdBoundary H)
+  have h := Contour.tendsto_intervalIntegral_excisionIndicator (continuous_fdBoundary H).measurable
     (by norm_num : (1 : ℝ) ≤ 3) S
     (Contour.measure_setOf_mem_eq_zero_of_injOn (injOn_fdBoundary_arc H) S)
   norm_num at h
