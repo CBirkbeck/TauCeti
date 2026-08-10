@@ -8,7 +8,7 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.RingTheory.Algebraic.Integral
 
 /-!
-# The function field of a Weierstrass curve has degree two over `K(x)`
+# The function field of a Weierstrass curve has degree two over `R(x)`
 
 Mathlib gives the coordinate ring `R[W]` a power basis `{1, Y}` over `R[X]`, so it is free of rank
 two, and defines the function field `R(W)` as its fraction field. It says nothing about `R(W)` as
@@ -18,8 +18,9 @@ proves the degree.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.moduleFinite_coordinateRing` and `isIntegral_coordinateRing`: the
-  coordinate ring is module-finite and integral over `R[X]`, over any commutative ring.
+* `WeierstrassCurve.Affine.moduleFinite_coordinateRing`: the coordinate ring is module-finite
+  over `R[X]`, over any commutative ring — whence Mathlib's `Algebra.IsIntegral.of_finite` gives
+  integrality without further help.
 * `WeierstrassCurve.Affine.finrank_coordinateRing`: it has rank two, under
   `[StrongRankCondition R[X]]` — the hypothesis `Module.finrank` actually needs, automatic over a
   domain.
@@ -81,12 +82,9 @@ variable {R : Type*} [CommRing R] (W : WeierstrassCurve.Affine R)
 instance moduleFinite_coordinateRing : Module.Finite R[X] W.CoordinateRing :=
   Module.Finite.of_basis (CoordinateRing.basis W)
 
-/-- The coordinate ring is integral over `R[X]`, being module-finite. -/
-instance isIntegral_coordinateRing : Algebra.IsIntegral R[X] W.CoordinateRing :=
-  Algebra.IsIntegral.of_finite R[X] W.CoordinateRing
-
 /-- **The coordinate ring is free of rank two over `R[X]`**, whenever ranks over `R[X]` are well
 behaved — which is what `StrongRankCondition` asks, and is automatic over a field. -/
+@[simp]
 lemma finrank_coordinateRing [StrongRankCondition R[X]] :
     Module.finrank R[X] W.CoordinateRing = 2 :=
   (Module.finrank_eq_card_basis (CoordinateRing.basis W)).trans (Fintype.card_fin 2)
@@ -113,6 +111,7 @@ instance isScalarTowerFractionRingFunctionField :
 /-- **The function field of a Weierstrass curve is a quadratic extension of `R(x)`.** The function
 field is the base change of the coordinate ring along `R[X] → R(x)`, by Mathlib's
 `Algebra.IsAlgebraic.isBaseChange_of_isFractionRing`, and the coordinate ring has rank two. -/
+@[simp]
 theorem finrank_functionField :
     Module.finrank (FractionRing R[X]) W.FunctionField = 2 := by
   rw [(Algebra.IsAlgebraic.isBaseChange_of_isFractionRing R[X] W.CoordinateRing
