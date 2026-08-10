@@ -26,9 +26,7 @@ it was built from.
   `XYIdeal W x (C y)` for `(x, y)` on `W`.
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_eq_iff_of_ne_top`: two such ideals are
   equal exactly when `x₁ = x₂` and the two `Y`-polynomials agree at the point,
-  `y₁.eval x₁ = y₂.eval x₂`, as soon as the first is proper. Forward: both `X - x₁` and `X - x₂`
-  lie in the ideal, so the constant `x₂ - x₁` does too, and a nonzero constant would be a unit;
-  likewise for `Y` after reducing modulo `X - x₁`.
+  `y₁.eval x₁ = y₂.eval x₂`, as soon as the first is proper.
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.XYIdeal_eq_iff`: the constant-polynomial point
   case, where the conclusion is equality of the coordinates and properness comes from maximality.
 
@@ -101,28 +99,19 @@ theorem XYIdeal_isMaximal_of_equation {y : F} (h : W.Equation x y) :
     (CoordinateRing.XYIdeal W x (C y)).IsMaximal :=
   XYIdeal_isMaximal h
 
-/-- A proper ideal of the coordinate ring contains no nonzero constant: constants from the base
-field are units. -/
-private theorem eq_zero_of_algebraMap_mem {I : Ideal W.CoordinateRing} (hI : I ≠ ⊤) {c : F}
-    (hc : algebraMap F W.CoordinateRing c ∈ I) : c = 0 := by
+/-- A proper ideal of the coordinate ring contains the class of no nonzero constant: the class of
+a unit is a unit. -/
+private theorem eq_zero_of_mk_C_C_mem {I : Ideal W.CoordinateRing} (hI : I ≠ ⊤) {c : F}
+    (hc : CoordinateRing.mk W (C (C c)) ∈ I) : c = 0 := by
   by_contra hne
-  exact hI (I.eq_top_of_isUnit_mem hc ((IsUnit.mk0 c hne).map (algebraMap F W.CoordinateRing)))
-
-/-- The image of a base-field element in the coordinate ring is `mk` of the double constant. Proved
-through `AdjoinRoot`'s own `algebraMap` API rather than by `rfl`, so it does not depend on how the
-algebra instances happen to unfold. -/
-private theorem algebraMap_eq_mk (c : F) :
-    algebraMap F W.CoordinateRing c = CoordinateRing.mk W (C (C c)) := by
-  rw [AdjoinRoot.algebraMap_eq' (S := F), RingHom.comp_apply, Polynomial.algebraMap_eq]
-  -- all that is left is `CoordinateRing.mk W = AdjoinRoot.mk W.polynomial`, which is what
-  -- `CoordinateRing.mk` is defined to be; no algebra instance is being unfolded here
-  rfl
+  exact hI (I.eq_top_of_isUnit_mem hc
+    ((isUnit_C.mpr (isUnit_C.mpr (IsUnit.mk0 c hne))).map (CoordinateRing.mk W)))
 
 /-- Two `XClass` generators differ by the constant `x₂ - x₁`. -/
 private theorem XClass_sub_XClass (x₁ x₂ : F) :
     CoordinateRing.XClass W x₁ - CoordinateRing.XClass W x₂ =
-      algebraMap F W.CoordinateRing (x₂ - x₁) := by
-  simp only [CoordinateRing.XClass, algebraMap_eq_mk, ← map_sub]
+      CoordinateRing.mk W (C (C (x₂ - x₁))) := by
+  simp only [CoordinateRing.XClass, ← map_sub]
   congr 1
   simp only [map_sub]
   ring
@@ -138,21 +127,22 @@ private theorem YClass_sub_YClass (y₁ y₂ : F[X]) :
 
 /-- Modulo `X - x`, a polynomial in `X` is its value at `x`: the two differ by an explicit multiple
 of the `XClass` generator. -/
-private theorem mk_C_sub_algebraMap_eval (x : F) (y : F[X]) :
-    ∃ q : F[X], CoordinateRing.mk W (C y) - algebraMap F W.CoordinateRing (y.eval x) =
+private theorem mk_C_sub_mk_C_C_eval (x : F) (y : F[X]) :
+    ∃ q : F[X], CoordinateRing.mk W (C y) - CoordinateRing.mk W (C (C (y.eval x))) =
       CoordinateRing.XClass W x * CoordinateRing.mk W (C q) := by
   obtain ⟨q, hq⟩ := X_sub_C_dvd_sub_C_eval (a := x) (p := y)
   refine ⟨q, ?_⟩
-  rw [algebraMap_eq_mk, CoordinateRing.XClass, ← map_mul, ← map_sub, ← map_sub, ← C_mul, ← hq]
+  rw [CoordinateRing.XClass, ← map_mul, ← map_sub, ← map_sub, ← C_mul, ← hq]
 
 /-- A proper ideal `⟨X - x₁, Y - y₁(X)⟩` sees the value of a polynomial at the point: if the class
-of `p` lies in it, then `p` vanishes at `x₁`. Modulo `X - x₁` the class of `p` is the constant
-`p.eval x₁`, and a proper ideal contains no nonzero constant. -/
+of `p` lies in it, then `p` vanishes at `x₁`. -/
 private theorem eval_eq_zero_of_mk_C_mem {x₁ : F} {y₁ : F[X]}
     (hI : CoordinateRing.XYIdeal W x₁ y₁ ≠ ⊤) {p : F[X]}
     (hp : CoordinateRing.mk W (C p) ∈ CoordinateRing.XYIdeal W x₁ y₁) : p.eval x₁ = 0 := by
-  obtain ⟨q, hq⟩ := mk_C_sub_algebraMap_eval (W := W) x₁ p
-  refine eq_zero_of_algebraMap_mem hI ?_
+  -- modulo `X - x₁` the class of `p` is the constant `p.eval x₁`, which a proper ideal can only
+  -- contain if it is zero
+  obtain ⟨q, hq⟩ := mk_C_sub_mk_C_C_eval (W := W) x₁ p
+  refine eq_zero_of_mk_C_C_mem hI ?_
   have hX₁ : CoordinateRing.XClass W x₁ ∈ CoordinateRing.XYIdeal W x₁ y₁ :=
     Ideal.subset_span (Set.mem_insert _ _)
   have hmem := Ideal.sub_mem _ hp (hq ▸ Ideal.mul_mem_right (CoordinateRing.mk W (C q)) _ hX₁)
@@ -160,12 +150,8 @@ private theorem eval_eq_zero_of_mk_C_mem {x₁ : F} {y₁ : F[X]}
 
 /-- **Two such ideals are equal exactly when their data agree at the point**, given only that the
 first is proper: the `X`-coordinates must coincide, and the two `Y`-polynomials must take the same
-value there. For the forward direction, both `X - x₁` and `X - x₂` lie in the ideal, so their
-difference — the constant `x₂ - x₁` — does too, and a nonzero constant would be a unit; the `Y`
-generators differ by `y₂ - y₁`, which reduces modulo `X - x₁` to its value at `x₁`. Conversely,
-agreeing at the point makes the two `Y` generators differ by a multiple of `X - x₁`, a change of
-generator that leaves the span alone. Stated for polynomial `y`, matching `XYIdeal` and
-`XYIdeal_isMaximal`; no curve equation is needed. -/
+value there. Stated for polynomial `y`, matching `XYIdeal` and `XYIdeal_isMaximal`; no curve
+equation is needed. Use `XYIdeal_eq_iff` for points, whose properness is automatic. -/
 theorem XYIdeal_eq_iff_of_ne_top {x₁ x₂ : F} {y₁ y₂ : F[X]}
     (hI : CoordinateRing.XYIdeal W x₁ y₁ ≠ ⊤) :
     CoordinateRing.XYIdeal W x₁ y₁ = CoordinateRing.XYIdeal W x₂ y₂ ↔
@@ -173,12 +159,15 @@ theorem XYIdeal_eq_iff_of_ne_top {x₁ x₂ : F} {y₁ y₂ : F[X]}
   have hX₁ : CoordinateRing.XClass W x₁ ∈ CoordinateRing.XYIdeal W x₁ y₁ :=
     Ideal.subset_span (Set.mem_insert _ _)
   constructor
-  · intro h
+  · -- both `X - x₁` and `X - x₂` lie in the ideal, so the constant `x₂ - x₁` does too, and a
+    -- nonzero constant would be a unit; the `Y` generators differ by `y₂ - y₁`, which reduces
+    -- modulo `X - x₁` to its value at `x₁`
+    intro h
     have hmemX : CoordinateRing.XClass W x₁ - CoordinateRing.XClass W x₂ ∈
         CoordinateRing.XYIdeal W x₁ y₁ :=
       Ideal.sub_mem _ hX₁ (h ▸ Ideal.subset_span (Set.mem_insert _ _))
     rw [XClass_sub_XClass] at hmemX
-    have hx : x₁ = x₂ := (sub_eq_zero.mp (eq_zero_of_algebraMap_mem hI hmemX)).symm
+    have hx : x₁ = x₂ := (sub_eq_zero.mp (eq_zero_of_mk_C_C_mem hI hmemX)).symm
     have hmemY : CoordinateRing.mk W (C (y₂ - y₁)) ∈ CoordinateRing.XYIdeal W x₁ y₁ := by
       rw [← YClass_sub_YClass]
       exact Ideal.sub_mem _ (Ideal.subset_span (Set.mem_insert_of_mem _ rfl))
@@ -189,8 +178,9 @@ theorem XYIdeal_eq_iff_of_ne_top {x₁ x₂ : F} {y₁ y₂ : F[X]}
   · rintro ⟨rfl, hy⟩
     -- the two `Y` generators differ by a multiple of `X - x₁`, which is a change of generator
     -- Mathlib already knows leaves the span alone
-    obtain ⟨q, hq⟩ := mk_C_sub_algebraMap_eval (W := W) x₁ (y₂ - y₁)
-    rw [eval_sub, sub_eq_zero.mpr hy.symm, map_zero, sub_zero, ← YClass_sub_YClass] at hq
+    obtain ⟨q, hq⟩ := mk_C_sub_mk_C_C_eval (W := W) x₁ (y₂ - y₁)
+    rw [eval_sub, sub_eq_zero.mpr hy.symm] at hq
+    simp only [map_zero, sub_zero, ← YClass_sub_YClass] at hq
     rw [CoordinateRing.XYIdeal, CoordinateRing.XYIdeal, sub_eq_iff_eq_add.mp hq,
       Ideal.span_pair_left_mul_add]
 

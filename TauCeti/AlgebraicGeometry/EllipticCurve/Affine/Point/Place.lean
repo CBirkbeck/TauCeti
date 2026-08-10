@@ -85,8 +85,9 @@ proved here. -/
 @[simp]
 theorem pointPlace_eq_iff {x₁ x₂ y₁ y₂ : F} (h₁ : W.Equation x₁ y₁) (h₂ : W.Equation x₂ y₂) :
     pointPlace h₁ = pointPlace h₂ ↔ x₁ = x₂ ∧ y₁ = y₂ := by
-  refine ⟨fun h => (XYIdeal_eq_iff h₁).mp ?_, fun ⟨hx, hy⟩ => by subst hx; subst hy; rfl⟩
-  rw [← pointPlace_asIdeal h₁, ← pointPlace_asIdeal h₂, h]
+  -- both directions go through the underlying ideals, `HeightOneSpectrum` being determined by them
+  rw [HeightOneSpectrum.ext_iff, pointPlace_asIdeal, pointPlace_asIdeal]
+  exact XYIdeal_eq_iff h₁
 
 end WeierstrassCurve.Affine.CoordinateRing
 
