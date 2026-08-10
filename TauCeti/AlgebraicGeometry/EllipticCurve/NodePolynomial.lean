@@ -212,7 +212,7 @@ lemma nodePoly_map_splits_iff_exists_artinSchreier_of_two_eq_zero (h2 : (2 : k) 
     intro h0
     refine neg_ne_zero.mpr (mul_ne_zero hc₄ hc₆) ?_
     rw [← map_mul, ← map_neg, ← map_nodePoly_discrim φ W,
-      Polynomial.discrim_eq_sq_of_two_eq_zero h2, h0, zero_pow two_ne_zero]
+      discrim_eq_sq_of_two_eq_zero h2, h0, zero_pow two_ne_zero]
   rw [nodePoly_map_eq_quadratic,
     Polynomial.splits_quadratic_iff_exists_artinSchreier_of_two_eq_zero h2 hc₄ hb]
 

@@ -54,6 +54,15 @@ the degree is exactly two.
 
 public section
 
+/-- In characteristic two the discriminant degenerates to `b²`, since `4 = 0` kills the `a c`
+term. This is why `splits_quadratic_iff_isSquare` says nothing there: `discrim a b c` is
+automatically a square. -/
+theorem discrim_eq_sq_of_two_eq_zero {k : Type*} [Field k] (h2 : (2 : k) = 0) (a b c : k) :
+    discrim a b c = b ^ 2 := by
+  have h4 : (4 : k) = 0 := by linear_combination (2 : k) * h2
+  rw [discrim]
+  linear_combination -(a * c) * h4
+
 namespace Polynomial
 
 /-- The derivative of the quadratic `a X² + b X + c` is `2 a X + b`. -/
@@ -134,15 +143,6 @@ theorem splits_quadratic_iff_isSquare {k : Type*} [Field k] [NeZero (2 : k)] {a 
   · rintro ⟨s, hs⟩
     obtain ⟨x, hx⟩ := exists_quadratic_eq_zero ha ⟨s, by rw [hs]⟩
     exact ⟨x, by linear_combination hx⟩
-
-/-- In characteristic two the discriminant degenerates to `b²`, since `4 = 0` kills the `a c`
-term. This is why `splits_quadratic_iff_isSquare` says nothing there: `discrim a b c` is
-automatically a square. -/
-theorem discrim_eq_sq_of_two_eq_zero {k : Type*} [Field k] (h2 : (2 : k) = 0) (a b c : k) :
-    discrim a b c = b ^ 2 := by
-  have h4 : (4 : k) = 0 := by linear_combination (2 : k) * h2
-  rw [discrim]
-  linear_combination -(a * c) * h4
 
 /-- Over a field of characteristic `2`, a quadratic `a X² + b X + c` with `a, b ≠ 0` splits
 exactly when its Artin-Schreier invariant `a c / b²` lies in the image of `z ↦ z² + z`, written
