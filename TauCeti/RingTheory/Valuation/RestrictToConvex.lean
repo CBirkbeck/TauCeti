@@ -112,27 +112,20 @@ private theorem restrictToConvexFun_of_mem (v : Valuation R Γ₀) (H : ConvexSu
 that out here. -/
 private theorem mul_notMem_of_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup Γ₀ˣ}
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
-    {x y : R} (hx : v x ≠ 0) (hy : v y ≠ 0) (hxy : v (x * y) ≠ 0)
-    (hm : Units.mk0 (v x) hx ∉ H) : Units.mk0 (v (x * y)) hxy ∉ H := by
+    {x y : R} (hx : v x ≠ 0) (hy : v y ≠ 0) (hm : Units.mk0 (v x) hx ∉ H) :
+    Units.mk0 (v x) hx * Units.mk0 (v y) hy ∉ H := by
   intro hmem
-  have hfac : Units.mk0 (v (x * y)) hxy = Units.mk0 (v x) hx * Units.mk0 (v y) hy := by
-    ext; simp
   by_cases hy' : Units.mk0 (v y) hy ∈ H
   · -- the product and `y`'s unit are both in `H`, so `x`'s unit is too
-    refine hm ?_
-    have hxeq : Units.mk0 (v x) hx = Units.mk0 (v (x * y)) hxy * (Units.mk0 (v y) hy)⁻¹ := by
-      rw [hfac, mul_inv_cancel_right]
-    rw [hxeq]
-    exact mul_mem hmem (inv_mem hy')
+    exact hm (by simpa using mul_mem hmem (inv_mem hy'))
   · -- both units are below `1`, so the product is below `x`'s unit, and convexity lifts it
     have hy1 : Units.mk0 (v y) hy ≤ 1 := by
       have := lt_one_of_unit_notMem hH hy hy'
       simpa [← Units.val_le_val] using this.le
-    refine hm (mem_of_le_of_le_one hmem ?_ ?_)
-    · rw [hfac]
-      exact mul_le_of_le_one_right' (a := Units.mk0 (v x) hx) hy1
-    · have := lt_one_of_unit_notMem hH hx hm
-      simpa [← Units.val_le_val] using this.le
+    refine hm (mem_of_le_of_le_one hmem
+      (mul_le_of_le_one_right' (a := Units.mk0 (v x) hx) hy1) ?_)
+    have := lt_one_of_unit_notMem hH hx hm
+    simpa [← Units.val_le_val] using this.le
 
 /-- `H` is closed upwards along attained values: a member below an attained unit forces that
 unit in too, whether it sits below `1` (by convexity) or above (by hypothesis). -/
@@ -143,5 +136,51 @@ private theorem mem_of_mem_of_le {v : Valuation R Γ₀} {H : ConvexSubgroup Γ�
   rcases le_or_gt (Units.mk0 (v x) hx) 1 with h1 | h1
   · exact mem_of_le_of_le_one hu hle h1
   · exact hH x hx (by simpa using Units.val_le_val.mpr h1.le)
+
+private theorem restrictToConvexFun_map_zero (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ) :
+    restrictToConvexFun v H 0 = 0 := by
+  classical
+  rw [restrictToConvexFun_unfold, dif_pos (by simp)]
+
+private theorem restrictToConvexFun_map_one (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ) :
+    restrictToConvexFun v H 1 = 1 := by
+  classical
+  have h1 : v 1 ≠ 0 := by simp
+  have hunit : Units.mk0 (v 1) h1 = 1 := by ext; simp
+  have hm : Units.mk0 (v 1) h1 ∈ H := hunit ▸ one_mem H
+  rw [restrictToConvexFun_of_mem v H h1 hm]
+  norm_cast
+  ext
+  simp
+
+private theorem restrictToConvexFun_map_mul (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) (x y : R) :
+    restrictToConvexFun v H (x * y)
+      = restrictToConvexFun v H x * restrictToConvexFun v H y := by
+  classical
+  by_cases hx : v x = 0
+  · rw [restrictToConvexFun_unfold v H (x * y), dif_pos (by simp [hx]),
+      restrictToConvexFun_unfold v H x, dif_pos hx, zero_mul]
+  by_cases hy : v y = 0
+  · rw [restrictToConvexFun_unfold v H (x * y), dif_pos (by simp [hy]),
+      restrictToConvexFun_unfold v H y, dif_pos hy, mul_zero]
+  have hxy : v (x * y) ≠ 0 := by simp [hx, hy]
+  have hfac : Units.mk0 (v (x * y)) hxy = Units.mk0 (v x) hx * Units.mk0 (v y) hy := by
+    ext; simp
+  by_cases hmx : Units.mk0 (v x) hx ∈ H
+  · by_cases hmy : Units.mk0 (v y) hy ∈ H
+    · have hmxy : Units.mk0 (v (x * y)) hxy ∈ H := by rw [hfac]; exact mul_mem hmx hmy
+      rw [restrictToConvexFun_of_mem v H hxy hmxy, restrictToConvexFun_of_mem v H hx hmx,
+        restrictToConvexFun_of_mem v H hy hmy, ← WithZero.coe_mul, WithZero.coe_inj]
+      ext
+      simp
+    · have hmxy : Units.mk0 (v (x * y)) hxy ∉ H := by
+        rw [hfac, mul_comm]; exact mul_notMem_of_notMem hH hy hx hmy
+      rw [(restrictToConvexFun_eq_zero_iff v H hxy).mpr hmxy,
+        (restrictToConvexFun_eq_zero_iff v H hy).mpr hmy, mul_zero]
+  · have hmxy : Units.mk0 (v (x * y)) hxy ∉ H := by
+      rw [hfac]; exact mul_notMem_of_notMem hH hx hy hmx
+    rw [(restrictToConvexFun_eq_zero_iff v H hxy).mpr hmxy,
+      (restrictToConvexFun_eq_zero_iff v H hx).mpr hmx, zero_mul]
 
 end Valuation
