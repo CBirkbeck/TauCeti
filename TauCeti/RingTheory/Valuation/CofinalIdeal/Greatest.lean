@@ -123,7 +123,7 @@ theorem lt_one_of_not_idealMeetsCharacteristicSubgroup {v : Valuation A Γ₀} {
   push Not at hge
   have ha0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := by
     simpa using (zero_lt_one.trans_le hge).ne'
-  exact hdisj ⟨a, haI, ha0, valueGroup_mk_mem_characteristicSubgroup_of_one_le h0 ha0 hge⟩
+  exact hdisj ⟨a, haI, ha0, valueGroup_mk_mem_characteristicSubgroup_of_one_le ha0 hge⟩
 
 /-- The ideal condition inherits that monotonicity. -/
 theorem IdealCofinalFor.mono_subgroup {v : Valuation A Γ₀}
