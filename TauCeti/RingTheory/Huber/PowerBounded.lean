@@ -38,8 +38,9 @@ in William Coram's mathlib4#40013 (there `PowerBounded.subring`, and the last tw
 names), so that the two can be identified once that pull request lands. New here are
 `IsPowerBounded.pow`, the nonarchimedean `IsPowerBounded.add` and `isTopologicallyNilpotent_add`,
 `topologicallyNilpotentIdeal` and `coe_topologicallyNilpotentIdeal` — #40013 carries `A°°` as a
-`Set.range` of an inclusion rather than as an ideal of `A°` — and the transport lemmas. The
-selection and ordering of results follows AINTLIB's `Bounded.lean`, the roadmap's designated prior
+`Set.range` of an inclusion rather than as an ideal of `A°` — `IsBounded.isPowerBounded_of_mem`,
+and the transport lemmas. The selection and ordering of results follows AINTLIB's `Bounded.lean`,
+the roadmap's designated prior
 formalisation of this layer; its proofs were not used.
 
 ## Main definitions

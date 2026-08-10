@@ -47,8 +47,8 @@ and Definition 5.51, §5.6, of Wedhorn's *Adic Spaces*.
 * `continuous_algebraMap_locTopology`: the structure map `A → Aₛ` is continuous.
 * `isOpen_locNhd`, and `isOpen_locSubring` with `isBounded_locSubring`: every basic
   neighbourhood is open, and `D` is open and bounded. These do **not** yet make `(D, J)` a
-  `TauCeti.Huber.PairOfDefinition`, which also asks that `J` be finitely generated and that the
-  subspace topology on `D` be `J`-adic; that identification is not proved here.
+  `TauCeti.Huber.PairOfDefinition`, which also asks that `J` be finitely generated (`fg_locIdeal`,
+  proved here) and that the subspace topology on `D` be `J`-adic (not proved here).
 * `isPowerBounded_of_mem_locSubring` and `isPowerBounded_divByS`: every element of `D` — in
   particular each fraction `t/s` — is power-bounded, the fact a converse to the continuity
   criterion needs.
@@ -84,7 +84,7 @@ public section
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A]
 
-/-! ### The ring of definition `D` -/
+/-! ### The candidate ring of definition `D` -/
 
 /-! Everything below takes a `PairOfDefinition` as its first explicit argument, so it lives in
 that namespace and reads `P.locSubring T s`, matching `TauCeti/RingTheory/Huber/Basic.lean`. -/
@@ -191,7 +191,7 @@ theorem hasDenominatorPower_of_pow_le_span (P : PairOfDefinition A) (T : Finset 
   rw [hb', divByS_self_mul]
   exact algebraMap_mem_locSubring P T s c.property
 
-/-! ### The ideal of definition `J` -/
+/-! ### The candidate ideal of definition `J` -/
 
 /-- The ring homomorphism `A₀ →+* D` induced by `algebraMap`. -/
 noncomputable def algebraMapD (P : PairOfDefinition A) (T : Finset A)
@@ -235,6 +235,14 @@ theorem algebraMapD_mem_locIdeal_pow (P : PairOfDefinition A) (T : Finset A) (s 
     {b : P.ringOfDefinition} (hb : b ∈ P.idealOfDefinition ^ n) :
     algebraMapD P T s b ∈ locIdeal P T s ^ n := by
   rw [locIdeal_pow]; exact Ideal.mem_map_of_mem _ hb
+
+/-- **`J` is finitely generated**, because `I` is and `Ideal.map` preserves that. This is one of
+the two conditions `(D, J)` still needs to be a `TauCeti.Huber.PairOfDefinition`; the other, that
+the subspace topology on `D` is `J`-adic, is not proved here. -/
+theorem fg_locIdeal (P : PairOfDefinition A) (T : Finset A) (s : A) :
+    (locIdeal P T s).FG := by
+  rw [locIdeal_def]
+  exact P.fg_idealOfDefinition.map _
 
 /-! ### The neighborhood basis -/
 
@@ -439,7 +447,8 @@ private theorem locBasis [IsTopologicalRing A] (P : PairOfDefinition A) (T : Fin
     (locNhd_leftMul P T s hopen)
 
 /-- Wedhorn's topological localisation: the topology on `Aₛ` whose neighbourhoods of zero are the
-images of the powers of the ideal of definition of `D = A₀[t₁/s, …, tₙ/s]`. -/
+images of the powers of `J = I · D`, the candidate ideal of definition of
+`D = A₀[t₁/s, …, tₙ/s]`. -/
 @[instance_reducible] noncomputable def locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
     (T : Finset A) (s : A)
     (hopen : HasDenominatorPower P T s) :
@@ -480,8 +489,9 @@ theorem isOpen_locNhd [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset
     ((hasBasis_nhds_zero_locTopology P T s hopen).mem_of_mem (i := n) trivial)
 
 /-- **`D` is open**: it is the zeroth basic neighbourhood of zero. With `isBounded_locSubring`
-these are two of the conditions a ring of definition must satisfy; the remaining one, that the
-subspace topology on `D` is the `J`-adic topology, is not proved here. -/
+`D` is open and bounded, but that does not yet make `(D, J)` a
+`TauCeti.Huber.PairOfDefinition`: both `J.FG` and `IsAdic J` remain. `fg_locIdeal` supplies the
+first; the second is not proved here. -/
 theorem isOpen_locSubring [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A)
     (hopen : HasDenominatorPower P T s) :
     letI := locTopology P T s hopen
