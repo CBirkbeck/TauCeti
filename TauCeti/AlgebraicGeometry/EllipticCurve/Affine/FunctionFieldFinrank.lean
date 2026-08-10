@@ -24,8 +24,9 @@ proves the degree.
 * `WeierstrassCurve.Affine.finrank_coordinateRing`: it has rank two, under
   `[StrongRankCondition R[X]]` — the hypothesis `Module.finrank` actually needs, automatic over a
   domain.
-* `WeierstrassCurve.Affine.algebraFractionRingFunctionField` and
-  `isScalarTowerFractionRingFunctionField`: the `R(x)`-algebra structure on `R(W)` and the tower
+* `WeierstrassCurve.Affine.algebraFractionRingFunctionField`,
+  `algebraMap_fractionRing_functionField` and `isScalarTowerFractionRingFunctionField`: the
+  `R(x)`-algebra structure on `R(W)`, the `algebraMap` it induces, and the tower
   `R[X] ⊆ R(x) ⊆ R(W)`, over any integral domain.
 * `WeierstrassCurve.Affine.finrank_functionField`: `[R(W) : R(x)] = 2`.
 
@@ -102,6 +103,12 @@ that collision cannot arise for this pair and the instance is exported. -/
 noncomputable instance algebraFractionRingFunctionField :
     Algebra (FractionRing R[X]) W.FunctionField :=
   FractionRing.liftAlgebra R[X] W.FunctionField
+
+/-- **The `R(x)`-action on `R(W)` is the unique extension of `R[X] → R(W)` to fractions.** -/
+lemma algebraMap_fractionRing_functionField :
+    algebraMap (FractionRing R[X]) W.FunctionField
+      = IsFractionRing.lift (FaithfulSMul.algebraMap_injective R[X] W.FunctionField) :=
+  rfl
 
 /-- `R(x)` sits between `R[X]` and `R(W)`. -/
 instance isScalarTowerFractionRingFunctionField :
