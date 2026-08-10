@@ -202,13 +202,11 @@ private theorem meromorphicOrderAt_ne_top_of_analyticAt_off {g : ℂ → ℂ} {T
     meromorphicOrderAt g s ≠ ⊤ := by
   rw [Ne, meromorphicOrderAt_eq_top_iff]
   intro hzero
-  have hTc : ((T : Set ℂ) \ {s})ᶜ ∈ 𝓝 s :=
-    (T.finite_toSet.sdiff).isClosed.compl_mem_nhds (by simp)
-  have hnb : (U \ (T : Set ℂ)) ∈ 𝓝[≠] s := by
-    filter_upwards [nhdsWithin_le_nhds (hU.mem_nhds hs), nhdsWithin_le_nhds hTc,
-      self_mem_nhdsWithin] with z hzU hzT hzne
-    exact ⟨hzU, fun hzT' => hzT ⟨hzT', hzne⟩⟩
-  obtain ⟨z, hz0, hzU, hzT⟩ := (hzero.and hnb).exists
+  have hmem : ∀ᶠ z in 𝓝[≠] s, z ∈ U ∧ z ∉ T := by
+    filter_upwards [nhdsWithin_le_nhds (hU.mem_nhds hs),
+      T.eventually_cofinite_notMem.filter_mono (nhdsNE_le_cofinite s)] with z hzU hzT
+    exact ⟨hzU, hzT⟩
+  obtain ⟨z, hz0, hzU, hzT⟩ := (hzero.and hmem).exists
   exact (hoff z hzU hzT).2 hz0
 
 /-- **The weighted order sum in terms of `orderOfVanishingAt`.** With the divisor points in the
