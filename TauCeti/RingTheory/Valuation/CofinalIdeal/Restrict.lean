@@ -139,8 +139,10 @@ theorem restrictToIdeal_apply_of_mem (v : Valuation A Γ₀) (I : Ideal A)
   _root_.Valuation.restrictToConvex_apply_of_mem _ _ _ _ _
 
 /-- Off `cΓ_v(I)`, the restriction vanishes. The hypothesis is non-membership in `cΓ_v(I)`
-itself; the transport is applied internally. -/
-@[simp]
+itself; the transport is applied internally.
+
+Not `@[simp]`: `restrictToIdeal_eq_zero_iff` is the simp-normal form for a vanishing
+restriction, and it rewrites this lemma's left-hand side, which `simpNF` rejects. -/
 theorem restrictToIdeal_apply_of_notMem (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
     (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0)
@@ -157,8 +159,8 @@ theorem restrictToIdeal_apply_of_eq_zero (v : Valuation A Γ₀) (I : Ideal A)
   _root_.Valuation.restrictToConvex_apply_of_eq_zero _ _ _ (v.restrict_eq_zero_iff.mpr h0)
 
 /-- **Where the restriction vanishes at a nonzero value**, stated through `cΓ_v(I)` itself.
-`restrictToIdeal_eq_zero_iff` is the total form. -/
-@[simp]
+`restrictToIdeal_eq_zero_iff` is the total form, and is the `@[simp]` one: tagging this
+branch too makes its left-hand side reducible by that lemma, which `simpNF` rejects. -/
 theorem restrictToIdeal_eq_zero_iff_of_ne (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
     (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) :
