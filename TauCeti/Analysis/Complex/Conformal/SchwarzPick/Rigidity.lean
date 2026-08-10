@@ -76,8 +76,6 @@ private theorem exists_mem_ball_norm_dslope_schwarzPickConjugate_eq_one
     (heq : pseudoHyperbolicExpr (f z) (f w) = pseudoHyperbolicExpr z w) :
     ∃ ξ ∈ ball (0 : ℂ) 1, ‖dslope (schwarzPickConjugate f w) 0 ξ‖ = 1 / 1 := by
   have hz_norm : ‖z‖ < 1 := by simpa [mem_ball_zero_iff] using hz
-  -- the conjugate fixes the origin outright: its outer numerator there is `f w - f w`
-  have hg0 : schwarzPickConjugate f w 0 = 0 := by simp
   -- the Moebius image of `z` is where the conjugate attains its bound
   refine ⟨(z - w) / (1 - (starRingEnd ℂ) w * z),
     mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := w) hw_norm hz, ?_⟩
@@ -91,7 +89,8 @@ private theorem exists_mem_ball_norm_dslope_schwarzPickConjugate_eq_one
       = ‖(z - w) / (1 - (starRingEnd ℂ) w * z)‖ := by
     rw [schwarzPickConjugate_apply_unitDiscMoebiusFormula hw_norm hz_norm,
       ← pseudoHyperbolicExpr_def, heq, hξ_norm]
-  rw [dslope_of_ne _ hξ_ne, slope_def_field, hg0, sub_zero, sub_zero, norm_div, hg_ξ,
+  rw [dslope_of_ne _ hξ_ne, slope_def_field, schwarzPickConjugate_apply_zero f w, sub_zero,
+    sub_zero, norm_div, hg_ξ,
     div_self (norm_ne_zero_iff.mpr hξ_ne)]
   norm_num
 
