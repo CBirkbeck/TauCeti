@@ -78,12 +78,11 @@ def spvOfIdeal (I : Ideal A) (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radi
     Set (Spv A) :=
   {v | characteristicSubgroupOfIdeal v.valuation I hfg = ⊤}
 
+-- Not `@[simp]`: its right-hand side rewrites the left-hand side of the `@[simp]` lemma
+-- `mem_spvOfIdeal_ofValuation` below, leaving that sibling outside simp-normal form, which
+-- `simpNF` rejects.
 /-- Membership in `Spv (A, I)`, unfolded through the canonical valuation of the point. The
-usable form is `mem_spvOfIdeal_ofValuation`, which tests an arbitrary representative.
-
-Deliberately not `@[simp]`: its right-hand side rewrites the left-hand side of
-`mem_spvOfIdeal_ofValuation`, which is `@[simp]` and is the form consumers want. Tagging both
-leaves that sibling outside simp-normal form, and `simpNF` rejects it. -/
+usable form is `mem_spvOfIdeal_ofValuation`, which tests an arbitrary representative. -/
 theorem mem_spvOfIdeal_iff {I : Ideal A} {hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical}
     {v : Spv A} :
     v ∈ spvOfIdeal I hfg ↔ characteristicSubgroupOfIdeal v.valuation I hfg = ⊤ :=
