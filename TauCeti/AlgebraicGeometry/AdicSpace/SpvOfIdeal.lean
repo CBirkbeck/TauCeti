@@ -82,8 +82,8 @@ def spvOfIdeal (I : Ideal A) (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radi
 usable form is `mem_spvOfIdeal_ofValuation`, which tests an arbitrary representative.
 
 Deliberately not `@[simp]`: its right-hand side rewrites the left-hand side of
-`mem_spvOfIdeal_ofValuation`, which is `@[simp]` and is the form consumers want, so tagging
-both puts the sibling out of simp-normal form. See the note on this in the PR description. -/
+`mem_spvOfIdeal_ofValuation`, which is `@[simp]` and is the form consumers want. Tagging both
+leaves that sibling outside simp-normal form, and `simpNF` rejects it. -/
 theorem mem_spvOfIdeal_iff {I : Ideal A} {hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical}
     {v : Spv A} :
     v ∈ spvOfIdeal I hfg ↔ characteristicSubgroupOfIdeal v.valuation I hfg = ⊤ :=
