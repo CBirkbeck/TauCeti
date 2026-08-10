@@ -183,4 +183,41 @@ private theorem restrictToConvexFun_map_mul (v : Valuation R Γ₀) (H : ConvexS
     rw [(restrictToConvexFun_eq_zero_iff v H hxy).mpr hmxy,
       (restrictToConvexFun_eq_zero_iff v H hx).mpr hmx, zero_mul]
 
+/-- The dominating side of `v (x + y) ≤ max (v x) (v y)` bounds the restriction. Stated for one
+side so that `map_add_le_max` can apply it to whichever side achieves the maximum. -/
+private theorem restrictToConvexFun_le_of_le (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {z x : R} (hz : v z ≠ 0) (hmz : Units.mk0 (v z) hz ∈ H) (hle : v z ≤ v x) :
+    restrictToConvexFun v H z ≤ restrictToConvexFun v H x := by
+  classical
+  have hx : v x ≠ 0 := fun h0 => hz (le_antisymm (h0 ▸ hle) (zero_le))
+  have hu : Units.mk0 (v z) hz ≤ Units.mk0 (v x) hx := by
+    simpa [← Units.val_le_val] using hle
+  have hmx : Units.mk0 (v x) hx ∈ H := mem_of_mem_of_le hH hx hmz hu
+  rw [restrictToConvexFun_of_mem v H hz hmz, restrictToConvexFun_of_mem v H hx hmx,
+    WithZero.coe_le_coe]
+  exact hu
+
+private theorem restrictToConvexFun_map_add_le_max (v : Valuation R Γ₀)
+    (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) (x y : R) :
+    restrictToConvexFun v H (x + y)
+      ≤ max (restrictToConvexFun v H x) (restrictToConvexFun v H y) := by
+  classical
+  by_cases hxy : v (x + y) = 0
+  · rw [restrictToConvexFun_unfold v H (x + y), dif_pos hxy]
+    exact zero_le
+  by_cases hmxy : Units.mk0 (v (x + y)) hxy ∈ H
+  · rcases le_total (v y) (v x) with h | h
+    · exact le_trans
+        (restrictToConvexFun_le_of_le v H hH hxy hmxy
+          ((v.map_add_le_max' x y).trans (max_le le_rfl h)))
+        (le_max_left _ _)
+    · exact le_trans
+        (restrictToConvexFun_le_of_le v H hH hxy hmxy
+          ((v.map_add_le_max' x y).trans (max_le h le_rfl)))
+        (le_max_right _ _)
+  · rw [(restrictToConvexFun_eq_zero_iff v H hxy).mpr hmxy]
+    exact zero_le
+
 end Valuation
