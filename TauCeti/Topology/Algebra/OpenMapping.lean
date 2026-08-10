@@ -15,7 +15,8 @@ Henkel's open mapping theorem says that a continuous surjective linear map betwe
 Hausdorff first-countable modules over a ring with a zero sequence of units is open. Its first
 half is a Baire-category argument, and that half is what this file isolates. It needs none of
 the hypotheses the second half needs — no completeness, no first countability, not even
-continuity of the map — only that the target is a Baire space.
+continuity of the map. What it does need is that the target is a Baire space and that the map is
+equivariant, the latter being what lets a dilate pass through it.
 
 The argument is the classical one, with the zero sequence of units supplying the countability
 Baire needs. Any neighbourhood `U` of zero in the domain has its dilates `uₙ⁻¹ • U` cover the
@@ -62,12 +63,14 @@ Baire space, then `closure V` has nonempty interior.
 The units are what make the conclusion about `V` rather than about one dilate: `x ↦ uₙ • x` is a
 homeomorphism, so it carries interior to interior and commutes with closure. Countability of the
 index is the whole reason Henkel's hypothesis is a *sequence* of units — a cover indexed by all
-of `Aˣ` would exhaust the space just as well but could not start a Baire argument. -/
-theorem nonempty_interior_closure_of_iUnion_units_smul [BaireSpace N] [Nonempty N] {u : ℕ → Aˣ}
-    {V : Set N} (hV : ⋃ n, u n • V = Set.univ) : (interior (closure V)).Nonempty := by
-  have hcov : ⋃ n : ℕ, closure (u n • V) = Set.univ :=
+of `Aˣ` would exhaust the space just as well but could not start a Baire argument. Nothing else
+about the index is used, so it is an arbitrary countable type; the caller below supplies `ℕ`. -/
+theorem nonempty_interior_closure_of_iUnion_units_smul [BaireSpace N] [Nonempty N] {ι : Type*}
+    [Countable ι] {u : ι → Aˣ} {V : Set N} (hV : ⋃ i, u i • V = Set.univ) :
+    (interior (closure V)).Nonempty := by
+  have hcov : ⋃ i : ι, closure (u i • V) = Set.univ :=
     Set.eq_univ_of_univ_subset (hV ▸ Set.iUnion_mono fun _ ↦ subset_closure)
-  obtain ⟨n, hn⟩ := nonempty_interior_of_iUnion_of_closed (fun _ : ℕ ↦ isClosed_closure) hcov
+  obtain ⟨n, hn⟩ := nonempty_interior_of_iUnion_of_closed (fun _ : ι ↦ isClosed_closure) hcov
   rwa [closure_smul, interior_smul, Set.smul_set_nonempty] at hn
 
 end Baire
@@ -82,9 +85,10 @@ variable {A M N : Type*} [MonoidWithZero A] [TopologicalSpace A]
 closure of the image of a neighbourhood of zero under a surjective equivariant map has nonempty
 interior.
 
-Surjectivity is the only property of the map used: it is what turns the countable cover of the
-domain by `uₙ⁻¹ • U` into a countable cover of the target. Continuity of the map is not needed
-here and is not assumed — it enters Henkel's proof only afterwards.
+Besides the equivariance carried by `MulActionHomClass` — which is what lets a dilate pass
+through the map — surjectivity is the only property used: together they turn the countable cover
+of the domain by `uₙ⁻¹ • U` into a countable cover of the target. Continuity of the map is not
+needed here and is not assumed; it enters Henkel's proof only afterwards.
 
 The hypothesis `hc` is the one carried by
 `TauCeti.iUnion_inv_smul_eq_univ_of_tendsto_zero`: continuity of the action in the scalar alone,
