@@ -45,10 +45,15 @@ needs exactly these two facts. The finiteness that the descent then applies to i
 `Subgroup.finiteIndex_range_powMonoidHom_of_fg`, read through
 `Subgroup.finiteIndex_iff_finite_quotient`; nothing here reproves it.
 
-Adapted from Michael Stoll's elliptic-curves formalisation
+`AddSubgroup.fg_of_addCommGroup`, `Subgroup.fg_of_commGroup` and `Group.fg_of_fg_ker_of_fg_range`
+are adapted from Michael Stoll's elliptic-curves formalisation
 (`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/SelmerGroup.lean` at the
 roadmap's pin `66889eada51a`, Apache 2.0, by Michael Stoll). Following this repository's convention
 for adapted material, the upstream authorship is credited here rather than in the copyright header.
+
+**`Subgroup.fg_of_fg_map_of_fg_inf_ker` is new here**, with no counterpart in that source: it is
+the relativization of the extension lemma, and Mathlib records its absence in the comment at
+`Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean` quoted above.
 
 That source file also carries `finite_modPow`, `finite_of_fg_of_pow_eq_one` and two `ℤ`-module
 translation helpers. **None of them is ported: all four are now in Mathlib** — as
