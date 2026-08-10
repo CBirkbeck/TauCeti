@@ -231,11 +231,8 @@ theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le_restrict
   mem_characteristicSubgroup_of_restrict h1 (v.restrict_eq_mk h)
 
 /-- An attained value at least `1` puts its class in `cΓ_v`. This is the form consumers hold,
-since they meet `1 ≤ v a` rather than a bound in the value group.
-
-The nonvanishing hypothesis `h` is implied by `h1`, but cannot be dropped: it appears in the
-`valueGroup.mk` of the conclusion, so deriving it inside the proof leaves an anonymous term
-there that `rw [← v.restrict_eq_mk]` cannot match. -/
+since they meet `1 ≤ v a` rather than a bound in the value group. The nonvanishing hypothesis
+is part of the statement, since the class `valueGroup.mk … h` is indexed by it. -/
 theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le {v : Valuation A Γ₀} {a : A}
     (h : (MonoidWithZeroHom.ofClass v) a ≠ 0) (h1 : 1 ≤ v a) :
     valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v := by
