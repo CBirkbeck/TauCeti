@@ -98,7 +98,7 @@ theorem coarsenMap_lt_one_iff (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x �
   have h : coarsenMap H x = ↑(QuotientGroup.mk' H.toSubgroup (Units.mk0 x hx)) :=
     coarsenMap_coe_unit H (Units.mk0 x hx)
   rw [h, ← WithZero.coe_one, WithZero.coe_lt_coe, QuotientGroup.mk'_apply]
-  exact quotientMk_lt_one_iff H
+  simpa using quotient_lt_iff H (Units.mk0 x hx) 1
 
 end ConvexSubgroup
 

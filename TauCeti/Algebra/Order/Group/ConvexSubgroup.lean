@@ -54,10 +54,8 @@ built from `closure` in the forthcoming valuation-spectrum development of `Spv (
 * `TauCeti.ConvexSubgroup.mulArchimedean_iff_forall_eq_bot_or_eq_top` : A linearly ordered
   commutative group is `MulArchimedean` exactly when its only convex subgroups are `⊥`
   and `⊤`.
-* `TauCeti.ConvexSubgroup.quotient_lt_iff` and
-  `TauCeti.ConvexSubgroup.quotientMk_lt_one_iff` : The strict order on the quotient, and the
-  case that matters for coarsening — an element stays below `1` exactly when it is below `1`
-  and the subgroup does not absorb it.
+* `TauCeti.ConvexSubgroup.quotient_lt_iff` : The strict order on the quotient — `[a] < [b]`
+  exactly when `b⁻¹ * a` is below `1` and the subgroup does not absorb it.
 * `TauCeti.ConvexSubgroup.quotientMk_monotone` : The quotient map is monotone.
 
 ## References
@@ -653,13 +651,6 @@ theorem quotientMk_monotone : Monotone (QuotientGroup.mk' H.toSubgroup) := by
   intro a b hab
   rw [QuotientGroup.mk'_apply, QuotientGroup.mk'_apply, coe_eq_mk, coe_eq_mk]
   exact Quotient.mk_monotone hab
-
-/-- An element stays below `1` in the quotient exactly when it is below `1` and avoids `H`.
-The `b = 1` case of `quotient_lt_iff`. -/
-@[simp]
-theorem quotientMk_lt_one_iff {u : Γ} :
-    (u : Γ ⧸ H.toSubgroup) < 1 ↔ u < 1 ∧ u ∉ H.toSubgroup := by
-  simpa using quotient_lt_iff H u 1
 
 end Quotient
 
