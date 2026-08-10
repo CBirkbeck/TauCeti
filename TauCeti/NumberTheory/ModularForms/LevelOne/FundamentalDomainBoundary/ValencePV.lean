@@ -33,6 +33,10 @@ on the contour.
 * `TauCeti.ModularForm.two_pi_I_mul_sum_windingNumber_mul_order_eq`: equating that with the
   argument principle gives `2πi·Σ n_z·ord z = 2πi·ord_∞ − k·(π/6)·I`, the analytic identity the
   valence formula rests on.
+* `TauCeti.ModularForm.two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq`: the same with
+  the abstract order replaced by `orderOfVanishingAt`, for divisor points in the upper half plane.
+* `TauCeti.ModularForm.sum_windingNumber_mul_orderOfVanishingAt_eq`: that identity divided by
+  `2πi`, giving `Σ n_z·ord z = ord_∞ − k/12`.
 
 ## References
 
