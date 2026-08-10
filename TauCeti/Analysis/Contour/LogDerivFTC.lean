@@ -61,12 +61,16 @@ argument principle above all — into a statement about how often an image curve
   integrand, is confined to a closed half-plane, is nonvanishing at the two endpoints and
   slit-plane-valued strictly between them, and agrees with `g` both on the open interval and at
   each endpoint — so endpoint values may sit on the negative-real boundary.
-* the slit-plane sibling `..._eq_log_sub_log_of_mem_slitPlane` — the same comparison for an
-  `h` that stays in the slit plane on the whole closed interval, where no half-plane
-  hypothesis and no endpoint nonvanishing are needed.
-* the `_of_le` forms of the upper and slit-plane comparisons — the ordered-interval forms callers
-  usually have: `a ≤ b`, hypotheses read on `Set.Icc a b` and `Set.Ioo a b` rather than through
-  `min` and `max`, and integrability derived from a continuous derivative instead of assumed.
+* `intervalIntegrable_deriv_div_and_integral_deriv_div_eq_log_sub_log_of_mem_slitPlane` (in
+  `TauCeti.Contour`, unqualified here only to stay inside the line limit)
+  — the third member of that family, for a comparison confined to the slit plane on the whole
+  closed interval rather than held off the cut by a half-plane condition. Its conclusion could be
+  reached inline from `integral_deriv_div_eq_log_sub_log` plus `IntervalIntegrable.congr_uIoo` and
+  `intervalIntegral.integral_congr_uIoo`, but that transport is performed at nine call sites
+  across the winding developments, so it is factored here.
+* the `_of_le` forms of the slit-plane and upper comparisons — the ordered-interval versions
+  callers usually have: `a ≤ b`, hypotheses read on `Set.Icc a b` and `Set.Ioo a b` rather than
+  through `min` and `max`, and integrability derived from a continuous derivative.
 * `TauCeti.Contour.integral_deriv_div_eq_log_sub_log` — the slit-plane logarithmic-derivative FTC in
   general `f' / f` form.
 * `TauCeti.Contour.integral_deriv_div_sub_eq_log` — its contour specialization to

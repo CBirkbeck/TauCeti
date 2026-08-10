@@ -411,20 +411,16 @@ private theorem ftc_logDeriv_telescope_I (H : ℝ) (hH : 1 < H) {δ : ℝ} (hδ 
 
 variable {H ε δ t : ℝ}
 
-/-- The sine of a sub-half-turn multiple of `π/12` factors through the absolute value. -/
-private lemma abs_sin_mul_pi_div_twelve {u : ℝ} (hu : |u| ≤ 1) :
-    |Real.sin (u * (Real.pi / 12))| = Real.sin (|u| * (Real.pi / 12)) := by
-  rw [Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
-      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
-      nlinarith [Real.pi_pos, abs_nonneg u]),
-    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
-
 /-- Far from the arc top, the chord distance strictly exceeds the excision chord. -/
 private lemma lt_norm_fdBoundary_sub_I_arc_of_far (harc : t ∈ Icc (1 : ℝ) 3) (hd : 0 < δ)
     (hd1 : δ < 1) (hfar : δ < |t - 2|) :
     2 * Real.sin (δ * (Real.pi / 12)) < ‖fdBoundary H t - Complex.I‖ := by
   have habs1 : |t - 2| ≤ 1 := abs_le.mpr ⟨by linarith [harc.1], by linarith [harc.2]⟩
-  rw [norm_fdBoundary_sub_I_arc H harc, abs_sin_mul_pi_div_twelve habs1]
+  rw [norm_fdBoundary_sub_I_arc H harc,
+    Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
+      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
+      nlinarith [Real.pi_pos, habs1]),
+    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
   have hmono : Real.sin (δ * (Real.pi / 12)) < Real.sin (|t - 2| * (Real.pi / 12)) := by
     refine Real.strictMonoOn_sin ⟨by nlinarith [Real.pi_pos], by nlinarith [Real.pi_pos]⟩
       ⟨by nlinarith [Real.pi_pos, abs_nonneg (t - 2)], by nlinarith [Real.pi_pos]⟩ ?_
@@ -437,7 +433,11 @@ private lemma norm_fdBoundary_sub_I_arc_le_of_near (harc : t ∈ Icc (1 : ℝ) 3
     ‖fdBoundary H t - Complex.I‖ ≤ 2 * Real.sin (δ * (Real.pi / 12)) := by
   have habs1 : |t - 2| ≤ 1 := hnear.trans hd1.le
   have hd0 : 0 ≤ δ := (abs_nonneg _).trans hnear
-  rw [norm_fdBoundary_sub_I_arc H harc, abs_sin_mul_pi_div_twelve habs1]
+  rw [norm_fdBoundary_sub_I_arc H harc,
+    Real.abs_sin_eq_sin_abs_of_abs_le_pi (by
+      rw [abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
+      nlinarith [Real.pi_pos, habs1]),
+    abs_mul, abs_of_pos (by positivity : (0 : ℝ) < Real.pi / 12)]
   have hmono : Real.sin (|t - 2| * (Real.pi / 12)) ≤ Real.sin (δ * (Real.pi / 12)) := by
     refine Real.strictMonoOn_sin.monotoneOn
       ⟨by nlinarith [Real.pi_pos, abs_nonneg (t - 2)], by nlinarith [Real.pi_pos]⟩
