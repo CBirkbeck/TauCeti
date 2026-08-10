@@ -9,55 +9,66 @@ public import Mathlib.RingTheory.Localization.Away.Basic
 /-!
 # The fraction `t/s` in an away localisation
 
-`Localization.Away s` inverts `s`, so it contains `t/s` for every `t`. This file names that
-element and gives the two identities that manipulating it needs: scaling `1/s` by `t`, and
-clearing the denominator.
+A localisation `S` of `A` away from `s` inverts `s`, so it contains `t/s` for every `t : A`.
+Mathlib names the inverse itself — `IsLocalization.Away.invSelf s` is `1/s` — but not the general
+fraction; this file names it and gives the identities that manipulating it needs: scaling `1/s`
+by `t`, and clearing the denominator on either side.
 
-Nothing here is topological or Huber-specific — it is `IsLocalization` algebra over an
-arbitrary commutative ring — so it is stated outside the Huber namespace, alongside
-`TauCeti/RingTheory/Localization/DenIdeal.lean`.
+Nothing here is topological or Huber-specific — it is `IsLocalization` algebra over an arbitrary
+commutative semiring, for an arbitrary localisation away from `s` — so it is stated outside the
+Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 
 ## Main definitions
 
-* `TauCeti.Localization.divByS`: the element `t/s` of `Localization.Away s`.
+* `TauCeti.Localization.divByS`: the element `t/s` of a localisation away from `s`.
 
 ## Main results
 
+* `TauCeti.Localization.divByS_one`: `1/s` is Mathlib's `IsLocalization.Away.invSelf`.
 * `TauCeti.Localization.divByS_one_mul_algebraMap`: scaling `1/s` by `t` gives `t/s`.
 * `TauCeti.Localization.algebraMap_mul_divByS`: `s · (t/s) = t`.
+* `TauCeti.Localization.divByS_self_mul`: `(s · t)/s = t`.
 -/
 
 public section
 
 namespace TauCeti.Localization
 
-variable {A : Type*} [CommRing A]
+variable {A : Type*} [CommSemiring A] {S : Type*} [CommSemiring S] [Algebra A S]
+  (t s : A) [IsLocalization.Away s S]
 
-/-- The element `t/s` in `Localization.Away s`. -/
-noncomputable def divByS (t s : A) : Localization.Away s :=
-  IsLocalization.mk' (Localization.Away s) t
-    (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s)
+/-- The element `t/s` in a localisation `S` of `A` away from `s`. -/
+noncomputable def divByS : S :=
+  IsLocalization.mk' S t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s)
 
 /-- `t/s` is the fraction `mk' t s`. The body of `divByS` is not exported, so this is how a
 consumer reaches Mathlib's `IsLocalization` API for it. -/
-theorem divByS_def (t s : A) :
-    divByS t s = IsLocalization.mk' (Localization.Away s) t
-      (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s) := (rfl)
+theorem divByS_def :
+    divByS t s = IsLocalization.mk' S t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s) :=
+  (rfl)
+
+/-- `1/s` is Mathlib's `IsLocalization.Away.invSelf`, so its simp set applies to `divByS 1 s`. -/
+@[simp]
+theorem divByS_one : divByS 1 s = (IsLocalization.Away.invSelf s : S) := (rfl)
 
 /-- Scaling `1/s` by `t` gives `t/s`. -/
-@[simp]
-theorem divByS_one_mul_algebraMap (t s : A) :
-    divByS 1 s * algebraMap A (Localization.Away s) t = divByS t s := by
-  rw [divByS_def, divByS_def, ← IsLocalization.mk'_one (M := Submonoid.powers s)
-    (S := Localization.Away s) t, ← IsLocalization.mk'_mul, one_mul, mul_one]
+theorem divByS_one_mul_algebraMap :
+    (divByS 1 s : S) * algebraMap A S t = divByS t s := by
+  rw [divByS_def, divByS_def,
+    IsLocalization.mk'_eq_mul_mk'_one t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s)]
+  exact mul_comm _ _
 
-/-- **Clearing the denominator**: `s · (t/s) = t` in `Localization.Away s`. -/
+/-- **Clearing the denominator**: `s · (t/s) = t`. -/
 @[simp]
-theorem algebraMap_mul_divByS (t s : A) :
-    algebraMap A (Localization.Away s) s * divByS t s =
-      algebraMap A (Localization.Away s) t := by
+theorem algebraMap_mul_divByS :
+    algebraMap A S s * divByS t s = algebraMap A S t := by
   rw [divByS_def]
-  exact IsLocalization.mk'_spec' (Localization.Away s) t
-    (⟨s, ⟨1, pow_one s⟩⟩ : Submonoid.powers s)
+  exact IsLocalization.mk'_spec' S t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s)
+
+/-- **Clearing the denominator inside the numerator**: `(s · t)/s = t`. -/
+@[simp]
+theorem divByS_self_mul : divByS (s * t) s = algebraMap A S t := by
+  rw [divByS_def]
+  exact IsLocalization.mk'_mul_cancel_left t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s)
 
 end TauCeti.Localization
