@@ -167,6 +167,19 @@ private theorem frobeniusAlgHom_comp_toAlgHom :
   ext r
   simp [_root_.FiniteField.frobeniusAlgHom_apply]
 
+/-- **`K(x^q)` is the image of `K(x)` under the `q`-power map of `K(W)`.** Raising to the `q`-th
+power commutes with embedding a rational function, so the copy of `K(x)^q` inside `K(W)` is what
+the `q`-power map of the whole function field does to the copy of `K(x)`. This is the interaction
+between the two subfields; both degree computations below go through it. -/
+theorem frobeniusRatFuncRange_eq_map_ratFuncRange :
+    letI := Fintype.ofFinite K
+    frobeniusRatFuncRange W = (_root_.WeierstrassCurve.Affine.ratFuncRange W).map
+      (_root_.FiniteField.frobeniusAlgHom K W.FunctionField) := by
+  let _ := Fintype.ofFinite K
+  rw [_root_.WeierstrassCurve.Affine.ratFuncRange_eq_map, frobeniusRatFuncRange_eq_map,
+    AlgHom.fieldRange_eq_map, IntermediateField.map_map, IntermediateField.map_map,
+    frobeniusAlgHom_comp_toAlgHom W]
+
 /-- **`[K(W)^q : K(x^q)] = 2`.** Raising `K(x) ⊆ K(W)` to the `q`-th power is an embedding of the
 pair, so the relative degree `2` of `finrank_ratFuncRange` is unchanged. -/
 @[simp]
@@ -175,14 +188,8 @@ theorem relfinrank_fieldRange_frobeniusAlgHom :
     relfinrank (frobeniusRatFuncRange W)
       (_root_.FiniteField.frobeniusAlgHom K W.FunctionField).fieldRange = 2 := by
   let _ := Fintype.ofFinite K
-  -- the two `q`-th power subfields are the images of `K(x)` and of `K(W)` itself
-  have hlow : (_root_.WeierstrassCurve.Affine.ratFuncRange W).map
-      (_root_.FiniteField.frobeniusAlgHom K W.FunctionField) = frobeniusRatFuncRange W := by
-    rw [_root_.WeierstrassCurve.Affine.ratFuncRange_eq_map, frobeniusRatFuncRange_eq_map,
-      AlgHom.fieldRange_eq_map, IntermediateField.map_map, IntermediateField.map_map,
-      frobeniusAlgHom_comp_toAlgHom W]
-  rw [← hlow, AlgHom.fieldRange_eq_map, relfinrank_map_map, relfinrank_top_right,
-    _root_.WeierstrassCurve.Affine.finrank_ratFuncRange]
+  rw [frobeniusRatFuncRange_eq_map_ratFuncRange W, AlgHom.fieldRange_eq_map, relfinrank_map_map,
+    relfinrank_top_right, _root_.WeierstrassCurve.Affine.finrank_ratFuncRange]
 
 /-- **`[K(W) : K(W)^q] = q`.** The tower `K(x^q) ⊆ K(W)^q ⊆ K(W)` has degrees `2` and
 `[K(W) : K(W)^q]`, with product `2q`. Stated over the field range of the `q`-power map itself,

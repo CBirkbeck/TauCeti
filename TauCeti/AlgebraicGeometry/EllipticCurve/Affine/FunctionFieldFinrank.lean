@@ -17,7 +17,9 @@ function field `R(W)` as its fraction field. It says nothing about `R(W)` as an 
 rational function field. The algebra structure for that pair *is* Mathlib's
 `FractionRing.liftAlgebra`, but deliberately not an instance — for a general target it collides
 with the identity structure on `FractionRing R[X]` itself — so the degree cannot be stated without
-introducing it. This file exports it as an instance and proves the degree.
+introducing it. This file exports it as an instance and proves the degree, in two forms: over an
+abstract fraction field `L` of `R[X]` acting through a scalar tower, and over the copy of the
+rational function field that sits *inside* `R(W)` as an intermediate field.
 
 ## Main results
 
@@ -36,6 +38,15 @@ introducing it. This file exports it as an instance and proves the degree.
   `R[X]` — so it serves `RatFunc R` as well as `FractionRing R[X]`.
 * `WeierstrassCurve.Affine.finiteDimensional_functionField`: the extension is finite-dimensional
   over the same arbitrary `L`, which `finrank = 2` does not give by instance search.
+* `WeierstrassCurve.Affine.ratFuncRange`: the copy of the rational function field `F(x)` inside
+  `F(W)`, as an `IntermediateField`. Its API is `ratFuncRange_eq_map`, the defining equation in
+  the `⊤.map` form that `IntermediateField.map` lemmas consume, and `mem_ratFuncRange`, the
+  membership characterisation; the body is not exposed, so those two lemmas are the interface.
+* `WeierstrassCurve.Affine.finrank_ratFuncRange`: `[F(W) : F(x)] = 2` for that copy. This is the
+  degree above a subfield of `F(W)` rather than above an abstract `L`, which is what any argument
+  comparing two subfields of `F(W)` — a tower, or a relative degree — needs; the two are related
+  by transporting along `AlgHom.equivFieldRange`, since the copy and `RatFunc F` are isomorphic as
+  fields acting on `F(W)`.
 
 Exporting the algebra instance is safe here for the reason Mathlib withholds it in general: the
 collision is with the identity structure on `FractionRing R[X]`, and `R(W)` is a *quadratic*
