@@ -6,6 +6,7 @@ module
 
 public import Mathlib.RingTheory.ClassGroup.ExtendedHom
 public import TauCeti.RingTheory.ClassGroup.HeightOneSpectrum
+public import TauCeti.GroupTheory.QuotientGroup.KerEquiv
 public import TauCeti.RingTheory.DedekindDomain.Factorization
 public import TauCeti.RingTheory.DedekindDomain.SInteger.Spectrum
 
@@ -210,9 +211,8 @@ the class of `c` in the quotient. -/
   have hinner : (QuotientGroup.quotientKerEquivOfSurjective
       (ClassGroup.extendedHom R (S.integer K)) (integer_extendedHom_surjective K S)).symm
         (ClassGroup.extendedHom R (S.integer K) c) = QuotientGroup.mk c :=
-    (MulEquiv.symm_apply_eq _).mpr <| by
-      simp only [QuotientGroup.quotientKerEquivOfSurjective,
-        QuotientGroup.quotientKerEquivOfRightInverse_apply, QuotientGroup.kerLift_mk]
+    (MulEquiv.symm_apply_eq _).mpr
+      (TauCeti.QuotientGroup.quotientKerEquivOfSurjective_apply_mk _ _ c).symm
   simp only [integerClassGroupEquiv, MulEquiv.trans_apply, hinner,
     QuotientGroup.quotientMulEquivOfEq_mk]
 
