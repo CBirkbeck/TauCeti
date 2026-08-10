@@ -119,11 +119,11 @@ stated so that no consumer has to unfold the definition or mention the transport
 read in the value group, lies in `cΓ_v(I)` itself. -/
 theorem mk0_restrict_mem_comapUnitsWithZero_iff (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
-    (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) (ha : v.restrict a ≠ 0) :
-    Units.mk0 (v.restrict a) ha ∈
+    (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) :
+    Units.mk0 (v.restrict a) (fun h => h0 (v.restrict_eq_zero_iff.mp h)) ∈
         ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg) ↔
       valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∈ characteristicSubgroupOfIdeal v I hfg := by
-  rw [ConvexSubgroup.mem_comapUnitsWithZero, unitsWithZeroEquiv_mk0_restrict v h0 ha]
+  rw [ConvexSubgroup.mem_comapUnitsWithZero, unitsWithZeroEquiv_mk0_restrict v h0 _]
 
 /-- On a value kept by the restriction, the restriction is that value. -/
 theorem restrictToIdeal_apply_of_mem (v : Valuation A Γ₀) (I : Ideal A)
@@ -137,6 +137,7 @@ theorem restrictToIdeal_apply_of_mem (v : Valuation A Γ₀) (I : Ideal A)
   _root_.Valuation.restrictToConvex_apply_of_mem _ _ _ ha hm
 
 /-- Off `cΓ_v(I)`, the restriction vanishes. -/
+@[simp]
 theorem restrictToIdeal_apply_of_notMem (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A} (ha : v.restrict a ≠ 0)
     (hm : Units.mk0 (v.restrict a) ha ∉
@@ -155,11 +156,12 @@ theorem restrictToIdeal_apply_of_eq_zero (v : Valuation A Γ₀) (I : Ideal A)
 `restrictToIdeal_eq_zero_iff` is the total form. -/
 theorem restrictToIdeal_eq_zero_iff_of_ne (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
-    (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) (ha : v.restrict a ≠ 0) :
+    (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) :
     v.restrictToIdeal I hfg a = 0 ↔
       valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∉ characteristicSubgroupOfIdeal v I hfg :=
-  (_root_.Valuation.restrictToConvex_eq_zero_iff_of_ne _ _ _ ha).trans
-    (not_congr (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0 ha))
+  (_root_.Valuation.restrictToConvex_eq_zero_iff_of_ne _ _ _
+      (fun h => h0 (v.restrict_eq_zero_iff.mp h))).trans
+    (not_congr (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0))
 
 /-- **Where the restriction vanishes, totally**: at the zeros of `v`, and where `v` is nonzero
 but its value escapes `cΓ_v(I)`. `restrictToIdeal_eq_zero_iff_of_ne` is the nonzero branch, in
@@ -172,8 +174,7 @@ theorem restrictToIdeal_eq_zero_iff (v : Valuation A Γ₀) (I : Ideal A)
         valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∉ characteristicSubgroupOfIdeal v I hfg := by
   by_cases h0 : (MonoidWithZeroHom.ofClass v) a = 0
   · simp [restrictToIdeal_apply_of_eq_zero v I hfg h0, h0]
-  · have ha : v.restrict a ≠ 0 := fun h => h0 (v.restrict_eq_zero_iff.mp h)
-    rw [restrictToIdeal_eq_zero_iff_of_ne v I hfg h0 ha]
+  · rw [restrictToIdeal_eq_zero_iff_of_ne v I hfg h0]
     constructor
     · exact fun h => Or.inr ⟨h0, h⟩
     · rintro (hz | ⟨_, h'⟩)
