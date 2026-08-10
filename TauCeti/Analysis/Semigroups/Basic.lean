@@ -95,8 +95,9 @@ would put it out of simp normal form (`simpNF`). -/
 theorem map_nsmul (S : StronglyContinuousSemigroup X) (t : ℝ≥0) (k : ℕ) :
     S (k • t) = (S t) ^ k := by
   induction k with
-  | zero => simp [S.map_zero]; rfl
-  | succ k ih => rw [succ_nsmul', S.map_add, ih, pow_succ']; rfl
+  | zero => rw [zero_smul, S.map_zero, pow_zero, ContinuousLinearMap.one_def]
+  | succ k ih =>
+    rw [succ_nsmul', S.map_add, ih, pow_succ', ContinuousLinearMap.mul_def]
 
 omit [CompleteSpace X] in
 /-- **The multi-step operator-norm bound.** If `‖S t‖ ≤ M`, then `‖S (k • t)‖ ≤ M ^ k` at every
@@ -105,8 +106,7 @@ theorem norm_map_nsmul_le_pow (S : StronglyContinuousSemigroup X) (t : ℝ≥0) 
     (hMt : ‖S t‖ ≤ M) (k : ℕ) : ‖S (k • t)‖ ≤ M ^ k := by
   rw [S.map_nsmul]
   rcases Nat.eq_zero_or_pos k with rfl | hk
-  · simpa [show (1 : X →L[ℝ] X) = ContinuousLinearMap.id ℝ X from rfl] using
-      ContinuousLinearMap.norm_id_le
+  · simpa [ContinuousLinearMap.one_def] using ContinuousLinearMap.norm_id_le
   · exact (norm_pow_le' _ hk).trans (pow_le_pow_left₀ (norm_nonneg _) hMt k)
 
 omit [CompleteSpace X] in
