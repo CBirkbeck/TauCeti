@@ -8,7 +8,6 @@ module
 public import Mathlib.Algebra.Order.Monoid.Submonoid
 public import Mathlib.RingTheory.Valuation.Basic
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
-public import TauCeti.RingTheory.Valuation.ValueGroupTransport
 
 /-!
 # Restricting a valuation to a convex subgroup
@@ -39,9 +38,8 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out 
 * `Valuation.one_le_restrictToConvex` : a value at least `1` stays at least `1`.
 * `Valuation.mk0_mem_of_inv_le_of_le` : `H` keeps every value bracketed by an attained value
   `≥ 1` and its inverse — so the characteristic values of `v` all survive the restriction.
-(Carrying a convex subgroup of a value group onto the units of the value monoid containing it
-is `TauCeti.ConvexSubgroup.ofValueGroup`, in
-`TauCeti.RingTheory.Valuation.ValueGroupTransport`.)
+(A convex subgroup of a *value group* has to be carried onto the units of the value monoid
+before it can be restricted to; that transport ships with the retraction that needs it.)
 
 ## References
 
