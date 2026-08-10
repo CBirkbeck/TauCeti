@@ -344,9 +344,12 @@ noncomputable def quadraticTwist (E : WeierstrassCurve K) (L : Type*) [Field L] 
 variable (L) in
 /-- **Elimination for `quadraticTwist`.** The twist *is* the twist by the trace and norm of some
 generator — an equation, not merely an isomorphism, so that everything the file proves about
-`quadraticTwistOf` (the coefficients, `Δ`, `c₄`, `c₆`) transfers to `quadraticTwist`. The body of
-the definition is unexposed, so this is the only way out of it. `L` is explicit: it occurs only
-inside the existential, so nothing else could determine it. -/
+`quadraticTwistOf` (the coefficients, `Δ`, `c₄`, `c₆`) transfers to `quadraticTwist`. It is the
+one place that unfolds the definition: the body is not exposed across the module boundary, so
+downstream modules could not unfold it anyway, and every other result here — including
+`j_quadraticTwist`, where the `IsElliptic` instance makes the rewrite dependent and `simp_rw` is
+needed — goes through this lemma instead. `L` is explicit: it occurs only inside the existential,
+so nothing else could determine it. -/
 theorem exists_quadraticTwist_eq :
     ∃ θ : L, θ ∉ Set.range (algebraMap K L) ∧
       E.quadraticTwist L = E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ) :=
@@ -364,13 +367,12 @@ variable (L) in
 /-- Twisting does not change the `j`-invariant. -/
 @[simp]
 theorem j_quadraticTwist [E.IsElliptic] : (E.quadraticTwist L).j = E.j := by
-  -- The elimination lemma `exists_quadraticTwist_eq` is unusable here, unlike in the two
-  -- statements above: `j` takes the `IsElliptic` instance of its argument, so rewriting the
-  -- curve with it is a dependent rewrite and fails with `motive is not type correct`.
-  -- `simp only` unfolds the definition and carries the instance along.
-  simp only [quadraticTwist]
-  exact E.j_quadraticTwistOf _ _
-    (E.isElliptic_quadraticTwistOf_trace_norm (choose_exists_discrim_notMem_range_algebraMap K L))
+  obtain ⟨θ, hθ, h⟩ := E.exists_quadraticTwist_eq L
+  -- `j` takes the `IsElliptic` instance of its argument, so `rw [h]` is a dependent rewrite and
+  -- fails; `simp_rw` transfers the instance, as Mathlib's `WeierstrassCurve.j` docstring
+  -- prescribes.
+  simp_rw [h]
+  exact E.j_quadraticTwistOf _ _ (E.isElliptic_quadraticTwistOf_trace_norm hθ)
 
 /-- The twist by the extension agrees, up to a change of variables over `K`, with the twist by
 *any* generator `θ`: the arbitrary choice in `quadraticTwist` is harmless. -/
