@@ -158,7 +158,7 @@ theorem restrictToIdeal_eq_zero_iff_of_ne (v : Valuation A Γ₀) (I : Ideal A)
     (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) (ha : v.restrict a ≠ 0) :
     v.restrictToIdeal I hfg a = 0 ↔
       valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∉ characteristicSubgroupOfIdeal v I hfg :=
-  (_root_.Valuation.restrictToConvex_eq_zero_iff _ _ _ ha).trans
+  (_root_.Valuation.restrictToConvex_eq_zero_iff_of_ne _ _ _ ha).trans
     (not_congr (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0 ha))
 
 /-- **Where the restriction vanishes, totally**: at the zeros of `v`, and where `v` is nonzero

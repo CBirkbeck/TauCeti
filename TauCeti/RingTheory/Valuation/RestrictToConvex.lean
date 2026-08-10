@@ -33,7 +33,7 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out:
 * `Valuation.restrictToConvex_apply_of_mem`, `Valuation.restrictToConvex_apply_of_notMem` and
   `Valuation.restrictToConvex_apply_of_eq_zero` : the three branches, which are the intended
   interface — the definition itself is a `dite` chain and is not meant to be unfolded.
-* `Valuation.restrictToConvex_eq_zero_iff_or` : where the restriction vanishes, totally.
+* `Valuation.restrictToConvex_eq_zero_iff` : where the restriction vanishes, totally.
 * `Valuation.restrictToConvex_le_iff` : on values kept by the restriction, the order is both
   preserved and reflected.
 * `Valuation.one_le_restrictToConvex` : a value at least `1` stays at least `1`.
@@ -304,22 +304,22 @@ theorem mk0_mem_of_inv_le_of_le (v : Valuation R Γ₀) {H : ConvexSubgroup Γ�
 
 /-- The restriction vanishes at a nonzero value exactly when its unit avoids `H`. -/
 @[simp]
-theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+theorem restrictToConvex_eq_zero_iff_of_ne (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
     {r : R} (hr : v r ≠ 0) :
     v.restrictToConvex H hH r = 0 ↔ Units.mk0 (v r) hr ∉ H :=
   restrictToConvexFun_eq_zero_iff v H hr
 
 /-- **Where the restriction vanishes, totally**: at the zeros of `v`, and where `v` is nonzero
-but its unit avoids `H`. `restrictToConvex_eq_zero_iff` is the nonzero branch, in the form
+but its unit avoids `H`. `restrictToConvex_eq_zero_iff_of_ne` is the nonzero branch, in the form
 consumers holding a nonvanishing hypothesis want. -/
 @[simp]
-theorem restrictToConvex_eq_zero_iff_or (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) (r : R) :
     v.restrictToConvex H hH r = 0 ↔ v r = 0 ∨ ∃ hr : v r ≠ 0, Units.mk0 (v r) hr ∉ H := by
   by_cases hr : v r = 0
   · simp [restrictToConvex_apply_of_eq_zero v H hH hr, hr]
-  · rw [restrictToConvex_eq_zero_iff v H hH hr]
+  · rw [restrictToConvex_eq_zero_iff_of_ne v H hH hr]
     simp only [hr, false_or]
     exact ⟨fun h ↦ ⟨hr, h⟩, fun ⟨_, h⟩ ↦ h⟩
 
