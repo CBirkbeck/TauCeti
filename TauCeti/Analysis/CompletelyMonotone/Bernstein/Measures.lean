@@ -964,7 +964,8 @@ private lemma const_le_intervalIntegral_chafaiDensity (f : ℝ → ℝ) (k : ℕ
     rw [← hpow]; ring
   rwa [hconst_eq] at hmono_int
 
-/-- Boundary-term tail estimate factored out of `boundary_term_decay`: `(T-x)^k · h T` is
+/-- Boundary-term tail estimate, the engine of
+`tendsto_sub_pow_mul_normalized_iteratedDerivWithin`: `(T-x)^k · h T` is
 eventually squeezed by a multiple of the vanishing density tail `∫_{Ioi (T/2)}`. -/
 private lemma density_tail_lower_bound_eventually (f : ℝ → ℝ)
     (hcm : IsCompletelyMonotone f) (k : ℕ) (hk : k ≠ 0) (x : ℝ) (hx : 0 ≤ x)
@@ -1054,21 +1055,6 @@ private lemma tendsto_sub_pow_mul_normalized_iteratedDerivWithin (f : ℝ → �
   -- squeeze between nonnegativity and the vanishing tail bound
   exact squeeze_zero' hnonneg_event hupper hupper_tendsto
 
-private lemma boundary_term_decay (f : ℝ → ℝ) (hcm : IsCompletelyMonotone f)
-    (k : ℕ) (hk : k ≠ 0) (x : ℝ) (hx : 0 ≤ x) (L : ℝ) (hL : Tendsto f atTop (nhds L)) :
-    Tendsto (fun T => (-1 : ℝ) ^ (k + 1) / ↑k.factorial * (T - x) ^ k *
-      iteratedDerivWithin k f (Ici 0) T) atTop (nhds 0) := by
-  have hkey := tendsto_sub_pow_mul_normalized_iteratedDerivWithin f hcm k hk x hx L hL
-  have heq : ∀ T, (-1 : ℝ) ^ (k + 1) / ↑k.factorial * (T - x) ^ k *
-      iteratedDerivWithin k f (Ici 0) T =
-      -(1 / ↑k.factorial) *
-        ((T - x) ^ k * ((-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) T)) := by
-    intro T
-    simp only [pow_succ]
-    ring
-  simp_rw [heq]
-  simpa using hkey.const_mul (-(1 / (k.factorial : ℝ)))
-
 /-- **The shifted order-`k` kernel is dominated by the Chafaï density.** For `0 ≤ x ≤ t` the
 kernel built from `(t - x) ^ (k - 1)` is nonnegative and bounded by the density built from
 `t ^ (k - 1)`. -/
@@ -1157,7 +1143,18 @@ private lemma chafai_repeated_ibp_succ (f : ℝ → ℝ) (hcm : IsCompletelyMono
         iteratedDerivWithin k f (Ici 0) T +
       ∫ t in x..T, (-1 : ℝ) ^ k / ↑(k - 1).factorial * (t - x) ^ (k - 1) *
         iteratedDerivWithin k f (Ici 0) t) atTop (nhds (f x - L)) := by
-    simpa [zero_add] using (boundary_term_decay f hcm k hk x hx L hL).add htend_k
+    have hbdry : Tendsto (fun T => (-1 : ℝ) ^ (k + 1) / ↑k.factorial * (T - x) ^ k *
+        iteratedDerivWithin k f (Ici 0) T) atTop (nhds 0) := by
+      have heq : ∀ T, -(1 / (k.factorial : ℝ)) *
+          ((T - x) ^ k * ((-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) T)) =
+          (-1 : ℝ) ^ (k + 1) / ↑k.factorial * (T - x) ^ k *
+            iteratedDerivWithin k f (Ici 0) T := fun T => by
+        simp only [pow_succ]
+        ring
+      simpa using
+        (((tendsto_sub_pow_mul_normalized_iteratedDerivWithin f hcm k hk x hx L hL).const_mul
+          (-(1 / (k.factorial : ℝ)))).congr heq)
+    simpa [zero_add] using hbdry.add htend_k
   have htend_via_ibp : Tendsto (fun T => ∫ t in x..T,
       (-1 : ℝ) ^ (k + 1) / ↑k.factorial * (t - x) ^ k *
       iteratedDerivWithin (k + 1) f (Ici 0) t) atTop (nhds (f x - L)) :=
