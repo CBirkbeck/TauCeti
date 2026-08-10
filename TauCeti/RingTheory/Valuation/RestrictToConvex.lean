@@ -5,10 +5,10 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Algebra.Order.Hom.MonoidWithZero
 public import Mathlib.Algebra.Order.Monoid.Submonoid
 public import Mathlib.RingTheory.Valuation.Basic
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
+public import TauCeti.RingTheory.Valuation.ValueGroupTransport
 
 /-!
 # Restricting a valuation to a convex subgroup
@@ -34,8 +34,9 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out 
 * `Valuation.restrictToConvex_apply_of_mem`, `Valuation.restrictToConvex_apply_of_notMem` and
   `Valuation.restrictToConvex_apply_of_eq_zero` : the three branches, which are the intended
   interface — the definition itself is a `dite` chain and is not meant to be unfolded.
-* `TauCeti.ConvexSubgroup.ofValueGroup` : a convex subgroup of a value group carried across to
-  the units of the value monoid containing it, along Mathlib's `OrderMonoidIso.unitsWithZero`.
+(Carrying a convex subgroup of a value group onto the units of the value monoid containing it
+is `TauCeti.ConvexSubgroup.ofValueGroup`, in
+`TauCeti.RingTheory.Valuation.ValueGroupTransport`.)
 
 ## References
 
@@ -262,21 +263,3 @@ theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup
 
 end Valuation
 
-namespace TauCeti
-
-/-! ### Transporting a convex subgroup across the units of a `WithZero` -/
-
-/-- Carry a convex subgroup of `G` back to one of `(WithZero G)ˣ`. This is the transport that
-lets `cΓ_v(I)`, which lives in the value group, be handed to `Valuation.restrictToConvex`,
-which wants a convex subgroup of the units of the value monoid. -/
-def ConvexSubgroup.ofValueGroup {G : Type*} [CommGroup G] [LinearOrder G]
-    (K : ConvexSubgroup G) : ConvexSubgroup ((WithZero G)ˣ) :=
-  ConvexSubgroup.comap (OrderMonoidIso.unitsWithZero (α := G)) K
-
-@[simp]
-theorem mem_convexSubgroup_ofValueGroup {G : Type*} [CommGroup G] [LinearOrder G]
-    {K : ConvexSubgroup G} {u : (WithZero G)ˣ} :
-    u ∈ ConvexSubgroup.ofValueGroup K ↔ OrderMonoidIso.unitsWithZero u ∈ K :=
-  ConvexSubgroup.mem_comap
-
-end TauCeti
