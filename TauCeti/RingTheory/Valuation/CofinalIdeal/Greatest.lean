@@ -95,15 +95,6 @@ def IdealCofinalFor (v : Valuation A Γ₀)
     (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) (I : Ideal A) : Prop :=
   ∀ a ∈ I, CofinalValueFor v H.toSubgroup a
 
-/-- The defining property, as a restatement.
-
-Deliberately not `@[simp]`: the right-hand side is the unfolded bounded quantifier, so tagging
-it would expand goals about `IdealCofinalFor` rather than simplify them. -/
-theorem idealCofinalFor_def {v : Valuation A Γ₀}
-    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {I : Ideal A} :
-    IdealCofinalFor v H I ↔ ∀ a ∈ I, CofinalValueFor v H.toSubgroup a :=
-  Iff.rfl
-
 /-- The condition is antitone in the ideal. -/
 theorem IdealCofinalFor.mono {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {I J : Ideal A}
@@ -123,16 +114,6 @@ Definition 7.3. -/
 def IdealMeetsCharacteristicSubgroup (v : Valuation A Γ₀) (I : Ideal A) : Prop :=
   ∃ (a : A) (_ : a ∈ I) (h : (MonoidWithZeroHom.ofClass v) a ≠ 0),
     valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v
-
-/-- The defining property, as a restatement.
-
-Deliberately not `@[simp]`: the right-hand side is a nested existential carrying a proof
-binder, which is a poor normal form to rewrite goals into. -/
-theorem idealMeetsCharacteristicSubgroup_def {v : Valuation A Γ₀} {I : Ideal A} :
-    IdealMeetsCharacteristicSubgroup v I ↔
-      ∃ (a : A) (_ : a ∈ I) (h : (MonoidWithZeroHom.ofClass v) a ≠ 0),
-        valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v :=
-  Iff.rfl
 
 /-- An attained value `≥ 1` always meets the characteristic subgroup — so under Wedhorn's
 disjointness hypothesis every element of `I` has value strictly below `1`, the observation
