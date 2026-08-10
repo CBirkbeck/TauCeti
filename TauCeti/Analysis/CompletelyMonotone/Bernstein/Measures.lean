@@ -968,20 +968,23 @@ private lemma const_le_intervalIntegral_chafaiDensity (f : ℝ → ℝ) (k : ℕ
 `tendsto_sub_pow_mul_normalized_iteratedDerivWithin`: `(T-x)^k · h T` is
 eventually squeezed by a multiple of the vanishing density tail `∫_{Ioi (T/2)}`. -/
 private lemma density_tail_lower_bound_eventually (f : ℝ → ℝ)
-    (hcm : IsCompletelyMonotone f) (k : ℕ) (hk : k ≠ 0) (x : ℝ) (hx : 0 ≤ x)
+    (hcm : IsCompletelyMonotone f) (k : ℕ) (hk : k ≠ 0) (x : ℝ)
     (h : ℝ → ℝ) (h_nonneg : ∀ T, 0 ≤ T → 0 ≤ h T) (h_antitone : AntitoneOn h (Ici 0))
     (h_density_eq : ∀ t, chafaiDensity f k t = (1 / ↑((k - 1).factorial)) * t ^ (k - 1) * h t)
     (hint_density : IntegrableOn (chafaiDensity f k) (Ioi 0)) :
     ∀ᶠ T in atTop,
       (T - x) ^ k * h T ≤
-        ((2 : ℝ) ^ k * ↑((k - 1).factorial)) *
+        ((4 : ℝ) ^ k * ↑((k - 1).factorial)) *
           ∫ t in Ioi (T / 2), chafaiDensity f k t := by
   have hcont_density : ContinuousOn (chafaiDensity f k) (Ici 0) :=
     continuousOn_chafaiDensity (n := k) (hcm.contDiffOn.of_le (nat_le_top k))
-  filter_upwards [eventually_gt_atTop (max (2 * x) 2)] with T hT
-  have hT2 : (2 : ℝ) < T := lt_of_le_of_lt (le_max_right (2 * x) 2) hT
+  filter_upwards [eventually_gt_atTop (max (2 * |x|) 2)] with T hT
+  have hT2 : (2 : ℝ) < T := lt_of_le_of_lt (le_max_right (2 * |x|) 2) hT
   have hTpos : 0 < T := by linarith
-  have hTx_nonneg : 0 ≤ T - x := by linarith [lt_of_le_of_lt (le_max_left (2 * x) 2) hT]
+  have hTabs : 2 * |x| < T := lt_of_le_of_lt (le_max_left (2 * |x|) 2) hT
+  -- the shift is dominated by `T` in both directions, so `T - x` sits between `0` and `2 * T`
+  have hTx_nonneg : 0 ≤ T - x := by linarith [le_abs_self x, abs_nonneg x]
+  have hTx_le : T - x ≤ 2 * T := by linarith [neg_abs_le x, abs_nonneg x]
   have hhalf_nonneg : 0 ≤ T / 2 := by linarith
   have hhT_nonneg : 0 ≤ h T := h_nonneg T hTpos.le
   have h_interval_le :
@@ -1006,18 +1009,21 @@ private lemma density_tail_lower_bound_eventually (f : ℝ → ℝ)
           (T / 2) ^ k * h T := by field_simp
     rwa [hfact_cancel] at hmul
   calc
-    (T - x) ^ k * h T ≤ T ^ k * h T := by gcongr; linarith
-    _ = (2 : ℝ) ^ k * ((T / 2) ^ k * h T) := by rw [div_pow]; field_simp
-    _ ≤ (2 : ℝ) ^ k * (↑((k - 1).factorial) * ∫ t in Ioi (T / 2), chafaiDensity f k t) := by gcongr
-    _ = ((2 : ℝ) ^ k * ↑((k - 1).factorial)) *
+    (T - x) ^ k * h T ≤ (2 * T) ^ k * h T := by gcongr
+    _ = (4 : ℝ) ^ k * ((T / 2) ^ k * h T) := by
+      rw [show (4 : ℝ) = 2 * 2 by norm_num, mul_pow, mul_pow, div_pow]
+      field_simp
+    _ ≤ (4 : ℝ) ^ k * (↑((k - 1).factorial) * ∫ t in Ioi (T / 2), chafaiDensity f k t) := by gcongr
+    _ = ((4 : ℝ) ^ k * ↑((k - 1).factorial)) *
           ∫ t in Ioi (T / 2), chafaiDensity f k t := by ring
 
 /-- **The weighted normalized derivative vanishes at infinity.** Let `f` be completely monotone,
-let `k` be a nonzero order and let `0 ≤ x`. Writing `h T` for the normalized derivative
+let `k` be a nonzero order and let `x` be any real shift. Writing `h T` for the normalized
+derivative
 `(-1) ^ k * iteratedDerivWithin k f (Ici 0) T`, the products `(T - x) ^ k * h T` tend to `0` as
 `T → ∞`. -/
 private lemma tendsto_sub_pow_mul_normalized_iteratedDerivWithin (f : ℝ → ℝ)
-    (hcm : IsCompletelyMonotone f) (k : ℕ) (hk : k ≠ 0) (x : ℝ) (hx : 0 ≤ x) :
+    (hcm : IsCompletelyMonotone f) (k : ℕ) (hk : k ≠ 0) (x : ℝ) :
     Tendsto (fun T => (T - x) ^ k * ((-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) T))
       atTop (nhds 0) := by
   -- complete monotonicity already supplies the limit at infinity that integrability needs
@@ -1037,7 +1043,7 @@ private lemma tendsto_sub_pow_mul_normalized_iteratedDerivWithin (f : ℝ → �
       atTop (nhds 0) :=
     tendsto_integral_Ioi_zero (b := fun T : ℝ => T / 2)
       (tendsto_id.atTop_div_const (by norm_num))
-  have hupper := density_tail_lower_bound_eventually f hcm k hk x hx h h_nonneg h_antitone
+  have hupper := density_tail_lower_bound_eventually f hcm k hk x h h_nonneg h_antitone
     (by
       intro t
       rw [chafaiDensity_of_ne_zero hk]
@@ -1051,9 +1057,9 @@ private lemma tendsto_sub_pow_mul_normalized_iteratedDerivWithin (f : ℝ → �
     exact mul_nonneg (pow_nonneg (sub_nonneg.mpr hxT.le) _) (h_nonneg T hT0.le)
   have hupper_tendsto :
       Tendsto (fun T : ℝ =>
-        ((2 : ℝ) ^ k * ↑((k - 1).factorial)) *
+        ((4 : ℝ) ^ k * ↑((k - 1).factorial)) *
           ∫ t in Ioi (T / 2), chafaiDensity f k t) atTop (nhds 0) := by
-    simpa [mul_zero] using htail_half.const_mul (((2 : ℝ) ^ k) * ↑((k - 1).factorial))
+    simpa [mul_zero] using htail_half.const_mul (((4 : ℝ) ^ k) * ↑((k - 1).factorial))
   -- squeeze between nonnegativity and the vanishing tail bound
   exact squeeze_zero' hnonneg_event hupper hupper_tendsto
 
@@ -1154,7 +1160,7 @@ private lemma chafai_repeated_ibp_succ (f : ℝ → ℝ) (hcm : IsCompletelyMono
         simp only [pow_succ]
         ring
       simpa using
-        (((tendsto_sub_pow_mul_normalized_iteratedDerivWithin f hcm k hk x hx).const_mul
+        (((tendsto_sub_pow_mul_normalized_iteratedDerivWithin f hcm k hk x).const_mul
           (-(1 / (k.factorial : ℝ)))).congr heq)
     simpa [zero_add] using hbdry.add htend_k
   have htend_via_ibp : Tendsto (fun T => ∫ t in x..T,
