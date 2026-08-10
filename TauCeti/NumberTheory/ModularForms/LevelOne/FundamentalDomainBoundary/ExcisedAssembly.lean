@@ -85,53 +85,6 @@ theorem intervalIntegral_excised_fdBoundary_segment5 {g : ℍ → ℂ} {H ε : �
   rw [uIcc_of_le (by norm_num : (4 : ℝ) ≤ 5)] at ht
   exact if_neg (not_exists_dist_le_of_mem_Icc_four_five hnorm hε ht)
 
-/-- The excision commutes with the scalar multiplication by `deriv γ`: excising the whole
-integrand is excising the function it is built from. -/
-private lemma excised_smul {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {H ε : ℝ}
-    {S : Finset ℂ} {φ : ℂ → E} (t : ℝ) :
-    (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-      else deriv (fdBoundary H) t • φ (fdBoundary H t)) =
-    deriv (fdBoundary H) t •
-      (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0 else φ (fdBoundary H t)) := by
-  split <;> simp
-
-/-- **The excised integrals over the two verticals cancel.** The left vertical is the right
-one translated by `1` and traversed backwards, and the excision set is stable under the
-reflection matching them, so the excision does not disturb the cancellation.
-
-This is `intervalIntegral_excised_fdBoundary_segment4_eq_neg_segment1` read on the
-integrand shape the arc pairing uses, with the excision outside the scalar multiplication
-rather than inside it. -/
-theorem intervalIntegral_excised_deriv_smul_fdBoundary_segment4_eq_neg_segment1 {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℂ E] (H : ℝ) {φ : ℂ → E} (hφ : Function.Periodic φ 1)
-    {S : Finset ℂ} {ε : ℝ} (hrefl : ∀ s ∈ S, -(starRingEnd ℂ) s ∈ S) :
-    (∫ t in (3 : ℝ)..4, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-        else deriv (fdBoundary H) t • φ (fdBoundary H t))) =
-      -∫ t in (0 : ℝ)..1, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-        else deriv (fdBoundary H) t • φ (fdBoundary H t)) := by
-  simp only [excised_smul]
-  exact intervalIntegral_excised_fdBoundary_segment4_eq_neg_segment1 H hφ hrefl
-
-/-- **The excised arc integral is the weight term.** Halving the arc-pairing identity
-`2·∫ = -k·∫`, which is the form the assembly consumes: the arc contributes `-(k/2)` times
-the arc integral of the contour's own logarithmic derivative. -/
-theorem intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
-    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ}
-    {ε : ℝ} (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
-    (hd : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
-      DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
-    (hne : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
-      (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
-    (hint : IntervalIntegrable (fun t ↦ if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-      else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) volume 1 2) :
-    ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-        else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) =
-      -(k : ℂ) / 2 * ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-        else logDeriv (fdBoundary H) t) := by
-  have h := two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
-    f hS hnorm hinv hd hne hint
-  linear_combination h / 2
-
 /-- **The excised boundary contour integral of a level-one logarithmic derivative.** The
 four pieces assemble exactly as they do without the excision: the verticals cancel, the arc
 collapses to its weight term, and the ceiling reads the cusp order. What the excision buys is
@@ -171,15 +124,20 @@ theorem intervalIntegral_excised_logDeriv_fdBoundary [SlashInvariantFormClass F 
           else logDeriv (fdBoundary H) t) := by
   have hint13 := hint12.trans hint23
   have hint35 := hint34.trans hint45
+  have hvert : (∫ t in (3 : ℝ)..4, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t))) =
+      -∫ t in (0 : ℝ)..1, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) := by
+    simpa only [smul_ite, smul_zero] using
+      intervalIntegral_excised_fdBoundary_segment4_eq_neg_segment1 H
+        (TauCeti.Function.Periodic.logDeriv hper) hrefl
   rw [← intervalIntegral.integral_add_adjacent_intervals hint01 (hint13.trans hint35),
     ← intervalIntegral.integral_add_adjacent_intervals hint13 hint35,
     ← intervalIntegral.integral_add_adjacent_intervals hint34 hint45,
-    intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc f hS hnorm hinv
-      hd hne hint12,
-    intervalIntegral_excised_deriv_smul_fdBoundary_segment4_eq_neg_segment1 H
-      (TauCeti.Function.Periodic.logDeriv hper) hrefl,
-    intervalIntegral_excised_fdBoundary_segment5 hnorm hε hper hga hgz]
-  ring
+    hvert, intervalIntegral_excised_fdBoundary_segment5 hnorm hε hper hga hgz]
+  linear_combination
+    two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
+      f hS hnorm hinv hd hne hint12 / 2
 
 end ModularForm
 
