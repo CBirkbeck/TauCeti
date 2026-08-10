@@ -68,7 +68,7 @@ of. -/
 theorem intervalIntegral_excised_logDeriv_fdBoundary [SlashInvariantFormClass F Γ k] (f : F)
     (hS : ModularGroup.S ∈ Γ) {H ε : ℝ} {S : Finset ℂ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
-    (hrefl : ∀ s ∈ S, -(starRingEnd ℂ) s ∈ S) (hlt : ∀ s ∈ S, s.im + ε < H)
+    (hlt : ∀ s ∈ S, s.im + ε < H)
     (hper : Periodic (⇑f ∘ ofComplex) 1)
     (hd : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
       DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
@@ -89,6 +89,12 @@ theorem intervalIntegral_excised_logDeriv_fdBoundary [SlashInvariantFormClass F 
       2 * Real.pi * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
         (k : ℂ) / 2 * ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
           else logDeriv (fdBoundary H) t) := by
+  -- On the unit circle inversion is conjugation, so the arc hypothesis already gives the
+  -- vertical one: `-1 / s = -s⁻¹ = -conj s`.
+  have hrefl : ∀ s ∈ S, -(starRingEnd ℂ) s ∈ S := fun s hs => by
+    have h : -1 / s = -(starRingEnd ℂ) s := by
+      rw [neg_div, one_div, Complex.inv_eq_conj (hnorm s hs)]
+    exact h ▸ hinv s hs
   have hint23 := intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_segment3
     f hS hnorm hinv hd hne hint12
   have hint34 : IntervalIntegrable (fun t ↦ if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
