@@ -256,7 +256,8 @@ rule for `locNhd`, and what continuity of the structure map is read off. -/
 theorem algebraMap_mem_locNhd (P : PairOfDefinition A) (T : Finset A) (s : A) {n : ℕ}
     {b : P.ringOfDefinition} (hb : b ∈ P.idealOfDefinition ^ n) :
     algebraMap A (Localization.Away s) (b : A) ∈ locNhd P T s n :=
-  ⟨algebraMapD P T s b, algebraMapD_mem_locIdeal_pow P T s hb, coe_algebraMapD P T s b⟩
+  (mem_locNhd_iff P T s n).mpr
+    ⟨algebraMapD P T s b, algebraMapD_mem_locIdeal_pow P T s hb, coe_algebraMapD P T s b⟩
 
 /-- The zeroth neighbourhood is `D` itself, because `J⁰ = ⊤`. -/
 @[simp]
@@ -293,9 +294,11 @@ because `Jⁱ · Jʲ ⊆ Jⁱ⁺ʲ` in `D`. The two special cases the subgroup b
 theorem locNhd_mul_subset_add (P : PairOfDefinition A) (T : Finset A) (s : A) (i j : ℕ) :
     (locNhd P T s i : Set (Localization.Away s)) * (locNhd P T s j : Set (Localization.Away s))
       ⊆ (locNhd P T s (i + j) : Set (Localization.Away s)) := by
-  rintro _ ⟨_, ⟨d₁, hd₁, rfl⟩, _, ⟨d₂, hd₂, rfl⟩, rfl⟩
-  exact ⟨d₁ * d₂, pow_add (locIdeal P T s) i j ▸ Ideal.mul_mem_mul hd₁ hd₂,
-    MulMemClass.coe_mul ..⟩
+  rintro _ ⟨x, hx, y, hy, rfl⟩
+  obtain ⟨d₁, hd₁, rfl⟩ := (mem_locNhd_iff P T s i).mp hx
+  obtain ⟨d₂, hd₂, rfl⟩ := (mem_locNhd_iff P T s j).mp hy
+  exact (mem_locNhd_iff P T s (i + j)).mpr ⟨d₁ * d₂,
+    pow_add (locIdeal P T s) i j ▸ Ideal.mul_mem_mul hd₁ hd₂, MulMemClass.coe_mul ..⟩
 
 /-- Products of the `n`-th neighbourhood land in the `n`-th neighbourhood: this is the
 multiplicative half of the subgroup basis, the diagonal case of `locNhd_mul_subset_add`. -/
@@ -351,8 +354,9 @@ private theorem locNhd_invS_step (P : PairOfDefinition A) (T : Finset A) (s : A)
   · intro a ha b hb
     -- expose the product `(1/s * a) * b`, whose left factor lands in `D` by `locNhd_invS_mem`
     rw [MulMemClass.coe_mul, ← mul_assoc]
-    exact ⟨⟨IsLocalization.Away.invSelf s * ↑a, locNhd_invS_mem P T s N hN ha⟩ * b,
-      Ideal.mul_mem_left _ _ hb, MulMemClass.coe_mul ..⟩
+    exact (mem_locNhd_iff P T s n).mpr
+      ⟨⟨IsLocalization.Away.invSelf s * ↑a, locNhd_invS_mem P T s N hN ha⟩ * b,
+        Ideal.mul_mem_left _ _ hb, MulMemClass.coe_mul ..⟩
   · intro y₁ y₂ h₁ h₂
     simp only [AddMemClass.coe_add, mul_add]
     exact (locNhd P T s n).add_mem h₁ h₂
@@ -392,7 +396,7 @@ theorem locNhd_leftMul [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finse
     (x : Localization.Away s) (i : ℕ) :
     ∃ j, (locNhd P T s j : Set (Localization.Away s)) ⊆
       (x * ·) ⁻¹' (locNhd P T s i : Set (Localization.Away s)) := by
-  obtain ⟨N, hN⟩ := hopen
+  obtain ⟨N, hN⟩ := (hasDenominatorPower_iff P T s).mp hopen
   induction x using Localization.induction_on with
   | H p =>
     obtain ⟨a, ⟨_, k, rfl⟩⟩ := p
@@ -637,7 +641,8 @@ theorem continuous_of_continuous_algebraMap_of_isPowerBounded {B : Type*}
   obtain ⟨m, hm⟩ := hfull W
   refine Filter.mem_of_superset
     ((hasBasis_nhds_zero_locTopology P T s hopen).mem_iff.mpr ⟨m, trivial, le_refl _⟩) ?_
-  rintro _ ⟨d, hd, rfl⟩
+  intro x hx
+  obtain ⟨d, hd, rfl⟩ := (mem_locNhd_iff P T s m).mp hx
   refine hWV ?_
   rw [locIdeal_pow_eq_span] at hd
   suffices h : ∀ r : locSubring P T s,
