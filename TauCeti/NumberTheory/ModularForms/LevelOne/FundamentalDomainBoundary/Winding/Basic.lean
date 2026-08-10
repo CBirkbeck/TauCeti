@@ -28,7 +28,6 @@ a radius below the corner chord `2·sin(π/12)` is stated once here rather than 
 
 ## Main declarations
 
-* `TauCeti.ModularForm.sqrt_three_div_two_le_im_fdBoundary`: the image height bound.
 * `TauCeti.ModularForm.windingNumber_fdBoundary_eq_zero_of_im_lt`: points below the
   corner height wind zero, with the analogous determinations on the other sides
   (`_of_half_lt_re`, `_of_re_lt_neg_half`, `_of_lt_im`) and in the unit disc

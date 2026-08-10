@@ -10,7 +10,7 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
 import Mathlib.NumberTheory.ModularForms.QExpansion
-import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Basic
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
 
 /-!
 # On-curve capture of the boundary zeros
