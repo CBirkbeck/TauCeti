@@ -46,8 +46,8 @@ variable {𝕜 E F : Type*} [NontriviallyNormedField 𝕜]
 
 /-- **Invertibility persists where the inverse family is continuous.** If `A t₀` is invertible and
 `t ↦ (A t).inverse` is continuous at `t₀`, then `A t` is invertible for every `t` near `t₀`. -/
-private theorem eventually_isInvertible_of_continuousAt_inverse (hA0Inv : (A t₀).IsInvertible)
-    (hcont : ContinuousAt (fun t => (A t).inverse) t₀) :
+private theorem eventually_isInvertible_of_isInvertible_of_continuousAt_inverse
+    (hA0Inv : (A t₀).IsInvertible) (hcont : ContinuousAt (fun t => (A t).inverse) t₀) :
     ∀ᶠ t in 𝓝 t₀, (A t).IsInvertible := by
   -- The continuity argument below needs the inverse at `t₀` to be nonzero, which fails exactly
   -- when `E` is a subsingleton; in that case all maps involved are zero and invertibility is
@@ -58,12 +58,10 @@ private theorem eventually_isInvertible_of_continuousAt_inverse (hA0Inv : (A t�
     let _ : Subsingleton F := e.toEquiv.symm.subsingleton
     exact Filter.Eventually.of_forall fun t => by
       -- Between subsingleton spaces every continuous linear map is the zero map.
-      rw [show A t = 0 from Subsingleton.elim _ _, isInvertible_zero_iff]
+      have hAt_zero : A t = 0 := Subsingleton.elim _ _
+      rw [hAt_zero, isInvertible_zero_iff]
       exact ⟨inferInstance, inferInstance⟩
-  · have hInv0Inv : ((A t₀).inverse).IsInvertible := by
-      rcases hA0Inv with ⟨e, he⟩
-      rw [← he, inverse_equiv]
-      exact isInvertible_equiv
+  · have hInv0Inv : ((A t₀).inverse).IsInvertible := hA0Inv.inverse
     have hInv0 : (A t₀).inverse ≠ 0 := by
       intro hzero
       rw [hzero, isInvertible_zero_iff] at hInv0Inv
@@ -82,7 +80,7 @@ theorem HasDerivAt.clm_inverse (hA : HasDerivAt A A' t₀)
     HasDerivAt (fun t => (A t).inverse)
       (-((A t₀).inverse.comp (A'.comp (A t₀).inverse))) t₀ := by
   have hAInv : ∀ᶠ t in 𝓝 t₀, (A t).IsInvertible :=
-    eventually_isInvertible_of_continuousAt_inverse hA0Inv hInvDiff.continuousAt
+    eventually_isInvertible_of_isInvertible_of_continuousAt_inverse hA0Inv hInvDiff.continuousAt
   let B' : F →L[𝕜] E := _root_.deriv (fun t => (A t).inverse) t₀
   have hInvRaw : HasDerivAt (fun t => (A t).inverse) B' t₀ := hInvDiff.hasDerivAt
   have hB'eq : B' = -((A t₀).inverse.comp (A'.comp (A t₀).inverse)) := by
