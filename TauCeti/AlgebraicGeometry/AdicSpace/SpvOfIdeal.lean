@@ -53,8 +53,8 @@ Lemma 7.4.
 
 * `TauCeti.ValuationSpectrum.isEquiv_valuation_ofValuation` : the canonical valuation of the
   point of a valuation `w` is equivalent to `w`.
-* `mem_spvOfIdeal_iff_forall_cofinalValue_or_characteristicSubgroup_eq_top` : **Lemma 7.4** at the `Spv` level — the criterion in the form a consumer can actually
-  check.
+* `mem_spvOfIdeal_iff_forall_cofinalValue_or_characteristicSubgroup_eq_top` : **Lemma 7.4**
+  at the `Spv` level — the criterion in the form a consumer can actually check.
 * `TauCeti.ValuationSpectrum.mem_spvOfIdeal_iff` : membership unfolded through the canonical
   valuation, and `TauCeti.ValuationSpectrum.mem_spvOfIdeal_ofValuation` : membership tested on
   an arbitrary representative, which is what makes the definition usable.
