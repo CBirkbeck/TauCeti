@@ -17,7 +17,7 @@ multiple of the *length* of the surviving parameter set, so its `ε → 0` limit
 that length alone.
 
 This file supplies the limit. The arc runs once around a `π/3` sector of the unit circle, so it
-meets each excision centre at most once, and
+meets each excision centre at most once (`injOn_fdBoundary_arc`), and
 `TauCeti.Contour.tendsto_intervalIntegral_excisionIndicator` applies with the whole length `2`.
 
 ## References
@@ -30,7 +30,6 @@ meets each excision centre at most once, and
 
 ## Main results
 
-* `TauCeti.ModularForm.injOn_fdBoundary_arc`: the arc is traversed injectively.
 * `TauCeti.ModularForm.tendsto_intervalIntegral_excisionIndicator_fdBoundary_arc`: the surviving
   length of `[1, 3]` tends to `2` as `ε → 0⁺`.
 -/
@@ -42,21 +41,6 @@ open Filter Set Topology
 namespace TauCeti
 
 namespace ModularForm
-
-/-- **The arc is traversed injectively.** On `[1, 3]` the boundary runs through the angles
-`[π/3, 2π/3]` of the unit circle — less than one full turn — so `circleMap` is injective there
-and distinct parameters give distinct points. -/
-theorem injOn_fdBoundary_arc (H : ℝ) : InjOn (fdBoundary H) (Icc 1 3) := by
-  have hpi := Real.pi_pos
-  have hcm : InjOn (circleMap 0 1) (Ioc 0 (2 * Real.pi)) := by
-    rw [← uIoc_of_le (by positivity : (0 : ℝ) ≤ 2 * Real.pi)]
-    exact injOn_circleMap_of_abs_sub_le one_ne_zero
-      (by rw [zero_sub, abs_neg, abs_of_pos (by positivity)])
-  have hmem : ∀ {t : ℝ}, t ∈ Icc (1 : ℝ) 3 → (t + 1) * (Real.pi / 6) ∈ Ioc 0 (2 * Real.pi) :=
-    fun ht => ⟨by nlinarith [ht.1], by nlinarith [ht.2]⟩
-  intro t₁ h₁ t₂ h₂ heq
-  rw [eqOn_fdBoundary_arc H h₁, eqOn_fdBoundary_arc H h₂] at heq
-  nlinarith [hcm (hmem h₁) (hmem h₂) heq]
 
 /-- **The excision leaves the arc's full length in the limit.** Deleting from `[1, 3]` the times
 at which the boundary comes within `ε` of one of finitely many centres costs no length as
