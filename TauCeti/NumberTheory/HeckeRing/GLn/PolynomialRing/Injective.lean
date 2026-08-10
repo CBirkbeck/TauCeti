@@ -281,7 +281,7 @@ representative — is `q^(e₀ + 2·e₁)`.
 
 This is what makes the exponent pair recoverable: the determinant pins `e₀ + 2·e₁`, and the
 elementary-divisor order then separates the individual exponents. -/
-lemma T_gen_pow_support_qpower (q : {p : ℕ // p.Prime}) (e : Fin 2 → ℕ)
+private lemma T_gen_pow_support_qpower (q : {p : ℕ // p.Prime}) (e : Fin 2 → ℕ)
     (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
     (hD : (heckeGen 2 q.1 0 ^ (e 0) * heckeGen 2 q.1 1 ^ (e 1)) D ≠ 0) :
     ∃ a : Fin 2 → ℕ, D = diagCoset a ∧ (∀ i, 0 < a i) ∧ IsDvdChain a ∧
@@ -306,7 +306,7 @@ lemma T_gen_pow_support_qpower (q : {p : ℕ // p.Prime}) (e : Fin 2 → ℕ)
 
 /-- Every coset in the support of `heckeGen(q,0)^a * heckeGen(q,1)^b` has entries
 that are powers of `q` (immediate from `T_gen_pow_support_qpower`). -/
-lemma T_gen_pow_entries_qpower (q : {p : ℕ // p.Prime})
+private lemma T_gen_pow_entries_qpower (q : {p : ℕ // p.Prime})
     (e : Fin 2 → ℕ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
     (hD : (heckeGen 2 q.1 0 ^ (e 0) * heckeGen 2 q.1 1 ^ (e 1)) D ≠ 0)
     (a : Fin 2 → ℕ) (ha : D = diagCoset a) (ha_pos : ∀ i, 0 < a i)
@@ -321,7 +321,7 @@ lemma T_gen_pow_entries_qpower (q : {p : ℕ // p.Prime})
   exact hpq ((Nat.prime_dvd_prime_iff_eq hp q.2).mp (hp.dvd_of_dvd_pow this))
 
 /-- `T_single(diagCoset a, α) * diagElem(c,c) = T_single(diagCoset(a * c), α)`. -/
-lemma T_single_diag_mul_T_scalar (c : ℕ) (hc : 0 < c)
+private lemma T_single_diag_mul_T_scalar (c : ℕ) (hc : 0 < c)
     (a : Fin 2 → ℕ) (ha_pos : ∀ i, 0 < a i) (α : ℤ) :
     HeckeCosetModule.single ℤ (diagCoset a) α * diagElem (fun _ : Fin 2 ↦ c) =
     HeckeCosetModule.single ℤ (diagCoset (a * (fun _ : Fin 2 ↦ c))) α := by
@@ -336,7 +336,8 @@ lemma T_single_diag_mul_T_scalar (c : ℕ) (hc : 0 < c)
 /-- Scalar shift identity: for any `f : IntegralHeckeRing 2`, scalar `c > 0`, and positive
 divisibility-chain `b`, evaluating `f * diagElem(c,c)` at `diagCoset(b * c)` equals
 `f(diagCoset b)`. -/
-lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 2) (b : Fin 2 → ℕ)
+private lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 2)
+    (b : Fin 2 → ℕ)
     (hb_pos : ∀ i, 0 < b i) (hb_div : IsDvdChain b) :
     (f * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * (fun _ : Fin 2 ↦ c))) = f (diagCoset b) := by
   classical
@@ -381,7 +382,7 @@ lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 
       rw [if_neg h_ne_1, if_neg h_ne_2]
 
 /-- If `c ∤ d i` for some `i`, the evaluation of `f * diagElem(c,c)` at `diagCoset d` is zero. -/
-lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 2)
+private lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHeckeRing 2)
     (d : Fin 2 → ℕ)
     (hd_pos : ∀ i, 0 < d i) (hd_div : IsDvdChain d) (i₀ : Fin 2) (hi₀ : ¬ c ∣ d i₀) :
     (f * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0 := by
@@ -416,7 +417,7 @@ lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : IntegralHe
 
 /-- For `i ≥ 1`, evaluation of `f * heckeTScalar(p)^i` at `diagCoset ![1, k]` is zero
 (since `p^i ∤ 1`). -/
-lemma T_mul_T_pp_pow_eval_at_one_zero (p : ℕ) (hp : p.Prime) (i k : ℕ) (hi : 1 ≤ i)
+private lemma T_mul_T_pp_pow_eval_at_one_zero (p : ℕ) (hp : p.Prime) (i k : ℕ) (hi : 1 ≤ i)
     (hk : 0 < k) (f : IntegralHeckeRing 2) :
     (f * heckeTScalar p ^ i) (diagCoset (![1, k] : Fin 2 → ℕ)) = 0 := by
   rw [HeckeRing.GL2.heckeTScalar_pow p hp.pos i]
@@ -432,7 +433,7 @@ lemma T_mul_T_pp_pow_eval_at_one_zero (p : ℕ) (hp : p.Prime) (i k : ℕ) (hi :
 
 /-- `diagElem ![p^i, p^j] = heckeTDiag(1, p^{j-i}) * heckeTScalar(p)^i` for `i ≤ j` with `p`
 prime. -/
-lemma T_elem_ppow_factor (p : ℕ) (hp : p.Prime) (i j : ℕ) (hij : i ≤ j) :
+private lemma T_elem_ppow_factor (p : ℕ) (hp : p.Prime) (i j : ℕ) (hij : i ≤ j) :
     diagElem (![p^i, p^j] : Fin 2 → ℕ) = heckeTDiag 1 (p ^ (j - i)) * heckeTScalar p ^ i := by
   rw [heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp.pos _) (one_dvd _),
       HeckeRing.GL2.heckeTScalar_pow p hp.pos i]
@@ -529,7 +530,7 @@ private lemma T_ad_one_p_mul_supp_ne_leading_eval_zero (p : ℕ) (hp : p.Prime) 
 
 /-- Leading coefficient of `T(1,p)^a`: `(heckeTDiag 1 p)^a` evaluated at the leading coset
 `diagCoset ![1, p^a]` equals 1. -/
-lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
+private lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
     ((heckeTDiag 1 p) ^ a) (diagCoset (![1, p ^ a] : Fin 2 → ℕ)) = 1 := by
   classical
   induction a with
@@ -642,7 +643,7 @@ private lemma T_ad_one_p_pow_mul_scalar_eval_at_one_ppow (p : ℕ) (hp : p.Prime
 /-- Kronecker delta lemma: evaluating the monomial `heckeGen(p,0)^a₁ * heckeGen(p,1)^b₁` at the
 diagonal coset `T(p^b₂, p^(a₂+b₂))` gives 1 iff `(a₁, b₁) = (a₂, b₂)`, and 0 otherwise,
 under the hypothesis `b₂ ≤ b₁`. -/
-lemma monomial_eval_kronecker (p : ℕ) (hp : p.Prime)
+private lemma monomial_eval_kronecker (p : ℕ) (hp : p.Prime)
     (a₁ b₁ a₂ b₂ : ℕ) (h : b₂ ≤ b₁) :
     (heckeGen 2 p 0 ^ a₁ * heckeGen 2 p 1 ^ b₁)
         (diagCoset (primePowDiag 2 p ![b₂, a₂ + b₂])) =
@@ -758,5 +759,13 @@ noncomputable def polynomialRingEquivTwo :
   RingEquiv.ofBijective (evalHomLocal 2 p)
     ⟨Inj.evalHomLocal_injective 2 p (Inj.evalHom_injective_two p hp),
      evalHomLocal_two_surjective p hp⟩
+
+/-- The rank-one presentation isomorphism is the evaluation map. -/
+@[simp] lemma polynomialRingEquivOne_apply (f : MvPolynomial (Fin 1) ℤ) :
+    polynomialRingEquivOne p hp f = evalHomLocal 1 p f := (rfl)
+
+/-- The rank-two presentation isomorphism is the evaluation map. -/
+@[simp] lemma polynomialRingEquivTwo_apply (f : MvPolynomial (Fin 2) ℤ) :
+    polynomialRingEquivTwo p hp f = evalHomLocal 2 p f := (rfl)
 
 end HeckeRing.GLn
