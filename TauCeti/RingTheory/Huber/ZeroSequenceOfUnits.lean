@@ -53,9 +53,11 @@ theorem IsPseudoUniformizer.tendsto_pow_unit {a : A} (ha : IsPseudoUniformizer a
   simpa only [Units.val_pow_eq_pow_val, IsUnit.unit_spec] using hnil
 
 /-- **A pseudouniformiser makes the ring admit a zero sequence of units.** No Huber or Tate
-hypothesis is needed: a topologically nilpotent unit is exactly what the class asks for. The
-witness is `TauCeti.Huber.IsPseudoUniformizer.tendsto_pow_unit`, which a caller wanting the
-powers themselves should use instead. -/
+hypothesis is needed: a topologically nilpotent unit *supplies* the class, through its powers.
+It is sufficient, not equivalent — the class asks only for some sequence of units tending to
+zero, and such a sequence need not consist of the powers of a single unit. The witness here is
+`TauCeti.Huber.IsPseudoUniformizer.tendsto_pow_unit`, which a caller wanting the powers
+themselves should use instead. -/
 theorem IsPseudoUniformizer.hasZeroSequenceOfUnits {a : A} (ha : IsPseudoUniformizer a) :
     HasZeroSequenceOfUnits A :=
   ⟨_, ha.tendsto_pow_unit⟩
