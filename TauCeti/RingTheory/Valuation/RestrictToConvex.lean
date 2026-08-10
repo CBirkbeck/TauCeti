@@ -34,6 +34,8 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out 
 * `Valuation.restrictToConvex_apply_of_mem`, `Valuation.restrictToConvex_apply_of_notMem` and
   `Valuation.restrictToConvex_apply_of_eq_zero` : the three branches, which are the intended
   interface — the definition itself is a `dite` chain and is not meant to be unfolded.
+* `Valuation.restrictToConvex_le_iff` : on values kept by the restriction, the order is both
+  preserved and reflected.
 (Carrying a convex subgroup of a value group onto the units of the value monoid containing it
 is `TauCeti.ConvexSubgroup.ofValueGroup`, in
 `TauCeti.RingTheory.Valuation.ValueGroupTransport`.)
@@ -253,6 +255,18 @@ theorem restrictToConvex_apply_of_eq_zero (v : Valuation R Γ₀) (H : ConvexSub
     {r : R} (hr : v r = 0) : v.restrictToConvex H hH r = 0 := by
   classical
   exact (restrictToConvexFun_unfold v H r).trans (dif_pos hr)
+
+/-- On values whose units lie in `H`, the restriction both preserves and reflects the order.
+This is what lets an order fact about `v` be moved to the restricted valuation without
+unfolding either. -/
+theorem restrictToConvex_le_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {r s : R} (hr : v r ≠ 0) (hs : v s ≠ 0)
+    (hmr : Units.mk0 (v r) hr ∈ H) (hms : Units.mk0 (v s) hs ∈ H) :
+    v.restrictToConvex H hH r ≤ v.restrictToConvex H hH s ↔ v r ≤ v s := by
+  rw [restrictToConvex_apply_of_mem v H hH hr hmr, restrictToConvex_apply_of_mem v H hH hs hms,
+    WithZero.coe_le_coe]
+  exact Iff.rfl
 
 /-- The restriction vanishes exactly where `v` does or where the unit avoids `H`. -/
 theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
