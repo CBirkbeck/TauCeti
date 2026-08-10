@@ -168,6 +168,36 @@ theorem two_pi_I_mul_sum_windingNumber_mul_order_eq [SlashInvariantFormClass F �
       hoff hga hgz).hasCauchyPV
 
 
+/-- **The weighted zero count in terms of `orderOfVanishingAt`.** The abstract order function of
+`two_pi_I_mul_sum_windingNumber_mul_order_eq` is the modular-forms order at each point of the
+excision set, once the excision points are recorded as points of the upper half plane.
+
+`orderOfVanishingAt` is by definition the meromorphic order of `f ∘ ofComplex`
+(`orderOfVanishingAt_def`), so the abstract `hord` hypothesis is discharged by `rfl` at every
+point whose order is finite — which is what `hfin` records. -/
+theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
+    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ}
+    {U : Set ℂ} (hH : 1 ≤ H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
+    (hHgt : ∀ s ∈ S, s.im < H) (hper : Periodic (⇑f ∘ ofComplex) 1) (hU : IsOpen U)
+    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
+    (hoff : ∀ z ∈ U, z ∉ S → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hmero : ∀ s ∈ S, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
+    (hfin : ∀ s ∈ S, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s ≠ ⊤)
+    (hbase : fdBoundary H 0 ∉ (S : Set ℂ))
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      cuspFunction 1 ⇑f q ≠ 0) :
+    2 * (Real.pi : ℂ) * Complex.I *
+        ∑ z ∈ S, Contour.windingNumber (fdBoundary H) 0 5 z *
+          ((meromorphicOrderAt (⇑f ∘ ofComplex) z).untop₀ : ℂ) =
+      2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
+        (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I) :=
+  two_pi_I_mul_sum_windingNumber_mul_order_eq f hS hH hnorm hinv hHgt hper hU hUdom hoff hmero
+    (fun s hsS hsU => (WithTop.coe_untop₀_of_ne_top (hfin s hsS hsU)).symm)
+    hbase hga hgz
+
+
 end ModularForm
 
 end TauCeti
