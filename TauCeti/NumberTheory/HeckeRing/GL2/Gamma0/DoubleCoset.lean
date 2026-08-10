@@ -5,8 +5,10 @@ Authors: Chris Birkbeck, Claude
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0
-public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
+
+-- the gcd decomposition and `Γ(N) ≤ Γ₀(N)` are used only inside proofs here
+import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
 
 /-!
 # The `Γ₀(N)` double coset of a coprime-determinant element
@@ -24,8 +26,9 @@ The mechanism is the Chinese-remainder decomposition
 `CongruenceSubgroup.Gamma_gcd_eq_sup`: coprimality of `det α` with `N` makes
 `Γ(N) ⊔ Γ(det α) = ⊤`, so `σ₁` factors as `τ_N · τ_a` with `τ_N ∈ Γ(N) ≤ Γ₀(N)` and
 `τ_a ∈ Γ(det α)`. The second factor is absorbed on the other side: `HeckeRing.GLn`'s
-`conj_ker_mem_SLnZ` says `α⁻¹ τ_a α` is again integral, so `τ_a α = α · (α⁻¹ τ_a α)`, and the
-new right factor is forced into `Γ₀(N)` by reading off the lower-left entry of the product —
+`inv_conjugate_mem_SLnZ_of_mem_ker` says `α⁻¹ τ_a α` is again integral, so
+`τ_a α = α · (α⁻¹ τ_a α)`, and the new right factor is forced into `Γ₀(N)` by reading off the
+lower-left entry of the product —
 which is where `gcd(det α, N) = 1` is used a second time, through the lower-right entry.
 
 Ported from the AINTLIB `LeanModularForms` project
@@ -137,8 +140,11 @@ private lemma mem_doubleCoset_Gamma0Image_of_mem_Delta0
   have : (Gamma N).Normal := Gamma_normal N
   -- coprimality of `det α` with `N` makes the two principal congruence subgroups fill `SL₂(ℤ)`
   have h_top : Gamma N ⊔ Gamma A.det.natAbs = ⊤ := by
+    -- `Int.gcd` is *defined* as `Nat.gcd` on the `natAbs`, but the two spellings are not
+    -- interchangeable for `rw`, so the bridge is named.
+    have hgcd : Nat.gcd A.det.natAbs N = Int.gcd A.det N := by simp [Int.gcd]
     have h := Gamma_gcd_eq_sup A.det.natAbs N
-    rw [show Nat.gcd A.det.natAbs N = Int.gcd A.det N from rfl, hdet, Gamma_one_top] at h
+    rw [hgcd, hdet, Gamma_one_top] at h
     rw [sup_comm]
     exact h.symm
   obtain ⟨τ_N, hτ_N, τ_a, hτ_a, hσ₁_eq⟩ :=
@@ -155,7 +161,8 @@ private lemma mem_doubleCoset_Gamma0Image_of_mem_Delta0
   have hτ_ker : τ_a ∈ (SpecialLinearGroup.map (Int.castRingHom (ZMod A.det.natAbs))).ker := by
     rw [MonoidHom.mem_ker]
     rwa [Gamma_mem'] at hτ_a
-  obtain ⟨h_sl, hh_sl⟩ := (mem_SLnZ_iff 2).mp (conj_ker_mem_SLnZ 2 α A hA τ_a hτ_ker)
+  obtain ⟨h_sl, hh_sl⟩ :=
+    (mem_SLnZ_iff 2).mp (inv_conjugate_mem_SLnZ_of_mem_ker 2 α A hA τ_a hτ_ker)
   set γ₂' := h_sl * σ₂ with hγ₂'
   have hx_eq : mapGL ℚ σ₁ * α * mapGL ℚ σ₂ = mapGL ℚ τ_N * α * mapGL ℚ γ₂' := by
     have hcross : mapGL ℚ τ_a * α = α * mapGL ℚ h_sl := by
@@ -182,15 +189,20 @@ private lemma mem_doubleCoset_Gamma0Image_of_mem_Delta0
 double coset down to `Δ₀(N)` leaves exactly the `Γ₀(N)`-double coset:
 `SL₂(ℤ) α SL₂(ℤ) ∩ Δ₀(N) = Γ₀(N) α Γ₀(N)`.
 
-This is what makes the Hecke operator of `Γ₀(N)` at a level-coprime index agree with the
-level-one one, and hence what makes `T_n` for `gcd(n, N) = 1` multiplicative on `M_k(Γ₀(N))`. -/
+This is the prerequisite for comparing the level-one and `Γ₀(N)` Hecke operators at an index
+coprime to the level, and so for the later multiplicativity of `T_n` on `M_k(Γ₀(N))`; neither
+comparison nor multiplicativity is proved here — this identifies the two double cosets. -/
 theorem doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0Image
     (α : GL (Fin 2) ℚ) (hα : α ∈ Delta0 N) (A : Matrix (Fin 2) (Fin 2) ℤ)
     (hA : (↑α : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
-    (hAN : (N : ℤ) ∣ A 1 0) (hdet : Int.gcd A.det N = 1) :
+    (hdet : Int.gcd A.det N = 1) :
     DoubleCoset.doubleCoset α (SLnZ 2) (SLnZ 2) ∩ (Delta0 N : Set (GL (Fin 2) ℚ)) =
       DoubleCoset.doubleCoset α (Gamma0Image N) (Gamma0Image N) := by
-  obtain ⟨-, -, hα_det, -, -⟩ := (mem_Delta0_iff N).mp hα
+  obtain ⟨B, hB, hα_det, hBN, -⟩ := (mem_Delta0_iff N).mp hα
+  -- `Δ₀(N)` already supplies an integral representative with `N ∣ c`, and `hA` identifies it
+  -- with `A`, so the divisibility need not be assumed
+  have hBA : B = A := Matrix.map_injective Int.cast_injective (hB.symm.trans hA)
+  have hAN : (N : ℤ) ∣ A 1 0 := hBA ▸ hBN
   have hAdet_ne : A.det ≠ 0 := by
     have hcast : ((A.det : ℤ) : ℚ) = (↑α : Matrix (Fin 2) (Fin 2) ℚ).det := by
       rw [hA]

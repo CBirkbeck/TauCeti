@@ -269,7 +269,7 @@ private lemma det_ne_zero_of_val_eq (g : GL (Fin n) ℚ) {A : Matrix (Fin n) (Fi
 
     It is also what moves the `Γ(det α)`-part of an `SL₂(ℤ)` factor across `α` when a full
     double coset is cut down to a `Γ₀(N)` one, so it is public rather than private. -/
-lemma conj_ker_mem_SLnZ (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fin n) ℤ)
+lemma inv_conjugate_mem_SLnZ_of_mem_ker (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fin n) ℤ)
     (hA : (↑g : Matrix _ _ ℚ) = A.map (Int.cast : ℤ → ℚ))
     (γ : SpecialLinearGroup (Fin n) ℤ)
     (hγ : γ ∈ (SpecialLinearGroup.map (Int.castRingHom (ZMod A.det.natAbs))).ker) :
@@ -366,7 +366,7 @@ private lemma int_mul_eq_reverse (A gamma : Matrix (Fin n) (Fin n) ℤ) (hAdet :
   rwa [Matrix.transpose_mul, Matrix.transpose_mul, Matrix.transpose_transpose,
     Matrix.transpose_transpose] at h2
 
-/-- Reverse direction of `conj_ker_mem_SLnZ`: kernel elements conjugated by `g`
+/-- Reverse direction of `inv_conjugate_mem_SLnZ_of_mem_ker`: kernel elements conjugated by `g`
     (rather than `g⁻¹`) remain in `SL_n(ℤ)`. -/
 private lemma conj_ker_mem_SLnZ_inv (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fin n) ℤ)
     (hA : (↑g : Matrix _ _ ℚ) = A.map (Int.cast : ℤ → ℚ))
@@ -415,7 +415,7 @@ private lemma congruence_ker_image_relIndex_ne_zero (d : ℕ) [NeZero d] :
   exact (Subgroup.finiteIndex_ker phi).index_ne_zero
 
 /-- The image of the congruence kernel lies inside `g • SL_n(ℤ)`: conjugating a kernel
-    element by `g⁻¹` keeps it integral (`conj_ker_mem_SLnZ`). -/
+    element by `g⁻¹` keeps it integral (`inv_conjugate_mem_SLnZ_of_mem_ker`). -/
 private lemma congruence_ker_image_le_conj (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fin n) ℤ)
     (hA : (↑g : Matrix _ _ ℚ) = A.map (Int.cast : ℤ → ℚ)) :
     Subgroup.map (mapGL ℚ) (SpecialLinearGroup.map (Int.castRingHom (ZMod A.det.natAbs))).ker ≤
@@ -426,7 +426,7 @@ private lemma congruence_ker_image_le_conj (g : GL (Fin n) ℚ) (A : Matrix (Fin
   -- element; `change` states it so the `ConjAct.smul_def` rewrite applies
   change (ConjAct.toConjAct g)⁻¹ • (γ : GL (Fin n) ℚ) ∈ SLnZ n
   rw [ConjAct.smul_def, ConjAct.ofConjAct_inv, ConjAct.ofConjAct_toConjAct]
-  exact conj_ker_mem_SLnZ n g A hA γ hγ_ker
+  exact inv_conjugate_mem_SLnZ_of_mem_ker n g A hA γ hγ_ker
 
 /-- The image of the congruence kernel lies inside `g⁻¹ • SL_n(ℤ)`: conjugating a kernel
     element by `g` keeps it integral (`conj_ker_mem_SLnZ_inv`). -/
