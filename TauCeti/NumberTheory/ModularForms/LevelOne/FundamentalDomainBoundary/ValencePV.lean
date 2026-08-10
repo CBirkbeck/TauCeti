@@ -10,6 +10,7 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ArcExcisionMeasure
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.LogDerivPV
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
+public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Interior
 
 /-!
 # The boundary principal value of a level-one logarithmic derivative
@@ -263,6 +264,47 @@ theorem sum_windingNumber_mul_orderOfVanishingAt_eq [SlashInvariantFormClass F �
     hU hUdom hoff hmero hfin hpos hbase hga hgz]
   push_cast
   ring
+
+/-- **The valence formula for a form with no elliptic zeros.** When every divisor point lies in
+the strict interior of the truncated fundamental domain, each winding number is `-1`
+(`windingNumber_fdBoundary_eq_neg_one_of_interior`), so the weighted count collapses to the plain
+sum of orders and the identity reads
+
+`Σ_q ord_q + ord_∞ = k/12`.
+
+This is the valence formula in the case the elliptic points contribute nothing; the general case
+adds the `½` and `⅓` terms coming from the corner winding numbers at `i` and `ρ`. -/
+theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq [SlashInvariantFormClass F Γ k]
+    (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ} (hH : 1 < H)
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
+    (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hU : IsOpen U)
+    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
+    (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
+    (hfin : ∀ s ∈ T, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s ≠ ⊤)
+    (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
+    (hin : ∀ s ∈ T, 1 < ‖s‖ ∧ |s.re| < 1 / 2 ∧ s.im < H)
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      cuspFunction 1 ⇑f q ≠ 0) :
+    ∑ z ∈ T.attach, ((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) +
+        qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
+  have hw : ∀ z ∈ T.attach,
+      Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
+          ((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) =
+        -((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) := by
+    intro z _
+    obtain ⟨h1, h2, h3⟩ := hin _ z.2
+    rw [windingNumber_fdBoundary_eq_neg_one_of_interior hH h1 h2 (hpos _ z.2) h3, neg_one_mul]
+  have := sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH.le hnorm hinv hHgt hper hoffγ hU
+    hUdom hoff hmero hfin hpos hbase hga hgz
+  rw [Finset.sum_congr rfl hw, Finset.sum_neg_distrib] at this
+  linear_combination -this
+
 
 end ModularForm
 
