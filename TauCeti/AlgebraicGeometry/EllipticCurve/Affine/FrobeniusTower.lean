@@ -38,8 +38,9 @@ Nothing here defines an isogeny or competes with the seeded `frobeniusIsogeny`.
 ## Provenance
 
 Ported from the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned by
-that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/FrobeniusIsogeny.lean`, declaration
-`finrank_frobFracRange_functionField`.
+that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/FrobeniusIsogeny.lean`, declarations
+`frobFracRange` — the model for `frobeniusRatFuncRange` — and `finrank_frobFracRange_functionField`,
+the degree above it.
 
 Changes from the source. It is `private` there, inside the file that builds the Frobenius isogeny,
 and works over `FractionRing K[X]`; about half its length is then spent transporting the degree of
