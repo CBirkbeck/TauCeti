@@ -634,7 +634,7 @@ theorem continuous_of_continuous_algebraMap_of_isPowerBounded {B : Type*}
   have hfull := exists_pow_mul_locSubring_mem P s f hf T hpow
   let _ : TopologicalSpace (Localization.Away s) := locTopology P T s hopen
   have : IsTopologicalRing (Localization.Away s) := isTopologicalRing_locTopology P T s hopen
-  refine continuous_of_continuousAt_zero f.toAddMonoidHom ?_
+  refine continuous_of_continuousAt_zero f ?_
   rw [ContinuousAt, map_zero, Filter.tendsto_def]
   intro V hV
   obtain ⟨W, hWV⟩ := NonarchimedeanAddGroup.is_nonarchimedean V hV
