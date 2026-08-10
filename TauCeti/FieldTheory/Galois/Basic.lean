@@ -52,6 +52,10 @@ theorem algEquiv_eq_one_or_eq {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) (φ : L ≃�
   · exact .inl h1
   · exact .inr (((Nat.card_eq_two_iff' 1).mp (card_algEquiv_eq_two K L)).unique h1 hσ)
 
+/-- **The nontrivial automorphism of a separable quadratic extension is an involution.** -/
+theorem algEquiv_mul_self {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) : σ * σ = 1 :=
+  (algEquiv_eq_one_or_eq K L hσ (σ * σ)).resolve_right fun h ↦ absurd (mul_eq_left.mp h) hσ
+
 /-- An element fixed by a nontrivial automorphism — hence, `Gal(L/K)` having order two, by all of
 `Gal(L/K)` — lies in the base field. -/
 theorem mem_range_algebraMap_of_apply_eq {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) {x : L} (hx : σ x = x) :

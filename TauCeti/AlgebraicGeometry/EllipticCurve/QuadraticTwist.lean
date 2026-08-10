@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.AlgebraicGeometry.EllipticCurve.VariableChange
+public import TauCeti.AlgebraicGeometry.EllipticCurve.VariableChange
+public import TauCeti.FieldTheory.Galois.Basic
 public import TauCeti.RingTheory.Norm.Quadratic
 
 /-!
@@ -380,6 +381,60 @@ theorem exists_smul_quadraticTwist_eq {θ : L} (hθ : θ ∉ Set.range (algebraM
   obtain ⟨θ', hθ', h⟩ := E.exists_quadraticTwist_eq L
   rw [h]
   exact E.exists_smul_quadraticTwistOf_trace_norm_eq hθ' hθ
+
+/-- **The twist is an `L`-form of `E`, with a nontrivial cocycle.** There is an explicit
+`L`-isomorphism `(Eᶿ)ᴸ ≅ Eᴸ` which is *anti*-equivariant for the Galois action: conjugating it by
+the nontrivial `σ ∈ Gal(L/K)` changes it by the automorphism `[-1]` of `E`
+(`negVariableChange`). That failure of equivariance is exactly what makes the twist a nontrivial
+form of `E` rather than an isomorphic copy. -/
+theorem exists_smul_baseChange_and_map_eq {θ : L} (hθ : θ ∉ Set.range (algebraMap K L))
+    {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
+    ∃ C : VariableChange L,
+      C • (E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ)).baseChange L
+          = E.baseChange L ∧
+        C.map σ.toAlgHom.toRingHom = (E.baseChange L).negVariableChange * C := by
+  -- TauCeti carries the contrapositive `mem_range_algebraMap_of_apply_eq`, not FLT's
+  -- `algEquiv_apply_ne`; a fixed point of the nontrivial automorphism lies in `K`.
+  have hσθ : σ θ ≠ θ := fun heq ↦
+    hθ (Algebra.IsQuadraticExtension.mem_range_algebraMap_of_apply_eq K L hσ heq)
+  have hw : σ θ - θ ≠ 0 := sub_ne_zero.mpr hσθ
+  have hT : algebraMap K L (Algebra.trace K L θ) = θ + σ θ :=
+    Algebra.IsQuadraticExtension.algebraMap_trace_eq_add K L hσ θ
+  have hN : algebraMap K L (Algebra.norm K θ) = θ * σ θ :=
+    Algebra.IsQuadraticExtension.algebraMap_norm_eq_mul K L hσ θ
+  have hσσ : σ (σ θ) = θ := by
+    rw [← AlgEquiv.mul_apply, Algebra.IsQuadraticExtension.algEquiv_mul_self K L hσ,
+      AlgEquiv.one_apply]
+  have hap : ⇑σ.toAlgHom.toRingHom = ⇑σ := rfl
+  refine ⟨⟨Units.mk0 (σ θ - θ) hw, 0, -(θ * algebraMap K L E.a₁),
+    -((σ θ - θ) ^ 2 * θ * algebraMap K L E.a₃)⟩, ?_, ?_⟩
+  · rw [variableChange_def]
+    ext <;>
+      simp only [quadraticTwistOf, baseChange, map_a₁, map_a₂, map_a₃, map_a₄, map_a₆,
+        Units.val_inv_eq_inv_val, Units.val_mk0, map_sub, map_mul, map_pow, map_ofNat, hT, hN] <;>
+      field
+  · ext <;>
+      -- a `public section` leaves `negVariableChange`'s body unexposed here, so the proof goes
+      -- through its accessor lemmas rather than unfolding the definition
+      simp only [VariableChange.map, VariableChange.mul_def, negVariableChange_u,
+        negVariableChange_r, negVariableChange_s, negVariableChange_t, Units.coe_map,
+        Units.val_mul, Units.val_neg, Units.val_one, Units.val_mk0, hap, MonoidHom.coe_coe,
+        map_neg, map_mul, map_pow, map_sub, map_zero, map_a₁, map_a₃, baseChange,
+        σ.commutes, hσσ] <;>
+      ring
+
+variable (L) in
+/-- **The quadratic twist becomes isomorphic to `E` after base change to `L`.** Over a field,
+isomorphisms of Weierstrass curves are exactly the admissible changes of variables
+`WeierstrassCurve.VariableChange`, acting via `•`. -/
+theorem exists_smul_quadraticTwist_baseChange_eq :
+    ∃ C : VariableChange L, C • (E.quadraticTwist L).baseChange L = E.baseChange L := by
+  obtain ⟨σ, hσ⟩ := Algebra.IsQuadraticExtension.exists_algEquiv_ne_one K L
+  obtain ⟨θ, hθ⟩ := Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap K L
+  obtain ⟨C₁, hC₁, -⟩ := E.exists_smul_baseChange_and_map_eq hθ hσ
+  -- bridge the generator chosen inside `quadraticTwist` to `θ`, base changed to `L`
+  obtain ⟨C₀, hC₀⟩ := E.exists_smul_quadraticTwist_eq hθ
+  exact ⟨C₁ * C₀.baseChange L, by rw [mul_smul, baseChange_smul_baseChange, hC₀, hC₁]⟩
 
 end QuadraticTwistBy
 

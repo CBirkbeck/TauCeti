@@ -88,6 +88,18 @@ lemma negVariableChange_ne_one [Nontrivial R] [E.IsElliptic] : E.negVariableChan
       simpa [VariableChange.one_def] using congrArg (fun C : VariableChange R ↦ (C.u : R)) h
     linear_combination -hv
 
+section BaseChange
+
+variable (L : Type*) [CommRing L] [Algebra R L]
+
+/-- **Base change commutes with the action of a change of variables.** Mathlib's
+`map_variableChange` read along `algebraMap R L`. -/
+lemma baseChange_smul_baseChange (C : VariableChange R) (V : WeierstrassCurve R) :
+    (C.baseChange L) • V.baseChange L = (C • V).baseChange L :=
+  map_variableChange (W := V) (C := C) (φ := algebraMap R L)
+
+end BaseChange
+
 end WeierstrassCurve
 
 end
