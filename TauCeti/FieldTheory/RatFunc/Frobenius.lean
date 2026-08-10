@@ -95,9 +95,9 @@ theorem fieldRange_frobeniusAlgHom_ratFunc :
       IntermediateField.adjoin K {(RatFunc.X : RatFunc K) ^ Fintype.card K} := by
   refine le_antisymm (fun x hx => ?_) (IntermediateField.adjoin_le_iff.mpr ?_)
   · obtain ⟨g, rfl⟩ := AlgHom.mem_fieldRange.mp hx
-    obtain ⟨p, r, -, rfl⟩ : ∃ p r : K[X], algebraMap K[X] (RatFunc K) r ≠ 0 ∧
+    obtain ⟨p, r, rfl⟩ : ∃ p r : K[X],
         g = algebraMap K[X] (RatFunc K) p / algebraMap K[X] (RatFunc K) r :=
-      ⟨g.num, g.denom, RatFunc.algebraMap_ne_zero g.denom_ne_zero, g.num_div_denom.symm⟩
+      ⟨g.num, g.denom, g.num_div_denom.symm⟩
     -- `(p/r) ^ q = p(X^q) / r(X^q)`, by `expand_card` on numerator and denominator
     simp only [_root_.FiniteField.coe_frobeniusAlgHom, div_pow, ← map_pow,
       ← _root_.FiniteField.expand_card (K := K)]
