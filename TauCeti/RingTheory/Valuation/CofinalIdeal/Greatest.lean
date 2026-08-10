@@ -494,10 +494,12 @@ theorem characteristicSubgroupOfIdeal_eq_top_iff {v : Valuation A Γ₀} {I : Id
   · have hg := isGreatestIdealCofinal_characteristicSubgroupOfIdeal hfg hm
     refine ⟨fun htop ↦ Or.inl fun a ha ↦ ?_, ?_⟩
     · have hcof := hg.1 a ha
-      rw [htop] at hcof
+      rw [htop, TauCeti.ConvexSubgroup.top_toSubgroup] at hcof
       exact cofinalValueFor_top_iff.mp hcof
     · rintro (hall | hfull)
-      · exact top_le_iff.mp (hg.2 fun a ha ↦ cofinalValueFor_top_iff.mpr (hall a ha))
+      · refine top_le_iff.mp (hg.2 fun a ha ↦ ?_)
+        rw [TauCeti.ConvexSubgroup.top_toSubgroup]
+        exact cofinalValueFor_top_iff.mpr (hall a ha)
       · -- `cΓ_v = ⊤` and disjointness force every value on `I` to vanish
         refine top_le_iff.mp (hg.2 fun a ha ↦ ?_)
         by_cases h0 : (MonoidWithZeroHom.ofClass v) a = 0
