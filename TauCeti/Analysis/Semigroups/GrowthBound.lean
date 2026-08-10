@@ -139,24 +139,22 @@ theorem ContractionSemigroup.hasGrowthBound_of_nonneg_omega_of_one_le_const
 /-! ## Growth Bounds and Exponential Type -/
 
 omit [CompleteSpace X] in
-/-- **The integer-time bound from the one-step bound.** If `‖S 1‖ ≤ M`, then `‖S k‖ ≤ M ^ k` at
-every natural time `k`. -/
-private theorem norm_realOperator_natCast_le_pow (S : StronglyContinuousSemigroup X) {M : ℝ}
-    (hM_one : ‖S.realOperator 1‖ ≤ M) (k : ℕ) :
-    ‖S.realOperator (k : ℝ)‖ ≤ M ^ k := by
-  have hM : 0 ≤ M := (norm_nonneg _).trans hM_one
+/-- **The multi-step bound from a one-step bound.** If `‖S t‖ ≤ M` at a nonnegative time `t`, then
+`‖S (k • t)‖ ≤ M ^ k` at every natural multiple of `t`. -/
+private theorem norm_realOperator_nsmul_le_pow (S : StronglyContinuousSemigroup X) {M t : ℝ}
+    (ht : 0 ≤ t) (hMt : ‖S.realOperator t‖ ≤ M) (k : ℕ) :
+    ‖S.realOperator (k • t)‖ ≤ M ^ k := by
+  have hM : 0 ≤ M := (norm_nonneg _).trans hMt
   induction k with
   | zero =>
-    simp only [Nat.cast_zero, S.realOperator_zero]
+    simp only [zero_smul, S.realOperator_zero, pow_zero]
     exact ContinuousLinearMap.norm_id_le
   | succ k ih =>
-    calc ‖S.realOperator (↑(k + 1) : ℝ)‖
-        = ‖S.realOperator (1 + ↑k)‖ := by
-          rw [Nat.cast_add, Nat.cast_one, add_comm]
-      _ ≤ ‖S.realOperator 1‖ * ‖S.realOperator ↑k‖ :=
-          S.norm_realOperator_add_le 1 ↑k zero_le_one (Nat.cast_nonneg k)
-      _ ≤ M * M ^ k :=
-          mul_le_mul hM_one ih (norm_nonneg _) hM
+    calc ‖S.realOperator ((k + 1) • t)‖
+        = ‖S.realOperator (t + k • t)‖ := by rw [succ_nsmul']
+      _ ≤ ‖S.realOperator t‖ * ‖S.realOperator (k • t)‖ :=
+          S.norm_realOperator_add_le t (k • t) ht (by positivity)
+      _ ≤ M * M ^ k := mul_le_mul hMt ih (norm_nonneg _) hM
       _ = M ^ (k + 1) := by ring
 
 /-- Every C₀-semigroup has a finite exponential growth bound
@@ -171,15 +169,15 @@ theorem StronglyContinuousSemigroup.existsGrowthBound (S : StronglyContinuousSem
   have hfrac_nn : 0 ≤ t - ↑n := sub_nonneg.mpr hn_le
   have hfrac_le1 : t - ↑n ≤ 1 := by
     have := Nat.lt_floor_add_one t; linarith
+  have hint : ‖S.realOperator (n : ℝ)‖ ≤ M ^ n := by
+    simpa using norm_realOperator_nsmul_le_pow S zero_le_one (hMbound 1 zero_le_one le_rfl) n
   calc ‖S.realOperator t‖
       = ‖S.realOperator ((t - ↑n) + ↑n)‖ := by
         rw [sub_add_cancel]
     _ ≤ ‖S.realOperator (t - ↑n)‖ * ‖S.realOperator ↑n‖ :=
         S.norm_realOperator_add_le _ _ hfrac_nn (Nat.cast_nonneg n)
     _ ≤ M * M ^ n :=
-        mul_le_mul (hMbound _ hfrac_nn hfrac_le1)
-          (norm_realOperator_natCast_le_pow S (hMbound 1 zero_le_one le_rfl) n)
-          (norm_nonneg _) (by linarith)
+        mul_le_mul (hMbound _ hfrac_nn hfrac_le1) hint (norm_nonneg _) (by linarith)
     _ ≤ M * Real.exp (Real.log M * t) := by
         apply mul_le_mul_of_nonneg_left _ (by linarith)
         calc (M : ℝ) ^ n
