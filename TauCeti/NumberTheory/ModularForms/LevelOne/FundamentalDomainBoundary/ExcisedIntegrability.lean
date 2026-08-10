@@ -9,7 +9,7 @@ public import TauCeti.Analysis.Contour.Curve.ExcisedIntegrability
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.DerivBound
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Basic
 
-import TauCeti.Analysis.Contour.Argument.Cycle
+import TauCeti.Analysis.Contour.LogDerivFTC
 
 /-!
 # The excised boundary integrand is integrable

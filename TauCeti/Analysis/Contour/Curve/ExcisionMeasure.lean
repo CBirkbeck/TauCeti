@@ -28,6 +28,7 @@ null set of times.
 
 ## Main results
 
+* `TauCeti.Contour.measurableSet_excision`: the excised parameter set is measurable.
 * `TauCeti.Contour.measure_setOf_mem_eq_zero_of_injOn`: an injective curve meets a finite set at
   a null set of times.
 * `TauCeti.Contour.tendsto_intervalIntegral_excisionIndicator`: the excision indicator's integral
@@ -48,6 +49,15 @@ public section
 open Filter MeasureTheory Set Topology
 
 namespace TauCeti.Contour
+
+/-- **The excised parameter set is measurable.** It is the finite union, over the centres, of the
+closed sublevel sets of `t ↦ ‖γ t - s‖`. -/
+theorem measurableSet_excision {γ : ℝ → ℂ} (hγm : Measurable γ) (S : Finset ℂ) (ε : ℝ) :
+    MeasurableSet {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} := by
+  have h : {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} = ⋃ s ∈ S, {t | ‖γ t - s‖ ≤ ε} := by ext; simp
+  rw [h]
+  exact Finset.measurableSet_biUnion _ fun s _ =>
+    measurableSet_le ((hγm.sub_const s).norm) measurable_const
 
 /-- A point lying off a finite set stays off it by a fixed positive margin. -/
 private theorem exists_pos_le_norm_sub_of_notMem {S : Finset ℂ} {z : ℂ} (hz : z ∉ S) :
@@ -78,13 +88,9 @@ theorem tendsto_intervalIntegral_excisionIndicator {γ : ℝ → ℂ} (hγm : Me
     (hab : a ≤ b) (S : Finset ℂ) (hnull : volume {t ∈ Icc a b | γ t ∈ S} = 0) :
     Tendsto (fun ε => ∫ t in a..b, if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then (0 : ℝ) else 1)
       (𝓝[>] 0) (𝓝 (b - a)) := by
-  have hmS : ∀ ε : ℝ, MeasurableSet {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} := fun ε => by
-    have h : {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} = ⋃ s ∈ S, {t | ‖γ t - s‖ ≤ ε} := by ext; simp
-    rw [h]
-    exact Finset.measurableSet_biUnion _ fun s _ =>
-      measurableSet_le ((hγm.sub_const s).norm) measurable_const
   set As : ℝ → Set ℝ := fun ε => Ioc a b \ {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} with hAs_def
-  have hAs : ∀ ε, MeasurableSet (As ε) := fun ε => measurableSet_Ioc.diff (hmS ε)
+  have hAs : ∀ ε, MeasurableSet (As ε) := fun ε =>
+    measurableSet_Ioc.diff (measurableSet_excision hγm S ε)
   -- The integral is exactly the surviving set's length.
   have hint : ∀ ε : ℝ, (∫ t in a..b, if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then (0 : ℝ) else 1)
       = volume.real (As ε) := fun ε => by

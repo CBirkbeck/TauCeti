@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Analysis.Contour.Curve.ExcisionMeasure
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Measurable
 public import Mathlib.Analysis.Complex.Basic
@@ -42,11 +43,10 @@ private def survivingParams (γ : ℝ → ℂ) (S : Finset ℂ) (ε : ℝ) : Set
 
 private theorem measurableSet_survivingParams (hγm : Measurable γ) (S : Finset ℂ) (ε : ℝ) :
     MeasurableSet (survivingParams γ S ε) := by
-  have h : survivingParams γ S ε = ⋂ s ∈ S, {t | ε < ‖γ t - s‖} := by
-    ext; simp [survivingParams]
+  have h : survivingParams γ S ε = {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε}ᶜ := by
+    ext; simp [survivingParams, not_le]
   rw [h]
-  exact MeasurableSet.biInter S.countable_toSet fun s _ =>
-    measurableSet_lt measurable_const ((hγm.sub_const s).norm)
+  exact (measurableSet_excision hγm S ε).compl
 
 /-- **The excised integrand is integrable.** Off the excision the curve stays at distance `> ε`
 from every centre, so over `[a, b]` its image lies in a compact set on which `φ` is continuous,
@@ -91,10 +91,8 @@ theorem intervalIntegrable_excised_of_continuousOn (hγc : Continuous γ) (hC : 
     · rw [Set.indicator_of_notMem hs, norm_zero]
       exact mul_nonneg hM0 hC0
   rw [intervalIntegrable_iff]
-  have hfin : IsFiniteMeasure (MeasureTheory.volume.restrict (Set.uIoc a b)) :=
-    ⟨by rw [MeasureTheory.Measure.restrict_apply_univ, Real.volume_uIoc]
-        exact ENNReal.ofReal_lt_top⟩
-  refine Integrable.mono' (integrable_const (max M 0 * C)) ?_
+  refine IntegrableOn.of_bound (by rw [Real.volume_uIoc]; exact ENNReal.ofReal_lt_top) ?_
+    (max M 0 * C)
     ((MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mpr
       (Filter.Eventually.of_forall fun t ht => hbd t (Set.uIoc_subset_uIcc ht)))
   refine (aestronglyMeasurable_indicator_iff
