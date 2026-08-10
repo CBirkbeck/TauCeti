@@ -17,12 +17,14 @@ opening `α` winding number `α / 2π` about its corner. Nothing connected the t
 value was stated in terms of the *parameter* `α`, and the crossing angle in terms of *tangents*,
 with no theorem saying they agree.
 
-This file supplies that bridge — `crossingAngle_modelSector`, for every real `α` — and with
-  angle `α` at its corner — stated for every real `α` as the `[0, 2π)` normalisation of
-  `α`, which is `α` itself exactly when `0 ≤ α < 2π`.
-winding about the corner is the crossing angle over `2π`, with no reference to the
-parametrisation. That is the shape a general curve can be compared against, since a curve is
-tangent to a model sector without being equal to one.
+This file supplies that bridge. `crossingAngle_modelSector` holds for every real `α`: the
+crossing angle at the corner is the `[0, 2π)` normalisation of `α`, which is `α` itself exactly
+when `0 ≤ α < 2π`. Under those bounds, `windingNumber_closedModelSector_eq_crossingAngle` then
+restates the winding number about the corner as the crossing angle over `2π`, with no reference
+to the parametrisation.
+
+That is the shape a general curve can be compared against, since a curve is tangent to a model
+sector without being equal to one.
 
 ## Main declarations
 
