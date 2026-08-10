@@ -21,6 +21,9 @@ a height one prime.
 
 ## Main results
 
+* `ClassGroup.mk_eq_one_iff_exists`: a class is trivial exactly when some `x : Kˣ` generates it.
+  This is Mathlib's `ClassGroup.mk_eq_one_iff` with `Submodule.IsPrincipal` traded for the range
+  of `toPrincipalIdeal`, which is the form a consumer that wants to *name* the generator can use.
 * `ClassGroup.mk_toPrincipalIdeal`: a principal fractional ideal has trivial class. This is the
   `simp` form of `ClassGroup.mk_eq_one_iff` for the one witness that arises in practice, and it
   holds over any domain.
@@ -29,11 +32,12 @@ a height one prime.
 * `IsDedekindDomain.HeightOneSpectrum.classGroupMk_eq_mk`: `[v]` is the class of `v.asIdeal` seen
   as an invertible fractional ideal of any fraction field `K`.
 
-Both are stated at the weakest hypotheses their proofs need — `ClassGroup.mk_toPrincipalIdeal`
-over `[IsDomain R]`, since nothing in it is Dedekind-specific. Neither needs the factorization
-of a fractional ideal into primes, so this file does not import it; the results that do live in
+All are stated at the weakest hypotheses their proofs need — `ClassGroup.mk_eq_one_iff_exists`
+and `ClassGroup.mk_toPrincipalIdeal` over `[IsDomain R]`, since nothing in either is
+Dedekind-specific. None of them needs the factorization of a fractional ideal into primes, so
+this file does not import it; the results that do live in
 `TauCeti.RingTheory.ClassGroup.HeightOneSpectrum`, which every consumer of *those* pays for and
-consumers of these two do not.
+consumers of these do not.
 
 Split out of material adapted from Michael Stoll's elliptic-curves formalisation
 (`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/FractionalIdeal.lean`

@@ -252,6 +252,11 @@ instance : Ring.DimensionLEOne (S.integer K) := by
 /-- **The ring of `S`-integers of a Dedekind domain is a Dedekind domain.** -/
 instance : IsDedekindDomain (S.integer K) where
 
+/-- `𝒪_S` is torsion-free over `R`, as `R` embeds into it. -/
+instance : Module.IsTorsionFree R (S.integer K) := by
+  rw [Module.isTorsionFree_iff_algebraMap_injective]
+  exact FaithfulSMul.algebraMap_injective R (S.integer K)
+
 
 
 end IsDedekindDomain

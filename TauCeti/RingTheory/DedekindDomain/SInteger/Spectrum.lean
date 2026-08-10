@@ -19,6 +19,12 @@ the height-one primes of `𝒪_S` are exactly the height-one primes of `R` **not
 (`integerHeightOneSpectrumEquiv`), and the correspondence carries the valuations across unchanged
 (`valuation_integerHeightOneSpectrumEquiv`).
 
+Two companion facts record what extension does to prime *powers* for `v ∉ S`:
+`integer_comap_map_pow`, that contracting the extension of `v ^ n` returns `v ^ n`, and
+`integer_map_le_map_pow_iff`, that containment in a prime power transfers along the extension in
+both directions. The latter is what turns a comparison of multiplicities into a comparison of
+ideals.
+
 The two directions are `integerPrimeOverOfNotMem`, extending `v ∉ S` to `𝒪_S`, and
 `integerPrimeUnder`, contracting a prime of `𝒪_S` back to `R`. That they are mutually inverse is
 Mathlib's `Ideal.comap_map_eq_self_of_isMaximal` in one direction — the extension of a maximal
@@ -44,7 +50,9 @@ roadmap's pin `66889eada51a`, Apache 2.0, by Michael Stoll), the source the road
 names for the Layer 6 Mordell–Weil lane. Following this repository's convention for adapted
 material, the upstream authorship is credited here rather than in the copyright header. This is
 the height-one-spectrum half of that file; the Dedekind property came first, and the class-group
-computation `Cl(𝒪_S) ≃* Cl(R) ⧸ ⟨[v] : v ∈ S⟩` follows in the PR that consumes it.
+computation `Cl(𝒪_S) ≃* Cl(R) ⧸ ⟨[v] : v ∈ S⟩` is
+`IsDedekindDomain.integerClassGroupEquiv` in
+`TauCeti/RingTheory/DedekindDomain/SInteger/ClassGroup.lean`, which consumes this file.
 -/
 
 public section
@@ -61,7 +69,7 @@ lemma integer_map_asIdeal_ne_top {v : HeightOneSpectrum R} (hv : v ∉ S) :
     Ideal.map (algebraMap R (S.integer K)) v.asIdeal ≠ ⊤ := by
   -- Since `v ∉ S`, the `S`-integers lie in the valuation ring of `v`; the extension of `v` lands
   -- in the pullback of that local ring's maximal ideal, which is proper because `1` does not.
-  set f := algebraMap R (S.integer K) with hf
+  set f := algebraMap R (S.integer K)
   have hsub : (S.integer K).toSubring ≤ (v.valuation K).valuationSubring.toSubring :=
     fun x hx ↦ (Set.mem_integer_iff K S).mp hx v hv
   let 𝔪 : Ideal (S.integer K) :=
@@ -80,7 +88,7 @@ lemma integer_map_asIdeal_ne_top {v : HeightOneSpectrum R} (hv : v ∉ S) :
 /-- For `v ∉ S`, the extension of `v` to `𝒪_S` is maximal. -/
 lemma isMaximal_integer_map_asIdeal {v : HeightOneSpectrum R} (hv : v ∉ S) :
     (Ideal.map (algebraMap R (S.integer K)) v.asIdeal).IsMaximal := by
-  set f := algebraMap R (S.integer K) with hf
+  set f := algebraMap R (S.integer K)
   have := v.isMaximal
   obtain ⟨M, hM, hle⟩ := Ideal.exists_le_maximal _ (integer_map_asIdeal_ne_top K S hv)
   have hcle : v.asIdeal ≤ M.comap f :=
@@ -107,7 +115,7 @@ noncomputable def integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉
 @[simp] lemma integer_comap_map_pow {v : HeightOneSpectrum R} (hv : v ∉ S) (n : ℕ) :
     (Ideal.map (algebraMap R (S.integer K)) (v.asIdeal ^ n)).comap
         (algebraMap R (S.integer K)) = v.asIdeal ^ n := by
-  set f := algebraMap R (S.integer K) with hf
+  set f := algebraMap R (S.integer K)
   have hP0 : Ideal.map f v.asIdeal ≠ 0 := Ideal.map_ne_bot_of_ne_bot v.ne_bot
   have hPnu : ¬ IsUnit (Ideal.map f v.asIdeal) :=
     fun h ↦ integer_map_asIdeal_ne_top K S hv (Ideal.isUnit_iff.mp h)
@@ -121,6 +129,15 @@ noncomputable def integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉
   rw [hassoc] at hmapQ
   simp only [Ideal.map_pow] at hmapQ
   rw [hassoc, (pow_inj_of_not_isUnit hPnu hP0).mp hmapQ]
+
+/-- Divisibility by prime powers transfers along extension to `𝒪_S` and back, for primes off
+`S`. -/
+lemma integer_map_le_map_pow_iff {v : HeightOneSpectrum R} (hv : v ∉ S) (J : Ideal R) (k : ℕ) :
+    Ideal.map (algebraMap R (S.integer K)) J ≤ (integerPrimeOverOfNotMem K S hv).asIdeal ^ k ↔
+      J ≤ v.asIdeal ^ k := by
+  rw [integerPrimeOverOfNotMem_asIdeal, ← Ideal.map_pow]
+  exact ⟨fun h ↦ Ideal.le_comap_map.trans
+    ((Ideal.comap_mono h).trans (integer_comap_map_pow K S hv k).le), Ideal.map_mono⟩
 
 /-- The prime of `R` below a prime `P` of `𝒪_S`: its contraction. -/
 noncomputable def integerPrimeUnder (P : HeightOneSpectrum (S.integer K)) :
