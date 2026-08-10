@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.Topology.Algebra.OpenSubgroup
 public import Mathlib.Topology.Algebra.ConstMulAction
 
 /-!
@@ -63,8 +62,9 @@ class HasZeroSequenceOfUnits : Prop where
   /-- Some sequence of units converges to zero. -/
   exists_tendsto : ∃ u : ℕ → Aˣ, Tendsto (fun n ↦ ((u n : A))) atTop (𝓝 0)
 
-/-- Destructor for `TauCeti.HasZeroSequenceOfUnits`: it is a class so that a Tate ring supplies it
-by instance search, and this is how a proof reaches the sequence. -/
+/-- The class unfolds to the existential it wraps. This is its `@[simp]` normal form; a proof
+already holding the instance normally reaches the sequence through the field directly, as
+`‹HasZeroSequenceOfUnits A›.exists_tendsto`. -/
 @[simp]
 theorem hasZeroSequenceOfUnits_iff :
     HasZeroSequenceOfUnits A ↔ ∃ u : ℕ → Aˣ, Tendsto (fun n ↦ ((u n : A))) atTop (𝓝 0) :=
