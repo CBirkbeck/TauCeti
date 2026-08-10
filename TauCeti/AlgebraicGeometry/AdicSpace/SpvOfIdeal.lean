@@ -80,6 +80,7 @@ def spvOfIdeal (I : Ideal A) (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radi
 
 /-- Membership in `Spv (A, I)`, unfolded through the canonical valuation of the point. The
 usable form is `mem_spvOfIdeal_ofValuation`, which tests an arbitrary representative. -/
+@[simp]
 theorem mem_spvOfIdeal_iff {I : Ideal A} {hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical}
     {v : Spv A} :
     v ∈ spvOfIdeal I hfg ↔ characteristicSubgroupOfIdeal v.valuation I hfg = ⊤ :=
