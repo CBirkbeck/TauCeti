@@ -34,8 +34,6 @@ on the contour.
 * `TauCeti.ModularForm.two_pi_I_mul_sum_windingNumber_mul_order_eq`: equating that with the
   argument principle gives `2πi·Σ n_z·ord z = 2πi·ord_∞ − k·(π/6)·I`, the analytic identity the
   valence formula rests on.
-* `TauCeti.ModularForm.two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq`: the same with
-  the abstract order replaced by `orderOfVanishingAt`, for divisor points in the upper half plane.
 * `TauCeti.ModularForm.sum_windingNumber_mul_orderOfVanishingAt_eq`: that identity divided by
   `2πi`, giving `Σ n_z·ord z = ord_∞ − k/12`.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq`: the valence formula
@@ -223,7 +221,7 @@ the modular-forms order at each of them.
 is automatic here: `meromorphicOrderAt_ne_top_of_analyticAt_off` derives it from `hoff` and the
 finiteness of `T`. The sum runs over `T.attach` because the order is taken at each divisor
 point *as a point of `ℍ`*, which needs its membership proof. -/
-theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
+private theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
     [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
     {U : Set ℂ} (hH : 1 ≤ H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hHgt : ∀ s ∈ S, s.im < H) (hper : Periodic (⇑f ∘ ofComplex) 1)
@@ -299,7 +297,7 @@ This is the valence formula in the case the elliptic points contribute nothing; 
 adds the `½` and `⅓` terms coming from the corner winding numbers at `i` and `ρ`. -/
 theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq [SlashInvariantFormClass F Γ k]
     (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ} (hH : 1 < H)
-    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hper : Periodic (⇑f ∘ ofComplex) 1)
     (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
       AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
@@ -307,7 +305,7 @@ theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq [SlashInvariantFormC
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
     (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
     (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
+    (hpos : ∀ s ∈ T, 0 < s.im)
     (hin : ∀ s ∈ T, 1 < ‖s‖ ∧ |s.re| < 1 / 2 ∧ s.im < H)
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
@@ -315,6 +313,16 @@ theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq [SlashInvariantFormC
       cuspFunction 1 ⇑f q ≠ 0) :
     ∑ z ∈ T.attach, ((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) +
         qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
+  -- Both are forced by the data: excision centres sit on the unit circle, and every divisor
+  -- point has `|re| < 1/2` while the basepoint has real part exactly `1/2`.
+  have hHgt : ∀ s ∈ S, s.im < H := fun s hs => by
+    have h1 : s.im ≤ ‖s‖ := (le_abs_self _).trans (Complex.abs_im_le_norm s)
+    rw [hnorm s hs] at h1
+    linarith
+  have hbase : fdBoundary H 0 ∉ (T : Set ℂ) := fun hmem => by
+    have h := (hin _ hmem).2.1
+    rw [fdBoundary_apply_zero] at h
+    simp at h
   have hw : ∀ z ∈ T.attach,
       Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
           ((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) =
