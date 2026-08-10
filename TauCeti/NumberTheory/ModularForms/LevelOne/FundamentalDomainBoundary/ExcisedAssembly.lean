@@ -14,8 +14,9 @@ import TauCeti.Analysis.Calculus.PeriodicDeriv
 
 `TauCeti.ModularForm.intervalIntegral_logDeriv_fdBoundary` assembles the boundary integral
 for a form with no zeros on the contour. The valence formula needs the version that tolerates
-them: the elliptic points `i` and `ρ` sit *on* the fundamental-domain boundary, so a form
-vanishing there makes `logDeriv f` blow up on the contour itself. The device is `ε`-excision —
+them at the elliptic points `i` and `ρ`, which sit *on* the fundamental-domain boundary, so a
+form vanishing there makes `logDeriv f` blow up on the contour itself. (Nonvanishing along the
+ceiling is still required, through the `q`-disk hypothesis.) The device is `ε`-excision —
 the integrand is replaced by `0` within `ε` of any excision centre — and this file assembles
 the excised integral **at a fixed `ε`**, from integrability hypotheses it takes rather than
 proves. Taking `ε → 0` and identifying the limit as a principal value is not done here.
@@ -54,8 +55,9 @@ variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup SL(2, ℤ)} {k : ℤ}
 /-- **The excised boundary contour integral of a level-one logarithmic derivative.** The
 four pieces assemble exactly as they do without the excision: the verticals cancel, the arc
 collapses to its weight term, and the ceiling reads the cusp order. What the excision buys is
-that none of this needs `f` to be nonvanishing *on* the contour — the elliptic points sit
-there, and near them the integrand is replaced by `0` instead.
+zeros on the arc and at the elliptic boundary points, where the integrand is replaced by `0`
+instead. It does not free the ceiling: `hgz` still asks `f` to be nonvanishing at every
+nonzero point of the closed `q`-disk, the circle of which is the ceiling.
 
 The statement is at a fixed `ε`, with integrability on `[0, 1]`, `[1, 2]` and `[4, 5]` assumed;
 the remaining two pieces are derived by the reflections. Compare
@@ -66,7 +68,7 @@ of. -/
 theorem intervalIntegral_excised_logDeriv_fdBoundary [SlashInvariantFormClass F Γ k] (f : F)
     (hS : ModularGroup.S ∈ Γ) {H ε : ℝ} {S : Finset ℂ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
-    (hrefl : ∀ s ∈ S, -(starRingEnd ℂ) s ∈ S) (hε : ε < H - 1)
+    (hrefl : ∀ s ∈ S, -(starRingEnd ℂ) s ∈ S) (hlt : ∀ s ∈ S, s.im + ε < H)
     (hper : Periodic (⇑f ∘ ofComplex) 1)
     (hd : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
       DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
@@ -87,12 +89,6 @@ theorem intervalIntegral_excised_logDeriv_fdBoundary [SlashInvariantFormClass F 
       2 * Real.pi * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
         (k : ℂ) / 2 * ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
           else logDeriv (fdBoundary H) t) := by
-  -- The ceiling exclusion needs only that each centre's height clears `ε` below the ceiling;
-  -- centres on the unit circle have height at most `1`, so `ε < H - 1` gives it.
-  have hlt : ∀ s ∈ S, s.im + ε < H := fun s hs => by
-    have h1 : s.im ≤ 1 :=
-      (le_abs_self _).trans ((Complex.abs_im_le_norm s).trans (hnorm s hs).le)
-    linarith
   have hint23 := intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_segment3
     f hS hnorm hinv hd hne hint12
   have hint34 : IntervalIntegrable (fun t ↦ if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
