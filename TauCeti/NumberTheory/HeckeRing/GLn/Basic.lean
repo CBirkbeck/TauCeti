@@ -79,14 +79,6 @@ downstream cannot unfold it to `MonoidHom.range`; this lemma is how they extract
     g ∈ SLnZ n ↔ ∃ σ : SpecialLinearGroup (Fin n) ℤ, (σ : GL (Fin n) ℚ) = g := by
   rw [SLnZ, MonoidHom.mem_range]
 
-/-- `SL_n(ℤ)` is the image of the whole of `SpecialLinearGroup (Fin n) ℤ`; the form in which
-`SLnZ` meets the `Subgroup.map` API. -/
-lemma SLnZ_eq_map_top :
-    SLnZ n = Subgroup.map (mapGL ℚ : SpecialLinearGroup (Fin n) ℤ →* GL (Fin n) ℚ) ⊤ := by
-  ext g
-  simp only [Subgroup.mem_map, Subgroup.mem_top, true_and]
-  exact (mem_SLnZ_iff n).trans (by simp)
-
 /-- The image in `GL_n(ℚ)` of a finite-index subgroup of `SL_n(ℤ)` is commensurable with
 `SL_n(ℤ)`. Since `mapGL ℚ` is injective, both relative indices transport along it: one is the
 index of `H`, finite by hypothesis, and the other is `1`.
@@ -97,11 +89,11 @@ re-proved at each of `Γ₀(N)`, `Γ₁(N)`, `Γ(N)`. -/
 lemma commensurable_map_SLnZ (H : Subgroup (SpecialLinearGroup (Fin n) ℤ)) [H.FiniteIndex] :
     Subgroup.Commensurable (H.map (mapGL ℚ)) (SLnZ n) := by
   constructor
-  · rw [SLnZ_eq_map_top, Subgroup.relIndex_map_map_of_injective _ _ mapGL_injective,
-      Subgroup.relIndex_top_right]
+  · rw [SLnZ, MonoidHom.range_eq_map,
+      Subgroup.relIndex_map_map_of_injective _ _ mapGL_injective, Subgroup.relIndex_top_right]
     exact Subgroup.FiniteIndex.index_ne_zero
-  · rw [SLnZ_eq_map_top, Subgroup.relIndex_map_map_of_injective _ _ mapGL_injective,
-      Subgroup.relIndex_top_left]
+  · rw [SLnZ, MonoidHom.range_eq_map,
+      Subgroup.relIndex_map_map_of_injective _ _ mapGL_injective, Subgroup.relIndex_top_left]
     exact one_ne_zero
 
 end Embedding
