@@ -151,6 +151,12 @@ variable [NeZero n] (p : ℕ) (hp : p.Prime)
 noncomputable def evalHom : MvPolynomial (Fin n) ℤ →+* IntegralHeckeRing n :=
   MvPolynomial.eval₂Hom (Int.castRingHom (IntegralHeckeRing n)) (fun k ↦ heckeGen n p k)
 
+/-- Defining equation for the sealed definition `evalHom`: evaluation of a polynomial at the
+generators, with integer coefficients cast into the Hecke ring. -/
+lemma evalHom_def : evalHom n p =
+    MvPolynomial.eval₂Hom (Int.castRingHom (IntegralHeckeRing n)) (fun k ↦ heckeGen n p k) :=
+  (rfl)
+
 /-- `evalHom` sends the `k`-th variable to the `k`-th generator. -/
 @[simp] lemma evalHom_X (k : Fin n) : evalHom n p (MvPolynomial.X k) = heckeGen n p k :=
   MvPolynomial.eval₂Hom_X' _ _ _
