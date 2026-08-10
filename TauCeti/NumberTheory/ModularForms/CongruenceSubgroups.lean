@@ -12,7 +12,7 @@ public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 import Mathlib.Algebra.Field.ZMod
 
 /-!
-# Congruence subgroup infrastructure: the pair `Γ₁(N) ⊴ Γ₀(N)` and the index of `Γ₀(pᵏ)`
+# Congruence subgroups: the pair `Γ₁(N) ⊴ Γ₀(N)`, the index of `Γ₀(pᵏ)`, and the level
 
 Foundational results about the pair `Γ₁(N) ≤ Γ₀(N)` beyond Mathlib's
 `Mathlib.NumberTheory.ModularForms.CongruenceSubgroups`: `Γ₀(N)` normalizes `Γ₁(N)` (also
@@ -23,18 +23,26 @@ lies in `Γ₁(N)` exactly when `N ∣ 2`.  The file then computes the index of 
 prime-power levels — the degree count of Shimura, Theorem 3.24 — which lives here because it
 is congruence-subgroup arithmetic consumed by, but independent of, the Hecke-ring layer.
 
+A final section records how the *principal* congruence subgroups compose with the arithmetic
+of the level: `Γ` is antitone in the level like the other two families, and the join of two
+of them is the principal congruence subgroup of the gcd, `Γ(gcd a b) = Γ(a) ⊔ Γ(b)`. That
+identity is Shimura's Lemma 3.28; it is the Chinese remainder theorem for `SL₂`, and it is
+what lets a Hecke operator at level `ab` be analysed one prime at a time.
+
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GL2/Gamma1Pair.lean`, for the index section
-`LeanModularForms/HeckeRIngs/GL2/CongruenceIndex.lean`, and for the level-antitonicity
-lemmas `LeanModularForms/HeckeRIngs/GL2/LevelEmbed.lean`, all Chris Birkbeck,
+`LeanModularForms/HeckeRIngs/GL2/CongruenceIndex.lean`, for the level-antitonicity
+lemmas `LeanModularForms/HeckeRIngs/GL2/LevelEmbed.lean`, and for the gcd decomposition
+`LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/Foundation.lean`, all Chris Birkbeck,
 <https://github.com/CBirkbeck/AINTLIB/tree/main/projects/LeanModularForms>), extracted from
 `TauCeti/NumberTheory/ModularForms/DiamondOperators.lean` as congruence-subgroup
 infrastructure independent of the diamond operators.
 
 ## Main results
 
-* `CongruenceSubgroup.Gamma1_le_Gamma1_of_dvd`, `CongruenceSubgroup.Gamma0_le_Gamma0_of_dvd`:
-  both families are antitone in the level, `Γ(N) ≤ Γ(M)` whenever `M ∣ N`.
+* `CongruenceSubgroup.Gamma1_le_Gamma1_of_dvd`, `CongruenceSubgroup.Gamma0_le_Gamma0_of_dvd`,
+  `CongruenceSubgroup.Gamma_le_Gamma_of_dvd`: all three families are antitone in the level,
+  `Γ(N) ≤ Γ(M)` whenever `M ∣ N`.
 * `CongruenceSubgroup.isUnit_intCast_apply_zero_zero_of_mem_Gamma0`: a `Γ₀(N)` matrix has
   unit upper-left entry modulo `N`.
 * `CongruenceSubgroup.Gamma0_normalizes_Gamma1`: conjugation by `Γ₀(N)` preserves `Γ₁(N)`.
@@ -52,6 +60,13 @@ infrastructure independent of the diamond operators.
   and `0 < k`.
 * `CongruenceSubgroup.Gamma0_prime_power_index`: `[SL₂(ℤ) : Γ₀(pᵏ)] = p^(k-1) * (p + 1)` for
   prime `p` and `k ≥ 1`.
+* `CongruenceSubgroup.Gamma_gcd_eq_sup`: `Γ(gcd a b) = Γ(a) ⊔ Γ(b)` — Shimura's Lemma 3.28,
+  the Chinese remainder theorem for `SL₂`.
+
+## References
+
+* [G. Shimura, *Introduction to the arithmetic theory of automorphic functions*][shimura1971],
+  Lemma 3.28 and Theorem 3.24.
 -/
 
 public section
@@ -398,7 +413,10 @@ private lemma exists_int_modEq_of_modEq_gcd {m n x y : ℤ} (h : x ≡ y [ZMOD �
   refine ⟨x + m * (Int.gcdA m n * k), ?_, ?_⟩
   · exact Int.modEq_iff_dvd.mpr ⟨-(Int.gcdA m n * k), by ring⟩
   · refine Int.modEq_iff_dvd.mpr ⟨Int.gcdB m n * k, ?_⟩
-    rw [show y = x + (↑(Int.gcd m n) : ℤ) * k by linarith, hbez]
+    -- `hk : y - x = gcd m n * k` is the divisibility witness; solved for `y` it is the shape
+    -- `hbez` can be substituted into.
+    have hy : y = x + (↑(Int.gcd m n) : ℤ) * k := by linarith
+    rw [hy, hbez]
     ring
 
 /-- Entries of a `Γ(N)` matrix agree with the identity's modulo `N`. -/
@@ -438,8 +456,14 @@ with the identity's modulo `gcd a b`, so the Chinese remainder theorem supplies 
 congruent to `1` modulo `a` and to `γ` modulo `b`. Strong approximation
 (`map_intCast_zmod_surjective`) realises `M mod lcm a b` by an actual `β ∈ SL₂(ℤ)`, and then
 `β ∈ Γ(a)` while `β⁻¹γ ∈ Γ(b)`, so `γ = β · (β⁻¹γ)`. -/
-theorem Gamma_gcd_eq_sup (a b : ℕ) [NeZero a] [NeZero b] :
-    Gamma (Nat.gcd a b) = Gamma a ⊔ Gamma b := by
+theorem Gamma_gcd_eq_sup (a b : ℕ) : Gamma (Nat.gcd a b) = Gamma a ⊔ Gamma b := by
+  -- a zero level contributes `Γ(0) = ⊥` and drops out of both sides
+  rcases Nat.eq_zero_or_pos a with rfl | ha
+  · simp [Gamma_zero_bot]
+  rcases Nat.eq_zero_or_pos b with rfl | hb
+  · simp [Gamma_zero_bot]
+  have : NeZero a := ⟨ha.ne'⟩
+  have : NeZero b := ⟨hb.ne'⟩
   have : NeZero (Nat.lcm a b) := ⟨Nat.lcm_ne_zero (NeZero.ne a) (NeZero.ne b)⟩
   refine le_antisymm ?_ (sup_le (Gamma_le_Gamma_of_dvd (Nat.gcd_dvd_left a b))
     (Gamma_le_Gamma_of_dvd (Nat.gcd_dvd_right a b)))
@@ -448,15 +472,20 @@ theorem Gamma_gcd_eq_sup (a b : ℕ) [NeZero a] [NeZero b] :
   rw [Subgroup.mem_sup_of_normal_left]
   have hcompat : ∀ i j : Fin 2,
       ((1 : SL(2, ℤ)) i j : ℤ) ≡ (γ i j : ℤ) [ZMOD ↑(Int.gcd (a : ℤ) (b : ℤ))] := by
-    rw [show (↑(Int.gcd (a : ℤ) (b : ℤ)) : ℤ) = ↑(Nat.gcd a b) by simp [Int.gcd]]
+    -- `Int.gcd` of two casts is the `Nat.gcd` of the naturals; the two spellings of the
+    -- modulus are equal but not syntactically interchangeable.
+    have hgcd : (↑(Int.gcd (a : ℤ) (b : ℤ)) : ℤ) = ↑(Nat.gcd a b) := by simp [Int.gcd]
+    rw [hgcd]
     exact intCast_apply_modEq_one_of_mem_Gamma _ γ hγ
   obtain ⟨z00, hz00a, hz00b⟩ := exists_int_modEq_of_modEq_gcd (hcompat 0 0)
   obtain ⟨z01, hz01a, hz01b⟩ := exists_int_modEq_of_modEq_gcd (hcompat 0 1)
   obtain ⟨z10, hz10a, hz10b⟩ := exists_int_modEq_of_modEq_gcd (hcompat 1 0)
   obtain ⟨z11, hz11a, hz11b⟩ := exists_int_modEq_of_modEq_gcd (hcompat 1 1)
   have hdet_lcm : z00 * z11 - z01 * z10 ≡ 1 [ZMOD ↑(Nat.lcm a b)] := by
-    rw [show (↑(Nat.lcm a b) : ℤ) = ↑(Int.lcm (a : ℤ) (b : ℤ)) by simp [Int.lcm, Nat.lcm],
-      ← Int.modEq_and_modEq_iff_modEq_lcm]
+    -- `Int.modEq_and_modEq_iff_modEq_lcm` is stated for `Int.lcm`, so the `Nat.lcm` modulus
+    -- has to be renamed before it applies.
+    have hlcm : (↑(Nat.lcm a b) : ℤ) = ↑(Int.lcm (a : ℤ) (b : ℤ)) := by simp [Int.lcm, Nat.lcm]
+    rw [hlcm, ← Int.modEq_and_modEq_iff_modEq_lcm]
     refine ⟨?_, ?_⟩
     · have h : z00 * z11 - z01 * z10 ≡ 1 * 1 - 0 * 0 [ZMOD (a : ℤ)] :=
         (hz00a.mul hz11a).sub (hz01a.mul hz10a)
