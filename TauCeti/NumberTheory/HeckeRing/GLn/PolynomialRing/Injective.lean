@@ -24,7 +24,7 @@ leading elementary-divisor vector, and distinct monomials have distinct leading 
 
 * `HeckeRing.GLn.Inj.evalHom_injective_one`, `HeckeRing.GLn.Inj.evalHom_injective_two`:
   evaluation at the generators is injective for `n = 1` and `n = 2`.
-* `HeckeRing.GLn.R_p_isPolynomialRing_one`, `HeckeRing.GLn.R_p_isPolynomialRing_two`:
+* `HeckeRing.GLn.polynomialRingEquivOne`, `HeckeRing.GLn.polynomialRingEquivTwo`:
   **Shimura, Theorem 3.20** for `n = 1` and `n = 2` — `pLocalSubring ≅ ℤ[X₁, …, Xₙ]`.
 
 ## Implementation notes
@@ -772,7 +772,7 @@ variable (p : ℕ) (hp : p.Prime)
 
 /-- **Shimura, Theorem 3.20 for `n = 1`**: the `p`-local Hecke ring of `GL₁` is the
 polynomial ring `ℤ[X]` on the single generator `T(p)`. -/
-noncomputable def R_p_isPolynomialRing_one :
+noncomputable def polynomialRingEquivOne :
     MvPolynomial (Fin 1) ℤ ≃+* pLocalSubring 1 p :=
   RingEquiv.ofBijective (evalHomLocal 1 p)
     ⟨Inj.evalHomLocal_injective 1 p hp (Inj.evalHom_injective_one p hp),
@@ -781,7 +781,7 @@ noncomputable def R_p_isPolynomialRing_one :
 /-- **Shimura, Theorem 3.20 for `n = 2`**: the `p`-local Hecke ring of `GL₂` is the
 polynomial ring `ℤ[X₁, X₂]` on the generators `T(1, p)` and `T(p, p)`. This is the case the
 classical theory of modular forms uses. -/
-noncomputable def R_p_isPolynomialRing_two :
+noncomputable def polynomialRingEquivTwo :
     MvPolynomial (Fin 2) ℤ ≃+* pLocalSubring 2 p :=
   RingEquiv.ofBijective (evalHomLocal 2 p)
     ⟨Inj.evalHomLocal_injective 2 p hp (Inj.evalHom_injective_two p hp),
