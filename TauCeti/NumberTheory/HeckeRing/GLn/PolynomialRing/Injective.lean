@@ -7,7 +7,7 @@ module
 
 public import TauCeti.NumberTheory.HeckeRing.GLn.PolynomialRing.Basic
 
-@[expose] public section
+public section
 
 /-!
 # `pLocalSubring` is a polynomial ring for `n = 1, 2`
@@ -275,6 +275,12 @@ private lemma det_rep_T_gen_zero_pow_mul (q : {p : ℕ // p.Prime}) (a₀ b₀ :
       ih f D₂ hf_det (Finsupp.mem_support_iff.mp hD₂_mem)]
     push_cast; ring
 
+/-- Every double coset in the support of `T(1,q)^{e₀} · T(q,q)^{e₁}` is a diagonal coset
+`T(a)` for a positive divisibility chain `a`, whose entry product — the determinant of any
+representative — is `q^(e₀ + 2·e₁)`.
+
+This is what makes the exponent pair recoverable: the determinant pins `e₀ + 2·e₁`, and the
+elementary-divisor order then separates the individual exponents. -/
 lemma T_gen_pow_support_qpower (q : {p : ℕ // p.Prime}) (e : Fin 2 → ℕ)
     (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
     (hD : (heckeGen 2 q.1 0 ^ (e 0) * heckeGen 2 q.1 1 ^ (e 1)) D ≠ 0) :
@@ -746,16 +752,8 @@ theorem evalHom_injective_two (p : ℕ) (hp : p.Prime) :
   rw [Finset.sum_congr rfl h_delta, Finset.sum_ite_eq_of_mem' R.support s _ hs_mem] at h_zero
   exact hs_coeff h_zero
 
-/-- Surjectivity of `evalHomLocal` follows from surjectivity onto `pLocalSubring`. -/
-lemma evalHomLocal_surjective (n : ℕ) [NeZero n] (p : ℕ)
-    (h_surj : ∀ f ∈ pLocalSubring n p, f ∈ (evalHom n p).range) :
-    Function.Surjective (evalHomLocal n p) := by
-  intro ⟨f, hf⟩
-  obtain ⟨P, hP⟩ := h_surj f hf
-  exact ⟨P, Subtype.ext ((evalHomLocal_coe n p P).trans hP)⟩
-
 /-- Injectivity of `evalHomLocal` follows from injectivity of `evalHom`. -/
-lemma evalHomLocal_injective (n : ℕ) [NeZero n] (p : ℕ) (_hp : p.Prime)
+lemma evalHomLocal_injective (n : ℕ) [NeZero n] (p : ℕ)
     (h_inj : Function.Injective (evalHom n p)) :
     Function.Injective (evalHomLocal n p) := by
   intro P Q hPQ
@@ -775,8 +773,8 @@ polynomial ring `ℤ[X]` on the single generator `T(p)`. -/
 noncomputable def polynomialRingEquivOne :
     MvPolynomial (Fin 1) ℤ ≃+* pLocalSubring 1 p :=
   RingEquiv.ofBijective (evalHomLocal 1 p)
-    ⟨Inj.evalHomLocal_injective 1 p hp (Inj.evalHom_injective_one p hp),
-     Inj.evalHomLocal_surjective 1 p (pLocalSubring_one_le_evalHom_range p hp.pos)⟩
+    ⟨Inj.evalHomLocal_injective 1 p (Inj.evalHom_injective_one p hp),
+     evalHomLocal_one_surjective p hp.pos⟩
 
 /-- **Shimura, Theorem 3.20 for `n = 2`**: the `p`-local Hecke ring of `GL₂` is the
 polynomial ring `ℤ[X₁, X₂]` on the generators `T(1, p)` and `T(p, p)`. This is the case the
@@ -784,7 +782,7 @@ classical theory of modular forms uses. -/
 noncomputable def polynomialRingEquivTwo :
     MvPolynomial (Fin 2) ℤ ≃+* pLocalSubring 2 p :=
   RingEquiv.ofBijective (evalHomLocal 2 p)
-    ⟨Inj.evalHomLocal_injective 2 p hp (Inj.evalHom_injective_two p hp),
-     Inj.evalHomLocal_surjective 2 p (pLocalSubring_two_le_evalHom_range p hp)⟩
+    ⟨Inj.evalHomLocal_injective 2 p (Inj.evalHom_injective_two p hp),
+     evalHomLocal_two_surjective p hp⟩
 
 end HeckeRing.GLn
