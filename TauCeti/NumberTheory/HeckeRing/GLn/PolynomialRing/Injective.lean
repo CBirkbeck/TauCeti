@@ -340,6 +340,10 @@ private noncomputable def evalAddHom (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLn
     IntegralHeckeRing 2 →+ ℤ :=
   AddMonoidHom.mk' (fun f ↦ f D) (fun g h ↦ HeckeCosetModule.add_apply g h D)
 
+/-- `evalAddHom D` is evaluation at `D`. -/
+@[simp] private lemma evalAddHom_apply (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
+    (f : IntegralHeckeRing 2) : evalAddHom D f = f D := rfl
+
 /-- Scalar shift identity: for any `f : IntegralHeckeRing 2`, scalar `c > 0`, and positive
 divisibility-chain `b`, evaluating `f * diagElem(c,c)` at `diagCoset(b * c)` equals
 `f(diagCoset b)`. -/
@@ -352,10 +356,7 @@ private lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHe
   intro D α
   obtain ⟨a, ha_pos, ha_div, hD_eq⟩ := exists_diagonal_representative D
   rw [hD_eq, T_single_diag_mul_T_scalar c hc a ha_pos α]
-  change HeckeCosetModule.single ℤ (diagCoset (a * fun _ : Fin 2 ↦ c)) α
-      (diagCoset (b * fun _ : Fin 2 ↦ c)) =
-    HeckeCosetModule.single ℤ (diagCoset a) α (diagCoset b)
-  rw [HeckeCosetModule.single_apply, HeckeCosetModule.single_apply]
+  rw [evalAddHom_apply, HeckeCosetModule.single_apply, HeckeCosetModule.single_apply]
   by_cases hab : a = b
   · subst hab; rw [if_pos rfl, if_pos rfl]
   · have h_ne_1 : diagCoset (a * fun _ : Fin 2 ↦ c) ≠ diagCoset (b * fun _ : Fin 2 ↦ c) := by

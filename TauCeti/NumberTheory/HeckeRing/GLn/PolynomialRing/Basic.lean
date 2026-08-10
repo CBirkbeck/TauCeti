@@ -181,10 +181,7 @@ lemma evalHom_apply (P : MvPolynomial (Fin n) ℤ)
     (D : HeckeCoset (posDetInt n) (SLnZ n) (SLnZ n)) :
     evalHom n p P D =
       ∑ d ∈ P.support, P.coeff d • (∏ i, heckeGen n p i ^ d i : IntegralHeckeRing n) D := by
-  rw [evalHom_def]
-  change (MvPolynomial.eval₂ (Int.castRingHom (IntegralHeckeRing n))
-    (fun k : Fin n ↦ heckeGen n p k) P) D = _
-  rw [MvPolynomial.eval₂_eq']
+  rw [evalHom_def, MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_eq']
   refine (Finset.sum_apply' D).trans (Finset.sum_congr rfl fun d _ ↦ ?_)
   -- beta-reduce the cast left by `eval₂_eq'`, then turn the `ℤ`-multiple into a `ℤ`-scalar so
   -- that the wrapper's own `smul_apply` closes the goal
