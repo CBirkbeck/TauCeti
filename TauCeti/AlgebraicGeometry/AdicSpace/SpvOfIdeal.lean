@@ -79,8 +79,11 @@ def spvOfIdeal (I : Ideal A) (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radi
   {v | characteristicSubgroupOfIdeal v.valuation I hfg = ⊤}
 
 /-- Membership in `Spv (A, I)`, unfolded through the canonical valuation of the point. The
-usable form is `mem_spvOfIdeal_ofValuation`, which tests an arbitrary representative. -/
-@[simp]
+usable form is `mem_spvOfIdeal_ofValuation`, which tests an arbitrary representative.
+
+Deliberately not `@[simp]`: its right-hand side rewrites the left-hand side of
+`mem_spvOfIdeal_ofValuation`, which is `@[simp]` and is the form consumers want, so tagging
+both puts the sibling out of simp-normal form. See the note on this in the PR description. -/
 theorem mem_spvOfIdeal_iff {I : Ideal A} {hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical}
     {v : Spv A} :
     v ∈ spvOfIdeal I hfg ↔ characteristicSubgroupOfIdeal v.valuation I hfg = ⊤ :=
