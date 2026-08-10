@@ -216,10 +216,10 @@ theorem matrixCoeff_mem_of_isIrreducible (h : IsIrrepSkeleton models) {V : Type*
 
 omit [IsTopologicalGroup G] [CompactSpace G] [T2Space G] [MeasurableSpace G] [BorelSpace G] in
 /-- **A matrix coefficient of a vector in an irreducible invariant subspace is accounted for.**
-If `W` is invariant under `π` and the restriction of `π` to `W` is irreducible, then for `x ∈ W`
-and any `w` the matrix coefficient of `π` at `x`, `w` lies in the span of the skeleton's
-coefficients. -/
-private theorem matrixCoeff_mem_of_mem_of_isIrreducible (h : IsIrrepSkeleton models) {V : Type*}
+If `W` is a finite-dimensional subspace invariant under `π`, on which `π` restricts to a unitary
+irreducible representation, then for `x ∈ W` and any `w` the matrix coefficient of `π` at `x`, `w`
+lies in the span of the skeleton's coefficients. -/
+theorem matrixCoeff_mem_of_mem_of_isIrreducible (h : IsIrrepSkeleton models) {V : Type*}
     [NormedAddCommGroup V] [InnerProductSpace 𝕜 V]
     {π : ContRepresentation 𝕜 G V} (hπ : Continuous π)
     {W : Submodule 𝕜 V} [FiniteDimensional 𝕜 W] (hU : ∀ g, ∀ y ∈ W, π g y ∈ W)
