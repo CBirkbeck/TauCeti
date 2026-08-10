@@ -343,13 +343,10 @@ noncomputable def quadraticTwist (E : WeierstrassCurve K) (L : Type*) [Field L] 
 
 variable (L) in
 /-- **Elimination for `quadraticTwist`.** The twist *is* the twist by the trace and norm of some
-generator — an equation, not merely an isomorphism, so that everything the file proves about
-`quadraticTwistOf` (the coefficients, `Δ`, `c₄`, `c₆`) transfers to `quadraticTwist`. It is the
-one place that unfolds the definition: the body is not exposed across the module boundary, so
-downstream modules could not unfold it anyway, and every other result here — including
-`j_quadraticTwist`, where the `IsElliptic` instance makes the rewrite dependent and `simp_rw` is
-needed — goes through this lemma instead. `L` is explicit: it occurs only inside the existential,
-so nothing else could determine it. -/
+generator of `L/K` — an equation, not merely an isomorphism, so everything proved about
+`quadraticTwistOf` (the coefficients, `Δ`, `c₄`, `c₆`) transfers to `quadraticTwist`. Use it to
+discharge a `quadraticTwist` goal. `L` is explicit because it occurs only inside the
+existential. -/
 theorem exists_quadraticTwist_eq :
     ∃ θ : L, θ ∉ Set.range (algebraMap K L) ∧
       E.quadraticTwist L = E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ) :=
