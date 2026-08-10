@@ -21,18 +21,20 @@ square.
 ## Main results
 
 * `WeierstrassCurve.Affine.norm_algebraMap_coordinateRing`: on an element of the coordinate
-  ring the norm is `Algebra.norm F[X]`, read as a rational function.
-* `WeierstrassCurve.Affine.norm_algebraMap_ratFunc`: on a rational function of `x` the norm
-  is its square, the extension being quadratic.
+  ring the norm is `Algebra.norm R[X]`, read as a rational function.
+* `WeierstrassCurve.Affine.norm_algebraMap_eq_sq`: on a rational function of `x` the norm is its
+  square, the extension being quadratic.
 * `WeierstrassCurve.Affine.intDegree_norm_algebraMap_coordinateRing`: consequently the
   `intDegree` of the norm of a function regular away from infinity is the degree of its polynomial
   norm.
 
-No new norm is defined: `Algebra.norm (RatFunc F)` is the norm, and multiplicativity, `map_one` and
-vanishing exactly at `0` are Mathlib's `map_mul`, `map_one` and `Algebra.norm_eq_zero_iff`. What is
-new is the two computations, and the choice of `RatFunc F` as the base rather than the isomorphic
-`FractionRing F[X]`: the degree theory of rational functions — `RatFunc.intDegree`, and with it
-Mathlib's place at infinity `RatFunc.inftyValuation` — is stated only for `RatFunc`.
+No new norm is defined: `Algebra.norm L` is the norm, and multiplicativity, `map_one` and vanishing
+exactly at `0` are Mathlib's `map_mul`, `map_one` and `Algebra.norm_eq_zero_iff`. What is new is the
+two computations. They sit at the level of `finrank_functionField`, which they use — an integral
+domain of coefficients and an arbitrary fraction field `L` of `R[X]` — so they serve `RatFunc R` and
+`FractionRing R[X]` alike. Only the degree corollary forces `RatFunc`: the degree theory of rational
+functions, `RatFunc.intDegree` and with it Mathlib's place at infinity `RatFunc.inftyValuation`, is
+stated for no other fraction field.
 
 `RatFunc.liftAlgebra` is a *scoped* instance in Mathlib, because it would create a diamond when the
 extension is `RatFunc F` itself; files consuming these results open the `RatFunc` scope as this one
@@ -71,31 +73,33 @@ open scoped RatFunc
 
 namespace WeierstrassCurve.Affine
 
-variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)
+section Domain
 
-section FractionField
-
--- Both computations are stated over an arbitrary fraction field `L` of `F[X]`, as
--- `finrank_functionField` is, so that they serve `RatFunc F` and `FractionRing F[X]` alike.
-variable (L : Type*) [Field L] [Algebra F[X] L] [IsFractionRing F[X] L]
-  [Algebra L W.FunctionField] [IsScalarTower F[X] L W.FunctionField]
+-- Both computations sit at the level of `finrank_functionField`, which they use: an integral
+-- domain of coefficients, and an arbitrary fraction field `L` of `R[X]` so that they serve
+-- `RatFunc R` and `FractionRing R[X]` alike.
+variable {R : Type*} [CommRing R] [IsDomain R] (W : _root_.WeierstrassCurve.Affine R)
+  (L : Type*) [Field L] [Algebra R[X] L] [IsFractionRing R[X] L]
+  [Algebra L W.FunctionField] [IsScalarTower R[X] L W.FunctionField]
 
 /-- **On a function regular away from infinity the norm is the polynomial norm**: for `u` in the
-coordinate ring, `N u` is `Algebra.norm F[X] u` read as a rational function. -/
+coordinate ring, `N u` is `Algebra.norm R[X] u` read as a rational function. -/
 @[simp]
 theorem norm_algebraMap_coordinateRing (u : W.CoordinateRing) :
     Algebra.norm L (algebraMap W.CoordinateRing W.FunctionField u) =
-      algebraMap F[X] L (Algebra.norm F[X] u) :=
-  Algebra.norm_localization (R := F[X]) (M := nonZeroDivisors F[X]) (S := W.CoordinateRing) u
+      algebraMap R[X] L (Algebra.norm R[X] u) :=
+  Algebra.norm_localization (R := R[X]) (M := nonZeroDivisors R[X]) (S := W.CoordinateRing) u
 
-/-- **On a function of `x` alone the norm is the square**, the extension `F(W) / F(x)` being
+/-- **On a function of `x` alone the norm is the square**, the extension `R(W) / R(x)` being
 quadratic. -/
 @[simp]
 theorem norm_algebraMap_eq_sq (r : L) :
     Algebra.norm L (algebraMap L W.FunctionField r) = r ^ 2 := by
   rw [Algebra.norm_algebraMap, finrank_functionField W L]
 
-end FractionField
+end Domain
+
+variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)
 
 /-- **The degree of the norm of a function regular away from infinity** is the degree of its
 polynomial norm. This is the input to the order at infinity, `ord_∞ f = -deg N f`, and it is where
