@@ -123,7 +123,7 @@ theorem lt_one_of_not_idealMeetsCharacteristicSubgroup {v : Valuation A Γ₀} {
   push Not at hge
   have ha0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := by
     simpa using (zero_lt_one.trans_le hge).ne'
-  exact hdisj ⟨a, haI, ha0, valueGroup_mk_mem_characteristicSubgroup_of_one_le hge⟩
+  exact hdisj ⟨a, haI, ha0, valueGroup_mk_mem_characteristicSubgroup_of_one_le h0 ha0 hge⟩
 
 /-- The ideal condition inherits that monotonicity. -/
 theorem IdealCofinalFor.mono_subgroup {v : Valuation A Γ₀}
@@ -171,7 +171,7 @@ theorem idealMeetsCharacteristicSubgroup_of_one_le {v : Valuation A Γ₀} {I : 
     (haI : a ∈ I) (ha : 1 ≤ v a) : IdealMeetsCharacteristicSubgroup v I := by
   have h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := by
     simpa using (zero_lt_one.trans_le ha).ne'
-  exact ⟨a, haI, h0, valueGroup_mk_mem_characteristicSubgroup_of_one_le ha⟩
+  exact ⟨a, haI, h0, valueGroup_mk_mem_characteristicSubgroup_of_one_le h0 ha⟩
 
 /-- **The bridge from the ideal to the group.** An ideal is cofinal for `H` exactly when every
 one of its nonzero values is a cofinal *element* of the value group. The vanishing values need

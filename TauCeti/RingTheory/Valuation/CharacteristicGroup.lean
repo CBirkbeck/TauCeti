@@ -230,14 +230,17 @@ theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le_restrict
     valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v :=
   mem_characteristicSubgroup_of_restrict h1 (v.restrict_eq_mk h)
 
-/-- An attained value at least `1` puts its class in `cΓ_v`. This is the form consumers hold:
-`1 ≤ v a` already forces `v a ≠ 0`, so no separate nonvanishing hypothesis is needed. -/
+/-- An attained value at least `1` puts its class in `cΓ_v`. This is the form consumers hold,
+since they meet `1 ≤ v a` rather than a bound in the value group.
+
+The nonvanishing hypothesis `h` is implied by `h1`, but cannot be dropped: it appears in the
+`valueGroup.mk` of the conclusion, so deriving it inside the proof leaves an anonymous term
+there that `rw [← v.restrict_eq_mk]` cannot match. -/
 theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le {v : Valuation A Γ₀} {a : A}
-    (h1 : 1 ≤ v a) :
-    valueGroup.mk (.ofClass v) 1 a (by simp) (by simpa using (zero_lt_one.trans_le h1).ne')
-      ∈ characteristicSubgroup v := by
-  refine valueGroup_mk_mem_characteristicSubgroup_of_one_le_restrict _ ?_
-  rw [← WithZero.coe_le_coe, ← v.restrict_eq_mk]
+    (h : (MonoidWithZeroHom.ofClass v) a ≠ 0) (h1 : 1 ≤ v a) :
+    valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v := by
+  refine valueGroup_mk_mem_characteristicSubgroup_of_one_le_restrict h ?_
+  rw [← WithZero.coe_le_coe, ← v.restrict_eq_mk h]
   have : v.restrict 1 ≤ v.restrict a := v.restrict_le_iff.mpr (by simpa using h1)
   simpa using this
 
