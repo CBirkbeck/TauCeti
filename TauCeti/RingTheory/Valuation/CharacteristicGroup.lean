@@ -90,24 +90,6 @@ theorem cofinalValue_iff {v : Valuation A Γ₀} {a : A} :
     CofinalValue v a ↔ ∀ γ : ValueGroup₀ (.ofClass v), 0 < γ → ∃ n : ℕ, v.restrict a ^ n < γ :=
   Iff.rfl
 
-/-- A cofinal value is at most `1`: otherwise its powers stay above `1`. -/
-theorem CofinalValue.le_one {v : Valuation A Γ₀} {a : A} (h : CofinalValue v a) :
-    v a ≤ 1 := by
-  by_contra h_gt
-  push Not at h_gt
-  have h_res : 1 < v.restrict a := by
-    have := (v.restrict_lt_iff (x := 1) (y := a)).mpr (by simpa using h_gt)
-    simpa using this
-  obtain ⟨n, hn⟩ := h 1 zero_lt_one
-  exact absurd hn (not_lt_of_ge (one_le_pow_of_one_le' h_res.le n))
-
-/-- Cofinality is downward closed in the value: a smaller value is cofinal whenever a
-larger one is (Wedhorn Lemma 7.1). -/
-theorem CofinalValue.of_le {v : Valuation A Γ₀} {a b : A} (h : CofinalValue v a)
-    (hba : v b ≤ v a) : CofinalValue v b := fun γ hγ ↦
-  let ⟨n, hn⟩ := h γ hγ
-  ⟨n, lt_of_le_of_lt (pow_le_pow_left' (v.restrict_le_iff.mpr hba) n) hn⟩
-
 /-- Cofinality transports along an equivalence of valuations, through the ordered
 isomorphism of their value groups. -/
 theorem CofinalValue.of_isEquiv {v : Valuation A Γ₀} {w : Valuation A Γ₀'}
