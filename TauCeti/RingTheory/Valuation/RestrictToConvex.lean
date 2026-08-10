@@ -281,4 +281,27 @@ theorem unitsWithZeroEquiv_monotone {G : Type*} [CommGroup G] [LinearOrder G]
     WithZero.coe_unitsWithZeroEquiv_eq_units_val]
   exact huw
 
+/-- The units identification packaged as an ordered monoid hom, which is the form
+`TauCeti.ConvexSubgroup.comap` consumes: a bare `MulEquiv` carries `MonoidHomClass` but not
+`OrderHomClass`. -/
+noncomputable def unitsWithZeroOrderHom {G : Type*} [CommGroup G] [LinearOrder G]
+    [IsOrderedMonoid G] : OrderMonoidHom ((WithZero G)ˣ) G where
+  toFun := WithZero.unitsWithZeroEquiv
+  map_one' := map_one _
+  map_mul' := map_mul _
+  monotone' := unitsWithZeroEquiv_monotone
+
+/-- Carry a convex subgroup of `G` back to one of `(WithZero G)ˣ`. This is the transport that
+lets `cΓ_v(I)`, which lives in the value group, be handed to `Valuation.restrictToConvex`,
+which wants a convex subgroup of the units of the value monoid. -/
+noncomputable def ConvexSubgroup.ofValueGroup {G : Type*} [CommGroup G] [LinearOrder G]
+    [IsOrderedMonoid G] (K : ConvexSubgroup G) : ConvexSubgroup ((WithZero G)ˣ) :=
+  ConvexSubgroup.comap unitsWithZeroOrderHom K
+
+@[simp]
+theorem mem_convexSubgroup_ofValueGroup {G : Type*} [CommGroup G] [LinearOrder G]
+    [IsOrderedMonoid G] {K : ConvexSubgroup G} {u : (WithZero G)ˣ} :
+    u ∈ ConvexSubgroup.ofValueGroup K ↔ WithZero.unitsWithZeroEquiv u ∈ K :=
+  ConvexSubgroup.mem_comap
+
 end Valuation
