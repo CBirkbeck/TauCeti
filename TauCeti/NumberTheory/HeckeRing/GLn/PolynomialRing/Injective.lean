@@ -133,6 +133,9 @@ theorem evalHom_one_injective (p : ℕ) (hp : 1 < p) : Function.Injective (evalH
   apply hcoeff
   suffices h : ((evalHom 1 p) R).toFun D = MvPolynomial.coeff s R from h ▸ h0
   rw [evalHom_def]
+  -- `evalHom` is sealed (`public section`, no `@[expose]`), so it does not reduce to
+  -- `eval₂Hom` by `rw`/`unfold` here; `evalHom_def` names the equation and this `change`
+  -- takes the resulting term to its `Finsupp` application form.
   change Finsupp.toFun (MvPolynomial.eval₂Hom (Int.castRingHom (IntegralHeckeRing 1))
     (fun k ↦ heckeGen 1 p k) R) D = _
   simp only [MvPolynomial.coe_eval₂Hom, MvPolynomial.eval₂_eq', Fin.prod_univ_one]
@@ -143,6 +146,9 @@ theorem evalHom_one_injective (p : ℕ) (hp : 1 < p) : Function.Injective (evalH
     Finset.sum_congr rfl (fun x _ ↦ by
       rw [heckeGen_pow_one p (Nat.lt_of_lt_of_le Nat.zero_lt_one hp.le)]
       exact intCast_mul_diagElem_eq_single (n := 1) (fun _ ↦ p ^ x 0) (R.coeff x))
+  -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
+  -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
+  -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
   change (∑ x ∈ R.support,
       (Int.castRingHom (IntegralHeckeRing 1)) (MvPolynomial.coeff x R) * heckeGen 1 p 0 ^ x 0)
         D = MvPolynomial.coeff s R
@@ -273,6 +279,8 @@ private lemma det_rep_T_gen_zero_pow_mul (q : {p : ℕ // p.Prime}) (a₀ b₀ :
         (HeckeCoset.rep (diagCoset (![1, q.1])))
         (HeckeCoset.rep D₂)) D' ≠ 0 := fun h ↦ hD₂_ne (by rw [h, mul_zero])
     rw [det_rep_eq_mul_of_m_ne_zero _ _ _ hm_ne,
+      -- `![…]` literals that are only extensionally equal do not unify syntactically, so the
+      -- intended spelling is stated here for the following rewrite to match.
       show (↑(↑(HeckeCoset.rep (diagCoset (![1, q.1]))) : GL (Fin 2) ℚ) :
           Matrix (Fin 2) (Fin 2) ℚ).det = (q.1 : ℚ) from by
         rw [prod_rep_T_diag (![1, q.1]) (fun i ↦ by fin_cases i <;> simp [q.2.pos])]
@@ -348,20 +356,32 @@ private lemma T_mul_T_scalar_eval_shifted (c : ℕ) (hc : 0 < c) (f : IntegralHe
   classical
   induction f using HeckeCosetModule.induction_linear with
   | h0 =>
+    -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
+    -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
+    -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
     change ((0 : IntegralHeckeRing 2) * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) =
       (0 : IntegralHeckeRing 2) (diagCoset b)
     rw [zero_mul]; rfl
   | hadd g h ihg ihh =>
     set g' : IntegralHeckeRing 2 := g
     set h' : IntegralHeckeRing 2 := h
+    -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
+    -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
+    -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
     change ((g' + h') * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) =
       (g' + h') (diagCoset b)
     rw [add_mul,
+      -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
+      -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
+      -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
       show (g' * diagElem (fun _ : Fin 2 ↦ c) + h' * diagElem (fun _ : Fin 2 ↦ c))
             (diagCoset (b * fun _ ↦ c)) =
             (g' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) +
             (h' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset (b * fun _ ↦ c)) from
         Finsupp.add_apply _ _ _,
+      -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
+      -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
+      -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
       show (g' + h') (diagCoset b) = g' (diagCoset b) + h' (diagCoset b) from
         Finsupp.add_apply _ _ _,
       ihg, ihh]
@@ -394,13 +414,22 @@ private lemma T_mul_T_scalar_eval_zero_of_not_dvd (c : ℕ) (hc : 0 < c) (f : In
   classical
   induction f using HeckeCosetModule.induction_linear with
   | h0 =>
+    -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
+    -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
+    -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
     change ((0 : IntegralHeckeRing 2) * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0
     rw [zero_mul]; rfl
   | hadd g h ihg ihh =>
     set g' : IntegralHeckeRing 2 := g
     set h' : IntegralHeckeRing 2 := h
+    -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
+    -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
+    -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
     change ((g' + h') * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) = 0
     rw [add_mul,
+      -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
+      -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
+      -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
       show (g' * diagElem (fun _ : Fin 2 ↦ c) + h' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) =
             (g' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) +
             (h' * diagElem (fun _ : Fin 2 ↦ c)) (diagCoset d) from Finsupp.add_apply _ _ _,
@@ -475,6 +504,8 @@ private lemma T_ad_one_p_mul_T_ad_one_ppow_eval_leading (p : ℕ) (hp : p.Prime)
   · subst hn
     rw [pow_zero, heckeTDiag_one_one, mul_one,
       heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _), diagElem_def,
+      -- `![…]` literals that are only extensionally equal do not unify syntactically, so the
+      -- intended spelling is stated here for the following rewrite to match.
       show (![1, p ^ (0 + 1)] : Fin 2 → ℕ) = (![1, p] : Fin 2 → ℕ) from by
         funext i; fin_cases i <;> simp,
       HeckeCosetModule.single_apply, if_pos rfl]
@@ -529,6 +560,9 @@ private lemma T_ad_one_p_mul_supp_ne_leading_eval_zero (p : ℕ) (hp : p.Prime) 
     have h_div := ha_form ▸ isDvdChain_iff.mp ha_div (by decide : (0 : Fin 2) ≤ 1)
     exact (Nat.pow_dvd_pow_iff_le_right hp.one_lt).mp h_div
   rw [hDa, ha_form, ← diagElem_mul_diagElem]
+  -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a ring element at a coset
+  -- is `Finsupp` application through the wrapper: the equation holds by defeq but no
+  -- `Finsupp` lemma matches syntactically, so the shape is stated rather than rewritten.
   change (diagElem (![1, p] : Fin 2 → ℕ) * diagElem (![p^i, p^(n-i)] : Fin 2 → ℕ)) _ = 0
   rw [T_elem_ppow_factor p hp i (n - i) hi_le_sub, ← mul_assoc]
   exact T_mul_T_pp_pow_eval_at_one_zero p hp i (p ^ (n + 1)) hi_ge (pow_pos hp.pos _) _
@@ -595,6 +629,8 @@ private lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
       rw [hs, ih, one_mul, ← diagElem_mul_diagElem]
       rw [show diagElem (![1, p] : Fin 2 → ℕ) = heckeTDiag 1 p from
           (heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _)).symm,
+        -- `![…]` literals that are only extensionally equal do not unify syntactically, so the
+        -- intended spelling is stated here for the following rewrite to match.
         show diagElem (![1, p ^ n] : Fin 2 → ℕ) = heckeTDiag 1 (p ^ n) from
           (heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp.pos n) (one_dvd _)).symm]
       exact T_ad_one_p_mul_T_ad_one_ppow_eval_leading p hp n
@@ -689,9 +725,15 @@ private lemma evalHom_apply_eq_sum_monomial (p : ℕ) (R : MvPolynomial (Fin 2) 
     (evalHom 2 p R) D =
     ∑ d ∈ R.support, R.coeff d * (heckeGen 2 p 0 ^ (d 0) * heckeGen 2 p 1 ^ (d 1)) D := by
   rw [evalHom_def]
+  -- `evalHom` is sealed (`public section`, no `@[expose]`), so it does not reduce to
+  -- `eval₂Hom` by `rw`/`unfold` here; `evalHom_def` names the equation and this `change`
+  -- takes the resulting term to its `Finsupp` application form.
   change (MvPolynomial.eval₂ (Int.castRingHom (IntegralHeckeRing 2))
     (fun k : Fin 2 ↦ heckeGen 2 p k) R) D = _
   rw [MvPolynomial.eval₂_eq]
+  -- `evalHom` is sealed (`public section`, no `@[expose]`), so it does not reduce to
+  -- `eval₂Hom` by `rw`/`unfold` here; `evalHom_def` names the equation and this `change`
+  -- takes the resulting term to its `Finsupp` application form.
   change (∑ d ∈ R.support, (Int.castRingHom (IntegralHeckeRing 2)) (MvPolynomial.coeff d R) *
     ∏ i ∈ d.support, heckeGen 2 p i ^ d i) D = _
   rw [show (∑ d ∈ R.support, (Int.castRingHom (IntegralHeckeRing 2)) (MvPolynomial.coeff d R) *
@@ -699,6 +741,9 @@ private lemma evalHom_apply_eq_sum_monomial (p : ℕ) (R : MvPolynomial (Fin 2) 
       ∑ d ∈ R.support, ((Int.castRingHom (IntegralHeckeRing 2)) (MvPolynomial.coeff d R) *
         ∏ i ∈ d.support, heckeGen 2 p i ^ d i) D from Finset.sum_apply' _]
   refine Finset.sum_congr rfl (fun d _ ↦ ?_)
+  -- `evalHom` is sealed (`public section`, no `@[expose]`), so it does not reduce to
+  -- `eval₂Hom` by `rw`/`unfold` here; `evalHom_def` names the equation and this `change`
+  -- takes the resulting term to its `Finsupp` application form.
   change (((R.coeff d : ℤ) : IntegralHeckeRing 2) * (∏ k ∈ d.support, heckeGen 2 p k ^ d k)) D = _
   rw [show ((R.coeff d : ℤ) : IntegralHeckeRing 2) = (R.coeff d) • (1 : IntegralHeckeRing 2) from
     (zsmul_one _).symm, smul_mul_assoc, one_mul]
