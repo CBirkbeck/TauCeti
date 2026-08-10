@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.Analysis.Complex.Conformal.Hyperbolic.Distance
+public import TauCeti.Analysis.Calculus.DSlope.Basic
 public import TauCeti.Analysis.Complex.Conformal.UnitDisc.Automorphism.Classification
 
 /-!
@@ -89,7 +90,9 @@ private theorem exists_mem_ball_norm_dslope_schwarzPickConjugate_eq_one_of_pseud
       ← pseudoHyperbolicExpr_def, ← hξ_def, hξ_norm]
     exact heq
   rw [div_one]
-  exact norm_dslope_zero_eq_one_of_norm_map_eq (schwarzPickConjugate_apply_zero f w) hξ_ne hg_ξ
+  refine norm_dslope_eq_one_of_norm_sub_map_eq hξ_ne ?_
+  rw [schwarzPickConjugate_apply_zero f w, sub_zero, sub_zero]
+  exact hg_ξ
 
 /--
 **Rigidity in the Schwarz--Pick theorem.**  If a holomorphic self-map `f` of the open unit disc

@@ -8,6 +8,7 @@ public import Mathlib.Analysis.Complex.Schwarz
 public import Mathlib.Analysis.Calculus.DSlope
 public import Mathlib.Data.Set.Function
 public import TauCeti.Analysis.Complex.Conformal.SchwarzPick.Isometry
+public import TauCeti.Analysis.Calculus.DSlope.Basic
 import Mathlib.Analysis.Calculus.Deriv.Mul
 
 /-!
@@ -85,8 +86,10 @@ theorem exists_eqOn_const_mul_of_leftInvOn_ball_of_map_zero
   have hz₀_ne : z₀ ≠ 0 := by
     rw [hz₀_def]; norm_num
   -- The slope has modulus one because `f` fixes the origin and preserves the modulus.
-  have hkey : ‖dslope f 0 z₀‖ = 1 :=
-    norm_dslope_zero_eq_one_of_norm_map_eq hf0 hz₀_ne (hnorm z₀ hz₀_mem)
+  have hkey : ‖dslope f 0 z₀‖ = 1 := by
+    refine norm_dslope_eq_one_of_norm_sub_map_eq hz₀_ne ?_
+    rw [hf0, sub_zero, sub_zero]
+    exact hnorm z₀ hz₀_mem
   -- The equality case of the Schwarz lemma makes `f` affine with this slope.
   set c : ℂ := dslope f 0 z₀ with hc_def
   have hmaps_closed : MapsTo f (ball (0 : ℂ) 1) (closedBall (f 0) 1) := by

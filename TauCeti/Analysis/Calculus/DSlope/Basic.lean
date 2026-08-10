@@ -16,27 +16,28 @@ a normed field and its norm, with no calculus in them.
 
 ## Main results
 
-* `TauCeti.norm_dslope_zero_eq_one_of_norm_map_eq`: a map fixing the origin has unimodular
-  difference quotient at any point where it preserves the modulus. This is the hypothesis the
-  equality case of Schwarz's lemma (`Complex.affine_of_mapsTo_ball_of_norm_dslope_eq_div`) takes,
-  and the two Tau Ceti consumers of that equality case — the Schwarz--Pick rigidity theorem and
-  the classification of the disc rotations — reach it by exactly this route.
+* `TauCeti.norm_dslope_eq_one_of_norm_sub_map_eq`: a map that moves two points exactly as far
+  apart as they already are has unimodular difference quotient between them. This is the
+  hypothesis the equality case of Schwarz's lemma
+  (`Complex.affine_of_mapsTo_ball_of_norm_dslope_eq_div`) takes, and the two Tau Ceti consumers of
+  that equality case — the Schwarz--Pick rigidity theorem and the classification of the disc
+  rotations — reach it by exactly this route, at base point `0`.
 -/
 
 public section
 
 namespace TauCeti
 
-/-- **A map fixing the origin has unit difference quotient wherever it preserves the modulus.**
-For `g 0 = 0` and `ξ ≠ 0` with `‖g ξ‖ = ‖ξ‖`, the difference quotient `dslope g 0 ξ` is
+/-- **A map preserving the distance between two points has unit difference quotient between
+them.** For `y ≠ x` with `‖g y - g x‖ = ‖y - x‖`, the difference quotient `dslope g x y` is
 unimodular.
 
-No differentiability is involved: at a point other than the base point `dslope` is the plain
-difference quotient. -/
-lemma norm_dslope_zero_eq_one_of_norm_map_eq {𝕜 : Type*} [NontriviallyNormedField 𝕜]
-    {g : 𝕜 → 𝕜} {ξ : 𝕜} (hg0 : g 0 = 0) (hξ : ξ ≠ 0) (hnorm : ‖g ξ‖ = ‖ξ‖) :
-    ‖dslope g 0 ξ‖ = 1 := by
-  rw [dslope_of_ne _ hξ, slope_def_field, hg0, sub_zero, sub_zero, norm_div, hnorm,
-    div_self (norm_ne_zero_iff.mpr hξ)]
+No differentiability is involved: away from the base point `dslope` is the plain difference
+quotient. -/
+lemma norm_dslope_eq_one_of_norm_sub_map_eq {𝕜 : Type*} [NontriviallyNormedField 𝕜]
+    {g : 𝕜 → 𝕜} {x y : 𝕜} (hxy : y ≠ x) (hnorm : ‖g y - g x‖ = ‖y - x‖) :
+    ‖dslope g x y‖ = 1 := by
+  rw [dslope_of_ne _ hxy, slope_def_field, norm_div, hnorm,
+    div_self (norm_ne_zero_iff.mpr (sub_ne_zero.mpr hxy))]
 
 end TauCeti

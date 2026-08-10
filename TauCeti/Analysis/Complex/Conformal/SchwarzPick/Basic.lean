@@ -7,7 +7,6 @@ module
 public import Mathlib.Analysis.Calculus.FDeriv.Defs
 public import Mathlib.Data.Set.Function
 public import TauCeti.Analysis.Complex.Conformal.PseudoHyperbolic
-public import TauCeti.Analysis.Calculus.DSlope.Basic
 import Mathlib.Analysis.Complex.Schwarz
 import TauCeti.Analysis.Complex.Conformal.Moebius
 
