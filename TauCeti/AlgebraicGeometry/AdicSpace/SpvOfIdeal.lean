@@ -40,9 +40,10 @@ The AINTLIB adic-spaces development (`aintlib-adic-spaces`, revision `37bbdaeb9`
 
 Taking clause (ii) as the definition sidesteps `cΓ_v(I)` entirely, so that development needs
 neither Lemma 7.2 nor Definition 7.3. This file instead takes clause (i), `cΓ_v(I) = Γ_v`, as
-Wedhorn does in §7.1.1, and recovers the disjunctive form as a theorem —
-`mem_spvOfIdeal_iff_forall_cofinalValue` is essentially AINTLIB's definition, proved rather than
-assumed. The two routes agree by Lemma 7.4.
+Wedhorn does in §7.1.1, and recovers the disjunctive form as a theorem:
+`mem_spvOfIdeal_iff_forall_cofinalValue_or_characteristicSubgroup_eq_top`
+is essentially AINTLIB's definition, proved rather than assumed. The two routes agree by
+Lemma 7.4.
 
 ## Main definitions
 
@@ -52,8 +53,8 @@ assumed. The two routes agree by Lemma 7.4.
 
 * `TauCeti.ValuationSpectrum.isEquiv_valuation_ofValuation` : the canonical valuation of the
   point of a valuation `w` is equivalent to `w`.
-* `TauCeti.ValuationSpectrum.mem_spvOfIdeal_iff_forall_cofinalValue` : **Lemma 7.4** at the
-  `Spv` level — the criterion in the form a consumer can actually check.
+* `mem_spvOfIdeal_iff_forall_cofinalValue_or_characteristicSubgroup_eq_top` : **Lemma 7.4** at the `Spv` level — the criterion in the form a consumer can actually
+  check.
 * `TauCeti.ValuationSpectrum.mem_spvOfIdeal_iff` : membership unfolded through the canonical
   valuation, and `TauCeti.ValuationSpectrum.mem_spvOfIdeal_ofValuation` : membership tested on
   an arbitrary representative, which is what makes the definition usable.
@@ -71,9 +72,7 @@ open TauCeti.Valuation MonoidWithZeroHom
 
 variable {A : Type*} [CommRing A]
 
-/-- The canonical valuation of the point determined by `w` is equivalent to `w`. Both sides
-compare elements by `w`, so this is the two simp lemmas `valuation_le_iff` and
-`vle_ofValuation` back to back. -/
+/-- The canonical valuation of the point determined by `w` is equivalent to `w`. -/
 theorem isEquiv_valuation_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (w : Valuation A Γ₀) : Valuation.IsEquiv (ofValuation w).valuation w := by
   intro x y
@@ -108,7 +107,7 @@ theorem mem_spvOfIdeal_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZe
 exactly when every element of `I` has cofinal value, or the characteristic subgroup is already
 everything. Stated at the level of `Spv A`, so consumers need not reach for
 `characteristicSubgroupOfIdeal`. -/
-theorem mem_spvOfIdeal_iff_forall_cofinalValue {I : Ideal A}
+theorem mem_spvOfIdeal_iff_forall_cofinalValue_or_characteristicSubgroup_eq_top {I : Ideal A}
     {hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical} {v : Spv A} :
     v ∈ spvOfIdeal I hfg ↔
       (∀ a ∈ I, CofinalValue v.valuation a) ∨ characteristicSubgroup v.valuation = ⊤ :=

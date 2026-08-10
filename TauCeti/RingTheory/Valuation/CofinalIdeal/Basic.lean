@@ -53,8 +53,9 @@ something derivable from cofinality.
 
 ## Implementation notes
 
-Ported from the AINTLIB AdicSpaces development (`AINTLIB`, Apache-2.0), whose treatment of
-Wedhorn §7.1 supplied the statement shapes and the proof skeleton for the cofinality predicate
+Ported from the AINTLIB adic-spaces development (`aintlib-adic-spaces`, revision `37bbdaeb9`,
+`projects/AdicSpaces/Adic spaces/SpvAI.lean`, Apache-2.0), whose `Valuation.CofinalValue` and
+its lemmas supplied the statement shapes and the proof skeleton for the cofinality predicate
 and its closure properties. The cofinality bridge is rebuilt here against Mathlib's
 `MonoidWithZeroHom.valueGroup` API rather than the parallel value-group construction used
 there.
