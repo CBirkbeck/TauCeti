@@ -31,7 +31,7 @@ the remaining step before 5.50 can be stated as a universal property.
   These, and the value on `0`, are unconditional: each of the three term families is supported on
   at most one index — the zero series gives the family that vanishes identically — so the sum is a
   single term and no summability hypothesis is involved.
-* `TauCeti.Huber.hasSum_weightedEvalTerm`: under the hypotheses of the summability theorem, the
+* `TauCeti.Huber.hasSum_weightedEval`: under the hypotheses of the summability theorem, the
   terms have `weightedEval` as their sum. This is the consumer-facing statement — it names the sum
   instead of leaving a `tsum` to be manipulated — and is not itself used below.
 * `TauCeti.Huber.weightedEval_zero` and `TauCeti.Huber.weightedEval_add_of_summable`: the
@@ -113,8 +113,8 @@ variable {k : ℕ} {A B : Type*} [CommRing A] [CommRing B] [TopologicalSpace B] 
 
 /-- **The evaluation is additive in the series**, at the level where that is actually true: two
 summable term families. Nothing topological about `A`, no completeness, no weights and no
-restrictedness enter — those hypotheses exist only to *produce* summability, and every result
-below is this one composed with a way of producing it.
+restrictedness enter — those hypotheses exist only to *produce* summability, and every additivity
+result below is this one composed with a way of producing it.
 
 Both summability hypotheses are needed: a sum of two families is the sum of their sums only when
 each converges. -/
@@ -140,27 +140,27 @@ variable {k : ℕ} {A B : Type*} [CommRing A] [TopologicalSpace A] [Nonarchimede
 holding the summability hypotheses does not have to manipulate a `tsum`. Nothing in this file uses
 it — additivity goes through `TauCeti.Huber.weightedEval_add_of_summable`, which asks only for
 `Summable`. -/
-theorem hasSum_weightedEvalTerm (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b)
+theorem hasSum_weightedEval (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b)
     {f : MvPowerSeries (Fin k) A} (hf : IsWeightedRestricted T f) :
     HasSum (weightedEvalTerm φ b f) (weightedEval φ b f) := by
   -- `weightedEval` is the `tsum`, but say so through its unfolding lemma rather than relying on
   -- the wrapper being transparent.
   simpa only [weightedEval_def] using (summable_weightedEvalTerm hφ hb hf).hasSum
 
-/-- `TauCeti.Huber.hasSum_weightedEvalTerm` under Wedhorn's coordinatewise hypothesis. -/
-theorem hasSum_weightedEvalTerm_of_isWeightedVarPowerBounded (hφ : ContinuousAt φ 0)
+/-- `TauCeti.Huber.hasSum_weightedEval` under Wedhorn's coordinatewise hypothesis. -/
+theorem hasSum_weightedEval_of_isWeightedVarPowerBounded (hφ : ContinuousAt φ 0)
     (hb : IsWeightedVarPowerBounded φ T b) {f : MvPowerSeries (Fin k) A}
     (hf : IsWeightedRestricted T f) :
     HasSum (weightedEvalTerm φ b f) (weightedEval φ b f) :=
-  hasSum_weightedEvalTerm hφ (isWeightBounded_of_isWeightedVarPowerBounded hb) hf
+  hasSum_weightedEval hφ (isWeightBounded_of_isWeightedVarPowerBounded hb) hf
 
-/-- `TauCeti.Huber.hasSum_weightedEvalTerm` at the one-weight family, where the hypothesis is that
+/-- `TauCeti.Huber.hasSum_weightedEval` at the one-weight family, where the hypothesis is that
 each variable is power-bounded. -/
-theorem hasSum_weightedEvalTerm_of_forall_isPowerBounded (hφ : ContinuousAt φ 0)
+theorem hasSum_weightedEval_of_forall_isPowerBounded (hφ : ContinuousAt φ 0)
     (hb : ∀ i, IsPowerBounded (b i)) {f : MvPowerSeries (Fin k) A}
     (hf : IsWeightedRestricted (fun _ : Fin k ↦ ({1} : Set A)) f) :
     HasSum (weightedEvalTerm φ b f) (weightedEval φ b f) :=
-  hasSum_weightedEvalTerm hφ ((isWeightBounded_one_weight_iff_forall_isPowerBounded φ b).mpr hb) hf
+  hasSum_weightedEval hφ ((isWeightBounded_one_weight_iff_forall_isPowerBounded φ b).mpr hb) hf
 
 variable [T2Space B]
 
