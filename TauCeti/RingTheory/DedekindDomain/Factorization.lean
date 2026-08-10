@@ -7,15 +7,16 @@ module
 public import Mathlib.RingTheory.DedekindDomain.Factorization
 
 /-!
-# Divisibility reading of the multiplicity of a height one prime
+# Multiplicity of a height one prime as an ideal containment
 
-Mathlib's `IsDedekindDomain.HeightOneSpectrum` factorization API measures the multiplicity of a
-prime `v` in an ideal `J` as `Associates.count (Associates.mk v.asIdeal) (Associates.mk J).factors`
-and relates it to valuations, but does not say what that number means as divisibility. This file
-supplies the missing reading:
+Mathlib already reads the multiplicity of a prime as divisibility:
+`Associates.prime_pow_dvd_iff_le` gives `p ^ k ∣ m ↔ k ≤ count p m.factors`, and it is the first
+step of the proof below. What that gives is a statement about `Associates`, while a consumer
+comparing two multiplicities wants a containment of *ideals*. This file packages the two together,
+through `Associates.mk_le_mk_iff_dvd` and `Ideal.dvd_iff_le`:
 
-* `IsDedekindDomain.HeightOneSpectrum.le_count_iff_le_pow`: the multiplicity is at least `k`
-  exactly when `v ^ k` contains `J`.
+* `IsDedekindDomain.HeightOneSpectrum.le_count_iff_le_pow`: the multiplicity of `v` in a nonzero
+  `J` is at least `k` exactly when `v ^ k` contains `J`.
 
 That is the form in which multiplicities are compared across a ring extension: one shows the two
 ideals contain the same prime powers and concludes the multiplicities agree. The `S`-integer

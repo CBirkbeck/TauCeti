@@ -65,9 +65,8 @@ lemma ClassGroup.mk_eq_one_iff_exists {R : Type*} [CommRing R] [IsDomain R] {K :
     have hx' : (I : FractionalIdeal R⁰ K) = FractionalIdeal.spanSingleton R⁰ x := by
       apply Subtype.coe_injective
       simp only [FractionalIdeal.val_eq_coe, hx, FractionalIdeal.coe_spanSingleton]
-    have hx0 : x ≠ 0 := fun h ↦ Units.ne_zero I (by
-      rw [hx', h, FractionalIdeal.spanSingleton_zero])
-    exact ⟨Units.mk0 x hx0, by rw [← Units.val_inj, coe_toPrincipalIdeal, hx']; rfl⟩
+    -- Mathlib's `mem_principal_ideals_iff` already does the `Units.mk0` nonzero bookkeeping
+    exact MonoidHom.mem_range.mp (mem_principal_ideals_iff.mpr ⟨x, hx'.symm⟩)
   · rintro ⟨x, rfl⟩
     exact ⟨⟨(x : K), by rw [coe_toPrincipalIdeal, FractionalIdeal.coe_spanSingleton]⟩⟩
 
