@@ -32,7 +32,7 @@ prior formalisation of this layer; its proofs were not used.
 ## Main results
 
 * `TauCeti.Huber.isBounded_iff`: unfolding lemma for `IsBounded`.
-* `TauCeti.Huber.isBounded_finset_prod`: a finite pointwise product of bounded sets is bounded.
+* `TauCeti.Huber.isBounded_finsetProd`: a finite pointwise product of bounded sets is bounded.
 * `TauCeti.Huber.isBounded_finite`: finite sets are bounded.
 * `TauCeti.Huber.IsBounded.union`, `TauCeti.Huber.IsBounded.mul`: unions and pointwise products
   of bounded sets are bounded.
@@ -176,22 +176,15 @@ section CommMonoidWithZero
 
 variable {M : Type*} [CommMonoidWithZero M] [TopologicalSpace M]
 
-/-- **A finite pointwise product of bounded sets is bounded.** This iterates
-`TauCeti.Huber.IsBounded.mul` from the bounded singleton `{1}`; commutativity is what makes the
-`Finset` product of sets available in the first place. No continuity is needed: the empty product
-is `{1}`, which `TauCeti.Huber.isBounded_pair_zero_one` already bounds. -/
-theorem isBounded_finset_prod {ι : Type*} (s : Finset ι) {S : ι → Set M}
-    (hS : ∀ i ∈ s, IsBounded (S i)) : IsBounded (∏ i ∈ s, S i) := by
-  classical
-  induction s using Finset.induction with
-  | empty =>
-    rw [Finset.prod_empty]
-    exact isBounded_pair_zero_one.subset
-      (Set.singleton_subset_iff.mpr (Set.mem_insert_iff.mpr (Or.inr rfl)))
-  | insert i s hi ih =>
-    rw [Finset.prod_insert hi]
-    exact (hS i (Finset.mem_insert_self i s)).mul
-      (ih fun j hj ↦ hS j (Finset.mem_insert_of_mem hj))
+/-- **A finite pointwise product of bounded sets is bounded.** This is
+`Finset.prod_induction` with `TauCeti.Huber.IsBounded.mul` for the step; commutativity is what
+makes the `Finset` product of sets available in the first place. No continuity is needed: the
+unit case is `{1}`, which `TauCeti.Huber.isBounded_pair_zero_one` already bounds. -/
+theorem isBounded_finsetProd {ι : Type*} (s : Finset ι) {S : ι → Set M}
+    (hS : ∀ i ∈ s, IsBounded (S i)) : IsBounded (∏ i ∈ s, S i) :=
+  s.prod_induction S IsBounded (fun _ _ ↦ IsBounded.mul)
+    (isBounded_pair_zero_one.subset
+      (Set.singleton_subset_iff.mpr (Set.mem_insert_iff.mpr (Or.inr rfl)))) hS
 
 end CommMonoidWithZero
 

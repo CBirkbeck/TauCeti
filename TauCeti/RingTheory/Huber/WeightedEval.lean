@@ -120,7 +120,7 @@ bounded precisely when every variable is power-bounded.
 Both directions are elementary once the monomials are in view. Forwards, the monomial at
 `ν = Finsupp.single i n` is `bᵢ ^ n`, so the one bounded set already contains every power of every
 `bᵢ`. Backwards, every monomial `bν` lies in the pointwise product of the power-sets, which is
-bounded by `TauCeti.Huber.isBounded_finset_prod`. -/
+bounded by `TauCeti.Huber.isBounded_finsetProd`. -/
 theorem isWeightBounded_one_weight_iff_forall_isPowerBounded (φ : A →+* B)
     (b : Fin k → B) :
     IsWeightBounded φ (fun _ : Fin k ↦ ({1} : Set A)) b ↔ ∀ i, IsPowerBounded (b i) := by
@@ -128,7 +128,7 @@ theorem isWeightBounded_one_weight_iff_forall_isPowerBounded (φ : A →+* B)
   refine ⟨fun hb i ↦ isPowerBounded_iff.mpr (hb.subset ?_), fun hb ↦ ?_⟩
   · rintro _ ⟨n, rfl⟩
     exact ⟨Finsupp.single i n, by simp [Finsupp.single_apply, Finset.prod_ite_eq]⟩
-  · refine (isBounded_finset_prod Finset.univ
+  · refine (isBounded_finsetProd Finset.univ
       (fun i _ ↦ isPowerBounded_iff.mp (hb i))).subset ?_
     rintro _ ⟨ν, rfl⟩
     exact Set.finsetProd_mem_finsetProd Finset.univ _ _ fun i _ ↦ ⟨ν i, rfl⟩
@@ -172,8 +172,7 @@ private theorem image_weightPow_mul_monomial (φ : A →+* B) (T : Fin k → Set
       = (φ '' weightPow T ν) * {∏ i, b i ^ ν i} := by
     rw [Set.mul_singleton, Set.image_image]
   have h2 : φ '' weightPow T ν = ∏ i, (φ '' T i) ^ ν i := by
-    rw [weightPow_def, Set.image_finsetProd]
-    exact Finset.prod_congr rfl fun i _ ↦ Set.image_pow ..
+    rw [image_weightPow, weightPow_def]
   have h3 : ({∏ i, b i ^ ν i} : Set B) = ∏ i, ({b i} : Set B) ^ ν i := by
     rw [← Set.finsetProd_singleton]
     exact Finset.prod_congr rfl fun i _ ↦ (Set.singleton_pow ..).symm
@@ -190,7 +189,7 @@ theorem rather than a stronger one invented for it: the two are reached from the
 theorem isWeightBounded_of_isWeightedVarPowerBounded {φ : A →+* B} {T : Fin k → Set A}
     {b : Fin k → B} (h : IsWeightedVarPowerBounded φ T b) : IsWeightBounded φ T b := by
   rw [isWeightBounded_iff]
-  refine (isBounded_finset_prod Finset.univ
+  refine (isBounded_finsetProd Finset.univ
     (fun i _ ↦ (isWeightedVarPowerBounded_iff φ T b).mp h i)).subset (Set.iUnion_subset fun ν ↦ ?_)
   rw [image_weightPow_mul_monomial]
   exact Set.finsetProd_subset_finsetProd _ _ _ fun i _ ↦ Set.subset_iUnion _ _
