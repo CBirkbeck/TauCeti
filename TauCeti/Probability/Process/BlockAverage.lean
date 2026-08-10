@@ -113,18 +113,18 @@ theorem prod_blockAverage_eq_expect {m N : ℕ} (Y : Fin m → ℕ → Ω → �
   push_cast
   simp [inv_pow]
 
-/-- **The squared deviation of an average, as a double sum.** For `n ≠ 0`, the square of
-`n⁻¹ * ∑ i ∈ range n, a i - b` is `n⁻¹ ^ 2` times the double sum of `(a i - b) * (a j - b)`
-over `range n × range n`. -/
-theorem sq_average_sub_eq_sum_sum {n : ℕ} (hn : n ≠ 0) (a : ℕ → ℝ) (b : ℝ) :
-    ((n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, a i) - b) ^ 2
-      = (n : ℝ)⁻¹ ^ 2 * ∑ i ∈ Finset.range n, ∑ j ∈ Finset.range n, (a i - b) * (a j - b) := by
-  have hn' : (n : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr hn
-  have h1 : (n : ℝ)⁻¹ * (∑ i ∈ Finset.range n, a i) - b
-      = (n : ℝ)⁻¹ * ∑ i ∈ Finset.range n, (a i - b) := by
-    rw [Finset.sum_sub_distrib, Finset.sum_const, Finset.card_range, nsmul_eq_mul, mul_sub,
-      inv_mul_cancel_left₀ hn']
-  rw [h1, mul_pow, sq (∑ i ∈ Finset.range n, (a i - b)), Finset.sum_mul_sum]
+/-- **The squared deviation of an average, as a double sum.** For a nonempty finite index set `s`,
+the square of `(#s)⁻¹ * ∑ i ∈ s, a i - b` is `(#s)⁻¹ ^ 2` times the double sum of
+`(a i - b) * (a j - b)` over `s × s`. -/
+theorem sq_average_sub_eq_sum_sum {ι : Type*} {s : Finset ι} (hs : s.Nonempty) (a : ι → ℝ)
+    (b : ℝ) :
+    ((s.card : ℝ)⁻¹ * (∑ i ∈ s, a i) - b) ^ 2
+      = (s.card : ℝ)⁻¹ ^ 2 * ∑ i ∈ s, ∑ j ∈ s, (a i - b) * (a j - b) := by
+  have hs' : (s.card : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (Finset.card_ne_zero_of_mem hs.choose_spec)
+  have h1 : (s.card : ℝ)⁻¹ * (∑ i ∈ s, a i) - b = (s.card : ℝ)⁻¹ * ∑ i ∈ s, (a i - b) := by
+    rw [Finset.sum_sub_distrib, Finset.sum_const, nsmul_eq_mul, mul_sub,
+      inv_mul_cancel_left₀ hs']
+  rw [h1, mul_pow, sq (∑ i ∈ s, (a i - b)), Finset.sum_mul_sum]
 
 end Probability
 
