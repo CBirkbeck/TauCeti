@@ -70,6 +70,11 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A]
 
 /-! ### The ring of definition `D` -/
 
+/-! Everything below takes a `PairOfDefinition` as its first explicit argument, so it lives in
+that namespace and reads `P.locSubring T s`, matching `TauCeti/RingTheory/Huber/Basic.lean`. -/
+
+namespace PairOfDefinition
+
 /-- The ring of definition `D = A₀[t₁/s, …, tₙ/s]` of `Localization.Away s`. -/
 noncomputable def locSubring (P : PairOfDefinition A) (T : Finset A)
     (s : A) : Subring (Localization.Away s) :=
@@ -512,6 +517,8 @@ theorem continuous_of_continuous_algebraMap_of_isPowerBounded {B : Type*}
   · intro c d _ hd r
     rw [smul_eq_mul, ← mul_assoc]
     exact hd (r * c)
+
+end PairOfDefinition
 
 end
 
