@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
+import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.XYIdealMaximal
 public import Mathlib.RingTheory.DedekindDomain.Dvr
 
@@ -18,9 +18,8 @@ therefore gives a discrete valuation ring.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.isDiscreteValuationRing_of_isLocalization`: a
-  localisation of the coordinate ring at the ideal `⟨X - x, Y - y(X)⟩` is a discrete valuation
-  ring.
+* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.isDiscreteValuationRing_of_isLocalizationAtPrime`:
+  a localisation of the coordinate ring at any nonzero prime is a discrete valuation ring.
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.isDiscreteValuationRing_localizationAtPrime`: the
   same for `Localization.AtPrime` at a point of the curve, from the curve equation alone.
 
@@ -58,29 +57,28 @@ namespace WeierstrassCurve.Affine.CoordinateRing
 
 variable {F : Type*} [Field F] {W : _root_.WeierstrassCurve.Affine F} {x : F}
 
-/-- **The local ring of an elliptic curve at an affine point is a discrete valuation ring.** Stated
-for an arbitrary localisation `S` at the ideal `⟨X - x, Y - y(X)⟩`, so that it covers
-`Localization.AtPrime` and any other model of it. The prime is named separately because its
-primality is a hypothesis here — it comes from `XYIdeal_isMaximal` — while `IsLocalization.AtPrime`
-needs it as an instance. -/
-theorem isDiscreteValuationRing_of_isLocalization [W.IsElliptic] {y : F[X]}
-    (P : Ideal W.CoordinateRing) [P.IsPrime] (hP : P = CoordinateRing.XYIdeal W x y)
+/-- **A localisation of the coordinate ring of an elliptic curve at a nonzero prime is a discrete
+valuation ring.** Stated for an arbitrary localisation `S`, so that it covers `Localization.AtPrime`
+and any other model of it. -/
+theorem isDiscreteValuationRing_of_isLocalizationAtPrime [W.IsElliptic] {P : Ideal W.CoordinateRing}
+    [P.IsPrime] (hP : P ≠ ⊥)
     (S : Type*) [CommRing S] [IsDomain S] [Algebra W.CoordinateRing S]
     [IsLocalization.AtPrime S P] :
     IsDiscreteValuationRing S :=
   have := isDedekindDomain_coordinateRing W
-  IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain _
-    (hP ▸ XYIdeal_ne_bot x y) S
+  IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain _ hP S
 
 /-- **The local ring at a point of an elliptic curve is a discrete valuation ring**, in the
-`Localization.AtPrime` model and from the curve equation alone. -/
+`Localization.AtPrime` model and from the curve equation alone. The primality of the point's ideal
+is a consequence of that equation, through `XYIdeal_isMaximal_of_equation`, so it is installed in
+the statement rather than assumed. -/
 theorem isDiscreteValuationRing_localizationAtPrime [W.IsElliptic] {y : F}
     (h : W.Equation x y) :
     haveI : (CoordinateRing.XYIdeal W x (C y)).IsPrime := (XYIdeal_isMaximal_of_equation h).isPrime
     IsDiscreteValuationRing (Localization.AtPrime (CoordinateRing.XYIdeal W x (C y))) :=
   haveI : (CoordinateRing.XYIdeal W x (C y)).IsPrime := (XYIdeal_isMaximal_of_equation h).isPrime
-  isDiscreteValuationRing_of_isLocalization (y := C y) (CoordinateRing.XYIdeal W x (C y)) rfl
-    (Localization.AtPrime (CoordinateRing.XYIdeal W x (C y)))
+  isDiscreteValuationRing_of_isLocalizationAtPrime (P := CoordinateRing.XYIdeal W x (C y))
+    (XYIdeal_ne_bot x (C y)) (Localization.AtPrime (CoordinateRing.XYIdeal W x (C y)))
 
 end WeierstrassCurve.Affine.CoordinateRing
 
