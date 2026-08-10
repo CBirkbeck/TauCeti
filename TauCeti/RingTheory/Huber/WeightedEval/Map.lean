@@ -27,8 +27,9 @@ the remaining step before 5.50 can be stated as a universal property.
 
 * `TauCeti.Huber.weightedEval_C` and `TauCeti.Huber.weightedEval_X`: it sends the constant series
   `C a` to `φ a` and the variable `X i` to `bᵢ`, which is what makes it *the* evaluation at `b`.
-  These, and the value on `0`, are unconditional: only one term of each family is nonzero, so no
-  summability hypothesis is involved.
+  These, and the value on `0`, are unconditional: each of the three term families is supported on
+  at most one index — the zero series gives the family that vanishes identically — so the sum is a
+  single term and no summability hypothesis is involved.
 * `TauCeti.Huber.hasSum_weightedEvalTerm`: under the hypotheses of the summability theorem, the
   terms have `weightedEval` as their sum. This is what `TauCeti.Huber.weightedEval_add` is read
   off, and what a consumer facing a genuine infinite sum should reach for rather than `tsum`
@@ -61,7 +62,8 @@ Unconditionally a `tsum`, so it is junk when the family is not summable. The res
 genuine infinite sum — `TauCeti.Huber.weightedEval_add` and its corollaries — therefore carry the
 hypotheses of `TauCeti.Huber.summable_weightedEvalTerm`, through
 `TauCeti.Huber.hasSum_weightedEvalTerm`. The values on `0`, on a constant and on a variable need
-none of that: their term families are supported at a single index and are computed directly. -/
+none of that: their term families are supported on at most one index, so the sum is read off that
+index directly. -/
 noncomputable def weightedEval (φ : A →+* B) (b : Fin k → B) (f : MvPowerSeries (Fin k) A) : B :=
   ∑' ν, weightedEvalTerm φ b f ν
 
