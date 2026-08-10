@@ -142,19 +142,8 @@ lemma Delta0_le_posDetInt : Delta0 N ≤ posDetInt 2 := by
 variable [NeZero N]
 
 /-- `Γ₁(N)` is commensurable with `SL₂(ℤ)`: it has finite index in it. -/
-lemma commensurable_Gamma1Image_SLnZ : Commensurable (Gamma1Image N) (SLnZ 2) := by
-  have hSL : SLnZ 2 =
-      Subgroup.map (mapGL ℚ : SpecialLinearGroup (Fin 2) ℤ →* GL (Fin 2) ℚ) ⊤ := by
-    ext g
-    simp only [Subgroup.mem_map, Subgroup.mem_top, true_and]
-    exact (mem_SLnZ_iff 2).trans (by simp)
-  constructor
-  · rw [Gamma1Image, hSL,
-      Subgroup.relIndex_map_map_of_injective _ _ mapGL_injective, Subgroup.relIndex_top_right]
-    exact Subgroup.FiniteIndex.index_ne_zero
-  · rw [Gamma1Image, hSL,
-      Subgroup.relIndex_map_map_of_injective _ _ mapGL_injective, Subgroup.relIndex_top_left]
-    exact one_ne_zero
+lemma commensurable_Gamma1Image_SLnZ : Commensurable (Gamma1Image N) (SLnZ 2) :=
+  commensurable_map_SLnZ 2 (Gamma1 N)
 
 /-- `Δ₀(N)` lies in the commensurator of `Γ₁(N)`: it lies in that of `SL₂(ℤ)`, and the two
 groups are commensurable. -/
