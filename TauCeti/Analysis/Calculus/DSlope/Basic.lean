@@ -34,10 +34,10 @@ unimodular.
 
 No differentiability is involved: away from the base point `dslope` is the plain difference
 quotient. -/
-lemma norm_dslope_eq_one_of_norm_sub_map_eq {𝕜 : Type*} [NontriviallyNormedField 𝕜]
-    {g : 𝕜 → 𝕜} {x y : 𝕜} (hxy : y ≠ x) (hnorm : ‖g y - g x‖ = ‖y - x‖) :
-    ‖dslope g x y‖ = 1 := by
-  rw [dslope_of_ne _ hxy, slope_def_field, norm_div, hnorm,
-    div_self (norm_ne_zero_iff.mpr (sub_ne_zero.mpr hxy))]
+lemma norm_dslope_eq_one_of_norm_sub_map_eq {𝕜 E : Type*} [NontriviallyNormedField 𝕜]
+    [NormedAddCommGroup E] [NormedSpace 𝕜 E] {g : 𝕜 → E} {x y : 𝕜} (hxy : y ≠ x)
+    (hnorm : ‖g y - g x‖ = ‖y - x‖) : ‖dslope g x y‖ = 1 := by
+  rw [dslope_of_ne _ hxy, slope_def_module, norm_smul, norm_inv, hnorm,
+    inv_mul_cancel₀ (norm_ne_zero_iff.mpr (sub_ne_zero.mpr hxy))]
 
 end TauCeti

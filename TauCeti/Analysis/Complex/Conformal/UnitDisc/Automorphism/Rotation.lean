@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Analysis.Complex.Schwarz
-public import Mathlib.Analysis.Calculus.DSlope
 public import Mathlib.Data.Set.Function
 public import TauCeti.Analysis.Complex.Conformal.SchwarzPick.Isometry
 public import TauCeti.Analysis.Calculus.DSlope.Basic
