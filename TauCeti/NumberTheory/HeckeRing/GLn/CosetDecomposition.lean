@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.LinearAlgebra.Matrix.Block
+public import TauCeti.LinearAlgebra.Matrix.Triangular
 public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 
 /-!
@@ -175,25 +176,16 @@ Two representatives lie in the same left `SL_n(ℤ)`-coset exactly when the conj
 
 section Triangular
 
-variable {R : Type*} [CommRing R] {M N : Matrix (Fin n) (Fin n) R}
-
-/-- On the diagonal, a product of upper-triangular matrices multiplies entrywise: only the
-`k = i` term of `∑ k, M i k * N k i` survives. -/
-lemma mul_apply_diag_of_isUpperTriangular (hM : Matrix.IsUpperTriangular M)
-    (hN : Matrix.IsUpperTriangular N) (i : Fin n) : (M * N) i i = M i i * N i i := by
-  rw [Matrix.mul_apply]
-  refine Finset.sum_eq_single i (fun k _ hk ↦ ?_) fun h ↦ absurd (Finset.mem_univ i) h
-  rcases lt_or_gt_of_ne hk with h | h
-  · rw [hM h, zero_mul]
-  · rw [hN h, mul_zero]
+variable {R : Type*} [CommRing R] {M : Matrix (Fin n) (Fin n) R}
 
 /-- The inverse of an upper-triangular matrix with `1` on the diagonal again has `1` on the
-diagonal. -/
+diagonal: `M⁻¹ * M = 1` read on the diagonal, through
+`Matrix.mul_apply_diag_of_isUpperTriangular`. -/
 lemma inv_apply_diag_of_isUpperTriangular [Invertible M] (hM : Matrix.IsUpperTriangular M)
     (hdiag : ∀ i, M i i = 1) (i : Fin n) : M⁻¹ i i = 1 := by
   have hinv : Matrix.IsUpperTriangular M⁻¹ := Matrix.blockTriangular_inv_of_blockTriangular hM
   have h := congrFun (congrFun (Matrix.nonsing_inv_mul M (Matrix.isUnit_det_of_invertible M)) i) i
-  rwa [mul_apply_diag_of_isUpperTriangular hinv hM i, hdiag i, mul_one,
+  rwa [Matrix.mul_apply_diag_of_isUpperTriangular hinv hM i, hdiag i, mul_one,
     Matrix.one_apply_eq] at h
 
 end Triangular
@@ -260,7 +252,7 @@ lemma upperTriGL_eq_of_dvd {a : Fin n → ℕ} {B₁ B₂ : UpperTriEntries n a}
   have hup : Matrix.IsUpperTriangular C :=
     Matrix.BlockTriangular.mul (isUpperTriangular_unitriMat B₁) hup₂
   have hdiag : ∀ i, C i i = 1 := fun i ↦ by
-    rw [hC, mul_apply_diag_of_isUpperTriangular (isUpperTriangular_unitriMat B₁) hup₂ i,
+    rw [hC, Matrix.mul_apply_diag_of_isUpperTriangular (isUpperTriangular_unitriMat B₁) hup₂ i,
       unitriMat_apply_diag,
       inv_apply_diag_of_isUpperTriangular (isUpperTriangular_unitriMat B₂)
         (unitriMat_apply_diag B₂) i, one_mul]
