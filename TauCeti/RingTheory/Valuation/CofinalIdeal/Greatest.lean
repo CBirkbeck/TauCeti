@@ -30,7 +30,6 @@ the two uses Wedhorn makes of it, and both appear here.
 * `TauCeti.Valuation.IdealCofinalFor v H I` : every element of `I` has value cofinal for `H`.
 * `TauCeti.Valuation.IdealMeetsCharacteristicSubgroup v I` : `v(I)` meets `cΓ_v`, the
   branch condition of Definition 7.3.
-* `TauCeti.Valuation.IsGreatestIdealCofinal v I H` : `H` is greatest with that property.
 * `TauCeti.Valuation.valueSet v I` : the nonzero values of `v` on `I`.
 * `TauCeti.Valuation.characteristicSubgroupOfIdeal` : **Definition 7.3**, `cΓ_v(I)`.
 
@@ -135,15 +134,6 @@ theorem IdealCofinalFor.mono_subgroup {v : Valuation A Γ₀}
     (h : IdealCofinalFor v K I) (hHK : H ≤ K) : IdealCofinalFor v H I :=
   fun a ha ↦ (h a ha).mono hHK
 
-/-- Wedhorn Lemma 7.2's greatest element, when it exists, is characterized by being an
-upper bound within the family — the statement the case split of Definition 7.3 consumes.
-
-This is Mathlib's `IsGreatest` at the family of convex subgroups for which `I` is cofinal, so
-consumers use the `IsGreatest` API directly (`.1`, `.2`, `IsGreatest.unique`). -/
-def IsGreatestIdealCofinal (v : Valuation A Γ₀) (I : Ideal A)
-    (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : Prop :=
-  IsGreatest {K | IdealCofinalFor v K I} H
-
 /-! ### Reduction to the value set -/
 
 /-- The nonzero values attained by `v` on an ideal, as a subset of the value group. It carries
@@ -243,7 +233,7 @@ theorem idealCofinalFor_of_span {v : Valuation A Γ₀}
 /-- If `v` vanishes on the whole of `I` then every convex subgroup works, so the greatest one
 is `⊤`. This is Wedhorn's "if `v(I) = {0}`, we may choose `H = Γv`". -/
 theorem isGreatestIdealCofinal_top_of_forall_eq_zero {v : Valuation A Γ₀} {I : Ideal A}
-    (h : ∀ a ∈ I, (MonoidWithZeroHom.ofClass v) a = 0) : IsGreatestIdealCofinal v I ⊤ :=
+    (h : ∀ a ∈ I, (MonoidWithZeroHom.ofClass v) a = 0) : IsGreatest {K | IdealCofinalFor v K I} ⊤ :=
   ⟨fun a ha ↦ cofinalValueFor_of_eq_zero (h a ha), fun _ _ ↦ le_top⟩
 
 /-! ### Reduction along the radical
@@ -294,7 +284,7 @@ theorem isGreatestIdealCofinal_closure_singleton_of_span {v : Valuation A Γ₀}
     (hspan : Ideal.span T = J) (hrad : I.radical = J.radical) (hlt : h < 1) (hn : n ≠ 0)
     (hdom : ∀ t ∈ T, v.restrict t ≤ (h : ValueGroup₀ (.ofClass v)))
     (hatt : h ^ n ∈ valueSet v I) :
-    IsGreatestIdealCofinal v I (TauCeti.ConvexSubgroup.closure {h}) := by
+    IsGreatest {K | IdealCofinalFor v K I} (TauCeti.ConvexSubgroup.closure {h}) := by
   constructor
   · -- membership: generators → J (ideal) → I (radical)
     refine (idealCofinalFor_congr_of_radical_eq hH hrad).mpr ?_
@@ -375,7 +365,7 @@ private theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
     (hdisj : ¬ IdealMeetsCharacteristicSubgroup v I)
     (hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0) :
-    ∃ H, IsGreatestIdealCofinal v I H ∧ characteristicSubgroup v ≤ H := by
+    ∃ H, IsGreatest {K | IdealCofinalFor v K I} H ∧ characteristicSubgroup v ≤ H := by
   obtain ⟨J, ⟨T, hT⟩, hrad⟩ := hfg
   obtain ⟨a₀, ha₀I, ha₀0⟩ := hne
   -- a generator off the support exists, else `v` would vanish on all of `I`
@@ -421,7 +411,7 @@ is covered separately by `⊤`. -/
 theorem exists_isGreatestIdealCofinal_of_not_meets {v : Valuation A Γ₀} {I : Ideal A}
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
     (hdisj : ¬ IdealMeetsCharacteristicSubgroup v I) :
-    ∃ H, IsGreatestIdealCofinal v I H ∧ characteristicSubgroup v ≤ H := by
+    ∃ H, IsGreatest {K | IdealCofinalFor v K I} H ∧ characteristicSubgroup v ≤ H := by
   by_cases hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0
   · exact exists_isGreatestIdealCofinal hfg hdisj hne
   · push Not at hne
@@ -454,7 +444,7 @@ convex subgroup for which `I` is cofinal. -/
 theorem isGreatestIdealCofinal_characteristicSubgroupOfIdeal {v : Valuation A Γ₀} {I : Ideal A}
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
     (h : ¬ IdealMeetsCharacteristicSubgroup v I) :
-    IsGreatestIdealCofinal v I (characteristicSubgroupOfIdeal v I hfg) := by
+    IsGreatest {K | IdealCofinalFor v K I} (characteristicSubgroupOfIdeal v I hfg) := by
   classical
   rw [characteristicSubgroupOfIdeal, dif_neg h]
   exact (exists_isGreatestIdealCofinal_of_not_meets hfg h).choose_spec.1
