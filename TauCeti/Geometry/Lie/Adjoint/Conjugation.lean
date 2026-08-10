@@ -45,9 +45,10 @@ instance instTopologicalSpaceConjAct : TopologicalSpace (ConjAct G) := topG
 /-- The conjugation-action copy of a Lie group carries the original manifold charts. -/
 instance instChartedSpaceConjAct : ChartedSpace H (ConjAct G) := chartsG
 
-/-- **Conjugation is smooth in both arguments.** The map `(g, x) ↦ g * x * g⁻¹` on a Lie group is
-smooth as a map out of the product manifold. -/
-theorem contMDiff_mul_mul_inv :
+/-- **Conjugation is jointly `C^n`.** The map `(g, x) ↦ g * x * g⁻¹` on a Lie group is `C^n` as a
+map out of the product manifold; this is the manifold counterpart of
+`IsTopologicalGroup.continuous_conj_prod`. -/
+theorem contMDiff_conj_prod :
     ContMDiff (I.prod I) I n (fun p : G × G ↦ p.1 * p.2 * p.1⁻¹) :=
   (contMDiff_fst.mul contMDiff_snd).mul contMDiff_fst.inv
 
@@ -57,7 +58,7 @@ instance instContMDiffSMulConjAct : ContMDiffSMul I I n (ConjAct G) G where
     -- The topology and charts above are definitionally those of `G`, while `ConjAct`'s scalar
     -- action is definitionally conjugation. Unfolding both exposes the standard smooth operations.
     change CMDiff n (fun p : G × G ↦ p.1 * p.2 * p.1⁻¹)
-    exact contMDiff_mul_mul_inv
+    exact contMDiff_conj_prod
 
 /-- Conjugation by `g`, sending `x` to `g * x * g⁻¹`, as a smooth self-diffeomorphism. -/
 def conjDiffeomorph (g : G) : G ≃ₘ^n⟮I, I⟯ G :=

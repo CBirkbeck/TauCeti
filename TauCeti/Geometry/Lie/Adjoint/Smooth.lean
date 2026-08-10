@@ -86,7 +86,7 @@ theorem contMDiff_adjointContinuousLinearMap :
     rw [show Function.uncurry f = fun p : G × G ↦ p.1 * p.2 * p.1⁻¹ by
       funext p
       exact conjDiffeomorph_apply p.1 p.2]
-    exact contMDiff_mul_mul_inv (I := I) (n := ∞) _
+    exact contMDiff_conj_prod (I := I) (n := ∞) _
   have h := hf.mfderiv (m := ∞) f c contMDiffAt_const (by simp)
   have hfc : (fun x ↦ f x (c x)) = c := by
     funext x
