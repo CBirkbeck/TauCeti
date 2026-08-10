@@ -12,25 +12,26 @@ public import Mathlib.FieldTheory.Separable
 
 Mathlib's `Mathlib/Algebra/QuadraticDiscriminant.lean` works with the *equation*
 `a x² + b x + c = 0` and relates its solutions to `discrim a b c = b² - 4 a c`. This file reads
-those facts back as statements about the *polynomial* `C a * X ^ 2 + C b * X + C c`. Every
-statement below is phrased in terms of Mathlib's `discrim` rather than its expansion, so that
-Mathlib's discriminant API applies to them directly.
+those facts back as statements about the *polynomial* `C a * X ^ 2 + C b * X + C c`. Wherever a
+statement mentions the discriminant it uses Mathlib's `discrim` rather than its expansion, so
+that Mathlib's discriminant API applies to it directly; the two criteria phrased by a root or by
+an Artin-Schreier condition mention no discriminant at all.
 
 Over a field, with `a ≠ 0`:
 
-* `Polynomial.separable_quadratic_iff`: separable exactly when `discrim a b c ≠ 0`;
+* `Polynomial.separable_quadratic_iff_discrim_ne_zero`: separable exactly when `discrim a b c ≠ 0`;
 * `Polynomial.splits_quadratic_iff_exists_root`: splits exactly when it has a root — the
   characteristic-free core, and the only one that mentions no discriminant;
-* `Polynomial.splits_quadratic_iff`: away from characteristic two, splits exactly when
+* `Polynomial.splits_quadratic_iff_isSquare`: away from characteristic two, splits exactly when
   `discrim a b c` is a square;
 * `Polynomial.splits_quadratic_iff_of_two_eq_zero`: in characteristic two, where the discriminant
   degenerates to `b²` and the square-class criterion says nothing, splits exactly when the
   Artin-Schreier invariant `a c / b²` lies in the image of `z ↦ z² + z`, written division-free.
-  Here `b ≠ 0` is also required, which by `separable_quadratic_iff` is separability.
+  Here `b ≠ 0` is also required, which by `separable_quadratic_iff_discrim_ne_zero` is separability.
 
 Two auxiliary identities need neither a field nor `a ≠ 0`, and are stated over a commutative
 (semi)ring: `Polynomial.derivative_quadratic`, computing the derivative as `2 a X + b`, and the
-Bézout-type `Polynomial.sq_derivative_quadratic_sub_mul`,
+Bézout-type `Polynomial.sq_derivative_quadratic_sub_mul_eq_C_discrim`,
 `(P')² - 4 a P = C (discrim a b c)`, which is what exhibits a nonzero discriminant as a
 coprimality witness in every characteristic.
 
@@ -65,8 +66,9 @@ theorem derivative_quadratic {R : Type*} [CommSemiring R] (a b c : R) :
 
 /-- The Bézout-type identity `(P')² - 4 a · P = C (discrim a b c)` for the quadratic
 `P = a X² + b X + c`: the discriminant is an explicit `R[X]`-combination of `P` and its
-derivative, which is what makes it a coprimality witness in `separable_quadratic_iff`. -/
-theorem sq_derivative_quadratic_sub_mul {R : Type*} [CommRing R] (a b c : R) :
+derivative, which is what makes it a coprimality witness in
+`separable_quadratic_iff_discrim_ne_zero`. -/
+theorem sq_derivative_quadratic_sub_mul_eq_C_discrim {R : Type*} [CommRing R] (a b c : R) :
     derivative (C a * X ^ 2 + C b * X + C c) ^ 2
       - 4 * C a * (C a * X ^ 2 + C b * X + C c) = C (discrim a b c) := by
   rw [derivative_quadratic, discrim]
@@ -75,13 +77,13 @@ theorem sq_derivative_quadratic_sub_mul {R : Type*} [CommRing R] (a b c : R) :
 
 /-- A quadratic polynomial `a X² + b X + c` (with `a ≠ 0`) over a field is separable exactly when
 `discrim a b c` is nonzero. This holds in every characteristic; contrast
-`splits_quadratic_iff`, which asks for the discriminant to be a square rather than nonzero, and
-only away from characteristic two. -/
-theorem separable_quadratic_iff {k : Type*} [Field k] {a b c : k} (ha : a ≠ 0) :
+`splits_quadratic_iff_isSquare`, which asks for the discriminant to be a square rather than
+nonzero, and only away from characteristic two. -/
+theorem separable_quadratic_iff_discrim_ne_zero {k : Type*} [Field k] {a b c : k} (ha : a ≠ 0) :
     (C a * X ^ 2 + C b * X + C c).Separable ↔ discrim a b c ≠ 0 := by
   set P := C a * X ^ 2 + C b * X + C c with hP
   have hid : derivative P ^ 2 - 4 * C a * P = C (discrim a b c) :=
-    sq_derivative_quadratic_sub_mul a b c
+    sq_derivative_quadratic_sub_mul_eq_C_discrim a b c
   constructor
   · intro hsep hdisc
     rw [hdisc, map_zero] at hid
@@ -117,9 +119,11 @@ theorem splits_quadratic_iff_exists_root {k : Type*} [Field k] {a b c : k} (ha :
     linear_combination hx
 
 /-- Over a field of characteristic `≠ 2`, a quadratic `a X² + b X + c` (with `a ≠ 0`) *splits*
-exactly when `discrim a b c` is a square. Compare `separable_quadratic_iff`, which asks for the
-discriminant to be nonzero rather than square, and holds in every characteristic. -/
-theorem splits_quadratic_iff {k : Type*} [Field k] [NeZero (2 : k)] {a b c : k} (ha : a ≠ 0) :
+exactly when `discrim a b c` is a square. Compare `separable_quadratic_iff_discrim_ne_zero`,
+which asks for the discriminant to be nonzero rather than square, and holds in every
+characteristic. -/
+theorem splits_quadratic_iff_isSquare {k : Type*} [Field k] [NeZero (2 : k)] {a b c : k}
+    (ha : a ≠ 0) :
     (C a * X ^ 2 + C b * X + C c).Splits ↔ IsSquare (discrim a b c) := by
   rw [splits_quadratic_iff_exists_root ha]
   constructor
@@ -132,9 +136,10 @@ theorem splits_quadratic_iff {k : Type*} [Field k] [NeZero (2 : k)] {a b c : k} 
 
 /-- Over a field of characteristic `2`, a quadratic `a X² + b X + c` with `a, b ≠ 0` splits
 exactly when its Artin-Schreier invariant `a c / b²` lies in the image of `z ↦ z² + z`, written
-division-free as `∃ z, b² (z² + z) = a c`. Here the square-class criterion `splits_quadratic_iff`
-says nothing, since `discrim a b c = b²` is automatically a square; the hypothesis `b ≠ 0` is
-exactly separability, by `separable_quadratic_iff`. -/
+division-free as `∃ z, b² (z² + z) = a c`. Here the square-class criterion
+`splits_quadratic_iff_isSquare` says nothing, since `discrim a b c = b²` is automatically a
+square; the hypothesis `b ≠ 0` is
+exactly separability, by `separable_quadratic_iff_discrim_ne_zero`. -/
 theorem splits_quadratic_iff_of_two_eq_zero {k : Type*} [Field k] (h2 : (2 : k) = 0)
     {a b c : k} (ha : a ≠ 0) (hb : b ≠ 0) :
     (C a * X ^ 2 + C b * X + C c).Splits ↔ ∃ z, b ^ 2 * (z ^ 2 + z) = a * c := by

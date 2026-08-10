@@ -16,10 +16,11 @@ residue field. Mathlib writes that quadratic out inline, in the very definition 
 `WeierstrassCurve.HasSplitMultiplicativeReduction`
 (`Mathlib/AlgebraicGeometry/EllipticCurve/Reduction.lean`, applied to `W.integralModel R`), but
 gives it no name and proves nothing about it. This file names it `WeierstrassCurve.nodePoly` and
-says when it splits, discharging the TODO recorded just above that class — *"add characterization
-in terms of the discriminant when the characteristic is not 2"* — and adding the characteristic-
-two counterpart. The remaining step, rewriting the class itself through these criteria, needs
-`integralModel` and belongs to the minimal-model slice.
+says when it splits, supplying the criterion the TODO just above that class asks for — *"add
+characterization in terms of the discriminant when the characteristic is not 2"* — together with
+the characteristic-two counterpart the TODO does not ask for. Restating the class itself through
+these criteria needs `integralModel` and belongs to the minimal-model slice, so the TODO is
+answered at the level of the polynomial, not yet of the class.
 
 * `WeierstrassCurve.nodePoly` is `c₄ T² + a₁ c₄ T - (54 b₆ - 3 b₂ b₄ + a₂ c₄)`, defined over any
   commutative ring;
@@ -30,24 +31,27 @@ two counterpart. The remaining step, rewriting the class itself through these cr
 * `WeierstrassCurve.map_nodePoly` is naturality, `(W.map φ).nodePoly = W.nodePoly.map φ`. It is
   what lets the criteria below — stated for `W.nodePoly.map φ`, i.e. for the *reduction* of the
   node polynomial — be read as statements about the node polynomial of the reduced curve;
-* `WeierstrassCurve.nodePoly_smul` and `WeierstrassCurve.nodePoly_map_splits_smul_iff`: a change
+* `WeierstrassCurve.variableChange_nodePoly` and
+  `WeierstrassCurve.variableChange_nodePoly_map_splits_iff`: a change
   of variables `(u, r, s, t)` transforms the node polynomial by the affine substitution
   `T ↦ u T + s` and the unit scalar `u⁻⁶`, so whether it splits is an isomorphism invariant. This
   is why split multiplicative reduction is a property of the curve and not of the equation;
 * `WeierstrassCurve.nodePoly_map_splits_iff_isSquare` and
   `WeierstrassCurve.nodePoly_map_splits_iff_of_two_eq_zero`: the splitting criteria themselves,
-  each under the hypothesis that `c₄` survives the map. Away from residue characteristic two it
-  splits iff the image of `-c₄ c₆` is a square; in residue characteristic two, where that says
-  nothing, iff an Artin-Schreier condition holds. Both come from the general quadratic criteria
-  of `TauCeti/Algebra/Polynomial/QuadraticDiscriminant.lean`.
+  each needing `c₄` to survive the map. Away from residue characteristic two it splits iff the
+  image of `-c₄ c₆` is a square; in residue characteristic two, where that says nothing, iff an
+  Artin-Schreier condition holds — and there `c₆` must survive as well. Both come from the
+  general quadratic criteria of `TauCeti/Algebra/Polynomial/QuadraticDiscriminant.lean`.
 
 Nothing here assumes a valuation or a reduction: every statement is about a Weierstrass curve
 over a commutative ring and a ring homomorphism to a field, so it applies to any reduction map
 one later chooses. They advance
 `TauCetiRoadmap/EllipticCurves/README.md` §Layer 5 (twists), whose headline
 `exists_quadraticTwist_hasSplitMultiplicativeReduction` — a curve with nonsplit multiplicative
-reduction acquires split reduction after a separable quadratic twist — is proved by feeding the
-twist's scaling of `-c₄ c₆` into `nodePoly_map_splits_iff_isSquare`.
+reduction acquires split reduction after a separable quadratic twist — carries no
+residue-characteristic hypothesis, so it needs both criteria: away from residue characteristic
+two one feeds the twist's scaling of `-c₄ c₆` into `nodePoly_map_splits_iff_isSquare`, and in
+residue characteristic two the route is `nodePoly_map_splits_iff_of_two_eq_zero`.
 
 Adapted from the FLT project (`ImperialCollegeLondon/FLT`, at the roadmap's pin `bc2fe8ff7396`,
 FLT PR #1088, Apache 2.0): the node-polynomial block of
@@ -69,13 +73,15 @@ variable {A : Type*} [CommRing A] {B : Type*} [CommRing B] {k : Type*} [Field k]
 
 /-- The **node polynomial** `c₄ T² + a₁ c₄ T - (54 b₆ - 3 b₂ b₄ + a₂ c₄)`, whose roots are the
 slopes of the two tangent directions at the node of a multiplicative reduction. This is the
-polynomial Mathlib writes out inline in `WeierstrassCurve.HasSplitMultiplicativeReduction`, whose
-splitting over the residue field *is* that class's defining condition. -/
+polynomial Mathlib writes out inline in `WeierstrassCurve.HasSplitMultiplicativeReduction`, which
+asks for the splitting over the residue field of this polynomial formed from the *integral model*
+`W.integralModel R`, as its one extra condition on top of `HasMultiplicativeReduction`. -/
 noncomputable def nodePoly (W : WeierstrassCurve A) : Polynomial A :=
   .C W.c₄ * .X ^ 2 + .C (W.a₁ * W.c₄) * .X - .C (54 * W.b₆ - 3 * W.b₂ * W.b₄ + W.a₂ * W.c₄)
 
-/-- The discriminant of the node polynomial is `-c₄ c₆`. Hence the tangent directions at the node
-are rational over the residue field exactly when `-c₄ c₆` is a square there
+/-- The discriminant of the node polynomial is `-c₄ c₆`. Hence — away from residue characteristic
+two, and provided `c₄` survives the reduction — the tangent directions at the node are rational
+over the residue field exactly when the image of `-c₄ c₆` is a square there
 (`nodePoly_map_splits_iff_isSquare`); twisting by `(t, n)` multiplies `-c₄ c₆` by
 `(t² - 4n)⁵ = (t² - 4n)⁴ · (t² - 4n)`, i.e. by the twisting parameter up to a square. -/
 theorem nodePoly_discrim (W : WeierstrassCurve A) :
@@ -115,8 +121,8 @@ lemma map_nodePoly_discrim (φ : A →+* B) (W : WeierstrassCurve A) :
 /-- Under a change of variables `C = (u, r, s, t)`, the node polynomial transforms by the affine
 substitution `T ↦ u T + s` and the unit scalar `u⁻⁶` — reflecting that the tangent slopes `λ`
 transform as `λ ↦ (λ - s)/u`. Over a field this makes splitting invariant; see
-`nodePoly_map_splits_smul_iff`. -/
-lemma nodePoly_smul (W : WeierstrassCurve A) (C : VariableChange A) :
+`variableChange_nodePoly_map_splits_iff`. -/
+lemma variableChange_nodePoly (W : WeierstrassCurve A) (C : VariableChange A) :
     (C • W).nodePoly = .C ((↑C.u⁻¹ : A) ^ 6)
       * W.nodePoly.comp (.C (↑C.u : A) * .X + .C C.s) := by
   have e2 : (↑C.u⁻¹ : A) ^ 6 * (↑C.u : A) ^ 2 = (↑C.u⁻¹ : A) ^ 4 := by
@@ -147,15 +153,17 @@ lemma nodePoly_smul (W : WeierstrassCurve A) (C : VariableChange A) :
 
 /-- **Invariance of the node polynomial's splitting under change of variables.** Since a change of
 variables transforms the node polynomial by an affine substitution and a unit scalar
-(`nodePoly_smul`), whether it splits over a field `k` is unchanged. This is what makes split
-multiplicative reduction an isomorphism invariant rather than a property of the equation. -/
-lemma nodePoly_map_splits_smul_iff (φ : A →+* k) (W : WeierstrassCurve A) (C : VariableChange A) :
+(`variableChange_nodePoly`), whether it splits over a field `k` is unchanged. This is what makes
+split multiplicative reduction an isomorphism invariant rather than a property of the
+equation. -/
+lemma variableChange_nodePoly_map_splits_iff (φ : A →+* k) (W : WeierstrassCurve A)
+    (C : VariableChange A) :
     ((C • W).nodePoly.map φ).Splits ↔ (W.nodePoly.map φ).Splits := by
   have hu : φ (↑C.u : A) ≠ 0 := (RingHom.isUnit_map φ C.u.isUnit).ne_zero
   have hu6 : φ ((↑C.u⁻¹ : A) ^ 6) ≠ 0 := by
     rw [map_pow]; exact pow_ne_zero 6 (RingHom.isUnit_map φ C.u⁻¹.isUnit).ne_zero
-  rw [nodePoly_smul, Polynomial.map_mul, Polynomial.map_C, Polynomial.map_comp, Polynomial.map_add,
-    Polynomial.map_mul, Polynomial.map_C, Polynomial.map_X, Polynomial.map_C,
+  rw [variableChange_nodePoly, Polynomial.map_mul, Polynomial.map_C, Polynomial.map_comp,
+    Polynomial.map_add, Polynomial.map_mul, Polynomial.map_C, Polynomial.map_X, Polynomial.map_C,
     Polynomial.splits_mul_iff_right (Polynomial.C_ne_zero.mpr hu6) (Polynomial.Splits.C _)]
   exact (Polynomial.splits_iff_comp_splits_of_natDegree_eq_one
     (Polynomial.natDegree_linear hu)).symm
@@ -164,14 +172,15 @@ lemma nodePoly_map_splits_smul_iff (φ : A →+* k) (W : WeierstrassCurve A) (C 
 provided `c₄` does not die under `φ` — the condition that makes the reduced polynomial genuinely
 quadratic, and which multiplicative reduction supplies — the node polynomial splits, i.e. the two
 tangent directions at the node are `k`-rational, exactly when `φ (-(c₄ * c₆))`, the image of its
-discriminant (`nodePoly_discrim`), is a square in `k`. This discharges Mathlib's TODO at
-`Reduction.lean:315`, and is the tool that, applied to a quadratic twist via the scaling
+discriminant (`nodePoly_discrim`), is a square in `k`. This is the characterization Mathlib's
+TODO in `Reduction.lean` asks for, and is the tool that, applied to a quadratic twist via the
+scaling
 `-c₄' c₆' = (t² - 4n)⁵ · (-c₄ c₆)`, turns a nonsplit reduction into a split one after twisting by
 the right square class. -/
 lemma nodePoly_map_splits_iff_isSquare [NeZero (2 : k)] (φ : A →+* k) (W : WeierstrassCurve A)
     (hc₄ : φ W.c₄ ≠ 0) :
     (W.nodePoly.map φ).Splits ↔ IsSquare (φ (-(W.c₄ * W.c₆))) := by
-  rw [nodePoly_map_eq_quadratic, Polynomial.splits_quadratic_iff hc₄, map_nodePoly_discrim]
+  rw [nodePoly_map_eq_quadratic, Polynomial.splits_quadratic_iff_isSquare hc₄, map_nodePoly_discrim]
 
 /-- **Split criterion in residue characteristic two.** Over a field `k` of characteristic `2`,
 where the square-class criterion `nodePoly_map_splits_iff_isSquare` says nothing, the node
