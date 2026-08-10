@@ -6,6 +6,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.LinearAlgebra.Dimension.Localization
+public import Mathlib.FieldTheory.IntermediateField.Adjoin.Defs
 public import Mathlib.FieldTheory.RatFunc.Basic
 
 /-!
@@ -150,6 +151,14 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 /-- The image of the rational function field `F(x)` inside the function field `F(W)`. -/
 noncomputable def ratFuncRange : IntermediateField F W.FunctionField :=
   (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).fieldRange
+
+/-- The copy of the rational function field inside `F(W)` is the image of all of `F(x)`. This is
+the defining equation of `ratFuncRange`, in the form that carries it along `IntermediateField.map`
+lemmas. -/
+theorem ratFuncRange_eq_map :
+    ratFuncRange W = (⊤ : IntermediateField F (RatFunc F)).map
+      (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField) :=
+  AlgHom.fieldRange_eq_map _
 
 /-- An element of `F(W)` lies in the copy of the rational function field exactly when it is the
 image of a rational function. -/
