@@ -81,6 +81,15 @@ noncomputable def frobeniusRatFuncRange : IntermediateField K W.FunctionField :=
   (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange.map
     (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
 
+/-- `K(x^q)` sits inside `K(x)`, both read inside `K(W)`. -/
+theorem frobeniusRatFuncRange_le_ratFuncRange :
+    frobeniusRatFuncRange W ≤ ratFuncRange W := by
+  rintro _ ⟨z, hz, rfl⟩
+  exact ⟨_root_.FiniteField.frobeniusAlgHom K (RatFunc K)
+    ((AlgHom.mem_fieldRange.mp hz).choose), by
+      simpa using congrArg (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
+        (AlgHom.mem_fieldRange.mp hz).choose_spec⟩
+
 end WeierstrassCurve.Affine
 
 end TauCeti
