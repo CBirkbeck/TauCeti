@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.ExcisionMeasure
+public import TauCeti.Analysis.Contour.Curve.ExcisionMeasure
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 
 /-!
@@ -19,6 +19,14 @@ that length alone.
 This file supplies the limit. The arc runs once around a `π/3` sector of the unit circle, so it
 meets each excision centre at most once, and
 `TauCeti.Contour.tendsto_intervalIntegral_excisionIndicator` applies with the whole length `2`.
+
+## References
+
+* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the valence-formula
+  development; this file adapts the arc-specific half of
+  `ForMathlib/ValenceFormula/PVChain/ArcContribution.lean`
+  (`arc_preimage_subsingleton` and the specialisation of `arc_non_excluded_measure_tendsto`)
+  onto the current Mathlib pin.
 
 ## Main results
 
@@ -57,7 +65,8 @@ theorem tendsto_intervalIntegral_excisionIndicator_fdBoundary_arc (H : ℝ) (S :
     Tendsto (fun ε => ∫ t in (1 : ℝ)..3,
         if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℝ) else 1) (𝓝[>] 0) (𝓝 2) := by
   have h := Contour.tendsto_intervalIntegral_excisionIndicator (continuous_fdBoundary H)
-    (by norm_num : (1 : ℝ) ≤ 3) (injOn_fdBoundary_arc H) S
+    (by norm_num : (1 : ℝ) ≤ 3) S
+    (Contour.measure_setOf_mem_eq_zero_of_injOn (injOn_fdBoundary_arc H) S)
   norm_num at h
   exact h
 
