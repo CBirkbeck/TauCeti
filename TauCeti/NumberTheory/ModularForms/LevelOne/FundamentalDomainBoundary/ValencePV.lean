@@ -9,6 +9,7 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ExcisedIntegrability
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ArcExcisionMeasure
 public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.On
+public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.LogDerivPV
 
 /-!
 # The boundary principal value of a level-one logarithmic derivative
@@ -29,6 +30,9 @@ on the contour.
 
 * `TauCeti.ModularForm.hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex`: the boundary
   principal value of `logDeriv (f ∘ ofComplex)` is `2πi·ord_∞ − k·(π/6)·I`.
+* `TauCeti.ModularForm.two_pi_I_mul_sum_windingNumber_mul_order_eq`: equating that with the
+  argument principle gives `2πi·Σ n_z·ord z = 2πi·ord_∞ − k·(π/6)·I`, the analytic identity the
+  valence formula rests on.
 -/
 
 public section
@@ -131,6 +135,38 @@ theorem hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex [SlashInvariantFormCl
       ring
     exact hval ▸ (tendsto_const_nhds.sub
       ((tendsto_intervalIntegral_excised_logDeriv_fdBoundary_arc H S).const_mul _))
+
+/-- **The weighted zero count equals the cusp order minus the weight term.** Both sides are the
+same Cauchy principal value along the boundary contour: `hasCauchyPV_fdBoundary_logDeriv`
+evaluates it by the argument principle, as `2πi` times the winding-weighted sum of orders, while
+`hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex` evaluates it by the excised assembly, as
+`2πi·ord_∞ − k·(π/6)·I`. Principal values are unique — even across different excision sets — so
+the two agree.
+
+This is the analytic identity the valence formula rests on: dividing by `2πi` and reading off the
+corner winding numbers (`½` at `i`, `1/6` at each `ρ`-corner) turns it into
+`ord_∞ + ½·ord_i + ⅓·ord_ρ + Σ ord_q = k/12`. -/
+theorem two_pi_I_mul_sum_windingNumber_mul_order_eq [SlashInvariantFormClass F Γ k] (f : F)
+    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {U : Set ℂ} {ord : ℂ → ℤ} (hH : 1 ≤ H)
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
+    (hper : Periodic (⇑f ∘ ofComplex) 1) (hU : IsOpen U)
+    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
+    (hoff : ∀ z ∈ U, z ∉ S → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hmero : ∀ s ∈ S, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
+    (hord : ∀ s ∈ S, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s = (ord s : WithTop ℤ))
+    (hbase : fdBoundary H 0 ∉ (S : Set ℂ))
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      cuspFunction 1 ⇑f q ≠ 0) :
+    2 * (Real.pi : ℂ) * Complex.I *
+        ∑ z ∈ S, Contour.windingNumber (fdBoundary H) 0 5 z * (ord z : ℂ) =
+      2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
+        (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I) :=
+  (hasCauchyPV_fdBoundary_logDeriv hH hU hUdom hoff hmero hord hbase).unique
+    (hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex f hS hH hnorm hinv hHgt hper hUdom
+      hoff hga hgz).hasCauchyPV
+
 
 end ModularForm
 
