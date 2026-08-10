@@ -1011,49 +1011,60 @@ private lemma density_tail_lower_bound_eventually (f : ℝ → ℝ)
     _ = ((2 : ℝ) ^ k * ↑((k - 1).factorial)) *
           ∫ t in Ioi (T / 2), chafaiDensity f k t := by ring
 
+/-- **The weighted normalized derivative vanishes at infinity.** Let `f` be completely monotone
+with a limit at infinity, let `k` be a nonzero order and let `0 ≤ x`. Writing `h T` for the
+normalized derivative `(-1) ^ k * iteratedDerivWithin k f (Ici 0) T`, the products
+`(T - x) ^ k * h T` tend to `0` as `T → ∞`. -/
+private lemma tendsto_sub_pow_mul_normalized_iteratedDerivWithin (f : ℝ → ℝ)
+    (hcm : IsCompletelyMonotone f) (k : ℕ) (hk : k ≠ 0) (x : ℝ) (hx : 0 ≤ x)
+    (L : ℝ) (hL : Tendsto f atTop (nhds L)) :
+    Tendsto (fun T => (T - x) ^ k * ((-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) T))
+      atTop (nhds 0) := by
+  set h := fun T => (-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) T
+  have hk1 : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk
+  obtain ⟨h_nonneg₀, h_antitone₀⟩ :=
+    normalized_iteratedDerivWithin_nonneg_antitone f hcm k
+  have h_nonneg : ∀ T, 0 ≤ T → 0 ≤ h T := by simpa [h] using h_nonneg₀
+  have h_antitone : AntitoneOn h (Ici 0) := by simpa [h] using h_antitone₀
+  have hint_density : IntegrableOn (chafaiDensity f k) (Ioi 0) :=
+    chafaiDensity_integrableOn_Ioi_of_tendsto f hcm k hk1 L hL
+  -- `tendsto_integral_Ioi_zero` takes the cut point along any map to `atTop`, so `T / 2` needs
+  -- no separate composition argument.
+  have htail_half : Tendsto (fun T : ℝ => ∫ t in Ioi (T / 2), chafaiDensity f k t)
+      atTop (nhds 0) :=
+    tendsto_integral_Ioi_zero (b := fun T : ℝ => T / 2)
+      (tendsto_id.atTop_div_const (by norm_num))
+  have hupper := density_tail_lower_bound_eventually f hcm k hk x hx h h_nonneg h_antitone
+    (by
+      intro t
+      rw [chafaiDensity_of_ne_zero hk]
+      simp only [h]
+      field_simp)
+    hint_density
+  have hnonneg_event : ∀ᶠ T in atTop, 0 ≤ (T - x) ^ k * h T := by
+    filter_upwards [eventually_gt_atTop (max x 0)] with T hT
+    have hT0 : 0 < T := lt_of_le_of_lt (le_max_right x 0) hT
+    have hxT : x < T := lt_of_le_of_lt (le_max_left x 0) hT
+    exact mul_nonneg (pow_nonneg (sub_nonneg.mpr hxT.le) _) (h_nonneg T hT0.le)
+  have hupper_tendsto :
+      Tendsto (fun T : ℝ =>
+        ((2 : ℝ) ^ k * ↑((k - 1).factorial)) *
+          ∫ t in Ioi (T / 2), chafaiDensity f k t) atTop (nhds 0) := by
+    simpa [mul_zero] using htail_half.const_mul (((2 : ℝ) ^ k) * ↑((k - 1).factorial))
+  -- squeeze between nonnegativity and the vanishing tail bound
+  exact squeeze_zero' hnonneg_event hupper hupper_tendsto
+
 private lemma boundary_term_decay (f : ℝ → ℝ) (hcm : IsCompletelyMonotone f)
     (k : ℕ) (hk : k ≠ 0) (x : ℝ) (hx : 0 ≤ x) (L : ℝ) (hL : Tendsto f atTop (nhds L)) :
     Tendsto (fun T => (-1 : ℝ) ^ (k + 1) / ↑k.factorial * (T - x) ^ k *
       iteratedDerivWithin k f (Ici 0) T) atTop (nhds 0) := by
-  set h := fun T => (-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) T
-  have hk1 : 1 ≤ k := Nat.one_le_iff_ne_zero.mpr hk
-  have hkey : Tendsto (fun T => (T - x) ^ k * h T) atTop (nhds 0) := by
-    obtain ⟨h_nonneg₀, h_antitone₀⟩ :=
-      normalized_iteratedDerivWithin_nonneg_antitone f hcm k
-    have h_nonneg : ∀ T, 0 ≤ T → 0 ≤ h T := by simpa [h] using h_nonneg₀
-    have h_antitone : AntitoneOn h (Ici 0) := by simpa [h] using h_antitone₀
-    have hint_density : IntegrableOn (chafaiDensity f k) (Ioi 0) :=
-      chafaiDensity_integrableOn_Ioi_of_tendsto f hcm k hk1 L hL
-    -- `tendsto_integral_Ioi_zero` takes the cut point along any map to `atTop`, so `T / 2` needs
-    -- no separate composition argument.
-    have htail_half : Tendsto (fun T : ℝ => ∫ t in Ioi (T / 2), chafaiDensity f k t)
-        atTop (nhds 0) :=
-      tendsto_integral_Ioi_zero (b := fun T : ℝ => T / 2)
-        (tendsto_id.atTop_div_const (by norm_num))
-    have hupper := density_tail_lower_bound_eventually f hcm k hk x hx h h_nonneg h_antitone
-      (by
-        intro t
-        rw [chafaiDensity_of_ne_zero hk]
-        simp only [h]
-        field_simp)
-      hint_density
-    have hnonneg_event : ∀ᶠ T in atTop, 0 ≤ (T - x) ^ k * h T := by
-      filter_upwards [eventually_gt_atTop (max x 0)] with T hT
-      have hT0 : 0 < T := lt_of_le_of_lt (le_max_right x 0) hT
-      have hxT : x < T := lt_of_le_of_lt (le_max_left x 0) hT
-      exact mul_nonneg (pow_nonneg (sub_nonneg.mpr hxT.le) _) (h_nonneg T hT0.le)
-    have hupper_tendsto :
-        Tendsto (fun T : ℝ =>
-          ((2 : ℝ) ^ k * ↑((k - 1).factorial)) *
-            ∫ t in Ioi (T / 2), chafaiDensity f k t) atTop (nhds 0) := by
-      simpa [mul_zero] using htail_half.const_mul (((2 : ℝ) ^ k) * ↑((k - 1).factorial))
-    -- Phase: squeeze between nonnegativity and the vanishing tail bound.
-    exact squeeze_zero' hnonneg_event hupper hupper_tendsto
+  have hkey := tendsto_sub_pow_mul_normalized_iteratedDerivWithin f hcm k hk x hx L hL
   have heq : ∀ T, (-1 : ℝ) ^ (k + 1) / ↑k.factorial * (T - x) ^ k *
       iteratedDerivWithin k f (Ici 0) T =
-      -(1 / ↑k.factorial) * ((T - x) ^ k * h T) := by
+      -(1 / ↑k.factorial) *
+        ((T - x) ^ k * ((-1 : ℝ) ^ k * iteratedDerivWithin k f (Ici 0) T)) := by
     intro T
-    simp only [h, pow_succ]
+    simp only [pow_succ]
     ring
   simp_rw [heq]
   simpa using hkey.const_mul (-(1 / (k.factorial : ℝ)))
