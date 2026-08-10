@@ -22,8 +22,8 @@ of that, neither in Mathlib:
 * `TauCeti.IsPrimitiveRoot.map_eq_pow`: a ring endomorphism sending a primitive `n`-th root of
   unity `ζ` to `ζ ^ j` sends every `n`-th root of unity `μ` to `μ ^ j`.
 * `TauCeti.IsPrimitiveRoot.rootsOfUnityAddEquivZMod`: `Additive (rootsOfUnity n R) ≃+ ZMod n`,
-  with `rootsOfUnityAddEquivZMod_apply_zpow` and `_symm_apply_zpow`/`_symm_apply_pow` computing it
-  and its inverse on powers of `ζ`.
+  with `rootsOfUnityAddEquivZMod_apply_zpow` and
+  `_symm_apply_coe_int`/`_symm_apply_coe_nat` computing it and its inverse on powers of `ζ`.
 
 ## Provenance
 
@@ -31,9 +31,8 @@ of that, neither in Mathlib:
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, pinned by `TauCetiRoadmap/EllipticCurves` at
 `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/WeilPairing/RootsOfUnity.lean`, declaration
 `rootsOfUnity_addEquiv_zmod`. The source states it over a field and inside an elliptic-curve
-namespace; here it is over an integral domain and hangs off `IsPrimitiveRoot`. The source's proof
-transports along `zpowers_eq` with `▸`; this composes instead, since a term behind `Eq.rec` does
-not reduce and the characterisation lemmas above would not be provable about it.
+namespace; here it is over an integral domain, hangs off `IsPrimitiveRoot`, and comes with the
+three characterisation lemmas, which the source does not have.
 
 Mathlib has both halves of the second: `IsPrimitiveRoot.zmodEquivZPowers` identifies `ZMod n` with
 the `zpowers` of the root, and `IsPrimitiveRoot.zpowers_eq` identifies those with
@@ -63,35 +62,38 @@ root of unity `ζ`, the group `μ_n` written additively is isomorphic to `ZMod n
 noncomputable def IsPrimitiveRoot.rootsOfUnityAddEquivZMod {n : ℕ} [NeZero n] {ζ : Rˣ}
     (hζ : IsPrimitiveRoot ζ n) :
     Additive (rootsOfUnity n R) ≃+ ZMod n :=
+  -- Composed with `subgroupCongr` rather than transported along `zpowers_eq` with `▸`: a term
+  -- behind `Eq.rec` does not reduce, and none of the three lemmas below would be provable.
   (hζ.zmodEquivZPowers.trans
     (MulEquiv.toAdditive (MulEquiv.subgroupCongr hζ.zpowers_eq))).symm
 
 /-- The inverse sends `i : ℤ` to the root `ζ ^ i`, matching Mathlib's
-`IsPrimitiveRoot.zmodEquivZPowers_symm_apply_zpow`. -/
+`IsPrimitiveRoot.zmodEquivZPowers_apply_coe_int`. -/
 @[simp]
-theorem IsPrimitiveRoot.rootsOfUnityAddEquivZMod_symm_apply_zpow {n : ℕ} [NeZero n] {ζ : Rˣ}
+theorem IsPrimitiveRoot.rootsOfUnityAddEquivZMod_symm_apply_coe_int {n : ℕ} [NeZero n] {ζ : Rˣ}
     (hζ : IsPrimitiveRoot ζ n) (i : ℤ) :
     ((Additive.toMul ((IsPrimitiveRoot.rootsOfUnityAddEquivZMod hζ).symm (i : ZMod n)) :
       rootsOfUnity n R) : Rˣ) = ζ ^ i := by
   simp [IsPrimitiveRoot.rootsOfUnityAddEquivZMod]
 
-/-- The natural-power case of `rootsOfUnityAddEquivZMod_symm_apply_zpow`, matching Mathlib's
-`IsPrimitiveRoot.zmodEquivZPowers_symm_apply_pow`. -/
+/-- The natural-power case of `rootsOfUnityAddEquivZMod_symm_apply_coe_int`, matching Mathlib's
+`IsPrimitiveRoot.zmodEquivZPowers_apply_coe_nat`. -/
 @[simp]
-theorem IsPrimitiveRoot.rootsOfUnityAddEquivZMod_symm_apply_pow {n : ℕ} [NeZero n] {ζ : Rˣ}
+theorem IsPrimitiveRoot.rootsOfUnityAddEquivZMod_symm_apply_coe_nat {n : ℕ} [NeZero n] {ζ : Rˣ}
     (hζ : IsPrimitiveRoot ζ n) (i : ℕ) :
     ((Additive.toMul ((IsPrimitiveRoot.rootsOfUnityAddEquivZMod hζ).symm (i : ZMod n)) :
       rootsOfUnity n R) : Rˣ) = ζ ^ i := by
-  simpa using IsPrimitiveRoot.rootsOfUnityAddEquivZMod_symm_apply_zpow hζ (i : ℤ)
+  simpa using IsPrimitiveRoot.rootsOfUnityAddEquivZMod_symm_apply_coe_int hζ (i : ℤ)
 
 /-- The equivalence sends the root `ζ ^ i` to `i`. -/
 @[simp]
 theorem IsPrimitiveRoot.rootsOfUnityAddEquivZMod_apply_zpow {n : ℕ} [NeZero n] {ζ : Rˣ}
-    (hζ : IsPrimitiveRoot ζ n) (i : ℤ) (h : ζ ^ i ∈ rootsOfUnity n R) :
-    IsPrimitiveRoot.rootsOfUnityAddEquivZMod hζ (Additive.ofMul ⟨ζ ^ i, h⟩) = (i : ZMod n) := by
+    (hζ : IsPrimitiveRoot ζ n) (i : ℤ) :
+    IsPrimitiveRoot.rootsOfUnityAddEquivZMod hζ
+        (Additive.ofMul ⟨ζ ^ i, by rw [← hζ.zpowers_eq]; exact ⟨i, rfl⟩⟩) = (i : ZMod n) := by
   apply (IsPrimitiveRoot.rootsOfUnityAddEquivZMod hζ).symm.injective
   simp only [AddEquiv.symm_apply_apply]
   exact Subtype.ext
-    (IsPrimitiveRoot.rootsOfUnityAddEquivZMod_symm_apply_zpow hζ i).symm
+    (IsPrimitiveRoot.rootsOfUnityAddEquivZMod_symm_apply_coe_int hζ i).symm
 
 end TauCeti
