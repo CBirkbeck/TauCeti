@@ -36,6 +36,7 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out 
   interface — the definition itself is a `dite` chain and is not meant to be unfolded.
 * `Valuation.restrictToConvex_le_iff` : on values kept by the restriction, the order is both
   preserved and reflected.
+* `Valuation.one_le_restrictToConvex` : a value at least `1` stays at least `1`.
 (Carrying a convex subgroup of a value group onto the units of the value monoid containing it
 is `TauCeti.ConvexSubgroup.ofValueGroup`, in
 `TauCeti.RingTheory.Valuation.ValueGroupTransport`.)
@@ -267,6 +268,18 @@ theorem restrictToConvex_le_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ�
   rw [restrictToConvex_apply_of_mem v H hH hr hmr, restrictToConvex_apply_of_mem v H hH hs hms,
     WithZero.coe_le_coe]
   exact Iff.rfl
+
+/-- A value at least `1` stays at least `1` under the restriction. Such a value is always kept,
+since `H` absorbs the attained values `≥ 1` by hypothesis. -/
+theorem one_le_restrictToConvex (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {c : R} (hc : v c ≠ 0) (h1 : 1 ≤ v c) : 1 ≤ v.restrictToConvex H hH c := by
+  have hone : v (1 : R) ≠ 0 := by simp
+  have hmone : Units.mk0 (v (1 : R)) hone ∈ H := by
+    have h : Units.mk0 (v (1 : R)) hone = 1 := by ext; simp
+    rw [h]; exact one_mem H
+  have := (restrictToConvex_le_iff v H hH hone hc hmone (hH c hc h1)).mpr (by simpa using h1)
+  simpa using this
 
 /-- The restriction vanishes exactly where `v` does or where the unit avoids `H`. -/
 theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
