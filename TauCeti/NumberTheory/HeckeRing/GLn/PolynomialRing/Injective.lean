@@ -22,7 +22,7 @@ leading elementary-divisor vector, and distinct monomials have distinct leading 
 
 ## Main results
 
-* `HeckeRing.GLn.Inj.evalHom_injective_one`, `HeckeRing.GLn.Inj.evalHom_injective_two`:
+* `HeckeRing.GLn.Inj.evalHom_one_injective`, `HeckeRing.GLn.Inj.evalHom_two_injective`:
   evaluation at the generators is injective for `n = 1` and `n = 2`.
 * `HeckeRing.GLn.polynomialRingEquivOne`, `HeckeRing.GLn.polynomialRingEquivTwo`:
   **Shimura, Theorem 3.20** for `n = 1` and `n = 2` — `pLocalSubring ≅ ℤ[X₁, …, Xₙ]`.
@@ -86,11 +86,11 @@ private lemma diagElem_mul_diagElem (a b : Fin 2 → ℕ) :
   exact h.trans (by simp)
 
 /-- For n=1, `heckeGen(0)^k = diagElem(fun _ => p^k)`. -/
-private lemma heckeGen_pow_one (p : ℕ) (hp : p.Prime) (k : ℕ) :
+private lemma heckeGen_pow_one (p : ℕ) (hp : 0 < p) (k : ℕ) :
     heckeGen 1 p (0 : Fin 1) ^ k = diagElem (fun _ : Fin 1 ↦ p ^ k) := by
   rw [show heckeGen 1 p (0 : Fin 1) = diagElem (fun _ : Fin 1 ↦ p) from by
     rw [heckeGen_def]; exact congrArg diagElem (heckeGenDiag_one_eq_const p)]
-  exact diagElem_const_pow 1 p hp.pos k
+  exact diagElem_const_pow 1 p hp k
 
 /-- An integer scalar times the basis element `diagElem a` is the single `Finsupp` at
 `diagCoset a` with that coefficient. -/
@@ -103,19 +103,20 @@ private lemma intCast_mul_diagElem_eq_single {n : ℕ} [NeZero n] (a : Fin n →
 
 /-- For `n = 1` and `p` prime, the cosets `diagCoset (fun _ => p^k)` are injective in `k`:
 if they coincide for `b 0` and `s 0`, then `b 0 = s 0`. -/
-private lemma T_diag_one_ppow_inj (p : ℕ) (hp : p.Prime) {b s : Fin 1 →₀ ℕ}
+private lemma T_diag_one_ppow_inj (p : ℕ) (hp : 1 < p) {b s : Fin 1 →₀ ℕ}
     (hb : (diagCoset (n := 1) (fun _ ↦ p ^ b 0) : HeckeCoset (posDetInt 1) (SLnZ 1) (SLnZ 1)) =
       diagCoset (fun _ ↦ p ^ s 0)) : b 0 = s 0 := by
   -- each diagonal here is constant, so the chain condition is `isDvdChain_const`
   have hdiv : ∀ c : Fin 1 →₀ ℕ, IsDvdChain (fun _ : Fin 1 ↦ p ^ c 0) :=
     fun c ↦ isDvdChain_const 1 (p ^ c 0)
-  have heq := eq_of_diagCoset_eq (fun _ ↦ Nat.pow_pos hp.pos)
-    (fun _ ↦ Nat.pow_pos hp.pos) (hdiv b) (hdiv s) hb
-  exact Nat.pow_right_injective hp.two_le (congr_fun heq 0)
+  have hpos : 0 < p := Nat.lt_of_lt_of_le Nat.zero_lt_one hp.le
+  have heq := eq_of_diagCoset_eq (fun _ ↦ Nat.pow_pos hpos)
+    (fun _ ↦ Nat.pow_pos hpos) (hdiv b) (hdiv s) hb
+  exact Nat.pow_right_injective hp (congr_fun heq 0)
 
 /-- n=1: evalHom is injective. Different monomials map to distinct basis elements,
     so the images are ℤ-linearly independent. -/
-theorem evalHom_injective_one (p : ℕ) (hp : p.Prime) : Function.Injective (evalHom 1 p) := by
+theorem evalHom_one_injective (p : ℕ) (hp : 1 < p) : Function.Injective (evalHom 1 p) := by
   intro P Q hPQ
   rw [← sub_eq_zero]
   set R := P - Q
@@ -136,7 +137,7 @@ theorem evalHom_injective_one (p : ℕ) (hp : p.Prime) : Function.Injective (eva
     (∑ x ∈ R.support, HeckeCosetModule.single ℤ
       (diagCoset (n := 1) (fun _ ↦ p ^ x 0)) (MvPolynomial.coeff x R)) :=
     Finset.sum_congr rfl (fun x _ ↦ by
-      rw [heckeGen_pow_one p hp]
+      rw [heckeGen_pow_one p (Nat.lt_of_lt_of_le Nat.zero_lt_one hp.le)]
       exact intCast_mul_diagElem_eq_single (n := 1) (fun _ ↦ p ^ x 0) (R.coeff x))
   change (∑ x ∈ R.support,
       (Int.castRingHom (IntegralHeckeRing 1)) (MvPolynomial.coeff x R) * heckeGen 1 p 0 ^ x 0)
@@ -702,7 +703,7 @@ private lemma evalHom_apply_eq_sum_monomial (p : ℕ) (R : MvPolynomial (Fin 2) 
     Finsupp.smul_apply _ _ _, smul_eq_mul, prod_T_gen_pow_eq_two]
 
 /-- n=2: evalHom is injective. -/
-theorem evalHom_injective_two (p : ℕ) (hp : p.Prime) :
+theorem evalHom_two_injective (p : ℕ) (hp : p.Prime) :
     Function.Injective (evalHom 2 p) := by
   intro P Q hPQ
   rw [← sub_eq_zero]; set R := P - Q
@@ -748,7 +749,7 @@ polynomial ring `ℤ[X]` on the single generator `T(p)`. -/
 noncomputable def polynomialRingEquivOne :
     MvPolynomial (Fin 1) ℤ ≃+* pLocalSubring 1 p :=
   RingEquiv.ofBijective (evalHomLocal 1 p)
-    ⟨Inj.evalHomLocal_injective 1 p (Inj.evalHom_injective_one p hp),
+    ⟨Inj.evalHomLocal_injective 1 p (Inj.evalHom_one_injective p hp.one_lt),
      evalHomLocal_one_surjective p hp.pos⟩
 
 /-- **Shimura, Theorem 3.20 for `n = 2`**: the `p`-local Hecke ring of `GL₂` is the
@@ -757,7 +758,7 @@ classical theory of modular forms uses. -/
 noncomputable def polynomialRingEquivTwo :
     MvPolynomial (Fin 2) ℤ ≃+* pLocalSubring 2 p :=
   RingEquiv.ofBijective (evalHomLocal 2 p)
-    ⟨Inj.evalHomLocal_injective 2 p (Inj.evalHom_injective_two p hp),
+    ⟨Inj.evalHomLocal_injective 2 p (Inj.evalHom_two_injective p hp),
      evalHomLocal_two_surjective p hp⟩
 
 /-- The rank-one presentation isomorphism is the evaluation map. -/
