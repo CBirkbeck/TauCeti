@@ -90,16 +90,11 @@ private lemma eval_eq_eval_equivPolynomial {A : Type*} [CommRing A]
 private lemma equivPolynomialSelf_mapCoeffs_polynomial :
     PolynomialModule.equivPolynomialSelf ((derivative' (R := R)).mapCoeffs W.polynomial)
       = W.polynomialX := by
-  -- The rewrite list is explicit on purpose: a broad `simp` fires Mathlib's
-  -- `equivPolynomialSelf_apply_eq` first, and the resulting `equivPolynomial` is only `R`-linear,
-  -- so the `R[X][Y]`-scalars can no longer be pushed through it and the goal sticks.
-  simp only [WeierstrassCurve.Affine.polynomial, WeierstrassCurve.Affine.polynomialX,
-    map_add, map_sub, map_mul, map_pow, map_smul, map_nsmul,
-    Derivation.leibniz, Derivation.leibniz_pow, Derivation.mapCoeffs_X, Derivation.mapCoeffs_C,
-    derivative'_apply, derivative_X, derivation_C, smul_zero, zero_add,
-    PolynomialModule.equivPolynomialSelf_apply_eq, PolynomialModule.equivPolynomial_single,
-    monomial_zero_left, C_1, C_0, smul_eq_mul, mul_one, mul_zero, add_zero,
-    map_ofNat, nsmul_eq_mul, Nat.cast_ofNat]
+  -- Transport to `MvPolynomial (Fin 2) R`, where Mathlib's `pderiv_zero_equivMvPolynomial`
+  -- already identifies this construction with `pderiv 0`, and compute there.
+  apply (Polynomial.Bivariate.equivMvPolynomial R).injective
+  rw [← Polynomial.Bivariate.pderiv_zero_equivMvPolynomial]
+  simp [WeierstrassCurve.Affine.polynomial, WeierstrassCurve.Affine.polynomialX, map_ofNat]
   ring
 
 /-- **The `X`-partial derivative of the Weierstrass polynomial is its coefficient-wise
