@@ -38,8 +38,10 @@ Adapted from Michael Stoll's elliptic-curves formalisation
 roadmap's pin `66889eada51a`, Apache 2.0, by Michael Stoll), which the roadmap names as the
 provenance for its Layer 6 Mordell–Weil lane. Following this repository's convention for adapted
 material, the upstream authorship is credited here rather than in the copyright header. Ported
-with the source's blanket `import Mathlib` narrowed to the modules actually used, and the
-class-group half of the source file deferred to the PR that consumes it.
+with the source's blanket `import Mathlib` narrowed to the modules actually used. The
+class-group half of that source file is
+`TauCeti/RingTheory/DedekindDomain/SInteger/ClassGroup.lean`, which computes `Cl(𝒪_S)` as
+`IsDedekindDomain.integerClassGroupEquiv` and consumes this file.
 -/
 
 public section
@@ -251,11 +253,6 @@ instance : Ring.DimensionLEOne (S.integer K) := by
 
 /-- **The ring of `S`-integers of a Dedekind domain is a Dedekind domain.** -/
 instance : IsDedekindDomain (S.integer K) where
-
-/-- `𝒪_S` is torsion-free over `R`, as `R` embeds into it. -/
-instance : Module.IsTorsionFree R (S.integer K) := by
-  rw [Module.isTorsionFree_iff_algebraMap_injective]
-  exact FaithfulSMul.algebraMap_injective R (S.integer K)
 
 
 
