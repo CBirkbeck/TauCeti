@@ -10,8 +10,8 @@ public import Mathlib.RingTheory.Algebraic.Integral
 /-!
 # The function field of a Weierstrass curve has degree two over `R(x)`
 
-Mathlib gives the coordinate ring `R[W]` a power basis `{1, Y}` over `R[X]`, so it is free of rank
-two, and defines the function field `R(W)` as its fraction field. It says nothing about `R(W)` as
+Mathlib gives the coordinate ring `R[W]` a power basis `{1, Y}` over `R[X]`, and defines the
+function field `R(W)` as its fraction field. It says nothing about `R(W)` as
 an extension of `R(x) = FractionRing R[X]` — indeed it provides no algebra structure for that pair,
 so the statement cannot even be written against Mathlib alone. This file exports the structure and
 proves the degree.
@@ -21,9 +21,9 @@ proves the degree.
 * `WeierstrassCurve.Affine.moduleFinite_coordinateRing`: the coordinate ring is module-finite
   over `R[X]`, over any commutative ring — whence Mathlib's `Algebra.IsIntegral.of_finite` gives
   integrality without further help.
-* `WeierstrassCurve.Affine.finrank_coordinateRing`: it has rank two, under
-  `[StrongRankCondition R[X]]` — the hypothesis `Module.finrank` actually needs, automatic over a
-  domain.
+* `WeierstrassCurve.Affine.finrank_coordinateRing`: its `Module.finrank` over `R[X]` is two,
+  under `[StrongRankCondition R[X]]` — the hypothesis `Module.finrank` actually needs, automatic
+  over a domain.
 * `WeierstrassCurve.Affine.algebraFractionRingFunctionField`: the `R(x)`-algebra structure on
   `R(W)`, over any integral domain. Exporting it is enough to bring Mathlib's own
   `FractionRing.liftAlgebra` API to bear on this pair — the tower `R[X] ⊆ R(x) ⊆ R(W)` is then
@@ -84,8 +84,8 @@ variable {R : Type*} [CommRing R] (W : WeierstrassCurve.Affine R)
 instance moduleFinite_coordinateRing : Module.Finite R[X] W.CoordinateRing :=
   Module.Finite.of_basis (CoordinateRing.basis W)
 
-/-- **The coordinate ring is free of rank two over `R[X]`**, whenever ranks over `R[X]` are well
-behaved — which is what `StrongRankCondition` asks, and is automatic over a field. -/
+/-- **The coordinate ring has rank two over `R[X]`**, whenever ranks over `R[X]` are well
+behaved — which is what `StrongRankCondition` asks, and is automatic over a domain. -/
 @[simp]
 lemma finrank_coordinateRing [StrongRankCondition R[X]] :
     Module.finrank R[X] W.CoordinateRing = 2 :=
