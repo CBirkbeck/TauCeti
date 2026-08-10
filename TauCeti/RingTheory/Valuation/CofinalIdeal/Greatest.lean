@@ -50,9 +50,12 @@ the two uses Wedhorn makes of it, and both appear here.
   greatest-cofinal conclusion** from a generating set, with
   `exists_isGreatestIdealCofinal_of_not_meets` its existence form, which is what Definition 7.3
   presupposes.
-* `TauCeti.Valuation.exists_mem_valueSet_mem_characteristicSubgroupOfIdeal` : **Lemma 7.2's
-  attainment conclusion** — off the first branch and with `v` not identically zero on `I`, the
-  subgroup `cΓ_v(I)` contains a value of `I`.
+* `TauCeti.Valuation.le_of_idealCofinalFor_of_mem_valueSet` : **Lemma 7.2's minimality half** —
+  a subgroup for which `I` is cofinal lies below every convex subgroup containing a value of `I`.
+* `TauCeti.Valuation.exists_mem_valueSet_mem_characteristicSubgroupOfIdeal` and
+  `TauCeti.Valuation.isLeast_characteristicSubgroupOfIdeal` : **Lemma 7.2's attainment and
+  minimality conclusions** for `cΓ_v(I)` — off the first branch and with `v` not identically zero
+  on `I`, it contains a value of `I` and is the least convex subgroup that does.
 * `TauCeti.Valuation.characteristicSubgroup_le_characteristicSubgroupOfIdeal` : `cΓ_v(I)` always
   contains `cΓ_v`.
 * `TauCeti.Valuation.characteristicSubgroupOfIdeal_eq_top_iff` and
@@ -61,19 +64,6 @@ the two uses Wedhorn makes of it, and both appear here.
 * `TauCeti.Valuation.characteristicSubgroupOfIdeal_eq_top_congr_of_isEquiv` : that criterion is
   an invariant of the valuation class, which is what lets `Spv (A, I)` be carved out of the
   valuation spectrum.
-
-## Scope: which conclusions of Lemma 7.2 are formalised
-
-Two are: that the constructed subgroup is **greatest** among those for which `I` is cofinal, and
-that it **meets** `v(I)` when `v` does not vanish identically on `I`.
-
-A **minimality** clause is not: that the subgroup is least among the convex subgroups meeting
-`v(I)`. Proving it means showing `h ∈ K` for every convex `K` containing some value of `I`,
-which needs `γ ^ k ≤ h` for some `k`. That is not immediate from the construction, since `h`
-maximises over a generating set of `J` while `γ` ranges over `I`, and `v (c * t) = v c * v t`
-can exceed `v t` — see the note on `idealCofinalFor_of_span` below. It is the disjointness
-hypothesis that constrains this, since an attained value `≥ 1` lies in `cΓ_v` and `v(I)` must
-avoid `cΓ_v`; formalising that argument is left to the work that needs the clause.
 
 ## Implementation notes
 
@@ -226,6 +216,28 @@ theorem le_closure_singleton_of_idealCofinalFor {v : Valuation A Γ₀} {I : Ide
     K ≤ TauCeti.ConvexSubgroup.closure {h} :=
   (TauCeti.isCofinalElement_iff_subset_closure hlt).mp
     (idealCofinalFor_iff_forall_isCofinalElement.mp hK h hh)
+
+/-- **Minimality half.** A convex subgroup for which `I` is cofinal sits below every convex
+subgroup containing so much as one value of `I`.
+
+No domination hypothesis is needed. Cofinality is applied twice, at `x` and at `x⁻¹`, which
+brackets `x` strictly between two powers of the single value `γ`; convexity of `K` then
+places `x` inside it. -/
+theorem le_of_idealCofinalFor_of_mem_valueSet {v : Valuation A Γ₀} {I : Ideal A}
+    {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (hcof : IdealCofinalFor v H I) {γ : valueGroup (.ofClass v)}
+    (hγ : γ ∈ valueSet v I) (hγK : γ ∈ K) : H ≤ K := by
+  obtain ⟨a, haI, hav⟩ := mem_valueSet.mp hγ
+  intro x hx
+  have hcofa := cofinalValueFor_def.mp (hcof a haI)
+  obtain ⟨n, hn⟩ := hcofa x (TauCeti.ConvexSubgroup.mem_toSubgroup.mpr hx)
+  obtain ⟨m, hm⟩ := hcofa x⁻¹ (TauCeti.ConvexSubgroup.mem_toSubgroup.mpr (inv_mem hx))
+  rw [hav, ← WithZero.coe_pow, WithZero.coe_lt_coe] at hn
+  rw [hav, ← WithZero.coe_pow, WithZero.coe_lt_coe] at hm
+  have hx2 : x < (γ ^ m)⁻¹ := by
+    have h := inv_lt_inv_iff.mpr hm
+    rwa [inv_inv] at h
+  exact K.convex (pow_mem hγK n) (inv_mem (pow_mem hγK m)) hn.le hx2.le
 
 /-- **Membership half.** It suffices to check cofinality on a generating set: if every element
 of `T` has cofinal value, so does every element of the ideal `T` spans.
@@ -495,6 +507,22 @@ theorem exists_mem_valueSet_mem_characteristicSubgroupOfIdeal {v : Valuation A �
   classical
   rw [characteristicSubgroupOfIdeal, dif_neg h]
   exact (exists_isGreatestIdealCofinal_of_not_meets hfg h).choose_spec.2.2 hne
+
+/-- **`cΓ_v(I)` is the least convex subgroup meeting `v(I)`** — the minimality conclusion of
+Wedhorn Lemma 7.2, on the branch where Definition 7.3 invokes it.
+
+The two halves are `exists_mem_valueSet_mem_characteristicSubgroupOfIdeal` for membership and
+`le_of_idealCofinalFor_of_mem_valueSet` for the lower bound. Nonvanishing is required for the
+same reason as there: with `valueSet v I` empty, nothing meets it and no least element exists. -/
+theorem isLeast_characteristicSubgroupOfIdeal {v : Valuation A Γ₀} {I : Ideal A}
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
+    (h : ¬ IdealMeetsCharacteristicSubgroup v I)
+    (hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0) :
+    IsLeast {K | ∃ γ ∈ valueSet v I, γ ∈ K} (characteristicSubgroupOfIdeal v I hfg) := by
+  refine ⟨exists_mem_valueSet_mem_characteristicSubgroupOfIdeal hfg h hne, ?_⟩
+  rintro K ⟨γ, hγ, hγK⟩
+  exact le_of_idealCofinalFor_of_mem_valueSet
+    (isGreatestIdealCofinal_characteristicSubgroupOfIdeal hfg h).1 hγ hγK
 
 /-! ### Wedhorn Lemma 7.4 -/
 
