@@ -22,7 +22,7 @@ leading elementary-divisor vector, and distinct monomials have distinct leading 
 
 ## Main results
 
-* `HeckeRing.GLn.Inj.evalHom_one_injective`, `HeckeRing.GLn.Inj.evalHom_two_injective`:
+* `HeckeRing.GLn.evalHom_one_injective`, `HeckeRing.GLn.evalHom_two_injective`:
   evaluation at the generators is injective for `n = 1` and `n = 2`.
 * `HeckeRing.GLn.polynomialRingEquivOne`, `HeckeRing.GLn.polynomialRingEquivTwo`:
   **Shimura, Theorem 3.20** for `n = 1` and `n = 2` — `pLocalSubring ≅ ℤ[X₁, …, Xₙ]`.
@@ -47,9 +47,9 @@ open Matrix Subgroup.Commensurable Pointwise HeckeRing DoubleCoset Matrix.Specia
 
 open scoped Pointwise
 
-namespace HeckeRing.GLn.Inj
+namespace HeckeRing.GLn
 
-open HeckeRing.GLn HeckeRing.GL2
+open HeckeRing.GL2
 
 /-- The `CommSemiring` structure this module needs on `IntegralHeckeRing n`, rebuilt locally
 from `HeckeCosetModule.instSemiringHeckeRing` and `HeckeCosetModule.mul_comm_of_antiInvolution`.
@@ -59,7 +59,7 @@ does not cross the module boundary; and `commSemiringIntegralHeckeRing` is a sea
 registering it for typeclass search does not make its body reduce to the ambient
 `NonAssocSemiring`. Writing the structure here makes it transparent exactly where this file
 needs it, leaving the upstream definitions sealed for every other consumer. -/
-noncomputable local instance commSemiringIntegralHeckeRingLocal (n : ℕ) [NeZero n] :
+noncomputable local instance localCommSemiringForInjectivity (n : ℕ) [NeZero n] :
     CommSemiring (IntegralHeckeRing n) :=
   { (HeckeCosetModule.instSemiringHeckeRing ℤ : Semiring (IntegralHeckeRing n)) with
     mul_comm := HeckeCosetModule.mul_comm_of_antiInvolution ℤ (transposeAntiInvolution n)
@@ -738,10 +738,6 @@ lemma evalHomLocal_injective (n : ℕ) [NeZero n] (p : ℕ)
   refine h_inj ?_
   rw [← evalHomLocal_coe n p P, ← evalHomLocal_coe n p Q, hPQ]
 
-end HeckeRing.GLn.Inj
-
-namespace HeckeRing.GLn
-
 variable (p : ℕ)
 
 /-- **Shimura, Theorem 3.20 for `n = 1`**: the `p`-local Hecke ring of `GL₁` is the
@@ -751,7 +747,7 @@ Stated for `1 < p` rather than `p.Prime`: rank one needs only that `k ↦ p^k` i
 noncomputable def polynomialRingEquivOne (hp : 1 < p) :
     MvPolynomial (Fin 1) ℤ ≃+* pLocalSubring 1 p :=
   RingEquiv.ofBijective (evalHomLocal 1 p)
-    ⟨Inj.evalHomLocal_injective 1 p (Inj.evalHom_one_injective p hp),
+    ⟨evalHomLocal_injective 1 p (evalHom_one_injective p hp),
      evalHomLocal_one_surjective p (Nat.zero_lt_of_lt hp)⟩
 
 /-- The rank-one presentation isomorphism is the evaluation map. -/
@@ -766,7 +762,7 @@ Primality is genuine here: the rank-two argument runs through the `GL₂` recurr
 noncomputable def polynomialRingEquivTwo (hp : p.Prime) :
     MvPolynomial (Fin 2) ℤ ≃+* pLocalSubring 2 p :=
   RingEquiv.ofBijective (evalHomLocal 2 p)
-    ⟨Inj.evalHomLocal_injective 2 p (Inj.evalHom_two_injective p hp),
+    ⟨evalHomLocal_injective 2 p (evalHom_two_injective p hp),
      evalHomLocal_two_surjective p hp⟩
 
 /-- The rank-two presentation isomorphism is the evaluation map. -/
