@@ -25,9 +25,24 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 ## Main results
 
 * `TauCeti.Localization.divByS_one`: `1/s` is Mathlib's `IsLocalization.Away.invSelf`.
-* `TauCeti.Localization.divByS_one_mul_algebraMap`: scaling `1/s` by `t` gives `t/s`.
+* `TauCeti.Localization.invSelf_mul_algebraMap`: scaling `1/s` by `t` gives `t/s`.
 * `TauCeti.Localization.algebraMap_mul_divByS`: `s · (t/s) = t`.
 * `TauCeti.Localization.divByS_self_mul`: `(s · t)/s = t`.
+
+## Provenance
+
+`divByS` and its identities are ported from AINTLIB's
+`projects/AdicSpaces/Adic spaces/LocalizationTopology.lean`, branch `dev/adic-spaces`, commit
+`d9f2fbbb`, where they are stated for the concrete `Localization.Away s` over a commutative ring
+inside the Huber development. They are generalised here to an arbitrary `IsLocalization.Away`
+over a commutative semiring, linked to Mathlib's `IsLocalization.Away.invSelf`, and moved out of
+the Huber namespace because nothing about them is topological. The topological part of that port
+is `TauCeti/RingTheory/Huber/LocalizationTopology.lean`, which records the same provenance.
+
+## References
+
+* [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
+  commit `d9f2fbbb`, `projects/AdicSpaces/Adic spaces/LocalizationTopology.lean`
 -/
 
 public section
@@ -51,10 +66,13 @@ theorem divByS_def :
 @[simp]
 theorem divByS_one : divByS 1 s = (IsLocalization.Away.invSelf s : S) := (rfl)
 
-/-- Scaling `1/s` by `t` gives `t/s`. -/
-theorem divByS_one_mul_algebraMap :
-    (divByS 1 s : S) * algebraMap A S t = divByS t s := by
-  rw [divByS_def, divByS_def,
+/-- **Scaling `1/s` by `t` gives `t/s`.** Stated with `IsLocalization.Away.invSelf` rather than
+`divByS 1 s` on the left, because `divByS_one` makes `invSelf` the simp-normal form of `1/s`; the
+two together normalise a product of a unit fraction and a scalar to a single `divByS`. -/
+@[simp]
+theorem invSelf_mul_algebraMap :
+    (IsLocalization.Away.invSelf s : S) * algebraMap A S t = divByS t s := by
+  rw [← divByS_one, divByS_def, divByS_def,
     IsLocalization.mk'_eq_mul_mk'_one t (⟨s, Submonoid.mem_powers s⟩ : Submonoid.powers s)]
   exact mul_comm _ _
 

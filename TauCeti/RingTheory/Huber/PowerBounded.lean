@@ -110,6 +110,13 @@ def IsPowerBounded (a : M) : Prop := IsBounded (Set.range (a ^ · : ℕ → M))
 theorem isPowerBounded_iff {a : M} :
     IsPowerBounded a ↔ IsBounded (Set.range (a ^ · : ℕ → M)) := (Iff.rfl)
 
+/-- **Every element of a bounded submonoid is power-bounded**: its powers never leave the
+submonoid, and the submonoid is absorbed by every neighbourhood of zero. This is the reason a
+ring of definition, and any other bounded subring, consists of power-bounded elements. -/
+theorem IsBounded.isPowerBounded_of_mem {S : Type*} [SetLike S M] [SubmonoidClass S M] {T : S}
+    (hT : IsBounded (T : Set M)) {a : M} (ha : a ∈ T) : IsPowerBounded a :=
+  isPowerBounded_iff.mpr <| hT.subset <| by rintro _ ⟨n, rfl⟩; exact pow_mem ha n
+
 /-- `0` is power-bounded. -/
 @[simp]
 theorem isPowerBounded_zero : IsPowerBounded (0 : M) := by
