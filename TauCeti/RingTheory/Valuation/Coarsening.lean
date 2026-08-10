@@ -32,8 +32,8 @@ unit lies in `H` and sending the rest to `0` — rather than quotienting by it.
 * `TauCeti.ConvexSubgroup.coarsenMap_monotone` : The coarsening map is monotone, which is
   what makes the composite a valuation.
 * `TauCeti.ConvexSubgroup.coarsenMap_eq_one_iff` : `H` is exactly what the map forgets.
-* `TauCeti.ConvexSubgroup.coarsenMap_lt_one_iff` : coarsening lands strictly below `1`
-  exactly for the values `H` does not absorb.
+* `TauCeti.ConvexSubgroup.coarsenMap_lt_one_iff` : among nonzero values whose unit is already
+  below `1`, coarsening stays strictly below `1` exactly for those `H` does not absorb.
   These are stated on `Γ₀`, not on a valuation: no valuation property enters, and the
   valuation-level forms follow from them by `simp` through `coarsen_apply`.
 * `Valuation.coarsen_supp` : Coarsening does not change the support.
@@ -90,8 +90,8 @@ theorem coarsenMap_eq_one_iff (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x �
     QuotientGroup.eq_one_iff]
 
 /-- For a nonzero `x`, coarsening lands strictly below `1` exactly when the unit of `x` is
-below `1` and `H` does not absorb it. The values surviving as `< 1` are exactly those the convex
-subgroup misses. -/
+below `1` **and** `H` does not absorb it. Both conditions are needed: a unit at or above `1`
+does not become smaller under coarsening, whatever `H` does. -/
 @[simp]
 theorem coarsenMap_lt_one_iff (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x ≠ 0) :
     coarsenMap H x < 1 ↔ Units.mk0 x hx < 1 ∧ Units.mk0 x hx ∉ H.toSubgroup := by
