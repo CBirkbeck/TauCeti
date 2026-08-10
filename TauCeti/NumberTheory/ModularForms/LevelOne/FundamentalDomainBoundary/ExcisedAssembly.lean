@@ -61,6 +61,26 @@ theorem not_exists_dist_le_of_mem_Icc_four_five {H ε : ℝ} {S : Finset ℂ}
   cases abs_le.mp hsim
   linarith
 
+/-- **The excised ceiling integral is the plain one.** The excision never fires on the
+ceiling, so the excised integrand agrees with the unexcised one there and the ceiling still
+evaluates through the `q`-circle to `2πi · ord_∞`. -/
+theorem intervalIntegral_excised_fdBoundary_segment5 {g : ℍ → ℂ} {H ε : ℝ} {S : Finset ℂ}
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hε : ε < H - 1)
+    (hper : Function.Periodic (g ∘ ofComplex) 1)
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (cuspFunction 1 g) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      cuspFunction 1 g q ≠ 0) :
+    ∫ t in (4 : ℝ)..5, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else deriv (fdBoundary H) t • logDeriv (g ∘ ofComplex) (fdBoundary H t)) =
+      2 * Real.pi * Complex.I * qExpansionOrderAtCusp 1 g := by
+  rw [intervalIntegral.integral_congr (g := fun t ↦ deriv (fdBoundary H) t •
+        logDeriv (g ∘ ofComplex) (fdBoundary H t)) fun t ht ↦ ?_,
+    (intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunction hper).trans
+      (circleIntegral_logDeriv_cuspFunction hga hgz)]
+  rw [uIcc_of_le (by norm_num : (4 : ℝ) ≤ 5)] at ht
+  exact if_neg (not_exists_dist_le_of_mem_Icc_four_five hnorm hε ht)
+
 /-- The excision commutes with the scalar multiplication by `deriv γ`: excising the whole
 integrand is excising the function it is built from. -/
 private lemma excised_smul {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] {H ε : ℝ}
