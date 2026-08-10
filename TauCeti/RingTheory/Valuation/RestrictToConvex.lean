@@ -33,6 +33,9 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out 
 * `Valuation.restrictToConvex_apply_of_mem`, `Valuation.restrictToConvex_apply_of_notMem` and
   `Valuation.restrictToConvex_apply_of_eq_zero` : the three branches, which are the intended
   interface — the definition itself is a `dite` chain and is not meant to be unfolded.
+* `Valuation.unitsWithZeroEquiv_monotone` : the order compatibility of `(WithZero G)ˣ ≃* G`,
+  which is what lets a convex subgroup of a value group be carried across to the units of the
+  value monoid containing it.
 
 ## References
 
@@ -263,5 +266,19 @@ theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup
     {r : R} (hr : v r ≠ 0) :
     v.restrictToConvex H hH r = 0 ↔ Units.mk0 (v r) hr ∉ H :=
   restrictToConvexFun_eq_zero_iff v H hr
+
+/-! ### Transporting a convex subgroup across the units of a `WithZero` -/
+
+/-- The identification `(WithZero G)ˣ ≃* G` is monotone. Mathlib states the multiplicative
+equivalence but not its order compatibility, and `ConvexSubgroup.comap` needs the latter: this
+is what carries a convex subgroup of a value group over to one of the units of the value monoid
+it sits inside. -/
+theorem unitsWithZeroEquiv_monotone {G : Type*} [CommGroup G] [LinearOrder G]
+    [IsOrderedMonoid G] :
+    Monotone (WithZero.unitsWithZeroEquiv : (WithZero G)ˣ ≃* G) := by
+  intro u w huw
+  rw [← WithZero.coe_le_coe, WithZero.coe_unitsWithZeroEquiv_eq_units_val,
+    WithZero.coe_unitsWithZeroEquiv_eq_units_val]
+  exact huw
 
 end Valuation
