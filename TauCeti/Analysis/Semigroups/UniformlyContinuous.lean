@@ -60,12 +60,15 @@ private theorem normalizedIntegral_sub_one_eq (S : StronglyContinuousSemigroup X
     inv_mul_cancel₀ ht.ne', one_smul]
 
 omit [CompleteSpace X] in
-/-- **A semigroup moves by less than `ε` over an interval on which it stays near the identity.**
-For `a ≤ b`, if the operator norm at `a` is at most `C > 0` and the semigroup is within `ε / C` of
-the identity after the elapsed time `b - a`, then `S b` and `S a` are within `ε`. -/
+/-- **A step of a semigroup is short when the semigroup is near the identity at the step's
+length.** For `a ≤ b`, if the operator norm at `a` is at most `C` and `S (b - a)` is within `ε / C`
+of the identity, then `S b` and `S a` are within `ε`. -/
 private theorem dist_lt_of_le_of_norm_sub_one_lt (S : StronglyContinuousSemigroup X) {a b : NNReal}
-    (hab : a ≤ b) {C ε : ℝ} (hC : 0 < C) (hSa : ‖S a‖ ≤ C)
+    (hab : a ≤ b) {C ε : ℝ} (hSa : ‖S a‖ ≤ C)
     (hgap : ‖S (b - a) - 1‖ < ε / C) : dist (S b) (S a) < ε := by
+  -- `C` is positive: it dominates a norm, and it cannot vanish or `ε / C` would too
+  have hpos : 0 < ε / C := (norm_nonneg _).trans_lt hgap
+  have hC : 0 < C := ((norm_nonneg (S a)).trans hSa).lt_of_ne' (by rintro rfl; simp at hpos)
   rw [dist_eq_norm, S.sub_eq_comp_sub_one_of_le hab]
   calc
     ‖(S a).comp (S (b - a) - 1)‖
@@ -91,7 +94,7 @@ private theorem continuous_of_continuousAt_zero (S : StronglyContinuousSemigroup
     simpa only [S.map_zero, ContinuousLinearMap.one_def, dist_eq_norm] using
       hsmall (by simpa [NNReal.dist_eq, NNReal.coe_sub hab] using hd)
   rcases le_total t₀ t with ht₀t | htt₀
-  · exact S.dist_lt_of_le_of_norm_sub_one_lt ht₀t hC
+  · exact S.dist_lt_of_le_of_norm_sub_one_lt ht₀t
       (by dsimp [C]; linarith [le_max_left ‖S t₀‖ (M * Real.exp (max ω 0 * t₀))])
       (hgap t₀ t ht₀t ht)
   · have hSt : ‖S t‖ ≤ C := by
@@ -101,7 +104,7 @@ private theorem continuous_of_continuousAt_zero (S : StronglyContinuousSemigroup
       dsimp [C]
       linarith [le_max_right ‖S t₀‖ (M * Real.exp (max ω 0 * t₀))]
     rw [dist_comm]
-    exact S.dist_lt_of_le_of_norm_sub_one_lt htt₀ hC hSt
+    exact S.dist_lt_of_le_of_norm_sub_one_lt htt₀ hSt
       (hgap t t₀ htt₀ (by rwa [dist_comm]))
 
 omit [CompleteSpace X] in
