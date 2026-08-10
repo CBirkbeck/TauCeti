@@ -20,9 +20,8 @@ therefore gives a discrete valuation ring.
 
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.isDiscreteValuationRing_localizationAtPrime`: the
   localisation of the coordinate ring at `⟨X - x, Y - y(X)⟩` is a discrete valuation ring, for any
-  `y : F[X]` solving the Weierstrass equation at `x`.
-* `…CoordinateRing.isDiscreteValuationRing_localizationAtPrime_of_equation`: the point case, with
-  `y` constant.
+  `y : F[X]` solving the Weierstrass equation at `x` — in particular at a point of the curve,
+  through `XYIdeal_isMaximal_of_equation`.
 
 Mathlib's `IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain` is applied directly;
 what this file contributes is that both of its hypotheses hold at such an ideal — primality from
@@ -75,14 +74,6 @@ theorem isDiscreteValuationRing_localizationAtPrime [W.IsElliptic] {y : F[X]}
   have := isDedekindDomain_coordinateRing W
   IsLocalization.AtPrime.isDiscreteValuationRing_of_dedekind_domain W.CoordinateRing
     (XYIdeal_ne_bot x y) _
-
-/-- **The local ring at a point of an elliptic curve is a discrete valuation ring**, the
-constant-polynomial case of `isDiscreteValuationRing_localizationAtPrime`. -/
-theorem isDiscreteValuationRing_localizationAtPrime_of_equation [W.IsElliptic] {y : F}
-    (h : W.Equation x y) :
-    haveI : (CoordinateRing.XYIdeal W x (C y)).IsPrime := (XYIdeal_isMaximal_of_equation h).isPrime
-    IsDiscreteValuationRing (Localization.AtPrime (CoordinateRing.XYIdeal W x (C y))) :=
-  isDiscreteValuationRing_localizationAtPrime h
 
 end WeierstrassCurve.Affine.CoordinateRing
 
