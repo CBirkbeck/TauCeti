@@ -334,8 +334,10 @@ barely depends on `E`. This is a different failure from the one the module docst
 refusing a twist-by-a-generator constructor, which is `(t, n) = (0, 1)` and so `D = -4`: there
 the parameters cease to reflect the extension but the twist stays generically nonsingular. The
 two coincide only in characteristic `2`. Choosing the generator by
-`Algebra.IsQuadraticExtension.exists_discrim_ne_zero` rules this case out, so the model is
-non-degenerate by construction. -/
+`Algebra.IsQuadraticExtension.exists_discrim_ne_zero` rules this case out, so the *twist
+parameters* never degenerate. That is all it can rule out: `E` is arbitrary here, so a singular
+`E` still gives a singular twist. Nonsingularity of the result needs `E` elliptic too, which is
+`isElliptic_quadraticTwist`. -/
 noncomputable def quadraticTwist (E : WeierstrassCurve K) (L : Type*) [Field L] [Algebra K L]
     [Algebra.IsQuadraticExtension K L] [Algebra.IsSeparable K L] : WeierstrassCurve K :=
   E.quadraticTwistOf (Algebra.trace K L (exists_discrim_ne_zero K L).choose)
