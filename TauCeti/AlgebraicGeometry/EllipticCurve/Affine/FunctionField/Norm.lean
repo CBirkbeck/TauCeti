@@ -73,23 +73,33 @@ namespace WeierstrassCurve.Affine
 
 variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)
 
+section FractionField
+
+-- Both computations are stated over an arbitrary fraction field `L` of `F[X]`, as
+-- `finrank_functionField` is, so that they serve `RatFunc F` and `FractionRing F[X]` alike.
+variable (L : Type*) [Field L] [Algebra F[X] L] [IsFractionRing F[X] L]
+  [Algebra L W.FunctionField] [IsScalarTower F[X] L W.FunctionField]
+
 /-- **On a function regular away from infinity the norm is the polynomial norm**: for `u` in the
 coordinate ring, `N u` is `Algebra.norm F[X] u` read as a rational function. -/
 @[simp]
 theorem norm_algebraMap_coordinateRing (u : W.CoordinateRing) :
-    Algebra.norm (RatFunc F) (algebraMap W.CoordinateRing W.FunctionField u) =
-      algebraMap F[X] (RatFunc F) (Algebra.norm F[X] u) :=
+    Algebra.norm L (algebraMap W.CoordinateRing W.FunctionField u) =
+      algebraMap F[X] L (Algebra.norm F[X] u) :=
   Algebra.norm_localization (R := F[X]) (M := nonZeroDivisors F[X]) (S := W.CoordinateRing) u
 
 /-- **On a function of `x` alone the norm is the square**, the extension `F(W) / F(x)` being
 quadratic. -/
 @[simp]
-theorem norm_algebraMap_ratFunc (r : RatFunc F) :
-    Algebra.norm (RatFunc F) (algebraMap (RatFunc F) W.FunctionField r) = r ^ 2 := by
-  rw [Algebra.norm_algebraMap, finrank_functionField W (RatFunc F)]
+theorem norm_algebraMap_eq_sq (r : L) :
+    Algebra.norm L (algebraMap L W.FunctionField r) = r ^ 2 := by
+  rw [Algebra.norm_algebraMap, finrank_functionField W L]
+
+end FractionField
 
 /-- **The degree of the norm of a function regular away from infinity** is the degree of its
-polynomial norm. This is the input to the order at infinity, `ord_∞ f = -deg N f`. -/
+polynomial norm. This is the input to the order at infinity, `ord_∞ f = -deg N f`, and it is where
+`RatFunc F` is forced: `intDegree` is stated for no other fraction field of `F[X]`. -/
 theorem intDegree_norm_algebraMap_coordinateRing (u : W.CoordinateRing) :
     (Algebra.norm (RatFunc F) (algebraMap W.CoordinateRing W.FunctionField u)).intDegree =
       (Algebra.norm F[X] u).natDegree := by
