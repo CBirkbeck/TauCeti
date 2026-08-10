@@ -23,6 +23,7 @@ retraction.
 
 ## Main definitions
 
+* `TauCeti.Valuation.RestrictedValues` : the value monoid the restriction lands in.
 * `TauCeti.Valuation.restrictToIdeal` : the restricted valuation `v|cΓ_v(I)`.
 * `TauCeti.ValuationSpectrum.retract` : the same at the level of points of `Spv A`.
 
@@ -72,12 +73,31 @@ theorem mk0_restrict_mem_ofValueGroup (v : Valuation A Γ₀) (I : Ideal A)
   have hr : v.restrict 1 ≤ v.restrict a := by simpa using h1
   simpa using v.restrict_le_iff.mp hr
 
+/-- The value monoid of the restricted valuation: `cΓ_v(I)`, transported onto the units of the
+value monoid, with a zero adjoined.
+
+Named rather than written inline because downstream statements need it as a
+`LinearOrderedCommGroupWithZero`. `Valuation` asks only for the monoid class, so an inline
+`WithZero …` elaborates with `WithZero`'s monoid instance and then `CofinalValue`, which needs
+the group class, cannot even be *stated* about the result — and no `letI` inside a proof can
+repair a mismatch in a statement. -/
+abbrev RestrictedValues (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) : Type _ :=
+  WithZero (ConvexSubgroup.ofValueGroup (characteristicSubgroupOfIdeal v I hfg)).toSubgroup
+
+/-- The group instance on `RestrictedValues`, registered so that downstream statements find it
+rather than `WithZero`'s monoid instance. Without this the abbreviation unfolds and the monoid
+instance wins, which is the whole problem it exists to solve. -/
+noncomputable instance instLinearOrderedCommGroupWithZeroRestrictedValues (v : Valuation A Γ₀)
+    (I : Ideal A) (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
+    LinearOrderedCommGroupWithZero (RestrictedValues v I hfg) :=
+  inferInstance
+
 /-- **Wedhorn §7.1.2: the restriction `v ↦ v|cΓ_v(I)`.** Values whose unit lies in `cΓ_v(I)` are
 kept; every other value is sent to `0`. -/
 noncomputable def restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
-    Valuation A (WithZero
-      (ConvexSubgroup.ofValueGroup (characteristicSubgroupOfIdeal v I hfg)).toSubgroup) :=
+    Valuation A (RestrictedValues v I hfg) :=
   (v.restrict).restrictToConvex _ (mk0_restrict_mem_ofValueGroup v I hfg)
 
 end TauCeti.Valuation
