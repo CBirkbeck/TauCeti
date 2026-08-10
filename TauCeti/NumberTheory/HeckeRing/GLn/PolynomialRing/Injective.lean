@@ -92,6 +92,8 @@ private lemma diagElem_mul_diagElem (a b : Fin 2 → ℕ) :
 /-- For n=1, `heckeGen(0)^k = diagElem(fun _ => p^k)`. -/
 private lemma heckeGen_pow_one (p : ℕ) (hp : 0 < p) (k : ℕ) :
     heckeGen 1 p (0 : Fin 1) ^ k = diagElem (fun _ : Fin 1 ↦ p ^ k) := by
+  -- `heckeGen` is sealed (`public section`, no `@[expose]`), so neither `rw [heckeGen]` nor
+  -- `unfold` sees through it; `heckeGen_def` supplies the equation and this states its target.
   rw [show heckeGen 1 p (0 : Fin 1) = diagElem (fun _ : Fin 1 ↦ p) from by
     rw [heckeGen_def]; exact congrArg diagElem (heckeGenDiag_one_eq_const p)]
   exact diagElem_const_pow 1 p hp k
@@ -101,11 +103,13 @@ private lemma heckeGen_pow_one (p : ℕ) (hp : 0 < p) (k : ℕ) :
 private lemma intCast_mul_diagElem_eq_single {n : ℕ} [NeZero n] (a : Fin n → ℕ) (c : ℤ) :
     (Int.castRingHom (IntegralHeckeRing n)) c * diagElem a =
       HeckeCosetModule.single ℤ (diagCoset a) c := by
+  -- no cast lemma reads an `Int.castRingHom` image as a `zsmul` of `1` in this direction, so
+  -- the equation is stated here and discharged by `zsmul_eq_mul`.
   rw [show (Int.castRingHom (IntegralHeckeRing n)) c = c • (1 : IntegralHeckeRing n) from by
       rw [zsmul_eq_mul, mul_one]; rfl, smul_mul_assoc, one_mul, diagElem_def]
   exact HeckeCosetModule.smul_single_one ℤ (diagCoset a) c
 
-/-- For `n = 1` and `p` prime, the cosets `diagCoset (fun _ => p^k)` are injective in `k`:
+/-- For `n = 1` and any base `1 < p`, the cosets `diagCoset (fun _ => p^k)` are injective in `k`:
 if they coincide for `b 0` and `s 0`, then `b 0 = s 0`. -/
 private lemma T_diag_one_ppow_inj (p : ℕ) (hp : 1 < p) {b s : Fin 1 →₀ ℕ}
     (hb : (diagCoset (n := 1) (fun _ ↦ p ^ b 0) : HeckeCoset (posDetInt 1) (SLnZ 1) (SLnZ 1)) =
@@ -174,15 +178,15 @@ private lemma divChain_two_of_dvd {a b : ℕ} (hab : a ∣ b) :
   isDvdChain_iff.mpr fun i j hij ↦ by
     fin_cases i <;> fin_cases j <;> simp_all
 
-/-- Determinant of an SL_n(ℤ) element embedded in GL_n(ℚ) is 1. -/
+/-- Determinant of an SL_n(ℤ) element embedded in GL_n(ℚ) is 1.
+
+`SpecialLinearGroup.det_mapGL` is the same fact for `GeneralLinearGroup.det`, which is
+`ℚˣ`-valued; every use here needs the `Matrix.det` of the coerced matrix, so this is the
+`Units.val` bridge rather than a second proof. -/
 private lemma det_SLnZ_eq_one {g : GL (Fin 2) ℚ} (hg : g ∈ SLnZ 2) :
     (↑g : Matrix (Fin 2) (Fin 2) ℚ).det = 1 := by
   obtain ⟨σ, rfl⟩ := (mem_SLnZ_iff 2).mp hg
-  -- the entries are integers cast into ℚ, so the determinant is the cast of `det σ = 1`
-  have h : (mapGL ℚ σ : Matrix (Fin 2) (Fin 2) ℚ) = (Int.castRingHom ℚ).mapMatrix σ.val := by
-    simp [mapGL_coe_matrix]
-  rw [h, ← RingHom.map_det]
-  simp
+  exact congrArg Units.val (SpecialLinearGroup.det_mapGL (S := ℚ) σ)
 
 /-- Elements in the same SL_n double coset have the same determinant. -/
 private lemma det_doubleCoset_eq {g₁ g₂ : posDetInt 2}
@@ -262,11 +266,16 @@ private lemma det_rep_T_gen_zero_pow_mul (q : {p : ℕ // p.Prime}) (a₀ b₀ :
   | succ n ih =>
     rw [pow_succ', mul_assoc] at hD'
     set g' := heckeGen 2 q.1 0 ^ n * f
+    -- `heckeGen` and `diagElem` are both sealed, so neither side reduces here; the `_def`
+    -- lemmas bridge them and this states the single-`Finsupp` spelling to rewrite with.
     rw [show heckeGen 2 q.1 0 = HeckeCosetModule.single ℤ (diagCoset (![1, q.1])) 1 from by
         rw [heckeGen_def, diagElem_def]
         exact congrArg (fun a ↦ HeckeCosetModule.single ℤ (diagCoset a) 1)
           (funext fun i ↦ by fin_cases i <;> simp [heckeGenDiag_apply])] at hD'
     obtain ⟨D₂, hD₂_mem, hD₂_ne⟩ := Finset.exists_ne_zero_of_sum_ne_zero (by
+      -- `IntegralHeckeRing` is a `def` over `Finsupp`, so evaluating a convolution at a coset
+      -- holds by defeq but matches no `Finsupp` lemma through the wrapper; the expansion is
+      -- stated and closed by the wrapper's own `mul_def`/`single_mul`/`sum_apply` chain.
       rw [show (HeckeCosetModule.single ℤ (diagCoset (![1, q.1])) 1 * g') D' =
           ∑ D₂ ∈ g'.support, g' D₂ *
             (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
@@ -316,22 +325,6 @@ private lemma T_gen_pow_support_qpower (q : {p : ℕ // p.Prime}) (e : Fin 2 →
   have h_result := det_rep_T_gen_zero_pow_mul q (2 * e 1) (e 0) _ D hf_det hD
   rw [hD_eq, prod_rep_T_diag a ha_pos] at h_result
   exact mod_cast h_result
-
-/-- Every coset in the support of `heckeGen(q,0)^a * heckeGen(q,1)^b` has entries
-that are powers of `q` (immediate from `T_gen_pow_support_qpower`). -/
-private lemma T_gen_pow_entries_qpower (q : {p : ℕ // p.Prime})
-    (e : Fin 2 → ℕ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
-    (hD : (heckeGen 2 q.1 0 ^ (e 0) * heckeGen 2 q.1 1 ^ (e 1)) D ≠ 0)
-    (a : Fin 2 → ℕ) (ha : D = diagCoset a) (ha_pos : ∀ i, 0 < a i)
-    (ha_div : IsDvdChain a) :
-    ∀ p : ℕ, p.Prime → p ≠ q.1 → ∀ i, ¬(p ∣ a i) := by
-  obtain ⟨a', rfl, ha'_pos, ha'_div, ha'_det⟩ := T_gen_pow_support_qpower q e D hD
-  have ha_eq := eq_of_diagCoset_eq ha_pos ha'_pos ha_div ha'_div ha.symm
-  subst ha_eq
-  intro p hp hpq i h_dvd
-  have : p ∣ ∏ j, a j := dvd_trans h_dvd (Finset.dvd_prod_of_mem _ (Finset.mem_univ i))
-  rw [ha'_det] at this
-  exact hpq ((Nat.prime_dvd_prime_iff_eq hp q.2).mp (hp.dvd_of_dvd_pow this))
 
 /-- `T_single(diagCoset a, α) * diagElem(c,c) = T_single(diagCoset(a * c), α)`. -/
 private lemma T_single_diag_mul_T_scalar (c : ℕ) (hc : 0 < c)
@@ -509,8 +502,9 @@ private lemma T_ad_one_p_mul_T_ad_one_ppow_eval_leading (p : ℕ) (hp : p.Prime)
       show (![1, p ^ (0 + 1)] : Fin 2 → ℕ) = (![1, p] : Fin 2 → ℕ) from by
         funext i; fin_cases i <;> simp,
       HeckeCosetModule.single_apply, if_pos rfl]
-  · rw [show heckeTDiag 1 p = heckeT ⟨p, hp.pos⟩ from (heckeT_prime p hp).symm,
-      heckeT_prime_mul_heckeTDiag_one_prime_pow p hp n]
+  · rw [← heckeT_prime p hp, heckeT_prime_mul_heckeTDiag_one_prime_pow p hp n]
+    -- `Finsupp.add_apply` holds through the `IntegralHeckeRing` wrapper by defeq but does not
+    -- match syntactically, so the split is stated and closed by that lemma.
     rw [show (heckeTDiag 1 (p ^ (n + 1)) + (if n = 1 then ((p : ℤ) + 1) else (p : ℤ)) •
               heckeTDiag p (p ^ n)) (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) =
           heckeTDiag 1 (p ^ (n + 1)) (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) +
@@ -518,9 +512,13 @@ private lemma T_ad_one_p_mul_T_ad_one_ppow_eval_leading (p : ℕ) (hp : p.Prime)
               (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) from Finsupp.add_apply _ _ _,
       heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp.pos _) (one_dvd _),
       heckeTDiag_eq_diagElem hp.pos (pow_pos hp.pos _) (dvd_pow_self p hn)]
+    -- `diagElem` is sealed, so its value at its own coset does not reduce here; `diagElem_def`
+    -- with `single_apply` gives it, and this states the result to rewrite with.
     rw [show (diagElem (![1, p ^ (n + 1)] : Fin 2 → ℕ))
           (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) = 1 from
         by rw [diagElem_def, HeckeCosetModule.single_apply, if_pos rfl]]
+    -- `Finsupp.smul_apply`, same obstruction as the `add_apply` above: true through the
+    -- wrapper by defeq, not syntactically matchable, so the pushed-in form is stated.
     rw [show ((if n = 1 then ((p : ℤ) + 1) else (p : ℤ)) • diagElem (![p, p ^ n] : Fin 2 → ℕ))
           (diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)) =
         (if n = 1 then ((p : ℤ) + 1) else (p : ℤ)) •
@@ -546,6 +544,8 @@ private lemma T_ad_one_p_mul_supp_ne_leading_eval_zero (p : ℕ) (hp : p.Prime) 
   obtain ⟨i, hi_le, hi_eq⟩ := (Nat.dvd_prime_pow hp).mp (ha_prod ▸ dvd_mul_right _ _)
   have ha1_eq : a 1 = p ^ (n - i) := by
     have h : p ^ i * a 1 = p ^ i * p ^ (n - i) := by
+      -- `i + (n - i) = n` is a truncated-subtraction side condition that needs `hi_le`; no
+      -- rewrite reaches it, so it is stated inline and discharged by `omega`.
       rw [← pow_add, show i + (n - i) = n from by omega, ← ha_prod, hi_eq]
     exact Nat.eq_of_mul_eq_mul_left (pow_pos hp.pos i) h
   have ha_form : a = (![p ^ i, p ^ (n - i)] : Fin 2 → ℕ) := by
@@ -574,6 +574,8 @@ private lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
   classical
   induction a with
   | zero =>
+    -- `![1, 1]` and `fun _ ↦ 1` are extensionally but not syntactically equal, so the
+    -- conversion is stated and proved pointwise before `diagElem_one` can apply.
     rw [pow_zero, pow_zero, show (![1, 1] : Fin 2 → ℕ) = (fun _ : Fin 2 ↦ 1) from by
         funext i; fin_cases i <;> rfl, ← diagElem_one]
     rw [diagElem_def, HeckeCosetModule.single_apply, if_pos rfl]
@@ -584,8 +586,7 @@ private lemma T_ad_one_p_pow_eval_leading (p : ℕ) (hp : p.Prime) (a : ℕ) :
       diagCoset (![1, p ^ (n + 1)] : Fin 2 → ℕ)
     set D_leading : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2) :=
       diagCoset (![1, p ^ n] : Fin 2 → ℕ)
-    rw [show heckeTDiag 1 p = HeckeCosetModule.single ℤ (diagCoset (![1, p] : Fin 2 → ℕ)) 1 from
-        (heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _)).trans (diagElem_def _),
+    rw [heckeTDiag_eq_diagElem Nat.one_pos hp.pos (one_dvd _), diagElem_def,
       HeckeCosetModule.mul_def, HeckeCosetModule.single_mul]
     -- Evaluate the convolution at `D_target` in the wrapper's own vocabulary: push the
     -- evaluation in with `sum_apply` first, then let `sum_def` expose the `Finset.sum`.
@@ -673,6 +674,8 @@ private lemma T_ad_one_p_pow_mul_scalar_eval_at_one_ppow (p : ℕ) (hp : p.Prime
     ((heckeTDiag 1 p) ^ a₁ * diagElem (fun _ : Fin 2 ↦ p ^ b))
         (diagCoset (![p ^ b, p ^ (a₂ + b)] : Fin 2 → ℕ)) =
     ((heckeTDiag 1 p) ^ a₁) (diagCoset (![1, p ^ a₂] : Fin 2 → ℕ)) := by
+  -- a `![…]` literal does not unify with a pointwise product syntactically, so the
+  -- factorisation is stated and proved entrywise before the shifted-coset lemma can apply.
   rw [show (![p ^ b, p ^ (a₂ + b)] : Fin 2 → ℕ) =
       (![1, p ^ a₂] : Fin 2 → ℕ) * (fun _ : Fin 2 ↦ p ^ b) from by
         funext i; fin_cases i
@@ -689,6 +692,8 @@ private lemma monomial_eval_kronecker (p : ℕ) (hp : p.Prime)
     (heckeGen 2 p 0 ^ a₁ * heckeGen 2 p 1 ^ b₁)
         (diagCoset (primePowDiag 2 p ![b₂, a₂ + b₂])) =
     if a₁ = a₂ ∧ b₁ = b₂ then 1 else 0 := by
+  -- `primePowDiag_apply` is entrywise, so reaching the `![…]` literal takes a `funext`; the
+  -- literal spelling is stated here for the rewrites that follow to match.
   rw [show (primePowDiag 2 p ![b₂, a₂ + b₂] : Fin 2 → ℕ) = (![p ^ b₂, p ^ (a₂ + b₂)] : Fin 2 → ℕ)
       from by funext i; fin_cases i <;> simp [primePowDiag_apply],
     heckeGen_zero_eq_heckeTDiag p hp.pos,
@@ -745,8 +750,9 @@ private lemma evalHom_apply_eq_sum_monomial (p : ℕ) (R : MvPolynomial (Fin 2) 
   -- `eval₂Hom` by `rw`/`unfold` here; `evalHom_def` names the equation and this `change`
   -- takes the resulting term to its `Finsupp` application form.
   change (((R.coeff d : ℤ) : IntegralHeckeRing 2) * (∏ k ∈ d.support, heckeGen 2 p k ^ d k)) D = _
-  rw [show ((R.coeff d : ℤ) : IntegralHeckeRing 2) = (R.coeff d) • (1 : IntegralHeckeRing 2) from
-    (zsmul_one _).symm, smul_mul_assoc, one_mul]
+  rw [← zsmul_one (R.coeff d), smul_mul_assoc, one_mul]
+  -- `Finsupp.smul_apply` again: it holds through the `IntegralHeckeRing` wrapper by defeq but
+  -- does not match syntactically, so the pushed-in form is stated and closed by it.
   rw [show ((R.coeff d) • (∏ k ∈ d.support, heckeGen 2 p k ^ d k : IntegralHeckeRing 2)) D =
     R.coeff d • (∏ k ∈ d.support, heckeGen 2 p k ^ d k : IntegralHeckeRing 2) D from
     Finsupp.smul_apply _ _ _, smul_eq_mul, prod_T_gen_pow_eq_two]
@@ -777,13 +783,18 @@ theorem evalHom_two_injective (p : ℕ) (hp : p.Prime) :
   rw [Finset.sum_congr rfl h_delta, Finset.sum_ite_eq_of_mem' R.support s _ hs_mem] at h_zero
   exact hs_coeff h_zero
 
-/-- Injectivity of `evalHomLocal` follows from injectivity of `evalHom`. -/
+/-- Injectivity of `evalHomLocal` follows from injectivity of `evalHom`.
+
+This is *not* an instance of `RingHom.injective_codRestrict`, even though `evalHomLocal` is
+defined as a `codRestrict`: that lemma's `f`, `s` and `h` are implicit and can only be solved
+by unfolding `evalHomLocal`, which is `public` with no `@[expose]` and therefore opaque to
+this module. Elaborating it here reports `evalHomLocal ↦ 662` under "definitions were not
+unfolded because their definition is not exposed". `evalHomLocal_coe` is the exported
+characteristic lemma that replaces the unfolding, so the argument runs through it. -/
 lemma evalHomLocal_injective (n : ℕ) [NeZero n] (p : ℕ)
     (h_inj : Function.Injective (evalHom n p)) :
     Function.Injective (evalHomLocal n p) := by
   intro P Q hPQ
-  -- `evalHomLocal` is sealed upstream, so the coercion is read off `evalHomLocal_coe`
-  -- rather than by unfolding.
   refine h_inj ?_
   rw [← evalHomLocal_coe n p P, ← evalHomLocal_coe n p Q, hPQ]
 
