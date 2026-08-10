@@ -88,7 +88,10 @@ theorem map_add (S : StronglyContinuousSemigroup X) (s t : ℝ≥0) :
   S.map_add' s t
 
 omit [CompleteSpace X] in
-/-- **The operator at a natural multiple of a time is a power.** `S (k • t) = (S t) ^ k`. -/
+/-- **The operator at a natural multiple of a time is a power.** `S (k • t) = (S t) ^ k`.
+
+Not a `simp` lemma: `nsmul_eq_mul` rewrites the left-hand side to `S (↑k * t)`, so tagging this
+would put it out of simp normal form (`simpNF`). -/
 theorem map_nsmul (S : StronglyContinuousSemigroup X) (t : ℝ≥0) (k : ℕ) :
     S (k • t) = (S t) ^ k := by
   induction k with
