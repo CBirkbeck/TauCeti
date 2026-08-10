@@ -76,3 +76,24 @@ noncomputable def restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)
   (v.restrict).restrictToConvex _ (mk0_restrict_mem_ofValueGroup v I hfg)
 
 end TauCeti.Valuation
+
+namespace TauCeti.ValuationSpectrum
+
+open MonoidWithZeroHom TauCeti TauCeti.Valuation
+
+variable {A : Type*} [CommRing A]
+
+/-- **The underlying map of Wedhorn's §7.1.2 retraction.** A point of `Spv A` is sent to the
+class of its canonical valuation restricted to `cΓ_v(I)`.
+
+The `letI` is load-bearing. `Valuation` asks only for `LinearOrderedCommMonoidWithZero`, so the
+restriction's codomain elaborates with `WithZero`'s direct monoid instance, while `ofValuation`
+wants the group class; the two paths agree by `rfl` but not reducibly, so unification needs the
+instance pinned. -/
+noncomputable def retract (v : Spv A) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) : Spv A :=
+  letI : LinearOrderedCommGroupWithZero (WithZero (ConvexSubgroup.ofValueGroup
+      (characteristicSubgroupOfIdeal v.valuation I hfg)).toSubgroup) := inferInstance
+  ofValuation (v.valuation.restrictToIdeal I hfg)
+
+end TauCeti.ValuationSpectrum
