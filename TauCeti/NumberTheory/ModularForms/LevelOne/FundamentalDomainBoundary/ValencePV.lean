@@ -33,6 +33,14 @@ on the contour.
 * `TauCeti.ModularForm.two_pi_I_mul_sum_windingNumber_mul_order_eq`: equating that with the
   argument principle gives `2πi·Σ n_z·ord z = 2πi·ord_∞ − k·(π/6)·I`, the analytic identity the
   valence formula rests on.
+
+## References
+
+* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the valence-formula
+  development. The `ε → 0` step follows `ForMathlib/ValenceFormula/PVChain/Assembly.lean`
+  (`cpv_modular_side_tendsto`), and the identification with the argument principle follows
+  `ForMathlib/ValenceFormulaFinal.lean`, both ported onto the current Mathlib pin. The
+  two-excision-set formulation and the route through `HasCauchyPV.unique` are Tau Ceti's.
 -/
 
 public section
@@ -51,13 +59,9 @@ variable {F : Type*} [FunLike F ℍ ℂ] {Γ : Subgroup SL(2, ℤ)} {k : ℤ}
 centre's `ε`-neighbourhood does too. -/
 private theorem eventually_forall_im_add_lt {H : ℝ} {S : Finset ℂ} (hHgt : ∀ s ∈ S, s.im < H) :
     ∀ᶠ ε in 𝓝[>] (0 : ℝ), ∀ s ∈ S, s.im + ε < H := by
-  rcases S.eq_empty_or_nonempty with rfl | hne
-  · filter_upwards with ε using by simp
-  · have hpos : (0 : ℝ) < S.inf' hne fun s => H - s.im :=
-      (Finset.lt_inf'_iff _).2 fun s hs => sub_pos.mpr (hHgt s hs)
-    filter_upwards [Ioo_mem_nhdsGT hpos] with ε hε s hs
-    have := hε.2.trans_le (Finset.inf'_le (fun s => H - s.im) hs)
-    linarith
+  refine (Filter.eventually_all_finset S).2 fun s hs => ?_
+  filter_upwards [Ioo_mem_nhdsGT (sub_pos.mpr (hHgt s hs))] with ε hε
+  linarith [hε.2]
 
 /-- The fixed-`ε` assembly, packaged as an eventual identity: for all small `ε` the excised
 boundary integral is `2πi·ord_∞` minus `(k/2)` times the excised arc integral. The two
