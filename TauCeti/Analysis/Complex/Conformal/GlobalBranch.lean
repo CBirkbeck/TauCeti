@@ -7,6 +7,7 @@ module
 
 public import TauCeti.Analysis.Complex.Conformal.Monodromy
 public import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
+public import TauCeti.Topology.Homotopy.Path
 import Mathlib.Topology.MetricSpace.Thickening
 
 /-!
@@ -41,10 +42,10 @@ The branch produced is unique as soon as `U` is preconnected, by the identity pr
 ## The construction
 
 Path independence is monodromy plus simple connectivity: two paths in `U` with the same endpoints
-lift to paths in the subspace `↥U`, where `SimplyConnectedSpace.paths_homotopic` produces a
-homotopy rel endpoints; pushing that homotopy back down to `ℂ` keeps every intermediate path
-inside `U`, so the hypothesis supplies a continuation along each of them and
-`TauCeti.monodromy_theorem` applies. Uniqueness of continuation along a *fixed* path
+are joined by a homotopy whose every intermediate path is again inside `U`
+(`Path.exists_homotopy_forall_mem_of_isSimplyConnected`), so the hypothesis supplies a continuation
+along each of them and `TauCeti.monodromy_theorem` applies. Uniqueness of continuation along a
+*fixed* path
 (`TauCeti.IsAnalyticContinuationAlong.eventuallyEq`, over the preconnected parameter interval)
 then matches the two given continuations with the two extreme members of that family.
 
@@ -106,36 +107,6 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E
 
 /-! ### Path independence and the global branch -/
 
-/-- **Two paths with the same endpoints in a simply connected set are joined by a homotopy that
-never leaves it.** For continuous `p` and `q` running in `V` from `a` to `b`, there is a homotopy
-`K` between paths from `a` to `b` whose every intermediate path lies in `V`, with `K 0 = p` and
-`K 1 = q`. -/
-private lemma exists_pathHomotopy_forall_mem_of_isSimplyConnected {X : Type*} [TopologicalSpace X]
-    {V : Set X} {a b : X} {p q : I → X} (hV : IsSimplyConnected V)
-    (hp : Continuous p) (hpV : ∀ x, p x ∈ V) (hp0 : p 0 = a) (hp1 : p 1 = b)
-    (hq : Continuous q) (hqV : ∀ x, q x ∈ V) (hq0 : q 0 = a) (hq1 : q 1 = b) :
-    ∃ (P Q : Path a b) (K : P.Homotopy Q), (∀ t x, K (t, x) ∈ V) ∧ (∀ t, K (t, 0) = a) ∧
-      (fun x => K (0, x)) = p ∧ (fun x => K (1, x)) = q := by
-  have := hV.simplyConnectedSpace
-  have haV : a ∈ V := hp0 ▸ hpV 0
-  have hbV : b ∈ V := hp1 ▸ hpV 1
-  -- the two paths, read in the subspace `↥V`, where simple connectivity lives
-  let P : Path (⟨a, haV⟩ : V) (⟨b, hbV⟩ : V) :=
-    { toFun := fun x => ⟨p x, hpV x⟩
-      continuous_toFun := hp.subtype_mk _
-      source' := Subtype.ext hp0
-      target' := Subtype.ext hp1 }
-  let Q : Path (⟨a, haV⟩ : V) (⟨b, hbV⟩ : V) :=
-    { toFun := fun x => ⟨q x, hqV x⟩
-      continuous_toFun := hq.subtype_mk _
-      source' := Subtype.ext hq0
-      target' := Subtype.ext hq1 }
-  obtain ⟨h⟩ := SimplyConnectedSpace.paths_homotopic P Q
-  -- the same homotopy, read back in `X`
-  exact ⟨_, _, h.map (⟨Subtype.val, continuous_subtype_val⟩ : C(V, X)),
-    fun t x => (h (t, x)).2, fun t => by simp, funext fun x => by simp [P],
-    funext fun x => by simp [Q]⟩
-
 namespace ContinuesInside
 
 /-- **Path independence of continuation on a simply connected domain.** Two continuations of one
@@ -151,8 +122,14 @@ theorem eventuallyEq_at_one (hUc : IsSimplyConnected U) (H : ContinuesInside f�
   -- continues the germ along every intermediate path and `TauCeti.monodromy_theorem` applies to
   -- the resulting family. The two given continuations are then matched with the extreme members
   -- of that family by uniqueness along a fixed path.
-  obtain ⟨_, _, K, hKmem, hKzero, hKp, hKq⟩ :=
-    exists_pathHomotopy_forall_mem_of_isSimplyConnected hUc hγ hγU hγ0 rfl hδ hδU hδ0 hend
+  have hz₀U : z₀ ∈ U := hγ0 ▸ hγU 0
+  let P : Path z₀ (γ 1) := { toFun := γ, continuous_toFun := hγ, source' := hγ0, target' := rfl }
+  let Q : Path z₀ (γ 1) := { toFun := δ, continuous_toFun := hδ, source' := hδ0, target' := hend }
+  obtain ⟨K, hKmem⟩ := Path.exists_homotopy_forall_mem_of_isSimplyConnected
+    (a := ⟨z₀, hz₀U⟩) (b := ⟨γ 1, hγU 1⟩) hUc (p := P) (q := Q) hγU hδU
+  have hKzero : ∀ t : I, K (t, 0) = z₀ := fun t => by simp
+  have hKp : (fun x => K (0, x)) = γ := funext fun x => by simp [P]
+  have hKq : (fun x => K (1, x)) = δ := funext fun x => by simp [Q]
   -- A continuation along every intermediate path, all starting from the germ of `f₀`.
   have hcont : ∀ t : I, ContinuesAlong f₀ fun x => K (t, x) := fun t =>
     H.continuesAlong (by fun_prop) (hKmem t) (hKzero t)
