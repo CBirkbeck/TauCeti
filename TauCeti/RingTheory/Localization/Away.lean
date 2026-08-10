@@ -29,7 +29,7 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 * `TauCeti.Localization.algebraMap_mul_divByS` and
   `TauCeti.Localization.divByS_mul_algebraMap`: `s · (t/s) = t` in both orders.
 * `TauCeti.Localization.divByS_zero`, `TauCeti.Localization.divByS_add` and
-  `TauCeti.Localization.algebraMap_mul_divByS_numerator`: `t/s` is additive and `A`-linear in the
+  `TauCeti.Localization.divByS_mul`: `t/s` is additive and `A`-linear in the
   numerator.
 * `TauCeti.Localization.divByS_self_mul` and `TauCeti.Localization.divByS_mul_self`:
   `(s · t)/s = t` and `(t · s)/s = t`.
@@ -134,7 +134,7 @@ theorem divByS_add (u : A) : divByS (t + u) s = (divByS t s : S) + divByS u s :=
   simp only [← invSelf_mul_algebraMap, map_add, mul_add]
 
 /-- `t/s` is `A`-linear in the numerator. -/
-theorem algebraMap_mul_divByS_numerator (a : A) :
+theorem divByS_mul (a : A) :
     divByS (a * t) s = algebraMap A S a * divByS t s := by
   simp only [← invSelf_mul_algebraMap, map_mul]
   ring

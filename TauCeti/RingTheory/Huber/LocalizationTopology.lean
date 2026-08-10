@@ -17,10 +17,10 @@ and Definition 5.51, §5.6, of Wedhorn's *Adic Spaces*.
 
 ## Main definitions
 
-* `locSubring P T s` : The ring of definition `D = A₀[t₁/s, …, tₙ/s]`.
+* `locSubring P T s` : the candidate ring of definition `D = A₀[t₁/s, …, tₙ/s]`.
 * `HasDenominatorPower P T s` : the standing hypothesis the construction runs under — some power
   of `I` has all of its fractions `b/s` already in `D`.
-* `locIdeal P T s` : The ideal of definition `J = I · D` in `D`.
+* `locIdeal P T s` : the candidate ideal of definition `J = I · D` in `D`.
 * `locNhd P T s n` : The `n`-th neighborhood `image(Jⁿ)` in `Aₛ`.
 
 ## Main results
@@ -46,8 +46,9 @@ and Definition 5.51, §5.6, of Wedhorn's *Adic Spaces*.
   the construction.
 * `continuous_algebraMap_locTopology`: the structure map `A → Aₛ` is continuous.
 * `isOpen_locNhd`, and `isOpen_locSubring` with `isBounded_locSubring`: every basic
-  neighbourhood is open, and `D` is open and bounded — the two halves of being a ring of
-  definition of `Aₛ`.
+  neighbourhood is open, and `D` is open and bounded. These do **not** yet make `(D, J)` a
+  `TauCeti.Huber.PairOfDefinition`, which also asks that `J` be finitely generated and that the
+  subspace topology on `D` be `J`-adic; that identification is not proved here.
 * `isPowerBounded_of_mem_locSubring` and `isPowerBounded_divByS`: every element of `D` — in
   particular each fraction `t/s` — is power-bounded, the fact a converse to the continuity
   criterion needs.
@@ -90,7 +91,7 @@ that namespace and reads `P.locSubring T s`, matching `TauCeti/RingTheory/Huber/
 
 namespace PairOfDefinition
 
-/-- The ring of definition `D = A₀[t₁/s, …, tₙ/s]` of `Localization.Away s`. -/
+/-- The candidate ring of definition `D = A₀[t₁/s, …, tₙ/s]` of `Localization.Away s`. -/
 noncomputable def locSubring (P : PairOfDefinition A) (T : Finset A)
     (s : A) : Subring (Localization.Away s) :=
   Subring.closure
@@ -207,7 +208,7 @@ theorem coe_algebraMapD (P : PairOfDefinition A) (T : Finset A) (s : A)
     (algebraMapD P T s a : Localization.Away s) = algebraMap A (Localization.Away s) (a : A) :=
   (rfl)
 
-/-- The ideal of definition `J = I · D` in `D`. -/
+/-- The candidate ideal of definition `J = I · D` in `D`. -/
 noncomputable def locIdeal (P : PairOfDefinition A) (T : Finset A)
     (s : A) : Ideal (locSubring P T s) :=
   Ideal.map (algebraMapD P T s) P.idealOfDefinition
@@ -427,7 +428,7 @@ theorem locNhd_leftMul [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finse
 
 /-- The `RingSubgroupsBasis` underlying the localization topology on `Aₛ`: the images of the
 powers `Jⁿ` are a basis of neighbourhoods of zero compatible with the ring structure. -/
-theorem locBasis [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A)
+private theorem locBasis [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A)
     (hopen : HasDenominatorPower P T s) :
     RingSubgroupsBasis (locNhd P T s) :=
   .of_comm _
@@ -478,8 +479,9 @@ theorem isOpen_locNhd [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset
   exact (locNhd P T s n).isOpen_of_mem_nhds (g := 0)
     ((hasBasis_nhds_zero_locTopology P T s hopen).mem_of_mem (i := n) trivial)
 
-/-- **The ring of definition is open**: it is the zeroth basic neighbourhood of zero. Together
-with `isBounded_locSubring` this is what makes `D` a ring of definition of `Aₛ`. -/
+/-- **`D` is open**: it is the zeroth basic neighbourhood of zero. With `isBounded_locSubring`
+these are two of the conditions a ring of definition must satisfy; the remaining one, that the
+subspace topology on `D` is the `J`-adic topology, is not proved here. -/
 theorem isOpen_locSubring [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A)
     (hopen : HasDenominatorPower P T s) :
     letI := locTopology P T s hopen
@@ -488,7 +490,7 @@ theorem isOpen_locSubring [IsTopologicalRing A] (P : PairOfDefinition A) (T : Fi
   have h := isOpen_locNhd P T s hopen 0
   rwa [locNhd_zero, Subring.coe_toAddSubgroup] at h
 
-/-- **The ring of definition is bounded**: each `Jⁿ` already absorbs it. -/
+/-- **`D` is bounded**: each `Jⁿ` already absorbs it. -/
 theorem isBounded_locSubring [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A)
     (hopen : HasDenominatorPower P T s) :
     letI := locTopology P T s hopen
