@@ -265,8 +265,11 @@ private lemma det_ne_zero_of_val_eq (g : GL (Fin n) ℚ) {A : Matrix (Fin n) (Fi
 
 /-- Main step: for `g` with integer matrix `A` of nonzero determinant,
     kernel elements of `SL_n(ℤ) → SL_n(ℤ/dℤ)` conjugated by `g⁻¹` remain in `SL_n(ℤ)`.
-    This is the mathematical heart of Shimura's Lemma 3.10. -/
-private lemma conj_ker_mem_SLnZ (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fin n) ℤ)
+    This is the mathematical heart of Shimura's Lemma 3.10.
+
+    It is also what moves the `Γ(det α)`-part of an `SL₂(ℤ)` factor across `α` when a full
+    double coset is cut down to a `Γ₀(N)` one, so it is public rather than private. -/
+lemma conj_ker_mem_SLnZ (g : GL (Fin n) ℚ) (A : Matrix (Fin n) (Fin n) ℤ)
     (hA : (↑g : Matrix _ _ ℚ) = A.map (Int.cast : ℤ → ℚ))
     (γ : SpecialLinearGroup (Fin n) ℤ)
     (hγ : γ ∈ (SpecialLinearGroup.map (Int.castRingHom (ZMod A.det.natAbs))).ker) :
