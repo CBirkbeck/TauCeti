@@ -18,9 +18,10 @@ proves the degree.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.moduleFinite_coordinateRing`: the coordinate ring is module-finite
-  over `R[X]`, over any commutative ring — whence Mathlib's `Algebra.IsIntegral.of_finite` gives
-  integrality without further help.
+* `WeierstrassCurve.Affine.moduleFinite_coordinateRing`: Mathlib's
+  `Polynomial.Monic.finite_adjoinRoot` registered as an instance for the coordinate ring, over any
+  commutative ring — whence `Algebra.IsIntegral.of_finite` gives integrality without further help.
+  Mathlib states finiteness as a lemma, so instance search cannot reach it unaided.
 * `WeierstrassCurve.Affine.finrank_coordinateRing`: its `Module.finrank` over `R[X]` is two,
   under `[StrongRankCondition R[X]]` — the hypothesis `Module.finrank` actually needs, automatic
   over a domain.
@@ -80,9 +81,12 @@ section CommRing
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve.Affine R)
 
-/-- The coordinate ring is module-finite over `R[X]`, on Mathlib's power basis `{1, Y}`. -/
+/-- **The coordinate ring is module-finite over `R[X]`.** The proof is Mathlib's
+`Polynomial.Monic.finite_adjoinRoot`; what is added here is the *registration*, since Mathlib
+states it as a lemma and instance search cannot reach it. Without it the base change below does
+not elaborate. -/
 instance moduleFinite_coordinateRing : Module.Finite R[X] W.CoordinateRing :=
-  Module.Finite.of_basis (CoordinateRing.basis W)
+  WeierstrassCurve.Affine.monic_polynomial.finite_adjoinRoot
 
 /-- **The coordinate ring has rank two over `R[X]`**, whenever ranks over `R[X]` are well
 behaved — which is what `StrongRankCondition` asks, and is automatic over a domain. -/
