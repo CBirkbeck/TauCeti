@@ -17,7 +17,8 @@ smaller one: it is `2q`.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.Affine.finrank_ratFuncRange`: `[K(W) : K(x)] = 2`, the image of the
+* `WeierstrassCurve.Affine.finrank_ratFuncRange` (in `FunctionFieldFinrank`): `[K(W) : K(x)] = 2`,
+  the image of the
   rational function field inside `K(W)`.
 * `TauCeti.WeierstrassCurve.Affine.finrank_frobeniusRatFuncRange`: `[K(W) : K(x^q)] = 2 * q`.
 
@@ -63,26 +64,6 @@ namespace WeierstrassCurve.Affine
 
 variable {K : Type*} [Field K] (W : _root_.WeierstrassCurve.Affine K)
 
-/-- The image of the rational function field `K(x)` inside the function field `K(W)`. -/
-noncomputable def ratFuncRange : IntermediateField K W.FunctionField :=
-  (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField).fieldRange
-
-@[simp]
-theorem mem_ratFuncRange {z : W.FunctionField} :
-    z ∈ ratFuncRange W ↔
-      ∃ r : RatFunc K, IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField r = z :=
-  AlgHom.mem_fieldRange
-
-/-- **`[K(W) : K(x)] = 2`**, for the copy of the rational function field inside `K(W)`. -/
-@[simp]
-theorem finrank_ratFuncRange : Module.finrank (ratFuncRange W) W.FunctionField = 2 := by
-  have h := Algebra.finrank_eq_of_equiv_equiv
-    (AlgEquiv.ofInjective (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
-      (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField).toRingHom.injective).toRingEquiv
-    (RingEquiv.refl W.FunctionField) (by ext x; rfl)
-  rw [_root_.WeierstrassCurve.Affine.finrank_functionField W (RatFunc K)] at h
-  exact h.symm
-
 variable [Fintype K]
 
 /-- The image of `K(x^q)`, the `q`-th powers of the rational function field, inside `K(W)`. -/
@@ -102,12 +83,12 @@ theorem mem_frobeniusRatFuncRange {z : W.FunctionField} :
 
 /-- `K(x^q)` sits inside `K(x)`, both read inside `K(W)`. -/
 theorem frobeniusRatFuncRange_le_ratFuncRange :
-    frobeniusRatFuncRange W ≤ ratFuncRange W := by
-  rintro _ ⟨z, hz, rfl⟩
-  exact ⟨_root_.FiniteField.frobeniusAlgHom K (RatFunc K)
-    ((AlgHom.mem_fieldRange.mp hz).choose), by
-      simpa using congrArg (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
-        (AlgHom.mem_fieldRange.mp hz).choose_spec⟩
+    frobeniusRatFuncRange W ≤ _root_.WeierstrassCurve.Affine.ratFuncRange W := by
+  intro z hz
+  rw [mem_frobeniusRatFuncRange] at hz
+  obtain ⟨r, rfl⟩ := hz
+  rw [_root_.WeierstrassCurve.Affine.mem_ratFuncRange]
+  exact ⟨_root_.FiniteField.frobeniusAlgHom K (RatFunc K) r, rfl⟩
 
 /-- **`[K(x) : K(x^q)] = q`**, transported into `K(W)`: the copy of the rational function field is
 of degree `q` over the copy of its subfield of `q`-th powers. -/
@@ -133,7 +114,8 @@ replaces the base field of an intermediate field and leaves its carrier alone, w
 what Mathlib's `IntermediateField.coe_extendScalars` records (and states as `rfl`). -/
 theorem finrank_extendScalars_eq :
     Module.finrank (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W))
-      W.FunctionField = Module.finrank (ratFuncRange W) W.FunctionField :=
+      W.FunctionField =
+      Module.finrank (_root_.WeierstrassCurve.Affine.ratFuncRange W) W.FunctionField :=
   rfl
 
 /-- **`[K(W) : K(x^q)] = 2q`.** The tower `K(x^q) ⊆ K(x) ⊆ K(W)` has degrees `q` and `2`. -/
@@ -143,7 +125,7 @@ theorem finrank_frobeniusRatFuncRange :
   have htower := Module.finrank_mul_finrank (frobeniusRatFuncRange W)
     (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W)) W.FunctionField
   rw [finrank_extendScalars_ratFuncRange W, finrank_extendScalars_eq W,
-    finrank_ratFuncRange W] at htower
+    _root_.WeierstrassCurve.Affine.finrank_ratFuncRange W] at htower
   rw [← htower, Nat.mul_comm]
 
 end WeierstrassCurve.Affine

@@ -6,6 +6,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.LinearAlgebra.Dimension.Localization
+public import Mathlib.FieldTheory.RatFunc.AsPolynomial
 
 /-!
 # The function field of a Weierstrass curve has degree two over `R(x)`
@@ -139,6 +140,37 @@ instance finiteDimensional_functionField (L : Type*) [Field L] [Algebra R[X] L]
   .of_finrank_pos (by simp)
 
 end Domain
+
+section Field
+
+open scoped RatFunc
+
+variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
+
+/-- The image of the rational function field `F(x)` inside the function field `F(W)`. Exposed:
+downstream files identify it with images of subfields of `F(x)`, which needs the body. -/
+@[expose]
+noncomputable def ratFuncRange : IntermediateField F W.FunctionField :=
+  (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).fieldRange
+
+@[simp]
+theorem mem_ratFuncRange {z : W.FunctionField} :
+    z ∈ ratFuncRange W ↔
+      ∃ r : RatFunc F, IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField r = z :=
+  AlgHom.mem_fieldRange
+
+/-- **`[F(W) : F(x)] = 2`**, for the copy of the rational function field inside `F(W)`: the
+`L = RatFunc F` case of `finrank_functionField`, transported along the embedding. -/
+@[simp]
+theorem finrank_ratFuncRange : Module.finrank (ratFuncRange W) W.FunctionField = 2 := by
+  have h := Algebra.finrank_eq_of_equiv_equiv
+    (AlgEquiv.ofInjective (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField)
+      (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).toRingHom.injective).toRingEquiv
+    (RingEquiv.refl W.FunctionField) (by ext x; rfl)
+  rw [finrank_functionField W (RatFunc F)] at h
+  exact h.symm
+
+end Field
 
 end WeierstrassCurve.Affine
 
