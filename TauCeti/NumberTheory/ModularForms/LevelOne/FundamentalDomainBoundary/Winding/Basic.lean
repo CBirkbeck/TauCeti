@@ -9,6 +9,8 @@ public import TauCeti.Analysis.Contour.Winding.Number.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 
 import Mathlib.Analysis.Complex.Convex
+import Mathlib.Analysis.Calculus.Deriv.Add
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import TauCeti.Analysis.Contour.Winding.UnboundedComponent
 
 /-!
@@ -52,7 +54,7 @@ It is stated once here so the three share it.
 
 public noncomputable section
 
-open Complex Set UpperHalfPlane TauCeti.Contour
+open Complex MeasureTheory Set UpperHalfPlane TauCeti.Contour
 
 open scoped Real
 
@@ -360,6 +362,28 @@ lemma fdBoundaryArcExcisionHalfWidth_pos_lt_one_and_two_mul_sin_eq {ε : ℝ} (h
       field_simp
     rw [hδπ, Real.sin_arcsin (by linarith) (by linarith)]
     ring
+
+
+/-- **Off the excision the truncated integrand is the logarithmic derivative.** Where the
+contour stays further than `ε` from the centre `w`, the `ε`-truncated winding integrand is the
+logarithmic derivative of `t ↦ fdBoundary H t - w`. The equality is almost-everywhere because
+the far-ness hypothesis is stated on the open interval, so the right endpoint — a null set — is
+excluded.
+
+The centre is a parameter: the corner computations at `ρ` and at `ρ + 1` use this same fact
+with their own centres. -/
+theorem ae_truncated_eq_logDeriv_fdBoundary_sub {ε : ℝ} (w : ℂ) {a b : ℝ} (hab : a ≤ b)
+    (hfar : ∀ s ∈ Ioo a b, ε < ‖fdBoundary H s - w‖) :
+    ∀ᵐ s ∂volume, s ∈ uIoc a b →
+      deriv (fun r ↦ fdBoundary H r - w) s / (fdBoundary H s - w) =
+        (if ε < ‖fdBoundary H s - w‖
+          then (fdBoundary H s - w)⁻¹ * deriv (fdBoundary H) s
+          else 0) := by
+  have hb_ae : ({b} : Set ℝ)ᶜ ∈ ae volume := by simp [MeasureTheory.mem_ae_iff]
+  filter_upwards [hb_ae] with s hs_ne hmem
+  rw [uIoc_of_le hab] at hmem
+  rw [if_pos (hfar s ⟨hmem.1, lt_of_le_of_ne hmem.2 fun h ↦ hs_ne (mem_singleton_iff.mpr h)⟩),
+    deriv_sub_const, inv_mul_eq_div]
 
 end ModularForm
 end TauCeti

@@ -381,23 +381,6 @@ private lemma norm_le_of_near_rho_add_one {δL δR : ℝ} (hH : Real.sqrt 3 / 2 
     exact norm_fdBoundary_sub_rho_add_one_arc_le H ⟨h1.le, by linarith [ht.2]⟩
       (by linarith) (by linarith [ht.2])
 
-/-- Away from the excised corner the truncated integrand is the logarithmic one: wherever
-the contour stays farther than `ε` from `ρ + 1` the excision test passes, and the endpoint
-where it may fail is a single point, hence null. -/
-private lemma ae_truncated_eq_logDeriv_rho_add_one {a b : ℝ} (hab : a ≤ b)
-    (hfar : ∀ s ∈ Ioo a b, ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖) :
-    ∀ᵐ s ∂volume, s ∈ uIoc a b →
-      deriv (fun r ↦ fdBoundary H r - ((UpperHalfPlane.ρ : ℂ) + 1)) s /
-        (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)) =
-        (if ε < ‖fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1)‖
-          then (fdBoundary H s - ((UpperHalfPlane.ρ : ℂ) + 1))⁻¹ * deriv (fdBoundary H) s
-          else 0) := by
-  have hb_ae : ({b} : Set ℝ)ᶜ ∈ ae volume := by simp [MeasureTheory.mem_ae_iff]
-  filter_upwards [hb_ae] with s hs_ne hmem
-  rw [uIoc_of_le hab] at hmem
-  rw [if_pos (hfar s ⟨hmem.1, lt_of_le_of_ne hmem.2 fun h ↦ hs_ne (mem_singleton_iff.mpr h)⟩),
-    deriv_sub_const, inv_mul_eq_div]
-
 /-- Over the excised window the truncated integrand vanishes identically, so it is
 integrable there and contributes nothing to the integral. -/
 private lemma excised_window_rho_add_one {δL δR : ℝ} (hH : Real.sqrt 3 / 2 < H)
@@ -452,9 +435,11 @@ private lemma truncated_integral_spec_rho_add_one (hH : Real.sqrt 3 / 2 < H) (h�
     exact div_mul_cancel₀ ε hHpos.ne'
   obtain ⟨hi_left, hi_right, hval⟩ :=
     ftc_logDeriv_telescope_rho_add_one H hH hδL_pos hδL_le hδR_pos hδR_lt
-  have hae_left := ae_truncated_eq_logDeriv_rho_add_one (a := (0 : ℝ)) (b := 1 - δL)
+  have hae_left := ae_truncated_eq_logDeriv_fdBoundary_sub ((UpperHalfPlane.ρ : ℂ) + 1)
+    (a := (0 : ℝ)) (b := 1 - δL)
     (by linarith) fun s hs ↦ lt_norm_of_far_left_rho_add_one hH hδL_pos hlin ⟨hs.1.le, hs.2⟩
-  have hae_right := ae_truncated_eq_logDeriv_rho_add_one (a := (1 + δR : ℝ)) (b := 5)
+  have hae_right := ae_truncated_eq_logDeriv_fdBoundary_sub ((UpperHalfPlane.ρ : ℂ) + 1)
+    (a := (1 + δR : ℝ)) (b := 5)
     (by linarith) fun s hs ↦
       lt_norm_of_far_right_rho_add_one hε₁ hεH hδR_pos hδR_lt h2sin ⟨hs.1, hs.2.le⟩
   obtain ⟨himid, hmid0⟩ :=
