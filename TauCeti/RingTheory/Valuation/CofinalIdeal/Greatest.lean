@@ -60,12 +60,20 @@ the two uses Wedhorn makes of it, and both appear here.
 ## Implementation notes
 
 The §7.1 development here — Lemma 7.2's two halves, the case split of Definition 7.3, and
-Lemma 7.4 — follows Wedhorn directly; no prior formalisation of it was available to draw on.
-The one piece with a formalised antecedent is the convex-subgroup notion it rests on, which
-came from the AINTLIB adic-spaces development (`aintlib-adic-spaces`, revision `37bbdaeb9`,
-`projects/AdicSpaces/Adic spaces/ValuationContinuity.lean`, `ConvexSubgroup` and
+Lemma 7.4 — follows Wedhorn directly. The AINTLIB adic-spaces development
+(`aintlib-adic-spaces`, revision `37bbdaeb9`) reaches the same section by a route that does not
+pass through these results: its `Spv.IsInSpvAI`
+(`projects/AdicSpaces/Adic spaces/SpvAI.lean`) *defines* `Spv (A, I)` by clause (ii) of Lemma
+7.4, the disjunction `(∀ a ∈ I, CofinalValue v a) ∨ IsMicrobial v`, so it needs neither
+Definition 7.3's `cΓ_v(I)` nor Lemma 7.2's existence result, and states no Lemma 7.4. Those
+three are therefore without a formalised antecedent here; the equivalence between the two
+routes is what `characteristicSubgroupOfIdeal_eq_top_iff` supplies.
+
+Two pieces do have antecedents: the convex-subgroup notion this rests on came from the same
+development (`projects/AdicSpaces/Adic spaces/ValuationContinuity.lean`, `ConvexSubgroup` and
 `ConvexSubgroup.minContain`) and reached this file through
-`TauCeti.Algebra.Order.Group.ConvexSubgroup`.
+`TauCeti.Algebra.Order.Group.ConvexSubgroup`; and the cofinal-value predicate corresponds to
+its `Valuation.CofinalValue` in `SpvAI.lean`.
 
 ## References
 
@@ -94,13 +102,6 @@ theorem idealCofinalFor_def {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {I : Ideal A} :
     IdealCofinalFor v H I ↔ ∀ a ∈ I, CofinalValueFor v H.toSubgroup a :=
   Iff.rfl
-
-/-- The trivial ideal is cofinal for every convex subgroup. -/
-@[simp]
-theorem idealCofinalFor_bot (v : Valuation A Γ₀)
-    (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : IdealCofinalFor v H ⊥ := by
-  intro a ha
-  exact cofinalValueFor_of_eq_zero (by simpa using congrArg v (Ideal.mem_bot.mp ha))
 
 /-- The condition is antitone in the ideal. -/
 theorem IdealCofinalFor.mono {v : Valuation A Γ₀}
@@ -174,12 +175,6 @@ theorem IsGreatestIdealCofinal.idealCofinalFor {v : Valuation A Γ₀} {I : Idea
 theorem IsGreatestIdealCofinal.le {v : Valuation A Γ₀} {I : Ideal A}
     {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (h : IsGreatestIdealCofinal v I H) (hK : IdealCofinalFor v K I) : K ≤ H := h.2 hK
-
-/-- For the zero ideal the greatest element is the whole value group (Wedhorn's first
-reduction: "if `v(I) = {0}` we may choose `H = Γ_v`"). -/
-theorem isGreatestIdealCofinal_bot (v : Valuation A Γ₀) :
-    IsGreatestIdealCofinal v ⊥ ⊤ :=
-  ⟨idealCofinalFor_bot v ⊤, fun _ _ ↦ le_top⟩
 
 /-! ### Reduction to the value set -/
 
