@@ -24,8 +24,9 @@ Over a field, with `a ≠ 0`:
   characteristic-free core, and the only one that mentions no discriminant;
 * `Polynomial.splits_quadratic_iff_isSquare`: away from characteristic two, splits exactly when
   `discrim a b c` is a square;
-* `Polynomial.splits_quadratic_iff_of_two_eq_zero`: in characteristic two, where the discriminant
-  degenerates to `b²` and the square-class criterion says nothing, splits exactly when the
+* `Polynomial.splits_quadratic_iff_exists_artinSchreier_of_two_eq_zero`: in characteristic two,
+  where the discriminant degenerates to `b²` (`discrim_eq_sq_of_two_eq_zero`) and the square-class
+  criterion says nothing, splits exactly when the
   Artin-Schreier invariant `a c / b²` lies in the image of `z ↦ z² + z`, written division-free.
   Here `b ≠ 0` is also required, which by `separable_quadratic_iff_discrim_ne_zero` is separability.
 
@@ -55,9 +56,9 @@ public section
 
 namespace Polynomial
 
-/-- The derivative of the quadratic `a X² + b X + c` is `2 a X + b`. Deliberately not `@[simp]`:
-Mathlib's simp set already rewrites this left-hand side to `C a * ((1 + 1) * X) + C b`, so the
-lemma is not in simp normal form and `simpNF` rejects it. -/
+/-- The derivative of the quadratic `a X² + b X + c` is `2 a X + b`. -/
+-- Deliberately not `@[simp]`: Mathlib's simp set already rewrites this left-hand side to
+-- `C a * ((1 + 1) * X) + C b`, so the lemma is not in simp normal form and `simpNF` rejects it.
 theorem derivative_quadratic {R : Type*} [CommSemiring R] (a b c : R) :
     derivative (C a * X ^ 2 + C b * X + C c) = 2 * C a * X + C b := by
   simp only [derivative_add, derivative_mul, derivative_C, derivative_X_pow, derivative_X,
@@ -134,14 +135,23 @@ theorem splits_quadratic_iff_isSquare {k : Type*} [Field k] [NeZero (2 : k)] {a 
     obtain ⟨x, hx⟩ := exists_quadratic_eq_zero ha ⟨s, by rw [hs]⟩
     exact ⟨x, by linear_combination hx⟩
 
+/-- In characteristic two the discriminant degenerates to `b²`, since `4 = 0` kills the `a c`
+term. This is why `splits_quadratic_iff_isSquare` says nothing there: `discrim a b c` is
+automatically a square. -/
+theorem discrim_eq_sq_of_two_eq_zero {k : Type*} [Field k] (h2 : (2 : k) = 0) (a b c : k) :
+    discrim a b c = b ^ 2 := by
+  have h4 : (4 : k) = 0 := by linear_combination (2 : k) * h2
+  rw [discrim]
+  linear_combination -(a * c) * h4
+
 /-- Over a field of characteristic `2`, a quadratic `a X² + b X + c` with `a, b ≠ 0` splits
 exactly when its Artin-Schreier invariant `a c / b²` lies in the image of `z ↦ z² + z`, written
 division-free as `∃ z, b² (z² + z) = a c`. Here the square-class criterion
 `splits_quadratic_iff_isSquare` says nothing, since `discrim a b c = b²` is automatically a
 square; the hypothesis `b ≠ 0` is
 exactly separability, by `separable_quadratic_iff_discrim_ne_zero`. -/
-theorem splits_quadratic_iff_of_two_eq_zero {k : Type*} [Field k] (h2 : (2 : k) = 0)
-    {a b c : k} (ha : a ≠ 0) (hb : b ≠ 0) :
+theorem splits_quadratic_iff_exists_artinSchreier_of_two_eq_zero {k : Type*} [Field k]
+    (h2 : (2 : k) = 0) {a b c : k} (ha : a ≠ 0) (hb : b ≠ 0) :
     (C a * X ^ 2 + C b * X + C c).Splits ↔ ∃ z, b ^ 2 * (z ^ 2 + z) = a * c := by
   rw [splits_quadratic_iff_exists_root ha]
   constructor

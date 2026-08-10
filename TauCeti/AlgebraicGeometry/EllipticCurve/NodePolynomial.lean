@@ -32,16 +32,17 @@ answered at the level of the polynomial, not yet of the class.
   what lets the criteria below — stated for `W.nodePoly.map φ`, i.e. for the *reduction* of the
   node polynomial — be read as statements about the node polynomial of the reduced curve;
 * `WeierstrassCurve.variableChange_nodePoly` and
-  `WeierstrassCurve.variableChange_nodePoly_map_splits_iff`: a change
-  of variables `(u, r, s, t)` transforms the node polynomial by the affine substitution
+  `WeierstrassCurve.variableChange_nodePoly_map_splits_iff`: a change of variables `(u, r, s, t)`
+  transforms the node polynomial by the affine substitution
   `T ↦ u T + s` and the unit scalar `u⁻⁶`, so whether it splits is an isomorphism invariant. This
   is why split multiplicative reduction is a property of the curve and not of the equation;
 * `WeierstrassCurve.nodePoly_map_splits_iff_isSquare` and
-  `WeierstrassCurve.nodePoly_map_splits_iff_of_two_eq_zero`: the splitting criteria themselves,
-  each needing `c₄` to survive the map. Away from residue characteristic two it splits iff the
-  image of `-c₄ c₆` is a square; in residue characteristic two, where that says nothing, iff an
-  Artin-Schreier condition holds — and there `c₆` must survive as well. Both come from the
-  general quadratic criteria of `TauCeti/Algebra/Polynomial/QuadraticDiscriminant.lean`.
+  `WeierstrassCurve.nodePoly_map_splits_iff_exists_artinSchreier_of_two_eq_zero`: the splitting
+  criteria themselves, each needing `c₄` to survive the map. Away from residue characteristic
+  two it splits iff the image of `-c₄ c₆` is a square; in residue characteristic two, where that
+  says nothing, iff an Artin-Schreier condition holds — and there `c₆` must survive as well. Both
+  come from the general quadratic criteria of
+  `TauCeti/Algebra/Polynomial/QuadraticDiscriminant.lean`.
 
 Nothing here assumes a valuation or a reduction: every statement is about a Weierstrass curve
 over a commutative ring and a ring homomorphism to a field, so it applies to any reduction map
@@ -51,7 +52,8 @@ one later chooses. They advance
 reduction acquires split reduction after a separable quadratic twist — carries no
 residue-characteristic hypothesis, so it needs both criteria: away from residue characteristic
 two one feeds the twist's scaling of `-c₄ c₆` into `nodePoly_map_splits_iff_isSquare`, and in
-residue characteristic two the route is `nodePoly_map_splits_iff_of_two_eq_zero`.
+residue characteristic two the route is
+`nodePoly_map_splits_iff_exists_artinSchreier_of_two_eq_zero`.
 
 Adapted from the FLT project (`ImperialCollegeLondon/FLT`, at the roadmap's pin `bc2fe8ff7396`,
 FLT PR #1088, Apache 2.0): the node-polynomial block of
@@ -78,6 +80,14 @@ asks for the splitting over the residue field of this polynomial formed from the
 `W.integralModel R`, as its one extra condition on top of `HasMultiplicativeReduction`. -/
 noncomputable def nodePoly (W : WeierstrassCurve A) : Polynomial A :=
   .C W.c₄ * .X ^ 2 + .C (W.a₁ * W.c₄) * .X - .C (54 * W.b₆ - 3 * W.b₂ * W.b₄ + W.a₂ * W.c₄)
+
+/-- The defining formula for the node polynomial. The definition's body is not exposed across
+the module boundary, so this is how downstream modules see it; `nodePoly_map_eq_quadratic` is the
+corresponding statement for its image under a ring homomorphism. -/
+lemma nodePoly_def (W : WeierstrassCurve A) :
+    W.nodePoly = .C W.c₄ * .X ^ 2 + .C (W.a₁ * W.c₄) * .X
+      - .C (54 * W.b₆ - 3 * W.b₂ * W.b₄ + W.a₂ * W.c₄) := by
+  simp only [nodePoly]
 
 /-- The discriminant of the node polynomial is `-c₄ c₆`. Hence — away from residue characteristic
 two, and provided `c₄` survives the reduction — the tangent directions at the node are rational
@@ -114,9 +124,9 @@ quadratic criteria applied to `nodePoly_map_eq_quadratic`. -/
 lemma map_nodePoly_discrim (φ : A →+* B) (W : WeierstrassCurve A) :
     discrim (φ W.c₄) (φ (W.a₁ * W.c₄)) (-φ (54 * W.b₆ - 3 * W.b₂ * W.b₄ + W.a₂ * W.c₄))
       = φ (-(W.c₄ * W.c₆)) := by
-  rw [discrim, mul_neg, sub_neg_eq_add, ← map_pow, ← map_ofNat φ 4, ← map_mul, ← map_mul,
-    ← map_add]
-  exact congrArg φ (by simpa only [discrim, mul_neg, sub_neg_eq_add] using W.nodePoly_discrim)
+  have h := congrArg φ W.nodePoly_discrim
+  simp only [discrim, map_add, map_sub, map_mul, map_neg, map_pow, map_ofNat] at h ⊢
+  linear_combination h
 
 /-- Under a change of variables `C = (u, r, s, t)`, the node polynomial transforms by the affine
 substitution `T ↦ u T + s` and the unit scalar `u⁻⁶` — reflecting that the tangent slopes `λ`
@@ -125,31 +135,35 @@ transform as `λ ↦ (λ - s)/u`. Over a field this makes splitting invariant; s
 lemma variableChange_nodePoly (W : WeierstrassCurve A) (C : VariableChange A) :
     (C • W).nodePoly = .C ((↑C.u⁻¹ : A) ^ 6)
       * W.nodePoly.comp (.C (↑C.u : A) * .X + .C C.s) := by
+  -- `ring` cannot see that `u⁻¹` inverts `u`, so the two cancellations it needs are supplied as
+  -- hypotheses and fed to `linear_combination`: `e2` corrects the `X²` coefficient, where the
+  -- scalar `u⁻⁶` meets the `u²` from `(uX + s)²`, and `e1` the `X` coefficient, where it meets a
+  -- single `u`.
   have e2 : (↑C.u⁻¹ : A) ^ 6 * (↑C.u : A) ^ 2 = (↑C.u⁻¹ : A) ^ 4 := by
     have := congrArg (Units.val (α := A)) (by group : C.u⁻¹ ^ 6 * C.u ^ 2 = C.u⁻¹ ^ 4)
     simpa only [Units.val_mul, Units.val_pow_eq_pow_val] using this
   have e1 : (↑C.u⁻¹ : A) ^ 6 * (↑C.u : A) = (↑C.u⁻¹ : A) ^ 5 := by
     have := congrArg (Units.val (α := A)) (by group : C.u⁻¹ ^ 6 * C.u = C.u⁻¹ ^ 5)
     simpa only [Units.val_mul, Units.val_pow_eq_pow_val] using this
-  have e2p : (algebraMap A (Polynomial A) (↑C.u⁻¹ : A)) ^ 6 * (algebraMap A (Polynomial A) ↑C.u) ^ 2
-      = (algebraMap A (Polynomial A) (↑C.u⁻¹ : A)) ^ 4 := by
-    rw [← map_pow, ← map_pow, ← map_mul, e2, map_pow]
-  have e1p : (algebraMap A (Polynomial A) (↑C.u⁻¹ : A)) ^ 6 * algebraMap A (Polynomial A) ↑C.u
-      = (algebraMap A (Polynomial A) (↑C.u⁻¹ : A)) ^ 5 := by
-    rw [← map_pow, ← map_mul, e1, map_pow]
-  simp only [nodePoly, c₄, variableChange_a₁, variableChange_a₂, variableChange_b₂,
-    variableChange_b₄, variableChange_b₆, Polynomial.mul_comp, Polynomial.add_comp,
-    Polynomial.sub_comp, Polynomial.C_comp, Polynomial.X_comp, pow_two, mul_add, add_mul,
-    mul_sub, sub_mul]
-  simp only [Polynomial.C_eq_algebraMap, map_mul, map_pow, map_sub, map_add, map_ofNat]
-  linear_combination
-    (-(algebraMap A (Polynomial A) W.b₂ ^ 2 - 24 * algebraMap A (Polynomial A) W.b₄) *
-        Polynomial.X ^ 2) * e2p +
-    (-(2 * (algebraMap A (Polynomial A) W.b₂ ^ 2 - 24 * algebraMap A (Polynomial A) W.b₄) *
-            algebraMap A (Polynomial A) C.s +
-          algebraMap A (Polynomial A) W.a₁ *
-            (algebraMap A (Polynomial A) W.b₂ ^ 2 - 24 * algebraMap A (Polynomial A) W.b₄)) *
-        Polynomial.X) * e1p
+  have hc₄ : Polynomial.C W.c₄ = Polynomial.C W.b₂ ^ 2 - 24 * Polynomial.C W.b₄ := by
+    rw [c₄]
+    simp only [Polynomial.C_sub, Polynomial.C_mul, Polynomial.C_pow, map_ofNat]
+  have e2p : (Polynomial.C (↑C.u⁻¹ : A)) ^ 6 * (Polynomial.C (↑C.u : A)) ^ 2
+      = (Polynomial.C (↑C.u⁻¹ : A)) ^ 4 := by
+    rw [← Polynomial.C_pow, ← Polynomial.C_pow, ← Polynomial.C_mul, e2, Polynomial.C_pow]
+  have e1p : (Polynomial.C (↑C.u⁻¹ : A)) ^ 6 * Polynomial.C (↑C.u : A)
+      = (Polynomial.C (↑C.u⁻¹ : A)) ^ 5 := by
+    rw [← Polynomial.C_pow, ← Polynomial.C_mul, e1, Polynomial.C_pow]
+  simp only [nodePoly, variableChange_a₁, variableChange_a₂, variableChange_c₄,
+    variableChange_b₂, variableChange_b₄, variableChange_b₆, Polynomial.mul_comp,
+    Polynomial.add_comp, Polynomial.sub_comp, Polynomial.C_comp, Polynomial.X_comp, pow_two,
+    mul_add, add_mul, mul_sub, sub_mul, Polynomial.C_mul, Polynomial.C_add, Polynomial.C_sub,
+    Polynomial.C_pow, map_ofNat, Polynomial.ofNat_comp]
+  -- the `r`-shift contributes `c₄` through `variableChange_a₂`, in expanded form
+  linear_combination (-Polynomial.C W.c₄ * Polynomial.X ^ 2) * e2p
+    + (-(2 * Polynomial.C W.c₄ * Polynomial.C C.s + Polynomial.C W.a₁ * Polynomial.C W.c₄)
+        * Polynomial.X) * e1p
+    + (-3 * Polynomial.C (↑C.u⁻¹ : A) ^ 6 * Polynomial.C C.r) * hc₄
 
 /-- **Invariance of the node polynomial's splitting under change of variables.** Since a change of
 variables transforms the node polynomial by an affine substitution and a unit scalar
@@ -187,20 +201,20 @@ where the square-class criterion `nodePoly_map_splits_iff_isSquare` says nothing
 polynomial splits exactly when its Artin-Schreier invariant lies in the image of `z ↦ z² + z`.
 Both `c₄` and `c₆` are required nonzero in `k`; together they force the linear coefficient
 `a₁ c₄` to be nonzero as well, which is what makes the criterion applicable. -/
-lemma nodePoly_map_splits_iff_of_two_eq_zero (h2 : (2 : k) = 0) (φ : A →+* k)
+lemma nodePoly_map_splits_iff_exists_artinSchreier_of_two_eq_zero (h2 : (2 : k) = 0) (φ : A →+* k)
     (W : WeierstrassCurve A) (hc₄ : φ W.c₄ ≠ 0) (hc₆ : φ W.c₆ ≠ 0) :
     (W.nodePoly.map φ).Splits ↔ ∃ z, φ (W.a₁ * W.c₄) ^ 2 * (z ^ 2 + z)
       = φ W.c₄ * (-φ (54 * W.b₆ - 3 * W.b₂ * W.b₄ + W.a₂ * W.c₄)) := by
+  -- In characteristic two the discriminant is the square of the linear coefficient
+  -- (`discrim_eq_sq_of_two_eq_zero`), and it equals `φ (-(c₄ c₆)) ≠ 0`, so that coefficient is
+  -- nonzero — which is what makes the Artin-Schreier criterion applicable.
   have hb : φ (W.a₁ * W.c₄) ≠ 0 := by
-    have h4 : (4 : k) = 0 := by linear_combination (2 : k) * h2
-    have hAk := map_nodePoly_discrim φ W
-    rw [discrim] at hAk
     intro h0
     refine neg_ne_zero.mpr (mul_ne_zero hc₄ hc₆) ?_
-    rw [← map_mul, ← map_neg]
-    linear_combination -hAk + φ (W.a₁ * W.c₄) * h0
-      + φ W.c₄ * φ (54 * W.b₆ - 3 * W.b₂ * W.b₄ + W.a₂ * W.c₄) * h4
-  rw [nodePoly_map_eq_quadratic, Polynomial.splits_quadratic_iff_of_two_eq_zero h2 hc₄ hb]
+    rw [← map_mul, ← map_neg, ← map_nodePoly_discrim φ W,
+      Polynomial.discrim_eq_sq_of_two_eq_zero h2, h0, zero_pow two_ne_zero]
+  rw [nodePoly_map_eq_quadratic,
+    Polynomial.splits_quadratic_iff_exists_artinSchreier_of_two_eq_zero h2 hc₄ hb]
 
 end WeierstrassCurve
 
