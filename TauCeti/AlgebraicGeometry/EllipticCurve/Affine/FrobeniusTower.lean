@@ -108,6 +108,19 @@ theorem finrank_extendScalars_ratFuncRange :
   rw [TauCeti.FiniteField.finrank_fieldRange_frobeniusAlgHom_ratFunc] at h
   exact h.symm
 
+/-- **`[K(W) : K(x^q)] = 2q`.** The tower `K(x^q) ⊆ K(x) ⊆ K(W)` has degrees `q` and `2`. -/
+theorem finrank_frobeniusRatFuncRange [W.IsElliptic] :
+    Module.finrank (frobeniusRatFuncRange W) W.FunctionField = 2 * Fintype.card K := by
+  have htower := Module.finrank_mul_finrank (frobeniusRatFuncRange W)
+    (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W)) W.FunctionField
+  -- `extendScalars` only changes the base ring of the intermediate field, not its carrier, so the
+  -- outer degree is `finrank_ratFuncRange` unchanged
+  have houter : Module.finrank
+      (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W))
+      W.FunctionField = 2 := finrank_ratFuncRange W
+  rw [finrank_extendScalars_ratFuncRange W, houter] at htower
+  rw [← htower, Nat.mul_comm]
+
 end WeierstrassCurve.Affine
 
 end TauCeti
