@@ -1,0 +1,111 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import TauCeti.Topology.Algebra.ZeroSequenceOfUnits
+public import Mathlib.Topology.Baire.Lemmas
+public import Mathlib.GroupTheory.GroupAction.Pointwise
+
+/-!
+# The Baire step of Henkel's open mapping theorem
+
+Henkel's open mapping theorem says that a continuous surjective linear map between complete
+Hausdorff first-countable modules over a ring with a zero sequence of units is open. Its first
+half is a Baire-category argument, and that half is what this file isolates. It needs none of
+the hypotheses the second half needs — no completeness, no first countability, not even
+continuity of the map — only that the target is a Baire space.
+
+The argument is the classical one, with the zero sequence of units supplying the countability
+Baire needs. Any neighbourhood `U` of zero in the domain has its dilates `uₙ⁻¹ • U` cover the
+domain, indexed by `ℕ` (`TauCeti.iUnion_inv_smul_eq_univ_of_tendsto_zero`); a surjection carries
+that cover to a cover of the target by the corresponding dilates of `f '' U`; Baire forces one of
+their closures to have interior; and dilating back by a unit — a homeomorphism of the target —
+moves that interior onto `closure (f '' U)` itself.
+
+What this does **not** give is that `closure (f '' U)` is a *neighbourhood of zero*, still less
+that `f '' U` is. Both are later steps of Henkel's proof and neither is proved here; the second
+is where completeness and first countability enter.
+
+## Main results
+
+* `TauCeti.nonempty_interior_closure_of_iUnion_units_smul`: if countably many unit dilates of a
+  set cover a Baire space, then the closure of that set has nonempty interior. This is the Baire
+  argument by itself, with no map in sight.
+* `TauCeti.nonempty_interior_closure_image_of_tendsto_zero`: the form Henkel's proof uses — along
+  a zero sequence of units, the closure of the image of any neighbourhood of zero under a
+  surjective equivariant map has nonempty interior.
+
+## References
+
+* L. Henkel, *An Open Mapping Theorem for rings which have a zero sequence of units*,
+  [arXiv:1407.5647](https://arxiv.org/abs/1407.5647). The Baire argument formalised here is the
+  opening of its proof.
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], Theorem 6.16 and Propositions 6.17–6.18, which are
+  proved from Henkel's theorem; downstream context for this file rather than its source.
+-/
+
+public section
+
+open Filter Pointwise Topology
+
+namespace TauCeti
+
+section Baire
+
+variable {A N : Type*} [Monoid A] [TopologicalSpace N] [MulAction A N] [ContinuousConstSMul A N]
+
+/-- **The Baire step**, on its own: if countably many dilates of `V` by units of `A` cover a
+Baire space, then `closure V` has nonempty interior.
+
+The units are what make the conclusion about `V` rather than about one dilate: `x ↦ uₙ • x` is a
+homeomorphism, so it carries interior to interior and commutes with closure. Countability of the
+index is the whole reason Henkel's hypothesis is a *sequence* of units — a cover indexed by all
+of `Aˣ` would exhaust the space just as well but could not start a Baire argument. -/
+theorem nonempty_interior_closure_of_iUnion_units_smul [BaireSpace N] [Nonempty N] {u : ℕ → Aˣ}
+    {V : Set N} (hV : ⋃ n, u n • V = Set.univ) : (interior (closure V)).Nonempty := by
+  have hcov : ⋃ n : ℕ, closure (u n • V) = Set.univ :=
+    Set.eq_univ_of_univ_subset (hV ▸ Set.iUnion_mono fun _ ↦ subset_closure)
+  obtain ⟨n, hn⟩ := nonempty_interior_of_iUnion_of_closed (fun _ : ℕ ↦ isClosed_closure) hcov
+  rwa [closure_smul, interior_smul, Set.smul_set_nonempty] at hn
+
+end Baire
+
+section Image
+
+variable {A M N : Type*} [MonoidWithZero A] [TopologicalSpace A]
+  [Zero M] [TopologicalSpace M] [MulActionWithZero A M]
+  [TopologicalSpace N] [MulAction A N] [ContinuousConstSMul A N]
+
+/-- **The Baire step in the form Henkel's proof uses.** Along a zero sequence of units, the
+closure of the image of a neighbourhood of zero under a surjective equivariant map has nonempty
+interior.
+
+Surjectivity is the only property of the map used: it is what turns the countable cover of the
+domain by `uₙ⁻¹ • U` into a countable cover of the target. Continuity of the map is not needed
+here and is not assumed — it enters Henkel's proof only afterwards.
+
+The hypothesis `hc` is the one carried by
+`TauCeti.iUnion_inv_smul_eq_univ_of_tendsto_zero`: continuity of the action in the scalar alone,
+at zero, at every vector. `ContinuousSMul A M` implies it and is strictly stronger. -/
+theorem nonempty_interior_closure_image_of_tendsto_zero [BaireSpace N] {F : Type*}
+    [FunLike F M N] [MulActionHomClass F A M N] (f : F) (hf : Function.Surjective f) {u : ℕ → Aˣ}
+    (hu : Tendsto (fun n ↦ ((u n : A))) atTop (𝓝 0))
+    (hc : ∀ x : M, ContinuousAt (fun a : A ↦ a • x) 0) {U : Set M} (hU : U ∈ 𝓝 (0 : M)) :
+    (interior (closure (f '' U))).Nonempty := by
+  have : Nonempty N := ⟨f 0⟩
+  refine nonempty_interior_closure_of_iUnion_units_smul (u := fun n ↦ (u n)⁻¹) ?_
+  -- `v • s` for `v : Aˣ` is by definition `(v : A) • s`, which is the form `image_smul_set` takes.
+  have himg : ∀ v : Aˣ, v • f '' U = f '' (v • U) := fun v ↦ (image_smul_set f (v : A) U).symm
+  calc ⋃ n, ((u n)⁻¹ : Aˣ) • f '' U
+      = f '' ⋃ n, ((u n)⁻¹ : Aˣ) • U := by
+        rw [Set.image_iUnion]; exact Set.iUnion_congr fun n ↦ himg _
+    _ = f '' Set.univ := by rw [iUnion_inv_smul_eq_univ_of_tendsto_zero hu hc hU]
+    _ = Set.univ := by rw [Set.image_univ, hf.range_eq]
+
+end Image
+
+end TauCeti
+
+end
