@@ -397,11 +397,11 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
     exact div_mul_cancel₀ ε hHpos.ne'
   obtain ⟨hi_left, hi_right, hval⟩ :=
     ftc_logDeriv_telescope_rho H hH hδL_pos hδL_lt hδR_pos hδR_le
-  have hae_left := ae_truncated_eq_logDeriv_fdBoundary_sub (UpperHalfPlane.ρ : ℂ)
-    (H := H) (a := (0 : ℝ)) (b := 3 - δL) (by linarith)
+  have hae_left := Contour.ae_logDeriv_sub_eq_truncated (γ := fdBoundary H)
+    (z₀ := (UpperHalfPlane.ρ : ℂ)) (a := (0 : ℝ)) (b := 3 - δL) (by linarith)
     fun s hs ↦ lt_norm_of_far_left_rho hε₁ hδL_pos hδL_lt h2sin ⟨hs.1.le, hs.2⟩
-  have hae_right := ae_truncated_eq_logDeriv_fdBoundary_sub (UpperHalfPlane.ρ : ℂ)
-    (H := H) (a := (3 + δR : ℝ)) (b := 5) (by linarith)
+  have hae_right := Contour.ae_logDeriv_sub_eq_truncated (γ := fdBoundary H)
+    (z₀ := (UpperHalfPlane.ρ : ℂ)) (a := (3 + δR : ℝ)) (b := 5) (by linarith)
     fun s hs ↦ lt_norm_of_far_right_rho hH hεH hδR_pos hlin ⟨hs.1, hs.2.le⟩
   obtain ⟨himid, hmid0⟩ :=
     excised_window_rho hH hδL_pos.le hδL_lt h2sin hδR_le hlin (by linarith)

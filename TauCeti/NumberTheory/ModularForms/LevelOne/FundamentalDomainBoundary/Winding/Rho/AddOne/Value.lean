@@ -435,11 +435,11 @@ private lemma truncated_integral_spec_rho_add_one (hH : Real.sqrt 3 / 2 < H) (h�
     exact div_mul_cancel₀ ε hHpos.ne'
   obtain ⟨hi_left, hi_right, hval⟩ :=
     ftc_logDeriv_telescope_rho_add_one H hH hδL_pos hδL_le hδR_pos hδR_lt
-  have hae_left := ae_truncated_eq_logDeriv_fdBoundary_sub ((UpperHalfPlane.ρ : ℂ) + 1)
-    (a := (0 : ℝ)) (b := 1 - δL)
+  have hae_left := Contour.ae_logDeriv_sub_eq_truncated (γ := fdBoundary H)
+    (z₀ := ((UpperHalfPlane.ρ : ℂ) + 1)) (a := (0 : ℝ)) (b := 1 - δL)
     (by linarith) fun s hs ↦ lt_norm_of_far_left_rho_add_one hH hδL_pos hlin ⟨hs.1.le, hs.2⟩
-  have hae_right := ae_truncated_eq_logDeriv_fdBoundary_sub ((UpperHalfPlane.ρ : ℂ) + 1)
-    (a := (1 + δR : ℝ)) (b := 5)
+  have hae_right := Contour.ae_logDeriv_sub_eq_truncated (γ := fdBoundary H)
+    (z₀ := ((UpperHalfPlane.ρ : ℂ) + 1)) (a := (1 + δR : ℝ)) (b := 5)
     (by linarith) fun s hs ↦
       lt_norm_of_far_right_rho_add_one hε₁ hεH hδR_pos hδR_lt h2sin ⟨hs.1, hs.2.le⟩
   obtain ⟨himid, hmid0⟩ :=
