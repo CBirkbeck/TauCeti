@@ -307,7 +307,6 @@ theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq [SlashInvariantFormC
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
     (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
     (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hfin : ∀ s ∈ T, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s ≠ ⊤)
     (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
     (hin : ∀ s ∈ T, 1 < ‖s‖ ∧ |s.re| < 1 / 2 ∧ s.im < H)
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
@@ -324,7 +323,7 @@ theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq [SlashInvariantFormC
     obtain ⟨h1, h2, h3⟩ := hin _ z.2
     rw [windingNumber_fdBoundary_eq_neg_one_of_interior hH h1 h2 (hpos _ z.2) h3, neg_one_mul]
   have := sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH.le hnorm hinv hHgt hper hoffγ hU
-    hUdom hoff hmero hfin hpos hbase hga hgz
+    hUdom hoff hmero hpos hbase hga hgz
   rw [Finset.sum_congr rfl hw, Finset.sum_neg_distrib] at this
   linear_combination -this
 
