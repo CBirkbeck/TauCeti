@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.MeasureTheory.Function.ConditionalExpectation.Basic
+import Mathlib.MeasureTheory.Function.ConditionalExpectation.PullOut
 -- Non-public: `eLpNorm_condExp_le_eLpNorm` (the Lᵖ contraction of conditional expectation) is
 -- used only inside the proof of the L¹-continuity lemma below, not in any public signature.
 import Mathlib.MeasureTheory.Function.ConditionalExpectation.Real
@@ -136,6 +137,22 @@ lemma condExp_ae_eq_of_forall_condExp_ae_eq_of_tendsto_eLpNorm
   filter_upwards [h_norm_zero] with ω hω
   simp only [Pi.zero_apply] at hω
   exact sub_eq_zero.mp hω
+
+/-- **The cross term against a coarser conditional expectation.** If `f` is `m`-measurable and is
+the conditional expectation of `g` on `m`, then `∫ g * f = ∫ f * f`. -/
+theorem integral_mul_eq_integral_sq_of_condExp_ae_eq {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {m : MeasurableSpace Ω} (hm : m ≤ mΩ) {μ : @Measure Ω mΩ} [SigmaFinite (μ.trim hm)]
+    {f g : Ω → ℝ}
+    (hf : AEStronglyMeasurable[m] f μ) (hgf_int : Integrable (fun ω => g ω * f ω) μ)
+    (hg_int : Integrable g μ) (h_tower : μ[g | m] =ᵐ[μ] f) :
+    ∫ ω, g ω * f ω ∂μ = ∫ ω, f ω * f ω ∂μ := by
+  -- pull the `m`-measurable factor out of the conditional expectation, then apply the tower law
+  have h_pullout := condExp_mul_of_aestronglyMeasurable_right (m := m) hf hgf_int hg_int
+  calc ∫ ω, g ω * f ω ∂μ
+      = ∫ ω, μ[fun ω => g ω * f ω | m] ω ∂μ := (integral_condExp hm).symm
+    _ = ∫ ω, μ[g | m] ω * f ω ∂μ := integral_congr_ae h_pullout
+    _ = ∫ ω, f ω * f ω ∂μ := by
+        refine integral_congr_ae ?_; filter_upwards [h_tower] with ω hω; rw [hω]
 
 end MeasureTheory
 
