@@ -74,8 +74,8 @@ and `Subgroup.fg_of_commGroup` is transported from it. An instance, matching how
 states its other `FG` closure properties (`Group.fg_range`, `QuotientGroup.fg`). -/
 instance (priority := 100) AddSubgroup.fg_of_addCommGroup {G : Type*} [AddCommGroup G]
     [AddGroup.FG G] (H : AddSubgroup G) : AddGroup.FG H :=
-  Module.Finite.iff_addGroup_fg.mp <| Module.Finite.iff_fg.mpr <|
-    IsNoetherian.noetherian (R := ℤ) (AddSubgroup.toIntSubmodule H)
+  (AddGroup.fg_iff_addSubgroup_fg H).mpr <| H.toIntSubmodule_toAddSubgroup ▸
+    (Submodule.fg_iff_addSubgroup_fg _).mp (IsNoetherian.noetherian (R := ℤ) H.toIntSubmodule)
 
 /-- A subgroup of a finitely generated commutative group is finitely generated: the additive
 statement `AddSubgroup.fg_of_addCommGroup` transported through `Additive G`. Registered with
@@ -98,8 +98,8 @@ theorem Group.fg_of_fg_ker_of_fg_range {G H : Type*} [Group G] [Group H] (φ : G
     [Group.FG φ.ker] [Group.FG φ.range] : Group.FG G := by
   obtain ⟨T, hT, hTfin⟩ := Group.fg_iff.mp ‹Group.FG φ.range›
   obtain ⟨S, hS, hSfin⟩ := Group.fg_iff.mp ‹Group.FG φ.ker›
-  set σ : φ.range → G := Function.surjInv φ.rangeRestrict_surjective with hσ
-  set U : Set G := σ '' T ∪ (φ.ker.subtype '' S) with hU
+  set σ : φ.range → G := Function.surjInv φ.rangeRestrict_surjective
+  set U : Set G := σ '' T ∪ (φ.ker.subtype '' S)
   refine Group.fg_iff.mpr ⟨U, ?_, (hTfin.image σ).union (hSfin.image _)⟩
   -- the kernel is contained in the closure of `U`
   have hkerle : φ.ker ≤ Subgroup.closure U := by
@@ -132,13 +132,11 @@ finitely generated is itself finitely generated.** The `AddSubgroup` analogue of
 `Submodule.fg_of_fg_map_of_fg_inf_ker`. -/]
 theorem Subgroup.fg_of_fg_map_of_fg_inf_ker {G H : Type*} [Group G] [Group H] (φ : G →* H)
     {K : Subgroup G} (h₁ : (K.map φ).FG) (h₂ : (K ⊓ φ.ker).FG) : K.FG := by
-  have h2' : Group.FG (φ.ker ⊓ K : Subgroup G) := by
-    rw [inf_comm]; exact (Group.fg_iff_subgroup_fg _).mpr h₂
   have : Group.FG (φ.domRestrict K).ker := by
-    rw [MonoidHom.ker_domRestrict, ← Subgroup.inf_subgroupOf_right]
-    exact Group.fg_of_surjective
-      (f := (Subgroup.subgroupOfEquivOfLe (inf_le_right : φ.ker ⊓ K ≤ K)).symm.toMonoidHom)
-      (Subgroup.subgroupOfEquivOfLe (inf_le_right : φ.ker ⊓ K ≤ K)).symm.surjective
+    have : Group.FG (K ⊓ φ.ker : Subgroup G) := (Group.fg_iff_subgroup_fg _).mpr h₂
+    rw [MonoidHom.ker_domRestrict, ← Subgroup.inf_subgroupOf_left]
+    have e := (Subgroup.subgroupOfEquivOfLe (inf_le_left : K ⊓ φ.ker ≤ K)).symm
+    exact Group.fg_of_surjective (f := e.toMonoidHom) e.surjective
   have : Group.FG (φ.domRestrict K).range := by
     rw [MonoidHom.domRestrict_range]; exact (Group.fg_iff_subgroup_fg _).mpr h₁
   exact (Group.fg_iff_subgroup_fg K).mp (Group.fg_of_fg_ker_of_fg_range (φ.domRestrict K))
