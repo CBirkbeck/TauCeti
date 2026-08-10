@@ -723,7 +723,8 @@ neighbourhoods of zero are the `U⟨X⟩`.
 
 Consumers should go through the contract lemmas below rather than unfolding this: the basis is
 `hasBasis_nhds_zero_weightedTopology`, and `isTopologicalRing_weightedTopology` /
-`nonarchimedeanRing_weightedTopology` give the structure. `@[instance_reducible]` rather than plain
+`nonarchimedeanRing_weightedTopology` give the structure.
+
 It is an `instance` rather than a plain `def` so that a consumer of `A⟨X⟩_T` gets the topology,
 and the `IsTopologicalRing` and `NonarchimedeanRing` structures below, by inference. Both `T` and
 the standing hypothesis are implicit because they are read off the carrier's own type. There is no
