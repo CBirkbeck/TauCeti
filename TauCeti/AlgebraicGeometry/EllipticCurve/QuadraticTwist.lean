@@ -382,11 +382,15 @@ theorem exists_smul_quadraticTwist_eq {θ : L} (hθ : θ ∉ Set.range (algebraM
   rw [h]
   exact E.exists_smul_quadraticTwistOf_trace_norm_eq hθ' hθ
 
-/-- **The twist is an `L`-form of `E`, with a nontrivial cocycle.** There is an explicit
-`L`-isomorphism `(Eᶿ)ᴸ ≅ Eᴸ` which is *anti*-equivariant for the Galois action: conjugating it by
-the nontrivial `σ ∈ Gal(L/K)` changes it by the automorphism `[-1]` of `E`
-(`negVariableChange`). That failure of equivariance is exactly what makes the twist a nontrivial
-form of `E` rather than an isomorphic copy. -/
+/-- **The twist becomes isomorphic to `E` over `L`, and that isomorphism carries a Galois
+cocycle.** There is an explicit `L`-isomorphism `(Eᶿ)ᴸ ≅ Eᴸ` whose conjugate by the nontrivial
+`σ ∈ Gal(L/K)` differs from it by `negVariableChange`, the change of variables `[-1]`: this is the
+cocycle identity for `H¹(Gal(L/K), Aut E)`.
+
+It does **not** say the class is nontrivial. `E` here is an arbitrary Weierstrass curve, and when
+`negVariableChange = 1` — a singular curve in characteristic 2 with `a₁ = a₃ = 0`, say — the
+identity above is plain equivariance. Nontriviality needs hypotheses this statement does not
+carry. -/
 theorem exists_smul_baseChange_and_map_eq {θ : L} (hθ : θ ∉ Set.range (algebraMap K L))
     {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
     ∃ C : VariableChange L,
