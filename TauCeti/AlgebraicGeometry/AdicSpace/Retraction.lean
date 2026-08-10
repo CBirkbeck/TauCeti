@@ -43,14 +43,14 @@ variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZer
 
 /-- The units identification takes the unit of a restricted value to the value-group element it
 names. This is the bridge between membership in a transported convex subgroup, which is phrased
-through `WithZero.unitsWithZeroEquiv`, and the introduction rules for `cΓ_v(I)`, which are
+through `OrderMonoidIso.unitsWithZero`, and the introduction rules for `cΓ_v(I)`, which are
 phrased through `valueGroup.mk`. -/
 private theorem unitsWithZeroEquiv_mk0_restrict (v : Valuation A Γ₀) {a : A}
     (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) (ha : v.restrict a ≠ 0) :
-    WithZero.unitsWithZeroEquiv (Units.mk0 (v.restrict a) ha) =
+    OrderMonoidIso.unitsWithZero (Units.mk0 (v.restrict a) ha) =
       valueGroup.mk (.ofClass v) 1 a (by simp) h0 := by
-  rw [← WithZero.coe_inj, WithZero.coe_unitsWithZeroEquiv_eq_units_val, ← v.restrict_eq_mk h0]
-  rfl
+  rw [← WithZero.coe_inj, ← v.restrict_eq_mk h0]
+  exact WithZero.coe_unitsWithZeroEquiv_eq_units_val _
 
 /-- `cΓ_v(I)`, transported onto the units of the value monoid, absorbs every attained value
 `≥ 1`. This is exactly the hypothesis `Valuation.restrictToConvex` needs, and it holds because

@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import Mathlib.Algebra.Order.Hom.MonoidWithZero
 public import Mathlib.Algebra.Order.Monoid.Submonoid
 public import Mathlib.RingTheory.Valuation.Basic
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
@@ -33,9 +34,8 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out 
 * `Valuation.restrictToConvex_apply_of_mem`, `Valuation.restrictToConvex_apply_of_notMem` and
   `Valuation.restrictToConvex_apply_of_eq_zero` : the three branches, which are the intended
   interface — the definition itself is a `dite` chain and is not meant to be unfolded.
-* `Valuation.unitsWithZeroEquiv_monotone` : the order compatibility of `(WithZero G)ˣ ≃* G`,
-  which is what lets a convex subgroup of a value group be carried across to the units of the
-  value monoid containing it.
+* `TauCeti.ConvexSubgroup.ofValueGroup` : a convex subgroup of a value group carried across to
+  the units of the value monoid containing it, along Mathlib's `OrderMonoidIso.unitsWithZero`.
 
 ## References
 
@@ -87,13 +87,6 @@ theorem lt_one_of_unit_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup Γ₀�
   push Not at hge
   exact hm (hH r hr hge)
 
-/-- A unit of `H` dominated by something itself below `1` forces that something into `H`. This
-is the only way convexity is used below, and it is what stops two units outside `H` from having
-a product inside it. -/
-private theorem mem_of_le_of_le_one {H : ConvexSubgroup Γ₀ˣ} {u w : Γ₀ˣ}
-    (hu : u ∈ H) (huw : u ≤ w) (hw : w ≤ 1) : w ∈ H :=
-  H.convex hu (one_mem H) huw hw
-
 /-- The restriction is `0` at `r` exactly when `v r` vanishes or its unit avoids `H`. -/
 private theorem restrictToConvexFun_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     {r : R} (hr : v r ≠ 0) :
@@ -126,7 +119,7 @@ private theorem mul_notMem_of_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup
     have hy1 : Units.mk0 (v y) hy ≤ 1 := by
       have := lt_one_of_unit_notMem hH hy hy'
       simpa [← Units.val_le_val] using this.le
-    refine hm (mem_of_le_of_le_one hmem
+    refine hm (ConvexSubgroup.mem_of_le_le_one hmem
       (mul_le_of_le_one_right' (a := Units.mk0 (v x) hx) hy1) ?_)
     have := lt_one_of_unit_notMem hH hx hm
     simpa [← Units.val_le_val] using this.le
@@ -138,7 +131,7 @@ private theorem mem_of_mem_of_le {v : Valuation R Γ₀} {H : ConvexSubgroup Γ�
     {x : R} (hx : v x ≠ 0) {u : Γ₀ˣ} (hu : u ∈ H) (hle : u ≤ Units.mk0 (v x) hx) :
     Units.mk0 (v x) hx ∈ H := by
   rcases le_or_gt (Units.mk0 (v x) hx) 1 with h1 | h1
-  · exact mem_of_le_of_le_one hu hle h1
+  · exact ConvexSubgroup.mem_of_le_le_one hu hle h1
   · exact hH x hx (by simpa using Units.val_le_val.mpr h1.le)
 
 private theorem restrictToConvexFun_map_zero (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ) :
@@ -273,39 +266,17 @@ namespace TauCeti
 
 /-! ### Transporting a convex subgroup across the units of a `WithZero` -/
 
-/-- The identification `(WithZero G)ˣ ≃* G` is monotone. Mathlib states the multiplicative
-equivalence but not its order compatibility, and `ConvexSubgroup.comap` needs the latter: this
-is what carries a convex subgroup of a value group over to one of the units of the value monoid
-it sits inside. -/
-theorem unitsWithZeroEquiv_monotone {G : Type*} [CommGroup G] [LinearOrder G]
-    [IsOrderedMonoid G] :
-    Monotone (WithZero.unitsWithZeroEquiv : (WithZero G)ˣ ≃* G) := by
-  intro u w huw
-  rw [← WithZero.coe_le_coe, WithZero.coe_unitsWithZeroEquiv_eq_units_val,
-    WithZero.coe_unitsWithZeroEquiv_eq_units_val]
-  exact huw
-
-/-- The units identification packaged as an ordered monoid hom, which is the form
-`TauCeti.ConvexSubgroup.comap` consumes: a bare `MulEquiv` carries `MonoidHomClass` but not
-`OrderHomClass`. -/
-noncomputable def unitsWithZeroOrderHom {G : Type*} [CommGroup G] [LinearOrder G]
-    [IsOrderedMonoid G] : OrderMonoidHom ((WithZero G)ˣ) G where
-  toFun := WithZero.unitsWithZeroEquiv
-  map_one' := map_one _
-  map_mul' := map_mul _
-  monotone' := unitsWithZeroEquiv_monotone
-
 /-- Carry a convex subgroup of `G` back to one of `(WithZero G)ˣ`. This is the transport that
 lets `cΓ_v(I)`, which lives in the value group, be handed to `Valuation.restrictToConvex`,
 which wants a convex subgroup of the units of the value monoid. -/
-noncomputable def ConvexSubgroup.ofValueGroup {G : Type*} [CommGroup G] [LinearOrder G]
-    [IsOrderedMonoid G] (K : ConvexSubgroup G) : ConvexSubgroup ((WithZero G)ˣ) :=
-  ConvexSubgroup.comap unitsWithZeroOrderHom K
+def ConvexSubgroup.ofValueGroup {G : Type*} [CommGroup G] [LinearOrder G]
+    (K : ConvexSubgroup G) : ConvexSubgroup ((WithZero G)ˣ) :=
+  ConvexSubgroup.comap (OrderMonoidIso.unitsWithZero (α := G)) K
 
 @[simp]
 theorem mem_convexSubgroup_ofValueGroup {G : Type*} [CommGroup G] [LinearOrder G]
-    [IsOrderedMonoid G] {K : ConvexSubgroup G} {u : (WithZero G)ˣ} :
-    u ∈ ConvexSubgroup.ofValueGroup K ↔ WithZero.unitsWithZeroEquiv u ∈ K :=
+    {K : ConvexSubgroup G} {u : (WithZero G)ˣ} :
+    u ∈ ConvexSubgroup.ofValueGroup K ↔ OrderMonoidIso.unitsWithZero u ∈ K :=
   ConvexSubgroup.mem_comap
 
 end TauCeti
