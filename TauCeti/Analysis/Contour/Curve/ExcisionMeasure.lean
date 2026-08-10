@@ -60,8 +60,8 @@ theorem nullMeasurableSet_excision {γ : ℝ → ℂ} {μ : MeasureTheory.Measur
     (hγ : AEMeasurable γ μ) (S : Finset ℂ) (ε : ℝ) :
     MeasureTheory.NullMeasurableSet {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} μ := by
   have h : {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} = ⋃ s ∈ S, {t | ‖γ t - s‖ ≤ ε} := by ext; simp
-  refine h ▸ MeasureTheory.NullMeasurableSet.biUnion S.countable_toSet fun s _ => ?_
-  exact nullMeasurableSet_le ((hγ.sub_const s).norm) aemeasurable_const
+  exact h ▸ Finset.nullMeasurableSet_biUnion S fun s _ =>
+    nullMeasurableSet_le ((hγ.sub_const s).norm) aemeasurable_const
 
 /-- **The excised parameter set is measurable.** It is the finite union, over the centres, of the
 preimages of the ray `(-∞, ε]` under `t ↦ ‖γ t - s‖`, each measurable because `γ` is. -/
