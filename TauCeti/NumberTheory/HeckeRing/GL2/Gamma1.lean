@@ -5,8 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.GL2.Delta0
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0
 
 /-!
 # The Hecke triple of `Γ₁(N)`
@@ -41,7 +40,8 @@ Chris Birkbeck).
 
 ## Main results
 
-* `HeckeRing.GL2.Gamma1Image_le_Delta0`: `Γ₁(N) ≤ Δ₀(N)`.
+* `HeckeRing.GL2.Gamma1Image_le_Gamma0Image`: `Γ₁(N) ≤ Γ₀(N)` in `GL₂(ℚ)`.
+* `HeckeRing.GL2.Gamma1Image_le_Delta0`: `Γ₁(N) ≤ Δ₀(N)`, the special case of the Γ₀ result.
 * `HeckeRing.GL2.Delta0_le_commensurator`: `Δ₀(N)` lies in the commensurator of `Γ₁(N)`.
 * the `IsHeckeTriple (Delta0 N) (Gamma1Image N) (Gamma1Image N)` instance.
 
@@ -71,16 +71,16 @@ noncomputable def Gamma1Image : Subgroup (GL (Fin 2) ℚ) :=
     g ∈ Gamma1Image N ↔ ∃ σ ∈ Gamma1 N, mapGL ℚ σ = g := by
   rw [Gamma1Image, Subgroup.mem_map]
 
-/-- `Γ₁(N) ≤ Δ₀(N)`: the congruence subgroup embeds in the submonoid. -/
-lemma Gamma1Image_le_Delta0 : (Gamma1Image N).toSubmonoid ≤ Delta0 N := by
+/-- `Γ₁(N) ≤ Γ₀(N)`, transported to the images in `GL₂(ℚ)`. -/
+lemma Gamma1Image_le_Gamma0Image : Gamma1Image N ≤ Gamma0Image N := by
   intro g hg
   obtain ⟨σ, hσ, rfl⟩ := (mem_Gamma1Image_iff N).mp hg
-  obtain ⟨ha, -, hc⟩ := (Gamma1_mem _ _).mp hσ
-  refine (mem_Delta0_iff N).mpr ⟨(σ : Matrix (Fin 2) (Fin 2) ℤ), ?_, ?_, ?_, ha ▸ isUnit_one⟩
-  · simp [mapGL_coe_matrix, algebraMap_int_eq]
-  · rw [mapGL_coe_matrix, (SpecialLinearGroup.map (algebraMap ℤ ℚ) σ).prop]
-    exact one_pos
-  · exact (ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp hc
+  exact (mem_Gamma0Image_iff N).mpr ⟨σ, Gamma1_in_Gamma0 N hσ, rfl⟩
+
+/-- `Γ₁(N) ≤ Δ₀(N)`: the special case of `Gamma0Image_le_Delta0` at the smaller group, since
+`Γ₁(N) ≤ Γ₀(N)`. -/
+lemma Gamma1Image_le_Delta0 : (Gamma1Image N).toSubmonoid ≤ Delta0 N :=
+  fun _ hg ↦ Gamma0Image_le_Delta0 N (Gamma1Image_le_Gamma0Image N hg)
 
 variable [NeZero N]
 
