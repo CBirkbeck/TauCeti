@@ -6,7 +6,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
 public import Mathlib.LinearAlgebra.Dimension.Localization
-public import Mathlib.FieldTheory.RatFunc.AsPolynomial
+public import Mathlib.FieldTheory.RatFunc.Basic
 
 /-!
 # The function field of a Weierstrass curve has degree two over `R(x)`

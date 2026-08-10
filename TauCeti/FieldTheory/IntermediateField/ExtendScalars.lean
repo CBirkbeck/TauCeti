@@ -6,7 +6,6 @@ module
 
 public import Mathlib.FieldTheory.IntermediateField.Basic
 public import Mathlib.LinearAlgebra.Dimension.Free
-public import Mathlib.LinearAlgebra.Basis.VectorSpace
 
 /-!
 # Degrees above a re-based intermediate field
