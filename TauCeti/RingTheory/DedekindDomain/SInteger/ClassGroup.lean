@@ -7,8 +7,7 @@ module
 public import Mathlib.RingTheory.ClassGroup.ExtendedHom
 public import TauCeti.RingTheory.ClassGroup.HeightOneSpectrum
 public import TauCeti.GroupTheory.QuotientGroup.KerEquiv
-public import TauCeti.RingTheory.DedekindDomain.Factorization
-public import TauCeti.RingTheory.DedekindDomain.SInteger.Spectrum
+public import TauCeti.RingTheory.DedekindDomain.SInteger.Factorization
 
 /-!
 # The class group of the `S`-integers
@@ -41,8 +40,9 @@ The proof is the first isomorphism theorem applied to extension of ideals `Cl(R)
   in `S`. One inclusion is that a prime of `S` extends to `⊤` (`integer_map_asIdeal_eq_top`); the
   other compares multiplicities off `S`, which is what
   `IsDedekindDomain.integer_count_coeIdeal_map` and
-  `IsDedekindDomain.integer_count_spanSingleton` supply, and then applies
-  `ClassGroup.mk0_mem_closure_of_count_eq`.
+  `IsDedekindDomain.integer_count_spanSingleton` supply — they are in
+  `TauCeti/RingTheory/DedekindDomain/SInteger/Factorization.lean`, since neither mentions the class
+  group — and then applies `ClassGroup.mk0_mem_closure_of_count_eq`.
 
 `IsDedekindDomain.finite_integer_classGroup` is the consequence the arithmetic wants: `Cl(𝒪_S)` is
 finite whenever `Cl(R)` is, being a quotient of it. That is one of the two finiteness inputs to
@@ -92,57 +92,6 @@ lemma integer_extendedHom_surjective :
 one of the two finiteness inputs to weak Mordell–Weil. -/
 instance finite_integer_classGroup [Finite (ClassGroup R)] : Finite (ClassGroup (S.integer K)) :=
   .of_surjective _ (integer_extendedHom_surjective K S)
-
-/-- The multiplicity of the extension of an ideal at the prime above `v ∉ S` is the multiplicity
-at `v`. -/
-@[simp]
-lemma integer_count_coeIdeal_map {v : HeightOneSpectrum R} (hv : v ∉ S) {J : Ideal R} :
-    count K (integerPrimeOverOfNotMem K S hv)
-        ((Ideal.map (algebraMap R (S.integer K)) J : Ideal (S.integer K)) :
-          FractionalIdeal (S.integer K)⁰ K) =
-      count K v (J : FractionalIdeal R⁰ K) := by
-  rcases eq_or_ne J ⊥ with rfl | hJ
-  · rw [Ideal.map_bot]
-    simp only [coeIdeal_bot, count_zero]
-  have hmJ := Ideal.map_ne_bot_of_ne_bot (S := S.integer K) hJ
-  rw [count_coe K _ hmJ, count_coe K v hJ, Nat.cast_inj]
-  -- the two multiplicities dominate the same `k`, and `le_count_associates_iff_le_pow` turns each
-  -- side into
-  -- containment of a prime power, which `integer_map_le_map_pow_iff` transfers
-  refine eq_of_forall_le_iff fun k ↦ ?_
-  rw [(integerPrimeOverOfNotMem K S hv).le_count_associates_iff_le_pow hmJ k,
-    integer_map_le_map_pow_iff K S hv, ← v.le_count_associates_iff_le_pow hJ k]
-
-/-- The multiplicity of a principal fractional ideal at the prime above `v ∉ S` is the
-multiplicity at `v`. -/
-@[simp]
-lemma integer_count_spanSingleton {v : HeightOneSpectrum R} (hv : v ∉ S) {x : K} :
-    count K (integerPrimeOverOfNotMem K S hv) (spanSingleton (S.integer K)⁰ x) =
-      count K v (spanSingleton R⁰ x) := by
-  -- The integral case already knows this, so it is enough to write `x = a / b` with `a b : R` and
-  -- clear the denominator: `spanSingleton` of an element of `R` *is* a coerced ideal.
-  have hcoe : ∀ r : R, spanSingleton (S.integer K)⁰ (algebraMap R K r) =
-      ((Ideal.map (algebraMap R (S.integer K)) (Ideal.span {r}) : Ideal (S.integer K)) :
-        FractionalIdeal (S.integer K)⁰ K) := by
-    intro r
-    rw [Ideal.map_span, Set.image_singleton, coeIdeal_span_singleton,
-      ← IsScalarTower.algebraMap_apply R (S.integer K) K]
-  have key : ∀ r : R, count K (integerPrimeOverOfNotMem K S hv)
-      (spanSingleton (S.integer K)⁰ (algebraMap R K r)) =
-        count K v (spanSingleton R⁰ (algebraMap R K r)) := by
-    intro r
-    rw [hcoe r, integer_count_coeIdeal_map K S hv, coeIdeal_span_singleton]
-  rcases eq_or_ne x 0 with rfl | hx
-  · simp only [spanSingleton_zero, count_zero]
-  obtain ⟨a, b, hb, rfl⟩ := IsFractionRing.div_surjective (A := R) x
-  have hb0 : algebraMap R K b ≠ 0 :=
-    (map_ne_zero_iff _ (IsFractionRing.injective R K)).mpr (nonZeroDivisors.ne_zero hb)
-  have ha0 : algebraMap R K a ≠ 0 := by
-    rintro h; exact hx (by rw [h, zero_div])
-  -- clearing the denominator turns each side into a difference of two integral counts, and `key`
-  -- settles those; `FractionalIdeal.count_spanSingleton_div` is stated once, in
-  -- `TauCeti/RingTheory/DedekindDomain/Factorization.lean`, and used here at both rings.
-  rw [count_spanSingleton_div K _ ha0 hb0, count_spanSingleton_div K v ha0 hb0, key a, key b]
 
 /-- The classes of the primes in `S` lie in the kernel of extension: such primes extend to `⊤`. -/
 private lemma closure_le_ker_integer_extendedHom :
