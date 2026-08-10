@@ -209,11 +209,7 @@ theorem intervalIntegrable_truncated_and_integral_truncated_eq_zero_of_norm_le {
     (intervalIntegrable_const (c := (0 : ℂ))).congr_ae
       ((MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mpr
         (Filter.Eventually.of_forall fun s hs => (hpt s hs).symm))
-  refine ⟨hint, ?_⟩
-  have h0 : ∫ s in a..b, (if ε < ‖γ s - z₀‖ then f (γ s) * deriv γ s else 0) =
-      ∫ _ in a..b, (0 : ℂ) :=
-    intervalIntegral.integral_congr_ae (Filter.Eventually.of_forall hpt)
-  rw [h0, intervalIntegral.integral_const, smul_zero]
+  exact ⟨hint, intervalIntegral.integral_zero_ae (Filter.Eventually.of_forall hpt)⟩
 
 /-- Constructor for `HasCauchyPVAt` from its two clauses — eventual integrability of the excised
 integrand and convergence of the excised integrals — without unfolding the definition. -/
