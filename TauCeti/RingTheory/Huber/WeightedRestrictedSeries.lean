@@ -830,22 +830,25 @@ theorem continuous_weightedC [NonarchimedeanRing A] {T : Fin k → Set A} (hT : 
 
 /-! ### Density of the polynomials -/
 
-/-- A polynomial, read as a power series, has finitely many nonzero coefficients. Nothing about
-the weighted construction enters, so it is stated for arbitrary variables over a commutative
-semiring and specialised below. -/
-theorem finite_support_coe_mvPolynomial {σ R : Type*} [CommSemiring R] (p : MvPolynomial σ R) :
+/-- A polynomial, read as a power series, has finitely many nonzero coefficients. Private: nothing
+about the weighted construction enters, so this is a general fact about
+`MvPolynomial.toMvPowerSeries` rather than something `TauCeti.Huber` should own a canonical name
+for; it is used only by the two results below. -/
+private theorem finite_support_toMvPowerSeries {σ R : Type*} [CommSemiring R]
+    (p : MvPolynomial σ R) :
     {ν | MvPowerSeries.coeff ν (p : MvPowerSeries σ R) ≠ 0}.Finite :=
   p.support.finite_toSet.subset fun ν hν ↦ by
     simpa [MvPolynomial.coeff_coe, MvPolynomial.mem_support_iff] using hν
 
 /-- Every polynomial is `T`-restricted, for any family `T`. -/
-theorem isWeightedRestricted_coe_mvPolynomial (T : Fin k → Set A) (p : MvPolynomial (Fin k) A) :
+theorem isWeightedRestricted_toMvPowerSeries (T : Fin k → Set A) (p : MvPolynomial (Fin k) A) :
     IsWeightedRestricted T (p : MvPowerSeries (Fin k) A) :=
-  isWeightedRestricted_of_finite_support T (finite_support_coe_mvPolynomial p)
+  isWeightedRestricted_of_finite_support T (finite_support_toMvPowerSeries p)
 
 /-- **Wedhorn 5.49, the approximation step**, at predicate level: a `T`-restricted series is
-approximated by a polynomial, coefficientwise inside `Tν · U`. No hypothesis on `A` or on `T`
-is needed. -/
+approximated by a polynomial, coefficientwise inside `Tν · U`. Neither a nonarchimedean
+hypothesis on `A` nor `IsWeightFamily T` is needed — only the ambient `[CommRing A]` and
+`[TopologicalSpace A]` that `OpenAddSubgroup A` already asks for. -/
 -- The polynomial is `f` truncated at the finitely many indices where its coefficient escapes
 -- `Tν · U`; producing that finite set is what `TauCeti.Huber.IsWeightedRestricted` is for.
 theorem exists_mvPolynomial_forall_coeff_sub_mem {T : Fin k → Set A}
@@ -870,7 +873,7 @@ is `TauCeti.Huber.weightedPolynomials`. -/
 noncomputable def weightedPolynomialHom [NonarchimedeanRing A] (T : Fin k → Set A)
     (hT : IsWeightFamily T) : MvPolynomial (Fin k) A →+* weightedRestrictedSubring T hT :=
   MvPolynomial.coeToMvPowerSeries.ringHom.codRestrict _
-    (isWeightedRestricted_coe_mvPolynomial T)
+    (isWeightedRestricted_toMvPowerSeries T)
 
 @[simp]
 theorem coe_weightedPolynomialHom [NonarchimedeanRing A] {T : Fin k → Set A}
@@ -906,7 +909,7 @@ theorem mem_weightedPolynomials_iff [NonarchimedeanRing A] {T : Fin k → Set A}
   classical
   constructor
   · rintro ⟨p, rfl⟩
-    simpa only [coe_weightedPolynomialHom] using finite_support_coe_mvPolynomial p
+    simpa only [coe_weightedPolynomialHom] using finite_support_toMvPowerSeries p
   · intro hfin
     refine ⟨MvPowerSeries.truncFinset A hfin.toFinset (f : MvPowerSeries (Fin k) A), ?_⟩
     refine Subtype.ext (MvPowerSeries.ext fun ν ↦ ?_)
@@ -916,11 +919,13 @@ theorem mem_weightedPolynomials_iff [NonarchimedeanRing A] {T : Fin k → Set A}
     · simpa [hν] using (not_not.mp fun h ↦ hν (hfin.mem_toFinset.mpr h)).symm
 
 /-- A constant series is a polynomial. -/
+@[simp]
 theorem weightedC_mem_weightedPolynomials [NonarchimedeanRing A] {T : Fin k → Set A}
     {hT : IsWeightFamily T} (a : A) : weightedC T hT a ∈ weightedPolynomials T hT :=
   ⟨MvPolynomial.C a, weightedPolynomialHom_C a⟩
 
 /-- A weighted variable is a polynomial. -/
+@[simp]
 theorem weightedX_mem_weightedPolynomials [NonarchimedeanRing A] {T : Fin k → Set A}
     {hT : IsWeightFamily T} (i : Fin k) : weightedX T hT i ∈ weightedPolynomials T hT :=
   ⟨MvPolynomial.X i, weightedPolynomialHom_X i⟩
