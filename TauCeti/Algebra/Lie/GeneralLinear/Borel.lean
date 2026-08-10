@@ -6,7 +6,6 @@ module
 
 public import TauCeti.Algebra.Lie.GeneralLinear.RootSpace
 public import TauCeti.LinearAlgebra.Matrix.Triangular
-public import Mathlib.LinearAlgebra.Matrix.Block
 
 /-!
 # The standard Borel subalgebra of `gl n R` and its positive nilpotent ideal
@@ -167,8 +166,10 @@ theorem lie_apply_eq_zero_of_mem_upperTriangular {A B : Matrix n n R}
     rw [mem_upperTriangular_iff.mp (mul_mem_upperTriangular hA hB) _ _ h,
       mem_upperTriangular_iff.mp (mul_mem_upperTriangular hB hA) _ _ h, sub_zero]
   · -- on the diagonal the two products agree, by commutativity of `R`
-    rw [Matrix.mul_apply_diag_of_isUpperTriangular hA hB,
-      Matrix.mul_apply_diag_of_isUpperTriangular hB hA, mul_comm, sub_self]
+    have hA' := mem_upperTriangular_iff_blockTriangular.mp hA
+    have hB' := mem_upperTriangular_iff_blockTriangular.mp hB
+    rw [Matrix.mul_apply_diag_of_isUpperTriangular hA' hB',
+      Matrix.mul_apply_diag_of_isUpperTriangular hB' hA', mul_comm, sub_self]
 
 variable (R n)
 
@@ -216,7 +217,9 @@ theorem mul_mem_strictUpperTriangular {A B : Matrix n n R}
   intro i j hij
   rcases hij.lt_or_eq with h | rfl
   · exact mem_upperTriangular_iff.mp (mul_mem_upperTriangular hA' hB') _ _ h
-  · rw [Matrix.mul_apply_diag_of_isUpperTriangular hA' hB',
+  · rw [Matrix.mul_apply_diag_of_isUpperTriangular
+        (mem_upperTriangular_iff_blockTriangular.mp hA')
+        (mem_upperTriangular_iff_blockTriangular.mp hB'),
       apply_diag_eq_zero_of_mem_strictUpperTriangular hA, zero_mul]
 
 /-- **The bracket of two upper triangular matrices is strictly upper triangular.** So the derived
