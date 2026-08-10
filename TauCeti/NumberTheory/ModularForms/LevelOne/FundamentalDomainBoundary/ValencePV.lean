@@ -38,6 +38,8 @@ on the contour.
   the abstract order replaced by `orderOfVanishingAt`, for divisor points in the upper half plane.
 * `TauCeti.ModularForm.sum_windingNumber_mul_orderOfVanishingAt_eq`: that identity divided by
   `2πi`, giving `Σ n_z·ord z = ord_∞ − k/12`.
+* `TauCeti.ModularForm.sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq`: the valence formula
+  `Σ_q ord_q + ord_∞ = k/12` for a form whose zeros all lie in the strict interior.
 
 ## References
 
