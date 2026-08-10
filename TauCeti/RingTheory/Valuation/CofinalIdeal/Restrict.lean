@@ -22,7 +22,7 @@ the units of the value monoid by `ConvexSubgroup.comapUnitsWithZero`; and the re
 `cΓ_v(I)` to absorb every attained value `≥ 1`, which holds because it contains `cΓ_v`.
 
 The point-level map on `Spv A` that Wedhorn's retraction `r_I` is built from lives in
-`TauCeti.AlgebraicGeometry.AdicSpace.Retraction`.
+`TauCeti.AlgebraicGeometry.AdicSpace.RestrictToIdeal`.
 
 ## Main definitions
 
@@ -108,6 +108,17 @@ noncomputable def restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)
     Valuation A (RestrictedValues v I hfg) :=
   (v.restrict).restrictToConvex _ (mk0_restrict_mem_comapUnitsWithZero v I hfg)
 
+/-- **The defining unfolding**, so that the lemmas below rewrite through it rather than relying
+on `restrictToIdeal` unfolding implicitly. The boundedness hypothesis is taken as an argument;
+by proof irrelevance any proof of it gives the same restriction. -/
+theorem restrictToIdeal_def (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
+    (hH : ∀ a : A, ∀ ha : v.restrict a ≠ 0, 1 ≤ v.restrict a →
+      Units.mk0 (v.restrict a) ha ∈
+        ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg)) :
+    v.restrictToIdeal I hfg = (v.restrict).restrictToConvex _ hH :=
+  (rfl)
+
 /-! ### The restriction, characterised through `cΓ_v(I)`
 
 `restrictToIdeal` keeps or discards a value according to membership in the *transported*
@@ -136,7 +147,9 @@ theorem restrictToIdeal_apply_of_mem (v : Valuation A Γ₀) (I : Ideal A)
           (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0).mpr hm⟩ :
         (ConvexSubgroup.comapUnitsWithZero
           (characteristicSubgroupOfIdeal v I hfg)).toSubgroup) : RestrictedValues v I hfg) :=
-  _root_.Valuation.restrictToConvex_apply_of_mem _ _ _ _ _
+by
+  rw [restrictToIdeal_def v I hfg (mk0_restrict_mem_comapUnitsWithZero v I hfg)]
+  exact _root_.Valuation.restrictToConvex_apply_of_mem _ _ _ _ _
 
 /-- Off `cΓ_v(I)`, the restriction vanishes. The hypothesis is non-membership in `cΓ_v(I)`
 itself; the transport is applied internally.
@@ -148,7 +161,9 @@ theorem restrictToIdeal_apply_of_notMem (v : Valuation A Γ₀) (I : Ideal A)
     (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0)
     (hm : valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∉ characteristicSubgroupOfIdeal v I hfg) :
     v.restrictToIdeal I hfg a = 0 :=
-  _root_.Valuation.restrictToConvex_apply_of_notMem _ _ _ _
+by
+  rw [restrictToIdeal_def v I hfg (mk0_restrict_mem_comapUnitsWithZero v I hfg)]
+  exact _root_.Valuation.restrictToConvex_apply_of_notMem _ _ _ _
     (fun hmem => hm ((mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0).mp hmem))
 
 /-- The restriction vanishes wherever `v` does. -/
@@ -156,7 +171,9 @@ theorem restrictToIdeal_apply_of_notMem (v : Valuation A Γ₀) (I : Ideal A)
 theorem restrictToIdeal_apply_of_eq_zero (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
     (h0 : (MonoidWithZeroHom.ofClass v) a = 0) : v.restrictToIdeal I hfg a = 0 :=
-  _root_.Valuation.restrictToConvex_apply_of_eq_zero _ _ _ (v.restrict_eq_zero_iff.mpr h0)
+by
+  rw [restrictToIdeal_def v I hfg (mk0_restrict_mem_comapUnitsWithZero v I hfg)]
+  exact _root_.Valuation.restrictToConvex_apply_of_eq_zero _ _ _ (v.restrict_eq_zero_iff.mpr h0)
 
 /-- **Where the restriction vanishes at a nonzero value**, stated through `cΓ_v(I)` itself.
 `restrictToIdeal_eq_zero_iff` is the total form, and is the `@[simp]` one: tagging this
@@ -166,7 +183,9 @@ theorem restrictToIdeal_eq_zero_iff_of_ne (v : Valuation A Γ₀) (I : Ideal A)
     (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) :
     v.restrictToIdeal I hfg a = 0 ↔
       valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∉ characteristicSubgroupOfIdeal v I hfg :=
-  (_root_.Valuation.restrictToConvex_eq_zero_iff_of_ne _ _ _
+  by
+  rw [restrictToIdeal_def v I hfg (mk0_restrict_mem_comapUnitsWithZero v I hfg)]
+  exact (_root_.Valuation.restrictToConvex_eq_zero_iff_of_ne _ _ _
       (fun h => h0 (v.restrict_eq_zero_iff.mp h))).trans
     (not_congr (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0))
 
@@ -199,14 +218,17 @@ theorem restrictToIdeal_le_iff (v : Valuation A Γ₀) (I : Ideal A)
     (hma : valueGroup.mk (.ofClass v) 1 a (by simp) h0a ∈ characteristicSubgroupOfIdeal v I hfg)
     (hmb : valueGroup.mk (.ofClass v) 1 b (by simp) h0b ∈ characteristicSubgroupOfIdeal v I hfg) :
     v.restrictToIdeal I hfg a ≤ v.restrictToIdeal I hfg b ↔ v.restrict a ≤ v.restrict b :=
-  _root_.Valuation.restrictToConvex_le_iff _ _ _ _ _
+by
+  rw [restrictToIdeal_def v I hfg (mk0_restrict_mem_comapUnitsWithZero v I hfg)]
+  exact _root_.Valuation.restrictToConvex_le_iff _ _ _ _ _
     ((mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0a).mpr hma)
     ((mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0b).mpr hmb)
 
 /-- A value at least `1` stays at least `1`: `cΓ_v(I)` keeps every attained value `≥ 1`. -/
 theorem one_le_restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A} (h1 : 1 ≤ v.restrict a) :
-    1 ≤ v.restrictToIdeal I hfg a :=
-  _root_.Valuation.one_le_restrictToConvex _ _ _ h1
+    1 ≤ v.restrictToIdeal I hfg a := by
+  rw [restrictToIdeal_def v I hfg (mk0_restrict_mem_comapUnitsWithZero v I hfg)]
+  exact _root_.Valuation.one_le_restrictToConvex _ _ _ h1
 
 end TauCeti.Valuation
