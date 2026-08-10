@@ -24,16 +24,21 @@ file; they are planned for a companion `PolynomialRing/Injective.lean`.
 
 * `HeckeRing.GLn.heckeGen k` — the `k`-th generator `T(1, …, 1, p, …, p)`, with `k + 1` entries
   equal to `p`.
-* `HeckeRing.GLn.evalHom` — evaluation of `ℤ[X₁, …, Xₙ]` at the generators.
+* `HeckeRing.GLn.evalHom` — evaluation of `ℤ[X₁, …, Xₙ]` at the generators, into the ambient
+  Hecke ring.
+* `HeckeRing.GLn.evalHomLocal` — the same map with codomain `pLocalSubring n p`, which is the
+  presentation map Theorem 3.20 is about.
 
 ## Main results
 
+* `HeckeRing.GLn.evalHomLocal_surjective_two`,
+  `HeckeRing.GLn.evalHomLocal_surjective_one`: the presentation is onto, `ℤ[X₁, X₂] ↠ R_p` and
+  `ℤ[X₁] ↠ R_p` — the surjectivity half of Theorem 3.20 at `n = 2` and `n = 1`.
 * `HeckeRing.GLn.heckeGen_mem_pLocalSubring`: each generator lies in `pLocalSubring`.
-* `HeckeRing.GLn.Surj.pLocalSubring_two_subset_evalHom_range`,
-  `HeckeRing.GLn.SurjOne.pLocalSubring_one_subset_evalHom_range`:
-  `pLocalSubring` is contained in the range of `evalHom`, for `n = 2` and `n = 1`. Together
-  with `heckeGen_mem_pLocalSubring` for the reverse inclusion, the generators therefore
-  generate `pLocalSubring` in these two cases.
+* `HeckeRing.GLn.pLocalSubring_two_subset_evalHom_range`,
+  `HeckeRing.GLn.pLocalSubring_one_subset_evalHom_range`: the underlying inclusions of
+  `pLocalSubring` into the range of `evalHom`, from which the two surjectivity statements
+  above are read off.
 
 ## Implementation notes
 
@@ -164,13 +169,32 @@ lemma heckeGen_mem_evalHom_range (k : Fin n) :
     heckeGen n p k ∈ (evalHom n p).range :=
   ⟨MvPolynomial.X k, MvPolynomial.eval₂Hom_X' _ _ _⟩
 
+/-- Every value of `evalHom` lies in `R_p`: the generators do, and `pLocalSubring` is a subring,
+so it absorbs the constants, sums and products that build an arbitrary polynomial. -/
+lemma evalHom_mem_pLocalSubring (f : MvPolynomial (Fin n) ℤ) :
+    evalHom n p f ∈ pLocalSubring n p := by
+  induction f using MvPolynomial.induction_on with
+  | C a => rw [evalHom_C]; exact intCast_mem (pLocalSubring n p) a
+  | add q r hq hr => rw [map_add]; exact (pLocalSubring n p).add_mem hq hr
+  | mul_X q k hq =>
+    rw [map_mul, evalHom_X]
+    exact (pLocalSubring n p).mul_mem hq (heckeGen_mem_pLocalSubring n p k)
+
+/-- The evaluation homomorphism with its true codomain: `ℤ[X₁, …, Xₙ] →+* R_p`.
+
+`evalHom` lands in the ambient Hecke ring, which makes the results below mere inclusions;
+this is the map whose surjectivity is the presentation statement of Theorem 3.20. -/
+noncomputable def evalHomLocal : MvPolynomial (Fin n) ℤ →+* pLocalSubring n p :=
+  (evalHom n p).codRestrict _ (evalHom_mem_pLocalSubring n p)
+
+@[simp] lemma evalHomLocal_coe (f : MvPolynomial (Fin n) ℤ) :
+    (evalHomLocal n p f : IntegralHeckeRing n) = evalHom n p f := (rfl)
+
 end PolynomialRing
 
-end HeckeRing.GLn
 
-namespace HeckeRing.GLn.Surj
 
-open HeckeRing.GLn HeckeRing.GL2
+open HeckeRing.GL2
 
 /-- `heckeGen 2 p 0 = heckeTDiag 1 p`: the first generator is `T(1,p)`.
 
@@ -247,31 +271,27 @@ lemma heckeTDiag_one_prime_pow_mem_evalHom_range (p : ℕ) (hp : p.Prime) (k : �
 lemma diagElem_primePowDiag_mem_evalHom_range (p : ℕ) (hp : p.Prime) (e : Fin 2 → ℕ)
     (hmono : Monotone e) :
     diagElem (primePowDiag 2 p e) ∈ (evalHom 2 p).range := by
-  by_cases he0 : e 0 = 0
-  · have h_eq : primePowDiag 2 p e = ![1, p ^ (e 1)] := by
-      funext i; simp only [primePowDiag_apply]; fin_cases i <;> simp [he0]
-    rw [congrArg diagElem h_eq,
+  -- Factor out the scalar `p ^ e 0`; the cofactor is `T(1, p ^ (e 1 - e 0))`. This covers
+  -- `e 0 = 0` too, where the scalar factor is `1`, so no case split is needed.
+  have h_le : e 0 ≤ e 1 := hmono (Fin.zero_le _)
+  have h_eq : primePowDiag 2 p e = (fun _ ↦ p ^ (e 0)) * primePowDiag 2 p ![0, e 1 - e 0] := by
+    funext i
+    simp only [primePowDiag_apply, Pi.mul_apply]
+    fin_cases i
+    · simp
+    · -- the second entry splits as `p ^ e 0 * p ^ (e 1 - e 0)` since `e 0 ≤ e 1`
+      simp [Matrix.cons_val_one, ← pow_add, Nat.add_sub_cancel' h_le]
+  rw [congrArg diagElem h_eq,
+    ← diagElem_const_mul 2 (p ^ (e 0)) (pow_pos hp.pos _) (primePowDiag 2 p ![0, e 1 - e 0])
+      (primePowDiag_pos 2 p hp.pos _)]
+  apply (evalHom 2 p).range.mul_mem
+  · rw [← heckeTScalar_pow p hp.pos (e 0), ← heckeGen_one_eq_heckeTScalar p hp.pos]
+    exact (evalHom 2 p).range.pow_mem (heckeGen_mem_evalHom_range 2 p 1) _
+  · have h2 : primePowDiag 2 p ![0, e 1 - e 0] = ![1, p ^ (e 1 - e 0)] := by
+      funext i; simp only [primePowDiag_apply]; fin_cases i <;> simp
+    rw [congrArg diagElem h2,
       ← heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp.pos _) (one_dvd _)]
-    exact heckeTDiag_one_prime_pow_mem_evalHom_range p hp (e 1)
-  · have h_le : e 0 ≤ e 1 := hmono (Fin.zero_le _)
-    have h_eq : primePowDiag 2 p e = (fun _ ↦ p ^ (e 0)) * primePowDiag 2 p ![0, e 1 - e 0] := by
-      funext i
-      simp only [primePowDiag_apply, Pi.mul_apply]
-      fin_cases i
-      · simp
-      · -- the second entry splits as `p ^ e 0 * p ^ (e 1 - e 0)` since `e 0 ≤ e 1`
-        simp [Matrix.cons_val_one, ← pow_add, Nat.add_sub_cancel' h_le]
-    rw [congrArg diagElem h_eq,
-      ← diagElem_const_mul 2 (p ^ (e 0)) (pow_pos hp.pos _) (primePowDiag 2 p ![0, e 1 - e 0])
-        (primePowDiag_pos 2 p hp.pos _)]
-    apply (evalHom 2 p).range.mul_mem
-    · rw [← heckeTScalar_pow p hp.pos (e 0), ← heckeGen_one_eq_heckeTScalar p hp.pos]
-      exact (evalHom 2 p).range.pow_mem (heckeGen_mem_evalHom_range 2 p 1) _
-    · have h2 : primePowDiag 2 p ![0, e 1 - e 0] = ![1, p ^ (e 1 - e 0)] := by
-        funext i; simp only [primePowDiag_apply]; fin_cases i <;> simp
-      rw [congrArg diagElem h2,
-        ← heckeTDiag_eq_diagElem Nat.one_pos (pow_pos hp.pos _) (one_dvd _)]
-      exact heckeTDiag_one_prime_pow_mem_evalHom_range p hp (e 1 - e 0)
+    exact heckeTDiag_one_prime_pow_mem_evalHom_range p hp (e 1 - e 0)
 
 /-- Surjectivity of `evalHom` at `n = 2`: `pLocalSubring 2 p` lies in the range of the
 evaluation homomorphism `ℤ[X₁, X₂] → IntegralHeckeRing 2`.
@@ -284,11 +304,8 @@ theorem pLocalSubring_two_subset_evalHom_range (p : ℕ) (hp : p.Prime) :
   (pLocalSubring_le_iff 2 p _).2 fun e hmono ↦
     diagElem_primePowDiag_mem_evalHom_range p hp e hmono
 
-end HeckeRing.GLn.Surj
 
-namespace HeckeRing.GLn.SurjOne
 
-open HeckeRing.GLn
 
 /-- Surjectivity of `evalHom` at `n = 1`: `pLocalSubring 1 p` lies in the range of `evalHom`.
 
@@ -310,4 +327,20 @@ theorem pLocalSubring_one_subset_evalHom_range (p : ℕ) (hp : p.Prime) :
       rw [heckeGen_def]; exact (congrArg diagElem (heckeGenDiag_one_eq_const p)).symm]
   exact (evalHom 1 p).range.pow_mem (heckeGen_mem_evalHom_range 1 p 0) _
 
-end HeckeRing.GLn.SurjOne
+/-- **The presentation is onto at `n = 2`**: `ℤ[X₁, X₂] ↠ R_p`, the surjectivity half of
+Shimura's Theorem 3.20. This is the inclusion above read through `evalHomLocal`, whose codomain
+is `R_p` itself. -/
+theorem evalHomLocal_surjective_two (p : ℕ) (hp : p.Prime) :
+    Function.Surjective (evalHomLocal 2 p) := by
+  rintro ⟨y, hy⟩
+  obtain ⟨f, hf⟩ := pLocalSubring_two_subset_evalHom_range p hp hy
+  exact ⟨f, Subtype.ext hf⟩
+
+/-- **The presentation is onto at `n = 1`**: `ℤ[X₁] ↠ R_p`. -/
+theorem evalHomLocal_surjective_one (p : ℕ) (hp : p.Prime) :
+    Function.Surjective (evalHomLocal 1 p) := by
+  rintro ⟨y, hy⟩
+  obtain ⟨f, hf⟩ := pLocalSubring_one_subset_evalHom_range p hp hy
+  exact ⟨f, Subtype.ext hf⟩
+
+end HeckeRing.GLn
