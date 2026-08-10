@@ -666,16 +666,6 @@ private lemma monomial_eval_kronecker (p : ℕ) (hp : p.Prime)
         (fun i ↦ by fin_cases i <;> simp [pow_pos hp.pos])
         (divChain_two_of_dvd (pow_dvd_pow p (by omega))) 0 h_not_dvd
 
-/-- Evaluating `evalHom 2 p R` at the coset `D` expands as
-`∑_{d ∈ supp R} (R.coeff d) · (heckeGen(p,0)^{d 0} · heckeGen(p,1)^{d 1}) D`. -/
-private lemma evalHom_apply_eq_sum_monomial (p : ℕ) (R : MvPolynomial (Fin 2) ℤ)
-    (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2)) :
-    (evalHom 2 p R) D =
-    ∑ d ∈ R.support, R.coeff d * (heckeGen 2 p 0 ^ (d 0) * heckeGen 2 p 1 ^ (d 1)) D := by
-  rw [evalHom_apply]
-  refine Finset.sum_congr rfl fun d _ ↦ ?_
-  rw [Fin.prod_univ_two, smul_eq_mul]
-
 /-- n=2: evalHom is injective. -/
 theorem evalHom_two_injective (p : ℕ) (hp : p.Prime) :
     Function.Injective (evalHom 2 p) := by
@@ -688,7 +678,9 @@ theorem evalHom_two_injective (p : ℕ) (hp : p.Prime) :
   have hs_coeff : R.coeff s ≠ 0 := MvPolynomial.mem_support_iff.mp hs_mem
   have h_zero : (evalHom 2 p R) (diagCoset (primePowDiag 2 p ![s 1, s 0 + s 1])) = 0 := by
     rw [hR]; rfl
-  rw [evalHom_apply_eq_sum_monomial] at h_zero
+  -- expand with the general evaluation rule, then normalise each rank-two summand
+  rw [evalHom_apply] at h_zero
+  rw [Finset.sum_congr rfl fun d _ ↦ by rw [Fin.prod_univ_two, smul_eq_mul]] at h_zero
   have h_delta : ∀ d ∈ R.support,
       R.coeff d * (heckeGen 2 p 0 ^ (d 0) * heckeGen 2 p 1 ^ (d 1))
           (diagCoset (primePowDiag 2 p ![s 1, s 0 + s 1])) =
