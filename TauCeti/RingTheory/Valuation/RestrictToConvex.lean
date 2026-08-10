@@ -33,6 +33,7 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out 
 * `Valuation.restrictToConvex_apply_of_mem`, `Valuation.restrictToConvex_apply_of_notMem` and
   `Valuation.restrictToConvex_apply_of_eq_zero` : the three branches, which are the intended
   interface — the definition itself is a `dite` chain and is not meant to be unfolded.
+* `Valuation.restrictToConvex_eq_zero_iff_or` : where the restriction vanishes, totally.
 * `Valuation.restrictToConvex_le_iff` : on values kept by the restriction, the order is both
   preserved and reflected.
 * `Valuation.one_le_restrictToConvex` : a value at least `1` stays at least `1`.
@@ -85,11 +86,11 @@ private theorem restrictToConvexFun_unfold (v : Valuation R Γ₀) (H : ConvexSu
 what makes the restriction multiplicative: it forces both factors below `1`, and convexity then
 keeps their product outside `H` too. -/
 theorem lt_one_of_unit_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup Γ₀ˣ}
-    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
-    {r : R} (hr : v r ≠ 0) (hm : Units.mk0 (v r) hr ∉ H) : v r < 1 := by
+    {r : R} (hr : v r ≠ 0) (hH : 1 ≤ v r → Units.mk0 (v r) hr ∈ H)
+    (hm : Units.mk0 (v r) hr ∉ H) : v r < 1 := by
   by_contra hge
   push Not at hge
-  exact hm (hH r hr hge)
+  exact hm (hH hge)
 
 /-- The restriction is `0` at `r` exactly when `v r` vanishes or its unit avoids `H`. -/
 private theorem restrictToConvexFun_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
@@ -121,11 +122,11 @@ private theorem mul_notMem_of_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup
     exact hm (by simpa using mul_mem hmem (inv_mem hy'))
   · -- both units are below `1`, so the product is below `x`'s unit, and convexity lifts it
     have hy1 : Units.mk0 (v y) hy ≤ 1 := by
-      have := lt_one_of_unit_notMem hH hy hy'
+      have := lt_one_of_unit_notMem hy (fun h => hH y hy h) hy'
       simpa [← Units.val_le_val] using this.le
     refine hm (ConvexSubgroup.mem_of_le_le_one hmem
       (mul_le_of_le_one_right' (a := Units.mk0 (v x) hx) hy1) ?_)
-    have := lt_one_of_unit_notMem hH hx hm
+    have := lt_one_of_unit_notMem hx (fun h => hH x hx h) hm
     simpa [← Units.val_le_val] using this.le
 
 /-- `H` is closed upwards along attained values: a member below an attained unit forces that
@@ -272,7 +273,7 @@ theorem restrictToConvex_le_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ�
     v.restrictToConvex H hH r ≤ v.restrictToConvex H hH s ↔ v r ≤ v s := by
   rw [restrictToConvex_apply_of_mem v H hH hr hmr, restrictToConvex_apply_of_mem v H hH hs hms,
     WithZero.coe_le_coe]
-  exact Iff.rfl
+  simp [← Units.val_le_val]
 
 /-- A value at least `1` stays at least `1` under the restriction. Such a value is always kept,
 since `H` absorbs the attained values `≥ 1` by hypothesis. -/
@@ -300,13 +301,25 @@ theorem mk0_mem_of_inv_le_of_le (v : Valuation R Γ₀) {H : ConvexSubgroup Γ�
   · simpa [← Units.val_le_val] using hlo
   · simpa [← Units.val_le_val] using hhi
 
-/-- The restriction vanishes exactly where `v` does or where the unit avoids `H`. -/
+/-- The restriction vanishes at a nonzero value exactly when its unit avoids `H`. -/
 @[simp]
 theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
     {r : R} (hr : v r ≠ 0) :
     v.restrictToConvex H hH r = 0 ↔ Units.mk0 (v r) hr ∉ H :=
   restrictToConvexFun_eq_zero_iff v H hr
+
+/-- **Where the restriction vanishes, totally**: at the zeros of `v`, and where `v` is nonzero
+but its unit avoids `H`. `restrictToConvex_eq_zero_iff` is the nonzero branch, in the form
+consumers holding a nonvanishing hypothesis want. -/
+theorem restrictToConvex_eq_zero_iff_or (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) (r : R) :
+    v.restrictToConvex H hH r = 0 ↔ v r = 0 ∨ ∃ hr : v r ≠ 0, Units.mk0 (v r) hr ∉ H := by
+  by_cases hr : v r = 0
+  · simp [restrictToConvex_apply_of_eq_zero v H hH hr, hr]
+  · rw [restrictToConvex_eq_zero_iff v H hH hr]
+    simp only [hr, false_or]
+    exact ⟨fun h ↦ ⟨hr, h⟩, fun ⟨_, h⟩ ↦ h⟩
 
 end Valuation
 
