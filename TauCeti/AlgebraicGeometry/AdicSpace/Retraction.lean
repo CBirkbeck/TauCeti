@@ -14,12 +14,17 @@ public import TauCeti.RingTheory.Valuation.RestrictToConvex
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), §7.1.2.**
 
 A valuation is sent to its restriction to `cΓ_v(I)`: values whose unit lies in that convex
-subgroup are kept, and every other value is sent to `0`. The result lands in `Spv (A, I)`, and a
-point already there is fixed, so this is a retraction of `Spv A` onto the subspace.
+subgroup are kept, and every other value is sent to `0`.
+
+This file builds that map and nothing more. Wedhorn's retraction additionally **lands in**
+`Spv (A, I)` and **fixes** that subspace pointwise; **neither is proved here**, so the map is
+stated with codomain `Spv A` rather than the subspace, and it should not yet be relied on as a
+retraction.
 
 ## Main definitions
 
 * `TauCeti.Valuation.restrictToIdeal` : the restricted valuation `v|cΓ_v(I)`.
+* `TauCeti.ValuationSpectrum.retract` : the same at the level of points of `Spv A`.
 
 ## References
 
