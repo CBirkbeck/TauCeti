@@ -137,19 +137,16 @@ end Image
 section Nhds
 
 variable {A M N : Type*} [MonoidWithZero A] [TopologicalSpace A]
-  [AddCommGroup M] [TopologicalSpace M] [IsTopologicalAddGroup M] [MulActionWithZero A M]
-  [AddCommGroup N] [TopologicalSpace N] [IsTopologicalAddGroup N] [MulAction A N]
+  [AddGroup M] [TopologicalSpace M] [IsTopologicalAddGroup M] [MulActionWithZero A M]
+  [AddGroup N] [TopologicalSpace N] [IsTopologicalAddGroup N] [MulAction A N]
   [ContinuousConstSMul A N]
 
 /-- **The closure of the image of a neighbourhood of zero is a neighbourhood of zero.** This is
-the Baire step's interior turned into a neighbourhood, and the last statement about `f` that holds
-without completeness or first countability.
+the strongest statement about `f` available without completeness or first countability; removing
+the closure needs both and is not done here.
 
-The upgrade is the classical one. Take the neighbourhood `V` symmetric with `V + V ⊆ U`; the Baire
-step puts a point `y` in the interior `W` of `closure (f '' V)`, and then `W - y` is an open
-neighbourhood of zero inside `closure (f '' V) - closure (f '' V)`, which
-`TauCeti.closure_sub_closure_subset` keeps inside `closure (f '' (V - V)) ⊆ closure (f '' U)`.
-Additivity of `f` enters here and nowhere earlier. -/
+Additivity of `f` is used here and by none of the results above, which is why this and its
+class-level companion carry the additive hypotheses on `M` and `N` and those do not. -/
 theorem closure_image_mem_nhds_zero_of_tendsto_zero [BaireSpace N]
     {F : Type*} [FunLike F M N] [MulActionHomClass F A M N] [AddMonoidHomClass F M N] (f : F)
     (hf : Function.Surjective f) {u : ℕ → Aˣ} (hu : Tendsto (fun n ↦ ((u n : A))) atTop (𝓝 0))
