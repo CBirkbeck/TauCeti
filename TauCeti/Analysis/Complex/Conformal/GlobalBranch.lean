@@ -106,6 +106,36 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [CompleteSpace E
 
 /-! ### Path independence and the global branch -/
 
+/-- **Two paths with the same endpoints in a simply connected set are joined by a homotopy that
+never leaves it.** For continuous `p` and `q` running in `V` from `a` to `b`, there is a homotopy
+`K` between paths from `a` to `b` whose every intermediate path lies in `V`, with `K 0 = p` and
+`K 1 = q`. -/
+private lemma exists_pathHomotopy_forall_mem_of_isSimplyConnected {X : Type*} [TopologicalSpace X]
+    {V : Set X} {a b : X} {p q : I → X} (hV : IsSimplyConnected V)
+    (hp : Continuous p) (hpV : ∀ x, p x ∈ V) (hp0 : p 0 = a) (hp1 : p 1 = b)
+    (hq : Continuous q) (hqV : ∀ x, q x ∈ V) (hq0 : q 0 = a) (hq1 : q 1 = b) :
+    ∃ (P Q : Path a b) (K : P.Homotopy Q), (∀ t x, K (t, x) ∈ V) ∧ (∀ t, K (t, 0) = a) ∧
+      (fun x => K (0, x)) = p ∧ (fun x => K (1, x)) = q := by
+  have := hV.simplyConnectedSpace
+  have haV : a ∈ V := hp0 ▸ hpV 0
+  have hbV : b ∈ V := hp1 ▸ hpV 1
+  -- the two paths, read in the subspace `↥V`, where simple connectivity lives
+  let P : Path (⟨a, haV⟩ : V) (⟨b, hbV⟩ : V) :=
+    { toFun := fun x => ⟨p x, hpV x⟩
+      continuous_toFun := hp.subtype_mk _
+      source' := Subtype.ext hp0
+      target' := Subtype.ext hp1 }
+  let Q : Path (⟨a, haV⟩ : V) (⟨b, hbV⟩ : V) :=
+    { toFun := fun x => ⟨q x, hqV x⟩
+      continuous_toFun := hq.subtype_mk _
+      source' := Subtype.ext hq0
+      target' := Subtype.ext hq1 }
+  obtain ⟨h⟩ := SimplyConnectedSpace.paths_homotopic P Q
+  -- the same homotopy, read back in `X`
+  exact ⟨_, _, h.map (⟨Subtype.val, continuous_subtype_val⟩ : C(V, X)),
+    fun t x => (h (t, x)).2, fun t => by simp, funext fun x => by simp [P],
+    funext fun x => by simp [Q]⟩
+
 namespace ContinuesInside
 
 /-- **Path independence of continuation on a simply connected domain.** Two continuations of one
@@ -117,31 +147,12 @@ theorem eventuallyEq_at_one (hUc : IsSimplyConnected U) (H : ContinuesInside f�
     (hf : IsAnalyticContinuationAlong f γ univ) (hf0 : f 0 =ᶠ[𝓝 z₀] f₀)
     (hg : IsAnalyticContinuationAlong g δ univ) (hg0 : g 0 =ᶠ[𝓝 z₀] f₀) :
     f 1 =ᶠ[𝓝 (γ 1)] g 1 := by
-  -- Lift the two paths to the subspace `↥U`, where simple connectivity makes them homotopic rel
-  -- endpoints; push the homotopy back to `ℂ` — every intermediate path still lies in `U`, so the
-  -- hypothesis continues the germ along it — and apply `TauCeti.monodromy_theorem` to the
-  -- resulting family. The two given continuations are then matched with the extreme members of
-  -- that family by uniqueness along a fixed path.
-  have := hUc.simplyConnectedSpace
-  have hz₀U : z₀ ∈ U := hγ0 ▸ hγU 0
-  -- The two paths, read in the subspace `↥U`, where simple connectivity lives.
-  let p : Path (⟨z₀, hz₀U⟩ : U) (⟨γ 1, hγU 1⟩ : U) :=
-    { toFun := fun x => ⟨γ x, hγU x⟩
-      continuous_toFun := hγ.subtype_mk _
-      source' := Subtype.ext hγ0
-      target' := rfl }
-  let q : Path (⟨z₀, hz₀U⟩ : U) (⟨γ 1, hγU 1⟩ : U) :=
-    { toFun := fun x => ⟨δ x, hδU x⟩
-      continuous_toFun := hδ.subtype_mk _
-      source' := Subtype.ext hδ0
-      target' := Subtype.ext hend }
-  obtain ⟨h⟩ := SimplyConnectedSpace.paths_homotopic p q
-  -- The same homotopy, read back in `ℂ`; it never leaves `U`.
-  set K := h.map (⟨Subtype.val, continuous_subtype_val⟩ : C(U, ℂ)) with hK
-  have hKmem : ∀ t x : I, K (t, x) ∈ U := fun t x => (h (t, x)).2
-  have hKzero : ∀ t : I, K (t, 0) = z₀ := fun t => by simp [hK]
-  have hKp : (fun x => K (0, x)) = γ := funext fun x => by simp [hK, p]
-  have hKq : (fun x => K (1, x)) = δ := funext fun x => by simp [hK, q]
+  -- Simple connectivity joins the two paths by a homotopy that stays in `U`, so the hypothesis
+  -- continues the germ along every intermediate path and `TauCeti.monodromy_theorem` applies to
+  -- the resulting family. The two given continuations are then matched with the extreme members
+  -- of that family by uniqueness along a fixed path.
+  obtain ⟨_, _, K, hKmem, hKzero, hKp, hKq⟩ :=
+    exists_pathHomotopy_forall_mem_of_isSimplyConnected hUc hγ hγU hγ0 rfl hδ hδU hδ0 hend
   -- A continuation along every intermediate path, all starting from the germ of `f₀`.
   have hcont : ∀ t : I, ContinuesAlong f₀ fun x => K (t, x) := fun t =>
     H.continuesAlong (by fun_prop) (hKmem t) (hKzero t)
