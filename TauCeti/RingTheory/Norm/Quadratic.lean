@@ -152,6 +152,7 @@ not lie in `K`.) Forwards, over the nontrivial automorphism `σ` the discriminan
 `discrim_eq_zero_of_mem_range_algebraMap`, which needs neither separability nor a field. This is
 the form a construction wants: it chooses `θ` by nonzero discriminant and needs to know that `θ`
 generates. -/
+@[simp]
 theorem discrim_eq_zero_iff_mem_range_algebraMap {θ : L} :
     Algebra.trace K L θ ^ 2 - 4 * Algebra.norm K θ = 0 ↔ θ ∈ Set.range (algebraMap K L) := by
   refine ⟨fun h0 => ?_, discrim_eq_zero_of_mem_range_algebraMap K L⟩
