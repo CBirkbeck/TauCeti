@@ -7,6 +7,7 @@ module
 
 public import TauCeti.Analysis.Contour.Curve.ExcisionMeasure
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
+public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
 
 /-!
 # The excision leaves the arc's full length in the limit
@@ -53,6 +54,36 @@ theorem tendsto_intervalIntegral_excisionIndicator_fdBoundary_arc (H : ℝ) (S :
     (Contour.measure_setOf_mem_eq_zero_of_injOn (injOn_fdBoundary_arc H) S)
   norm_num at h
   exact h
+
+/-- **The excised arc integral of the contour's own logarithmic derivative.** On the arc
+`logDeriv (fdBoundary H)` is the constant `(π/6)·I` (`logDeriv_fdBoundary_arc`), so the excised
+integral is that constant times the surviving length. -/
+theorem intervalIntegral_excised_logDeriv_fdBoundary_arc (H : ℝ) (S : Finset ℂ) (ε : ℝ) :
+    (∫ t in (1 : ℝ)..3, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else logDeriv (fdBoundary H) t) =
+      ((Real.pi / 6 : ℝ) * Complex.I) *
+        (↑(∫ t in (1 : ℝ)..3, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℝ) else 1) : ℂ) := by
+  rw [← intervalIntegral.integral_ofReal, ← intervalIntegral.integral_const_mul]
+  refine intervalIntegral.integral_congr_uIoo fun t ht => ?_
+  rw [uIoo_of_le (by norm_num : (1 : ℝ) ≤ 3)] at ht
+  by_cases hb : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε
+  · simp [hb]
+  · simp [hb, logDeriv_fdBoundary_arc ht]
+
+/-- **The arc's excised logarithmic-derivative integral tends to `(π/3)·I`.** Combining the
+constant value on the arc with the surviving length's limit `2`. -/
+theorem tendsto_intervalIntegral_excised_logDeriv_fdBoundary_arc (H : ℝ) (S : Finset ℂ) :
+    Tendsto (fun ε => ∫ t in (1 : ℝ)..3, if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else logDeriv (fdBoundary H) t)
+      (𝓝[>] 0) (𝓝 ((Real.pi / 3 : ℝ) * Complex.I)) := by
+  simp only [intervalIntegral_excised_logDeriv_fdBoundary_arc H S]
+  have h := (Complex.continuous_ofReal.tendsto _).comp
+    (tendsto_intervalIntegral_excisionIndicator_fdBoundary_arc H S)
+  -- `2` surviving units of length at `(π/6)·I` each.
+  have hval : ((Real.pi / 6 : ℝ) : ℂ) * Complex.I * ((2 : ℝ) : ℂ)
+      = ((Real.pi / 3 : ℝ) : ℂ) * Complex.I := by push_cast; ring
+  exact hval ▸ h.const_mul _
+
 
 end ModularForm
 
