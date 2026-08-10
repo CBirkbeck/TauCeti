@@ -32,9 +32,8 @@ the remaining step before 5.50 can be stated as a universal property.
   at most one index — the zero series gives the family that vanishes identically — so the sum is a
   single term and no summability hypothesis is involved.
 * `TauCeti.Huber.hasSum_weightedEvalTerm`: under the hypotheses of the summability theorem, the
-  terms have `weightedEval` as their sum. This is what `TauCeti.Huber.weightedEval_add` is read
-  off, and what a consumer facing a genuine infinite sum should reach for rather than `tsum`
-  lemmas.
+  terms have `weightedEval` as their sum. This is the consumer-facing statement — it names the sum
+  instead of leaving a `tsum` to be manipulated — and is not itself used below.
 * `TauCeti.Huber.weightedEval_zero` and `TauCeti.Huber.weightedEval_add_of_summable`: the
   evaluation is additive in the series, the latter stated where additivity is actually true — two
   summable term families, with no weights, completeness or restrictedness in sight.
@@ -60,11 +59,11 @@ variable {k : ℕ} {A B : Type*} [CommRing A] [CommRing B] [TopologicalSpace B]
 `φ(coeff ν f) · bν`.
 
 Unconditionally a `tsum`, so it is junk when the family is not summable. The results that take a
-genuine infinite sum — `TauCeti.Huber.weightedEval_add` and its corollaries — therefore carry the
-hypotheses of `TauCeti.Huber.summable_weightedEvalTerm`, through
-`TauCeti.Huber.hasSum_weightedEvalTerm`. The values on `0`, on a constant and on a variable need
-none of that: their term families are supported on at most one index, so the sum is read off that
-index directly. -/
+genuine infinite sum — `TauCeti.Huber.weightedEval_add` and its corollaries — therefore obtain
+summability from `TauCeti.Huber.summable_weightedEvalTerm` and pass it to
+`TauCeti.Huber.weightedEval_add_of_summable`. The values on `0`, on a constant and on a variable
+need none of that: their term families are supported on at most one index, so the sum is read off
+that index directly. -/
 noncomputable def weightedEval (φ : A →+* B) (b : Fin k → B) (f : MvPowerSeries (Fin k) A) : B :=
   ∑' ν, weightedEvalTerm φ b f ν
 
@@ -137,9 +136,10 @@ variable {k : ℕ} {A B : Type*} [CommRing A] [TopologicalSpace A] [Nonarchimede
   [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanAddGroup B] [CompleteSpace B]
   {φ : A →+* B} {T : Fin k → Set A} {b : Fin k → B}
 
-/-- **The terms sum to the evaluation.** This is the form in which additivity below uses
-summability, and the form a consumer should use: it names the sum rather than leaving it as a
-`tsum` to be manipulated. -/
+/-- **The terms sum to the evaluation.** This is for consumers: it names the sum, so that a caller
+holding the summability hypotheses does not have to manipulate a `tsum`. Nothing in this file uses
+it — additivity goes through `TauCeti.Huber.weightedEval_add_of_summable`, which asks only for
+`Summable`. -/
 theorem hasSum_weightedEvalTerm (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b)
     {f : MvPowerSeries (Fin k) A} (hf : IsWeightedRestricted T f) :
     HasSum (weightedEvalTerm φ b f) (weightedEval φ b f) := by
