@@ -65,6 +65,7 @@ section CommRing
 variable {R : Type*} [CommRing R] [Nontrivial R] {W : _root_.WeierstrassCurve.Affine R}
 
 /-- **The ideal `⟨X - x, Y - y(X)⟩` of the coordinate ring is nonzero** over a nontrivial base. -/
+@[simp]
 lemma XYIdeal_ne_bot (x : R) (y : R[X]) : CoordinateRing.XYIdeal W x y ≠ ⊥ := fun hbot => by
   have hmem : CoordinateRing.XClass W x ∈ CoordinateRing.XYIdeal W x y :=
     Ideal.subset_span (Set.mem_insert _ _)
