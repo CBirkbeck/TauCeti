@@ -66,10 +66,19 @@ variable {K : Type*} [Field K] (W : _root_.WeierstrassCurve.Affine K)
 
 variable [Fintype K]
 
-/-- The image of `K(x^q)`, the `q`-th powers of the rational function field, inside `K(W)`. -/
+/-- The image of `K(x^q)`, the `q`-th powers of the rational function field, inside `K(W)`. The
+body is exposed so that `frobeniusRatFuncRange_def` is available; without it that `rfl` does not
+typecheck. -/
+@[expose]
 noncomputable def frobeniusRatFuncRange : IntermediateField K W.FunctionField :=
   (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange.map
     (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
+
+theorem frobeniusRatFuncRange_def :
+    frobeniusRatFuncRange W =
+      (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange.map
+        (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField) :=
+  rfl
 
 @[simp]
 theorem mem_frobeniusRatFuncRange {z : W.FunctionField} :
@@ -106,13 +115,14 @@ theorem finrank_extendScalars_ratFuncRange :
   rw [TauCeti.FiniteField.finrank_fieldRange_frobeniusAlgHom_ratFunc] at h
   exact h.symm
 
-/-- Re-basing `K(x)` over `K(x^q)` does not change its degree under `K(W)`: `extendScalars`
-replaces the base field of an intermediate field and leaves its carrier alone, which is exactly
-what Mathlib's `IntermediateField.coe_extendScalars` records (and states as `rfl`). -/
-theorem finrank_extendScalars_eq :
-    Module.finrank (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W))
-      W.FunctionField =
-      Module.finrank (_root_.WeierstrassCurve.Affine.ratFuncRange W) W.FunctionField :=
+/-- **Re-basing an intermediate field does not change the degree above it.**
+`IntermediateField.extendScalars` replaces the base field and leaves the carrier alone — Mathlib
+records exactly that as `coe_extendScalars`, itself proved by `rfl` — so the two degrees are
+definitionally equal. Stated for arbitrary intermediate fields, since nothing about a curve or a
+Frobenius enters. -/
+theorem _root_.IntermediateField.finrank_extendScalars {F L : Type*} [Field F] [Field L]
+    [Algebra F L] {E E' : IntermediateField F L} (h : E ≤ E') :
+    Module.finrank (IntermediateField.extendScalars h) L = Module.finrank E' L :=
   rfl
 
 /-- **`[K(W) : K(x^q)] = 2q`.** The tower `K(x^q) ⊆ K(x) ⊆ K(W)` has degrees `q` and `2`. -/
@@ -121,7 +131,7 @@ theorem finrank_frobeniusRatFuncRange :
     Module.finrank (frobeniusRatFuncRange W) W.FunctionField = 2 * Fintype.card K := by
   have htower := Module.finrank_mul_finrank (frobeniusRatFuncRange W)
     (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W)) W.FunctionField
-  rw [finrank_extendScalars_ratFuncRange W, finrank_extendScalars_eq W,
+  rw [finrank_extendScalars_ratFuncRange W, IntermediateField.finrank_extendScalars,
     _root_.WeierstrassCurve.Affine.finrank_ratFuncRange W] at htower
   rw [← htower, Nat.mul_comm]
 
