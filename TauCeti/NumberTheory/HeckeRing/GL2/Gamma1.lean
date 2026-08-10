@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Delta0
+public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
 /-!
 # The Hecke triple of `Γ₁(N)`

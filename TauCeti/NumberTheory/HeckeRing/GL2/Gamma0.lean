@@ -6,6 +6,7 @@ Authors: Chris Birkbeck, Claude
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Delta0
+public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
 -- only the Γ₀ unit-entry lemma is needed, and only inside a proof
 import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
@@ -40,6 +41,7 @@ The Γ₀ pair corresponds to the AINTLIB
 
 ## Main results
 
+* `HeckeRing.GL2.Gamma0Image_le_Delta0`: `Γ₀(N) ≤ Δ₀(N)`.
 * `HeckeRing.GL2.Delta0_le_commensurator_Gamma0Image`: `Δ₀(N)` lies in the commensurator of
   `Γ₀(N)`.
 * the `IsHeckeTriple (Delta0 N) (Gamma0Image N) (Gamma0Image N)` instance.

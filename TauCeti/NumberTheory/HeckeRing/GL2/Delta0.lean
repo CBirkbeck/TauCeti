@@ -6,7 +6,6 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GLn.Basic
-public import Mathlib.NumberTheory.ModularForms.CongruenceSubgroups
 
 /-!
 # The semigroup `Δ₀(N)`
@@ -51,8 +50,7 @@ Chris Birkbeck).
 
 public section
 
-open Matrix Matrix.SpecialLinearGroup CongruenceSubgroup Subgroup
-  Subgroup.Commensurable HeckeRing.GLn
+open Matrix Matrix.SpecialLinearGroup HeckeRing.GLn
 
 open scoped Pointwise MatrixGroups
 
