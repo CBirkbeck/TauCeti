@@ -25,8 +25,9 @@ the remaining step before 5.50 can be stated as a universal property.
 
 ## Main results
 
-* `TauCeti.Huber.weightedEval_C` and `TauCeti.Huber.weightedEval_X`: it sends the constant series
-  `C a` to `φ a` and the variable `X i` to `bᵢ`, which is what makes it *the* evaluation at `b`.
+* `TauCeti.Huber.weightedEval_monomial`, with `TauCeti.Huber.weightedEval_C` and
+  `TauCeti.Huber.weightedEval_X` as its cases at `ν = 0` and `ν = single i 1`: the value on a
+  monomial is its own term, which is what makes this *the* evaluation at `b`.
   These, and the value on `0`, are unconditional: each of the three term families is supported on
   at most one index — the zero series gives the family that vanishes identically — so the sum is a
   single term and no summability hypothesis is involved.
@@ -77,28 +78,32 @@ theorem weightedEval_zero (φ : A →+* B) (b : Fin k → B) :
     weightedEval φ b (0 : MvPowerSeries (Fin k) A) = 0 := by
   simp [weightedEval_def, weightedEvalTerm_def]
 
-/-- **The evaluation sends a constant series to its image.** Only the constant term contributes,
-since every other coefficient of `C a` vanishes. -/
+/-- **The evaluation of a monomial is its term.** Every other coefficient of `monomial ν a`
+vanishes, so the sum collapses to the index `ν`. The values on a constant and on a variable are
+the two special cases below. -/
+@[simp]
+theorem weightedEval_monomial (φ : A →+* B) (b : Fin k → B) (ν : Fin k →₀ ℕ) (a : A) :
+    weightedEval φ b (MvPowerSeries.monomial ν a) = φ a * ∏ i, b i ^ ν i := by
+  classical
+  rw [weightedEval_def, tsum_eq_single ν ?_]
+  · simp [weightedEvalTerm_def]
+  · intro μ hμ
+    simp [weightedEvalTerm_def, MvPowerSeries.coeff_monomial, hμ]
+
+/-- **The evaluation sends a constant series to its image**, the monomial at `ν = 0`. -/
 @[simp]
 theorem weightedEval_C (φ : A →+* B) (b : Fin k → B) (a : A) :
     weightedEval φ b (MvPowerSeries.C a) = φ a := by
-  classical
-  rw [weightedEval_def, tsum_eq_single 0 ?_]
-  · simp [weightedEvalTerm_def]
-  · intro ν hν
-    simp [weightedEvalTerm_def, MvPowerSeries.coeff_C, hν]
+  rw [← MvPowerSeries.monomial_zero_eq_C_apply, weightedEval_monomial]
+  simp
 
-/-- **The evaluation sends a variable to its value.** Only the multi-index `single i 1`
-contributes, and its monomial is `bᵢ`. -/
+/-- **The evaluation sends a variable to its value**, the monomial at `ν = single i 1`. -/
 @[simp]
 theorem weightedEval_X (φ : A →+* B) (b : Fin k → B) (i : Fin k) :
     weightedEval φ b (MvPowerSeries.X i) = b i := by
   classical
-  rw [weightedEval_def, tsum_eq_single (Finsupp.single i 1) ?_]
-  · simp [weightedEvalTerm_def, MvPowerSeries.coeff_X, Finsupp.single_apply,
-      Finset.prod_ite_eq]
-  · intro ν hν
-    simp [weightedEvalTerm_def, MvPowerSeries.coeff_X, hν]
+  rw [MvPowerSeries.X_def, weightedEval_monomial]
+  simp [Finsupp.single_apply, Finset.prod_ite_eq]
 
 end Values
 
@@ -122,7 +127,7 @@ theorem weightedEval_add_of_summable {f g : MvPowerSeries (Fin k) A}
     funext ν
     simp [weightedEvalTerm_def, add_mul]
   rw [weightedEval_def, hterm]
-  exact (hf.hasSum.add hg.hasSum).tsum_eq
+  exact hf.tsum_add hg
 
 end Additive
 
