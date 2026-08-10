@@ -138,26 +138,6 @@ theorem ContractionSemigroup.hasGrowthBound_of_nonneg_omega_of_one_le_const
 
 /-! ## Growth Bounds and Exponential Type -/
 
-omit [CompleteSpace X] in
-/-- **The multi-step bound from a one-step bound.** If `‖S t‖ ≤ M` at a nonnegative time `t`, then
-`‖S (k • t)‖ ≤ M ^ k` at every natural multiple of `t`. -/
-theorem StronglyContinuousSemigroup.norm_realOperator_nsmul_le_pow
-    (S : StronglyContinuousSemigroup X) {M t : ℝ}
-    (ht : 0 ≤ t) (hMt : ‖S.realOperator t‖ ≤ M) (k : ℕ) :
-    ‖S.realOperator (k • t)‖ ≤ M ^ k := by
-  have hM : 0 ≤ M := (norm_nonneg _).trans hMt
-  induction k with
-  | zero =>
-    simp only [zero_smul, S.realOperator_zero, pow_zero]
-    exact ContinuousLinearMap.norm_id_le
-  | succ k ih =>
-    calc ‖S.realOperator ((k + 1) • t)‖
-        = ‖S.realOperator (t + k • t)‖ := by rw [succ_nsmul']
-      _ ≤ ‖S.realOperator t‖ * ‖S.realOperator (k • t)‖ :=
-          S.norm_realOperator_add_le t (k • t) ht (by positivity)
-      _ ≤ M * M ^ k := mul_le_mul hMt ih (norm_nonneg _) hM
-      _ = M ^ (k + 1) := by ring
-
 /-- Every C₀-semigroup has a finite exponential growth bound
 ([EN] Prop. I.5.5, [Linares] Thm. 1). -/
 theorem StronglyContinuousSemigroup.existsGrowthBound (S : StronglyContinuousSemigroup X) :
@@ -170,8 +150,10 @@ theorem StronglyContinuousSemigroup.existsGrowthBound (S : StronglyContinuousSem
   have hfrac_nn : 0 ≤ t - ↑n := sub_nonneg.mpr hn_le
   have hfrac_le1 : t - ↑n ≤ 1 := by
     have := Nat.lt_floor_add_one t; linarith
+  have hone : ‖S (1 : ℝ≥0)‖ ≤ M := by
+    simpa [S.realOperator_def] using hMbound 1 zero_le_one le_rfl
   have hint : ‖S.realOperator (n : ℝ)‖ ≤ M ^ n := by
-    simpa using S.norm_realOperator_nsmul_le_pow zero_le_one (hMbound 1 zero_le_one le_rfl) n
+    simpa [S.realOperator_def, nsmul_eq_mul] using S.norm_map_nsmul_le_pow 1 hone n
   calc ‖S.realOperator t‖
       = ‖S.realOperator ((t - ↑n) + ↑n)‖ := by
         rw [sub_add_cancel]
