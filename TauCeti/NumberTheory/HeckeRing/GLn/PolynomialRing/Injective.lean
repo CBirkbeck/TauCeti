@@ -742,31 +742,35 @@ end HeckeRing.GLn.Inj
 
 namespace HeckeRing.GLn
 
-variable (p : ℕ) (hp : p.Prime)
+variable (p : ℕ)
 
 /-- **Shimura, Theorem 3.20 for `n = 1`**: the `p`-local Hecke ring of `GL₁` is the
-polynomial ring `ℤ[X]` on the single generator `T(p)`. -/
-noncomputable def polynomialRingEquivOne :
+polynomial ring `ℤ[X]` on the single generator `T(p)`.
+
+Stated for `1 < p` rather than `p.Prime`: rank one needs only that `k ↦ p^k` is injective. -/
+noncomputable def polynomialRingEquivOne (hp : 1 < p) :
     MvPolynomial (Fin 1) ℤ ≃+* pLocalSubring 1 p :=
   RingEquiv.ofBijective (evalHomLocal 1 p)
-    ⟨Inj.evalHomLocal_injective 1 p (Inj.evalHom_one_injective p hp.one_lt),
-     evalHomLocal_one_surjective p hp.pos⟩
+    ⟨Inj.evalHomLocal_injective 1 p (Inj.evalHom_one_injective p hp),
+     evalHomLocal_one_surjective p (Nat.zero_lt_of_lt hp)⟩
+
+/-- The rank-one presentation isomorphism is the evaluation map. -/
+@[simp] lemma polynomialRingEquivOne_apply (hp : 1 < p) (f : MvPolynomial (Fin 1) ℤ) :
+    polynomialRingEquivOne p hp f = evalHomLocal 1 p f := (rfl)
 
 /-- **Shimura, Theorem 3.20 for `n = 2`**: the `p`-local Hecke ring of `GL₂` is the
 polynomial ring `ℤ[X₁, X₂]` on the generators `T(1, p)` and `T(p, p)`. This is the case the
-classical theory of modular forms uses. -/
-noncomputable def polynomialRingEquivTwo :
+classical theory of modular forms uses.
+
+Primality is genuine here: the rank-two argument runs through the `GL₂` recurrence. -/
+noncomputable def polynomialRingEquivTwo (hp : p.Prime) :
     MvPolynomial (Fin 2) ℤ ≃+* pLocalSubring 2 p :=
   RingEquiv.ofBijective (evalHomLocal 2 p)
     ⟨Inj.evalHomLocal_injective 2 p (Inj.evalHom_two_injective p hp),
      evalHomLocal_two_surjective p hp⟩
 
-/-- The rank-one presentation isomorphism is the evaluation map. -/
-@[simp] lemma polynomialRingEquivOne_apply (f : MvPolynomial (Fin 1) ℤ) :
-    polynomialRingEquivOne p hp f = evalHomLocal 1 p f := (rfl)
-
 /-- The rank-two presentation isomorphism is the evaluation map. -/
-@[simp] lemma polynomialRingEquivTwo_apply (f : MvPolynomial (Fin 2) ℤ) :
+@[simp] lemma polynomialRingEquivTwo_apply (hp : p.Prime) (f : MvPolynomial (Fin 2) ℤ) :
     polynomialRingEquivTwo p hp f = evalHomLocal 2 p f := (rfl)
 
 end HeckeRing.GLn
