@@ -5,6 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Basic
+public import Mathlib.Algebra.Polynomial.Derivation
+public import Mathlib.RingTheory.Derivation.MapCoeffs
 
 /-!
 # The partial derivatives of the Weierstrass polynomial
@@ -18,6 +20,8 @@ the only two forms the types allow.
 
 * `TauCeti.WeierstrassCurve.Affine.derivative_polynomial`: `W_Y` is the derivative of `W(X, Y)`
   in `Y`, which is `Polynomial.derivative` on `R[X][Y]` outright.
+* `TauCeti.WeierstrassCurve.Affine.eval_mapCoeffs_polynomial`: `W_X` is the *coefficient-wise*
+  derivative, Mathlib's `Derivation.mapCoeffs` applied to `Polynomial.derivative'`.
 * `TauCeti.WeierstrassCurve.Affine.derivative_eval_polynomial`: the chain rule — substituting a
   polynomial `y : R[X]` for `Y` and differentiating in `X` gives `W_X(X, y) + W_Y(X, y) · y'`.
 * `TauCeti.WeierstrassCurve.Affine.derivative_eval_polynomial_C`: the constant case `y' = 0`,
@@ -25,11 +29,12 @@ the only two forms the types allow.
 
 The `Y`-partial is a plain `Polynomial.derivative` because `Y` is the outer variable of
 `R[X][Y]`. The `X`-partial is not: differentiating the *coefficients* is not a ring homomorphism,
-so there is no `Polynomial.map` to apply. Substituting for `Y` first lands the polynomial in
-`R[X]`, where `Polynomial.derivative` is the derivative in `X` — and what one gets there is the
-chain rule, `W_X` alone only when the substituted polynomial is constant.
+so there is no `Polynomial.map` to apply — it is a *derivation*, and Mathlib's
+`Derivation.mapCoeffs` is the one that lifts `Polynomial.derivative` coefficient-wise. The chain
+rule then costs nothing: it is Mathlib's `Derivation.apply_eval_eq` with the two partials
+identified, `W_X` alone only when the substituted polynomial is constant.
 
-All three hold over an arbitrary commutative ring, and for a Weierstrass curve that need not be
+All four hold over an arbitrary commutative ring, and for a Weierstrass curve that need not be
 elliptic — they are identities between the defining polynomials, with no nonsingularity in sight.
 
 This supports `TauCetiRoadmap/EllipticCurves/README.md`, Layer 0: the places-and-divisors
@@ -47,9 +52,10 @@ that roadmap at `dev/hasse-weil @ 513e83879e2f`), `HasseWeil/Valuation.lean`, de
 Changes from the source. The source states the `X`-partial over a field, only at a constant, and
 keeps it `private` — it is an internal step of its DVR proof. Here it is public, over an arbitrary
 commutative ring since nothing in it needs inverses, and stated as the chain rule for an arbitrary
-substituted polynomial, of which the source's statement is the `y' = 0` case. The `Y`-partial has
-no counterpart in the source: it is the other half of Mathlib's `TODO`, and it is the cleaner of
-the two, needing no substitution at all.
+substituted polynomial, of which the source's statement is the `y' = 0` case. Neither the
+`Y`-partial nor the coefficient-wise reading of the `X`-partial has a counterpart in the source:
+they are the two halves of Mathlib's `TODO`, and between them the chain rule is Mathlib's own
+`Derivation.apply_eval_eq` rather than a fresh computation.
 -/
 
 public section
@@ -73,18 +79,35 @@ lemma derivative_polynomial : derivative W.polynomial = W.polynomialY := by
     Nat.cast_ofNat, map_ofNat]
   ring
 
+/-- **The `X`-partial derivative of the Weierstrass polynomial is its coefficient-wise
+derivative.** Differentiating the coefficients of a polynomial in `R[X][Y]` is Mathlib's
+`Derivation.mapCoeffs` applied to `Polynomial.derivative'`; evaluating the result at `y` gives
+`W_X(X, y)`. -/
+lemma eval_mapCoeffs_polynomial (y : R[X]) :
+    PolynomialModule.eval y ((derivative' (R := R)).mapCoeffs W.polynomial)
+      = W.polynomialX.eval y := by
+  simp only [WeierstrassCurve.Affine.polynomial, map_add, map_mul, map_pow, map_sub,
+    Derivation.leibniz_pow, Nat.add_one_sub_one, pow_one, Derivation.mapCoeffs_X, smul_zero,
+    Derivation.leibniz, Derivation.mapCoeffs_C, derivative'_apply, derivative_X,
+    derivation_C, PolynomialModule.single_zero, add_zero, zero_add, PolynomialModule.eval_smul,
+    eval_X, eval_C, PolynomialModule.eval_single, pow_zero, smul_eq_mul, mul_one,
+    LinearMap.map_smul_of_tower, eval_pow, nsmul_eq_mul, Nat.cast_ofNat,
+    WeierstrassCurve.Affine.polynomialX, map_ofNat, eval_sub, eval_mul, eval_add, eval_ofNat]
+  ring
+
 /-- **The chain rule for the Weierstrass polynomial.** Substituting `Y = y` for a polynomial
 `y : R[X]` lands `W(X, Y)` in `R[X]`, where `Polynomial.derivative` is the derivative in `X`, and
-it differentiates to `W_X(X, y) + W_Y(X, y) · y'`. -/
+it differentiates to `W_X(X, y) + W_Y(X, y) · y'`.
+
+This is Mathlib's `Derivation.apply_eval_eq` instantiated at `Polynomial.derivative'`, with the
+two partial derivatives identified by the lemmas above. -/
 @[simp]
 lemma derivative_eval_polynomial (y : R[X]) :
     derivative (W.polynomial.eval y)
       = W.polynomialX.eval y + W.polynomialY.eval y * derivative y := by
-  simp only [WeierstrassCurve.Affine.polynomial, WeierstrassCurve.Affine.polynomialX,
-    WeierstrassCurve.Affine.polynomialY, eval_add, eval_sub, eval_mul, eval_pow, eval_C, eval_X,
-    eval_ofNat, derivative_add, derivative_sub, derivative_mul, derivative_pow, derivative_C,
-    derivative_X, Nat.cast_ofNat, map_ofNat, C_add, C_mul, C_pow]
-  ring
+  have h := (derivative' (R := R)).apply_eval_eq y W.polynomial
+  simp only [derivative'_apply] at h
+  rw [h, eval_mapCoeffs_polynomial, derivative_polynomial, smul_eq_mul]
 
 /-- **The `X`-partial derivative of the Weierstrass polynomial is the `Polynomial.derivative` of
 its specialisation at a constant.** This is the chain rule with `y' = 0`.
