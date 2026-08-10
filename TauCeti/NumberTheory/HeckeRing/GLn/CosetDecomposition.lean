@@ -46,15 +46,16 @@ does not, since `upperTriGL` is visibly a composition of injective maps.
 * `upperTriGL_mem_doubleCoset` — every representative lies in `SL_n(ℤ) · diag(a) · SL_n(ℤ)`.
 * `unitriMat_injective`, `upperTriGL_injective` — distinct entry assignments give distinct
   matrices, hence distinct representatives.
-* `eq_of_upperTriGL_eq`, `eq_of_upperTriGL_mul_inv_mem_SLnZ` — the representatives lie in
-  *distinct* left `SL_n(ℤ)`-cosets: two of them are left-equivalent only when their entry
-  assignments already agree, for a positive `IsDvdChain`.
+* `eq_of_upperTriGL_eq_mapGL_mul_upperTriGL` and `eq_of_upperTriGL_mul_inv_mem_SLnZ` — the
+  representatives lie in *distinct* left `SL_n(ℤ)`-cosets: two of them are left-equivalent
+  only when their entry assignments already agree, for a positive `IsDvdChain`.
 
 The two steps behind that conclusion are also stated separately, since each is reusable:
-`dvd_comparison_of_upperTriGL_eq` turns left equivalence into `(a_j / a_i) ∣ C_{ij}` for the
-comparison matrix `C = U(B₁) · U(B₂)⁻¹`, by conjugating the connecting element back through
-`diag(a)`; and `eq_of_dvd_comparison` turns that divisibility into `C = 1`, because the entry
-bound `B_{ij} < a_j / a_i` leaves no room for a nonzero multiple, by induction on `j - i`.
+`dvd_comparison_of_upperTriGL_eq_mapGL_mul_upperTriGL` turns left equivalence into
+`(a_j / a_i) ∣ C_{ij}` for the comparison matrix `C = U(B₁) · U(B₂)⁻¹`, by conjugating the
+connecting element back through `diag(a)`; and `eq_of_dvd_comparison` turns that divisibility
+into `C = 1`, because the entry bound `B_{ij} < a_j / a_i` leaves no room for a nonzero
+multiple, by induction on `j - i`.
 
 ## References
 
@@ -236,7 +237,8 @@ private lemma comparison_apply_eq_zero {a : Fin n → ℕ} {B₁ B₂ : UpperTri
 
 This is arithmetic about a hypothesised divisibility; nothing here mentions cosets. What makes
 that divisibility hold for two representatives in the same left `SL_n(ℤ)`-coset is
-`dvd_comparison_of_upperTriGL_eq`, and `eq_of_upperTriGL_eq` is the two combined. -/
+`dvd_comparison_of_upperTriGL_eq_mapGL_mul_upperTriGL`, and
+`eq_of_upperTriGL_eq_mapGL_mul_upperTriGL` is the two combined. -/
 lemma eq_of_dvd_comparison {a : Fin n → ℕ} {B₁ B₂ : UpperTriEntries n a}
     (hdvd : ∀ ⦃i j : Fin n⦄, i < j →
       ((a j / a i : ℕ) : ℤ) ∣ (unitriMat B₁ * (unitriMat B₂)⁻¹) i j) :
@@ -271,7 +273,7 @@ Deliberately not `@[simp]`: `simp` already rewrites the left-hand side past this
 `(unitriMat B).adjugate`, through `SpecialLinearGroup.coe_inv` and `coe_unitriSL`, so the
 marking is rejected by `simpNF` as not being in normal form. The lemma is kept as the named
 bridge to the `Matrix.inv` spelling, for `rw` and for `simp only` sets that want it. -/
-lemma coe_inv_unitriSL {a : Fin n → ℕ} (B : UpperTriEntries n a) :
+private lemma coe_inv_unitriSL {a : Fin n → ℕ} (B : UpperTriEntries n a) :
     (((unitriSL B)⁻¹ : SpecialLinearGroup (Fin n) ℤ) : Matrix (Fin n) (Fin n) ℤ)
       = (unitriMat B)⁻¹ := by
   rw [SpecialLinearGroup.coe_inv, Matrix.inv_def, coe_unitriSL, det_unitriMat, Ring.inverse_one,
@@ -282,10 +284,9 @@ the diagonal: `(a_j / a_i) ∣ C_{ij}` for `C = U(B₁) · U(B₂)⁻¹`. This i
 `eq_of_dvd_comparison` takes as a hypothesis, so the two together make distinctness a theorem
 about the coset relation rather than a criterion. Only `a i ∣ a j` is needed, at the pair asked
 about. -/
-lemma dvd_comparison_of_upperTriGL_eq {a : Fin n → ℕ} (ha : ∀ i, 0 < a i)
-    {B₁ B₂ : UpperTriEntries n a}
-    {S : SpecialLinearGroup (Fin n) ℤ} (hS : upperTriGL B₁ = mapGL ℚ S * upperTriGL B₂)
-    {i j : Fin n} (hdvd : a i ∣ a j) :
+lemma dvd_comparison_of_upperTriGL_eq_mapGL_mul_upperTriGL {a : Fin n → ℕ}
+    (ha : ∀ i, 0 < a i) {B₁ B₂ : UpperTriEntries n a} {S : SpecialLinearGroup (Fin n) ℤ}
+    (hS : upperTriGL B₁ = mapGL ℚ S * upperTriGL B₂) {i j : Fin n} (hdvd : a i ∣ a j) :
     ((a j / a i : ℕ) : ℤ) ∣ (unitriMat B₁ * (unitriMat B₂)⁻¹) i j := by
   -- Cancel `U(B₂)` on the right, in the group `GL_n(ℚ)`.
   have hGL : natDiagGL n a * mapGL ℚ (unitriSL B₁ * (unitriSL B₂)⁻¹)
@@ -315,12 +316,13 @@ lemma dvd_comparison_of_upperTriGL_eq {a : Fin n → ℕ} (ha : ∀ i, 0 < a i)
 /-- The upper-triangular representatives of a positive divisibility chain lie in pairwise
 **distinct** left `SL_n(ℤ)`-cosets: if two of them differ by a left factor in `SL_n(ℤ)`, their
 entry assignments already agree. Equivalently, `B ↦ SL_n(ℤ) · upperTriGL B` is injective. -/
-theorem eq_of_upperTriGL_eq {a : Fin n → ℕ} (ha : ∀ i, 0 < a i) (hchain : IsDvdChain a)
+theorem eq_of_upperTriGL_eq_mapGL_mul_upperTriGL {a : Fin n → ℕ} (ha : ∀ i, 0 < a i)
+    (hchain : IsDvdChain a)
     {B₁ B₂ : UpperTriEntries n a}
     {S : SpecialLinearGroup (Fin n) ℤ} (hS : upperTriGL B₁ = mapGL ℚ S * upperTriGL B₂) :
     B₁ = B₂ :=
   eq_of_dvd_comparison fun _ _ hij ↦
-    dvd_comparison_of_upperTriGL_eq ha hS (isDvdChain_iff.mp hchain hij.le)
+    dvd_comparison_of_upperTriGL_eq_mapGL_mul_upperTriGL ha hS (isDvdChain_iff.mp hchain hij.le)
 
 /-- The same statement phrased with the subgroup `SLnZ n` of `GL_n(ℚ)`: distinct entry
 assignments give representatives in distinct left cosets of `SL_n(ℤ)`. -/
@@ -328,6 +330,6 @@ theorem eq_of_upperTriGL_mul_inv_mem_SLnZ {a : Fin n → ℕ} (ha : ∀ i, 0 < a
     (hchain : IsDvdChain a) {B₁ B₂ : UpperTriEntries n a}
     (h : upperTriGL B₁ * (upperTriGL B₂)⁻¹ ∈ SLnZ n) : B₁ = B₂ := by
   obtain ⟨S, hSeq⟩ := (mem_SLnZ_iff n).mp h
-  exact eq_of_upperTriGL_eq ha hchain (by rw [hSeq]; group)
+  exact eq_of_upperTriGL_eq_mapGL_mul_upperTriGL ha hchain (by rw [hSeq]; group)
 
 end HeckeRing.GLn
