@@ -99,6 +99,64 @@ noncomputable def restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)
     Valuation A (RestrictedValues v I hfg) :=
   (v.restrict).restrictToConvex _ (mk0_restrict_mem_comapUnitsWithZero v I hfg)
 
+/-! ### The restriction, characterised through `cΓ_v(I)`
+
+`restrictToIdeal` keeps or discards a value according to membership in the *transported*
+`cΓ_v(I)`, which is not the form a consumer holds: the introduction rules for `cΓ_v(I)` speak
+about the value group. The bridge below converts between the two, and the lemmas after it are
+stated so that no consumer has to unfold the definition or mention the transport. -/
+
+/-- **The bridge.** A value's unit lies in the transported `cΓ_v(I)` exactly when the value,
+read in the value group, lies in `cΓ_v(I)` itself. -/
+theorem mk0_restrict_mem_comapUnitsWithZero_iff (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
+    (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) (ha : v.restrict a ≠ 0) :
+    Units.mk0 (v.restrict a) ha ∈
+        ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg) ↔
+      valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∈ characteristicSubgroupOfIdeal v I hfg := by
+  rw [ConvexSubgroup.mem_comapUnitsWithZero, unitsWithZeroEquiv_mk0_restrict v h0 ha]
+
+/-- On a value kept by the restriction, the restriction is that value. -/
+theorem restrictToIdeal_apply_of_mem (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A} (ha : v.restrict a ≠ 0)
+    (hm : Units.mk0 (v.restrict a) ha ∈
+      ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg)) :
+    v.restrictToIdeal I hfg a =
+      ((⟨Units.mk0 (v.restrict a) ha, hm⟩ :
+        (ConvexSubgroup.comapUnitsWithZero
+          (characteristicSubgroupOfIdeal v I hfg)).toSubgroup) : RestrictedValues v I hfg) :=
+  _root_.Valuation.restrictToConvex_apply_of_mem _ _ _ ha hm
+
+/-- Off `cΓ_v(I)`, the restriction vanishes. -/
+theorem restrictToIdeal_apply_of_notMem (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A} (ha : v.restrict a ≠ 0)
+    (hm : Units.mk0 (v.restrict a) ha ∉
+      ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg)) :
+    v.restrictToIdeal I hfg a = 0 :=
+  _root_.Valuation.restrictToConvex_apply_of_notMem _ _ _ ha hm
+
+/-- The restriction vanishes wherever `v` does. -/
+@[simp]
+theorem restrictToIdeal_apply_of_eq_zero (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
+    (h0 : (MonoidWithZeroHom.ofClass v) a = 0) : v.restrictToIdeal I hfg a = 0 :=
+  _root_.Valuation.restrictToConvex_apply_of_eq_zero _ _ _ (v.restrict_eq_zero_iff.mpr h0)
+
+/-- **Where the restriction vanishes at a nonzero value**, stated through `cΓ_v(I)` itself. -/
+theorem restrictToIdeal_eq_zero_iff (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
+    (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) (ha : v.restrict a ≠ 0) :
+    v.restrictToIdeal I hfg a = 0 ↔
+      valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∉ characteristicSubgroupOfIdeal v I hfg :=
+  (_root_.Valuation.restrictToConvex_eq_zero_iff _ _ _ ha).trans
+    (not_congr (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0 ha))
+
+/-- A value at least `1` stays at least `1`: `cΓ_v(I)` keeps every attained value `≥ 1`. -/
+theorem one_le_restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A} (h1 : 1 ≤ v.restrict a) :
+    1 ≤ v.restrictToIdeal I hfg a :=
+  _root_.Valuation.one_le_restrictToConvex _ _ _ h1
+
 end TauCeti.Valuation
 
 namespace TauCeti.ValuationSpectrum
@@ -109,14 +167,15 @@ variable {A : Type*} [CommRing A]
 
 /-- **The underlying map of Wedhorn's §7.1.2 retraction.** A point of `Spv A` is sent to the
 class of its canonical valuation restricted to `cΓ_v(I)`. -/
--- The `letI` is load-bearing: `Valuation` asks only for `LinearOrderedCommMonoidWithZero`, so
--- the restriction's codomain elaborates with `WithZero`'s direct monoid instance while
--- `ofValuation` wants the group class. The two agree by `rfl` but not reducibly, so
--- unification needs the instance pinned.
-noncomputable def restrictToIdeal (v : Spv A) (I : Ideal A)
+@[expose] noncomputable def restrictToIdeal (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) : Spv A :=
-  letI : LinearOrderedCommGroupWithZero (WithZero (ConvexSubgroup.comapUnitsWithZero
-      (characteristicSubgroupOfIdeal v.valuation I hfg)).toSubgroup) := inferInstance
   ofValuation (v.valuation.restrictToIdeal I hfg)
+
+/-- **The point map, on a representative.** Consumers rewrite through this to reach the
+valuation-level restriction, rather than unfolding the definition. -/
+theorem restrictToIdeal_def (v : Spv A) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
+    restrictToIdeal v I hfg = ofValuation (v.valuation.restrictToIdeal I hfg) :=
+  rfl
 
 end TauCeti.ValuationSpectrum
