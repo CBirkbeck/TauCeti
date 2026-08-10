@@ -76,10 +76,8 @@ theorem mem_frobeniusRatFuncRange {z : W.FunctionField} :
     z ∈ frobeniusRatFuncRange W ↔ ∃ r : RatFunc K,
       IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField
         (_root_.FiniteField.frobeniusAlgHom K (RatFunc K) r) = z := by
-  simp only [frobeniusRatFuncRange, IntermediateField.mem_map, AlgHom.mem_fieldRange]
-  constructor
-  · rintro ⟨_, ⟨r, rfl⟩, rfl⟩; exact ⟨r, rfl⟩
-  · rintro ⟨r, rfl⟩; exact ⟨_, ⟨r, rfl⟩, rfl⟩
+  rw [frobeniusRatFuncRange, AlgHom.map_fieldRange]
+  exact AlgHom.mem_fieldRange
 
 /-- `K(x^q)` sits inside `K(x)`, both read inside `K(W)`. -/
 theorem frobeniusRatFuncRange_le_ratFuncRange :
@@ -103,8 +101,7 @@ theorem finrank_extendScalars_ratFuncRange :
       (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)).toRingEquiv
   let j : RatFunc K ≃+*
       IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W) :=
-    (AlgEquiv.ofInjective (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
-      (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField).toRingHom.injective).toRingEquiv
+    (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField).equivFieldRange.toRingEquiv
   have h := Algebra.finrank_eq_of_equiv_equiv i j (by ext x; rfl)
   rw [TauCeti.FiniteField.finrank_fieldRange_frobeniusAlgHom_ratFunc] at h
   exact h.symm

@@ -164,8 +164,7 @@ theorem mem_ratFuncRange {z : W.FunctionField} :
 @[simp]
 theorem finrank_ratFuncRange : Module.finrank (ratFuncRange W) W.FunctionField = 2 := by
   have h := Algebra.finrank_eq_of_equiv_equiv
-    (AlgEquiv.ofInjective (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField)
-      (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).toRingHom.injective).toRingEquiv
+    (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).equivFieldRange.toRingEquiv
     (RingEquiv.refl W.FunctionField) (by ext x; rfl)
   rw [finrank_functionField W (RatFunc F)] at h
   exact h.symm
