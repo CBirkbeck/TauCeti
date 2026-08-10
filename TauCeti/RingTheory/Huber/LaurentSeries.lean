@@ -169,8 +169,9 @@ noncomputable def pairOfDefinition : PairOfDefinition K⸨X⸩ where
 
 /-- The ring of definition of `TauCeti.Huber.LaurentSeries.pairOfDefinition` is the power series.
 
-The ideal is characterised by `TauCeti.Huber.LaurentSeries.mem_pairOfDefinition_idealOfDefinition`
-in membership form. An equation is avoided rather than impossible: `idealOfDefinition`'s type
+The ideal is characterised in membership form by
+`TauCeti.Huber.LaurentSeries.mem_pairOfDefinition_idealOfDefinition_pow_iff`. An equation is
+avoided rather than impossible: `idealOfDefinition`'s type
 depends on `ringOfDefinition`, so an equation would be between two `Ideal` types that the
 elaborator identifies only through that projection. -/
 @[simp]
@@ -183,7 +184,7 @@ The membership form is used because `idealOfDefinition`'s type depends on the pa
 `ringOfDefinition`; `f` is already taken in that dependent type, so nothing has to be
 transported. -/
 @[simp]
-theorem mem_pairOfDefinition_idealOfDefinition {n : ℕ}
+theorem mem_pairOfDefinition_idealOfDefinition_pow_iff {n : ℕ}
     {f : (pairOfDefinition K).ringOfDefinition} :
     f ∈ (pairOfDefinition K).idealOfDefinition ^ n ↔ Valued.v (f : K⸨X⸩) ≤ exp (-(n : ℤ)) :=
   mem_idealOfDefinition_pow_iff n f
