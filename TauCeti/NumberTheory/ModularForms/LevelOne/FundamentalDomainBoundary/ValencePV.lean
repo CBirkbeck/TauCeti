@@ -8,8 +8,6 @@ module
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ExcisedAssembly
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ExcisedIntegrability
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ArcExcisionMeasure
-public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.On
-public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.LogDerivPV
 
 /-!
@@ -88,6 +86,15 @@ private theorem eventually_intervalIntegral_excised_eq [SlashInvariantFormClass 
     intro ε t hε hex ht
     refine hoffγ t ht fun hs => hex ?_
     exact ⟨_, hs, by rw [sub_self, norm_zero]; exact hε.le⟩
+  have hsub01 : uIcc (0 : ℝ) 1 ⊆ Icc (0 : ℝ) 5 := by
+    rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)]
+    exact Icc_subset_Icc le_rfl (by norm_num)
+  have hsub12 : uIcc (1 : ℝ) 2 ⊆ Icc (0 : ℝ) 5 := by
+    rw [uIcc_of_le (by norm_num : (1 : ℝ) ≤ 2)]
+    exact Icc_subset_Icc (by norm_num) (by norm_num)
+  have hsub45 : uIcc (4 : ℝ) 5 ⊆ Icc (0 : ℝ) 5 := by
+    rw [uIcc_of_le (by norm_num : (4 : ℝ) ≤ 5)]
+    exact Icc_subset_Icc (by norm_num) le_rfl
   filter_upwards [eventually_forall_im_add_lt hHgt, self_mem_nhdsWithin] with ε hlt hε
   simpa only [smul_eq_mul, mul_comm] using
     intervalIntegral_excised_logDeriv_fdBoundary f hS hnorm hinv hlt hper
@@ -95,23 +102,22 @@ private theorem eventually_intervalIntegral_excised_eq [SlashInvariantFormClass 
         (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).1.differentiableAt)
       (fun t ht hex => (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).2)
       hga hgz
-      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hoffγ
-        (by rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)]; exact Icc_subset_Icc le_rfl (by norm_num)))
-      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hoffγ
-        (by rw [uIcc_of_le (by norm_num : (1 : ℝ) ≤ 2)]
-            exact Icc_subset_Icc (by norm_num) (by norm_num)))
-      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hoffγ
-        (by rw [uIcc_of_le (by norm_num : (4 : ℝ) ≤ 5)]
-            exact Icc_subset_Icc (by norm_num) le_rfl))
+      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hsub01
+        fun t ht => hoffγ t (hsub01 ht))
+      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hsub12
+        fun t ht => hoffγ t (hsub12 ht))
+      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hsub45
+        fun t ht => hoffγ t (hsub45 ht))
 
 /-- **The boundary principal value of a level-one logarithmic derivative.** The excised integrals
 converge as `ε → 0⁺`, to `2πi·ord_∞ − k·(π/6)·I`.
 
 The hypotheses are those of the fixed-`ε` assembly, with the two `ε`-dependent ones replaced by
 their `ε`-free sources: `hHgt` (each excision centre sits below the ceiling) gives `hlt` once `ε`
-is small, and `hoff` (analytic and nonvanishing off the centres on an open `U` containing the
-truncated fundamental domain) gives the differentiability and nonvanishing side conditions at
-every `ε`, as well as the integrability. -/
+is small, and `hoffγ` — analytic and nonvanishing off the centres **at the contour points** —
+gives the differentiability and nonvanishing side conditions at every `ε`, as well as the
+integrability. Stating it along the contour rather than on an open set is what keeps this
+excision set independent of the argument principle's divisor set. -/
 theorem hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex [SlashInvariantFormClass F Γ k] (f : F)
     (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
@@ -128,8 +134,9 @@ theorem hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex [SlashInvariantFormCl
   refine Contour.hasCauchyPVWith_iff.mpr ⟨?_, ?_⟩
   · filter_upwards [self_mem_nhdsWithin] with ε hε
     simpa only [smul_eq_mul, mul_comm] using
-      intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hoffγ
+      intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε
         (by rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
+        fun t ht => hoffγ t (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht)
   · refine Tendsto.congr' (Filter.EventuallyEq.symm
       (eventually_intervalIntegral_excised_eq f hS hnorm hinv hHgt hper hoffγ hga hgz)) ?_
     have hval : 2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
@@ -154,7 +161,8 @@ symmetries), whereas the divisor set is unrestricted, so zeros in the interior a
 assembly's side conditions are needed only *along the contour*, which is what `hoffγ` states.
 
 This is the analytic identity the valence formula rests on: dividing by `2πi` and reading off the
-corner winding numbers (`½` at `i`, `1/6` at each `ρ`-corner) turns it into
+corner winding numbers — which are **negative**, the contour running clockwise: `-(1/2)` at `i`
+and `-(1/6)` at each `ρ`-corner, against `-1` at an interior point — turns it into
 `ord_∞ + ½·ord_i + ⅓·ord_ρ + Σ ord_q = k/12`. -/
 theorem two_pi_I_mul_sum_windingNumber_mul_order_eq [SlashInvariantFormClass F Γ k] (f : F)
     (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ} {ord : ℂ → ℤ} (hH : 1 ≤ H)
