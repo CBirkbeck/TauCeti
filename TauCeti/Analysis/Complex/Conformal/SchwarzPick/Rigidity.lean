@@ -21,7 +21,8 @@ by the Moebius factors that send `w` to `0` on the source and `f w` to `0` on th
 exactly as the contraction estimate does.  The conjugate `g = schwarzPickConjugate f w` is a
 holomorphic self-map of the disc fixing the origin, and the hypothesis says `‖g ξ‖ = ‖ξ‖` at
 the nonzero point `ξ = (z - w) / (1 - conj w * z)`.  Mathlib's equality case of the Schwarz
-lemma, `Complex.affine_of_mapsTo_ball_of_norm_dslope_eq_div`, then forces `g` to be the
+lemma in its existence form, `Complex.affine_of_mapsTo_ball_of_exists_norm_dslope_eq_div'`,
+consumes exactly that one equality point, supplied as an existential, and forces `g` to be the
 rotation `ζ ↦ C * ζ` for a unimodular constant `C`.  Unwinding the conjugation gives the
 identity `(f ζ - f w) / (1 - conj (f w) * f ζ) = C * ((ζ - w) / (1 - conj w * ζ))` on the whole
 disc, from which the inverse map is read off explicitly as a Moebius factor, an inverse
