@@ -65,22 +65,22 @@ upstreamed, so check Mathlib again before porting anything further from it.
 
 public section
 
-/-- A subgroup of a finitely generated additive commutative group is finitely generated, as `ℤ`
-is a Noetherian ring: `G` is then a finitely generated `ℤ`-module, hence Noetherian, so the
-submodule corresponding to `H` is finitely generated.
-
-This is the foundational form — the argument is about `ℤ`-modules, so it is naturally additive —
-and `Subgroup.fg_of_commGroup` is transported from it. An instance, matching how Mathlib
-states its other `FG` closure properties (`Group.fg_range`, `QuotientGroup.fg`). -/
+/-- **A subgroup of a finitely generated additive commutative group is finitely generated.** The
+additive form of `Subgroup.fg_of_commGroup`. -/
+-- `ℤ` is Noetherian, so `G` is a finitely generated `ℤ`-module and hence Noetherian, and the
+-- submodule corresponding to `H` is finitely generated. The argument is about `ℤ`-modules, which
+-- is why this additive form is the one proved directly.
 instance (priority := 100) AddSubgroup.fg_of_addCommGroup {G : Type*} [AddCommGroup G]
     [AddGroup.FG G] (H : AddSubgroup G) : AddGroup.FG H :=
   (AddGroup.fg_iff_addSubgroup_fg H).mpr <| H.toIntSubmodule_toAddSubgroup ▸
     (Submodule.fg_iff_addSubgroup_fg _).mp (IsNoetherian.noetherian (R := ℤ) H.toIntSubmodule)
 
-/-- A subgroup of a finitely generated commutative group is finitely generated: the additive
-statement `AddSubgroup.fg_of_addCommGroup` transported through `Additive G`. Registered with
-`to_additive existing` so the hand-written pair is in the dictionary and downstream
-`@[to_additive]` proofs using this instance can translate. -/
+/-- **A subgroup of a finitely generated commutative group is finitely generated.** The
+multiplicative form of `AddSubgroup.fg_of_addCommGroup`. -/
+-- Transported through `Additive G`. `to_additive` cannot relate the two — it would have to
+-- translate the `ℤ`-module argument itself — so the pair is written out by hand and registered
+-- with `to_additive existing`, which puts it in the dictionary so downstream `@[to_additive]`
+-- proofs using either can translate.
 @[to_additive existing]
 instance (priority := 100) Subgroup.fg_of_commGroup {G : Type*} [CommGroup G] [Group.FG G]
     (H : Subgroup G) : Group.FG H :=
@@ -88,12 +88,13 @@ instance (priority := 100) Subgroup.fg_of_commGroup {G : Type*} [CommGroup G] [G
   (Group.fg_iff_subgroup_fg H).mpr <| (Subgroup.fg_iff_add_fg H).mpr <|
     (AddGroup.fg_iff_addSubgroup_fg (Subgroup.toAddSubgroup H)).mp inferInstance
 
-/-- An extension of finitely generated groups is finitely generated: if the kernel and the range
-of `φ : G →* H` are finitely generated, then so is `G`. The generators are preimages of
-generators of the range together with generators of the kernel. -/
-@[to_additive /-- An extension of finitely generated additive groups is finitely generated: if the
-kernel and the range of `φ : G →+ H` are finitely generated, then so is `G`. The generators are
-preimages of generators of the range together with generators of the kernel. -/]
+/-- **An extension of finitely generated groups is finitely generated:** if the kernel and the
+range of `φ : G →* H` are finitely generated, then so is `G`. This is the `K = ⊤` case of
+`Subgroup.fg_of_fg_map_of_fg_inf_ker`. -/
+-- The generators are preimages of generators of the range together with generators of the kernel.
+@[to_additive /-- **An extension of finitely generated additive groups is finitely generated:** if
+the kernel and the range of `φ : G →+ H` are finitely generated, then so is `G`. This is the
+`K = ⊤` case of `AddSubgroup.fg_of_fg_map_of_fg_inf_ker`. -/]
 theorem Group.fg_of_fg_ker_of_fg_range {G H : Type*} [Group G] [Group H] (φ : G →* H)
     [Group.FG φ.ker] [Group.FG φ.range] : Group.FG G := by
   obtain ⟨T, hT, hTfin⟩ := Group.fg_iff.mp ‹Group.FG φ.range›
@@ -125,8 +126,7 @@ itself finitely generated.** The `Subgroup` analogue of Mathlib's
 `Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean` restructures a proof "due to no
 `Subgroup` version of `Submodule.fg_of_fg_map_of_fg_inf_ker` existing".
 
-Restricting `φ` to `K` turns this into `Group.fg_of_fg_ker_of_fg_range`, of which it is the
-relativization: at `K = ⊤` the hypotheses read `φ.range` and `φ.ker`. -/
+It is the relativization of `Group.fg_of_fg_ker_of_fg_range`, which is its `K = ⊤` case. -/
 @[to_additive /-- **An additive subgroup whose image and whose intersection with the kernel are
 finitely generated is itself finitely generated.** The `AddSubgroup` analogue of Mathlib's
 `Submodule.fg_of_fg_map_of_fg_inf_ker`. -/]
