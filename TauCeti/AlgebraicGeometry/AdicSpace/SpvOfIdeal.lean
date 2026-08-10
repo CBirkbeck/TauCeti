@@ -89,9 +89,9 @@ theorem mem_spvOfIdeal_iff {I : Ideal A} {hfg : ∃ J : Ideal A, J.FG ∧ I.radi
     v ∈ spvOfIdeal I hfg ↔ characteristicSubgroupOfIdeal v.valuation I hfg = ⊤ :=
   Iff.rfl
 
-/-- **Membership is testable on any representative.** This is where Lemma 7.4's class-invariance
-does its work: the defining condition is stated through the canonical valuation of a point, but
-any valuation representing that point gives the same answer. -/
+/-- **Membership is testable on any representative.** The defining condition is stated through
+the canonical valuation of a point, but any valuation representing that point gives the same
+answer. -/
 @[simp]
 theorem mem_spvOfIdeal_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (w : Valuation A Γ₀) (I : Ideal A)
