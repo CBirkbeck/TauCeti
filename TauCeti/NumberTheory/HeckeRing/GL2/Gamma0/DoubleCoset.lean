@@ -122,10 +122,14 @@ private lemma mapGL_mul_coe_eq_intMatrix (τ δ : SpecialLinearGroup (Fin 2) ℤ
     (↑(mapGL ℚ τ * g * mapGL ℚ δ) : Matrix (Fin 2) (Fin 2) ℚ) =
       ((τ : Matrix (Fin 2) (Fin 2) ℤ) * A * (δ : Matrix (Fin 2) (Fin 2) ℤ)).map
         (Int.cast : ℤ → ℚ) := by
+  -- multiplicativity of the entrywise cast is `map_mul` for `(Int.castRingHom ℚ).mapMatrix`
+  have h₁ := map_mul (Int.castRingHom ℚ).mapMatrix
+    ((τ : Matrix (Fin 2) (Fin 2) ℤ) * A) (δ : Matrix (Fin 2) (Fin 2) ℤ)
+  have h₂ := map_mul (Int.castRingHom ℚ).mapMatrix (τ : Matrix (Fin 2) (Fin 2) ℤ) A
+  simp only [RingHom.mapMatrix_apply, Int.coe_castRingHom] at h₁ h₂
   simp only [GeneralLinearGroup.coe_mul, mapGL_coe_matrix, map_apply_coe,
     RingHom.mapMatrix_apply, algebraMap_int_eq, Int.coe_castRingHom, hA]
-  ext i j
-  simp [Matrix.mul_apply, Matrix.map_apply]
+  rw [h₁, h₂]
 
 /-- The hard inclusion of Lemma 3.29(3): an element `σ₁ α σ₂` of the level-one double coset
 that lies in `Δ₀(N)` already lies in the `Γ₀(N)`-double coset. -/
@@ -198,17 +202,11 @@ theorem doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0Image
     (hdet : Int.gcd A.det N = 1) :
     DoubleCoset.doubleCoset α (SLnZ 2) (SLnZ 2) ∩ (Delta0 N : Set (GL (Fin 2) ℚ)) =
       DoubleCoset.doubleCoset α (Gamma0Image N) (Gamma0Image N) := by
-  obtain ⟨B, hB, hα_det, hBN, -⟩ := (mem_Delta0_iff N).mp hα
+  obtain ⟨B, hB, -, hBN, -⟩ := (mem_Delta0_iff N).mp hα
   -- `Δ₀(N)` already supplies an integral representative with `N ∣ c`, and `hA` identifies it
   -- with `A`, so the divisibility need not be assumed
   have hBA : B = A := Matrix.map_injective Int.cast_injective (hB.symm.trans hA)
   have hAN : (N : ℤ) ∣ A 1 0 := hBA ▸ hBN
-  have hAdet_ne : A.det ≠ 0 := by
-    have hcast : ((A.det : ℤ) : ℚ) = (↑α : Matrix (Fin 2) (Fin 2) ℚ).det := by
-      rw [hA]
-      simpa [RingHom.mapMatrix_apply] using RingHom.map_det (Int.castRingHom ℚ) A
-    rw [← hcast] at hα_det
-    exact_mod_cast hα_det.ne'
   have hA11 : Int.gcd (A 1 1) N = 1 := gcd_apply_one_one_eq_one N A hAN hdet
   ext x
   constructor
