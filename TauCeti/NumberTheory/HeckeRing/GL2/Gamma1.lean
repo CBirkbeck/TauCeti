@@ -42,7 +42,8 @@ Chris Birkbeck).
 
 * `HeckeRing.GL2.Gamma1Image_le_Gamma0Image`: `Γ₁(N) ≤ Γ₀(N)` in `GL₂(ℚ)`.
 * `HeckeRing.GL2.Gamma1Image_le_Delta0`: `Γ₁(N) ≤ Δ₀(N)`, the special case of the Γ₀ result.
-* `HeckeRing.GL2.Delta0_le_commensurator`: `Δ₀(N)` lies in the commensurator of `Γ₁(N)`.
+* `HeckeRing.GL2.Delta0_le_commensurator_Gamma1Image`: `Δ₀(N)` lies in the commensurator
+  of `Γ₁(N)`.
 * the `IsHeckeTriple (Delta0 N) (Gamma1Image N) (Gamma1Image N)` instance.
 
 ## References
@@ -90,13 +91,14 @@ lemma commensurable_Gamma1Image_SLnZ : Commensurable (Gamma1Image N) (SLnZ 2) :=
 
 /-- `Δ₀(N)` lies in the commensurator of `Γ₁(N)`: it lies in that of `SL₂(ℤ)`, and the two
 groups are commensurable. -/
-lemma Delta0_le_commensurator : Delta0 N ≤ (commensurator (Gamma1Image N)).toSubmonoid := by
+lemma Delta0_le_commensurator_Gamma1Image :
+    Delta0 N ≤ (commensurator (Gamma1Image N)).toSubmonoid := by
   rw [Subgroup.Commensurable.eq (commensurable_Gamma1Image_SLnZ N)]
   exact (Delta0_le_posDetInt N).trans (posDetInt_le_commensurator 2)
 
 /-- **The Hecke triple of `Γ₁(N)`**: `Γ₁(N) ≤ Δ₀(N) ≤ commensurator(Γ₁(N))` inside
 `GL₂(ℚ)` — the setting of the Hecke operators on modular forms of level `N`. -/
 instance : IsHeckeTriple (Delta0 N) (Gamma1Image N) (Gamma1Image N) :=
-  IsHeckeTriple.of_diagonal (Gamma1Image_le_Delta0 N) (Delta0_le_commensurator N)
+  IsHeckeTriple.of_diagonal (Gamma1Image_le_Delta0 N) (Delta0_le_commensurator_Gamma1Image N)
 
 end HeckeRing.GL2
