@@ -31,9 +31,8 @@ which coarsens `v` by the ideal-indexed characteristic subgroup `cΓ_v(I)`.
 * `TauCeti.ConvexSubgroup.coarsenMap_monotone` : The coarsening map is monotone, which is
   what makes the composite a valuation.
 * `TauCeti.ConvexSubgroup.coarsenMap_eq_one_iff` : `H` is exactly what the map forgets.
-* `TauCeti.ConvexSubgroup.coarsenMap_le_one_of_le_one` and
-  `TauCeti.ConvexSubgroup.coarsenMap_lt_one_of_le_one_of_notMem` : how the bounds `≤ 1` and
-  `< 1` transport, the second being the reason `r_I` lands where it does.
+* `TauCeti.ConvexSubgroup.coarsenMap_lt_one_iff` : coarsening lands strictly below `1`
+  exactly for the values `H` does not absorb — the reason `r_I` lands where it does.
   These are stated on `Γ₀`, not on a valuation: no valuation property enters, and the
   valuation-level forms follow from them by `simp` through `coarsen_apply`.
 * `Valuation.coarsen_supp` : Coarsening does not change the support.
@@ -89,26 +88,26 @@ theorem coarsenMap_eq_one_iff (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x �
   rw [h, ← WithZero.coe_one, WithZero.coe_inj, QuotientGroup.mk'_apply,
     QuotientGroup.eq_one_iff]
 
-/-- Coarsening preserves the bound `x ≤ 1`. -/
-theorem coarsenMap_le_one_of_le_one (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x ≤ 1) :
-    coarsenMap H x ≤ 1 := by
-  simpa using coarsenMap_monotone H hx
+/-- For a nonzero `x`, coarsening lands strictly below `1` exactly when the unit of `x` is
+below `1` and `H` does not absorb it. This is what makes the retraction of Wedhorn §7.1.2 land
+where it does: the values surviving as `< 1` are exactly those the convex subgroup misses. -/
+@[simp]
+theorem coarsenMap_lt_one_iff (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x ≠ 0) :
+    coarsenMap H x < 1 ↔ Units.mk0 x hx < 1 ∧ Units.mk0 x hx ∉ H.toSubgroup := by
+  have h : coarsenMap H x = ↑(QuotientGroup.mk' H.toSubgroup (Units.mk0 x hx)) :=
+    coarsenMap_coe_unit H (Units.mk0 x hx)
+  rw [h, ← WithZero.coe_one, WithZero.coe_lt_coe, QuotientGroup.mk'_apply]
+  exact quotientMk_lt_one_iff H
 
-/-- A nonzero `x ≤ 1` whose unit avoids `H` becomes *strictly* less than `1` after coarsening.
-This is what makes the retraction of Wedhorn §7.1.2 land where it does: the values that survive
-as `< 1` are exactly those the convex subgroup does not absorb. -/
+/-- The form consumers hold: a nonzero value `≤ 1` whose unit avoids `H` becomes strictly
+smaller than `1`. Immediate from `coarsenMap_lt_one_iff`. -/
 theorem coarsenMap_lt_one_of_le_one_of_notMem (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x ≠ 0)
     (hle : x ≤ 1) (hnot : Units.mk0 x hx ∉ H.toSubgroup) : coarsenMap H x < 1 := by
   have hle' : (Units.mk0 x hx : Γ₀ˣ) ≤ 1 := by
     rw [← Units.val_le_val, Units.val_mk0, Units.val_one]
     exact hle
-  have hlt : Units.mk0 x hx < 1 :=
-    lt_of_le_of_ne hle' fun h ↦ hnot (h ▸ one_mem H.toSubgroup)
-  have h : coarsenMap H x = ↑(QuotientGroup.mk' H.toSubgroup (Units.mk0 x hx)) :=
-    coarsenMap_coe_unit H (Units.mk0 x hx)
-  rw [h]
-  exact WithZero.coe_lt_one.mpr
-    ((quotientMk_lt_one_iff H).mpr ⟨hlt, hnot⟩)
+  exact (coarsenMap_lt_one_iff H hx).mpr
+    ⟨lt_of_le_of_ne hle' fun h ↦ hnot (h ▸ one_mem H.toSubgroup), hnot⟩
 
 end ConvexSubgroup
 
@@ -119,7 +118,7 @@ namespace Valuation
 variable {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀] {R : Type*} [Ring R]
 
 /-- The **coarsening** of a valuation by a convex subgroup `H` of the units of its value
-monoid: the composite of `v` with `TauCeti.coarsenMap H`. -/
+monoid: the composite of `v` with `TauCeti.ConvexSubgroup.coarsenMap H`. -/
 noncomputable def coarsen (v : Valuation R Γ₀) (H : TauCeti.ConvexSubgroup Γ₀ˣ) :
     Valuation R (WithZero (Γ₀ˣ ⧸ H.toSubgroup)) :=
   v.map H.coarsenMap H.coarsenMap_monotone

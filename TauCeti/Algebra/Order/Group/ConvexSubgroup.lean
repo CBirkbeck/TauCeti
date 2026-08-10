@@ -604,8 +604,9 @@ theorem quotientMk_monotone : Monotone (QuotientGroup.mk' H.toSubgroup) := by
 
 /-- An element stays below `1` in the quotient exactly when it is below `1` and avoids `H`.
 The `b = 1` case of `quotient_lt_iff`. -/
+@[simp]
 theorem quotientMk_lt_one_iff {u : Γ} :
-    QuotientGroup.mk' H.toSubgroup u < 1 ↔ u < 1 ∧ u ∉ H.toSubgroup := by
+    (u : Γ ⧸ H.toSubgroup) < 1 ↔ u < 1 ∧ u ∉ H.toSubgroup := by
   simpa using quotient_lt_iff H u 1
 
 end Quotient
