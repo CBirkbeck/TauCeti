@@ -28,16 +28,17 @@ the two uses Wedhorn makes of it, and both appear here.
 ## Main definitions
 
 * `TauCeti.Valuation.IdealCofinalFor v H I` : every element of `I` has value cofinal for `H`.
-* `TauCeti.Valuation.IdealMeetsCharacteristic v I` : `v(I)` meets `cΓ_v`, the branch condition
-  of Definition 7.3.
+* `TauCeti.Valuation.IdealMeetsCharacteristicSubgroup v I` : `v(I)` meets `cΓ_v`, the
+  branch condition of Definition 7.3.
 * `TauCeti.Valuation.IsGreatestIdealCofinal v I H` : `H` is greatest with that property.
 * `TauCeti.Valuation.valueSet v I` : the nonzero values of `v` on `I`.
 * `TauCeti.Valuation.characteristicSubgroupOfIdeal` : **Definition 7.3**, `cΓ_v(I)`.
 
 ## Main results
-* `TauCeti.Valuation.idealMeetsCharacteristic_iff` and
-  `TauCeti.Valuation.idealMeetsCharacteristic_of_one_le` : the branch condition of Definition
-  7.3 restated on `valueSet`, and the introduction rule discharging it from a value `≥ 1`.
+* `TauCeti.Valuation.idealMeetsCharacteristicSubgroup_iff` and
+  `TauCeti.Valuation.idealMeetsCharacteristicSubgroup_of_one_le` : the branch condition of
+  Definition 7.3 restated on `valueSet`, and the introduction rule discharging it from a
+  value `≥ 1`.
 
 * `TauCeti.Valuation.idealCofinalFor_iff_forall_isCofinalElement` : the ideal condition is
   cofinality of each nonzero value as an element of the value group; vanishing values are
@@ -119,7 +120,7 @@ theorem idealCofinalFor_iff_le_cofinalIdeal {v : Valuation A Γ₀}
 
 /-- The values of `I` meet the characteristic subgroup: the first branch of Wedhorn
 Definition 7.3. -/
-def IdealMeetsCharacteristic (v : Valuation A Γ₀) (I : Ideal A) : Prop :=
+def IdealMeetsCharacteristicSubgroup (v : Valuation A Γ₀) (I : Ideal A) : Prop :=
   ∃ (a : A) (_ : a ∈ I) (h : (MonoidWithZeroHom.ofClass v) a ≠ 0),
     valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v
 
@@ -127,8 +128,8 @@ def IdealMeetsCharacteristic (v : Valuation A Γ₀) (I : Ideal A) : Prop :=
 
 Deliberately not `@[simp]`: the right-hand side is a nested existential carrying a proof
 binder, which is a poor normal form to rewrite goals into. -/
-theorem idealMeetsCharacteristic_def {v : Valuation A Γ₀} {I : Ideal A} :
-    IdealMeetsCharacteristic v I ↔
+theorem idealMeetsCharacteristicSubgroup_def {v : Valuation A Γ₀} {I : Ideal A} :
+    IdealMeetsCharacteristicSubgroup v I ↔
       ∃ (a : A) (_ : a ∈ I) (h : (MonoidWithZeroHom.ofClass v) a ≠ 0),
         valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v :=
   Iff.rfl
@@ -136,8 +137,8 @@ theorem idealMeetsCharacteristic_def {v : Valuation A Γ₀} {I : Ideal A} :
 /-- An attained value `≥ 1` always meets the characteristic subgroup — so under Wedhorn's
 disjointness hypothesis every element of `I` has value strictly below `1`, the observation
 recorded after Lemma 7.2. -/
-theorem lt_one_of_not_idealMeetsCharacteristic {v : Valuation A Γ₀} {I : Ideal A}
-    (hdisj : ¬ IdealMeetsCharacteristic v I) {a : A} (haI : a ∈ I) : v a < 1 := by
+theorem lt_one_of_not_idealMeetsCharacteristicSubgroup {v : Valuation A Γ₀} {I : Ideal A}
+    (hdisj : ¬ IdealMeetsCharacteristicSubgroup v I) {a : A} (haI : a ∈ I) : v a < 1 := by
   by_contra hge
   push Not at hge
   have ha0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := by
@@ -193,8 +194,8 @@ theorem mem_valueSet {v : Valuation A Γ₀} {I : Ideal A} {γ : valueGroup (.of
 /-- The branch condition of Definition 7.3, restated on `valueSet`: `v(I)` meets `cΓ_v`. The
 definition quantifies over ring elements, this form over the values they attain; they carry the
 same data through `Valuation.restrict_eq_mk`. -/
-theorem idealMeetsCharacteristic_iff {v : Valuation A Γ₀} {I : Ideal A} :
-    IdealMeetsCharacteristic v I ↔ ∃ γ ∈ valueSet v I, γ ∈ characteristicSubgroup v := by
+theorem idealMeetsCharacteristicSubgroup_iff {v : Valuation A Γ₀} {I : Ideal A} :
+    IdealMeetsCharacteristicSubgroup v I ↔ ∃ γ ∈ valueSet v I, γ ∈ characteristicSubgroup v := by
   constructor
   · rintro ⟨a, haI, h0, hmem⟩
     exact ⟨_, ⟨a, haI, v.restrict_eq_mk h0⟩, hmem⟩
@@ -209,10 +210,11 @@ theorem idealMeetsCharacteristic_iff {v : Valuation A Γ₀} {I : Ideal A} :
     rwa [hγ]
 
 /-- An element of `I` with value at least `1` puts `v(I)` into `cΓ_v`. This is the positive
-counterpart of `lt_one_of_not_idealMeetsCharacteristic`, and the introduction rule callers use
+counterpart of `lt_one_of_not_idealMeetsCharacteristicSubgroup`, and the introduction rule
+that callers use
 to discharge the first branch of Definition 7.3. -/
-theorem idealMeetsCharacteristic_of_one_le {v : Valuation A Γ₀} {I : Ideal A} {a : A}
-    (haI : a ∈ I) (ha : 1 ≤ v.restrict a) : IdealMeetsCharacteristic v I := by
+theorem idealMeetsCharacteristicSubgroup_of_one_le {v : Valuation A Γ₀} {I : Ideal A} {a : A}
+    (haI : a ∈ I) (ha : 1 ≤ v.restrict a) : IdealMeetsCharacteristicSubgroup v I := by
   have h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := by
     intro h
     rw [v.restrict_eq_zero_iff.mpr (by simpa using h)] at ha
@@ -383,7 +385,7 @@ private theorem restrict_pow_eq_mk_pow {v : Valuation A Γ₀} {t : A}
 it inside, so would be its `n`-th power, which is the class of `t ^ n ∈ I` — exactly the
 meeting that is excluded. -/
 private theorem not_mem_characteristicSubgroup_of_pow_mem {v : Valuation A Γ₀} {I : Ideal A}
-    (hdisj : ¬ IdealMeetsCharacteristic v I) {t : A}
+    (hdisj : ¬ IdealMeetsCharacteristicSubgroup v I) {t : A}
     (ht0 : (MonoidWithZeroHom.ofClass v) t ≠ 0) {n : ℕ} (hn : t ^ n ∈ I) :
     valueGroup.mk (.ofClass v) 1 t (by simp) ht0 ∉ characteristicSubgroup v := by
   intro hmem
@@ -404,7 +406,7 @@ This is what makes Definition 7.3 well posed: its second branch names *the* grea
 subgroup, so the definition presupposes exactly this statement. -/
 private theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal A}
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
-    (hdisj : ¬ IdealMeetsCharacteristic v I)
+    (hdisj : ¬ IdealMeetsCharacteristicSubgroup v I)
     (hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0) :
     ∃ H, IsGreatestIdealCofinal v I H ∧ characteristicSubgroup v ≤ H := by
   obtain ⟨J, ⟨T, hT⟩, hrad⟩ := hfg
@@ -433,7 +435,7 @@ private theorem exists_isGreatestIdealCofinal {v : Valuation A Γ₀} {I : Ideal
   have hatt : h ^ n ∈ valueSet v I := ⟨t₀ ^ n, hn, hpow⟩
   have hlt_n : (h ^ n : valueGroup (.ofClass v)) < 1 := by
     have h2 : v.restrict (t₀ ^ n) < 1 :=
-      v.restrict_lt_one_iff.mpr (lt_one_of_not_idealMeetsCharacteristic hdisj hn)
+      v.restrict_lt_one_iff.mpr (lt_one_of_not_idealMeetsCharacteristicSubgroup hdisj hn)
     rwa [hpow, ← WithZero.coe_one, WithZero.coe_lt_coe] at h2
   have hlt : h < 1 := (pow_lt_one_iff hn0).mp hlt_n
   have hnot : h ∉ characteristicSubgroup v :=
@@ -451,7 +453,7 @@ the disjointness `v(I) ∩ cΓ_v = ∅` are needed: the case where `v` vanishes 
 is covered separately by `⊤`. -/
 theorem exists_isGreatestIdealCofinal_of_not_meets {v : Valuation A Γ₀} {I : Ideal A}
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
-    (hdisj : ¬ IdealMeetsCharacteristic v I) :
+    (hdisj : ¬ IdealMeetsCharacteristicSubgroup v I) :
     ∃ H, IsGreatestIdealCofinal v I H ∧ characteristicSubgroup v ≤ H := by
   by_cases hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0
   · exact exists_isGreatestIdealCofinal hfg hdisj hne
@@ -470,12 +472,12 @@ Note that this is a **case split**, not the convex subgroup generated by `cΓ_v`
 noncomputable def characteristicSubgroupOfIdeal (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     TauCeti.ConvexSubgroup (valueGroup (.ofClass v)) :=
-  if h : IdealMeetsCharacteristic v I then characteristicSubgroup v
+  if h : IdealMeetsCharacteristicSubgroup v I then characteristicSubgroup v
   else (exists_isGreatestIdealCofinal_of_not_meets hfg h).choose
 
 /-- First branch of Definition 7.3. -/
 theorem characteristicSubgroupOfIdeal_of_meets {v : Valuation A Γ₀} {I : Ideal A}
-    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (h : IdealMeetsCharacteristic v I) :
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (h : IdealMeetsCharacteristicSubgroup v I) :
     characteristicSubgroupOfIdeal v I hfg = characteristicSubgroup v := by
   classical
   rw [characteristicSubgroupOfIdeal, dif_pos h]
@@ -484,7 +486,7 @@ theorem characteristicSubgroupOfIdeal_of_meets {v : Valuation A Γ₀} {I : Idea
 convex subgroup for which `I` is cofinal. -/
 theorem isGreatestIdealCofinal_characteristicSubgroupOfIdeal {v : Valuation A Γ₀} {I : Ideal A}
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
-    (h : ¬ IdealMeetsCharacteristic v I) :
+    (h : ¬ IdealMeetsCharacteristicSubgroup v I) :
     IsGreatestIdealCofinal v I (characteristicSubgroupOfIdeal v I hfg) := by
   classical
   rw [characteristicSubgroupOfIdeal, dif_neg h]
@@ -497,7 +499,7 @@ theorem characteristicSubgroup_le_characteristicSubgroupOfIdeal (v : Valuation A
     (I : Ideal A) (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     characteristicSubgroup v ≤ characteristicSubgroupOfIdeal v I hfg := by
   classical
-  by_cases h : IdealMeetsCharacteristic v I
+  by_cases h : IdealMeetsCharacteristicSubgroup v I
   · rw [characteristicSubgroupOfIdeal_of_meets hfg h]
   · rw [characteristicSubgroupOfIdeal, dif_neg h]
     exact (exists_isGreatestIdealCofinal_of_not_meets hfg h).choose_spec.2
@@ -515,7 +517,7 @@ theorem characteristicSubgroupOfIdeal_eq_top_iff {v : Valuation A Γ₀} {I : Id
     characteristicSubgroupOfIdeal v I hfg = ⊤ ↔
       (∀ a ∈ I, CofinalValue v a) ∨ characteristicSubgroup v = ⊤ := by
   classical
-  by_cases hm : IdealMeetsCharacteristic v I
+  by_cases hm : IdealMeetsCharacteristicSubgroup v I
   · rw [characteristicSubgroupOfIdeal_of_meets hfg hm]
     refine ⟨fun h ↦ Or.inr h, ?_⟩
     rintro (hall | hfull)
