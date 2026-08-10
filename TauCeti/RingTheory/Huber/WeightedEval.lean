@@ -117,10 +117,9 @@ omit [TopologicalSpace A] in
 /-- **At the one-weight family the hypothesis is exactly Wedhorn's**: the weighted monomials are
 bounded precisely when every variable is power-bounded.
 
-Both directions are elementary once the monomials are in view. Forwards, the monomial at
-`ν = Finsupp.single i n` is `bᵢ ^ n`, so the one bounded set already contains every power of every
-`bᵢ`. Backwards, every monomial `bν` lies in the pointwise product of the power-sets, which is
-bounded by `TauCeti.Huber.isBounded_finsetProd`. -/
+This is the case in which the weights impose nothing, so the hypothesis on the tuple is the
+familiar one; for a general `T` it is `TauCeti.Huber.IsWeightedVarPowerBounded` that plays this
+role. -/
 theorem isWeightBounded_one_weight_iff_forall_isPowerBounded (φ : A →+* B)
     (b : Fin k → B) :
     IsWeightBounded φ (fun _ : Fin k ↦ ({1} : Set A)) b ↔ ∀ i, IsPowerBounded (b i) := by
@@ -202,10 +201,10 @@ completeness; completeness is what makes it *sufficient*, in
 `TauCeti.Huber.summable_weightedEvalTerm`.
 
 The three hypotheses each do one thing: `T`-restrictedness puts all but finitely many coefficients
-into `Tν · U`, continuity of `φ` makes `U` small enough that `φ(U)` shrinks the bounded family,
-and `IsWeightBounded` is what makes one `U` work for every `ν` at once. -/
-theorem tendsto_weightedEvalTerm_cofinite_zero {φ : A →+* B} (hφ : Continuous φ) {T : Fin k → Set A}
-    {b : Fin k → B} (hb : IsWeightBounded φ T b) {f : MvPowerSeries (Fin k) A}
+into `Tν · U`, continuity of `φ` at zero makes `U` small enough that `φ(U)` shrinks the bounded
+family, and `IsWeightBounded` is what makes one `U` work for every `ν` at once. -/
+theorem tendsto_weightedEvalTerm_cofinite_zero {φ : A →+* B} (hφ : ContinuousAt φ 0)
+    {T : Fin k → Set A} {b : Fin k → B} (hb : IsWeightBounded φ T b) {f : MvPowerSeries (Fin k) A}
     (hf : IsWeightedRestricted T f) :
     Filter.Tendsto (weightedEvalTerm φ b f) Filter.cofinite (𝓝 0) := by
   refine Filter.tendsto_def.mpr fun W hW ↦ ?_
@@ -213,7 +212,7 @@ theorem tendsto_weightedEvalTerm_cofinite_zero {φ : A →+* B} (hφ : Continuou
   -- Shrink `G` by the bounded family of weighted monomials, then pull the result back along `φ`.
   obtain ⟨V, hV, hVG⟩ := isBounded_iff.mp ((isWeightBounded_iff φ T b).mp hb) (G : Set B)
     (G.isOpen.mem_nhds G.zero_mem)
-  obtain ⟨U, hUV⟩ := NonarchimedeanAddGroup.is_nonarchimedean _ (hφ.continuousAt.preimage_mem_nhds
+  obtain ⟨U, hUV⟩ := NonarchimedeanAddGroup.is_nonarchimedean _ (hφ.preimage_mem_nhds
     (by simpa only [map_zero] using hV))
   -- All but finitely many coefficients lie in `Tν · U`, and every such term lands in `G`.
   filter_upwards [isWeightedRestricted_iff.mp hf U] with ν hν
@@ -245,7 +244,7 @@ variable {k : ℕ} {A B : Type*} [CommRing A] [TopologicalSpace A] [Nonarchimede
 
 /-- **The evaluation of a `T`-restricted series is summable.** Its terms tend to zero along the
 cofinite filter, which in a complete nonarchimedean group is summability. -/
-theorem summable_weightedEvalTerm {φ : A →+* B} (hφ : Continuous φ) {T : Fin k → Set A}
+theorem summable_weightedEvalTerm {φ : A →+* B} (hφ : ContinuousAt φ 0) {T : Fin k → Set A}
     {b : Fin k → B} (hb : IsWeightBounded φ T b) {f : MvPowerSeries (Fin k) A}
     (hf : IsWeightedRestricted T f) :
     Summable (weightedEvalTerm φ b f) :=
@@ -256,7 +255,8 @@ theorem summable_weightedEvalTerm {φ : A →+* B} (hφ : Continuous φ) {T : Fi
 each weighted variable power-bounded as a set is enough. This is the theorem above read through
 `TauCeti.Huber.isWeightBounded_of_isWeightedVarPowerBounded`, and it is the form Proposition 5.50
 states. -/
-theorem summable_weightedEvalTerm_of_isWeightedVarPowerBounded {φ : A →+* B} (hφ : Continuous φ)
+theorem summable_weightedEvalTerm_of_isWeightedVarPowerBounded {φ : A →+* B}
+    (hφ : ContinuousAt φ 0)
     {T : Fin k → Set A} {b : Fin k → B} (hb : IsWeightedVarPowerBounded φ T b)
     {f : MvPowerSeries (Fin k) A} (hf : IsWeightedRestricted T f) :
     Summable (weightedEvalTerm φ b f) :=
@@ -267,7 +267,7 @@ tuple is that each variable be power-bounded, which is how Proposition 5.50 stat
 theorem above read through
 `TauCeti.Huber.isWeightBounded_one_weight_iff_forall_isPowerBounded`. -/
 theorem summable_weightedEvalTerm_of_forall_isPowerBounded {φ : A →+* B}
-    (hφ : Continuous φ) {b : Fin k → B} (hb : ∀ i, IsPowerBounded (b i))
+    (hφ : ContinuousAt φ 0) {b : Fin k → B} (hb : ∀ i, IsPowerBounded (b i))
     {f : MvPowerSeries (Fin k) A}
     (hf : IsWeightedRestricted (fun _ : Fin k ↦ ({1} : Set A)) f) :
     Summable (weightedEvalTerm φ b f) :=

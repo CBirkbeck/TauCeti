@@ -176,10 +176,9 @@ section CommMonoidWithZero
 
 variable {M : Type*} [CommMonoidWithZero M] [TopologicalSpace M]
 
-/-- **A finite pointwise product of bounded sets is bounded.** This is
-`Finset.prod_induction` with `TauCeti.Huber.IsBounded.mul` for the step; commutativity is what
-makes the `Finset` product of sets available in the first place. No continuity is needed: the
-unit case is `{1}`, which `TauCeti.Huber.isBounded_pair_zero_one` already bounds. -/
+/-- **A finite pointwise product of bounded sets is bounded.** Commutativity is
+what makes the `Finset` product of sets available in the first place, and no continuity is
+required. -/
 theorem isBounded_finsetProd {ι : Type*} (s : Finset ι) {S : ι → Set M}
     (hS : ∀ i ∈ s, IsBounded (S i)) : IsBounded (∏ i ∈ s, S i) :=
   s.prod_induction S IsBounded (fun _ _ ↦ IsBounded.mul)
