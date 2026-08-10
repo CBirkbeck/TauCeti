@@ -98,17 +98,6 @@ private lemma heckeGen_pow_one (p : ℕ) (hp : 0 < p) (k : ℕ) :
     rw [heckeGen_def]; exact congrArg diagElem (heckeGenDiag_one_eq_const p)]
   exact diagElem_const_pow 1 p hp k
 
-/-- An integer scalar times the basis element `diagElem a` is the single `Finsupp` at
-`diagCoset a` with that coefficient. -/
-private lemma intCast_mul_diagElem_eq_single {n : ℕ} [NeZero n] (a : Fin n → ℕ) (c : ℤ) :
-    (Int.castRingHom (IntegralHeckeRing n)) c * diagElem a =
-      HeckeCosetModule.single ℤ (diagCoset a) c := by
-  -- no cast lemma reads an `Int.castRingHom` image as a `zsmul` of `1` in this direction, so
-  -- the equation is stated here and discharged by `zsmul_eq_mul`.
-  rw [show (Int.castRingHom (IntegralHeckeRing n)) c = c • (1 : IntegralHeckeRing n) from by
-      rw [zsmul_eq_mul, mul_one]; rfl, smul_mul_assoc, one_mul, diagElem_def]
-  exact HeckeCosetModule.smul_single_one ℤ (diagCoset a) c
-
 /-- For `n = 1` and any base `1 < p`, the cosets `diagCoset (fun _ => p^k)` are injective in `k`:
 if they coincide for `b 0` and `s 0`, then `b 0 = s 0`. -/
 private lemma T_diag_one_ppow_inj (p : ℕ) (hp : 1 < p) {b s : Fin 1 →₀ ℕ}
@@ -694,14 +683,6 @@ private lemma monomial_eval_kronecker (p : ℕ) (hp : p.Prime)
       exact T_mul_T_scalar_eval_zero_of_not_dvd (p ^ b₁) (pow_pos hp.pos _) _ _
         (fun i ↦ by fin_cases i <;> simp [pow_pos hp.pos])
         (divChain_two_of_dvd (pow_dvd_pow p (by omega))) 0 h_not_dvd
-
-/-- For `n = 2`, the monomial `∏ₖ heckeGen(p,k)^{d k}` over the support of `d` equals
-`heckeGen(p,0)^{d 0} · heckeGen(p,1)^{d 1}` (missing factors contribute `heckeGen^0 = 1`). -/
-private lemma prod_T_gen_pow_eq_two (p : ℕ) (d : Fin 2 →₀ ℕ) :
-    (∏ k ∈ d.support, heckeGen 2 p k ^ d k) = heckeGen 2 p 0 ^ (d 0) * heckeGen 2 p 1 ^ (d 1) := by
-  rw [Finset.prod_subset (Finset.subset_univ d.support) (fun k _ hk ↦ by
-    rw [Finsupp.notMem_support_iff.mp hk, pow_zero])]
-  rw [Fin.prod_univ_two]
 
 /-- Evaluating `evalHom 2 p R` at the coset `D` expands as
 `∑_{d ∈ supp R} (R.coeff d) · (heckeGen(p,0)^{d 0} · heckeGen(p,1)^{d 1}) D`. -/

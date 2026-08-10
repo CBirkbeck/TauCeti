@@ -164,7 +164,7 @@ lemma isDvdChain_const (c : ℕ) : IsDvdChain (fun _ : Fin n ↦ c) :=
   fun _ _ _ ↦ dvd_refl _
 
 /-- The pointwise product of two divisibility chains is a divisibility chain. Scaling by a
-constant is the case `b = isDvdChain_const`. -/
+constant `c` is the case where `b` is the constant function, with `hb := isDvdChain_const n c`. -/
 lemma isDvdChain_mul {a b : Fin n → ℕ} (ha : IsDvdChain a) (hb : IsDvdChain b) :
     IsDvdChain (a * b) :=
   isDvdChain_iff.mpr fun _ _ hij ↦

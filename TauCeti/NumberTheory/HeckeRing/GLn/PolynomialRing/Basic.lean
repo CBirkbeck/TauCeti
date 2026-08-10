@@ -17,8 +17,9 @@ public section
 Towards **Shimura's Theorem 3.20**, that the `p`-local Hecke ring `pLocalSubring` of `GL_n` is a
 polynomial ring `ℤ[X₁, …, Xₙ]` on the `n` diagonal prime cosets. This file sets up the
 generators and proves the surjectivity half for `n = 1` and `n = 2`. The injectivity half —
-algebraic independence of the generators — and the resulting isomorphism are not part of this
-file; they are planned for a companion `PolynomialRing/Injective.lean`.
+algebraic independence of the generators — and the resulting isomorphisms live in the companion
+file `PolynomialRing/Injective.lean`, which consumes `evalHom_def` and `evalHom_apply` from
+here.
 
 ## Main definitions
 
