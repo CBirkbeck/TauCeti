@@ -209,6 +209,37 @@ theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
     hbase hga hgz
 
 
+/-- **The valence identity, divided through.** Cancelling the common factor `2πi` from
+`two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq` puts it in the shape the valence
+formula is usually written in: the winding-weighted count of orders inside the contour equals the
+cusp order minus `k/12`.
+
+The weight term matches because `k·(π/6)·I = 2πi·(k/12)`. -/
+theorem sum_windingNumber_mul_orderOfVanishingAt_eq [SlashInvariantFormClass F Γ k] (f : F)
+    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {U : Set ℂ} (hH : 1 ≤ H)
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
+    (hper : Periodic (⇑f ∘ ofComplex) 1) (hU : IsOpen U)
+    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
+    (hoff : ∀ z ∈ U, z ∉ S → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hmero : ∀ s ∈ S, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
+    (hfin : ∀ s ∈ S, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s ≠ ⊤)
+    (hbase : fdBoundary H 0 ∉ (S : Set ℂ))
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      cuspFunction 1 ⇑f q ≠ 0) :
+    ∑ z ∈ S, Contour.windingNumber (fdBoundary H) 0 5 z *
+        ((meromorphicOrderAt (⇑f ∘ ofComplex) z).untop₀ : ℂ) =
+      qExpansionOrderAtCusp 1 ⇑f - (k : ℂ) / 12 := by
+  have hne : (2 : ℂ) * (Real.pi : ℂ) * Complex.I ≠ 0 := by
+    simp [Real.pi_ne_zero]
+  refine mul_left_cancel₀ hne ?_
+  rw [two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH hnorm hinv hHgt hper hU
+    hUdom hoff hmero hfin hbase hga hgz]
+  push_cast
+  ring
+
+
 end ModularForm
 
 end TauCeti
