@@ -49,6 +49,9 @@ countability enter; it is not proved here.
 * `TauCeti.HasZeroSequenceOfUnits.nonempty_interior_closure_image` and
   `TauCeti.HasZeroSequenceOfUnits.closure_image_mem_nhds_zero`: the same two, taking the sequence
   from the class rather than from the caller.
+* `TauCeti.exists_mem_and_sub_mem_closure_image`: one step of the approximation that consumes that
+  neighbourhood — a point in the closure of `f '' U` is brought inside `closure (f '' V)` by
+  subtracting the image of some `x ∈ U`.
 
 ## References
 
@@ -177,6 +180,33 @@ theorem HasZeroSequenceOfUnits.closure_image_mem_nhds_zero [HasZeroSequenceOfUni
   closure_image_mem_nhds_zero_of_tendsto_zero f hf hu hc hU
 
 end Nhds
+
+section Approximation
+
+variable {M N : Type*} [AddCommGroup N] [TopologicalSpace N] [IsTopologicalAddGroup N]
+
+/-- **One step of Henkel's approximation.** If `y` lies in the closure of `f '' U`, and the closure
+of `f '' V` is a neighbourhood of zero, then some `x ∈ U` brings `y` within that closure: the
+residual `y - f x` lies in `closure (f '' V)`.
+
+This is what turns the neighbourhood statement above into a *construction*. Iterating it down a
+decreasing sequence of `V`s produces a sequence of approximants whose residuals shrink, and it is
+the convergence of the resulting series — where completeness and first countability enter — that
+finally removes the closure from `f '' U`. Neither of those hypotheses is needed here.
+
+Nothing is asked of `f` beyond being a function, and nothing of `M` at all: the step is about
+closures and images, and it is the *iteration* that needs `f` additive and `M` complete. -/
+theorem exists_mem_and_sub_mem_closure_image {F : Type*} [FunLike F M N] (f : F) {U V : Set M}
+    {y : N} (hy : y ∈ closure (f '' U))
+    (hV : closure (f '' V) ∈ 𝓝 (0 : N)) : ∃ x ∈ U, y - f x ∈ closure (f '' V) := by
+  -- `z ↦ y - z` is continuous and sends `y` to `0`, so it pulls `closure (f '' V)` back to a
+  -- neighbourhood of `y`, which `y ∈ closure (f '' U)` forces to meet `f '' U`.
+  have hnhd : (fun z ↦ y - z) ⁻¹' closure (f '' V) ∈ 𝓝 y :=
+    (continuous_const.sub continuous_id).continuousAt.preimage_mem_nhds (by simpa using hV)
+  obtain ⟨_, hres, x, hx, rfl⟩ := mem_closure_iff_nhds.mp hy _ hnhd
+  exact ⟨x, hx, hres⟩
+
+end Approximation
 
 end TauCeti
 
