@@ -33,8 +33,9 @@ ceiling still reads the cusp order.
   (the ceiling bridge).
 * `TauCeti.ModularForm.not_exists_norm_fdBoundary_sub_le_of_mem_Icc_four_five` (the excision
   never fires on the ceiling) and
-  `…_excised_logDeriv_fdBoundary_segment5_eq_two_pi_I_mul_qExpansionOrderAtCusp` in the same
-  namespace (so the excised ceiling integral is still `2πi · ord_∞`).
+  `intervalIntegral_excised_logDeriv_fdBoundary_segment5_eq_two_pi_I_mul_qExpansionOrderAtCusp`
+  (same namespace; the fully qualified name does not fit the line limit — so the excised
+  ceiling integral is still `2πi · ord_∞`).
 
 ## References
 
