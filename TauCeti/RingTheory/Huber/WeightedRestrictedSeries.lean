@@ -900,8 +900,12 @@ noncomputable def weightedPolynomials [NonarchimedeanRing A] (T : Fin k → Set 
     (hT : IsWeightFamily T) : Subring (weightedRestrictedSubring T hT) :=
   (weightedPolynomialHom T hT).range
 
-/-- Membership in `weightedPolynomials` is exactly having finitely many nonzero coefficients. -/
-@[simp]
+/-- Membership in `weightedPolynomials` is exactly having finitely many nonzero coefficients.
+
+Deliberately not `@[simp]`: with this rewrite in the default set, the left-hand sides of
+`weightedC_mem_weightedPolynomials` and `weightedX_mem_weightedPolynomials` stop being
+simp-normal — simp turns them into `Set.Finite` goals it cannot then close — and `simpNF`
+rejects them. The generator facts are the ones worth firing automatically. -/
 theorem mem_weightedPolynomials_iff [NonarchimedeanRing A] {T : Fin k → Set A}
     {hT : IsWeightFamily T} {f : weightedRestrictedSubring T hT} :
     f ∈ weightedPolynomials T hT ↔
