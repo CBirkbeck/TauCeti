@@ -93,8 +93,9 @@ variable {R : Type*} [CommRing R] (W : WeierstrassCurve.Affine R)
 /-- **The coordinate ring is a finite `R[X]`-module.** -/
 -- Mathlib registers `Module.Free R[X] R[W]` off the same basis (`Affine/Point.lean`) but not
 -- `Module.Finite`, which it has only as the lemma `Polynomial.Monic.finite_adjoinRoot`; instance
--- search cannot reach a lemma. This is what `Algebra.IsIntegral.of_finite` and the norm and trace
--- API consume, and what makes the rank below the rank of a finite module.
+-- search cannot reach a lemma. Its consumers in this repository are the two Dedekind theorems of
+-- `Affine/CoordinateRing.lean` and `isIntegral_pullback_of_isIntegral_X` in
+-- `Isogeny/FunctionField.lean`, each of which used to re-derive it from the basis by hand.
 instance moduleFinite_coordinateRing : Module.Finite R[X] W.CoordinateRing :=
   .of_basis (CoordinateRing.basis W)
 
