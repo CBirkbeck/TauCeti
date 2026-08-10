@@ -39,13 +39,6 @@ variable {γ : ℝ → ℂ} {φ : ℂ → ℂ} {S : Finset ℂ} {a b ε C : ℝ}
 private def survivingParams (γ : ℝ → ℂ) (S : Finset ℂ) (ε : ℝ) : Set ℝ :=
   {t | ∀ s ∈ S, ε < ‖γ t - s‖}
 
-private theorem measurableSet_survivingParams (hγm : Measurable γ) (S : Finset ℂ) (ε : ℝ) :
-    MeasurableSet (survivingParams γ S ε) := by
-  have h : survivingParams γ S ε = {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε}ᶜ := by
-    ext; simp [survivingParams, not_le]
-  rw [h]
-  exact (measurableSet_excision hγm S ε).compl
-
 /-- **The excised integrand is integrable.** Off the excision the curve stays at distance `> ε`
 from every centre, so over `[a, b]` its values lie in a compact set on which `φ` is continuous,
 hence bounded. The excised integrand is that bounded factor times `deriv γ`, so it is integrable
@@ -54,41 +47,60 @@ whenever `deriv γ` is.
 `hφ` asks for continuity only on the *closed* condition `ε ≤ ‖z - s‖`, which is what makes the
 relevant set compact; the excision itself keeps the strict `ε < ‖γ t - s‖`. -/
 theorem intervalIntegrable_excised_of_continuousOn (hγc : ContinuousOn γ (uIcc a b))
-    (hγm : Measurable γ) (hd : IntervalIntegrable (deriv γ) MeasureTheory.volume a b)
+    (hd : IntervalIntegrable (deriv γ) MeasureTheory.volume a b)
     (hφ : ContinuousOn φ (γ '' uIcc a b ∩ {z | ∀ s ∈ S, ε ≤ ‖z - s‖})) :
     IntervalIntegrable (fun t => if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then 0 else φ (γ t) * deriv γ t)
       MeasureTheory.volume a b := by
-  set K : Set ℂ := γ '' uIcc a b ∩ {z | ∀ s ∈ S, ε ≤ ‖z - s‖} with hK
   have hclosed : IsClosed {z : ℂ | ∀ s ∈ S, ε ≤ ‖z - s‖} := by
     have h : {z : ℂ | ∀ s ∈ S, ε ≤ ‖z - s‖} = ⋂ s ∈ S, {z : ℂ | ε ≤ ‖z - s‖} := by ext; simp
     rw [h]
     exact isClosed_biInter fun s _ =>
       isClosed_le continuous_const ((continuous_id.sub continuous_const).norm)
-  have hKcompact : IsCompact K :=
-    (isCompact_uIcc.image_of_continuousOn hγc).inter_right hclosed
-  obtain ⟨M, hM⟩ := hKcompact.exists_bound_of_continuousOn hφ
-  -- The excised integrand is a bounded factor times `deriv γ`.
-  have hsplit : (fun t => if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then 0 else φ (γ t) * deriv γ t) =
-      fun t => (survivingParams γ S ε).indicator (fun t => φ (γ t)) t * deriv γ t := by
-    funext t
+  obtain ⟨M, hM⟩ :=
+    ((isCompact_uIcc.image_of_continuousOn hγc).inter_right hclosed).exists_bound_of_continuousOn hφ
+  -- Measurability is only ever needed on `Ι a b`, where `hγc` already supplies it.
+  have hae : AEMeasurable γ (MeasureTheory.volume.restrict (uIoc a b)) :=
+    (hγc.mono Set.uIoc_subset_uIcc).aemeasurable measurableSet_uIoc
+  have hA0 : MeasureTheory.NullMeasurableSet (survivingParams γ S ε ∩ uIoc a b)
+      (MeasureTheory.volume.restrict (uIoc a b)) := by
+    have hcompl : survivingParams γ S ε = {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε}ᶜ := by
+      ext; simp [survivingParams, not_le]
+    have hset : {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} = ⋃ s ∈ S, {t | ‖γ t - s‖ ≤ ε} := by ext; simp
+    refine MeasureTheory.NullMeasurableSet.inter ?_ measurableSet_uIoc.nullMeasurableSet
+    refine hcompl ▸ MeasureTheory.NullMeasurableSet.compl (hset ▸ ?_)
+    exact MeasureTheory.NullMeasurableSet.biUnion S.countable_toSet fun s _ =>
+      nullMeasurableSet_le ((hae.sub_const s).norm) aemeasurable_const
+  have hmem : ∀ t ∈ uIoc a b,
+      (t ∈ survivingParams γ S ε ∩ uIoc a b ↔ ¬∃ s ∈ S, ‖γ t - s‖ ≤ ε) := by
+    refine fun t ht => ⟨?_, ?_⟩
+    · rintro ⟨hs, -⟩ ⟨s, hsS, hle⟩
+      exact absurd hle (not_le.mpr (hs s hsS))
+    · exact fun h => ⟨fun s hsS => not_le.mp fun hle => h ⟨s, hsS, hle⟩, ht⟩
+  have hsplit : EqOn (fun t => if ∃ s ∈ S, ‖γ t - s‖ ≤ ε then 0 else φ (γ t) * deriv γ t)
+      (fun t => (survivingParams γ S ε ∩ uIoc a b).indicator (fun t => φ (γ t)) t * deriv γ t)
+      (uIoc a b) := fun t ht => by
     by_cases h : ∃ s ∈ S, ‖γ t - s‖ ≤ ε
-    · rw [if_pos h, Set.indicator_of_notMem (by simpa [survivingParams, not_lt] using h), zero_mul]
-    · rw [if_neg h, Set.indicator_of_mem (by simpa [survivingParams, not_lt] using h)]
-  rw [hsplit, intervalIntegrable_iff]
+    · have hno : t ∉ survivingParams γ S ε ∩ uIoc a b := fun hm => (hmem t ht).mp hm h
+      simp [Set.indicator_of_notMem hno, h]
+    · have hyes : t ∈ survivingParams γ S ε ∩ uIoc a b := (hmem t ht).mpr h
+      simp [Set.indicator_of_mem hyes, h]
+  rw [intervalIntegrable_iff]
+  refine MeasureTheory.IntegrableOn.congr_fun ?_ hsplit.symm measurableSet_uIoc
   refine (intervalIntegrable_iff.mp hd).bdd_mul (c := max M 0) ?_ ?_
-  · refine (aestronglyMeasurable_indicator_iff
-      (measurableSet_survivingParams hγm S ε)).mpr ?_
-    rw [MeasureTheory.Measure.restrict_restrict (measurableSet_survivingParams hγm S ε)]
-    refine ContinuousOn.aestronglyMeasurable ?_
-      ((measurableSet_survivingParams hγm S ε).inter measurableSet_uIoc)
-    exact hφ.comp (hγc.mono fun t ht => Set.uIoc_subset_uIcc ht.2) fun t ht =>
-      ⟨⟨t, Set.uIoc_subset_uIcc ht.2, rfl⟩, fun s hs => (ht.1 s hs).le⟩
+  · refine (aestronglyMeasurable_indicator_iff₀ hA0).mpr ?_
+    rw [MeasureTheory.Measure.restrict_restrict₀ hA0]
+    refine (ContinuousOn.aemeasurable₀ (f := fun t => φ (γ t)) (fun t ht => ?_) ?_
+      ).aestronglyMeasurable
+    · exact (hφ.comp (hγc.mono fun u hu => Set.uIoc_subset_uIcc hu.1.2)
+        fun u hu => ⟨⟨u, Set.uIoc_subset_uIcc hu.1.2, rfl⟩, fun s hs => (hu.1.1 s hs).le⟩) t ht
+    · exact ((MeasureTheory.nullMeasurableSet_restrict_of_subset
+        Set.inter_subset_right).mp hA0).inter measurableSet_uIoc.nullMeasurableSet
   · refine (MeasureTheory.ae_restrict_iff' measurableSet_uIoc).mpr
       (Filter.Eventually.of_forall fun t ht => ?_)
-    by_cases hs : t ∈ survivingParams γ S ε
+    by_cases hs : t ∈ survivingParams γ S ε ∩ uIoc a b
     · rw [Set.indicator_of_mem hs]
-      exact (hM _ ⟨⟨t, Set.uIoc_subset_uIcc ht, rfl⟩,
-        fun s hsS => (hs s hsS).le⟩).trans (le_max_left _ _)
+      exact (hM _ ⟨⟨t, Set.uIoc_subset_uIcc hs.2, rfl⟩,
+        fun s hsS => (hs.1 s hsS).le⟩).trans (le_max_left _ _)
     · rw [Set.indicator_of_notMem hs, norm_zero]
       exact le_max_right _ _
 

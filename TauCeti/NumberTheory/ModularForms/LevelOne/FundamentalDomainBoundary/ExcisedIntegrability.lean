@@ -7,7 +7,7 @@ module
 
 public import TauCeti.Analysis.Contour.Curve.ExcisedIntegrability
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.DerivBound
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Basic
+public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
 
 import TauCeti.Analysis.Contour.LogDerivFTC
 
@@ -73,7 +73,7 @@ theorem intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary
       (hoff _ hmemU hnotS).2).continuousAt.continuousWithinAt
   simpa only [smul_eq_mul, mul_comm] using
     Contour.intervalIntegrable_excised_of_continuousOn (continuous_fdBoundary H).continuousOn
-      (continuous_fdBoundary H).measurable hd hφ
+      hd hφ
 
 end ModularForm
 
