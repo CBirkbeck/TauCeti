@@ -7,7 +7,7 @@ module
 public import Mathlib.Analysis.Calculus.FDeriv.Defs
 public import Mathlib.Data.Set.Function
 public import TauCeti.Analysis.Complex.Conformal.PseudoHyperbolic
-public import Mathlib.Analysis.Calculus.DSlope
+public import TauCeti.Analysis.Calculus.DSlope.Basic
 import Mathlib.Analysis.Complex.Schwarz
 import TauCeti.Analysis.Complex.Conformal.Moebius
 
@@ -64,17 +64,6 @@ lemma schwarzPickConjugate_def (f : ℂ → ℂ) (a : ℂ) :
       (fun η => (η - f a) / (1 - (starRingEnd ℂ) (f a) * η)) ∘ f ∘
         fun ξ => (ξ - (-a)) / (1 - (starRingEnd ℂ) (-a) * ξ) := by
   rw [schwarzPickConjugate]
-
-/-- **A map fixing the origin has unit difference quotient wherever it preserves the modulus.**
-For `g 0 = 0` and `ξ ≠ 0` with `‖g ξ‖ = ‖ξ‖`, the difference quotient `dslope g 0 ξ` is unimodular.
-
-This is the input the equality case of Schwarz's lemma
-(`Complex.affine_of_mapsTo_ball_of_norm_dslope_eq_div`) asks for, and no holomorphy is involved in
-supplying it. -/
-lemma norm_dslope_zero_eq_one_of_norm_map_eq {g : ℂ → ℂ} {ξ : ℂ} (hg0 : g 0 = 0) (hξ : ξ ≠ 0)
-    (hnorm : ‖g ξ‖ = ‖ξ‖) : ‖dslope g 0 ξ‖ = 1 := by
-  rw [dslope_of_ne _ hξ, slope_def_field, hg0, sub_zero, sub_zero, norm_div, hnorm,
-    div_self (norm_ne_zero_iff.mpr hξ)]
 
 /-- The Schwarz--Pick conjugate of `f` at `a` fixes the origin: the source factor sends `0` to
 `a`, and the target factor sends `f a` to `0`.  No hypothesis on `f` or `a` is needed. -/
