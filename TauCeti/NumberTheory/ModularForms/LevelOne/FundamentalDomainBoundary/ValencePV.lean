@@ -180,34 +180,36 @@ theorem two_pi_I_mul_sum_windingNumber_mul_order_eq [SlashInvariantFormClass F �
     (hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex f hS hnorm hinv hHgt hper hoffγ hga
       hgz).hasCauchyPV
 
-/-- **The weighted zero count in terms of `orderOfVanishingAt`.** With the excision centres in
-the upper half plane, the abstract order function of
-`two_pi_I_mul_sum_windingNumber_mul_order_eq` is the modular-forms order at each centre.
+/-- **The weighted zero count in terms of `orderOfVanishingAt`.** With the divisor points in the
+upper half plane, the abstract order function of `two_pi_I_mul_sum_windingNumber_mul_order_eq` is
+the modular-forms order at each of them.
 
 `orderOfVanishingAt` is by definition the meromorphic order of `f ∘ ofComplex`
 (`orderOfVanishingAt_def`), so the abstract hypothesis is discharged by finiteness alone, which
-is what `hfin` records. The sum runs over `S.attach` because the order is taken at the centre
-*as a point of `ℍ`*, which needs its membership proof. -/
+is what `hfin` records. The sum runs over `T.attach` because the order is taken at each divisor
+point *as a point of `ℍ`*, which needs its membership proof. -/
 theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
-    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ}
+    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
     {U : Set ℂ} (hH : 1 ≤ H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
-    (hHgt : ∀ s ∈ S, s.im < H) (hpos : ∀ s ∈ S, 0 < s.im)
-    (hper : Periodic (⇑f ∘ ofComplex) 1) (hU : IsOpen U)
+    (hHgt : ∀ s ∈ S, s.im < H) (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hU : IsOpen U)
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
-    (hoff : ∀ z ∈ U, z ∉ S → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
-    (hmero : ∀ s ∈ S, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hfin : ∀ s ∈ S, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s ≠ ⊤)
-    (hbase : fdBoundary H 0 ∉ (S : Set ℂ))
+    (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
+    (hfin : ∀ s ∈ T, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s ≠ ⊤)
+    (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
     (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
       cuspFunction 1 ⇑f q ≠ 0) :
     2 * (Real.pi : ℂ) * Complex.I *
-        ∑ z ∈ S.attach, Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
+        ∑ z ∈ T.attach, Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
           ((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) =
       2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
         (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I) := by
-  have hsummand : ∀ z ∈ S.attach,
+  have hsummand : ∀ z ∈ T.attach,
       Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
           ((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) =
         Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
@@ -215,10 +217,11 @@ theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
     intro z _
     rw [orderOfVanishingAt_def]
   rw [Finset.sum_congr rfl hsummand,
-    Finset.sum_attach S fun z => Contour.windingNumber (fdBoundary H) 0 5 z *
+    Finset.sum_attach T fun z => Contour.windingNumber (fdBoundary H) 0 5 z *
       (((meromorphicOrderAt (⇑f ∘ ofComplex) z).untop₀ : ℤ) : ℂ)]
-  exact two_pi_I_mul_sum_windingNumber_mul_order_eq f hS hH hnorm hinv hHgt hper hU hUdom hoff
-    hmero (fun s hsS hsU => (WithTop.coe_untop₀_of_ne_top (hfin s hsS hsU)).symm) hbase hga hgz
+  exact two_pi_I_mul_sum_windingNumber_mul_order_eq f hS hH hnorm hinv hHgt hper hoffγ hU hUdom
+    hoff hmero (fun s hsT hsU => (WithTop.coe_untop₀_of_ne_top (hfin s hsT hsU)).symm) hbase hga
+    hgz
 
 /-- **The valence identity, divided through.** Cancelling the common factor `2πi` puts the
 identity in the shape the valence formula is usually written in: the winding-weighted count of
@@ -226,26 +229,29 @@ orders inside the contour equals the cusp order minus `k/12`.
 
 The weight term matches because `k·(π/6)·I = 2πi·(k/12)`. -/
 theorem sum_windingNumber_mul_orderOfVanishingAt_eq [SlashInvariantFormClass F Γ k] (f : F)
-    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {U : Set ℂ} (hH : 1 ≤ H)
+    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ} (hH : 1 ≤ H)
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
-    (hpos : ∀ s ∈ S, 0 < s.im) (hper : Periodic (⇑f ∘ ofComplex) 1) (hU : IsOpen U)
+    (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hU : IsOpen U)
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
-    (hoff : ∀ z ∈ U, z ∉ S → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
-    (hmero : ∀ s ∈ S, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hfin : ∀ s ∈ S, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s ≠ ⊤)
-    (hbase : fdBoundary H 0 ∉ (S : Set ℂ))
+    (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
+    (hfin : ∀ s ∈ T, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s ≠ ⊤)
+    (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
     (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
       cuspFunction 1 ⇑f q ≠ 0) :
-    ∑ z ∈ S.attach, Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
+    ∑ z ∈ T.attach, Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
         ((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) =
       qExpansionOrderAtCusp 1 ⇑f - (k : ℂ) / 12 := by
   have hne : (2 : ℂ) * (Real.pi : ℂ) * Complex.I ≠ 0 := by
     simp [Real.pi_ne_zero]
   refine mul_left_cancel₀ hne ?_
-  rw [two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH hnorm hinv hHgt hpos hper
-    hU hUdom hoff hmero hfin hbase hga hgz]
+  rw [two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH hnorm hinv hHgt hper hoffγ
+    hU hUdom hoff hmero hfin hpos hbase hga hgz]
   push_cast
   ring
 
