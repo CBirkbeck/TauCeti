@@ -31,8 +31,8 @@ file; they are planned for a companion `PolynomialRing/Injective.lean`.
 
 ## Main results
 
-* `HeckeRing.GLn.evalHomLocal_surjective_two`,
-  `HeckeRing.GLn.evalHomLocal_surjective_one`: the presentation is onto, `ℤ[X₁, X₂] ↠ R_p` and
+* `HeckeRing.GLn.evalHomLocal_two_surjective`,
+  `HeckeRing.GLn.evalHomLocal_one_surjective`: the presentation is onto, `ℤ[X₁, X₂] ↠ R_p` and
   `ℤ[X₁] ↠ R_p` — the surjectivity half of Theorem 3.20 at `n = 2` and `n = 1`.
 * `HeckeRing.GLn.heckeGen_mem_pLocalSubring`: each generator lies in `pLocalSubring`.
 * `HeckeRing.GLn.pLocalSubring_two_subset_evalHom_range`,
@@ -189,6 +189,12 @@ noncomputable def evalHomLocal : MvPolynomial (Fin n) ℤ →+* pLocalSubring n 
 @[simp] lemma evalHomLocal_coe (f : MvPolynomial (Fin n) ℤ) :
     (evalHomLocal n p f : IntegralHeckeRing n) = evalHom n p f := (rfl)
 
+/-- The computation rule of the presentation map: the `k`-th variable goes to the `k`-th
+generator, taken in `pLocalSubring` rather than in the ambient ring. -/
+@[simp] lemma evalHomLocal_X (k : Fin n) :
+    evalHomLocal n p (MvPolynomial.X k) = ⟨heckeGen n p k, heckeGen_mem_pLocalSubring n p k⟩ :=
+  Subtype.ext (evalHom_X n p k)
+
 end PolynomialRing
 
 
@@ -326,14 +332,14 @@ theorem pLocalSubring_one_subset_evalHom_range (p : ℕ) (hp : p.Prime) :
 /-- **The presentation is onto at `n = 2`**: `ℤ[X₁, X₂] ↠ R_p`, the surjectivity half of
 Shimura's Theorem 3.20. This is the inclusion above read through `evalHomLocal`, whose codomain
 is `R_p` itself. -/
-theorem evalHomLocal_surjective_two (p : ℕ) (hp : p.Prime) :
+theorem evalHomLocal_two_surjective (p : ℕ) (hp : p.Prime) :
     Function.Surjective (evalHomLocal 2 p) := by
   rintro ⟨y, hy⟩
   obtain ⟨f, hf⟩ := pLocalSubring_two_subset_evalHom_range p hp hy
   exact ⟨f, Subtype.ext hf⟩
 
 /-- **The presentation is onto at `n = 1`**: `ℤ[X₁] ↠ R_p`. -/
-theorem evalHomLocal_surjective_one (p : ℕ) (hp : p.Prime) :
+theorem evalHomLocal_one_surjective (p : ℕ) (hp : p.Prime) :
     Function.Surjective (evalHomLocal 1 p) := by
   rintro ⟨y, hy⟩
   obtain ⟨f, hf⟩ := pLocalSubring_one_subset_evalHom_range p hp hy
