@@ -21,10 +21,12 @@ transfers to every other. This is what makes a construction defined by "pick any
 well posed up to the ambiguity that `b + aθ` describes.
 `linearIndependent_one_of_notMem_range_algebraMap` is the linear-algebra step behind the second.
 
-The first two of those need only a nontrivial *ring* over `K`, not a field, and are stated that
-way: they see `L` only as a free `K`-module of rank two, so they also cover the split and
-non-reduced quadratic algebras `K × K` and `K[X]/(X²)`. Only
-`exists_eq_algebraMap_add_algebraMap_mul` asks for a field.
+Two of the three need only a nontrivial *ring* over `K`, not a field, and are stated that way:
+`linearIndependent_one_of_notMem_range_algebraMap`, which carries no rank hypothesis at all — its
+argument is just that `θ` is not a `K`-multiple of `1` — and
+`Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap`, which sees `L` only as a free
+`K`-module of rank two. So both cover the split and non-reduced quadratic algebras `K × K` and
+`K[X]/(X²)`. Only `exists_eq_algebraMap_add_algebraMap_mul` asks for a field.
 
 These are consumed by the extension quadratic twist in
 `TauCeti/AlgebraicGeometry/EllipticCurve/QuadraticTwist.lean`, which advances

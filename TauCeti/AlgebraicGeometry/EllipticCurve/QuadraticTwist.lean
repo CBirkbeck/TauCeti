@@ -315,10 +315,12 @@ theorem isElliptic_quadraticTwistOf_trace_norm [E.IsElliptic] {θ : L}
 
 variable (K L) in
 /-- The generator `quadraticTwist` picks does generate: nonzero discriminant characterises the
-generators (`discrim_eq_zero_iff_mem_range`), and the chosen element has nonzero discriminant. -/
-private theorem choose_exists_discrim_notMem_range :
+generators (`discrim_eq_zero_iff_mem_range_algebraMap`), and the chosen element has nonzero
+discriminant. -/
+private theorem choose_exists_discrim_notMem_range_algebraMap :
     (exists_discrim_ne_zero K L).choose ∉ Set.range (algebraMap K L) :=
-  fun h => (exists_discrim_ne_zero K L).choose_spec ((discrim_eq_zero_iff_mem_range K L).mpr h)
+  fun h => (exists_discrim_ne_zero K L).choose_spec
+    ((discrim_eq_zero_iff_mem_range_algebraMap K L).mpr h)
 
 /-- **The quadratic twist of `E` by the separable quadratic extension `L/K`**: the twist by the
 trace and norm of a generator of `L/K`. The choice of generator is harmless —
@@ -348,7 +350,7 @@ inside the existential, so nothing else could determine it. -/
 theorem exists_quadraticTwist_eq :
     ∃ θ : L, θ ∉ Set.range (algebraMap K L) ∧
       E.quadraticTwist L = E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ) :=
-  ⟨_, choose_exists_discrim_notMem_range K L, by simp only [quadraticTwist]⟩
+  ⟨_, choose_exists_discrim_notMem_range_algebraMap K L, by simp only [quadraticTwist]⟩
 
 /-- The twist of an elliptic curve by a separable quadratic extension is elliptic. Registered as
 an instance so that downstream statements needing `[(E.quadraticTwist L).IsElliptic]` discharge it
@@ -368,7 +370,7 @@ theorem j_quadraticTwist [E.IsElliptic] : (E.quadraticTwist L).j = E.j := by
   -- `simp only` unfolds the definition and carries the instance along.
   simp only [quadraticTwist]
   exact E.j_quadraticTwistOf _ _
-    (E.isElliptic_quadraticTwistOf_trace_norm (choose_exists_discrim_notMem_range K L))
+    (E.isElliptic_quadraticTwistOf_trace_norm (choose_exists_discrim_notMem_range_algebraMap K L))
 
 /-- The twist by the extension agrees, up to a change of variables over `K`, with the twist by
 *any* generator `θ`: the arbitrary choice in `quadraticTwist` is harmless. -/
