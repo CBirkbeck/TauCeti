@@ -84,12 +84,9 @@ theorem exists_eqOn_const_mul_of_leftInvOn_ball_of_map_zero
     norm_num
   have hz₀_ne : z₀ ≠ 0 := by
     rw [hz₀_def]; norm_num
-  -- The slope `dslope f 0 z₀ = f z₀ / z₀` has modulus one because `f` preserves the modulus.
-  have hslope : dslope f 0 z₀ = f z₀ / z₀ := by
-    rw [dslope_of_ne _ hz₀_ne, slope_def_field, hf0, sub_zero, sub_zero]
-  have hkey : ‖dslope f 0 z₀‖ = 1 := by
-    rw [hslope, norm_div, hnorm z₀ hz₀_mem]
-    exact div_self (norm_ne_zero_iff.mpr hz₀_ne)
+  -- The slope has modulus one because `f` fixes the origin and preserves the modulus.
+  have hkey : ‖dslope f 0 z₀‖ = 1 :=
+    norm_dslope_zero_eq_one_of_norm_map_eq hf0 hz₀_ne (hnorm z₀ hz₀_mem)
   -- The equality case of the Schwarz lemma makes `f` affine with this slope.
   set c : ℂ := dslope f 0 z₀ with hc_def
   have hmaps_closed : MapsTo f (ball (0 : ℂ) 1) (closedBall (f 0) 1) := by

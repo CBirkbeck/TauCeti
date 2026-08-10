@@ -71,28 +71,25 @@ variable {f : ℂ → ℂ} {z w : ℂ}
 /-- **Preserving the pseudo-hyperbolic expression makes the Schwarz estimate an equality.** If
 `f` matches the pseudo-hyperbolic expression at two distinct points `z ≠ w` of the disc, then the
 Schwarz--Pick conjugate at `w` has unit difference quotient at some point of the disc. -/
-private theorem exists_mem_ball_norm_dslope_schwarzPickConjugate_eq_one
+private theorem exists_mem_ball_norm_dslope_schwarzPickConjugate_eq_one_of_pseudoHyperbolicExpr_eq
     (hz : z ∈ ball (0 : ℂ) 1) (hw_norm : ‖w‖ < 1) (hne : z ≠ w)
     (heq : pseudoHyperbolicExpr (f z) (f w) = pseudoHyperbolicExpr z w) :
     ∃ ξ ∈ ball (0 : ℂ) 1, ‖dslope (schwarzPickConjugate f w) 0 ξ‖ = 1 / 1 := by
   have hz_norm : ‖z‖ < 1 := by simpa [mem_ball_zero_iff] using hz
   -- the Moebius image of `z` is where the conjugate attains its bound
-  refine ⟨(z - w) / (1 - (starRingEnd ℂ) w * z),
-    mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := w) hw_norm hz, ?_⟩
-  have hξ_norm : ‖(z - w) / (1 - (starRingEnd ℂ) w * z)‖ = pseudoHyperbolicExpr z w :=
-    (pseudoHyperbolicExpr_def z w).symm
-  have hξ_ne : (z - w) / (1 - (starRingEnd ℂ) w * z) ≠ 0 := by
+  set ξ : ℂ := (z - w) / (1 - (starRingEnd ℂ) w * z) with hξ_def
+  refine ⟨ξ, mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := w) hw_norm hz, ?_⟩
+  have hξ_norm : ‖ξ‖ = pseudoHyperbolicExpr z w := (pseudoHyperbolicExpr_def z w).symm
+  have hξ_ne : ξ ≠ 0 := by
     rw [← norm_ne_zero_iff, hξ_norm]
     exact fun h => hne ((pseudoHyperbolicExpr_eq_zero_iff_of_mem_ball hz
       (mem_ball_zero_iff.2 hw_norm)).mp h)
-  have hg_ξ : ‖schwarzPickConjugate f w ((z - w) / (1 - (starRingEnd ℂ) w * z))‖
-      = ‖(z - w) / (1 - (starRingEnd ℂ) w * z)‖ := by
-    rw [schwarzPickConjugate_apply_unitDiscMoebiusFormula hw_norm hz_norm,
-      ← pseudoHyperbolicExpr_def, heq, hξ_norm]
-  rw [dslope_of_ne _ hξ_ne, slope_def_field, schwarzPickConjugate_apply_zero f w, sub_zero,
-    sub_zero, norm_div, hg_ξ,
-    div_self (norm_ne_zero_iff.mpr hξ_ne)]
-  norm_num
+  have hg_ξ : ‖schwarzPickConjugate f w ξ‖ = ‖ξ‖ := by
+    rw [hξ_def, schwarzPickConjugate_apply_unitDiscMoebiusFormula hw_norm hz_norm,
+      ← pseudoHyperbolicExpr_def, ← hξ_def, hξ_norm]
+    exact heq
+  rw [div_one]
+  exact norm_dslope_zero_eq_one_of_norm_map_eq (schwarzPickConjugate_apply_zero f w) hξ_ne hg_ξ
 
 /--
 **Rigidity in the Schwarz--Pick theorem.**  If a holomorphic self-map `f` of the open unit disc
@@ -121,7 +118,8 @@ theorem exists_norm_eq_one_forall_eq_of_pseudoHyperbolicExpr_map_eq
   -- Mathlib's equality case of the Schwarz lemma, in its existence form
   obtain ⟨C, hC_norm, haffine⟩ :=
     Complex.affine_of_mapsTo_ball_of_exists_norm_dslope_eq_div' hgd hg_maps_closed
-      (exists_mem_ball_norm_dslope_schwarzPickConjugate_eq_one hz hw_norm hne heq)
+      (exists_mem_ball_norm_dslope_schwarzPickConjugate_eq_one_of_pseudoHyperbolicExpr_eq
+        hz hw_norm hne heq)
   refine ⟨C, by simpa using hC_norm, fun ζ hζ => ?_⟩
   have hζ' : (ζ - w) / (1 - (starRingEnd ℂ) w * ζ) ∈ ball (0 : ℂ) 1 :=
     mapsTo_ball_unitDiscMoebiusFormula_of_norm_lt_one (a := w) hw_norm hζ
