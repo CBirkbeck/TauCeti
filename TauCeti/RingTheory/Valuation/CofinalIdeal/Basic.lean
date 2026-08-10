@@ -305,7 +305,7 @@ theorem isRadical_cofinalIdeal {v : Valuation A Γ₀}
   rw [mem_cofinalIdeal] at hn ⊢
   rcases Nat.eq_zero_or_pos n with rfl | hp
   · rw [pow_zero] at hn
-    exact absurd hn.lt_one (by simp)
+    exact absurd hn (not_cofinalValueFor_one v H.toSubgroup)
   · exact (cofinalValueFor_pow_iff hp).mp hn
 
 end CommRing
