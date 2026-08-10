@@ -68,10 +68,10 @@ theorem mem_range_algebraMap_of_apply_eq {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) {
   · exact AlgEquiv.one_apply x
   · exact hx
 
-/-- **A nontrivial automorphism moves every element outside the base field.** The difference is
-the square root of the discriminant of the element's minimal polynomial, so this is exactly the
-nondegeneracy that makes such an element a generator. -/
-theorem sub_apply_ne_zero {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) {x : L}
+/-- **A nontrivial automorphism moves every element outside the base field.** The difference
+`σ x - x` is the square root of the discriminant of `x`'s minimal polynomial, so this is exactly
+the nondegeneracy that makes such an `x` a generator. -/
+theorem apply_sub_self_ne_zero {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) {x : L}
     (hx : x ∉ Set.range (algebraMap K L)) : σ x - x ≠ 0 :=
   sub_ne_zero.mpr fun heq ↦ hx (mem_range_algebraMap_of_apply_eq K L hσ heq)
 
