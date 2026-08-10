@@ -18,10 +18,11 @@ import TauCeti.Analysis.Contour.LogDerivFTC
 integrability *assumed* on `[0, 1]`, `[1, 2]` and `[4, 5]`. This file discharges that assumption,
 for any subinterval of `[0, 5]` at once.
 
-Both inputs the general criterion needs are available for the boundary contour: its derivative is
-globally bounded (`exists_norm_deriv_fdBoundary_le`), and off the excision the contour stays in
-the open set where the form is analytic and nonvanishing, so its logarithmic derivative is
-analytic there (`analyticAt_logDeriv_of_analyticAt`) and in particular continuous.
+Both inputs the general criterion needs are available for the boundary contour: it is piecewise
+`C¹` (`isPiecewiseC1On_fdBoundary`), which makes its derivative interval-integrable, and off the
+excision the contour stays in the open set where the form is analytic and nonvanishing, so its
+logarithmic derivative is analytic there (`analyticAt_logDeriv_of_analyticAt`) and in particular
+continuous.
 
 This shares `hH`, `hUdom` and `hoff` with `hasCauchyPV_fdBoundary_logDeriv` — deliberately, so
 that one analyticity block serves both the excised assembly and the principal value it converges
@@ -45,7 +46,8 @@ namespace ModularForm
 
 /-- **The excised boundary integrand is integrable.** Off the excision the contour stays in `U`,
 where the form is analytic and nonvanishing, so its logarithmic derivative is continuous there;
-with `deriv (fdBoundary H)` globally bounded, `TauCeti.Contour`'s criterion applies.
+the contour is piecewise `C¹`, so its derivative is interval-integrable, and `TauCeti.Contour`'s
+criterion applies.
 
 `hε` is needed to know that a point at distance `≥ ε` from every centre is not itself a centre. -/
 theorem intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary {g : ℂ → ℂ}
