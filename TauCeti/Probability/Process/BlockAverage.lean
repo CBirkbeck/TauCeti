@@ -116,14 +116,15 @@ theorem prod_blockAverage_eq_expect {m N : ℕ} (Y : Fin m → ℕ → Ω → �
 /-- **The squared deviation of an average, as a double sum.** For a nonempty finite index set `s`,
 the square of `(#s)⁻¹ * ∑ i ∈ s, a i - b` is `(#s)⁻¹ ^ 2` times the double sum of
 `(a i - b) * (a j - b)` over `s × s`. -/
-theorem average_sub_sq_eq_sum_sum {ι : Type*} {s : Finset ι} (hs : s.Nonempty) (a : ι → ℝ)
-    (b : ℝ) :
-    ((s.card : ℝ)⁻¹ * (∑ i ∈ s, a i) - b) ^ 2
-      = (s.card : ℝ)⁻¹ ^ 2 * ∑ i ∈ s, ∑ j ∈ s, (a i - b) * (a j - b) := by
-  have hs' : (s.card : ℝ) ≠ 0 := Nat.cast_ne_zero.mpr (Finset.card_ne_zero_of_mem hs.choose_spec)
-  have h1 : (s.card : ℝ)⁻¹ * (∑ i ∈ s, a i) - b = (s.card : ℝ)⁻¹ * ∑ i ∈ s, (a i - b) := by
-    rw [Finset.sum_sub_distrib, Finset.sum_const, nsmul_eq_mul, mul_sub,
-      inv_mul_cancel_left₀ hs']
+theorem average_sub_sq_eq_sum_sum {ι R : Type*} [Field R] [CharZero R] {s : Finset ι}
+    (hs : s.Nonempty) (a : ι → R) (b : R) :
+    ((s.card : R)⁻¹ * (∑ i ∈ s, a i) - b) ^ 2
+      = (s.card : R)⁻¹ ^ 2 * ∑ i ∈ s, ∑ j ∈ s, (a i - b) * (a j - b) := by
+  -- both normalised sums are expectations, where subtracting a constant is `expect_const`
+  have hexp : ∀ f : ι → R, (s.card : R)⁻¹ * (∑ i ∈ s, f i) = 𝔼 i ∈ s, f i := fun f => by
+    rw [Finset.expect_eq_sum_div_card, div_eq_inv_mul]
+  have h1 : (s.card : R)⁻¹ * (∑ i ∈ s, a i) - b = (s.card : R)⁻¹ * ∑ i ∈ s, (a i - b) := by
+    rw [hexp, hexp, Finset.expect_sub_distrib, Finset.expect_const hs]
   rw [h1, mul_pow, sq (∑ i ∈ s, (a i - b)), Finset.sum_mul_sum]
 
 end Probability
