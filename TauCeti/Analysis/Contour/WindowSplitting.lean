@@ -116,7 +116,7 @@ private theorem integral_truncated_eq_zero_between_exits {γ : ℝ → ℂ} {g :
     (hεₗ : ‖γ cₗ - s‖ = ε) (hεᵣ : ‖γ cᵣ - s‖ = ε) :
     ∫ u in cₗ..cᵣ, (if ‖γ u - s‖ > ε then g (γ u) * deriv γ u else 0) = 0 := by
   refine (intervalIntegrable_truncated_and_integral_truncated_eq_zero_of_norm_le
-    (f := g) fun t ht => ?_).2
+    (g := fun t => g (γ t) * deriv γ t) (Filter.Eventually.of_forall fun t ht => ?_)).2
   rw [uIoc_of_le (le_of_lt (hcₗ.2.trans hcᵣ.1))] at ht
   rcases lt_trichotomy t t₀ with h_lt | h_eq | h_ge
   · have h_bd : ‖γ t - s‖ ≤ ‖γ cₗ - s‖ :=

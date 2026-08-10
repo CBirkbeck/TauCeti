@@ -508,10 +508,10 @@ private lemma truncated_integral_spec (hH : 1 < H) (hε : 0 < ε) (hε₁ : ε <
     fun s hs ↦ lt_norm_of_far_right hε₁ hε₂ hδ_pos hδ_lt h2sin ⟨hs.1, hs.2.le⟩
   obtain ⟨himid, hmid0⟩ :=
     Contour.intervalIntegrable_truncated_and_integral_truncated_eq_zero_of_norm_le
-    (γ := fdBoundary H) (z₀ := Complex.I) (f := fun z => (z - Complex.I)⁻¹)
-    fun s hs ↦ norm_le_of_near hδ_lt h2sin
+    (γ := fdBoundary H) (z₀ := Complex.I)
+    (Filter.Eventually.of_forall fun s hs ↦ norm_le_of_near hδ_lt h2sin
       (Set.Ioc_subset_Icc_self
-        (by rwa [Set.uIoc_of_le (by linarith : (2 - δ : ℝ) ≤ 2 + δ)] at hs))
+        (by rwa [Set.uIoc_of_le (by linarith : (2 - δ : ℝ) ≤ 2 + δ)] at hs)))
   have hi02 := hi_left.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_left)
   have hi25 := hi_right.congr_ae ((ae_restrict_iff' measurableSet_uIoc).mpr hae_right)
   refine ⟨(hi02.trans himid).trans hi25, ?_⟩
