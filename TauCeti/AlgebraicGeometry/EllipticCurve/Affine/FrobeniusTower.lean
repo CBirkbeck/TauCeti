@@ -6,7 +6,6 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionFieldFinrank
 public import TauCeti.FieldTheory.RatFunc.Frobenius
-public import Mathlib.LinearAlgebra.Basis.VectorSpace
 
 /-!
 # The function field of a curve over the `q`-th powers of the rational function field
@@ -65,7 +64,14 @@ variable {K : Type*} [Field K] (W : _root_.WeierstrassCurve.Affine K)
 noncomputable def ratFuncRange : IntermediateField K W.FunctionField :=
   (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField).fieldRange
 
+@[simp]
+theorem mem_ratFuncRange {z : W.FunctionField} :
+    z ∈ ratFuncRange W ↔
+      ∃ r : RatFunc K, IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField r = z :=
+  AlgHom.mem_fieldRange
+
 /-- **`[K(W) : K(x)] = 2`**, for the copy of the rational function field inside `K(W)`. -/
+@[simp]
 theorem finrank_ratFuncRange : Module.finrank (ratFuncRange W) W.FunctionField = 2 := by
   have h := Algebra.finrank_eq_of_equiv_equiv
     (AlgEquiv.ofInjective (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
@@ -81,6 +87,16 @@ noncomputable def frobeniusRatFuncRange : IntermediateField K W.FunctionField :=
   (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange.map
     (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField)
 
+@[simp]
+theorem mem_frobeniusRatFuncRange {z : W.FunctionField} :
+    z ∈ frobeniusRatFuncRange W ↔ ∃ r : RatFunc K,
+      IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField
+        (_root_.FiniteField.frobeniusAlgHom K (RatFunc K) r) = z := by
+  simp only [frobeniusRatFuncRange, IntermediateField.mem_map, AlgHom.mem_fieldRange]
+  constructor
+  · rintro ⟨_, ⟨r, rfl⟩, rfl⟩; exact ⟨r, rfl⟩
+  · rintro ⟨r, rfl⟩; exact ⟨_, ⟨r, rfl⟩, rfl⟩
+
 /-- `K(x^q)` sits inside `K(x)`, both read inside `K(W)`. -/
 theorem frobeniusRatFuncRange_le_ratFuncRange :
     frobeniusRatFuncRange W ≤ ratFuncRange W := by
@@ -92,6 +108,7 @@ theorem frobeniusRatFuncRange_le_ratFuncRange :
 
 /-- **`[K(x) : K(x^q)] = q`**, transported into `K(W)`: the copy of the rational function field is
 of degree `q` over the copy of its subfield of `q`-th powers. -/
+@[simp]
 theorem finrank_extendScalars_ratFuncRange :
     Module.finrank (frobeniusRatFuncRange W)
       (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W)) =
@@ -109,7 +126,8 @@ theorem finrank_extendScalars_ratFuncRange :
   exact h.symm
 
 /-- **`[K(W) : K(x^q)] = 2q`.** The tower `K(x^q) ⊆ K(x) ⊆ K(W)` has degrees `q` and `2`. -/
-theorem finrank_frobeniusRatFuncRange [W.IsElliptic] :
+@[simp]
+theorem finrank_frobeniusRatFuncRange :
     Module.finrank (frobeniusRatFuncRange W) W.FunctionField = 2 * Fintype.card K := by
   have htower := Module.finrank_mul_finrank (frobeniusRatFuncRange W)
     (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W)) W.FunctionField
