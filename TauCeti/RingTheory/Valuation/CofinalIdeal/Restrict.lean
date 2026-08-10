@@ -31,12 +31,13 @@ The point-level map on `Spv A` that Wedhorn's retraction `r_I` is built from liv
 
 ## Main results
 
-* `TauCeti.Valuation.mk0_restrict_mem_comapUnitsWithZero_iff` : membership in the transported
-  `cΓ_v(I)`, converted to membership in `cΓ_v(I)` itself — the form consumers hold.
-* `TauCeti.Valuation.restrictToIdeal_apply_of_mem`,
-  `TauCeti.Valuation.restrictToIdeal_apply_of_notMem`,
-  `TauCeti.Valuation.restrictToIdeal_apply_of_eq_zero` : the three branches.
+* `TauCeti.Valuation.restrictToIdeal_apply_of_notMem`,
+  `TauCeti.Valuation.restrictToIdeal_apply_of_eq_zero` : the two vanishing branches.
 * `TauCeti.Valuation.restrictToIdeal_eq_zero_iff` : where the restriction vanishes, totally.
+* `TauCeti.Valuation.restrictToIdeal_le_iff` : how restricted values compare, totally.
+
+Every statement here is phrased through `cΓ_v(I)` itself, or through vanishing of the
+restriction; the transport onto the units of the value monoid stays internal.
 
 ## References
 
@@ -127,29 +128,17 @@ about the value group. The bridge below converts between the two, and the lemmas
 stated so that no consumer has to unfold the definition or mention the transport. -/
 
 /-- **The bridge.** A value's unit lies in the transported `cΓ_v(I)` exactly when the value,
-read in the value group, lies in `cΓ_v(I)` itself. -/
-theorem mk0_restrict_mem_comapUnitsWithZero_iff (v : Valuation A Γ₀) (I : Ideal A)
+read in the value group, lies in `cΓ_v(I)` itself.
+
+Private: it is the units-transport implementation, and every lemma below applies it internally,
+so no consumer has to name `comapUnitsWithZero`. -/
+private theorem mk0_restrict_mem_comapUnitsWithZero_iff (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
     (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) :
     Units.mk0 (v.restrict a) (fun h => h0 (v.restrict_eq_zero_iff.mp h)) ∈
         ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg) ↔
       valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∈ characteristicSubgroupOfIdeal v I hfg := by
   rw [ConvexSubgroup.mem_comapUnitsWithZero, unitsWithZeroEquiv_mk0_restrict v h0 _]
-
-/-- On a value kept by the restriction, the restriction is that value. The hypothesis is
-membership in `cΓ_v(I)` itself; the transport is applied internally. -/
-theorem restrictToIdeal_apply_of_mem (v : Valuation A Γ₀) (I : Ideal A)
-    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a : A}
-    (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0)
-    (hm : valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∈ characteristicSubgroupOfIdeal v I hfg) :
-    v.restrictToIdeal I hfg a =
-      ((⟨Units.mk0 (v.restrict a) (fun h => h0 (v.restrict_eq_zero_iff.mp h)),
-          (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0).mpr hm⟩ :
-        (ConvexSubgroup.comapUnitsWithZero
-          (characteristicSubgroupOfIdeal v I hfg)).toSubgroup) : RestrictedValues v I hfg) :=
-by
-  rw [restrictToIdeal_def v I hfg (mk0_restrict_mem_comapUnitsWithZero v I hfg)]
-  exact _root_.Valuation.restrictToConvex_apply_of_mem _ _ _ _ _
 
 /-- Off `cΓ_v(I)`, the restriction vanishes. The hypothesis is non-membership in `cΓ_v(I)`
 itself; the transport is applied internally.
@@ -210,19 +199,39 @@ theorem restrictToIdeal_eq_zero_iff (v : Valuation A Γ₀) (I : Ideal A)
       exact (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0).mp hmem
 
 /-- On values kept by the restriction, the order is both preserved and reflected — stated
-through membership in `cΓ_v(I)` itself. -/
-@[simp]
-theorem restrictToIdeal_le_iff (v : Valuation A Γ₀) (I : Ideal A)
+through membership in `cΓ_v(I)` itself.
+
+Not `@[simp]`: `restrictToIdeal_le_iff` is the simp-normal form for a comparison of restricted
+values, and it rewrites this lemma's left-hand side, which `simpNF` rejects. -/
+theorem restrictToIdeal_le_iff_of_mem (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a b : A}
     (h0a : v a ≠ 0) (h0b : v b ≠ 0)
     (hma : valueGroup.mk (.ofClass v) 1 a (by simp) h0a ∈ characteristicSubgroupOfIdeal v I hfg)
     (hmb : valueGroup.mk (.ofClass v) 1 b (by simp) h0b ∈ characteristicSubgroupOfIdeal v I hfg) :
-    v.restrictToIdeal I hfg a ≤ v.restrictToIdeal I hfg b ↔ v.restrict a ≤ v.restrict b :=
+    v.restrictToIdeal I hfg a ≤ v.restrictToIdeal I hfg b ↔ v a ≤ v b :=
 by
-  rw [restrictToIdeal_def v I hfg (mk0_restrict_mem_comapUnitsWithZero v I hfg)]
-  exact _root_.Valuation.restrictToConvex_le_iff _ _ _ _ _
-    ((mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0a).mpr hma)
-    ((mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0b).mpr hmb)
+  rw [restrictToIdeal_def v I hfg (mk0_restrict_mem_comapUnitsWithZero v I hfg),
+    _root_.Valuation.restrictToConvex_le_iff_of_mem _ _ _ _ _
+      ((mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0a).mpr hma)
+      ((mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0b).mpr hmb),
+    _root_.Valuation.restrict_le_iff]
+
+/-- **Comparison after restriction, totally**: a value discarded by the restriction is below
+everything, a kept value is below only kept values, and two kept values compare exactly as they
+did under `v`. `restrictToIdeal_le_iff_of_mem` is the both-kept branch, in the form consumers
+holding membership hypotheses want.
+
+The side conditions are stated as vanishing of the restriction, which
+`restrictToIdeal_eq_zero_iff` turns into membership in `cΓ_v(I)`; so a caller never has to name
+the transported subgroup. -/
+@[simp]
+theorem restrictToIdeal_le_iff (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (a b : A) :
+    v.restrictToIdeal I hfg a ≤ v.restrictToIdeal I hfg b ↔
+      v.restrictToIdeal I hfg a = 0 ∨ v.restrictToIdeal I hfg b ≠ 0 ∧ v a ≤ v b :=
+by
+  rw [restrictToIdeal_def v I hfg (mk0_restrict_mem_comapUnitsWithZero v I hfg),
+    _root_.Valuation.restrictToConvex_le_iff, _root_.Valuation.restrict_le_iff]
 
 /-- A value at least `1` stays at least `1`: `cΓ_v(I)` keeps every attained value `≥ 1`. -/
 theorem one_le_restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)

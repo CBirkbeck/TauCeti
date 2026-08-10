@@ -32,6 +32,8 @@ property it does not yet carry.
 
 * `TauCeti.ValuationSpectrum.restrictToIdeal_def` : the point map, unfolded through the
   canonical valuation.
+* `TauCeti.ValuationSpectrum.vle_restrictToIdeal` : the valuative relation of the restricted
+  point, in terms of the original one.
 
 ## References
 
@@ -60,5 +62,18 @@ theorem restrictToIdeal_def (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     restrictToIdeal v I hfg = ofValuation (v.valuation.restrictToIdeal I hfg) :=
   (rfl)
+
+/-- **The valuative relation of the restricted point.** Comparison is the whole observable
+content of a point of `Spv A`, so this is the interface to `restrictToIdeal` at the level of
+points: `a ≤ b` after restriction exactly when `a`'s value is discarded, or `b`'s is kept and
+`a ≤ b` held already. The side conditions are discharged by
+`TauCeti.Valuation.restrictToIdeal_eq_zero_iff`. -/
+theorem vle_restrictToIdeal (v : Spv A) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (a b : A) :
+    (restrictToIdeal v I hfg).toValuativeRel.vle a b ↔
+      v.valuation.restrictToIdeal I hfg a = 0 ∨
+        v.valuation.restrictToIdeal I hfg b ≠ 0 ∧ v.toValuativeRel.vle a b := by
+  rw [restrictToIdeal_def, vle_ofValuation, TauCeti.Valuation.restrictToIdeal_le_iff]
+  exact or_congr_right (and_congr_right fun _ ↦ valuation_le_iff v a b)
 
 end TauCeti.ValuationSpectrum
