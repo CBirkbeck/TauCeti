@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2024 Chris Birkbeck. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Chris Birkbeck
+Authors: Chris Birkbeck, Claude
 -/
 module
 
@@ -56,11 +56,18 @@ bound `B_{ij} < a_j / a_i` leaves no room for a nonzero multiple, by induction o
 
 ## References
 
-The general-`n` statement is Shimura, *Introduction to the Arithmetic Theory of Automorphic
-Functions* (1971), Exercise 3.26(A), p. 65: for every `α ∈ Δ` one can choose representatives
-`α_j` of `ΓαΓ = ⋃_j Γα_j` with `L_ν α_j ⊆ L_ν` for the standard flag `L_ν = ∑_{i ≤ ν} ℤ e_i`,
-i.e. upper-triangular ones. Shimura leaves it as an exercise and works the `n = 2` case
-explicitly in Prop. 3.33 (p. 70) and Prop. 3.36 (p. 72).
+The background for working with upper-triangular representatives at all is Shimura,
+*Introduction to the Arithmetic Theory of Automorphic Functions* (1971), Exercise 3.26(A),
+p. 65: for every `α ∈ Δ` one can choose representatives `α_j` of `ΓαΓ = ⋃_j Γα_j` with
+`L_ν α_j ⊆ L_ν` for the standard flag `L_ν = ∑_{i ≤ ν} ℤ e_i`, i.e. upper-triangular ones.
+Shimura leaves it as an exercise and works the `n = 2` case explicitly in Prop. 3.33 (p. 70)
+and Prop. 3.36 (p. 72).
+
+That exercise is motivation, not the statement proved here. It asserts only that
+flag-preserving representatives *exist*; it does not supply this bounded family
+`B_{ij} ∈ Fin (a_j / a_i)`, nor the distinctness of the left cosets they occupy, nor the
+resulting `∏_{i < j} (a_j / a_i)` lower bound. Those are proved below and are not read off
+from the exercise.
 
 The definitions follow the AINTLIB [`LeanModularForms`](https://github.com/CBirkbeck/AINTLIB)
 file `LeanModularForms/HeckeRIngs/GLn/CosetDecomposition.lean` (Chris Birkbeck), whose module
