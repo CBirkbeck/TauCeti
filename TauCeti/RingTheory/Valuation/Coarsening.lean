@@ -100,16 +100,6 @@ theorem coarsenMap_lt_one_iff (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x �
   rw [h, ← WithZero.coe_one, WithZero.coe_lt_coe, QuotientGroup.mk'_apply]
   exact quotientMk_lt_one_iff H
 
-/-- The form consumers hold: a nonzero value `≤ 1` whose unit avoids `H` becomes strictly
-smaller than `1`. Immediate from `coarsenMap_lt_one_iff`. -/
-theorem coarsenMap_lt_one_of_le_one_of_notMem (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x ≠ 0)
-    (hle : x ≤ 1) (hnot : Units.mk0 x hx ∉ H.toSubgroup) : coarsenMap H x < 1 := by
-  have hle' : (Units.mk0 x hx : Γ₀ˣ) ≤ 1 := by
-    rw [← Units.val_le_val, Units.val_mk0, Units.val_one]
-    exact hle
-  exact (coarsenMap_lt_one_iff H hx).mpr
-    ⟨lt_of_le_of_ne hle' fun h ↦ hnot (h ▸ one_mem H.toSubgroup), hnot⟩
-
 end ConvexSubgroup
 
 end TauCeti
