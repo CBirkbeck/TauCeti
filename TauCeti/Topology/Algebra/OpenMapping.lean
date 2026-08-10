@@ -10,14 +10,17 @@ public import Mathlib.Topology.Baire.Lemmas
 public import Mathlib.GroupTheory.GroupAction.Pointwise
 
 /-!
-# The Baire steps of Henkel's open mapping theorem
+# Steps toward Henkel's open mapping theorem
 
 Henkel's open mapping theorem says that a continuous surjective linear map between complete
 Hausdorff first-countable modules over a ring with a zero sequence of units is open. Its first
-half is a Baire-category argument, and that half is what this file isolates. It needs none of
-the hypotheses the rest of the proof needs — no completeness, no first countability, not even
-continuity of the map. What it does need is that the target is a Baire space and that the map is
-equivariant, the latter being what lets a dilate pass through it.
+half is a Baire-category argument, and this file collects the steps up to and including the one
+that consumes it. None of them needs the hypotheses the *end* of the proof needs — no
+completeness, no first countability, not even continuity of the map.
+
+The Baire results below need a Baire target and an equivariant map, the latter being what lets a
+dilate pass through it. The approximation step at the end needs neither: it asks nothing of the
+map beyond being a function.
 
 The argument is the classical one, with the zero sequence of units supplying the countability
 Baire needs. Any neighbourhood `U` of zero in the domain has its dilates `uₙ⁻¹ • U` cover the
@@ -183,7 +186,7 @@ end Nhds
 
 section Approximation
 
-variable {M N : Type*} [AddCommGroup N] [TopologicalSpace N] [IsTopologicalAddGroup N]
+variable {M N : Type*} [AddGroup N] [TopologicalSpace N] [IsTopologicalAddGroup N]
 
 /-- **One step of Henkel's approximation.** If `y` lies in the closure of `f '' U`, and the closure
 of `f '' V` is a neighbourhood of zero, then some `x ∈ U` brings `y` within that closure: the
