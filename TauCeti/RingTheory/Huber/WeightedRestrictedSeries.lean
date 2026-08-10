@@ -49,7 +49,7 @@ counterexample in `IsWeightFamily`'s docstring shows the hypothesis is not autom
   Wedhorn flags as not entirely clear; with the additive closure lemmas this gives the subring.
 * `TauCeti.Huber.weightedNhd_subgroups_basis`: the `U⟨X⟩` are a fundamental system of
   neighbourhoods of zero for a ring topology, with its contract
-  (`weightedTopology_hasBasis_nhds_zero`, `isTopologicalRing_weightedTopology`,
+  (`hasBasis_nhds_zero_weightedTopology`, `isTopologicalRing_weightedTopology`,
   `nonarchimedeanRing_weightedTopology`, `continuous_weightedC`).
 * `TauCeti.Huber.weightedRestrictedSubring_one_weight`: for the trivial weight this is the ordinary
   ring of restricted power series (Wedhorn Example 5.54).
@@ -72,7 +72,8 @@ coefficient convergence when the open additive subgroups are a neighbourhood bas
 setting Wedhorn works in throughout §5.6. Without that it can be vacuous: over `ℝ` with its usual
 topology the only open additive subgroup is `ℝ` itself, so every power series is `T`-restricted
 for the trivial weight. `TauCeti.Huber.isWeightedRestricted_one_weight_iff` therefore assumes
-`NonarchimedeanRing`.
+`NonarchimedeanAddGroup` — the additive condition is what rules that vacuity out, and no
+multiplicative structure of the topology enters its proof.
 
 If some `Tᵢ` is empty and `νᵢ > 0` then `Tν` is empty and `Tν · U = ⊥`, so the condition forces
 those coefficients to vanish; the closure lemmas below need no nonemptiness hypothesis.
@@ -185,7 +186,7 @@ unit.
 One unit per index suffices — the other elements of `T i` are never used — and the existential
 also carries the nonemptiness the statement needs: `(∅ : Set A) ^ m` is empty for `m > 0`, so the
 subgroup it generates is `⊥`, a neighbourhood of zero only for the discrete topology. -/
-theorem IsWeightFamily.of_exists_isUnit [IsTopologicalRing A] {T : Fin k → Set A}
+theorem IsWeightFamily.of_exists_isUnit [SeparatelyContinuousMul A] {T : Fin k → Set A}
     (hu : ∀ i, ∃ t ∈ T i, IsUnit t) : IsWeightFamily T := by
   intro i m U hU
   obtain ⟨t, ht, htu⟩ := hu i
@@ -260,7 +261,7 @@ theorem weightPow_add (T : Fin k → Set A) (α β : Fin k →₀ ℕ) :
 omit [TopologicalSpace A] in
 /-- A product of an element of `T^α · V` with an element of `T^β · W` lies in
 `T^(α+β) · (V · W)`. -/
-theorem weightMul_mul_mem {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {V W : AddSubgroup A} {x y : A}
+theorem mul_mem_weightMul_add {T : Fin k → Set A} {α β : Fin k →₀ ℕ} {V W : AddSubgroup A} {x y : A}
     (hx : x ∈ weightMul T α V) (hy : y ∈ weightMul T β W) :
     x * y ∈ weightMul T (α + β) (AddSubgroup.closure ((V : Set A) * (W : Set A))) := by
   rw [mul_comm x y]
@@ -285,7 +286,7 @@ omit [TopologicalSpace A] in
 theorem mul_mem_weightMul_of_mul_subset {T : Fin k → Set A} {α β ν : Fin k →₀ ℕ} (hν : α + β = ν)
     {W U : AddSubgroup A} (hWU : (W : Set A) * (W : Set A) ⊆ (U : Set A)) {a b : A}
     (ha : a ∈ weightMul T α W) (hb : b ∈ weightMul T β W) : a * b ∈ weightMul T ν U :=
-  hν ▸ weightMul_mono T (α + β) ((AddSubgroup.closure_le _).mpr hWU) (weightMul_mul_mem ha hb)
+  hν ▸ weightMul_mono T (α + β) ((AddSubgroup.closure_le _).mpr hWU) (mul_mem_weightMul_add ha hb)
 
 omit [TopologicalSpace A] in
 /-- Multiplying by a weight element shifts the multi-index: `T^β · (T^α · U) ⊆ T^(α+β) · U`. -/
@@ -340,7 +341,7 @@ theorem IsWeightFamily.weightMul_mem_nhds {T : Fin k → Set A} (hT : IsWeightFa
 
 /-- Over a nonarchimedean ring the standing hypothesis need only be checked on *open* subgroups:
 those are cofinal in the neighbourhoods of zero, and `Tᵢ^m · V ≤ Tᵢ^m · U` for `V ⊆ U`. -/
-theorem IsWeightFamily.of_forall_openAddSubgroup [NonarchimedeanRing A] {T : Fin k → Set A}
+theorem IsWeightFamily.of_forall_openAddSubgroup [NonarchimedeanAddGroup A] {T : Fin k → Set A}
     (h : ∀ (i : Fin k) (m : ℕ) (V : OpenAddSubgroup A),
       (weightMul T (Finsupp.single i m) V.toAddSubgroup : Set A) ∈ nhds (0 : A)) :
     IsWeightFamily T := by
@@ -352,7 +353,7 @@ theorem IsWeightFamily.of_forall_openAddSubgroup [NonarchimedeanRing A] {T : Fin
 
 /-- The subgroups `Tν · U` are themselves open, so they can be fed back into
 `TauCeti.Huber.IsWeightedRestricted`, which quantifies over `OpenAddSubgroup A`. -/
-theorem IsWeightFamily.isOpen_weightMul [NonarchimedeanRing A] {T : Fin k → Set A}
+theorem IsWeightFamily.isOpen_weightMul [SeparatelyContinuousAdd A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) (ν : Fin k →₀ ℕ) {U : AddSubgroup A}
     (hU : (U : Set A) ∈ nhds (0 : A)) : IsOpen (weightMul T ν U : Set A) :=
   AddSubgroup.isOpen_of_mem_nhds _ (hT.weightMul_mem_nhds ν hU)
@@ -364,7 +365,7 @@ Only this direction is proved. The roadmap (`AdicSpaces/README.md`, Layer 0.4) s
 phrasings as equivalent, but recovering the condition for every neighbourhood `U` from the single
 case `U = ⊤` is not derivable from the definitions here, and Wedhorn fixes the all-neighbourhoods
 form as the standing hypothesis, so that is what `IsWeightFamily` says. -/
-theorem IsWeightFamily.isOpen_weightMul_top [NonarchimedeanRing A] {T : Fin k → Set A}
+theorem IsWeightFamily.isOpen_weightMul_top [SeparatelyContinuousAdd A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) (i : Fin k) (m : ℕ) :
     IsOpen ((weightMul T (Finsupp.single i m) ⊤ : AddSubgroup A) : Set A) :=
   IsWeightFamily.isOpen_weightMul hT _ (by simp)
@@ -398,7 +399,7 @@ theorem weightMul_one_weight (ν : Fin k →₀ ℕ) (U : AddSubgroup A) :
 /-- **Wedhorn Example 5.54**: for the trivial weight `Tᵢ = {1}` the condition is the ordinary
 restrictedness of `A⟨X⟩`, that the coefficients tend to zero along the cofinite filter. This is
 the nontrivial witness that `TauCeti.Huber.IsWeightedRestricted` is not vacuous. -/
-theorem isWeightedRestricted_one_weight_iff [NonarchimedeanRing A]
+theorem isWeightedRestricted_one_weight_iff [NonarchimedeanAddGroup A]
     {f : MvPowerSeries (Fin k) A} :
     IsWeightedRestricted (fun _ : Fin k ↦ ({1} : Set A)) f ↔
       Tendsto (fun ν ↦ MvPowerSeries.coeff ν f) cofinite (nhds 0) := by
@@ -544,7 +545,7 @@ theorem coeff_mul_mem_weightMul {T : Fin k → Set A} {V W : AddSubgroup A}
   rw [MvPowerSeries.coeff_mul]
   refine sum_mem fun p hp ↦ ?_
   have hsum : p.1 + p.2 = ν := Finset.mem_antidiagonal.mp hp
-  exact hsum ▸ weightMul_mul_mem (hf p.1) (hg p.2)
+  exact hsum ▸ mul_mem_weightMul_add (hf p.1) (hg p.2)
 
 /-! ### The ring `A⟨X⟩_T` -/
 
@@ -699,33 +700,33 @@ theorem weightedNhd_subgroups_basis [NonarchimedeanRing A] {T : Fin k → Set A}
 neighbourhoods of zero are the `U⟨X⟩`.
 
 Consumers should go through the contract lemmas below rather than unfolding this: the basis is
-`weightedTopology_hasBasis_nhds_zero`, and `isTopologicalRing_weightedTopology` /
+`hasBasis_nhds_zero_weightedTopology`, and `isTopologicalRing_weightedTopology` /
 `nonarchimedeanRing_weightedTopology` give the structure. `@[instance_reducible]` rather than plain
-`@[reducible]` is what the `classDefReducibility` linter requires of a class-valued `def`; it
-opens the body to instance synthesis only, not to general definitional unfolding. -/
-@[instance_reducible]
-noncomputable def weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
-    (hT : IsWeightFamily T) : TopologicalSpace (weightedRestrictedSubring T hT) :=
+It is an `instance` rather than a plain `def` so that a consumer of `A⟨X⟩_T` gets the topology,
+and the `IsTopologicalRing` and `NonarchimedeanRing` structures below, by inference. Both `T` and
+the standing hypothesis are implicit because they are read off the carrier's own type. There is no
+diamond with a subtype topology: `MvPowerSeries (Fin k) A` carries no registered
+`TopologicalSpace` instance. -/
+noncomputable instance weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
+    {hT : IsWeightFamily T} : TopologicalSpace (weightedRestrictedSubring T hT) :=
   (weightedNhd_subgroups_basis hT).topology
 
 /-- The `U⟨X⟩` are a basis of neighbourhoods of zero for `weightedTopology`. -/
-theorem weightedTopology_hasBasis_nhds_zero [NonarchimedeanRing A] {T : Fin k → Set A}
+theorem hasBasis_nhds_zero_weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) :
-    (@nhds _ (weightedTopology hT) 0).HasBasis (fun _ : OpenAddSubgroup A ↦ True)
+    (nhds (0 : weightedRestrictedSubring T hT)).HasBasis (fun _ : OpenAddSubgroup A ↦ True)
       fun U ↦ (weightedNhd T hT U.toAddSubgroup : Set (weightedRestrictedSubring T hT)) :=
   (weightedNhd_subgroups_basis hT).hasBasis_nhds_zero
 
-/-- `weightedTopology` is a ring topology. -/
-theorem isTopologicalRing_weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
-    (hT : IsWeightFamily T) :
-    @IsTopologicalRing _ (weightedTopology hT) _ :=
+/-- `A⟨X⟩_T` is a topological ring. -/
+instance isTopologicalRing_weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
+    {hT : IsWeightFamily T} : IsTopologicalRing (weightedRestrictedSubring T hT) :=
   (weightedNhd_subgroups_basis hT).toRingFilterBasis.isTopologicalRing
 
-/-- `weightedTopology` is nonarchimedean: `A⟨X⟩_T` inherits a basis of open additive subgroups at
-zero, as every ring built from a `RingSubgroupsBasis` does. -/
-theorem nonarchimedeanRing_weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
-    (hT : IsWeightFamily T) :
-    @NonarchimedeanRing _ _ (weightedTopology hT) :=
+/-- `A⟨X⟩_T` is nonarchimedean: it inherits a basis of open additive subgroups at zero, as every
+ring built from a `RingSubgroupsBasis` does. -/
+instance nonarchimedeanRing_weightedTopology [NonarchimedeanRing A] {T : Fin k → Set A}
+    {hT : IsWeightFamily T} : NonarchimedeanRing (weightedRestrictedSubring T hT) :=
   (weightedNhd_subgroups_basis hT).nonarchimedean
 
 /-- The constant-series embedding `A → A⟨X⟩_T` is continuous.
@@ -733,12 +734,10 @@ theorem nonarchimedeanRing_weightedTopology [NonarchimedeanRing A] {T : Fin k �
 A constant series has its only nonzero coefficient at `ν = 0`, where `T⁰ · U` is `U` itself, so
 the open subgroup `U` already witnesses continuity at zero. -/
 theorem continuous_weightedC [NonarchimedeanRing A] {T : Fin k → Set A} (hT : IsWeightFamily T) :
-    @Continuous _ _ _ (weightedTopology hT) (weightedC T hT) := by
+    Continuous (weightedC T hT) := by
   classical
-  let _ := weightedTopology hT
-  have _ := isTopologicalRing_weightedTopology hT
   refine continuous_of_continuousAt_zero (weightedC T hT) ?_
-  rw [ContinuousAt, map_zero, (weightedTopology_hasBasis_nhds_zero hT).tendsto_right_iff]
+  rw [ContinuousAt, map_zero, (hasBasis_nhds_zero_weightedTopology hT).tendsto_right_iff]
   intro U _
   filter_upwards [U.isOpen.mem_nhds U.zero_mem] with a ha ν
   rcases eq_or_ne ν 0 with rfl | hν
