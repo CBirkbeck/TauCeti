@@ -5,8 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.Analysis.Calculus.LogDeriv
 public import TauCeti.Analysis.Contour.Curve.ExcisedIntegrability
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.DerivBound
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
 
 import TauCeti.Analysis.Contour.LogDerivFTC
@@ -55,11 +55,11 @@ theorem intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary
     {a b : ℝ} (hab : uIcc a b ⊆ Icc (0 : ℝ) 5) :
     IntervalIntegrable (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
         else deriv (fdBoundary H) t • logDeriv g (fdBoundary H t)) volume a b := by
-  obtain ⟨M, -, hM⟩ := exists_norm_deriv_fdBoundary_le H
-  have hd : IntervalIntegrable (deriv (fdBoundary H)) volume a b := by
-    rw [intervalIntegrable_iff]
-    exact IntegrableOn.of_bound (by rw [Real.volume_uIoc]; exact ENNReal.ofReal_lt_top)
-      (measurable_deriv _).aestronglyMeasurable M (Filter.Eventually.of_forall fun t => hM t)
+  have hab' : uIcc a b ⊆ uIcc (0 : ℝ) 5 := by
+    rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
+    exact hab
+  have hd : IntervalIntegrable (deriv (fdBoundary H)) volume a b :=
+    (isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv.mono_set hab'
   have hφ : ContinuousOn (logDeriv g)
       (fdBoundary H '' uIcc a b ∩ {z | ∀ s ∈ S, ε ≤ ‖z - s‖}) := by
     rintro z ⟨⟨t, ht, rfl⟩, hfar⟩
