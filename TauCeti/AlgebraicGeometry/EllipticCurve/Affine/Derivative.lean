@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Basic
-public import Mathlib.RingTheory.Derivation.MapCoeffs
 
 /-!
 # The partial derivatives of the Weierstrass polynomial
