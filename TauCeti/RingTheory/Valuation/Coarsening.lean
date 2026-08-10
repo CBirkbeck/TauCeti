@@ -17,8 +17,9 @@ order-compatible quotient of `Γ₀ˣ`, so composing a valuation with that quoti
 valuation — its **coarsening** by `H`. Coarsening forgets the part of the value group lying
 inside `H` while keeping the order relation between the remaining classes.
 
-This is the construction behind the retraction `r_I : Spv A → Spv (A, I)` of Wedhorn §7.1.2,
-which coarsens `v` by the ideal-indexed characteristic subgroup `cΓ_v(I)`.
+Wedhorn uses this in §7.1 to reduce to a MulArchimedean value group. It is *not* the §7.1.2
+retraction `r_I`, which restricts a valuation into a convex subgroup — keeping the values whose
+unit lies in `H` and sending the rest to `0` — rather than quotienting by it.
 
 ## Main definitions
 
@@ -32,7 +33,7 @@ which coarsens `v` by the ideal-indexed characteristic subgroup `cΓ_v(I)`.
   what makes the composite a valuation.
 * `TauCeti.ConvexSubgroup.coarsenMap_eq_one_iff` : `H` is exactly what the map forgets.
 * `TauCeti.ConvexSubgroup.coarsenMap_lt_one_iff` : coarsening lands strictly below `1`
-  exactly for the values `H` does not absorb — the reason `r_I` lands where it does.
+  exactly for the values `H` does not absorb.
   These are stated on `Γ₀`, not on a valuation: no valuation property enters, and the
   valuation-level forms follow from them by `simp` through `coarsen_apply`.
 * `Valuation.coarsen_supp` : Coarsening does not change the support.
@@ -89,8 +90,8 @@ theorem coarsenMap_eq_one_iff (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x �
     QuotientGroup.eq_one_iff]
 
 /-- For a nonzero `x`, coarsening lands strictly below `1` exactly when the unit of `x` is
-below `1` and `H` does not absorb it. This is what makes the retraction of Wedhorn §7.1.2 land
-where it does: the values surviving as `< 1` are exactly those the convex subgroup misses. -/
+below `1` and `H` does not absorb it. The values surviving as `< 1` are exactly those the convex
+subgroup misses. -/
 @[simp]
 theorem coarsenMap_lt_one_iff (H : ConvexSubgroup Γ₀ˣ) {x : Γ₀} (hx : x ≠ 0) :
     coarsenMap H x < 1 ↔ Units.mk0 x hx < 1 ∧ Units.mk0 x hx ∉ H.toSubgroup := by
