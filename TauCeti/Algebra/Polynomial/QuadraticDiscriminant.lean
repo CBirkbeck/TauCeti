@@ -57,9 +57,9 @@ public section
 /-- In characteristic two the discriminant degenerates to `b²`, since `4 = 0` kills the `a c`
 term. This is why `splits_quadratic_iff_isSquare` says nothing there: `discrim a b c` is
 automatically a square. -/
-theorem discrim_eq_sq_of_two_eq_zero {k : Type*} [Field k] (h2 : (2 : k) = 0) (a b c : k) :
+theorem discrim_eq_sq_of_two_eq_zero {R : Type*} [CommRing R] (h2 : (2 : R) = 0) (a b c : R) :
     discrim a b c = b ^ 2 := by
-  have h4 : (4 : k) = 0 := by linear_combination (2 : k) * h2
+  have h4 : (4 : R) = 0 := by linear_combination (2 : R) * h2
   rw [discrim]
   linear_combination -(a * c) * h4
 
@@ -116,12 +116,9 @@ theorem splits_quadratic_iff_exists_root {k : Type*} [Field k] {a b c : k} (ha :
     (C a * X ^ 2 + C b * X + C c).Splits ↔ ∃ x, a * x ^ 2 + b * x + c = 0 := by
   set p := C a * X ^ 2 + C b * X + C c with hp
   have hdeg : p.natDegree = 2 := natDegree_quadratic ha
-  have hp0 : p ≠ 0 := fun h ↦ by rw [h, natDegree_zero] at hdeg; omega
   constructor
   · intro hs
-    obtain ⟨x, hx⟩ := hs.exists_eval_eq_zero (by
-      simp only [degree_eq_natDegree hp0, hdeg, ne_eq, Nat.cast_ofNat, OfNat.ofNat_ne_zero,
-        not_false_eq_true])
+    obtain ⟨x, hx⟩ := hs.exists_eval_eq_zero (degree_ne_of_natDegree_ne (by rw [hdeg]; norm_num))
     refine ⟨x, ?_⟩
     simp only [hp, eval_add, eval_mul, eval_pow, eval_C, eval_X] at hx
     linear_combination hx
