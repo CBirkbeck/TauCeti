@@ -6,9 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.Analysis.Contour.Curve.ExcisionMeasure
-public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Measurable
-public import Mathlib.Analysis.Complex.Basic
 
 /-!
 # The excised integrand is integrable
