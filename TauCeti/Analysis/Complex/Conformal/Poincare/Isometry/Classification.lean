@@ -324,10 +324,9 @@ private lemma exists_mapsTo_ball_and_hyperbolicDist_map_eq_of_isometry
   refine ⟨fun z => if h : ‖z‖ < 1 then
     ((toUnitDisc (f (Complex.UnitDisc.toPoincare (Complex.UnitDisc.mk z h)))) : ℂ) else 0, ?_, ?_,
     ?_⟩
-  · intro z hz
-    dsimp only
-    rw [dif_pos (mem_ball_zero_iff.mp hz), mem_ball_zero_iff]
-    exact Complex.UnitDisc.norm_lt_one _
+  · refine mapsTo_ball_of_forall_unitDisc_coe_eq
+      (e := fun z => toUnitDisc (f (Complex.UnitDisc.toPoincare z))) fun z => ?_
+    rw [dif_pos z.norm_lt_one, Complex.UnitDisc.mk_coe]
   · intro z hz w hw
     have hz' := mem_ball_zero_iff.mp hz
     have hw' := mem_ball_zero_iff.mp hw
