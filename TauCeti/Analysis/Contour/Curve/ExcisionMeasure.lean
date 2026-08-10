@@ -51,7 +51,7 @@ open Filter MeasureTheory Set Topology
 namespace TauCeti.Contour
 
 /-- **The excised parameter set is measurable.** It is the finite union, over the centres, of the
-closed sublevel sets of `t ↦ ‖γ t - s‖`. -/
+preimages of the ray `(-∞, ε]` under `t ↦ ‖γ t - s‖`, each measurable because `γ` is. -/
 theorem measurableSet_excision {γ : ℝ → ℂ} (hγm : Measurable γ) (S : Finset ℂ) (ε : ℝ) :
     MeasurableSet {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} := by
   have h : {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} = ⋃ s ∈ S, {t | ‖γ t - s‖ ≤ ε} := by ext; simp
