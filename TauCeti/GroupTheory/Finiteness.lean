@@ -27,21 +27,25 @@ closure properties it does not carry are collected here.
   `ℤ`-module argument itself — so the pair is written out by hand and registered with
   `to_additive existing`. Both are `instance`s, matching how Mathlib states its other `FG` closure
   properties (`Group.fg_range`, `QuotientGroup.fg`, `Subgroup.fg_of_index_ne_zero`).
+* `Subgroup.fg_of_fg_map_of_fg_inf_ker`: a subgroup `K` whose image `K.map φ` and whose
+  intersection `K ⊓ φ.ker` with the kernel are finitely generated is itself finitely generated.
+  This is the `Subgroup` analogue of Mathlib's `Submodule.fg_of_fg_map_of_fg_inf_ker`, an absence
+  Mathlib records explicitly — a comment in
+  `Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean` restructures a proof "due to no
+  `Subgroup` version of `Submodule.fg_of_fg_map_of_fg_inf_ker` existing". It carries the generator
+  argument, and needs no commutativity.
 * `Group.fg_of_fg_ker_of_fg_range`: an extension of finitely generated groups is finitely
   generated — if the kernel and the range of `φ : G →* H` are finitely generated then so is `G`.
-  This needs no commutativity and *is* `@[to_additive]`. It is a plain theorem rather than an
-  instance, because `φ` is an explicit argument that typeclass resolution cannot infer.
-* `Subgroup.fg_of_fg_map_of_fg_inf_ker`: the relativization of the previous result to an arbitrary
-  subgroup `K`, of which it is the `K = ⊤` case. This is the `Subgroup` analogue of Mathlib's
-  `Submodule.fg_of_fg_map_of_fg_inf_ker`, an absence Mathlib records explicitly — a comment in
-  `Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean` restructures a proof "due to no
-  `Subgroup` version of `Submodule.fg_of_fg_map_of_fg_inf_ker` existing". Also `@[to_additive]`.
+  It is the `K = ⊤` case of the previous result, and is derived from it. It is a plain theorem
+  rather than an instance, because `φ` is an explicit argument that typeclass resolution cannot
+  infer.
 
-Both are steps towards the `S`-unit group being finitely generated, which
-`TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 names as an input to the weak Mordell–Weil
-theorem: the group of `S`-units sits in an extension whose kernel is the unit group of the base
-and whose range is a subgroup of a free group of rank `|S|`, so establishing finite generation
-needs exactly these two facts. The finiteness that the descent then applies to it is Mathlib's
+Both are `@[to_additive]`, and both are steps towards the `S`-unit group being finitely
+generated, which `TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 names as an input to the weak
+Mordell–Weil theorem: the group of `S`-units sits in an extension whose kernel is the unit group
+of the base and whose range is a subgroup of a free group of rank `|S|`, so establishing finite
+generation needs exactly these two facts. The finiteness that the descent then applies to it is
+Mathlib's
 `Subgroup.finiteIndex_range_powMonoidHom_of_fg`, read through
 `Subgroup.finiteIndex_iff_finite_quotient`; nothing here reproves it.
 
@@ -51,9 +55,10 @@ are adapted from Michael Stoll's elliptic-curves formalisation
 roadmap's pin `66889eada51a`, Apache 2.0, by Michael Stoll). Following this repository's convention
 for adapted material, the upstream authorship is credited here rather than in the copyright header.
 
-**`Subgroup.fg_of_fg_map_of_fg_inf_ker` is new here**, with no counterpart in that source: it is
-the relativization of the extension lemma, and Mathlib records its absence in the comment at
-`Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean` quoted above.
+**`Subgroup.fg_of_fg_map_of_fg_inf_ker` is new here**, with no counterpart in that source, which
+has only the `K = ⊤` case; Mathlib records the general statement's absence in the comment at
+`Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean` quoted above. The generator
+argument is Stoll's, restated for a subgroup.
 
 That source file also carries `finite_modPow`, `finite_of_fg_of_pow_eq_one` and two `ℤ`-module
 translation helpers. **None of them is ported: all four are now in Mathlib** — as
@@ -98,57 +103,65 @@ instance (priority := 100) Subgroup.fg_of_commGroup {G : Type*} [CommGroup G] [G
   (Group.fg_iff_subgroup_fg H).mpr <| (Subgroup.fg_iff_add_fg H).mpr <|
     (AddGroup.fg_iff_addSubgroup_fg (Subgroup.toAddSubgroup H)).mp inferInstance
 
-/-- **An extension of finitely generated groups is finitely generated:** if the kernel and the
-range of `φ : G →* H` are finitely generated, then so is `G`. This is the `K = ⊤` case of
-`Subgroup.fg_of_fg_map_of_fg_inf_ker`. -/
--- The generators are preimages of generators of the range together with generators of the kernel.
-@[to_additive /-- **An extension of finitely generated additive groups is finitely generated:** if
-the kernel and the range of `φ : G →+ H` are finitely generated, then so is `G`. This is the
-`K = ⊤` case of `AddSubgroup.fg_of_fg_map_of_fg_inf_ker`. -/]
-theorem Group.fg_of_fg_ker_of_fg_range {G H : Type*} [Group G] [Group H] (φ : G →* H)
-    [Group.FG φ.ker] [Group.FG φ.range] : Group.FG G := by
-  obtain ⟨T, hT, hTfin⟩ := Group.fg_iff.mp ‹Group.FG φ.range›
-  obtain ⟨S, hS, hSfin⟩ := Group.fg_iff.mp ‹Group.FG φ.ker›
-  set σ : φ.range → G := Function.surjInv φ.rangeRestrict_surjective
-  set U : Set G := σ '' T ∪ (φ.ker.subtype '' S)
-  refine Group.fg_iff.mpr ⟨U, ?_, (hTfin.image σ).union (hSfin.image _)⟩
-  -- the kernel is contained in the closure of `U`
-  have hkerle : φ.ker ≤ Subgroup.closure U := by
-    calc φ.ker = (⊤ : Subgroup φ.ker).map φ.ker.subtype := by
-          rw [← MonoidHom.range_eq_map, Subgroup.range_subtype]
-      _ = (Subgroup.closure S).map φ.ker.subtype := by rw [hS]
-      _ = Subgroup.closure (φ.ker.subtype '' S) := MonoidHom.map_closure ..
-      _ ≤ Subgroup.closure U := Subgroup.closure_mono Set.subset_union_right
-  -- the closure of `U` surjects onto the range
-  have hmap : (Subgroup.closure U).map φ.rangeRestrict = ⊤ := by
-    rw [eq_top_iff, ← hT]
-    refine (Subgroup.closure_mono ?_).trans_eq (MonoidHom.map_closure ..).symm
-    intro t ht
-    exact ⟨σ t, Set.mem_union_left _ ⟨t, ht, rfl⟩, Function.surjInv_eq _ t⟩
-  -- so `U` generates everything, by `comap_map_eq` for the range restriction
-  have h := Subgroup.comap_map_eq φ.rangeRestrict (Subgroup.closure U)
-  rw [hmap, Subgroup.comap_top, MonoidHom.ker_rangeRestrict, sup_eq_left.mpr hkerle] at h
-  exact h.symm
-
 /-- **A subgroup whose image and whose intersection with the kernel are finitely generated is
 itself finitely generated.** The `Subgroup` analogue of Mathlib's
 `Submodule.fg_of_fg_map_of_fg_inf_ker`, whose absence Mathlib records explicitly: a comment in
 `Mathlib/NumberTheory/NumberField/Units/DirichletTheorem.lean` restructures a proof "due to no
 `Subgroup` version of `Submodule.fg_of_fg_map_of_fg_inf_ker` existing".
 
-It is the relativization of `Group.fg_of_fg_ker_of_fg_range`, which is its `K = ⊤` case. -/
+`Group.fg_of_fg_ker_of_fg_range` is its `K = ⊤` case. -/
+-- `K` is generated by preimages in `K` of generators of `K.map φ`, together with generators of
+-- `K ⊓ φ.ker`: an `x ∈ K` agrees under `φ` with some `n` in their closure `N`, and then `n⁻¹ * x`
+-- lies in `K ⊓ φ.ker ≤ N`.
 @[to_additive /-- **An additive subgroup whose image and whose intersection with the kernel are
 finitely generated is itself finitely generated.** The `AddSubgroup` analogue of Mathlib's
-`Submodule.fg_of_fg_map_of_fg_inf_ker`. -/]
+`Submodule.fg_of_fg_map_of_fg_inf_ker`. `AddGroup.fg_of_fg_ker_of_fg_range` is its `K = ⊤`
+case. -/]
 theorem Subgroup.fg_of_fg_map_of_fg_inf_ker {G H : Type*} [Group G] [Group H] (φ : G →* H)
     {K : Subgroup G} (h₁ : (K.map φ).FG) (h₂ : (K ⊓ φ.ker).FG) : K.FG := by
-  have : Group.FG (φ.domRestrict K).ker := by
-    have : Group.FG (K ⊓ φ.ker : Subgroup G) := (Group.fg_iff_subgroup_fg _).mpr h₂
-    rw [MonoidHom.ker_domRestrict, ← Subgroup.inf_subgroupOf_left]
-    have e := (Subgroup.subgroupOfEquivOfLe (inf_le_left : K ⊓ φ.ker ≤ K)).symm
-    exact Group.fg_of_surjective (f := e.toMonoidHom) e.surjective
-  have : Group.FG (φ.domRestrict K).range := by
-    rw [MonoidHom.domRestrict_range]; exact (Group.fg_iff_subgroup_fg _).mpr h₁
-  exact (Group.fg_iff_subgroup_fg K).mp (Group.fg_of_fg_ker_of_fg_range (φ.domRestrict K))
+  obtain ⟨T, hT, hTfin⟩ := (Subgroup.fg_iff _).mp h₁
+  obtain ⟨S, hS, hSfin⟩ := (Subgroup.fg_iff _).mp h₂
+  -- a preimage in `K` for each generator of the image
+  have hTmem : ∀ t ∈ T, ∃ g, g ∈ K ∧ φ g = t := fun t ht ↦
+    Subgroup.mem_map.mp (by rw [← hT]; exact Subgroup.subset_closure ht)
+  choose! σ hσK hσ using hTmem
+  have hSle : S ⊆ (K ⊓ φ.ker : Subgroup G) := by rw [← hS]; exact Subgroup.subset_closure
+  refine (Subgroup.fg_iff _).mpr ⟨σ '' T ∪ S, ?_, (hTfin.image σ).union hSfin⟩
+  set N := Subgroup.closure (σ '' T ∪ S) with hN
+  -- the generators lie in `K`
+  have hle : N ≤ K := by
+    rw [hN, Subgroup.closure_le]
+    rintro g (⟨t, ht, rfl⟩ | hg)
+    exacts [hσK t ht, (hSle hg).1]
+  refine le_antisymm hle fun x hx ↦ ?_
+  -- `φ x` is hit by `N`, since `N.map φ` contains every generator of `K.map φ`
+  have hTle : T ⊆ (N.map φ : Set H) := fun t ht ↦
+    ⟨σ t, Subgroup.subset_closure (Set.mem_union_left _ ⟨t, ht, rfl⟩), hσ t ht⟩
+  have hxT : φ x ∈ Subgroup.closure T := by rw [hT]; exact ⟨x, hx, rfl⟩
+  obtain ⟨n, hnN, hn⟩ := (Subgroup.closure_le _).mpr hTle hxT
+  -- so `n⁻¹ * x` lies in `K ⊓ φ.ker`, hence in `N`
+  have hker : n⁻¹ * x ∈ K ⊓ φ.ker :=
+    ⟨K.mul_mem (K.inv_mem (hle hnN)) hx, by simp [hn]⟩
+  rw [← hS] at hker
+  have := (Subgroup.closure_le N).mpr
+    (fun s hs ↦ Subgroup.subset_closure (Set.mem_union_right _ hs)) hker
+  simpa using N.mul_mem hnN this
+
+/-- **An extension of finitely generated groups is finitely generated:** if the kernel and the
+range of `φ : G →* H` are finitely generated, then so is `G`. This is the `K = ⊤` case of
+`Subgroup.fg_of_fg_map_of_fg_inf_ker`. -/
+@[to_additive /-- **An extension of finitely generated additive groups is finitely generated:** if
+the kernel and the range of `φ : G →+ H` are finitely generated, then so is `G`. This is the
+`K = ⊤` case of `AddSubgroup.fg_of_fg_map_of_fg_inf_ker`. -/]
+theorem Group.fg_of_fg_ker_of_fg_range {G H : Type*} [Group G] [Group H] (φ : G →* H)
+    [Group.FG φ.ker] [Group.FG φ.range] : Group.FG G := by
+  have h₁ : ((⊤ : Subgroup G).map φ).FG := by
+    rw [← MonoidHom.range_eq_map]
+    exact (Group.fg_iff_subgroup_fg _).mp ‹Group.FG φ.range›
+  have h₂ : ((⊤ : Subgroup G) ⊓ φ.ker).FG := by
+    rw [top_inf_eq]
+    exact (Group.fg_iff_subgroup_fg _).mp ‹Group.FG φ.ker›
+  -- `Group.FG G` is by definition finite generation of `(⊤ : Subgroup G)`
+  exact ⟨Subgroup.fg_of_fg_map_of_fg_inf_ker φ h₁ h₂⟩
 
 end
