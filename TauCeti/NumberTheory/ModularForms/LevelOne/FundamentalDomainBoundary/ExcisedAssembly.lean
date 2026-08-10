@@ -24,7 +24,7 @@ cancel by periodicity (`intervalIntegral_excised_fdBoundary_segment4_eq_neg_segm
 arc collapses to its weight term
 (`two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc`), and
 the ceiling is untouched by the excision altogether
-(`intervalIntegral_excised_logDeriv_fdBoundary_segment5_eq_qExpansionOrderAtCusp`).
+(`intervalIntegral_excised_logDeriv_fdBoundary_segment5_eq_two_pi_I_mul_qExpansionOrderAtCusp`).
 
 ## Main declarations
 
@@ -99,7 +99,8 @@ theorem intervalIntegral_excised_logDeriv_fdBoundary [SlashInvariantFormClass F 
   rw [← intervalIntegral.integral_add_adjacent_intervals hint01 (hint13.trans hint35),
     ← intervalIntegral.integral_add_adjacent_intervals hint13 hint35,
     ← intervalIntegral.integral_add_adjacent_intervals hint34 hint45,
-    hvert, intervalIntegral_excised_logDeriv_fdBoundary_segment5_eq_qExpansionOrderAtCusp
+    hvert,
+    intervalIntegral_excised_logDeriv_fdBoundary_segment5_eq_two_pi_I_mul_qExpansionOrderAtCusp
       hnorm hε hper hga hgz]
   linear_combination
     two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc

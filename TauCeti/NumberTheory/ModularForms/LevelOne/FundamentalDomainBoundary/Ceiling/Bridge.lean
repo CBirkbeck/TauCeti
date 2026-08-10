@@ -138,7 +138,7 @@ theorem not_exists_norm_fdBoundary_sub_le_of_mem_Icc_four_five {H ε : ℝ} {S :
 /-- **The excised ceiling integral is the plain one.** The excision never fires on the
 ceiling, so the excised integrand agrees with the unexcised one there and the ceiling still
 evaluates through the `q`-circle to `2πi · ord_∞`. -/
-theorem intervalIntegral_excised_logDeriv_fdBoundary_segment5_eq_qExpansionOrderAtCusp
+theorem intervalIntegral_excised_logDeriv_fdBoundary_segment5_eq_two_pi_I_mul_qExpansionOrderAtCusp
     {g : UpperHalfPlane → ℂ} {H ε : ℝ} {S : Finset ℂ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hε : ε < H - 1)
     (hper : Function.Periodic (g ∘ UpperHalfPlane.ofComplex) 1)
