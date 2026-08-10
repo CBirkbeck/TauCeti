@@ -45,7 +45,8 @@ the two uses Wedhorn makes of it, and both appear here.
 * `TauCeti.Valuation.idealCofinalFor_of_span`,
   `TauCeti.Valuation.le_closure_singleton_of_idealCofinalFor` and
   `TauCeti.Valuation.le_of_idealCofinalFor_of_mem_valueSet` : the membership, maximality and
-  minimality halves of **Lemma 7.2**.
+  minimality halves of **Lemma 7.2**, with `TauCeti.Valuation.isLeast_of_idealCofinalFor` the
+  least-element form of the last.
 * `TauCeti.Valuation.idealCofinalFor_radical_iff` : cofinality depends only on the radical.
 * `TauCeti.Valuation.isGreatestIdealCofinal_closure_singleton_of_span` : **Lemma 7.2's
   greatest-cofinal conclusion** from a generating set, with
@@ -217,26 +218,23 @@ theorem le_closure_singleton_of_idealCofinalFor {v : Valuation A Γ₀} {I : Ide
     (idealCofinalFor_iff_forall_isCofinalElement.mp hK h hh)
 
 /-- **Minimality half.** A convex subgroup for which `I` is cofinal sits below every convex
-subgroup containing so much as one value of `I`.
-
-No domination hypothesis is needed. Cofinality is applied twice, at `x` and at `x⁻¹`, which
-brackets `x` strictly between two powers of the single value `γ`; convexity of `K` then
-places `x` inside it. -/
+subgroup containing so much as one value of `I`. No domination hypothesis is needed. -/
 theorem le_of_idealCofinalFor_of_mem_valueSet {v : Valuation A Γ₀} {I : Ideal A}
     {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (hcof : IdealCofinalFor v H I) {γ : valueGroup (.ofClass v)}
-    (hγ : γ ∈ valueSet v I) (hγK : γ ∈ K) : H ≤ K := by
-  obtain ⟨a, haI, hav⟩ := mem_valueSet.mp hγ
-  intro x hx
-  have hcofa := cofinalValueFor_def.mp (hcof a haI)
-  obtain ⟨n, hn⟩ := hcofa x (TauCeti.ConvexSubgroup.mem_toSubgroup.mpr hx)
-  obtain ⟨m, hm⟩ := hcofa x⁻¹ (TauCeti.ConvexSubgroup.mem_toSubgroup.mpr (inv_mem hx))
-  rw [hav, ← WithZero.coe_pow, WithZero.coe_lt_coe] at hn
-  rw [hav, ← WithZero.coe_pow, WithZero.coe_lt_coe] at hm
-  have hx2 : x < (γ ^ m)⁻¹ := by
-    have h := inv_lt_inv_iff.mpr hm
-    rwa [inv_inv] at h
-  exact K.convex (pow_mem hγK n) (inv_mem (pow_mem hγK m)) hn.le hx2.le
+    (hγ : γ ∈ valueSet v I) (hγK : γ ∈ K) : H ≤ K :=
+  -- through the convex subgroup `γ` generates: `H` is below it, and it is below `K`
+  (le_closure_singleton_of_idealCofinalFor hγ
+      (idealCofinalFor_iff_forall_isCofinalElement.mp hcof γ hγ).lt_one hcof).trans
+    (TauCeti.ConvexSubgroup.closure_le.mpr (Set.singleton_subset_iff.mpr hγK))
+
+/-- **Minimality, as a least-element statement.** Any convex subgroup for which `I` is cofinal
+and which contains a value of `I` is the least convex subgroup meeting `v(I)`. -/
+theorem isLeast_of_idealCofinalFor {v : Valuation A Γ₀} {I : Ideal A}
+    {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
+    (hcof : IdealCofinalFor v H I) (hmeet : ∃ γ ∈ valueSet v I, γ ∈ H) :
+    IsLeast {K | ∃ γ ∈ valueSet v I, γ ∈ K} H :=
+  ⟨hmeet, fun _ ⟨_, hγ, hγK⟩ ↦ le_of_idealCofinalFor_of_mem_valueSet hcof hγ hγK⟩
 
 /-- **Membership half.** It suffices to check cofinality on a generating set: if every element
 of `T` has cofinal value, so does every element of the ideal `T` spans.
@@ -509,18 +507,15 @@ theorem exists_mem_valueSet_mem_characteristicSubgroupOfIdeal {v : Valuation A �
 /-- **`cΓ_v(I)` is the least convex subgroup meeting `v(I)`** — the minimality conclusion of
 Wedhorn Lemma 7.2, on the branch where Definition 7.3 invokes it.
 
-The two halves are `exists_mem_valueSet_mem_characteristicSubgroupOfIdeal` for membership and
-`le_of_idealCofinalFor_of_mem_valueSet` for the lower bound. Nonvanishing is required for the
-same reason as there: with `valueSet v I` empty, nothing meets it and no least element exists. -/
+Nonvanishing cannot be dropped: with `valueSet v I` empty nothing meets it, so the set has no
+least element. -/
 theorem isLeast_characteristicSubgroupOfIdeal {v : Valuation A Γ₀} {I : Ideal A}
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
     (h : ¬ IdealMeetsCharacteristicSubgroup v I)
     (hne : ∃ a ∈ I, (MonoidWithZeroHom.ofClass v) a ≠ 0) :
-    IsLeast {K | ∃ γ ∈ valueSet v I, γ ∈ K} (characteristicSubgroupOfIdeal v I hfg) := by
-  refine ⟨exists_mem_valueSet_mem_characteristicSubgroupOfIdeal hfg h hne, ?_⟩
-  rintro K ⟨γ, hγ, hγK⟩
-  exact le_of_idealCofinalFor_of_mem_valueSet
-    (isGreatestIdealCofinal_characteristicSubgroupOfIdeal hfg h).1 hγ hγK
+    IsLeast {K | ∃ γ ∈ valueSet v I, γ ∈ K} (characteristicSubgroupOfIdeal v I hfg) :=
+  isLeast_of_idealCofinalFor (isGreatestIdealCofinal_characteristicSubgroupOfIdeal hfg h).1
+    (exists_mem_valueSet_mem_characteristicSubgroupOfIdeal hfg h hne)
 
 /-! ### Wedhorn Lemma 7.4 -/
 
