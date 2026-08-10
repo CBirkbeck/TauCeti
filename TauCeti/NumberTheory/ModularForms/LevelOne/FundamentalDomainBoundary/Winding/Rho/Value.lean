@@ -384,7 +384,7 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
         then (fdBoundary H t - (UpperHalfPlane.ρ : ℂ))⁻¹ * deriv (fdBoundary H) t else 0) =
       -((Real.pi : ℂ) / 3) * Complex.I - ((Real.arcsin (ε / 2) : ℝ) : ℂ) * Complex.I := by
   obtain ⟨hδL_pos, hδL_lt, h2sin⟩ :=
-    fdBoundaryArcExcisionHalfWidth_pos_lt_one_and_two_mul_sin_eq hε hε₃
+    fdBoundaryArcExcisionHalfWidth_pos_and_lt_one_and_two_mul_sin_eq hε hε₃
   set δL := fdBoundaryArcExcisionHalfWidth ε with hδL_def
   have hHpos : (0 : ℝ) < H - Real.sqrt 3 / 2 := by linarith
   set δR := ε / (H - Real.sqrt 3 / 2) with hδR_def
