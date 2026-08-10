@@ -14,18 +14,13 @@ For a finite field `K` with `q` elements, the `q`-power map is a `K`-algebra end
 rational function field `K(X)` (Mathlib's `FiniteField.frobeniusAlgHom`). Its image is the
 subfield `K(X^q)`, and `K(X)` has degree exactly `q` over it.
 
-Both halves rest on `FiniteField.expand_card`: every polynomial over `K` satisfies
-`f(X) ^ q = f(X ^ q)`, since raising the coefficients to the `q`-th power fixes them. So a
-`q`-th power in `K(X)` is a quotient of polynomials in `X ^ q`, and conversely.
-
 ## Main results
 
 * `TauCeti.FiniteField.fieldRange_frobeniusAlgHom_ratFunc`: the image of the `q`-power map on
   `K(X)` is `K⟮X ^ q⟯`.
 * `TauCeti.FiniteField.finrank_fieldRange_frobeniusAlgHom_ratFunc`: `[K(X) : K(X^q)] = q`.
 
-The degree then comes from Mathlib's `RatFunc.finrank_eq_max_natDegree`, which computes
-`[K(X) : K⟮f⟯]` as `max f.num.natDegree f.denom.natDegree`: for `f = X ^ q` that is `max q 0`.
+Both are `@[simp]`.
 
 ## Roadmap
 
