@@ -449,6 +449,22 @@ private lemma ae_norm_condExp_indicator_le_one {Ω : Type*} {m0 : MeasurableSpac
   ae_bdd_norm_condExp_of_ae_bdd_norm (m := m') <| Filter.Eventually.of_forall fun ω => by
     simpa only [norm_one] using norm_indicator_le_norm_self (fun _ => (1 : ℝ)) ω
 
+/-- **The cross term against a coarser conditional expectation.** If `f` is `m`-measurable and is
+the conditional expectation of `g` on `m`, then `∫ g * f = ∫ f * f`. -/
+private lemma integral_mul_eq_integral_sq_of_condExp_ae_eq {Ω : Type*} {mΩ : MeasurableSpace Ω}
+    {m : MeasurableSpace Ω} (hm : m ≤ mΩ) {μ : @Measure Ω mΩ} [SigmaFinite (μ.trim hm)]
+    {f g : Ω → ℝ}
+    (hf : StronglyMeasurable[m] f) (hgf_int : Integrable (fun ω => g ω * f ω) μ)
+    (hg_int : Integrable g μ) (h_tower : μ[g | m] =ᵐ[μ] f) :
+    ∫ ω, g ω * f ω ∂μ = ∫ ω, f ω * f ω ∂μ := by
+  -- pull the `m`-measurable factor out of the conditional expectation, then apply the tower law
+  have h_pullout := condExp_mul_of_stronglyMeasurable_right (m := m) hf hgf_int hg_int
+  calc ∫ ω, g ω * f ω ∂μ
+      = ∫ ω, μ[fun ω => g ω * f ω | m] ω ∂μ := (integral_condExp hm).symm
+    _ = ∫ ω, μ[g | m] ω * f ω ∂μ := integral_congr_ae h_pullout
+    _ = ∫ ω, f ω * f ω ∂μ := by
+        refine integral_congr_ae ?_; filter_upwards [h_tower] with ω hω; rw [hω]
+
 /-- **Kallenberg Lemma 1.3 (contraction-independence).** If `(X, W) =ᵈ (X, W')` and
 `σ(W) ≤ σ(W')` (so `W` is a contraction of `W'`), then conditioning the indicator of `X` on the
 finer `σ(W')` equals conditioning on the coarser `σ(W)`, almost everywhere. -/
@@ -486,15 +502,9 @@ theorem condExp_indicator_eq_of_law_eq_of_comap_le [IsFiniteMeasure μ] (X : Ω 
     hμ₂_int.bdd_mul hμ₂_int.aestronglyMeasurable hμ₂_bound
   have hμ₂μ₁_int : Integrable (fun ω => μ₂ ω * μ₁ ω) μ :=
     hμ₁_int.bdd_mul hμ₂_int.aestronglyMeasurable hμ₂_bound
-  -- Cross term `∫ μ₂ μ₁ = ∫ μ₁ μ₁` via pull-out and the tower property.
-  have h_cross : ∫ ω, μ₂ ω * μ₁ ω ∂μ = ∫ ω, μ₁ ω * μ₁ ω ∂μ := by
-    have hμ₁_meas : StronglyMeasurable[mW] μ₁ := stronglyMeasurable_condExp
-    have h_pullout := condExp_mul_of_stronglyMeasurable_right (m := mW) hμ₁_meas hμ₂μ₁_int hμ₂_int
-    calc ∫ ω, μ₂ ω * μ₁ ω ∂μ
-        = ∫ ω, μ[fun ω => μ₂ ω * μ₁ ω | mW] ω ∂μ := (integral_condExp hmW_le).symm
-      _ = ∫ ω, μ[μ₂ | mW] ω * μ₁ ω ∂μ := integral_congr_ae h_pullout
-      _ = ∫ ω, μ₁ ω * μ₁ ω ∂μ := by
-          refine integral_congr_ae ?_; filter_upwards [h_tower] with ω hω; rw [hω]
+  have hμ₁_meas : StronglyMeasurable[mW] μ₁ := stronglyMeasurable_condExp
+  have h_cross : ∫ ω, μ₂ ω * μ₁ ω ∂μ = ∫ ω, μ₁ ω * μ₁ ω ∂μ :=
+    integral_mul_eq_integral_sq_of_condExp_ae_eq hmW_le hμ₁_meas hμ₂μ₁_int hμ₂_int h_tower
   have h_sq_eq : ∫ ω, μ₁ ω * μ₁ ω ∂μ = ∫ ω, μ₂ ω * μ₂ ω ∂μ := h_sq_eq_raw
   -- `μ₁ =ᵐ μ₂` from the polarisation `∫ (μ₂ - μ₁)² = ∫ μ₂² - 2 ∫ μ₂ μ₁ + ∫ μ₁² = 0`.
   exact (ae_eq_of_integral_mul_eq_of_integral_sq_eq hμ₁sq_int hμ₂sq_int hμ₂μ₁_int
