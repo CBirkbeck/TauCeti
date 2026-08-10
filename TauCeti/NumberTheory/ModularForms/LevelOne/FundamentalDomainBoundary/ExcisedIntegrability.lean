@@ -55,9 +55,13 @@ theorem intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary
     IntervalIntegrable (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
         else deriv (fdBoundary H) t • logDeriv g (fdBoundary H t)) volume a b := by
   obtain ⟨M, -, hM⟩ := exists_norm_deriv_fdBoundary_le H
+  have hd : IntervalIntegrable (deriv (fdBoundary H)) volume a b := by
+    rw [intervalIntegrable_iff]
+    exact IntegrableOn.of_bound (by rw [Real.volume_uIoc]; exact ENNReal.ofReal_lt_top)
+      (measurable_deriv _).aestronglyMeasurable M (Filter.Eventually.of_forall fun t => hM t)
   have hφ : ContinuousOn (logDeriv g)
-      (fdBoundary H '' (uIcc a b ∩ {t | ∀ s ∈ S, ε ≤ ‖fdBoundary H t - s‖})) := by
-    rintro z ⟨t, ⟨ht, hfar⟩, rfl⟩
+      (fdBoundary H '' uIcc a b ∩ {z | ∀ s ∈ S, ε ≤ ‖z - s‖}) := by
+    rintro z ⟨⟨t, ht, rfl⟩, hfar⟩
     have hmemU : fdBoundary H t ∈ U :=
       hUdom (fdBoundary_mem_coe_truncatedFundamentalDomain hH (hab ht))
     have hnotS : fdBoundary H t ∉ S := fun hs => by
@@ -67,7 +71,8 @@ theorem intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary
     exact (Contour.analyticAt_logDeriv_of_analyticAt (hoff _ hmemU hnotS).1
       (hoff _ hmemU hnotS).2).continuousAt.continuousWithinAt
   simpa only [smul_eq_mul, mul_comm] using
-    Contour.intervalIntegrable_excised_of_continuousOn (continuous_fdBoundary H) hM hφ
+    Contour.intervalIntegrable_excised_of_continuousOn (continuous_fdBoundary H).continuousOn
+      (continuous_fdBoundary H).measurable hd hφ
 
 end ModularForm
 
