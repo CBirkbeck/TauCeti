@@ -65,11 +65,9 @@ theorem intervalIntegrable_excised_of_continuousOn (hγc : ContinuousOn γ (uIcc
       (MeasureTheory.volume.restrict (uIoc a b)) := by
     have hcompl : survivingParams γ S ε = {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε}ᶜ := by
       ext; simp [survivingParams, not_le]
-    have hset : {t | ∃ s ∈ S, ‖γ t - s‖ ≤ ε} = ⋃ s ∈ S, {t | ‖γ t - s‖ ≤ ε} := by ext; simp
-    refine MeasureTheory.NullMeasurableSet.inter ?_ measurableSet_uIoc.nullMeasurableSet
-    refine hcompl ▸ MeasureTheory.NullMeasurableSet.compl (hset ▸ ?_)
-    exact MeasureTheory.NullMeasurableSet.biUnion S.countable_toSet fun s _ =>
-      nullMeasurableSet_le ((hae.sub_const s).norm) aemeasurable_const
+    exact MeasureTheory.NullMeasurableSet.inter
+      (hcompl ▸ (nullMeasurableSet_excision hae S ε).compl)
+      measurableSet_uIoc.nullMeasurableSet
   have hmem : ∀ t ∈ uIoc a b,
       (t ∈ survivingParams γ S ε ∩ uIoc a b ↔ ¬∃ s ∈ S, ‖γ t - s‖ ≤ ε) := by
     refine fun t ht => ⟨?_, ?_⟩
