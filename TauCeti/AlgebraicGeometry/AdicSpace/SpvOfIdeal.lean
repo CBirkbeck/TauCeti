@@ -28,6 +28,22 @@ eliminator is needed: `ValuationSpectrum.valuation` picks a canonical representa
 point and `ofValuation_valuation` says the choice round-trips, so the set is defined directly
 by that representative and `mem_spvOfIdeal_ofValuation` transfers the test to any other.
 
+## Relation to the AINTLIB formalisation
+
+The AINTLIB adic-spaces development (`aintlib-adic-spaces`, revision `37bbdaeb9`,
+`projects/AdicSpaces/Adic spaces/SpvAI.lean`) already formalises this space, as
+`Spv.IsInSpvAI`, but by the *other* clause of Lemma 7.4:
+
+```text
+(∀ a ∈ I, Valuation.CofinalValue v a) ∨ Valuation.IsMicrobial v
+```
+
+Taking clause (ii) as the definition sidesteps `cΓ_v(I)` entirely, so that development needs
+neither Lemma 7.2 nor Definition 7.3. This file instead takes clause (i), `cΓ_v(I) = Γ_v`, as
+Wedhorn does in §7.1.1, and recovers the disjunctive form as a theorem —
+`mem_spvOfIdeal_iff_forall_cofinalValue` is essentially AINTLIB's definition, proved rather than
+assumed. The two routes agree by Lemma 7.4.
+
 ## Main definitions
 
 * `TauCeti.ValuationSpectrum.spvOfIdeal` : the subset `Spv (A, I)` of `Spv A`.
