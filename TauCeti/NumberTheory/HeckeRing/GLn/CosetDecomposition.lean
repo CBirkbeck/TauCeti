@@ -11,10 +11,16 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.DiagonalCosets
 /-!
 # Upper-triangular representatives for a diagonal double coset
 
-For a tuple `a` of positive naturals, this file exhibits a family of elements of the double
+For an arbitrary tuple `a` of naturals, this file exhibits a family of elements of the double
 coset `SL_n(ℤ) · diag(a) · SL_n(ℤ)`, indexed by the bounded entry assignments
-`B_{ij} ∈ {0, …, a_j / a_i - 1}` for `i < j`, and shows that they lie in pairwise distinct
-left `SL_n(ℤ)`-cosets — so the double coset contains at least `∏_{i < j} (a_j / a_i)` of them.
+`B_{ij} ∈ {0, …, a_j / a_i - 1}` for `i < j`. The construction, its membership in the double
+coset, and its injectivity need no hypothesis on `a` at all.
+
+*Distinctness of the cosets* does: when `a` is positive and a divisibility chain (`IsDvdChain`),
+the family lies in pairwise distinct left `SL_n(ℤ)`-cosets, so the double coset meets at least
+`∏_{i < j} (a_j / a_i)` of them. The chain condition is what makes `a_j / a_i` an exact
+quotient, which is what turns integrality of the connecting element into the divisibility the
+argument runs on.
 
 The representative attached to `B` is *defined* as `diag(a) · U(B)`, where `U(B)` is the
 unipotent upper-triangular integral matrix with off-diagonal entries `B`. Two things follow
