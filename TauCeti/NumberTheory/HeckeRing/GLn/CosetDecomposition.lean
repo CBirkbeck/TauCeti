@@ -17,10 +17,13 @@ coset `SL_n(ℤ) · diag(a) · SL_n(ℤ)`, indexed by the bounded entry assignme
 coset, and its injectivity need no hypothesis on `a` at all.
 
 *Distinctness of the cosets* does: when `a` is positive and a divisibility chain (`IsDvdChain`),
-the family lies in pairwise distinct left `SL_n(ℤ)`-cosets, so the double coset meets at least
-`∏_{i < j} (a_j / a_i)` of them. The chain condition is what makes `a_j / a_i` an exact
-quotient, which is what turns integrality of the connecting element into the divisibility the
-argument runs on.
+distinct entry assignments give representatives in distinct left `SL_n(ℤ)`-cosets. The chain
+condition is what makes `a_j / a_i` an exact quotient, which is what turns integrality of the
+connecting element into the divisibility the argument runs on.
+
+Counting the index type then bounds the number of left cosets in the double coset below by
+`∏_{i < j} (a_j / a_i)`. That count is a consequence of the distinctness proved here, not
+itself a declaration in this file.
 
 The representative attached to `B` is *defined* as `diag(a) · U(B)`, where `U(B)` is the
 unipotent upper-triangular integral matrix with off-diagonal entries `B`. Two things follow
@@ -45,8 +48,7 @@ does not, since `upperTriGL` is visibly a composition of injective maps.
   matrices, hence distinct representatives.
 * `eq_of_upperTriGL_eq`, `eq_of_upperTriGL_mul_inv_mem_SLnZ` — the representatives lie in
   *distinct* left `SL_n(ℤ)`-cosets: two of them are left-equivalent only when their entry
-  assignments already agree. So for a positive `IsDvdChain` the double coset meets at least
-  `∏_{i < j} (a_j / a_i)` distinct left cosets.
+  assignments already agree, for a positive `IsDvdChain`.
 
 The two steps behind that conclusion are also stated separately, since each is reusable:
 `dvd_comparison_of_upperTriGL_eq` turns left equivalence into `(a_j / a_i) ∣ C_{ij}` for the
@@ -65,9 +67,8 @@ and Prop. 3.36 (p. 72).
 
 That exercise is motivation, not the statement proved here. It asserts only that
 flag-preserving representatives *exist*; it does not supply this bounded family
-`B_{ij} ∈ Fin (a_j / a_i)`, nor the distinctness of the left cosets they occupy, nor the
-resulting `∏_{i < j} (a_j / a_i)` lower bound. Those are proved below and are not read off
-from the exercise.
+`B_{ij} ∈ Fin (a_j / a_i)`, nor the distinctness of the left cosets they occupy. Those are
+proved below and are not read off from the exercise.
 
 The definitions follow the AINTLIB [`LeanModularForms`](https://github.com/CBirkbeck/AINTLIB)
 file `LeanModularForms/HeckeRIngs/GLn/CosetDecomposition.lean` (Chris Birkbeck), whose module
@@ -313,8 +314,7 @@ lemma dvd_comparison_of_upperTriGL_eq {a : Fin n → ℕ} (ha : ∀ i, 0 < a i)
 
 /-- The upper-triangular representatives of a positive divisibility chain lie in pairwise
 **distinct** left `SL_n(ℤ)`-cosets: if two of them differ by a left factor in `SL_n(ℤ)`, their
-entry assignments already agree. So the double coset `SL_n(ℤ) · diag(a) · SL_n(ℤ)` meets at
-least `∏_{i < j} (a_j / a_i)` distinct left cosets. -/
+entry assignments already agree. Equivalently, `B ↦ SL_n(ℤ) · upperTriGL B` is injective. -/
 theorem eq_of_upperTriGL_eq {a : Fin n → ℕ} (ha : ∀ i, 0 < a i) (hchain : IsDvdChain a)
     {B₁ B₂ : UpperTriEntries n a}
     {S : SpecialLinearGroup (Fin n) ℤ} (hS : upperTriGL B₁ = mapGL ℚ S * upperTriGL B₂) :

@@ -55,8 +55,7 @@ theorem mul_apply_diag_of_isUpperTriangular (hA : A.IsUpperTriangular)
 variable {S : Type*} [CommRing S] {M : Matrix n n S}
 
 /-- On the diagonal, the inverse of an invertible upper-triangular matrix inverts entrywise:
-`M⁻¹ i i * M i i = 1`. Read `M⁻¹ * M = 1` at `(i, i)`, where the product's diagonal is the
-pointwise product because `M⁻¹` is upper triangular too. -/
+`M⁻¹ i i * M i i = 1`. -/
 theorem inv_apply_diag_mul_of_isUpperTriangular [Invertible M] (hM : M.IsUpperTriangular)
     (i : n) : M⁻¹ i i * M i i = 1 := by
   have hinv : M⁻¹.IsUpperTriangular := blockTriangular_inv_of_blockTriangular hM
