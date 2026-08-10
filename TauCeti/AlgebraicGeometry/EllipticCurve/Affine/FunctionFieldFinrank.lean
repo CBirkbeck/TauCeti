@@ -108,12 +108,11 @@ instance isScalarTowerFractionRingFunctionField :
     IsScalarTower R[X] (FractionRing R[X]) W.FunctionField :=
   FractionRing.isScalarTower_liftAlgebra R[X] W.FunctionField
 
-/-- **The function field of a Weierstrass curve is a quadratic extension of `R(x)`.** The function
-field is the base change of the coordinate ring along `R[X] → R(x)`, by Mathlib's
-`Algebra.IsAlgebraic.isBaseChange_of_isFractionRing`, and the coordinate ring has rank two. -/
+/-- **The function field of a Weierstrass curve is a quadratic extension of `R(x)`.** -/
 @[simp]
 theorem finrank_functionField :
     Module.finrank (FractionRing R[X]) W.FunctionField = 2 := by
+  -- `R(W)` is the base change of `R[W]` along `R[X] → R(x)`, and `R[W]` has rank two.
   rw [(Algebra.IsAlgebraic.isBaseChange_of_isFractionRing R[X] W.CoordinateRing
     (FractionRing R[X]) W.FunctionField).finrank_eq, finrank_coordinateRing]
 
