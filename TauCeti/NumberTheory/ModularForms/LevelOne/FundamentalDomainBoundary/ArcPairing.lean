@@ -285,14 +285,14 @@ theorem intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary
     · simp only [if_pos hc]
     · simp only [if_neg hc, logDeriv_fdBoundary_arc ⟨hu.1, by linarith [hu.2]⟩]
   have hI := ((hconst.sub hint).comp_sub_left 4).symm
-  rw [show (4 : ℝ) - 2 = 2 by norm_num, show (4 : ℝ) - 1 = 3 by norm_num] at hI
+  norm_num at hI
   refine hI.congr_uIoo ?_
   rw [Set.uIoo_of_le (by norm_num : (2 : ℝ) ≤ 3)]
   intro x hx
   have hu : 4 - x ∈ Ioo (1 : ℝ) 2 := ⟨by linarith [hx.2], by linarith [hx.1]⟩
   have hp := excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS
     ⟨hu.1, by linarith [hu.2]⟩ hnorm hinv (hd _ hu) (hne _ hu)
-  rw [show (4 : ℝ) - (4 - x) = x by ring] at hp
+  rw [sub_sub_self] at hp
   linear_combination -hp
 
 /-- **The excised arc integral collapses to the weight term.** Integrating the pointwise pairing

@@ -140,7 +140,7 @@ theorem intervalIntegrable_excised_deriv_smul_fdBoundary_segment4 {E : Type*}
     IntervalIntegrable (fun t ↦ deriv (fdBoundary H) t •
       (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0 else φ (fdBoundary H t))) volume 3 4 := by
   have hI := (hint.neg.comp_sub_left 4).symm
-  rw [show (4 : ℝ) - 0 = 4 by norm_num, show (4 : ℝ) - 1 = 3 by norm_num] at hI
+  norm_num at hI
   refine hI.congr_uIoo ?_
   rw [Set.uIoo_of_le (by norm_num : (3 : ℝ) ≤ 4)]
   intro x hx
@@ -149,12 +149,12 @@ theorem intervalIntegrable_excised_deriv_smul_fdBoundary_segment4 {E : Type*}
   have hval : fdBoundary H (4 - (4 - x)) = fdBoundary H (4 - x) - 1 :=
     fdBoundary_four_sub_vertical H ⟨hu.1.le, hu.2.le⟩
   have hder := deriv_fdBoundary_four_sub_vertical H hu
-  rw [show (4 : ℝ) - (4 - x) = x by ring] at hval hder hiff
+  rw [sub_sub_self] at hval hder hiff
   by_cases hc : ∃ s ∈ S, ‖fdBoundary H (4 - x) - s‖ ≤ ε
-  · simp only [Pi.neg_apply, if_pos hc, if_pos (hiff.mpr hc), smul_zero, neg_zero]
+  · simp only [if_pos hc, if_pos (hiff.mpr hc), smul_zero, neg_zero]
   · -- Discharge both `if`s first: rewriting values inside a live condition would stop
     -- `if_neg` from matching it.
-    simp only [Pi.neg_apply, if_neg hc, if_neg fun h => hc (hiff.mp h)]
+    simp only [if_neg hc, if_neg fun h => hc (hiff.mp h)]
     simp only [hval, hφ.sub_eq, hder, neg_smul]
 
 /-- **The vertical cancellation survives excision.** The reflection `t ↦ 4 - t` carries the right

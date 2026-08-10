@@ -121,26 +121,23 @@ theorem intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunc
   rw [hLc, hcusp, hR]
   exact ceiling_integrand_eq hper ht.1
 
-/-- **The excision never fires on the ceiling.** The excision centres lie on the unit circle,
-so their heights are at most `1`, while the ceiling runs at height `H`; once `ε < H - 1` no
-ceiling point is within `ε` of a centre. -/
+/-- **The excision never fires on the ceiling.** The ceiling runs at height `H`, so a centre
+whose height clears `ε` below it — `s.im + ε < H` — has no ceiling point within `ε`. This is
+the exact condition; callers with centres on the unit circle get it from `ε < H - 1`. -/
 theorem not_exists_norm_fdBoundary_sub_le_of_mem_Icc_four_five {H ε : ℝ} {S : Finset ℂ}
-    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hε : ε < H - 1) {t : ℝ} (ht : t ∈ Icc (4 : ℝ) 5) :
+    (hlt : ∀ s ∈ S, s.im + ε < H) {t : ℝ} (ht : t ∈ Icc (4 : ℝ) 5) :
     ¬ ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε := by
   rintro ⟨s, hs, hle⟩
-  have hsim : |s.im| ≤ 1 := (Complex.abs_im_le_norm s).trans (hnorm s hs).le
   have himle : |(fdBoundary H t - s).im| ≤ ‖fdBoundary H t - s‖ := Complex.abs_im_le_norm _
   rw [Complex.sub_im, im_fdBoundary_segment5 H ht] at himle
   have : H - s.im ≤ ε := (le_abs_self _).trans (himle.trans hle)
-  cases abs_le.mp hsim
-  linarith
+  linarith [hlt s hs]
 
 /-- **The excised ceiling integral is the plain one.** The excision never fires on the
 ceiling, so the excised integrand agrees with the unexcised one there and the ceiling still
 evaluates through the `q`-circle to `2πi · ord_∞`. -/
 theorem intervalIntegral_excised_logDeriv_fdBoundary_segment5_eq_two_pi_I_mul_qExpansionOrderAtCusp
-    {g : UpperHalfPlane → ℂ} {H ε : ℝ} {S : Finset ℂ}
-    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hε : ε < H - 1)
+    {g : UpperHalfPlane → ℂ} {H ε : ℝ} {S : Finset ℂ} (hlt : ∀ s ∈ S, s.im + ε < H)
     (hper : Function.Periodic (g ∘ UpperHalfPlane.ofComplex) 1)
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (UpperHalfPlane.cuspFunction 1 g) q)
@@ -154,7 +151,7 @@ theorem intervalIntegral_excised_logDeriv_fdBoundary_segment5_eq_two_pi_I_mul_qE
     (intervalIntegral_fdBoundary_segment5_eq_circleIntegral_logDeriv_cuspFunction hper).trans
       (circleIntegral_logDeriv_cuspFunction hga hgz)]
   rw [uIcc_of_le (by norm_num : (4 : ℝ) ≤ 5)] at ht
-  exact if_neg (not_exists_norm_fdBoundary_sub_le_of_mem_Icc_four_five hnorm hε ht)
+  exact if_neg (not_exists_norm_fdBoundary_sub_le_of_mem_Icc_four_five hlt ht)
 
 end ModularForm
 
