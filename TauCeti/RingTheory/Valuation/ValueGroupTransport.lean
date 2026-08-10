@@ -99,22 +99,3 @@ theorem _root_.Valuation.IsEquiv.valueGroupOrderIso_trans {Γ₀'' : Type*}
   rw [withZero_symm_trans, Valuation.IsEquiv.orderMonoidIso_trans]
 
 end TauCeti.Valuation
-
-namespace TauCeti
-
-/-! ### Transporting a convex subgroup across the units of a `WithZero` -/
-
-/-- Carry a convex subgroup of `G` back to one of `(WithZero G)ˣ`. This is the transport that
-lets `cΓ_v(I)`, which lives in the value group, be handed to `Valuation.restrictToConvex`,
-which wants a convex subgroup of the units of the value monoid. -/
-def ConvexSubgroup.ofValueGroup {G : Type*} [CommGroup G] [LinearOrder G]
-    (K : ConvexSubgroup G) : ConvexSubgroup ((WithZero G)ˣ) :=
-  ConvexSubgroup.comap (OrderMonoidIso.unitsWithZero (α := G)) K
-
-@[simp]
-theorem mem_convexSubgroup_ofValueGroup {G : Type*} [CommGroup G] [LinearOrder G]
-    {K : ConvexSubgroup G} {u : (WithZero G)ˣ} :
-    u ∈ ConvexSubgroup.ofValueGroup K ↔ OrderMonoidIso.unitsWithZero u ∈ K :=
-  ConvexSubgroup.mem_comap
-
-end TauCeti

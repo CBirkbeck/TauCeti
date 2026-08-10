@@ -92,7 +92,8 @@ theorem lt_one_of_unit_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup Γ₀�
   push Not at hge
   exact hm (hH hge)
 
-/-- The restriction is `0` at `r` exactly when `v r` vanishes or its unit avoids `H`. -/
+/-- The nonzero branch: on a value that does not vanish, the restriction is `0` at `r` exactly
+when the unit of `v r` avoids `H`. -/
 private theorem restrictToConvexFun_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     {r : R} (hr : v r ≠ 0) :
     restrictToConvexFun v H r = 0 ↔ Units.mk0 (v r) hr ∉ H := by

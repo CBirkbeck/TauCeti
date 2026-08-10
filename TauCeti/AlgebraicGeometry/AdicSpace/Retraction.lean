@@ -18,14 +18,14 @@ subgroup are kept, and every other value is sent to `0`.
 
 This file builds that map and nothing more. Wedhorn's retraction additionally **lands in**
 `Spv (A, I)` and **fixes** that subspace pointwise; **neither is proved here**, so the map is
-stated with codomain `Spv A` rather than the subspace, and it should not yet be relied on as a
-retraction.
+stated with codomain `Spv A` rather than the subspace, and is named for what it does —
+restriction to `I` — rather than for the retraction property it does not yet carry.
 
 ## Main definitions
 
 * `TauCeti.Valuation.RestrictedValues` : the value monoid the restriction lands in.
 * `TauCeti.Valuation.restrictToIdeal` : the restricted valuation `v|cΓ_v(I)`.
-* `TauCeti.ValuationSpectrum.retract` : the same at the level of points of `Spv A`.
+* `TauCeti.ValuationSpectrum.restrictToIdeal` : the same at the level of points of `Spv A`.
 
 ## References
 
@@ -61,33 +61,32 @@ private theorem unitsWithZeroEquiv_mk0_restrict (v : Valuation A Γ₀) {a : A}
 /-- `cΓ_v(I)`, transported onto the units of the value monoid, absorbs every attained value
 `≥ 1`. This is exactly the hypothesis `Valuation.restrictToConvex` needs, and it holds because
 `cΓ_v(I)` contains `cΓ_v`, which contains every attained value `≥ 1`. -/
-theorem mk0_restrict_mem_ofValueGroup (v : Valuation A Γ₀) (I : Ideal A)
+theorem mk0_restrict_mem_comapUnitsWithZero (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
     (a : A) (ha : v.restrict a ≠ 0) (h1 : 1 ≤ v.restrict a) :
     Units.mk0 (v.restrict a) ha ∈
-      ConvexSubgroup.ofValueGroup (characteristicSubgroupOfIdeal v I hfg) := by
+      ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg) := by
   have h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := fun h => ha (v.restrict_eq_zero_iff.mpr h)
-  rw [mem_convexSubgroup_ofValueGroup, unitsWithZeroEquiv_mk0_restrict v h0 ha]
+  rw [ConvexSubgroup.mem_comapUnitsWithZero, unitsWithZeroEquiv_mk0_restrict v h0 ha]
   refine characteristicSubgroup_le_characteristicSubgroupOfIdeal v I hfg
     (valueGroup_mk_mem_characteristicSubgroup_of_one_le_value h0 ?_)
   have hr : v.restrict 1 ≤ v.restrict a := by simpa using h1
   simpa using v.restrict_le_iff.mp hr
 
 /-- The value monoid of the restricted valuation: `cΓ_v(I)`, transported onto the units of the
-value monoid, with a zero adjoined.
-
-Named rather than written inline because downstream statements need it as a
-`LinearOrderedCommGroupWithZero`. `Valuation` asks only for the monoid class, so an inline
-`WithZero …` elaborates with `WithZero`'s monoid instance and then `CofinalValue`, which needs
-the group class, cannot even be *stated* about the result — and no `letI` inside a proof can
-repair a mismatch in a statement. -/
+value monoid, with a zero adjoined. -/
+-- Named rather than written inline because downstream statements need it as a
+-- `LinearOrderedCommGroupWithZero`. `Valuation` asks only for the monoid class, so an inline
+-- `WithZero …` elaborates with `WithZero`'s monoid instance, and then `CofinalValue`, which
+-- needs the group class, cannot even be *stated* about the result -- a mismatch no `letI`
+-- inside a later proof can repair.
 abbrev RestrictedValues (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) : Type _ :=
-  WithZero (ConvexSubgroup.ofValueGroup (characteristicSubgroupOfIdeal v I hfg)).toSubgroup
+  WithZero (ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg)).toSubgroup
 
-/-- The group instance on `RestrictedValues`, registered so that downstream statements find it
-rather than `WithZero`'s monoid instance. Without this the abbreviation unfolds and the monoid
-instance wins, which is the whole problem it exists to solve. -/
+/-- `RestrictedValues` is a linearly ordered commutative group with zero. -/
+-- Registered explicitly so downstream statements find this instance rather than `WithZero`'s
+-- monoid instance: without it the abbreviation unfolds and the monoid instance wins.
 noncomputable instance instLinearOrderedCommGroupWithZeroRestrictedValues (v : Valuation A Γ₀)
     (I : Ideal A) (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     LinearOrderedCommGroupWithZero (RestrictedValues v I hfg) :=
@@ -98,7 +97,7 @@ kept; every other value is sent to `0`. -/
 noncomputable def restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     Valuation A (RestrictedValues v I hfg) :=
-  (v.restrict).restrictToConvex _ (mk0_restrict_mem_ofValueGroup v I hfg)
+  (v.restrict).restrictToConvex _ (mk0_restrict_mem_comapUnitsWithZero v I hfg)
 
 end TauCeti.Valuation
 
@@ -109,15 +108,14 @@ open MonoidWithZeroHom TauCeti TauCeti.Valuation
 variable {A : Type*} [CommRing A]
 
 /-- **The underlying map of Wedhorn's §7.1.2 retraction.** A point of `Spv A` is sent to the
-class of its canonical valuation restricted to `cΓ_v(I)`.
-
-The `letI` is load-bearing. `Valuation` asks only for `LinearOrderedCommMonoidWithZero`, so the
-restriction's codomain elaborates with `WithZero`'s direct monoid instance, while `ofValuation`
-wants the group class; the two paths agree by `rfl` but not reducibly, so unification needs the
-instance pinned. -/
-noncomputable def retract (v : Spv A) (I : Ideal A)
+class of its canonical valuation restricted to `cΓ_v(I)`. -/
+-- The `letI` is load-bearing: `Valuation` asks only for `LinearOrderedCommMonoidWithZero`, so
+-- the restriction's codomain elaborates with `WithZero`'s direct monoid instance while
+-- `ofValuation` wants the group class. The two agree by `rfl` but not reducibly, so
+-- unification needs the instance pinned.
+noncomputable def restrictToIdeal (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) : Spv A :=
-  letI : LinearOrderedCommGroupWithZero (WithZero (ConvexSubgroup.ofValueGroup
+  letI : LinearOrderedCommGroupWithZero (WithZero (ConvexSubgroup.comapUnitsWithZero
       (characteristicSubgroupOfIdeal v.valuation I hfg)).toSubgroup) := inferInstance
   ofValuation (v.valuation.restrictToIdeal I hfg)
 
