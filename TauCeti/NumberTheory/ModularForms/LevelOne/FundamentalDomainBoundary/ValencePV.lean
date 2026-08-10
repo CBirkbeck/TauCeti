@@ -156,10 +156,11 @@ theorem hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex [SlashInvariantFormCl
     exact hval ▸ (tendsto_const_nhds.sub
       ((tendsto_intervalIntegral_excised_logDeriv_fdBoundary_arc H S).const_mul _))
 
-/-- **The weighted zero count equals the cusp order minus the weight term.** Both sides are the
+/-- **The weighted order sum equals the cusp order minus the weight term.** Both sides are the
 same Cauchy principal value along the boundary contour: `hasCauchyPV_fdBoundary_logDeriv`
 evaluates it by the argument principle, as `2πi` times the winding-weighted sum of orders over
-the **divisor** set `T`, while `hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex` evaluates it
+the **divisor** set `T` — orders, not zero-counts: a point of `T` where the form has a pole
+contributes negatively, while `hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex` evaluates it
 by the excised assembly, excising the **boundary** set `S`. Principal values are unique even
 across different excision sets, so the two agree.
 
@@ -196,13 +197,31 @@ theorem two_pi_I_mul_sum_windingNumber_mul_order_eq [SlashInvariantFormClass F �
     (hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex f hS hnorm hinv hHgt hper hoffγ hga
       hgz).hasCauchyPV
 
-/-- **The weighted zero count in terms of `orderOfVanishingAt`.** With the divisor points in the
+/-- A form analytic and nonvanishing off a *finite* set on an open `U` cannot vanish identically
+near a point of `U`: every punctured neighbourhood meets `U` off that finite set. So its
+meromorphic order there is finite, and `hfin` need not be assumed. -/
+private theorem meromorphicOrderAt_ne_top_of_analyticAt_off {g : ℂ → ℂ} {T : Finset ℂ} {U : Set ℂ}
+    (hU : IsOpen U) (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ g z ∧ g z ≠ 0) {s : ℂ} (hs : s ∈ U) :
+    meromorphicOrderAt g s ≠ ⊤ := by
+  rw [Ne, meromorphicOrderAt_eq_top_iff]
+  intro hzero
+  have hTc : ((T : Set ℂ) \ {s})ᶜ ∈ 𝓝 s :=
+    (T.finite_toSet.sdiff).isClosed.compl_mem_nhds (by simp)
+  have hnb : (U \ (T : Set ℂ)) ∈ 𝓝[≠] s := by
+    filter_upwards [nhdsWithin_le_nhds (hU.mem_nhds hs), nhdsWithin_le_nhds hTc,
+      self_mem_nhdsWithin] with z hzU hzT hzne
+    exact ⟨hzU, fun hzT' => hzT ⟨hzT', hzne⟩⟩
+  obtain ⟨z, hz0, hzU, hzT⟩ := (hzero.and hnb).exists
+  exact (hoff z hzU hzT).2 hz0
+
+/-- **The weighted order sum in terms of `orderOfVanishingAt`.** With the divisor points in the
 upper half plane, the abstract order function of `two_pi_I_mul_sum_windingNumber_mul_order_eq` is
 the modular-forms order at each of them.
 
 `orderOfVanishingAt` is by definition the meromorphic order of `f ∘ ofComplex`
 (`orderOfVanishingAt_def`), so the abstract hypothesis is discharged by finiteness alone, which
-is what `hfin` records. The sum runs over `T.attach` because the order is taken at each divisor
+is automatic here: `meromorphicOrderAt_ne_top_of_analyticAt_off` derives it from `hoff` and the
+finiteness of `T`. The sum runs over `T.attach` because the order is taken at each divisor
 point *as a point of `ℍ`*, which needs its membership proof. -/
 theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
     [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
@@ -214,7 +233,6 @@ theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
     (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
     (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hfin : ∀ s ∈ T, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s ≠ ⊤)
     (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
@@ -236,12 +254,14 @@ theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
     Finset.sum_attach T fun z => Contour.windingNumber (fdBoundary H) 0 5 z *
       (((meromorphicOrderAt (⇑f ∘ ofComplex) z).untop₀ : ℤ) : ℂ)]
   exact two_pi_I_mul_sum_windingNumber_mul_order_eq f hS hH hnorm hinv hHgt hper hoffγ hU hUdom
-    hoff hmero (fun s hsT hsU => (WithTop.coe_untop₀_of_ne_top (hfin s hsT hsU)).symm) hbase hga
+    hoff hmero (fun s hsT hsU => (WithTop.coe_untop₀_of_ne_top
+      (meromorphicOrderAt_ne_top_of_analyticAt_off hU hoff hsU)).symm) hbase hga
     hgz
 
 /-- **The valence identity, divided through.** Cancelling the common factor `2πi` puts the
-identity in the shape the valence formula is usually written in: the winding-weighted count of
-orders inside the contour equals the cusp order minus `k/12`.
+identity in the shape the valence formula is usually written in: the winding-weighted sum of
+orders inside the contour equals the cusp order minus `k/12`. The orders are meromorphic orders,
+so a pole contributes negatively.
 
 The weight term matches because `k·(π/6)·I = 2πi·(k/12)`. -/
 theorem sum_windingNumber_mul_orderOfVanishingAt_eq [SlashInvariantFormClass F Γ k] (f : F)
@@ -254,7 +274,6 @@ theorem sum_windingNumber_mul_orderOfVanishingAt_eq [SlashInvariantFormClass F �
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
     (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
     (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hfin : ∀ s ∈ T, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s ≠ ⊤)
     (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
@@ -263,11 +282,9 @@ theorem sum_windingNumber_mul_orderOfVanishingAt_eq [SlashInvariantFormClass F �
     ∑ z ∈ T.attach, Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
         ((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) =
       qExpansionOrderAtCusp 1 ⇑f - (k : ℂ) / 12 := by
-  have hne : (2 : ℂ) * (Real.pi : ℂ) * Complex.I ≠ 0 := by
-    simp [Real.pi_ne_zero]
-  refine mul_left_cancel₀ hne ?_
+  refine mul_left_cancel₀ Complex.two_pi_I_ne_zero ?_
   rw [two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH hnorm hinv hHgt hper hoffγ
-    hU hUdom hoff hmero hfin hpos hbase hga hgz]
+    hU hUdom hoff hmero hpos hbase hga hgz]
   push_cast
   ring
 
