@@ -107,15 +107,23 @@ theorem continuous_initialSegmentFamily_uncurry {a b : X} (γ : Path a b) :
 `p` and `q` running in `V` between the same two points of `V`, there is a homotopy from `p` to `q`
 every intermediate path of which again lies in `V`.
 
-`SimplyConnectedSpace.paths_homotopic` gives a homotopy in the subspace `↥V`; the point of this
-statement is that reading it back in `X` costs nothing, because a homotopy in the subspace is by
-construction one that stays in `V`. -/
+The homotopy is stated in the ambient space rather than in `↥V`, with membership in `V` as a
+separate conclusion: that is the form consumers want, and it spares them transporting along the
+subtype. -/
 theorem exists_homotopy_forall_mem_of_isSimplyConnected {V : Set X} (hV : IsSimplyConnected V)
-    {a b : V} {p q : Path (a : X) (b : X)} (hp : ∀ t, p t ∈ V) (hq : ∀ t, q t ∈ V) :
+    {a b : X} {p q : Path a b} (hp : ∀ t, p t ∈ V) (hq : ∀ t, q t ∈ V) :
     ∃ K : p.Homotopy q, ∀ t x, K (t, x) ∈ V := by
   have := hV.simplyConnectedSpace
-  obtain ⟨h⟩ := SimplyConnectedSpace.paths_homotopic (p.codRestrict hp) (q.codRestrict hq)
-  exact ⟨h.map (⟨Subtype.val, continuous_subtype_val⟩ : C(V, X)), fun t x => (h (t, x)).2⟩
+  have haV : a ∈ V := p.source ▸ hp 0
+  have hbV : b ∈ V := p.target ▸ hp 1
+  obtain ⟨h⟩ := SimplyConnectedSpace.paths_homotopic
+    (Path.codRestrict (x := ⟨a, haV⟩) (y := ⟨b, hbV⟩) p hp)
+    (Path.codRestrict (x := ⟨a, haV⟩) (y := ⟨b, hbV⟩) q hq)
+  -- map the subspace homotopy back down, and read its endpoints through `map_codRestrict`
+  refine ⟨(h.map (⟨Subtype.val, continuous_subtype_val⟩ : C(V, X))).cast
+    (Path.map_codRestrict (x := ⟨a, haV⟩) (y := ⟨b, hbV⟩) p hp)
+    (Path.map_codRestrict (x := ⟨a, haV⟩) (y := ⟨b, hbV⟩) q hq), fun t x => ?_⟩
+  simp
 
 end Path
 

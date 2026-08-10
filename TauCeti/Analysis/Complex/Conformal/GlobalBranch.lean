@@ -6,7 +6,6 @@ Authors: Claude
 module
 
 public import TauCeti.Analysis.Complex.Conformal.Monodromy
-public import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
 public import TauCeti.Topology.Homotopy.Path
 import Mathlib.Topology.MetricSpace.Thickening
 
@@ -45,9 +44,8 @@ Path independence is monodromy plus simple connectivity: two paths in `U` with t
 are joined by a homotopy whose every intermediate path is again inside `U`
 (`Path.exists_homotopy_forall_mem_of_isSimplyConnected`), so the hypothesis supplies a continuation
 along each of them and `TauCeti.monodromy_theorem` applies. Uniqueness of continuation along a
-*fixed* path
-(`TauCeti.IsAnalyticContinuationAlong.eventuallyEq`, over the preconnected parameter interval)
-then matches the two given continuations with the two extreme members of that family.
+*fixed* path (`TauCeti.IsAnalyticContinuationAlong.eventuallyEq`, over the preconnected parameter
+interval) then matches the two given continuations with the two extreme members of that family.
 
 The global branch is `F w = (value at w of the terminal germ of a continuation to w)`, chosen once
 per point of `U` by path connectedness; path independence says the choice does not matter. The
@@ -84,10 +82,11 @@ Mathlib has the abstract monodromy statement `IsLocalHomeomorph.monodromy_theore
 criterion `IsCoveringMap.existsUnique_continuousMap_lifts` for a simply connected base
 (`Mathlib/Topology/Homotopy/Lifting.lean`), but consuming them for germs of holomorphic functions
 would first require the étale space of those germs as a topological space, which Mathlib does not
-have; see the discussion in `Conformal/Monodromy.lean`. Mathlib's simple-connectivity API
-(`SimplyConnectedSpace.paths_homotopic`, `IsSimplyConnected.isPathConnected`), its path homotopy
-API (`Path.Homotopy.map`), and its metric thickening of a compact set are consumed rather than
-restated.
+have; see the discussion in `Conformal/Monodromy.lean`. Mathlib's simple-connectivity and path
+homotopy APIs are consumed rather than restated: `IsSimplyConnected.isPathConnected` here, and
+`SimplyConnectedSpace.paths_homotopic` with `Path.Homotopy.map` through
+`Path.exists_homotopy_forall_mem_of_isSimplyConnected`. So is its metric thickening of a compact
+set.
 
 ## References
 
@@ -122,11 +121,10 @@ theorem eventuallyEq_at_one (hUc : IsSimplyConnected U) (H : ContinuesInside f�
   -- continues the germ along every intermediate path and `TauCeti.monodromy_theorem` applies to
   -- the resulting family. The two given continuations are then matched with the extreme members
   -- of that family by uniqueness along a fixed path.
-  have hz₀U : z₀ ∈ U := hγ0 ▸ hγU 0
   let P : Path z₀ (γ 1) := { toFun := γ, continuous_toFun := hγ, source' := hγ0, target' := rfl }
   let Q : Path z₀ (γ 1) := { toFun := δ, continuous_toFun := hδ, source' := hδ0, target' := hend }
-  obtain ⟨K, hKmem⟩ := Path.exists_homotopy_forall_mem_of_isSimplyConnected
-    (a := ⟨z₀, hz₀U⟩) (b := ⟨γ 1, hγU 1⟩) hUc (p := P) (q := Q) hγU hδU
+  obtain ⟨K, hKmem⟩ :=
+    Path.exists_homotopy_forall_mem_of_isSimplyConnected hUc (p := P) (q := Q) hγU hδU
   have hKzero : ∀ t : I, K (t, 0) = z₀ := fun t => by simp
   have hKp : (fun x => K (0, x)) = γ := funext fun x => by simp [P]
   have hKq : (fun x => K (1, x)) = δ := funext fun x => by simp [Q]
