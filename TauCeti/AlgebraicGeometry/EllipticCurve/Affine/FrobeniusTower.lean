@@ -21,6 +21,9 @@ smaller one: it is `2q`.
   rational function field inside `K(W)`.
 * `TauCeti.WeierstrassCurve.Affine.finrank_frobeniusRatFuncRange`: `[K(W) : K(x^q)] = 2 * q`.
 
+Neither degree needs `W` to be elliptic: they are the degree of `K(W)` over embedded subfields of
+the rational function field, and the Weierstrass equation alone gives the power basis.
+
 ## Roadmap
 
 `TauCetiRoadmap/EllipticCurves/README.md`, **Layer 1**, the Frobenius isogeny — "the key input to
@@ -125,18 +128,22 @@ theorem finrank_extendScalars_ratFuncRange :
   rw [TauCeti.FiniteField.finrank_fieldRange_frobeniusAlgHom_ratFunc] at h
   exact h.symm
 
+/-- Re-basing `K(x)` over `K(x^q)` does not change its degree under `K(W)`: `extendScalars`
+replaces the base field of an intermediate field and leaves its carrier alone, which is exactly
+what Mathlib's `IntermediateField.coe_extendScalars` records (and states as `rfl`). -/
+theorem finrank_extendScalars_eq :
+    Module.finrank (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W))
+      W.FunctionField = Module.finrank (ratFuncRange W) W.FunctionField :=
+  rfl
+
 /-- **`[K(W) : K(x^q)] = 2q`.** The tower `K(x^q) ⊆ K(x) ⊆ K(W)` has degrees `q` and `2`. -/
 @[simp]
 theorem finrank_frobeniusRatFuncRange :
     Module.finrank (frobeniusRatFuncRange W) W.FunctionField = 2 * Fintype.card K := by
   have htower := Module.finrank_mul_finrank (frobeniusRatFuncRange W)
     (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W)) W.FunctionField
-  -- `extendScalars` only changes the base ring of the intermediate field, not its carrier, so the
-  -- outer degree is `finrank_ratFuncRange` unchanged
-  have houter : Module.finrank
-      (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W))
-      W.FunctionField = 2 := finrank_ratFuncRange W
-  rw [finrank_extendScalars_ratFuncRange W, houter] at htower
+  rw [finrank_extendScalars_ratFuncRange W, finrank_extendScalars_eq W,
+    finrank_ratFuncRange W] at htower
   rw [← htower, Nat.mul_comm]
 
 end WeierstrassCurve.Affine
