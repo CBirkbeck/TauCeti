@@ -9,37 +9,36 @@ public import Mathlib.RingTheory.DedekindDomain.Factorization
 /-!
 # Complements on the multiplicity of a height one prime
 
-Two ways of handling `Associates.count` / `FractionalIdeal.count` that Mathlib does not carry.
+Three facts about `Associates.count` and `FractionalIdeal.count` that Mathlib does not carry.
+
+## Main results
 
 * `IsDedekindDomain.HeightOneSpectrum.le_count_associates_iff_le_pow`: the multiplicity of `v` in
   a nonzero `J` is at least `k` exactly when `v ^ k` contains `J`. The multiplicity here is
   `Associates.count`, not `FractionalIdeal.count` — hence the `associates` token, matching
-  Mathlib's `Ideal.count_associates_factors_eq` for the same expression.
-  Mathlib already reads the multiplicity of a prime as divisibility —
-  `Associates.prime_pow_dvd_iff_le` gives
-  `p ^ k ∣ m ↔ k ≤ count p m.factors` and is the first step of the proof — but that is a statement
-  about `Associates`, while a consumer
-  comparing two multiplicities wants a containment of *ideals*. This packages the two together,
-  through `Associates.mk_le_mk_iff_dvd` and `Ideal.dvd_iff_le`. It is the form in which
-  multiplicities are compared across a ring extension: one shows the two ideals contain the same
-  prime powers and concludes the multiplicities agree.
+  Mathlib's `Ideal.count_associates_factors_eq` for the same expression. Mathlib reads that
+  multiplicity as divisibility of `Associates`; a consumer comparing two multiplicities across a
+  ring extension wants a containment of *ideals*, and shows the two ideals contain the same prime
+  powers.
 * `FractionalIdeal.count_div`: the multiplicity of `I / J` is the difference of the multiplicities
   of `I` and `J`. Mathlib's `count` API has `count_mul`, `count_inv`, `count_pow` and `count_zpow`
-  but no division form, so every consumer that clears a denominator repeats the same rewrites;
-  this states them once. `FractionalIdeal.count_spanSingleton_div` reads it on principal fractional
-  ideals, which is the shape the class-group computation below needs.
+  but no division form, so every consumer that clears a denominator repeats the same rewrites.
+* `FractionalIdeal.count_spanSingleton_div`: the same on principal fractional ideals. This is the
+  one the `S`-integer class-group computation in
+  `TauCeti/RingTheory/DedekindDomain/SInteger/ClassGroup.lean` uses, at both `R` and `𝒪_S` — which
+  is why the ring is a variable rather than fixed — advancing
+  `TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 (Mordell–Weil), whose weak-Mordell–Weil
+  argument needs the `S`-class group to be finite. `count_div` is its general form and has no
+  consumer in this repository yet.
 
-Both are general facts about an arbitrary Dedekind domain, mentioning no particular ring extension.
-The `S`-integer class-group computation in
-`TauCeti/RingTheory/DedekindDomain/SInteger/ClassGroup.lean` consumes both — the second at two
-different rings, which is why it is stated with the ring as a variable — advancing
-`TauCetiRoadmap/EllipticCurves/README.md` §Layer 6 (Mordell–Weil), whose weak-Mordell–Weil argument
-needs the `S`-class group to be finite.
+All three are general facts about an arbitrary Dedekind domain, mentioning no particular ring
+extension.
 
-Adapted from Michael Stoll's elliptic-curves formalisation
+`le_count_associates_iff_le_pow` is adapted from Michael Stoll's elliptic-curves formalisation
 (`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/Basic.lean:381` at the
-roadmap's pin `66889eada51a`, Apache 2.0, by Michael Stoll). Following this repository's convention
+roadmap's pin `66889eada51a`, Apache 2.0, by Michael Stoll); following this repository's convention
 for adapted material, the upstream authorship is credited here rather than in the copyright header.
+**The two `count` lemmas are new here** — they have no counterpart in that source.
 -/
 public section
 
@@ -63,9 +62,7 @@ open scoped nonZeroDivisors
 
 /-- **The multiplicity of a quotient is the difference of the multiplicities.** Mathlib's `count`
 API has `count_mul`, `count_inv`, `count_pow` and `count_zpow` but no division form, so every
-consumer that clears a denominator repeats the same rewrites. Fractional ideals over a Dedekind
-domain form a `Semifield` (`FractionalIdeal.semifield`), so this is `count_mul` and `count_inv`
-composed through `div_eq_mul_inv`. -/
+consumer that clears a denominator repeats the same rewrites. -/
 theorem count_div {A : Type*} [CommRing A] [IsDedekindDomain A] (K : Type*) [Field K] [Algebra A K]
     [IsFractionRing A K] (w : HeightOneSpectrum A) {I J : FractionalIdeal A⁰ K} (hI : I ≠ 0)
     (hJ : J ≠ 0) : count K w (I / J) = count K w I - count K w J := by
@@ -80,9 +77,8 @@ theorem count_spanSingleton_div {A : Type*} [CommRing A] [IsDedekindDomain A] (K
     (hy : y ≠ 0) :
     count K w (spanSingleton A⁰ (x / y)) =
       count K w (spanSingleton A⁰ x) - count K w (spanSingleton A⁰ y) := by
-  rw [← spanSingleton_div_spanSingleton, count_div K w
-    (by simpa only [ne_eq, spanSingleton_eq_zero_iff] using hx)
-    (by simpa only [ne_eq, spanSingleton_eq_zero_iff] using hy)]
+  rw [← spanSingleton_div_spanSingleton, count_div K w (spanSingleton_ne_zero_iff.mpr hx)
+    (spanSingleton_ne_zero_iff.mpr hy)]
 
 end FractionalIdeal
 

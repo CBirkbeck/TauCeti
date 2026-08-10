@@ -18,6 +18,22 @@ in `S`:
 
 `IsDedekindDomain.integerClassGroupEquiv : ClassGroup 𝒪_S ≃* ClassGroup R ⧸ ⟨[v] : v ∈ S⟩`.
 
+## Main definitions
+
+* `IsDedekindDomain.integerClassGroupEquiv`: the isomorphism above.
+* `IsDedekindDomain.integerContractedIdeal`: the contraction to `R` of a nonzero ideal of `𝒪_S`,
+  as a nonzero ideal — the dual of Mathlib's `ClassGroup.extendedIdeal`, and the ideal-level
+  companion of the spectrum-level `integerPrimeUnder`.
+
+## Main results
+
+* `IsDedekindDomain.finite_integer_classGroup`: `Cl(𝒪_S)` is finite whenever `Cl(R)` is.
+* `IsDedekindDomain.integer_extendedHom_mk0_comap`: the class of `I` is extended from the class of
+  its contraction — the explicit preimage witnessing surjectivity, so a consumer holding a concrete
+  `I` need not go through `Exists.choose`.
+* `IsDedekindDomain.integerClassGroupEquiv_symm_mk`, `..._extendedHom` and `..._mk0`: how the
+  isomorphism evaluates, on a class extended from `Cl(R)` and on a concrete `ClassGroup.mk0`.
+
 The proof is the first isomorphism theorem applied to extension of ideals `Cl(R) → Cl(𝒪_S)`:
 
 * `IsDedekindDomain.integer_extendedHom_surjective`: extension is surjective, because every ideal
@@ -186,22 +202,31 @@ noncomputable def integerClassGroupEquiv :
   (QuotientGroup.quotientKerEquivOfSurjective _ (integer_extendedHom_surjective K S)).symm.trans
     (QuotientGroup.quotientMulEquivOfEq (ker_integer_extendedHom K S))
 
-/-- `integerClassGroupEquiv` inverts extension: the class extended from `c : Cl(R)` corresponds to
-the class of `c` in the quotient. -/
-@[simp] lemma integerClassGroupEquiv_symm_mk (c : ClassGroup R) :
-    (integerClassGroupEquiv K S).symm (QuotientGroup.mk c) =
-      ClassGroup.extendedHom R (S.integer K) c := by
-  -- a `public section` leaves the body unexposed, so this is not `rfl` from outside the file
-  simp only [integerClassGroupEquiv]
-  rfl
-
 /-- `integerClassGroupEquiv` in the stated direction: the class extended from `c : Cl(R)` maps to
-the class of `c` in the quotient. The companion of `integerClassGroupEquiv_symm_mk`, so a consumer
-applying the equivalence forwards need not go through `MulEquiv.eq_symm_apply` by hand. -/
+the class of `c` in the quotient.
+
+Proved from Mathlib's characterisation lemmas for the two equivalences it is built from, rather
+than by unfolding either: `quotientKerEquivOfRightInverse_apply` and `kerLift_mk` for the first
+isomorphism theorem, `quotientMulEquivOfEq_mk` for the rewriting of the kernel. -/
 @[simp] lemma integerClassGroupEquiv_extendedHom (c : ClassGroup R) :
     integerClassGroupEquiv K S (ClassGroup.extendedHom R (S.integer K) c) =
       QuotientGroup.mk c := by
-  rw [← integerClassGroupEquiv_symm_mk K S c, MulEquiv.apply_symm_apply]
+  have hinner : (QuotientGroup.quotientKerEquivOfSurjective
+      (ClassGroup.extendedHom R (S.integer K)) (integer_extendedHom_surjective K S)).symm
+        (ClassGroup.extendedHom R (S.integer K) c) = QuotientGroup.mk c :=
+    (MulEquiv.symm_apply_eq _).mpr <| by
+      simp only [QuotientGroup.quotientKerEquivOfSurjective,
+        QuotientGroup.quotientKerEquivOfRightInverse_apply, QuotientGroup.kerLift_mk]
+  simp only [integerClassGroupEquiv, MulEquiv.trans_apply, hinner,
+    QuotientGroup.quotientMulEquivOfEq_mk]
+
+/-- `integerClassGroupEquiv` inverts extension: the class extended from `c : Cl(R)` corresponds to
+the class of `c` in the quotient. The companion of `integerClassGroupEquiv_extendedHom`, obtained
+from it by `MulEquiv.symm_apply_eq`. -/
+@[simp] lemma integerClassGroupEquiv_symm_mk (c : ClassGroup R) :
+    (integerClassGroupEquiv K S).symm (QuotientGroup.mk c) =
+      ClassGroup.extendedHom R (S.integer K) c :=
+  (MulEquiv.symm_apply_eq _).mpr (integerClassGroupEquiv_extendedHom K S c).symm
 
 /-- `integerClassGroupEquiv` evaluated on a concrete ideal: the class of `I` corresponds to the
 class of the contraction of `I` to `R`. This is the evaluation to use when the argument is

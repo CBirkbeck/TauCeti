@@ -132,8 +132,8 @@ noncomputable def integerPrimeOverOfNotMem {v : HeightOneSpectrum R} (hv : v ∉
   simp only [Ideal.map_pow] at hmapQ
   rw [hassoc, (pow_inj_of_not_isUnit hPnu hP0).mp hmapQ]
 
-/-- Divisibility by prime powers transfers along extension to `𝒪_S` and back, for primes off
-`S`. -/
+/-- For `v ∉ S`, an ideal `J` of `R` is contained in `v ^ k` exactly when its extension to `𝒪_S`
+is contained in the `k`-th power of the prime above `v`. -/
 lemma integer_map_le_map_pow_iff {v : HeightOneSpectrum R} (hv : v ∉ S) (J : Ideal R) (k : ℕ) :
     Ideal.map (algebraMap R (S.integer K)) J ≤ (integerPrimeOverOfNotMem K S hv).asIdeal ^ k ↔
       J ≤ v.asIdeal ^ k := by
