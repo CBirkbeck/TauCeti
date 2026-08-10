@@ -203,11 +203,7 @@ noncomputable def integerClassGroupEquiv :
     (QuotientGroup.quotientMulEquivOfEq (ker_integer_extendedHom K S))
 
 /-- `integerClassGroupEquiv` in the stated direction: the class extended from `c : Cl(R)` maps to
-the class of `c` in the quotient.
-
-Proved from Mathlib's characterisation lemmas for the two equivalences it is built from, rather
-than by unfolding either: `quotientKerEquivOfRightInverse_apply` and `kerLift_mk` for the first
-isomorphism theorem, `quotientMulEquivOfEq_mk` for the rewriting of the kernel. -/
+the class of `c` in the quotient. -/
 @[simp] lemma integerClassGroupEquiv_extendedHom (c : ClassGroup R) :
     integerClassGroupEquiv K S (ClassGroup.extendedHom R (S.integer K) c) =
       QuotientGroup.mk c := by
@@ -220,9 +216,8 @@ isomorphism theorem, `quotientMulEquivOfEq_mk` for the rewriting of the kernel. 
   simp only [integerClassGroupEquiv, MulEquiv.trans_apply, hinner,
     QuotientGroup.quotientMulEquivOfEq_mk]
 
-/-- `integerClassGroupEquiv` inverts extension: the class extended from `c : Cl(R)` corresponds to
-the class of `c` in the quotient. The companion of `integerClassGroupEquiv_extendedHom`, obtained
-from it by `MulEquiv.symm_apply_eq`. -/
+/-- `integerClassGroupEquiv` inverts extension: the class of `c` in the quotient corresponds to the
+class extended from `c : Cl(R)`. The `symm` counterpart of `integerClassGroupEquiv_extendedHom`. -/
 @[simp] lemma integerClassGroupEquiv_symm_mk (c : ClassGroup R) :
     (integerClassGroupEquiv K S).symm (QuotientGroup.mk c) =
       ClassGroup.extendedHom R (S.integer K) c :=
