@@ -67,13 +67,13 @@ the two uses Wedhorn makes of it, and both appear here.
 Two are: that the constructed subgroup is **greatest** among those for which `I` is cofinal, and
 that it **meets** `v(I)` when `v` does not vanish identically on `I`.
 
-A **minimality** clause is not. Being least among the convex subgroups that meet `v(I)` would
-force the selected value `h` to dominate every value of `I`, and it does not: `h` is a maximum
-over a finite generating set of `J`, `√I = √J` relates `I` to `J` by radicals rather than by any
-inequality, and `v (c * t) = v c * v t` exceeds `v t` whenever `1 < v c` — the point recorded on
-`idealCofinalFor_of_span` below. Concretely, over a lexicographic `ℤ × ℤ` one can have
-`h = (-1, 0)` attained on a generator while `γ = (0, -1)` is attained on `I`; then
-`closure {γ}` meets `v(I)` but omits `h`, since `γ ^ k = (0, -k) > h` for every `k`.
+A **minimality** clause is not: that the subgroup is least among the convex subgroups meeting
+`v(I)`. Proving it means showing `h ∈ K` for every convex `K` containing some value of `I`,
+which needs `γ ^ k ≤ h` for some `k`. That is not immediate from the construction, since `h`
+maximises over a generating set of `J` while `γ` ranges over `I`, and `v (c * t) = v c * v t`
+can exceed `v t` — see the note on `idealCofinalFor_of_span` below. It is the disjointness
+hypothesis that constrains this, since an attained value `≥ 1` lies in `cΓ_v` and `v(I)` must
+avoid `cΓ_v`; formalising that argument is left to the work that needs the clause.
 
 ## Implementation notes
 
