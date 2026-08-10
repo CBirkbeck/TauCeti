@@ -39,11 +39,10 @@ answered at the level of the polynomial, not yet of the class.
   reduction is a property of the curve and not of the equation;
 * `WeierstrassCurve.splits_nodePolynomial_map_iff_isSquare` and
   `WeierstrassCurve.splits_nodePolynomial_map_iff_exists_artinSchreier_of_two_eq_zero`: the
-  splitting criteria themselves, each needing `c₄` to survive the map. Away from residue
-  characteristic two it splits iff the image of `-c₄ c₆` is a square; in residue characteristic two,
-  where that says nothing, iff an Artin-Schreier condition holds — and there `c₆` must survive as
-  well. Both come from the general quadratic criteria of
-  `TauCeti/Algebra/Polynomial/QuadraticDiscriminant.lean`.
+  splitting criteria themselves, each needing only `c₄` to survive the map. Away from residue
+  characteristic two it splits iff the image of `-c₄ c₆` is a square; in residue characteristic
+  two, where that says nothing, iff an Artin-Schreier condition holds. Both come from the general
+  quadratic criteria of `TauCeti/Algebra/Polynomial/QuadraticDiscriminant.lean`.
 
 Nothing here assumes a valuation or a reduction: every statement is about a Weierstrass curve over
 a commutative ring and a ring homomorphism to a field, so it applies to any reduction map one later
@@ -202,13 +201,21 @@ lemma splits_nodePolynomial_map_iff_isSquare [NeZero (2 : k)] (φ : A →+* k) (
 /-- **Split criterion in residue characteristic two.** Over a field `k` of characteristic `2`,
 where the square-class criterion `splits_nodePolynomial_map_iff_isSquare` says nothing, the node
 polynomial splits exactly when its Artin-Schreier invariant lies in the image of `z ↦ z² + z`.
-Both `c₄` and `c₆` are required nonzero in `k`; together they force the linear coefficient
-`a₁ c₄` to be nonzero as well, which is what makes the criterion applicable. -/
+Only `c₄` need be assumed nonzero: in characteristic two `1728 = 0`, so `c_relation` reads
+`c₄³ = c₆²` and `c₆ ≠ 0` comes for free. Together they force the linear coefficient `a₁ c₄` to be
+nonzero, which is what makes the criterion applicable. -/
 lemma splits_nodePolynomial_map_iff_exists_artinSchreier_of_two_eq_zero (h2 : (2 : k) = 0)
-    (φ : A →+* k)
-    (W : WeierstrassCurve A) (hc₄ : φ W.c₄ ≠ 0) (hc₆ : φ W.c₆ ≠ 0) :
+    (φ : A →+* k) (W : WeierstrassCurve A) (hc₄ : φ W.c₄ ≠ 0) :
     (W.nodePolynomial.map φ).Splits ↔ ∃ z, φ (W.a₁ * W.c₄) ^ 2 * (z ^ 2 + z)
       = φ W.c₄ * (-φ (54 * W.b₆ - 3 * W.b₂ * W.b₄ + W.a₂ * W.c₄)) := by
+  -- `1728 = 0` in characteristic two, so `c_relation` gives `φ c₄ ^ 3 = φ c₆ ^ 2`.
+  have hc₆ : φ W.c₆ ≠ 0 := by
+    intro h0
+    refine hc₄ (pow_eq_zero_iff three_ne_zero |>.mp ?_)
+    have h := congrArg φ W.c_relation
+    have h1728 : (1728 : k) = 0 := by linear_combination (864 : k) * h2
+    simp only [map_mul, map_sub, map_pow, map_ofNat] at h
+    linear_combination -h + φ W.Δ * h1728 + φ W.c₆ * h0
   -- In characteristic two the discriminant is the square of the linear coefficient
   -- (`discrim_eq_sq_of_two_eq_zero`), and it equals `φ (-(c₄ c₆)) ≠ 0`, so that coefficient is
   -- nonzero — which is what makes the Artin-Schreier criterion applicable.
