@@ -182,8 +182,7 @@ omit [CompactSpace G] [MeasurableSpace G] [BorelSpace G] in
 /-- **A symmetric open neighbourhood of the identity carries a symmetric bump.** If `W` is open,
 contains `1`, and is closed under inversion, then some continuous real function is nonnegative,
 invariant under inversion, vanishes off `W`, and is positive at `1`. -/
-private theorem exists_symmetric_bump [RegularSpace G] [LocallyCompactSpace G] {W : Set G}
-    (hWopen : IsOpen W)
+private theorem exists_symmetric_bump [LocallyCompactSpace G] {W : Set G} (hWopen : IsOpen W)
     (hW1 : (1 : G) ∈ W) (hWsymm : ∀ g ∈ W, g⁻¹ ∈ W) :
     ∃ ψ : C(G, ℝ), (∀ g, 0 ≤ ψ g) ∧ (∀ g, ψ g⁻¹ = ψ g) ∧ (∀ g ∉ W, ψ g = 0) ∧ 0 < ψ 1 := by
   obtain ⟨φ, hφ1, hφ0, -, hφIcc⟩ :=
