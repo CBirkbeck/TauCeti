@@ -89,4 +89,12 @@ theorem exists_mem_off_curve {γ : ℝ → ℂ} {Ω : Set ℂ} {a b : ℝ} (hΩ 
     IsClopen.eq_univ ⟨hcompact.isClosed, hΩ⟩ ⟨γ a, hγΩ a left_mem_uIcc⟩
   exact noncompact_univ ℂ (huniv ▸ hcompact)
 
+/-- **The set where a curve stays near a point is closed.** For a curve continuous on `[[a, b]]`,
+the set of parameters at which it stays within `ε` of a point `s` is closed. -/
+theorem isClosed_setOfPred_mem_uIcc_norm_sub_le {γ : ℝ → ℂ} {a b : ℝ}
+    (hγ_cont : ContinuousOn γ (uIcc a b)) (s : ℂ) (ε : ℝ) :
+    IsClosed {t ∈ uIcc a b | ‖γ t - s‖ ≤ ε} := by
+  have huIcc : IsClosed (uIcc a b) := by rw [← Icc_min_max]; exact isClosed_Icc
+  exact huIcc.isClosed_le ((hγ_cont.sub continuousOn_const).norm) continuousOn_const
+
 end TauCeti.Contour

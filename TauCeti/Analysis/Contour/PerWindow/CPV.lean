@@ -9,7 +9,7 @@ public import Mathlib.Analysis.Calculus.Deriv.Basic
 public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 import TauCeti.Analysis.Calculus.OneSidedDerivLimit
-import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
+import TauCeti.Analysis.Contour.Curve.Distance
 import TauCeti.Analysis.Contour.Chord.QuotientAsymptotics
 import TauCeti.Analysis.Contour.LogDerivFTC
 import TauCeti.Analysis.Contour.Winding.Number.Basic

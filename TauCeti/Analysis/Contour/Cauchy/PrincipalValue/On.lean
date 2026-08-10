@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
+import TauCeti.Analysis.Contour.Curve.Distance
 import Mathlib.MeasureTheory.Integral.DominatedConvergence
 import Mathlib.Analysis.Calculus.Deriv.Inverse
 import Mathlib.Topology.Order.LeftRightNhds

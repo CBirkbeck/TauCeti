@@ -11,6 +11,7 @@ public import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 public import TauCeti.Analysis.Contour.PiecewiseC1On
 public import TauCeti.Analysis.Contour.RegularityConditions
 import TauCeti.Analysis.Contour.Cauchy.PrincipalValue.Basic
+import TauCeti.Analysis.Contour.Curve.Distance
 import TauCeti.Analysis.Calculus.OneSidedDerivLimit
 import TauCeti.Analysis.Contour.HigherOrder.Asymptotics
 import TauCeti.Analysis.Contour.SectorCancellation

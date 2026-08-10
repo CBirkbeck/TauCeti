@@ -725,14 +725,6 @@ theorem cauchyPVAt_concat_range {γ : ℝ → ℂ} {f : ℂ → ℂ} {z₀ : ℂ
       ∑ k ∈ Finset.range n, cauchyPVAt γ (t k) (t (k + 1)) f z₀ :=
   (HasCauchyPVAt.concat_range fun k hk => (h k hk).hasCauchyPVAt_cauchyPVAt).cauchyPVAt_eq
 
-/-- **The excised parameter set is closed.** For a curve continuous on `[[a, b]]`, the set of
-parameters at which it stays within `ε` of a point `s` is closed. -/
-theorem isClosed_setOfPred_mem_uIcc_norm_sub_le {γ : ℝ → ℂ} {a b : ℝ}
-    (hγ_cont : ContinuousOn γ (Set.uIcc a b)) (s : ℂ) (ε : ℝ) :
-    IsClosed {t ∈ Set.uIcc a b | ‖γ t - s‖ ≤ ε} :=
-  ((hγ_cont.sub continuousOn_const).norm).preimage_isClosed_of_isClosed
-    (by rw [← Set.Icc_min_max]; exact isClosed_Icc) isClosed_Iic
-
 end TauCeti.Contour
 
 end
