@@ -179,14 +179,28 @@ theorem restrictToIdeal_eq_zero_iff (v : Valuation A Γ₀) (I : Ideal A)
     v.restrictToIdeal I hfg a = 0 ↔ (MonoidWithZeroHom.ofClass v) a = 0 ∨
       ∃ h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0,
         valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∉ characteristicSubgroupOfIdeal v I hfg := by
-  by_cases h0 : (MonoidWithZeroHom.ofClass v) a = 0
-  · simp [restrictToIdeal_apply_of_eq_zero v I hfg h0, h0]
-  · rw [restrictToIdeal_eq_zero_iff_of_ne v I hfg h0]
-    constructor
-    · exact fun h => Or.inr ⟨h0, h⟩
-    · rintro (hz | ⟨_, h'⟩)
-      · exact absurd hz h0
-      · exact h'
+  rw [restrictToIdeal, _root_.Valuation.restrictToConvex_eq_zero_iff]
+  constructor
+  · rintro (hz | ⟨hr, hnm⟩)
+    · exact Or.inl (v.restrict_eq_zero_iff.mp hz)
+    · refine Or.inr ⟨fun h => hr (v.restrict_eq_zero_iff.mpr h), fun hmem => hnm ?_⟩
+      exact (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg _).mpr hmem
+  · rintro (hz | ⟨h0, hnm⟩)
+    · exact Or.inl (v.restrict_eq_zero_iff.mpr hz)
+    · refine Or.inr ⟨fun h => h0 (v.restrict_eq_zero_iff.mp h), fun hmem => hnm ?_⟩
+      exact (mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0).mp hmem
+
+/-- On values kept by the restriction, the order is both preserved and reflected — stated
+through membership in `cΓ_v(I)` itself. -/
+theorem restrictToIdeal_le_iff (v : Valuation A Γ₀) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {a b : A}
+    (h0a : (MonoidWithZeroHom.ofClass v) a ≠ 0) (h0b : (MonoidWithZeroHom.ofClass v) b ≠ 0)
+    (hma : valueGroup.mk (.ofClass v) 1 a (by simp) h0a ∈ characteristicSubgroupOfIdeal v I hfg)
+    (hmb : valueGroup.mk (.ofClass v) 1 b (by simp) h0b ∈ characteristicSubgroupOfIdeal v I hfg) :
+    v.restrictToIdeal I hfg a ≤ v.restrictToIdeal I hfg b ↔ v.restrict a ≤ v.restrict b :=
+  _root_.Valuation.restrictToConvex_le_iff _ _ _ _ _
+    ((mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0a).mpr hma)
+    ((mk0_restrict_mem_comapUnitsWithZero_iff v I hfg h0b).mpr hmb)
 
 /-- A value at least `1` stays at least `1`: `cΓ_v(I)` keeps every attained value `≥ 1`. -/
 theorem one_le_restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)

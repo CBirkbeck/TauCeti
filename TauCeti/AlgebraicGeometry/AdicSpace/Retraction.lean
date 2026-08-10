@@ -30,7 +30,8 @@ property it does not yet carry.
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.restrictToIdeal_def` : the point map on a representative.
+* `TauCeti.ValuationSpectrum.restrictToIdeal_def` : the point map, unfolded through the
+  canonical valuation.
 
 ## References
 
@@ -51,8 +52,10 @@ noncomputable def restrictToIdeal (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) : Spv A :=
   ofValuation (v.valuation.restrictToIdeal I hfg)
 
-/-- **The point map, on a representative.** Consumers rewrite through this to reach the
-valuation-level restriction, rather than unfolding the definition. -/
+/-- **The point map, unfolded through the canonical valuation.** Consumers rewrite through this
+to reach the valuation-level restriction rather than unfolding the definition, whose body is not
+exposed. Note this is the definitional unfolding at `v.valuation`, not a formula valid at an
+arbitrary representative of the class. -/
 theorem restrictToIdeal_def (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     restrictToIdeal v I hfg = ofValuation (v.valuation.restrictToIdeal I hfg) :=

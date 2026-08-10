@@ -295,6 +295,8 @@ containing it, which is the form a restriction of a valuation consumes. -/
 def comapUnitsWithZero (K : ConvexSubgroup Γ) : ConvexSubgroup ((WithZero Γ)ˣ) :=
   comap (OrderMonoidIso.unitsWithZero (α := Γ)) K
 
+/-- Membership in the transported subgroup is membership of the corresponding value group
+element: the unit `u` is carried across by `OrderMonoidIso.unitsWithZero`. -/
 @[simp]
 theorem mem_comapUnitsWithZero {K : ConvexSubgroup Γ} {u : (WithZero Γ)ˣ} :
     u ∈ comapUnitsWithZero K ↔ OrderMonoidIso.unitsWithZero u ∈ K :=
