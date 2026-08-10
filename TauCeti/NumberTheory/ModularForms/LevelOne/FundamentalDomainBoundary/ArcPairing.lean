@@ -232,7 +232,7 @@ theorem excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg
 
 /-- **The excision set is measurable.** It is a finite union of preimages of closed balls
 under the continuous contour. -/
-theorem measurableSet_exists_norm_fdBoundary_sub_le {H ε : ℝ} {S : Finset ℂ} :
+private theorem measurableSet_exists_norm_fdBoundary_sub_le {H ε : ℝ} {S : Finset ℂ} :
     MeasurableSet {t : ℝ | ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε} := by
   have hset : {t : ℝ | ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε}
       = ⋃ s ∈ (S : Set ℂ), {t : ℝ | ‖fdBoundary H t - s‖ ≤ ε} := by
@@ -243,15 +243,18 @@ theorem measurableSet_exists_norm_fdBoundary_sub_le {H ε : ℝ} {S : Finset ℂ
     (((continuous_fdBoundary H).sub continuous_const).norm).measurable measurable_const
 
 /-- **An excised constant is interval-integrable.** It is measurable, because the excision set
-is, and bounded by the constant's norm. -/
-theorem intervalIntegrable_excised_const {H ε : ℝ} {S : Finset ℂ} (c : ℂ) (a b : ℝ) :
+is, and bounded by the constant's norm. Nothing here is complex-analytic: the value lives in
+any normed space. -/
+private theorem intervalIntegrable_excised_const {E : Type*} [NormedAddCommGroup E]
+    {H ε : ℝ} {S : Finset ℂ} (c : E) (a b : ℝ) :
     IntervalIntegrable
-      (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ) else c) volume a b := by
-  have hmeas : Measurable
-      (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ) else c) :=
-    measurable_const.ite measurableSet_exists_norm_fdBoundary_sub_le measurable_const
+      (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : E) else c) volume a b := by
+  have hmeas : StronglyMeasurable
+      (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : E) else c) :=
+    stronglyMeasurable_const.ite measurableSet_exists_norm_fdBoundary_sub_le
+      stronglyMeasurable_const
   have hbdd : ∀ t : ℝ,
-      ‖(if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ) else c)‖ ≤ ‖c‖ := by
+      ‖(if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : E) else c)‖ ≤ ‖c‖ := by
     intro t
     by_cases h : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε <;> simp [h]
   exact ⟨(integrable_const ‖c‖).mono' hmeas.aestronglyMeasurable
