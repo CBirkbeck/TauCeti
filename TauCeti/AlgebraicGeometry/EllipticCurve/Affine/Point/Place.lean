@@ -61,16 +61,20 @@ namespace WeierstrassCurve.Affine.CoordinateRing
 variable {F : Type*} [Field F] {W : _root_.WeierstrassCurve.Affine F}
   [IsDedekindDomain W.CoordinateRing] {x : F}
 
-/-- **The place of an affine point of an elliptic curve**: the ideal `⟨X - x, Y - y(X)⟩` as a
-nonzero prime of the coordinate ring, for `y` solving the Weierstrass equation at `x`. The Dedekind
-hypothesis is an instance argument; for an elliptic curve it is
+/-- **The place of an affine point of an elliptic curve**: the ideal `⟨X - x, Y - y⟩` as a nonzero
+prime of the coordinate ring, for a point `(x, y)` of the curve. The Dedekind hypothesis is an
+instance argument; for an elliptic curve it is
 `TauCeti.WeierstrassCurve.Affine.isDedekindDomain_coordinateRing`. -/
-@[expose, simps]
-noncomputable def pointPlace {y : F[X]} (h : (W.polynomial.eval y).eval x = 0) :
-    HeightOneSpectrum W.CoordinateRing where
-  asIdeal := CoordinateRing.XYIdeal W x y
-  isPrime := (XYIdeal_isMaximal h).isPrime
-  ne_bot := XYIdeal_ne_bot x y
+noncomputable def pointPlace {y : F} (h : W.Equation x y) :
+    HeightOneSpectrum W.CoordinateRing :=
+  HeightOneSpectrum.ofPrime
+    (Ideal.prime_of_isPrime (XYIdeal_ne_bot x (C y)) (XYIdeal_isMaximal_of_equation h).isPrime)
+
+/-- The ideal underlying the place of a point is `⟨X - x, Y - y⟩`. -/
+@[simp]
+theorem pointPlace_asIdeal {y : F} (h : W.Equation x y) :
+    (pointPlace h).asIdeal = CoordinateRing.XYIdeal W x (C y) :=
+  (rfl)
 
 end WeierstrassCurve.Affine.CoordinateRing
 
