@@ -158,6 +158,8 @@ theorem ratFuncRange_def :
     ratFuncRange W = (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).fieldRange :=
   rfl
 
+/-- An element of `F(W)` lies in the copy of the rational function field exactly when it is the
+image of a rational function. -/
 @[simp]
 theorem mem_ratFuncRange {z : W.FunctionField} :
     z ∈ ratFuncRange W ↔
@@ -168,9 +170,16 @@ theorem mem_ratFuncRange {z : W.FunctionField} :
 `L = RatFunc F` case of `finrank_functionField`, transported along the embedding. -/
 @[simp]
 theorem finrank_ratFuncRange : Module.finrank (ratFuncRange W) W.FunctionField = 2 := by
+  have hsquare : (algebraMap (ratFuncRange W) W.FunctionField).comp
+      (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).equivFieldRange.toRingEquiv.toRingHom =
+      (RingEquiv.refl W.FunctionField).toRingHom.comp
+        (algebraMap (RatFunc F) W.FunctionField) := by
+    -- both sides send `r` to its image in `F(W)`; `equivFieldRange` is the range restriction
+    ext x
+    rfl
   have h := Algebra.finrank_eq_of_equiv_equiv
     (IsScalarTower.toAlgHom F (RatFunc F) W.FunctionField).equivFieldRange.toRingEquiv
-    (RingEquiv.refl W.FunctionField) (by ext x; rfl)
+    (RingEquiv.refl W.FunctionField) hsquare
   rw [finrank_functionField W (RatFunc F)] at h
   exact h.symm
 

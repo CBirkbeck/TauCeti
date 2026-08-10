@@ -80,6 +80,8 @@ theorem frobeniusRatFuncRange_def :
         (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField) :=
   rfl
 
+/-- An element of `K(W)` lies in the copy of `K(x^q)` exactly when it is the image there of a
+`q`-th power from the rational function field. -/
 @[simp]
 theorem mem_frobeniusRatFuncRange {z : W.FunctionField} :
     z ∈ frobeniusRatFuncRange W ↔ ∃ r : RatFunc K,
@@ -111,15 +113,22 @@ theorem finrank_extendScalars_ratFuncRange :
   let j : RatFunc K ≃+*
       IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W) :=
     (IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField).equivFieldRange.toRingEquiv
-  have h := Algebra.finrank_eq_of_equiv_equiv i j (by ext x; rfl)
+  -- both routes send an element of `K(x^q)` to its image in `K(W)`
+  have hsquare :
+      (algebraMap (frobeniusRatFuncRange W)
+          (IntermediateField.extendScalars (frobeniusRatFuncRange_le_ratFuncRange W))).comp
+        i.toRingHom =
+      j.toRingHom.comp (algebraMap (_root_.FiniteField.frobeniusAlgHom K (RatFunc K)).fieldRange
+        (RatFunc K)) := by
+    ext x
+    rfl
+  have h := Algebra.finrank_eq_of_equiv_equiv i j hsquare
   rw [TauCeti.FiniteField.finrank_fieldRange_frobeniusAlgHom_ratFunc] at h
   exact h.symm
 
-/-- **Re-basing an intermediate field does not change the degree above it.**
-`IntermediateField.extendScalars` replaces the base field and leaves the carrier alone — Mathlib
-records exactly that as `coe_extendScalars`, itself proved by `rfl` — so the two degrees are
-definitionally equal. Stated for arbitrary intermediate fields, since nothing about a curve or a
-Frobenius enters. -/
+/-- **Re-basing an intermediate field does not change the degree above it**: for `E ≤ E'` in
+`L / F`, the degree of `L` over `E'` viewed as an intermediate field of `L / E` is the degree of
+`L` over `E'`. -/
 theorem _root_.IntermediateField.finrank_extendScalars {F L : Type*} [Field F] [Field L]
     [Algebra F L] {E E' : IntermediateField F L} (h : E ≤ E') :
     Module.finrank (IntermediateField.extendScalars h) L = Module.finrank E' L :=
