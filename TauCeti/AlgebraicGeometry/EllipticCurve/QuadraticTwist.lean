@@ -52,6 +52,16 @@ change of variables, again over any commutative ring in which the relevant param
 * `WeierstrassCurve.isElliptic_quadraticTwist` (an `instance`) and
   `WeierstrassCurve.j_quadraticTwist`: the twist of an elliptic curve is elliptic, with the same
   `j`-invariant.
+* `WeierstrassCurve.quadraticTwistOfTraceNormVarChange`: the explicit change of variables over
+  `L` carrying the twist by `θ` back to `E`, with
+  `WeierstrassCurve.quadraticTwistOfTraceNormVarChange_smul_baseChange` saying that it does so —
+  the twist is an `L`-form of `E` — and
+  `WeierstrassCurve.map_quadraticTwistOfTraceNormVarChange` giving the Galois cocycle it carries:
+  conjugating it by the nontrivial `σ ∈ Gal(L/K)` changes it by `negVariableChange`. The witness
+  is a definition rather than an existential precisely because the cocycle identity is a
+  statement about *this* change of variables and not about an arbitrary one carrying the twist
+  to `E`. `WeierstrassCurve.exists_smul_quadraticTwist_baseChange_eq` is the corresponding
+  statement for `quadraticTwist` itself, where the generator is the one chosen internally.
 
 These are the `quadraticTwistOf` seeds of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 5
 (twists), pinned in that roadmap's `Suggested.lean`, together with the extension twist they make
@@ -382,50 +392,65 @@ theorem exists_smul_quadraticTwist_eq {θ : L} (hθ : θ ∉ Set.range (algebraM
   rw [h]
   exact E.exists_smul_quadraticTwistOf_trace_norm_eq hθ' hθ
 
-/-- **The twist becomes isomorphic to `E` over `L`, and that isomorphism carries a Galois
-cocycle.** There is an explicit `L`-isomorphism `(Eᶿ)ᴸ ≅ Eᴸ` whose conjugate by the nontrivial
-`σ ∈ Gal(L/K)` differs from it by `negVariableChange`, the change of variables `[-1]`: this is the
-cocycle identity for `H¹(Gal(L/K), Aut E)`.
+/-- The change of variables over `L` that carries the twist by `θ` back to `E`. It rescales by
+`σ θ - θ`, a square root of the discriminant of `θ`'s minimal polynomial, and shears and
+translates by the amounts that clear the twisted model's `a₁` and `a₃` terms.
 
-It does **not** say the class is nontrivial. `E` here is an arbitrary Weierstrass curve, and when
-`negVariableChange = 1` — a singular curve in characteristic 2 with `a₁ = a₃ = 0`, say — the
-identity above is plain equivariance. Nontriviality needs hypotheses this statement does not
-carry. -/
-theorem exists_smul_baseChange_and_map_eq {θ : L} (hθ : θ ∉ Set.range (algebraMap K L))
-    {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
-    ∃ C : VariableChange L,
-      C • (E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ)).baseChange L
-          = E.baseChange L ∧
-        C.map σ.toAlgHom.toRingHom = (E.baseChange L).negVariableChange * C := by
-  -- TauCeti carries the contrapositive `mem_range_algebraMap_of_apply_eq`, not FLT's
-  -- `algEquiv_apply_ne`; a fixed point of the nontrivial automorphism lies in `K`.
-  have hσθ : σ θ ≠ θ := fun heq ↦
-    hθ (Algebra.IsQuadraticExtension.mem_range_algebraMap_of_apply_eq K L hσ heq)
-  have hw : σ θ - θ ≠ 0 := sub_ne_zero.mpr hσθ
+This is the witness of `quadraticTwistOfTraceNormVarChange_smul_baseChange`; it is a definition
+rather than an existential because `map_quadraticTwistOfTraceNormVarChange` is a statement about
+*this* change of variables, and does not hold of an arbitrary one carrying the twist to `E` —
+two such differ by an automorphism of `E`, which the cocycle identity does not tolerate. -/
+def quadraticTwistOfTraceNormVarChange {θ : L} (hθ : θ ∉ Set.range (algebraMap K L))
+    {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) : VariableChange L :=
+  ⟨Units.mk0 (σ θ - θ) (Algebra.IsQuadraticExtension.sub_apply_ne_zero K L hσ hθ),
+    0, -(θ * algebraMap K L E.a₁), -((σ θ - θ) ^ 2 * θ * algebraMap K L E.a₃)⟩
+
+/-- **The twist becomes isomorphic to `E` over `L`**, by the explicit change of variables
+`quadraticTwistOfTraceNormVarChange`. Over a field, isomorphisms of Weierstrass curves are
+exactly the admissible changes of variables, acting via `•`. -/
+theorem quadraticTwistOfTraceNormVarChange_smul_baseChange {θ : L}
+    (hθ : θ ∉ Set.range (algebraMap K L)) {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
+    E.quadraticTwistOfTraceNormVarChange hθ hσ •
+        (E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ)).baseChange L
+      = E.baseChange L := by
   have hT : algebraMap K L (Algebra.trace K L θ) = θ + σ θ :=
     Algebra.IsQuadraticExtension.algebraMap_trace_eq_add K L hσ θ
   have hN : algebraMap K L (Algebra.norm K θ) = θ * σ θ :=
     Algebra.IsQuadraticExtension.algebraMap_norm_eq_mul K L hσ θ
+  have hw : σ θ - θ ≠ 0 := Algebra.IsQuadraticExtension.sub_apply_ne_zero K L hσ hθ
+  rw [variableChange_def]
+  ext <;>
+    simp only [quadraticTwistOfTraceNormVarChange, quadraticTwistOf, baseChange, map_a₁, map_a₂,
+      map_a₃, map_a₄, map_a₆, Units.val_inv_eq_inv_val, Units.val_mk0, map_sub, map_mul, map_pow,
+      map_ofNat, hT, hN] <;>
+    field
+
+/-- **The Galois cocycle carried by that isomorphism.** Conjugating
+`quadraticTwistOfTraceNormVarChange` by the nontrivial `σ ∈ Gal(L/K)` changes it by
+`negVariableChange`, the change of variables `[-1]`: this is the cocycle identity for
+`H¹(Gal(L/K), Aut E)`.
+
+It does **not** say the class is nontrivial. `E` here is an arbitrary Weierstrass curve, and when
+`negVariableChange = 1` — a singular curve in characteristic 2 with `a₁ = a₃ = 0`, say — the
+identity below is plain equivariance. Nontriviality needs hypotheses this statement does not
+carry. -/
+theorem map_quadraticTwistOfTraceNormVarChange {θ : L} (hθ : θ ∉ Set.range (algebraMap K L))
+    {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
+    (E.quadraticTwistOfTraceNormVarChange hθ hσ).map σ.toAlgHom.toRingHom
+      = (E.baseChange L).negVariableChange * E.quadraticTwistOfTraceNormVarChange hθ hσ := by
   have hσσ : σ (σ θ) = θ := by
-    rw [← AlgEquiv.mul_apply, Algebra.IsQuadraticExtension.algEquiv_mul_self K L hσ,
+    rw [← AlgEquiv.mul_apply, Algebra.IsQuadraticExtension.algEquiv_mul_self K L σ,
       AlgEquiv.one_apply]
-  have hap : ⇑σ.toAlgHom.toRingHom = ⇑σ := rfl
-  refine ⟨⟨Units.mk0 (σ θ - θ) hw, 0, -(θ * algebraMap K L E.a₁),
-    -((σ θ - θ) ^ 2 * θ * algebraMap K L E.a₃)⟩, ?_, ?_⟩
-  · rw [variableChange_def]
-    ext <;>
-      simp only [quadraticTwistOf, baseChange, map_a₁, map_a₂, map_a₃, map_a₄, map_a₆,
-        Units.val_inv_eq_inv_val, Units.val_mk0, map_sub, map_mul, map_pow, map_ofNat, hT, hN] <;>
-      field
-  · ext <;>
-      -- a `public section` leaves `negVariableChange`'s body unexposed here, so the proof goes
-      -- through its accessor lemmas rather than unfolding the definition
-      simp only [VariableChange.map, VariableChange.mul_def, negVariableChange_u,
-        negVariableChange_r, negVariableChange_s, negVariableChange_t, Units.coe_map,
-        Units.val_mul, Units.val_neg, Units.val_one, Units.val_mk0, hap, MonoidHom.coe_coe,
-        map_neg, map_mul, map_pow, map_sub, map_zero, map_a₁, map_a₃, baseChange,
-        σ.commutes, hσσ] <;>
-      ring
+  ext <;>
+    -- a `public section` leaves `negVariableChange`'s body unexposed here, so the proof goes
+    -- through its accessor lemmas rather than unfolding the definition
+    simp only [quadraticTwistOfTraceNormVarChange, VariableChange.map, VariableChange.mul_def,
+      negVariableChange_u, negVariableChange_r, negVariableChange_s, negVariableChange_t,
+      Units.coe_map, Units.val_mul, Units.val_neg, Units.val_one, Units.val_mk0,
+      AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom, AlgEquiv.coe_toAlgHom, MonoidHom.coe_coe,
+      map_neg, map_mul, map_pow, map_sub, map_zero, map_a₁, map_a₃, baseChange,
+      σ.commutes, hσσ] <;>
+    ring
 
 variable (L) in
 /-- **The quadratic twist becomes isomorphic to `E` after base change to `L`.** Over a field,
@@ -435,10 +460,11 @@ theorem exists_smul_quadraticTwist_baseChange_eq :
     ∃ C : VariableChange L, C • (E.quadraticTwist L).baseChange L = E.baseChange L := by
   obtain ⟨σ, hσ⟩ := Algebra.IsQuadraticExtension.exists_algEquiv_ne_one K L
   obtain ⟨θ, hθ⟩ := Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap K L
-  obtain ⟨C₁, hC₁, -⟩ := E.exists_smul_baseChange_and_map_eq hθ hσ
   -- bridge the generator chosen inside `quadraticTwist` to `θ`, base changed to `L`
   obtain ⟨C₀, hC₀⟩ := E.exists_smul_quadraticTwist_eq hθ
-  exact ⟨C₁ * C₀.baseChange L, by rw [mul_smul, baseChange_smul_baseChange, hC₀, hC₁]⟩
+  exact ⟨E.quadraticTwistOfTraceNormVarChange hθ hσ * C₀.baseChange L, by
+    rw [mul_smul, baseChange_smul_baseChange, hC₀,
+      E.quadraticTwistOfTraceNormVarChange_smul_baseChange hθ hσ]⟩
 
 end QuadraticTwistBy
 

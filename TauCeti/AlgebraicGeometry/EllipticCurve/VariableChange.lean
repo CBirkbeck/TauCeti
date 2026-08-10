@@ -12,8 +12,9 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Weierstrass
 
 Material complementing `Mathlib/AlgebraicGeometry/EllipticCurve/VariableChange.lean`: the
 negation automorphism `[-1]` of a Weierstrass curve as an admissible change of variables, with
-its involution API. This is the nontrivial automorphism in the `Aut (E, O)` milestone of
-`TauCetiRoadmap/EllipticCurves/README.md` §Layer 1, proved in
+its involution API, together with the compatibility of the action with base change
+(`baseChange_smul_baseChange`). The negation is the nontrivial automorphism in the `Aut (E, O)`
+milestone of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 1, proved in
 `TauCeti/AlgebraicGeometry/EllipticCurve/Aut.lean` to exhaust `Aut(E)` with the identity when
 `j(E) ∉ {0, 1728}`.
 
@@ -92,8 +93,10 @@ section BaseChange
 
 variable (L : Type*) [CommRing L] [Algebra R L]
 
-/-- **Base change commutes with the action of a change of variables.** Mathlib's
-`map_variableChange` read along `algebraMap R L`. -/
+/-- **Base change commutes with the action of a change of variables.** Base changing a curve and
+then acting by the base-changed variable change gives the same model as acting first and base
+changing the result, so a `VariableChange`-invariant statement over `R` transports to `L`. Stated
+in the `baseChange` spelling, so it rewrites directly in goals phrased that way. -/
 lemma baseChange_smul_baseChange (C : VariableChange R) (V : WeierstrassCurve R) :
     (C.baseChange L) • V.baseChange L = (C • V).baseChange L :=
   map_variableChange (W := V) (C := C) (φ := algebraMap R L)
