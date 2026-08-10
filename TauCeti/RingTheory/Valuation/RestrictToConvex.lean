@@ -20,8 +20,8 @@ value to `0`. It is the construction underlying the retraction `r_I : Spv A → 
 
 That this is again a valuation is not formal: multiplicativity fails for an arbitrary subgroup,
 because two units outside `H` can have a product inside it. Convexity of `H` together with the
-hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out — see
-`Valuation.lt_one_of_unit_notMem`.
+hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out: a unit outside
+`H` must lie below `1`, so a product of two such is below each factor.
 
 ## Main definitions
 
@@ -85,7 +85,7 @@ private theorem restrictToConvexFun_unfold (v : Valuation R Γ₀) (H : ConvexSu
 /-- If `H` absorbs every attained value `≥ 1`, then a unit outside `H` is below `1`. This is
 what makes the restriction multiplicative: it forces both factors below `1`, and convexity then
 keeps their product outside `H` too. -/
-theorem lt_one_of_unit_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup Γ₀ˣ}
+private theorem lt_one_of_unit_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup Γ₀ˣ}
     {r : R} (hr : v r ≠ 0) (hH : 1 ≤ v r → Units.mk0 (v r) hr ∈ H)
     (hm : Units.mk0 (v r) hr ∉ H) : v r < 1 := by
   by_contra hge
@@ -117,18 +117,18 @@ private theorem mul_notMem_of_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
     {x y : R} (hx : v x ≠ 0) (hy : v y ≠ 0) (hm : Units.mk0 (v x) hx ∉ H) :
     Units.mk0 (v x) hx * Units.mk0 (v y) hy ∉ H := by
-  intro hmem
   by_cases hy' : Units.mk0 (v y) hy ∈ H
-  · -- the product and `y`'s unit are both in `H`, so `x`'s unit is too
-    exact hm (by simpa using mul_mem hmem (inv_mem hy'))
-  · -- both units are below `1`, so the product is below `x`'s unit, and convexity lifts it
+  · -- the product and `y`'s unit are both in `H`, so `x`'s unit would be too
+    exact fun hmem => hm ((mul_mem_cancel_right hy').mp hmem)
+  · -- both units are below `1`, so the product is below `x`'s unit, which `H` already excludes
     have hy1 : Units.mk0 (v y) hy ≤ 1 := by
       have := lt_one_of_unit_notMem hy (fun h => hH y hy h) hy'
       simpa [← Units.val_le_val] using this.le
-    refine hm (ConvexSubgroup.mem_of_le_le_one hmem
-      (mul_le_of_le_one_right' (a := Units.mk0 (v x) hx) hy1) ?_)
-    have := lt_one_of_unit_notMem hx (fun h => hH x hx h) hm
-    simpa [← Units.val_le_val] using this.le
+    have hx1 : Units.mk0 (v x) hx < 1 := by
+      have := lt_one_of_unit_notMem hx (fun h => hH x hx h) hm
+      simpa [← Units.val_lt_val] using this
+    exact H.not_mem_of_not_mem_of_le_lt_one hm hx1
+      (mul_le_of_le_one_right' (a := Units.mk0 (v x) hx) hy1)
 
 /-- `H` is closed upwards along attained values: a member below an attained unit forces that
 unit in too, whether it sits below `1` (by convexity) or above (by hypothesis). -/
@@ -313,6 +313,7 @@ theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup
 /-- **Where the restriction vanishes, totally**: at the zeros of `v`, and where `v` is nonzero
 but its unit avoids `H`. `restrictToConvex_eq_zero_iff` is the nonzero branch, in the form
 consumers holding a nonvanishing hypothesis want. -/
+@[simp]
 theorem restrictToConvex_eq_zero_iff_or (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) (r : R) :
     v.restrictToConvex H hH r = 0 ↔ v r = 0 ∨ ∃ hr : v r ≠ 0, Units.mk0 (v r) hr ∉ H := by
