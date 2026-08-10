@@ -134,4 +134,14 @@ private theorem mul_notMem_of_notMem {v : Valuation R Γ₀} {H : ConvexSubgroup
     · have := lt_one_of_unit_notMem hH hx hm
       simpa [← Units.val_le_val] using this.le
 
+/-- `H` is closed upwards along attained values: a member below an attained unit forces that
+unit in too, whether it sits below `1` (by convexity) or above (by hypothesis). -/
+private theorem mem_of_mem_of_le {v : Valuation R Γ₀} {H : ConvexSubgroup Γ₀ˣ}
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {x : R} (hx : v x ≠ 0) {u : Γ₀ˣ} (hu : u ∈ H) (hle : u ≤ Units.mk0 (v x) hx) :
+    Units.mk0 (v x) hx ∈ H := by
+  rcases le_or_gt (Units.mk0 (v x) hx) 1 with h1 | h1
+  · exact mem_of_le_of_le_one hu hle h1
+  · exact hH x hx (by simpa using Units.val_le_val.mpr h1.le)
+
 end Valuation
