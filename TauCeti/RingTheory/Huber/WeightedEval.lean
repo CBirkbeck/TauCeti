@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.RingTheory.Huber.Bounded
 public import TauCeti.RingTheory.Huber.PowerBounded
 public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries
 public import Mathlib.Topology.Algebra.InfiniteSum.Nonarchimedean
@@ -30,10 +29,9 @@ it to summability, through Mathlib's
 
 * `TauCeti.Huber.weightedEvalTerm`: the term `φ(coeff ν f) · bν` of the evaluation.
 * `TauCeti.Huber.IsWeightBounded`: the weighted monomials `φ(Tν) · bν` form a bounded set. This is
-  the hypothesis on `b`. At the one-weight family it is boundedness of the set of monomials `bν`
-  (`TauCeti.Huber.isWeightBounded_one_weight_iff`), which implies that each `bᵢ` is power-bounded;
-  the converse needs a finite pointwise product of bounded sets to be bounded, so it is not stated
-  here.
+  the hypothesis on `b`. At the one-weight family it is *equivalent* to each `bᵢ` being
+  power-bounded, which is Wedhorn's condition —
+  `TauCeti.Huber.isWeightBounded_one_weight_iff_forall_isPowerBounded`.
 
 ## Main results
 
@@ -41,6 +39,8 @@ it to summability, through Mathlib's
   cofinite filter. This is the analytic input, and it needs no completeness.
 * `TauCeti.Huber.summable_weightedEvalTerm`: completeness upgrades that convergence to
   summability.
+* `TauCeti.Huber.summable_weightedEvalTerm_of_forall_isPowerBounded`: the same at the one-weight
+  family, stated with Wedhorn's own hypothesis that each variable is power-bounded.
 
 The evaluation map itself, its continuity, and the uniqueness that makes Proposition 5.50 a
 universal property are not proved here.
@@ -67,6 +67,7 @@ def weightedEvalTerm (φ : A →+* B) (b : Fin k → B) (f : MvPowerSeries (Fin 
 
 omit [TopologicalSpace A] [TopologicalSpace B] in
 /-- Unfolding lemma for `TauCeti.Huber.weightedEvalTerm`. -/
+@[simp]
 theorem weightedEvalTerm_def (φ : A →+* B) (b : Fin k → B) (f : MvPowerSeries (Fin k) A)
     (ν : Fin k →₀ ℕ) :
     weightedEvalTerm φ b f ν = φ (MvPowerSeries.coeff ν f) * ∏ i, b i ^ ν i := (rfl)
@@ -77,9 +78,9 @@ multi-indices at once, form a bounded subset of `B`.
 This is Wedhorn's requirement that the variables be power-bounded *relative to the weights*, in
 the form the summability argument uses. It is a condition on the whole family rather than on each
 `bᵢ` separately, because the bound has to be uniform in `ν`. For the one-weight family `T ≡ {1}`
-it says exactly that the set of monomials `bν` is bounded, which is strictly a statement about the
-family: it gives that each `bᵢ` is power-bounded, but recovering it from the individual bounds
-needs those bounds to combine multiplicatively. -/
+it is equivalent to each `bᵢ` being power-bounded, which is Wedhorn's condition; recovering it
+from the individual bounds is where continuity of multiplication is needed, since the bounds have
+to be multiplied together. -/
 def IsWeightBounded (φ : A →+* B) (T : Fin k → Set A) (b : Fin k → B) : Prop :=
   IsBounded (⋃ ν : Fin k →₀ ℕ, (fun t ↦ φ t * ∏ i, b i ^ ν i) '' weightPow T ν)
 
@@ -95,6 +96,7 @@ omit [TopologicalSpace A] in
 equal to `{1}` the weighted monomials are just the `bν`, so `IsWeightBounded` says exactly that
 they form a bounded set — the condition a reader expects to see, and the bridge from the roadmap's
 power-bounded-variable hypothesis. -/
+@[simp]
 theorem isWeightBounded_one_weight_iff (φ : A →+* B) (b : Fin k → B) :
     IsWeightBounded φ (fun _ : Fin k ↦ ({1} : Set A)) b ↔
       IsBounded (Set.range fun ν : Fin k →₀ ℕ ↦ ∏ i, b i ^ ν i) := by
@@ -105,18 +107,39 @@ theorem isWeightBounded_one_weight_iff (φ : A →+* B) (b : Fin k → B) :
     simp [weightPow_one_weight]
   rw [isWeightBounded_iff, hset]
 
+omit [TopologicalSpace B] in
+/-- A product of members of finitely many sets lies in their pointwise product. Private: it is
+elementary, Mathlib does not name it, and it is used only to prove the characterisation below. -/
+private theorem prod_mem_finset_prod {ι : Type*} (s : Finset ι) {S : ι → Set B} {f : ι → B}
+    (hf : ∀ i ∈ s, f i ∈ S i) : (∏ i ∈ s, f i) ∈ ∏ i ∈ s, S i := by
+  classical
+  induction s using Finset.induction with
+  | empty => simp
+  | insert i s hi ih =>
+    rw [Finset.prod_insert hi, Finset.prod_insert hi]
+    exact Set.mul_mem_mul (hf i (Finset.mem_insert_self i s))
+      (ih fun j hj ↦ hf j (Finset.mem_insert_of_mem hj))
+
 omit [TopologicalSpace A] in
-/-- **Each variable is power-bounded.** The monomial at `ν = single i n` is `bᵢ ^ n`, so the
-one-weight hypothesis contains every power of every `bᵢ` in one bounded set. The converse — that
-individually power-bounded variables satisfy the hypothesis — needs a finite pointwise product of
-bounded sets to be bounded, which the repo does not yet have, and is not claimed here. -/
-theorem IsWeightBounded.isPowerBounded {φ : A →+* B} {b : Fin k → B}
-    (hb : IsWeightBounded φ (fun _ : Fin k ↦ ({1} : Set A)) b) (i : Fin k) :
-    IsPowerBounded (b i) := by
-  refine isPowerBounded_iff.mpr (((isWeightBounded_one_weight_iff φ b).mp hb).subset ?_)
-  rintro _ ⟨n, rfl⟩
-  refine ⟨Finsupp.single i n, ?_⟩
-  simp [Finsupp.single_apply, Finset.prod_ite_eq]
+/-- **At the one-weight family the hypothesis is exactly Wedhorn's**: the weighted monomials are
+bounded precisely when every variable is power-bounded.
+
+Both directions are elementary once the monomials are in view. Forwards, the monomial at
+`ν = Finsupp.single i n` is `bᵢ ^ n`, so the one bounded set already contains every power of every
+`bᵢ`. Backwards, every monomial `bν` lies in the pointwise product of the power-sets, which is
+bounded by `TauCeti.Huber.isBounded_finset_prod` — this is the direction that needs the
+multiplication of `B` to be continuous, since it multiplies the individual bounds together. -/
+theorem isWeightBounded_one_weight_iff_forall_isPowerBounded [ContinuousMul B] (φ : A →+* B)
+    (b : Fin k → B) :
+    IsWeightBounded φ (fun _ : Fin k ↦ ({1} : Set A)) b ↔ ∀ i, IsPowerBounded (b i) := by
+  rw [isWeightBounded_one_weight_iff]
+  refine ⟨fun hb i ↦ isPowerBounded_iff.mpr (hb.subset ?_), fun hb ↦ ?_⟩
+  · rintro _ ⟨n, rfl⟩
+    exact ⟨Finsupp.single i n, by simp [Finsupp.single_apply, Finset.prod_ite_eq]⟩
+  · refine (isBounded_finset_prod Finset.univ
+      (fun i _ ↦ isPowerBounded_iff.mp (hb i))).subset ?_
+    rintro _ ⟨ν, rfl⟩
+    exact prod_mem_finset_prod Finset.univ fun i _ ↦ ⟨ν i, rfl⟩
 
 
 variable [NonarchimedeanAddGroup A] [NonarchimedeanAddGroup B]
@@ -154,9 +177,10 @@ theorem tendsto_weightedEvalTerm_cofinite_zero {φ : A →+* B} (hφ : Continuou
     simp only [AddSubgroup.mem_comap, hval]
     exact hVG (Set.mul_mem_mul (hUV hu) (Set.mem_iUnion.mpr ⟨ν, ⟨t, ht, rfl⟩⟩))
   have hcomap : MvPowerSeries.coeff ν f ∈ G.toAddSubgroup.comap ψ := weightMul_le.mpr hgen hν
-  -- `ψ` applied to the coefficient is the term `φ (coeff ν f) * bν`, which is `weightedEvalTerm`
-  -- by definition. Stated here rather than left to close the goal by unfolding.
-  have hterm : weightedEvalTerm φ b f ν ∈ (G : Set B) := hcomap
+  -- `ψ` applied to the coefficient is the term `φ (coeff ν f) * bν`; rewriting rather than
+  -- relying on the wrappers and coercions agreeing definitionally.
+  have hterm : weightedEvalTerm φ b f ν ∈ (G : Set B) := by
+    simpa [weightedEvalTerm_def, ψ] using hcomap
   exact hGW hterm
 
 
@@ -175,6 +199,18 @@ theorem summable_weightedEvalTerm {φ : A →+* B} (hφ : Continuous φ) {T : Fi
     Summable (weightedEvalTerm φ b f) :=
   NonarchimedeanAddGroup.summable_of_tendsto_cofinite_zero
     (tendsto_weightedEvalTerm_cofinite_zero hφ hb hf)
+
+/-- **Summability under Wedhorn's own hypothesis.** At the one-weight family the condition on the
+tuple is that each variable be power-bounded, which is how Proposition 5.50 states it; this is the
+theorem above read through
+`TauCeti.Huber.isWeightBounded_one_weight_iff_forall_isPowerBounded`. -/
+theorem summable_weightedEvalTerm_of_forall_isPowerBounded [ContinuousMul B] {φ : A →+* B}
+    (hφ : Continuous φ) {b : Fin k → B} (hb : ∀ i, IsPowerBounded (b i))
+    {f : MvPowerSeries (Fin k) A}
+    (hf : IsWeightedRestricted (fun _ : Fin k ↦ ({1} : Set A)) f) :
+    Summable (weightedEvalTerm φ b f) :=
+  summable_weightedEvalTerm hφ
+    ((isWeightBounded_one_weight_iff_forall_isPowerBounded φ b).mpr hb) hf
 
 end Summable
 
