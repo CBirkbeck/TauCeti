@@ -68,6 +68,7 @@ content of a point of `Spv A`, so this is the interface to `restrictToIdeal` at 
 points: `a ≤ b` after restriction exactly when `a`'s value is discarded, or `b`'s is kept and
 `a ≤ b` held already. The side conditions are discharged by
 `TauCeti.Valuation.restrictToIdeal_eq_zero_iff`. -/
+@[simp]
 theorem vle_restrictToIdeal (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (a b : A) :
     (restrictToIdeal v I hfg).toValuativeRel.vle a b ↔

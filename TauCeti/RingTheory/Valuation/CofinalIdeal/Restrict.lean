@@ -36,8 +36,13 @@ The point-level map on `Spv A` that Wedhorn's retraction `r_I` is built from liv
 * `TauCeti.Valuation.restrictToIdeal_eq_zero_iff` : where the restriction vanishes, totally.
 * `TauCeti.Valuation.restrictToIdeal_le_iff` : how restricted values compare, totally.
 
-Every statement here is phrased through `cΓ_v(I)` itself, or through vanishing of the
-restriction; the transport onto the units of the value monoid stays internal.
+The *characterisation* lemmas — the vanishing branches, `restrictToIdeal_eq_zero_iff` and
+`restrictToIdeal_le_iff` — are phrased through `cΓ_v(I)` itself or through vanishing of the
+restriction, so a consumer of them never names the transport. Two declarations necessarily do
+name it: `RestrictedValues`, which *is* the transported subgroup with a zero adjoined, and
+`restrictToIdeal_def`, whose content is the definitional unfolding and which therefore carries
+the boundedness hypothesis over that subgroup. `one_le_restrictToIdeal` mentions neither, being
+an order fact about `v.restrict`.
 
 ## References
 
