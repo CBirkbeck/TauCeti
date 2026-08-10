@@ -31,12 +31,14 @@ is where completeness and first countability enter.
 
 ## Main results
 
-* `TauCeti.nonempty_interior_closure_of_iUnion_units_smul`: if countably many unit dilates of a
-  set cover a Baire space, then the closure of that set has nonempty interior. This is the Baire
-  argument by itself, with no map in sight.
+* `TauCeti.nonempty_interior_closure_of_iUnion_smul`: if countably many dilates of a set by a
+  group acting continuously cover a Baire space, then the closure of that set has nonempty
+  interior. This is the Baire argument by itself, with no map in sight.
 * `TauCeti.nonempty_interior_closure_image_of_tendsto_zero`: the form Henkel's proof uses — along
   a zero sequence of units, the closure of the image of any neighbourhood of zero under a
   surjective equivariant map has nonempty interior.
+* `TauCeti.HasZeroSequenceOfUnits.nonempty_interior_closure_image`: the same, taking the sequence
+  from the class rather than from the caller.
 
 ## References
 
@@ -55,18 +57,19 @@ namespace TauCeti
 
 section Baire
 
-variable {A N : Type*} [Monoid A] [TopologicalSpace N] [MulAction A N] [ContinuousConstSMul A N]
+variable {G N : Type*} [Group G] [TopologicalSpace N] [MulAction G N] [ContinuousConstSMul G N]
 
-/-- **The Baire step**, on its own: if countably many dilates of `V` by units of `A` cover a
-Baire space, then `closure V` has nonempty interior.
+/-- **The Baire step**, on its own: if countably many dilates of `V` by elements of a group acting
+continuously cover a Baire space, then `closure V` has nonempty interior.
 
-The units are what make the conclusion about `V` rather than about one dilate: `x ↦ uₙ • x` is a
-homeomorphism, so it carries interior to interior and commutes with closure. Countability of the
-index is the whole reason Henkel's hypothesis is a *sequence* of units — a cover indexed by all
-of `Aˣ` would exhaust the space just as well but could not start a Baire argument. Nothing else
-about the index is used, so it is an arbitrary countable type; the caller below supplies `ℕ`. -/
-theorem nonempty_interior_closure_of_iUnion_units_smul [BaireSpace N] [Nonempty N] {ι : Type*}
-    [Countable ι] {u : ι → Aˣ} {V : Set N} (hV : ⋃ i, u i • V = Set.univ) :
+Invertibility of the scalars is what makes the conclusion about `V` rather than about one dilate:
+`x ↦ g • x` is then a homeomorphism, so it carries interior to interior and commutes with closure.
+Countability of the index is the whole reason Henkel's hypothesis is a *sequence* of units — a
+cover indexed by all of `Aˣ` would exhaust the space just as well but could not start a Baire
+argument. Nothing else about either parameter is used, so the group is arbitrary and the index is
+an arbitrary countable type; the caller below supplies `Aˣ` and `ℕ`. -/
+theorem nonempty_interior_closure_of_iUnion_smul [BaireSpace N] [Nonempty N] {ι : Type*}
+    [Countable ι] {u : ι → G} {V : Set N} (hV : ⋃ i, u i • V = Set.univ) :
     (interior (closure V)).Nonempty := by
   have hcov : ⋃ i : ι, closure (u i • V) = Set.univ :=
     Set.eq_univ_of_univ_subset (hV ▸ Set.iUnion_mono fun _ ↦ subset_closure)
@@ -99,7 +102,7 @@ theorem nonempty_interior_closure_image_of_tendsto_zero [BaireSpace N] {F : Type
     (hc : ∀ x : M, ContinuousAt (fun a : A ↦ a • x) 0) {U : Set M} (hU : U ∈ 𝓝 (0 : M)) :
     (interior (closure (f '' U))).Nonempty := by
   have : Nonempty N := ⟨f 0⟩
-  refine nonempty_interior_closure_of_iUnion_units_smul (u := fun n ↦ (u n)⁻¹) ?_
+  refine nonempty_interior_closure_of_iUnion_smul (G := Aˣ) (u := fun n ↦ (u n)⁻¹) ?_
   -- `v • s` for `v : Aˣ` is by definition `(v : A) • s`, which is the form `image_smul_set` takes.
   have himg : ∀ v : Aˣ, v • f '' U = f '' (v • U) := fun v ↦ (image_smul_set f (v : A) U).symm
   calc ⋃ n, ((u n)⁻¹ : Aˣ) • f '' U
@@ -107,6 +110,17 @@ theorem nonempty_interior_closure_image_of_tendsto_zero [BaireSpace N] {F : Type
         rw [Set.image_iUnion]; exact Set.iUnion_congr fun n ↦ himg _
     _ = f '' Set.univ := by rw [iUnion_inv_smul_eq_univ_of_tendsto_zero hu hc hU]
     _ = Set.univ := by rw [Set.image_univ, hf.range_eq]
+
+/-- **The Baire step under the class hypothesis.** The same conclusion as
+`TauCeti.nonempty_interior_closure_image_of_tendsto_zero`, with the zero sequence taken from
+`TauCeti.HasZeroSequenceOfUnits` instead of supplied by the caller. This is the form a downstream
+open mapping theorem wants, since the roadmap states Henkel's hypothesis as the class. -/
+theorem HasZeroSequenceOfUnits.nonempty_interior_closure_image [HasZeroSequenceOfUnits A]
+    [BaireSpace N] {F : Type*} [FunLike F M N] [MulActionHomClass F A M N] (f : F)
+    (hf : Function.Surjective f) (hc : ∀ x : M, ContinuousAt (fun a : A ↦ a • x) 0) {U : Set M}
+    (hU : U ∈ 𝓝 (0 : M)) : (interior (closure (f '' U))).Nonempty :=
+  let ⟨_, hu⟩ := ‹HasZeroSequenceOfUnits A›.exists_tendsto
+  nonempty_interior_closure_image_of_tendsto_zero f hf hu hc hU
 
 end Image
 
