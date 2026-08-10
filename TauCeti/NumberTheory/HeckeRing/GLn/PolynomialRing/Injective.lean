@@ -164,7 +164,7 @@ private lemma divChain_two_of_dvd {a b : ℕ} (hab : a ∣ b) :
     fin_cases i <;> fin_cases j <;> simp_all
 
 /-- Determinant of an SL_n(ℤ) element embedded in GL_n(ℚ) is 1. -/
-lemma det_SLnZ_eq_one {g : GL (Fin 2) ℚ} (hg : g ∈ SLnZ 2) :
+private lemma det_SLnZ_eq_one {g : GL (Fin 2) ℚ} (hg : g ∈ SLnZ 2) :
     (↑g : Matrix (Fin 2) (Fin 2) ℚ).det = 1 := by
   obtain ⟨σ, rfl⟩ := (mem_SLnZ_iff 2).mp hg
   -- the entries are integers cast into ℚ, so the determinant is the cast of `det σ = 1`
@@ -174,7 +174,7 @@ lemma det_SLnZ_eq_one {g : GL (Fin 2) ℚ} (hg : g ∈ SLnZ 2) :
   simp
 
 /-- Elements in the same SL_n double coset have the same determinant. -/
-lemma det_doubleCoset_eq {g₁ g₂ : posDetInt 2}
+private lemma det_doubleCoset_eq {g₁ g₂ : posDetInt 2}
     (h : HeckeCoset.mk (SLnZ 2) (SLnZ 2) g₁ = HeckeCoset.mk (SLnZ 2) (SLnZ 2) g₂) :
     (↑(↑g₁ : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det =
       (↑(↑g₂ : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det := by
@@ -190,7 +190,7 @@ lemma det_doubleCoset_eq {g₁ g₂ : posDetInt 2}
   exact this
 
 /-- The diagonal product of rep(diagCoset a) equals ∏ a. -/
-lemma prod_rep_T_diag (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a i) :
+private lemma prod_rep_T_diag (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a i) :
     (↑(↑(HeckeCoset.rep (diagCoset a)) : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ).det =
       ∏ i, (a i : ℚ) := by
   -- the representative and the explicit diagonal matrix lie in the same double coset
@@ -200,7 +200,7 @@ lemma prod_rep_T_diag (a : Fin 2 → ℕ) (ha : ∀ i, 0 < a i) :
   exact (det_doubleCoset_eq h_eq).trans (natDiagGL_det 2 a ha)
 
 /-- Every coset in the support of a mulMap output has determinant = det(g₁) * det(g₂). -/
-lemma det_mulMap_eq (g₁ g₂ : posDetInt 2)
+private lemma det_mulMap_eq (g₁ g₂ : posDetInt 2)
     (p : DecompQuotient (SLnZ 2) (SLnZ 2) (g₁ : GL (Fin 2) ℚ) ×
       DecompQuotient (SLnZ 2) (SLnZ 2) (g₂ : GL (Fin 2) ℚ)) :
     (↑(↑(HeckeCoset.rep (HeckeCoset.mulMap (SLnZ 2) (SLnZ 2) (SLnZ 2) g₁ g₂ p)) : GL (Fin 2) ℚ) :
@@ -319,32 +319,6 @@ lemma T_gen_pow_entries_qpower (q : {p : ℕ // p.Prime})
   have : p ∣ ∏ j, a j := dvd_trans h_dvd (Finset.dvd_prod_of_mem _ (Finset.mem_univ i))
   rw [ha'_det] at this
   exact hpq ((Nat.prime_dvd_prime_iff_eq hp q.2).mp (hp.dvd_of_dvd_pow this))
-
-/-- If `(f * g)(D) ≠ 0` in the Hecke ring, there exist `D₁ ∈ supp(f)` and `D₂ ∈ supp(g)`
-with `D ∈ mulSupport(rep D₁, rep D₂)`. -/
-lemma support_mul_exists (f g : IntegralHeckeRing 2)
-    (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
-    (hD : (f * g) D ≠ 0) :
-    ∃ D₁ D₂, f D₁ ≠ 0 ∧ g D₂ ≠ 0 ∧
-      D ∈ (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
-        (HeckeCoset.rep D₁) (HeckeCoset.rep D₂)).support := by
-  -- `HeckeCosetModule.mul` is sealed, so unfold it through its API rather than by defeq.
-  -- The evaluation lemmas have to be applied by `rw`, outermost sum first: `simp only` cannot
-  -- match `sum_apply` through the wrapper's `FunLike` coercion, so it silently does nothing.
-  have h := hD
-  rw [HeckeCosetModule.mul_def, HeckeCosetModule.mul_eq_sum, HeckeCosetModule.sum_apply,
-    HeckeCosetModule.sum_def] at h
-  obtain ⟨D₁, hD₁_mem, h₁⟩ := Finset.exists_ne_zero_of_sum_ne_zero h
-  rw [HeckeCosetModule.sum_apply, HeckeCosetModule.sum_def] at h₁
-  obtain ⟨D₂, hD₂_mem, h₂⟩ := Finset.exists_ne_zero_of_sum_ne_zero h₁
-  rw [HeckeCosetModule.smul_apply, HeckeCosetModule.smul_apply] at h₂
-  have hfD₁ := Finsupp.mem_support_iff.mp hD₁_mem
-  have hgD₂ := Finsupp.mem_support_iff.mp hD₂_mem
-  have hm_ne : (HeckeCosetModule.structureConstants ℤ (SLnZ 2) (SLnZ 2) (SLnZ 2)
-      (HeckeCoset.rep D₁) (HeckeCoset.rep D₂)) D ≠ 0 := by
-    intro h; exact h₂ (by rw [h, mul_zero, mul_zero])
-  refine ⟨D₁, D₂, hfD₁, hgD₂, ?_⟩
-  exact HeckeCosetModule.mem_support_iff.mpr hm_ne
 
 /-- `T_single(diagCoset a, α) * diagElem(c,c) = T_single(diagCoset(a * c), α)`. -/
 lemma T_single_diag_mul_T_scalar (c : ℕ) (hc : 0 < c)
