@@ -51,8 +51,6 @@ Lemma 7.4.
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.isEquiv_valuation_ofValuation` : the canonical valuation of the
-  point of a valuation `w` is equivalent to `w`.
 * `mem_spvOfIdeal_iff_forall_cofinalValue_or_characteristicSubgroup_eq_top` : **Lemma 7.4**
   at the `Spv` level — the criterion in the form a consumer can actually check.
 * `TauCeti.ValuationSpectrum.mem_spvOfIdeal_iff` : membership unfolded through the canonical
@@ -71,12 +69,6 @@ namespace TauCeti.ValuationSpectrum
 open TauCeti.Valuation MonoidWithZeroHom
 
 variable {A : Type*} [CommRing A]
-
-/-- The canonical valuation of the point determined by `w` is equivalent to `w`. -/
-theorem isEquiv_valuation_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
-    (w : Valuation A Γ₀) : Valuation.IsEquiv (ofValuation w).valuation w := by
-  intro x y
-  rw [valuation_le_iff, vle_ofValuation]
 
 /-- **Wedhorn §7.1.1.** The subspace `Spv (A, I)` of the valuation spectrum: the points whose
 ideal-indexed characteristic subgroup `cΓ_v(I)` is the whole value group. The hypothesis `hfg`
