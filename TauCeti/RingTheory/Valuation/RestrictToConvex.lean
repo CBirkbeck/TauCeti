@@ -37,6 +37,8 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out 
 * `Valuation.restrictToConvex_le_iff` : on values kept by the restriction, the order is both
   preserved and reflected.
 * `Valuation.one_le_restrictToConvex` : a value at least `1` stays at least `1`.
+* `Valuation.mk0_mem_of_inv_le_of_le` : `H` keeps every value bracketed by an attained value
+  `≥ 1` and its inverse — so the characteristic values of `v` all survive the restriction.
 (Carrying a convex subgroup of a value group onto the units of the value monoid containing it
 is `TauCeti.ConvexSubgroup.ofValueGroup`, in
 `TauCeti.RingTheory.Valuation.ValueGroupTransport`.)
@@ -280,6 +282,18 @@ theorem one_le_restrictToConvex (v : Valuation R Γ₀) (H : ConvexSubgroup Γ�
     rw [h]; exact one_mem H
   have := (restrictToConvex_le_iff v H hH hone hc hmone (hH c hc h1)).mpr (by simpa using h1)
   simpa using this
+
+/-- `H` keeps every value sandwiched between an attained value `≥ 1` and its inverse. Since
+`H` absorbs the attained values `≥ 1`, and is convex, it absorbs everything they bracket —
+which is exactly the characteristic values of `v`. -/
+theorem mk0_mem_of_inv_le_of_le (v : Valuation R Γ₀) {H : ConvexSubgroup Γ₀ˣ}
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
+    {b c : R} (hb : v b ≠ 0) (hc : v c ≠ 0) (h1 : 1 ≤ v c)
+    (hlo : (v c)⁻¹ ≤ v b) (hhi : v b ≤ v c) : Units.mk0 (v b) hb ∈ H := by
+  have hmc : Units.mk0 (v c) hc ∈ H := hH c hc h1
+  refine H.convex (inv_mem hmc) hmc ?_ ?_
+  · simpa [← Units.val_le_val] using hlo
+  · simpa [← Units.val_le_val] using hhi
 
 /-- The restriction vanishes exactly where `v` does or where the unit avoids `H`. -/
 theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
