@@ -103,13 +103,6 @@ theorem idealCofinalFor_def {v : Valuation A Γ₀}
     IdealCofinalFor v H I ↔ ∀ a ∈ I, CofinalValueFor v H.toSubgroup a :=
   Iff.rfl
 
-/-- The trivial ideal is cofinal for every convex subgroup. -/
-@[simp]
-theorem idealCofinalFor_bot (v : Valuation A Γ₀)
-    (H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))) : IdealCofinalFor v H ⊥ := by
-  intro a ha
-  exact cofinalValueFor_of_eq_zero (by simpa using congrArg v (Ideal.mem_bot.mp ha))
-
 /-- The condition is antitone in the ideal. -/
 theorem IdealCofinalFor.mono {v : Valuation A Γ₀}
     {H : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))} {I J : Ideal A}
@@ -182,12 +175,6 @@ theorem IsGreatestIdealCofinal.idealCofinalFor {v : Valuation A Γ₀} {I : Idea
 theorem IsGreatestIdealCofinal.le {v : Valuation A Γ₀} {I : Ideal A}
     {H K : TauCeti.ConvexSubgroup (valueGroup (.ofClass v))}
     (h : IsGreatestIdealCofinal v I H) (hK : IdealCofinalFor v K I) : K ≤ H := h.2 hK
-
-/-- For the zero ideal the greatest element is the whole value group (Wedhorn's first
-reduction: "if `v(I) = {0}` we may choose `H = Γ_v`"). -/
-theorem isGreatestIdealCofinal_bot (v : Valuation A Γ₀) :
-    IsGreatestIdealCofinal v ⊥ ⊤ :=
-  ⟨idealCofinalFor_bot v ⊤, fun _ _ ↦ le_top⟩
 
 /-! ### Reduction to the value set -/
 
