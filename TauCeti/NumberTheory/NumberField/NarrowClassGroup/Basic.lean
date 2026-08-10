@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.ClassGroup.Basic
 public import TauCeti.NumberTheory.NumberField.TotallyPositive
 public import TauCeti.RingTheory.ClassGroup.Basic
 
