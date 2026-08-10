@@ -236,6 +236,9 @@ noncomputable def restrictToConvex (v : Valuation R Γ₀) (H : ConvexSubgroup �
   map_add_le_max' := restrictToConvexFun_map_add_le_max v H hH
 
 /-- On a value whose unit lies in `H`, the restriction keeps that unit. -/
+-- Deliberately not `@[simp]`, unlike its three siblings: its right-hand side is a coercion of a
+-- subtype element, which is not a normal form. Tagging it rewrites `v.restrictToConvex H hH 1`
+-- to `↑⟨1, _⟩` instead of to `1`, which breaks `one_le_restrictToConvex` below.
 theorem restrictToConvex_apply_of_mem (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
     {r : R} (hr : v r ≠ 0) (hm : Units.mk0 (v r) hr ∈ H) :
@@ -243,6 +246,7 @@ theorem restrictToConvex_apply_of_mem (v : Valuation R Γ₀) (H : ConvexSubgrou
   restrictToConvexFun_of_mem v H hr hm
 
 /-- Off `H`, the restriction vanishes. -/
+@[simp]
 theorem restrictToConvex_apply_of_notMem (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
     {r : R} (hr : v r ≠ 0) (hm : Units.mk0 (v r) hr ∉ H) :
@@ -260,6 +264,7 @@ theorem restrictToConvex_apply_of_eq_zero (v : Valuation R Γ₀) (H : ConvexSub
 /-- On values whose units lie in `H`, the restriction both preserves and reflects the order.
 This is what lets an order fact about `v` be moved to the restricted valuation without
 unfolding either. -/
+@[simp]
 theorem restrictToConvex_le_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
     {r s : R} (hr : v r ≠ 0) (hs : v s ≠ 0)
@@ -273,7 +278,8 @@ theorem restrictToConvex_le_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ�
 since `H` absorbs the attained values `≥ 1` by hypothesis. -/
 theorem one_le_restrictToConvex (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
-    {c : R} (hc : v c ≠ 0) (h1 : 1 ≤ v c) : 1 ≤ v.restrictToConvex H hH c := by
+    {c : R} (h1 : 1 ≤ v c) : 1 ≤ v.restrictToConvex H hH c := by
+  have hc : v c ≠ 0 := (zero_lt_one.trans_le h1).ne'
   have hone : v (1 : R) ≠ 0 := by simp
   have hmone : Units.mk0 (v (1 : R)) hone ∈ H := by
     have h : Units.mk0 (v (1 : R)) hone = 1 := by ext; simp
@@ -294,6 +300,7 @@ theorem mk0_mem_of_inv_le_of_le (v : Valuation R Γ₀) {H : ConvexSubgroup Γ�
   · simpa [← Units.val_le_val] using hhi
 
 /-- The restriction vanishes exactly where `v` does or where the unit avoids `H`. -/
+@[simp]
 theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
     {r : R} (hr : v r ≠ 0) :
