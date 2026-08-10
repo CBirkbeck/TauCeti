@@ -223,7 +223,7 @@ theorem mem_characteristicSubgroup_of_restrict {v : Valuation A Γ₀} {a : A}
 
 /-- The `valueGroup.mk` restatement of the introduction rule, for consumers already holding
 a representation of the value. -/
-theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le_restrict
+theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le
     {v : Valuation A Γ₀} {a : A}
     (h : (MonoidWithZeroHom.ofClass v) a ≠ 0)
     (h1 : 1 ≤ valueGroup.mk (.ofClass v) 1 a (by simp) h) :
@@ -233,10 +233,10 @@ theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le_restrict
 /-- An attained value at least `1` puts its class in `cΓ_v`. This is the form consumers hold,
 since they meet `1 ≤ v a` rather than a bound in the value group. The nonvanishing hypothesis
 is part of the statement, since the class `valueGroup.mk … h` is indexed by it. -/
-theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le {v : Valuation A Γ₀} {a : A}
+theorem valueGroup_mk_mem_characteristicSubgroup_of_one_le_value {v : Valuation A Γ₀} {a : A}
     (h : (MonoidWithZeroHom.ofClass v) a ≠ 0) (h1 : 1 ≤ v a) :
     valueGroup.mk (.ofClass v) 1 a (by simp) h ∈ characteristicSubgroup v := by
-  refine valueGroup_mk_mem_characteristicSubgroup_of_one_le_restrict h ?_
+  refine valueGroup_mk_mem_characteristicSubgroup_of_one_le h ?_
   rw [← WithZero.coe_le_coe, ← v.restrict_eq_mk h]
   have : v.restrict 1 ≤ v.restrict a := v.restrict_le_iff.mpr (by simpa using h1)
   simpa using this
