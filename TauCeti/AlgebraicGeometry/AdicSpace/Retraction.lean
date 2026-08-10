@@ -167,7 +167,7 @@ variable {A : Type*} [CommRing A]
 
 /-- **The underlying map of Wedhorn's §7.1.2 retraction.** A point of `Spv A` is sent to the
 class of its canonical valuation restricted to `cΓ_v(I)`. -/
-@[expose] noncomputable def restrictToIdeal (v : Spv A) (I : Ideal A)
+noncomputable def restrictToIdeal (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) : Spv A :=
   ofValuation (v.valuation.restrictToIdeal I hfg)
 
@@ -176,6 +176,6 @@ valuation-level restriction, rather than unfolding the definition. -/
 theorem restrictToIdeal_def (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     restrictToIdeal v I hfg = ofValuation (v.valuation.restrictToIdeal I hfg) :=
-  rfl
+  (rfl)
 
 end TauCeti.ValuationSpectrum
