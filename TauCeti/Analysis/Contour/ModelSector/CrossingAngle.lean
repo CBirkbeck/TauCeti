@@ -19,9 +19,9 @@ with no theorem saying they agree.
 
 This file supplies that bridge. `crossingAngle_modelSector` holds for every real `α`: the
 crossing angle at the corner is the `[0, 2π)` normalisation of `α`, which is `α` itself exactly
-when `0 ≤ α < 2π`. Under those bounds, `windingNumber_closedModelSector_eq_crossingAngle` then
-restates the winding number about the corner as the crossing angle over `2π`, with no reference
-to the parametrisation.
+when `0 ≤ α < 2π`. Under those bounds,
+`windingNumber_closedModelSector_eq_crossingAngle_div_two_pi` then restates the winding number
+about the corner as the crossing angle over `2π`, with no reference to the parametrisation.
 
 That is the shape a general curve can be compared against, since a curve is tangent to a model
 sector without being equal to one.
@@ -31,8 +31,8 @@ sector without being equal to one.
 * `TauCeti.Contour.crossingAngle_modelSector`: the model sector of opening `α` has crossing
   angle `α` at its corner — stated for every real `α` as the `[0, 2π)` normalisation of `α`,
   which is `α` itself exactly when `0 ≤ α < 2π`.
-* `TauCeti.Contour.windingNumber_closedModelSector_eq_crossingAngle`: hence its winding number
-  about the corner is `crossingAngle / (2π)`.
+* `TauCeti.Contour.windingNumber_closedModelSector_eq_crossingAngle_div_two_pi`: hence its
+  winding number about the corner is `crossingAngle / (2π)`.
 
 ## References
 
@@ -97,8 +97,8 @@ theorem crossingAngle_modelSector (hr : 0 < r) (φ : ℝ) (α : ℝ) :
 /-- **The model sector's winding number, read off its crossing angle.** Combining
 `windingNumber_closedModelSector` with `crossingAngle_modelSector`: the winding number about the
 corner is the crossing angle over `2π`, with no reference to the parametrisation. -/
-theorem windingNumber_closedModelSector_eq_crossingAngle (hr : 0 < r) (φ : ℝ) (hα : 0 ≤ α)
-    (hα2 : α < 2 * Real.pi) :
+theorem windingNumber_closedModelSector_eq_crossingAngle_div_two_pi (hr : 0 < r) (φ : ℝ)
+    (hα : 0 ≤ α) (hα2 : α < 2 * Real.pi) :
     windingNumber (modelSector z₀ r φ α) (-r) (r + α) z₀ =
       (crossingAngle (modelSector z₀ r φ α) 0 : ℂ) / (2 * (Real.pi : ℂ)) := by
   rw [crossingAngle_modelSector hr φ α, windingNumber_closedModelSector hr φ hα,
