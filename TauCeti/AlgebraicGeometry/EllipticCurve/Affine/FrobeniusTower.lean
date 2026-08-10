@@ -142,20 +142,6 @@ theorem finrank_frobeniusRatFuncRange :
     _root_.WeierstrassCurve.Affine.finrank_ratFuncRange W] at htower
   rw [← htower, Nat.mul_comm]
 
-/-- `K(x^q)` sits inside `K(W)^q`, the `q`-th powers of the whole function field: a `q`-th power
-of a rational function is a `q`-th power. -/
-theorem frobeniusRatFuncRange_le_frobeniusFieldRange :
-    letI := Fintype.ofFinite K
-    frobeniusRatFuncRange W ≤
-      (_root_.FiniteField.frobeniusAlgHom K W.FunctionField).fieldRange := by
-  let _ := Fintype.ofFinite K
-  intro z hz
-  rw [mem_frobeniusRatFuncRange] at hz
-  obtain ⟨r, rfl⟩ := hz
-  refine ⟨IsScalarTower.toAlgHom K (RatFunc K) W.FunctionField r, ?_⟩
-  rw [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, _root_.FiniteField.frobeniusAlgHom_apply,
-    ← map_pow, Nat.card_eq_fintype_card]
-
 /-- Raising to the `q`-th power commutes with embedding a rational function into `K(W)`. -/
 private theorem frobeniusAlgHom_comp_toAlgHom :
     letI := Fintype.ofFinite K
@@ -179,6 +165,16 @@ theorem frobeniusRatFuncRange_eq_map_ratFuncRange :
   rw [_root_.WeierstrassCurve.Affine.ratFuncRange_eq_map, frobeniusRatFuncRange_eq_map,
     AlgHom.fieldRange_eq_map, IntermediateField.map_map, IntermediateField.map_map,
     frobeniusAlgHom_comp_toAlgHom W]
+
+/-- `K(x^q)` sits inside `K(W)^q`, the `q`-th powers of the whole function field: a `q`-th power
+of a rational function is a `q`-th power. -/
+theorem frobeniusRatFuncRange_le_frobeniusFieldRange :
+    letI := Fintype.ofFinite K
+    frobeniusRatFuncRange W ≤
+      (_root_.FiniteField.frobeniusAlgHom K W.FunctionField).fieldRange := by
+  let _ := Fintype.ofFinite K
+  rw [frobeniusRatFuncRange_eq_map_ratFuncRange W, AlgHom.fieldRange_eq_map]
+  exact IntermediateField.map_mono _ le_top
 
 /-- **`[K(W)^q : K(x^q)] = 2`.** Raising `K(x) ⊆ K(W)` to the `q`-th power is an embedding of the
 pair, so the relative degree `2` of `finrank_ratFuncRange` is unchanged. -/
