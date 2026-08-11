@@ -179,4 +179,32 @@ theorem restrictToIdeal_mem_spvOfIdeal (v : Spv A) (I : Ideal A)
   · exact Or.inr (characteristicSubgroup_restrictToIdeal_eq_top_of_meets v I hfg hm)
   · exact Or.inl (cofinalValue_restrictToIdeal_of_not_meets v I hfg hm)
 
+/-- **Wedhorn §7.1.2: the restriction fixes `Spv (A, I)` pointwise.** A point already in the
+subspace has `cΓ_v(I) = ⊤`, so the restriction discards nothing and returns the point itself.
+With `restrictToIdeal_mem_spvOfIdeal` this makes the map a genuine retraction onto
+`Spv (A, I)`. -/
+theorem restrictToIdeal_of_mem_spvOfIdeal (v : Spv A) (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (hv : v ∈ spvOfIdeal I hfg) :
+    restrictToIdeal v I hfg = v := by
+  have htop : characteristicSubgroupOfIdeal v.valuation I hfg = ⊤ := mem_spvOfIdeal_iff.mp hv
+  -- with `cΓ_v(I)` everything, the restriction vanishes exactly where `v` does
+  have hzero : ∀ a : A, v.valuation.restrictToIdeal I hfg a = 0 ↔ v.valuation a = 0 := by
+    intro a
+    rw [TauCeti.Valuation.restrictToIdeal_eq_zero_iff]
+    refine ⟨?_, fun h ↦ Or.inl h⟩
+    rintro (h | ⟨h0, hmem⟩)
+    · exact h
+    · rw [htop] at hmem
+      exact absurd ConvexSubgroup.mem_top hmem
+  refine ext' fun a b ↦ ?_
+  simp only [vle_restrictToIdeal, hzero, ne_eq]
+  refine ⟨?_, fun h ↦ ?_⟩
+  · rintro (h | ⟨_, h⟩)
+    · rw [← valuation_le_iff, h]; exact zero_le
+    · exact h
+  · by_cases ha : v.valuation a = 0
+    · exact Or.inl ha
+    · exact Or.inr ⟨fun hb ↦ ha (le_antisymm (hb ▸ (valuation_le_iff v a b).mpr h) zero_le), h⟩
+
+
 end TauCeti.ValuationSpectrum
