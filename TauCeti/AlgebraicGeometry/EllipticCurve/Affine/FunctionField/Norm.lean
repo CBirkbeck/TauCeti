@@ -97,8 +97,9 @@ private theorem norm_algebraMap_polynomial' (d : F[X]) :
 
 /-- **The degree of the norm of `u / d`**: the polynomial norm's degree, less twice that of the
 denominator. Stated for an arbitrary numerator `u` in the coordinate ring, so it carries no
-hypothesis on the basis coefficients — they may vanish. `intDegree_norm_eq_max` specialises it to
-`u = a • 1 + b • y`, where the `max` form needs `a` and `b` nonzero. -/
+hypothesis on the basis coefficients — they may vanish. This is the form downstream proofs should
+use; a private specialisation below reads off the weighted `max` for `u = a • 1 + b • y`, which does
+need `a` and `b` nonzero. -/
 theorem intDegree_norm_of_mul_eq {f : W.FunctionField} (hf : f ≠ 0) {u : W.CoordinateRing}
     {d : F[X]} (hd : d ≠ 0)
     (h : f * algebraMap F[X] W.FunctionField d = algebraMap W.CoordinateRing W.FunctionField u) :

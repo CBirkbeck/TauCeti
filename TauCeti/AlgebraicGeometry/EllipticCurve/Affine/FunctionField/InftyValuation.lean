@@ -25,9 +25,6 @@ at infinity of the curve: `ord_∞ f = -deg N f`, the place where `x` and `y` ha
 
 The valuation's `map_add_le_max'` rests on an ultrametric inequality in degree form, proved here;
 the other three axioms are the norm's multiplicativity and Mathlib's place at infinity.
-* `WeierstrassCurve.Affine.intDegree_norm_eq_max`: for `a`, `b` and `p` all nonzero, the degree of
-  the norm of `(a + by)/p` is
-  `max (2 deg a) (2 deg b + 3) - 2 deg p`.
 * `WeierstrassCurve.Affine.inftyValuation.X`,
   `WeierstrassCurve.Affine.inftyValuation.mk_Y`
 * `WeierstrassCurve.Affine.inftyValuation.C`: the valuation is trivial on the base field — a
