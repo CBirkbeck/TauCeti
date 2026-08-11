@@ -616,6 +616,26 @@ private lemma exists_isOpen_truncated_zeros_confined {g : ℍ → ℂ} (hg : MDi
   TauCeti.UpperHalfPlane.exists_isOpen_zeros_inter hg hg0
     (by rintro _ ⟨p, -, rfl⟩; exact p.im_pos)
 
+/-- Step 4 of the rung-1 bridge: `hoff` from a zeros-confined neighbourhood plus completeness of
+the divisor set.
+
+Analyticity is holomorphy transported through `ofComplex`. Non-vanishing is where the
+zeros-confined clause earns its place: a zero of `g ∘ ofComplex` inside `U` must already lie in
+the truncated fundamental domain, and completeness of `T` over that domain then puts it in `T`. -/
+private lemma hoff_of_zeros_confined {g : ℍ → ℂ} (hg : MDiff g) {U : Set ℂ} {T : Finset ℂ}
+    {H : ℝ} (hUsub : U ⊆ {z : ℂ | 0 < z.im})
+    (hUZ : {z ∈ U | (g ∘ ofComplex) z = 0} =
+      {z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H |
+        (g ∘ ofComplex) z = 0})
+    (hT : ∀ z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H,
+      (g ∘ ofComplex) z = 0 → z ∈ T) :
+    ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (g ∘ ofComplex) z ∧ (g ∘ ofComplex) z ≠ 0 := by
+  intro z hzU hzT
+  refine ⟨TauCeti.UpperHalfPlane.analyticAt_comp_ofComplex hg (hUsub hzU), fun h0 ↦ hzT ?_⟩
+  have hz : z ∈ {z ∈ U | (g ∘ ofComplex) z = 0} := ⟨hzU, h0⟩
+  rw [hUZ] at hz
+  exact hT z hz.1 hz.2
+
 end ModularForm
 
 end TauCeti
