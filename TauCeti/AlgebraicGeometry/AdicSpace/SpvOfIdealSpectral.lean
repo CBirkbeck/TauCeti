@@ -171,16 +171,14 @@ lemma isAdmissible_of_forall_exists_pow_mem {I J : Ideal A} {S T : Finset A} {u 
 
 /-! ### Wedhorn 7.5(ii): the rational subsets are a basis -/
 
-/-- **Wedhorn 7.5(ii), the branch `Γ_v = cΓ_v`.** A witness `d` with `v(ds) ≥ 1` turns the basic
-open `Spv(A)(f/s)` into `Spv(A)({df, 1}/ds)`, whose numerator set contains `1` and is therefore
-admissible for every `I`. -/
-theorem exists_basicOpenFinset_of_characteristicSubgroup_eq_top {v : Spv A}
-    (htop : characteristicSubgroup v.valuation = ⊤) {f s : A} (hv : v ∈ basicOpen f s) :
-    ∃ (T : Finset A) (u : A), (1 : A) ∈ T ∧ v ∈ basicOpenFinset T u ∧
-      basicOpenFinset T u ⊆ basicOpen f s := by
-  classical
-  rw [mem_basicOpen_iff] at hv
-  obtain ⟨hfs, hs0⟩ := hv
+/-- **Scaling a denominator into the unit ball.** When `Γ_v = cΓ_v`, an `s` outside the support
+has a multiple `d * s` whose value is at least `1` and which is still outside the support. This
+is the witness Wedhorn takes at the start of the `Γ_v = cΓ_v` branch of 7.5(ii): full
+characteristic group means `(v s)⁻¹` is dominated by an attained value. -/
+private theorem exists_vle_one_mul_of_characteristicSubgroup_eq_top {v : Spv A}
+    (htop : characteristicSubgroup v.valuation = ⊤) {s : A}
+    (hs0 : ¬ v.toValuativeRel.vle s 0) :
+    ∃ d : A, v.toValuativeRel.vle 1 (d * s) ∧ ¬ v.toValuativeRel.vle (d * s) 0 := by
   set w := v.valuation with hw
   have hs0' : w s ≠ 0 := fun h ↦
     hs0 ((valuation_le_iff v s 0).mp (by rw [← hw]; simp [h]))
@@ -192,15 +190,25 @@ theorem exists_basicOpenFinset_of_characteristicSubgroup_eq_top {v : Spv A}
     rw [map_mul]
     have h := mul_le_mul_left hd (w.restrict s)
     rwa [inv_mul_cancel₀ hrs] at h
-  have hvle_one : v.toValuativeRel.vle 1 (d * s) := by
-    rw [← valuation_le_iff]
+  refine ⟨d, ?_, fun h ↦ ?_⟩
+  · rw [← valuation_le_iff]
     exact (Valuation.restrict_le_iff w).mp (by simpa using hone)
-  have hds0 : ¬ v.toValuativeRel.vle (d * s) 0 := by
-    intro h
-    have hle := (valuation_le_iff v (d * s) 0).mpr h
+  · have hle := (valuation_le_iff v (d * s) 0).mpr h
     rw [← hw, map_zero] at hle
     rw [w.restrict_eq_zero_iff.mpr (le_antisymm hle zero_le)] at hone
     exact absurd hone (by simp)
+
+/-- **Wedhorn 7.5(ii), the branch `Γ_v = cΓ_v`.** A witness `d` with `v(ds) ≥ 1` turns the basic
+open `Spv(A)(f/s)` into `Spv(A)({df, 1}/ds)`, whose numerator set contains `1` and is therefore
+admissible for every `I`. -/
+theorem exists_basicOpenFinset_of_characteristicSubgroup_eq_top {v : Spv A}
+    (htop : characteristicSubgroup v.valuation = ⊤) {f s : A} (hv : v ∈ basicOpen f s) :
+    ∃ (T : Finset A) (u : A), (1 : A) ∈ T ∧ v ∈ basicOpenFinset T u ∧
+      basicOpenFinset T u ⊆ basicOpen f s := by
+  classical
+  rw [mem_basicOpen_iff] at hv
+  obtain ⟨hfs, hs0⟩ := hv
+  obtain ⟨d, hvle_one, hds0⟩ := exists_vle_one_mul_of_characteristicSubgroup_eq_top htop hs0
   have hdfs : v.toValuativeRel.vle (d * f) (d * s) := by
     have h := v.toValuativeRel.mul_vle_mul_left hfs d
     rwa [mul_comm f d, mul_comm s d] at h
@@ -341,6 +349,17 @@ lemma isClopen_patchTopologyOfIdeal_of_preimage (I : Ideal A)
 
 /-! ### Wedhorn 7.5(iii) -/
 
+/-- A value the restriction keeps lies outside the support, since the restriction vanishes
+wherever `v` does. -/
+private theorem not_vle_zero_of_restrictToIdeal_ne_zero {w : Spv A} (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {u : A}
+    (hu : w.valuation.restrictToIdeal I hfg u ≠ 0) : ¬ w.toValuativeRel.vle u 0 := by
+  intro h
+  refine hu (Valuation.restrictToIdeal_apply_of_eq_zero w.valuation I hfg ?_)
+  have hle := (valuation_le_iff w u 0).mpr h
+  rw [map_zero] at hle
+  exact le_antisymm hle zero_le
+
 /-- **Wedhorn 7.5(iii)**: `r_I⁻¹(Spv(A,I)(T/u)) = Spv(A)(T/u)` for admissible `(T, u)`.
 
 The inclusion `⊆` is Wedhorn's remark that a point of the preimage is a horizontal generization
@@ -356,12 +375,7 @@ theorem restrictToIdealCodRestrict_preimage (I : Ideal A)
     vle_restrictToIdeal, map_zero, ne_eq, not_true_eq_false, false_and, or_false]
   constructor
   · rintro ⟨hT, hu⟩
-    have hu0 : ¬ w.toValuativeRel.vle u 0 := by
-      intro h
-      refine hu (Valuation.restrictToIdeal_apply_of_eq_zero w.valuation I hfg ?_)
-      have hle := (valuation_le_iff w u 0).mpr h
-      rw [map_zero] at hle
-      exact le_antisymm hle zero_le
+    have hu0 := not_vle_zero_of_restrictToIdeal_ne_zero I hfg hu
     refine ⟨fun t ht ↦ ?_, hu0⟩
     rcases hT t ht with h | ⟨-, h⟩
     · by_contra hlt
