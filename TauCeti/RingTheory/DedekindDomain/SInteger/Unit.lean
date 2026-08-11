@@ -22,13 +22,15 @@ for global fields"*. This file supplies the finite-generation half.
 
 * `Set.unit_fg`: **if `S` is finite and the `∅`-units are finitely generated, so are the
   `S`-units.**
-* `Set.unit_fg_of_units`: the same with the hypothesis over the base ring, `[Group.FG Rˣ]` — the
-  form the arithmetic actually applies, since a caller holds `Rˣ` and not the `∅`-units. An
-  `instance`.
+* `Set.unit_fg_of_units`: the same with the hypothesis over the base ring, `[Monoid.FG Rˣ]` —
+  the form the arithmetic actually applies, since a caller holds `Rˣ` and not the `∅`-units. An
+  `instance`; the hypothesis is the `Monoid` form because that is the one Mathlib registers for
+  `𝒪 K`.
 * `Set.unitValuation_ker`: the kernel of the `S`-valuation map is the `∅`-units, which is the
-  left-exactness `1 → Rˣ → (S.integer K)ˣ → ∏_{v∈S} ℤ`. This is the TODO
-  `RingTheory/DedekindDomain/SInteger.lean` records as "proof that `S`-units is the kernel of a
-  map to a product".
+  left-exactness `1 → Rˣ → (S.integer K)ˣ → ∏_{v∈S} ℤ`. This is in the same spirit as the TODO
+  `RingTheory/DedekindDomain/SInteger.lean` records — "proof that `S`-units is the kernel of a map
+  to a product" — but is not that statement: the map here is defined *on* the `S`-units and its
+  kernel is the `∅`-units.
 
 The argument is one application of `Group.fg_of_fg_ker_of_fg_range`. Sending an `S`-unit to its
 tuple of valuations at the primes *in* `S` gives `Set.unitValuation`, a homomorphism to `ℤ^S`; its
@@ -118,10 +120,7 @@ noncomputable def unitValuation : S.unit K →* (↥S → Multiplicative ℤ) :=
 @[simp]
 theorem unitValuation_apply (u : S.unit K) (v : ↥S) :
     unitValuation S K u v = (v : HeightOneSpectrum R).valuationOfNeZero ((u : Kˣ)) := by
-  -- mathlib4#40791 proves this by `rfl`; here a `public section` without `@[expose]` leaves the
-  -- body unexposed, so the definition has to be named explicitly
-  simp only [unitValuation, MonoidHom.pi_apply, MonoidHom.coe_comp, Function.comp_apply,
-    Subgroup.coe_subtype]
+  rfl
 
 /-- Membership in `Set.unit` unfolded. Mathlib defines `Set.unit` as a `Subgroup.copy` of exactly
 this set-builder, so this is `Iff.rfl`; stating it once means the proofs below go through a named
@@ -172,10 +171,8 @@ theorem unit_fg [Finite S] (hu : Group.FG ((∅ : Set (HeightOneSpectrum R)).uni
 are the base ring `R` (`IsDedekindDomain.integer_empty`), and `S`-units are the units of the
 `S`-integers (`Set.unitEquivUnitsInteger`).
 
-Public, as in mathlib4#40791. Its body is a three-fold composite and this repository's bare
-`public section` leaves that unexposed, so `coe_unitEmptyEquivUnits` below is what identifies it:
-without that lemma a consumer could not discharge `unit_fg`'s hypothesis, which this equiv is the
-only bridge to. -/
+Public, as in mathlib4#40791. It is a three-fold composite, so `coe_unitEmptyEquivUnits` below
+records what it does to the underlying element, for consumers outside this module. -/
 noncomputable def unitEmptyEquivUnits : (∅ : Set (HeightOneSpectrum R)).unit K ≃* Rˣ :=
   (unitEquivUnitsInteger (∅ : Set (HeightOneSpectrum R)) K).trans
     (Units.mapEquiv
@@ -183,19 +180,23 @@ noncomputable def unitEmptyEquivUnits : (∅ : Set (HeightOneSpectrum R)).unit K
         (Algebra.botEquivOfInjective (IsFractionRing.injective R K))).toRingEquiv.toMulEquiv)
 
 /-- **What `unitEmptyEquivUnits` does to the underlying element:** it sends an `∅`-unit to the
-unit of `R` with the same image in `K`. The equiv is a composite whose body is unexposed here, so
-this is what lets a consumer identify it — and hence discharge `unit_fg`'s hypothesis.
+unit of `R` with the same image in `K`.
 
-**New here**, with no counterpart in mathlib4#40791, which does not need one. -/
+**New here**, with no counterpart in mathlib4#40791, which does not need one: its module exposes
+definition bodies, so the composite is transparent to consumers there. -/
 @[simp]
 theorem coe_unitEmptyEquivUnits (u : (∅ : Set (HeightOneSpectrum R)).unit K) :
     algebraMap R K ((unitEmptyEquivUnits K u : Rˣ) : R) = ((u : Kˣ) : K) := by
+  -- `algebraMap R K` undoes `botEquivOfInjective` on `⊥`: the equiv's inverse is the algebra map
+  -- (`AlgEquiv.commutes`), and `Subalgebra.coe_algebraMap` pushes the coercion out to `K`.
   have key : ∀ x : (⊥ : Subalgebra R K),
       algebraMap R K (Algebra.botEquivOfInjective (IsFractionRing.injective R K) x) = (x : K) := by
     intro x
-    conv_rhs =>
-      rw [← (Algebra.botEquivOfInjective (IsFractionRing.injective R K)).symm_apply_apply x]
-    rfl
+    set e := Algebra.botEquivOfInjective (IsFractionRing.injective R K) with he
+    have h := e.symm.commutes (e x)
+    simp only [Algebra.algebraMap_self_apply, e.symm_apply_apply] at h
+    conv_rhs => rw [h]
+    exact (Subalgebra.coe_algebraMap _ _).symm
   simp only [unitEmptyEquivUnits]
   exact key _
 
