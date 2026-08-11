@@ -16,7 +16,9 @@ public import TauCeti.RingTheory.Valuation.Continuous
 `Cont A` is the subspace of `Spv A` cut out by continuity. Wedhorn defines it in one line —
 "the subspace of `Spv (A)` of continuous valuations" — but that line only makes sense because
 continuity is a property of the *equivalence class*, not of a chosen representative. That is
-what this file supplies, and it is the whole of its mathematical content.
+what this file supplies, and it is the reason the definition is meaningful at all. Two further
+results of Wedhorn's come with it: the discrete case (Remark 7.8(2)) and the pullback along a
+continuous ring homomorphism (Remark 7.9).
 
 ## Why this is not automatic
 
@@ -28,7 +30,7 @@ quantifier running over the value group `Γ_v` — that holds, and
 the module docstring of `TauCeti.RingTheory.Valuation.Continuous` carries the counterexample.
 
 So `IsContinuous` is defined here by testing the *canonical* valuation of the point, and
-`isContinuous_ofValuation` says the test may equally be run on any representative.
+`isContinuous_ofValuation_iff` says the test may equally be run on any representative.
 
 ## Main definitions
 
@@ -40,10 +42,9 @@ So `IsContinuous` is defined here by testing the *canonical* valuation of the po
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.isContinuous_ofValuation` and
-  `TauCeti.ValuationSpectrum.ofValuation_mem_cont_iff` : continuity may be tested on any
-  representative, not only the canonical one — the well-definedness making `cont` meaningful,
-  as a predicate and as set membership.
+* `TauCeti.ValuationSpectrum.isContinuous_ofValuation_iff` : continuity may be tested on any
+  representative, not only the canonical one — the well-definedness making `cont` meaningful.
+  Membership `ofValuation w ∈ cont A` reduces to it through the `@[simp]` `mem_cont_iff`.
 * `TauCeti.ValuationSpectrum.IsContinuous.comap` : **Remark 7.9**, that a continuous ring
   homomorphism pulls continuous points back to continuous points, so `comap φ` restricts to
   `Cont B → Cont A`.
@@ -73,7 +74,7 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A]
 
 /-- **Continuity of a point of `Spv A`.** A point is *continuous* when its canonical valuation
 is, in the attained-value sense of `TauCeti.Valuation.IsContinuous`. Any representative would do
-— that is `isContinuous_ofValuation` — but the canonical one makes the definition depend on
+— that is `isContinuous_ofValuation_iff` — but the canonical one makes the definition depend on
 nothing chosen.
 
 Under `[SeparatelyContinuousMul A]` this is Wedhorn's Definition 7.7; see `cont`. -/
@@ -108,22 +109,9 @@ would fail for a continuity predicate quantified over the ambient codomain.
 
 Not `@[simp]`: `isContinuous_def` already rewrites the left-hand side, so this would not be in
 simp-normal form. -/
-theorem isContinuous_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+theorem isContinuous_ofValuation_iff {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (w : Valuation A Γ₀) : (ofValuation w).IsContinuous ↔ w.IsContinuous :=
   (isEquiv_valuation_ofValuation w).isContinuous_iff
-
-/-- **Membership in `Cont A` may be tested on any representative.** The `@[simp]` form of
-`isContinuous_ofValuation` at the level of the set: `ofValuation w` is a continuous *point*
-exactly when `w` is a continuous *valuation*, for every `w` in the class. Representative
-independence is the whole reason `cont` is well defined, so this is its characteristic lemma.
-
-Not `@[simp]`, although it is the characteristic lemma: `mem_cont_iff`, `isContinuous_def` and
-`Valuation.isContinuous_def` are already simp lemmas, and together they rewrite this left-hand
-side all the way down to the raw quantifier, so no statement about `ofValuation w ∈ cont A` can
-be in simp-normal form. -/
-theorem ofValuation_mem_cont_iff {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
-    (w : Valuation A Γ₀) : ofValuation w ∈ cont A ↔ w.IsContinuous :=
-  isContinuous_ofValuation w
 
 /-- **Wedhorn Remark 7.8(2).** Over a discrete ring every point is continuous. -/
 @[simp]
@@ -135,7 +123,7 @@ theorem cont_eq_univ [DiscreteTopology A] : cont A = Set.univ :=
 continuous points, so it restricts to a map `Cont B → Cont A`. -/
 theorem IsContinuous.comap {B : Type*} [CommRing B] [TopologicalSpace B] {φ : A →+* B}
     (hφ : Continuous φ) {v : Spv B} (hv : v.IsContinuous) : (comap φ v).IsContinuous := by
-  rw [← ofValuation_valuation v, comap_ofValuation, isContinuous_ofValuation]
+  rw [← ofValuation_valuation v, comap_ofValuation, isContinuous_ofValuation_iff]
   exact (isContinuous_def v |>.mp hv).comap hφ
 
 /-- **Remark 7.9 at the level of the subspaces.** `Cont B` lands inside the preimage of
