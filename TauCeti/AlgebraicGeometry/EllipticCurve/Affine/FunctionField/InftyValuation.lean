@@ -29,10 +29,10 @@ at infinity of the curve: `ord_∞ f = -deg N f`, the place where `x` and `y` ha
   norm's multiplicativity and Mathlib's place at infinity.
 * `WeierstrassCurve.Affine.intDegree_norm_eq_max`: the degree of the norm of `(a + by)/p` is
   `max (2 deg a) (2 deg b + 3) - 2 deg p`.
-The degrees of the norms of the coordinate functions, `2` and `3`, are
-`WeierstrassCurve.Affine.natDegree_norm_X` and `WeierstrassCurve.Affine.natDegree_norm_mk_Y` in
-`FunctionField/Norm.lean`; reading them through this valuation as `ord_∞ x = -2`, `ord_∞ y = -3`
-is the next step.
+* `WeierstrassCurve.Affine.inftyValuation_algebraMap_X`,
+  `WeierstrassCurve.Affine.inftyValuation_algebraMap_mk_Y`: `v_∞ x = exp 2` and `v_∞ y = exp 3` —
+  the double and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0
+  asks for by name. They read the norm degrees of `FunctionField/Norm.lean` through the valuation.
 
 The route is the one the source takes: build the order at infinity from the norm rather than by
 extending a valuation. Multiplicativity is then free, and the only real content is the ultrametric
@@ -292,6 +292,48 @@ noncomputable def inftyValuation : Valuation W.FunctionField (WithZero (Multipli
     · refine le_trans ?_ (le_max_right _ _)
       rw [WithZero.exp_le_exp]
       exact le_trans (intDegree_norm_add_le W hx hy hxy) (le_of_eq h)
+
+
+open scoped Classical in
+@[simp]
+theorem inftyValuation_apply (f : W.FunctionField) :
+    inftyValuation W f = RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f) := by
+  simp [inftyValuation]
+
+/-- A coordinate-ring element whose polynomial norm has positive degree has nonzero norm over
+`RatFunc F`: a zero polynomial would have degree zero. -/
+private theorem norm_ne_zero_of_natDegree_ne_zero {u : W.CoordinateRing}
+    (h : (Algebra.norm F[X] u).natDegree ≠ 0) :
+    Algebra.norm (RatFunc F) (algebraMap W.CoordinateRing W.FunctionField u) ≠ 0 := by
+  rw [Algebra.norm_localization (R := F[X]) (M := nonZeroDivisors F[X]) (S := W.CoordinateRing)]
+  refine RatFunc.algebraMap_ne_zero fun hz => h ?_
+  rw [hz, natDegree_zero]
+
+open scoped Classical in
+/-- **`x` has a double pole at infinity**: `v_∞ x = exp 2`, which is `ord_∞ x = -2`. -/
+@[simp]
+theorem inftyValuation_algebraMap_X :
+    inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
+      (algebraMap F[X] W.CoordinateRing X)) = WithZero.exp 2 := by
+  rw [inftyValuation_apply, RatFunc.inftyValuation_apply,
+    RatFunc.inftyValuation_of_nonzero F
+      (norm_ne_zero_of_natDegree_ne_zero W (u := algebraMap F[X] W.CoordinateRing X)
+        (by rw [natDegree_norm_X]; norm_num)),
+    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_X]
+  norm_num
+
+open scoped Classical in
+/-- **`y` has a triple pole at infinity**: `v_∞ y = exp 3`, which is `ord_∞ y = -3`. -/
+@[simp]
+theorem inftyValuation_algebraMap_mk_Y :
+    inftyValuation W (algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y))
+      = WithZero.exp 3 := by
+  rw [inftyValuation_apply, RatFunc.inftyValuation_apply,
+    RatFunc.inftyValuation_of_nonzero F
+      (norm_ne_zero_of_natDegree_ne_zero W (u := CoordinateRing.mk W Y)
+        (by rw [natDegree_norm_mk_Y]; norm_num)),
+    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_mk_Y]
+  norm_num
 
 end WeierstrassCurve.Affine
 
