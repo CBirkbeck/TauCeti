@@ -6,7 +6,6 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.RingTheory.Valuation.Basic
-public import Mathlib.Topology.Algebra.Ring.Basic
 public import Mathlib.Topology.Algebra.WithZeroTopology
 
 /-!
@@ -62,8 +61,12 @@ the definition, carries `[SeparatelyContinuousMul A]`. Phrased this way the defi
 
 * `Valuation.IsEquiv.isContinuous_iff` : continuity depends only on the equivalence class, so it
   descends to the valuation spectrum.
-* `TauCeti.Valuation.IsContinuous.isOpen_lt_div` : the defining sets for an arbitrary element
-  `v b / v c` of the value group, which is Wedhorn's quantifier in full.
+* `TauCeti.Valuation.IsContinuous.isOpen_lt_div` and
+  `TauCeti.Valuation.isContinuous_iff_forall_isOpen_lt_div` : the defining sets for an arbitrary
+  element `v b / v c` of the value group — Wedhorn's quantifier in full, as an elimination rule
+  and as an equivalence.
+* `TauCeti.Valuation.isContinuous_of_continuous` : the easy half of Remark 7.8(1), needing no
+  hypothesis on `A` beyond its topology.
 * `TauCeti.Valuation.isContinuous_iff_continuous` : **Remark 7.8(1)**, that once the attained
   ratios are coinitial in `Γ₀` — in particular on a codomain no larger than `Γ_v ∪ {0}` —
   continuity is ordinary continuity into `WithZeroTopology`.
@@ -148,10 +151,11 @@ theorem _root_.Valuation.IsEquiv.isContinuous_iff {v : Valuation A Γ₀} {w : V
 theorem isContinuous_of_discreteTopology [DiscreteTopology A] (v : Valuation A Γ₀) :
     v.IsContinuous := fun _ ↦ isOpen_discrete _
 
-/-- **The translated ball is a neighbourhood.** For `γ` in the value group, `{y ; v (y - a) < γ}`
-is an open neighbourhood of `a`, being the preimage of the open `{x ; v x < γ}` under
-translation. It is the workhorse of the two results below: on it, `v y` is controlled by `v a`
-through the strict triangle inequality. -/
+/-- **The translated ball is a neighbourhood.** For an *attained* threshold `v b`, the set
+`{y ; v (y - a) < v b}` is an open neighbourhood of `a`, being the preimage of the open
+`{x ; v x < v b}` under translation. (An arbitrary element of `Γ_v` is a ratio and needs the
+machinery of `isOpen_lt_div`; nothing here does.) It is the workhorse of the two results below:
+on it, `v y` is controlled by `v a` through the strict triangle inequality. -/
 private theorem IsContinuous.sub_lt_mem_nhds [SeparatelyContinuousAdd A] {v : Valuation A Γ₀}
     (hv : v.IsContinuous) (a : A) {b : A} (hb : v b ≠ 0) : {y : A | v (y - a) < v b} ∈ 𝓝 a := by
   have hcont : Continuous fun y : A ↦ y - a := by
@@ -198,6 +202,16 @@ theorem IsContinuous.isOpen_lt_div [SeparatelyContinuousMul A] {v : Valuation A 
   -- the set is the preimage of `{x ; v x < v b}` under multiplication by `c`
   simpa [lt_div_iff₀ (zero_lt_iff.mpr hc)] using (hv b).preimage (continuous_mul_const c)
 
+/-- **Wedhorn's quantifier in full, as an equivalence.** Continuity is exactly openness of
+`{a ; v a < v b / v c}` for every ratio, i.e. for every element of the value group `Γ_v` — which
+is Definition 7.7 verbatim. The reverse direction is the case `c = 1`, so this is the named
+introduction rule for continuity that `isOpen_lt_div` alone does not provide. -/
+theorem isContinuous_iff_forall_isOpen_lt_div [SeparatelyContinuousMul A]
+    {v : Valuation A Γ₀} :
+    v.IsContinuous ↔ ∀ b c : A, v c ≠ 0 → IsOpen {a : A | v a < v b / v c} := by
+  refine ⟨fun hv b _ hc ↦ hv.isOpen_lt_div b hc, fun h b ↦ ?_⟩
+  simpa only [map_one, div_one] using h b 1 (by simp)
+
 /-- **Wedhorn Remark 7.8(3) in full.** Remark 7.8(3) quantifies over the whole value group, and
 a general element of it is a ratio `v b / v c` rather than an attained value, so this rather than
 `isOpen_le` is the statement Wedhorn makes. As in `isOpen_lt_div` the set is the preimage of the
@@ -207,6 +221,15 @@ theorem IsContinuous.isOpen_le_div [SeparatelyContinuousAdd A] [SeparatelyContin
     IsOpen {a : A | v a ≤ v b / v c} := by
   simpa [le_div_iff₀ (zero_lt_iff.mpr hc)] using
     (hv.isOpen_le hb).preimage (continuous_mul_const c)
+
+open scoped WithZeroTopology in
+/-- Ordinary continuity into `WithZeroTopology` implies continuity in the sense of Definition
+7.7, with no hypothesis on `A` beyond its topology and none on the value group: `Iio γ` is open,
+so each defining set is a preimage of an open set. This is the easy half of
+`isContinuous_iff_continuous`, split off because that equivalence's other hypotheses are
+irrelevant to it. -/
+theorem isContinuous_of_continuous {v : Valuation A Γ₀} (hv : Continuous v) : v.IsContinuous :=
+  isContinuous_of_forall_isOpen_lt fun _ ↦ hv.isOpen_preimage _ WithZeroTopology.isOpen_Iio
 
 open scoped WithZeroTopology in
 /-- **Wedhorn Remark 7.8(1).** Continuity in the sense of Definition 7.7 is ordinary continuity
@@ -223,9 +246,7 @@ theorem isContinuous_iff_continuous [SeparatelyContinuousAdd A] [SeparatelyConti
     {v : Valuation A Γ₀}
     (hΓ : ∀ γ : Γ₀, γ ≠ 0 → ∃ b c : A, v b ≠ 0 ∧ v c ≠ 0 ∧ v b / v c ≤ γ) :
     v.IsContinuous ↔ Continuous v := by
-  refine ⟨fun hv ↦ continuous_iff_continuousAt.mpr fun a ↦ ?_,
-    fun hv ↦ isContinuous_of_forall_isOpen_lt fun γ ↦
-      hv.isOpen_preimage _ WithZeroTopology.isOpen_Iio⟩
+  refine ⟨fun hv ↦ continuous_iff_continuousAt.mpr fun a ↦ ?_, isContinuous_of_continuous⟩
   rcases eq_or_ne (v a) 0 with ha | ha
   · -- at a point of the support, a ratio ball sitting below `γ` is already a neighbourhood
     rw [ContinuousAt, ha, WithZeroTopology.tendsto_zero]
