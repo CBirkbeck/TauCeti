@@ -1091,13 +1091,12 @@ theorem eqOn_weightedPolynomials [NonarchimedeanRing A] {T : Fin k → Set A}
     Set.EqOn f g (weightedPolynomials T hT : Set (weightedRestrictedSubring T hT)) := by
   have hcomp : f.comp (weightedPolynomialHom T hT) = g.comp (weightedPolynomialHom T hT) :=
     MvPolynomial.ringHom_ext (by simpa using hC) (by simpa using hX)
-  intro x hx
-  obtain ⟨p, rfl⟩ := RingHom.mem_range.mp hx
-  exact congrArg (fun h : MvPolynomial (Fin k) A →+* B ↦ h p) hcomp
+  exact Set.eqOn_range.mpr (congrArg (fun h : MvPolynomial (Fin k) A →+* B ↦ (h : _ → B)) hcomp)
 
 /-- **A continuous homomorphism out of `A⟨X⟩_T` is determined by its values on the generators.**
-This is the uniqueness half of Wedhorn 5.50: an extension sending each `Xᵢ` to a prescribed value
-is unique among *continuous* homomorphisms.
+Two of them agreeing on every constant series *and* every variable are equal. This is the
+uniqueness half of Wedhorn 5.50: among *continuous* homomorphisms there is at most one extending a
+given map on constants and sending each `Xᵢ` to a prescribed value.
 
 Continuity is essential — the polynomials are only dense, not everything — and so is the target
 being Hausdorff. -/
