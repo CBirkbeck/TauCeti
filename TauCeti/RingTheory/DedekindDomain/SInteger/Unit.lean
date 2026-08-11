@@ -22,6 +22,12 @@ for global fields"*. This file supplies the finite-generation half.
 
 * `Set.unit_fg`: **if `S` is finite and the `∅`-units are finitely generated, so are the
   `S`-units.**
+* `Set.unit_fg_of_units`: the same with the hypothesis over the base ring, `[Group.FG Rˣ]` — the
+  form the arithmetic actually applies, since a caller holds `Rˣ` and not the `∅`-units. An
+  `instance`.
+* `Set.unitValuation_ker`: the kernel of the `S`-valuation map is the `∅`-units, which is the
+  left-exactness `1 → 𝒪_K^× → 𝒪_{K,S}^× → ∏_{v∈S} ℤ`. Mathlib records the absence of any such
+  finiteness statement as a TODO in `RingTheory/DedekindDomain/SInteger.lean`.
 
 The argument is one application of `Group.fg_of_fg_ker_of_fg_range`. Sending an `S`-unit to its
 tuple of valuations at the primes *in* `S` gives `Set.unitValuation`, a homomorphism to `ℤ^S`; its
@@ -29,8 +35,8 @@ image is a subgroup of a finitely generated commutative group and so is finitely
 kernel is the group of `∅`-units (`Set.unitValuation_ker`), which is `Rˣ`
 (`Set.unitEmptyEquivUnits`). An extension of finitely generated groups is finitely generated.
 
-`Set.unit_mono` — the `S`-units grow with `S` — is the small monotonicity step the kernel
-computation needs, and is not in Mathlib.
+`Set.unit_mono` — the `S`-units grow with `S` — is what lets `unit_fg` identify the kernel
+subgroup with the `∅`-units along `Subgroup.subgroupOfEquivOfLe`; it is not in Mathlib.
 
 The rank refinement — that the rank is exactly `rank Rˣ + |S|` when the class group is finite — is
 a separate topic and is not here.
@@ -44,14 +50,27 @@ generated** (AEC VIII.1)."
 
 **The names, statements and proofs here are taken from the open Mathlib pull request
 [mathlib4#40791](https://github.com/leanprover-community/mathlib4/pull/40791), "feat(RingTheory/
-DedekindDomain): dirichlet's s-unit theorem"**, which adds `Mathlib/RingTheory/DedekindDomain/
-SUnit.lean` and proves exactly this (and more: the rank formula and its number-field
-specialisation). Following that PR rather than inventing a parallel API is deliberate — when Mathlib
-bumps past it, this file is deleted outright instead of being reconciled name by name. The two
-deviations are recorded at the declarations that carry them: `unitValuation_apply` cannot be `rfl`
-here, because this repository's module convention is `public section` without `@[expose]`, so the
-definition body is not visible even inside the file; and `unit_mono` is stated for an arbitrary
-`S ⊆ S'` rather than only `∅ ⊆ S`, of which #40791's `unit_empty_le` is the special case.
+DedekindDomain): dirichlet's s-unit theorem", by `vvvv-ops`, open since 2026-06-19**, which adds
+`Mathlib/RingTheory/DedekindDomain/SUnit.lean` and proves exactly this (and more: the rank formula
+and its number-field specialisation). Following that PR rather than inventing a parallel API is
+deliberate — when Mathlib bumps past it, almost all of this file is deleted outright instead of
+being reconciled name by name. **`unit_fg_of_units` is the exception: it has no #40791 analogue,
+so at bump time it must be re-homed onto Mathlib's `Set.unit_fg`, not dropped with the rest.**
+
+**Three declarations here are not that PR's**, and are marked as such where they occur:
+
+* `unitValuation_apply` cannot be `rfl` as it is upstream, because this repository's module
+  convention is `public section` without `@[expose]`, so the definition body is not visible even
+  inside the file.
+* `unit_mono` is stated for an arbitrary `S ⊆ S'`, of which #40791's `unit_empty_le` is the
+  `S = ∅` case.
+* **`unit_fg_of_units` is new here**, with no counterpart in #40791: upstream gives
+  `unitEmptyEquivUnits` its consumer in the rank formula, which is not ported, so without this
+  form the theorem is awkward to apply — a caller holds `Rˣ`, not the `∅`-units.
+
+`valuationOfNeZero_eq_one_iff` is also local: Stoll's source uses
+`HeightOneSpectrum.valuationOfNeZero_eq_iff`, which does not exist at our pin, and Mathlib has
+only the coercion form `valuationOfNeZero_eq`.
 
 Adapted from Michael Stoll's elliptic-curves formalisation
 (`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/SelmerGroup.lean` at
@@ -64,38 +83,45 @@ public section
 
 open IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
 
+namespace IsDedekindDomain.HeightOneSpectrum
+
+/-- A unit has trivial `v`-adic `valuationOfNeZero` iff its `v`-adic valuation is `1`. Mathlib
+carries this only in the coerced form `valuationOfNeZero_eq`, which this complements; it lives
+beside that lemma rather than in `Set`, since it mentions no set. -/
+theorem valuationOfNeZero_eq_one_iff {R : Type*} [CommRing R] [IsDedekindDomain R]
+    {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
+    (v : HeightOneSpectrum R) (x : Kˣ) :
+    v.valuationOfNeZero x = 1 ↔ v.valuation K (x : K) = 1 := by
+  rw [← WithZero.coe_inj, valuationOfNeZero_eq, WithZero.coe_one]
+
+end IsDedekindDomain.HeightOneSpectrum
+
 namespace Set
 
 variable {R : Type*} [CommRing R] [IsDedekindDomain R]
   (S : Set (HeightOneSpectrum R)) (K : Type*) [Field K] [Algebra R K] [IsFractionRing R K]
 
 /-- The `S`-valuation map on `S`-units: `u ↦ (v(u))_{v ∈ S}`, valued in `↥S → Multiplicative ℤ`. -/
-noncomputable def unitValuation : S.unit K →* (↥S → Multiplicative ℤ) where
-  toFun u v := (v : HeightOneSpectrum R).valuationOfNeZero ((u : Kˣ))
-  map_one' := by ext v; simp only [Subgroup.coe_one, map_one, Pi.one_apply]
-  map_mul' u u' := by ext v; simp only [Subgroup.coe_mul, map_mul, Pi.mul_apply]
+noncomputable def unitValuation : S.unit K →* (↥S → Multiplicative ℤ) :=
+  MonoidHom.pi fun v ↦ (v : HeightOneSpectrum R).valuationOfNeZero.comp (S.unit K).subtype
 
 @[simp]
 theorem unitValuation_apply (u : S.unit K) (v : ↥S) :
     unitValuation S K u v = (v : HeightOneSpectrum R).valuationOfNeZero ((u : Kˣ)) := by
   -- mathlib4#40791 proves this by `rfl`; here a `public section` without `@[expose]` leaves the
   -- body unexposed, so the definition has to be named explicitly
-  simp only [unitValuation, MonoidHom.coe_mk, OneHom.coe_mk]
+  simp only [unitValuation, MonoidHom.pi_apply, MonoidHom.coe_comp, Function.comp_apply,
+    Subgroup.coe_subtype]
 
 /-- The `S`-units grow with `S`: enlarging the set of allowed primes only weakens the condition
 `v x = 1` for `v ∉ S`. mathlib4#40791's `unit_empty_le` is the case `S = ∅`. -/
 theorem unit_mono {S S' : Set (HeightOneSpectrum R)} (h : S ⊆ S') : S.unit K ≤ S'.unit K :=
   fun _ hx v hv ↦ hx v fun hvS ↦ hv (h hvS)
 
-/-- A unit has trivial `v`-adic `valuationOfNeZero` iff its `v`-adic valuation is `1`. Mathlib
-carries this only in the coerced form `valuationOfNeZero_eq`. -/
-theorem valuationOfNeZero_eq_one_iff (v : HeightOneSpectrum R) (x : Kˣ) :
-    v.valuationOfNeZero x = 1 ↔ v.valuation K (x : K) = 1 := by
-  rw [← WithZero.coe_inj, valuationOfNeZero_eq, WithZero.coe_one]
-
 /-- **The kernel of the `S`-valuation map is the `∅`-units.** Equivalently, an `S`-unit lies in the
 kernel iff it has trivial valuation at every prime — i.e. it is a unit of `𝒪_K`. This is the exact
-`1 → 𝒪_K^× → 𝒪_{K,S}^× → ⊕_{v∈S} ℤ` left-exactness. -/
+`1 → 𝒪_K^× → 𝒪_{K,S}^× → ∏_{v∈S} ℤ` left-exactness. The codomain is the product `↥S →
+Multiplicative ℤ`; this theorem does not assume `S` finite, so it is not the direct sum. -/
 theorem unitValuation_ker :
     (unitValuation S K).ker = ((∅ : Set (HeightOneSpectrum R)).unit K).subgroupOf (S.unit K) := by
   ext u
@@ -113,11 +139,11 @@ theorem unitValuation_ker :
 /-- **Finite generation of `S`-units.** If `S` is finite and the `∅`-units `𝒪_K^×` are finitely
 generated (e.g. `K` is a number field, by Dirichlet's unit theorem), then the `S`-units `𝒪_{K,S}^×`
 are finitely generated. The kernel of `unitValuation` is `𝒪_K^×` (`unitValuation_ker`) and its range
-is a subgroup of the finitely generated free group `↥S → ℤ`, so `𝒪_{K,S}^×` is an extension of
+is a subgroup of the finitely generated free *abelian* group `↥S → ℤ` — commutativity is what
+makes the subgroup finitely generated — so `𝒪_{K,S}^×` is an extension of
 finitely generated by finitely generated. -/
 theorem unit_fg [Finite S] (hu : Group.FG ((∅ : Set (HeightOneSpectrum R)).unit K)) :
     Group.FG (S.unit K) := by
-  have : Group.FG ((∅ : Set (HeightOneSpectrum R)).unit K) := hu
   have : Group.FG (↥S → Multiplicative ℤ) := by
     rw [GroupFG.iff_add_fg, ← Module.Finite.iff_addGroup_fg]
     exact inferInstanceAs (Module.Finite ℤ (↥S → ℤ))
@@ -130,18 +156,30 @@ theorem unit_fg [Finite S] (hu : Group.FG ((∅ : Set (HeightOneSpectrum R)).uni
 
 /-- The `∅`-units are exactly the units of the base ring: `Set.unit ∅ K ≃* Rˣ`. The `∅`-integers
 are the base ring `R` (`IsDedekindDomain.integer_empty`), and `S`-units are the units of the
-`S`-integers (`Set.unitEquivUnitsInteger`). -/
-noncomputable def unitEmptyEquivUnits : (∅ : Set (HeightOneSpectrum R)).unit K ≃* Rˣ :=
+`S`-integers (`Set.unitEquivUnitsInteger`).
+
+`private`, unlike mathlib4#40791's, because its only consumer is `unit_fg_of_units` just below:
+this repository's bare `public section` leaves the body of a three-fold composite equiv
+unexposed, so exporting it without a characteristic lemma would give consumers something they
+cannot identify — and upstream's consumer, the rank formula, is not ported. -/
+private noncomputable def unitEmptyEquivUnits : (∅ : Set (HeightOneSpectrum R)).unit K ≃* Rˣ :=
   (unitEquivUnitsInteger (∅ : Set (HeightOneSpectrum R)) K).trans
     (Units.mapEquiv
       ((Subalgebra.equivOfEq _ _ (IsDedekindDomain.integer_empty R K)).trans
         (Algebra.botEquivOfInjective (IsFractionRing.injective R K))).toRingEquiv.toMulEquiv)
 
-/-- **Dirichlet's `S`-unit theorem, weak form**, stated over the base ring: if `Rˣ` is finitely
-generated and `S` is finite, then so is the group of `S`-units. This is `unit_fg` with its
-hypothesis transported along `unitEmptyEquivUnits`, and it is the form the arithmetic uses — the
-`∅`-units are not what a caller has in hand, `Rˣ` is. -/
-theorem unit_fg_of_units [Finite S] [Group.FG Rˣ] : Group.FG (S.unit K) :=
+/-- **Finite generation of the `S`-units, over the base ring.** If `Rˣ` is finitely generated and
+`S` is finite, then so is the group of `S`-units. This is `unit_fg` with its hypothesis
+transported along `unitEmptyEquivUnits`, and it is the form the arithmetic uses — the `∅`-units
+are not what a caller has in hand, `Rˣ` is.
+
+This is *not* Dirichlet's `S`-unit theorem: finite generation of `Rˣ` is assumed, not proved (for
+`R = 𝒪_K` that assumption is Dirichlet's unit theorem itself), no rank is computed, and `R` is an
+arbitrary Dedekind domain rather than the ring of integers of a global field.
+
+**New here**, with no counterpart in mathlib4#40791: upstream gives `unitEmptyEquivUnits` its
+consumer in the rank formula, which is not ported. -/
+instance unit_fg_of_units [Finite S] [Group.FG Rˣ] : Group.FG (S.unit K) :=
   unit_fg S K <| Group.fg_of_surjective (f := (unitEmptyEquivUnits K).symm.toMonoidHom)
     (unitEmptyEquivUnits K).symm.surjective
 
