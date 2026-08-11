@@ -96,6 +96,25 @@ lemma negVariableChange_ne_one [Nontrivial R] [E.IsElliptic] : E.negVariableChan
       simpa [VariableChange.one_def] using congrArg (fun C : VariableChange R ↦ (C.u : R)) h
     linear_combination -hv
 
+namespace VariableChange
+
+variable {A : Type*} [CommRing A]
+
+/-- **A change of variables maps its inverse to the inverse of its image.** Mathlib has this as
+`map_inv` for the bundled `VariableChange.mapHom`; this is the same fact in the `.map` spelling,
+which is the one goals are phrased in — `rw` does not see through `mapHom φ C ≡ C.map φ`. -/
+@[simp] lemma map_inv (φ : R →+* A) (C : VariableChange R) : C⁻¹.map φ = (C.map φ)⁻¹ :=
+  _root_.map_inv (VariableChange.mapHom φ) C
+
+/-- **A change of variables maps a product to the product of the images**, in the `.map` spelling.
+The companion of `VariableChange.map_inv`; see there for why the bundled `mapHom` form is not
+enough. -/
+@[simp] lemma map_mul (φ : R →+* A) (C D : VariableChange R) :
+    (C * D).map φ = C.map φ * D.map φ :=
+  _root_.map_mul (VariableChange.mapHom φ) C D
+
+end VariableChange
+
 section BaseChange
 
 variable (L : Type*) [CommRing L] [Algebra R L]

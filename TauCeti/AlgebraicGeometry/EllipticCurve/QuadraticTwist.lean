@@ -593,12 +593,8 @@ theorem map_quadraticTwistVariableChange {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
   -- `quadraticTwistVariableChange`
   obtain rfl : σ = σ₀ :=
     (Algebra.IsQuadraticExtension.algEquiv_eq_one_or_eq K L hσ₀ σ).resolve_left hσ
-  -- `map_inv` is stated about `mapHom φ` applied; the goal is in the `.map φ` spelling, and `rw`
-  -- does not see through `mapHom φ C ≡ C.map φ`. This `have` is that Mathlib lemma in the goal's
-  -- spelling — its proof *is* `map_inv`, elaborated up to that defeq.
-  have hinv : ∀ C : VariableChange L, C⁻¹.map (σ₀ : L →+* L) = (C.map (σ₀ : L →+* L))⁻¹ :=
-    fun C ↦ map_inv (VariableChange.mapHom _) C
-  rw [quadraticTwistVariableChange, hinv, E.map_quadraticTwistOfTraceNormVariableChange,
+  rw [quadraticTwistVariableChange, VariableChange.map_inv,
+    E.map_quadraticTwistOfTraceNormVariableChange,
     mul_inv_rev,
     (E.baseChange L).negVariableChange_inv]
 
@@ -612,10 +608,11 @@ a genuinely nontrivial operation: this is what `map_quadraticTwistOfTraceNormVar
 deliberately stopped short of claiming, and the `j`-hypotheses are exactly what it lacked.
 
 They cannot be dropped, and the reason is visible in the proof: its only use of them is to get
-`Aut(Eᴸ) = {±1}`, via `eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq`.
-Over a field containing the relevant roots of unity that fails exactly at `j ∈ {0, 1728}`, where
-the automorphism group is `μ₄` and `μ₆` rather than `μ₂`, and the argument below has nothing to
-run on. No specific counterexample is asserted here. -/
+`Aut(Eᴸ) = {±1}`, via `eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq`,
+whose hypotheses `c₄ ≠ 0` and `c₆ ≠ 0` are exactly `j ≠ 0` and `j ≠ 1728`. At those two values the
+automorphism group can be strictly larger than `{±1}` and the argument below has nothing to run
+on. Precisely which group it is depends on the characteristic — this statement fixes none, so
+nothing more is claimed here, and no counterexample is asserted. -/
 theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728) :
     ¬∃ C : VariableChange K, C • E.quadraticTwist L = E := by
   rintro ⟨CK, hCK⟩
@@ -711,15 +708,8 @@ theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj�
     have hχiso : (C₁⁻¹ * ρ) • E'.baseChange L
         = (E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ)).baseChange L := by
       rw [mul_smul, hρ, hC1inv]
-    -- as with `hinv` above: `map_mul` and `map_inv` restated in the goal's `.map` spelling,
-    -- since `rw` cannot match them through `mapHom`
-    have hmapmul : ∀ a b : VariableChange L, (a * b).map (σ : L →+* L)
-        = a.map (σ : L →+* L) * b.map (σ : L →+* L) :=
-      fun a b ↦ map_mul (VariableChange.mapHom _) a b
-    have hmapinv : ∀ a : VariableChange L, a⁻¹.map (σ : L →+* L)
-        = (a.map (σ : L →+* L))⁻¹ := fun a ↦ map_inv (VariableChange.mapHom _) a
     have hχinv : (C₁⁻¹ * ρ).map (σ : L →+* L) = C₁⁻¹ * ρ := by
-      rw [hmapmul, hmapinv, hcoc, hρmap, mul_inv_rev,
+      rw [VariableChange.map_mul, VariableChange.map_inv, hcoc, hρmap, mul_inv_rev,
         (E.baseChange L).negVariableChange_inv, mul_assoc,
         ← mul_assoc (E.baseChange L).negVariableChange,
         (E.baseChange L).negVariableChange_mul_self, one_mul]
