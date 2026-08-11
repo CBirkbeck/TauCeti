@@ -347,9 +347,9 @@ simply vanishes when `p ∣ N`, instead of the recurrence needing a separate cas
 
 Follows `diamondOp_n` of the AINTLIB `LeanModularForms` project
 (`HeckeRIngs/GL2/HeckeT_n.lean`, <https://github.com/CBirkbeck/AINTLIB>, commit
-`ce76186b5f61c846d770d2f87eb76ba5b9c9117a`, Apache-2.0). The statement is that project's; the
-proofs are re-derived against the current Mathlib pin, where `dif_pos`/`dif_neg` are deprecated
-and the coprime lemma cannot carry `@[simp]`. -/
+`ce76186b5f61c846d770d2f87eb76ba5b9c9117a`, Apache-2.0). -/
+-- The statement is that project's; the proofs below are re-derived against the current Mathlib
+-- pin, where `dif_pos`/`dif_neg` are deprecated and the coprime lemma cannot carry `@[simp]`.
 noncomputable def diamondOpNat [NeZero N] (k : ℤ) (n : ℕ) :
     ModularForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] ModularForm ((Gamma1 N).map (mapGL ℝ)) k :=
   if h : Nat.Coprime n N then diamondOp k (ZMod.unitOfCoprime n h) else 0
