@@ -323,6 +323,22 @@ ring maps and `ringEval_mk` when rewriting underneath an application. -/
 lemma ringEval_comp_mk : (ringEval eqn).comp (AdjoinRoot.mk _) = polyEval W x y :=
   RingHom.ext (ringEval_mk eqn)
 
+open Polynomial MvPolynomial in
+/-- `ringEval` sends the distinguished `X` to the abscissa of the point. Together with
+`ringEval_root` this is the coordinate-level content of the universal property: the pair
+`(X, Y)` of `Universal.Ring` goes to the chosen point `(x, y)` of `W`. -/
+@[simp]
+lemma ringEval_of_X : ringEval eqn (AdjoinRoot.of _ Polynomial.X) = x := by
+  rw [← AdjoinRoot.mk_C, ringEval_mk, polyEval_apply]
+  simp [Polynomial.evalEval]
+
+open Polynomial MvPolynomial in
+/-- `ringEval` sends the distinguished `Y` to the ordinate of the point. -/
+@[simp]
+lemma ringEval_root : ringEval eqn (AdjoinRoot.root _) = y := by
+  rw [← AdjoinRoot.mk_X, ringEval_mk, polyEval_apply]
+  simp [Polynomial.evalEval]
+
 /-- Restricted to the coefficient ring, `polyEval W x y` is just `W.specialize`: evaluating at a
 point does not disturb the substitution of `W`'s coefficients. -/
 @[simp]
