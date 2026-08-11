@@ -14,33 +14,30 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finra
 The function field `F(W)` of an affine Weierstrass curve is a quadratic extension of the rational
 function field `F(x)` — that is `WeierstrassCurve.Affine.finrank_functionField` — so every
 function has an algebra norm `N : F(W) → F(x)`. Mathlib's `Algebra.norm` supplies it, over
-`RatFunc F` itself once `RatFunc.liftAlgebra` is in scope. This file computes it and its degree: on
-a function regular away from infinity the norm is the polynomial norm, on a function of `x` alone it
-is the square, and the degree of the norm of `p + qY` is `max (2 deg p) (2 deg q + 3)` — whence the
-poles of the two coordinate functions at infinity, `x` double and `y` triple.
+`RatFunc F` itself once `RatFunc.liftAlgebra` is in scope. This file computes the degree of that
+norm: for `p + qY` it is `max (2 deg p) (2 deg q + 3)`, and in particular the norms of the two
+coordinate functions have degrees `2` and `3`.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.norm_algebraMap_coordinateRing`: on an element of the coordinate
-  ring the norm is `Algebra.norm R[X]`, read as a rational function.
-* `WeierstrassCurve.Affine.norm_algebraMap_eq_sq`: on a rational function of `x` the norm is its
-  square, the extension being quadratic.
 * `WeierstrassCurve.Affine.natDegree_norm_smul_basis`: the degree of the norm of `p + qY` is
   `max (2 * p.natDegree) (2 * q.natDegree + 3)`, for `p` and `q` both nonzero.
-* `WeierstrassCurve.Affine.natDegree_norm_coordX`, `WeierstrassCurve.Affine.natDegree_norm_coordY`:
-  the norms of the coordinate functions have degrees `2` and `3` — the double and triple poles at
-  infinity that Layer 0 asks for.
-* `WeierstrassCurve.Affine.intDegree_norm_algebraMap_coordinateRing`: consequently the
+* `WeierstrassCurve.Affine.natDegree_norm_X`, `WeierstrassCurve.Affine.natDegree_norm_mk_Y`: the
+  norms of the two coordinate functions have degrees `2` and `3`.
+* `WeierstrassCurve.Affine.intDegree_norm_algebraMap_coordinateRing`: over `RatFunc F`, the
   `intDegree` of the norm of a function regular away from infinity is the degree of its polynomial
   norm.
 
-No new norm is defined: `Algebra.norm L` is the norm, and multiplicativity, `map_one` and vanishing
-exactly at `0` are Mathlib's `map_mul`, `map_one` and `Algebra.norm_eq_zero_iff`. What is new are
-the computations. The first two sit at the level of `finrank_functionField`, which they use — an
-integral domain of coefficients and an arbitrary fraction field `L` of `R[X]` — so they serve
-`RatFunc R` and `FractionRing R[X]` alike. Only the degree corollary forces `RatFunc`: the degree
-theory of rational functions, `RatFunc.intDegree` and with it Mathlib's place at infinity
-`RatFunc.inftyValuation`, is stated for no other fraction field.
+
+No new norm is defined, and no lemma restates a generic one: `Algebra.norm` is the norm,
+multiplicativity and vanishing exactly at `0` are `map_mul` and `Algebra.norm_eq_zero_iff`, and the
+value of the norm on the base ring and on the coordinate ring is `Algebra.norm_algebraMap` and
+`Algebra.norm_localization`, applied where they are needed rather than re-exported. What is new is
+the degree computation, which Mathlib states only in `WithBot ℕ`.
+
+Only the last result forces `RatFunc`: the degree theory of rational functions, `RatFunc.intDegree`
+and with it Mathlib's place at infinity `RatFunc.inftyValuation`, is stated for no other fraction
+field of `F[X]`.
 
 `RatFunc.liftAlgebra` is a *scoped* instance in Mathlib, because it would create a diamond when the
 extension is `RatFunc F` itself; files consuming these results open the `RatFunc` scope as this one
@@ -53,9 +50,10 @@ does. The repository's own `algebraFractionRingFunctionField` is the same constr
 The layer asks for the place at infinity, "where `x` and `y` have their poles", with `ord_∞ x = -2`,
 `ord_∞ y = -3` and residue field `K`. That place is this norm followed by Mathlib's place at
 infinity of `F(x)`: `ord_∞ f = -deg N(f)`, so `v_∞ = RatFunc.inftyValuation ∘ Algebra.norm`. This
-file is the norm and its degree, which is what `ord_∞` is built from — `natDegree_norm_coordX = 2`
-and `natDegree_norm_coordY = 3` are `ord_∞ x = -2` and `ord_∞ y = -3` before the sign; the valuation
-itself, whose content is the ultrametric inequality, comes next. Layer
+file supplies the degrees that `ord_∞` is computed from: `ord_∞ f = -deg N f`, so the degrees `2`
+and `3` proved here are what will give `ord_∞ x = -2` and `ord_∞ y = -3` once the valuation exists.
+The valuation itself, whose content is the ultrametric inequality, comes next; no order at infinity
+is defined or claimed in this file. Layer
 0 seeds no declaration this competes with — `Suggested.lean` records that the function-field layer's
 "types are new API and are built there, not pinned here".
 
@@ -83,40 +81,42 @@ open scoped RatFunc
 
 namespace WeierstrassCurve.Affine
 
-section FractionField
+section Nontrivial
 
--- Both computations sit at the level of `finrank_functionField`, which they use: an integral
--- domain of coefficients, and an arbitrary fraction field `L` of `R[X]` so that they serve
--- `RatFunc R` and `FractionRing R[X]` alike.
-variable {R : Type*} [CommRing R] [IsDomain R] (W : _root_.WeierstrassCurve.Affine R)
-  (L : Type*) [Field L] [Algebra R[X] L] [IsFractionRing R[X] L]
-  [Algebra L W.FunctionField] [IsScalarTower R[X] L W.FunctionField]
+-- `norm_smul_basis` is an identity over any commutative ring, so the `y` degree needs only a
+-- nontrivial base. The `x` degree does not: it goes through `finrank_coordinateRing`, which needs
+-- `NoZeroDivisors`, so it sits in the domain section below.
+variable {R : Type*} [CommRing R] [Nontrivial R] (W : _root_.WeierstrassCurve.Affine R)
 
-/-- **On a function regular away from infinity the norm is the polynomial norm**: for `u` in the
-coordinate ring, `N u` is `Algebra.norm R[X] u` read as a rational function. -/
+/-- **The norm of the coordinate function `y` has degree `3`**, being the negative of the cubic in
+`x` that the Weierstrass equation solves for. -/
 @[simp]
-theorem norm_algebraMap_coordinateRing (u : W.CoordinateRing) :
-    Algebra.norm L (algebraMap W.CoordinateRing W.FunctionField u) =
-      algebraMap R[X] L (Algebra.norm R[X] u) :=
-  Algebra.norm_localization (R := R[X]) (M := nonZeroDivisors R[X]) (S := W.CoordinateRing) u
+theorem natDegree_norm_mk_Y :
+    (Algebra.norm R[X] (CoordinateRing.mk W Y)).natDegree = 3 := by
+  -- `norm_smul_basis` reads the norm off the `1, Y` basis, so `y` is written in it first
+  have hY : CoordinateRing.mk W Y = (0 : R[X]) • 1 + (1 : R[X]) • CoordinateRing.mk W Y := by simp
+  rw [hY, CoordinateRing.norm_smul_basis]
+  compute_degree!
 
-/-- **On a function of `x` alone the norm is the square**, the extension `R(W) / R(x)` being
-quadratic. -/
-@[simp]
-theorem norm_algebraMap_eq_sq (r : L) :
-    Algebra.norm L (algebraMap L W.FunctionField r) = r ^ 2 := by
-  rw [Algebra.norm_algebraMap, finrank_functionField W L]
+end Nontrivial
 
-end FractionField
+section Domain
 
-section Degree
-
--- The degree computations are about the coordinate ring alone; no fraction field is involved.
+-- `degree_norm_smul_basis` needs the base to be a domain, degrees adding only there; so does
+-- `finrank_coordinateRing`, through `NoZeroDivisors`.
 variable {R : Type*} [CommRing R] [IsDomain R] (W : _root_.WeierstrassCurve.Affine R)
+
+/-- **The norm of the coordinate function `x` has degree `2`.** -/
+@[simp]
+theorem natDegree_norm_X :
+    (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing X)).natDegree = 2 := by
+  rw [Algebra.norm_algebraMap, finrank_coordinateRing, natDegree_pow, natDegree_X, mul_one]
 
 /-- **The degree of the norm of `p + qY`**, the `natDegree` form of Mathlib's
 `degree_norm_smul_basis`. Both parts must be nonzero: the `WithBot ℕ` statement reads
-`max (2 • p.degree) (2 • q.degree + 3)`, and at `q = 0` the second term is `⊥` rather than `3`. -/
+`max (2 • p.degree) (2 • q.degree + 3)`, and at `q = 0` the second term is `⊥` rather than `3`, so
+this is a separate statement rather than a rewriting of that one. -/
+@[simp]
 theorem natDegree_norm_smul_basis {p q : R[X]} (hp : p ≠ 0) (hq : q ≠ 0) :
     (Algebra.norm R[X] (p • (1 : W.CoordinateRing) + q • CoordinateRing.mk W Y)).natDegree =
       max (2 * p.natDegree) (2 * q.natDegree + 3) := by
@@ -124,37 +124,19 @@ theorem natDegree_norm_smul_basis {p q : R[X]} (hp : p ≠ 0) (hq : q ≠ 0) :
   rw [CoordinateRing.degree_norm_smul_basis, degree_eq_natDegree hp, degree_eq_natDegree hq]
   norm_cast
 
-/-- **The norm of a function of `x` alone is its square**, the coordinate-ring form of
-`norm_algebraMap_eq_sq`. -/
-theorem norm_algebraMap_polynomial (p : R[X]) :
-    Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing p) = p ^ 2 := by
-  rw [Algebra.norm_algebraMap, finrank_coordinateRing]
-
-/-- **The coordinate function `x` has a double pole at infinity**: its norm is `x ^ 2`, of degree
-`2`. -/
-theorem natDegree_norm_coordX :
-    (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing X)).natDegree = 2 := by
-  rw [norm_algebraMap_polynomial, natDegree_pow, natDegree_X, mul_one]
-
-/-- **The coordinate function `y` has a triple pole at infinity**: its norm is the negative of the
-cubic in `x`, of degree `3`. -/
-theorem natDegree_norm_coordY :
-    (Algebra.norm R[X] (CoordinateRing.mk W Y)).natDegree = 3 := by
-  rw [show CoordinateRing.mk W Y = (0 : R[X]) • 1 + (1 : R[X]) • CoordinateRing.mk W Y by simp,
-    CoordinateRing.norm_smul_basis]
-  compute_degree!
-
-end Degree
+end Domain
 
 variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)
 
-/-- **The degree of the norm of a function regular away from infinity** is the degree of its
-polynomial norm. This is the input to the order at infinity, `ord_∞ f = -deg N f`, and it is where
-`RatFunc F` is forced: `intDegree` is stated for no other fraction field of `F[X]`. -/
+/-- **The degree of the norm of a function regular away from infinity**, as a rational function, is
+the degree of its polynomial norm. This is what the order at infinity is computed from, and it is
+where `RatFunc F` is forced: `intDegree` is stated for no other fraction field of `F[X]`. -/
+@[simp]
 theorem intDegree_norm_algebraMap_coordinateRing (u : W.CoordinateRing) :
     (Algebra.norm (RatFunc F) (algebraMap W.CoordinateRing W.FunctionField u)).intDegree =
       (Algebra.norm F[X] u).natDegree := by
-  rw [norm_algebraMap_coordinateRing, RatFunc.intDegree_polynomial]
+  rw [Algebra.norm_localization (R := F[X]) (M := nonZeroDivisors F[X]) (S := W.CoordinateRing),
+    RatFunc.intDegree_polynomial]
 
 end WeierstrassCurve.Affine
 
