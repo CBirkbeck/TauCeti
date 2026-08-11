@@ -427,41 +427,6 @@ section Nontrivial
 -- commutative ring, so a nontrivial base is all they need.
 variable {R : Type*} [CommRing R] [Nontrivial R] (W : _root_.WeierstrassCurve.Affine R)
 
-/-- **The norm of the coordinate function `x` has degree `2`**: it is `x ^ 2`. -/
-theorem natDegree_norm_X :
-    (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing X)).natDegree = 2 := by
-  -- `norm_smul_basis` reads the norm off the `1, Y` basis, so `x` is written in it first
-  have hX : algebraMap R[X] W.CoordinateRing X =
-      (X : R[X]) • (1 : W.CoordinateRing) + (0 : R[X]) • CoordinateRing.mk W Y := by
-    rw [zero_smul, add_zero, Algebra.smul_def, mul_one]
-  rw [hX, CoordinateRing.norm_smul_basis]
-  simp
-
-/-- **The norm of the coordinate function `y` has degree `3`**, being the negative of the cubic in
-`x` that the Weierstrass equation solves for. -/
-theorem natDegree_norm_mk_Y :
-    (Algebra.norm R[X] (CoordinateRing.mk W Y)).natDegree = 3 := by
-  -- `norm_smul_basis` reads the norm off the `1, Y` basis, so `y` is written in it first
-  have hY : CoordinateRing.mk W Y = (0 : R[X]) • 1 + (1 : R[X]) • CoordinateRing.mk W Y := by simp
-  rw [hY, CoordinateRing.norm_smul_basis]
-  compute_degree!
-
-/-- The simp-normal form of `natDegree_norm_X`: simp rewrites `algebraMap F[X] W.CoordinateRing`
-to `AdjoinRoot.of`, so this is the shape automation actually meets. -/
-@[simp]
-theorem natDegree_norm_of_X :
-    (Algebra.norm R[X] (AdjoinRoot.of W.polynomial X)).natDegree = 2 :=
-  natDegree_norm_X W
-
-/-- The simp-normal form of `natDegree_norm_mk_Y`: simp rewrites `CoordinateRing.mk W Y` to
-`AdjoinRoot.root`. -/
-@[simp]
-theorem natDegree_norm_root :
-    (Algebra.norm R[X] (AdjoinRoot.root W.polynomial)).natDegree = 3 :=
-  natDegree_norm_mk_Y W
-
-end Nontrivial
-
 end WeierstrassCurve.Affine
 
 end TauCeti

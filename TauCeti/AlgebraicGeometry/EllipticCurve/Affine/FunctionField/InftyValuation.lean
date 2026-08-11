@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.FieldTheory.RatFunc.Valuation
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Norm
 
 /-!
@@ -72,6 +71,30 @@ open Polynomial WeierstrassCurve
 open scoped Polynomial.Bivariate RatFunc
 
 namespace WeierstrassCurve.Affine
+
+
+section Nontrivial
+
+variable {R : Type*} [CommRing R] [Nontrivial R] (W : WeierstrassCurve.Affine R)
+
+/-- The norm of the coordinate function `x` has degree `2`: it is `x ^ 2`. Private: it exists to
+compute `inftyValuation.X`, and Mathlib's `CoordinateRing.norm_smul_basis` is the general fact. -/
+private theorem natDegree_norm_X :
+    (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing Polynomial.X)).natDegree = 2 := by
+  have hX : algebraMap R[X] W.CoordinateRing Polynomial.X =
+      (Polynomial.X : R[X]) • (1 : W.CoordinateRing) + (0 : R[X]) • CoordinateRing.mk W Y := by
+    rw [zero_smul, add_zero, Algebra.smul_def, mul_one]
+  rw [hX, CoordinateRing.norm_smul_basis]
+  simp
+
+/-- The norm of the coordinate function `y` has degree `3`. Private, as above. -/
+private theorem natDegree_norm_mk_Y :
+    (Algebra.norm R[X] (CoordinateRing.mk W Y)).natDegree = 3 := by
+  have hY : CoordinateRing.mk W Y = (0 : R[X]) • 1 + (1 : R[X]) • CoordinateRing.mk W Y := by simp
+  rw [hY, CoordinateRing.norm_smul_basis]
+  compute_degree!
+
+end Nontrivial
 
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
@@ -305,8 +328,8 @@ theorem inftyValuation.X :
     RatFunc.inftyValuation_of_nonzero F
       (norm_ne_zero_of_natDegree_ne_zero W
         (u := algebraMap F[X] W.CoordinateRing Polynomial.X)
-        (by rw [TauCeti.WeierstrassCurve.Affine.natDegree_norm_X]; norm_num)),
-    intDegree_norm_algebraMap_coordinateRing, TauCeti.WeierstrassCurve.Affine.natDegree_norm_X]
+        (by rw [natDegree_norm_X]; norm_num)),
+    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_X]
   norm_num
 
 open scoped Classical in
@@ -317,8 +340,8 @@ theorem inftyValuation.mk_Y :
   rw [inftyValuation_apply, RatFunc.inftyValuation_apply,
     RatFunc.inftyValuation_of_nonzero F
       (norm_ne_zero_of_natDegree_ne_zero W (u := CoordinateRing.mk W Y)
-        (by rw [TauCeti.WeierstrassCurve.Affine.natDegree_norm_mk_Y]; norm_num)),
-    intDegree_norm_algebraMap_coordinateRing, TauCeti.WeierstrassCurve.Affine.natDegree_norm_mk_Y]
+        (by rw [natDegree_norm_mk_Y]; norm_num)),
+    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_mk_Y]
   norm_num
 
 
