@@ -330,6 +330,19 @@ point does not disturb the substitution of `W`'s coefficients. -/
 lemma polyEval_comp_eq_specialize : (polyEval W x y).comp (algebraMap _ _) = W.specialize := by
   ext <;> simp [polyEval]
 
+/-- **Extensionality for homomorphisms out of the universal ring.** Two ring homomorphisms out of
+`Universal.Ring` agreeing on the classes of polynomials are equal, `AdjoinRoot.mk` being surjective.
+
+Together with `ringEval_comp_mk` this is the uniqueness half of the universal property: `ringEval`
+is not merely *a* homomorphism carrying the universal curve and its point to `W` and `(x, y)`, it is
+the *only* one. That is what licenses proving an identity once over `curveRing` and reading it off
+for every curve and every point. -/
+lemma ringHom_ext {f g : Universal.Ring →+* R}
+    (h : f.comp (AdjoinRoot.mk _) = g.comp (AdjoinRoot.mk _)) : f = g := by
+  refine RingHom.ext fun z ↦ ?_
+  obtain ⟨p, rfl⟩ := AdjoinRoot.mk_surjective z
+  exact congr($h p)
+
 /-- The `Universal.Ring` counterpart of `polyEval_comp_eq_specialize`: `ringEval eqn` also restricts
 to `W.specialize` on the coefficient ring. This is the compatibility that makes
 `curveRing_map_ringEval`, and with it every specialization argument, go through. -/
