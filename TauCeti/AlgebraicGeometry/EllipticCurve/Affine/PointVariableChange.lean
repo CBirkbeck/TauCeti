@@ -17,14 +17,12 @@ group isomorphism `(C • W).Point ≃+ W.Point`.
 
 ## Main definitions
 
-* `WeierstrassCurve.Affine.Point.mapVariableChange`: the group homomorphism
-  `(C • W).Point →+ W.Point`.
 * `WeierstrassCurve.Affine.Point.equivVariableChange`: the group isomorphism
   `(C • W).Point ≃+ W.Point`, whose inverse is the map induced by `C⁻¹` rather than an inverse
   extracted from bijectivity. Everything here is computable given `[DecidableEq F]`.
-* `WeierstrassCurve.Affine.Point.mapVariableChange_some` and
-  `WeierstrassCurve.Affine.Point.equivVariableChange_some`: what those two maps do to a point
-  given by coordinates, both `@[simp]`.
+* `WeierstrassCurve.Affine.Point.equivVariableChange_some`: what it does to a point given by
+  coordinates, `@[simp]`. The underlying homomorphism is `(equivVariableChange W C).toAddMonoidHom`
+  — there is no separate `→+` in the public interface, since it would be the same map.
 
 Transport of the point group along an equality of curves — needed to use a `C • W = W'` fact on
 points — is Mathlib's `AddEquiv.cast`, instantiated at `fun V ↦ V.toAffine.Point`; this file adds
@@ -256,9 +254,11 @@ private lemma cast_some {V V' : WeierstrassCurve F} (h : V = V') {x y : F}
       = some x y (h ▸ hns) := by
   subst h; rfl
 
-/-- The group homomorphism `(C • W).Point →+ W.Point` induced by the admissible change of variables
-`(x, y) ↦ (u²x + r, u³y + u²sx + t)`. -/
-def mapVariableChange : (C • W).toAffine.Point →+ W.toAffine.Point where
+/-- The group homomorphism `(C • W).Point →+ W.Point` induced by the admissible change of
+variables, as scaffolding: its `map_add'` is what `equivVariableChange` is built from. Private,
+since `(equivVariableChange W C).toAddMonoidHom` is the same homomorphism and is the canonical
+way to ask for it. -/
+private def mapVariableChange : (C • W).toAffine.Point →+ W.toAffine.Point where
   toFun := mapVariableChangeFun W C
   map_zero' := rfl
   map_add' := by
@@ -304,15 +304,6 @@ def equivVariableChange : (C • W).toAffine.Point ≃+ W.toAffine.Point :=
 `mapVariableChange_some` for the bundled `≃+`. -/
 @[simp] lemma equivVariableChange_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
     equivVariableChange W C (.some x y h)
-      = .some ((C.u : F) ^ 2 * x + C.r) ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
-          ((variableChange_nonsingular W C x y).mpr h) :=
-  mapVariableChangeFun_some W C h
-
-/-- What the group homomorphism does to a point given by coordinates. Stated separately from
-`equivVariableChange_some` because a consumer holding a `→+` should not have to know that it is
-the underlying map of an `≃+`. -/
-@[simp] lemma mapVariableChange_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
-    mapVariableChange W C (.some x y h)
       = .some ((C.u : F) ^ 2 * x + C.r) ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
           ((variableChange_nonsingular W C x y).mpr h) :=
   mapVariableChangeFun_some W C h
