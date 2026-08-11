@@ -10,8 +10,8 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ArcExcisionMeasure
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.LogDerivPV
 public import TauCeti.NumberTheory.ModularForms.Order.Orbits
-public import TauCeti.Analysis.Complex.UpperHalfPlane.Manifold
 import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
+import TauCeti.Analysis.Complex.UpperHalfPlane.Manifold
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Interior
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.I.Value
@@ -650,12 +650,13 @@ private lemma analyticAt_cuspFunction_of_norm_le {g : ℍ → ℂ} (hper : Perio
 -- radius shrinks as `H` grows, so the disc sits inside the neighbourhood only above a threshold —
 -- it cannot hold for every `H`.
 private lemma exists_threshold_cuspFunction_ne_zero [ModularFormClass F 𝒮ℒ k] {f : F}
-    (hΓ : (1 : ℝ) ∈ (𝒮ℒ : Subgroup (GL (Fin 2) ℝ)).strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H →
       ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
         cuspFunction 1 ⇑f q ≠ 0 := by
   obtain ⟨ε, hε, hne⟩ := Metric.eventually_nhds_iff.mp
-    (eventually_nhdsWithin_iff.mp (cuspFunction_eventually_ne_zero (f := f) one_pos hΓ hf))
+    (eventually_nhdsWithin_iff.mp
+      (cuspFunction_eventually_ne_zero (f := f) one_pos one_mem_strictPeriods_SL hf))
   refine ⟨(Real.log ε⁻¹ + 1) / (2 * Real.pi), fun H hH q hq hq0 ↦ hne ?_ hq0⟩
   have hlog : 1 - Real.log ε ≤ 2 * Real.pi * H := by
     linarith [Real.log_inv ε, (div_le_iff₀ (by positivity)).mp hH]
