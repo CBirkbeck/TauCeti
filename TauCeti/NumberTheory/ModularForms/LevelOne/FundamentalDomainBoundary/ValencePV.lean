@@ -196,30 +196,17 @@ theorem two_pi_I_mul_sum_windingNumber_mul_order_eq [SlashInvariantFormClass F �
     (hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex f hS hnorm hinv hHgt hper hoffγ hga
       hgz).hasCauchyPV
 
-/-- A form analytic and nonvanishing off a *finite* set on an open `U` cannot vanish identically
-near a point of `U`: every punctured neighbourhood meets `U` off that finite set. So its
-meromorphic order there is finite, and `hfin` need not be assumed. -/
-private theorem meromorphicOrderAt_ne_top_of_analyticAt_off {g : ℂ → ℂ} {T : Finset ℂ} {U : Set ℂ}
-    (hU : IsOpen U) (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ g z ∧ g z ≠ 0) {s : ℂ} (hs : s ∈ U) :
-    meromorphicOrderAt g s ≠ ⊤ := by
-  rw [Ne, meromorphicOrderAt_eq_top_iff]
-  intro hzero
-  have hmem : ∀ᶠ z in 𝓝[≠] s, z ∈ U ∧ z ∉ T := by
-    filter_upwards [nhdsWithin_le_nhds (hU.mem_nhds hs),
-      T.eventually_cofinite_notMem.filter_mono (nhdsNE_le_cofinite s)] with z hzU hzT
-    exact ⟨hzU, hzT⟩
-  obtain ⟨z, hz0, hzU, hzT⟩ := (hzero.and hmem).exists
-  exact (hoff z hzU hzT).2 hz0
-
 /-- **The weighted order sum in terms of `orderOfVanishingAt`.** With the divisor points in the
 upper half plane, the abstract order function of `two_pi_I_mul_sum_windingNumber_mul_order_eq` is
 the modular-forms order at each of them.
 
 `orderOfVanishingAt` is by definition the meromorphic order of `f ∘ ofComplex`
 (`orderOfVanishingAt_def`), so the abstract hypothesis is discharged by finiteness alone, which
-is automatic here: `meromorphicOrderAt_ne_top_of_analyticAt_off` derives it from `hoff` and the
-finiteness of `T`. The sum runs over `T.attach` because the order is taken at each divisor
-point *as a point of `ℍ`*, which needs its membership proof. -/
+is automatic here: by `meromorphicOrderAt_ne_top_iff_eventually_ne_zero` it suffices that the form
+is eventually nonzero on a punctured neighbourhood, and it is, because such a neighbourhood
+eventually avoids the finite set `T` (`nhdsNE_le_cofinite`) and `hoff` covers everything off `T`.
+The sum runs over `T.attach` because the order is taken at each divisor point *as a point of
+`ℍ`*, which needs its membership proof. -/
 private theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
     [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
     {U : Set ℂ} (hH : 1 ≤ H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
@@ -252,7 +239,10 @@ private theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
       (((meromorphicOrderAt (⇑f ∘ ofComplex) z).untop₀ : ℤ) : ℂ)]
   exact two_pi_I_mul_sum_windingNumber_mul_order_eq f hS hH hnorm hinv hHgt hper hoffγ hU hUdom
     hoff hmero (fun s hsT hsU => (WithTop.coe_untop₀_of_ne_top
-      (meromorphicOrderAt_ne_top_of_analyticAt_off hU hoff hsU)).symm) hbase hga
+      ((meromorphicOrderAt_ne_top_iff_eventually_ne_zero (hmero s hsT hsU)).2 (by
+        filter_upwards [nhdsWithin_le_nhds (hU.mem_nhds hsU),
+          T.eventually_cofinite_notMem.filter_mono (nhdsNE_le_cofinite s)] with z hzU hzT
+        exact (hoff z hzU hzT).2))).symm) hbase hga
     hgz
 
 /-- **The valence identity, divided through.** Cancelling the common factor `2πi` puts the
