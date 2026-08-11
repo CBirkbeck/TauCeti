@@ -123,11 +123,9 @@ every `R`-algebra automorphism of `L`: its four components `-1, 0, -a₁, -a₃`
 lemma negVariableChange_baseChange_map (σ : L ≃ₐ[R] L) :
     (E.baseChange L).negVariableChange.map (σ : L →+* L)
       = (E.baseChange L).negVariableChange := by
-  ext <;>
-    simp only [VariableChange.map, negVariableChange_u, negVariableChange_r,
-      negVariableChange_s, negVariableChange_t, Units.coe_map, Units.val_neg, Units.val_one,
-      MonoidHom.coe_coe, RingHom.coe_coe, map_neg, map_zero, map_one, map_a₁, map_a₃,
-      baseChange, σ.commutes]
+  have h : (E.baseChange L).map (σ : L →+* L) = E.baseChange L :=
+    map_baseChange (R := R) (W := E) (σ : L →ₐ[R] L)
+  rw [← negVariableChange_map, h]
 
 /-- **The Galois conjugate of an isomorphism between base-changed curves is again one.** If
 `ρ : Vᴸ ≅ Wᴸ` and `V`, `W` are defined over `R`, then `σρ` is also an isomorphism `Vᴸ ≅ Wᴸ`,

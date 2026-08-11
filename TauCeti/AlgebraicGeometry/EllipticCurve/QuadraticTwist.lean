@@ -591,7 +591,9 @@ theorem map_quadraticTwistVarChange {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
   -- `Gal(L/K)` has order two, so `σ` is the automorphism chosen inside `quadraticTwistVarChange`
   obtain rfl : σ = σ₀ :=
     (Algebra.IsQuadraticExtension.algEquiv_eq_one_or_eq K L hσ₀ σ).resolve_left hσ
-  -- stated in the `.map` spelling so that `rw` can use it; `mapHom` is that map bundled
+  -- `map_inv` is stated about `mapHom φ` applied; the goal is in the `.map φ` spelling, and `rw`
+  -- does not see through `mapHom φ C ≡ C.map φ`. This `have` is that Mathlib lemma in the goal's
+  -- spelling — its proof *is* `map_inv`, elaborated up to that defeq.
   have hinv : ∀ C : VariableChange L, C⁻¹.map (σ₀ : L →+* L) = (C.map (σ₀ : L →+* L))⁻¹ :=
     fun C ↦ map_inv (VariableChange.mapHom _) C
   rw [quadraticTwistVarChange, hinv, E.map_quadraticTwistOfTraceNormVariableChange, mul_inv_rev,
@@ -706,7 +708,8 @@ theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj�
     have hχiso : (C₁⁻¹ * ρ) • E'.baseChange L
         = (E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ)).baseChange L := by
       rw [mul_smul, hρ, hC1inv]
-    -- both stated in the `.map` spelling so that `rw` can use them
+    -- as with `hinv` above: `map_mul` and `map_inv` restated in the goal's `.map` spelling,
+    -- since `rw` cannot match them through `mapHom`
     have hmapmul : ∀ a b : VariableChange L, (a * b).map (σ : L →+* L)
         = a.map (σ : L →+* L) * b.map (σ : L →+* L) :=
       fun a b ↦ map_mul (VariableChange.mapHom _) a b
