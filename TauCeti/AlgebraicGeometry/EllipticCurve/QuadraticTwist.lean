@@ -817,6 +817,31 @@ is `quadraticTwistVariableChange` base changed to `M`. -/
   rw [quadraticTwistPointEquiv, AddEquiv.trans_apply, Affine.Point.cast_some,
     Affine.Point.equivVariableChange_some]
 
+/-- **What the inverse isomorphism does to a point given by coordinates.** It is the map induced
+by the inverse of the base-changed change of variables. -/
+@[simp] lemma quadraticTwistPointEquiv_symm_some {x y : M}
+    (h : (E.baseChange M).toAffine.Nonsingular x y) :
+    (E.quadraticTwistPointEquiv L M).symm (.some x y h)
+      = .some (((((E.quadraticTwistVariableChange L).baseChange M)⁻¹).u : M) ^ 2 * x
+            + (((E.quadraticTwistVariableChange L).baseChange M)⁻¹).r)
+          (((((E.quadraticTwistVariableChange L).baseChange M)⁻¹).u : M) ^ 3 * y
+            + ((((E.quadraticTwistVariableChange L).baseChange M)⁻¹).u : M) ^ 2
+              * (((E.quadraticTwistVariableChange L).baseChange M)⁻¹).s * x
+            + (((E.quadraticTwistVariableChange L).baseChange M)⁻¹).t)
+          (by
+            rw [← E.quadraticTwistVariableChange_smul_baseChange L M]
+            exact (Affine.variableChange_nonsingular
+              (((E.quadraticTwistVariableChange L).baseChange M) • E.baseChange M)
+              (((E.quadraticTwistVariableChange L).baseChange M)⁻¹) x y).mpr
+                ((inv_smul_smul ((E.quadraticTwistVariableChange L).baseChange M)
+                  (E.baseChange M)).symm ▸ h)) := by
+  rw [quadraticTwistPointEquiv, AddEquiv.symm_trans_apply,
+    Affine.Point.equivVariableChange_symm_some]
+  rw [show (AddEquiv.cast (M := fun V : WeierstrassCurve M ↦ V.toAffine.Point)
+      (E.quadraticTwistVariableChange_smul_baseChange L M).symm).symm
+      = AddEquiv.cast (E.quadraticTwistVariableChange_smul_baseChange L M) from rfl,
+    Affine.Point.cast_some]
+
 /-- **Naturality of `quadraticTwistPointEquiv` in `M`.** The isomorphisms on `M`-points over
 varying `M ⊇ L` all come from one isomorphism of curves over `L`, so they commute with the maps on
 points induced by any `L`-algebra homomorphism. -/
