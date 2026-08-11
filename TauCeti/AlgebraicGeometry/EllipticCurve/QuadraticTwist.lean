@@ -244,23 +244,23 @@ theorem quadraticTwistOf_quadraticTwistOf :
 
 /-- The change of variables carrying the twist by the trace and norm of `aθ + b` back to the
 twist by those of `θ`. It is the single witness behind every isomorphism in this file:
-`exists_smul_quadraticTwistOf_eq` is its inverse, and
+`exists_smul_quadraticTwistOf_eq` supplies its inverse, and
 `quadraticTwistOfTraceNormVariableChange` is its base change at `(t, n) = (1, 0)`.
 
 Stated over any commutative ring, since the identity it satisfies is polynomial; only
 invertibility of `a` is needed. -/
-def quadraticTwistOfVariableChangeInv (u : Aˣ) (b : A) : VariableChange A :=
+def quadraticTwistOfVariableChange (u : Aˣ) (b : A) : VariableChange A :=
   ⟨u, 0, -(b * E.a₁), -((u : A) ^ 2 * b * (t ^ 2 - 4 * n) * E.a₃)⟩
 
-/-- **The defining identity of `quadraticTwistOfVariableChangeInv`.** -/
-theorem quadraticTwistOfVariableChangeInv_smul (u : Aˣ) (b : A) :
-    E.quadraticTwistOfVariableChangeInv t n u b •
+/-- **The defining identity of `quadraticTwistOfVariableChange`.** -/
+theorem quadraticTwistOfVariableChange_smul (u : Aˣ) (b : A) :
+    E.quadraticTwistOfVariableChange t n u b •
         E.quadraticTwistOf ((u : A) * t + 2 * b)
           (b ^ 2 + (u : A) * b * t + (u : A) ^ 2 * n)
       = E.quadraticTwistOf t n := by
   have hi : (↑u⁻¹ : A) * (u : A) = 1 := u.inv_mul
   rw [variableChange_def]
-  ext <;> simp only [quadraticTwistOfVariableChangeInv, quadraticTwistOf] <;> grobner
+  ext <;> simp only [quadraticTwistOfVariableChange, quadraticTwistOf] <;> grobner
 
 /-- Changing the parameters `(t, n)` — the trace and norm of a generator `θ` of a quadratic
 extension — into the trace and norm `(at + 2b, b² + abt + a²n)` of another generator `aθ + b`
@@ -270,9 +270,9 @@ theorem exists_smul_quadraticTwistOf_eq {a : A} (b : A) (ha : IsUnit a) :
     ∃ C : VariableChange A, C • E.quadraticTwistOf t n
       = E.quadraticTwistOf (a * t + 2 * b) (b ^ 2 + a * b * t + a ^ 2 * n) :=
   let ⟨v, hv⟩ := ha
-  ⟨(E.quadraticTwistOfVariableChangeInv t n v b)⁻¹, by
+  ⟨(E.quadraticTwistOfVariableChange t n v b)⁻¹, by
     rw [inv_smul_eq_iff, ← hv]
-    exact (E.quadraticTwistOfVariableChangeInv_smul t n v b).symm⟩
+    exact (E.quadraticTwistOfVariableChange_smul t n v b).symm⟩
 
 /-- Twisting by a **split** quadratic `(x - r)(x - s)` is trivial up to isomorphism: the twist
 by its trace and norm `(r + s, rs)` is a change of variables away from `E`, provided the
@@ -422,7 +422,7 @@ twist to `E` — two such differ by an automorphism of `E`, which the cocycle id
 tolerate. -/
 def quadraticTwistOfTraceNormVariableChange {θ : L} (hθ : θ ∉ Set.range (algebraMap K L))
     {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) : VariableChange L :=
-  (E.baseChange L).quadraticTwistOfVariableChangeInv 1 0
+  (E.baseChange L).quadraticTwistOfVariableChange 1 0
     (Units.mk0 (σ θ - θ) (Algebra.IsQuadraticExtension.apply_sub_self_ne_zero K L hσ hθ)) θ
 
 /-- **The twist becomes isomorphic to `E` over `L`**, by the explicit change of variables
@@ -439,7 +439,7 @@ theorem quadraticTwistOfTraceNormVariableChange_smul_baseChange {θ : L}
     Algebra.IsQuadraticExtension.algebraMap_norm_eq_mul K L hσ θ
   -- the twist parameters of `θ` are those of the generator `(σ θ - θ) · 1 + θ`,
   -- taken at `(t, n) = (1, 0)`, where the twist is `E` itself
-  have h := (E.baseChange L).quadraticTwistOfVariableChangeInv_smul 1 0
+  have h := (E.baseChange L).quadraticTwistOfVariableChange_smul 1 0
     (Units.mk0 (σ θ - θ) (Algebra.IsQuadraticExtension.apply_sub_self_ne_zero K L hσ hθ)) θ
   rw [quadraticTwistOf_one_zero] at h
   rw [baseChange_quadraticTwistOf, hT, hN]
@@ -464,7 +464,7 @@ theorem map_quadraticTwistOfTraceNormVariableChange {θ : L} (hθ : θ ∉ Set.r
   ext <;>
     -- a `public section` leaves `negVariableChange`'s body unexposed here, so the proof goes
     -- through its accessor lemmas rather than unfolding the definition
-    simp only [quadraticTwistOfTraceNormVariableChange, quadraticTwistOfVariableChangeInv,
+    simp only [quadraticTwistOfTraceNormVariableChange, quadraticTwistOfVariableChange,
       VariableChange.map, VariableChange.mul_def,
       negVariableChange_u, negVariableChange_r, negVariableChange_s, negVariableChange_t,
       Units.coe_map, Units.val_mul, Units.val_neg, Units.val_one, Units.val_mk0,
