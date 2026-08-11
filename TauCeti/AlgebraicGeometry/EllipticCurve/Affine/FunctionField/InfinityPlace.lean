@@ -353,9 +353,7 @@ theorem infinityPlace_ne_heightOneSpectrum_valuation [IsDedekindDomain W.Coordin
   have hx := IsDedekindDomain.HeightOneSpectrum.valuation_le_one P
     (K := W.FunctionField) (algebraMap F[X] W.CoordinateRing Polynomial.X)
   rw [← heq, infinityPlace.X] at hx
-  -- the unit of `ℤᵐ⁰` is `exp 0` by definition, so the bound compares exponents
-  rw [show (1 : WithZero (Multiplicative ℤ)) = WithZero.exp 0 from rfl,
-    WithZero.exp_le_exp] at hx
+  rw [← WithZero.exp_zero, WithZero.exp_le_exp] at hx
   omega
 
 end WeierstrassCurve.Affine
