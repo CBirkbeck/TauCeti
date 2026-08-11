@@ -24,7 +24,7 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
   `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit`: finite support on orbits for a
   nonzero form.
-* `TauCeti.ModularForm.sum_orderOfVanishingAt_comp_eq_finsum_orbit`: a divisor sum reindexed
+* `TauCeti.ModularForm.sum_orderOfVanishingAt_eq_finsum_orbit`: a divisor sum reindexed
   over the orbits its points represent, given that the orbit map is injective on them.
 
 ## References
@@ -91,7 +91,7 @@ reduces to the orbit map's, which `ModularGroup.orbit_mk_injOn_fdo.mono` supplie
 fundamental domain. The open domain is genuinely needed there: on the closed `𝒟` the orbit map is
 not injective, since `T` identifies the two vertical edges and `S` the two halves of the arc, so a
 set holding two identified boundary representatives would count their common orbit twice. -/
-lemma sum_orderOfVanishingAt_comp_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k] {α : Type*}
+lemma sum_orderOfVanishingAt_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k] {α : Type*}
     {X : Finset α} (p : α → ℍ)
     (hX : Set.InjOn (fun a ↦ (Quotient.mk'' (p a) :
       MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ↑X) :
@@ -105,7 +105,7 @@ lemma sum_orderOfVanishingAt_comp_eq_finsum_orbit [SlashInvariantFormClass F �
 
 /-- The divisor sum of the valence formula, whose points are complex numbers carrying the
 interior bounds, reindexed over the orbits they represent — the case `p := ofComplex` of
-`sum_orderOfVanishingAt_comp_eq_finsum_orbit`.
+`sum_orderOfVanishingAt_eq_finsum_orbit`.
 
 The index is a `Set` image rather than a `Finset` one, which keeps the statement free of a
 classical `DecidableEq (MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)` instance — the image elements are
@@ -123,7 +123,7 @@ lemma sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit [SlashInvariantFormClass 
         orderOfVanishingOnOrbit f q := by
   have hcoe : ∀ z ∈ X, ((ofComplex z : ℍ) : ℂ) = z := fun z hz =>
     congrArg _ (ofComplex_apply_of_im_pos (hpos z hz))
-  refine sum_orderOfVanishingAt_comp_eq_finsum_orbit f ofComplex fun a ha b hb hab => ?_
+  refine sum_orderOfVanishingAt_eq_finsum_orbit f ofComplex fun a ha b hb hab => ?_
   have ha' : a ∈ X := by simpa using ha
   have hb' : b ∈ X := by simpa using hb
   have hfdo : ∀ z ∈ X, ofComplex z ∈ 𝒟ᵒ := fun z hz => by
