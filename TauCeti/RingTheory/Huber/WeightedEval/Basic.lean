@@ -198,9 +198,9 @@ variable [NonarchimedeanAddGroup A] [NonarchimedeanAddGroup B]
 omit [TopologicalSpace A] [NonarchimedeanAddGroup A] [TopologicalSpace B]
   [NonarchimedeanAddGroup B] in
 /-- **A coefficient bound gives a term bound**, at a single multi-index: if the `ν`-th coefficient
-of `f` lies in `Tν · U`, and `φ(U)` times the family of weighted monomials lands in the open
-subgroup `G`, then the `ν`-th term of the evaluation lies in `G`. The bound is needed only at
-this one `ν`, and `G` need not be open.
+of `f` lies in `Tν · U`, and `φ(U)` times the weighted monomials at `ν` lands in the subgroup `G`,
+then the `ν`-th term of the evaluation lies in `G`. Both the hypothesis and the conclusion concern
+that one `ν`, and nothing topological is involved.
 
 This is the estimate both convergence results run on.
 `TauCeti.Huber.tendsto_weightedEvalTerm_cofinite_zero` applies it to the cofinitely many
