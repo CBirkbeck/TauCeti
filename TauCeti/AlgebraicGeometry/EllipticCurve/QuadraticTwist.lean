@@ -835,9 +835,10 @@ by the inverse of the base-changed change of variables. -/
               (((E.quadraticTwistVariableChange L).baseChange M)⁻¹) x y).mpr
                 ((inv_smul_smul ((E.quadraticTwistVariableChange L).baseChange M)
                   (E.baseChange M)).symm ▸ h)) := by
-  rw [quadraticTwistPointEquiv, AddEquiv.symm_trans_apply,
-    Affine.Point.equivVariableChange_symm_some]
-  rw [Affine.Point.cast_symm, Affine.Point.cast_some]
+  rw [AddEquiv.symm_apply_eq, quadraticTwistPointEquiv, AddEquiv.trans_apply,
+    Affine.Point.cast_some, Affine.Point.equivVariableChange_some, Affine.Point.some.injEq]
+  refine ⟨?_, ?_⟩ <;>
+    simp only [VariableChange.inv_def, Units.val_inv_eq_inv_val] <;> field
 
 /-- **Naturality of `quadraticTwistPointEquiv` in `M`.** The isomorphisms on `M`-points over
 varying `M ⊇ L` all come from one isomorphism of curves over `L`, so they commute with the maps on

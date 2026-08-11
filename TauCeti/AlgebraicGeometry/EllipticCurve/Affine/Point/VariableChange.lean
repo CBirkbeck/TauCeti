@@ -140,14 +140,6 @@ lemma cast_some {V V' : WeierstrassCurve F} (h : V = V') {x y : F}
       = some x y (h ▸ hns) := by
   subst h; rfl
 
-/-- **The inverse of a transport is the transport along the symmetric equality.** Stated so that
-consumers need not identify `(AddEquiv.cast h).symm` with `AddEquiv.cast h.symm` through the
-record structure of `AddEquiv`; the proof eliminates `h` instead. -/
-lemma cast_symm {V V' : WeierstrassCurve F} (h : V = V') :
-    (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point) h).symm
-      = AddEquiv.cast h.symm := by
-  subst h; rfl
-
 /-- The group homomorphism `(C • W).Point →+ W.Point` induced by the admissible change of
 variables, as scaffolding: its `map_add'` is what `equivVariableChange` is built from. Private,
 since `(equivVariableChange W C).toAddMonoidHom` is the same homomorphism and is the canonical
