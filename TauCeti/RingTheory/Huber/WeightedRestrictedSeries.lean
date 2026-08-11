@@ -971,8 +971,9 @@ Two of them agreeing on every constant series *and* every variable are equal. Th
 uniqueness half of Wedhorn 5.50: among *continuous* homomorphisms there is at most one extending a
 given map on constants and sending each `Xᵢ` to a prescribed value.
 
-Continuity is essential — the polynomials are only dense, not everything — and so is the target
-being Hausdorff. -/
+The polynomials are only dense, not everything, so equality on them has to be propagated: that is
+what continuity and the Hausdorff hypothesis are for. Whether uniqueness can fail without them is
+not addressed here. -/
 theorem weightedRestrictedSubring_ringHom_ext_of_continuous [NonarchimedeanRing A]
     {T : Fin k → Set A} (hT : IsWeightFamily T) {B : Type*} [Semiring B] [TopologicalSpace B]
     [T2Space B] {f g : weightedRestrictedSubring T hT →+* B} (hf : Continuous f)
