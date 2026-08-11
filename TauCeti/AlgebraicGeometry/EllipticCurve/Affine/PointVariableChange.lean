@@ -154,7 +154,7 @@ lemma variableChange_slope [DecidableEq F] {x₁ x₂ y₁ y₂ : F}
 
 /-- A point `(x, y)` lies on `C • W` if and only if `(u²x + r, u³y + u²sx + t)` lies on `W`: the
 change of variables scales the Weierstrass polynomial by `u⁶`. -/
-lemma variableChange_equation (x y : F) :
+@[simp] lemma variableChange_equation (x y : F) :
     W.toAffine.Equation ((C.u : F) ^ 2 * x + C.r)
         ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
       ↔ (C • W).toAffine.Equation x y := by
@@ -172,7 +172,7 @@ would supply nonsingularity from the equation, but only for an elliptic curve, w
 point to a point needs no such hypothesis. It does not extend to the bundled maps below, which are
 elliptic-only for a different reason — Mathlib puts the group structure on `Point` under
 `[W.IsElliptic]`, so `(C • W).Point` is not an additive group without it. -/
-lemma variableChange_nonsingular (x y : F) :
+@[simp] lemma variableChange_nonsingular (x y : F) :
     W.toAffine.Nonsingular ((C.u : F) ^ 2 * x + C.r)
         ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
       ↔ (C • W).toAffine.Nonsingular x y := by
