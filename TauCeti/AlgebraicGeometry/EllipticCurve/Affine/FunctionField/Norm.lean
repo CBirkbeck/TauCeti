@@ -15,8 +15,7 @@ The function field `F(W)` of an affine Weierstrass curve is a quadratic extensio
 function field `F(x)` — that is `WeierstrassCurve.Affine.finrank_functionField` — so every
 function has an algebra norm `N : F(W) → F(x)`. Mathlib's `Algebra.norm` supplies it, over
 `RatFunc F` itself once `RatFunc.liftAlgebra` is in scope. This file computes the degree of that
-norm on the two coordinate functions: `N x = x ^ 2` has degree `2`, and `N y`, the negative of the
-cubic the Weierstrass equation solves for, has degree `3`.
+norm of a function regular away from infinity: it is the degree of the polynomial norm.
 
 ## Main results
 
@@ -24,12 +23,11 @@ cubic the Weierstrass equation solves for, has degree `3`.
   `intDegree` of the norm of a function regular away from infinity is the degree of its polynomial
   norm.
 
-
 No new norm is defined, and no lemma restates a generic one: `Algebra.norm` is the norm,
-multiplicativity and vanishing exactly at `0` are `map_mul` and `Algebra.norm_eq_zero_iff`, and the
-value of the norm on the base ring and on the coordinate ring is `Algebra.norm_algebraMap` and
-`Algebra.norm_localization`, applied where they are needed rather than re-exported. What is new are
-the two coordinate degrees, which are curve-specific and which Mathlib does not state.
+multiplicativity and vanishing exactly at `0` are `map_mul` and `Algebra.norm_eq_zero_iff`, and
+the value of the norm on the base ring and on the coordinate ring is `Algebra.norm_algebraMap`
+and `Algebra.norm_localization`, applied where they are needed rather than re-exported. What is
+new is the transport of that degree to the function field, where `RatFunc.intDegree` lives.
 
 Only the last result forces `RatFunc`: the degree theory of rational functions, `RatFunc.intDegree`
 and with it Mathlib's place at infinity `RatFunc.inftyValuation`, is stated for no other fraction

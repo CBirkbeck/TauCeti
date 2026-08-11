@@ -369,17 +369,18 @@ instance instIsNontrivial : (inftyValuation W).IsNontrivial where
 
 
 open scoped Classical in
-/-- The simp-normal form of `inftyValuation.X`. -/
+/-- The simp-normal form of `inftyValuation.X`, stated for `AdjoinRoot.of`, which is what simp
+rewrites the coordinate function to. -/
 @[simp]
-theorem inftyValuation.of_X :
+theorem inftyValuation.adjoinRoot_of_X :
     inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
       (AdjoinRoot.of W.polynomial Polynomial.X)) = WithZero.exp 2 :=
   inftyValuation.X W
 
 open scoped Classical in
-/-- The simp-normal form of `inftyValuation.mk_Y`. -/
+/-- The simp-normal form of `inftyValuation.mk_Y`, stated for `AdjoinRoot.root`. -/
 @[simp]
-theorem inftyValuation.root :
+theorem inftyValuation.adjoinRoot_root :
     inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
       (AdjoinRoot.root W.polynomial)) = WithZero.exp 3 :=
   inftyValuation.mk_Y W
