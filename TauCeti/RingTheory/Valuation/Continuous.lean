@@ -14,9 +14,12 @@ public import Mathlib.Topology.Algebra.WithZeroTopology
 
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Definition 7.7 and Remarks 7.8, 7.9.**
 
-A valuation `v` on a topological ring `A` is *continuous* if `{a ; v a < γ}` is open in `A` for
-every `γ` in the value group `Γ_v` of `v` — equivalently, if the topology of `A` is finer than
-the one `v` defines.
+`IsContinuous v` here says every `{a ; v a < v b}` is open, the quantifier running over the
+values `v` **attains**. Wedhorn's Definition 7.7 instead runs it over the whole value group
+`Γ_v`, whose general element is a ratio `v b / v c`. The two say the same thing as soon as
+multiplication is separately continuous — `isOpen_lt_div` is precisely that step, and carries
+`[SeparatelyContinuousMul A]` for it — but the definition itself asks for no such hypothesis, so
+`IsContinuous` is the attained-value predicate and not literally Wedhorn's.
 
 Wedhorn works over a topological ring throughout, but the compatibility is only needed where it
 is used, so it is asked for per result rather than up front: the definition itself needs no more
@@ -51,8 +54,8 @@ the definition, carries `[SeparatelyContinuousMul A]`. Phrased this way the defi
 
 ## Main definitions
 
-* `TauCeti.Valuation.IsContinuous` : **Definition 7.7**, continuity of a valuation on a
-  topological ring.
+* `TauCeti.Valuation.IsContinuous` : continuity of a valuation, in attained-value form. It
+  recovers **Definition 7.7** under `[SeparatelyContinuousMul A]`, via `isOpen_lt_div`.
 
 ## Main results
 
@@ -99,16 +102,16 @@ variable {A : Type*} [Ring A] [TopologicalSpace A]
   {Γ₀ : Type*} [LinearOrderedCommMonoidWithZero Γ₀]
   {Γ₀' : Type*} [LinearOrderedCommMonoidWithZero Γ₀']
 
-/-- **Wedhorn Definition 7.7, in attained-value form.** A valuation is *continuous* when every
-set `{a ; v a < v b}` is open.
+/-- **Continuity of a valuation, in attained-value form.** Every set `{a ; v a < v b}` is open.
 
-The quantifier runs over the **attained values** `v b`, not over the codomain `Γ₀` — see the
-module docstring for why quantifying over `Γ₀` would be a different, and
-equivalence-class-dependent, condition. Wedhorn instead quantifies over the whole value group
-`Γ_v`; the two agree once multiplication is separately continuous, which is exactly what
-`isOpen_lt_div` supplies and why *it*, not this definition, carries
-`[SeparatelyContinuousMul A]`. The `b` with `v b = 0` cost nothing here, the set then being
-empty. -/
+This is *not* literally Wedhorn's Definition 7.7, which quantifies over the whole value group
+`Γ_v`: reaching a general element of `Γ_v`, being a ratio `v b / v c`, needs multiplication to be
+continuous, and this definition asks for no compatibility beyond a topology on `A`. Under
+`[SeparatelyContinuousMul A]` the two coincide, which is what `isOpen_lt_div` proves.
+
+Quantifying over attained values rather than over the codomain `Γ₀` is deliberate — see the
+module docstring for why the `Γ₀` form is a different, and equivalence-class-dependent,
+condition. The `b` with `v b = 0` cost nothing, the set then being empty. -/
 def IsContinuous (v : Valuation A Γ₀) : Prop :=
   ∀ b : A, IsOpen {a : A | v a < v b}
 
