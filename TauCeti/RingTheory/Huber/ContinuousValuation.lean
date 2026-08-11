@@ -21,6 +21,14 @@ That replaces a quantifier over open sets by one over a single natural number, a
 form Wedhorn's §7.2 arguments actually use — his proof of Theorem 7.10 produces continuity by
 exhibiting, for a given `γ`, an `n` with `v < γ` on `Iⁿ⁺¹`.
 
+## The codomain is a monoid, so `Valuation.ltAddSubgroup` is unavailable
+
+Mathlib's `Valuation.ltAddSubgroup` packages a sublevel set as an additive subgroup, but it is
+indexed by `Γ₀ˣ` and so forces a `LinearOrderedCommGroupWithZero` codomain. `IsContinuous` is
+stated over a `LinearOrderedCommMonoidWithZero`, matching Mathlib's `Valuation`, and this
+criterion is stated over one too — the strict triangle inequality needs no inverses. The
+subgroup is therefore built where it is used rather than taken from Mathlib.
+
 ## Main results
 
 * `TauCeti.Huber.PairOfDefinition.isContinuous_iff_forall_exists_idealImage_subset` : the
@@ -29,6 +37,11 @@ exhibiting, for a given `γ`, an `n` with `v < γ` on `Iⁿ⁺¹`.
 ## References
 
 * T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, Proposition and Definition 6.1, and §7.2.
+* AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit
+  `2baa76f742bdb4fb8ee323fabba41203bd390e08`, `projects/AdicSpaces/Adic spaces/SpvAITopology.lean`,
+  was consulted. It names `pow_image_isOpen` and `isContinuous_of_ideal_pow_lt` as consumers of
+  exactly this criterion, which is what fixed its downstream-facing shape, but does not state the
+  criterion itself and leaves the surrounding Wedhorn 7.10 sub-leaves incomplete.
 -/
 
 public section
@@ -43,11 +56,6 @@ variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 /-- **Continuity, tested against the ideal-of-definition basis.** A valuation on a Huber ring is
 continuous exactly when every set `{a ; v a < v b}` contains the image of some power `Iⁿ` of an
 ideal of definition.
-
-Both directions are the neighbourhood basis, read in opposite senses. Forwards: the set is open
-and contains `0`, so it contains a basic neighbourhood. Backwards: it is the additive subgroup
-`Valuation.ltAddSubgroup` — the strict triangle inequality is what makes it one — and an additive
-subgroup containing an open subgroup is open, so the containment upgrades to openness.
 
 The `b` with `v b = 0` are excluded because `{a ; v a < 0}` is empty, hence not a subgroup;
 `Valuation.isContinuous_iff_forall_ne_zero` shows they cost nothing. -/
