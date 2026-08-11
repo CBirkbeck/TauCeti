@@ -79,7 +79,7 @@ change of variables, again over any commutative ring in which the relevant param
 These are the `quadraticTwistOf` seeds of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 5
 (twists), pinned in that roadmap's `Suggested.lean`, together with the extension twist they make
 well posed, the classification of the `L`-forms that the cocycle delivers, and the point
-isomorphism `quadraticTwistPointEquiv` that classification makes possible; the
+isomorphism `quadraticTwistPointEquiv` that `quadraticTwistVariableChange` induces; the
 split-multiplicative-reduction theorem is a later milestone of the same layer and builds on this
 file.
 
