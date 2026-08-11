@@ -195,24 +195,26 @@ theorem isWeightBounded_of_isWeightedVarPowerBounded {φ : A →+* B} {T : Fin k
 
 variable [NonarchimedeanAddGroup A] [NonarchimedeanAddGroup B]
 
-omit [TopologicalSpace A] [NonarchimedeanAddGroup A] [NonarchimedeanAddGroup B] in
+omit [TopologicalSpace A] [NonarchimedeanAddGroup A] [TopologicalSpace B]
+  [NonarchimedeanAddGroup B] in
 /-- **A coefficient bound gives a term bound**, at a single multi-index: if the `ν`-th coefficient
 of `f` lies in `Tν · U`, and `φ(U)` times the family of weighted monomials lands in the open
-subgroup `G`, then the `ν`-th term of the evaluation lies in `G`.
+subgroup `G`, then the `ν`-th term of the evaluation lies in `G`. The bound is needed only at
+this one `ν`, and `G` need not be open.
 
 This is the estimate both convergence results run on.
 `TauCeti.Huber.tendsto_weightedEvalTerm_cofinite_zero` applies it to the cofinitely many
 coefficients that satisfy the bound; the continuity proof applies it to every coefficient at
 once. -/
 theorem weightedEvalTerm_mem_of_mem_weightMul {φ : A →+* B} {T : Fin k → Set A} {b : Fin k → B}
-    {U : AddSubgroup A} {V : Set B} {G : OpenAddSubgroup B} (hUV : (φ : A → B) '' U ⊆ V)
-    (hVG : V * (⋃ ν : Fin k →₀ ℕ, (fun t ↦ φ t * ∏ i, b i ^ ν i) '' weightPow T ν) ⊆ (G : Set B))
-    {f : MvPowerSeries (Fin k) A} {ν : Fin k →₀ ℕ}
-    (hf : MvPowerSeries.coeff ν f ∈ weightMul T ν U) :
-    weightedEvalTerm φ b f ν ∈ (G : Set B) := by
+    {U : AddSubgroup A} {V : Set B} {G : AddSubgroup B} {ν : Fin k →₀ ℕ}
+    (hUV : (φ : A → B) '' U ⊆ V)
+    (hVG : V * ((fun t ↦ φ t * ∏ i, b i ^ ν i) '' weightPow T ν) ⊆ (G : Set B))
+    {f : MvPowerSeries (Fin k) A} (hf : MvPowerSeries.coeff ν f ∈ weightMul T ν U) :
+    weightedEvalTerm φ b f ν ∈ G := by
   -- Multiplying by `bν` is additive, so `Tν · U` lands in `G` as soon as its generators do.
   let ψ : A →+ B := (AddMonoidHom.mulRight (∏ i, b i ^ ν i)).comp (φ : A →+ B)
-  have hgen : ∀ t ∈ weightPow T ν, ∀ u ∈ U, t * u ∈ G.toAddSubgroup.comap ψ := by
+  have hgen : ∀ t ∈ weightPow T ν, ∀ u ∈ U, t * u ∈ G.comap ψ := by
     intro t ht u hu
     -- On a generator the term is `φ u * (φ t * bν)`: a small element times a bounded one.
     have hval : ψ (t * u) = φ u * (φ t * ∏ i, b i ^ ν i) := by
@@ -220,8 +222,8 @@ theorem weightedEvalTerm_mem_of_mem_weightMul {φ : A →+* B} {T : Fin k → Se
         AddMonoidHom.coe_coe, map_mul]
       ring
     simp only [AddSubgroup.mem_comap, hval]
-    exact hVG (Set.mul_mem_mul (hUV ⟨u, hu, rfl⟩) (Set.mem_iUnion.mpr ⟨ν, ⟨t, ht, rfl⟩⟩))
-  have hcomap : MvPowerSeries.coeff ν f ∈ G.toAddSubgroup.comap ψ := weightMul_le.mpr hgen hf
+    exact hVG (Set.mul_mem_mul (hUV ⟨u, hu, rfl⟩) ⟨t, ht, rfl⟩)
+  have hcomap : MvPowerSeries.coeff ν f ∈ G.comap ψ := weightMul_le.mpr hgen hf
   -- `ψ` applied to the coefficient is the term `φ (coeff ν f) * bν`; rewriting rather than
   -- relying on the wrappers and coercions agreeing definitionally.
   simpa [weightedEvalTerm_def, ψ] using hcomap
@@ -247,8 +249,8 @@ theorem tendsto_weightedEvalTerm_cofinite_zero {φ : A →+* B} (hφ : Continuou
     (by simpa only [map_zero] using hV))
   -- All but finitely many coefficients lie in `Tν · U`, and every such term lands in `G`.
   filter_upwards [isWeightedRestricted_iff.mp hf U] with ν hν
-  exact hGW (weightedEvalTerm_mem_of_mem_weightMul
-    (fun _ ⟨u, hu, hval⟩ ↦ hval ▸ hUV hu) hVG hν)
+  exact hGW (weightedEvalTerm_mem_of_mem_weightMul (fun _ ⟨u, hu, hval⟩ ↦ hval ▸ hUV hu)
+    ((Set.mul_subset_mul_left (Set.subset_iUnion _ ν)).trans hVG) hν)
 
 
 end Terms

@@ -62,8 +62,8 @@ theorem continuous_weightedEvalHom (hT : IsWeightFamily T) (hφ : ContinuousAt �
     (hasSum_weightedEval hφ hb (mem_weightedRestrictedSubring.mp f.property)) ?_
   filter_upwards with s
   exact G.toAddSubgroup.sum_mem fun ν _ ↦
-    weightedEvalTerm_mem_of_mem_weightMul (fun _ ⟨u, hu, hval⟩ ↦ hval ▸ hUV hu) hVG
-      (mem_weightedNhd.mp hf ν)
+    weightedEvalTerm_mem_of_mem_weightMul (fun _ ⟨u, hu, hval⟩ ↦ hval ▸ hUV hu)
+      ((Set.mul_subset_mul_left (Set.subset_iUnion _ ν)).trans hVG) (mem_weightedNhd.mp hf ν)
 
 end TauCeti.Huber
 
