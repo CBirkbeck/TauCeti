@@ -95,6 +95,34 @@ lemma sum_orderOfVanishingAt_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ 
   simp only [orderOfVanishingOnOrbit_mk]
   exact (finsum_mem_coe_finset _ X).symm
 
+/-- The divisor sum of the valence formula, whose points are complex numbers carrying the
+interior bounds, reindexed over the orbits they represent.
+
+The index set is a `Set` image rather than a `Finset` one on purpose: `Finset.image` would need
+`DecidableEq ℍ`, which does not exist. Injectivity composes `ofComplex` on the upper half plane
+with the orbit map on `𝒟ᵒ`, and the interior bounds supply membership of `𝒟ᵒ`. -/
+lemma sum_ofComplex_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k] {X : Finset ℂ}
+    (hpos : ∀ z ∈ X, 0 < z.im) (hnorm : ∀ z ∈ X, 1 < ‖z‖) (hre : ∀ z ∈ X, |z.re| < 1 / 2) :
+    ∑ z ∈ X, orderOfVanishingAt f (ofComplex z) =
+      ∑ᶠ q ∈ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
+          MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) '' ↑X,
+        orderOfVanishingOnOrbit f q := by
+  have hcoe : ∀ z ∈ X, ((ofComplex z : ℍ) : ℂ) = z := fun z hz =>
+    congrArg _ (ofComplex_apply_of_im_pos (hpos z hz))
+  have hfdo : ∀ z ∈ X, ofComplex z ∈ 𝒟ᵒ := fun z hz =>
+    ModularGroup.mem_fdo_of_one_lt_norm
+      (by rw [hcoe z hz]; exact hnorm z hz) (by rw [hcoe z hz]; exact hre z hz)
+  have hginj : Set.InjOn (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
+      MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ↑X := fun a ha b hb hab => by
+    have ha' : a ∈ X := by simpa using ha
+    have hb' : b ∈ X := by simpa using hb
+    have h : ofComplex a = ofComplex b :=
+      ModularGroup.orbit_mk_injOn_fdo (hfdo a ha') (hfdo b hb') hab
+    exact (hcoe a ha').symm.trans ((congrArg (fun p : ℍ ↦ (p : ℂ)) h).trans (hcoe b hb'))
+  rw [finsum_mem_image hginj]
+  simp only [orderOfVanishingOnOrbit_mk]
+  exact (finsum_mem_coe_finset _ X).symm
+
 end ModularForm
 
 end TauCeti
