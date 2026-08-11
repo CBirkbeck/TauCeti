@@ -42,9 +42,9 @@ Each special value comes in two forms: one stated about the curve's coordinate f
 ultrametric inequality is `private`, and the norm-degree theory it rests on lives in
 `FunctionField/Norm.lean`.
 
-* `WeierstrassCurve.Affine.infinityPlace.X_div_mk_Y` (with
-  `WeierstrassCurve.Affine.infinityPlace.adjoinRoot_of_X_div_root` in the other spelling) and
-  `WeierstrassCurve.Affine.infinityPlace.isUniformizer_X_div_mk_Y`: **`x / y` is a uniformiser at
+* `WeierstrassCurve.Affine.infinityPlace.X_div_mk_Y` and
+  `WeierstrassCurve.Affine.infinityPlace.isUniformizer_X_div_mk_Y` (each with an
+  `adjoinRoot_of_X_div_root` twin in the other spelling): **`x / y` is a uniformiser at
   infinity.** Its value is `exp (-1)`, and it is a uniformiser in Mathlib's
   `Valuation.IsUniformizer` sense. That the place is discrete of rank one needs no proof here — its
   value group is a nontrivial subgroup of the cyclic `ℤᵐ⁰ˣ`, so Mathlib's `IsRankOneDiscrete`
@@ -424,6 +424,15 @@ theorem infinityPlace.isUniformizer_X_div_mk_Y :
       ⟨_, infinityPlace.X_div_mk_Y W⟩,
     Units.val_mk0]
   exact infinityPlace.X_div_mk_Y W
+
+open scoped Classical in
+/-- `infinityPlace.isUniformizer_X_div_mk_Y` in the spelling simp normalises the coordinate
+functions to. -/
+theorem infinityPlace.isUniformizer_adjoinRoot_of_X_div_root :
+    (infinityPlace W).IsUniformizer (algebraMap W.CoordinateRing W.FunctionField
+        (AdjoinRoot.of W.polynomial Polynomial.X) /
+      algebraMap W.CoordinateRing W.FunctionField (AdjoinRoot.root W.polynomial)) :=
+  infinityPlace.isUniformizer_X_div_mk_Y W
 
 end WeierstrassCurve.Affine
 
