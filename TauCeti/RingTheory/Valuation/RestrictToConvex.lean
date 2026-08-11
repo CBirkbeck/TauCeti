@@ -329,8 +329,11 @@ theorem mk0_mem_of_inv_le_of_le (v : Valuation R Γ₀) {H : ConvexSubgroup Γ�
   · simpa [← Units.val_le_val] using hlo
   · simpa [← Units.val_le_val] using hhi
 
-/-- The restriction vanishes at a nonzero value exactly when its unit avoids `H`. -/
-@[simp]
+/-- The restriction vanishes at a nonzero value exactly when its unit avoids `H`.
+
+Not `@[simp]`: `restrictToConvex_eq_zero_iff` is the simp-normal form for a vanishing
+restriction, and tagging this branch too would make normalisation depend on whether a
+nonvanishing proof happens to be available. -/
 theorem restrictToConvex_eq_zero_iff_of_ne (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
     {r : R} (hr : v r ≠ 0) :
