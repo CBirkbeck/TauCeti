@@ -28,9 +28,10 @@ used, on either side — and `isContinuous_iff_continuous` needs both. Commutati
 never used, so `A` is a `Ring`.
 
 The codomain is treated the same way. Mathlib's `Valuation` is valued in a
-`LinearOrderedCommMonoidWithZero`, and so is most of this file; only writing down a ratio
-`v b / v c` needs inverses, so the three results that do are gathered in a section asking for a
-`LinearOrderedCommGroupWithZero`.
+`LinearOrderedCommMonoidWithZero`, and so is most of this file. A `LinearOrderedCommGroupWithZero`
+is needed for two reasons — writing down a ratio `v b / v c`, and `WithZeroTopology`, whose
+instance is stated on the group — so the five results that need either are gathered in a section
+asking for it.
 
 ## The quantifier ranges over the value group, not over the codomain
 
@@ -184,9 +185,10 @@ theorem IsContinuous.comap {B : Type*} [Ring B] [TopologicalSpace B] {φ : B →
 
 /-! ### Results needing a value **group**
 
-Wedhorn's quantifier runs over `Γ_v`, whose general element is a ratio `v b / v c`. Writing that
-down needs division, so these three — and only these — ask the codomain to be a group rather
-than the monoid the rest of the file works over.
+Two things need inverses on the codomain: writing a ratio `v b / v c`, which is how Wedhorn's
+quantifier over `Γ_v` is expressed, and Mathlib's `WithZeroTopology`, whose instance is stated on
+a `LinearOrderedCommGroupWithZero`. The five results below need one or the other; everything
+above works over the monoid.
 -/
 
 section ValueGroup
@@ -224,10 +226,11 @@ theorem IsContinuous.isOpen_le_div [SeparatelyContinuousAdd A] [SeparatelyContin
 
 open scoped WithZeroTopology in
 /-- Ordinary continuity into `WithZeroTopology` implies continuity in the sense of Definition
-7.7, with no hypothesis on `A` beyond its topology and none on the value group: `Iio γ` is open,
-so each defining set is a preimage of an open set. This is the easy half of
-`isContinuous_iff_continuous`, split off because that equivalence's other hypotheses are
-irrelevant to it. -/
+7.7: `Iio γ` is open, so each defining set is a preimage of an open set. This is the easy half of
+`isContinuous_iff_continuous`, split off because that equivalence's separate-continuity and
+coinitiality hypotheses are irrelevant to this direction — no compatibility with the ring
+operations is needed at all. It sits in this section only because naming `WithZeroTopology`
+requires the codomain to be a group. -/
 theorem isContinuous_of_continuous {v : Valuation A Γ₀} (hv : Continuous v) : v.IsContinuous :=
   isContinuous_of_forall_isOpen_lt fun _ ↦ hv.isOpen_preimage _ WithZeroTopology.isOpen_Iio
 
