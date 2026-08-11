@@ -814,16 +814,7 @@ is `quadraticTwistVariableChange` base changed to `M`. -/
           ((Affine.variableChange_nonsingular (E.baseChange M)
             ((E.quadraticTwistVariableChange L).baseChange M) x y).mpr
               ((E.quadraticTwistVariableChange_smul_baseChange L M).symm ▸ h)) := by
-  -- the transport along `Cᴹ • Eᴹ = (E.quadraticTwist L)ᴹ`, computed locally: it is needed only
-  -- here, since everything else goes through this lemma
-  have hcast : ∀ {V V' : WeierstrassCurve M} (hVV' : V = V') {a b : M}
-      (hns : V.toAffine.Nonsingular a b),
-      AddEquiv.cast (M := fun V : WeierstrassCurve M ↦ V.toAffine.Point) hVV' (.some a b hns)
-        = .some a b (hVV' ▸ hns) := by
-    intro V V' hVV' a b hns
-    subst hVV'
-    rfl
-  rw [quadraticTwistPointEquiv, AddEquiv.trans_apply, hcast,
+  rw [quadraticTwistPointEquiv, AddEquiv.trans_apply, Affine.Point.cast_some,
     Affine.Point.equivVariableChange_some]
 
 /-- **Naturality of `quadraticTwistPointEquiv` in `M`.** The isomorphisms on `M`-points over
