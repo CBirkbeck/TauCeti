@@ -252,7 +252,9 @@ invertibility of `a` is needed. -/
 def quadraticTwistOfVariableChange (u : Aˣ) (b : A) : VariableChange A :=
   ⟨u, 0, -(b * E.a₁), -((u : A) ^ 2 * b * (t ^ 2 - 4 * n) * E.a₃)⟩
 
-/-- **The defining identity of `quadraticTwistOfVariableChange`.** -/
+/-- **The defining identity of `quadraticTwistOfVariableChange`:** it carries the twist by the
+transformed parameters `(ut + 2b, b² + ubt + u²n)` — those of the generator `uθ + b` — back to the
+twist by `(t, n)` themselves. Every isomorphism in this file is an instance of this one. -/
 @[simp]
 theorem quadraticTwistOfVariableChange_smul (u : Aˣ) (b : A) :
     E.quadraticTwistOfVariableChange t n u b •

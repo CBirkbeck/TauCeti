@@ -54,6 +54,7 @@ theorem algEquiv_eq_one_or_eq {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) (φ : L ≃�
 
 /-- **Every automorphism of a separable quadratic extension is an involution.** `Gal(L/K)` has
 order two, so this needs no nontriviality hypothesis: it holds for the identity as well. -/
+@[simp]
 theorem algEquiv_mul_self (σ : L ≃ₐ[K] L) : σ * σ = 1 := by
   rw [← sq, ← card_algEquiv_eq_two K L]
   exact pow_card_eq_one'
