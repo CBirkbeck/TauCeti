@@ -4,9 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Mathlib.Algebra.BigOperators.Finprod
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
+public import TauCeti.NumberTheory.Modular.Orbits
 
-import TauCeti.NumberTheory.Modular.Orbits
 import TauCeti.NumberTheory.ModularForms.FiniteZeros
 
 /-!
@@ -23,6 +24,8 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
   `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit`: finite support on orbits for a
   nonzero form.
+* `TauCeti.ModularForm.sum_orderOfVanishingAt_eq_finsum_orbit`: a divisor sum over points of the
+  open fundamental domain, reindexed over the orbits they represent.
 
 ## References
 
@@ -74,6 +77,19 @@ lemma hasFiniteSupport_orderOfVanishingOnOrbit [ModularFormClass F 𝒮ℒ k] {f
   have h_inj : Set.InjOn rep {q | orderOfVanishingOnOrbit f q ≠ 0} := fun q₁ _ q₂ _ h ↦ by
     rw [← hrep_mk q₁, ← hrep_mk q₂, h]
   exact ((finite_zeros_in_fd hf).subset h_image).of_finite_image h_inj
+
+/-- A divisor sum over points of the **open** fundamental domain, reindexed over the orbits those
+points represent. The reindexing is lossless because the orbit map is injective on `𝒟ᵒ`
+(`ModularGroup.orbit_mk_injOn_fdo`); on the closed domain it would double-count the boundary,
+whose two halves `T` and `S` identify. -/
+lemma sum_orderOfVanishingAt_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k] {X : Finset ℍ}
+    (hX : ∀ p ∈ X, p ∈ 𝒟ᵒ) :
+    ∑ p ∈ X, orderOfVanishingAt f p =
+      ∑ᶠ q ∈ (Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) '' ↑X,
+        orderOfVanishingOnOrbit f q := by
+  rw [finsum_mem_image (ModularGroup.orbit_mk_injOn_fdo.mono fun p hp => hX p (by simpa using hp))]
+  simp only [orderOfVanishingOnOrbit_mk]
+  exact (finsum_mem_coe_finset _ X).symm
 
 end ModularForm
 
