@@ -420,13 +420,6 @@ theorem isDedekindDomain_coordinateRing [W.IsElliptic] : IsDedekindDomain W.Coor
 
 end IntegrallyClosed
 
-
-section Nontrivial
-
--- Both degrees read the norm off the `1, Y` basis with `norm_smul_basis`, an identity over any
--- commutative ring, so a nontrivial base is all they need.
-variable {R : Type*} [CommRing R] [Nontrivial R] (W : _root_.WeierstrassCurve.Affine R)
-
 end WeierstrassCurve.Affine
 
 end TauCeti
