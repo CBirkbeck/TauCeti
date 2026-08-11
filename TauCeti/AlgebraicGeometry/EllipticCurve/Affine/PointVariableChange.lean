@@ -143,11 +143,44 @@ lemma variableChange_equation (x y : F) :
     variableChange_a₄, variableChange_a₆, Units.val_inv_eq_inv_val, field]
   refine ⟨fun h ↦ ?_, fun h ↦ ?_⟩ <;> linear_combination h
 
+/-- **Nonsingularity transfers across the change of variables.** The two partial derivatives
+transform by the matrix `![![u⁴, -su³], ![0, u³]]`, which is invertible because `u` is, so
+`W_X ≠ 0 ∨ W_Y ≠ 0` holds at the image exactly when it holds at the source.
+
+This is what lets the point map avoid `[W.IsElliptic]`: `equation_iff_nonsingular` would supply
+nonsingularity from the equation, but only for an elliptic curve, whereas the isomorphism of point
+groups holds for every Weierstrass curve over a field. -/
+lemma variableChange_nonsingular (x y : F) :
+    W.toAffine.Nonsingular ((C.u : F) ^ 2 * x + C.r)
+        ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
+      ↔ (C • W).toAffine.Nonsingular x y := by
+  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
+  -- `W_Y` scales by `u³`
+  have hY : 2 * ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
+        + W.a₁ * ((C.u : F) ^ 2 * x + C.r) + W.a₃
+      = (C.u : F) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃) := by
+    simp only [variableChange_a₁, variableChange_a₃, Units.val_inv_eq_inv_val]
+    field
+  -- `W_X` scales by `u⁴`, shifted by an `s`-multiple of `W_Y`
+  have hX : W.a₁ * ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
+        - (3 * ((C.u : F) ^ 2 * x + C.r) ^ 2 + 2 * W.a₂ * ((C.u : F) ^ 2 * x + C.r) + W.a₄)
+      = (C.u : F) ^ 4 * ((C • W).a₁ * y - (3 * x ^ 2 + 2 * (C • W).a₂ * x + (C • W).a₄))
+        - C.s * ((C.u : F) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃)) := by
+    simp only [variableChange_a₁, variableChange_a₂, variableChange_a₃, variableChange_a₄,
+      Units.val_inv_eq_inv_val]
+    field
+  rw [nonsingular_iff', nonsingular_iff', variableChange_equation]
+  refine and_congr_right fun _ ↦ ?_
+  rw [hX, hY, ← not_and_or, ← not_and_or]
+  refine not_congr ⟨fun ⟨h1, h2⟩ ↦ ?_, fun ⟨h1, h2⟩ ↦ ?_⟩
+  · have hB := (mul_eq_zero.mp h2).resolve_left (pow_ne_zero 3 hu)
+    rw [hB, mul_zero, mul_zero, sub_zero] at h1
+    exact ⟨(mul_eq_zero.mp h1).resolve_left (pow_ne_zero 4 hu), hB⟩
+  · exact ⟨by rw [h1, h2]; ring, by rw [h2]; ring⟩
+
 /-! ### The induced isomorphism of point groups -/
 
 namespace Point
-
-variable [W.IsElliptic]
 
 /-- The underlying map `(C • W).Point → W.Point` of the change of variables, sending `0` to `0` and
 `(x, y)` to `(u²x + r, u³y + u²sx + t)`. -/
@@ -155,21 +188,14 @@ def mapVariableChangeFun : (C • W).toAffine.Point → W.toAffine.Point
   | .zero => .zero
   | .some x y h => .some ((C.u : F) ^ 2 * x + C.r)
       ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
-      (equation_iff_nonsingular.mp
-        ((variableChange_equation W C x y).mpr (equation_iff_nonsingular.mpr h)))
+      ((variableChange_nonsingular W C x y).mpr h)
 
 @[simp] lemma mapVariableChangeFun_zero : mapVariableChangeFun W C 0 = 0 := rfl
 
 lemma mapVariableChangeFun_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
     mapVariableChangeFun W C (.some x y h)
       = .some ((C.u : F) ^ 2 * x + C.r) ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
-          (equation_iff_nonsingular.mp
-            ((variableChange_equation W C x y).mpr (equation_iff_nonsingular.mpr h))) := rfl
-
-lemma some_eq_some (W : WeierstrassCurve F) {x₁ x₂ y₁ y₂ : F} (hx : x₁ = x₂) (hy : y₁ = y₂)
-    {h₁ : W.toAffine.Nonsingular x₁ y₁} {h₂ : W.toAffine.Nonsingular x₂ y₂} :
-    (some x₁ y₁ h₁ : W.toAffine.Point) = some x₂ y₂ h₂ := by
-  subst hx hy; rfl
+          ((variableChange_nonsingular W C x y).mpr h) := rfl
 
 lemma mapVariableChangeFun_injective :
     Function.Injective (mapVariableChangeFun W C) := by
@@ -181,19 +207,29 @@ lemma mapVariableChangeFun_injective :
   · rw [mapVariableChangeFun_some, mapVariableChangeFun_some] at h
     injection h with hX hY
     have hx : x₁ = x₂ := mul_left_cancel₀ (pow_ne_zero 2 hu) (by linear_combination hX)
-    exact some_eq_some (C • W) hx
-      (mul_left_cancel₀ (pow_ne_zero 3 hu) (by linear_combination hY - (C.u : F) ^ 2 * C.s * hx))
+    simp only [some.injEq]
+    exact ⟨hx,
+      mul_left_cancel₀ (pow_ne_zero 3 hu) (by linear_combination hY - (C.u : F) ^ 2 * C.s * hx)⟩
 
-variable [DecidableEq F]
+variable [DecidableEq F] [W.IsElliptic]
 
-/-- Transport of the affine point group along an equality of Weierstrass curves. -/
-def equivOfEq {V V' : WeierstrassCurve F} (h : V = V') :
-    V.toAffine.Point ≃+ V'.toAffine.Point := by
-  subst h; exact AddEquiv.refl _
+/-! From here on `[W.IsElliptic]` is unavoidable: Mathlib puts the `AddCommGroup` structure on
+`Point` under that hypothesis (`Affine/Point.lean`, the section opened by
+`variable [Nontrivial R] [W'.IsElliptic]`), so without it `(C • W).Point` is not an additive group
+and the statements below do not even typecheck. Everything above — the transformation laws, the
+underlying map and its injectivity — holds for an arbitrary Weierstrass curve over a field. -/
 
-@[simp] lemma equivOfEq_some {V V' : WeierstrassCurve F} (h : V = V') {x y : F}
+/-- What Mathlib's `AddEquiv.cast` — transport of the point group along an equality of Weierstrass
+curves — does to a point given by coordinates. The equiv itself is `AddEquiv.cast` and is not
+restated here; only its value needs a name, since Mathlib states `cast` through `Equiv.cast` and
+so gives no equation for it. -/
+-- not `@[simp]`: Mathlib's `AddEquiv.cast_apply` is itself a simp lemma and rewrites this
+-- left-hand side to the raw `cast` first, so `simpNF` reports the statement is not in
+-- simp-normal form and the lemma could never fire. It is used by `rw` below, which is syntactic.
+lemma cast_some {V V' : WeierstrassCurve F} (h : V = V') {x y : F}
     (hns : V.toAffine.Nonsingular x y) :
-    equivOfEq h (some x y hns) = some x y (h ▸ hns) := by
+    AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point) h (some x y hns)
+      = some x y (h ▸ hns) := by
   subst h; rfl
 
 /-- The group homomorphism `(C • W).Point →+ W.Point` induced by the admissible change of variables
@@ -219,15 +255,22 @@ def mapVariableChange : (C • W).toAffine.Point →+ W.toAffine.Point where
 variables `(x, y) ↦ (u²x + r, u³y + u²sx + t)`, with inverse coming from `C⁻¹`. -/
 def equivVariableChange : (C • W).toAffine.Point ≃+ W.toAffine.Point :=
   have hright : ∀ P, mapVariableChangeFun W C
-      (mapVariableChangeFun (C • W) C⁻¹ (equivOfEq (inv_smul_smul C W).symm P)) = P := by
+      (mapVariableChangeFun (C • W) C⁻¹
+        (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+          (inv_smul_smul C W).symm P)) = P := by
     have hu : (C.u : F) ≠ 0 := C.u.ne_zero
     rintro (_ | ⟨X, Y, h⟩)
-    · simp [← zero_def]
-    · rw [equivOfEq_some, mapVariableChangeFun_some, mapVariableChangeFun_some]
-      refine some_eq_some W ?_ ?_ <;>
+    · have hz : (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+        (inv_smul_smul C W).symm) 0 = 0 := _root_.map_zero _
+      rw [← zero_def, hz, mapVariableChangeFun_zero, mapVariableChangeFun_zero]
+    · rw [cast_some, mapVariableChangeFun_some, mapVariableChangeFun_some]
+      simp only [some.injEq]
+      refine ⟨?_, ?_⟩ <;>
         (simp only [VariableChange.inv_def, Units.val_inv_eq_inv_val]; field)
   { toFun := mapVariableChangeFun W C
-    invFun := fun P ↦ mapVariableChangeFun (C • W) C⁻¹ (equivOfEq (inv_smul_smul C W).symm P)
+    invFun := fun P ↦ mapVariableChangeFun (C • W) C⁻¹
+      (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+        (inv_smul_smul C W).symm P)
     left_inv := Function.RightInverse.leftInverse_of_injective hright
       (mapVariableChangeFun_injective W C)
     right_inv := hright
@@ -236,8 +279,7 @@ def equivVariableChange : (C • W).toAffine.Point ≃+ W.toAffine.Point :=
 lemma equivVariableChange_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
     equivVariableChange W C (.some x y h)
       = .some ((C.u : F) ^ 2 * x + C.r) ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
-          (equation_iff_nonsingular.mp
-            ((variableChange_equation W C x y).mpr (equation_iff_nonsingular.mpr h))) := rfl
+          ((variableChange_nonsingular W C x y).mpr h) := rfl
 
 end Point
 
