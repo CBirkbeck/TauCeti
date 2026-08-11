@@ -412,11 +412,11 @@ lemma trivialSection_vle_iff (p : PrimeSpectrum A) (f s : A) :
     by_cases hf : f ∈ p.asIdeal
     · exact Or.inl hf
     · refine Or.inr fun hs ↦ ?_
-      rw [if_neg hf, if_pos hs] at h
+      rw [ite_eq_right hf, ite_eq_left hs] at h
       simp at h
   · rintro (hf | hs)
     · simp [hf]
-    · rw [if_neg hs]
+    · rw [ite_eq_right hs]
       split <;> simp
 
 /-- `trivialSection` is a section of the support map. -/
@@ -448,6 +448,45 @@ theorem suppFun_surjective : Function.Surjective (suppFun : Spv A → PrimeSpect
 
 end PrimeSpectrum
 
+section RationalOpenFinset
+
+open Set
+
+/-! ### Rational opens with a finite numerator set -/
+
+/-- **Wedhorn's `Spv(A)(T/s)`** for a finite set `T`: the points where every `t ∈ T` is
+dominated by `s`, and `s` is not in the support. -/
+def basicOpenFinset (T : Finset A) (s : A) : Set (Spv A) :=
+  {v | (∀ t ∈ T, v.toValuativeRel.vle t s) ∧ ¬ v.toValuativeRel.vle s 0}
+
+@[simp]
+lemma mem_basicOpenFinset_iff (T : Finset A) (s : A) (v : Spv A) :
+    v ∈ basicOpenFinset T s ↔
+      (∀ t ∈ T, v.toValuativeRel.vle t s) ∧ ¬ v.toValuativeRel.vle s 0 := Iff.rfl
+
+/-- Each numerator gives back an ordinary basic open. -/
+lemma basicOpenFinset_subset_basicOpen {T : Finset A} {s t : A} (ht : t ∈ T) :
+    basicOpenFinset T s ⊆ basicOpen t s :=
+  fun _ hv ↦ (mem_basicOpen_iff t s _).mpr ⟨hv.1 t ht, hv.2⟩
+
+/-- `Spv(A)(T/s)` is the finite intersection of the basic opens `Spv(A)(t/s)` for `t` ranging
+over `T ∪ {s}`; the extra `s` is what carries the nonvanishing clause when `T` is empty. -/
+lemma basicOpenFinset_eq_biInter (T : Finset A) (s : A) :
+    basicOpenFinset T s = ⋂ t ∈ insert s (T : Set A), basicOpen t s := by
+  ext v
+  simp only [mem_basicOpenFinset_iff, mem_iInter, mem_basicOpen_iff, Set.mem_insert_iff,
+    Finset.mem_coe]
+  refine ⟨fun h t ht ↦ ?_, fun h ↦ ⟨fun t ht ↦ (h t (Or.inr ht)).1, fun hs ↦ ?_⟩⟩
+  · rcases ht with rfl | ht
+    · exact ⟨v.toValuativeRel.vle_refl t, h.2⟩
+    · exact ⟨h.1 t ht, h.2⟩
+  · exact (h s (Or.inl rfl)).2 hs
+
+lemma isOpen_basicOpenFinset (T : Finset A) (s : A) : IsOpen (basicOpenFinset T s) := by
+  rw [basicOpenFinset_eq_biInter]
+  exact Set.Finite.isOpen_biInter (T.finite_toSet.insert s) fun t _ ↦ isOpen_basicOpen t s
+
+end RationalOpenFinset
 end ValuationSpectrum
 
 end TauCeti
