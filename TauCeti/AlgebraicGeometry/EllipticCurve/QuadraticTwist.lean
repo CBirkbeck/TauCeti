@@ -786,6 +786,23 @@ noncomputable def quadraticTwistPointEquiv :
       ((E.quadraticTwistVariableChange L).baseChange M))
 
 variable (L) in
+/-- **What the isomorphism does to a point given by coordinates.** The change of variables acting
+is `quadraticTwistVariableChange` base changed to `M`. -/
+@[simp] lemma quadraticTwistPointEquiv_some {x y : M}
+    (h : ((E.quadraticTwist L).baseChange M).toAffine.Nonsingular x y) :
+    E.quadraticTwistPointEquiv L M (.some x y h)
+      = .some ((((E.quadraticTwistVariableChange L).baseChange M).u : M) ^ 2 * x
+            + ((E.quadraticTwistVariableChange L).baseChange M).r)
+          ((((E.quadraticTwistVariableChange L).baseChange M).u : M) ^ 3 * y
+            + (((E.quadraticTwistVariableChange L).baseChange M).u : M) ^ 2
+              * ((E.quadraticTwistVariableChange L).baseChange M).s * x
+            + ((E.quadraticTwistVariableChange L).baseChange M).t)
+          ((Affine.variableChange_nonsingular (E.baseChange M)
+            ((E.quadraticTwistVariableChange L).baseChange M) x y).mpr
+              ((E.quadraticTwistVariableChange_smul_baseChange L M).symm ▸ h)) := by
+  rw [quadraticTwistPointEquiv, AddEquiv.trans_apply, Affine.Point.cast_some,
+    Affine.Point.equivVariableChange_some]
+
 /-- **Naturality of `quadraticTwistPointEquiv` in `M`.** The isomorphisms on `M`-points over
 varying `M ⊇ L` all come from one isomorphism of curves over `L`, so they commute with the maps on
 points induced by any `L`-algebra homomorphism. -/
