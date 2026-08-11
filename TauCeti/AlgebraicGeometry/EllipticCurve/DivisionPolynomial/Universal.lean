@@ -48,7 +48,7 @@ polynomial) with distinguished point `(X,Y)`.
 The cusp curve `Y² = X³` carries the rational point `(1,1)`, with the nice property that
 `ψₙ(1,1) = n`. Specializing along it is therefore the cheap route to nonvanishing of the universal
 `ψₙ` for `n ≠ 0`, which shows that `(X,Y)` is a point of infinite order on the universal pointed
-elliptic curve. `Field.two_ne_zero` is the first instance of that argument.
+elliptic curve. The `CharZero Universal.Ring` instance is the first use of that argument.
 
 ## Roadmap
 
@@ -145,12 +145,11 @@ protected abbrev Field : Type := FractionRing Universal.Ring
 
 instance : CommRing Poly := Polynomial.commRing /- why is this not automatic ... -/
 
-/-- `2` is nonzero in `ℤ[A₁,⋯,A₆,X,Y]`, being the constant `2` of the coefficient ring `ℤ`. The
-halving steps of the group law and of the division-polynomial recursion need this;
-`Field.two_ne_zero` below is the same fact in `Universal.Field`. -/
-lemma Poly.two_ne_zero : (2 : Poly) ≠ 0 :=
-  Polynomial.C_ne_zero.mpr <| Polynomial.C_ne_zero.mpr fun h ↦ two_ne_zero' (α := ℤ) <|
-    MvPolynomial.C_injective _ _ <| by rwa [← MvPolynomial.C_0] at h
+/-- Adjoining a variable preserves characteristic zero, the coefficient embedding being injective.
+Mathlib has this for `MvPolynomial` but not for univariate `Polynomial`, and `Universal.Poly` is
+built from both; with it, `(2 : Poly) ≠ 0` is `two_ne_zero` and needs no bespoke lemma. -/
+instance {R : Type*} [Semiring R] [CharZero R] : CharZero R[X] :=
+  (RingHom.charZero_iff Polynomial.C_injective).1 inferInstance
 
 /-- The obvious ring homomorphism from the polynomial ring in 7 variables to the universal field.
 
@@ -263,7 +262,8 @@ def cusp (R : Type*) [CommRing R] : Affine R := { a₁ := 0, a₂ := 0, a₃ := 
 
 /-- `(1, 1)` lies on the cusp curve `Y² = X³` over `ℤ`. Specializing the universal curve along this
 point is the cheap route to nonvanishing statements, since `ψₙ(1,1) = n`: a universal quantity that
-vanished would have to vanish in `ℤ` here. `Field.two_ne_zero` below is proved this way. -/
+vanished would have to vanish in `ℤ` here. The `CharZero Universal.Ring` instance below is
+obtained this way. -/
 lemma cusp_equation_one_one : (cusp ℤ).Equation 1 1 := by
   simp [Affine.Equation, Affine.polynomial, cusp, Polynomial.evalEval]
 
@@ -326,13 +326,16 @@ to `W.specialize` on the coefficient ring. This is the compatibility that makes
 lemma ringEval_comp_eq_specialize : (ringEval eqn).comp (algebraMap _ _) = W.specialize := by
   rw [algebraMap_ring_eq_comp, ← RingHom.comp_assoc, ringEval_comp_mk, polyEval_comp_eq_specialize]
 
-/-- `2` is nonzero in the universal field, proved by specializing to the cusp curve at `(1, 1)`,
-where `2` maps to `2 : ℤ`. The halving steps of the group law and of the division-polynomial
-recursion need this; `Poly.two_ne_zero` is the same fact one level down, in `Poly`. -/
-protected lemma Field.two_ne_zero : (2 : Universal.Field) ≠ 0 := by
-  rw [← map_ofNat (algebraMap Universal.Ring _), map_ne_zero_iff _ (IsFractionRing.injective _ _)]
-  intro h; replace h := congr(ringEval cusp_equation_one_one $h)
-  rw [map_ofNat, map_zero] at h; cases h
+/-- The universal ring has characteristic zero: specializing to the cusp curve at `(1, 1)` retracts
+it onto `ℤ`. This is the first use of that specialization argument, and it is what gives
+`(2 : Universal.Ring) ≠ 0` — needed by the halving steps of the group law and of the
+division-polynomial recursion. -/
+instance : CharZero Universal.Ring :=
+  RingHom.charZero (ringEval cusp_equation_one_one)
+
+/-- The universal field has characteristic zero, being the fraction field of a ring that does. -/
+instance : CharZero Universal.Field :=
+  (RingHom.charZero_iff (IsFractionRing.injective Universal.Ring Universal.Field)).1 inferInstance
 
 /-- Specialization is compatible with base change: pushing the universal curve over
 `Universal.Ring` along `ringEval eqn` returns `W` itself. This is the mechanism the whole file
