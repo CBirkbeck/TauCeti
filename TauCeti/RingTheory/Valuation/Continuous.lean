@@ -24,7 +24,8 @@ multiplication is separately continuous — `isOpen_lt_div` is precisely that st
 Wedhorn works over a topological ring throughout, but the compatibility is only needed where it
 is used, so it is asked for per result rather than up front: the definition itself needs no more
 than a topology on `A`, the ratio results need `[SeparatelyContinuousMul A]`, the translation
-results need `[ContinuousSub A]`, and `isContinuous_iff_continuous` needs both. Commutativity is
+results need `[SeparatelyContinuousAdd A]` — only translation by a *fixed* element is ever
+used, on either side — and `isContinuous_iff_continuous` needs both. Commutativity is
 never used, so `A` is a `Ring`.
 
 The codomain is treated the same way. Mathlib's `Valuation` is valued in a
@@ -151,16 +152,18 @@ theorem isContinuous_of_discreteTopology [DiscreteTopology A] (v : Valuation A �
 is an open neighbourhood of `a`, being the preimage of the open `{x ; v x < γ}` under
 translation. It is the workhorse of the two results below: on it, `v y` is controlled by `v a`
 through the strict triangle inequality. -/
-private theorem IsContinuous.sub_lt_mem_nhds [ContinuousSub A] {v : Valuation A Γ₀}
+private theorem IsContinuous.sub_lt_mem_nhds [SeparatelyContinuousAdd A] {v : Valuation A Γ₀}
     (hv : v.IsContinuous) (a : A) {b : A} (hb : v b ≠ 0) : {y : A | v (y - a) < v b} ∈ 𝓝 a := by
-  refine ((hv b).preimage (continuous_id.sub continuous_const)).mem_nhds ?_
+  have hcont : Continuous fun y : A ↦ y - a := by
+    simpa only [sub_eq_add_neg] using continuous_add_const (-a)
+  refine ((hv b).preimage hcont).mem_nhds ?_
   simpa using zero_lt_iff.mpr hb
 
 /-- **Wedhorn Remark 7.8(3), at an attained value.** The non-strict set `{a ; v a ≤ v b}` is
 open: it is a union of translates of the open `{a ; v a < v b}`, since adding an element of
 value `< v b` to one of value `≤ v b` keeps the value `≤ v b`. For an arbitrary element of the
 value group — which need not be attained — see `isOpen_le_div`. -/
-theorem IsContinuous.isOpen_le [ContinuousSub A] {v : Valuation A Γ₀} (hv : v.IsContinuous) {b : A}
+theorem IsContinuous.isOpen_le [SeparatelyContinuousAdd A] {v : Valuation A Γ₀} (hv : v.IsContinuous) {b : A}
     (hb : v b ≠ 0) : IsOpen {a : A | v a ≤ v b} := by
   refine isOpen_iff_mem_nhds.mpr fun a ha ↦ ?_
   filter_upwards [hv.sub_lt_mem_nhds a hb] with y hy
@@ -199,7 +202,7 @@ theorem IsContinuous.isOpen_lt_div [SeparatelyContinuousMul A] {v : Valuation A 
 a general element of it is a ratio `v b / v c` rather than an attained value, so this rather than
 `isOpen_le` is the statement Wedhorn makes. As in `isOpen_lt_div` the set is the preimage of the
 attained-value one under multiplication by `c`. -/
-theorem IsContinuous.isOpen_le_div [ContinuousSub A] [SeparatelyContinuousMul A]
+theorem IsContinuous.isOpen_le_div [SeparatelyContinuousAdd A] [SeparatelyContinuousMul A]
     {v : Valuation A Γ₀} (hv : v.IsContinuous) {b c : A} (hb : v b ≠ 0) (hc : v c ≠ 0) :
     IsOpen {a : A | v a ≤ v b / v c} := by
   simpa [le_div_iff₀ (zero_lt_iff.mpr hc)] using
@@ -216,7 +219,7 @@ codomain is no larger than `Γ_v ∪ {0}`, which is Wedhorn's setting.
 
 `hΓ` is not decoration: without it only the reverse implication survives, and the module
 docstring's `ℤ_p` valuation is a witness — its attained ratios all exceed `(1/2, 1)`. -/
-theorem isContinuous_iff_continuous [ContinuousSub A] [SeparatelyContinuousMul A]
+theorem isContinuous_iff_continuous [SeparatelyContinuousAdd A] [SeparatelyContinuousMul A]
     {v : Valuation A Γ₀}
     (hΓ : ∀ γ : Γ₀, γ ≠ 0 → ∃ b c : A, v b ≠ 0 ∧ v c ≠ 0 ∧ v b / v c ≤ γ) :
     v.IsContinuous ↔ Continuous v := by
