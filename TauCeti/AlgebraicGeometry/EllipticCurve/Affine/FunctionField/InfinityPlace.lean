@@ -50,7 +50,7 @@ ultrametric inequality is `private`, and the norm-degree theory it rests on live
   value group is a nontrivial subgroup of the cyclic `ℤᵐ⁰ˣ`, so Mathlib's `IsRankOneDiscrete`
   instance fires by itself — but the *generator* does: discreteness alone permits `exp (-n)` with
   `n ≥ 1`, and the proper subgroup `2ℤ` genuinely occurs, being the value group of the restriction
-  of `v_∞` to `F(x)`. Surjectivity of `v_∞` rules it out and is proved `private` here.
+  of `v_∞` to `F(x)`. One element of value `exp (-1)` settles it, which is what the value above is.
 
 The quotient value is the one special value whose restatement is not `@[simp]`; the comment above it
 gives the simpNF reason.
@@ -87,13 +87,12 @@ reproved.
 
 The uniformiser corresponds to that project's `HasseWeil/LocalExpansion.lean`, `localParam` — the
 local parameter `t = -x/y` at `O` (Silverman IV.1) — whose uniformising property is recorded there
-through a Laurent-series embedding (`localExpand_localParam`). The surjectivity argument, that the
-integer powers of an element of value `exp (-1)` realise every value, is that project's private
-`surjective_of_eq_exp_neg_one` in `HasseWeil/EC/IsogenyOrdTransport.lean`, used there for the affine
-`pointValuation_surjective'`; the same two-line rewrite serves here. There is no Laurent series and
-no `SmoothPlaneCurve` wrapper in this file: the conclusion is Mathlib's `Valuation.IsUniformizer`
-against Mathlib's discrete-valuation API, and the sign is dropped, `x / y` and `-x / y` having the
-same valuation.
+through a Laurent-series embedding (`localExpand_localParam`), over a `SmoothPlaneCurve` wrapper and
+that development's own `WithTop ℤ`-valued `ordAtInfty`. None of that apparatus is needed here: the
+value of `x / y` is two rewrites from the two pole orders, and Mathlib's
+`Valuation.IsRankOneDiscrete.generator_eq_exp_neg_one_of_mem_range` turns that single value into the
+generator, so the conclusion is Mathlib's `Valuation.IsUniformizer` directly. The sign is dropped,
+`x / y` and `-x / y` having the same valuation.
 -/
 
 public section
@@ -408,31 +407,12 @@ theorem infinityPlace.adjoinRoot_of_X_div_root :
   infinityPlace.X_div_mk_Y W
 
 open scoped Classical in
--- Private: it exists to identify Mathlib's `IsRankOneDiscrete.generator`, and nothing outside this
--- file consumes it yet. The general criterion it specialises — a `ℤᵐ⁰`-valued valuation on a field
--- is surjective as soon as some element has value `exp (-1)` — is not extracted either: Mathlib has
--- no such criterion and inlines this same `WithZero.log` construction in both of its analogues,
--- `RatFunc.valuation_surjective` and `HeightOneSpectrum.valuation_surjective`. When a consumer
--- appears (§Divisors' `deg (div f) = 0`, or the ramification index of §`inducedPlace`, which needs
--- the value groups of both places exactly), that PR should export whichever form it needs.
-/-- **The value group at infinity is all of `ℤ`**: `v_∞` is surjective, so `ord_∞` attains every
-integer value, the powers of the uniformiser `x / y` realising them. -/
-private theorem infinityPlace_surjective : Function.Surjective (infinityPlace W) := by
-  intro g
-  obtain rfl | hg := eq_or_ne g 0
-  · exact ⟨0, map_zero _⟩
-  refine ⟨(algebraMap W.CoordinateRing W.FunctionField
-      (algebraMap F[X] W.CoordinateRing Polynomial.X) /
-    algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y)) ^ (-WithZero.log g), ?_⟩
-  rw [map_zpow₀, infinityPlace.X_div_mk_Y, ← WithZero.exp_zsmul, smul_eq_mul, neg_mul_neg, mul_one,
-    WithZero.exp_log hg]
-
-open scoped Classical in
 -- The place is discrete of rank one for free — its value group is a subgroup of the cyclic group
 -- `ℤᵐ⁰ˣ`, nontrivial by `instIsNontrivial` — but discreteness alone leaves the generator as
 -- `exp (-n)` for an unspecified `n ≥ 1`, and the proper subgroup genuinely occurs: the restriction
--- of `v_∞` to `F(x)` has value group `2ℤ` by `infinityPlace.algebraMap_eq_sq`. Surjectivity is what
--- pins the generator to `exp (-1)`, and that is the content of this proof.
+-- of `v_∞` to `F(x)` has value group `2ℤ` by `infinityPlace.algebraMap_eq_sq`. What pins the
+-- generator to `exp (-1)` is a single element of that value, so `X_div_mk_Y` is exactly the witness
+-- Mathlib's `generator_eq_exp_neg_one_of_mem_range` asks for.
 /-- **`x / y` is a uniformiser at the place at infinity**, in Mathlib's sense: its value generates
 the value group and is `< 1`. -/
 theorem infinityPlace.isUniformizer_X_div_mk_Y :
@@ -440,8 +420,8 @@ theorem infinityPlace.isUniformizer_X_div_mk_Y :
         (algebraMap F[X] W.CoordinateRing Polynomial.X) /
       algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y)) := by
   rw [Valuation.IsUniformizer.iff,
-    Valuation.IsRankOneDiscrete.generator_eq_exp_neg_one_of_surjective
-      (infinityPlace_surjective W),
+    Valuation.IsRankOneDiscrete.generator_eq_exp_neg_one_of_mem_range
+      ⟨_, infinityPlace.X_div_mk_Y W⟩,
     Units.val_mk0]
   exact infinityPlace.X_div_mk_Y W
 
