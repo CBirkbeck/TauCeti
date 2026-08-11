@@ -6,7 +6,6 @@ module
 
 public import Mathlib.FieldTheory.RatFunc.Valuation
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Norm
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Place
 
 /-!
 # The valuation at infinity on the function field of a Weierstrass curve
@@ -339,20 +338,20 @@ theorem infinityPlace.adjoinRoot_root :
   infinityPlace.mk_Y W
 
 
-/-- **The place at infinity is not the place of any affine point.** The coordinate function `x` has
-a pole at infinity, while every element of the coordinate ring is regular at every affine place, so
-the two valuations differ at `x`. With `pointPlace_eq_iff` this completes the injectivity of the
-point-to-place assignment on all of `W.toAffine.Point`. -/
-theorem infinityPlace_ne_pointPlace_valuation [IsDedekindDomain W.CoordinateRing] {x y : F}
-    (h : W.Equation x y) :
-    infinityPlace W ≠
-      (TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace h).valuation W.FunctionField := by
+/-- **The place at infinity is distinct from every affine place.** Together with
+`CoordinateRing.pointPlace_eq_iff` this gives the injectivity of the whole point-to-place
+assignment, the point at infinity included. -/
+@[simp]
+theorem infinityPlace_ne_heightOneSpectrum_valuation [IsDedekindDomain W.CoordinateRing]
+    (P : IsDedekindDomain.HeightOneSpectrum W.CoordinateRing) :
+    infinityPlace W ≠ P.valuation W.FunctionField := by
   intro heq
-  -- `x` lies in the coordinate ring, so an affine place values it at most `1`
-  have hx := IsDedekindDomain.HeightOneSpectrum.valuation_le_one
-    (TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace h)
+  -- `x` lies in the coordinate ring, so an affine place values it at most `1`, while it has a
+  -- double pole at infinity
+  have hx := IsDedekindDomain.HeightOneSpectrum.valuation_le_one P
     (K := W.FunctionField) (algebraMap F[X] W.CoordinateRing Polynomial.X)
   rw [← heq, infinityPlace.X] at hx
+  -- the unit of `ℤᵐ⁰` is `exp 0` by definition, so the bound compares exponents
   rw [show (1 : WithZero (Multiplicative ℤ)) = WithZero.exp 0 from rfl,
     WithZero.exp_le_exp] at hx
   omega
