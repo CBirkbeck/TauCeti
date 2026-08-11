@@ -17,7 +17,7 @@ at infinity of the curve: `ord_∞ f = -deg N f`, the place where `x` and `y` ha
 
 ## Main definitions
 
-* `WeierstrassCurve.Affine.inftyValuation`: the valuation at infinity,
+* `WeierstrassCurve.Affine.infinityPlace`: the valuation at infinity,
   `Valuation W.FunctionField (WithZero (Multiplicative ℤ))`, as `RatFunc.inftyValuation` composed
   with `Algebra.norm`.
 
@@ -25,17 +25,18 @@ at infinity of the curve: `ord_∞ f = -deg N f`, the place where `x` and `y` ha
 
 The valuation's `map_add_le_max'` rests on an ultrametric inequality in degree form, proved here;
 the other three axioms are the norm's multiplicativity and Mathlib's place at infinity.
-* `WeierstrassCurve.Affine.inftyValuation.X`,
-  `WeierstrassCurve.Affine.inftyValuation.mk_Y`
-* `WeierstrassCurve.Affine.inftyValuation.C`: the valuation is trivial on the base field — a
+* `WeierstrassCurve.Affine.infinityPlace.X`,
+  `WeierstrassCurve.Affine.infinityPlace.mk_Y`
+* `WeierstrassCurve.Affine.infinityPlace.C`: the valuation is trivial on the base field — a
   nonzero constant has value `1`. The `Valuation.IsTrivialOn F` and `Valuation.IsNontrivial`
   instances follow, so the place is usable through Mathlib's standard valuation
   API: `v_∞ x = exp 2` and `v_∞ y = exp 3` —
   the double and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0
   asks for by name. They read the norm degrees of `FunctionField/Norm.lean` through the valuation.
 
-The public surface is the valuation, its evaluation rule, the two pole values and the two degree
-statements; the machinery that builds the ultrametric inequality is `private`.
+The public surface is the place itself, its evaluation rule, the three special values and the two
+`Valuation` instances; the machinery that builds the ultrametric inequality is `private`, and the
+norm-degree theory it rests on lives in `FunctionField/Norm.lean`.
 
 ## Roadmap
 
@@ -75,7 +76,7 @@ section Nontrivial
 variable {R : Type*} [CommRing R] [Nontrivial R] (W : WeierstrassCurve.Affine R)
 
 /-- The norm of the coordinate function `x` has degree `2`: it is `x ^ 2`. Private: it exists to
-compute `inftyValuation.X`, and Mathlib's `CoordinateRing.norm_smul_basis` is the general fact. -/
+compute `infinityPlace.X`, and Mathlib's `CoordinateRing.norm_smul_basis` is the general fact. -/
 private theorem natDegree_norm_X :
     (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing Polynomial.X)).natDegree = 2 := by
   have hX : algebraMap R[X] W.CoordinateRing Polynomial.X =
@@ -204,8 +205,8 @@ private theorem norm_zero_eq_zero :
 
 open scoped Classical in
 /-- The ultrametric inequality for the composite `RatFunc.inftyValuation ∘ Algebra.norm`, which is
-`inftyValuation`'s `map_add_le_max'`. Split out to keep the definition short. -/
-private theorem inftyValuation_add_le_max (x y : W.FunctionField) :
+`infinityPlace`'s `map_add_le_max'`. Split out to keep the definition short. -/
+private theorem infinityPlace_add_le_max (x y : W.FunctionField) :
     RatFunc.inftyValuation F (Algebra.norm (RatFunc F) (x + y))
       ≤ max (RatFunc.inftyValuation F (Algebra.norm (RatFunc F) x))
             (RatFunc.inftyValuation F (Algebra.norm (RatFunc F) y)) := by
@@ -237,22 +238,22 @@ private theorem inftyValuation_add_le_max (x y : W.FunctionField) :
 open scoped Classical in
 /-- **The valuation at infinity on the function field of a Weierstrass curve**: Mathlib's place at
 infinity of `F(x)`, composed with the algebra norm. -/
-noncomputable def inftyValuation : Valuation W.FunctionField (WithZero (Multiplicative ℤ)) where
+noncomputable def infinityPlace : Valuation W.FunctionField (WithZero (Multiplicative ℤ)) where
   toFun f := RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f)
   map_zero' := by
     rw [norm_zero_eq_zero W, map_zero]
   map_one' := by rw [map_one, map_one]
   map_mul' x y := by rw [map_mul, map_mul]
-  map_add_le_max' := inftyValuation_add_le_max W
+  map_add_le_max' := infinityPlace_add_le_max W
 
 
 open scoped Classical in
-/-- The evaluation rule for `inftyValuation`: it is `RatFunc.inftyValuation` applied to the algebra
+/-- The evaluation rule for `infinityPlace`: it is `RatFunc.inftyValuation` applied to the algebra
 norm of the function. Deliberately not `@[simp]`: unfolding the valuation would defeat the
 special-value lemmas below, which are the normal forms automation should reach. -/
-theorem inftyValuation_apply (f : W.FunctionField) :
-    inftyValuation W f = RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f) := by
-  simp [inftyValuation]
+theorem infinityPlace_apply (f : W.FunctionField) :
+    infinityPlace W f = RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f) := by
+  simp [infinityPlace]
 
 /-- A coordinate-ring element whose polynomial norm has positive degree has nonzero norm over
 `RatFunc F`: a zero polynomial would have degree zero. -/
@@ -271,10 +272,10 @@ open scoped Classical in
 -- lint gate. Stating them in that normal form instead would remove every mention of the curve's
 -- coordinate functions, which is the whole content of the lemmas.
 /-- **`x` has a double pole at infinity**: `v_∞ x = exp 2`, which is `ord_∞ x = -2`. -/
-theorem inftyValuation.X :
-    inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
+theorem infinityPlace.X :
+    infinityPlace W (algebraMap W.CoordinateRing W.FunctionField
       (algebraMap F[X] W.CoordinateRing Polynomial.X)) = WithZero.exp 2 := by
-  rw [inftyValuation_apply, RatFunc.inftyValuation_apply,
+  rw [infinityPlace_apply, RatFunc.inftyValuation_apply,
     RatFunc.inftyValuation_of_nonzero F
       (norm_ne_zero_of_natDegree_ne_zero W
         (u := algebraMap F[X] W.CoordinateRing Polynomial.X)
@@ -284,10 +285,10 @@ theorem inftyValuation.X :
 
 open scoped Classical in
 /-- **`y` has a triple pole at infinity**: `v_∞ y = exp 3`, which is `ord_∞ y = -3`. -/
-theorem inftyValuation.mk_Y :
-    inftyValuation W (algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y))
+theorem infinityPlace.mk_Y :
+    infinityPlace W (algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y))
       = WithZero.exp 3 := by
-  rw [inftyValuation_apply, RatFunc.inftyValuation_apply,
+  rw [infinityPlace_apply, RatFunc.inftyValuation_apply,
     RatFunc.inftyValuation_of_nonzero F
       (norm_ne_zero_of_natDegree_ne_zero W (u := CoordinateRing.mk W Y)
         (by rw [natDegree_norm_mk_Y]; norm_num)),
@@ -298,42 +299,42 @@ theorem inftyValuation.mk_Y :
 open scoped Classical in
 /-- **The valuation is trivial on the base field**: a nonzero constant has value `1`, so `v_∞`
 restricted to `F` is trivial. The analogue of `RatFunc.inftyValuation.C`. -/
-theorem inftyValuation.C {c : F} (hc : c ≠ 0) :
-    inftyValuation W (algebraMap (RatFunc F) W.FunctionField (RatFunc.C c)) = 1 := by
-  rw [inftyValuation_apply, Algebra.norm_algebraMap, finrank_functionField W (RatFunc F), map_pow,
+theorem infinityPlace.C {c : F} (hc : c ≠ 0) :
+    infinityPlace W (algebraMap (RatFunc F) W.FunctionField (RatFunc.C c)) = 1 := by
+  rw [infinityPlace_apply, Algebra.norm_algebraMap, finrank_functionField W (RatFunc F), map_pow,
     RatFunc.inftyValuation.C (F := F) hc, one_pow]
 
 
 open scoped Classical in
 /-- **The valuation at infinity is trivial on the base field.** -/
-instance instIsTrivialOn : (inftyValuation W).IsTrivialOn F where
+instance instIsTrivialOn : (infinityPlace W).IsTrivialOn F where
   eq_one c hc := by
     rw [IsScalarTower.algebraMap_apply F (RatFunc F) W.FunctionField]
-    exact inftyValuation.C W hc
+    exact infinityPlace.C W hc
 
 /-- **The valuation at infinity is nontrivial**: `x` has value `exp 2`. -/
-instance instIsNontrivial : (inftyValuation W).IsNontrivial where
+instance instIsNontrivial : (infinityPlace W).IsNontrivial where
   exists_val_nontrivial :=
     ⟨algebraMap W.CoordinateRing W.FunctionField (algebraMap F[X] W.CoordinateRing Polynomial.X),
-      by rw [inftyValuation.X]; exact ⟨WithZero.exp_ne_zero, by simp⟩⟩
+      by rw [infinityPlace.X]; exact ⟨WithZero.exp_ne_zero, by simp⟩⟩
 
 
 open scoped Classical in
-/-- The simp-normal form of `inftyValuation.X`, stated for `AdjoinRoot.of`, which is what simp
+/-- The simp-normal form of `infinityPlace.X`, stated for `AdjoinRoot.of`, which is what simp
 rewrites the coordinate function to. -/
 @[simp]
-theorem inftyValuation.adjoinRoot_of_X :
-    inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
+theorem infinityPlace.adjoinRoot_of_X :
+    infinityPlace W (algebraMap W.CoordinateRing W.FunctionField
       (AdjoinRoot.of W.polynomial Polynomial.X)) = WithZero.exp 2 :=
-  inftyValuation.X W
+  infinityPlace.X W
 
 open scoped Classical in
-/-- The simp-normal form of `inftyValuation.mk_Y`, stated for `AdjoinRoot.root`. -/
+/-- The simp-normal form of `infinityPlace.mk_Y`, stated for `AdjoinRoot.root`. -/
 @[simp]
-theorem inftyValuation.adjoinRoot_root :
-    inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
+theorem infinityPlace.adjoinRoot_root :
+    infinityPlace W (algebraMap W.CoordinateRing W.FunctionField
       (AdjoinRoot.root W.polynomial)) = WithZero.exp 3 :=
-  inftyValuation.mk_Y W
+  infinityPlace.mk_Y W
 
 end WeierstrassCurve.Affine
 
