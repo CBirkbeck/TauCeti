@@ -34,9 +34,10 @@ the other three axioms are the norm's multiplicativity and Mathlib's place at in
   the double and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0
   asks for by name. They read the norm degrees of `FunctionField/Norm.lean` through the valuation.
 
-The public surface is the place itself, its evaluation rule, the three special values and the two
-`Valuation` instances; the machinery that builds the ultrametric inequality is `private`, and the
-norm-degree theory it rests on lives in `FunctionField/Norm.lean`.
+Each special value comes in two forms: one stated about the curve's coordinate functions, and a
+`@[simp]` restatement in the shape simp actually normalises them to. The machinery that builds the
+ultrametric inequality is `private`, and the norm-degree theory it rests on lives in
+`FunctionField/Norm.lean`.
 
 ## Roadmap
 

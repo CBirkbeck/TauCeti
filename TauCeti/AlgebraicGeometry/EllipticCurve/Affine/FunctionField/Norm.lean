@@ -21,6 +21,9 @@ valuation lives, in `FunctionField/InfinityPlace.lean`.
 
 ## Main results
 
+* `WeierstrassCurve.Affine.intDegree_norm_of_mul_eq`: the degree of the norm of `u / d` is the
+  degree of the polynomial norm of `u`, less twice that of `d`. Stated for an arbitrary numerator in
+  the coordinate ring, so it needs no hypothesis on the basis coefficients.
 * `WeierstrassCurve.Affine.intDegree_norm_algebraMap_coordinateRing`: over `RatFunc F`, the
   `intDegree` of the norm of a function regular away from infinity is the degree of its polynomial
   norm.
