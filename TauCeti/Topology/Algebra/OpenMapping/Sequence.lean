@@ -45,7 +45,7 @@ drive the residual down the sequence: `y - f (x 0 + ⋯ + x n)` lies in `closure
 No completeness or first countability is used: those are what let the sequence be *summed*, which
 is what finally removes the closure from `f '' U`, and neither is needed to obtain the
 approximants. -/
-theorem exists_seq_mem_and_sub_sum_mem {F : Type*} [FunLike F M N] [AddMonoidHomClass F M N]
+theorem exists_seq_mem_and_sub_sum_mem {F : Type*} [FunLike F M N] [AddHomClass F M N]
     (f : F) (V : ℕ → Set M) (hV : ∀ n, closure (f '' V (n + 1)) ∈ 𝓝 (0 : N)) {y : N}
     (hy : y ∈ closure (f '' V 0)) :
     ∃ x : ℕ → M, (∀ n, x n ∈ V n) ∧
