@@ -35,11 +35,13 @@ so it carries points to points. Those identities are what make the map additive.
 
 ## Implementation notes
 
-`mapVariableChangeFun` and its equation lemmas, its injectivity, and the `AddEquiv.cast`
-computation lemma are `private`: they are how the homomorphism is built, not part of what it
-offers. The public surface is the two maps and their coordinate lemmas
-`equivVariableChange_some` and `equivVariableChange_symm_some`, both `@[simp]`, so a consumer
-never needs to unfold anything.
+`mapVariableChangeFun`, its equation lemmas and injectivity, `variableChange_negY_ne`,
+`mapVariableChange` and the `AddEquiv.cast` computation lemma are all `private`: they are how the
+isomorphism is built, not part of what it offers. The public surface is the transformation
+lemmas, `variableChange_equation` and `variableChange_nonsingular`, and `equivVariableChange`
+with its two coordinate lemmas `equivVariableChange_some` and `equivVariableChange_symm_some` —
+all `@[simp]`, so a consumer never needs to unfold anything. Anyone wanting the bare homomorphism
+takes `(equivVariableChange W C).toAddMonoidHom`.
 
 That is also why the section is a plain `public section` rather than `@[expose]`. Exposing the
 whole file would publish every proof body to make three `rfl`s go through, and it is incompatible
@@ -112,8 +114,8 @@ lemma variableChange_negAddY (x₁ x₂ y₁ ℓ : F) :
   simp [negAddY, addX, variableChange_a₁, variableChange_a₂]
   field
 
-/-- **`addY` under the change of variables.** Immediate from `variableChange_negAddY`,
-`variableChange_addX` and `variableChange_negY`, since `addY` is `negY` of `negAddY`. -/
+/-- **`addY` under the change of variables**, scaling by `u³` with the shear and translation of
+the `y`-coordinate, plus the shear applied to `addX`. -/
 lemma variableChange_addY (x₁ x₂ y₁ ℓ : F) :
     W.toAffine.addY ((C.u : F) ^ 2 * x₁ + C.r) ((C.u : F) ^ 2 * x₂ + C.r)
         ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t) ((C.u : F) * ℓ + C.s)
@@ -122,8 +124,9 @@ lemma variableChange_addY (x₁ x₂ y₁ ℓ : F) :
   simp only [addY, variableChange_negAddY, variableChange_addX, variableChange_negY]
 
 /-- **The slope under the change of variables**, scaling by `u` and translating by `s` — the law
-the change of variables applies to a slope, as `y` scales by `u³` and `x` by `u²`. Both branches
-of `slope` are checked: the tangent case `x₁ = x₂` and the secant case `x₁ ≠ x₂`. -/
+the change of variables applies to a slope, as `y` scales by `u³` and `x` by `u²`. Stated for two
+points of `C • W` on the curve whose `x`-coordinates are not exchanged by `negY`, which is where
+`slope` is defined. -/
 lemma variableChange_slope [DecidableEq F] {x₁ x₂ y₁ y₂ : F}
     (h₁ : (C • W).toAffine.Equation x₁ y₁) (h₂ : (C • W).toAffine.Equation x₂ y₂)
     (hxy : ¬(x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂)) :
