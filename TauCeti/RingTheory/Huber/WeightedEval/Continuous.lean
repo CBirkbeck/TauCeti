@@ -14,14 +14,14 @@ file proves it continuous for the topology of `A⟨X⟩_T`, which is the last pr
 5.50 asks of the extension apart from its uniqueness.
 
 The argument is the one that made the terms summable, run at a fixed series rather than along the
-cofinite filter. A basic neighbourhood `U⟨X⟩` of zero bounds *every* coefficient of `f` by
-`Tν · U`, so — once `φ(U)` is small enough to shrink the weighted monomials into a prescribed open
-subgroup `G` of `B` — *every* term of the evaluation lies in `G`. The partial sums then lie in `G`
-because it is a subgroup, and the sum lies in `G` because an open subgroup is closed.
+cofinite filter, and it shares its estimate: a basic neighbourhood `U⟨X⟩` of zero bounds *every*
+coefficient of `f` by `Tν · U`, so `TauCeti.Huber.weightedEvalTerm_mem_of_mem_weightMul` — applied
+at every `ν` rather than at cofinitely many — puts *every* term of the evaluation in a prescribed
+open subgroup `G` of `B`. The partial sums then lie in `G` because it is a subgroup, and the sum
+lies in `G` because an open subgroup is closed.
 
 ## Main results
 
-* `TauCeti.Huber.weightedEvalTerm_mem_of_mem_weightMul`: the term-level bound just described.
 * `TauCeti.Huber.continuous_weightedEvalHom`: the evaluation homomorphism is continuous.
 
 ## References
@@ -38,37 +38,6 @@ namespace TauCeti.Huber
 variable {k : ℕ} {A B : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
   [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B] [CompleteSpace B]
   [T3Space B] {φ : A →+* B} {T : Fin k → Set A} {b : Fin k → B}
-
-omit [TopologicalSpace A] [NonarchimedeanRing A] [IsUniformAddGroup B] [NonarchimedeanRing B]
-  [CompleteSpace B] [T3Space B] in
-/-- **Every term of the evaluation is small when every coefficient is.** If the `ν`-th coefficient
-of `f` lies in `Tν · U`, and `φ(U)` multiplied by the bounded family of weighted monomials lands
-in `G`, then the `ν`-th term of the evaluation lies in `G`.
-
-This is the fixed-series form of the estimate behind
-`TauCeti.Huber.tendsto_weightedEvalTerm_cofinite_zero`; there it is applied to the cofinitely many
-coefficients that satisfy the bound, here to all of them at once. -/
-theorem weightedEvalTerm_mem_of_mem_weightMul {U : AddSubgroup A} {V : Set B}
-    {G : OpenAddSubgroup B} (hUV : (φ : A → B) '' U ⊆ V)
-    (hVG : V * (⋃ ν : Fin k →₀ ℕ, (fun t ↦ φ t * ∏ i, b i ^ ν i) '' weightPow T ν) ⊆ (G : Set B))
-    {f : MvPowerSeries (Fin k) A} {ν : Fin k →₀ ℕ}
-    (hf : MvPowerSeries.coeff ν f ∈ weightMul T ν U) :
-    weightedEvalTerm φ b f ν ∈ G := by
-  classical
-  let ψ : A →+ B := (AddMonoidHom.mulRight (∏ i, b i ^ ν i)).comp (φ : A →+ B)
-  have hgen : ∀ t ∈ weightPow T ν, ∀ u ∈ U, t * u ∈ G.toAddSubgroup.comap ψ := by
-    intro t ht u hu
-    have hval : ψ (t * u) = φ u * (φ t * ∏ i, b i ^ ν i) := by
-      simp only [ψ, AddMonoidHom.coe_comp, Function.comp_apply, AddMonoidHom.coe_mulRight,
-        AddMonoidHom.coe_coe, map_mul]
-      ring
-    simp only [AddSubgroup.mem_comap, hval]
-    exact hVG (Set.mul_mem_mul (hUV ⟨u, hu, rfl⟩) (Set.mem_iUnion.mpr ⟨ν, ⟨t, ht, rfl⟩⟩))
-  have hcomap : MvPowerSeries.coeff ν f ∈ G.toAddSubgroup.comap ψ := weightMul_le.mpr hgen hf
-  -- `ψ` applied to the coefficient is the term; say so rather than lean on the wrapper.
-  simpa only [weightedEvalTerm_def, ψ, AddSubgroup.mem_comap, AddMonoidHom.coe_comp,
-    Function.comp_apply, AddMonoidHom.coe_mulRight, AddMonoidHom.coe_coe, SetLike.mem_coe,
-    OpenAddSubgroup.mem_toAddSubgroup] using hcomap
 
 /-- **The evaluation homomorphism is continuous.** A basic neighbourhood `U⟨X⟩` bounds every
 coefficient, hence every term, inside a prescribed open subgroup `G`; the partial sums stay in `G`
