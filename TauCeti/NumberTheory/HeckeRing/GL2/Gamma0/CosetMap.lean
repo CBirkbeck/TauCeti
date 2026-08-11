@@ -25,8 +25,9 @@ and it is **injective on the cosets whose determinant is coprime to the level**
 with the same level-one double coset are recovered from it by intersecting with `Δ₀(N)`, which
 is exactly `doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0Image`.
 
-This is what identifies the good-prime part of `R(Γ₀(N), Δ₀(N))` with the level-one Hecke ring,
-and so the step by which `T_n` for `gcd(n, N) = 1` inherits its level-one behaviour.
+This is the injectivity step towards a later good-prime comparison of `R(Γ₀(N), Δ₀(N))` with
+the level-one Hecke ring. Neither surjectivity nor compatibility with the Hecke-ring operations
+is proved here: this file compares the two *coset types* only.
 
 Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/Props.lean`, Chris Birkbeck,
@@ -38,13 +39,16 @@ here, and AINTLIB's `HeckePair` bundle is Mathlib's `HeckeCoset`.
 
 * `HeckeRing.GL2.CoprimeDet`: an element of `Δ₀(N)` whose integral representative has
   determinant coprime to `N`.
+* `HeckeRing.GL2.CoprimeDetCoset`: the same condition on a `Γ₀(N)`-double coset — well defined
+  because the coefficients have determinant one, so the determinant is constant on a coset.
 * `HeckeRing.GL2.toLevelOneCoset`: the map `Γ₀(N) α Γ₀(N) ↦ SL₂(ℤ) α SL₂(ℤ)`.
 
 ## Main results
 
-* `HeckeRing.GL2.toLevelOneCoset_mk`: its computation rule on a representative.
-* `HeckeRing.GL2.toLevelOneCoset_injOn_coprimeDet`: **Shimura, Proposition 3.31** — it is
-  injective on coprime-determinant double cosets.
+* `HeckeRing.GL2.toLevelOneCoset_mk`, `HeckeRing.GL2.coprimeDetCoset_mk`: the computation rules
+  on a representative.
+* `HeckeRing.GL2.injOn_toLevelOneCoset`: **Shimura, Proposition 3.31** — `toLevelOneCoset` is
+  injective on the set of coprime-determinant double cosets.
 
 ## References
 
@@ -95,22 +99,76 @@ level. -/
     toLevelOneCoset N (HeckeCoset.mk (Gamma0Image N) (Gamma0Image N) g) =
       HeckeCoset.mk (SLnZ 2) (SLnZ 2) (Submonoid.inclusion (Delta0_le_posDetInt N) g) := (rfl)
 
+/-- An `SL₂(ℤ)`-coefficient has determinant one, so multiplying by it does not change the
+determinant of the integral matrix. -/
+private lemma intMatrix_det_eq_of_mem_doubleCoset {a b : GL (Fin 2) ℚ}
+    (hb : b ∈ DoubleCoset.doubleCoset a (Gamma0Image N) (Gamma0Image N))
+    {A B : Matrix (Fin 2) (Fin 2) ℤ}
+    (hA : (↑a : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
+    (hB : (↑b : Matrix (Fin 2) (Fin 2) ℚ) = B.map (Int.cast : ℤ → ℚ)) : B.det = A.det := by
+  obtain ⟨γ₁, hγ₁, γ₂, hγ₂, rfl⟩ := DoubleCoset.mem_doubleCoset.mp hb
+  obtain ⟨σ₁, rfl⟩ := (mem_SLnZ_iff 2).mp (Gamma0Image_le_SLnZ N hγ₁)
+  obtain ⟨σ₂, rfl⟩ := (mem_SLnZ_iff 2).mp (Gamma0Image_le_SLnZ N hγ₂)
+  -- over `ℚ` the two determinants agree, and `ℤ → ℚ` is injective
+  have hcast : ((B.det : ℤ) : ℚ) = ((A.det : ℤ) : ℚ) := by
+    have hB' : ((B.det : ℤ) : ℚ) = (↑(mapGL ℚ σ₁ * a * mapGL ℚ σ₂) :
+        Matrix (Fin 2) (Fin 2) ℚ).det := by
+      rw [hB]; simpa [RingHom.mapMatrix_apply] using RingHom.map_det (Int.castRingHom ℚ) B
+    have hA' : ((A.det : ℤ) : ℚ) = (↑a : Matrix (Fin 2) (Fin 2) ℚ).det := by
+      rw [hA]; simpa [RingHom.mapMatrix_apply] using RingHom.map_det (Int.castRingHom ℚ) A
+    -- `det_mapGL` is about the *unit* determinant, so `← val_det_apply` moves the matrix
+    -- determinant of an `SL₂(ℤ)` coefficient into its range first
+    rw [hB', hA', GeneralLinearGroup.coe_mul, GeneralLinearGroup.coe_mul, Matrix.det_mul,
+      Matrix.det_mul]
+    simp only [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL,
+      Units.val_one, one_mul, mul_one]
+  exact_mod_cast hcast
+
+/-- Coprimality of the determinant to the level depends only on the double coset. -/
+lemma coprimeDet_congr {a b : Delta0 N}
+    (h : HeckeCoset.mk (Gamma0Image N) (Gamma0Image N) a =
+      HeckeCoset.mk (Gamma0Image N) (Gamma0Image N) b) :
+    CoprimeDet N a ↔ CoprimeDet N b := by
+  obtain ⟨Aa, hAa, -, -, -⟩ := (mem_Delta0_iff N).mp a.2
+  obtain ⟨Ab, hAb, -, -, -⟩ := (mem_Delta0_iff N).mp b.2
+  have hdc := HeckeCoset.eq_iff.mp h
+  have hba : Ab.det = Aa.det := intMatrix_det_eq_of_mem_doubleCoset N
+    (hdc ▸ DoubleCoset.mem_doubleCoset_self _ _ _) hAa hAb
+  constructor
+  · intro ha A hA
+    obtain rfl : A = Ab := Matrix.map_injective Int.cast_injective (hA.symm.trans hAb)
+    exact hba ▸ ha Aa hAa
+  · intro hb A hA
+    obtain rfl : A = Aa := Matrix.map_injective Int.cast_injective (hA.symm.trans hAa)
+    exact hba ▸ hb Ab hAb
+
+/-- Coprimality of the determinant to the level, as a predicate on `Γ₀(N)`-double cosets. -/
+def CoprimeDetCoset : HeckeCoset (Delta0 N) (Gamma0Image N) (Gamma0Image N) → Prop :=
+  Quotient.lift (CoprimeDet N)
+    (fun _ _ hab ↦ propext (coprimeDet_congr N (Quotient.sound hab)))
+
+/-- `CoprimeDetCoset` is `CoprimeDet` on any representative. -/
+@[simp] lemma coprimeDetCoset_mk (g : Delta0 N) :
+    CoprimeDetCoset N (HeckeCoset.mk (Gamma0Image N) (Gamma0Image N) g) ↔ CoprimeDet N g :=
+  Iff.rfl
+
 /-- **Shimura, Proposition 3.31.** `toLevelOneCoset` is injective on the double cosets whose
 determinant is coprime to `N`: the level-one double coset determines the `Γ₀(N)` one, because
 intersecting it with `Δ₀(N)` returns the latter. -/
-theorem toLevelOneCoset_injOn_coprimeDet {a b : Delta0 N} (ha : CoprimeDet N a)
-    (hb : CoprimeDet N b)
-    (h : toLevelOneCoset N (HeckeCoset.mk (Gamma0Image N) (Gamma0Image N) a) =
-      toLevelOneCoset N (HeckeCoset.mk (Gamma0Image N) (Gamma0Image N) b)) :
-    HeckeCoset.mk (Gamma0Image N) (Gamma0Image N) a =
-      HeckeCoset.mk (Gamma0Image N) (Gamma0Image N) b := by
-  obtain ⟨Aa, hAa, -, hAaN, -⟩ := (mem_Delta0_iff N).mp a.2
-  obtain ⟨Ab, hAb, -, hAbN, -⟩ := (mem_Delta0_iff N).mp b.2
-  rw [toLevelOneCoset_mk, toLevelOneCoset_mk, HeckeCoset.eq_iff,
-    Submonoid.coe_inclusion, Submonoid.coe_inclusion] at h
+theorem injOn_toLevelOneCoset :
+    Set.InjOn (toLevelOneCoset N) {D | CoprimeDetCoset N D} := by
+  rintro D₁ hD₁ D₂ hD₂ h
+  obtain ⟨a, rfl⟩ := Quotient.exists_rep D₁
+  obtain ⟨b, rfl⟩ := Quotient.exists_rep D₂
+  obtain ⟨Aa, hAa, -, -, -⟩ := (mem_Delta0_iff N).mp a.2
+  obtain ⟨Ab, hAb, -, -, -⟩ := (mem_Delta0_iff N).mp b.2
+  replace h : HeckeCoset.mk (SLnZ 2) (SLnZ 2)
+      (Submonoid.inclusion (Delta0_le_posDetInt N) a) =
+    HeckeCoset.mk (SLnZ 2) (SLnZ 2) (Submonoid.inclusion (Delta0_le_posDetInt N) b) := h
+  rw [HeckeCoset.eq_iff, Submonoid.coe_inclusion, Submonoid.coe_inclusion] at h
   refine HeckeCoset.eq_iff.mpr ?_
   -- each `Γ₀(N)`-double coset is its level-one one cut down to `Δ₀(N)`, and those agree
-  rw [← doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0Image N _ a.2 Aa hAa (ha Aa hAa),
-    ← doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0Image N _ b.2 Ab hAb (hb Ab hAb), h]
+  rw [← doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0Image N _ a.2 Aa hAa (hD₁ Aa hAa),
+    ← doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0Image N _ b.2 Ab hAb (hD₂ Ab hAb), h]
 
 end HeckeRing.GL2
