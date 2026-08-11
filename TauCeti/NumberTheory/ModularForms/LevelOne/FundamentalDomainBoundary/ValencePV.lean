@@ -10,7 +10,7 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ArcExcisionMeasure
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.LogDerivPV
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Interior
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Interior
 
 /-!
 # The boundary principal value of a level-one logarithmic derivative
