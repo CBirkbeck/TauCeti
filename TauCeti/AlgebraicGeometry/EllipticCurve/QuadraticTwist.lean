@@ -837,10 +837,7 @@ by the inverse of the base-changed change of variables. -/
                   (E.baseChange M)).symm ▸ h)) := by
   rw [quadraticTwistPointEquiv, AddEquiv.symm_trans_apply,
     Affine.Point.equivVariableChange_symm_some]
-  rw [show (AddEquiv.cast (M := fun V : WeierstrassCurve M ↦ V.toAffine.Point)
-      (E.quadraticTwistVariableChange_smul_baseChange L M).symm).symm
-      = AddEquiv.cast (E.quadraticTwistVariableChange_smul_baseChange L M) from rfl,
-    Affine.Point.cast_some]
+  rw [Affine.Point.cast_symm, Affine.Point.cast_some]
 
 /-- **Naturality of `quadraticTwistPointEquiv` in `M`.** The isomorphisms on `M`-points over
 varying `M ⊇ L` all come from one isomorphism of curves over `L`, so they commute with the maps on
