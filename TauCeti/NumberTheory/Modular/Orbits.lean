@@ -19,6 +19,7 @@ orbit once.
 
 * `TauCeti.ModularGroup.exists_rep_mem_fd`: every orbit meets `𝒟`.
 * `TauCeti.ModularGroup.orbit_mk_int_vadd`: integer translation preserves the orbit.
+* `TauCeti.ModularGroup.orbit_mk_S_smul`: the `S`-translate preserves the orbit.
 * `TauCeti.ModularGroup.orbit_mk_injOn_fdo`: the orbit map is injective on `𝒟ᵒ`.
 -/
 
@@ -61,6 +62,17 @@ lemma orbit_mk_injOn_fdo :
   have hg' : g • q = p := hg
   have hgq : g • q ∈ 𝒟ᵒ := by rw [hg']; exact hp
   exact hg'.symm.trans (_root_.ModularGroup.eq_smul_self_of_mem_fdo_mem_fdo hq hgq).symm
+
+/-- The `S`-translate of a point lies in the same `SL(2, ℤ)`-orbit. Together with
+`orbit_mk_int_vadd` this is the pair of boundary identifications of the standard fundamental
+domain: `T` identifies its two vertical edges, `S` the two halves of its arc. Both are needed to
+count each orbit once when a divisor meets the boundary. -/
+-- Not a `simp` lemma: `UpperHalfPlane.modular_S_smul` already rewrites `S • z`, so this
+-- left-hand side is never in simp normal form and `simpNF` rejects the annotation.
+lemma orbit_mk_S_smul (z : ℍ) :
+    (Quotient.mk'' (_root_.ModularGroup.S • z) :
+      MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) = Quotient.mk'' z :=
+  Quotient.sound' ⟨_root_.ModularGroup.S, rfl⟩
 
 end ModularGroup
 
