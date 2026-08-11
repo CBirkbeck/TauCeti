@@ -40,6 +40,9 @@ polynomial) with distinguished point `(X,Y)`.
 * `WeierstrassCurve.Universal.curveRing_map_ringEval`: pushing the universal curve over
   `Universal.Ring` along `ringEval` returns `W`, so one identity over the universal pointed curve
   is the same identity for every curve and every point on it.
+* `WeierstrassCurve.Universal.ringHom_ext`: two homomorphisms out of `Universal.Ring` agreeing on
+  the coefficient ring and on the two distinguished coordinates are equal — the uniqueness half of
+  the universal property, since those generate.
 * `WeierstrassCurve.Universal.algebraMap_field_injective`: `ℤ[A₁,⋯,A₆]` embeds in
   `Universal.Field`, which is what makes `pointedCurve` an elliptic curve.
 
@@ -135,9 +138,10 @@ ring `ℤ[A₁,⋯,A₆]`, in Mathlib's iterated form `R[X][Y]`, so `Y` is the o
 Weierstrass polynomial `curve.polynomial` lives here; `Universal.Ring` is the quotient by it. -/
 abbrev Poly : Type := (MvPolynomial Coeff ℤ)[X][Y]
 /-- The universal ring for **pointed** Weierstrass curves: `ℤ[A₁,⋯,A₆,X,Y]/⟨P⟩`, for `P` the
-Weierstrass polynomial. A ring homomorphism out of it is the same thing as a Weierstrass curve
-together with an affine point on it; `ringEval` is the homomorphism such a pair determines. Being
-an `abbrev` for `curve.CoordinateRing`, it inherits Mathlib's `Affine.CoordinateRing` API. -/
+Weierstrass polynomial. A Weierstrass curve over `R` together with an affine point on it determines
+a ring homomorphism out of it — `ringEval` — and determines it uniquely, since the coefficients and
+the two coordinates generate (`ringHom_ext`). Being an `abbrev` for `curve.CoordinateRing`, it
+inherits Mathlib's `Affine.CoordinateRing` API. -/
 protected abbrev Ring : Type := curve.CoordinateRing
 /-- The universal field for pointed Weierstrass curves is
 the field of fractions of the universal ring. -/
@@ -345,17 +349,26 @@ lemma polyEval_comp_eq_specialize : (polyEval W x y).comp (algebraMap _ _) = W.s
   ext <;> simp [polyEval]
 
 /-- **Extensionality for homomorphisms out of the universal ring.** Two ring homomorphisms out of
-`Universal.Ring` agreeing on the classes of polynomials are equal, `AdjoinRoot.mk` being surjective.
+`Universal.Ring` are equal as soon as they agree on the coefficient ring `ℤ[A₁,⋯,A₆]` and on the two
+distinguished coordinates `X` and `Y` — that is, on generators.
 
-Together with `ringEval_comp_mk` this is the uniqueness half of the universal property: `ringEval`
-is not merely *a* homomorphism carrying the universal curve and its point to `W` and `(x, y)`, it is
-the *only* one. That is what licenses proving an identity once over `curveRing` and reading it off
-for every curve and every point. -/
+Together with `ringEval_comp_eq_specialize`, `ringEval_of_X` and `ringEval_root` this is the
+uniqueness half of the universal property: `ringEval` is not merely *a* homomorphism carrying the
+universal curve and its point to `W` and `(x, y)`, it is the *only* one. That is what licenses
+proving an identity once over `curveRing` and reading it off for every curve and every point.
+
+Agreement after composing with `AdjoinRoot.mk` would **not** do: `mk` is surjective, so that
+hypothesis is merely a restatement of the conclusion and proves nothing about generators. -/
 lemma ringHom_ext {f g : Universal.Ring →+* R}
-    (h : f.comp (AdjoinRoot.mk _) = g.comp (AdjoinRoot.mk _)) : f = g := by
+    (hcoeff : f.comp (algebraMap (MvPolynomial Coeff ℤ) Universal.Ring)
+      = g.comp (algebraMap (MvPolynomial Coeff ℤ) Universal.Ring))
+    (hX : f (AdjoinRoot.of _ Polynomial.X) = g (AdjoinRoot.of _ Polynomial.X))
+    (hY : f (AdjoinRoot.root _) = g (AdjoinRoot.root _)) : f = g := by
+  have key : f.comp (AdjoinRoot.mk _) = g.comp (AdjoinRoot.mk _) :=
+    Polynomial.ringHom_ext' (Polynomial.ringHom_ext' hcoeff hX) hY
   refine RingHom.ext fun z ↦ ?_
   obtain ⟨p, rfl⟩ := AdjoinRoot.mk_surjective z
-  exact congr($h p)
+  exact congr($key p)
 
 /-- The `Universal.Ring` counterpart of `polyEval_comp_eq_specialize`: `ringEval eqn` also restricts
 to `W.specialize` on the coefficient ring. This is the compatibility that makes
