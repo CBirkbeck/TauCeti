@@ -21,7 +21,7 @@ noncomputable def toLevelOneCoset :
 ```
 
 and it is **injective on the cosets whose determinant is coprime to the level**
-(`injOn_toLevelOneCoset`). Injectivity is the content: two `Γ₀(N)`-double cosets
+(`toLevelOneCoset_injOn`). Injectivity is the content: two `Γ₀(N)`-double cosets
 with the same level-one double coset are recovered from it by intersecting with `Δ₀(N)`, which
 is exactly `doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0Image`.
 
@@ -49,7 +49,7 @@ here, and AINTLIB's `HeckePair` bundle is Mathlib's `HeckeCoset`.
 * `HeckeRing.GL2.coprimeDet_iff`: `CoprimeDet` is decided by any one integral witness.
 * `HeckeRing.GL2.toLevelOneCoset_mk`, `HeckeRing.GL2.coprimeDetCoset_mk`: the computation rules
   on a representative.
-* `HeckeRing.GL2.injOn_toLevelOneCoset`: **Shimura, Proposition 3.31** — `toLevelOneCoset` is
+* `HeckeRing.GL2.toLevelOneCoset_injOn`: **Shimura, Proposition 3.31** — `toLevelOneCoset` is
   injective on the set of coprime-determinant double cosets.
 
 ## References
@@ -147,7 +147,7 @@ def CoprimeDetCoset : HeckeCoset (Delta0 N) (Gamma0Image N) (Gamma0Image N) → 
 /-- **Shimura, Proposition 3.31.** `toLevelOneCoset` is injective on the double cosets whose
 determinant is coprime to `N`: the level-one double coset determines the `Γ₀(N)` one, because
 intersecting it with `Δ₀(N)` returns the latter. -/
-theorem injOn_toLevelOneCoset :
+theorem toLevelOneCoset_injOn :
     Set.InjOn (toLevelOneCoset N) {D | CoprimeDetCoset N D} := by
   rintro D₁ hD₁ D₂ hD₂ h
   -- work with representatives, so that `toLevelOneCoset_mk` applies
