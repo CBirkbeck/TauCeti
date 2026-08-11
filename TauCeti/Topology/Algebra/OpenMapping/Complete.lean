@@ -46,23 +46,24 @@ open Filter Topology
 namespace TauCeti
 
 variable {M N : Type*} [AddCommGroup M] [UniformSpace M] [IsUniformAddGroup M] [CompleteSpace M]
-  [AddCommGroup N] [TopologicalSpace N] [IsTopologicalAddGroup N] [T0Space N]
+  [AddGroup N] [TopologicalSpace N] [IsTopologicalAddGroup N] [T0Space N]
 
 /-- **Henkel's approximation converges.** Let `V` be an antitone basis of subgroups at zero in a
-complete group `M`, let `f : M → N` be a continuous additive map, and suppose each
+complete group `M`, let `f : M → N` be an additive map continuous at zero, and suppose each
 `closure (f '' V (n + 1))` is a neighbourhood of zero — which is what the Baire step of Henkel's
 theorem provides. Then every point of `closure (f '' V 0)` is already the image of a point of
 `V 0`.
 
 `M` is not assumed nonarchimedean: a basis of subgroups at zero is exactly that condition, and
-the proof reconstructs the instance from `hV`. Separation of `N` is used only to identify the
-two limits of the partial sums. -/
+the proof reconstructs the instance from `hV`. `N` need not be commutative, and separation of it
+is used only to identify the two limits of the partial sums. -/
 theorem mem_image_of_mem_closure_image {F : Type*} [FunLike F M N] [AddMonoidHomClass F M N]
-    (f : F) (hf : Continuous f) {V : ℕ → AddSubgroup M}
+    (f : F) (hf : ContinuousAt (f : M → N) 0) {V : ℕ → AddSubgroup M}
     (hV : (𝓝 (0 : M)).HasAntitoneBasis fun n ↦ (V n : Set M))
     (hVN : ∀ n, closure ((f : M → N) '' (V (n + 1) : Set M)) ∈ 𝓝 (0 : N))
     {y : N} (hy : y ∈ closure ((f : M → N) '' (V 0 : Set M))) :
     y ∈ (f : M → N) '' (V 0 : Set M) := by
+  have hf' : Continuous (f : M → N) := continuous_of_continuousAt_zero f hf
   obtain ⟨x, hxV, hxres⟩ :=
     exists_seq_mem_and_sub_sum_mem f (fun n ↦ (V n : Set M)) hVN hy
   -- A basis of subgroups at zero *is* nonarchimedeanness, so the instance need not be assumed.
@@ -81,20 +82,21 @@ theorem mem_image_of_mem_closure_image {F : Type*} [FunLike F M N] [AddMonoidHom
   -- The partial sums have two limits under `f`: its value at the sum, and `y`.
   have hpart : Tendsto (fun n ↦ (f : M → N) (∑ i ∈ Finset.range (n + 1), x i)) atTop
       (𝓝 ((f : M → N) (∑' n, x n))) :=
-    ((hf.tendsto _).comp hsummable.hasSum.tendsto_sum_nat).comp (tendsto_add_atTop_nat 1)
+    ((hf'.tendsto _).comp hsummable.hasSum.tendsto_sum_nat).comp (tendsto_add_atTop_nat 1)
   refine tendsto_nhds_unique hpart ?_
   -- The residuals tend to zero: the sets holding them shrink because `N` is regular.
   have hres : Tendsto (fun n ↦ y - (f : M → N) (∑ i ∈ Finset.range (n + 1), x i)) atTop
       (𝓝 (0 : N)) := by
     refine (hasBasis_nhds_closure (0 : N)).tendsto_right_iff.mpr fun U hU ↦ ?_
     have hpre : (f : M → N) ⁻¹' U ∈ 𝓝 (0 : M) :=
-      hf.continuousAt (by rw [map_zero]; exact hU)
+      hf (by rw [map_zero]; exact hU)
     obtain ⟨n₀, -, hn₀⟩ := hV.toHasBasis.mem_iff.mp hpre
     filter_upwards [eventually_ge_atTop n₀] with n hn
     exact closure_mono ((Set.image_mono
       ((hV.antitone (hn.trans (Nat.le_succ n))).trans hn₀)).trans
       (Set.image_preimage_subset _ _)) (hxres n)
-  simpa using (tendsto_const_nhds (x := y) (f := atTop (α := ℕ))).sub hres
+  -- `-(y - f s) + y = f s` reassociates without commuting anything in `N`.
+  simpa using hres.neg.add_const y
 
 end TauCeti
 
