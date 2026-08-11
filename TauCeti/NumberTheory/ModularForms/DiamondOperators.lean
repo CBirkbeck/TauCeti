@@ -39,6 +39,8 @@ re-founded slash action with built-in character) and their names. The Hecke pair
   by `coe_diamondOp`/`coe_diamondOpCusp` as slashing by any representative.
 * `diamondOpHom`/`diamondOpCuspHom`: the diamond operators as monoid homomorphisms into the
   endomorphism algebras.
+* `diamondOpNat`: the same operator indexed by a natural number, `⟨n⟩` of
+  Diamond–Shurman §5.3, extended by zero when `n` is not coprime to `N`.
 * `modFormCharSpace`/`cuspFormCharSpace`: the nebentypus character spaces `M_k(Γ₁(N), χ)` and
   `S_k(Γ₁(N), χ)`, cut out as simultaneous diamond eigenspaces.
 
@@ -335,3 +337,25 @@ theorem mem_cuspFormCharSpace_iff_nebentypus [NeZero N] (k : ℤ) (χ₀ : (ZMod
   · obtain ⟨g, hg⟩ := Gamma0Map_toHomUnits_surjective (N := N) d
     rw [diamondOpCuspHom_apply, diamondOpCusp_eq_diamondOpCuspAux k d g hg, ← hg]
     exact CuspForm.ext (congr_fun (h g))
+
+/-- The diamond operator indexed by a natural number: `⟨n⟩` is `diamondOp` at the unit `n mod N`
+when `n` is coprime to `N`, and `0` otherwise.
+
+This is `⟨n⟩` as Diamond–Shurman §5.3 writes it. Extending the index from `(ZMod N)ˣ` to `ℕ` by
+zero is what lets the Hecke recurrence at a prime power be stated uniformly: the `⟨p⟩` term
+simply vanishes when `p ∣ N`, instead of the recurrence needing a separate case. -/
+noncomputable def diamondOpNat [NeZero N] (k : ℤ) (n : ℕ) :
+    ModularForm ((Gamma1 N).map (mapGL ℝ)) k →ₗ[ℂ] ModularForm ((Gamma1 N).map (mapGL ℝ)) k :=
+  if h : Nat.Coprime n N then diamondOp k (ZMod.unitOfCoprime n h) else 0
+
+-- Not a `simp` lemma: the right-hand side mentions the coprimality proof `h`, which `simp`
+-- cannot recover from the left-hand side, so it could never apply. Its negative counterpart is
+-- `simp`-able because that right-hand side is just `0`.
+lemma diamondOpNat_of_coprime [NeZero N] (k : ℤ) {n : ℕ} (h : Nat.Coprime n N) :
+    diamondOpNat k n = diamondOp k (ZMod.unitOfCoprime n h) :=
+  dite_eq_left_of_eq_true (by simpa using h)
+
+@[simp]
+lemma diamondOpNat_of_not_coprime [NeZero N] (k : ℤ) {n : ℕ} (h : ¬ Nat.Coprime n N) :
+    diamondOpNat (N := N) k n = 0 :=
+  dite_eq_right_of_eq_false (by simpa using h)
