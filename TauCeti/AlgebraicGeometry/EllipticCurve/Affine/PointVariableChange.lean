@@ -169,9 +169,11 @@ lemma variableChange_equation (x y : F) :
 transform by the matrix `![![u⁴, -su³], ![0, u³]]`, which is invertible because `u` is, so
 `W_X ≠ 0 ∨ W_Y ≠ 0` holds at the image exactly when it holds at the source.
 
-This is what lets the point map avoid `[W.IsElliptic]`: `equation_iff_nonsingular` would supply
-nonsingularity from the equation, but only for an elliptic curve, whereas the isomorphism of point
-groups holds for every Weierstrass curve over a field. -/
+This is what lets the *underlying* point map avoid `[W.IsElliptic]`: `equation_iff_nonsingular`
+would supply nonsingularity from the equation, but only for an elliptic curve, whereas carrying a
+point to a point needs no such hypothesis. It does not extend to the bundled maps below, which are
+elliptic-only for a different reason — Mathlib puts the group structure on `Point` under
+`[W.IsElliptic]`, so `(C • W).Point` is not an additive group without it. -/
 lemma variableChange_nonsingular (x y : F) :
     W.toAffine.Nonsingular ((C.u : F) ^ 2 * x + C.r)
         ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
