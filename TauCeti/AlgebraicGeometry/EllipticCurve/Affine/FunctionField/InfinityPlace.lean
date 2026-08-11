@@ -27,6 +27,8 @@ The valuation's `map_add_le_max'` rests on an ultrametric inequality in degree f
 the other three axioms are the norm's multiplicativity and Mathlib's place at infinity.
 * `WeierstrassCurve.Affine.infinityPlace.X`,
   `WeierstrassCurve.Affine.infinityPlace.mk_Y`
+* `WeierstrassCurve.Affine.infinityPlace_ne_heightOneSpectrum_valuation`: the place at infinity is
+  distinct from the valuation of every height-one prime of the coordinate ring — the affine places.
 * `WeierstrassCurve.Affine.infinityPlace.C`: the valuation is trivial on the base field — a
   nonzero constant has value `1`. The `Valuation.IsTrivialOn F` and `Valuation.IsNontrivial`
   instances follow, so the place is usable through Mathlib's standard valuation
