@@ -163,8 +163,8 @@ private theorem IsContinuous.sub_lt_mem_nhds [SeparatelyContinuousAdd A] {v : Va
 open: it is a union of translates of the open `{a ; v a < v b}`, since adding an element of
 value `< v b` to one of value `≤ v b` keeps the value `≤ v b`. For an arbitrary element of the
 value group — which need not be attained — see `isOpen_le_div`. -/
-theorem IsContinuous.isOpen_le [SeparatelyContinuousAdd A] {v : Valuation A Γ₀} (hv : v.IsContinuous) {b : A}
-    (hb : v b ≠ 0) : IsOpen {a : A | v a ≤ v b} := by
+theorem IsContinuous.isOpen_le [SeparatelyContinuousAdd A] {v : Valuation A Γ₀}
+    (hv : v.IsContinuous) {b : A} (hb : v b ≠ 0) : IsOpen {a : A | v a ≤ v b} := by
   refine isOpen_iff_mem_nhds.mpr fun a ha ↦ ?_
   filter_upwards [hv.sub_lt_mem_nhds a hb] with y hy
   simpa using v.map_add_le hy.le ha
