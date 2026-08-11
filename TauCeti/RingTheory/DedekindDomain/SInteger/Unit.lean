@@ -4,8 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.RingTheory.DedekindDomain.SelmerGroup
+public import TauCeti.RingTheory.DedekindDomain.SelmerGroup
 public import Mathlib.RingTheory.DedekindDomain.SInteger
+public import TauCeti.Algebra.Algebra.Subalgebra.Lattice
 public import TauCeti.GroupTheory.Finiteness
 
 /-!
@@ -78,9 +79,10 @@ exceptions: they have no #40791 analogue, so at bump time they must be re-homed 
   element-level characterisation of the three-fold composite `unitEmptyEquivUnits`, so that a
   future user of that equiv need not unfold it.
 
-`valuationOfNeZero_eq_one_iff` is also local: Stoll's source uses
-`HeightOneSpectrum.valuationOfNeZero_eq_iff`, which does not exist at our pin, and Mathlib has
-only the coercion form `valuationOfNeZero_eq`.
+The valuation lemma these proofs run on,
+`IsDedekindDomain.HeightOneSpectrum.valuationOfNeZero_eq_one_iff`, is not here: it mentions no
+`S` and no `Set.unit`, so it lives in `TauCeti/RingTheory/DedekindDomain/SelmerGroup.lean`
+beside the `valuationOfNeZero` API it belongs to.
 
 Adapted from Michael Stoll's elliptic-curves formalisation
 (`github.com/MichaelStollBayreuth/EllipticCurves`, `EllipticCurves/Mathlib/SelmerGroup.lean` at
@@ -92,20 +94,6 @@ upstream authorship is credited here rather than in the copyright header.
 public section
 
 open IsDedekindDomain IsDedekindDomain.HeightOneSpectrum
-
-namespace IsDedekindDomain.HeightOneSpectrum
-
-/-- A unit has trivial `v`-adic `valuationOfNeZero` iff its `v`-adic valuation is `1`. Mathlib
-carries this only in the coerced form `valuationOfNeZero_eq`, which this complements; it lives
-beside that lemma rather than in `Set`, since it mentions no set. -/
-@[simp]
-theorem valuationOfNeZero_eq_one_iff {R : Type*} [CommRing R] [IsDedekindDomain R]
-    {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
-    (v : HeightOneSpectrum R) (x : Kˣ) :
-    v.valuationOfNeZero x = 1 ↔ v.valuation K (x : K) = 1 := by
-  rw [← WithZero.coe_inj, valuationOfNeZero_eq, WithZero.coe_one]
-
-end IsDedekindDomain.HeightOneSpectrum
 
 namespace Set
 
@@ -161,6 +149,7 @@ theorem unit_fg [Finite S] (hu : Group.FG ((∅ : Set (HeightOneSpectrum R)).uni
     Group.FG (S.unit K) := by
   -- `Group.FG (↥S → Multiplicative ℤ)` is Mathlib's `Pi.instGroupFG` composed with
   -- `Group.fg_of_mul_group_fg` and `AddGroup.FG ℤ`; instance search finds it from `[Finite S]`
+  -- and the range side from `Subgroup.fg_of_commGroup`, the only instance that can discharge it
   have : Group.FG (unitValuation S K).ker := by
     rw [unitValuation_ker]
     exact Group.fg_of_surjective
@@ -189,18 +178,13 @@ so a future user of the equiv need not unfold it. -/
 @[simp]
 theorem coe_unitEmptyEquivUnits (u : (∅ : Set (HeightOneSpectrum R)).unit K) :
     algebraMap R K ((unitEmptyEquivUnits K u : Rˣ) : R) = ((u : Kˣ) : K) := by
-  -- `algebraMap R K` undoes `botEquivOfInjective` on `⊥`: the equiv's inverse is the algebra map
-  -- (`AlgEquiv.commutes`), and `Subalgebra.coe_algebraMap` pushes the coercion out to `K`.
-  have key : ∀ x : (⊥ : Subalgebra R K),
-      algebraMap R K (Algebra.botEquivOfInjective (IsFractionRing.injective R K) x) = (x : K) := by
-    intro x
-    set e := Algebra.botEquivOfInjective (IsFractionRing.injective R K) with he
-    have h := e.symm.commutes (e x)
-    simp only [Algebra.algebraMap_self_apply, e.symm_apply_apply] at h
-    conv_rhs => rw [h]
-    exact (Subalgebra.coe_algebraMap _ _).symm
-  simp only [unitEmptyEquivUnits]
-  exact key _
+  -- unfold the three-fold composite through its own equations rather than through defeq:
+  -- `unitEquivUnitsInteger` and `Units.mapEquiv` down to the underlying element of `K`, then
+  -- `Algebra.algebraMap_botEquivOfInjective` for the identification of `⊥` with `R`
+  simp only [unitEmptyEquivUnits, RingEquiv.toMulEquiv_eq_coe, MulEquiv.trans_apply,
+    Units.coe_mapEquiv, RingEquiv.coe_toMulEquiv, RingEquiv.coe_mk, AlgEquiv.toEquiv_eq_coe,
+    EquivLike.coe_coe, AlgEquiv.trans_apply, Subalgebra.equivOfEq_apply,
+    val_unitEquivUnitsInteger_apply_coe, Algebra.algebraMap_botEquivOfInjective]
 
 /-- **Finite generation of the `S`-units, over the base ring.** If `Rˣ` is finitely generated and
 `S` is finite, then so is the group of `S`-units. This is `unit_fg` with its hypothesis
