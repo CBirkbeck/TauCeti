@@ -158,6 +158,7 @@ universal pointed curve is ultimately about the images of `X` and `Y` under this
 
 /-- `polyToField` is reduction modulo the Weierstrass polynomial followed by the inclusion into
 the fraction field. -/
+@[simp]
 lemma polyToField_apply (p : Poly) :
     polyToField p = algebraMap Universal.Ring _ (AdjoinRoot.mk _ p) := rfl
 
@@ -175,7 +176,9 @@ lemma algebraMap_ring_eq_comp :
 
 /-- The Weierstrass polynomial vanishes at `(X, Y)` in the universal field — it is exactly what was
 quotiented out. This is the computational content of `equation_point`. -/
-@[simp] lemma polyToField_polynomial : polyToField curve.polynomial = 0 := by
+-- Not `@[simp]`: now that `polyToField_apply` is a simp lemma, `simp` derives this from it and
+-- `AdjoinRoot.mk_self`, so tagging it as well is a `simpNF` duplicate. It stays as a named fact.
+lemma polyToField_polynomial : polyToField curve.polynomial = 0 := by
   rw [polyToField_apply, AdjoinRoot.mk_self, map_zero]
 
 /-- The coefficient ring `ℤ[A₁,⋯,A₆]` embeds in the universal field: the five indeterminates stay
@@ -279,6 +282,7 @@ def specialize : MvPolynomial Coeff ℤ →+* R :=
   (MvPolynomial.aeval <| Coeff.rec W.a₁ W.a₂ W.a₃ W.a₄ W.a₆).toRingHom
 
 /-- Every Weierstrass curve is a specialization of the universal Weierstrass curve. -/
+@[simp]
 lemma map_specialize : Universal.curve.map W.specialize = W := by simp [specialize, curve, map]
 
 namespace Universal
@@ -309,23 +313,27 @@ def ringEval : Universal.Ring →+* R :=
 
 /-- `ringEval` is `polyEval` read on the quotient: evaluating a representative `p` gives the same
 answer as evaluating `p` in `Poly`. The pointwise form of `ringEval_comp_mk`. -/
+@[simp]
 lemma ringEval_mk (p : Poly) : ringEval eqn (AdjoinRoot.mk _ p) = polyEval W x y p :=
   AdjoinRoot.lift_mk _ p
 
 /-- The homomorphism-level form of `ringEval_mk`: `ringEval eqn` is the factorisation of
 `polyEval W x y` through the quotient by the Weierstrass polynomial. Use this shape when composing
 ring maps and `ringEval_mk` when rewriting underneath an application. -/
+@[simp]
 lemma ringEval_comp_mk : (ringEval eqn).comp (AdjoinRoot.mk _) = polyEval W x y :=
   RingHom.ext (ringEval_mk eqn)
 
 /-- Restricted to the coefficient ring, `polyEval W x y` is just `W.specialize`: evaluating at a
 point does not disturb the substitution of `W`'s coefficients. -/
+@[simp]
 lemma polyEval_comp_eq_specialize : (polyEval W x y).comp (algebraMap _ _) = W.specialize := by
   ext <;> simp [polyEval]
 
 /-- The `Universal.Ring` counterpart of `polyEval_comp_eq_specialize`: `ringEval eqn` also restricts
 to `W.specialize` on the coefficient ring. This is the compatibility that makes
 `curveRing_map_ringEval`, and with it every specialization argument, go through. -/
+@[simp]
 lemma ringEval_comp_eq_specialize : (ringEval eqn).comp (algebraMap _ _) = W.specialize := by
   rw [algebraMap_ring_eq_comp, ← RingHom.comp_assoc, ringEval_comp_mk, polyEval_comp_eq_specialize]
 
@@ -344,6 +352,7 @@ instance : CharZero Universal.Field :=
 `Universal.Ring` along `ringEval eqn` returns `W` itself. This is the mechanism the whole file
 exists for — an identity proved once for `curveRing` and its distinguished point becomes the same
 identity for every Weierstrass curve `W` and every point `(x, y)` on it. -/
+@[simp]
 lemma curveRing_map_ringEval : curveRing.map (ringEval eqn) = W :=
   (map_map curve (algebraMap _ _) (ringEval eqn)).symm ▸
     (ringEval_comp_eq_specialize eqn) ▸ map_specialize W
