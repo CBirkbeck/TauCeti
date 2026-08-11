@@ -19,14 +19,19 @@ restriction itself, together with its interface, lives in
 points.
 
 Wedhorn's retraction has two properties beyond being this map: it **lands in** `Spv (A, I)`, and
-it **fixes** that subspace pointwise. The first is proved here. The second is not, so the map
-still carries codomain `Spv A` rather than the subspace, and is still named for what it does —
-restriction to `I` — rather than for the retraction property it does not yet carry.
+it **fixes** that subspace pointwise. The first is proved here, and the map is therefore also
+offered with the codomain the roadmap asks for, as `restrictToIdealCodRestrict`. The second is
+not proved here, so neither form is called `retract`: both are named for what they are shown to
+do — restriction to `I` — rather than for the retraction property still outstanding.
 
 ## Main definitions
 
 * `TauCeti.ValuationSpectrum.restrictToIdeal` : the restriction, at the level of points of
   `Spv A`.
+* `TauCeti.ValuationSpectrum.restrictToIdealCodRestrict` : the same map with the roadmap's
+  codomain, `Spv A → Spv (A, I)`, obtained by corestricting along the landing theorem below. This
+  is the canonical form for a consumer, who then holds a point of the subspace rather than a
+  point of `Spv A` together with a membership proof.
 
 ## Main results
 
@@ -38,6 +43,8 @@ restriction to `I` — rather than for the retraction property it does not yet c
   `Spv (A, I)`. The case split is Wedhorn's: where `I` meets `cΓ_v`, the subgroup `cΓ_v(I)`
   collapses to `cΓ_v` and a generator brackets the bound; where it does not, `cΓ_v(I)` is the
   greatest ideal-cofinal convex subgroup and the bound is cofinal by that maximality.
+* `TauCeti.ValuationSpectrum.coe_restrictToIdealCodRestrict` : the corestriction read back in
+  `Spv A`.
 
 ## References
 
@@ -111,7 +118,7 @@ private theorem characteristicSubgroup_restrictToIdeal_eq_top_of_meets (v : Spv 
     rw [← ValueGroup₀.embedding_strictMono.le_iff_le, map_inv₀,
       Valuation.embedding_restrict, ← hu,
       inv_le_comm₀ (zero_lt_one.trans_le h1a) (pos_iff_ne_zero.mpr WithZero.coe_ne_zero),
-      ← WithZero.coe_inv, restrictToIdeal_coe_le_iff, hga]
+      ← WithZero.coe_inv, coe_le_restrictToIdeal_iff, hga]
     have hcoe : ((OrderMonoidIso.unitsWithZero
           ((u⁻¹ : (ConvexSubgroup.comapUnitsWithZero
             (characteristicSubgroupOfIdeal v.valuation I hfg)).toSubgroup) :
@@ -125,7 +132,7 @@ private theorem characteristicSubgroup_restrictToIdeal_eq_top_of_meets (v : Spv 
     simp only [map_inv, InvMemClass.coe_inv]
     simpa using inv_le_inv_iff.mpr hginv
   · rw [← ValueGroup₀.embedding_strictMono.le_iff_le, Valuation.embedding_restrict, ← hu,
-      restrictToIdeal_coe_le_iff, hga]
+      coe_le_restrictToIdeal_iff, hga]
     have hcoe : ((OrderMonoidIso.unitsWithZero (u : (ValueGroup₀ (.ofClass v.valuation))ˣ) :
         valueGroup (.ofClass v.valuation)) : ValueGroup₀ (.ofClass v.valuation)) =
         ((u : (ValueGroup₀ (.ofClass v.valuation))ˣ) : ValueGroup₀ (.ofClass v.valuation)) :=

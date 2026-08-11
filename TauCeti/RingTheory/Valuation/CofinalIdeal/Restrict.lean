@@ -243,13 +243,13 @@ by
     _root_.Valuation.restrictToConvex_le_iff, _root_.Valuation.restrict_le_iff]
 
 /-- The companion of `restrictToIdeal_lt_coe_iff` with the member on the left. -/
-theorem restrictToIdeal_coe_le_iff (v : Valuation A Γ₀) (I : Ideal A)
+theorem coe_le_restrictToIdeal_iff (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (a : A)
     (u : (ConvexSubgroup.comapUnitsWithZero
       (characteristicSubgroupOfIdeal v I hfg)).toSubgroup) :
     (u : RestrictedValues v I hfg) ≤ v.restrictToIdeal I hfg a ↔
       ((u : (ValueGroup₀ (.ofClass v))ˣ) : ValueGroup₀ (.ofClass v)) ≤ v.restrict a :=
-  _root_.Valuation.restrictToConvex_coe_le_iff _ _ _ a u
+  _root_.Valuation.coe_le_restrictToConvex_iff _ _ _ a u
 
 /-- Comparing a restricted value against an abstract member of the transported `cΓ_v(I)`,
 back in the value monoid of `v`. This is the form a cofinality argument needs, where the
