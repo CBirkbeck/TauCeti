@@ -28,8 +28,6 @@ type of nonzero primes and carries the adic valuation on the function field.
   identifying its underlying ideal as `XYIdeal W x (C y)`.
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace_eq_iff`: `pointPlace` is injective —
   two points have the same place exactly when they have the same coordinates.
-* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.finrank_quotient_XYIdeal`: the quotient by
-  `XYIdeal W x y` is one-dimensional over the base, for any polynomial `y` solving the equation.
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace.finrank_residueField`: consequently the
   place of a point has degree one — its residue field is the base field.
 
@@ -103,21 +101,14 @@ theorem pointPlace_eq_iff {x₁ x₂ y₁ y₂ : F} (h₁ : W.Equation x₁ y₁
   exact XYIdeal_eq_iff h₁
 
 
-omit [IsDedekindDomain W.CoordinateRing] in
-/-- **The quotient by `XYIdeal W x y` is one-dimensional over the base**, for any polynomial `y`
-solving the Weierstrass equation at `x`: Mathlib's `quotientXYIdealEquiv` identifies it with `F`. -/
-theorem finrank_quotient_XYIdeal {y : F[X]} (h : (W.polynomial.eval y).eval x = 0) :
-    Module.finrank F (W.CoordinateRing ⧸ CoordinateRing.XYIdeal W x y) = 1 := by
-  rw [(_root_.WeierstrassCurve.Affine.CoordinateRing.quotientXYIdealEquiv
-    h).toLinearEquiv.finrank_eq, Module.finrank_self]
-
 /-- **The place of a point has degree one.** The degree of a place is the rank of its residue field
 over the base, and the residue field here is the base field itself — which is the sense in which the
 point–place dictionary lands in the *degree-one* places. -/
 theorem pointPlace.finrank_residueField {y : F} (h : W.Equation x y) :
     Module.finrank F (W.CoordinateRing ⧸ (pointPlace h).asIdeal) = 1 := by
-  rw [(Ideal.quotientEquivAlgOfEq F (pointPlace_asIdeal h)).toLinearEquiv.finrank_eq]
-  exact finrank_quotient_XYIdeal h
+  rw [(Ideal.quotientEquivAlgOfEq F (pointPlace_asIdeal h)).toLinearEquiv.finrank_eq,
+    (_root_.WeierstrassCurve.Affine.CoordinateRing.quotientXYIdealEquiv h).toLinearEquiv.finrank_eq,
+    Module.finrank_self]
 
 end WeierstrassCurve.Affine.CoordinateRing
 
