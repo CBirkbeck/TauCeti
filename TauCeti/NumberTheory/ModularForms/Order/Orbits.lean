@@ -72,6 +72,7 @@ lemma orderOfVanishingOnOrbit_mk [SlashInvariantFormClass F 𝒮ℒ k] (p : ℍ)
 /-- For a nonzero level-one form, only finitely many orbits carry nonzero order. -/
 lemma hasFiniteSupport_orderOfVanishingOnOrbit [ModularFormClass F 𝒮ℒ k] {f : F}
     (hf : (⇑f : ℍ → ℂ) ≠ 0) : (orderOfVanishingOnOrbit f).HasFiniteSupport :=
+  -- the `rfl` pattern rewrites `q` to `⟦p⟧`, after which `orderOfVanishingOnOrbit_mk` fires
   (finite_zeros_in_fd hf).of_surjOn Quotient.mk'' fun q hq ↦
     (ModularGroup.exists_rep_mem_fd q).imp fun p ⟨rfl, hfd⟩ ↦ ⟨⟨hfd, by simpa using hq⟩, rfl⟩
 
