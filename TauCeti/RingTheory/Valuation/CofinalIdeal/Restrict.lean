@@ -38,11 +38,16 @@ The point-level map on `Spv A` that Wedhorn's retraction `r_I` is built from liv
 
 The *characterisation* lemmas — the vanishing branches, `restrictToIdeal_eq_zero_iff` and
 `restrictToIdeal_le_iff` — are phrased through `cΓ_v(I)` itself or through vanishing of the
-restriction, so a consumer of them never names the transport. Two declarations necessarily do
-name it: `RestrictedValues`, which *is* the transported subgroup with a zero adjoined, and the
-private `restrictToIdeal_def`, whose content is the definitional unfolding and which therefore
-carries the boundedness hypothesis over that subgroup. `one_le_restrictToIdeal` mentions neither,
-being an order fact about `v.restrict`.
+restriction, so a consumer of them never names the transport. `one_le_restrictToIdeal` mentions
+neither, being an order fact about `v.restrict`.
+
+The transport is named by four declarations, each unavoidably. `RestrictedValues` *is* the
+transported subgroup with a zero adjoined, and the private `restrictToIdeal_def` is the
+definitional unfolding and so carries the boundedness hypothesis over it. The two comparison
+lemmas against an abstract bound, `coe_le_restrictToIdeal_iff` and `restrictToIdeal_lt_coe_iff`,
+quantify over a member of that subgroup: their whole point is to compare a restricted value
+against a bound arriving from the value group rather than from a ring element, and such a bound
+*is* an element of the transported subgroup. A cofinality argument needs them in that form.
 
 ## References
 
