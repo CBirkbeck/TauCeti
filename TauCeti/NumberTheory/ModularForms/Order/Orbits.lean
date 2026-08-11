@@ -24,8 +24,8 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
   `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit`: finite support on orbits for a
   nonzero form.
-* `TauCeti.ModularForm.sum_orderOfVanishingAt_eq_finsum_orbit`: a divisor sum reindexed over
-  the orbits its points represent, given that the orbit map is injective on them.
+* `TauCeti.ModularForm.sum_orderOfVanishingAt_comp_eq_finsum_orbit`: a divisor sum reindexed
+  over the orbits its points represent, given that the orbit map is injective on them.
 
 ## References
 
@@ -78,50 +78,56 @@ lemma hasFiniteSupport_orderOfVanishingOnOrbit [ModularFormClass F 𝒮ℒ k] {f
     rw [← hrep_mk q₁, ← hrep_mk q₂, h]
   exact ((finite_zeros_in_fd hf).subset h_image).of_finite_image h_inj
 
-/-- A divisor sum over points, reindexed over the orbits those points represent. The reindexing
-is lossless exactly when the orbit map is injective on the index set, which is all this asks.
+/-- A divisor sum reindexed over the orbits its points represent. The index set is arbitrary,
+mapped into `ℍ` by `p`; the reindexing is lossless exactly when the orbit map is injective on
+that image, which is all this asks.
 
 A caller whose points lie in the **open** fundamental domain gets the hypothesis from
 `ModularGroup.orbit_mk_injOn_fdo.mono`. It genuinely needs the open domain: on the closed `𝒟`
 the orbit map is not injective — `T` identifies the two vertical edges and `S` the two halves of
 the arc — so a set holding two identified boundary representatives would count their common orbit
 twice. -/
-lemma sum_orderOfVanishingAt_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k] {X : Finset ℍ}
-    (hX : Set.InjOn (Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) ↑X) :
-    ∑ p ∈ X, orderOfVanishingAt f p =
-      ∑ᶠ q ∈ (Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) '' ↑X,
+lemma sum_orderOfVanishingAt_comp_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k] {α : Type*}
+    {X : Finset α} (p : α → ℍ)
+    (hX : Set.InjOn (fun a ↦ (Quotient.mk'' (p a) :
+      MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ↑X) :
+    ∑ a ∈ X, orderOfVanishingAt f (p a) =
+      ∑ᶠ q ∈ (fun a ↦ (Quotient.mk'' (p a) :
+          MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) '' ↑X,
         orderOfVanishingOnOrbit f q := by
   rw [finsum_mem_image hX]
   simp only [orderOfVanishingOnOrbit_mk]
   exact (finsum_mem_coe_finset _ X).symm
 
 /-- The divisor sum of the valence formula, whose points are complex numbers carrying the
-interior bounds, reindexed over the orbits they represent.
+interior bounds, reindexed over the orbits they represent — the case `p := ofComplex` of
+`sum_orderOfVanishingAt_comp_eq_finsum_orbit`.
 
-The index set is a `Set` image rather than a `Finset` one on purpose: `Finset.image` would need
-`DecidableEq ℍ`, which does not exist. Injectivity composes `ofComplex` on the upper half plane
-with the orbit map on `𝒟ᵒ`, and the interior bounds supply membership of `𝒟ᵒ`. -/
-lemma sum_ofComplex_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k] {X : Finset ℂ}
-    (hpos : ∀ z ∈ X, 0 < z.im) (hnorm : ∀ z ∈ X, 1 < ‖z‖) (hre : ∀ z ∈ X, |z.re| < 1 / 2) :
+The index is a `Set` image rather than a `Finset` one, which keeps the statement free of a
+classical `DecidableEq ℍ` instance. Injectivity composes `ofComplex` on the upper half plane with
+the orbit map on `𝒟ᵒ`, and the interior bounds supply membership of `𝒟ᵒ`. -/
+lemma sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k]
+    {X : Finset ℂ} (hpos : ∀ z ∈ X, 0 < z.im) (hnorm : ∀ z ∈ X, 1 < ‖z‖)
+    (hre : ∀ z ∈ X, |z.re| < 1 / 2) :
     ∑ z ∈ X, orderOfVanishingAt f (ofComplex z) =
       ∑ᶠ q ∈ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
           MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) '' ↑X,
         orderOfVanishingOnOrbit f q := by
   have hcoe : ∀ z ∈ X, ((ofComplex z : ℍ) : ℂ) = z := fun z hz =>
     congrArg _ (ofComplex_apply_of_im_pos (hpos z hz))
-  have hfdo : ∀ z ∈ X, ofComplex z ∈ 𝒟ᵒ := fun z hz =>
-    ModularGroup.mem_fdo_of_one_lt_norm
-      (by rw [hcoe z hz]; exact hnorm z hz) (by rw [hcoe z hz]; exact hre z hz)
-  have hginj : Set.InjOn (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
-      MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ↑X := fun a ha b hb hab => by
-    have ha' : a ∈ X := by simpa using ha
-    have hb' : b ∈ X := by simpa using hb
-    have h : ofComplex a = ofComplex b :=
-      ModularGroup.orbit_mk_injOn_fdo (hfdo a ha') (hfdo b hb') hab
-    exact (hcoe a ha').symm.trans ((congrArg (fun p : ℍ ↦ (p : ℂ)) h).trans (hcoe b hb'))
-  rw [finsum_mem_image hginj]
-  simp only [orderOfVanishingOnOrbit_mk]
-  exact (finsum_mem_coe_finset _ X).symm
+  refine sum_orderOfVanishingAt_comp_eq_finsum_orbit f ofComplex fun a ha b hb hab => ?_
+  have ha' : a ∈ X := by simpa using ha
+  have hb' : b ∈ X := by simpa using hb
+  have hfdo : ∀ z ∈ X, ofComplex z ∈ 𝒟ᵒ := fun z hz => by
+    refine ⟨Complex.one_lt_normSq_iff.mpr ?_, ?_⟩
+    · rw [hcoe z hz]; exact hnorm z hz
+    · -- `𝒟ᵒ`'s real-part bound is stated with `UpperHalfPlane.re`; unfold it to the coercion
+      change |((ofComplex z : ℍ) : ℂ).re| < 1 / 2
+      rw [hcoe z hz]; exact hre z hz
+  have h : ofComplex a = ofComplex b :=
+    ModularGroup.orbit_mk_injOn_fdo (hfdo a ha') (hfdo b hb') hab
+  exact (hcoe a ha').symm.trans ((congrArg (fun w : ℍ ↦ (w : ℂ)) h).trans (hcoe b hb'))
+
 
 end ModularForm
 
