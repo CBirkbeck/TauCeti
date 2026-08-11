@@ -79,6 +79,15 @@ downstream cannot unfold it to `MonoidHom.range`; this lemma is how they extract
     g ∈ SLnZ n ↔ ∃ σ : SpecialLinearGroup (Fin n) ℤ, (σ : GL (Fin n) ℚ) = g := by
   rw [SLnZ, MonoidHom.mem_range]
 
+/-- The determinant of an integral witness, cast to `ℚ`, is the determinant of the element it
+represents. This is the bridge every consumer of an integral witness needs in order to move
+between `A.det : ℤ` and the rational determinant. -/
+lemma intCast_det_eq_det {g : GL (Fin n) ℚ} {A : Matrix (Fin n) (Fin n) ℤ}
+    (hA : (↑g : Matrix (Fin n) (Fin n) ℚ) = A.map (Int.cast : ℤ → ℚ)) :
+    ((A.det : ℤ) : ℚ) = (↑g : Matrix (Fin n) (Fin n) ℚ).det := by
+  rw [hA]
+  simpa [RingHom.mapMatrix_apply] using RingHom.map_det (Int.castRingHom ℚ) A
+
 /-- An element of `SL_n(ℤ)` has matrix determinant one over `ℚ`.
 
 `SpecialLinearGroup.det_mapGL` is the same fact for `GeneralLinearGroup.det`, which is

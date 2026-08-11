@@ -103,11 +103,7 @@ private lemma intMatrix_det_eq_of_mem_doubleCoset {a b : GL (Fin 2) ℚ}
   have hdet := det_eq_of_mem_doubleCoset_SLnZ 2 (DoubleCoset.mem_doubleCoset.mpr
     ⟨γ₁, Gamma0Image_le_SLnZ N hγ₁, γ₂, Gamma0Image_le_SLnZ N hγ₂, hb'⟩)
   have hcast : ((B.det : ℤ) : ℚ) = ((A.det : ℤ) : ℚ) := by
-    rw [show ((B.det : ℤ) : ℚ) = (↑b : Matrix (Fin 2) (Fin 2) ℚ).det by
-        rw [hB]; simpa [RingHom.mapMatrix_apply] using RingHom.map_det (Int.castRingHom ℚ) B,
-      show ((A.det : ℤ) : ℚ) = (↑a : Matrix (Fin 2) (Fin 2) ℚ).det by
-        rw [hA]; simpa [RingHom.mapMatrix_apply] using RingHom.map_det (Int.castRingHom ℚ) A]
-    exact hdet
+    rw [intCast_det_eq_det 2 hB, intCast_det_eq_det 2 hA]; exact hdet
   exact_mod_cast hcast
 
 /-- Coprimality of the determinant to the level depends only on the double coset. -/
