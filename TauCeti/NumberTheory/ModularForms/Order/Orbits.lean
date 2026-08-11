@@ -104,8 +104,12 @@ interior bounds, reindexed over the orbits they represent — the case `p := ofC
 `sum_orderOfVanishingAt_comp_eq_finsum_orbit`.
 
 The index is a `Set` image rather than a `Finset` one, which keeps the statement free of a
-classical `DecidableEq ℍ` instance. Injectivity composes `ofComplex` on the upper half plane with
-the orbit map on `𝒟ᵒ`, and the interior bounds supply membership of `𝒟ᵒ`. -/
+classical `DecidableEq (MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)` instance — the image elements are
+orbits, so that, not `DecidableEq ℍ`, is what a `Finset` image would need.
+
+The three hypotheses are the interior bounds the valence formula carries: positivity puts each
+point in `ℍ`, and the radial and real-part bounds put it in the open fundamental domain, where
+distinct points represent distinct orbits. -/
 lemma sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k]
     {X : Finset ℂ} (hpos : ∀ z ∈ X, 0 < z.im) (hnorm : ∀ z ∈ X, 1 < ‖z‖)
     (hre : ∀ z ∈ X, |z.re| < 1 / 2) :
