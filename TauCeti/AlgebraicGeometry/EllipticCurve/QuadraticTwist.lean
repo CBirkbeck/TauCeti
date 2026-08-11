@@ -733,6 +733,8 @@ section PointEquiv
 variable (M : Type*) [Field M] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
 
 variable (L) in
+/-- **The change of variables carries `E` to its twist over every `M ⊇ L`**, not just over `L`:
+`quadraticTwistVariableChange_smul` base changed along `L → M`. -/
 theorem quadraticTwistVariableChange_smul_baseChange :
     (E.quadraticTwistVariableChange L).baseChange M • E.baseChange M
       = (E.quadraticTwist L).baseChange M := by
@@ -744,6 +746,11 @@ theorem quadraticTwistVariableChange_smul_baseChange :
   exact h
 
 variable (L) in
+/-- **The twist's defining cocycle over `M`.** Any `σ ∈ Aut(M/K)` not fixing `L` pointwise
+conjugates the base change of `quadraticTwistVariableChange` by the automorphism `[-1]` of `E`.
+This is `map_quadraticTwistVariableChange` base changed to `M`: `σ` restricts to the nontrivial
+element of `Gal(L/K)` precisely because it moves `L`, which is what
+`Algebra.IsQuadraticExtension.restrictNormal_eq_one_iff` records. -/
 theorem quadraticTwistVariableChange_baseChange_map {σ : M ≃ₐ[K] M}
     (hσ : ¬ ∀ x : L, σ (algebraMap L M x) = algebraMap L M x) :
     ((E.quadraticTwistVariableChange L).baseChange M).map (σ : M →+* M)
@@ -767,7 +774,13 @@ theorem quadraticTwistVariableChange_baseChange_map {σ : M ≃ₐ[K] M}
 variable [E.IsElliptic] [DecidableEq M]
 
 variable (L) in
-/-- The isomorphism `Eᴸ(M) ≅ E(M)` on `M`-points, for a tower `K ⊆ L ⊆ M`. -/
+/-- **The isomorphism `Eᴸ(M) ≅ E(M)` on `M`-points**, for any field `M` in a tower `K ⊆ L ⊆ M`:
+the base change to `M` of the change of variables carrying `E` to its twist over `L`. It is
+natural in `M` (`quadraticTwistPointEquiv_map`) and anti-equivariant for the Galois elements that
+move `L` (`quadraticTwistPointEquiv_map_of_not_fixed`).
+
+Like the twist itself this is well defined only up to an `L`-automorphism of `E` — generically up
+to sign — and this definition makes one arbitrary choice, consistently across all `M`. -/
 noncomputable def quadraticTwistPointEquiv :
     ((E.quadraticTwist L).baseChange M).toAffine.Point ≃+ (E.baseChange M).toAffine.Point :=
   have : (E.baseChange M).IsElliptic := inferInstanceAs (E.map (algebraMap K M)).IsElliptic
@@ -777,7 +790,9 @@ noncomputable def quadraticTwistPointEquiv :
       ((E.quadraticTwistVariableChange L).baseChange M))
 
 variable (L) in
-/-- Naturality of `quadraticTwistPointEquiv` in `M`. -/
+/-- **Naturality of `quadraticTwistPointEquiv` in `M`.** The isomorphisms on `M`-points over
+varying `M ⊇ L` all come from one isomorphism of curves over `L`, so they commute with the maps on
+points induced by any `L`-algebra homomorphism. -/
 theorem quadraticTwistPointEquiv_map {N : Type*} [Field N] [Algebra K N] [Algebra L N]
     [IsScalarTower K L N] [DecidableEq N] (f : M →ₐ[L] N)
     (P : ((E.quadraticTwist L).baseChange M).toAffine.Point) :
