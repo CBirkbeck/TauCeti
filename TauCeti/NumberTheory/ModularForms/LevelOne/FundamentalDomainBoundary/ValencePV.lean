@@ -505,11 +505,14 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
   linear_combination -key
 
 
-/-- **The valence formula, indexed by orbits.** The roadmap states the level-one valence formula
-with its divisor sum running over `SL₂(ℤ)`-*orbits* of `ℍ` rather than over points, since the
-order is constant on an orbit. This is that form: the interior divisor points are replaced by the
-orbits they represent, which is faithful because distinct points of the open fundamental domain
-lie in distinct orbits.
+/-- **The valence formula, with its divisor sum reindexed over orbits.** The order is constant
+along the `SL₂(ℤ)`-action, so the interior divisor points may be replaced by the orbits they
+represent; this is faithful because distinct points of the open fundamental domain lie in
+distinct orbits.
+
+⚠ The sum here runs over the orbits *met by the divisor set* `T`, **not** over the whole
+non-elliptic orbit space, which is what the roadmap's Layer-1 target states. Reaching that needs
+the further step that an orbit missed by `T` contributes `0`.
 
 Level one is forced — `orderOfVanishingOnOrbit` is defined for `𝒮ℒ`-invariant forms — so this
 takes the level-one class directly and transports it to the `Γ = ⊤` instance the point-indexed
