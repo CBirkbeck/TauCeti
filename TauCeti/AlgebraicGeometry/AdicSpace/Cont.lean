@@ -111,7 +111,12 @@ theorem isContinuous_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero
     (w : Valuation A Γ₀) : (ofValuation w).IsContinuous ↔ w.IsContinuous :=
   (isEquiv_valuation_ofValuation w).isContinuous_iff
 
-/-- **Wedhorn Remark 7.8(2).** Over a discrete ring every point is continuous. -/
+/-- **Wedhorn Remark 7.8(2).** Over a discrete ring every point is continuous.
+
+The ambient `[SeparatelyContinuousMul A]` cannot be dropped here even though discreteness implies
+it mathematically: `ContinuousMul` is derivable from `DiscreteTopology` only by the explicit term
+`⟨continuous_of_discreteTopology⟩`, not by instance synthesis, and `cont A` needs the instance
+already in its *statement* — so a local `have` inside the proof would come too late. -/
 @[simp]
 theorem cont_eq_univ [DiscreteTopology A] : cont A = Set.univ :=
   Set.eq_univ_of_forall fun v ↦ isContinuous_of_discreteTopology v.valuation
@@ -123,5 +128,17 @@ theorem IsContinuous.comap {B : Type*} [CommRing B] [TopologicalSpace B] {φ : A
     (hφ : Continuous φ) {v : Spv B} (hv : v.IsContinuous) : (comap φ v).IsContinuous := by
   rw [← ofValuation_valuation v, comap_ofValuation, isContinuous_ofValuation]
   exact (isContinuous_def v |>.mp hv).comap hφ
+
+/-- **Remark 7.9 at the level of the subspaces.** `Cont B` lands inside the preimage of
+`Cont A` along `comap φ`, so `comap φ` restricts to a map `Cont B → Cont A`.
+
+This is the set-level form of `IsContinuous.comap`, and is stated separately because it is the
+form a consumer of the subspaces actually applies: the pointwise version has to be threaded
+through membership and preimage by hand at each call site, and it is this containment — not the
+pointwise implication — that the module docstring claims. -/
+theorem cont_subset_comap_preimage {B : Type*} [CommRing B] [TopologicalSpace B]
+    [SeparatelyContinuousMul B] {φ : A →+* B} (hφ : Continuous φ) :
+    cont B ⊆ comap φ ⁻¹' cont A :=
+  fun _ hv ↦ IsContinuous.comap hφ hv
 
 end TauCeti.ValuationSpectrum
