@@ -111,14 +111,21 @@ def IsAdmissible (I : Ideal A) (T : Finset A) (u : A) : Prop :=
 
 /-- Admissibility, unfolded: `I` lies in the radical of the span of the numerators together
 with the denominator. -/
+@[simp]
 theorem isAdmissible_iff {I : Ideal A} {T : Finset A} {u : A} :
     IsAdmissible I T u ↔ I ≤ (Ideal.span (insert u (T : Set A))).radical := Iff.rfl
 
+/-- **A numerator set containing `1` is admissible for every ideal.** The span is then already
+everything, so its radical is `⊤` and the containment defining admissibility is vacuous — for
+any `I` and any denominator `u`. This is what discharges admissibility in the `Γ_v = cΓ_v`
+branch of 7.5(ii), where Wedhorn's witness `Spv(A,I)((g₁d, …, gₙd, 1)/g₀d)` carries `1` among
+its numerators; the cofinal branch instead needs
+`isAdmissible_of_forall_exists_pow_mem`. -/
 lemma isAdmissible_of_one_mem {I : Ideal A} {T : Finset A} {u : A} (h : (1 : A) ∈ T) :
     IsAdmissible I T u := by
   have hspan : Ideal.span (insert u (T : Set A)) = ⊤ :=
     (Ideal.eq_top_iff_one _).mpr (Ideal.subset_span (mem_insert_of_mem _ h))
-  simp [IsAdmissible, hspan, Ideal.radical_top]
+  simp [hspan, Ideal.radical_top]
 
 /-- If `I` sits inside the radical of a span whose every generator has a power in `T`, then `T`
 is admissible for `I`. Only that containment is needed — no auxiliary ideal, and no equality of
