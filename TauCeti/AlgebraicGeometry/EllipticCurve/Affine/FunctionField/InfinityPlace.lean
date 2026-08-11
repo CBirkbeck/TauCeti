@@ -39,7 +39,8 @@ Each special value comes in two forms: one stated about the curve's coordinate f
 ultrametric inequality is `private`, and the norm-degree theory it rests on lives in
 `FunctionField/Norm.lean`.
 
-* `WeierstrassCurve.Affine.infinityPlace.X_div_mk_Y`,
+* `WeierstrassCurve.Affine.infinityPlace.X_div_mk_Y` (with
+  `WeierstrassCurve.Affine.infinityPlace.adjoinRoot_of_X_div_root` in the other spelling),
   `WeierstrassCurve.Affine.infinityPlace_surjective`,
   `WeierstrassCurve.Affine.infinityPlace.isUniformizer_X_div_mk_Y`: **`x / y` is a uniformiser at
   infinity.** Its value is `exp (-1)`, the value group is all of `ℤ`, and it is a uniformiser in
@@ -47,6 +48,9 @@ ultrametric inequality is `private`, and the norm-degree theory it rests on live
   here — its value group is a subgroup of the cyclic `ℤᵐ⁰ˣ` and is nontrivial — but surjectivity
   does: discreteness alone permits a generator `exp (-n)` with `n ≥ 1`, and the proper subgroup `2ℤ`
   genuinely occurs, being the value group of the restriction of `v_∞` to `F(x)`.
+
+The quotient value is the one special value whose restatement is not `@[simp]`; its docstring gives
+the simpNF reason.
 
 ## Roadmap
 
@@ -372,9 +376,31 @@ theorem infinityPlace.X_div_mk_Y :
   norm_num
 
 open scoped Classical in
+/-- `infinityPlace.X_div_mk_Y` in the spelling simp normalises the coordinate functions to.
+
+Deliberately **not** `@[simp]`, unlike the atomic `infinityPlace.adjoinRoot_of_X` and
+`infinityPlace.adjoinRoot_root`: `map_div₀` is itself a simp lemma, so simp decomposes the quotient
+and rewrites this left-hand side to `exp 2 / exp 3`, leaving the residual goal
+`exp 2 / exp 3 = (exp 1)⁻¹`. A quotient-shaped left-hand side is therefore not in simp-normal form
+and the repository's simpNF gate rejects the tag, so the closed value is supplied here for `rw` and
+`exact` instead. -/
+theorem infinityPlace.adjoinRoot_of_X_div_root :
+    infinityPlace W (algebraMap W.CoordinateRing W.FunctionField
+        (AdjoinRoot.of W.polynomial Polynomial.X) /
+      algebraMap W.CoordinateRing W.FunctionField (AdjoinRoot.root W.polynomial))
+      = WithZero.exp (-1) :=
+  infinityPlace.X_div_mk_Y W
+
+open scoped Classical in
 /-- **The value group at infinity is all of `ℤ`**: `v_∞` is surjective, so `ord_∞` attains every
 integer value. Powers of the uniformiser `x / y` realise them. This is the analogue for the place
-at infinity of `IsDedekindDomain.HeightOneSpectrum.valuation_surjective` for the affine places. -/
+at infinity of `IsDedekindDomain.HeightOneSpectrum.valuation_surjective` for the affine places.
+
+The four-line construction is not factored into a general criterion ("a `ℤᵐ⁰`-valued valuation on a
+field is surjective as soon as some element has value `exp (-1)`") on purpose. Mathlib has no such
+criterion, and its own `RatFunc.valuation_surjective` — the same statement for `F(x)` — proves it
+inline by this very `WithZero.log` construction rather than factoring one out. General valuation API
+does not belong in a curve file, and at four lines it does not earn a file of its own. -/
 theorem infinityPlace_surjective : Function.Surjective (infinityPlace W) := by
   intro g
   obtain rfl | hg := eq_or_ne g 0
