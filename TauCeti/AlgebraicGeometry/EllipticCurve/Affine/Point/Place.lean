@@ -104,13 +104,12 @@ theorem pointPlace_eq_iff {x₁ x₂ y₁ y₂ : F} (h₁ : W.Equation x₁ y₁
 
 /-- **The place of a point has degree one.** The degree of a place is the rank of its residue field
 over the base, and the residue field here is the base field itself — which is the sense in which the
-point–place dictionary lands in the *degree-one* places.
-
-The `XYIdeal`-level statement this specialises is deliberately not exported: it would be a one-line
-wrapper around Mathlib's `quotientXYIdealEquiv`, so the rewrite happens here instead. -/
+point–place dictionary lands in the *degree-one* places. -/
 @[simp]
 theorem pointPlace.finrank_residueField_eq_one {y : F} (h : W.Equation x y) :
     Module.finrank F (W.CoordinateRing ⧸ (pointPlace h).asIdeal) = 1 := by
+  -- the `XYIdeal`-level form is not exported: it would be a one-line wrapper around
+  -- `quotientXYIdealEquiv`, so the rewrite happens here
   rw [(Ideal.quotientEquivAlgOfEq F (pointPlace_asIdeal h)).toLinearEquiv.finrank_eq,
     (_root_.WeierstrassCurve.Affine.CoordinateRing.quotientXYIdealEquiv h).toLinearEquiv.finrank_eq,
     Module.finrank_self]
