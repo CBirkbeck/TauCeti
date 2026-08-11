@@ -10,6 +10,7 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ArcExcisionMeasure
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.LogDerivPV
 public import TauCeti.NumberTheory.ModularForms.Order.Orbits
+public import TauCeti.Analysis.Complex.UpperHalfPlane.Manifold
 import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Interior
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
@@ -65,7 +66,7 @@ public section
 
 open Complex Filter Function MeasureTheory Set Topology UpperHalfPlane
 
-open scoped MatrixGroups Real
+open scoped MatrixGroups Real Manifold
 
 namespace TauCeti
 
@@ -600,6 +601,20 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_modu
     (fun s hsT _ ↦ (TauCeti.UpperHalfPlane.analyticAt_comp_ofComplex
       (ModularFormClass.holo f) (hpos s hsT)).meromorphicAt)
     hpos hin hga hgz
+
+/-- Step 1-2 of the rung-1 bridge: an open neighbourhood of the truncated fundamental domain
+inside the upper half plane, carrying no zeros of `f ∘ ofComplex` beyond those already in the
+truncated domain. This is what makes `hoff` provable — it is false for an arbitrary `U`. -/
+private lemma exists_isOpen_truncated_zeros_confined {g : ℍ → ℂ} (hg : MDiff g) (hg0 : g ≠ 0)
+    (H : ℝ) :
+    ∃ U : Set ℂ, IsOpen U ∧
+      UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U ∧
+      U ⊆ {z : ℂ | 0 < z.im} ∧
+      {z ∈ U | (g ∘ ofComplex) z = 0} =
+        {z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H |
+          (g ∘ ofComplex) z = 0} :=
+  TauCeti.UpperHalfPlane.exists_isOpen_zeros_inter hg hg0
+    (by rintro _ ⟨p, -, rfl⟩; exact p.im_pos)
 
 end ModularForm
 
