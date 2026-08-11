@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Algebra.BigOperators.Finprod
+public import Mathlib.NumberTheory.Modular
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
 import TauCeti.NumberTheory.Modular.Orbits
@@ -24,6 +25,8 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
   `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit`: finite support on orbits for a
   nonzero form.
+* `TauCeti.ModularForm.exists_rep_mem_fd_of_orderOfVanishingOnOrbit_ne_zero`: an orbit of
+  nonzero order is represented by a point of `𝒟` at which the form has nonzero order.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_eq_finsum_orbit`: a divisor sum reindexed over
   the orbits its points represent, given that the orbit map is injective on them.
 
@@ -64,6 +67,20 @@ lemma orderOfVanishingOnOrbit_mk [SlashInvariantFormClass F 𝒮ℒ k] (p : ℍ)
     orderOfVanishingOnOrbit f (Quotient.mk'' p) = orderOfVanishingAt f p := by
   unfold orderOfVanishingOnOrbit
   rfl
+
+/-- An orbit of nonzero order is represented by a point of the closed fundamental domain at
+which the form itself has nonzero order.
+
+This is the direction the valence formula consumes: it turns a statement about an orbit — where
+there is no point to evaluate at — into one about a representative sitting in `𝒟`, which the
+contour hypotheses can then talk about. Every orbit meets `𝒟`
+(`ModularGroup.exists_rep_mem_fd`); the content is that the order transfers, which is
+`orderOfVanishingOnOrbit_mk`. -/
+lemma exists_rep_mem_fd_of_orderOfVanishingOnOrbit_ne_zero [SlashInvariantFormClass F 𝒮ℒ k]
+    {q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ} (hq : orderOfVanishingOnOrbit f q ≠ 0) :
+    ∃ p ∈ 𝒟, Quotient.mk'' p = q ∧ orderOfVanishingAt f p ≠ 0 := by
+  obtain ⟨p, hmk, hfd⟩ := ModularGroup.exists_rep_mem_fd q
+  exact ⟨p, hfd, hmk, by rwa [← orderOfVanishingOnOrbit_mk f p, hmk]⟩
 
 /-- For a nonzero level-one form, only finitely many orbits carry nonzero order. -/
 lemma hasFiniteSupport_orderOfVanishingOnOrbit [ModularFormClass F 𝒮ℒ k] {f : F}
