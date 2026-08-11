@@ -32,7 +32,8 @@ the other three axioms are the norm's multiplicativity and Mathlib's place at in
   `WeierstrassCurve.Affine.inftyValuation.mk_Y`
 * `WeierstrassCurve.Affine.inftyValuation.C`: the valuation is trivial on the base field — a
   nonzero constant has value `1`. The `Valuation.IsTrivialOn F` and `Valuation.IsNontrivial`
-  instances follow, so the place is usable through Mathlib's standard valuation API: `v_∞ x = exp 2` and `v_∞ y = exp 3` —
+  instances follow, so the place is usable through Mathlib's standard valuation
+  API: `v_∞ x = exp 2` and `v_∞ y = exp 3` —
   the double and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0
   asks for by name. They read the norm degrees of `FunctionField/Norm.lean` through the valuation.
 
