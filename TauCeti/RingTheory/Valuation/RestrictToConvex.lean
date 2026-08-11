@@ -47,9 +47,12 @@ before it can be restricted to; that transport ships with the retraction that ne
 
 * T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, §7.1.2
 
-Ported from the AINTLIB adic-spaces development (`aintlib-adic-spaces`,
-`projects/AdicSpaces/Adic spaces/ValuationContinuity.lean`, `convexRestrictFun` and
-`restrictToConvexBounded`). That development carries
+## Provenance
+
+Ported from AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), branch `dev/adic-spaces` at commit
+`37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`, project `projects/AdicSpaces/`,
+file `Adic spaces/ValuationContinuity.lean`, declarations `convexRestrictFun` and
+`restrictToConvexBounded`. That development carries
 `set_option backward.isDefEq.respectTransparency false` on the definition and several proofs;
 TauCeti's CI forbids `set_option`, and it turns out not to be needed — stating the `dite` chain
 as `restrictToConvexFun_unfold` and rewriting through it, rather than unfolding the definition in
