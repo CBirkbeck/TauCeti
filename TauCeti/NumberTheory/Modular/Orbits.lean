@@ -32,6 +32,14 @@ namespace TauCeti
 
 namespace ModularGroup
 
+/-- The orbit map `ℍ → ℍ ⧸ SL(2, ℤ)`, as a reducible abbreviation.
+
+It is spelled out inline — with the full `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ` ascription — at
+every site that needs the orbit of a point, because `Quotient.mk''` alone does not determine the
+setoid. Being an `abbrev` it is reducible, so statements using it stay definitionally equal to the
+spelled-out form and existing consumers are unaffected. -/
+noncomputable abbrev orbitMk (p : ℍ) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ := Quotient.mk'' p
+
 /-- Every `SL(2, ℤ)`-orbit of `ℍ` has a representative in the standard fundamental
 domain. -/
 lemma exists_rep_mem_fd (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
@@ -55,7 +63,7 @@ orbit map is injective there. This is the Second Fundamental Domain Lemma
 orbit-indexed valence formula needs. It fails on the closed domain `𝒟`, whose boundary is
 identified with itself by `T` and `S`. -/
 lemma orbit_mk_injOn_fdo :
-    Set.InjOn (fun p : ℍ ↦ (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) 𝒟ᵒ := by
+    Set.InjOn orbitMk 𝒟ᵒ := by
   intro p hp q hq hpq
   obtain ⟨g, hg⟩ := Quotient.exact' hpq
   have hg' : g • q = p := hg
