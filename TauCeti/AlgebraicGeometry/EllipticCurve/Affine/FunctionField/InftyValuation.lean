@@ -76,17 +76,6 @@ namespace WeierstrassCurve.Affine
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
-/-- Every function is a coordinate-ring element over a nonzero polynomial. -/
-theorem exists_algebraMap_mul_eq (f : W.FunctionField) :
-    ∃ (u : W.CoordinateRing) (d : F[X]), d ≠ 0 ∧
-      f * algebraMap F[X] W.FunctionField d = algebraMap W.CoordinateRing W.FunctionField u := by
-  obtain ⟨⟨u, ⟨d, _hd⟩⟩, hf⟩ := IsLocalization.mk'_surjective
-    (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) f
-  obtain ⟨p, hp, rfl⟩ := _hd
-  refine ⟨u, p, nonZeroDivisors.ne_zero hp, ?_⟩
-  rw [← hf, IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField]
-  exact IsLocalization.mk'_spec W.FunctionField u _
-
 theorem norm_algebraMap_polynomial' (d : F[X]) :
     Algebra.norm (RatFunc F) (algebraMap F[X] W.FunctionField d) =
       (algebraMap F[X] (RatFunc F) d) ^ 2 := by
@@ -111,29 +100,6 @@ theorem intDegree_norm_of_mul_eq {f : W.FunctionField} (hf : f ≠ 0) {u : W.Coo
   rw [RatFunc.intDegree_mul hNf (pow_ne_zero _ hdR), ← map_pow,
     RatFunc.intDegree_polynomial, RatFunc.intDegree_polynomial, natDegree_pow] at this
   omega
-
-/-- Every function is `α + β y` with `α β` rational functions of `x`: the `1, Y` basis of the
-coordinate ring over `F[X]`, divided through by a common denominator. -/
-theorem exists_basis_decomp (f : W.FunctionField) :
-    ∃ α β : RatFunc F, f = algebraMap (RatFunc F) W.FunctionField α +
-      algebraMap (RatFunc F) W.FunctionField β *
-        algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y) := by
-  obtain ⟨⟨u, ⟨d, _hd⟩⟩, hf⟩ := IsLocalization.mk'_surjective
-    (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) f
-  obtain ⟨p, hp, rfl⟩ := _hd
-  obtain ⟨a, b, rfl⟩ := CoordinateRing.exists_smul_basis_eq u
-  have hpne : algebraMap F[X] (RatFunc F) p ≠ 0 :=
-    RatFunc.algebraMap_ne_zero (nonZeroDivisors.ne_zero hp)
-  refine ⟨algebraMap F[X] (RatFunc F) a / algebraMap F[X] (RatFunc F) p,
-          algebraMap F[X] (RatFunc F) b / algebraMap F[X] (RatFunc F) p, ?_⟩
-  rw [← hf, IsLocalization.mk'_eq_iff_eq_mul]
-  simp only [Algebra.smul_def, map_add, map_mul, mul_one,
-    ← IsScalarTower.algebraMap_apply]
-  rw [IsScalarTower.algebraMap_apply F[X] (RatFunc F) W.FunctionField a,
-    IsScalarTower.algebraMap_apply F[X] (RatFunc F) W.FunctionField b,
-    IsScalarTower.algebraMap_apply F[X] (RatFunc F) W.FunctionField p]
-  rw [add_mul, mul_right_comm, ← map_mul, ← map_mul,
-    div_mul_cancel₀ _ hpne, div_mul_cancel₀ _ hpne]
 
 /-- Every function is `(a + b y) / p` with `a b p` polynomials, `p ≠ 0` — the form the degree
 formula consumes: numerator in the `1, Y` basis, denominator a polynomial. -/
@@ -257,6 +223,39 @@ theorem intDegree_norm_add_le {f g : W.FunctionField} (hf : f ≠ 0) (hg : g ≠
   omega
 
 open scoped Classical in
+/-- The ultrametric inequality for the composite `RatFunc.inftyValuation ∘ Algebra.norm`, which is
+`inftyValuation`'s `map_add_le_max'`. Split out to keep the definition short. -/
+private theorem inftyValuation_add_le_max (x y : W.FunctionField) :
+    RatFunc.inftyValuation F (Algebra.norm (RatFunc F) (x + y))
+      ≤ max (RatFunc.inftyValuation F (Algebra.norm (RatFunc F) x))
+            (RatFunc.inftyValuation F (Algebra.norm (RatFunc F) y)) := by
+  rcases eq_or_ne x 0 with rfl | hx
+  · simp
+  rcases eq_or_ne y 0 with rfl | hy
+  · simp
+  rcases eq_or_ne (x + y) 0 with hxy | hxy
+  · rw [hxy, show Algebra.norm (RatFunc F) (0 : W.FunctionField) = 0 from
+      (Algebra.norm_eq_zero_iff (R := RatFunc F)).mpr rfl, map_zero]
+    exact zero_le
+  have hNx : Algebra.norm (RatFunc F) x ≠ 0 :=
+    fun h => hx ((Algebra.norm_eq_zero_iff (R := RatFunc F)).mp h)
+  have hNy : Algebra.norm (RatFunc F) y ≠ 0 :=
+    fun h => hy ((Algebra.norm_eq_zero_iff (R := RatFunc F)).mp h)
+  have hNxy : Algebra.norm (RatFunc F) (x + y) ≠ 0 :=
+    fun h => hxy ((Algebra.norm_eq_zero_iff (R := RatFunc F)).mp h)
+  rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_apply, RatFunc.inftyValuation_apply,
+    RatFunc.inftyValuation_of_nonzero F hNx, RatFunc.inftyValuation_of_nonzero F hNy,
+    RatFunc.inftyValuation_of_nonzero F hNxy]
+  rcases max_cases (Algebra.norm (RatFunc F) x).intDegree
+      (Algebra.norm (RatFunc F) y).intDegree with ⟨h, _⟩ | ⟨h, _⟩
+  · refine le_trans ?_ (le_max_left _ _)
+    rw [WithZero.exp_le_exp]
+    exact le_trans (intDegree_norm_add_le W hx hy hxy) (le_of_eq h)
+  · refine le_trans ?_ (le_max_right _ _)
+    rw [WithZero.exp_le_exp]
+    exact le_trans (intDegree_norm_add_le W hx hy hxy) (le_of_eq h)
+
+open scoped Classical in
 /-- **The valuation at infinity on the function field of a Weierstrass curve**: Mathlib's place at
 infinity of `F(x)`, composed with the algebra norm. -/
 noncomputable def inftyValuation : Valuation W.FunctionField (WithZero (Multiplicative ℤ)) where
@@ -266,32 +265,7 @@ noncomputable def inftyValuation : Valuation W.FunctionField (WithZero (Multipli
       (Algebra.norm_eq_zero_iff (R := RatFunc F)).mpr rfl, map_zero]
   map_one' := by rw [map_one, map_one]
   map_mul' x y := by rw [map_mul, map_mul]
-  map_add_le_max' x y := by
-    rcases eq_or_ne x 0 with rfl | hx
-    · simp
-    rcases eq_or_ne y 0 with rfl | hy
-    · simp
-    rcases eq_or_ne (x + y) 0 with hxy | hxy
-    · rw [hxy, show Algebra.norm (RatFunc F) (0 : W.FunctionField) = 0 from
-        (Algebra.norm_eq_zero_iff (R := RatFunc F)).mpr rfl, map_zero]
-      exact zero_le
-    have hNx : Algebra.norm (RatFunc F) x ≠ 0 :=
-      fun h => hx ((Algebra.norm_eq_zero_iff (R := RatFunc F)).mp h)
-    have hNy : Algebra.norm (RatFunc F) y ≠ 0 :=
-      fun h => hy ((Algebra.norm_eq_zero_iff (R := RatFunc F)).mp h)
-    have hNxy : Algebra.norm (RatFunc F) (x + y) ≠ 0 :=
-      fun h => hxy ((Algebra.norm_eq_zero_iff (R := RatFunc F)).mp h)
-    rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_apply, RatFunc.inftyValuation_apply,
-      RatFunc.inftyValuation_of_nonzero F hNx, RatFunc.inftyValuation_of_nonzero F hNy,
-      RatFunc.inftyValuation_of_nonzero F hNxy]
-    rcases max_cases (Algebra.norm (RatFunc F) x).intDegree
-        (Algebra.norm (RatFunc F) y).intDegree with ⟨h, _⟩ | ⟨h, _⟩
-    · refine le_trans ?_ (le_max_left _ _)
-      rw [WithZero.exp_le_exp]
-      exact le_trans (intDegree_norm_add_le W hx hy hxy) (le_of_eq h)
-    · refine le_trans ?_ (le_max_right _ _)
-      rw [WithZero.exp_le_exp]
-      exact le_trans (intDegree_norm_add_le W hx hy hxy) (le_of_eq h)
+  map_add_le_max' := inftyValuation_add_le_max W
 
 
 open scoped Classical in
