@@ -69,8 +69,8 @@ Apache 2.0, `main` at `1c1c7466`, `projects/NagellLutz/LutzNagell/Universal.lean
 roadmap pins for the Nagell–Lutz strand. Every declaration here comes from that file: the `Coeff`
 index type and the whole `Universal` namespace (`curve`, `Poly`, `Ring`, `Field`, `polyToField`,
 `pointedCurve`, `Affine.point`, `Jacobian.point`, `curvePoly`, `curveRing`, `curveField` with their
-lemmas); and the
-specialization API (`cusp`, `specialize`, `polyEval`, `ringEval` with their compatibility lemmas).
+lemmas); and the specialization API (`cusp`, `specialize`, `polyEval`, `ringEval` with their
+compatibility lemmas).
 That file's header reads `Authors: Junyan Xu`; following this repository's convention for adapted
 material, the upstream authorship is credited here rather than in the copyright header.
 
@@ -147,7 +147,6 @@ protected abbrev Field : Type := FractionRing Universal.Ring
 commutative `R`, and finding it for the iterated `(MvPolynomial Coeff ℤ)[X][Y]` needs the inner
 `R[X]` to be seen as commutative first, which instance search does not do on its own here. -/
 instance : CommRing Poly := Polynomial.commRing
-
 
 /-- The ring homomorphism `ℤ[A₁,⋯,A₆,X,Y] → Universal.Field`: reduce modulo the Weierstrass
 polynomial, then include the universal ring into its fraction field. Every statement about the
