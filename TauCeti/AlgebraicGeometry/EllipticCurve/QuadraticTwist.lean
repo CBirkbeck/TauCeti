@@ -742,7 +742,7 @@ end Classification
 
 section PointEquiv
 
--- `M` is any field between `L` and a separable closure of `K`; for example `L` itself.
+-- `M` is any extension field of `L` compatible with the `K`-algebra tower; e.g. `L` itself.
 variable (M : Type*) [Field M] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
 
 variable (L) in
@@ -755,8 +755,9 @@ theorem quadraticTwistVariableChange_smul_baseChange :
     fun W ↦ by rw [baseChange, baseChange, baseChange, map_map, ← IsScalarTower.algebraMap_eq]
   rw [← hb E, baseChange_smul_baseChange, quadraticTwistVariableChange_smul, hb]
 
-/-- **The twist's defining cocycle over `M`.** Any `σ ∈ Aut(M/K)` not fixing `L` pointwise
-conjugates the base change of `quadraticTwistVariableChange` by the automorphism `[-1]` of `E`.
+/-- **The twist's defining cocycle over `M`.** Applying any `σ ∈ Aut(M/K)` that does not fix `L`
+pointwise multiplies the base change of `quadraticTwistVariableChange` on the right by the
+automorphism `[-1]` of `E`.
 This is `map_quadraticTwistVariableChange` base changed to `M`: `σ` restricts to the nontrivial
 element of `Gal(L/K)` precisely because it moves `L`, which is what
 `AlgEquiv.restrictNormal_eq_one_iff_algebraMap` records. -/
