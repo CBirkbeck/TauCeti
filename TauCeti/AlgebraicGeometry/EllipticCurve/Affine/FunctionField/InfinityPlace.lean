@@ -43,17 +43,17 @@ ultrametric inequality is `private`, and the norm-degree theory it rests on live
 `FunctionField/Norm.lean`.
 
 * `WeierstrassCurve.Affine.infinityPlace.X_div_mk_Y` (with
-  `WeierstrassCurve.Affine.infinityPlace.adjoinRoot_of_X_div_root` in the other spelling),
-  `WeierstrassCurve.Affine.infinityPlace_surjective`,
+  `WeierstrassCurve.Affine.infinityPlace.adjoinRoot_of_X_div_root` in the other spelling) and
   `WeierstrassCurve.Affine.infinityPlace.isUniformizer_X_div_mk_Y`: **`x / y` is a uniformiser at
-  infinity.** Its value is `exp (-1)`, the value group is all of `ℤ`, and it is a uniformiser in
-  Mathlib's `Valuation.IsUniformizer` sense. That the place is discrete of rank one needs no proof
-  here — its value group is a subgroup of the cyclic `ℤᵐ⁰ˣ` and is nontrivial — but surjectivity
-  does: discreteness alone permits a generator `exp (-n)` with `n ≥ 1`, and the proper subgroup `2ℤ`
-  genuinely occurs, being the value group of the restriction of `v_∞` to `F(x)`.
+  infinity.** Its value is `exp (-1)`, and it is a uniformiser in Mathlib's
+  `Valuation.IsUniformizer` sense. That the place is discrete of rank one needs no proof here — its
+  value group is a nontrivial subgroup of the cyclic `ℤᵐ⁰ˣ`, so Mathlib's `IsRankOneDiscrete`
+  instance fires by itself — but the *generator* does: discreteness alone permits `exp (-n)` with
+  `n ≥ 1`, and the proper subgroup `2ℤ` genuinely occurs, being the value group of the restriction
+  of `v_∞` to `F(x)`. Surjectivity of `v_∞` rules it out and is proved `private` here.
 
-The quotient value is the one special value whose restatement is not `@[simp]`; its docstring gives
-the simpNF reason.
+The quotient value is the one special value whose restatement is not `@[simp]`; the comment above it
+gives the simpNF reason.
 
 ## Roadmap
 
@@ -393,14 +393,13 @@ theorem infinityPlace.X_div_mk_Y :
   norm_num
 
 open scoped Classical in
-/-- `infinityPlace.X_div_mk_Y` in the spelling simp normalises the coordinate functions to.
-
-Deliberately **not** `@[simp]`, unlike the atomic `infinityPlace.adjoinRoot_of_X` and
-`infinityPlace.adjoinRoot_root`: `map_div₀` is itself a simp lemma, so simp decomposes the quotient
-and rewrites this left-hand side to `exp 2 / exp 3`, leaving the residual goal
-`exp 2 / exp 3 = (exp 1)⁻¹`. A quotient-shaped left-hand side is therefore not in simp-normal form
-and the repository's simpNF gate rejects the tag, so the closed value is supplied here for `rw` and
-`exact` instead. -/
+-- NB this one is deliberately NOT `@[simp]`, unlike the atomic `infinityPlace.adjoinRoot_of_X` and
+-- `infinityPlace.adjoinRoot_root`: `map_div₀` is itself a simp lemma, so simp decomposes the
+-- quotient and rewrites this left-hand side to `exp 2 / exp 3`, leaving the residual goal
+-- `exp 2 / exp 3 = (exp 1)⁻¹`.
+-- A quotient-shaped left-hand side is therefore not in simp-normal form and the repository's simpNF
+-- gate rejects the tag, so the closed value is supplied for `rw` and `exact` instead.
+/-- `infinityPlace.X_div_mk_Y` in the spelling simp normalises the coordinate functions to. -/
 theorem infinityPlace.adjoinRoot_of_X_div_root :
     infinityPlace W (algebraMap W.CoordinateRing W.FunctionField
         (AdjoinRoot.of W.polynomial Polynomial.X) /
@@ -409,16 +408,16 @@ theorem infinityPlace.adjoinRoot_of_X_div_root :
   infinityPlace.X_div_mk_Y W
 
 open scoped Classical in
+-- Private: it exists to identify Mathlib's `IsRankOneDiscrete.generator`, and nothing outside this
+-- file consumes it yet. The general criterion it specialises — a `ℤᵐ⁰`-valued valuation on a field
+-- is surjective as soon as some element has value `exp (-1)` — is not extracted either: Mathlib has
+-- no such criterion and inlines this same `WithZero.log` construction in both of its analogues,
+-- `RatFunc.valuation_surjective` and `HeightOneSpectrum.valuation_surjective`. When a consumer
+-- appears (§Divisors' `deg (div f) = 0`, or the ramification index of §`inducedPlace`, which needs
+-- the value groups of both places exactly), that PR should export whichever form it needs.
 /-- **The value group at infinity is all of `ℤ`**: `v_∞` is surjective, so `ord_∞` attains every
-integer value. Powers of the uniformiser `x / y` realise them. This is the analogue for the place
-at infinity of `IsDedekindDomain.HeightOneSpectrum.valuation_surjective` for the affine places.
-
-The four-line construction is not factored into a general criterion ("a `ℤᵐ⁰`-valued valuation on a
-field is surjective as soon as some element has value `exp (-1)`") on purpose. Mathlib has no such
-criterion, and its own `RatFunc.valuation_surjective` — the same statement for `F(x)` — proves it
-inline by this very `WithZero.log` construction rather than factoring one out. General valuation API
-does not belong in a curve file, and at four lines it does not earn a file of its own. -/
-theorem infinityPlace_surjective : Function.Surjective (infinityPlace W) := by
+integer value, the powers of the uniformiser `x / y` realising them. -/
+private theorem infinityPlace_surjective : Function.Surjective (infinityPlace W) := by
   intro g
   obtain rfl | hg := eq_or_ne g 0
   · exact ⟨0, map_zero _⟩
@@ -429,14 +428,13 @@ theorem infinityPlace_surjective : Function.Surjective (infinityPlace W) := by
     WithZero.exp_log hg]
 
 open scoped Classical in
+-- The place is discrete of rank one for free — its value group is a subgroup of the cyclic group
+-- `ℤᵐ⁰ˣ`, nontrivial by `instIsNontrivial` — but discreteness alone leaves the generator as
+-- `exp (-n)` for an unspecified `n ≥ 1`, and the proper subgroup genuinely occurs: the restriction
+-- of `v_∞` to `F(x)` has value group `2ℤ` by `infinityPlace.algebraMap_eq_sq`. Surjectivity is what
+-- pins the generator to `exp (-1)`, and that is the content of this proof.
 /-- **`x / y` is a uniformiser at the place at infinity**, in Mathlib's sense: its value generates
-the value group and is `< 1`.
-
-The place is discrete of rank one for free — its value group is a subgroup of the cyclic group
-`ℤᵐ⁰ˣ`, nontrivial by `instIsNontrivial` — but discreteness alone leaves the generator as `exp (-n)`
-for an unspecified `n ≥ 1`; the restriction of `v_∞` to `F(x)` really does have value group `2ℤ`
-(`infinityPlace.algebraMap_eq_sq`). Surjectivity is what pins the generator to `exp (-1)`, and that
-is the whole content here. -/
+the value group and is `< 1`. -/
 theorem infinityPlace.isUniformizer_X_div_mk_Y :
     (infinityPlace W).IsUniformizer (algebraMap W.CoordinateRing W.FunctionField
         (algebraMap F[X] W.CoordinateRing Polynomial.X) /
