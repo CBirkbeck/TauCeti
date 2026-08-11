@@ -9,8 +9,8 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ExcisedIntegrability
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ArcExcisionMeasure
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.LogDerivPV
-public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 public import TauCeti.NumberTheory.ModularForms.Order.Orbits
+import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Interior
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.I.Value
@@ -514,13 +514,11 @@ distinct orbits.
 non-elliptic orbit space, which is what the roadmap's Layer-1 target states. Reaching that needs
 the further step that an orbit missed by `T` contributes `0`.
 
-Level one is forced — `orderOfVanishingOnOrbit` is defined for `𝒮ℒ`-invariant forms — so this
-takes the level-one class directly and transports it to the `Γ = ⊤` instance the point-indexed
-formula wants. -/
-theorem finsum_orderOfVanishingOnOrbit_add_elliptic_add_qExpansionOrderAtCusp_eq
+Level one is forced: `orderOfVanishingOnOrbit` is defined for `𝒮ℒ`-invariant forms, so this
+theorem takes the level-one class rather than a general `Γ`. -/
+theorem finsum_orderOfVanishingOnOrbit_mem_image_add_elliptic_add_qExpansionOrderAtCusp_eq
     [SlashInvariantFormClass F 𝒮ℒ k] (f : F) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ} (hH : 1 < H)
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
-    (hper : Periodic (⇑f ∘ ofComplex) 1)
     (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
       AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
     (hU : IsOpen U)
@@ -554,7 +552,10 @@ theorem finsum_orderOfVanishingOnOrbit_add_elliptic_add_qExpansionOrderAtCusp_eq
   have : SlashInvariantFormClass F ((⊤ : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)) k :=
     MonoidHom.range_eq_map (Matrix.SpecialLinearGroup.mapGL ℝ : SL(2, ℤ) →* GL (Fin 2) ℝ) ▸ ‹_›
   have key := sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
-    (Γ := ⊤) f (Subgroup.mem_top _) hH hnorm hinv hper hoffγ hU hUdom hoff hmero hpos hin hga hgz
+    (Γ := ⊤) f (Subgroup.mem_top _) hH hnorm hinv
+    (SlashInvariantFormClass.periodic_comp_ofComplex f
+      (MonoidHom.range_eq_map (Matrix.SpecialLinearGroup.mapGL ℝ : SL(2, ℤ) →* GL (Fin 2) ℝ) ▸
+        one_mem_strictPeriods_SL)) hoffγ hU hUdom hoff hmero hpos hin hga hgz
   rw [← horb]
   push_cast
   exact key
