@@ -429,7 +429,7 @@ theorem restrictToIdeal_ne_zero_of_le (v : Valuation A Γ₀) (I : Ideal A)
       ⟨_, mem_characteristicGenerators.mpr ⟨h1.le, a, v.restrict_eq_mk ha0⟩,
         Left.inv_le_self h1.le, le_rfl⟩
 
-/-- **The restriction does not kill an admissible denominator.** If `u` dominates a finite set
+/-- **The restriction does not kill an admissible denominator.** If `u` dominates a set
 `T` with `I ⊆ √((T ∪ {u}) · A)` and `v u ≠ 0`, then `v|cΓ_v(I)` keeps `u`.
 
 This is the step Wedhorn argues by contradiction in the proof of Lemma 7.5(iii): were `u`

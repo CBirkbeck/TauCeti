@@ -21,7 +21,9 @@ spectral with the sets
 Spv (A, I)(T/s) = { v ∈ Spv (A, I) ; v(t) ≤ v(s) ≠ 0 for all t ∈ T },   I ⊆ √(T · A)
 ```
 
-as a basis of quasi-compact opens. No second topology on the subtype is introduced here: the
+as a generating family. (Wedhorn states them as a basis of quasi-compact opens; what is
+proved here is that they generate the topology, which is what the patch criterion consumes.)
+No second topology on the subtype is introduced here: the
 `Subtype` instance *is* that topology, which is the content of
 `instTopologicalSpace_spvOfIdeal_eq_generateFrom`.
 
@@ -47,9 +49,10 @@ Note that `Spv (A, I)` is *not* pro-constructible in `Spv A` in general, so
 
 * `TauCeti.ValuationSpectrum.basicOpenFinset` : Wedhorn's `Spv(A)(T/s)` for finite `T`.
 * `TauCeti.ValuationSpectrum.IsAdmissible` : his condition `I ⊆ √(T · A)` on a numerator set.
-* `TauCeti.ValuationSpectrum.rationalFamily` : the basis `R` of `Spv (A, I)`.
-* `TauCeti.ValuationSpectrum.patchTopologyOfIdeal` : the compact witness topology, coinduced
-  along `r_I`. This is a proof device, not an instance.
+* `TauCeti.ValuationSpectrum.rationalFamily` : Wedhorn's family `R`, which generates the
+  topology of `Spv (A, I)`.
+(The compact witness topology used in the proof — coinduced along `r_I` — is private: it is a
+proof device for the patch criterion, not API.)
 
 ## Main results
 
@@ -98,48 +101,6 @@ open Set Topology TopologicalSpace TauCeti TauCeti.Valuation MonoidWithZeroHom
 
 variable {A : Type*} [CommRing A]
 
-/-! ### Wedhorn's `Spv(A)(T/s)` -/
-
-/-- **Wedhorn's `Spv(A)(T/s)`** for a finite set `T`: the points where every `t ∈ T` is
-dominated by `s`, and `s` is not in the support. -/
-def basicOpenFinset (T : Finset A) (s : A) : Set (Spv A) :=
-  {v | (∀ t ∈ T, v.toValuativeRel.vle t s) ∧ ¬ v.toValuativeRel.vle s 0}
-
-@[simp]
-lemma mem_basicOpenFinset_iff (T : Finset A) (s : A) (v : Spv A) :
-    v ∈ basicOpenFinset T s ↔
-      (∀ t ∈ T, v.toValuativeRel.vle t s) ∧ ¬ v.toValuativeRel.vle s 0 := Iff.rfl
-
-/-- Each numerator gives back an ordinary basic open. -/
-lemma basicOpenFinset_subset_basicOpen {T : Finset A} {s t : A} (ht : t ∈ T) :
-    basicOpenFinset T s ⊆ basicOpen t s :=
-  fun _ hv ↦ (mem_basicOpen_iff t s _).mpr ⟨hv.1 t ht, hv.2⟩
-
-/-- `Spv(A)(T/s)` is the finite intersection of the basic opens `Spv(A)(t/s)` for `t` ranging
-over `T ∪ {s}`; the extra `s` is what carries the nonvanishing clause when `T` is empty. -/
-lemma basicOpenFinset_eq_biInter (T : Finset A) (s : A) :
-    basicOpenFinset T s = ⋂ t ∈ insert s (T : Set A), basicOpen t s := by
-  ext v
-  simp only [mem_basicOpenFinset_iff, mem_iInter, mem_basicOpen_iff, Set.mem_insert_iff,
-    Finset.mem_coe]
-  refine ⟨fun h t ht ↦ ?_, fun h ↦ ⟨fun t ht ↦ (h t (Or.inr ht)).1, fun hs ↦ ?_⟩⟩
-  · rcases ht with rfl | ht
-    · exact ⟨v.toValuativeRel.vle_refl t, h.2⟩
-    · exact ⟨h.1 t ht, h.2⟩
-  · exact (h s (Or.inl rfl)).2 hs
-
-lemma isOpen_basicOpenFinset (T : Finset A) (s : A) : IsOpen (basicOpenFinset T s) := by
-  rw [basicOpenFinset_eq_biInter]
-  exact Set.Finite.isOpen_biInter (T.finite_toSet.insert s) fun t _ ↦ isOpen_basicOpen t s
-
-/-- `Spv(A)(T/s)` is clopen for the patch topology: a finite intersection of patch-clopen basic
-opens. This is the input the patch criterion consumes. -/
-lemma isClopen_patchTopology_basicOpenFinset (T : Finset A) (s : A) :
-    @IsClopen (Spv A) (patchTopology A) (basicOpenFinset T s) := by
-  rw [basicOpenFinset_eq_biInter]
-  exact @Set.Finite.isClopen_biInter _ (patchTopology A) _ _ (T.finite_toSet.insert s) _
-    fun t _ ↦ isClopen_patchTopology_basicOpen t s
-
 /-! ### Admissible numerator sets -/
 
 /-- **Wedhorn's condition `I ⊆ √(T · A)`** on a numerator set, in the form that also absorbs the
@@ -148,24 +109,29 @@ denominator — harmless because `Spv(A,I)(T/s) = Spv(A,I)((T ∪ {s})/s)`, and 
 def IsAdmissible (I : Ideal A) (T : Finset A) (u : A) : Prop :=
   I ≤ (Ideal.span (insert u (T : Set A))).radical
 
+/-- Admissibility, unfolded: `I` lies in the radical of the span of the numerators together
+with the denominator. -/
+theorem isAdmissible_iff {I : Ideal A} {T : Finset A} {u : A} :
+    IsAdmissible I T u ↔ I ≤ (Ideal.span (insert u (T : Set A))).radical := Iff.rfl
+
 lemma isAdmissible_of_one_mem {I : Ideal A} {T : Finset A} {u : A} (h : (1 : A) ∈ T) :
     IsAdmissible I T u := by
   have hspan : Ideal.span (insert u (T : Set A)) = ⊤ :=
     (Ideal.eq_top_iff_one _).mpr (Ideal.subset_span (mem_insert_of_mem _ h))
   simp [IsAdmissible, hspan, Ideal.radical_top]
 
-/-- If every generator of an ideal sharing a radical with `I` has a power in `T`, then `T` is
-admissible for `I`. -/
-lemma isAdmissible_of_forall_exists_pow_mem {I J : Ideal A} {S T : Finset A} {u : A}
-    (hspan : Ideal.span (S : Set A) = J) (hrad : I.radical = J.radical)
+/-- If `I` sits inside the radical of a span whose every generator has a power in `T`, then `T`
+is admissible for `I`. Only that containment is needed — no auxiliary ideal, and no equality of
+spans or radicals. -/
+lemma isAdmissible_of_forall_exists_pow_mem {I : Ideal A} {S T : Finset A} {u : A}
+    (hI : I ≤ (Ideal.span (S : Set A)).radical)
     (h : ∀ σ ∈ S, ∃ k : ℕ, σ ^ k ∈ T) : IsAdmissible I T u := by
   have hle : Ideal.span (S : Set A) ≤ (Ideal.span (insert u (T : Set A))).radical := by
     rw [Ideal.span_le]
     intro σ hσ
     obtain ⟨k, hk⟩ := h σ hσ
     exact Ideal.mem_radical_iff.mpr ⟨k, Ideal.subset_span (mem_insert_of_mem _ hk)⟩
-  calc I ≤ I.radical := Ideal.le_radical
-    _ = (Ideal.span (S : Set A)).radical := by rw [hrad, hspan]
+  calc I ≤ (Ideal.span (S : Set A)).radical := hI
     _ ≤ ((Ideal.span (insert u (T : Set A))).radical).radical := Ideal.radical_mono hle
     _ = (Ideal.span (insert u (T : Set A))).radical := Ideal.radical_idem _
 
@@ -212,7 +178,7 @@ theorem exists_basicOpenFinset_of_characteristicSubgroup_eq_top {v : Spv A}
   have hdfs : v.toValuativeRel.vle (d * f) (d * s) := by
     have h := v.toValuativeRel.mul_vle_mul_left hfs d
     rwa [mul_comm f d, mul_comm s d] at h
-  refine ⟨{d * f, 1}, d * s, by simp, ⟨?_, hds0⟩, ?_⟩
+  refine ⟨{d * f, 1}, d * s, by simp, (mem_basicOpenFinset_iff _ _ _).mpr ⟨?_, hds0⟩, ?_⟩
   · intro t ht
     simp only [Finset.mem_insert, Finset.mem_singleton] at ht
     rcases ht with rfl | rfl
@@ -241,7 +207,7 @@ theorem exists_basicOpenFinset_of_forall_cofinalValue {v : Spv A} (S : Finset A)
   choose n hn using key
   refine ⟨insert f (S.attach.image fun σ ↦ σ.1 ^ n σ.1 σ.2), Finset.mem_insert_self _ _,
     fun σ hσ ↦ ⟨n σ hσ, Finset.mem_insert_of_mem (Finset.mem_image.mpr ⟨⟨σ, hσ⟩,
-      Finset.mem_attach _ _, rfl⟩)⟩, ?_, hs0⟩
+      Finset.mem_attach _ _, rfl⟩)⟩, (mem_basicOpenFinset_iff _ _ _).mpr ⟨?_, hs0⟩⟩
   intro t ht
   rcases Finset.mem_insert.mp ht with rfl | ht
   · exact hfs
@@ -259,11 +225,13 @@ theorem exists_isAdmissible_basicOpenFinset {I : Ideal A}
       basicOpenFinset T u ⊆ basicOpen f s := by
   obtain ⟨J, hJfg, hrad⟩ := hfg
   obtain ⟨S, hS⟩ := hJfg
+  have hI : I ≤ (Ideal.span (S : Set A)).radical := by
+    rw [hS, ← hrad]; exact Ideal.le_radical
   rcases (characteristicSubgroupOfIdeal_eq_top_iff_forall_span _ hS hrad).mp
       (mem_spvOfIdeal_iff.mp hvI) with hcof | htop
   · obtain ⟨T, hfT, hpow, hvT⟩ :=
       exists_basicOpenFinset_of_forall_cofinalValue S (fun σ hσ ↦ hcof σ hσ) hv
-    exact ⟨T, s, isAdmissible_of_forall_exists_pow_mem hS hrad hpow, hvT,
+    exact ⟨T, s, isAdmissible_of_forall_exists_pow_mem hI hpow, hvT,
       basicOpenFinset_subset_basicOpen hfT⟩
   · obtain ⟨T, u, h1, hvT, hsub⟩ :=
       exists_basicOpenFinset_of_characteristicSubgroup_eq_top htop hv
@@ -271,13 +239,23 @@ theorem exists_isAdmissible_basicOpenFinset {I : Ideal A}
 
 /-! ### The basis `R` and the topology it generates -/
 
-/-- **Wedhorn's basis `R`** of `Spv (A, I)`: the traces of the admissible `Spv(A)(T/u)`. -/
+/-- **Wedhorn's family `R`** for `Spv (A, I)`: the traces of the admissible `Spv(A)(T/u)`.
+It generates the subspace topology — see `instTopologicalSpace_spvOfIdeal_eq_generateFrom`. -/
 def rationalFamily (I : Ideal A) (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     Set (Set (spvOfIdeal I hfg)) :=
   {U | ∃ (T : Finset A) (u : A), IsAdmissible I T u ∧ U = Subtype.val ⁻¹' basicOpenFinset T u}
 
-/-- **Wedhorn 7.5(1), the basis statement**: the subspace topology of `Spv (A, I)` is generated
-by the admissible rational subsets. One direction is that each of them is the trace of an open
+/-- Membership in the generating family: a set belongs exactly when it is the trace of some
+admissible `Spv(A)(T/u)`. -/
+@[simp]
+theorem mem_rationalFamily_iff {I : Ideal A} {hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical}
+    {U : Set (spvOfIdeal I hfg)} :
+    U ∈ rationalFamily I hfg ↔
+      ∃ (T : Finset A) (u : A), IsAdmissible I T u ∧
+        U = Subtype.val ⁻¹' basicOpenFinset T u := Iff.rfl
+
+/-- **Wedhorn 7.5(1), step (ii)**: the subspace topology of `Spv (A, I)` is generated by the
+admissible rational subsets. One direction is that each of them is the trace of an open
 of `Spv A`; the other is step (ii), applied to the subbasis of `Spv A`. -/
 theorem instTopologicalSpace_spvOfIdeal_eq_generateFrom (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
