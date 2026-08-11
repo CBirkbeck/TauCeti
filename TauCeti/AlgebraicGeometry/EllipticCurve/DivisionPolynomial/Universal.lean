@@ -15,15 +15,40 @@ polynomial ring `ℤ[A₁,A₂,A₃,A₄,A₆]`, and the universal pointed ellip
 `Universal.Ring = Universal.Poly/⟨P⟩ = ℤ[A₁,A₂,A₃,A₄,A₆,X,Y]/⟨P⟩` (where `P` is the Weierstrass
 polynomial) with distinguished point `(X,Y)`.
 
-Given a Weierstrass curve `W` over a commutative ring `R`, we define the specialization
-homomorphism `W.specialize : ℤ[A₁,A₂,A₃,A₄,A₆] →+* R`. If `(x,y)` is a point on the affine plane,
-we define `W.polyEval x y : Universal.Poly →+* R`, which factors through
-`W.ringEval x y : Universal.Ring →+* R` if `(x,y)` is on `W`.
+## Main definitions
 
-We also introduce the cusp curve `Y² = X³`, on which lies the rational point `(1,1)`, with
-the nice property that `ψₙ(1,1) = n`, making it easy to prove nonvanishing of the universal `ψₙ`
-when `n ≠ 0` by specializing to the cusp curve, which shows that `(X,Y)` is a point of infinite
-order on the universal pointed elliptic curve.
+* `WeierstrassCurve.Universal.curve`: the universal Weierstrass curve, over `ℤ[A₁,⋯,A₆]`.
+* `WeierstrassCurve.Universal.Poly`, `.Ring`, `.Field`: the polynomial ring `ℤ[A₁,⋯,A₆,X,Y]`, its
+  quotient by the Weierstrass polynomial, and that quotient's field of fractions; `polyToField` is
+  the composite `Poly →+* Field`.
+* `WeierstrassCurve.Universal.pointedCurve`: the universal curve over `Universal.Field`. It is an
+  elliptic curve, and carries the distinguished point `Universal.Affine.point`
+  (`Universal.Jacobian.point` in Jacobian coordinates).
+* `WeierstrassCurve.specialize`: for a Weierstrass curve `W` over a commutative ring `R`, the
+  specialization homomorphism `ℤ[A₁,⋯,A₆] →+* R` substituting `W`'s coefficients.
+* `WeierstrassCurve.Universal.polyEval`, `.ringEval`: the homomorphism `Universal.Poly →+* R`
+  induced by a point `(x,y)` of the affine plane, and its factorisation `Universal.Ring →+* R`
+  through the Weierstrass polynomial when `(x,y)` lies on `W`.
+* `WeierstrassCurve.cusp`: the cusp curve `Y² = X³`.
+
+## Main results
+
+* `WeierstrassCurve.Universal.equation_point`: `(X,Y)` satisfies the affine Weierstrass equation
+  of `pointedCurve` — the universal curve really is pointed.
+* `WeierstrassCurve.map_specialize`: every Weierstrass curve is a specialization of the universal
+  one.
+* `WeierstrassCurve.Universal.curveRing_map_ringEval`: pushing the universal curve over
+  `Universal.Ring` along `ringEval` returns `W`, so one identity over the universal pointed curve
+  is the same identity for every curve and every point on it.
+* `WeierstrassCurve.Universal.algebraMap_field_injective`: `ℤ[A₁,⋯,A₆]` embeds in
+  `Universal.Field`, which is what makes `pointedCurve` an elliptic curve.
+
+## Implementation notes
+
+The cusp curve `Y² = X³` carries the rational point `(1,1)`, with the nice property that
+`ψₙ(1,1) = n`. Specializing along it is therefore the cheap route to nonvanishing of the universal
+`ψₙ` for `n ≠ 0`, which shows that `(X,Y)` is a point of infinite order on the universal pointed
+elliptic curve. `Field.two_ne_zero` is the first instance of that argument.
 
 ## Roadmap
 
@@ -79,8 +104,10 @@ open scoped Polynomial.Bivariate
 
 namespace WeierstrassCurve
 
-/-- A type whose elements represent the five coefficients `a₁`, `a₂`, `a₃`, `a₄` and `a₆`
-of the Weierstrass polynomial. -/
+/-- A type whose elements represent the five coefficients `a₁`, `a₂`, `a₃`, `a₄` and `a₆` of the
+Weierstrass polynomial. It indexes the variables of `MvPolynomial Coeff ℤ = ℤ[A₁,⋯,A₆]`, the ring
+the universal curve is defined over. There is no `A₅` — the subscripts are weights, not positions —
+and the constructors are uppercase as names of indeterminates: `specialize` sends `A₁` to `W.a₁`. -/
 inductive Coeff : Type | A₁ : Coeff | A₂ : Coeff | A₃ : Coeff | A₄ : Coeff | A₆ : Coeff
 
 namespace Universal
@@ -89,27 +116,28 @@ open scoped Polynomial Polynomial.Bivariate
 open Coeff
 
 open MvPolynomial (X) in
-/-- The universal Weierstrass curve over the polynomial ring in five variables
-(the **universal polynomial ring** for Weierstrass curves),
-corresponding to the five coefficients of the Weierstrass polynomial. -/
+/-- The universal Weierstrass curve: the curve over `ℤ[A₁,⋯,A₆] = MvPolynomial Coeff ℤ` (the
+**universal polynomial ring** for Weierstrass curves) whose five coefficients are the five
+indeterminates. Every Weierstrass curve is one of its specializations (`map_specialize`); its base
+changes are `curvePoly`, `curveRing` and `curveField = pointedCurve`. -/
 def curve : Affine (MvPolynomial Coeff ℤ) :=
   { a₁ := X A₁, a₂ := X A₂, a₃ := X A₃, a₄ := X A₄, a₆ := X A₆ }
 
 /-- The discriminant of the universal Weierstrass curve is a nonzero polynomial in `ℤ[A₁,⋯,A₆]`,
-i.e. a Weierstrass equation is not singular *identically* in its coefficients. Witnessed by
-specializing to `Y² = X³ + 1`, where `Δ = -432`. Transported along `algebraMap_field_injective`,
-this is what makes `pointedCurve` an elliptic curve over `Universal.Field`. -/
-lemma Δ_curve_ne_zero : curve.Δ ≠ 0 := fun h ↦ by
-  simp_rw [Δ, b₂, b₄, b₆, b₈, curve] at h
-  apply_fun MvPolynomial.eval (Coeff.rec 0 0 0 0 1) at h
-  simp at h
+i.e. a Weierstrass equation is not singular *identically* in its coefficients. Transported along
+`algebraMap_field_injective`, this is what makes `pointedCurve` elliptic over `Universal.Field`. -/
+lemma Δ_curve_ne_zero : curve.Δ ≠ 0 :=
+  -- specialize `A₆ ↦ 1` and the rest to `0`: the curve `Y² = X³ + 1`, whose `Δ` is `-432`
+  ne_of_apply_ne (MvPolynomial.eval (Coeff.rec 0 0 0 0 1)) <| by simp [Δ, b₂, b₄, b₆, b₈, curve]
 
-/-- The polynomial ring over ℤ in the variables `A₁`, `A₂`, `A₃`, `A₄`, `A₆`, `X` and `Y`,
-which is the polynomial ring in two variables over the universal polynomial ring. -/
+/-- The polynomial ring `ℤ[A₁,A₂,A₃,A₄,A₆,X,Y]`: two variables adjoined to the universal polynomial
+ring `ℤ[A₁,⋯,A₆]`, in Mathlib's iterated form `R[X][Y]`, so `Y` is the outer variable. The
+Weierstrass polynomial `curve.polynomial` lives here; `Universal.Ring` is the quotient by it. -/
 abbrev Poly : Type := (MvPolynomial Coeff ℤ)[X][Y]
 /-- The universal ring for **pointed** Weierstrass curves: `ℤ[A₁,⋯,A₆,X,Y]/⟨P⟩`, for `P` the
 Weierstrass polynomial. A ring homomorphism out of it is the same thing as a Weierstrass curve
-together with an affine point on it; that correspondence is `ringEval`. -/
+together with an affine point on it; `ringEval` is the homomorphism such a pair determines. Being
+an `abbrev` for `curve.CoordinateRing`, it inherits Mathlib's `Affine.CoordinateRing` API. -/
 protected abbrev Ring : Type := curve.CoordinateRing
 /-- The universal field for pointed Weierstrass curves is
 the field of fractions of the universal ring. -/
@@ -230,7 +258,7 @@ lemma curveField_eq : curveField = pointedCurve := rfl
 
 end Universal
 
-/-- The cusp curve $Y^2 = X^3$ over a commutative ring `R`. -/
+/-- The cusp curve `Y² = X³` over a commutative ring `R`. -/
 def cusp (R : Type*) [CommRing R] : Affine R := { a₁ := 0, a₂ := 0, a₃ := 0, a₄ := 0, a₆ := 0 }
 
 /-- `(1, 1)` lies on the cusp curve `Y² = X³` over `ℤ`. Specializing the universal curve along this
