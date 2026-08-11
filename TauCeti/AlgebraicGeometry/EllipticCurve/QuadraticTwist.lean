@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Aut
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.VariableChange
 public import TauCeti.AlgebraicGeometry.EllipticCurve.GaloisDescent
 public import TauCeti.RingTheory.Norm.Quadratic
 
@@ -723,6 +724,125 @@ theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj�
     exact ⟨C₀⁻¹ * χK, by rw [mul_smul, hE'T, ← hC₀, inv_smul_smul]⟩
 
 end Classification
+
+/-! ### The isomorphism on points and its Galois anti-equivariance -/
+
+section PointEquiv
+
+-- `M` is any field between `L` and a separable closure of `K`; for example `L` itself.
+variable (M : Type*) [Field M] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
+
+variable (L) in
+theorem quadraticTwistVariableChange_smul_baseChange :
+    (E.quadraticTwistVariableChange L).baseChange M • E.baseChange M
+      = (E.quadraticTwist L).baseChange M := by
+  have h := map_variableChange (C := E.quadraticTwistVariableChange L) (W := E.baseChange L)
+    (φ := algebraMap L M)
+  have hb : ∀ W : WeierstrassCurve K, (W.baseChange L).map (algebraMap L M) = W.baseChange M :=
+    fun W ↦ by rw [baseChange, baseChange, map_map, ← IsScalarTower.algebraMap_eq]
+  rw [quadraticTwistVariableChange_smul, hb, hb] at h
+  exact h
+
+variable (L) in
+theorem quadraticTwistVariableChange_baseChange_map {σ : M ≃ₐ[K] M}
+    (hσ : ¬ ∀ x : L, σ (algebraMap L M x) = algebraMap L M x) :
+    ((E.quadraticTwistVariableChange L).baseChange M).map (σ : M →+* M)
+      = (E.quadraticTwistVariableChange L).baseChange M * (E.baseChange M).negVariableChange := by
+  obtain ⟨σ₀, hσ₀⟩ := exists_algEquiv_ne_one K L
+  have hres : σ.restrictNormal L = σ₀ :=
+    (algEquiv_eq_one_or_eq K L hσ₀ _).resolve_left
+      (fun h ↦ hσ ((restrictNormal_eq_one_iff K L M σ).mp h))
+  have hcomp : (σ : M →+* M).comp (algebraMap L M) = (algebraMap L M).comp (σ₀ : L →+* L) := by
+    ext l
+    have h := (AlgEquiv.restrictNormal_commutes σ L l).symm
+    rw [hres] at h
+    simpa using h
+  have hb : ∀ W : WeierstrassCurve K, (W.baseChange L).map (algebraMap L M) = W.baseChange M :=
+    fun W ↦ by rw [baseChange, baseChange, map_map, ← IsScalarTower.algebraMap_eq]
+  rw [VariableChange.baseChange, VariableChange.map_map, hcomp, ← VariableChange.map_map,
+    map_quadraticTwistVariableChange (E := E) (L := L) hσ₀, VariableChange.map_mul,
+    ← VariableChange.baseChange,
+    ← negVariableChange_map, hb]
+
+variable [E.IsElliptic] [DecidableEq M]
+
+variable (L) in
+/-- The isomorphism `Eᴸ(M) ≅ E(M)` on `M`-points, for a tower `K ⊆ L ⊆ M`. -/
+noncomputable def quadraticTwistPointEquiv :
+    ((E.quadraticTwist L).baseChange M).toAffine.Point ≃+ (E.baseChange M).toAffine.Point :=
+  have : (E.baseChange M).IsElliptic := inferInstanceAs (E.map (algebraMap K M)).IsElliptic
+  (AddEquiv.cast (M := fun V : WeierstrassCurve M ↦ V.toAffine.Point)
+      (E.quadraticTwistVariableChange_smul_baseChange L M).symm).trans
+    (Affine.Point.equivVariableChange (E.baseChange M)
+      ((E.quadraticTwistVariableChange L).baseChange M))
+
+variable (L) in
+/-- Naturality of `quadraticTwistPointEquiv` in `M`. -/
+theorem quadraticTwistPointEquiv_map {N : Type*} [Field N] [Algebra K N] [Algebra L N]
+    [IsScalarTower K L N] [DecidableEq N] (f : M →ₐ[L] N)
+    (P : ((E.quadraticTwist L).baseChange M).toAffine.Point) :
+    E.quadraticTwistPointEquiv L N (Affine.Point.map f P)
+      = Affine.Point.map f (E.quadraticTwistPointEquiv L M P) := by
+  have hu : (((E.quadraticTwistVariableChange L).baseChange N).u : N)
+      = f (((E.quadraticTwistVariableChange L).baseChange M).u : M) := by
+    simp only [VariableChange.baseChange, VariableChange.map, Units.coe_map, MonoidHom.coe_coe]
+    exact (f.commutes _).symm
+  have hr : ((E.quadraticTwistVariableChange L).baseChange N).r
+      = f ((E.quadraticTwistVariableChange L).baseChange M).r := (f.commutes _).symm
+  have hs : ((E.quadraticTwistVariableChange L).baseChange N).s
+      = f ((E.quadraticTwistVariableChange L).baseChange M).s := (f.commutes _).symm
+  have ht : ((E.quadraticTwistVariableChange L).baseChange N).t
+      = f ((E.quadraticTwistVariableChange L).baseChange M).t := (f.commutes _).symm
+  rcases P with _ | ⟨x, y, h⟩
+  · simp [← Affine.Point.zero_def]
+  · simp only [quadraticTwistPointEquiv, AddEquiv.trans_apply, Affine.Point.cast_some,
+      Affine.Point.equivVariableChange_some, Affine.Point.map_some, Affine.Point.some.injEq]
+    constructor
+    · simp only [map_add, map_mul, map_pow, hu, hr]
+    · simp only [map_add, map_mul, map_pow, hu, hs, ht]
+
+
+variable (L) in
+/-- **Anti-equivariance**: if `σ ∈ Aut(M/K)` does not fix `L` pointwise, transporting its action
+through `Eᴸ(M) ≅ E(M)` gives minus its action. -/
+theorem quadraticTwistPointEquiv_map_of_not_fixed {σ : M ≃ₐ[K] M}
+    (hσ : ¬ ∀ x : L, σ (algebraMap L M x) = algebraMap L M x)
+    (P : ((E.quadraticTwist L).baseChange M).toAffine.Point) :
+    E.quadraticTwistPointEquiv L M (Affine.Point.map σ.toAlgHom P)
+      = -Affine.Point.map σ.toAlgHom (E.quadraticTwistPointEquiv L M P) := by
+  have hM := E.quadraticTwistVariableChange_baseChange_map L M hσ
+  have hu : σ.toAlgHom (((E.quadraticTwistVariableChange L).baseChange M).u : M)
+      = -(((E.quadraticTwistVariableChange L).baseChange M).u : M) := by
+    simpa [VariableChange.mul_def, negVariableChange_u, negVariableChange_r,
+      negVariableChange_s, negVariableChange_t]
+      using congrArg (fun C ↦ (VariableChange.u C : M)) hM
+  have hr : σ.toAlgHom ((E.quadraticTwistVariableChange L).baseChange M).r
+      = ((E.quadraticTwistVariableChange L).baseChange M).r := by
+    simpa [VariableChange.mul_def, negVariableChange_u, negVariableChange_r,
+      negVariableChange_s, negVariableChange_t] using congrArg VariableChange.r hM
+  have hs : σ.toAlgHom ((E.quadraticTwistVariableChange L).baseChange M).s
+      = -((E.quadraticTwistVariableChange L).baseChange M).s - (E.baseChange M).a₁ := by
+    simpa [VariableChange.mul_def, negVariableChange_u, negVariableChange_r,
+      negVariableChange_s, negVariableChange_t, sub_eq_add_neg]
+      using congrArg VariableChange.s hM
+  have ht : σ.toAlgHom ((E.quadraticTwistVariableChange L).baseChange M).t
+      = -((E.quadraticTwistVariableChange L).baseChange M).t
+        - ((E.quadraticTwistVariableChange L).baseChange M).r * (E.baseChange M).a₁
+        - (E.baseChange M).a₃ := by
+    simpa [VariableChange.mul_def, negVariableChange_u, negVariableChange_r,
+      negVariableChange_s, negVariableChange_t, sub_eq_add_neg, mul_neg_one,
+      (by ring : ((-1 : M)) ^ 3 = -1)] using congrArg VariableChange.t hM
+  rcases P with _ | ⟨x, y, hns⟩
+  · simp [← Affine.Point.zero_def]
+  · simp only [quadraticTwistPointEquiv, AddEquiv.trans_apply, Affine.Point.cast_some,
+      Affine.Point.equivVariableChange_some, Affine.Point.map_some, Affine.Point.neg_some,
+      Affine.Point.some.injEq]
+    refine ⟨?_, ?_⟩
+    · simp only [map_add, map_mul, map_pow, hu, hr]; ring
+    · simp only [Affine.negY, map_add, map_mul, map_pow, hu, hr, hs, ht]; ring
+
+
+end PointEquiv
 
 end QuadraticTwistBy
 
