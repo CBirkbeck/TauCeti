@@ -54,6 +54,11 @@ The route is that of the AINTLIB `HasseWeil` project (`github.com/CBirkbeck/AINT
 `ordAtInfty`, `ordAtInfty_mul`, `ordAtInfty_add_ge_min` (tagged T-ORD-ARITH-12) and
 `ordAtInfty_coordX`/`ordAtInfty_coordY`.
 
+The ramification statement corresponds to that project's `Curves/OrdAtInftyRamification.lean` and
+`Curves/RamificationAtInfinity.lean`; there it is an order identity for a `WithTop ℤ`-valued
+`ordAtInfty` over the `SmoothPlaneCurve` wrapper, where here it is an equality of Mathlib
+`Valuation`s and follows from `Algebra.norm_algebraMap` with `finrank_functionField`.
+
 Changes from the source. There `ordAtInfty` is a definition of its own, valued in `WithTop ℤ`, built
 over a `SmoothPlaneCurve` structure wrapping `WeierstrassCurve.Affine`, with multiplicativity,
 vanishing and the ultrametric bound all proved by hand. Here the norm is Mathlib's `Algebra.norm`
@@ -298,12 +303,21 @@ theorem infinityPlace.mk_Y :
 
 
 open scoped Classical in
+/-- **The place at infinity lies over the infinite place of `F(x)`, with ramification index two.**
+On a rational function of `x` the value is the square of Mathlib's infinite valuation, the extension
+`F(W) / F(x)` being quadratic. -/
+@[simp]
+theorem infinityPlace.algebraMap_eq_sq (r : RatFunc F) :
+    infinityPlace W (algebraMap (RatFunc F) W.FunctionField r)
+      = RatFunc.inftyValuation F r ^ 2 := by
+  rw [infinityPlace_apply, Algebra.norm_algebraMap, finrank_functionField W (RatFunc F), map_pow]
+
+open scoped Classical in
 /-- **The valuation is trivial on the base field**: a nonzero constant has value `1`, so `v_∞`
 restricted to `F` is trivial. The analogue of `RatFunc.inftyValuation.C`. -/
 theorem infinityPlace.C {c : F} (hc : c ≠ 0) :
     infinityPlace W (algebraMap (RatFunc F) W.FunctionField (RatFunc.C c)) = 1 := by
-  rw [infinityPlace_apply, Algebra.norm_algebraMap, finrank_functionField W (RatFunc F), map_pow,
-    RatFunc.inftyValuation.C (F := F) hc, one_pow]
+  rw [infinityPlace.algebraMap_eq_sq, RatFunc.inftyValuation.C (F := F) hc, one_pow]
 
 
 open scoped Classical in
@@ -337,16 +351,6 @@ theorem infinityPlace.adjoinRoot_root :
       (AdjoinRoot.root W.polynomial)) = WithZero.exp 3 :=
   infinityPlace.mk_Y W
 
-
-open scoped Classical in
-/-- **The place at infinity lies over the infinite place of `F(x)`, with ramification index two.**
-On a rational function of `x` the value is the square of Mathlib's infinite valuation, the extension
-`F(W) / F(x)` being quadratic. -/
-@[simp]
-theorem infinityPlace_algebraMap (r : RatFunc F) :
-    infinityPlace W (algebraMap (RatFunc F) W.FunctionField r)
-      = RatFunc.inftyValuation F r ^ 2 := by
-  rw [infinityPlace_apply, Algebra.norm_algebraMap, finrank_functionField W (RatFunc F), map_pow]
 
 end WeierstrassCurve.Affine
 
