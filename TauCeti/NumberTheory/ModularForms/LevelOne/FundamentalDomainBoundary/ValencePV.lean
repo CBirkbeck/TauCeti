@@ -10,6 +10,7 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ArcExcisionMeasure
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.LogDerivPV
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
+public import TauCeti.NumberTheory.ModularForms.Order.Orbits
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Interior
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.I.Value
@@ -503,6 +504,57 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     sum_corner_windingNumber_mul_order hH hper] at key
   linear_combination -key
 
+
+/-- **The valence formula, indexed by orbits.** The roadmap states the level-one valence formula
+with its divisor sum running over `SL₂(ℤ)`-*orbits* of `ℍ` rather than over points, since the
+order is constant on an orbit. This is that form: the interior divisor points are replaced by the
+orbits they represent, which is faithful because distinct points of the open fundamental domain
+lie in distinct orbits.
+
+Level one is forced — `orderOfVanishingOnOrbit` is defined for `𝒮ℒ`-invariant forms — so this
+takes the level-one class directly and transports it to the `Γ = ⊤` instance the point-indexed
+formula wants. -/
+theorem finsum_orderOfVanishingOnOrbit_add_elliptic_add_qExpansionOrderAtCusp_eq
+    [SlashInvariantFormClass F 𝒮ℒ k] (f : F) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ} (hH : 1 < H)
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
+    (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hU : IsOpen U)
+    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
+    (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
+    (hpos : ∀ s ∈ T, 0 < s.im)
+    (hin : ∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
+      1 < ‖z‖ ∧ |z.re| < 1 / 2 ∧ z.im < H)
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      cuspFunction 1 ⇑f q ≠ 0) :
+    ((∑ᶠ q ∈ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
+              MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ''
+            ↑(T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
+          orderOfVanishingOnOrbit f q : ℤ) : ℂ)
+        + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
+        + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
+        + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
+  have horb : ∑ z ∈ T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
+        orderOfVanishingAt (⇑f) (ofComplex z) =
+      ∑ᶠ q ∈ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
+            MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ''
+          ↑(T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
+        orderOfVanishingOnOrbit (k := k) f q :=
+    sum_ofComplex_eq_finsum_orbit (k := k) f
+      (fun z hz => hpos z (Finset.mem_sdiff.mp hz).1)
+      (fun z hz => (hin z (Finset.mem_sdiff.mp hz).1 (Finset.mem_sdiff.mp hz).2).1)
+      (fun z hz => (hin z (Finset.mem_sdiff.mp hz).1 (Finset.mem_sdiff.mp hz).2).2.1)
+  have : SlashInvariantFormClass F ((⊤ : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)) k :=
+    MonoidHom.range_eq_map (Matrix.SpecialLinearGroup.mapGL ℝ : SL(2, ℤ) →* GL (Fin 2) ℝ) ▸ ‹_›
+  have key := sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
+    (Γ := ⊤) f (Subgroup.mem_top _) hH hnorm hinv hper hoffγ hU hUdom hoff hmero hpos hin hga hgz
+  rw [← horb]
+  push_cast
+  exact key
 
 end ModularForm
 
