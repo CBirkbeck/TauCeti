@@ -35,10 +35,10 @@ poles of the two coordinate functions at infinity, `x` double and `y` triple.
   norm.
 
 No new norm is defined: `Algebra.norm L` is the norm, and multiplicativity, `map_one` and vanishing
-exactly at `0` are Mathlib's `map_mul`, `map_one` and `Algebra.norm_eq_zero_iff`. What is new are the
-computations. The first two sit at the level of `finrank_functionField`, which they use — an integral
-domain of coefficients and an arbitrary fraction field `L` of `R[X]` — so they serve `RatFunc R` and
-`FractionRing R[X]` alike. Only the degree corollary forces `RatFunc`: the degree theory of rational
+exactly at `0` are Mathlib's `map_mul`, `map_one` and `Algebra.norm_eq_zero_iff`. What is new are
+the computations. The first two sit at the level of `finrank_functionField`, which they use — an
+integral domain of coefficients and an arbitrary fraction field `L` of `R[X]` — so they serve
+`RatFunc R` and `FractionRing R[X]` alike. Only the degree corollary forces `RatFunc`: the degree theory of rational
 functions, `RatFunc.intDegree` and with it Mathlib's place at infinity `RatFunc.inftyValuation`, is
 stated for no other fraction field.
 
