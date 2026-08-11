@@ -9,19 +9,24 @@ public import Mathlib.AlgebraicGeometry.EllipticCurve.Weierstrass
 /-!
 # Complements on Weierstrass curves
 
-Two facts about the invariants of an elliptic curve, complementing
+Facts about the invariants of an elliptic curve, complementing
 `Mathlib/AlgebraicGeometry/EllipticCurve/Weierstrass.lean`:
 
 * `WeierstrassCurve.a₁_ne_zero_or_a₃_ne_zero_of_two_eq_zero`: where `2 = 0`, an elliptic curve
   has `a₁ ≠ 0` or `a₃ ≠ 0`;
 * `WeierstrassCurve.j_eq_1728_iff`: `j = 1728 ↔ c₆ = 0`, the analogue for `j = 1728` of Mathlib's
   `WeierstrassCurve.j_eq_zero_iff` (`j = 0 ↔ c₄ = 0`), together with its unreduced companion
-  `WeierstrassCurve.j_eq_1728_iff'` mirroring `WeierstrassCurve.j_eq_zero_iff'`.
+  `WeierstrassCurve.j_eq_1728_iff'` mirroring `WeierstrassCurve.j_eq_zero_iff'`;
+* `WeierstrassCurve.baseChange_c₄_ne_zero` and `WeierstrassCurve.baseChange_c₆_ne_zero`: the two
+  corollaries of those criteria that say `j ≠ 0` and `j ≠ 1728` survive base change along an
+  injection, in the `c₄`/`c₆` form the automorphism criterion consumes.
 
-Both are stated over a commutative ring, matching the generality of the Mathlib results they
-complement. Both are consumed by the automorphism-group development in
+All are stated over a commutative ring, matching the generality of the Mathlib results they
+complement. The first two are consumed by the automorphism-group development in
 `TauCeti/AlgebraicGeometry/EllipticCurve/Aut.lean`, the `Aut (E, O)` milestone of
-`TauCetiRoadmap/EllipticCurves/README.md` §Layer 1.
+`TauCetiRoadmap/EllipticCurves/README.md` §Layer 1; the base-change pair is consumed by the
+twist classification in `TauCeti/AlgebraicGeometry/EllipticCurve/QuadraticTwist.lean`, which
+needs `Aut(Eᴸ) = {±1}` after base change to a splitting field.
 
 Adapted from the FLT project (`ImperialCollegeLondon/FLT`,
 `FLT/Mathlib/AlgebraicGeometry/EllipticCurve/Weierstrass.lean` at the roadmap's pin

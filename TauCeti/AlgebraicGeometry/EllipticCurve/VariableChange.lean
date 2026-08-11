@@ -13,7 +13,14 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Weierstrass
 Material complementing `Mathlib/AlgebraicGeometry/EllipticCurve/VariableChange.lean`: the
 negation automorphism `[-1]` of a Weierstrass curve as an admissible change of variables, with
 its involution API, together with the compatibility of the action with base change
-(`baseChange_smul_baseChange`). The negation is the nontrivial automorphism in the `Aut (E, O)`
+(`baseChange_smul_baseChange`) and the three base-change facts that Galois descent runs on:
+`smul_eq_of_baseChange_smul_eq` (a relation between base changes descends when the change of
+variables does), `negVariableChange_baseChange_map` (`[-1]` is defined over the base, so a base
+automorphism fixes it) and `map_smul_baseChange_eq` (the conjugate of an isomorphism of base
+changes is again one). Comparing an isomorphism with its conjugate via the last of these is what
+produces the Galois cocycle used by the twist classification.
+
+The negation is the nontrivial automorphism in the `Aut (E, O)`
 milestone of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 1, proved in
 `TauCeti/AlgebraicGeometry/EllipticCurve/Aut.lean` to exhaust `Aut(E)` with the identity when
 `j(E) ∉ {0, 1728}`.

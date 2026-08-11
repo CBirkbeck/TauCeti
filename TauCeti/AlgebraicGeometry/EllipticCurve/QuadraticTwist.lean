@@ -65,11 +65,23 @@ change of variables, again over any commutative ring in which the relevant param
   statement about *this* change of variables and not about an arbitrary one carrying the twist
   to `E`. `WeierstrassCurve.exists_smul_quadraticTwist_baseChange_eq` is the corresponding
   statement for `quadraticTwist` itself, where the generator is the one chosen internally.
+* `WeierstrassCurve.quadraticTwistVarChange`: the same change of variables in the other
+  direction, carrying `E` to the twist, at the generator `quadraticTwist` chooses internally —
+  the inverse of the previous one, with `WeierstrassCurve.quadraticTwistVarChange_smul` and the
+  cocycle `WeierstrassCurve.map_quadraticTwistVarChange`, where the `negVariableChange` factor
+  sits on the right because inverting a product reverses it.
+* `WeierstrassCurve.not_exists_smul_quadraticTwist_eq` and
+  `WeierstrassCurve.exists_smul_eq_or_exists_smul_eq_quadraticTwist`: **the classification**, for
+  `j ∉ {0, 1728}`. The twist is not `K`-isomorphic to `E`, and any curve becoming isomorphic to
+  `E` over `L` is `K`-isomorphic to one of the two. This is where the cocycle is used: forms are
+  classified by `H¹(Gal(L/K), Aut Eᴸ) = Hom(ℤ/2, {±1})`, of order two, and the two branches of
+  the proof are its two classes.
 
 These are the `quadraticTwistOf` seeds of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 5
 (twists), pinned in that roadmap's `Suggested.lean`, together with the extension twist they make
-well posed; the point isomorphism and the split-multiplicative-reduction theorem are later
-milestones of the same layer and build on this file.
+well posed, and the classification of the `L`-forms that the cocycle delivers; the point
+isomorphism and the split-multiplicative-reduction theorem are later milestones of the same layer
+and build on this file.
 
 The twist by a generator is deliberately **not** given its own constructor here. Such a
 definition would accept any field extension, and outside the finite-dimensional case Mathlib's
@@ -594,9 +606,11 @@ variable (L) in
 a genuinely nontrivial operation: this is what `map_quadraticTwistOfTraceNormVariableChange`
 deliberately stopped short of claiming, and the `j`-hypotheses are exactly what it lacked.
 
-They cannot be dropped. For `j = 1728` and `K = ℚ(i)`, the curve `y² = x³ + x` has the extra
-automorphism `(x, y) ↦ (-x, iy)` of order `4`, and its twist by `L = K(d^{1/2})` with
-`d ∈ (K^×)⁴ \ (K^×)²` *is* isomorphic to it over `K`. -/
+They cannot be dropped, and the reason is visible in the proof: its only use of them is to get
+`Aut(Eᴸ) = {±1}`, via `eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq`.
+Over a field containing the relevant roots of unity that fails exactly at `j ∈ {0, 1728}`, where
+the automorphism group is `μ₄` and `μ₆` rather than `μ₂`, and the argument below has nothing to
+run on. No specific counterexample is asserted here. -/
 theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728) :
     ¬∃ C : VariableChange K, C • E.quadraticTwist L = E := by
   rintro ⟨CK, hCK⟩
