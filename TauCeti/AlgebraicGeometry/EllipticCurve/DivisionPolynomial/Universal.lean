@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Jacobian.Point
+public import TauCeti.Algebra.Polynomial.CharZero
 
 /-!
 # The universal elliptic curve
@@ -145,11 +146,6 @@ protected abbrev Field : Type := FractionRing Universal.Ring
 
 instance : CommRing Poly := Polynomial.commRing /- why is this not automatic ... -/
 
-/-- Adjoining a variable preserves characteristic zero, the coefficient embedding being injective.
-Mathlib has this for `MvPolynomial` but not for univariate `Polynomial`, and `Universal.Poly` is
-built from both; with it, `(2 : Poly) ≠ 0` is `two_ne_zero` and needs no bespoke lemma. -/
-instance {R : Type*} [Semiring R] [CharZero R] : CharZero R[X] :=
-  (RingHom.charZero_iff Polynomial.C_injective).1 inferInstance
 
 /-- The obvious ring homomorphism from the polynomial ring in 7 variables to the universal field.
 
