@@ -28,6 +28,8 @@ irregular cusps in odd weight) belongs to the general-level layer and is not def
 * `TauCeti.orderOfVanishingAt_pos_iff`: for a nonzero holomorphic function, positive
   order characterizes the zeros.
 * `TauCeti.orderOfVanishingAt_smul`: invariance along the action of the group.
+* `TauCeti.orderOfVanishingAt_of_coe_eq_add_one`: invariance under the unit translation, for
+  a `1`-periodic function.
 
 ## References
 
@@ -206,6 +208,22 @@ lemma orderOfVanishingAt_smul [SlashInvariantFormClass F Γ k] (f : F) {γ}
   rw [← meromorphicOrderAt_comp_smul hdet,
     meromorphicOrderAt_congr (hcongr.filter_mono nhdsWithin_le_nhds),
     meromorphicOrderAt_mul_of_ne_zero h_an h_ne]
+
+/-- The meromorphic order of a `1`-periodic function agrees at `z + 1` and at `z`. -/
+theorem meromorphicOrderAt_add_one_of_periodic {g : ℂ → ℂ} (hper : Function.Periodic g 1)
+    (z : ℂ) : meromorphicOrderAt g (z + 1) = meromorphicOrderAt g z := by
+  rw [← meromorphicOrderAt_comp_add_const_eq_meromorphicOrderAt (f := g) (c := 1) (x := z)]
+  exact congrArg (fun h => meromorphicOrderAt h z) (funext fun x => hper x)
+
+/-- The vanishing order of a `1`-periodic function on `ℍ` agrees at `z` and at `z + 1`. For a
+level-one form this is what makes the two `ρ`-corners of the fundamental domain contribute
+equally to the valence formula. -/
+theorem orderOfVanishingAt_of_coe_eq_add_one (hper : Function.Periodic (f ∘ ofComplex) 1)
+    {z w : ℍ} (hzw : (w : ℂ) = (z : ℂ) + 1) :
+    orderOfVanishingAt f w = orderOfVanishingAt f z := by
+  rw [orderOfVanishingAt_def, orderOfVanishingAt_def, hzw,
+    meromorphicOrderAt_add_one_of_periodic hper]
+
 
 end TauCeti
 

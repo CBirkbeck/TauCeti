@@ -43,7 +43,7 @@ on the contour.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq`: the valence formula
   `Σ_q ord_q + ord_∞ = k/12` when every divisor point — zero or pole — lies in the strict
   interior of the truncated fundamental domain.
-* `TauCeti.ModularForm.sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq_of_mem_elliptic`: the
+* `TauCeti.ModularForm.sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`: the
   valence formula `Σ_q ord_q + ½·ord_i + ⅓·ord_ρ + ord_∞ = k/12`, allowing the divisor to meet
   the two elliptic corners.
 
@@ -332,21 +332,6 @@ theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq [SlashInvariantFormC
   linear_combination -this
 
 
-/-- A `1`-periodic function has the same meromorphic order at `z + 1` as at `z`. -/
-private lemma meromorphicOrderAt_add_one_of_periodic {g : ℂ → ℂ} (hper : Periodic g 1) (z : ℂ) :
-    meromorphicOrderAt g (z + 1) = meromorphicOrderAt g z := by
-  rw [← meromorphicOrderAt_comp_add_const_eq_meromorphicOrderAt (f := g) (c := 1) (x := z)]
-  exact congrArg (fun h => meromorphicOrderAt h z) (funext fun x => hper x)
-
-/-- The vanishing order of a `1`-periodic form agrees at `z` and at `z + 1`. This is what makes
-the two `ρ`-corners of the fundamental domain contribute equally. -/
-private lemma orderOfVanishingAt_of_eq_add_one {f : ℍ → ℂ} (hper : Periodic (f ∘ ofComplex) 1)
-    {z w : ℍ} (hzw : (w : ℂ) = (z : ℂ) + 1) :
-    orderOfVanishingAt f w = orderOfVanishingAt f z := by
-  rw [orderOfVanishingAt_def, orderOfVanishingAt_def, hzw,
-    meromorphicOrderAt_add_one_of_periodic hper]
-
-
 /-- A weighted divisor sum over `X.attach` as a plain sum over `X`. Each term of the attached
 sum carries its own membership proof; `ofComplex` is the total map that replaces it, and it
 agrees with the attached point because `X` lies in the upper half plane. -/
@@ -358,17 +343,25 @@ private lemma sum_attach_mul_orderOfVanishingAt {f : ℍ → ℂ} {X : Finset �
   exact Finset.sum_congr rfl fun z _ => by rw [ofComplex_apply_of_im_pos (hX _ z.2)]
 
 
+/-- The height of the `ρ`-corner. -/
+private lemma coe_rho_im : (ρ : ℂ).im = Real.sqrt 3 / 2 := by simp [UpperHalfPlane.ρ]
+
 /-- The `i`-corner sits at height `1` and both `ρ`-corners at height `√3/2 < 1`, so the three
 elliptic corners are distinct. -/
 private lemma corner_notMem :
     Complex.I ∉ ({(ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧
       (ρ : ℂ) ∉ ({(ρ : ℂ) + 1} : Finset ℂ) := by
   have hne : (ρ : ℂ).im ≠ Complex.I.im := by
-    rw [show (ρ : ℂ).im = Real.sqrt 3 / 2 from by simp [UpperHalfPlane.ρ], Complex.I_im]
+    rw [coe_rho_im, Complex.I_im]
     exact ne_of_lt sqrt_three_div_two_lt_one
   refine ⟨?_, by simp⟩
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
   exact ⟨fun h => hne (by simp [h]), fun h => hne (by simp [h])⟩
+
+/-- Both `ρ`-corners lie in the upper half plane. -/
+private lemma coe_rho_add_one_im_pos : (0 : ℝ) < ((ρ : ℂ) + 1).im := by
+  simp only [Complex.add_im, Complex.one_im, add_zero, coe_rho_im]
+  positivity
 
 /-- Off the three corners every divisor point is interior, so its winding weight is `-1` and it
 enters the count with its bare order. -/
@@ -397,23 +390,51 @@ private lemma sum_corner_windingNumber_mul_order {f : ℍ → ℂ} {H : ℝ} (hH
       -(1 / 2) * ((orderOfVanishingAt f UpperHalfPlane.I : ℤ) : ℂ) -
         1 / 3 * ((orderOfVanishingAt f ρ : ℤ) : ℂ) := by
   have hρH : Real.sqrt 3 / 2 < H := sqrt_three_div_two_lt_one.trans hH
-  have hρpos : (0 : ℝ) < ((ρ : ℂ) + 1).im := by
-    simp only [Complex.add_im, Complex.one_im, add_zero,
-      show (ρ : ℂ).im = Real.sqrt 3 / 2 from by simp [UpperHalfPlane.ρ]]
-    positivity
   have hofI : ofComplex Complex.I = UpperHalfPlane.I := by
     rw [← UpperHalfPlane.coe_I, ofComplex_apply]
   -- The two `ρ`-corners are a unit translate apart, so periodicity equates their orders.
   have hordρ1 : orderOfVanishingAt f (ofComplex ((ρ : ℂ) + 1)) = orderOfVanishingAt f ρ :=
-    orderOfVanishingAt_of_eq_add_one hper (by rw [ofComplex_apply_of_im_pos hρpos])
+    orderOfVanishingAt_of_coe_eq_add_one hper
+      (by rw [ofComplex_apply_of_im_pos coe_rho_add_one_im_pos])
   rw [Finset.sum_insert corner_notMem.1, Finset.sum_insert corner_notMem.2, Finset.sum_singleton,
     windingNumber_fdBoundary_I hH, windingNumber_fdBoundary_rho hρH,
     windingNumber_fdBoundary_rho_add_one hρH, hofI, ofComplex_apply ρ, hordρ1]
   ring
 
+/-- A corner the divisor set misses contributes nothing: it lies on the contour, hence in `U`, so
+`hoff` makes the form analytic and nonvanishing there and its order is `0`. -/
+private lemma orderOfVanishingAt_corner_eq_zero [SlashInvariantFormClass F Γ k] (f : F) {H : ℝ}
+    {T : Finset ℂ} {U : Set ℂ} (hH : 1 < H)
+    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
+    (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    {c : ℂ} (hc : c ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)) (hcT : c ∉ T) :
+    orderOfVanishingAt ⇑f (ofComplex c) = 0 := by
+  have hIm : 0 < c.im := by
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hc
+    rcases hc with rfl | rfl | rfl
+    · simp
+    · rw [coe_rho_im]; positivity
+    · exact coe_rho_add_one_im_pos
+  have hcU : c ∈ U := by
+    refine hUdom ?_
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hc
+    rcases hc with rfl | rfl | rfl
+    · exact fdBoundary_apply_two H ▸
+        fdBoundary_mem_coe_truncatedFundamentalDomain hH.le (by norm_num)
+    · exact fdBoundary_apply_three H ▸
+        fdBoundary_mem_coe_truncatedFundamentalDomain hH.le (by norm_num)
+    · exact fdBoundary_apply_one H ▸
+        fdBoundary_mem_coe_truncatedFundamentalDomain hH.le (by norm_num)
+  obtain ⟨han, hne⟩ := hoff c hcU hcT
+  rw [ofComplex_apply_of_im_pos hIm]
+  exact orderOfVanishingAt_eq_zero_of_ne_zero han.meromorphicNFAt
+    (by simpa [Function.comp_apply, ofComplex_apply_of_im_pos hIm] using hne)
+
+
 /-- **The valence formula, with the elliptic points.** The divisor may now meet the two elliptic
-corners of the truncated fundamental domain, `i` and `ρ` (the `ρ`-corner appearing twice, at `ρ`
-and at `ρ + 1`); every other divisor point is required to lie in the strict interior.
+corners of the truncated fundamental domain, `i` and `ρ` (the `ρ`-corner appearing twice on the
+contour, at `ρ` and at `ρ + 1`); every other divisor point is required to lie in the strict
+interior.
 
 The corner winding numbers are `-(1/2)` at `i` and `-(1/6)` at each `ρ`-corner, against `-1` in
 the interior, so those points enter the count with weights `½` and `⅙`. Periodicity makes the two
@@ -421,9 +442,9 @@ the interior, so those points enter the count with weights `½` and `⅙`. Perio
 
 `Σ_q ord_q + ½·ord_i + ⅓·ord_ρ + ord_∞ = k/12`.
 
-The three corners are required to lie in `T` only for convenience — `T` need merely *contain* the
-divisor, so a form that does not vanish at a corner simply contributes `0` there. -/
-theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq_of_mem_elliptic
+A corner that `T` misses is no special case: it lies on the contour, so `hUdom` and `hoff` make
+the form analytic and nonzero there, and at such a point the order is `0`. -/
+theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
     {U : Set ℂ} (hH : 1 < H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hper : Periodic (⇑f ∘ ofComplex) 1)
@@ -434,18 +455,17 @@ theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq_of_mem_elliptic
     (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
     (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
     (hpos : ∀ s ∈ T, 0 < s.im)
-    (hcorner : ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ⊆ T)
     (hin : ∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
       1 < ‖z‖ ∧ |z.re| < 1 / 2 ∧ z.im < H)
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
     (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
       cuspFunction 1 ⇑f q ≠ 0) :
-    ∑ z ∈ (T \ {Complex.I, (ρ : ℂ), (ρ : ℂ) + 1}), ((orderOfVanishingAt ⇑f (ofComplex z) : ℤ) : ℂ)
+    ∑ z ∈ T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
+          ((orderOfVanishingAt ⇑f (ofComplex z) : ℤ) : ℂ)
         + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
         + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
         + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
-  have hρim : (ρ : ℂ).im = Real.sqrt 3 / 2 := by simp [UpperHalfPlane.ρ]
   have hHgt : ∀ s ∈ S, s.im < H := fun s hs => by
     have h1 : s.im ≤ ‖s‖ := (le_abs_self _).trans (Complex.abs_im_le_norm s)
     rw [hnorm s hs] at h1
@@ -458,17 +478,29 @@ theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq_of_mem_elliptic
     by_cases hE : fdBoundary H 0 ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)
     · simp only [Finset.mem_insert, Finset.mem_singleton] at hE
       rcases hE with h | h | h <;> rw [h] at him <;>
-        simp only [Complex.I_im, Complex.add_im, Complex.one_im, add_zero, hρim] at him <;>
+        simp only [Complex.I_im, Complex.add_im, Complex.one_im, add_zero, coe_rho_im] at him <;>
         linarith [sqrt_three_div_two_lt_one]
     · have := (hin _ (Finset.mem_coe.mp hmem) hE).2.1
       rw [hre] at this
       norm_num at this
+  -- A corner outside `T` contributes nothing, so the count may be taken over all three.
+  have hmiss : ∀ c ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
+      c ∉ T ∩ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
+      Contour.windingNumber (fdBoundary H) 0 5 c *
+        ((orderOfVanishingAt ⇑f (ofComplex c) : ℤ) : ℂ) = 0 := fun c hc hcni => by
+    rw [orderOfVanishingAt_corner_eq_zero f hH hUdom hoff hc
+      fun hcT => hcni (Finset.mem_inter.mpr ⟨hcT, hc⟩)]
+    simp
   have key := sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH.le hnorm hinv hHgt hper hoffγ hU
     hUdom hoff hmero hpos hbase hga hgz
   rw [sum_attach_mul_orderOfVanishingAt hpos fun z => Contour.windingNumber (fdBoundary H) 0 5 z,
-    ← Finset.sum_sdiff hcorner, sum_sdiff_corner_windingNumber_mul_order hH hpos hin,
+    ← Finset.sum_sdiff (show T ∩ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ⊆ T from
+      Finset.inter_subset_left),
+    Finset.sdiff_inter_self_left, Finset.sum_subset Finset.inter_subset_right hmiss,
+    sum_sdiff_corner_windingNumber_mul_order hH hpos hin,
     sum_corner_windingNumber_mul_order hH hper] at key
   linear_combination -key
+
 
 end ModularForm
 
