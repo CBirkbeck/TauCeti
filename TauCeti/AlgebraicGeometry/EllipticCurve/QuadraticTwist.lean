@@ -248,9 +248,31 @@ twist by those of `θ`. It is the single witness behind every isomorphism in thi
 `quadraticTwistOfTraceNormVariableChange` is its base change at `(t, n) = (1, 0)`.
 
 Stated over any commutative ring, since the identity it satisfies is polynomial; only
-invertibility of `a` is needed. -/
+invertibility of `a` is needed.
+
+Its four projections are `quadraticTwistOfVariableChange_u/_r/_s/_t`, as `negVariableChange` has
+`negVariableChange_u/_r/_s/_t`: the body does not unfold outside this module, and the action
+identity below does not pin the value down on its own, since composing with an automorphism of
+the twisted curve gives another change of variables satisfying it. -/
 def quadraticTwistOfVariableChange (u : Aˣ) (b : A) : VariableChange A :=
   ⟨u, 0, -(b * E.a₁), -((u : A) ^ 2 * b * (t ^ 2 - 4 * n) * E.a₃)⟩
+
+@[simp] lemma quadraticTwistOfVariableChange_u (u : Aˣ) (b : A) :
+    (E.quadraticTwistOfVariableChange t n u b).u = u := by
+  simp only [quadraticTwistOfVariableChange]
+
+@[simp] lemma quadraticTwistOfVariableChange_r (u : Aˣ) (b : A) :
+    (E.quadraticTwistOfVariableChange t n u b).r = 0 := by
+  simp only [quadraticTwistOfVariableChange]
+
+@[simp] lemma quadraticTwistOfVariableChange_s (u : Aˣ) (b : A) :
+    (E.quadraticTwistOfVariableChange t n u b).s = -(b * E.a₁) := by
+  simp only [quadraticTwistOfVariableChange]
+
+@[simp] lemma quadraticTwistOfVariableChange_t (u : Aˣ) (b : A) :
+    (E.quadraticTwistOfVariableChange t n u b).t
+      = -((u : A) ^ 2 * b * (t ^ 2 - 4 * n) * E.a₃) := by
+  simp only [quadraticTwistOfVariableChange]
 
 /-- **The defining identity of `quadraticTwistOfVariableChange`:** it carries the twist by the
 transformed parameters `(ut + 2b, b² + ubt + u²n)` — those of the generator `uθ + b` — back to the
@@ -427,6 +449,30 @@ def quadraticTwistOfTraceNormVariableChange {θ : L} (hθ : θ ∉ Set.range (al
     {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) : VariableChange L :=
   (E.baseChange L).quadraticTwistOfVariableChange 1 0
     (Units.mk0 (σ θ - θ) (Algebra.IsQuadraticExtension.apply_sub_self_ne_zero K L hσ hθ)) θ
+
+@[simp] lemma quadraticTwistOfTraceNormVariableChange_u {θ : L}
+    (hθ : θ ∉ Set.range (algebraMap K L)) {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
+    (E.quadraticTwistOfTraceNormVariableChange hθ hσ).u
+      = Units.mk0 (σ θ - θ) (Algebra.IsQuadraticExtension.apply_sub_self_ne_zero K L hσ hθ) := by
+  simp only [quadraticTwistOfTraceNormVariableChange, quadraticTwistOfVariableChange]
+
+@[simp] lemma quadraticTwistOfTraceNormVariableChange_r {θ : L}
+    (hθ : θ ∉ Set.range (algebraMap K L)) {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
+    (E.quadraticTwistOfTraceNormVariableChange hθ hσ).r = 0 := by
+  simp only [quadraticTwistOfTraceNormVariableChange, quadraticTwistOfVariableChange]
+
+@[simp] lemma quadraticTwistOfTraceNormVariableChange_s {θ : L}
+    (hθ : θ ∉ Set.range (algebraMap K L)) {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
+    (E.quadraticTwistOfTraceNormVariableChange hθ hσ).s = -(θ * (E.baseChange L).a₁) := by
+  simp only [quadraticTwistOfTraceNormVariableChange, quadraticTwistOfVariableChange]
+
+@[simp] lemma quadraticTwistOfTraceNormVariableChange_t {θ : L}
+    (hθ : θ ∉ Set.range (algebraMap K L)) {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
+    (E.quadraticTwistOfTraceNormVariableChange hθ hσ).t
+      = -((σ θ - θ) ^ 2 * θ * (E.baseChange L).a₃) := by
+  simp only [quadraticTwistOfTraceNormVariableChange, quadraticTwistOfVariableChange,
+    Units.val_mk0]
+  ring
 
 /-- **The twist becomes isomorphic to `E` over `L`**, by the explicit change of variables
 `quadraticTwistOfTraceNormVariableChange`. Over a field, isomorphisms of Weierstrass curves are
