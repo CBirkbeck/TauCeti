@@ -118,25 +118,28 @@ lemma smul_eq_of_baseChange_smul_eq (hRL : Function.Injective (algebraMap R L))
   map_injective hRL ((baseChange_smul_baseChange L C V).symm.trans h)
 
 /-- **The automorphism `[-1]` of a base-changed curve is defined over the base**, hence fixed by
-every `R`-algebra automorphism of `L`: its four components `-1, 0, -a₁, -a₃` all come from `R`. -/
+every `R`-algebra map `L → L`: its four components `-1, 0, -a₁, -a₃` all come from `R`. -/
 @[simp]
-lemma negVariableChange_baseChange_map (σ : L ≃ₐ[R] L) :
+lemma negVariableChange_baseChange_map (σ : L →ₐ[R] L) :
     (E.baseChange L).negVariableChange.map (σ : L →+* L)
       = (E.baseChange L).negVariableChange := by
   have h : (E.baseChange L).map (σ : L →+* L) = E.baseChange L :=
-    map_baseChange (R := R) (W := E) (σ : L →ₐ[R] L)
+    map_baseChange (R := R) (W := E) σ
   rw [← negVariableChange_map, h]
 
-/-- **The Galois conjugate of an isomorphism between base-changed curves is again one.** If
+/-- **The conjugate of an isomorphism between base-changed curves is again one.** If
 `ρ : Vᴸ ≅ Wᴸ` and `V`, `W` are defined over `R`, then `σρ` is also an isomorphism `Vᴸ ≅ Wᴸ`,
-because `σ` fixes both curves. Comparing `ρ` with `σρ` is what produces the Galois cocycle. -/
-lemma map_smul_baseChange_eq (σ : L ≃ₐ[R] L) {V W : WeierstrassCurve R} {ρ : VariableChange L}
+because `σ` fixes both curves. Only that `σ` is an `R`-algebra map is used, not that it is
+invertible; the Galois case is the instance the twist classification takes. Comparing `ρ` with
+`σρ` is what produces the Galois cocycle. -/
+lemma map_smul_baseChange_eq (σ : L →ₐ[R] L) {V W : WeierstrassCurve R}
+    {ρ : VariableChange L}
     (hρ : ρ • V.baseChange L = W.baseChange L) :
     (ρ.map (σ : L →+* L)) • V.baseChange L = W.baseChange L := by
   have hV : (V.baseChange L).map (σ : L →+* L) = V.baseChange L :=
-    map_baseChange (R := R) (W := V) (σ : L →ₐ[R] L)
+    map_baseChange (R := R) (W := V) σ
   have hW : (W.baseChange L).map (σ : L →+* L) = W.baseChange L :=
-    map_baseChange (R := R) (W := W) (σ : L →ₐ[R] L)
+    map_baseChange (R := R) (W := W) σ
   have hmv := map_variableChange (W := V.baseChange L) (C := ρ) (φ := (σ : L →+* L))
   rwa [hρ, hV, hW] at hmv
 

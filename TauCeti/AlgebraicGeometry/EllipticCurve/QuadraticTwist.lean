@@ -6,8 +6,6 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Aut
 public import TauCeti.AlgebraicGeometry.EllipticCurve.GaloisDescent
-public import TauCeti.AlgebraicGeometry.EllipticCurve.VariableChange
-public import TauCeti.FieldTheory.Galois.Basic
 public import TauCeti.RingTheory.Norm.Quadratic
 
 /-!
@@ -649,7 +647,7 @@ theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : 
     rcases (E.baseChange L).eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq
       hc4L hc6L haut with hcase | hcase
     · rw [hcase]; exact map_one (VariableChange.mapHom (σ : L →+* L))
-    · rw [hcase]; exact E.negVariableChange_baseChange_map L σ
+    · rw [hcase]; exact E.negVariableChange_baseChange_map L (σ : L →ₐ[K] L)
   -- applying `σ` to `ψ = a · C₁` forces `[-1] = 1`
   apply (E.baseChange L).negVariableChange_ne_one
   have hchain : a * ((E.baseChange L).negVariableChange * C₁) = a * C₁ :=
@@ -689,7 +687,7 @@ theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj�
   have hc6L : (E.baseChange L).c₆ ≠ 0 := E.baseChange_c₆_ne_zero hinj hj₁₇₂₈
   -- the Galois conjugate of `ρ` is again an isomorphism `E'ᴸ ≅ Eᴸ`, so `σρ · ρ⁻¹` fixes `Eᴸ`
   have hσρ : (ρ.map (σ : L →+* L)) • E'.baseChange L = E.baseChange L :=
-    map_smul_baseChange_eq L σ hρ
+    map_smul_baseChange_eq L (σ : L →ₐ[K] L) hρ
   have hρinv : ρ⁻¹ • E.baseChange L = E'.baseChange L := by rw [← hρ, inv_smul_smul]
   have hb : (ρ.map (σ : L →+* L) * ρ⁻¹) • E.baseChange L = E.baseChange L := by
     rw [mul_smul, hρinv, hσρ]
