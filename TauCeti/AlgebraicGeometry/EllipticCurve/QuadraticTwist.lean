@@ -253,6 +253,7 @@ def quadraticTwistOfVariableChange (u : Aˣ) (b : A) : VariableChange A :=
   ⟨u, 0, -(b * E.a₁), -((u : A) ^ 2 * b * (t ^ 2 - 4 * n) * E.a₃)⟩
 
 /-- **The defining identity of `quadraticTwistOfVariableChange`.** -/
+@[simp]
 theorem quadraticTwistOfVariableChange_smul (u : Aˣ) (b : A) :
     E.quadraticTwistOfVariableChange t n u b •
         E.quadraticTwistOf ((u : A) * t + 2 * b)
@@ -428,6 +429,10 @@ def quadraticTwistOfTraceNormVariableChange {θ : L} (hθ : θ ∉ Set.range (al
 /-- **The twist becomes isomorphic to `E` over `L`**, by the explicit change of variables
 `quadraticTwistOfTraceNormVariableChange`. Over a field, isomorphisms of Weierstrass curves are
 exactly the admissible changes of variables, acting via `•`. -/
+-- not `@[simp]`: `baseChange_quadraticTwistOf` is itself a simp lemma and rewrites this
+-- left-hand side first, so `simpNF` reports the statement is not in simp-normal form and the
+-- lemma could never fire. Consumers rewrite with it explicitly, as
+-- `exists_smul_quadraticTwist_baseChange_eq` does.
 theorem quadraticTwistOfTraceNormVariableChange_smul_baseChange {θ : L}
     (hθ : θ ∉ Set.range (algebraMap K L)) {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
     E.quadraticTwistOfTraceNormVariableChange hθ hσ •

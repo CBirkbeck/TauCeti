@@ -97,6 +97,7 @@ variable (L : Type*) [CommRing L] [Algebra R L]
 then acting by the base-changed variable change gives the same model as acting first and base
 changing the result, so a `VariableChange`-invariant statement over `R` transports to `L`. Stated
 in the `baseChange` spelling, so it rewrites directly in goals phrased that way. -/
+@[simp]
 lemma baseChange_smul_baseChange (C : VariableChange R) (V : WeierstrassCurve R) :
     (C.baseChange L) • V.baseChange L = (C • V).baseChange L :=
   map_variableChange (W := V) (C := C) (φ := algebraMap R L)
