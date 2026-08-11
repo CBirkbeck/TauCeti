@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Algebra.BigOperators.Finprod
-public import Mathlib.NumberTheory.Modular
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
 import TauCeti.NumberTheory.Modular.Orbits
@@ -25,8 +24,6 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
   `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit`: finite support on orbits for a
   nonzero form.
-* `TauCeti.ModularForm.exists_rep_mem_fd_orderOfVanishingAt_eq`: every orbit is represented
-  by a point of `𝒟` carrying the orbit's order.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_eq_finsum_orbit`: a divisor sum over an arbitrary
   index set, reindexed over the orbits its points represent, given that the index-to-orbit
   composite is injective.
@@ -72,28 +69,11 @@ lemma orderOfVanishingOnOrbit_mk [SlashInvariantFormClass F 𝒮ℒ k] (p : ℍ)
   unfold orderOfVanishingOnOrbit
   rfl
 
-/-- Every orbit is represented by a point of the closed fundamental domain carrying the orbit's
-vanishing order.
-
-This is the direction the valence formula consumes: it turns a statement about an orbit — where
-there is no point to evaluate at — into one about a representative sitting in `𝒟`, which the
-contour hypotheses can then talk about. Every orbit meets `𝒟`
-(`ModularGroup.exists_rep_mem_fd`); the content is that the order transfers, which is
-`orderOfVanishingOnOrbit_mk`.
-
-⚠ `𝒟` is the **closed** domain, so this gives no injectivity: two boundary representatives can
-share an orbit. The reindexing lemmas that need injectivity take the open `𝒟ᵒ` instead. -/
-lemma exists_rep_mem_fd_orderOfVanishingAt_eq [SlashInvariantFormClass F 𝒮ℒ k]
-    (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
-    ∃ p ∈ 𝒟, Quotient.mk'' p = q ∧ orderOfVanishingAt f p = orderOfVanishingOnOrbit f q :=
-  (ModularGroup.exists_rep_mem_fd q).imp fun p ⟨rfl, hfd⟩ ↦ ⟨hfd, rfl, by simp⟩
-
 /-- For a nonzero level-one form, only finitely many orbits carry nonzero order. -/
 lemma hasFiniteSupport_orderOfVanishingOnOrbit [ModularFormClass F 𝒮ℒ k] {f : F}
     (hf : (⇑f : ℍ → ℂ) ≠ 0) : (orderOfVanishingOnOrbit f).HasFiniteSupport :=
   (finite_zeros_in_fd hf).of_surjOn Quotient.mk'' fun q hq ↦
-    (exists_rep_mem_fd_orderOfVanishingAt_eq f q).imp fun _ ⟨hp, hmk, hord⟩ ↦
-      ⟨⟨hp, hord.trans_ne hq⟩, hmk⟩
+    (ModularGroup.exists_rep_mem_fd q).imp fun p ⟨rfl, hfd⟩ ↦ ⟨⟨hfd, by simpa using hq⟩, rfl⟩
 
 /-- A divisor sum reindexed over the orbits its points represent. The index set is arbitrary,
 mapped into `ℍ` by `p`.
