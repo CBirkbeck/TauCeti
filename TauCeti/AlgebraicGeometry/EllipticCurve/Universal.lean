@@ -204,6 +204,12 @@ open Polynomial in
 the affine Weierstrass equation of `pointedCurve`. This is what makes the universal curve *pointed*;
 `Affine.point` packages it as an element of the point group. -/
 lemma equation_point : pointedCurve.toAffine.Equation (polyToField (C X)) (polyToField Y) := by
+  -- Two steps at once, and neither is a rewrite: unfold `Equation` to its defining
+  -- `evalEval _ _ polynomial = 0` (Mathlib's `equation_iff'` expands to the coefficient form
+  -- instead, which is not what the argument below needs), and present `pointedCurve` as
+  -- `curve.map (algebraMap _ _)` so that `Affine.map_polynomial` applies. The two curves are
+  -- definitionally equal — `pointedCurve` is `baseChange curve Universal.Field` — so `change`
+  -- is the step, not a `rw`.
   change evalEval (polyToField (C X)) (polyToField Y)
     ((curve.map (algebraMap _ Universal.Field)).toAffine.polynomial) = 0
   have h : (evalEvalRingHom (polyToField (C X)) (polyToField Y)).comp
