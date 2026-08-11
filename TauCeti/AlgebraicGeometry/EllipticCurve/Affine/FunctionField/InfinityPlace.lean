@@ -26,13 +26,16 @@ at infinity of the curve: `ord_∞ f = -deg N f`, the place where `x` and `y` ha
 The valuation's `map_add_le_max'` rests on an ultrametric inequality in degree form, proved here;
 the other three axioms are the norm's multiplicativity and Mathlib's place at infinity.
 * `WeierstrassCurve.Affine.infinityPlace.X`,
-  `WeierstrassCurve.Affine.infinityPlace.mk_Y`
+  `WeierstrassCurve.Affine.infinityPlace.mk_Y`: `v_∞ x = exp 2` and `v_∞ y = exp 3` — the double
+  and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0 asks for
+  by name. They read the norm degrees of `FunctionField/Norm.lean` through the valuation.
+* `WeierstrassCurve.Affine.infinityPlace.algebraMap_eq_sq`: restricting along
+  `RatFunc F → W.FunctionField` squares `RatFunc.inftyValuation`, so the place at infinity is
+  ramified of index two over the infinite place of `F(x)`.
 * `WeierstrassCurve.Affine.infinityPlace.C`: the valuation is trivial on the base field — a
-  nonzero constant has value `1`. The `Valuation.IsTrivialOn F` and `Valuation.IsNontrivial`
-  instances follow, so the place is usable through Mathlib's standard valuation
-  API: `v_∞ x = exp 2` and `v_∞ y = exp 3` —
-  the double and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0
-  asks for by name. They read the norm degrees of `FunctionField/Norm.lean` through the valuation.
+  nonzero constant has value `1`, the constant case of the previous result. The
+  `Valuation.IsTrivialOn F` and `Valuation.IsNontrivial` instances follow, so the place is usable
+  through Mathlib's standard valuation API.
 
 Each special value comes in two forms: one stated about the curve's coordinate functions, and a
 `@[simp]` restatement in the shape simp actually normalises them to. The machinery that builds the
