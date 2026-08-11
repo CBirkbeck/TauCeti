@@ -65,19 +65,16 @@ being reconciled name by name. **`unit_fg_of_units` and `coe_unitEmptyEquivUnits
 exceptions: they have no #40791 analogue, so at bump time they must be re-homed onto Mathlib's
 `Set.unit_fg`, not dropped with the rest.**
 
-**Four declarations here are not that PR's**, and are marked as such where they occur:
+**Three declarations here are not that PR's**, and are marked as such where they occur:
 
-* `unitValuation_apply` cannot be `rfl` as it is upstream, because this repository's module
-  convention is `public section` without `@[expose]`, so the definition body is not visible even
-  inside the file.
 * `unit_mono` is stated for an arbitrary `S ⊆ S'`, of which #40791's `unit_empty_le` is the
   `S = ∅` case.
 * **`unit_fg_of_units` is new here**, with no counterpart in #40791: upstream gives
   `unitEmptyEquivUnits` its consumer in the rank formula, which is not ported, so without this
   form the theorem is awkward to apply — a caller holds `Rˣ`, not the `∅`-units.
-* **`coe_unitEmptyEquivUnits` is new here.** #40791 has no analogue: it does not need one, since
-  its module exposes definition bodies, whereas this repository's bare `public section` leaves
-  the equiv opaque without it.
+* **`coe_unitEmptyEquivUnits` is new here**, with no counterpart in #40791: the equiv is a
+  three-fold composite, and this records what it does to the underlying element, so that a
+  consumer of `unit_fg_of_units` need not unfold it.
 
 `valuationOfNeZero_eq_one_iff` is also local: Stoll's source uses
 `HeightOneSpectrum.valuationOfNeZero_eq_iff`, which does not exist at our pin, and Mathlib has
@@ -172,7 +169,7 @@ are the base ring `R` (`IsDedekindDomain.integer_empty`), and `S`-units are the 
 `S`-integers (`Set.unitEquivUnitsInteger`).
 
 Public, as in mathlib4#40791. It is a three-fold composite, so `coe_unitEmptyEquivUnits` below
-records what it does to the underlying element, for consumers outside this module. -/
+records what it does to the underlying element. -/
 noncomputable def unitEmptyEquivUnits : (∅ : Set (HeightOneSpectrum R)).unit K ≃* Rˣ :=
   (unitEquivUnitsInteger (∅ : Set (HeightOneSpectrum R)) K).trans
     (Units.mapEquiv
@@ -182,8 +179,9 @@ noncomputable def unitEmptyEquivUnits : (∅ : Set (HeightOneSpectrum R)).unit K
 /-- **What `unitEmptyEquivUnits` does to the underlying element:** it sends an `∅`-unit to the
 unit of `R` with the same image in `K`.
 
-**New here**, with no counterpart in mathlib4#40791, which does not need one: its module exposes
-definition bodies, so the composite is transparent to consumers there. -/
+**New here**, with no counterpart in mathlib4#40791: upstream uses the equiv only through the rank
+formula, which is not ported, whereas `unit_fg_of_units` hands a caller an `Rˣ` and this is what
+identifies it. -/
 @[simp]
 theorem coe_unitEmptyEquivUnits (u : (∅ : Set (HeightOneSpectrum R)).unit K) :
     algebraMap R K ((unitEmptyEquivUnits K u : Rˣ) : R) = ((u : Kˣ) : K) := by
