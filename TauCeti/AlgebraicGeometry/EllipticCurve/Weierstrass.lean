@@ -53,6 +53,28 @@ analogue for `j = 1728` of `WeierstrassCurve.j_eq_zero_iff` (`j = 0 ↔ c₄ = 0
 lemma j_eq_1728_iff [IsReduced R] : E.j = 1728 ↔ E.c₆ = 0 := by
   rw [j_eq_1728_iff', pow_eq_zero_iff two_ne_zero]
 
+section BaseChange
+
+variable {A : Type*} [CommRing A] [Algebra R A] (hRA : Function.Injective (algebraMap R A))
+  [IsReduced R]
+
+include hRA
+
+/-- **`j ≠ 0` survives base change**, in the `c₄` form: if `j(E) ≠ 0` then `c₄` of the base change
+is still nonzero. Injectivity is what carries it: `c₄` of the base change is the image of `c₄`. -/
+lemma baseChange_c₄_ne_zero (hj₀ : E.j ≠ 0) : (E.baseChange A).c₄ ≠ 0 := by
+  simp only [baseChange, map_c₄]
+  exact (map_ne_zero_iff _ hRA).mpr (E.j_eq_zero_iff.not.mp hj₀)
+
+/-- **`j ≠ 1728` survives base change**, in the `c₆` form. The companion of
+`baseChange_c₄_ne_zero`; together they say that base change along an injection cannot move `j`
+onto either of the two exceptional values. -/
+lemma baseChange_c₆_ne_zero (hj₁₇₂₈ : E.j ≠ 1728) : (E.baseChange A).c₆ ≠ 0 := by
+  simp only [baseChange, map_c₆]
+  exact (map_ne_zero_iff _ hRA).mpr (E.j_eq_1728_iff.not.mp hj₁₇₂₈)
+
+end BaseChange
+
 end WeierstrassCurve
 
 end

@@ -102,6 +102,39 @@ lemma baseChange_smul_baseChange (C : VariableChange R) (V : WeierstrassCurve R)
     (C.baseChange L) • V.baseChange L = (C • V).baseChange L :=
   map_variableChange (W := V) (C := C) (φ := algebraMap R L)
 
+/-- **A relation between base changes descends, provided the change of variables does.** If `C` is
+defined over `R` and `Cᴸ` carries `Vᴸ` to `Wᴸ`, then `C` already carries `V` to `W` over `R`. The
+content is that base change is injective on models when `R → L` is. -/
+lemma smul_eq_of_baseChange_smul_eq (hRL : Function.Injective (algebraMap R L))
+    (C : VariableChange R) {V W : WeierstrassCurve R}
+    (h : (C.baseChange L) • V.baseChange L = W.baseChange L) : C • V = W :=
+  map_injective hRL ((baseChange_smul_baseChange L C V).symm.trans h)
+
+/-- **The automorphism `[-1]` of a base-changed curve is defined over the base**, hence fixed by
+every `R`-algebra automorphism of `L`: its four components `-1, 0, -a₁, -a₃` all come from `R`. -/
+@[simp]
+lemma negVariableChange_baseChange_map (σ : L ≃ₐ[R] L) :
+    (E.baseChange L).negVariableChange.map (σ : L →+* L)
+      = (E.baseChange L).negVariableChange := by
+  ext <;>
+    simp only [VariableChange.map, negVariableChange_u, negVariableChange_r,
+      negVariableChange_s, negVariableChange_t, Units.coe_map, Units.val_neg, Units.val_one,
+      MonoidHom.coe_coe, RingHom.coe_coe, map_neg, map_zero, map_one, map_a₁, map_a₃,
+      baseChange, σ.commutes]
+
+/-- **The Galois conjugate of an isomorphism between base-changed curves is again one.** If
+`ρ : Vᴸ ≅ Wᴸ` and `V`, `W` are defined over `R`, then `σρ` is also an isomorphism `Vᴸ ≅ Wᴸ`,
+because `σ` fixes both curves. Comparing `ρ` with `σρ` is what produces the Galois cocycle. -/
+lemma map_smul_baseChange_eq (σ : L ≃ₐ[R] L) {V W : WeierstrassCurve R} {ρ : VariableChange L}
+    (hρ : ρ • V.baseChange L = W.baseChange L) :
+    (ρ.map (σ : L →+* L)) • V.baseChange L = W.baseChange L := by
+  have hV : (V.baseChange L).map (σ : L →+* L) = V.baseChange L :=
+    map_baseChange (R := R) (W := V) (σ : L →ₐ[R] L)
+  have hW : (W.baseChange L).map (σ : L →+* L) = W.baseChange L :=
+    map_baseChange (R := R) (W := W) (σ : L →ₐ[R] L)
+  have hmv := map_variableChange (W := V.baseChange L) (C := ρ) (φ := (σ : L →+* L))
+  rwa [hρ, hV, hW] at hmv
+
 end BaseChange
 
 end WeierstrassCurve
