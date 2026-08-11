@@ -65,8 +65,10 @@ being reconciled name by name. **`unit_fg_of_units` and `coe_unitEmptyEquivUnits
 exceptions: they have no #40791 analogue, so at bump time they must be re-homed onto Mathlib's
 `Set.unit_fg`, not dropped with the rest.**
 
-**Three declarations here are not that PR's**, and are marked as such where they occur:
+**Four declarations here are not that PR's**, and are marked as such where they occur:
 
+* `mem_unit_iff` is the membership lemma for `Set.unit`, which neither #40791 nor Mathlib states;
+  it is the companion of `Set.mem_integer_iff` next door, and `@[simp]` for the same reason.
 * `unit_mono` is stated for an arbitrary `S ⊆ S'`, of which #40791's `unit_empty_le` is the
   `S = ∅` case.
 * **`unit_fg_of_units` is new here**, with no counterpart in #40791: upstream gives
@@ -119,16 +121,18 @@ theorem unitValuation_apply (u : S.unit K) (v : ↥S) :
     unitValuation S K u v = (v : HeightOneSpectrum R).valuationOfNeZero ((u : Kˣ)) := by
   rfl
 
-/-- Membership in `Set.unit` unfolded. Mathlib defines `Set.unit` as a `Subgroup.copy` of exactly
-this set-builder, so this is `Iff.rfl`; stating it once means the proofs below go through a named
-characterisation rather than relying on that definitional unfolding at each use. -/
-theorem mem_unit {x : Kˣ} :
+/-- Membership in the `S`-units is the valuation condition defining it. Mathlib defines
+`Set.unit` as a `Subgroup.copy` of exactly this set-builder but provides no membership lemma, so
+this is `Iff.rfl`; naming it means the proofs below go through a characterisation rather than
+that definitional unfolding. The companion of `Set.mem_integer_iff` for the other half of the
+same API. -/
+@[simp] theorem mem_unit_iff {x : Kˣ} :
     x ∈ S.unit K ↔ ∀ v ∉ S, (v : HeightOneSpectrum R).valuation K (x : K) = 1 := Iff.rfl
 
 /-- The `S`-units grow with `S`: enlarging the set of allowed primes only weakens the condition
 `v x = 1` for `v ∉ S`. mathlib4#40791's `unit_empty_le` is the case `S = ∅`. -/
 theorem unit_mono {S S' : Set (HeightOneSpectrum R)} (h : S ⊆ S') : S.unit K ≤ S'.unit K :=
-  fun _ hx ↦ (mem_unit ..).mpr fun v hv ↦ (mem_unit ..).mp hx v fun hvS ↦ hv (h hvS)
+  fun _ hx ↦ (mem_unit_iff ..).mpr fun v hv ↦ (mem_unit_iff ..).mp hx v fun hvS ↦ hv (h hvS)
 
 /-- **The kernel of the `S`-valuation map is the `∅`-units.** Equivalently, an `S`-unit lies in the
 kernel iff it has trivial valuation at every prime — i.e. it comes from a unit of `R`. This is the
@@ -140,14 +144,14 @@ theorem unitValuation_ker :
   rw [MonoidHom.mem_ker, Subgroup.mem_subgroupOf, funext_iff]
   constructor
   · intro h
-    refine (mem_unit ..).mpr fun v _ ↦ ?_
+    refine (mem_unit_iff ..).mpr fun v _ ↦ ?_
     by_cases hvS : v ∈ S
     · have := h ⟨v, hvS⟩
       rwa [unitValuation_apply, Pi.one_apply, valuationOfNeZero_eq_one_iff] at this
     · exact Set.unit_valuation_eq_one _ _ u hvS
   · intro h v
     rw [unitValuation_apply, Pi.one_apply, valuationOfNeZero_eq_one_iff]
-    exact (mem_unit ..).mp h v (Set.notMem_empty v)
+    exact (mem_unit_iff ..).mp h v (Set.notMem_empty v)
 
 /-- **Finite generation of the `S`-units, relative to the `∅`-units.** If `S` is finite and the
 `∅`-units are finitely generated — for `R = 𝒪_K` a ring of integers that is Dirichlet's unit
