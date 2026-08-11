@@ -1,0 +1,126 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import Mathlib.NumberTheory.EllipticDivisibilitySequence
+public import Mathlib.RingTheory.MvPolynomial.Basic
+
+/-!
+# The universal normalised elliptic divisibility sequence
+
+A normalised EDS over a commutative ring `R` is determined by three parameters `b, c, d : R`.
+Taking those parameters to be three indeterminates gives the **universal** normalised EDS
+
+`universalNormEDS : ℤ → MvPolynomial Param ℤ`,
+
+of which every normalised EDS is a specialization: `normEDS b c d` is `universalNormEDS` followed
+by the evaluation sending the indeterminates to `b, c, d` (`normEDS_eq_aeval`), and likewise for
+`preNormEDS` and for the two complement sequences (`preNormEDS_eq_aeval`, `complEDS₂_eq_aeval`,
+`complEDS_eq_aeval`).
+
+The point is that an identity between expressions in the terms of a normalised EDS need only be
+proved once, over `MvPolynomial Param ℤ`, and then specialises to every ring and every choice of
+parameters. Working universally also buys an integral domain to work in, which the parameters'
+ring need not be.
+
+## Main definitions
+
+* `Param`: a three-element index type for the parameters `b`, `c`, `d` of a normalised EDS.
+* `universalNormEDS`: the normalised EDS over `ℤ[B, C, D]` whose parameters are the three
+  indeterminates.
+
+## Main results
+
+* `normEDS_eq_aeval`, `preNormEDS_eq_aeval`, `complEDS₂_eq_aeval`, `complEDS_eq_aeval`: every
+  normalised EDS, and each of its associated sequences, is the universal one specialised along
+  `Param.rec b c d`.
+
+## Implementation notes
+
+The constructors of `Param` are uppercase because they name indeterminates rather than elements,
+matching `WeierstrassCurve.Coeff` in
+`TauCeti/AlgebraicGeometry/EllipticCurve/Universal.lean`, which plays the same role for the
+universal Weierstrass curve.
+
+Only `normEDS` gets a named universal object. The three companion sequences are stated against
+`preNormEDS (X B) (X C) (X D)` and its analogues written out, since naming each one would add four
+definitions whose only use is to be unfolded — the sequences are already determined by the
+parameters, and it is the specialization statement that consumers need, not a new name for its
+left-hand side. Those three carry an explicit `X (R := ℤ)`: with the coefficient ring appearing
+only under `aeval`, elaboration has nothing to pin it to and reports a stuck `CommSemiring`
+instance otherwise.
+
+## Provenance
+
+Ported from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
+(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
+`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `Param`, `universalNormEDS`,
+`normEDS_eq_aeval`, `compl₂EDS_eq_aeval` and `complEDS_eq_aeval`. That file's header reads
+`Authors: Junyan Xu`; following this repository's convention for adapted material the upstream
+authorship is credited here rather than in the copyright header.
+
+The same declarations sit in **Mathlib PR #13057** (open, last updated 2024-07-31), the
+upstreaming of that AINTLIB file, so they are portable under this project's rule and deduplicate
+when it lands. `compl₂EDS` is spelt `complEDS₂` here, following Mathlib's subsequent rename of the
+elliptic-net API (`addMulSub → IsEllipticNet.atom`, `net → IsEllipticNet.rel`,
+`rel₄ → IsEllipticNet.atomRel`, `IsEllSequence → IsEllipticSequence`, `compl₂EDS → complEDS₂`),
+which #13057 predates.
+
+`preNormEDS_eq_aeval` is new: the source states the principle for `normEDS` and the two
+complements but not for `preNormEDS`, although Mathlib's `map_preNormEDS` makes it the same
+one-line proof and consumers reaching for the pre-normalised sequence would otherwise have to
+redo it.
+
+Deliberately **not** ported here: `universalNormEDS_ne_zero` and
+`universalNormEDS_mem_nonZeroDivisors`. They rest on `normEDS 2 3 2 = id`, whose proof needs
+`normEDS` to be known an elliptic sequence — which the pinned Mathlib does not know, and which is
+the content of the separate open Mathlib PR #42453. They belong with whichever slice ports that.
+-/
+
+public section
+
+open MvPolynomial
+
+/-- A three-element index type for the parameters `b`, `c`, `d` of a normalised elliptic
+divisibility sequence. It indexes the variables of `MvPolynomial Param ℤ = ℤ[B, C, D]`, the ring
+the universal normalised EDS is defined over; the constructors are uppercase as names of
+indeterminates. -/
+inductive Param : Type | B : Param | C : Param | D : Param
+
+namespace Param
+
+open Param
+
+variable {R : Type*} [CommRing R] (b c d : R)
+
+/-- **The universal normalised elliptic divisibility sequence**: the normalised EDS over
+`ℤ[B, C, D]` whose three parameters are the three indeterminates. Every normalised EDS is one of
+its specializations (`normEDS_eq_aeval`), so an identity between terms of a normalised EDS can be
+proved here once and read off for every ring and every choice of parameters. -/
+noncomputable def universalNormEDS : ℤ → MvPolynomial Param ℤ := normEDS (X B) (X C) (X D)
+
+/-- **Every normalised EDS is a specialization of the universal one.** -/
+theorem normEDS_eq_aeval :
+    normEDS b c d = fun n ↦ aeval (Param.rec b c d) (universalNormEDS n) := by
+  simp_rw [universalNormEDS, map_normEDS, aeval_X]
+
+/-- The pre-normalised sequence of a normalised EDS is likewise a specialization. -/
+theorem preNormEDS_eq_aeval :
+    preNormEDS b c d =
+      fun n ↦ aeval (Param.rec b c d) (preNormEDS (X (R := ℤ) B) (X C) (X D) n) := by
+  simp_rw [map_preNormEDS, aeval_X]
+
+/-- The second complement sequence of a normalised EDS is likewise a specialization. -/
+theorem complEDS₂_eq_aeval :
+    complEDS₂ b c d = fun n ↦ aeval (Param.rec b c d) (complEDS₂ (X (R := ℤ) B) (X C) (X D) n) := by
+  simp_rw [map_complEDS₂, aeval_X]
+
+/-- The complement sequence of a normalised EDS is likewise a specialization, in both arguments. -/
+theorem complEDS_eq_aeval :
+    complEDS b c d =
+      fun k n ↦ aeval (Param.rec b c d) (complEDS (X (R := ℤ) B) (X C) (X D) k n) := by
+  simp_rw [map_complEDS, aeval_X]
+
+end Param
