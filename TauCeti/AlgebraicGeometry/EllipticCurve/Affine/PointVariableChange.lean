@@ -73,6 +73,8 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve F) (C : VariableChange F)
 Throughout, the change of variables carries a point `(x, y)` of `C • W` to the point
 `(u²x + r, u³y + u²sx + t)` of `W`. -/
 
+/-- **`negY` under the change of variables.** The negation of the `y`-coordinate scales by `u³`
+and picks up the same shear and translation the change of variables applies to `y`. -/
 lemma variableChange_negY (x y : F) :
     W.toAffine.negY ((C.u : F) ^ 2 * x + C.r)
         ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
@@ -94,12 +96,16 @@ lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : F}
   rw [variableChange_negY] at hY
   exact hxy ⟨rfl, mul_left_cancel₀ (pow_ne_zero 3 hu) (by linear_combination hY)⟩
 
+/-- **`addX` under the change of variables.** The `x`-coordinate of a sum scales by `u²` and
+translates by `r`, the same law the change of variables applies to any `x`. -/
 lemma variableChange_addX (x₁ x₂ ℓ : F) :
     W.toAffine.addX ((C.u : F) ^ 2 * x₁ + C.r) ((C.u : F) ^ 2 * x₂ + C.r) ((C.u : F) * ℓ + C.s)
       = (C.u : F) ^ 2 * (C • W).toAffine.addX x₁ x₂ ℓ + C.r := by
   simp [addX, variableChange_a₁, variableChange_a₂]
   field
 
+/-- **`negAddY` under the change of variables**, scaling by `u³` with the shear and translation
+of the `y`-coordinate. -/
 lemma variableChange_negAddY (x₁ x₂ y₁ ℓ : F) :
     W.toAffine.negAddY ((C.u : F) ^ 2 * x₁ + C.r) ((C.u : F) ^ 2 * x₂ + C.r)
         ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t) ((C.u : F) * ℓ + C.s)
@@ -108,6 +114,8 @@ lemma variableChange_negAddY (x₁ x₂ y₁ ℓ : F) :
   simp [negAddY, addX, variableChange_a₁, variableChange_a₂]
   field
 
+/-- **`addY` under the change of variables.** Immediate from `variableChange_negAddY`,
+`variableChange_addX` and `variableChange_negY`, since `addY` is `negY` of `negAddY`. -/
 lemma variableChange_addY (x₁ x₂ y₁ ℓ : F) :
     W.toAffine.addY ((C.u : F) ^ 2 * x₁ + C.r) ((C.u : F) ^ 2 * x₂ + C.r)
         ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t) ((C.u : F) * ℓ + C.s)
@@ -115,6 +123,9 @@ lemma variableChange_addY (x₁ x₂ y₁ ℓ : F) :
         + (C.u : F) ^ 2 * C.s * (C • W).toAffine.addX x₁ x₂ ℓ + C.t := by
   simp only [addY, variableChange_negAddY, variableChange_addX, variableChange_negY]
 
+/-- **The slope under the change of variables**, scaling by `u` and translating by `s` — the law
+the change of variables applies to a slope, as `y` scales by `u³` and `x` by `u²`. Both branches
+of `slope` are checked: the tangent case `x₁ = x₂` and the secant case `x₁ ≠ x₂`. -/
 lemma variableChange_slope [DecidableEq F] {x₁ x₂ y₁ y₂ : F}
     (h₁ : (C • W).toAffine.Equation x₁ y₁) (h₂ : (C • W).toAffine.Equation x₂ y₂)
     (hxy : ¬(x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂)) :
@@ -287,6 +298,8 @@ def equivVariableChange : (C • W).toAffine.Point ≃+ W.toAffine.Point :=
     right_inv := hright
     map_add' := (mapVariableChange W C).map_add' }
 
+/-- **What the isomorphism does to a point given by coordinates.** The companion of
+`mapVariableChange_some` for the bundled `≃+`. -/
 @[simp] lemma equivVariableChange_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
     equivVariableChange W C (.some x y h)
       = .some ((C.u : F) ^ 2 * x + C.r) ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
