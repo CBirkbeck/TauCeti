@@ -79,14 +79,18 @@ lemma hasFiniteSupport_orderOfVanishingOnOrbit [ModularFormClass F 𝒮ℒ k] {f
   exact ((finite_zeros_in_fd hf).subset h_image).of_finite_image h_inj
 
 /-- A divisor sum reindexed over the orbits its points represent. The index set is arbitrary,
-mapped into `ℍ` by `p`; the reindexing is lossless exactly when the orbit map is injective on
-that image, which is all this asks.
+mapped into `ℍ` by `p`.
 
-A caller whose points lie in the **open** fundamental domain gets the hypothesis from
-`ModularGroup.orbit_mk_injOn_fdo.mono`. It genuinely needs the open domain: on the closed `𝒟`
-the orbit map is not injective — `T` identifies the two vertical edges and `S` the two halves of
-the arc — so a set holding two identified boundary representatives would count their common orbit
-twice. -/
+The hypothesis is that the **composite** `a ↦ ⟦p a⟧` is injective on `X`, which is what makes the
+reindexing lossless. That is strictly more than asking the orbit map to be injective on `p '' X`:
+it also rules out distinct indices with the same `p`, since those would contribute twice on the
+left and once on the right.
+
+For `p` injective — `ofComplex` on the upper half plane, say — the composite's injectivity
+reduces to the orbit map's, which `ModularGroup.orbit_mk_injOn_fdo.mono` supplies on the **open**
+fundamental domain. The open domain is genuinely needed there: on the closed `𝒟` the orbit map is
+not injective, since `T` identifies the two vertical edges and `S` the two halves of the arc, so a
+set holding two identified boundary representatives would count their common orbit twice. -/
 lemma sum_orderOfVanishingAt_comp_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k] {α : Type*}
     {X : Finset α} (p : α → ℍ)
     (hX : Set.InjOn (fun a ↦ (Quotient.mk'' (p a) :
