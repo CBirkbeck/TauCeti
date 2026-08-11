@@ -120,11 +120,10 @@ condition. The `b` with `v b = 0` cost nothing, the set then being empty. -/
 def IsContinuous (v : Valuation A Γ₀) : Prop :=
   ∀ b : A, IsOpen {a : A | v a < v b}
 
-/-- Continuity, unfolded. **This is required, not a wrapper.** `IsContinuous` is not `@[expose]`,
-so downstream modules cannot see its body: `simp [IsContinuous]` there fails with *"Expected a
-definition with an exposed body"*. Rewriting through this lemma is the only way to reach the
-underlying quantifier from another module, which is the same reason `restrictToIdeal_def` exists
-in `TauCeti.RingTheory.Valuation.CofinalIdeal.Restrict`. -/
+/-- Continuity, unfolded to the family of open sets defining it. -/
+-- Not a wrapper: `IsContinuous` is not `@[expose]`, so a downstream module cannot unfold it and
+-- `simp [IsContinuous]` fails there; rewriting through this lemma is the only route to the
+-- quantifier from outside this file.
 @[simp]
 theorem isContinuous_def {v : Valuation A Γ₀} :
     v.IsContinuous ↔ ∀ b : A, IsOpen {a : A | v a < v b} := Iff.rfl
