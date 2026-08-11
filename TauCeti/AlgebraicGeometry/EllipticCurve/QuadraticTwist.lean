@@ -92,8 +92,11 @@ cocycle identity (`map_quadraticTwistVariableChange_baseChange`). Transporting a
 `quadraticTwistPointEquiv_some` the coordinate equation a consumer needs. It is natural in `M`
 (`quadraticTwistPointEquiv_map`) and **anti-equivariant** for the Galois elements that move `L`
 (`quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed`): that sign is what makes the twist a
-twist. Packaging the two cases as `φ(σP) = χ(σ) • σ(φP)` needs a quadratic character, which this
-repository does not yet have, so it is left to a later PR.
+twist. `quadraticTwistPointEquiv_galois` packages the two cases as `φ(σP) = χ(σ|_L) • σ(φP)`,
+uniformly in `σ`, where `χ` is `Algebra.IsQuadraticExtension.quadraticCharacter` — the
+`Gal(L/K) →* ℤˣ` sending the nontrivial automorphism to `-1`. That is the canonical form of the
+statement: the isomorphism is defined over `L` rather than over `K`, and `χ` measures precisely
+that failure.
 
 The twist by a generator is deliberately **not** given its own constructor here. Such a
 definition would accept any field extension, and outside the finite-dimensional case Mathlib's
@@ -787,7 +790,9 @@ variable (L) in
 /-- **The isomorphism `Eᴸ(M) ≅ E(M)` on `M`-points**, for any field `M` in a tower `K ⊆ L ⊆ M`:
 the base change to `M` of the change of variables carrying `E` to its twist over `L`. It is
 natural in `M` (`quadraticTwistPointEquiv_map`) and anti-equivariant for the Galois elements that
-move `L` (`quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed`).
+move `L` (`quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed`); `quadraticTwistPointEquiv_galois`
+bundles those two branches into a single statement, uniform in `σ`, twisted by the quadratic
+character of `L/K`.
 
 Like the twist itself this is well defined only up to an `L`-automorphism of `E` — generically up
 to sign — and this definition makes one arbitrary choice, consistently across all `M`. -/
@@ -907,6 +912,29 @@ theorem quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed {σ : M ≃ₐ[K] M
     · simp only [map_add, map_mul, map_pow, hu, hr]; ring
     · simp only [Affine.negY, map_add, map_mul, map_pow, hu, hr, hs, ht]; ring
 
+variable (L) in
+/-- **Galois equivariance of the point isomorphism, twisted by the quadratic character.** For
+*every* `σ ∈ Aut(M/K)`, transporting the action of `σ` through `Eᴸ(M) ≅ E(M)` multiplies it by
+`χ(σ|_L) = ±1`, the quadratic character of `L/K`. This is the uniform statement that
+`quadraticTwistPointEquiv_map` (the `σ|_L = 1` branch, where the isomorphism is `L`-linear) and
+`quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed` (the moved branch, where it is
+anti-equivariant) together assert: the isomorphism is defined over `L`, not over `K`, and the
+character measures exactly that failure. -/
+theorem quadraticTwistPointEquiv_galois (σ : M ≃ₐ[K] M)
+    (P : ((E.quadraticTwist L).baseChange M).toAffine.Point) :
+    E.quadraticTwistPointEquiv L M (Affine.Point.map σ.toAlgHom P)
+      = (Algebra.IsQuadraticExtension.quadraticCharacter K L (σ.restrictNormal L) : ℤ) •
+          Affine.Point.map σ.toAlgHom (E.quadraticTwistPointEquiv L M P) := by
+  by_cases hσ : ∀ x : L, σ (algebraMap L M x) = algebraMap L M x
+  · -- `σ` fixes `L` pointwise, so it *is* an `L`-algebra map and naturality applies verbatim
+    have key := quadraticTwistPointEquiv_map (E := E) (L := L) (M := M) (N := M)
+      (f := ({ σ.toAlgHom.toRingHom with commutes' := hσ } : M →ₐ[L] M)) (P := P)
+    rw [(AlgEquiv.restrictNormal_eq_one_iff_algebraMap K L M σ).2 hσ, map_one]
+    exact_mod_cast key
+  · rw [Algebra.IsQuadraticExtension.quadraticCharacter_eq_neg_one_of_ne_one _ _
+      fun h ↦ hσ ((AlgEquiv.restrictNormal_eq_one_iff_algebraMap K L M σ).1 h)]
+    simpa using quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed
+      (E := E) (L := L) (M := M) (σ := σ) hσ P
 
 end PointEquiv
 
