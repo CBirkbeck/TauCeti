@@ -86,7 +86,6 @@ section Nontrivial
 variable {R : Type*} [CommRing R] [Nontrivial R] (W : _root_.WeierstrassCurve.Affine R)
 
 /-- **The norm of the coordinate function `x` has degree `2`**: it is `x ^ 2`. -/
-@[simp]
 theorem natDegree_norm_X :
     (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing X)).natDegree = 2 := by
   -- `norm_smul_basis` reads the norm off the `1, Y` basis, so `x` is written in it first
@@ -98,7 +97,6 @@ theorem natDegree_norm_X :
 
 /-- **The norm of the coordinate function `y` has degree `3`**, being the negative of the cubic in
 `x` that the Weierstrass equation solves for. -/
-@[simp]
 theorem natDegree_norm_mk_Y :
     (Algebra.norm R[X] (CoordinateRing.mk W Y)).natDegree = 3 := by
   -- `norm_smul_basis` reads the norm off the `1, Y` basis, so `y` is written in it first

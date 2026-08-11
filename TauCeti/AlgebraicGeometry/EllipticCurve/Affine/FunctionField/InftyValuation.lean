@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.FieldTheory.RatFunc.Valuation
-public import Mathlib.RingTheory.Localization.NormTrace
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Norm
 
 /-!
@@ -34,12 +33,8 @@ at infinity of the curve: `ord_∞ f = -deg N f`, the place where `x` and `y` ha
   the double and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0
   asks for by name. They read the norm degrees of `FunctionField/Norm.lean` through the valuation.
 
-The route is the one the source takes: build the order at infinity from the norm rather than by
-extending a valuation. Multiplicativity is then free, and the only real content is the ultrametric
-inequality. That is proved here at the *polynomial* level (`degree_norm_add_le`), where `WithBot`
-absorbs every degenerate case, and transported to the function field by clearing denominators —
-`exists_common_smul_basis_div` puts two functions over a common denominator, so the numerator of a
-sum is just the sum of the numerators.
+Only `inftyValuation`, its `apply` lemma, the two pole values and the two degree statements are
+public; everything else in the file is scaffolding for the ultrametric inequality and is `private`.
 
 ## Roadmap
 
@@ -76,7 +71,7 @@ namespace WeierstrassCurve.Affine
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
-theorem norm_algebraMap_polynomial' (d : F[X]) :
+private theorem norm_algebraMap_polynomial' (d : F[X]) :
     Algebra.norm (RatFunc F) (algebraMap F[X] W.FunctionField d) =
       (algebraMap F[X] (RatFunc F) d) ^ 2 := by
   rw [IsScalarTower.algebraMap_apply F[X] (RatFunc F) W.FunctionField, Algebra.norm_algebraMap,
@@ -84,7 +79,7 @@ theorem norm_algebraMap_polynomial' (d : F[X]) :
 
 /-- The degree of the norm of `u / d`: the polynomial norm's degree, less twice that of the
 denominator. -/
-theorem intDegree_norm_of_mul_eq {f : W.FunctionField} (hf : f ≠ 0) {u : W.CoordinateRing}
+private theorem intDegree_norm_of_mul_eq {f : W.FunctionField} (hf : f ≠ 0) {u : W.CoordinateRing}
     {d : F[X]} (hd : d ≠ 0)
     (h : f * algebraMap F[X] W.FunctionField d = algebraMap W.CoordinateRing W.FunctionField u) :
     (Algebra.norm (RatFunc F) f).intDegree
@@ -103,7 +98,7 @@ theorem intDegree_norm_of_mul_eq {f : W.FunctionField} (hf : f ≠ 0) {u : W.Coo
 
 /-- Every function is `(a + b y) / p` with `a b p` polynomials, `p ≠ 0` — the form the degree
 formula consumes: numerator in the `1, Y` basis, denominator a polynomial. -/
-theorem exists_smul_basis_div (f : W.FunctionField) :
+private theorem exists_smul_basis_div (f : W.FunctionField) :
     ∃ a b p : F[X], p ≠ 0 ∧
       f * algebraMap F[X] W.FunctionField p =
         algebraMap W.CoordinateRing W.FunctionField (a • 1 + b • CoordinateRing.mk W Y) := by
@@ -116,7 +111,7 @@ theorem exists_smul_basis_div (f : W.FunctionField) :
   exact IsLocalization.mk'_spec W.FunctionField _ _
 
 /-- natDegree form of Mathlib's `degree_norm_smul_basis` (recovered from `be8adaca`). -/
-theorem natDegree_norm_smul_basis {a b : F[X]} (ha : a ≠ 0) (hb : b ≠ 0) :
+private theorem natDegree_norm_smul_basis {a b : F[X]} (ha : a ≠ 0) (hb : b ≠ 0) :
     (Algebra.norm F[X] (a • (1 : W.CoordinateRing) + b • CoordinateRing.mk W Y)).natDegree =
       max (2 * a.natDegree) (2 * b.natDegree + 3) := by
   refine natDegree_eq_of_degree_eq_some ?_
@@ -150,7 +145,7 @@ private theorem smul_basis_div_mul {f : W.FunctionField} {a b p : F[X]}
   ring
 
 /-- **Two functions over a common denominator.** -/
-theorem exists_common_smul_basis_div (f g : W.FunctionField) :
+private theorem exists_common_smul_basis_div (f g : W.FunctionField) :
     ∃ a₁ b₁ a₂ b₂ p : F[X], p ≠ 0 ∧
       f * algebraMap F[X] W.FunctionField p =
         algebraMap W.CoordinateRing W.FunctionField (a₁ • 1 + b₁ • CoordinateRing.mk W Y) ∧
@@ -170,7 +165,7 @@ variable {R : Type*} [CommRing R] [IsDomain R] (W : WeierstrassCurve.Affine R)
 /-- **The ultrametric inequality at the polynomial level**: the norm degree of a sum of two
 basis-decomposed elements is at most the larger of the two. No denominators, no case analysis —
 `degree` in `WithBot` handles the zero cases. -/
-theorem degree_norm_add_le (a₁ b₁ a₂ b₂ : R[X]) :
+private theorem degree_norm_add_le (a₁ b₁ a₂ b₂ : R[X]) :
     (Algebra.norm R[X] ((a₁ + a₂) • (1 : W.CoordinateRing)
         + (b₁ + b₂) • CoordinateRing.mk W Y)).degree
       ≤ max (Algebra.norm R[X] (a₁ • 1 + b₁ • CoordinateRing.mk W Y)).degree
@@ -189,7 +184,7 @@ theorem degree_norm_add_le (a₁ b₁ a₂ b₂ : R[X]) :
 
 /-- The `natDegree` form, and it needs no nonzero hypotheses at all: `natDegree_le_natDegree`
 carries the `WithBot` bound across, and `natDegree 0 = 0` makes the zero cases hold anyway. -/
-theorem natDegree_norm_add_le (a₁ b₁ a₂ b₂ : R[X]) :
+private theorem natDegree_norm_add_le (a₁ b₁ a₂ b₂ : R[X]) :
     (Algebra.norm R[X] ((a₁ + a₂) • (1 : W.CoordinateRing)
         + (b₁ + b₂) • CoordinateRing.mk W Y)).natDegree
       ≤ max (Algebra.norm R[X] (a₁ • 1 + b₁ • CoordinateRing.mk W Y)).natDegree
@@ -221,6 +216,11 @@ theorem intDegree_norm_add_le {f g : W.FunctionField} (hf : f ≠ 0) (hg : g ≠
     intDegree_norm_of_mul_eq W hfg hp h₃]
   have := natDegree_norm_add_le W a₁ b₁ a₂ b₂
   omega
+
+/-- The norm of `0` is `0`: the extension is nontrivial, so `Algebra.norm_eq_zero_iff` applies. -/
+private theorem norm_zero_eq_zero :
+    Algebra.norm (RatFunc F) (0 : W.FunctionField) = 0 :=
+  (Algebra.norm_eq_zero_iff (R := RatFunc F)).mpr rfl
 
 open scoped Classical in
 /-- The ultrametric inequality for the composite `RatFunc.inftyValuation ∘ Algebra.norm`, which is
@@ -261,8 +261,7 @@ infinity of `F(x)`, composed with the algebra norm. -/
 noncomputable def inftyValuation : Valuation W.FunctionField (WithZero (Multiplicative ℤ)) where
   toFun f := RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f)
   map_zero' := by
-    rw [show Algebra.norm (RatFunc F) (0 : W.FunctionField) = 0 from
-      (Algebra.norm_eq_zero_iff (R := RatFunc F)).mpr rfl, map_zero]
+    rw [norm_zero_eq_zero W, map_zero]
   map_one' := by rw [map_one, map_one]
   map_mul' x y := by rw [map_mul, map_mul]
   map_add_le_max' := inftyValuation_add_le_max W
@@ -285,7 +284,6 @@ private theorem norm_ne_zero_of_natDegree_ne_zero {u : W.CoordinateRing}
 
 open scoped Classical in
 /-- **`x` has a double pole at infinity**: `v_∞ x = exp 2`, which is `ord_∞ x = -2`. -/
-@[simp]
 theorem inftyValuation_algebraMap_X :
     inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
       (algebraMap F[X] W.CoordinateRing X)) = WithZero.exp 2 := by
@@ -298,7 +296,6 @@ theorem inftyValuation_algebraMap_X :
 
 open scoped Classical in
 /-- **`y` has a triple pole at infinity**: `v_∞ y = exp 3`, which is `ord_∞ y = -3`. -/
-@[simp]
 theorem inftyValuation_algebraMap_mk_Y :
     inftyValuation W (algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y))
       = WithZero.exp 3 := by
