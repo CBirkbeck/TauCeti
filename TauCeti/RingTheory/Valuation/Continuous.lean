@@ -12,7 +12,7 @@ public import Mathlib.Topology.Algebra.WithZeroTopology
 /-!
 # Continuous valuations
 
-**Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Definition 7.7 and Remark 7.8.**
+**Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Definition 7.7 and Remarks 7.8, 7.9.**
 
 A valuation `v` on a topological ring `A` is *continuous* if `{a ; v a < γ}` is open in `A` for
 every `γ` in the value group `Γ_v` of `v` — equivalently, if the topology of `A` is finer than
@@ -68,10 +68,12 @@ the definition, carries `[SeparatelyContinuousMul A]`. Phrased this way the defi
   case.
 * `TauCeti.Valuation.isContinuous_of_discreteTopology` : **Remark 7.8(2)**, every valuation on
   a discrete ring is continuous.
+* `TauCeti.Valuation.IsContinuous.comap` : **Remark 7.9**, continuity is inherited along a
+  continuous ring homomorphism.
 
 ## References
 
-* T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, Definition 7.7 and Remark 7.8.
+* T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, Definition 7.7 and Remarks 7.8, 7.9.
 
 ## Provenance
 
@@ -160,6 +162,15 @@ theorem IsContinuous.isOpen_le [ContinuousSub A] {v : Valuation A Γ₀} (hv : v
   refine isOpen_iff_mem_nhds.mpr fun a ha ↦ ?_
   filter_upwards [hv.sub_lt_mem_nhds a hb] with y hy
   simpa using v.map_add_le hy.le ha
+
+/-- **Wedhorn Remark 7.9.** Continuity is inherited along a continuous ring homomorphism. No
+compatibility between the topology and the ring operations is needed on either side: because the
+quantifier runs over attained values, and `v.comap φ` attains exactly the `v (φ b)`, the sets
+cutting out continuity of `v.comap φ` are literally the `φ`-preimages of those cutting out
+continuity of `v`. -/
+theorem IsContinuous.comap {B : Type*} [Ring B] [TopologicalSpace B] {φ : B →+* A}
+    (hφ : Continuous φ) {v : Valuation A Γ₀} (hv : v.IsContinuous) : (v.comap φ).IsContinuous :=
+  fun b ↦ (hv (φ b)).preimage hφ
 
 /-! ### Results needing a value **group**
 
