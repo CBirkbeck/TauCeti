@@ -33,8 +33,6 @@ on the contour.
 * `TauCeti.ModularForm.two_pi_I_mul_sum_windingNumber_mul_order_eq`: equating that with the
   argument principle gives `2πi·Σ n_z·ord z = 2πi·ord_∞ − k·(π/6)·I`, the analytic identity the
   valence formula rests on.
-* `TauCeti.ModularForm.two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq`: the same with
-  the abstract order replaced by `orderOfVanishingAt`, for divisor points in the upper half plane.
 * `TauCeti.ModularForm.sum_windingNumber_mul_orderOfVanishingAt_eq`: that identity divided by
   `2πi`, giving `Σ n_z·ord z = ord_∞ − k/12`.
 
@@ -218,7 +216,7 @@ the modular-forms order at each of them.
 is automatic here: `meromorphicOrderAt_ne_top_of_analyticAt_off` derives it from `hoff` and the
 finiteness of `T`. The sum runs over `T.attach` because the order is taken at each divisor
 point *as a point of `ℍ`*, which needs its membership proof. -/
-theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
+private theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
     [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
     {U : Set ℂ} (hH : 1 ≤ H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hHgt : ∀ s ∈ S, s.im < H) (hper : Periodic (⇑f ∘ ofComplex) 1)
