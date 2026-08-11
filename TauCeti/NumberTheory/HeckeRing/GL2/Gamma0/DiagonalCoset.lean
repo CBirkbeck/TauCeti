@@ -41,6 +41,7 @@ Ported from the AINTLIB `LeanModularForms` project
 * `HeckeRing.GL2.diagCosetGamma0_toSet`: its underlying set.
 * `HeckeRing.GL2.toLevelOneCoset_diagCosetGamma0`: the `Γ₀(N)`-coset of `diag(a)` lies over the
   level-one coset `T(a)`.
+* `HeckeRing.GL2.diagCosetGamma0_one`: the all-ones tuple gives the identity coset.
 
 ## References
 
@@ -60,8 +61,10 @@ variable (N : ℕ)
 
 /-- A diagonal whose upper-left entry is coprime to `N` lies in `Δ₀(N)`: the lower-left entry
 is zero, so only the unit condition has content — and when positivity fails `natDiagGL` is the
-identity, which is in `Δ₀(N)` anyway. -/
-lemma natDiagGL_mem_Delta0_of_coprime (a : Fin 2 → ℕ) (hgcd : Nat.Coprime (a 0) N) :
+identity, which is in `Δ₀(N)` anyway. Coprimality is therefore only needed in the positive
+branch, and the hypothesis asks for it only there. -/
+lemma natDiagGL_mem_Delta0_of_coprime (a : Fin 2 → ℕ)
+    (hgcd : (∀ i, 0 < a i) → Nat.Coprime (a 0) N) :
     natDiagGL 2 a ∈ Delta0 N := by
   by_cases ha : ∀ i, 0 < a i
   case neg => rw [natDiagGL_of_not_pos (n := 2) ha]; exact one_mem _
@@ -71,26 +74,26 @@ lemma natDiagGL_mem_Delta0_of_coprime (a : Fin 2 → ℕ) (hgcd : Nat.Coprime (a
     simp [Matrix.diagonal, Matrix.map_apply, apply_ite (Int.cast : ℤ → ℚ)]
   · exact natDiagGL_det_pos 2 a ha
   · simp [Matrix.diagonal_apply_ne]
-  · simpa [Matrix.diagonal_apply_eq] using (ZMod.isUnit_iff_coprime (a 0) N).mpr hgcd
+  · simpa [Matrix.diagonal_apply_eq] using (ZMod.isUnit_iff_coprime (a 0) N).mpr (hgcd ha)
 
 /-- The `Γ₀(N)`-double coset of `diag(a)` when the upper-left entry is coprime to the level:
 the level-`N` analogue of `diagCoset`.
 
-Coprimality stays in the signature because it is what puts the matrix in `Δ₀(N)`; positivity,
-like in `diagCoset`, belongs in the lemmas, since `natDiagGL` falls back to the identity
-without it. -/
-noncomputable def diagCosetGamma0 (a : Fin 2 → ℕ) (hgcd : Nat.Coprime (a 0) N) :
+Coprimality stays in the signature because it is what puts the matrix in `Δ₀(N)`, but only
+under positivity: without it `natDiagGL` falls back to the identity, which lies in `Δ₀(N)`
+regardless of the level. -/
+noncomputable def diagCosetGamma0 (a : Fin 2 → ℕ) (hgcd : (∀ i, 0 < a i) → Nat.Coprime (a 0) N) :
     HeckeCoset (Delta0 N) (Gamma0Image N) (Gamma0Image N) :=
   HeckeCoset.mk _ _ ⟨natDiagGL 2 a, natDiagGL_mem_Delta0_of_coprime N a hgcd⟩
 
 /-- Defining equation for the sealed definition `diagCosetGamma0`. -/
-lemma diagCosetGamma0_def (a : Fin 2 → ℕ) (hgcd : Nat.Coprime (a 0) N) :
+lemma diagCosetGamma0_def (a : Fin 2 → ℕ) (hgcd : (∀ i, 0 < a i) → Nat.Coprime (a 0) N) :
     diagCosetGamma0 N a hgcd =
       HeckeCoset.mk (Gamma0Image N) (Gamma0Image N)
         ⟨natDiagGL 2 a, natDiagGL_mem_Delta0_of_coprime N a hgcd⟩ := (rfl)
 
 /-- The underlying set of `diagCosetGamma0 a` is the `Γ₀(N)`-double coset of `diag(a)`. -/
-@[simp] lemma diagCosetGamma0_toSet (a : Fin 2 → ℕ) (hgcd : Nat.Coprime (a 0) N) :
+@[simp] lemma diagCosetGamma0_toSet (a : Fin 2 → ℕ) (hgcd : (∀ i, 0 < a i) → Nat.Coprime (a 0) N) :
     (diagCosetGamma0 N a hgcd).toSet =
       DoubleCoset.doubleCoset (natDiagGL 2 a) (Gamma0Image N) (Gamma0Image N) :=
   HeckeCoset.toSet_mk _
@@ -99,10 +102,17 @@ lemma diagCosetGamma0_def (a : Fin 2 → ℕ) (hgcd : Nat.Coprime (a 0) N) :
 coefficient subgroups from `Γ₀(N)` to `SL₂(ℤ)` along `toLevelOneCoset` gives the double coset
 of the same representative, hence exactly `diagCoset a`. (The `Γ₀(N)`-coset itself is in
 general strictly smaller than the level-one one.) -/
-@[simp] lemma toLevelOneCoset_diagCosetGamma0 (a : Fin 2 → ℕ) (hgcd : Nat.Coprime (a 0) N) :
+@[simp] lemma toLevelOneCoset_diagCosetGamma0 (a : Fin 2 → ℕ)
+    (hgcd : (∀ i, 0 < a i) → Nat.Coprime (a 0) N) :
     toLevelOneCoset N (diagCosetGamma0 N a hgcd) = diagCoset a := by
   refine HeckeCoset.toSet_injective ?_
   rw [diagCosetGamma0_def, toLevelOneCoset_mk, HeckeCoset.toSet_mk, diagCoset_toSet,
     Submonoid.coe_inclusion]
+
+/-- The identity normal form, mirroring `diagCoset_one`: the all-ones tuple gives the identity
+double coset, whatever proof of the coprimality condition is supplied. -/
+@[simp] lemma diagCosetGamma0_one (h : (∀ _ : Fin 2, 0 < (1 : ℕ)) → Nat.Coprime 1 N) :
+    diagCosetGamma0 N (fun _ ↦ 1) h = 1 :=
+  congrArg (HeckeCoset.mk _ _) (Subtype.ext (natDiagGL_one 2))
 
 end HeckeRing.GL2
