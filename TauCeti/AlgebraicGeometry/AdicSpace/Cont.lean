@@ -43,7 +43,8 @@ So `IsContinuous` is defined here by testing the *canonical* valuation of the po
 * `TauCeti.ValuationSpectrum.isContinuous_ofValuation` : continuity may be tested on any
   representative, not only the canonical one — the well-definedness making `cont` meaningful.
 * `TauCeti.ValuationSpectrum.IsContinuous.comap` : **Remark 7.9**, that a continuous ring
-  homomorphism pulls continuous points back to continuous points.
+  homomorphism pulls continuous points back to continuous points, so `comap φ` restricts to
+  `Cont B → Cont A`.
 * `TauCeti.ValuationSpectrum.cont_eq_univ` : **Remark 7.8(2)**, `Cont A = Spv A` for discrete `A`.
 
 ## References
@@ -122,13 +123,5 @@ theorem IsContinuous.comap {B : Type*} [CommRing B] [TopologicalSpace B] {φ : A
     (hφ : Continuous φ) {v : Spv B} (hv : v.IsContinuous) : (comap φ v).IsContinuous := by
   rw [← ofValuation_valuation v, comap_ofValuation, isContinuous_ofValuation]
   exact (isContinuous_def v |>.mp hv).comap hφ
-
-/-- Remark 7.9 in the form a consumer of the subspaces uses: `Cont B` lands inside the preimage
-of `Cont A` along the induced map `comap φ : Spv B → Spv A`, so `comap φ` restricts to
-`Cont B → Cont A`. -/
-theorem cont_subset_comap_preimage {B : Type*} [CommRing B] [TopologicalSpace B]
-    [SeparatelyContinuousMul B] {φ : A →+* B}
-    (hφ : Continuous φ) : cont B ⊆ comap φ ⁻¹' cont A :=
-  fun _ hv ↦ IsContinuous.comap hφ hv
 
 end TauCeti.ValuationSpectrum
