@@ -23,19 +23,20 @@ at infinity of the curve: `ord_∞ f = -deg N f`, the place where `x` and `y` ha
 
 ## Main results
 
-* `WeierstrassCurve.Affine.intDegree_norm_add_le`: the ultrametric inequality in degree form, which
-  is what `inftyValuation`'s `map_add_le_max'` rests on. The other three valuation axioms are the
-  norm's multiplicativity and Mathlib's place at infinity.
+The valuation's `map_add_le_max'` rests on an ultrametric inequality in degree form, proved here;
+the other three axioms are the norm's multiplicativity and Mathlib's place at infinity.
 * `WeierstrassCurve.Affine.intDegree_norm_eq_max`: for `a`, `b` and `p` all nonzero, the degree of
   the norm of `(a + by)/p` is
   `max (2 deg a) (2 deg b + 3) - 2 deg p`.
-* `WeierstrassCurve.Affine.inftyValuation_X`,
-  `WeierstrassCurve.Affine.inftyValuation_mk_Y`: `v_∞ x = exp 2` and `v_∞ y = exp 3` —
+* `WeierstrassCurve.Affine.inftyValuation.X`,
+  `WeierstrassCurve.Affine.inftyValuation.mk_Y`
+* `WeierstrassCurve.Affine.inftyValuation.C`: the valuation is trivial on the base field — a
+  nonzero constant has value `1`: `v_∞ x = exp 2` and `v_∞ y = exp 3` —
   the double and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0
   asks for by name. They read the norm degrees of `FunctionField/Norm.lean` through the valuation.
 
-Only `inftyValuation`, its `apply` lemma, the two pole values and the two degree statements are
-public; everything else in the file is scaffolding for the ultrametric inequality and is `private`.
+The public surface is the valuation, its evaluation rule, the two pole values and the two degree
+statements; the machinery that builds the ultrametric inequality is `private`.
 
 ## Roadmap
 
@@ -203,7 +204,7 @@ private theorem natDegree_norm_add_le (a₁ b₁ a₂ b₂ : R[X]) :
 end DomainCore
 
 /-- **The ultrametric inequality on the function field.** -/
-theorem intDegree_norm_add_le {f g : W.FunctionField} (hf : f ≠ 0) (hg : g ≠ 0)
+private theorem intDegree_norm_add_le {f g : W.FunctionField} (hf : f ≠ 0) (hg : g ≠ 0)
     (hfg : f + g ≠ 0) :
     (Algebra.norm (RatFunc F) (f + g)).intDegree
       ≤ max (Algebra.norm (RatFunc F) f).intDegree (Algebra.norm (RatFunc F) g).intDegree := by
@@ -294,19 +295,20 @@ open scoped Classical in
 -- lint gate. Stating them in that normal form instead would remove every mention of the curve's
 -- coordinate functions, which is the whole content of the lemmas.
 /-- **`x` has a double pole at infinity**: `v_∞ x = exp 2`, which is `ord_∞ x = -2`. -/
-theorem inftyValuation_X :
+theorem inftyValuation.X :
     inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
-      (algebraMap F[X] W.CoordinateRing X)) = WithZero.exp 2 := by
+      (algebraMap F[X] W.CoordinateRing Polynomial.X)) = WithZero.exp 2 := by
   rw [inftyValuation_apply, RatFunc.inftyValuation_apply,
     RatFunc.inftyValuation_of_nonzero F
-      (norm_ne_zero_of_natDegree_ne_zero W (u := algebraMap F[X] W.CoordinateRing X)
+      (norm_ne_zero_of_natDegree_ne_zero W
+        (u := algebraMap F[X] W.CoordinateRing Polynomial.X)
         (by rw [natDegree_norm_X]; norm_num)),
     intDegree_norm_algebraMap_coordinateRing, natDegree_norm_X]
   norm_num
 
 open scoped Classical in
 /-- **`y` has a triple pole at infinity**: `v_∞ y = exp 3`, which is `ord_∞ y = -3`. -/
-theorem inftyValuation_mk_Y :
+theorem inftyValuation.mk_Y :
     inftyValuation W (algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y))
       = WithZero.exp 3 := by
   rw [inftyValuation_apply, RatFunc.inftyValuation_apply,
@@ -315,6 +317,15 @@ theorem inftyValuation_mk_Y :
         (by rw [natDegree_norm_mk_Y]; norm_num)),
     intDegree_norm_algebraMap_coordinateRing, natDegree_norm_mk_Y]
   norm_num
+
+
+open scoped Classical in
+/-- **The valuation is trivial on the base field**: a nonzero constant has value `1`, so `v_∞`
+restricted to `F` is trivial. The analogue of `RatFunc.inftyValuation.C`. -/
+theorem inftyValuation.C {c : F} (hc : c ≠ 0) :
+    inftyValuation W (algebraMap (RatFunc F) W.FunctionField (RatFunc.C c)) = 1 := by
+  rw [inftyValuation_apply, Algebra.norm_algebraMap, finrank_functionField W (RatFunc F), map_pow,
+    RatFunc.inftyValuation.C (F := F) hc, one_pow]
 
 end WeierstrassCurve.Affine
 
