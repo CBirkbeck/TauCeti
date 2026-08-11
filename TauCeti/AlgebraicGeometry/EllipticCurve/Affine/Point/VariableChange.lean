@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Affine.Point
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Formula.VariableChange
 
 /-!
 # The isomorphism of point groups induced by a change of variables
@@ -28,33 +29,22 @@ Transport of the point group along an equality of curves — needed to use a `C 
 points — is Mathlib's `AddEquiv.cast`, instantiated at `fun V ↦ V.toAffine.Point`; this file adds
 no wrapper for it.
 
-The route is the group-law formulae. Each of `negY`, `addX`, `negAddY`, `addY` and `slope`
-transforms by an explicit power of `u` (`variableChange_negY` and its companions), and
-`variableChange_equation` says the change of variables scales the Weierstrass polynomial by `u⁶`,
-so it carries points to points. Those identities are what make the map additive.
-
 ## Implementation notes
 
-The file is in two halves, split exactly where division starts. Over a commutative ring `R`: the
-transformation laws for `negY`, `addX`, `negAddY` and `addY`, together with
-`variableChange_equation` and `variableChange_nonsingular` — none of them divides by anything, and
-`u` is a unit by construction. Over a field `F`: `variableChange_slope`, which is a quotient, and
-hence everything about `Point`, which is built from it.
-
-Mathlib writes the coefficients of `C • W` with powers of `u⁻¹`. The five private
-`u_pow_mul_variableChange_aᵢ` lemmas clear those denominators once, as `uⁱ * (C • W).aᵢ = …`, and
-every identity in the first half is then a `linear_combination` of them which treats `(C • W).aᵢ`
-as an atom and mentions no inverse at all. Multiplying an inverse away where it appears is what
-needs a field; multiplying by `u` to cancel it does not.
+The route is the group-law formulae, and those are a separate topic: what the change of variables
+does to `negY`, `addX`, `negAddY`, `addY`, `slope`, `Equation` and `Nonsingular` is
+`Affine/Formula/VariableChange.lean`, imported here. Nothing in that file mentions `Point`, and
+nothing here restates it — the split follows Mathlib's own, which puts the formulae in
+`Affine/Formula.lean` and the point type in `Affine/Point.lean`. In particular
+`variableChange_equation` and `variableChange_nonsingular` are what let the map carry points to
+points, and `variableChange_slope`, `variableChange_addX` and `variableChange_addY` are what make
+it additive.
 
 `mapVariableChangeFun`, its equation lemmas and injectivity, `variableChange_negY_ne`,
 `mapVariableChange` and the `AddEquiv.cast` computation lemma are all `private`: they are how the
-isomorphism is built, not part of what it offers. The public surface is the transformation
-lemmas, `variableChange_equation` and `variableChange_nonsingular`, and `equivVariableChange`
-with its two coordinate lemmas `equivVariableChange_some` and `equivVariableChange_symm_some`.
-Of these, `variableChange_equation`, `variableChange_nonsingular` and the two coordinate lemmas
-are `@[simp]`, so a consumer never needs to unfold anything; the five transformation lemmas are
-the ingredients those are built from and are used by name. Anyone wanting the bare homomorphism
+isomorphism is built, not part of what it offers. The public surface is `equivVariableChange` with
+its two coordinate lemmas `equivVariableChange_some` and `equivVariableChange_symm_some`, both
+`@[simp]`, so a consumer never needs to unfold anything. Anyone wanting the bare homomorphism
 takes `(equivVariableChange W C).toAddMonoidHom`.
 
 That is also why the section is a plain `public section` rather than `@[expose]`. Exposing the
@@ -80,190 +70,21 @@ public section
 
 namespace WeierstrassCurve.Affine
 
-section CommRing
-
-variable {R : Type*} [CommRing R] (W : WeierstrassCurve R) (C : VariableChange R)
-
-/-! ### Transformation of the group-law formulae under a change of variables
-
-Throughout, the change of variables carries a point `(x, y)` of `C • W` to the point
-`(u²x + r, u³y + u²sx + t)` of `W`. -/
-
--- Mathlib's `variableChange_aᵢ` state the coefficients of `C • W` with a factor of `u⁻¹ ^ i`.
--- These five clear that factor, and are the only place `u⁻¹` is mentioned in this half of the
--- file: every identity below is a `linear_combination` of them over `R`, with `(C • W).aᵢ` left
--- as an atom. They are `private` because the `variableChange_aᵢ` themselves are the public way to
--- ask what the coefficients are.
-private lemma u_mul_variableChange_a₁ : (C.u : R) * (C • W).a₁ = W.a₁ + 2 * C.s := by
-  simp only [variableChange_a₁, Units.mul_inv_cancel_left]
-
-private lemma u_pow_mul_variableChange_a₂ :
-    (C.u : R) ^ 2 * (C • W).a₂ = W.a₂ - C.s * W.a₁ + 3 * C.r - C.s ^ 2 := by
-  simp only [variableChange_a₂, ← Units.val_pow_eq_pow_val, inv_pow, Units.mul_inv_cancel_left]
-
-private lemma u_pow_mul_variableChange_a₃ :
-    (C.u : R) ^ 3 * (C • W).a₃ = W.a₃ + C.r * W.a₁ + 2 * C.t := by
-  simp only [variableChange_a₃, ← Units.val_pow_eq_pow_val, inv_pow, Units.mul_inv_cancel_left]
-
-private lemma u_pow_mul_variableChange_a₄ :
-    (C.u : R) ^ 4 * (C • W).a₄ = W.a₄ - C.s * W.a₃ + 2 * C.r * W.a₂
-      - (C.t + C.r * C.s) * W.a₁ + 3 * C.r ^ 2 - 2 * C.s * C.t := by
-  simp only [variableChange_a₄, ← Units.val_pow_eq_pow_val, inv_pow, Units.mul_inv_cancel_left]
-
-private lemma u_pow_mul_variableChange_a₆ :
-    (C.u : R) ^ 6 * (C • W).a₆ = W.a₆ + C.r * W.a₄ + C.r ^ 2 * W.a₂ + C.r ^ 3
-      - C.t * W.a₃ - C.t ^ 2 - C.r * C.t * W.a₁ := by
-  simp only [variableChange_a₆, ← Units.val_pow_eq_pow_val, inv_pow, Units.mul_inv_cancel_left]
-
-/-- **`negY` under the change of variables.** The negation of the `y`-coordinate scales by `u³`
-and picks up the same shear and translation the change of variables applies to `y`. -/
-lemma variableChange_negY (x y : R) :
-    W.toAffine.negY ((C.u : R) ^ 2 * x + C.r)
-        ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
-      = (C.u : R) ^ 3 * (C • W).toAffine.negY x y + (C.u : R) ^ 2 * C.s * x + C.t := by
-  simp only [negY]
-  linear_combination (C.u : R) ^ 2 * x * u_mul_variableChange_a₁ W C
-    + u_pow_mul_variableChange_a₃ W C
+variable {F : Type*} [Field F] (W : WeierstrassCurve F) (C : VariableChange F)
 
 /-- The image of a pair of points under the change of variables satisfies the `y₁ = -y₂`
-degeneracy condition (`negY`) only if the original pair does. -/
-private lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : R}
+degeneracy condition (`negY`) only if the original pair does. This is the case split of the
+addition formula, transported; it is what lets `add_some` be applied on both sides at once. -/
+private lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : F}
     (hxy : ¬(x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂)) :
-    ¬((C.u : R) ^ 2 * x₁ + C.r = (C.u : R) ^ 2 * x₂ + C.r ∧
-      (C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t = W.toAffine.negY
-        ((C.u : R) ^ 2 * x₂ + C.r) ((C.u : R) ^ 3 * y₂ + (C.u : R) ^ 2 * C.s * x₂ + C.t)) := by
+    ¬((C.u : F) ^ 2 * x₁ + C.r = (C.u : F) ^ 2 * x₂ + C.r ∧
+      (C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t = W.toAffine.negY
+        ((C.u : F) ^ 2 * x₂ + C.r) ((C.u : F) ^ 3 * y₂ + (C.u : F) ^ 2 * C.s * x₂ + C.t)) := by
   rintro ⟨hX, hY⟩
   have hx : x₁ = x₂ := (C.u.isUnit.pow 2).mul_left_cancel (by linear_combination hX)
   subst hx
   rw [variableChange_negY] at hY
   exact hxy ⟨rfl, (C.u.isUnit.pow 3).mul_left_cancel (by linear_combination hY)⟩
-
-/-- **`addX` under the change of variables.** The `x`-coordinate of a sum scales by `u²` and
-translates by `r`, the same law the change of variables applies to any `x`. -/
-lemma variableChange_addX (x₁ x₂ ℓ : R) :
-    W.toAffine.addX ((C.u : R) ^ 2 * x₁ + C.r) ((C.u : R) ^ 2 * x₂ + C.r) ((C.u : R) * ℓ + C.s)
-      = (C.u : R) ^ 2 * (C • W).toAffine.addX x₁ x₂ ℓ + C.r := by
-  simp only [addX]
-  linear_combination (-(C.u : R) * ℓ) * u_mul_variableChange_a₁ W C
-    + u_pow_mul_variableChange_a₂ W C
-
-/-- **`negAddY` under the change of variables**, scaling by `u³` with the shear and translation
-of the `y`-coordinate. -/
-lemma variableChange_negAddY (x₁ x₂ y₁ ℓ : R) :
-    W.toAffine.negAddY ((C.u : R) ^ 2 * x₁ + C.r) ((C.u : R) ^ 2 * x₂ + C.r)
-        ((C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t) ((C.u : R) * ℓ + C.s)
-      = (C.u : R) ^ 3 * (C • W).toAffine.negAddY x₁ x₂ y₁ ℓ
-        + (C.u : R) ^ 2 * C.s * (C • W).toAffine.addX x₁ x₂ ℓ + C.t := by
-  simp only [negAddY, variableChange_addX]
-  ring
-
-/-- **`addY` under the change of variables**, scaling by `u³` with the shear and translation of
-the `y`-coordinate, plus the shear applied to `addX`. -/
-lemma variableChange_addY (x₁ x₂ y₁ ℓ : R) :
-    W.toAffine.addY ((C.u : R) ^ 2 * x₁ + C.r) ((C.u : R) ^ 2 * x₂ + C.r)
-        ((C.u : R) ^ 3 * y₁ + (C.u : R) ^ 2 * C.s * x₁ + C.t) ((C.u : R) * ℓ + C.s)
-      = (C.u : R) ^ 3 * (C • W).toAffine.addY x₁ x₂ y₁ ℓ
-        + (C.u : R) ^ 2 * C.s * (C • W).toAffine.addX x₁ x₂ ℓ + C.t := by
-  simp only [addY, variableChange_negAddY, variableChange_addX, variableChange_negY]
-
-/-- A point `(x, y)` lies on `C • W` if and only if `(u²x + r, u³y + u²sx + t)` lies on `W`: the
-change of variables scales the Weierstrass polynomial by `u⁶`, and `u` is a unit. -/
-@[simp] lemma variableChange_equation (x y : R) :
-    W.toAffine.Equation ((C.u : R) ^ 2 * x + C.r)
-        ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
-      ↔ (C • W).toAffine.Equation x y := by
-  rw [equation_iff', equation_iff']
-  refine Iff.trans ?_ (C.u.isUnit.pow 6).mul_right_eq_zero
-  constructor
-  · intro h
-    linear_combination h + (C.u : R) ^ 5 * x * y * u_mul_variableChange_a₁ W C
-      - (C.u : R) ^ 4 * x ^ 2 * u_pow_mul_variableChange_a₂ W C
-      + (C.u : R) ^ 3 * y * u_pow_mul_variableChange_a₃ W C
-      - (C.u : R) ^ 2 * x * u_pow_mul_variableChange_a₄ W C - u_pow_mul_variableChange_a₆ W C
-  · intro h
-    linear_combination h - (C.u : R) ^ 5 * x * y * u_mul_variableChange_a₁ W C
-      + (C.u : R) ^ 4 * x ^ 2 * u_pow_mul_variableChange_a₂ W C
-      - (C.u : R) ^ 3 * y * u_pow_mul_variableChange_a₃ W C
-      + (C.u : R) ^ 2 * x * u_pow_mul_variableChange_a₄ W C + u_pow_mul_variableChange_a₆ W C
-
-/-- **Nonsingularity transfers across the change of variables.** The two partial derivatives
-transform by the matrix `![![u⁴, -su³], ![0, u³]]`, which is invertible because `u` is, so
-`W_X ≠ 0 ∨ W_Y ≠ 0` holds at the image exactly when it holds at the source.
-
-This is what lets the *underlying* point map avoid `[W.IsElliptic]`: `equation_iff_nonsingular`
-would supply nonsingularity from the equation, but only for an elliptic curve, whereas carrying a
-point to a point needs no such hypothesis. It does not extend to the bundled maps below, which are
-elliptic-only for a different reason — Mathlib puts the group structure on `Point` under
-`[W.IsElliptic]`, so `(C • W).Point` is not an additive group without it. -/
-@[simp] lemma variableChange_nonsingular (x y : R) :
-    W.toAffine.Nonsingular ((C.u : R) ^ 2 * x + C.r)
-        ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
-      ↔ (C • W).toAffine.Nonsingular x y := by
-  -- `W_Y` scales by `u³`
-  have hY : 2 * ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
-        + W.a₁ * ((C.u : R) ^ 2 * x + C.r) + W.a₃
-      = (C.u : R) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃) := by
-    linear_combination (-(C.u : R) ^ 2 * x) * u_mul_variableChange_a₁ W C
-      - u_pow_mul_variableChange_a₃ W C
-  -- `W_X` scales by `u⁴`, shifted by an `s`-multiple of `W_Y`
-  have hX : W.a₁ * ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
-        - (3 * ((C.u : R) ^ 2 * x + C.r) ^ 2 + 2 * W.a₂ * ((C.u : R) ^ 2 * x + C.r) + W.a₄)
-      = (C.u : R) ^ 4 * ((C • W).a₁ * y - (3 * x ^ 2 + 2 * (C • W).a₂ * x + (C • W).a₄))
-        - C.s * ((C.u : R) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃)) := by
-    linear_combination (-(C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x) * u_mul_variableChange_a₁ W C
-      + (2 * (C.u : R) ^ 2 * x) * u_pow_mul_variableChange_a₂ W C
-      + C.s * u_pow_mul_variableChange_a₃ W C + u_pow_mul_variableChange_a₄ W C
-  rw [nonsingular_iff', nonsingular_iff', variableChange_equation]
-  refine and_congr_right fun _ ↦ ?_
-  rw [hX, hY, ← not_and_or, ← not_and_or]
-  refine not_congr ⟨fun ⟨h1, h2⟩ ↦ ?_, fun ⟨h1, h2⟩ ↦ ?_⟩
-  · have hB := (C.u.isUnit.pow 3).mul_right_eq_zero.mp h2
-    rw [hB, mul_zero, mul_zero, sub_zero] at h1
-    exact ⟨(C.u.isUnit.pow 4).mul_right_eq_zero.mp h1, hB⟩
-  · exact ⟨by rw [h1, h2]; ring, by rw [h2]; ring⟩
-
-end CommRing
-
-section Field
-
-variable {F : Type*} [Field F] (W : WeierstrassCurve F) (C : VariableChange F)
-
-/-! ### The slope, and the induced isomorphism of point groups
-
-From here on `F` is a field. The slope of the chord or tangent is a quotient, so it is the first
-thing that needs to divide, and the group law — hence all of `Point` — is defined through it. -/
-
-/-- **The slope under the change of variables**, scaling by `u` and translating by `s` — the law
-the change of variables applies to a slope, as `y` scales by `u³` and `x` by `u²`. Stated for two
-points of `C • W` on the curve, excluding the degenerate case `x₁ = x₂ ∧ y₁ = negY x₂ y₂` —
-where the two points are inverse to one another and the chord through them is vertical. -/
-lemma variableChange_slope [DecidableEq F] {x₁ x₂ y₁ y₂ : F}
-    (h₁ : (C • W).toAffine.Equation x₁ y₁) (h₂ : (C • W).toAffine.Equation x₂ y₂)
-    (hxy : ¬(x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂)) :
-    W.toAffine.slope ((C.u : F) ^ 2 * x₁ + C.r) ((C.u : F) ^ 2 * x₂ + C.r)
-        ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t)
-        ((C.u : F) ^ 3 * y₂ + (C.u : F) ^ 2 * C.s * x₂ + C.t)
-      = (C.u : F) * (C • W).toAffine.slope x₁ x₂ y₁ y₂ + C.s := by
-  have hu : (C.u : F) ≠ 0 := C.u.ne_zero
-  rcases eq_or_ne x₁ x₂ with rfl | hx
-  · have hy : y₁ ≠ (C • W).toAffine.negY x₁ y₂ := fun h ↦ hxy ⟨rfl, h⟩
-    obtain rfl := Y_eq_of_Y_ne h₁ h₂ rfl hy
-    have hΦy : (C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t
-        ≠ W.toAffine.negY ((C.u : F) ^ 2 * x₁ + C.r)
-            ((C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t) := by
-      rw [variableChange_negY]
-      exact fun h ↦ hy (mul_left_cancel₀ (pow_ne_zero 3 hu) (by linear_combination h))
-    rw [W.toAffine.slope_of_Y_ne rfl hΦy, (C • W).toAffine.slope_of_Y_ne rfl hy,
-      ← mul_div_assoc, div_add' _ _ _ (sub_ne_zero.mpr hy),
-      div_eq_div_iff (sub_ne_zero.mpr hΦy) (sub_ne_zero.mpr hy)]
-    simp [negY, variableChange_a₁, variableChange_a₂, variableChange_a₃, variableChange_a₄]
-    field
-  · have hΦx : (C.u : F) ^ 2 * x₁ + C.r ≠ (C.u : F) ^ 2 * x₂ + C.r := by
-      simpa [mul_right_inj' (pow_ne_zero 2 hu)] using hx
-    rw [W.toAffine.slope_of_X_ne hΦx, (C • W).toAffine.slope_of_X_ne hx]
-    have h1 := sub_ne_zero.mpr hΦx
-    have h2 := sub_ne_zero.mpr hx
-    field
 
 namespace Point
 
@@ -395,8 +216,6 @@ private lemma equivVariableChange_symm_apply (P : W.toAffine.Point) :
   rw [equivVariableChange_symm_apply, cast_some, mapVariableChangeFun_some]
 
 end Point
-
-end Field
 
 end WeierstrassCurve.Affine
 
