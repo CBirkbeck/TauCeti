@@ -210,6 +210,7 @@ theorem coe_restrictToIdealCodRestrict (I : Ideal A)
 
 /-- **Wedhorn §7.1.2: the restriction fixes `Spv (A, I)` pointwise.** A point already in the
 subspace has `cΓ_v(I) = ⊤`, so the restriction discards nothing and returns the point itself. -/
+@[simp]
 theorem restrictToIdeal_eq_self_of_mem_spvOfIdeal (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (hv : v ∈ spvOfIdeal I hfg) :
     restrictToIdeal v I hfg = v := by
