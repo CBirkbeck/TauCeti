@@ -4,12 +4,13 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.Topology.Algebra.OpenMapping
+public import TauCeti.Topology.Algebra.OpenMapping.Basic
 
 /-!
 # The approximating sequence of Henkel's open mapping theorem
 
-`TauCeti/Topology/Algebra/OpenMapping.lean` proves one step of Henkel's approximation: a point in
+`TauCeti/Topology/Algebra/OpenMapping/Basic.lean` proves one step of Henkel's approximation: a
+point in
 `closure (f '' U)` is brought inside `closure (f '' V)` by subtracting the image of some `x ∈ U`.
 Iterating that step down a sequence of sets produces a sequence of approximants whose residuals
 shrink, and this file builds it.
@@ -35,8 +36,7 @@ open Filter Topology
 
 namespace TauCeti
 
-variable {M N : Type*} [AddCommGroup M] [AddCommGroup N] [TopologicalSpace N]
-  [IsTopologicalAddGroup N]
+variable {M N : Type*} [AddCommMonoid M] [AddCommGroup N] [TopologicalSpace N] [ContinuousSub N]
 
 /-- **Henkel's approximating sequence.** If each `closure (f '' V (n + 1))` is a neighbourhood of
 zero and `y` lies in `closure (f '' V 0)`, there are approximants `x n ∈ V n` whose partial sums
@@ -51,29 +51,27 @@ theorem exists_seq_mem_and_sub_sum_mem {F : Type*} [FunLike F M N] [AddMonoidHom
     ∃ x : ℕ → M, (∀ n, x n ∈ V n) ∧
       ∀ n, y - f (∑ i ∈ Finset.range (n + 1), x i) ∈ closure (f '' V (n + 1)) := by
   classical
-  -- The state of the recursion: a residual known to lie in `closure (f '' V n)`.
-  let step : ∀ n, {z : N // z ∈ closure (f '' V n)} → M × {z : N // z ∈ closure (f '' V (n + 1))} :=
-    fun n r ↦
-      let h := exists_mem_and_sub_mem_closure_image f r.property (hV n)
-      (h.choose, ⟨r.1 - f h.choose, h.choose_spec.2⟩)
+  -- One application of choice, packaging the approximant with both of its properties.
+  choose! x hxV hxres using fun (n : ℕ) (r : {z : N // z ∈ closure (f '' V n)}) ↦
+    exists_mem_and_sub_mem_closure_image f r.property (hV n)
+  -- The recursion carries the residual, whose type depends on the stage.
   let state : ∀ n, {z : N // z ∈ closure (f '' V n)} :=
     fun n ↦ Nat.rec (motive := fun n ↦ {z : N // z ∈ closure (f '' V n)}) ⟨y, hy⟩
-      (fun m r ↦ (step m r).2) n
-  refine ⟨fun n ↦ (step n (state n)).1, fun n ↦ ?_, fun n ↦ ?_⟩
-  · exact (exists_mem_and_sub_mem_closure_image f (state n).property (hV n)).choose_spec.1
-  · -- The residual after `n + 1` steps is `y` minus the image of the `n`-th partial sum.
-    have key : ∀ m, (state (m + 1)).1
-        = y - f (∑ i ∈ Finset.range (m + 1), (step i (state i)).1) := by
-      intro m
-      induction m with
-      | zero => simp [state, step]
-      | succ p ih =>
-        have : (state (p + 2)).1 = (state (p + 1)).1 - f (step (p + 1) (state (p + 1))).1 := rfl
-        rw [this, ih]
-        conv_rhs => rw [Finset.sum_range_succ]
-        rw [map_add]
-        abel
-    exact key n ▸ (state (n + 1)).property
+      (fun m r ↦ ⟨r.1 - f (x m r), hxres m r⟩) n
+  have state_succ : ∀ m, (state (m + 1)).1 = (state m).1 - f (x m (state m)) := fun _ ↦ rfl
+  refine ⟨fun n ↦ x n (state n), fun n ↦ hxV n (state n), fun n ↦ ?_⟩
+  -- The residual after `n + 1` steps is `y` minus the image of the `n`-th partial sum.
+  have key : ∀ m, (state (m + 1)).1
+      = y - f (∑ i ∈ Finset.range (m + 1), x i (state i)) := by
+    intro m
+    induction m with
+    | zero => simp [state]
+    | succ p ih =>
+      rw [state_succ, ih]
+      conv_rhs => rw [Finset.sum_range_succ]
+      rw [map_add]
+      abel
+  exact key n ▸ (state (n + 1)).property
 
 end TauCeti
 
