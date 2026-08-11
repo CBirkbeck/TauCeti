@@ -448,7 +448,27 @@ the interior, so those points enter the count with weights `½` and `⅙`. Perio
 `Σ_q ord_q + ½·ord_i + ⅓·ord_ρ + ord_∞ = k/12`.
 
 A corner that `T` misses is no special case: it lies on the contour, so `hUdom` and `hoff` make
-the form analytic and nonzero there, and at such a point the order is `0`. -/
+the form analytic and nonzero there, and at such a point the order is `0`.
+
+⚠ **This statement does not reach a form with a zero on the unit arc other than at a corner**, and
+`S` cannot rescue it. The truncated fundamental domain is *closed*
+(`ModularGroup.coe_truncatedFundamentalDomain` bounds by `1 ≤ ‖z‖`), so the arc lies inside it and
+`hUdom` places it in `U`. A zero `s` there with `‖s‖ = 1`, `s` not a corner, is then trapped: were
+`s ∉ T`, `hoff` would give `(⇑f ∘ ofComplex) s ≠ 0`; but `s ∈ T` contradicts `hin`, which forces
+`1 < ‖s‖` off the corners. Since a usable `S` therefore holds nothing but corners, `hnorm` and
+`hinv` do no work here — unlike in `sum_windingNumber_mul_orderOfVanishingAt_eq`, which has no
+`hin` and where they carry the `s ↦ -1/s` pairing.
+
+Lifting this needs the divisor set split into its arc and vertical parts rather than the single
+`S` above, because `hoffγ` must cover contour zeros of both kinds while `hnorm` admits only the
+unit-norm ones. `TauCeti.ModularForm.arcSingularSet` and `verticalSingularSet` are those two
+families, `fdBoundary_mem_arcSingularSet_union_verticalSingularSet_of_comp_eq_zero` is `hoffγ`
+for them, and `ArcPairing`/`VerticalCancel` supply the two cancellations.
+
+The conclusion then gains one sum per family, each over a *half* of its pair: the inversion
+`z ↦ -1/z` carries the arc's `re < 0` half onto its `re > 0` half, and `z ↦ z + 1` carries the
+`re = -(1/2)` line onto `re = 1/2`, so each pair is counted once by restricting to the left
+representative. The interior sum keeps its `1 < ‖z‖ ∧ |z.re| < 1/2` condition. -/
 theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
     {U : Set ℂ} (hH : 1 < H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
