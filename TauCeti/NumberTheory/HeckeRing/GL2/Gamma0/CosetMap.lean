@@ -92,29 +92,22 @@ level. -/
       HeckeCoset.mk (SLnZ 2) (SLnZ 2) (Submonoid.inclusion (Delta0_le_posDetInt N) g) :=
   HeckeCoset.map_mk _ _ _ g
 
-/-- An `SL₂(ℤ)`-coefficient has determinant one, so multiplying by it does not change the
-determinant of the integral matrix. -/
+/-- The integral matrices of two elements of one `Γ₀(N)`-double coset have equal determinant:
+`Γ₀(N) ≤ SL₂(ℤ)`, and the determinant is constant on an `SL₂(ℤ)`-double coset. -/
 private lemma intMatrix_det_eq_of_mem_doubleCoset {a b : GL (Fin 2) ℚ}
     (hb : b ∈ DoubleCoset.doubleCoset a (Gamma0Image N) (Gamma0Image N))
     {A B : Matrix (Fin 2) (Fin 2) ℤ}
     (hA : (↑a : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
     (hB : (↑b : Matrix (Fin 2) (Fin 2) ℚ) = B.map (Int.cast : ℤ → ℚ)) : B.det = A.det := by
-  obtain ⟨γ₁, hγ₁, γ₂, hγ₂, rfl⟩ := DoubleCoset.mem_doubleCoset.mp hb
-  obtain ⟨σ₁, rfl⟩ := (mem_SLnZ_iff 2).mp (Gamma0Image_le_SLnZ N hγ₁)
-  obtain ⟨σ₂, rfl⟩ := (mem_SLnZ_iff 2).mp (Gamma0Image_le_SLnZ N hγ₂)
-  -- over `ℚ` the two determinants agree, and `ℤ → ℚ` is injective
+  obtain ⟨γ₁, hγ₁, γ₂, hγ₂, hb'⟩ := DoubleCoset.mem_doubleCoset.mp hb
+  have hdet := det_eq_of_mem_doubleCoset_SLnZ 2 (DoubleCoset.mem_doubleCoset.mpr
+    ⟨γ₁, Gamma0Image_le_SLnZ N hγ₁, γ₂, Gamma0Image_le_SLnZ N hγ₂, hb'⟩)
   have hcast : ((B.det : ℤ) : ℚ) = ((A.det : ℤ) : ℚ) := by
-    have hB' : ((B.det : ℤ) : ℚ) = (↑(mapGL ℚ σ₁ * a * mapGL ℚ σ₂) :
-        Matrix (Fin 2) (Fin 2) ℚ).det := by
-      rw [hB]; simpa [RingHom.mapMatrix_apply] using RingHom.map_det (Int.castRingHom ℚ) B
-    have hA' : ((A.det : ℤ) : ℚ) = (↑a : Matrix (Fin 2) (Fin 2) ℚ).det := by
-      rw [hA]; simpa [RingHom.mapMatrix_apply] using RingHom.map_det (Int.castRingHom ℚ) A
-    -- `det_mapGL` is about the *unit* determinant, so `← val_det_apply` moves the matrix
-    -- determinant of an `SL₂(ℤ)` coefficient into its range first
-    rw [hB', hA', GeneralLinearGroup.coe_mul, GeneralLinearGroup.coe_mul, Matrix.det_mul,
-      Matrix.det_mul]
-    simp only [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL,
-      Units.val_one, one_mul, mul_one]
+    rw [show ((B.det : ℤ) : ℚ) = (↑b : Matrix (Fin 2) (Fin 2) ℚ).det by
+        rw [hB]; simpa [RingHom.mapMatrix_apply] using RingHom.map_det (Int.castRingHom ℚ) B,
+      show ((A.det : ℤ) : ℚ) = (↑a : Matrix (Fin 2) (Fin 2) ℚ).det by
+        rw [hA]; simpa [RingHom.mapMatrix_apply] using RingHom.map_det (Int.castRingHom ℚ) A]
+    exact hdet
   exact_mod_cast hcast
 
 /-- Coprimality of the determinant to the level depends only on the double coset. -/

@@ -79,6 +79,25 @@ downstream cannot unfold it to `MonoidHom.range`; this lemma is how they extract
     g ∈ SLnZ n ↔ ∃ σ : SpecialLinearGroup (Fin n) ℤ, (σ : GL (Fin n) ℚ) = g := by
   rw [SLnZ, MonoidHom.mem_range]
 
+/-- An element of `SL_n(ℤ)` has matrix determinant one over `ℚ`.
+
+`SpecialLinearGroup.det_mapGL` is the same fact for `GeneralLinearGroup.det`, which is
+`ℚˣ`-valued; every consumer needs the `Matrix.det` of the coerced matrix, so this is the
+`Units.val` bridge rather than a second proof. -/
+lemma det_eq_one_of_mem_SLnZ {g : GL (Fin n) ℚ} (hg : g ∈ SLnZ n) :
+    (↑g : Matrix (Fin n) (Fin n) ℚ).det = 1 := by
+  obtain ⟨σ, rfl⟩ := (mem_SLnZ_iff n).mp hg
+  exact congrArg Units.val (SpecialLinearGroup.det_mapGL (S := ℚ) σ)
+
+/-- The determinant is constant on an `SL_n(ℤ)`-double coset: both coefficients have
+determinant one. -/
+lemma det_eq_of_mem_doubleCoset_SLnZ {a b : GL (Fin n) ℚ}
+    (hb : b ∈ DoubleCoset.doubleCoset a (SLnZ n) (SLnZ n)) :
+    (↑b : Matrix (Fin n) (Fin n) ℚ).det = (↑a : Matrix (Fin n) (Fin n) ℚ).det := by
+  obtain ⟨γ₁, hγ₁, γ₂, hγ₂, rfl⟩ := DoubleCoset.mem_doubleCoset.mp hb
+  simp only [GeneralLinearGroup.coe_mul, Matrix.det_mul, det_eq_one_of_mem_SLnZ n hγ₁,
+    det_eq_one_of_mem_SLnZ n hγ₂, one_mul, mul_one]
+
 /-- The image in `GL_n(ℚ)` of a finite-index subgroup of `SL_n(ℤ)` is commensurable with
 `SL_n(ℤ)`. Since `mapGL ℚ` is injective, both relative indices transport along it: one is the
 index of `H`, finite by hypothesis, and the other is `1`.
