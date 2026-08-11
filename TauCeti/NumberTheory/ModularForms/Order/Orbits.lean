@@ -24,8 +24,12 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
   `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit`: finite support on orbits for a
   nonzero form.
-* `TauCeti.ModularForm.sum_orderOfVanishingAt_eq_finsum_orbit`: a divisor sum reindexed
-  over the orbits its points represent, given that the orbit map is injective on them.
+* `TauCeti.ModularForm.sum_orderOfVanishingAt_eq_finsum_orbit`: a divisor sum over an arbitrary
+  index set, reindexed over the orbits its points represent, given that the index-to-orbit
+  composite is injective.
+* `TauCeti.ModularForm.sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit`: the same for the
+  valence formula's own divisor sum, whose points are complex numbers carrying the interior
+  bounds.
 
 ## References
 
@@ -135,7 +139,6 @@ lemma sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit [SlashInvariantFormClass 
   have h : ofComplex a = ofComplex b :=
     ModularGroup.orbit_mk_injOn_fdo (hfdo a ha') (hfdo b hb') hab
   exact (hcoe a ha').symm.trans ((congrArg (fun w : ℍ ↦ (w : ℂ)) h).trans (hcoe b hb'))
-
 
 end ModularForm
 
