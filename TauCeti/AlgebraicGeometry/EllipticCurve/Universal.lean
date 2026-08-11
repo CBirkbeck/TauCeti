@@ -144,19 +144,20 @@ protected abbrev Ring : Type := curve.CoordinateRing
 the field of fractions of the universal ring. -/
 protected abbrev Field : Type := FractionRing Universal.Ring
 
-instance : CommRing Poly := Polynomial.commRing /- why is this not automatic ... -/
+/-- The commutative ring structure on `Poly`. `Polynomial.commRing` is stated for `R[X]` over a
+commutative `R`, and finding it for the iterated `(MvPolynomial Coeff ℤ)[X][Y]` needs the inner
+`R[X]` to be seen as commutative first, which instance search does not do on its own here. -/
+instance : CommRing Poly := Polynomial.commRing
 
 
-/-- The obvious ring homomorphism from the polynomial ring in 7 variables to the universal field.
-
-`@[expose]` is the minimum needed for `polyToField_apply` and `algebraMap_field_eq_comp` below to
-hold by `rfl` under the module system; the section stays a plain `public section` so that nothing
-else in the file publishes its proof body. -/
+/-- The ring homomorphism `ℤ[A₁,⋯,A₆,X,Y] → Universal.Field`: reduce modulo the Weierstrass
+polynomial, then include the universal ring into its fraction field. Every statement about the
+universal pointed curve is ultimately about the images of `X` and `Y` under this map. -/
 @[expose] def polyToField : Poly →+* Universal.Field :=
   (algebraMap Universal.Ring _).comp <| AdjoinRoot.mk _
 
-/-- `polyToField` computes as advertised: reduce modulo the Weierstrass polynomial, then pass to
-the fraction field. Holds by `rfl`, which is what the `@[expose]` on `polyToField` buys. -/
+/-- `polyToField` is reduction modulo the Weierstrass polynomial followed by the inclusion into
+the fraction field. -/
 lemma polyToField_apply (p : Poly) :
     polyToField p = algebraMap Universal.Ring _ (AdjoinRoot.mk _ p) := rfl
 
