@@ -46,6 +46,7 @@ here, and AINTLIB's `HeckePair` bundle is Mathlib's `HeckeCoset`.
 
 ## Main results
 
+* `HeckeRing.GL2.coprimeDet_iff`: `CoprimeDet` is decided by any one integral witness.
 * `HeckeRing.GL2.toLevelOneCoset_mk`, `HeckeRing.GL2.coprimeDetCoset_mk`: the computation rules
   on a representative.
 * `HeckeRing.GL2.injOn_toLevelOneCoset`: **Shimura, Proposition 3.31** — `toLevelOneCoset` is
@@ -77,6 +78,16 @@ def CoprimeDet (g : Delta0 N) : Prop :=
     (↑(g : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ) →
       Int.gcd A.det N = 1
 
+/-- `CoprimeDet` is decided by any single integral witness: the witness is unique, because the
+entrywise cast `ℤ → ℚ` is injective. This is the introduction rule for the definition, whose
+universal quantifier only eliminates. -/
+lemma coprimeDet_iff {g : Delta0 N} {A : Matrix (Fin 2) (Fin 2) ℤ}
+    (hA : (↑(g : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ)) :
+    CoprimeDet N g ↔ Int.gcd A.det N = 1 := by
+  refine ⟨fun h ↦ h A hA, fun h A' hA' ↦ ?_⟩
+  have : A' = A := Matrix.map_injective Int.cast_injective (hA'.symm.trans hA)
+  exact this ▸ h
+
 /-- **Shimura, Proposition 3.30.** Passing from a `Γ₀(N)`-double coset to the level-one double
 coset of the same element, as the `HeckeCoset.map` of the three inclusions `Δ₀(N) ≤ Δ`,
 `Γ₀(N) ≤ SL₂(ℤ)` (twice). -/
@@ -103,7 +114,7 @@ private lemma intMatrix_det_eq_of_mem_doubleCoset {a b : GL (Fin 2) ℚ}
   have hdet := det_eq_of_mem_doubleCoset_SLnZ 2 (DoubleCoset.mem_doubleCoset.mpr
     ⟨γ₁, Gamma0Image_le_SLnZ N hγ₁, γ₂, Gamma0Image_le_SLnZ N hγ₂, hb'⟩)
   have hcast : ((B.det : ℤ) : ℚ) = ((A.det : ℤ) : ℚ) := by
-    rw [intCast_det_eq_det 2 hB, intCast_det_eq_det 2 hA]; exact hdet
+    rw [Int.cast_det B, Int.cast_det A, ← hB, ← hA]; exact hdet
   exact_mod_cast hcast
 
 /-- Coprimality of the determinant to the level depends only on the double coset. -/
