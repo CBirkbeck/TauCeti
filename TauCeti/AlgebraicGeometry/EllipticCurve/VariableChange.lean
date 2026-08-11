@@ -106,6 +106,11 @@ which is the one goals are phrased in — `rw` does not see through `mapHom φ C
 @[simp] lemma map_inv (φ : R →+* A) (C : VariableChange R) : C⁻¹.map φ = (C.map φ)⁻¹ :=
   _root_.map_inv (VariableChange.mapHom φ) C
 
+/-- **A change of variables maps the identity to the identity**, in the `.map` spelling. The
+companion of `VariableChange.map_inv`; see there for why the bundled `mapHom` form is not enough. -/
+@[simp] lemma map_one (φ : R →+* A) : (1 : VariableChange R).map φ = 1 :=
+  _root_.map_one (VariableChange.mapHom φ)
+
 /-- **A change of variables maps a product to the product of the images**, in the `.map` spelling.
 The companion of `VariableChange.map_inv`; see there for why the bundled `mapHom` form is not
 enough. -/

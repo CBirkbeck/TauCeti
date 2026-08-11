@@ -607,12 +607,12 @@ variable (L) in
 a genuinely nontrivial operation: this is what `map_quadraticTwistOfTraceNormVariableChange`
 deliberately stopped short of claiming, and the `j`-hypotheses are exactly what it lacked.
 
-They cannot be dropped, and the reason is visible in the proof: its only use of them is to get
-`Aut(Eᴸ) = {±1}`, via `eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq`,
-whose hypotheses `c₄ ≠ 0` and `c₆ ≠ 0` are exactly `j ≠ 0` and `j ≠ 1728`. At those two values the
-automorphism group can be strictly larger than `{±1}` and the argument below has nothing to run
-on. Precisely which group it is depends on the characteristic — this statement fixes none, so
-nothing more is claimed here, and no counterexample is asserted. -/
+Where the hypotheses enter: the only use of them is to get `Aut(Eᴸ) = {±1}`, via
+`eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq`, whose hypotheses `c₄ ≠ 0`
+and `c₆ ≠ 0` are exactly `j ≠ 0` and `j ≠ 1728`. At those two values the automorphism group can be
+strictly larger and the argument has nothing to run on. That is a statement about *this proof*;
+whether the theorem itself fails without them is not settled here, and no counterexample is
+asserted. -/
 theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728) :
     ¬∃ C : VariableChange K, C • E.quadraticTwist L = E := by
   rintro ⟨CK, hCK⟩
@@ -634,8 +634,10 @@ theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : 
       = E.baseChange L := by rw [hψ, baseChange_smul_baseChange, hDK]
   have hψinv : ψ.map (σ : L →+* L) = ψ :=
     VariableChange.map_baseChange (C := CK * C₀⁻¹) (σ : L →ₐ[K] L)
-  have hc4L : (E.baseChange L).c₄ ≠ 0 := E.baseChange_c₄_ne_zero hinj hj₀
-  have hc6L : (E.baseChange L).c₆ ≠ 0 := E.baseChange_c₆_ne_zero hinj hj₁₇₂₈
+  have hc4L : (E.baseChange L).c₄ ≠ 0 :=
+    E.baseChange_c₄_ne_zero hinj (E.j_eq_zero_iff.not.mp hj₀)
+  have hc6L : (E.baseChange L).c₆ ≠ 0 :=
+    E.baseChange_c₆_ne_zero hinj (E.j_eq_1728_iff.not.mp hj₁₇₂₈)
   -- `a := ψ · C₁⁻¹` fixes `Eᴸ`, so it is `1` or `[-1]`; either way it is `σ`-invariant
   set a := ψ * C₁⁻¹ with ha
   have hC1inv : C₁⁻¹ • E.baseChange L
@@ -646,15 +648,14 @@ theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : 
   have hamap : a.map (σ : L →+* L) = a := by
     rcases (E.baseChange L).eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq
       hc4L hc6L haut with hcase | hcase
-    · rw [hcase]; exact map_one (VariableChange.mapHom (σ : L →+* L))
+    · rw [hcase]; exact VariableChange.map_one _
     · rw [hcase]; exact E.negVariableChange_baseChange_map L (σ : L →ₐ[K] L)
   -- applying `σ` to `ψ = a · C₁` forces `[-1] = 1`
   apply (E.baseChange L).negVariableChange_ne_one
   have hchain : a * ((E.baseChange L).negVariableChange * C₁) = a * C₁ :=
     calc a * ((E.baseChange L).negVariableChange * C₁)
         = a.map (σ : L →+* L) * C₁.map (σ : L →+* L) := by rw [hamap, hcoc]
-      _ = (a * C₁).map (σ : L →+* L) :=
-          (map_mul (VariableChange.mapHom (σ : L →+* L)) a C₁).symm
+      _ = (a * C₁).map (σ : L →+* L) := (VariableChange.map_mul ..).symm
       _ = ψ.map (σ : L →+* L) := by rw [haC]
       _ = ψ := hψinv
       _ = a * C₁ := haC.symm
@@ -683,8 +684,10 @@ theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj�
   have hinj := FaithfulSMul.algebraMap_injective K L
   -- `baseChange` is `map (algebraMap K L)`, whose `IsElliptic` instance Mathlib registers
   have : (E.baseChange L).IsElliptic := inferInstanceAs ((E.map (algebraMap K L)).IsElliptic)
-  have hc4L : (E.baseChange L).c₄ ≠ 0 := E.baseChange_c₄_ne_zero hinj hj₀
-  have hc6L : (E.baseChange L).c₆ ≠ 0 := E.baseChange_c₆_ne_zero hinj hj₁₇₂₈
+  have hc4L : (E.baseChange L).c₄ ≠ 0 :=
+    E.baseChange_c₄_ne_zero hinj (E.j_eq_zero_iff.not.mp hj₀)
+  have hc6L : (E.baseChange L).c₆ ≠ 0 :=
+    E.baseChange_c₆_ne_zero hinj (E.j_eq_1728_iff.not.mp hj₁₇₂₈)
   -- the Galois conjugate of `ρ` is again an isomorphism `E'ᴸ ≅ Eᴸ`, so `σρ · ρ⁻¹` fixes `Eᴸ`
   have hσρ : (ρ.map (σ : L →+* L)) • E'.baseChange L = E.baseChange L :=
     map_smul_baseChange_eq L (σ : L →ₐ[K] L) hρ
