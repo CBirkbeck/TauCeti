@@ -63,10 +63,10 @@ change of variables, again over any commutative ring in which the relevant param
   statement about *this* change of variables and not about an arbitrary one carrying the twist
   to `E`. `WeierstrassCurve.exists_smul_quadraticTwist_baseChange_eq` is the corresponding
   statement for `quadraticTwist` itself, where the generator is the one chosen internally.
-* `WeierstrassCurve.quadraticTwistVarChange`: the same change of variables in the other
+* `WeierstrassCurve.quadraticTwistVariableChange`: the same change of variables in the other
   direction, carrying `E` to the twist, at the generator `quadraticTwist` chooses internally —
-  the inverse of the previous one, with `WeierstrassCurve.quadraticTwistVarChange_smul` and the
-  cocycle `WeierstrassCurve.map_quadraticTwistVarChange`, where the `negVariableChange` factor
+  the inverse of the previous one, with `WeierstrassCurve.quadraticTwistVariableChange_smul` and the
+  cocycle `WeierstrassCurve.map_quadraticTwistVariableChange`, where the `negVariableChange` factor
   sits on the right because inverting a product reverses it.
 * `WeierstrassCurve.not_exists_smul_quadraticTwist_eq` and
   `WeierstrassCurve.exists_smul_eq_or_exists_smul_eq_quadraticTwist`: **the classification**, for
@@ -560,35 +560,37 @@ internally, so no bridging change of variables is needed: at that generator the 
 `quadraticTwistOf` of its trace and norm, by definition.
 
 Naming an explicit witness rather than an existential is what makes the cocycle identity
-`map_quadraticTwistVarChange` statable: that identity is false of an arbitrary change of variables
+`map_quadraticTwistVariableChange` statable: that identity is false of an arbitrary change of
+variables
 carrying `E` to the twist, since two such differ by an automorphism of the twist. -/
-noncomputable def quadraticTwistVarChange : VariableChange L :=
+noncomputable def quadraticTwistVariableChange : VariableChange L :=
   (E.quadraticTwistOfTraceNormVariableChange
     (choose_exists_discrim_notMem_range_algebraMap K L)
     (Algebra.IsQuadraticExtension.exists_algEquiv_ne_one K L).choose_spec)⁻¹
 
 variable (L) in
-/-- **`quadraticTwistVarChange` does carry `E` to the twist**, after base change to `L`. -/
+/-- **`quadraticTwistVariableChange` does carry `E` to the twist**, after base change to `L`. -/
 @[simp]
-theorem quadraticTwistVarChange_smul :
-    E.quadraticTwistVarChange L • E.baseChange L = (E.quadraticTwist L).baseChange L := by
-  rw [quadraticTwistVarChange, inv_smul_eq_iff]
+theorem quadraticTwistVariableChange_smul :
+    E.quadraticTwistVariableChange L • E.baseChange L = (E.quadraticTwist L).baseChange L := by
+  rw [quadraticTwistVariableChange, inv_smul_eq_iff]
   exact (E.quadraticTwistOfTraceNormVariableChange_smul_baseChange _ _).symm
 
 variable (L) in
 /-- **The defining cocycle of the quadratic twist.** The nontrivial `σ ∈ Gal(L/K)` conjugates
-`quadraticTwistVarChange` by the automorphism `[-1]` of `E`. This is the mirror of
+`quadraticTwistVariableChange` by the automorphism `[-1]` of `E`. This is the mirror of
 `map_quadraticTwistOfTraceNormVariableChange`, and the factor lands on the *right* here because
 inverting a product reverses it and `[-1]` is its own inverse (`negVariableChange_inv`).
 
 As there, this is the cocycle identity and not a nontriviality claim. -/
 @[simp]
-theorem map_quadraticTwistVarChange {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
-    (E.quadraticTwistVarChange L).map (σ : L →+* L)
-      = E.quadraticTwistVarChange L * (E.baseChange L).negVariableChange := by
+theorem map_quadraticTwistVariableChange {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
+    (E.quadraticTwistVariableChange L).map (σ : L →+* L)
+      = E.quadraticTwistVariableChange L * (E.baseChange L).negVariableChange := by
   set σ₀ := (Algebra.IsQuadraticExtension.exists_algEquiv_ne_one K L).choose with hσ₀def
   have hσ₀ : σ₀ ≠ 1 := (Algebra.IsQuadraticExtension.exists_algEquiv_ne_one K L).choose_spec
-  -- `Gal(L/K)` has order two, so `σ` is the automorphism chosen inside `quadraticTwistVarChange`
+  -- `Gal(L/K)` has order two, so `σ` is the automorphism chosen inside
+  -- `quadraticTwistVariableChange`
   obtain rfl : σ = σ₀ :=
     (Algebra.IsQuadraticExtension.algEquiv_eq_one_or_eq K L hσ₀ σ).resolve_left hσ
   -- `map_inv` is stated about `mapHom φ` applied; the goal is in the `.map φ` spelling, and `rw`
@@ -596,7 +598,8 @@ theorem map_quadraticTwistVarChange {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
   -- spelling — its proof *is* `map_inv`, elaborated up to that defeq.
   have hinv : ∀ C : VariableChange L, C⁻¹.map (σ₀ : L →+* L) = (C.map (σ₀ : L →+* L))⁻¹ :=
     fun C ↦ map_inv (VariableChange.mapHom _) C
-  rw [quadraticTwistVarChange, hinv, E.map_quadraticTwistOfTraceNormVariableChange, mul_inv_rev,
+  rw [quadraticTwistVariableChange, hinv, E.map_quadraticTwistOfTraceNormVariableChange,
+    mul_inv_rev,
     (E.baseChange L).negVariableChange_inv]
 
 section Classification
