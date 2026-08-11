@@ -314,6 +314,16 @@ is characterised by this same equation. -/
           ((variableChange_nonsingular W C x y).mpr h) :=
   mapVariableChangeFun_some W C h
 
+/-- The inverse of `equivVariableChange` on the nose: it *is* the map induced by `C⁻¹`, transported
+along `C⁻¹ • (C • W) = W`. Stated separately so the public coordinate lemma below is proved by
+rewriting rather than by `change`: the equivalence's `invFun` is a structure field, and without
+this step a proof of the coordinate law would silently depend on how that record is written. -/
+private lemma equivVariableChange_symm_apply (P : W.toAffine.Point) :
+    (equivVariableChange W C).symm P
+      = mapVariableChangeFun (C • W) C⁻¹
+          (AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point)
+            (inv_smul_smul C W).symm P) := rfl
+
 /-- **What the inverse isomorphism does to a point given by coordinates.** It is the map induced by
 `C⁻¹`, so the coordinates are those of `C⁻¹` — this is the sense in which the inverse "comes from
 `C⁻¹`" rather than from bijectivity. -/
@@ -323,8 +333,7 @@ is characterised by this same equation. -/
           (((C⁻¹).u : F) ^ 3 * y + ((C⁻¹).u : F) ^ 2 * (C⁻¹).s * x + (C⁻¹).t)
           ((variableChange_nonsingular (C • W) C⁻¹ x y).mpr
             ((inv_smul_smul C W).symm ▸ h)) := by
-  change mapVariableChangeFun (C • W) C⁻¹ _ = _
-  rw [cast_some, mapVariableChangeFun_some]
+  rw [equivVariableChange_symm_apply, cast_some, mapVariableChangeFun_some]
 
 end Point
 
