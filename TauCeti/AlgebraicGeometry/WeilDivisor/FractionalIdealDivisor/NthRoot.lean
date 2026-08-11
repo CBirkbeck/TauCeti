@@ -18,20 +18,19 @@ This file transports that division back to fractional ideals and records what it
 ideal class group.
 
 Everything below is stated for all `n : ℕ`, including the degenerate `n = 0`. There `nDivisible R K
-0` is the trivial subgroup (divisibility by `0` is vanishing), `nthRootFun R K 0` is constantly `1`,
+0` is the trivial subgroup (divisibility by `0` is vanishing), `nthRootHom R K 0` is constantly `1`,
 and the results remain true but say nothing: `1 ^ 0 = 1` is the only instance of `nthRootHom_pow`.
 
 ## Main definitions
 
 * `nDivisible R K n`: the subgroup of invertible fractional ideals all of whose multiplicities
   `FractionalIdeal.count K v` are divisible by `n`.
-* `nthRootFun R K n`: coefficientwise integer division of the Weil divisor by `n`, as a bare
-  function on all invertible fractional ideals. It is a genuine `n`-th root on `nDivisible R K n`
-  and a candidate elsewhere — integer division rounds.
 * `nthRootHom R K n`: the **`n`-th root homomorphism** from `nDivisible R K n` to the group of
-  invertible fractional ideals. Restricting to `nDivisible R K n` is what makes `nthRootFun`
-  multiplicative for `n ≠ 0`, integer division being additive on multiples of `n`; for `n = 0` it
-  is multiplicative on the whole group, being constant.
+  invertible fractional ideals. It is built from a private helper performing coefficientwise
+  integer division of the Weil divisor by `n`; that helper is deliberately not public, since off
+  `nDivisible R K n` integer division rounds and the value obeys no law worth depending on.
+  Restricting to the subgroup is what makes it multiplicative for `n ≠ 0`, integer division being
+  additive on multiples of `n`; for `n = 0` it is constant.
 * `unitsNDivisible R K n`: the subgroup of `x : Kˣ` whose principal fractional ideal `(x)` lies in
   `nDivisible R K n`.
 * `nthRootClass R K n`: the **`n`-th root class map** `unitsNDivisible R K n →* ClassGroup R`,
@@ -61,9 +60,9 @@ weak Mordell–Weil argument needs the Selmer group `K(S, n)` of
 `Mathlib.RingTheory.DedekindDomain.SelmerGroup` to be finite; Mathlib leaves that finiteness as a
 `TODO` and the roadmap assigns it to this repository. The finiteness proof is not in this file.
 
-None of the definitions here is `@[expose]`: the interface is the membership, coefficient, coercion
-and application lemmas, not the construction bodies. The characteristic lemmas that hold by
-definition are therefore written `:= (rfl)` and `:= (Iff.rfl)` rather than `:= rfl` — the
+None of the definitions here is `@[expose]`: the interface is the membership, coefficient and
+coercion lemmas, not the construction bodies. The characteristic lemmas that hold by
+definition are therefore written `:= (rfl)`, `:= (Iff.rfl)` and `:= (proof)` rather than bare — the
 parentheses keep the proof elaborating where the definition is still available, which is what lets
 the bodies stay unexposed. Do not "simplify" them back.
 
@@ -124,15 +123,15 @@ lemma pow_mem_nDivisible (n : ℕ) (J : (FractionalIdeal R⁰ K)ˣ) : J ^ n ∈ 
 transported back along `fractionalIdealDivisorAddEquiv`. Since integer division rounds, this is a
 genuine `n`-th root exactly on `nDivisible R K n`, where `nthRootHom` bundles it as a group
 homomorphism; off that subgroup it is only a candidate. -/
-noncomputable def nthRootFun (n : ℕ) (I : (FractionalIdeal R⁰ K)ˣ) : (FractionalIdeal R⁰ K)ˣ :=
+private noncomputable def nthRootFun (n : ℕ) (I : (FractionalIdeal R⁰ K)ˣ) :
+    (FractionalIdeal R⁰ K)ˣ :=
   Additive.toMul ((fractionalIdealDivisorAddEquiv R K).symm
     (Finsupp.mapRange (· / (n : ℤ)) (Int.zero_ediv _)
       (fractionalIdealDivisor R K (Additive.ofMul I))))
 
 /-- The Weil divisor of the `n`-th root is the Weil divisor of `I` with every coefficient divided
 by `n`: `nthRootFun` read back through the isomorphism defining it. -/
-@[simp]
-lemma fractionalIdealDivisor_nthRootFun (n : ℕ) (I : (FractionalIdeal R⁰ K)ˣ) :
+private lemma fractionalIdealDivisor_nthRootFun (n : ℕ) (I : (FractionalIdeal R⁰ K)ˣ) :
     fractionalIdealDivisor R K (Additive.ofMul (nthRootFun R K n I)) =
       Finsupp.mapRange (· / (n : ℤ)) (Int.zero_ediv _)
         (fractionalIdealDivisor R K (Additive.ofMul I)) := by
@@ -140,8 +139,7 @@ lemma fractionalIdealDivisor_nthRootFun (n : ℕ) (I : (FractionalIdeal R⁰ K)�
   simp only [ofMul_toMul, ← fractionalIdealDivisorAddEquiv_apply, AddEquiv.apply_symm_apply]
 
 /-- The multiplicities of the `n`-th root are those of `I`, divided by `n`. -/
-@[simp]
-lemma count_nthRootFun (n : ℕ) (I : (FractionalIdeal R⁰ K)ˣ) (v : HeightOneSpectrum R) :
+private lemma count_nthRootFun (n : ℕ) (I : (FractionalIdeal R⁰ K)ˣ) (v : HeightOneSpectrum R) :
     count K v (nthRootFun R K n I : FractionalIdeal R⁰ K) =
       count K v (I : FractionalIdeal R⁰ K) / n := by
   have key : ∀ J : (FractionalIdeal R⁰ K)ˣ, count K v (J : FractionalIdeal R⁰ K) =
@@ -165,18 +163,21 @@ noncomputable def nthRootHom (n : ℕ) : nDivisible R K n →* (FractionalIdeal 
       Int.add_ediv_of_dvd_left (mem_nDivisible.mp I.2 v)]
 
 variable {R K} in
-/-- The `n`-th root homomorphism acts by `nthRootFun` on the underlying fractional ideal. -/
+/-- The multiplicities of the `n`-th root are those of `I`, divided by `n`. Together with
+`units_eq_of_forall_count_eq` this determines `nthRootHom` completely, so no lemma below needs to
+unfold it. -/
 @[simp]
-lemma nthRootHom_apply (n : ℕ) (I : nDivisible R K n) :
-    nthRootHom R K n I = nthRootFun R K n (I : (FractionalIdeal R⁰ K)ˣ) :=
-  (rfl)
+lemma count_nthRootHom (n : ℕ) (I : nDivisible R K n) (v : HeightOneSpectrum R) :
+    count K v (nthRootHom R K n I : FractionalIdeal R⁰ K) =
+      count K v ((I : (FractionalIdeal R⁰ K)ˣ) : FractionalIdeal R⁰ K) / n :=
+  (count_nthRootFun R K n _ v)
 
 /-- The `n`-th root homomorphism is a genuine `n`-th root: raising its value to the `n`-th power
 returns the original ideal. -/
 lemma nthRootHom_pow (n : ℕ) (I : nDivisible R K n) :
     nthRootHom R K n I ^ n = (I : (FractionalIdeal R⁰ K)ˣ) :=
   units_eq_of_forall_count_eq R K fun v ↦ by
-    rw [Units.val_pow_eq_pow_val, count_pow, nthRootHom_apply, count_nthRootFun,
+    rw [Units.val_pow_eq_pow_val, count_pow, count_nthRootHom,
       Int.mul_ediv_cancel' (mem_nDivisible.mp I.2 v)]
 
 /-- **`n`-th roots of invertible fractional ideals.** An invertible fractional ideal all of whose
@@ -274,8 +275,7 @@ lemma nthRootClass_eq_one_iff {n : ℕ} (u : unitsNDivisible R K n) :
     obtain ⟨a, ha⟩ := (toPrincipalIdeal_eq_one_iff _).mp hu1
     have hroot : nthRootHom R K 0 (unitsNDivisibleToNDivisible R K 0 u) = 1 :=
       units_eq_of_forall_count_eq R K fun v ↦ by
-        rw [nthRootHom_apply, count_nthRootFun, Nat.cast_zero, Int.ediv_zero, Units.val_one,
-          count_one]
+        rw [count_nthRootHom, Nat.cast_zero, Int.ediv_zero, Units.val_one, count_one]
     exact iff_of_true (by rw [nthRootClass_apply, hroot, map_one])
       ⟨a, 1, by rw [pow_zero, mul_one, ha]⟩
   rw [nthRootClass_apply, ClassGroup.mk_eq_one_iff_exists]
@@ -297,7 +297,7 @@ lemma nthRootClass_eq_one_iff {n : ℕ} (u : unitsNDivisible R K n) :
       rw [← hw, map_mul, map_pow, Units.val_mul, Units.val_pow_eq_pow_val,
         count_mul K v (Units.ne_zero _) (pow_ne_zero _ (Units.ne_zero _)), count_pow,
         (toPrincipalIdeal_eq_one_iff _).mpr ⟨a, rfl⟩, Units.val_one, count_one, zero_add]
-    rw [nthRootHom_apply, count_nthRootFun, coe_unitsNDivisibleToNDivisible, hcu,
+    rw [count_nthRootHom, coe_unitsNDivisibleToNDivisible, hcu,
       Int.mul_ediv_cancel_left _ (Int.natCast_ne_zero.mpr hn)]
 
 end WeilDivisor
