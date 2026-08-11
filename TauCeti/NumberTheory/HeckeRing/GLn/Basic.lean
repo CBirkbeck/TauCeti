@@ -89,14 +89,22 @@ lemma det_eq_one_of_mem_SLnZ {g : GL (Fin n) ℚ} (hg : g ∈ SLnZ n) :
   obtain ⟨σ, rfl⟩ := (mem_SLnZ_iff n).mp hg
   exact congrArg Units.val (SpecialLinearGroup.det_mapGL (S := ℚ) σ)
 
-/-- The determinant is constant on an `SL_n(ℤ)`-double coset: both coefficients have
-determinant one. -/
-lemma det_eq_of_mem_doubleCoset_SLnZ {a b : GL (Fin n) ℚ}
-    (hb : b ∈ DoubleCoset.doubleCoset a (SLnZ n) (SLnZ n)) :
+/-- The determinant is constant on a double coset whose coefficient subgroups lie in
+`SL_n(ℤ)` — the proof needs only that each coefficient has determinant one, so the
+congruence subgroups get it as well as `SL_n(ℤ)` itself. -/
+lemma det_eq_of_mem_doubleCoset_of_le_SLnZ {H₁ H₂ : Subgroup (GL (Fin n) ℚ)}
+    (h₁ : H₁ ≤ SLnZ n) (h₂ : H₂ ≤ SLnZ n) {a b : GL (Fin n) ℚ}
+    (hb : b ∈ DoubleCoset.doubleCoset a H₁ H₂) :
     (↑b : Matrix (Fin n) (Fin n) ℚ).det = (↑a : Matrix (Fin n) (Fin n) ℚ).det := by
   obtain ⟨γ₁, hγ₁, γ₂, hγ₂, rfl⟩ := DoubleCoset.mem_doubleCoset.mp hb
-  simp only [GeneralLinearGroup.coe_mul, Matrix.det_mul, det_eq_one_of_mem_SLnZ n hγ₁,
-    det_eq_one_of_mem_SLnZ n hγ₂, one_mul, mul_one]
+  simp only [GeneralLinearGroup.coe_mul, Matrix.det_mul, det_eq_one_of_mem_SLnZ n (h₁ hγ₁),
+    det_eq_one_of_mem_SLnZ n (h₂ hγ₂), one_mul, mul_one]
+
+/-- The `SL_n(ℤ)` case of `det_eq_of_mem_doubleCoset_of_le_SLnZ`. -/
+lemma det_eq_of_mem_doubleCoset_SLnZ {a b : GL (Fin n) ℚ}
+    (hb : b ∈ DoubleCoset.doubleCoset a (SLnZ n) (SLnZ n)) :
+    (↑b : Matrix (Fin n) (Fin n) ℚ).det = (↑a : Matrix (Fin n) (Fin n) ℚ).det :=
+  det_eq_of_mem_doubleCoset_of_le_SLnZ n le_rfl le_rfl hb
 
 /-- The image in `GL_n(ℚ)` of a finite-index subgroup of `SL_n(ℤ)` is commensurable with
 `SL_n(ℤ)`. Since `mapGL ℚ` is injective, both relative indices transport along it: one is the

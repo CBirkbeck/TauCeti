@@ -110,9 +110,8 @@ private lemma intMatrix_det_eq_of_mem_doubleCoset {a b : GL (Fin 2) ℚ}
     {A B : Matrix (Fin 2) (Fin 2) ℤ}
     (hA : (↑a : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
     (hB : (↑b : Matrix (Fin 2) (Fin 2) ℚ) = B.map (Int.cast : ℤ → ℚ)) : B.det = A.det := by
-  obtain ⟨γ₁, hγ₁, γ₂, hγ₂, hb'⟩ := DoubleCoset.mem_doubleCoset.mp hb
-  have hdet := det_eq_of_mem_doubleCoset_SLnZ 2 (DoubleCoset.mem_doubleCoset.mpr
-    ⟨γ₁, Gamma0Image_le_SLnZ N hγ₁, γ₂, Gamma0Image_le_SLnZ N hγ₂, hb'⟩)
+  have hdet := det_eq_of_mem_doubleCoset_of_le_SLnZ 2 (Gamma0Image_le_SLnZ N)
+    (Gamma0Image_le_SLnZ N) hb
   have hcast : ((B.det : ℤ) : ℚ) = ((A.det : ℤ) : ℚ) := by
     rw [Int.cast_det B, Int.cast_det A, ← hB, ← hA]; exact hdet
   exact_mod_cast hcast
