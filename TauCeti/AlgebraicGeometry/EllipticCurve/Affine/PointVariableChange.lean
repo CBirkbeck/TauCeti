@@ -82,7 +82,7 @@ lemma variableChange_negY (x y : F) :
 
 /-- The image of a pair of points under the change of variables satisfies the `y₁ = -y₂`
 degeneracy condition (`negY`) only if the original pair does. -/
-lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : F}
+private lemma variableChange_negY_ne {x₁ x₂ y₁ y₂ : F}
     (hxy : ¬(x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂)) :
     ¬((C.u : F) ^ 2 * x₁ + C.r = (C.u : F) ^ 2 * x₂ + C.r ∧
       (C.u : F) ^ 3 * y₁ + (C.u : F) ^ 2 * C.s * x₁ + C.t = W.toAffine.negY
