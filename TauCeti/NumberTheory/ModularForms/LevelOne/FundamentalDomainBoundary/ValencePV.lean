@@ -46,7 +46,10 @@ on the contour.
   interior of the truncated fundamental domain.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`: the
   valence formula `Σ_q ord_q + ½·ord_i + ⅓·ord_ρ + ord_∞ = k/12`, allowing the divisor to meet
-  the two elliptic corners.
+  the two elliptic corners. ⚠ It does *not* reach a divisor point on the unit arc away from those
+  corners: `hin` places every non-corner divisor point strictly outside the unit circle, while
+  `hUdom` puts the arc inside `U` where `hoff` demands non-vanishing. Its docstring gives the
+  argument and what lifting it needs.
 * `finsum_orderOfVanishingOnOrbit_mem_image_add_elliptic_add_qExpansionOrderAtCusp_eq`
   (in `TauCeti.ModularForm`):
   the same identity with the interior sum reindexed over the orbits its points represent. ⚠ That
@@ -537,6 +540,10 @@ distinct orbits.
 ⚠ The sum here runs over the orbits *met by the divisor set* `T`, **not** over the whole
 non-elliptic orbit space, which is what the roadmap's Layer-1 target states. Reaching that needs
 the further step that an orbit missed by `T` contributes `0`.
+
+⚠ This inherits the arc-zero restriction of
+`sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`, since it is proved through
+it: a form with a zero on the unit arc away from the corners is out of reach here too.
 
 Level one is forced: `orderOfVanishingOnOrbit` is defined for `𝒮ℒ`-invariant forms, so this
 theorem takes the level-one class rather than a general `Γ`. -/
