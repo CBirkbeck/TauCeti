@@ -35,7 +35,7 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out:
   interface — the definition itself is a `dite` chain and is not meant to be unfolded.
 * `Valuation.restrictToConvex_eq_zero_iff` : where the restriction vanishes, totally.
 * `Valuation.restrictToConvex_le_iff` : how restricted values compare, totally.
-* `Valuation.restrictToConvex_lt_coe_iff` and `Valuation.restrictToConvex_coe_le_iff` : a
+* `Valuation.restrictToConvex_lt_coe_iff` and `Valuation.coe_le_restrictToConvex_iff` : a
   restricted value compared against an abstract member of `H`.
 * `Valuation.one_le_restrictToConvex` : a value at least `1` stays at least `1`.
 * `Valuation.mk0_mem_of_inv_le_of_le` : `H` keeps every value bracketed by an attained value
@@ -372,7 +372,7 @@ theorem restrictToConvex_lt_coe_iff (v : Valuation R Γ₀) (H : ConvexSubgroup 
 
 Both discarded branches work the same way: a value the restriction throws away sits strictly
 below every member of `H`, so no member of `H` is below it. -/
-theorem restrictToConvex_coe_le_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+theorem coe_le_restrictToConvex_iff (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H)
     (r : R) (u : H.toSubgroup) :
     (u : WithZero H.toSubgroup) ≤ v.restrictToConvex H hH r ↔ ((u : Γ₀ˣ) : Γ₀) ≤ v r := by

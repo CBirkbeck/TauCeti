@@ -39,10 +39,10 @@ The point-level map on `Spv A` that Wedhorn's retraction `r_I` is built from liv
 The *characterisation* lemmas — the vanishing branches, `restrictToIdeal_eq_zero_iff` and
 `restrictToIdeal_le_iff` — are phrased through `cΓ_v(I)` itself or through vanishing of the
 restriction, so a consumer of them never names the transport. Two declarations necessarily do
-name it: `RestrictedValues`, which *is* the transported subgroup with a zero adjoined, and
-`restrictToIdeal_def`, whose content is the definitional unfolding and which therefore carries
-the boundedness hypothesis over that subgroup. `one_le_restrictToIdeal` mentions neither, being
-an order fact about `v.restrict`.
+name it: `RestrictedValues`, which *is* the transported subgroup with a zero adjoined, and the
+private `restrictToIdeal_def`, whose content is the definitional unfolding and which therefore
+carries the boundedness hypothesis over that subgroup. `one_le_restrictToIdeal` mentions neither,
+being an order fact about `v.restrict`.
 
 ## References
 
@@ -116,8 +116,12 @@ noncomputable def restrictToIdeal (v : Valuation A Γ₀) (I : Ideal A)
 
 /-- **The defining unfolding**, so that the lemmas below rewrite through it rather than relying
 on `restrictToIdeal` unfolding implicitly. The boundedness hypothesis is taken as an argument;
-by proof irrelevance any proof of it gives the same restriction. -/
-theorem restrictToIdeal_def (v : Valuation A Γ₀) (I : Ideal A)
+by proof irrelevance any proof of it gives the same restriction.
+
+Private: it is stated against the `restrictToConvex` representation and makes the caller supply a
+transport-level boundedness proof, neither of which a consumer should have to see. The
+characterisation lemmas below are the public interface. -/
+private theorem restrictToIdeal_def (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
     (hH : ∀ a : A, ∀ ha : v.restrict a ≠ 0, 1 ≤ v.restrict a →
       Units.mk0 (v.restrict a) ha ∈
@@ -239,13 +243,13 @@ by
     _root_.Valuation.restrictToConvex_le_iff, _root_.Valuation.restrict_le_iff]
 
 /-- The companion of `restrictToIdeal_lt_coe_iff` with the member on the left. -/
-theorem restrictToIdeal_coe_le_iff (v : Valuation A Γ₀) (I : Ideal A)
+theorem coe_le_restrictToIdeal_iff (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (a : A)
     (u : (ConvexSubgroup.comapUnitsWithZero
       (characteristicSubgroupOfIdeal v I hfg)).toSubgroup) :
     (u : RestrictedValues v I hfg) ≤ v.restrictToIdeal I hfg a ↔
       ((u : (ValueGroup₀ (.ofClass v))ˣ) : ValueGroup₀ (.ofClass v)) ≤ v.restrict a :=
-  _root_.Valuation.restrictToConvex_coe_le_iff _ _ _ a u
+  _root_.Valuation.coe_le_restrictToConvex_iff _ _ _ a u
 
 /-- Comparing a restricted value against an abstract member of the transported `cΓ_v(I)`,
 back in the value monoid of `v`. This is the form a cofinality argument needs, where the

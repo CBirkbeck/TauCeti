@@ -19,14 +19,20 @@ restriction itself, together with its interface, lives in
 points.
 
 Wedhorn's retraction has two properties beyond being this map: it **lands in** `Spv (A, I)`, and
-it **fixes** that subspace pointwise. The first is proved here. The second is not, so the map
-still carries codomain `Spv A` rather than the subspace, and is still named for what it does —
-restriction to `I` — rather than for the retraction property it does not yet carry.
+it **fixes** that subspace pointwise. **Both are proved here**, so the map is also offered with
+the codomain the roadmap asks for — `restrictToIdealCodRestrict` — and that form is a retraction
+in the literal sense, `restrictToIdealCodRestrict_coe` saying it moves no point of the subspace.
+The declarations keep the name `restrictToIdeal` rather than `retract` because that is what they
+compute; the retraction property is the content of the two theorems, not of the name.
 
 ## Main definitions
 
 * `TauCeti.ValuationSpectrum.restrictToIdeal` : the restriction, at the level of points of
   `Spv A`.
+* `TauCeti.ValuationSpectrum.restrictToIdealCodRestrict` : the same map with the roadmap's
+  codomain, `Spv A → Spv (A, I)`, obtained by corestricting along the landing theorem below. This
+  is the canonical form for a consumer, who then holds a point of the subspace rather than a
+  point of `Spv A` together with a membership proof.
 
 ## Main results
 
@@ -38,6 +44,12 @@ restriction to `I` — rather than for the retraction property it does not yet c
   `Spv (A, I)`. The case split is Wedhorn's: where `I` meets `cΓ_v`, the subgroup `cΓ_v(I)`
   collapses to `cΓ_v` and a generator brackets the bound; where it does not, `cΓ_v(I)` is the
   greatest ideal-cofinal convex subgroup and the bound is cofinal by that maximality.
+* `TauCeti.ValuationSpectrum.coe_restrictToIdealCodRestrict` : the corestriction read back in
+  `Spv A`.
+* `TauCeti.ValuationSpectrum.restrictToIdeal_eq_self_of_mem_spvOfIdeal` : the restriction fixes
+  `Spv (A, I)` pointwise — a point of the subspace has `cΓ_v(I) = ⊤`, so nothing is discarded.
+* `TauCeti.ValuationSpectrum.restrictToIdealCodRestrict_coe` : the retraction law itself, that
+  `r_I` composed with the inclusion of the subspace is the identity.
 
 ## References
 
@@ -111,7 +123,7 @@ private theorem characteristicSubgroup_restrictToIdeal_eq_top_of_meets (v : Spv 
     rw [← ValueGroup₀.embedding_strictMono.le_iff_le, map_inv₀,
       Valuation.embedding_restrict, ← hu,
       inv_le_comm₀ (zero_lt_one.trans_le h1a) (pos_iff_ne_zero.mpr WithZero.coe_ne_zero),
-      ← WithZero.coe_inv, restrictToIdeal_coe_le_iff, hga]
+      ← WithZero.coe_inv, coe_le_restrictToIdeal_iff, hga]
     have hcoe : ((OrderMonoidIso.unitsWithZero
           ((u⁻¹ : (ConvexSubgroup.comapUnitsWithZero
             (characteristicSubgroupOfIdeal v.valuation I hfg)).toSubgroup) :
@@ -125,7 +137,7 @@ private theorem characteristicSubgroup_restrictToIdeal_eq_top_of_meets (v : Spv 
     simp only [map_inv, InvMemClass.coe_inv]
     simpa using inv_le_inv_iff.mpr hginv
   · rw [← ValueGroup₀.embedding_strictMono.le_iff_le, Valuation.embedding_restrict, ← hu,
-      restrictToIdeal_coe_le_iff, hga]
+      coe_le_restrictToIdeal_iff, hga]
     have hcoe : ((OrderMonoidIso.unitsWithZero (u : (ValueGroup₀ (.ofClass v.valuation))ˣ) :
         valueGroup (.ofClass v.valuation)) : ValueGroup₀ (.ofClass v.valuation)) =
         ((u : (ValueGroup₀ (.ofClass v.valuation))ˣ) : ValueGroup₀ (.ofClass v.valuation)) :=
@@ -170,6 +182,7 @@ private theorem cofinalValue_restrictToIdeal_of_not_meets (v : Spv A) (I : Ideal
 the roadmap's `r_I : Spv A → Spv (A, I)`: the point `restrictToIdeal v I` really does satisfy the
 condition cutting out the subspace. The two branches are Wedhorn's own case split on whether `I`
 meets `cΓ_v`, and each is proved above. -/
+@[simp]
 theorem restrictToIdeal_mem_spvOfIdeal (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     restrictToIdeal v I hfg ∈ spvOfIdeal I hfg := by
@@ -179,11 +192,25 @@ theorem restrictToIdeal_mem_spvOfIdeal (v : Spv A) (I : Ideal A)
   · exact Or.inr (characteristicSubgroup_restrictToIdeal_eq_top_of_meets v I hfg hm)
   · exact Or.inl (cofinalValue_restrictToIdeal_of_not_meets v I hfg hm)
 
+/-- **The roadmap's `r_I : Spv A → Spv (A, I)`**, with the codomain the roadmap asks for. This is
+`restrictToIdeal` corestricted along the landing theorem, so a consumer receives a point of the
+subspace rather than an `Spv A`-point plus a membership proof to carry around. It is a genuine
+retraction: `restrictToIdealCodRestrict_coe` below says it fixes the subspace pointwise. -/
+noncomputable def restrictToIdealCodRestrict (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (v : Spv A) :
+    (spvOfIdeal I hfg : Set (Spv A)) :=
+  ⟨restrictToIdeal v I hfg, restrictToIdeal_mem_spvOfIdeal v I hfg⟩
+
+/-- The corestricted map is the plain one, read in `Spv A`. -/
+@[simp]
+theorem coe_restrictToIdealCodRestrict (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (v : Spv A) :
+    (restrictToIdealCodRestrict I hfg v : Spv A) = restrictToIdeal v I hfg :=
+  (rfl)
+
 /-- **Wedhorn §7.1.2: the restriction fixes `Spv (A, I)` pointwise.** A point already in the
-subspace has `cΓ_v(I) = ⊤`, so the restriction discards nothing and returns the point itself.
-With `restrictToIdeal_mem_spvOfIdeal` this makes the map a genuine retraction onto
-`Spv (A, I)`. -/
-theorem restrictToIdeal_of_mem_spvOfIdeal (v : Spv A) (I : Ideal A)
+subspace has `cΓ_v(I) = ⊤`, so the restriction discards nothing and returns the point itself. -/
+theorem restrictToIdeal_eq_self_of_mem_spvOfIdeal (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (hv : v ∈ spvOfIdeal I hfg) :
     restrictToIdeal v I hfg = v := by
   have htop : characteristicSubgroupOfIdeal v.valuation I hfg = ⊤ := mem_spvOfIdeal_iff.mp hv
@@ -206,5 +233,14 @@ theorem restrictToIdeal_of_mem_spvOfIdeal (v : Spv A) (I : Ideal A)
     · exact Or.inl ha
     · exact Or.inr ⟨fun hb ↦ ha (le_antisymm (hb ▸ (valuation_le_iff v a b).mpr h) zero_le), h⟩
 
+/-- **`r_I` is a retraction of `Spv A` onto `Spv (A, I)`**: composed with the inclusion of the
+subspace it is the identity. This is the retraction law in the form the word means — with
+`restrictToIdealCodRestrict` landing in the subspace by construction, this says it moves no point
+of the subspace. -/
+@[simp]
+theorem restrictToIdealCodRestrict_coe (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (v : (spvOfIdeal I hfg : Set (Spv A))) :
+    restrictToIdealCodRestrict I hfg (v : Spv A) = v :=
+  Subtype.ext (restrictToIdeal_eq_self_of_mem_spvOfIdeal _ I hfg v.2)
 
 end TauCeti.ValuationSpectrum
