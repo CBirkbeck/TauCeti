@@ -437,13 +437,13 @@ discarded, `T ∪ {u}` would lie in the support of the restriction, which is pri
 radical, so all of `I` would lie there — contradicting Lemma 7.2, which produces an element of
 `I` whose value lies in `cΓ_v(I)` whenever `v` does not vanish on `I`. -/
 theorem restrictToIdeal_ne_zero_of_isAdmissible (v : Valuation A Γ₀) (I : Ideal A)
-    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {T : Finset A} {u : A}
-    (hadm : I ≤ (Ideal.span (insert u (T : Set A))).radical)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {T : Set A} {u : A}
+    (hadm : I ≤ (Ideal.span (insert u T)).radical)
     (hu0 : v u ≠ 0) (hT : ∀ t ∈ T, v t ≤ v u) :
     v.restrictToIdeal I hfg u ≠ 0 := by
   intro hRu
   set R := v.restrictToIdeal I hfg with hR
-  have hsupp : insert u (T : Set A) ⊆ (Valuation.supp R : Set A) := by
+  have hsupp : insert u T ⊆ (Valuation.supp R : Set A) := by
     rintro t (rfl | ht)
     · exact hRu
     · refine Valuation.mem_supp_iff R t |>.mpr ?_

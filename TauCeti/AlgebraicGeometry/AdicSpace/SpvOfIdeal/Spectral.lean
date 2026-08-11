@@ -302,7 +302,7 @@ theorem instTopologicalSpace_spvOfIdeal_eq_generateFrom (I : Ideal A)
 /-! ### The compact witness topology -/
 
 /-- `r_I` is surjective: it fixes `Spv (A, I)` pointwise. -/
-lemma surjective_restrictToIdealCodRestrict (I : Ideal A)
+private lemma restrictToIdealCodRestrict_surjective (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     Function.Surjective (restrictToIdealCodRestrict I hfg) :=
   fun v ↦ ⟨(v : Spv A), restrictToIdealCodRestrict_coe I hfg v⟩
@@ -310,34 +310,30 @@ lemma surjective_restrictToIdealCodRestrict (I : Ideal A)
 /-- **The compact witness topology on `Spv (A, I)`**, coinduced along `r_I` from the patch
 topology of `Spv A`. It is a proof device for the patch criterion, deliberately not an
 instance: the topology of `Spv (A, I)` is the subspace one. -/
-@[expose, instance_reducible]
-noncomputable def patchTopologyOfIdeal (I : Ideal A)
+@[instance_reducible]
+private noncomputable def patchTopologyOfIdeal (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     TopologicalSpace (spvOfIdeal I hfg) :=
   TopologicalSpace.coinduced (restrictToIdealCodRestrict I hfg) (patchTopology A)
 
-/-- The defining equation of the witness topology. `patchTopologyOfIdeal` is `@[expose]` exactly
-so that this holds by `rfl` outside the module. -/
-lemma patchTopologyOfIdeal_eq (I : Ideal A)
+/-- The defining equation of the witness topology. -/
+private lemma patchTopologyOfIdeal_eq (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     patchTopologyOfIdeal I hfg =
       TopologicalSpace.coinduced (restrictToIdealCodRestrict I hfg) (patchTopology A) := rfl
 
 /-- **The witness topology is compact** — Wedhorn's step (iv): the continuous image of the
 compact `(Spv A)_cons` under the surjection `r_I`. -/
-lemma compactSpace_patchTopologyOfIdeal (I : Ideal A)
+private lemma compactSpace_patchTopologyOfIdeal (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     @CompactSpace _ (patchTopologyOfIdeal I hfg) := by
-  refine @CompactSpace.mk _ (patchTopologyOfIdeal I hfg) ?_
-  have h := @IsCompact.image _ _ (patchTopology A) (patchTopologyOfIdeal I hfg) univ
-    (restrictToIdealCodRestrict I hfg)
-    (@CompactSpace.isCompact_univ _ (patchTopology A) compactSpace_patchTopology)
-    (by rw [patchTopologyOfIdeal_eq]; exact continuous_coinduced_rng)
-  rwa [Set.image_univ, (surjective_restrictToIdealCodRestrict I hfg).range_eq] at h
+  exact @Function.Surjective.compactSpace _ _ (patchTopology A) (patchTopologyOfIdeal I hfg) _
+    (by rw [patchTopologyOfIdeal_eq]; exact continuous_coinduced_rng) compactSpace_patchTopology
+    (restrictToIdealCodRestrict_surjective I hfg)
 
 /-- A set is clopen for the witness topology as soon as its `r_I`-preimage is patch-clopen in
 `Spv A`; that is what a coinduced topology means. -/
-lemma isClopen_patchTopologyOfIdeal_of_preimage (I : Ideal A)
+private lemma isClopen_patchTopologyOfIdeal_of_preimage (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {V : Set (spvOfIdeal I hfg)}
     (h : @IsClopen (Spv A) (patchTopology A) (restrictToIdealCodRestrict I hfg ⁻¹' V)) :
     @IsClopen _ (patchTopologyOfIdeal I hfg) V := by
