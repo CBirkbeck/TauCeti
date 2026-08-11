@@ -900,12 +900,6 @@ noncomputable def weightedPolynomials [NonarchimedeanRing A] (T : Fin k → Set 
     (hT : IsWeightFamily T) : Subring (weightedRestrictedSubring T hT) :=
   (weightedPolynomialHom T hT).range
 
-/-- `weightedPolynomials` is the range of `weightedPolynomialHom`. The body is not exported, so
-this is how a consumer produces the polynomial behind a member. -/
-theorem mem_weightedPolynomials_iff_exists [NonarchimedeanRing A] {T : Fin k → Set A}
-    {hT : IsWeightFamily T} {f : weightedRestrictedSubring T hT} :
-    f ∈ weightedPolynomials T hT ↔ ∃ p, weightedPolynomialHom T hT p = f := (Iff.rfl)
-
 /-- Membership in `weightedPolynomials` is exactly having finitely many nonzero coefficients.
 
 Deliberately not `@[simp]`: with this rewrite in the default set, the left-hand sides of
@@ -1085,6 +1079,34 @@ theorem weightedMap_weightedX [NonarchimedeanRing A] [NonarchimedeanRing B] {φ 
     {hS : IsWeightFamily S} (hTS : ∀ i, φ '' T i ⊆ S i) (i : Fin k) :
     weightedMap hφ hT hS hTS (weightedX T hT i) = weightedX S hS i :=
   Subtype.ext (by simp [MvPowerSeries.map_X])
+
+/-- **Agreement on the generators propagates to the polynomials.** Two ring homomorphisms out of
+`A⟨X⟩_T` that agree on every constant series and every variable agree on the whole polynomial
+subring. No topology is involved. -/
+theorem eqOn_weightedPolynomials [NonarchimedeanRing A] {T : Fin k → Set A}
+    {hT : IsWeightFamily T} {B : Type*} [Semiring B]
+    {f g : weightedRestrictedSubring T hT →+* B}
+    (hC : ∀ a, f (weightedC T hT a) = g (weightedC T hT a))
+    (hX : ∀ i, f (weightedX T hT i) = g (weightedX T hT i)) :
+    Set.EqOn f g (weightedPolynomials T hT : Set (weightedRestrictedSubring T hT)) := by
+  have hcomp : f.comp (weightedPolynomialHom T hT) = g.comp (weightedPolynomialHom T hT) :=
+    MvPolynomial.ringHom_ext (by simpa using hC) (by simpa using hX)
+  intro x hx
+  obtain ⟨p, rfl⟩ := RingHom.mem_range.mp hx
+  exact congrArg (fun h : MvPolynomial (Fin k) A →+* B ↦ h p) hcomp
+
+/-- **A continuous homomorphism out of `A⟨X⟩_T` is determined by its values on the generators.**
+This is the uniqueness half of Wedhorn 5.50: an extension sending each `Xᵢ` to a prescribed value
+is unique among *continuous* homomorphisms.
+
+Continuity is essential — the polynomials are only dense, not everything — and so is the target
+being Hausdorff. -/
+theorem weightedRestrictedSubring_ringHom_ext_of_continuous [NonarchimedeanRing A]
+    {T : Fin k → Set A} (hT : IsWeightFamily T) {B : Type*} [Semiring B] [TopologicalSpace B]
+    [T2Space B] {f g : weightedRestrictedSubring T hT →+* B} (hf : Continuous f)
+    (hg : Continuous g) (hC : ∀ a, f (weightedC T hT a) = g (weightedC T hT a))
+    (hX : ∀ i, f (weightedX T hT i) = g (weightedX T hT i)) : f = g :=
+  RingHom.coe_inj (hf.ext_on (dense_weightedPolynomials hT) hg (eqOn_weightedPolynomials hC hX))
 
 end Functoriality
 
