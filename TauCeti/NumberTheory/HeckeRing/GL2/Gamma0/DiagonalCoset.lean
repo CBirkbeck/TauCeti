@@ -42,6 +42,8 @@ Ported from the AINTLIB `LeanModularForms` project
 * `HeckeRing.GL2.toLevelOneCoset_diagCosetGamma0`: the `Γ₀(N)`-coset of `diag(a)` lies over the
   level-one coset `T(a)`.
 * `HeckeRing.GL2.diagCosetGamma0_one`: the all-ones tuple gives the identity coset.
+* `HeckeRing.GL2.diagCosetGamma0_of_not_pos`: so does any tuple that is not everywhere
+  positive.
 
 ## References
 
@@ -114,5 +116,13 @@ double coset, whatever proof of the coprimality condition is supplied. -/
 @[simp] lemma diagCosetGamma0_one (h : (∀ _ : Fin 2, 0 < (1 : ℕ)) → Nat.Coprime 1 N) :
     diagCosetGamma0 N (fun _ ↦ 1) h = 1 :=
   congrArg (HeckeCoset.mk _ _) (Subtype.ext (natDiagGL_one 2))
+
+/-- The junk normal form, mirroring `diagCoset_of_not_pos`: a tuple that is not everywhere
+positive gives the identity coset, matching the junk value of `natDiagGL`. The coprimality
+condition is vacuous in this branch, so it is irrelevant which proof is supplied. -/
+@[simp] lemma diagCosetGamma0_of_not_pos {a : Fin 2 → ℕ}
+    (hgcd : (∀ i, 0 < a i) → Nat.Coprime (a 0) N) (ha : ¬ ∀ i, 0 < a i) :
+    diagCosetGamma0 N a hgcd = 1 :=
+  congrArg (HeckeCoset.mk _ _) (Subtype.ext (natDiagGL_of_not_pos (n := 2) ha))
 
 end HeckeRing.GL2
