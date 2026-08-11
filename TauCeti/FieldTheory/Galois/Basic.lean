@@ -14,6 +14,14 @@ extension `L/K`: it has exactly two automorphisms, so the identity and any one n
 automorphism exhaust `Gal(L/K)`, and an element fixed by a nontrivial automorphism lies in the
 base field.
 
+The file closes with one lemma that is **not** about quadratic extensions:
+`AlgEquiv.restrictNormal_eq_one_iff_algebraMap` says that in a tower `K ⊆ L ⊆ M` with `L/K`
+normal, an automorphism of `M` restricts to the identity on `L` exactly when it fixes `L`
+pointwise. Mathlib states this for an `IntermediateField`
+(`AlgEquiv.restrictNormal_eq_one_iff`) while `AlgEquiv.restrictNormal` itself is already given for
+an abstract algebra, so only the characterisation needed transporting; it is a bridge to Mathlib
+rather than ported material, and it asks for `[Normal K L]` alone.
+
 Mathlib already supplies the surrounding structure: `Algebra.IsQuadraticExtension` makes `L/K`
 finite and normal (`Algebra.IsQuadraticExtension.normal`), hence Galois with separability
 (`Algebra.IsQuadraticExtension.isGalois`); `IsGalois.card_aut_eq_finrank` counts the

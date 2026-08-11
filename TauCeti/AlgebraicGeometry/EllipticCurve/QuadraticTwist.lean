@@ -78,9 +78,22 @@ change of variables, again over any commutative ring in which the relevant param
 
 These are the `quadraticTwistOf` seeds of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 5
 (twists), pinned in that roadmap's `Suggested.lean`, together with the extension twist they make
-well posed, and the classification of the `L`-forms that the cocycle delivers; the point
-isomorphism and the split-multiplicative-reduction theorem are later milestones of the same layer
-and build on this file.
+well posed, the classification of the `L`-forms that the cocycle delivers, and the point
+isomorphism `quadraticTwistPointEquiv` that classification makes possible; the
+split-multiplicative-reduction theorem is a later milestone of the same layer and builds on this
+file.
+
+## The point isomorphism
+
+Over any field `M` in a tower `K ⊆ L ⊆ M`, the base change of `quadraticTwistVariableChange`
+carries `E` to its twist (`quadraticTwistVariableChange_smul_baseChange`) and satisfies the
+cocycle identity (`map_quadraticTwistVariableChange_baseChange`). Transporting along it gives
+`quadraticTwistPointEquiv : ((E.quadraticTwist L)⁄M).Point ≃+ (E⁄M).Point`, with
+`quadraticTwistPointEquiv_some` the coordinate equation a consumer needs. It is natural in `M`
+(`quadraticTwistPointEquiv_map`) and **anti-equivariant** for the Galois elements that move `L`
+(`quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed`): that sign is what makes the twist a
+twist. Packaging the two cases as `φ(σP) = χ(σ) • σ(φP)` needs a quadratic character, which this
+repository does not yet have, so it is left to a later PR.
 
 The twist by a generator is deliberately **not** given its own constructor here. Such a
 definition would accept any field extension, and outside the finite-dimensional case Mathlib's
@@ -815,6 +828,7 @@ is `quadraticTwistVariableChange` base changed to `M`. -/
 /-- **Naturality of `quadraticTwistPointEquiv` in `M`.** The isomorphisms on `M`-points over
 varying `M ⊇ L` all come from one isomorphism of curves over `L`, so they commute with the maps on
 points induced by any `L`-algebra homomorphism. -/
+@[simp]
 theorem quadraticTwistPointEquiv_map {N : Type*} [Field N] [Algebra K N] [Algebra L N]
     [IsScalarTower K L N] [DecidableEq N] (f : M →ₐ[L] N)
     (P : ((E.quadraticTwist L).baseChange M).toAffine.Point) :
@@ -842,6 +856,7 @@ theorem quadraticTwistPointEquiv_map {N : Type*} [Field N] [Algebra K N] [Algebr
 variable (L) in
 /-- **Anti-equivariance**: if `σ ∈ Aut(M/K)` does not fix `L` pointwise, transporting its action
 through `Eᴸ(M) ≅ E(M)` gives minus its action. -/
+@[simp]
 theorem quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed {σ : M ≃ₐ[K] M}
     (hσ : ¬ ∀ x : L, σ (algebraMap L M x) = algebraMap L M x)
     (P : ((E.quadraticTwist L).baseChange M).toAffine.Point) :
