@@ -28,7 +28,8 @@ type of nonzero primes and carries the adic valuation on the function field.
   identifying its underlying ideal as `XYIdeal W x (C y)`.
 * `TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace_eq_iff`: `pointPlace` is injective —
   two points have the same place exactly when they have the same coordinates.
-* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace.finrank_residueField`: consequently the
+* `TauCeti.WeierstrassCurve.Affine.CoordinateRing.pointPlace.finrank_residueField_eq_one`:
+  consequently the
   place of a point has degree one — its residue field is the base field.
 
 `(pointPlace h).valuation W.FunctionField` is then the associated multiplicative adic valuation on
@@ -103,8 +104,12 @@ theorem pointPlace_eq_iff {x₁ x₂ y₁ y₂ : F} (h₁ : W.Equation x₁ y₁
 
 /-- **The place of a point has degree one.** The degree of a place is the rank of its residue field
 over the base, and the residue field here is the base field itself — which is the sense in which the
-point–place dictionary lands in the *degree-one* places. -/
-theorem pointPlace.finrank_residueField {y : F} (h : W.Equation x y) :
+point–place dictionary lands in the *degree-one* places.
+
+The `XYIdeal`-level statement this specialises is deliberately not exported: it would be a one-line
+wrapper around Mathlib's `quotientXYIdealEquiv`, so the rewrite happens here instead. -/
+@[simp]
+theorem pointPlace.finrank_residueField_eq_one {y : F} (h : W.Equation x y) :
     Module.finrank F (W.CoordinateRing ⧸ (pointPlace h).asIdeal) = 1 := by
   rw [(Ideal.quotientEquivAlgOfEq F (pointPlace_asIdeal h)).toLinearEquiv.finrank_eq,
     (_root_.WeierstrassCurve.Affine.CoordinateRing.quotientXYIdealEquiv h).toLinearEquiv.finrank_eq,
