@@ -800,7 +800,16 @@ is `quadraticTwistVariableChange` base changed to `M`. -/
           ((Affine.variableChange_nonsingular (E.baseChange M)
             ((E.quadraticTwistVariableChange L).baseChange M) x y).mpr
               ((E.quadraticTwistVariableChange_smul_baseChange L M).symm ▸ h)) := by
-  rw [quadraticTwistPointEquiv, AddEquiv.trans_apply, Affine.Point.cast_some,
+  -- the transport along `Cᴹ • Eᴹ = (E.quadraticTwist L)ᴹ`, computed locally: it is needed only
+  -- here, since everything else goes through this lemma
+  have hcast : ∀ {V V' : WeierstrassCurve M} (hVV' : V = V') {a b : M}
+      (hns : V.toAffine.Nonsingular a b),
+      AddEquiv.cast (M := fun V : WeierstrassCurve M ↦ V.toAffine.Point) hVV' (.some a b hns)
+        = .some a b (hVV' ▸ hns) := by
+    intro V V' hVV' a b hns
+    subst hVV'
+    rfl
+  rw [quadraticTwistPointEquiv, AddEquiv.trans_apply, hcast,
     Affine.Point.equivVariableChange_some]
 
 /-- **Naturality of `quadraticTwistPointEquiv` in `M`.** The isomorphisms on `M`-points over
@@ -823,8 +832,8 @@ theorem quadraticTwistPointEquiv_map {N : Type*} [Field N] [Algebra K N] [Algebr
       = f ((E.quadraticTwistVariableChange L).baseChange M).t := (f.commutes _).symm
   rcases P with _ | ⟨x, y, h⟩
   · simp [← Affine.Point.zero_def]
-  · simp only [quadraticTwistPointEquiv, AddEquiv.trans_apply, Affine.Point.cast_some,
-      Affine.Point.equivVariableChange_some, Affine.Point.map_some, Affine.Point.some.injEq]
+  · simp only [quadraticTwistPointEquiv_some, Affine.Point.map_some,
+      Affine.Point.some.injEq]
     constructor
     · simp only [map_add, map_mul, map_pow, hu, hr]
     · simp only [map_add, map_mul, map_pow, hu, hs, ht]
@@ -862,8 +871,7 @@ theorem quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed {σ : M ≃ₐ[K] M
       (by ring : ((-1 : M)) ^ 3 = -1)] using congrArg VariableChange.t hM
   rcases P with _ | ⟨x, y, hns⟩
   · simp [← Affine.Point.zero_def]
-  · simp only [quadraticTwistPointEquiv, AddEquiv.trans_apply, Affine.Point.cast_some,
-      Affine.Point.equivVariableChange_some, Affine.Point.map_some, Affine.Point.neg_some,
+  · simp only [quadraticTwistPointEquiv_some, Affine.Point.map_some, Affine.Point.neg_some,
       Affine.Point.some.injEq]
     refine ⟨?_, ?_⟩
     · simp only [map_add, map_mul, map_pow, hu, hr]; ring
