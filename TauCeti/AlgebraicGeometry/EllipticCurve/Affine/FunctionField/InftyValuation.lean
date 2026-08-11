@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.FieldTheory.RatFunc.Valuation
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.CoordinateRing
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Norm
 
 /-!
@@ -274,8 +275,8 @@ noncomputable def inftyValuation : Valuation W.FunctionField (WithZero (Multipli
 
 open scoped Classical in
 /-- The evaluation rule for `inftyValuation`: it is `RatFunc.inftyValuation` applied to the algebra
-norm of the function. -/
-@[simp]
+norm of the function. Deliberately not `@[simp]`: unfolding the valuation would defeat the
+special-value lemmas below, which are the normal forms automation should reach. -/
 theorem inftyValuation_apply (f : W.FunctionField) :
     inftyValuation W f = RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f) := by
   simp [inftyValuation]
@@ -304,8 +305,8 @@ theorem inftyValuation.X :
     RatFunc.inftyValuation_of_nonzero F
       (norm_ne_zero_of_natDegree_ne_zero W
         (u := algebraMap F[X] W.CoordinateRing Polynomial.X)
-        (by rw [natDegree_norm_X]; norm_num)),
-    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_X]
+        (by rw [TauCeti.WeierstrassCurve.Affine.natDegree_norm_X]; norm_num)),
+    intDegree_norm_algebraMap_coordinateRing, TauCeti.WeierstrassCurve.Affine.natDegree_norm_X]
   norm_num
 
 open scoped Classical in
@@ -316,8 +317,8 @@ theorem inftyValuation.mk_Y :
   rw [inftyValuation_apply, RatFunc.inftyValuation_apply,
     RatFunc.inftyValuation_of_nonzero F
       (norm_ne_zero_of_natDegree_ne_zero W (u := CoordinateRing.mk W Y)
-        (by rw [natDegree_norm_mk_Y]; norm_num)),
-    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_mk_Y]
+        (by rw [TauCeti.WeierstrassCurve.Affine.natDegree_norm_mk_Y]; norm_num)),
+    intDegree_norm_algebraMap_coordinateRing, TauCeti.WeierstrassCurve.Affine.natDegree_norm_mk_Y]
   norm_num
 
 
@@ -342,6 +343,23 @@ instance instIsNontrivial : (inftyValuation W).IsNontrivial where
   exists_val_nontrivial :=
     ⟨algebraMap W.CoordinateRing W.FunctionField (algebraMap F[X] W.CoordinateRing Polynomial.X),
       by rw [inftyValuation.X]; exact ⟨WithZero.exp_ne_zero, by simp⟩⟩
+
+
+open scoped Classical in
+/-- The simp-normal form of `inftyValuation.X`. -/
+@[simp]
+theorem inftyValuation.of_X :
+    inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
+      (AdjoinRoot.of W.polynomial Polynomial.X)) = WithZero.exp 2 :=
+  inftyValuation.X W
+
+open scoped Classical in
+/-- The simp-normal form of `inftyValuation.mk_Y`. -/
+@[simp]
+theorem inftyValuation.root :
+    inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
+      (AdjoinRoot.root W.polynomial)) = WithZero.exp 3 :=
+  inftyValuation.mk_Y W
 
 end WeierstrassCurve.Affine
 

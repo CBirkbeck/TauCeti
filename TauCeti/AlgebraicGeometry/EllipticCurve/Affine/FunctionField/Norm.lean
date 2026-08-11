@@ -20,8 +20,6 @@ cubic the Weierstrass equation solves for, has degree `3`.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.natDegree_norm_X`, `WeierstrassCurve.Affine.natDegree_norm_mk_Y`: the
-  norms of the two coordinate functions have degrees `2` and `3`.
 * `WeierstrassCurve.Affine.intDegree_norm_algebraMap_coordinateRing`: over `RatFunc F`, the
   `intDegree` of the norm of a function regular away from infinity is the degree of its polynomial
   norm.
@@ -78,33 +76,6 @@ open scoped Polynomial.Bivariate
 open scoped RatFunc
 
 namespace WeierstrassCurve.Affine
-
-section Nontrivial
-
--- Both degrees read the norm off the `1, Y` basis with `norm_smul_basis`, an identity over any
--- commutative ring, so a nontrivial base is all they need.
-variable {R : Type*} [CommRing R] [Nontrivial R] (W : _root_.WeierstrassCurve.Affine R)
-
-/-- **The norm of the coordinate function `x` has degree `2`**: it is `x ^ 2`. -/
-theorem natDegree_norm_X :
-    (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing X)).natDegree = 2 := by
-  -- `norm_smul_basis` reads the norm off the `1, Y` basis, so `x` is written in it first
-  have hX : algebraMap R[X] W.CoordinateRing X =
-      (X : R[X]) • (1 : W.CoordinateRing) + (0 : R[X]) • CoordinateRing.mk W Y := by
-    rw [zero_smul, add_zero, Algebra.smul_def, mul_one]
-  rw [hX, CoordinateRing.norm_smul_basis]
-  simp
-
-/-- **The norm of the coordinate function `y` has degree `3`**, being the negative of the cubic in
-`x` that the Weierstrass equation solves for. -/
-theorem natDegree_norm_mk_Y :
-    (Algebra.norm R[X] (CoordinateRing.mk W Y)).natDegree = 3 := by
-  -- `norm_smul_basis` reads the norm off the `1, Y` basis, so `y` is written in it first
-  have hY : CoordinateRing.mk W Y = (0 : R[X]) • 1 + (1 : R[X]) • CoordinateRing.mk W Y := by simp
-  rw [hY, CoordinateRing.norm_smul_basis]
-  compute_degree!
-
-end Nontrivial
 
 variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)
 
