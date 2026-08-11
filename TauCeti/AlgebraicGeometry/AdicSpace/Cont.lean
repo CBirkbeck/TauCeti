@@ -46,8 +46,9 @@ So `IsContinuous` is defined here by testing the *canonical* valuation of the po
   representative, not only the canonical one — the well-definedness making `cont` meaningful.
   Membership `ofValuation w ∈ cont A` reduces to it through the `@[simp]` `mem_cont_iff`.
 * `TauCeti.ValuationSpectrum.IsContinuous.comap` : **Remark 7.9**, that a continuous ring
-  homomorphism pulls continuous points back to continuous points, so `comap φ` restricts to
-  `Cont B → Cont A`.
+  homomorphism pulls continuous points back to continuous points. Combined with `mem_cont_iff`
+  this is exactly the statement that `comap φ` restricts to a map `Cont B → Cont A`; no separate
+  set-level lemma is kept for it, since that would be this one after unfolding.
 * `TauCeti.ValuationSpectrum.cont_eq_univ` : **Remark 7.8(2)**, `Cont A = Spv A` for discrete `A`.
 
 ## References
@@ -125,17 +126,5 @@ theorem IsContinuous.comap {B : Type*} [CommRing B] [TopologicalSpace B] {φ : A
     (hφ : Continuous φ) {v : Spv B} (hv : v.IsContinuous) : (comap φ v).IsContinuous := by
   rw [← ofValuation_valuation v, comap_ofValuation, isContinuous_ofValuation_iff]
   exact (isContinuous_def v |>.mp hv).comap hφ
-
-/-- **Remark 7.9 at the level of the subspaces.** `Cont B` lands inside the preimage of
-`Cont A` along `comap φ`, so `comap φ` restricts to a map `Cont B → Cont A`.
-
-This is the set-level form of `IsContinuous.comap`, and is stated separately because it is the
-form a consumer of the subspaces actually applies: the pointwise version has to be threaded
-through membership and preimage by hand at each call site, and it is this containment — not the
-pointwise implication — that the module docstring claims. -/
-theorem cont_subset_comap_preimage {B : Type*} [CommRing B] [TopologicalSpace B]
-    {φ : A →+* B} (hφ : Continuous φ) :
-    cont B ⊆ comap φ ⁻¹' cont A := fun v hv ↦
-  Set.mem_preimage.mpr ((mem_cont_iff _).mpr (IsContinuous.comap hφ ((mem_cont_iff v).mp hv)))
 
 end TauCeti.ValuationSpectrum
