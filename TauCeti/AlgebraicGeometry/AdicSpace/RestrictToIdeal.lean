@@ -170,6 +170,7 @@ private theorem cofinalValue_restrictToIdeal_of_not_meets (v : Spv A) (I : Ideal
 the roadmap's `r_I : Spv A → Spv (A, I)`: the point `restrictToIdeal v I` really does satisfy the
 condition cutting out the subspace. The two branches are Wedhorn's own case split on whether `I`
 meets `cΓ_v`, and each is proved above. -/
+@[simp]
 theorem restrictToIdeal_mem_spvOfIdeal (v : Spv A) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     restrictToIdeal v I hfg ∈ spvOfIdeal I hfg := by
@@ -178,5 +179,23 @@ theorem restrictToIdeal_mem_spvOfIdeal (v : Spv A) (I : Ideal A)
   by_cases hm : IdealMeetsCharacteristicSubgroup v.valuation I
   · exact Or.inr (characteristicSubgroup_restrictToIdeal_eq_top_of_meets v I hfg hm)
   · exact Or.inl (cofinalValue_restrictToIdeal_of_not_meets v I hfg hm)
+
+/-- **The roadmap's `r_I : Spv A → Spv (A, I)`**, with the codomain the roadmap asks for. This is
+`restrictToIdeal` corestricted along the landing theorem, so a consumer receives a point of the
+subspace rather than an `Spv A`-point plus a membership proof to carry around.
+
+It is named for the restriction rather than for a retraction: that it *is* a retraction needs the
+second law — that it fixes `Spv (A, I)` pointwise — which is proved separately. -/
+noncomputable def restrictToIdealCodRestrict (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (v : Spv A) :
+    (spvOfIdeal I hfg : Set (Spv A)) :=
+  ⟨restrictToIdeal v I hfg, restrictToIdeal_mem_spvOfIdeal v I hfg⟩
+
+/-- The corestricted map is the plain one, read in `Spv A`. -/
+@[simp]
+theorem coe_restrictToIdealCodRestrict (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (v : Spv A) :
+    (restrictToIdealCodRestrict I hfg v : Spv A) = restrictToIdeal v I hfg :=
+  (rfl)
 
 end TauCeti.ValuationSpectrum
