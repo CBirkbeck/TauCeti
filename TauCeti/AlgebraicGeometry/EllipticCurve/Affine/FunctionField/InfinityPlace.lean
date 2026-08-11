@@ -337,6 +337,17 @@ theorem infinityPlace.adjoinRoot_root :
       (AdjoinRoot.root W.polynomial)) = WithZero.exp 3 :=
   infinityPlace.mk_Y W
 
+
+open scoped Classical in
+/-- **The place at infinity lies over the infinite place of `F(x)`, with ramification index two.**
+On a rational function of `x` the value is the square of Mathlib's infinite valuation, the extension
+`F(W) / F(x)` being quadratic. -/
+@[simp]
+theorem infinityPlace_algebraMap (r : RatFunc F) :
+    infinityPlace W (algebraMap (RatFunc F) W.FunctionField r)
+      = RatFunc.inftyValuation F r ^ 2 := by
+  rw [infinityPlace_apply, Algebra.norm_algebraMap, finrank_functionField W (RatFunc F), map_pow]
+
 end WeierstrassCurve.Affine
 
 end
