@@ -84,8 +84,9 @@ omit [SeparatelyContinuousMul A] in
 theorem isContinuous_def (v : Spv A) : v.IsContinuous ↔ v.valuation.IsContinuous :=
   Iff.rfl
 
-/-- **Wedhorn's `Cont A`**: the continuous points of `Spv A`, with the subspace topology it
-inherits as a `Set (Spv A)`.
+/-- **Wedhorn's `Cont A`**: the continuous points of `Spv A`, as a `Set (Spv A)`. Wedhorn calls
+it a subspace; here it is the underlying set, and the subspace topology is the one the *coercion*
+`↥(cont A)` carries as a subtype of `Spv A`.
 
 `[SeparatelyContinuousMul A]` is load-bearing rather than incidental. `IsContinuous` tests the
 values `v` attains, whereas Wedhorn's Definition 7.7 quantifies over the whole value group `Γ_v`,
@@ -119,7 +120,8 @@ it mathematically: `ContinuousMul` is derivable from `DiscreteTopology` only by 
 already in its *statement* — so a local `have` inside the proof would come too late. -/
 @[simp]
 theorem cont_eq_univ [DiscreteTopology A] : cont A = Set.univ :=
-  Set.eq_univ_of_forall fun v ↦ isContinuous_of_discreteTopology v.valuation
+  Set.eq_univ_of_forall fun v ↦
+    (mem_cont_iff v).mpr ((isContinuous_def v).mpr (isContinuous_of_discreteTopology v.valuation))
 
 omit [SeparatelyContinuousMul A] in
 /-- **Wedhorn Remark 7.9.** A continuous ring homomorphism pulls continuous points back to
@@ -138,7 +140,7 @@ through membership and preimage by hand at each call site, and it is this contai
 pointwise implication — that the module docstring claims. -/
 theorem cont_subset_comap_preimage {B : Type*} [CommRing B] [TopologicalSpace B]
     [SeparatelyContinuousMul B] {φ : A →+* B} (hφ : Continuous φ) :
-    cont B ⊆ comap φ ⁻¹' cont A :=
-  fun _ hv ↦ IsContinuous.comap hφ hv
+    cont B ⊆ comap φ ⁻¹' cont A := fun v hv ↦
+  Set.mem_preimage.mpr ((mem_cont_iff _).mpr (IsContinuous.comap hφ ((mem_cont_iff v).mp hv)))
 
 end TauCeti.ValuationSpectrum
