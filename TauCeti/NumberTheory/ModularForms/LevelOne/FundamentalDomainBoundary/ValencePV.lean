@@ -636,6 +636,22 @@ private lemma hoff_of_zeros_confined {g : ℍ → ℂ} (hg : MDiff g) {U : Set �
   rw [hUZ] at hz
   exact hT z hz.1 hz.2
 
+/-- Step 5 of the rung-1 bridge: `hga`, analyticity of the cusp function on the `q`-disc the
+contour uses.
+
+The radius is not a side condition to worry about: `fdBoundaryQRadius_lt_one` already says the
+disc has radius `< 1` for `0 < H`, so it sits strictly inside the open unit disc, where Mathlib's
+`differentiableOn_cuspFunction_ball` gives differentiability. -/
+private lemma analyticAt_cuspFunction_of_norm_le {g : ℍ → ℂ} (hper : Periodic (g ∘ ofComplex) 1)
+    (hg : MDiff g) (hbdd : IsBoundedAtImInfty g) {H : ℝ} (hH : 0 < H)
+    {q : ℂ} (hq : q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H)) :
+    AnalyticAt ℂ (cuspFunction 1 g) q := by
+  have hlt : ‖q‖ < 1 := by
+    have h1 : ‖q‖ ≤ fdBoundaryQRadius H := by simpa using hq
+    linarith [fdBoundaryQRadius_lt_one hH]
+  exact (differentiableOn_cuspFunction_ball one_pos hper hg hbdd).analyticAt
+    (Metric.isOpen_ball.mem_nhds (mem_ball_zero_iff.mpr hlt))
+
 end ModularForm
 
 end TauCeti
