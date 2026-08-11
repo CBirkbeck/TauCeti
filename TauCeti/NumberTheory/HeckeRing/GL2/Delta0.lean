@@ -30,7 +30,8 @@ as that entire fibre.
 
 Ported from the AINTLIB `LeanModularForms` project
 ([`LeanModularForms/HeckeRIngs/GL2/Gamma1Pair.lean`](https://github.com/CBirkbeck/AINTLIB),
-Chris Birkbeck).
+Chris Birkbeck), with `CoprimeDet` and `coprimeDet_iff` from the `CoprimeDet` section of
+`LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/Props.lean` (Chris Birkbeck).
 
 ## Main definitions
 
