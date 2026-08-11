@@ -62,9 +62,9 @@ DedekindDomain): dirichlet's s-unit theorem", by `vvvv-ops`, open since 2026-06-
 `Mathlib/RingTheory/DedekindDomain/SUnit.lean` and proves exactly this (and more: the rank formula
 and its number-field specialisation). Following that PR rather than inventing a parallel API is
 deliberate — when Mathlib bumps past it, almost all of this file is deleted outright instead of
-being reconciled name by name. **`unit_fg_of_units` and `coe_unitEmptyEquivUnits` are the
-exceptions: they have no #40791 analogue, so at bump time they must be re-homed onto Mathlib's
-`Set.unit_fg`, not dropped with the rest.**
+being reconciled name by name. **`unit_fg_of_units` and
+`algebraMap_unitEmptyEquivUnits_apply` are the exceptions: they have no #40791 analogue, so at
+bump time they must be re-homed onto Mathlib's `Set.unit_fg`, not dropped with the rest.**
 
 **Four declarations here are not that PR's**, and are marked as such where they occur:
 
@@ -75,7 +75,7 @@ exceptions: they have no #40791 analogue, so at bump time they must be re-homed 
 * **`unit_fg_of_units` is new here**, with no counterpart in #40791: upstream gives
   `unitEmptyEquivUnits` its consumer in the rank formula, which is not ported, so without this
   form the theorem is awkward to apply — a caller holds `Rˣ`, not the `∅`-units.
-* **`coe_unitEmptyEquivUnits` is new here**, with no counterpart in #40791: it is the
+* **`algebraMap_unitEmptyEquivUnits_apply` is new here**, with no counterpart in #40791: it is the
   element-level characterisation of the three-fold composite `unitEmptyEquivUnits`, so that a
   future user of that equiv need not unfold it.
 
@@ -161,8 +161,8 @@ theorem unit_fg [Finite S] (hu : Group.FG ((∅ : Set (HeightOneSpectrum R)).uni
 are the base ring `R` (`IsDedekindDomain.integer_empty`), and `S`-units are the units of the
 `S`-integers (`Set.unitEquivUnitsInteger`).
 
-It is a three-fold composite, so `coe_unitEmptyEquivUnits` below records what it does to the
-underlying element. -/
+It is a three-fold composite, so `algebraMap_unitEmptyEquivUnits_apply` below records what it
+does to the underlying element. -/
 noncomputable def unitEmptyEquivUnits : (∅ : Set (HeightOneSpectrum R)).unit K ≃* Rˣ :=
   (unitEquivUnitsInteger (∅ : Set (HeightOneSpectrum R)) K).trans
     (Units.mapEquiv
@@ -176,7 +176,7 @@ unit of `R` with the same image in `K`.
 composite whose value on an element is not readable off the definition, and this is that value,
 so a future user of the equiv need not unfold it. -/
 @[simp]
-theorem coe_unitEmptyEquivUnits (u : (∅ : Set (HeightOneSpectrum R)).unit K) :
+theorem algebraMap_unitEmptyEquivUnits_apply (u : (∅ : Set (HeightOneSpectrum R)).unit K) :
     algebraMap R K ((unitEmptyEquivUnits K u : Rˣ) : R) = ((u : Kˣ) : K) := by
   -- unfold the three-fold composite through its own equations rather than through defeq:
   -- `unitEquivUnitsInteger` and `Units.mapEquiv` down to the underlying element of `K`, then
