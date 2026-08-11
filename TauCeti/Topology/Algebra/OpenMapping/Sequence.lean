@@ -36,7 +36,7 @@ open Filter Topology
 
 namespace TauCeti
 
-variable {M N : Type*} [AddCommMonoid M] [AddCommGroup N] [TopologicalSpace N] [ContinuousSub N]
+variable {M N : Type*} [AddCommMonoid M] [AddGroup N] [TopologicalSpace N] [ContinuousSub N]
 
 /-- **Henkel's approximating sequence.** If each `closure (f '' V (n + 1))` is a neighbourhood of
 zero and `y` lies in `closure (f '' V 0)`, there are approximants `x n ∈ V n` whose partial sums
@@ -67,10 +67,15 @@ theorem exists_seq_mem_and_sub_sum_mem {F : Type*} [FunLike F M N] [AddMonoidHom
     induction m with
     | zero => simp [state]
     | succ p ih =>
+      -- `a - b - c = a - (b + c)` needs `b` and `c` to commute, which they do here: they are
+      -- images of elements of `M`, where addition is commutative.
+      have hsub : ∀ a b c : N, b + c = c + b → a - b - c = a - (b + c) := by
+        intro a b c hbc
+        have hneg : -b + -c = -(b + c) := by rw [← neg_add_rev, hbc]
+        rw [sub_eq_add_neg, sub_eq_add_neg, sub_eq_add_neg, add_assoc, hneg]
       rw [state_succ, ih]
       conv_rhs => rw [Finset.sum_range_succ]
-      rw [map_add]
-      abel
+      rw [map_add, hsub _ _ _ (by rw [← map_add, ← map_add, add_comm])]
   exact key n ▸ (state (n + 1)).property
 
 end TauCeti
