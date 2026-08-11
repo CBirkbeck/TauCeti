@@ -39,9 +39,11 @@ variable {k : ℕ} {A B : Type*} [CommRing A] [TopologicalSpace A] [Nonarchimede
   [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B] [CompleteSpace B]
   [T3Space B] {φ : A →+* B} {T : Fin k → Set A} {b : Fin k → B}
 
-/-- **The evaluation homomorphism is continuous.** A basic neighbourhood `U⟨X⟩` bounds every
-coefficient, hence every term, inside a prescribed open subgroup `G`; the partial sums stay in `G`
-because it is a subgroup, and the sum stays in `G` because an open subgroup is closed. -/
+/-- **The evaluation homomorphism `A⟨X⟩_T →+* B` is continuous**, under the hypotheses that make
+it exist: `φ` continuous at zero and the weighted monomials `φ(Tν) · bν` bounded.
+
+With `weightedEvalHom_weightedC` and `weightedEvalHom_weightedX`, this gives every property
+Proposition 5.50 asks of the extension except the uniqueness, which is not proved here. -/
 theorem continuous_weightedEvalHom (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
     (hb : IsWeightBounded φ T b) : Continuous (weightedEvalHom hT hφ hb) := by
   have _ : IsTopologicalRing (weightedRestrictedSubring T hT) :=
