@@ -78,9 +78,11 @@ private theorem norm_algebraMap_polynomial' (d : F[X]) :
   rw [IsScalarTower.algebraMap_apply F[X] (RatFunc F) W.FunctionField, Algebra.norm_algebraMap,
     finrank_functionField W (RatFunc F)]
 
-/-- The degree of the norm of `u / d`: the polynomial norm's degree, less twice that of the
-denominator. -/
-private theorem intDegree_norm_of_mul_eq {f : W.FunctionField} (hf : f ≠ 0) {u : W.CoordinateRing}
+/-- **The degree of the norm of `u / d`**: the polynomial norm's degree, less twice that of the
+denominator. Stated for an arbitrary numerator `u` in the coordinate ring, so it carries no
+hypothesis on the basis coefficients — they may vanish. `intDegree_norm_eq_max` specialises it to
+`u = a • 1 + b • y`, where the `max` form needs `a` and `b` nonzero. -/
+theorem intDegree_norm_of_mul_eq {f : W.FunctionField} (hf : f ≠ 0) {u : W.CoordinateRing}
     {d : F[X]} (hd : d ≠ 0)
     (h : f * algebraMap F[X] W.FunctionField d = algebraMap W.CoordinateRing W.FunctionField u) :
     (Algebra.norm (RatFunc F) f).intDegree
@@ -285,6 +287,12 @@ private theorem norm_ne_zero_of_natDegree_ne_zero {u : W.CoordinateRing}
   rw [hz, natDegree_zero]
 
 open scoped Classical in
+-- NB `inftyValuation_X` and `inftyValuation_mk_Y` (and the two `natDegree_norm_*` in
+-- `FunctionField/Norm.lean`) are deliberately NOT `@[simp]`: their left-hand sides are not in
+-- simp-normal form — simp rewrites `algebraMap F[X] W.CoordinateRing X` to `AdjoinRoot.of` and
+-- `CoordinateRing.mk W Y` to `AdjoinRoot.root` — so tagging them fails the repository's simpNF
+-- lint gate. Stating them in that normal form instead would remove every mention of the curve's
+-- coordinate functions, which is the whole content of the lemmas.
 /-- **`x` has a double pole at infinity**: `v_∞ x = exp 2`, which is `ord_∞ x = -2`. -/
 theorem inftyValuation_X :
     inftyValuation W (algebraMap W.CoordinateRing W.FunctionField
