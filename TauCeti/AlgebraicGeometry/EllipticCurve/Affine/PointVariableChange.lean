@@ -38,8 +38,8 @@ so it carries points to points. Those identities are what make the map additive.
 `mapVariableChangeFun` and its equation lemmas, its injectivity, and the `AddEquiv.cast`
 computation lemma are `private`: they are how the homomorphism is built, not part of what it
 offers. The public surface is the two maps and their coordinate lemmas
-`mapVariableChange_some` / `equivVariableChange_some`, both `@[simp]`, so a consumer never needs
-to unfold anything.
+`equivVariableChange_some` and `equivVariableChange_symm_some`, both `@[simp]`, so a consumer
+never needs to unfold anything.
 
 That is also why the section is a plain `public section` rather than `@[expose]`. Exposing the
 whole file would publish every proof body to make three `rfl`s go through, and it is incompatible
@@ -300,13 +300,26 @@ def equivVariableChange : (C • W).toAffine.Point ≃+ W.toAffine.Point :=
     right_inv := hright
     map_add' := (mapVariableChange W C).map_add' }
 
-/-- **What the isomorphism does to a point given by coordinates.** The companion of
-`mapVariableChange_some` for the bundled `≃+`. -/
+/-- **What the isomorphism does to a point given by coordinates.** Its inverse is
+`equivVariableChange_symm_some`. The coerced homomorphism `(equivVariableChange W C).toAddMonoidHom`
+is characterised by this same equation. -/
 @[simp] lemma equivVariableChange_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
     equivVariableChange W C (.some x y h)
       = .some ((C.u : F) ^ 2 * x + C.r) ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
           ((variableChange_nonsingular W C x y).mpr h) :=
   mapVariableChangeFun_some W C h
+
+/-- **What the inverse isomorphism does to a point given by coordinates.** It is the map induced by
+`C⁻¹`, so the coordinates are those of `C⁻¹` — this is the sense in which the inverse "comes from
+`C⁻¹`" rather than from bijectivity. -/
+@[simp] lemma equivVariableChange_symm_some {x y : F} (h : W.toAffine.Nonsingular x y) :
+    (equivVariableChange W C).symm (.some x y h)
+      = .some (((C⁻¹).u : F) ^ 2 * x + (C⁻¹).r)
+          (((C⁻¹).u : F) ^ 3 * y + ((C⁻¹).u : F) ^ 2 * (C⁻¹).s * x + (C⁻¹).t)
+          ((variableChange_nonsingular (C • W) C⁻¹ x y).mpr
+            ((inv_smul_smul C W).symm ▸ h)) := by
+  change mapVariableChangeFun (C • W) C⁻¹ _ = _
+  rw [cast_some, mapVariableChangeFun_some]
 
 end Point
 
