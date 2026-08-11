@@ -65,7 +65,7 @@ def orderOfVanishingOnOrbit [SlashInvariantFormClass F 𝒮ℒ k]
 `p`. -/
 @[simp]
 lemma orderOfVanishingOnOrbit_mk [SlashInvariantFormClass F 𝒮ℒ k] (p : ℍ) :
-    orderOfVanishingOnOrbit f (Quotient.mk'' p) = orderOfVanishingAt f p := by
+    orderOfVanishingOnOrbit f (ModularGroup.orbitMk p) = orderOfVanishingAt f p := by
   unfold orderOfVanishingOnOrbit
   rfl
 

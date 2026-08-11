@@ -18,7 +18,7 @@ orbit once.
 ## Main declarations
 
 * `TauCeti.ModularGroup.exists_rep_mem_fd`: every orbit meets `𝒟`.
-* `TauCeti.ModularGroup.orbit_mk_int_vadd`: integer translation preserves the orbit.
+* `TauCeti.ModularGroup.orbitMk_int_vadd`: integer translation preserves the orbit.
 * `TauCeti.ModularGroup.orbitMk_injOn_fdo`: the orbit map is injective on `𝒟ᵒ`.
 -/
 
@@ -45,7 +45,7 @@ noncomputable abbrev orbitMk (p : ℍ) : MulAction.orbitRel.Quotient SL(2, ℤ) 
 /-- Every `SL(2, ℤ)`-orbit of `ℍ` has a representative in the standard fundamental
 domain. -/
 lemma exists_rep_mem_fd (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
-    ∃ p : ℍ, Quotient.mk'' p = q ∧ p ∈ 𝒟 := by
+    ∃ p : ℍ, orbitMk p = q ∧ p ∈ 𝒟 := by
   induction q using Quotient.inductionOn' with
   | h z =>
     obtain ⟨g, hg⟩ := _root_.ModularGroup.exists_smul_mem_fd z
@@ -53,9 +53,8 @@ lemma exists_rep_mem_fd (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
 
 /-- Translation by any integer preserves the `SL(2, ℤ)`-orbit. -/
 @[simp]
-lemma orbit_mk_int_vadd (n : ℤ) (z : ℍ) :
-    orbitMk ((n : ℝ) +ᵥ z) =
-      Quotient.mk'' z :=
+lemma orbitMk_int_vadd (n : ℤ) (z : ℍ) :
+    orbitMk ((n : ℝ) +ᵥ z) = orbitMk z :=
   Quotient.sound' ⟨_root_.ModularGroup.T ^ n, UpperHalfPlane.modular_T_zpow_smul z n⟩
 
 
