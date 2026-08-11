@@ -32,10 +32,11 @@ neighbourhood, and feed the result to the group-theoretic criterion for openness
 
 * `TauCeti.HasZeroSequenceOfUnits.isOpenMap`: Henkel's open mapping theorem.
 
-Mathlib's `MonoidHom.isOpenMap_of_sigmaCompact` proves openness from a σ-compact source and a
-locally compact target. Neither theorem implies the other: a complete first-countable
-nonarchimedean group need not be σ-compact, and a σ-compact group need not be complete or
-nonarchimedean.
+Mathlib's `MonoidHom.isOpenMap_of_sigmaCompact` proves openness for a continuous surjection from
+a σ-compact source onto a T2 Baire target group (locally compact groups being the standard
+example of such a target). Neither theorem implies the other: both ask the target to be Baire,
+but this one asks the *source* to be complete, first countable and nonarchimedean where that one
+asks it to be σ-compact, and neither of those conditions implies the other.
 
 ## References
 
