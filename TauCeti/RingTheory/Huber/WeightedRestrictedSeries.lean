@@ -900,6 +900,12 @@ noncomputable def weightedPolynomials [NonarchimedeanRing A] (T : Fin k → Set 
     (hT : IsWeightFamily T) : Subring (weightedRestrictedSubring T hT) :=
   (weightedPolynomialHom T hT).range
 
+/-- `weightedPolynomials` is the range of `weightedPolynomialHom`. The body is not exported, so
+this is how a consumer produces the polynomial behind a member. -/
+theorem mem_weightedPolynomials_iff_exists [NonarchimedeanRing A] {T : Fin k → Set A}
+    {hT : IsWeightFamily T} {f : weightedRestrictedSubring T hT} :
+    f ∈ weightedPolynomials T hT ↔ ∃ p, weightedPolynomialHom T hT p = f := (Iff.rfl)
+
 /-- Membership in `weightedPolynomials` is exactly having finitely many nonzero coefficients.
 
 Deliberately not `@[simp]`: with this rewrite in the default set, the left-hand sides of
