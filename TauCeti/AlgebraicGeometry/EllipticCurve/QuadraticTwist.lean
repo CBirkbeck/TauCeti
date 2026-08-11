@@ -571,6 +571,7 @@ noncomputable def quadraticTwistVarChange : VariableChange L :=
 
 variable (L) in
 /-- **`quadraticTwistVarChange` does carry `E` to the twist**, after base change to `L`. -/
+@[simp]
 theorem quadraticTwistVarChange_smul :
     E.quadraticTwistVarChange L • E.baseChange L = (E.quadraticTwist L).baseChange L := by
   rw [quadraticTwistVarChange, inv_smul_eq_iff]
@@ -583,6 +584,7 @@ variable (L) in
 inverting a product reverses it and `[-1]` is its own inverse (`negVariableChange_inv`).
 
 As there, this is the cocycle identity and not a nontriviality claim. -/
+@[simp]
 theorem map_quadraticTwistVarChange {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
     (E.quadraticTwistVarChange L).map (σ : L →+* L)
       = E.quadraticTwistVarChange L * (E.baseChange L).negVariableChange := by
