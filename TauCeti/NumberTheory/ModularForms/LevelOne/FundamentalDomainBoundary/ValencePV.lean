@@ -52,6 +52,10 @@ on the contour.
   (in `TauCeti.ModularForm`):
   the same identity with the interior sum reindexed over the orbits its points represent. ⚠ That
   sum covers only the orbits met by the divisor set `T`, not the whole non-elliptic orbit space.
+* `sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_modularFormClass`
+  (in `TauCeti.ModularForm`):
+  the elliptic-corner identity for a modular form, whose holomorphy discharges the meromorphy
+  hypothesis the slash-invariant form has to assume.
 
 ## References
 
@@ -576,13 +580,12 @@ hypothesis is automatic: `ModularFormClass.holo` gives `MDiff ⇑f`, and
 The interior hypothesis `hpos` already supplies that positivity, so nothing replaces `hmero` —
 this form takes one hypothesis fewer than the general one. -/
 theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_modularFormClass
-    [ModularFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
-    {U : Set ℂ} (hH : 1 < H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
+    [ModularFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ}
+    (hH : 1 < H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hper : Periodic (⇑f ∘ ofComplex) 1)
     (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
       AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
-    (hU : IsOpen U)
-    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
+    (hU : IsOpen U) (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
     (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
     (hpos : ∀ s ∈ T, 0 < s.im)
     (hin : ∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
@@ -597,14 +600,11 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_modu
         + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
         + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 :=
   sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq f hS hH hnorm hinv hper hoffγ
-    hU hUdom hoff
-    (fun s hsT _ ↦ (TauCeti.UpperHalfPlane.analyticAt_comp_ofComplex
-      (ModularFormClass.holo f) (hpos s hsT)).meromorphicAt)
-    hpos hin hga hgz
+    hU hUdom hoff (fun s hsT _ ↦ (UpperHalfPlane.analyticAt_comp_ofComplex
+      (ModularFormClass.holo f) (hpos s hsT)).meromorphicAt) hpos hin hga hgz
 
-/-- Step 1-2 of the rung-1 bridge: an open neighbourhood of the truncated fundamental domain
-inside the upper half plane, carrying no zeros of `f ∘ ofComplex` beyond those already in the
-truncated domain. This is what makes `hoff` provable — it is false for an arbitrary `U`. -/
+-- Step 1-2 of the rung-1 bridge. The zeros-confinement clause is what makes `hoff` provable:
+-- it is false for an arbitrary neighbourhood `U` of the truncated fundamental domain.
 private lemma exists_isOpen_truncated_zeros_confined {g : ℍ → ℂ} (hg : MDiff g) (hg0 : g ≠ 0)
     (H : ℝ) :
     ∃ U : Set ℂ, IsOpen U ∧
@@ -613,17 +613,14 @@ private lemma exists_isOpen_truncated_zeros_confined {g : ℍ → ℂ} (hg : MDi
       {z ∈ U | (g ∘ ofComplex) z = 0} =
         {z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H |
           (g ∘ ofComplex) z = 0} :=
-  TauCeti.UpperHalfPlane.exists_isOpen_zeros_inter hg hg0
-    (by rintro _ ⟨p, -, rfl⟩; exact p.im_pos)
+  UpperHalfPlane.exists_isOpen_zeros_inter hg hg0 (image_subset_iff.mpr fun p _ ↦ p.im_pos)
 
-/-- Step 4 of the rung-1 bridge: `hoff` from a zeros-confined neighbourhood plus completeness of
-the divisor set.
-
-Analyticity is holomorphy transported through `ofComplex`. Non-vanishing is where the
-zeros-confined clause earns its place: a zero of `g ∘ ofComplex` inside `U` must already lie in
-the truncated fundamental domain, and completeness of `T` over that domain then puts it in `T`. -/
-private lemma hoff_of_zeros_confined {g : ℍ → ℂ} (hg : MDiff g) {U : Set ℂ} {T : Finset ℂ}
-    {H : ℝ} (hUsub : U ⊆ {z : ℂ | 0 < z.im})
+-- Step 4 of the rung-1 bridge. Analyticity is holomorphy transported through `ofComplex`.
+-- Non-vanishing is where the zeros-confinement clause earns its place: a zero of `g ∘ ofComplex`
+-- inside `U` must already lie in the truncated fundamental domain, and completeness of `T` over
+-- that domain then puts it in `T`.
+private lemma hoff_of_zeros_confined {g : ℍ → ℂ} (hg : MDiff g) {U : Set ℂ} {T : Finset ℂ} {H : ℝ}
+    (hUsub : U ⊆ {z : ℂ | 0 < z.im})
     (hUZ : {z ∈ U | (g ∘ ofComplex) z = 0} =
       {z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H |
         (g ∘ ofComplex) z = 0})
@@ -631,34 +628,27 @@ private lemma hoff_of_zeros_confined {g : ℍ → ℂ} (hg : MDiff g) {U : Set �
       (g ∘ ofComplex) z = 0 → z ∈ T) :
     ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (g ∘ ofComplex) z ∧ (g ∘ ofComplex) z ≠ 0 := by
   intro z hzU hzT
-  refine ⟨TauCeti.UpperHalfPlane.analyticAt_comp_ofComplex hg (hUsub hzU), fun h0 ↦ hzT ?_⟩
-  have hz : z ∈ {z ∈ U | (g ∘ ofComplex) z = 0} := ⟨hzU, h0⟩
-  rw [hUZ] at hz
+  refine ⟨UpperHalfPlane.analyticAt_comp_ofComplex hg (hUsub hzU), fun h0 ↦ hzT ?_⟩
+  have hz := hUZ.subset (⟨hzU, h0⟩ : z ∈ {z ∈ U | (g ∘ ofComplex) z = 0})
   exact hT z hz.1 hz.2
 
-/-- Step 5 of the rung-1 bridge: `hga`, analyticity of the cusp function on the `q`-disc the
-contour uses.
-
-The radius is not a side condition to worry about: `fdBoundaryQRadius_lt_one` already says the
-disc has radius `< 1` for `0 < H`, so it sits strictly inside the open unit disc, where Mathlib's
-`differentiableOn_cuspFunction_ball` gives differentiability. -/
+-- Step 5 of the rung-1 bridge: `hga`. The radius is not a side condition to worry about:
+-- `fdBoundaryQRadius_lt_one` already says the disc has radius `< 1` for `0 < H`, so it sits
+-- strictly inside the open unit disc, where Mathlib's `differentiableOn_cuspFunction_ball`
+-- gives differentiability.
 private lemma analyticAt_cuspFunction_of_norm_le {g : ℍ → ℂ} (hper : Periodic (g ∘ ofComplex) 1)
-    (hg : MDiff g) (hbdd : IsBoundedAtImInfty g) {H : ℝ} (hH : 0 < H)
-    {q : ℂ} (hq : q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H)) :
-    AnalyticAt ℂ (cuspFunction 1 g) q := by
-  have hlt : ‖q‖ < 1 := by
-    have h1 : ‖q‖ ≤ fdBoundaryQRadius H := by simpa using hq
-    linarith [fdBoundaryQRadius_lt_one hH]
-  exact (differentiableOn_cuspFunction_ball one_pos hper hg hbdd).analyticAt
-    (Metric.isOpen_ball.mem_nhds (mem_ball_zero_iff.mpr hlt))
+    (hg : MDiff g) (hbdd : IsBoundedAtImInfty g) {H : ℝ} (hH : 0 < H) {q : ℂ}
+    (hq : q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H)) :
+    AnalyticAt ℂ (cuspFunction 1 g) q :=
+  (differentiableOn_cuspFunction_ball one_pos hper hg hbdd).analyticAt <|
+    Metric.isOpen_ball.mem_nhds <| mem_ball_zero_iff.mpr <|
+      (mem_closedBall_zero_iff.mp hq).trans_lt (fdBoundaryQRadius_lt_one hH)
 
-/-- Step 5b of the rung-1 bridge: a height threshold above which the cusp function is
-non-vanishing on the punctured `q`-disc the contour uses.
-
-This is where the `∃ H₀` of the final statement comes from. `cuspFunction_eventually_ne_zero`
-gives non-vanishing on *some* punctured neighbourhood of `0`, while the contour needs it on the
-disc of radius `fdBoundaryQRadius H = exp (-2 π H)`. That radius shrinks as `H` grows, so the disc
-sits inside the neighbourhood only above a threshold — it cannot hold for every `H`. -/
+-- Step 5b of the rung-1 bridge: this is where the `∃ H₀` of the final statement comes from.
+-- `cuspFunction_eventually_ne_zero` gives non-vanishing on *some* punctured neighbourhood of `0`,
+-- while the contour needs it on the disc of radius `fdBoundaryQRadius H = exp (-2 π H)`. That
+-- radius shrinks as `H` grows, so the disc sits inside the neighbourhood only above a threshold —
+-- it cannot hold for every `H`.
 private lemma exists_threshold_cuspFunction_ne_zero [ModularFormClass F 𝒮ℒ k] {f : F}
     (hΓ : (1 : ℝ) ∈ (𝒮ℒ : Subgroup (GL (Fin 2) ℝ)).strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H →
@@ -666,19 +656,13 @@ private lemma exists_threshold_cuspFunction_ne_zero [ModularFormClass F 𝒮ℒ 
         cuspFunction 1 ⇑f q ≠ 0 := by
   obtain ⟨ε, hε, hne⟩ := Metric.eventually_nhds_iff.mp
     (eventually_nhdsWithin_iff.mp (cuspFunction_eventually_ne_zero (f := f) one_pos hΓ hf))
-  have hpi : (0 : ℝ) < 2 * Real.pi := by positivity
-  refine ⟨max 1 ((Real.log ε⁻¹ + 1) / (2 * Real.pi)), fun H hH q hq hq0 ↦ hne ?_ hq0⟩
-  have hH1 : (1 : ℝ) ≤ H := (le_max_left _ _).trans hH
-  have hlog : (Real.log ε⁻¹ + 1) / (2 * Real.pi) ≤ H := (le_max_right _ _).trans hH
-  have hlog' : Real.log ε⁻¹ + 1 ≤ 2 * Real.pi * H := by
-    rw [div_le_iff₀ hpi] at hlog; linarith [hlog]
-  have hqr : ‖q‖ ≤ fdBoundaryQRadius H := by simpa using hq
+  refine ⟨(Real.log ε⁻¹ + 1) / (2 * Real.pi), fun H hH q hq hq0 ↦ hne ?_ hq0⟩
+  have hlog : 1 - Real.log ε ≤ 2 * Real.pi * H := by
+    linarith [Real.log_inv ε, (div_le_iff₀ (by positivity)).mp hH]
   have hlt : fdBoundaryQRadius H < ε := by
-    rw [fdBoundaryQRadius_def, ← Real.exp_log hε]
-    refine Real.exp_lt_exp.mpr ?_
-    rw [Real.log_inv] at hlog'
+    rw [fdBoundaryQRadius_def, ← Real.exp_log hε, Real.exp_lt_exp]
     linarith
-  simpa [Complex.dist_eq] using lt_of_le_of_lt hqr hlt
+  simpa using (mem_closedBall_zero_iff.mp hq).trans_lt hlt
 
 end ModularForm
 
