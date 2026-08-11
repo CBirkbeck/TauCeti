@@ -133,7 +133,7 @@ noncomputable def map (hΔ : Δ ≤ Δ') (h₁ : H₁ ≤ H₁') (h₂ : H₂ �
 
 variable {Δ'' : Submonoid G} {H₁'' H₂'' : Subgroup G}
 
-lemma map_map (hΔ : Δ ≤ Δ') (h₁ : H₁ ≤ H₁') (h₂ : H₂ ≤ H₂') (hΔ' : Δ' ≤ Δ'')
+@[simp] lemma map_map (hΔ : Δ ≤ Δ') (h₁ : H₁ ≤ H₁') (h₂ : H₂ ≤ H₂') (hΔ' : Δ' ≤ Δ'')
     (h₁' : H₁' ≤ H₁'') (h₂' : H₂' ≤ H₂'') (D : HeckeCoset Δ H₁ H₂) :
     map hΔ' h₁' h₂' (map hΔ h₁ h₂ D) = map (hΔ.trans hΔ') (h₁.trans h₁') (h₂.trans h₂') D :=
   Quotient.inductionOn D fun _ ↦ rfl
