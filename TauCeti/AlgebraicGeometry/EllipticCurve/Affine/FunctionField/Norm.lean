@@ -15,13 +15,11 @@ The function field `F(W)` of an affine Weierstrass curve is a quadratic extensio
 function field `F(x)` — that is `WeierstrassCurve.Affine.finrank_functionField` — so every
 function has an algebra norm `N : F(W) → F(x)`. Mathlib's `Algebra.norm` supplies it, over
 `RatFunc F` itself once `RatFunc.liftAlgebra` is in scope. This file computes the degree of that
-norm: for `p + qY` it is `max (2 deg p) (2 deg q + 3)`, and in particular the norms of the two
-coordinate functions have degrees `2` and `3`.
+norm on the two coordinate functions: `N x = x ^ 2` has degree `2`, and `N y`, the negative of the
+cubic the Weierstrass equation solves for, has degree `3`.
 
 ## Main results
 
-* `WeierstrassCurve.Affine.natDegree_norm_smul_basis`: the degree of the norm of `p + qY` is
-  `max (2 * p.natDegree) (2 * q.natDegree + 3)`, for `p` and `q` both nonzero.
 * `WeierstrassCurve.Affine.natDegree_norm_X`, `WeierstrassCurve.Affine.natDegree_norm_mk_Y`: the
   norms of the two coordinate functions have degrees `2` and `3`.
 * `WeierstrassCurve.Affine.intDegree_norm_algebraMap_coordinateRing`: over `RatFunc F`, the
@@ -32,8 +30,8 @@ coordinate functions have degrees `2` and `3`.
 No new norm is defined, and no lemma restates a generic one: `Algebra.norm` is the norm,
 multiplicativity and vanishing exactly at `0` are `map_mul` and `Algebra.norm_eq_zero_iff`, and the
 value of the norm on the base ring and on the coordinate ring is `Algebra.norm_algebraMap` and
-`Algebra.norm_localization`, applied where they are needed rather than re-exported. What is new is
-the degree computation, which Mathlib states only in `WithBot ℕ`.
+`Algebra.norm_localization`, applied where they are needed rather than re-exported. What is new are the two
+coordinate degrees, which are curve-specific and which Mathlib does not state.
 
 Only the last result forces `RatFunc`: the degree theory of rational functions, `RatFunc.intDegree`
 and with it Mathlib's place at infinity `RatFunc.inftyValuation`, is stated for no other fraction
@@ -83,10 +81,20 @@ namespace WeierstrassCurve.Affine
 
 section Nontrivial
 
--- `norm_smul_basis` is an identity over any commutative ring, so the `y` degree needs only a
--- nontrivial base. The `x` degree does not: it goes through `finrank_coordinateRing`, which needs
--- `NoZeroDivisors`, so it sits in the domain section below.
+-- Both degrees read the norm off the `1, Y` basis with `norm_smul_basis`, an identity over any
+-- commutative ring, so a nontrivial base is all they need.
 variable {R : Type*} [CommRing R] [Nontrivial R] (W : _root_.WeierstrassCurve.Affine R)
+
+/-- **The norm of the coordinate function `x` has degree `2`**: it is `x ^ 2`. -/
+@[simp]
+theorem natDegree_norm_X :
+    (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing X)).natDegree = 2 := by
+  -- `norm_smul_basis` reads the norm off the `1, Y` basis, so `x` is written in it first
+  have hX : algebraMap R[X] W.CoordinateRing X =
+      (X : R[X]) • (1 : W.CoordinateRing) + (0 : R[X]) • CoordinateRing.mk W Y := by
+    rw [zero_smul, add_zero, Algebra.smul_def, mul_one]
+  rw [hX, CoordinateRing.norm_smul_basis]
+  simp
 
 /-- **The norm of the coordinate function `y` has degree `3`**, being the negative of the cubic in
 `x` that the Weierstrass equation solves for. -/
@@ -99,32 +107,6 @@ theorem natDegree_norm_mk_Y :
   compute_degree!
 
 end Nontrivial
-
-section Domain
-
--- `degree_norm_smul_basis` needs the base to be a domain, degrees adding only there; so does
--- `finrank_coordinateRing`, through `NoZeroDivisors`.
-variable {R : Type*} [CommRing R] [IsDomain R] (W : _root_.WeierstrassCurve.Affine R)
-
-/-- **The norm of the coordinate function `x` has degree `2`.** -/
-@[simp]
-theorem natDegree_norm_X :
-    (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing X)).natDegree = 2 := by
-  rw [Algebra.norm_algebraMap, finrank_coordinateRing, natDegree_pow, natDegree_X, mul_one]
-
-/-- **The degree of the norm of `p + qY`**, the `natDegree` form of Mathlib's
-`degree_norm_smul_basis`. Both parts must be nonzero: the `WithBot ℕ` statement reads
-`max (2 • p.degree) (2 • q.degree + 3)`, and at `q = 0` the second term is `⊥` rather than `3`, so
-this is a separate statement rather than a rewriting of that one. -/
-@[simp]
-theorem natDegree_norm_smul_basis {p q : R[X]} (hp : p ≠ 0) (hq : q ≠ 0) :
-    (Algebra.norm R[X] (p • (1 : W.CoordinateRing) + q • CoordinateRing.mk W Y)).natDegree =
-      max (2 * p.natDegree) (2 * q.natDegree + 3) := by
-  refine natDegree_eq_of_degree_eq_some ?_
-  rw [CoordinateRing.degree_norm_smul_basis, degree_eq_natDegree hp, degree_eq_natDegree hq]
-  norm_cast
-
-end Domain
 
 variable {F : Type*} [Field F] (W : _root_.WeierstrassCurve.Affine F)
 
