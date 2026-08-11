@@ -43,8 +43,7 @@ ultrametric inequality is `private`, and the norm-degree theory it rests on live
 `FunctionField/Norm.lean`.
 
 * `WeierstrassCurve.Affine.infinityPlace.X_div_mk_Y` and
-  `WeierstrassCurve.Affine.infinityPlace.isUniformizer_X_div_mk_Y` (each with an
-  `adjoinRoot_of_X_div_root` twin in the other spelling): **`x / y` is a uniformiser at
+  `WeierstrassCurve.Affine.infinityPlace.isUniformizer_X_div_mk_Y`: **`x / y` is a uniformiser at
   infinity.** Its value is `exp (-1)`, and it is a uniformiser in Mathlib's
   `Valuation.IsUniformizer` sense. That the place is discrete of rank one needs no proof here — its
   value group is a nontrivial subgroup of the cyclic `ℤᵐ⁰ˣ`, so Mathlib's `IsRankOneDiscrete`
@@ -52,8 +51,9 @@ ultrametric inequality is `private`, and the norm-degree theory it rests on live
   `n ≥ 1`, and the proper subgroup `2ℤ` genuinely occurs, being the value group of the restriction
   of `v_∞` to `F(x)`. One element of value `exp (-1)` settles it, which is what the value above is.
 
-The quotient value is the one special value whose restatement is not `@[simp]`; the comment above it
-gives the simpNF reason.
+The quotient value gets no `@[simp]` restatement of its own: `map_div₀` is a simp lemma, so simp
+decomposes the quotient through the two atomic restatements rather than matching a quotient-shaped
+left-hand side, and the `AdjoinRoot` spelling of `x / y` is definitionally the one written here.
 
 ## Roadmap
 
@@ -85,9 +85,10 @@ and the target is Mathlib's `ℤᵐ⁰`, so the result is a genuine `Valuation` 
 vanishing are `map_mul` and `Algebra.norm_eq_zero_iff`, and only the ultrametric inequality is
 reproved.
 
-The uniformiser corresponds to that project's `HasseWeil/LocalExpansion.lean`, `localParam` — the
-local parameter `t = -x/y` at `O` (Silverman IV.1) — whose uniformising property is recorded there
-through a Laurent-series embedding (`localExpand_localParam`), over a `SmoothPlaneCurve` wrapper and
+The uniformiser corresponds to that project's
+`projects/HasseWeil/HasseWeil/Foundation/LocalExpansion.lean` at `main` `1c1c7466`, `localParam` —
+the local parameter `t = -x/y` at `O` (Silverman IV.1) — whose uniformising property is recorded
+there through a Laurent-series embedding (`localExpand_localParam`), over a `SmoothPlaneCurve` and
 that development's own `WithTop ℤ`-valued `ordAtInfty`. None of that apparatus is needed here: the
 value of `x / y` is two rewrites from the two pole orders, and Mathlib's
 `Valuation.IsRankOneDiscrete.generator_eq_exp_neg_one_of_mem_range` turns that single value into the
@@ -392,21 +393,6 @@ theorem infinityPlace.X_div_mk_Y :
   norm_num
 
 open scoped Classical in
--- NB this one is deliberately NOT `@[simp]`, unlike the atomic `infinityPlace.adjoinRoot_of_X` and
--- `infinityPlace.adjoinRoot_root`: `map_div₀` is itself a simp lemma, so simp decomposes the
--- quotient and rewrites this left-hand side to `exp 2 / exp 3`, leaving the residual goal
--- `exp 2 / exp 3 = (exp 1)⁻¹`.
--- A quotient-shaped left-hand side is therefore not in simp-normal form and the repository's simpNF
--- gate rejects the tag, so the closed value is supplied for `rw` and `exact` instead.
-/-- `infinityPlace.X_div_mk_Y` in the spelling simp normalises the coordinate functions to. -/
-theorem infinityPlace.adjoinRoot_of_X_div_root :
-    infinityPlace W (algebraMap W.CoordinateRing W.FunctionField
-        (AdjoinRoot.of W.polynomial Polynomial.X) /
-      algebraMap W.CoordinateRing W.FunctionField (AdjoinRoot.root W.polynomial))
-      = WithZero.exp (-1) :=
-  infinityPlace.X_div_mk_Y W
-
-open scoped Classical in
 -- The place is discrete of rank one for free — its value group is a subgroup of the cyclic group
 -- `ℤᵐ⁰ˣ`, nontrivial by `instIsNontrivial` — but discreteness alone leaves the generator as
 -- `exp (-n)` for an unspecified `n ≥ 1`, and the proper subgroup genuinely occurs: the restriction
@@ -424,15 +410,6 @@ theorem infinityPlace.isUniformizer_X_div_mk_Y :
       ⟨_, infinityPlace.X_div_mk_Y W⟩,
     Units.val_mk0]
   exact infinityPlace.X_div_mk_Y W
-
-open scoped Classical in
-/-- `infinityPlace.isUniformizer_X_div_mk_Y` in the spelling simp normalises the coordinate
-functions to. -/
-theorem infinityPlace.isUniformizer_adjoinRoot_of_X_div_root :
-    (infinityPlace W).IsUniformizer (algebraMap W.CoordinateRing W.FunctionField
-        (AdjoinRoot.of W.polynomial Polynomial.X) /
-      algebraMap W.CoordinateRing W.FunctionField (AdjoinRoot.root W.polynomial)) :=
-  infinityPlace.isUniformizer_X_div_mk_Y W
 
 end WeierstrassCurve.Affine
 
