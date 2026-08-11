@@ -60,8 +60,9 @@ the definition, carries `[SeparatelyContinuousMul A]`. Phrased this way the defi
   descends to the valuation spectrum.
 * `TauCeti.Valuation.IsContinuous.isOpen_lt_div` : the defining sets for an arbitrary element
   `v b / v c` of the value group, which is Wedhorn's quantifier in full.
-* `TauCeti.Valuation.isContinuous_iff_continuous` : **Remark 7.8(1)**, that on a codomain no
-  larger than `Γ_v ∪ {0}` continuity is ordinary continuity into `WithZeroTopology`.
+* `TauCeti.Valuation.isContinuous_iff_continuous` : **Remark 7.8(1)**, that once the attained
+  ratios are coinitial in `Γ₀` — in particular on a codomain no larger than `Γ_v ∪ {0}` —
+  continuity is ordinary continuity into `WithZeroTopology`.
 * `TauCeti.Valuation.IsContinuous.isOpen_le_div` : **Remark 7.8(3)**, the non-strict sets are
   open too, again over the whole value group; `IsContinuous.isOpen_le` is its attained-value
   case.
@@ -109,7 +110,11 @@ empty. -/
 def IsContinuous (v : Valuation A Γ₀) : Prop :=
   ∀ b : A, IsOpen {a : A | v a < v b}
 
-/-- Continuity, unfolded. Consumers rewrite through this rather than unfolding the definition. -/
+/-- Continuity, unfolded. **This is required, not a wrapper.** `IsContinuous` is not `@[expose]`,
+so downstream modules cannot see its body: `simp [IsContinuous]` there fails with *"Expected a
+definition with an exposed body"*. Rewriting through this lemma is the only way to reach the
+underlying quantifier from another module, which is the same reason `restrictToIdeal_def` exists
+in `TauCeti.RingTheory.Valuation.CofinalIdeal.Restrict`. -/
 @[simp]
 theorem isContinuous_def {v : Valuation A Γ₀} :
     v.IsContinuous ↔ ∀ b : A, IsOpen {a : A | v a < v b} := Iff.rfl
@@ -187,27 +192,31 @@ theorem IsContinuous.isOpen_le_div [ContinuousSub A] [SeparatelyContinuousMul A]
     (hv.isOpen_le hb).preimage (continuous_mul_const c)
 
 open scoped WithZeroTopology in
-/-- **Wedhorn Remark 7.8(1).** When the codomain is no larger than `Γ_v ∪ {0}` — the hypothesis
-`hΓ`, which says every nonzero `γ` is a ratio of values — continuity in the sense of Definition
-7.7 is ordinary continuity of `v : A → Γ₀` for the topology of Wedhorn's Remark 1.17, namely
-Mathlib's `WithZeroTopology`.
+/-- **Wedhorn Remark 7.8(1).** Continuity in the sense of Definition 7.7 is ordinary continuity
+of `v : A → Γ₀` for the topology of Wedhorn's Remark 1.17 — Mathlib's `WithZeroTopology` — as
+soon as the attained ratios `v b / v c` are **coinitial** in `Γ₀`, which is the hypothesis `hΓ`.
 
-Without `hΓ` only the reverse implication survives, and the module docstring gives a valuation
-for which the forward one fails. -/
+Coinitiality, not exact representation, is what the proof needs: below any `γ ≠ 0` it has to find
+*some* basic ratio ball, not the ball of radius exactly `γ`. It holds in particular whenever the
+codomain is no larger than `Γ_v ∪ {0}`, which is Wedhorn's setting.
+
+`hΓ` is not decoration: without it only the reverse implication survives, and the module
+docstring's `ℤ_p` valuation is a witness — its attained ratios all exceed `(1/2, 1)`. -/
 theorem isContinuous_iff_continuous [ContinuousSub A] [SeparatelyContinuousMul A]
-    {v : Valuation A Γ₀} (hΓ : ∀ γ : Γ₀, γ ≠ 0 → ∃ b c : A, v c ≠ 0 ∧ v b = γ * v c) :
+    {v : Valuation A Γ₀}
+    (hΓ : ∀ γ : Γ₀, γ ≠ 0 → ∃ b c : A, v b ≠ 0 ∧ v c ≠ 0 ∧ v b / v c ≤ γ) :
     v.IsContinuous ↔ Continuous v := by
   refine ⟨fun hv ↦ continuous_iff_continuousAt.mpr fun a ↦ ?_,
     fun hv ↦ isContinuous_of_forall_isOpen_lt fun γ ↦
       hv.isOpen_preimage _ WithZeroTopology.isOpen_Iio⟩
   rcases eq_or_ne (v a) 0 with ha | ha
-  · -- at a point of the support, the sets of Definition 7.7 are themselves the basic
-    -- neighbourhoods of `0`, once `hΓ` has written `γ` as a ratio of values
+  · -- at a point of the support, a ratio ball sitting below `γ` is already a neighbourhood
     rw [ContinuousAt, ha, WithZeroTopology.tendsto_zero]
     intro γ hγ
-    obtain ⟨b, c, hc, hbc⟩ := hΓ γ hγ
-    rw [← mul_div_cancel_right₀ γ hc, ← hbc]
-    exact (hv.isOpen_lt_div b hc).mem_nhds (by simpa [ha, hbc, hc] using zero_lt_iff.mpr hγ)
+    obtain ⟨b, c, hb, hc, hle⟩ := hΓ γ hγ
+    have hpos : (0 : Γ₀) < v b / v c := zero_lt_iff.mpr (div_ne_zero hb hc)
+    filter_upwards [(hv.isOpen_lt_div b hc).mem_nhds (by simpa [ha] using hpos)] with x hx
+    exact hx.trans_le hle
   · -- off the support `v` is locally constant, by the strict triangle equality
     rw [ContinuousAt, WithZeroTopology.tendsto_of_ne_zero ha]
     filter_upwards [hv.sub_lt_mem_nhds a ha] with y hy using v.map_eq_of_sub_lt hy
