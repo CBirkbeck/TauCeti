@@ -201,12 +201,10 @@ upper half plane, the abstract order function of `two_pi_I_mul_sum_windingNumber
 the modular-forms order at each of them.
 
 `orderOfVanishingAt` is by definition the meromorphic order of `f ∘ ofComplex`
-(`orderOfVanishingAt_def`), so the abstract hypothesis is discharged by finiteness alone, which
-is automatic here: by `meromorphicOrderAt_ne_top_iff_eventually_ne_zero` it suffices that the form
-is eventually nonzero on a punctured neighbourhood, and it is, because such a neighbourhood
-eventually avoids the finite set `T` (`nhdsNE_le_cofinite`) and `hoff` covers everything off `T`.
-The sum runs over `T.attach` because the order is taken at each divisor point *as a point of
-`ℍ`*, which needs its membership proof. -/
+(`orderOfVanishingAt_def`), so the abstract hypothesis asks only that those orders be finite —
+which `hoff` and the finiteness of `T` already force, so no separate hypothesis is needed. The
+sum runs over `T.attach` because the order is taken at each divisor point *as a point of `ℍ`*,
+which needs its membership proof. -/
 private theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
     [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
     {U : Set ℂ} (hH : 1 ≤ H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
