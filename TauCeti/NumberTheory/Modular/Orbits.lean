@@ -46,6 +46,19 @@ lemma orbit_mk_int_vadd (n : ℤ) (z : ℍ) :
   Quotient.sound' ⟨_root_.ModularGroup.T ^ n, UpperHalfPlane.modular_T_zpow_smul z n⟩
 
 
+/-- Distinct points of the **open** fundamental domain lie in distinct `SL(2, ℤ)`-orbits: the
+orbit map is injective there. This is the Second Fundamental Domain Lemma
+(`ModularGroup.eq_smul_self_of_mem_fdo_mem_fdo`) restated as injectivity, which is the form the
+orbit-indexed valence formula needs. It fails on the closed domain `𝒟`, whose boundary is
+identified with itself by `T` and `S`. -/
+lemma orbit_mk_injOn_fdo :
+    Set.InjOn (fun p : ℍ ↦ (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) 𝒟ᵒ := by
+  intro p hp q hq hpq
+  obtain ⟨g, hg⟩ := Quotient.exact' hpq
+  have hg' : g • q = p := hg
+  have hgq : g • q ∈ 𝒟ᵒ := by rw [hg']; exact hp
+  exact hg'.symm.trans (_root_.ModularGroup.eq_smul_self_of_mem_fdo_mem_fdo hq hgq).symm
+
 end ModularGroup
 
 end TauCeti
