@@ -752,7 +752,7 @@ theorem quadraticTwistVariableChange_smul_baseChange :
     (E.quadraticTwistVariableChange L).baseChange M • E.baseChange M
       = (E.quadraticTwist L).baseChange M := by
   have hb : ∀ W : WeierstrassCurve K, (W.baseChange L).baseChange M = W.baseChange M :=
-    fun W ↦ by rw [baseChange, baseChange, baseChange, map_map, ← IsScalarTower.algebraMap_eq]
+    fun W ↦ by simpa [baseChange] using W.map_baseChange (IsScalarTower.toAlgHom K L M)
   rw [← hb E, baseChange_smul_baseChange, quadraticTwistVariableChange_smul, hb]
 
 /-- **The twist's defining cocycle over `M`.** Applying any `σ ∈ Aut(M/K)` that does not fix `L`
@@ -775,7 +775,7 @@ theorem map_quadraticTwistVariableChange_baseChange {σ : M ≃ₐ[K] M}
     rw [hres] at h
     simpa using h
   have hb : ∀ W : WeierstrassCurve K, (W.baseChange L).map (algebraMap L M) = W.baseChange M :=
-    fun W ↦ by rw [baseChange, baseChange, map_map, ← IsScalarTower.algebraMap_eq]
+    fun W ↦ by simpa using W.map_baseChange (IsScalarTower.toAlgHom K L M)
   rw [VariableChange.baseChange, VariableChange.map_map, hcomp, ← VariableChange.map_map,
     map_quadraticTwistVariableChange (E := E) (L := L) hσ₀, VariableChange.map_mul,
     ← VariableChange.baseChange,
