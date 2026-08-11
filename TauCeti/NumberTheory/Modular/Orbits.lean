@@ -62,12 +62,6 @@ lemma orbit_mk_injOn_fdo :
   have hgq : g • q ∈ 𝒟ᵒ := by rw [hg']; exact hp
   exact hg'.symm.trans (_root_.ModularGroup.eq_smul_self_of_mem_fdo_mem_fdo hq hgq).symm
 
-/-- Membership of the open fundamental domain from the bounds the valence formula carries: it
-states the radial condition as `1 < ‖z‖`, while `𝒟ᵒ` is defined by `1 < normSq z`. -/
-lemma mem_fdo_of_one_lt_norm {z : ℍ} (hnorm : 1 < ‖(z : ℂ)‖) (hre : |(z : ℂ).re| < 1 / 2) :
-    z ∈ 𝒟ᵒ :=
-  ⟨by rw [← Complex.sq_norm]; nlinarith [hnorm, norm_nonneg (z : ℂ)], hre⟩
-
 end ModularGroup
 
 end TauCeti
