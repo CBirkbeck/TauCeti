@@ -652,6 +652,34 @@ private lemma analyticAt_cuspFunction_of_norm_le {g : ℍ → ℂ} (hper : Perio
   exact (differentiableOn_cuspFunction_ball one_pos hper hg hbdd).analyticAt
     (Metric.isOpen_ball.mem_nhds (mem_ball_zero_iff.mpr hlt))
 
+/-- Step 5b of the rung-1 bridge: a height threshold above which the cusp function is
+non-vanishing on the punctured `q`-disc the contour uses.
+
+This is where the `∃ H₀` of the final statement comes from. `cuspFunction_eventually_ne_zero`
+gives non-vanishing on *some* punctured neighbourhood of `0`, while the contour needs it on the
+disc of radius `fdBoundaryQRadius H = exp (-2 π H)`. That radius shrinks as `H` grows, so the disc
+sits inside the neighbourhood only above a threshold — it cannot hold for every `H`. -/
+private lemma exists_threshold_cuspFunction_ne_zero [ModularFormClass F 𝒮ℒ k] {f : F}
+    (hΓ : (1 : ℝ) ∈ (𝒮ℒ : Subgroup (GL (Fin 2) ℝ)).strictPeriods) (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H →
+      ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+        cuspFunction 1 ⇑f q ≠ 0 := by
+  obtain ⟨ε, hε, hne⟩ := Metric.eventually_nhds_iff.mp
+    (eventually_nhdsWithin_iff.mp (cuspFunction_eventually_ne_zero (f := f) one_pos hΓ hf))
+  have hpi : (0 : ℝ) < 2 * Real.pi := by positivity
+  refine ⟨max 1 ((Real.log ε⁻¹ + 1) / (2 * Real.pi)), fun H hH q hq hq0 ↦ hne ?_ hq0⟩
+  have hH1 : (1 : ℝ) ≤ H := (le_max_left _ _).trans hH
+  have hlog : (Real.log ε⁻¹ + 1) / (2 * Real.pi) ≤ H := (le_max_right _ _).trans hH
+  have hlog' : Real.log ε⁻¹ + 1 ≤ 2 * Real.pi * H := by
+    rw [div_le_iff₀ hpi] at hlog; linarith [hlog]
+  have hqr : ‖q‖ ≤ fdBoundaryQRadius H := by simpa using hq
+  have hlt : fdBoundaryQRadius H < ε := by
+    rw [fdBoundaryQRadius_def, ← Real.exp_log hε]
+    refine Real.exp_lt_exp.mpr ?_
+    rw [Real.log_inv] at hlog'
+    linarith
+  simpa [Complex.dist_eq] using lt_of_le_of_lt hqr hlt
+
 end ModularForm
 
 end TauCeti
