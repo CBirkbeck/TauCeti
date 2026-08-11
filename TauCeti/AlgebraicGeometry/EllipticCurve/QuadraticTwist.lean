@@ -459,9 +459,10 @@ It does **not** say the class is nontrivial. `E` here is an arbitrary Weierstras
 `negVariableChange = 1` — a singular curve in characteristic 2 with `a₁ = a₃ = 0`, say — the
 identity below is plain equivariance. Nontriviality needs hypotheses this statement does not
 carry. -/
+@[simp]
 theorem map_quadraticTwistOfTraceNormVariableChange {θ : L} (hθ : θ ∉ Set.range (algebraMap K L))
     {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
-    (E.quadraticTwistOfTraceNormVariableChange hθ hσ).map σ.toAlgHom.toRingHom
+    (E.quadraticTwistOfTraceNormVariableChange hθ hσ).map (σ : L →+* L)
       = (E.baseChange L).negVariableChange * E.quadraticTwistOfTraceNormVariableChange hθ hσ := by
   have hσσ : σ (σ θ) = θ := by
     rw [← AlgEquiv.mul_apply, Algebra.IsQuadraticExtension.algEquiv_mul_self K L σ,
@@ -473,7 +474,7 @@ theorem map_quadraticTwistOfTraceNormVariableChange {θ : L} (hθ : θ ∉ Set.r
       VariableChange.map, VariableChange.mul_def,
       negVariableChange_u, negVariableChange_r, negVariableChange_s, negVariableChange_t,
       Units.coe_map, Units.val_mul, Units.val_neg, Units.val_one, Units.val_mk0,
-      AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom, AlgEquiv.coe_toAlgHom, MonoidHom.coe_coe,
+      MonoidHom.coe_coe, RingHom.coe_coe,
       map_neg, map_mul, map_pow, map_sub, map_zero, map_one, map_a₁, map_a₃, baseChange,
       σ.commutes, hσσ] <;>
     ring
