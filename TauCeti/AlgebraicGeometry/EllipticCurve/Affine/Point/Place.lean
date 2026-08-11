@@ -89,6 +89,22 @@ theorem pointPlace_eq_iff {x₁ x₂ y₁ y₂ : F} (h₁ : W.Equation x₁ y₁
   rw [HeightOneSpectrum.ext_iff, pointPlace_asIdeal, pointPlace_asIdeal]
   exact XYIdeal_eq_iff h₁
 
+
+/-- **The residue field at the place of a point is the base field.** The quotient by
+`XYIdeal W x (C y)` is `F` — that is Mathlib's `quotientXYIdealEquiv` — and the place's underlying
+ideal is that ideal. -/
+noncomputable def pointPlace.residueEquiv {y : F} (h : W.Equation x y) :
+    (W.CoordinateRing ⧸ (pointPlace h).asIdeal) ≃ₐ[F] F :=
+  (Ideal.quotientEquivAlgOfEq F (pointPlace_asIdeal h)).trans
+    (_root_.WeierstrassCurve.Affine.CoordinateRing.quotientXYIdealEquiv h)
+
+/-- **The place of a point has degree one.** The degree of a place is the rank of its residue field
+over the base, and here that residue field is the base field itself. This is the sense in which the
+point–place dictionary lands in the *degree-one* places. -/
+theorem pointPlace.finrank_residue {y : F} (h : W.Equation x y) :
+    Module.finrank F (W.CoordinateRing ⧸ (pointPlace h).asIdeal) = 1 := by
+  rw [(pointPlace.residueEquiv h).toLinearEquiv.finrank_eq, Module.finrank_self]
+
 end WeierstrassCurve.Affine.CoordinateRing
 
 end TauCeti
