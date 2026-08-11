@@ -133,7 +133,8 @@ lemma sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit [SlashInvariantFormClass 
   have hfdo : ∀ z ∈ X, ofComplex z ∈ 𝒟ᵒ := fun z hz => by
     obtain ⟨τ, hτ, hτz⟩ : z ∈ UpperHalfPlane.coe '' 𝒟ᵒ := by
       rw [ModularGroup.coe_fdo]; exact ⟨hpos z hz, hnorm z hz, hre z hz⟩
-    rw [show ofComplex z = τ from UpperHalfPlane.coe_injective ((hcoe z hz).trans hτz.symm)]
+    have hof : ofComplex z = τ := UpperHalfPlane.coe_injective ((hcoe z hz).trans hτz.symm)
+    rw [hof]
     exact hτ
   have h : ofComplex a = ofComplex b :=
     ModularGroup.orbit_mk_injOn_fdo (hfdo a ha') (hfdo b hb') hab
