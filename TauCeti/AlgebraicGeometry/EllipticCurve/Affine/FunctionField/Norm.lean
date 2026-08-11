@@ -30,8 +30,8 @@ cubic the Weierstrass equation solves for, has degree `3`.
 No new norm is defined, and no lemma restates a generic one: `Algebra.norm` is the norm,
 multiplicativity and vanishing exactly at `0` are `map_mul` and `Algebra.norm_eq_zero_iff`, and the
 value of the norm on the base ring and on the coordinate ring is `Algebra.norm_algebraMap` and
-`Algebra.norm_localization`, applied where they are needed rather than re-exported. What is new are the two
-coordinate degrees, which are curve-specific and which Mathlib does not state.
+`Algebra.norm_localization`, applied where they are needed rather than re-exported. What is new are
+the two coordinate degrees, which are curve-specific and which Mathlib does not state.
 
 Only the last result forces `RatFunc`: the degree theory of rational functions, `RatFunc.intDegree`
 and with it Mathlib's place at infinity `RatFunc.inftyValuation`, is stated for no other fraction
