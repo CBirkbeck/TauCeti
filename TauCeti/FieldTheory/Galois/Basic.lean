@@ -21,9 +21,12 @@ automorphisms and `IsGalois.mem_range_algebraMap_iff_fixed` characterises the ba
 
 These are the descent inputs for the quadratic-twist layer of
 `TauCetiRoadmap/EllipticCurves/README.md` (§Layer 5), consumed by
-`TauCeti/AlgebraicGeometry/EllipticCurve/GaloisDescent.lean` and by
+`TauCeti/AlgebraicGeometry/EllipticCurve/GaloisDescent.lean`; by
 `TauCeti/RingTheory/Norm/Quadratic.lean`, which expresses the trace and norm of a
-separable quadratic extension through its nontrivial automorphism.
+separable quadratic extension through its nontrivial automorphism; and by
+`TauCeti/AlgebraicGeometry/EllipticCurve/QuadraticTwist.lean`, whose cocycle identity needs
+`algEquiv_mul_self` to see that `σ` is an involution and `apply_sub_self_ne_zero` to know that
+the scaling factor `σ θ - θ` of its change of variables is a unit.
 
 Adapted from the FLT project (`ImperialCollegeLondon/FLT`,
 `FLT/Mathlib/FieldTheory/Galois/Basic.lean` at the roadmap's pin `bc2fe8ff7396`, FLT PR #1088,
