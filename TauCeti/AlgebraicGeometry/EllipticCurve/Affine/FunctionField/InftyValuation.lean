@@ -99,33 +99,6 @@ end Nontrivial
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
-private theorem norm_algebraMap_polynomial' (d : F[X]) :
-    Algebra.norm (RatFunc F) (algebraMap F[X] W.FunctionField d) =
-      (algebraMap F[X] (RatFunc F) d) ^ 2 := by
-  rw [IsScalarTower.algebraMap_apply F[X] (RatFunc F) W.FunctionField, Algebra.norm_algebraMap,
-    finrank_functionField W (RatFunc F)]
-
-/-- **The degree of the norm of `u / d`**: the polynomial norm's degree, less twice that of the
-denominator. Stated for an arbitrary numerator `u` in the coordinate ring, so it carries no
-hypothesis on the basis coefficients — they may vanish. `intDegree_norm_eq_max` specialises it to
-`u = a • 1 + b • y`, where the `max` form needs `a` and `b` nonzero. -/
-theorem intDegree_norm_of_mul_eq {f : W.FunctionField} (hf : f ≠ 0) {u : W.CoordinateRing}
-    {d : F[X]} (hd : d ≠ 0)
-    (h : f * algebraMap F[X] W.FunctionField d = algebraMap W.CoordinateRing W.FunctionField u) :
-    (Algebra.norm (RatFunc F) f).intDegree
-      = (Algebra.norm F[X] u).natDegree - 2 * d.natDegree := by
-  have hNf : Algebra.norm (RatFunc F) f ≠ 0 :=
-    fun hz => hf ((Algebra.norm_eq_zero_iff (R := RatFunc F)).mp hz)
-  have hdR : algebraMap F[X] (RatFunc F) d ≠ 0 := RatFunc.algebraMap_ne_zero hd
-  have hnorm := congrArg (Algebra.norm (RatFunc F)) h
-  rw [map_mul, norm_algebraMap_polynomial',
-    Algebra.norm_localization (R := F[X]) (M := nonZeroDivisors F[X])
-      (S := W.CoordinateRing)] at hnorm
-  have := congrArg RatFunc.intDegree hnorm
-  rw [RatFunc.intDegree_mul hNf (pow_ne_zero _ hdR), ← map_pow,
-    RatFunc.intDegree_polynomial, RatFunc.intDegree_polynomial, natDegree_pow] at this
-  omega
-
 /-- Every function is `(a + b y) / p` with `a b p` polynomials, `p ≠ 0` — the form the degree
 formula consumes: numerator in the `1, Y` basis, denominator a polynomial. -/
 private theorem exists_smul_basis_div (f : W.FunctionField) :
@@ -139,26 +112,6 @@ private theorem exists_smul_basis_div (f : W.FunctionField) :
   refine ⟨a, b, p, nonZeroDivisors.ne_zero hp, ?_⟩
   rw [← hf, IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField]
   exact IsLocalization.mk'_spec W.FunctionField _ _
-
-/-- natDegree form of Mathlib's `degree_norm_smul_basis` (recovered from `be8adaca`). -/
-private theorem natDegree_norm_smul_basis {a b : F[X]} (ha : a ≠ 0) (hb : b ≠ 0) :
-    (Algebra.norm F[X] (a • (1 : W.CoordinateRing) + b • CoordinateRing.mk W Y)).natDegree =
-      max (2 * a.natDegree) (2 * b.natDegree + 3) := by
-  refine natDegree_eq_of_degree_eq_some ?_
-  rw [CoordinateRing.degree_norm_smul_basis, degree_eq_natDegree ha, degree_eq_natDegree hb]
-  norm_cast
-
-/-- **The degree of the norm, in the `(a + b y)/p` normal form.** -/
-theorem intDegree_norm_eq_max {f : W.FunctionField} (hf : f ≠ 0) {a b p : F[X]}
-    (ha : a ≠ 0) (hb : b ≠ 0) (hp : p ≠ 0)
-    (h : f * algebraMap F[X] W.FunctionField p =
-      algebraMap W.CoordinateRing W.FunctionField (a • 1 + b • CoordinateRing.mk W Y)) :
-    (Algebra.norm (RatFunc F) f).intDegree
-      = max (2 * (a.natDegree : ℤ) - 2 * p.natDegree)
-            (2 * (b.natDegree : ℤ) + 3 - 2 * p.natDegree) := by
-  rw [intDegree_norm_of_mul_eq W hf hp h, natDegree_norm_smul_basis W ha hb]
-  push_cast
-  omega
 
 /-- Scaling a decomposition by a polynomial: `(a + by)/p = (ac + bcy)/(pc)`. -/
 private theorem smul_basis_div_mul {f : W.FunctionField} {a b p : F[X]}
