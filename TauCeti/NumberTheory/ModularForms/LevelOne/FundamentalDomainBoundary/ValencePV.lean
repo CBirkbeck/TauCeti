@@ -536,8 +536,7 @@ theorem finsum_orderOfVanishingOnOrbit_mem_image_add_elliptic_add_qExpansionOrde
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
     (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
       cuspFunction 1 ⇑f q ≠ 0) :
-    ((∑ᶠ q ∈ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
-              MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ''
+    ((∑ᶠ q ∈ (fun z : ℂ ↦ ModularGroup.orbitMk (ofComplex z)) ''
             ↑(T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
           orderOfVanishingOnOrbit f q : ℤ) : ℂ)
         + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
@@ -545,8 +544,7 @@ theorem finsum_orderOfVanishingOnOrbit_mem_image_add_elliptic_add_qExpansionOrde
         + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
   have horb : ∑ z ∈ T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
         orderOfVanishingAt (⇑f) (ofComplex z) =
-      ∑ᶠ q ∈ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
-            MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ''
+      ∑ᶠ q ∈ (fun z : ℂ ↦ ModularGroup.orbitMk (ofComplex z)) ''
           ↑(T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
         orderOfVanishingOnOrbit (k := k) f q :=
     sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit (k := k) f

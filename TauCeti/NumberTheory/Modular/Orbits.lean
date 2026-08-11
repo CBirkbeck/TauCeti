@@ -19,7 +19,7 @@ orbit once.
 
 * `TauCeti.ModularGroup.exists_rep_mem_fd`: every orbit meets `𝒟`.
 * `TauCeti.ModularGroup.orbit_mk_int_vadd`: integer translation preserves the orbit.
-* `TauCeti.ModularGroup.orbit_mk_injOn_fdo`: the orbit map is injective on `𝒟ᵒ`.
+* `TauCeti.ModularGroup.orbitMk_injOn_fdo`: the orbit map is injective on `𝒟ᵒ`.
 -/
 
 public section
@@ -32,12 +32,14 @@ namespace TauCeti
 
 namespace ModularGroup
 
-/-- The orbit map `ℍ → ℍ ⧸ SL(2, ℤ)`, as a reducible abbreviation.
+/-- The orbit map `ℍ → ℍ ⧸ SL(2, ℤ)`.
 
-It is spelled out inline — with the full `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ` ascription — at
-every site that needs the orbit of a point, because `Quotient.mk''` alone does not determine the
-setoid. Being an `abbrev` it is reducible, so statements using it stay definitionally equal to the
-spelled-out form and existing consumers are unaffected. -/
+`Quotient.mk''` alone does not determine the setoid, so the orbit of a point cannot be written
+without naming the target type. This abbreviation supplies that name. It is an `abbrev`, hence
+reducible: statements phrased with it are definitionally equal to the spelled-out form, so
+unification, `simp` and existing consumers are unaffected.
+
+`noncomputable` because the underlying `SLAction` is. -/
 noncomputable abbrev orbitMk (p : ℍ) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ := Quotient.mk'' p
 
 /-- Every `SL(2, ℤ)`-orbit of `ℍ` has a representative in the standard fundamental
@@ -52,7 +54,7 @@ lemma exists_rep_mem_fd (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
 /-- Translation by any integer preserves the `SL(2, ℤ)`-orbit. -/
 @[simp]
 lemma orbit_mk_int_vadd (n : ℤ) (z : ℍ) :
-    (Quotient.mk'' ((n : ℝ) +ᵥ z) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) =
+    orbitMk ((n : ℝ) +ᵥ z) =
       Quotient.mk'' z :=
   Quotient.sound' ⟨_root_.ModularGroup.T ^ n, UpperHalfPlane.modular_T_zpow_smul z n⟩
 
@@ -62,7 +64,7 @@ orbit map is injective there. This is the Second Fundamental Domain Lemma
 (`ModularGroup.eq_smul_self_of_mem_fdo_mem_fdo`) restated as injectivity, which is the form the
 orbit-indexed valence formula needs. It fails on the closed domain `𝒟`, whose boundary is
 identified with itself by `T` and `S`. -/
-lemma orbit_mk_injOn_fdo :
+lemma orbitMk_injOn_fdo :
     Set.InjOn orbitMk 𝒟ᵒ := by
   intro p hp q hq hpq
   obtain ⟨g, hg⟩ := Quotient.exact' hpq

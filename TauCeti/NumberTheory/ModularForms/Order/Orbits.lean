@@ -7,7 +7,7 @@ module
 public import Mathlib.Algebra.BigOperators.Finprod
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
-import TauCeti.NumberTheory.Modular.Orbits
+public import TauCeti.NumberTheory.Modular.Orbits
 import TauCeti.NumberTheory.ModularForms.FiniteZeros
 
 /-!
@@ -91,17 +91,15 @@ it also rules out distinct indices with the same `p`, since those would contribu
 left and once on the right.
 
 For `p` injective — `ofComplex` on the upper half plane, say — the composite's injectivity
-reduces to the orbit map's, which `ModularGroup.orbit_mk_injOn_fdo.mono` supplies on the **open**
+reduces to the orbit map's, which `ModularGroup.orbitMk_injOn_fdo.mono` supplies on the **open**
 fundamental domain. The open domain is genuinely needed there: on the closed `𝒟` the orbit map is
 not injective, since `T` identifies the two vertical edges and `S` the two halves of the arc, so a
 set holding two identified boundary representatives would count their common orbit twice. -/
 lemma sum_orderOfVanishingAt_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k] {α : Type*}
     {X : Finset α} (p : α → ℍ)
-    (hX : Set.InjOn (fun a ↦ (Quotient.mk'' (p a) :
-      MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ↑X) :
+    (hX : Set.InjOn (fun a ↦ ModularGroup.orbitMk (p a)) ↑X) :
     ∑ a ∈ X, orderOfVanishingAt f (p a) =
-      ∑ᶠ q ∈ (fun a ↦ (Quotient.mk'' (p a) :
-          MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) '' ↑X,
+      ∑ᶠ q ∈ (fun a ↦ ModularGroup.orbitMk (p a)) '' ↑X,
         orderOfVanishingOnOrbit f q := by
   rw [finsum_mem_image hX]
   simp only [orderOfVanishingOnOrbit_mk]
@@ -122,8 +120,7 @@ lemma sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit [SlashInvariantFormClass 
     {X : Finset ℂ} (hpos : ∀ z ∈ X, 0 < z.im) (hnorm : ∀ z ∈ X, 1 < ‖z‖)
     (hre : ∀ z ∈ X, |z.re| < 1 / 2) :
     ∑ z ∈ X, orderOfVanishingAt f (ofComplex z) =
-      ∑ᶠ q ∈ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
-          MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) '' ↑X,
+      ∑ᶠ q ∈ (fun z : ℂ ↦ ModularGroup.orbitMk (ofComplex z)) '' ↑X,
         orderOfVanishingOnOrbit f q := by
   have hcoe : ∀ z ∈ X, ((ofComplex z : ℍ) : ℂ) = z := fun z hz =>
     congrArg _ (ofComplex_apply_of_im_pos (hpos z hz))
@@ -137,7 +134,7 @@ lemma sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit [SlashInvariantFormClass 
     rw [hof]
     exact hτ
   have h : ofComplex a = ofComplex b :=
-    ModularGroup.orbit_mk_injOn_fdo (hfdo a ha') (hfdo b hb') hab
+    ModularGroup.orbitMk_injOn_fdo (hfdo a ha') (hfdo b hb') hab
   exact (hcoe a ha').symm.trans ((congrArg (fun w : ℍ ↦ (w : ℂ)) h).trans (hcoe b hb'))
 
 end ModularForm
