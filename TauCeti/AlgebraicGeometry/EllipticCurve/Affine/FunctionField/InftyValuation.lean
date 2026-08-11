@@ -31,7 +31,8 @@ the other three axioms are the norm's multiplicativity and Mathlib's place at in
 * `WeierstrassCurve.Affine.inftyValuation.X`,
   `WeierstrassCurve.Affine.inftyValuation.mk_Y`
 * `WeierstrassCurve.Affine.inftyValuation.C`: the valuation is trivial on the base field — a
-  nonzero constant has value `1`: `v_∞ x = exp 2` and `v_∞ y = exp 3` —
+  nonzero constant has value `1`. The `Valuation.IsTrivialOn F` and `Valuation.IsNontrivial`
+  instances follow, so the place is usable through Mathlib's standard valuation API: `v_∞ x = exp 2` and `v_∞ y = exp 3` —
   the double and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0
   asks for by name. They read the norm degrees of `FunctionField/Norm.lean` through the valuation.
 
@@ -326,6 +327,20 @@ theorem inftyValuation.C {c : F} (hc : c ≠ 0) :
     inftyValuation W (algebraMap (RatFunc F) W.FunctionField (RatFunc.C c)) = 1 := by
   rw [inftyValuation_apply, Algebra.norm_algebraMap, finrank_functionField W (RatFunc F), map_pow,
     RatFunc.inftyValuation.C (F := F) hc, one_pow]
+
+
+open scoped Classical in
+/-- **The valuation at infinity is trivial on the base field.** -/
+instance instIsTrivialOn : (inftyValuation W).IsTrivialOn F where
+  eq_one c hc := by
+    rw [IsScalarTower.algebraMap_apply F (RatFunc F) W.FunctionField]
+    exact inftyValuation.C W hc
+
+/-- **The valuation at infinity is nontrivial**: `x` has value `exp 2`. -/
+instance instIsNontrivial : (inftyValuation W).IsNontrivial where
+  exists_val_nontrivial :=
+    ⟨algebraMap W.CoordinateRing W.FunctionField (algebraMap F[X] W.CoordinateRing Polynomial.X),
+      by rw [inftyValuation.X]; exact ⟨WithZero.exp_ne_zero, by simp⟩⟩
 
 end WeierstrassCurve.Affine
 
