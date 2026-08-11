@@ -24,6 +24,11 @@ than a topology on `A`, the ratio results need `[SeparatelyContinuousMul A]`, th
 results need `[ContinuousSub A]`, and `isContinuous_iff_continuous` needs both. Commutativity is
 never used, so `A` is a `Ring`.
 
+The codomain is treated the same way. Mathlib's `Valuation` is valued in a
+`LinearOrderedCommMonoidWithZero`, and so is most of this file; only writing down a ratio
+`v b / v c` needs inverses, so the three results that do are gathered in a section asking for a
+`LinearOrderedCommGroupWithZero`.
+
 ## The quantifier ranges over the value group, not over the codomain
 
 Wedhorn quantifies `γ` over `Γ_v`, and that is load-bearing rather than incidental. Asking
@@ -88,24 +93,25 @@ namespace TauCeti.Valuation
 open Set Topology TauCeti
 
 variable {A : Type*} [Ring A] [TopologicalSpace A]
-  {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
-  {Γ₀' : Type*} [LinearOrderedCommGroupWithZero Γ₀']
+  {Γ₀ : Type*} [LinearOrderedCommMonoidWithZero Γ₀]
+  {Γ₀' : Type*} [LinearOrderedCommMonoidWithZero Γ₀']
 
-/-- **Wedhorn Definition 7.7.** A valuation on a topological ring is *continuous* if every set
-`{a ; v a < γ}` with `γ` in the value group of `v` is open, i.e. if the topology of `A` is finer
-than the topology `v` defines.
+/-- **Wedhorn Definition 7.7, in attained-value form.** A valuation is *continuous* when every
+set `{a ; v a < v b}` is open.
 
-The quantifier is over the **attained values** `v b` rather than over the codomain `Γ₀`; those
-generate the value group, and `isOpen_lt_div` reaches the rest of it once multiplication is
-continuous. See the module docstring
-for why quantifying over `Γ₀` would be a different — and equivalence-class-dependent —
-condition. The values `b` with `v b = 0` cost nothing here, the set then being empty. -/
+The quantifier runs over the **attained values** `v b`, not over the codomain `Γ₀` — see the
+module docstring for why quantifying over `Γ₀` would be a different, and
+equivalence-class-dependent, condition. Wedhorn instead quantifies over the whole value group
+`Γ_v`; the two agree once multiplication is separately continuous, which is exactly what
+`isOpen_lt_div` supplies and why *it*, not this definition, carries
+`[SeparatelyContinuousMul A]`. The `b` with `v b = 0` cost nothing here, the set then being
+empty. -/
 def IsContinuous (v : Valuation A Γ₀) : Prop :=
   ∀ b : A, IsOpen {a : A | v a < v b}
 
 /-- Continuity, unfolded. Consumers rewrite through this rather than unfolding the definition. -/
 @[simp]
-theorem isContinuous_iff {v : Valuation A Γ₀} :
+theorem isContinuous_def {v : Valuation A Γ₀} :
     v.IsContinuous ↔ ∀ b : A, IsOpen {a : A | v a < v b} := Iff.rfl
 
 /-- The `b` in the support may be dropped from the quantifier, contributing as they do only the
@@ -131,15 +137,6 @@ theorem _root_.Valuation.IsEquiv.isContinuous_iff {v : Valuation A Γ₀} {w : V
 theorem isContinuous_of_discreteTopology [DiscreteTopology A] (v : Valuation A Γ₀) :
     v.IsContinuous := fun _ ↦ isOpen_discrete _
 
-/-- **Wedhorn's quantifier in full.** Every element of the value group `Γ_v` is a ratio
-`v b / v c` with `c` outside the support, and continuity makes `{a ; v a < v b / v c}` open for
-all of them. -/
-theorem IsContinuous.isOpen_lt_div [SeparatelyContinuousMul A] {v : Valuation A Γ₀}
-    (hv : v.IsContinuous)
-    (b : A) {c : A} (hc : v c ≠ 0) : IsOpen {a : A | v a < v b / v c} := by
-  -- the set is the preimage of `{x ; v x < v b}` under multiplication by `c`
-  simpa [lt_div_iff₀ (zero_lt_iff.mpr hc)] using (hv b).preimage (continuous_mul_const c)
-
 /-- **The translated ball is a neighbourhood.** For `γ` in the value group, `{y ; v (y - a) < γ}`
 is an open neighbourhood of `a`, being the preimage of the open `{x ; v x < γ}` under
 translation. It is the workhorse of the two results below: on it, `v y` is controlled by `v a`
@@ -158,6 +155,26 @@ theorem IsContinuous.isOpen_le [ContinuousSub A] {v : Valuation A Γ₀} (hv : v
   refine isOpen_iff_mem_nhds.mpr fun a ha ↦ ?_
   filter_upwards [hv.sub_lt_mem_nhds a hb] with y hy
   simpa using v.map_add_le hy.le ha
+
+/-! ### Results needing a value **group**
+
+Wedhorn's quantifier runs over `Γ_v`, whose general element is a ratio `v b / v c`. Writing that
+down needs division, so these three — and only these — ask the codomain to be a group rather
+than the monoid the rest of the file works over.
+-/
+
+section ValueGroup
+
+variable {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+
+/-- **Wedhorn's quantifier in full.** Every element of the value group `Γ_v` is a ratio
+`v b / v c` with `c` outside the support, and continuity makes `{a ; v a < v b / v c}` open for
+all of them. -/
+theorem IsContinuous.isOpen_lt_div [SeparatelyContinuousMul A] {v : Valuation A Γ₀}
+    (hv : v.IsContinuous)
+    (b : A) {c : A} (hc : v c ≠ 0) : IsOpen {a : A | v a < v b / v c} := by
+  -- the set is the preimage of `{x ; v x < v b}` under multiplication by `c`
+  simpa [lt_div_iff₀ (zero_lt_iff.mpr hc)] using (hv b).preimage (continuous_mul_const c)
 
 /-- **Wedhorn Remark 7.8(3) in full.** Remark 7.8(3) quantifies over the whole value group, and
 a general element of it is a ratio `v b / v c` rather than an attained value, so this rather than
@@ -194,5 +211,7 @@ theorem isContinuous_iff_continuous [ContinuousSub A] [SeparatelyContinuousMul A
   · -- off the support `v` is locally constant, by the strict triangle equality
     rw [ContinuousAt, WithZeroTopology.tendsto_of_ne_zero ha]
     filter_upwards [hv.sub_lt_mem_nhds a ha] with y hy using v.map_eq_of_sub_lt hy
+
+end ValueGroup
 
 end TauCeti.Valuation
