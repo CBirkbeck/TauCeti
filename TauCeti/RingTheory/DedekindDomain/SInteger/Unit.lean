@@ -59,10 +59,11 @@ DedekindDomain): dirichlet's s-unit theorem", by `vvvv-ops`, open since 2026-06-
 `Mathlib/RingTheory/DedekindDomain/SUnit.lean` and proves exactly this (and more: the rank formula
 and its number-field specialisation). Following that PR rather than inventing a parallel API is
 deliberate — when Mathlib bumps past it, almost all of this file is deleted outright instead of
-being reconciled name by name. **`unit_fg_of_units` is the exception: it has no #40791 analogue,
-so at bump time it must be re-homed onto Mathlib's `Set.unit_fg`, not dropped with the rest.**
+being reconciled name by name. **`unit_fg_of_units` and `coe_unitEmptyEquivUnits` are the
+exceptions: they have no #40791 analogue, so at bump time they must be re-homed onto Mathlib's
+`Set.unit_fg`, not dropped with the rest.**
 
-**Three declarations here are not that PR's**, and are marked as such where they occur:
+**Four declarations here are not that PR's**, and are marked as such where they occur:
 
 * `unitValuation_apply` cannot be `rfl` as it is upstream, because this repository's module
   convention is `public section` without `@[expose]`, so the definition body is not visible even
@@ -72,6 +73,9 @@ so at bump time it must be re-homed onto Mathlib's `Set.unit_fg`, not dropped wi
 * **`unit_fg_of_units` is new here**, with no counterpart in #40791: upstream gives
   `unitEmptyEquivUnits` its consumer in the rank formula, which is not ported, so without this
   form the theorem is awkward to apply — a caller holds `Rˣ`, not the `∅`-units.
+* **`coe_unitEmptyEquivUnits` is new here.** #40791 has no analogue: it does not need one, since
+  its module exposes definition bodies, whereas this repository's bare `public section` leaves
+  the equiv opaque without it.
 
 `valuationOfNeZero_eq_one_iff` is also local: Stoll's source uses
 `HeightOneSpectrum.valuationOfNeZero_eq_iff`, which does not exist at our pin, and Mathlib has
@@ -180,7 +184,9 @@ noncomputable def unitEmptyEquivUnits : (∅ : Set (HeightOneSpectrum R)).unit K
 
 /-- **What `unitEmptyEquivUnits` does to the underlying element:** it sends an `∅`-unit to the
 unit of `R` with the same image in `K`. The equiv is a composite whose body is unexposed here, so
-this is what lets a consumer identify it — and hence discharge `unit_fg`'s hypothesis. -/
+this is what lets a consumer identify it — and hence discharge `unit_fg`'s hypothesis.
+
+**New here**, with no counterpart in mathlib4#40791, which does not need one. -/
 @[simp]
 theorem coe_unitEmptyEquivUnits (u : (∅ : Set (HeightOneSpectrum R)).unit K) :
     algebraMap R K ((unitEmptyEquivUnits K u : Rˣ) : R) = ((u : Kˣ) : K) := by
