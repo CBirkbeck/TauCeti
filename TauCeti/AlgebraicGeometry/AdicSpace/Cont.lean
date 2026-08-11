@@ -32,8 +32,11 @@ So `IsContinuous` is defined here by testing the *canonical* valuation of the po
 
 ## Main definitions
 
-* `TauCeti.ValuationSpectrum.IsContinuous` : continuity of a point of `Spv A`.
-* `TauCeti.ValuationSpectrum.cont` : **Wedhorn's `Cont A`**, the set of continuous points.
+* `TauCeti.ValuationSpectrum.IsContinuous` : continuity of a point of `Spv A`, in the
+  attained-value sense.
+* `TauCeti.ValuationSpectrum.cont` : **Wedhorn's `Cont A`**, the set of continuous points. It
+  carries `[SeparatelyContinuousMul A]`, without which the attained-value test can admit strictly
+  more points than Wedhorn's value-group one — see its docstring.
 
 ## Main results
 
@@ -63,27 +66,41 @@ namespace TauCeti.ValuationSpectrum
 
 open TauCeti TauCeti.Valuation
 
-variable {A : Type*} [CommRing A] [TopologicalSpace A]
+variable {A : Type*} [CommRing A] [TopologicalSpace A] [SeparatelyContinuousMul A]
 
-/-- **Wedhorn Definition 7.7 at a point of `Spv A`.** A point is *continuous* when its canonical
-valuation is. Any representative would do — that is `isContinuous_ofValuation` — but the
-canonical one makes the definition depend on nothing chosen. -/
+/-- **Continuity of a point of `Spv A`.** A point is *continuous* when its canonical valuation
+is, in the attained-value sense of `TauCeti.Valuation.IsContinuous`. Any representative would do
+— that is `isContinuous_ofValuation` — but the canonical one makes the definition depend on
+nothing chosen.
+
+Under `[SeparatelyContinuousMul A]` this is Wedhorn's Definition 7.7; see `cont`. -/
 def IsContinuous (v : Spv A) : Prop :=
   v.valuation.IsContinuous
 
+omit [SeparatelyContinuousMul A] in
 /-- Continuity of a point, unfolded to its canonical valuation. -/
 @[simp]
 theorem isContinuous_def (v : Spv A) : v.IsContinuous ↔ v.valuation.IsContinuous :=
   Iff.rfl
 
 /-- **Wedhorn's `Cont A`**: the continuous points of `Spv A`, with the subspace topology it
-inherits as a `Set (Spv A)`. -/
-def cont (A : Type*) [CommRing A] [TopologicalSpace A] : Set (Spv A) :=
+inherits as a `Set (Spv A)`.
+
+`[SeparatelyContinuousMul A]` is load-bearing rather than incidental. `IsContinuous` tests the
+values `v` attains, whereas Wedhorn's Definition 7.7 quantifies over the whole value group `Γ_v`,
+a general element of which is a ratio `v b / v c`. Reaching those ratios is exactly
+`TauCeti.Valuation.IsContinuous.isOpen_lt_div`, which needs multiplication by a fixed element to
+be continuous. Without that hypothesis the two conditions can differ and this set would be
+strictly larger than `Cont A`, so the name would be wrong. Every setting `Cont A` is used in — a
+Huber ring, and `Spa` beyond it — is a topological ring, which supplies it. -/
+def cont (A : Type*) [CommRing A] [TopologicalSpace A] [SeparatelyContinuousMul A] :
+    Set (Spv A) :=
   {v : Spv A | v.IsContinuous}
 
 @[simp]
 theorem mem_cont_iff (v : Spv A) : v ∈ cont A ↔ v.IsContinuous := Iff.rfl
 
+omit [SeparatelyContinuousMul A] in
 /-- **Continuity may be tested on any representative.** This is what makes `cont` well defined:
 the point `ofValuation w` is continuous exactly when `w` is, for every `w` in the class, not
 merely for the canonical one. It rests on `TauCeti.Valuation.IsEquiv.isContinuous_iff`, and
@@ -98,6 +115,7 @@ theorem isContinuous_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero
 theorem cont_eq_univ [DiscreteTopology A] : cont A = Set.univ :=
   Set.eq_univ_of_forall fun v ↦ isContinuous_of_discreteTopology v.valuation
 
+omit [SeparatelyContinuousMul A] in
 /-- **Wedhorn Remark 7.9.** A continuous ring homomorphism pulls continuous points back to
 continuous points, so it restricts to a map `Cont B → Cont A`. -/
 theorem IsContinuous.comap {B : Type*} [CommRing B] [TopologicalSpace B] {φ : A →+* B}
@@ -108,7 +126,8 @@ theorem IsContinuous.comap {B : Type*} [CommRing B] [TopologicalSpace B] {φ : A
 /-- Remark 7.9 in the form a consumer of the subspaces uses: `Cont B` lands inside the preimage
 of `Cont A` along the induced map `comap φ : Spv B → Spv A`, so `comap φ` restricts to
 `Cont B → Cont A`. -/
-theorem cont_subset_comap_preimage {B : Type*} [CommRing B] [TopologicalSpace B] {φ : A →+* B}
+theorem cont_subset_comap_preimage {B : Type*} [CommRing B] [TopologicalSpace B]
+    [SeparatelyContinuousMul B] {φ : A →+* B}
     (hφ : Continuous φ) : cont B ⊆ comap φ ⁻¹' cont A :=
   fun _ hv ↦ IsContinuous.comap hφ hv
 
