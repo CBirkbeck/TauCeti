@@ -22,8 +22,13 @@ group isomorphism `(C • W).Point ≃+ W.Point`.
 * `WeierstrassCurve.Affine.Point.equivVariableChange`: the group isomorphism
   `(C • W).Point ≃+ W.Point`, whose inverse is the map induced by `C⁻¹` rather than an inverse
   extracted from bijectivity. Everything here is computable given `[DecidableEq F]`.
-* `WeierstrassCurve.Affine.Point.equivOfEq`: transport of the point group along an equality of
-  Weierstrass curves, which is what lets a `C • W = W'` fact be used on points.
+* `WeierstrassCurve.Affine.Point.mapVariableChange_some` and
+  `WeierstrassCurve.Affine.Point.equivVariableChange_some`: what those two maps do to a point
+  given by coordinates, both `@[simp]`.
+
+Transport of the point group along an equality of curves — needed to use a `C • W = W'` fact on
+points — is Mathlib's `AddEquiv.cast`, instantiated at `fun V ↦ V.toAffine.Point`; this file adds
+no wrapper for it.
 
 The route is the group-law formulae. Each of `negY`, `addX`, `negAddY`, `addY` and `slope`
 transforms by an explicit power of `u` (`variableChange_negY` and its companions), and
@@ -32,12 +37,18 @@ so it carries points to points. Those identities are what make the map additive.
 
 ## Implementation notes
 
-The section is `@[expose]`, unlike most of this repository. `mapVariableChangeFun` is defined by
-pattern matching, and its equation lemmas — `mapVariableChangeFun_zero`, `..._some` and
-`equivVariableChange_some` — are `rfl`. Without the body exposed those three fail with
-`Not a definitional equality: the left-hand side`, and the alternative is to restate each as a
-`simp` unfolding, which buys nothing: the point of the file is a *computable* isomorphism, so the
-bodies are part of its interface.
+`mapVariableChangeFun` and its equation lemmas, its injectivity, and the `AddEquiv.cast`
+computation lemma are `private`: they are how the homomorphism is built, not part of what it
+offers. The public surface is the two maps and their coordinate lemmas
+`mapVariableChange_some` / `equivVariableChange_some`, both `@[simp]`, so a consumer never needs
+to unfold anything.
+
+That is also why the section is a plain `public section` rather than `@[expose]`. Exposing the
+whole file would publish every proof body to make three `rfl`s go through, and it is incompatible
+with the helpers being private — a public declaration may not refer to a private one, so the
+exposed body of `mapVariableChange` would fail to elaborate with
+`Unknown identifier 'mapVariableChangeFun'`. Routing the two public coordinate lemmas through the
+private equation lemma removes the need for exposure entirely.
 
 This is a prerequisite for `TauCetiRoadmap/EllipticCurves/README.md` §Layer 5's point isomorphism
 for the quadratic twist: that statement is about the point groups of `E` and its twist, which
@@ -51,7 +62,7 @@ Adapted from the FLT project (`ImperialCollegeLondon/FLT`,
 upstream authorship is credited here rather than in the copyright header.
 -/
 
-@[expose] public section
+public section
 
 namespace WeierstrassCurve.Affine
 
@@ -184,20 +195,20 @@ namespace Point
 
 /-- The underlying map `(C • W).Point → W.Point` of the change of variables, sending `0` to `0` and
 `(x, y)` to `(u²x + r, u³y + u²sx + t)`. -/
-def mapVariableChangeFun : (C • W).toAffine.Point → W.toAffine.Point
+private def mapVariableChangeFun : (C • W).toAffine.Point → W.toAffine.Point
   | .zero => .zero
   | .some x y h => .some ((C.u : F) ^ 2 * x + C.r)
       ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
       ((variableChange_nonsingular W C x y).mpr h)
 
-@[simp] lemma mapVariableChangeFun_zero : mapVariableChangeFun W C 0 = 0 := rfl
+@[simp] private lemma mapVariableChangeFun_zero : mapVariableChangeFun W C 0 = 0 := rfl
 
-lemma mapVariableChangeFun_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
+private lemma mapVariableChangeFun_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
     mapVariableChangeFun W C (.some x y h)
       = .some ((C.u : F) ^ 2 * x + C.r) ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
           ((variableChange_nonsingular W C x y).mpr h) := rfl
 
-lemma mapVariableChangeFun_injective :
+private lemma mapVariableChangeFun_injective :
     Function.Injective (mapVariableChangeFun W C) := by
   have hu : (C.u : F) ≠ 0 := C.u.ne_zero
   rintro (_ | ⟨x₁, y₁, h₁⟩) (_ | ⟨x₂, y₂, h₂⟩) h
@@ -226,7 +237,7 @@ so gives no equation for it. -/
 -- not `@[simp]`: Mathlib's `AddEquiv.cast_apply` is itself a simp lemma and rewrites this
 -- left-hand side to the raw `cast` first, so `simpNF` reports the statement is not in
 -- simp-normal form and the lemma could never fire. It is used by `rw` below, which is syntactic.
-lemma cast_some {V V' : WeierstrassCurve F} (h : V = V') {x y : F}
+private lemma cast_some {V V' : WeierstrassCurve F} (h : V = V') {x y : F}
     (hns : V.toAffine.Nonsingular x y) :
     AddEquiv.cast (M := fun V : WeierstrassCurve F ↦ V.toAffine.Point) h (some x y hns)
       = some x y (h ▸ hns) := by
@@ -276,10 +287,20 @@ def equivVariableChange : (C • W).toAffine.Point ≃+ W.toAffine.Point :=
     right_inv := hright
     map_add' := (mapVariableChange W C).map_add' }
 
-lemma equivVariableChange_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
+@[simp] lemma equivVariableChange_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
     equivVariableChange W C (.some x y h)
       = .some ((C.u : F) ^ 2 * x + C.r) ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
-          ((variableChange_nonsingular W C x y).mpr h) := rfl
+          ((variableChange_nonsingular W C x y).mpr h) :=
+  mapVariableChangeFun_some W C h
+
+/-- What the group homomorphism does to a point given by coordinates. Stated separately from
+`equivVariableChange_some` because a consumer holding a `→+` should not have to know that it is
+the underlying map of an `≃+`. -/
+@[simp] lemma mapVariableChange_some {x y : F} (h : (C • W).toAffine.Nonsingular x y) :
+    mapVariableChange W C (.some x y h)
+      = .some ((C.u : F) ^ 2 * x + C.r) ((C.u : F) ^ 3 * y + (C.u : F) ^ 2 * C.s * x + C.t)
+          ((variableChange_nonsingular W C x y).mpr h) :=
+  mapVariableChangeFun_some W C h
 
 end Point
 
