@@ -115,8 +115,12 @@ theorem isContinuous_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero
 /-- **Membership in `Cont A` may be tested on any representative.** The `@[simp]` form of
 `isContinuous_ofValuation` at the level of the set: `ofValuation w` is a continuous *point*
 exactly when `w` is a continuous *valuation*, for every `w` in the class. Representative
-independence is the whole reason `cont` is well defined, so this is its characteristic lemma. -/
-@[simp]
+independence is the whole reason `cont` is well defined, so this is its characteristic lemma.
+
+Not `@[simp]`, although it is the characteristic lemma: `mem_cont_iff`, `isContinuous_def` and
+`Valuation.isContinuous_def` are already simp lemmas, and together they rewrite this left-hand
+side all the way down to the raw quantifier, so no statement about `ofValuation w ∈ cont A` can
+be in simp-normal form. -/
 theorem ofValuation_mem_cont_iff {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (w : Valuation A Γ₀) : ofValuation w ∈ cont A ↔ w.IsContinuous :=
   isContinuous_ofValuation w
