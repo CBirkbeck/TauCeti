@@ -51,8 +51,10 @@ Note that `Spv (A, I)` is *not* pro-constructible in `Spv A` in general, so
 * `TauCeti.ValuationSpectrum.IsAdmissible` : his condition `I ⊆ √(T · A)` on a numerator set.
 * `TauCeti.ValuationSpectrum.rationalFamily` : Wedhorn's family `R`, which generates the
   topology of `Spv (A, I)`.
-(The compact witness topology used in the proof — coinduced along `r_I` — is private: it is a
-proof device for the patch criterion, not API.)
+(Two things used in the proof are deliberately private: the compact witness topology coinduced
+along `r_I`, a device for the patch criterion rather than API, and the two branch lemmas of step
+(ii), whose statements are specific to the case split. `exists_isAdmissible_basicOpenFinset`
+below is the public neighbourhood interface that merges them.)
 
 ## Main results
 
@@ -174,7 +176,7 @@ private theorem exists_vle_one_mul_of_characteristicSubgroup_eq_top {v : Spv A}
 /-- **Wedhorn 7.5(ii), the branch `Γ_v = cΓ_v`.** A witness `d` with `v(ds) ≥ 1` turns the basic
 open `Spv(A)(f/s)` into `Spv(A)({df, 1}/ds)`, whose numerator set contains `1` and is therefore
 admissible for every `I`. -/
-theorem exists_basicOpenFinset_of_characteristicSubgroup_eq_top {v : Spv A}
+private theorem exists_basicOpenFinset_of_characteristicSubgroup_eq_top {v : Spv A}
     (htop : characteristicSubgroup v.valuation = ⊤) {f s : A} (hv : v ∈ basicOpen f s) :
     ∃ (T : Finset A) (u : A), (1 : A) ∈ T ∧ v ∈ basicOpenFinset T u ∧
       basicOpenFinset T u ⊆ basicOpen f s := by
@@ -198,7 +200,7 @@ theorem exists_basicOpenFinset_of_characteristicSubgroup_eq_top {v : Spv A}
 an exponent per generator; adjoining those powers to `{f}` gives an admissible numerator set
 inside `Spv(A)(f/s)`. Wedhorn takes one uniform exponent, which would need every generator to
 have value `≤ 1`; a separate exponent per generator avoids that. -/
-theorem exists_basicOpenFinset_of_forall_cofinalValue {v : Spv A} (S : Finset A)
+private theorem exists_basicOpenFinset_of_forall_cofinalValue {v : Spv A} (S : Finset A)
     (hcof : ∀ σ ∈ S, CofinalValue v.valuation σ) {f s : A} (hv : v ∈ basicOpen f s) :
     ∃ T : Finset A, f ∈ T ∧ (∀ σ ∈ S, ∃ k : ℕ, σ ^ k ∈ T) ∧ v ∈ basicOpenFinset T s := by
   classical
