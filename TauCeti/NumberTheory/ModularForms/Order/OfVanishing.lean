@@ -28,8 +28,8 @@ irregular cusps in odd weight) belongs to the general-level layer and is not def
 * `TauCeti.orderOfVanishingAt_pos_iff`: for a nonzero holomorphic function, positive
   order characterizes the zeros.
 * `TauCeti.orderOfVanishingAt_smul`: invariance along the action of the group.
-* `TauCeti.orderOfVanishingAt_of_coe_eq_add_one`: invariance under the unit translation, for
-  a `1`-periodic function.
+* `TauCeti.orderOfVanishingAt_eq_of_coe_eq_add`: invariance under the period translation, for
+  a periodic function.
 
 ## References
 
@@ -209,20 +209,23 @@ lemma orderOfVanishingAt_smul [SlashInvariantFormClass F Γ k] (f : F) {γ}
     meromorphicOrderAt_congr (hcongr.filter_mono nhdsWithin_le_nhds),
     meromorphicOrderAt_mul_of_ne_zero h_an h_ne]
 
-/-- The meromorphic order of a `1`-periodic function agrees at `z + 1` and at `z`. -/
-theorem meromorphicOrderAt_add_one_of_periodic {g : ℂ → ℂ} (hper : Function.Periodic g 1)
-    (z : ℂ) : meromorphicOrderAt g (z + 1) = meromorphicOrderAt g z := by
-  rw [← meromorphicOrderAt_comp_add_const_eq_meromorphicOrderAt (f := g) (c := 1) (x := z)]
+/-- The meromorphic order of a `c`-periodic function agrees at `z + c` and at `z`. Only a proof
+helper for `orderOfVanishingAt_eq_of_coe_eq_add`: it is a fact about periodic functions on `ℂ`,
+with no modular-forms content, so it is not exported from this module. -/
+private theorem meromorphicOrderAt_add_of_periodic {g : ℂ → ℂ} {c : ℂ}
+    (hper : Function.Periodic g c) (z : ℂ) :
+    meromorphicOrderAt g (z + c) = meromorphicOrderAt g z := by
+  rw [← meromorphicOrderAt_comp_add_const_eq_meromorphicOrderAt (f := g) (c := c) (x := z)]
   exact congrArg (fun h => meromorphicOrderAt h z) (funext fun x => hper x)
 
-/-- The vanishing order of a `1`-periodic function on `ℍ` agrees at `z` and at `z + 1`. For a
-level-one form this is what makes the two `ρ`-corners of the fundamental domain contribute
-equally to the valence formula. -/
-theorem orderOfVanishingAt_of_coe_eq_add_one (hper : Function.Periodic (f ∘ ofComplex) 1)
-    {z w : ℍ} (hzw : (w : ℂ) = (z : ℂ) + 1) :
+/-- The vanishing order of a `c`-periodic function on `ℍ` agrees at `z` and at `z + c`. For a
+level-one form and `c = 1` this is what makes the two `ρ`-corners of the fundamental domain
+contribute equally to the valence formula. -/
+theorem orderOfVanishingAt_eq_of_coe_eq_add {c : ℂ} (hper : Function.Periodic (f ∘ ofComplex) c)
+    {z w : ℍ} (hzw : (w : ℂ) = (z : ℂ) + c) :
     orderOfVanishingAt f w = orderOfVanishingAt f z := by
   rw [orderOfVanishingAt_def, orderOfVanishingAt_def, hzw,
-    meromorphicOrderAt_add_one_of_periodic hper]
+    meromorphicOrderAt_add_of_periodic hper]
 
 
 end TauCeti

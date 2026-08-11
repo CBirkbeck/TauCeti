@@ -394,7 +394,7 @@ private lemma sum_corner_windingNumber_mul_order {f : ℍ → ℂ} {H : ℝ} (hH
     rw [← UpperHalfPlane.coe_I, ofComplex_apply]
   -- The two `ρ`-corners are a unit translate apart, so periodicity equates their orders.
   have hordρ1 : orderOfVanishingAt f (ofComplex ((ρ : ℂ) + 1)) = orderOfVanishingAt f ρ :=
-    orderOfVanishingAt_of_coe_eq_add_one hper
+    orderOfVanishingAt_eq_of_coe_eq_add hper
       (by rw [ofComplex_apply_of_im_pos coe_rho_add_one_im_pos])
   rw [Finset.sum_insert corner_notMem.1, Finset.sum_insert corner_notMem.2, Finset.sum_singleton,
     windingNumber_fdBoundary_I hH, windingNumber_fdBoundary_rho hρH,
@@ -491,11 +491,13 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     rw [orderOfVanishingAt_corner_eq_zero f hH hUdom hoff hc
       fun hcT => hcni (Finset.mem_inter.mpr ⟨hcT, hc⟩)]
     simp
+  -- Named because `Finset.sum_sdiff` is rewritten right-to-left, so the subset's two `Finset`
+  -- arguments are not determined by the goal and must be pinned here.
+  have hTE : T ∩ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ⊆ T := Finset.inter_subset_left
   have key := sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH.le hnorm hinv hHgt hper hoffγ hU
     hUdom hoff hmero hpos hbase hga hgz
   rw [sum_attach_mul_orderOfVanishingAt hpos fun z => Contour.windingNumber (fdBoundary H) 0 5 z,
-    ← Finset.sum_sdiff (show T ∩ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ⊆ T from
-      Finset.inter_subset_left),
+    ← Finset.sum_sdiff hTE,
     Finset.sdiff_inter_self_left, Finset.sum_subset Finset.inter_subset_right hmiss,
     sum_sdiff_corner_windingNumber_mul_order hH hpos hin,
     sum_corner_windingNumber_mul_order hH hper] at key
