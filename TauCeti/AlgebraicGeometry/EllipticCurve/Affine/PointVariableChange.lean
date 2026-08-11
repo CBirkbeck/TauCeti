@@ -39,8 +39,10 @@ so it carries points to points. Those identities are what make the map additive.
 `mapVariableChange` and the `AddEquiv.cast` computation lemma are all `private`: they are how the
 isomorphism is built, not part of what it offers. The public surface is the transformation
 lemmas, `variableChange_equation` and `variableChange_nonsingular`, and `equivVariableChange`
-with its two coordinate lemmas `equivVariableChange_some` and `equivVariableChange_symm_some` —
-all `@[simp]`, so a consumer never needs to unfold anything. Anyone wanting the bare homomorphism
+with its two coordinate lemmas `equivVariableChange_some` and `equivVariableChange_symm_some`.
+Of these, `variableChange_equation`, `variableChange_nonsingular` and the two coordinate lemmas
+are `@[simp]`, so a consumer never needs to unfold anything; the five transformation lemmas are
+the ingredients those are built from and are used by name. Anyone wanting the bare homomorphism
 takes `(equivVariableChange W C).toAddMonoidHom`.
 
 That is also why the section is a plain `public section` rather than `@[expose]`. Exposing the
@@ -125,8 +127,8 @@ lemma variableChange_addY (x₁ x₂ y₁ ℓ : F) :
 
 /-- **The slope under the change of variables**, scaling by `u` and translating by `s` — the law
 the change of variables applies to a slope, as `y` scales by `u³` and `x` by `u²`. Stated for two
-points of `C • W` on the curve whose `x`-coordinates are not exchanged by `negY`, which is where
-`slope` is defined. -/
+points of `C • W` on the curve, excluding the degenerate case `x₁ = x₂ ∧ y₁ = negY x₂ y₂` —
+where the two points are inverse to one another and the chord through them is vertical. -/
 lemma variableChange_slope [DecidableEq F] {x₁ x₂ y₁ y₂ : F}
     (h₁ : (C • W).toAffine.Equation x₁ y₁) (h₂ : (C • W).toAffine.Equation x₂ y₂)
     (hxy : ¬(x₁ = x₂ ∧ y₁ = (C • W).toAffine.negY x₂ y₂)) :
