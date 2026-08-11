@@ -86,6 +86,8 @@ theorem univ_eq_pair [DecidableEq (L ≃ₐ[K] L)] {σ : L ≃ₐ[K] L} (hσ : �
     (Finset.univ : Finset (L ≃ₐ[K] L)) = {1, σ} :=
   (Finset.eq_univ_of_forall fun φ ↦ by simpa using algEquiv_eq_one_or_eq K L hσ φ).symm
 
+end Algebra.IsQuadraticExtension
+
 /-! ### Restriction to an intermediate field in a tower -/
 
 section Tower
@@ -94,10 +96,11 @@ variable (K L : Type*) [Field K] [Field L] [Algebra K L] [Normal K L]
   (M : Type*) [Field M] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
 
 /-- **`σ` restricts to the identity on `L` exactly when it fixes `L` pointwise.** Mathlib's
-`AlgEquiv.restrictNormal_eq_one_iff` says this for an `IntermediateField`; `AlgEquiv.restrictNormal`
+Mathlib's `AlgEquiv.restrictNormal_eq_one_iff` says this for an `IntermediateField`;
+`AlgEquiv.restrictNormal`
 itself is already stated for an abstract algebra `L`, so only the characterisation needs
 transporting to a tower `K ⊆ L ⊆ M`. -/
-theorem restrictNormal_eq_one_iff (σ : M ≃ₐ[K] M) :
+theorem AlgEquiv.restrictNormal_eq_one_iff_algebraMap (σ : M ≃ₐ[K] M) :
     σ.restrictNormal L = 1 ↔ ∀ x : L, σ (algebraMap L M x) = algebraMap L M x := by
   constructor
   · intro h x
@@ -110,6 +113,5 @@ theorem restrictNormal_eq_one_iff (σ : M ≃ₐ[K] M) :
 
 end Tower
 
-end Algebra.IsQuadraticExtension
 
 end
