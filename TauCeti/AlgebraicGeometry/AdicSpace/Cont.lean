@@ -89,7 +89,7 @@ the point `ofValuation w` is continuous exactly when `w` is, for every `w` in th
 merely for the canonical one. It rests on `TauCeti.Valuation.IsEquiv.isContinuous_iff`, and
 would fail for a continuity predicate quantified over the ambient codomain. -/
 @[simp]
-theorem isContinuous_ofValuation {Γ₀ : Type*} [LinearOrderedCommMonoidWithZero Γ₀]
+theorem isContinuous_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (w : Valuation A Γ₀) : (ofValuation w).IsContinuous ↔ w.IsContinuous :=
   (isEquiv_valuation_ofValuation w).isContinuous_iff
 
