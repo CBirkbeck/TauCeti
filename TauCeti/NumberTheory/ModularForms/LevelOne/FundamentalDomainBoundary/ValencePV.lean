@@ -547,7 +547,7 @@ theorem finsum_orderOfVanishingOnOrbit_add_elliptic_add_qExpansionOrderAtCusp_eq
             MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ''
           ↑(T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
         orderOfVanishingOnOrbit (k := k) f q :=
-    sum_ofComplex_eq_finsum_orbit (k := k) f
+    sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit (k := k) f
       (fun z hz => hpos z (Finset.mem_sdiff.mp hz).1)
       (fun z hz => (hin z (Finset.mem_sdiff.mp hz).1 (Finset.mem_sdiff.mp hz).2).1)
       (fun z hz => (hin z (Finset.mem_sdiff.mp hz).1 (Finset.mem_sdiff.mp hz).2).2.1)
