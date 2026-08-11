@@ -102,8 +102,10 @@ theorem mem_cont_iff (v : Spv A) : v ∈ cont A ↔ v.IsContinuous := Iff.rfl
 /-- **Continuity may be tested on any representative.** This is what makes `cont` well defined:
 the point `ofValuation w` is continuous exactly when `w` is, for every `w` in the class, not
 merely for the canonical one. It rests on `TauCeti.Valuation.IsEquiv.isContinuous_iff`, and
-would fail for a continuity predicate quantified over the ambient codomain. -/
-@[simp]
+would fail for a continuity predicate quantified over the ambient codomain.
+
+Not `@[simp]`: `isContinuous_def` already rewrites the left-hand side, so this would not be in
+simp-normal form. -/
 theorem isContinuous_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
     (w : Valuation A Γ₀) : (ofValuation w).IsContinuous ↔ w.IsContinuous :=
   (isEquiv_valuation_ofValuation w).isContinuous_iff
