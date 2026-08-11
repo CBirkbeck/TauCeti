@@ -9,14 +9,17 @@ public import Mathlib.NumberTheory.Modular
 /-!
 # Orbits of the modular group on the upper half-plane
 
-Every `SL(2, ℤ)`-orbit of `ℍ` has a representative in the standard fundamental domain,
-and translation by one preserves orbits. These are the orbit-space inputs of the
-valence formula.
+Every `SL(2, ℤ)`-orbit of `ℍ` has a representative in the standard fundamental domain, and
+translation by one preserves orbits. On the *open* domain the representative is moreover unique,
+so the orbit map is injective there. These are the orbit-space inputs of the valence formula: the
+first says a sum over orbits can be read off representatives, the last says doing so counts each
+orbit once.
 
 ## Main declarations
 
 * `TauCeti.ModularGroup.exists_rep_mem_fd`: every orbit meets `𝒟`.
 * `TauCeti.ModularGroup.orbit_mk_int_vadd`: integer translation preserves the orbit.
+* `TauCeti.ModularGroup.orbit_mk_injOn_fdo`: the orbit map is injective on `𝒟ᵒ`.
 -/
 
 public section

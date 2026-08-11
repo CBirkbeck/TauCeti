@@ -80,8 +80,9 @@ lemma hasFiniteSupport_orderOfVanishingOnOrbit [ModularFormClass F 𝒮ℒ k] {f
 
 /-- A divisor sum over points of the **open** fundamental domain, reindexed over the orbits those
 points represent. The reindexing is lossless because the orbit map is injective on `𝒟ᵒ`
-(`ModularGroup.orbit_mk_injOn_fdo`); on the closed domain it would double-count the boundary,
-whose two halves `T` and `S` identify. -/
+(`ModularGroup.orbit_mk_injOn_fdo`). On the closed domain `𝒟` it is not injective — `T` identifies
+the two vertical edges and `S` the two halves of the arc — so a set containing two identified
+boundary representatives would count their common orbit twice. -/
 lemma sum_orderOfVanishingAt_eq_finsum_orbit [SlashInvariantFormClass F 𝒮ℒ k] {X : Finset ℍ}
     (hX : ∀ p ∈ X, p ∈ 𝒟ᵒ) :
     ∑ p ∈ X, orderOfVanishingAt f p =
