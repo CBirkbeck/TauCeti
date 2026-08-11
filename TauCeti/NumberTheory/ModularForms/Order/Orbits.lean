@@ -25,8 +25,10 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
   `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit`: finite support on orbits for a
   nonzero form.
-* `TauCeti.ModularForm.exists_rep_mem_fd_of_orderOfVanishingOnOrbit_ne_zero`: an orbit of
-  nonzero order is represented by a point of `𝒟` at which the form has nonzero order.
+* `TauCeti.ModularForm.exists_rep_mem_fd_orderOfVanishingAt_eq`: every orbit is represented
+  by a point of `𝒟` carrying the orbit's order, with
+  `TauCeti.ModularForm.exists_rep_mem_fd_of_orderOfVanishingOnOrbit_ne_zero` its
+  nonvanishing corollary.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_eq_finsum_orbit`: a divisor sum reindexed over
   the orbits its points represent, given that the orbit map is injective on them.
 
@@ -68,19 +70,30 @@ lemma orderOfVanishingOnOrbit_mk [SlashInvariantFormClass F 𝒮ℒ k] (p : ℍ)
   unfold orderOfVanishingOnOrbit
   rfl
 
-/-- An orbit of nonzero order is represented by a point of the closed fundamental domain at
-which the form itself has nonzero order.
+/-- Every orbit is represented by a point of the closed fundamental domain carrying the orbit's
+vanishing order.
 
 This is the direction the valence formula consumes: it turns a statement about an orbit — where
 there is no point to evaluate at — into one about a representative sitting in `𝒟`, which the
 contour hypotheses can then talk about. Every orbit meets `𝒟`
 (`ModularGroup.exists_rep_mem_fd`); the content is that the order transfers, which is
-`orderOfVanishingOnOrbit_mk`. -/
+`orderOfVanishingOnOrbit_mk`.
+
+⚠ `𝒟` is the **closed** domain, so this gives no injectivity: two boundary representatives can
+share an orbit. The reindexing lemmas that need injectivity take the open `𝒟ᵒ` instead. -/
+lemma exists_rep_mem_fd_orderOfVanishingAt_eq [SlashInvariantFormClass F 𝒮ℒ k]
+    (q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) :
+    ∃ p ∈ 𝒟, Quotient.mk'' p = q ∧ orderOfVanishingAt f p = orderOfVanishingOnOrbit f q := by
+  obtain ⟨p, hmk, hfd⟩ := ModularGroup.exists_rep_mem_fd q
+  exact ⟨p, hfd, hmk, by rw [← hmk, orderOfVanishingOnOrbit_mk]⟩
+
+/-- An orbit of nonzero order is represented by a point of `𝒟` at which the form has nonzero
+order — the form in which the valence formula's non-vanishing hypotheses apply. -/
 lemma exists_rep_mem_fd_of_orderOfVanishingOnOrbit_ne_zero [SlashInvariantFormClass F 𝒮ℒ k]
     {q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ} (hq : orderOfVanishingOnOrbit f q ≠ 0) :
     ∃ p ∈ 𝒟, Quotient.mk'' p = q ∧ orderOfVanishingAt f p ≠ 0 := by
-  obtain ⟨p, hmk, hfd⟩ := ModularGroup.exists_rep_mem_fd q
-  exact ⟨p, hfd, hmk, by rwa [← orderOfVanishingOnOrbit_mk f p, hmk]⟩
+  obtain ⟨p, hfd, hmk, hord⟩ := exists_rep_mem_fd_orderOfVanishingAt_eq f q
+  exact ⟨p, hfd, hmk, hord ▸ hq⟩
 
 /-- For a nonzero level-one form, only finitely many orbits carry nonzero order. -/
 lemma hasFiniteSupport_orderOfVanishingOnOrbit [ModularFormClass F 𝒮ℒ k] {f : F}
