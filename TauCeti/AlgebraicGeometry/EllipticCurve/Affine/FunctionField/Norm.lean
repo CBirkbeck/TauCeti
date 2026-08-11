@@ -15,7 +15,9 @@ The function field `F(W)` of an affine Weierstrass curve is a quadratic extensio
 function field `F(x)` — that is `WeierstrassCurve.Affine.finrank_functionField` — so every
 function has an algebra norm `N : F(W) → F(x)`. Mathlib's `Algebra.norm` supplies it, over
 `RatFunc F` itself once `RatFunc.liftAlgebra` is in scope. This file computes the degree of that
-norm of a function regular away from infinity: it is the degree of the polynomial norm.
+norm of a function regular away from infinity: it is the degree of the polynomial norm. The
+coordinate values that follow from it — `ord_∞ x = -2`, `ord_∞ y = -3` — are proved where the
+valuation lives, in `FunctionField/InftyValuation.lean`.
 
 ## Main results
 
@@ -123,7 +125,7 @@ private theorem natDegree_norm_smul_basis {a b : F[X]} (ha : a ≠ 0) (hb : b �
   norm_cast
 
 /-- **The degree of the norm, in the `(a + b y)/p` normal form.** -/
-theorem intDegree_norm_eq_max {f : W.FunctionField} (hf : f ≠ 0) {a b p : F[X]}
+private theorem intDegree_norm_eq_max {f : W.FunctionField} (hf : f ≠ 0) {a b p : F[X]}
     (ha : a ≠ 0) (hb : b ≠ 0) (hp : p ≠ 0)
     (h : f * algebraMap F[X] W.FunctionField p =
       algebraMap W.CoordinateRing W.FunctionField (a • 1 + b • CoordinateRing.mk W Y)) :
