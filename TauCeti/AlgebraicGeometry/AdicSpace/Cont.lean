@@ -34,9 +34,9 @@ So `IsContinuous` is defined here by testing the *canonical* valuation of the po
 
 * `TauCeti.ValuationSpectrum.IsContinuous` : continuity of a point of `Spv A`, in the
   attained-value sense.
-* `TauCeti.ValuationSpectrum.cont` : **Wedhorn's `Cont A`**, the set of continuous points. It
-  carries `[SeparatelyContinuousMul A]`, without which the attained-value test can admit strictly
-  more points than Wedhorn's value-group one — see its docstring.
+* `TauCeti.ValuationSpectrum.cont` : **Wedhorn's `Cont A`**, the set of continuous points, cut
+  out by the attained-value test — see its docstring for how that relates to Wedhorn's
+  value-group quantifier.
 
 ## Main results
 
@@ -67,7 +67,7 @@ namespace TauCeti.ValuationSpectrum
 
 open TauCeti TauCeti.Valuation
 
-variable {A : Type*} [CommRing A] [TopologicalSpace A] [SeparatelyContinuousMul A]
+variable {A : Type*} [CommRing A] [TopologicalSpace A]
 
 /-- **Continuity of a point of `Spv A`.** A point is *continuous* when its canonical valuation
 is, in the attained-value sense of `TauCeti.Valuation.IsContinuous`. Any representative would do
@@ -78,7 +78,6 @@ Under `[SeparatelyContinuousMul A]` this is Wedhorn's Definition 7.7; see `cont`
 def IsContinuous (v : Spv A) : Prop :=
   v.valuation.IsContinuous
 
-omit [SeparatelyContinuousMul A] in
 /-- Continuity of a point, unfolded to its canonical valuation. -/
 @[simp]
 theorem isContinuous_def (v : Spv A) : v.IsContinuous ↔ v.valuation.IsContinuous :=
@@ -88,21 +87,18 @@ theorem isContinuous_def (v : Spv A) : v.IsContinuous ↔ v.valuation.IsContinuo
 it a subspace; here it is the underlying set, and the subspace topology is the one the *coercion*
 `↥(cont A)` carries as a subtype of `Spv A`.
 
-`[SeparatelyContinuousMul A]` is load-bearing rather than incidental. `IsContinuous` tests the
-values `v` attains, whereas Wedhorn's Definition 7.7 quantifies over the whole value group `Γ_v`,
-a general element of which is a ratio `v b / v c`. Reaching those ratios is exactly
-`TauCeti.Valuation.IsContinuous.isOpen_lt_div`, which needs multiplication by a fixed element to
-be continuous. Without that hypothesis the two conditions can differ and this set would be
-strictly larger than `Cont A`, so the name would be wrong. Every setting `Cont A` is used in — a
-Huber ring, and `Spa` beyond it — is a topological ring, which supplies it. -/
-def cont (A : Type*) [CommRing A] [TopologicalSpace A] [SeparatelyContinuousMul A] :
-    Set (Spv A) :=
+Membership is the attained-value test of `TauCeti.Valuation.IsContinuous`, which is Wedhorn's
+Definition 7.7 once multiplication is separately continuous —
+`isContinuous_iff_forall_isOpen_lt_div` is that step, and it is where
+`[SeparatelyContinuousMul A]` is asked for. It is *not* asked for
+here: an unused instance argument is a lint violation, and every setting `Cont A` is used in — a
+Huber ring, and `Spa` beyond it — is a topological ring, which supplies it at the point of use. -/
+def cont (A : Type*) [CommRing A] [TopologicalSpace A] : Set (Spv A) :=
   {v : Spv A | v.IsContinuous}
 
 @[simp]
 theorem mem_cont_iff (v : Spv A) : v ∈ cont A ↔ v.IsContinuous := Iff.rfl
 
-omit [SeparatelyContinuousMul A] in
 /-- **Continuity may be tested on any representative.** This is what makes `cont` well defined:
 the point `ofValuation w` is continuous exactly when `w` is, for every `w` in the class, not
 merely for the canonical one. It rests on `TauCeti.Valuation.IsEquiv.isContinuous_iff`, and
@@ -112,18 +108,12 @@ theorem isContinuous_ofValuation {Γ₀ : Type*} [LinearOrderedCommGroupWithZero
     (w : Valuation A Γ₀) : (ofValuation w).IsContinuous ↔ w.IsContinuous :=
   (isEquiv_valuation_ofValuation w).isContinuous_iff
 
-/-- **Wedhorn Remark 7.8(2).** Over a discrete ring every point is continuous.
-
-The ambient `[SeparatelyContinuousMul A]` cannot be dropped here even though discreteness implies
-it mathematically: `ContinuousMul` is derivable from `DiscreteTopology` only by the explicit term
-`⟨continuous_of_discreteTopology⟩`, not by instance synthesis, and `cont A` needs the instance
-already in its *statement* — so a local `have` inside the proof would come too late. -/
+/-- **Wedhorn Remark 7.8(2).** Over a discrete ring every point is continuous. -/
 @[simp]
 theorem cont_eq_univ [DiscreteTopology A] : cont A = Set.univ :=
   Set.eq_univ_of_forall fun v ↦
     (mem_cont_iff v).mpr ((isContinuous_def v).mpr (isContinuous_of_discreteTopology v.valuation))
 
-omit [SeparatelyContinuousMul A] in
 /-- **Wedhorn Remark 7.9.** A continuous ring homomorphism pulls continuous points back to
 continuous points, so it restricts to a map `Cont B → Cont A`. -/
 theorem IsContinuous.comap {B : Type*} [CommRing B] [TopologicalSpace B] {φ : A →+* B}
@@ -139,7 +129,7 @@ form a consumer of the subspaces actually applies: the pointwise version has to 
 through membership and preimage by hand at each call site, and it is this containment — not the
 pointwise implication — that the module docstring claims. -/
 theorem cont_subset_comap_preimage {B : Type*} [CommRing B] [TopologicalSpace B]
-    [SeparatelyContinuousMul B] {φ : A →+* B} (hφ : Continuous φ) :
+    {φ : A →+* B} (hφ : Continuous φ) :
     cont B ⊆ comap φ ⁻¹' cont A := fun v hv ↦
   Set.mem_preimage.mpr ((mem_cont_iff _).mpr (IsContinuous.comap hφ ((mem_cont_iff v).mp hv)))
 
