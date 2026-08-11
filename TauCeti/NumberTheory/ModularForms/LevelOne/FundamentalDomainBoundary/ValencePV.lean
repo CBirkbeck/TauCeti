@@ -564,6 +564,43 @@ theorem finsum_orderOfVanishingOnOrbit_mem_image_add_elliptic_add_qExpansionOrde
   push_cast
   exact key
 
+/-- The valence formula for a **modular form**, with the meromorphy hypothesis discharged.
+
+`sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq` asks its caller for
+`hmero`, meromorphy of `f ∘ ofComplex` at each divisor point, because it is stated for a merely
+slash-invariant `f`. A modular form is holomorphic, so at a point of the upper half plane that
+hypothesis is automatic: `ModularFormClass.holo` gives `MDiff ⇑f`, and
+`analyticAt_comp_ofComplex` turns it into analyticity, hence meromorphy, wherever `0 < im`.
+
+The interior hypothesis `hpos` already supplies that positivity, so nothing replaces `hmero` —
+this form takes one hypothesis fewer than the general one. -/
+theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_modularFormClass
+    [ModularFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
+    {U : Set ℂ} (hH : 1 < H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
+    (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hU : IsOpen U)
+    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
+    (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
+    (hpos : ∀ s ∈ T, 0 < s.im)
+    (hin : ∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
+      1 < ‖z‖ ∧ |z.re| < 1 / 2 ∧ z.im < H)
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      cuspFunction 1 ⇑f q ≠ 0) :
+    ∑ z ∈ T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
+          ((orderOfVanishingAt ⇑f (ofComplex z) : ℤ) : ℂ)
+        + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
+        + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
+        + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 :=
+  sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq f hS hH hnorm hinv hper hoffγ
+    hU hUdom hoff
+    (fun s hsT _ ↦ (TauCeti.UpperHalfPlane.analyticAt_comp_ofComplex
+      (ModularFormClass.holo f) (hpos s hsT)).meromorphicAt)
+    hpos hin hga hgz
+
 end ModularForm
 
 end TauCeti
