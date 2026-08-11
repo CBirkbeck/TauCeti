@@ -18,8 +18,8 @@ Each hypothesis pays for one step and no other.
 
 * The zero sequence of units and the Baire property give
   `TauCeti.HasZeroSequenceOfUnits.closure_image_mem_nhds_zero`: the *closure* of the image of a
-  neighbourhood of zero is a neighbourhood of zero. Nothing weaker than Baire is available here,
-  and nothing stronger is used.
+  neighbourhood of zero is a neighbourhood of zero. Supplying that closure step is the only use
+  the Baire hypothesis is put to here; whether a weaker hypothesis would do is not addressed.
 * Nonarchimedean plus countable generation of `𝓝 0` turn that into a sequence of subgroups
   (`TauCeti.NonarchimedeanAddGroup.exists_antitone_basis_openAddSubgroup`) along which the
   approximation can run.
