@@ -7,7 +7,7 @@ module
 
 public import TauCeti.RingTheory.Huber.Continuous.Valuation
 public import TauCeti.RingTheory.Valuation.CharacteristicGroup
-public import TauCeti.RingTheory.Valuation.SpanPow
+import TauCeti.RingTheory.Valuation.SpanPow
 
 /-!
 # Cofinal values on a generating set make a valuation continuous
@@ -28,7 +28,7 @@ with `v b ≠ 0` the task is to find one `n` with `v < v b` on the image of `I�
 Only **one** generator has to be cofinal: one whose value dominates the others. Cofinality there
 produces an `n` with `v t₀ ⁿ < v b`, the valuation bound on a power of a spanned ideal
 (`Valuation.map_le_pow_of_mem_span_pow_succ`) gives `v ≤ v t₀ ⁿ` on `Iⁿ⁺¹`, and the two
-inequalities compose. That is `isContinuous_of_cofinalValue_of_forall_le`, which asks for no
+inequalities compose. That is `isContinuous_of_forall_le_of_cofinalValue`, which asks for no
 finiteness at all.
 
 The form a call site actually holds — a *finite* generating set with *every* generator cofinal, as
@@ -46,7 +46,7 @@ from these hypotheses.
 
 ## Main results
 
-* `TauCeti.Huber.PairOfDefinition.isContinuous_of_cofinalValue_of_forall_le` : the engine, needing
+* `TauCeti.Huber.PairOfDefinition.isContinuous_of_forall_le_of_cofinalValue` : the engine, needing
   cofinality at a single dominating generator.
 * `TauCeti.Huber.PairOfDefinition.isContinuous_of_forall_cofinalValue` : its call-site form, for a
   finite generating set with every generator cofinal.
@@ -72,7 +72,7 @@ cofinal value, then `v` is continuous.
 No finiteness is needed: the spanning set is an arbitrary `Set`, cofinality is asked of `t₀`
 alone, and `t₀` need not even lie in the spanning set — dominating it is enough.
 `isContinuous_of_forall_cofinalValue` below is the reading a call site usually holds. -/
-theorem isContinuous_of_cofinalValue_of_forall_le (P : PairOfDefinition A) (v : Valuation A Γ₀)
+theorem isContinuous_of_forall_le_of_cofinalValue (P : PairOfDefinition A) (v : Valuation A Γ₀)
     {s : Set P.ringOfDefinition} {t₀ : P.ringOfDefinition}
     (hgen : Ideal.span s = P.idealOfDefinition)
     (hle : ∀ t ∈ s, v ((t : P.ringOfDefinition) : A) ≤ v ((t₀ : P.ringOfDefinition) : A))
@@ -126,7 +126,7 @@ theorem isContinuous_of_forall_cofinalValue (P : PairOfDefinition A) (v : Valuat
     simp only [Finset.coe_empty, Ideal.span_empty, pow_one, Ideal.mem_bot] at hy
     simpa [hy] using zero_lt_iff.mpr hb
   · obtain ⟨t₀, ht₀s, ht₀max⟩ := s.exists_max_image (fun t ↦ v ((t : P.ringOfDefinition) : A)) hne
-    exact isContinuous_of_cofinalValue_of_forall_le P v hgen
+    exact isContinuous_of_forall_le_of_cofinalValue P v hgen
       (fun t ht ↦ ht₀max t (Finset.mem_coe.mp ht)) h1 (hcof t₀ ht₀s)
 
 end TauCeti.Huber.PairOfDefinition
