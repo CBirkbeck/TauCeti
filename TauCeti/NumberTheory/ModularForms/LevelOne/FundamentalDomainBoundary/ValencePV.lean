@@ -14,7 +14,7 @@ import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 import TauCeti.Analysis.Complex.UpperHalfPlane.Rho
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Interior
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
-import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.NonCorner
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.NonCorner.Arc
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.Value
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.AddOne.Value
 
