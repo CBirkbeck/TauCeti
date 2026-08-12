@@ -104,7 +104,7 @@ noncomputable def tRep (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2)
 
 -- `tRep` and `heckeSlashSum` are not `@[expose]`, so a module downstream of this one cannot
 -- unfold either body. Their characteristic equations below are therefore the interface, not a
--- restatement of something already visible; they are written `(rfl)` in the style of
+-- restatement of something already visible; `tRep_def` is written `(rfl)` in the style of
 -- `ModularForms/Basic.lean`, which opts out of exporting the definitional equality itself.
 
 /-- Defining equation for `tRep`: the transpose of `σᵢ δ`. Since `tRep` is not `@[expose]`, a
@@ -136,11 +136,9 @@ noncomputable def heckeSlashSum (f : ℍ → ℂ) : ℍ → ℂ :=
 
 /-- The pointwise value of the slash sum: the sum of the slashed values. This is the equation
 the reindexing proof of Prop 3.30 works from. -/
-@[simp]
-lemma heckeSlashSum_apply (f : ℍ → ℂ) (τ : ℍ) :
-    heckeSlashSum k D f τ =
-      ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ)), (f ∣[k] tRep D i) τ := by
-  simp [heckeSlashSum]
+lemma heckeSlashSum_apply (f : ℍ → ℂ) (τ : ℍ) : heckeSlashSum k D f τ =
+    ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ), (f ∣[k] tRep D i) τ :=
+  Finset.sum_apply ..
 
 /-- The slash sum is additive in `f`. -/
 @[simp]
