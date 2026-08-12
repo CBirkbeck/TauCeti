@@ -229,7 +229,9 @@ theorem id_comp (φ : Isogeny W₁ W₂) : (id W₂).comp φ = φ :=
 theorem comp_id (φ : Isogeny W₁ W₂) : φ.comp (id W₁) = φ :=
   Isogeny.ext <| by simp
 
-/-- Composition of isogenies is associative. -/
+/-- Composition of isogenies is associative; the right-associated form is the simp-normal one,
+as for `CategoryTheory.Category.assoc`. -/
+@[simp]
 theorem comp_assoc {W₄ : WeierstrassCurve.Affine F} (χ : Isogeny W₃ W₄) (ψ : Isogeny W₂ W₃)
     (φ : Isogeny W₁ W₂) : (χ.comp ψ).comp φ = χ.comp (ψ.comp φ) :=
   Isogeny.ext <| AlgHom.ext fun x ↦ by simp
