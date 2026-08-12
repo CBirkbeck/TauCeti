@@ -632,7 +632,7 @@ theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrder
     [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {S T : Finset ℂ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hpos : ∀ s ∈ T, 0 < s.im) :
-    ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H → 1 < H →
+    ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H →
       (∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
         AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0) →
       (∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
@@ -651,7 +651,9 @@ theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrder
     ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos one_mem_strictPeriods_SL⟩
   have hbdd : IsBoundedAtImInfty (⇑f : ℍ → ℂ) := ModularFormClass.bdd_at_infty f
   obtain ⟨H₀, hH₀⟩ := exists_threshold_cuspFunction_ne_zero hf
-  refine ⟨H₀, fun H hHH₀ hH hoffγ hin hT => ?_⟩
+  refine ⟨max H₀ 2, fun H hHH₀ hoffγ hin hT => ?_⟩
+  have hH₀H : H₀ ≤ H := le_trans (le_max_left H₀ 2) hHH₀
+  have hH : 1 < H := by linarith [le_max_right H₀ 2, hHH₀]
   obtain ⟨U, hU, hUdom, hUsub, hUZ⟩ := UpperHalfPlane.exists_isOpen_zeros_inter hg hf
     (K := UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H)
     (image_subset_iff.mpr fun p _ ↦ p.im_pos)
@@ -665,7 +667,7 @@ theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrder
     (fun q hq => (differentiableOn_cuspFunction_ball one_pos hper hg hbdd).analyticAt <|
       Metric.isOpen_ball.mem_nhds <| mem_ball_zero_iff.mpr <|
         (mem_closedBall_zero_iff.mp hq).trans_lt (fdBoundaryQRadius_lt_one (zero_lt_one.trans hH)))
-    (hH₀ H hHH₀)
+    (hH₀ H hH₀H)
 
 end ModularForm
 
