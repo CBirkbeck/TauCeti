@@ -11,14 +11,20 @@ public import Mathlib.RingTheory.MvPolynomial.Basic
 # The universal normalised elliptic divisibility sequence
 
 A normalised EDS over a commutative ring `R` is determined by three parameters `b, c, d : R`.
-Taking those parameters to be three indeterminates gives the **universal** normalised EDS
+Taking those parameters to be three indeterminates gives the **universal** `normEDS` family
 
 `universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ`,
 
-of which every normalised EDS is a specialization: `normEDS b c d` is `universalNormEDS` followed
-by the evaluation sending the indeterminates to `b, c, d` (`normEDS_eq_aeval`), and likewise for
+of which every sequence **of the form** `normEDS b c d` is a specialization: it is
+`universalNormEDS` followed by the evaluation sending the indeterminates to `b, c, d`
+(`normEDS_eq_aeval`), and likewise for
 `preNormEDS` and for the two complement sequences (`preNormEDS_eq_aeval`, `complEDS₂_eq_aeval`,
 `complEDS_eq_aeval`).
+
+Note the claim is about the *constructed function* `normEDS`, not about elliptic divisibility
+sequences in the abstract: the pinned Mathlib does not know that `normEDS b c d` satisfies
+`IsEllipticDvdSequence` — it records proving so as a TODO — so nothing here says every EDS arises
+this way, only that every `normEDS b c d` does.
 
 The point is that an identity between expressions in the terms of a normalised EDS need only be
 proved once, over `MvPolynomial NormEDSParam ℤ`, and then specialises to every ring and every
@@ -101,9 +107,9 @@ its specializations (`normEDS_eq_aeval`), so an identity between terms of a norm
 proved here once and read off for every ring and every choice of parameters. -/
 noncomputable def universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ := normEDS (X B) (X C) (X D)
 
-/-- `universalNormEDS` is the normalised EDS at the three indeterminates. The definition body is
-not exposed, so this is the normal form downstream reasoning should rewrite with rather than
-unfolding the definition. -/
+/-- `universalNormEDS` at the three indeterminates. This is the normal form downstream reasoning
+should rewrite with: unfolding the definition by name instead re-exposes the `X B`/`X C`/`X D`
+spelling at every call site, which is the coupling this lemma exists to remove. -/
 @[simp]
 theorem universalNormEDS_apply (n : ℤ) :
     universalNormEDS n = normEDS (X NormEDSParam.B) (X NormEDSParam.C) (X NormEDSParam.D) n := (rfl)
