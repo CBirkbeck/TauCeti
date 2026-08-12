@@ -517,8 +517,8 @@ private theorem fejer_avg_eq_integral (ψ : V → ℂ) (hcont : Continuous ψ)
 
 /-! ### Step C: the integral of a positive-definite function has nonnegative real part -/
 
-/-- **The overlap-ratio weights converge to the integral.** For an integrable continuous `ψ`, the
-integrals of `ψ` against the weights `overlapRatio n` converge to `∫ ψ` as `n → ∞`. -/
+/-- **The overlap-ratio weights converge to the integral.** For an integrable `ψ`, the integrals
+of `ψ` against the weights `overlapRatio n` converge to `∫ ψ` as `n → ∞`. -/
 private theorem tendsto_integral_overlapRatio_mul (ψ : V → ℂ) (hint : Integrable ψ) :
     Tendsto (fun n : ℕ => ∫ v, (overlapRatio (n : ℝ) v : ℂ) * ψ v) atTop (nhds (∫ x, ψ x)) := by
   have hone : (∫ x, ψ x) = ∫ x, (1 : ℂ) * ψ x := by simp
