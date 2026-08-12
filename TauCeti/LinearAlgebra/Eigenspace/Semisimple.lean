@@ -39,8 +39,9 @@ private theorem isSemisimpleModule_mapSubmodule_eigenspace (f : End K V) (μ : K
   -- `AEval.restrict_equiv_mapSubmodule` restricts `Algebra.lsmul K K V f` rather than `f`, but
   -- the two restrictions and their invariance proofs agree at default transparency
   have hres : LinearMap.restrict (p := f.eigenspace μ) (q := f.eigenspace μ)
-      (Algebra.lsmul K K V f) hinv = μ • LinearMap.id :=
-    Module.End.restrict_eigenspace f μ
+      (Algebra.lsmul K K V f) hinv = μ • LinearMap.id := by
+    ext w
+    exact congrArg Subtype.val (LinearMap.congr_fun (Module.End.restrict_eigenspace f μ) w)
   refine (AEval.restrict_equiv_mapSubmodule f _ hinv).isSemisimpleModule_iff.mp ?_
   refine End.isSemisimple_of_squarefree_aeval_eq_zero (p := X - C μ)
     (irreducible_X_sub_C μ).squarefree ?_
