@@ -111,10 +111,12 @@ when specialising the universal curve along it. -/
 /-- The `a₆` coefficient of the cusp curve vanishes. -/
 @[simp] lemma cusp_a₆ (R : Type*) [Zero R] : (cusp R).a₆ = 0 := (rfl)
 
-/-- `(1, 1)` lies on the cusp curve `Y² = X³` over `ℤ`. Specializing the universal curve along this
-point is the cheap route to nonvanishing statements, since `ψₙ(1,1) = n`: a universal quantity that
-vanished would have to vanish in `ℤ` here. The `CharZero Universal.Ring` instance in
-`TauCeti/AlgebraicGeometry/EllipticCurve/Universal.lean` is obtained this way. -/
+/-- `(1, 1)` lies on the cusp curve `Y² = X³`, over any commutative ring.
+
+The case `R = ℤ` is the one the universal curve uses: specializing along that point is the cheap
+route to nonvanishing statements, since `ψₙ(1,1) = n`, so a universal quantity that vanished would
+have to vanish in `ℤ`. The `CharZero Universal.Ring` instance in
+`TauCeti/AlgebraicGeometry/EllipticCurve/Universal.lean` is obtained that way. -/
 lemma equation_cusp_one_one (R : Type*) [CommRing R] : (cusp R).Equation 1 1 := by
   simp [Affine.Equation, Affine.polynomial, cusp, Polynomial.evalEval]
 
