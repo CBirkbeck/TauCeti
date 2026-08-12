@@ -38,7 +38,8 @@ than `Ideal.map`, and a comap of a finitely generated ideal need not be finitely
 * `TauCeti.Huber.PairOfDefinition.adjoin`: adjoining finitely many power-bounded elements gives
   another pair of definition.
 * `TauCeti.Huber.PairOfDefinition.enlargeBounded`: joining a ring of definition with any
-  bounded subring gives a ring of definition, and
+  bounded subring gives a ring of definition, with `enlargeBounded_ringOfDefinition` and
+  `enlargeBounded_idealOfDefinition` naming both components, and
   `TauCeti.Huber.PairOfDefinition.sup`: the join of two rings of definition is a ring of
   definition.
 * `TauCeti.Huber.isBounded_iff_exists_ringOfDefinition_ge`: a subring is bounded exactly when
@@ -290,11 +291,15 @@ theorem enlargeBounded_ringOfDefinition (P : PairOfDefinition A) (B : Subring A)
     (hB : IsBounded (B : Set A)) :
     (P.enlargeBounded B hB).ringOfDefinition = P.ringOfDefinition ⊔ B := (rfl)
 
-/-- The bounded subring is contained in the enlarged ring of definition. -/
-theorem le_enlargeBounded (P : PairOfDefinition A) (B : Subring A) (hB : IsBounded (B : Set A)) :
-    B ≤ (P.enlargeBounded B hB).ringOfDefinition := by
-  rw [enlargeBounded_ringOfDefinition]
-  exact _root_.le_sup_right
+/-- The ideal of definition of `P.enlargeBounded B hB` is the image of `I`, as for any
+`enlarge`. -/
+theorem enlargeBounded_idealOfDefinition (P : PairOfDefinition A) (B : Subring A)
+    (hB : IsBounded (B : Set A)) :
+    (P.enlargeBounded B hB).idealOfDefinition =
+      P.idealOfDefinition.map (Subring.inclusion
+        (show P.ringOfDefinition ≤ (P.enlargeBounded B hB).ringOfDefinition by
+          rw [enlargeBounded_ringOfDefinition]; exact _root_.le_sup_left)) :=
+  P.enlarge_idealOfDefinition _ _ _
 
 /-- **Wedhorn Corollary 6.4, the product half.** The join of two rings of definition is again a
 ring of definition; its ideal of definition is the image of the first one's. -/
@@ -342,7 +347,7 @@ theorem isBounded_iff_exists_ringOfDefinition_ge {B : Subring A} :
     IsBounded (B : Set A) ↔ ∃ P : PairOfDefinition A, B ≤ P.ringOfDefinition := by
   refine ⟨fun hB ↦ ?_, fun ⟨P, hP⟩ ↦ P.isBounded_ringOfDefinition.subset hP⟩
   obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
-  exact ⟨P.enlargeBounded B hB, P.le_enlargeBounded B hB⟩
+  exact ⟨P.enlargeBounded B hB, by simp⟩
 
 /-- Wedhorn Corollary 6.4: an element of a Huber ring is power-bounded exactly when it belongs
 to some ring of definition. Equivalently, `A°` is the union of all rings of definition. -/
