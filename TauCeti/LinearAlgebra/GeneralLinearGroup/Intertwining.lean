@@ -39,13 +39,17 @@ theorem comp_inv_eq_of_comp_eq (f : V →ₗ[K] W) (a : GeneralLinearGroup K V)
     (b : GeneralLinearGroup K W)
     (hab : f.comp (a : Module.End K V) = (b : Module.End K W).comp f) :
     f.comp (↑a⁻¹ : Module.End K V) = (↑b⁻¹ : Module.End K W).comp f := by
-  -- `↑a⁻¹` is the inverse equivalence's map, so the transposition lemma for equivalences applies
-  change f.comp a.toLinearEquiv.symm.toLinearMap = _
-  rw [LinearEquiv.comp_toLinearMap_symm_eq, LinearMap.comp_assoc]
-  change _ = (↑b⁻¹ : Module.End K W).comp (f.comp (a : Module.End K V))
-  rw [hab, ← LinearMap.comp_assoc]
-  ext x
-  exact (b.toLinearEquiv.symm_apply_apply _).symm
+  have hb : (↑b⁻¹ : Module.End K W).comp (b : Module.End K W) = LinearMap.id := b.inv_val
+  have ha : (a : Module.End K V).comp (↑a⁻¹ : Module.End K V) = LinearMap.id := a.val_inv
+  calc f.comp (↑a⁻¹ : Module.End K V)
+      = ((LinearMap.id : Module.End K W).comp f).comp (↑a⁻¹ : Module.End K V) := by
+        rw [LinearMap.id_comp]
+    _ = (↑b⁻¹ : Module.End K W).comp ((f.comp (a : Module.End K V)).comp
+          (↑a⁻¹ : Module.End K V)) := by
+        rw [← hb, hab]
+        simp only [LinearMap.comp_assoc]
+    _ = (↑b⁻¹ : Module.End K W).comp f := by
+        rw [LinearMap.comp_assoc, ha, LinearMap.comp_id]
 
 end GeneralLinearGroup
 
