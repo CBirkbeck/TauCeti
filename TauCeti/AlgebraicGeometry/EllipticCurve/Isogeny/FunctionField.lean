@@ -22,6 +22,10 @@ would then make the source coordinate algebraic as well, contradicting its trans
 * `TauCeti.Isogeny.pullback_injective`: a coordinate pullback satisfying `MapsInfinity` is
   injective.
 * `TauCeti.Isogeny.fieldPullback`: the induced embedding of function fields.
+* `TauCeti.Isogeny.degree`: the degree of an isogeny, the dimension of the source function field
+  over the image of `fieldPullback`; `TauCeti.Isogeny.degree_id` computes it for the identity.
+  Finiteness of that extension — which is what makes the degree honest, since `finrank` of an
+  infinite extension reads `0` — is not proved here, so nothing below asserts positivity.
 
 The construction is the coordinate-ring form of D. Angdinata's function-field definition of an
 isogeny and follows the nonconstancy argument described in the elliptic-curves roadmap. The
@@ -178,6 +182,30 @@ theorem id_fieldPullback (W : WeierstrassCurve.Affine F) :
   apply (id W).fieldPullback_unique
   intro x
   simp
+
+/-- **The degree of an isogeny**: the dimension of the source function field `W₁.FunctionField`
+over the image of `fieldPullback` — the pulled-back copy of the target's function field
+`W₂.FunctionField`, which `fieldPullback` embeds isomorphically.
+
+This is the shape of Silverman, *The Arithmetic of Elliptic Curves*, II.2.4(a). Two things it
+does **not** yet carry. The extension is finite for a nonconstant map of one-variable function
+fields, but that is not proved here, and `Module.finrank` of an infinite extension reads `0`, so
+`degree` is only known to be the honest dimension once finiteness is available. Consequently
+positivity is unavailable too: `degree_id` below is computed from the extension being trivial,
+not from any general bound. -/
+noncomputable def degree (φ : Isogeny W₁ W₂) : ℕ :=
+  Module.finrank φ.fieldPullback.fieldRange W₁.FunctionField
+
+/-- The identity isogeny has degree one: its function-field pullback is the identity, so the
+extension it measures is trivial. -/
+@[simp]
+theorem degree_id (W : WeierstrassCurve.Affine F) : (id W).degree = 1 := by
+  have hrange : (id W).fieldPullback.fieldRange = ⊤ := by
+    rw [id_fieldPullback]
+    ext x
+    simp
+  rw [degree, hrange]
+  exact IntermediateField.finrank_top
 
 end Isogeny
 
