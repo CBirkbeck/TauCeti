@@ -52,7 +52,11 @@ This file proves only the summability that the evaluation needs. The evaluation 
 `TauCeti.Huber.weightedEval` in `WeightedEval/Map.lean`, its packaging as a ring homomorphism is
 `TauCeti.Huber.weightedEvalHom` in `WeightedEval/Hom.lean`, and its continuity is
 `TauCeti.Huber.continuous_weightedEvalHom` in `WeightedEval/Continuous.lean`. The uniqueness that
-makes Proposition 5.50 a universal property is still unproved.
+makes Proposition 5.50 a universal property is
+`TauCeti.Huber.weightedRestrictedSubring_ringHom_ext_of_continuous` in
+`WeightedRestrictedSeries.lean`, and the two are assembled into the `∃!` statement of 5.50 by
+`TauCeti.Huber.existsUnique_continuous_ringHom_weightedRestrictedSubring` in
+`WeightedEval/UniversalProperty.lean`.
 
 ## References
 

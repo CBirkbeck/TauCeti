@@ -1,0 +1,79 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import TauCeti.RingTheory.Huber.WeightedEval.Continuous
+
+/-!
+# The universal property of `A⟨X⟩_T`
+
+Wedhorn's Proposition 5.50 is the universal property of `A⟨X₁, …, Xₖ⟩_T`: a ring homomorphism
+`φ : A →+* B` into a complete Hausdorff nonarchimedean ring, continuous at zero, together with
+values `bᵢ ∈ B` for the variables whose weighted monomials stay bounded, extends to `A⟨X⟩_T` in
+exactly one continuous way.
+
+The two halves are already in place and this file is their assembly. Existence is the evaluation
+homomorphism: `weightedEvalHom` is a ring map, `weightedEvalHom_weightedC` and
+`weightedEvalHom_weightedX` give its values on the generators, and `continuous_weightedEvalHom`
+makes it continuous. Uniqueness is `weightedRestrictedSubring_ringHom_ext_of_continuous`, where the
+density of the polynomials (Wedhorn 5.49) is what propagates agreement on the generators to the
+whole ring.
+
+## Main results
+
+* `TauCeti.Huber.eq_weightedEvalHom_of_continuous`: a continuous ring homomorphism out of `A⟨X⟩_T`
+  with the prescribed values on constants and variables *is* the evaluation. This is the form a
+  consumer identifying a map already in hand will want.
+* `TauCeti.Huber.existsUnique_continuous_ringHom_weightedRestrictedSubring`: Proposition 5.50
+  itself, as the `∃!` the phrase "universal property" names.
+
+## References
+
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition 5.50.
+-/
+
+public section
+
+namespace TauCeti.Huber
+
+variable {k : ℕ} {A B : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
+  [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B] [CompleteSpace B]
+  [T3Space B] {φ : A →+* B} {T : Fin k → Set A} {b : Fin k → B}
+
+/-- **The uniqueness half of Wedhorn 5.50, in identifying form.** A continuous ring homomorphism
+`A⟨X⟩_T →+* B` that agrees with `φ` on the constants and takes the value `bᵢ` at each variable is
+the evaluation homomorphism.
+
+`weightedRestrictedSubring_ringHom_ext_of_continuous` states the same uniqueness as an
+extensionality principle between two arbitrary homomorphisms; this is that principle with the
+evaluation supplied as one of them, which is how a map already constructed gets identified. -/
+theorem eq_weightedEvalHom_of_continuous (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
+    (hb : IsWeightBounded φ T b) {ψ : weightedRestrictedSubring T hT →+* B} (hψ : Continuous ψ)
+    (hC : ∀ a, ψ (weightedC T hT a) = φ a) (hX : ∀ i, ψ (weightedX T hT i) = b i) :
+    ψ = weightedEvalHom hT hφ hb :=
+  weightedRestrictedSubring_ringHom_ext_of_continuous hT hψ (continuous_weightedEvalHom hT hφ hb)
+    (fun a ↦ (hC a).trans (weightedEvalHom_weightedC hT hφ hb a).symm)
+    (fun i ↦ (hX i).trans (weightedEvalHom_weightedX hT hφ hb i).symm)
+
+/-- **Wedhorn 5.50, the universal property of `A⟨X⟩_T`.** Given `φ : A →+* B` continuous at zero
+and values `b` making the weighted monomials bounded, there is exactly one continuous ring
+homomorphism `A⟨X⟩_T →+* B` restricting to `φ` on the constants and sending each `Xᵢ` to `bᵢ`.
+
+The uniqueness is among *continuous* homomorphisms, and that restriction is what the proof uses:
+agreement is forced on the polynomials, and only continuity carries it across their closure.
+Whether a discontinuous extension with the same values on the generators can exist is not
+addressed here, in keeping with `weightedRestrictedSubring_ringHom_ext_of_continuous`. -/
+theorem existsUnique_continuous_ringHom_weightedRestrictedSubring (hT : IsWeightFamily T)
+    (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b) :
+    ∃! ψ : weightedRestrictedSubring T hT →+* B, Continuous ψ ∧
+      (∀ a, ψ (weightedC T hT a) = φ a) ∧ ∀ i, ψ (weightedX T hT i) = b i :=
+  ⟨weightedEvalHom hT hφ hb,
+    ⟨continuous_weightedEvalHom hT hφ hb, weightedEvalHom_weightedC hT hφ hb,
+      weightedEvalHom_weightedX hT hφ hb⟩,
+    fun _ ⟨hψ, hC, hX⟩ ↦ eq_weightedEvalHom_of_continuous hT hφ hb hψ hC hX⟩
+
+end TauCeti.Huber
+
+end
