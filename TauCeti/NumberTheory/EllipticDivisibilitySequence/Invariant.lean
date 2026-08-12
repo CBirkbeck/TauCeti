@@ -79,11 +79,11 @@ public section
 
 namespace IsEllipticNet
 
-variable {R S : Type*} [CommSemiring R] [CommSemiring S] (W : ℤ → R)
+variable {R S : Type*} [Semiring R] [Semiring S] (W : ℤ → R)
 
-/-! The definitions and their equation and naturality lemmas are pure products and sums, so they
-ask only for a commutative semiring. Subtraction enters with the elliptic relator, and the
-invariance theorems live in the `CommRing` section below. -/
+/-! The definitions and their equation and naturality lemmas are pure products and sums, in a fixed
+order, so they ask only for a semiring — neither commutativity nor subtraction. Both enter with the
+elliptic relator, and the invariance theorems live in the `CommRing` section below. -/
 
 /-- The candidate numerator of the invariant, for an arbitrary sequence `W` — no hypothesis is
 imposed here. When `W` is an elliptic net, the ratio `invarNum W s n / invarDenom W s n` is
