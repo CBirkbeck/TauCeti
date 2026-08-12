@@ -14,8 +14,9 @@ Mathlib computes the terms of `normEDS` up to the fourth (`normEDS_zero`, `normE
 
 `normEDS b c d 6 = (normEDS b c d 5 - d ^ 2) * b * c`,
 
-expressed through the fifth rather than expanded: the fifth term has no short closed form, and the
-shape above is the one the divisibility arguments downstream consume.
+expressed through the fifth rather than expanded. The fifth term does have a closed form,
+`normEDS b c d 5 = d * b ^ 4 - c ^ 3`, but the factored shape above is the one the divisibility
+arguments downstream consume, so the statement keeps `normEDS _ 5` rather than substituting it.
 
 Adapted from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
