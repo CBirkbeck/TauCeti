@@ -71,7 +71,7 @@ Ported from J. Xu's `LutzNagell/Universal.lean` in AINTLIB (`github.com/CBirkbec
 Apache 2.0, `main` at `1c1c7466`, `projects/NagellLutz/LutzNagell/Universal.lean`), the source the
 roadmap pins for the Nagell–Lutz strand. Every declaration here comes from that file: the `Coeff`
 index type and the whole `Universal` namespace (`curve`, `Poly`, `Ring`, `Field`, `polyToField`,
-`pointedCurve`, `Affine.point`, `Jacobian.point`, `curvePoly`, `curveRing`, `curveField` with their
+`pointedCurve`, `Affine.point`, `Jacobian.point`, `curvePoly` and `curveRing` with their
 lemmas); and the specialization API (`cusp`, `specialize`, `polyEval`, `ringEval` with their
 compatibility lemmas).
 That file's header reads `Authors: Junyan Xu`; following this repository's convention for adapted
@@ -122,7 +122,7 @@ open MvPolynomial (X) in
 /-- The universal Weierstrass curve: the curve over `ℤ[A₁,⋯,A₆] = MvPolynomial Coeff ℤ` (the
 **universal polynomial ring** for Weierstrass curves) whose five coefficients are the five
 indeterminates. Every Weierstrass curve is one of its specializations (`map_specialize`); its base
-changes are `curvePoly`, `curveRing` and `curveField = pointedCurve`. -/
+changes are `curvePoly`, `curveRing` and `pointedCurve`. -/
 def curve : Affine (MvPolynomial Coeff ℤ) :=
   { a₁ := X A₁, a₂ := X A₂, a₃ := X A₃, a₄ := X A₄, a₆ := X A₆ }
 
@@ -146,11 +146,6 @@ protected abbrev Ring : Type := curve.CoordinateRing
 /-- The universal field for pointed Weierstrass curves is
 the field of fractions of the universal ring. -/
 protected abbrev Field : Type := FractionRing Universal.Ring
-
-/-- The commutative ring structure on `Poly`. `Polynomial.commRing` is stated for `R[X]` over a
-commutative `R`, and finding it for the iterated `(MvPolynomial Coeff ℤ)[X][Y]` needs the inner
-`R[X]` to be seen as commutative first, which instance search does not do on its own here. -/
-instance : CommRing Poly := Polynomial.commRing
 
 /-- The ring homomorphism `ℤ[A₁,⋯,A₆,X,Y] → Universal.Field`: reduce modulo the Weierstrass
 polynomial, then include the universal ring into its fraction field. Every statement about the
@@ -193,7 +188,8 @@ lemma algebraMap_field_injective :
 
 /-- The universal **pointed** Weierstrass curve: the universal curve base-changed to the universal
 field, over which it is an elliptic curve (instance below) carrying the distinguished point `(X, Y)`
-(`equation_point`, packaged as `Affine.point`). `curveField_eq` identifies it with `curveField`. -/
+(`equation_point`, packaged as `Affine.point`). It is the base change to `Universal.Field`, and so
+is the third of `curvePoly`, `curveRing`, `pointedCurve`. -/
 abbrev pointedCurve : WeierstrassCurve Universal.Field := baseChange curve Universal.Field
 
 /-- The universal pointed Weierstrass curve is an elliptic curve: its discriminant is a unit,
@@ -254,15 +250,6 @@ abbrev curvePoly : WeierstrassCurve Poly := curve.baseChange Poly
 /-- The base change of the universal curve from `ℤ[A₁,⋯,A₆]` to `ℤ[A₁,⋯,A₆,X,Y]/⟨P⟩`
 (the universal ring), where `P` is the Weierstrass polynomial. -/
 abbrev curveRing : WeierstrassCurve Universal.Ring := curve.baseChange Universal.Ring
-/-- The base change of the universal curve from `ℤ[A₁,⋯,A₆]` to `Frac(ℤ[A₁,⋯,A₆,X,Y]/⟨P⟩)`
-(the universal field), where `P` is the Weierstrass polynomial. -/
-abbrev curveField : WeierstrassCurve Universal.Field := curve.baseChange Universal.Field
-
-/-- `curveField` and `pointedCurve` are the same curve under two names: this file writes
-`pointedCurve` when the distinguished point is what matters and `curveField` alongside `curvePoly`
-and `curveRing` when the base change is. Holds by `rfl`. -/
-lemma curveField_eq : curveField = pointedCurve := rfl
-
 end Universal
 
 /-- The cusp curve `Y² = X³` over a commutative ring `R`. -/
