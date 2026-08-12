@@ -120,7 +120,9 @@ private theorem natDegree_norm_X :
     (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing Polynomial.X)).natDegree = 2 := by
   rw [Algebra.norm_algebraMap, finrank_coordinateRing, natDegree_X_pow]
 
-/-- The norm of the coordinate function `y` has degree `3`. Private, as above. -/
+/-- The norm of the coordinate function `y` has degree `3`: it is `-(X³ + a₂X² + a₄X + a₆)`.
+Private: it exists to compute `infinityPlace.mk_Y`. Unlike `x`, the function `y` does not come
+from `R[X]`, so the general fact is the basis decomposition `CoordinateRing.norm_smul_basis`. -/
 private theorem natDegree_norm_mk_Y :
     (Algebra.norm R[X] (CoordinateRing.mk W Y)).natDegree = 3 := by
   have hY : CoordinateRing.mk W Y = (0 : R[X]) • 1 + (1 : R[X]) • CoordinateRing.mk W Y := by simp
@@ -134,17 +136,14 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
 /-- Every function is `(a + b y) / p` with `a b p` polynomials, `p ≠ 0` — the form the degree
 formula consumes: numerator in the `1, Y` basis, denominator a polynomial. -/
-private theorem exists_smul_basis_div (f : W.FunctionField) :
-    ∃ a b p : F[X], p ≠ 0 ∧
-      f * algebraMap F[X] W.FunctionField p =
-        algebraMap W.CoordinateRing W.FunctionField (a • 1 + b • CoordinateRing.mk W Y) := by
-  obtain ⟨⟨u, ⟨d, _hd⟩⟩, hf⟩ := IsLocalization.mk'_surjective
+private theorem exists_smul_basis_div (f : W.FunctionField) : ∃ a b p : F[X], p ≠ 0 ∧
+    f * algebraMap F[X] W.FunctionField p =
+      algebraMap W.CoordinateRing W.FunctionField (a • 1 + b • CoordinateRing.mk W Y) := by
+  obtain ⟨⟨u, -, p, hp, rfl⟩, hf⟩ := IsLocalization.surj
     (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) f
-  obtain ⟨p, hp, rfl⟩ := _hd
   obtain ⟨a, b, rfl⟩ := CoordinateRing.exists_smul_basis_eq u
   refine ⟨a, b, p, nonZeroDivisors.ne_zero hp, ?_⟩
-  rw [← hf, IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField]
-  exact IsLocalization.mk'_spec W.FunctionField _ _
+  rwa [IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField]
 
 /-- Scaling a decomposition by a polynomial: `(a + by)/p = (ac + bcy)/(pc)`. -/
 private theorem smul_basis_div_mul {f : W.FunctionField} {a b p : F[X]}
