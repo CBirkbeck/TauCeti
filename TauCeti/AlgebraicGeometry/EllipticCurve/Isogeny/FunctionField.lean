@@ -23,7 +23,8 @@ would then make the source coordinate algebraic as well, contradicting its trans
   injective.
 * `TauCeti.Isogeny.fieldPullback`: the induced embedding of function fields.
 * `TauCeti.Isogeny.degree`: the degree of an isogeny, the dimension of the source function field
-  over the image of `fieldPullback`; `TauCeti.Isogeny.degree_id` computes it for the identity.
+  over the image of `fieldPullback`, with `TauCeti.Isogeny.degree_def` the equation lemma the
+  module boundary makes necessary; `TauCeti.Isogeny.degree_id` computes it for the identity.
   Finiteness of that extension — which is what makes the degree honest, since `finrank` of an
   infinite extension reads `0` — is not proved here, so nothing below asserts positivity.
 
@@ -196,15 +197,19 @@ not from any general bound. -/
 noncomputable def degree (φ : Isogeny W₁ W₂) : ℕ :=
   Module.finrank φ.fieldPullback.fieldRange W₁.FunctionField
 
+/-- The defining formula for `degree`. The definition's body is not exposed across the module
+boundary, so this is how downstream modules compute with it. -/
+@[simp]
+theorem degree_def (φ : Isogeny W₁ W₂) :
+    φ.degree = Module.finrank φ.fieldPullback.fieldRange W₁.FunctionField := (rfl)
+
 /-- The identity isogeny has degree one: its function-field pullback is the identity, so the
 extension it measures is trivial. -/
-@[simp]
 theorem degree_id (W : WeierstrassCurve.Affine F) : (id W).degree = 1 := by
   have hrange : (id W).fieldPullback.fieldRange = ⊤ := by
     rw [id_fieldPullback]
-    ext x
-    simp
-  rw [degree, hrange]
+    exact AlgHom.fieldRange_eq_top.mpr Function.surjective_id
+  rw [degree_def, hrange]
   exact IntermediateField.finrank_top
 
 end Isogeny
