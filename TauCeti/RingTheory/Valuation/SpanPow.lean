@@ -9,10 +9,15 @@ public import Mathlib.RingTheory.Ideal.Operations
 public import Mathlib.RingTheory.Valuation.Basic
 
 /-!
-# A valuation on a power of a finitely generated ideal
+# A valuation on a power of a spanned ideal
 
 If `v ≤ δ` on a generating set `s` and `v ≤ 1` on the ideal `Ideal.span s`, then
 `v ≤ δ ^ n` on `Ideal.span s ^ (n + 1)`.
+
+`s` is an arbitrary `Set R`: the bound needs no finiteness. Finiteness enters only at the
+intended call site, Wedhorn's Theorem 7.10, where `δ` is chosen as the maximum of `v` over a
+*finite* generating set of an ideal of definition — a maximum that needs the set to be finite,
+whereas this bound does not.
 
 ## Why the two hypotheses, and why the shift
 
@@ -46,9 +51,8 @@ open scoped Pointwise
 variable {R : Type*} [CommRing R] {Γ₀ : Type*} [LinearOrderedCommMonoidWithZero Γ₀]
   (v : Valuation R Γ₀) {s : Set R} {δ : Γ₀}
 
-/-- The engine of `map_le_pow_of_mem_span_pow_succ`: a bound on `v (r * y)` for `y` in the span of
-the `n`-fold pointwise power and `r` in the ideal. The coefficient `r` is quantified **inside** the
-induction, because the scalar-multiplication case has to feed `r * c` back in. -/
+/-- The engine of `map_le_pow_of_mem_span_pow_succ`: for `y` in the span of the `n`-fold pointwise
+power of `s` and `r` in the ideal, `v (r * y) ≤ δ ^ n`. -/
 private theorem map_mul_le_pow_of_mem_span_pow (hs : ∀ t ∈ s, v t ≤ δ)
     (h1 : ∀ a ∈ Ideal.span s, v a ≤ 1) (n : ℕ) :
     ∀ y ∈ Ideal.span (s ^ n), ∀ r ∈ Ideal.span s, v (r * y) ≤ δ ^ n := by
@@ -66,7 +70,7 @@ private theorem map_mul_le_pow_of_mem_span_pow (hs : ∀ t ∈ s, v t ≤ δ)
     | add y₁ y₂ _ _ ih₁ ih₂ =>
       intro r hr
       rw [mul_add]
-      exact le_trans (v.map_add _ _) (max_le (ih₁ r hr) (ih₂ r hr))
+      exact v.map_add_le (ih₁ r hr) (ih₂ r hr)
     | smul c y _ ih' =>
       intro r hr
       rw [smul_eq_mul, ← mul_assoc]
@@ -84,6 +88,6 @@ theorem map_le_pow_of_mem_span_pow_succ (hs : ∀ t ∈ s, v t ≤ δ)
   rw [pow_succ', hspan] at ha
   refine Submodule.mul_induction_on ha (fun r hr y hy ↦ ?_) fun x y hx hy ↦ ?_
   · exact v.map_mul_le_pow_of_mem_span_pow hs h1 n y hy r hr
-  · exact le_trans (v.map_add _ _) (max_le hx hy)
+  · exact v.map_add_le hx hy
 
 end Valuation
