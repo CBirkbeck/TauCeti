@@ -63,6 +63,8 @@ and scalars commute past it (`ModularForm.rat_smul_slash_of_det_pos`). Over a ge
 
 ## Main results
 
+* `HeckeRing.GL2.tRep_def`, `HeckeRing.GL2.heckeSlashSum_apply`: the characteristic equations,
+  which are the interface since neither definition is `@[expose]`.
 * `HeckeRing.GL2.det_tRep_pos`: the representatives have positive determinant.
 * `HeckeRing.GL2.heckeSlashSum_add`, `heckeSlashSum_zero`, `heckeSlashSum_smul`: `ℂ`-linearity.
 
@@ -100,6 +102,16 @@ noncomputable def tRep (i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2
     GL (Fin 2) ℚ :=
   (transposeGLEquiv 2 ((i.out : GL (Fin 2) ℚ) * (D.out : GL (Fin 2) ℚ))).unop
 
+-- `tRep` and `heckeSlashSum` are not `@[expose]`, so a module downstream of this one cannot
+-- unfold either body. Their characteristic equations below are therefore the interface, not a
+-- restatement of something already visible; they are written `(rfl)` in the style of
+-- `ModularForms/Basic.lean`, which opts out of exporting the definitional equality itself.
+
+/-- Defining equation for `tRep`: the transpose of `σᵢ δ`. -/
+lemma tRep_def (i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ))) :
+    tRep D i =
+      (transposeGLEquiv 2 ((i.out : GL (Fin 2) ℚ) * (D.out : GL (Fin 2) ℚ))).unop := (rfl)
+
 /-- Each representative lies in `Δ`: `σᵢ ∈ SL₂(ℤ) ≤ Δ`, `δ ∈ Δ`, and transposition preserves
 `Δ`. -/
 lemma tRep_mem_posDetInt (i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ))) :
@@ -123,6 +135,14 @@ the choices, and an action, exactly on slash-invariant `f`; that is a separate t
 read this definition as "the Hecke operator" until it is available. -/
 noncomputable def heckeSlashSum (f : ℍ → ℂ) : ℍ → ℂ :=
   ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ)), f ∣[k] tRep D i
+
+/-- The pointwise value of the slash sum: the sum of the slashed values. This is the equation
+the reindexing proof of Prop 3.30 works from. -/
+@[simp]
+lemma heckeSlashSum_apply (f : ℍ → ℂ) (τ : ℍ) :
+    heckeSlashSum k D f τ =
+      ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ)), (f ∣[k] tRep D i) τ := by
+  simp [heckeSlashSum]
 
 /-- The slash sum is additive in `f`. -/
 @[simp]
