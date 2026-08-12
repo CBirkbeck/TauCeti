@@ -46,7 +46,8 @@ and the curve.
   `IsEllipticNet W` because only four instances of the relator are used, and consumers that have
   the relator vanishing for other reasons can apply it directly.
 * `IsEllipticNet.invarNum_mul_invarDenom`: the same for an elliptic net.
-* `IsEllipticNet.map_invarNum`, `IsEllipticNet.map_invarDenom`: both are natural in `R`.
+* `IsEllipticNet.map_invarNum`, `IsEllipticNet.map_invarDenom`: both are natural in `R`. These are
+  deliberately not `@[simp]` — the `_def` equations are, and `simp` derives naturality from them.
 
 ## Implementation notes
 
@@ -88,6 +89,7 @@ def invarNum (s n : ℤ) : R :=
 
 /-- The defining formula for `invarNum`. The definition body is not exposed, so this equation
 lemma is how a consumer computes with it. -/
+@[simp]
 theorem invarNum_def (s n : ℤ) : invarNum W s n =
     (W (n + 2 * s) * W (n - s) ^ 2 + W (n + s) ^ 2 * W (n - 2 * s)) * W s ^ 2
       + W n ^ 3 * W (2 * s) ^ 2 := (rfl)
@@ -97,6 +99,7 @@ def invarDenom (s n : ℤ) : R := W (n + s) * W n * W (n - s)
 
 /-- The defining formula for `invarDenom`. The definition body is not exposed, so this equation
 lemma is how a consumer computes with it. -/
+@[simp]
 theorem invarDenom_def (s n : ℤ) : invarDenom W s n = W (n + s) * W n * W (n - s) := (rfl)
 
 variable {W} in
@@ -122,13 +125,17 @@ theorem invarNum_mul_invarDenom (h : IsEllipticNet W) (s m n : ℤ) :
 
 variable {F : Type*} [FunLike F R S] [RingHomClass F R S] (f : F)
 
-/-- The numerator of the invariant is natural in the coefficient ring. -/
-@[simp]
+/-- The numerator of the invariant is natural in the coefficient ring.
+
+Not `@[simp]`: with `invarNum_def` tagged, `simp` derives this from it together with `map_add`,
+`map_mul`, `map_pow` and `Function.comp_apply`, so tagging it too is a `simpNF` duplicate. It
+stays as a named fact for use by hand. -/
 theorem map_invarNum (s n : ℤ) : f (invarNum W s n) = invarNum (f ∘ W) s n := by
   simp only [invarNum, map_add, map_mul, map_pow, Function.comp_apply]
 
-/-- The denominator of the invariant is natural in the coefficient ring. -/
-@[simp]
+/-- The denominator of the invariant is natural in the coefficient ring.
+
+Not `@[simp]`, for the same reason as `map_invarNum`: `invarDenom_def` and `map_mul` derive it. -/
 theorem map_invarDenom (s n : ℤ) : f (invarDenom W s n) = invarDenom (f ∘ W) s n := by
   simp only [invarDenom, map_mul, Function.comp_apply]
 
