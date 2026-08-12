@@ -58,8 +58,8 @@ on the contour.
 * `exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`
   (in `TauCeti.ModularForm`):
   the same identity for a nonzero level-one modular form once the truncation height clears a
-  threshold, with periodicity, the ambient open set `U`, and the hypotheses `hoff`, `hmero`,
-  `hga`, `hgz` all constructed rather than assumed. The threshold is unavoidable:
+  threshold, with periodicity, the ambient open set `U`, and the hypotheses `hoffγ`, `hoff`,
+  `hmero`, `hga`, `hgz` all constructed rather than assumed. The threshold is unavoidable:
   `fdBoundaryQRadius H` shrinks as `H` grows, so it meets the cusp function's non-vanishing
   neighbourhood only above some `H₀`.
 
@@ -663,16 +663,16 @@ and `hga` from `differentiableOn_cuspFunction_ball` — but `hgz` only from
 gives non-vanishing only on some fixed punctured neighbourhood of `0`, so the two meet only once
 `H` clears `H₀`. That threshold is exactly what this theorem returns.
 
-The hypotheses `hoffγ`, the strict-interior condition `hin` on the non-elliptic points of `T`,
-and completeness of the zero set of `T` (`hT`) all mention `H`, so — together with the threshold
-hypothesis itself — they sit inside the `∀ H` binder rather than being fixed in advance. -/
+The strict-interior condition `hin` on the non-elliptic points of `T` and completeness of the zero
+set of `T` (`hT`) both mention `H`, so — together with the threshold hypothesis itself — they sit
+inside the `∀ H` binder rather than being fixed in advance. `hoffγ` is no longer assumed either: a
+boundary point is analytic by holomorphy transported through `ofComplex`, and if it vanished it
+would lie in the closed truncated fundamental domain, hence in `T` by `hT`, putting it in the
+strict interior by `hin` — impossible for a point of the contour itself. -/
 theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {T : Finset ℂ}
     (hpos : ∀ s ∈ T, 0 < s.im) :
     ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H →
-      (∀ t ∈ Icc (0 : ℝ) 5,
-        fdBoundary H t ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
-        AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0) →
       (∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
         1 < ‖z‖ ∧ |z.re| < 1 / 2 ∧ z.im < H) →
       (∀ z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H,
@@ -689,9 +689,23 @@ theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrder
     ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos one_mem_strictPeriods_SL⟩
   have hbdd : IsBoundedAtImInfty (⇑f : ℍ → ℂ) := ModularFormClass.bdd_at_infty f
   obtain ⟨H₀, hH₀⟩ := exists_threshold_cuspFunction_ne_zero hf
-  refine ⟨max H₀ 2, fun H hHH₀ hoffγ hin hT => ?_⟩
+  refine ⟨max H₀ 2, fun H hHH₀ hin hT => ?_⟩
   have hH₀H : H₀ ≤ H := le_trans (le_max_left H₀ 2) hHH₀
   have hH : 1 < H := by linarith [le_max_right H₀ 2, hHH₀]
+  -- A boundary zero is analytic by holomorphy transported through `ofComplex`, and cannot
+  -- vanish: completeness (`hT`) would put it in `T`, and `hin` would then place it in the
+  -- strict interior, contradicting that it lies on the contour.
+  have hoffγ : ∀ t ∈ Icc (0 : ℝ) 5,
+      fdBoundary H t ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0 := by
+    intro t ht htE
+    have hpos' : 0 < (fdBoundary H t).im :=
+      (by positivity : (0 : ℝ) < Real.sqrt 3 / 2).trans_le
+        (sqrt_three_div_two_le_im_fdBoundary (sqrt_three_div_two_lt_one.le.trans hH.le) ht)
+    refine ⟨UpperHalfPlane.analyticAt_comp_ofComplex hg hpos', fun h0 => ?_⟩
+    obtain ⟨h1, h2, h3⟩ :=
+      hin _ (hT _ (fdBoundary_mem_coe_truncatedFundamentalDomain hH.le ht) h0) htE
+    exact fdBoundary_ne_of_abs_re_lt_half_of_one_lt_norm_of_im_lt h2 h1 h3 t ht rfl
   obtain ⟨U, hU, hUdom, hUsub, hUZ⟩ := UpperHalfPlane.exists_isOpen_zeros_inter hg hf
     (K := UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H)
     (image_subset_iff.mpr fun p _ ↦ p.im_pos)
