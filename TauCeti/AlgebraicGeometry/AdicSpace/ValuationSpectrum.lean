@@ -501,11 +501,16 @@ lemma basicOpenFinset_insert_self (T : Finset A) (s : A) :
 
 open scoped Classical Pointwise in
 /-- **Wedhorn's step (i) in the proof of Lemma 7.5**: the rational opens are stable under finite
-intersection, `Spv(A)(T₁/s₁) ∩ Spv(A)(T₂/s₂) = Spv(A)(T₁T₂/s₁s₂)`.
+intersection. Writing `Uᵢ = insert sᵢ Tᵢ` for the numerator set augmented by its own denominator,
+
+```text
+Spv(A)(T₁/s₁) ∩ Spv(A)(T₂/s₂) = Spv(A)(U₁U₂ / s₁s₂).
+```
 
 The numerator sets on the right carry their own denominators, which
 `basicOpenFinset_insert_self` shows costs nothing — the same absorption `IsAdmissible` performs
 for the admissibility condition. -/
+@[simp]
 lemma basicOpenFinset_inter (T₁ T₂ : Finset A) (s₁ s₂ : A) :
     basicOpenFinset T₁ s₁ ∩ basicOpenFinset T₂ s₂
       = basicOpenFinset (insert s₁ T₁ * insert s₂ T₂) (s₁ * s₂) := by
@@ -522,9 +527,7 @@ lemma basicOpenFinset_inter (T₁ T₂ : Finset A) (s₁ s₂ : A) :
     refine ⟨?_, hs₁, hs₂⟩
     rintro _ ht
     obtain ⟨t₁, ht₁, t₂, ht₂, rfl⟩ := Finset.mem_mul.mp ht
-    refine v.toValuativeRel.vle_trans (v.toValuativeRel.mul_vle_mul_left (hT₁ t₁ ht₁) t₂) ?_
-    have := v.toValuativeRel.mul_vle_mul_left (hT₂ t₂ ht₂) s₁
-    rwa [mul_comm t₂ s₁, mul_comm s₂ s₁] at this
+    exact v.toValuativeRel.mul_vle_mul (hT₁ t₁ ht₁) (hT₂ t₂ ht₂)
   · rintro ⟨hT, hs₁, hs₂⟩
     refine ⟨⟨fun t₁ ht₁ ↦ ?_, hs₁⟩, fun t₂ ht₂ ↦ ?_, hs₂⟩
     · exact v.toValuativeRel.vle_mul_cancel hs₂ (hT _ (Finset.mul_mem_mul ht₁ h₂))
