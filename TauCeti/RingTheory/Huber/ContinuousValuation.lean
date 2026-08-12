@@ -7,6 +7,7 @@ module
 
 public import TauCeti.RingTheory.Huber.Basic
 public import TauCeti.RingTheory.Valuation.Continuous
+public import TauCeti.RingTheory.Valuation.SpanPow
 
 /-!
 # Continuity of a valuation on a Huber ring
@@ -33,6 +34,8 @@ subgroup is therefore built where it is used rather than taken from Mathlib.
 
 * `TauCeti.Huber.PairOfDefinition.isContinuous_iff_forall_exists_idealImage_subset` : the
   criterion, in both directions.
+* `TauCeti.Huber.PairOfDefinition.map_le_pow_of_mem_idealImage_succ` : the bound on `v` over a
+  basic neighbourhood of zero that the criterion is fed with.
 
 ## References
 
@@ -76,5 +79,27 @@ theorem isContinuous_iff_forall_exists_idealImage_subset (P : PairOfDefinition A
         zero_mem' := by simpa using zero_lt_iff.mpr hb
         neg_mem' := fun {x} hx ↦ by simpa [Set.mem_ofPred_eq, v.map_neg] using hx }
     exact AddSubgroup.isOpen_mono (H₁ := P.idealImage n) (H₂ := S) hn (P.isOpen_idealImage n)
+
+omit [IsTopologicalRing A] in
+/-- **A valuation on a basic neighbourhood of zero.** If `v ≤ δ` on a generating set of the ideal
+of definition and `v ≤ 1` on the ideal itself, then `v ≤ δ ^ n` on the image of `Iⁿ⁺¹`.
+
+This is `Valuation.map_le_pow_of_mem_span_pow_succ` transported to the Huber setting, and it is
+the input `isContinuous_iff_forall_exists_idealImage_subset` consumes in Wedhorn's proof of
+Theorem 7.10: cofinality supplies an `n` with `δ ^ n` below a given `γ`, and this turns that into
+`v < γ` on a basic neighbourhood, which is continuity.
+
+The bound is taken **over the ring of definition**, through `v.comap`. That is not a convenience:
+the coefficients occurring in `Iⁿ⁺¹` range over `A₀`, so the hypothesis needed is `v ≤ 1` on `I`,
+which Theorem 7.10 supplies. Asking instead for `v ≤ 1` on the extension `I · A` would be asking
+for something false — `I · A` contains `r * x` for arbitrary `r ∈ A`. -/
+theorem map_le_pow_of_mem_idealImage_succ (P : PairOfDefinition A) (v : Valuation A Γ₀)
+    {s : Set P.ringOfDefinition} {δ : Γ₀} (hgen : Ideal.span s = P.idealOfDefinition)
+    (hs : ∀ t ∈ s, v (t : A) ≤ δ)
+    (h1 : ∀ a ∈ P.idealOfDefinition, v ((a : P.ringOfDefinition) : A) ≤ 1)
+    {n : ℕ} {x : A} (hx : x ∈ P.idealImage (n + 1)) : v x ≤ δ ^ n := by
+  obtain ⟨y, hy, rfl⟩ := (P.mem_idealImage (n + 1)).mp hx
+  exact Valuation.map_le_pow_of_mem_span_pow_succ (v.comap P.ringOfDefinition.subtype) hs
+    (by rwa [hgen]) (by rwa [hgen])
 
 end TauCeti.Huber.PairOfDefinition
