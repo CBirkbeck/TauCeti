@@ -116,7 +116,8 @@ lemma transposeRep_def (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2)
 /-- Each representative lies in `Δ`. -/
 lemma transposeRep_mem_posDetInt (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ)) :
     transposeRep D i ∈ posDetInt 2 :=
-  transposeGLEquiv_mem_posDetInt 2 (mul_mem (SLnZ_le_posDetInt 2 i.out.2) D.out.2)
+  transposeRep_def D i ▸
+    transposeGLEquiv_mem_posDetInt 2 (mul_mem (SLnZ_le_posDetInt 2 i.out.2) D.out.2)
 
 /-- The representatives have positive determinant — the `0 < det` half of
 `transposeRep_mem_posDetInt`, in the shape `ModularForm.rat_smul_slash_of_det_pos` consumes. -/
@@ -129,9 +130,11 @@ lemma det_transposeRep_pos (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fi
 `HδH` (Shimura Prop 3.30).
 
 ⚠ This depends on the chosen representatives `D.out` and `i.out`, and on a general
-`f : ℍ → ℂ` the value changes with them — see the module docstring. It becomes independent of
-the choices, and an action, exactly on slash-invariant `f`; that is a separate theorem. Do not
-read this definition as "the Hecke operator" until it is available. -/
+`f : ℍ → ℂ` the value changes with them — see the module docstring. Slash-invariance of `f` is
+*sufficient* to make it independent of the choices, and so an action; that is a separate
+theorem. Whether it is also necessary is not claimed here — a particular `f` and `D` could be
+independent by cancellation. Do not read this definition as "the Hecke operator" until the
+sufficiency theorem is available. -/
 noncomputable def heckeSlashSum (f : ℍ → ℂ) : ℍ → ℂ :=
   ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ), f ∣[k] transposeRep D i
 
@@ -149,17 +152,19 @@ lemma heckeSlashSum_add (f g : ℍ → ℂ) : heckeSlashSum k D (f + g) =
 
 /-- The slash sum kills the zero function. -/
 @[simp]
-lemma heckeSlashSum_zero : heckeSlashSum k D 0 = 0 :=
-  Finset.sum_eq_zero fun i _ ↦ SlashAction.zero_slash k (transposeRep D i)
+lemma heckeSlashSum_zero : heckeSlashSum k D 0 = 0 := by
+  rw [heckeSlashSum]
+  exact Finset.sum_eq_zero fun i _ ↦ SlashAction.zero_slash k (transposeRep D i)
 
 /-- **The slash sum is homogeneous in `f`**: a scalar acting on `ℂ` through the scalar tower
 passes out of the sum. With `heckeSlashSum_add`, at `α := ℂ`, this gives `ℂ`-linearity. -/
 @[simp]
 lemma heckeSlashSum_smul {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α) (f : ℍ → ℂ) :
-    heckeSlashSum k D (c • f) = c • heckeSlashSum k D f :=
+    heckeSlashSum k D (c • f) = c • heckeSlashSum k D f := by
+  rw [heckeSlashSum, heckeSlashSum]
   -- each representative has positive determinant, so the slash carries no `σ` twist: the
   -- scalar leaves the summands one at a time, and only then comes out of the sum as a whole
-  (Finset.sum_congr rfl fun i _ ↦ ModularForm.rat_smul_slash_of_det_pos k
+  exact (Finset.sum_congr rfl fun i _ ↦ ModularForm.rat_smul_slash_of_det_pos k
     (det_transposeRep_pos D i) f c).trans Finset.smul_sum.symm
 
 end HeckeRing.GL2
