@@ -130,8 +130,7 @@ theorem norm_eq_one_of_mem_arcSingularSet {S : Finset ℍ} {s : ℂ}
   · exact hp_norm
   · rw [norm_div, norm_neg, norm_one, hp_norm, div_one]
   · exact UpperHalfPlane.norm_ρ
-  · rw [← UpperHalfPlane.neg_one_div_ρ, norm_div, norm_neg, norm_one, UpperHalfPlane.norm_ρ,
-      div_one]
+  · exact UpperHalfPlane.norm_ρ_add_one
 
 /-- The arc singular set is closed under the inversion `z ↦ -1/z`. -/
 theorem neg_one_div_mem_arcSingularSet {S : Finset ℍ} {s : ℂ}

@@ -508,8 +508,7 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     rcases hs with rfl | rfl | rfl
     · exact Complex.norm_I
     · exact UpperHalfPlane.norm_ρ
-    · rw [← UpperHalfPlane.neg_one_div_ρ, norm_div, norm_neg, norm_one, UpperHalfPlane.norm_ρ,
-        div_one]
+    · exact UpperHalfPlane.norm_ρ_add_one
   have hinv : ∀ s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
       -1 / s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) := by
     intro s hs
