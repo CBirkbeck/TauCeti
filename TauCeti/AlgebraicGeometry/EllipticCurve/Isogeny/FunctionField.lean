@@ -27,10 +27,10 @@ field. `TauCeti.Isogeny.comp` therefore lives here rather than beside `TauCeti.I
 * `TauCeti.Isogeny.pullback_injective`: a coordinate pullback satisfying `MapsInfinity` is
   injective.
 * `TauCeti.Isogeny.fieldPullback`: the induced embedding of function fields.
-* `TauCeti.Isogeny.comp`: composition of isogenies, with `TauCeti.Isogeny.mapsInfinity_comp` its
-  pointedness condition, `TauCeti.Isogeny.comp_fieldPullback` its function-field law, and
-  `TauCeti.Isogeny.id_comp`, `TauCeti.Isogeny.comp_id`, `TauCeti.Isogeny.comp_assoc` the unit
-  and associativity laws.
+* `TauCeti.Isogeny.comp`: composition of isogenies, with `TauCeti.Isogeny.comp_fieldPullback`
+  its function-field law and `TauCeti.Isogeny.id_comp`, `TauCeti.Isogeny.comp_id`,
+  `TauCeti.Isogeny.comp_assoc` the unit and associativity laws. The pointedness obligation is
+  discharged privately when `comp` is defined.
 * `TauCeti.Isogeny.degree`: the degree of an isogeny, the dimension of the source function field
   over the image of `fieldPullback`, with `TauCeti.Isogeny.degree_def` the equation lemma the
   module boundary makes necessary; `TauCeti.Isogeny.degree_id` computes it for the identity and is
@@ -184,8 +184,9 @@ theorem id_fieldPullback (W : WeierstrassCurve.Affine F) :
 variable {W₃ : WeierstrassCurve.Affine F}
 
 /-- **Composition maps infinity to infinity**: the composite pullback of two isogenies again
-satisfies `CoordinatePullback.MapsInfinity`. -/
-theorem mapsInfinity_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
+satisfies `CoordinatePullback.MapsInfinity`. Private: it exists to fill `comp`'s `mapsInfinity`
+field, and consumers read the same fact off `(ψ.comp φ).mapsInfinity`. -/
+private theorem mapsInfinity_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
     CoordinatePullback.MapsInfinity (φ.fieldPullback.comp ψ.pullback) := by
   rw [CoordinatePullback.mapsInfinity_iff]
   let _ := (φ.fieldPullback.comp ψ.pullback).toRingHom.toAlgebra
