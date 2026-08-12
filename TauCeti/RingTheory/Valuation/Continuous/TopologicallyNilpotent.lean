@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.Topology.Algebra.TopologicallyNilpotent
-public import TauCeti.RingTheory.Valuation.CofinalIdeal.Basic
+public import TauCeti.RingTheory.Valuation.CharacteristicGroup
 public import TauCeti.RingTheory.Valuation.Continuous.Basic
 
 /-!
@@ -33,12 +33,12 @@ values, so a general `γ` is a **ratio** `v t / v r` and not itself attained. Th
 `Valuation.IsContinuous.isOpen_lt_div` supplies, and it is why this proof reaches for the ratio
 form of continuity rather than the attained-value one: `{x ; v x < γ}` has to be open for the
 ratios too before topological nilpotence can be applied to it. Mathlib's
-`MonoidWithZeroHom.ValueGroup₀.zero_or_exists_mk` is what puts a general element of `Γ_v` in
+`Valuation.exists_div_eq_of_unit` is what puts a general element of `Γ_v` in
 that form.
 
 ## Why `lt_one` is not just the case `γ = 1`
 
-Cofinality does imply `v a < 1`, through `CofinalValueFor.lt_one`. But that route pays for the
+Cofinality does imply `v a < 1`, through `CofinalValue.lt_one`. But that route pays for the
 general `γ`: a group codomain, and continuity of right multiplication for the ratios. Since
 `Spv (A, I·A)` membership is a condition on all of `Γ_v` while the second conjunct of Theorem
 7.10 is a condition on `1` alone, the two really are separate obligations, and the second is
@@ -48,7 +48,7 @@ recorded at its own — much weaker — hypotheses rather than as a corollary of
 
 * `TauCeti.Valuation.exists_pow_lt`
 * `TauCeti.Valuation.IsContinuous.lt_one_of_isTopologicallyNilpotent`
-* `TauCeti.Valuation.CofinalValueFor.of_isContinuous_of_isTopologicallyNilpotent`
+* `TauCeti.Valuation.IsContinuous.cofinalValue_of_isTopologicallyNilpotent`
 
 ## References
 
@@ -114,22 +114,18 @@ eventually inside each ball `{x ; v x < γ}`, and continuity is what makes that 
 A general `γ ∈ Γ_v` is a ratio `v t / v r` of attained values rather than an attained value, so
 the ball is opened by `IsContinuous.isOpen_lt_div` — whence `[ContinuousConstSMul Aᵐᵒᵖ A]`,
 which is continuity of right multiplication by a constant and nothing more. -/
-theorem CofinalValueFor.of_isContinuous_of_isTopologicallyNilpotent [ContinuousConstSMul Aᵐᵒᵖ A]
+theorem IsContinuous.cofinalValue_of_isTopologicallyNilpotent [ContinuousConstSMul Aᵐᵒᵖ A]
     {v : Valuation A Γ₀} (hv : v.IsContinuous) {a : A} (ha : IsTopologicallyNilpotent a) :
-    CofinalValueFor v ⊤ a := by
-  rw [cofinalValueFor_def]
-  intro γ _
-  obtain hz | ⟨r, t, hr, ht, hmk⟩ :=
-    ValueGroup₀.zero_or_exists_mk (f := .ofClass v) (γ : ValueGroup₀ (.ofClass v))
-  · exact absurd hz (by simp)
-  · -- the ball of radius `v t / v r` is open and contains `0`, so a power of `a` lands in it
-    obtain ⟨n, hn⟩ := ha.exists_pow_mem_of_mem_nhds
-      ((hv.isOpen_lt_div t hr).mem_nhds (by simpa using zero_lt_iff.mpr (div_ne_zero ht hr)))
-    refine ⟨n, ?_⟩
-    have hemb : ValueGroup₀.embedding
-        ((valueGroup.mk (ofClass v) r t hr ht : ValueGroup₀ (.ofClass v))) = v t / v r := by
-      simp [valueGroup.mk, ValueGroup₀.embedding, div_eq_mul_inv, mul_comm]
-    rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, hmk, hemb]
-    exact hn
+    CofinalValue v a := by
+  rw [cofinalValue_iff]
+  intro γ hγ
+  -- a positive element of `Γ_v` is a ratio of attained values (`Valuation.exists_div_eq_of_unit`)
+  obtain ⟨r, t, hr, ht, hrt⟩ := v.exists_div_eq_of_unit (Units.mk0 γ hγ.ne')
+  simp only [Units.val_mk0] at hrt
+  have hemb : ValueGroup₀.embedding γ = v r / v t := by
+    rw [← hrt, map_div₀, Valuation.embedding_restrict, Valuation.embedding_restrict]
+  obtain ⟨n, hn⟩ := exists_pow_lt (v := v) (div_ne_zero hr.ne' ht.ne')
+    (hv.isOpen_lt_div r ht.ne') ha
+  exact ⟨n, by rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, hemb, map_pow]; exact hn⟩
 
 end TauCeti.Valuation
