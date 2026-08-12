@@ -10,10 +10,15 @@ public import Mathlib.FieldTheory.Finite.Basic
 /-!
 # The Frobenius isogeny
 
-Over a finite field `F` with `q = #F` elements, raising to the `q`-th power is an `F`-algebra
-endomorphism of any `F`-algebra (`FiniteField.frobeniusAlgHom`). Composing it with the embedding of
-the coordinate ring into the function field gives a coordinate pullback, and that pullback maps
-infinity to infinity, so it is an isogeny of `W` with itself.
+Over a finite field `F` with `q = Nat.card F` elements, raising to the `q`-th power is an
+`F`-algebra endomorphism of any `F`-algebra (`FiniteField.frobeniusAlgHom`). Composing it with
+the embedding of the coordinate ring into the function field gives a coordinate pullback, and
+that pullback maps infinity to infinity, so it is an isogeny of `W` with itself.
+
+The declarations take `[Finite F]` rather than `[Fintype F]`, matching
+`Affine/FrobeniusTower.lean`, and state the exponent as `Nat.card F`: a `Fintype` instance is
+chosen enumeration data, and neither the definitions nor the statements should depend on it. The
+instance Mathlib's map needs is installed locally where it is required.
 
 ## Main definitions
 
@@ -41,28 +46,31 @@ namespace TauCeti
 
 open Polynomial WeierstrassCurve.Affine
 
-variable {F : Type*} [Field F] [Fintype F] (W : WeierstrassCurve.Affine F)
+variable {F : Type*} [Field F] [Finite F] (W : WeierstrassCurve.Affine F)
 
 namespace Isogeny
 
 /-- The Frobenius coordinate pullback: an element of the coordinate ring is sent to its `q`-th
-power, viewed in the function field, where `q = #F`. -/
+power, viewed in the function field, where `q = Nat.card F`. -/
 noncomputable def frobeniusPullback : CoordinatePullback W W :=
+  letI := Fintype.ofFinite F
   (IsScalarTower.toAlgHom F W.CoordinateRing W.FunctionField).comp
     (FiniteField.frobeniusAlgHom F W.CoordinateRing)
 
 /-- The Frobenius pullback raises to the `q`-th power. -/
 @[simp]
 theorem frobeniusPullback_apply (x : W.CoordinateRing) :
-    frobeniusPullback W x = algebraMap W.CoordinateRing W.FunctionField (x ^ Fintype.card F) :=
-  (rfl)
+    frobeniusPullback W x = algebraMap W.CoordinateRing W.FunctionField (x ^ Nat.card F) := by
+  let _ := Fintype.ofFinite F
+  rw [Nat.card_eq_fintype_card]
+  rfl
 
 /-- **Frobenius maps the point at infinity to itself.** Every `x` satisfies the monic polynomial
 `X ^ q - C x` over the pulled-back coordinate ring, because the pullback carries `x` to `x ^ q`. -/
 theorem mapsInfinity_frobeniusPullback : (frobeniusPullback W).MapsInfinity := by
   rw [CoordinatePullback.mapsInfinity_iff]
   intro x
-  refine ⟨X ^ Fintype.card F - C x, monic_X_pow_sub_C x Fintype.card_pos.ne', ?_⟩
+  refine ⟨X ^ Nat.card F - C x, monic_X_pow_sub_C x Nat.card_pos.ne', ?_⟩
   -- The two `algebraMap`s below are different instances: the point is taken along the canonical
   -- embedding, while `eval₂` uses the pullback's, for which `algebraMap` *is* the pullback. The
   -- step that matters is `frobeniusPullback_apply`, named here rather than left implicit.
