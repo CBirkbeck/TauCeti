@@ -86,19 +86,21 @@ theorem HasZeroSequenceOfUnits.isOpenMap {F : Type*} [FunLike F M N] [MulActionH
   obtain ⟨x, hx, rfl⟩ := mem_image_of_mem_closure_image f hfc hW (fun n ↦ hnhds (n + 1)) hy
   exact hn₀ hx
 
-/-- **Henkel's theorem in quotient form.** Under the hypotheses of
-`TauCeti.HasZeroSequenceOfUnits.isOpenMap`, a *continuous* surjection does not merely carry open
-sets to open sets: the topology of `N` is the one coinduced from `M`, so a map out of `N` is
-continuous exactly when its composite with `f` is.
+/-- **Henkel's theorem in quotient form.** Under exactly the hypotheses of
+`TauCeti.HasZeroSequenceOfUnits.isOpenMap`, the map does not merely carry open sets to open sets:
+the topology of `N` is the one coinduced from `M`, so a map out of `N` is continuous exactly when
+its composite with `f` is.
 
-Continuity of `f` is asked in full here, where `TauCeti.HasZeroSequenceOfUnits.isOpenMap` needs it
-only at `0`; that is what the quotient conclusion costs, and it is the shape Wedhorn's strict
-morphisms use. -/
+The quotient conclusion needs `f` continuous everywhere, but that is not an extra hypothesis: an
+additive homomorphism out of a topological group is continuous as soon as it is continuous at `0`
+(`continuous_of_continuousAt_zero`), so `hfc` is the same assumption the open-mapping theorem
+makes. This is the shape Wedhorn's strict morphisms use. -/
 theorem HasZeroSequenceOfUnits.isQuotientMap {F : Type*} [FunLike F M N]
     [MulActionHomClass F A M N] [AddMonoidHomClass F M N] (f : F) (hf : Function.Surjective f)
-    (hfc : Continuous (f : M → N)) (hc : ∀ x : M, ContinuousAt (fun a : A ↦ a • x) 0) :
+    (hfc : ContinuousAt (f : M → N) 0) (hc : ∀ x : M, ContinuousAt (fun a : A ↦ a • x) 0) :
     IsQuotientMap (f : M → N) :=
-  (HasZeroSequenceOfUnits.isOpenMap f hf hfc.continuousAt hc).isQuotientMap hfc hf
+  have hcont : Continuous (f : M → N) := continuous_of_continuousAt_zero f hfc
+  (HasZeroSequenceOfUnits.isOpenMap f hf hfc hc).isQuotientMap hcont hf
 
 end TauCeti
 
