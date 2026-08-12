@@ -613,10 +613,11 @@ private lemma sqrt_three_div_two_lt_im (hre : w.re = 1 / 2 ∨ w.re = -(1 / 2))
 /-- **The principal value at a vertical-edge point**: the Cauchy principal value of the
 index integrand of the boundary contour about a point of an open vertical edge is `-πi` —
 half a clockwise turn, as the contour passes straight through `w` along the edge. -/
-theorem hasCauchyPVAt_fdBoundary_vertical (hre : w.re = 1 / 2 ∨ w.re = -(1 / 2))
+theorem hasCauchyPVAt_fdBoundary_vertical (hre : w.re = 2⁻¹ ∨ w.re = -(2⁻¹))
     (hnorm : 1 < ‖w‖) (him : 0 < w.im) (himH : w.im < H) :
     Contour.HasCauchyPVAt (fdBoundary H) 0 5 (fun z ↦ (z - w)⁻¹) w
       (-(Real.pi : ℂ) * Complex.I) := by
+  rw [← one_div] at hre
   have him_lo := sqrt_three_div_two_lt_im hre hnorm him
   have hb : (0 : ℝ) <
       min (min 1 (‖w‖ - 1)) (min (H - w.im) (w.im - Real.sqrt 3 / 2)) :=
@@ -650,7 +651,8 @@ theorem hasCauchyPVAt_fdBoundary_vertical (hre : w.re = 1 / 2 ∨ w.re = -(1 / 2
 /-- **The winding number of the boundary contour at a vertical-edge point is `-1/2`**: the
 point sits on an open vertical edge, and the principal-value normalization sees exactly half
 a clockwise turn. -/
-theorem windingNumber_fdBoundary_vertical (hre : w.re = 1 / 2 ∨ w.re = -(1 / 2))
+@[simp]
+theorem windingNumber_fdBoundary_vertical (hre : w.re = 2⁻¹ ∨ w.re = -(2⁻¹))
     (hnorm : 1 < ‖w‖) (him : 0 < w.im) (himH : w.im < H) :
     Contour.windingNumber (fdBoundary H) 0 5 w = -(1 / 2 : ℂ) := by
   rw [Contour.windingNumber_eq_of_hasCauchyPVAt
@@ -1046,9 +1048,10 @@ private lemma arc_min_radius_pos (hH : 1 < H) (hre : |w.re| < 1 / 2)
 integrand of the boundary contour about a point of the open unit arc is `-πi` — half a
 clockwise turn, as the contour passes smoothly through `w` along the arc. -/
 theorem hasCauchyPVAt_fdBoundary_arc (hH : 1 < H) (hnorm : ‖w‖ = 1)
-    (hre : |w.re| < 1 / 2) (him : 0 < w.im) :
+    (hre : |w.re| < 2⁻¹) (him : 0 < w.im) :
     Contour.HasCauchyPVAt (fdBoundary H) 0 5 (fun z ↦ (z - w)⁻¹) w
       (-(Real.pi : ℂ) * Complex.I) := by
+  rw [← one_div] at hre
   obtain ⟨t₀, ht₀, hw⟩ := exists_arc_param (H := H) hnorm hre him
   set b := min (min (2 * Real.sin ((t₀ - 1) * (Real.pi / 12)))
       (2 * Real.sin ((3 - t₀) * (Real.pi / 12))))
@@ -1081,8 +1084,9 @@ theorem hasCauchyPVAt_fdBoundary_arc (hH : 1 < H) (hnorm : ‖w‖ = 1)
 /-- **The winding number of the boundary contour at an arc point is `-1/2`**: the point sits
 on the open unit arc, and the principal-value normalization sees exactly half a clockwise
 turn. -/
+@[simp]
 theorem windingNumber_fdBoundary_arc (hH : 1 < H) (hnorm : ‖w‖ = 1)
-    (hre : |w.re| < 1 / 2) (him : 0 < w.im) :
+    (hre : |w.re| < 2⁻¹) (him : 0 < w.im) :
     Contour.windingNumber (fdBoundary H) 0 5 w = -(1 / 2 : ℂ) := by
   rw [Contour.windingNumber_eq_of_hasCauchyPVAt
     (hasCauchyPVAt_fdBoundary_arc hH hnorm hre him)]
