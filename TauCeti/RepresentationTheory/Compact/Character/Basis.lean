@@ -121,8 +121,8 @@ For `π` irreducible unitary and `f` a class function there is a `c` with
 `⟪(π)_{v,w}, f⟫ = c · ⟪w, v⟫` for all `v, w`.
 
 The pairing is `⟪w, T v⟫` for an endomorphism `T` of the carrier, and
-`TauCeti.ContRepresentation.map_apply_comm_of_inner_matrixCoeffLp_eq` makes `T` an intertwiner;
-Schur's lemma over an algebraically closed field turns it into a scalar. -/
+`TauCeti.ContRepresentation.inner_matrixCoeffLp_map_map` makes `T` an intertwiner; Schur's lemma
+over an algebraically closed field turns it into a scalar. -/
 theorem exists_forall_inner_matrixCoeffLp_eq [IsAlgClosed 𝕜] (hunitary : IsUnitary π)
     (hirr : Representation.IsIrreducible π.toRepresentation) {f : Lp 𝕜 2 (haarProb G)}
     (hf : f ∈ classFunctionLp 𝕜 𝕜 2 (haarProb G)) :
