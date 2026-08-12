@@ -28,7 +28,9 @@ field. `TauCeti.Isogeny.comp` therefore lives here rather than beside `TauCeti.I
   injective.
 * `TauCeti.Isogeny.fieldPullback`: the induced embedding of function fields.
 * `TauCeti.Isogeny.comp`: composition of isogenies, with `TauCeti.Isogeny.mapsInfinity_comp` its
-  pointedness condition.
+  pointedness condition, `TauCeti.Isogeny.comp_fieldPullback` its function-field law, and
+  `TauCeti.Isogeny.id_comp`, `TauCeti.Isogeny.comp_id`, `TauCeti.Isogeny.comp_assoc` the unit
+  and associativity laws.
 * `TauCeti.Isogeny.degree`: the degree of an isogeny, the dimension of the source function field
   over the image of `fieldPullback`, with `TauCeti.Isogeny.degree_def` the equation lemma the
   module boundary makes necessary; `TauCeti.Isogeny.degree_id` computes it for the identity and is
@@ -207,6 +209,28 @@ across the module boundary, so this is how downstream modules compute with it. -
 @[simp]
 theorem comp_pullback (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
     (ψ.comp φ).pullback = φ.fieldPullback.comp ψ.pullback := (rfl)
+
+/-- The function-field pullback of a composite is the composite of the function-field
+pullbacks. -/
+@[simp]
+theorem comp_fieldPullback (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
+    (ψ.comp φ).fieldPullback = φ.fieldPullback.comp ψ.fieldPullback :=
+  ((ψ.comp φ).fieldPullback_unique _ fun x ↦ by simp).symm
+
+/-- The identity isogeny is a left unit for composition. -/
+@[simp]
+theorem id_comp (φ : Isogeny W₁ W₂) : (id W₂).comp φ = φ :=
+  Isogeny.ext <| AlgHom.ext fun x ↦ by simp
+
+/-- The identity isogeny is a right unit for composition. -/
+@[simp]
+theorem comp_id (φ : Isogeny W₁ W₂) : φ.comp (id W₁) = φ :=
+  Isogeny.ext <| by simp
+
+/-- Composition of isogenies is associative. -/
+theorem comp_assoc {W₄ : WeierstrassCurve.Affine F} (χ : Isogeny W₃ W₄) (ψ : Isogeny W₂ W₃)
+    (φ : Isogeny W₁ W₂) : (χ.comp ψ).comp φ = χ.comp (ψ.comp φ) :=
+  Isogeny.ext <| AlgHom.ext fun x ↦ by simp
 
 /-- **The degree of an isogeny**: the dimension of the source function field `W₁.FunctionField`
 over the image of `fieldPullback` — the pulled-back copy of the target's function field
