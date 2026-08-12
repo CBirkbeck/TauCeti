@@ -74,10 +74,12 @@ below is the public neighbourhood interface that merges them.)
 
 ## Provenance
 
-The corresponding development in AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), branch
-`dev/adic-spaces` at commit `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`, project
+The corresponding development in AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), project
 `projects/AdicSpaces/`, file `Adic spaces/SpvAITopology.lean`, was consulted rather than copied,
-and this file departs from it in two ways.
+and this file departs from it in two ways. Two revisions are cited below, each for what was
+checked against it: branch `dev/adic-spaces` at `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`, the
+revision the spectrality material here was written against, and
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`, the revision re-checked when Lemma 7.5(2) was added.
 
 First, AINTLIB equips `Spv (A, I)` with a *separate* topology, `SpvAI.topology`, described there
 as strictly finer than the subspace topology. That reading of Remark 7.6 is not Wedhorn's:
@@ -407,8 +409,8 @@ needed. The admissible rational subsets generate the target topology
 (`instTopologicalSpace_spvOfIdeal_eq_generateFrom`), so only their preimages have to be tested,
 and step (iii) computes each of those to be a rational subset of `Spv A`
 (`restrictToIdealCodRestrict_preimage`), which is open. In particular no description of
-`r_I⁻¹(Spv(A)(f/s))` for a *general* pair `(f, s)` is needed; admissibility of `(T, u)` is what
-makes the preimage computable at all. -/
+`r_I⁻¹(Spv(A)(f/s))` for a *general* pair `(f, s)` is needed here: admissibility of `(T, u)` is
+the hypothesis under which `restrictToIdealCodRestrict_preimage` computes the preimage. -/
 theorem continuous_restrictToIdealCodRestrict (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     Continuous (restrictToIdealCodRestrict I hfg) := by
