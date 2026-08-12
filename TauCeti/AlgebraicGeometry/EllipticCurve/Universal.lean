@@ -85,7 +85,7 @@ is new; the `CharZero Universal.Ring` instance **replaces** the source's `Poly.t
 `Field.two_ne_zero` rather than porting them, and carries the field case with it — Mathlib derives
 `CharZero Universal.Field` from it through `IsFractionRing`, so no second instance is declared; and
 the equation lemmas for the opaque definitions
-(`polyToField_apply`, `Affine.point_def`, `Jacobian.point_def`, `Δ_pointedCurve`) exist because
+(`polyToField_apply`, `Affine.point_def`, `Jacobian.point_def`, `pointedCurve_Δ`) exist because
 this repository's module system leaves definition bodies unexposed.
 That file's header reads `Authors: Junyan Xu`; following this repository's convention for adapted
 material, the upstream authorship is credited here rather than in the copyright header.
@@ -161,7 +161,7 @@ open MvPolynomial (X) in
 /-- The discriminant of the universal Weierstrass curve is a nonzero polynomial in `ℤ[A₁,⋯,A₆]`,
 i.e. a Weierstrass equation is not singular *identically* in its coefficients. Transported along
 `algebraMap_field_injective`, this is what makes `pointedCurve` elliptic over `Universal.Field`. -/
-lemma Δ_curve_ne_zero : curve.Δ ≠ 0 :=
+lemma curve_Δ_ne_zero : curve.Δ ≠ 0 :=
   -- specialize `A₆ ↦ 1` and the rest to `0`: the curve `Y² = X³ + 1`, whose `Δ` is `-432`
   ne_of_apply_ne (MvPolynomial.eval (Coeff.rec 0 0 0 0 1)) <| by simp [Δ, b₂, b₄, b₆, b₈, curve]
 
@@ -205,7 +205,7 @@ lemma algebraMap_ring_eq_comp :
 
 /-- The coefficient ring `ℤ[A₁,⋯,A₆]` embeds in the universal field: the five indeterminates stay
 algebraically independent after adjoining a point and passing to fractions. This is what carries
-`Δ_curve_ne_zero` over to `pointedCurve`, giving the `IsElliptic` instance below. -/
+`curve_Δ_ne_zero` over to `pointedCurve`, giving the `IsElliptic` instance below. -/
 lemma algebraMap_field_injective :
     Function.Injective (algebraMap (MvPolynomial Coeff ℤ) Universal.Field) :=
   (IsFractionRing.injective Universal.Ring Universal.Field).comp
@@ -221,7 +221,7 @@ abbrev pointedCurve : WeierstrassCurve Universal.Field := baseChange curve Unive
 `curve.baseChange Universal.Field`, so this is `map_Δ` at that base change — named here rather than
 reached through a definitional `show`, so the ellipticity proof rewrites with an ordinary equation
 and the reliance on that definitional unfolding sits in one place. -/
-lemma Δ_pointedCurve : pointedCurve.Δ = algebraMap _ Universal.Field curve.Δ :=
+lemma pointedCurve_Δ : pointedCurve.Δ = algebraMap _ Universal.Field curve.Δ :=
   map_Δ curve (algebraMap _ Universal.Field)
 
 /-- The universal pointed Weierstrass curve is an elliptic curve: its discriminant is a unit,
@@ -229,8 +229,8 @@ because `Δ` of the universal curve is a nonzero polynomial and the coefficient 
 universal field. -/
 instance : pointedCurve.IsElliptic where
   isUnit := by
-    rw [Δ_pointedCurve]
-    exact ((map_ne_zero_iff _ algebraMap_field_injective).mpr Δ_curve_ne_zero).isUnit
+    rw [pointedCurve_Δ]
+    exact ((map_ne_zero_iff _ algebraMap_field_injective).mpr curve_Δ_ne_zero).isUnit
 
 open Polynomial in
 /-- The pair `(X, Y)` — the images of the two adjoined variables in the universal field — satisfies
