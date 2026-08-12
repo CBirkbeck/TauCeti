@@ -33,20 +33,18 @@ and the curve.
 
 * `IsEllipticNet.invarNum` and `IsEllipticNet.invarDenom` are defined for an **arbitrary**
   sequence `W : ℤ → R` — no hypothesis on `W`, and nothing about Weierstrass curves. It is the
-  *theorem* that asks `W` to be an elliptic net — or, in `invarNum_mul_invarDenom_of_rel`, asks the
-  relator to vanish at four specific arguments; the file proves that direction only, and states no
-  converse.
+  *theorem* that asks `W` to be an elliptic net; the file proves that direction only, and states
+  no converse.
 * `IsEllipticNet.invarNum_def`, `IsEllipticNet.invarDenom_def`: the defining formulas, as public
   equation lemmas. The definition bodies are not exposed, so these are how a consumer computes
   with them.
 
 ## Main results
 
-* `IsEllipticNet.invarNum_mul_invarDenom_of_rel`: the invariance identity, from the vanishing of
-  the elliptic relator `IsEllipticNet.rel` alone. Stated this way rather than from
-  `IsEllipticNet W` because only four instances of the relator are used, and consumers that have
-  the relator vanishing for other reasons can apply it directly.
-* `IsEllipticNet.invarNum_mul_invarDenom`: the same for an elliptic net.
+* `IsEllipticNet.invarNum_mul_invarDenom`: the invariance identity for an elliptic net. It is
+  proved through a `private` step that asks only for the four instances of the elliptic relator
+  `IsEllipticNet.rel` the `linear_combination` certificate consumes, which keeps that certificate
+  out of the public interface.
 * `IsEllipticNet.map_invarNum`, `IsEllipticNet.map_invarDenom`: both are natural in `R`. These are
   deliberately not `@[simp]` — the `_def` equations are, and `simp` derives naturality from them.
 
@@ -113,13 +111,14 @@ section CommRing
 
 variable {R : Type*} [CommRing R] {W : ℤ → R}
 
-/-- **The invariance identity from exactly the four relator instances its proof consumes.**
+/-- The invariance identity from exactly the four relator instances its proof consumes.
 
-Stated this way rather than from `∀ p q r s, rel W p q r s = 0`, which is *definitionally*
-`IsEllipticNet W` and so would make this a second name for `invarNum_mul_invarDenom` rather than a
-weaker hypothesis. Four equalities are genuinely all the proof needs, so a consumer holding the
-relator vanishing for other reasons — or at only these arguments — can apply this directly. -/
-theorem invarNum_mul_invarDenom_of_rel {s m n : ℤ}
+Asking for the four instances rather than for `∀ p q r s, rel W p q r s = 0` — which is
+*definitionally* `IsEllipticNet W` — keeps the hypothesis down to what the `linear_combination`
+certificate below actually uses. It is `private` because that certificate is an implementation
+detail: a consumer arrives with the relator vanishing everywhere, and takes
+`invarNum_mul_invarDenom`. -/
+private theorem invarNum_mul_invarDenom_of_rel {s m n : ℤ}
     (h₀ : rel W m n s 0 = 0) (h₁ : rel W m n s s = 0)
     (h₂ : rel W (m - s) (n - s) s s = 0) (h₃ : rel W (n + s) n (n - s) (m - n) = 0) :
     invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m := by
