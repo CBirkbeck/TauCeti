@@ -80,8 +80,7 @@ vertical edge and right half-arc are omitted — `z ↦ z - 1` and `z ↦ -1/z` 
 left representatives — and the elliptic points are excluded by all three filters. -/
 def canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (⇑f : ℍ → ℂ) ≠ 0) : Finset ℍ :=
   (fdZeros hf).filter fun p : ℍ ↦
-    ((p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧ 1 < ‖(p : ℂ)‖ ∧
-        |(p : ℂ).re| < 1 / 2) ∨
+    (1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2) ∨
       ((p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖) ∨
       ((p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0)
 
@@ -91,39 +90,26 @@ on the left vertical edge, or on the left half-arc minus `ρ`. -/
 lemma mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F} {hf : (⇑f : ℍ → ℂ) ≠ 0} {p : ℍ} :
     p ∈ canonicalReps hf ↔
       p ∈ fdZeros hf ∧
-        (((p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧ 1 < ‖(p : ℂ)‖ ∧
-            |(p : ℂ).re| < 1 / 2) ∨
+        ((1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2) ∨
           ((p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖) ∨
           ((p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0)) :=
   Finset.mem_filter
-
-private lemma coe_re_ρ : (ρ : ℂ).re = -(1 / 2) := by
-  norm_num [UpperHalfPlane.ρ]
-
-private lemma coe_vadd_one_ρ : (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ) = (ρ : ℂ) + 1 := by
-  rw [coe_vadd, Complex.ofReal_one, add_comm]
-
-private lemma norm_eq_one_of_mem_corners {z : ℂ}
-    (hz : z ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)) : ‖z‖ = 1 := by
-  simp only [Finset.mem_insert, Finset.mem_singleton] at hz
-  rcases hz with rfl | rfl | rfl <;> simp [norm_ρ]
 
 private lemma ne_elliptic_of_mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
     {hf : (⇑f : ℍ → ℂ) ≠ 0} {p : ℍ} (hp : p ∈ canonicalReps hf) :
     p ≠ I ∧ p ≠ ρ ∧ p ≠ (1 : ℝ) +ᵥ ρ := by
   have hcond := (mem_canonicalReps.mp hp).2
   refine ⟨fun h ↦ ?_, fun h ↦ ?_, fun h ↦ ?_⟩ <;> subst h <;>
-    rcases hcond with ⟨hno, hgt, -⟩ | ⟨hre, hgt⟩ | ⟨hne, hnorm, hre⟩
-  · exact hno (by simp)
+    rcases hcond with ⟨hgt, habs⟩ | ⟨hre, hgt⟩ | ⟨hne, hnorm, hre⟩
+  · norm_num at hgt
   · norm_num at hre
   · norm_num at hre
-  · exact hno (Finset.mem_insert_of_mem (Finset.mem_insert_self _ _))
+  · norm_num [norm_ρ] at hgt
   · norm_num [norm_ρ] at hgt
   · exact hne rfl
-  · rw [coe_vadd_one_ρ] at hno
-    exact hno (Finset.mem_insert_of_mem (Finset.mem_insert_of_mem (Finset.mem_singleton_self _)))
-  · norm_num [← coe_re, coe_re_ρ] at hre
-  · norm_num [← coe_re, coe_re_ρ] at hre
+  · norm_num at habs
+  · norm_num at hre
+  · norm_num at hre
 
 /-- The canonical representatives lie in the non-elliptic orbits. -/
 theorem orbit_mk_ne_I_and_ne_ρ_of_mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
@@ -144,12 +130,12 @@ theorem orbit_mk_injOn_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
   refine ModularGroup.orbit_mk_injOn_fd_left.mono fun p hp ↦ ?_
   obtain ⟨hmem, hcond⟩ := mem_canonicalReps.mp hp
   refine ⟨(mem_fdZeros.mp hmem).1, ?_, ?_⟩
-  · rcases hcond with ⟨-, -, habs⟩ | ⟨hre, -⟩ | ⟨-, -, hre⟩
+  · rcases hcond with ⟨-, habs⟩ | ⟨hre, -⟩ | ⟨-, -, hre⟩
     · exact lt_of_abs_lt (coe_re p ▸ habs)
     · norm_num [← coe_re, hre]
     · exact (coe_re p ▸ hre).trans (by norm_num)
   · intro hnorm
-    rcases hcond with ⟨-, hgt, -⟩ | ⟨-, hgt⟩ | ⟨-, -, hre⟩
+    rcases hcond with ⟨hgt, -⟩ | ⟨-, hgt⟩ | ⟨-, -, hre⟩
     · norm_num [hnorm] at hgt
     · norm_num [hnorm] at hgt
     · exact coe_re p ▸ hre
@@ -228,8 +214,7 @@ theorem exists_mem_canonicalReps_orbit_mk_eq [ModularFormClass F 𝒮ℒ k] {f :
   rw [orderOfVanishingOnOrbit_mk] at hq
   rcases (Complex.one_le_normSq_iff.mp hfd.1).lt_or_eq with hlt | heq
   · rcases hfd.2.lt_or_eq with hre_lt | hre_eq
-    · refine ⟨p₀, mem_canonicalReps.mpr ⟨mem_fdZeros.mpr ⟨hfd, hq⟩,
-        Or.inl ⟨fun hc ↦ hlt.ne' (norm_eq_one_of_mem_corners hc), hlt, ?_⟩⟩, rfl⟩
+    · refine ⟨p₀, mem_canonicalReps.mpr ⟨mem_fdZeros.mpr ⟨hfd, hq⟩, Or.inl ⟨hlt, ?_⟩⟩, rfl⟩
       rwa [coe_re]
     · rcases (abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp hre_eq with h | h
       · exact exists_of_re_eq_half hfd hq ((coe_re p₀).trans h) hlt
@@ -273,9 +258,7 @@ theorem finsum_orderOfVanishingOnOrbit_eq_sum_canonicalReps [ModularFormClass F 
 strict interior, left vertical edge, and left half-arc minus `ρ`. -/
 theorem sum_canonicalReps_split [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     ∑ p ∈ canonicalReps hf, orderOfVanishingAt f p =
-      ∑ p ∈ (fdZeros hf).filter (fun p : ℍ ↦
-          (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧ 1 < ‖(p : ℂ)‖ ∧
-            |(p : ℂ).re| < 1 / 2),
+      ∑ p ∈ (fdZeros hf).filter (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2),
           orderOfVanishingAt f p +
         ∑ p ∈ (fdZeros hf).filter (fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖),
           orderOfVanishingAt f p +
@@ -289,13 +272,11 @@ theorem sum_canonicalReps_split [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (�
     Finset.disjoint_left.mpr fun p hp hq ↦
       (Finset.mem_filter.mp hp).2.2.ne' (Finset.mem_filter.mp hq).2.2.1
   have hd₁ : Disjoint
-      ((fdZeros hf).filter fun p : ℍ ↦
-        (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧ 1 < ‖(p : ℂ)‖ ∧
-          |(p : ℂ).re| < 1 / 2)
+      ((fdZeros hf).filter fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)
       (((fdZeros hf).filter fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖) ∪
         (fdZeros hf).filter fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0) := by
     refine Finset.disjoint_left.mpr fun p hp hq ↦ ?_
-    obtain ⟨-, hgt, habs⟩ := (Finset.mem_filter.mp hp).2
+    obtain ⟨hgt, habs⟩ := (Finset.mem_filter.mp hp).2
     rcases Finset.mem_union.mp hq with hq | hq
     · norm_num [← coe_re, (Finset.mem_filter.mp hq).2.1] at habs
     · norm_num [(Finset.mem_filter.mp hq).2.2.1] at hgt

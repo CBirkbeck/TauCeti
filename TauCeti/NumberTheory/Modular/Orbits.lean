@@ -90,54 +90,31 @@ lemma orbit_mk_injOn_fdo :
 The values of the corner points and of the finitely many group elements that can move a point of
 `𝒟` inside `𝒟` (classified by `ModularGroup.cases_of_mem_fd_smul_mem_fd`). -/
 
-private lemma re_I : (I : ℍ).re = 0 := by
-  rw [← coe_re, coe_I, Complex.I_re]
-
-private lemma re_ρ : (ρ : ℍ).re = -(1 / 2) := by
-  rw [← coe_re]
-  norm_num [UpperHalfPlane.ρ]
-
 private lemma re_vadd_ρ : ((1 : ℝ) +ᵥ ρ : ℍ).re = 1 / 2 := by
-  rw [vadd_re, re_ρ]
   norm_num
-
-private lemma I_ne_ρ : (I : ℍ) ≠ ρ :=
-  ne_of_apply_ne UpperHalfPlane.re (by norm_num [re_I, re_ρ])
-
-private lemma I_ne_vadd_ρ : (I : ℍ) ≠ (1 : ℝ) +ᵥ ρ :=
-  ne_of_apply_ne UpperHalfPlane.re (by norm_num [re_I, re_ρ])
-
-private lemma ρ_ne_vadd_ρ : (ρ : ℍ) ≠ (1 : ℝ) +ᵥ ρ :=
-  ne_of_apply_ne UpperHalfPlane.re (by norm_num [re_ρ])
 
 private lemma S_smul_I : _root_.ModularGroup.S • (I : ℍ) = I :=
   _root_.ModularGroup.stabilizer_I.mpr (by simp)
 
-private lemma S_smul_ρ : _root_.ModularGroup.S • (ρ : ℍ) = (1 : ℝ) +ᵥ ρ := by
-  rw [modular_S_smul]
-  ext
-  simp only [coe_vadd, Complex.ofReal_one]
-  field_simp [UpperHalfPlane.ne_zero ρ]
-  linear_combination -ρ_sq
-
-private lemma S_smul_vadd_ρ : _root_.ModularGroup.S • ((1 : ℝ) +ᵥ ρ : ℍ) = ρ := by
-  have hρ1 : (1 : ℂ) + (ρ : ℂ) ≠ 0 := by simpa using UpperHalfPlane.ne_zero ((1 : ℝ) +ᵥ ρ)
-  rw [modular_S_smul]
-  ext
-  simp only [coe_vadd, Complex.ofReal_one]
-  field_simp [hρ1]
-  linear_combination -ρ_sq
-
 private lemma ST_smul_ρ : (_root_.ModularGroup.S * _root_.ModularGroup.T) • (ρ : ℍ) = ρ :=
   _root_.ModularGroup.stabilizer_ρ.mpr (by simp)
+
+private lemma T_inv_S_smul_ρ : (_root_.ModularGroup.T⁻¹ * _root_.ModularGroup.S) • (ρ : ℍ) = ρ :=
+  _root_.ModularGroup.stabilizer_ρ.mpr (by simp)
+
+private lemma S_smul_ρ : _root_.ModularGroup.S • (ρ : ℍ) = (1 : ℝ) +ᵥ ρ := by
+  have h := T_inv_S_smul_ρ
+  rw [mul_smul, inv_smul_eq_iff, modular_T_smul] at h
+  exact h
+
+private lemma S_smul_vadd_ρ : _root_.ModularGroup.S • ((1 : ℝ) +ᵥ ρ : ℍ) = ρ := by
+  rw [← modular_T_smul, ← mul_smul]
+  exact ST_smul_ρ
 
 private lemma TST_smul_ρ :
     (_root_.ModularGroup.T * _root_.ModularGroup.S * _root_.ModularGroup.T) • (ρ : ℍ) =
       (1 : ℝ) +ᵥ ρ := by
   rw [mul_smul, modular_T_smul, mul_smul, S_smul_vadd_ρ, modular_T_smul]
-
-private lemma T_inv_S_smul_ρ : (_root_.ModularGroup.T⁻¹ * _root_.ModularGroup.S) • (ρ : ℍ) = ρ :=
-  _root_.ModularGroup.stabilizer_ρ.mpr (by simp)
 
 /-- The inversion `S` scales the norm of every point by its reciprocal.
 
@@ -182,8 +159,8 @@ lemma orbit_mk_eq_I_iff {p : ℍ} (hp : p ∈ 𝒟) :
     ⟨-, hI⟩ | ⟨-, hI⟩ | ⟨-, hI⟩
   · exact one_smul _ _
   · exact (_root_.ModularGroup.SL_neg_smul _ _).trans (one_smul _ _)
-  · norm_num [re_I] at hre
-  · norm_num [re_I] at hre
+  · norm_num at hre
+  · norm_num at hre
   · exact S_smul_I
   · exact (_root_.ModularGroup.SL_neg_smul _ _).trans S_smul_I
   · exact absurd hI I_ne_vadd_ρ
