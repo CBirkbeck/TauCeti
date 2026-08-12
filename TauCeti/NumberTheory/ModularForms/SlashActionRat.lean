@@ -85,7 +85,11 @@ lemma det_map_ratCast_pos {g : GL (Fin 2) ℚ} (hg : 0 < (g : Matrix (Fin 2) (Fi
 
 /-- **The expanded formula for a positive-determinant rational slash**, with no `σ` twist:
 
-`f ∣[k] g = fun τ ↦ f (g • τ) * |det g| ^ (k - 1) * denom g τ ^ (-k)`.
+`f ∣[k] g = fun τ ↦ f (ĝ • τ) * |det ĝ| ^ (k - 1) * denom ĝ τ ^ (-k)`,
+
+where `ĝ` abbreviates `Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g`, the real image of `g`.
+The distinction is not cosmetic: `g : GL (Fin 2) ℚ` does not act on `ℍ` at all, and `denom` is
+likewise only defined at the real matrix, so every occurrence in the statement below is at `ĝ`.
 
 Mathlib's `ModularForm.slash_def` carries `σ g` around the value of `f`, which is complex
 conjugation on the negative-determinant branch. This is the analogue of
