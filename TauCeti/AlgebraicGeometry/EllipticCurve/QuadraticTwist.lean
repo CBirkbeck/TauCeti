@@ -28,7 +28,7 @@ change of variables, again over any commutative ring in which the relevant param
 * `WeierstrassCurve.quadraticTwistOf`: the quadratic twist of a Weierstrass curve by `(t, n)`,
   an explicit Weierstrass model over any commutative ring.
 * `WeierstrassCurve.nodePolynomial_coeff_zero_quadraticTwistOf`: the constant coefficient of
-  `nodePolynomial` is the one invariant here that does **not** simply scale by a power of
+  `nodePolynomial` is the one quantity here that does **not** simply scale by a power of
   `t² - 4n`; it acquires `+ D² n a₁² c₄`. Splitting of the node polynomial is not determined by
   this coefficient alone, so this is a record of how it transforms, not a reduction statement.
 * `WeierstrassCurve.Δ_quadraticTwistOf`, `WeierstrassCurve.c₄_quadraticTwistOf`,
