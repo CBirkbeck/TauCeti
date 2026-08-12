@@ -134,44 +134,21 @@ end Nontrivial
 
 variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
 
-/-- Every function is `(a + b y) / p` with `a b p` polynomials, `p ≠ 0` — the form the degree
-formula consumes: numerator in the `1, Y` basis, denominator a polynomial. -/
-private theorem exists_smul_basis_div (f : W.FunctionField) : ∃ a b p : F[X], p ≠ 0 ∧
-    f * algebraMap F[X] W.FunctionField p =
-      algebraMap W.CoordinateRing W.FunctionField (a • 1 + b • CoordinateRing.mk W Y) := by
-  obtain ⟨⟨u, -, p, hp, rfl⟩, hf⟩ := IsLocalization.surj
-    (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) f
-  obtain ⟨a, b, rfl⟩ := CoordinateRing.exists_smul_basis_eq u
-  refine ⟨a, b, p, nonZeroDivisors.ne_zero hp, ?_⟩
-  rwa [IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField]
-
-/-- Scaling a decomposition by a polynomial: `(a + by)/p = (ac + bcy)/(pc)`. -/
-private theorem smul_basis_div_mul {f : W.FunctionField} {a b p : F[X]}
-    (h : f * algebraMap F[X] W.FunctionField p =
-      algebraMap W.CoordinateRing W.FunctionField (a • 1 + b • CoordinateRing.mk W Y)) (c : F[X]) :
-    f * algebraMap F[X] W.FunctionField (p * c) =
-      algebraMap W.CoordinateRing W.FunctionField
-        ((a * c) • 1 + (b * c) • CoordinateRing.mk W Y) := by
-  have : (a * c) • (1 : W.CoordinateRing) + (b * c) • CoordinateRing.mk W Y
-      = (a • 1 + b • CoordinateRing.mk W Y) * algebraMap F[X] W.CoordinateRing c := by
-    simp only [Algebra.smul_def, map_mul]; ring
-  rw [this, map_mul, map_mul,
-    ← IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, ← h]
-  ring
-
-/-- **Two functions over a common denominator.** -/
+/-- **Two functions over a common denominator**: `f = (a₁ + b₁ y) / p` and `g = (a₂ + b₂ y) / p`
+with `p ≠ 0` — the form the degree formula consumes: numerators in the `1, Y` basis, one shared
+polynomial denominator. -/
 private theorem exists_common_smul_basis_div (f g : W.FunctionField) :
     ∃ a₁ b₁ a₂ b₂ p : F[X], p ≠ 0 ∧
       f * algebraMap F[X] W.FunctionField p =
         algebraMap W.CoordinateRing W.FunctionField (a₁ • 1 + b₁ • CoordinateRing.mk W Y) ∧
       g * algebraMap F[X] W.FunctionField p =
         algebraMap W.CoordinateRing W.FunctionField (a₂ • 1 + b₂ • CoordinateRing.mk W Y) := by
-  obtain ⟨a₁, b₁, p₁, hp₁, h₁⟩ := exists_smul_basis_div W f
-  obtain ⟨a₂, b₂, p₂, hp₂, h₂⟩ := exists_smul_basis_div W g
-  refine ⟨a₁ * p₂, b₁ * p₂, a₂ * p₁, b₂ * p₁, p₁ * p₂, mul_ne_zero hp₁ hp₂,
-    smul_basis_div_mul W h₁ p₂, ?_⟩
-  rw [mul_comm p₁ p₂]
-  exact smul_basis_div_mul W h₂ p₁
+  obtain ⟨u₁, u₂, ⟨-, p, hp, rfl⟩, h₁, h₂⟩ := IsLocalization.surj₂
+    (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) W.FunctionField f g
+  obtain ⟨a₁, b₁, rfl⟩ := CoordinateRing.exists_smul_basis_eq u₁
+  obtain ⟨a₂, b₂, rfl⟩ := CoordinateRing.exists_smul_basis_eq u₂
+  rw [← IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField] at h₁ h₂
+  exact ⟨a₁, b₁, a₂, b₂, p, nonZeroDivisors.ne_zero hp, h₁, h₂⟩
 
 section DomainCore
 
