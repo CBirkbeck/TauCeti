@@ -31,9 +31,11 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit`: the same for the
   valence formula's own divisor sum, whose points are complex numbers carrying the interior
   bounds.
-* `TauCeti.ModularForm.orderOfVanishingOnOrbit_eq_zero_of_notMem_image`: an orbit missed by a
-  divisor set complete for `f` carries vanishing order zero — the remaining step that extends
-  `sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit`'s image-indexed sum to the whole orbit space.
+* `TauCeti.ModularForm.orderOfVanishingOnOrbit_eq_zero_of_notMem`: an orbit outside a set of
+  orbits complete for `f`'s nonzero-order points on `𝒟` carries vanishing order zero.
+* `TauCeti.ModularForm.orderOfVanishingOnOrbit_eq_zero_of_notMem_image`: the case of the above
+  where the orbit set is the image, under `sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit`'s
+  orbit map, of a divisor set of complex points complete for `f` over `𝒟`.
 
 ## References
 
@@ -138,28 +140,42 @@ lemma sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit [SlashInvariantFormClass 
     ModularGroup.orbit_mk_injOn_fdo (hfdo a ha') (hfdo b hb') hab
   exact (hcoe a ha').symm.trans ((congrArg (fun w : ℍ ↦ (w : ℂ)) h).trans (hcoe b hb'))
 
-/-- **The missing completeness step.** An orbit outside the image of a divisor set complete for
-`f` carries vanishing order zero. Completeness means `hX` catches every fundamental-domain point
-of nonzero order into `X`, the same idiom `hasFiniteSupport_orderOfVanishingOnOrbit` uses over
-`𝒟`.
+/-- **The missing completeness step.** An orbit outside a set `S` that catches every
+fundamental-domain point of nonzero order carries vanishing order zero. Completeness means `hS`:
+every `p ∈ 𝒟` with `orderOfVanishingAt f p ≠ 0` has its orbit `⟦p⟧` inside `S`, the same idiom
+`hasFiniteSupport_orderOfVanishingOnOrbit` uses over `𝒟`. -/
+lemma orderOfVanishingOnOrbit_eq_zero_of_notMem [SlashInvariantFormClass F 𝒮ℒ k]
+    {S : Set (MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)}
+    (hS : ∀ p ∈ 𝒟, orderOfVanishingAt f p ≠ 0 →
+      (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) ∈ S)
+    {q} (hq : q ∉ S) : orderOfVanishingOnOrbit f q = 0 := by
+  -- `q`'s representative `p ∈ 𝒟` (`ModularGroup.exists_rep_mem_fd`) would, if its order were
+  -- nonzero, put `q` itself into `S` via `hS` (order is orbit-constant,
+  -- `orderOfVanishingOnOrbit_mk`), contradicting `hq`
+  by_contra hne
+  obtain ⟨p, rfl, hpfd⟩ := ModularGroup.exists_rep_mem_fd q
+  rw [orderOfVanishingOnOrbit_mk] at hne
+  exact hq (hS p hpfd hne)
 
-Were the order nonzero, `q`'s representative `p ∈ 𝒟` (`ModularGroup.exists_rep_mem_fd`) would have
-`orderOfVanishingAt f p ≠ 0` too (order is orbit-constant, `orderOfVanishingOnOrbit_mk`), so
-completeness would put `(p : ℂ)` in `X`, and hence `q` itself in the image `X` maps to under
-`sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit`'s orbit map — contradicting `hq`.
+/-- The case `S := (fun z ↦ ⟦ofComplex z⟧) '' X` of `orderOfVanishingOnOrbit_eq_zero_of_notMem`,
+for `X` a divisor set of complex points complete for `f` over `𝒟`.
 
-This is what promotes that lemma's image-indexed `∑ᶠ` to the whole orbit space: extending its sum
-past the image only adds terms that vanish. -/
+This does **not** extend `sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit`'s image-indexed `∑ᶠ`
+to the whole orbit space: that lemma needs `X` inside the *open* domain `𝒟ᵒ`, while `hX` ranges
+over the *closed* `𝒟`, which also holds the elliptic points `i` and `ρ` (`‖i‖ = ‖ρ‖ = 1`). If `f`
+has nonzero order at `i` or `ρ`, `hX` forces `(i : ℂ) ∈ X` or `(ρ : ℂ) ∈ X`, while that lemma
+forbids either — exactly the points the valence formula weights by `1/2` and `1/3` rather than
+counting into this sum. Reaching the roadmap's non-elliptic orbit space still needs separate
+treatment of those elliptic orbits. -/
 lemma orderOfVanishingOnOrbit_eq_zero_of_notMem_image [SlashInvariantFormClass F 𝒮ℒ k]
     {X : Set ℂ} (hX : ∀ p ∈ 𝒟, orderOfVanishingAt f p ≠ 0 → (p : ℂ) ∈ X)
     {q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ}
     (hq : q ∉ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
         MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) '' X) :
-    orderOfVanishingOnOrbit f q = 0 := by
-  by_contra hne
-  obtain ⟨p, rfl, hpfd⟩ := ModularGroup.exists_rep_mem_fd q
-  rw [orderOfVanishingOnOrbit_mk] at hne
-  exact hq ⟨(p : ℂ), hX p hpfd hne, by simp⟩
+    orderOfVanishingOnOrbit f q = 0 :=
+  orderOfVanishingOnOrbit_eq_zero_of_notMem (S := (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
+      MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) '' X) f
+    (fun p hp hne ↦ ⟨(p : ℂ), hX p hp hne, by simp⟩) hq
 
 end ModularForm
 
