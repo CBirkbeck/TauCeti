@@ -10,8 +10,8 @@ public import TauCeti.RingTheory.Huber.WeightedEval.Hom
 # The evaluation of `A⟨X⟩_T` is continuous
 
 `WeightedEval/Hom.lean` packages Wedhorn's evaluation as a ring homomorphism `A⟨X⟩_T →+* B`. This
-file proves it continuous for the topology of `A⟨X⟩_T`, which is the last property Proposition
-5.50 asks of the extension apart from its uniqueness.
+file proves it continuous for the topology of `A⟨X⟩_T`. Together with the uniqueness in
+`WeightedRestrictedSeries.lean`, that completes what Proposition 5.50 asks of the extension.
 
 The argument is the one that made the terms summable, run at a fixed series rather than along the
 cofinite filter, and it shares its estimate: a basic neighbourhood `U⟨X⟩` of zero bounds *every*
@@ -43,7 +43,8 @@ variable {k : ℕ} {A B : Type*} [CommRing A] [TopologicalSpace A] [Nonarchimede
 it exist: `φ` continuous at zero and the weighted monomials `φ(Tν) · bν` bounded.
 
 With `weightedEvalHom_weightedC` and `weightedEvalHom_weightedX`, this gives every property
-Proposition 5.50 asks of the extension except the uniqueness, which is not proved here. -/
+Proposition 5.50 asks of the extension except its uniqueness, which is
+`TauCeti.Huber.weightedRestrictedSubring_ringHom_ext_of_continuous`. -/
 theorem continuous_weightedEvalHom (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
     (hb : IsWeightBounded φ T b) : Continuous (weightedEvalHom hT hφ hb) := by
   have _ : IsTopologicalRing (weightedRestrictedSubring T hT) :=
