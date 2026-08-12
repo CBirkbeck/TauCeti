@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.NumberTheory.Modular
-public import Mathlib.NumberTheory.ModularForms.ArithmeticSubgroups
 public import TauCeti.Analysis.Complex.UpperHalfPlane.Rho
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
@@ -131,25 +130,17 @@ variable {g : ℍ → ℂ} {p : ℍ}
 private lemma coe_S_smul (p : ℍ) : ((ModularGroup.S • p : ℍ) : ℂ) = (-(p : ℂ))⁻¹ := by
   rw [modular_S_smul]
 
-private lemma normSq_eq_one_of_norm_eq_one (hp : ‖(p : ℂ)‖ = 1) : normSq (p : ℂ) = 1 := by
-  simp [normSq_eq_norm_sq, hp]
-
 private lemma norm_coe_S_smul (hp : ‖(p : ℂ)‖ = 1) : ‖((ModularGroup.S • p : ℍ) : ℂ)‖ = 1 := by
   rw [coe_S_smul, norm_inv, norm_neg, hp, inv_one]
 
-/-- On the unit arc the inversion is `z ↦ -conj z`, so it flips the real part. -/
+-- On the unit arc the inversion is `z ↦ -conj z`, so it flips the real part.
 private lemma re_coe_S_smul (hp : ‖(p : ℂ)‖ = 1) :
     ((ModularGroup.S • p : ℍ) : ℂ).re = -(p : ℂ).re := by
-  rw [coe_S_smul]
-  simp [Complex.inv_re, normSq_eq_one_of_norm_eq_one hp]
+  rw [coe_S_smul, inv_re, normSq_neg, Complex.normSq_eq_norm_sq, hp, one_pow, neg_re, div_one]
 
-/-- The inversion preserves `𝒟` at the unit-arc points: it keeps the modulus at `1` and only
-flips the real part. -/
-private lemma S_smul_mem_fd (hp : p ∈ 𝒟) (hnorm : ‖(p : ℂ)‖ = 1) : ModularGroup.S • p ∈ 𝒟 := by
-  refine ⟨?_, ?_⟩
-  · rw [coe_S_smul, map_inv₀, normSq_neg, normSq_eq_one_of_norm_eq_one hnorm, inv_one]
-  · rw [← UpperHalfPlane.coe_re, re_coe_S_smul hnorm, abs_neg, UpperHalfPlane.coe_re]
-    exact hp.2
+private lemma S_smul_mem_fd (hp : p ∈ 𝒟) (hnorm : ‖(p : ℂ)‖ = 1) : ModularGroup.S • p ∈ 𝒟 :=
+  ⟨Complex.one_le_normSq_iff.mpr (norm_coe_S_smul hnorm).ge,
+    by simpa only [← coe_re, re_coe_S_smul hnorm, abs_neg] using hp.2⟩
 
 /-- The inversion is an involution of `ℍ`. -/
 private lemma S_smul_S_smul (p : ℍ) : ModularGroup.S • (ModularGroup.S • p) = p :=
@@ -269,47 +260,35 @@ section Partition
 
 variable {p : ℍ}
 
-/-- Points of `𝒟` lie outside the open unit disc. -/
-private lemma one_le_norm_of_mem_fd (hp : p ∈ 𝒟) : 1 ≤ ‖(p : ℂ)‖ := by
-  have h := Real.sqrt_le_sqrt hp.1
-  rwa [Real.sqrt_one, ← norm_def] at h
-
-/-- Two points of the unit arc with the same real part coincide: on the upper half plane the
-imaginary part is the positive square root of `1 - re ^ 2`. -/
-private lemma coe_eq_coe_of_norm_eq_one {q : ℍ} (hp : ‖(p : ℂ)‖ = 1) (hq : ‖(q : ℂ)‖ = 1)
-    (hre : (p : ℂ).re = (q : ℂ).re) : (p : ℂ) = (q : ℂ) := by
-  refine Complex.ext hre ?_
-  have h₁ := normSq_eq_one_of_norm_eq_one hp
-  have h₂ := normSq_eq_one_of_norm_eq_one hq
-  rw [normSq_apply] at h₁ h₂
-  rw [hre] at h₁
-  have hip : 0 < (p : ℂ).im := p.im_pos
-  have hiq : 0 < (q : ℂ).im := q.im_pos
-  have h : ((p : ℂ).im - (q : ℂ).im) * ((p : ℂ).im + (q : ℂ).im) = 0 := by
-    linear_combination h₁ - h₂
-  rcases mul_eq_zero.mp h with h | h <;> linarith
-
 /-- The real part of the second corner. -/
 private lemma coe_re_ρ_add_one : ((ρ : ℂ) + 1).re = 1 / 2 := by
   rw [add_re, coe_re_ρ, one_re]; norm_num
 
 /-- A point of the unit arc with vanishing real part is `i`. -/
 private lemma coe_eq_I_of_re_eq_zero (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = 0) :
-    (p : ℂ) = Complex.I :=
-  coe_eq_coe_of_norm_eq_one (q := UpperHalfPlane.I) hnorm (by simp) (by simpa using hre)
+    (p : ℂ) = Complex.I := by
+  have hp : p = UpperHalfPlane.I := UpperHalfPlane.eq_of_re_of_norm
+    (show (p : ℂ).re = (UpperHalfPlane.I : ℂ).re by simpa using hre)
+    (show ‖(p : ℂ)‖ = ‖(UpperHalfPlane.I : ℂ)‖ by simp [hnorm])
+  rw [hp, UpperHalfPlane.coe_I]
 
 /-- A point of the unit arc with real part `-1/2` is the corner `ρ`. -/
 private lemma coe_eq_ρ_of_re (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = -(1 / 2)) :
-    (p : ℂ) = (ρ : ℂ) :=
-  coe_eq_coe_of_norm_eq_one (q := ρ) hnorm norm_ρ (by rw [hre, coe_re_ρ])
+    (p : ℂ) = (ρ : ℂ) := by
+  have hp : p = ρ := UpperHalfPlane.eq_of_re_of_norm
+    (show (p : ℂ).re = (ρ : ℂ).re by rw [hre, coe_re_ρ])
+    (show ‖(p : ℂ)‖ = ‖(ρ : ℂ)‖ by rw [hnorm, norm_ρ])
+  rw [hp]
 
 /-- A point of the unit arc with real part `1/2` is the corner `ρ + 1`. -/
 private lemma coe_eq_ρ_add_one_of_re (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = 1 / 2) :
     (p : ℂ) = (ρ : ℂ) + 1 := by
-  rw [← coe_vadd_one_ρ]
-  refine coe_eq_coe_of_norm_eq_one (q := (1 : ℝ) +ᵥ ρ) hnorm ?_ ?_
-  · rw [coe_vadd_one_ρ]; exact norm_ρ_add_one
-  · rw [hre, re_coe_vadd, coe_re_ρ]; norm_num
+  have hp : p = (1 : ℝ) +ᵥ ρ := UpperHalfPlane.eq_of_re_of_norm
+    (show (p : ℂ).re = (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ).re by
+      rw [hre, re_coe_vadd, coe_re_ρ]; norm_num)
+    (show ‖(p : ℂ)‖ = ‖(((1 : ℝ) +ᵥ ρ : ℍ) : ℂ)‖ by
+      rw [hnorm, coe_vadd_one_ρ, norm_ρ_add_one])
+  rw [hp, coe_vadd_one_ρ]
 
 /-- Each of the four half-edges consists of non-elliptic points that are not strictly interior:
 the verticals are cut off from the corners by their modulus, the arc halves by their real part. -/
@@ -344,7 +323,7 @@ private lemma half_edge_of_boundary (hp : p ∈ 𝒟) (hI : (p : ℂ) ≠ Comple
     ((p : ℂ).re = 1 / 2 ∧ 1 < ‖(p : ℂ)‖) ∨ ((p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖) ∨
       ((p : ℂ) ≠ (ρ : ℂ) + 1 ∧ ‖(p : ℂ)‖ = 1 ∧ 0 < (p : ℂ).re) ∨
       ((p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0) := by
-  rcases eq_or_lt_of_le (one_le_norm_of_mem_fd hp) with heq | hgt
+  rcases eq_or_lt_of_le (Complex.one_le_normSq_iff.mp hp.1) with heq | hgt
   · rcases lt_trichotomy (p : ℂ).re 0 with h | h | h
     · exact Or.inr (Or.inr (Or.inr ⟨hρ, heq.symm, h⟩))
     · exact absurd (coe_eq_I_of_re_eq_zero heq.symm h) hI
