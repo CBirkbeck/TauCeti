@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.Jacobian.Point
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Weierstrass
 
 /-!
 # The universal elliptic curve
@@ -29,7 +30,6 @@ polynomial) with distinguished point `(X,Y)`.
 * `WeierstrassCurve.Universal.polyEval`, `.ringEval`: the homomorphism `Universal.Poly →+* R`
   induced by a point `(x,y)` of the affine plane, and its factorisation `Universal.Ring →+* R`
   through the Weierstrass polynomial when `(x,y)` lies on `W`.
-* `WeierstrassCurve.cusp`: the cusp curve `Y² = X³`.
 
 ## Main results
 
@@ -77,7 +77,7 @@ Apache 2.0, `main` at `1c1c7466`, `projects/NagellLutz/LutzNagell/Universal.lean
 roadmap pins for the Nagell–Lutz strand. **Most** declarations here come from that file: the
 `Coeff` index type and the bulk of the `Universal` namespace (`curve`, `Poly`, `Ring`, `Field`,
 `polyToField`, `pointedCurve`, `Affine.point`, `Jacobian.point`, `curvePoly` and `curveRing` with
-their lemmas), and the specialization API (`cusp`, `specialize`, `polyEval`, `ringEval` with their
+their lemmas), and the specialization API (`specialize`, `polyEval`, `ringEval` with their
 compatibility lemmas).
 
 Three groups are **not** simple ports, and are listed among the adaptations below: `ringHom_ext`
@@ -298,29 +298,6 @@ abbrev curvePoly : WeierstrassCurve Poly := curve.baseChange Poly
 (the universal ring), where `P` is the Weierstrass polynomial. -/
 abbrev curveRing : WeierstrassCurve Universal.Ring := curve.baseChange Universal.Ring
 end Universal
-
-/-- The cusp curve `Y² = X³` over a commutative ring `R`. -/
-def cusp (R : Type*) [Zero R] : Affine R := { a₁ := 0, a₂ := 0, a₃ := 0, a₄ := 0, a₆ := 0 }
-
-/-- Every coefficient of the cusp curve vanishes, and likewise for `cusp_a₂` through `cusp_a₆`.
-The definition body is unexposed, so these are how a consumer projects out of `cusp` — for instance
-when specialising the universal curve along it. -/
-@[simp] lemma cusp_a₁ (R : Type*) [Zero R] : (cusp R).a₁ = 0 := (rfl)
-/-- The `a₂` coefficient of the cusp curve vanishes. -/
-@[simp] lemma cusp_a₂ (R : Type*) [Zero R] : (cusp R).a₂ = 0 := (rfl)
-/-- The `a₃` coefficient of the cusp curve vanishes. -/
-@[simp] lemma cusp_a₃ (R : Type*) [Zero R] : (cusp R).a₃ = 0 := (rfl)
-/-- The `a₄` coefficient of the cusp curve vanishes. -/
-@[simp] lemma cusp_a₄ (R : Type*) [Zero R] : (cusp R).a₄ = 0 := (rfl)
-/-- The `a₆` coefficient of the cusp curve vanishes. -/
-@[simp] lemma cusp_a₆ (R : Type*) [Zero R] : (cusp R).a₆ = 0 := (rfl)
-
-/-- `(1, 1)` lies on the cusp curve `Y² = X³` over `ℤ`. Specializing the universal curve along this
-point is the cheap route to nonvanishing statements, since `ψₙ(1,1) = n`: a universal quantity that
-vanished would have to vanish in `ℤ` here. The `CharZero Universal.Ring` instance below is
-obtained this way. -/
-lemma equation_cusp_one_one (R : Type*) [CommRing R] : (cusp R).Equation 1 1 := by
-  simp [Affine.Equation, Affine.polynomial, cusp, Polynomial.evalEval]
 
 open Universal
 variable {R} [CommRing R] (W : WeierstrassCurve R)
