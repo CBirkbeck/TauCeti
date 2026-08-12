@@ -6,7 +6,7 @@ module
 
 public import TauCeti.RingTheory.Huber.ZeroSequenceOfUnits
 public import TauCeti.Topology.Algebra.OpenMapping.Henkel
-public import Mathlib.Topology.Baire.CompleteMetrizable
+import Mathlib.Topology.Baire.CompleteMetrizable
 
 /-!
 # The open mapping theorem over a Tate ring
@@ -14,8 +14,14 @@ public import Mathlib.Topology.Baire.CompleteMetrizable
 `TauCeti.HasZeroSequenceOfUnits.isOpenMap` is Henkel's theorem in the generality it is proved in:
 the scalars need only a zero sequence of units, the source is a complete first-countable
 nonarchimedean group, and the target need only be Baire. This file records the form the
-strict-morphism material actually consumes — a surjective linear map between complete metrisable
-modules over a Tate ring is open — by discharging those hypotheses from ones a consumer can check.
+strict-morphism material actually consumes — a surjective linear map from a complete
+pseudometrisable module onto a complete metrisable one, over a Tate ring, is open — by discharging
+those hypotheses from ones a consumer can check.
+
+The asymmetry is real and not an oversight. Both modules are asked for completeness and a countably
+generated uniformity; only the *target* is asked to be `T0Space`, so only the target is metrisable.
+The source is pseudometrisable, which is all Henkel needs of it, and separating the source would be
+an assumption the theorem does not use.
 
 Only two of Henkel's hypotheses survive the translation, and both are stated:
 
@@ -48,8 +54,8 @@ repository.
 
 ## Main results
 
-* `TauCeti.Huber.IsTateRing.isOpenMap`: a continuous surjective linear map between complete
-  metrisable modules over a Tate ring is open.
+* `TauCeti.Huber.IsTateRing.isOpenMap`: a continuous surjective linear map from a complete
+  pseudometrisable module onto a complete metrisable one, over a Tate ring, is open.
 
 ## References
 
@@ -71,9 +77,12 @@ variable {A M N : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   [AddCommGroup N] [UniformSpace N] [IsUniformAddGroup N] [CompleteSpace N]
   [(𝓤 N).IsCountablyGenerated] [T0Space N] [Module A N] [ContinuousSMul A N]
 
-/-- **The open mapping theorem over a Tate ring.** A surjective `A`-linear map between complete
-metrisable topological `A`-modules is open, when `A` is a Tate ring and the source is
-nonarchimedean.
+/-- **The open mapping theorem over a Tate ring.** A surjective `A`-linear map from a complete
+pseudometrisable topological `A`-module onto a complete metrisable one is open, when `A` is a Tate
+ring and the source is nonarchimedean.
+
+Only the target carries `T0Space`, so only the target is metrisable rather than pseudometrisable;
+the source is never asked to be separated because the proof does not use it.
 
 This is `TauCeti.HasZeroSequenceOfUnits.isOpenMap` with its hypotheses discharged: it is the
 general theorem that does the work, and this is the named instantiation the roadmap asks for.
