@@ -201,13 +201,6 @@ lemma algebraMap_ring_eq_comp :
     algebraMap (MvPolynomial Coeff ℤ) Universal.Ring = (AdjoinRoot.mk _).comp (algebraMap _ _) :=
   (rfl)
 
-/-- The Weierstrass polynomial vanishes at `(X, Y)` in the universal field — it is exactly what was
-quotiented out. This is the computational content of `equation_point`. -/
--- Not `@[simp]`: now that `polyToField_apply` is a simp lemma, `simp` derives this from it and
--- `AdjoinRoot.mk_self`, so tagging it as well is a `simpNF` duplicate. It stays as a named fact.
-lemma polyToField_polynomial : polyToField curve.polynomial = 0 := by
-  rw [polyToField_apply, AdjoinRoot.mk_self, map_zero]
-
 /-- The coefficient ring `ℤ[A₁,⋯,A₆]` embeds in the universal field: the five indeterminates stay
 algebraically independent after adjoining a point and passing to fractions. This is what carries
 `Δ_curve_ne_zero` over to `pointedCurve`, giving the `IsElliptic` instance below. -/
@@ -256,7 +249,9 @@ lemma equation_point : pointedCurve.toAffine.Equation (polyToField (C X)) (polyT
   have : ∀ p, evalEval (polyToField (C X)) (polyToField Y)
       (p.map (mapRingHom (algebraMap _ Universal.Field))) = polyToField p :=
     fun p ↦ congr($h p)
-  rw [Affine.map_polynomial, this, polyToField_polynomial]
+  -- The Weierstrass polynomial vanishes at `(X, Y)`: it is exactly what was quotiented out, so
+  -- `AdjoinRoot.mk_self` closes the goal through `polyToField_apply`.
+  rw [Affine.map_polynomial, this, polyToField_apply, AdjoinRoot.mk_self, map_zero]
 
 open Polynomial Affine in
 /-- The distinguished point on the universal pointed Weierstrass curve. -/
