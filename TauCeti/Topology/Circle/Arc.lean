@@ -27,9 +27,11 @@ preconnected and not the whole circle, and pick `z ∉ T`. Cutting the circle at
 reading it as `Circle.exp` on the period `[t, t + 2π]` for `Circle.exp t = z` — turns `T` into
 `K = Circle.exp ⁻¹' T ∩ Icc t (t + 2 * π)`, a compact subset of `ℝ` avoiding *both* endpoints of
 that period, so `K ⊆ Ioo t (t + 2 * π)` and `Circle.exp` is injective on `K`. A continuous injection
-of a compact space into a Hausdorff one is a closed map, so
-`IsPreconnected.preimage_of_isClosedMap` carries preconnectedness of `T = Circle.exp '' K` back to
-`K`, and a compact connected subset of `ℝ` is a closed interval (`eq_Icc_of_connected_compact`).
+of a compact space into a Hausdorff one is a closed embedding (`Continuous.isClosedEmbedding`),
+hence inducing, and an inducing map reflects preconnectedness
+(`Topology.IsInducing.isPreconnected_image`), which carries preconnectedness of
+`T = Circle.exp '' K` back to `K`; a compact connected subset of `ℝ` is then a closed interval
+(`eq_Icc_of_connected_compact`).
 Hence `T = Circle.exp '' Icc a b` with `b - a < 2 * π`, the degenerate case `a = b` being a point.
 
 The complement is read off the same period, moved to `Ioc b (b + 2 * π)` so that the closed arc
