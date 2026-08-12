@@ -81,8 +81,10 @@ their lemmas), and the specialization API (`cusp`, `specialize`, `polyEval`, `ri
 compatibility lemmas).
 
 Three groups are **not** simple ports, and are listed among the adaptations below: `ringHom_ext`
-is new; the two `CharZero` instances **replace** the source's `Poly.two_ne_zero` and
-`Field.two_ne_zero` rather than porting them; and the equation lemmas for the opaque definitions
+is new; the `CharZero Universal.Ring` instance **replaces** the source's `Poly.two_ne_zero` and
+`Field.two_ne_zero` rather than porting them, and carries the field case with it — Mathlib derives
+`CharZero Universal.Field` from it through `IsFractionRing`, so no second instance is declared; and
+the equation lemmas for the opaque definitions
 (`polyToField_apply`, `Affine.point_def`, `Jacobian.point_def`, `Δ_pointedCurve`) exist because
 this repository's module system leaves definition bodies unexposed.
 That file's header reads `Authors: Junyan Xu`; following this repository's convention for adapted
@@ -441,10 +443,6 @@ it onto `ℤ`. This is the first use of that specialization argument, and it is 
 division-polynomial recursion. -/
 instance : CharZero Universal.Ring :=
   RingHom.charZero (ringEval (equation_cusp_one_one ℤ))
-
-/-- The universal field has characteristic zero, being the fraction field of a ring that does. -/
-instance : CharZero Universal.Field :=
-  (RingHom.charZero_iff (IsFractionRing.injective Universal.Ring Universal.Field)).1 inferInstance
 
 /-- Specialization is compatible with base change: pushing the universal curve over
 `Universal.Ring` along `ringEval eqn` returns `W` itself. This is the mechanism the whole file
