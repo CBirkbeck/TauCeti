@@ -22,12 +22,14 @@ along the entrywise map `GL(2, ℚ) →* GL(2, ℝ)`. It is a `scoped instance`,
 not want `f ∣[k] g` to elaborate at rational `g` simply does not open the scope.
 
 `f ∣[k] g` is the real slash at the mapped matrix *definitionally*, so every `GL(2, ℝ)` lemma
-applies after rewriting with `rat_slash_def`; the point of the instance is that consumers need
+applies after rewriting with `rat_slash`; the point of the instance is that consumers need
 not insert the coercion by hand.
 
 ## Main results
 
-* `ModularForm.rat_slash_def`: the rational action is the real one at the mapped matrix.
+* `ModularForm.rat_slash`: the rational action is the real one at the mapped matrix.
+* `ModularForm.rat_slash_def_of_det_pos`, `ModularForm.rat_slash_apply_of_det_pos`: the expanded
+  formula at positive determinant, free of the `σ` twist.
 * `ModularForm.det_map_ratCast_pos`: positivity of the determinant survives the embedding.
 * `ModularForm.rat_smul_slash_of_det_pos`: scalars pass through the slash of a
   positive-determinant rational matrix, with no `σ` twist.
@@ -64,7 +66,7 @@ noncomputable scoped instance ratSlashAction : SlashAction ℤ (GL (Fin 2) ℚ) 
 
 /-- The rational slash action is the real one at the mapped matrix. Definitional, but named:
 it is how every `GL(2, ℝ)` lemma is brought to bear on a rational slash. -/
-lemma rat_slash_def (k : ℤ) (g : GL (Fin 2) ℚ) (f : ℍ → ℂ) :
+lemma rat_slash (k : ℤ) (g : GL (Fin 2) ℚ) (f : ℍ → ℂ) :
     f ∣[k] g = f ∣[k] (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g) := (rfl)
 
 /-- A rational matrix of positive determinant maps to a real one of positive determinant.
@@ -74,6 +76,33 @@ lemma det_map_ratCast_pos {g : GL (Fin 2) ℚ} (hg : 0 < (g : Matrix (Fin 2) (Fi
       Matrix (Fin 2) (Fin 2) ℝ).det := by
   rw [Matrix.GeneralLinearGroup.val_map_apply, ← RingHom.mapMatrix_apply, ← RingHom.map_det]
   simpa using hg
+
+/-- **The expanded formula for a positive-determinant rational slash**, with no `σ` twist:
+
+`f ∣[k] g = fun τ ↦ f (g • τ) * |det g| ^ (k - 1) * denom g τ ^ (-k)`.
+
+Mathlib's `ModularForm.slash_def` carries `σ g` around the value of `f`, which is complex
+conjugation on the negative-determinant branch. This is the analogue of
+`ModularForm.SL_slash_def`, which drops the twist because `det = 1`; here positivity is the
+hypothesis that does it. -/
+lemma rat_slash_def_of_det_pos (k : ℤ) {g : GL (Fin 2) ℚ}
+    (hg : 0 < (g : Matrix (Fin 2) (Fin 2) ℚ).det) (f : ℍ → ℂ) :
+    f ∣[k] g = fun τ ↦
+      f ((Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g) • τ) *
+        |((Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g).det : ℝ)| ^ (k - 1) *
+          denom (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g) τ ^ (-k) := by
+  rw [rat_slash, ModularForm.slash_def, σ_eq_refl_of_det_pos (det_map_ratCast_pos hg)]
+  rfl
+
+/-- The pointwise form of `rat_slash_def_of_det_pos`, matching
+`ModularForm.SL_slash_apply`. -/
+lemma rat_slash_apply_of_det_pos (k : ℤ) {g : GL (Fin 2) ℚ}
+    (hg : 0 < (g : Matrix (Fin 2) (Fin 2) ℚ).det) (f : ℍ → ℂ) (τ : ℍ) :
+    (f ∣[k] g) τ =
+      f ((Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g) • τ) *
+        |((Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g).det : ℝ)| ^ (k - 1) *
+          denom (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g) τ ^ (-k) :=
+  congrFun (rat_slash_def_of_det_pos k hg f) τ
 
 /-- **Scalars pass through the slash of a positive-determinant rational matrix.** Mathlib's
 `ModularForm.smul_slash` carries the twist `σ A c`, which is complex conjugation when the
@@ -88,7 +117,7 @@ lemma rat_smul_slash_of_det_pos {α : Type*} [SMul α ℂ] [IsScalarTower α ℂ
     {g : GL (Fin 2) ℚ} (hg : 0 < (g : Matrix (Fin 2) (Fin 2) ℚ).det) (f : ℍ → ℂ) (c : α) :
     (c • f) ∣[k] g = c • f ∣[k] g := by
   ext τ : 1
-  rw [rat_slash_def, rat_slash_def]
+  rw [rat_slash, rat_slash]
   simp [ModularForm.slash_apply, σ_eq_refl_of_det_pos (det_map_ratCast_pos hg), smul_mul_assoc]
 
 end ModularForm
