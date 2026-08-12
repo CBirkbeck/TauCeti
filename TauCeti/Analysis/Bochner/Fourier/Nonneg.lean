@@ -519,8 +519,7 @@ private theorem fejer_avg_eq_integral (ψ : V → ℂ) (hcont : Continuous ψ)
 
 /-- **The overlap-ratio weights converge to the integral.** For an integrable continuous `ψ`, the
 integrals of `ψ` against the weights `overlapRatio n` converge to `∫ ψ` as `n → ∞`. -/
-private theorem tendsto_integral_overlapRatio_mul (ψ : V → ℂ) (hint : Integrable ψ)
-    (hcont : Continuous ψ) :
+private theorem tendsto_integral_overlapRatio_mul (ψ : V → ℂ) (hint : Integrable ψ) :
     Tendsto (fun n : ℕ => ∫ v, (overlapRatio (n : ℝ) v : ℂ) * ψ v) atTop (nhds (∫ x, ψ x)) := by
   have hone : (∫ x, ψ x) = ∫ x, (1 : ℂ) * ψ x := by simp
   rw [hone]
@@ -528,7 +527,7 @@ private theorem tendsto_integral_overlapRatio_mul (ψ : V → ℂ) (hint : Integ
   · intro n
     exact (continuous_ofReal.measurable.comp
       (measurable_overlapRatio n)).aestronglyMeasurable.mul
-      hcont.aestronglyMeasurable
+      hint.aestronglyMeasurable
   · exact hint.norm
   · intro n
     filter_upwards with v
@@ -573,7 +572,7 @@ private theorem pd_integral_re_nonneg (ψ : V → ℂ)
       filter_upwards [Filter.eventually_ne_atTop 0] with n hn
       simp only [J, ite_eq_right hn]
       exact (fejer_avg_eq_integral ψ hcont n (Nat.cast_pos.mpr (Nat.pos_of_ne_zero hn))).symm
-    exact tendsto_integral_overlapRatio_mul ψ hint hcont
+    exact tendsto_integral_overlapRatio_mul ψ hint
   exact ge_of_tendsto' ((Complex.continuous_re.tendsto _).comp hconv) hnn
 
 /-! ### The main theorems -/
