@@ -132,7 +132,7 @@ section IndicatorSum
 /-- **A shifted indicator picks out one summand.** Summing `f` over `Fin n` against the indicator
 of `b = k + j` gives `f` at the index `b - j` when that is a valid index and `j ≤ b`, and `0`
 otherwise. -/
-theorem sum_ite_val_add {n : ℕ} (f : Fin n → ℤ) (b j : ℕ) :
+theorem sum_ite_val_add {M : Type*} [AddCommMonoid M] {n : ℕ} (f : Fin n → M) (b j : ℕ) :
     ∑ k : Fin n, (if b = (k : ℕ) + j then f k else 0)
       = if h : b - j < n ∧ j ≤ b then f ⟨b - j, h.1⟩ else 0 := by
   by_cases h : b - j < n ∧ j ≤ b
