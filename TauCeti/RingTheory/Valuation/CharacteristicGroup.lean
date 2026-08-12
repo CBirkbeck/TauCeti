@@ -50,7 +50,7 @@ formalised here.
 ## Main results
 
 * `TauCeti.Valuation.exists_pow_lt_of_forall_cofinalValue` : one exponent serves finitely many
-  cofinal values, given that each has value at most `1`.
+  cofinal values.
 * `TauCeti.Valuation.mem_characteristicSubgroup_iff` : Membership in `cΓ_v` is bounding by a
   single attained value `≥ 1`.
 * `TauCeti.Valuation.hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top` : The
@@ -93,21 +93,20 @@ theorem cofinalValue_iff {v : Valuation A Γ₀} {a : A} :
   Iff.rfl
 
 /-- **A uniform exponent for finitely many cofinal values.** If every member of a finite set has
-cofinal value and value at most `1`, then a single exponent works for all of them at once.
+cofinal value, then a single exponent works for all of them at once.
 
-The bound `v a ≤ 1` is what makes the exponent uniform: taking the largest of the individual
-exponents only helps because raising a value `≤ 1` to a higher power decreases it. Wedhorn's proof
-of Lemma 7.5 avoids this by choosing an exponent per generator, precisely because the bound is not
-available there (see `exists_basicOpenFinset_of_forall_cofinalValue`); in Theorem 7.10 it is, being
-the second conjunct of the hypothesis. -/
+No bound on the values need be assumed: cofinality already forces `v.restrict a ≤ 1`, by taking
+`γ = 1`. That is what makes the exponent uniform, since raising a value `≤ 1` to a higher power
+only decreases it, so the largest of the individual exponents serves. -/
 theorem exists_pow_lt_of_forall_cofinalValue {v : Valuation A Γ₀} (S : Finset A)
-    (hle : ∀ a ∈ S, v.restrict a ≤ 1) (hcof : ∀ a ∈ S, CofinalValue v a)
-    {γ : ValueGroup₀ (.ofClass v)} (hγ : 0 < γ) :
+    (hcof : ∀ a ∈ S, CofinalValue v a) {γ : ValueGroup₀ (.ofClass v)} (hγ : 0 < γ) :
     ∃ n : ℕ, ∀ a ∈ S, v.restrict a ^ n < γ := by
-  classical
-  choose! f hf using fun a (ha : a ∈ S) ↦ cofinalValue_iff.mp (hcof a ha) γ hγ
-  refine ⟨S.sup f, fun a ha ↦ lt_of_le_of_lt ?_ (hf a ha)⟩
-  exact pow_le_pow_right_of_le_one' (hle a ha) (Finset.le_sup ha)
+  have hle : ∀ a ∈ S, v.restrict a ≤ 1 := fun a ha ↦ by
+    obtain ⟨n, hn⟩ := hcof a ha 1 one_pos
+    exact not_lt.mp fun h ↦ absurd hn (not_lt.mpr (one_le_pow₀ h.le))
+  choose! f hf using fun a (ha : a ∈ S) ↦ hcof a ha γ hγ
+  exact ⟨S.sup f, fun a ha ↦
+    (pow_le_pow_right_of_le_one' (hle a ha) (Finset.le_sup ha)).trans_lt (hf a ha)⟩
 
 /-- Cofinality transports along an equivalence of valuations, through the ordered
 isomorphism of their value groups. -/
