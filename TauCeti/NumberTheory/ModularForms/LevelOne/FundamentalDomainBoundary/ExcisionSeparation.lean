@@ -7,6 +7,8 @@ module
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Basic
 public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.SingularSets
 
+import TauCeti.Analysis.Contour.Curve.Distance
+
 /-!
 # The arc keeps its distance from the vertical excision centres
 
@@ -58,9 +60,9 @@ private theorem re_fdBoundary_arc_strictly_between (H : ℝ) {t : ℝ} (ht : t �
     ⟨by nlinarith [ht.1], by nlinarith [ht.2]⟩
   constructor
   · have h1 := Real.strictAntiOn_cos hmem ⟨by positivity, by linarith⟩ hhi
+    have h23 : 2 * Real.pi / 3 = Real.pi - Real.pi / 3 := by ring
     have h2 : Real.cos (2 * Real.pi / 3) = -(1 / 2) := by
-      rw [show 2 * Real.pi / 3 = Real.pi - Real.pi / 3 by ring, Real.cos_pi_sub,
-        Real.cos_pi_div_three]
+      rw [h23, Real.cos_pi_sub, Real.cos_pi_div_three]
     linarith
   · have h1 := Real.strictAntiOn_cos ⟨by positivity, by linarith⟩ hmem hlo
     rw [Real.cos_pi_div_three] at h1
@@ -98,20 +100,19 @@ theorem exists_pos_forall_le_norm_fdBoundary_sub_of_mem_verticalSingularSet (H :
   rcases V.eq_empty_or_nonempty with hVe | hVne
   · exact ⟨1, one_pos, fun s hsv hsna =>
       absurd (hVe ▸ Finset.mem_filter.mpr ⟨hsv, hsna⟩) (Finset.notMem_empty s)⟩
-  refine ⟨V.inf' hVne fun s => infDist s (fdBoundary H '' Icc 1 3),
-    (Finset.lt_inf'_iff hVne).mpr fun s hsV => ?_, fun s hsv hsna t ht => ?_⟩
-  · obtain ⟨hsv, hsna⟩ := Finset.mem_filter.mp hsV
-    refine ((isCompact_Icc.image_of_continuousOn
-      (continuous_fdBoundary H).continuousOn).isClosed.notMem_iff_infDist_pos
-      ⟨_, mem_image_of_mem _ (left_mem_Icc.mpr (by norm_num))⟩).mp ?_
-    rintro ⟨u, hu, heq⟩
-    exact fdBoundary_arc_ne_of_notMem_arcSingularSet
-      (re_eq_of_mem_verticalSingularSet hsv) hsna hu heq
-  · calc V.inf' hVne (fun s => infDist s (fdBoundary H '' Icc 1 3))
-        ≤ infDist s (fdBoundary H '' Icc 1 3) :=
-          Finset.inf'_le _ (Finset.mem_filter.mpr ⟨hsv, hsna⟩)
-      _ ≤ dist s (fdBoundary H t) := infDist_le_dist_of_mem (mem_image_of_mem _ ht)
-      _ = ‖fdBoundary H t - s‖ := by rw [dist_eq_norm, norm_sub_rev]
+  have huIcc : uIcc (1 : ℝ) 3 = Icc 1 3 := uIcc_of_le (by norm_num)
+  have hbound : ∀ s ∈ V, ∃ ρ > 0, ∀ t ∈ uIcc (1 : ℝ) 3, ρ ≤ ‖fdBoundary H t - s‖ := by
+    intro s hsV
+    obtain ⟨hsv, hsna⟩ := Finset.mem_filter.mp hsV
+    exact Contour.exists_curve_dist_lower_bound (γ := fdBoundary H) (w := s)
+      (continuous_fdBoundary H).continuousOn (by
+        rw [huIcc]
+        exact fun t ht => fdBoundary_arc_ne_of_notMem_arcSingularSet
+          (re_eq_of_mem_verticalSingularSet hsv) hsna ht)
+  choose! ρ hρpos hρbound using hbound
+  exact ⟨V.inf' hVne ρ, (Finset.lt_inf'_iff hVne).mpr fun s hsV => hρpos s hsV,
+    fun s hsv hsna t ht => (Finset.inf'_le ρ (Finset.mem_filter.mpr ⟨hsv, hsna⟩)).trans
+      (hρbound s (Finset.mem_filter.mpr ⟨hsv, hsna⟩) t (huIcc ▸ ht))⟩
 
 /-- **Under the separation the union excision test degenerates to its arc part on the arc.**
 The vertical centres already in the arc set are absorbed by it, and the remaining ones are
