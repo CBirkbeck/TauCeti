@@ -36,28 +36,15 @@ variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V] {f : End K V}
 private theorem isSemisimpleModule_mapSubmodule_eigenspace (f : End K V) (μ : K)
     (hinv : f.eigenspace μ ∈ (Algebra.lsmul K K V f).invtSubmodule) :
     IsSemisimpleModule K[X] (AEval.mapSubmodule K V f ⟨f.eigenspace μ, hinv⟩) := by
-  -- `AEval.restrict_equiv_mapSubmodule` restricts `Algebra.lsmul K K V f`, not `f`, to the
-  -- `μ`-eigenspace, and it hands `LinearMap.restrict` an invariance proof of type
-  -- `p ∈ (Algebra.lsmul K K V f).invtSubmodule`, where `LinearMap.restrict` asks for
-  -- `∀ x ∈ p, g x ∈ p`. Those two types are definitionally equal only at default transparency,
-  -- so `LinearMap.coe_restrict_apply` cannot be instantiated against the goal below directly.
-  -- Recording the composite coercion here once, with the submodules supplied explicitly, keeps
-  -- the step below lemma-driven.
-  have hrestrict (w : f.eigenspace μ) :
-      (LinearMap.restrict (p := f.eigenspace μ) (q := f.eigenspace μ)
-        (Algebra.lsmul K K V f) hinv w : V) = f w :=
-    (LinearMap.coe_restrict_apply _ _).trans
-      ((Algebra.lsmul_apply (R := K) (B := K) V f w).trans (Module.End.smul_def f w))
+  -- `AEval.restrict_equiv_mapSubmodule` restricts `Algebra.lsmul K K V f` rather than `f`, but
+  -- the two restrictions and their invariance proofs agree at default transparency
+  have hres : LinearMap.restrict (p := f.eigenspace μ) (q := f.eigenspace μ)
+      (Algebra.lsmul K K V f) hinv = μ • LinearMap.id :=
+    Module.End.restrict_eigenspace f μ
   refine (AEval.restrict_equiv_mapSubmodule f _ hinv).isSemisimpleModule_iff.mp ?_
   refine End.isSemisimple_of_squarefree_aeval_eq_zero (p := X - C μ)
     (irreducible_X_sub_C μ).squarefree ?_
-  ext v
-  have hv := v.2
-  rw [End.mem_eigenspace_iff] at hv
-  simp only [map_sub, aeval_X, aeval_C, LinearMap.sub_apply, LinearMap.zero_apply,
-    Module.algebraMap_end_apply, Submodule.coe_sub, Submodule.coe_smul, ZeroMemClass.coe_zero]
-  -- the restriction of `f` to the `μ`-eigenspace is multiplication by `μ`
-  rw [hrestrict, hv, sub_self]
+  rw [hres, map_sub, aeval_X, aeval_C, Module.algebraMap_end_eq_smul_id, sub_self]
 
 /-- **A diagonalizable endomorphism is semisimple.** If the eigenspaces of `f` span the space then
 `f` is semisimple.
