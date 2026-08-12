@@ -64,7 +64,14 @@ noncomputable scoped instance ratSlashAction : SlashAction ℤ (GL (Fin 2) ℚ) 
   monoidHomSlashAction (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ))
 
 /-- The rational slash action is the real one at the mapped matrix. Definitional, but named:
-it is how every `GL(2, ℝ)` lemma is brought to bear on a rational slash. -/
+it is how every `GL(2, ℝ)` lemma is brought to bear on a rational slash.
+
+The three lemmas here mirror Mathlib's integral trio exactly, including the absence of a `_def`
+suffix on this one: `ModularForm.SL_slash` is the transport
+(`Mathlib/NumberTheory/ModularForms/SlashActions.lean:155`), `ModularForm.SL_slash_def` the
+expanded formula (:158) and `ModularForm.SL_slash_apply` the pointwise one (:162). `_def` marks
+the *expanded* statement in this family, not the transport, so it belongs to
+`rat_slash_def_of_det_pos` below. -/
 lemma rat_slash (k : ℤ) (g : GL (Fin 2) ℚ) (f : ℍ → ℂ) :
     f ∣[k] g = f ∣[k] (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g) := (rfl)
 
