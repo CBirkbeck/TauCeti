@@ -433,12 +433,7 @@ theorem restrictToIdeal_ne_zero_of_le (v : Valuation A Γ₀) (I : Ideal A)
 
 /-- **Wedhorn Lemma 7.5(3).** If `v` does not vanish identically on `I`, neither does its
 restriction: `v(I) ≠ 0` implies `r_I(v)(I) ≠ 0`, so `I` is not contained in the support of the
-restricted valuation.
-
-Both branches of Definition 7.3 supply the same thing — an element of `v(I)` lying in `cΓ_v(I)`.
-On the meeting branch `cΓ_v(I)` is `cΓ_v` itself, which the branch condition says `v(I)` meets;
-off it, `cΓ_v(I)` is the greatest subgroup for which `I` is cofinal, and Lemma 7.2 produces the
-element. A value in `cΓ_v(I)` is exactly a value the restriction keeps. -/
+restricted valuation. This is the form Wedhorn's Theorem 7.10 consumes. -/
 theorem exists_mem_restrictToIdeal_ne_zero (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical)
     (hne : ∃ a ∈ I, (ofClass v) a ≠ 0) :
@@ -462,11 +457,8 @@ theorem exists_mem_restrictToIdeal_ne_zero (v : Valuation A Γ₀) (I : Ideal A)
 /-- **The restriction does not kill an admissible denominator.** If `u` dominates a set
 `T` with `I ⊆ √((T ∪ {u}) · A)` and `v u ≠ 0`, then `v|cΓ_v(I)` keeps `u`.
 
-This is the step Wedhorn argues by contradiction in the proof of Lemma 7.5(iii): were `u`
-discarded, `T ∪ {u}` would lie in the support of the restriction, which is prime and hence
-radical, so all of `I` would lie there — contradicting `exists_mem_restrictToIdeal_ne_zero`
-above. That leaves only the case where `v` vanishes on all of `I`, where `cΓ_v(I) = ⊤` keeps
-everything. -/
+This is Wedhorn's Lemma 7.5(iii), and it is what lets
+`restrictToIdealCodRestrict_preimage` compute the preimage of a rational subset. -/
 theorem restrictToIdeal_ne_zero_of_isAdmissible (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {T : Set A} {u : A}
     (hadm : I ≤ (Ideal.span (insert u T)).radical)
