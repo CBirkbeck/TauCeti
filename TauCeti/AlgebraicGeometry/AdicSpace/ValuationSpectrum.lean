@@ -28,7 +28,7 @@ We define the valuation spectrum `Spv A` following Wedhorn, *Adic Spaces*
 * `TauCeti.ValuationSpectrum.supp v` : The support ideal `{a ∈ A | v(a) = 0}`.
 * `TauCeti.ValuationSpectrum.basicOpenFinset_inter` : **Wedhorn's step (i)** in the proof of
   Lemma 7.5, that the rational opens are stable under finite intersection.
-* `TauCeti.ValuationSpectrum.isClosed_setOf_forall_not_vle_one` : the sub-unit locus of a set
+* `TauCeti.ValuationSpectrum.isClosed_setOfPred_forall_vlt_one` : the sub-unit locus of a set
   of ring elements is closed — the closedness behind Wedhorn's Corollary 7.12.
 * `TauCeti.ValuationSpectrum.quotientLift 𝔞 h` : Lift the implicitly inferred point `v` with
   `𝔞 ≤ supp v` to `Spv (A ⧸ 𝔞)`.
@@ -154,13 +154,13 @@ nonvanishing clause survives.
 
 This is the closedness underlying Wedhorn's Corollary 7.12: Theorem 7.10 describes `Cont A`
 inside `Spv (A, IA)` by exactly such conditions, so `Cont A` is the trace of a closed set. -/
-theorem isClosed_setOf_forall_not_vle_one (S : Set A) :
-    IsClosed {v : Spv A | ∀ a ∈ S, ¬ v.toValuativeRel.vle 1 a} := by
+theorem isClosed_setOfPred_forall_vlt_one (S : Set A) :
+    IsClosed {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vlt a 1} := by
   rw [← isOpen_compl_iff]
-  have h : {v : Spv A | ∀ a ∈ S, ¬ v.toValuativeRel.vle 1 a}ᶜ = ⋃ a ∈ S, basicOpen 1 a := by
+  have h : {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vlt a 1}ᶜ = ⋃ a ∈ S, basicOpen 1 a := by
     ext v
-    simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, not_forall, not_not, Set.mem_iUnion,
-      mem_basicOpen_iff, exists_prop]
+    simp only [Set.mem_compl_iff, Set.mem_ofPred_eq, ValuativeRel.vlt, not_forall, not_not,
+      Set.mem_iUnion, mem_basicOpen_iff, exists_prop]
     constructor
     · rintro ⟨a, haS, h1⟩
       exact ⟨a, haS, h1, fun h0 ↦ v.toValuativeRel.not_vle_one_zero
