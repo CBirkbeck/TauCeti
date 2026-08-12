@@ -20,7 +20,7 @@ from the smaller ring, and the new ideal of definition is the `Ideal.map` of the
 finite generation comes for free. Boundedness of the larger ring is the only real hypothesis, and
 the two applications supply it differently — by induction over a finite set of power-bounded
 elements for `A₀[T]` (`isBounded_subringClosure_union_finset`), and from the lattice structure of
-the subrings for `A₀ ⊔ B` (`isBounded_sup`). The join case is `PairOfDefinition.enlargeBounded`,
+the subrings for `A₀ ⊔ B` (`isBounded_sup`). The join case is `PairOfDefinition.enlargeSup`,
 which takes an arbitrary bounded `B`; joining two rings of definition is the case where `B` is
 one of them.
 
@@ -37,10 +37,11 @@ than `Ideal.map`, and a comap of a finitely generated ideal need not be finitely
   a ring of definition.
 * `TauCeti.Huber.PairOfDefinition.adjoin`: adjoining finitely many power-bounded elements gives
   another pair of definition.
-* `TauCeti.Huber.PairOfDefinition.enlargeBounded`: joining a ring of definition with any
-  bounded subring gives a ring of definition, with `enlargeBounded_ringOfDefinition` and
-  `enlargeBounded_idealOfDefinition` naming both components, and
-  `TauCeti.Huber.PairOfDefinition.sup`: the join of two rings of definition is a ring of
+* `TauCeti.Huber.PairOfDefinition.enlargeSup`: joining a ring of definition with any bounded
+  subring gives a ring of definition, with `enlargeSup_ringOfDefinition`,
+  `enlargeSup_idealOfDefinition`, `le_enlargeSup` and `self_le_enlargeSup` naming its components
+  and inclusions.
+* `TauCeti.Huber.PairOfDefinition.sup`: the join of two rings of definition is a ring of
   definition.
 * `TauCeti.Huber.isBounded_iff_exists_ringOfDefinition_ge`: a subring is bounded exactly when
   some ring of definition contains it.
@@ -54,7 +55,7 @@ The `adjoin` construction — and hence the adic-topology argument now extracted
 at commit `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`. Names and the proof are adjusted to Tau
 Ceti's `PairOfDefinition` and boundedness APIs.
 
-`enlargeBounded`, `sup`, the boundedness input `isBounded_sup` and
+`enlargeSup`, `sup`, the boundedness input `isBounded_sup` and
 `isBounded_iff_exists_ringOfDefinition_ge` are **not** covered by that attribution: AINTLIB cites
 Corollary 6.4 only for its parts (1)–(3), and has no counterpart either to the join of a ring of
 definition with a bounded subring or to the resulting characterisation of bounded subrings.
@@ -279,38 +280,49 @@ theorem mem_adjoin_of_mem (P : PairOfDefinition A) (T : Finset A)
 /-- **Joining a ring of definition with a bounded subring.** For any bounded `B`, the join
 `A₀ ⊔ B` is again a ring of definition: it is bounded by `isBounded_sup` and contains `A₀`, so
 `enlarge` applies. The join of two rings of definition is the case `B = A₁`. -/
-def enlargeBounded (P : PairOfDefinition A) (B : Subring A) (hB : IsBounded (B : Set A)) :
+def enlargeSup (P : PairOfDefinition A) (B : Subring A) (hB : IsBounded (B : Set A)) :
     PairOfDefinition A :=
   letI := P.toNonarchimedeanRing
   P.enlarge (P.ringOfDefinition ⊔ B) _root_.le_sup_left
     (isBounded_sup P.ringOfDefinition B P.isBounded_ringOfDefinition hB)
 
-/-- The ring of definition of `P.enlargeBounded B hB` is `A₀ ⊔ B`. -/
+/-- The ring of definition of `P.enlargeSup B hB` is `A₀ ⊔ B`. -/
 @[simp]
-theorem enlargeBounded_ringOfDefinition (P : PairOfDefinition A) (B : Subring A)
+theorem enlargeSup_ringOfDefinition (P : PairOfDefinition A) (B : Subring A)
     (hB : IsBounded (B : Set A)) :
-    (P.enlargeBounded B hB).ringOfDefinition = P.ringOfDefinition ⊔ B := (rfl)
+    (P.enlargeSup B hB).ringOfDefinition = P.ringOfDefinition ⊔ B :=
+  P.enlarge_ringOfDefinition _ _ _
 
-/-- The ideal of definition of `P.enlargeBounded B hB` is the image of `I`, as for any
-`enlarge`. -/
-theorem enlargeBounded_idealOfDefinition (P : PairOfDefinition A) (B : Subring A)
+/-- The original ring of definition is contained in the join. -/
+theorem le_enlargeSup (P : PairOfDefinition A) (B : Subring A) (hB : IsBounded (B : Set A)) :
+    P.ringOfDefinition ≤ (P.enlargeSup B hB).ringOfDefinition := by
+  rw [enlargeSup_ringOfDefinition]
+  exact _root_.le_sup_left
+
+/-- The adjoined subring is contained in the join — the defining property of the construction. -/
+theorem self_le_enlargeSup (P : PairOfDefinition A) (B : Subring A) (hB : IsBounded (B : Set A)) :
+    B ≤ (P.enlargeSup B hB).ringOfDefinition := by
+  rw [enlargeSup_ringOfDefinition]
+  exact _root_.le_sup_right
+
+/-- The ideal of definition of `P.enlargeSup B hB` is the image of `I`, as for any `enlarge`. -/
+@[simp]
+theorem enlargeSup_idealOfDefinition (P : PairOfDefinition A) (B : Subring A)
     (hB : IsBounded (B : Set A)) :
-    (P.enlargeBounded B hB).idealOfDefinition =
-      P.idealOfDefinition.map (Subring.inclusion
-        (show P.ringOfDefinition ≤ (P.enlargeBounded B hB).ringOfDefinition by
-          rw [enlargeBounded_ringOfDefinition]; exact _root_.le_sup_left)) :=
+    (P.enlargeSup B hB).idealOfDefinition =
+      P.idealOfDefinition.map (Subring.inclusion (P.le_enlargeSup B hB)) :=
   P.enlarge_idealOfDefinition _ _ _
 
 /-- **Wedhorn Corollary 6.4, the product half.** The join of two rings of definition is again a
 ring of definition; its ideal of definition is the image of the first one's. -/
 def sup (P Q : PairOfDefinition A) : PairOfDefinition A :=
-  P.enlargeBounded Q.ringOfDefinition Q.isBounded_ringOfDefinition
+  P.enlargeSup Q.ringOfDefinition Q.isBounded_ringOfDefinition
 
 /-- The ring of definition of `P.sup Q` is `A₀ ⊔ A₁`. -/
 @[simp]
 theorem sup_ringOfDefinition (P Q : PairOfDefinition A) :
     (P.sup Q).ringOfDefinition = P.ringOfDefinition ⊔ Q.ringOfDefinition :=
-  P.enlargeBounded_ringOfDefinition _ _
+  P.enlargeSup_ringOfDefinition _ _
 
 /-- The first ring of definition is contained in the join. -/
 theorem le_sup_left (P Q : PairOfDefinition A) :
@@ -341,13 +353,13 @@ single element.
 Being contained in one is as much as boundedness gives: a bounded subring is generally *not*
 itself a ring of definition, because rings of definition are open and a bounded subring need not
 be — `ℤ ⊆ ℚ_p` is bounded, sitting inside `ℤ_p`, and is not open. What
-`PairOfDefinition.enlargeBounded` does is supply the missing openness, by joining `B` with a ring
+`PairOfDefinition.enlargeSup` does is supply the missing openness, by joining `B` with a ring
 of definition it already has. -/
 theorem isBounded_iff_exists_ringOfDefinition_ge {B : Subring A} :
     IsBounded (B : Set A) ↔ ∃ P : PairOfDefinition A, B ≤ P.ringOfDefinition := by
   refine ⟨fun hB ↦ ?_, fun ⟨P, hP⟩ ↦ P.isBounded_ringOfDefinition.subset hP⟩
   obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
-  exact ⟨P.enlargeBounded B hB, by simp⟩
+  exact ⟨P.enlargeSup B hB, P.self_le_enlargeSup B hB⟩
 
 /-- Wedhorn Corollary 6.4: an element of a Huber ring is power-bounded exactly when it belongs
 to some ring of definition. Equivalently, `A°` is the union of all rings of definition. -/
