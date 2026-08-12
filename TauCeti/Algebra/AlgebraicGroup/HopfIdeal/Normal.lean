@@ -109,52 +109,57 @@ theorem quotientPointsSubgroup_normal (H : _root_.CommHopfAlgCat.{v} R)
     simpa using hn y ((HopfIdeal.mem_toIdeal (I := I)).mp hy)
   exact RingHom.mem_ker.mp (hker (hI.conjugation_mem hx))
 
+/-- If a Hopf ideal cuts out a normal subgroup over every commutative value algebra, then
+it is normal. -/
+private theorem isNormal_of_forall_quotientPointsSubgroup_normal
+    (H : _root_.CommHopfAlgCat.{v} R) (I : HopfIdeal R H)
+    (hnormal : ∀ A : CommAlgCat.{v} R, (quotientPointsSubgroup H I A).Normal) :
+    I.IsNormal := by
+  rw [HopfIdeal.isNormal_iff_conjugation_mem]
+  intro x hx
+  let Q := H ⧸ I.toIdeal
+  let A : CommAlgCat R := CommAlgCat.of R (TensorProduct R H Q)
+  let g : HopfAlgebra.points (R := R) (H := H) A :=
+    toConv Algebra.TensorProduct.includeLeft
+  let n : HopfAlgebra.points (R := R) (H := H) A :=
+    quotientPointsHom H I A (toConv Algebra.TensorProduct.includeRight)
+  have hn : n ∈ quotientPointsSubgroup H I A :=
+    quotientPointsHom_mem_quotientPointsSubgroup H I A _
+  have hgof : g.ofConv = (Algebra.TensorProduct.includeLeft : H →ₐ[R] TensorProduct R H Q) :=
+    ofConv_toConv _
+  have hnof : n.ofConv =
+      (Algebra.TensorProduct.includeRight : Q →ₐ[R] TensorProduct R H Q).comp
+        (Ideal.Quotient.mkₐ R I.toIdeal) :=
+    AlgHom.ext fun h => quotientPointsHom_apply_apply H I A _ h
+  have hconj := (hnormal A).conj_mem n hn g
+  rw [mem_quotientPointsSubgroup_iff] at hconj
+  have hzero := hconj x hx
+  have heval :
+      (Algebra.TensorProduct.productMap g.ofConv n.ofConv)
+          (HopfAlgebra.conjugationAlgHom (R := R) (H := H) x) = 0 :=
+    (AlgHom.congr_fun
+      (HopfAlgebra.productMap_comp_conjugationAlgHom (R := R) (H := H) g n) x).trans hzero
+  have hproduct :
+      Algebra.TensorProduct.productMap g.ofConv n.ofConv =
+        Algebra.TensorProduct.map (AlgHom.id R H) (Ideal.Quotient.mkₐ R I.toIdeal) := by
+    rw [hgof, hnof]
+    refine Algebra.TensorProduct.ext ?_ ?_
+    · rw [Algebra.TensorProduct.productMap_left,
+        Algebra.TensorProduct.map_comp_includeLeft, AlgHom.comp_id]
+    · exact (Algebra.TensorProduct.productMap_right _ _).trans
+        (Algebra.TensorProduct.map_comp_includeRight _ _).symm
+  rw [hproduct] at heval
+  have hmem := RingHom.mem_ker.mpr heval
+  rw [HopfIdeal.ker_tensorProduct_map_id_quotient I.toIdeal] at hmem
+  exact hmem
+
 /-- A Hopf ideal is normal if and only if it cuts out a normal subgroup over every
 commutative value algebra. -/
 theorem isNormal_iff_quotientPointsSubgroup_normal
     (H : _root_.CommHopfAlgCat.{v} R) (I : HopfIdeal R H) :
-    I.IsNormal ↔ ∀ A : CommAlgCat.{v} R, (quotientPointsSubgroup H I A).Normal := by
-  constructor
-  · intro hI A
-    exact quotientPointsSubgroup_normal H I hI A
-  · intro hnormal
-    rw [HopfIdeal.isNormal_iff_conjugation_mem]
-    intro x hx
-    let Q := H ⧸ I.toIdeal
-    let A : CommAlgCat R := CommAlgCat.of R (TensorProduct R H Q)
-    let g : HopfAlgebra.points (R := R) (H := H) A :=
-      toConv Algebra.TensorProduct.includeLeft
-    let n : HopfAlgebra.points (R := R) (H := H) A :=
-      quotientPointsHom H I A (toConv Algebra.TensorProduct.includeRight)
-    have hn : n ∈ quotientPointsSubgroup H I A :=
-      quotientPointsHom_mem_quotientPointsSubgroup H I A _
-    have hgof : g.ofConv = (Algebra.TensorProduct.includeLeft : H →ₐ[R] TensorProduct R H Q) :=
-      ofConv_toConv _
-    have hnof : n.ofConv =
-        (Algebra.TensorProduct.includeRight : Q →ₐ[R] TensorProduct R H Q).comp
-          (Ideal.Quotient.mkₐ R I.toIdeal) :=
-      AlgHom.ext fun h => quotientPointsHom_apply_apply H I A _ h
-    have hconj := (hnormal A).conj_mem n hn g
-    rw [mem_quotientPointsSubgroup_iff] at hconj
-    have hzero := hconj x hx
-    have heval :
-        (Algebra.TensorProduct.productMap g.ofConv n.ofConv)
-            (HopfAlgebra.conjugationAlgHom (R := R) (H := H) x) = 0 :=
-      (AlgHom.congr_fun
-        (HopfAlgebra.productMap_comp_conjugationAlgHom (R := R) (H := H) g n) x).trans hzero
-    have hproduct :
-        Algebra.TensorProduct.productMap g.ofConv n.ofConv =
-          Algebra.TensorProduct.map (AlgHom.id R H) (Ideal.Quotient.mkₐ R I.toIdeal) := by
-      rw [hgof, hnof]
-      refine Algebra.TensorProduct.ext ?_ ?_
-      · rw [Algebra.TensorProduct.productMap_left,
-          Algebra.TensorProduct.map_comp_includeLeft, AlgHom.comp_id]
-      · exact (Algebra.TensorProduct.productMap_right _ _).trans
-          (Algebra.TensorProduct.map_comp_includeRight _ _).symm
-    rw [hproduct] at heval
-    have hmem := RingHom.mem_ker.mpr heval
-    rw [HopfIdeal.ker_tensorProduct_map_id_quotient I.toIdeal] at hmem
-    exact hmem
+    I.IsNormal ↔ ∀ A : CommAlgCat.{v} R, (quotientPointsSubgroup H I A).Normal :=
+  ⟨fun hI A => quotientPointsSubgroup_normal H I hI A,
+    isNormal_of_forall_quotientPointsSubgroup_normal H I⟩
 
 end CommHopfAlgCat
 
