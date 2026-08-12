@@ -71,7 +71,7 @@ theorem condIndep_of_indicator_condExp_eq {Ω : Type*} {mΩ : MeasurableSpace Ω
   set f2 : Ω → ℝ := tH.indicator (fun _ : Ω => (1 : ℝ)) with hf2
   -- The product of the two indicators is the indicator of the intersection; named once and reused.
   have h_f1f2 : (fun ω => f1 ω * f2 ω) = (tF ∩ tH).indicator (fun _ => (1 : ℝ)) := by
-    funext ω; simp [hf1, hf2, ← Set.inter_indicator_mul]
+    rw [hf1, hf2]; exact (Set.inter_indicator_one (s := tF) (t := tH) (M₀ := ℝ)).symm
   have hf1_int : Integrable f1 μ := Integrable.indicator (integrable_const (1 : ℝ)) (hmF _ htF)
   have hf2_int : Integrable f2 μ := Integrable.indicator (integrable_const (1 : ℝ)) (hmH _ htH)
   have hf1_aesm : AEStronglyMeasurable[mF ⊔ mG] f1 μ :=
