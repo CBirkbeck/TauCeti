@@ -17,9 +17,6 @@ Mathlib computes the terms of `normEDS` up to the fourth (`normEDS_zero`, `normE
 expressed through the fifth rather than expanded: the fifth term has no short closed form, and the
 shape above is the one the divisibility arguments downstream consume.
 
-The proof is the doubling identity `normEDS_mul_complEDS₂` at `k = 3`, after which Mathlib's
-`complEDS₂_three` and `normEDS_three` evaluate the two factors.
-
 Adapted from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
 `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`, path
