@@ -6,7 +6,6 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GLn.TransposeAntiInvolution
-public import TauCeti.NumberTheory.HeckeRing.LeftCosetModule.Basic
 public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 
 /-!
@@ -17,7 +16,7 @@ coset and summing. This file defines that sum and records that it is `ℂ`-linea
 
 ⚠ **It is not yet an action, and on a general `f : ℍ → ℂ` it is not even well defined.**
 `heckeSlashSum` is a sum over *chosen* representatives — `D.out` for the double coset and
-`i.out` for each of its right cosets — and on an arbitrary function the choice changes the
+`i.out` for each of its left cosets — and on an arbitrary function the choice changes the
 answer: replacing `σᵢ` by `hσᵢ` for `h ∈ SL₂(ℤ)` multiplies the representative `(σᵢδ)ᵀ` by
 `hᵀ` on the right, and `f ∣[k] (Xhᵀ) = (f ∣[k] X) ∣[k] hᵀ` differs from `f ∣[k] X` unless the
 slash by `hᵀ` is trivial on that function. Even the identity double coset can therefore send a
@@ -32,12 +31,19 @@ say so, and every consumer must supply the invariance hypothesis itself.
 
 ## The transpose, and why it is here
 
-The Hecke ring is built from the decomposition of `HδH` into **right** cosets `σᵢδH`
-(`DoubleCoset.DecompQuotient`), but the slash action is a right action, so a sum over right
-cosets is not slash-invariant. Shimura's Prop 3.30 sums instead over **left** coset
-representatives, and the two are exchanged by transposition: if `HδH = ⊔ᵢ (σᵢδ)H` then
-`HδH = ⊔ᵢ H(δᵀσᵢᵀ)`, because transposition is an anti-automorphism preserving `SL₂(ℤ)` and
-fixing every double coset. So the representative used here is `(σᵢδ)ᵀ`, which is `tRep`.
+The Hecke ring is built from the decomposition of `HδH` into **left** cosets `σᵢδH`
+(`DoubleCoset.DecompQuotient`, and `LeftCosetModule/Basic.lean` in this repository). But the
+slash action is a *right* action, so invariance of `∑ᵢ f ∣[k] Xᵢ` under `f ↦ f ∣[k] γ` needs
+right multiplication by `γ` to permute the `Xᵢ` up to multiplication by `H` **on the left** —
+that is, the `Xᵢ` must represent **right** cosets `HXᵢ`.
+
+Transposition exchanges the two: if `HδH = ⊔ᵢ (σᵢδ)H` then `HδH = ⊔ᵢ H(δᵀσᵢᵀ)`, because
+transposition is an anti-automorphism preserving `SL₂(ℤ)` and fixing every double coset. So the
+representative used here is `(σᵢδ)ᵀ`, which is `tRep`. This is Shimura's Prop 3.30.
+
+⚠ Conventions: `gH` is a left coset and `Hg` a right one, as in Mathlib and in
+`LeftCosetModule/Basic.lean`. AINTLIB's `HeckeAction.lean` uses the opposite labels for the
+same objects; the mathematics is identical, the words are not.
 
 Transposition is available as the anti-involution of `GLn/TransposeAntiInvolution.lean`, the
 same one that proves the Hecke ring commutative; this file only needs that it preserves
@@ -86,8 +92,10 @@ namespace HeckeRing.GL2
 
 variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 
-/-- The transposed right-coset representative `(σᵢ δ)ᵀ = δᵀ σᵢᵀ`, where `δ` is the chosen
-representative of the double coset `D` and `σᵢ` runs over its right-coset decomposition. -/
+/-- The transposed left-coset representative `(σᵢ δ)ᵀ = δᵀ σᵢᵀ`, where `δ` is the chosen
+representative of the double coset `D` and `σᵢ` runs over its left-coset decomposition. The
+transpose turns it into a representative of a right coset `H·tRep`, which is what a right
+action needs. -/
 noncomputable def tRep (i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ))) :
     GL (Fin 2) ℚ :=
   (transposeGLEquiv 2 ((i.out : GL (Fin 2) ℚ) * (D.out : GL (Fin 2) ℚ))).unop
@@ -106,7 +114,7 @@ lemma det_tRep_pos (i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) �
   ((mem_posDetInt_iff 2).mp (tRep_mem_posDetInt D i)).2
 
 /-- **The slash sum over a chosen decomposition of a double coset**:
-`∑ᵢ f ∣[k] (σᵢ δ)ᵀ`, over the transposed representatives of the right-coset decomposition of
+`∑ᵢ f ∣[k] (σᵢ δ)ᵀ`, over the transposed representatives of the left-coset decomposition of
 `HδH` (Shimura Prop 3.30).
 
 ⚠ This depends on the chosen representatives `D.out` and `i.out`, and on a general
@@ -116,12 +124,8 @@ read this definition as "the Hecke operator" until it is available. -/
 noncomputable def heckeSlashSum (f : ℍ → ℂ) : ℍ → ℂ :=
   ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ)), f ∣[k] tRep D i
 
-/-- Defining equation for `heckeSlashSum`. -/
-lemma heckeSlashSum_def (f : ℍ → ℂ) :
-    heckeSlashSum k D f =
-      ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ)), f ∣[k] tRep D i := (rfl)
-
 /-- The slash sum is additive in `f`. -/
+@[simp]
 lemma heckeSlashSum_add (f g : ℍ → ℂ) :
     heckeSlashSum k D (f + g) = heckeSlashSum k D f + heckeSlashSum k D g := by
   simp [heckeSlashSum, Finset.sum_add_distrib]
@@ -134,9 +138,10 @@ lemma heckeSlashSum_zero : heckeSlashSum k D 0 = 0 := by
 /-- **The slash sum is `ℂ`-linear in `f`.** Each summand has positive
 determinant, so `ModularForm.rat_smul_slash_of_det_pos` applies and the scalar passes through
 with no `σ` twist. -/
+@[simp]
 lemma heckeSlashSum_smul {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α)
     (f : ℍ → ℂ) : heckeSlashSum k D (c • f) = c • heckeSlashSum k D f := by
-  rw [heckeSlashSum_def, heckeSlashSum_def, Finset.smul_sum]
+  rw [heckeSlashSum, heckeSlashSum, Finset.smul_sum]
   exact Finset.sum_congr rfl fun i _ ↦
     ModularForm.rat_smul_slash_of_det_pos k (det_tRep_pos D i) f c
 
