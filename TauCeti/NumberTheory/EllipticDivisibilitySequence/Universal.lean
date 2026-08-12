@@ -38,9 +38,12 @@ parameters' ring need not be.
 
 ## Main results
 
-* `normEDS_eq_aeval`, `preNormEDS_eq_aeval`, `complEDS₂_eq_aeval`, `complEDS_eq_aeval`: every
-  sequence of the form `normEDS b c d`, and each of its associated sequences, is the universal one
-  specialised along `NormEDSParam.rec b c d`.
+* `normEDS_eq_aeval`: every sequence of the form `normEDS b c d` is `universalNormEDS` specialised
+  along `NormEDSParam.rec b c d`.
+* `preNormEDS_eq_aeval`, `complEDS₂_eq_aeval`, `complEDS_eq_aeval`: the same for the three companion
+  sequences, each specialising **its own** construction over `ℤ[B, C, D]` — `preNormEDS`,
+  `complEDS₂` and `complEDS` at the three indeterminates — not `universalNormEDS`, which is only
+  the `normEDS` one.
 
 ## Implementation notes
 
@@ -61,8 +64,11 @@ instance otherwise.
 
 Ported from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
-`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `NormEDSParam`, `universalNormEDS`,
-`normEDS_eq_aeval`, `compl₂EDS_eq_aeval` and `complEDS_eq_aeval`. That file's header reads
+`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `Param`, `universalNormEDS`,
+`normEDS_eq_aeval`, `compl₂EDS_eq_aeval` and `complEDS_eq_aeval`. **`Param` is spelt
+`NormEDSParam` here** — a root-level `Param` says nothing about elliptic divisibility sequences and
+makes its namespace equally generic; that rename is an adaptation made in this repository, not
+upstream's name. That file's header reads
 `Authors: Junyan Xu`; following this repository's convention for adapted material the upstream
 authorship is credited here rather than in the copyright header.
 
