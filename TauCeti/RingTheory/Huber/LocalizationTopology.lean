@@ -603,6 +603,45 @@ theorem continuous_algebraMap_locTopology [IsTopologicalRing A] (P : PairOfDefin
   obtain ⟨b, hb, rfl⟩ := (P.mem_idealImage n).mp ha
   exact algebraMap_mem_locIdealImage P T s S hb
 
+/-- **The powers of `J` are a neighbourhood basis of zero in `D`.** The images `image(Jⁿ)` are one
+in `Aₛ` by `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_locTopology`, and `D` carries the
+subspace topology, so it suffices that pulling those images back along the inclusion returns the
+`Jⁿ` themselves — which is
+`TauCeti.Huber.PairOfDefinition.locIdealImage_preimage_eq_locIdeal_pow`. -/
+theorem hasBasis_nhds_zero_locSubring [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI := locTopology P T s S hden
+    (𝓝 (0 : locSubring P T s S)).HasBasis (fun _ : ℕ ↦ True)
+      fun n ↦ ((locIdeal P T s S ^ n : Ideal (locSubring P T s S)) :
+        Set (locSubring P T s S)) := by
+  let _ := locTopology P T s S hden
+  have h := (hasBasis_nhds_zero_locTopology P T s S hden).comap
+    (Subtype.val : locSubring P T s S → S)
+  rw [nhds_induced (Subtype.val : locSubring P T s S → S) (0 : locSubring P T s S)]
+  simpa using h
+
+/-- **The subspace topology on `D` is the `J`-adic topology.** This is the last condition
+`TauCeti.Huber.PairOfDefinition` asks of the candidate pair `(D, J)`; `fg_locIdeal` supplies the
+other.
+
+`IsAdic` is an equality of topologies, and `Ideal.isAdic_iff` turns it into the two conditions the
+basis already gives: each `Jⁿ` is open, and every neighbourhood of zero contains one. -/
+theorem isAdic_locIdeal [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI := locTopology P T s S hden
+    IsAdic (locIdeal P T s S) := by
+  let _ := locTopology P T s S hden
+  have _ := isTopologicalRing_locTopology P T s S hden
+  have hbasis := hasBasis_nhds_zero_locSubring P T s S hden
+  rw [isAdic_iff]
+  refine ⟨fun n ↦ ?_, fun U hU ↦ ?_⟩
+  · exact (locIdeal P T s S ^ n).toAddSubgroup.isOpen_of_mem_nhds (g := 0)
+      (hbasis.mem_of_mem (i := n) trivial)
+  · obtain ⟨n, -, hn⟩ := hbasis.mem_iff.mp hU
+    exact ⟨n, hn⟩
+
 /-! ### A sufficient criterion for continuity -/
 
 /-- Along `algebraMap`, some power of the ideal of definition multiplies the image of `A₀` into
@@ -731,44 +770,6 @@ theorem continuous_of_continuous_algebraMap_of_isPowerBounded {B : Type*}
     rw [smul_eq_mul, ← mul_assoc]
     exact hd (r * c)
 
-/-- **The powers of `J` are a neighbourhood basis of zero in `D`.** The images `image(Jⁿ)` are one
-in `Aₛ` by `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_locTopology`, and `D` carries the
-subspace topology, so it suffices that pulling those images back along the inclusion returns the
-`Jⁿ` themselves — which is
-`TauCeti.Huber.PairOfDefinition.locIdealImage_preimage_eq_locIdeal_pow`. -/
-theorem hasBasis_nhds_zero_locSubring [IsTopologicalRing A] (P : PairOfDefinition A)
-    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (hden : HasDenominatorPower P T s S) :
-    letI := locTopology P T s S hden
-    (𝓝 (0 : locSubring P T s S)).HasBasis (fun _ : ℕ ↦ True)
-      fun n ↦ ((locIdeal P T s S ^ n : Ideal (locSubring P T s S)) :
-        Set (locSubring P T s S)) := by
-  let _ := locTopology P T s S hden
-  have h := (hasBasis_nhds_zero_locTopology P T s S hden).comap
-    (Subtype.val : locSubring P T s S → S)
-  rw [nhds_induced (Subtype.val : locSubring P T s S → S) (0 : locSubring P T s S)]
-  simpa using h
-
-/-- **The subspace topology on `D` is the `J`-adic topology.** This is the last condition
-`TauCeti.Huber.PairOfDefinition` asks of the candidate pair `(D, J)`; `fg_locIdeal` supplies the
-other.
-
-`IsAdic` is an equality of topologies, and `Ideal.isAdic_iff` turns it into the two conditions the
-basis already gives: each `Jⁿ` is open, and every neighbourhood of zero contains one. -/
-theorem isAdic_locIdeal [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A)
-    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (hden : HasDenominatorPower P T s S) :
-    letI := locTopology P T s S hden
-    IsAdic (locIdeal P T s S) := by
-  let _ := locTopology P T s S hden
-  have _ := isTopologicalRing_locTopology P T s S hden
-  have hbasis := hasBasis_nhds_zero_locSubring P T s S hden
-  rw [isAdic_iff]
-  refine ⟨fun n ↦ ?_, fun U hU ↦ ?_⟩
-  · exact (locIdeal P T s S ^ n).toAddSubgroup.isOpen_of_mem_nhds (g := 0)
-      (hbasis.mem_of_mem (i := n) trivial)
-  · obtain ⟨n, -, hn⟩ := hbasis.mem_iff.mp hU
-    exact ⟨n, hn⟩
 
 end PairOfDefinition
 
