@@ -585,14 +585,16 @@ private lemma windingNumber_coe_eq_neg_half {H : ℝ} {p : ℍ} (hH : 1 < H) (hp
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hc
   rcases eq_or_lt_of_le (Complex.one_le_normSq_iff.mp hp.1) with heq | hgt
   · refine windingNumber_fdBoundary_arc hH heq.symm ?_ p.2
+    rw [← one_div]
     rcases lt_or_eq_of_le hp.2 with h | h
     · exact h
     · rcases (abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp h with h' | h'
       · exact absurd (coe_eq_ρ_add_one_of_re heq.symm h') hc.2.2
       · exact absurd (coe_eq_ρ_of_re heq.symm h') hc.2.1
   · have habs : |(p : ℂ).re| = 1 / 2 := le_antisymm hp.2 (not_lt.mp fun h => hint ⟨hgt, h⟩)
-    exact windingNumber_fdBoundary_vertical
-      ((abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp habs) hgt p.2 him
+    refine windingNumber_fdBoundary_vertical ?_ hgt p.2 him
+    rw [← one_div]
+    exact (abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp habs
 
 /-- Restricting a family sum to the nonzero-order points does not change it. -/
 private lemma sum_filter_orderOfVanishingAt_ne_zero {f : ℍ → ℂ} {S : Finset ℍ}
