@@ -92,8 +92,9 @@ cocycle identity (`map_quadraticTwistVariableChange_baseChange`). Transporting a
 `quadraticTwistPointEquiv_some` the coordinate equation a consumer needs. It is natural in `M`
 (`quadraticTwistPointEquiv_map`) and **anti-equivariant** for the Galois elements that move `L`
 (`quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed`): that sign is what makes the twist a
-twist. `quadraticTwistPointEquiv_galois` packages the two cases as `φ(σP) = χ(σ|_L) • σ(φP)`,
-uniformly in `σ`, where `χ` is `Algebra.IsQuadraticExtension.quadraticCharacter` — the
+twist. `quadraticTwistPointEquiv_map_eq_quadraticCharacter_smul_map` packages the two cases as
+`φ(σP) = χ(σ|_L) • σ(φP)`, uniformly in `σ`, where `χ` is
+`Algebra.IsQuadraticExtension.quadraticCharacter` — the
 `Gal(L/K) →* ℤˣ` sending the nontrivial automorphism to `-1`. That is the canonical form of the
 statement: the isomorphism is defined over `L` rather than over `K`, and `χ` measures precisely
 that failure.
@@ -745,18 +746,28 @@ end Classification
 
 section PointEquiv
 
--- `M` is any extension field of `L` compatible with the `K`-algebra tower; e.g. `L` itself.
-variable (M : Type*) [Field M] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
+/-! The curve-level identity below is about base change alone, so it asks only for a commutative
+`L`-algebra. Everything after it — the Galois cocycle, the isomorphism on points, and the
+equivariance statements — genuinely needs `M` to be a field, and lives in the section after. -/
+
+section BaseChange
+
+variable (M : Type*) [CommRing M] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
 
 variable (L) in
-/-- **The change of variables carries `E` to its twist over every `M ⊇ L`**, not just over `L`:
-`quadraticTwistVariableChange_smul` base changed along `L → M`. -/
+/-- **The change of variables carries `E` to its twist over every commutative `L`-algebra `M`**,
+not just over `L`: `quadraticTwistVariableChange_smul` base changed along `L → M`. -/
 theorem quadraticTwistVariableChange_smul_baseChange :
     (E.quadraticTwistVariableChange L).baseChange M • E.baseChange M
       = (E.quadraticTwist L).baseChange M := by
   have hb : ∀ W : WeierstrassCurve K, (W.baseChange L).baseChange M = W.baseChange M :=
     fun W ↦ by simpa [baseChange] using W.map_baseChange (IsScalarTower.toAlgHom K L M)
   rw [← hb E, baseChange_smul_baseChange, quadraticTwistVariableChange_smul, hb]
+
+end BaseChange
+
+-- `M` is any extension field of `L` compatible with the `K`-algebra tower; e.g. `L` itself.
+variable (M : Type*) [Field M] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
 
 /-- **The twist's defining cocycle over `M`.** Applying any `σ ∈ Aut(M/K)` that does not fix `L`
 pointwise multiplies the base change of `quadraticTwistVariableChange` on the right by the
@@ -790,9 +801,9 @@ variable (L) in
 /-- **The isomorphism `Eᴸ(M) ≅ E(M)` on `M`-points**, for any field `M` in a tower `K ⊆ L ⊆ M`:
 the base change to `M` of the change of variables carrying `E` to its twist over `L`. It is
 natural in `M` (`quadraticTwistPointEquiv_map`) and anti-equivariant for the Galois elements that
-move `L` (`quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed`); `quadraticTwistPointEquiv_galois`
-bundles those two branches into a single statement, uniform in `σ`, twisted by the quadratic
-character of `L/K`.
+move `L` (`quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed`);
+`quadraticTwistPointEquiv_map_eq_quadraticCharacter_smul_map` bundles those two branches into a
+single statement, uniform in `σ`, twisted by the quadratic character of `L/K`.
 
 Like the twist itself this is well defined only up to an `L`-automorphism of `E` — generically up
 to sign — and this definition makes one arbitrary choice, consistently across all `M`. -/
@@ -920,7 +931,7 @@ variable (L) in
 `quadraticTwistPointEquiv_map_eq_neg_map_of_not_fixed` (the moved branch, where it is
 anti-equivariant) together assert: the isomorphism is defined over `L`, not over `K`, and the
 character measures exactly that failure. -/
-theorem quadraticTwistPointEquiv_galois (σ : M ≃ₐ[K] M)
+theorem quadraticTwistPointEquiv_map_eq_quadraticCharacter_smul_map (σ : M ≃ₐ[K] M)
     (P : ((E.quadraticTwist L).baseChange M).toAffine.Point) :
     E.quadraticTwistPointEquiv L M (Affine.Point.map σ.toAlgHom P)
       = (Algebra.IsQuadraticExtension.quadraticCharacter K L (σ.restrictNormal L) : ℤ) •
