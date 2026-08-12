@@ -69,11 +69,17 @@ still open, so the whole `Universal` namespace below is absent from Mathlib.
 
 Ported from J. Xu's `LutzNagell/Universal.lean` in AINTLIB (`github.com/CBirkbeck/AINTLIB`,
 Apache 2.0, `main` at `1c1c7466`, `projects/NagellLutz/LutzNagell/Universal.lean`), the source the
-roadmap pins for the Nagell–Lutz strand. Every declaration here comes from that file: the `Coeff`
-index type and the whole `Universal` namespace (`curve`, `Poly`, `Ring`, `Field`, `polyToField`,
-`pointedCurve`, `Affine.point`, `Jacobian.point`, `curvePoly` and `curveRing` with their
-lemmas); and the specialization API (`cusp`, `specialize`, `polyEval`, `ringEval` with their
+roadmap pins for the Nagell–Lutz strand. **Most** declarations here come from that file: the
+`Coeff` index type and the bulk of the `Universal` namespace (`curve`, `Poly`, `Ring`, `Field`,
+`polyToField`, `pointedCurve`, `Affine.point`, `Jacobian.point`, `curvePoly` and `curveRing` with
+their lemmas), and the specialization API (`cusp`, `specialize`, `polyEval`, `ringEval` with their
 compatibility lemmas).
+
+Three groups are **not** simple ports, and are listed among the adaptations below: `ringHom_ext`
+is new; the two `CharZero` instances **replace** the source's `Poly.two_ne_zero` and
+`Field.two_ne_zero` rather than porting them; and the equation lemmas for the opaque definitions
+(`polyToField_apply`, `Affine.point_def`, `Jacobian.point_def`, `Δ_pointedCurve`) exist because
+this repository's module system leaves definition bodies unexposed.
 That file's header reads `Authors: Junyan Xu`; following this repository's convention for adapted
 material, the upstream authorship is credited here rather than in the copyright header.
 
@@ -88,13 +94,14 @@ instances in `Affine/FunctionField/Finrank.lean`; the one internal use, in
 `algebraMap_field_injective`, calls `FaithfulSMul.algebraMap_injective` directly. Dropping them also
 removes the source's `set_option backward.isDefEq.respectTransparency false in`, which existed only
 for the first of them and which `TauCeti/` forbids in any case.
-`polyToField` carries a targeted `@[expose]` — the minimum the module system needs for
-`polyToField_apply`, `algebraMap_field_eq_comp` and the five `pointedCurve_aᵢ` lemmas to hold by
-`rfl`; the section stays a plain `public section` rather than `@[expose] public section`, for the
-reason spelled out in `TauCeti/AlgebraicGeometry/EllipticCurve/Affine/Point/VariableChange.lean` —
-exposing the whole file would publish every proof body to make a handful of `rfl`s go through. And
-`equation_point` opens with `change` where the source has `show`, that step rewriting the goal
-rather than only naming it (`linter.style.show`).
+No definition in this file is exposed. `polyToField_apply`, `algebraMap_field_eq_comp`, the five
+`pointedCurve_aᵢ` lemmas and the two `point_def` lemmas are proved `:= (rfl)`: the parentheses
+satisfy the module system's export check without publishing any body, which is what an `@[expose]`
+would do. The section is a plain `public section` for the reason spelled out in
+`TauCeti/AlgebraicGeometry/EllipticCurve/Affine/Point/VariableChange.lean` — exposing the whole file
+would publish every proof body to make a handful of `rfl`s go through. And `equation_point` opens
+with `change` where the source has `show`, that step rewriting the goal rather than only naming it
+(`linter.style.show`).
 -/
 
 public section
@@ -150,26 +157,26 @@ protected abbrev Field : Type := FractionRing Universal.Ring
 /-- The ring homomorphism `ℤ[A₁,⋯,A₆,X,Y] → Universal.Field`: reduce modulo the Weierstrass
 polynomial, then include the universal ring into its fraction field. Every statement about the
 universal pointed curve is ultimately about the images of `X` and `Y` under this map. -/
-@[expose] def polyToField : Poly →+* Universal.Field :=
+def polyToField : Poly →+* Universal.Field :=
   (algebraMap Universal.Ring _).comp <| AdjoinRoot.mk _
 
 /-- `polyToField` is reduction modulo the Weierstrass polynomial followed by the inclusion into
 the fraction field. -/
 @[simp]
 lemma polyToField_apply (p : Poly) :
-    polyToField p = algebraMap Universal.Ring _ (AdjoinRoot.mk _ p) := rfl
+    polyToField p = algebraMap Universal.Ring _ (AdjoinRoot.mk _ p) := (rfl)
 
 /-- The structure map of `Universal.Field` over the coefficient ring factors through `Poly`: the
 coefficients `A₁,⋯,A₆` reach the universal field by the same route as `X` and `Y` do. Rewriting
 with this turns a statement about `algebraMap` into one about `polyToField`. -/
 lemma algebraMap_field_eq_comp :
-    algebraMap (MvPolynomial Coeff ℤ) Universal.Field = polyToField.comp (algebraMap _ _) := rfl
+    algebraMap (MvPolynomial Coeff ℤ) Universal.Field = polyToField.comp (algebraMap _ _) := (rfl)
 
 /-- The `Universal.Ring` counterpart of `algebraMap_field_eq_comp`: the structure map from the
 coefficient ring is the inclusion `ℤ[A₁,⋯,A₆] → Poly` followed by the quotient map. -/
 lemma algebraMap_ring_eq_comp :
     algebraMap (MvPolynomial Coeff ℤ) Universal.Ring = (AdjoinRoot.mk _).comp (algebraMap _ _) :=
-  rfl
+  (rfl)
 
 /-- The Weierstrass polynomial vanishes at `(X, Y)` in the universal field — it is exactly what was
 quotiented out. This is the computational content of `equation_point`. -/
@@ -192,12 +199,19 @@ field, over which it is an elliptic curve (instance below) carrying the distingu
 is the third of `curvePoly`, `curveRing`, `pointedCurve`. -/
 abbrev pointedCurve : WeierstrassCurve Universal.Field := baseChange curve Universal.Field
 
+/-- The discriminant of `pointedCurve` is the image of `curve.Δ`. `pointedCurve` is by definition
+`curve.baseChange Universal.Field`, so this is `map_Δ` at that base change — named here rather than
+reached through a definitional `show`, so the ellipticity proof rewrites with an ordinary equation
+and the reliance on that definitional unfolding sits in one place. -/
+lemma Δ_pointedCurve : pointedCurve.Δ = algebraMap _ Universal.Field curve.Δ :=
+  map_Δ curve (algebraMap _ Universal.Field)
+
 /-- The universal pointed Weierstrass curve is an elliptic curve: its discriminant is a unit,
 because `Δ` of the universal curve is a nonzero polynomial and the coefficient ring embeds in the
 universal field. -/
 instance : pointedCurve.IsElliptic where
   isUnit := by
-    rw [show pointedCurve.Δ = _ from map_Δ curve (algebraMap _ Universal.Field)]
+    rw [Δ_pointedCurve]
     exact ((map_ne_zero_iff _ algebraMap_field_injective).mpr Δ_curve_ne_zero).isUnit
 
 open Polynomial in
@@ -226,24 +240,37 @@ open Polynomial Affine in
 def Affine.point : (curve.baseChange Universal.Field).toAffine.Point :=
   .mk equation_point
 
+/-- The affine distinguished point is `equation_point` packaged as a point of the group. The
+definition body is not exposed, so this equation lemma is how a consumer recovers it. -/
+@[simp]
+theorem Affine.point_def : Affine.point = .mk equation_point := (rfl)
+
 /-- The distinguished point on the universal curve in Jacobian coordinates. -/
 def Jacobian.point : Jacobian.Point (curve.baseChange Universal.Field) :=
   Jacobian.Point.fromAffine Affine.point
 
+/-- The Jacobian distinguished point is the affine one, moved along `fromAffine`. -/
+@[simp]
+theorem Jacobian.point_def : Jacobian.point = Jacobian.Point.fromAffine Affine.point := (rfl)
+
 open Polynomial (CC)
 
 /-- The `a₁` coefficient of `pointedCurve` is the image of the indeterminate `A₁` in the universal
-field, and likewise for `pointedCurve_a₂` through `pointedCurve_a₆`. All five are `@[simp]`, so a
-goal about `pointedCurve`'s coefficients reduces to one about `polyToField`. -/
-@[simp] lemma pointedCurve_a₁ : pointedCurve.a₁ = polyToField (CC curve.a₁) := rfl
+field, and likewise for `pointedCurve_a₂` through `pointedCurve_a₆`.
+
+None of the five is `@[simp]`: `simp` already rewrites `pointedCurve.a₁` with Mathlib's
+`Affine.baseChange_a₁`, to `algebraMap _ _ curve.a₁`, so tagging these would put a non-normal-form
+left-hand side in the simp set. They are the `polyToField` reading of the same coefficients, for
+use by name. -/
+lemma pointedCurve_a₁ : pointedCurve.a₁ = polyToField (CC curve.a₁) := (rfl)
 /-- The `a₂` coefficient of `pointedCurve` is the image of the indeterminate `A₂`. -/
-@[simp] lemma pointedCurve_a₂ : pointedCurve.a₂ = polyToField (CC curve.a₂) := rfl
+lemma pointedCurve_a₂ : pointedCurve.a₂ = polyToField (CC curve.a₂) := (rfl)
 /-- The `a₃` coefficient of `pointedCurve` is the image of the indeterminate `A₃`. -/
-@[simp] lemma pointedCurve_a₃ : pointedCurve.a₃ = polyToField (CC curve.a₃) := rfl
+lemma pointedCurve_a₃ : pointedCurve.a₃ = polyToField (CC curve.a₃) := (rfl)
 /-- The `a₄` coefficient of `pointedCurve` is the image of the indeterminate `A₄`. -/
-@[simp] lemma pointedCurve_a₄ : pointedCurve.a₄ = polyToField (CC curve.a₄) := rfl
+lemma pointedCurve_a₄ : pointedCurve.a₄ = polyToField (CC curve.a₄) := (rfl)
 /-- The `a₆` coefficient of `pointedCurve` is the image of the indeterminate `A₆`. -/
-@[simp] lemma pointedCurve_a₆ : pointedCurve.a₆ = polyToField (CC curve.a₆) := rfl
+lemma pointedCurve_a₆ : pointedCurve.a₆ = polyToField (CC curve.a₆) := (rfl)
 
 /-- The base change of the universal curve from `ℤ[A₁,⋯,A₆]` to `ℤ[A₁,⋯,A₆,X,Y]`. -/
 abbrev curvePoly : WeierstrassCurve Poly := curve.baseChange Poly
@@ -253,13 +280,13 @@ abbrev curveRing : WeierstrassCurve Universal.Ring := curve.baseChange Universal
 end Universal
 
 /-- The cusp curve `Y² = X³` over a commutative ring `R`. -/
-def cusp (R : Type*) [CommRing R] : Affine R := { a₁ := 0, a₂ := 0, a₃ := 0, a₄ := 0, a₆ := 0 }
+def cusp (R : Type*) [Zero R] : Affine R := { a₁ := 0, a₂ := 0, a₃ := 0, a₄ := 0, a₆ := 0 }
 
 /-- `(1, 1)` lies on the cusp curve `Y² = X³` over `ℤ`. Specializing the universal curve along this
 point is the cheap route to nonvanishing statements, since `ψₙ(1,1) = n`: a universal quantity that
 vanished would have to vanish in `ℤ` here. The `CharZero Universal.Ring` instance below is
 obtained this way. -/
-lemma cusp_equation_one_one : (cusp ℤ).Equation 1 1 := by
+lemma equation_cusp_one_one : (cusp ℤ).Equation 1 1 := by
   simp [Affine.Equation, Affine.polynomial, cusp, Polynomial.evalEval]
 
 open Universal
@@ -286,6 +313,7 @@ def polyEval : Poly →+* R := eval₂RingHom (eval₂RingHom W.specialize x) y
 open Polynomial in
 /-- `polyEval` computes in the expected order: substitute `W`'s coefficients for the indeterminates
 `A₁,⋯,A₆`, then evaluate the resulting bivariate polynomial at `(x, y)`. -/
+@[simp]
 lemma polyEval_apply (p : Poly) :
     polyEval W x y p = (p.map <| mapRingHom W.specialize).evalEval x y :=
   eval₂_eval₂RingHom_apply _ _ _ _
@@ -346,16 +374,13 @@ proving an identity once over `curveRing` and reading it off for every curve and
 
 Agreement after composing with `AdjoinRoot.mk` would **not** do: `mk` is surjective, so that
 hypothesis is merely a restatement of the conclusion and proves nothing about generators. -/
+@[ext]
 lemma ringHom_ext {f g : Universal.Ring →+* R}
     (hcoeff : f.comp (algebraMap (MvPolynomial Coeff ℤ) Universal.Ring)
       = g.comp (algebraMap (MvPolynomial Coeff ℤ) Universal.Ring))
     (hX : f (AdjoinRoot.of _ Polynomial.X) = g (AdjoinRoot.of _ Polynomial.X))
     (hY : f (AdjoinRoot.root _) = g (AdjoinRoot.root _)) : f = g := by
-  have key : f.comp (AdjoinRoot.mk _) = g.comp (AdjoinRoot.mk _) :=
-    Polynomial.ringHom_ext' (Polynomial.ringHom_ext' hcoeff hX) hY
-  refine RingHom.ext fun z ↦ ?_
-  obtain ⟨p, rfl⟩ := AdjoinRoot.mk_surjective z
-  exact congr($key p)
+  exact AdjoinRoot.ringHom_ext (Polynomial.ringHom_ext' hcoeff hX) hY
 
 /-- The `Universal.Ring` counterpart of `polyEval_comp_eq_specialize`: `ringEval eqn` also restricts
 to `W.specialize` on the coefficient ring. This is the compatibility that makes
@@ -369,7 +394,7 @@ it onto `ℤ`. This is the first use of that specialization argument, and it is 
 `(2 : Universal.Ring) ≠ 0` — needed by the halving steps of the group law and of the
 division-polynomial recursion. -/
 instance : CharZero Universal.Ring :=
-  RingHom.charZero (ringEval cusp_equation_one_one)
+  RingHom.charZero (ringEval equation_cusp_one_one)
 
 /-- The universal field has characteristic zero, being the fraction field of a ring that does. -/
 instance : CharZero Universal.Field :=
