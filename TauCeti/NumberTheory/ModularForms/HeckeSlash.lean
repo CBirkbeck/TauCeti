@@ -148,8 +148,8 @@ lemma heckeSlashSum_add (f g : ℍ → ℂ) : heckeSlashSum k D (f + g) =
 
 /-- The slash sum kills the zero function. -/
 @[simp]
-lemma heckeSlashSum_zero : heckeSlashSum k D 0 = 0 := by
-  simp [heckeSlashSum]
+lemma heckeSlashSum_zero : heckeSlashSum k D 0 = 0 :=
+  Finset.sum_eq_zero fun i _ ↦ SlashAction.zero_slash k (tRep D i)
 
 /-- **The slash sum is `ℂ`-linear in `f`.** Each summand has positive
 determinant, so `ModularForm.rat_smul_slash_of_det_pos` applies and the scalar passes through
