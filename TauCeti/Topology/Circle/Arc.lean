@@ -62,18 +62,17 @@ private lemma circleExp_image_Icc_add_period (a b : ℝ) :
   exact image_congr fun x _ => Circle.exp_add_two_pi x
 
 /-- **Preconnectedness pulls back along a continuous injection on a compact set.** If `f` is
-continuous and injective on a compact `K` and carries it onto a preconnected set, then `K` itself
-is preconnected. -/
-private lemma isPreconnected_of_injOn_of_image_eq {X Y : Type*} [TopologicalSpace X]
-    [TopologicalSpace Y] [T2Space Y] {f : X → Y} {K : Set X} {T : Set Y} (hK : IsCompact K)
-    (hf : ContinuousOn f K) (hinj : InjOn f K) (himg : f '' K = T) (hpre : IsPreconnected T) :
-    IsPreconnected K := by
+continuous and injective on a compact `K` and its image in a Hausdorff space is preconnected, then
+`K` itself is preconnected. -/
+private lemma isPreconnected_of_injOn {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    [T2Space Y] {f : X → Y} {K : Set X} (hK : IsCompact K) (hf : ContinuousOn f K)
+    (hinj : InjOn f K) (hpre : IsPreconnected (f '' K)) : IsPreconnected K := by
   -- On the subtype the restriction is a closed embedding, so it reflects preconnectedness.
   have : CompactSpace K := isCompact_iff_compactSpace.mp hK
   have hginj : Function.Injective fun x : K => f (x : X) :=
     fun x y hxy => Subtype.ext (hinj x.2 y.2 hxy)
   have hgc : Continuous fun x : K => f (x : X) := continuousOn_iff_continuous_domRestrict.mp hf
-  have hrange : range (fun x : K => f (x : X)) = T := (image_eq_range f K).symm.trans himg
+  have hrange : range (fun x : K => f (x : X)) = f '' K := (image_eq_range f K).symm
   rw [isPreconnected_iff_preconnectedSpace, preconnectedSpace_iff_univ,
     ← (hgc.isClosedEmbedding hginj).isInducing.isPreconnected_image, image_univ, hrange]
   exact hpre
@@ -109,7 +108,7 @@ theorem exists_eq_circleExp_image_Icc {T : Set Circle} (hT : IsClosed T) (hpre :
     rw [← image_nonempty (f := Circle.exp), himg]
     exact hne
   have hKpre : IsPreconnected K :=
-    isPreconnected_of_injOn_of_image_eq hKcompact Circle.exp.continuous.continuousOn hinj himg hpre
+    isPreconnected_of_injOn hKcompact Circle.exp.continuous.continuousOn hinj (himg ▸ hpre)
   have hKeq : K = Icc (sInf K) (sSup K) := eq_Icc_of_connected_compact ⟨hKne, hKpre⟩ hKcompact
   have hIsub : Icc (sInf K) (sSup K) ⊆ Ioo t (t + 2 * π) := hKeq ▸ hKsub
   have hle : sInf K ≤ sSup K := by
