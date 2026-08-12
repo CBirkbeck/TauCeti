@@ -49,7 +49,6 @@ formalised here.
 
 ## Main results
 
-* `TauCeti.Valuation.CofinalValue.lt_one` : A cofinal value is `< 1`.
 * `TauCeti.Valuation.mem_characteristicSubgroup_iff` : Membership in `cΓ_v` is bounding by a
   single attained value `≥ 1`.
 * `TauCeti.Valuation.hasFullCharacteristicGroup_iff_characteristicSubgroup_eq_top` : The
@@ -90,17 +89,6 @@ def CofinalValue (v : Valuation A Γ₀) (a : A) : Prop :=
 theorem cofinalValue_iff {v : Valuation A Γ₀} {a : A} :
     CofinalValue v a ↔ ∀ γ : ValueGroup₀ (.ofClass v), 0 < γ → ∃ n : ℕ, v.restrict a ^ n < γ :=
   Iff.rfl
-
-/-- A cofinal value lies strictly below `1`, by cofinality at `γ = 1`.
-
-The counterpart for a general convex subgroup, `CofinalValueFor.lt_one`, is stated where
-`CofinalValueFor` is defined and is the more general statement, so it cannot supply this one
-here; conversely cofinality for `⊤` is the strongest of the family, so this one does not
-supply it either. -/
-theorem CofinalValue.lt_one {v : Valuation A Γ₀} {a : A} (h : CofinalValue v a) :
-    v.restrict a < 1 := by
-  obtain ⟨n, hn⟩ := h 1 zero_lt_one
-  exact not_le.mp fun hle ↦ absurd hn (not_lt.mpr (one_le_pow₀ hle))
 
 /-- Cofinality transports along an equivalence of valuations, through the ordered
 isomorphism of their value groups. -/
