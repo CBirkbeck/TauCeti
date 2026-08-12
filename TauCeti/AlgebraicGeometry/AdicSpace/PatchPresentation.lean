@@ -22,9 +22,10 @@ criterion's `isCompact_of_isClosed_generateFrom` at `patchTopology A`: the mecha
 in `TauCeti/Topology/Spectral/PatchCriterion.lean`, and is specialised here. That is the part of
 Wedhorn's Theorem 4.9 which says the family consists of quasi-compact opens, as opposed to merely
 generating the topology. It says nothing about Lemma 7.5(1), whose family lives in `Spv (A, I)`:
-quasi-compactness in `Spv A` does not pass to the traces, since `spvOfIdeal` is not closed in
-`Spv A`. Nor is the
-*basis* property proved anywhere here — only quasi-compactness of the individual members.
+these statements do not transfer to the traces along the inclusion. That side is proved separately
+in `SpvOfIdeal/Spectral.lean`, by the same criterion applied to the witness topology coinduced
+along `r_I`. Nor is the *basis* property proved here — only quasi-compactness of the individual
+members.
 
 ## Main definitions
 
@@ -42,6 +43,14 @@ quasi-compactness in `Spv A` does not pass to the traces, since `spvOfIdeal` is 
 * `TauCeti.ValuationSpectrum.isCompact_of_isClosed_patchTopology` : a patch-closed subset is
   quasi-compact, with `TauCeti.ValuationSpectrum.isCompact_basicOpen` and
   `TauCeti.ValuationSpectrum.isCompact_basicOpenFinset` its two instances.
+
+## Provenance
+
+The corresponding development in AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`, project `projects/AdicSpaces/`, reaches spectrality
+through `isSpectralSpace_of_qcKolmogorov_oc_basis` and `Spv.isSpectralSpace`, which return a
+`CompactSpace ∧ T0Space ∧ QuasiSober` conjunction; it has no counterpart to an isolated
+quasi-compactness statement about a single rational subset. Nothing was copied.
 -/
 
 public section
