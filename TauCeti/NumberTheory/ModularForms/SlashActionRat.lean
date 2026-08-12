@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.Analysis.Complex.UpperHalfPlane.MoebiusAction
 public import TauCeti.NumberTheory.ModularForms.Basic
 
 /-!
