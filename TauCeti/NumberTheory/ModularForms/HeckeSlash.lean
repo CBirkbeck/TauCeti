@@ -10,10 +10,25 @@ public import TauCeti.NumberTheory.HeckeRing.LeftCosetModule.Basic
 public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 
 /-!
-# The slash action of a double coset
+# The slash sum over a double-coset decomposition
 
-A Hecke operator acts on a function `f : ℍ → ℂ` by slashing it against representatives of the
-double coset and summing. This file defines that sum and records that it is `ℂ`-linear in `f`.
+A Hecke operator acts on a modular form by slashing it against representatives of the double
+coset and summing. This file defines that sum and records that it is `ℂ`-linear in `f`.
+
+⚠ **It is not yet an action, and on a general `f : ℍ → ℂ` it is not even well defined.**
+`heckeSlashSum` is a sum over *chosen* representatives — `D.out` for the double coset and
+`i.out` for each of its right cosets — and on an arbitrary function the choice changes the
+answer: replacing `σᵢ` by `hσᵢ` for `h ∈ SL₂(ℤ)` multiplies the representative `(σᵢδ)ᵀ` by
+`hᵀ` on the right, and `f ∣[k] (Xhᵀ) = (f ∣[k] X) ∣[k] hᵀ` differs from `f ∣[k] X` unless the
+slash by `hᵀ` is trivial on that function. Even the identity double coset can therefore send a
+raw `f` to `f ∣[k] h` rather than to `f`.
+
+What repairs it is slash-invariance of `f`, and that is Shimura's Proposition 3.30: for `f`
+invariant under `SL₂(ℤ)` the sum is again invariant, and right multiplication merely permutes
+the representatives. That theorem, and the descent of this sum to a genuine operator on
+`SlashInvariantForm` and `ModularForm`, are deliberately **not** in this file — the reindexing
+argument is substantial and is a different claim. Until then this is an auxiliary sum, named to
+say so, and every consumer must supply the invariance hypothesis itself.
 
 ## The transpose, and why it is here
 
@@ -38,19 +53,20 @@ and scalars commute past it (`ModularForm.rat_smul_slash_of_det_pos`). Over a ge
 ## Main definitions
 
 * `HeckeRing.GL2.tRep`: the transposed representative `(σᵢ δ)ᵀ`.
-* `HeckeRing.GL2.heckeSlash`: `T_k(D) f = ∑ᵢ f ∣[k] (σᵢ δ)ᵀ`.
+* `HeckeRing.GL2.heckeSlashSum`: the choice-dependent sum `∑ᵢ f ∣[k] (σᵢ δ)ᵀ`.
 
 ## Main results
 
 * `HeckeRing.GL2.det_tRep_pos`: the representatives have positive determinant.
-* `HeckeRing.GL2.heckeSlash_add`, `heckeSlash_zero`, `heckeSlash_smul`: `ℂ`-linearity.
+* `HeckeRing.GL2.heckeSlashSum_add`, `heckeSlashSum_zero`, `heckeSlashSum_smul`: `ℂ`-linearity.
 
 ## Provenance
 
 Ported from the AINTLIB `LeanModularForms` project
 ([`LeanModularForms/HeckeRIngs/GL2/HeckeAction.lean`](https://github.com/CBirkbeck/AINTLIB),
 commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck): `tRep`,
-`heckeSlash` and the `heckeSlash_add` / `heckeSlash_zero` / `heckeSlash_smul` group. Restated
+its `heckeSlash` (renamed `heckeSlashSum` here, since it is not yet an action) and that
+definition's additivity, zero and scalar lemmas. Restated
 against TauCeti's `SLnZ`/`posDetInt` Hecke pair and `transposeGLEquiv` rather than AINTLIB's
 `GL_pair`/`GL_transposeEquiv`.
 
@@ -89,32 +105,38 @@ lemma det_tRep_pos (i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) �
     0 < (tRep D i : Matrix (Fin 2) (Fin 2) ℚ).det :=
   ((mem_posDetInt_iff 2).mp (tRep_mem_posDetInt D i)).2
 
-/-- **The slash action of a double coset**: `T_k(D) f = ∑ᵢ f ∣[k] (σᵢ δ)ᵀ`, the sum over the
-transposed representatives of the right-coset decomposition of `HδH` (Shimura Prop 3.30). -/
-noncomputable def heckeSlash (f : ℍ → ℂ) : ℍ → ℂ :=
+/-- **The slash sum over a chosen decomposition of a double coset**:
+`∑ᵢ f ∣[k] (σᵢ δ)ᵀ`, over the transposed representatives of the right-coset decomposition of
+`HδH` (Shimura Prop 3.30).
+
+⚠ This depends on the chosen representatives `D.out` and `i.out`, and on a general
+`f : ℍ → ℂ` the value changes with them — see the module docstring. It becomes independent of
+the choices, and an action, exactly on slash-invariant `f`; that is a separate theorem. Do not
+read this definition as "the Hecke operator" until it is available. -/
+noncomputable def heckeSlashSum (f : ℍ → ℂ) : ℍ → ℂ :=
   ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ)), f ∣[k] tRep D i
 
-/-- Defining equation for `heckeSlash`. -/
-lemma heckeSlash_def (f : ℍ → ℂ) :
-    heckeSlash k D f =
+/-- Defining equation for `heckeSlashSum`. -/
+lemma heckeSlashSum_def (f : ℍ → ℂ) :
+    heckeSlashSum k D f =
       ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ)), f ∣[k] tRep D i := (rfl)
 
-/-- The slash action of a double coset is additive. -/
-lemma heckeSlash_add (f g : ℍ → ℂ) :
-    heckeSlash k D (f + g) = heckeSlash k D f + heckeSlash k D g := by
-  simp [heckeSlash, Finset.sum_add_distrib]
+/-- The slash sum is additive in `f`. -/
+lemma heckeSlashSum_add (f g : ℍ → ℂ) :
+    heckeSlashSum k D (f + g) = heckeSlashSum k D f + heckeSlashSum k D g := by
+  simp [heckeSlashSum, Finset.sum_add_distrib]
 
-/-- The slash action of a double coset kills the zero function. -/
+/-- The slash sum kills the zero function. -/
 @[simp]
-lemma heckeSlash_zero : heckeSlash k D 0 = 0 := by
-  simp [heckeSlash]
+lemma heckeSlashSum_zero : heckeSlashSum k D 0 = 0 := by
+  simp [heckeSlashSum]
 
-/-- **The slash action of a double coset is `ℂ`-linear.** Each summand has positive
+/-- **The slash sum is `ℂ`-linear in `f`.** Each summand has positive
 determinant, so `ModularForm.rat_smul_slash_of_det_pos` applies and the scalar passes through
 with no `σ` twist. -/
-lemma heckeSlash_smul {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α)
-    (f : ℍ → ℂ) : heckeSlash k D (c • f) = c • heckeSlash k D f := by
-  rw [heckeSlash_def, heckeSlash_def, Finset.smul_sum]
+lemma heckeSlashSum_smul {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α)
+    (f : ℍ → ℂ) : heckeSlashSum k D (c • f) = c • heckeSlashSum k D f := by
+  rw [heckeSlashSum_def, heckeSlashSum_def, Finset.smul_sum]
   exact Finset.sum_congr rfl fun i _ ↦
     ModularForm.rat_smul_slash_of_det_pos k (det_tRep_pos D i) f c
 
