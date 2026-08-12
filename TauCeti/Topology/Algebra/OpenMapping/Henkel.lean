@@ -31,6 +31,9 @@ neighbourhood, and feed the result to the group-theoretic criterion for openness
 ## Main results
 
 * `TauCeti.HasZeroSequenceOfUnits.isOpenMap`: Henkel's open mapping theorem.
+* `TauCeti.HasZeroSequenceOfUnits.isQuotientMap`: the same map induces the quotient topology on
+  its target — the form the strict-morphism material consumes, where what matters is not that
+  images are open but that the target's topology is determined by the source's.
 
 Mathlib's `MonoidHom.isOpenMap_of_sigmaCompact` proves openness for a continuous surjection from
 a σ-compact source onto a T2 Baire target group (locally compact groups being the standard
@@ -82,6 +85,20 @@ theorem HasZeroSequenceOfUnits.isOpenMap {F : Type*} [FunLike F M N] [MulActionH
   refine Filter.mem_of_superset (hnhds 0) fun y hy ↦ ?_
   obtain ⟨x, hx, rfl⟩ := mem_image_of_mem_closure_image f hfc hW (fun n ↦ hnhds (n + 1)) hy
   exact hn₀ hx
+
+/-- **Henkel's theorem in quotient form.** Under the hypotheses of
+`TauCeti.HasZeroSequenceOfUnits.isOpenMap`, a *continuous* surjection does not merely carry open
+sets to open sets: the topology of `N` is the one coinduced from `M`, so a map out of `N` is
+continuous exactly when its composite with `f` is.
+
+Continuity of `f` is asked in full here, where `TauCeti.HasZeroSequenceOfUnits.isOpenMap` needs it
+only at `0`; that is what the quotient conclusion costs, and it is the shape Wedhorn's strict
+morphisms use. -/
+theorem HasZeroSequenceOfUnits.isQuotientMap {F : Type*} [FunLike F M N]
+    [MulActionHomClass F A M N] [AddMonoidHomClass F M N] (f : F) (hf : Function.Surjective f)
+    (hfc : Continuous (f : M → N)) (hc : ∀ x : M, ContinuousAt (fun a : A ↦ a • x) 0) :
+    IsQuotientMap (f : M → N) :=
+  (HasZeroSequenceOfUnits.isOpenMap f hf hfc.continuousAt hc).isQuotientMap hfc hf
 
 end TauCeti
 
