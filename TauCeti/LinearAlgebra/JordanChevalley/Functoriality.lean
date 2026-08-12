@@ -178,6 +178,29 @@ theorem comp_semisimplePart_eq_of_comp_eq
     LinearMap.prodMap_apply] at hpx
   exact hpx.symm
 
+omit [PerfectField K] [FiniteDimensional K V] [FiniteDimensional K W] in
+/-- **Intertwining passes to inverses.** If `f` intertwines the automorphisms `a` and `b`, then it
+intertwines `a⁻¹` and `b⁻¹`. -/
+theorem comp_inv_eq_of_comp_eq (f : V →ₗ[K] W) (a : GeneralLinearGroup K V)
+    (b : GeneralLinearGroup K W)
+    (hab : f.comp (a : Module.End K V) = (b : Module.End K W).comp f) :
+    f.comp (↑a⁻¹ : Module.End K V) = (↑b⁻¹ : Module.End K W).comp f := by
+  apply LinearMap.ext
+  intro x
+  calc
+    f ((↑a⁻¹ : Module.End K V) x) =
+        (↑b⁻¹ : Module.End K W)
+          ((b : Module.End K W) (f ((↑a⁻¹ : Module.End K V) x))) := by
+      exact ((b.toLinearEquiv.symm_apply_apply _).symm)
+    _ = (↑b⁻¹ : Module.End K W)
+        (f ((a : Module.End K V) ((↑a⁻¹ : Module.End K V) x))) := by
+      exact congrArg (↑b⁻¹ : Module.End K W)
+        (LinearMap.congr_fun hab ((↑a⁻¹ : Module.End K V) x)).symm
+    _ = (↑b⁻¹ : Module.End K W) (f x) := by
+      have hxa : (a : Module.End K V) ((↑a⁻¹ : Module.End K V) x) = x :=
+        LinearMap.congr_fun a.val_inv x
+      rw [hxa]
+
 /-- A linear map intertwining two automorphisms also intertwines their unipotent factors. -/
 theorem comp_unipotentPart_eq_of_comp_eq
     (f : V →ₗ[K] W) (g : GeneralLinearGroup K V) (h : GeneralLinearGroup K W)
@@ -185,28 +208,7 @@ theorem comp_unipotentPart_eq_of_comp_eq
     f.comp (unipotentPart g : Module.End K V) =
       (unipotentPart h : Module.End K W).comp f := by
   have hs := comp_semisimplePart_eq_of_comp_eq f g h hfg
-  have hs_inv :
-      f.comp (↑((semisimplePart g)⁻¹) : Module.End K V) =
-        (↑((semisimplePart h)⁻¹) : Module.End K W).comp f := by
-    apply LinearMap.ext
-    intro x
-    calc
-      f ((↑((semisimplePart g)⁻¹) : Module.End K V) x) =
-          (↑((semisimplePart h)⁻¹) : Module.End K W)
-            ((semisimplePart h : Module.End K W)
-              (f ((↑((semisimplePart g)⁻¹) : Module.End K V) x))) := by
-        exact ((semisimplePart h).toLinearEquiv.symm_apply_apply _).symm
-      _ = (↑((semisimplePart h)⁻¹) : Module.End K W)
-          (f ((semisimplePart g : Module.End K V)
-            ((↑((semisimplePart g)⁻¹) : Module.End K V) x))) := by
-        exact congrArg (↑((semisimplePart h)⁻¹) : Module.End K W)
-          (LinearMap.congr_fun hs
-            ((↑((semisimplePart g)⁻¹) : Module.End K V) x)).symm
-      _ = (↑((semisimplePart h)⁻¹) : Module.End K W) (f x) := by
-        have hxg : (semisimplePart g : Module.End K V)
-            ((↑((semisimplePart g)⁻¹) : Module.End K V) x) = x :=
-          LinearMap.congr_fun (semisimplePart g).val_inv x
-        rw [hxg]
+  have hs_inv := comp_inv_eq_of_comp_eq f (semisimplePart g) (semisimplePart h) hs
   have hug : unipotentPart g = (semisimplePart g)⁻¹ * g := by
     apply mul_left_cancel (a := semisimplePart g)
     simp
