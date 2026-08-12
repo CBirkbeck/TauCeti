@@ -39,9 +39,9 @@ At a vertical point the excision endpoints sit at `w ± ε·i`, so the excised i
 constant `-π·i`; at an arc point it is `-π·i - 2·arcsin(ε/2)·i`, and the limit is `-π·i` in
 both cases.
 
-The arc statement covers the whole open arc, including `i`: `Winding/I/Value.lean` derives
-the principal value and the `simp`-normal winding anchor at that closed point by specializing
-the two arc theorems here.
+The arc statement covers the whole open arc, including `i`: a consumer wanting the value there
+supplies the elliptic point's three elementary facts — `‖i‖ = 1`, `|re i| = 0 < 1/2`,
+`0 < im i` — directly to the arc theorems below.
 
 ## Main declarations
 
