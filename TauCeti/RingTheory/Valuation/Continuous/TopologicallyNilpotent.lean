@@ -29,7 +29,7 @@ need the same hypotheses.
 ## The value group, not the codomain
 
 Cofinality quantifies over `Γ_v`, the subgroup of the codomain *generated* by the attained
-values, so a general `γ` is a **ratio** `v t / v r` and not itself attained. That is exactly what
+values, so a general `γ` is a **ratio** `v t / v r`, which need not be attained. That is what
 `Valuation.IsContinuous.isOpen_lt_div` supplies, and it is why this proof reaches for the ratio
 form of continuity rather than the attained-value one: `{x ; v x < γ}` has to be open for the
 ratios too before topological nilpotence can be applied to it. Mathlib's
@@ -111,7 +111,7 @@ variable {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 valuation has cofinal values at every topologically nilpotent element: the powers of `a` are
 eventually inside each ball `{x ; v x < γ}`, and continuity is what makes that ball open.
 
-A general `γ ∈ Γ_v` is a ratio `v t / v r` of attained values rather than an attained value, so
+A general `γ ∈ Γ_v` is a ratio `v t / v r` of attained values, which need not be attained, so
 the ball is opened by `IsContinuous.isOpen_lt_div` — whence `[ContinuousConstSMul Aᵐᵒᵖ A]`,
 which is continuity of right multiplication by a constant and nothing more. -/
 theorem IsContinuous.cofinalValue_of_isTopologicallyNilpotent [ContinuousConstSMul Aᵐᵒᵖ A]
