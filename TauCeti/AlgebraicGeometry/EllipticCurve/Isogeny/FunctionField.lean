@@ -40,7 +40,9 @@ field. `TauCeti.Isogeny.comp` therefore lives here rather than beside `TauCeti.I
 
 The construction is the coordinate-ring form of D. Angdinata's function-field definition of an
 isogeny and follows the nonconstancy argument described in the elliptic-curves roadmap. The
-geometric interpretation is Silverman, *The Arithmetic of Elliptic Curves*, II.2.4.
+composition definition follows the seed in `TauCetiRoadmap/EllipticCurves/Suggested.lean`,
+discharging the `mapsInfinity` obligation the seed leaves open. The geometric interpretation is
+Silverman, *The Arithmetic of Elliptic Curves*, II.2.4.
 -/
 
 public section
