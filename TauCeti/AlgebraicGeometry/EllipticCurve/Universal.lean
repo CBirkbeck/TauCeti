@@ -305,6 +305,19 @@ end Universal
 /-- The cusp curve `Y² = X³` over a commutative ring `R`. -/
 def cusp (R : Type*) [Zero R] : Affine R := { a₁ := 0, a₂ := 0, a₃ := 0, a₄ := 0, a₆ := 0 }
 
+/-- Every coefficient of the cusp curve vanishes, and likewise for `cusp_a₂` through `cusp_a₆`.
+The definition body is unexposed, so these are how a consumer projects out of `cusp` — for instance
+when specialising the universal curve along it. -/
+@[simp] lemma cusp_a₁ (R : Type*) [Zero R] : (cusp R).a₁ = 0 := (rfl)
+/-- The `a₂` coefficient of the cusp curve vanishes. -/
+@[simp] lemma cusp_a₂ (R : Type*) [Zero R] : (cusp R).a₂ = 0 := (rfl)
+/-- The `a₃` coefficient of the cusp curve vanishes. -/
+@[simp] lemma cusp_a₃ (R : Type*) [Zero R] : (cusp R).a₃ = 0 := (rfl)
+/-- The `a₄` coefficient of the cusp curve vanishes. -/
+@[simp] lemma cusp_a₄ (R : Type*) [Zero R] : (cusp R).a₄ = 0 := (rfl)
+/-- The `a₆` coefficient of the cusp curve vanishes. -/
+@[simp] lemma cusp_a₆ (R : Type*) [Zero R] : (cusp R).a₆ = 0 := (rfl)
+
 /-- `(1, 1)` lies on the cusp curve `Y² = X³` over `ℤ`. Specializing the universal curve along this
 point is the cheap route to nonvanishing statements, since `ψₙ(1,1) = n`: a universal quantity that
 vanished would have to vanish in `ℤ` here. The `CharZero Universal.Ring` instance below is
@@ -395,6 +408,10 @@ point does not disturb the substitution of `W`'s coefficients. -/
 lemma polyEval_comp_eq_specialize : (polyEval W x y).comp (algebraMap _ _) = W.specialize := by
   ext <;> simp [polyEval]
 
+section RingHomExt
+
+variable {R : Type*} [Semiring R]
+
 /-- **Extensionality for homomorphisms out of the universal ring.** Two ring homomorphisms out of
 `Universal.Ring` are equal as soon as they agree on the coefficient ring `ℤ[A₁,⋯,A₆]` and on the two
 distinguished coordinates `X` and `Y` — that is, on generators.
@@ -413,6 +430,8 @@ lemma ringHom_ext {f g : Universal.Ring →+* R}
     (hX : f (AdjoinRoot.of _ Polynomial.X) = g (AdjoinRoot.of _ Polynomial.X))
     (hY : f (AdjoinRoot.root _) = g (AdjoinRoot.root _)) : f = g := by
   exact AdjoinRoot.ringHom_ext (Polynomial.ringHom_ext' hcoeff hX) hY
+
+end RingHomExt
 
 /-- The `Universal.Ring` counterpart of `polyEval_comp_eq_specialize`: `ringEval eqn` also restricts
 to `W.specialize` on the coefficient ring. This is the compatibility that makes
