@@ -411,6 +411,7 @@ and step (iii) computes each of those to be a rational subset of `Spv A`
 (`restrictToIdealCodRestrict_preimage`), which is open. In particular no description of
 `r_I⁻¹(Spv(A)(f/s))` for a *general* pair `(f, s)` is needed here: admissibility of `(T, u)` is
 the hypothesis under which `restrictToIdealCodRestrict_preimage` computes the preimage. -/
+@[fun_prop]
 theorem continuous_restrictToIdealCodRestrict (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     Continuous (restrictToIdealCodRestrict I hfg) := by
