@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.LinearAlgebra.JordanChevalley.Prod
+public import TauCeti.LinearAlgebra.GeneralLinearGroup.Intertwining
 
 /-!
 # Functoriality of the multiplicative Jordan decomposition
@@ -177,29 +178,6 @@ theorem comp_semisimplePart_eq_of_comp_eq
   rw [semisimplePart_prodMap, LinearMap.mem_graph_iff, coe_prodMap,
     LinearMap.prodMap_apply] at hpx
   exact hpx.symm
-
-omit [PerfectField K] [FiniteDimensional K V] [FiniteDimensional K W] in
-/-- **Intertwining passes to inverses.** If `f` intertwines the automorphisms `a` and `b`, then it
-intertwines `a⁻¹` and `b⁻¹`. -/
-theorem comp_inv_eq_of_comp_eq (f : V →ₗ[K] W) (a : GeneralLinearGroup K V)
-    (b : GeneralLinearGroup K W)
-    (hab : f.comp (a : Module.End K V) = (b : Module.End K W).comp f) :
-    f.comp (↑a⁻¹ : Module.End K V) = (↑b⁻¹ : Module.End K W).comp f := by
-  apply LinearMap.ext
-  intro x
-  calc
-    f ((↑a⁻¹ : Module.End K V) x) =
-        (↑b⁻¹ : Module.End K W)
-          ((b : Module.End K W) (f ((↑a⁻¹ : Module.End K V) x))) := by
-      exact ((b.toLinearEquiv.symm_apply_apply _).symm)
-    _ = (↑b⁻¹ : Module.End K W)
-        (f ((a : Module.End K V) ((↑a⁻¹ : Module.End K V) x))) := by
-      exact congrArg (↑b⁻¹ : Module.End K W)
-        (LinearMap.congr_fun hab ((↑a⁻¹ : Module.End K V) x)).symm
-    _ = (↑b⁻¹ : Module.End K W) (f x) := by
-      have hxa : (a : Module.End K V) ((↑a⁻¹ : Module.End K V) x) = x :=
-        LinearMap.congr_fun a.val_inv x
-      rw [hxa]
 
 /-- A linear map intertwining two automorphisms also intertwines their unipotent factors. -/
 theorem comp_unipotentPart_eq_of_comp_eq
