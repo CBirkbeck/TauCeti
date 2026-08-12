@@ -43,8 +43,6 @@ than `Ideal.map`, and a comap of a finitely generated ideal need not be finitely
   components and inclusions.
 * `TauCeti.Huber.PairOfDefinition.sup`: the join of two rings of definition is a ring of
   definition.
-* `TauCeti.Huber.isBounded_iff_exists_ringOfDefinition_ge`: a subring is bounded exactly when
-  some ring of definition contains it.
 * `TauCeti.Huber.isPowerBounded_iff_exists_mem_ringOfDefinition`: the power-bounded subring is
   the union of the rings of definition.
 
@@ -55,10 +53,9 @@ The `adjoin` construction — and hence the adic-topology argument now extracted
 at commit `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`. Names and the proof are adjusted to Tau
 Ceti's `PairOfDefinition` and boundedness APIs.
 
-`enlargeSup`, `sup`, the boundedness input `isBounded_sup` and
-`isBounded_iff_exists_ringOfDefinition_ge` are **not** covered by that attribution: AINTLIB cites
-Corollary 6.4 only for its parts (1)–(3), and has no counterpart either to the join of a ring of
-definition with a bounded subring or to the resulting characterisation of bounded subrings.
+`enlargeSup`, `sup` and the boundedness input `isBounded_sup` are **not** covered by that
+attribution: AINTLIB cites Corollary 6.4 only for its parts (1)–(3), and has no counterpart to the
+join of a ring of definition with a bounded subring.
 
 ## References
 
@@ -355,19 +352,6 @@ theorem sup_idealOfDefinition (P Q : PairOfDefinition A) :
 end PairOfDefinition
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] [IsHuberRing A]
-
-/-- **A subring is bounded exactly when it sits inside a ring of definition.** This is the
-subring form of `isPowerBounded_iff_exists_mem_ringOfDefinition`, which says the same for a
-single element.
-
-Being contained in one is as much as boundedness gives: a bounded subring is generally *not*
-itself a ring of definition, because rings of definition are open and a bounded subring need not
-be — `ℤ ⊆ ℚ_p` is bounded, sitting inside `ℤ_p`, and is not open. -/
-theorem isBounded_iff_exists_ringOfDefinition_ge {B : Subring A} :
-    IsBounded (B : Set A) ↔ ∃ P : PairOfDefinition A, B ≤ P.ringOfDefinition := by
-  refine ⟨fun hB ↦ ?_, fun ⟨P, hP⟩ ↦ P.isBounded_ringOfDefinition.subset hP⟩
-  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
-  exact ⟨P.enlargeSup B hB, P.le_enlargeSup_right B hB⟩
 
 /-- Wedhorn Corollary 6.4: an element of a Huber ring is power-bounded exactly when it belongs
 to some ring of definition. Equivalently, `A°` is the union of all rings of definition. -/
