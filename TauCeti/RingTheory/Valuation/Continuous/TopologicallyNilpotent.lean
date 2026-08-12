@@ -47,6 +47,7 @@ the first.
 
 ## Main results
 
+* `TauCeti.Valuation.exists_pow_lt_of_isTopologicallyNilpotent`
 * `TauCeti.Valuation.IsContinuous.lt_one_of_isTopologicallyNilpotent`
 * `TauCeti.Valuation.IsContinuous.cofinalValue_of_isTopologicallyNilpotent`
 
@@ -80,7 +81,8 @@ some power of `v a` falls below `γ`.
 Both bounds in this file are this lemma at a different threshold, so it is stated once, at the
 monoid level, with the openness supplied rather than derived: nothing here needs a group codomain
 or any compatibility between the topology and the ring operations. -/
-private theorem exists_pow_lt_of_isTopologicallyNilpotent {v : Valuation A Γ₀} {γ : Γ₀} (hγ : γ ≠ 0)
+theorem exists_pow_lt_of_isTopologicallyNilpotent {v : Valuation A Γ₀} {γ : Γ₀}
+    (hγ : γ ≠ 0)
     (hopen : IsOpen {x : A | v x < γ}) {a : A} (ha : IsTopologicallyNilpotent a) :
     ∃ n : ℕ, v a ^ n < γ := by
   obtain ⟨n, hn⟩ :=
