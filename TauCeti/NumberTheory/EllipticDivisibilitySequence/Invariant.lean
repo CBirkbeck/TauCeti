@@ -41,10 +41,8 @@ and the curve.
 
 ## Main results
 
-* `IsEllipticNet.invarNum_mul_invarDenom`: the invariance identity for an elliptic net. It is
-  proved through a `private` step that asks only for the four instances of the elliptic relator
-  `IsEllipticNet.rel` the `linear_combination` certificate consumes, which keeps that certificate
-  out of the public interface.
+* `IsEllipticNet.invarNum_mul_invarDenom`: the invariance identity for an elliptic net —
+  `invarNum` and `invarDenom` cross-multiply symmetrically in the two indices.
 * `IsEllipticNet.map_invarNum`, `IsEllipticNet.map_invarDenom`: both are natural in `R`. These are
   deliberately not `@[simp]` — the `_def` equations are, and `simp` derives naturality from them.
 
@@ -111,13 +109,8 @@ section CommRing
 
 variable {R : Type*} [CommRing R] {W : ℤ → R}
 
-/-- The invariance identity from exactly the four relator instances its proof consumes.
-
-Asking for the four instances rather than for `∀ p q r s, rel W p q r s = 0` — which is
-*definitionally* `IsEllipticNet W` — keeps the hypothesis down to what the `linear_combination`
-certificate below actually uses. It is `private` because that certificate is an implementation
-detail: a consumer arrives with the relator vanishing everywhere, and takes
-`invarNum_mul_invarDenom`. -/
+/-- `invarNum` and `invarDenom` cross-multiply symmetrically in `m` and `n` as soon as the elliptic
+relator vanishes at these four arguments. -/
 private theorem invarNum_mul_invarDenom_of_rel {s m n : ℤ}
     (h₀ : rel W m n s 0 = 0) (h₁ : rel W m n s s = 0)
     (h₂ : rel W (m - s) (n - s) s s = 0) (h₃ : rel W (n + s) n (n - s) (m - n) = 0) :
