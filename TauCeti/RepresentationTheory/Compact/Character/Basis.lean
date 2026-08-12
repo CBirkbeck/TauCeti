@@ -98,13 +98,13 @@ theorem inner_matrixCoeffLp_map_map (hunitary : IsUnitary π) {f : Lp 𝕜 2 (ha
 
 omit [FiniteDimensional 𝕜 V] in
 /-- **An endomorphism that represents the pairing against a class function is an intertwiner.**
-If `⟪w, T v⟫ = ⟪(π)_{v,w}, f⟫` for all `v, w` and `f` is a class function, then `T` commutes with
-the action of `π`. -/
-private lemma map_apply_comm_of_inner_matrixCoeffLp_eq (hunitary : IsUnitary π)
+If `⟪w, T v⟫ = ⟪(π)_{v,w}, f⟫` for all `v, w` and `f` is a class function, then `T` intertwines `π`
+with itself. -/
+private lemma isIntertwiningMap_of_inner_matrixCoeffLp_eq (hunitary : IsUnitary π)
     {f : Lp 𝕜 2 (haarProb G)} (hf : f ∈ classFunctionLp 𝕜 𝕜 2 (haarProb G)) (T : V →ₗ[𝕜] V)
-    (hT : ∀ v w : V, ⟪w, T v⟫_𝕜 = ⟪matrixCoeffLp π hπ v w, f⟫_𝕜) (g : G) (v : V) :
-    T (π g v) = π g (T v) := by
-  refine ext_inner_left 𝕜 fun u ↦ ?_
+    (hT : ∀ v w : V, ⟪w, T v⟫_𝕜 = ⟪matrixCoeffLp π hπ v w, f⟫_𝕜) :
+    π.toRepresentation.IsIntertwiningMap π.toRepresentation T := by
+  refine ⟨fun g v ↦ ext_inner_left 𝕜 fun u ↦ ?_⟩
   -- Conjugation invariance of `f` is what moves `g` across the coefficient.
   have hu : π g (π g⁻¹ u) = u := Representation.self_inv_apply π.toRepresentation g u
   calc ⟪u, T (π g v)⟫_𝕜
@@ -148,7 +148,7 @@ theorem exists_forall_inner_matrixCoeffLp_eq [IsAlgClosed 𝕜] (hunitary : IsUn
       inner_smul_left]
     exact Finset.sum_congr rfl fun a _ ↦ by rw [inner_conj_symm, mul_comm]
   have hcomm : ∀ (g : G) (v : V), T (π g v) = π g (T v) :=
-    map_apply_comm_of_inner_matrixCoeffLp_eq hπ hunitary hf T hT
+    (isIntertwiningMap_of_inner_matrixCoeffLp_eq hπ hunitary hf T hT).isIntertwining
   -- Schur's lemma turns it into a scalar.
   obtain ⟨c, hc⟩ := exists_eq_smul_one_of_irreducible π hirr
     { toContinuousLinearMap := LinearMap.toContinuousLinearMap T
