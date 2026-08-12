@@ -625,9 +625,9 @@ and `hga` from `differentiableOn_cuspFunction_ball` — but `hgz` only from
 gives non-vanishing only on some fixed punctured neighbourhood of `0`, so the two meet only once
 `H` clears `H₀`. That threshold is exactly what this theorem returns.
 
-The hypotheses `hoffγ`, the corner condition `hin`, and completeness of the zero set of `T`
-(`hT`) all mention `H`, so — together with the threshold hypothesis itself — they sit inside the
-`∀ H` binder rather than being fixed in advance. -/
+The hypotheses `hoffγ`, the strict-interior condition `hin` on the non-elliptic points of `T`,
+and completeness of the zero set of `T` (`hT`) all mention `H`, so — together with the threshold
+hypothesis itself — they sit inside the `∀ H` binder rather than being fixed in advance. -/
 theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {S T : Finset ℂ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
