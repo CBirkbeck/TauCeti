@@ -40,9 +40,14 @@ than `Ideal.map`, and a comap of a finitely generated ideal need not be finitely
 
 ## Provenance
 
-The construction and proof are adapted from AINTLIB's `HuberRings.lean` (Apache 2.0), branch
-`dev/adic-spaces` at commit `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`. Names and the proof
-are adjusted to Tau Ceti's `PairOfDefinition` and boundedness APIs.
+The `adjoin` construction — and hence the adic-topology argument now extracted from it as
+`enlarge` — is adapted from AINTLIB's `HuberRings.lean` (Apache 2.0), branch `dev/adic-spaces`
+at commit `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`. Names and the proof are adjusted to Tau
+Ceti's `PairOfDefinition` and boundedness APIs.
+
+`sup` and its boundedness input `isBounded_sup` are **not** covered by that attribution: AINTLIB
+cites Corollary 6.4 only for its parts (1)–(3) and has no counterpart to the join of two rings of
+definition.
 
 ## References
 
@@ -265,7 +270,7 @@ theorem mem_adjoin_of_mem (P : PairOfDefinition A) (T : Finset A)
 ring of definition; its ideal of definition is the image of the first one's. -/
 def sup (P Q : PairOfDefinition A) : PairOfDefinition A :=
   letI := P.toNonarchimedeanRing
-  P.enlarge (P.ringOfDefinition ⊔ Q.ringOfDefinition) le_sup_left
+  P.enlarge (P.ringOfDefinition ⊔ Q.ringOfDefinition) _root_.le_sup_left
     (isBounded_sup P.ringOfDefinition Q.ringOfDefinition P.isBounded_ringOfDefinition
       Q.isBounded_ringOfDefinition)
 
@@ -274,17 +279,23 @@ def sup (P Q : PairOfDefinition A) : PairOfDefinition A :=
 theorem sup_ringOfDefinition (P Q : PairOfDefinition A) :
     (P.sup Q).ringOfDefinition = P.ringOfDefinition ⊔ Q.ringOfDefinition := (rfl)
 
-/-- The old ring of definition is contained in the join. -/
-theorem le_sup (P Q : PairOfDefinition A) :
+/-- The first ring of definition is contained in the join. -/
+theorem le_sup_left (P Q : PairOfDefinition A) :
     P.ringOfDefinition ≤ (P.sup Q).ringOfDefinition := by
   rw [sup_ringOfDefinition]
-  exact le_sup_left
+  exact _root_.le_sup_left
+
+/-- The second ring of definition is contained in the join. -/
+theorem le_sup_right (P Q : PairOfDefinition A) :
+    Q.ringOfDefinition ≤ (P.sup Q).ringOfDefinition := by
+  rw [sup_ringOfDefinition]
+  exact _root_.le_sup_right
 
 /-- The ideal of definition of `P.sup Q` is the image of `P`'s. -/
 @[simp]
 theorem sup_idealOfDefinition (P Q : PairOfDefinition A) :
     (P.sup Q).idealOfDefinition =
-      P.idealOfDefinition.map (Subring.inclusion (P.le_sup Q)) := (rfl)
+      P.idealOfDefinition.map (Subring.inclusion (P.le_sup_left Q)) := (rfl)
 
 end PairOfDefinition
 
