@@ -35,6 +35,8 @@ than `Ideal.map`, and a comap of a finitely generated ideal need not be finitely
   another pair of definition.
 * `TauCeti.Huber.PairOfDefinition.sup`: the join of two rings of definition is a ring of
   definition.
+* `TauCeti.Huber.exists_ringOfDefinition_ge_of_isBounded`: every bounded subring sits inside a
+  ring of definition.
 * `TauCeti.Huber.isPowerBounded_iff_exists_mem_ringOfDefinition`: the power-bounded subring is
   the union of the rings of definition.
 
@@ -300,6 +302,21 @@ theorem sup_idealOfDefinition (P Q : PairOfDefinition A) :
 end PairOfDefinition
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A] [IsHuberRing A]
+
+/-- **Every bounded subring sits inside a ring of definition.** Join it with any ring of
+definition: the join is bounded (`isBounded_sup`) and contains that ring, so `enlarge` makes it
+one.
+
+This is the subring form of `isPowerBounded_iff_exists_mem_ringOfDefinition`, which says the same
+for a single element. -/
+theorem exists_ringOfDefinition_ge_of_isBounded {B : Subring A} (hB : IsBounded (B : Set A)) :
+    ∃ P : PairOfDefinition A, B ≤ P.ringOfDefinition := by
+  obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
+  let _ := P.toNonarchimedeanRing
+  refine ⟨P.enlarge (P.ringOfDefinition ⊔ B) le_sup_left
+    (isBounded_sup P.ringOfDefinition B P.isBounded_ringOfDefinition hB), ?_⟩
+  rw [PairOfDefinition.enlarge_ringOfDefinition]
+  exact le_sup_right
 
 /-- Wedhorn Corollary 6.4: an element of a Huber ring is power-bounded exactly when it belongs
 to some ring of definition. Equivalently, `A°` is the union of all rings of definition. -/
