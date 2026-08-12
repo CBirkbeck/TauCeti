@@ -54,10 +54,10 @@ on the contour.
 * `exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`
   (in `TauCeti.ModularForm`):
   the same identity for a nonzero level-one modular form once the truncation height clears a
-  threshold, with the ambient open set `U` and the hypotheses `hoff`, `hmero`, `hga`, `hgz`
-  all constructed rather than assumed. The threshold is unavoidable: `fdBoundaryQRadius H`
-  shrinks as `H` grows, so it meets the cusp function's non-vanishing neighbourhood only above
-  some `H₀`.
+  threshold, with periodicity, the ambient open set `U`, and the hypotheses `hoff`, `hmero`,
+  `hga`, `hgz` all constructed rather than assumed. The threshold is unavoidable:
+  `fdBoundaryQRadius H` shrinks as `H` grows, so it meets the cusp function's non-vanishing
+  neighbourhood only above some `H₀`.
 
 ## References
 
@@ -611,8 +611,10 @@ private lemma exists_threshold_cuspFunction_ne_zero [ModularFormClass F 𝒮ℒ 
 
 
 /-- **The valence formula for a level-one modular form, once `H` clears a threshold.**
-`sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq` still asks for an ambient open
-set `U` dominating the truncated fundamental domain, the off-divisor analyticity `hoff`, the
+Periodicity (`hper`) is constructed unconditionally, via
+`SlashInvariantFormClass.periodic_comp_ofComplex` and `one_mem_strictPeriods_SL`.
+`sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq` further asks for an ambient
+open set `U` dominating the truncated fundamental domain, the off-divisor analyticity `hoff`, the
 meromorphy `hmero`, and the cusp-function data `hga`/`hgz` on `Metric.closedBall 0
 (fdBoundaryQRadius H)`. All six come for free once `f` is a level-one modular form: `U` and `hoff`
 from the zeros-confinement construction (`UpperHalfPlane.exists_isOpen_zeros_inter`,
@@ -628,7 +630,7 @@ The hypotheses `hoffγ`, the corner condition `hin`, and completeness of the zer
 `∀ H` binder rather than being fixed in advance. -/
 theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {S T : Finset ℂ}
-    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hpos : ∀ s ∈ T, 0 < s.im) :
     ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H → 1 < H →
       (∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
@@ -642,6 +644,8 @@ theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrder
           + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
           + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
           + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
+  have hper : Periodic (⇑f ∘ ofComplex) 1 :=
+    SlashInvariantFormClass.periodic_comp_ofComplex f one_mem_strictPeriods_SL
   have hg : MDiff (⇑f : ℍ → ℂ) := ModularFormClass.holo f
   have : Fact (IsCusp OnePoint.infty 𝒮ℒ) :=
     ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos one_mem_strictPeriods_SL⟩
