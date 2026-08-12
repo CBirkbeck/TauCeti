@@ -173,14 +173,9 @@ private theorem natDegree_norm_add_le (a₁ b₁ a₂ b₂ : R[X]) :
     (Algebra.norm R[X] ((a₁ + a₂) • (1 : W.CoordinateRing)
         + (b₁ + b₂) • CoordinateRing.mk W Y)).natDegree
       ≤ max (Algebra.norm R[X] (a₁ • 1 + b₁ • CoordinateRing.mk W Y)).natDegree
-            (Algebra.norm R[X] (a₂ • 1 + b₂ • CoordinateRing.mk W Y)).natDegree := by
-  have hd := degree_norm_add_le W a₁ b₁ a₂ b₂
-  rcases max_cases
-      (Algebra.norm R[X] (a₁ • (1 : W.CoordinateRing) + b₁ • CoordinateRing.mk W Y)).degree
-      (Algebra.norm R[X] (a₂ • (1 : W.CoordinateRing) + b₂ • CoordinateRing.mk W Y)).degree with
-    ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] at hd
-  exacts [le_max_of_le_left (natDegree_le_natDegree hd),
-    le_max_of_le_right (natDegree_le_natDegree hd)]
+            (Algebra.norm R[X] (a₂ • 1 + b₂ • CoordinateRing.mk W Y)).natDegree :=
+  le_max_iff.2 <| (le_max_iff.1 <| degree_norm_add_le W a₁ b₁ a₂ b₂).imp natDegree_le_natDegree
+    natDegree_le_natDegree
 
 end DomainCore
 
