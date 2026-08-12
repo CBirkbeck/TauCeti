@@ -33,8 +33,9 @@ and the curve.
 
 * `IsEllipticNet.invarNum` and `IsEllipticNet.invarDenom` are defined for an **arbitrary**
   sequence `W : ℤ → R` — no hypothesis on `W`, and nothing about Weierstrass curves. It is the
-  *theorem* that asks `W` to be an elliptic net (or, in the primed form, asks the relator to
-  vanish); the file proves that direction only, and states no converse.
+  *theorem* that asks `W` to be an elliptic net — or, in `invarNum_mul_invarDenom_of_rel`, asks the
+  relator to vanish at four specific arguments; the file proves that direction only, and states no
+  converse.
 * `IsEllipticNet.invarNum_def`, `IsEllipticNet.invarDenom_def`: the defining formulas, as public
   equation lemmas. The definition bodies are not exposed, so these are how a consumer computes
   with them.
@@ -78,11 +79,16 @@ public section
 
 namespace IsEllipticNet
 
-variable {R S : Type*} [CommRing R] [CommRing S] (W : ℤ → R)
+variable {R S : Type*} [CommSemiring R] [CommSemiring S] (W : ℤ → R)
 
-/-- The numerator of the invariant of an elliptic net: for each `s`, the ratio
-`invarNum W s n / invarDenom W s n` does not depend on `n`
-(`invarNum_mul_invarDenom`, cross-multiplied so as to make sense over any commutative ring). -/
+/-! The definitions and their equation and naturality lemmas are pure products and sums, so they
+ask only for a commutative semiring. Subtraction enters with the elliptic relator, and the
+invariance theorems live in the `CommRing` section below. -/
+
+/-- The candidate numerator of the invariant, for an arbitrary sequence `W` — no hypothesis is
+imposed here. When `W` is an elliptic net, the ratio `invarNum W s n / invarDenom W s n` is
+independent of `n`; that is `invarNum_mul_invarDenom`, cross-multiplied so as to make sense over any
+commutative ring. -/
 def invarNum (s n : ℤ) : R :=
   (W (n + 2 * s) * W (n - s) ^ 2 + W (n + s) ^ 2 * W (n - 2 * s)) * W s ^ 2
     + W n ^ 3 * W (2 * s) ^ 2
@@ -102,26 +108,33 @@ lemma is how a consumer computes with it. -/
 @[simp]
 theorem invarDenom_def (s n : ℤ) : invarDenom W s n = W (n + s) * W n * W (n - s) := (rfl)
 
-variable {W} in
-/-- **The invariant of an elliptic net does not depend on `n`**, in the cross-multiplied form that
-makes sense over a commutative ring.
+section CommRing
 
-Only four instances of the relator are used, so the hypothesis is its vanishing rather than
-`IsEllipticNet W`; `invarNum_mul_invarDenom` is the packaged version. -/
-theorem invarNum_mul_invarDenom_of_rel (hrel : ∀ p q r s, rel W p q r s = 0) (s m n : ℤ) :
+variable {R : Type*} [CommRing R] {W : ℤ → R}
+
+/-- **The invariance identity from exactly the four relator instances its proof consumes.**
+
+Stated this way rather than from `∀ p q r s, rel W p q r s = 0`, which is *definitionally*
+`IsEllipticNet W` and so would make this a second name for `invarNum_mul_invarDenom` rather than a
+weaker hypothesis. Four equalities are genuinely all the proof needs, so a consumer holding the
+relator vanishing for other reasons — or at only these arguments — can apply this directly. -/
+theorem invarNum_mul_invarDenom_of_rel {s m n : ℤ}
+    (h₀ : rel W m n s 0 = 0) (h₁ : rel W m n s s = 0)
+    (h₂ : rel W (m - s) (n - s) s s = 0) (h₃ : rel W (n + s) n (n - s) (m - n) = 0) :
     invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m := by
   simp_rw [invarNum, invarDenom]
   linear_combination (norm := (simp_rw [rel]; ring_nf))
-    hrel m n s 0 * W m * W n * W (2 * s) ^ 2
-      - (hrel m n s s * W (m - s) * W (n - s)
-        + hrel (m - s) (n - s) s s * W (m + s) * W (n + s)
-        - hrel (n + s) n (n - s) (m - n) * W (m - n) * W (2 * s)) * W s ^ 2
+    h₀ * W m * W n * W (2 * s) ^ 2
+      - (h₁ * W (m - s) * W (n - s)
+        + h₂ * W (m + s) * W (n + s)
+        - h₃ * W (m - n) * W (2 * s)) * W s ^ 2
 
-variable {W} in
 /-- **The invariant of an elliptic net does not depend on `n`.** -/
 theorem invarNum_mul_invarDenom (h : IsEllipticNet W) (s m n : ℤ) :
     invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m :=
-  invarNum_mul_invarDenom_of_rel h s m n
+  invarNum_mul_invarDenom_of_rel (h ..) (h ..) (h ..) (h ..)
+
+end CommRing
 
 variable {F : Type*} [FunLike F R S] [RingHomClass F R S] (f : F)
 
