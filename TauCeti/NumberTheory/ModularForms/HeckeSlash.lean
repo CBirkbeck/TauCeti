@@ -107,10 +107,10 @@ noncomputable def tRep (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2)
 -- restatement of something already visible; they are written `(rfl)` in the style of
 -- `ModularForms/Basic.lean`, which opts out of exporting the definitional equality itself.
 
-/-- Defining equation for `tRep`: the transpose of `σᵢ δ`. -/
-lemma tRep_def (i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ))) :
-    tRep D i =
-      (transposeGLEquiv 2 ((i.out : GL (Fin 2) ℚ) * (D.out : GL (Fin 2) ℚ))).unop := (rfl)
+/-- Defining equation for `tRep`: the transpose of `σᵢ δ`. Since `tRep` is not `@[expose]`, a
+downstream module rewrites with this instead of unfolding the body. -/
+lemma tRep_def (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ)) : tRep D i =
+    (transposeGLEquiv 2 ((i.out : GL (Fin 2) ℚ) * (D.out : GL (Fin 2) ℚ))).unop := (rfl)
 
 /-- Each representative lies in `Δ`: `σᵢ ∈ SL₂(ℤ) ≤ Δ`, `δ ∈ Δ`, and transposition preserves
 `Δ`. -/
