@@ -322,9 +322,6 @@ private noncomputable def conjFunctionField :
 `d` divides the trace `2p - q(a₁X + a₃)` of `b`, and `d²` divides its norm
 `p² - pq(a₁X + a₃) - q²(X³ + a₂X² + a₄X + a₆)`.
 
-The trace and the norm of `w` over `F(X)` are those two polynomials over `d` and `d²`; when `w` is
-integral over `F[X]` so are they, and an element of `F(X)` integral over `F[X]` lies in `F[X]`.
-
 Ellipticity of `W` is not needed for this computation, and is not assumed. It enters only in the
 divisibility argument that consumes these two facts. -/
 private theorem dvd_trace_and_sq_dvd_norm {b : W.CoordinateRing} {d p q : F[X]}
