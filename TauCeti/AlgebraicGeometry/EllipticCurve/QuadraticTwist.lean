@@ -26,11 +26,12 @@ change of variables, again over any commutative ring in which the relevant param
 
 * `WeierstrassCurve.quadraticTwistOf`: the quadratic twist of a Weierstrass curve by `(t, n)`,
   an explicit Weierstrass model over any commutative ring.
-* `WeierstrassCurve.neg_nodePolynomial_const_quadraticTwistOf`: minus the constant coefficient of
-  `nodePolynomial` — the constant as written in `nodePolynomial_def` — is the one invariant here
+* `WeierstrassCurve.neg_nodePolynomial_constantCoeff_quadraticTwistOf`: minus the constant
+  coefficient of `nodePolynomial` — the constant as written in `nodePolynomial_def` — is the one
+  invariant here
   that does **not** simply scale by a power of `t² - 4n`; it acquires `- D² n a₁² c₄`, so the
-  coefficient itself acquires `+ D² n a₁² c₄`. That deviation is the arithmetic content behind
-  acquiring split multiplicative reduction after a twist.
+  coefficient itself acquires `+ D² n a₁² c₄`. Splitting of the node polynomial is not determined by
+  this coefficient alone, so this is a record of how it transforms, not a reduction statement.
 * `WeierstrassCurve.Δ_quadraticTwistOf`, `WeierstrassCurve.c₄_quadraticTwistOf`,
   `WeierstrassCurve.c₆_quadraticTwistOf`: the invariants of the twist.
 * `WeierstrassCurve.isElliptic_quadraticTwistOf_iff` and its field specialisation
@@ -226,10 +227,12 @@ this one picks up an extra `- D² n a₁² c₄`; equivalently the constant coef
 `+ D² n a₁² c₄`. That term vanishes when any of `a₁`, `n`, `c₄` or `D` does — and, over a general
 commutative ring, it can vanish from zero divisors without any factor being zero.
 
-Splitting of the node polynomial over the residue field is what distinguishes split from non-split
-multiplicative reduction, so this is the arithmetic input to the statement that a curve with
-multiplicative reduction acquires split reduction after a quadratic twist. -/
-theorem neg_nodePolynomial_const_quadraticTwistOf :
+Whether the node polynomial splits over the residue field is what distinguishes split from
+non-split multiplicative reduction, so a twist can change that behaviour — but splitting is not
+determined by this coefficient alone, and this lemma establishes no reduction statement by itself.
+It records the coefficient's transformation, which such an argument would use (for instance in the
+characteristic-two Artin–Schreier calculation), and nothing more. -/
+theorem neg_nodePolynomial_constantCoeff_quadraticTwistOf :
     54 * (E.quadraticTwistOf t n).b₆
       - 3 * (E.quadraticTwistOf t n).b₂ * (E.quadraticTwistOf t n).b₄
       + (E.quadraticTwistOf t n).a₂ * (E.quadraticTwistOf t n).c₄
