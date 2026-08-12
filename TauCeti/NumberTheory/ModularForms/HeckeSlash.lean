@@ -132,7 +132,7 @@ lemma det_tRep_pos (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ
 the choices, and an action, exactly on slash-invariant `f`; that is a separate theorem. Do not
 read this definition as "the Hecke operator" until it is available. -/
 noncomputable def heckeSlashSum (f : ℍ → ℂ) : ℍ → ℂ :=
-  ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ)), f ∣[k] tRep D i
+  ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ), f ∣[k] tRep D i
 
 /-- The pointwise value of the slash sum: the sum of the slashed values. This is the equation
 the reindexing proof of Prop 3.30 works from. -/
