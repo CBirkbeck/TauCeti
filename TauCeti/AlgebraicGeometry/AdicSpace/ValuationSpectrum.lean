@@ -26,6 +26,8 @@ We define the valuation spectrum `Spv A` following Wedhorn, *Adic Spaces*
 * `TauCeti.ValuationSpectrum.comap φ` : The continuous map `Spv B → Spv A` induced by
   `φ : A →+* B`.
 * `TauCeti.ValuationSpectrum.supp v` : The support ideal `{a ∈ A | v(a) = 0}`.
+* `TauCeti.ValuationSpectrum.basicOpenFinset_inter` : **Wedhorn's step (i)** in the proof of
+  Lemma 7.5, that the rational opens are stable under finite intersection.
 * `TauCeti.ValuationSpectrum.quotientLift 𝔞 h` : Lift the implicitly inferred point `v` with
   `𝔞 ≤ supp v` to `Spv (A ⧸ 𝔞)`.
 * `TauCeti.ValuationSpectrum.localizationComapSection S B v hS` : Lift `v` to a localization
@@ -485,6 +487,53 @@ lemma basicOpenFinset_eq_biInter (T : Finset A) (s : A) :
 lemma isOpen_basicOpenFinset (T : Finset A) (s : A) : IsOpen (basicOpenFinset T s) := by
   rw [basicOpenFinset_eq_biInter]
   exact Set.Finite.isOpen_biInter (T.finite_toSet.insert s) fun t _ ↦ isOpen_basicOpen t s
+
+open scoped Classical in
+/-- Inserting the denominator among the numerators changes nothing: the extra condition it adds
+is `v s ≤ v s`. -/
+lemma basicOpenFinset_insert_self (T : Finset A) (s : A) :
+    basicOpenFinset (insert s T) s = basicOpenFinset T s := by
+  ext v
+  simp only [mem_basicOpenFinset_iff, Finset.mem_insert]
+  exact ⟨fun ⟨h, hs⟩ ↦ ⟨fun t ht ↦ h t (Or.inr ht), hs⟩,
+    fun ⟨h, hs⟩ ↦ ⟨fun t ht ↦ ht.elim (fun e ↦ e ▸ v.toValuativeRel.vle_refl s) (h t), hs⟩⟩
+
+/-- A product avoids the support exactly when both factors do: the support is a prime ideal. -/
+private lemma not_vle_mul_zero_iff (v : Spv A) (a b : A) :
+    ¬ v.toValuativeRel.vle (a * b) 0 ↔
+      ¬ v.toValuativeRel.vle a 0 ∧ ¬ v.toValuativeRel.vle b 0 := by
+  simp only [← mem_supp_iff]
+  refine ⟨fun h ↦ ⟨fun ha ↦ h (Ideal.mul_mem_right _ _ ha), fun hb ↦ h (Ideal.mul_mem_left _ _ hb)⟩,
+    fun ⟨ha, hb⟩ hab ↦ ?_⟩
+  exact ((instIsPrimeSupp v).mem_or_mem hab).elim ha hb
+
+open scoped Classical Pointwise in
+/-- **Wedhorn's step (i) in the proof of Lemma 7.5**: the rational opens are stable under finite
+intersection, `Spv(A)(T₁/s₁) ∩ Spv(A)(T₂/s₂) = Spv(A)(T₁T₂/s₁s₂)`.
+
+Each denominator must occur among its own numerators. That is no restriction —
+`basicOpenFinset_insert_self` says inserting it changes nothing — but it is what the
+`⊇` direction needs: recovering `v t₁ ≤ v s₁` from `v (t₁s₂) ≤ v (s₁s₂)` cancels `s₂`, which has
+to be available as a numerator on the left. It is the same absorption that `IsAdmissible` performs
+for the admissibility condition. -/
+lemma basicOpenFinset_inter (T₁ T₂ : Finset A) {s₁ s₂ : A} (h₁ : s₁ ∈ T₁) (h₂ : s₂ ∈ T₂) :
+    basicOpenFinset T₁ s₁ ∩ basicOpenFinset T₂ s₂ = basicOpenFinset (T₁ * T₂) (s₁ * s₂) := by
+  ext v
+  simp only [Set.mem_inter_iff, mem_basicOpenFinset_iff, not_vle_mul_zero_iff]
+  constructor
+  · rintro ⟨⟨hT₁, hs₁⟩, ⟨hT₂, hs₂⟩⟩
+    refine ⟨?_, hs₁, hs₂⟩
+    rintro _ ht
+    obtain ⟨t₁, ht₁, t₂, ht₂, rfl⟩ := Finset.mem_mul.mp ht
+    refine v.toValuativeRel.vle_trans (v.toValuativeRel.mul_vle_mul_left (hT₁ t₁ ht₁) t₂) ?_
+    have := v.toValuativeRel.mul_vle_mul_left (hT₂ t₂ ht₂) s₁
+    rwa [mul_comm t₂ s₁, mul_comm s₂ s₁] at this
+  · rintro ⟨hT, hs₁, hs₂⟩
+    refine ⟨⟨fun t₁ ht₁ ↦ ?_, hs₁⟩, fun t₂ ht₂ ↦ ?_, hs₂⟩
+    · exact v.toValuativeRel.vle_mul_cancel hs₂ (hT _ (Finset.mul_mem_mul ht₁ h₂))
+    · refine v.toValuativeRel.vle_mul_cancel hs₁ ?_
+      have := hT _ (Finset.mul_mem_mul h₁ ht₂)
+      rwa [mul_comm s₁ t₂, mul_comm s₁ s₂] at this
 
 end RationalOpenFinset
 end ValuationSpectrum
