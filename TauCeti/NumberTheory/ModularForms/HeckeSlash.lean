@@ -96,9 +96,9 @@ variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 
 /-- The transposed left-coset representative `(σᵢ δ)ᵀ = δᵀ σᵢᵀ`, where `δ` is the chosen
 representative of the double coset `D` and `σᵢ` runs over its left-coset decomposition. The
-transpose turns it into a representative of a right coset `H·tRep`, which is what a right
+transpose turns it into a representative of a right coset `H(σᵢ δ)ᵀ`, which is what a right
 action needs. -/
-noncomputable def tRep (i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ))) :
+noncomputable def tRep (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ)) :
     GL (Fin 2) ℚ :=
   (transposeGLEquiv 2 ((i.out : GL (Fin 2) ℚ) * (D.out : GL (Fin 2) ℚ))).unop
 
