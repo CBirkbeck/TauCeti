@@ -6,12 +6,15 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.NumberTheory.ModularForms.Basic
+public import TauCeti.Analysis.Complex.UpperHalfPlane.MoebiusAction
 
 /-!
 # Modular-forms basics: extensions of Mathlib's API
 
 Small generic lemmas extending `Mathlib/NumberTheory/ModularForms/Basic.lean` and its slash
-actions: the conjugation `σ` is trivial on matrices of positive determinant, the `CuspForm`
+actions: the conjugation `σ` is trivial on `SL(2, ℤ)`-matrices — a special case of
+`UpperHalfPlane.σ_eq_refl_of_det_pos`, which lives with `σ` itself in
+`TauCeti/Analysis/Complex/UpperHalfPlane/MoebiusAction.lean` — the `CuspForm`
 translation equations Mathlib does not yet provide (`CuspForm.mcast_apply` and the
 `GL(2, ℝ)`-level `CuspForm.coe_translate_gl`), and the weight-`k` slash action of `-I`
 (`ModularForm.slash_neg_one`), the source of every parity constraint on weights and
@@ -40,9 +43,6 @@ AINTLIB `LeanModularForms` project
 
 ## Main results
 
-* `σ_eq_refl_of_det_pos`: the slash-action conjugation `σ` is the identity on matrices of
-  positive determinant. This is the branch every slash computation in the project takes, and
-  naming it keeps the `if` out of the proofs that used to unfold `σ` by hand.
 * `SlashInvariantFormClass.SL_slash_eq`: a form invariant under the image of `Γ ≤ SL(2, ℤ)`
   is fixed by the slash action of every element of `Γ`.
 * `SlashInvariantForm.slash_action_eqn_of_det_pos`: the transformation law
@@ -59,14 +59,6 @@ public section
 open Matrix Matrix.SpecialLinearGroup UpperHalfPlane
 
 open scoped MatrixGroups ModularForm
-
-/-- The slash-action conjugation `σ` is the identity on matrices of positive determinant:
-that is the branch its definition picks. Every slash computation with a positive-determinant
-matrix passes through this step, and the `GL(2, ℝ)`-level slash action is only well behaved
-there — on the other branch `σ` is complex conjugation and pulls apart products. -/
-lemma σ_eq_refl_of_det_pos {g : GL (Fin 2) ℝ} (hg : 0 < g.det.val) :
-    UpperHalfPlane.σ g = ContinuousAlgEquiv.refl ℝ ℂ :=
-  ite_eq_left hg
 
 /-- The slash-action conjugation `σ` is the identity for matrices coming from
 `SL₂(ℤ)`: their determinant is `1 > 0`, so the `σ` branch picks `ContinuousAlgEquiv.refl ℝ ℂ`. -/
