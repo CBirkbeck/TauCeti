@@ -18,7 +18,7 @@ Mathlib defines the second complement of a normalised EDS as a difference,
 
 with the two summands written out inline. This file names the subtracted one,
 
-`IsEllipticNet.complEDS₂Aux b c d m =
+`complEDS₂Aux b c d m =
   preNormEDS (b ^ 4) c d (m - 2) * preNormEDS (b ^ 4) c d (m + 1) ^ 2 * (if Even m then 1 else b)`,
 
 so that the decomposition `complEDS₂ = (first term) - complEDS₂Aux` can be used as an identity
@@ -32,11 +32,11 @@ the division polynomials.
 
 ## Main results
 
-* `IsEllipticNet.complEDS₂Aux_mul_b`: multiplying by `b` clears the parity factor and the
+* `complEDS₂Aux_mul_b`: multiplying by `b` clears the parity factor and the
   `b ^ 4`-rescaling at once, leaving `normEDS b c d (m - 2) * normEDS b c d (m + 1) ^ 2`. This is
   the companion of Mathlib's `complEDS₂_mul_b`, and it is why the definition is stated with
   `preNormEDS` rather than `normEDS`.
-* `IsEllipticNet.complEDS₂Aux_two`: the auxiliary term vanishes at `2`, since `preNormEDS _ _ _ 0`
+* `complEDS₂Aux_two`: the auxiliary term vanishes at `2`, since `preNormEDS _ _ _ 0`
   does.
 * `map_complEDS₂Aux`: it is natural in the coefficient ring.
 
