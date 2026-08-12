@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Topology.Algebra.TopologicallyNilpotent
 public import TauCeti.RingTheory.Valuation.CofinalIdeal.Basic
-public import TauCeti.RingTheory.Valuation.Continuous
+public import TauCeti.RingTheory.Valuation.Continuous.Basic
 
 /-!
 # A continuous valuation at a topologically nilpotent element
@@ -52,6 +52,12 @@ recorded at its own — much weaker — hypotheses rather than as a corollary of
 ## References
 
 * T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1, Remark 7.11 and Theorem 7.10.
+* AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit
+  `2baa76f742bdb4fb8ee323fabba41203bd390e08`, `projects/AdicSpaces/Adic spaces/SpvAITopology.lean`,
+  was consulted. Its `cont_to_ideal_le_supp_of_mem_defIdeal` proves the `v a < 1` case over a
+  `ValuativeRel`-derived valuation, and its general-`γ` counterpart
+  `cont_to_ideal_le_supp_microbial` is an explicit `sorry` gated on a microbiality hypothesis.
+  Neither result here needs microbiality, and the hypotheses differ; nothing was copied.
 -/
 
 public section

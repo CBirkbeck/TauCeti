@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.ValuationSpectrum
-public import TauCeti.RingTheory.Valuation.Continuous
+public import TauCeti.RingTheory.Valuation.Continuous.Basic
 
 /-!
 # The space `Cont A` of continuous valuations
@@ -27,7 +27,8 @@ equivalent valuations agree on the predicate. For continuity as Wedhorn states i
 quantifier running over the value group `Γ_v` — that holds, and
 `TauCeti.Valuation.IsEquiv.isContinuous_iff` says so. Had continuity instead been asked of every
 `γ` in the ambient codomain, it would **not** descend, and `Cont A` would not be well defined;
-the module docstring of `TauCeti.RingTheory.Valuation.Continuous` carries the counterexample.
+the module docstring of `TauCeti.RingTheory.Valuation.Continuous.Basic` carries the
+counterexample.
 
 So `IsContinuous` is defined here by testing the *canonical* valuation of the point, and
 `isContinuous_ofValuation_iff` says the test may equally be run on any representative.
