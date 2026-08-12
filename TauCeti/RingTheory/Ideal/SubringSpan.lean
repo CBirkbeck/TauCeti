@@ -49,8 +49,8 @@ is, and sandwiches the square as `I * I ≤ Submodule.span S G ≤ I`.
 
 ## Main results
 
-* `Submodule.mul_mem_span_of_mem_idealSpan`
-* `Submodule.restrictScalars_idealMul_le_span`
+* `Submodule.mul_mem_span_of_mem_ideal_span`
+* `Submodule.restrictScalars_mul_ideal_span_le_span`
 
 ## References
 
@@ -66,7 +66,7 @@ variable {R : Type*} [CommSemiring R] {T : Type*} [SetLike T R] [SubsemiringClas
 
 /-- Multiplying by an element of an ideal contained in `S` moves the coefficients into `S`: for
 `x` in such an ideal and `y` in `Ideal.span G`, the product `x * y` lies in the `S`-span of `G`. -/
-theorem mul_mem_span_of_mem_idealSpan (hJS : ∀ x ∈ J, x ∈ S) {x y : R} (hx : x ∈ J)
+theorem mul_mem_span_of_mem_ideal_span (hJS : ∀ x ∈ J, x ∈ S) {x y : R} (hx : x ∈ J)
     (hy : y ∈ Ideal.span G) : x * y ∈ Submodule.span S G := by
   induction hy using Submodule.span_induction generalizing x with
   | mem g hg => exact Submodule.smul_mem _ (⟨x, hJS x hx⟩ : S) (Submodule.subset_span hg)
@@ -78,12 +78,12 @@ theorem mul_mem_span_of_mem_idealSpan (hJS : ∀ x ∈ J, x ∈ S) {x y : R} (hx
 If `J` is an ideal of `R` lying inside `S`, then `J * Ideal.span G` is contained in the `S`-span
 of `G`. Taking `J = Ideal.span G`, legitimate when that ideal itself lies inside `S`, bounds the
 square of the ideal. -/
-theorem restrictScalars_idealMul_le_span (hJS : ∀ x ∈ J, x ∈ S) :
+theorem restrictScalars_mul_ideal_span_le_span (hJS : ∀ x ∈ J, x ∈ S) :
     Submodule.restrictScalars S (J * Ideal.span G) ≤ Submodule.span S G := by
   intro a ha
   rw [Submodule.restrictScalars_mem] at ha
   refine Submodule.mul_induction_on ha (fun x hx y hy ↦ ?_) fun x y hx hy ↦ ?_
-  · exact mul_mem_span_of_mem_idealSpan S hJS hx hy
+  · exact mul_mem_span_of_mem_ideal_span S hJS hx hy
   · exact Submodule.add_mem _ hx hy
 
 end Submodule
