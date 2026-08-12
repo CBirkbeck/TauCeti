@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.FunctionField
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Basic
 public import Mathlib.FieldTheory.Finite.Basic
 
 /-!
