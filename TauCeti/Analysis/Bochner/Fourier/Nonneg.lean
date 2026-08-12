@@ -200,47 +200,56 @@ private theorem exists_simpleFunc_tendsto_double_integral (ψ : V → ℂ)
     hmeas2 (integrable_const _) hbd2 (ae_of_all _ h_inner_conv)
 
 omit [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] [BorelSpace V] in
-/-- For a simple function `sn`, the double integral `∬ ψ (sn x - sn y)` expands as the
-positive-definite double sum `∑ᵤᵥ μ(sn⁻¹{u}) μ(sn⁻¹{v}) ψ (u - v)` over the range of `sn`, whose
-coefficients are real; so its real part is nonnegative. -/
+/-- **Discretising a double integral against a simple function.** For a finite measure `μ` and a
+simple function `sn`, the double integral of `ψ (sn x - sn y)` is the double sum over the range of
+`sn`, each term weighted by the measures of the two preimages. -/
+private theorem double_integral_comp_simpleFunc_eq_sum (ψ : V → ℂ) (μ : Measure V)
+    [IsFiniteMeasure μ] (sn : SimpleFunc V V) :
+    (∫ x, ∫ y, ψ (sn x - sn y) ∂μ ∂μ) =
+      ∑ u ∈ sn.range, ∑ v ∈ sn.range,
+        ((μ (sn ⁻¹' {u})).toReal : ℂ) *
+        ((μ (sn ⁻¹' {v})).toReal : ℂ) * ψ (u - v) := by
+  classical
+  set R := sn.range with hR
+  have h_inner : ∀ x, ∫ y, ψ (sn x - sn y) ∂μ =
+      ∑ v ∈ R, (μ (⇑sn ⁻¹' {v})).toReal • ψ (sn x - v) :=
+    fun x => integral_simpleFunc_comp sn (fun v => ψ (sn x - v)) μ
+  simp_rw [h_inner, Complex.real_smul]
+  rw [integral_finsetSum _ (fun v _ => ?_)]
+  · -- Expand the outer integral via `integral_simpleFunc_comp`.
+    have h_expand : ∀ v, ∫ a, (↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (sn a - v) ∂μ =
+        ∑ u ∈ R, (μ (⇑sn ⁻¹' {u})).toReal •
+          ((↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (u - v)) := fun v =>
+      integral_simpleFunc_comp sn
+        (fun w => (↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (w - v)) μ
+    simp_rw [h_expand]
+    rw [Finset.sum_comm]
+    congr 1
+    ext u
+    congr 1
+    ext v
+    rw [Complex.real_smul]
+    ring
+  · -- `c * ψ (sn · - v)` is integrable for the finite measure `μ`.
+    refine Integrable.const_mul ?_ _
+    -- as above: rewrite to the `SimpleFunc` coercion, which carries the integrability instance
+    have hmap : (fun x => ψ (sn x - v)) = ⇑(sn.map fun u => ψ (u - v)) :=
+      funext fun x => (SimpleFunc.map_apply (fun u => ψ (u - v)) sn x).symm
+    rw [hmap]
+    exact SimpleFunc.integrable_of_isFiniteMeasure _
+
+omit [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] [BorelSpace V] in
+/-- **The double integral of a positive-definite kernel along a simple function has nonnegative
+real part.** For a positive-definite `fun a b => ψ (a - b)`, a finite measure `μ` and a simple
+function `sn`, the real part of `∬ ψ (sn x - sn y)` is nonnegative. -/
 private theorem re_double_integral_simpleFunc_nonneg (ψ : V → ℂ)
     (hpd : IsPositiveDefiniteKernel fun a b : V => ψ (a - b))
     (μ : Measure V) [IsFiniteMeasure μ] (sn : SimpleFunc V V) :
     0 ≤ (∫ x, ∫ y, ψ (sn x - sn y) ∂μ ∂μ).re := by
   classical
+  rw [double_integral_comp_simpleFunc_eq_sum ψ μ sn]
+  -- Reindex both sums over the coercion of the range to a type, then apply positive definiteness.
   set R := sn.range with hR
-  have h_double_integral : (∫ x, ∫ y, ψ (sn x - sn y) ∂μ ∂μ) =
-      ∑ u ∈ R, ∑ v ∈ R,
-        ((μ (sn ⁻¹' {u})).toReal : ℂ) *
-        ((μ (sn ⁻¹' {v})).toReal : ℂ) * ψ (u - v) := by
-    have h_inner : ∀ x, ∫ y, ψ (sn x - sn y) ∂μ =
-        ∑ v ∈ R, (μ (⇑sn ⁻¹' {v})).toReal • ψ (sn x - v) :=
-      fun x => integral_simpleFunc_comp sn (fun v => ψ (sn x - v)) μ
-    simp_rw [h_inner, Complex.real_smul]
-    rw [integral_finsetSum _ (fun v _ => ?_)]
-    · -- Expand the outer integral via `integral_simpleFunc_comp`.
-      have h_expand : ∀ v, ∫ a, (↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (sn a - v) ∂μ =
-          ∑ u ∈ R, (μ (⇑sn ⁻¹' {u})).toReal •
-            ((↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (u - v)) := fun v =>
-        integral_simpleFunc_comp sn
-          (fun w => (↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (w - v)) μ
-      simp_rw [h_expand]
-      rw [Finset.sum_comm]
-      congr 1
-      ext u
-      congr 1
-      ext v
-      rw [Complex.real_smul]
-      ring
-    · -- `c * ψ (sn · - v)` is integrable for the finite measure `μ`.
-      refine Integrable.const_mul ?_ _
-      -- as above: rewrite to the `SimpleFunc` coercion, which carries the integrability instance
-      have hmap : (fun x => ψ (sn x - v)) = ⇑(sn.map fun u => ψ (u - v)) :=
-        funext fun x => (SimpleFunc.map_apply (fun u => ψ (u - v)) sn x).symm
-      rw [hmap]
-      exact SimpleFunc.integrable_of_isFiniteMeasure _
-  -- Reindex both sums over the coercion of `R` to a type, then apply positive definiteness.
-  rw [h_double_integral]
   simp_rw [← Finset.sum_coe_sort R]
   set c : R → ℂ := fun i => ((μ (sn ⁻¹' {(i : V)})).toReal : ℂ) with hc
   have hpd_eval := re_sum_nonneg_of_kernel hpd (fun i : R => (i : V)) c
