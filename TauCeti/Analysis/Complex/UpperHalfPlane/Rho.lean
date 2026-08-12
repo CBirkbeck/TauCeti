@@ -40,7 +40,8 @@ lemma neg_one_div_ρ : -1 / (ρ : ℂ) = (ρ : ℂ) + 1 := by
 other and preserves the norm. -/
 @[simp]
 lemma norm_ρ_add_one : ‖(ρ : ℂ) + 1‖ = 1 := by
-  rw [← neg_one_div_ρ, norm_div, norm_neg, norm_one, norm_ρ, div_one]
+  rw [← neg_one_div_ρ, norm_div]
+  simp [norm_ρ]
 
 @[simp]
 lemma ρ_add_one_ne_zero : (ρ : ℂ) + 1 ≠ 0 := by
