@@ -61,11 +61,16 @@ open Matrix Matrix.SpecialLinearGroup UpperHalfPlane
 open scoped MatrixGroups ModularForm
 
 /-- The slash-action conjugation `σ` is the identity for matrices coming from
-`SL₂(ℤ)`: their determinant is `1 > 0`, so the `σ` branch picks `ContinuousAlgEquiv.refl ℝ ℂ`. -/
+`SL₂(ℤ)`: their determinant is `1 > 0`, so the `σ` branch picks `ContinuousAlgEquiv.refl ℝ ℂ`.
+
+This keeps `@[simp]` even though `UpperHalfPlane.σ_eq_refl_of_det_pos` is also `@[simp]`: that
+one is conditional, and `simp` cannot discharge `0 < (↑(mapGL ℝ s)).det` on its own — the
+determinant of a mapped `SL(2, ℤ)` matrix reduces through `GeneralLinearGroup.det`, not through
+`Matrix.det` of the entrywise map. So the two do not overlap in practice. -/
 @[simp]
 lemma σ_mapGL_real_eq_refl (s : SL(2, ℤ)) :
     UpperHalfPlane.σ (mapGL ℝ s) = ContinuousAlgEquiv.refl ℝ ℂ :=
-  σ_eq_refl_of_det_pos (by simp [SpecialLinearGroup.mapGL])
+  σ_eq_refl_of_det_pos (by rw [← Matrix.GeneralLinearGroup.val_det_apply]; simp)
 
 /-- `CuspForm.mcast` does not change the pointwise values of a cusp form: the `CuspForm`
 analogue of Mathlib's `ModularForm.mcast_apply`, which Mathlib does not yet provide. -/
@@ -94,7 +99,7 @@ theorem _root_.ModularForm.slash_neg_one (k : ℤ) (f : ℍ → ℂ) :
     ext
     simp [Matrix.det_neg]
   funext z
-  rw [ModularForm.slash_apply, σ_eq_refl_of_det_pos (by simp [hdet])]
+  rw [ModularForm.slash_apply, σ_eq_refl_of_det_pos (by simp [Matrix.det_neg])]
   simp [hzpow, hdet, mul_comm]
 
 /-- A form invariant under the image in `GL(2, ℝ)` of a subgroup `Γ ≤ SL(2, ℤ)` is fixed by
