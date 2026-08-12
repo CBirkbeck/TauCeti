@@ -132,19 +132,39 @@ private lemma TST_smul_ρ :
 private lemma T_inv_S_smul_ρ : (_root_.ModularGroup.T⁻¹ * _root_.ModularGroup.S) • (ρ : ℍ) = ρ :=
   _root_.ModularGroup.stabilizer_ρ.mpr (by simp)
 
-/-- The inversion `S` keeps unit-circle points on the unit circle. -/
-lemma norm_coe_S_smul {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
-    ‖((_root_.ModularGroup.S • p : ℍ) : ℂ)‖ = 1 := by
-  rw [modular_S_smul, coe_mk, norm_inv, norm_neg, hp, inv_one]
+/-- The inversion `S` scales the norm of every point by its reciprocal.
 
-/-- The inversion `S` negates the real part of a unit-circle point. -/
-lemma re_S_smul {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
-    (_root_.ModularGroup.S • p).re = -p.re := by
+Not `@[simp]`: the simpNF linter rewrites the stated LHS `‖↑(ModularGroup.S • p)‖` through the
+unconditional simp lemma `ModularGroup.sl_moeb` to `‖↑((ModularGroup.S : GL (Fin 2) ℝ) • p)‖`
+(the `GL (Fin 2) ℝ`-lifted action), which is not how any call site in this development states
+the `S`-action, so tagging would make the lemma unusable via plain `rw`. -/
+lemma norm_coe_S_smul (p : ℍ) :
+    ‖((_root_.ModularGroup.S • p : ℍ) : ℂ)‖ = ‖(p : ℂ)‖⁻¹ := by
+  rw [modular_S_smul, coe_mk, norm_inv, norm_neg]
+
+/-- The inversion `S` negates the real part of every point and divides by its norm-square.
+
+Not `@[simp]`, for the same `ModularGroup.sl_moeb` reason as `norm_coe_S_smul`. -/
+lemma re_S_smul (p : ℍ) :
+    (_root_.ModularGroup.S • p).re = -p.re / Complex.normSq (p : ℂ) := by
   rw [← coe_re, modular_S_smul, coe_mk, Complex.inv_re, Complex.neg_re, Complex.normSq_neg,
-    Complex.normSq_eq_norm_sq, hp, one_pow, div_one, coe_re]
+    coe_re]
+
+/-- The unit-circle specialization of `norm_coe_S_smul`: on the unit circle, `S` keeps the
+norm at `1`. -/
+private lemma norm_coe_S_smul_of_norm_eq_one {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
+    ‖((_root_.ModularGroup.S • p : ℍ) : ℂ)‖ = 1 := by
+  rw [norm_coe_S_smul, hp, inv_one]
+
+/-- The unit-circle specialization of `re_S_smul`: on the unit circle, `S` negates the real
+part. -/
+private lemma re_S_smul_of_norm_eq_one {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
+    (_root_.ModularGroup.S • p).re = -p.re := by
+  rw [re_S_smul, Complex.normSq_eq_norm_sq, hp, one_pow, div_one]
 
 /-- A point of the closed fundamental domain lying in the `SL(2, ℤ)`-orbit of `i` is `i`
 itself: the boundary identifications of `𝒟` fix `i`. -/
+@[simp]
 lemma orbit_mk_eq_I_iff {p : ℍ} (hp : p ∈ 𝒟) :
     (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) = Quotient.mk'' I ↔ p = I := by
   refine ⟨fun h ↦ ?_, fun h ↦ by rw [h]⟩
@@ -167,6 +187,7 @@ lemma orbit_mk_eq_I_iff {p : ℍ} (hp : p ∈ 𝒟) :
 
 /-- A point of the closed fundamental domain lying in the `SL(2, ℤ)`-orbit of `ρ` is `ρ` or
 its translate `ρ + 1`: the two corners the boundary identifications of `𝒟` exchange. -/
+@[simp]
 lemma orbit_mk_eq_ρ_iff {p : ℍ} (hp : p ∈ 𝒟) :
     (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) = Quotient.mk'' ρ ↔
       p = ρ ∨ p = (1 : ℝ) +ᵥ ρ := by
@@ -216,11 +237,11 @@ lemma orbit_mk_injOn_fd_left :
   · rw [_root_.ModularGroup.re_T_smul, hre] at hp₁re
     norm_num at hp₁re
   · exact absurd hre hp₂re.ne
-  · have h1 := hp₁arc (norm_coe_S_smul hnorm)
-    rw [re_S_smul hnorm] at h1
+  · have h1 := hp₁arc (norm_coe_S_smul_of_norm_eq_one hnorm)
+    rw [re_S_smul_of_norm_eq_one hnorm] at h1
     linarith [hp₂arc hnorm]
-  · have h1 := hp₁arc (norm_coe_S_smul hnorm)
-    rw [re_S_smul hnorm] at h1
+  · have h1 := hp₁arc (norm_coe_S_smul_of_norm_eq_one hnorm)
+    rw [re_S_smul_of_norm_eq_one hnorm] at h1
     linarith [hp₂arc hnorm]
   · norm_num [re_ρ] at hp₂re
   · norm_num [re_ρ] at hp₂re
