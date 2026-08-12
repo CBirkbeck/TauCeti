@@ -66,10 +66,6 @@ private lemma norm_coe_vadd_of_re_eq (hre : (p : ℂ).re = -r / 2) :
     ‖((r +ᵥ p : ℍ) : ℂ)‖ = ‖(p : ℂ)‖ := by
   rw [norm_def, norm_def, normSq_coe_vadd_of_re_eq hre]
 
-/-- Translating by `r` adds `r` to the real part. -/
-private lemma re_coe_vadd (r : ℝ) (p : ℍ) : ((r +ᵥ p : ℍ) : ℂ).re = r + (p : ℂ).re := by
-  simp
-
 -- Translation carries the line `re = -r / 2` to `re = r / 2`, keeping the modulus.
 private lemma vadd_mem_fd_of_re_eq (hr : |r| ≤ 1) (hp : p ∈ 𝒟) (hre : (p : ℂ).re = -r / 2) :
     r +ᵥ p ∈ 𝒟 := by
@@ -220,7 +216,8 @@ private lemma vadd_one_ρ_mem_rightArc {g : ℍ → ℂ}
   Finset.mem_filter.mpr
     ⟨hcomp _ (vadd_mem_fd_of_re_eq (r := 1) (by norm_num) ModularGroup.ρ_mem_fd
         (by rw [coe_re_ρ]; norm_num)) (by rw [hordρ]; exact h),
-      by rw [coe_vadd_one_ρ]; exact norm_ρ_add_one, by rw [re_coe_vadd, coe_re_ρ]; norm_num⟩
+      by rw [coe_vadd_one_ρ]; exact norm_ρ_add_one,
+      by rw [coe_re, vadd_re, ← coe_re, coe_re_ρ]; norm_num⟩
 
 end Corners
 
@@ -285,7 +282,7 @@ private lemma coe_eq_ρ_add_one_of_re (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : 
     (p : ℂ) = (ρ : ℂ) + 1 := by
   have hp : p = (1 : ℝ) +ᵥ ρ := UpperHalfPlane.eq_of_re_of_norm
     (show (p : ℂ).re = (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ).re by
-      rw [hre, re_coe_vadd, coe_re_ρ]; norm_num)
+      rw [hre, coe_re, vadd_re, ← coe_re, coe_re_ρ]; norm_num)
     (show ‖(p : ℂ)‖ = ‖(((1 : ℝ) +ᵥ ρ : ℍ) : ℂ)‖ by
       rw [hnorm, coe_vadd_one_ρ, norm_ρ_add_one])
   rw [hp, coe_vadd_one_ρ]
