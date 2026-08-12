@@ -32,10 +32,11 @@ the division polynomials.
 
 ## Main results
 
-* `complEDS₂Aux_mul_b`: multiplying by `b` clears the parity factor and the
-  `b ^ 4`-rescaling at once, leaving `normEDS b c d (m - 2) * normEDS b c d (m + 1) ^ 2`. This is
-  the companion of Mathlib's `complEDS₂_mul_b`, and it is why the definition is stated with
-  `preNormEDS` rather than `normEDS`.
+* `complEDS₂Aux_mul_b`: one factor of `b` turns the auxiliary term into
+  `normEDS b c d (m - 2) * normEDS b c d (m + 1) ^ 2`. What it redistributes is the parity
+  bookkeeping; the `b ^ 4` rescaling is untouched, being the same inside `complEDS₂Aux` as inside
+  `normEDS`. This is the companion of Mathlib's `complEDS₂_mul_b`, and it is why the definition is
+  stated with `preNormEDS` rather than `normEDS`.
 * `complEDS₂Aux_two`: the auxiliary term vanishes at `2`, since `preNormEDS _ _ _ 0`
   does.
 * `map_complEDS₂Aux`: it is natural in the coefficient ring.
@@ -46,6 +47,11 @@ The parity factor `if Even m then 1 else b` and the `b ^ 4` inside `preNormEDS` 
 bookkeeping Mathlib uses for `normEDS` and `complEDS₂`; keeping them here, rather than defining the
 auxiliary term through `normEDS`, is what makes `complEDS₂Aux_mul_b` a single `split_ifs <;> ring`
 and keeps the definition literally a summand of Mathlib's.
+
+The `b ^ 4` never goes away. `normEDS b c d n` is by definition
+`preNormEDS (b ^ 4) c d n * (if Even n then b else 1)`, so the rescaling on the right of
+`complEDS₂Aux_mul_b` is the identical one written out explicitly on the left. Only the parity
+factors move.
 
 ## Provenance
 
@@ -97,9 +103,11 @@ theorem complEDS₂_eq_sub_complEDS₂Aux :
   simp only [complEDS₂, complEDS₂Aux_def]
   ring
 
-/-- **Multiplying the auxiliary term by `b` returns it to the normalised sequence.** The parity
-factor and the `b ^ 4`-rescaling of `preNormEDS` cancel together against a single `b`, which is the
-companion of Mathlib's `complEDS₂_mul_b`. -/
+/-- **Multiplying the auxiliary term by `b` returns it to the normalised sequence.** The single `b`
+converts the auxiliary term's own parity factor into the two that `normEDS` carries at `m - 2` and
+`m + 1`: each side contributes `b` for even `m` and `b ^ 2` for odd `m`. The `b ^ 4` rescaling of
+`preNormEDS` is not affected, since `normEDS` is defined with the identical one. Companion of
+Mathlib's `complEDS₂_mul_b`. -/
 theorem complEDS₂Aux_mul_b :
     complEDS₂Aux b c d m * b = normEDS b c d (m - 2) * normEDS b c d (m + 1) ^ 2 := by
   simp_rw [complEDS₂Aux, normEDS, Int.even_add, Int.even_sub, Int.not_even_one, even_two,
