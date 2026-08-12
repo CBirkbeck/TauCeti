@@ -109,11 +109,13 @@ theorem quotientPointsSubgroup_normal (H : _root_.CommHopfAlgCat.{v} R)
     simpa using hn y ((HopfIdeal.mem_toIdeal (I := I)).mp hy)
   exact RingHom.mem_ker.mp (hker (hI.conjugation_mem hx))
 
-/-- If a Hopf ideal cuts out a normal subgroup over every commutative value algebra, then
-it is normal. -/
-private theorem isNormal_of_forall_quotientPointsSubgroup_normal
+/-- If a Hopf ideal cuts out a normal subgroup over the value algebra `H ⊗ (H ⧸ I)`, then it is
+normal. That single test algebra suffices: it carries the two points whose conjugate detects
+membership in the ideal. -/
+private theorem isNormal_of_quotientPointsSubgroup_normal
     (H : _root_.CommHopfAlgCat.{v} R) (I : HopfIdeal R H)
-    (hnormal : ∀ A : CommAlgCat.{v} R, (quotientPointsSubgroup H I A).Normal) :
+    (hnormal : (quotientPointsSubgroup H I
+      (CommAlgCat.of R (TensorProduct R H (H ⧸ I.toIdeal)))).Normal) :
     I.IsNormal := by
   rw [HopfIdeal.isNormal_iff_conjugation_mem]
   intro x hx
@@ -131,7 +133,7 @@ private theorem isNormal_of_forall_quotientPointsSubgroup_normal
       (Algebra.TensorProduct.includeRight : Q →ₐ[R] TensorProduct R H Q).comp
         (Ideal.Quotient.mkₐ R I.toIdeal) :=
     AlgHom.ext fun h => quotientPointsHom_apply_apply H I A _ h
-  have hconj := (hnormal A).conj_mem n hn g
+  have hconj := hnormal.conj_mem n hn g
   rw [mem_quotientPointsSubgroup_iff] at hconj
   have hzero := hconj x hx
   have heval :
@@ -159,7 +161,7 @@ theorem isNormal_iff_quotientPointsSubgroup_normal
     (H : _root_.CommHopfAlgCat.{v} R) (I : HopfIdeal R H) :
     I.IsNormal ↔ ∀ A : CommAlgCat.{v} R, (quotientPointsSubgroup H I A).Normal :=
   ⟨fun hI A => quotientPointsSubgroup_normal H I hI A,
-    isNormal_of_forall_quotientPointsSubgroup_normal H I⟩
+    fun hnormal => isNormal_of_quotientPointsSubgroup_normal H I (hnormal _)⟩
 
 end CommHopfAlgCat
 
