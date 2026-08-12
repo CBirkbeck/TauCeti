@@ -86,9 +86,10 @@ order, so they ask only for a semiring — neither commutativity nor subtraction
 elliptic relator, and the invariance theorems live in the `CommRing` section below. -/
 
 /-- The candidate numerator of the invariant, for an arbitrary sequence `W` — no hypothesis is
-imposed here. When `W` is an elliptic net, the ratio `invarNum W s n / invarDenom W s n` is
-independent of `n`; that is `invarNum_mul_invarDenom`, cross-multiplied so as to make sense over any
-commutative ring. -/
+imposed here. When `W` is an elliptic net, `invarNum W s n` and `invarDenom W s n` cross-multiply
+symmetrically in `n`; that is `invarNum_mul_invarDenom`, which is the ratio
+`invarNum W s n / invarDenom W s n` being independent of `n` only over a field where the
+denominators involved are nonzero. -/
 def invarNum (s n : ℤ) : R :=
   (W (n + 2 * s) * W (n - s) ^ 2 + W (n + s) ^ 2 * W (n - 2 * s)) * W s ^ 2
     + W n ^ 3 * W (2 * s) ^ 2
@@ -129,7 +130,13 @@ theorem invarNum_mul_invarDenom_of_rel {s m n : ℤ}
         + h₂ * W (m + s) * W (n + s)
         - h₃ * W (m - n) * W (2 * s)) * W s ^ 2
 
-/-- **The invariant of an elliptic net does not depend on `n`.** -/
+/-- **The invariance identity for an elliptic net**: `invarNum` and `invarDenom` cross-multiply
+symmetrically in the two indices.
+
+That is weaker than "the invariant does not depend on `n`". Over a field, at a pair `m, n` where
+both `invarDenom W s m` and `invarDenom W s n` are nonzero, it cancels to equality of the two
+ratios; over a general commutative ring a denominator may vanish or be a zero divisor, and then
+there is no ratio to compare. -/
 theorem invarNum_mul_invarDenom (h : IsEllipticNet W) (s m n : ℤ) :
     invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m :=
   invarNum_mul_invarDenom_of_rel (h ..) (h ..) (h ..) (h ..)
