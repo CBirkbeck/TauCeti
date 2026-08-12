@@ -33,9 +33,6 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
   bounds.
 * `TauCeti.ModularForm.orderOfVanishingOnOrbit_eq_zero_of_notMem`: an orbit outside a set of
   orbits complete for `f`'s nonzero-order points on `𝒟` carries vanishing order zero.
-* `TauCeti.ModularForm.orderOfVanishingOnOrbit_eq_zero_of_notMem_image`: the case of the above
-  where the orbit set is the image, under `sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit`'s
-  orbit map, of a divisor set of complex points complete for `f` over `𝒟`.
 
 ## References
 
@@ -143,7 +140,15 @@ lemma sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit [SlashInvariantFormClass 
 /-- **The missing completeness step.** An orbit outside a set `S` that catches every
 fundamental-domain point of nonzero order carries vanishing order zero. Completeness means `hS`:
 every `p ∈ 𝒟` with `orderOfVanishingAt f p ≠ 0` has its orbit `⟦p⟧` inside `S`, the same idiom
-`hasFiniteSupport_orderOfVanishingOnOrbit` uses over `𝒟`. -/
+`hasFiniteSupport_orderOfVanishingOnOrbit` uses over `𝒟`.
+
+⚠ This does **not** by itself extend `sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit`'s
+image-indexed `∑ᶠ` to the whole orbit space. Instantiated at that lemma's orbit map, `hS` ranges
+over the *closed* `𝒟`, which holds the elliptic points `i` and `ρ` (`‖i‖ = ‖ρ‖ = 1`), whereas that
+lemma confines its divisor set to the *open* `𝒟ᵒ`. For a form of nonzero order at `i` or `ρ` the
+two demands cannot both hold — those are exactly the points the valence formula weights by `1/2`
+and `1/3` instead of counting into the divisor sum. Reaching the roadmap's non-elliptic orbit
+space still needs separate treatment of the elliptic orbits. -/
 lemma orderOfVanishingOnOrbit_eq_zero_of_notMem [SlashInvariantFormClass F 𝒮ℒ k]
     {S : Set (MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)}
     (hS : ∀ p ∈ 𝒟, orderOfVanishingAt f p ≠ 0 →
@@ -156,26 +161,6 @@ lemma orderOfVanishingOnOrbit_eq_zero_of_notMem [SlashInvariantFormClass F 𝒮�
   obtain ⟨p, rfl, hpfd⟩ := ModularGroup.exists_rep_mem_fd q
   rw [orderOfVanishingOnOrbit_mk] at hne
   exact hq (hS p hpfd hne)
-
-/-- The case `S := (fun z ↦ ⟦ofComplex z⟧) '' X` of `orderOfVanishingOnOrbit_eq_zero_of_notMem`,
-for `X` a divisor set of complex points complete for `f` over `𝒟`.
-
-This does **not** extend `sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit`'s image-indexed `∑ᶠ`
-to the whole orbit space: that lemma needs `X` inside the *open* domain `𝒟ᵒ`, while `hX` ranges
-over the *closed* `𝒟`, which also holds the elliptic points `i` and `ρ` (`‖i‖ = ‖ρ‖ = 1`). If `f`
-has nonzero order at `i` or `ρ`, `hX` forces `(i : ℂ) ∈ X` or `(ρ : ℂ) ∈ X`, while that lemma
-forbids either — exactly the points the valence formula weights by `1/2` and `1/3` rather than
-counting into this sum. Reaching the roadmap's non-elliptic orbit space still needs separate
-treatment of those elliptic orbits. -/
-lemma orderOfVanishingOnOrbit_eq_zero_of_notMem_image [SlashInvariantFormClass F 𝒮ℒ k]
-    {X : Set ℂ} (hX : ∀ p ∈ 𝒟, orderOfVanishingAt f p ≠ 0 → (p : ℂ) ∈ X)
-    {q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ}
-    (hq : q ∉ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
-        MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) '' X) :
-    orderOfVanishingOnOrbit f q = 0 :=
-  orderOfVanishingOnOrbit_eq_zero_of_notMem (S := (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
-      MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) '' X) f
-    (fun p hp hne ↦ ⟨(p : ℂ), hX p hp hne, by simp⟩) hq
 
 end ModularForm
 
