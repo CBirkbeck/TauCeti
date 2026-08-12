@@ -54,9 +54,9 @@ This file proves only the summability that the evaluation needs. The evaluation 
 `TauCeti.Huber.continuous_weightedEvalHom` in `WeightedEval/Continuous.lean`. The uniqueness that
 makes Proposition 5.50 a universal property is
 `TauCeti.Huber.weightedRestrictedSubring_ringHom_ext_of_continuous` in
-`WeightedRestrictedSeries.lean`, and the two are assembled into the `∃!` statement of 5.50 by
-`TauCeti.Huber.existsUnique_continuous_ringHom_weightedRestrictedSubring` in
-`WeightedEval/UniversalProperty.lean`.
+`WeightedRestrictedSeries.lean`. `WeightedEval/UniversalProperty.lean` assembles the two into an
+`∃!`, and states Proposition 5.50 itself — under Wedhorn's own coordinatewise hypothesis — as
+`existsUnique_continuous_ringHom_weightedRestrictedSubring_of_isWeightedVarPowerBounded`.
 
 ## References
 
