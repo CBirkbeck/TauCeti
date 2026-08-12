@@ -11,8 +11,13 @@ public import TauCeti.RingTheory.Huber.WeightedEval.Continuous
 
 Wedhorn's Proposition 5.50 is the universal property of `A⟨X₁, …, Xₖ⟩_T`: a ring homomorphism
 `φ : A →+* B` into a complete Hausdorff nonarchimedean ring, continuous at zero, together with
-values `bᵢ ∈ B` for the variables whose weighted monomials stay bounded, extends to `A⟨X⟩_T` in
+values `bᵢ ∈ B` making each weighted variable `φ(Tᵢ) · bᵢ` power-bounded, extends to `A⟨X⟩_T` in
 exactly one continuous way.
+
+That coordinatewise condition is `TauCeti.Huber.IsWeightedVarPowerBounded`, and it is what 5.50
+states. The results below are given first under the weaker `TauCeti.Huber.IsWeightBounded`, the
+uniform bound on the monomials that the whole `WeightedEval` cluster is stated with, and then
+under Wedhorn's own hypothesis; see "Main results" for which is which.
 
 The two halves are already in place and this file is their assembly. Existence is the evaluation
 homomorphism: `weightedEvalHom` is a ring map, `weightedEvalHom_weightedC` and
@@ -39,8 +44,17 @@ to serve.
 * `TauCeti.Huber.eq_weightedEvalHom_of_continuous`: a continuous ring homomorphism out of `A⟨X⟩_T`
   with the prescribed values on constants and variables *is* the evaluation. This is the form a
   consumer identifying a map already in hand will want.
-* `TauCeti.Huber.existsUnique_continuous_ringHom_weightedRestrictedSubring`: Proposition 5.50
-  itself, as the `∃!` the phrase "universal property" names.
+* `TauCeti.Huber.existsUnique_continuous_ringHom_weightedRestricted`: the `∃!` the phrase
+  "universal property" names, under `IsWeightBounded` — the uniform bound on the monomials that
+  the rest of this cluster is stated with, and which is *weaker* than Wedhorn's hypothesis.
+* `TauCeti.Huber.existsUnique_continuous_ringHom_weightedRestricted_of_isWeightedVarPowerBounded`:
+  the same under `IsWeightedVarPowerBounded`, the coordinatewise condition Proposition 5.50 states.
+  **This is the one to cite as 5.50.**
+
+The two hypotheses are not interchangeable: `IsWeightedVarPowerBounded` implies `IsWeightBounded`
+(`isWeightBounded_of_isWeightedVarPowerBounded`) and not conversely, so the first statement is the
+more general and the second is Wedhorn's. Keeping both, general first, is the pattern `Map.lean`
+and `Mul.lean` already use for `hasSum_weightedEval`, `weightedEval_add` and `weightedEval_mul`.
 
 ## References
 
@@ -70,21 +84,49 @@ theorem eq_weightedEvalHom_of_continuous (hT : IsWeightFamily T) (hφ : Continuo
     (fun a ↦ (hC a).trans (weightedEvalHom_weightedC hT hφ hb a).symm)
     (fun i ↦ (hX i).trans (weightedEvalHom_weightedX hT hφ hb i).symm)
 
-/-- **Wedhorn 5.50, the universal property of `A⟨X⟩_T`.** Given `φ : A →+* B` continuous at zero
-and values `b` making the weighted monomials bounded, there is exactly one continuous ring
-homomorphism `A⟨X⟩_T →+* B` restricting to `φ` on the constants and sending each `Xᵢ` to `bᵢ`.
+/-- **The universal property of `A⟨X⟩_T`**, under the uniform bound this cluster is built on.
+Given `φ : A →+* B` continuous at zero and values `b` making the weighted *monomials* bounded,
+there is exactly one continuous ring homomorphism `A⟨X⟩_T →+* B` restricting to `φ` on the
+constants and sending each `Xᵢ` to `bᵢ`.
+
+This is Proposition 5.50 with its hypothesis on the variables **weakened**:
+`TauCeti.Huber.IsWeightBounded` bounds the monomials `φ(Tν) · bν` all at once, where Wedhorn asks
+the coordinatewise `TauCeti.Huber.IsWeightedVarPowerBounded`, one index at a time. The latter
+implies the former (`TauCeti.Huber.isWeightBounded_of_isWeightedVarPowerBounded`) and not
+conversely, so this statement is the more general one. Wedhorn's own statement is
+`TauCeti.Huber.existsUnique_continuous_ringHom_weightedRestricted_of_isWeightedVarPowerBounded`
+below. Stating the general form first and deriving Wedhorn's from it is the pattern the rest of
+the cluster already follows — compare `weightedEval_mul` with
+`weightedEval_mul_of_isWeightedVarPowerBounded`, and `hasSum_weightedEval` with
+`hasSum_weightedEval_of_isWeightedVarPowerBounded`.
 
 The uniqueness is among *continuous* homomorphisms, and that restriction is what the proof uses:
 agreement is forced on the polynomials, and only continuity carries it across their closure.
 Whether a discontinuous extension with the same values on the generators can exist is not
 addressed here, in keeping with `weightedRestrictedSubring_ringHom_ext_of_continuous`. -/
-theorem existsUnique_continuous_ringHom_weightedRestrictedSubring (hT : IsWeightFamily T)
+theorem existsUnique_continuous_ringHom_weightedRestricted (hT : IsWeightFamily T)
     (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b) :
     ∃! ψ : weightedRestrictedSubring T hT →+* B, Continuous ψ ∧ (∀ a, ψ (weightedC T hT a) = φ a) ∧
       ∀ i, ψ (weightedX T hT i) = b i :=
   ⟨weightedEvalHom hT hφ hb, ⟨continuous_weightedEvalHom hT hφ hb,
       weightedEvalHom_weightedC hT hφ hb, weightedEvalHom_weightedX hT hφ hb⟩,
     fun _ ⟨hψ, hC, hX⟩ ↦ eq_weightedEvalHom_of_continuous hT hφ hb hψ hC hX⟩
+
+/-- **Wedhorn 5.50, the universal property of `A⟨X⟩_T`**, stated with the hypothesis Proposition
+5.50 itself carries: each weighted variable `φ(Tᵢ) · bᵢ` power-bounded as a set, one index at a
+time.
+
+This is the theorem to cite as 5.50. It is the general form above composed with
+`TauCeti.Huber.isWeightBounded_of_isWeightedVarPowerBounded`, which is how the rest of the cluster
+relates its own two hypotheses. A caller already holding the uniform bound wants the general
+statement instead; the two are not interchangeable, since the coordinatewise condition is strictly
+the stronger of the two. -/
+theorem existsUnique_continuous_ringHom_weightedRestricted_of_isWeightedVarPowerBounded
+    (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0) (hb : IsWeightedVarPowerBounded φ T b) :
+    ∃! ψ : weightedRestrictedSubring T hT →+* B, Continuous ψ ∧ (∀ a, ψ (weightedC T hT a) = φ a) ∧
+      ∀ i, ψ (weightedX T hT i) = b i :=
+  existsUnique_continuous_ringHom_weightedRestricted hT hφ
+    (isWeightBounded_of_isWeightedVarPowerBounded hb)
 
 end TauCeti.Huber
 
