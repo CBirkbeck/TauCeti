@@ -30,13 +30,10 @@ open Complex
 
 namespace UpperHalfPlane
 
-@[simp]
-lemma ρ_ne_zero : (ρ : ℂ) ≠ 0 := fun h0 ↦ by simpa [h0] using norm_ρ
-
 /-- The inversion carries `ρ` to `ρ + 1`. -/
 @[simp]
 lemma neg_one_div_ρ : -1 / (ρ : ℂ) = (ρ : ℂ) + 1 := by
-  rw [div_eq_iff ρ_ne_zero]
+  rw [div_eq_iff (ne_zero ρ)]
   linear_combination -ρ_sq
 
 /-- The second `ρ`-corner has unit modulus, like `ρ` itself: the inversion carries one to the
@@ -48,7 +45,7 @@ lemma norm_ρ_add_one : ‖(ρ : ℂ) + 1‖ = 1 := by
 @[simp]
 lemma ρ_add_one_ne_zero : (ρ : ℂ) + 1 ≠ 0 := by
   rw [← neg_one_div_ρ]
-  exact div_ne_zero (by norm_num) ρ_ne_zero
+  exact div_ne_zero (by norm_num) (ne_zero ρ)
 
 /-- The inversion carries `ρ + 1` to `ρ`. -/
 @[simp]

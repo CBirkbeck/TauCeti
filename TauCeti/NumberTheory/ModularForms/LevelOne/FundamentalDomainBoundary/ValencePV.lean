@@ -500,23 +500,12 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
         + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
         + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
         + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
-  have hI : -1 / Complex.I = Complex.I := by
-    rw [div_eq_iff Complex.I_ne_zero, Complex.I_mul_I]
+  have hI : -1 / Complex.I = Complex.I := by simp
   have hnorm : ∀ s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ), ‖s‖ = 1 := by
-    intro s hs
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hs
-    rcases hs with rfl | rfl | rfl
-    · exact Complex.norm_I
-    · exact UpperHalfPlane.norm_ρ
-    · exact UpperHalfPlane.norm_ρ_add_one
+    simp [UpperHalfPlane.norm_ρ]
   have hinv : ∀ s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
       -1 / s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) := by
-    intro s hs
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hs
-    rcases hs with rfl | rfl | rfl
-    · simp [hI]
-    · simp [UpperHalfPlane.neg_one_div_ρ]
-    · simp [UpperHalfPlane.neg_one_div_ρ_add_one]
+    simp [hI]
   have hHgt : ∀ s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ), s.im < H := fun s hs => by
     have h1 : s.im ≤ ‖s‖ := (le_abs_self _).trans (Complex.abs_im_le_norm s)
     rw [hnorm s hs] at h1
