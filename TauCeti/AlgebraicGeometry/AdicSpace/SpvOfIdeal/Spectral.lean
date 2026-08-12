@@ -404,13 +404,8 @@ theorem spectralSpace_spvOfIdeal (I : Ideal A)
 /-- **Wedhorn Lemma 7.5(2)**, the continuity half: the retraction `r_I : Spv A → Spv (A, I)`
 is continuous.
 
-Continuity into `Spv (A, I)` costs nothing beyond the two steps that Lemma 7.5(1) already
-needed. The admissible rational subsets generate the target topology
-(`instTopologicalSpace_spvOfIdeal_eq_generateFrom`), so only their preimages have to be tested,
-and step (iii) computes each of those to be a rational subset of `Spv A`
-(`restrictToIdealCodRestrict_preimage`), which is open. In particular no description of
-`r_I⁻¹(Spv(A)(f/s))` for a *general* pair `(f, s)` is needed here: admissibility of `(T, u)` is
-the hypothesis under which `restrictToIdealCodRestrict_preimage` computes the preimage. -/
+Wedhorn also calls `r_I` a *spectral* map; that half is not recorded here, as it additionally
+needs the rational subsets of `Spv (A, I)` to be quasi-compact. -/
 @[fun_prop]
 theorem continuous_restrictToIdealCodRestrict (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
