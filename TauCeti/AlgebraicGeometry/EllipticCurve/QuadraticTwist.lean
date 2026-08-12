@@ -26,6 +26,10 @@ change of variables, again over any commutative ring in which the relevant param
 
 * `WeierstrassCurve.quadraticTwistOf`: the quadratic twist of a Weierstrass curve by `(t, n)`,
   an explicit Weierstrass model over any commutative ring.
+* `WeierstrassCurve.nodePolynomial_const_quadraticTwistOf`: the constant coefficient of
+  `nodePolynomial` is the one invariant here that does **not** simply scale by a power of
+  `t² - 4n` — it acquires `- D² n a₁² c₄`. That deviation is the arithmetic content behind
+  acquiring split multiplicative reduction after a twist.
 * `WeierstrassCurve.Δ_quadraticTwistOf`, `WeierstrassCurve.c₄_quadraticTwistOf`,
   `WeierstrassCurve.c₆_quadraticTwistOf`: the invariants of the twist.
 * `WeierstrassCurve.isElliptic_quadraticTwistOf_iff` and its field specialisation
@@ -208,6 +212,24 @@ curve itself. -/
 @[simp] theorem Δ_quadraticTwistOf : (E.quadraticTwistOf t n).Δ = (t ^ 2 - 4 * n) ^ 6 * E.Δ := by
   simp only [Δ, b₂_quadraticTwistOf, b₄_quadraticTwistOf, b₆_quadraticTwistOf,
     b₈_quadraticTwistOf]
+  ring
+
+/-- **The node polynomial's constant coefficient under twisting.** `nodePolynomial` is
+`c₄ T² + a₁ c₄ T - (54 b₆ - 3 b₂ b₄ + a₂ c₄)`; its constant term does *not* simply scale by a power
+of `D = t² - 4n`, unlike `b₂`, `b₄`, `b₆`, `c₄`, `c₆` and `Δ`. It picks up an extra
+`- D² n a₁² c₄`, which vanishes exactly when `a₁ = 0` or `n = 0` — that is, away from the
+characteristic-2 obstruction. Splitting of the node polynomial over the residue field is what
+distinguishes split from non-split multiplicative reduction, so this is the arithmetic input to the
+statement that a curve with multiplicative reduction acquires split reduction after a quadratic
+twist. -/
+theorem nodePolynomial_const_quadraticTwistOf :
+    54 * (E.quadraticTwistOf t n).b₆
+      - 3 * (E.quadraticTwistOf t n).b₂ * (E.quadraticTwistOf t n).b₄
+      + (E.quadraticTwistOf t n).a₂ * (E.quadraticTwistOf t n).c₄
+      = (t ^ 2 - 4 * n) ^ 3 * (54 * E.b₆ - 3 * E.b₂ * E.b₄ + E.a₂ * E.c₄)
+        - (t ^ 2 - 4 * n) ^ 2 * n * E.a₁ ^ 2 * E.c₄ := by
+  simp only [b₆_quadraticTwistOf, b₂_quadraticTwistOf, b₄_quadraticTwistOf, c₄_quadraticTwistOf,
+    a₂_quadraticTwistOf]
   ring
 
 /-- The quadratic twist commutes with a ring homomorphism `f` (in particular with base change):
