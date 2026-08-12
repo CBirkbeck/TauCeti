@@ -6,7 +6,6 @@ module
 
 public import Mathlib.Algebra.BigOperators.Finprod
 public import Mathlib.NumberTheory.Modular
-public import TauCeti.NumberTheory.ModularForms.Order.AtCusp
 public import TauCeti.NumberTheory.ModularForms.Order.Orbits
 
 import TauCeti.Analysis.Complex.UpperHalfPlane.Rho
@@ -14,13 +13,15 @@ import TauCeti.NumberTheory.Modular.Orbits
 import TauCeti.NumberTheory.ModularForms.FiniteZeros
 
 /-!
-# Reduction of the valence formula to the non-elliptic orbit space
+# Orbit-reduction machinery for the valence formula
 
-The valence formula is proved as an identity over an arbitrary complete divisor set: for every
-finite `S ⊆ 𝒟` catching all nonzero-order points, three sums — over the strict interior, the
-left vertical edge, and the left half-arc minus `ρ` — together with the weighted elliptic and
-cusp terms equal `k/12`. This file reduces that hypothesis-shaped identity (`h_core`) to the
-headline form, a `∑ᶠ` over the non-elliptic orbit space.
+The valence formula will be proved as an identity over an arbitrary complete divisor set: for
+every finite `S ⊆ 𝒟` catching all nonzero-order points, three sums — over the strict interior,
+the left vertical edge, and the left half-arc minus `ρ` — together with the weighted elliptic
+and cusp terms equal `k/12`. This file provides the orbit-reduction machinery a future proof of
+that theorem will need: a canonical set of representatives for the non-elliptic orbits of
+nonzero order, and the rewriting of a `∑ᶠ` over those orbits as the sum over the three
+representative families.
 
 The reduction picks one representative per non-elliptic orbit of nonzero order inside the
 canonical set `canonicalReps`: interior points represent themselves; a right-vertical-edge point
@@ -86,6 +87,18 @@ def canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (⇑f : ℍ → �
       ((p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖) ∨
       ((p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0)
 
+/-- Membership in the canonical representatives: a point of `fdZeros` in the strict interior,
+on the left vertical edge, or on the left half-arc minus `ρ`. -/
+@[simp]
+lemma mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F} {hf : (⇑f : ℍ → ℂ) ≠ 0} {p : ℍ} :
+    p ∈ canonicalReps hf ↔
+      p ∈ fdZeros hf ∧
+        (((p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧ 1 < ‖(p : ℂ)‖ ∧
+            |(p : ℂ).re| < 1 / 2) ∨
+          ((p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖) ∨
+          ((p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0)) :=
+  Finset.mem_filter
+
 private lemma coe_re_ρ : (ρ : ℂ).re = -(1 / 2) := by
   norm_num [UpperHalfPlane.ρ]
 
@@ -104,7 +117,7 @@ private lemma norm_eq_one_of_mem_corners {z : ℂ}
 private lemma ne_elliptic_of_mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
     {hf : (⇑f : ℍ → ℂ) ≠ 0} {p : ℍ} (hp : p ∈ canonicalReps hf) :
     p ≠ I ∧ p ≠ ρ ∧ p ≠ (1 : ℝ) +ᵥ ρ := by
-  have hcond := (Finset.mem_filter.mp hp).2
+  have hcond := (mem_canonicalReps.mp hp).2
   refine ⟨fun h ↦ ?_, fun h ↦ ?_, fun h ↦ ?_⟩ <;> subst h <;>
     rcases hcond with ⟨hno, hgt, -⟩ | ⟨hre, hgt⟩ | ⟨hne, hnorm, hre⟩
   · exact hno (by rw [coe_I]; exact Finset.mem_insert_self _ _)
@@ -119,12 +132,12 @@ private lemma ne_elliptic_of_mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f
   · rw [coe_vadd_one_ρ, Complex.add_re, coe_re_ρ, Complex.one_re] at hre; norm_num at hre
 
 /-- The canonical representatives lie in the non-elliptic orbits. -/
-theorem orbit_mk_ne_of_mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
+theorem orbit_mk_ne_I_and_ne_ρ_of_mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
     {hf : (⇑f : ℍ → ℂ) ≠ 0} {p : ℍ} (hp : p ∈ canonicalReps hf) :
     (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) ≠ Quotient.mk'' I ∧
       (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) ≠ Quotient.mk'' ρ := by
   obtain ⟨hne_I, hne_ρ, hne_vadd⟩ := ne_elliptic_of_mem_canonicalReps hp
-  have hfd : p ∈ 𝒟 := (mem_fdZeros.mp (Finset.mem_filter.mp hp).1).1
+  have hfd : p ∈ 𝒟 := (mem_fdZeros.mp (mem_canonicalReps.mp hp).1).1
   exact ⟨fun h ↦ hne_I ((ModularGroup.orbit_mk_eq_I_iff hfd).mp h),
     fun h ↦ ((ModularGroup.orbit_mk_eq_ρ_iff hfd).mp h).elim hne_ρ hne_vadd⟩
 
@@ -135,7 +148,7 @@ theorem orbit_mk_injOn_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
     Set.InjOn (fun p : ℍ ↦ (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ))
       ↑(canonicalReps hf) := by
   refine ModularGroup.orbit_mk_injOn_fd_left.mono fun p hp ↦ ?_
-  obtain ⟨hmem, hcond⟩ := Finset.mem_filter.mp hp
+  obtain ⟨hmem, hcond⟩ := mem_canonicalReps.mp hp
   refine ⟨(mem_fdZeros.mp hmem).1, ?_, ?_⟩
   · rcases hcond with ⟨-, -, habs⟩ | ⟨hre, -⟩ | ⟨-, -, hre⟩
     · exact lt_of_abs_lt (coe_re p ▸ habs)
@@ -147,48 +160,13 @@ theorem orbit_mk_injOn_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
     · rw [hnorm] at hgt; norm_num at hgt
     · exact coe_re p ▸ hre
 
-private lemma one_le_norm_of_mem_fd {p : ℍ} (hp : p ∈ 𝒟) : 1 ≤ ‖(p : ℂ)‖ := by
-  have h := hp.1
-  rw [Complex.normSq_eq_norm_sq] at h
-  nlinarith [norm_nonneg (p : ℂ)]
-
-private lemma coe_S_smul (p : ℍ) : ((ModularGroup.S • p : ℍ) : ℂ) = (-(p : ℂ))⁻¹ := by
-  rw [modular_S_smul, coe_mk]
-
-private lemma norm_coe_S_smul {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
-    ‖((ModularGroup.S • p : ℍ) : ℂ)‖ = 1 := by
-  rw [coe_S_smul, norm_inv, norm_neg, hp, inv_one]
-
-private lemma re_coe_S_smul {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
-    ((ModularGroup.S • p : ℍ) : ℂ).re = -(p : ℂ).re := by
-  rw [coe_S_smul, Complex.inv_re, Complex.neg_re, Complex.normSq_neg,
-    Complex.normSq_eq_norm_sq, hp, one_pow, div_one]
-
 private lemma S_smul_mem_fd {p : ℍ} (hp : p ∈ 𝒟) (hnorm : ‖(p : ℂ)‖ = 1) :
     ModularGroup.S • p ∈ 𝒟 := by
   refine ⟨?_, ?_⟩
-  · rw [Complex.normSq_eq_norm_sq, norm_coe_S_smul hnorm]
+  · rw [Complex.normSq_eq_norm_sq, ModularGroup.norm_coe_S_smul hnorm]
     norm_num
-  · have h := re_coe_S_smul hnorm
-    rw [coe_re, coe_re] at h
-    rw [h, abs_neg]
+  · rw [ModularGroup.re_S_smul hnorm, abs_neg]
     exact hp.2
-
-private lemma eq_I_of_norm_eq_one_of_re_eq_zero {p : ℍ} (hnorm : ‖(p : ℂ)‖ = 1)
-    (hre : (p : ℂ).re = 0) : p = I := by
-  have him_pos : (0 : ℝ) < (p : ℂ).im := p.im_pos
-  have h1 : (p : ℂ).re * (p : ℂ).re + (p : ℂ).im * (p : ℂ).im = 1 := by
-    have h := Complex.normSq_eq_norm_sq (p : ℂ)
-    rw [hnorm, one_pow] at h
-    simpa [Complex.normSq_apply] using h
-  rw [hre, zero_mul, zero_add] at h1
-  have hprod : ((p : ℂ).im - 1) * ((p : ℂ).im + 1) = 0 := by nlinarith
-  have him : (p : ℂ).im = 1 := by
-    rcases mul_eq_zero.mp hprod with h | h
-    · linarith
-    · linarith
-  exact UpperHalfPlane.ext (Complex.ext (by rw [hre, coe_I, Complex.I_re])
-    (by rw [him, coe_I, Complex.I_im]))
 
 private lemma normSq_coe_vadd_neg_one {p : ℍ} (hre : (p : ℂ).re = 1 / 2) :
     Complex.normSq (((-1 : ℝ) +ᵥ p : ℍ) : ℂ) = Complex.normSq (p : ℂ) := by
@@ -220,7 +198,7 @@ private lemma exists_of_re_eq_half [ModularFormClass F 𝒮ℒ k] {f : F}
   have hord' : orderOfVanishingAt f ((-1 : ℝ) +ᵥ p₀) ≠ 0 := by
     rw [← orderOfVanishingOnOrbit_mk (k := k) f, horb, orderOfVanishingOnOrbit_mk]
     exact hord
-  refine ⟨(-1 : ℝ) +ᵥ p₀, Finset.mem_filter.mpr ⟨mem_fdZeros.mpr
+  refine ⟨(-1 : ℝ) +ᵥ p₀, mem_canonicalReps.mpr ⟨mem_fdZeros.mpr
     ⟨vadd_neg_one_mem_fd hfd hre, hord'⟩, Or.inr (Or.inl ⟨?_, ?_⟩)⟩, horb⟩
   · rw [coe_vadd, Complex.add_re, Complex.ofReal_re, hre]
     norm_num
@@ -240,9 +218,11 @@ private lemma exists_of_norm_eq_one_of_re_pos [ModularFormClass F 𝒮ℒ k] {f 
     exact hord
   have hne : ((ModularGroup.S • p₀ : ℍ) : ℂ) ≠ (ρ : ℂ) := fun h ↦
     hqρ (horb ▸ congrArg Quotient.mk'' (UpperHalfPlane.coe_injective h))
-  refine ⟨ModularGroup.S • p₀, Finset.mem_filter.mpr ⟨mem_fdZeros.mpr
-    ⟨S_smul_mem_fd hfd hnorm, hord'⟩, Or.inr (Or.inr ⟨hne, norm_coe_S_smul hnorm, ?_⟩)⟩, horb⟩
-  rw [re_coe_S_smul hnorm]
+  refine ⟨ModularGroup.S • p₀, mem_canonicalReps.mpr ⟨mem_fdZeros.mpr
+    ⟨S_smul_mem_fd hfd hnorm, hord'⟩,
+      Or.inr (Or.inr ⟨hne, ModularGroup.norm_coe_S_smul hnorm, ?_⟩)⟩, horb⟩
+  rw [coe_re, ModularGroup.re_S_smul hnorm]
+  have hpos' : 0 < p₀.re := coe_re p₀ ▸ hpos
   linarith
 
 /-- Every non-elliptic orbit of nonzero order has a representative among the canonical ones:
@@ -255,22 +235,23 @@ theorem exists_mem_canonicalReps_orbit_mk_eq [ModularFormClass F 𝒮ℒ k] {f :
     ∃ p ∈ canonicalReps hf, Quotient.mk'' p = q := by
   obtain ⟨p₀, rfl, hfd⟩ := ModularGroup.exists_rep_mem_fd q
   rw [orderOfVanishingOnOrbit_mk] at hq
-  rcases (one_le_norm_of_mem_fd hfd).lt_or_eq with hlt | heq
+  rcases (Complex.one_le_normSq_iff.mp hfd.1).lt_or_eq with hlt | heq
   · rcases lt_or_eq_of_le hfd.2 with hre_lt | hre_eq
-    · refine ⟨p₀, Finset.mem_filter.mpr ⟨mem_fdZeros.mpr ⟨hfd, hq⟩,
+    · refine ⟨p₀, mem_canonicalReps.mpr ⟨mem_fdZeros.mpr ⟨hfd, hq⟩,
         Or.inl ⟨fun hc ↦ hlt.ne' (norm_eq_one_of_mem_corners hc), hlt, ?_⟩⟩, rfl⟩
       rwa [coe_re]
     · rcases (abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp hre_eq with h | h
       · exact exists_of_re_eq_half hfd hq ((coe_re p₀).trans h) hlt
-      · exact ⟨p₀, Finset.mem_filter.mpr ⟨mem_fdZeros.mpr ⟨hfd, hq⟩,
+      · exact ⟨p₀, mem_canonicalReps.mpr ⟨mem_fdZeros.mpr ⟨hfd, hq⟩,
           Or.inr (Or.inl ⟨(coe_re p₀).trans h, hlt⟩)⟩, rfl⟩
   · rcases lt_trichotomy ((p₀ : ℂ).re) 0 with hneg | hzero | hpos
     · have hne : (p₀ : ℂ) ≠ (ρ : ℂ) := fun h ↦
         hqρ (congrArg Quotient.mk'' (UpperHalfPlane.coe_injective h))
-      exact ⟨p₀, Finset.mem_filter.mpr ⟨mem_fdZeros.mpr ⟨hfd, hq⟩,
+      exact ⟨p₀, mem_canonicalReps.mpr ⟨mem_fdZeros.mpr ⟨hfd, hq⟩,
         Or.inr (Or.inr ⟨hne, heq.symm, hneg⟩)⟩, rfl⟩
-    · exact absurd (congrArg Quotient.mk''
-        (eq_I_of_norm_eq_one_of_re_eq_zero heq.symm hzero)) hqI
+    · exact absurd (congrArg Quotient.mk'' (UpperHalfPlane.eq_of_re_of_norm
+        (by rw [← coe_re, hzero, ← coe_re, coe_I, Complex.I_re])
+        (by rw [heq.symm, coe_I, Complex.norm_I]))) hqI
     · exact exists_of_norm_eq_one_of_re_pos hfd hq heq.symm hpos hqρ
 
 /-- The `∑ᶠ` over the non-elliptic orbit space equals the sum over the canonical
@@ -282,11 +263,12 @@ theorem finsum_orderOfVanishingOnOrbit_eq_sum_canonicalReps [ModularFormClass F 
       ∑ p ∈ canonicalReps hf, orderOfVanishingAt f p := by
   rw [finsum_eq_sum _ (hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic hf)]
   refine (Finset.sum_bij
-    (fun p hp ↦ (⟨Quotient.mk'' p, orbit_mk_ne_of_mem_canonicalReps hp⟩ : NonEllipticOrbit))
+    (fun p hp ↦ (⟨Quotient.mk'' p, orbit_mk_ne_I_and_ne_ρ_of_mem_canonicalReps hp⟩ :
+      NonEllipticOrbit))
     ?_ ?_ ?_ ?_).symm
   · intro p hp
     refine (hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic hf).mem_toFinset.mpr ?_
-    simpa using (mem_fdZeros.mp (Finset.mem_filter.mp hp).1).2
+    simpa using (mem_fdZeros.mp (mem_canonicalReps.mp hp).1).2
   · intro p₁ h₁ p₂ h₂ h
     exact orbit_mk_injOn_canonicalReps hf h₁ h₂ (congrArg Subtype.val h)
   · intro q hq

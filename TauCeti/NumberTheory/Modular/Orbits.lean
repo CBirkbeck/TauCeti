@@ -36,6 +36,13 @@ half-arc.
   when it is `ρ` or `ρ + 1`.
 * `TauCeti.ModularGroup.orbit_mk_injOn_fd_left`: the orbit map is injective on `𝒟` minus the
   right vertical edge and the right half-arc.
+
+## References
+
+* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the elliptic-orbit and
+  closed-domain classification development (`ForMathlib/Orbits.lean`), commit
+  `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0. Mathlib's classification
+  `ModularGroup.cases_of_mem_fd_smul_mem_fd` replaces its denominator analysis here.
 -/
 
 public section
@@ -144,12 +151,12 @@ private lemma T_inv_S_smul_ρ :
   rw [mul_smul, S_smul_ρ, T_inv_smul_vadd_ρ]
 
 /-- The inversion `S` keeps unit-circle points on the unit circle. -/
-private lemma norm_coe_S_smul {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
+lemma norm_coe_S_smul {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
     ‖((_root_.ModularGroup.S • p : ℍ) : ℂ)‖ = 1 := by
   rw [modular_S_smul, coe_mk, norm_inv, norm_neg, hp, inv_one]
 
 /-- The inversion `S` negates the real part of a unit-circle point. -/
-private lemma re_S_smul {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
+lemma re_S_smul {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
     (_root_.ModularGroup.S • p).re = -p.re := by
   rw [← coe_re, modular_S_smul, coe_mk, Complex.inv_re, Complex.neg_re, Complex.normSq_neg,
     Complex.normSq_eq_norm_sq, hp, one_pow, div_one, coe_re]
