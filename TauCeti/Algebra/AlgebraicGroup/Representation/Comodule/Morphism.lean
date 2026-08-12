@@ -21,6 +21,8 @@ algebras, including nonreduced ones.
 
 ## Main declarations
 
+* `TauCeti.HopfAlgebra.PointRepresentation.map_coact_of_baseChange_comp_endOfPoint_universal`:
+  intertwining at the universal point alone already forces colinearity.
 * `TauCeti.HopfAlgebra.PointRepresentation.map_coact_iff_baseChange_comp_endOfPoint`: the
   fixed-morphism criterion for explicit comodules with carriers in independent universes.
 * `TauCeti.HopfAlgebra.PointRepresentation.map_coact_iff_baseChange_comp_action`: the
@@ -86,7 +88,7 @@ variable {W : Type x} [AddCommMonoid W] [Module R W]
 /-- **Intertwining at the universal point suffices for colinearity.** A linear map between two
 right comodules is colinear as soon as its scalar extension to `ULift H` intertwines the point
 actions of the universal point; no condition at other value algebras is needed. -/
-private theorem map_coact_of_baseChange_comp_endOfPoint_universal
+theorem map_coact_of_baseChange_comp_endOfPoint_universal
     (rho : Comodule R H V) (sigma : Comodule R H W) (f : V →ₗ[R] W)
     (huniv : f.baseChange (CommAlgCat.of R (ULift.{max u v w x} H)) ∘ₗ
           Comodule.endOfPoint V
