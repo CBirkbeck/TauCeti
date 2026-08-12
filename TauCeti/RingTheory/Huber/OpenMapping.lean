@@ -52,18 +52,23 @@ equivalent to continuity everywhere (`continuous_of_continuousAt_zero`), so this
 hypothesis spelled at its weakest, and a consumer holding `Continuous f` supplies
 `hfc.continuousAt`.
 
-This is the open-map half of the roadmap's derived form. The other half — that such a map induces
-the quotient topology — needs the quotient form of Henkel's theorem, which is not yet in this
-repository.
+Both halves of the roadmap's derived form are here. `TauCeti.Huber.IsTateRing.isOpenMap` is the
+open-map half; `TauCeti.Huber.IsTateRing.isQuotientMap` is the other — that such a map induces the
+quotient topology — and it delegates to `TauCeti.HasZeroSequenceOfUnits.isQuotientMap` exactly as
+the open-map form delegates to `TauCeti.HasZeroSequenceOfUnits.isOpenMap`. It is the quotient form
+that the strict-morphism material consumes, since what matters there is not that images are open
+but that the target's topology is determined by the source's.
 
 ## Main results
 
 * `TauCeti.Huber.IsTateRing.isOpenMap`: a continuous surjective linear map from a complete
   pseudometrisable module onto a complete metrisable one, over a Tate ring, is open.
+* `TauCeti.Huber.IsTateRing.isQuotientMap`: the same map induces the quotient topology on its
+  target. This is the form the strict-morphism material consumes.
 
 ## References
 
-* [Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition 6.16.
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], Theorem 6.16.
 * L. Henkel, *An Open Mapping Theorem for rings which have a zero sequence of units*,
   [arXiv:1407.5647](https://arxiv.org/abs/1407.5647).
 -/
@@ -97,6 +102,19 @@ Continuity is asked at zero only; `Continuous f` gives it as `hfc.continuousAt`.
 theorem IsTateRing.isOpenMap (f : M →ₗ[A] N) (hf : Function.Surjective f)
     (hfc : ContinuousAt (f : M → N) 0) : IsOpenMap (f : M → N) :=
   HasZeroSequenceOfUnits.isOpenMap f hf hfc
+    fun _ ↦ (continuous_id.smul continuous_const).continuousAt
+
+/-- **The quotient form over a Tate ring.** Under exactly the hypotheses of
+`TauCeti.Huber.IsTateRing.isOpenMap`, the map does not merely carry open sets to open sets: the
+topology of `N` is the one coinduced from `M`.
+
+This is the form Wedhorn's strict morphisms use, where what matters is not that images are open but
+that the target's topology is determined by the source's. It delegates to
+`TauCeti.HasZeroSequenceOfUnits.isQuotientMap`, which supplies the full continuity of `f` that the
+quotient conclusion needs from continuity at zero alone. -/
+theorem IsTateRing.isQuotientMap (f : M →ₗ[A] N) (hf : Function.Surjective f)
+    (hfc : ContinuousAt (f : M → N) 0) : IsQuotientMap (f : M → N) :=
+  HasZeroSequenceOfUnits.isQuotientMap f hf hfc
     fun _ ↦ (continuous_id.smul continuous_const).continuousAt
 
 end TauCeti.Huber
