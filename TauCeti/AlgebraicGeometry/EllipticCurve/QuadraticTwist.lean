@@ -6,6 +6,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Aut
 public import TauCeti.AlgebraicGeometry.EllipticCurve.GaloisDescent
+public import TauCeti.AlgebraicGeometry.EllipticCurve.NodePolynomial
 public import TauCeti.RingTheory.Norm.Quadratic
 
 /-!
@@ -26,11 +27,9 @@ change of variables, again over any commutative ring in which the relevant param
 
 * `WeierstrassCurve.quadraticTwistOf`: the quadratic twist of a Weierstrass curve by `(t, n)`,
   an explicit Weierstrass model over any commutative ring.
-* `WeierstrassCurve.neg_nodePolynomial_constantCoeff_quadraticTwistOf`: minus the constant
-  coefficient of `nodePolynomial` — the constant as written in `nodePolynomial_def` — is the one
-  invariant here
-  that does **not** simply scale by a power of `t² - 4n`; it acquires `- D² n a₁² c₄`, so the
-  coefficient itself acquires `+ D² n a₁² c₄`. Splitting of the node polynomial is not determined by
+* `WeierstrassCurve.nodePolynomial_coeff_zero_quadraticTwistOf`: the constant coefficient of
+  `nodePolynomial` is the one invariant here that does **not** simply scale by a power of
+  `t² - 4n`; it acquires `+ D² n a₁² c₄`. Splitting of the node polynomial is not determined by
   this coefficient alone, so this is a record of how it transforms, not a reduction statement.
 * `WeierstrassCurve.Δ_quadraticTwistOf`, `WeierstrassCurve.c₄_quadraticTwistOf`,
   `WeierstrassCurve.c₆_quadraticTwistOf`: the invariants of the twist.
@@ -216,30 +215,23 @@ curve itself. -/
     b₈_quadraticTwistOf]
   ring
 
-/-- **The negated constant term of the node polynomial, under twisting.** `nodePolynomial` is
-`C c₄ T² + C (a₁ c₄) T - C (54 b₆ - 3 b₂ b₄ + a₂ c₄)`, so the quantity below is *minus* its
-constant coefficient — it is the constant as it appears inside `nodePolynomial_def`, which is why
-the name says `neg_`. (`QuadraticTwist.lean` does not import `NodePolynomial.lean`, so the
-connection is by inspection of that definition, not a formal one here.)
-
-Unlike `b₂`, `b₄`, `b₆`, `c₄`, `c₆` and `Δ`, which all simply scale by a power of `D = t² - 4n`,
-this one picks up an extra `- D² n a₁² c₄`; equivalently the constant coefficient itself acquires
-`+ D² n a₁² c₄`. That term vanishes when any of `a₁`, `n`, `c₄` or `D` does — and, over a general
-commutative ring, it can vanish from zero divisors without any factor being zero.
+/-- **The constant coefficient of the node polynomial, under twisting.** Unlike `b₂`, `b₄`, `b₆`,
+`c₄`, `c₆` and `Δ`, which all simply scale by a power of `D = t² - 4n`, this coefficient picks up
+an extra `+ D² n a₁² c₄`. That term vanishes when any of `a₁`, `n`, `c₄` or `D` does — and, over a
+general commutative ring, it can vanish from zero divisors without any factor being zero.
 
 Whether the node polynomial splits over the residue field is what distinguishes split from
 non-split multiplicative reduction, so a twist can change that behaviour — but splitting is not
 determined by this coefficient alone, and this lemma establishes no reduction statement by itself.
 It records the coefficient's transformation, which such an argument would use (for instance in the
 characteristic-two Artin–Schreier calculation), and nothing more. -/
-theorem neg_nodePolynomial_constantCoeff_quadraticTwistOf :
-    54 * (E.quadraticTwistOf t n).b₆
-      - 3 * (E.quadraticTwistOf t n).b₂ * (E.quadraticTwistOf t n).b₄
-      + (E.quadraticTwistOf t n).a₂ * (E.quadraticTwistOf t n).c₄
-      = (t ^ 2 - 4 * n) ^ 3 * (54 * E.b₆ - 3 * E.b₂ * E.b₄ + E.a₂ * E.c₄)
-        - (t ^ 2 - 4 * n) ^ 2 * n * E.a₁ ^ 2 * E.c₄ := by
-  simp only [b₆_quadraticTwistOf, b₂_quadraticTwistOf, b₄_quadraticTwistOf, c₄_quadraticTwistOf,
-    a₂_quadraticTwistOf]
+@[simp]
+theorem nodePolynomial_coeff_zero_quadraticTwistOf :
+    (E.quadraticTwistOf t n).nodePolynomial.coeff 0
+      = (t ^ 2 - 4 * n) ^ 3 * E.nodePolynomial.coeff 0
+        + (t ^ 2 - 4 * n) ^ 2 * n * E.a₁ ^ 2 * E.c₄ := by
+  simp only [nodePolynomial_coeff_zero, b₆_quadraticTwistOf, b₂_quadraticTwistOf,
+    b₄_quadraticTwistOf, c₄_quadraticTwistOf, a₂_quadraticTwistOf]
   ring
 
 /-- The quadratic twist commutes with a ring homomorphism `f` (in particular with base change):
