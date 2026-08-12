@@ -125,30 +125,6 @@ theorem sub_mem_closure_of_le {n : ℕ} (f : ℕ → M) {a b : ℕ} (hb : b ≤ 
 
 end Closure
 
-/-! ## Indicator sums over a finite index -/
-
-section IndicatorSum
-
-/-- **A shifted indicator picks out one summand.** Summing `f` over `Fin n` against the indicator
-of `b = k + j` gives `f` at the index `b - j` when that is a valid index and `j ≤ b`, and `0`
-otherwise. -/
-theorem sum_ite_val_add {M : Type*} [AddCommMonoid M] {n : ℕ} (f : Fin n → M) (b j : ℕ) :
-    ∑ k : Fin n, (if b = (k : ℕ) + j then f k else 0)
-      = if h : b - j < n ∧ j ≤ b then f ⟨b - j, h.1⟩ else 0 := by
-  by_cases h : b - j < n ∧ j ≤ b
-  · have hb : ∀ k : Fin n, (b = (k : ℕ) + j) = (k = (⟨b - j, h.1⟩ : Fin n)) := by
-      intro k
-      have := h.2
-      simp only [Fin.ext_iff, eq_iff_iff]
-      omega
-    simp only [hb, dite_eq_left h, Finset.sum_ite_eq', Finset.mem_univ, ite_true]
-  · rw [dite_eq_right h, Finset.sum_eq_zero]
-    intro k _
-    have := k.isLt
-    exact ite_eq_right (by omega)
-
-end IndicatorSum
-
 /-! ## Recognizing the pinned data -/
 
 section RootPairing
