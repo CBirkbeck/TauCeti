@@ -79,7 +79,7 @@ is, in the attained-value sense of `TauCeti.Valuation.IsContinuous`. Any represe
 — that is `isContinuous_ofValuation_iff` — but the canonical one makes the definition depend on
 nothing chosen.
 
-Under `[SeparatelyContinuousMul A]` this is Wedhorn's Definition 7.7; see `cont`. -/
+Under `[ContinuousConstSMul Aᵐᵒᵖ A]` this is Wedhorn's Definition 7.7; see `cont`. -/
 def IsContinuous (v : Spv A) : Prop :=
   v.valuation.IsContinuous
 
@@ -93,9 +93,9 @@ it a subspace; here it is the underlying set, and the subspace topology is the o
 `↥(cont A)` carries as a subtype of `Spv A`.
 
 Membership is the attained-value test of `TauCeti.Valuation.IsContinuous`, which is Wedhorn's
-Definition 7.7 once multiplication is separately continuous —
+Definition 7.7 once right multiplication is continuous —
 `isContinuous_iff_forall_isOpen_lt_div` is that step, and it is where
-`[SeparatelyContinuousMul A]` is asked for. It is *not* asked for
+`[ContinuousConstSMul Aᵐᵒᵖ A]` is asked for. It is *not* asked for
 here: an unused instance argument is a lint violation, and every setting `Cont A` is used in — a
 Huber ring, and `Spa` beyond it — is a topological ring, which supplies it at the point of use. -/
 def cont (A : Type*) [CommRing A] [TopologicalSpace A] : Set (Spv A) :=

@@ -46,6 +46,7 @@ recorded at its own — much weaker — hypotheses rather than as a corollary of
 
 ## Main results
 
+* `TauCeti.Valuation.exists_pow_lt`
 * `TauCeti.Valuation.IsContinuous.lt_one_of_isTopologicallyNilpotent`
 * `TauCeti.Valuation.CofinalValueFor.of_isContinuous_of_isTopologicallyNilpotent`
 
@@ -72,22 +73,34 @@ section Monoid
 
 variable {Γ₀ : Type*} [LinearOrderedCommMonoidWithZero Γ₀] [Nontrivial Γ₀]
 
+omit [Nontrivial Γ₀] in
+/-- **The shared step.** If the ball of radius `γ` is open and `a` is topologically nilpotent,
+some power of `v a` falls below `γ`.
+
+Both bounds in this file are this lemma at a different threshold, so it is stated once, at the
+monoid level, with the openness supplied rather than derived: nothing here needs a group codomain
+or any compatibility between the topology and the ring operations. -/
+theorem exists_pow_lt {v : Valuation A Γ₀} {γ : Γ₀} (hγ : γ ≠ 0)
+    (hopen : IsOpen {x : A | v x < γ}) {a : A} (ha : IsTopologicallyNilpotent a) :
+    ∃ n : ℕ, v a ^ n < γ := by
+  obtain ⟨n, hn⟩ :=
+    ha.exists_pow_mem_of_mem_nhds (hopen.mem_nhds (by simpa using zero_lt_iff.mpr hγ))
+  exact ⟨n, by rwa [Set.mem_ofPred_eq, map_pow] at hn⟩
+
 /-- **The second conjunct of Wedhorn Theorem 7.10.** A continuous valuation is `< 1` at every
 topologically nilpotent element.
 
 The threshold `1` is the attained value `v 1`, so the ball `{x ; v x < 1}` is open straight from
 the definition of continuity: nothing relates the topology to the ring operations, and the
-codomain is only a monoid — contrast
-`CofinalValueFor.of_isContinuous_of_isTopologicallyNilpotent`, which needs both.
+codomain is only a monoid.
 
 `Nontrivial Γ₀` is not decoration. If `0 = 1` in `Γ₀` then `Γ₀` is trivial, every `{x ; v x < v b}`
 is empty and so open, and the conclusion `v a < 1` reads `0 < 0`; a group codomain rules this out
 by fiat, a monoid one does not. -/
 theorem IsContinuous.lt_one_of_isTopologicallyNilpotent {v : Valuation A Γ₀}
     (hv : v.IsContinuous) {a : A} (ha : IsTopologicallyNilpotent a) : v a < 1 := by
-  obtain ⟨n, hn⟩ := ha.exists_pow_mem_of_mem_nhds
-    ((isContinuous_def.mp hv 1).mem_nhds (by simp [zero_le_one.lt_of_ne zero_ne_one]))
-  rw [Set.mem_ofPred_eq, map_pow, map_one] at hn
+  obtain ⟨n, hn⟩ := exists_pow_lt (v := v) (γ := 1) one_ne_zero
+    (by simpa using isContinuous_def.mp hv 1) ha
   exact not_le.mp fun h ↦ absurd hn (not_lt.mpr (one_le_pow₀ h))
 
 end Monoid

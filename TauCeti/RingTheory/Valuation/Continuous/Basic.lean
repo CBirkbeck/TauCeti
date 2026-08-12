@@ -247,7 +247,7 @@ codomain is no larger than `Γ_v ∪ {0}`, which is Wedhorn's setting.
 
 `hΓ` is not decoration: without it only the reverse implication survives, and the module
 docstring's `ℤ_p` valuation is a witness — its attained ratios all exceed `(1/2, 1)`. -/
-theorem isContinuous_iff_continuous [SeparatelyContinuousAdd A] [SeparatelyContinuousMul A]
+theorem isContinuous_iff_continuous [SeparatelyContinuousAdd A] [ContinuousConstSMul Aᵐᵒᵖ A]
     {v : Valuation A Γ₀}
     (hΓ : ∀ γ : Γ₀, γ ≠ 0 → ∃ b c : A, v b ≠ 0 ∧ v c ≠ 0 ∧ v b / v c ≤ γ) :
     v.IsContinuous ↔ Continuous v := by
