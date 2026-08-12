@@ -427,6 +427,19 @@ private lemma aemeasurable_chafaiDensity_ofReal (f : ℝ → ℝ) (hcm : IsCompl
     continuousOn_chafaiDensity (n := n) (hcm.contDiffOn.of_le (nat_le_top n))
   exact ((hcont.mono Ioi_subset_Ici_self).aemeasurable measurableSet_Ioi).ennreal_ofReal
 
+/-- **Differentiating the negated derivative one time fewer.** The `(n-1)`-st iterated derivative
+of `-f'` is minus the `n`-th iterated derivative of `f`. -/
+private lemma iteratedDerivWithin_neg_derivWithin {f : ℝ → ℝ} {n : ℕ} (hn : n ≠ 0) {s : Set ℝ}
+    {t : ℝ} : iteratedDerivWithin (n - 1) (fun u => -derivWithin f s u) s t =
+      -iteratedDerivWithin n f s t := by
+  -- The negated function elaborates as negation of `derivWithin`; expose that defeq.
+  change iteratedDerivWithin (n - 1) (-(derivWithin f s)) s t = -iteratedDerivWithin n f s t
+  rw [iteratedDerivWithin_neg]
+  congr 1
+  rw [← iteratedDerivWithin_succ']
+  congr 1
+  omega
+
 private lemma chafaiDensity_neg_derivWithin_pred (f : ℝ → ℝ)
     {n : ℕ} (hn : 2 ≤ n) {t : ℝ} (ht : 0 < t) :
     chafaiDensity (fun t => -derivWithin f (Ici 0) t) (n - 1) t =
@@ -434,18 +447,7 @@ private lemma chafaiDensity_neg_derivWithin_pred (f : ℝ → ℝ)
   have hn0 : n ≠ 0 := by omega
   have hn10 : n - 1 ≠ 0 := by omega
   rw [chafaiDensity_of_ne_zero hn10, chafaiDensity_of_ne_zero hn0]
-  have hiter : iteratedDerivWithin (n - 1)
-        (fun t => -derivWithin f (Ici 0) t) (Ici 0) t =
-      -iteratedDerivWithin n f (Ici 0) t := by
-    -- The negated function elaborates as negation of `derivWithin`; expose that defeq.
-    change iteratedDerivWithin (n - 1) (-(derivWithin f (Ici 0))) (Ici 0) t =
-      -iteratedDerivWithin n f (Ici 0) t
-    rw [iteratedDerivWithin_neg]
-    congr 1
-    rw [← iteratedDerivWithin_succ']
-    congr 1
-    omega
-  rw [hiter]
+  rw [iteratedDerivWithin_neg_derivWithin hn0]
   have hfact : ((n - 1).factorial : ℝ) =
       ((n - 1 : ℕ) : ℝ) * ((n - 2).factorial : ℝ) := by
     rw [show n - 1 = (n - 2) + 1 by omega, Nat.factorial_succ]
