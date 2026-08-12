@@ -129,6 +129,45 @@ theorem isContinuous_of_forall_cofinalValue (P : PairOfDefinition A) (v : Valuat
     exact isContinuous_of_forall_le_of_cofinalValue P v hgen
       (fun t ht ↦ ht₀max t (Finset.mem_coe.mp ht)) h1 (hcof t₀ ht₀s)
 
+/-- **Full characteristic group makes every ideal-of-definition value cofinal.** If `Γ_v = cΓ_v`
+and `v < 1` on an ideal of definition `I`, then the value at each element of `I` is cofinal:
+a positive target dominates the inverse of some attained value `v t`, and the sequence `xⁿ · t`
+tends to `0`, so it eventually enters the image of `I`, where `v(x)ⁿ · v(t) < 1`.
+
+This is the `Γ_v = cΓ_v` branch of Wedhorn's proof of Theorem 7.10, `⊇` direction: Lemma 7.4
+splits membership in `Spv (A, IA)` into cofinality on `IA` — which
+`isContinuous_of_forall_cofinalValue` consumes directly — or full characteristic group, which
+this lemma reduces to the first case. It is the one step of the theorem that uses the ring
+topology rather than the value group alone. -/
+theorem cofinalValue_of_hasFullCharacteristicGroup (P : PairOfDefinition A)
+    (v : Valuation A Γ₀) (hfull : HasFullCharacteristicGroup v)
+    (h1 : ∀ a ∈ P.idealOfDefinition, v ((a : P.ringOfDefinition) : A) < 1)
+    {x : P.ringOfDefinition} (hx : x ∈ P.idealOfDefinition) :
+    CofinalValue v ((x : P.ringOfDefinition) : A) := by
+  rw [cofinalValue_iff]
+  intro γ hγ
+  obtain ⟨t, ht0, htle⟩ := hfull.exists_inv_le hγ
+  -- the sequence `xⁿ · t` tends to `0`, so it eventually enters the image of `I`
+  have htend : Filter.Tendsto (fun n : ℕ ↦ ((x : P.ringOfDefinition) : A) ^ n * t)
+      Filter.atTop (nhds 0) := by
+    simpa using (P.isTopologicallyNilpotent_of_mem_idealOfDefinition hx).mul_const t
+  obtain ⟨n, hn⟩ := (htend.eventually_mem
+    ((P.isOpen_idealImage 1).mem_nhds (P.idealImage 1).zero_mem)).exists
+  -- inside the image of `I` the value is `< 1`
+  obtain ⟨y, hy, hyx⟩ := (P.mem_idealImage 1).mp hn
+  have hlt : v (((x : P.ringOfDefinition) : A)) ^ n * v t < 1 := by
+    rw [← map_pow, ← map_mul, ← hyx]
+    exact h1 y (by simpa using hy)
+  -- transport `v(x)ⁿ < v(t)⁻¹ ≤ γ` to the value group
+  have htne : v t ≠ 0 := fun h ↦ ht0 (v.restrict_eq_zero_iff.mpr (by simpa using h))
+  have hgoal : v (((x : P.ringOfDefinition) : A)) ^ n < (v t)⁻¹ := by
+    rw [← inv_mul_cancel₀ htne] at hlt
+    exact lt_of_mul_lt_mul_right hlt zero_le
+  have hemb : v.restrict (((x : P.ringOfDefinition) : A)) ^ n < (v.restrict t)⁻¹ := by
+    refine MonoidWithZeroHom.ValueGroup₀.embedding_strictMono.lt_iff_lt.mp ?_
+    simpa only [map_pow, map_inv₀, _root_.Valuation.embedding_restrict] using hgoal
+  exact ⟨n, hemb.trans_le htle⟩
+
 end TauCeti.Huber.PairOfDefinition
 
 end
