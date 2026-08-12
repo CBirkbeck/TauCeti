@@ -12,9 +12,14 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 public import TauCeti.NumberTheory.ModularForms.Order.Orbits
 import Mathlib.NumberTheory.ModularForms.LevelOne.Basic
 import TauCeti.Analysis.Complex.UpperHalfPlane.Rho
+import TauCeti.NumberTheory.Modular.Orbits
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.BoundaryPairing
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ExcisionSeparation
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Interior
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.OnCurveCapture
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.I.Value
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.NonCorner
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.Value
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.AddOne.Value
 
@@ -36,8 +41,13 @@ on the contour.
 ## Main results
 
 * `TauCeti.ModularForm.hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex`: the boundary
-  principal value of `logDeriv (f ∘ ofComplex)` is `2πi·ord_∞ − k·(π/6)·I`.
-* `TauCeti.ModularForm.two_pi_I_mul_sum_windingNumber_mul_order_eq`: equating that with the
+  principal value of `logDeriv (f ∘ ofComplex)` is `2πi·ord_∞ − k·(π/6)·I`, for a unit-norm
+  inversion-closed excision set.
+* `hasCauchyPVWith_fdBoundary_logDeriv_arcSingularSet_union_verticalSingularSet` (in
+  `TauCeti.ModularForm`): the same principal value for the union-shaped excision set
+  `arcSingularSet S ∪ verticalSingularSet S`, which tolerates contour zeros on the vertical
+  edges as well as on the arc.
+* `TauCeti.ModularForm.two_pi_I_mul_sum_windingNumber_mul_order_eq`: equating either with the
   argument principle gives `2πi·Σ n_z·ord z = 2πi·ord_∞ − k·(π/6)·I`, the analytic identity the
   valence formula rests on.
 * `TauCeti.ModularForm.sum_windingNumber_mul_orderOfVanishingAt_eq`: that identity divided by
@@ -46,24 +56,20 @@ on the contour.
   `Σ_q ord_q + ord_∞ = k/12` when every divisor point — zero or pole — lies in the strict
   interior of the truncated fundamental domain.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`: the
-  valence formula `Σ_q ord_q + ½·ord_i + ⅓·ord_ρ + ord_∞ = k/12`, allowing the divisor to meet
-  the two elliptic corners. ⚠ It does *not* reach a divisor point on the unit arc away from those
-  corners: `hin` places every non-corner divisor point strictly outside the unit circle, while
-  `hUdom` puts the arc inside `U` where `hoff` demands non-vanishing. Its docstring gives the
-  argument and what lifting it needs.
+  valence formula `Σ_int ord_q + Σ_leftVert ord_q + Σ_{leftArc∖ρ} ord_q + ½·ord_i + ⅓·ord_ρ +
+  ord_∞ = k/12` for a nonzero level-one form and a divisor set complete for the closed
+  fundamental domain — the divisor may meet the corners, the vertical edges and the unit arc,
+  each boundary pair entering by its left representative. The analytic inputs `hoff`/`hga`/`hgz`
+  are still hypotheses at this fixed height `H`.
+* `sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero`
+  (in `TauCeti.ModularForm`): the same identity from nonvanishing and completeness alone; the
+  height is chosen internally — above the divisor set (`exists_height_bound`) and above the
+  threshold past which the shrinking `q`-disk `fdBoundaryQRadius H = exp (-2πH)` sits inside
+  the cusp function's non-vanishing neighbourhood — and the analytic inputs are constructed.
 * `finsum_orderOfVanishingOnOrbit_mem_image_add_elliptic_add_qExpansionOrderAtCusp_eq`
   (in `TauCeti.ModularForm`):
   the same identity with the interior sum reindexed over the orbits its points represent. ⚠ That
-  sum covers only the orbits met by the divisor set `T`, not the whole non-elliptic orbit space.
-* `exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`
-  (in `TauCeti.ModularForm`):
-  the same identity for a nonzero level-one modular form once the truncation height clears a
-  threshold, with periodicity, the ambient open set `U`, and the hypotheses `hoff`, `hmero`,
-  `hga`, `hgz` all constructed rather than assumed. The threshold is unavoidable:
-  `fdBoundaryQRadius H` shrinks as `H` grows, so it meets the cusp function's non-vanishing
-  neighbourhood only above some `H₀`. ⚠ `hoffγ` remains assumed, not constructed: like
-  `sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`, this theorem does not reach
-  a form with a non-corner boundary zero. Its docstring gives the argument.
+  sum covers only the orbits met by the divisor set `S`, not the whole non-elliptic orbit space.
 
 ## References
 
@@ -78,7 +84,7 @@ public section
 
 open Complex Filter Function MeasureTheory Set Topology UpperHalfPlane
 
-open scoped MatrixGroups Real Manifold
+open scoped MatrixGroups Modular Real Manifold
 
 namespace TauCeti
 
@@ -93,6 +99,21 @@ private theorem eventually_forall_im_add_lt {H : ℝ} {S : Finset ℂ} (hHgt : �
   refine (Filter.eventually_all_finset S).2 fun s hs => ?_
   filter_upwards [Ioo_mem_nhdsGT (sub_pos.mpr (hHgt s hs))] with ε hε
   linarith [hε.2]
+
+/-- Excised integrability on a subinterval of the contour, with the endpoints given
+numerically: the along-contour analyticity and non-vanishing off the excision set restrict to
+the subinterval. -/
+private lemma intervalIntegrable_excised_of_subset {g : ℂ → ℂ} {H ε : ℝ} {Sx : Finset ℂ}
+    (hε : 0 < ε) {a b : ℝ} (h0 : 0 ≤ a) (hab : a ≤ b) (h5 : b ≤ 5)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ Sx →
+      AnalyticAt ℂ g (fdBoundary H t) ∧ g (fdBoundary H t) ≠ 0) :
+    IntervalIntegrable (fun t ↦ if ∃ s ∈ Sx, ‖fdBoundary H t - s‖ ≤ ε then 0
+      else deriv (fdBoundary H) t • logDeriv g (fdBoundary H t)) volume a b := by
+  have hsub : uIcc a b ⊆ Icc (0 : ℝ) 5 := by
+    rw [uIcc_of_le hab]
+    exact Icc_subset_Icc h0 h5
+  exact intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hsub
+    fun t ht => hoffγ t (hsub ht)
 
 /-- The fixed-`ε` assembly, packaged as an eventual identity: for all small `ε` the excised
 boundary integral is `2πi·ord_∞` minus `(k/2)` times the excised arc integral. The two
@@ -118,15 +139,6 @@ private theorem eventually_intervalIntegral_excised_eq [SlashInvariantFormClass 
     intro ε t hε hex ht
     refine hoffγ t ht fun hs => hex ?_
     exact ⟨_, hs, by rw [sub_self, norm_zero]; exact hε.le⟩
-  have hsub01 : uIcc (0 : ℝ) 1 ⊆ Icc (0 : ℝ) 5 := by
-    rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 1)]
-    exact Icc_subset_Icc le_rfl (by norm_num)
-  have hsub12 : uIcc (1 : ℝ) 2 ⊆ Icc (0 : ℝ) 5 := by
-    rw [uIcc_of_le (by norm_num : (1 : ℝ) ≤ 2)]
-    exact Icc_subset_Icc (by norm_num) (by norm_num)
-  have hsub45 : uIcc (4 : ℝ) 5 ⊆ Icc (0 : ℝ) 5 := by
-    rw [uIcc_of_le (by norm_num : (4 : ℝ) ≤ 5)]
-    exact Icc_subset_Icc (by norm_num) le_rfl
   filter_upwards [eventually_forall_im_add_lt hHgt, self_mem_nhdsWithin] with ε hlt hε
   simpa only [smul_eq_mul, mul_comm] using
     intervalIntegral_excised_logDeriv_fdBoundary f hS hnorm hinv hlt hper
@@ -134,12 +146,9 @@ private theorem eventually_intervalIntegral_excised_eq [SlashInvariantFormClass 
         (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).1.differentiableAt)
       (fun t ht hex => (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).2)
       hga hgz
-      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hsub01
-        fun t ht => hoffγ t (hsub01 ht))
-      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hsub12
-        fun t ht => hoffγ t (hsub12 ht))
-      (intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hsub45
-        fun t ht => hoffγ t (hsub45 ht))
+      (intervalIntegrable_excised_of_subset hε le_rfl (by norm_num) (by norm_num) hoffγ)
+      (intervalIntegrable_excised_of_subset hε (by norm_num) (by norm_num) (by norm_num) hoffγ)
+      (intervalIntegrable_excised_of_subset hε (by norm_num) (by norm_num) le_rfl hoffγ)
 
 /-- **The boundary principal value of a level-one logarithmic derivative.** The excised integrals
 converge as `ε → 0⁺`, to `2πi·ord_∞ − k·(π/6)·I`.
@@ -166,9 +175,7 @@ theorem hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex [SlashInvariantFormCl
   refine Contour.hasCauchyPVWith_iff.mpr ⟨?_, ?_⟩
   · filter_upwards [self_mem_nhdsWithin] with ε hε
     simpa only [smul_eq_mul, mul_comm] using
-      intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε
-        (by rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
-        fun t ht => hoffγ t (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)] at ht)
+      intervalIntegrable_excised_of_subset hε le_rfl (by norm_num) le_rfl hoffγ
   · refine Tendsto.congr' (Filter.EventuallyEq.symm
       (eventually_intervalIntegral_excised_eq f hS hnorm hinv hHgt hper hoffγ hga hgz)) ?_
     have hval : 2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
@@ -180,46 +187,130 @@ theorem hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex [SlashInvariantFormCl
     exact hval ▸ (tendsto_const_nhds.sub
       ((tendsto_intervalIntegral_excised_logDeriv_fdBoundary_arc H S).const_mul _))
 
+/-- Every union excision centre sits below the ceiling: arc points by their unit norm,
+vertical points by the height bound on their source set. -/
+private lemma im_lt_of_mem_union {H : ℝ} {S : Finset ℍ} (hH : 1 < H)
+    (hHgt : ∀ p ∈ S, (p : ℂ).im < H) {s : ℂ}
+    (hs : s ∈ arcSingularSet S ∪ verticalSingularSet S) : s.im < H := by
+  rcases Finset.mem_union.mp hs with h | h
+  · have h1 : s.im ≤ ‖s‖ := (le_abs_self _).trans (Complex.abs_im_le_norm s)
+    rw [norm_eq_one_of_mem_arcSingularSet h] at h1
+    linarith
+  · exact im_lt_of_mem_verticalSingularSet h hHgt
+
+/-- The union-excised assembly, packaged as an eventual identity: for all small `ε` the
+`arcSingularSet S ∪ verticalSingularSet S`-excised boundary integral is `2πi·ord_∞` minus
+`(k/2)` times the excised arc integral. Beyond the ceiling clearance the smallness of `ε` is
+what puts it under the arc/vertical separation, so the union assembly's `hfar` holds. -/
+private theorem eventually_intervalIntegral_union_excised_eq [SlashInvariantFormClass F Γ k]
+    (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℍ} (hH : 1 < H)
+    (hHgt : ∀ p ∈ S, (p : ℂ).im < H) (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5,
+      fdBoundary H t ∉ arcSingularSet S ∪ verticalSingularSet S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      cuspFunction 1 ⇑f q ≠ 0) :
+    ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+      (∫ t in (0 : ℝ)..5,
+          if ∃ s ∈ arcSingularSet S ∪ verticalSingularSet S, ‖fdBoundary H t - s‖ ≤ ε then 0
+          else logDeriv (⇑f ∘ ofComplex) (fdBoundary H t) * deriv (fdBoundary H) t) =
+        2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
+          (k : ℂ) / 2 * ∫ t in (1 : ℝ)..3,
+            (if ∃ s ∈ arcSingularSet S ∪ verticalSingularSet S, ‖fdBoundary H t - s‖ ≤ ε
+            then 0 else logDeriv (fdBoundary H) t) := by
+  have hside : ∀ {ε t : ℝ}, 0 < ε →
+      ¬(∃ s ∈ arcSingularSet S ∪ verticalSingularSet S, ‖fdBoundary H t - s‖ ≤ ε) →
+      t ∈ Icc (0 : ℝ) 5 →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧
+        (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0 := by
+    intro ε t hε hex ht
+    refine hoffγ t ht fun hs => hex ?_
+    exact ⟨_, hs, by rw [sub_self, norm_zero]; exact hε.le⟩
+  filter_upwards [eventually_forall_im_add_lt fun s hs => im_lt_of_mem_union hH hHgt hs,
+    eventually_forall_lt_norm_fdBoundary_sub_of_mem_verticalSingularSet H S,
+    self_mem_nhdsWithin] with ε hlt hfar hε
+  simpa only [smul_eq_mul, mul_comm] using
+    intervalIntegral_excised_logDeriv_fdBoundary_arcSingularSet_union_verticalSingularSet f hS
+      hfar hlt hper
+      (fun t ht hex =>
+        (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).1.differentiableAt)
+      (fun t ht hex => (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).2)
+      hga hgz
+      (intervalIntegrable_excised_of_subset hε le_rfl (by norm_num) (by norm_num) hoffγ)
+      (intervalIntegrable_excised_of_subset hε (by norm_num) (by norm_num) (by norm_num) hoffγ)
+      (intervalIntegrable_excised_of_subset hε (by norm_num) (by norm_num) le_rfl hoffγ)
+
+/-- **The boundary principal value against the union excision set.** The excised integrals
+for `arcSingularSet S ∪ verticalSingularSet S` converge as `ε → 0⁺`, to the same constant
+`2πi·ord_∞ − k·(π/6)·I` as the unit-norm assembly: the union shape buys tolerance of contour
+zeros on the vertical edges as well as on the arc, which is exactly what a divisor set
+complete for the closed fundamental domain can force. Compare
+`hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex`, the unit-norm inversion-closed shape. -/
+theorem hasCauchyPVWith_fdBoundary_logDeriv_arcSingularSet_union_verticalSingularSet
+    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℍ}
+    (hH : 1 < H) (hHgt : ∀ p ∈ S, (p : ℂ).im < H) (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5,
+      fdBoundary H t ∉ arcSingularSet S ∪ verticalSingularSet S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
+    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
+      cuspFunction 1 ⇑f q ≠ 0) :
+    Contour.HasCauchyPVWith (fdBoundary H) 0 5 (logDeriv (⇑f ∘ ofComplex))
+      (arcSingularSet S ∪ verticalSingularSet S)
+      (2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
+        (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I)) := by
+  refine Contour.hasCauchyPVWith_iff.mpr ⟨?_, ?_⟩
+  · filter_upwards [self_mem_nhdsWithin] with ε hε
+    simpa only [smul_eq_mul, mul_comm] using
+      intervalIntegrable_excised_of_subset hε le_rfl (by norm_num) le_rfl hoffγ
+  · refine Tendsto.congr' (Filter.EventuallyEq.symm
+      (eventually_intervalIntegral_union_excised_eq f hS hH hHgt hper hoffγ hga hgz)) ?_
+    have hval : 2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
+        (k : ℂ) / 2 * ((Real.pi / 3 : ℝ) * Complex.I) =
+        2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
+          (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I) := by
+      push_cast
+      ring
+    exact hval ▸ (tendsto_const_nhds.sub
+      ((tendsto_intervalIntegral_excised_logDeriv_fdBoundary_arc H _).const_mul _))
+
 /-- **The weighted order sum equals the cusp order minus the weight term.** Both sides are the
 same Cauchy principal value along the boundary contour: `hasCauchyPV_fdBoundary_logDeriv`
 evaluates it by the argument principle, as `2πi` times the winding-weighted sum of orders over
 the **divisor** set `T` — orders, not zero-counts: a point of `T` where the form has a pole
-contributes negatively, while `hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex` evaluates it
-by the excised assembly, excising the **boundary** set `S`. Principal values are unique even
-across different excision sets, so the two agree.
+contributes negatively, while `hpv` evaluates it by an excised assembly, excising some
+**boundary** set. Principal values are unique even across different excision sets, so the two
+agree.
 
-Keeping `S` and `T` separate is what makes the statement useful: the assembly forces its excision
-set onto the unit circle (`hnorm`, `hinv` — the arc pairing and vertical cancellation need those
-symmetries), whereas the divisor set is unrestricted, so zeros in the interior are allowed. The
-assembly's side conditions are needed only *along the contour*, which is what `hoffγ` states.
+Keeping the excision set and `T` separate is what makes the statement useful: the assemblies
+constrain their excision sets — to the unit circle
+(`hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex`) or to the two singular families
+(`hasCauchyPVWith_fdBoundary_logDeriv_arcSingularSet_union_verticalSingularSet`) — whereas the
+divisor set is unrestricted, so zeros in the interior are allowed.
 
 This is the analytic identity the valence formula rests on: dividing by `2πi` and reading off the
 corner winding numbers — which are **negative**, the contour running clockwise: `-(1/2)` at `i`
 and `-(1/6)` at each `ρ`-corner, against `-1` at an interior point — turns it into
 `ord_∞ + ½·ord_i + ⅓·ord_ρ + Σ ord_q = k/12`. -/
-theorem two_pi_I_mul_sum_windingNumber_mul_order_eq [SlashInvariantFormClass F Γ k] (f : F)
-    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ} {ord : ℂ → ℤ} (hH : 1 ≤ H)
-    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
-    (hper : Periodic (⇑f ∘ ofComplex) 1)
-    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
-      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+theorem two_pi_I_mul_sum_windingNumber_mul_order_eq (f : F) {H : ℝ} {Sx T : Finset ℂ}
+    {U : Set ℂ} {ord : ℂ → ℤ} (hH : 1 ≤ H)
+    (hpv : Contour.HasCauchyPVWith (fdBoundary H) 0 5 (logDeriv (⇑f ∘ ofComplex)) Sx
+      (2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
+        (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I)))
     (hU : IsOpen U)
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
     (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
     (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
     (hord : ∀ s ∈ T, s ∈ U → meromorphicOrderAt (⇑f ∘ ofComplex) s = (ord s : WithTop ℤ))
-    (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
-    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
-      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
-    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
-      cuspFunction 1 ⇑f q ≠ 0) :
+    (hbase : fdBoundary H 0 ∉ (T : Set ℂ)) :
     2 * (Real.pi : ℂ) * Complex.I *
         ∑ z ∈ T, Contour.windingNumber (fdBoundary H) 0 5 z * (ord z : ℂ) =
       2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
         (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I) :=
-  (hasCauchyPV_fdBoundary_logDeriv hH hU hUdom hoff hmero hord hbase).unique
-    (hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex f hS hnorm hinv hHgt hper hoffγ hga
-      hgz).hasCauchyPV
+  (hasCauchyPV_fdBoundary_logDeriv hH hU hUdom hoff hmero hord hbase).unique hpv.hasCauchyPV
 
 /-- **The weighted order sum in terms of `orderOfVanishingAt`.** With the divisor points in the
 upper half plane, the abstract order function of `two_pi_I_mul_sum_windingNumber_mul_order_eq` is
@@ -230,21 +321,16 @@ the modular-forms order at each of them.
 which `hoff` and the finiteness of `T` already force, so no separate hypothesis is needed. The
 sum runs over `T.attach` because the order is taken at each divisor point *as a point of `ℍ`*,
 which needs its membership proof. -/
-private theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
-    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ}
-    {U : Set ℂ} (hH : 1 ≤ H) (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
-    (hHgt : ∀ s ∈ S, s.im < H) (hper : Periodic (⇑f ∘ ofComplex) 1)
-    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
-      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+private theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq (f : F) {H : ℝ}
+    {Sx T : Finset ℂ} {U : Set ℂ} (hH : 1 ≤ H)
+    (hpv : Contour.HasCauchyPVWith (fdBoundary H) 0 5 (logDeriv (⇑f ∘ ofComplex)) Sx
+      (2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
+        (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I)))
     (hU : IsOpen U)
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
     (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
     (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
-    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
-      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
-    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
-      cuspFunction 1 ⇑f q ≠ 0) :
+    (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ)) :
     2 * (Real.pi : ℂ) * Complex.I *
         ∑ z ∈ T.attach, Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
           ((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) =
@@ -260,13 +346,12 @@ private theorem two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq
   rw [Finset.sum_congr rfl hsummand,
     Finset.sum_attach T fun z => Contour.windingNumber (fdBoundary H) 0 5 z *
       (((meromorphicOrderAt (⇑f ∘ ofComplex) z).untop₀ : ℤ) : ℂ)]
-  exact two_pi_I_mul_sum_windingNumber_mul_order_eq f hS hH hnorm hinv hHgt hper hoffγ hU hUdom
+  exact two_pi_I_mul_sum_windingNumber_mul_order_eq f hH hpv hU hUdom
     hoff hmero (fun s hsT hsU => (WithTop.coe_untop₀_of_ne_top
       ((meromorphicOrderAt_ne_top_iff_eventually_ne_zero (hmero s hsT hsU)).2 (by
         filter_upwards [nhdsWithin_le_nhds (hU.mem_nhds hsU),
           T.eventually_cofinite_notMem.filter_mono (nhdsNE_le_cofinite s)] with z hzU hzT
-        exact (hoff z hzU hzT).2))).symm) hbase hga
-    hgz
+        exact (hoff z hzU hzT).2))).symm) hbase
 
 /-- **The valence identity, divided through.** Cancelling the common factor `2πi` puts the
 identity in the shape the valence formula is usually written in: the winding-weighted sum of
@@ -274,27 +359,22 @@ orders inside the contour equals the cusp order minus `k/12`. The orders are mer
 so a pole contributes negatively.
 
 The weight term matches because `k·(π/6)·I = 2πi·(k/12)`. -/
-theorem sum_windingNumber_mul_orderOfVanishingAt_eq [SlashInvariantFormClass F Γ k] (f : F)
-    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S T : Finset ℂ} {U : Set ℂ} (hH : 1 ≤ H)
-    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hHgt : ∀ s ∈ S, s.im < H)
-    (hper : Periodic (⇑f ∘ ofComplex) 1)
-    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
-      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+theorem sum_windingNumber_mul_orderOfVanishingAt_eq (f : F) {H : ℝ} {Sx T : Finset ℂ}
+    {U : Set ℂ} (hH : 1 ≤ H)
+    (hpv : Contour.HasCauchyPVWith (fdBoundary H) 0 5 (logDeriv (⇑f ∘ ofComplex)) Sx
+      (2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
+        (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I)))
     (hU : IsOpen U)
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
     (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
     (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ))
-    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
-      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
-    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
-      cuspFunction 1 ⇑f q ≠ 0) :
+    (hpos : ∀ s ∈ T, 0 < s.im) (hbase : fdBoundary H 0 ∉ (T : Set ℂ)) :
     ∑ z ∈ T.attach, Contour.windingNumber (fdBoundary H) 0 5 (z : ℂ) *
         ((orderOfVanishingAt ⇑f ⟨(z : ℂ), hpos _ z.2⟩ : ℤ) : ℂ) =
       qExpansionOrderAtCusp 1 ⇑f - (k : ℂ) / 12 := by
   refine mul_left_cancel₀ Complex.two_pi_I_ne_zero ?_
-  rw [two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH hnorm hinv hHgt hper hoffγ
-    hU hUdom hoff hmero hpos hbase hga hgz]
+  rw [two_pi_I_mul_sum_windingNumber_mul_orderOfVanishingAt_eq f hH hpv
+    hU hUdom hoff hmero hpos hbase]
   push_cast
   ring
 
@@ -344,8 +424,9 @@ theorem sum_orderOfVanishingAt_add_qExpansionOrderAtCusp_eq [SlashInvariantFormC
     intro z _
     obtain ⟨h1, h2, h3⟩ := hin _ z.2
     rw [windingNumber_fdBoundary_eq_neg_one_of_interior hH h1 h2 (hpos _ z.2) h3, neg_one_mul]
-  have := sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH.le hnorm hinv hHgt hper hoffγ hU
-    hUdom hoff hmero hpos hbase hga hgz
+  have := sum_windingNumber_mul_orderOfVanishingAt_eq f hH.le
+    (hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex f hS hnorm hinv hHgt hper hoffγ hga hgz)
+    hU hUdom hoff hmero hpos hbase
   rw [Finset.sum_congr rfl hw, Finset.sum_neg_distrib] at this
   linear_combination -this
 
@@ -376,240 +457,361 @@ private lemma corner_notMem :
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
   exact ⟨fun h => hne (by simp [h]), fun h => hne (by simp [h])⟩
 
-/-- Both `ρ`-corners lie in the upper half plane. -/
-private lemma coe_rho_add_one_im_pos : (0 : ℝ) < ((ρ : ℂ) + 1).im := by
-  simp only [Complex.add_im, Complex.one_im, add_zero, coe_rho_im]
-  positivity
-
-/-- Off the three corners every divisor point is interior, so its winding weight is `-1` and it
-enters the count with its bare order. -/
-private lemma sum_sdiff_corner_windingNumber_mul_order {f : ℍ → ℂ} {H : ℝ} {T : Finset ℂ}
-    (hH : 1 < H) (hpos : ∀ s ∈ T, 0 < s.im)
-    (hin : ∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
-      1 < ‖z‖ ∧ |z.re| < 1 / 2 ∧ z.im < H) :
-    ∑ z ∈ T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
-        Contour.windingNumber (fdBoundary H) 0 5 z *
-          ((orderOfVanishingAt f (ofComplex z) : ℤ) : ℂ) =
-      -∑ z ∈ T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
-        ((orderOfVanishingAt f (ofComplex z) : ℤ) : ℂ) := by
-  rw [← Finset.sum_neg_distrib]
-  refine Finset.sum_congr rfl fun z hz => ?_
-  obtain ⟨hzT, hzE⟩ := Finset.mem_sdiff.mp hz
-  obtain ⟨h1, h2, h3⟩ := hin z hzT hzE
-  rw [windingNumber_fdBoundary_eq_neg_one_of_interior hH h1 h2 (hpos _ hzT) h3, neg_one_mul]
-
-/-- The three corners carry weights `-(1/2)` at `i` and `-(1/6)` at each `ρ`-corner. Periodicity
-gives the two `ρ`-corners the same order, so their two `1/6`s merge into a single `1/3`. -/
-private lemma sum_corner_windingNumber_mul_order {f : ℍ → ℂ} {H : ℝ} (hH : 1 < H)
-    (hper : Periodic (f ∘ ofComplex) 1) :
-    ∑ z ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
-        Contour.windingNumber (fdBoundary H) 0 5 z *
-          ((orderOfVanishingAt f (ofComplex z) : ℤ) : ℂ) =
-      -(1 / 2) * ((orderOfVanishingAt f UpperHalfPlane.I : ℤ) : ℂ) -
-        1 / 3 * ((orderOfVanishingAt f ρ : ℤ) : ℂ) := by
-  have hρH : Real.sqrt 3 / 2 < H := sqrt_three_div_two_lt_one.trans hH
-  have hofI : ofComplex Complex.I = UpperHalfPlane.I := by
-    rw [← UpperHalfPlane.coe_I, ofComplex_apply]
-  -- The two `ρ`-corners are a unit translate apart, so periodicity equates their orders.
-  have hordρ1 : orderOfVanishingAt f (ofComplex ((ρ : ℂ) + 1)) = orderOfVanishingAt f ρ :=
-    orderOfVanishingAt_eq_of_coe_eq_add hper
-      (by rw [ofComplex_apply_of_im_pos coe_rho_add_one_im_pos])
-  rw [Finset.sum_insert corner_notMem.1, Finset.sum_insert corner_notMem.2, Finset.sum_singleton,
-    windingNumber_fdBoundary_I hH, windingNumber_fdBoundary_rho hρH,
-    windingNumber_fdBoundary_rho_add_one hρH, hofI, ofComplex_apply ρ, hordρ1]
+/-- The second corner `ρ + 1` as a point of `ℍ`, computed into `ℂ`. -/
+private lemma coe_vadd_one_ρ : (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ) = (ρ : ℂ) + 1 := by
+  rw [UpperHalfPlane.coe_vadd]
+  push_cast
   ring
 
-/-- A corner the divisor set misses contributes nothing: it lies on the contour, hence in `U`, so
-`hoff` makes the form analytic and nonvanishing there and its order is `0`. -/
-private lemma orderOfVanishingAt_corner_eq_zero [SlashInvariantFormClass F Γ k] (f : F) {H : ℝ}
-    {T : Finset ℂ} {U : Set ℂ} (hH : 1 < H)
-    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
-    (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
-    {c : ℂ} (hc : c ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)) (hcT : c ∉ T) :
-    orderOfVanishingAt ⇑f (ofComplex c) = 0 := by
-  have hIm : 0 < c.im := by
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hc
-    rcases hc with rfl | rfl | rfl
-    · simp
-    · rw [coe_rho_im]; positivity
-    · exact coe_rho_add_one_im_pos
-  have hcU : c ∈ U := by
-    refine hUdom ?_
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hc
-    rcases hc with rfl | rfl | rfl
-    · exact fdBoundary_apply_two H ▸
-        fdBoundary_mem_coe_truncatedFundamentalDomain hH.le (by norm_num)
-    · exact fdBoundary_apply_three H ▸
-        fdBoundary_mem_coe_truncatedFundamentalDomain hH.le (by norm_num)
-    · exact fdBoundary_apply_one H ▸
-        fdBoundary_mem_coe_truncatedFundamentalDomain hH.le (by norm_num)
-  obtain ⟨han, hne⟩ := hoff c hcU hcT
-  rw [ofComplex_apply_of_im_pos hIm]
-  exact orderOfVanishingAt_eq_zero_of_ne_zero han.meromorphicNFAt
-    (by simpa [Function.comp_apply, ofComplex_apply_of_im_pos hIm] using hne)
+/-- The real part of the corner `ρ`. -/
+private lemma coe_re_ρ : ((ρ : ℍ) : ℂ).re = -(1 / 2) := by
+  norm_num [UpperHalfPlane.ρ]
 
+/-- The second corner lies in the closed fundamental domain. -/
+private lemma vadd_one_ρ_mem_fd : (1 : ℝ) +ᵥ ρ ∈ 𝒟 := by
+  refine ⟨?_, ?_⟩
+  · rw [coe_vadd_one_ρ, Complex.normSq_eq_norm_sq, norm_ρ_add_one]
+    norm_num
+  · rw [← UpperHalfPlane.coe_re, coe_vadd_one_ρ, Complex.add_re, Complex.one_re, coe_re_ρ]
+    norm_num
 
-/-- **The valence formula, with the elliptic points.** The divisor may now meet the two elliptic
-corners of the truncated fundamental domain, `i` and `ρ` (the `ρ`-corner appearing twice on the
-contour, at `ρ` and at `ρ + 1`); every other divisor point is required to lie in the strict
-interior.
+/-- A corner the divisor set misses has order `0`: the corners lie in the closed fundamental
+domain, so a nonzero order would put them into any complete set. -/
+private lemma orderOfVanishingAt_corner_eq_zero {f : ℍ → ℂ} {S : Finset ℍ}
+    (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) {c : ℍ}
+    (hc : c = UpperHalfPlane.I ∨ c = ρ ∨ c = (1 : ℝ) +ᵥ ρ) (hcS : c ∉ S) :
+    orderOfVanishingAt f c = 0 := by
+  by_contra hne
+  refine hcS (hcomp c ?_ hne)
+  rcases hc with rfl | rfl | rfl
+  exacts [ModularGroup.I_mem_fd, ModularGroup.ρ_mem_fd, vadd_one_ρ_mem_fd]
 
-The corner winding numbers are `-(1/2)` at `i` and `-(1/6)` at each `ρ`-corner, against `-1` in
-the interior, so those points enter the count with weights `½` and `⅙`. Periodicity makes the two
-`ρ`-corners carry the same order, and the two `⅙`s combine:
+/-- The corner `i` differs from the two `ρ`-corners as a point of `ℍ`. -/
+private lemma I_ne_ρ_and_I_ne_vadd_one_ρ :
+    UpperHalfPlane.I ≠ ρ ∧ UpperHalfPlane.I ≠ (1 : ℝ) +ᵥ ρ := by
+  have h := corner_notMem.1
+  simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at h
+  exact ⟨fun he => h.1 (UpperHalfPlane.coe_I ▸ congrArg _ he),
+    fun he => h.2 (UpperHalfPlane.coe_I ▸ (congrArg _ he).trans coe_vadd_one_ρ)⟩
 
-`Σ_q ord_q + ½·ord_i + ⅓·ord_ρ + ord_∞ = k/12`.
+/-- The two `ρ`-corners differ as points of `ℍ`. -/
+private lemma ρ_ne_vadd_one_ρ : ρ ≠ (1 : ℝ) +ᵥ ρ := by
+  have h := corner_notMem.2
+  simp only [Finset.mem_singleton] at h
+  exact fun he => h ((congrArg _ he).trans coe_vadd_one_ρ)
 
-A corner that `T` misses is no special case: it lies on the contour, so `hUdom` and `hoff` make
-the form analytic and nonzero there, and at such a point the order is `0`.
+/-- The `ℂ`-corner classification transfers along the coercion: a point of `ℍ` lands on
+`{i, ρ, ρ + 1}` in `ℂ` exactly when it is one of the three corner points of `ℍ`. -/
+private lemma coe_mem_corner_iff {p : ℍ} :
+    (p : ℂ) ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ↔
+      p = UpperHalfPlane.I ∨ p = ρ ∨ p = (1 : ℝ) +ᵥ ρ := by
+  simp only [Finset.mem_insert, Finset.mem_singleton]
+  constructor
+  · rintro (h | h | h)
+    · exact Or.inl (UpperHalfPlane.coe_injective (h.trans UpperHalfPlane.coe_I.symm))
+    · exact Or.inr (Or.inl (UpperHalfPlane.coe_injective h))
+    · exact Or.inr (Or.inr (UpperHalfPlane.coe_injective (h.trans coe_vadd_one_ρ.symm)))
+  · rintro (rfl | rfl | rfl)
+    · exact Or.inl UpperHalfPlane.coe_I
+    · exact Or.inr (Or.inl rfl)
+    · exact Or.inr (Or.inr coe_vadd_one_ρ)
 
-⚠ **This statement does not reach a form with a zero on the unit arc other than at a corner.** The
-truncated fundamental domain is *closed* (`ModularGroup.coe_truncatedFundamentalDomain` bounds by
-`1 ≤ ‖z‖`), so the arc lies inside it and `hUdom` places it in `U`. A zero `s` there with `‖s‖ = 1`
-is then trapped: `hoff` forces `s ∈ T` (otherwise it would give `(⇑f ∘ ofComplex) s ≠ 0`), and
-`hin` forbids `s ∈ T` unless `s` is a corner, since off the corners it forces `1 < ‖s‖`. So any arc
-divisor point compatible with both `hoff` and `hin` must be a corner, and the exceptional contour
-set is now fixed to the three corners; a general `S` could only have added redundant non-vanishing
-points.
+/-- The corner contribution to the winding-weighted divisor sum: `-(1/2)·ord_i - ⅓·ord_ρ`.
+The two `ρ`-corners weigh `-(1/6)` each and carry the same order by periodicity; a corner the
+set misses carries order `0` by completeness. -/
+private lemma sum_filter_corner_windingNumber_mul_order {f : ℍ → ℂ} {H : ℝ} {S : Finset ℍ}
+    (hH : 1 < H) (hper : Periodic (f ∘ ofComplex) 1)
+    (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) :
+    ∑ p ∈ (S.filter fun p : ℍ ↦ orderOfVanishingAt f p ≠ 0).filter
+        (fun p : ℍ ↦ (p : ℂ) ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
+        Contour.windingNumber (fdBoundary H) 0 5 (p : ℂ) *
+          ((orderOfVanishingAt f p : ℤ) : ℂ) =
+      -(1 / 2) * ((orderOfVanishingAt f UpperHalfPlane.I : ℤ) : ℂ) -
+        1 / 3 * ((orderOfVanishingAt f ρ : ℤ) : ℂ) := by
+  classical
+  have hρH : Real.sqrt 3 / 2 < H := sqrt_three_div_two_lt_one.trans hH
+  have hordρ₁ : orderOfVanishingAt f ((1 : ℝ) +ᵥ ρ) = orderOfVanishingAt f ρ :=
+    orderOfVanishingAt_eq_of_coe_eq_add hper (by rw [coe_vadd_one_ρ, add_comm])
+  have hsub : (S.filter fun p : ℍ ↦ orderOfVanishingAt f p ≠ 0).filter
+      (fun p : ℍ ↦ (p : ℂ) ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)) ⊆
+      ({UpperHalfPlane.I, ρ, (1 : ℝ) +ᵥ ρ} : Finset ℍ) := fun p hp => by
+    simp only [Finset.mem_insert, Finset.mem_singleton]
+    exact coe_mem_corner_iff.mp (Finset.mem_filter.mp hp).2
+  have hmiss : ∀ c ∈ ({UpperHalfPlane.I, ρ, (1 : ℝ) +ᵥ ρ} : Finset ℍ),
+      c ∉ (S.filter fun p : ℍ ↦ orderOfVanishingAt f p ≠ 0).filter
+        (fun p : ℍ ↦ (p : ℂ) ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)) →
+      Contour.windingNumber (fdBoundary H) 0 5 (c : ℂ) *
+        ((orderOfVanishingAt f c : ℤ) : ℂ) = 0 := by
+    intro c hc hcn
+    have hc' : c = UpperHalfPlane.I ∨ c = ρ ∨ c = (1 : ℝ) +ᵥ ρ := by
+      simpa only [Finset.mem_insert, Finset.mem_singleton] using hc
+    rcases Decidable.em (orderOfVanishingAt f c = 0) with h0 | h0
+    · rw [h0]
+      simp
+    · rw [orderOfVanishingAt_corner_eq_zero hcomp hc' fun hmem => hcn (Finset.mem_filter.mpr
+        ⟨Finset.mem_filter.mpr ⟨hmem, h0⟩, coe_mem_corner_iff.mpr hc'⟩)]
+      simp
+  rw [Finset.sum_subset hsub hmiss,
+    Finset.sum_insert (by simp [I_ne_ρ_and_I_ne_vadd_one_ρ.1, I_ne_ρ_and_I_ne_vadd_one_ρ.2]),
+    Finset.sum_insert (by simp [ρ_ne_vadd_one_ρ]), Finset.sum_singleton,
+    UpperHalfPlane.coe_I, coe_vadd_one_ρ, windingNumber_fdBoundary_I hH,
+    windingNumber_fdBoundary_rho hρH, windingNumber_fdBoundary_rho_add_one hρH, hordρ₁]
+  ring
 
-Lifting this needs the divisor set split into its arc and vertical parts rather than the fixed
-three-corner set above, because `hoffγ` must cover contour zeros of both an arc and a vertical
-kind. `TauCeti.ModularForm.arcSingularSet` and `verticalSingularSet` are those two families,
-`fdBoundary_mem_arcSingularSet_union_verticalSingularSet_of_comp_eq_zero` is `hoffγ` for them, and
-`ArcPairing`/`VerticalCancel` supply the two cancellations.
+/-- A point of the unit arc with real part `-1/2` is the corner `ρ`. -/
+private lemma coe_eq_ρ_of_re {p : ℍ} (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = -(1 / 2)) :
+    (p : ℂ) = (ρ : ℂ) := by
+  have hp : p = ρ := UpperHalfPlane.eq_of_re_of_norm
+    (show (p : ℂ).re = (ρ : ℂ).re by rw [hre, coe_re_ρ])
+    (show ‖(p : ℂ)‖ = ‖(ρ : ℂ)‖ by rw [hnorm, norm_ρ])
+  rw [hp]
 
-The lifting shape below follows `valence_formula_textbook_unconditional_FM` in
-`ValenceFormulaBridged.lean` of AINTLIB (github.com/CBirkbeck/AINTLIB, revision
-2baa76f742bdb4fb8ee323fabba41203bd390e08).
+/-- A point of the unit arc with real part `1/2` is the corner `ρ + 1`. -/
+private lemma coe_eq_ρ_add_one_of_re {p : ℍ} (hnorm : ‖(p : ℂ)‖ = 1)
+    (hre : (p : ℂ).re = 1 / 2) : (p : ℂ) = (ρ : ℂ) + 1 := by
+  have hp : p = (1 : ℝ) +ᵥ ρ := UpperHalfPlane.eq_of_re_of_norm
+    (show (p : ℂ).re = (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ).re by
+      rw [hre, coe_vadd_one_ρ, Complex.add_re, Complex.one_re, coe_re_ρ]; norm_num)
+    (show ‖(p : ℂ)‖ = ‖(((1 : ℝ) +ᵥ ρ : ℍ) : ℂ)‖ by rw [hnorm, coe_vadd_one_ρ, norm_ρ_add_one])
+  rw [hp, coe_vadd_one_ρ]
 
-The conclusion then gains one sum per family, each over a *half* of its pair: the inversion
-`z ↦ -1/z` carries the arc's `re < 0` half onto its `re > 0` half, and `z ↦ z + 1` carries the
-`re = -(1/2)` line onto `re = 1/2`, so each pair is counted once by restricting to the left
-representative. The interior sum keeps its `1 < ‖z‖ ∧ |z.re| < 1/2` condition. -/
-theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
-    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {T : Finset ℂ}
-    {U : Set ℂ} (hH : 1 < H)
+/-- **The non-corner boundary weight.** A point of the closed fundamental domain that is
+neither a corner nor strictly interior lies on a vertical edge or on the open arc, where the
+boundary contour winds `-1/2`. -/
+private lemma windingNumber_coe_eq_neg_half {H : ℝ} {p : ℍ} (hH : 1 < H) (hp : p ∈ 𝒟)
+    (hc : (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ))
+    (hint : ¬(1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)) (him : (p : ℂ).im < H) :
+    Contour.windingNumber (fdBoundary H) 0 5 (p : ℂ) = -(1 / 2 : ℂ) := by
+  simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hc
+  rcases eq_or_lt_of_le (Complex.one_le_normSq_iff.mp hp.1) with heq | hgt
+  · refine windingNumber_fdBoundary_arc hH heq.symm ?_ p.2
+    rcases lt_or_eq_of_le hp.2 with h | h
+    · exact h
+    · rcases (abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp h with h' | h'
+      · exact absurd (coe_eq_ρ_add_one_of_re heq.symm h') hc.2.2
+      · exact absurd (coe_eq_ρ_of_re heq.symm h') hc.2.1
+  · have habs : |(p : ℂ).re| = 1 / 2 := le_antisymm hp.2 (not_lt.mp fun h => hint ⟨hgt, h⟩)
+    exact windingNumber_fdBoundary_vertical
+      ((abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp habs) hgt p.2 him
+
+/-- Restricting a family sum to the nonzero-order points does not change it. -/
+private lemma sum_filter_orderOfVanishingAt_ne_zero {f : ℍ → ℂ} {S : Finset ℍ}
+    (P : ℍ → Prop) [DecidablePred P] :
+    ∑ p ∈ (S.filter fun p : ℍ ↦ orderOfVanishingAt f p ≠ 0).filter P,
+        ((orderOfVanishingAt f p : ℤ) : ℂ) =
+      ∑ p ∈ S.filter P, ((orderOfVanishingAt f p : ℤ) : ℂ) := by
+  rw [Finset.filter_comm]
+  exact Finset.sum_filter_of_ne fun p _ hne => Int.cast_ne_zero.mp hne
+
+/-- The boundary aggregate over the nonzero-order points, paired into left representatives:
+completeness matches each right half-edge with its left partner, so the non-elliptic boundary
+sum is twice the left-representative sum. -/
+private lemma sum_filter_boundary_orderOfVanishingAt_eq [SlashInvariantFormClass F Γ k] (f : F)
+    (hSmem : ModularGroup.S ∈ Γ) {S : Finset ℍ} (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hSfd : ∀ p ∈ S, orderOfVanishingAt ⇑f p ≠ 0 → p ∈ 𝒟)
+    (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt ⇑f p ≠ 0 → p ∈ S) :
+    ∑ p ∈ (S.filter fun p : ℍ ↦ orderOfVanishingAt ⇑f p ≠ 0).filter
+        (fun p : ℍ ↦ (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧
+          ¬(1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)),
+        ((orderOfVanishingAt ⇑f p : ℤ) : ℂ) =
+      2 * (∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖),
+          ((orderOfVanishingAt ⇑f p : ℤ) : ℂ) +
+        ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
+          ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)) := by
+  rw [sum_filter_orderOfVanishingAt_ne_zero]
+  exact_mod_cast congrArg (Int.cast : ℤ → ℂ)
+    (sum_orderOfVanishingAt_nonEllipticBoundary_eq_two_mul f hper hSmem hSfd hcomp)
+
+/-- A strictly interior point is not a corner: the corners sit on the unit circle. -/
+private lemma notMem_corner_of_interior {p : ℍ}
+    (hp : 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2) :
+    (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) := by
+  intro hmem
+  have h1 : ‖(p : ℂ)‖ = 1 := by
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hmem
+    rcases hmem with h | h | h <;> rw [h]
+    · exact Complex.norm_I
+    · exact norm_ρ
+    · exact norm_ρ_add_one
+  rw [h1] at hp
+  exact lt_irrefl 1 hp.1
+
+/-- The pointwise winding weight off the corners: `-1` in the interior, `-1/2` on the
+boundary, packaged as the `if` the sum below splits along. -/
+private lemma windingNumber_mul_order_ite {f : ℍ → ℂ} {H : ℝ} {S : Finset ℍ} (hH : 1 < H)
+    (hSfd : ∀ p ∈ S, orderOfVanishingAt f p ≠ 0 → p ∈ 𝒟)
+    (hHgt : ∀ p ∈ S, (p : ℂ).im < H) :
+    ∀ p ∈ (S.filter fun p : ℍ ↦ orderOfVanishingAt f p ≠ 0).filter
+      (fun p : ℍ ↦ (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
+      Contour.windingNumber (fdBoundary H) 0 5 (p : ℂ) * ((orderOfVanishingAt f p : ℤ) : ℂ) =
+        if 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2
+        then -((orderOfVanishingAt f p : ℤ) : ℂ)
+        else -(1 / 2) * ((orderOfVanishingAt f p : ℤ) : ℂ) := by
+  intro p hp
+  obtain ⟨hp', hpc⟩ := Finset.mem_filter.mp hp
+  obtain ⟨hpS, hpne⟩ := Finset.mem_filter.mp hp'
+  split_ifs with h
+  · rw [windingNumber_fdBoundary_eq_neg_one_of_interior hH h.1 h.2 p.2 (hHgt p hpS),
+      neg_one_mul]
+  · rw [windingNumber_coe_eq_neg_half hH (hSfd p hpS hpne) hpc h (hHgt p hpS)]
+
+/-- Inside the non-corner family the interior filter absorbs the corner filter: interior
+points are off the unit circle, where the corners sit. -/
+private lemma filter_filter_interior_eq {f : ℍ → ℂ} {S : Finset ℍ} :
+    ((S.filter fun p : ℍ ↦ orderOfVanishingAt f p ≠ 0).filter
+      (fun p : ℍ ↦ (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ))).filter
+      (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2) =
+      (S.filter fun p : ℍ ↦ orderOfVanishingAt f p ≠ 0).filter
+        (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2) := by
+  ext q
+  simp only [Finset.mem_filter, and_assoc]
+  exact ⟨fun h => ⟨h.1, h.2.1, h.2.2.2⟩,
+    fun h => ⟨h.1, h.2.1, notMem_corner_of_interior h.2.2, h.2.2⟩⟩
+
+/-- **The winding-weighted divisor sum over a complete set, evaluated.** The corners weigh
+`-(1/2)` at `i` and `-(1/6)` at each `ρ`-corner (merging into `-⅓` at `ρ` by periodicity),
+interior points weigh `-1`, and the non-elliptic boundary points weigh `-1/2` and pair into
+left representatives, each pair contributing one full-weight representative. -/
+private lemma sum_windingNumber_mul_orderOfVanishingAt_coe_eq [SlashInvariantFormClass F Γ k]
+    (f : F) (hSmem : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℍ} (hH : 1 < H)
     (hper : Periodic (⇑f ∘ ofComplex) 1)
-    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5,
-      fdBoundary H t ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
-      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
+    (hSfd : ∀ p ∈ S, orderOfVanishingAt ⇑f p ≠ 0 → p ∈ 𝒟)
+    (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt ⇑f p ≠ 0 → p ∈ S)
+    (hHgt : ∀ p ∈ S, (p : ℂ).im < H) :
+    ∑ p ∈ S, Contour.windingNumber (fdBoundary H) 0 5 (p : ℂ) *
+        ((orderOfVanishingAt ⇑f p : ℤ) : ℂ) =
+      -(∑ p ∈ S.filter (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2),
+            ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
+          + ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖),
+            ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
+          + ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
+            ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
+          + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
+          + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)) := by
+  classical
+  rw [← Finset.sum_filter_of_ne (p := fun p : ℍ ↦ orderOfVanishingAt ⇑f p ≠ 0)
+      fun p _ h => Int.cast_ne_zero.mp (right_ne_zero_of_mul h),
+    ← Finset.sum_filter_add_sum_filter_not (S.filter fun p : ℍ ↦ orderOfVanishingAt ⇑f p ≠ 0)
+      (fun p : ℍ ↦ (p : ℂ) ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
+    sum_filter_corner_windingNumber_mul_order hH hper hcomp,
+    Finset.sum_congr rfl (windingNumber_mul_order_ite hH hSfd hHgt), Finset.sum_ite,
+    Finset.sum_neg_distrib, filter_filter_interior_eq,
+    sum_filter_orderOfVanishingAt_ne_zero (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2),
+    ← Finset.mul_sum, Finset.filter_filter,
+    sum_filter_boundary_orderOfVanishingAt_eq (k := k) f hSmem hper hSfd hcomp]
+  ring
+
+
+/-- Along the contour, off the union of the two singular sets, a nonzero level-one form is
+analytic and nonvanishing: analyticity is holomorphy transported through `ofComplex`, and a
+vanishing contour point would be captured into the union by
+`fdBoundary_mem_arcSingularSet_union_verticalSingularSet_of_comp_eq_zero`. -/
+private lemma analyticAt_comp_ofComplex_and_ne_zero_of_notMem [ModularFormClass F 𝒮ℒ k] {f : F}
+    (hf : (⇑f : ℍ → ℂ) ≠ 0) {H : ℝ} {S : Finset ℍ} (hH : 1 ≤ H)
+    (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt ⇑f p ≠ 0 → p ∈ S)
+    (hHgt : ∀ p ∈ S, (p : ℂ).im < H) :
+    ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ arcSingularSet S ∪ verticalSingularSet S →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧
+        (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0 := by
+  intro t ht hmem
+  obtain ⟨q, -, hqe⟩ := fdBoundary_mem_coe_truncatedFundamentalDomain hH ht
+  refine ⟨UpperHalfPlane.analyticAt_comp_ofComplex (ModularFormClass.holo f) ?_,
+    fun h0 => hmem
+      (fdBoundary_mem_arcSingularSet_union_verticalSingularSet_of_comp_eq_zero hf hcomp hH
+        hHgt ht h0)⟩
+  rw [← hqe]
+  exact q.2
+
+/-- The image of a divisor set of upper half-plane points lies above the real axis. -/
+private lemma im_pos_of_mem_image {S : Finset ℍ} :
+    ∀ z ∈ S.image ((↑·) : ℍ → ℂ), 0 < z.im := by
+  simp only [Finset.mem_image]
+  rintro z ⟨p, -, rfl⟩
+  exact p.2
+
+/-- The basepoint of the contour sits at height `H`, above every point of a height-bounded
+divisor set. -/
+private lemma fdBoundary_zero_notMem_image {H : ℝ} {S : Finset ℍ}
+    (hHgt : ∀ p ∈ S, (p : ℂ).im < H) :
+    fdBoundary H 0 ∉ ((S.image ((↑·) : ℍ → ℂ)) : Set ℂ) := by
+  simp only [Finset.coe_image, Set.mem_image, Finset.mem_coe]
+  rintro ⟨p, hp, he⟩
+  have him : (fdBoundary H 0).im = H := by rw [fdBoundary_apply_zero]; simp
+  rw [← he] at him
+  exact absurd him (ne_of_lt (hHgt p hp))
+
+/-- **The valence formula, with the elliptic points.** The divisor set `S` is now a finite set
+of upper half-plane points, *complete* for the closed fundamental domain: every point of `𝒟`
+of nonzero order belongs to it. Nothing confines the divisor to the interior — it may meet the
+corners, the vertical edges and the unit arc, because the excised assembly tolerates contour
+zeros anywhere the completeness hypothesis can force them.
+
+The count splits by winding weight. The corners weigh `-(1/2)` at `i` and `-(1/6)` at each
+`ρ`-corner, and periodicity merges the two `⅙`s; interior points weigh `-1`; every other
+boundary point weighs `-1/2` and pairs with its partner under `z ↦ z + 1` (verticals) or
+`z ↦ -1/z` (arc), so each pair enters as one full-weight *left* representative:
+
+`Σ_int ord_q + Σ_leftVert ord_q + Σ_{leftArc∖ρ} ord_q + ½·ord_i + ⅓·ord_ρ + ord_∞ = k/12`.
+
+The statement shape follows `valence_formula_textbook_unconditional_FM` in
+`ValenceFormulaBridged.lean` of AINTLIB (github.com/CBirkbeck/AINTLIB, revision
+2baa76f742bdb4fb8ee323fabba41203bd390e08), with the filter vocabulary of `BoundaryPairing`.
+
+The analytic inputs `hU`/`hoff`/`hga`/`hgz` remain hypotheses here — with `hgz` obtainable
+only above a height threshold, this fixed-`H` statement cannot construct them — while the
+along-contour non-vanishing that the excised assembly needs is *derived*: a contour zero is a
+nonzero-order point of the truncated fundamental domain, so completeness captures it into
+`arcSingularSet S ∪ verticalSingularSet S`
+(`fdBoundary_mem_arcSingularSet_union_verticalSingularSet_of_comp_eq_zero`), which is exactly
+the set the assembly excises. That capture argument is what forces `f` to be a genuine
+level-one modular form here rather than an abstract slash-invariant one. -/
+theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
+    [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {H : ℝ} {S : Finset ℍ}
+    {U : Set ℂ} (hH : 1 < H)
+    (hSfd : ∀ p ∈ S, orderOfVanishingAt ⇑f p ≠ 0 → p ∈ 𝒟)
+    (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt ⇑f p ≠ 0 → p ∈ S)
+    (hHgt : ∀ p ∈ S, (p : ℂ).im < H)
     (hU : IsOpen U)
     (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
-    (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
-    (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hpos : ∀ s ∈ T, 0 < s.im)
-    (hin : ∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
-      1 < ‖z‖ ∧ |z.re| < 1 / 2 ∧ z.im < H)
+    (hoff : ∀ z ∈ U, z ∉ S.image ((↑·) : ℍ → ℂ) →
+      AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
     (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
     (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
       cuspFunction 1 ⇑f q ≠ 0) :
-    ∑ z ∈ T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
-          ((orderOfVanishingAt ⇑f (ofComplex z) : ℤ) : ℂ)
+    ∑ p ∈ S.filter (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2),
+          ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
+        + ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖),
+          ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
+        + ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
+          ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
         + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
         + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
         + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
-  have hnorm : ∀ s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ), ‖s‖ = 1 := by
-    simp [UpperHalfPlane.norm_ρ]
-  have hinv : ∀ s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
-      -1 / s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) := by
-    simp
-  have hHgt : ∀ s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ), s.im < H := fun s hs => by
-    have h1 : s.im ≤ ‖s‖ := (le_abs_self _).trans (Complex.abs_im_le_norm s)
-    rw [hnorm s hs] at h1
-    linarith
-  -- The basepoint sits at height `H`, above all three corners, and its real part is exactly
-  -- `1/2`, which `hin` forbids off the corners.
-  have hbase : fdBoundary H 0 ∉ (T : Set ℂ) := fun hmem => by
-    have hre : (fdBoundary H 0).re = 1 / 2 := by rw [fdBoundary_apply_zero]; simp
-    have him : (fdBoundary H 0).im = H := by rw [fdBoundary_apply_zero]; simp
-    by_cases hE : fdBoundary H 0 ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)
-    · simp only [Finset.mem_insert, Finset.mem_singleton] at hE
-      rcases hE with h | h | h <;> rw [h] at him <;>
-        simp only [Complex.I_im, Complex.add_im, Complex.one_im, add_zero, coe_rho_im] at him <;>
-        linarith [sqrt_three_div_two_lt_one]
-    · have := (hin _ (Finset.mem_coe.mp hmem) hE).2.1
-      rw [hre] at this
-      norm_num at this
-  -- A corner outside `T` contributes nothing, so the count may be taken over all three.
-  have hmiss : ∀ c ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
-      c ∉ T ∩ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
-      Contour.windingNumber (fdBoundary H) 0 5 c *
-        ((orderOfVanishingAt ⇑f (ofComplex c) : ℤ) : ℂ) = 0 := fun c hc hcni => by
-    rw [orderOfVanishingAt_corner_eq_zero f hH hUdom hoff hc
-      fun hcT => hcni (Finset.mem_inter.mpr ⟨hcT, hc⟩)]
-    simp
-  -- Named because `Finset.sum_sdiff` is rewritten right-to-left, so the subset's two `Finset`
-  -- arguments are not determined by the goal and must be pinned here.
-  have hTE : T ∩ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ⊆ T := Finset.inter_subset_left
-  have key := sum_windingNumber_mul_orderOfVanishingAt_eq f hS hH.le hnorm hinv hHgt hper hoffγ hU
-    hUdom hoff hmero hpos hbase hga hgz
-  rw [sum_attach_mul_orderOfVanishingAt hpos fun z => Contour.windingNumber (fdBoundary H) 0 5 z,
-    ← Finset.sum_sdiff hTE,
-    Finset.sdiff_inter_self_left, Finset.sum_subset Finset.inter_subset_right hmiss,
-    sum_sdiff_corner_windingNumber_mul_order hH hpos hin,
-    sum_corner_windingNumber_mul_order hH hper] at key
+  have hper : Periodic (⇑f ∘ ofComplex) 1 :=
+    SlashInvariantFormClass.periodic_comp_ofComplex f one_mem_strictPeriods_SL
+  have hg : MDiff (⇑f : ℍ → ℂ) := ModularFormClass.holo f
+  have hoffγU := analyticAt_comp_ofComplex_and_ne_zero_of_notMem (k := k) hf hH.le hcomp hHgt
+  -- Only the slash-invariant class is transported to the `⊤`-shaped subgroup: a `map`-shaped
+  -- `ModularFormClass` instance would shadow the `𝒮ℒ`-shaped searches above.
+  have : SlashInvariantFormClass F ((⊤ : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)) k :=
+    MonoidHom.range_eq_map (Matrix.SpecialLinearGroup.mapGL ℝ : SL(2, ℤ) →* GL (Fin 2) ℝ) ▸
+      inferInstance
+  have key := sum_windingNumber_mul_orderOfVanishingAt_eq f hH.le
+    (hasCauchyPVWith_fdBoundary_logDeriv_arcSingularSet_union_verticalSingularSet
+      (Γ := (⊤ : Subgroup SL(2, ℤ))) (k := k) f (Subgroup.mem_top _) hH hHgt hper hoffγU hga hgz)
+    hU hUdom hoff
+    (fun s hs _ =>
+      (UpperHalfPlane.analyticAt_comp_ofComplex hg (im_pos_of_mem_image s hs)).meromorphicAt)
+    im_pos_of_mem_image (fdBoundary_zero_notMem_image hHgt)
+  rw [sum_attach_mul_orderOfVanishingAt im_pos_of_mem_image
+      (Contour.windingNumber (fdBoundary H) 0 5),
+    Finset.sum_image fun p _ q _ h => UpperHalfPlane.coe_injective h] at key
+  simp only [ofComplex_apply] at key
+  rw [sum_windingNumber_mul_orderOfVanishingAt_coe_eq (Γ := (⊤ : Subgroup SL(2, ℤ))) (k := k) f
+      (Subgroup.mem_top _) hH hper hSfd hcomp hHgt] at key
   linear_combination -key
 
-
-/-- **The valence formula, with its divisor sum reindexed over orbits.** The order is constant
-along the `SL₂(ℤ)`-action, so the interior divisor points may be replaced by the orbits they
-represent; this is faithful because distinct points of the open fundamental domain lie in
-distinct orbits.
-
-⚠ The sum here runs over the orbits *met by the divisor set* `T`, **not** over the whole
-non-elliptic orbit space, which is what the roadmap's Layer-1 target states. Reaching that needs
-the further step that an orbit missed by `T` contributes `0`.
-
-⚠ This inherits the arc-zero restriction of
-`sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`, since it is proved through
-it: a form with a zero on the unit arc away from the corners is out of reach here too.
-
-Level one is forced: `orderOfVanishingOnOrbit` is defined for `𝒮ℒ`-invariant forms, so this
-theorem takes the level-one class rather than a general `Γ`. -/
-theorem finsum_orderOfVanishingOnOrbit_mem_image_add_elliptic_add_qExpansionOrderAtCusp_eq
-    [SlashInvariantFormClass F 𝒮ℒ k] (f : F) {H : ℝ} {T : Finset ℂ} {U : Set ℂ} (hH : 1 < H)
-    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5,
-      fdBoundary H t ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
-      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
-    (hU : IsOpen U)
-    (hUdom : UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H ⊆ U)
-    (hoff : ∀ z ∈ U, z ∉ T → AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0)
-    (hmero : ∀ s ∈ T, s ∈ U → MeromorphicAt (⇑f ∘ ofComplex) s)
-    (hpos : ∀ s ∈ T, 0 < s.im)
-    (hin : ∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
-      1 < ‖z‖ ∧ |z.re| < 1 / 2 ∧ z.im < H)
-    (hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
-      AnalyticAt ℂ (cuspFunction 1 ⇑f) q)
-    (hgz : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
-      cuspFunction 1 ⇑f q ≠ 0) :
-    ((∑ᶠ q ∈ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
-              MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ''
-            ↑(T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
-          orderOfVanishingOnOrbit f q : ℤ) : ℂ)
-        + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
-        + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
-        + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
-  have horb : ∑ z ∈ T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
-        orderOfVanishingAt (⇑f) (ofComplex z) =
-      ∑ᶠ q ∈ (fun z : ℂ ↦ (Quotient.mk'' (ofComplex z) :
-            MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ''
-          ↑(T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
-        orderOfVanishingOnOrbit (k := k) f q :=
-    sum_orderOfVanishingAt_ofComplex_eq_finsum_orbit (k := k) f
-      (fun z hz => hpos z (Finset.mem_sdiff.mp hz).1)
-      (fun z hz => (hin z (Finset.mem_sdiff.mp hz).1 (Finset.mem_sdiff.mp hz).2).1)
-      (fun z hz => (hin z (Finset.mem_sdiff.mp hz).1 (Finset.mem_sdiff.mp hz).2).2.1)
-  have : SlashInvariantFormClass F ((⊤ : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)) k :=
-    MonoidHom.range_eq_map (Matrix.SpecialLinearGroup.mapGL ℝ : SL(2, ℤ) →* GL (Fin 2) ℝ) ▸ ‹_›
-  have key := sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
-    (Γ := ⊤) f (Subgroup.mem_top _) hH
-    (SlashInvariantFormClass.periodic_comp_ofComplex f
-      (MonoidHom.range_eq_map (Matrix.SpecialLinearGroup.mapGL ℝ : SL(2, ℤ) →* GL (Fin 2) ℝ) ▸
-        one_mem_strictPeriods_SL)) hoffγ hU hUdom hoff hmero hpos hin hga hgz
-  rw [← horb]
-  push_cast
-  exact key
 
 -- Step 4 of the rung-1 bridge. Analyticity is holomorphy transported through `ofComplex`.
 -- Non-vanishing is where the zeros-confinement clause earns its place: a zero of `g ∘ ofComplex`
@@ -650,75 +852,107 @@ private lemma exists_threshold_cuspFunction_ne_zero [ModularFormClass F 𝒮ℒ 
   simpa using (mem_closedBall_zero_iff.mp hq).trans_lt hlt
 
 
-/-- **The valence formula for a level-one modular form, once `H` clears a threshold.**
-Periodicity (`hper`) is constructed unconditionally, via
-`SlashInvariantFormClass.periodic_comp_ofComplex` and `one_mem_strictPeriods_SL`.
-`sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq` further asks for an ambient
-open set `U` dominating the truncated fundamental domain, the off-divisor analyticity `hoff`, the
-meromorphy `hmero`, and the cusp-function data `hga`/`hgz` on `Metric.closedBall 0
-(fdBoundaryQRadius H)`. All six come for free once `f` is a level-one modular form: `U` and `hoff`
-from the zeros-confinement construction (`UpperHalfPlane.exists_isOpen_zeros_inter`,
-`hoff_of_zeros_confined`), `hmero` from holomorphy via `UpperHalfPlane.analyticAt_comp_ofComplex`,
-and `hga` from `differentiableOn_cuspFunction_ball` — but `hgz` only from
-`exists_threshold_cuspFunction_ne_zero`, and only **above a threshold** `H₀`:
-`fdBoundaryQRadius H = exp (-2πH)` shrinks as `H` grows, while `cuspFunction_eventually_ne_zero`
-gives non-vanishing only on some fixed punctured neighbourhood of `0`, so the two meet only once
-`H` clears `H₀`. That threshold is exactly what this theorem returns.
-
-The hypotheses `hoffγ`, the strict-interior condition `hin` on the non-elliptic points of `T`, and
-completeness of the zero set of `T` (`hT`) all mention `H`, so — together with the threshold
-hypothesis itself — they sit inside the `∀ H` binder rather than being fixed in advance.
-
-`hoffγ` is assumed rather than derived from `hT` and `hin`, even though it looks derivable: a
-boundary zero would, by `hT`, land in `T`, and then, by `hin`, satisfy the strict-interior bounds —
-impossible for a point of the contour itself. But that only shows `hT` and `hin` are jointly
-unsatisfiable whenever `f` *has* such a zero, so deriving `hoffγ` this way would hide the
-restriction rather than lift it. ⚠ So, like
-`sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq` that it feeds into, this theorem
-does not reach a form with a non-corner zero on the boundary contour, arc or vertical. Lifting that
-needs the divisor set split along the arc/vertical singular-set pairing —
-`arcSingularSet`/`verticalSingularSet` in `SingularSets.lean`, with `ArcPairing`/`VerticalCancel`
-supplying the cancellations — rather than assuming `hoffγ` outright. -/
-theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
-    [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {T : Finset ℂ}
-    (hpos : ∀ s ∈ T, 0 < s.im) :
-    ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H →
-      (∀ t ∈ Icc (0 : ℝ) 5,
-        fdBoundary H t ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
-        AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0) →
-      (∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
-        1 < ‖z‖ ∧ |z.re| < 1 / 2 ∧ z.im < H) →
-      (∀ z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H,
-        (⇑f ∘ ofComplex) z = 0 → z ∈ T) →
-      ∑ z ∈ T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
-            ((orderOfVanishingAt ⇑f (ofComplex z) : ℤ) : ℂ)
-          + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
-          + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
-          + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
+/-- The cusp function of a level-one modular form is analytic on the closed `q`-disk of the
+contour: it is differentiable on the unit ball, and the disk's radius `exp (-2πH)` stays
+below `1`. -/
+private lemma analyticAt_cuspFunction_of_mem_closedBall [ModularFormClass F 𝒮ℒ k] (f : F)
+    {H : ℝ} (hH : 1 < H) :
+    ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
+      AnalyticAt ℂ (cuspFunction 1 ⇑f) q := by
   have hper : Periodic (⇑f ∘ ofComplex) 1 :=
     SlashInvariantFormClass.periodic_comp_ofComplex f one_mem_strictPeriods_SL
-  have hg : MDiff (⇑f : ℍ → ℂ) := ModularFormClass.holo f
   have : Fact (IsCusp OnePoint.infty 𝒮ℒ) :=
     ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos one_mem_strictPeriods_SL⟩
-  have hbdd : IsBoundedAtImInfty (⇑f : ℍ → ℂ) := ModularFormClass.bdd_at_infty f
-  obtain ⟨H₀, hH₀⟩ := exists_threshold_cuspFunction_ne_zero hf
-  refine ⟨max H₀ 2, fun H hHH₀ hoffγ hin hT => ?_⟩
-  have hH₀H : H₀ ≤ H := le_trans (le_max_left H₀ 2) hHH₀
-  have hH : 1 < H := by linarith [le_max_right H₀ 2, hHH₀]
-  obtain ⟨U, hU, hUdom, hUsub, hUZ⟩ := UpperHalfPlane.exists_isOpen_zeros_inter hg hf
-    (K := UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H)
-    (image_subset_iff.mpr fun p _ ↦ p.im_pos)
-  have : ModularFormClass F ((⊤ : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)) k :=
-    MonoidHom.range_eq_map (Matrix.SpecialLinearGroup.mapGL ℝ : SL(2, ℤ) →* GL (Fin 2) ℝ) ▸ ‹_›
-  exact sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
-    (Γ := ⊤) f (Subgroup.mem_top _) hH hper hoffγ hU hUdom
-    (hoff_of_zeros_confined hg hUsub hUZ hT)
-    (fun s hsT _ ↦ (UpperHalfPlane.analyticAt_comp_ofComplex hg (hpos s hsT)).meromorphicAt)
-    hpos hin
-    (fun q hq => (differentiableOn_cuspFunction_ball one_pos hper hg hbdd).analyticAt <|
+  exact fun q hq => (differentiableOn_cuspFunction_ball one_pos hper (ModularFormClass.holo f)
+    (ModularFormClass.bdd_at_infty f)).analyticAt <|
       Metric.isOpen_ball.mem_nhds <| mem_ball_zero_iff.mpr <|
-        (mem_closedBall_zero_iff.mp hq).trans_lt (fdBoundaryQRadius_lt_one (zero_lt_one.trans hH)))
-    (hH₀ H hH₀H)
+        (mem_closedBall_zero_iff.mp hq).trans_lt (fdBoundaryQRadius_lt_one (zero_lt_one.trans hH))
+
+/-- **The valence formula for a nonzero level-one modular form.** Only nonvanishing and
+completeness of the divisor set remain: the truncation height and all the analytic inputs of
+`sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq` are constructed here.
+
+The height is internal, following the AINTLIB proof: `exists_height_bound` dominates the
+divisor set, and `exists_threshold_cuspFunction_ne_zero` supplies the threshold above which the
+`q`-disk of radius `fdBoundaryQRadius H = exp (-2πH)` sits inside the cusp function's
+non-vanishing neighbourhood — the maximum of the two serves. The remaining inputs come for
+free: `U` and `hoff` from the zeros-confinement construction
+(`UpperHalfPlane.exists_isOpen_zeros_inter`, `hoff_of_zeros_confined`) — completeness over the
+closed fundamental domain hands the confinement its capture hypothesis — and `hga` from
+`differentiableOn_cuspFunction_ball`. -/
+theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero
+    [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {S : Finset ℍ}
+    (hSfd : ∀ p ∈ S, orderOfVanishingAt ⇑f p ≠ 0 → p ∈ 𝒟)
+    (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt ⇑f p ≠ 0 → p ∈ S) :
+    ∑ p ∈ S.filter (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2),
+          ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
+        + ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖),
+          ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
+        + ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
+          ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
+        + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
+        + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
+        + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
+  have hg : MDiff (⇑f : ℍ → ℂ) := ModularFormClass.holo f
+  obtain ⟨H₀, hH₀⟩ := exists_threshold_cuspFunction_ne_zero hf
+  obtain ⟨H₁, -, hH₁1, hH₁⟩ := exists_height_bound S
+  have hH : 1 < max H₀ H₁ := hH₁1.trans_le (le_max_right _ _)
+  have hHgt : ∀ p ∈ S, (p : ℂ).im < max H₀ H₁ := fun p hp =>
+    (hH₁ p hp).trans_le (le_max_right _ _)
+  obtain ⟨U, hU, hUdom, hUsub, hUZ⟩ := UpperHalfPlane.exists_isOpen_zeros_inter hg hf
+    (K := UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain (max H₀ H₁))
+    (image_subset_iff.mpr fun p _ ↦ p.im_pos)
+  refine sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq f hf hH hSfd hcomp
+    hHgt hU hUdom (hoff_of_zeros_confined hg hUsub hUZ ?_)
+    (analyticAt_cuspFunction_of_mem_closedBall f hH) (hH₀ _ (le_max_left _ _))
+  rintro z ⟨q, hq, rfl⟩ h0
+  exact Finset.mem_image_of_mem _ (hcomp q hq.1 (orderOfVanishingAt_ne_zero_of_eq_zero hg hf
+    (by simpa [Function.comp_apply, ofComplex_apply] using h0)))
+
+/-- **The valence formula, with its interior divisor sum reindexed over orbits.** The order is
+constant along the `SL₂(ℤ)`-action, so the interior divisor points may be replaced by the
+orbits they represent; this is faithful because distinct points of the open fundamental domain
+lie in distinct orbits. The boundary families stay as point sums: the closed domain's boundary
+identifications are exactly what the left-representative filters already quotient by.
+
+⚠ The sum here runs over the orbits *met by the divisor set* `S`, **not** over the whole
+non-elliptic orbit space, which is what the roadmap's Layer-1 target states. Reaching that
+needs the further step that an orbit missed by `S` contributes `0`
+(`orderOfVanishingOnOrbit_eq_zero_of_notMem`).
+
+Level one is forced: `orderOfVanishingOnOrbit` is defined for `𝒮ℒ`-invariant forms, so this
+theorem takes the level-one class rather than a general `Γ`. -/
+theorem finsum_orderOfVanishingOnOrbit_mem_image_add_elliptic_add_qExpansionOrderAtCusp_eq
+    [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {S : Finset ℍ}
+    (hSfd : ∀ p ∈ S, orderOfVanishingAt ⇑f p ≠ 0 → p ∈ 𝒟)
+    (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt ⇑f p ≠ 0 → p ∈ S) :
+    ((∑ᶠ q ∈ (fun p : ℍ ↦ (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ''
+            ↑(S.filter (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)),
+          orderOfVanishingOnOrbit f q : ℤ) : ℂ)
+        + ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖),
+          ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
+        + ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
+          ((orderOfVanishingAt ⇑f p : ℤ) : ℂ)
+        + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
+        + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
+        + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
+  have hfdo : ∀ p ∈ S.filter (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2), p ∈ 𝒟ᵒ := by
+    intro p hp
+    obtain ⟨-, hn, hre⟩ := Finset.mem_filter.mp hp
+    exact ⟨Complex.one_lt_normSq_iff.mpr hn, hre⟩
+  have horb : ∑ p ∈ S.filter (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2),
+      orderOfVanishingAt (⇑f) p =
+      ∑ᶠ q ∈ (fun p : ℍ ↦ (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ''
+          ↑(S.filter (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)),
+        orderOfVanishingOnOrbit (k := k) f q :=
+    sum_orderOfVanishingAt_eq_finsum_orbit f (fun p : ℍ ↦ p) fun a ha b hb hab =>
+      TauCeti.ModularGroup.orbit_mk_injOn_fdo (hfdo a (by simpa using ha))
+        (hfdo b (by simpa using hb)) hab
+  have key := sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero
+    f hf hSfd hcomp
+  rw [← horb]
+  push_cast
+  exact key
 
 end ModularForm
 
