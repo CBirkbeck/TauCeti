@@ -41,8 +41,6 @@ closed-domain descriptions (`orbit_mk_eq_I_iff`, `orbit_mk_eq_ρ_iff`).
   non-elliptic orbit space equals the `canonicalReps` sum.
 * `TauCeti.ModularForm.sum_canonicalReps_split`: the `canonicalReps` sum splits into the three
   family sums of the core identity.
-* `TauCeti.ModularForm.finsum_orderOfVanishingOnOrbit_add_elliptic_add_qExpansionOrderAtCusp_eq`:
-  **the valence formula in orbit-space form**, conditional on the core identity `h_core`.
 
 ## References
 
@@ -335,42 +333,6 @@ theorem sum_canonicalReps_split [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (�
   unfold canonicalReps
   rw [Finset.filter_or, Finset.filter_or, Finset.sum_union hd₁, Finset.sum_union hd₂,
     ← add_assoc]
-
-/-- **The valence formula in orbit-space form**, conditional on the core identity.
-
-The hypothesis `h_core` is the valence formula over an arbitrary complete divisor set
-`S ⊆ 𝒟`, its interior and boundary contributions grouped into the three families produced by
-the contour argument: the strict interior, the left vertical edge, and the left half-arc
-minus `ρ`. It is proved separately, by contour integration of the logarithmic derivative
-along the boundary of the fundamental domain.
-
-The conclusion re-indexes the three families by the non-elliptic orbits they represent:
-
-`∑ᶠ_{q non-elliptic} ord_q f + (1/2)·ord_i f + (1/3)·ord_ρ f + ord_∞ f = k/12`. -/
-theorem finsum_orderOfVanishingOnOrbit_add_elliptic_add_qExpansionOrderAtCusp_eq
-    [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (⇑f : ℍ → ℂ) ≠ 0)
-    (h_core : ∀ S : Finset ℍ, (∀ p ∈ S, p ∈ 𝒟) →
-      (∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) →
-      ((∑ p ∈ S.filter (fun p : ℍ ↦
-          (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧ 1 < ‖(p : ℂ)‖ ∧
-            |(p : ℂ).re| < 1 / 2),
-          orderOfVanishingAt f p : ℤ) : ℂ) +
-        ((∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖),
-          orderOfVanishingAt f p : ℤ) : ℂ) +
-        ((∑ p ∈ S.filter (fun p : ℍ ↦
-          (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
-          orderOfVanishingAt f p : ℤ) : ℂ) +
-        1 / 2 * (orderOfVanishingAt f I : ℂ) + 1 / 3 * (orderOfVanishingAt f ρ : ℂ) +
-        qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12) :
-    ((∑ᶠ q : NonEllipticOrbit, orderOfVanishingOnOrbit f q.val : ℤ) : ℂ) +
-      1 / 2 * (orderOfVanishingAt f I : ℂ) + 1 / 3 * (orderOfVanishingAt f ρ : ℂ) +
-      qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
-  have h := h_core (fdZeros hf) (fun p hp ↦ (mem_fdZeros.mp hp).1)
-    fun p hp hord ↦ mem_fdZeros.mpr ⟨hp, hord⟩
-  rw [finsum_orderOfVanishingOnOrbit_eq_sum_canonicalReps hf, sum_canonicalReps_split hf]
-  push_cast
-  push_cast at h
-  linear_combination h
 
 end ModularForm
 
