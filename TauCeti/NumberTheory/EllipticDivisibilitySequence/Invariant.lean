@@ -9,25 +9,26 @@ public import Mathlib.NumberTheory.EllipticDivisibilitySequence
 /-!
 # The invariant of an elliptic net
 
-An elliptic net `W : ℤ → R` carries, for each `s`, a quantity that does not depend on `n`:
-the ratio of
+For an elliptic net `W : ℤ → R` and each `s`, the two quantities
 
 * `IsEllipticNet.invarNum W s n
     = (W (n + 2s) * W (n - s)² + W (n + s)² * W (n - 2s)) * W s² + W n³ * W (2s)²`, and
-* `IsEllipticNet.invarDenom W s n = W (n + s) * W n * W (n - s)`.
+* `IsEllipticNet.invarDenom W s n = W (n + s) * W n * W (n - s)`
 
-`R` is only a commutative ring, so the ratio itself need not exist; the statement is therefore the
-cross-multiplied one,
+cross-multiply symmetrically in the two indices:
 
 `invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m`,
 
-which is `IsEllipticNet.invarNum_mul_invarDenom`. Over a field, on any set of indices where
-`invarDenom W s ·` is nonvanishing, it says exactly that `n ↦ invarNum/invarDenom` is constant
-there: the hypothesis is `IsEllipticNet W`, and cancelling the identity at a pair `m, n` needs both
-`invarDenom W s m` and `invarDenom W s n` to be nonzero, not just one of them. When `W` is the
-division-polynomial sequence of a Weierstrass curve, that constant is a coordinate of the point
-being multiplied — which is what makes the invariant the bridge between the elliptic-net identities
-and the curve.
+which is `IsEllipticNet.invarNum_mul_invarDenom`. That identity, and not a statement about a
+ratio, is what this file proves: `R` is only a commutative ring, where a denominator may vanish or
+be a zero divisor and `invarNum / invarDenom` need not exist at all.
+
+Over a field it does become a statement about a ratio. On any set of indices where
+`invarDenom W s ·` is nonvanishing, cancelling the identity at a pair `m, n` — which needs both
+`invarDenom W s m` and `invarDenom W s n` nonzero, not just one of them — says exactly that
+`n ↦ invarNum/invarDenom` is constant there. When `W` is the division-polynomial sequence of a
+Weierstrass curve, that constant is a coordinate of the point being multiplied, which is what makes
+the invariant the bridge between the elliptic-net identities and the curve.
 
 ## Main definitions
 
@@ -36,15 +37,18 @@ and the curve.
   *theorem* that asks `W` to be an elliptic net; the file proves that direction only, and states
   no converse.
 * `IsEllipticNet.invarNum_def`, `IsEllipticNet.invarDenom_def`: the defining formulas, as public
-  equation lemmas. The definition bodies are not exposed, so these are how a consumer computes
-  with them.
+  equation lemmas. The section is a plain `public section`, so the bodies are exported unexposed
+  and an importing module cannot unfold them: these equations are how a consumer computes.
 
 ## Main results
 
 * `IsEllipticNet.invarNum_mul_invarDenom`: the invariance identity for an elliptic net —
   `invarNum` and `invarDenom` cross-multiply symmetrically in the two indices.
 * `IsEllipticNet.map_invarNum`, `IsEllipticNet.map_invarDenom`: both are natural in `R`. These are
-  deliberately not `@[simp]` — the `_def` equations are, and `simp` derives naturality from them.
+  deliberately not `@[simp]` — the `_def` equations are, and `simp` derives naturality from them —
+  but they are named, because the `simp only` sets of the specialization arguments downstream need
+  naturality *without* unfolding the invariant, exactly as Mathlib names `map_atom`, `map_rel` and
+  `map_normEDS` alongside the same objects' defining equations.
 
 ## Implementation notes
 
@@ -90,8 +94,8 @@ def invarNum (s n : ℤ) : R :=
   (W (n + 2 * s) * W (n - s) ^ 2 + W (n + s) ^ 2 * W (n - 2 * s)) * W s ^ 2
     + W n ^ 3 * W (2 * s) ^ 2
 
-/-- The defining formula for `invarNum`. The definition body is not exposed, so this equation
-lemma is how a consumer computes with it. -/
+/-- The defining formula for `invarNum`. The body is exported unexposed, so an importing
+module cannot unfold it and this equation lemma is how a consumer computes with it. -/
 @[simp]
 theorem invarNum_def (s n : ℤ) : invarNum W s n =
     (W (n + 2 * s) * W (n - s) ^ 2 + W (n + s) ^ 2 * W (n - 2 * s)) * W s ^ 2
@@ -100,8 +104,8 @@ theorem invarNum_def (s n : ℤ) : invarNum W s n =
 /-- The denominator of the invariant of an elliptic net, `W (n + s) * W n * W (n - s)`. -/
 def invarDenom (s n : ℤ) : R := W (n + s) * W n * W (n - s)
 
-/-- The defining formula for `invarDenom`. The definition body is not exposed, so this equation
-lemma is how a consumer computes with it. -/
+/-- The defining formula for `invarDenom`. The body is exported unexposed, so an importing
+module cannot unfold it and this equation lemma is how a consumer computes with it. -/
 @[simp]
 theorem invarDenom_def (s n : ℤ) : invarDenom W s n = W (n + s) * W n * W (n - s) := (rfl)
 
@@ -140,8 +144,11 @@ variable {F : Type*} [FunLike F R S] [RingHomClass F R S] (f : F)
 /-- The numerator of the invariant is natural in the coefficient ring.
 
 Not `@[simp]`: with `invarNum_def` tagged, `simp` derives this from it together with `map_add`,
-`map_mul`, `map_pow` and `Function.comp_apply`, so tagging it too is a `simpNF` duplicate. It
-stays as a named fact for use by hand. -/
+`map_mul`, `map_pow` and `Function.comp_apply`, so tagging it too is a `simpNF` duplicate. It is
+still wanted under its own name, because the specialization arguments downstream rewrite with
+`simp only` — where nothing fires unless it is named, and where the point is to move a ring hom
+through the invariant *without* unfolding it into its six-term formula. This is the role Mathlib's
+`map_atom`, `map_rel` and `map_normEDS` play for the rest of this API. -/
 theorem map_invarNum (s n : ℤ) : f (invarNum W s n) = invarNum (f ∘ W) s n := by
   simp only [invarNum, map_add, map_mul, map_pow, Function.comp_apply]
 
