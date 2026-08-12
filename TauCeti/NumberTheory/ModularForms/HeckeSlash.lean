@@ -151,14 +151,14 @@ lemma heckeSlashSum_add (f g : ℍ → ℂ) : heckeSlashSum k D (f + g) =
 lemma heckeSlashSum_zero : heckeSlashSum k D 0 = 0 :=
   Finset.sum_eq_zero fun i _ ↦ SlashAction.zero_slash k (tRep D i)
 
-/-- **The slash sum is `ℂ`-linear in `f`.** Each summand has positive
-determinant, so `ModularForm.rat_smul_slash_of_det_pos` applies and the scalar passes through
-with no `σ` twist. -/
+/-- **The slash sum is homogeneous in `f`**: a scalar acting on `ℂ` through the scalar tower
+passes out of the sum. With `heckeSlashSum_add`, at `α := ℂ`, this gives `ℂ`-linearity. -/
 @[simp]
-lemma heckeSlashSum_smul {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α)
-    (f : ℍ → ℂ) : heckeSlashSum k D (c • f) = c • heckeSlashSum k D f := by
-  rw [heckeSlashSum, heckeSlashSum, Finset.smul_sum]
-  exact Finset.sum_congr rfl fun i _ ↦
-    ModularForm.rat_smul_slash_of_det_pos k (det_tRep_pos D i) f c
+lemma heckeSlashSum_smul {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α) (f : ℍ → ℂ) :
+    heckeSlashSum k D (c • f) = c • heckeSlashSum k D f :=
+  -- each representative has positive determinant, so the slash carries no `σ` twist: the
+  -- scalar leaves the summands one at a time, and only then comes out of the sum as a whole
+  (Finset.sum_congr rfl fun i _ ↦ ModularForm.rat_smul_slash_of_det_pos k
+    (det_tRep_pos D i) f c).trans Finset.smul_sum.symm
 
 end HeckeRing.GL2
