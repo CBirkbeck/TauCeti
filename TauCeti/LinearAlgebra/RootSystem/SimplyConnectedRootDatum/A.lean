@@ -94,31 +94,6 @@ the coordinates of `e_a - e_b`; the `k`-th potential is `[a ≤ k]`. -/
 private def typeACoweight (n a : ℕ) : Fin n → ℤ :=
   fun k => if a ≤ (k : ℕ) then 1 else 0
 
-/-- **A shifted natural-number indicator picks out one summand.** Summing `g` over `Fin n` against
-the indicator of `b = k + j` gives `g` at the index `b - j` when that is a valid index and `j ≤ b`,
-and `0` otherwise. -/
-private lemma sum_ite_natCast_add_mul (b j : ℕ) (g : Fin n → ℤ) :
-    ∑ k : Fin n, (if b = (k : ℕ) + j then (1 : ℤ) else 0) * g k
-      = if h : b - j < n ∧ j ≤ b then g ⟨b - j, h.1⟩ else 0 := by
-  simp only [ite_mul, one_mul, zero_mul]
-  by_cases h : b - j < n ∧ j ≤ b
-  · rw [dite_eq_left h]
-    calc
-      _ = ∑ k : Fin n, if (⟨b - j, h.1⟩ : Fin n) = k then g k else 0 := by
-        refine Finset.sum_congr rfl fun k _ => ?_
-        congr 1
-        apply propext
-        constructor
-        · intro hb
-          exact Fin.ext (by simp only; omega)
-        · intro hk
-          have hkval := congrArg Fin.val hk
-          simp only at hkval
-          omega
-      _ = _ := Fintype.sum_ite_eq _ _
-  · rw [dite_eq_right h]
-    exact Finset.sum_eq_zero fun k _ => ite_eq_right (by omega)
-
 /-- The fundamental pairing identity of type `Aₙ`: in the classical model `⟨e_a, e_c^∨⟩` would be
 `[a = c]`, and the two pinned lattices see that up to the single correction `[a = n]`, which
 cancels in the differences that are the roots and coroots. -/
@@ -128,12 +103,15 @@ private lemma typeAWeight_dotProduct_typeACoweight {a c : ℕ} (ha : a ≤ n) (h
   have key : ∀ b : ℕ, ∑ k : Fin n, (if b = (k : ℕ) then (1 : ℤ) else 0) *
       (if c ≤ (k : ℕ) then 1 else 0) = if h : b < n then (if c ≤ b then (1 : ℤ) else 0) else 0 :=
     fun b => by
-      simpa only [Nat.add_zero, Nat.sub_zero, Nat.zero_le, and_true, Fin.val_mk] using
-        sum_ite_natCast_add_mul b 0 (fun k : Fin n => if c ≤ (k : ℕ) then (1 : ℤ) else 0)
+      simp only [ite_mul, one_mul, zero_mul]
+      simpa only [Nat.add_zero, Nat.sub_zero, Nat.zero_le, and_true] using
+        sum_ite_val_add (fun k : Fin n => if c ≤ (k : ℕ) then (1 : ℤ) else 0) b 0
   have key' : ∀ b : ℕ, ∑ k : Fin n, (if b = (k : ℕ) + 1 then (1 : ℤ) else 0) *
       (if c ≤ (k : ℕ) then 1 else 0)
         = if h : b - 1 < n ∧ 1 ≤ b then (if c ≤ b - 1 then (1 : ℤ) else 0) else 0 :=
-    fun b => sum_ite_natCast_add_mul b 1 _
+    fun b => by
+      simp only [ite_mul, one_mul, zero_mul]
+      exact sum_ite_val_add (fun k : Fin n => if c ≤ (k : ℕ) then (1 : ℤ) else 0) b 1
   simp only [dotProduct, typeAWeight, typeACoweight, sub_mul, Finset.sum_sub_distrib,
     key a, key' a]
   split_ifs <;> omega
