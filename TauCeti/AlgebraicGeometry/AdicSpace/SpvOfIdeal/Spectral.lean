@@ -21,8 +21,11 @@ spectral with the sets
 Spv (A, I)(T/s) = { v ∈ Spv (A, I) ; v(t) ≤ v(s) ≠ 0 for all t ∈ T },   I ⊆ √(T · A)
 ```
 
-as a generating family. (Wedhorn states them as a basis of quasi-compact opens; what is
-proved here is that they generate the topology, which is what the patch criterion consumes.)
+as a generating family. (Wedhorn states them as a basis of quasi-compact opens. Both halves that
+are about individual members are proved here: they generate the topology, which is what the patch
+criterion consumes, and each is quasi-compact. The *basis* property itself — every open a union
+of them — is not, since it needs stability under finite intersection, Wedhorn's step (i), which
+the criterion absorbs rather than proves.)
 No second topology on the subtype is introduced here: the
 `Subtype` instance *is* that topology, which is the content of
 `instTopologicalSpace_spvOfIdeal_eq_generateFrom`.
@@ -63,10 +66,12 @@ below is the public neighbourhood interface that merges them.)
   that `R` generates the subspace topology.
 * `TauCeti.ValuationSpectrum.restrictToIdealCodRestrict_preimage` : **step (iii)**,
   `r_I⁻¹(Spv(A,I)(T/s)) = Spv(A)(T/s)`.
+* `TauCeti.ValuationSpectrum.isCompact_of_mem_rationalFamily` : the members of `R` are
+  quasi-compact, the other half of what Lemma 7.5(1) asserts about them.
 * `TauCeti.ValuationSpectrum.continuous_restrictToIdealCodRestrict` : **Lemma 7.5(2)**, the
   continuity half — steps (ii) and (iii) give it at once. Wedhorn's further claim that `r_I` is
-  a *spectral* map is not recorded here: it needs the rational subsets to be quasi-compact, and
-  that half of 7.5(1) is not yet on `main`.
+  a *spectral* map is not recorded here; the quasi-compactness that claim needs is available as
+  `isCompact_of_mem_rationalFamily` just above.
 
 ## References
 
@@ -383,6 +388,16 @@ theorem restrictToIdealCodRestrict_preimage (I : Ideal A)
 
 /-! ### Wedhorn Lemma 7.5(1) -/
 
+/-- Every member of `R` is clopen for the witness topology: step (iii) computes its `r_I`-preimage
+to be `Spv(A)(T/u)`, which is patch-clopen in `Spv A`. -/
+private lemma isClopen_patchTopologyOfIdeal_of_mem_rationalFamily (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
+    ∀ V ∈ rationalFamily I hfg, @IsClopen _ (patchTopologyOfIdeal I hfg) V := by
+  rintro _ ⟨T, u, hadm, rfl⟩
+  exact isClopen_patchTopologyOfIdeal_of_preimage I hfg
+    (by rw [restrictToIdealCodRestrict_preimage I hfg hadm]
+        exact isClopen_patchTopology_basicOpenFinset T u)
+
 /-- **Wedhorn, Lemma 7.5(1)**: `Spv (A, I)` is a spectral space.
 
 The patch criterion is applied with the subspace topology as the generated one — the admissible
@@ -393,19 +408,30 @@ theorem spectralSpace_spvOfIdeal (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     SpectralSpace (spvOfIdeal I hfg) :=
   spectralSpace_of_isClopen_generateFrom (instTopologicalSpace_spvOfIdeal_eq_generateFrom I hfg)
-    (compactSpace_patchTopologyOfIdeal I hfg) (by
-      rintro _ ⟨T, u, hadm, rfl⟩
-      exact isClopen_patchTopologyOfIdeal_of_preimage I hfg
-        (by rw [restrictToIdealCodRestrict_preimage I hfg hadm]
-            exact isClopen_patchTopology_basicOpenFinset T u))
+    (compactSpace_patchTopologyOfIdeal I hfg)
+    (isClopen_patchTopologyOfIdeal_of_mem_rationalFamily I hfg)
+
+/-- **Wedhorn Lemma 7.5(1), the quasi-compactness half.** Every member of `R` is a quasi-compact
+open of `Spv (A, I)` — the property Wedhorn states alongside "basis", and the one that
+quasi-compactness in `Spv A` does *not* supply, since `Spv (A, I)` is not closed there.
+
+Same witness topology as the spectrality proof, so the patch criterion's
+`isCompact_of_isClopen_generateFrom` applies directly. -/
+theorem isCompact_of_mem_rationalFamily (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {V : Set (spvOfIdeal I hfg)}
+    (hV : V ∈ rationalFamily I hfg) : IsCompact V :=
+  isCompact_of_isClopen_generateFrom (t' := patchTopologyOfIdeal I hfg)
+    (instTopologicalSpace_spvOfIdeal_eq_generateFrom I hfg)
+    (compactSpace_patchTopologyOfIdeal I hfg)
+    (isClopen_patchTopologyOfIdeal_of_mem_rationalFamily I hfg) hV
 
 /-! ### Wedhorn Lemma 7.5(2) -/
 
 /-- **Wedhorn Lemma 7.5(2)**, the continuity half: the retraction `r_I : Spv A → Spv (A, I)`
 is continuous.
 
-Wedhorn also calls `r_I` a *spectral* map; that half is not recorded here, as it additionally
-needs the rational subsets of `Spv (A, I)` to be quasi-compact. -/
+Wedhorn also calls `r_I` a *spectral* map; that half is not recorded here. The quasi-compactness
+of the rational subsets which it additionally needs is `isCompact_of_mem_rationalFamily` above. -/
 @[fun_prop]
 theorem continuous_restrictToIdealCodRestrict (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
