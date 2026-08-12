@@ -52,6 +52,7 @@ noncomputable def frobeniusPullback : CoordinatePullback W W :=
     (FiniteField.frobeniusAlgHom F W.CoordinateRing)
 
 /-- The Frobenius pullback raises to the `q`-th power. -/
+@[simp]
 theorem frobeniusPullback_apply (x : W.CoordinateRing) :
     frobeniusPullback W x = algebraMap W.CoordinateRing W.FunctionField (x ^ Fintype.card F) :=
   (rfl)
@@ -63,10 +64,11 @@ theorem mapsInfinity_frobeniusPullback : (frobeniusPullback W).MapsInfinity := b
   intro x
   refine ⟨X ^ Fintype.card F - C x, monic_X_pow_sub_C x Fintype.card_pos.ne', ?_⟩
   -- The two `algebraMap`s below are different instances: the point is taken along the canonical
-  -- embedding, while `eval₂` uses the pullback's. They agree here because the pullback is the
-  -- `q`-th power map, which is exactly `map_pow`.
+  -- embedding, while `eval₂` uses the pullback's, for which `algebraMap` *is* the pullback. The
+  -- step that matters is `frobeniusPullback_apply`, named here rather than left implicit.
+  have hpull := frobeniusPullback_apply W x
   simp only [eval₂_sub, eval₂_X_pow, eval₂_C]
-  exact sub_eq_zero.mpr (map_pow _ x _).symm
+  exact sub_eq_zero.mpr ((map_pow _ x _).symm.trans hpull.symm)
 
 /-- **The Frobenius isogeny** of a Weierstrass curve over a finite field. -/
 noncomputable def frobeniusIsogeny : Isogeny W W where
