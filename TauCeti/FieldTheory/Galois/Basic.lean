@@ -15,9 +15,9 @@ automorphism exhaust `Gal(L/K)`, and an element fixed by a nontrivial automorphi
 base field. `Algebra.IsQuadraticExtension.quadraticCharacter` records the resulting
 `Gal(L/K) →* ℤˣ` — the identity to `1`, the nontrivial automorphism to `-1`. It is there so that
 a quantity alternating with the Galois action can be described uniformly in `σ` rather than by
-cases; `WeierstrassCurve.quadraticTwistPointEquiv_galois` is the intended consumer. Mathlib's
-`quadraticChar` is a different object — the Legendre symbol of a finite field, not a character of
-a Galois group.
+cases; `WeierstrassCurve.quadraticTwistPointEquiv_map_eq_quadraticCharacter_smul_map` is the
+intended consumer. Mathlib's `quadraticChar` is a different object — the Legendre symbol of a
+finite field, not a character of a Galois group.
 
 The file closes with one lemma that is **not** about quadratic extensions:
 `AlgEquiv.restrictNormal_eq_one_iff_algebraMap` says that in a tower `K ⊆ L ⊆ M` with `L/K`
@@ -143,10 +143,9 @@ variable (K L : Type*) [Field K] [Field L] [Algebra K L] [Normal K L]
   (M : Type*) [Field M] [Algebra K M] [Algebra L M] [IsScalarTower K L M]
 
 /-- **`σ` restricts to the identity on `L` exactly when it fixes `L` pointwise.** Mathlib's
-Mathlib's `AlgEquiv.restrictNormal_eq_one_iff` says this for an `IntermediateField`;
-`AlgEquiv.restrictNormal`
-itself is already stated for an abstract algebra `L`, so only the characterisation needs
-transporting to a tower `K ⊆ L ⊆ M`. -/
+`AlgEquiv.restrictNormal_eq_one_iff` says this for an `IntermediateField`, while
+`AlgEquiv.restrictNormal` itself is already stated for an abstract algebra `L`, so only the
+characterisation needs transporting to a tower `K ⊆ L ⊆ M`. -/
 theorem AlgEquiv.restrictNormal_eq_one_iff_algebraMap (σ : M ≃ₐ[K] M) :
     σ.restrictNormal L = 1 ↔ ∀ x : L, σ (algebraMap L M x) = algebraMap L M x := by
   constructor
