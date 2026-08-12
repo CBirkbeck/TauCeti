@@ -38,7 +38,8 @@ dominates every vertical point.
 
 * [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the valence-formula
   development (`ForMathlib/ValenceFormula/PVChain/Helpers.lean`) this file ports onto the
-  current Mathlib pin.
+  current Mathlib pin; the reflection and union closure lemmas adapt the per-part closure
+  bookkeeping of `ForMathlib/ValenceFormula/PVChain/Assembly.lean`.
 -/
 
 public section
