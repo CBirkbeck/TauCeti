@@ -16,6 +16,8 @@ completely-monotone or Bernstein-function structure.
 
 * `TauCeti.ContDiffOn.hasDerivAt_iteratedDerivWithin`: differentiability of an
   `iteratedDerivWithin` on a neighbourhood inside a unique-differentiability set.
+* `TauCeti.iteratedDerivWithin_neg_derivWithin_succ`: differentiating the negated derivative
+  absorbs one order.
 For the plain fundamental-theorem identity on a compact interval use Mathlib's
 `intervalIntegral.integral_derivWithin_Icc_of_contDiffOn_Icc` together with
 `iteratedDerivWithin_one`.
@@ -39,5 +41,14 @@ theorem ContDiffOn.hasDerivAt_iteratedDerivWithin
   rw [iteratedDerivWithin_succ, derivWithin_of_mem_nhds hx]
   exact (hf.differentiableOn_iteratedDerivWithin
     (by exact_mod_cast Nat.lt_succ_self k) hs).hasDerivAt hx
+
+/-- **Differentiating the negated derivative absorbs one order.** The `m`-th iterated derivative
+of `-f'` is minus the `(m+1)`-st iterated derivative of `f`. -/
+theorem iteratedDerivWithin_neg_derivWithin_succ {f : ℝ → ℝ} {m : ℕ} {s : Set ℝ} {t : ℝ} :
+    iteratedDerivWithin m (fun u => -derivWithin f s u) s t =
+      -iteratedDerivWithin (m + 1) f s t := by
+  -- The negated function elaborates as negation of `derivWithin`; expose that defeq.
+  change iteratedDerivWithin m (-(derivWithin f s)) s t = -iteratedDerivWithin (m + 1) f s t
+  rw [iteratedDerivWithin_neg, ← iteratedDerivWithin_succ']
 
 end TauCeti
