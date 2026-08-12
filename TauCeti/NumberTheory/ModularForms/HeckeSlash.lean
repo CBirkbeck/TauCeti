@@ -117,9 +117,9 @@ lemma tRep_mem_posDetInt (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 
     tRep D i ∈ posDetInt 2 :=
   transposeGLEquiv_mem_posDetInt 2 (mul_mem (SLnZ_le_posDetInt 2 i.out.2) D.out.2)
 
-/-- The representatives have positive determinant — the hypothesis every slash lemma below
-needs. -/
-lemma det_tRep_pos (i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ))) :
+/-- The representatives have positive determinant — the `0 < det` half of
+`tRep_mem_posDetInt`, in the shape `ModularForm.rat_smul_slash_of_det_pos` consumes. -/
+lemma det_tRep_pos (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ)) :
     0 < (tRep D i : Matrix (Fin 2) (Fin 2) ℚ).det :=
   ((mem_posDetInt_iff 2).mp (tRep_mem_posDetInt D i)).2
 
