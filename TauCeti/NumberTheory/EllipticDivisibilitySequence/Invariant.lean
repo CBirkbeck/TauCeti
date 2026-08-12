@@ -21,17 +21,23 @@ cross-multiplied one,
 
 `invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m`,
 
-which is `IsEllipticNet.invarNum_mul_invarDenom`. For an elliptic sequence over a field with
-`invarDenom W s n ≠ 0` it says exactly that `n ↦ invarNum/invarDenom` is constant. When `W` is the
+which is `IsEllipticNet.invarNum_mul_invarDenom`. Over a field, on any set of indices where
+`invarDenom W s ·` is nonvanishing, it says exactly that `n ↦ invarNum/invarDenom` is constant
+there: the hypothesis is `IsEllipticNet W`, and cancelling the identity at a pair `m, n` needs both
+`invarDenom W s m` and `invarDenom W s n` to be nonzero, not just one of them. When `W` is the
 division-polynomial sequence of a Weierstrass curve, that constant is a coordinate of the point
 being multiplied — which is what makes the invariant the bridge between the elliptic-net identities
 and the curve.
 
 ## Main definitions
 
-* `WeierstrassCurve`-free by design: `IsEllipticNet.invarNum` and `IsEllipticNet.invarDenom` are
-  defined for an arbitrary sequence `W : ℤ → R`, since the identity below is what forces `W` to be
-  a net rather than the other way round.
+* `IsEllipticNet.invarNum` and `IsEllipticNet.invarDenom` are defined for an **arbitrary**
+  sequence `W : ℤ → R` — no hypothesis on `W`, and nothing about Weierstrass curves. It is the
+  *theorem* that asks `W` to be an elliptic net (or, in the primed form, asks the relator to
+  vanish); the file proves that direction only, and states no converse.
+* `IsEllipticNet.invarNum_def`, `IsEllipticNet.invarDenom_def`: the defining formulas, as public
+  equation lemmas. The definition bodies are not exposed, so these are how a consumer computes
+  with them.
 
 ## Main results
 
@@ -80,8 +86,18 @@ def invarNum (s n : ℤ) : R :=
   (W (n + 2 * s) * W (n - s) ^ 2 + W (n + s) ^ 2 * W (n - 2 * s)) * W s ^ 2
     + W n ^ 3 * W (2 * s) ^ 2
 
+/-- The defining formula for `invarNum`. The definition body is not exposed, so this equation
+lemma is how a consumer computes with it. -/
+theorem invarNum_def (s n : ℤ) : invarNum W s n =
+    (W (n + 2 * s) * W (n - s) ^ 2 + W (n + s) ^ 2 * W (n - 2 * s)) * W s ^ 2
+      + W n ^ 3 * W (2 * s) ^ 2 := (rfl)
+
 /-- The denominator of the invariant of an elliptic net, `W (n + s) * W n * W (n - s)`. -/
 def invarDenom (s n : ℤ) : R := W (n + s) * W n * W (n - s)
+
+/-- The defining formula for `invarDenom`. The definition body is not exposed, so this equation
+lemma is how a consumer computes with it. -/
+theorem invarDenom_def (s n : ℤ) : invarDenom W s n = W (n + s) * W n * W (n - s) := (rfl)
 
 variable {W} in
 /-- **The invariant of an elliptic net does not depend on `n`**, in the cross-multiplied form that
