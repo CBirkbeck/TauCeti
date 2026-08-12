@@ -323,15 +323,13 @@ theorem sup_ringOfDefinition (P Q : PairOfDefinition A) :
 
 /-- The first ring of definition is contained in the join. -/
 theorem le_sup_left (P Q : PairOfDefinition A) :
-    P.ringOfDefinition ≤ (P.sup Q).ringOfDefinition := by
-  rw [sup_ringOfDefinition]
-  exact _root_.le_sup_left
+    P.ringOfDefinition ≤ (P.sup Q).ringOfDefinition :=
+  P.le_enlargeSup_left _ _
 
 /-- The second ring of definition is contained in the join. -/
 theorem le_sup_right (P Q : PairOfDefinition A) :
-    Q.ringOfDefinition ≤ (P.sup Q).ringOfDefinition := by
-  rw [sup_ringOfDefinition]
-  exact _root_.le_sup_right
+    Q.ringOfDefinition ≤ (P.sup Q).ringOfDefinition :=
+  P.le_enlargeSup_right _ _
 
 /-- The ideal of definition of `P.sup Q` is the image of `P`'s. -/
 @[simp]
