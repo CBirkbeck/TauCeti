@@ -500,12 +500,11 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
         + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
         + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
         + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
-  have hI : -1 / Complex.I = Complex.I := by simp
   have hnorm : ∀ s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ), ‖s‖ = 1 := by
     simp [UpperHalfPlane.norm_ρ]
   have hinv : ∀ s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
       -1 / s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) := by
-    simp [hI]
+    simp
   have hHgt : ∀ s ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ), s.im < H := fun s hs => by
     have h1 : s.im ≤ ‖s‖ := (le_abs_self _).trans (Complex.abs_im_le_norm s)
     rw [hnorm s hs] at h1
