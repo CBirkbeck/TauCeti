@@ -319,15 +319,14 @@ private noncomputable def conjFunctionField :
 
 /-- **The trace and the norm of an integral quotient are divisible by the denominator.** For
 `w = b / d` with `b` in the coordinate ring and `d` in `F[X]`, writing `b = p + q Y` in the basis,
-the trace `w + σ w` and the norm `w * σ w` of `w` over `F(X)` are the images of
-`(2p - q(a₁X + a₃)) / d` and of `Algebra.norm F[X] b / d²`. When `w` is integral over `F[X]` so are
-they, and an element of `F(X)` integral over `F[X]` lies in `F[X]` — which is the two
-divisibilities below.
+`d` divides the trace `2p - q(a₁X + a₃)` of `b`, and `d²` divides its norm
+`p² - pq(a₁X + a₃) - q²(X³ + a₂X² + a₄X + a₆)`.
 
-Both halves run the same argument, differing only in which of `IsIntegral.add` and
-`IsIntegral.mul` closes them, and are stated together because `dvd_and_dvd` consumes them
-together. Ellipticity of `W` plays no part: it is needed to know that such a `d` exists, not for
-this computation. -/
+The trace and the norm of `w` over `F(X)` are those two polynomials over `d` and `d²`; when `w` is
+integral over `F[X]` so are they, and an element of `F(X)` integral over `F[X]` lies in `F[X]`.
+
+Ellipticity of `W` is not needed for this computation, and is not assumed. It enters only in the
+divisibility argument that consumes these two facts. -/
 private theorem dvd_trace_and_sq_dvd_norm {b : W.CoordinateRing} {d p q : F[X]}
     (hd0 : d ≠ 0) (hpq : p • (1 : W.CoordinateRing) + q • mk W Y = b)
     (hz : IsIntegral F[X] (algebraMap W.CoordinateRing W.FunctionField b /
