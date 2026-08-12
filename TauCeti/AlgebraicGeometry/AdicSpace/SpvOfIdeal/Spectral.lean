@@ -324,7 +324,11 @@ theorem instTopologicalSpace_spvOfIdeal_eq_generateFrom (I : Ideal A)
 
 /-- **The whole space is a member of `R`**: it is the trace of `Spv(A)({1}/1)`, whose defining
 conditions hold at every point and whose numerator set contains `1` and is therefore admissible
-for every ideal. -/
+for every ideal.
+
+Deliberately not `@[simp]`: family membership already has a simp normal form through
+`mem_rationalFamily_iff`, which rewrites this left-hand side first, so the tag would be dead
+weight — and `simpNF` rejects it. -/
 theorem univ_mem_rationalFamily (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     Set.univ ∈ rationalFamily I hfg :=
@@ -355,12 +359,10 @@ with `isCompact_of_mem_rationalFamily` below, this is Wedhorn's full claim: a ba
 quasi-compact opens. -/
 theorem isTopologicalBasis_rationalFamily (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
-    IsTopologicalBasis (rationalFamily I hfg) where
-  exists_subset_inter t₁ h₁ t₂ h₂ _x hx :=
-    ⟨t₁ ∩ t₂, inter_mem_rationalFamily h₁ h₂, hx, le_rfl⟩
-  sUnion_eq := Set.sUnion_eq_univ_iff.mpr
-    fun v ↦ ⟨Set.univ, univ_mem_rationalFamily I hfg, Set.mem_univ v⟩
-  eq_generateFrom := instTopologicalSpace_spvOfIdeal_eq_generateFrom I hfg
+    IsTopologicalBasis (rationalFamily I hfg) :=
+  isTopologicalBasis_of_subbasis_of_finiteInter
+    (instTopologicalSpace_spvOfIdeal_eq_generateFrom I hfg)
+    ⟨univ_mem_rationalFamily I hfg, fun _ hU _ hV ↦ inter_mem_rationalFamily hU hV⟩
 
 /-! ### The compact witness topology -/
 
