@@ -26,9 +26,10 @@ change of variables, again over any commutative ring in which the relevant param
 
 * `WeierstrassCurve.quadraticTwistOf`: the quadratic twist of a Weierstrass curve by `(t, n)`,
   an explicit Weierstrass model over any commutative ring.
-* `WeierstrassCurve.nodePolynomial_const_quadraticTwistOf`: the constant coefficient of
-  `nodePolynomial` is the one invariant here that does **not** simply scale by a power of
-  `t² - 4n` — it acquires `- D² n a₁² c₄`. That deviation is the arithmetic content behind
+* `WeierstrassCurve.neg_nodePolynomial_const_quadraticTwistOf`: minus the constant coefficient of
+  `nodePolynomial` — the constant as written in `nodePolynomial_def` — is the one invariant here
+  that does **not** simply scale by a power of `t² - 4n`; it acquires `- D² n a₁² c₄`, so the
+  coefficient itself acquires `+ D² n a₁² c₄`. That deviation is the arithmetic content behind
   acquiring split multiplicative reduction after a twist.
 * `WeierstrassCurve.Δ_quadraticTwistOf`, `WeierstrassCurve.c₄_quadraticTwistOf`,
   `WeierstrassCurve.c₆_quadraticTwistOf`: the invariants of the twist.
@@ -214,15 +215,21 @@ curve itself. -/
     b₈_quadraticTwistOf]
   ring
 
-/-- **The node polynomial's constant coefficient under twisting.** `nodePolynomial` is
-`c₄ T² + a₁ c₄ T - (54 b₆ - 3 b₂ b₄ + a₂ c₄)`; its constant term does *not* simply scale by a power
-of `D = t² - 4n`, unlike `b₂`, `b₄`, `b₆`, `c₄`, `c₆` and `Δ`. It picks up an extra
-`- D² n a₁² c₄`, which vanishes exactly when `a₁ = 0` or `n = 0` — that is, away from the
-characteristic-2 obstruction. Splitting of the node polynomial over the residue field is what
-distinguishes split from non-split multiplicative reduction, so this is the arithmetic input to the
-statement that a curve with multiplicative reduction acquires split reduction after a quadratic
-twist. -/
-theorem nodePolynomial_const_quadraticTwistOf :
+/-- **The negated constant term of the node polynomial, under twisting.** `nodePolynomial` is
+`C c₄ T² + C (a₁ c₄) T - C (54 b₆ - 3 b₂ b₄ + a₂ c₄)`, so the quantity below is *minus* its
+constant coefficient — it is the constant as it appears inside `nodePolynomial_def`, which is why
+the name says `neg_`. (`QuadraticTwist.lean` does not import `NodePolynomial.lean`, so the
+connection is by inspection of that definition, not a formal one here.)
+
+Unlike `b₂`, `b₄`, `b₆`, `c₄`, `c₆` and `Δ`, which all simply scale by a power of `D = t² - 4n`,
+this one picks up an extra `- D² n a₁² c₄`; equivalently the constant coefficient itself acquires
+`+ D² n a₁² c₄`. That term vanishes when any of `a₁`, `n`, `c₄` or `D` does — and, over a general
+commutative ring, it can vanish from zero divisors without any factor being zero.
+
+Splitting of the node polynomial over the residue field is what distinguishes split from non-split
+multiplicative reduction, so this is the arithmetic input to the statement that a curve with
+multiplicative reduction acquires split reduction after a quadratic twist. -/
+theorem neg_nodePolynomial_const_quadraticTwistOf :
     54 * (E.quadraticTwistOf t n).b₆
       - 3 * (E.quadraticTwistOf t n).b₂ * (E.quadraticTwistOf t n).b₄
       + (E.quadraticTwistOf t n).a₂ * (E.quadraticTwistOf t n).c₄
