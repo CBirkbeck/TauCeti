@@ -24,7 +24,7 @@ Adapted from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
 `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`, path
 `projects/NagellLutz/LutzNagell/EllipticDivisibilitySequence.lean`), declaration
-`normEDS_six_eq_mul`. That file's header reads `Authors: Junyan Xu`; following this repository's
+`normEDS_six`. That file's header reads `Authors: Junyan Xu`; following this repository's
 convention for adapted material, the upstream authorship is credited here rather than in the
 copyright header.
 
@@ -44,7 +44,11 @@ variable {R : Type*} [CommRing R] (b c d : R)
 /-- **The sixth term of a normalised elliptic divisibility sequence**, through the fifth:
 `W₆ = (W₅ - d²) b c`. This continues Mathlib's `normEDS_zero` through `normEDS_four`, which stop
 at the fourth term. -/
-theorem normEDS_six_eq_mul : normEDS b c d 6 = (normEDS b c d 5 - d ^ 2) * b * c := by
+@[simp]
+theorem normEDS_six : normEDS b c d 6 = (normEDS b c d 5 - d ^ 2) * b * c := by
+  -- `normEDS_mul_complEDS₂` is stated at `2 * k`, so the index has to be presented in that shape.
+  -- `6` and `2 * 3` are definitionally equal literals, which is why `show … by rfl` suffices; there
+  -- is no arithmetic step to perform.
   rw [show (6 : ℤ) = 2 * 3 by rfl, ← normEDS_mul_complEDS₂, complEDS₂_three, normEDS_three]
   norm_num [normEDS, Int.even_iff]
   ring
