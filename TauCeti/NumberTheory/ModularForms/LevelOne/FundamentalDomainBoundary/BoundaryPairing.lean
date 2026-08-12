@@ -356,7 +356,7 @@ not strictly interior lies on exactly one of the four half-edges — the two ver
 two open arc halves — so the order sum over the non-elliptic boundary splits into the four
 half-edge sums. -/
 theorem sum_orderOfVanishingAt_nonEllipticBoundary_eq_verticals_add_arcs
-    (f : F) (hS : ∀ p ∈ S, p ∈ 𝒟) :
+    (f : F) (hS : ∀ p ∈ S, orderOfVanishingAt f p ≠ 0 → p ∈ 𝒟) :
     ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧
         ¬(1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)), orderOfVanishingAt f p =
       ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = 1 / 2 ∧ 1 < ‖(p : ℂ)‖),
@@ -384,16 +384,18 @@ theorem sum_orderOfVanishingAt_nonEllipticBoundary_eq_verticals_add_arcs
     · linarith [h.2.2, hq'.2.2.1]
     · linarith [h.2.2, hq'.2.2.1]
     · linarith [h.2.2.2, hq'.2.2.2]
-  have hunion : S.filter (fun p : ℍ ↦ (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧
-      ¬(1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)) = A₁ ∪ A₂ ∪ A₃ ∪ A₄ := by
+  have hunion : (S.filter (fun p : ℍ ↦ (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧
+      ¬(1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2))).filter (fun p ↦ orderOfVanishingAt f p ≠ 0) =
+      (A₁ ∪ A₂ ∪ A₃ ∪ A₄).filter (fun p ↦ orderOfVanishingAt f p ≠ 0) := by
     ext q
     simp only [hA₁, hA₂, hA₃, hA₄, Finset.mem_union, Finset.mem_filter]
-    refine ⟨fun ⟨hq, hb⟩ ↦ ?_, fun h ↦ ?_⟩
-    · have := (mem_boundary_iff (hS q hq)).mp hb
+    refine ⟨fun ⟨⟨hq, hb⟩, hne⟩ ↦ ?_, fun ⟨h, hne⟩ ↦ ?_⟩
+    · have := (mem_boundary_iff (hS q hq hne)).mp hb
       tauto
     · have hq : q ∈ S := by tauto
-      exact ⟨hq, (mem_boundary_iff (hS q hq)).mpr (by tauto)⟩
-  rw [hunion, Finset.sum_union hd₄, Finset.sum_union hd₃, Finset.sum_union hd₂]
+      exact ⟨⟨hq, (mem_boundary_iff (hS q hq hne)).mpr (by tauto)⟩, hne⟩
+  rw [← Finset.sum_filter_ne_zero, hunion, Finset.sum_filter_ne_zero,
+    Finset.sum_union hd₄, Finset.sum_union hd₃, Finset.sum_union hd₂]
 
 /-- **The boundary sum collapses to left representatives.** Over a divisor set complete for
 the closed fundamental domain, the order sum across all non-elliptic boundary points is twice
@@ -402,18 +404,17 @@ corner. Each boundary point carries winding weight `-1/2` in the valence count, 
 step that gives each pair a single full-weight representative. -/
 theorem sum_orderOfVanishingAt_nonEllipticBoundary_eq_two_mul [SlashInvariantFormClass F Γ k]
     (f : F) (hper : Periodic (⇑f ∘ ofComplex) 1) (hSmem : ModularGroup.S ∈ Γ)
-    (hS : ∀ p ∈ S, p ∈ 𝒟) (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) :
+    (hS : ∀ p ∈ S, orderOfVanishingAt f p ≠ 0 → p ∈ 𝒟)
+    (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) :
     ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧
         ¬(1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)), orderOfVanishingAt f p =
       2 * (∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖),
           orderOfVanishingAt f p +
         ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
           orderOfVanishingAt f p) := by
-  rw [sum_orderOfVanishingAt_nonEllipticBoundary_eq_verticals_add_arcs
-      f hS,
-    sum_orderOfVanishingAt_rightVertical_eq_leftVertical f hper (fun p hp _ ↦ hS p hp) hcomp,
-    sum_orderOfVanishingAt_rightArc_ne_ρ_add_one_eq_leftArc_ne_ρ f hper hSmem
-      (fun p hp _ ↦ hS p hp) hcomp]
+  rw [sum_orderOfVanishingAt_nonEllipticBoundary_eq_verticals_add_arcs f hS,
+    sum_orderOfVanishingAt_rightVertical_eq_leftVertical f hper hS hcomp,
+    sum_orderOfVanishingAt_rightArc_ne_ρ_add_one_eq_leftArc_ne_ρ f hper hSmem hS hcomp]
   ring
 
 end ModularForm
