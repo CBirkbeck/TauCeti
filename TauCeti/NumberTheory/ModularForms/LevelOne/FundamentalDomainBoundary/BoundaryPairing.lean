@@ -28,8 +28,9 @@ full-weight representative per pair.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_rightArc_eq_leftArc`: the arc pairing.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_rightArc_erase_eq_leftArc_erase`: the arc
   pairing with the two `ρ`-corners removed.
-* `TauCeti.ModularForm.sum_orderOfVanishingAt_boundary_eq_rightVertical_add_leftVertical_add_rightArc_add_leftArc`:
-  the order sum over the non-elliptic boundary points splits into the four half-edge sums.
+* `sum_orderOfVanishingAt_boundary_eq_rightVertical_add_leftVertical_add_rightArc_add_leftArc`
+  (in `TauCeti.ModularForm`): the order sum over the non-elliptic boundary points splits into
+  the four half-edge sums.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_boundary_eq_two_mul`: the non-elliptic
   boundary sum is twice the left-representative sum.
 
@@ -406,7 +407,8 @@ theorem sum_orderOfVanishingAt_boundary_eq_two_mul [SlashInvariantFormClass F Γ
           orderOfVanishingAt f p +
         ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
           orderOfVanishingAt f p) := by
-  rw [sum_orderOfVanishingAt_boundary_eq_rightVertical_add_leftVertical_add_rightArc_add_leftArc f hS,
+  rw [sum_orderOfVanishingAt_boundary_eq_rightVertical_add_leftVertical_add_rightArc_add_leftArc
+      f hS,
     sum_orderOfVanishingAt_rightVertical_eq_leftVertical f hper hS hcomp,
     sum_orderOfVanishingAt_rightArc_erase_eq_leftArc_erase f hper hSmem hS hcomp]
   ring
