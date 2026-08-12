@@ -87,9 +87,9 @@ section SimpleFuncExpansion
 
 variable {α : Type*} [MeasurableSpace α]
 
-/-- For a simple function `sn : α → α` and any `g : α → ℂ`,
+/-- For a simple function `sn : α → W` and any `g : W → ℂ`,
 `∫ g (sn x) ∂μ = ∑ u ∈ sn.range, μ (sn ⁻¹' {u}).toReal • g u`. -/
-private theorem integral_simpleFunc_comp (sn : SimpleFunc α α) (g : α → ℂ)
+private theorem integral_simpleFunc_comp {W : Type*} (sn : SimpleFunc α W) (g : W → ℂ)
     (μ : Measure α) [IsFiniteMeasure μ] :
     ∫ x, g (sn x) ∂μ = ∑ u ∈ sn.range, (μ (⇑sn ⁻¹' {u})).toReal • g u := by
   classical
@@ -105,6 +105,44 @@ private theorem integral_simpleFunc_comp (sn : SimpleFunc α α) (g : α → ℂ
     _ = ∑ u ∈ sn.range with g u = g b, (μ (⇑sn ⁻¹' {u})).toReal • g u := by
         rw [ENNReal.toReal_sum fun u _ => measure_ne_top μ _, Finset.sum_smul]
         exact Finset.sum_congr rfl fun u hu => by rw [(Finset.mem_filter.mp hu).2]
+
+/-- **Discretising a double integral against a simple function.** For a finite measure `μ` and a
+simple function `sn`, the double integral of `ψ (sn x - sn y)` is the double sum over the range of
+`sn`, each term weighted by the measures of the two preimages. -/
+private theorem double_integral_comp_simpleFunc_eq_sum {W : Type*} [Sub W] (ψ : W → ℂ)
+    (μ : Measure α) [IsFiniteMeasure μ] (sn : SimpleFunc α W) :
+    (∫ x, ∫ y, ψ (sn x - sn y) ∂μ ∂μ) =
+      ∑ u ∈ sn.range, ∑ v ∈ sn.range,
+        ((μ (sn ⁻¹' {u})).toReal : ℂ) *
+        ((μ (sn ⁻¹' {v})).toReal : ℂ) * ψ (u - v) := by
+  classical
+  set R := sn.range with hR
+  have h_inner : ∀ x, ∫ y, ψ (sn x - sn y) ∂μ =
+      ∑ v ∈ R, (μ (⇑sn ⁻¹' {v})).toReal • ψ (sn x - v) :=
+    fun x => integral_simpleFunc_comp sn (fun v => ψ (sn x - v)) μ
+  simp_rw [h_inner, Complex.real_smul]
+  rw [integral_finsetSum _ (fun v _ => ?_)]
+  · -- Expand the outer integral via `integral_simpleFunc_comp`.
+    have h_expand : ∀ v, ∫ a, (↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (sn a - v) ∂μ =
+        ∑ u ∈ R, (μ (⇑sn ⁻¹' {u})).toReal •
+          ((↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (u - v)) := fun v =>
+      integral_simpleFunc_comp sn
+        (fun w => (↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (w - v)) μ
+    simp_rw [h_expand]
+    rw [Finset.sum_comm]
+    congr 1
+    ext u
+    congr 1
+    ext v
+    rw [Complex.real_smul]
+    ring
+  · -- `c * ψ (sn · - v)` is integrable for the finite measure `μ`.
+    refine Integrable.const_mul ?_ _
+    -- as above: rewrite to the `SimpleFunc` coercion, which carries the integrability instance
+    have hmap : (fun x => ψ (sn x - v)) = ⇑(sn.map fun u => ψ (u - v)) :=
+      funext fun x => (SimpleFunc.map_apply (fun u => ψ (u - v)) sn x).symm
+    rw [hmap]
+    exact SimpleFunc.integrable_of_isFiniteMeasure _
 
 /-- Precomposing any function with a simple function is a.e. strongly measurable: the composite
 is itself (the coercion of) a simple function. -/
@@ -198,45 +236,6 @@ private theorem exists_simpleFunc_tendsto_double_integral (ψ : V → ℂ)
   exact tendsto_integral_of_dominated_convergence
     (fun _ => (ψ 0).re * (μ Set.univ).toReal)
     hmeas2 (integrable_const _) hbd2 (ae_of_all _ h_inner_conv)
-
-omit [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] [BorelSpace V] in
-/-- **Discretising a double integral against a simple function.** For a finite measure `μ` and a
-simple function `sn`, the double integral of `ψ (sn x - sn y)` is the double sum over the range of
-`sn`, each term weighted by the measures of the two preimages. -/
-private theorem double_integral_comp_simpleFunc_eq_sum (ψ : V → ℂ) (μ : Measure V)
-    [IsFiniteMeasure μ] (sn : SimpleFunc V V) :
-    (∫ x, ∫ y, ψ (sn x - sn y) ∂μ ∂μ) =
-      ∑ u ∈ sn.range, ∑ v ∈ sn.range,
-        ((μ (sn ⁻¹' {u})).toReal : ℂ) *
-        ((μ (sn ⁻¹' {v})).toReal : ℂ) * ψ (u - v) := by
-  classical
-  set R := sn.range with hR
-  have h_inner : ∀ x, ∫ y, ψ (sn x - sn y) ∂μ =
-      ∑ v ∈ R, (μ (⇑sn ⁻¹' {v})).toReal • ψ (sn x - v) :=
-    fun x => integral_simpleFunc_comp sn (fun v => ψ (sn x - v)) μ
-  simp_rw [h_inner, Complex.real_smul]
-  rw [integral_finsetSum _ (fun v _ => ?_)]
-  · -- Expand the outer integral via `integral_simpleFunc_comp`.
-    have h_expand : ∀ v, ∫ a, (↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (sn a - v) ∂μ =
-        ∑ u ∈ R, (μ (⇑sn ⁻¹' {u})).toReal •
-          ((↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (u - v)) := fun v =>
-      integral_simpleFunc_comp sn
-        (fun w => (↑(μ (⇑sn ⁻¹' {v})).toReal : ℂ) * ψ (w - v)) μ
-    simp_rw [h_expand]
-    rw [Finset.sum_comm]
-    congr 1
-    ext u
-    congr 1
-    ext v
-    rw [Complex.real_smul]
-    ring
-  · -- `c * ψ (sn · - v)` is integrable for the finite measure `μ`.
-    refine Integrable.const_mul ?_ _
-    -- as above: rewrite to the `SimpleFunc` coercion, which carries the integrability instance
-    have hmap : (fun x => ψ (sn x - v)) = ⇑(sn.map fun u => ψ (u - v)) :=
-      funext fun x => (SimpleFunc.map_apply (fun u => ψ (u - v)) sn x).symm
-    rw [hmap]
-    exact SimpleFunc.integrable_of_isFiniteMeasure _
 
 omit [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] [BorelSpace V] in
 /-- **The double integral of a positive-definite kernel along a simple function has nonnegative
