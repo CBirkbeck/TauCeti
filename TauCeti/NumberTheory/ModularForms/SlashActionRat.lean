@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.Analysis.Complex.UpperHalfPlane.MoebiusAction
-public import Mathlib.NumberTheory.ModularForms.SlashActions
+public import TauCeti.NumberTheory.ModularForms.Basic
 
 /-!
 # The weight-`k` slash action of `GL(2, ℚ)`
@@ -91,8 +91,7 @@ lemma rat_slash_def_of_det_pos (k : ℤ) {g : GL (Fin 2) ℚ}
       f ((Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g) • τ) *
         |((Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g).det : ℝ)| ^ (k - 1) *
           denom (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g) τ ^ (-k) := by
-  rw [rat_slash, ModularForm.slash_def, σ_eq_refl_of_det_pos (det_map_ratCast_pos hg)]
-  rfl
+  rw [rat_slash, _root_.ModularForm.slash_def_of_det_pos k (det_map_ratCast_pos hg)]
 
 /-- The pointwise form of `rat_slash_def_of_det_pos`, matching
 `ModularForm.SL_slash_apply`. -/
@@ -116,8 +115,7 @@ statement for the integral action. -/
 lemma rat_smul_slash_of_det_pos {α : Type*} [SMul α ℂ] [IsScalarTower α ℂ ℂ] (k : ℤ)
     {g : GL (Fin 2) ℚ} (hg : 0 < (g : Matrix (Fin 2) (Fin 2) ℚ).det) (f : ℍ → ℂ) (c : α) :
     (c • f) ∣[k] g = c • f ∣[k] g := by
-  ext τ : 1
   rw [rat_slash, rat_slash]
-  simp [ModularForm.slash_apply, σ_eq_refl_of_det_pos (det_map_ratCast_pos hg), smul_mul_assoc]
+  exact _root_.ModularForm.smul_slash_of_det_pos k (det_map_ratCast_pos hg) f c
 
 end ModularForm
