@@ -491,6 +491,7 @@ lemma isOpen_basicOpenFinset (T : Finset A) (s : A) : IsOpen (basicOpenFinset T 
 open scoped Classical in
 /-- Inserting the denominator among the numerators changes nothing: the extra condition it adds
 is `v s ≤ v s`. -/
+@[simp]
 lemma basicOpenFinset_insert_self (T : Finset A) (s : A) :
     basicOpenFinset (insert s T) s = basicOpenFinset T s := by
   ext v
@@ -498,28 +499,24 @@ lemma basicOpenFinset_insert_self (T : Finset A) (s : A) :
   exact ⟨fun ⟨h, hs⟩ ↦ ⟨fun t ht ↦ h t (Or.inr ht), hs⟩,
     fun ⟨h, hs⟩ ↦ ⟨fun t ht ↦ ht.elim (fun e ↦ e ▸ v.toValuativeRel.vle_refl s) (h t), hs⟩⟩
 
-/-- A product avoids the support exactly when both factors do: the support is a prime ideal. -/
-private lemma not_vle_mul_zero_iff (v : Spv A) (a b : A) :
-    ¬ v.toValuativeRel.vle (a * b) 0 ↔
-      ¬ v.toValuativeRel.vle a 0 ∧ ¬ v.toValuativeRel.vle b 0 := by
-  simp only [← mem_supp_iff]
-  refine ⟨fun h ↦ ⟨fun ha ↦ h (Ideal.mul_mem_right _ _ ha), fun hb ↦ h (Ideal.mul_mem_left _ _ hb)⟩,
-    fun ⟨ha, hb⟩ hab ↦ ?_⟩
-  exact ((instIsPrimeSupp v).mem_or_mem hab).elim ha hb
-
 open scoped Classical Pointwise in
 /-- **Wedhorn's step (i) in the proof of Lemma 7.5**: the rational opens are stable under finite
 intersection, `Spv(A)(T₁/s₁) ∩ Spv(A)(T₂/s₂) = Spv(A)(T₁T₂/s₁s₂)`.
 
-Each denominator must occur among its own numerators. That is no restriction —
-`basicOpenFinset_insert_self` says inserting it changes nothing — but it is what the
-`⊇` direction needs: recovering `v t₁ ≤ v s₁` from `v (t₁s₂) ≤ v (s₁s₂)` cancels `s₂`, which has
-to be available as a numerator on the left. It is the same absorption that `IsAdmissible` performs
+The numerator sets on the right carry their own denominators, which
+`basicOpenFinset_insert_self` shows costs nothing — the same absorption `IsAdmissible` performs
 for the admissibility condition. -/
-lemma basicOpenFinset_inter (T₁ T₂ : Finset A) {s₁ s₂ : A} (h₁ : s₁ ∈ T₁) (h₂ : s₂ ∈ T₂) :
-    basicOpenFinset T₁ s₁ ∩ basicOpenFinset T₂ s₂ = basicOpenFinset (T₁ * T₂) (s₁ * s₂) := by
+lemma basicOpenFinset_inter (T₁ T₂ : Finset A) (s₁ s₂ : A) :
+    basicOpenFinset T₁ s₁ ∩ basicOpenFinset T₂ s₂
+      = basicOpenFinset (insert s₁ T₁ * insert s₂ T₂) (s₁ * s₂) := by
+  rw [← basicOpenFinset_insert_self T₁ s₁, ← basicOpenFinset_insert_self T₂ s₂]
+  set U₁ := insert s₁ T₁ with hU₁
+  set U₂ := insert s₂ T₂ with hU₂
+  have h₁ : s₁ ∈ U₁ := Finset.mem_insert_self _ _
+  have h₂ : s₂ ∈ U₂ := Finset.mem_insert_self _ _
   ext v
-  simp only [Set.mem_inter_iff, mem_basicOpenFinset_iff, not_vle_mul_zero_iff]
+  simp only [Set.mem_inter_iff, mem_basicOpenFinset_iff, ← mem_supp_iff,
+    (instIsPrimeSupp v).mul_mem_iff_mem_or_mem, not_or]
   constructor
   · rintro ⟨⟨hT₁, hs₁⟩, ⟨hT₂, hs₂⟩⟩
     refine ⟨?_, hs₁, hs₂⟩
