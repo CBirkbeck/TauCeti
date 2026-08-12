@@ -40,10 +40,15 @@ nilpotent — the nilpotence is a property of the generators, not of the ideal t
 * `TauCeti.ValuationSpectrum.mem_spvOfIdeal_extendedIdealOfDefinition_of_isContinuous` and
   `TauCeti.ValuationSpectrum.cont_subset_spvOfIdeal_extendedIdealOfDefinition` : its reading at a
   pair of definition, in membership and subset form.
+* `TauCeti.ValuationSpectrum.not_vle_one_of_isContinuous_of_mem_idealOfDefinition` : the other
+  conjunct of the inclusion `⊆` — a continuous point is sub-unit on the ideal of definition.
 
-The converse inclusion, which is the substance of Theorem 7.10, is not proved here: it needs a
-uniform exponent across the finitely many generators of `I`, and that estimate is not yet on
-`main`.
+The converse inclusion, which is the substance of Theorem 7.10, is still not assembled here.
+Its cofinality engine is on `main`, as
+`TauCeti.Huber.PairOfDefinition.isContinuous_of_forall_cofinalValue`, so membership supplies
+continuity through Lemma 7.4's cofinal branch; what remains open is the
+full-characteristic-group branch, where cofinality of the generators' values is not yet
+supplied by anything on `main`.
 
 ## References
 
@@ -98,6 +103,24 @@ theorem cont_subset_spvOfIdeal_extendedIdealOfDefinition (P : PairOfDefinition A
       ⟨P.extendedIdealOfDefinition, P.fg_extendedIdealOfDefinition, rfl⟩ :=
   fun _ hv ↦
     mem_spvOfIdeal_extendedIdealOfDefinition_of_isContinuous P ((mem_cont_iff _).mp hv)
+
+omit [IsTopologicalRing A] in
+/-- **A continuous point is sub-unit on the ideal of definition** — the other conjunct of
+Wedhorn Theorem 7.10's inclusion `⊆`, beside the membership
+`mem_spvOfIdeal_extendedIdealOfDefinition_of_isContinuous` above. An element of the ideal of
+definition is topologically nilpotent, and a continuous valuation takes a value `< 1` at a
+topologically nilpotent element. -/
+theorem not_vle_one_of_isContinuous_of_mem_idealOfDefinition (P : PairOfDefinition A)
+    {v : Spv A} (hv : v.IsContinuous) {a : P.ringOfDefinition}
+    (ha : a ∈ P.idealOfDefinition) :
+    ¬ v.toValuativeRel.vle 1 (a : A) := by
+  intro h
+  have hlt : v.valuation (a : A) < 1 :=
+    ((isContinuous_def v).mp hv).lt_one_of_isTopologicallyNilpotent
+      (P.isTopologicallyNilpotent_of_mem_idealOfDefinition ha)
+  have hle : (1 : _) ≤ v.valuation (a : A) := by
+    simpa using (valuation_le_iff v 1 (a : A)).mpr h
+  exact absurd hle (not_le.mpr hlt)
 
 end TauCeti.ValuationSpectrum
 
