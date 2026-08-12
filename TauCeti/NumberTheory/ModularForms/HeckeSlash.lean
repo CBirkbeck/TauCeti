@@ -112,12 +112,10 @@ downstream module rewrites with this instead of unfolding the body. -/
 lemma tRep_def (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ)) : tRep D i =
     (transposeGLEquiv 2 ((i.out : GL (Fin 2) ℚ) * (D.out : GL (Fin 2) ℚ))).unop := (rfl)
 
-/-- Each representative lies in `Δ`: `σᵢ ∈ SL₂(ℤ) ≤ Δ`, `δ ∈ Δ`, and transposition preserves
-`Δ`. -/
-lemma tRep_mem_posDetInt (i : DecompQuotient (SLnZ 2) (SLnZ 2) ((D.out : GL (Fin 2) ℚ))) :
+/-- Each representative lies in `Δ`. -/
+lemma tRep_mem_posDetInt (i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ)) :
     tRep D i ∈ posDetInt 2 :=
-  transposeGLEquiv_mem_posDetInt 2
-    ((posDetInt 2).mul_mem (SLnZ_le_posDetInt 2 i.out.2) (D.out).2)
+  transposeGLEquiv_mem_posDetInt 2 (mul_mem (SLnZ_le_posDetInt 2 i.out.2) D.out.2)
 
 /-- The representatives have positive determinant — the hypothesis every slash lemma below
 needs. -/
