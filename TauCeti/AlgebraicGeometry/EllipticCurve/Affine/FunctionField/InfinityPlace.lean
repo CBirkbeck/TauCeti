@@ -115,14 +115,10 @@ section Nontrivial
 variable {R : Type*} [CommRing R] [Nontrivial R] (W : WeierstrassCurve.Affine R)
 
 /-- The norm of the coordinate function `x` has degree `2`: it is `x ^ 2`. Private: it exists to
-compute `infinityPlace.X`, and Mathlib's `CoordinateRing.norm_smul_basis` is the general fact. -/
+compute `infinityPlace.X`, and Mathlib's `Algebra.norm_algebraMap` is the general fact. -/
 private theorem natDegree_norm_X :
     (Algebra.norm R[X] (algebraMap R[X] W.CoordinateRing Polynomial.X)).natDegree = 2 := by
-  have hX : algebraMap R[X] W.CoordinateRing Polynomial.X =
-      (Polynomial.X : R[X]) • (1 : W.CoordinateRing) + (0 : R[X]) • CoordinateRing.mk W Y := by
-    rw [zero_smul, add_zero, Algebra.smul_def, mul_one]
-  rw [hX, CoordinateRing.norm_smul_basis]
-  simp
+  rw [Algebra.norm_algebraMap, finrank_coordinateRing, natDegree_X_pow]
 
 /-- The norm of the coordinate function `y` has degree `3`. Private, as above. -/
 private theorem natDegree_norm_mk_Y :
