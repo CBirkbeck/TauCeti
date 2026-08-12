@@ -63,6 +63,10 @@ below is the public neighbourhood interface that merges them.)
   that `R` generates the subspace topology.
 * `TauCeti.ValuationSpectrum.restrictToIdealCodRestrict_preimage` : **step (iii)**,
   `r_I⁻¹(Spv(A,I)(T/s)) = Spv(A)(T/s)`.
+* `TauCeti.ValuationSpectrum.continuous_restrictToIdealCodRestrict` : **Lemma 7.5(2)**, the
+  continuity half — steps (ii) and (iii) give it at once. Wedhorn's further claim that `r_I` is
+  a *spectral* map is not recorded here: it needs the rational subsets to be quasi-compact, and
+  that half of 7.5(1) is not yet on `main`.
 
 ## References
 
@@ -83,11 +87,14 @@ be a basis of the subspace topology itself. AINTLIB proves only the trivial half
 here, and the two topologies therefore agree.
 
 Second, AINTLIB's route to compactness and quasi-soberness goes through
-`SpvAI.retraction_continuous`, which is a `sorry` there, as are its dependencies
-`Spv.restrictIdeal_preimage_basicOpen_isOpen` and `SpvAI.retraction_preimage_rationalSubset`.
-Taking the witness topology coinduced along the retraction removes the need for that continuity
-statement, and quasi-soberness then comes from the patch criterion rather than from a transfer
-along the retraction.
+`SpvAI.retraction_continuous`. At `2baa76f742bdb4fb8ee323fabba41203bd390e08` that theorem carries
+a proof, but it rests on `Spv.restrictIdeal_preimage_basicOpen_isOpen` — openness of
+`r_I⁻¹(Spv(A)(f/s))` for an *arbitrary* pair `(f, s)` — which is a `sorry` there, as is
+`SpvAI.retraction_preimage_rationalSubset`. Taking the witness topology coinduced along the
+retraction removes the need for continuity in the proof of 7.5(1), and quasi-soberness then comes
+from the patch criterion rather than from a transfer along the retraction. Continuity is proved
+below all the same, as Lemma 7.5(2) in its own right, and by a route that needs only the
+*admissible* preimages already computed for 7.5(1) — never the general-`(f, s)` statement.
 
 The two branches of step (ii) below follow AINTLIB's `SpvAI.exists_rationalSubset_microbial` and
 `SpvAI.exists_rationalSubset_cofinality`, which are proved there; they are restated against
@@ -389,5 +396,28 @@ theorem spectralSpace_spvOfIdeal (I : Ideal A)
       exact isClopen_patchTopologyOfIdeal_of_preimage I hfg
         (by rw [restrictToIdealCodRestrict_preimage I hfg hadm]
             exact isClopen_patchTopology_basicOpenFinset T u))
+
+/-! ### Wedhorn Lemma 7.5(2) -/
+
+/-- **Wedhorn Lemma 7.5(2)**, the continuity half: the retraction `r_I : Spv A → Spv (A, I)`
+is continuous.
+
+Continuity into `Spv (A, I)` costs nothing beyond the two steps that Lemma 7.5(1) already
+needed. The admissible rational subsets generate the target topology
+(`instTopologicalSpace_spvOfIdeal_eq_generateFrom`), so only their preimages have to be tested,
+and step (iii) computes each of those to be a rational subset of `Spv A`
+(`restrictToIdealCodRestrict_preimage`), which is open. In particular no description of
+`r_I⁻¹(Spv(A)(f/s))` for a *general* pair `(f, s)` is needed; admissibility of `(T, u)` is what
+makes the preimage computable at all. -/
+theorem continuous_restrictToIdealCodRestrict (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
+    Continuous (restrictToIdealCodRestrict I hfg) := by
+  have h : Continuous[_, generateFrom (rationalFamily I hfg)]
+      (restrictToIdealCodRestrict I hfg) := by
+    refine continuous_generateFrom_iff.mpr ?_
+    rintro _ ⟨T, u, hadm, rfl⟩
+    rw [restrictToIdealCodRestrict_preimage I hfg hadm]
+    exact isOpen_basicOpenFinset T u
+  rwa [← instTopologicalSpace_spvOfIdeal_eq_generateFrom I hfg] at h
 
 end TauCeti.ValuationSpectrum
