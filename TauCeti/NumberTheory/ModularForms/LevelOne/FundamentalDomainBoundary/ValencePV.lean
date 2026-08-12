@@ -667,11 +667,11 @@ The hypotheses `hoffγ`, the strict-interior condition `hin` on the non-elliptic
 and completeness of the zero set of `T` (`hT`) all mention `H`, so — together with the threshold
 hypothesis itself — they sit inside the `∀ H` binder rather than being fixed in advance. -/
 theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
-    [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {S T : Finset ℂ}
-    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
+    [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {T : Finset ℂ}
     (hpos : ∀ s ∈ T, 0 < s.im) :
     ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H →
-      (∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+      (∀ t ∈ Icc (0 : ℝ) 5,
+        fdBoundary H t ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
         AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0) →
       (∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
         1 < ‖z‖ ∧ |z.re| < 1 / 2 ∧ z.im < H) →
@@ -698,7 +698,7 @@ theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrder
   have : ModularFormClass F ((⊤ : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)) k :=
     MonoidHom.range_eq_map (Matrix.SpecialLinearGroup.mapGL ℝ : SL(2, ℤ) →* GL (Fin 2) ℝ) ▸ ‹_›
   exact sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
-    (Γ := ⊤) f (Subgroup.mem_top _) hH hnorm hinv hper hoffγ hU hUdom
+    (Γ := ⊤) f (Subgroup.mem_top _) hH hper hoffγ hU hUdom
     (hoff_of_zeros_confined hg hUsub hUZ hT)
     (fun s hsT _ ↦ (UpperHalfPlane.analyticAt_comp_ofComplex hg (hpos s hsT)).meromorphicAt)
     hpos hin
