@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.HeckeSlash
+public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 
 /-!
 # Reindexing the slash sum: slashing by any element of a left coset
@@ -28,7 +28,7 @@ Transposition turns left multiplication into right multiplication, so changing t
 representative multiplies the transposed element **on the left** by a transposed element of
 `H`. Slashing is a right action, so that extra factor does not simply cancel: it survives as
 `f ∣[k] hᵀ`, and only vanishes because `f` is invariant under `H` — which is exactly the
-hypothesis `hf`. Without it the sum genuinely depends on the choice, as `HeckeSlash.lean`'s
+hypothesis `hf`. Without it the sum genuinely depends on the choice, as `HeckeSlash/Basic.lean`'s
 module docstring records.
 
 ## Main results
@@ -61,9 +61,9 @@ is used only by the invariance block that follows the ported range.
   §3.4.
 
 This file cites the section rather than a numbered proposition on purpose. The sibling
-`HeckeSlash.lean` attributes this material to Proposition 3.30; that number has been questioned
-more than once and nobody working on these files has had the book to hand, so it is not asserted
-here. The mathematics is unaffected either way.
+`HeckeSlash/Basic.lean` attributes this material to Proposition 3.30; that number has been
+questioned more than once and nobody working on these files has had the book to hand, so it is
+not asserted here. The mathematics is unaffected either way.
 -/
 
 public section
