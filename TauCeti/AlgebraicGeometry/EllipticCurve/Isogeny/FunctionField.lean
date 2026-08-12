@@ -17,11 +17,19 @@ to the function fields. Injectivity is the algebraic form of nonconstancy: a non
 kernel would make the pulled-back target coordinate algebraic over the base field. Pointedness
 would then make the source coordinate algebraic as well, contradicting its transcendence.
 
+That extension is what lets isogenies be composed: a coordinate pullback lands in a *function*
+field, so composing two of them needs the outer one extended across the inner one's fraction
+field. `TauCeti.Isogeny.comp` therefore lives here rather than beside `TauCeti.Isogeny.id` in
+`Isogeny/Basic.lean` — this is the first file where it can be stated.
+
 ## Main results
 
 * `TauCeti.Isogeny.pullback_injective`: a coordinate pullback satisfying `MapsInfinity` is
   injective.
 * `TauCeti.Isogeny.fieldPullback`: the induced embedding of function fields.
+* `TauCeti.Isogeny.comp`: composition of isogenies, with `TauCeti.Isogeny.mapsInfinity_comp` its
+  pointedness condition — transitivity of integrality along `W₃.CoordinateRing`, `φ.pullback`'s
+  copy of `W₂.CoordinateRing`, and `W₁.FunctionField`.
 * `TauCeti.Isogeny.degree`: the degree of an isogeny, the dimension of the source function field
   over the image of `fieldPullback`, with `TauCeti.Isogeny.degree_def` the equation lemma the
   module boundary makes necessary; `TauCeti.Isogeny.degree_id` computes it for the identity and is
@@ -52,9 +60,9 @@ private theorem isIntegral_eval_of_isIntegral {K : Type*} [CommRing K] [Algebra 
   rw [← mem_integralClosure_iff]
   exact adjoin_le_integralClosure hx (Polynomial.aeval_mem_adjoin_singleton F x)
 
-private theorem isIntegral_of_isIntegral_map {A K : Type*} [CommRing A] [CommRing K] [Nontrivial K]
-    [Algebra F K] (f : A →+* K) (hf : ∀ a, IsIntegral F (f a)) {x : K}
-    (hx : @IsIntegral A K _ _ f.toAlgebra x) : IsIntegral F x := by
+private theorem isIntegral_of_isIntegral_map {R A K : Type*} [CommRing R] [CommRing A]
+    [CommRing K] [Nontrivial K] [Algebra R K] (f : A →+* K) (hf : ∀ a, IsIntegral R (f a)) {x : K}
+    (hx : @IsIntegral A K _ _ f.toAlgebra x) : IsIntegral R x := by
   obtain ⟨p, hp, hpx⟩ := hx
   have hpdegree : p.natDegree ≠ 0 := by
     intro hdegree
@@ -184,6 +192,38 @@ theorem id_fieldPullback (W : WeierstrassCurve.Affine F) :
   apply (id W).fieldPullback_unique
   intro x
   simp
+
+/-- **Composition maps infinity to infinity.** Every element of `W₁.CoordinateRing` is integral
+over `φ.pullback`'s copy of `W₂.CoordinateRing`, and each value of `φ.pullback` is in turn integral
+over the composite's copy of `W₃.CoordinateRing` — that second step is `ψ.mapsInfinity` carried
+across `φ.fieldPullback`, which is legitimate because the composite pullback *is*
+`φ.fieldPullback ∘ ψ.pullback`. -/
+theorem mapsInfinity_comp {W₃ : WeierstrassCurve.Affine F} (ψ : Isogeny W₂ W₃)
+    (φ : Isogeny W₁ W₂) :
+    CoordinatePullback.MapsInfinity (φ.fieldPullback.comp ψ.pullback) := by
+  rw [CoordinatePullback.mapsInfinity_iff]
+  let _ := (φ.fieldPullback.comp ψ.pullback).toRingHom.toAlgebra
+  let _ := ψ.pullback.toRingHom.toAlgebra
+  intro x
+  refine isIntegral_of_isIntegral_map φ.pullback.toRingHom (fun a ↦ ?_)
+    ((CoordinatePullback.mapsInfinity_iff φ.pullback).1 φ.mapsInfinity x)
+  have h := (CoordinatePullback.mapsInfinity_iff ψ.pullback).1 ψ.mapsInfinity a
+  have himage := IsIntegral.map_of_comp_eq (RingHom.id W₃.CoordinateRing)
+    φ.fieldPullback.toRingHom rfl h
+  rwa [AlgHom.toRingHom_eq_coe, RingHom.coe_coe, fieldPullback_algebraMap] at himage
+
+/-- **Composition of isogenies**: pull back along `ψ` into `W₂.FunctionField`, then carry that
+across to `W₁.FunctionField` by `φ.fieldPullback`. -/
+noncomputable def comp {W₃ : WeierstrassCurve.Affine F} (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
+    Isogeny W₁ W₃ where
+  pullback := φ.fieldPullback.comp ψ.pullback
+  mapsInfinity := mapsInfinity_comp ψ φ
+
+/-- The composite's coordinate pullback is the target pullback followed by the source's
+function-field pullback. -/
+@[simp]
+theorem comp_pullback {W₃ : WeierstrassCurve.Affine F} (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
+    (ψ.comp φ).pullback = φ.fieldPullback.comp ψ.pullback := (rfl)
 
 /-- **The degree of an isogeny**: the dimension of the source function field `W₁.FunctionField`
 over the image of `fieldPullback` — the pulled-back copy of the target's function field
