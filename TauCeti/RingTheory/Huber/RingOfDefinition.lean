@@ -337,15 +337,8 @@ theorem le_sup_right (P Q : PairOfDefinition A) :
 @[simp]
 theorem sup_idealOfDefinition (P Q : PairOfDefinition A) :
     (P.sup Q).idealOfDefinition =
-      P.idealOfDefinition.map (Subring.inclusion (P.le_sup_left Q)) := by
-  have hinclusion : Subring.inclusion (P.le_enlargeSup_left Q.ringOfDefinition
-      Q.isBounded_ringOfDefinition) = Subring.inclusion (P.le_sup_left Q) := by
-    apply RingHom.ext
-    intro x
-    apply Subtype.ext
-    rfl
-  exact (P.enlargeSup_idealOfDefinition _ _).trans
-    (congrArg (fun f ↦ P.idealOfDefinition.map f) hinclusion)
+      P.idealOfDefinition.map (Subring.inclusion (P.le_sup_left Q)) :=
+  P.enlargeSup_idealOfDefinition _ _
 
 end PairOfDefinition
 
