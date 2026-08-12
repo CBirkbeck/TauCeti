@@ -457,8 +457,9 @@ theorem exists_mem_restrictToIdeal_ne_zero (v : Valuation A Γ₀) (I : Ideal A)
 /-- **The restriction does not kill an admissible denominator.** If `u` dominates a set
 `T` with `I ⊆ √((T ∪ {u}) · A)` and `v u ≠ 0`, then `v|cΓ_v(I)` keeps `u`.
 
-This is Wedhorn's Lemma 7.5(iii), and it is what lets
-`restrictToIdealCodRestrict_preimage` compute the preimage of a rational subset. -/
+This is one of the auxiliary claims in Wedhorn's proof of Lemma 7.5(1) — step (iii) there — and
+it is what lets `restrictToIdealCodRestrict_preimage` compute the preimage of a rational
+subset. -/
 theorem restrictToIdeal_ne_zero_of_isAdmissible (v : Valuation A Γ₀) (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {T : Set A} {u : A}
     (hadm : I ≤ (Ideal.span (insert u T)).radical)
