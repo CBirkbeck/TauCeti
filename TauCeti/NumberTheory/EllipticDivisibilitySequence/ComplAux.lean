@@ -28,7 +28,7 @@ the division polynomials.
 
 ## Main definitions
 
-* `IsEllipticNet.complEDS₂Aux`: the subtracted summand of Mathlib's `complEDS₂`.
+* `complEDS₂Aux`: the subtracted summand of Mathlib's `complEDS₂`.
 
 ## Main results
 
@@ -38,7 +38,7 @@ the division polynomials.
   `preNormEDS` rather than `normEDS`.
 * `IsEllipticNet.complEDS₂Aux_two`: the auxiliary term vanishes at `2`, since `preNormEDS _ _ _ 0`
   does.
-* `IsEllipticNet.map_complEDS₂Aux`: it is natural in the coefficient ring.
+* `map_complEDS₂Aux`: it is natural in the coefficient ring.
 
 ## Implementation notes
 
@@ -61,13 +61,12 @@ of that AINTLIB file, so they are portable under this project's rule and dedupli
 They are spelt `complEDS₂Aux` here rather than `compl₂EDSAux`, following Mathlib's subsequent
 rename of this API (`compl₂EDS → complEDS₂`, and likewise `addMulSub → IsEllipticNet.atom`,
 `net → IsEllipticNet.rel`, `rel₄ → IsEllipticNet.atomRel`,
-`IsEllSequence → IsEllipticSequence`), which #13057 predates. They also live in the
-`IsEllipticNet` namespace, where Mathlib keeps the rest of this material.
+`IsEllSequence → IsEllipticSequence`), which #13057 predates. They live in the **root** namespace,
+where Mathlib keeps `complEDS₂`, `normEDS` and `preNormEDS` — the `IsEllipticNet` namespace upstream
+holds the elliptic-net material (`atom`, `atomRel`, `rel`) and closes well before these.
 -/
 
 public section
-
-namespace IsEllipticNet
 
 variable {R S : Type*} [CommRing R] [CommRing S] (b c d : R) (m : ℤ)
 
@@ -77,14 +76,26 @@ def complEDS₂Aux : R :=
   preNormEDS (b ^ 4) c d (m - 2) * preNormEDS (b ^ 4) c d (m + 1) ^ 2 * if Even m then 1 else b
 
 /-- The defining formula for `complEDS₂Aux`. The definition body is not exposed, so this equation
-lemma is how a consumer computes with it. -/
-@[simp]
+lemma is how a consumer computes with it. It is deliberately **not** `@[simp]`: tagging it would
+have `simp` unfold `complEDS₂Aux` everywhere and defeat the point of naming the term. Rewrite with
+`complEDS₂_eq_sub_complEDS₂Aux` instead when the decomposition is what is wanted. -/
 theorem complEDS₂Aux_def : complEDS₂Aux b c d m =
     preNormEDS (b ^ 4) c d (m - 2) * preNormEDS (b ^ 4) c d (m + 1) ^ 2 *
       if Even m then 1 else b := (rfl)
 
 /-- The auxiliary term vanishes at `2`: its first factor is `preNormEDS _ _ _ 0`. -/
-theorem complEDS₂Aux_two : complEDS₂Aux b c d 2 = 0 := by simp
+@[simp]
+theorem complEDS₂Aux_two : complEDS₂Aux b c d 2 = 0 := by simp [complEDS₂Aux_def]
+
+/-- **The decomposition `complEDS₂` was named for.** Mathlib writes the second complement as a
+difference with both summands inline; this states it with the subtracted one abstracted, so that
+consumers can rewrite rather than re-expand. -/
+theorem complEDS₂_eq_sub_complEDS₂Aux :
+    complEDS₂ b c d m =
+      preNormEDS (b ^ 4) c d (m - 1) ^ 2 * preNormEDS (b ^ 4) c d (m + 2) *
+        (if Even m then 1 else b) - complEDS₂Aux b c d m := by
+  simp only [complEDS₂, complEDS₂Aux_def]
+  ring
 
 /-- **Multiplying the auxiliary term by `b` returns it to the normalised sequence.** The parity
 factor and the `b ^ 4`-rescaling of `preNormEDS` cancel together against a single `b`, which is the
@@ -98,8 +109,8 @@ theorem complEDS₂Aux_mul_b :
 variable {F : Type*} [FunLike F R S] [RingHomClass F R S] (f : F)
 
 /-- The auxiliary term is natural in the coefficient ring. -/
+@[simp]
 theorem map_complEDS₂Aux :
     f (complEDS₂Aux b c d m) = complEDS₂Aux (f b) (f c) (f d) m := by
-  simp [apply_ite f, map_preNormEDS]
+  simp [complEDS₂Aux_def, apply_ite f, map_preNormEDS]
 
-end IsEllipticNet
