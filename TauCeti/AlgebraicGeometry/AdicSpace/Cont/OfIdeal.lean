@@ -11,13 +11,14 @@ public import TauCeti.RingTheory.Huber.Basic
 import TauCeti.RingTheory.Valuation.Continuous.TopologicallyNilpotent
 
 /-!
-# A continuous point lies in `Spv (A, I)` when `I` is spanned by topologically nilpotent elements
+# Continuous points in `Spv (A, I)`: the inclusion half of Theorem 7.10
 
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Theorem 7.10, the inclusion `Cont A ⊆ Spv(A, IA)`.**
 
-Theorem 7.10 identifies `Cont A` inside `Spv (A, IA)` for a pair of definition `(A₀, I)`. This
-file proves the half that says the identification is well posed at all: a continuous point does
-lie in `Spv (A, IA)`.
+Theorem 7.10 identifies `Cont A` inside `Spv (A, IA)` for a pair of definition `(A₀, I)`, as the
+locus where additionally `v(a) < 1` for every `a ∈ I`. This file proves both conjuncts of the
+inclusion: a continuous point lies in `Spv (A, IA)`, and it is sub-unit on the ideal of
+definition.
 
 The argument needs no estimate, and it needs no pair of definition either. Membership in
 `Spv (A, I)` is `cΓ_v(I) = Γ_v`, which by Lemma 7.4 follows from cofinality of `v` at every
@@ -64,9 +65,9 @@ open TauCeti TauCeti.Huber TauCeti.Valuation
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
 /-- **A continuous point lies in `Spv (A, I)` when some ideal with the same radical is spanned by
-topologically nilpotent elements.** This is the whole content of the inclusion half of Wedhorn
-Theorem 7.10: continuity makes the value at a topologically nilpotent element cofinal, and Lemma
-7.4 only ever asks for cofinality on a spanning set.
+topologically nilpotent elements.** This is the membership conjunct of the inclusion half of
+Wedhorn Theorem 7.10: continuity makes the value at a topologically nilpotent element cofinal,
+and Lemma 7.4 only ever asks for cofinality on a spanning set.
 
 `cΓ_v(I)` depends on `I` only through its radical, so the spanning set need not generate `I`
 itself — any `J` with `I.radical = J.radical` will do. The spanning set is not assumed finite and
