@@ -46,7 +46,7 @@ recorded at its own — much weaker — hypotheses rather than as a corollary of
 
 ## Main results
 
-* `TauCeti.Valuation.lt_one_of_isContinuous_of_isTopologicallyNilpotent`
+* `TauCeti.Valuation.IsContinuous.lt_one_of_isTopologicallyNilpotent`
 * `TauCeti.Valuation.CofinalValueFor.of_isContinuous_of_isTopologicallyNilpotent`
 
 ## References
@@ -83,7 +83,7 @@ codomain is only a monoid — contrast
 `Nontrivial Γ₀` is not decoration. If `0 = 1` in `Γ₀` then `Γ₀` is trivial, every `{x ; v x < v b}`
 is empty and so open, and the conclusion `v a < 1` reads `0 < 0`; a group codomain rules this out
 by fiat, a monoid one does not. -/
-theorem lt_one_of_isContinuous_of_isTopologicallyNilpotent {v : Valuation A Γ₀}
+theorem IsContinuous.lt_one_of_isTopologicallyNilpotent {v : Valuation A Γ₀}
     (hv : v.IsContinuous) {a : A} (ha : IsTopologicallyNilpotent a) : v a < 1 := by
   obtain ⟨n, hn⟩ := ha.exists_pow_mem_of_mem_nhds
     ((isContinuous_def.mp hv 1).mem_nhds (by simp [zero_le_one.lt_of_ne zero_ne_one]))

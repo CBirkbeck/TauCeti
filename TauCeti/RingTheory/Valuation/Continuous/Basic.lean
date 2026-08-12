@@ -220,11 +220,11 @@ theorem isContinuous_iff_forall_isOpen_lt_div [ContinuousConstSMul Aᵐᵒᵖ A]
 a general element of it is a ratio `v b / v c` rather than an attained value, so this rather than
 `isOpen_le` is the statement Wedhorn makes. As in `isOpen_lt_div` the set is the preimage of the
 attained-value one under multiplication by `c`. -/
-theorem IsContinuous.isOpen_le_div [SeparatelyContinuousAdd A] [SeparatelyContinuousMul A]
+theorem IsContinuous.isOpen_le_div [SeparatelyContinuousAdd A] [ContinuousConstSMul Aᵐᵒᵖ A]
     {v : Valuation A Γ₀} (hv : v.IsContinuous) {b c : A} (hb : v b ≠ 0) (hc : v c ≠ 0) :
     IsOpen {a : A | v a ≤ v b / v c} := by
   simpa [le_div_iff₀ (zero_lt_iff.mpr hc)] using
-    (hv.isOpen_le hb).preimage (continuous_mul_const c)
+    (hv.isOpen_le hb).preimage (continuous_const_smul (MulOpposite.op c))
 
 open scoped WithZeroTopology in
 /-- Ordinary continuity into `WithZeroTopology` implies continuity in the sense of Definition
