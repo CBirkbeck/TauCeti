@@ -7,7 +7,7 @@ module
 
 public import TauCeti.RingTheory.Huber.Basic
 public import TauCeti.RingTheory.Valuation.Continuous
-public import TauCeti.RingTheory.Valuation.SpanPow
+import TauCeti.RingTheory.Valuation.SpanPow
 
 /-!
 # Continuity of a valuation on a Huber ring
@@ -91,15 +91,22 @@ Theorem 7.10: cofinality supplies an `n` with `δ ^ n` below a given `γ`, and t
 
 The bound is taken **over the ring of definition**, through `v.comap`. That is not a convenience:
 the coefficients occurring in `Iⁿ⁺¹` range over `A₀`, so the hypothesis needed is `v ≤ 1` on `I`,
-which Theorem 7.10 supplies. Asking instead for `v ≤ 1` on the extension `I · A` would be asking
-for something false — `I · A` contains `r * x` for arbitrary `r ∈ A`. -/
+which Theorem 7.10 supplies. The same bound over the extension `I · A` is not available in
+general: `I · A` contains `r * x` for arbitrary `r ∈ A`, so an unbounded `v` violates it. (It is
+not *always* violated — the trivial valuation satisfies it — but it does not follow from the
+hypotheses here, which is what matters.) -/
 theorem map_le_pow_of_mem_idealImage_succ (P : PairOfDefinition A) (v : Valuation A Γ₀)
     {s : Set P.ringOfDefinition} {δ : Γ₀} (hgen : Ideal.span s = P.idealOfDefinition)
     (hs : ∀ t ∈ s, v (t : A) ≤ δ)
     (h1 : ∀ a ∈ P.idealOfDefinition, v ((a : P.ringOfDefinition) : A) ≤ 1)
     {n : ℕ} {x : A} (hx : x ∈ P.idealImage (n + 1)) : v x ≤ δ ^ n := by
   obtain ⟨y, hy, rfl⟩ := (P.mem_idealImage (n + 1)).mp hx
-  exact Valuation.map_le_pow_of_mem_span_pow_succ (v.comap P.ringOfDefinition.subtype) hs
-    (by rwa [hgen]) (by rwa [hgen])
+  set w := v.comap P.ringOfDefinition.subtype with hw
+  have hsw : ∀ t ∈ s, w t ≤ δ := by
+    simpa only [hw, Valuation.comap_apply, Subring.coe_subtype] using hs
+  have h1w : ∀ a ∈ Ideal.span s, w a ≤ 1 := by
+    rw [hgen]; simpa only [hw, Valuation.comap_apply, Subring.coe_subtype] using h1
+  simpa only [hw, Valuation.comap_apply, Subring.coe_subtype] using
+    Valuation.map_le_pow_of_mem_span_pow_succ w hsw h1w (by rwa [hgen])
 
 end TauCeti.Huber.PairOfDefinition
