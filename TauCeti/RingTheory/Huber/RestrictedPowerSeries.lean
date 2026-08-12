@@ -34,9 +34,9 @@ This is *not* Mathlib's `MvPowerSeries.IsRestricted`, which is stated over a nor
 relative to a polyradius `c : σ → ℝ`, asking that `‖coeff t f‖ * ∏ i, c i ^ t i` tend to `0` along
 the cofinite filter. The two conditions agree over a normed ring at `c = 1`, but neither is more
 general: Mathlib's varies the radius, while `IsRestricted` here needs only a topology on `A` and
-no norm. It is the latter that Huber theory requires, a Huber ring being topologised by an ideal
-of definition rather than by a norm. The nonarchimedean hypothesis enters only for closure under
-multiplication and hence for the subring.
+no norm. It is the latter that Huber theory requires: Huber ring topologies are defined using an
+ideal of definition and need not be induced by a norm. The nonarchimedean hypothesis enters only
+for closure under multiplication and hence for the subring.
 
 ## Implementation notes
 
