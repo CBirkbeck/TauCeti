@@ -37,9 +37,12 @@ polynomial) with distinguished point `(X,Y)`.
   of `pointedCurve` — the universal curve really is pointed.
 * `WeierstrassCurve.map_specialize`: every Weierstrass curve is a specialization of the universal
   one.
-* `WeierstrassCurve.Universal.curveRing_map_ringEval`: pushing the universal curve over
-  `Universal.Ring` along `ringEval` returns `W`, so one identity over the universal pointed curve
-  is the same identity for every curve and every point on it.
+* `WeierstrassCurve.Universal.map_ringEval`: pushing the universal curve over
+  `Universal.Ring` along `ringEval` returns `W`, so one identity **over `curveRing`** is the same
+  identity for every curve and every point on it. Note the restriction: `ringEval` maps out of
+  `Universal.Ring`, so it transports identities over `curveRing`, not over `pointedCurve`, which
+  lives over `Universal.Field`. An identity stated there needs its denominators cleared into
+  `Universal.Ring` first.
 * `WeierstrassCurve.Universal.ringHom_ext`: two homomorphisms out of `Universal.Ring` agreeing on
   the coefficient ring and on the two distinguished coordinates are equal — the uniqueness half of
   the universal property, since those generate.
@@ -60,9 +63,11 @@ narrative on isogenies asks for multiplication by `n ≠ 0` as an isogeny of deg
 pullback is "pinned by the division-polynomial multiplication formula, already proved at the point
 level in the Lutz–Nagell provenance through J. Xu's work (mathlib #13782 / `ZSMul.lean`) — the
 mathlib-track anchor Layer 1 consumes". This file is the `Universal.Ring` prerequisite of that
-`ZSMul.lean`: `ringEval` is what turns a single identity over the universal pointed curve into the
-same identity for every Weierstrass curve and every point on it, so the point-level
-`[n]`-compatibility is proved once, universally, rather than curve by curve. Mathlib PR #13782 is
+`ZSMul.lean`: `ringEval` is what turns a single identity **over `curveRing`** into the same
+identity for every Weierstrass curve and every point on it, so the point-level
+`[n]`-compatibility is proved once, universally, rather than curve by curve. It maps out of
+`Universal.Ring`; identities over `pointedCurve`, which is over `Universal.Field`, transport only
+after their denominators are cleared into `Universal.Ring`. Mathlib PR #13782 is
 still open, so the whole `Universal` namespace below is absent from Mathlib.
 
 ## Provenance
@@ -132,6 +137,24 @@ indeterminates. Every Weierstrass curve is one of its specializations (`map_spec
 changes are `curvePoly`, `curveRing` and `pointedCurve`. -/
 def curve : Affine (MvPolynomial Coeff ℤ) :=
   { a₁ := X A₁, a₂ := X A₂, a₃ := X A₃, a₄ := X A₄, a₆ := X A₆ }
+
+open MvPolynomial (X) in
+/-- The `a₁` coefficient of the universal curve is the indeterminate `A₁`, and likewise for `A₂`
+through `A₆`. The definition body is unexposed, so these are how a consumer normalises a coefficient
+of `curve` inside a polynomial identity. -/
+@[simp] lemma curve_a₁ : curve.a₁ = X A₁ := (rfl)
+open MvPolynomial (X) in
+/-- The `a₂` coefficient of the universal curve is the indeterminate `A₂`. -/
+@[simp] lemma curve_a₂ : curve.a₂ = X A₂ := (rfl)
+open MvPolynomial (X) in
+/-- The `a₃` coefficient of the universal curve is the indeterminate `A₃`. -/
+@[simp] lemma curve_a₃ : curve.a₃ = X A₃ := (rfl)
+open MvPolynomial (X) in
+/-- The `a₄` coefficient of the universal curve is the indeterminate `A₄`. -/
+@[simp] lemma curve_a₄ : curve.a₄ = X A₄ := (rfl)
+open MvPolynomial (X) in
+/-- The `a₆` coefficient of the universal curve is the indeterminate `A₆`. -/
+@[simp] lemma curve_a₆ : curve.a₆ = X A₆ := (rfl)
 
 /-- The discriminant of the universal Weierstrass curve is a nonzero polynomial in `ℤ[A₁,⋯,A₆]`,
 i.e. a Weierstrass equation is not singular *identically* in its coefficients. Transported along
@@ -286,7 +309,7 @@ def cusp (R : Type*) [Zero R] : Affine R := { a₁ := 0, a₂ := 0, a₃ := 0, a
 point is the cheap route to nonvanishing statements, since `ψₙ(1,1) = n`: a universal quantity that
 vanished would have to vanish in `ℤ` here. The `CharZero Universal.Ring` instance below is
 obtained this way. -/
-lemma equation_cusp_one_one : (cusp ℤ).Equation 1 1 := by
+lemma equation_cusp_one_one (R : Type*) [CommRing R] : (cusp R).Equation 1 1 := by
   simp [Affine.Equation, Affine.polynomial, cusp, Polynomial.evalEval]
 
 open Universal
@@ -296,6 +319,15 @@ variable {R} [CommRing R] (W : WeierstrassCurve R)
 to the ring of definition of the Weierstrass curve. -/
 def specialize : MvPolynomial Coeff ℤ →+* R :=
   (MvPolynomial.aeval <| Coeff.rec W.a₁ W.a₂ W.a₃ W.a₄ W.a₆).toRingHom
+
+open MvPolynomial (X) in
+/-- `specialize` sends each indeterminate to the corresponding coefficient of `W`. With
+`curve_a₁`‥`curve_a₆` this normalises coefficient evaluation inside a polynomial identity, without
+unfolding either definition. -/
+@[simp]
+lemma specialize_X (i : Coeff) :
+    W.specialize (X i) = Coeff.rec W.a₁ W.a₂ W.a₃ W.a₄ W.a₆ i := by
+  simp [specialize]
 
 /-- Every Weierstrass curve is a specialization of the universal Weierstrass curve. -/
 @[simp]
@@ -384,7 +416,7 @@ lemma ringHom_ext {f g : Universal.Ring →+* R}
 
 /-- The `Universal.Ring` counterpart of `polyEval_comp_eq_specialize`: `ringEval eqn` also restricts
 to `W.specialize` on the coefficient ring. This is the compatibility that makes
-`curveRing_map_ringEval`, and with it every specialization argument, go through. -/
+`map_ringEval`, and with it every specialization argument, go through. -/
 @[simp]
 lemma ringEval_comp_eq_specialize : (ringEval eqn).comp (algebraMap _ _) = W.specialize := by
   rw [algebraMap_ring_eq_comp, ← RingHom.comp_assoc, ringEval_comp_mk, polyEval_comp_eq_specialize]
@@ -394,7 +426,7 @@ it onto `ℤ`. This is the first use of that specialization argument, and it is 
 `(2 : Universal.Ring) ≠ 0` — needed by the halving steps of the group law and of the
 division-polynomial recursion. -/
 instance : CharZero Universal.Ring :=
-  RingHom.charZero (ringEval equation_cusp_one_one)
+  RingHom.charZero (ringEval (equation_cusp_one_one ℤ))
 
 /-- The universal field has characteristic zero, being the fraction field of a ring that does. -/
 instance : CharZero Universal.Field :=
@@ -405,7 +437,7 @@ instance : CharZero Universal.Field :=
 exists for — an identity proved once for `curveRing` and its distinguished point becomes the same
 identity for every Weierstrass curve `W` and every point `(x, y)` on it. -/
 @[simp]
-lemma curveRing_map_ringEval : curveRing.map (ringEval eqn) = W :=
+lemma map_ringEval : curveRing.map (ringEval eqn) = W :=
   (map_map curve (algebraMap _ _) (ringEval eqn)).symm ▸
     (ringEval_comp_eq_specialize eqn) ▸ map_specialize W
 
