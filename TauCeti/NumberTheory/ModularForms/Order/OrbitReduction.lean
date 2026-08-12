@@ -4,8 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.Algebra.BigOperators.Finprod
-public import Mathlib.NumberTheory.Modular
 public import TauCeti.NumberTheory.ModularForms.Order.Orbits
 
 import TauCeti.Analysis.Complex.UpperHalfPlane.Rho
@@ -156,31 +154,19 @@ theorem orbit_mk_injOn_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
     · norm_num [hnorm] at hgt
     · exact coe_re p ▸ hre
 
-/-- The unit-circle specialization of `ModularGroup.norm_coe_S_smul`: on the unit circle, `S`
-keeps the norm at `1`. -/
-private lemma norm_coe_S_smul_of_norm_eq_one {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
-    ‖((ModularGroup.S • p : ℍ) : ℂ)‖ = 1 := by
-  rw [ModularGroup.norm_coe_S_smul, hp, inv_one]
-
-/-- The unit-circle specialization of `ModularGroup.re_S_smul`: on the unit circle, `S` negates
-the real part. -/
-private lemma re_S_smul_of_norm_eq_one {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
-    (ModularGroup.S • p).re = -p.re := by
-  rw [ModularGroup.re_S_smul, Complex.normSq_eq_norm_sq, hp, one_pow, div_one]
-
 private lemma S_smul_mem_fd {p : ℍ} (hp : p ∈ 𝒟) (hnorm : ‖(p : ℂ)‖ = 1) :
     ModularGroup.S • p ∈ 𝒟 := by
   refine ⟨?_, ?_⟩
-  · rw [Complex.normSq_eq_norm_sq, norm_coe_S_smul_of_norm_eq_one hnorm]
+  · rw [Complex.normSq_eq_norm_sq, ModularGroup.norm_coe_S_smul_of_norm_eq_one hnorm]
     norm_num
-  · rw [re_S_smul_of_norm_eq_one hnorm, abs_neg]
+  · rw [ModularGroup.re_S_smul_of_norm_eq_one hnorm, abs_neg]
     exact hp.2
 
 private lemma normSq_coe_vadd_neg_one {p : ℍ} (hre : (p : ℂ).re = 1 / 2) :
     Complex.normSq (((-1 : ℝ) +ᵥ p : ℍ) : ℂ) = Complex.normSq (p : ℂ) := by
-  rw [coe_vadd, Complex.normSq_apply, Complex.normSq_apply, Complex.add_re, Complex.add_im,
-    Complex.ofReal_re, Complex.ofReal_im, hre, zero_add]
-  norm_num
+  rw [coe_re] at hre
+  simp [coe_vadd, Complex.normSq_apply, hre]
+  ring
 
 private lemma norm_coe_vadd_neg_one {p : ℍ} (hre : (p : ℂ).re = 1 / 2) :
     ‖(((-1 : ℝ) +ᵥ p : ℍ) : ℂ)‖ = ‖(p : ℂ)‖ := by
@@ -226,8 +212,8 @@ private lemma exists_of_norm_eq_one_of_re_pos [ModularFormClass F 𝒮ℒ k] {f 
     hqρ (horb ▸ congrArg Quotient.mk'' (UpperHalfPlane.coe_injective h))
   refine ⟨ModularGroup.S • p₀, mem_canonicalReps.mpr ⟨mem_fdZeros.mpr
     ⟨S_smul_mem_fd hfd hnorm, hord'⟩,
-      Or.inr (Or.inr ⟨hne, norm_coe_S_smul_of_norm_eq_one hnorm, ?_⟩)⟩, horb⟩
-  rw [coe_re, re_S_smul_of_norm_eq_one hnorm]
+      Or.inr (Or.inr ⟨hne, ModularGroup.norm_coe_S_smul_of_norm_eq_one hnorm, ?_⟩)⟩, horb⟩
+  rw [coe_re, ModularGroup.re_S_smul_of_norm_eq_one hnorm]
   exact neg_lt_zero.mpr (coe_re p₀ ▸ hpos)
 
 /-- Every non-elliptic orbit of nonzero order has a representative among the canonical ones:

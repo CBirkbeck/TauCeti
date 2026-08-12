@@ -114,12 +114,19 @@ private lemma S_smul_I : _root_.ModularGroup.S • (I : ℍ) = I :=
   _root_.ModularGroup.stabilizer_I.mpr (by simp)
 
 private lemma S_smul_ρ : _root_.ModularGroup.S • (ρ : ℍ) = (1 : ℝ) +ᵥ ρ := by
-  rw [modular_S_smul, UpperHalfPlane.ext_iff, coe_mk, coe_vadd, Complex.ofReal_one, inv_neg,
-    ← one_div, ← neg_div, neg_one_div_ρ, add_comm]
+  rw [modular_S_smul]
+  ext
+  simp only [coe_vadd, Complex.ofReal_one]
+  field_simp [UpperHalfPlane.ne_zero ρ]
+  linear_combination -ρ_sq
 
 private lemma S_smul_vadd_ρ : _root_.ModularGroup.S • ((1 : ℝ) +ᵥ ρ : ℍ) = ρ := by
-  rw [modular_S_smul, UpperHalfPlane.ext_iff, coe_mk, coe_vadd, Complex.ofReal_one, inv_neg,
-    ← one_div, ← neg_div, add_comm, neg_one_div_ρ_add_one]
+  have hρ1 : (1 : ℂ) + (ρ : ℂ) ≠ 0 := by simpa using UpperHalfPlane.ne_zero ((1 : ℝ) +ᵥ ρ)
+  rw [modular_S_smul]
+  ext
+  simp only [coe_vadd, Complex.ofReal_one]
+  field_simp [hρ1]
+  linear_combination -ρ_sq
 
 private lemma ST_smul_ρ : (_root_.ModularGroup.S * _root_.ModularGroup.T) • (ρ : ℍ) = ρ :=
   _root_.ModularGroup.stabilizer_ρ.mpr (by simp)
@@ -147,18 +154,19 @@ lemma norm_coe_S_smul (p : ℍ) :
 Not `@[simp]`, for the same `ModularGroup.sl_moeb` reason as `norm_coe_S_smul`. -/
 lemma re_S_smul (p : ℍ) :
     (_root_.ModularGroup.S • p).re = -p.re / Complex.normSq (p : ℂ) := by
-  rw [← coe_re, modular_S_smul, coe_mk, Complex.inv_re, Complex.neg_re, Complex.normSq_neg,
-    coe_re]
+  rw [modular_S_smul]
+  simp [Complex.inv_re]
+  ring
 
 /-- The unit-circle specialization of `norm_coe_S_smul`: on the unit circle, `S` keeps the
 norm at `1`. -/
-private lemma norm_coe_S_smul_of_norm_eq_one {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
+lemma norm_coe_S_smul_of_norm_eq_one {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
     ‖((_root_.ModularGroup.S • p : ℍ) : ℂ)‖ = 1 := by
   rw [norm_coe_S_smul, hp, inv_one]
 
 /-- The unit-circle specialization of `re_S_smul`: on the unit circle, `S` negates the real
 part. -/
-private lemma re_S_smul_of_norm_eq_one {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
+lemma re_S_smul_of_norm_eq_one {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
     (_root_.ModularGroup.S • p).re = -p.re := by
   rw [re_S_smul, Complex.normSq_eq_norm_sq, hp, one_pow, div_one]
 
