@@ -7,6 +7,7 @@ module
 public import Mathlib.LinearAlgebra.TensorProduct.Basis
 public import Mathlib.LinearAlgebra.Semisimple
 public import Mathlib.RingTheory.TensorProduct.Maps
+public import TauCeti.LinearAlgebra.Semisimple
 import Mathlib.RingTheory.TensorProduct.Finite
 import Mathlib.Tactic.NoncommRing
 
@@ -109,7 +110,10 @@ theorem IsSemisimple.rTensor {f : _root_.Module.End K V} (hf : f.IsSemisimple) :
   -- Split `W` off a free module `M`; the free case then transfers back along `i.lTensor V`.
   obtain ⟨M, _, _, _, i, s, his⟩ :=
     (Module.Projective.iff_split (R := K) (P := W)).mp inferInstance
-  refine (isSemisimple_rTensor_of_free (N := M) hf).of_injective (i.lTensor V) ?_ ?_
+  -- `iff_split` only supplies `AddCommMonoid M`; over a ring the module structure promotes it.
+  let _ : AddCommGroup M := Module.addCommMonoidToAddCommGroup K
+  refine IsSemisimple.of_injective (isSemisimple_rTensor_of_free (N := M) hf)
+    (i.lTensor V) ?_ ?_
   · apply LinearMap.injective_of_comp_eq_id (i.lTensor V) (s.lTensor V)
     rw [← LinearMap.lTensor_comp, his, LinearMap.lTensor_id]
   · exact (LinearMap.lTensor_comp_rTensor V f i).trans
