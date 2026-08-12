@@ -26,22 +26,21 @@ sequences in the abstract: the pinned Mathlib does not know that `normEDS b c d`
 `IsEllipticDvdSequence` — it records proving so as a TODO — so nothing here says every EDS arises
 this way, only that every `normEDS b c d` does.
 
-The point is that an identity between expressions in the terms of a normalised EDS need only be
-proved once, over `MvPolynomial NormEDSParam ℤ`, and then specialises to every ring and every
-choice of parameters. Working universally also buys an integral domain to work in, which the
+The point is that an identity between the terms of a sequence of the form `normEDS b c d` need
+only be proved once, over `MvPolynomial NormEDSParam ℤ`, and then specialises to every ring and
+every choice of parameters. Working universally also buys an integral domain to work in, which the
 parameters' ring need not be.
 
 ## Main definitions
 
-* `NormEDSParam`: a three-element index type for the parameters `b`, `c`, `d` of a normalised EDS.
-* `universalNormEDS`: the normalised EDS over `ℤ[B, C, D]` whose parameters are the three
-  indeterminates.
+* `NormEDSParam`: a three-element index type for the parameters `b`, `c`, `d` of `normEDS`.
+* `universalNormEDS`: `normEDS` over `ℤ[B, C, D]`, at the three indeterminates.
 
 ## Main results
 
 * `normEDS_eq_aeval`, `preNormEDS_eq_aeval`, `complEDS₂_eq_aeval`, `complEDS_eq_aeval`: every
-  normalised EDS, and each of its associated sequences, is the universal one specialised along
-  `NormEDSParam.rec b c d`.
+  sequence of the form `normEDS b c d`, and each of its associated sequences, is the universal one
+  specialised along `NormEDSParam.rec b c d`.
 
 ## Implementation notes
 
@@ -101,20 +100,20 @@ open NormEDSParam
 
 variable {R : Type*} [CommRing R] (b c d : R)
 
-/-- **The universal normalised elliptic divisibility sequence**: the normalised EDS over
-`ℤ[B, C, D]` whose three parameters are the three indeterminates. Every normalised EDS is one of
-its specializations (`normEDS_eq_aeval`), so an identity between terms of a normalised EDS can be
-proved here once and read off for every ring and every choice of parameters. -/
+/-- **The universal `normEDS`**: `normEDS` over `ℤ[B, C, D]`, at the three indeterminates. Every
+sequence of the form `normEDS b c d` is one of its specializations (`normEDS_eq_aeval`), so an
+identity between such terms can be proved here once and read off for every ring and every choice of
+parameters. -/
 noncomputable def universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ := normEDS (X B) (X C) (X D)
 
-/-- `universalNormEDS` at the three indeterminates. This is the normal form downstream reasoning
-should rewrite with: unfolding the definition by name instead re-exposes the `X B`/`X C`/`X D`
-spelling at every call site, which is the coupling this lemma exists to remove. -/
+/-- The `simp` expansion of `universalNormEDS`: `normEDS` at the three indeterminates. It is the
+stable name for that expansion, so downstream proofs rewrite with a lemma rather than unfolding a
+definition; it does not hide the representation, and its right-hand side is that representation. -/
 @[simp]
 theorem universalNormEDS_apply (n : ℤ) :
     universalNormEDS n = normEDS (X NormEDSParam.B) (X NormEDSParam.C) (X NormEDSParam.D) n := (rfl)
 
-/-- **Every normalised EDS is a specialization of the universal one.** -/
+/-- **Every sequence of the form `normEDS b c d` is a specialization of the universal one.** -/
 theorem normEDS_eq_aeval :
     normEDS b c d = fun n ↦ aeval (NormEDSParam.rec b c d) (universalNormEDS n) := by
   simp_rw [universalNormEDS, map_normEDS, aeval_X]
