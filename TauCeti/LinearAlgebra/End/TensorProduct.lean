@@ -7,8 +7,8 @@ module
 public import Mathlib.LinearAlgebra.TensorProduct.Basis
 public import Mathlib.LinearAlgebra.Semisimple
 public import Mathlib.RingTheory.TensorProduct.Maps
-public import TauCeti.LinearAlgebra.Semisimple
 import Mathlib.RingTheory.TensorProduct.Finite
+import TauCeti.LinearAlgebra.Semisimple
 import Mathlib.Tactic.NoncommRing
 
 /-!

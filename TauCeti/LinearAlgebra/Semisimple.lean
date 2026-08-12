@@ -40,13 +40,8 @@ theorem IsSemisimple.of_injective {f : _root_.Module.End R M} {g : _root_.Module
   -- endomorphisms, so it embeds `AEval' f` into the semisimple module `AEval' g`.
   let iX : Module.AEval' f →ₗ[R[X]] Module.AEval' g :=
     LinearMap.ofAEval _ ((Module.AEval'.of g).toLinearMap.comp i) fun x ↦ by
-      calc
-        _ = (Module.AEval'.of g) (i (f x)) := by
-          simp only [LinearMap.comp_apply, _root_.Module.End.smul_def]
-          rfl
-        _ = (Module.AEval'.of g) (g (i x)) :=
-          congrArg (Module.AEval'.of g) (LinearMap.congr_fun hcomm x)
-        _ = _ := (Module.AEval'.X_smul_of g (i x)).symm
+      simpa [Module.AEval'.X_smul_of] using congrArg (Module.AEval'.of g)
+        (LinearMap.congr_fun hcomm x)
   apply IsSemisimpleModule.of_injective iX
   intro x y hxy
   apply (Module.AEval'.of f).symm.injective
