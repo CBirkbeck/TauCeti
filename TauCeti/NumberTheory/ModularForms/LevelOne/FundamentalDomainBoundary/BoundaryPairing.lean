@@ -26,12 +26,12 @@ full-weight representative per pair.
 
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_rightVertical_eq_leftVertical`: the vertical pairing.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_rightArc_eq_leftArc`: the arc pairing.
-* `TauCeti.ModularForm.sum_orderOfVanishingAt_rightArc_erase_eq_leftArc_erase`: the arc
+* `TauCeti.ModularForm.sum_orderOfVanishingAt_rightArc_ne_ρ_add_one_eq_leftArc_ne_ρ`: the arc
   pairing with the two `ρ`-corners removed.
-* `sum_orderOfVanishingAt_boundary_eq_rightVertical_add_leftVertical_add_rightArc_add_leftArc`
+* `sum_orderOfVanishingAt_nonEllipticBoundary_eq_verticals_add_arcs`
   (in `TauCeti.ModularForm`): the order sum over the non-elliptic boundary points splits into
   the four half-edge sums.
-* `TauCeti.ModularForm.sum_orderOfVanishingAt_boundary_eq_two_mul`: the non-elliptic
+* `TauCeti.ModularForm.sum_orderOfVanishingAt_nonEllipticBoundary_eq_two_mul`: the non-elliptic
   boundary sum is twice the left-representative sum.
 
 ## References
@@ -81,17 +81,18 @@ private lemma orderOfVanishingAt_vadd_neg_one (hper : Periodic (g ∘ ofComplex)
     orderOfVanishingAt g ((-1 : ℝ) +ᵥ p) = orderOfVanishingAt g p :=
   orderOfVanishingAt_eq_of_coe_eq_add hper.neg <| by simp [add_comm]
 
-private lemma vadd_mem_of_re_eq (hr : |r| ≤ 1) (hS : ∀ q ∈ S, q ∈ 𝒟)
+private lemma vadd_mem_of_re_eq (hr : |r| ≤ 1) (hS : ∀ q ∈ S, orderOfVanishingAt g q ≠ 0 → q ∈ 𝒟)
     (hcomp : ∀ q, q ∈ 𝒟 → orderOfVanishingAt g q ≠ 0 → q ∈ S)
     (hord : orderOfVanishingAt g (r +ᵥ p) = orderOfVanishingAt g p) (hp : p ∈ S)
     (hre : (p : ℂ).re = -r / 2) (hne : orderOfVanishingAt g p ≠ 0) :
     r +ᵥ p ∈ S ∧ ((r +ᵥ p : ℍ) : ℂ).re = r / 2 ∧ ‖((r +ᵥ p : ℍ) : ℂ)‖ = ‖(p : ℂ)‖ :=
-  ⟨hcomp _ (vadd_mem_fd_of_re_eq hr (hS p hp) hre) (hord ▸ hne),
+  ⟨hcomp _ (vadd_mem_fd_of_re_eq hr (hS p hp hne) hre) (hord ▸ hne),
     by rw [coe_vadd, add_re, ofReal_re, hre]; ring, norm_coe_vadd_of_re_eq hre⟩
 
 -- Translation by `r` matches the points of modulus `> 1` on `re = a` with those on `re = -a`.
 private theorem sum_orderOfVanishingAt_vert_aux {a : ℝ} (hr : |r| ≤ 1) (ha : a = -r / 2)
-    (hord : ∀ q : ℍ, orderOfVanishingAt g (r +ᵥ q) = orderOfVanishingAt g q) (hS : ∀ q ∈ S, q ∈ 𝒟)
+    (hord : ∀ q : ℍ, orderOfVanishingAt g (r +ᵥ q) = orderOfVanishingAt g q)
+    (hS : ∀ q ∈ S, orderOfVanishingAt g q ≠ 0 → q ∈ 𝒟)
     (hcomp : ∀ q, q ∈ 𝒟 → orderOfVanishingAt g q ≠ 0 → q ∈ S) :
     ∑ q ∈ S.filter (fun q : ℍ ↦ (q : ℂ).re = a ∧ 1 < ‖(q : ℂ)‖), orderOfVanishingAt g q =
       ∑ q ∈ S.filter (fun q : ℍ ↦ (q : ℂ).re = -a ∧ 1 < ‖(q : ℂ)‖), orderOfVanishingAt g q := by
@@ -113,7 +114,7 @@ end Vertical
 /-- **The vertical pairing.** Over a divisor set complete for the closed fundamental domain,
 the order sum along the right vertical edge equals the order sum along the left one. -/
 theorem sum_orderOfVanishingAt_rightVertical_eq_leftVertical (f : F)
-    (hper : Periodic (⇑f ∘ ofComplex) 1) (hS : ∀ p ∈ S, p ∈ 𝒟)
+    (hper : Periodic (⇑f ∘ ofComplex) 1) (hS : ∀ p ∈ S, orderOfVanishingAt f p ≠ 0 → p ∈ 𝒟)
     (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) :
     ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = 1 / 2 ∧ 1 < ‖(p : ℂ)‖), orderOfVanishingAt f p =
       ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖), orderOfVanishingAt f p :=
@@ -155,13 +156,13 @@ private lemma orderOfVanishingAt_S_smul [SlashInvariantFormClass F Γ k] (f : F)
 
 /-- Over a divisor set complete for `𝒟`, a nonzero-order point of the unit arc is carried by the
 inversion back into the set, again on the unit arc, with the real part flipped. -/
-private lemma S_smul_mem_of_norm_eq_one (hS : ∀ q ∈ S, q ∈ 𝒟)
+private lemma S_smul_mem_of_norm_eq_one (hS : ∀ q ∈ S, orderOfVanishingAt g q ≠ 0 → q ∈ 𝒟)
     (hcomp : ∀ q, q ∈ 𝒟 → orderOfVanishingAt g q ≠ 0 → q ∈ S)
     (hord : orderOfVanishingAt g (ModularGroup.S • p) = orderOfVanishingAt g p) (hp : p ∈ S)
     (hnorm : ‖(p : ℂ)‖ = 1) (hne : orderOfVanishingAt g p ≠ 0) :
     ModularGroup.S • p ∈ S ∧ ‖((ModularGroup.S • p : ℍ) : ℂ)‖ = 1 ∧
       ((ModularGroup.S • p : ℍ) : ℂ).re = -(p : ℂ).re :=
-  ⟨hcomp _ (S_smul_mem_fd (hS p hp) hnorm) (hord ▸ hne), norm_coe_S_smul hnorm,
+  ⟨hcomp _ (S_smul_mem_fd (hS p hp hne) hnorm) (hord ▸ hne), norm_coe_S_smul hnorm,
     re_coe_S_smul hnorm⟩
 
 end Arc
@@ -171,7 +172,7 @@ order sum along the right half of the unit arc equals the order sum along the le
 `z ↦ -1/z` matches the two halves point by point — carrying `ρ + 1` to `ρ` — and
 slash-invariance carries the order across. -/
 theorem sum_orderOfVanishingAt_rightArc_eq_leftArc [SlashInvariantFormClass F Γ k] (f : F)
-    (hSmem : ModularGroup.S ∈ Γ) (hS : ∀ p ∈ S, p ∈ 𝒟)
+    (hSmem : ModularGroup.S ∈ Γ) (hS : ∀ p ∈ S, orderOfVanishingAt f p ≠ 0 → p ∈ 𝒟)
     (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) :
     ∑ p ∈ S.filter (fun p : ℍ ↦ ‖(p : ℂ)‖ = 1 ∧ 0 < (p : ℂ).re), orderOfVanishingAt f p =
       ∑ p ∈ S.filter (fun p : ℍ ↦ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0), orderOfVanishingAt f p := by
@@ -225,9 +226,10 @@ end Corners
 /-- The arc pairing with the two `ρ`-corners removed: the pairing map matches them with each
 other, so deleting one from each half preserves the identity. This is the shape the valence
 formula consumes, whose arc family excludes the corner it weights separately. -/
-theorem sum_orderOfVanishingAt_rightArc_erase_eq_leftArc_erase [SlashInvariantFormClass F Γ k]
-    (f : F) (hper : Periodic (⇑f ∘ ofComplex) 1) (hSmem : ModularGroup.S ∈ Γ)
-    (hS : ∀ p ∈ S, p ∈ 𝒟) (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) :
+theorem sum_orderOfVanishingAt_rightArc_ne_ρ_add_one_eq_leftArc_ne_ρ
+    [SlashInvariantFormClass F Γ k] (f : F) (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hSmem : ModularGroup.S ∈ Γ) (hS : ∀ p ∈ S, orderOfVanishingAt f p ≠ 0 → p ∈ 𝒟)
+    (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) :
     ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) + 1 ∧ ‖(p : ℂ)‖ = 1 ∧ 0 < (p : ℂ).re),
         orderOfVanishingAt f p =
       ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
@@ -353,7 +355,7 @@ end Partition
 not strictly interior lies on exactly one of the four half-edges — the two verticals and the
 two open arc halves — so the order sum over the non-elliptic boundary splits into the four
 half-edge sums. -/
-theorem sum_orderOfVanishingAt_boundary_eq_rightVertical_add_leftVertical_add_rightArc_add_leftArc
+theorem sum_orderOfVanishingAt_nonEllipticBoundary_eq_verticals_add_arcs
     (f : F) (hS : ∀ p ∈ S, p ∈ 𝒟) :
     ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧
         ¬(1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)), orderOfVanishingAt f p =
@@ -398,8 +400,8 @@ the closed fundamental domain, the order sum across all non-elliptic boundary po
 the sum over one representative per pair — the left vertical and the left arc half without its
 corner. Each boundary point carries winding weight `-1/2` in the valence count, so this is the
 step that gives each pair a single full-weight representative. -/
-theorem sum_orderOfVanishingAt_boundary_eq_two_mul [SlashInvariantFormClass F Γ k] (f : F)
-    (hper : Periodic (⇑f ∘ ofComplex) 1) (hSmem : ModularGroup.S ∈ Γ)
+theorem sum_orderOfVanishingAt_nonEllipticBoundary_eq_two_mul [SlashInvariantFormClass F Γ k]
+    (f : F) (hper : Periodic (⇑f ∘ ofComplex) 1) (hSmem : ModularGroup.S ∈ Γ)
     (hS : ∀ p ∈ S, p ∈ 𝒟) (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) :
     ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧
         ¬(1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)), orderOfVanishingAt f p =
@@ -407,10 +409,11 @@ theorem sum_orderOfVanishingAt_boundary_eq_two_mul [SlashInvariantFormClass F Γ
           orderOfVanishingAt f p +
         ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
           orderOfVanishingAt f p) := by
-  rw [sum_orderOfVanishingAt_boundary_eq_rightVertical_add_leftVertical_add_rightArc_add_leftArc
+  rw [sum_orderOfVanishingAt_nonEllipticBoundary_eq_verticals_add_arcs
       f hS,
-    sum_orderOfVanishingAt_rightVertical_eq_leftVertical f hper hS hcomp,
-    sum_orderOfVanishingAt_rightArc_erase_eq_leftArc_erase f hper hSmem hS hcomp]
+    sum_orderOfVanishingAt_rightVertical_eq_leftVertical f hper (fun p hp _ ↦ hS p hp) hcomp,
+    sum_orderOfVanishingAt_rightArc_ne_ρ_add_one_eq_leftArc_ne_ρ f hper hSmem
+      (fun p hp _ ↦ hS p hp) hcomp]
   ring
 
 end ModularForm
