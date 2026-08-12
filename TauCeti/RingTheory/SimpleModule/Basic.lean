@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.LinearAlgebra.Prod
 public import Mathlib.RingTheory.SimpleModule.Basic
 
 /-!
@@ -27,14 +26,13 @@ namespace TauCeti
 variable {R M N : Type*} [Ring R] [AddCommGroup M] [Module R M] [AddCommGroup N] [Module R N]
 
 /-- **A product of two semisimple modules is semisimple.** -/
-theorem IsSemisimpleModule.prod [IsSemisimpleModule R M] [IsSemisimpleModule R N] :
+instance IsSemisimpleModule.prod [IsSemisimpleModule R M] [IsSemisimpleModule R N] :
     IsSemisimpleModule R (M × N) := by
+  -- The plan is that of Mathlib's binary-product `IsSemisimpleRing` instance, one level down:
   -- `M × N` is the join of the two coordinate copies, each of which is a semisimple submodule.
-  have hM : IsSemisimpleModule R (LinearMap.range (LinearMap.inl R M N)) :=
-    .congr (LinearEquiv.ofInjective _ LinearMap.inl_injective).symm
-  have hN : IsSemisimpleModule R (LinearMap.range (LinearMap.inr R M N)) :=
-    .congr (LinearEquiv.ofInjective _ LinearMap.inr_injective).symm
-  have hsup := _root_.IsSemisimpleModule.sup hM hN
+  have hsup := _root_.IsSemisimpleModule.sup
+    (_root_.IsSemisimpleModule.range (LinearMap.inl R M N))
+    (_root_.IsSemisimpleModule.range (LinearMap.inr R M N))
   rw [LinearMap.sup_range_inl_inr] at hsup
   exact .congr Submodule.topEquiv.symm
 

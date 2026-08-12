@@ -72,8 +72,7 @@ theorem IsSemisimple.prodMap {f : Module.End K V} {g : Module.End K W}
   rw [Module.End.IsSemisimple] at hf hg ⊢
   let _ : IsSemisimpleModule K[X] (Module.AEval' f) := hf
   let _ : IsSemisimpleModule K[X] (Module.AEval' g) := hg
-  have hprod : IsSemisimpleModule K[X] (Module.AEval' f × Module.AEval' g) :=
-    TauCeti.IsSemisimpleModule.prod
+  have hprod : IsSemisimpleModule K[X] (Module.AEval' f × Module.AEval' g) := inferInstance
   let E : Module.AEval' (f.prodMap g) ≃ₗ[K[X]]
       Module.AEval' f × Module.AEval' g := {
     toFun x := (x.1, x.2)
