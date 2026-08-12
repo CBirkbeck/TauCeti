@@ -30,18 +30,22 @@ open Complex
 
 namespace UpperHalfPlane
 
+@[simp]
 lemma ρ_ne_zero : (ρ : ℂ) ≠ 0 := fun h0 ↦ by simpa [h0] using norm_ρ
 
 /-- The inversion carries `ρ` to `ρ + 1`. -/
+@[simp]
 lemma neg_one_div_ρ : -1 / (ρ : ℂ) = (ρ : ℂ) + 1 := by
   rw [div_eq_iff ρ_ne_zero]
   linear_combination -ρ_sq
 
+@[simp]
 lemma ρ_add_one_ne_zero : (ρ : ℂ) + 1 ≠ 0 := by
   rw [← neg_one_div_ρ]
   exact div_ne_zero (by norm_num) ρ_ne_zero
 
 /-- The inversion carries `ρ + 1` to `ρ`. -/
+@[simp]
 lemma neg_one_div_ρ_add_one : -1 / ((ρ : ℂ) + 1) = (ρ : ℂ) := by
   rw [div_eq_iff ρ_add_one_ne_zero]
   linear_combination -ρ_sq
