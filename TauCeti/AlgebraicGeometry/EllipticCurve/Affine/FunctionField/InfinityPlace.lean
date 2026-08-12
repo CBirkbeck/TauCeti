@@ -214,8 +214,8 @@ private theorem natDegree_norm_add_le (a₁ b₁ a₂ b₂ : R[X]) :
       (Algebra.norm R[X] (a₁ • (1 : W.CoordinateRing) + b₁ • CoordinateRing.mk W Y)).degree
       (Algebra.norm R[X] (a₂ • (1 : W.CoordinateRing) + b₂ • CoordinateRing.mk W Y)).degree with
     ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] at hd
-  · exact le_max_of_le_left (natDegree_le_natDegree hd)
-  · exact le_max_of_le_right (natDegree_le_natDegree hd)
+  exacts [le_max_of_le_left (natDegree_le_natDegree hd),
+    le_max_of_le_right (natDegree_le_natDegree hd)]
 
 end DomainCore
 
@@ -237,11 +237,6 @@ private theorem intDegree_norm_add_le {f g : W.FunctionField} (hf : f ≠ 0) (hg
   have := natDegree_norm_add_le W a₁ b₁ a₂ b₂
   omega
 
-/-- The norm of `0` is `0`: the extension is nontrivial, so `Algebra.norm_eq_zero_iff` applies. -/
-private theorem norm_zero_eq_zero :
-    Algebra.norm (RatFunc F) (0 : W.FunctionField) = 0 :=
-  (Algebra.norm_eq_zero_iff (R := RatFunc F)).mpr rfl
-
 open scoped Classical in
 /-- The ultrametric inequality for the composite `RatFunc.inftyValuation ∘ Algebra.norm`, which is
 `infinityPlace`'s `map_add_le_max'`. Split out to keep the definition short. -/
@@ -254,25 +249,19 @@ private theorem infinityPlace_add_le_max (x y : W.FunctionField) :
   rcases eq_or_ne y 0 with rfl | hy
   · simp
   rcases eq_or_ne (x + y) 0 with hxy | hxy
-  · rw [hxy, norm_zero_eq_zero W, map_zero]
+  · rw [hxy, Algebra.norm_zero, map_zero]
     exact zero_le
-  have hNx : Algebra.norm (RatFunc F) x ≠ 0 :=
-    fun h => hx ((Algebra.norm_eq_zero_iff (R := RatFunc F)).mp h)
-  have hNy : Algebra.norm (RatFunc F) y ≠ 0 :=
-    fun h => hy ((Algebra.norm_eq_zero_iff (R := RatFunc F)).mp h)
-  have hNxy : Algebra.norm (RatFunc F) (x + y) ≠ 0 :=
-    fun h => hxy ((Algebra.norm_eq_zero_iff (R := RatFunc F)).mp h)
+  have hN {f : W.FunctionField} (hf : f ≠ 0) : Algebra.norm (RatFunc F) f ≠ 0 :=
+    (Algebra.norm_ne_zero_iff (R := RatFunc F)).mpr hf
   rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_apply, RatFunc.inftyValuation_apply,
-    RatFunc.inftyValuation_of_nonzero F hNx, RatFunc.inftyValuation_of_nonzero F hNy,
-    RatFunc.inftyValuation_of_nonzero F hNxy]
-  rcases max_cases (Algebra.norm (RatFunc F) x).intDegree
-      (Algebra.norm (RatFunc F) y).intDegree with ⟨h, _⟩ | ⟨h, _⟩
-  · refine le_trans ?_ (le_max_left _ _)
-    rw [WithZero.exp_le_exp]
-    exact le_trans (intDegree_norm_add_le W hx hy hxy) (le_of_eq h)
-  · refine le_trans ?_ (le_max_right _ _)
-    rw [WithZero.exp_le_exp]
-    exact le_trans (intDegree_norm_add_le W hx hy hxy) (le_of_eq h)
+    RatFunc.inftyValuation_of_nonzero F (hN hx), RatFunc.inftyValuation_of_nonzero F (hN hy),
+    RatFunc.inftyValuation_of_nonzero F (hN hxy)]
+  trans WithZero.exp (max (Algebra.norm (RatFunc F) x).intDegree
+    (Algebra.norm (RatFunc F) y).intDegree)
+  · rw [WithZero.exp_le_exp]
+    exact intDegree_norm_add_le W hx hy hxy
+  · rcases max_cases (Algebra.norm (RatFunc F) x).intDegree
+      (Algebra.norm (RatFunc F) y).intDegree with ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] <;> simp
 
 open scoped Classical in
 /-- **The valuation at infinity on the function field of a Weierstrass curve**: Mathlib's place at
@@ -280,7 +269,7 @@ infinity of `F(x)`, composed with the algebra norm. -/
 noncomputable def infinityPlace : Valuation W.FunctionField (WithZero (Multiplicative ℤ)) where
   toFun f := RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f)
   map_zero' := by
-    rw [norm_zero_eq_zero W, map_zero]
+    rw [Algebra.norm_zero, map_zero]
   map_one' := by rw [map_one, map_one]
   map_mul' x y := by rw [map_mul, map_mul]
   map_add_le_max' := infinityPlace_add_le_max W
