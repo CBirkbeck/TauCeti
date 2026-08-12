@@ -217,6 +217,18 @@ theorem IsBounded.add {S T : Set A} (hS : IsBounded S) (hT : IsBounded T) : IsBo
   exact AddSubgroup.add_mem _ (AddSubgroup.subset_closure (.inl hs))
     (AddSubgroup.subset_closure (.inr ht))
 
+/-- The join of two bounded subrings of a commutative ring is bounded. -/
+theorem isBounded_sup {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanAddGroup A]
+    (B₀ B₁ : Subring A) (hB₀ : IsBounded (B₀ : Set A)) (hB₁ : IsBounded (B₁ : Set A)) :
+    IsBounded ((B₀ ⊔ B₁ : Subring A) : Set A) := by
+  refine (hB₀.mul hB₁).addSubgroupClosure.subset fun x hx ↦ ?_
+  have hmem : x ∈ Subring.closure ((B₀ : Set A) ∪ (B₁ : Set A)) := by
+    simpa [Subring.closure_union] using hx
+  have hcl : ∀ B : Subring A, Submonoid.closure (B : Set A) = B.toSubmonoid := fun B ↦ by
+    rw [← Subring.coe_toSubmonoid]; exact Submonoid.closure_eq _
+  rw [Subring.mem_closure_iff, Submonoid.closure_union, hcl, hcl] at hmem
+  simpa [Submonoid.coe_sup] using hmem
+
 end Nonarchimedean
 
 section Image
