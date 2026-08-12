@@ -59,6 +59,10 @@ variable (N : ℕ)
 /-- The unipotent factor `U(B)` of an upper-triangular representative lies in `Γ₀(N)`, for
 every level: it is unitriangular, so its lower-left entry is `0`, which is what `Γ₀(N)` asks
 for modulo `N`. The entry assignment `B` sits strictly above the diagonal and is irrelevant. -/
+-- Deliberately not `@[simp]`, and the attribute is not available: every step of the proof is
+-- already a simp lemma (`Gamma0_mem`, `coe_unitriSL`, `unitriMat_apply_eq_zero_of_lt`,
+-- `Int.cast_zero`), so `simp` closes the goal on its own and `simpNF` rejects the attribute as
+-- redundant with `simp can prove this`. The lemma is kept as the named fact to `exact`.
 lemma unitriSL_mem_Gamma0 {a : Fin 2 → ℕ} (B : UpperTriEntries 2 a) :
     unitriSL B ∈ Gamma0 N :=
   Gamma0_mem.mpr <| by simp
