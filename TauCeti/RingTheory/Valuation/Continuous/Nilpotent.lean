@@ -39,7 +39,7 @@ that form.
 ## Why `lt_one` is not just the case `γ = 1`
 
 Cofinality does imply `v a < 1`, through `CofinalValueFor.lt_one`. But that route pays for the
-general `γ`: a group codomain, and `[SeparatelyContinuousMul A]` for the ratios. Since
+general `γ`: a group codomain, and continuity of right multiplication for the ratios. Since
 `Spv (A, I·A)` membership is a condition on all of `Γ_v` while the second conjunct of Theorem
 7.10 is a condition on `1` alone, the two really are separate obligations, and the second is
 recorded at its own — much weaker — hypotheses rather than as a corollary of the first.
@@ -99,8 +99,9 @@ valuation has cofinal values at every topologically nilpotent element: the power
 eventually inside each ball `{x ; v x < γ}`, and continuity is what makes that ball open.
 
 A general `γ ∈ Γ_v` is a ratio `v t / v r` of attained values rather than an attained value, so
-the ball is opened by `IsContinuous.isOpen_lt_div` — whence `[SeparatelyContinuousMul A]`. -/
-theorem CofinalValueFor.of_isContinuous_of_isTopologicallyNilpotent [SeparatelyContinuousMul A]
+the ball is opened by `IsContinuous.isOpen_lt_div` — whence `[ContinuousConstSMul Aᵐᵒᵖ A]`,
+which is continuity of right multiplication by a constant and nothing more. -/
+theorem CofinalValueFor.of_isContinuous_of_isTopologicallyNilpotent [ContinuousConstSMul Aᵐᵒᵖ A]
     {v : Valuation A Γ₀} (hv : v.IsContinuous) {a : A} (ha : IsTopologicallyNilpotent a) :
     CofinalValueFor v ⊤ a := by
   rw [cofinalValueFor_def]
