@@ -24,7 +24,7 @@ full-weight representative per pair.
 
 ## Main results
 
-* `TauCeti.ModularForm.sum_orderOfVanishingAt_rightVert_eq_leftVert`: the vertical pairing.
+* `TauCeti.ModularForm.sum_orderOfVanishingAt_rightVertical_eq_leftVertical`: the vertical pairing.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_rightArc_eq_leftArc`: the arc pairing.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_rightArc_erase_eq_leftArc_erase`: the arc
   pairing with the two `ρ`-corners removed.
@@ -111,7 +111,7 @@ end Vertical
 
 /-- **The vertical pairing.** Over a divisor set complete for the closed fundamental domain,
 the order sum along the right vertical edge equals the order sum along the left one. -/
-theorem sum_orderOfVanishingAt_rightVert_eq_leftVert (f : F)
+theorem sum_orderOfVanishingAt_rightVertical_eq_leftVertical (f : F)
     (hper : Periodic (⇑f ∘ ofComplex) 1) (hS : ∀ p ∈ S, p ∈ 𝒟)
     (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt f p ≠ 0 → p ∈ S) :
     ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ).re = 1 / 2 ∧ 1 < ‖(p : ℂ)‖), orderOfVanishingAt f p =
@@ -264,6 +264,8 @@ private lemma coe_re_ρ_add_one : ((ρ : ℂ) + 1).re = 1 / 2 := by
 /-- A point of the unit arc with vanishing real part is `i`. -/
 private lemma coe_eq_I_of_re_eq_zero (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = 0) :
     (p : ℂ) = Complex.I := by
+  -- `eq_of_re_of_norm` states its hypotheses via `UpperHalfPlane.re`; the `show`s restate them
+  -- (definitionally) at the `Complex` spellings the hypotheses and corner lemmas use.
   have hp : p = UpperHalfPlane.I := UpperHalfPlane.eq_of_re_of_norm
     (show (p : ℂ).re = (UpperHalfPlane.I : ℂ).re by simpa using hre)
     (show ‖(p : ℂ)‖ = ‖(UpperHalfPlane.I : ℂ)‖ by simp [hnorm])
@@ -272,6 +274,7 @@ private lemma coe_eq_I_of_re_eq_zero (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : �
 /-- A point of the unit arc with real part `-1/2` is the corner `ρ`. -/
 private lemma coe_eq_ρ_of_re (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = -(1 / 2)) :
     (p : ℂ) = (ρ : ℂ) := by
+  -- `show` restates the hypotheses at the `Complex` spellings, as in `coe_eq_I_of_re_eq_zero`.
   have hp : p = ρ := UpperHalfPlane.eq_of_re_of_norm
     (show (p : ℂ).re = (ρ : ℂ).re by rw [hre, coe_re_ρ])
     (show ‖(p : ℂ)‖ = ‖(ρ : ℂ)‖ by rw [hnorm, norm_ρ])
@@ -280,6 +283,7 @@ private lemma coe_eq_ρ_of_re (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re 
 /-- A point of the unit arc with real part `1/2` is the corner `ρ + 1`. -/
 private lemma coe_eq_ρ_add_one_of_re (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = 1 / 2) :
     (p : ℂ) = (ρ : ℂ) + 1 := by
+  -- `show` restates the hypotheses at the `Complex` spellings, as in `coe_eq_I_of_re_eq_zero`.
   have hp : p = (1 : ℝ) +ᵥ ρ := UpperHalfPlane.eq_of_re_of_norm
     (show (p : ℂ).re = (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ).re by
       rw [hre, coe_re, vadd_re, ← coe_re, coe_re_ρ]; norm_num)
@@ -403,7 +407,7 @@ theorem sum_orderOfVanishingAt_boundary_eq_two_mul [SlashInvariantFormClass F Γ
         ∑ p ∈ S.filter (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
           orderOfVanishingAt f p) := by
   rw [sum_orderOfVanishingAt_boundary_eq_add_four f hS,
-    sum_orderOfVanishingAt_rightVert_eq_leftVert f hper hS hcomp,
+    sum_orderOfVanishingAt_rightVertical_eq_leftVertical f hper hS hcomp,
     sum_orderOfVanishingAt_rightArc_erase_eq_leftArc_erase f hper hSmem hS hcomp]
   ring
 
