@@ -24,8 +24,9 @@ explicit second topology.
 ## Main results
 
 * `TauCeti.spectralSpace_of_isClopen_generateFrom` : Wedhorn's Proposition 3.31.
-* `TauCeti.isCompact_of_isClopen_generateFrom` : every member of `U` is quasi-compact for the
-  generated topology.
+* `TauCeti.isCompact_of_isClosed_generateFrom` : every `t'`-closed set is quasi-compact for the
+  generated topology, and `TauCeti.isCompact_of_isClopen_generateFrom` : in particular every
+  member of `U` is.
 
 ## References
 
@@ -91,6 +92,12 @@ lemma isCompact_sInter_of_isClopen_generateFrom {f : Set (Set X)} (hf : f.Finite
   isCompact_of_patch htU hU
     (@IsClosed.isCompact X t' _ hcomp
       (@IsClopen.isClosed X t' _ (isClopen_sInter_of_subset hU hf hfU)))
+
+/-- Every set closed for the witness topology is quasi-compact for the generated topology. This
+is the form to reach for when the set is presented as closed rather than as a member of `U`; the
+two lemmas around it are its instances at a member and at a finite intersection. -/
+lemma isCompact_of_isClosed_generateFrom {s : Set X} (hs : @IsClosed X t' s) : IsCompact s :=
+  isCompact_of_patch htU hU (@IsClosed.isCompact X t' _ hcomp hs)
 
 /-- Every member of `U` is quasi-compact for the generated topology. -/
 lemma isCompact_of_isClopen_generateFrom {s : Set X} (hs : s ∈ U) : IsCompact s := by

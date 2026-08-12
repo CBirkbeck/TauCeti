@@ -18,10 +18,12 @@ for the induced compact topology. This is the presentation that the patch criter
 spectral spaces consumes to prove `Spv A` spectral.
 
 It also settles quasi-compactness of the generating family of `Spv A`, by instantiating the patch
-criterion's own transfer lemmas at `patchTopology A`. That is the part of Wedhorn's Theorem 4.9
-which says the family consists of quasi-compact opens, as opposed to merely generating the
-topology. It says nothing about Lemma 7.5(1), whose family lives in `Spv (A, I)`: quasi-compactness
-in `Spv A` does not pass to the traces, since `spvOfIdeal` is not closed in `Spv A`. Nor is the
+criterion's `isCompact_of_isClosed_generateFrom` at `patchTopology A`: the mechanism lives once,
+in `TauCeti/Topology/Spectral/PatchCriterion.lean`, and is specialised here. That is the part of
+Wedhorn's Theorem 4.9 which says the family consists of quasi-compact opens, as opposed to merely
+generating the topology. It says nothing about Lemma 7.5(1), whose family lives in `Spv (A, I)`:
+quasi-compactness in `Spv A` does not pass to the traces, since `spvOfIdeal` is not closed in
+`Spv A`. Nor is the
 *basis* property proved anywhere here — only quasi-compactness of the individual members.
 
 ## Main definitions
@@ -37,9 +39,9 @@ in `Spv A` does not pass to the traces, since `spvOfIdeal` is not closed in `Spv
 * `TauCeti.ValuationSpectrum.compactSpace_patchTopology` : The witness topology is compact.
 * `TauCeti.ValuationSpectrum.isClopen_patchTopology_basicOpen` : Basic opens are clopen for
   the witness topology.
-* `TauCeti.ValuationSpectrum.isCompact_basicOpen` and
-  `TauCeti.ValuationSpectrum.isCompact_basicOpenFinset` : the members of the generating family
-  are quasi-compact.
+* `TauCeti.ValuationSpectrum.isCompact_of_isClosed_patchTopology` : a patch-closed subset is
+  quasi-compact, with `TauCeti.ValuationSpectrum.isCompact_basicOpen` and
+  `TauCeti.ValuationSpectrum.isCompact_basicOpenFinset` its two instances.
 -/
 
 public section
@@ -224,20 +226,22 @@ private lemma isClopen_patchTopology_of_mem_basicOpens :
   rintro _ ⟨f, s, rfl⟩
   exact isClopen_patchTopology_basicOpen f s
 
+/-- Any patch-closed subset of `Spv A` is quasi-compact — the patch criterion's
+`isCompact_of_isClosed_generateFrom`, instantiated at the patch presentation. -/
+lemma isCompact_of_isClosed_patchTopology {U : Set (Spv A)}
+    (hU : @IsClosed (Spv A) (patchTopology A) U) : IsCompact U :=
+  isCompact_of_isClosed_generateFrom (t' := patchTopology A) instTopologicalSpace_eq_generateFrom
+    compactSpace_patchTopology isClopen_patchTopology_of_mem_basicOpens hU
+
 /-- A basic open of `Spv A` is quasi-compact. -/
 lemma isCompact_basicOpen (f s : A) : IsCompact (basicOpen f s) :=
-  isCompact_of_isClopen_generateFrom (t' := patchTopology A) instTopologicalSpace_eq_generateFrom
-    compactSpace_patchTopology isClopen_patchTopology_of_mem_basicOpens ⟨f, s, rfl⟩
+  isCompact_of_isClosed_patchTopology
+    (@IsClopen.isClosed (Spv A) (patchTopology A) _ (isClopen_patchTopology_basicOpen f s))
 
-/-- `Spv(A)(T/s)` is quasi-compact: it is the finite intersection of basic opens exhibited by
-`basicOpenFinset_eq_biInter`, and the patch criterion makes finite intersections of members of
-the generating family quasi-compact. -/
-lemma isCompact_basicOpenFinset (T : Finset A) (s : A) : IsCompact (basicOpenFinset T s) := by
-  rw [basicOpenFinset_eq_biInter, ← Set.sInter_image]
-  refine isCompact_sInter_of_isClopen_generateFrom (t' := patchTopology A)
-    instTopologicalSpace_eq_generateFrom compactSpace_patchTopology
-    isClopen_patchTopology_of_mem_basicOpens ((T.finite_toSet.insert s).image _) ?_
-  rintro _ ⟨t, -, rfl⟩
-  exact ⟨t, s, rfl⟩
+/-- `Spv(A)(T/s)` is quasi-compact: a finite intersection of patch-clopen basic opens is
+patch-clopen. -/
+lemma isCompact_basicOpenFinset (T : Finset A) (s : A) : IsCompact (basicOpenFinset T s) :=
+  isCompact_of_isClosed_patchTopology
+    (@IsClopen.isClosed (Spv A) (patchTopology A) _ (isClopen_patchTopology_basicOpenFinset T s))
 
 end TauCeti.ValuationSpectrum
