@@ -403,14 +403,15 @@ theorem matrixCoeffLp_mem_span_peterWeylFamily (models : ι → IrrepModel 𝕜 
   have hright : ∀ (a : Fin (models i).dim) (u : EuclideanSpace 𝕜 (Fin (models i).dim)),
       ContRepresentation.matrixCoeffLp (models i).rep (models i).continuous_rep
         ((models i).basis a) u ∈ P := fun a u => by
-    have hle := Submodule.span_le.2 (show Set.range ⇑(models i).basis ⊆
-      ↑(P.comap (ContRepresentation.matrixCoeffLpₛₗ (models i).rep (models i).continuous_rep
-        ((models i).basis a))) from by rintro _ ⟨b, rfl⟩; simpa using hbase a b)
-    simpa using hle (hspan ▸ Submodule.mem_top)
-  have hle := Submodule.span_le.2 (show Set.range ⇑(models i).basis ⊆
-    ↑(P.comap ((ContRepresentation.matrixCoeffLpₛₗ (models i).rep
-      (models i).continuous_rep).flip w)) from by rintro _ ⟨a, rfl⟩; simpa using hright a w)
-  simpa using hle (hspan ▸ Submodule.mem_top)
+    have himg := (Submodule.image_span_subset
+      (ContRepresentation.matrixCoeffLpₛₗ (models i).rep (models i).continuous_rep
+        ((models i).basis a)) (Set.range ⇑(models i).basis) P).2
+      (by rintro _ ⟨b, rfl⟩; simpa using hbase a b)
+    simpa using himg ⟨u, hspan ▸ Submodule.mem_top, rfl⟩
+  have himg := (Submodule.image_span_subset
+    ((ContRepresentation.matrixCoeffLpₛₗ (models i).rep (models i).continuous_rep).flip w)
+    (Set.range ⇑(models i).basis) P).2 (by rintro _ ⟨a, rfl⟩; simpa using hright a w)
+  simpa using himg ⟨v, hspan ▸ Submodule.mem_top, rfl⟩
 
 namespace IsIrrepSkeleton
 
