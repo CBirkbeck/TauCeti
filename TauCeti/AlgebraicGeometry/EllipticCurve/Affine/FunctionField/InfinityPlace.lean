@@ -163,16 +163,9 @@ private theorem degree_norm_add_le (a₁ b₁ a₂ b₂ : R[X]) :
       ≤ max (Algebra.norm R[X] (a₁ • 1 + b₁ • CoordinateRing.mk W Y)).degree
             (Algebra.norm R[X] (a₂ • 1 + b₂ • CoordinateRing.mk W Y)).degree := by
   rw [CoordinateRing.degree_norm_smul_basis, CoordinateRing.degree_norm_smul_basis,
-    CoordinateRing.degree_norm_smul_basis]
-  refine max_le ?_ ?_
-  · calc (2 : ℕ) • (a₁ + a₂).degree ≤ 2 • max a₁.degree a₂.degree := by
-          gcongr; exact degree_add_le a₁ a₂
-    _ ≤ _ := by
-          rcases max_cases a₁.degree a₂.degree with ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] <;> simp
-  · calc (2 : ℕ) • (b₁ + b₂).degree + 3 ≤ 2 • max b₁.degree b₂.degree + 3 := by
-          gcongr; exact degree_add_le b₁ b₂
-    _ ≤ _ := by
-          rcases max_cases b₁.degree b₂.degree with ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] <;> simp
+    CoordinateRing.degree_norm_smul_basis, max_max_max_comm, max_add_add_right,
+    ← smul_max_of_nonneg (Nat.zero_le 2), ← smul_max_of_nonneg (Nat.zero_le 2)]
+  gcongr <;> exact degree_add_le _ _
 
 /-- The `natDegree` form, and it needs no nonzero hypotheses at all: `natDegree_le_natDegree`
 carries the `WithBot` bound across, and `natDegree 0 = 0` makes the zero cases hold anyway. -/
