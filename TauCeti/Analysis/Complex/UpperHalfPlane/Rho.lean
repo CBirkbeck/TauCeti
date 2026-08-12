@@ -43,15 +43,10 @@ lemma norm_ρ_add_one : ‖(ρ : ℂ) + 1‖ = 1 := by
   rw [← neg_one_div_ρ, norm_div]
   simp [norm_ρ]
 
-@[simp]
-lemma ρ_add_one_ne_zero : (ρ : ℂ) + 1 ≠ 0 := by
-  rw [← neg_one_div_ρ]
-  exact div_ne_zero (by norm_num) (ne_zero ρ)
-
 /-- The inversion carries `ρ + 1` to `ρ`. -/
 @[simp]
 lemma neg_one_div_ρ_add_one : -1 / ((ρ : ℂ) + 1) = (ρ : ℂ) := by
-  rw [div_eq_iff ρ_add_one_ne_zero]
-  linear_combination -ρ_sq
+  rw [← neg_one_div_ρ]
+  field_simp
 
 end UpperHalfPlane
