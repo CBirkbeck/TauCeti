@@ -142,8 +142,8 @@ lemma heckeSlashSum_apply (f : ℍ → ℂ) (τ : ℍ) : heckeSlashSum k D f τ 
 
 /-- The slash sum is additive in `f`. -/
 @[simp]
-lemma heckeSlashSum_add (f g : ℍ → ℂ) :
-    heckeSlashSum k D (f + g) = heckeSlashSum k D f + heckeSlashSum k D g := by
+lemma heckeSlashSum_add (f g : ℍ → ℂ) : heckeSlashSum k D (f + g) =
+    heckeSlashSum k D f + heckeSlashSum k D g := by
   simp [heckeSlashSum, Finset.sum_add_distrib]
 
 /-- The slash sum kills the zero function. -/
