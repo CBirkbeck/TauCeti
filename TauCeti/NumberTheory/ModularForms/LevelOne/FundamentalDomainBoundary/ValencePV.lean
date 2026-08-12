@@ -55,6 +55,13 @@ on the contour.
   (in `TauCeti.ModularForm`):
   the elliptic-corner identity for a modular form, whose holomorphy discharges the meromorphy
   hypothesis the slash-invariant form has to assume.
+* `exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`
+  (in `TauCeti.ModularForm`):
+  the same identity for a nonzero level-one modular form once the truncation height clears a
+  threshold, with the ambient open set `U` and the hypotheses `hoff`, `hmero`, `hga`, `hgz`
+  all constructed rather than assumed. The threshold is unavoidable: `fdBoundaryQRadius H`
+  shrinks as `H` grows, so it meets the cusp function's non-vanishing neighbourhood only above
+  some `H₀`.
 
 ## References
 
@@ -663,6 +670,53 @@ private lemma exists_threshold_cuspFunction_ne_zero [ModularFormClass F 𝒮ℒ 
     rw [fdBoundaryQRadius_def, ← Real.exp_log hε, Real.exp_lt_exp]
     linarith
   simpa using (mem_closedBall_zero_iff.mp hq).trans_lt hlt
+
+
+/-- **The valence formula for a level-one modular form, once `H` clears a threshold.**
+`sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_modularFormClass` still asks
+for an ambient open set `U` dominating the truncated fundamental domain, the off-divisor
+analyticity `hoff`, and the cusp-function data `hga`/`hgz` on `Metric.closedBall 0
+(fdBoundaryQRadius H)`. All five come for free once `f` is a level-one modular form: `U` and
+`hoff` from the zeros-confinement construction (`exists_isOpen_truncated_zeros_confined`,
+`hoff_of_zeros_confined`), and `hga` from `analyticAt_cuspFunction_of_norm_le` — but `hgz` only
+from `exists_threshold_cuspFunction_ne_zero`, and only **above a threshold** `H₀`:
+`fdBoundaryQRadius H = exp (-2πH)` shrinks as `H` grows, while `cuspFunction_eventually_ne_zero`
+gives non-vanishing only on some fixed punctured neighbourhood of `0`, so the two meet only once
+`H` clears `H₀`. That threshold is exactly what this theorem returns.
+
+The hypotheses `hoffγ`, the corner condition `hin`, and completeness of the zero set of `T`
+(`hT`) all mention `H`, so — together with the threshold hypothesis itself — they sit inside the
+`∀ H` binder rather than being fixed in advance. -/
+theorem exists_threshold_sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
+    [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {S T : Finset ℂ}
+    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (hper : Periodic (⇑f ∘ ofComplex) 1)
+    (hpos : ∀ s ∈ T, 0 < s.im) :
+    ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H → 1 < H →
+      (∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ S →
+        AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0) →
+      (∀ z ∈ T, z ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) →
+        1 < ‖z‖ ∧ |z.re| < 1 / 2 ∧ z.im < H) →
+      (∀ z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H,
+        (⇑f ∘ ofComplex) z = 0 → z ∈ T) →
+      ∑ z ∈ T \ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ),
+            ((orderOfVanishingAt ⇑f (ofComplex z) : ℤ) : ℂ)
+          + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
+          + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)
+          + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
+  have hg : MDiff (⇑f : ℍ → ℂ) := ModularFormClass.holo f
+  have : Fact (IsCusp OnePoint.infty 𝒮ℒ) :=
+    ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos one_mem_strictPeriods_SL⟩
+  have hbdd : IsBoundedAtImInfty (⇑f : ℍ → ℂ) := ModularFormClass.bdd_at_infty f
+  obtain ⟨H₀, hH₀⟩ := exists_threshold_cuspFunction_ne_zero hf
+  refine ⟨H₀, fun H hHH₀ hH hoffγ hin hT => ?_⟩
+  obtain ⟨U, hU, hUdom, hUsub, hUZ⟩ := exists_isOpen_truncated_zeros_confined hg hf H
+  have : ModularFormClass F ((⊤ : Subgroup SL(2, ℤ)) : Subgroup (GL (Fin 2) ℝ)) k :=
+    MonoidHom.range_eq_map (Matrix.SpecialLinearGroup.mapGL ℝ : SL(2, ℤ) →* GL (Fin 2) ℝ) ▸ ‹_›
+  exact sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_modularFormClass
+    (Γ := ⊤) f (Subgroup.mem_top _) hH hnorm hinv hper hoffγ hU hUdom
+    (hoff_of_zeros_confined hg hUsub hUZ hT) hpos hin
+    (fun q hq => analyticAt_cuspFunction_of_norm_le hper hg hbdd (zero_lt_one.trans hH) hq)
+    (hH₀ H hHH₀)
 
 end ModularForm
 
