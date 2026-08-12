@@ -17,9 +17,8 @@ Mathlib computes the terms of `normEDS` up to the fourth (`normEDS_zero`, `normE
 expressed through the fifth rather than expanded: the fifth term has no short closed form, and the
 shape above is the one the divisibility arguments downstream consume.
 
-The proof is the doubling identity `normEDS_mul_complEDS₂` at `k = 3`, after which the second
-complement `complEDS₂ b c d 3` is expanded by its definition and the `preNormEDS` values at `1`,
-`2` and `4` are substituted.
+The proof is the doubling identity `normEDS_mul_complEDS₂` at `k = 3`, after which Mathlib's
+`complEDS₂_three` and `normEDS_three` evaluate the two factors.
 
 Adapted from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
@@ -31,7 +30,9 @@ copyright header.
 
 **Adaptations:** converted to this repository's module system, and restated for Mathlib's current
 names — the source predates the rename of `compl₂EDS` to `complEDS₂` and of
-`normEDS_mul_compl₂EDS` to `normEDS_mul_complEDS₂`.
+`normEDS_mul_compl₂EDS` to `normEDS_mul_complEDS₂`. The source also unfolds `compl₂EDS` and
+re-evaluates it at `3` from the `preNormEDS` values; Mathlib now has `complEDS₂_three`, so that
+step is a rewrite rather than a computation.
 -/
 
 public section
@@ -44,9 +45,8 @@ variable {R : Type*} [CommRing R] (b c d : R)
 `W₆ = (W₅ - d²) b c`. This continues Mathlib's `normEDS_zero` through `normEDS_four`, which stop
 at the fourth term. -/
 theorem normEDS_six_eq_mul : normEDS b c d 6 = (normEDS b c d 5 - d ^ 2) * b * c := by
-  rw [show (6 : ℤ) = 2 * 3 by rfl, ← normEDS_mul_complEDS₂, complEDS₂]
-  norm_num [normEDS, normEDS_three, preNormEDS_one, preNormEDS_two, preNormEDS_four,
-    Int.even_iff]
+  rw [show (6 : ℤ) = 2 * 3 by rfl, ← normEDS_mul_complEDS₂, complEDS₂_three, normEDS_three]
+  norm_num [normEDS, Int.even_iff]
   ring
 
 end WeierstrassCurve
