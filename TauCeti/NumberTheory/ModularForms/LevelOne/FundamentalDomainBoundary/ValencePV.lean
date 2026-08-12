@@ -18,7 +18,6 @@ import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Exci
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Interior
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.OnCurveCapture
-import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.I.Value
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.NonCorner
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.Value
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Rho.AddOne.Value
@@ -554,7 +553,8 @@ private lemma sum_filter_corner_windingNumber_mul_order {f : ℍ → ℂ} {H : �
   rw [Finset.sum_subset hsub hmiss,
     Finset.sum_insert (by simp [I_ne_ρ_and_I_ne_vadd_one_ρ.1, I_ne_ρ_and_I_ne_vadd_one_ρ.2]),
     Finset.sum_insert (by simp [ρ_ne_vadd_one_ρ]), Finset.sum_singleton,
-    UpperHalfPlane.coe_I, coe_vadd_one_ρ, windingNumber_fdBoundary_I hH,
+    UpperHalfPlane.coe_I, coe_vadd_one_ρ,
+    windingNumber_fdBoundary_arc hH (by norm_num) (by norm_num) (by norm_num),
     windingNumber_fdBoundary_rho hρH, windingNumber_fdBoundary_rho_add_one hρH, hordρ₁]
   ring
 

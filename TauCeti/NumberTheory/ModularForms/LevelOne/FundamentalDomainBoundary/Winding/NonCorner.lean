@@ -18,30 +18,30 @@ import TauCeti.Topology.Circle.Metric
 /-!
 # Winding of the boundary contour at its smooth non-corner points
 
-Every point of the truncated-fundamental-domain boundary that is not one of the corner
-points `ρ`, `ρ + 1`, `-1/2 + H·i`, `1/2 + H·i` is crossed smoothly by a single piece of the
-contour, and the generalized winding number there is `-1/2`: half a clockwise turn, exactly
-as at the elliptic point `i`. This file proves that value on the two open smooth strata —
-the open vertical edges and the open unit arc — the winding weights of the boundary divisor
-points in the valence formula.
+A non-corner point of the truncated-fundamental-domain boundary lies on one of three open
+smooth strata: the two open vertical edges, the open unit arc, or the open ceiling segment at
+height `H`. This file proves that on the first two the contour crosses the point smoothly
+exactly once and the generalized winding number there is `-1/2`: half a clockwise turn,
+exactly as at the elliptic point `i`. These are the winding weights of the boundary divisor
+points in the valence formula; the ceiling stratum is not treated here, since divisor points
+lie strictly below the ceiling (`w.im < H`) and never reach it in that application.
 
-The computation generalizes the route proven at `i`
-(`TauCeti.ModularForm.hasCauchyPVAt_fdBoundary_I`): a logarithmic telescope over the
-`δ`-excised contour followed by the excision collapse at the chord-matched half-width. One
-choice removes that file's branch-crossing bookkeeping: instead of the principal branch of
-`log (γ t - w)`, the telescope runs on `log ((γ t - w) · c)` for a unit `c` rotating the
-branch cut into a ray from `w` that misses the rest of the contour — `c = -1` on the right
-vertical, `c = 1` on the left, `c = w⁻¹` on the arc. With the cut so aimed, the whole excised
-contour is slit-plane-valued for the one branch, the telescope needs no interior crossing
-corrections, and both pieces evaluate by the comparison-free logarithmic FTC.
+The computation at a crossing point is a logarithmic telescope over the `δ`-excised contour
+followed by the excision collapse at the chord-matched half-width. Running the telescope on
+the principal branch of `log (γ t - w)` would cost branch-crossing bookkeeping; instead it
+runs on `log ((γ t - w) · c)` for a unit `c` rotating the branch cut into a ray from `w` that
+misses the rest of the contour — `c = -1` on the right vertical, `c = 1` on the left,
+`c = w⁻¹` on the arc. With the cut so aimed, the whole excised contour is slit-plane-valued
+for the one branch, the telescope needs no interior crossing corrections, and both pieces
+evaluate by the comparison-free logarithmic FTC.
 
 At a vertical point the excision endpoints sit at `w ± ε·i`, so the excised integral is the
-constant `-π·i`; at an arc point it is `-π·i - 2·arcsin(ε/2)·i`, the same value the collapse
-at `i` produced, and the limit is `-π·i` in both cases.
+constant `-π·i`; at an arc point it is `-π·i - 2·arcsin(ε/2)·i`, and the limit is `-π·i` in
+both cases.
 
-The arc statement covers the whole open arc, including `i`; the specific value
-`TauCeti.ModularForm.windingNumber_fdBoundary_I` stays the `simp`-normal anchor at that
-closed point.
+The arc statement covers the whole open arc, including `i`: a consumer wanting the value there
+supplies the elliptic point's three elementary facts — `‖i‖ = 1`, `|re i| = 0 < 1/2`,
+`0 < im i` — directly to the arc theorems below.
 
 ## Main declarations
 
@@ -55,14 +55,19 @@ closed point.
 The hypotheses are spelled the way the singular-set interfaces provide them
 (`TauCeti.ModularForm.verticalSingularSet`, `arcSingularSet`): a vertical point carries
 `w.re = 1/2 ∨ w.re = -(1/2)`, `1 < ‖w‖`, `0 < w.im` and `w.im < H`; an arc point carries
-`‖w‖ = 1`, `|w.re| < 1/2` and `0 < w.im`.
+`‖w‖ = 1`, `|w.re| < 1/2` and `0 < w.im`. The arc theorems also assume `1 < H`, which makes
+the contour the boundary of a genuine truncation: the ceiling then clears the arc point by
+`H - 1 > 0`.
 
 ## References
 
-* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the valence-formula
-  winding-weight development (`ForMathlib/ValenceFormula/WindingWeights/`) proves these
-  values at the three corner points; the non-corner statements and the rotated-branch
-  telescope that uniformizes them are Tau Ceti's.
+* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) (commit
+  `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck) — the two statement
+  pairs fill the role of that project's `FDWindingDataFull.boundary_winding`, whose non-corner
+  inputs are the FTC-provider files `ForMathlib/ArcGenericFTCProvider.lean`,
+  `ForMathlib/Seg1FTCProvider.lean` and `ForMathlib/Seg4FTCProvider.lean`. The proof route is
+  Tau Ceti's own: the rotated-branch telescope above, developed against the `Winding/I`
+  telescope pattern, replaces that FTC-provider chain.
 * N. Hungerbühler, M. Wasem, *Non-integer valued winding numbers and a generalized
   Residue Theorem*, arXiv:1808.00997.
 -/
@@ -196,6 +201,11 @@ shifted contour `γ t - w` is purely imaginary, so the chord distance is linear 
 parameter and the matched half-width is `δ(ε) = ε / (H - √3/2)`. The adapted branch negates
 on the right edge and is the principal one on the left; either way the excision endpoints are
 `±ε·i` and the excised integral is the constant `-π·i`.
+
+Two spellings recur below: linear bounds enter as inline `show _ by linarith` terms, stating
+each bound at the sign-adjusted operand its consuming `abs` estimate needs, and the log
+evaluations reshape real-cast products by `show _ by push_cast; ring` into the
+`((r : ℝ) : ℂ) * z` operand that `Complex.log_ofReal_mul` splits.
 -/
 
 /-- On the right vertical the shifted contour is purely imaginary, with signed height linear
@@ -495,10 +505,10 @@ private lemma left_window_endpoints (hre : w.re = -(1 / 2)) (hε : 0 < ε)
   refine ⟨hwl, hwr, ?_, ?_⟩ <;>
     rw [fdBoundary_sub_of_mem_Icc_three_four hre ⟨by linarith, by linarith⟩]
   · refine congrArg (fun r : ℝ ↦ (r : ℂ) * Complex.I) ?_
-    rw [show ∀ a b : ℝ, 3 + a - b - 3 = a - b by intros; ring, sub_mul]
+    rw [sub_right_comm, add_sub_cancel_left, sub_mul]
     linarith
   · refine congrArg (fun r : ℝ ↦ (r : ℂ) * Complex.I) ?_
-    rw [show ∀ a b : ℝ, 3 + a + b - 3 = a + b by intros; ring, add_mul]
+    rw [add_assoc, add_sub_cancel_left, add_mul]
     linarith
 
 /-- **The near bound of a left-vertical crossing**: within the chord-matched window the
@@ -654,7 +664,11 @@ A point `w` of the open unit arc is `fdBoundary H t₀` for a unique `t₀ ∈ (
 one smooth circle parameterization through `t = 2`, so no corner is in the way even at `i`.
 The adapted branch is `c = w⁻¹`, whose cut ray `{r·w : r ≤ 1}` runs from `w` through the
 open unit disc and leaves through the lower half-plane, missing the rest of the contour. The
-chord geometry is the one proven at `i`, with `t₀` in place of `2`.
+chord distance is `2·sin(|t - t₀|·π/12)`, uniform along the arc.
+
+The polar computations below restate angle and cast algebra as inline `show _ by ring` /
+`show _ by push_cast; ring` equations: each aims the expression at the exact spelling the
+next `Real.cos`/`Complex.exp`/`Complex.log` rewrite matches.
 -/
 
 /-- The argument of a point of the open unit arc lies in the open middle third of
@@ -699,8 +713,7 @@ private lemma exists_arc_param (hnorm : ‖w‖ = 1) (hre : |w.re| < 1 / 2) (him
   rw [hcurve,
     show (6 * Complex.arg w / Real.pi - 1 + 1) * (Real.pi / 6) = Complex.arg w by
       field_simp; ring,
-    show circleMap 0 1 (Complex.arg w) =
-      Complex.exp ((Complex.arg w : ℂ) * Complex.I) by simp [circleMap]]
+    circleMap_zero, Complex.ofReal_one, one_mul]
   exact hpolar
 
 /-- On the arc the distance between two contour points is the chord distance
@@ -759,14 +772,14 @@ private lemma fdBoundary_sub_mul_inv_polar {ξ : ℝ} (ht₀ : t₀ ∈ Icc (1 :
         Complex.exp (((ξ * (Real.pi / 12) : ℝ) : ℂ) * Complex.I) := by
   have h1 : fdBoundary H (t₀ + ξ) =
       Complex.exp ((((t₀ + ξ + 1) * (Real.pi / 6) : ℝ) : ℂ) * Complex.I) := by
-    rw [show Complex.exp ((((t₀ + ξ + 1) * (Real.pi / 6) : ℝ) : ℂ) * Complex.I) =
-      circleMap 0 1 ((t₀ + ξ + 1) * (Real.pi / 6)) by simp [circleMap]]
-    exact eqOn_fdBoundary_arc H hξ
+    have hcurve : fdBoundary H (t₀ + ξ) = circleMap 0 1 ((t₀ + ξ + 1) * (Real.pi / 6)) :=
+      eqOn_fdBoundary_arc H hξ
+    rw [hcurve, circleMap_zero, Complex.ofReal_one, one_mul]
   have h2 : fdBoundary H t₀ =
       Complex.exp ((((t₀ + 1) * (Real.pi / 6) : ℝ) : ℂ) * Complex.I) := by
-    rw [show Complex.exp ((((t₀ + 1) * (Real.pi / 6) : ℝ) : ℂ) * Complex.I) =
-      circleMap 0 1 ((t₀ + 1) * (Real.pi / 6)) by simp [circleMap]]
-    exact eqOn_fdBoundary_arc H ht₀
+    have hcurve : fdBoundary H t₀ = circleMap 0 1 ((t₀ + 1) * (Real.pi / 6)) :=
+      eqOn_fdBoundary_arc H ht₀
+    rw [hcurve, circleMap_zero, Complex.ofReal_one, one_mul]
   rw [h1, h2, exp_mul_I_sub_exp_mul_I,
     show ((t₀ + ξ + 1) * (Real.pi / 6) - (t₀ + 1) * (Real.pi / 6)) / 2 = ξ * (Real.pi / 12)
       by ring,
@@ -799,8 +812,7 @@ private lemma fdBoundary_sub_mul_inv_sub_eq (ht₀ : t₀ ∈ Icc (1 : ℝ) 3) (
         Complex.exp (((-(Real.pi / 2 + δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I) := by
   have h := fdBoundary_sub_mul_inv_polar (H := H) (ξ := -δ) ht₀
     ⟨by linarith, by linarith [ht₀.2]⟩
-  rw [show t₀ + -δ = t₀ - δ by ring, show -δ * (Real.pi / 12) = -(δ * (Real.pi / 12)) by ring,
-    Real.sin_neg] at h
+  rw [← sub_eq_add_neg, neg_mul, Real.sin_neg] at h
   rw [h, show ((-(Real.pi / 2 + δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I =
       -((Real.pi : ℂ) / 2 * Complex.I) + ((-(δ * (Real.pi / 12)) : ℝ) : ℂ) * Complex.I by
         push_cast; ring,
@@ -959,7 +971,7 @@ private lemma lt_norm_sub_arc_of_far_right (ht₀ : t₀ ∈ Ioo (1 : ℝ) 3)
         rw [Complex.sub_re, re_fdBoundarySegment4 H ⟨h3.le, h4⟩]
       calc ε < w.re + 1 / 2 := hε₂
         _ ≤ |(fdBoundary H s - w).re| := by
-          rw [hr, abs_sub_comm, show w.re - -(1 / 2) = w.re + 1 / 2 by ring]
+          rw [hr, abs_sub_comm, sub_neg_eq_add]
           exact le_abs_self _
         _ ≤ ‖fdBoundary H s - w‖ := Complex.abs_re_le_norm _
     · have hi : (fdBoundary H s - w).im = H - w.im := by
