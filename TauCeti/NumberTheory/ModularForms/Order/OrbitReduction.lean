@@ -107,12 +107,8 @@ private lemma coe_vadd_one_ρ : (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ) = (ρ : ℂ) +
 
 private lemma norm_eq_one_of_mem_corners {z : ℂ}
     (hz : z ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)) : ‖z‖ = 1 := by
-  rcases Finset.mem_insert.mp hz with rfl | hz'
-  · exact Complex.norm_I
-  rcases Finset.mem_insert.mp hz' with rfl | hz''
-  · exact norm_ρ
-  · rw [Finset.mem_singleton.mp hz'']
-    exact norm_ρ_add_one
+  simp only [Finset.mem_insert, Finset.mem_singleton] at hz
+  rcases hz with rfl | rfl | rfl <;> simp [norm_ρ]
 
 private lemma ne_elliptic_of_mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
     {hf : (⇑f : ℍ → ℂ) ≠ 0} {p : ℍ} (hp : p ∈ canonicalReps hf) :
@@ -120,16 +116,16 @@ private lemma ne_elliptic_of_mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f
   have hcond := (mem_canonicalReps.mp hp).2
   refine ⟨fun h ↦ ?_, fun h ↦ ?_, fun h ↦ ?_⟩ <;> subst h <;>
     rcases hcond with ⟨hno, hgt, -⟩ | ⟨hre, hgt⟩ | ⟨hne, hnorm, hre⟩
-  · exact hno (by rw [coe_I]; exact Finset.mem_insert_self _ _)
-  · rw [coe_I, Complex.I_re] at hre; norm_num at hre
-  · rw [coe_I, Complex.I_re] at hre; norm_num at hre
+  · exact hno (by simp)
+  · norm_num at hre
+  · norm_num at hre
   · exact hno (Finset.mem_insert_of_mem (Finset.mem_insert_self _ _))
-  · rw [norm_ρ] at hgt; norm_num at hgt
+  · norm_num [norm_ρ] at hgt
   · exact hne rfl
   · rw [coe_vadd_one_ρ] at hno
     exact hno (Finset.mem_insert_of_mem (Finset.mem_insert_of_mem (Finset.mem_singleton_self _)))
-  · rw [coe_vadd_one_ρ, Complex.add_re, coe_re_ρ, Complex.one_re] at hre; norm_num at hre
-  · rw [coe_vadd_one_ρ, Complex.add_re, coe_re_ρ, Complex.one_re] at hre; norm_num at hre
+  · norm_num [← coe_re, coe_re_ρ] at hre
+  · norm_num [← coe_re, coe_re_ρ] at hre
 
 /-- The canonical representatives lie in the non-elliptic orbits. -/
 theorem orbit_mk_ne_I_and_ne_ρ_of_mem_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
@@ -152,12 +148,12 @@ theorem orbit_mk_injOn_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
   refine ⟨(mem_fdZeros.mp hmem).1, ?_, ?_⟩
   · rcases hcond with ⟨-, -, habs⟩ | ⟨hre, -⟩ | ⟨-, -, hre⟩
     · exact lt_of_abs_lt (coe_re p ▸ habs)
-    · rw [← coe_re, hre]; norm_num
+    · norm_num [← coe_re, hre]
     · exact (coe_re p ▸ hre).trans (by norm_num)
   · intro hnorm
     rcases hcond with ⟨-, hgt, -⟩ | ⟨-, hgt⟩ | ⟨-, -, hre⟩
-    · rw [hnorm] at hgt; norm_num at hgt
-    · rw [hnorm] at hgt; norm_num at hgt
+    · norm_num [hnorm] at hgt
+    · norm_num [hnorm] at hgt
     · exact coe_re p ▸ hre
 
 private lemma S_smul_mem_fd {p : ℍ} (hp : p ∈ 𝒟) (hnorm : ‖(p : ℂ)‖ = 1) :
@@ -183,14 +179,12 @@ private lemma vadd_neg_one_mem_fd {p : ℍ} (hp : p ∈ 𝒟) (hre : (p : ℂ).r
   refine ⟨?_, ?_⟩
   · rw [normSq_coe_vadd_neg_one hre]
     exact hp.1
-  · have hre' : p.re = 1 / 2 := coe_re p ▸ hre
-    rw [vadd_re, hre']
+  · rw [vadd_re, (coe_re p ▸ hre : p.re = 1 / 2)]
     norm_num
 
-private lemma exists_of_re_eq_half [ModularFormClass F 𝒮ℒ k] {f : F}
-    {hf : (⇑f : ℍ → ℂ) ≠ 0} {p₀ : ℍ} (hfd : p₀ ∈ 𝒟) (hord : orderOfVanishingAt f p₀ ≠ 0)
-    (hre : (p₀ : ℂ).re = 1 / 2) (hlt : 1 < ‖(p₀ : ℂ)‖) :
-    ∃ p ∈ canonicalReps hf,
+private lemma exists_of_re_eq_half [ModularFormClass F 𝒮ℒ k] {f : F} {hf : (⇑f : ℍ → ℂ) ≠ 0}
+    {p₀ : ℍ} (hfd : p₀ ∈ 𝒟) (hord : orderOfVanishingAt f p₀ ≠ 0) (hre : (p₀ : ℂ).re = 1 / 2)
+    (hlt : 1 < ‖(p₀ : ℂ)‖) : ∃ p ∈ canonicalReps hf,
       (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) = Quotient.mk'' p₀ := by
   have horb : (Quotient.mk'' ((-1 : ℝ) +ᵥ p₀) : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) =
       Quotient.mk'' p₀ := by
@@ -222,8 +216,7 @@ private lemma exists_of_norm_eq_one_of_re_pos [ModularFormClass F 𝒮ℒ k] {f 
     ⟨S_smul_mem_fd hfd hnorm, hord'⟩,
       Or.inr (Or.inr ⟨hne, ModularGroup.norm_coe_S_smul hnorm, ?_⟩)⟩, horb⟩
   rw [coe_re, ModularGroup.re_S_smul hnorm]
-  have hpos' : 0 < p₀.re := coe_re p₀ ▸ hpos
-  linarith
+  exact neg_lt_zero.mpr (coe_re p₀ ▸ hpos)
 
 /-- Every non-elliptic orbit of nonzero order has a representative among the canonical ones:
 a fundamental-domain representative exists, and the boundary identifications move it into
@@ -236,7 +229,7 @@ theorem exists_mem_canonicalReps_orbit_mk_eq [ModularFormClass F 𝒮ℒ k] {f :
   obtain ⟨p₀, rfl, hfd⟩ := ModularGroup.exists_rep_mem_fd q
   rw [orderOfVanishingOnOrbit_mk] at hq
   rcases (Complex.one_le_normSq_iff.mp hfd.1).lt_or_eq with hlt | heq
-  · rcases lt_or_eq_of_le hfd.2 with hre_lt | hre_eq
+  · rcases hfd.2.lt_or_eq with hre_lt | hre_eq
     · refine ⟨p₀, mem_canonicalReps.mpr ⟨mem_fdZeros.mpr ⟨hfd, hq⟩,
         Or.inl ⟨fun hc ↦ hlt.ne' (norm_eq_one_of_mem_corners hc), hlt, ?_⟩⟩, rfl⟩
       rwa [coe_re]
@@ -294,11 +287,9 @@ theorem sum_canonicalReps_split [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (�
   classical
   have hd₂ : Disjoint
       ((fdZeros hf).filter fun p : ℍ ↦ (p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖)
-      ((fdZeros hf).filter fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0) := by
-    refine Finset.disjoint_left.mpr fun p hp hq ↦ ?_
-    have h1 := (Finset.mem_filter.mp hp).2.2
-    rw [(Finset.mem_filter.mp hq).2.2.1] at h1
-    exact lt_irrefl 1 h1
+      ((fdZeros hf).filter fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0) :=
+    Finset.disjoint_left.mpr fun p hp hq ↦
+      (Finset.mem_filter.mp hp).2.2.ne' (Finset.mem_filter.mp hq).2.2.1
   have hd₁ : Disjoint
       ((fdZeros hf).filter fun p : ℍ ↦
         (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧ 1 < ‖(p : ℂ)‖ ∧
@@ -308,10 +299,8 @@ theorem sum_canonicalReps_split [ModularFormClass F 𝒮ℒ k] {f : F} (hf : (�
     refine Finset.disjoint_left.mpr fun p hp hq ↦ ?_
     obtain ⟨-, hgt, habs⟩ := (Finset.mem_filter.mp hp).2
     rcases Finset.mem_union.mp hq with hq | hq
-    · rw [(Finset.mem_filter.mp hq).2.1] at habs
-      norm_num at habs
-    · rw [(Finset.mem_filter.mp hq).2.2.1] at hgt
-      norm_num at hgt
+    · norm_num [← coe_re, (Finset.mem_filter.mp hq).2.1] at habs
+    · norm_num [(Finset.mem_filter.mp hq).2.2.1] at hgt
   unfold canonicalReps
   rw [Finset.filter_or, Finset.filter_or, Finset.sum_union hd₁, Finset.sum_union hd₂,
     ← add_assoc]

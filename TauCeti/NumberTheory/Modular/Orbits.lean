@@ -101,54 +101,36 @@ private lemma re_vadd_ρ : ((1 : ℝ) +ᵥ ρ : ℍ).re = 1 / 2 := by
   rw [vadd_re, re_ρ]
   norm_num
 
-private lemma I_ne_ρ : (I : ℍ) ≠ ρ := fun h ↦ by
-  have h' := congrArg UpperHalfPlane.re h
-  rw [re_I, re_ρ] at h'
-  norm_num at h'
+private lemma I_ne_ρ : (I : ℍ) ≠ ρ :=
+  ne_of_apply_ne UpperHalfPlane.re (by norm_num [re_I, re_ρ])
 
-private lemma I_ne_vadd_ρ : (I : ℍ) ≠ (1 : ℝ) +ᵥ ρ := fun h ↦ by
-  have h' := congrArg UpperHalfPlane.re h
-  rw [re_I, re_vadd_ρ] at h'
-  norm_num at h'
+private lemma I_ne_vadd_ρ : (I : ℍ) ≠ (1 : ℝ) +ᵥ ρ :=
+  ne_of_apply_ne UpperHalfPlane.re (by norm_num [re_I, re_ρ])
 
-private lemma ρ_ne_vadd_ρ : (ρ : ℍ) ≠ (1 : ℝ) +ᵥ ρ := fun h ↦ by
-  have h' := congrArg UpperHalfPlane.re h
-  rw [re_ρ, re_vadd_ρ] at h'
-  norm_num at h'
+private lemma ρ_ne_vadd_ρ : (ρ : ℍ) ≠ (1 : ℝ) +ᵥ ρ :=
+  ne_of_apply_ne UpperHalfPlane.re (by norm_num [re_ρ])
 
-private lemma S_smul_I : _root_.ModularGroup.S • (I : ℍ) = I := by
-  rw [modular_S_smul]
-  refine UpperHalfPlane.ext ?_
-  rw [coe_mk]
-  simp [coe_I]
+private lemma S_smul_I : _root_.ModularGroup.S • (I : ℍ) = I :=
+  _root_.ModularGroup.stabilizer_I.mpr (by simp)
 
 private lemma S_smul_ρ : _root_.ModularGroup.S • (ρ : ℍ) = (1 : ℝ) +ᵥ ρ := by
-  rw [modular_S_smul]
-  refine UpperHalfPlane.ext ?_
-  rw [coe_mk, coe_vadd, Complex.ofReal_one, inv_neg, ← one_div, ← neg_div, neg_one_div_ρ,
-    add_comm]
+  rw [modular_S_smul, UpperHalfPlane.ext_iff, coe_mk, coe_vadd, Complex.ofReal_one, inv_neg,
+    ← one_div, ← neg_div, neg_one_div_ρ, add_comm]
 
 private lemma S_smul_vadd_ρ : _root_.ModularGroup.S • ((1 : ℝ) +ᵥ ρ : ℍ) = ρ := by
-  rw [modular_S_smul]
-  refine UpperHalfPlane.ext ?_
-  rw [coe_mk, coe_vadd, Complex.ofReal_one, inv_neg, ← one_div, ← neg_div, add_comm,
-    neg_one_div_ρ_add_one]
+  rw [modular_S_smul, UpperHalfPlane.ext_iff, coe_mk, coe_vadd, Complex.ofReal_one, inv_neg,
+    ← one_div, ← neg_div, add_comm, neg_one_div_ρ_add_one]
 
-private lemma T_inv_smul_vadd_ρ : _root_.ModularGroup.T⁻¹ • ((1 : ℝ) +ᵥ ρ : ℍ) = ρ := by
-  rw [← zpow_neg_one, modular_T_zpow_smul, ← add_vadd]
-  norm_num
-
-private lemma ST_smul_ρ : (_root_.ModularGroup.S * _root_.ModularGroup.T) • (ρ : ℍ) = ρ := by
-  rw [mul_smul, modular_T_smul, S_smul_vadd_ρ]
+private lemma ST_smul_ρ : (_root_.ModularGroup.S * _root_.ModularGroup.T) • (ρ : ℍ) = ρ :=
+  _root_.ModularGroup.stabilizer_ρ.mpr (by simp)
 
 private lemma TST_smul_ρ :
     (_root_.ModularGroup.T * _root_.ModularGroup.S * _root_.ModularGroup.T) • (ρ : ℍ) =
       (1 : ℝ) +ᵥ ρ := by
   rw [mul_smul, modular_T_smul, mul_smul, S_smul_vadd_ρ, modular_T_smul]
 
-private lemma T_inv_S_smul_ρ :
-    (_root_.ModularGroup.T⁻¹ * _root_.ModularGroup.S) • (ρ : ℍ) = ρ := by
-  rw [mul_smul, S_smul_ρ, T_inv_smul_vadd_ρ]
+private lemma T_inv_S_smul_ρ : (_root_.ModularGroup.T⁻¹ * _root_.ModularGroup.S) • (ρ : ℍ) = ρ :=
+  _root_.ModularGroup.stabilizer_ρ.mpr (by simp)
 
 /-- The inversion `S` keeps unit-circle points on the unit circle. -/
 lemma norm_coe_S_smul {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
@@ -166,16 +148,14 @@ itself: the boundary identifications of `𝒟` fix `i`. -/
 lemma orbit_mk_eq_I_iff {p : ℍ} (hp : p ∈ 𝒟) :
     (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) = Quotient.mk'' I ↔ p = I := by
   refine ⟨fun h ↦ ?_, fun h ↦ by rw [h]⟩
-  obtain ⟨g, hg⟩ := Quotient.exact' h
-  have hg' : g • (I : ℍ) = p := hg
-  subst hg'
+  obtain ⟨g, rfl⟩ : ∃ g : SL(2, ℤ), g • (I : ℍ) = p := Quotient.exact' h
   rcases _root_.ModularGroup.cases_of_mem_fd_smul_mem_fd _root_.ModularGroup.I_mem_fd hp with
     (rfl | rfl) | ⟨-, hre⟩ | ⟨-, hre⟩ | ⟨rfl | rfl, -⟩ | ⟨-, hI⟩ | ⟨-, hI⟩ | ⟨-, hI⟩ |
     ⟨-, hI⟩ | ⟨-, hI⟩ | ⟨-, hI⟩
   · exact one_smul _ _
   · exact (_root_.ModularGroup.SL_neg_smul _ _).trans (one_smul _ _)
-  · rw [re_I] at hre; norm_num at hre
-  · rw [re_I] at hre; norm_num at hre
+  · norm_num [re_I] at hre
+  · norm_num [re_I] at hre
   · exact S_smul_I
   · exact (_root_.ModularGroup.SL_neg_smul _ _).trans S_smul_I
   · exact absurd hI I_ne_vadd_ρ
@@ -192,9 +172,7 @@ lemma orbit_mk_eq_ρ_iff {p : ℍ} (hp : p ∈ 𝒟) :
       p = ρ ∨ p = (1 : ℝ) +ᵥ ρ := by
   constructor
   · intro h
-    obtain ⟨g, hg⟩ := Quotient.exact' h
-    have hg' : g • (ρ : ℍ) = p := hg
-    subst hg'
+    obtain ⟨g, rfl⟩ : ∃ g : SL(2, ℤ), g • (ρ : ℍ) = p := Quotient.exact' h
     rcases _root_.ModularGroup.cases_of_mem_fd_smul_mem_fd _root_.ModularGroup.ρ_mem_fd hp with
       (rfl | rfl) | ⟨rfl | rfl, -⟩ | ⟨-, hre⟩ | ⟨rfl | rfl, -⟩ | ⟨-, hρ⟩ | ⟨-, hρ⟩ | ⟨-, hρ⟩ |
       ⟨rfl | rfl, -⟩ | ⟨rfl | rfl, -⟩ | ⟨rfl | rfl, -⟩
@@ -202,7 +180,7 @@ lemma orbit_mk_eq_ρ_iff {p : ℍ} (hp : p ∈ 𝒟) :
     · exact .inl ((_root_.ModularGroup.SL_neg_smul _ _).trans (one_smul _ _))
     · exact .inr (modular_T_smul _)
     · exact .inr ((_root_.ModularGroup.SL_neg_smul _ _).trans (modular_T_smul _))
-    · rw [re_ρ] at hre; norm_num at hre
+    · norm_num [re_ρ] at hre
     · exact .inr S_smul_ρ
     · exact .inr ((_root_.ModularGroup.SL_neg_smul _ _).trans S_smul_ρ)
     · exact absurd hρ ρ_ne_vadd_ρ
@@ -226,17 +204,17 @@ lemma orbit_mk_injOn_fd_left :
     Set.InjOn (fun p : ℍ ↦ (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ))
       {p : ℍ | p ∈ 𝒟 ∧ p.re < 1 / 2 ∧ (‖(p : ℂ)‖ = 1 → p.re < 0)} := by
   rintro p₁ ⟨hp₁fd, hp₁re, hp₁arc⟩ p₂ ⟨hp₂fd, hp₂re, hp₂arc⟩ h
-  obtain ⟨g, hg⟩ := Quotient.exact' h
-  have hg' : g • p₂ = p₁ := hg
-  subst hg'
+  obtain ⟨g, rfl⟩ : ∃ g : SL(2, ℤ), g • p₂ = p₁ := Quotient.exact' h
   rcases _root_.ModularGroup.cases_of_mem_fd_smul_mem_fd hp₂fd hp₁fd with
     (rfl | rfl) | ⟨rfl | rfl, hre⟩ | ⟨-, hre⟩ | ⟨rfl | rfl, hnorm⟩ | ⟨-, rfl⟩ | ⟨-, rfl⟩ |
     ⟨-, rfl⟩ | ⟨rfl | rfl, rfl⟩ | ⟨rfl | rfl, rfl⟩ | ⟨rfl | rfl, rfl⟩
   all_goals try simp only [_root_.ModularGroup.SL_neg_smul] at hp₁re hp₁arc ⊢
   · exact one_smul _ _
   · exact one_smul _ _
-  · rw [_root_.ModularGroup.re_T_smul, hre] at hp₁re; norm_num at hp₁re
-  · rw [_root_.ModularGroup.re_T_smul, hre] at hp₁re; norm_num at hp₁re
+  · rw [_root_.ModularGroup.re_T_smul, hre] at hp₁re
+    norm_num at hp₁re
+  · rw [_root_.ModularGroup.re_T_smul, hre] at hp₁re
+    norm_num at hp₁re
   · exact absurd hre hp₂re.ne
   · have h1 := hp₁arc (norm_coe_S_smul hnorm)
     rw [re_S_smul hnorm] at h1
@@ -244,13 +222,15 @@ lemma orbit_mk_injOn_fd_left :
   · have h1 := hp₁arc (norm_coe_S_smul hnorm)
     rw [re_S_smul hnorm] at h1
     linarith [hp₂arc hnorm]
-  · rw [re_vadd_ρ] at hp₂re; norm_num at hp₂re
-  · rw [re_vadd_ρ] at hp₂re; norm_num at hp₂re
-  · rw [re_vadd_ρ] at hp₂re; norm_num at hp₂re
+  · norm_num [re_ρ] at hp₂re
+  · norm_num [re_ρ] at hp₂re
+  · norm_num [re_ρ] at hp₂re
   · exact ST_smul_ρ
   · exact ST_smul_ρ
-  · rw [TST_smul_ρ, re_vadd_ρ] at hp₁re; norm_num at hp₁re
-  · rw [TST_smul_ρ, re_vadd_ρ] at hp₁re; norm_num at hp₁re
+  · rw [TST_smul_ρ, re_vadd_ρ] at hp₁re
+    norm_num at hp₁re
+  · rw [TST_smul_ρ, re_vadd_ρ] at hp₁re
+    norm_num at hp₁re
   · exact T_inv_S_smul_ρ
   · exact T_inv_S_smul_ρ
 

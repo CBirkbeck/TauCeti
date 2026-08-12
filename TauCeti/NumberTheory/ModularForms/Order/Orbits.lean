@@ -8,6 +8,7 @@ public import Mathlib.Algebra.BigOperators.Finprod
 public import Mathlib.NumberTheory.Modular
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
+import Mathlib.Algebra.FiniteSupport.Basic
 import TauCeti.NumberTheory.Modular.Orbits
 import TauCeti.NumberTheory.ModularForms.FiniteZeros
 
@@ -179,8 +180,8 @@ non-elliptic orbits. -/
 lemma hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic [ModularFormClass F 𝒮ℒ k] {f : F}
     (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     Function.HasFiniteSupport fun q : NonEllipticOrbit ↦ orderOfVanishingOnOrbit f q.val :=
-  ((hasFiniteSupport_orderOfVanishingOnOrbit hf).preimage Subtype.val_injective.injOn).subset
-    fun _ hq ↦ hq
+  Function.HasFiniteSupport.fun_comp_of_injective Subtype.val_injective
+    (hasFiniteSupport_orderOfVanishingOnOrbit hf)
 
 end ModularForm
 
