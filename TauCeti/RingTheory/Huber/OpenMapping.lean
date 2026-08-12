@@ -23,8 +23,12 @@ generated uniformity; only the *target* is asked to be `T0Space`, so only the ta
 The source is pseudometrisable, which is all Henkel needs of it, and separating the source would be
 an assumption the theorem does not use.
 
-Only two of Henkel's hypotheses survive the translation, and both are stated:
+Three of Henkel's substantive hypotheses survive the translation, and all three are stated. (The
+structural binders that merely say `M` and `N` are topological modules carry across unchanged and
+are not counted here.)
 
+* `CompleteSpace M`. Nothing supplies it; completeness of the source is what
+  `TauCeti.mem_image_of_mem_closure_image` needs in order to remove the closure.
 * `NonarchimedeanAddGroup M`. Metrisability does not supply it, and nothing about a module over a
   Tate ring does either; it is a genuine assumption on the source.
 * `T0Space N`. This is the Hausdorff hypothesis. It cannot come from the metrisability route,
