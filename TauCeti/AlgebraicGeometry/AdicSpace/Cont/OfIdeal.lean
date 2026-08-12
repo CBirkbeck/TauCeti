@@ -11,7 +11,7 @@ public import TauCeti.RingTheory.Huber.Basic
 import TauCeti.RingTheory.Valuation.Continuous.TopologicallyNilpotent
 
 /-!
-# A continuous point lies in `Spv (A, I)` when `I` is spanned by nilpotents
+# A continuous point lies in `Spv (A, I)` when `I` is spanned by topologically nilpotent elements
 
 **Wedhorn, *Adic Spaces* (arXiv:1910.05934v1), Theorem 7.10, the inclusion `Cont A ⊆ Spv(A, IA)`.**
 
@@ -21,11 +21,12 @@ lie in `Spv (A, IA)`.
 
 The argument needs no estimate, and it needs no pair of definition either. Membership in
 `Spv (A, I)` is `cΓ_v(I) = Γ_v`, which by Lemma 7.4 follows from cofinality of `v` at every
-element of a *spanning set* of `I`; and continuity turns topological nilpotence into cofinality.
-So the hypothesis that carries the proof is exactly "`I` is spanned by topologically nilpotent
-elements", which is what `mem_spvOfIdeal_of_isContinuous_of_span` below assumes. The extended
-ideal of a pair of definition is the case at hand, since the image of `I` spans `IA` and its
-elements are topologically nilpotent.
+element of a *spanning set*; and continuity turns topological nilpotence into cofinality. So the
+hypothesis that carries the proof is exactly "spanned by topologically nilpotent elements", which
+is what `mem_spvOfIdeal_of_span_of_isTopologicallyNilpotent_of_isContinuous` below assumes — and
+of an ideal with the same radical as `I`, since `cΓ_v(I)` sees `I` only through its radical. The
+extended ideal of a pair of definition is the case at hand, since the image of `I` spans `IA` and
+its elements are topologically nilpotent.
 
 Passing through a spanning set is essential, not a convenience. A general element of `IA` is a sum
 `Σ xᵢ aᵢ` with `xᵢ ∈ I` and `aᵢ ∈ A` arbitrary, and such a sum need not be topologically
@@ -33,8 +34,9 @@ nilpotent — the nilpotence is a property of the generators, not of the ideal t
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.mem_spvOfIdeal_of_isContinuous_of_span` : a continuous point lies in
-  `Spv (A, I)` whenever `I` is spanned by topologically nilpotent elements.
+* `TauCeti.ValuationSpectrum.mem_spvOfIdeal_of_span_of_isTopologicallyNilpotent_of_isContinuous`
+  : a continuous point lies in `Spv (A, I)` whenever some ideal with the same radical as `I` is
+  spanned by topologically nilpotent elements.
 * `TauCeti.ValuationSpectrum.mem_spvOfIdeal_extendedIdealOfDefinition_of_isContinuous` and
   `TauCeti.ValuationSpectrum.cont_subset_spvOfIdeal_extendedIdealOfDefinition` : its reading at a
   pair of definition, in membership and subset form.
@@ -56,20 +58,21 @@ open TauCeti TauCeti.Huber TauCeti.Valuation
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
-/-- **A continuous point lies in `Spv (A, I)` when `I` is spanned by topologically nilpotent
-elements.** This is the whole content of the inclusion half of Wedhorn Theorem 7.10: continuity
-makes the value at a topologically nilpotent element cofinal, and Lemma 7.4 only ever asks for
-cofinality on a spanning set.
+/-- **A continuous point lies in `Spv (A, I)` when some ideal with the same radical is spanned by
+topologically nilpotent elements.** This is the whole content of the inclusion half of Wedhorn
+Theorem 7.10: continuity makes the value at a topologically nilpotent element cofinal, and Lemma
+7.4 only ever asks for cofinality on a spanning set.
 
-The spanning set is not assumed finite and no pair of definition appears; both enter only in the
-specialisation below. -/
-theorem mem_spvOfIdeal_of_isContinuous_of_span {I : Ideal A}
-    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {T : Set A} (hspan : Ideal.span T = I)
-    (hnil : ∀ t ∈ T, IsTopologicallyNilpotent t) {v : Spv A} (hv : v.IsContinuous) :
-    v ∈ spvOfIdeal I hfg := by
+`cΓ_v(I)` depends on `I` only through its radical, so the spanning set need not generate `I`
+itself — any `J` with `I.radical = J.radical` will do. The spanning set is not assumed finite and
+no pair of definition appears; both enter only in the specialisation below. -/
+theorem mem_spvOfIdeal_of_span_of_isTopologicallyNilpotent_of_isContinuous {I J : Ideal A}
+    (hfg : ∃ K : Ideal A, K.FG ∧ I.radical = K.radical) {T : Set A} (hspan : Ideal.span T = J)
+    (hrad : I.radical = J.radical) (hnil : ∀ t ∈ T, IsTopologicallyNilpotent t) {v : Spv A}
+    (hv : v.IsContinuous) : v ∈ spvOfIdeal I hfg := by
   rw [mem_spvOfIdeal_iff]
   refine (characteristicSubgroupOfIdeal_eq_top_iff_forall_span (v := v.valuation) hfg hspan
-    rfl).mpr (Or.inl fun t ht ↦ ?_)
+    hrad).mpr (Or.inl fun t ht ↦ ?_)
   exact ((isContinuous_def _).mp hv).cofinalValue_of_isTopologicallyNilpotent (hnil t ht)
 
 /-- **Wedhorn Theorem 7.10, the inclusion `Cont A ⊆ Spv (A, IA)`.** A continuous point of the
@@ -83,8 +86,8 @@ theorem mem_spvOfIdeal_extendedIdealOfDefinition_of_isContinuous (P : PairOfDefi
     {v : Spv A} (hv : v.IsContinuous) :
     v ∈ spvOfIdeal P.extendedIdealOfDefinition
       ⟨P.extendedIdealOfDefinition, P.fg_extendedIdealOfDefinition, rfl⟩ := by
-  refine mem_spvOfIdeal_of_isContinuous_of_span _
-    (T := Subtype.val '' (P.idealOfDefinition : Set P.ringOfDefinition)) ?_ ?_ hv
+  refine mem_spvOfIdeal_of_span_of_isTopologicallyNilpotent_of_isContinuous _
+    (T := Subtype.val '' (P.idealOfDefinition : Set P.ringOfDefinition)) ?_ rfl ?_ hv
   · rw [P.extendedIdealOfDefinition_def, Ideal.map, Subring.coe_subtype]
   · rintro _ ⟨a, ha, rfl⟩
     exact P.isTopologicallyNilpotent_of_mem_idealOfDefinition ha
