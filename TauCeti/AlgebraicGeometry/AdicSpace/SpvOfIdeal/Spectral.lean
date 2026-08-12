@@ -333,10 +333,8 @@ theorem univ_mem_rationalFamily (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) :
     Set.univ ∈ rationalFamily I hfg :=
   ⟨{1}, 1, isAdmissible_of_one_mem (Finset.mem_singleton_self 1), by
-    refine (Set.eq_univ_of_forall fun v ↦ ?_).symm
-    rw [Set.mem_preimage, mem_basicOpenFinset_iff]
-    exact ⟨fun t ht ↦ Finset.mem_singleton.mp ht ▸ (v : Spv A).toValuativeRel.vle_refl 1,
-      (v : Spv A).toValuativeRel.not_vle_one_zero⟩⟩
+    rw [basicOpenFinset_eq_biInter]
+    simp [basicOpen_one]⟩
 
 /-- **Wedhorn's step (i) in the proof of Lemma 7.5, on `Spv (A, I)`**: the family `R` is stable
 under intersection. The traces intersect along the trace of the intersection, which
