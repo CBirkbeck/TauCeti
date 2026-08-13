@@ -9,6 +9,8 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.Absorption
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 public import Mathlib.Algebra.Ring.Subgroup
 public import Mathlib.RingTheory.MvPowerSeries.Trunc
+public import Mathlib.Topology.Algebra.IsUniformGroup.Defs
+public import Mathlib.Topology.Algebra.UniformMulAction
 
 /-!
 # Weighted restricted power series `A⟨X⟩_T`
@@ -42,7 +44,9 @@ counterexample in `IsWeightFamily`'s docstring shows the hypothesis is not autom
 * `TauCeti.Huber.IsWeightedRestricted`: Wedhorn's condition (5.6.1) on a power series.
 * `TauCeti.Huber.weightedRestrictedSubring`: `A⟨X⟩_T` as a subring of `A[[X]]`.
 * `TauCeti.Huber.weightedNhd`: the subgroup `U⟨X⟩` of `A⟨X⟩_T`.
-* `TauCeti.Huber.weightedTopology`: the ring topology they generate.
+* `TauCeti.Huber.weightedTopology`: the ring topology they generate. `A⟨X⟩_T` also carries the
+  group uniformity of that topology, with its `IsUniformAddGroup` and
+  `UniformContinuousConstSMul` instances, so that its separated completion can be formed.
 * `TauCeti.Huber.weightedC` and `TauCeti.Huber.weightedX`: the constant series and the variables.
 * `TauCeti.Huber.weightedMap`: the morphism `A⟨X⟩_T → B⟨X⟩_S` induced by a continuous ring map
   carrying each weight into the corresponding one; `continuous_weightedMap` makes it a morphism of
@@ -827,6 +831,30 @@ theorem continuous_weightedC [NonarchimedeanRing A] {T : Fin k → Set A} (hT : 
     simpa using ha
   · simp [coe_weightedC, MvPowerSeries.coeff_C, hν]
 
+
+/-! ### The uniform structure
+
+`A⟨X⟩_T` carries the group uniformity of its additive topological group, so that its separated
+completion can be formed. As with `weightedTopology` there is no diamond to fear: Mathlib's
+uniformity on `MvPowerSeries` (like its topology) lives in the scoped
+`MvPowerSeries.WithPiTopology`, so nothing else registers a `UniformSpace` on this carrier. -/
+
+noncomputable instance [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T} :
+    UniformSpace (weightedRestrictedSubring T hT) :=
+  IsTopologicalAddGroup.rightUniformSpace _
+
+instance [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T} :
+    IsUniformAddGroup (weightedRestrictedSubring T hT) :=
+  isUniformAddGroup_of_addCommGroup
+
+instance [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T} :
+    ContinuousConstSMul A (weightedRestrictedSubring T hT) :=
+  ⟨fun a ↦ (continuous_const_mul (algebraMap A (weightedRestrictedSubring T hT) a)).congr
+    fun f ↦ (Algebra.smul_def a f).symm⟩
+
+instance [NonarchimedeanRing A] {T : Fin k → Set A} {hT : IsWeightFamily T} :
+    UniformContinuousConstSMul A (weightedRestrictedSubring T hT) :=
+  uniformContinuousConstSMul_of_continuousConstSMul _ _
 
 /-! ### Density of the polynomials -/
 
