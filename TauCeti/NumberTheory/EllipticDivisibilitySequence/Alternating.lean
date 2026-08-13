@@ -89,7 +89,9 @@ variable (W) in
 def atomRelFin4 (t : Fin 4 → ℤ) : R := atomRel W (t 0) (t 1) (t 2) (t 3)
 
 /-- The defining formula for `atomRelFin4`. The definition body is not exposed, so this equation
-lemma is how a consumer computes with it. -/
+lemma is how a consumer computes with it. `@[simp]`, as the `_def` equations of this API are:
+the tuple packaging carries no content of its own, so unfolding it is always progress. -/
+@[simp]
 theorem atomRelFin4_def (t : Fin 4 → ℤ) :
     atomRelFin4 W t = atomRel W (t 0) (t 1) (t 2) (t 3) := (rfl)
 
@@ -101,11 +103,15 @@ theorem atomRelFin4_perm (odd : W.Odd) (σ : Perm (Fin 4)) :
   refine Submonoid.closure_induction
     (motive := fun (σ : Perm (Fin 4)) _ ↦
       ∀ t, atomRelFin4 W (t ∘ σ) = Perm.sign σ • atomRelFin4 W t)
-    ?_ (fun t ↦ by simp) (fun σ τ _ _ hσ hτ t ↦ ?_) hmem
-  on_goal 2 => rw [Perm.coe_mul, ← Function.comp_assoc, hτ, hσ, map_mul, mul_comm, mul_smul]
-  rintro _ ⟨i, rfl⟩ t
-  fin_cases i <;> rw [Perm.sign_swap Fin.castSucc_lt_succ.ne, Units.neg_smul, one_smul]
-  exacts [atomRel_swap₁₂ odd _ _ _ _, atomRel_swap₂₃ odd _ _ _ _, atomRel_swap₃₄ odd _ _ _ _]
+    (fun _ hgen t ↦ ?generator)
+    (fun t ↦ by simp)
+    (fun σ τ _ _ hσ hτ t ↦ by
+      rw [Perm.coe_mul, ← Function.comp_assoc, hτ, hσ, map_mul, mul_comm, mul_smul])
+    hmem
+  case generator =>
+    obtain ⟨i, rfl⟩ := hgen
+    fin_cases i <;> rw [Perm.sign_swap Fin.castSucc_lt_succ.ne, Units.neg_smul, one_smul]
+    exacts [atomRel_swap₁₂ odd _ _ _ _, atomRel_swap₂₃ odd _ _ _ _, atomRel_swap₃₄ odd _ _ _ _]
 
 /-- `atomRelFin4_perm` in the form that cancels the sign. -/
 theorem atomRelFin4_perm' (odd : W.Odd) (σ : Perm (Fin 4)) (t : Fin 4 → ℤ) :
