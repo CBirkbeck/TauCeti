@@ -354,11 +354,10 @@ theorem infinityPlace_ne_heightOneSpectrum_valuation [IsDedekindDomain W.Coordin
   intro heq
   -- `x` lies in the coordinate ring, so an affine place values it at most `1`, while it has a
   -- double pole at infinity
-  have hx := IsDedekindDomain.HeightOneSpectrum.valuation_le_one P
-    (K := W.FunctionField) (algebraMap F[X] W.CoordinateRing Polynomial.X)
-  rw [← heq, infinityPlace.X] at hx
-  rw [← WithZero.exp_zero, WithZero.exp_le_exp] at hx
-  omega
+  have hx := P.valuation_le_one (K := W.FunctionField)
+    (algebraMap F[X] W.CoordinateRing Polynomial.X)
+  rw [← heq, infinityPlace.X, ← WithZero.exp_zero, WithZero.exp_le_exp] at hx
+  lia
 
 end WeierstrassCurve.Affine
 
