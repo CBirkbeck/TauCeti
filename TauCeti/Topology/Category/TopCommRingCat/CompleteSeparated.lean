@@ -7,6 +7,7 @@ module
 
 public import Mathlib.Topology.Category.TopCommRingCat
 public import Mathlib.Topology.Algebra.IsUniformGroup.Constructions
+public import Mathlib.Topology.Algebra.UniformRing
 
 /-!
 # The category of complete separated topological commutative rings
@@ -37,7 +38,9 @@ Hausdorff form the equalizer arguments consume.
 
 * `TauCeti.TopCommRingCat.isCompleteSeparated_of_completeSpace_of_t0Space` and
   `TauCeti.TopCommRingCat.completeSpace_of_isCompleteSeparated` : the transfer in and out of
-  the predicate for a ring carrying its own compatible uniformity.
+  the predicate for a ring carrying its own compatible uniformity;
+  `TauCeti.TopCommRingCat.isCompleteSeparated_completion` instantiates it at every
+  completion — the canonical witnesses.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.t2Space` : separatedness in Hausdorff form.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.pi` : a product of complete separated objects
   is complete separated. This is the closure half for products; the limit cones and the
@@ -77,6 +80,14 @@ theorem isCompleteSeparated_of_completeSpace_of_t0Space (R : Type u) [CommRing R
     rw [IsUniformAddGroup.rightUniformSpace_eq]
     infer_instance
   t0Space := ‹T0Space R›
+
+/-- **The canonical witnesses**: the completion of any uniform commutative topological ring
+is a complete separated object. This is the family the structure presheaf's values come
+from. -/
+theorem isCompleteSeparated_completion (B : Type u) [CommRing B] [UniformSpace B]
+    [IsUniformAddGroup B] [IsTopologicalRing B] :
+    IsCompleteSeparated (TopCommRingCat.of (UniformSpace.Completion B)) :=
+  isCompleteSeparated_of_completeSpace_of_t0Space _
 
 /-- **Elimination to a native uniformity**, the dual of
 `isCompleteSeparated_of_completeSpace_of_t0Space`: a uniform topological ring whose
