@@ -44,6 +44,16 @@ Hausdorff topological `A`-algebra, with all of that structure found by instance 
 The comparison of `A⟨X₁,…,Xₖ⟩` with the plain restricted-series ring when `A` is itself
 complete and Hausdorff, the iteration `A⟨X⟩⟨Y⟩ ≅ A⟨X,Y⟩`, and the stability of noetherianness
 under quotients belong to the later roadmap milestones of Layer 0.5 and are not proved here.
+
+## Provenance
+
+AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08` formalises an `IsStronglyNoetherian` class in
+`projects/AdicSpaces/Adic spaces/RestrictedPowerSeries.lean` and `TateAcyclicity.lean`. It
+was consulted and not ported: AINTLIB quantifies over the *uncompleted* restricted-series
+subring, which matches Wedhorn only for complete Hausdorff rings, whereas the roadmap — and
+this file — define `A⟨X₁,…,Xₖ⟩` through the separated completion so that the predicate is
+meaningful for arbitrary Tate rings. Nothing was copied.
 -/
 
 public section
