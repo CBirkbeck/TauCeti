@@ -30,7 +30,10 @@ terminate.
 
 ## Main results
 
-* `IsEllipticNet.parity_avg_sub`: same parity survives the transfer.
+* `IsEllipticNet.parity_avg_sub`: same parity survives the transfer, for the tuple exactly as
+  `atomRel_avg_sub` produces it.
+* `IsEllipticNet.parity_abs_avg_sub`: the same after `atomRel_abs₄` absorbs the sign on the last
+  index — the shape the descent consumes.
 * `IsEllipticNet.nonnegStrictDecreasing₄_avg_sub`: nonnegativity and strict decrease survive it.
 * `IsEllipticNet.six_le_of_parity_of_nonnegStrictDecreasing₄`: a strictly decreasing quadruple
   of one parity with `0 ≤ d` has `6 ≤ a` — consecutive indices differ by at least two, three
@@ -43,6 +46,13 @@ Parity is spelled as Mathlib spells it for this API — the unbundled conjunctio
 `IsEllipticNet.atomRel_eq` and `atomRel_avg_sub` take it — rather than as the source's bundled
 predicate over `Int.negOnePow`. Matching the upstream shape means those two lemmas apply with no
 conversion at the use sites, and avoids standing a second parity predicate next to Mathlib's.
+
+The ordering half is likewise a plain conjunction of the three adjacent inequalities rather than
+`StrictAnti ![a, b, c, d]`. Mathlib's `StrictAnti` is a predicate on order-preserving *functions*,
+and it is nowhere applied to a `Matrix.cons` tuple in Mathlib itself; the descent, meanwhile,
+consumes exactly the three adjacent comparisons at every site, so bundling them into a function on
+`Fin 4` and unbundling them again at each use would add a layer without adding a fact.
+`Fin.strictAnti_iff_succ_lt` is the bridge if a caller ever wants the bundled form.
 
 ## Provenance
 
@@ -79,10 +89,19 @@ equation lemma is how a consumer computes with it, and it is the normal form `si
 theorem nonnegStrictDecreasing₄_def (a b c d : ℤ) :
     NonnegStrictDecreasing₄ a b c d ↔ 0 ≤ d ∧ d < c ∧ c < b ∧ b < a := Iff.rfl
 
-/-- **Same parity survives the transfer.** Stated for the transferred quadruple in the order
-`atomRel_avg_sub` produces it, and with the absolute value on the last index that
-`atomRel_abs₄` absorbs. -/
+/-- **Same parity survives the transfer.** Stated for the transferred quadruple exactly as
+`atomRel_avg_sub` produces it, with the last index raw. -/
 theorem parity_avg_sub {a b c d : ℤ}
+    (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) :
+    ((a + b + c + d) / 2 - a) % 2 = ((a + b + c + d) / 2 - d) % 2 ∧
+      ((a + b + c + d) / 2 - a) % 2 = ((a + b + c + d) / 2 - c) % 2 ∧
+        ((a + b + c + d) / 2 - a) % 2 = ((a + b + c + d) / 2 - b) % 2 := by
+  obtain ⟨h₁, h₂, h₃⟩ := parity
+  omega
+
+/-- The absolute-value form of `parity_avg_sub`, for the last index after `atomRel_abs₄` has
+absorbed the sign. This is the shape the descent consumes. -/
+theorem parity_abs_avg_sub {a b c d : ℤ}
     (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) :
     |(a + b + c + d) / 2 - a| % 2 = ((a + b + c + d) / 2 - d) % 2 ∧
       |(a + b + c + d) / 2 - a| % 2 = ((a + b + c + d) / 2 - c) % 2 ∧
