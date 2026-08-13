@@ -39,7 +39,7 @@ variable {V : Type*} {G : SimpleGraph V}
 /-- Distinct neighbours of `c` lie in distinct components of `G ∖ {c}`, whenever `G` is acyclic.
 
 Only acyclicity is used; connectedness plays no part. -/
-private theorem injective_connectedComponentMk_neighborSet (hG : G.IsAcyclic) (c : V) :
+private theorem connectedComponentMk_neighborSet_injective (hG : G.IsAcyclic) (c : V) :
     Function.Injective fun x : ↥(G.neighborSet c) =>
       (G.induce ({c}ᶜ : Set V)).connectedComponentMk
         ⟨(x : V), Set.mem_compl_singleton_iff.mpr (G.ne_of_adj x.property).symm⟩ := by
@@ -79,7 +79,7 @@ private theorem injective_connectedComponentMk_neighborSet (hG : G.IsAcyclic) (c
 /-- Every component of `G ∖ {c}` contains a neighbour of `c`, whenever `G` is preconnected.
 
 Only preconnectedness is used; acyclicity plays no part. -/
-private theorem surjective_connectedComponentMk_neighborSet (hG : G.Preconnected) (c : V) :
+private theorem connectedComponentMk_neighborSet_surjective (hG : G.Preconnected) (c : V) :
     Function.Surjective fun x : ↥(G.neighborSet c) =>
       (G.induce ({c}ᶜ : Set V)).connectedComponentMk
         ⟨(x : V), Set.mem_compl_singleton_iff.mpr (G.ne_of_adj x.property).symm⟩ := by
@@ -100,8 +100,8 @@ contains it; the inverse sends a component to the unique neighbour of `c` that i
 noncomputable def IsTree.neighborSetEquivConnectedComponentCompl (hG : G.IsTree) (c : V) :
     ↥(G.neighborSet c) ≃ (G.induce ({c}ᶜ : Set V)).ConnectedComponent :=
   Equiv.ofBijective _
-    ⟨injective_connectedComponentMk_neighborSet hG.isAcyclic c,
-      surjective_connectedComponentMk_neighborSet hG.connected.preconnected c⟩
+    ⟨connectedComponentMk_neighborSet_injective hG.isAcyclic c,
+      connectedComponentMk_neighborSet_surjective hG.connected.preconnected c⟩
 
 /-- The equivalence sends a neighbour to the connected component containing that neighbour. -/
 @[simp] theorem IsTree.neighborSetEquivConnectedComponentCompl_apply (hG : G.IsTree) (c : V)
