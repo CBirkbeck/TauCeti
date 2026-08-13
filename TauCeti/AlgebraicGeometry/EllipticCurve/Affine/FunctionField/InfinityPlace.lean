@@ -28,7 +28,8 @@ the other three axioms are the norm's multiplicativity and Mathlib's place at in
 * `WeierstrassCurve.Affine.infinityPlace.X`,
   `WeierstrassCurve.Affine.infinityPlace.mk_Y`: `v_∞ x = exp 2` and `v_∞ y = exp 3` — the double
   and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0 asks for
-  by name. They read the norm degrees of `FunctionField/Norm.lean` through the valuation.
+  by name. They read this file's two `natDegree_norm_*` helpers through `Norm.lean`'s degree
+  transfer.
 * `WeierstrassCurve.Affine.infinityPlace.algebraMap_eq_sq`: restricting along
   `RatFunc F → W.FunctionField` squares `RatFunc.inftyValuation`, so the place at infinity is
   ramified of index two over the infinite place of `F(x)`.
@@ -36,12 +37,6 @@ the other three axioms are the norm's multiplicativity and Mathlib's place at in
   nonzero constant has value `1`, the constant case of the previous result. The
   `Valuation.IsTrivialOn F` and `Valuation.IsNontrivial` instances follow, so the place is usable
   through Mathlib's standard valuation API.
-
-Each special value comes in two forms: one stated about the curve's coordinate functions, and a
-`@[simp]` restatement in the shape simp actually normalises them to. The machinery that builds the
-ultrametric inequality is `private`, and the norm-degree theory it rests on lives in
-`FunctionField/Norm.lean`.
-
 * `WeierstrassCurve.Affine.infinityPlace.X_div_mk_Y` and
   `WeierstrassCurve.Affine.infinityPlace.isUniformizer_X_div_mk_Y`: **`x / y` is a uniformiser at
   infinity.** Its value is `exp (-1)`, and it is a uniformiser in Mathlib's
@@ -50,15 +45,17 @@ ultrametric inequality is `private`, and the norm-degree theory it rests on live
   instance fires by itself — but the *generator* does: discreteness alone permits `exp (-n)` with
   `n ≥ 1`, and the proper subgroup `2ℤ` genuinely occurs, being the value group of the restriction
   of `v_∞` to `F(x)`. One element of value `exp (-1)` settles it, which is what the value above is.
-
 * `WeierstrassCurve.Affine.infinityPlace_ne_heightOneSpectrum_valuation`: the place at infinity is
   distinct from the valuation of every height-one prime of the coordinate ring — the affine places.
   With `CoordinateRing.pointPlace_eq_iff` that makes the whole point-to-place assignment injective,
   the point at infinity included.
 
-The quotient value gets no `@[simp]` restatement of its own: `map_div₀` is a simp lemma, so simp
-decomposes the quotient through the two atomic restatements rather than matching a quotient-shaped
-left-hand side, and the `AdjoinRoot` spelling of `x / y` is definitionally the one written here.
+The two coordinate-function values each come in a second `@[simp]` form, stated in the shape simp
+actually normalises them to (the note above `infinityPlace.X` explains why the coordinate forms
+cannot carry the tag themselves). The quotient value gets no restatement of its own: `map_div₀`
+is a simp lemma, so simp decomposes the quotient through the two atomic restatements. The
+machinery that builds the ultrametric inequality is `private`, and the norm-degree theory it
+rests on lives in `FunctionField/Norm.lean`.
 
 ## Roadmap
 
@@ -87,7 +84,7 @@ over a `SmoothPlaneCurve` structure wrapping `WeierstrassCurve.Affine`, with mul
 vanishing and the ultrametric bound all proved by hand. Here the norm is Mathlib's `Algebra.norm`
 and the target is Mathlib's `ℤᵐ⁰`, so the result is a genuine `Valuation` uniform with
 `RatFunc.inftyValuation` and `IsDedekindDomain.HeightOneSpectrum.valuation`; multiplicativity and
-vanishing are `map_mul` and `Algebra.norm_eq_zero_iff`, and only the ultrametric inequality is
+vanishing are `map_mul` and `Algebra.norm_zero`, and only the ultrametric inequality is
 reproved.
 
 The uniformiser corresponds to that project's
@@ -132,24 +129,6 @@ private theorem natDegree_norm_mk_Y :
 end Nontrivial
 
 
-variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
-
-/-- **Two functions over a common denominator**: `f = (a₁ + b₁ y) / p` and `g = (a₂ + b₂ y) / p`
-with `p ≠ 0` — the form the degree formula consumes: numerators in the `1, Y` basis, one shared
-polynomial denominator. -/
-private theorem exists_common_smul_basis_div (f g : W.FunctionField) :
-    ∃ a₁ b₁ a₂ b₂ p : F[X], p ≠ 0 ∧
-      f * algebraMap F[X] W.FunctionField p =
-        algebraMap W.CoordinateRing W.FunctionField (a₁ • 1 + b₁ • CoordinateRing.mk W Y) ∧
-      g * algebraMap F[X] W.FunctionField p =
-        algebraMap W.CoordinateRing W.FunctionField (a₂ • 1 + b₂ • CoordinateRing.mk W Y) := by
-  obtain ⟨u₁, u₂, ⟨-, p, hp, rfl⟩, h₁, h₂⟩ := IsLocalization.surj₂
-    (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) W.FunctionField f g
-  obtain ⟨a₁, b₁, rfl⟩ := CoordinateRing.exists_smul_basis_eq u₁
-  obtain ⟨a₂, b₂, rfl⟩ := CoordinateRing.exists_smul_basis_eq u₂
-  rw [← IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField] at h₁ h₂
-  exact ⟨a₁, b₁, a₂, b₂, p, nonZeroDivisors.ne_zero hp, h₁, h₂⟩
-
 section DomainCore
 
 variable {R : Type*} [CommRing R] [IsDomain R] (W : WeierstrassCurve.Affine R)
@@ -178,6 +157,25 @@ private theorem natDegree_norm_add_le (a₁ b₁ a₂ b₂ : R[X]) :
     natDegree_le_natDegree
 
 end DomainCore
+
+
+variable {F : Type*} [Field F] (W : WeierstrassCurve.Affine F)
+
+/-- **Two functions over a common denominator**: `f = (a₁ + b₁ y) / p` and `g = (a₂ + b₂ y) / p`
+with `p ≠ 0` — the form the degree formula consumes: numerators in the `1, Y` basis, one shared
+polynomial denominator. -/
+private theorem exists_common_smul_basis_div (f g : W.FunctionField) :
+    ∃ a₁ b₁ a₂ b₂ p : F[X], p ≠ 0 ∧
+      f * algebraMap F[X] W.FunctionField p =
+        algebraMap W.CoordinateRing W.FunctionField (a₁ • 1 + b₁ • CoordinateRing.mk W Y) ∧
+      g * algebraMap F[X] W.FunctionField p =
+        algebraMap W.CoordinateRing W.FunctionField (a₂ • 1 + b₂ • CoordinateRing.mk W Y) := by
+  obtain ⟨u₁, u₂, ⟨-, p, hp, rfl⟩, h₁, h₂⟩ := IsLocalization.surj₂
+    (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) W.FunctionField f g
+  obtain ⟨a₁, b₁, rfl⟩ := CoordinateRing.exists_smul_basis_eq u₁
+  obtain ⟨a₂, b₂, rfl⟩ := CoordinateRing.exists_smul_basis_eq u₂
+  rw [← IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField] at h₁ h₂
+  exact ⟨a₁, b₁, a₂, b₂, p, nonZeroDivisors.ne_zero hp, h₁, h₂⟩
 
 /-- **The ultrametric inequality on the function field.** -/
 private theorem intDegree_norm_add_le {f g : W.FunctionField} (hf : f ≠ 0) (hg : g ≠ 0)
@@ -230,15 +228,19 @@ defeat the special-value lemmas below, which are the normal forms automation sho
 theorem infinityPlace_apply (f : W.FunctionField) :
     infinityPlace W f = RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f) := (rfl)
 
-/-- A coordinate-ring element whose polynomial norm has positive degree has nonzero norm over
-`RatFunc F`: a zero polynomial would have degree zero. -/
-private theorem norm_ne_zero_of_natDegree_ne_zero {u : W.CoordinateRing}
-    (h : (Algebra.norm F[X] u).natDegree ≠ 0) :
-    Algebra.norm (RatFunc F) (algebraMap W.CoordinateRing W.FunctionField u) ≠ 0 := by
-  rw [Algebra.norm_localization (M := nonZeroDivisors F[X])]
-  exact RatFunc.algebraMap_ne_zero (ne_zero_of_natDegree_gt (Nat.pos_of_ne_zero h))
-
 open scoped Classical in
+/-- The value of `infinityPlace` on a coordinate-ring element whose polynomial norm has positive
+degree `n` is `exp n`. The nonzero-norm transfer is built in: a zero polynomial would have degree
+zero. The two pole orders below are its instances. -/
+private theorem infinityPlace_algebraMap_of_natDegree_norm {u : W.CoordinateRing} {n : ℕ}
+    (hn : n ≠ 0) (h : (Algebra.norm F[X] u).natDegree = n) :
+    infinityPlace W (algebraMap W.CoordinateRing W.FunctionField u) = WithZero.exp (n : ℤ) := by
+  have hne : Algebra.norm (RatFunc F) (algebraMap W.CoordinateRing W.FunctionField u) ≠ 0 := by
+    rw [Algebra.norm_localization (M := nonZeroDivisors F[X])]
+    exact RatFunc.algebraMap_ne_zero (ne_zero_of_natDegree_gt (Nat.pos_of_ne_zero (h ▸ hn)))
+  rw [infinityPlace_apply, RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero F hne,
+    intDegree_norm_algebraMap_coordinateRing, h]
+
 -- NB `infinityPlace.X` and `infinityPlace.mk_Y` (and this file's two `natDegree_norm_*`
 -- helpers) are deliberately NOT `@[simp]`: their left-hand sides are not in
 -- simp-normal form — simp rewrites `algebraMap F[X] W.CoordinateRing X` to `AdjoinRoot.of` and
@@ -249,20 +251,13 @@ open scoped Classical in
 theorem infinityPlace.X :
     infinityPlace W (algebraMap W.CoordinateRing W.FunctionField
       (algebraMap F[X] W.CoordinateRing Polynomial.X)) = WithZero.exp 2 := by
-  rw [infinityPlace_apply, RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero F
-      (norm_ne_zero_of_natDegree_ne_zero W (u := algebraMap F[X] W.CoordinateRing Polynomial.X)
-        (natDegree_norm_X W ▸ two_ne_zero)),
-    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_X, Nat.cast_ofNat]
+  simpa using infinityPlace_algebraMap_of_natDegree_norm W two_ne_zero (natDegree_norm_X W)
 
-open scoped Classical in
 /-- **`y` has a triple pole at infinity**: `v_∞ y = exp 3`, which is `ord_∞ y = -3`. -/
 theorem infinityPlace.mk_Y :
     infinityPlace W (algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y))
       = WithZero.exp 3 := by
-  rw [infinityPlace_apply, RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero F
-      (norm_ne_zero_of_natDegree_ne_zero W (u := CoordinateRing.mk W Y)
-        (natDegree_norm_mk_Y W ▸ three_ne_zero)),
-    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_mk_Y, Nat.cast_ofNat]
+  simpa using infinityPlace_algebraMap_of_natDegree_norm W three_ne_zero (natDegree_norm_mk_Y W)
 
 
 open scoped Classical in
@@ -283,7 +278,6 @@ theorem infinityPlace.C {c : F} (hc : c ≠ 0) :
   rw [infinityPlace.algebraMap_eq_sq, RatFunc.inftyValuation.C F hc, one_pow]
 
 
-open scoped Classical in
 /-- **The valuation at infinity is trivial on the base field.** -/
 instance : (infinityPlace W).IsTrivialOn F where
   eq_one c hc :=
@@ -295,7 +289,6 @@ instance : (infinityPlace W).IsNontrivial :=
     infinityPlace.X W ▸ ⟨WithZero.exp_ne_zero, by simp⟩⟩
 
 
-open scoped Classical in
 /-- The simp-normal form of `infinityPlace.X`, stated for `AdjoinRoot.of`, which is what simp
 rewrites the coordinate function to. -/
 @[simp]
@@ -304,7 +297,6 @@ theorem infinityPlace.adjoinRoot_of_X :
       (AdjoinRoot.of W.polynomial Polynomial.X)) = WithZero.exp 2 :=
   infinityPlace.X W
 
-open scoped Classical in
 /-- The simp-normal form of `infinityPlace.mk_Y`, stated for `AdjoinRoot.root`. -/
 @[simp]
 theorem infinityPlace.adjoinRoot_root :
@@ -313,7 +305,6 @@ theorem infinityPlace.adjoinRoot_root :
   infinityPlace.mk_Y W
 
 
-open scoped Classical in
 /-- **`x / y` is a uniformiser at infinity**: `v_∞ (x / y) = exp (-1)`, that is
 `ord_∞ (x / y) = 1`, a simple zero at the point at infinity. The double pole of `x` and the triple
 pole of `y` differ by one, which is what makes the quotient a uniformiser. -/
@@ -324,7 +315,6 @@ theorem infinityPlace.X_div_mk_Y :
   rw [map_div₀, infinityPlace.X, infinityPlace.mk_Y, ← WithZero.exp_sub]
   rfl
 
-open scoped Classical in
 -- The place is discrete of rank one for free — its value group is a subgroup of the cyclic group
 -- `ℤᵐ⁰ˣ`, nontrivial by the instance above — but discreteness alone leaves the generator as
 -- `exp (-n)` for an unspecified `n ≥ 1`, and the proper subgroup genuinely occurs: the restriction
@@ -343,7 +333,6 @@ theorem infinityPlace.isUniformizer_X_div_mk_Y :
   exact infinityPlace.X_div_mk_Y W
 
 
-open scoped Classical in
 /-- **The place at infinity is distinct from every affine place.** Together with
 `CoordinateRing.pointPlace_eq_iff` this gives the injectivity of the whole point-to-place
 assignment, the point at infinity included. -/
