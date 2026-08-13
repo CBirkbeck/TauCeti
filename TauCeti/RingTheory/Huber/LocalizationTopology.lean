@@ -89,6 +89,11 @@ changes are:
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition and Definition 5.51, §5.6
 * [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
   commit `d9f2fbbb`, `projects/AdicSpaces/Adic spaces/LocalizationTopology.lean`
+* `Mathlib.Topology.Algebra.Valued.ValuationTopology`, `Valued.mk'` — the model for the
+  instance setup in the completion results below. It layers
+  `IsTopologicalAddGroup.rightUniformSpace` and `isUniformAddGroup_of_addCommGroup` on a topology
+  built from a `RingSubgroupsBasis`, passing that topology positionally because it is not an
+  instance; `locTopology` is in the same position here.
 -/
 
 open Pointwise Topology
