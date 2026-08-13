@@ -16,9 +16,13 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
 ## Main definitions
 
 * `IsRestricted`: A power series is **restricted** if its coefficients
-  converge to `0` along the cofinite filter on multi-indices.
+  converge to `0` along the cofinite filter on multi-indices. The coefficients are asked only for
+  a `0` and a topology, so the same predicate serves ring and module coefficients.
 * `restrictedMvPowerSeriesSubring k A`: The subring of restricted power series in `k`
   variables over `A`, denoted `A⟨T₁, …, Tₖ⟩`.
+* `restrictedMvPowerSeriesSubmodule k A M`: the `A`-submodule of restricted power series with
+  coefficients in a topological `A`-module `M`, denoted `M⟨T₁, …, Tₖ⟩`. This is the object
+  Wedhorn's Remark 8.29 compares with `M ⊗[A] A⟨T₁, …, Tₖ⟩`.
 
 ## Provenance
 
@@ -33,16 +37,23 @@ namespace, opts into the Lean module system with the definition bodies unexposed
 This is *not* Mathlib's `MvPowerSeries.IsRestricted`, which is stated over a normed ring and
 relative to a polyradius `c : σ → ℝ`, asking that `‖coeff t f‖ * ∏ i, c i ^ t i` tend to `0` along
 the cofinite filter. The two conditions agree over a normed ring at `c = 1`, but neither is more
-general: Mathlib's varies the radius, while `IsRestricted` here needs only a topology on `A` and
-no norm. It is the latter that Huber theory requires: Huber ring topologies are defined using an
-ideal of definition and need not be induced by a norm. The nonarchimedean hypothesis enters only
-for closure under multiplication and hence for the subring.
+general: Mathlib's varies the radius, while `IsRestricted` here needs no norm — indeed no
+multiplication, asking the coefficients for nothing beyond a `0` and a topology. It is the
+norm-free form that Huber theory requires: Huber ring topologies are defined using an ideal of
+definition and need not be induced by a norm. The nonarchimedean hypothesis enters only for
+closure under multiplication, and hence for the subring but not for the submodule.
 
 ## Implementation notes
 
 The restricted power series ring is defined as a subring of `MvPowerSeries (Fin k) A`
 (the formal power series ring), cut out by the condition that coefficients tend to `0`.
-This is the canonical concrete definition.
+This is the canonical concrete definition. `M⟨T₁, …, Tₖ⟩` is cut out of
+`MvPowerSeries (Fin k) M` by the same condition, as an `A`-submodule.
+
+`isRestricted_iff_apply` unfolds the predicate through plain coefficient application, which is
+what module coefficients admit; `isRestricted_iff` unfolds it through `MvPowerSeries.coeff`, the
+accessor to prefer wherever the coefficients form a semiring. The two agree definitionally,
+because `coeff` is projection.
 
 The closure of the restricted power series under multiplication (convolution) requires
 that `A` is a topological ring. The proof that the convolution of two sequences tending
@@ -66,18 +77,33 @@ namespace TauCeti.Huber
 
 /-! ### Restricted power series -/
 
-/-- An element `f` of the multivariate power series ring `A⦃X₁, …, Xₖ⦄` is **restricted**
+/-- An element `f` of the multivariate power series ring `M⦃X₁, …, Xₖ⦄` is **restricted**
 if its coefficients converge to `0` along the cofinite filter on multi-indices. That is,
-for every open neighborhood `U` of `0` in `A`, all but finitely many coefficients of `f`
-lie in `U`. This is the defining property of elements of `A⟨T₁, …, Tₖ⟩`.
+for every open neighborhood `U` of `0` in `M`, all but finitely many coefficients of `f`
+lie in `M`. This is the defining property of elements of `A⟨T₁, …, Tₖ⟩`.
+
+The coefficients need carry no algebraic structure beyond a distinguished `0`: the condition is
+about a family of points converging in `M`. The stronger binders appear only where a proof needs
+them — `isRestricted_one` and `IsRestricted.mul` are about the ring structure, and the module
+coefficients used for `M⟨X⟩` are not a semiring at all.
 
 See Wedhorn, (5.6.1) and §6.7. -/
-def IsRestricted {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
-    (f : MvPowerSeries (Fin k) A) : Prop :=
-  Tendsto (fun s : Fin k →₀ ℕ => MvPowerSeries.coeff s f) cofinite (nhds 0)
+def IsRestricted {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
+    (f : MvPowerSeries (Fin k) M) : Prop :=
+  Tendsto (fun s : Fin k →₀ ℕ => (f : (Fin k →₀ ℕ) → M) s) cofinite (nhds 0)
 
-/-- Unfolding lemma for `TauCeti.Huber.IsRestricted`: the body is not exposed, so this is how
-consumers recover the defining convergence condition. -/
+/-- Unfolding lemma for `TauCeti.Huber.IsRestricted` over coefficients with no algebraic
+structure: the body is not exposed, so this is how consumers recover the defining convergence
+condition. Over a semiring, `isRestricted_iff` states the same thing through
+`MvPowerSeries.coeff`, which is the accessor to prefer when it applies. -/
+theorem isRestricted_iff_apply {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
+    {f : MvPowerSeries (Fin k) M} :
+    IsRestricted f ↔
+      Tendsto (fun s : Fin k →₀ ℕ => (f : (Fin k →₀ ℕ) → M) s) cofinite (nhds 0) := (Iff.rfl)
+
+/-- Unfolding lemma for `TauCeti.Huber.IsRestricted` over a semiring, through
+`MvPowerSeries.coeff`. The body is not exposed, so this is how consumers recover the defining
+convergence condition; it holds because `coeff` is projection. -/
 theorem isRestricted_iff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
     {f : MvPowerSeries (Fin k) A} :
     IsRestricted f ↔
@@ -85,10 +111,9 @@ theorem isRestricted_iff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
 
 /-- `0` is restricted: its coefficients are constantly `0`. -/
 @[simp]
-theorem isRestricted_zero (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A] :
-    IsRestricted (0 : MvPowerSeries (Fin k) A) := by
-  rw [isRestricted_iff]
-  simp only [map_zero]
+theorem isRestricted_zero (k : ℕ) (M : Type*) [Zero M] [TopologicalSpace M] :
+    IsRestricted (0 : MvPowerSeries (Fin k) M) := by
+  rw [isRestricted_iff_apply]
   exact tendsto_const_nhds
 
 /-- `1` is restricted: every coefficient but the `0`-th vanishes. -/
@@ -107,23 +132,22 @@ theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A]
   exact hs (by rw [MvPowerSeries.coeff_one, ite_eq_right h]; exact h0U)
 
 /-- A sum of restricted series is restricted. -/
-theorem IsRestricted.add {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
-    [ContinuousAdd A] {f g : MvPowerSeries (Fin k) A}
+theorem IsRestricted.add {k : ℕ} {M : Type*} [AddMonoid M] [TopologicalSpace M]
+    [ContinuousAdd M] {f g : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f + g) := by
-  rw [isRestricted_iff]
-  have : Tendsto (fun s => MvPowerSeries.coeff s f + MvPowerSeries.coeff s g)
-      cofinite (nhds 0) := by
-    simpa using (isRestricted_iff.mp hf).add (isRestricted_iff.mp hg)
-  exact this.congr (fun s => by simp [map_add])
+  rw [isRestricted_iff_apply]
+  have h := (isRestricted_iff_apply.mp hf).add (isRestricted_iff_apply.mp hg)
+  rw [add_zero] at h
+  exact h
 
 /-- The negation of a restricted series is restricted. -/
-theorem IsRestricted.neg {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
-    [ContinuousNeg A] {f : MvPowerSeries (Fin k) A}
+theorem IsRestricted.neg {k : ℕ} {M : Type*} [AddGroup M] [TopologicalSpace M]
+    [ContinuousNeg M] {f : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) : IsRestricted (-f) := by
-  rw [isRestricted_iff]
-  have : Tendsto (fun s => -(MvPowerSeries.coeff s f)) cofinite (nhds 0) := by
-    simpa using (isRestricted_iff.mp hf).neg
-  exact this.congr (fun s => by simp [map_neg])
+  rw [isRestricted_iff_apply]
+  have h := (isRestricted_iff_apply.mp hf).neg
+  rw [neg_zero] at h
+  exact h
 
 /-- Restrictedness, restated: for every open additive subgroup `W`, all but finitely many
 coefficients lie in `W`. This is the form the convolution argument actually consumes. -/
@@ -305,5 +329,35 @@ theorem coe_algebraMap_restrictedMvPowerSeriesSubring {k : ℕ} {A : Type*} [Com
     ((algebraMap A (restrictedMvPowerSeriesSubring k A) a :
         restrictedMvPowerSeriesSubring k A) : MvPowerSeries (Fin k) A) =
       algebraMap A (MvPowerSeries (Fin k) A) a := (rfl)
+
+/-! ### Module coefficients -/
+
+/-- `M⟨T₁, …, Tₖ⟩`: the restricted power series with coefficients in a topological `A`-module `M`,
+as an `A`-submodule of `M⦃T₁, …, Tₖ⦄`.
+
+This is the module-coefficient counterpart of `restrictedMvPowerSeriesSubring`, and it is what
+Wedhorn's Remark 8.29 compares with `M ⊗[A] A⟨T₁, …, Tₖ⟩`. No multiplication is involved, so `M`
+needs no ring structure and the nonarchimedean hypothesis that `restrictedMvPowerSeriesSubring`
+carries is absent here: closure under the scalar action follows from continuity of each
+`a • ·` alone. -/
+def restrictedMvPowerSeriesSubmodule (k : ℕ) (A M : Type*) [Semiring A] [AddCommMonoid M]
+    [TopologicalSpace M] [Module A M] [ContinuousAdd M] [ContinuousConstSMul A M] :
+    Submodule A (MvPowerSeries (Fin k) M) where
+  carrier := {f | IsRestricted f}
+  zero_mem' := isRestricted_zero k M
+  add_mem' := IsRestricted.add
+  smul_mem' c f hf := by
+    change IsRestricted (c • f)
+    rw [isRestricted_iff_apply]
+    have h := (isRestricted_iff_apply.mp hf).const_smul c
+    rw [smul_zero] at h
+    exact h
+
+/-- Membership in `M⟨T₁, …, Tₖ⟩` is restrictedness. -/
+@[simp]
+theorem mem_restrictedMvPowerSeriesSubmodule {k : ℕ} {A M : Type*} [Semiring A] [AddCommMonoid M]
+    [TopologicalSpace M] [Module A M] [ContinuousAdd M] [ContinuousConstSMul A M]
+    {f : MvPowerSeries (Fin k) M} :
+    f ∈ restrictedMvPowerSeriesSubmodule k A M ↔ IsRestricted f := (Iff.rfl)
 
 end TauCeti.Huber
