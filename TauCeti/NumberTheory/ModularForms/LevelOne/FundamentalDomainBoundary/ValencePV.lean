@@ -59,8 +59,9 @@ on the contour.
   valence formula `Σ_int ord_q + Σ_leftVert ord_q + Σ_{leftArc∖ρ} ord_q + ½·ord_i + ⅓·ord_ρ +
   ord_∞ = k/12` for a nonzero level-one form and a divisor set complete for the closed
   fundamental domain — the divisor may meet the corners, the vertical edges and the unit arc,
-  each boundary pair entering by its left representative. The analytic inputs `hoff`/`hga`/`hgz`
-  are still hypotheses at this fixed height `H`.
+  each boundary pair entering by its left representative. Only the cusp-function
+  non-vanishing `hgz` remains a hypothesis at this fixed height `H`; contour non-vanishing
+  and cusp analyticity are derived internally.
 * `sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero`
   (in `TauCeti.ModularForm`): the same identity from nonvanishing and completeness alone; the
   height is chosen internally — above the divisor set (`exists_height_bound`) and above the

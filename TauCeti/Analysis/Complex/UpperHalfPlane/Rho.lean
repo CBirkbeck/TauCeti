@@ -82,12 +82,11 @@ lemma I_ne_vadd_ρ : (I : ℍ) ≠ (1 : ℝ) +ᵥ ρ :=
 lemma ρ_ne_vadd_ρ : (ρ : ℍ) ≠ (1 : ℝ) +ᵥ ρ :=
   ne_of_apply_ne UpperHalfPlane.re (by norm_num)
 
-/-- The second corner `ρ + 1` as a point of `ℍ`, computed into `ℂ`.
-
-Not `@[simp]`: the simpNF linter rewrites the stated LHS through the unconditional simp
-lemmas `coe_vadd` and `Complex.ofReal_one` to `1 + (ρ : ℂ)`, and restating at that normal
-form would leave a bare commutativity instance `1 + (ρ : ℂ) = (ρ : ℂ) + 1`. The lemma is the
-`rw`-oriented bridge to the `ρ + 1` spelling the corner API uses throughout. -/
+-- Not `@[simp]`: the simpNF linter rewrites the stated LHS through the unconditional simp
+-- lemmas `coe_vadd` and `Complex.ofReal_one` to `1 + (ρ : ℂ)`, and restating at that normal
+-- form would leave a bare commutativity instance. The lemma is the `rw`-oriented bridge to
+-- the `ρ + 1` spelling the corner API uses throughout.
+/-- The second corner `ρ + 1` as a point of `ℍ`, computed into `ℂ`. -/
 lemma coe_vadd_one_ρ : (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ) = (ρ : ℂ) + 1 := by
   rw [coe_vadd]
   push_cast
