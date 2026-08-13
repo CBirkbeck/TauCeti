@@ -80,11 +80,14 @@ tensors `1 ⊗ₜ (m ⊗ₜ n)`. -/
 private theorem baseChange_tensor_hom_ext {M N : SemimoduleCat.{u} R} {P : SemimoduleCat.{u} A}
     {f g : SemimoduleCat.of A (A ⊗[R] (M ⊗[R] N)) ⟶ P}
     (h : ∀ m n, f (1 ⊗ₜ[R] (m ⊗ₜ[R] n)) = g (1 ⊗ₜ[R] (m ⊗ₜ[R] n))) : f = g := by
-  refine baseChange_hom_ext R A fun x ↦ ?_
-  induction x with
-  | zero => simp
-  | tmul m n => exact h m n
-  | add x y hx hy => rw [TensorProduct.tmul_add, map_add, map_add, hx, hy]
+  let _ : Module R P := Module.compHom P (algebraMap R A)
+  let _ : IsScalarTower R A P := IsScalarTower.of_algebraMap_smul fun _ _ ↦ rfl
+  apply SemimoduleCat.hom_ext
+  apply (LinearMap.liftBaseChangeEquiv A).symm.injective
+  apply TensorProduct.ext
+  ext m n
+  simpa only [LinearMap.compr₂ₛₗ_apply, TensorProduct.mk_apply,
+    LinearMap.liftBaseChangeEquiv_symm_apply] using h m n
 
 /-- Two maps out of a base-changed triple tensor product agree as soon as they agree on the pure
 tensors `1 ⊗ₜ ((m ⊗ₜ n) ⊗ₜ p)`. -/
@@ -93,16 +96,12 @@ private theorem baseChange_tensor₃_hom_ext {M N P : SemimoduleCat.{u} R}
     {f g : SemimoduleCat.of A (A ⊗[R] ((M ⊗[R] N) ⊗[R] P)) ⟶ Q}
     (h : ∀ m n p, f (1 ⊗ₜ[R] ((m ⊗ₜ[R] n) ⊗ₜ[R] p)) =
       g (1 ⊗ₜ[R] ((m ⊗ₜ[R] n) ⊗ₜ[R] p))) : f = g := by
-  refine baseChange_hom_ext R A fun x ↦ ?_
-  induction x with
-  | zero => simp
-  | tmul y p =>
-    induction y with
-    | zero => simp
-    | tmul m n => exact h m n p
-    | add u v hu hv =>
-      rw [TensorProduct.add_tmul, TensorProduct.tmul_add, map_add, map_add, hu, hv]
-  | add x y hx hy => rw [TensorProduct.tmul_add, map_add, map_add, hx, hy]
+  let _ : Module R Q := Module.compHom Q (algebraMap R A)
+  let _ : IsScalarTower R A Q := IsScalarTower.of_algebraMap_smul fun _ _ ↦ rfl
+  apply SemimoduleCat.hom_ext
+  apply (LinearMap.liftBaseChangeEquiv A).symm.injective
+  exact TensorProduct.ext_threefold fun m n p ↦ by
+    simpa only [LinearMap.liftBaseChangeEquiv_symm_apply] using h m n p
 
 /-- Scalar extension from finitely generated comodules to semimodules is strong monoidal. -/
 noncomputable instance instMonoidalScalarExtensionFunctor :
