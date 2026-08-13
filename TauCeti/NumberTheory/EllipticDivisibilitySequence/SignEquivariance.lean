@@ -39,8 +39,8 @@ discharged — Mathlib's `atomRel_same` family with `W 0 = 0`.
 * `IsEllipticNet.atomRel_swap₁₂`, `atomRel_swap₂₃`, `atomRel_swap₃₄`: the three adjacent
   transpositions each negate `atomRel`.
 * `IsEllipticNet.atomRelFin4_perm`: `atomRelFin4 W (t ∘ σ) = sign σ • atomRelFin4 W t` for every
-  `σ : Equiv.Perm (Fin 4)`, and `atomRelFin4_perm'` in the form that cancels the sign. Note this is
-  sign-equivariance, not alternation — see the header.
+  `σ : Equiv.Perm (Fin 4)`, and `IsEllipticNet.sign_smul_atomRelFin4_perm` with the sign moved
+  left, where it cancels. Note this is sign-equivariance, not alternation — see the header.
 
 ## Implementation notes
 
@@ -96,9 +96,10 @@ variable (W) in
 /-- The relator with its four indices packaged as a tuple, the form a permutation acts on. -/
 def atomRelFin4 (t : Fin 4 → ℤ) : R := atomRel W (t 0) (t 1) (t 2) (t 3)
 
-/-- The defining formula for `atomRelFin4`. The definition body is not exposed, so this equation
-lemma is how a consumer computes with it. `@[simp]`, as the `_def` equations of this API are:
-the tuple packaging carries no content of its own, so unfolding it is always progress. -/
+/-- The `@[simp]` unfolding equation for `atomRelFin4`, and the supported way to compute with it:
+the tuple packaging carries no content of its own, so unfolding is always progress. The body is
+exported unexposed — a plain `public section`, no `@[expose]` — so an importing module cannot
+unfold it directly and reaches the formula through this lemma. -/
 @[simp]
 theorem atomRelFin4_def (t : Fin 4 → ℤ) :
     atomRelFin4 W t = atomRel W (t 0) (t 1) (t 2) (t 3) := (rfl)
@@ -120,11 +121,13 @@ theorem atomRelFin4_perm (odd : W.Odd) (σ : Perm (Fin 4)) :
     hmem
   case generator =>
     obtain ⟨i, rfl⟩ := hgen
-    fin_cases i <;> rw [Perm.sign_swap Fin.castSucc_lt_succ.ne, Units.neg_smul, one_smul]
+    fin_cases i <;>
+      simp only [Perm.sign_swap Fin.castSucc_lt_succ.ne, Units.neg_smul, one_smul, atomRelFin4_def,
+        Function.comp_apply, Fin.isValue]
     exacts [atomRel_swap₁₂ odd _ _ _ _, atomRel_swap₂₃ odd _ _ _ _, atomRel_swap₃₄ odd _ _ _ _]
 
-/-- `atomRelFin4_perm` in the form that cancels the sign. -/
-theorem atomRelFin4_perm' (odd : W.Odd) (σ : Perm (Fin 4)) (t : Fin 4 → ℤ) :
+/-- `atomRelFin4_perm` with the sign moved to the left, where it cancels. -/
+theorem sign_smul_atomRelFin4_perm (odd : W.Odd) (σ : Perm (Fin 4)) (t : Fin 4 → ℤ) :
     Perm.sign σ • atomRelFin4 W (t ∘ σ) = atomRelFin4 W t := by
   rw [atomRelFin4_perm odd, ← mul_smul, Int.units_mul_self, one_smul]
 
