@@ -42,6 +42,8 @@ the corresponding facts about `Spv(A)(T/s)`:
 
 ## Main results
 
+* `TauCeti.ValuationSpectrum.isOpen_val_preimage_rationalSubset` : a rational subset is open
+  in the subspace `spa A⁺`.
 * `TauCeti.ValuationSpectrum.rationalSubset_insert_self` : the denominator may be inserted
   among the numerators.
 * `TauCeti.ValuationSpectrum.rationalSubset_inter` : **Remark 7.30(5)** — the intersection of
@@ -85,6 +87,19 @@ replace `T` by `T ∪ {s}`" (Definition 7.29). -/
 theorem rationalSubset_insert_self (Aplus : Subring A) (T : Finset A) (s : A) :
     rationalSubset Aplus (insert s T) s = rationalSubset Aplus T s := by
   rw [rationalSubset_def, rationalSubset_def, basicOpenFinset_insert_self]
+
+/-- A rational subset is open in the subspace `spa A⁺`: its trace along the coercion is the
+trace of the basic open `Spv(A)(T/s)`, whose openness descends along the continuous coercion.
+This is the form basis consumers use, with no unfolding of `rationalSubset`. -/
+theorem isOpen_val_preimage_rationalSubset (Aplus : Subring A) (T : Finset A) (s : A) :
+    IsOpen (Subtype.val ⁻¹' rationalSubset Aplus T s : Set (spa Aplus)) := by
+  have h : (Subtype.val ⁻¹' rationalSubset Aplus T s : Set (spa Aplus))
+      = Subtype.val ⁻¹' basicOpenFinset T s := by
+    ext v
+    simp only [rationalSubset_def, Set.preimage_inter, Set.mem_inter_iff, Set.mem_preimage]
+    exact and_iff_right v.2
+  rw [h]
+  exact (isOpen_basicOpenFinset T s).preimage continuous_subtype_val
 
 open scoped Classical Pointwise in
 /-- **Wedhorn Remark 7.30(5)**: rational subsets are stable under finite intersection, with
