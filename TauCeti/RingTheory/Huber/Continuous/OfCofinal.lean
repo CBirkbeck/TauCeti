@@ -19,8 +19,9 @@ A valuation on a Huber ring is continuous as soon as it is bounded by `1` on an 
 definition `I` and has cofinal values on a generating set of `I`. That is exactly what the
 right-hand side of Theorem 7.10 supplies: membership in `Spv (A, IA)` gives the cofinality
 through Wedhorn Lemma 7.4 — on its cofinal branch directly, and on its full-characteristic-group
-branch through `cofinalValue_of_hasFullCharacteristicGroup` below, since `v a < 1` on `I` makes
-the image of `I` a unit ball around `0`. The same `v a < 1` gives the bound.
+branch through `cofinalValue_of_hasFullCharacteristicGroup` below, since `v a < 1` on `I` places
+the open ideal image, a neighbourhood of `0`, inside the unit ball — so the unit ball is itself a
+neighbourhood of `0`. The same `v a < 1` gives the bound.
 
 ## What the argument actually needs
 
