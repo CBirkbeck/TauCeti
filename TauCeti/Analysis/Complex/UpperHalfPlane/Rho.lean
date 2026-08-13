@@ -20,7 +20,9 @@ is known to be nonzero — and `ρ + 1 ≠ 0` is itself read off from `-1 / ρ =
 
 The file also collects the elementary values every consumer of the fundamental domain's boundary
 needs for its three elliptic points — the corners `ρ`, `ρ + 1` and the arc midpoint `i`: the
-real part of `ρ`, the pairwise distinctness of the three points, and their common unit modulus.
+real part of `ρ`, the pairwise distinctness of the three points, their common unit modulus, the
+coercion identity for the translated corner, and the unit-circle/real-part characterizations
+that classify a boundary point as one of the three.
 
 ## Main results
 
@@ -28,6 +30,10 @@ real part of `ρ`, the pairwise distinctness of the three points, and their comm
 * `UpperHalfPlane.neg_one_div_ρ_add_one`: the inversion carries `ρ + 1` to `ρ`.
 * `UpperHalfPlane.re_ρ`, `UpperHalfPlane.norm_eq_one_of_mem_ellipticPoints` and the pairwise
   distinctness of `i`, `ρ`, `ρ + 1`.
+* `UpperHalfPlane.coe_vadd_one_ρ`: the translated corner `(1 : ℝ) +ᵥ ρ` is `ρ + 1` in `ℂ`.
+* `UpperHalfPlane.coe_eq_I_of_re_eq_zero`, `UpperHalfPlane.coe_eq_ρ_of_re`,
+  `UpperHalfPlane.coe_eq_ρ_add_one_of_re`: a unit-circle point of `ℍ` with real part `0`,
+  `-1/2`, `1/2` is `i`, `ρ`, `ρ + 1` respectively.
 -/
 
 public section
@@ -76,7 +82,12 @@ lemma I_ne_vadd_ρ : (I : ℍ) ≠ (1 : ℝ) +ᵥ ρ :=
 lemma ρ_ne_vadd_ρ : (ρ : ℍ) ≠ (1 : ℝ) +ᵥ ρ :=
   ne_of_apply_ne UpperHalfPlane.re (by norm_num)
 
-/-- The second corner `ρ + 1` as a point of `ℍ`, computed into `ℂ`. -/
+/-- The second corner `ρ + 1` as a point of `ℍ`, computed into `ℂ`.
+
+Not `@[simp]`: the simpNF linter rewrites the stated LHS through the unconditional simp
+lemmas `coe_vadd` and `Complex.ofReal_one` to `1 + (ρ : ℂ)`, and restating at that normal
+form would leave a bare commutativity instance `1 + (ρ : ℂ) = (ρ : ℂ) + 1`. The lemma is the
+`rw`-oriented bridge to the `ρ + 1` spelling the corner API uses throughout. -/
 lemma coe_vadd_one_ρ : (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ) = (ρ : ℂ) + 1 := by
   rw [coe_vadd]
   push_cast
