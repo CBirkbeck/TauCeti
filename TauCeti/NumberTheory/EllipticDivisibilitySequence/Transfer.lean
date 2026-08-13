@@ -23,16 +23,18 @@ terminate.
 
 ## Main definitions
 
-* `IsEllipticNet.NonnegStrictAnti₄`: the four indices are nonnegative and strictly decreasing. The
-  nonnegativity is bundled in because every use needs it alongside the ordering, and the name says
-  so: Mathlib's `StrictAnti` is the order-reversing property alone.
+* `IsEllipticNet.NonnegStrictDecreasing₄`: the four indices are nonnegative and strictly
+  decreasing. The nonnegativity is bundled in because every use needs it alongside the ordering,
+  and the name carries both halves — `StrictAnti` is Mathlib's name for an antitone *function*,
+  not for a chain of four integers.
 
 ## Main results
 
 * `IsEllipticNet.parity_avg_sub`: same parity survives the transfer.
-* `IsEllipticNet.nonnegStrictAnti₄_avg_sub`: nonnegativity and strict decrease survive it.
-* `IsEllipticNet.six_le_of_nonnegStrictAnti₄`: a strictly decreasing quadruple of one parity with
-  `0 ≤ d` has `6 ≤ a` — consecutive indices differ by at least two, three times over.
+* `IsEllipticNet.nonnegStrictDecreasing₄_avg_sub`: nonnegativity and strict decrease survive it.
+* `IsEllipticNet.six_le_of_parity_of_nonnegStrictDecreasing₄`: a strictly decreasing quadruple
+  of one parity with `0 ≤ d` has `6 ≤ a` — consecutive indices differ by at least two, three
+  times over.
 
 ## Implementation notes
 
@@ -49,10 +51,11 @@ Ported from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `StrictAnti₄`, `HaveSameParity₄.transf`,
 `HaveSameParity₄.strictAnti₄_transf` and `HaveSameParity₄.six_le_of_strictAnti₄`. That file's
 header reads `Authors: Junyan Xu`; following this repository's convention for adapted material the
-upstream authorship is credited here rather than in the copyright header. The source's `StrictAnti₄`
-is renamed `NonnegStrictAnti₄` here, since the predicate also carries the lower bound `0 ≤ d` and
-Mathlib already uses `StrictAnti` for the order-reversing property alone; the three dependent names
-follow it.
+upstream authorship is credited here rather than in the copyright header. The source's
+`StrictAnti₄` is renamed `NonnegStrictDecreasing₄` here: the predicate also carries the lower
+bound `0 ≤ d`, and `StrictAnti` is Mathlib's name for an antitone function rather than for a
+chain of four integers. The dependent names follow it, and `six_le_of_parity_of_…` names the
+parity hypothesis that its statement genuinely needs.
 
 The source's surrounding transfer machinery is **not** ported, being already upstream: its
 `rel₄_transf` is Mathlib's `atomRel_avg_sub`, its `rel₄_eq_net` is Mathlib's `atomRel_eq`, and its
@@ -68,13 +71,13 @@ namespace IsEllipticNet
 
 /-- The four indices are nonnegative and strictly decreasing. Nonnegativity is bundled in because
 the descent needs it wherever it needs the ordering. -/
-def NonnegStrictAnti₄ (a b c d : ℤ) : Prop := 0 ≤ d ∧ d < c ∧ c < b ∧ b < a
+def NonnegStrictDecreasing₄ (a b c d : ℤ) : Prop := 0 ≤ d ∧ d < c ∧ c < b ∧ b < a
 
-/-- The defining formula for `NonnegStrictAnti₄`. The definition body is not exposed, so this
+/-- The defining formula for `NonnegStrictDecreasing₄`. The definition body is not exposed, so this
 equation lemma is how a consumer computes with it, and it is the normal form `simp` uses. -/
 @[simp]
-theorem nonnegStrictAnti₄_def (a b c d : ℤ) :
-    NonnegStrictAnti₄ a b c d ↔ 0 ≤ d ∧ d < c ∧ c < b ∧ b < a := Iff.rfl
+theorem nonnegStrictDecreasing₄_def (a b c d : ℤ) :
+    NonnegStrictDecreasing₄ a b c d ↔ 0 ≤ d ∧ d < c ∧ c < b ∧ b < a := Iff.rfl
 
 /-- **Same parity survives the transfer.** Stated for the transferred quadruple in the order
 `atomRel_avg_sub` produces it, and with the absolute value on the last index that
@@ -89,9 +92,10 @@ theorem parity_avg_sub {a b c d : ℤ}
 
 /-- **Nonnegativity and strict decrease survive the transfer.** The last index needs its absolute
 value: `m - a` is the one difference that can be negative, `a` being the largest index. -/
-theorem nonnegStrictAnti₄_avg_sub {a b c d : ℤ}
-    (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) (anti : NonnegStrictAnti₄ a b c d) :
-    NonnegStrictAnti₄ ((a + b + c + d) / 2 - d) ((a + b + c + d) / 2 - c)
+theorem nonnegStrictDecreasing₄_avg_sub {a b c d : ℤ}
+    (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2)
+    (anti : NonnegStrictDecreasing₄ a b c d) :
+    NonnegStrictDecreasing₄ ((a + b + c + d) / 2 - d) ((a + b + c + d) / 2 - c)
       ((a + b + c + d) / 2 - b) |(a + b + c + d) / 2 - a| := by
   obtain ⟨h₁, h₂, h₃⟩ := parity
   obtain ⟨hd, hdc, hcb, hba⟩ := anti
@@ -100,8 +104,9 @@ theorem nonnegStrictAnti₄_avg_sub {a b c d : ℤ}
 
 /-- A strictly decreasing quadruple of one parity, bounded below by zero, has `6 ≤ a`: each of the
 three consecutive gaps is at least two. This is what makes the descent terminate. -/
-theorem six_le_of_nonnegStrictAnti₄ {a b c d : ℤ}
-    (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) (anti : NonnegStrictAnti₄ a b c d) :
+theorem six_le_of_parity_of_nonnegStrictDecreasing₄ {a b c d : ℤ}
+    (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2)
+    (anti : NonnegStrictDecreasing₄ a b c d) :
     6 ≤ a := by
   obtain ⟨h₁, h₂, h₃⟩ := parity
   obtain ⟨hd, hdc, hcb, hba⟩ := anti
