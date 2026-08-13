@@ -137,13 +137,8 @@ theorem eq_of_adjoin_prod_root_eq [NeZero (2 : K)] (hroot : ∀ i, root i ^ 2 = 
   rw [hE, Finset.sdiff_nonempty]
   intro hsub
   apply hne
-  have h3 : S ∪ T = S ∩ T := Finset.Subset.antisymm hsub Finset.inter_subset_union
-  refine Finset.Subset.antisymm ?_ ?_
-  · calc S ⊆ S ∪ T := Finset.subset_union_left
-      _ = S ∩ T := h3
-      _ ⊆ T := Finset.inter_subset_right
-  · calc T ⊆ S ∪ T := Finset.subset_union_right
-      _ = S ∩ T := h3
-      _ ⊆ S := Finset.inter_subset_left
+  exact Finset.Subset.antisymm
+    (Finset.subset_union_left.trans (hsub.trans Finset.inter_subset_right))
+    (Finset.subset_union_right.trans (hsub.trans Finset.inter_subset_left))
 
 end TauCeti.Multiquadratic
