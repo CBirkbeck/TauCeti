@@ -249,25 +249,20 @@ open scoped Classical in
 theorem infinityPlace.X :
     infinityPlace W (algebraMap W.CoordinateRing W.FunctionField
       (algebraMap F[X] W.CoordinateRing Polynomial.X)) = WithZero.exp 2 := by
-  rw [infinityPlace_apply, RatFunc.inftyValuation_apply,
-    RatFunc.inftyValuation_of_nonzero F
-      (norm_ne_zero_of_natDegree_ne_zero W
-        (u := algebraMap F[X] W.CoordinateRing Polynomial.X)
-        (by rw [natDegree_norm_X]; norm_num)),
-    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_X]
-  norm_num
+  rw [infinityPlace_apply, RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero F
+      (norm_ne_zero_of_natDegree_ne_zero W (u := algebraMap F[X] W.CoordinateRing Polynomial.X)
+        (natDegree_norm_X W ▸ two_ne_zero)),
+    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_X, Nat.cast_ofNat]
 
 open scoped Classical in
 /-- **`y` has a triple pole at infinity**: `v_∞ y = exp 3`, which is `ord_∞ y = -3`. -/
 theorem infinityPlace.mk_Y :
     infinityPlace W (algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y))
       = WithZero.exp 3 := by
-  rw [infinityPlace_apply, RatFunc.inftyValuation_apply,
-    RatFunc.inftyValuation_of_nonzero F
+  rw [infinityPlace_apply, RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero F
       (norm_ne_zero_of_natDegree_ne_zero W (u := CoordinateRing.mk W Y)
-        (by rw [natDegree_norm_mk_Y]; norm_num)),
-    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_mk_Y]
-  norm_num
+        (natDegree_norm_mk_Y W ▸ three_ne_zero)),
+    intDegree_norm_algebraMap_coordinateRing, natDegree_norm_mk_Y, Nat.cast_ofNat]
 
 
 open scoped Classical in
