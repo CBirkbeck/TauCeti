@@ -142,6 +142,7 @@ section BaseChange
 
 variable {S : Type*} [CommRing S] (f : R →+* S)
 
+/-- `invar` commutes with mapping the coefficients along a ring homomorphism. -/
 @[simp]
 lemma map_invar : (W.map f).invar = W.invar.map f := by
   simp [invar]
@@ -149,6 +150,7 @@ lemma map_invar : (W.map f).invar = W.invar.map f := by
 variable [Algebra R S] {A : Type*} [CommRing A] [Algebra R A] [Algebra S A] [IsScalarTower R S A]
   {B : Type*} [CommRing B] [Algebra R B] [Algebra S B] [IsScalarTower R S B] (g : A →ₐ[S] B)
 
+/-- `invar` commutes with base change along an algebra homomorphism between extensions. -/
 lemma baseChange_invar : (W⁄B).invar = (W⁄A).invar.map g := by
   rw [← map_invar, map_baseChange]
 
