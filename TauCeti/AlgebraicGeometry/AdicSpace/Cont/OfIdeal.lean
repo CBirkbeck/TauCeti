@@ -127,13 +127,9 @@ theorem not_vle_one_of_isContinuous_of_mem_idealOfDefinition (P : PairOfDefiniti
 /-- **Wedhorn Theorem 7.10, the converse inclusion.** A point of `Spv (A, IA)` that is sub-unit
 on the ideal of definition is continuous.
 
-Lemma 7.4 reads membership as cofinality on `IA` or a full characteristic group, and both
-branches funnel into the cofinality engine `isContinuous_of_forall_cofinalValue` at a finite
-generating set of `I`: on the cofinal branch the generators' values are cofinal outright, being
-values on `IA`, and on the other branch the sub-unit bound turns the full characteristic group
-into cofinality through `cofinalValue_of_hasFullCharacteristicGroup`. The sub-unit bound
-quantifies over `I` itself, not over `IA`: over the extension it would not hand the engine its
-`v ≤ 1`. -/
+The sub-unit hypothesis quantifies over the ideal of definition `I` itself — through the
+subring inclusion — and not over the extension `IA`, where the coefficients range over all of
+`A` and the bound would say something strictly weaker. -/
 theorem isContinuous_of_mem_spvOfIdeal_of_forall_vlt_one (P : PairOfDefinition A) {v : Spv A}
     (hmem : v ∈ spvOfIdeal P.extendedIdealOfDefinition
       ⟨P.extendedIdealOfDefinition, P.fg_extendedIdealOfDefinition, rfl⟩)
