@@ -37,9 +37,9 @@ Hausdorff form the equalizer arguments consume.
 
 * `TauCeti.TopCommRingCat.isCompleteSeparated_of_completeSpace_of_t0Space` and
   `TauCeti.TopCommRingCat.completeSpace_of_isCompleteSeparated` : the transfer in and out of
-  the predicate for a ring carrying its own compatible uniformity;
-  `TauCeti.TopCommRingCat.isCompleteSeparated_completion` instantiates it at every
-  completion — the canonical witnesses.
+  the predicate for a ring carrying its own compatible uniformity. Applied at a completion
+  it gives the canonical witnesses — the family the structure presheaf's values come from —
+  as the `example` below records.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.t2Space` : separatedness in Hausdorff form.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.pi` : a product of complete separated objects
   is complete separated. This is the closure half for products; the limit cones and the
@@ -80,11 +80,11 @@ theorem isCompleteSeparated_of_completeSpace_of_t0Space (R : Type u) [CommRing R
     infer_instance
   t0Space := ‹T0Space R›
 
-/-- **The canonical witnesses**: the completion of any uniform commutative topological ring
-is a complete separated object. This is the family the structure presheaf's values come
-from. -/
-theorem isCompleteSeparated_completion (B : Type u) [CommRing B] [UniformSpace B]
-    [IsUniformAddGroup B] [IsTopologicalRing B] :
+-- The canonical witnesses: the completion of any uniform commutative topological ring is a
+-- complete separated object — the family the structure presheaf's values come from. This is
+-- recorded as an `example` rather than a named theorem because it is the introduction lemma
+-- above at the completion instances, which callers can apply directly.
+example (B : Type u) [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [IsTopologicalRing B] :
     IsCompleteSeparated (TopCommRingCat.of (UniformSpace.Completion B)) :=
   isCompleteSeparated_of_completeSpace_of_t0Space _
 
