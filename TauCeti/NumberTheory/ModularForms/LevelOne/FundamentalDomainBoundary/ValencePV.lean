@@ -486,20 +486,6 @@ private lemma orderOfVanishingAt_corner_eq_zero {f : ℍ → ℂ} {S : Finset �
   rcases hc with rfl | rfl | rfl
   exacts [ModularGroup.I_mem_fd, ModularGroup.ρ_mem_fd, vadd_one_ρ_mem_fd]
 
-/-- The corner `i` differs from the two `ρ`-corners as a point of `ℍ`. -/
-private lemma I_ne_ρ_and_I_ne_vadd_one_ρ :
-    UpperHalfPlane.I ≠ ρ ∧ UpperHalfPlane.I ≠ (1 : ℝ) +ᵥ ρ := by
-  have h := corner_notMem.1
-  simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at h
-  exact ⟨fun he => h.1 (UpperHalfPlane.coe_I ▸ congrArg _ he),
-    fun he => h.2 (UpperHalfPlane.coe_I ▸ (congrArg _ he).trans coe_vadd_one_ρ)⟩
-
-/-- The two `ρ`-corners differ as points of `ℍ`. -/
-private lemma ρ_ne_vadd_one_ρ : ρ ≠ (1 : ℝ) +ᵥ ρ := by
-  have h := corner_notMem.2
-  simp only [Finset.mem_singleton] at h
-  exact fun he => h ((congrArg _ he).trans coe_vadd_one_ρ)
-
 /-- The `ℂ`-corner classification transfers along the coercion: a point of `ℍ` lands on
 `{i, ρ, ρ + 1}` in `ℂ` exactly when it is one of the three corner points of `ℍ`. -/
 private lemma coe_mem_corner_iff {p : ℍ} :
@@ -552,8 +538,7 @@ private lemma sum_filter_corner_windingNumber_mul_order {f : ℍ → ℂ} {H : �
         ⟨Finset.mem_filter.mpr ⟨hmem, h0⟩, coe_mem_corner_iff.mpr hc'⟩)]
       simp
   rw [Finset.sum_subset hsub hmiss,
-    Finset.sum_insert (by simp [I_ne_ρ_and_I_ne_vadd_one_ρ.1, I_ne_ρ_and_I_ne_vadd_one_ρ.2]),
-    Finset.sum_insert (by simp [ρ_ne_vadd_one_ρ]), Finset.sum_singleton,
+    Finset.sum_insert (by simp), Finset.sum_insert (by simp), Finset.sum_singleton,
     UpperHalfPlane.coe_I, coe_vadd_one_ρ,
     windingNumber_fdBoundary_arc hH (by norm_num) (by norm_num) (by norm_num),
     windingNumber_fdBoundary_rho hρH, windingNumber_fdBoundary_rho_add_one hρH, hordρ₁]
