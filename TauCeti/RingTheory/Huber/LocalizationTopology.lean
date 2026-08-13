@@ -8,6 +8,7 @@ public import TauCeti.RingTheory.Localization.Away
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 public import Mathlib.RingTheory.Adjoin.Polynomial.Basic
 public import TauCeti.RingTheory.Huber.Basic
+public import TauCeti.RingTheory.Huber.Completion
 
 /-!
 # Localization Topology for Huber Rings
@@ -67,6 +68,9 @@ so a consumer holding `A[1/s]` in another presentation can use the topology dire
 * `existsUnique_continuous_ringHom_locTopology`: Wedhorn 5.51's universal property — a continuous
   `φ : A →+* B` inverting `s` and sending each `t/s` to a power-bounded element extends to `Aₛ` in
   exactly one continuous way.
+* `isHuberRing_completion_locTopology` and
+  `existsUnique_continuous_ringHom_completion_locTopology`: the separated completion `A⟨T/s⟩` is
+  Huber, and the same universal property holds across it for complete Hausdorff targets.
 
 ## Provenance
 
@@ -882,6 +886,72 @@ theorem existsUnique_continuous_ringHom_locTopology {B : Type*} [CommRing B] [To
   · rintro g ⟨-, hg⟩
     exact IsLocalization.ringHom_ext (Submonoid.powers s)
       (hg.trans (IsLocalization.Away.lift_comp s hs).symm)
+
+/-! ### The completion `A⟨T/s⟩` -/
+
+/-- **`A⟨T/s⟩` is a Huber ring.** The separated completion of `Aₛ` under `locTopology` — Wedhorn's
+`A⟨T/s⟩` — inherits the Huber property from `isHuberRing_locTopology` through
+`IsHuberRing.completion`.
+
+Four instances have to be introduced before `UniformSpace.Completion S` even makes sense, and they
+are the same four every consumer of this construction needs: the topology, its ring structure, the
+canonical uniformity of the underlying additive group, and that uniformity's compatibility. Only
+the first is peculiar to this file; the pattern is Mathlib's own, in `Valued.mk'`. -/
+theorem isHuberRing_completion_locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI tS := locTopology P T s S hden
+    letI := isTopologicalRing_locTopology P T s S hden
+    letI : UniformSpace S := @IsTopologicalAddGroup.rightUniformSpace S _ tS _
+    letI : IsUniformAddGroup S := @isUniformAddGroup_of_addCommGroup _ _ tS _
+    IsHuberRing (UniformSpace.Completion S) := by
+  let tS := locTopology P T s S hden
+  have _ := isTopologicalRing_locTopology P T s S hden
+  let _ : UniformSpace S := @IsTopologicalAddGroup.rightUniformSpace S _ tS _
+  have _ : IsUniformAddGroup S := @isUniformAddGroup_of_addCommGroup _ _ tS _
+  have _ := isHuberRing_locTopology P T s S hden
+  infer_instance
+
+/-- **The universal property of `A⟨T/s⟩`**, for complete Hausdorff targets. Under the hypotheses of
+`existsUnique_continuous_ringHom_locTopology`, and with `B` complete and separated, `φ` extends to
+the completion in exactly one continuous way.
+
+This is that theorem composed with the completion's own universal property. The map is
+`UniformSpace.Completion.extensionHom` applied to the unique continuous map out of `Aₛ`;
+uniqueness is density — two continuous maps agreeing on the image of `Aₛ` agree — followed by the
+uniqueness already established downstairs. The completeness and separatedness of `B` are what the
+extension needs, and they are the only hypotheses here beyond those of the localisation form. -/
+theorem existsUnique_continuous_ringHom_completion_locTopology {B : Type*} [CommRing B]
+    [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B] [CompleteSpace B] [T0Space B]
+    [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type*) [CommRing S]
+    [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S) {φ : A →+* B}
+    (hφ : ContinuousAt φ 0) (hs : IsUnit (φ s))
+    (hpow : ∀ t ∈ T, IsPowerBounded (φ t * ↑hs.unit⁻¹)) :
+    letI tS := locTopology P T s S hden
+    letI := isTopologicalRing_locTopology P T s S hden
+    letI : UniformSpace S := @IsTopologicalAddGroup.rightUniformSpace S _ tS _
+    letI : IsUniformAddGroup S := @isUniformAddGroup_of_addCommGroup _ _ tS _
+    ∃! g : UniformSpace.Completion S →+* B,
+      Continuous g ∧ (g.comp UniformSpace.Completion.coeRingHom).comp (algebraMap A S) = φ := by
+  let tS := locTopology P T s S hden
+  have _ := isTopologicalRing_locTopology P T s S hden
+  let _ : UniformSpace S := @IsTopologicalAddGroup.rightUniformSpace S _ tS _
+  have _ : IsUniformAddGroup S := @isUniformAddGroup_of_addCommGroup _ _ tS _
+  obtain ⟨f, ⟨hfc, hfe⟩, huniq⟩ :=
+    existsUnique_continuous_ringHom_locTopology P T s S hden hφ hs hpow
+  refine ⟨UniformSpace.Completion.extensionHom f hfc,
+    ⟨UniformSpace.Completion.continuous_extension, ?_⟩, ?_⟩
+  · ext a
+    simpa [UniformSpace.Completion.extensionHom_coe, UniformSpace.Completion.coeRingHom] using
+      congrArg (fun h => h a) hfe
+  · rintro g ⟨hgc, hge⟩
+    have hcoe : g.comp UniformSpace.Completion.coeRingHom = f :=
+      huniq _ ⟨hgc.comp UniformSpace.Completion.continuous_coeRingHom, hge⟩
+    refine RingHom.coe_inj (Continuous.ext_on UniformSpace.Completion.denseRange_coe hgc
+      UniformSpace.Completion.continuous_extension ?_)
+    rintro _ ⟨x, rfl⟩
+    simpa [UniformSpace.Completion.coeRingHom, UniformSpace.Completion.extensionHom_coe] using
+      congrArg (fun h => h x) hcoe
 
 end PairOfDefinition
 
