@@ -10,17 +10,28 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant
 /-!
 # The invariant polynomial of a Weierstrass curve
 
-The elliptic net `ψ` carries an invariant, in the cross-multiplied sense of
-`IsEllipticNet.invarNum`/`invarDenom` (over a `CommRing` only the cross-multiplied identity holds;
-the reading as the quotient `(ψ(n-1)² ψ(n+2) + ψ(n-2) ψ(n+1)² + ψ₂² ψ(n)³) / (ψ(n+1) ψ(n) ψ(n-1))`,
-independent of `n`, needs nonzero denominators). Modulo the Weierstrass polynomial its value is
+This file defines the polynomial
 
-`WeierstrassCurve.invar = 6 X² + b₂ X + b₄`.
+`WeierstrassCurve.invar = 6 X² + b₂ X + b₄`
 
-This file defines that polynomial and proves the division-polynomial identities that identify it,
-together with the one identity connecting `φ` and `ψ` to `IsEllipticNet.invarDenom`. They are the
-first stage of the `ω` family of division polynomials, which gives the `Y` coordinate of scalar
-multiplication in Jacobian coordinates.
+and proves the division-polynomial identities that pin it down, together with the one identity
+connecting `φ` and `ψ` to `IsEllipticNet.invarDenom`. They are the first stage of the `ω` family of
+division polynomials, which gives the `Y` coordinate of scalar multiplication in Jacobian
+coordinates.
+
+Throughout, `ψ` is Mathlib's division-polynomial sequence `WeierstrassCurve.ψ`, and nothing here
+uses or asserts that it is an elliptic net or an elliptic sequence. `IsEllipticNet.invarNum` and
+`IsEllipticNet.invarDenom` are defined for an **arbitrary** sequence — `invarDenom W s n` is
+`W (n + s) * W n * W (n - s)` — so applying `invarDenom` to `ψ` is the use of a formula, not an
+ellipticity hypothesis; the namespace is where those formulas live, not a claim about `ψ`.
+
+The name `invar` records where the polynomial comes from, and that origin is motivation rather than
+anything established below: for a sequence that *is* an elliptic net, and over a field where the
+relevant denominators are nonzero, `invarNum/invarDenom` is independent of the index — that is the
+cancellation of `IsEllipticNet.invarNum_mul_invarDenom` — and its value modulo the Weierstrass
+polynomial is `6 X² + b₂ X + b₄`. Neither the hypothesis nor that conclusion is proved here, and
+over a `CommRing` the quotient need not exist at all. What this file proves are the polynomial
+identities listed below.
 
 ## Main definitions
 
@@ -38,7 +49,7 @@ multiplication in Jacobian coordinates.
   `WeierstrassCurve.map_invar` and `baseChange_invar`, the naturality the surrounding
   division-polynomial API provides for its other objects.
 * `WeierstrassCurve.φ_mul_ψ`: `φ n * ψ n = X ψ(n)³ - invarDenom ψ 1 n`, which is what connects the
-  division polynomials to the invariant of the elliptic net they form.
+  division polynomials to the invariant denominator formula evaluated at `ψ`.
 
 ## What is deliberately not here
 
@@ -84,9 +95,10 @@ namespace WeierstrassCurve
 
 variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
 
-/-- The invariant polynomial `6 X² + b₂ X + b₄` of a Weierstrass curve: modulo the Weierstrass
-polynomial it is the value of the invariant of the elliptic net `ψ`, the quotient
-`(ψ(n-1)² ψ(n+2) + ψ(n-2) ψ(n+1)² + ψ₂² ψ(n)³) / (ψ(n+1) ψ(n) ψ(n-1))` for any `n`. -/
+/-- The polynomial `6 X² + b₂ X + b₄` of a Weierstrass curve. What ties it to the division
+polynomials is `preΨ₄_add_Ψ₂Sq_sq` below, `preΨ₄ + Ψ₂Sq ^ 2 = invar * Ψ₃`. The name records the
+classical invariant of an elliptic net, whose index-independence is not what is proved here; see
+the module docstring. -/
 noncomputable def invar : R[X] := 6 * X ^ 2 + C W.b₂ * X + C W.b₄
 
 /-- The defining formula for `invar`. The definition body is not exposed, so this equation lemma is
@@ -130,9 +142,10 @@ lemma Affine.CoordinateRing.mk_preΨ₄_add_ψ₂_pow_four :
   rw [preΨ₄_add_ψ₂_pow_four]
   simp
 
-/-- **The division polynomials meet the invariant of their elliptic net**: `φ n * ψ n` is
-`X ψ(n)³` less the invariant's denominator at `s = 1`. This is the step through which the
-elliptic-net identities reach the curve. -/
+/-- **The division polynomials meet the invariant denominator**: `φ n * ψ n` is `X ψ(n)³` less
+`IsEllipticNet.invarDenom ψ 1 n`, which is `ψ(n+1) ψ(n) ψ(n-1)`. That denominator is a formula in an
+arbitrary sequence, so this is an identity between division polynomials and uses no ellipticity of
+`ψ`. It is the step through which the elliptic-net formulas reach the curve. -/
 theorem φ_mul_ψ (n : ℤ) :
     W.φ n * W.ψ n = C X * W.ψ n ^ 3 - IsEllipticNet.invarDenom W.ψ 1 n := by
   rw [WeierstrassCurve.φ, IsEllipticNet.invarDenom_def]
