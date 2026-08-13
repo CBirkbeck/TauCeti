@@ -259,10 +259,7 @@ lemma isCompact_basicOpenFinset (T : Finset A) (s : A) : IsCompact (basicOpenFin
 
 /-! ### The sub-unit locus is pro-constructible -/
 
-/-- **The locus `v ≤ 1` on a set of ring elements is pro-constructible in `Spv A`.** Each single
-condition `v(a) ≤ 1` is the basic open `Spv(A)(a/1)` — the nonvanishing clause is vacuous at
-denominator `1` — so the locus is an intersection of quasi-compact opens, and pro-constructible
-subsets are stable under arbitrary intersection.
+/-- **The locus `v ≤ 1` on a set of ring elements is pro-constructible in `Spv A`.**
 
 This is the plus-ring half of Wedhorn's Theorem 7.35: `Spa (A, A⁺)` is the trace of this locus
 at `S = A⁺` on `Cont A`, and its pro-constructibility in `Spv (A, IA)` is what makes the adic
