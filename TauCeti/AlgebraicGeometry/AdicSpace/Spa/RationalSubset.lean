@@ -88,9 +88,8 @@ theorem rationalSubset_insert_self (Aplus : Subring A) (T : Finset A) (s : A) :
     rationalSubset Aplus (insert s T) s = rationalSubset Aplus T s := by
   rw [rationalSubset_def, rationalSubset_def, basicOpenFinset_insert_self]
 
-/-- A rational subset is open in the subspace `spa A⁺`: its trace along the coercion is the
-trace of the basic open `Spv(A)(T/s)`, whose openness descends along the continuous coercion.
-This is the form basis consumers use, with no unfolding of `rationalSubset`. -/
+/-- The preimage of `R(T/s)` under the coercion of the subtype `spa A⁺` is open: a rational
+subset is relatively open in the adic spectrum. -/
 theorem isOpen_val_preimage_rationalSubset (Aplus : Subring A) (T : Finset A) (s : A) :
     IsOpen (Subtype.val ⁻¹' rationalSubset Aplus T s : Set (spa Aplus)) := by
   have h : (Subtype.val ⁻¹' rationalSubset Aplus T s : Set (spa Aplus))
