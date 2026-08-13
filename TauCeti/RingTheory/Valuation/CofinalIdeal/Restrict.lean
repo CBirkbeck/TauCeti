@@ -78,6 +78,18 @@ open MonoidWithZeroHom TauCeti
 
 variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
+/-- The image of a unit of `WithZero α` under `OrderMonoidIso.unitsWithZero`, read back in
+`WithZero α`, is the value that unit carries.
+
+This is `WithZero.coe_unitsWithZeroEquiv_eq_units_val` in the order-isomorphism spelling.
+`OrderMonoidIso.unitsWithZero` is built on `WithZero.unitsWithZeroEquiv`, so the two agree
+definitionally, but they are distinct terms and only this spelling matches a goal stated
+through the order isomorphism. -/
+private theorem coe_unitsWithZero_eq_units_val {α : Type*} [Group α] [Preorder α]
+    (γ : (WithZero α)ˣ) :
+    ((OrderMonoidIso.unitsWithZero γ : α) : WithZero α) = γ.val :=
+  WithZero.coe_unitsWithZeroEquiv_eq_units_val _
+
 /-- The units identification takes the unit of a restricted value to the value-group element it
 names. This is the bridge between membership in a transported convex subgroup, which is phrased
 through `OrderMonoidIso.unitsWithZero`, and the introduction rules for `cΓ_v(I)`, which are
@@ -318,25 +330,12 @@ private theorem characteristicSubgroup_restrictToIdeal_eq_top_of_meets (w : Valu
       Valuation.embedding_restrict, ← hu,
       inv_le_comm₀ (zero_lt_one.trans_le h1a) (pos_iff_ne_zero.mpr WithZero.coe_ne_zero),
       ← WithZero.coe_inv, coe_le_restrictToIdeal_iff, hga]
-    have hcoe : ((OrderMonoidIso.unitsWithZero
-          ((u⁻¹ : (ConvexSubgroup.comapUnitsWithZero
-            (characteristicSubgroupOfIdeal w I hfg)).toSubgroup) :
-            (ValueGroup₀ (.ofClass w))ˣ) :
-          valueGroup (.ofClass w)) : ValueGroup₀ (.ofClass w)) =
-        (((u⁻¹ : (ConvexSubgroup.comapUnitsWithZero
-            (characteristicSubgroupOfIdeal w I hfg)).toSubgroup) :
-          (ValueGroup₀ (.ofClass w))ˣ) : ValueGroup₀ (.ofClass w)) :=
-      WithZero.coe_unitsWithZeroEquiv_eq_units_val _
-    rw [← hcoe, WithZero.coe_le_coe]
+    rw [← coe_unitsWithZero_eq_units_val, WithZero.coe_le_coe]
     simp only [map_inv, InvMemClass.coe_inv]
     simpa using inv_le_inv_iff.mpr hginv
   · rw [← ValueGroup₀.embedding_strictMono.le_iff_le, Valuation.embedding_restrict, ← hu,
       coe_le_restrictToIdeal_iff, hga]
-    have hcoe : ((OrderMonoidIso.unitsWithZero (u : (ValueGroup₀ (.ofClass w))ˣ) :
-        valueGroup (.ofClass w)) : ValueGroup₀ (.ofClass w)) =
-        ((u : (ValueGroup₀ (.ofClass w))ˣ) : ValueGroup₀ (.ofClass w)) :=
-      WithZero.coe_unitsWithZeroEquiv_eq_units_val _
-    rw [← hcoe, WithZero.coe_le_coe]
+    rw [← coe_unitsWithZero_eq_units_val, WithZero.coe_le_coe]
     exact hgle
 
 /-- The **not-meets** branch of `characteristicSubgroupOfIdeal_restrictToIdeal_eq_top`. When
@@ -366,13 +365,7 @@ private theorem cofinalValue_restrictToIdeal_of_not_meets (w : Valuation A Γ₀
   refine ⟨n, ?_⟩
   rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, ← hu,
     restrictToIdeal_lt_coe_iff, map_pow]
-  -- `OrderMonoidIso.unitsWithZero` and `WithZero.unitsWithZeroEquiv` agree, but only up to
-  -- defeq, so the bridge has to be stated rather than rewritten with
-  have hcoe : ((OrderMonoidIso.unitsWithZero (u : (ValueGroup₀ (.ofClass w))ˣ) :
-      valueGroup (.ofClass w)) : ValueGroup₀ (.ofClass w)) =
-      ((u : (ValueGroup₀ (.ofClass w))ˣ) : ValueGroup₀ (.ofClass w)) :=
-    WithZero.coe_unitsWithZeroEquiv_eq_units_val _
-  rwa [hcoe] at hn
+  rwa [coe_unitsWithZero_eq_units_val] at hn
 
 /-- **Wedhorn §7.1.2: the restricted valuation has full characteristic subgroup for `I`.** This
 is the valuation-level content of the landing law — the restriction `v|cΓ_v(I)` satisfies the very
