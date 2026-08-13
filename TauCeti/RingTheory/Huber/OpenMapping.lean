@@ -39,8 +39,9 @@ uniformity in Henkel: it carries `UniformSpace M` and `IsUniformAddGroup M` ther
 Henkel also takes a fourth *explicit* argument, `hc : ∀ x : M, ContinuousAt (fun a : A ↦ a • x) 0`
 — continuity of the scalar action at zero, in the scalar variable, on the **source**. That is what
 `ContinuousSMul A M` is here to supply, and it is why that binder is neither structural nor
-removable: dropping it leaves `hc` unprovable, since `ContinuousSMul A N` is an assumption about
-the action on `N` while `hc` quantifies over `x : M`.
+removable: dropping it leaves `hc` unprovable. The target's `ContinuousConstSMul A N` cannot stand
+in — it is an assumption about the action on `N`, and continuity in the *module* variable at that,
+where `hc` quantifies over `x : M` and asks continuity in the *scalar*.
 
 The rest are inferred. `IsTateRing A` gives `HasZeroSequenceOfUnits A` through the powers of a
 pseudouniformiser (`TauCeti.Huber.IsTateRing.hasZeroSequenceOfUnits`) — this is the only place the
