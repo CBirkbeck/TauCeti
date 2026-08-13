@@ -119,7 +119,7 @@ public section
 
 namespace TauCeti.ValuationSpectrum
 
-open Set Topology TopologicalSpace TauCeti TauCeti.Valuation MonoidWithZeroHom
+open _root_.Set Topology TopologicalSpace TauCeti TauCeti.Valuation MonoidWithZeroHom
 
 variable {A : Type*} [CommRing A]
 
