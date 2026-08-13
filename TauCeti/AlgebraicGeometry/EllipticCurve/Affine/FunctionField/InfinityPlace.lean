@@ -181,21 +181,15 @@ end DomainCore
 
 /-- **The ultrametric inequality on the function field.** -/
 private theorem intDegree_norm_add_le {f g : W.FunctionField} (hf : f ≠ 0) (hg : g ≠ 0)
-    (hfg : f + g ≠ 0) :
-    (Algebra.norm (RatFunc F) (f + g)).intDegree
+    (hfg : f + g ≠ 0) : (Algebra.norm (RatFunc F) (f + g)).intDegree
       ≤ max (Algebra.norm (RatFunc F) f).intDegree (Algebra.norm (RatFunc F) g).intDegree := by
   obtain ⟨a₁, b₁, a₂, b₂, p, hp, h₁, h₂⟩ := exists_common_smul_basis_div W f g
   have h₃ : (f + g) * algebraMap F[X] W.FunctionField p =
       algebraMap W.CoordinateRing W.FunctionField
-        ((a₁ + a₂) • 1 + (b₁ + b₂) • CoordinateRing.mk W Y) := by
-    rw [add_mul, h₁, h₂, ← map_add]
-    congr 1
-    simp only [add_smul]
-    ring
+        ((a₁ + a₂) • 1 + (b₁ + b₂) • CoordinateRing.mk W Y) := by grind [add_smul]
   rw [intDegree_norm_of_mul_eq W hf hp h₁, intDegree_norm_of_mul_eq W hg hp h₂,
     intDegree_norm_of_mul_eq W hfg hp h₃]
-  have := natDegree_norm_add_le W a₁ b₁ a₂ b₂
-  omega
+  grind [natDegree_norm_add_le]
 
 open scoped Classical in
 /-- The ultrametric inequality for the composite `RatFunc.inftyValuation ∘ Algebra.norm`, which is
