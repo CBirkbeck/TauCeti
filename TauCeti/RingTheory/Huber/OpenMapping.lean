@@ -26,7 +26,8 @@ an assumption the theorem does not use.
 Three of Henkel's substantive hypotheses survive the translation, and all three are stated. (The
 binders that merely say `M` and `N` are topological modules are not counted here; they carry across
 in strengthened form — `MonoidWithZero A` becomes `CommRing A`, `MulActionWithZero A M` becomes
-`Module A M`, and the plain topologies become uniformities.)
+`Module A M`, and the target's plain topology becomes a uniformity. The source's is already a
+uniformity in Henkel: it carries `UniformSpace M` and `IsUniformAddGroup M` there.)
 
 * `CompleteSpace M`. Nothing supplies it; completeness of the source is what
   `TauCeti.mem_image_of_mem_closure_image` needs in order to remove the closure.
