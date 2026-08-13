@@ -155,6 +155,17 @@ theorem of_obj (R : Type u) [CommRing R] [UniformSpace R] [IsTopologicalRing R]
 instance (X : CompleteSeparatedTopCommRingCat.{u}) : T2Space X.obj :=
   ((TopCommRingCat.isCompleteSeparated_iff _).mp X.property).t2Space
 
+/-- Objects carry the group uniformity of their topology, so that the defining completeness
+is available by inference. -/
+noncomputable instance (X : CompleteSeparatedTopCommRingCat.{u}) : UniformSpace X.obj :=
+  IsTopologicalAddGroup.rightUniformSpace X.obj
+
+instance (X : CompleteSeparatedTopCommRingCat.{u}) : IsUniformAddGroup X.obj :=
+  isUniformAddGroup_of_addCommGroup
+
+instance (X : CompleteSeparatedTopCommRingCat.{u}) : CompleteSpace X.obj :=
+  ((TopCommRingCat.isCompleteSeparated_iff _).mp X.property).completeSpace
+
 end CompleteSeparatedTopCommRingCat
 
 end TauCeti
