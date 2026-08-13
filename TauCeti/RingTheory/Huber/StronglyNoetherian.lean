@@ -6,8 +6,11 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries
+public import TauCeti.Topology.Algebra.UniformRing
+public import TauCeti.Topology.UniformSpace.DiscreteUniformity
 public import Mathlib.Topology.Algebra.UniformRing
 public import Mathlib.RingTheory.Noetherian.Defs
+public import Mathlib.RingTheory.Polynomial.Basic
 
 /-!
 # Strong noetherianness of a nonarchimedean ring
@@ -35,6 +38,10 @@ Hausdorff topological `A`-algebra, with all of that structure found by instance 
 
 * `TauCeti.Huber.continuous_algebraMap_restrictedMvPowerSeriesCompletion`: the structure map
   `A → A⟨X₁,…,Xₖ⟩` is continuous.
+* `TauCeti.Huber.IsStronglyNoetherian.of_discreteTopology`: a noetherian ring with the
+  discrete topology is strongly noetherian — over a discrete ring the restricted series are
+  the polynomials, already complete, and the Hilbert basis theorem applies. In particular
+  `ℤ`, every field, and every noetherian ring discretely topologised witness the predicate.
 
 The comparison of `A⟨X₁,…,Xₖ⟩` with the plain restricted-series ring when `A` is itself
 complete and Hausdorff, the iteration `A⟨X⟩⟨Y⟩ ≅ A⟨X,Y⟩`, and the stability of noetherianness
@@ -76,5 +83,24 @@ field satisfies it (BGR 5.2.6 — not yet formalised). -/
 @[mk_iff]
 class IsStronglyNoetherian : Prop where
   isNoetherianRing (k : ℕ) : IsNoetherianRing (restrictedMvPowerSeriesCompletion k A)
+
+/-! ### The discrete case -/
+
+/-- **A noetherian ring with the discrete topology is strongly noetherian.** Over a discrete
+ring the restricted series are exactly the polynomials
+(`TauCeti.Huber.weightedPolynomialEquiv`), the topology on them is discrete and hence already
+complete and Hausdorff, and the Hilbert basis theorem applies. This is the nondegenerate
+family of witnesses for `IsStronglyNoetherian` — `ℤ`, any field, any noetherian ring, all
+discretely topologised. -/
+instance IsStronglyNoetherian.of_discreteTopology [DiscreteTopology A] [IsNoetherianRing A] :
+    IsStronglyNoetherian A where
+  isNoetherianRing k := by
+    have : DiscreteTopology (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
+        isWeightFamily_one_weight) := discreteTopology_weightedRestrictedSubring
+    have : DiscreteUniformity (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
+        isWeightFamily_one_weight) := DiscreteUniformity.of_discreteTopology
+    exact isNoetherianRing_of_ringEquiv _
+      ((weightedPolynomialEquiv _ isWeightFamily_one_weight).trans
+        (UniformSpace.Completion.selfRingEquiv _).symm)
 
 end TauCeti.Huber
