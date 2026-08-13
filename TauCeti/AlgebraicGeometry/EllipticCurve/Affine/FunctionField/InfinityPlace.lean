@@ -253,8 +253,8 @@ private theorem norm_ne_zero_of_natDegree_ne_zero {u : W.CoordinateRing}
   rw [hz, natDegree_zero]
 
 open scoped Classical in
--- NB `inftyValuation_X` and `inftyValuation_mk_Y` (and the two `natDegree_norm_*` in
--- `FunctionField/Norm.lean`) are deliberately NOT `@[simp]`: their left-hand sides are not in
+-- NB `infinityPlace.X` and `infinityPlace.mk_Y` (and this file's two `natDegree_norm_*`
+-- helpers) are deliberately NOT `@[simp]`: their left-hand sides are not in
 -- simp-normal form — simp rewrites `algebraMap F[X] W.CoordinateRing X` to `AdjoinRoot.of` and
 -- `CoordinateRing.mk W Y` to `AdjoinRoot.root` — so tagging them fails the repository's simpNF
 -- lint gate. Stating them in that normal form instead would remove every mention of the curve's
