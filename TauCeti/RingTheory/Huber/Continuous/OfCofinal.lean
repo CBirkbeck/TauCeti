@@ -135,10 +135,7 @@ theorem isContinuous_of_forall_cofinalValue (P : PairOfDefinition A) (v : Valuat
     exact isContinuous_of_forall_le_of_cofinalValue P v hgen
       (fun t ht ↦ ht₀max t (Finset.mem_coe.mp ht)) h1 (hcof t₀ ht₀s)
 
-/-- **Full characteristic group makes every ideal-of-definition value cofinal.** The image of
-the ideal of definition is a neighbourhood of `0` on which `v < 1`, and its elements are
-topologically nilpotent, so the general
-`HasFullCharacteristicGroup.cofinalValue_of_isTopologicallyNilpotent` applies.
+/-- **Full characteristic group makes every ideal-of-definition value cofinal.**
 
 This is the `Γ_v = cΓ_v` branch of Wedhorn's proof of Theorem 7.10, `⊇` direction: Lemma 7.4
 splits membership in `Spv (A, IA)` into cofinality on `IA` — which

@@ -134,9 +134,7 @@ theorem IsContinuous.cofinalValue_of_isTopologicallyNilpotent [ContinuousConstSM
   exact ⟨n, by rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, hemb, map_pow]; exact hn⟩
 
 /-- **Full characteristic group makes every topologically nilpotent value cofinal**, given that
-the open unit ball `{a ; v a < 1}` is a neighbourhood of `0`. A positive target dominates the
-inverse of some attained value `v t`, the sequence `xⁿ · t` tends to `0`, so it eventually
-enters the unit ball, where `v(x)ⁿ · v(t) < 1`.
+the open unit ball `{a ; v a < 1}` is a neighbourhood of `0`.
 
 This is the sibling of `IsContinuous.cofinalValue_of_isTopologicallyNilpotent` with continuity
 replaced by `Γ_v = cΓ_v` plus the one ball it actually uses. It is the `Γ_v = cΓ_v` branch of
