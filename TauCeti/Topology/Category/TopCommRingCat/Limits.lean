@@ -40,6 +40,13 @@ rings, which is plain from their statements.
 
 * T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1 — the sheaf condition of §8.2 is stated in
   complete Hausdorff topological rings, whose products and equalizers this file prepares.
+* The constructions adapt Mathlib's to continuous ring homomorphisms: `piFan`/`piFanIsLimit`
+  follow `TopCat.piFan`/`TopCat.piFanIsLimit`
+  (`Mathlib/Topology/Category/TopCat/Limits/Products.lean`) on the topological side and
+  `CommRingCat.piFan`/`CommRingCat.piFanIsLimit` on the algebraic side, and
+  `equalizerFork`/`equalizerForkIsLimit` follow `CommRingCat.equalizerFork`/
+  `CommRingCat.equalizerForkIsLimit` (`Mathlib/Algebra/Category/Ring/Constructions.lean`),
+  with the topology carried through each construction.
 -/
 
 public section
