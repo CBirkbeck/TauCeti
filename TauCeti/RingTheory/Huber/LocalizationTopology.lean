@@ -889,14 +889,12 @@ theorem existsUnique_continuous_ringHom_locTopology {B : Type*} [CommRing B] [To
 
 /-! ### The completion `A⟨T/s⟩` -/
 
-/-- **`A⟨T/s⟩` is a Huber ring.** The separated completion of `Aₛ` under `locTopology` — Wedhorn's
-`A⟨T/s⟩` — inherits the Huber property from `isHuberRing_locTopology` through
-`IsHuberRing.completion`.
+/-- **`A⟨T/s⟩` is a Huber ring**: the separated completion of `Aₛ` under `locTopology` —
+Wedhorn's `A⟨T/s⟩` — carries a pair of definition.
 
-Four instances have to be introduced before `UniformSpace.Completion S` even makes sense, and they
-are the same four every consumer of this construction needs: the topology, its ring structure, the
-canonical uniformity of the underlying additive group, and that uniformity's compatibility. Only
-the first is peculiar to this file; the pattern is Mathlib's own, in `Valued.mk'`. -/
+The statement introduces the topology, its ring structure and the canonical uniformity, because
+`locTopology` is not an instance and `UniformSpace.Completion S` is not well-formed without
+them. -/
 theorem isHuberRing_completion_locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) :
@@ -912,15 +910,13 @@ theorem isHuberRing_completion_locTopology [IsTopologicalRing A] (P : PairOfDefi
   have _ := isHuberRing_locTopology P T s S hden
   infer_instance
 
-/-- **The universal property of `A⟨T/s⟩`**, for complete Hausdorff targets. Under the hypotheses of
-`existsUnique_continuous_ringHom_locTopology`, and with `B` complete and separated, `φ` extends to
-the completion in exactly one continuous way.
+/-- **The universal property of `A⟨T/s⟩`**, for complete Hausdorff targets: a ring homomorphism
+`φ : A →+* B` continuous at zero, with `φ s` a unit and each fraction `φ t / φ s` power-bounded,
+extends to the completion in exactly one continuous way.
 
-This is that theorem composed with the completion's own universal property. The map is
-`UniformSpace.Completion.extensionHom` applied to the unique continuous map out of `Aₛ`;
-uniqueness is density — two continuous maps agreeing on the image of `Aₛ` agree — followed by the
-uniqueness already established downstairs. The completeness and separatedness of `B` are what the
-extension needs, and they are the only hypotheses here beyond those of the localisation form. -/
+The hypotheses are those of `existsUnique_continuous_ringHom_locTopology` together with `B`
+complete and separated, which is what an extension across the completion requires. As there, the
+condition on the fractions is sufficient and is not claimed to be necessary. -/
 theorem existsUnique_continuous_ringHom_completion_locTopology {B : Type*} [CommRing B]
     [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B] [CompleteSpace B] [T0Space B]
     [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type*) [CommRing S]
