@@ -6,6 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.ValuationSpectrum
+public import TauCeti.Topology.Spectral.ProConstructible
 import TauCeti.Topology.Spectral.PatchCriterion
 
 /-!
@@ -43,6 +44,9 @@ members.
 * `TauCeti.ValuationSpectrum.isCompact_of_isClosed_patchTopology` : a patch-closed subset is
   quasi-compact, with `TauCeti.ValuationSpectrum.isCompact_basicOpen` and
   `TauCeti.ValuationSpectrum.isCompact_basicOpenFinset` its two instances.
+* `TauCeti.ValuationSpectrum.isProConstructible_setOfPred_forall_vle_one` : the locus
+  `v ≤ 1` on a set of ring elements is pro-constructible in `Spv A` — the plus-ring half of
+  the pro-constructibility of `Spa (A, A⁺)` in Wedhorn's Theorem 7.35.
 
 ## Provenance
 
@@ -57,7 +61,7 @@ public section
 
 namespace TauCeti.ValuationSpectrum
 
-open TopologicalSpace Set Topology
+open TopologicalSpace _root_.Set Topology
 
 variable {A : Type*} [CommRing A]
 
@@ -252,5 +256,25 @@ patch-clopen. -/
 lemma isCompact_basicOpenFinset (T : Finset A) (s : A) : IsCompact (basicOpenFinset T s) :=
   isCompact_of_isClosed_patchTopology
     (@IsClopen.isClosed (Spv A) (patchTopology A) _ (isClopen_patchTopology_basicOpenFinset T s))
+
+/-! ### The sub-unit locus is pro-constructible -/
+
+/-- **The locus `v ≤ 1` on a set of ring elements is pro-constructible in `Spv A`.** Each single
+condition `v(a) ≤ 1` is the basic open `Spv(A)(a/1)` — the nonvanishing clause is vacuous at
+denominator `1` — so the locus is an intersection of quasi-compact opens, and pro-constructible
+subsets are stable under arbitrary intersection.
+
+This is the plus-ring half of Wedhorn's Theorem 7.35: `Spa (A, A⁺)` is the trace of this locus
+at `S = A⁺` on `Cont A`, and its pro-constructibility in `Spv (A, IA)` is what makes the adic
+spectrum spectral. -/
+theorem isProConstructible_setOfPred_forall_vle_one (S : Set A) :
+    IsProConstructible {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vle a 1} := by
+  have h : {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vle a 1} = ⋂ a ∈ S, basicOpen a 1 := by
+    ext v
+    simp only [Set.mem_ofPred_eq, Set.mem_iInter, mem_basicOpen_iff]
+    exact forall₂_congr fun a _ ↦ (and_iff_left v.toValuativeRel.not_vle_one_zero).symm
+  rw [h]
+  exact IsProConstructible.biInter fun a _ ↦
+    IsCompact.isProConstructible (isCompact_basicOpen a 1) (isOpen_basicOpen a 1)
 
 end TauCeti.ValuationSpectrum
