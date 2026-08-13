@@ -780,26 +780,28 @@ theorem continuous_of_continuous_algebraMap_of_isPowerBounded {B : Type*}
 `φ : A →+* B` into a nonarchimedean ring extends to `Aₛ` in exactly one continuous way, provided
 `φ` is continuous, `φ s` is a unit, and each fraction `φ t / φ s` is power-bounded.
 
-The condition on the fractions is what the topology on `Aₛ` is designed to make necessary: `t / s`
-lies in `D`, and every element of `D` is power-bounded, so a continuous extension has no choice.
-Here it is also sufficient, which is the content.
+The condition on the fractions is stated as sufficient, and only that. It is *not* forced by
+continuity: a continuous ring homomorphism need not carry power-bounded elements to power-bounded
+elements — `IsBounded.image` in `Huber/Bounded.lean` is stated for the image under a map, and
+`IsBounded.image_of_isOpenMap` needs openness on top, precisely because continuity alone does not
+suffice. Whether some weaker condition is also necessary is not addressed here.
 
-Existence is Mathlib's `IsLocalization.Away.lift`, whose continuity is supplied by
+The map itself is Mathlib's `IsLocalization.Away.lift`, which is purely algebraic and needs no
+topology; the topology's contribution is that this lift is *continuous*, supplied by
 `continuous_of_continuous_algebraMap_of_isPowerBounded`. Uniqueness is
-`IsLocalization.ringHom_ext` and needs no topology: a homomorphism out of a localisation is already
-determined by its restriction along `algebraMap`. So the topology's whole contribution is the
-existence half. -/
+`IsLocalization.ringHom_ext` and is algebraic too: a homomorphism out of a localisation is already
+determined by its restriction along `algebraMap`, so nothing topological enters there. -/
 theorem existsUnique_continuous_ringHom_locTopology {B : Type*} [CommRing B] [TopologicalSpace B]
     [NonarchimedeanRing B] [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (hden : HasDenominatorPower P T s S) {φ : A →+* B} (hφ : Continuous φ) (hs : IsUnit (φ s))
+    (hden : HasDenominatorPower P T s S) {φ : A →+* B} (hφ : ContinuousAt φ 0) (hs : IsUnit (φ s))
     (hpow : ∀ t ∈ T, IsPowerBounded (φ t * ↑hs.unit⁻¹)) :
     letI := locTopology P T s S hden
     ∃! f : S →+* B, Continuous f ∧ f.comp (algebraMap A S) = φ := by
   let _ := locTopology P T s S hden
   refine ⟨IsLocalization.Away.lift s hs, ⟨?_, IsLocalization.Away.lift_comp s hs⟩, ?_⟩
   · refine continuous_of_continuous_algebraMap_of_isPowerBounded P T s S hden _ ?_ ?_
-    · rw [IsLocalization.Away.lift_comp s hs]; exact hφ
+    · rw [IsLocalization.Away.lift_comp s hs]; exact continuous_of_continuousAt_zero φ hφ
     · intro t ht
       have : IsLocalization.Away.lift s hs ((divBy t s : S)) = φ t * ↑hs.unit⁻¹ := by
         rw [divBy_def, IsLocalization.Away.lift, IsLocalization.lift_mk']
