@@ -4,10 +4,10 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.Algebra.Module.Basic
 public import Mathlib.GroupTheory.Perm.Sign
 public import Mathlib.NumberTheory.EllipticDivisibilitySequence
-public import Mathlib.Tactic.FinCases
+import Mathlib.Algebra.Module.Basic
+import Mathlib.Tactic.FinCases
 
 /-!
 # The elliptic relator is alternating in its four indices
