@@ -24,14 +24,14 @@ The source is pseudometrisable, which is all Henkel needs of it, and separating 
 an assumption the theorem does not use.
 
 Three of Henkel's substantive hypotheses survive the translation, and all three are stated. The
-remaining binders — the ones saying only that `M` and `N` are topological modules — are not counted
-among them, and they do not all move the same way. Some carry across verbatim: `TopologicalSpace A`,
-`AddCommGroup M`, `UniformSpace M`, `IsUniformAddGroup M`, and the target's
-`ContinuousConstSMul A N`. Others are strengthened: `MonoidWithZero A` to `CommRing A`,
-`MulActionWithZero A M` to `Module A M`, `AddGroup N` to `AddCommGroup N`, `MulAction A N` to
-`Module A N`, and the target's `TopologicalSpace N` / `IsTopologicalAddGroup N` to a uniformity.
-And `IsTopologicalRing A` has no Henkel counterpart at all — it is what `IsTateRing A` is stated
-over.
+remaining binders are the structural context — what `A`, `M` and `N` are and how they are
+topologised — and they are not counted among the three. They do not all move the same way. Some
+carry across verbatim: `TopologicalSpace A`, `AddCommGroup M`, `UniformSpace M`,
+`IsUniformAddGroup M`, and the target's `ContinuousConstSMul A N`. Others are strengthened:
+`MonoidWithZero A` to `CommRing A`, `MulActionWithZero A M` to `Module A M`, `AddGroup N` to
+`AddCommGroup N`, `MulAction A N` to `Module A N`, and the target's `TopologicalSpace N` /
+`IsTopologicalAddGroup N` to a uniformity. And `IsTopologicalRing A` has no Henkel counterpart at
+all — it is what `IsTateRing A` is stated over.
 
 * `CompleteSpace M`. Nothing supplies it; completeness of the source is what
   `TauCeti.mem_image_of_mem_closure_image` needs in order to remove the closure.
