@@ -224,20 +224,19 @@ noncomputable def infinityPlace : Valuation W.FunctionField (WithZero (Multiplic
 
 open scoped Classical in
 /-- The evaluation rule for `infinityPlace`: it is `RatFunc.inftyValuation` applied to the algebra
-norm of the function. Deliberately not `@[simp]`: unfolding the valuation would defeat the
-special-value lemmas below, which are the normal forms automation should reach. -/
+norm of the function. The definition's body is not exposed across the module boundary, so this is
+how downstream modules compute with it. Deliberately not `@[simp]`: unfolding the valuation would
+defeat the special-value lemmas below, which are the normal forms automation should reach. -/
 theorem infinityPlace_apply (f : W.FunctionField) :
-    infinityPlace W f = RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f) := by
-  simp [infinityPlace]
+    infinityPlace W f = RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f) := (rfl)
 
 /-- A coordinate-ring element whose polynomial norm has positive degree has nonzero norm over
 `RatFunc F`: a zero polynomial would have degree zero. -/
 private theorem norm_ne_zero_of_natDegree_ne_zero {u : W.CoordinateRing}
     (h : (Algebra.norm F[X] u).natDegree ≠ 0) :
     Algebra.norm (RatFunc F) (algebraMap W.CoordinateRing W.FunctionField u) ≠ 0 := by
-  rw [Algebra.norm_localization (R := F[X]) (M := nonZeroDivisors F[X]) (S := W.CoordinateRing)]
-  refine RatFunc.algebraMap_ne_zero fun hz => h ?_
-  rw [hz, natDegree_zero]
+  rw [Algebra.norm_localization (M := nonZeroDivisors F[X])]
+  exact RatFunc.algebraMap_ne_zero (ne_zero_of_natDegree_gt (Nat.pos_of_ne_zero h))
 
 open scoped Classical in
 -- NB `infinityPlace.X` and `infinityPlace.mk_Y` (and this file's two `natDegree_norm_*`
