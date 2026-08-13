@@ -19,9 +19,10 @@ subspace topology.
 
 The forgetful functor to `CommRingCat` does not *create* these limits in the technical sense:
 it does not reflect them, since the topology on a cone apex is not determined by the
-underlying ring — the same reason `TopCat`'s own forgetful functor creates no limits. What is
-true, and what later files use, is that the constructions below have the expected underlying
-rings, which is plain from their statements.
+underlying ring — the same reason `TopCat`'s own forgetful functor does not create products
+or arbitrary limits (it does create some shapes, such as terminal objects). What is true, and
+what later files use, is that the constructions below have the expected underlying rings,
+which is plain from their statements.
 
 ## Main definitions
 
