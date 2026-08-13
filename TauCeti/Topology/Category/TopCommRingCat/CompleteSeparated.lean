@@ -37,15 +37,14 @@ Hausdorff form the equalizer arguments consume.
 
 ## Main results
 
-* `TauCeti.TopCommRingCat.isCompleteSeparated_of` and
+* `TauCeti.TopCommRingCat.isCompleteSeparated_of_completeSpace_of_t0Space` and
   `TauCeti.TopCommRingCat.completeSpace_of_isCompleteSeparated` : the transfer in and out of
   the predicate for a ring carrying its own compatible uniformity.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.t2Space` : separatedness in Hausdorff form.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.pi` : a product of complete separated objects
-  is complete separated — the apex of the product cone stays in the subcategory, so the
-  inclusion `CompleteSeparatedTopCommRingCat ⥤ TopCommRingCat` (not the forgetful functor
-  to `CommRingCat`, which `Limits.lean` documents as not creating these limits) will create
-  products in the sense of roadmap Layer 3.2.
+  is complete separated. This is the closure half for products; the limit cones and the
+  creation statement for the inclusion `CompleteSeparatedTopCommRingCat ⥤ TopCommRingCat`
+  (roadmap Layer 3.2) are the follow-up, not proved here.
 -/
 
 public section
@@ -73,7 +72,7 @@ structure IsCompleteSeparated (R : TopCommRingCat.{u}) : Prop where
 is complete separated as a topological ring — the group uniformity of its topology equals
 the given uniformity. This is how completions, `Valued` rings, and closed subrings enter the
 subcategory. -/
-theorem isCompleteSeparated_of (R : Type u) [CommRing R] [UniformSpace R]
+theorem isCompleteSeparated_of_completeSpace_of_t0Space (R : Type u) [CommRing R] [UniformSpace R]
     [IsTopologicalRing R] [IsUniformAddGroup R] [CompleteSpace R] [T0Space R] :
     IsCompleteSeparated (TopCommRingCat.of R) where
   completeSpace := by
@@ -81,9 +80,9 @@ theorem isCompleteSeparated_of (R : Type u) [CommRing R] [UniformSpace R]
     infer_instance
   t0Space := ‹T0Space R›
 
-/-- **Elimination to a native uniformity**, the dual of `isCompleteSeparated_of`: a uniform
-topological ring whose associated object is complete separated is complete for its own
-uniformity. -/
+/-- **Elimination to a native uniformity**, the dual of
+`isCompleteSeparated_of_completeSpace_of_t0Space`: a uniform topological ring whose
+associated object is complete separated is complete for its own uniformity. -/
 theorem completeSpace_of_isCompleteSeparated {R : Type u} [CommRing R] [UniformSpace R]
     [IsTopologicalRing R] [IsUniformAddGroup R]
     (h : IsCompleteSeparated (TopCommRingCat.of R)) : CompleteSpace R := by
@@ -116,8 +115,8 @@ theorem IsCompleteSeparated.pi {β : Type v} {f : β → TopCommRingCat.{max u v
   infer_instance
 
 /-- The complete separated objects, as a named `ObjectProperty` — the form the subcategory
-and its instance machinery key on. -/
-@[expose]
+and its instance machinery key on. Consumers go through `isCompleteSeparated_iff` and the
+object instances rather than the definition. -/
 def isCompleteSeparated : ObjectProperty TopCommRingCat.{u} :=
   fun R ↦ IsCompleteSeparated R
 
@@ -146,10 +145,15 @@ topological ring. -/
 noncomputable def of (R : Type u) [CommRing R] [UniformSpace R] [IsTopologicalRing R]
     [IsUniformAddGroup R] [CompleteSpace R] [T0Space R] :
     CompleteSeparatedTopCommRingCat.{u} :=
-  ⟨TopCommRingCat.of R, TopCommRingCat.isCompleteSeparated_of R⟩
+  ⟨TopCommRingCat.of R, TopCommRingCat.isCompleteSeparated_of_completeSpace_of_t0Space R⟩
 
-instance (X : CompleteSeparatedTopCommRingCat.{u}) : T0Space X.obj :=
-  X.property.t0Space
+@[simp]
+theorem of_obj (R : Type u) [CommRing R] [UniformSpace R] [IsTopologicalRing R]
+    [IsUniformAddGroup R] [CompleteSpace R] [T0Space R] :
+    (of R).obj = TopCommRingCat.of R := (rfl)
+
+instance (X : CompleteSeparatedTopCommRingCat.{u}) : T2Space X.obj :=
+  ((TopCommRingCat.isCompleteSeparated_iff _).mp X.property).t2Space
 
 end CompleteSeparatedTopCommRingCat
 
