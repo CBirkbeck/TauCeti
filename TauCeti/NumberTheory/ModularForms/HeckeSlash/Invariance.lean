@@ -65,10 +65,13 @@ private lemma transposeRep_mul (i : DecompQuotient (SLnZ 2) (SLnZ 2) D.out) (γ 
 under the weight-`k` slash action of `SL₂(ℤ)` and `γ ∈ SL₂(ℤ)`,
 `heckeSlashSum k D f ∣[k] γ = heckeSlashSum k D f`.
 
-This is what makes the sum an operator: with it, `heckeSlashSum` no longer depends on the chosen
-representatives, since any two choices differ by an element of `SL₂(ℤ)`. The proof is Shimura's —
-right multiplication by `γ` permutes the summands — and the permutation is `MulAction.toPerm`
-applied to `γᵀ`, the transpose appearing because the representatives are transposed. -/
+The proof is Shimura's — right multiplication by `γ` permutes the summands — and the permutation
+is `MulAction.toPerm` applied to `γᵀ`, the transpose appearing because the representatives are
+transposed.
+
+⚠ This proves invariance of the sum formed from the representatives `D.out` and `i.out` that
+`heckeSlashSum` fixes. It does **not** state that sums formed from *different* choices of
+representatives agree; that would be a separate theorem, and none is available yet. -/
 theorem heckeSlashSum_slash_of_mem_SLnZ (f : ℍ → ℂ) (hf : ∀ δ ∈ SLnZ 2, f ∣[k] δ = f)
     {γ : GL (Fin 2) ℚ} (hγ : γ ∈ SLnZ 2) :
     heckeSlashSum k D f ∣[k] γ = heckeSlashSum k D f := by

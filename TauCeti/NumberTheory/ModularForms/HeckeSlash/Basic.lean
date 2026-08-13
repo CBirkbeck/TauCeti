@@ -63,8 +63,10 @@ and scalars commute past it (`ModularForm.rat_smul_slash_of_det_pos`). Over a ge
 
 ## Main results
 
-* `HeckeRing.GL2.transposeRep_def`, `HeckeRing.GL2.heckeSlashSum_apply`: the characteristic
-  equations, which are the interface since neither definition is `@[expose]`.
+* `HeckeRing.GL2.transposeRep_def`, `HeckeRing.GL2.heckeSlashSum_def` and
+  `HeckeRing.GL2.heckeSlashSum_apply`: the characteristic equations, which are the interface
+  since neither definition is `@[expose]`. The last two are the function-level and pointwise
+  forms of the same equation.
 * `HeckeRing.GL2.det_transposeRep_pos`: the representatives have positive determinant.
 * `HeckeRing.GL2.heckeSlashSum_add`, `heckeSlashSum_zero`, `heckeSlashSum_smul`: `ℂ`-linearity.
 
