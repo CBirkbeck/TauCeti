@@ -13,21 +13,25 @@ import Mathlib.Topology.Baire.CompleteMetrizable
 
 `TauCeti.HasZeroSequenceOfUnits.isOpenMap` is Henkel's theorem in the generality it is proved in:
 the scalars need only a zero sequence of units, the source is a complete first-countable
-nonarchimedean group, and the target need only be `T0Space` and Baire. This file records the form
-the strict-morphism material will consume — a surjective linear map, continuous at zero, from a
-complete pseudometrisable module onto a complete metrisable one over a Tate ring is open — by
-discharging those hypotheses from ones a consumer can check.
+nonarchimedean group, and the target need only be `T0Space` and Baire. This file records both
+halves of the roadmap's derived form over a Tate ring — a surjective linear map, continuous at
+zero, from a complete pseudometrisable module onto a complete metrisable one is open, and induces
+the quotient topology — by discharging Henkel's hypotheses from ones a consumer can check.
 
 The asymmetry is real and not an oversight. Both modules are asked for completeness and a countably
 generated uniformity; only the *target* is asked to be `T0Space`, so only the target is metrisable.
 The source is pseudometrisable, which is all Henkel needs of it, and separating the source would be
 an assumption the theorem does not use.
 
-Three of Henkel's substantive hypotheses survive the translation, and all three are stated. (The
-binders that merely say `M` and `N` are topological modules are not counted here; they carry across
-in strengthened form — `MonoidWithZero A` becomes `CommRing A`, `MulActionWithZero A M` becomes
-`Module A M`, and the target's plain topology becomes a uniformity. The source's is already a
-uniformity in Henkel: it carries `UniformSpace M` and `IsUniformAddGroup M` there.)
+Three of Henkel's substantive hypotheses survive the translation, and all three are stated. The
+remaining binders — the ones saying only that `M` and `N` are topological modules — are not counted
+among them, and they do not all move the same way. Some carry across verbatim: `TopologicalSpace A`,
+`AddCommGroup M`, `UniformSpace M`, `IsUniformAddGroup M`, and the target's
+`ContinuousConstSMul A N`. Others are strengthened: `MonoidWithZero A` to `CommRing A`,
+`MulActionWithZero A M` to `Module A M`, `AddGroup N` to `AddCommGroup N`, `MulAction A N` to
+`Module A N`, and the target's `TopologicalSpace N` / `IsTopologicalAddGroup N` to a uniformity.
+And `IsTopologicalRing A` has no Henkel counterpart at all — it is what `IsTateRing A` is stated
+over.
 
 * `CompleteSpace M`. Nothing supplies it; completeness of the source is what
   `TauCeti.mem_image_of_mem_closure_image` needs in order to remove the closure.
@@ -39,20 +43,18 @@ uniformity in Henkel: it carries `UniformSpace M` and `IsUniformAddGroup M` ther
 Henkel also takes a fourth *explicit* argument, `hc : ∀ x : M, ContinuousAt (fun a : A ↦ a • x) 0`
 — continuity of the scalar action at zero, in the scalar variable, on the **source**. That is what
 `ContinuousSMul A M` is here to supply, and it is why that binder is neither structural nor
-removable: dropping it leaves `hc` unprovable. The target's `ContinuousConstSMul A N` cannot stand
-in — it is an assumption about the action on `N`, and continuity in the *module* variable at that,
-where `hc` quantifies over `x : M` and asks continuity in the *scalar*.
+removable: dropping it leaves `hc` unprovable.
+
+This is the whole reason the two sides carry different action hypotheses. The source needs
+continuity in the *scalar* variable, to discharge `hc`; the target needs only continuity in the
+*module* variable, which is exactly `ContinuousConstSMul A N` — Henkel's own binder, carried across
+unchanged. The asymmetry is not an oversight.
 
 The rest are inferred. `IsTateRing A` gives `HasZeroSequenceOfUnits A` through the powers of a
 pseudouniformiser (`TauCeti.Huber.IsTateRing.hasZeroSequenceOfUnits`) — this is the only place the
 Tate condition is used, and a Huber ring that is not Tate need not admit such a sequence.
 Countable generation of the uniformity gives it for `𝓝 0`, which is the first countability Henkel
 asks of the source.
-
-The target's action hypothesis is `ContinuousConstSMul A N`, which is Henkel's own binder rather
-than a strengthening of it. The asymmetry with `ContinuousSMul A M` on the source is not an
-oversight: the source needs continuity in the *scalar* variable to discharge `hc`, whereas the
-target needs only continuity in the *module* variable, and `ContinuousConstSMul` is exactly that.
 
 The target's completeness deserves a word, since it is not what one would guess Henkel needs.
 Henkel asks the target to be a **Baire** space, and completeness plus a countably generated
@@ -71,7 +73,7 @@ open-map half; `TauCeti.Huber.IsTateRing.isQuotientMap` is the other — that su
 quotient topology — and it delegates to `TauCeti.HasZeroSequenceOfUnits.isQuotientMap` exactly as
 the open-map form delegates to `TauCeti.HasZeroSequenceOfUnits.isOpenMap`. It is the quotient form
 that the strict-morphism material will consume, since what matters there is not that images are
-but that the target's topology is determined by the source's.
+open but that the target's topology is determined by the source's.
 
 ## Main results
 
