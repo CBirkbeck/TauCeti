@@ -13,10 +13,10 @@ import Mathlib.Topology.Baire.CompleteMetrizable
 
 `TauCeti.HasZeroSequenceOfUnits.isOpenMap` is Henkel's theorem in the generality it is proved in:
 the scalars need only a zero sequence of units, the source is a complete first-countable
-nonarchimedean group, and the target need only be Baire. This file records the form the
-strict-morphism material actually consumes — a surjective linear map from a complete
-pseudometrisable module onto a complete metrisable one, over a Tate ring, is open — by discharging
-those hypotheses from ones a consumer can check.
+nonarchimedean group, and the target need only be `T0Space` and Baire. This file records the form
+the strict-morphism material will consume — a surjective linear map, continuous at zero, from a
+complete pseudometrisable module onto a complete metrisable one over a Tate ring is open — by
+discharging those hypotheses from ones a consumer can check.
 
 The asymmetry is real and not an oversight. Both modules are asked for completeness and a countably
 generated uniformity; only the *target* is asked to be `T0Space`, so only the target is metrisable.
@@ -24,8 +24,9 @@ The source is pseudometrisable, which is all Henkel needs of it, and separating 
 an assumption the theorem does not use.
 
 Three of Henkel's substantive hypotheses survive the translation, and all three are stated. (The
-structural binders that merely say `M` and `N` are topological modules carry across unchanged and
-are not counted here.)
+binders that merely say `M` and `N` are topological modules are not counted here; they carry across
+in strengthened form — `MonoidWithZero A` becomes `CommRing A`, `MulActionWithZero A M` becomes
+`Module A M`, and the plain topologies become uniformities.)
 
 * `CompleteSpace M`. Nothing supplies it; completeness of the source is what
   `TauCeti.mem_image_of_mem_closure_image` needs in order to remove the closure.
@@ -33,6 +34,12 @@ are not counted here.)
   Tate ring does either; it is a genuine assumption on the source.
 * `T0Space N`. This is the Hausdorff hypothesis. It cannot come from the metrisability route,
   because `IsCompletelyPseudoMetrizableSpace` is *pseudo* and carries no separation.
+
+Henkel also takes a fourth *explicit* argument, `hc : ∀ x : M, ContinuousAt (fun a : A ↦ a • x) 0`
+— continuity of the scalar action at zero, in the scalar variable, on the **source**. That is what
+`ContinuousSMul A M` is here to supply, and it is why that binder is neither structural nor
+removable: dropping it leaves `hc` unprovable, since `ContinuousSMul A N` is an assumption about
+the action on `N` while `hc` quantifies over `x : M`.
 
 The rest are inferred. `IsTateRing A` gives `HasZeroSequenceOfUnits A` through the powers of a
 pseudouniformiser (`TauCeti.Huber.IsTateRing.hasZeroSequenceOfUnits`) — this is the only place the
@@ -50,7 +57,7 @@ removable without putting a Baire hypothesis back in its place.
 Continuity is asked only at zero. For an additive map out of a topological group that is
 equivalent to continuity everywhere (`continuous_of_continuousAt_zero`), so this is the same
 hypothesis spelled at its weakest, and a consumer holding `Continuous f` supplies
-`hfc.continuousAt`.
+`‹Continuous f›.continuousAt`.
 
 Both halves of the roadmap's derived form are here. `TauCeti.Huber.IsTateRing.isOpenMap` is the
 open-map half; `TauCeti.Huber.IsTateRing.isQuotientMap` is the other — that such a map induces the
@@ -61,10 +68,10 @@ but that the target's topology is determined by the source's.
 
 ## Main results
 
-* `TauCeti.Huber.IsTateRing.isOpenMap`: a continuous surjective linear map from a complete
-  pseudometrisable module onto a complete metrisable one, over a Tate ring, is open.
+* `TauCeti.Huber.IsTateRing.isOpenMap`: a surjective linear map, continuous at zero, from a
+  complete pseudometrisable module onto a complete metrisable one over a Tate ring is open.
 * `TauCeti.Huber.IsTateRing.isQuotientMap`: the same map induces the quotient topology on its
-  target. This is the form the strict-morphism material consumes.
+  target. This is the form the strict-morphism material will consume.
 
 ## References
 
@@ -86,9 +93,9 @@ variable {A M N : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   [AddCommGroup N] [UniformSpace N] [IsUniformAddGroup N] [CompleteSpace N]
   [(𝓤 N).IsCountablyGenerated] [T0Space N] [Module A N] [ContinuousSMul A N]
 
-/-- **The open mapping theorem over a Tate ring.** A surjective `A`-linear map from a complete
-pseudometrisable topological `A`-module onto a complete metrisable one is open, when `A` is a Tate
-ring and the source is nonarchimedean.
+/-- **The open mapping theorem over a Tate ring.** A surjective `A`-linear map that is continuous
+at zero, from a complete pseudometrisable topological `A`-module onto a complete metrisable one, is
+open, when `A` is a Tate ring and the source is nonarchimedean.
 
 Only the target carries `T0Space`, so only the target is metrisable rather than pseudometrisable;
 the source is never asked to be separated because the proof does not use it.
@@ -98,7 +105,7 @@ general theorem that does the work, and this is the named instantiation the road
 Metrisability appears as a countably generated uniformity rather than as a metric, which is both
 the weaker hypothesis and the vocabulary Henkel's own statement is phrased in.
 
-Continuity is asked at zero only; `Continuous f` gives it as `hfc.continuousAt`. -/
+Continuity is asked at zero only; a consumer holding `Continuous f` passes its `.continuousAt`. -/
 theorem IsTateRing.isOpenMap (f : M →ₗ[A] N) (hf : Function.Surjective f)
     (hfc : ContinuousAt (f : M → N) 0) : IsOpenMap (f : M → N) :=
   HasZeroSequenceOfUnits.isOpenMap f hf hfc
@@ -108,8 +115,8 @@ theorem IsTateRing.isOpenMap (f : M →ₗ[A] N) (hf : Function.Surjective f)
 `TauCeti.Huber.IsTateRing.isOpenMap`, the map does not merely carry open sets to open sets: the
 topology of `N` is the one coinduced from `M`.
 
-This is the form Wedhorn's strict morphisms use, where what matters is not that images are open but
-that the target's topology is determined by the source's. It delegates to
+This is the form Wedhorn's strict morphisms will use, where what matters is not that images are
+open but that the target's topology is determined by the source's. It delegates to
 `TauCeti.HasZeroSequenceOfUnits.isQuotientMap`, which supplies the full continuity of `f` that the
 quotient conclusion needs from continuity at zero alone. -/
 theorem IsTateRing.isQuotientMap (f : M →ₗ[A] N) (hf : Function.Surjective f)
