@@ -216,8 +216,7 @@ open scoped Classical in
 infinity of `F(x)`, composed with the algebra norm. -/
 noncomputable def infinityPlace : Valuation W.FunctionField (WithZero (Multiplicative ℤ)) where
   toFun f := RatFunc.inftyValuation F (Algebra.norm (RatFunc F) f)
-  map_zero' := by
-    rw [Algebra.norm_zero, map_zero]
+  map_zero' := by rw [Algebra.norm_zero, map_zero]
   map_one' := by rw [map_one, map_one]
   map_mul' x y := by rw [map_mul, map_mul]
   map_add_le_max' := infinityPlace_add_le_max W
