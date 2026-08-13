@@ -278,7 +278,7 @@ theorem isProConstructible_setOfPred_forall_vle_one (S : Set A) :
     IsProConstructible {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vle a 1} := by
   have h : {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vle a 1} = ⋂ a ∈ S, basicOpen a 1 := by
     ext v
-    simp [basicOpen_one_right]
+    simp
   rw [h]
   exact IsProConstructible.biInter fun a _ ↦
     IsCompact.isProConstructible (isCompact_basicOpen a 1) (isOpen_basicOpen a 1)

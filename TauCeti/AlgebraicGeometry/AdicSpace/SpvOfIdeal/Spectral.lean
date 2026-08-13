@@ -340,7 +340,7 @@ theorem univ_mem_rationalFamily (I : Ideal A)
     Set.univ ∈ rationalFamily I hfg :=
   ⟨{1}, 1, isAdmissible_of_one_mem (Finset.mem_singleton_self 1), by
     rw [basicOpenFinset_eq_biInter]
-    simp [basicOpen_one]⟩
+    simp⟩
 
 /-- **Wedhorn's step (i) in the proof of Lemma 7.5, on `Spv (A, I)`**: the family `R` is stable
 under intersection. The traces intersect along the trace of the intersection, which
@@ -541,16 +541,13 @@ theorem isProConstructible_val_preimage_setOfPred_forall_vle_one (I : Ideal A)
     IsProConstructible (Subtype.val ⁻¹' {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vle a 1} :
       Set (spvOfIdeal I hfg)) := by
   classical
+  have hsingle : ∀ a : A, basicOpenFinset ({a, 1} : Finset A) 1 = basicOpen a 1 := fun a ↦ by
+    rw [basicOpenFinset_eq_biInter]
+    simp
   have h : (Subtype.val ⁻¹' {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vle a 1} :
       Set (spvOfIdeal I hfg)) = ⋂ a ∈ S, Subtype.val ⁻¹' basicOpenFinset {a, 1} 1 := by
     ext w
-    simp only [Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_iInter, mem_basicOpenFinset_iff]
-    refine forall₂_congr fun a _ ↦ ⟨fun hle ↦ ⟨fun t ht ↦ ?_,
-      (w : Spv A).toValuativeRel.not_vle_one_zero⟩, fun ⟨hT, _⟩ ↦ hT a (by simp)⟩
-    rcases Finset.mem_insert.mp ht with rfl | ht
-    · exact hle
-    · rw [Finset.mem_singleton.mp ht]
-      exact (w : Spv A).toValuativeRel.vle_refl 1
+    simp [hsingle]
   rw [h]
   exact IsProConstructible.biInter fun a _ ↦ IsCompact.isProConstructible
     (isCompact_of_mem_rationalFamily I hfg ⟨{a, 1}, 1, isAdmissible_of_one_mem (by simp), rfl⟩)
