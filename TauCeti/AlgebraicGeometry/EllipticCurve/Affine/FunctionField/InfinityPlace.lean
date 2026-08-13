@@ -28,8 +28,8 @@ the other three axioms are the norm's multiplicativity and Mathlib's place at in
 * `WeierstrassCurve.Affine.infinityPlace.X`,
   `WeierstrassCurve.Affine.infinityPlace.mk_Y`: `v_∞ x = exp 2` and `v_∞ y = exp 3` — the double
   and triple poles at infinity, `ord_∞ x = -2` and `ord_∞ y = -3`, which is what Layer 0 asks for
-  by name. They read this file's two `natDegree_norm_*` helpers through `Norm.lean`'s degree
-  transfer.
+  by name. They read this file's two `natDegree_norm_*` helpers through
+  `Algebra.norm_localization` and Mathlib's polynomial valuation.
 * `WeierstrassCurve.Affine.infinityPlace.algebraMap_eq_sq`: restricting along
   `RatFunc F → W.FunctionField` squares `RatFunc.inftyValuation`, so the place at infinity is
   ramified of index two over the infinite place of `F(x)`.
@@ -312,7 +312,7 @@ theorem infinityPlace.X_div_mk_Y :
         (algebraMap F[X] W.CoordinateRing Polynomial.X) /
       algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y)) = WithZero.exp (-1) := by
   rw [map_div₀, infinityPlace.X, infinityPlace.mk_Y, ← WithZero.exp_sub]
-  rfl
+  norm_num
 
 -- The place is discrete of rank one for free — its value group is a subgroup of the cyclic group
 -- `ℤᵐ⁰ˣ`, nontrivial by the instance above — but discreteness alone leaves the generator as
