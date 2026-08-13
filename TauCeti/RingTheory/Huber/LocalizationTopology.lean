@@ -53,7 +53,7 @@ so a consumer holding `A[1/s]` in another presentation can use the topology dire
 * `hasBasis_nhds_zero_locSubring` and `isAdic_locIdeal`: the powers of `J` are a neighbourhood
   basis of zero in `D`, so the subspace topology on `D` is the `J`-adic one. With `fg_locIdeal`
   this completes every condition `TauCeti.Huber.PairOfDefinition` asks of the pair `(D, J)`.
-* `locPairOfDefinition` and `isHuberRing_locTopology`: those conditions assembled, so `Aₛ` under
+* `localization` and `isHuberRing_locTopology`: those conditions assembled, so `Aₛ` under
   `locTopology` is a Huber ring.
 * `isPowerBounded_of_mem_locSubring` and `isPowerBounded_divBy`: every element of `D` — in
   particular each fraction `t/s` — is power-bounded, the fact a converse to the continuity
@@ -655,7 +655,7 @@ this is the value that packages them for `isHuberRing_locTopology`.
 
 The topology is not an instance on `S`, so it is introduced in the statement; a consumer supplies
 it the same way, or works under `isHuberRing_locTopology` instead. -/
-noncomputable def locPairOfDefinition [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A)
+noncomputable def localization [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A)
     (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) :
     letI := locTopology P T s S hden
@@ -671,7 +671,7 @@ noncomputable def locPairOfDefinition [IsTopologicalRing A] (P : PairOfDefinitio
 carrying `locTopology` admits a pair of definition, namely `(D, J)`.
 
 This is what the whole file is for. Being Huber is exactly the existence of *some* pair of
-definition, so the content is the four facts assembled in `locPairOfDefinition`: `D` is open, `J`
+definition, so the content is the four facts assembled in `localization`: `D` is open, `J`
 is finitely generated, and the subspace topology on `D` is the `J`-adic one.
 
 Both the topology and its ring structure are introduced in the statement, because `locTopology` is
@@ -685,7 +685,7 @@ theorem isHuberRing_locTopology [IsTopologicalRing A] (P : PairOfDefinition A) (
     IsHuberRing S :=
   letI := locTopology P T s S hden
   letI := isTopologicalRing_locTopology P T s S hden
-  ⟨⟨locPairOfDefinition P T s S hden⟩⟩
+  ⟨⟨localization P T s S hden⟩⟩
 
 /-! ### A sufficient criterion for continuity -/
 
