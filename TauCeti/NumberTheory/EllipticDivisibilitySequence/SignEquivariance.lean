@@ -10,17 +10,24 @@ import Mathlib.Algebra.Module.Basic
 import Mathlib.Tactic.FinCases
 
 /-!
-# The elliptic relator is alternating in its four indices
+# The elliptic relator is sign-equivariant in its four indices
 
 For an odd sequence `W : ℤ → R`, Mathlib's `IsEllipticNet.atomRel W a b c d` changes sign under a
 transposition of its four arguments. This file proves that for the three adjacent transpositions
 and then, by inducting over the generators of `Equiv.Perm (Fin 4)`, for an arbitrary permutation:
-`atomRelFin4` is alternating.
+`atomRelFin4 W (t ∘ σ) = sign σ • atomRelFin4 W t`.
 
-The point is the descent that identifies elliptic sequences. Deducing the four-index relation from
-the one-index odd and even recurrences works by ordering the four indices and shrinking the largest,
-which is only available once the relation may be reordered freely — and, since three of the six
-`atomRel_same` shapes then collapse to zero, once repeated indices can be discharged.
+This is **skew-symmetry, not alternation**, and the distinction is not pedantic here. `R` is an
+arbitrary commutative ring, so `2` may be a zero divisor or vanish; the usual implication from
+`f = -f` to `f = 0` is unavailable, and nothing below forces the relator to vanish when two indices
+coincide. That vanishing is a separate fact, and it is Mathlib's: given `W 0 = 0`, each of the six
+`IsEllipticNet.atomRel_same` lemmas has the shape `_ * W 0 * _`, hence is zero. The descent uses
+both, from their two sources.
+
+The point is that descent. Deducing the four-index relation from the one-index odd and even
+recurrences works by ordering the four indices and shrinking the largest, which is only available
+once the relation may be reordered freely — this file — and once repeated indices can be
+discharged — Mathlib's `atomRel_same` family with `W 0 = 0`.
 
 ## Main definitions
 
@@ -32,7 +39,8 @@ which is only available once the relation may be reordered freely — and, since
 * `IsEllipticNet.atomRel_swap₁₂`, `atomRel_swap₂₃`, `atomRel_swap₃₄`: the three adjacent
   transpositions each negate `atomRel`.
 * `IsEllipticNet.atomRelFin4_perm`: `atomRelFin4 W (t ∘ σ) = sign σ • atomRelFin4 W t` for every
-  `σ : Equiv.Perm (Fin 4)`, and `atomRelFin4_perm'` in the form that cancels the sign.
+  `σ : Equiv.Perm (Fin 4)`, and `atomRelFin4_perm'` in the form that cancels the sign. Note this is
+  sign-equivariance, not alternation — see the header.
 
 ## Implementation notes
 
@@ -95,8 +103,10 @@ the tuple packaging carries no content of its own, so unfolding it is always pro
 theorem atomRelFin4_def (t : Fin 4 → ℤ) :
     atomRelFin4 W t = atomRel W (t 0) (t 1) (t 2) (t 3) := (rfl)
 
-/-- **The relator is alternating**: permuting the four indices multiplies it by the sign of the
-permutation. -/
+/-- **The relator is sign-equivariant**: permuting the four indices multiplies it by the sign of
+the permutation. This is skew-symmetry; it does *not* say the relator vanishes at repeated indices,
+which over a ring with `2` a zero divisor does not follow, and which Mathlib's `atomRel_same`
+family supplies separately from `W 0 = 0`. -/
 theorem atomRelFin4_perm (odd : W.Odd) (σ : Perm (Fin 4)) :
     ∀ t : Fin 4 → ℤ, atomRelFin4 W (t ∘ σ) = Perm.sign σ • atomRelFin4 W t := by
   have hmem := (Perm.mclosure_swap_castSucc_succ 3).symm ▸ Submonoid.mem_top σ
