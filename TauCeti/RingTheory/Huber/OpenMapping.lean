@@ -63,7 +63,7 @@ Both halves of the roadmap's derived form are here. `TauCeti.Huber.IsTateRing.is
 open-map half; `TauCeti.Huber.IsTateRing.isQuotientMap` is the other — that such a map induces the
 quotient topology — and it delegates to `TauCeti.HasZeroSequenceOfUnits.isQuotientMap` exactly as
 the open-map form delegates to `TauCeti.HasZeroSequenceOfUnits.isOpenMap`. It is the quotient form
-that the strict-morphism material consumes, since what matters there is not that images are open
+that the strict-morphism material will consume, since what matters there is not that images are
 but that the target's topology is determined by the source's.
 
 ## Main results
