@@ -285,16 +285,14 @@ theorem infinityPlace.C {c : F} (hc : c ≠ 0) :
 
 open scoped Classical in
 /-- **The valuation at infinity is trivial on the base field.** -/
-instance instIsTrivialOn : (infinityPlace W).IsTrivialOn F where
-  eq_one c hc := by
-    rw [IsScalarTower.algebraMap_apply F (RatFunc F) W.FunctionField]
-    exact infinityPlace.C W hc
+instance : (infinityPlace W).IsTrivialOn F where
+  eq_one c hc :=
+    IsScalarTower.algebraMap_apply F (RatFunc F) W.FunctionField c ▸ infinityPlace.C W hc
 
 /-- **The valuation at infinity is nontrivial**: `x` has value `exp 2`. -/
-instance instIsNontrivial : (infinityPlace W).IsNontrivial where
-  exists_val_nontrivial :=
-    ⟨algebraMap W.CoordinateRing W.FunctionField (algebraMap F[X] W.CoordinateRing Polynomial.X),
-      by rw [infinityPlace.X]; exact ⟨WithZero.exp_ne_zero, by simp⟩⟩
+instance : (infinityPlace W).IsNontrivial :=
+  ⟨algebraMap W.CoordinateRing W.FunctionField (algebraMap F[X] W.CoordinateRing Polynomial.X),
+    infinityPlace.X W ▸ ⟨WithZero.exp_ne_zero, by simp⟩⟩
 
 
 open scoped Classical in
@@ -329,7 +327,7 @@ theorem infinityPlace.X_div_mk_Y :
 
 open scoped Classical in
 -- The place is discrete of rank one for free — its value group is a subgroup of the cyclic group
--- `ℤᵐ⁰ˣ`, nontrivial by `instIsNontrivial` — but discreteness alone leaves the generator as
+-- `ℤᵐ⁰ˣ`, nontrivial by the instance above — but discreteness alone leaves the generator as
 -- `exp (-n)` for an unspecified `n ≥ 1`, and the proper subgroup genuinely occurs: the restriction
 -- of `v_∞` to `F(x)` has value group `2ℤ` by `infinityPlace.algebraMap_eq_sq`. What pins the
 -- generator to `exp (-1)` is a single element of that value, so `X_div_mk_Y` is exactly the witness
