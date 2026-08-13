@@ -302,7 +302,7 @@ private lemma half_edge_of_boundary (hp : p ∈ 𝒟) (hI : (p : ℂ) ≠ Comple
 
 /-- **The pointwise boundary classification.** A point of `𝒟` avoids the three elliptic points
 and the open fundamental domain exactly when it lies on one of the four half-edges. -/
-private lemma mem_boundary_iff (hp : p ∈ 𝒟) :
+lemma mem_boundary_iff (hp : p ∈ 𝒟) :
     ((p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧
         ¬(1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)) ↔
       (((p : ℂ).re = 1 / 2 ∧ 1 < ‖(p : ℂ)‖) ∨ ((p : ℂ).re = -(1 / 2) ∧ 1 < ‖(p : ℂ)‖) ∨

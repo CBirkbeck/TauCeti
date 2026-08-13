@@ -117,6 +117,43 @@ private lemma intervalIntegrable_excised_of_subset {g : ℂ → ℂ} {H ε : ℝ
   exact intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary hε hsub
     fun t ht => hoffγ t (hsub ht)
 
+/-- Off the `ε`-excision the contour point avoids the excision set itself, so the along-contour
+analyticity and non-vanishing hypothesis applies to it. -/
+private theorem analyticAt_and_ne_zero_of_not_excised {g : ℂ → ℂ} {H : ℝ} {Sx : Finset ℂ}
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ Sx →
+      AnalyticAt ℂ g (fdBoundary H t) ∧ g (fdBoundary H t) ≠ 0)
+    {ε t : ℝ} (hε : 0 < ε) (hex : ¬(∃ s ∈ Sx, ‖fdBoundary H t - s‖ ≤ ε))
+    (ht : t ∈ Icc (0 : ℝ) 5) :
+    AnalyticAt ℂ g (fdBoundary H t) ∧ g (fdBoundary H t) ≠ 0 := by
+  refine hoffγ t ht fun hs => hex ?_
+  exact ⟨_, hs, by rw [sub_self, norm_zero]; exact hε.le⟩
+
+/-- The boundary principal value from an eventual fixed-`ε` identity: once each small-`ε`
+excised boundary integral is `c` minus `w/2` times the excised arc integral, the arc limit
+`(π/3)·I` makes the boundary principal value `c − w·(π/6)·I`, whatever the excision set. -/
+private theorem hasCauchyPVWith_fdBoundary_logDeriv_of_eventually_eq {g : ℂ → ℂ} {H : ℝ}
+    {Sx : Finset ℂ} {c w : ℂ}
+    (hoffγ : ∀ t ∈ Icc (0 : ℝ) 5, fdBoundary H t ∉ Sx →
+      AnalyticAt ℂ g (fdBoundary H t) ∧ g (fdBoundary H t) ≠ 0)
+    (heq : ∀ᶠ ε in 𝓝[>] (0 : ℝ),
+      (∫ t in (0 : ℝ)..5, if ∃ s ∈ Sx, ‖fdBoundary H t - s‖ ≤ ε then 0
+          else logDeriv g (fdBoundary H t) * deriv (fdBoundary H) t) =
+        c - w / 2 * ∫ t in (1 : ℝ)..3, (if ∃ s ∈ Sx, ‖fdBoundary H t - s‖ ≤ ε then 0
+          else logDeriv (fdBoundary H) t)) :
+    Contour.HasCauchyPVWith (fdBoundary H) 0 5 (logDeriv g) Sx
+      (c - w * ((Real.pi / 6 : ℝ) * Complex.I)) := by
+  refine Contour.hasCauchyPVWith_iff.mpr ⟨?_, ?_⟩
+  · filter_upwards [self_mem_nhdsWithin] with ε hε
+    simpa only [smul_eq_mul, mul_comm] using
+      intervalIntegrable_excised_of_subset hε le_rfl (by norm_num) le_rfl hoffγ
+  · refine Tendsto.congr' (Filter.EventuallyEq.symm heq) ?_
+    have hval : c - w / 2 * ((Real.pi / 3 : ℝ) * Complex.I) =
+        c - w * ((Real.pi / 6 : ℝ) * Complex.I) := by
+      push_cast
+      ring
+    exact hval ▸ (tendsto_const_nhds.sub
+      ((tendsto_intervalIntegral_excised_logDeriv_fdBoundary_arc H Sx).const_mul _))
+
 /-- The fixed-`ε` assembly, packaged as an eventual identity: for all small `ε` the excised
 boundary integral is `2πi·ord_∞` minus `(k/2)` times the excised arc integral. The two
 `ε`-dependent side conditions of the assembly are supplied here from their `ε`-free sources. -/
@@ -136,17 +173,13 @@ private theorem eventually_intervalIntegral_excised_eq [SlashInvariantFormClass 
         2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
           (k : ℂ) / 2 * ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
             else logDeriv (fdBoundary H) t) := by
-  have hside : ∀ {ε t : ℝ}, 0 < ε → ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) → t ∈ Icc (0 : ℝ) 5 →
-      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧ (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0 := by
-    intro ε t hε hex ht
-    refine hoffγ t ht fun hs => hex ?_
-    exact ⟨_, hs, by rw [sub_self, norm_zero]; exact hε.le⟩
   filter_upwards [eventually_forall_im_add_lt hHgt, self_mem_nhdsWithin] with ε hlt hε
   simpa only [smul_eq_mul, mul_comm] using
     intervalIntegral_excised_logDeriv_fdBoundary f hS hnorm hinv hlt hper
-      (fun t ht hex =>
-        (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).1.differentiableAt)
-      (fun t ht hex => (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).2)
+      (fun t ht hex => (analyticAt_and_ne_zero_of_not_excised hoffγ hε hex
+        ⟨by linarith [ht.1], by linarith [ht.2]⟩).1.differentiableAt)
+      (fun t ht hex => (analyticAt_and_ne_zero_of_not_excised hoffγ hε hex
+        ⟨by linarith [ht.1], by linarith [ht.2]⟩).2)
       hga hgz
       (intervalIntegrable_excised_of_subset hε le_rfl (by norm_num) (by norm_num) hoffγ)
       (intervalIntegrable_excised_of_subset hε (by norm_num) (by norm_num) (by norm_num) hoffγ)
@@ -173,32 +206,9 @@ theorem hasCauchyPVWith_fdBoundary_logDeriv_comp_ofComplex [SlashInvariantFormCl
       cuspFunction 1 ⇑f q ≠ 0) :
     Contour.HasCauchyPVWith (fdBoundary H) 0 5 (logDeriv (⇑f ∘ ofComplex)) S
       (2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
-        (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I)) := by
-  refine Contour.hasCauchyPVWith_iff.mpr ⟨?_, ?_⟩
-  · filter_upwards [self_mem_nhdsWithin] with ε hε
-    simpa only [smul_eq_mul, mul_comm] using
-      intervalIntegrable_excised_of_subset hε le_rfl (by norm_num) le_rfl hoffγ
-  · refine Tendsto.congr' (Filter.EventuallyEq.symm
-      (eventually_intervalIntegral_excised_eq f hS hnorm hinv hHgt hper hoffγ hga hgz)) ?_
-    have hval : 2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
-        (k : ℂ) / 2 * ((Real.pi / 3 : ℝ) * Complex.I) =
-        2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
-          (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I) := by
-      push_cast
-      ring
-    exact hval ▸ (tendsto_const_nhds.sub
-      ((tendsto_intervalIntegral_excised_logDeriv_fdBoundary_arc H S).const_mul _))
-
-/-- Every union excision centre sits below the ceiling: arc points by their unit norm,
-vertical points by the height bound on their source set. -/
-private lemma im_lt_of_mem_union {H : ℝ} {S : Finset ℍ} (hH : 1 < H)
-    (hHgt : ∀ p ∈ S, (p : ℂ).im < H) {s : ℂ}
-    (hs : s ∈ arcSingularSet S ∪ verticalSingularSet S) : s.im < H := by
-  rcases Finset.mem_union.mp hs with h | h
-  · have h1 : s.im ≤ ‖s‖ := (le_abs_self _).trans (Complex.abs_im_le_norm s)
-    rw [norm_eq_one_of_mem_arcSingularSet h] at h1
-    linarith
-  · exact im_lt_of_mem_verticalSingularSet h hHgt
+        (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I)) :=
+  hasCauchyPVWith_fdBoundary_logDeriv_of_eventually_eq hoffγ
+    (eventually_intervalIntegral_excised_eq f hS hnorm hinv hHgt hper hoffγ hga hgz)
 
 /-- The union-excised assembly, packaged as an eventual identity: for all small `ε` the
 `arcSingularSet S ∪ verticalSingularSet S`-excised boundary integral is `2πi·ord_∞` minus
@@ -222,23 +232,16 @@ private theorem eventually_intervalIntegral_union_excised_eq [SlashInvariantForm
           (k : ℂ) / 2 * ∫ t in (1 : ℝ)..3,
             (if ∃ s ∈ arcSingularSet S ∪ verticalSingularSet S, ‖fdBoundary H t - s‖ ≤ ε
             then 0 else logDeriv (fdBoundary H) t) := by
-  have hside : ∀ {ε t : ℝ}, 0 < ε →
-      ¬(∃ s ∈ arcSingularSet S ∪ verticalSingularSet S, ‖fdBoundary H t - s‖ ≤ ε) →
-      t ∈ Icc (0 : ℝ) 5 →
-      AnalyticAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t) ∧
-        (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0 := by
-    intro ε t hε hex ht
-    refine hoffγ t ht fun hs => hex ?_
-    exact ⟨_, hs, by rw [sub_self, norm_zero]; exact hε.le⟩
   filter_upwards [eventually_forall_im_add_lt fun s hs => im_lt_of_mem_union hH hHgt hs,
     eventually_forall_lt_norm_fdBoundary_sub_of_mem_verticalSingularSet H S,
     self_mem_nhdsWithin] with ε hlt hfar hε
   simpa only [smul_eq_mul, mul_comm] using
     intervalIntegral_excised_logDeriv_fdBoundary_arcSingularSet_union_verticalSingularSet f hS
       hfar hlt hper
-      (fun t ht hex =>
-        (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).1.differentiableAt)
-      (fun t ht hex => (hside hε hex ⟨by linarith [ht.1], by linarith [ht.2]⟩).2)
+      (fun t ht hex => (analyticAt_and_ne_zero_of_not_excised hoffγ hε hex
+        ⟨by linarith [ht.1], by linarith [ht.2]⟩).1.differentiableAt)
+      (fun t ht hex => (analyticAt_and_ne_zero_of_not_excised hoffγ hε hex
+        ⟨by linarith [ht.1], by linarith [ht.2]⟩).2)
       hga hgz
       (intervalIntegrable_excised_of_subset hε le_rfl (by norm_num) (by norm_num) hoffγ)
       (intervalIntegrable_excised_of_subset hε (by norm_num) (by norm_num) (by norm_num) hoffγ)
@@ -263,21 +266,9 @@ theorem hasCauchyPVWith_fdBoundary_logDeriv_arcSingularSet_union_verticalSingula
     Contour.HasCauchyPVWith (fdBoundary H) 0 5 (logDeriv (⇑f ∘ ofComplex))
       (arcSingularSet S ∪ verticalSingularSet S)
       (2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
-        (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I)) := by
-  refine Contour.hasCauchyPVWith_iff.mpr ⟨?_, ?_⟩
-  · filter_upwards [self_mem_nhdsWithin] with ε hε
-    simpa only [smul_eq_mul, mul_comm] using
-      intervalIntegrable_excised_of_subset hε le_rfl (by norm_num) le_rfl hoffγ
-  · refine Tendsto.congr' (Filter.EventuallyEq.symm
-      (eventually_intervalIntegral_union_excised_eq f hS hH hHgt hper hoffγ hga hgz)) ?_
-    have hval : 2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
-        (k : ℂ) / 2 * ((Real.pi / 3 : ℝ) * Complex.I) =
-        2 * (Real.pi : ℂ) * Complex.I * qExpansionOrderAtCusp 1 ⇑f -
-          (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I) := by
-      push_cast
-      ring
-    exact hval ▸ (tendsto_const_nhds.sub
-      ((tendsto_intervalIntegral_excised_logDeriv_fdBoundary_arc H _).const_mul _))
+        (k : ℂ) * ((Real.pi / 6 : ℝ) * Complex.I)) :=
+  hasCauchyPVWith_fdBoundary_logDeriv_of_eventually_eq hoffγ
+    (eventually_intervalIntegral_union_excised_eq f hS hH hHgt hper hoffγ hga hgz)
 
 /-- **The weighted order sum equals the cusp order minus the weight term.** Both sides are the
 same Cauchy principal value along the boundary contour: `hasCauchyPV_fdBoundary_logDeriv`
@@ -521,20 +512,18 @@ private lemma windingNumber_coe_eq_neg_half {H : ℝ} {p : ℍ} (hH : 1 < H) (hp
     (hc : (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ))
     (hint : ¬(1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2)) (him : (p : ℂ).im < H) :
     Contour.windingNumber (fdBoundary H) 0 5 (p : ℂ) = -(1 / 2 : ℂ) := by
-  simp only [Finset.mem_insert, Finset.mem_singleton, not_or] at hc
-  rcases eq_or_lt_of_le (Complex.one_le_normSq_iff.mp hp.1) with heq | hgt
-  · refine windingNumber_fdBoundary_arc hH heq.symm ?_ p.2
-    rw [← one_div]
-    rcases lt_or_eq_of_le hp.2 with h | h
-    · exact h
-    · rcases (abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp h with h' | h'
-      · exact absurd ((congrArg _ (eq_vadd_one_ρ_of_re_eq_half heq.symm h')).trans
-          coe_vadd_one_ρ) hc.2.2
-      · exact absurd (congrArg _ (eq_ρ_of_re_eq_neg_half heq.symm h')) hc.2.1
-  · have habs : |(p : ℂ).re| = 1 / 2 := le_antisymm hp.2 (not_lt.mp fun h => hint ⟨hgt, h⟩)
-    refine windingNumber_fdBoundary_vertical ?_ hgt p.2 him
-    rw [← one_div]
-    exact (abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp habs
+  rcases (mem_boundary_iff hp).mp ⟨hc, hint⟩ with ⟨hre, hgt⟩ | ⟨hre, hgt⟩ |
+    ⟨hne, hnorm, hpos⟩ | ⟨hne, hnorm, hneg⟩
+  · exact windingNumber_fdBoundary_vertical (by rw [← one_div]; exact Or.inl hre) hgt p.2 him
+  · exact windingNumber_fdBoundary_vertical (by rw [← one_div]; exact Or.inr hre) hgt p.2 him
+  · refine windingNumber_fdBoundary_arc hH hnorm ?_ p.2
+    rw [← one_div, abs_lt]
+    exact ⟨by linarith, lt_of_le_of_ne (abs_le.mp hp.2).2 fun h =>
+      hne ((congrArg _ (eq_vadd_one_ρ_of_re_eq_half hnorm h)).trans coe_vadd_one_ρ)⟩
+  · refine windingNumber_fdBoundary_arc hH hnorm ?_ p.2
+    rw [← one_div, abs_lt]
+    exact ⟨lt_of_le_of_ne (abs_le.mp hp.2).1 fun h =>
+      hne (congrArg _ (eq_ρ_of_re_eq_neg_half hnorm h.symm)), by linarith⟩
 
 /-- Restricting a family sum to the nonzero-order points does not change it. -/
 private lemma sum_filter_orderOfVanishingAt_ne_zero {f : ℍ → ℂ} {S : Finset ℍ}
@@ -699,44 +688,6 @@ private lemma analyticAt_comp_ofComplex_and_ne_zero_of_notMem_of_zeros_confined 
   have hz := hUZ.subset (⟨hzU, h0⟩ : z ∈ {z ∈ U | (g ∘ ofComplex) z = 0})
   exact hT z hz.1 hz.2
 
-/-- Above a threshold height, the cusp function is nonvanishing on the punctured contour
-`q`-disk: `cuspFunction_eventually_ne_zero` gives non-vanishing on *some* punctured
-neighbourhood of `0`, while the contour needs it on the disc of radius
-`fdBoundaryQRadius H = exp (-2πH)` — that radius shrinks as `H` grows, so the disc sits
-inside the neighbourhood exactly above a threshold. The threshold device follows
-`valence_formula_general_S_FM` in `ForMathlib/ValenceFormula.lean` of AINTLIB. -/
-private lemma exists_threshold_cuspFunction_ne_zero [ModularFormClass F 𝒮ℒ k] {f : F}
-    (hf : (⇑f : ℍ → ℂ) ≠ 0) :
-    ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H →
-      ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H), q ≠ 0 →
-        cuspFunction 1 ⇑f q ≠ 0 := by
-  obtain ⟨ε, hε, hne⟩ := Metric.eventually_nhds_iff.mp
-    (eventually_nhdsWithin_iff.mp
-      (cuspFunction_eventually_ne_zero (f := f) one_pos one_mem_strictPeriods_SL hf))
-  refine ⟨(Real.log ε⁻¹ + 1) / (2 * Real.pi), fun H hH q hq hq0 ↦ hne ?_ hq0⟩
-  have hlog : 1 - Real.log ε ≤ 2 * Real.pi * H := by
-    linarith [Real.log_inv ε, (div_le_iff₀ (by positivity)).mp hH]
-  have hlt : fdBoundaryQRadius H < ε := by
-    rw [fdBoundaryQRadius_def, ← Real.exp_log hε, Real.exp_lt_exp]
-    linarith
-  simpa using (mem_closedBall_zero_iff.mp hq).trans_lt hlt
-
-
-/-- The cusp function of a level-one modular form is analytic on the closed `q`-disk of the
-contour: it is differentiable on the unit ball, and the disk's radius `exp (-2πH)` stays
-below `1`. -/
-private lemma analyticAt_cuspFunction_of_mem_closedBall [ModularFormClass F 𝒮ℒ k] (f : F)
-    {H : ℝ} (hH : 1 < H) :
-    ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
-      AnalyticAt ℂ (cuspFunction 1 ⇑f) q := by
-  have hper : Periodic (⇑f ∘ ofComplex) 1 :=
-    SlashInvariantFormClass.periodic_comp_ofComplex f one_mem_strictPeriods_SL
-  have : Fact (IsCusp OnePoint.infty 𝒮ℒ) :=
-    ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos one_mem_strictPeriods_SL⟩
-  exact fun q hq => (differentiableOn_cuspFunction_ball one_pos hper (ModularFormClass.holo f)
-    (ModularFormClass.bdd_at_infty f)).analyticAt <|
-      Metric.isOpen_ball.mem_nhds <| mem_ball_zero_iff.mpr <|
-        (mem_closedBall_zero_iff.mp hq).trans_lt (fdBoundaryQRadius_lt_one (zero_lt_one.trans hH))
 
 /-- **The valence formula, with the elliptic points.** The divisor set `S` is now a finite set
 of upper half-plane points, *complete* for the closed fundamental domain: every point of `𝒟`
@@ -854,11 +805,14 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     (hH₁1.trans_le (le_max_right _ _)) hSfd hcomp
     (fun p hp => (hH₁ p hp).trans_le (le_max_right _ _)) (hH₀ _ (le_max_left _ _))
 
-/-- **The valence formula, with its interior divisor sum reindexed over orbits.** The order is
-constant along the `SL₂(ℤ)`-action, so the interior divisor points may be replaced by the
-orbits they represent; this is faithful because distinct points of the open fundamental domain
-lie in distinct orbits. The boundary families stay as point sums: the closed domain's boundary
-identifications are exactly what the left-representative filters already quotient by.
+/-- **The valence formula, with its interior divisor sum reindexed over orbits.** The divisor
+set is captured in both directions as in the point-sum statement — every point of `𝒟` of
+nonzero order lies in `S` (`hcomp`), every point of `S` of nonzero order lies in `𝒟`
+(`hSfd`). The order is constant along the `SL₂(ℤ)`-action, so the interior divisor points may
+be replaced by the orbits they represent; this is faithful because distinct points of the
+open fundamental domain lie in distinct orbits. The boundary families stay as point sums: the
+closed domain's boundary identifications are exactly what the left-representative filters
+already quotient by.
 
 ⚠ The sum here runs over the orbits *met by the divisor set* `S`, **not** over the whole
 non-elliptic orbit space, which is what the roadmap's Layer-1 target states. Reaching that
