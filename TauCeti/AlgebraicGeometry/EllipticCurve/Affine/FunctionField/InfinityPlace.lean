@@ -203,19 +203,13 @@ private theorem infinityPlace_add_le_max (x y : W.FunctionField) :
   rcases eq_or_ne y 0 with rfl | hy
   · simp
   rcases eq_or_ne (x + y) 0 with hxy | hxy
-  · rw [hxy, Algebra.norm_zero, map_zero]
-    exact zero_le
+  · simp [hxy]
   have hN {f : W.FunctionField} (hf : f ≠ 0) : Algebra.norm (RatFunc F) f ≠ 0 :=
     (Algebra.norm_ne_zero_iff (R := RatFunc F)).mpr hf
-  rw [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_apply, RatFunc.inftyValuation_apply,
-    RatFunc.inftyValuation_of_nonzero F (hN hx), RatFunc.inftyValuation_of_nonzero F (hN hy),
-    RatFunc.inftyValuation_of_nonzero F (hN hxy)]
-  trans WithZero.exp (max (Algebra.norm (RatFunc F) x).intDegree
-    (Algebra.norm (RatFunc F) y).intDegree)
-  · rw [WithZero.exp_le_exp]
-    exact intDegree_norm_add_le W hx hy hxy
-  · rcases max_cases (Algebra.norm (RatFunc F) x).intDegree
-      (Algebra.norm (RatFunc F) y).intDegree with ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] <;> simp
+  simp only [RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero F (hN hx),
+    RatFunc.inftyValuation_of_nonzero F (hN hy), RatFunc.inftyValuation_of_nonzero F (hN hxy)]
+  exact le_max_iff.2 <| (le_max_iff.1 <| intDegree_norm_add_le W hx hy hxy).imp
+    WithZero.exp_le_exp.2 WithZero.exp_le_exp.2
 
 open scoped Classical in
 /-- **The valuation at infinity on the function field of a Weierstrass curve**: Mathlib's place at
