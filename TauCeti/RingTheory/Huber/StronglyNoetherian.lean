@@ -8,8 +8,6 @@ module
 public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries
 public import TauCeti.Topology.Algebra.UniformRing
 public import TauCeti.Topology.UniformSpace.DiscreteUniformity
-public import Mathlib.Topology.Algebra.UniformRing
-public import Mathlib.RingTheory.Noetherian.Defs
 public import Mathlib.RingTheory.Polynomial.Basic
 
 /-!
@@ -101,6 +99,6 @@ instance IsStronglyNoetherian.of_discreteTopology [DiscreteTopology A] [IsNoethe
         isWeightFamily_one_weight) := DiscreteUniformity.of_discreteTopology
     exact isNoetherianRing_of_ringEquiv _
       ((weightedPolynomialEquiv _ isWeightFamily_one_weight).trans
-        (UniformSpace.Completion.selfRingEquiv _).symm)
+        (UniformSpace.Completion.completeRingEquivSelf _).symm)
 
 end TauCeti.Huber

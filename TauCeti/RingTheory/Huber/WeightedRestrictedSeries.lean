@@ -9,7 +9,6 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.Absorption
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 public import Mathlib.Algebra.Ring.Subgroup
 public import Mathlib.RingTheory.MvPowerSeries.Trunc
-public import Mathlib.Topology.Algebra.IsUniformGroup.Defs
 public import Mathlib.Topology.Algebra.UniformMulAction
 
 /-!
@@ -1048,6 +1047,13 @@ noncomputable def weightedPolynomialEquiv [NonarchimedeanRing A] [DiscreteTopolo
           exact Subring.mem_top f
         obtain ⟨p, hp⟩ := hmem
         exact ⟨p, hp⟩⟩
+
+/-- The forward map of `weightedPolynomialEquiv` is the coefficientwise inclusion
+`weightedPolynomialHom`, so its `coe_`/`_C`/`_X` lemmas apply. -/
+@[simp]
+theorem weightedPolynomialEquiv_apply [NonarchimedeanRing A] [DiscreteTopology A]
+    {T : Fin k → Set A} {hT : IsWeightFamily T} (p : MvPolynomial (Fin k) A) :
+    weightedPolynomialEquiv T hT p = weightedPolynomialHom T hT p := (rfl)
 
 /-! ### The uniform structure
 
