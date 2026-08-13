@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries
+public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Basic
 public import TauCeti.Topology.Algebra.UniformRing
 public import TauCeti.Topology.UniformSpace.DiscreteUniformity
 public import Mathlib.RingTheory.Polynomial.Basic

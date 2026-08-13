@@ -5,8 +5,8 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries
-public import Mathlib.Topology.Algebra.UniformRing
+public import TauCeti.RingTheory.Huber.StronglyNoetherian
+public import TauCeti.Topology.Algebra.UniformRing
 
 /-!
 # Completeness of the restricted power series over a complete base
@@ -21,9 +21,9 @@ completeness statement for `A⟨X⟩_T` (*Adic Spaces*, arXiv:1910.05934v1, 5.49
 case needs bounded weights and is not treated here.
 
 Consequently `TauCeti.Huber.restrictedMvPowerSeriesCompletion k A` collapses for such `A`:
-`UniformSpace.Completion.completeRingEquivSelf` applies to it directly through the instances
-below, identifying `A⟨X₁,…,Xₖ⟩` with the plain restricted-series ring — the "comparison with
-the usual completed restricted power-series algebra" milestone of roadmap Layer 0.5.
+`TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv` identifies `A⟨X₁,…,Xₖ⟩` with the
+plain restricted-series ring — the "comparison with the usual completed restricted
+power-series algebra" milestone of roadmap Layer 0.5.
 
 ## Main results
 
@@ -33,6 +33,8 @@ the usual completed restricted power-series algebra" milestone of roadmap Layer 
   Hausdorff.
 * `TauCeti.Huber.instCompleteSpace_one_weight` : the restricted series over a complete base
   are complete.
+* `TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv` : the comparison —
+  `A⟨X₁,…,Xₖ⟩` is the plain restricted-series ring over a complete Hausdorff base.
 -/
 
 public section
@@ -101,9 +103,8 @@ private theorem exists_mem_forall_coeff_sub_mem {T : Fin k → Set A} {hT : IsWe
   have hfg : f - g ∈ weightedNhd T hT U.toAddSubgroup := ht (Set.mk_mem_prod hg hf)
   simpa using mem_weightedNhd.mp hfg ν
 
-/-- **Restricted series over a complete base are complete**: a Cauchy filter is
-coefficientwise Cauchy at trivial weights, its coefficientwise limit is restricted, and the
-filter converges to it. -/
+/-- The trivial-weight restricted-series subring has a `CompleteSpace` instance whenever the
+base uniform nonarchimedean commutative ring is complete. -/
 instance instCompleteSpace_one_weight [CompleteSpace A] :
     CompleteSpace (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A))
       isWeightFamily_one_weight) := by
@@ -112,7 +113,7 @@ instance instCompleteSpace_one_weight [CompleteSpace A] :
   choose a ha using fun ν ↦ CompleteSpace.complete
     (hF.map (uniformContinuous_coeff_one_weight (A := A) ν))
   obtain ⟨g, hg⟩ : ∃ g : MvPowerSeries (Fin k) A, ∀ ν, MvPowerSeries.coeff ν g = a ν :=
-    ⟨a, fun _ ↦ rfl⟩
+    ⟨a, fun ν ↦ MvPowerSeries.coeff_apply a ν⟩
   -- Every open subgroup `U` has an `F`-set all of whose coefficients are `U`-close to `g`.
   have key : ∀ U : OpenAddSubgroup A, ∃ t ∈ F, ∀ f ∈ t, ∀ ν,
       MvPowerSeries.coeff ν (f : MvPowerSeries (Fin k) A) - a ν ∈ U := by
@@ -141,5 +142,23 @@ instance instCompleteSpace_one_weight [CompleteSpace A] :
   rw [SetLike.mem_coe, mem_weightedNhd]
   intro ν
   simpa [map_sub, hg] using ht f hf ν
+
+/-- **The comparison equivalence of roadmap Layer 0.5**: over a complete Hausdorff base the
+completed restricted power-series algebra is the plain restricted-series ring. -/
+noncomputable def restrictedMvPowerSeriesCompletionEquiv (k : ℕ) (A : Type*) [CommRing A]
+    [UniformSpace A] [IsUniformAddGroup A] [NonarchimedeanRing A] [CompleteSpace A]
+    [T0Space A] :
+    restrictedMvPowerSeriesCompletion k A ≃+*
+      weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight :=
+  UniformSpace.Completion.completeRingEquivSelf _
+
+@[simp]
+theorem restrictedMvPowerSeriesCompletionEquiv_coe {k : ℕ} {A : Type*} [CommRing A]
+    [UniformSpace A] [IsUniformAddGroup A] [NonarchimedeanRing A] [CompleteSpace A]
+    [T0Space A]
+    (f : weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight) :
+    restrictedMvPowerSeriesCompletionEquiv k A (f : restrictedMvPowerSeriesCompletion k A)
+      = f :=
+  UniformSpace.Completion.completeRingEquivSelf_coe _ f
 
 end TauCeti.Huber
