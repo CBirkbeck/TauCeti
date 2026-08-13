@@ -186,7 +186,7 @@ there and the complex index integrand is interval-integrable.
 Only continuity of `γ` and integrability of its derivative are needed; no regularity at a
 crossing, since the interval carries none. -/
 private theorem ne_and_intervalIntegrable_inv_sub_mul_deriv_of_le_norm_sub
-    {γ : ℝ → ℂ} {s : ℂ} {a b m : ℝ} (hab : a ≤ b) (hγ_cont : ContinuousOn γ (Icc a b))
+    {γ : ℝ → ℂ} {s : ℂ} {a b m : ℝ} (hγ_cont : ContinuousOn γ (Icc a b))
     (hderiv_int : IntervalIntegrable (fun t => deriv γ t) volume a b) (hm_pos : 0 < m)
     {l u : ℝ} (hA : a ≤ l) (hlu : l ≤ u) (hu : u ≤ b)
     (h_far : ∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) :
@@ -200,20 +200,16 @@ private theorem ne_and_intervalIntegrable_inv_sub_mul_deriv_of_le_norm_sub
     (by rw [uIcc_of_le hlu]; exact hγ_cont.mono (Icc_subset_Icc hA hu))
     (by intro t ht; rw [uIcc_of_le hlu] at ht; exact h_ne t ht)
     (hderiv_int.mono_set (by
-      rw [uIcc_of_le hlu, uIcc_of_le hab]
+      rw [uIcc_of_le hlu, uIcc_of_le (hA.trans (hlu.trans hu))]
       exact Icc_subset_Icc hA hu))⟩
 
-/-- On a sub-interval where `γ` stays at distance at least `m > 0` from `s`, the real winding
-integrand is interval-integrable. -/
-private theorem intervalIntegrable_realWindingIntegrand_of_le_norm_sub
-    {γ : ℝ → ℂ} {s : ℂ} {a b m : ℝ} (hab : a ≤ b) (hγ_cont : ContinuousOn γ (Icc a b))
-    (hderiv_int : IntervalIntegrable (fun t => deriv γ t) volume a b) (hm_pos : 0 < m)
-    {l u : ℝ} (hA : a ≤ l) (hlu : l ≤ u) (hu : u ≤ b)
-    (h_far : ∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) :
+/-- Wherever the complex index integrand is interval-integrable, so is the real winding
+integrand. -/
+private theorem intervalIntegrable_realWindingIntegrand_of_inv_sub_mul_deriv
+    {γ : ℝ → ℂ} {s : ℂ} {l u : ℝ}
+    (hcplx : IntervalIntegrable (fun t => (γ t - s)⁻¹ * deriv γ t) volume l u) :
     IntervalIntegrable (fun t => realWindingIntegrand (γ t - s) (deriv γ t)) volume l u := by
-  obtain ⟨-, hcplx⟩ := ne_and_intervalIntegrable_inv_sub_mul_deriv_of_le_norm_sub hab hγ_cont
-    hderiv_int hm_pos hA hlu hu h_far
-  -- off the crossings the real integrand is the imaginary part of the index integrand
+  -- the real integrand is the imaginary part of the index integrand
   have hfun_eq : (fun t => realWindingIntegrand (γ t - s) (deriv γ t))
       = (fun t => ((γ t - s)⁻¹ * deriv γ t).im) :=
     funext fun t => realWindingIntegrand_def (γ t - s) (deriv γ t)
@@ -338,14 +334,14 @@ private theorem isBounded_intervalIntegrable_cauchyPV_of_interior_crossings
       (∀ t ∈ Icc l u, γ t ≠ s) ∧
         IntervalIntegrable (fun t => (γ t - s)⁻¹ * deriv γ t) volume l u :=
     fun l u hA hlu hu h_far' => ne_and_intervalIntegrable_inv_sub_mul_deriv_of_le_norm_sub
-      hab.le hγ_cont h_imm.isPiecewiseC1On.intervalIntegrable_deriv hm_pos hA hlu hu h_far'
+      hγ_cont h_imm.isPiecewiseC1On.intervalIntegrable_deriv hm_pos hA hlu hu h_far'
   -- The real winding integrand's interval-integrability: away from crossings it's the imaginary
   -- part of the already-integrable index integrand; at each crossing, boundedness from the
   -- crossing's `C^{1,1}` regularity.
   have h_piece : ∀ l u : ℝ, a ≤ l → l ≤ u → u ≤ b → (∀ t ∈ Icc l u, m ≤ ‖γ t - s‖) →
       IntervalIntegrable (fun t => realWindingIntegrand (γ t - s) (deriv γ t)) volume l u :=
-    fun l u hA hlu hu h_far' => intervalIntegrable_realWindingIntegrand_of_le_norm_sub
-      hab.le hγ_cont h_imm.isPiecewiseC1On.intervalIntegrable_deriv hm_pos hA hlu hu h_far'
+    fun l u hA hlu hu h_far' => intervalIntegrable_realWindingIntegrand_of_inv_sub_mul_deriv
+      (h_ne_int l u hA hlu hu h_far').2
   have h_int : IntervalIntegrable (fun t => realWindingIntegrand (γ t - s) (deriv γ t)) volume
       a b :=
     sorted_crossing_gluing_induction h_piece (fun _ _ _ _ _ h₁ h₂ => h₁.trans h₂)
