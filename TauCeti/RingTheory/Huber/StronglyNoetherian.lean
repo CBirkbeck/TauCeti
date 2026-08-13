@@ -61,8 +61,7 @@ noncomputable abbrev restrictedMvPowerSeriesCompletion : Type _ :=
   UniformSpace.Completion
     (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight)
 
-/-- The structure map `A → A⟨X₁,…,Xₖ⟩` is continuous: the constant-series embedding is, and
-so is the coercion into the completion. -/
+/-- The structure map `A → A⟨X₁,…,Xₖ⟩` is continuous. -/
 theorem continuous_algebraMap_restrictedMvPowerSeriesCompletion :
     Continuous (algebraMap A (restrictedMvPowerSeriesCompletion k A)) := by
   have h : Continuous (algebraMap A (weightedRestrictedSubring
@@ -82,14 +81,17 @@ field satisfies it (BGR 5.2.6 — not yet formalised). -/
 class IsStronglyNoetherian : Prop where
   isNoetherianRing (k : ℕ) : IsNoetherianRing (restrictedMvPowerSeriesCompletion k A)
 
+/-- The defining property, as an instance: with `[IsStronglyNoetherian A]` in scope, each
+`A⟨X₁,…,Xₖ⟩` is a noetherian ring by typeclass resolution. -/
+instance (k : ℕ) [IsStronglyNoetherian A] :
+    IsNoetherianRing (restrictedMvPowerSeriesCompletion k A) :=
+  IsStronglyNoetherian.isNoetherianRing k
+
 /-! ### The discrete case -/
 
-/-- **A noetherian ring with the discrete topology is strongly noetherian.** Over a discrete
-ring the restricted series are exactly the polynomials
-(`TauCeti.Huber.weightedPolynomialEquiv`), the topology on them is discrete and hence already
-complete and Hausdorff, and the Hilbert basis theorem applies. This is the nondegenerate
-family of witnesses for `IsStronglyNoetherian` — `ℤ`, any field, any noetherian ring, all
-discretely topologised. -/
+/-- **A noetherian ring with the discrete topology is strongly noetherian.** This is the
+nondegenerate family of witnesses for `IsStronglyNoetherian` — `ℤ`, any field, any noetherian
+ring, all discretely topologised. -/
 instance IsStronglyNoetherian.of_discreteTopology [DiscreteTopology A] [IsNoetherianRing A] :
     IsStronglyNoetherian A where
   isNoetherianRing k := by

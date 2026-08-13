@@ -31,13 +31,12 @@ variable (S : Type*) [Ring S] [UniformSpace S] [IsTopologicalRing S] [IsUniformA
 /-- The extension of the identity ring homomorphism and the uniform bijection
 `UniformCompletion.completeEquivSelf` are the same function: both are
 `UniformSpace.Completion.extension id`. -/
-theorem coe_extensionHom_id :
+private theorem coe_extensionHom_id :
     ⇑(extensionHom (RingHom.id S) continuous_id) =
-      ⇑(UniformCompletion.completeEquivSelf (α := S)) := rfl
+      ⇑(UniformCompletion.completeEquivSelf (α := S)) := (rfl)
 
 /-- For a complete Hausdorff topological ring, the extension of the identity is a ring
-isomorphism from the completion — bijective because it is the underlying map of the uniform
-bijection `UniformCompletion.completeEquivSelf` (`coe_extensionHom_id`). -/
+isomorphism from the completion. -/
 noncomputable def completeRingEquivSelf : UniformSpace.Completion S ≃+* S :=
   RingEquiv.ofBijective (extensionHom (RingHom.id S) continuous_id)
     (coe_extensionHom_id S ▸ (UniformCompletion.completeEquivSelf (α := S)).bijective)

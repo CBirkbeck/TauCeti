@@ -17,27 +17,27 @@ neighbourhood filter of zero.
 
 ## Main results
 
-* `TauCeti.DiscreteUniformity.of_discreteTopology` : a uniform additive group with discrete
-  topology has the discrete uniformity. Stated as a theorem, not an instance: together with
-  Mathlib's `DiscreteUniformity → DiscreteTopology` instance it would form a resolution cycle.
+* `DiscreteUniformity.of_discreteTopology` : a uniform additive group with discrete topology
+  has the discrete uniformity. Stated as a theorem, not an instance: together with Mathlib's
+  `DiscreteUniformity → DiscreteTopology` instance it would form a resolution cycle. It lives
+  in the root `DiscreteUniformity` namespace it extends, following this repository's
+  convention for lemmas about external types.
 -/
 
 public section
 
-namespace TauCeti
+namespace DiscreteUniformity
 
 open Filter
 
-/-- A uniform additive group whose topology is discrete has the discrete uniformity: the
-uniformity is the comap of the neighbourhood filter of zero under the difference map, and
-`{0}` is a neighbourhood of zero.
+/-- A uniform additive group whose topology is discrete has the discrete uniformity.
 
 A theorem rather than an instance: Mathlib's `DiscreteUniformity → DiscreteTopology`
 instance points the other way, and registering both directions would loop. -/
-theorem DiscreteUniformity.of_discreteTopology {G : Type*} [AddGroup G] [UniformSpace G]
+theorem of_discreteTopology {G : Type*} [AddGroup G] [UniformSpace G]
     [IsUniformAddGroup G] [DiscreteTopology G] : DiscreteUniformity G := by
   rw [discreteUniformity_iff_setRelId_mem_uniformity, uniformity_eq_comap_nhds_zero G]
   refine Filter.mem_comap.mpr ⟨{0}, (isOpen_discrete _).mem_nhds rfl, fun p hp ↦ ?_⟩
   simpa [SetRel.id, sub_eq_zero, eq_comm] using hp
 
-end TauCeti
+end DiscreteUniformity
