@@ -273,14 +273,14 @@ On a rational function of `x` the value is the square of Mathlib's infinite valu
 theorem infinityPlace.algebraMap_eq_sq (r : RatFunc F) :
     infinityPlace W (algebraMap (RatFunc F) W.FunctionField r)
       = RatFunc.inftyValuation F r ^ 2 := by
-  rw [infinityPlace_apply, Algebra.norm_algebraMap, finrank_functionField W (RatFunc F), map_pow]
+  rw [infinityPlace_apply, Algebra.norm_algebraMap, finrank_functionField, map_pow]
 
 open scoped Classical in
 /-- **The valuation is trivial on the base field**: a nonzero constant has value `1`, so `v_∞`
 restricted to `F` is trivial. The analogue of `RatFunc.inftyValuation.C`. -/
 theorem infinityPlace.C {c : F} (hc : c ≠ 0) :
     infinityPlace W (algebraMap (RatFunc F) W.FunctionField (RatFunc.C c)) = 1 := by
-  rw [infinityPlace.algebraMap_eq_sq, RatFunc.inftyValuation.C (F := F) hc, one_pow]
+  rw [infinityPlace.algebraMap_eq_sq, RatFunc.inftyValuation.C F hc, one_pow]
 
 
 open scoped Classical in
