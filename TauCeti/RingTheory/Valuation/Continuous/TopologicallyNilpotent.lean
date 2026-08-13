@@ -50,6 +50,9 @@ the first.
 * `TauCeti.Valuation.exists_pow_lt_of_isTopologicallyNilpotent`
 * `TauCeti.Valuation.IsContinuous.lt_one_of_isTopologicallyNilpotent`
 * `TauCeti.Valuation.IsContinuous.cofinalValue_of_isTopologicallyNilpotent`
+* `TauCeti.Valuation.HasFullCharacteristicGroup.cofinalValue_of_isTopologicallyNilpotent` :
+  cofinality again, with continuity replaced by a full characteristic group plus the open unit
+  ball being a neighbourhood of `0` — the `Γ_v = cΓ_v` branch of Theorem 7.10's converse.
 
 ## References
 
@@ -129,5 +132,35 @@ theorem IsContinuous.cofinalValue_of_isTopologicallyNilpotent [ContinuousConstSM
   obtain ⟨n, hn⟩ := exists_pow_lt_of_isTopologicallyNilpotent (v := v) (div_ne_zero hr.ne' ht.ne')
     (hv.isOpen_lt_div r ht.ne') ha
   exact ⟨n, by rw [← map_pow, Valuation.restrict_lt_iff_lt_embedding, hemb, map_pow]; exact hn⟩
+
+/-- **Full characteristic group makes every topologically nilpotent value cofinal**, given that
+the open unit ball `{a ; v a < 1}` is a neighbourhood of `0`. A positive target dominates the
+inverse of some attained value `v t`, the sequence `xⁿ · t` tends to `0`, so it eventually
+enters the unit ball, where `v(x)ⁿ · v(t) < 1`.
+
+This is the sibling of `IsContinuous.cofinalValue_of_isTopologicallyNilpotent` with continuity
+replaced by `Γ_v = cΓ_v` plus the one ball it actually uses. It is the `Γ_v = cΓ_v` branch of
+Wedhorn's proof of Theorem 7.10, `⊇` direction, stated with no Huber-ring hypothesis. -/
+theorem HasFullCharacteristicGroup.cofinalValue_of_isTopologicallyNilpotent
+    [ContinuousConstSMul Aᵐᵒᵖ A] {v : Valuation A Γ₀} (hfull : HasFullCharacteristicGroup v)
+    (hU : {a : A | v a < 1} ∈ nhds 0) {x : A} (hx : IsTopologicallyNilpotent x) :
+    CofinalValue v x := by
+  rw [cofinalValue_iff]
+  intro γ hγ
+  obtain ⟨t, ht0, htle⟩ := hfull.exists_inv_le hγ
+  -- the sequence `xⁿ · t` tends to `0`, so it eventually enters the unit ball
+  have htend : Filter.Tendsto (fun n : ℕ ↦ x ^ n * t) Filter.atTop (nhds 0) := by
+    simpa using hx.const_smul (MulOpposite.op t)
+  obtain ⟨n, hn⟩ := (htend.eventually_mem hU).exists
+  have hlt : v x ^ n * v t < 1 := by rw [← map_pow, ← map_mul]; exact hn
+  -- transport `v(x)ⁿ < v(t)⁻¹ ≤ γ` to the value group
+  have htne : v t ≠ 0 := fun h ↦ ht0 (v.restrict_eq_zero_iff.mpr (by simpa using h))
+  have hgoal : v x ^ n < (v t)⁻¹ := by
+    rw [← inv_mul_cancel₀ htne] at hlt
+    exact lt_of_mul_lt_mul_right hlt zero_le
+  have hemb : v.restrict x ^ n < (v.restrict t)⁻¹ := by
+    refine MonoidWithZeroHom.ValueGroup₀.embedding_strictMono.lt_iff_lt.mp ?_
+    simpa only [map_pow, map_inv₀, _root_.Valuation.embedding_restrict] using hgoal
+  exact ⟨n, hemb.trans_le htle⟩
 
 end TauCeti.Valuation
