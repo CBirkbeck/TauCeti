@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.RingTheory.Huber.StronglyNoetherian
+public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion
 public import TauCeti.Topology.Algebra.UniformRing
 
 /-!
@@ -72,18 +72,6 @@ instance instT0Space_one_weight [T0Space A] :
     (continuous_pi fun ν ↦ (uniformContinuous_coeff_one_weight ν).continuous)
 
 omit [IsUniformAddGroup A] in
-/-- A limit inherits a coset bound: if `u` tends to `b` and eventually stays in the coset
-`c + U` of an open subgroup, then so does `b`, because an open subgroup — hence each of its
-cosets — is closed. Private: a step of the completeness proof below with no weighted content. -/
-private theorem sub_mem_of_tendsto {α : Type*} {l : Filter α} [l.NeBot] {u : α → A} {b c : A}
-    (U : OpenAddSubgroup A) (hu : Tendsto u l (nhds b)) (h : ∀ᶠ x in l, u x - c ∈ U) :
-    b - c ∈ U := by
-  have hc : IsClosed ((fun y : A ↦ y - c) ⁻¹' (U : Set A)) :=
-    U.isClosed.preimage (continuous_id.sub continuous_const)
-  have hs : ∀ᶠ x in l, u x ∈ (fun y : A ↦ y - c) ⁻¹' (U : Set A) := h
-  exact hc.closure_subset (mem_closure_of_tendsto hu hs)
-
-omit [IsUniformAddGroup A] in
 /-- A Cauchy filter on `A⟨X⟩_T` is coefficientwise uniformly Cauchy: for every open subgroup `U`
 of `A` some member of the filter has all its pairwise coefficient differences inside `Tν · U`.
 Private: this is the step that unfolds `U⟨X⟩` into its defining coefficient bounds, used only by
@@ -121,7 +109,7 @@ instance instCompleteSpace_one_weight [CompleteSpace A] :
     obtain ⟨t, htF, ht⟩ := exists_mem_forall_coeff_sub_mem hF U
     refine ⟨t, htF, fun f hf ν ↦ ?_⟩
     have h : a ν - MvPowerSeries.coeff ν (f : MvPowerSeries (Fin k) A) ∈ U :=
-      sub_mem_of_tendsto U (ha ν)
+      U.isClosed.mem_of_tendsto (Filter.Tendsto.sub (ha ν) tendsto_const_nhds)
         (Filter.eventually_of_mem htF fun f' hf' ↦ by simpa using ht f' hf' f hf ν)
     simpa using neg_mem h
   -- The coefficientwise limit is again restricted, since it is `U`-close to a restricted series.
@@ -160,5 +148,14 @@ theorem restrictedMvPowerSeriesCompletionEquiv_coe {k : ℕ} {A : Type*} [CommRi
     restrictedMvPowerSeriesCompletionEquiv k A (f : restrictedMvPowerSeriesCompletion k A)
       = f :=
   UniformSpace.Completion.completeRingEquivSelf_coe _ f
+
+@[simp]
+theorem restrictedMvPowerSeriesCompletionEquiv_symm_apply {k : ℕ} {A : Type*} [CommRing A]
+    [UniformSpace A] [IsUniformAddGroup A] [NonarchimedeanRing A] [CompleteSpace A]
+    [T0Space A]
+    (f : weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight) :
+    (restrictedMvPowerSeriesCompletionEquiv k A).symm f
+      = (f : restrictedMvPowerSeriesCompletion k A) :=
+  UniformSpace.Completion.completeRingEquivSelf_symm_apply _ f
 
 end TauCeti.Huber

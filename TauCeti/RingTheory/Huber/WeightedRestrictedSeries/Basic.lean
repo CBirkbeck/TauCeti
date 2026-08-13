@@ -107,6 +107,16 @@ This construction is not the same as retopologising the ordinary `A⟨X⟩` by t
 substitution `X ↦ f X`: there the weight multiplies the coefficient rather than the
 neighbourhood, and the carrier does not vary with `T`. Here the carrier itself depends on `T`.
 
+Nor is it Mathlib's `MvPowerSeries.IsRestricted`, despite that also being a weighted condition.
+Mathlib weights by a polyradius `c : σ → ℝ` over a *normed* ring, asking that
+`‖coeff t f‖ * ∏ i, c i ^ t i` tend to `0` along the cofinite filter. A Huber ring's topology is
+nonarchimedean but in general carries no norm, so no polyradius is available to state that
+condition, and the weight family here is a family of *subsets* `Tᵢ ⊆ A` acting on neighbourhood
+subgroups rather than a family of reals scaling coefficient norms. Over a normed ring the two
+notions agree at the trivial weight, which is the comparison
+`TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean` records for the unweighted predicate;
+neither is a special case of the other in general.
+
 The finite-family absorption fact the multiplicative arguments run on — finitely many fixed
 elements are absorbed into their own targets by a single open subgroup — mentions no weight, so
 it lives in `TauCeti/Topology/Algebra/Nonarchimedean/Absorption.lean`, built on Mathlib's

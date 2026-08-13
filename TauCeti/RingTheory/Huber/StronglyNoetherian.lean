@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Basic
+public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion
 public import TauCeti.Topology.Algebra.UniformRing
 public import TauCeti.Topology.UniformSpace.DiscreteUniformity
 public import Mathlib.RingTheory.Polynomial.Basic
@@ -20,22 +20,18 @@ arXiv:1910.05934v1) — the strongly noetherian form of Tate acyclicity — whic
 for Tate rings; the predicate itself needs only the nonarchimedean topology, so it is stated
 here in that generality.
 
-`A` is not assumed complete or Hausdorff: following the roadmap, `A⟨X₁,…,Xₖ⟩` is *defined* as
-the separated completion of the ring `TauCeti.Huber.weightedRestrictedSubring` of restricted
-power series at the trivial weight family `Tᵢ = {1}` (Wedhorn Example 5.54), so for zero
-variables it is the separated completion of `A` itself. Being a completion, it is a complete
-Hausdorff topological `A`-algebra, with all of that structure found by instance search.
+`A` is not assumed complete or Hausdorff: following the roadmap, `A⟨X₁,…,Xₖ⟩` — the
+`TauCeti.Huber.restrictedMvPowerSeriesCompletion` of
+`TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion` — is *defined* as the separated
+completion of the ring of restricted power series at the trivial weight family `Tᵢ = {1}`
+(Wedhorn Example 5.54), so for zero variables it is the separated completion of `A` itself.
 
 ## Main definitions
 
-* `TauCeti.Huber.restrictedMvPowerSeriesCompletion`: the completed restricted power-series
-  algebra `A⟨X₁,…,Xₖ⟩`.
 * `TauCeti.Huber.IsStronglyNoetherian`: every `A⟨X₁,…,Xₖ⟩` is a noetherian ring.
 
 ## Main results
 
-* `TauCeti.Huber.continuous_algebraMap_restrictedMvPowerSeriesCompletion`: the structure map
-  `A → A⟨X₁,…,Xₖ⟩` is continuous.
 * `TauCeti.Huber.IsStronglyNoetherian.of_discreteTopology`: a noetherian ring with the
   discrete topology is strongly noetherian — over a discrete ring the restricted series are
   the polynomials, already complete, and the Hilbert basis theorem applies. In particular
@@ -61,24 +57,6 @@ public section
 namespace TauCeti.Huber
 
 variable (k : ℕ) (A : Type*) [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
-
-/-- The completed restricted power-series algebra `A⟨X₁,…,Xₖ⟩` of a nonarchimedean commutative
-ring `A`: the separated completion of the ring of restricted power series in `k` variables —
-the weighted ring `TauCeti.Huber.weightedRestrictedSubring` at the trivial weight family
-`Tᵢ = {1}` — with respect to the uniformity of its ring topology. For `k = 0` this is the
-separated completion of `A` itself. -/
-noncomputable abbrev restrictedMvPowerSeriesCompletion : Type _ :=
-  UniformSpace.Completion
-    (weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight)
-
-/-- The structure map `A → A⟨X₁,…,Xₖ⟩` is continuous. -/
-theorem continuous_algebraMap_restrictedMvPowerSeriesCompletion :
-    Continuous (algebraMap A (restrictedMvPowerSeriesCompletion k A)) := by
-  have h : Continuous (algebraMap A (weightedRestrictedSubring
-      (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight)) :=
-    (continuous_weightedC isWeightFamily_one_weight).congr fun a ↦ Subtype.ext (by simp)
-  exact ((UniformSpace.Completion.continuous_coe _).comp h).congr fun a ↦
-    (UniformSpace.Completion.algebraMap_def _ _ a).symm
 
 /-- A nonarchimedean commutative ring is **strongly noetherian** when every completed
 restricted power-series algebra `A⟨X₁,…,Xₖ⟩` over it is noetherian. For `k = 0` this asks
