@@ -10,7 +10,6 @@ public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBounda
 
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Containment
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Deriv
-import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.Basic
 import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.Winding.NonCorner.Basic
 
 /-!
