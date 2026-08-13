@@ -20,9 +20,9 @@ Theorem 7.10 identifies `Cont A` inside `Spv (A, IA)` for a pair of definition `
 locus where additionally `v(a) < 1` for every `a ∈ I`. This file proves the two conjuncts of the
 inclusion — a continuous point lies in `Spv (A, IA)`, and it is sub-unit on the ideal of
 definition — then the converse, and assembles the identification
-`cont_eq_spvOfIdeal_inter_setOf_forall_vlt_one`.
+`cont_eq_spvOfIdeal_inter_setOfPred_forall_vlt_one`.
 
-The argument needs no estimate, and it needs no pair of definition either. Membership in
+For the inclusion, the argument needs no estimate and no pair of definition either. Membership in
 `Spv (A, I)` is `cΓ_v(I) = Γ_v`, which by Lemma 7.4 follows from cofinality of `v` at every
 element of a *spanning set*; and continuity turns topological nilpotence into cofinality. So the
 hypothesis that carries the proof is exactly "spanned by topologically nilpotent elements", which
@@ -49,7 +49,7 @@ nilpotent — the nilpotence is a property of the generators, not of the ideal t
   Lemma 7.4 reads membership as cofinality on `IA` or a full characteristic group, and either
   branch feeds the cofinality engine
   `TauCeti.Huber.PairOfDefinition.isContinuous_of_forall_cofinalValue`.
-* `TauCeti.ValuationSpectrum.cont_eq_spvOfIdeal_inter_setOf_forall_vlt_one` : **Theorem 7.10**,
+* `TauCeti.ValuationSpectrum.cont_eq_spvOfIdeal_inter_setOfPred_forall_vlt_one` : **Theorem 7.10**,
   the resulting identification of `Cont A` inside `Spv (A, IA)`.
 
 ## References
@@ -128,8 +128,9 @@ theorem not_vle_one_of_isContinuous_of_mem_idealOfDefinition (P : PairOfDefiniti
 on the ideal of definition is continuous.
 
 The sub-unit hypothesis quantifies over the ideal of definition `I` itself — through the
-subring inclusion — and not over the extension `IA`, where the coefficients range over all of
-`A` and the bound would say something strictly weaker. -/
+subring inclusion — and not over the extension `IA`. The `IA`-form would be the stronger
+demand (the extension contains the image of `I` among much else), and it is not what Theorem
+7.10's right-hand side supplies. -/
 theorem isContinuous_of_mem_spvOfIdeal_of_forall_vlt_one (P : PairOfDefinition A) {v : Spv A}
     (hmem : v ∈ spvOfIdeal P.extendedIdealOfDefinition
       ⟨P.extendedIdealOfDefinition, P.fg_extendedIdealOfDefinition, rfl⟩)
@@ -151,7 +152,7 @@ theorem isContinuous_of_mem_spvOfIdeal_of_forall_vlt_one (P : PairOfDefinition A
 
 /-- **Wedhorn Theorem 7.10.** The continuous points of the valuation spectrum of a Huber ring
 are exactly the points of `Spv (A, IA)` that are sub-unit on the ideal of definition. -/
-theorem cont_eq_spvOfIdeal_inter_setOf_forall_vlt_one (P : PairOfDefinition A) :
+theorem cont_eq_spvOfIdeal_inter_setOfPred_forall_vlt_one (P : PairOfDefinition A) :
     cont A = spvOfIdeal P.extendedIdealOfDefinition
         ⟨P.extendedIdealOfDefinition, P.fg_extendedIdealOfDefinition, rfl⟩ ∩
       {v : Spv A | ∀ a ∈ P.idealOfDefinition,
