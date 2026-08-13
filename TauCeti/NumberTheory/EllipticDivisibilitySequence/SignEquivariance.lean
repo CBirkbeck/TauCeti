@@ -58,7 +58,9 @@ oddness of `W` enters; nothing else here needs a hypothesis on `W`.
 Ported from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
 `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `rel₄_swap₀₁`, `rel₄_swap₁₂`,
-`rel₄_swap₂₃`, `relFin4`, `relFin4_perm` and `relFin4_perm'`. That file's header reads
+`rel₄_swap₂₃`, `relFin4` and `relFin4_perm`. The source's `relFin4_perm'` — the sign-cancelled
+orientation — was **considered and not ported**: it has no consumer until the descent slice, and
+lands there beside `rel₄_of_oddRec_evenRec`, the proof that uses it. That file's header reads
 `Authors: Junyan Xu`; following this repository's convention for adapted material the upstream
 authorship is credited here rather than in the copyright header.
 
