@@ -230,16 +230,15 @@ theorem infinityPlace_apply (f : W.FunctionField) :
 
 open scoped Classical in
 /-- The value of `infinityPlace` on a coordinate-ring element whose polynomial norm has positive
-degree `n` is `exp n`. The nonzero-norm transfer is built in: a zero polynomial would have degree
-zero. The two pole orders below are its instances. -/
+degree `n` is `exp n`: the norm commutes with the localization, and Mathlib values a nonzero
+polynomial at its degree. The two pole orders below are its instances. -/
 private theorem infinityPlace_algebraMap_of_natDegree_norm {u : W.CoordinateRing} {n : ℕ}
     (hn : n ≠ 0) (h : (Algebra.norm F[X] u).natDegree = n) :
     infinityPlace W (algebraMap W.CoordinateRing W.FunctionField u) = WithZero.exp (n : ℤ) := by
-  have hne : Algebra.norm (RatFunc F) (algebraMap W.CoordinateRing W.FunctionField u) ≠ 0 := by
-    rw [Algebra.norm_localization (M := nonZeroDivisors F[X])]
-    exact RatFunc.algebraMap_ne_zero (ne_zero_of_natDegree_gt (Nat.pos_of_ne_zero (h ▸ hn)))
-  rw [infinityPlace_apply, RatFunc.inftyValuation_apply, RatFunc.inftyValuation_of_nonzero F hne,
-    intDegree_norm_algebraMap_coordinateRing, h]
+  rw [infinityPlace_apply, RatFunc.inftyValuation_apply,
+    Algebra.norm_localization (M := nonZeroDivisors F[X]),
+    RatFunc.inftyValuation.polynomial F (ne_zero_of_natDegree_gt (Nat.pos_of_ne_zero (h ▸ hn))),
+    h]
 
 -- NB `infinityPlace.X` and `infinityPlace.mk_Y` (and this file's two `natDegree_norm_*`
 -- helpers) are deliberately NOT `@[simp]`: their left-hand sides are not in
