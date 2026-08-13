@@ -33,8 +33,9 @@ rings, which is plain from their statements.
 
 ## Main results
 
-* `TauCeti.TopCommRingCat.isClosed_eqLocus` : when the codomain is Hausdorff the agreement
-  subring is closed — the fact that will make equalizers of complete Hausdorff rings complete.
+The closedness of the agreement subring over a Hausdorff codomain — what will keep equalizers
+of complete separated rings complete — is Mathlib's `isClosed_eq` applied to the two morphisms'
+continuity fields; consumers use it directly rather than through a named specialization here.
 
 ## References
 
@@ -55,16 +56,16 @@ namespace TauCeti.TopCommRingCat
 
 open CategoryTheory Limits
 
-universe u
+universe v u
 
 /-- The explicit product fan of a family of topological commutative rings: the pointwise ring
 under the product topology, with the evaluation projections. -/
-@[expose]
-def piFan {β : Type u} (f : β → TopCommRingCat.{u}) : Fan f :=
+@[expose, simps! pt π_app]
+def piFan {β : Type v} (f : β → TopCommRingCat.{max u v}) : Fan f :=
   Fan.mk (TopCommRingCat.of (∀ b, f b)) fun b => ⟨Pi.evalRingHom _ b, continuous_apply b⟩
 
 /-- The pointwise ring under the product topology is the product in `TopCommRingCat`. -/
-def piFanIsLimit {β : Type u} (f : β → TopCommRingCat.{u}) : IsLimit (piFan f) where
+def piFanIsLimit {β : Type v} (f : β → TopCommRingCat.{max u v}) : IsLimit (piFan f) where
   lift s := ⟨RingHom.pi fun b => (s.π.app ⟨b⟩).val, continuous_pi fun b => (s.π.app ⟨b⟩).2⟩
   fac _ _ := rfl
   uniq s m h := by
@@ -72,17 +73,17 @@ def piFanIsLimit {β : Type u} (f : β → TopCommRingCat.{u}) : IsLimit (piFan 
     refine RingHom.ext fun x => funext fun b => ?_
     exact congrArg (fun g => (g : _ →+* _) x) (congrArg Subtype.val (h ⟨b⟩))
 
-instance {β : Type u} (f : β → TopCommRingCat.{u}) : HasProduct f :=
+instance {β : Type v} (f : β → TopCommRingCat.{max u v}) : HasProduct f :=
   HasLimit.mk ⟨piFan f, piFanIsLimit f⟩
 
-instance : HasProducts.{u} TopCommRingCat.{u} := fun _ =>
+instance : HasProducts.{v} TopCommRingCat.{max u v} := fun _ =>
   ⟨fun _ => hasLimit_of_iso Discrete.natIsoFunctor.symm⟩
 
 variable {R S : TopCommRingCat.{u}} (f g : R ⟶ S)
 
 /-- The explicit equalizer fork of a parallel pair: the agreement subring
 `RingHom.eqLocus` under the subspace topology. -/
-@[expose]
+@[expose, simps! pt π_app]
 def equalizerFork : Fork f g :=
   Fork.ofι (P := TopCommRingCat.of (RingHom.eqLocus f.val g.val))
     ⟨(RingHom.eqLocus f.val g.val).subtype, continuous_subtype_val⟩
@@ -107,13 +108,6 @@ instance : HasLimit (parallelPair f g) :=
 
 instance : HasEqualizers TopCommRingCat.{u} :=
   ⟨fun F => hasLimit_of_iso (diagramIsoParallelPair F).symm⟩
-
-/-- Over a Hausdorff codomain the agreement locus of two morphisms is closed. This is what
-makes the equalizer of complete Hausdorff topological rings complete: it is a closed subring
-of a complete ring. -/
-theorem isClosed_eqLocus [T2Space S] :
-    IsClosed ((RingHom.eqLocus f.val g.val : Subring R) : Set R) :=
-  isClosed_eq f.2 g.2
 
 end TauCeti.TopCommRingCat
 
