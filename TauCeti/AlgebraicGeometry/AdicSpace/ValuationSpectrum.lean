@@ -282,9 +282,8 @@ lemma valuation_le_iff (v : Spv A) (x y : A) :
   ((ValuativeRel.valuation A).vle_iff_le (x := x) (y := y)).symm
 
 /-- Strict comparison under the canonical valuation of a point is the point's strict valuative
-relation — the strict sibling of `valuation_le_iff`. `Spv.valuation` is not exposed across the
-module boundary, so this equation is how consumers convert `vlt` hypotheses into valuation
-inequalities. -/
+relation — the strict sibling of `valuation_le_iff`, and the direct bridge between strict
+valuation inequalities and `vlt` hypotheses. -/
 @[simp]
 lemma valuation_lt_iff (v : Spv A) (x y : A) :
     v.valuation x < v.valuation y ↔ v.toValuativeRel.vlt x y :=
