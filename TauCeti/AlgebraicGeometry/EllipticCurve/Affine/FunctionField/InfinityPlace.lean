@@ -320,10 +320,9 @@ pole of `y` differ by one, which is what makes the quotient a uniformiser. -/
 theorem infinityPlace.X_div_mk_Y :
     infinityPlace W (algebraMap W.CoordinateRing W.FunctionField
         (algebraMap F[X] W.CoordinateRing Polynomial.X) /
-      algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y))
-      = WithZero.exp (-1) := by
+      algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y)) = WithZero.exp (-1) := by
   rw [map_div₀, infinityPlace.X, infinityPlace.mk_Y, ← WithZero.exp_sub]
-  norm_num
+  rfl
 
 open scoped Classical in
 -- The place is discrete of rank one for free — its value group is a subgroup of the cyclic group
@@ -340,8 +339,7 @@ theorem infinityPlace.isUniformizer_X_div_mk_Y :
       algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.mk W Y)) := by
   rw [Valuation.IsUniformizer.iff,
     Valuation.IsRankOneDiscrete.generator_eq_exp_neg_one_of_mem_range
-      ⟨_, infinityPlace.X_div_mk_Y W⟩,
-    Units.val_mk0]
+      ⟨_, infinityPlace.X_div_mk_Y W⟩]
   exact infinityPlace.X_div_mk_Y W
 
 
