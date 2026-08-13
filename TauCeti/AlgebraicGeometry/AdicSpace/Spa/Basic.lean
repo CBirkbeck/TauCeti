@@ -37,10 +37,11 @@ them: spectrality (Wedhorn Theorem 7.35) is the first such theorem, and it lives
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.mem_spa_iff` : membership is continuity plus the sub-unit
-  condition on the plus ring.
-* `TauCeti.ValuationSpectrum.spa_subset_cont` and `TauCeti.ValuationSpectrum.spa_antitone` :
-  the spectrum sits inside `Cont A` and shrinks as the plus ring grows.
+* `TauCeti.ValuationSpectrum.spa_def` and `TauCeti.ValuationSpectrum.mem_spa_iff` : the
+  set-level and membership-level characterizations — the definition is not exposed across the
+  module boundary, so these two are the exported interface.
+* `TauCeti.ValuationSpectrum.spa_antitone` : the spectrum shrinks as the plus ring grows. Its
+  inclusion into `Cont A` is `spa_def ▸ Set.inter_subset_left`.
 
 ## References
 
@@ -60,14 +61,19 @@ integral elements is a hypothesis of later theorems, not of the definition. -/
 def spa (Aplus : Subring A) : Set (Spv A) :=
   cont A ∩ {v : Spv A | ∀ a ∈ Aplus, v.toValuativeRel.vle a 1}
 
+/-- The set-level characterization of the adic spectrum: `spa` is the intersection of the
+continuous locus with the sub-unit locus of the plus ring. The definition is not exposed
+across the module boundary, so this equation is how consumers apply set-level results to
+`spa` — for instance `spa_def ▸ Set.inter_subset_left : spa Aplus ⊆ cont A`. -/
+theorem spa_def (Aplus : Subring A) :
+    spa Aplus = cont A ∩ {v : Spv A | ∀ a ∈ Aplus, v.toValuativeRel.vle a 1} := (rfl)
+
+/-- Membership in the adic spectrum is continuity together with the sub-unit condition on the
+plus ring: `v ∈ Spa (A, A⁺)` iff `v` is continuous and `v(a) ≤ 1` for every `a ∈ A⁺`. -/
 @[simp]
 theorem mem_spa_iff (Aplus : Subring A) (v : Spv A) :
     v ∈ spa Aplus ↔ v.IsContinuous ∧ ∀ a ∈ Aplus, v.toValuativeRel.vle a 1 := by
-  rw [spa, Set.mem_inter_iff, mem_cont_iff, Set.mem_ofPred_eq]
-
-/-- The adic spectrum sits inside the continuous locus. -/
-theorem spa_subset_cont (Aplus : Subring A) : spa Aplus ⊆ cont A :=
-  Set.inter_subset_left
+  rw [spa_def, Set.mem_inter_iff, mem_cont_iff, Set.mem_ofPred_eq]
 
 /-- Enlarging the plus ring shrinks the adic spectrum. -/
 theorem spa_antitone : Antitone (spa (A := A)) := fun _ _ hle ↦
