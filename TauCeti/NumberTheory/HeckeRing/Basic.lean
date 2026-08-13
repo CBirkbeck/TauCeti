@@ -192,6 +192,19 @@ lemma conj_mem_of_stabilizer {H : Subgroup G} (g : G)
     ConjAct.smul_def] at hn
   simpa [ConjAct.ofConjAct_toConjAct] using hn
 
+/-- Equality of classes in `DecompQuotient H H g` gives the conjugation relation between their
+representatives: `u₁⁻¹ u₂` lies in the stabilizer indexing the decomposition, so conjugating it
+by `g` lands back in `H`.
+
+This is the form to reach for when a class equality `⟦u₁⟧ = ⟦u₂⟧` has to be turned into a
+membership. `QuotientGroup.eq` supplies the stabilizer membership and
+`conj_mem_of_stabilizer` does the conjugation; unfolding `QuotientGroup.leftRel` by hand
+duplicates both. -/
+lemma conj_mem_of_mk_eq {H : Subgroup G} (g : G) {u₁ u₂ : H}
+    (h : (QuotientGroup.mk u₁ : DecompQuotient H H g) = QuotientGroup.mk u₂) :
+    g⁻¹ * ((u₁ : G)⁻¹ * u₂) * g ∈ H :=
+  conj_mem_of_stabilizer g ⟨_, QuotientGroup.eq.mp h⟩
+
 end DoubleCoset
 
 namespace IsHeckeTriple
