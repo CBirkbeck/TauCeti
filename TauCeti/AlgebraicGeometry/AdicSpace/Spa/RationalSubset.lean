@@ -105,6 +105,7 @@ open scoped Classical Pointwise in
 /-- **Wedhorn Remark 7.30(5)**: rational subsets are stable under finite intersection, with
 the numerator products over the denominator product presenting the intersection. This is the
 form Theorem 7.35's own proof consumes. -/
+@[simp]
 theorem rationalSubset_inter (Aplus : Subring A) (T₁ T₂ : Finset A) (s₁ s₂ : A) :
     rationalSubset Aplus T₁ s₁ ∩ rationalSubset Aplus T₂ s₂
       = rationalSubset Aplus (insert s₁ T₁ * insert s₂ T₂) (s₁ * s₂) := by
