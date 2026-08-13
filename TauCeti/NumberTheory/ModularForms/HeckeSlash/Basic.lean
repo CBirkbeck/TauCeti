@@ -138,6 +138,12 @@ sufficiency theorem is available. -/
 noncomputable def heckeSlashSum (f : ℍ → ℂ) : ℍ → ℂ :=
   ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ), f ∣[k] transposeRep D i
 
+/-- Defining equation for `heckeSlashSum` at the level of functions. Since `heckeSlashSum` is
+not `@[expose]`, a downstream module rewrites with this instead of unfolding the body; the
+pointwise `heckeSlashSum_apply` below is the companion for arguments that work at a point. -/
+lemma heckeSlashSum_def (f : ℍ → ℂ) : heckeSlashSum k D f =
+    ∑ i : DecompQuotient (SLnZ 2) (SLnZ 2) (D.out : GL (Fin 2) ℚ), f ∣[k] transposeRep D i := (rfl)
+
 /-- The pointwise value of the slash sum: the sum of the slashed values. This is the equation
 the reindexing proof of Prop 3.30 works from. -/
 lemma heckeSlashSum_apply (f : ℍ → ℂ) (τ : ℍ) : heckeSlashSum k D f τ =
