@@ -293,7 +293,7 @@ private lemma half_edge_of_boundary (hp : p ∈ 𝒟) (hI : (p : ℂ) ≠ Comple
   rcases eq_or_lt_of_le (Complex.one_le_normSq_iff.mp hp.1) with heq | hgt
   · rcases lt_trichotomy (p : ℂ).re 0 with h | h | h
     · exact Or.inr (Or.inr (Or.inr ⟨hρ, heq.symm, h⟩))
-    · exact absurd (coe_eq_I_of_re_eq_zero heq.symm h) hI
+    · exact absurd ((congrArg _ (eq_I_of_re_eq_zero heq.symm h)).trans coe_I) hI
     · exact Or.inr (Or.inr (Or.inl ⟨hρ₁, heq.symm, h⟩))
   · have habs : |(p : ℂ).re| = 1 / 2 := le_antisymm hp.2 (not_lt.mp fun h ↦ hint ⟨hgt, h⟩)
     rcases (abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp habs with h | h

@@ -57,16 +57,12 @@ on the contour.
   interior of the truncated fundamental domain.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq`: the
   valence formula `Σ_int ord_q + Σ_leftVert ord_q + Σ_{leftArc∖ρ} ord_q + ½·ord_i + ⅓·ord_ρ +
-  ord_∞ = k/12` for a nonzero level-one form and a divisor set complete for the closed
-  fundamental domain — the divisor may meet the corners, the vertical edges and the unit arc,
-  each boundary pair entering by its left representative. Only the cusp-function
-  non-vanishing `hgz` remains a hypothesis at this fixed height `H`; contour non-vanishing
-  and cusp analyticity are derived internally.
-* `sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero`
-  (in `TauCeti.ModularForm`): the same identity from nonvanishing and completeness alone; the
-  height is chosen internally — above the divisor set (`exists_height_bound`) and above the
-  threshold past which the shrinking `q`-disk `fdBoundaryQRadius H = exp (-2πH)` sits inside
-  the cusp function's non-vanishing neighbourhood — and the analytic inputs are constructed.
+  ord_∞ = k/12` for a nonzero level-one form and a divisor set that is complete for the
+  closed fundamental domain and confined to it: every point of `𝒟` of nonzero order lies in
+  `S` (`hcomp`), and every point of `S` of nonzero order lies in `𝒟` (`hSfd`). The divisor
+  may meet the corners, the vertical edges and the unit arc — each boundary pair enters by
+  its left representative — and the truncation height and every analytic input are chosen
+  internally.
 * `finsum_orderOfVanishingOnOrbit_mem_image_add_elliptic_add_qExpansionOrderAtCusp_eq`
   (in `TauCeti.ModularForm`):
   the same identity with the interior sum reindexed over the orbits its points represent. ⚠ That
@@ -74,11 +70,16 @@ on the contour.
 
 ## References
 
-* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) — the valence-formula
-  development. The `ε → 0` step follows `ForMathlib/ValenceFormula/PVChain/Assembly.lean`
-  (`cpv_modular_side_tendsto`), and the identification with the argument principle follows
-  `ForMathlib/ValenceFormulaFinal.lean`, both ported onto the current Mathlib pin. The
+* [AINTLIB `LeanModularForms`](https://github.com/CBirkbeck/AINTLIB) (commit
+  `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck) — the
+  valence-formula development. The `ε → 0` step follows
+  `ForMathlib/ValenceFormula/PVChain/Assembly.lean` (`cpv_modular_side_tendsto`), the
+  identification with the argument principle follows `ForMathlib/ValenceFormulaFinal.lean`,
+  and the internal-height threshold assembly follows `valence_formula_general_S_FM` in
+  `ForMathlib/ValenceFormula.lean`, all ported onto the current Mathlib pin. The
   two-excision-set formulation and the route through `HasCauchyPV.unique` are Tau Ceti's.
+* J.-P. Serre, *A Course in Arithmetic*, VII §3 Theorem 3 — the classical statement and
+  contour argument this file formalizes.
 -/
 
 public section
@@ -443,21 +444,6 @@ private lemma sum_attach_mul_orderOfVanishingAt {f : ℍ → ℂ} {X : Finset �
   exact Finset.sum_congr rfl fun z _ => by rw [ofComplex_apply_of_im_pos (hX _ z.2)]
 
 
-/-- The height of the `ρ`-corner. -/
-private lemma coe_rho_im : (ρ : ℂ).im = Real.sqrt 3 / 2 := by simp [UpperHalfPlane.ρ]
-
-/-- The `i`-corner sits at height `1` and both `ρ`-corners at height `√3/2 < 1`, so the three
-elliptic corners are distinct. -/
-private lemma corner_notMem :
-    Complex.I ∉ ({(ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) ∧
-      (ρ : ℂ) ∉ ({(ρ : ℂ) + 1} : Finset ℂ) := by
-  have hne : (ρ : ℂ).im ≠ Complex.I.im := by
-    rw [coe_rho_im, Complex.I_im]
-    exact ne_of_lt sqrt_three_div_two_lt_one
-  refine ⟨?_, by simp⟩
-  simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
-  exact ⟨fun h => hne (by simp [h]), fun h => hne (by simp [h])⟩
-
 /-- A corner the divisor set misses has order `0`: the corners lie in the closed fundamental
 domain, so a nonzero order would put them into any complete set. -/
 private lemma orderOfVanishingAt_corner_eq_zero {f : ℍ → ℂ} {S : Finset ℍ}
@@ -542,8 +528,9 @@ private lemma windingNumber_coe_eq_neg_half {H : ℝ} {p : ℍ} (hH : 1 < H) (hp
     rcases lt_or_eq_of_le hp.2 with h | h
     · exact h
     · rcases (abs_eq (by norm_num : (0 : ℝ) ≤ 1 / 2)).mp h with h' | h'
-      · exact absurd (coe_eq_ρ_add_one_of_re heq.symm h') hc.2.2
-      · exact absurd (coe_eq_ρ_of_re heq.symm h') hc.2.1
+      · exact absurd ((congrArg _ (eq_vadd_one_ρ_of_re_eq_half heq.symm h')).trans
+          coe_vadd_one_ρ) hc.2.2
+      · exact absurd (congrArg _ (eq_ρ_of_re_eq_neg_half heq.symm h')) hc.2.1
   · have habs : |(p : ℂ).re| = 1 / 2 := le_antisymm hp.2 (not_lt.mp fun h => hint ⟨hgt, h⟩)
     refine windingNumber_fdBoundary_vertical ?_ hgt p.2 him
     rw [← one_div]
@@ -582,12 +569,7 @@ private lemma notMem_corner_of_interior {p : ℍ}
     (hp : 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2) :
     (p : ℂ) ∉ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ) := by
   intro hmem
-  have h1 : ‖(p : ℂ)‖ = 1 := by
-    simp only [Finset.mem_insert, Finset.mem_singleton] at hmem
-    rcases hmem with h | h | h <;> rw [h]
-    · exact Complex.norm_I
-    · exact norm_ρ
-    · exact norm_ρ_add_one
+  have h1 : ‖(p : ℂ)‖ = 1 := norm_eq_one_of_mem_ellipticPoints hmem
   rw [h1] at hp
   exact lt_irrefl 1 hp.1
 
@@ -699,11 +681,12 @@ private lemma fdBoundary_zero_notMem_image {H : ℝ} {S : Finset ℍ}
   rw [← he] at him
   exact absurd him (ne_of_lt (hHgt p hp))
 
--- Step 4 of the rung-1 bridge. Analyticity is holomorphy transported through `ofComplex`.
--- Non-vanishing is where the zeros-confinement clause earns its place: a zero of `g ∘ ofComplex`
--- inside `U` must already lie in the truncated fundamental domain, and completeness of `T` over
--- that domain then puts it in `T`.
-private lemma hoff_of_zeros_confined {g : ℍ → ℂ} (hg : MDiff g) {U : Set ℂ} {T : Finset ℂ} {H : ℝ}
+/-- Off a set capturing the confined zeros, the transported form is analytic and nonzero:
+analyticity is holomorphy transported through `ofComplex`, and a zero of `g ∘ ofComplex`
+inside `U` must already lie in the truncated fundamental domain, where completeness of `T`
+puts it in `T`. -/
+private lemma analyticAt_comp_ofComplex_and_ne_zero_of_notMem_of_zeros_confined {g : ℍ → ℂ}
+    (hg : MDiff g) {U : Set ℂ} {T : Finset ℂ} {H : ℝ}
     (hUsub : U ⊆ {z : ℂ | 0 < z.im})
     (hUZ : {z ∈ U | (g ∘ ofComplex) z = 0} =
       {z ∈ UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H |
@@ -716,11 +699,12 @@ private lemma hoff_of_zeros_confined {g : ℍ → ℂ} (hg : MDiff g) {U : Set �
   have hz := hUZ.subset (⟨hzU, h0⟩ : z ∈ {z ∈ U | (g ∘ ofComplex) z = 0})
   exact hT z hz.1 hz.2
 
--- Step 5b of the rung-1 bridge: this is where the `∃ H₀` of the final statement comes from.
--- `cuspFunction_eventually_ne_zero` gives non-vanishing on *some* punctured neighbourhood of `0`,
--- while the contour needs it on the disc of radius `fdBoundaryQRadius H = exp (-2 π H)`. That
--- radius shrinks as `H` grows, so the disc sits inside the neighbourhood only above a threshold —
--- it cannot hold for every `H`.
+/-- Above a threshold height, the cusp function is nonvanishing on the punctured contour
+`q`-disk: `cuspFunction_eventually_ne_zero` gives non-vanishing on *some* punctured
+neighbourhood of `0`, while the contour needs it on the disc of radius
+`fdBoundaryQRadius H = exp (-2πH)` — that radius shrinks as `H` grows, so the disc sits
+inside the neighbourhood exactly above a threshold. The threshold device follows
+`valence_formula_general_S_FM` in `ForMathlib/ValenceFormula.lean` of AINTLIB. -/
 private lemma exists_threshold_cuspFunction_ne_zero [ModularFormClass F 𝒮ℒ k] {f : F}
     (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     ∃ H₀ : ℝ, ∀ H : ℝ, H₀ ≤ H →
@@ -774,16 +758,18 @@ The statement shape follows `valence_formula_textbook_unconditional_FM` in
 Only the cusp-function non-vanishing `hgz` remains an analytic hypothesis — it holds only
 above a height threshold, so this fixed-`H` statement cannot construct it. The zero-confining
 neighbourhood and the cusp-function analyticity are built internally
-(`UpperHalfPlane.exists_isOpen_zeros_inter` with `hoff_of_zeros_confined`, and
-`analyticAt_cuspFunction_of_mem_closedBall`) — completeness over the closed fundamental
-domain hands the confinement its capture hypothesis — while the
+(`UpperHalfPlane.exists_isOpen_zeros_inter` with
+`analyticAt_comp_ofComplex_and_ne_zero_of_notMem_of_zeros_confined`, and
+`analyticAt_cuspFunction_of_mem_closedBall`) — the confinement's capture hypothesis is handed
+to it by completeness over the closed domain (`hcomp`), with `hSfd` confining `S` back into
+`𝒟` — while the
 along-contour non-vanishing that the excised assembly needs is *derived*: a contour zero is a
 nonzero-order point of the truncated fundamental domain, so completeness captures it into
 `arcSingularSet S ∪ verticalSingularSet S`
 (`fdBoundary_mem_arcSingularSet_union_verticalSingularSet_of_comp_eq_zero`), which is exactly
 the set the assembly excises. That capture argument is what forces `f` to be a genuine
 level-one modular form here rather than an abstract slash-invariant one. -/
-theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
+private theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_im_lt
     [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {H : ℝ} {S : Finset ℍ}
     (hH : 1 < H)
     (hSfd : ∀ p ∈ S, orderOfVanishingAt ⇑f p ≠ 0 → p ∈ 𝒟)
@@ -808,7 +794,7 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     (image_subset_iff.mpr fun p _ ↦ p.im_pos)
   have hoff : ∀ z ∈ U, z ∉ S.image ((↑·) : ℍ → ℂ) →
       AnalyticAt ℂ (⇑f ∘ ofComplex) z ∧ (⇑f ∘ ofComplex) z ≠ 0 := by
-    refine hoff_of_zeros_confined hg hUsub hUZ ?_
+    refine analyticAt_comp_ofComplex_and_ne_zero_of_notMem_of_zeros_confined hg hUsub hUZ ?_
     rintro z ⟨q, hq, rfl⟩ h0
     exact Finset.mem_image_of_mem _ (hcomp q hq.1 (orderOfVanishingAt_ne_zero_of_eq_zero hg hf
       (by simpa [Function.comp_apply, ofComplex_apply] using h0)))
@@ -836,16 +822,20 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
   linear_combination -key
 
 
-/-- **The valence formula for a nonzero level-one modular form.** Only nonvanishing and
-completeness of the divisor set remain: the truncation height and the last analytic input of
-`sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq` are constructed here.
+/-- **The valence formula for a nonzero level-one modular form.** Beyond nonvanishing, the
+divisor set is only asked to capture the closed fundamental domain's divisor in both
+directions — every point of `𝒟` of nonzero order lies in `S` (`hcomp`), and every point of
+`S` of nonzero order lies in `𝒟` (`hSfd`); the truncation height and every analytic input
+are constructed in the fixed-height layer above.
 
-The height is internal, following the AINTLIB proof: `exists_height_bound` dominates the
-divisor set, and `exists_threshold_cuspFunction_ne_zero` supplies the threshold above which the
-`q`-disk of radius `fdBoundaryQRadius H = exp (-2πH)` sits inside the cusp function's
-non-vanishing neighbourhood — the maximum of the two serves, and above it the cusp-function
-non-vanishing `hgz` holds. -/
-theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero
+The height is internal, following `valence_formula_general_S_FM` in
+`ForMathlib/ValenceFormula.lean` of AINTLIB (github.com/CBirkbeck/AINTLIB, revision
+2baa76f742bdb4fb8ee323fabba41203bd390e08): `exists_height_bound` dominates the divisor set,
+and `exists_threshold_cuspFunction_ne_zero` supplies the threshold above which the `q`-disk
+of radius `fdBoundaryQRadius H = exp (-2πH)` sits inside the cusp function's non-vanishing
+neighbourhood — the maximum of the two serves, and above it the cusp-function non-vanishing
+`hgz` holds. -/
+theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     [ModularFormClass F 𝒮ℒ k] (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) {S : Finset ℍ}
     (hSfd : ∀ p ∈ S, orderOfVanishingAt ⇑f p ≠ 0 → p ∈ 𝒟)
     (hcomp : ∀ p, p ∈ 𝒟 → orderOfVanishingAt ⇑f p ≠ 0 → p ∈ S) :
@@ -860,7 +850,7 @@ theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_z
         + qExpansionOrderAtCusp 1 ⇑f = (k : ℂ) / 12 := by
   obtain ⟨H₀, hH₀⟩ := exists_threshold_cuspFunction_ne_zero hf
   obtain ⟨H₁, -, hH₁1, hH₁⟩ := exists_height_bound S
-  exact sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq f hf
+  exact sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_im_lt f hf
     (hH₁1.trans_le (le_max_right _ _)) hSfd hcomp
     (fun p hp => (hH₁ p hp).trans_le (le_max_right _ _)) (hH₀ _ (le_max_left _ _))
 
@@ -903,7 +893,7 @@ theorem finsum_orderOfVanishingOnOrbit_mem_image_add_elliptic_add_qExpansionOrde
     sum_orderOfVanishingAt_eq_finsum_orbit f (fun p : ℍ ↦ p) fun a ha b hb hab =>
       TauCeti.ModularGroup.orbit_mk_injOn_fdo (hfdo a (by simpa using ha))
         (hfdo b (by simpa using hb)) hab
-  have key := sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero
+  have key := sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     f hf hSfd hcomp
   rw [← horb]
   push_cast
