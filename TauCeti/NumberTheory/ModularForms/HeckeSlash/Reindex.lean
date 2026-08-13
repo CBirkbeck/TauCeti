@@ -120,9 +120,9 @@ lemma slash_transposeRep_of_mem_SLnZ {h₁ h₂ : GL (Fin 2) ℚ} (hh₁ : h₁ 
     f ∣[k] (transposeGLEquiv 2 (h₁ * ↑D.out * h₂)).unop = f ∣[k] transposeRep D ⟦⟨h₁, hh₁⟩⟧ := by
   rw [transposeGLEquiv_eq_mul_transposeRep D ⟦⟨h₁, hh₁⟩⟧ h₁ h₂]
   -- The leftover factor lies in `H`: `Quotient.out_eq` says the chosen representative of `⟦h₁⟧`
-  -- is in `h₁`'s own class, so `QuotientGroup.eq` puts `σ⁻¹ h₁` in the stabilizer indexing the
-  -- decomposition, and `conj_mem_of_stabilizer` conjugates that by `δ` back into `H`.
+  -- is in `h₁`'s own class, and `conj_mem_of_mk_eq` turns that class equality into the
+  -- conjugated membership in one step.
   exact slash_transpose_mul_of_mem_SLnZ k
-    (mul_mem (conj_mem_of_stabilizer _ ⟨_, QuotientGroup.eq.mp (Quotient.out_eq _)⟩) hh₂) _ f hf
+    (mul_mem (conj_mem_of_mk_eq _ (Quotient.out_eq _)) hh₂) _ f hf
 
 end HeckeRing.GL2
