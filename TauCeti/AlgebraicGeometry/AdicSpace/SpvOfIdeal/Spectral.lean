@@ -80,6 +80,10 @@ below is the public neighbourhood interface that merges them.)
 * `TauCeti.ValuationSpectrum.isSpectralMap_restrictToIdealCodRestrict` : **Lemma 7.5(2)**, the
   spectral-map half, closing out Lemma 7.5: spectrality is tested on the basis `R`, whose
   preimages step (iii) computes and `isCompact_basicOpenFinset` bounds.
+* `TauCeti.ValuationSpectrum.isProConstructible_val_preimage_setOfPred_forall_vle_one` : the
+  sub-unit locus of a set of ring elements is pro-constructible in `Spv (A, I)` — the form
+  Wedhorn's Theorem 7.35 consumes, proved from the rational family since the inclusion into
+  `Spv A` is not spectral.
 
 ## References
 
@@ -521,5 +525,35 @@ theorem isSpectralMap_restrictToIdealCodRestrict (I : Ideal A)
   rintro _ ⟨T, u, hadm, rfl⟩
   rw [restrictToIdealCodRestrict_preimage I hfg hadm]
   exact isCompact_basicOpenFinset T u
+
+/-! ### The sub-unit locus is pro-constructible in `Spv (A, I)` -/
+
+/-- **The locus `v ≤ 1` on a set of ring elements is pro-constructible in `Spv (A, I)`.** Its
+trace is the intersection over `a ∈ S` of the rational subsets `Spv(A,I)({a,1}/1)`, each a
+quasi-compact open of the subspace by `isCompact_of_mem_rationalFamily` — carrying `1` among
+the numerators makes the pair admissible for any `I` (`isAdmissible_of_one_mem`).
+
+This is the form Wedhorn's Theorem 7.35 consumes at `S = A⁺`. It does not follow from the
+corresponding `Spv A` statement by restriction — the inclusion `Spv (A, I) → Spv A` is not
+spectral — which is why it is proved here from the rational family instead. -/
+theorem isProConstructible_val_preimage_setOfPred_forall_vle_one (I : Ideal A)
+    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) (S : Set A) :
+    IsProConstructible (Subtype.val ⁻¹' {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vle a 1} :
+      Set (spvOfIdeal I hfg)) := by
+  classical
+  have h : (Subtype.val ⁻¹' {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vle a 1} :
+      Set (spvOfIdeal I hfg)) = ⋂ a ∈ S, Subtype.val ⁻¹' basicOpenFinset {a, 1} 1 := by
+    ext w
+    simp only [Set.mem_preimage, Set.mem_ofPred_eq, Set.mem_iInter, mem_basicOpenFinset_iff]
+    refine forall₂_congr fun a _ ↦ ⟨fun hle ↦ ⟨fun t ht ↦ ?_,
+      (w : Spv A).toValuativeRel.not_vle_one_zero⟩, fun ⟨hT, _⟩ ↦ hT a (by simp)⟩
+    rcases Finset.mem_insert.mp ht with rfl | ht
+    · exact hle
+    · rw [Finset.mem_singleton.mp ht]
+      exact (w : Spv A).toValuativeRel.vle_refl 1
+  rw [h]
+  exact IsProConstructible.biInter fun a _ ↦ IsCompact.isProConstructible
+    (isCompact_of_mem_rationalFamily I hfg ⟨{a, 1}, 1, isAdmissible_of_one_mem (by simp), rfl⟩)
+    ((isOpen_basicOpenFinset _ _).preimage continuous_subtype_val)
 
 end TauCeti.ValuationSpectrum

@@ -32,7 +32,7 @@ The quasi-compactness of the basic opens also yields, by stability of pro-constr
 under intersections, that the sub-unit locus `{v | ∀ a ∈ S, v(a) ≤ 1}` is pro-constructible in
 `Spv A`. Like everything above this is a statement about `Spv A` itself, subject to the same
 non-transfer caveat: the `Spv (A, IA)` analogue that Theorem 7.35 consumes is proved on that
-side, not by restriction.
+side (`isProConstructible_val_preimage_setOfPred_forall_vle_one`), not by restriction.
 
 ## Main definitions
 
@@ -53,7 +53,8 @@ side, not by restriction.
 * `TauCeti.ValuationSpectrum.isProConstructible_setOfPred_forall_vle_one` : the locus
   `v ≤ 1` on a set of ring elements is pro-constructible **in `Spv A`** — the `Spv A`-level
   shape of the sub-unit condition of `Spa (A, A⁺)`; the `Spv (A, IA)` statement that Wedhorn's
-  Theorem 7.35 consumes is proved on that side, since the inclusion is not spectral.
+  Theorem 7.35 consumes is `isProConstructible_val_preimage_setOfPred_forall_vle_one`
+  (`SpvOfIdeal/Spectral.lean`), proved there since the inclusion is not spectral.
 
 ## Provenance
 
@@ -271,8 +272,8 @@ lemma isCompact_basicOpenFinset (T : Finset A) (s : A) : IsCompact (basicOpenFin
 At `S = A⁺` this is the `Spv A`-level shape of the sub-unit condition cutting `Spa (A, A⁺)`
 out of `Cont A` (`spa_def`). Wedhorn's Theorem 7.35 consumes the corresponding statement in
 `Spv (A, IA)`, which does not follow from this one by restriction — the inclusion
-`Spv(A,I) → Spv A` is not spectral — and must instead be proved there from the rational
-family, where the denominator `1` is admissible. -/
+`Spv(A,I) → Spv A` is not spectral — and is instead proved from the rational family as
+`isProConstructible_val_preimage_setOfPred_forall_vle_one` in `SpvOfIdeal/Spectral.lean`. -/
 theorem isProConstructible_setOfPred_forall_vle_one (S : Set A) :
     IsProConstructible {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vle a 1} := by
   have h : {v : Spv A | ∀ a ∈ S, v.toValuativeRel.vle a 1} = ⋂ a ∈ S, basicOpen a 1 := by
