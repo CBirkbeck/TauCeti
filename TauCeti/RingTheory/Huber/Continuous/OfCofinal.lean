@@ -56,7 +56,7 @@ from these hypotheses.
   finite generating set with every generator cofinal.
 * `TauCeti.Huber.PairOfDefinition.cofinalValue_of_hasFullCharacteristicGroup` : the supply for
   Lemma 7.4's other branch — a full characteristic group makes every ideal-of-definition value
-  cofinal.
+  cofinal, given `v a < 1` on the ideal of definition.
 
 ## References
 
@@ -136,12 +136,15 @@ theorem isContinuous_of_forall_cofinalValue (P : PairOfDefinition A) (v : Valuat
     exact isContinuous_of_forall_le_of_cofinalValue P v hgen
       (fun t ht ↦ ht₀max t (Finset.mem_coe.mp ht)) h1 (hcof t₀ ht₀s)
 
-/-- **Full characteristic group makes every ideal-of-definition value cofinal.**
+/-- **Full characteristic group makes every ideal-of-definition value cofinal**, given the
+sub-unit bound `v a < 1` on the ideal of definition.
 
 This is the `Γ_v = cΓ_v` branch of Wedhorn's proof of Theorem 7.10, `⊇` direction: Lemma 7.4
 splits membership in `Spv (A, IA)` into cofinality on `IA` — which
 `isContinuous_of_forall_cofinalValue` consumes directly — or full characteristic group, which
-this lemma reduces to the first case. -/
+this lemma reduces to the first case. The sub-unit bound is what hands the valuation-level lemma
+its neighbourhood: `v a < 1` on `I` places the open ideal image inside the unit ball, so the
+unit ball is itself a neighbourhood of `0`. -/
 theorem cofinalValue_of_hasFullCharacteristicGroup (P : PairOfDefinition A)
     (v : Valuation A Γ₀) (hfull : HasFullCharacteristicGroup v)
     (h1 : ∀ a ∈ P.idealOfDefinition, v ((a : P.ringOfDefinition) : A) < 1)
