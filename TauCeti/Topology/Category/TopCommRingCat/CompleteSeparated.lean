@@ -6,9 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import Mathlib.Topology.Category.TopCommRingCat
-public import Mathlib.Topology.Algebra.IsUniformGroup.Defs
 public import Mathlib.Topology.Algebra.IsUniformGroup.Constructions
-public import Mathlib.Topology.UniformSpace.Pi
 
 /-!
 # The category of complete separated topological commutative rings
