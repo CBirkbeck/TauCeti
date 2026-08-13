@@ -28,6 +28,8 @@ so a consumer holding `A[1/s]` in another presentation can use the topology dire
 * `locUniformSpace P T s S` : the uniformity `locTopology` determines, packaged so that
   `UniformSpace.Completion S` — Wedhorn's `A⟨T/s⟩` — can be written down.
 * `toCompletionLoc P T s S` : the structure map `A → A⟨T/s⟩`.
+* `completionLocalization P T s S` : the pair of definition `A⟨T/s⟩` carries. Its body is exposed,
+  so `PairOfDefinition.completion`'s ring and ideal characterisations apply to it directly.
 
 ## Main results
 
@@ -77,7 +79,9 @@ so a consumer holding `A[1/s]` in another presentation can use the topology dire
   computes the structure map.
 * `isHuberRing_completion_locTopology` and
   `existsUnique_continuous_ringHom_completion_locTopology`: the separated completion `A⟨T/s⟩` is
-  Huber, and the same universal property holds across it for complete Hausdorff targets.
+  Huber — witnessed by `completionLocalization`, exactly as `localization` witnesses
+  `isHuberRing_locTopology` — and the same universal property holds across it for complete
+  Hausdorff targets.
 
 ## Provenance
 
@@ -912,7 +916,7 @@ It is *the* uniformity, not merely one compatible with the topology:
 `IsUniformAddGroup.rightUniformSpace_eq` identifies it with any uniformity making `Aₛ` a uniform
 additive group, so a consumer arriving with its own such structure rewrites rather than
 transports. -/
-@[instance_reducible]
+@[instance_reducible, expose]
 noncomputable def locUniformSpace (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type*)
     [CommRing S] [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
     [IsTopologicalRing A] : UniformSpace S :=
@@ -964,6 +968,26 @@ theorem toCompletionLoc_apply [IsTopologicalRing A] (P : PairOfDefinition A) (T 
     toCompletionLoc P T s S hden a = (algebraMap A S a : UniformSpace.Completion S) := (rfl)
 
 
+/-- **The pair of definition on `A⟨T/s⟩`**, the completion of the pair `localization` carries on
+`Aₛ`. This is the completed counterpart of `localization`, and it is what makes `A⟨T/s⟩` Huber.
+
+The body is exposed, unlike `localization`'s: it is the one-line composite
+`(localization …).completion`, and exposing it is what lets `PairOfDefinition.completion`'s
+existing ring and ideal characterisations — `completion_ringOfDefinition` and
+`mem_completion_idealOfDefinition` — apply to `A⟨T/s⟩` directly, with no restatement here. -/
+@[expose]
+noncomputable def completionLocalization [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    PairOfDefinition (UniformSpace.Completion S) :=
+  letI := locUniformSpace P T s S hden
+  letI := isUniformAddGroup_locUniformSpace P T s S hden
+  letI := isTopologicalRing_locUniformSpace P T s S hden
+  (localization P T s S hden).completion
+
 /-- **`A⟨T/s⟩` is a Huber ring**: the separated completion of `Aₛ` under `locTopology` —
 Wedhorn's `A⟨T/s⟩` — carries a pair of definition.
 
@@ -976,12 +1000,11 @@ theorem isHuberRing_completion_locTopology [IsTopologicalRing A] (P : PairOfDefi
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
-    IsHuberRing (UniformSpace.Completion S) := by
-  let _ := locUniformSpace P T s S hden
-  have _ := isUniformAddGroup_locUniformSpace P T s S hden
-  have _ := isTopologicalRing_locUniformSpace P T s S hden
-  have _ := isHuberRing_locTopology P T s S hden
-  infer_instance
+    IsHuberRing (UniformSpace.Completion S) :=
+  letI := locUniformSpace P T s S hden
+  letI := isUniformAddGroup_locUniformSpace P T s S hden
+  letI := isTopologicalRing_locUniformSpace P T s S hden
+  ⟨⟨completionLocalization P T s S hden⟩⟩
 
 /-- **The universal property of `A⟨T/s⟩`**, for complete Hausdorff targets: a ring homomorphism
 `φ : A →+* B` continuous at zero, with `φ s` a unit and each fraction `φ t / φ s` power-bounded,
