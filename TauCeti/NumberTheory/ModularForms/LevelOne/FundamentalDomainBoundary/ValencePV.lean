@@ -457,24 +457,6 @@ private lemma corner_notMem :
   simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
   exact ⟨fun h => hne (by simp [h]), fun h => hne (by simp [h])⟩
 
-/-- The second corner `ρ + 1` as a point of `ℍ`, computed into `ℂ`. -/
-private lemma coe_vadd_one_ρ : (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ) = (ρ : ℂ) + 1 := by
-  rw [UpperHalfPlane.coe_vadd]
-  push_cast
-  ring
-
-/-- The real part of the corner `ρ`. -/
-private lemma coe_re_ρ : ((ρ : ℍ) : ℂ).re = -(1 / 2) := by
-  norm_num [UpperHalfPlane.ρ]
-
-/-- The second corner lies in the closed fundamental domain. -/
-private lemma vadd_one_ρ_mem_fd : (1 : ℝ) +ᵥ ρ ∈ 𝒟 := by
-  refine ⟨?_, ?_⟩
-  · rw [coe_vadd_one_ρ, Complex.normSq_eq_norm_sq, norm_ρ_add_one]
-    norm_num
-  · rw [← UpperHalfPlane.coe_re, coe_vadd_one_ρ, Complex.add_re, Complex.one_re, coe_re_ρ]
-    norm_num
-
 /-- A corner the divisor set misses has order `0`: the corners lie in the closed fundamental
 domain, so a nonzero order would put them into any complete set. -/
 private lemma orderOfVanishingAt_corner_eq_zero {f : ℍ → ℂ} {S : Finset ℍ}
@@ -484,7 +466,8 @@ private lemma orderOfVanishingAt_corner_eq_zero {f : ℍ → ℂ} {S : Finset �
   by_contra hne
   refine hcS (hcomp c ?_ hne)
   rcases hc with rfl | rfl | rfl
-  exacts [ModularGroup.I_mem_fd, ModularGroup.ρ_mem_fd, vadd_one_ρ_mem_fd]
+  exacts [ModularGroup.I_mem_fd, ModularGroup.ρ_mem_fd,
+    vadd_mem_fd_of_re_eq (by norm_num) ModularGroup.ρ_mem_fd (by norm_num)]
 
 /-- The `ℂ`-corner classification transfers along the coercion: a point of `ℍ` lands on
 `{i, ρ, ρ + 1}` in `ℂ` exactly when it is one of the three corner points of `ℍ`. -/
@@ -543,23 +526,6 @@ private lemma sum_filter_corner_windingNumber_mul_order {f : ℍ → ℂ} {H : �
     windingNumber_fdBoundary_arc hH (by norm_num) (by norm_num) (by norm_num),
     windingNumber_fdBoundary_rho hρH, windingNumber_fdBoundary_rho_add_one hρH, hordρ₁]
   ring
-
-/-- A point of the unit arc with real part `-1/2` is the corner `ρ`. -/
-private lemma coe_eq_ρ_of_re {p : ℍ} (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = -(1 / 2)) :
-    (p : ℂ) = (ρ : ℂ) := by
-  have hp : p = ρ := UpperHalfPlane.eq_of_re_of_norm
-    (show (p : ℂ).re = (ρ : ℂ).re by rw [hre, coe_re_ρ])
-    (show ‖(p : ℂ)‖ = ‖(ρ : ℂ)‖ by rw [hnorm, norm_ρ])
-  rw [hp]
-
-/-- A point of the unit arc with real part `1/2` is the corner `ρ + 1`. -/
-private lemma coe_eq_ρ_add_one_of_re {p : ℍ} (hnorm : ‖(p : ℂ)‖ = 1)
-    (hre : (p : ℂ).re = 1 / 2) : (p : ℂ) = (ρ : ℂ) + 1 := by
-  have hp : p = (1 : ℝ) +ᵥ ρ := UpperHalfPlane.eq_of_re_of_norm
-    (show (p : ℂ).re = (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ).re by
-      rw [hre, coe_vadd_one_ρ, Complex.add_re, Complex.one_re, coe_re_ρ]; norm_num)
-    (show ‖(p : ℂ)‖ = ‖(((1 : ℝ) +ᵥ ρ : ℍ) : ℂ)‖ by rw [hnorm, coe_vadd_one_ρ, norm_ρ_add_one])
-  rw [hp, coe_vadd_one_ρ]
 
 /-- **The non-corner boundary weight.** A point of the closed fundamental domain that is
 neither a corner nor strictly interior lies on a vertical edge or on the open arc, where the
@@ -677,12 +643,16 @@ private lemma sum_windingNumber_mul_orderOfVanishingAt_coe_eq [SlashInvariantFor
           + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
           + 1 / 3 * ((orderOfVanishingAt ⇑f ρ : ℤ) : ℂ)) := by
   classical
+  -- Restrict to the nonzero-order points, then split the three corner points from the rest.
   rw [← Finset.sum_filter_of_ne (p := fun p : ℍ ↦ orderOfVanishingAt ⇑f p ≠ 0)
       fun p _ h => Int.cast_ne_zero.mp (right_ne_zero_of_mul h),
     ← Finset.sum_filter_add_sum_filter_not (S.filter fun p : ℍ ↦ orderOfVanishingAt ⇑f p ≠ 0)
-      (fun p : ℍ ↦ (p : ℂ) ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ)),
-    sum_filter_corner_windingNumber_mul_order hH hper hcomp,
-    Finset.sum_congr rfl (windingNumber_mul_order_ite hH hSfd hHgt), Finset.sum_ite,
+      (fun p : ℍ ↦ (p : ℂ) ∈ ({Complex.I, (ρ : ℂ), (ρ : ℂ) + 1} : Finset ℂ))]
+  -- The corner block evaluates to the two weighted elliptic orders.
+  rw [sum_filter_corner_windingNumber_mul_order hH hper hcomp]
+  -- Off the corners the winding weight is `-1` on the interior and `-1/2` on the boundary;
+  -- the boundary half then pairs into full-weight left representatives.
+  rw [Finset.sum_congr rfl (windingNumber_mul_order_ite hH hSfd hHgt), Finset.sum_ite,
     Finset.sum_neg_distrib, filter_filter_interior_eq,
     sum_filter_orderOfVanishingAt_ne_zero (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2),
     ← Finset.mul_sum, Finset.filter_filter,

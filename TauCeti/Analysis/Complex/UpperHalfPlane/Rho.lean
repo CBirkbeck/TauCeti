@@ -76,6 +76,34 @@ lemma I_ne_vadd_ρ : (I : ℍ) ≠ (1 : ℝ) +ᵥ ρ :=
 lemma ρ_ne_vadd_ρ : (ρ : ℍ) ≠ (1 : ℝ) +ᵥ ρ :=
   ne_of_apply_ne UpperHalfPlane.re (by norm_num)
 
+/-- The second corner `ρ + 1` as a point of `ℍ`, computed into `ℂ`. -/
+lemma coe_vadd_one_ρ : (((1 : ℝ) +ᵥ ρ : ℍ) : ℂ) = (ρ : ℂ) + 1 := by
+  rw [coe_vadd]
+  push_cast
+  ring
+
+/-- A point of the unit circle with real part `0` is the elliptic point `i`. -/
+lemma coe_eq_I_of_re_eq_zero {p : ℍ} (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = 0) :
+    (p : ℂ) = Complex.I := by
+  have h1 : p.re = I.re := by rw [← coe_re, hre, I_re]
+  have h2 : ‖(p : ℂ)‖ = ‖(I : ℂ)‖ := by rw [hnorm, coe_I, Complex.norm_I]
+  rw [eq_of_re_of_norm h1 h2, coe_I]
+
+/-- A point of the unit circle with real part `-1/2` is the corner `ρ`. -/
+lemma coe_eq_ρ_of_re {p : ℍ} (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = -(1 / 2)) :
+    (p : ℂ) = (ρ : ℂ) := by
+  have h1 : p.re = ρ.re := by rw [← coe_re, hre, re_ρ]
+  have h2 : ‖(p : ℂ)‖ = ‖(ρ : ℂ)‖ := by rw [hnorm, norm_ρ]
+  rw [eq_of_re_of_norm h1 h2]
+
+/-- A point of the unit circle with real part `1/2` is the corner `ρ + 1`. -/
+lemma coe_eq_ρ_add_one_of_re {p : ℍ} (hnorm : ‖(p : ℂ)‖ = 1) (hre : (p : ℂ).re = 1 / 2) :
+    (p : ℂ) = (ρ : ℂ) + 1 := by
+  have h1 : p.re = ((1 : ℝ) +ᵥ ρ).re := by rw [← coe_re, hre, vadd_re, re_ρ]; norm_num
+  have h2 : ‖(p : ℂ)‖ = ‖(((1 : ℝ) +ᵥ ρ : ℍ) : ℂ)‖ := by
+    rw [hnorm, coe_vadd_one_ρ, norm_ρ_add_one]
+  rw [eq_of_re_of_norm h1 h2, coe_vadd_one_ρ]
+
 /-- The three elliptic points on the boundary of the fundamental domain — the corners `ρ`,
 `ρ + 1` and the arc midpoint `i` — all lie on the unit circle. -/
 lemma norm_eq_one_of_mem_ellipticPoints {z : ℂ}
