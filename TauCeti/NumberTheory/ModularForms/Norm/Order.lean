@@ -68,16 +68,20 @@ public lemma orderOfVanishingAt_norm (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) (
 
 /-- The norm vanishes at a point to at least the order the form itself does: the zeros of the
 norm dominate the zeros of the form. -/
-public lemma orderOfVanishingAt_le_orderOfVanishingAt_norm (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) (p : ℍ) :
+public lemma orderOfVanishingAt_le_orderOfVanishingAt_norm (f : F) (p : ℍ) :
     orderOfVanishingAt (⇑f) p ≤ orderOfVanishingAt (⇑(_root_.ModularForm.norm ℋ f)) p := by
-  let _ : Fintype (ℋ ⧸ 𝒢.subgroupOf ℋ) := Fintype.ofFinite _
-  rw [orderOfVanishingAt_norm f hf p, finsum_eq_sum_of_fintype]
-  -- The form is the identity-coset factor of the product and the other factors have non-negative
-  -- order. The coset space is not a group — `𝒢.subgroupOf ℋ` need not be normal — so the identity
-  -- coset is spelled `⟦1⟧` rather than `1`.
-  simpa using Finset.single_le_sum
-    (fun q _ ↦ orderOfVanishingAt_nonneg (SlashInvariantForm.mdifferentiable_quotientFunc f q) p)
-    (Finset.mem_univ (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ))
+  rcases eq_or_ne (⇑f : ℍ → ℂ) 0 with hf | hf
+  · -- The norm of the zero form is zero, so both sides are the order of the same function.
+    rw [hf, (_root_.ModularForm.norm_eq_zero_iff ℋ f).mpr hf]
+    simp
+  · let _ : Fintype (ℋ ⧸ 𝒢.subgroupOf ℋ) := Fintype.ofFinite _
+    rw [orderOfVanishingAt_norm f hf p, finsum_eq_sum_of_fintype]
+    -- The form is the identity-coset factor of the product and the other factors have
+    -- non-negative order. The coset space is not a group — `𝒢.subgroupOf ℋ` need not be normal
+    -- — so the identity coset is spelled `⟦1⟧` rather than `1`.
+    simpa using Finset.single_le_sum
+      (fun q _ ↦ orderOfVanishingAt_nonneg (SlashInvariantForm.mdifferentiable_quotientFunc f q) p)
+      (Finset.mem_univ (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ))
 
 end ModularForm
 
