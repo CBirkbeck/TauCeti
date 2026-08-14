@@ -21,8 +21,9 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
 
 * `TauCeti.SlashInvariantForm.mdifferentiable_quotientFunc`.
 * `TauCeti.SlashInvariantForm.isBoundedAtImInfty_quotientFunc`.
-* `TauCeti.ModularForm.normRest`, `TauCeti.ModularForm.norm_eq_galoisProd_mul_normRest`.
-* `TauCeti.ModularForm.exists_norm_decomposition`.
+* `TauCeti.ModularForm.normRest`, `TauCeti.ModularForm.periodic_normRest` and
+  `TauCeti.ModularForm.analyticAt_cuspFunction_normRest`.
+* `TauCeti.ModularForm.norm_eq_galoisProd_mul_normRest`.
 
 ## References
 
@@ -217,35 +218,6 @@ public lemma norm_eq_galoisProd_mul_normRest (τ : ℍ) :
     ← Finset.prod_filter_mul_prod_filter_not Finset.univ (· ∈ tPowCosets 𝒢),
     Finset.filter_univ_mem, prod_tPowCosets_quotientFunc f τ, normRest_eq_prod,
     Finset.prod_apply]
-
-/-- Decomposition of the norm of `f` from `𝒢` to `𝒮ℒ` at the cusp `∞`: it is the Galois
-product of the first `Subgroup.integerCuspWidth 𝒢` integer translates of `f` times a remainder which
-is `1`-periodic and analytic at `∞`. -/
-lemma exists_norm_decomposition :
-    ∃ rest : ℍ → ℂ,
-      Function.Periodic (rest ∘ ofComplex) 1 ∧ AnalyticAt ℂ (cuspFunction 1 rest) 0 ∧
-        ∀ τ : ℍ, _root_.ModularForm.norm 𝒮ℒ f τ =
-          galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * rest τ := by
-  classical
-  have : Fact (IsCusp OnePoint.infty 𝒮ℒ) :=
-    ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos (by simp)⟩
-  let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
-  set rest : ℍ → ℂ :=
-    fun τ ↦ ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q τ
-  have h_rest_eq : rest =
-      ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q :=
-    funext fun _ ↦ (Finset.prod_apply ..).symm
-  have h_rest_per : Function.Periodic (rest ∘ ofComplex) 1 :=
-    periodic_comp_ofComplex_iff.mpr fun τ ↦ prod_quotientFunc_one_vadd f τ
-  refine ⟨rest, h_rest_per, analyticAt_cuspFunction_zero one_pos h_rest_per
-    (h_rest_eq ▸ MDifferentiable.prod fun q _ ↦
-      SlashInvariantForm.mdifferentiable_quotientFunc f q)
-    (h_rest_eq ▸ Filter.BoundedAtFilter.prod _ fun q _ ↦
-      SlashInvariantForm.isBoundedAtImInfty_quotientFunc f q),
-    fun τ ↦ ?_⟩
-  rw [_root_.ModularForm.coe_norm, Finset.prod_apply,
-    ← Finset.prod_filter_mul_prod_filter_not Finset.univ (· ∈ tPowCosets 𝒢),
-    Finset.filter_univ_mem, prod_tPowCosets_quotientFunc f τ]
 
 end NormDecomposition
 
