@@ -710,7 +710,7 @@ twist by `L` — and, by `not_exists_smul_quadraticTwist_eq`, those two alternat
 There are exactly two alternatives because such forms are classified by
 `H¹(Gal(L/K), Aut Eᴸ) = Hom(ℤ/2, {±1})`, a group of order two. The `j`-hypotheses are what give
 `Aut Eᴸ = {±1}` (`eq_one_or_eq_negVariableChange_map`); for the excluded `j` the
-automorphism group is larger and there can be more forms. -/
+automorphism group can be larger and there can be more forms. -/
 theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728)
     (E' : WeierstrassCurve K)
     (h : ∃ C : VariableChange L, C • E'.baseChange L = E.baseChange L) :
