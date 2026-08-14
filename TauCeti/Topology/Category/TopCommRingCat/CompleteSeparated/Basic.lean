@@ -172,20 +172,12 @@ def isCompleteSeparated : ObjectProperty TopCommRingCat.{u} :=
 theorem isCompleteSeparated_iff (R : TopCommRingCat.{u}) :
     isCompleteSeparated R ↔ IsCompleteSeparated R := (Iff.rfl)
 
-/-- **The homeomorphism an isomorphism induces has `e.inv` as its underlying function.** It holds
-by `rfl`, but through `forget₂`, `mapIso` and `TopCat.homeoOfIso` in turn; naming it keeps
-`isClosedEmbedding_inv` from depending on that chain unfolding. Private: it exposes the internal
-representation and has no consumer beyond that lemma. -/
-private theorem coe_homeoOfIso_mapIso_symm {R S : TopCommRingCat.{u}} (e : R ≅ S) :
-    ⇑(TopCat.homeoOfIso ((forget₂ TopCommRingCat.{u} TopCat.{u}).mapIso e)).symm = ⇑e.inv :=
-  rfl
-
 /-- The inverse of an isomorphism of topological commutative rings is a closed embedding: it is
-the induced homeomorphism, transported along `coe_homeoOfIso_mapIso_symm`. -/
+the induced homeomorphism, whose underlying function is `e.inv` by `rfl` — through `forget₂`,
+`mapIso` and `TopCat.homeoOfIso` in turn. -/
 theorem isClosedEmbedding_inv {R S : TopCommRingCat.{u}} (e : R ≅ S) :
     Topology.IsClosedEmbedding ⇑e.inv :=
-  coe_homeoOfIso_mapIso_symm e ▸
-    (TopCat.homeoOfIso ((forget₂ TopCommRingCat.{u} TopCat.{u}).mapIso e)).symm.isClosedEmbedding
+  (TopCat.homeoOfIso ((forget₂ TopCommRingCat.{u} TopCat.{u}).mapIso e)).symm.isClosedEmbedding
 
 /-- The complete separated property transfers along isomorphisms of topological commutative
 rings: an isomorphism is in particular a closed embedding, so this is

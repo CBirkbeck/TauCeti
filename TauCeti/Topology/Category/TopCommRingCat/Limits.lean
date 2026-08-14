@@ -32,12 +32,10 @@ which is plain from their statements.
   the equalizer of a parallel pair, as the agreement subring under the subspace topology.
 * The resulting `HasProducts` and `HasEqualizers` instances.
 
-## Main results
-
-* `TauCeti.TopCommRingCat.coe_equalizerFork_ι` : the equalizer fork's inclusion is, as a
-  function, the subtype coercion of the agreement subring. Consumers transport statements about
-  that coercion — closedness of its range, say — to the categorical morphism along this lemma,
-  rather than unfolding the hom `FunLike` and `Subring.subtype` at the use site.
+The equalizer fork's inclusion is, as a function, the subtype coercion of the agreement subring,
+and by `rfl`; consumers state closedness of its range against the coercion and let that
+definitional equality carry it to the categorical morphism, rather than going through a named
+lemma here.
 
 The closedness of the agreement subring over a Hausdorff codomain — what will keep equalizers
 of complete separated rings complete — is Mathlib's `isClosed_eq` applied to the two morphisms'
@@ -94,14 +92,6 @@ def equalizerFork : Fork f g :=
   Fork.ofι (P := TopCommRingCat.of (RingHom.eqLocus f.val g.val))
     ⟨(RingHom.eqLocus f.val g.val).subtype, continuous_subtype_val⟩
     (by exact Subtype.ext (RingHom.ext fun x => x.2))
-
-/-- **The fork's inclusion is the subtype coercion of the agreement subring**, as a function.
-It holds by `rfl`, but through `Fork.ofι`, the hom `FunLike` and `Subring.subtype` in turn;
-naming it lets a consumer transport a statement about that coercion to the categorical
-morphism instead of unfolding the chain at the use site. -/
-@[simp]
-theorem coe_equalizerFork_ι : ⇑(equalizerFork f g).ι = ((↑) : RingHom.eqLocus f.val g.val → R) :=
-  rfl
 
 /-- The agreement subring under the subspace topology is the equalizer in
 `TopCommRingCat`. -/
