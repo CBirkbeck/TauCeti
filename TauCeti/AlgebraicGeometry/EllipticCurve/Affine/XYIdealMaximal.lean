@@ -148,14 +148,15 @@ private theorem eval_eq_zero_of_mk_C_mem {x₁ : F} {y₁ : F[X]}
   have hmem := Ideal.sub_mem _ hp (hq ▸ Ideal.mul_mem_right (CoordinateRing.mk W (C q)) _ hX₁)
   rwa [sub_sub_cancel] at hmem
 
-/-- **Equal ideals have equal data.** The forward half of `XYIdeal_eq_iff_of_ne_top`: both
-`X - x₁` and `X - x₂` lie in the ideal, so the constant `x₂ - x₁` does too, and in a proper ideal
-a nonzero constant is impossible; the two `Y` generators then differ by `y₂ - y₁`, which reduces
-modulo `X - x₁` to its value there. -/
+/-- **Equal ideals have equal data**: if `⟨X - x₁, Y - y₁(X)⟩` is proper and equals
+`⟨X - x₂, Y - y₂(X)⟩`, then `x₁ = x₂` and the two `Y`-polynomials agree at the point. The forward
+half of `XYIdeal_eq_iff_of_ne_top`. -/
 private theorem eq_and_eval_eq_of_XYIdeal_eq {x₁ x₂ : F} {y₁ y₂ : F[X]}
     (hI : CoordinateRing.XYIdeal W x₁ y₁ ≠ ⊤)
     (h : CoordinateRing.XYIdeal W x₁ y₁ = CoordinateRing.XYIdeal W x₂ y₂) :
     x₁ = x₂ ∧ y₁.eval x₁ = y₂.eval x₂ := by
+  -- the two `XClass` generators differ by the constant `x₂ - x₁`, which a proper ideal can only
+  -- contain if it is zero; the `YClass` generators then differ by `y₂ - y₁`
   have hmemX : CoordinateRing.XClass W x₁ - CoordinateRing.XClass W x₂ ∈
       CoordinateRing.XYIdeal W x₁ y₁ :=
     Ideal.sub_mem _ (Ideal.subset_span (Set.mem_insert _ _))
