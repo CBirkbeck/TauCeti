@@ -29,7 +29,9 @@ so a consumer holding `A[1/s]` in another presentation can use the topology dire
   `UniformSpace.Completion S` — Wedhorn's `A⟨T/s⟩` — can be written down.
 * `toCompletionLoc P T s S` : the structure map `A → A⟨T/s⟩`.
 * `localizationUniform P T s S` : the pair `localization`, transported to the topology
-  `locUniformSpace` induces, so that no statement about `A⟨T/s⟩` carries the transport.
+  `locUniformSpace` induces, so that no statement about `A⟨T/s⟩` carries the transport. Its
+  `localizationUniform_ringOfDefinition` and `mem_localizationUniform_idealOfDefinition` reduce it
+  to the concrete `D` and `J`, so the completed pair's characteristic lemmas do too.
 * `completionLocalization P T s S` : the pair of definition `A⟨T/s⟩` carries, characterised by
   `completionLocalization_ringOfDefinition` and
   `mem_completionLocalization_idealOfDefinition`.
@@ -999,6 +1001,30 @@ noncomputable def localizationUniform [IsTopologicalRing A] (P : PairOfDefinitio
     letI := locUniformSpace P T s S hden
     PairOfDefinition S :=
   (locUniformSpace_toTopologicalSpace P T s S hden).symm ▸ localization P T s S hden
+
+/-- The ring of definition of `localizationUniform` is `D`, as for `localization`: the transport
+is along an equality of topologies and `ringOfDefinition` is a `Subring S`, which does not depend
+on one. This is what makes the completed pair's API reduce to the concrete data. -/
+@[simp]
+theorem localizationUniform_ringOfDefinition [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI := locUniformSpace P T s S hden
+    (localizationUniform P T s S hden).ringOfDefinition = locSubring P T s S := (rfl)
+
+/-- Membership in the ideal of definition of `localizationUniform` is membership in `J`, as for
+`localization`. With `localizationUniform_ringOfDefinition` this reduces the completed pair's
+characteristic lemmas to the concrete `D` and `J`. -/
+@[simp]
+theorem mem_localizationUniform_idealOfDefinition [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S)
+    {x : letI := locUniformSpace P T s S hden;
+      (localizationUniform P T s S hden).ringOfDefinition} :
+    letI := locUniformSpace P T s S hden
+    x ∈ (localizationUniform P T s S hden).idealOfDefinition ↔
+      (⟨x, by rw [← localizationUniform_ringOfDefinition P T s S hden]; exact x.2⟩ :
+        locSubring P T s S) ∈ locIdeal P T s S := (Iff.rfl)
 
 /-- **The pair of definition on `A⟨T/s⟩`**, the completion of the pair `localization` carries on
 `Aₛ`. This is the completed counterpart of `localization`, and it is what makes `A⟨T/s⟩` Huber.
