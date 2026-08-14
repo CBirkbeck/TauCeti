@@ -28,8 +28,8 @@ so a consumer holding `A[1/s]` in another presentation can use the topology dire
 * `locUniformSpace P T s S` : the uniformity `locTopology` determines, packaged so that
   `UniformSpace.Completion S` — Wedhorn's `A⟨T/s⟩` — can be written down.
 * `toCompletionLoc P T s S` : the structure map `A → A⟨T/s⟩`.
-* `completionLocalization P T s S` : the pair of definition `A⟨T/s⟩` carries. Its body is exposed,
-  so `PairOfDefinition.completion`'s ring and ideal characterisations apply to it directly.
+* `completionLocalization P T s S` : the pair of definition `A⟨T/s⟩` carries, characterised by
+  `completionLocalization_ringOfDefinition`.
 
 ## Main results
 
@@ -77,6 +77,8 @@ so a consumer holding `A[1/s]` in another presentation can use the topology dire
   of `locUniformSpace`. Since `locTopology` is not an instance, a statement about `A⟨T/s⟩` has to
   name its structures; these three declarations are what it names, and `toCompletionLoc_apply`
   computes the structure map.
+* `locUniformSpace_toTopologicalSpace`: the topology `locUniformSpace` induces is `locTopology`.
+  This is what a proof rewrites against, so no body in this file needs exposing.
 * `isHuberRing_completion_locTopology` and
   `existsUnique_continuous_ringHom_completion_locTopology`: the separated completion `A⟨T/s⟩` is
   Huber — witnessed by `completionLocalization`, exactly as `localization` witnesses
@@ -908,21 +910,34 @@ theorem existsUnique_continuous_ringHom_locTopology {B : Type*} [CommRing B] [To
 /-- **The canonical uniformity on `Aₛ`**, the one its topology determines.
 
 `locTopology` is not an instance, so a consumer of the completion has to name the uniform structure
-explicitly. This packages the construction: with `locUniformSpace` and
-`isUniformAddGroup_locUniformSpace` in scope, `UniformSpace.Completion S` is well-formed and its
-ring structure is found by inference.
+explicitly. This packages the construction, and it takes **three** declarations to state anything
+about `A⟨T/s⟩`: `locUniformSpace` makes `UniformSpace.Completion S` well-formed,
+`isUniformAddGroup_locUniformSpace` makes the completion an additive group, and
+`isTopologicalRing_locUniformSpace` is what its ring structure is inferred from. The first two
+alone do not suffice.
+
+`locUniformSpace_toTopologicalSpace` is the characteristic property — the topology it induces is
+`locTopology` — so the body is not exposed and a proof rewrites against that lemma instead.
 
 It is *the* uniformity, not merely one compatible with the topology:
 `IsUniformAddGroup.rightUniformSpace_eq` identifies it with any uniformity making `Aₛ` a uniform
 additive group, so a consumer arriving with its own such structure rewrites rather than
 transports. -/
-@[instance_reducible, expose]
+@[instance_reducible]
 noncomputable def locUniformSpace (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type*)
     [CommRing S] [Algebra A S] [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
     [IsTopologicalRing A] : UniformSpace S :=
   letI tS := locTopology P T s S hden
   letI := isTopologicalRing_locTopology P T s S hden
   @IsTopologicalAddGroup.rightUniformSpace S _ tS _
+
+/-- The topology `locUniformSpace` induces is `locTopology`. This is the characteristic property
+of the packaged uniformity: it lets a statement made at one be rewritten to the other. -/
+@[simp]
+theorem locUniformSpace_toTopologicalSpace [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    (locUniformSpace P T s S hden).toTopologicalSpace = locTopology P T s S hden := (rfl)
 
 /-- `Aₛ` is a uniform additive group for `locUniformSpace`. The companion of `locUniformSpace`:
 the two together are what `UniformSpace.Completion S` needs. -/
@@ -971,11 +986,9 @@ theorem toCompletionLoc_apply [IsTopologicalRing A] (P : PairOfDefinition A) (T 
 /-- **The pair of definition on `A⟨T/s⟩`**, the completion of the pair `localization` carries on
 `Aₛ`. This is the completed counterpart of `localization`, and it is what makes `A⟨T/s⟩` Huber.
 
-The body is exposed, unlike `localization`'s: it is the one-line composite
-`(localization …).completion`, and exposing it is what lets `PairOfDefinition.completion`'s
-existing ring and ideal characterisations — `completion_ringOfDefinition` and
-`mem_completion_idealOfDefinition` — apply to `A⟨T/s⟩` directly, with no restatement here. -/
-@[expose]
+Its ring of definition and ideal of definition are characterised by
+`completionLocalization_ringOfDefinition` and `mem_completionLocalization_idealOfDefinition`,
+which are how a consumer computes with it — the body is not exposed. -/
 noncomputable def completionLocalization [IsTopologicalRing A] (P : PairOfDefinition A)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) :
@@ -986,7 +999,24 @@ noncomputable def completionLocalization [IsTopologicalRing A] (P : PairOfDefini
   letI := locUniformSpace P T s S hden
   letI := isUniformAddGroup_locUniformSpace P T s S hden
   letI := isTopologicalRing_locUniformSpace P T s S hden
-  (localization P T s S hden).completion
+  ((locUniformSpace_toTopologicalSpace P T s S hden).symm ▸ localization P T s S hden).completion
+
+/-- The ring of definition of `completionLocalization` is the one `PairOfDefinition.completion`
+supplies for the localisation pair: the closure of the image of `D`. -/
+@[simp]
+theorem completionLocalization_ringOfDefinition [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    (completionLocalization P T s S hden).ringOfDefinition =
+      ((locUniformSpace_toTopologicalSpace P T s S hden).symm ▸
+        localization P T s S hden).completionRingOfDefinition := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  exact PairOfDefinition.completion_ringOfDefinition _
 
 /-- **`A⟨T/s⟩` is a Huber ring**: the separated completion of `Aₛ` under `locTopology` —
 Wedhorn's `A⟨T/s⟩` — carries a pair of definition.
@@ -1035,8 +1065,13 @@ theorem existsUnique_continuous_ringHom_completion_locTopology {B : Type*} [Comm
     simpa [UniformSpace.Completion.extensionHom_coe, UniformSpace.Completion.coeRingHom] using
       congrArg (fun h => h a) hfe
   · rintro g ⟨hgc, hge⟩
+    have hcomp : (g.comp UniformSpace.Completion.coeRingHom).comp (algebraMap A S) = φ := by
+      refine RingHom.ext fun a ↦ ?_
+      have h := congrArg (fun h ↦ h a) hge
+      simp only [RingHom.comp_apply, toCompletionLoc_apply] at h
+      simpa [UniformSpace.Completion.coeRingHom] using h
     have hcoe : g.comp UniformSpace.Completion.coeRingHom = f :=
-      huniq _ ⟨hgc.comp UniformSpace.Completion.continuous_coeRingHom, hge⟩
+      huniq _ ⟨hgc.comp UniformSpace.Completion.continuous_coeRingHom, hcomp⟩
     refine RingHom.coe_inj (Continuous.ext_on UniformSpace.Completion.denseRange_coe hgc
       UniformSpace.Completion.continuous_extension ?_)
     rintro _ ⟨x, rfl⟩
