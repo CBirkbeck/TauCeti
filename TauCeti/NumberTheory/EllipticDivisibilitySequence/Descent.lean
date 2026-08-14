@@ -10,45 +10,83 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Recurrence
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Transfer
 
 /-!
-# Expanding a product of an elliptic atom with an elliptic relator
+# An elliptic sequence from its two doubling recurrences
 
-The descent that recovers the full four-index elliptic relation from the two doubling
-recurrences works by rewriting a relator on four unconstrained indices into relators that all
-carry a fixed pair `c, d` of small indices. This file supplies the algebraic identities that
-perform that rewriting; the ordering and parity bookkeeping that makes the resulting induction
-terminate is in `Transfer.lean`.
+`IsEllipticSequence W` is a condition on every triple of integers. This file proves it
+equivalent to two families of equations indexed by a *single* integer — the odd doubling
+recurrence from `m = 2` on and the even one from `m = 3` on — for a sequence that is odd,
+vanishes at `0`, and has `W 1` and `W 2` nonzerodivisors.
 
-All four are polynomial identities in the atoms: `atomRel` is a fixed quadratic expression in
-`atom`, so each statement expands on both sides to a combination of products of two atoms, and
-`ring` closes it. No index arithmetic is involved — the atoms' arguments are carried along
-unchanged — which is why nothing here needs the parity hypotheses that `atom_even`, `atom_odd`
-and `atomRel_eq` require.
+The forward direction is `Recurrence.lean`. The reverse is the descent proved here, by
+induction on the largest index `a`:
+
+* below `6` there is no valid quadruple at all, four nonnegative same-parity indices in strict
+  decrease forcing `6 ≤ a` (`Transfer.lean`);
+* above it, a relator on four unconstrained indices is rewritten into relators carrying a fixed
+  pair of small indices, by the three-term and ten-term expansions below;
+* that reduces to the minimal same-parity pair `(a % 2 + 2, a % 2)`, where either `b + 2 < a`
+  admits the transfer down to a smaller first index, or `b + 2 = a` lands on one of the two
+  recurrences, chosen by the parity of `a`.
+
+Arbitrary indices are then reduced to a valid quadruple: absolute values make them nonnegative,
+coincidences collapse through Mathlib's `atomRel_same` family, and the rest are sorted.
+
+The expansions are polynomial identities in the atoms — `atomRel` is a fixed quadratic
+expression in `atom`, so both sides expand to combinations of products of two atoms and `ring`
+closes them. No index arithmetic is involved, which is why they need none of the parity
+hypotheses that `atom_even`, `atom_odd` and `atomRel_eq` carry.
 
 ## Main results
 
-* `atom_mul_atomRel_eq_of_last_eq_fst`, `atom_mul_atomRel_eq_of_last_eq_snd`: when the relator's
-  last index is already one of the atom's two indices, the product is a three-term combination.
-* `atom_mul_atomRel_eq`: for four unconstrained relator indices, a ten-term combination.
-* `atom_sq_mul_atomRel_eq`: the nine-term combination obtained from the previous two, which is
-  the form the descent actually consumes.
+* `isEllipticSequence_iff`: the equivalence, and the headline result of the file.
+* `IsEllipticNet.isEllipticSequence_of_rel`: its hard direction, with the recurrences in
+  relator form.
+* `IsEllipticNet.atomRelVanishes_of_rel`: the descent itself, at valid quadruples.
+* `IsEllipticNet.atom_mul_atomRel_eq_of_last_eq_fst`, `…_of_last_eq_snd`,
+  `IsEllipticNet.atom_mul_atomRel_eq`: the three-term and ten-term expansions that drive it.
+* `IsEllipticNet.atomRel_swap₁₂`, `IsEllipticNet.atomRel_swap₂₃`: antisymmetry of the relator
+  under transpositions of its indices.
+
+## Implementation notes
+
+The descent's hypothesis is packaged as `AtomRelVanishes`, carrying the parity and ordering
+conditions *inside* the predicate. The induction applies its hypothesis at quadruples whose
+validity is not known in advance, so the recursive call has to be a statement about indices
+alone.
+
+Three parts of the source's apparatus are not needed here, each because Mathlib has absorbed
+the layer that made them necessary. Its `rel₄_transf` is `atomRel_avg_sub`; its minimal-index
+definition `if Even a then 0 else 1`, with five `Int.negOnePow` lemmas about it, is `a % 2`,
+about which everything needed is `omega`; and its `Tuple.sort` argument over four indices
+reduces to six orderings of three, the last index being `0` and so already minimal.
 
 ## Provenance
 
 Adapted from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
-`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `rel₆_eq₃`, `rel₆_eq₃'`, `rel₆_eq₁₀`
-and `addMulSub_sq_mul_rel₄_eq₉`. That file's header reads `Authors: Junyan Xu`; following this
-repository's convention for adapted material the upstream authorship is credited here rather
-than in the copyright header.
+`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `rel₆_eq₃`, `rel₆_eq₃'`, `rel₆_eq₁₀`,
+`rel₄_iff_evenRec`, `dMin`, `cMin`, `Rel₄OfValid`, `rel₄_fix₁_of_fix₂`, `rel₄_of_fix₂`,
+`rel₄_of_min₂`, `rel₄_of_anti_oddRec_evenRec`, `rel₄_swap₀₁`, `rel₄_swap₁₂`,
+`rel₄_of_oddRec_evenRec` and `IsEllSequence.of_oddRec_evenRec`. That file's header reads
+`Authors: Junyan Xu`; following this repository's convention for adapted material the upstream
+authorship is credited here rather than in the copyright header.
 
-The source states these against its own `addMulSub` and `rel₄`, which Mathlib now supplies as
-`IsEllipticNet.atom` and `IsEllipticNet.atomRel` with the same definitions, so the statements
-transfer by renaming. The source also carries an abbreviation `rel₆ W k l a b c d` for the
-product `addMulSub W k l * rel₄ W a b c d`, together with a `@[simp]` lemma unfolding it. That
-abbreviation is **not** ported: it names a product rather than a concept, it exists only to
-shorten these four statements, and a wrapper whose sole purpose is to be unfolded again at
-every use site is a second public spelling of `atom _ _ * atomRel _ _ _ _`. The statements below
-therefore write the product out.
+The source states its expansions against its own `addMulSub` and `rel₄`, which Mathlib now
+supplies as `atom` and `atomRel` with the same definitions, so those statements transfer by
+renaming. Three of its declarations are deliberately **not** ported. Its `rel₆` abbreviation for
+`addMulSub W k l * rel₄ W a b c d`, with the `@[simp]` lemma unfolding it, names a product
+rather than a concept and exists only to shorten four statements, so it would stand a second
+public spelling of `atom _ _ * atomRel _ _ _ _`; the statements below write the product out.
+Its `addMulSub_sq_mul_rel₄_eq₉`, the nine-term expansion, is unused in the source itself — it
+occurs there only at its own declaration — and this descent does not need it. Its four-index
+swap `rel₄_swap₂₃` supports the `Tuple.sort` argument avoided above; with the last index held
+at `0` only the first three are ever permuted, so the two swaps below suffice.
+
+`rel₄_iff_evenRec` is the one source declaration carrying `set_option allowUnsafeReducibility
+true` together with `attribute [local reducible] Nat.rawCast`, which #2860 declined to bring
+into this repository. Stating the base cases with indices in `2 * _` and `2 * _ + 1` form lets
+`atomRel_two_mul` and `atom_odd` apply directly, so neither the option nor the attribute
+appears here.
 -/
 
 public section
@@ -87,20 +125,6 @@ theorem atom_mul_atomRel_eq (c d m n r s : ℤ) :
       + atom W n r * atomRel W m s c d - atom W n s * atomRel W m r c d
         + atom W r s * atomRel W m n c d
       - 2 * (atom W m d * atomRel W n r s c) := by
-  simp_rw [atomRel]; ring
-
-/-- **The squared-atom form, in which every relator on the right carries the whole fixed pair.**
-This is the shape the descent consumes: the first two bracketed groups are the right-hand sides
-of `atom_mul_atomRel_eq_of_last_eq_snd` and `…_fst`, and the third is the last group of
-`atom_mul_atomRel_eq`. Squaring the atom is the price of having no index left outside `c, d`. -/
-theorem atom_sq_mul_atomRel_eq (c d m n r s : ℤ) :
-    atom W c d ^ 2 * atomRel W m n r s =
-      atom W m c * (atom W n d * atomRel W r s c d - atom W r d * atomRel W n s c d
-        + atom W s d * atomRel W n r c d)
-      - atom W m d * (atom W n c * atomRel W r s c d - atom W r c * atomRel W n s c d
-        + atom W s c * atomRel W n r c d)
-      + atom W c d * (atom W n r * atomRel W m s c d - atom W n s * atomRel W m r c d
-        + atom W r s * atomRel W m n c d) := by
   simp_rw [atomRel]; ring
 
 open scoped nonZeroDivisors
@@ -229,18 +253,13 @@ theorem atomRel_swap₁₂ (odd : W.Odd) (a b c d : ℤ) :
     atomRel W b a c d = -atomRel W a b c d := by
   rw [atomRel, atomRel, ← neg_atom odd a b]; ring
 
-/-- **The relator is antisymmetric in its middle two indices.** -/
+/-- **The relator is antisymmetric in its middle two indices.** With `atomRel_swap₁₂` these are
+the two transpositions needed here: the last index is held fixed throughout the descent, so only
+the first three are ever permuted, and these two generate that symmetric group. Mathlib supplies
+the `atomRel_same`, `atomRel_neg` and `atomRel_abs` families but neither of these. -/
 theorem atomRel_swap₂₃ (odd : W.Odd) (a b c d : ℤ) :
     atomRel W a c b d = -atomRel W a b c d := by
   rw [atomRel, atomRel, ← neg_atom odd b c]; ring
-
-/-- **The relator is antisymmetric in its last two indices.** Together with `atomRel_swap₁₂` and
-`atomRel_swap₂₃` these are the adjacent transpositions, so the relator is alternating under the
-whole symmetric group on its four indices. Mathlib supplies the `atomRel_same`, `atomRel_neg`
-and `atomRel_abs` families but not these. -/
-theorem atomRel_swap₃₄ (odd : W.Odd) (a b c d : ℤ) :
-    atomRel W a b d c = -atomRel W a b c d := by
-  rw [atomRel, atomRel, ← neg_atom odd c d]; ring
 
 /-- The even base case, as a relator: all four indices are even, so `atomRel_two_mul` applies. -/
 private theorem atomRel_even_eq_rel (m : ℤ) :
