@@ -225,12 +225,11 @@ private theorem injOn_Ioo_and_mapsTo_image_of_eq_circleMap_lineMap {X : Type*} {
     exact lineMap_mem_openSegment ℝ a b (by simpa using ht)
   -- `circleMap` is injective on an arc no longer than a full turn, so the angular composite is
   -- injective on `Ioo a b`; the affine parametrisation then carries that to `γ`
-  have hginj : InjOn (fun θ => g (circleMap ζ ρ θ)) (Ioo a b) := fun x hx y hy hxy =>
-    injOn_circleMap_of_abs_sub_le (c := ζ) hρ
-      (by rw [abs_sub_comm, abs_of_pos (sub_pos.mpr hab)]; exact hab2π)
-      (by rw [uIoc_of_le hab.le]; exact ⟨hx.1, hx.2.le⟩)
-      (by rw [uIoc_of_le hab.le]; exact ⟨hy.1, hy.2.le⟩)
-      (hinj (hmaps hx) (hmaps hy) hxy)
+  have hcircle : InjOn (circleMap ζ ρ) (Ioo a b) :=
+    (injOn_circleMap_of_abs_sub_le (c := ζ) hρ
+      (by rw [abs_sub_comm, abs_of_pos (sub_pos.mpr hab)]; exact hab2π)).mono
+      (by rw [uIoc_of_le hab.le]; exact Ioo_subset_Ioc_self)
+  have hginj : InjOn (g ∘ circleMap ζ ρ) (Ioo a b) := hinj.comp hcircle hmaps
   refine ⟨fun x hx y hy hxy => ?_, fun t ht => ?_⟩
   · rw [hγformula x hx, hγformula y hy] at hxy
     exact Subtype.ext
