@@ -18,9 +18,14 @@ summands. A slash is zero at `c` exactly when the original function is zero at `
 rational (`IsCusp.smul_map_ratCast`). So a function vanishing at every cusp has a slash sum
 vanishing at every cusp, whatever representatives were chosen.
 
-This is the step the Layer 2 statement "`Tₙ` preserves `S_k`" rests on. The cusp hypothesis is
-the one a `CuspForm` actually supplies through `zero_at_cusps'`, which only gives vanishing where
-`IsCusp c Γ` holds.
+This is the step the Layer 2 statement "`Tₙ` preserves `S_k`" rests on.
+
+**These lemmas are about `𝒮ℒ`**, i.e. level one: both the hypothesis and the conclusion quantify
+over cusps of `𝒮ℒ`, because `IsCusp.smul_map_ratCast` is proved from `isCusp_SL2Z_iff`, mathlib's
+description of the cusps of `𝒮ℒ` as the rational points. A `CuspForm Γ k` supplies
+`zero_at_cusps'` at the cusps of its *own* `Γ`, so applying these to a general `Γ` needs a
+comparison between the cusps of `Γ` and those of `𝒮ℒ` first; for `Γ = 𝒮ℒ` the hypothesis is
+immediate.
 
 ## Main results
 
