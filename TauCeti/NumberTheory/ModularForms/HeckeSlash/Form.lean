@@ -27,6 +27,8 @@ of it, and `ModularForm.rat_slash` turns each rational slash into the real one.
 ## Main definitions
 
 * `HeckeRing.GL2.heckeSlashInvariant`: the double coset acting on `SlashInvariantForm 𝒮ℒ k`.
+* `HeckeRing.GL2.heckeSlashEnd`: the same map as a `ℂ`-linear endomorphism, the shape Layer 2(b)
+  of the roadmap asks for.
 
 ## Main results
 
@@ -94,5 +96,22 @@ noncomputable def heckeSlashInvariant (f : SlashInvariantForm 𝒮ℒ k) : Slash
     rw [← ModularForm.rat_slash]
     exact heckeSlashSum_slash_invariant_of_mem_SLnZ k D f
       (fun _ h ↦ slash_eq_of_mem_SLnZ k f.slash_action_eq' h) hδ
+
+/-- The underlying function of `heckeSlashInvariant` is `heckeSlashSum`. Since the definition is
+not `@[expose]`, this is the interface a downstream module rewrites with. -/
+@[simp] lemma coe_heckeSlashInvariant (f : SlashInvariantForm 𝒮ℒ k) :
+    ⇑(heckeSlashInvariant k D f) = heckeSlashSum k D f := (rfl)
+
+/-- **The double coset as a `ℂ`-linear endomorphism of `SlashInvariantForm 𝒮ℒ k`.** This is the
+form the roadmap's Layer 2(b) asks for: `Module.End ℂ`, so that Hecke operators compose and can
+carry a ring structure. Linearity is `heckeSlashSum_add` and `heckeSlashSum_smul`, which hold
+because every coset representative has positive determinant. -/
+noncomputable def heckeSlashEnd : Module.End ℂ (SlashInvariantForm 𝒮ℒ k) where
+  toFun := heckeSlashInvariant k D
+  map_add' f g := by ext τ; simp [heckeSlashSum_add]
+  map_smul' c f := by ext τ; simp [heckeSlashSum_smul]
+
+@[simp] lemma coe_heckeSlashEnd (f : SlashInvariantForm 𝒮ℒ k) :
+    heckeSlashEnd k D f = heckeSlashInvariant k D f := (rfl)
 
 end HeckeRing.GL2
