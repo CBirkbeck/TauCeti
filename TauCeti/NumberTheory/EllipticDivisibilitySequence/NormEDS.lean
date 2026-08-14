@@ -5,25 +5,33 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Descent
+public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Universal
 
 /-!
-# A normalised EDS is an elliptic sequence
+# A normalised EDS is an elliptic net
 
 `normEDS b c d` is defined by the doubling recursion, so it satisfies that recursion by
-construction. This file draws the consequence: it satisfies the full three-index elliptic
-relation, for arbitrary `b`, `c`, `d` in any commutative ring.
+construction. This file draws the consequence: it satisfies the full **four**-index elliptic
+relation, for arbitrary `b`, `c`, `d` in any commutative ring. Being an elliptic *sequence* is
+the last index held at `0`.
 
-This is the first half of the TODO Mathlib records at
+The three-index statement is the first half of the TODO Mathlib records at
 `Mathlib/NumberTheory/EllipticDivisibilitySequence.lean:70`, "prove that `normEDS` satisfies
 `IsEllipticDvdSequence`". That predicate is `IsEllipticSequence ∧ IsDvdSequence`; the second
 conjunct needs a general `normEDS_mul_complEDS`, of which Mathlib has only the `k = 2` case, and
 is left to its own slice.
 
+The net is what the invariant layer needs. `IsEllipticNet.invarNum_mul_invarDenom` takes an
+`IsEllipticNet` hypothesis — the cross identity is proved from the relation at four free indices,
+not three — so stopping at the sequence would leave that consumer unusable for `normEDS`.
+
 ## Main results
 
-* `isEllipticSequence_normEDS`: `IsEllipticSequence (normEDS b c d)`, with no hypothesis on the
-  parameters.
+* `isEllipticNet_normEDS`: `IsEllipticNet (normEDS b c d)`, with no hypothesis on the parameters.
+* `isEllipticSequence_normEDS`: its `s = 0` case.
+* `IsEllipticNet.invarNum_mul_invarDenom_normEDS`: the invariant of `normEDS` is symmetric in its
+  two indices — the first consumer the net unlocks.
 
 ## Implementation notes
 
@@ -63,27 +71,52 @@ open MvPolynomial NormEDSParam
 
 variable {R : Type*} [CommRing R] {b c d : R}
 
-/-- **A normalised EDS is an elliptic sequence, given that `b` is a nonzerodivisor.** Superseded
-by `isEllipticSequence_normEDS`, which carries no hypothesis; this is the form that transports. -/
-private theorem isEllipticSequence_normEDS_of_mem (hb : b ∈ R⁰) :
-    IsEllipticSequence (normEDS b c d) := by
-  refine (isEllipticSequence_iff (fun k ↦ normEDS_neg b c d k) (normEDS_zero b c d)
-    (by simp [normEDS_one]) (by simpa [normEDS_two] using hb)).mpr ⟨fun m _ ↦ ?_, fun m _ ↦ ?_⟩
-  · simpa [normEDS_one] using normEDS_odd b c d m
+/-- **A normalised EDS is an elliptic net, given that `b` is a nonzerodivisor.** Superseded by
+`isEllipticNet_normEDS`, which carries no hypothesis; this is the form that transports.
+
+The two recurrences are supplied in relator form, which is what `isEllipticNet_of_rel` consumes;
+`rel_odd` and `rel_even` turn each into the equation `normEDS_odd` and `normEDS_even` state. -/
+private theorem isEllipticNet_normEDS_of_mem (hb : b ∈ R⁰) :
+    IsEllipticNet (normEDS b c d) := by
+  refine IsEllipticNet.isEllipticNet_of_rel (fun k ↦ normEDS_neg b c d k) (normEDS_zero b c d)
+    (by simp [normEDS_one]) (by simpa [normEDS_two] using hb) (fun m _ ↦ ?_) fun m _ ↦ ?_
+  · rw [IsEllipticNet.rel_odd]
+    simp only [normEDS_one, one_pow, mul_one]
+    linear_combination normEDS_odd b c d m
   -- `linear_combination` needs `normEDS _ _ _ 2` and `… 1` as `b` and `1` before it can match.
-  · simp only [normEDS_one, normEDS_two, one_pow, mul_one]
+  · rw [IsEllipticNet.rel_even]
+    simp only [normEDS_one, normEDS_two, one_pow, mul_one]
     linear_combination normEDS_even b c d m
 
-/-- **A normalised EDS is an elliptic sequence.** No hypothesis on `b`, `c`, `d`. -/
-theorem isEllipticSequence_normEDS (b c d : R) : IsEllipticSequence (normEDS b c d) := by
+/-- **A normalised EDS is an elliptic net.** No hypothesis on `b`, `c`, `d`: the statement is
+proved over `ℤ[B, C, D]`, where the second term is the indeterminate `X B` and so a nonzerodivisor,
+and transported along `aeval` to an arbitrary commutative ring. -/
+theorem isEllipticNet_normEDS (b c d : R) : IsEllipticNet (normEDS b c d) := by
   -- Supply the defining equation rather than leaving it to `isDefEq`: `universalNormEDS`'s body
   -- is not exposed, so unification cannot cheaply see it as `normEDS (X B) (X C) (X D)`.
-  have huniv : IsEllipticSequence (universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ) := by
+  have huniv : IsEllipticNet (universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ) := by
     have hfun : (universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ)
         = normEDS (X B) (X C) (X D) := funext universalNormEDS_apply
     rw [hfun]
-    exact isEllipticSequence_normEDS_of_mem (mem_nonZeroDivisors_of_ne_zero (X_ne_zero B))
-  intro p q r
+    exact isEllipticNet_normEDS_of_mem (mem_nonZeroDivisors_of_ne_zero (X_ne_zero B))
+  intro p q r s
   -- `map_rel` is stated for `f ∘ W`, `normEDS_eq_aeval` for the eta-expanded lambda.
   rw [normEDS_eq_aeval (b := b) (c := c) (d := d), ← Function.comp_def,
     ← IsEllipticNet.map_rel, huniv, map_zero]
+
+/-- **A normalised EDS is an elliptic sequence**, the last index of the net held at `0`. -/
+theorem isEllipticSequence_normEDS (b c d : R) : IsEllipticSequence (normEDS b c d) :=
+  fun p q r ↦ isEllipticNet_normEDS b c d p q r 0
+
+/-- **The invariant of a normalised EDS is symmetric in its two indices.** This is what the
+elliptic-net structure buys for `normEDS`: `IsEllipticNet.invarNum_mul_invarDenom` needs the full
+four-index relation, which `isEllipticNet_normEDS` now supplies unconditionally, so the cross
+identity holds for every `b`, `c`, `d` over any commutative ring.
+
+It is the entry point to the invariant and denominator layer — `invar₂`, `redInvar` and the
+reduced denominator are read off it — and the reason this file proves the net rather than
+stopping at the sequence. -/
+theorem IsEllipticNet.invarNum_mul_invarDenom_normEDS (b c d : R) (s m n : ℤ) :
+    invarNum (normEDS b c d) s m * invarDenom (normEDS b c d) s n =
+      invarNum (normEDS b c d) s n * invarDenom (normEDS b c d) s m :=
+  invarNum_mul_invarDenom (isEllipticNet_normEDS b c d) s m n
