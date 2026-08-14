@@ -37,8 +37,8 @@ these representatives are in `GL2/UpperTriangularDelta0.lean`.
 * `HeckeRing.GL2.upperTriEntriesEquiv_apply`, `upperTriEntriesEquiv_symm_apply_default`: the
   equivalence reads off, and installs, the coordinate at the unique index pair.
 * `HeckeRing.GL2.upperTriEntriesEquivFin_val`, `upperTriEntriesEquivFin_symm_val`: the same for
-  `a = ![1, p]`, as an identity of natural numbers — the two fibres `Fin (![1, p] 1 / ![1, p] 0)`
-  and `Fin p` are definitionally but not syntactically equal.
+  `a = ![1, p]`, as an identity of natural numbers: the fibre `Fin (![1, p] 1 / ![1, p] 0)` is
+  `Fin (p / 1)`, which `finCongr` carries to `Fin p` along `p / 1 = p`.
 * `HeckeRing.GL2.upperTriRep_apply_one_zero`: the representatives are upper triangular — the
   hypothesis mathlib's `IsBoundedAtImInfty.slash` asks for.
 * `HeckeRing.GL2.det_upperTriRep_pos`: they have determinant `p > 0`, which is what lets scalars
@@ -76,47 +76,39 @@ lemma default_indexPair_val : (default : {ij : Fin 2 × Fin 2 // ij.1 < ij.2}).v
 dependent function on the ordered index pairs, and by `uniqueIndexPair` there is only the pair
 `(0, 1)`; the fibre over it is `Fin (a 1 / a 0)`.
 
-The stated fibre `Fin (a 1 / a 0)` is the fibre `Fin (a default.val.2 / a default.val.1)` that
-`Equiv.piUnique` produces: `default` is *definitionally* `⟨(0, 1), _⟩`, since that is the field
-of `uniqueIndexPair`. It is not syntactically that, which is why the specialisation below needs
-`finCongr` rather than a rewrite.
-
-`@[expose]` is load-bearing, not decoration: the four characteristic lemmas below are proved by
-`rfl`, and without it the compiler rejects them with "this theorem is exported from the current
-module, [so] all definitions that need to be unfolded to prove this theorem must be exposed".
-Removing it does not trade one API for another — it leaves the equivalence with no usable
-characteristic equations at all. -/
-@[expose]
+The fibre over `default` reduces to the fibre over `(0, 1)`, namely `Fin (a 1 / a 0)`, because
+`default` is the field of `uniqueIndexPair`. The specialisation to `a = ![1, p]` is a separate
+matter: it leaves the bound `p / 1`, and `finCongr (by simp)` transports along the
+*propositional* equality `p / 1 = p`. -/
 def upperTriEntriesEquiv (a : Fin 2 → ℕ) : UpperTriEntries 2 a ≃ Fin (a 1 / a 0) :=
   Equiv.piUnique _
 
 /-- The equivalence reads off the coordinate at the unique index pair. -/
 @[simp]
 lemma upperTriEntriesEquiv_apply {a : Fin 2 → ℕ} (B : UpperTriEntries 2 a) :
-    upperTriEntriesEquiv a B = B default := rfl
+    upperTriEntriesEquiv a B = B default := (rfl)
 
 /-- Its inverse installs a given coordinate at the unique index pair. -/
 @[simp]
 lemma upperTriEntriesEquiv_symm_apply_default {a : Fin 2 → ℕ} (b : Fin (a 1 / a 0)) :
-    (upperTriEntriesEquiv a).symm b default = b := rfl
+    (upperTriEntriesEquiv a).symm b default = b := (rfl)
 
 /-- **The classical index of the upper-triangular representatives.** For `a = ![1, p]` the entry
 assignments are just the offsets `b ∈ Fin p`, so `upperTriGL` at these entries runs over the
 familiar `!![1, b; 0, p]`. -/
-@[expose]
 def upperTriEntriesEquivFin (p : ℕ) : UpperTriEntries 2 ![1, p] ≃ Fin p :=
   (upperTriEntriesEquiv _).trans (finCongr (by simp))
 
 /-- At `a = ![1, p]` the offset read off is the coordinate, as natural numbers: the fibres
-`Fin (![1, p] 1 / ![1, p] 0)` and `Fin p` are definitionally but not syntactically equal. -/
+`Fin (![1, p] 1 / ![1, p] 0)` is `Fin (p / 1)`, carried to `Fin p` by `finCongr`. -/
 @[simp]
 lemma upperTriEntriesEquivFin_val {p : ℕ} (B : UpperTriEntries 2 ![1, p]) :
-    (upperTriEntriesEquivFin p B : ℕ) = (B default : ℕ) := rfl
+    (upperTriEntriesEquivFin p B : ℕ) = (B default : ℕ) := (rfl)
 
 /-- At `a = ![1, p]` the coordinate installed is the offset, as natural numbers. -/
 @[simp]
 lemma upperTriEntriesEquivFin_symm_val {p : ℕ} (b : Fin p) :
-    (((upperTriEntriesEquivFin p).symm b default : ℕ)) = (b : ℕ) := rfl
+    (((upperTriEntriesEquivFin p).symm b default : ℕ)) = (b : ℕ) := (rfl)
 
 /-- The `b`-th upper-triangular representative `!![1, b; 0, p]`, as an element of this
 repository's general-`n` family at `a = ![1, p]`. -/
