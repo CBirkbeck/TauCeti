@@ -19,9 +19,10 @@ at which the double coset finally acts on *forms* rather than on raw functions `
 The two sides speak different languages, and reconciling them is most of this file.
 `SlashInvariantForm Γ k` is indexed by a subgroup of `GL(2, ℝ)`, and `𝒮ℒ` is the range of
 `mapGL ℝ`; the invariance theorem is stated at `SLnZ 2`, the range of `mapGL ℚ`, under the
-rational slash action. Both are ranges of `mapGL` out of the *same* `SL₂(ℤ)`, so a single lemma
-relates them: `map (algebraMap ℚ ℝ)` sends `mapGL ℚ s` to `mapGL ℝ s`. Both directions of the
-bridge follow, and `ModularForm.rat_slash` turns each rational slash into the real one.
+rational slash action. Both are ranges of `mapGL` out of the *same* `SL₂(ℤ)`, so mathlib's
+`Matrix.SpecialLinearGroup.map_mapGL` — `(mapGL S g).map (algebraMap S T) = mapGL T g` for a
+scalar tower — relates them directly at `ℤ → ℚ → ℝ`. Both directions of the bridge are corollaries
+of it, and `ModularForm.rat_slash` turns each rational slash into the real one.
 
 ## Main definitions
 
@@ -36,8 +37,10 @@ bridge follow, and `ModularForm.rat_slash` turns each rational slash into the re
 
 Ported from the AINTLIB `LeanModularForms` project
 ([`LeanModularForms/HeckeRIngs/GL2/HeckeAction.lean`](https://github.com/CBirkbeck/AINTLIB),
-commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck): `glMap_mapGL_eq`,
-`glMap_mem_SL`, `mem_SL_exists_H` and `heckeSlashInvariant`.
+commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck): `glMap_mem_SL`,
+`mem_SL_exists_H` and `heckeSlashInvariant`. AINTLIB's `glMap` wrapper and its `glMap_mapGL_eq`
+have no counterpart here: `Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ)` is already the map, and
+mathlib's `Matrix.SpecialLinearGroup.map_mapGL` is already the identity relating the two ranges.
 
 These are the bridging helpers that earlier files in this chain deliberately avoided: carrying
 slash-invariance rationally kept `Reindex.lean` and `Invariance.lean` free of them, and this is
@@ -60,24 +63,17 @@ namespace HeckeRing.GL2
 
 variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 
-/-- Entrywise `ℚ → ℝ` turns the rational image of `s : SL₂(ℤ)` into its real image. This is the
-single fact behind both directions of the `SLnZ 2` ↔ `𝒮ℒ` correspondence. -/
-lemma map_ratCast_mapGL (s : SpecialLinearGroup (Fin 2) ℤ) :
-    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) (mapGL ℚ s) = mapGL ℝ s := by
-  ext i j
-  simp
-
 /-- An element of `SL₂(ℤ) ≤ GL(2, ℚ)` maps into `𝒮ℒ`. -/
 lemma map_ratCast_mem_SL {δ : GL (Fin 2) ℚ} (hδ : δ ∈ SLnZ 2) :
     Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) δ ∈ 𝒮ℒ := by
   obtain ⟨s, rfl⟩ := (mem_SLnZ_iff 2).mp hδ
-  exact ⟨s, (map_ratCast_mapGL s).symm⟩
+  exact ⟨s, (map_mapGL (R := ℤ) (S := ℚ) (T := ℝ) s).symm⟩
 
 /-- Every element of `𝒮ℒ` is the image of one of `SLnZ 2`. -/
 lemma exists_mem_SLnZ_of_mem_SL {γ : GL (Fin 2) ℝ} (hγ : γ ∈ 𝒮ℒ) :
     ∃ δ ∈ SLnZ 2, Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) δ = γ := by
   obtain ⟨s, rfl⟩ := MonoidHom.mem_range.mp hγ
-  exact ⟨mapGL ℚ s, (mem_SLnZ_iff 2).mpr ⟨s, rfl⟩, map_ratCast_mapGL s⟩
+  exact ⟨mapGL ℚ s, (mem_SLnZ_iff 2).mpr ⟨s, rfl⟩, map_mapGL (R := ℤ) (S := ℚ) (T := ℝ) s⟩
 
 /-- Real slash-invariance under `𝒮ℒ` gives rational slash-invariance under `SLnZ 2`. -/
 lemma slash_eq_of_mem_SLnZ {f : ℍ → ℂ} (hf : ∀ γ ∈ 𝒮ℒ, f ∣[k] γ = f) {δ : GL (Fin 2) ℚ}
