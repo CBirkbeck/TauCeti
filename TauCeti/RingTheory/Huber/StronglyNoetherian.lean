@@ -32,6 +32,9 @@ Hausdorff topological `A`-algebra, with all of that structure found by instance 
 * `TauCeti.Huber.restrictedMvPowerSeriesCompletion`: the completed restricted power-series
   algebra `A⟨X₁,…,Xₖ⟩`.
 * `TauCeti.Huber.IsStronglyNoetherian`: every `A⟨X₁,…,Xₖ⟩` is a noetherian ring.
+* `TauCeti.Huber.weightedRestrictedSubringFinZeroEquiv` and
+  `TauCeti.Huber.restrictedMvPowerSeriesCompletionFinZeroEquiv`: the zero-variable
+  identifications, of the restricted-series ring with `A` and of `A⟨⟩` with `Â`.
 
 ## Main results
 
@@ -42,9 +45,17 @@ Hausdorff topological `A`-algebra, with all of that structure found by instance 
   the polynomials, already complete, and the Hilbert basis theorem applies. In particular
   `ℤ`, every field, and every noetherian ring discretely topologised witness the predicate.
 
-The comparison of `A⟨X₁,…,Xₖ⟩` with the plain restricted-series ring when `A` is itself
-complete and Hausdorff, the iteration `A⟨X⟩⟨Y⟩ ≅ A⟨X,Y⟩`, and the stability of noetherianness
-under quotients belong to the later roadmap milestones of Layer 0.5 and are not proved here.
+* `TauCeti.Huber.isNoetherianRing_completion_of_isStronglyNoetherian`: at zero variables the
+  predicate says exactly that the separated completion `Â` is noetherian. The identification
+  behind it is topological, not merely a ring isomorphism: the weight at `k = 0` is the empty
+  product, so `Tν · U` is `U` and the two neighbourhood bases correspond.
+
+The second half of that roadmap sentence — that `A` itself is noetherian when it is already
+complete and Hausdorff — needs completeness stated against the group uniformity introduced
+below rather than an ambient instance, and is not proved here. Neither is the comparison of
+`A⟨X₁,…,Xₖ⟩` with the plain restricted-series ring for complete Hausdorff `A`, the iteration
+`A⟨X⟩⟨Y⟩ ≅ A⟨X,Y⟩`, nor the stability of noetherianness under quotients; those belong to the
+later roadmap milestones of Layer 0.5.
 
 ## Provenance
 
@@ -182,6 +193,30 @@ theorem continuous_weightedRestrictedSubringFinZeroEquiv_symm :
   refine mem_weightedNhd.mpr fun ν ↦ ?_
   rw [weightMul_fin_zero]
   simpa [Subsingleton.elim ν 0] using ha
+
+/-- **`A⟨⟩` is the separated completion of `A`.** The zero-variable comparison is a topological
+ring isomorphism, so it extends to the completions, where it is an isomorphism because
+`UniformSpace.Completion.mapRingHom` is functorial. -/
+noncomputable def restrictedMvPowerSeriesCompletionFinZeroEquiv :
+    letI := IsTopologicalAddGroup.rightUniformSpace A
+    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+    restrictedMvPowerSeriesCompletion 0 A ≃+* UniformSpace.Completion A :=
+  letI := IsTopologicalAddGroup.rightUniformSpace A
+  letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+  UniformSpace.Completion.mapRingEquiv weightedRestrictedSubringFinZeroEquiv
+    continuous_weightedRestrictedSubringFinZeroEquiv
+    continuous_weightedRestrictedSubringFinZeroEquiv_symm
+
+/-- **At zero variables, strong noetherianness says that the separated completion `Â` is
+noetherian.** This is the `k = 0` reading of `TauCeti.Huber.IsStronglyNoetherian`, transported
+along the identification of `A⟨⟩` with `Â`. -/
+theorem isNoetherianRing_completion_of_isStronglyNoetherian [IsStronglyNoetherian A] :
+    letI := IsTopologicalAddGroup.rightUniformSpace A
+    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+    IsNoetherianRing (UniformSpace.Completion A) :=
+  let _ := IsTopologicalAddGroup.rightUniformSpace A
+  let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+  isNoetherianRing_of_ringEquiv _ restrictedMvPowerSeriesCompletionFinZeroEquiv
 
 end ZeroVariables
 
