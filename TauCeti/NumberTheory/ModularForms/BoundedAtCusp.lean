@@ -1,0 +1,60 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import Mathlib.NumberTheory.ModularForms.BoundedAtCusp
+
+/-!
+# Vanishing and boundedness at a cusp are closed under finite sums
+
+Mathlib's `OnePoint.IsZeroAt` and `OnePoint.IsBoundedAt` are closed under binary sums
+(`OnePoint.IsZeroAt.add`, `OnePoint.IsBoundedAt.add`), but the zero function and a
+`Finset.sum` are not recorded. This file adds them.
+
+The gap matters for the Hecke operators, which are finite sums of slashes: a proof that such
+an operator preserves vanishing at the cusps is an induction over the summands, and without
+`OnePoint.IsZeroAt.sum` each call site has to rerun that induction by hand.
+
+## Main declarations
+
+* `OnePoint.IsZeroAt.zero`, `OnePoint.IsBoundedAt.zero`: the zero function vanishes, and is
+  bounded, at every point of `OnePoint ℝ`.
+* `OnePoint.IsZeroAt.sum`, `OnePoint.IsBoundedAt.sum`: a finite sum of functions vanishing
+  (resp. bounded) at `c` vanishes (resp. is bounded) at `c`.
+-/
+
+public section
+
+open UpperHalfPlane
+
+open scoped ModularForm
+
+namespace OnePoint
+
+variable {c : OnePoint ℝ} {k : ℤ} {ι : Type*} {s : Finset ι} {F : ι → ℍ → ℂ}
+
+/-- The zero function vanishes at every point of `OnePoint ℝ`. -/
+@[simp]
+lemma IsZeroAt.zero : IsZeroAt c (0 : ℍ → ℂ) k := fun _ _ ↦ by
+  rw [SlashAction.zero_slash, isZeroAtImInfty_iff]
+  exact fun ε hε ↦ ⟨0, fun _ _ ↦ by simpa using hε.le⟩
+
+/-- The zero function is bounded at every point of `OnePoint ℝ`. -/
+@[simp]
+lemma IsBoundedAt.zero : IsBoundedAt c (0 : ℍ → ℂ) k := fun _ _ ↦ by
+  simpa only [SlashAction.zero_slash] using zero_form_isBoundedAtImInfty
+
+/-- A finite sum of functions vanishing at `c` vanishes at `c`. -/
+lemma IsZeroAt.sum (h : ∀ i ∈ s, IsZeroAt c (F i) k) : IsZeroAt c (∑ i ∈ s, F i) k :=
+  Finset.sum_induction F (fun g ↦ IsZeroAt c g k) (fun _ _ ↦ IsZeroAt.add) IsZeroAt.zero h
+
+/-- A finite sum of functions bounded at `c` is bounded at `c`. -/
+lemma IsBoundedAt.sum (h : ∀ i ∈ s, IsBoundedAt c (F i) k) : IsBoundedAt c (∑ i ∈ s, F i) k :=
+  Finset.sum_induction F (fun g ↦ IsBoundedAt c g k) (fun _ _ ↦ IsBoundedAt.add)
+    IsBoundedAt.zero h
+
+end OnePoint
+
+end
