@@ -22,8 +22,9 @@ produces the Galois cocycle used by the twist classification.
 
 That cocycle comparison lands on a product `C * [-1]`. Mathlib gives a product only as a whole
 structure literal (`VariableChange.mul_def`), so this file also reads off its components:
-`VariableChange.mul_u/_r/_s/_t` for an arbitrary product, and `mul_negVariableChange_u/_r/_s/_t`
-for the `[-1]` case, the latter derived from the former. Only the `[-1]` four are `@[simp]`.
+`VariableChange.mul_u/_r/_s/_t` for an arbitrary product, and then `mul_negVariableChange_*` and
+`negVariableChange_mul_*` for composing with `[-1]` on the right and on the left, both derived
+from the general four. The `[-1]` families are `@[simp]`; the general four are not.
 
 The negation is the nontrivial automorphism in the `Aut (E, O)`
 milestone of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 1, proved in
@@ -154,52 +155,51 @@ variable (C : VariableChange R)
 
 /-- Composing with `[-1]` negates the scaling factor `u`. -/
 @[simp] lemma mul_negVariableChange_u : (C * E.negVariableChange).u = -C.u := by
-  rw [VariableChange.mul_u, negVariableChange_u, mul_neg, mul_one]
+  simp [VariableChange.mul_u]
 
 /-- Composing with `[-1]` leaves the translation `r` unchanged, `[-1]` having `r = 0` and
 `u = -1` entering squared. -/
 @[simp] lemma mul_negVariableChange_r : (C * E.negVariableChange).r = C.r := by
-  rw [VariableChange.mul_r, negVariableChange_u, negVariableChange_r, Units.val_neg,
-    Units.val_one, neg_one_sq, mul_one, add_zero]
+  simp [VariableChange.mul_r]
 
 /-- Composing with `[-1]` negates the shear `s` and shifts it by the curve's `a₁`. -/
 @[simp] lemma mul_negVariableChange_s : (C * E.negVariableChange).s = -C.s - E.a₁ := by
-  rw [VariableChange.mul_s, negVariableChange_u, negVariableChange_s, Units.val_neg,
-    Units.val_one, neg_mul, one_mul, sub_eq_add_neg]
+  simp [VariableChange.mul_s]
+  ring
 
 /-- Composing with `[-1]` negates the translation `t` and shifts it by `r * a₁` and the curve's
 `a₃`. -/
 @[simp] lemma mul_negVariableChange_t :
     (C * E.negVariableChange).t = -C.t - C.r * E.a₁ - E.a₃ := by
-  rw [VariableChange.mul_t, negVariableChange_u, negVariableChange_s, negVariableChange_t,
-    Units.val_neg, Units.val_one]
+  simp [VariableChange.mul_t]
   ring
 
 /-- Precomposing with `[-1]` negates the scaling factor `u`. -/
 @[simp] lemma negVariableChange_mul_u : (E.negVariableChange * C).u = -C.u := by
-  rw [VariableChange.mul_u, negVariableChange_u, neg_one_mul]
+  simp [VariableChange.mul_u]
 
 /-- Precomposing with `[-1]` leaves the translation `r` unchanged, `[-1]` having `r = 0`. -/
 @[simp] lemma negVariableChange_mul_r : (E.negVariableChange * C).r = C.r := by
-  rw [VariableChange.mul_r, negVariableChange_r, zero_mul, zero_add]
+  simp [VariableChange.mul_r]
 
 /-- Precomposing with `[-1]` shifts the shear `s` by `u * a₁`. Unlike the postcomposed
 `mul_negVariableChange_s`, `s` itself is not negated: it is the *second* factor's `u` that
 rescales, and here that is `C`'s rather than `-1`. -/
 @[simp] lemma negVariableChange_mul_s :
     (E.negVariableChange * C).s = C.s - (C.u : R) * E.a₁ := by
-  rw [VariableChange.mul_s, negVariableChange_s, mul_neg, ← sub_eq_neg_add]
+  simp [VariableChange.mul_s]
+  ring
 
 /-- Precomposing with `[-1]` shifts the translation `t` by `a₃ * u ^ 3`, and contributes nothing
 through `r`, which is zero for `[-1]`. -/
 @[simp] lemma negVariableChange_mul_t :
     (E.negVariableChange * C).t = C.t - E.a₃ * (C.u : R) ^ 3 := by
-  rw [VariableChange.mul_t, negVariableChange_r, negVariableChange_t]
+  simp [VariableChange.mul_t]
   ring
 
-/-- The negation automorphism is an involution. Each component follows from the lemmas just
-above, `[-1]` being both factors. -/
+/-- The negation automorphism is an involution. -/
 @[simp] lemma negVariableChange_mul_self : E.negVariableChange * E.negVariableChange = 1 := by
+  -- each component is one of the lemmas just above, with `[-1]` as both factors
   ext <;> simp [VariableChange.one_def]
 
 /-- The negation automorphism is its own inverse, being an involution. -/
