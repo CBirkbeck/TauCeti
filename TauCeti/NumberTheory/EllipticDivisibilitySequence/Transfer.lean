@@ -7,8 +7,8 @@ module
 public import Mathlib.Algebra.Order.Group.Int
 public import Mathlib.Algebra.Order.Group.Unbundled.Abs
 public import Mathlib.Order.Fin.Tuple
+import Mathlib.Algebra.Order.Group.Abs
 import Mathlib.Data.Int.ModEq
-import Mathlib.NumberTheory.EllipticDivisibilitySequence
 
 /-!
 # Index bookkeeping for the descent on the elliptic relator
@@ -61,9 +61,15 @@ normal form once for downstream use.
 **private** for what only the proofs need. So `Mathlib.Algebra.Order.Group.Int` and
 `…Group.Unbundled.Abs` are public — the statements use ℤ arithmetic and `|…|` — as is
 `Mathlib.Order.Fin.Tuple`, since `nonnegStrictAnti₄_def` mentions `StrictAnti ![…]` and that
-module supplies the vector notation too. `Mathlib.Data.Int.ModEq` is private, used only inside a
-proof. The EDS import is **private** as well: no declaration here mentions `atomRel`, so none of
-that API belongs in this module's public surface, but the proofs still draw instances from it.
+module supplies the vector notation too. `Mathlib.Data.Int.ModEq` and `Mathlib.Algebra.Order.Group
+.Abs` are private, each used only inside a proof — the latter for `abs_cases`, which is
+`to_additive`-generated from `mabs_cases` and so appears under no literal definition of its own.
+
+This file does **not** import `Mathlib.NumberTheory.EllipticDivisibilitySequence`. No declaration
+here mentions `atom`, `atomRel` or `rel`: the statements are about ℤ arithmetic, order and parity,
+and the EDS lemmas they are *for* — `atomRel_avg_sub`, `atomRel_abs₄`, `atomRel_eq` — are named in
+the prose because that is what fixes the index shapes, not because anything here needs their API.
+Importing the EDS module only to reach `abs_cases` through it cost 279 build jobs.
 
 ## Provenance
 
@@ -122,9 +128,10 @@ private theorem parity_avg_sub {a b c d : ℤ}
   obtain ⟨h₁, h₂, h₃⟩ := parity
   omega
 
-/-- **Same parity survives the transfer**, in the form the descent consumes: the first index
-carries the absolute value that `atomRel_abs₄` leaves behind. This is the only public parity
-statement here; the raw-index step it goes through is private. -/
+/-- **Same parity survives the transfer**, in the form the descent consumes: the parity witness is
+written relative to `|(a + b + c + d) / 2 - a|`, the entry `atomRel_abs₄` leaves under an absolute
+value. This is the only public parity statement here; the raw-index step it goes through is
+private. -/
 theorem parity_abs_avg_sub {a b c d : ℤ}
     (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) :
     |(a + b + c + d) / 2 - a| % 2 = ((a + b + c + d) / 2 - d) % 2 ∧
