@@ -29,6 +29,8 @@ restated here.
 
 * `HeckeRing.GL2.heckeSlashUpperTri_def`, `HeckeRing.GL2.upperTriRep_def`: the characteristic
   equations, which are the interface since neither definition is `@[expose]`.
+* `HeckeRing.GL2.upperTriRep_apply_one_zero`: the representatives are upper triangular — the
+  hypothesis mathlib's `IsBoundedAtImInfty.slash` requires.
 * `HeckeRing.GL2.heckeSlashUpperTri_add`, `heckeSlashUpperTri_zero`: additivity in `f`.
 
 ## Provenance
@@ -63,6 +65,13 @@ noncomputable def upperTriRep (b : Fin p) : GL (Fin 2) ℚ :=
 
 lemma upperTriRep_def (b : Fin p) :
     upperTriRep p b = upperTriGL ((upperTriEntriesEquivFin p).symm b) := (rfl)
+
+/-- **The representatives are upper triangular** — the hypothesis mathlib's
+`IsBoundedAtImInfty.slash` asks for. At `n = 2` this is the `(1, 0)` entry of
+`upperTriGL_apply_eq_zero_of_lt`. -/
+@[simp] lemma upperTriRep_apply_one_zero (b : Fin p) :
+    (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0 :=
+  upperTriGL_apply_eq_zero_of_lt (fun i ↦ by fin_cases i <;> simp [b.pos]) _ (by decide)
 
 /-- **The upper-triangular part of the Hecke operator**: `∑ b < p, f ∣[k] !![1, b; 0, p]`. -/
 noncomputable def heckeSlashUpperTri (f : ℍ → ℂ) : ℍ → ℂ :=
