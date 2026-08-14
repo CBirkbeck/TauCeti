@@ -19,7 +19,7 @@ For `𝒢 ≤ GL(2, ℝ)` of finite relative index in `𝒮ℒ` with discrete st
 
 The proof lifts the level-one bound `ModularForm.sturm_bound_levelOne` through the norm map:
 the norm of `f` vanishes exactly when `f` does, and by the decomposition
-`TauCeti.ModularForm.norm_apply_eq_galoisProd_mul_normRest` sufficient vanishing of `f` at `∞`
+`TauCeti.ModularForm.qExpansion_one_norm_order_eq` sufficient vanishing of `f` at `∞`
 propagates to the norm.
 
 ## Main declarations
@@ -58,13 +58,6 @@ private lemma strictWidthInfty_pos_of_finiteRelIndex {𝒢 : Subgroup (GL (Fin 2
   exact (by exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢) : (0 : ℝ) <
     Subgroup.integerCuspWidth 𝒢).ne' hnRw
 
-private lemma isBoundedAtImInfty_of_finiteRelIndex : IsBoundedAtImInfty f :=
-  OnePoint.isBoundedAt_infty_iff.mp <| f.bdd_at_cusps' <|
-    Subgroup.isCusp_of_mem_strictPeriods
-      (by exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢) :
-        (0 : ℝ) < Subgroup.integerCuspWidth 𝒢)
-      Subgroup.integerCuspWidth_mem_strictPeriods
-
 private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.strictPeriods] :
     (qExpansion 𝒢.strictWidthInfty f).order ≤
       (qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f)).order := by
@@ -76,7 +69,8 @@ private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.s
   refine le_trans ?_ le_self_add
   rw [hnRw]
   exact qExpansion_order_le_qExpansion_nat_mul_order strictWidthInfty_pos_of_finiteRelIndex
-    hm'_pos hf_w_per (isBoundedAtImInfty_of_finiteRelIndex f) f.holo'
+    hm'_pos hf_w_per (OnePoint.isBoundedAt_infty_iff.mp
+      (ModularFormClass.bdd_at_cusps f Subgroup.isCusp_infty_of_finiteRelIndex)) f.holo'
 
 /-- **Sturm bound for subgroups of `GL(2, ℝ)` of finite relative index in `SL(2, ℤ)`** with
 discrete strict periods. A modular form of weight `k` whose `q`-expansion at the cusp `∞`

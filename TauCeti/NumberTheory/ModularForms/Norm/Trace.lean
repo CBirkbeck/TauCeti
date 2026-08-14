@@ -40,6 +40,9 @@ needs `f` to be a modular form.
 * [Mathlib PR #39083](https://github.com/leanprover-community/mathlib4/pull/39083) and
   [Mathlib PR #39088](https://github.com/leanprover-community/mathlib4/pull/39088)
   (Chris Birkbeck) — the upstream drafts this file ports onto the current Mathlib pin.
+* [Mathlib PR #39000](https://github.com/leanprover-community/mathlib4/pull/39000)
+  (Chris Birkbeck) — the source of `qExpansion_one_norm_order_eq`, whose proof moved here
+  from the Sturm-bound development.
 -/
 
 public noncomputable section
@@ -308,9 +311,10 @@ public lemma norm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
 /-- The `q`-expansion order of the norm at the cusp `∞` splits as the order of `f` at width
 `Subgroup.integerCuspWidth 𝒢` plus the order of the remainder factor `normRest f`.
 
-No discreteness hypothesis is needed: the conversion between `𝒢.strictWidthInfty` and
-`Subgroup.integerCuspWidth 𝒢`, which is where discreteness enters, belongs to the
-inequality `qExpansion_order_le_qExpansion_norm_order` derived from this.
+No discreteness hypothesis is needed here. Discreteness is what converts `𝒢.strictWidthInfty`
+into `Subgroup.integerCuspWidth 𝒢` — see
+`Subgroup.exists_pos_nat_integerCuspWidth_eq_mul_strictWidthInfty` — and that conversion
+belongs to the Sturm-bound inequality derived from this identity, not to the identity.
 
 Not `@[simp]`: `ModularForm.coe_norm` is itself an unconditional simp lemma, so the
 left-hand side is not in simp normal form — it simplifies on to the raw coset product. -/
@@ -319,11 +323,8 @@ public lemma qExpansion_one_norm_order_eq :
       (qExpansion ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) f).order
         + (qExpansion 1 (normRest f)).order := by
   have hn_pos : 0 < Subgroup.integerCuspWidth 𝒢 := Subgroup.integerCuspWidth_pos
-  have hf_bdd : IsBoundedAtImInfty f := by
-    have hpos : (0 : ℝ) < Subgroup.integerCuspWidth 𝒢 := by
-      exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢)
-    exact OnePoint.isBoundedAt_infty_iff.mp <| ModularFormClass.bdd_at_cusps f <|
-      Subgroup.isCusp_of_mem_strictPeriods hpos Subgroup.integerCuspWidth_mem_strictPeriods
+  have hf_bdd : IsBoundedAtImInfty f := OnePoint.isBoundedAt_infty_iff.mp <|
+    ModularFormClass.bdd_at_cusps f Subgroup.isCusp_infty_of_finiteRelIndex
   have hf_n_per : Function.Periodic (⇑f ∘ ofComplex)
       ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) :=
     SlashInvariantFormClass.periodic_comp_ofComplex f
