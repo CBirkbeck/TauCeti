@@ -22,7 +22,8 @@ of `Γ` as a strict period at level one.
 ## Main declarations
 
 * `TauCeti.ModularForm.NormReduction.G`, `TauCeti.ModularForm.NormReduction.Q`: a subgroup
-  `Γ ≤ SL(2, ℤ)` viewed in `GL(2, ℝ)`, and the coset space indexing the norm factors.
+  `Γ ≤ SL(2, ℤ)` viewed in `GL(2, ℝ)` (arithmetic for finite index, by Mathlib's instance),
+  and the coset space indexing the norm factors.
 * `TauCeti.ModularForm.NormReduction.restProd`: the product of the nontrivial slash
   translates, characterized by `restProd_apply` and bounded at `Im z → ∞`.
 * `TauCeti.ModularForm.NormReduction.strictWidthInfty_mem_strictPeriods_levelOne`: the
@@ -52,10 +53,6 @@ variable {Γ : Subgroup SL(2, ℤ)} {k : ℤ}
 /-- The quotient indexing the factors in the norm product. -/
 @[expose, reducible] public def Q (Γ : Subgroup SL(2, ℤ)) : Type :=
   𝒮ℒ ⧸ ((G Γ).subgroupOf 𝒮ℒ)
-
-/-- A finite-index subgroup of `SL(2, ℤ)` is arithmetic as a subgroup of `GL(2, ℝ)`. -/
-public instance (Γ : Subgroup SL(2, ℤ)) [Γ.FiniteIndex] : (G Γ).IsArithmetic :=
-  (Subgroup.isArithmetic_iff_finiteIndex (Γ := Γ)).2 inferInstance
 
 /-- The strict cusp width of `G Γ` is a strict period of the full level-one group `𝒮ℒ`. -/
 public lemma strictWidthInfty_mem_strictPeriods_levelOne (Γ : Subgroup SL(2, ℤ)) :
