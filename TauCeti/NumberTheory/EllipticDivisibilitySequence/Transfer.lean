@@ -33,10 +33,9 @@ terminate.
 
 ## Main results
 
-* `IsEllipticNet.parity_avg_sub`: same parity survives the transfer, for the tuple exactly as
-  `atomRel_avg_sub` produces it.
-* `IsEllipticNet.parity_abs_avg_sub`: the same after `atomRel_abs₄` absorbs the sign on the last
-  index — the shape the descent consumes.
+* `IsEllipticNet.parity_abs_avg_sub`: same parity survives the transfer, in the form the descent
+  consumes — after `atomRel_abs₄` has absorbed the sign. The raw-index form that `atomRel_avg_sub`
+  produces is a private step inside its proof rather than a second public spelling.
 * `IsEllipticNet.nonnegStrictAnti₄_def` / `nonnegStrictAnti₄_iff`: the predicate's defining body,
   and its adjacent-inequality normal form.
 * `IsEllipticNet.nonnegStrictAnti₄_abs_avg_sub`: nonnegativity and strict decrease survive it.
@@ -111,9 +110,11 @@ theorem nonnegStrictAnti₄_iff (a b c d : ℤ) :
   simp
   omega
 
-/-- **Same parity survives the transfer.** Stated for the transferred quadruple exactly as
-`atomRel_avg_sub` produces it, with the last index raw. -/
-theorem parity_avg_sub {a b c d : ℤ}
+/-- **Same parity survives the transfer**, for the transferred quadruple exactly as
+`atomRel_avg_sub` produces it, with the last index raw. Private: it is the step through which
+`parity_abs_avg_sub` is proved, and that absolute-value form is the shape every consumer wants,
+so exporting both would put two spellings of one fact on the public surface. -/
+private theorem parity_avg_sub {a b c d : ℤ}
     (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) :
     ((a + b + c + d) / 2 - a) % 2 = ((a + b + c + d) / 2 - d) % 2 ∧
       ((a + b + c + d) / 2 - a) % 2 = ((a + b + c + d) / 2 - c) % 2 ∧
@@ -121,8 +122,9 @@ theorem parity_avg_sub {a b c d : ℤ}
   obtain ⟨h₁, h₂, h₃⟩ := parity
   omega
 
-/-- The absolute-value form of `parity_avg_sub`, for the last index after `atomRel_abs₄` has
-absorbed the sign. This is the shape the descent consumes. -/
+/-- **Same parity survives the transfer**, in the form the descent consumes: the first index
+carries the absolute value that `atomRel_abs₄` leaves behind. This is the only public parity
+statement here; the raw-index step it goes through is private. -/
 theorem parity_abs_avg_sub {a b c d : ℤ}
     (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) :
     |(a + b + c + d) / 2 - a| % 2 = ((a + b + c + d) / 2 - d) % 2 ∧
