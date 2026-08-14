@@ -17,9 +17,10 @@ This file records reusable consequences of acyclicity for paths in simple graphs
 
 * `SimpleGraph.IsAcyclic.not_adj_getVert_of_add_one_lt`: nonconsecutive vertices of a path
   in an acyclic graph are not adjacent.
-* `SimpleGraph.IsAcyclic.ne_of_adj_start_of_adj_end`: the outer ends of the two branches at the
-  ends of a path are distinct.
-* `SimpleGraph.IsAcyclic.not_adj_of_adj_start_of_adj_end`: those two outer ends are not adjacent.
+* `SimpleGraph.IsAcyclic.ne_of_adj_start_of_adj_end`: an off-path neighbour of a path's start
+  differs from every neighbour of its end.
+* `SimpleGraph.IsAcyclic.not_adj_of_adj_start_of_adj_end`: when both lie off the path, such a
+  neighbour of the start and a neighbour of the end are not adjacent.
 -/
 
 namespace TauCeti
@@ -40,9 +41,9 @@ theorem _root_.SimpleGraph.IsAcyclic.not_adj_getVert_of_add_one_lt {V : Type*}
   have := hp.getVert_injOn (by omega : i + 1 ≤ p.length) hj heq.symm
   omega
 
-/-- **The outer ends of the two branches at the ends of a path are distinct.** In an acyclic
-graph, a vertex adjacent to the start of a path with distinct endpoints and off that path differs
-from every vertex adjacent to the path's end. -/
+/-- **An off-path neighbour of a path's start differs from every neighbour of its end.** In an
+acyclic graph, for a path with distinct endpoints. Only the start-side vertex is required to lie
+off the path; the end-side one is unconstrained. -/
 theorem _root_.SimpleGraph.IsAcyclic.ne_of_adj_start_of_adj_end {V : Type*} {G : SimpleGraph V}
     {u v : V} (hG : G.IsAcyclic) (huv : u ≠ v) {q : G.Walk u v} (hq : q.IsPath)
     {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) : a ≠ b := fun hab ↦
@@ -52,9 +53,9 @@ theorem _root_.SimpleGraph.IsAcyclic.ne_of_adj_start_of_adj_end {V : Type*} {G :
     (hG.eq_snd_of_adj_start (hq.cons ha' (h := ha.symm)) (hab ▸ hb).symm
       (SimpleGraph.Walk.end_mem_support _)).symm
 
-/-- **The outer ends of the two branches at the ends of a path are not adjacent.** In an acyclic
-graph, no edge joins a vertex adjacent to the start of a path to a vertex adjacent to its end, when
-both lie off the path. -/
+/-- **Neighbours of a path's two ends, both lying off the path, are not adjacent.** In an acyclic
+graph, no edge joins a vertex adjacent to the start of a path to one adjacent to its end. Here
+both are required to lie off the path, unlike in `ne_of_adj_start_of_adj_end`. -/
 theorem _root_.SimpleGraph.IsAcyclic.not_adj_of_adj_start_of_adj_end {V : Type*}
     {G : SimpleGraph V} {u v : V} (hG : G.IsAcyclic) {q : G.Walk u v} (hq : q.IsPath)
     {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) (hb' : b ∉ q.support) :
