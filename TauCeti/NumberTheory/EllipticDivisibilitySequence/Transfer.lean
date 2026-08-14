@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.NumberTheory.EllipticDivisibilitySequence
+import Mathlib.Data.Int.ModEq
 import Mathlib.Order.Fin.Tuple
 
 /-!
@@ -109,8 +110,10 @@ theorem parity_abs_avg_sub {a b c d : ℤ}
     |(a + b + c + d) / 2 - a| % 2 = ((a + b + c + d) / 2 - d) % 2 ∧
       |(a + b + c + d) / 2 - a| % 2 = ((a + b + c + d) / 2 - c) % 2 ∧
         |(a + b + c + d) / 2 - a| % 2 = ((a + b + c + d) / 2 - b) % 2 := by
-  obtain ⟨h₁, h₂, h₃⟩ := parity
-  rcases abs_cases ((a + b + c + d) / 2 - a) with ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] <;> omega
+  have habs : |(a + b + c + d) / 2 - a| % 2 = ((a + b + c + d) / 2 - a) % 2 :=
+    Int.abs_modEq_two
+  obtain ⟨h₁, h₂, h₃⟩ := parity_avg_sub parity
+  exact ⟨habs.trans h₁, habs.trans h₂, habs.trans h₃⟩
 
 /-- **Nonnegativity and strict decrease survive the transfer.** The last index needs its absolute
 value: `m - a` is the one difference that can be negative, `a` being the largest index. -/
