@@ -74,19 +74,15 @@ private theorem image_smul_eq_image_smul_of_inter_nonempty
     (hdisj : ∀ g : G, (g • U ∩ U).Nonempty → g = 1) {g g' : G}
     (hmeet : (qH '' (g • U) ∩ qH '' (g' • U)).Nonempty) :
     qH '' (g • U) = qH '' (g' • U) := by
-  obtain ⟨z, ⟨w, hw, rfl⟩, w', hw', hww'⟩ := hmeet
-  obtain ⟨u, hu, rfl⟩ := Set.mem_smul_set.mp hw
-  obtain ⟨u', hu', rfl⟩ := Set.mem_smul_set.mp hw'
+  -- A point common to the two images is `qH (g • u) = qH (g' • u')` for some `u, u' ∈ U`.
+  obtain ⟨_, ⟨_, ⟨u, hu, rfl⟩, rfl⟩, _, ⟨u', hu', rfl⟩, hww'⟩ := hmeet
   obtain ⟨⟨h, hh⟩, hhu'⟩ := horbit.mp hww'.symm
   -- `H` acts on `E` through `G`, so the orbit witness is an element of `G` fixing `qH`.
-  have hhu : h • (g' • u') = g • u := hhu'
   have hmap : ∀ e : E, qH (h • e) = qH e := fun _ => horbit.mpr ⟨⟨h, hh⟩, rfl⟩
-  have hone : g⁻¹ * h * g' = 1 := by
+  have hgg' : g = h * g' := eq_of_inv_mul_eq_one <| by
     refine hdisj _ ⟨u, Set.mem_smul_set.mpr ⟨u', hu', ?_⟩, hu⟩
-    rw [mul_smul, mul_smul, hhu, inv_smul_smul]
-  have hgg' : g = h * g' := eq_of_inv_mul_eq_one (by simpa [mul_assoc] using hone)
-  rw [hgg', mul_smul]
-  simp only [← Set.image_smul, Set.image_image, hmap]
+    rw [mul_smul, mul_smul, show h • (g' • u') = g • u from hhu', inv_smul_smul]
+  simp [hgg', mul_smul, ← Set.image_smul, Set.image_image, hmap]
 
 /-- The evenly covered neighbourhood of `q e` cut out by a set `U` around `e` whose `G`-translates
 are pairwise disjoint. Its sheets are the images in `Y` of the translates `g • U`. -/
