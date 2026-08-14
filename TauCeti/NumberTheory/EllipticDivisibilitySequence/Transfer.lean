@@ -35,7 +35,8 @@ terminate.
 
 * `IsEllipticNet.parity_abs_avg_sub`: same parity survives the transfer, with the witness taken
   relative to the entry `atomRel_abs₄` leaves under an absolute value.
-* `IsEllipticNet.nonnegStrictAnti₄_iff`: the predicate as its four adjacent inequalities.
+* `IsEllipticNet.nonnegStrictAnti₄_def` / `nonnegStrictAnti₄_iff`: the predicate in its defining
+  tuple form, and as its four adjacent inequalities.
 * `IsEllipticNet.nonnegStrictAnti₄_abs_avg_sub`: nonnegativity and strict decrease survive it.
 * `IsEllipticNet.six_le_of_parity_of_nonnegStrictAnti₄`: a strictly decreasing quadruple
   of one parity with `0 ≤ d` has `6 ≤ a` — consecutive indices differ by at least two, three
@@ -104,6 +105,11 @@ namespace IsEllipticNet
 the descent needs it wherever it needs the ordering; the decreasing half is Mathlib's
 `StrictAnti` on the tuple. -/
 def NonnegStrictAnti₄ (a b c d : ℤ) : Prop := 0 ≤ d ∧ StrictAnti ![a, b, c, d]
+
+/-- `NonnegStrictAnti₄` in its defining tuple form, for a consumer that wants Mathlib's
+`StrictAnti` API on the tuple. Not `@[simp]`: `nonnegStrictAnti₄_iff` is the normal form. -/
+theorem nonnegStrictAnti₄_def (a b c d : ℤ) :
+    NonnegStrictAnti₄ a b c d ↔ 0 ≤ d ∧ StrictAnti ![a, b, c, d] := Iff.rfl
 
 /-- `NonnegStrictAnti₄` as its four adjacent inequalities. -/
 @[simp]
