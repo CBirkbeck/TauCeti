@@ -155,6 +155,7 @@ theorem divBy_mem_completedPlusSubring (P : PairOfDefinition A) (Aplus : Subring
 
 /-- **Membership in the base**, as the file's characteristic lemma: the body is not exposed, so
 this is how a consumer reaches `A⁺[T/s]` underneath the image. -/
+@[simp]
 theorem mem_completedPlusSubringBase_iff (P : PairOfDefinition A) (Aplus : Subring A)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) :
@@ -164,9 +165,16 @@ theorem mem_completedPlusSubringBase_iff (P : PairOfDefinition A) (Aplus : Subri
     ∀ {x : UniformSpace.Completion S},
       x ∈ completedPlusSubringBase P Aplus T s S hden ↔
         ∃ y ∈ Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S)),
-          UniformSpace.Completion.coeRingHom y = x := (Iff.rfl)
+          UniformSpace.Completion.coeRingHom y = x := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  intro x
+  rw [completedPlusSubringBase, Subring.mem_map]
+  simp only [Subalgebra.mem_toSubring]
 
 /-- **Membership in `A_U⁺`**: it is exactly integrality over the base. -/
+@[simp]
 theorem mem_completedPlusSubring_iff (P : PairOfDefinition A) (Aplus : Subring A)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) :
@@ -185,6 +193,27 @@ theorem mem_completedPlusSubring_iff (P : PairOfDefinition A) (Aplus : Subring A
     (completedPlusSubringBase P Aplus T s S hden).subtype.toAlgebra
   intro x
   rw [completedPlusSubring, Subalgebra.mem_toSubring, mem_integralClosure_iff]
+
+/-- **`A_U⁺` is integrally closed in `A_U`**, which is the point of taking the integral closure in
+the completion rather than in `Aₛ`: the property holds by construction, with no transfer theorem.
+-/
+instance isIntegrallyClosedIn_completedPlusSubring (P : PairOfDefinition A) (Aplus : Subring A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI : Algebra ↥(completedPlusSubringBase P Aplus T s S hden) (UniformSpace.Completion S) :=
+      (completedPlusSubringBase P Aplus T s S hden).subtype.toAlgebra
+    IsIntegrallyClosedIn ↥(completedPlusSubring P Aplus T s S hden)
+      (UniformSpace.Completion S) := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  let _ : Algebra ↥(completedPlusSubringBase P Aplus T s S hden) (UniformSpace.Completion S) :=
+    (completedPlusSubringBase P Aplus T s S hden).subtype.toAlgebra
+  rw [completedPlusSubring]
+  infer_instance
 
 end Topological
 
