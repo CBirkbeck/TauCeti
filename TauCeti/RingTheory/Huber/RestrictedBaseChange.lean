@@ -25,11 +25,10 @@ scalar action.
 
 ## Main results
 
-* `baseChange_tmul`: `baseChange` sends `m ⊗ₜ f` to the coefficientwise scalar action
-  `s ↦ coeff s f • m`.
-* `isRestricted_baseChange_tmul`: that series is restricted whenever `f` is. This is what makes
-  the comparison land in `M⟨T₁, …, Tₖ⟩`, and it is where `ContinuousSMul A M` is used —
-  continuity of `a ↦ a • m` in the *scalar*, which `ContinuousConstSMul` does not give.
+* `isRestricted_baseChange_tmul`: `baseChange` sends a pure tensor `m ⊗ₜ f` with `f` restricted
+  to a restricted series. This is what makes the comparison land in `M⟨T₁, …, Tₖ⟩`, and it is
+  where `ContinuousSMul A M` is used — continuity of `a ↦ a • m` in the *scalar*, which
+  `ContinuousConstSMul` does not give.
 * `isRestricted_baseChange`: `baseChange` carries the span of the restricted pure tensors into
   `M⟨T₁, …, Tₖ⟩`.
 * `coe_baseChangeRestricted_tmul`: read in the ambient series, `baseChangeRestricted` agrees with
@@ -42,9 +41,15 @@ strongly noetherian Tate ring — is not proved here.
 
 `MvPowerSeries σ R` is a plain `def` for `(σ →₀ ℕ) → R`, so Mathlib's lemmas about
 `TensorProduct.piScalarRightHom` are stated about a type that `rw` and `simp` will not unfold to
-reach a goal phrased in power series. `baseChange_tmul` is Mathlib's `piScalarRightHom_tmul`
-restated at the series type, and is the only declaration here that crosses that gap; the
-restricted results reach the coefficients by rewriting with it.
+reach a goal phrased in power series. Two declarations answer this, and nothing else here crosses
+the gap:
+
+* `baseChange` ascribes the codomain of `TensorProduct.piScalarRightHom` as `M⦃T₁, …, Tₖ⦄`. The
+  `simp` steps of the span induction in `isRestricted_baseChange` — `map_zero`, `map_add`,
+  `map_smul` — match that ascription; against the unascribed `(Fin k →₀ ℕ) → M` form they rewrite
+  to a term the goal no longer matches syntactically.
+* the private `baseChange_tmul` restates Mathlib's `piScalarRightHom_tmul` at the series type;
+  the results above reach the coefficients by rewriting with it.
 
 ## References
 
@@ -62,15 +67,16 @@ section Ambient
 variable {k : ℕ} {A M : Type*} [CommSemiring A] [TopologicalSpace A] [AddCommMonoid M]
   [TopologicalSpace M] [Module A M]
 
-/-- Notation for Mathlib's base-change map at the index type of `k`-variable power series:
-`M ⊗[A] A⦃T₁, …, Tₖ⦄ →ₗ[A] M⦃T₁, …, Tₖ⦄`, sending `m ⊗ₜ f` to `s ↦ coeff s f • m`. -/
+/-- Mathlib's base-change map at the index type of `k`-variable power series, with its codomain
+ascribed as `M⦃T₁, …, Tₖ⦄` rather than `(Fin k →₀ ℕ) → M`. It sends `m ⊗ₜ f` to
+`s ↦ coeff s f • m`. -/
 abbrev baseChange : TensorProduct A M (MvPowerSeries (Fin k) A) →ₗ[A] MvPowerSeries (Fin k) M :=
   TensorProduct.piScalarRightHom A A M (Fin k →₀ ℕ)
 
 omit [TopologicalSpace A] [TopologicalSpace M] in
 /-- `baseChange` sends a pure tensor `m ⊗ₜ f` to the coefficientwise scalar action
 `s ↦ coeff s f • m`. -/
-theorem baseChange_tmul (m : M) (f : MvPowerSeries (Fin k) A) :
+private theorem baseChange_tmul (m : M) (f : MvPowerSeries (Fin k) A) :
     baseChange (TensorProduct.tmul A m f)
       = show MvPowerSeries (Fin k) M from fun s ↦ MvPowerSeries.coeff s f • m :=
   -- Mathlib's `TensorProduct.piScalarRightHom_tmul` is this statement at the function type
