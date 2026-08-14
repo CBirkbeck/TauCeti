@@ -41,9 +41,11 @@ discrete case below is proved through it.
   `ℤ`, every field, and every noetherian ring discretely topologised witness the predicate.
 * `TauCeti.Huber.isNoetherianRing_completion_of_isStronglyNoetherian`: the zero-variable
   *consequence* of the predicate — strong noetherianness quantifies over every `k`, and its
-  `k = 0` component says the separated completion `Â` is noetherian. The identification behind it
-  is topological, not merely a ring isomorphism: the weight at `k = 0` is the empty product, so
-  `Tν · U` is `U` and the two neighbourhood bases correspond.
+  `k = 0` component says the separated completion `Â` is noetherian. The identification behind it,
+  `TauCeti.Huber.restrictedMvPowerSeriesCompletionFinZeroEquiv` in
+  `TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion`, is topological and not merely a
+  ring isomorphism: at `k = 0` the coefficient index `Fin 0 →₀ ℕ` is a singleton, so a basic
+  neighbourhood is cut out by the single coefficient and the two neighbourhood bases correspond.
 
 The second half of that roadmap sentence — that `A` itself is noetherian when it is already
 complete and Hausdorff — needs completeness stated against the group uniformity introduced
