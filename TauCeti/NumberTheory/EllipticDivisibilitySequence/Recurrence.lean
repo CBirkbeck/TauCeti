@@ -67,7 +67,6 @@ namespace IsEllipticSequence
 variable {R : Type*} [CommRing R] {W : ℤ → R}
 
 /-- **The odd doubling relation of an elliptic sequence.** -/
-@[grind]
 theorem rel_odd (h : IsEllipticSequence W) (m : ℤ) :
     W (2 * m + 1) * W 1 ^ 3 = W (m + 2) * W m ^ 3 - W (m - 1) * W (m + 1) ^ 3 := by
   have hm := h (m + 1) m 1
@@ -75,7 +74,6 @@ theorem rel_odd (h : IsEllipticSequence W) (m : ℤ) :
   linear_combination hm
 
 /-- **The even doubling relation of an elliptic sequence.** -/
-@[grind]
 theorem rel_even (h : IsEllipticSequence W) (m : ℤ) :
     W (2 * m) * W 2 * W 1 ^ 2 =
       W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2) := by
