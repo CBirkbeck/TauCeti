@@ -22,8 +22,8 @@ That is the content of the proof of Shimura's Proposition 3.37 — right multipl
 
 ## Main results
 
-* `HeckeRing.GL2.heckeSlashSum_slash_of_mem_SLnZ`: for `γ ∈ SL₂(ℤ)` and slash-invariant `f`,
-  `heckeSlashSum k D f ∣[k] γ = heckeSlashSum k D f`.
+* `HeckeRing.GL2.heckeSlashSum_slash_invariant_of_mem_SLnZ`: for `γ ∈ SL₂(ℤ)` and
+  slash-invariant `f`, `heckeSlashSum k D f ∣[k] γ = heckeSlashSum k D f`.
 
 ## Provenance
 
@@ -72,7 +72,7 @@ transposed.
 ⚠ This proves invariance of the sum formed from the representatives `D.out` and `i.out` that
 `heckeSlashSum` fixes. It does **not** state that sums formed from *different* choices of
 representatives agree; that would be a separate theorem, and none is available yet. -/
-theorem heckeSlashSum_slash_of_mem_SLnZ (f : ℍ → ℂ) (hf : ∀ δ ∈ SLnZ 2, f ∣[k] δ = f)
+theorem heckeSlashSum_slash_invariant_of_mem_SLnZ (f : ℍ → ℂ) (hf : ∀ δ ∈ SLnZ 2, f ∣[k] δ = f)
     {γ : GL (Fin 2) ℚ} (hγ : γ ∈ SLnZ 2) :
     heckeSlashSum k D f ∣[k] γ = heckeSlashSum k D f := by
   have hγT : (transposeGLEquiv 2 γ).unop ∈ SLnZ 2 := transposeGLEquiv_mem_SLnZ 2 hγ
@@ -86,8 +86,9 @@ theorem heckeSlashSum_slash_of_mem_SLnZ (f : ℍ → ℂ) (hf : ∀ δ ∈ SLnZ 
     exact congrArg (f ∣[k] transposeRep D ·)
       (MulAction.Quotient.mk_smul_out _ (⟨_, hγT⟩ : SLnZ 2) i)
   rw [heckeSlashSum_def, SlashAction.sum_slash]
-  -- `MulAction.toPerm` of the transposed `γ` is the reindexing bijection; `hperm` is exactly its
-  -- compatibility hypothesis, since `toPerm b i` and `b • i` are definitionally equal.
-  exact Fintype.sum_equiv (MulAction.toPerm (⟨_, hγT⟩ : SLnZ 2)) _ _ hperm
+  -- `MulAction.toPerm` of the transposed `γ` is the reindexing bijection. Its compatibility
+  -- hypothesis is `hperm` up to `toPerm_apply`, which is stated rather than left to defeq.
+  exact Fintype.sum_equiv (MulAction.toPerm (⟨_, hγT⟩ : SLnZ 2)) _ _ fun i ↦ by
+    simpa only [MulAction.toPerm_apply] using hperm i
 
 end HeckeRing.GL2
