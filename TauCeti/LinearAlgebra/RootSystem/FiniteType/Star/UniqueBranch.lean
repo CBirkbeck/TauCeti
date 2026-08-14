@@ -256,6 +256,43 @@ private lemma submatrix_doubleForkEmbedding_eq (h : IsFiniteType A)
         (h.diagramGraph_adj_iff.mp (hright_adj j)).2
       exact (h.diagramGraph_adj_iff.mp hadj).2 hzero'
 
+/-- **The outer ends of the two branches at the ends of a path are distinct.** In an acyclic
+graph, a vertex adjacent to the start of a nontrivial path and off that path differs from every
+vertex adjacent to the path's end. -/
+private theorem ne_of_adj_first_of_adj_last {V : Type*} {G : SimpleGraph V}
+    (hG : G.IsAcyclic) {u v : V} {q : G.Walk u v} (hq : q.IsPath) (hlen : q.length ≠ 0)
+    {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) : a ≠ b := by
+  intro hab
+  -- `a — u — … — v` and the single edge `a — v` are two paths with the same ends, so equal;
+  -- but the first is longer, since `q` is not nil.
+  have heq := (hG.subsingleton_path a v).elim
+    (⟨q.cons ha.symm, hq.cons ha'⟩ : G.Path a v)
+    (SimpleGraph.Path.singleton (hab ▸ hb).symm)
+  have h := congrArg (fun r : G.Path a v ↦ r.val.length) heq
+  simp only [SimpleGraph.Walk.length_cons, SimpleGraph.Path.singleton_coe,
+    (hab ▸ hb).symm.length_toWalk] at h
+  omega
+
+/-- **The outer ends of the two branches at the ends of a path are not adjacent.** In an acyclic
+graph, no edge joins a vertex adjacent to the start of a path to a distinct vertex adjacent to its
+end, when both lie off the path. -/
+private theorem not_adj_of_adj_first_of_adj_last {V : Type*} {G : SimpleGraph V}
+    (hG : G.IsAcyclic) {u v : V} {q : G.Walk u v} (hq : q.IsPath)
+    {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) (hb' : b ∉ q.support)
+    (hab : a ≠ b) : ¬G.Adj a b := by
+  intro hadj
+  -- `a — u — … — v — b` and the single edge `a — b` are two paths with the same ends.
+  have hb'' : b ∉ (q.cons ha.symm).support := by
+    simp only [SimpleGraph.Walk.support_cons, List.mem_cons, not_or]
+    exact ⟨hab.symm, hb'⟩
+  have heq := (hG.subsingleton_path a b).elim
+    (⟨(q.cons ha.symm).concat hb, (hq.cons ha').concat hb'' hb⟩ : G.Path a b)
+    (SimpleGraph.Path.singleton hadj)
+  have h := congrArg (fun r : G.Path a b ↦ r.val.length) heq
+  simp only [SimpleGraph.Walk.length_concat, SimpleGraph.Walk.length_cons,
+    SimpleGraph.Path.singleton_coe, hadj.length_toWalk] at h
+  omega
+
 /-- **Two distinct branch vertices in one simply-laced finite-type component contain an affine
 `D` principal submatrix.** The middle `Fin (n + 2)` is the path between the branch vertices, and
 the two outer copies of `Fin 2` enumerate the unused neighbours at either end.
@@ -315,33 +352,12 @@ theorem exists_doubleFork_submatrix (h : IsFiniteType A) {u v : B}
   have hright_not_mem (i : Fin 2) : rightVertex i ∉ q.support := fun hi ↦
     hright_ne_penultimate i
       (h.isAcyclic_diagramGraph.eq_penultimate_of_adj_end hq (hright_adj i) hi)
-  have hleft_right_ne (i j : Fin 2) : leftVertex i ≠ rightVertex j := by
-    intro hij
-    have hp' : (q.cons (hleft_adj i).symm).IsPath := hq.cons (hleft_not_mem i)
-    have heq := h.isAcyclic_diagramGraph.subsingleton_path (leftVertex i) v |>.elim
-      (⟨q.cons (hleft_adj i).symm, hp'⟩ : G.Path (leftVertex i) v)
-      (SimpleGraph.Path.singleton (hij ▸ hright_adj j).symm)
-    have hlen := congrArg (fun r : G.Path (leftVertex i) v ↦ r.val.length) heq
-    simp only [SimpleGraph.Walk.length_cons, SimpleGraph.Path.singleton_coe,
-      (hij ▸ hright_adj j).symm.length_toWalk, hn] at hlen
-    omega
-  have hleft_right_not_adj (i j : Fin 2) : ¬G.Adj (leftVertex i) (rightVertex j) := by
-    have hp' : (q.cons (hleft_adj i).symm).IsPath := hq.cons (hleft_not_mem i)
-    have hright_not_mem' : rightVertex j ∉ (q.cons (hleft_adj i).symm).support := by
-      simp only [SimpleGraph.Walk.support_cons, List.mem_cons, not_or]
-      exact ⟨(hleft_right_ne i j).symm, hright_not_mem j⟩
-    have hp'' := hp'.concat hright_not_mem' (hright_adj j)
-    intro hadj
-    have heq := h.isAcyclic_diagramGraph.subsingleton_path
-      (leftVertex i) (rightVertex j) |>.elim
-        (⟨(q.cons (hleft_adj i).symm).concat (hright_adj j), hp''⟩ :
-          G.Path (leftVertex i) (rightVertex j))
-        (SimpleGraph.Path.singleton hadj)
-    have hlen := congrArg
-      (fun r : G.Path (leftVertex i) (rightVertex j) ↦ r.val.length) heq
-    simp only [SimpleGraph.Walk.length_concat, SimpleGraph.Walk.length_cons,
-      SimpleGraph.Path.singleton_coe, hadj.length_toWalk, hn] at hlen
-    omega
+  have hleft_right_ne (i j : Fin 2) : leftVertex i ≠ rightVertex j :=
+    ne_of_adj_first_of_adj_last h.isAcyclic_diagramGraph hq (by omega)
+      (hleft_adj i) (hleft_not_mem i) (hright_adj j)
+  have hleft_right_not_adj (i j : Fin 2) : ¬G.Adj (leftVertex i) (rightVertex j) :=
+    not_adj_of_adj_first_of_adj_last h.isAcyclic_diagramGraph hq
+      (hleft_adj i) (hleft_not_mem i) (hright_adj j) (hright_not_mem j) (hleft_right_ne i j)
   have he' := doubleForkEmbedding_injective hq hn leftVertex rightVertex hleft_inj hright_inj
     hleft_not_mem hright_not_mem hleft_right_ne
   -- Every vertex of the double fork lies in the component of `u`, so `hsl` applies to it.
