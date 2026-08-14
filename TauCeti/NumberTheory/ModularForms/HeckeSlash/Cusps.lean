@@ -6,25 +6,26 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.NumberTheory.ModularForms.BoundedAtCusp
+public import TauCeti.NumberTheory.ModularForms.CuspsRat
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 
 /-!
 # The Hecke slash sum vanishes, and is bounded, at the cusps
 
-`heckeSlashSum` is a finite sum of slashes, so its behaviour at a point of `OnePoint ℝ` follows
-from that of its summands. A slash is zero at `c` exactly when the original function is zero at
-`g • c` (`OnePoint.IsZeroAt.smul_iff`), so a function vanishing at *every* point of `OnePoint ℝ`
-has a slash sum vanishing at every point, whatever representatives were chosen.
+`heckeSlashSum` is a finite sum of slashes, so its behaviour at a cusp follows from that of its
+summands. A slash is zero at `c` exactly when the original function is zero at `g • c`
+(`OnePoint.IsZeroAt.smul_iff`), and `g • c` is again a cusp because the representatives are
+rational (`isCusp_smul_map_ratCast`). So a function vanishing at every cusp has a slash sum
+vanishing at every cusp, whatever representatives were chosen.
 
-This is the step the Layer 2 statement "`Tₙ` preserves `S_k`" rests on. It is stated here for
-the choice-dependent `heckeSlashSum` and at every point rather than at cusps only, because
-neither the choice of representatives nor the cusp condition is used: what is needed is closure
-of `OnePoint.IsZeroAt` under finite sums, and invariance of the hypothesis under the action.
+This is the step the Layer 2 statement "`Tₙ` preserves `S_k`" rests on. The cusp hypothesis is
+the one a `CuspForm` actually supplies through `zero_at_cusps'`, which only gives vanishing where
+`IsCusp c Γ` holds.
 
 ## Main results
 
-* `HeckeRing.GL2.isZeroAt_heckeSlashSum`: the slash sum of a function vanishing at every point
-  vanishes at every point.
+* `HeckeRing.GL2.isZeroAt_heckeSlashSum`: the slash sum of a function vanishing at every cusp
+  vanishes at every cusp.
 * `HeckeRing.GL2.isBoundedAt_heckeSlashSum`: the same for boundedness.
 
 ## Provenance
@@ -47,19 +48,23 @@ open scoped MatrixGroups ModularForm
 
 variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 
-/-- **The slash sum vanishes at every point** when the function does. Each summand `f ∣[k] g` is
-zero at `c` because `f` is zero at `g • c`, and `OnePoint.IsZeroAt` is closed under finite
-sums. -/
-lemma isZeroAt_heckeSlashSum {f : ℍ → ℂ} (hf : ∀ c : OnePoint ℝ, c.IsZeroAt f k)
-    (c : OnePoint ℝ) : c.IsZeroAt (heckeSlashSum k D f) k := by
+/-- **The slash sum vanishes at every cusp** when the function does. Each summand `f ∣[k] g` is
+zero at the cusp `c` because `f` is zero at the cusp `g • c`, and `OnePoint.IsZeroAt` is closed
+under finite sums. -/
+lemma isZeroAt_heckeSlashSum {f : ℍ → ℂ}
+    (hf : ∀ c : OnePoint ℝ, IsCusp c 𝒮ℒ → c.IsZeroAt f k) {c : OnePoint ℝ} (hc : IsCusp c 𝒮ℒ) :
+    c.IsZeroAt (heckeSlashSum k D f) k := by
   rw [heckeSlashSum_def]
-  exact OnePoint.IsZeroAt.sum fun i _ ↦ OnePoint.IsZeroAt.smul_iff.mp (hf _)
+  exact OnePoint.IsZeroAt.sum fun i _ ↦
+    OnePoint.IsZeroAt.smul_iff.mp (hf _ (isCusp_smul_map_ratCast _ hc))
 
-/-- **The slash sum is bounded at every point** when the function is. -/
-lemma isBoundedAt_heckeSlashSum {f : ℍ → ℂ} (hf : ∀ c : OnePoint ℝ, c.IsBoundedAt f k)
-    (c : OnePoint ℝ) : c.IsBoundedAt (heckeSlashSum k D f) k := by
+/-- **The slash sum is bounded at every cusp** when the function is. -/
+lemma isBoundedAt_heckeSlashSum {f : ℍ → ℂ}
+    (hf : ∀ c : OnePoint ℝ, IsCusp c 𝒮ℒ → c.IsBoundedAt f k) {c : OnePoint ℝ}
+    (hc : IsCusp c 𝒮ℒ) : c.IsBoundedAt (heckeSlashSum k D f) k := by
   rw [heckeSlashSum_def]
-  exact OnePoint.IsBoundedAt.sum fun i _ ↦ OnePoint.IsBoundedAt.smul_iff.mp (hf _)
+  exact OnePoint.IsBoundedAt.sum fun i _ ↦
+    OnePoint.IsBoundedAt.smul_iff.mp (hf _ (isCusp_smul_map_ratCast _ hc))
 
 end HeckeRing.GL2
 
