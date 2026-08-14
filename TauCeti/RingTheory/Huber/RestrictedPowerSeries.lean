@@ -27,8 +27,14 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
 ## Provenance
 
 This module is a port of AINTLIB's `projects/AdicSpaces/Adic spaces/RestrictedPowerSeries.lean`,
-the roadmap's designated prior formalisation of this material; the definitions, the statements and
-the convolution argument are all its work. The port moves the declarations into the `TauCeti.Huber`
+the roadmap's designated prior formalisation of this material. That attribution covers the
+**ring-coefficient** material — `IsRestricted` as originally stated, its closure lemmas,
+`restrictedMvPowerSeriesSubring` and the convolution argument behind `IsRestricted.mul`, whose
+definitions, statements and proof are all AINTLIB's work. The module-coefficient declarations —
+`isRestricted_iff_apply`, `IsRestricted.const_smul`, `restrictedMvPowerSeriesSubmodule` and
+`mem_restrictedMvPowerSeriesSubmodule`, together with the weakening of `IsRestricted`'s
+coefficient binders to `[Zero]` and a topology — have no AINTLIB counterpart and are original
+here. The port moves the declarations into the `TauCeti.Huber`
 namespace, opts into the Lean module system with the definition bodies unexposed — hence the added
 `isRestricted_iff` and `mem_restrictedMvPowerSeriesSubring` — tracks the Mathlib rename of
 `Set.mem_setOf_eq` to `Set.mem_ofPred_eq`, renames the predicate from AINTLIB's `IsRestrictedAdic`
@@ -80,7 +86,8 @@ namespace TauCeti.Huber
 /-- An element `f` of the multivariate power series ring `M⦃X₁, …, Xₖ⦄` is **restricted**
 if its coefficients converge to `0` along the cofinite filter on multi-indices. That is,
 for every open neighborhood `U` of `0` in `M`, all but finitely many coefficients of `f`
-lie in `M`. This is the defining property of elements of `A⟨T₁, …, Tₖ⟩`.
+lie in `U`. This is the defining property of elements of `M⟨T₁, …, Tₖ⟩`, and of
+`A⟨T₁, …, Tₖ⟩` in the case of ring coefficients.
 
 The coefficients need carry no algebraic structure beyond a distinguished `0`: the condition is
 about a family of points converging in `M`. The stronger binders appear only where a proof needs
@@ -147,6 +154,20 @@ theorem IsRestricted.neg {k : ℕ} {M : Type*} [AddGroup M] [TopologicalSpace M]
   rw [isRestricted_iff_apply]
   have h := (isRestricted_iff_apply.mp hf).neg
   rw [neg_zero] at h
+  exact h
+
+/-- Scaling a restricted series by a constant leaves it restricted.
+
+The scalar ring is unrelated to the coefficients' own structure — only the action has to be
+continuous in the vector variable, which is `ContinuousConstSMul`. This is the closure fact
+`restrictedMvPowerSeriesSubmodule` is built from, stated separately so consumers holding
+`IsRestricted` can use it directly, as they can `IsRestricted.add` and `IsRestricted.neg`. -/
+theorem IsRestricted.const_smul {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M]
+    [TopologicalSpace M] [Module R M] [ContinuousConstSMul R M] {f : MvPowerSeries (Fin k) M}
+    (hf : IsRestricted f) (c : R) : IsRestricted (c • f) := by
+  rw [isRestricted_iff_apply]
+  have h := (isRestricted_iff_apply.mp hf).const_smul c
+  rw [smul_zero] at h
   exact h
 
 /-- Restrictedness, restated: for every open additive subgroup `W`, all but finitely many
@@ -346,12 +367,7 @@ def restrictedMvPowerSeriesSubmodule (k : ℕ) (A M : Type*) [Semiring A] [AddCo
   carrier := {f | IsRestricted f}
   zero_mem' := isRestricted_zero k M
   add_mem' := IsRestricted.add
-  smul_mem' c f hf := by
-    change IsRestricted (c • f)
-    rw [isRestricted_iff_apply]
-    have h := (isRestricted_iff_apply.mp hf).const_smul c
-    rw [smul_zero] at h
-    exact h
+  smul_mem' c _f hf := hf.const_smul c
 
 /-- Membership in `M⟨T₁, …, Tₖ⟩` is restrictedness. -/
 @[simp]
