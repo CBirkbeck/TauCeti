@@ -178,6 +178,27 @@ private theorem eventually_dist_parameterizedPath_lt {γ : E → C(K, F)} {p₀ 
   simpa only [hpathBase, Function.comp_apply, id_eq] using
     (Metric.continuousAt_iff'.mp hpath ε hε)
 
+/-- **A path whose Picard residual vanishes satisfies the Picard integral equation pointwise.**
+The residual is the difference between the path and its initial value plus integrated field, so
+its vanishing is exactly that equation, read at each time of `[0, 1]`. -/
+private theorem apply_eq_add_integral_of_picardResidual_eq_zero (gc : C(E × F, F)) (x₀ : F)
+    (p : E) (q : C(Set.Icc (0 : ℝ) 1, F)) (hq : picardResidual gc x₀ (p, q) = 0)
+    (t : Set.Icc (0 : ℝ) 1) :
+    q t = x₀ + ∫ s in (0 : ℝ)..t, gc (p, q (Set.projIcc 0 1 zero_le_one s)) := by
+  have hpathEq : q = ContinuousMap.const _ x₀ +
+      ContinuousMap.unitIntervalIntegral (gc.comp (parameterizedPath (p, q))) := by
+    apply sub_eq_zero.mp
+    calc
+      q - (ContinuousMap.const _ x₀ +
+          ContinuousMap.unitIntervalIntegral (gc.comp (parameterizedPath (p, q)))) =
+          picardResidual gc x₀ (p, q) := by
+        simp only [picardResidual_apply]
+        abel
+      _ = 0 := hq
+  simpa only [ContinuousMap.add_apply, ContinuousMap.const_apply,
+    ContinuousMap.unitIntervalIntegral_apply, ContinuousMap.comp_apply,
+    parameterizedPath_apply] using congrArg (fun r : C(Set.Icc (0 : ℝ) 1, F) ↦ r t) hpathEq
+
 /-- A smooth parameterized autonomous vector field which vanishes at the base parameter admits a
 locally smooth family of solutions through a fixed initial state. The result is stated at every
 finite order; this is the form needed to assemble smoothness of a germ. Each nearby path satisfies
@@ -259,24 +280,10 @@ theorem exists_contDiffAt_picard_solution
       (ContinuousMap.dist_apply_le_dist
         (f := parameterizedPath (p, γ p))
         (g := ContinuousMap.const _ (p₀, x₀)) t).trans_lt hpnear
-  have hpathEq : γ p = ContinuousMap.const _ x₀ +
-      ContinuousMap.unitIntervalIntegral (gc.comp (parameterizedPath (p, γ p))) := by
-    apply sub_eq_zero.mp
-    calc
-      γ p - (ContinuousMap.const _ x₀ +
-          ContinuousMap.unitIntervalIntegral (gc.comp (parameterizedPath (p, γ p)))) =
-          R (p, γ p) := by
-        simp only [R, picardResidual_apply]
-        abel
-      _ = 0 := hp
   have hpicard : ∀ t : Set.Icc (0 : ℝ) 1,
       γ p t = x₀ + ∫ s in (0 : ℝ)..t,
-        gc (p, γ p (Set.projIcc 0 1 zero_le_one s)) := by
-    intro t
-    have ht := congrArg (fun q : C(Set.Icc (0 : ℝ) 1, F) ↦ q t) hpathEq
-    simpa only [ContinuousMap.add_apply, ContinuousMap.const_apply,
-      ContinuousMap.unitIntervalIntegral_apply, ContinuousMap.comp_apply,
-      parameterizedPath_apply] using ht
+        gc (p, γ p (Set.projIcc 0 1 zero_le_one s)) :=
+    apply_eq_add_integral_of_picardResidual_eq_zero gc x₀ p (γ p) hp
   let vproj : ℝ → F := fun s ↦ gc (p, γ p (Set.projIcc 0 1 zero_le_one s))
   have hvproj : Continuous vproj :=
     gc.continuous.comp
