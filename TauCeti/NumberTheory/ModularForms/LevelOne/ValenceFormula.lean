@@ -60,7 +60,7 @@ theorem finsum_orderOfVanishingOnOrbit_add_elliptic_add_qExpansionOrderAtCusp_eq
           orderOfVanishingAt ⇑f p : ℤ) : ℂ) := by
     exact_mod_cast (finsum_orderOfVanishingOnOrbit_eq_sum_canonicalReps hf).trans
       (sum_canonicalReps_split hf)
-  have key := sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero
+  have key := sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     f hf (S := fdZeros hf) (fun p hp _ ↦ (mem_fdZeros.mp hp).1)
     (fun p hpfd hord ↦ mem_fdZeros.mpr ⟨hpfd, hord⟩)
   push_cast at hsplit key ⊢
