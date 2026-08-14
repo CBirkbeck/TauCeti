@@ -28,6 +28,7 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
 * `TauCeti.ModularForm.normRest_def`: the remainder as a product of coset factors.
 * `TauCeti.ModularForm.normRest_apply_eq_div`: how to compute the remainder off the zeros of
   the Galois product.
+* `TauCeti.ModularForm.normRest_ne_zero`: the remainder of a nonzero form is nonzero.
 
 The remainder and the decomposition itself are algebraic, so they are stated for
 `SlashInvariantForm.norm` under `SlashInvariantFormClass`; only analyticity at the cusp
@@ -302,6 +303,18 @@ public lemma norm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
   have hcoe : _root_.ModularForm.norm 𝒮ℒ f τ = _root_.SlashInvariantForm.norm 𝒮ℒ f τ := by
     rw [_root_.ModularForm.coe_norm, _root_.SlashInvariantForm.coe_norm]
   rw [hcoe, slashInvariantForm_norm_apply_eq_galoisProd_mul_normRest]
+
+/-- The remainder factor of a nonzero modular form is itself nonzero.
+
+Order arguments over `normRest` need this: `orderOfVanishingAt_prod` and the vanishing-order
+API are stated only for factors that are not identically zero. -/
+public lemma normRest_ne_zero (hf : (⇑f : ℍ → ℂ) ≠ 0) : normRest f ≠ 0 := by
+  intro h
+  refine _root_.ModularForm.norm_ne_zero 𝒮ℒ hf ?_
+  rw [← DFunLike.coe_injective.eq_iff]
+  ext τ
+  rw [FunLike.coe_zero, Pi.zero_apply, norm_apply_eq_galoisProd_mul_normRest f τ,
+    show normRest f τ = (0 : ℍ → ℂ) τ from congrFun h τ, Pi.zero_apply, mul_zero]
 
 end Analytic
 
