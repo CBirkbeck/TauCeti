@@ -156,4 +156,38 @@ theorem atomRelVanishes_of_forall_le {a c₀ d₀ : ℤ} (par : c₀ % 2 = d₀ 
     rw [mul_comm, atom_mul_atomRel_eq_of_last_eq_snd, h₁, h₂, h₃]
     ring
 
+/-- **Lowering an unconstrained last index.** With the previous lemma available at every `b, c`,
+the ten-term expansion reaches a quadruple whose last index `d` is merely above `c₀`: each of
+the ten summands carries a relator that either already ends at the fixed pair or is reachable
+from it, and so vanishes. -/
+theorem atomRelVanishes_of_lt {a c₀ d₀ : ℤ} (par : c₀ % 2 = d₀ % 2) (le : 0 ≤ d₀) (lt : d₀ < c₀)
+    (rel : ∀ {a' b : ℤ}, a' ≤ a → AtomRelVanishes W a' b c₀ d₀) (mem : atom W c₀ d₀ ∈ R⁰)
+    (b c d : ℤ) (hc : c₀ < d) (par' : d % 2 = d₀ % 2) :
+    AtomRelVanishes W a b c d := by
+  intro same anti
+  rw [nonnegStrictAnti₄_iff] at anti
+  obtain ⟨hd, hdc, hcb, hba⟩ := anti
+  obtain ⟨hda, hdb, hdc'⟩ := same
+  have fix₁ (b' c' : ℤ) := (atomRelVanishes_of_forall_le par le lt rel mem b' c').1
+  have fix₂ (b' c' : ℤ) := (atomRelVanishes_of_forall_le par le lt rel mem b' c').2
+  have fixb (b' c' : ℤ) :=
+    (atomRelVanishes_of_forall_le par le lt (fun h ↦ rel (h.trans hba.le)) mem b' c').1
+  have e₁ := fix₁ c d ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
+  have e₂ := fix₁ b d ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
+  have e₃ := fix₁ b c ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
+  have e₄ := fix₂ c d hc ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
+  have e₅ := fix₂ b d hc ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
+  have e₆ := fix₂ b c (by omega) ⟨by omega, by omega, by omega⟩
+    (by rw [nonnegStrictAnti₄_iff]; omega)
+  have e₇ := rel (b := d) le_rfl ⟨by omega, by omega, by omega⟩
+    (by rw [nonnegStrictAnti₄_iff]; omega)
+  have e₈ := rel (b := c) le_rfl ⟨by omega, by omega, by omega⟩
+    (by rw [nonnegStrictAnti₄_iff]; omega)
+  have e₉ := rel (b := b) le_rfl ⟨by omega, by omega, by omega⟩
+    (by rw [nonnegStrictAnti₄_iff]; omega)
+  have e₁₀ := fixb c d ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
+  refine mem.2 _ ?_
+  rw [mul_comm, atom_mul_atomRel_eq, e₁, e₂, e₃, e₄, e₅, e₆, e₇, e₈, e₉, e₁₀]
+  ring
+
 end IsEllipticNet
