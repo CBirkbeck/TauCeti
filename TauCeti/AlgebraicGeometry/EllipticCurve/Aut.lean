@@ -20,6 +20,8 @@ proves the classical fact (Silverman, *The Arithmetic of Elliptic Curves*, III.1
 
 * `WeierstrassCurve.eq_one_or_eq_negVariableChange_of_smul_eq`: if `j(E) ∉ {0, 1728}` then any
   `C : VariableChange K` with `C • E = E` equals `1` or `negVariableChange E`.
+* `WeierstrassCurve.eq_one_or_eq_negVariableChange_baseChange`: the same dichotomy for the base
+  change of `E` along an injection, with the `j`-hypotheses still read on `E` itself.
 * `WeierstrassCurve.autGroup E`: the automorphism group of `E`, as the stabiliser of `E` under
   the action of `VariableChange K`. It is an `abbrev`, so Mathlib's `MulAction.stabilizer` API
   applies to it unchanged.
@@ -177,6 +179,22 @@ theorem eq_one_or_eq_negVariableChange_of_smul_eq [E.IsElliptic] (hj₀ : E.j �
     C = 1 ∨ C = E.negVariableChange :=
   E.eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq
     (E.j_eq_zero_iff.not.mp hj₀) (E.j_eq_1728_iff.not.mp hj₁₇₂₈) hC
+
+omit [IsDomain A] in
+variable {B : Type*} [CommRing B] [IsDomain B] [Algebra A B] in
+/-- **`Aut(E ⊗ B) = {±1}` when `j(E) ∉ {0, 1728}`**: the dichotomy survives base change along an
+injection. The hypotheses stay on `E` over the base ring, since `j` of the base change is the
+image of `j` (`map_j`), so an injective `algebraMap` carries both away from `0` and `1728`. Only
+the target has to be a domain; the base needs no more than a commutative ring. -/
+theorem eq_one_or_eq_negVariableChange_baseChange [E.IsElliptic]
+    (hinj : Function.Injective (algebraMap A B)) (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728)
+    {D : VariableChange B} (hD : D • E.baseChange B = E.baseChange B) :
+    D = 1 ∨ D = (E.baseChange B).negVariableChange := by
+  have : (E.baseChange B).IsElliptic := inferInstanceAs ((E.map (algebraMap A B)).IsElliptic)
+  have hj : (E.baseChange B).j = algebraMap A B E.j := by simp only [baseChange, map_j]
+  refine (E.baseChange B).eq_one_or_eq_negVariableChange_of_smul_eq ?_ ?_ hD
+  · rw [hj]; exact fun h ↦ hj₀ (hinj (by rw [h, map_zero]))
+  · rw [hj]; exact fun h ↦ hj₁₇₂₈ (hinj (by rw [h, map_ofNat]))
 
 /-! ### The automorphism group -/
 
