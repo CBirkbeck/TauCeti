@@ -334,24 +334,19 @@ private theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
         (nonnegStrictAnti₄_abs_avg_sub h1 (by omega) h2 h3)
     · exact atomRel_eq_zero_of_gap_two oddRec evenRec (by omega) hb
 
-/-- The relator vanishes at three even indices in strict decrease above `0`, against a last
-index of `0`: the descent's hypothesis at exactly the shape the sorting step below produces. -/
-private theorem atomRel_eq_zero_of_sorted {u v w : ℤ} (h : AtomRelVanishes W u v w 0)
-    (pu : u % 2 = 0) (pv : v % 2 = 0) (pw : w % 2 = 0)
-    (hw : 0 < w) (hwv : w < v) (hvu : v < u) :
-    atomRel W u v w 0 = 0 :=
-  h ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
-
 /-- Three distinct positive even indices, in any order, against a last index of `0`. The six
 orderings are reached from the decreasing one by the adjacent transpositions; the last index is
 already minimal, so only the first three need sorting and the general `Tuple.sort` argument the
-source uses is not required. -/
+source uses is not required. The local `sorted` is the descent specialised to that decreasing
+shape, which is the only shape the six branches ever need. -/
 private theorem atomRel_eq_zero_of_ne (odd : W.Odd)
     (descent : ∀ a b c d : ℤ, AtomRelVanishes W a b c d) {x y z : ℤ}
     (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) (px : x % 2 = 0) (py : y % 2 = 0) (pz : z % 2 = 0)
     (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) :
     atomRel W x y z 0 = 0 := by
-  have sorted {u v w : ℤ} := atomRel_eq_zero_of_sorted (W := W) (descent u v w 0)
+  have sorted {u v w : ℤ} (pu : u % 2 = 0) (pv : v % 2 = 0) (pw : w % 2 = 0)
+      (hw : 0 < w) (hwv : w < v) (hvu : v < u) : atomRel W u v w 0 = 0 :=
+    descent u v w 0 ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
   rcases lt_trichotomy x y with h₁ | h₁ | h₁
   · rcases lt_trichotomy y z with h₂ | h₂ | h₂
     · have h := sorted pz py px hx h₁ h₂
