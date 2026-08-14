@@ -36,6 +36,17 @@ field. `TauCeti.Isogeny.comp` therefore lives here rather than beside `TauCeti.I
   its function-field law and `TauCeti.Isogeny.id_comp`, `TauCeti.Isogeny.comp_id`,
   `TauCeti.Isogeny.comp_assoc` the unit and associativity laws. The pointedness obligation is
   discharged privately when `comp` is defined.
+* `TauCeti.Isogeny.comp_right_injective` and `TauCeti.Isogeny.comp_right_cancel`: precomposition
+  by a fixed isogeny is injective. This is the uniqueness half of the dual isogeny
+  (Silverman III.6.2), reached without the group structure on `Hom` that Silverman's subtraction
+  argument uses.
+
+Adapted from the AINTLIB project (`github.com/CBirkbeck/AINTLIB`, at revision
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache 2.0 per the source file's header, by Chris
+Birkbeck): `projects/HasseWeil/HasseWeil/EC/IsogenyAG/CanonicalDual.lean`, declaration
+`Isogeny.compose_right_cancel`. The source states it for an isogeny structure that carries the
+point map as an independent field, so its proof passes through `ext_toCurveMap`; here an isogeny
+is determined by its pullback, so pullback extensionality suffices.
 
 The degree of an isogeny — the dimension of `W₁.FunctionField` over the image of `fieldPullback`
 — is `TauCeti.Isogeny.degree`, in `Isogeny/Degree.lean`; it is stated there rather than here
@@ -251,17 +262,18 @@ theorem comp_assoc {W₄ : WeierstrassCurve.Affine F} (χ : Isogeny W₃ W₄) (
     (φ : Isogeny W₁ W₂) : (χ.comp ψ).comp φ = χ.comp (ψ.comp φ) :=
   Isogeny.ext <| AlgHom.ext fun x ↦ by simp
 
-/-- **Right cancellation**: precomposition with a fixed isogeny is injective.
+/-- Precomposition by a fixed isogeny is injective. -/
+theorem comp_right_injective (φ : Isogeny W₁ W₂) :
+    Function.Injective fun ψ : Isogeny W₂ W₃ ↦ ψ.comp φ := fun _ _ h ↦
+  -- the composite's pullback is `φ.fieldPullback ∘ ψ.pullback`, and an embedding of function
+  -- fields cancels on the left
+  Isogeny.ext <| (AlgHom.cancel_left φ.fieldPullback.toRingHom.injective).mp <| by
+    simpa using congrArg Isogeny.pullback h
 
-An isogeny is determined by its coordinate pullback, and the composite's pullback is
-`φ.fieldPullback ∘ ψ.pullback`. Since `φ.fieldPullback` is a ring homomorphism out of a field it
-is injective, so the two pullbacks agree and the isogenies are equal. Silverman proves the
-corresponding statement by subtracting the two isogenies; at the pullback level no group
-structure on isogenies is needed. -/
-theorem comp_right_cancel {φ : Isogeny W₁ W₂} {ψ₁ ψ₂ : Isogeny W₂ W₃}
-    (h : ψ₁.comp φ = ψ₂.comp φ) : ψ₁ = ψ₂ :=
-  Isogeny.ext <| AlgHom.ext fun x ↦ φ.fieldPullback.toRingHom.injective <| by
-    simpa using congrArg (fun χ : Isogeny W₁ W₃ ↦ χ.pullback x) h
+/-- Two isogenies agree exactly when they agree after precomposition by a fixed isogeny. -/
+theorem comp_right_cancel {φ : Isogeny W₁ W₂} {ψ₁ ψ₂ : Isogeny W₂ W₃} :
+    ψ₁.comp φ = ψ₂.comp φ ↔ ψ₁ = ψ₂ :=
+  (comp_right_injective φ).eq_iff
 
 end Isogeny
 
