@@ -125,4 +125,62 @@ theorem isRestricted_baseChange [ContinuousSMul A M] [ContinuousAdd M]
       exact (isRestricted_iff (f := a • baseChange y)).mpr
         (hc.comp ((isRestricted_iff (f := baseChange y)).mp hy))
 
+/-! ### Between the restricted objects -/
+
+section Restricted
+
+variable {k : ℕ} {A M : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
+  [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousSMul A M] [ContinuousAdd M]
+
+/-- The inclusion `A⟨T₁, …, Tₖ⟩ → A⦃T₁, …, Tₖ⦄` as an `A`-linear map. `A⟨T⟩` is a `Subring`
+rather than a `Subalgebra`, so there is no `val` to reuse. -/
+noncomputable def restrictedSubringVal :
+    restrictedMvPowerSeriesSubring k A →ₗ[A] MvPowerSeries (Fin k) A where
+  toFun := Subtype.val
+  map_add' _ _ := rfl
+  map_smul' a x := by
+    simp only [Algebra.smul_def, Subring.coe_mul, RingHom.id_apply,
+      coe_algebraMap_restrictedMvPowerSeriesSubring]
+
+/-- `restrictedSubringVal` is the underlying series. Its body is not exposed, so this is how a
+consumer computes with it. -/
+@[simp]
+theorem restrictedSubringVal_apply (f : restrictedMvPowerSeriesSubring k A) :
+    restrictedSubringVal f = (f : MvPowerSeries (Fin k) A) := (rfl)
+
+/-- **The comparison map of Wedhorn Remark 8.29**, between the objects the remark names:
+`M ⊗[A] A⟨T₁, …, Tₖ⟩ →ₗ[A] M⟨T₁, …, Tₖ⟩`.
+
+This is `baseChange` restricted on both sides, so it inherits that map's linearity rather than
+re-proving it; `isRestricted_coeffSmulSeries` is what lets the codomain be cut down. Remark 8.29
+asserts that this is an isomorphism when `M` is finitely generated over a complete strongly
+noetherian Tate ring, which is not proved here. -/
+noncomputable def baseChangeRestricted :
+    TensorProduct A M (restrictedMvPowerSeriesSubring k A) →ₗ[A]
+      restrictedMvPowerSeriesSubmodule k A M :=
+  LinearMap.codRestrict _ (baseChange.comp (TensorProduct.map LinearMap.id restrictedSubringVal))
+    fun x ↦ by
+      induction x using TensorProduct.induction_on with
+      | zero =>
+          simp only [map_zero]
+          exact mem_restrictedMvPowerSeriesSubmodule.mpr (isRestricted_zero k M)
+      | tmul m f =>
+          simp only [LinearMap.comp_apply, TensorProduct.map_tmul, LinearMap.id_coe, id_eq,
+            restrictedSubringVal_apply, baseChange_tmul]
+          exact mem_restrictedMvPowerSeriesSubmodule.mpr
+            (isRestricted_coeffSmulSeries (mem_restrictedMvPowerSeriesSubring.mp f.2) m)
+      | add y z hy hz =>
+          simp only [map_add]
+          exact mem_restrictedMvPowerSeriesSubmodule.mpr
+            ((mem_restrictedMvPowerSeriesSubmodule.mp hy).add
+              (mem_restrictedMvPowerSeriesSubmodule.mp hz))
+
+@[simp]
+theorem coe_baseChangeRestricted_tmul (m : M) (f : restrictedMvPowerSeriesSubring k A) :
+    ((baseChangeRestricted (TensorProduct.tmul A m f) :
+        restrictedMvPowerSeriesSubmodule k A M) : MvPowerSeries (Fin k) M)
+      = coeffSmulSeries (f : MvPowerSeries (Fin k) A) m := (rfl)
+
+end Restricted
+
 end TauCeti.Huber
