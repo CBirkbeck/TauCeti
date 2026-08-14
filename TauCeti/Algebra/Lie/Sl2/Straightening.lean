@@ -317,6 +317,19 @@ private theorem eq_of_succ_nsmul_eq (m : ℕ) {x y : A}
   have hm : ((m + 1 : ℕ) : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
   exact smul_right_injective A hm h
 
+/-- **Raising the left divided power, scaled.** Multiplying by `E` on the left turns the product
+`E^[m] · F^[n]` into `(m + 1)` copies of `E^[m+1] · F^[n]`. -/
+private theorem succ_nsmul_dividedPower_succ_mul (m n : ℕ) (E F : A) :
+    (m + 1) • (dividedPower (m + 1) E * dividedPower n F) =
+      E * (dividedPower m E * dividedPower n F) := by
+  calc
+    (m + 1) • (dividedPower (m + 1) E * dividedPower n F) =
+        ((m + 1) • dividedPower (m + 1) E) * dividedPower n F := by
+          simp only [nsmul_eq_mul]
+          rw [mul_assoc]
+    _ = (E * dividedPower m E) * dividedPower n F := by rw [self_mul_dividedPower]
+    _ = E * (dividedPower m E * dividedPower n F) := mul_assoc _ _ _
+
 private theorem straightening_step {H E F : A}
     (hef : E * F - F * E = H) (hhe : H * E - E * H = 2 • E)
     (hhf : H * F - F * H = -(2 • F)) (m n : ℕ)
@@ -328,23 +341,15 @@ private theorem straightening_step {H E F : A}
   have hleft :
       (m + 1) • (dividedPower (m + 1) E * dividedPower n F) =
         E * ∑ k ∈ range (min m n + 1), straighteningSummand H E F m n k := by
-    calc
-      (m + 1) • (dividedPower (m + 1) E * dividedPower n F) =
-          ((m + 1) • dividedPower (m + 1) E) * dividedPower n F := by
-            simp only [nsmul_eq_mul]
-            rw [mul_assoc]
-      _ = (E * dividedPower m E) * dividedPower n F := by rw [self_mul_dividedPower]
-      _ = E * (dividedPower m E * dividedPower n F) := by rw [mul_assoc]
-      _ = E * ∑ k ∈ range (min m n + 1),
-          straighteningSummand H E F m n k := by rw [ih]
+    rw [succ_nsmul_dividedPower_succ_mul, ih]
   rw [hleft, mul_sum]
+  let K := keptStraighteningSummand H E F m n
+  let R := raisedStraighteningSummand H E F m n
+  let T := fun k ↦ (m + 1) • straighteningSummand H E F (m + 1) n k
   by_cases hmn : m < n
   · have hmin : min m n = m := min_eq_left (Nat.le_of_lt hmn)
     have hminSucc : min (m + 1) n = m + 1 := min_eq_left hmn
     rw [hmin, hminSucc]
-    let K := keptStraighteningSummand H E F m n
-    let R := raisedStraighteningSummand H E F m n
-    let T := fun k ↦ (m + 1) • straighteningSummand H E F (m + 1) n k
     have hcombine :
         ∑ j ∈ range (m + 2), T j = ∑ k ∈ range (m + 1), (K k + R k) := by
       apply sum_range_adjacent_with_zero K R T m
@@ -364,9 +369,6 @@ private theorem straightening_step {H E F : A}
     have hmin : min m n = n := min_eq_right hnm
     have hminSucc : min (m + 1) n = n := min_eq_right (by omega)
     rw [hmin, hminSucc]
-    let K := keptStraighteningSummand H E F m n
-    let R := raisedStraighteningSummand H E F m n
-    let T := fun k ↦ (m + 1) • straighteningSummand H E F (m + 1) n k
     have hcombine :
         ∑ j ∈ range (n + 1), T j = (∑ k ∈ range n, (K k + R k)) + K n := by
       apply sum_range_adjacent_capped K R T n
