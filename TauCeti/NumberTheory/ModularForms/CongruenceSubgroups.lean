@@ -446,7 +446,7 @@ private lemma intCast_apply_modEq_one_of_mem_Gamma (N : ℕ) (γ : SL(2, ℤ))
   simpa [Matrix.one_apply] using h.symm
 
 /-- A lift chosen modulo `lcm a b` reduces correctly modulo any divisor of it. -/
-private lemma map_apply_of_dvd_lcm {a b : ℕ} [NeZero (Nat.lcm a b)]
+private lemma map_apply_of_dvd_lcm {a b : ℕ}
     (M : Matrix (Fin 2) (Fin 2) ℤ) (β : SL(2, ℤ))
     (hβ : (↑(Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod (Nat.lcm a b))) β) :
         Matrix (Fin 2) (Fin 2) (ZMod (Nat.lcm a b))) =
@@ -469,27 +469,30 @@ private lemma det_fin_two_modEq_one_lcm {a b : ℕ} {M : Matrix (Fin 2) (Fin 2) 
     (hMa : ∀ i j, M i j ≡ ((1 : SL(2, ℤ)) i j : ℤ) [ZMOD (a : ℤ)])
     (hMb : ∀ i j, M i j ≡ (γ i j : ℤ) [ZMOD (b : ℤ)]) :
     M 0 0 * M 1 1 - M 0 1 * M 1 0 ≡ 1 [ZMOD ↑(Nat.lcm a b)] := by
+  -- reduction is a ring map, so it carries determinants to determinants (`RingHom.map_det`),
+  -- and every matrix of `SL(2, ℤ)` has determinant `1`; the two moduli then differ only in
+  -- which matrix `M` is compared against
+  have key : ∀ (n : ℕ) (g : SL(2, ℤ)), (∀ i j, M i j ≡ (g i j : ℤ) [ZMOD (n : ℤ)]) →
+      M 0 0 * M 1 1 - M 0 1 * M 1 0 ≡ 1 [ZMOD (n : ℤ)] := by
+    intro n g hM
+    have hmap : (Int.castRingHom (ZMod n)).mapMatrix M =
+        (Int.castRingHom (ZMod n)).mapMatrix (g : Matrix (Fin 2) (Fin 2) ℤ) := by
+      ext i j
+      exact (ZMod.intCast_eq_intCast_iff _ _ _).mpr (hM i j)
+    have hdet := congr_arg Matrix.det hmap
+    rw [← RingHom.map_det, ← RingHom.map_det, g.prop] at hdet
+    rw [← ZMod.intCast_eq_intCast_iff, ← Matrix.det_fin_two]
+    simpa using hdet
   -- `Int.modEq_and_modEq_iff_modEq_lcm` is stated for `Int.lcm`, so the `Nat.lcm` modulus
   -- has to be renamed before it applies.
   have hlcm : (↑(Nat.lcm a b) : ℤ) = ↑(Int.lcm (a : ℤ) (b : ℤ)) := by simp [Int.lcm, Nat.lcm]
   rw [hlcm, ← Int.modEq_and_modEq_iff_modEq_lcm]
-  refine ⟨?_, ?_⟩
-  · have h : M 0 0 * M 1 1 - M 0 1 * M 1 0 ≡ 1 * 1 - 0 * 0 [ZMOD (a : ℤ)] :=
-      ((hMa 0 0).mul (hMa 1 1)).sub ((hMa 0 1).mul (hMa 1 0))
-    simpa using h
-  · have hdetγ : (γ 0 0 : ℤ) * γ 1 1 - γ 0 1 * γ 1 0 = 1 := by
-      have h := γ.prop
-      rw [Matrix.det_fin_two] at h
-      exact_mod_cast h
-    have h : M 0 0 * M 1 1 - M 0 1 * M 1 0 ≡
-        (γ 0 0 : ℤ) * γ 1 1 - (γ 0 1 : ℤ) * γ 1 0 [ZMOD (b : ℤ)] :=
-      ((hMb 0 0).mul (hMb 1 1)).sub ((hMb 0 1).mul (hMb 1 0))
-    rwa [hdetγ] at h
+  exact ⟨key a 1 hMa, key b γ hMb⟩
 
 /-- **A lift realising `M` modulo `lcm a b` splits `γ` across the two levels.** If `β` reduces
 to `M` modulo `lcm a b`, and `M` is congruent to the identity modulo `a` and to `γ` modulo `b`,
 then `β ∈ Γ(a)` and `β⁻¹γ ∈ Γ(b)`. -/
-private lemma mem_Gamma_and_inv_mul_mem_Gamma_of_map_eq {a b : ℕ} [NeZero (Nat.lcm a b)]
+private lemma mem_Gamma_and_inv_mul_mem_Gamma_of_map_eq {a b : ℕ}
     {M : Matrix (Fin 2) (Fin 2) ℤ} {β γ : SL(2, ℤ)}
     (hβ : (↑(Matrix.SpecialLinearGroup.map (Int.castRingHom (ZMod (Nat.lcm a b))) β) :
         Matrix (Fin 2) (Fin 2) (ZMod (Nat.lcm a b))) =
