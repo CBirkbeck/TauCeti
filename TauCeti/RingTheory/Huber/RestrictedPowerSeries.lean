@@ -31,32 +31,41 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
 ## Provenance
 
 This module is a port of AINTLIB's `projects/AdicSpaces/Adic spaces/RestrictedPowerSeries.lean`,
-the roadmap's designated prior formalisation of this material. That attribution covers the
-**ring-coefficient** material — `IsRestricted` as originally stated, its closure lemmas,
-`restrictedMvPowerSeriesSubring` and the convolution argument behind `IsRestricted.mul`, whose
-definitions, statements and proof are all AINTLIB's work. The module-coefficient declarations —
-`isRestricted_iff`, `isRestricted_of_hasFiniteSupport`, `IsRestricted.smul`,
-`restrictedMvPowerSeriesSubmodule` and `mem_restrictedMvPowerSeriesSubmodule` — are original here.
+the roadmap's designated prior formalisation of this material. Three groups, because the port and
+this PR did different things to different declarations.
 
-That originality claim was checked against **both** AINTLIB files the roadmap designates for this
-material, not only `RestrictedPowerSeries.lean`. AINTLIB's `TateAlgebra.lean`,
+**AINTLIB's in definition, statement and proof.** `restrictedMvPowerSeriesSubring`,
+`IsRestricted.finite_coeff_notMem`, the private convolution helpers, and `IsRestricted.mul` — the
+convolution argument this file exists for. `IsRestricted.mul`'s proof is unchanged here apart from
+three call sites renamed to `isRestricted_iff_coeff`.
+
+**AINTLIB's in statement, with proofs rewritten here.** Five: `isRestricted_zero`,
+`IsRestricted.add` and `IsRestricted.neg`, which now delegate to Mathlib's `Filter.ZeroAtFilter`
+API instead of reproving convergence; and `isRestricted_one` and `isRestricted_algebraMap`, which
+were near-identical `tendsto_nhds`/`mem_cofinite` arguments and are now special cases of
+`isRestricted_of_hasFiniteSupport`. `IsRestricted` itself is AINTLIB's statement at weaker
+coefficient binders — `[Zero]` and a topology, where the original asked for a semiring.
+
+**Original here.** `isRestricted_of_hasFiniteSupport`, `IsRestricted.smul`,
+`restrictedMvPowerSeriesSubmodule` and `mem_restrictedMvPowerSeriesSubmodule`.
+
+The name `isRestricted_iff` needs care: the port introduced it for the `coeff`-form unfolding
+lemma, which is now `isRestricted_iff_coeff`. The statement the name carries here — unfolding
+through `Filter.ZeroAtFilter` at coefficients asking only for a `0` and a topology — is new.
+
+That originality claim was checked against **both** AINTLIB sources the roadmap designates for
+this material, not only `RestrictedPowerSeries.lean`. AINTLIB's `TateAlgebra.lean`,
 `TateAlgebraTopology.lean` and `TateAlgebraWedhorn.lean` build `TateAlgebra A` for a *ring* `A`
 (`[CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]`) throughout; their `Submodule`
 occurrences are ideals of that ring viewed as submodules, not coefficients in a module. There is
 no `M⟨X⟩` there, and §0.5's "restricted series with coefficients in a complete topological module"
 has no AINTLIB counterpart to credit.
 
-Four further declarations are AINTLIB's in statement only. `IsRestricted` itself now asks the
-coefficients for a `0` and a topology; `isRestricted_zero`, `IsRestricted.add` and
-`IsRestricted.neg` are restated at `[Zero]`, `[AddMonoid] [ContinuousAdd]` and
-`[AddGroup] [ContinuousNeg]`. **Their proofs are not AINTLIB's** — all three were rewritten here,
-and now delegate to Mathlib's `Filter.ZeroAtFilter` API rather than reproving convergence.
-
-The port moves the declarations into the `TauCeti.Huber` namespace, opts into the Lean module
-system with the definition bodies unexposed — hence the added
-`isRestricted_iff_coeff` and `mem_restrictedMvPowerSeriesSubring` — tracks the Mathlib rename of
-`Set.mem_setOf_eq` to `Set.mem_ofPred_eq`, renames the predicate from AINTLIB's `IsRestrictedAdic`
-(nothing here is adic), and drops hypotheses that the individual proofs never used.
+The port additionally moves the declarations into the `TauCeti.Huber` namespace, opts into the
+Lean module system with the definition bodies unexposed — hence the added `isRestricted_iff_coeff`
+and `mem_restrictedMvPowerSeriesSubring` — tracks the Mathlib rename of `Set.mem_setOf_eq` to
+`Set.mem_ofPred_eq`, renames the predicate from AINTLIB's `IsRestrictedAdic` (nothing here is
+adic), and drops hypotheses that the individual proofs never used.
 
 This is *not* Mathlib's `MvPowerSeries.IsRestricted`, which is stated over a normed ring and
 relative to a polyradius `c : σ → ℝ`, asking that `‖coeff t f‖ * ∏ i, c i ^ t i` tend to `0` along
