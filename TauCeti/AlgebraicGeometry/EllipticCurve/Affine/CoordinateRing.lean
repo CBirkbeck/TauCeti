@@ -366,12 +366,6 @@ private noncomputable def conjFunctionField :
     W.FunctionField ≃ₐ[F[X]] W.FunctionField :=
   IsFractionRing.algEquivOfAlgEquiv (CoordinateRing.conj W)
 
-/-- The structure map into the function field factors through the coordinate ring. -/
-private theorem algebraMap_functionField_eq (r : F[X]) :
-    algebraMap F[X] W.FunctionField r =
-      algebraMap W.CoordinateRing W.FunctionField (algebraMap F[X] W.CoordinateRing r) :=
-  IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField r
-
 /-- Conjugation moves only the numerator of `b / d`, because it fixes `F[X]`. -/
 private theorem conjFunctionField_apply_div (b : W.CoordinateRing) (d : F[X]) :
     conjFunctionField W (algebraMap W.CoordinateRing W.FunctionField b /
@@ -381,8 +375,9 @@ private theorem conjFunctionField_apply_div (b : W.CoordinateRing) (d : F[X]) :
   rw [map_div₀, conjFunctionField, IsFractionRing.algEquivOfAlgEquiv_algebraMap, AlgEquiv.commutes]
 
 /-- **The trace of an integral quotient is divisible by the denominator.** For `w = b / d` with `b`
-in the coordinate ring and `d` in `F[X]`, writing `b = p + q Y` in the basis, `d` divides the trace
-`2p - q(a₁X + a₃)` of `b`, because that trace is `w + σw` and both summands are integral.
+in the coordinate ring and `d` in `F[X]`, writing `b = p + q Y` in the basis, the trace of `w` is
+`w + σw = (2p - q(a₁X + a₃)) / d`, whose numerator is the trace of `b`. Both summands are integral
+over `F[X]`, hence so is the quotient, and that forces `d ∣ 2p - q(a₁X + a₃)`.
 
 Ellipticity of `W` is not needed here, and is not assumed. -/
 private theorem dvd_trace_of_isIntegral_div {b : W.CoordinateRing} {d p q : F[X]}
@@ -401,14 +396,15 @@ private theorem dvd_trace_of_isIntegral_div {b : W.CoordinateRing} {d p q : F[X]
       algebraMap W.CoordinateRing W.FunctionField b / algebraMap F[X] W.FunctionField d +
         conjFunctionField W (algebraMap W.CoordinateRing W.FunctionField b /
           algebraMap F[X] W.FunctionField d) := by
-    rw [conjFunctionField_apply_div, ← add_div, ← map_add, algebraMap_functionField_eq, ← hpq,
-      hadd]
+    rw [conjFunctionField_apply_div, ← add_div, ← map_add,
+      IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, ← hpq, hadd]
   rw [hsum]
   exact hz.add (hz.map (conjFunctionField W : W.FunctionField →ₐ[F[X]] W.FunctionField))
 
 /-- **The norm of an integral quotient is divisible by the square of the denominator.** The
-companion of `dvd_trace_of_isIntegral_div`: the norm is `w · σw`, so `d²` divides
-`p² - pq(a₁X + a₃) - q²(X³ + a₂X² + a₄X + a₆)`.
+companion of `dvd_trace_of_isIntegral_div`: the norm of `w = b / d` is
+`w · σw = Norm(b) / d²`, and `Norm(b)` is `p² - pq(a₁X + a₃) - q²(X³ + a₂X² + a₄X + a₆)` in the
+basis. Integrality of that product forces `d² ∣ Norm(b)`.
 
 Ellipticity of `W` is not needed here either. -/
 private theorem sq_dvd_norm_of_isIntegral_div {b : W.CoordinateRing} {d p q : F[X]}
@@ -428,7 +424,8 @@ private theorem sq_dvd_norm_of_isIntegral_div {b : W.CoordinateRing} {d p q : F[
         conjFunctionField W (algebraMap W.CoordinateRing W.FunctionField b /
           algebraMap F[X] W.FunctionField d) := by
     rw [conjFunctionField_apply_div, div_mul_div_comm, ← map_mul, ← hnorm,
-      CoordinateRing.mul_conj, ← algebraMap_functionField_eq, map_pow, pow_two]
+      CoordinateRing.mul_conj,
+      ← IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, map_pow, pow_two]
   rw [hprod]
   exact hz.mul (hz.map (conjFunctionField W : W.FunctionField →ₐ[F[X]] W.FunctionField))
 
@@ -459,7 +456,8 @@ private theorem exists_algebraMap_eq [W.IsElliptic] {z : W.FunctionField}
   have hzeq : algebraMap W.CoordinateRing W.FunctionField b₁ /
       algebraMap W.CoordinateRing W.FunctionField b₂ =
       algebraMap W.CoordinateRing W.FunctionField b / algebraMap F[X] W.FunctionField d := by
-    rw [algebraMap_functionField_eq, hdB, hb, map_mul, map_mul, mul_div_mul_right _ _ hcb₂K]
+    rw [IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, hdB, hb, map_mul,
+      map_mul, mul_div_mul_right _ _ hcb₂K]
   rw [hzeq] at hz ⊢
   -- the trace and the norm of `z`
   obtain ⟨p, q, hpq⟩ := exists_smul_basis_eq b
@@ -470,7 +468,8 @@ private theorem exists_algebraMap_eq [W.IsElliptic] {z : W.FunctionField}
   obtain ⟨p', rfl⟩ := hdp
   obtain ⟨q', rfl⟩ := hdq
   refine ⟨p' • 1 + q' • mk W Y, ?_⟩
-  rw [eq_div_iff hdK, algebraMap_functionField_eq, ← map_mul, ← hpq]
+  rw [eq_div_iff hdK, IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField,
+    ← map_mul, ← hpq]
   congr 1
   simp only [smul, ← CoordinateRing.mk_C_eq_algebraMap, map_mul]
   ring1
