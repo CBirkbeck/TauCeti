@@ -534,13 +534,8 @@ private lemma exists_matrix_modEq_one_modEq_of_mem_Gamma_gcd {a b : ℕ} {γ : S
     have hgcd : (↑(Int.gcd (a : ℤ) (b : ℤ)) : ℤ) = ↑(Nat.gcd a b) := by simp [Int.gcd]
     rw [hgcd]
     exact intCast_apply_modEq_one_of_mem_Gamma _ γ hγ
-  obtain ⟨z00, hz00a, hz00b⟩ := exists_int_modEq_of_modEq_gcd (hcompat 0 0)
-  obtain ⟨z01, hz01a, hz01b⟩ := exists_int_modEq_of_modEq_gcd (hcompat 0 1)
-  obtain ⟨z10, hz10a, hz10b⟩ := exists_int_modEq_of_modEq_gcd (hcompat 1 0)
-  obtain ⟨z11, hz11a, hz11b⟩ := exists_int_modEq_of_modEq_gcd (hcompat 1 1)
-  refine ⟨!![z00, z01; z10, z11], ?_, ?_⟩ <;>
-    · intro i j
-      fin_cases i <;> fin_cases j <;> assumption
+  choose z hza hzb using fun i j => exists_int_modEq_of_modEq_gcd (hcompat i j)
+  exact ⟨Matrix.of z, hza, hzb⟩
 
 /-- **Shimura, Lemma 3.28.** `Γ(gcd a b) = Γ(a) ⊔ Γ(b)`: the join of two principal congruence
 subgroups is the principal congruence subgroup of the gcd.
