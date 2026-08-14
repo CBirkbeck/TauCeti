@@ -132,7 +132,7 @@ variable {r : ℝ} {g : ℂ → ℂ}
 orthonormal frame.** There are orthogonal unit vectors `e`, `f` for which `⟪e, g z⟫_ℝ` and
 `⟪f, g z⟫_ℝ` are the real and imaginary parts of `z`, for every `z` of the disc. The one frame
 serves every point; that is what later fixes a single `u` in the classification. -/
-private theorem exists_norm_eq_one_real_inner_map_eq_of_dist_map_eq (hr : 0 < r) (h0 : g 0 = 0)
+private theorem exists_orthonormal_pair_real_inner_map_eq_of_dist_map_eq (hr : 0 < r) (h0 : g 0 = 0)
     (hg : ∀ z ∈ ball (0 : ℂ) r, ∀ w ∈ ball (0 : ℂ) r, dist (g z) (g w) = dist z w) :
     ∃ e f : ℂ, ‖e‖ = 1 ∧ ‖f‖ = 1 ∧ ⟪e, f⟫ = 0 ∧
       (∀ z ∈ ball (0 : ℂ) r, ⟪e, g z⟫ = z.re) ∧ ∀ z ∈ ball (0 : ℂ) r, ⟪f, g z⟫ = z.im := by
@@ -174,7 +174,7 @@ theorem exists_norm_eq_one_eqOn_ball_const_mul_or_const_mul_conj_of_dist_map_eq 
       (EqOn g (fun z => u * z) (ball (0 : ℂ) r) ∨
         EqOn g (fun z => u * conj z) (ball (0 : ℂ) r)) := by
   obtain ⟨e, f, hne, hnf, horth, hre, him⟩ :=
-    exists_norm_eq_one_real_inner_map_eq_of_dist_map_eq hr h0 hg
+    exists_orthonormal_pair_real_inner_map_eq_of_dist_map_eq hr h0 hg
   refine ⟨e, hne, ?_⟩
   rcases eq_mul_I_or_eq_neg_mul_I_of_real_inner_eq_zero hne hnf horth with hcase | hcase
   · -- The frame is positively oriented: `g` is the rotation by `e`.
