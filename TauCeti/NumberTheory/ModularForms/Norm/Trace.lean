@@ -199,13 +199,12 @@ public noncomputable def normRest : ℍ → ℂ := by
   let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
   exact ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q
 
+-- Kept private, with `tPowCoset`/`tPowCosets`: the indexing by `T`-power cosets is how the
+-- decomposition is proved, not part of what it asserts. The public interface is
+-- `periodic_normRest`, `analyticAt_cuspFunction_normRest`, the decomposition and
+-- `normRest_apply_eq_div`, none of whose statements mention the index set.
 /-- `normRest` as the product over the cosets that are not represented by a power of `T`,
-for any choice of the finiteness and decidability instances on the coset space.
-
-Private, together with `tPowCoset`/`tPowCosets`: the indexing by `T`-power cosets is how
-the decomposition is *proved*, not part of what it asserts. The public interface is
-`periodic_normRest`, `analyticAt_cuspFunction_normRest` and
-`norm_apply_eq_galoisProd_mul_normRest`, none of whose statements mention the index set. -/
+for any choice of the finiteness and decidability instances on the coset space. -/
 @[simp]
 private lemma normRest_def [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
     [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
@@ -269,16 +268,16 @@ public lemma analyticAt_cuspFunction_normRest :
     (normRest_def f ▸ Filter.BoundedAtFilter.prod _ fun q _ ↦
       SlashInvariantForm.isBoundedAtImInfty_quotientFunc f q)
 
-/-- **Decomposition of the norm at the cusp** for a modular form: the corollary of
-`slashInvariantNorm_apply_eq_galoisProd_mul_normRest` at `ModularForm.norm`.
-
-`ModularForm.norm` and `SlashInvariantForm.norm` share an underlying function, but not a
-spelling, and `rw` matches syntactically — so this is the form in which the general theorem
-can be applied to a modular form, and the bridge is taken through the two `coe_norm` lemmas
-rather than left to definitional unfolding. -/
+/-- **Decomposition of the norm at the cusp** for a modular form: the norm of `f` from `𝒢`
+down to `𝒮ℒ` is the Galois product of the first `Subgroup.integerCuspWidth 𝒢` integer
+translates of `f` times `normRest f`. This is the form to rewrite with when `f` is a modular
+form; `slashInvariantNorm_apply_eq_galoisProd_mul_normRest` is the general statement. -/
 public lemma norm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
     _root_.ModularForm.norm 𝒮ℒ f τ =
       galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * normRest f τ := by
+  -- The two norms share an underlying function but not a spelling, and `rw` matches
+  -- syntactically, so the bridge is taken through the two `coe_norm` lemmas rather than
+  -- left to definitional unfolding.
   have hcoe : _root_.ModularForm.norm 𝒮ℒ f τ = _root_.SlashInvariantForm.norm 𝒮ℒ f τ := by
     rw [_root_.ModularForm.coe_norm, _root_.SlashInvariantForm.coe_norm]
   rw [hcoe, slashInvariantNorm_apply_eq_galoisProd_mul_normRest]
