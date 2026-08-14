@@ -18,22 +18,22 @@ This file defines it, following the roadmap's wording exactly: one integral clos
 
 ```text
 Algebra.adjoin A⁺ {t/s}   A⁺[t₁/s, …, tₙ/s]  (Mathlib's, unwrapped)  ⊆ Aₛ
-completedPlusSubringBase  topological closure of its image           ⊆ A⟨T/s⟩
+completedPlusSubringBase  its image                                  ⊆ A⟨T/s⟩
 completedPlusSubring      the integral closure of that               ⊆ A⟨T/s⟩
 ```
 
 The integral closure is taken **in the completion**, which is what makes integral closedness of
 `A_U⁺` hold by construction rather than by a transfer theorem.
 
-There is deliberately **no** intermediate integral closure inside `Aₛ`. Interposing one would give
-`integralClosure (closure (image (A⁺[T/s])^int))`, which agrees with the roadmap's object only once
-`integralClosure (closure (image A⁺[T/s]))` is known closed — precisely the openness result this
-file defers. The ring defined here is the roadmap's, not an a-priori-larger one.
+Neither an intermediate integral closure inside `Aₛ` nor a topological closure of the image is
+interposed. Either would enlarge the generating subring before the integral closure is taken, and
+the result would agree with the roadmap's object only after an identification theorem this file
+does not prove. What is defined here is the roadmap's sentence read literally: **one** integral
+closure, in `A_U`, of the image of `A⁺[T/s]`.
 
 ## Main definitions
 
-* `TauCeti.Huber.PairOfDefinition.completedPlusSubringBase`: the topological closure in `A⟨T/s⟩`
-  of the image of `A⁺[T/s]`.
+* `TauCeti.Huber.PairOfDefinition.completedPlusSubringBase`: the image of `A⁺[T/s]` in `A⟨T/s⟩`.
 * `TauCeti.Huber.PairOfDefinition.completedPlusSubring`: **`A_U⁺`**.
 
 ## Main results
@@ -55,11 +55,14 @@ carries a version of this construction in `projects/AdicSpaces/Adic spaces/Presh
 of taking the final integral closure in the completion, so that integral closedness is free, is
 theirs.
 
-**This file deliberately differs from AINTLIB in one respect.** Their `completedPlusSubringBase`
-closes the image of `(A⁺[T/s])^int`, the integral closure taken already in `Aₛ`; this one closes
-the image of `A⁺[T/s]` itself. The roadmap and Wedhorn 8.16 describe a single integral closure, and
-with the extra layer the two objects agree only after the openness result this file defers. No
-proof was copied and nothing here is ported.
+**This file deliberately differs from AINTLIB in two respects.** Their `completedPlusSubringBase`
+is the *topological closure* of the image of `(A⁺[T/s])^int` — an integral closure taken already in
+`Aₛ`, then closed. This one is the image of `A⁺[T/s]` itself, with neither extra layer. The roadmap
+describes a single integral closure of that image, and each additional layer enlarges the
+generating subring, so the objects agree only after an identification theorem that is not
+available here. Their shape buys closedness of `A_U⁺`, which their power-boundedness argument then
+uses; that cost is deferred rather than avoided, and is noted above. No proof was copied and
+nothing here is ported.
 
 ## References
 
@@ -78,8 +81,7 @@ section Topological
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
-/-- The base of `A_U⁺`: the topological closure in `A⟨T/s⟩` of the image of the integral closure
-of `A⁺[T/s]`. -/
+/-- The base of `A_U⁺`: the image of `A⁺[T/s]` in `A⟨T/s⟩`. -/
 noncomputable def completedPlusSubringBase (P : PairOfDefinition A) (Aplus : Subring A)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) :
@@ -90,8 +92,8 @@ noncomputable def completedPlusSubringBase (P : PairOfDefinition A) (Aplus : Sub
   letI := locUniformSpace P T s S hden
   letI := isUniformAddGroup_locUniformSpace P T s S hden
   letI := isTopologicalRing_locUniformSpace P T s S hden
-  (((Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))).toSubring).map
-    UniformSpace.Completion.coeRingHom).topologicalClosure
+  ((Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))).toSubring).map
+    UniformSpace.Completion.coeRingHom
 
 /-- **`A_U⁺`**: the integral closure, inside `A⟨T/s⟩`, of `completedPlusSubringBase`.
 
@@ -129,8 +131,7 @@ theorem toCompletionLoc_mem_completedPlusSubring (P : PairOfDefinition A) (Aplus
     (completedPlusSubringBase P Aplus T s S hden).subtype.toAlgebra
   refine Subalgebra.algebraMap_mem (integralClosure _ _)
     (⟨toCompletionLoc P T s S hden a, ?_⟩ : ↥(completedPlusSubringBase P Aplus T s S hden))
-  refine Subring.le_topologicalClosure _
-    ⟨algebraMap A S a, Subalgebra.algebraMap_mem _ (⟨a, ha⟩ : ↥Aplus), ?_⟩
+  refine ⟨algebraMap A S a, Subalgebra.algebraMap_mem _ (⟨a, ha⟩ : ↥Aplus), ?_⟩
   simp [toCompletionLoc_apply, UniformSpace.Completion.coeRingHom]
 
 /-- Each fraction `t/s` lands in `A_U⁺`. -/
@@ -149,8 +150,7 @@ theorem divBy_mem_completedPlusSubring (P : PairOfDefinition A) (Aplus : Subring
   refine Subalgebra.algebraMap_mem (integralClosure _ _)
     (⟨((divBy t s : S) : UniformSpace.Completion S), ?_⟩ :
       ↥(completedPlusSubringBase P Aplus T s S hden))
-  exact Subring.le_topologicalClosure _
-    ⟨divBy t s, Algebra.subset_adjoin ⟨⟨t, ht⟩, rfl⟩, rfl⟩
+  exact ⟨divBy t s, Algebra.subset_adjoin ⟨⟨t, ht⟩, rfl⟩, rfl⟩
 
 end Topological
 
