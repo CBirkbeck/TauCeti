@@ -7,6 +7,7 @@ module
 public import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Recurrence
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Transfer
+import Mathlib.Data.Fin.Tuple.Sort
 import TauCeti.NumberTheory.EllipticDivisibilitySequence.SignEquivariance
 
 /-!
@@ -376,6 +377,31 @@ private theorem atomRel_eq_zero_of_ne (odd : W.Odd)
         simpa using h
       · exact absurd h₃ hyz
       · exact sorted px py pz hz h₃ h₁
+
+/-- **Four pairwise distinct nonnegative indices of one parity, in any order.** The tuple is
+sorted by `Tuple.sort` and the relator read off the sorted order, `atomRelFin4_perm` supplying the
+sign. Unlike the three-index case below, no index is pinned at `0`, so there is no distinguished
+minimum and the general permutation argument is what the sorting needs. -/
+private theorem atomRelFin4_eq_zero_of_injective (odd : W.Odd)
+    (descent : ∀ a b c d : ℤ, AtomRelVanishes W a b c d) {t : Fin 4 → ℤ}
+    (nonneg : ∀ i, 0 ≤ t i) (par : ∀ i j, t i % 2 = t j % 2) (inj : Function.Injective t) :
+    atomRelFin4 W t = 0 := by
+  set σ : Equiv.Perm (Fin 4) := Fin.revPerm.trans (Tuple.sort t) with hσ
+  -- `t ∘ Tuple.sort t` is monotone, so precomposing with the reversal makes it antitone; with `t`
+  -- injective that antitone tuple is *strictly* decreasing, which is what the descent consumes.
+  have hanti : ∀ i j : Fin 4, i < j → (t ∘ σ) j < (t ∘ σ) i := by
+    intro i j hij
+    refine lt_of_le_of_ne (Tuple.monotone_sort t (by simpa [hσ] using Fin.rev_le_rev.mpr hij.le)) ?_
+    exact fun h ↦ absurd ((σ.injective (inj h)).symm) (by simpa using hij.ne)
+  have hzero : atomRelFin4 W (t ∘ σ) = 0 := by
+    rw [atomRelFin4_def]
+    refine descent _ _ _ _ ⟨par _ _, par _ _, par _ _⟩ ?_
+    rw [nonnegStrictAnti₄_iff]
+    exact ⟨nonneg _, hanti 2 3 (by decide), hanti 1 2 (by decide), hanti 0 1 (by decide)⟩
+  rw [atomRelFin4_perm odd σ t] at hzero
+  -- the sign is a unit of `ℤ`, so it cancels; splitting on `±1` avoids naming a units lemma
+  rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> rw [h] at hzero <;>
+    simpa using hzero
 
 /-- Three nonnegative even indices against `0`, with no distinctness assumed: every coincidence
 puts two indices of the relator equal, and each such case is one of Mathlib's `atomRel_same`
