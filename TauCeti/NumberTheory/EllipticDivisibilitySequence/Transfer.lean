@@ -35,8 +35,7 @@ terminate.
 
 * `IsEllipticNet.parity_abs_avg_sub`: same parity survives the transfer, with the witness taken
   relative to the entry `atomRel_abs₄` leaves under an absolute value.
-* `IsEllipticNet.nonnegStrictAnti₄_def` / `nonnegStrictAnti₄_iff`: the predicate in its defining
-  tuple form, and as its four adjacent inequalities.
+* `IsEllipticNet.nonnegStrictAnti₄_iff`: the predicate as its four adjacent inequalities.
 * `IsEllipticNet.nonnegStrictAnti₄_abs_avg_sub`: nonnegativity and strict decrease survive it.
 * `IsEllipticNet.six_le_of_parity_of_nonnegStrictAnti₄`: a strictly decreasing quadruple
   of one parity with `0 ≤ d` has `6 ≤ a` — consecutive indices differ by at least two, three
@@ -64,10 +63,11 @@ module supplies the vector notation too. `Mathlib.Data.Int.ModEq` and `Mathlib.A
 .Abs` are private, each used only inside a proof — the latter for `abs_cases`, which is
 `to_additive`-generated from `mabs_cases` and so appears under no literal definition of its own.
 
-**On the hypotheses.** `nonnegStrictAnti₄_abs_avg_sub` takes the four inequalities separately
-rather than a bundled `NonnegStrictAnti₄` plus a gap: the descent supplies parity, from which
-`d + 2 ≤ c` follows by `omega`, and bundling would have carried `d < c` alongside the strictly
-stronger gap. Only `parity_abs_avg_sub` and `six_le_of_parity_of_nonnegStrictAnti₄` genuinely need
+**On the hypotheses.** `nonnegStrictAnti₄_abs_avg_sub` takes `d < c`, `2 ≤ c + d`, `c < b` and
+`b < a` separately, rather than a bundled `NonnegStrictAnti₄`. Those are what the transferred
+ordering actually needs: the descent supplies parity, and a same-parity gap is strictly stronger
+than this — `(a, b, c, d) = (4, 3, 2, 1)` satisfies these and the conclusion while failing
+`d + 2 ≤ c`. Only `parity_abs_avg_sub` and `six_le_of_parity_of_nonnegStrictAnti₄` genuinely need
 parity as parity.
 
 This file does **not** import `Mathlib.NumberTheory.EllipticDivisibilitySequence`. No declaration
@@ -106,11 +106,6 @@ the descent needs it wherever it needs the ordering; the decreasing half is Math
 `StrictAnti` on the tuple. -/
 def NonnegStrictAnti₄ (a b c d : ℤ) : Prop := 0 ≤ d ∧ StrictAnti ![a, b, c, d]
 
-/-- `NonnegStrictAnti₄` in its defining tuple form, for a consumer that wants Mathlib's
-`StrictAnti` API on the tuple. Not `@[simp]`: `nonnegStrictAnti₄_iff` is the normal form. -/
-theorem nonnegStrictAnti₄_def (a b c d : ℤ) :
-    NonnegStrictAnti₄ a b c d ↔ 0 ≤ d ∧ StrictAnti ![a, b, c, d] := Iff.rfl
-
 /-- `NonnegStrictAnti₄` as its four adjacent inequalities. -/
 @[simp]
 theorem nonnegStrictAnti₄_iff (a b c d : ℤ) :
@@ -144,7 +139,7 @@ theorem parity_abs_avg_sub {a b c d : ℤ}
 /-- **Nonnegativity and strict decrease survive the transfer.** The last index needs its absolute
 value: `m - a` is the one difference that can be negative, `a` being the largest index. -/
 theorem nonnegStrictAnti₄_abs_avg_sub {a b c d : ℤ}
-    (hd : 0 ≤ d) (hcd : d + 2 ≤ c) (hcb : c < b) (hba : b < a) :
+    (hdc : d < c) (hcd : 2 ≤ c + d) (hcb : c < b) (hba : b < a) :
     NonnegStrictAnti₄ ((a + b + c + d) / 2 - d) ((a + b + c + d) / 2 - c)
       ((a + b + c + d) / 2 - b) |(a + b + c + d) / 2 - a| := by
   rw [nonnegStrictAnti₄_iff]
