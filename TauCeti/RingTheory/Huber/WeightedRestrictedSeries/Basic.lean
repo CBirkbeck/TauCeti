@@ -1124,7 +1124,7 @@ theorem continuous_weightedRestrictedSubringFinZeroEquiv [NonarchimedeanRing A] 
 
 /-- The inverse comparison sends `a` to the constant series. -/
 @[simp]
-theorem coe_weightedRestrictedSubringFinZeroEquiv_symm [NonarchimedeanRing A] (a : A) :
+theorem coe_weightedRestrictedSubringFinZeroEquiv_symm_apply [NonarchimedeanRing A] (a : A) :
     ((weightedRestrictedSubringFinZeroEquiv.symm a :
         weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight) :
       MvPowerSeries (Fin 0) A) = MvPowerSeries.C a := by
