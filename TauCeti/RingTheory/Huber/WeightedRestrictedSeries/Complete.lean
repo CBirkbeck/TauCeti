@@ -7,6 +7,7 @@ module
 
 public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion
 public import TauCeti.Topology.Algebra.UniformRing
+public import Mathlib.Topology.Algebra.UniformFilterBasis
 
 /-!
 # Completeness of the restricted power series over a complete base
@@ -23,7 +24,12 @@ case needs bounded weights and is not treated here.
 Consequently `TauCeti.Huber.restrictedMvPowerSeriesCompletion k A` collapses for such `A`:
 `TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv` identifies `A⟨X₁,…,Xₖ⟩` with the
 plain restricted-series ring — the "comparison with the usual completed restricted
-power-series algebra" milestone of roadmap Layer 0.5.
+power-series algebra" milestone of roadmap Layer 0.5. It is packaged twice over one and the
+same underlying map — as that ring isomorphism and as the `A`-algebra equivalence
+`TauCeti.Huber.restrictedMvPowerSeriesCompletionAlgEquiv`, the two tied together by
+`TauCeti.Huber.coe_restrictedMvPowerSeriesCompletionAlgEquiv` and
+`TauCeti.Huber.coe_restrictedMvPowerSeriesCompletionAlgEquiv_symm` — and both it and its
+inverse are uniformly continuous, hence continuous by `UniformContinuous.continuous`.
 
 ## Main results
 
@@ -35,6 +41,11 @@ power-series algebra" milestone of roadmap Layer 0.5.
   are complete.
 * `TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv` : the comparison —
   `A⟨X₁,…,Xₖ⟩` is the plain restricted-series ring over a complete Hausdorff base.
+* `TauCeti.Huber.restrictedMvPowerSeriesCompletionAlgEquiv` : the same comparison as an
+  `A`-algebra equivalence.
+* `TauCeti.Huber.uniformContinuous_restrictedMvPowerSeriesCompletionEquiv` and
+  `TauCeti.Huber.uniformContinuous_restrictedMvPowerSeriesCompletionEquiv_symm` : the
+  comparison and its inverse are uniformly continuous.
 -/
 
 public section
@@ -71,26 +82,6 @@ instance instT0Space_one_weight [T0Space A] :
     (fun _ _ h ↦ Subtype.ext (MvPowerSeries.ext fun ν ↦ congrFun h ν))
     (continuous_pi fun ν ↦ (uniformContinuous_coeff_one_weight ν).continuous)
 
-omit [IsUniformAddGroup A] in
-/-- A Cauchy filter on `A⟨X⟩_T` is coefficientwise uniformly Cauchy: for every open subgroup `U`
-of `A` some member of the filter has all its pairwise coefficient differences inside `Tν · U`.
-Private: this is the step that unfolds `U⟨X⟩` into its defining coefficient bounds, used only by
-the completeness proof below. -/
-private theorem exists_mem_forall_coeff_sub_mem {T : Fin k → Set A} {hT : IsWeightFamily T}
-    {F : Filter (weightedRestrictedSubring T hT)} (hF : Cauchy F) (U : OpenAddSubgroup A) :
-    ∃ t ∈ F, ∀ f ∈ t, ∀ g ∈ t, ∀ ν, MvPowerSeries.coeff ν (f : MvPowerSeries (Fin k) A)
-      - MvPowerSeries.coeff ν (g : MvPowerSeries (Fin k) A) ∈ weightMul T ν U.toAddSubgroup := by
-  have hV : (weightedNhd T hT U.toAddSubgroup : Set (weightedRestrictedSubring T hT)) ∈ nhds 0 :=
-    (hasBasis_nhds_zero_weightedTopology hT).mem_of_mem trivial
-  have huni : (fun p : weightedRestrictedSubring T hT × weightedRestrictedSubring T hT ↦
-      p.2 - p.1) ⁻¹' (weightedNhd T hT U.toAddSubgroup : Set _) ∈ uniformity _ := by
-    rw [uniformity_eq_comap_nhds_zero]
-    exact Filter.mem_comap.mpr ⟨_, hV, subset_rfl⟩
-  obtain ⟨t, htF, ht⟩ := (cauchy_iff.mp hF).2 _ huni
-  refine ⟨t, htF, fun f hf g hg ν ↦ ?_⟩
-  have hfg : f - g ∈ weightedNhd T hT U.toAddSubgroup := ht (Set.mk_mem_prod hg hf)
-  simpa using mem_weightedNhd.mp hfg ν
-
 /-- The trivial-weight restricted-series subring has a `CompleteSpace` instance whenever the
 base uniform nonarchimedean commutative ring is complete. -/
 instance instCompleteSpace_one_weight [CompleteSpace A] :
@@ -106,11 +97,14 @@ instance instCompleteSpace_one_weight [CompleteSpace A] :
   have key : ∀ U : OpenAddSubgroup A, ∃ t ∈ F, ∀ f ∈ t, ∀ ν,
       MvPowerSeries.coeff ν (f : MvPowerSeries (Fin k) A) - a ν ∈ U := by
     intro U
-    obtain ⟨t, htF, ht⟩ := exists_mem_forall_coeff_sub_mem hF U
+    obtain ⟨t, htF, ht⟩ := ((weightedNhd_subgroups_basis
+      isWeightFamily_one_weight).toRingFilterBasis.toAddGroupFilterBasis.cauchy_iff.mp hF).2 _
+      ((weightedNhd_subgroups_basis isWeightFamily_one_weight).mem_addGroupFilterBasis U)
     refine ⟨t, htF, fun f hf ν ↦ ?_⟩
     have h : a ν - MvPowerSeries.coeff ν (f : MvPowerSeries (Fin k) A) ∈ U :=
       U.isClosed.mem_of_tendsto (Filter.Tendsto.sub (ha ν) tendsto_const_nhds)
-        (Filter.eventually_of_mem htF fun f' hf' ↦ by simpa using ht f' hf' f hf ν)
+        (Filter.eventually_of_mem htF fun f' hf' ↦ by
+          simpa using mem_weightedNhd.mp (ht f hf f' hf') ν)
     simpa using neg_mem h
   -- The coefficientwise limit is again restricted, since it is `U`-close to a restricted series.
   have hres : IsWeightedRestricted (fun _ : Fin k ↦ ({1} : Set A)) g := by
@@ -157,5 +151,56 @@ theorem restrictedMvPowerSeriesCompletionEquiv_symm_apply {k : ℕ} {A : Type*} 
     (restrictedMvPowerSeriesCompletionEquiv k A).symm f
       = (f : restrictedMvPowerSeriesCompletion k A) :=
   UniformSpace.Completion.completeRingEquivSelf_symm_apply _ f
+
+/-- **The comparison as an `A`-algebra equivalence**: over a complete Hausdorff base the
+completed restricted power-series algebra is the plain restricted-series ring, structure map
+included. It is `TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv` rebundled, so the two
+share an underlying map and the coercion lemmas for the latter apply to it. -/
+noncomputable def restrictedMvPowerSeriesCompletionAlgEquiv (k : ℕ) (A : Type*) [CommRing A]
+    [UniformSpace A] [IsUniformAddGroup A] [NonarchimedeanRing A] [CompleteSpace A]
+    [T0Space A] :
+    restrictedMvPowerSeriesCompletion k A ≃ₐ[A]
+      weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight :=
+  AlgEquiv.ofRingEquiv (f := restrictedMvPowerSeriesCompletionEquiv k A) fun a ↦ by
+    rw [UniformSpace.Completion.algebraMap_def]
+    exact restrictedMvPowerSeriesCompletionEquiv_coe _
+
+@[simp]
+theorem coe_restrictedMvPowerSeriesCompletionAlgEquiv {k : ℕ} {A : Type*} [CommRing A]
+    [UniformSpace A] [IsUniformAddGroup A] [NonarchimedeanRing A] [CompleteSpace A]
+    [T0Space A] :
+    ⇑(restrictedMvPowerSeriesCompletionAlgEquiv k A)
+      = ⇑(restrictedMvPowerSeriesCompletionEquiv k A) := (rfl)
+
+@[simp]
+theorem coe_restrictedMvPowerSeriesCompletionAlgEquiv_symm {k : ℕ} {A : Type*} [CommRing A]
+    [UniformSpace A] [IsUniformAddGroup A] [NonarchimedeanRing A] [CompleteSpace A]
+    [T0Space A] :
+    ⇑(restrictedMvPowerSeriesCompletionAlgEquiv k A).symm
+      = ⇑(restrictedMvPowerSeriesCompletionEquiv k A).symm := (rfl)
+
+/-- The comparison is uniformly continuous: composing it with the uniformly inducing map into
+the completion gives back the identity. -/
+theorem uniformContinuous_restrictedMvPowerSeriesCompletionEquiv {k : ℕ} {A : Type*} [CommRing A]
+    [UniformSpace A] [IsUniformAddGroup A] [NonarchimedeanRing A] [CompleteSpace A]
+    [T0Space A] :
+    UniformContinuous ⇑(restrictedMvPowerSeriesCompletionEquiv k A) := by
+  have h : ((↑) : _ → restrictedMvPowerSeriesCompletion k A) ∘
+      ⇑(restrictedMvPowerSeriesCompletionEquiv k A) = id := funext fun x ↦
+    (restrictedMvPowerSeriesCompletionEquiv_symm_apply _).symm.trans
+      ((restrictedMvPowerSeriesCompletionEquiv k A).symm_apply_apply x)
+  rw [(UniformSpace.Completion.isUniformInducing_coe _).uniformContinuous_iff, h]
+  exact uniformContinuous_id
+
+/-- The inverse comparison is uniformly continuous: it is the canonical map into the
+completion. -/
+theorem uniformContinuous_restrictedMvPowerSeriesCompletionEquiv_symm {k : ℕ} {A : Type*}
+    [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [NonarchimedeanRing A] [CompleteSpace A]
+    [T0Space A] :
+    UniformContinuous ⇑(restrictedMvPowerSeriesCompletionEquiv k A).symm := by
+  rw [show ⇑(restrictedMvPowerSeriesCompletionEquiv k A).symm
+    = ((↑) : _ → restrictedMvPowerSeriesCompletion k A) from
+    funext restrictedMvPowerSeriesCompletionEquiv_symm_apply]
+  exact UniformSpace.Completion.uniformContinuous_coe _
 
 end TauCeti.Huber
