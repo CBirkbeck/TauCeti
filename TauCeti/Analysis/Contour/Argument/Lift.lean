@@ -372,7 +372,9 @@ node `s j` with `j < N` to `w`, any `t` between `s 0` and `s N` satisfies
 `γ t - w = ‖γ t - w‖ · exp (I · θ t)`, where
 `θ t = arg (γ (s 0) - w) + ∑_{j < N} (log (segRatio γ w (s j) (s (j+1)) t)).im`.
 
-For `N = 0` this is the ordinary polar identity at `s 0`, with no hypothesis at all. -/
+For `N = 0` the avoidance hypothesis is vacuous and monotonicity goes unused; the coverage
+bounds still do the work, pinning `t = s 0`, where the conclusion is the ordinary polar
+identity. -/
 private theorem polar_form_of_partition {γ : ℝ → ℂ} {w : ℂ} {N : ℕ} {s : ℕ → ℝ}
     (hs_mono : Monotone s) (hs_avoid : ∀ j < N, γ (s j) - w ≠ 0) {t : ℝ}
     (h_cov_lo : s 0 ≤ t) (h_cov_hi : t ≤ s N) :
