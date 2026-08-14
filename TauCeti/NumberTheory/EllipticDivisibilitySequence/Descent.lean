@@ -298,4 +298,88 @@ theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
           show b' = 2 * (k - 1) + 1 by omega, atomRel_odd_eq_rel]
         exact evenRec k (by omega)
 
+/-- Three distinct positive even indices, in any order, against a last index of `0`. The six
+orderings are reached from the decreasing one by the adjacent transpositions; the last index is
+already minimal, so only the first three need sorting and the general `Tuple.sort` argument the
+source uses is not required. -/
+private theorem atomRel_eq_zero_of_ne (odd : W.Odd)
+    (descent : ∀ a b c d : ℤ, AtomRelVanishes W a b c d) {x y z : ℤ}
+    (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) (px : x % 2 = 0) (py : y % 2 = 0) (pz : z % 2 = 0)
+    (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) :
+    atomRel W x y z 0 = 0 := by
+  have sorted : ∀ {u v w : ℤ}, u % 2 = 0 → v % 2 = 0 → w % 2 = 0 → 0 < w → w < v → v < u →
+      atomRel W u v w 0 = 0 := by
+    intro u v w pu pv pw hw hwv hvu
+    exact descent u v w 0 ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
+  rcases lt_trichotomy x y with h₁ | h₁ | h₁
+  · rcases lt_trichotomy y z with h₂ | h₂ | h₂
+    · have h := sorted pz py px hx h₁ h₂
+      rw [atomRel_swap₁₂ odd y z x 0, atomRel_swap₂₃ odd y x z 0,
+        atomRel_swap₁₂ odd x y z 0] at h
+      simpa using h
+    · exact absurd h₂ hyz
+    · rcases lt_trichotomy x z with h₃ | h₃ | h₃
+      · have h := sorted py pz px hx h₃ h₂
+        rw [atomRel_swap₂₃ odd y x z 0, atomRel_swap₁₂ odd x y z 0] at h
+        simpa using h
+      · exact absurd h₃ hxz
+      · have h := sorted py px pz hz h₃ h₁
+        rw [atomRel_swap₁₂ odd x y z 0] at h
+        simpa using h
+  · exact absurd h₁ hxy
+  · rcases lt_trichotomy x z with h₂ | h₂ | h₂
+    · have h := sorted pz px py hy h₁ h₂
+      rw [atomRel_swap₁₂ odd x z y 0, atomRel_swap₂₃ odd x y z 0] at h
+      simpa using h
+    · exact absurd h₂ hxz
+    · rcases lt_trichotomy y z with h₃ | h₃ | h₃
+      · have h := sorted px pz py hy h₃ h₂
+        rw [atomRel_swap₂₃ odd x y z 0] at h
+        simpa using h
+      · exact absurd h₃ hyz
+      · exact sorted px py pz hz h₃ h₁
+
+/-- Three nonnegative even indices against `0`, with no distinctness assumed: every coincidence
+puts two indices of the relator equal, and each such case is one of Mathlib's `atomRel_same`
+lemmas, whose value carries a factor `W 0`. -/
+private theorem atomRel_eq_zero_of_nonneg (odd : W.Odd) (zero : W 0 = 0)
+    (descent : ∀ a b c d : ℤ, AtomRelVanishes W a b c d) {x y z : ℤ}
+    (hx : 0 ≤ x) (hy : 0 ≤ y) (hz : 0 ≤ z) (px : x % 2 = 0) (py : y % 2 = 0) (pz : z % 2 = 0) :
+    atomRel W x y z 0 = 0 := by
+  rcases eq_or_lt_of_le hx with rfl | hx'
+  · rw [atomRel_same₁₄ odd]; simp [zero]
+  rcases eq_or_lt_of_le hy with rfl | hy'
+  · rw [atomRel_same₂₄ odd]; simp [zero]
+  rcases eq_or_lt_of_le hz with rfl | hz'
+  · rw [atomRel_same₃₄]; simp [zero]
+  rcases eq_or_ne x y with rfl | hxy
+  · rw [atomRel_same₁₂]; simp [zero]
+  rcases eq_or_ne y z with rfl | hyz
+  · rw [atomRel_same₂₃]; simp [zero]
+  rcases eq_or_ne x z with rfl | hxz
+  · rw [atomRel_same₁₃ odd]; simp [zero]
+  exact atomRel_eq_zero_of_ne odd descent hx' hy' hz' px py pz hxy hyz hxz
+
+/-- `omega` cannot parse `|·|`, so the sign split has to happen before it is called. -/
+private theorem abs_two_mul_emod_two (p : ℤ) : |2 * p| % 2 = 0 := by
+  rcases abs_cases (2 * p) with ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] <;> omega
+
+/-- **An elliptic sequence from its two doubling recurrences.** A sequence that is odd, vanishes
+at `0`, has `W 1` and `W 2` nonzerodivisors, and satisfies the odd recurrence from `m = 2` and
+the even one from `m = 3`, satisfies the full elliptic-net relation at every triple.
+
+This is the converse direction to `IsEllipticSequence.rel_odd` and `rel_even`: those read the two
+recurrences off the relation, this rebuilds the relation from them. -/
+theorem isEllipticSequence_of_rel (odd : W.Odd) (zero : W 0 = 0) (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
+    (oddRec : ∀ m : ℤ, 2 ≤ m → rel W (m + 1) m 1 0 = 0)
+    (evenRec : ∀ m : ℤ, 3 ≤ m → rel W (m + 1) (m - 1) 1 0 = 0) :
+    IsEllipticSequence W := by
+  intro p q r
+  have bridge := atomRel_two_mul W p q r 0
+  norm_num at bridge
+  rw [← bridge, ← atomRel_abs₁ odd, ← atomRel_abs₂ odd, ← atomRel_abs₃ odd]
+  exact atomRel_eq_zero_of_nonneg odd zero
+    (atomRelVanishes_of_rel one two oddRec evenRec) (abs_nonneg _) (abs_nonneg _) (abs_nonneg _)
+    (abs_two_mul_emod_two p) (abs_two_mul_emod_two q) (abs_two_mul_emod_two r)
+
 end IsEllipticNet
