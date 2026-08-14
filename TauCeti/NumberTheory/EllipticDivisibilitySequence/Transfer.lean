@@ -35,7 +35,8 @@ terminate.
 
 * `IsEllipticNet.parity_abs_avg_sub`: same parity survives the transfer, with the witness taken
   relative to the entry `atomRel_abs₄` leaves under an absolute value.
-* `IsEllipticNet.nonnegStrictAnti₄_iff`: the predicate as its four adjacent inequalities.
+* `IsEllipticNet.nonnegStrictAnti₄_iff`: the predicate as the lower bound `0 ≤ d` together
+  with the three adjacent inequalities.
 * `IsEllipticNet.nonnegStrictAnti₄_abs_avg_sub`: nonnegativity and strict decrease survive it.
 * `IsEllipticNet.six_le_of_parity_of_nonnegStrictAnti₄`: a strictly decreasing quadruple
   of one parity with `0 ≤ d` has `6 ≤ a` — consecutive indices differ by at least two, three
@@ -106,7 +107,7 @@ the descent needs it wherever it needs the ordering; the decreasing half is Math
 `StrictAnti` on the tuple. -/
 def NonnegStrictAnti₄ (a b c d : ℤ) : Prop := 0 ≤ d ∧ StrictAnti ![a, b, c, d]
 
-/-- `NonnegStrictAnti₄` as its four adjacent inequalities. -/
+/-- `NonnegStrictAnti₄` as the lower bound and the three adjacent inequalities. -/
 @[simp]
 theorem nonnegStrictAnti₄_iff (a b c d : ℤ) :
     NonnegStrictAnti₄ a b c d ↔ 0 ≤ d ∧ d < c ∧ c < b ∧ b < a := by
