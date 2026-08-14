@@ -26,14 +26,12 @@ of it, and `ModularForm.rat_slash` turns each rational slash into the real one.
 
 ## Main definitions
 
-* `HeckeRing.GL2.heckeSlashInvariant`: the double coset acting on `SlashInvariantForm 𝒮ℒ k`.
 * `HeckeRing.GL2.heckeSlashEnd`: the same map as a `ℂ`-linear endomorphism, the shape Layer 2(b)
   of the roadmap asks for.
 
 ## Main results
 
-* `HeckeRing.GL2.map_ratCast_mem_SL` and `HeckeRing.GL2.exists_mem_SLnZ_of_mem_SL`: the two
-  directions of the `SLnZ 2` ↔ `𝒮ℒ` correspondence.
+* `HeckeRing.GL2.coe_heckeSlashEnd`: the endomorphism is `heckeSlashSum` on functions.
 
 ## Provenance
 
@@ -65,42 +63,20 @@ namespace HeckeRing.GL2
 
 variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 
-/-- An element of `SL₂(ℤ) ≤ GL(2, ℚ)` maps into `𝒮ℒ`. -/
-lemma map_ratCast_mem_SL {δ : GL (Fin 2) ℚ} (hδ : δ ∈ SLnZ 2) :
-    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) δ ∈ 𝒮ℒ := by
-  obtain ⟨s, rfl⟩ := (mem_SLnZ_iff 2).mp hδ
-  exact ⟨s, (map_mapGL (R := ℤ) (S := ℚ) (T := ℝ) s).symm⟩
-
-/-- Every element of `𝒮ℒ` is the image of one of `SLnZ 2`. -/
-lemma exists_mem_SLnZ_of_mem_SL {γ : GL (Fin 2) ℝ} (hγ : γ ∈ 𝒮ℒ) :
-    ∃ δ ∈ SLnZ 2, Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) δ = γ := by
-  obtain ⟨s, rfl⟩ := MonoidHom.mem_range.mp hγ
-  exact ⟨mapGL ℚ s, (mem_SLnZ_iff 2).mpr ⟨s, rfl⟩, map_mapGL (R := ℤ) (S := ℚ) (T := ℝ) s⟩
-
-/-- Real slash-invariance under `𝒮ℒ` gives rational slash-invariance under `SLnZ 2`. -/
-lemma slash_eq_of_mem_SLnZ {f : ℍ → ℂ} (hf : ∀ γ ∈ 𝒮ℒ, f ∣[k] γ = f) {δ : GL (Fin 2) ℚ}
-    (hδ : δ ∈ SLnZ 2) : f ∣[k] δ = f := by
-  rw [ModularForm.rat_slash]
-  exact hf _ (map_ratCast_mem_SL hδ)
-
 /-- **The double coset acting on slash-invariant forms.** The underlying function is
 `heckeSlashSum`, and its invariance is `heckeSlashSum_slash_invariant_of_mem_SLnZ` transported
 across the `SLnZ 2` ↔ `𝒮ℒ` correspondence.
 
 ⚠ As in `Invariance.lean`, this is the sum over the representatives `heckeSlashSum` fixes; no
 claim is made that different choices of representatives give the same form. -/
-noncomputable def heckeSlashInvariant (f : SlashInvariantForm 𝒮ℒ k) : SlashInvariantForm 𝒮ℒ k where
+private noncomputable def heckeSlashInvariant (f : SlashInvariantForm 𝒮ℒ k) :
+    SlashInvariantForm 𝒮ℒ k where
   toFun := heckeSlashSum k D f
   slash_action_eq' γ hγ := by
-    obtain ⟨δ, hδ, rfl⟩ := exists_mem_SLnZ_of_mem_SL hγ
+    obtain ⟨δ, hδ, rfl⟩ := ModularForm.exists_mem_SLnZ_of_mem_SL hγ
     rw [← ModularForm.rat_slash]
     exact heckeSlashSum_slash_invariant_of_mem_SLnZ k D f
-      (fun _ h ↦ slash_eq_of_mem_SLnZ k f.slash_action_eq' h) hδ
-
-/-- The underlying function of `heckeSlashInvariant` is `heckeSlashSum`. Since the definition is
-not `@[expose]`, this is the interface a downstream module rewrites with. -/
-@[simp] lemma coe_heckeSlashInvariant (f : SlashInvariantForm 𝒮ℒ k) :
-    ⇑(heckeSlashInvariant k D f) = heckeSlashSum k D f := (rfl)
+      (fun _ h ↦ ModularForm.slash_eq_of_mem_SLnZ k f.slash_action_eq' h) hδ
 
 /-- **The double coset as a `ℂ`-linear endomorphism of `SlashInvariantForm 𝒮ℒ k`.** This is the
 form the roadmap's Layer 2(b) asks for: `Module.End ℂ`, so that Hecke operators compose and can
@@ -108,10 +84,12 @@ carry a ring structure. Linearity is `heckeSlashSum_add` and `heckeSlashSum_smul
 because every coset representative has positive determinant. -/
 noncomputable def heckeSlashEnd : Module.End ℂ (SlashInvariantForm 𝒮ℒ k) where
   toFun := heckeSlashInvariant k D
-  map_add' f g := by ext τ; simp [heckeSlashSum_add]
-  map_smul' c f := by ext τ; simp [heckeSlashSum_smul]
+  map_add' f g := by ext τ; simp [heckeSlashInvariant, heckeSlashSum_add]
+  map_smul' c f := by ext τ; simp [heckeSlashInvariant, heckeSlashSum_smul]
 
+/-- The endomorphism is `heckeSlashSum` on underlying functions. This characterises it directly,
+without exposing the bundling. -/
 @[simp] lemma coe_heckeSlashEnd (f : SlashInvariantForm 𝒮ℒ k) :
-    heckeSlashEnd k D f = heckeSlashInvariant k D f := (rfl)
+    ⇑(heckeSlashEnd k D f) = heckeSlashSum k D f := (rfl)
 
 end HeckeRing.GL2

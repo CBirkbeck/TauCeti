@@ -5,6 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
+public import TauCeti.NumberTheory.HeckeRing.GLn.Basic
 public import TauCeti.NumberTheory.ModularForms.Basic
 
 /-!
@@ -52,7 +53,7 @@ generality of Mathlib's `ModularForm.SL_smul_slash` rather than AINTLIB's `c : �
 
 public section
 
-open Matrix UpperHalfPlane
+open Matrix Matrix.SpecialLinearGroup UpperHalfPlane HeckeRing.GLn
 
 open scoped MatrixGroups ModularForm
 
@@ -127,5 +128,24 @@ lemma rat_smul_slash_of_det_pos {α : Type*} [SMul α ℂ] [IsScalarTower α ℂ
     (c • f) ∣[k] g = c • f ∣[k] g := by
   rw [rat_slash, rat_slash]
   exact _root_.ModularForm.smul_slash_of_det_pos k (det_map_ratCast_pos hg) f c
+
+/-- An element of `SL₂(ℤ) ≤ GL(2, ℚ)` maps into `𝒮ℒ`. -/
+lemma map_ratCast_mem_SL {δ : GL (Fin 2) ℚ} (hδ : δ ∈ SLnZ 2) :
+    Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) δ ∈ 𝒮ℒ := by
+  obtain ⟨s, rfl⟩ := (mem_SLnZ_iff 2).mp hδ
+  exact ⟨s, (map_mapGL (R := ℤ) (S := ℚ) (T := ℝ) s).symm⟩
+
+/-- Every element of `𝒮ℒ` is the image of one of `SLnZ 2`. -/
+lemma exists_mem_SLnZ_of_mem_SL {γ : GL (Fin 2) ℝ} (hγ : γ ∈ 𝒮ℒ) :
+    ∃ δ ∈ SLnZ 2, Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) δ = γ := by
+  obtain ⟨s, rfl⟩ := MonoidHom.mem_range.mp hγ
+  exact ⟨mapGL ℚ s, (mem_SLnZ_iff 2).mpr ⟨s, rfl⟩, map_mapGL (R := ℤ) (S := ℚ) (T := ℝ) s⟩
+
+/-- Real slash-invariance under `𝒮ℒ` gives rational slash-invariance under `SLnZ 2`. -/
+lemma slash_eq_of_mem_SLnZ (k : ℤ) {f : ℍ → ℂ} (hf : ∀ γ ∈ 𝒮ℒ, f ∣[k] γ = f)
+    {δ : GL (Fin 2) ℚ}
+    (hδ : δ ∈ SLnZ 2) : f ∣[k] δ = f := by
+  rw [rat_slash]
+  exact hf _ (map_ratCast_mem_SL hδ)
 
 end ModularForm
