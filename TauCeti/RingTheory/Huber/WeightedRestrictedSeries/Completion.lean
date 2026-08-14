@@ -104,10 +104,9 @@ noncomputable def restrictedMvPowerSeriesCompletionFinZeroEquiv :
   letI := IsTopologicalAddGroup.rightUniformSpace A
   letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
   UniformSpace.Completion.mapRingEquiv
-    (weightedRestrictedSubringFinZeroEquiv (fun _ : Fin 0 ↦ ({1} : Set A))
-      isWeightFamily_one_weight)
-    (continuous_weightedRestrictedSubringFinZeroEquiv _ _)
-    (continuous_weightedRestrictedSubringFinZeroEquiv_symm _ _)
+    (weightedRestrictedSubringFinZeroEquiv (fun _ : Fin 0 ↦ ({1} : Set A)))
+    (continuous_weightedRestrictedSubringFinZeroEquiv _)
+    (continuous_weightedRestrictedSubringFinZeroEquiv_symm _)
 
 /-- On the canonical image of a restricted series, the comparison of completions is the
 comparison of the rings underneath. -/
@@ -117,13 +116,13 @@ theorem restrictedMvPowerSeriesCompletionFinZeroEquiv_coe
     letI := IsTopologicalAddGroup.rightUniformSpace A
     letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
     restrictedMvPowerSeriesCompletionFinZeroEquiv (f : restrictedMvPowerSeriesCompletion 0 A) =
-      ((weightedRestrictedSubringFinZeroEquiv (fun _ : Fin 0 ↦ ({1} : Set A))
-        isWeightFamily_one_weight f : A) : UniformSpace.Completion A) := by
+      ((weightedRestrictedSubringFinZeroEquiv (fun _ : Fin 0 ↦ ({1} : Set A)) f : A) :
+        UniformSpace.Completion A) := by
   let _ := IsTopologicalAddGroup.rightUniformSpace A
   let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
   simp only [restrictedMvPowerSeriesCompletionFinZeroEquiv]
   exact UniformSpace.Completion.map_coe (uniformContinuous_addMonoidHom_of_continuous
-    (continuous_weightedRestrictedSubringFinZeroEquiv _ _)) f
+    (continuous_weightedRestrictedSubringFinZeroEquiv _)) f
 
 /-- On the canonical image of an element of `A`, the inverse comparison is the canonical image of
 the inverse ring comparison. -/
@@ -132,13 +131,13 @@ theorem restrictedMvPowerSeriesCompletionFinZeroEquiv_symm_coe (a : A) :
     letI := IsTopologicalAddGroup.rightUniformSpace A
     letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
     (restrictedMvPowerSeriesCompletionFinZeroEquiv (A := A)).symm (a : UniformSpace.Completion A) =
-      ((weightedRestrictedSubringFinZeroEquiv (fun _ : Fin 0 ↦ ({1} : Set A))
-        isWeightFamily_one_weight).symm a : restrictedMvPowerSeriesCompletion 0 A) := by
+      ((weightedRestrictedSubringFinZeroEquiv (fun _ : Fin 0 ↦ ({1} : Set A))).symm a :
+        restrictedMvPowerSeriesCompletion 0 A) := by
   let _ := IsTopologicalAddGroup.rightUniformSpace A
   let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
   simp only [restrictedMvPowerSeriesCompletionFinZeroEquiv]
   exact UniformSpace.Completion.map_coe (uniformContinuous_addMonoidHom_of_continuous
-    (continuous_weightedRestrictedSubringFinZeroEquiv_symm _ _)) a
+    (continuous_weightedRestrictedSubringFinZeroEquiv_symm _)) a
 
 /-- The comparison of completions is continuous. -/
 theorem continuous_restrictedMvPowerSeriesCompletionFinZeroEquiv :
