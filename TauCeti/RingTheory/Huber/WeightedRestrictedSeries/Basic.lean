@@ -591,23 +591,19 @@ theorem IsWeightedRestricted.finite_coeff_notMem {T : Fin k → Set A}
 /-- One open additive subgroup absorbing exceptional coefficients of two series at once: `Z` sends
 `coeff α f * z` into `Tα · U` for every `α ∈ F`, and `coeff β g * z` into `Tβ · U` for every
 `β ∈ G`. -/
-private theorem exists_openAddSubgroup_forall_two_sided_weightMul_mem [NonarchimedeanRing A]
+private theorem exists_openAddSubgroup_forall_pair_weightMul_mem [NonarchimedeanRing A]
     {T : Fin k → Set A} (hT : IsWeightFamily T) (U : OpenAddSubgroup A)
     (F G : Finset (Fin k →₀ ℕ)) (f g : MvPowerSeries (Fin k) A) :
     ∃ Z : OpenAddSubgroup A,
       (∀ α ∈ F, ∀ z ∈ Z, MvPowerSeries.coeff α f * z ∈ weightMul T α U.toAddSubgroup) ∧
         ∀ β ∈ G, ∀ z ∈ Z, MvPowerSeries.coeff β g * z ∈ weightMul T β U.toAddSubgroup := by
   have hU : (U : Set A) ∈ nhds (0 : A) := U.isOpen.mem_nhds U.zero_mem
-  obtain ⟨Zf, hZf⟩ := NonarchimedeanRing.exists_openAddSubgroup_forall_mul_subset F
-    (fun α ↦ MvPowerSeries.coeff α f) (fun α ↦ weightMul T α U.toAddSubgroup)
-    (fun α _ ↦ hT.weightMul_mem_nhds α hU)
-  obtain ⟨Zg, hZg⟩ := NonarchimedeanRing.exists_openAddSubgroup_forall_mul_subset G
-    (fun β ↦ MvPowerSeries.coeff β g) (fun β ↦ weightMul T β U.toAddSubgroup)
-    (fun β _ ↦ hT.weightMul_mem_nhds β hU)
-  have hZf_le : Zf ⊓ Zg ≤ Zf := inf_le_left
-  have hZg_le : Zf ⊓ Zg ≤ Zg := inf_le_right
-  exact ⟨Zf ⊓ Zg, fun α hα z hz ↦ hZf α hα z (hZf_le hz),
-    fun β hβ z hz ↦ hZg β hβ z (hZg_le hz)⟩
+  obtain ⟨Z, hZ⟩ := NonarchimedeanRing.exists_openAddSubgroup_forall_mul_subset (F.disjSum G)
+    (Sum.elim (fun α ↦ MvPowerSeries.coeff α f) fun β ↦ MvPowerSeries.coeff β g)
+    (Sum.elim (fun α ↦ weightMul T α U.toAddSubgroup) fun β ↦ weightMul T β U.toAddSubgroup)
+    (by rintro (α | β) _ <;> exact hT.weightMul_mem_nhds _ hU)
+  exact ⟨Z, fun α hα z hz ↦ hZ (Sum.inl α) (Finset.inl_mem_disjSum.mpr hα) z hz,
+    fun β hβ z hz ↦ hZ (Sum.inr β) (Finset.inr_mem_disjSum.mpr hβ) z hz⟩
 
 /-- **`A⟨X⟩_T` is closed under multiplication** (Wedhorn 5.48, the point he flags as "not
 entirely clear").
@@ -630,7 +626,7 @@ theorem IsWeightedRestricted.mul [NonarchimedeanRing A] {T : Fin k → Set A}
   obtain ⟨W, hWU⟩ := NonarchimedeanRing.mul_subset U
   have hF := hf.finite_coeff_notMem W
   have hG := hg.finite_coeff_notMem W
-  obtain ⟨Z, hZf, hZg⟩ := exists_openAddSubgroup_forall_two_sided_weightMul_mem hT U
+  obtain ⟨Z, hZf, hZg⟩ := exists_openAddSubgroup_forall_pair_weightMul_mem hT U
     hF.toFinset hG.toFinset f g
   have hFZ := hf.finite_coeff_notMem Z
   have hGZ := hg.finite_coeff_notMem Z
