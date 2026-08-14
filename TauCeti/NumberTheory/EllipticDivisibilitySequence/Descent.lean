@@ -279,6 +279,28 @@ private theorem atomRel_odd_eq_rel (k : ℤ) :
   simp_rw [atomRel, atom_odd, rel]
   ring_nf
 
+/-- **At a gap of exactly two the relator vanishes at the minimal pair.** This is where the
+induction bottoms out: the odd recurrence supplies the even first index and the even recurrence
+the odd one. -/
+private theorem atomRel_eq_zero_of_gap_two
+    (oddRec : ∀ m : ℤ, 2 ≤ m → rel W (m + 1) m 1 0 = 0)
+    (evenRec : ∀ m : ℤ, 3 ≤ m → rel W (m + 1) (m - 1) 1 0 = 0) {a b : ℤ} (h6 : 6 ≤ a)
+    (hb : b + 2 = a) :
+    atomRel W a b (a % 2 + 2) (a % 2) = 0 := by
+  rcases Int.emod_two_eq_zero_or_one a with hp | hp
+  · obtain ⟨k, rfl⟩ : ∃ k, a = 2 * k := ⟨a / 2, by omega⟩
+    -- `atomRel_even_eq_rel` is stated with its second index in `2 * _` form, which is what lets
+    -- `atomRel_two_mul` reduce every atom; put `b` in that form before rewriting.
+    obtain rfl : b = 2 * (k - 1) := by omega
+    rw [atomRel_even_eq_rel]
+    simpa using oddRec (k - 1) (by omega)
+  · obtain ⟨k, rfl⟩ : ∃ k, a = 2 * k + 1 := ⟨a / 2, by omega⟩
+    -- Likewise `atomRel_odd_eq_rel` wants `2 * _ + 1`, which is what lets `atom_odd` reduce each
+    -- atom without any reasoning about truncated division.
+    obtain rfl : b = 2 * (k - 1) + 1 := by omega
+    rw [atomRel_odd_eq_rel]
+    exact evenRec k (by omega)
+
 /-- **The descent.** The two doubling recurrences, holding from `m = 2` and `m = 3` on, force the
 full four-index relation at every valid quadruple. The induction is on the largest index: below
 `6` no valid quadruple exists, and above it `atomRelVanishes_of_min` reduces to the minimal
@@ -310,13 +332,7 @@ private theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
     · rw [← atomRel_avg_sub W same, ← atomRel_abs₄]
       exact ih _ (by omega) _ _ _ (parity_abs_avg_sub same)
         (nonnegStrictAnti₄_abs_avg_sub h1 (by omega) h2 h3)
-    · rcases Int.emod_two_eq_zero_or_one a' with hp | hp
-      · obtain ⟨k, rfl⟩ : ∃ k, a' = 2 * k := ⟨a' / 2, by omega⟩
-        rw [show b' = 2 * (k - 1) by omega, atomRel_even_eq_rel]
-        simpa using oddRec (k - 1) (by omega)
-      · obtain ⟨k, rfl⟩ : ∃ k, a' = 2 * k + 1 := ⟨a' / 2, by omega⟩
-        rw [show b' = 2 * (k - 1) + 1 by omega, atomRel_odd_eq_rel]
-        exact evenRec k (by omega)
+    · exact atomRel_eq_zero_of_gap_two oddRec evenRec (by omega) hb
 
 /-- The relator vanishes at three even indices in strict decrease above `0`, against a last
 index of `0`: the descent's hypothesis at exactly the shape the sorting step below produces. -/
