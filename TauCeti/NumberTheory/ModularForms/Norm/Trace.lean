@@ -21,6 +21,7 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
 
 * `TauCeti.SlashInvariantForm.mdifferentiable_quotientFunc`.
 * `TauCeti.SlashInvariantForm.isBoundedAtImInfty_quotientFunc`.
+* `TauCeti.ModularForm.normRest`, `TauCeti.ModularForm.norm_eq_galoisProd_mul_normRest`.
 * `TauCeti.ModularForm.exists_norm_decomposition`.
 
 ## References
@@ -70,12 +71,12 @@ variable [𝒢.IsFiniteRelIndex 𝒮ℒ]
 
 variable (𝒢) in
 /-- The coset of `T ^ j` in `𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ)`. -/
-private def tPowCoset (j : ℕ) : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ) :=
+public def tPowCoset (j : ℕ) : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ) :=
   ⟦(mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))^j)⟧
 
 variable (𝒢) in
 /-- The cosets of `T ^ j` for `j < integerCuspWidth 𝒢`, as a finset. -/
-private def tPowCosets [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
+public def tPowCosets [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
     Finset (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) :=
   Finset.univ.image fun j : Fin (Subgroup.integerCuspWidth 𝒢) ↦ tPowCoset 𝒢 j
 
@@ -167,6 +168,54 @@ private lemma prod_tPowCosets_quotientFunc [DecidableEq (𝒮ℒ ⧸ (𝒢.subgr
       Subgroup.quotient_T_pow_integerCuspWidth_injective (by simpa [tPowCoset] using h),
     Finset.prod_congr rfl fun j _ ↦ quotientFunc_T_pow_apply f j τ,
     Fin.prod_univ_eq_prod_range (fun n ↦ (f : ℍ → ℂ) (ofComplex ((τ : ℂ) - n))) _]
+
+/-- The remainder factor of the norm at the cusp `∞`: the product of the coset factors
+outside the `T`-power cosets, so that the norm is the Galois product of the integer
+translates of `f` times this factor. Its value is `normRest_apply`. -/
+public noncomputable def normRest : ℍ → ℂ := by
+  classical
+  let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
+  exact ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q
+
+/-- The value of `normRest`, for any choice of the finiteness and decidability instances on
+the coset space. -/
+public lemma normRest_apply [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
+    [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
+    normRest f = ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q := by
+  unfold normRest
+  congr!
+
+/-- `normRest` is `1`-periodic. -/
+public lemma periodic_normRest : Function.Periodic (normRest f ∘ ofComplex) 1 := by
+  classical
+  let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
+  refine periodic_comp_ofComplex_iff.mpr fun τ ↦ ?_
+  rw [normRest_apply, Finset.prod_apply, Finset.prod_apply]
+  exact prod_quotientFunc_one_vadd f τ
+
+/-- The cusp function of `normRest` is analytic at `0`. -/
+public lemma analyticAt_cuspFunction_normRest :
+    AnalyticAt ℂ (cuspFunction 1 (normRest f)) 0 := by
+  classical
+  let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
+  exact analyticAt_cuspFunction_zero one_pos (periodic_normRest f)
+    (normRest_apply f ▸ MDifferentiable.prod fun q _ ↦
+      SlashInvariantForm.mdifferentiable_quotientFunc f q)
+    (normRest_apply f ▸ Filter.BoundedAtFilter.prod _ fun q _ ↦
+      SlashInvariantForm.isBoundedAtImInfty_quotientFunc f q)
+
+/-- **Decomposition of the norm at the cusp**, with the remainder factor named: the norm is
+the Galois product of the first `Subgroup.integerCuspWidth 𝒢` integer translates of `f`
+times `normRest f`. -/
+public lemma norm_eq_galoisProd_mul_normRest (τ : ℍ) :
+    _root_.ModularForm.norm 𝒮ℒ f τ =
+      galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * normRest f τ := by
+  classical
+  let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
+  rw [_root_.ModularForm.coe_norm, Finset.prod_apply,
+    ← Finset.prod_filter_mul_prod_filter_not Finset.univ (· ∈ tPowCosets 𝒢),
+    Finset.filter_univ_mem, prod_tPowCosets_quotientFunc f τ, normRest_apply,
+    Finset.prod_apply]
 
 /-- Decomposition of the norm of `f` from `𝒢` to `𝒮ℒ` at the cusp `∞`: it is the Galois
 product of the first `Subgroup.integerCuspWidth 𝒢` integer translates of `f` times a remainder which
