@@ -17,8 +17,29 @@ that of the uniform bijection `UniformCompletion.completeEquivSelf` — the equa
 recorded as `coe_extensionHom_id` — which supplies bijectivity. The name follows
 `UniformCompletion.completeEquivSelf`.
 
+Everything else here is read off that identification. The isomorphism is uniformly continuous
+because `UniformCompletion.completeEquivSelf` is a uniform equivalence, and its inverse is
+uniformly continuous because it *is* the canonical map into the completion. Over a base ring
+`R` the same map is `R`-linear, giving `UniformSpace.Completion.completeAlgEquivSelf`.
+
 The declarations live in the root `UniformSpace.Completion` namespace they extend, following
 this repository's convention for lemmas about external types.
+
+## Main definitions
+
+* `UniformSpace.Completion.completeRingEquivSelf`: the ring isomorphism
+  `UniformSpace.Completion S ≃+* S`.
+* `UniformSpace.Completion.completeAlgEquivSelf`: the same map as an `R`-algebra equivalence,
+  for a complete Hausdorff topological `R`-algebra `S`.
+
+## Main results
+
+* `UniformSpace.Completion.coe_completeRingEquivSelf` and
+  `UniformSpace.Completion.coe_completeRingEquivSelf_symm`: the isomorphism is
+  `UniformCompletion.completeEquivSelf` and its inverse is the coercion into the completion.
+* `UniformSpace.Completion.uniformContinuous_completeRingEquivSelf` and
+  `UniformSpace.Completion.uniformContinuous_completeRingEquivSelf_symm`: both directions are
+  uniformly continuous, hence continuous by `UniformContinuous.continuous`.
 -/
 
 public section
@@ -50,5 +71,50 @@ theorem completeRingEquivSelf_coe (a : S) :
 theorem completeRingEquivSelf_symm_apply (a : S) :
     (completeRingEquivSelf S).symm a = (a : UniformSpace.Completion S) :=
   (RingEquiv.symm_apply_eq _).mpr (completeRingEquivSelf_coe S a).symm
+
+/-- The isomorphism **is** the uniform bijection `UniformCompletion.completeEquivSelf`, as a
+function: both are `UniformSpace.Completion.extension id`. -/
+theorem coe_completeRingEquivSelf :
+    ⇑(completeRingEquivSelf S) = ⇑(UniformCompletion.completeEquivSelf (α := S)) :=
+  coe_extensionHom_id S
+
+/-- The inverse isomorphism **is** the canonical map into the completion, as a function. -/
+theorem coe_completeRingEquivSelf_symm :
+    ⇑(completeRingEquivSelf S).symm = ((↑) : S → UniformSpace.Completion S) :=
+  funext (completeRingEquivSelf_symm_apply S)
+
+/-- The isomorphism is uniformly continuous: it is the uniform bijection
+`UniformCompletion.completeEquivSelf`. -/
+theorem uniformContinuous_completeRingEquivSelf :
+    UniformContinuous ⇑(completeRingEquivSelf S) :=
+  coe_completeRingEquivSelf S ▸ (UniformCompletion.completeEquivSelf (α := S)).uniformContinuous
+
+/-- The inverse isomorphism is uniformly continuous: it is the canonical map into the
+completion. -/
+theorem uniformContinuous_completeRingEquivSelf_symm :
+    UniformContinuous ⇑(completeRingEquivSelf S).symm :=
+  coe_completeRingEquivSelf_symm S ▸ uniformContinuous_coe S
+
+section Algebra
+
+variable (R : Type*) [CommSemiring R] [Algebra R S] [UniformContinuousConstSMul R S]
+
+/-- For a complete Hausdorff topological `R`-algebra, the extension of the identity is an
+`R`-algebra equivalence from the completion: `completeRingEquivSelf` is `R`-linear, since it
+fixes the image of `R`. -/
+noncomputable def completeAlgEquivSelf : UniformSpace.Completion S ≃ₐ[R] S :=
+  AlgEquiv.ofRingEquiv (f := completeRingEquivSelf S) fun r ↦ by
+    rw [algebraMap_def]
+    exact completeRingEquivSelf_coe S _
+
+@[simp]
+theorem coe_completeAlgEquivSelf :
+    ⇑(completeAlgEquivSelf S R) = ⇑(completeRingEquivSelf S) := (rfl)
+
+@[simp]
+theorem coe_completeAlgEquivSelf_symm :
+    ⇑(completeAlgEquivSelf S R).symm = ⇑(completeRingEquivSelf S).symm := (rfl)
+
+end Algebra
 
 end UniformSpace.Completion

@@ -5,8 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion
-public import TauCeti.Topology.Algebra.UniformRing
+public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Complete
 public import TauCeti.Topology.UniformSpace.DiscreteUniformity
 public import Mathlib.RingTheory.Polynomial.Basic
 
@@ -25,6 +24,10 @@ here in that generality.
 `TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Completion` — is *defined* as the separated
 completion of the ring of restricted power series at the trivial weight family `Tᵢ = {1}`
 (Wedhorn Example 5.54), so for zero variables it is the separated completion of `A` itself.
+Where that ring of restricted power series is already complete and Hausdorff, the completion
+does nothing: `TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv`, in
+`TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Complete`, is the identification, and the
+discrete case below is proved through it.
 
 ## Main definitions
 
@@ -37,19 +40,18 @@ completion of the ring of restricted power series at the trivial weight family `
   the polynomials, already complete, and the Hilbert basis theorem applies. In particular
   `ℤ`, every field, and every noetherian ring discretely topologised witness the predicate.
 
-The comparison of `A⟨X₁,…,Xₖ⟩` with the plain restricted-series ring when `A` is itself
-complete and Hausdorff, the iteration `A⟨X⟩⟨Y⟩ ≅ A⟨X,Y⟩`, and the stability of noetherianness
-under quotients belong to the later roadmap milestones of Layer 0.5 and are not proved here.
+The iteration `A⟨X⟩⟨Y⟩ ≅ A⟨X,Y⟩` and the stability of noetherianness under quotients belong
+to the later roadmap milestones of Layer 0.5 and are not proved here.
 
 ## Provenance
 
 AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit
 `2baa76f742bdb4fb8ee323fabba41203bd390e08` formalises an `IsStronglyNoetherian` class in
 `projects/AdicSpaces/Adic spaces/RestrictedPowerSeries.lean` and `TateAcyclicity.lean`. It
-was consulted and not ported: AINTLIB quantifies over the *uncompleted* restricted-series
-subring, which matches Wedhorn only for complete Hausdorff rings, whereas the roadmap — and
-this file — define `A⟨X₁,…,Xₖ⟩` through the separated completion so that the predicate is
-meaningful for arbitrary Tate rings. Nothing was copied.
+was consulted and not ported: its class quantifies over the *uncompleted* restricted-series
+subring, while the class here is stated over the separated completion
+`TauCeti.Huber.restrictedMvPowerSeriesCompletion`, whose own module records that contrast.
+Nothing was copied.
 -/
 
 public section
@@ -89,6 +91,6 @@ instance IsStronglyNoetherian.of_discreteTopology [DiscreteTopology A] [IsNoethe
         isWeightFamily_one_weight) := DiscreteUniformity.of_discreteTopology
     exact isNoetherianRing_of_ringEquiv _
       ((weightedPolynomialEquiv _ isWeightFamily_one_weight).trans
-        (UniformSpace.Completion.completeRingEquivSelf _).symm)
+        (restrictedMvPowerSeriesCompletionEquiv k A).symm)
 
 end TauCeti.Huber

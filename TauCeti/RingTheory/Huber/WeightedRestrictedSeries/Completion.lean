@@ -24,7 +24,8 @@ map.
 
 The predicate that every `A⟨X₁,…,Xₖ⟩` is noetherian is
 `TauCeti.Huber.IsStronglyNoetherian`, in `TauCeti.RingTheory.Huber.StronglyNoetherian`; the
-comparison with the plain restricted-series ring over a complete Hausdorff base is
+comparison with the plain restricted-series ring, whenever that ring is itself complete and
+Hausdorff — over a complete Hausdorff base, and over a discrete one — is
 `TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv`, in
 `TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Complete`.
 
@@ -37,6 +38,22 @@ comparison with the plain restricted-series ring over a complete Hausdorff base 
 
 * `TauCeti.Huber.continuous_algebraMap_restrictedMvPowerSeriesCompletion`: the structure map
   `A → A⟨X₁,…,Xₖ⟩` is continuous.
+
+## Provenance
+
+AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08` formalises restricted power series in
+`projects/AdicSpaces/Adic spaces/RestrictedPowerSeries.lean`. It was consulted and not
+ported: everything there is stated for the *uncompleted* restricted-series subring, which
+matches Wedhorn only for complete Hausdorff rings, whereas the roadmap — and this file —
+define `A⟨X₁,…,Xₖ⟩` through the separated completion, so that the object is the intended one
+for an arbitrary Tate ring. The two descriptions are identified, where they agree, by
+`TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv`. Nothing was copied.
+
+## References
+
+* [T. Wedhorn, *Adic Spaces*][wedhorn_adic], Remark and Definition 5.48, and Example 5.54 for
+  the case `Tᵢ = {1}`.
 -/
 
 public section
