@@ -8,6 +8,7 @@ public import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
 public import Mathlib.NumberTheory.EllipticDivisibilitySequence
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Recurrence
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Transfer
+import TauCeti.NumberTheory.EllipticDivisibilitySequence.SignEquivariance
 
 /-!
 # An elliptic sequence from its two doubling recurrences
@@ -41,18 +42,23 @@ hypotheses that `atom_even`, `atom_odd` and `atomRel_eq` carry.
 * `isEllipticSequence_iff`: the equivalence, and the headline result of the file.
 * `IsEllipticNet.isEllipticSequence_of_rel`: its hard direction, with the recurrences in
   relator form.
-* `IsEllipticNet.atomRelVanishes_of_rel`: the descent itself, at valid quadruples.
 * `IsEllipticNet.atom_mul_atomRel_eq_of_last_eq_fst`, `…_of_last_eq_snd`,
   `IsEllipticNet.atom_mul_atomRel_eq`: the three-term and ten-term expansions that drive it.
-* `IsEllipticNet.atomRel_swap₁₂`, `IsEllipticNet.atomRel_swap₂₃`: antisymmetry of the relator
-  under transpositions of its indices.
 
 ## Implementation notes
 
-The descent's hypothesis is packaged as `AtomRelVanishes`, carrying the parity and ordering
-conditions *inside* the predicate. The induction applies its hypothesis at quadruples whose
-validity is not known in advance, so the recursive call has to be a statement about indices
-alone.
+The descent itself is private. `AtomRelVanishes` and the three lemmas lowering it are shaped by
+this proof rather than by any consumer, and the interface a caller wants is the equivalence and
+its hard direction.
+
+That predicate carries the parity and ordering conditions *inside* it. The induction applies its
+hypothesis at quadruples whose validity is not known in advance, so the recursive call has to be
+a statement about indices alone.
+
+The antisymmetry of `atomRel` under transpositions is **not** proved here: `SignEquivariance.lean`
+already exports `atomRel_swap₁₂`, `atomRel_swap₂₃` and `atomRel_swap₃₄`, together with the general
+`atomRelFin4_perm`. Only the first three indices are ever permuted below, the last being held at
+`0`, so the two adjacent transpositions are all that is used.
 
 Three parts of the source's apparatus are not needed here, each because Mathlib has absorbed
 the layer that made them necessary. Its `rel₄_transf` is `atomRel_avg_sub`; its minimal-index
@@ -66,8 +72,8 @@ Adapted from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
 `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `rel₆_eq₃`, `rel₆_eq₃'`, `rel₆_eq₁₀`,
 `rel₄_iff_evenRec`, `dMin`, `cMin`, `Rel₄OfValid`, `rel₄_fix₁_of_fix₂`, `rel₄_of_fix₂`,
-`rel₄_of_min₂`, `rel₄_of_anti_oddRec_evenRec`, `rel₄_swap₀₁`, `rel₄_swap₁₂`,
-`rel₄_of_oddRec_evenRec` and `IsEllSequence.of_oddRec_evenRec`. That file's header reads
+`rel₄_of_min₂`, `rel₄_of_anti_oddRec_evenRec`, `rel₄_of_oddRec_evenRec` and
+`IsEllSequence.of_oddRec_evenRec`. That file's header reads
 `Authors: Junyan Xu`; following this repository's convention for adapted material the upstream
 authorship is credited here rather than in the copyright header.
 
@@ -78,9 +84,9 @@ renaming. Three of its declarations are deliberately **not** ported. Its `rel₆
 rather than a concept and exists only to shorten four statements, so it would stand a second
 public spelling of `atom _ _ * atomRel _ _ _ _`; the statements below write the product out.
 Its `addMulSub_sq_mul_rel₄_eq₉`, the nine-term expansion, is unused in the source itself — it
-occurs there only at its own declaration — and this descent does not need it. Its four-index
-swap `rel₄_swap₂₃` supports the `Tuple.sort` argument avoided above; with the last index held
-at `0` only the first three are ever permuted, so the two swaps below suffice.
+occurs there only at its own declaration — and this descent does not need it. Its swap family
+`rel₄_swap₀₁`, `rel₄_swap₁₂`, `rel₄_swap₂₃` and the `relFin4_perm` built on them are already in
+this repository as `SignEquivariance.lean`, and are used from there.
 
 `rel₄_iff_evenRec` is the one source declaration carrying `set_option allowUnsafeReducibility
 true` together with `attribute [local reducible] Nat.rawCast`, which #2860 declined to bring
@@ -133,7 +139,7 @@ open scoped nonZeroDivisors
 decreasing. The two hypotheses live inside the predicate rather than outside it because the
 descent applies its induction hypothesis at quadruples whose validity is not known in advance;
 carrying them here means the recursive call is a `Prop` about indices alone. -/
-def AtomRelVanishes (a b c d : ℤ) : Prop :=
+private def AtomRelVanishes (a b c d : ℤ) : Prop :=
   (d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) → NonnegStrictAnti₄ a b c d →
     atomRel W a b c d = 0
 
@@ -166,7 +172,7 @@ private theorem atomRel_triple_eq_zero {a b c c₀ d₀ : ℤ}
 `(a, b, c, d₀)` once `c₀ < c`. Both follow from a three-term expansion trading the relator's
 last index for the pair `c₀, d₀`, after which every summand carries a factor already known to
 vanish. -/
-theorem atomRelVanishes_of_forall_le {a c₀ d₀ : ℤ} (par : c₀ % 2 = d₀ % 2) (le : 0 ≤ d₀)
+private theorem atomRelVanishes_of_forall_le {a c₀ d₀ : ℤ} (par : c₀ % 2 = d₀ % 2) (le : 0 ≤ d₀)
     (lt : d₀ < c₀) (rel : ∀ {a' b : ℤ}, a' ≤ a → AtomRelVanishes W a' b c₀ d₀)
     (mem : atom W c₀ d₀ ∈ R⁰) (b c : ℤ) :
     AtomRelVanishes W a b c c₀ ∧ (c₀ < c → AtomRelVanishes W a b c d₀) := by
@@ -192,7 +198,8 @@ theorem atomRelVanishes_of_forall_le {a c₀ d₀ : ℤ} (par : c₀ % 2 = d₀ 
 the ten-term expansion reaches a quadruple whose last index `d` is merely above `c₀`: each of
 the ten summands carries a relator that either already ends at the fixed pair or is reachable
 from it, and so vanishes. -/
-theorem atomRelVanishes_of_lt {a c₀ d₀ : ℤ} (par : c₀ % 2 = d₀ % 2) (le : 0 ≤ d₀) (lt : d₀ < c₀)
+private theorem atomRelVanishes_of_lt {a c₀ d₀ : ℤ} (par : c₀ % 2 = d₀ % 2) (le : 0 ≤ d₀)
+    (lt : d₀ < c₀)
     (rel : ∀ {a' b : ℤ}, a' ≤ a → AtomRelVanishes W a' b c₀ d₀) (mem : atom W c₀ d₀ ∈ R⁰)
     (b c d : ℤ) (hc : c₀ < d) (par' : d % 2 = d₀ % 2) :
     AtomRelVanishes W a b c d := by
@@ -227,7 +234,7 @@ last two indices are the minimal same-parity pair `(a % 2 + 2, a % 2)`, it vanis
 valid quadruple with first index `a`. The three remaining cases are `d` above the pair, `d` at
 its top, and `d` at its bottom; in the `%2` spelling each is closed by `omega`, where the source
 needed a chain of `Int.negOnePow` lemmas. -/
-theorem atomRelVanishes_of_min {a : ℤ} (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
+private theorem atomRelVanishes_of_min {a : ℤ} (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
     (rel : ∀ {a' b : ℤ}, a' ≤ a → AtomRelVanishes W a' b (a % 2 + 2) (a % 2)) (b c d : ℤ) :
     AtomRelVanishes W a b c d := by
   intro same anti
@@ -247,19 +254,6 @@ theorem atomRelVanishes_of_min {a : ℤ} (one : W 1 ∈ R⁰) (two : W 2 ∈ R�
     rcases (show a % 2 + 2 = c ∨ a % 2 + 2 < c by omega) with heq₂ | hlt₃
     · subst heq₂; exact rel le_rfl same anti
     · exact fix.2 hlt₃ same anti
-
-/-- **The relator is antisymmetric in its first two indices.** -/
-theorem atomRel_swap₁₂ (odd : W.Odd) (a b c d : ℤ) :
-    atomRel W b a c d = -atomRel W a b c d := by
-  rw [atomRel, atomRel, ← neg_atom odd a b]; ring
-
-/-- **The relator is antisymmetric in its middle two indices.** With `atomRel_swap₁₂` these are
-the two transpositions needed here: the last index is held fixed throughout the descent, so only
-the first three are ever permuted, and these two generate that symmetric group. Mathlib supplies
-the `atomRel_same`, `atomRel_neg` and `atomRel_abs` families but neither of these. -/
-theorem atomRel_swap₂₃ (odd : W.Odd) (a b c d : ℤ) :
-    atomRel W a c b d = -atomRel W a b c d := by
-  rw [atomRel, atomRel, ← neg_atom odd b c]; ring
 
 /-- The even base case, as a relator: all four indices are even, so `atomRel_two_mul` applies. -/
 private theorem atomRel_even_eq_rel (m : ℤ) :
@@ -283,7 +277,7 @@ full four-index relation at every valid quadruple. The induction is on the large
 `6` no valid quadruple exists, and above it `atomRelVanishes_of_min` reduces to the minimal
 pair, where either the gap `b + 2 < a` admits the transfer down to a smaller first index, or
 `b + 2 = a` lands on one of the two recurrences according to parity. -/
-theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
+private theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
     (oddRec : ∀ m : ℤ, 2 ≤ m → rel W (m + 1) m 1 0 = 0)
     (evenRec : ∀ m : ℤ, 3 ≤ m → rel W (m + 1) (m - 1) 1 0 = 0) :
     ∀ a b c d : ℤ, AtomRelVanishes W a b c d := by
@@ -334,27 +328,27 @@ private theorem atomRel_eq_zero_of_ne (odd : W.Odd)
   rcases lt_trichotomy x y with h₁ | h₁ | h₁
   · rcases lt_trichotomy y z with h₂ | h₂ | h₂
     · have h := sorted pz py px hx h₁ h₂
-      rw [atomRel_swap₁₂ odd y z x 0, atomRel_swap₂₃ odd y x z 0,
-        atomRel_swap₁₂ odd x y z 0] at h
+      rw [atomRel_swap₁₂ odd z y x 0, atomRel_swap₂₃ odd y z x 0,
+        atomRel_swap₁₂ odd y x z 0] at h
       simpa using h
     · exact absurd h₂ hyz
     · rcases lt_trichotomy x z with h₃ | h₃ | h₃
       · have h := sorted py pz px hx h₃ h₂
-        rw [atomRel_swap₂₃ odd y x z 0, atomRel_swap₁₂ odd x y z 0] at h
+        rw [atomRel_swap₂₃ odd y z x 0, atomRel_swap₁₂ odd y x z 0] at h
         simpa using h
       · exact absurd h₃ hxz
       · have h := sorted py px pz hz h₃ h₁
-        rw [atomRel_swap₁₂ odd x y z 0] at h
+        rw [atomRel_swap₁₂ odd y x z 0] at h
         simpa using h
   · exact absurd h₁ hxy
   · rcases lt_trichotomy x z with h₂ | h₂ | h₂
     · have h := sorted pz px py hy h₁ h₂
-      rw [atomRel_swap₁₂ odd x z y 0, atomRel_swap₂₃ odd x y z 0] at h
+      rw [atomRel_swap₁₂ odd z x y 0, atomRel_swap₂₃ odd x z y 0] at h
       simpa using h
     · exact absurd h₂ hxz
     · rcases lt_trichotomy y z with h₃ | h₃ | h₃
       · have h := sorted px pz py hy h₃ h₂
-        rw [atomRel_swap₂₃ odd x y z 0] at h
+        rw [atomRel_swap₂₃ odd x z y 0] at h
         simpa using h
       · exact absurd h₃ hyz
       · exact sorted px py pz hz h₃ h₁
