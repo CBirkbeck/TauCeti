@@ -65,34 +65,6 @@ open Bornology Complex MeasureTheory Metric Set
 
 variable {f : ℂ → ℂ} {c ζ : ℂ} {r : ℝ}
 
-/-- **Below every radius bound there is a radius whose circular image piece is as small as
-prescribed.** For `f` holomorphic on `ball c r` with finite Dirichlet integral, and any `κ > 0`,
-some `ρ` below the bound and below `2 * r` has `diam (f '' (ball c r ∩ sphere ζ ρ)) ≤ κ`, with
-that image bounded and its circle-image length finite. Nothing is claimed here about `ρ` giving a
-genuine crosscut; that is settled downstream.
-
-Neither injectivity of `f` nor any hypothesis on the frontier of the image is involved: this is
-the length--area input to the theorem below, separated from the Jordan-curve geometry.
-
-This strengthens `TauCeti.exists_diam_image_ball_inter_sphere_le_of_lintegral_ne_top`, which
-selects the same radius but discards the finite circle-image length that produced the bound. The
-theorem below needs that witness twice over -- both closing theorems take it -- so it cannot be
-derived from the weaker form. -/
-private theorem exists_diam_image_ball_inter_sphere_le_and_circleImageLength_ne_top (hr : 0 < r)
-    (hf : DifferentiableOn ℂ f (ball c r))
-    (hdir : ∫⁻ z in ball c r, ‖deriv f z‖ₑ ^ 2 ≠ ⊤) {κ R : ℝ} (hκ : 0 < κ) (hR : 0 < R) :
-    ∃ ρ ∈ Ioo 0 R, ρ < 2 * r ∧ circleImageLength f (ball c r) ζ ρ ≠ ⊤ ∧
-      diam (f '' (ball c r ∩ sphere ζ ρ)) ≤ κ ∧
-      IsBounded (f '' (ball c r ∩ sphere ζ ρ)) := by
-  obtain ⟨ρ, hρ, hlen⟩ :=
-    exists_circleImageLength_lt_of_lintegral_ne_top f measurableSet_ball ζ hdir
-      (ENNReal.ofReal_pos.mpr hκ).ne' (R := min R (2 * r)) (lt_min hR (by linarith))
-  have hlenFin : circleImageLength f (ball c r) ζ ρ ≠ ⊤ :=
-    (hlen.trans ENNReal.ofReal_lt_top).ne
-  exact ⟨ρ, ⟨hρ.1, hρ.2.trans_le (min_le_left _ _)⟩, hρ.2.trans_le (min_le_right _ _), hlenFin,
-    diam_image_ball_inter_sphere_le hf hκ.le hlen.le,
-    isBounded_image_ball_inter_sphere_of_circleImageLength_ne_top hf hlenFin⟩
-
 /-- **A short image crosscut lies on a small Jordan curve.** Let `f` be holomorphic and injective
 on `ball c r`, with finite Dirichlet integral and Jordan-curve frontier. For every `ε > 0`, every
 boundary point `ζ` of the disc, and every radius bound `R > 0`, there is a genuine circular
@@ -125,8 +97,11 @@ theorem exists_isJordanCurve_superset_closure_image_ball_inter_sphere_diam_le
   obtain ⟨κ, hκ, hκε, hκδ⟩ : ∃ κ : ℝ, 0 < κ ∧ κ ≤ ε / 2 ∧ κ < δ :=
     ⟨min (ε / 2) (δ / 2), lt_min (by positivity) (by positivity), min_le_left _ _,
       (min_le_right _ _).trans_lt (by linarith)⟩
-  obtain ⟨ρ, hρ, hρr, hlenFin, hcross, hcrossBounded⟩ :=
-    exists_diam_image_ball_inter_sphere_le_and_circleImageLength_ne_top (ζ := ζ) hr hf hdir hκ hR
+  obtain ⟨ρ, hρmem, hlenFin, hcross, hcrossBounded⟩ :=
+    exists_diam_image_ball_inter_sphere_le_and_circleImageLength_ne_top (ζ := ζ) hf hdir hκ
+      (lt_min hR (by linarith : (0 : ℝ) < 2 * r))
+  have hρ : ρ ∈ Ioo 0 R := ⟨hρmem.1, hρmem.2.trans_le (min_le_left _ _)⟩
+  have hρr : ρ < 2 * r := hρmem.2.trans_le (min_le_right _ _)
   have hcrossSub : closure (f '' (ball c r ∩ sphere ζ ρ)) ⊆ closure (f '' ball c r) :=
     closure_mono (image_mono inter_subset_left)
   by_cases hends :
