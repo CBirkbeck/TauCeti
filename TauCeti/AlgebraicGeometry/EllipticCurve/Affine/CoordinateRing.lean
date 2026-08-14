@@ -429,32 +429,23 @@ private theorem sq_dvd_norm_of_isIntegral_div {b : W.CoordinateRing} {d p q : F[
   rw [hprod]
   exact hz.mul (hz.map (conjFunctionField W : W.FunctionField →ₐ[F[X]] W.FunctionField))
 
-/-- **Every element of the function field is a coordinate-ring element over a nonzero
-polynomial**: the denominator can be taken in `F[X]`, not merely in the coordinate ring.
-Ellipticity of `W` is not needed. -/
-private theorem exists_div_algebraMap_eq (z : W.FunctionField) :
-    ∃ (b : W.CoordinateRing) (d : F[X]), d ≠ 0 ∧
-      algebraMap W.CoordinateRing W.FunctionField b /
-        algebraMap F[X] W.FunctionField d = z := by
-  obtain ⟨⟨b, m, hm⟩, hbm⟩ :=
-    IsLocalization.surj (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) z
-  obtain ⟨d, hd, rfl⟩ := hm
-  have hd0 : algebraMap F[X] W.FunctionField d ≠ 0 :=
-    (map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective F[X] W.FunctionField)).mpr
-      (mem_nonZeroDivisors_iff_ne_zero.mp hd)
-  refine ⟨b, d, mem_nonZeroDivisors_iff_ne_zero.mp hd, ?_⟩
-  rw [eq_comm, eq_div_iff hd0,
-    IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, hbm]
-
 /-- Every element of the function field of an elliptic curve that is integral over `F[X]` already
 lies in the coordinate ring. -/
 private theorem exists_algebraMap_eq [W.IsElliptic] {z : W.FunctionField}
     (hz : IsIntegral F[X] z) :
     ∃ b : W.CoordinateRing, algebraMap W.CoordinateRing W.FunctionField b = z := by
-  -- write `z = b / d` with `b` in the coordinate ring and `d` in `F[X]`
-  obtain ⟨b, d, hd0, rfl⟩ := exists_div_algebraMap_eq W z
+  -- write `z = b / d` with `b` in the coordinate ring and `d` in `F[X]`; the function field is
+  -- the localisation at the image of `nonZeroDivisors F[X]`, so the denominator is a polynomial
+  obtain ⟨⟨b, m, hm⟩, hbm⟩ :=
+    IsLocalization.surj (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) z
+  obtain ⟨d, hd, rfl⟩ := hm
+  have hd0 : d ≠ 0 := mem_nonZeroDivisors_iff_ne_zero.mp hd
   have hdK : algebraMap F[X] W.FunctionField d ≠ 0 :=
     (map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective F[X] W.FunctionField)).mpr hd0
+  obtain rfl : algebraMap W.CoordinateRing W.FunctionField b /
+      algebraMap F[X] W.FunctionField d = z := by
+    rw [eq_comm, eq_div_iff hdK,
+      IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, hbm]
   -- the trace and the norm of `z`
   obtain ⟨p, q, hpq⟩ := exists_smul_basis_eq b
   have htr := dvd_trace_of_isIntegral_div W hd0 hpq hz
