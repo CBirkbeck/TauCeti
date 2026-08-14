@@ -7,24 +7,26 @@ module
 public import Mathlib.NumberTheory.EllipticDivisibilitySequence
 
 /-!
-# The doubling relations of an elliptic sequence, solved for the doubled term
+# The doubling relations of an elliptic sequence
 
 `IsEllipticSequence W` says that `IsEllipticNet.rel W p q r 0` vanishes for all `p, q, r`.
 Mathlib's `IsEllipticNet.rel_odd` and `rel_even` evaluate that relator at the two instances
 relating a doubled index to its neighbours, but they give the relator's *value* rather than what
 its vanishing says.
 
-This file supplies that second step: at each of those instances, the relator vanishes exactly when
-the doubled-index term stands in a named relation to the neighbouring terms. That is the form the
-division-polynomial development consumes, since the hypothesis in hand there is
-`IsEllipticSequence`, which supplies vanishing rather than a value.
+This file carries that through to the consumer. The two `_eq_zero_iff` lemmas say what vanishing
+means at those instances, and the two `IsEllipticSequence` lemmas hand the resulting relation
+straight to someone holding that hypothesis — which is how the division-polynomial development
+meets these, with `IsEllipticSequence` in hand rather than a relator value.
 
 ## Main results
 
-* `IsEllipticNet.rel_odd_eq_zero_iff`: `rel W (m + 1) m 1 0 = 0` iff
+* `IsEllipticSequence.rel_odd`: from `IsEllipticSequence W`, the relation
   `W (2 * m + 1) * W 1 ^ 3 = W (m + 2) * W m ^ 3 - W (m - 1) * W (m + 1) ^ 3`.
-* `IsEllipticNet.rel_even_eq_zero_iff`: `rel W (m + 1) (m - 1) 1 0 = 0` iff
+* `IsEllipticSequence.rel_even`: from `IsEllipticSequence W`, the relation
   `W (2 * m) * W 2 * W 1 ^ 2 = W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2)`.
+* `IsEllipticNet.rel_odd_eq_zero_iff` / `rel_even_eq_zero_iff`: the vanishing form at each
+  instance, which is what the two lemmas above are read off.
 
 ## Implementation notes
 
@@ -84,3 +86,20 @@ theorem rel_even_eq_zero_iff : rel W (m + 1) (m - 1) 1 0 = 0 ↔
   constructor <;> intro h <;> linear_combination h
 
 end IsEllipticNet
+
+namespace IsEllipticSequence
+
+variable {R : Type*} [CommRing R] {W : ℤ → R}
+
+/-- **The odd doubling relation of an elliptic sequence.** -/
+theorem rel_odd (h : IsEllipticSequence W) (m : ℤ) :
+    W (2 * m + 1) * W 1 ^ 3 = W (m + 2) * W m ^ 3 - W (m - 1) * W (m + 1) ^ 3 :=
+  (IsEllipticNet.rel_odd_eq_zero_iff W m).1 (h (m + 1) m 1)
+
+/-- **The even doubling relation of an elliptic sequence.** -/
+theorem rel_even (h : IsEllipticSequence W) (m : ℤ) :
+    W (2 * m) * W 2 * W 1 ^ 2 =
+      W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2) :=
+  (IsEllipticNet.rel_even_eq_zero_iff W m).1 (h (m + 1) (m - 1) 1)
+
+end IsEllipticSequence
