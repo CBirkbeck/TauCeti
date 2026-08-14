@@ -19,8 +19,8 @@ scalar multiplication. (Linearity in `f` only; this is not yet bundled as a `Lin
 Why these representatives: mathlib's `IsBoundedAtImInfty.slash` requires `g 1 0 = 0`, so
 boundedness of a slash at the cusp `∞` is available exactly for upper-triangular `g`. That is why
 the classical arguments run over `!![1, b; 0, p]` rather than over arbitrary coset
-representatives. That hypothesis is discharged here by `upperTriRep_apply_one_zero`, which is the
-`(1, 0)` case of `upperTriGL_apply_eq_zero_of_lt` in `HeckeRing/GLn/CosetDecomposition.lean` —
+representatives. That hypothesis is discharged by `upperTriRep_apply_one_zero` in
+`HeckeRing/GL2/CosetDecomposition.lean`, the `(1, 0)` case of `upperTriGL_apply_eq_zero_of_lt` —
 the entrywise description of the representatives is not restated.
 
 ## Main definitions
@@ -29,14 +29,12 @@ the entrywise description of the representatives is not restated.
 
 ## Main results
 
-* `HeckeRing.GL2.heckeSlashUpperTri_def`, `HeckeRing.GL2.upperTriRep_def`: the characteristic
-  equations, which are the interface since neither definition is `@[expose]`.
-* `HeckeRing.GL2.upperTriRep_apply_one_zero`: the representatives are upper triangular — the
-  hypothesis mathlib's `IsBoundedAtImInfty.slash` requires.
+* `HeckeRing.GL2.heckeSlashUpperTri_def`: the characteristic equation, which is the interface
+  since the definition is not `@[expose]`.
 * `HeckeRing.GL2.heckeSlashUpperTri_zero`, `heckeSlashUpperTri_add`,
   `heckeSlashUpperTri_smul`: linearity in `f`.
-* `HeckeRing.GL2.det_upperTriRep_pos`: the representatives have determinant `p > 0`, which is
-  what lets scalars pass through the slash without the `σ` twist.
+The representatives themselves, and their upper-triangularity and positive determinant, live in
+`HeckeRing/GL2/CosetDecomposition.lean`; this file is only the slash sum built from them.
 
 ## Provenance
 
@@ -63,21 +61,6 @@ namespace HeckeRing.GL2
 
 variable (k : ℤ) (p : ℕ)
 
-/-- The `b`-th upper-triangular representative `!![1, b; 0, p]`, as an element of this
-repository's general-`n` family at `a = ![1, p]`. -/
-noncomputable def upperTriRep (b : Fin p) : GL (Fin 2) ℚ :=
-  upperTriGL ((upperTriEntriesEquivFin p).symm b)
-
-lemma upperTriRep_def (b : Fin p) :
-    upperTriRep p b = upperTriGL ((upperTriEntriesEquivFin p).symm b) := (rfl)
-
-/-- **The representatives are upper triangular** — the hypothesis mathlib's
-`IsBoundedAtImInfty.slash` asks for. At `n = 2` this is the `(1, 0)` entry of
-`upperTriGL_apply_eq_zero_of_lt`. -/
-@[simp] lemma upperTriRep_apply_one_zero (b : Fin p) :
-    (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0 :=
-  upperTriGL_apply_eq_zero_of_lt (fun i ↦ by fin_cases i <;> simp [b.pos]) _ (by decide)
-
 /-- **The upper-triangular part of the Hecke operator**: `∑ b < p, f ∣[k] !![1, b; 0, p]`. -/
 noncomputable def heckeSlashUpperTri (f : ℍ → ℂ) : ℍ → ℂ :=
   ∑ b : Fin p, f ∣[k] upperTriRep p b
@@ -88,13 +71,6 @@ lemma heckeSlashUpperTri_def (f : ℍ → ℂ) :
 @[simp] lemma heckeSlashUpperTri_zero : heckeSlashUpperTri k p 0 = 0 := by
   rw [heckeSlashUpperTri]
   exact Finset.sum_eq_zero fun b _ ↦ SlashAction.zero_slash k (upperTriRep p b)
-
-/-- The representatives have positive determinant: `det !![1, b; 0, p] = p > 0`. -/
-lemma det_upperTriRep_pos (b : Fin p) :
-    0 < (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ).det := by
-  rw [upperTriRep_def, upperTriGL_coe (fun i ↦ by fin_cases i <;> simp [b.pos]),
-    Matrix.det_mul, Matrix.det_diagonal]
-  simp [Matrix.det_fin_two, Matrix.map_apply, Fin.prod_univ_two, b.pos]
 
 @[simp] lemma heckeSlashUpperTri_add (f g : ℍ → ℂ) :
     heckeSlashUpperTri k p (f + g) = heckeSlashUpperTri k p f + heckeSlashUpperTri k p g := by
