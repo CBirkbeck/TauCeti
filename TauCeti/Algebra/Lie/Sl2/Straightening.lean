@@ -317,6 +317,10 @@ private theorem eq_of_succ_nsmul_eq (m : ℕ) {x y : A}
   have hm : ((m + 1 : ℕ) : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (by omega)
   exact smul_right_injective A hm h
 
+section Semiring
+
+variable {A : Type u} [Semiring A] [Algebra ℚ A]
+
 /-- **Raising the left divided power, scaled.** Multiplying by `E` on the left turns the product
 `E^[m] · F^[n]` into `(m + 1)` copies of `E^[m+1] · F^[n]`. -/
 private theorem succ_nsmul_dividedPower_succ_mul (m n : ℕ) (E F : A) :
@@ -329,6 +333,8 @@ private theorem succ_nsmul_dividedPower_succ_mul (m n : ℕ) (E F : A) :
           rw [mul_assoc]
     _ = (E * dividedPower m E) * dividedPower n F := by rw [self_mul_dividedPower]
     _ = E * (dividedPower m E * dividedPower n F) := mul_assoc _ _ _
+
+end Semiring
 
 private theorem straightening_step {H E F : A}
     (hef : E * F - F * E = H) (hhe : H * E - E * H = 2 • E)
