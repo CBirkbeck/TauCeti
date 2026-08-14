@@ -138,28 +138,21 @@ private theorem hasDerivWithinAt_Icc_of_forall_eq_picard
 /-- **The path-derivative of the Picard residual at the constant base solution is invertible.**
 For a smooth field vanishing near `x₀` at the base parameter `p₀`, the restriction of
 `fderiv ℝ (picardResidual gc x₀)` to the path direction is invertible at `(p₀, const x₀)`. -/
-private theorem isInvertible_fderiv_picardResidual_comp_inr {n : ℕ}
-    (gc : C(E × F, F)) (hg : ContDiff ℝ (n + 1) gc) (p₀ : E) (x₀ : F)
+private theorem isInvertible_fderiv_picardResidual_comp_inr
+    (gc : C(E × F, F)) (hg : ContDiff ℝ 1 gc) (p₀ : E) (x₀ : F)
     (hgzero : ∀ᶠ y in nhds x₀, gc (p₀, y) = 0) :
     (fderiv ℝ (picardResidual gc x₀)
           (p₀, (ContinuousMap.const _ x₀ : C(Set.Icc (0 : ℝ) 1, F))) ∘L
         ContinuousLinearMap.inr ℝ E C(Set.Icc (0 : ℝ) 1, F)).IsInvertible := by
-  have hR : ContDiffAt ℝ (n + 1) (picardResidual gc x₀)
+  have hR : ContDiffAt ℝ 1 (picardResidual gc x₀)
       (p₀, (ContinuousMap.const _ x₀ : C(Set.Icc (0 : ℝ) 1, F))) :=
-    (contDiff_picardResidual (n + 1) gc hg x₀).contDiffAt
+    (contDiff_picardResidual 1 gc hg x₀).contDiffAt
   have hpartial := hasStrictFDerivAt_picardResidual_path gc p₀ x₀ hgzero
   have hdiff := hR.differentiableAt (by norm_num)
-  have hinnerRaw := hasFDerivAt_const (𝕜 := ℝ) p₀
-    (ContinuousMap.const (Set.Icc (0 : ℝ) 1) x₀) |>.prodMk
-    (hasFDerivAt_id (𝕜 := ℝ) (ContinuousMap.const (Set.Icc (0 : ℝ) 1) x₀))
-  have hinner := hinnerRaw.congr_fderiv (g' :=
-    ContinuousLinearMap.inr ℝ E C(Set.Icc (0 : ℝ) 1, F)) (by
-      apply ContinuousLinearMap.ext
-      intro z
-      simp [ContinuousLinearMap.inr_apply])
   have hpartialEq :=
-    (hdiff.hasFDerivAt.comp (ContinuousMap.const (Set.Icc (0 : ℝ) 1) x₀) hinner).unique
-      hpartial.hasFDerivAt
+    (hdiff.hasFDerivAt.comp (ContinuousMap.const (Set.Icc (0 : ℝ) 1) x₀)
+      (hasFDerivAt_prodMk_right (𝕜 := ℝ) p₀
+        (ContinuousMap.const (Set.Icc (0 : ℝ) 1) x₀))).unique hpartial.hasFDerivAt
   rw [hpartialEq]
   exact ⟨ContinuousLinearEquiv.refl ℝ _, rfl⟩
 
@@ -167,12 +160,11 @@ private theorem isInvertible_fderiv_picardResidual_comp_inr {n : ℕ}
 base point.** If `γ` is continuous at `p₀` and `γ p₀` is the constant path at `x₀`, then for `p`
 near `p₀` the parameterized path `(p, γ p)` stays within any prescribed distance of the constant
 path at `(p₀, x₀)`. -/
-private theorem eventually_dist_parameterizedPath_lt {γ : E → C(Set.Icc (0 : ℝ) 1, F)} {p₀ : E}
+private theorem eventually_dist_parameterizedPath_lt {γ : E → C(K, F)} {p₀ : E}
     {x₀ : F} (hγcont : ContinuousAt γ p₀)
     (hγbase : γ p₀ = ContinuousMap.const _ x₀) {ε : ℝ} (hε : 0 < ε) :
     ∀ᶠ p in nhds p₀,
-      dist (parameterizedPath (p, γ p))
-        (ContinuousMap.const (Set.Icc (0 : ℝ) 1) (p₀, x₀)) < ε := by
+      dist (parameterizedPath (p, γ p)) (ContinuousMap.const K (p₀, x₀)) < ε := by
   have hpath := parameterizedPath.continuous.continuousAt.comp
     (continuousAt_id.prodMk hγcont)
   have hpathBase : parameterizedPath (p₀, γ p₀) =
@@ -182,13 +174,8 @@ private theorem eventually_dist_parameterizedPath_lt {γ : E → C(Set.Icc (0 : 
     intro t
     rw [parameterizedPath_apply, ContinuousMap.const_apply]
     rw [ContinuousMap.const_apply]
-  filter_upwards [hpath (Metric.ball_mem_nhds (parameterizedPath (p₀, γ p₀)) hε)] with p hp
-  have hpBall : parameterizedPath (p, γ p) ∈
-      Metric.ball (parameterizedPath (p₀, γ p₀)) ε := Set.mem_preimage.mp hp
-  have hp' : dist (parameterizedPath (p, γ p))
-      (parameterizedPath (p₀, γ p₀)) < ε := by
-    simpa only [Metric.mem_ball] using hpBall
-  simpa only [hpathBase] using hp'
+  simpa only [hpathBase, Function.comp_apply, id_eq] using
+    (Metric.continuousAt_iff'.mp hpath ε hε)
 
 /-- A smooth parameterized autonomous vector field which vanishes at the base parameter admits a
 locally smooth family of solutions through a fixed initial state. The result is stated at every
@@ -238,7 +225,7 @@ theorem exists_contDiffAt_picard_solution
   have hinvertible :
       (fderiv ℝ R u ∘L
         ContinuousLinearMap.inr ℝ E C(Set.Icc (0 : ℝ) 1, F)).IsInvertible :=
-    isInvertible_fderiv_picardResidual_comp_inr gc hg p₀ x₀ hgzero
+    isInvertible_fderiv_picardResidual_comp_inr gc (hg.of_le (by norm_num)) p₀ x₀ hgzero
   let γ : E → C(Set.Icc (0 : ℝ) 1, F) :=
     hR.implicitFunction (by norm_num) hinvertible
   have hγsmooth : ContDiffAt ℝ (n + 1) γ p₀ :=
