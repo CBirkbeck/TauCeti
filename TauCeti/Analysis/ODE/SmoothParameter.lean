@@ -78,6 +78,16 @@ private theorem picardResidual_apply (f : C(E × F, F)) (x₀ : F)
       ContinuousMap.unitIntervalIntegral (f.comp (parameterizedPath p)) := by
   rfl
 
+/-- **A path's Picard residual vanishes exactly when it satisfies the Picard integral equation.**
+The residual is the path minus the constant path at `x₀` minus the integrated field, so the two
+sides are the same statement read as an equation of paths and pointwise on `[0, 1]` respectively.
+Mathlib states the same equivalence for its own path space as `ODE.FunSpace.isFixedPt_next_iff`. -/
+private theorem picardResidual_eq_zero_iff (gc : C(E × F, F)) (x₀ : F) (p : E)
+    (q : C(Set.Icc (0 : ℝ) 1, F)) :
+    picardResidual gc x₀ (p, q) = 0 ↔ ∀ t : Set.Icc (0 : ℝ) 1,
+      q t = x₀ + ∫ s in (0 : ℝ)..t, gc (p, q (Set.projIcc 0 1 zero_le_one s)) := by
+  simp [ContinuousMap.ext_iff, sub_sub, sub_eq_zero]
+
 /-- A vector field of class `Cⁿ` gives a Picard residual of class `Cⁿ`. -/
 private theorem contDiff_picardResidual (n : ℕ) (f : C(E × F, F))
     (hf : ContDiff ℝ n f) (x₀ : F) :
@@ -177,16 +187,6 @@ private theorem eventually_dist_parameterizedPath_lt {γ : E → C(K, F)} {p₀ 
     rw [ContinuousMap.const_apply]
   simpa only [hpathBase, Function.comp_apply, id_eq] using
     (Metric.continuousAt_iff'.mp hpath ε hε)
-
-/-- **A path's Picard residual vanishes exactly when it satisfies the Picard integral equation.**
-The residual is the path minus the constant path at `x₀` minus the integrated field, so the two
-sides are the same statement read as an equation of paths and pointwise on `[0, 1]` respectively.
-Mathlib states the same equivalence for its own path space as `ODE.FunSpace.isFixedPt_next_iff`. -/
-private theorem picardResidual_eq_zero_iff (gc : C(E × F, F)) (x₀ : F) (p : E)
-    (q : C(Set.Icc (0 : ℝ) 1, F)) :
-    picardResidual gc x₀ (p, q) = 0 ↔ ∀ t : Set.Icc (0 : ℝ) 1,
-      q t = x₀ + ∫ s in (0 : ℝ)..t, gc (p, q (Set.projIcc 0 1 zero_le_one s)) := by
-  simp [ContinuousMap.ext_iff, sub_sub, sub_eq_zero]
 
 /-- A smooth parameterized autonomous vector field which vanishes at the base parameter admits a
 locally smooth family of solutions through a fixed initial state. The result is stated at every
