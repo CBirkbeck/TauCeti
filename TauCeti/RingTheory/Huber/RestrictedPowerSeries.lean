@@ -6,6 +6,7 @@ module
 
 public import Mathlib.RingTheory.MvPowerSeries.Basic
 public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
+public import Mathlib.Order.Filter.ZeroAndBoundedAtFilter
 
 /-!
 # Restricted Power Series
@@ -22,7 +23,10 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
   variables over `A`, denoted `A⟨T₁, …, Tₖ⟩`.
 * `restrictedMvPowerSeriesSubmodule k A M`: the `A`-submodule of restricted power series with
   coefficients in a topological `A`-module `M`, denoted `M⟨T₁, …, Tₖ⟩`. This is the object
-  Wedhorn's Remark 8.29 compares with `M ⊗[A] A⟨T₁, …, Tₖ⟩`.
+  Wedhorn's Remark 8.29 compares with `M ⊗[A] A⟨T₁, …, Tₖ⟩`. It *is* Mathlib's
+  `Filter.zeroAtFilterSubmodule` at the cofinite filter, under the Huber-theoretic name.
+* `isRestricted_of_finite_ne_zero`: the introduction rule at module coefficients — finitely many
+  nonzero coefficients suffice.
 
 ## Provenance
 
@@ -34,10 +38,11 @@ definitions, statements and proof are all AINTLIB's work. The module-coefficient
 `isRestricted_iff`, `IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule` and
 `mem_restrictedMvPowerSeriesSubmodule` — have no AINTLIB counterpart and are original here.
 
-Four further declarations are AINTLIB's, restated at weaker coefficient binders: `IsRestricted`
-itself, now asking the coefficients only for a `0` and a topology, and `isRestricted_zero`,
-`IsRestricted.add` and `IsRestricted.neg`, now at `[Zero]`, `[AddMonoid] [ContinuousAdd]` and
-`[AddGroup] [ContinuousNeg]`. Their statements and proofs are otherwise unchanged.
+Four further declarations are AINTLIB's in statement only. `IsRestricted` itself now asks the
+coefficients for a `0` and a topology; `isRestricted_zero`, `IsRestricted.add` and
+`IsRestricted.neg` are restated at `[Zero]`, `[AddMonoid] [ContinuousAdd]` and
+`[AddGroup] [ContinuousNeg]`. **Their proofs are not AINTLIB's** — all three were rewritten here,
+and now delegate to Mathlib's `Filter.ZeroAtFilter` API rather than reproving convergence.
 
 The port moves the declarations into the `TauCeti.Huber` namespace, opts into the Lean module
 system with the definition bodies unexposed — hence the added
@@ -60,6 +65,13 @@ The restricted power series ring is defined as a subring of `MvPowerSeries (Fin 
 (the formal power series ring), cut out by the condition that coefficients tend to `0`.
 This is the canonical concrete definition. `M⟨T₁, …, Tₖ⟩` is cut out of
 `MvPowerSeries (Fin k) M` by the same condition, as an `A`-submodule.
+
+**`IsRestricted` is Mathlib's `Filter.ZeroAtFilter` at the cofinite filter**, applied to the
+coefficient function — see `isRestricted_iff_zeroAtFilter`, which is `Iff.rfl`. The closure
+lemmas delegate to `zero_zeroAtFilter` and `ZeroAtFilter.add`/`.neg`/`.smul`, and
+`restrictedMvPowerSeriesSubmodule` *is* `Filter.zeroAtFilterSubmodule` at that filter rather than
+a reconstruction of it. The Huber-specific names are kept because `M⟨T₁, …, Tₖ⟩` is the object the
+roadmap names, but no closure property is proved here that Mathlib already has.
 
 `isRestricted_iff` unfolds the predicate through plain coefficient application, which is
 what module coefficients admit; `isRestricted_iff_coeff` unfolds it through
@@ -85,33 +97,6 @@ open Filter
 universe u
 
 namespace TauCeti.Huber
-
-/-! ### Pointwise reductions
-
-`MvPowerSeries σ M` is by definition `(σ →₀ ℕ) → M`, and its `Zero`, `AddMonoid`, `AddGroup` and
-`Module` instances are the corresponding `Pi` instances transported by `inferInstanceAs`. Each
-lemma here is therefore `rfl`. They exist so that the closure proofs below cite a named fact
-rather than lean silently on that reduction, and they are `private` because Mathlib supplies the
-`coeff`-level versions wherever the coefficients form a semiring — these are needed only in the
-generality where `MvPowerSeries.coeff` does not apply. -/
-
-private theorem coe_zero_apply {k : ℕ} {M : Type*} [Zero M] (s : Fin k →₀ ℕ) :
-    ((0 : MvPowerSeries (Fin k) M) : (Fin k →₀ ℕ) → M) s = 0 := (rfl)
-
-private theorem coe_add_apply {k : ℕ} {M : Type*} [AddMonoid M] (f g : MvPowerSeries (Fin k) M)
-    (s : Fin k →₀ ℕ) :
-    ((f + g : MvPowerSeries (Fin k) M) : (Fin k →₀ ℕ) → M) s
-      = (f : (Fin k →₀ ℕ) → M) s + (g : (Fin k →₀ ℕ) → M) s := (rfl)
-
-private theorem coe_neg_apply {k : ℕ} {M : Type*} [AddGroup M] (f : MvPowerSeries (Fin k) M)
-    (s : Fin k →₀ ℕ) :
-    ((-f : MvPowerSeries (Fin k) M) : (Fin k →₀ ℕ) → M) s
-      = -((f : (Fin k →₀ ℕ) → M) s) := (rfl)
-
-private theorem coe_smul_apply {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M] [Module R M]
-    (c : R) (f : MvPowerSeries (Fin k) M) (s : Fin k →₀ ℕ) :
-    ((c • f : MvPowerSeries (Fin k) M) : (Fin k →₀ ℕ) → M) s
-      = c • ((f : (Fin k →₀ ℕ) → M) s) := (rfl)
 
 /-! ### Restricted power series -/
 
@@ -140,6 +125,14 @@ theorem isRestricted_iff {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
     IsRestricted f ↔
       Tendsto (fun s : Fin k →₀ ℕ => (f : (Fin k →₀ ℕ) → M) s) cofinite (nhds 0) := (Iff.rfl)
 
+/-- **`IsRestricted` is `Filter.ZeroAtFilter` at the cofinite filter**, on the coefficient
+function. Mathlib's predicate is the general notion — a function tending to `0` along a filter —
+and restrictedness is its instance at `cofinite`. Every closure property below is Mathlib's,
+cited through this lemma rather than reproved. -/
+theorem isRestricted_iff_zeroAtFilter {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
+    {f : MvPowerSeries (Fin k) M} :
+    IsRestricted f ↔ Filter.ZeroAtFilter cofinite (f : (Fin k →₀ ℕ) → M) := (Iff.rfl)
+
 /-- Unfolding lemma for `TauCeti.Huber.IsRestricted` over a semiring, through
 `MvPowerSeries.coeff`. The body is not exposed, so this is how consumers recover the defining
 convergence condition; it holds because `coeff` is projection. -/
@@ -152,8 +145,7 @@ theorem isRestricted_iff_coeff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSp
 @[simp]
 theorem isRestricted_zero (k : ℕ) (M : Type*) [Zero M] [TopologicalSpace M] :
     IsRestricted (0 : MvPowerSeries (Fin k) M) := by
-  simp only [isRestricted_iff, coe_zero_apply]
-  exact tendsto_const_nhds
+  exact zero_zeroAtFilter _
 
 /-- `1` is restricted: every coefficient but the `0`-th vanishes. -/
 @[simp]
@@ -170,6 +162,19 @@ theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A]
   by_contra h
   exact hs (by rw [MvPowerSeries.coeff_one, ite_eq_right h]; exact h0U)
 
+/-- **A series with only finitely many nonzero coefficients is restricted.**
+
+This is the introduction rule at module coefficients: `isRestricted_zero` gives only `0`, and the
+closure lemmas combine members without producing new ones, so without this nothing nonzero could
+be shown to lie in `M⟨T₁, …, Tₖ⟩`. Over a semiring `isRestricted_one` and
+`isRestricted_algebraMap` are the special cases at `1` and at a constant. -/
+theorem isRestricted_of_finite_ne_zero {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
+    {f : MvPowerSeries (Fin k) M}
+    (hf : {s : Fin k →₀ ℕ | (f : (Fin k →₀ ℕ) → M) s ≠ 0}.Finite) : IsRestricted f := by
+  refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
+  filter_upwards [hf.compl_mem_cofinite] with s hs
+  exact (not_not.mp hs).symm
+
 /-- A sum of restricted series is restricted.
 
 Unlike `IsRestricted.smul`, which closes through Mathlib's `Filter.Tendsto.const_smul_zero`, this
@@ -178,17 +183,13 @@ scalar action but not for addition or negation, so `Tendsto.add` lands at `𝓝 
 theorem IsRestricted.add {k : ℕ} {M : Type*} [AddMonoid M] [TopologicalSpace M]
     [ContinuousAdd M] {f g : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f + g) := by
-  simp only [isRestricted_iff, coe_add_apply]
-  have h := (isRestricted_iff.mp hf).add (isRestricted_iff.mp hg)
-  rwa [add_zero] at h
+  exact (isRestricted_iff_zeroAtFilter.mp hf).add (isRestricted_iff_zeroAtFilter.mp hg)
 
 /-- The negation of a restricted series is restricted. -/
 theorem IsRestricted.neg {k : ℕ} {M : Type*} [AddGroup M] [TopologicalSpace M]
     [ContinuousNeg M] {f : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) : IsRestricted (-f) := by
-  simp only [isRestricted_iff, coe_neg_apply]
-  have h := (isRestricted_iff.mp hf).neg
-  rwa [neg_zero] at h
+  exact (isRestricted_iff_zeroAtFilter.mp hf).neg
 
 /-- Scaling a restricted series by a constant leaves it restricted.
 
@@ -199,8 +200,7 @@ continuous in the vector variable, which is `ContinuousConstSMul`. This is the c
 theorem IsRestricted.smul {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M]
     [TopologicalSpace M] [Module R M] [ContinuousConstSMul R M] {f : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (c : R) : IsRestricted (c • f) := by
-  simp only [isRestricted_iff, coe_smul_apply]
-  exact (isRestricted_iff.mp hf).const_smul_zero c
+  exact (isRestricted_iff_zeroAtFilter.mp hf).smul c
 
 /-- Restrictedness, restated: for every open additive subgroup `W`, all but finitely many
 coefficients lie in `W`. This is the form the convolution argument actually consumes. -/
@@ -396,11 +396,8 @@ carries is absent here: closure under the scalar action follows from continuity 
 `a • ·` alone. -/
 def restrictedMvPowerSeriesSubmodule (k : ℕ) (A M : Type*) [Semiring A] [AddCommMonoid M]
     [TopologicalSpace M] [Module A M] [ContinuousAdd M] [ContinuousConstSMul A M] :
-    Submodule A (MvPowerSeries (Fin k) M) where
-  carrier := {f | IsRestricted f}
-  zero_mem' := isRestricted_zero k M
-  add_mem' := IsRestricted.add
-  smul_mem' c _f hf := hf.smul c
+    Submodule A (MvPowerSeries (Fin k) M) :=
+  Filter.zeroAtFilterSubmodule A (Filter.cofinite : Filter (Fin k →₀ ℕ))
 
 /-- Membership in `M⟨T₁, …, Tₖ⟩` is restrictedness. -/
 @[simp]
