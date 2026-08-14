@@ -644,28 +644,23 @@ section Classification
 
 variable [E.IsElliptic]
 
-omit [Algebra.IsSeparable K L] in
-/-- **`Aut(Eᴸ) = {±1}` when `j(E) ∉ {0, 1728}`**: an `L`-change of variables fixing `Eᴸ` is either
-the identity or `[-1]`.
-
-This is the only place either classification theorem below uses its two `j`-hypotheses, which is
-what their docstrings claim; naming the step is what makes that claim checkable. The hypotheses
-enter through `c₄ ≠ 0` and `c₆ ≠ 0` for the base change, which are exactly `j ≠ 0` and
-`j ≠ 1728`. At those two values the automorphism group can be strictly larger. -/
+omit [Algebra.IsQuadraticExtension K L] [Algebra.IsSeparable K L] in
+/-- **`Aut(Eᴸ) = {±1}` when `j(E) ∉ {0, 1728}`**: an `L`-change of variables fixing the base
+change `Eᴸ` is either the identity or `[-1]`. -/
 private theorem eq_one_or_eq_negVariableChange_baseChange (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728)
     {D : VariableChange L} (hD : D • E.baseChange L = E.baseChange L) :
     D = 1 ∨ D = (E.baseChange L).negVariableChange := by
   have hinj := FaithfulSMul.algebraMap_injective K L
   -- `baseChange` is `map (algebraMap K L)`, whose `IsElliptic` instance Mathlib registers
   have : (E.baseChange L).IsElliptic := inferInstanceAs ((E.map (algebraMap K L)).IsElliptic)
-  exact (E.baseChange L).eq_one_or_eq_negVariableChange_of_c₄_ne_zero_of_c₆_ne_zero_of_smul_eq
-    (E.baseChange_c₄_ne_zero hinj (E.j_eq_zero_iff.not.mp hj₀))
-    (E.baseChange_c₆_ne_zero hinj (E.j_eq_1728_iff.not.mp hj₁₇₂₈)) hD
+  have hj : (E.baseChange L).j = algebraMap K L E.j := by simp only [baseChange, map_j]
+  refine (E.baseChange L).eq_one_or_eq_negVariableChange_of_smul_eq ?_ ?_ hD
+  · rw [hj]; exact fun h ↦ hj₀ (hinj (by rw [h, map_zero]))
+  · rw [hj]; exact fun h ↦ hj₁₇₂₈ (hinj (by rw [h, map_ofNat]))
 
 omit [E.IsElliptic] in
 /-- The inverse of the trace–norm change of variables carries `Eᴸ` back to the base change of the
-twist by `θ`. Both classification theorems need this reading of
-`quadraticTwistOfTraceNormVariableChange_smul_baseChange`. Ellipticity is not needed. -/
+quadratic twist by `θ`. -/
 private theorem inv_quadraticTwistOfTraceNormVariableChange_smul {θ : L}
     (hθ : θ ∉ Set.range (algebraMap K L)) {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) :
     (E.quadraticTwistOfTraceNormVariableChange hθ hσ)⁻¹ • E.baseChange L
@@ -689,7 +684,6 @@ theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : 
   obtain ⟨σ, hσ⟩ := Algebra.IsQuadraticExtension.exists_algEquiv_ne_one K L
   obtain ⟨θ, hθ⟩ := Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap K L
   set C₁ := E.quadraticTwistOfTraceNormVariableChange hθ hσ with hC₁
-  have hiso := E.quadraticTwistOfTraceNormVariableChange_smul_baseChange hθ hσ
   have hcoc := E.map_quadraticTwistOfTraceNormVariableChange hθ hσ
   obtain ⟨C₀, hC₀⟩ := E.exists_smul_quadraticTwist_eq hθ
   -- needed by `negVariableChange_ne_one` at the end; the `Aut(Eᴸ) = {±1}` step supplies its own
@@ -741,7 +735,6 @@ theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj�
   obtain ⟨σ, hσ⟩ := Algebra.IsQuadraticExtension.exists_algEquiv_ne_one K L
   obtain ⟨θ, hθ⟩ := Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap K L
   set C₁ := E.quadraticTwistOfTraceNormVariableChange hθ hσ with hC₁
-  have hiso := E.quadraticTwistOfTraceNormVariableChange_smul_baseChange hθ hσ
   have hcoc := E.map_quadraticTwistOfTraceNormVariableChange hθ hσ
   have hinj := FaithfulSMul.algebraMap_injective K L
   -- the Galois conjugate of `ρ` is again an isomorphism `E'ᴸ ≅ Eᴸ`, so `σρ · ρ⁻¹` fixes `Eᴸ`
