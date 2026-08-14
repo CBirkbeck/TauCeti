@@ -8,6 +8,7 @@ public import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Recurrence
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Transfer
 import Mathlib.Data.Fin.Tuple.Sort
+import Mathlib.Tactic.FinCases
 import TauCeti.NumberTheory.EllipticDivisibilitySequence.SignEquivariance
 
 /-!
@@ -402,6 +403,47 @@ private theorem atomRelFin4_eq_zero_of_injective (odd : W.Odd)
   -- the sign is a unit of `ℤ`, so it cancels; splitting on `±1` avoids naming a units lemma
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> rw [h] at hzero <;>
     simpa using hzero
+
+/-- Taking absolute values preserves parity, which is what lets the sign-equivariance reduction
+to nonnegative indices keep the hypothesis the descent needs. `omega` cannot see through `|·|`,
+so the two cases are supplied by `abs_choice`. -/
+private theorem abs_emod_two (x : ℤ) : |x| % 2 = x % 2 := by
+  rcases abs_choice x with h | h
+  · rw [h]
+  · rw [h]; omega
+
+/-- **The relator vanishes at any quadruple of one parity.** All four indices are made
+nonnegative by sign equivariance, a coincidence between any two is one of Mathlib's
+`atomRel_same` lemmas, and the remaining pairwise-distinct case is sorted. This is the net
+statement; `atomRel_eq_zero_of_nonneg` below is its `d = 0` specialisation. -/
+private theorem atomRel_eq_zero_of_parity (odd : W.Odd) (zero : W 0 = 0)
+    (descent : ∀ a b c d : ℤ, AtomRelVanishes W a b c d) {a b c d : ℤ}
+    (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) :
+    atomRel W a b c d = 0 := by
+  obtain ⟨pa, pb, pc⟩ := parity
+  rw [← atomRel_abs₁ odd, ← atomRel_abs₂ odd, ← atomRel_abs₃ odd, ← atomRel_abs₄]
+  by_cases hab : |a| = |b|
+  · rw [hab, atomRel_same₁₂]; simp [zero]
+  by_cases hac : |a| = |c|
+  · rw [← hac, atomRel_same₁₃ odd]; simp [zero]
+  by_cases had : |a| = |d|
+  · rw [← had, atomRel_same₁₄ odd]; simp [zero]
+  by_cases hbc : |b| = |c|
+  · rw [← hbc, atomRel_same₂₃]; simp [zero]
+  by_cases hbd : |b| = |d|
+  · rw [← hbd, atomRel_same₂₄ odd]; simp [zero]
+  by_cases hcd : |c| = |d|
+  · rw [← hcd, atomRel_same₃₄]; simp [zero]
+  have hpar : ∀ i j : Fin 4, (![|a|, |b|, |c|, |d|] : Fin 4 → ℤ) i % 2 =
+      (![|a|, |b|, |c|, |d|] : Fin 4 → ℤ) j % 2 := by
+    have ha := abs_emod_two a; have hb := abs_emod_two b
+    have hc := abs_emod_two c; have hd := abs_emod_two d
+    intro i j; fin_cases i <;> fin_cases j <;> simp <;> omega
+  have hinj : Function.Injective (![|a|, |b|, |c|, |d|] : Fin 4 → ℤ) := by
+    intro i j hij
+    fin_cases i <;> fin_cases j <;> simp_all
+  simpa using atomRelFin4_eq_zero_of_injective odd descent
+    (t := ![|a|, |b|, |c|, |d|]) (fun i ↦ by fin_cases i <;> simp [abs_nonneg]) hpar hinj
 
 /-- Three nonnegative even indices against `0`, with no distinctness assumed: every coincidence
 puts two indices of the relator equal, and each such case is one of Mathlib's `atomRel_same`
