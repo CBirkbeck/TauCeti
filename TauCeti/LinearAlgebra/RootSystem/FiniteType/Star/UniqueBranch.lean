@@ -256,31 +256,6 @@ private lemma submatrix_doubleForkEmbedding_eq (h : IsFiniteType A)
         (h.diagramGraph_adj_iff.mp (hright_adj j)).2
       exact (h.diagramGraph_adj_iff.mp hadj).2 hzero'
 
-/-- **The outer ends of the two branches at the ends of a path are distinct.** In an acyclic
-graph, a vertex adjacent to the start of a path with distinct endpoints and off that path differs
-from every vertex adjacent to the path's end. -/
-private theorem ne_of_adj_first_of_adj_last {V : Type*} {G : SimpleGraph V}
-    (hG : G.IsAcyclic) {u v : V} (huv : u ≠ v) {q : G.Walk u v} (hq : q.IsPath)
-    {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) : a ≠ b := fun hab ↦
-  -- `a = b` makes `a` adjacent to the far end `v` of the path `a — u — … — v`, so acyclicity
-  -- forces `v` to be that path's second vertex, which is `u`.
-  huv <| (SimpleGraph.Walk.snd_cons q ha.symm).symm.trans
-    (hG.eq_snd_of_adj_start (hq.cons ha' (h := ha.symm)) (hab ▸ hb).symm
-      (SimpleGraph.Walk.end_mem_support _)).symm
-
-/-- **The outer ends of the two branches at the ends of a path are not adjacent.** In an acyclic
-graph, no edge joins a vertex adjacent to the start of a path to a vertex adjacent to its end, when
-both lie off the path. -/
-private theorem not_adj_of_adj_first_of_adj_last {V : Type*} {G : SimpleGraph V}
-    (hG : G.IsAcyclic) {u v : V} {q : G.Walk u v} (hq : q.IsPath) {a b : V} (ha : G.Adj u a)
-    (ha' : a ∉ q.support) (hb : G.Adj v b) (hb' : b ∉ q.support) : ¬G.Adj a b := by
-  intro hadj
-  -- The paths `a — u — … — v` and `a — b` leave `a` with adjacent far ends, and `v` misses the
-  -- edge `a — b`, so acyclicity puts `b` on the first path; but `b` is neither `a` nor on `q`.
-  have hmem := hG.mem_support_of_ne_mem_support_of_adj_of_isPath (hq.cons ha' (h := ha.symm))
-    hadj.isPath_toWalk hb (by simp [hb.ne, ne_of_mem_of_not_mem q.end_mem_support ha'])
-  simp [hadj.ne', hb'] at hmem
-
 /-- **Two distinct branch vertices in one simply-laced finite-type component contain an affine
 `D` principal submatrix.** The middle `Fin (n + 2)` is the path between the branch vertices, and
 the two outer copies of `Fin 2` enumerate the unused neighbours at either end.
@@ -341,10 +316,10 @@ theorem exists_doubleFork_submatrix (h : IsFiniteType A) {u v : B}
     hright_ne_penultimate i
       (h.isAcyclic_diagramGraph.eq_penultimate_of_adj_end hq (hright_adj i) hi)
   have hleft_right_ne (i j : Fin 2) : leftVertex i ≠ rightVertex j :=
-    ne_of_adj_first_of_adj_last h.isAcyclic_diagramGraph huv_ne hq
+    h.isAcyclic_diagramGraph.ne_of_adj_start_of_adj_end huv_ne hq
       (hleft_adj i) (hleft_not_mem i) (hright_adj j)
   have hleft_right_not_adj (i j : Fin 2) : ¬G.Adj (leftVertex i) (rightVertex j) :=
-    not_adj_of_adj_first_of_adj_last h.isAcyclic_diagramGraph hq
+    h.isAcyclic_diagramGraph.not_adj_of_adj_start_of_adj_end hq
       (hleft_adj i) (hleft_not_mem i) (hright_adj j) (hright_not_mem j)
   have he' := doubleForkEmbedding_injective hq hn leftVertex rightVertex hleft_inj hright_inj
     hleft_not_mem hright_not_mem hleft_right_ne
