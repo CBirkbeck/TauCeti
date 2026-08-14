@@ -104,6 +104,12 @@ theorem isBounded_empty : IsBounded (∅ : Set M) :=
 theorem isBounded_singleton_zero : IsBounded ({0} : Set M) :=
   fun U hU ↦ ⟨Set.univ, univ_mem, fun _ hx ↦ by simp_all [mem_of_mem_nhds hU]⟩
 
+/-- The singleton `{1}` is bounded. Unlike `isBounded_singleton`, this needs no continuity of
+multiplication: `V * {1}` is `V` itself, so the neighbourhood absorbs itself. -/
+@[simp]
+theorem isBounded_singleton_one : IsBounded ({1} : Set M) :=
+  fun U hU ↦ ⟨U, hU, by simp⟩
+
 /-- The pair `{0, 1}` is bounded. -/
 @[simp]
 theorem isBounded_pair_zero_one : IsBounded ({0, 1} : Set M) :=

@@ -17,10 +17,10 @@ subring containing a ring of definition is itself a ring of definition.** Openne
 from the smaller ring, and the new ideal of definition is the `Ideal.map` of the old one, so
 finite generation comes for free. Boundedness of the larger ring is the only real hypothesis, and
 both applications get it from the lattice: `A₀[T]` is `A₀ ⊔ Subring.closure T`, bounded by
-`isBounded_sup` against Wedhorn 5.30(2) (`isBounded_subringClosure`), which is what
-`isBounded_subringClosure_union_finset` records. The join case is `PairOfDefinition.enlargeSup`,
-which takes an arbitrary bounded `B`; joining two rings of definition is the case where `B` is
-one of them.
+`isBounded_sup` against Wedhorn 5.30(2). That combination is recorded upstream as
+`isBounded_subringClosure_union_finset` in `TauCeti.RingTheory.Huber.PowerBounded`, since it
+mentions no pair of definition. The join case is `PairOfDefinition.enlargeSup`, which takes an
+arbitrary bounded `B`; joining two rings of definition is the case where `B` is one of them.
 
 Taking `T = {a}` in the first application proves that every power-bounded element belongs to some
 ring of definition; the converse holds because every ring of definition is bounded.
@@ -79,15 +79,6 @@ private theorem le_adjoinRing (P : PairOfDefinition A) (T : Finset A) :
 end PairOfDefinition
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A]
-
-/-- Adjoining finitely many power-bounded elements to a bounded subring gives a bounded subring.
-This is the boundedness input in Wedhorn's Corollary 6.4. -/
-theorem isBounded_subringClosure_union_finset [NonarchimedeanAddGroup A] [ContinuousMul A]
-    (B₀ : Subring A) (hB₀ : IsBounded (B₀ : Set A)) (T : Finset A)
-    (hT : ∀ t ∈ T, IsPowerBounded t) :
-    IsBounded (Subring.closure ((B₀ : Set A) ∪ (T : Set A)) : Set A) := by
-  rw [Subring.closure_union, Subring.closure_eq]
-  exact isBounded_sup B₀ _ hB₀ (isBounded_subringClosure T.finite_toSet hT)
 
 namespace PairOfDefinition
 
