@@ -274,11 +274,39 @@ private theorem atomRel_odd_eq_rel (m : ℤ) :
   simp_rw [atomRel, atom_odd, rel]
   ring_nf
 
+/-- **The even base case**: first index `2 * k`, second two below it, at the minimal pair
+`(2, 0)`. This is where the odd recurrence is consumed. -/
+private theorem atomRelVanishes_base_even
+    (oddRec : ∀ m : ℤ, 2 ≤ m → rel W (m + 1) m 1 0 = 0) {k b : ℤ} (hk : 3 ≤ k)
+    (hb : b = 2 * (k - 1)) :
+    atomRel W (2 * k) b (2 * k % 2 + 2) (2 * k % 2) = 0 := by
+  have hodd := oddRec (k - 1) (by omega)
+  rw [sub_add_cancel] at hodd
+  -- `atomRel_even_eq_rel` carries every index in `2 * _` form, which is what lets
+  -- `atomRel_two_mul` fire; the goal's indices have to be put in that form first.
+  have hlast : (2 * k % 2 : ℤ) = 2 * 0 := by omega
+  have hthird : (2 : ℤ) * 0 + 2 = 2 * 1 := by norm_num
+  rw [hlast, hthird, hb, atomRel_even_eq_rel]
+  exact hodd
+
+/-- **The odd base case**: first index `2 * k + 1`, second two below it, at the minimal pair
+`(3, 1)`. This is where the even recurrence is consumed. -/
+private theorem atomRelVanishes_base_odd
+    (evenRec : ∀ m : ℤ, 3 ≤ m → rel W (m + 1) (m - 1) 1 0 = 0) {k b : ℤ} (hk : 3 ≤ k)
+    (hb : b = 2 * (k - 1) + 1) :
+    atomRel W (2 * k + 1) b ((2 * k + 1) % 2 + 2) ((2 * k + 1) % 2) = 0 := by
+  -- Likewise `atomRel_odd_eq_rel` carries its indices in `2 * _ + 1` form, which is what lets
+  -- `atom_odd` reduce each atom without any reasoning about truncated division.
+  have hlast : ((2 * k + 1) % 2 : ℤ) = 2 * 0 + 1 := by omega
+  have hthird : (2 : ℤ) * 0 + 1 + 2 = 2 * 1 + 1 := by norm_num
+  rw [hlast, hthird, hb, atomRel_odd_eq_rel]
+  exact evenRec k (by omega)
+
 /-- **The descent.** The two doubling recurrences, holding from `m = 2` and `m = 3` on, force the
 full four-index relation at every valid quadruple. The induction is on the largest index: below
 `6` no valid quadruple exists, and above it `atomRelVanishes_of_min` reduces to the minimal
 pair, where either the gap `b + 2 < a` admits the transfer down to a smaller first index, or
-`b + 2 = a` lands on one of the two recurrences according to parity. -/
+`b + 2 = a` lands on one of the two base cases according to parity. -/
 private theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
     (oddRec : ∀ m : ℤ, 2 ≤ m → rel W (m + 1) m 1 0 = 0)
     (evenRec : ∀ m : ℤ, 3 ≤ m → rel W (m + 1) (m - 1) 1 0 = 0) :
@@ -307,23 +335,17 @@ private theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
         (nonnegStrictAnti₄_abs_avg_sub h1 (by omega) h2 h3)
     · rcases Int.emod_two_eq_zero_or_one a' with hp | hp
       · obtain ⟨k, rfl⟩ : ∃ k, a' = 2 * k := ⟨a' / 2, by omega⟩
-        have hodd := oddRec (k - 1) (by omega)
-        rw [sub_add_cancel] at hodd
-        -- `atomRel_even_eq_rel` carries every index in `2 * _` form, which is what lets
-        -- `atomRel_two_mul` fire; the goal's indices have to be put in that form first.
-        have hlast : (2 * k % 2 : ℤ) = 2 * 0 := by omega
-        have hthird : (2 : ℤ) * 0 + 2 = 2 * 1 := by norm_num
-        have hsecond : b' = 2 * (k - 1) := by omega
-        rw [hlast, hthird, hsecond, atomRel_even_eq_rel]
-        exact hodd
+        exact atomRelVanishes_base_even oddRec (by omega) (by omega)
       · obtain ⟨k, rfl⟩ : ∃ k, a' = 2 * k + 1 := ⟨a' / 2, by omega⟩
-        -- Likewise `atomRel_odd_eq_rel` carries its indices in `2 * _ + 1` form, which is what
-        -- lets `atom_odd` reduce each atom without any reasoning about truncated division.
-        have hlast : ((2 * k + 1) % 2 : ℤ) = 2 * 0 + 1 := by omega
-        have hthird : (2 : ℤ) * 0 + 1 + 2 = 2 * 1 + 1 := by norm_num
-        have hsecond : b' = 2 * (k - 1) + 1 := by omega
-        rw [hlast, hthird, hsecond, atomRel_odd_eq_rel]
-        exact evenRec k (by omega)
+        exact atomRelVanishes_base_odd evenRec (by omega) (by omega)
+
+/-- The relator vanishes at three even indices in strict decrease above `0`, against a last
+index of `0`: the descent's hypothesis at exactly the shape the sorting step below produces. -/
+private theorem atomRel_eq_zero_of_sorted (descent : ∀ a b c d : ℤ, AtomRelVanishes W a b c d)
+    {u v w : ℤ} (pu : u % 2 = 0) (pv : v % 2 = 0) (pw : w % 2 = 0)
+    (hw : 0 < w) (hwv : w < v) (hvu : v < u) :
+    atomRel W u v w 0 = 0 :=
+  descent u v w 0 ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
 
 /-- Three distinct positive even indices, in any order, against a last index of `0`. The six
 orderings are reached from the decreasing one by the adjacent transpositions; the last index is
@@ -334,10 +356,7 @@ private theorem atomRel_eq_zero_of_ne (odd : W.Odd)
     (hx : 0 < x) (hy : 0 < y) (hz : 0 < z) (px : x % 2 = 0) (py : y % 2 = 0) (pz : z % 2 = 0)
     (hxy : x ≠ y) (hyz : y ≠ z) (hxz : x ≠ z) :
     atomRel W x y z 0 = 0 := by
-  have sorted : ∀ {u v w : ℤ}, u % 2 = 0 → v % 2 = 0 → w % 2 = 0 → 0 < w → w < v → v < u →
-      atomRel W u v w 0 = 0 := by
-    intro u v w pu pv pw hw hwv hvu
-    exact descent u v w 0 ⟨by omega, by omega, by omega⟩ (by rw [nonnegStrictAnti₄_iff]; omega)
+  have sorted {u v w : ℤ} := atomRel_eq_zero_of_sorted (W := W) descent (u := u) (v := v) (w := w)
   rcases lt_trichotomy x y with h₁ | h₁ | h₁
   · rcases lt_trichotomy y z with h₂ | h₂ | h₂
     · have h := sorted pz py px hx h₁ h₂
