@@ -215,7 +215,7 @@ private lemma prod_range_div_complex (a : ℕ → ℂ) (k : ℕ) (ha : ∀ j ≤
     hu 0 (Nat.zero_le k)]
 
 /-- Telescoping product: for `t ∈ [s_k, s_{k+1}]` along a monotone partition
-`s : ℕ → ℝ` with `γ(s_j) ≠ w` for `0 ≤ j ≤ N`, the product
+`s : ℕ → ℝ` with `γ(s_j) ≠ w` for `j < N`, the product
 `∏_{j < N} segRatio γ w (s j) (s (j+1)) t` collapses to `(γ t - w) / (γ (s 0) - w)`.
 
 This is the key identity making `Im(log)` of each `segRatio` add up to a
