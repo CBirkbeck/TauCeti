@@ -66,9 +66,9 @@ variable {E X Y : Type*} [TopologicalSpace E] [TopologicalSpace X] [TopologicalS
 namespace IsQuotientCoveringMap
 
 omit [TopologicalSpace E] [TopologicalSpace Y] in
-/-- **Translates of `U` whose images in `Y` meet have the same image.** When the `G`-translates of
-`U` are pairwise disjoint, the sets `qH '' (g • U)` are therefore pairwise equal or disjoint. This
-is a statement about the fibres of `qH` alone: no topology enters. -/
+/-- **When the `G`-translates of `U` are pairwise disjoint, two translates whose images in `Y` meet
+have the same image.** So the sets `qH '' (g • U)` are pairwise equal or disjoint. This is a
+statement about the fibres of `qH` alone: no topology enters. -/
 private theorem image_smul_eq_image_smul_of_inter_nonempty
     (horbit : ∀ {e₁ e₂ : E}, qH e₁ = qH e₂ ↔ e₁ ∈ MulAction.orbit H e₂) {U : Set E}
     (hdisj : ∀ g : G, (g • U ∩ U).Nonempty → g = 1) {g g' : G}
