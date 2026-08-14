@@ -46,15 +46,13 @@ open scoped ModularForm
 
 namespace UpperHalfPlane
 
-/-- **The zero function is zero at `im → ∞`.** Mathlib provides the bounded analogue,
-`zero_form_isBoundedAtImInfty`, but not this one, so every consumer has to reach past
-`IsZeroAtImInfty` to `Filter.zero_zeroAtFilter` itself. The unfolding is done once, here.
-
-`IsZeroAtImInfty` is a non-`@[expose]` wrapper for `ZeroAtFilter atImInfty`, so the `!` is
-required: plain `simpa using` cannot cross that boundary. This is the proof Mathlib gives for
-the same goal in `CuspForm.instZero`. -/
+/-- **The zero function is zero at `im → ∞`.** This is the missing analogue of Mathlib's
+`zero_form_isBoundedAtImInfty`, which covers only the bounded predicate. -/
 @[simp]
-lemma isZeroAtImInfty_zero : IsZeroAtImInfty (0 : ℍ → ℂ) := by
+lemma isZeroAtImInfty_zero {α : Type*} [Zero α] [TopologicalSpace α] :
+    IsZeroAtImInfty (0 : ℍ → α) := by
+  -- `IsZeroAtImInfty` is a non-`@[expose]` wrapper for `ZeroAtFilter atImInfty`; plain
+  -- `simpa using` cannot cross that boundary, as `CuspForm.instZero` also finds.
   simpa using! Filter.zero_zeroAtFilter _
 
 end UpperHalfPlane
