@@ -215,6 +215,33 @@ instance isIntegrallyClosedIn_completedPlusSubring (P : PairOfDefinition A) (Apl
   rw [completedPlusSubring]
   infer_instance
 
+/-- **The universal property of `A_U⁺`**: it is the *smallest* integrally closed subring of `A_U`
+containing the base. Containment in an integrally closed `R` is decided by the base alone, so a
+minimality or uniqueness argument never has to unfold the integral closure.
+
+This is `Subring.integralClosure_subring_le_iff` transported across the definition; the body of
+`completedPlusSubring` is not exposed, so this is the elimination principle a consumer has. -/
+theorem completedPlusSubring_le_iff (P : PairOfDefinition A) (Aplus : Subring A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI : Algebra ↥(completedPlusSubringBase P Aplus T s S hden) (UniformSpace.Completion S) :=
+      (completedPlusSubringBase P Aplus T s S hden).subtype.toAlgebra
+    ∀ {R : Subring (UniformSpace.Completion S)}
+      [IsIntegrallyClosedIn ↥R (UniformSpace.Completion S)],
+      completedPlusSubring P Aplus T s S hden ≤ R ↔
+        completedPlusSubringBase P Aplus T s S hden ≤ R := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  let _ : Algebra ↥(completedPlusSubringBase P Aplus T s S hden) (UniformSpace.Completion S) :=
+    (completedPlusSubringBase P Aplus T s S hden).subtype.toAlgebra
+  intro R _
+  rw [completedPlusSubring]
+  exact Subring.integralClosure_subring_le_iff
+
 end Topological
 
 end PairOfDefinition
