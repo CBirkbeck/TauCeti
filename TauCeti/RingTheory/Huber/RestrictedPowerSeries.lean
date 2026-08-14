@@ -170,7 +170,11 @@ theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A]
   by_contra h
   exact hs (by rw [MvPowerSeries.coeff_one, ite_eq_right h]; exact h0U)
 
-/-- A sum of restricted series is restricted. -/
+/-- A sum of restricted series is restricted.
+
+Unlike `IsRestricted.smul`, which closes through Mathlib's `Filter.Tendsto.const_smul_zero`, this
+and `IsRestricted.neg` rewrite the limit by hand: Mathlib packages the zero-limit case for the
+scalar action but not for addition or negation, so `Tendsto.add` lands at `𝓝 (0 + 0)`. -/
 theorem IsRestricted.add {k : ℕ} {M : Type*} [AddMonoid M] [TopologicalSpace M]
     [ContinuousAdd M] {f g : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f + g) := by
@@ -196,8 +200,7 @@ theorem IsRestricted.smul {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M]
     [TopologicalSpace M] [Module R M] [ContinuousConstSMul R M] {f : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (c : R) : IsRestricted (c • f) := by
   simp only [isRestricted_iff, coe_smul_apply]
-  have h := (isRestricted_iff.mp hf).const_smul c
-  rwa [smul_zero] at h
+  exact (isRestricted_iff.mp hf).const_smul_zero c
 
 /-- Restrictedness, restated: for every open additive subgroup `W`, all but finitely many
 coefficients lie in `W`. This is the form the convolution argument actually consumes. -/
