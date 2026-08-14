@@ -1104,7 +1104,9 @@ noncomputable def weightedRestrictedSubringFinZeroEquiv [NonarchimedeanRing A] :
 theorem weightedRestrictedSubringFinZeroEquiv_apply [NonarchimedeanRing A]
     (f : weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight) :
     weightedRestrictedSubringFinZeroEquiv f =
-      MvPowerSeries.constantCoeff (f : MvPowerSeries (Fin 0) A) := (rfl)
+      MvPowerSeries.constantCoeff (f : MvPowerSeries (Fin 0) A) := by
+  simp [weightedRestrictedSubringFinZeroEquiv, RingEquiv.trans_apply,
+    MvPowerSeries.isEmptyEquiv_apply]
 
 /-- The zero-variable comparison is continuous. -/
 theorem continuous_weightedRestrictedSubringFinZeroEquiv [NonarchimedeanRing A] :
@@ -1125,20 +1127,15 @@ theorem continuous_weightedRestrictedSubringFinZeroEquiv [NonarchimedeanRing A] 
 theorem coe_weightedRestrictedSubringFinZeroEquiv_symm [NonarchimedeanRing A] (a : A) :
     ((weightedRestrictedSubringFinZeroEquiv.symm a :
         weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight) :
-      MvPowerSeries (Fin 0) A) = MvPowerSeries.C a := (rfl)
+      MvPowerSeries (Fin 0) A) = MvPowerSeries.C a := by
+  simp [weightedRestrictedSubringFinZeroEquiv, RingEquiv.symm_trans_apply,
+    MvPowerSeries.isEmptyEquiv_symm_apply]
 
-/-- The inverse of the zero-variable comparison is continuous. -/
+/-- The inverse of the zero-variable comparison is continuous: it *is* the constant-series map
+`weightedC`, whose continuity is already known. -/
 theorem continuous_weightedRestrictedSubringFinZeroEquiv_symm [NonarchimedeanRing A] :
-    Continuous (weightedRestrictedSubringFinZeroEquiv (A := A)).symm := by
-  refine continuous_of_continuousAt_zero
-    (weightedRestrictedSubringFinZeroEquiv (A := A)).symm.toAddMonoidHom ?_
-  rw [ContinuousAt, map_zero,
-    (hasBasis_nhds_zero_weightedTopology isWeightFamily_one_weight).tendsto_right_iff]
-  intro U _
-  filter_upwards [U.isOpen.mem_nhds U.zero_mem] with a ha
-  refine mem_weightedNhd.mpr fun ν ↦ ?_
-  rw [weightMul_one_weight]
-  simpa [Subsingleton.elim ν 0] using ha
+    Continuous (weightedRestrictedSubringFinZeroEquiv (A := A)).symm :=
+  (continuous_weightedC isWeightFamily_one_weight).congr fun a ↦ Subtype.ext (by simp)
 
 end ZeroVariables
 

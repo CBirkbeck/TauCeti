@@ -18,9 +18,10 @@ at the trivial weight family `Tᵢ = {1}` (Wedhorn *Adic Spaces*, arXiv:1910.059
 completion of `A` itself.
 
 Being a completion, `A⟨X₁,…,Xₖ⟩` is a complete Hausdorff topological `A`-algebra with all of
-that structure found by instance search, which is why this module is short: it fixes the
-notation and records the one fact instance search does not supply, continuity of the structure
-map.
+that structure found by instance search, so this module fixes the notation and records what
+instance search does not supply: continuity of the structure map, and — at `k = 0`, where the
+construction degenerates to the separated completion of `A` — the identification of `A⟨⟩` with
+`Â` together with its topological API.
 
 The predicate that every `A⟨X₁,…,Xₖ⟩` is noetherian is
 `TauCeti.Huber.IsStronglyNoetherian`, in `TauCeti.RingTheory.Huber.StronglyNoetherian`; the
@@ -33,11 +34,17 @@ Hausdorff — over a complete Hausdorff base, and over a discrete one — is
 
 * `TauCeti.Huber.restrictedMvPowerSeriesCompletion`: the completed restricted power-series
   algebra `A⟨X₁,…,Xₖ⟩`.
+* `TauCeti.Huber.restrictedMvPowerSeriesCompletionFinZeroEquiv`: at `k = 0`, the identification
+  of `A⟨⟩` with the separated completion `Â`, carried across the completions from the
+  ring-level `TauCeti.Huber.weightedRestrictedSubringFinZeroEquiv`.
 
 ## Main results
 
 * `TauCeti.Huber.continuous_algebraMap_restrictedMvPowerSeriesCompletion`: the structure map
   `A → A⟨X₁,…,Xₖ⟩` is continuous.
+* `TauCeti.Huber.restrictedMvPowerSeriesCompletionFinZeroEquiv_coe`,
+  `…_symm_coe`, `continuous_restrictedMvPowerSeriesCompletionFinZeroEquiv` and its `_symm`: the
+  zero-variable identification on canonical images, and its continuity in both directions.
 
 ## Provenance
 

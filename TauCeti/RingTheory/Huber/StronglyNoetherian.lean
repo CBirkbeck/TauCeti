@@ -32,9 +32,6 @@ discrete case below is proved through it.
 ## Main definitions
 
 * `TauCeti.Huber.IsStronglyNoetherian`: every `A⟨X₁,…,Xₖ⟩` is a noetherian ring.
-* `TauCeti.Huber.restrictedMvPowerSeriesCompletionFinZeroEquiv`: the zero-variable
-  identification of `A⟨⟩` with `Â`, carried across the completions from
-  `TauCeti.Huber.weightedRestrictedSubringFinZeroEquiv` in `WeightedRestrictedSeries.Basic`.
 
 ## Main results
 
