@@ -232,7 +232,8 @@ private theorem eventually_intervalIntegral_union_excised_eq [SlashInvariantForm
           (k : ℂ) / 2 * ∫ t in (1 : ℝ)..3,
             (if ∃ s ∈ arcSingularSet S ∪ verticalSingularSet S, ‖fdBoundary H t - s‖ ≤ ε
             then 0 else logDeriv (fdBoundary H) t) := by
-  filter_upwards [eventually_forall_im_add_lt fun s hs => im_lt_of_mem_union hH hHgt hs,
+  filter_upwards [eventually_forall_im_add_lt fun s hs =>
+      im_lt_of_mem_arcSingularSet_union_verticalSingularSet hH hHgt hs,
     eventually_forall_lt_norm_fdBoundary_sub_of_mem_verticalSingularSet H S,
     self_mem_nhdsWithin] with ε hlt hfar hε
   simpa only [smul_eq_mul, mul_comm] using
@@ -750,7 +751,8 @@ private theorem sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     exact Finset.mem_image_of_mem _ (hcomp q hq.1 (orderOfVanishingAt_ne_zero_of_eq_zero hg hf
       (by simpa [Function.comp_apply, ofComplex_apply] using h0)))
   have hga : ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
-      AnalyticAt ℂ (cuspFunction 1 ⇑f) q := analyticAt_cuspFunction_of_mem_closedBall f hH
+      AnalyticAt ℂ (cuspFunction 1 ⇑f) q :=
+    analyticAt_cuspFunction_of_mem_closedBall f (zero_lt_one.trans hH)
   have hoffγU := analyticAt_comp_ofComplex_and_ne_zero_of_notMem (k := k) hf hH.le hcomp hHgt
   -- Only the slash-invariant class is transported to the `⊤`-shaped subgroup: a `map`-shaped
   -- `ModularFormClass` instance would shadow the `𝒮ℒ`-shaped searches above.

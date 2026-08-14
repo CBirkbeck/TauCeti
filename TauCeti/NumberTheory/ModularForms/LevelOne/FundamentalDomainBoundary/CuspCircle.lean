@@ -158,7 +158,7 @@ contour: it is differentiable on the unit ball, and the disk's radius `exp (-2π
 below `1`. -/
 theorem analyticAt_cuspFunction_of_mem_closedBall {F : Type*} [FunLike F ℍ ℂ] {k : ℤ}
     [ModularFormClass F 𝒮ℒ k] (f : F)
-    {H : ℝ} (hH : 1 < H) :
+    {H : ℝ} (hH : 0 < H) :
     ∀ q ∈ Metric.closedBall (0 : ℂ) (fdBoundaryQRadius H),
       AnalyticAt ℂ (cuspFunction 1 ⇑f) q := by
   have hper : Periodic (⇑f ∘ ofComplex) 1 :=
@@ -168,7 +168,7 @@ theorem analyticAt_cuspFunction_of_mem_closedBall {F : Type*} [FunLike F ℍ ℂ
   exact fun q hq => (differentiableOn_cuspFunction_ball one_pos hper (ModularFormClass.holo f)
     (ModularFormClass.bdd_at_infty f)).analyticAt <|
       Metric.isOpen_ball.mem_nhds <| mem_ball_zero_iff.mpr <|
-        (mem_closedBall_zero_iff.mp hq).trans_lt (fdBoundaryQRadius_lt_one (zero_lt_one.trans hH))
+        (mem_closedBall_zero_iff.mp hq).trans_lt (fdBoundaryQRadius_lt_one hH)
 
 end ModularForm
 

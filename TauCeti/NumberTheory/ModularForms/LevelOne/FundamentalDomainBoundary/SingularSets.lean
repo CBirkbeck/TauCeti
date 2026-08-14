@@ -277,8 +277,8 @@ theorem im_lt_of_mem_arcSingularSet {S : Finset ℍ} {s : ℂ} {H : ℝ}
 
 /-- Every union excision centre sits below the ceiling: arc points by their unit norm,
 vertical points by the height bound on their source set. -/
-theorem im_lt_of_mem_union {S : Finset ℍ} {s : ℂ} {H : ℝ} (hH : 1 < H)
-    (hHgt : ∀ p ∈ S, (p : ℂ).im < H)
+theorem im_lt_of_mem_arcSingularSet_union_verticalSingularSet {S : Finset ℍ} {s : ℂ} {H : ℝ}
+    (hH : 1 < H) (hHgt : ∀ p ∈ S, (p : ℂ).im < H)
     (hs : s ∈ arcSingularSet S ∪ verticalSingularSet S) : s.im < H := by
   rcases Finset.mem_union.mp hs with h | h
   · exact im_lt_of_mem_arcSingularSet h hH
