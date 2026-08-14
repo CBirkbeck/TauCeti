@@ -370,15 +370,12 @@ private theorem exists_monotone_partition_mesh_lt {a b δ : ℝ} (hab : a ≤ b)
 /-- **The polar form at a point, from the partition data alone.** For a monotone `s` with
 `s 0 = a`, no node sent to `w`, and every segment ratio in the slit plane, any `t` between `s 0`
 and `s N` satisfies `γ t - w = ‖γ t - w‖ · exp (I · θ t)`, where
-`θ t = arg (γ a - w) + ∑_{j < N} (log (segRatio γ w (s j) (s (j+1)) t)).im`.
-
-None of the analytic data behind the partition -- continuity of `γ`, the distance lower bound,
-the uniform modulus, the mesh bound -- takes part. -/
+`θ t = arg (γ a - w) + ∑_{j < N} (log (segRatio γ w (s j) (s (j+1)) t)).im`. -/
 private theorem polar_form_of_partition {γ : ℝ → ℂ} {w : ℂ} {a : ℝ} {N : ℕ} {s : ℕ → ℝ}
     (hN_pos : 0 < N) (hs_zero : s 0 = a) (hs_mono : Monotone s)
-    (hs_avoid : ∀ j ≤ N, γ (s j) - w ≠ 0)
-    (h_seg : ∀ j, j < N → ∀ t, segRatio γ w (s j) (s (j + 1)) t ∈ Complex.slitPlane)
-    {t : ℝ} (h_cov_lo : s 0 ≤ t) (h_cov_hi : t ≤ s N) :
+    (hs_avoid : ∀ j ≤ N, γ (s j) - w ≠ 0) {t : ℝ}
+    (h_ratio_ne : ∀ j < N, segRatio γ w (s j) (s (j + 1)) t ≠ 0)
+    (h_cov_lo : s 0 ≤ t) (h_cov_hi : t ≤ s N) :
     γ t - w = (‖γ t - w‖ : ℂ) * Complex.exp (Complex.I *
       ((Complex.arg (γ a - w) +
         ∑ j ∈ Finset.range N,
@@ -387,14 +384,11 @@ private theorem polar_form_of_partition {γ : ℝ → ℂ} {w : ℂ} {a : ℝ} {
   obtain ⟨k, hk_lt, hk_lo, hk_hi⟩ := exists_covering_segment hN_pos hs_mono h_cov_lo h_cov_hi
   have h_telescope := prod_segRatio_telescope hs_mono hs_avoid hk_lt hk_lo hk_hi
   rw [hs_zero] at h_telescope
-  have h_ratio_ne : ∀ j ∈ Finset.range N,
-      segRatio γ w (s j) (s (j + 1)) t ≠ 0 := fun j hj ↦
-    Complex.slitPlane_ne_zero (h_seg j (Finset.mem_range.mp hj) t)
   have h_prod_eq : (γ a - w) *
       ∏ j ∈ Finset.range N, segRatio γ w (s j) (s (j + 1)) t = γ t - w := by
     rw [h_telescope, mul_div_cancel₀ _ h_avoid_a]
   exact polar_form_of_prod (zs := fun j ↦ segRatio γ w (s j) (s (j + 1)) t)
-    h_avoid_a h_ratio_ne h_prod_eq
+    h_avoid_a (fun j hj ↦ h_ratio_ne j (Finset.mem_range.mp hj)) h_prod_eq
 
 /-! ### Main theorem: argument lift on `[a, b]` -/
 
@@ -445,7 +439,8 @@ theorem exists_continuousOn_arg_lift_with_partition {γ : ℝ → ℂ} {w : ℂ}
       (hs_in j (Finset.mem_range.mp hj).le) (hs_in (j + 1) (Finset.mem_range.mp hj))
       (hs_le j) (hs_mesh j)
   -- Lift property
-  · exact fun t ht => polar_form_of_partition hN_pos hs_zero hs_mono hs_avoid h_seg
+  · exact fun t ht => polar_form_of_partition hN_pos hs_zero hs_mono hs_avoid
+      (fun j hj ↦ Complex.slitPlane_ne_zero (h_seg j hj t))
       (by rw [hs_zero]; exact ht.1) (by rw [hs_N]; exact ht.2)
 
 end TauCeti.Contour
