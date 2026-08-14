@@ -271,6 +271,7 @@ theorem comp_right_injective (φ : Isogeny W₁ W₂) :
     simpa using congrArg Isogeny.pullback h
 
 /-- Two isogenies agree exactly when they agree after precomposition by a fixed isogeny. -/
+@[simp]
 theorem comp_right_cancel {φ : Isogeny W₁ W₂} {ψ₁ ψ₂ : Isogeny W₂ W₃} :
     ψ₁.comp φ = ψ₂.comp φ ↔ ψ₁ = ψ₂ :=
   (comp_right_injective φ).eq_iff
