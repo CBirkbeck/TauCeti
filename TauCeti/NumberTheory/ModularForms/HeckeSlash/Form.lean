@@ -26,8 +26,9 @@ of it, and `ModularForm.rat_slash` turns each rational slash into the real one.
 
 ## Main definitions
 
-* `HeckeRing.GL2.heckeSlashEnd`: the same map as a `ℂ`-linear endomorphism, the shape Layer 2(b)
-  of the roadmap asks for.
+* `HeckeRing.GL2.heckeSlashEnd`: the same map bundled as a `ℂ`-linear endomorphism. This is an
+  intermediate step toward Layer 2(b), which asks for endomorphisms of `ModularForm` at level
+  `Γ₁(N)`; the descent — holomorphy and the cusp conditions — is not formalised here.
 
 ## Main results
 
@@ -78,10 +79,15 @@ private noncomputable def heckeSlashInvariant (f : SlashInvariantForm 𝒮ℒ k)
     exact heckeSlashSum_slash_invariant_of_mem_SLnZ k D f
       (fun _ h ↦ ModularForm.slash_eq_of_mem_SLnZ k f.slash_action_eq' h) hδ
 
-/-- **The double coset as a `ℂ`-linear endomorphism of `SlashInvariantForm 𝒮ℒ k`.** This is the
-form the roadmap's Layer 2(b) asks for: `Module.End ℂ`, so that Hecke operators compose and can
-carry a ring structure. Linearity is `heckeSlashSum_add` and `heckeSlashSum_smul`, which hold
-because every coset representative has positive determinant. -/
+/-- **The double coset as a `ℂ`-linear endomorphism of `SlashInvariantForm 𝒮ℒ k`.** Bundling it
+as a `Module.End ℂ` is what lets Hecke operators compose and later carry a ring structure.
+Linearity is `heckeSlashSum_add` and `heckeSlashSum_smul`, which hold because every coset
+representative has positive determinant.
+
+⚠ This is an intermediate step, not the roadmap's Layer 2(b) target: that asks for endomorphisms
+of `ModularForm ((Gamma1 N).map (mapGL ℝ)) k`, which additionally requires holomorphy and the
+cusp conditions to be preserved, and at level `Γ₁(N)` rather than `𝒮ℒ`. The descent is not
+formalised here. -/
 noncomputable def heckeSlashEnd : Module.End ℂ (SlashInvariantForm 𝒮ℒ k) where
   toFun := heckeSlashInvariant k D
   map_add' f g := by ext τ; simp [heckeSlashInvariant, heckeSlashSum_add]

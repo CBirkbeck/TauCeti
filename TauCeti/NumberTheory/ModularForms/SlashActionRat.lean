@@ -25,6 +25,15 @@ not want `f ∣[k] g` to elaborate at rational `g` simply does not open the scop
 applies after rewriting with `rat_slash`; the point of the instance is that consumers need
 not insert the coercion by hand.
 
+## The `SLnZ 2` / `𝒮ℒ` bridge
+
+`SlashInvariantForm` and friends are indexed by subgroups of `GL(2, ℝ)`, while the Hecke
+development works at `SLnZ 2 ≤ GL(2, ℚ)` under the rational action defined here. Both `SLnZ 2`
+and `𝒮ℒ` are ranges of `mapGL` out of the same `SL₂(ℤ)`, so mathlib's
+`Matrix.SpecialLinearGroup.map_mapGL` relates them directly and the two membership directions are
+corollaries of it. `slash_eq_of_mem_SLnZ` is the form consumers want: real invariance under `𝒮ℒ`
+gives rational invariance under `SLnZ 2`.
+
 ## Main results
 
 * `ModularForm.rat_slash`: the rational action is the real one at the mapped matrix.
@@ -33,6 +42,10 @@ not insert the coercion by hand.
 * `ModularForm.det_map_ratCast_pos`: positivity of the determinant survives the embedding.
 * `ModularForm.rat_smul_slash_of_det_pos`: scalars pass through the slash of a
   positive-determinant rational matrix, with no `σ` twist.
+* `ModularForm.map_ratCast_mem_SL`, `ModularForm.exists_mem_SLnZ_of_mem_SL`: the two directions
+  of the `SLnZ 2` / `𝒮ℒ` correspondence.
+* `ModularForm.slash_eq_of_mem_SLnZ`: real slash-invariance under `𝒮ℒ` gives rational
+  slash-invariance under `SLnZ 2`.
 
 ## Provenance
 
@@ -44,6 +57,10 @@ scalar-pull-through step inside its `heckeSlash_smul`. AINTLIB names the embeddi
 is a one-use wrapper around Mathlib's `Matrix.GeneralLinearGroup.map`, so it is not ported and
 the map is spelled out instead. The scalar lemma is stated here at the `SMul`/`IsScalarTower`
 generality of Mathlib's `ModularForm.SL_smul_slash` rather than AINTLIB's `c : ℂ`.
+
+The `SLnZ 2` / `𝒮ℒ` bridge corresponds to AINTLIB's `glMap_mem_SL` and `mem_SL_exists_H` (same
+file). AINTLIB's `glMap_mapGL_eq` has no counterpart: mathlib's
+`Matrix.SpecialLinearGroup.map_mapGL` already states it for an arbitrary scalar tower.
 
 ## References
 
