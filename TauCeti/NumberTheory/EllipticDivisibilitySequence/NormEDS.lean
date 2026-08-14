@@ -51,11 +51,12 @@ waiting on, not the slice that lands them.
 ## Provenance
 
 Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
-(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`),
-declarations `IsEllSequence.normEDS_of_mem_nonZeroDivisors` and `IsEllSequence.normEDS`. That
-file's header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
-adapted material the upstream authorship is credited here rather than in the copyright header. J.
-Xu is acknowledged for the surrounding LutzNagell development — he authors `Universal.lean` and
+(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
+`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations
+`IsEllSequence.normEDS_of_mem_nonZeroDivisors` and `IsEllSequence.normEDS`. That file's header
+reads `Authors: David Kurniadi Angdinata`; following this repository's convention for adapted
+material the upstream authorship is credited here rather than in the copyright header. J. Xu is
+acknowledged for the surrounding LutzNagell development — he authors `Universal.lean` and
 co-authors `DivisionPolynomialOmega.lean` at the same revision — as context for this port, not as
 an author of the declarations above.
 
@@ -106,7 +107,7 @@ theorem isEllipticNet_normEDS (b c d : R) : IsEllipticNet (normEDS b c d) := by
 
 /-- **A normalised EDS is an elliptic sequence**, the last index of the net held at `0`. -/
 theorem isEllipticSequence_normEDS (b c d : R) : IsEllipticSequence (normEDS b c d) :=
-  fun p q r ↦ isEllipticNet_normEDS b c d p q r 0
+  (isEllipticNet_normEDS b c d).isEllipticSequence
 
 /-- **The invariant of a normalised EDS is symmetric in its two indices.** This is what the
 elliptic-net structure buys for `normEDS`: `IsEllipticNet.invarNum_mul_invarDenom` needs the full

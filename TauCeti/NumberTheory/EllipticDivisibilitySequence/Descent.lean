@@ -8,6 +8,7 @@ public import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Recurrence
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Transfer
 import Mathlib.Data.Fin.Tuple.Sort
+import Mathlib.Data.Int.ModEq
 import Mathlib.Tactic.FinCases
 import TauCeti.NumberTheory.EllipticDivisibilitySequence.SignEquivariance
 
@@ -73,15 +74,17 @@ needed, and is used.
 ## Provenance
 
 Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
-(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`),
-declarations `rel₆_eq₃`, `rel₆_eq₃'`, `rel₆_eq₁₀`, `rel₄_iff_evenRec`, `dMin`, `cMin`,
-`Rel₄OfValid`, `rel₄_fix₁_of_fix₂`, `rel₄_of_fix₂`, `rel₄_of_min₂`, `rel₄_of_anti_oddRec_evenRec`,
-`rel₄_of_oddRec_evenRec` and `IsEllSequence.of_oddRec_evenRec`. That file's header reads `Authors:
-David Kurniadi Angdinata`; following this repository's convention for adapted material the upstream
-authorship is credited here rather than in the copyright header. J. Xu is acknowledged for the
-surrounding LutzNagell development — he authors `Universal.lean` and co-authors
-`DivisionPolynomialOmega.lean` at the same revision — as context for this port, not as an author of
-the declarations above.
+(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
+`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `rel₆_eq₃`, `rel₆_eq₃'`, `rel₆_eq₁₀`,
+`rel₄_iff_evenRec`, `dMin`, `cMin`, `Rel₄OfValid`, `rel₄_fix₁_of_fix₂`, `rel₄_of_fix₂`,
+`rel₄_of_min₂`, `rel₄_of_anti_oddRec_evenRec`, `rel₄_of_oddRec_evenRec` and
+`IsEllSequence.of_oddRec_evenRec`, and — for the four-index sorting and the net entry point —
+`IsEllSequence.rel₄` and `IsEllSequence.net`. That file's header reads
+`Authors: David Kurniadi Angdinata`; following this repository's convention for adapted material
+the upstream authorship is credited here rather than in the copyright header. J. Xu is
+acknowledged for the surrounding LutzNagell development — he authors `Universal.lean` and
+co-authors `DivisionPolynomialOmega.lean` at the same revision — as context for this port, not as
+an author of the declarations above.
 
 The source states its expansions against its own `addMulSub` and `rel₄`, which Mathlib now
 supplies as `atom` and `atomRel` with the same definitions, so those statements transfer by
@@ -366,14 +369,6 @@ private theorem atomRelFin4_eq_zero_of_injective (odd : W.Odd)
   rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> rw [h] at hzero <;>
     simpa using hzero
 
-/-- Taking absolute values preserves parity, which is what lets the sign-equivariance reduction
-to nonnegative indices keep the hypothesis the descent needs. `omega` cannot see through `|·|`,
-so the two cases are supplied by `abs_choice`. -/
-private theorem abs_emod_two (x : ℤ) : |x| % 2 = x % 2 := by
-  rcases abs_choice x with h | h
-  · rw [h]
-  · rw [h]; omega
-
 /-- **The relator vanishes at any quadruple of one parity.** All four indices are made
 nonnegative by sign equivariance, a coincidence between any two is one of Mathlib's
 `atomRel_same` lemmas, and the remaining pairwise-distinct case is sorted. This is the net
@@ -399,8 +394,10 @@ private theorem atomRel_eq_zero_of_parity (odd : W.Odd) (zero : W 0 = 0)
   · rw [← hcd, atomRel_same₃₄]; simp [zero]
   have hpar : ∀ i j : Fin 4, (![|a|, |b|, |c|, |d|] : Fin 4 → ℤ) i % 2 =
       (![|a|, |b|, |c|, |d|] : Fin 4 → ℤ) j % 2 := by
-    have ha := abs_emod_two a; have hb := abs_emod_two b
-    have hc := abs_emod_two c; have hd := abs_emod_two d
+    have ha : |a| % 2 = a % 2 := Int.abs_modEq_two
+    have hb : |b| % 2 = b % 2 := Int.abs_modEq_two
+    have hc : |c| % 2 = c % 2 := Int.abs_modEq_two
+    have hd : |d| % 2 = d % 2 := Int.abs_modEq_two
     intro i j; fin_cases i <;> fin_cases j <;> simp <;> omega
   have hinj : Function.Injective (![|a|, |b|, |c|, |d|] : Fin 4 → ℤ) := by
     intro i j hij
@@ -432,7 +429,7 @@ theorem isEllipticSequence_of_rel (odd : W.Odd) (zero : W 0 = 0) (one : W 1 ∈ 
     (oddRec : ∀ m : ℤ, 2 ≤ m → rel W (m + 1) m 1 0 = 0)
     (evenRec : ∀ m : ℤ, 3 ≤ m → rel W (m + 1) (m - 1) 1 0 = 0) :
     IsEllipticSequence W :=
-  fun p q r ↦ isEllipticNet_of_rel odd zero one two oddRec evenRec p q r 0
+  (isEllipticNet_of_rel odd zero one two oddRec evenRec).isEllipticSequence
 
 end IsEllipticNet
 
