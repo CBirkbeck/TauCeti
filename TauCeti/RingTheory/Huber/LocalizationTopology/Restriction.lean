@@ -11,7 +11,7 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Completion
 
 A rational subset `U = R(T/s)` of `Spa(A, A⁺)` has many presentations, and the roadmap's Layer 3.1
 asks for restriction maps between the coordinate rings of two of them, *satisfying the identity and
-composition laws*. This file proves the identity law.
+composition laws*. This file proves both laws.
 
 The maps themselves need no new construction: `A⟨T'/s'⟩` supplies the instances that
 `existsUnique_continuous_ringHom_completion_locTopology` demands of its target — `CompleteSpace`
@@ -21,10 +21,10 @@ scope explicitly or the universal property will not apply. So a restriction map 
 property instantiated at another completed localisation, and the laws it satisfies are consequences
 of the *uniqueness* half.
 
-The identity law is the first of those: a continuous ring endomorphism of `A⟨T/s⟩` commuting with
-the structure map from `A` is the identity, because the identity map commutes too and only one map
-can. The composition law follows the same way — a composite of two such maps still commutes with
-the structure maps, so it is *the* map — and is left to a follow-up.
+Both laws come out that way. A continuous ring endomorphism of `A⟨T/s⟩` commuting with the
+structure map is the identity, because the identity commutes too and only one map can; and for
+three presentations, a composite `h ∘ g` still commutes with the structure maps, so any continuous
+map `A⟨T/s⟩ → A⟨T''/s''⟩` commuting with them equals it.
 
 The hypotheses are those the universal property needs (`s` a unit, the fractions power-bounded),
 not the geometric condition one would prefer. Wedhorn obtains them from an inclusion
@@ -34,6 +34,7 @@ not attempted here.
 ## Main results
 
 * `TauCeti.Huber.PairOfDefinition.eq_id_of_comp_toCompletionLoc`: the identity law.
+* `TauCeti.Huber.PairOfDefinition.eq_comp_of_comp_toCompletionLoc`: the composition law.
 
 ## References
 
@@ -74,6 +75,48 @@ theorem eq_id_of_comp_toCompletionLoc (P : PairOfDefinition A) (T : Finset A) (s
   obtain ⟨u, -, huniq⟩ := existsUnique_continuous_ringHom_completion_locTopology P T s S hden
     (continuous_toCompletionLoc P T s S hden).continuousAt hs hpow
   rw [huniq g ⟨hg, hcomp⟩, huniq (RingHom.id _) ⟨continuous_id, by ext a; simp⟩]
+
+/-- **The composition law for restriction maps.** For three presentations, any continuous ring
+homomorphism `A⟨T/s⟩ → A⟨T''/s''⟩` commuting with the structure maps equals the composite of the
+restrictions through `A⟨T'/s'⟩`: the composite commutes with them too, and only one map can. -/
+theorem eq_comp_of_comp_toCompletionLoc (P : PairOfDefinition A) (T T' T'' : Finset A)
+    (s s' s'' : A) (S S' S'' : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    [CommRing S'] [Algebra A S'] [IsLocalization.Away s' S']
+    [CommRing S''] [Algebra A S''] [IsLocalization.Away s'' S'']
+    (hden : HasDenominatorPower P T s S) (hden' : HasDenominatorPower P T' s' S')
+    (hden'' : HasDenominatorPower P T'' s'' S'') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    letI := locUniformSpace P T'' s'' S'' hden''
+    letI := isUniformAddGroup_locUniformSpace P T'' s'' S'' hden''
+    letI := isTopologicalRing_locUniformSpace P T'' s'' S'' hden''
+    ∀ (hs : IsUnit (toCompletionLoc P T'' s'' S'' hden'' s))
+      (_ : ∀ t ∈ T, IsPowerBounded (toCompletionLoc P T'' s'' S'' hden'' t * ↑hs.unit⁻¹))
+      (g : UniformSpace.Completion S →+* UniformSpace.Completion S'), Continuous g →
+      g.comp (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden' →
+      ∀ (h : UniformSpace.Completion S' →+* UniformSpace.Completion S''), Continuous h →
+      h.comp (toCompletionLoc P T' s' S' hden') = toCompletionLoc P T'' s'' S'' hden'' →
+      ∀ (k : UniformSpace.Completion S →+* UniformSpace.Completion S''), Continuous k →
+      k.comp (toCompletionLoc P T s S hden) = toCompletionLoc P T'' s'' S'' hden'' →
+      k = h.comp g := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  let _ := locUniformSpace P T' s' S' hden'
+  have _ := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+  have _ := isTopologicalRing_locUniformSpace P T' s' S' hden'
+  let _ := locUniformSpace P T'' s'' S'' hden''
+  have _ := isUniformAddGroup_locUniformSpace P T'' s'' S'' hden''
+  have _ := isTopologicalRing_locUniformSpace P T'' s'' S'' hden''
+  have _ := isHuberRing_completion_locTopology P T'' s'' S'' hden''
+  intro hs hpow g hg hgc h hh hhc k hk hkc
+  obtain ⟨u, -, huniq⟩ := existsUnique_continuous_ringHom_completion_locTopology P T s S hden
+    (continuous_toCompletionLoc P T'' s'' S'' hden'').continuousAt hs hpow
+  rw [huniq k ⟨hk, hkc⟩, huniq (h.comp g) ⟨hh.comp hg, by rw [RingHom.comp_assoc, hgc, hhc]⟩]
 
 end PairOfDefinition
 
