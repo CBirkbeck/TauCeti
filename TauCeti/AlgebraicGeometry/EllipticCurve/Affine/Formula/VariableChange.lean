@@ -151,11 +151,12 @@ change of variables scales the Weierstrass polynomial by `u⁶`, and `u` is a un
       - (C.u : R) ^ 3 * y * u_pow_mul_variableChange_a₃ W C
       + (C.u : R) ^ 2 * x * u_pow_mul_variableChange_a₄ W C + u_pow_mul_variableChange_a₆ W C
 
-/-- **The `Y`-partial derivative under the change of variables**, scaling by `u³`. Both sides are
-`polynomialY` evaluated at a point, written in the expanded form that `evalEval_polynomialY` and
-`nonsingular_iff'` produce; this is the second row of the matrix in `variableChange_nonsingular`
+/-- **The `Y`-partial derivative under the change of variables**, scaling by `u³`. The left-hand
+side is `W.polynomialY` at the image point, the right-hand side `u³` times `(C • W).polynomialY`
+at the source, both written in the expanded form that `evalEval_polynomialY` and
+`nonsingular_iff'` produce. This is the second row of the matrix in `variableChange_nonsingular`
 below. -/
-private lemma variableChange_polynomialY_eval (x y : R) :
+private lemma variableChange_evalEval_polynomialY (x y : R) :
     2 * ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
         + W.a₁ * ((C.u : R) ^ 2 * x + C.r) + W.a₃
       = (C.u : R) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃) := by
@@ -163,10 +164,13 @@ private lemma variableChange_polynomialY_eval (x y : R) :
     - u_pow_mul_variableChange_a₃ W C
 
 /-- **The `X`-partial derivative under the change of variables**, scaling by `u⁴` and shearing by
-an `s`-multiple of the `Y`-partial. Both sides are `polynomialX` evaluated at a point, in the same
-expanded form as `variableChange_polynomialY_eval`; this is the first row of the matrix in
-`variableChange_nonsingular` below, and the only place the shear `s` enters a derivative. -/
-private lemma variableChange_polynomialX_eval (x y : R) :
+an `s`-multiple of the `Y`-partial. The left-hand side is `W.polynomialX` at the image point. The
+right-hand side is *not* a `polynomialX` alone: it is `u⁴` times `(C • W).polynomialX` at the
+source, minus `s` times `u³` times `(C • W).polynomialY` there — the shear is what makes this the
+first row `(u⁴, -su³)` of the matrix in `variableChange_nonsingular` below, and this is the only
+identity in the file in which `s` enters a derivative. Everything is in the expanded form that
+`evalEval_polynomialX`, `evalEval_polynomialY` and `nonsingular_iff'` produce. -/
+private lemma variableChange_evalEval_polynomialX (x y : R) :
     W.a₁ * ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
         - (3 * ((C.u : R) ^ 2 * x + C.r) ^ 2 + 2 * W.a₂ * ((C.u : R) ^ 2 * x + C.r) + W.a₄)
       = (C.u : R) ^ 4 * ((C • W).a₁ * y - (3 * x ^ 2 + 2 * (C • W).a₂ * x + (C • W).a₄))
@@ -189,7 +193,7 @@ curve, whereas carrying a point to a point needs no such hypothesis. -/
       ↔ (C • W).toAffine.Nonsingular x y := by
   rw [nonsingular_iff', nonsingular_iff', variableChange_equation]
   refine and_congr_right fun _ ↦ ?_
-  rw [variableChange_polynomialX_eval W C x y, variableChange_polynomialY_eval W C x y,
+  rw [variableChange_evalEval_polynomialX W C x y, variableChange_evalEval_polynomialY W C x y,
     ← not_and_or, ← not_and_or]
   refine not_congr ⟨fun ⟨h1, h2⟩ ↦ ?_, fun ⟨h1, h2⟩ ↦ ?_⟩
   · have hB := (C.u.isUnit.pow 3).mul_right_eq_zero.mp h2
