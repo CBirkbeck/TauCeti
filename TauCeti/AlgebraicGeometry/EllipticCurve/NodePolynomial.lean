@@ -143,16 +143,14 @@ lemma discrim_map_nodePolynomial (φ : A →+* B) (W : WeierstrassCurve A) :
   simp only [discrim, map_add, map_sub, map_mul, map_neg, map_pow, map_ofNat] at h ⊢
   linear_combination h
 
-/-- A power of the constant `u⁻¹` absorbs any smaller power of the constant `u`. This is the one
-piece of arithmetic `ring` cannot do for `variableChange_nodePolynomial` below: it treats `↑u` and
-`↑u⁻¹` as unrelated constants, so their cancellation has to be supplied to `linear_combination`
-as a hypothesis. -/
+/-- A power of the constant polynomial `u⁻¹` absorbs any smaller power of the constant
+polynomial `u`. -/
 private lemma C_inv_pow_mul_C_pow (u : Aˣ) (m n : ℕ) :
     Polynomial.C (↑u⁻¹ : A) ^ (m + n) * Polynomial.C (↑u : A) ^ n
       = Polynomial.C (↑u⁻¹ : A) ^ m := by
-  have h : (↑u⁻¹ : A) ^ (m + n) * (↑u : A) ^ n = (↑u⁻¹ : A) ^ m := by
-    rw [pow_add, mul_assoc, ← mul_pow, u.inv_mul, one_pow, mul_one]
-  simp only [← Polynomial.C_pow, ← Polynomial.C_mul, h]
+  have hCu : Polynomial.C (↑u⁻¹ : A) * Polynomial.C (↑u : A) = 1 := by
+    rw [← Polynomial.C_mul, u.inv_mul, Polynomial.C_1]
+  rw [pow_add, mul_assoc, pow_mul_pow_eq_one n hCu, mul_one]
 
 /-- Under a change of variables `C = (u, r, s, t)`, the node polynomial transforms by the affine
 substitution `T ↦ u T + s` and the unit scalar `u⁻⁶` — reflecting that the tangent slopes `λ`
@@ -161,9 +159,9 @@ transform as `λ ↦ (λ - s)/u`. Over a field this makes splitting invariant; s
 lemma variableChange_nodePolynomial (W : WeierstrassCurve A) (C : VariableChange A) :
     (C • W).nodePolynomial = .C ((↑C.u⁻¹ : A) ^ 6)
       * W.nodePolynomial.comp (.C (↑C.u : A) * .X + .C C.s) := by
-  -- the two cancellations `linear_combination` needs: `e2` corrects the `X²` coefficient, where
-  -- the scalar `u⁻⁶` meets the `u²` from `(uX + s)²`, and `e1` the `X` coefficient, where it
-  -- meets a single `u`.
+  -- `ring` treats `↑u` and `↑u⁻¹` as unrelated constants, so the two cancellations it needs are
+  -- supplied to `linear_combination`: `e2` corrects the `X²` coefficient, where the scalar `u⁻⁶`
+  -- meets the `u²` from `(uX + s)²`, and `e1` the `X` coefficient, where it meets a single `u`.
   have e2 := C_inv_pow_mul_C_pow C.u 4 2
   have e1 := C_inv_pow_mul_C_pow C.u 5 1
   have hc₄ : Polynomial.C W.c₄ = Polynomial.C W.b₂ ^ 2 - 24 * Polynomial.C W.b₄ := by
