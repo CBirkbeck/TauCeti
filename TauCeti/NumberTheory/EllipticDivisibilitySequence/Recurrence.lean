@@ -11,35 +11,31 @@ public import Mathlib.NumberTheory.EllipticDivisibilitySequence
 
 `IsEllipticSequence W` says that `IsEllipticNet.rel W p q r 0` vanishes for all `p, q, r`.
 Mathlib's `IsEllipticNet.rel_odd` and `rel_even` evaluate that relator at the two instances
-relating a doubled index to its neighbours, but they give the relator's *value* rather than what
-its vanishing says.
+relating a doubled index to its neighbours, but they give the relator's *value* rather than the
+relation that follows from its vanishing.
 
-This file carries that through to the consumer. The two `_eq_zero_iff` lemmas say what vanishing
-means at those instances, and the two `IsEllipticSequence` lemmas hand the resulting relation
-straight to someone holding that hypothesis — which is how the division-polynomial development
-meets these, with `IsEllipticSequence` in hand rather than a relator value.
+This file draws that consequence: from `IsEllipticSequence W`, the doubled-index term stands in a
+fixed relation to its neighbours, at both parities. This is the intended interface for the
+division-polynomial development, which will meet the doubling step holding `IsEllipticSequence`
+rather than a relator value; no file consumes it yet.
 
 ## Main results
 
-* `IsEllipticSequence.rel_odd`: from `IsEllipticSequence W`, the relation
+* `IsEllipticSequence.rel_odd`: from `IsEllipticSequence W`,
   `W (2 * m + 1) * W 1 ^ 3 = W (m + 2) * W m ^ 3 - W (m - 1) * W (m + 1) ^ 3`.
-* `IsEllipticSequence.rel_even`: from `IsEllipticSequence W`, the relation
+* `IsEllipticSequence.rel_even`: from `IsEllipticSequence W`,
   `W (2 * m) * W 2 * W 1 ^ 2 = W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2)`.
-* `IsEllipticNet.rel_odd_eq_zero_iff` / `rel_even_eq_zero_iff`: the vanishing form at each
-  instance, which is what the two lemmas above are read off.
 
 ## Implementation notes
 
-These are equations about the doubled-index term, not new predicates. An earlier draft followed
-the source in introducing `OddRec` and `EvenRec` as `Prop` definitions; that stood a second
-recurrence interface beside Mathlib's `rel_odd` / `rel_even`, which already name these two
-instances. Deriving the vanishing form from those lemmas leaves one API rather than two, and makes
-each proof a rewrite followed by a rearrangement.
+Each proof specialises the hypothesis at the relevant instance, rewrites with Mathlib's evaluation
+of the relator there, and rearranges. Nothing intermediate is named: an earlier draft exported the
+two vanishing-form equivalences as well, but their only consumers were the two lemmas below, so
+they were a second public spelling of `rel_odd` / `rel_even` rather than API.
 
-The equations **relate** the doubled-index term to its neighbours; they do not on their own
-determine it. Nothing here inverts `W 1` or `W 2 * W 1 ^ 2`, and over an arbitrary `CommRing`
-neither need be a unit, so solving for `W (2 * m + 1)` or `W (2 * m)` requires a hypothesis this
-file does not carry.
+The equations **relate** the doubled-index term to its neighbours; they do not determine it.
+Nothing here inverts `W 1` or `W 2 * W 1 ^ 2`, and over an arbitrary `CommRing` neither need be a
+unit, so solving for `W (2 * m + 1)` or `W (2 * m)` requires a hypothesis this file does not carry.
 
 ## Provenance
 
@@ -54,8 +50,8 @@ The adaptation is substantial, because Mathlib has since absorbed most of what t
 build for itself. The source states its equivalences against `Rel₃`, a three-index relation of its
 own, and carries `OddRec` / `EvenRec` as `Prop` definitions naming the right-hand sides. Mathlib
 supplies `Rel₃` as `rel W p q r 0` — the shape `IsEllipticSequence` quantifies over — and supplies
-`rel_odd` / `rel_even` as the evaluations at these two instances. What remains to port is the
-passage from value to vanishing, which is what the two lemmas here do.
+`rel_odd` / `rel_even` as the evaluations at these two instances. What remains is the consequence
+drawn here, and none of the source's four declarations survives as such.
 
 The source's `rel₄_iff_evenRec`, a third equivalence against the four-index relator at
 `(2 * m + 1, 2 * m - 1, 3, 1)`, is not ported. It is the one declaration in this group carrying
@@ -66,40 +62,25 @@ descent layer that consumes it.
 
 public section
 
-namespace IsEllipticNet
-
-variable {R : Type*} [CommRing R] (W : ℤ → R) (m : ℤ)
-
-/-- **The odd doubling relation, in vanishing form.** The relator at `(m + 1, m, 1, 0)` vanishes
-exactly when `W (2 * m + 1)` stands in this relation to its neighbours. -/
-theorem rel_odd_eq_zero_iff : rel W (m + 1) m 1 0 = 0 ↔
-    W (2 * m + 1) * W 1 ^ 3 = W (m + 2) * W m ^ 3 - W (m - 1) * W (m + 1) ^ 3 := by
-  rw [rel_odd]
-  constructor <;> intro h <;> linear_combination h
-
-/-- **The even doubling relation, in vanishing form.** The relator at `(m + 1, m - 1, 1, 0)`
-vanishes exactly when `W (2 * m)` stands in this relation to its neighbours. -/
-theorem rel_even_eq_zero_iff : rel W (m + 1) (m - 1) 1 0 = 0 ↔
-    W (2 * m) * W 2 * W 1 ^ 2 =
-      W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2) := by
-  rw [rel_even]
-  constructor <;> intro h <;> linear_combination h
-
-end IsEllipticNet
-
 namespace IsEllipticSequence
 
 variable {R : Type*} [CommRing R] {W : ℤ → R}
 
 /-- **The odd doubling relation of an elliptic sequence.** -/
+@[grind]
 theorem rel_odd (h : IsEllipticSequence W) (m : ℤ) :
-    W (2 * m + 1) * W 1 ^ 3 = W (m + 2) * W m ^ 3 - W (m - 1) * W (m + 1) ^ 3 :=
-  (IsEllipticNet.rel_odd_eq_zero_iff W m).1 (h (m + 1) m 1)
+    W (2 * m + 1) * W 1 ^ 3 = W (m + 2) * W m ^ 3 - W (m - 1) * W (m + 1) ^ 3 := by
+  have hm := h (m + 1) m 1
+  rw [IsEllipticNet.rel_odd] at hm
+  linear_combination hm
 
 /-- **The even doubling relation of an elliptic sequence.** -/
+@[grind]
 theorem rel_even (h : IsEllipticSequence W) (m : ℤ) :
     W (2 * m) * W 2 * W 1 ^ 2 =
-      W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2) :=
-  (IsEllipticNet.rel_even_eq_zero_iff W m).1 (h (m + 1) (m - 1) 1)
+      W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2) := by
+  have hm := h (m + 1) (m - 1) 1
+  rw [IsEllipticNet.rel_even] at hm
+  linear_combination hm
 
 end IsEllipticSequence
