@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.NumberTheory.HeckeRing.GL2.UpperTriangularDelta0
+public import TauCeti.NumberTheory.HeckeRing.GL2.CosetDecomposition
 public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 
 /-!
@@ -18,8 +18,9 @@ and records that it is `ℂ`-linear in `f`.
 Why these representatives: mathlib's `IsBoundedAtImInfty.slash` requires `g 1 0 = 0`, so
 boundedness of a slash at the cusp `∞` is available exactly for upper-triangular `g`. That is why
 the classical arguments run over `!![1, b; 0, p]` rather than over arbitrary coset
-representatives. The upper-triangularity itself reads off `upperTriGL_coe` (#3194) and is not
-restated here.
+representatives. That hypothesis is discharged here by `upperTriRep_apply_one_zero`, which is the
+`(1, 0)` case of `upperTriGL_apply_eq_zero_of_lt` in `HeckeRing/GLn/CosetDecomposition.lean` —
+the entrywise description of the representatives is not restated.
 
 ## Main definitions
 
