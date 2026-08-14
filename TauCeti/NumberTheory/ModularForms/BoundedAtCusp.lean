@@ -49,8 +49,8 @@ variable {c : OnePoint ℝ} {k : ℤ} {ι : Type*} {s : Finset ι} {F : ι → �
 /-- The zero function vanishes at every point of `OnePoint ℝ`. -/
 @[simp]
 lemma IsZeroAt.zero : IsZeroAt c (0 : ℍ → ℂ) k := fun _ _ ↦ by
-  rw [SlashAction.zero_slash, isZeroAtImInfty_iff]
-  exact fun ε hε ↦ ⟨0, fun _ _ ↦ by simpa using hε.le⟩
+  rw [SlashAction.zero_slash]
+  simpa using! Filter.zero_zeroAtFilter _
 
 /-- The zero function is bounded at every point of `OnePoint ℝ`. -/
 @[simp]
