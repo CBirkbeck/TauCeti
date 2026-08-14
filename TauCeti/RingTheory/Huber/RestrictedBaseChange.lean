@@ -67,11 +67,11 @@ needed is of `a ↦ a • m` in the **scalar** variable, and `ContinuousConstSMu
 `m ↦ a • m` in the vector variable instead. -/
 theorem isRestricted_coeffSmulSeries [ContinuousSMul A M] {f : MvPowerSeries (Fin k) A}
     (hf : IsRestricted f) (m : M) : IsRestricted (coeffSmulSeries f m) := by
-  rw [isRestricted_iff_apply]
+  refine (isRestricted_iff (f := coeffSmulSeries f m)).mpr ?_
   have hc : Tendsto (fun a : A ↦ a • m) (nhds 0) (nhds ((0 : A) • m)) :=
     (continuous_id.smul continuous_const).tendsto 0
   rw [zero_smul] at hc
-  exact hc.comp (isRestricted_iff.mp hf)
+  exact hc.comp (isRestricted_iff_coeff.mp hf)
 
 /-- **The comparison map of Wedhorn Remark 8.29**, on the ambient power series:
 `M ⊗[A] A⦃T₁, …, Tₖ⦄ → M⦃T₁, …, Tₖ⦄`, sending `m ⊗ₜ f` to `s ↦ coeff s f • m`.
@@ -121,7 +121,8 @@ theorem isRestricted_baseChange [ContinuousSMul A M] [ContinuousAdd M]
       have hc : Tendsto (fun v : M ↦ a • v) (nhds 0) (nhds (a • (0 : M))) :=
         (continuous_const_smul a).tendsto 0
       rw [smul_zero] at hc
-      rw [map_smul, isRestricted_iff_apply]
-      exact hc.comp (isRestricted_iff_apply.mp hy)
+      rw [map_smul]
+      exact (isRestricted_iff (f := a • baseChange y)).mpr
+        (hc.comp ((isRestricted_iff (f := baseChange y)).mp hy))
 
 end TauCeti.Huber
