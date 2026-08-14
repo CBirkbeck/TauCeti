@@ -50,6 +50,9 @@ variable {c : OnePoint ℝ} {k : ℤ} {ι : Type*} {s : Finset ι} {F : ι → �
 @[simp]
 lemma IsZeroAt.zero : IsZeroAt c (0 : ℍ → ℂ) k := fun _ _ ↦ by
   rw [SlashAction.zero_slash]
+  -- `IsZeroAtImInfty` is a non-`@[expose]` wrapper for `ZeroAtFilter atImInfty`, so the `!` is
+  -- required: plain `simpa using` cannot cross that boundary. This is the same proof Mathlib
+  -- gives for the same goal in `CuspForm.instZero` (`NumberTheory/ModularForms/Basic.lean`).
   simpa using! Filter.zero_zeroAtFilter _
 
 /-- The zero function is bounded at every point of `OnePoint ℝ`. -/
