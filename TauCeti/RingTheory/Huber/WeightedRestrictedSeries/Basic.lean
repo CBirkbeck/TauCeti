@@ -62,7 +62,7 @@ counterexample in `IsWeightFamily`'s docstring shows the hypothesis is not autom
 * `TauCeti.Huber.IsWeightedRestricted.mul`: `A⟨X⟩_T` is closed under multiplication, the point
   Wedhorn flags as not entirely clear; with the additive closure lemmas this gives the subring.
   `TauCeti.Huber.IsWeightedRestricted.finite_coeff_notMem` restates the predicate as finiteness of
-  the exceptional set of coefficients, which is the form that argument consumes.
+  the exceptional set of coefficients.
 * `TauCeti.Huber.weightedNhd_subgroups_basis`: the `U⟨X⟩` are a fundamental system of
   neighbourhoods of zero for a ring topology, with its contract
   (`hasBasis_nhds_zero_weightedTopology`, `isTopologicalRing_weightedTopology`,
@@ -582,7 +582,7 @@ theorem IsWeightedRestricted.add {T : Fin k → Set A} {f g : MvPowerSeries (Fin
   simpa using (weightMul T ν U.toAddSubgroup).add_mem hfν hgν
 
 /-- Weighted restrictedness, restated: for every open additive subgroup `U`, only finitely many
-coefficients fail to lie in `Tν · U`. This is the form the convolution argument consumes. -/
+coefficients fail to lie in `Tν · U`. -/
 theorem IsWeightedRestricted.finite_coeff_notMem {T : Fin k → Set A}
     {f : MvPowerSeries (Fin k) A} (hf : IsWeightedRestricted T f) (U : OpenAddSubgroup A) :
     {ν | MvPowerSeries.coeff ν f ∉ weightMul T ν U.toAddSubgroup}.Finite :=
