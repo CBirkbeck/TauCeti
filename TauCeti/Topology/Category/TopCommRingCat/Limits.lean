@@ -99,6 +99,7 @@ def equalizerFork : Fork f g :=
 It holds by `rfl`, but through `Fork.ofι`, the hom `FunLike` and `Subring.subtype` in turn;
 naming it lets a consumer transport a statement about that coercion to the categorical
 morphism instead of unfolding the chain at the use site. -/
+@[simp]
 theorem coe_equalizerFork_ι : ⇑(equalizerFork f g).ι = ((↑) : RingHom.eqLocus f.val g.val → R) :=
   rfl
 
