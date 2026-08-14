@@ -37,6 +37,14 @@ every use. The definition below carries it once.
 * `TauCeti.Huber.PairOfDefinition.completionLocObj_obj` : the underlying `TopCommRingCat` of that
   object is `UniformSpace.Completion S` with the topology `locUniformSpace` induces.
 
+## Provenance
+
+The packaging here is this repository's own, built on the localisation topology of
+`LocalizationTopology.Basic`, which is the AINTLIB port — see that module's Provenance section for
+the source file and commit. AINTLIB's own structure-presheaf files supplied nothing here: it
+carries the codomain fact inside its presheaf construction rather than as a separate object, so
+there was nothing at this granularity to port.
+
 ## References
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), §8.1–§8.2, where the structure
