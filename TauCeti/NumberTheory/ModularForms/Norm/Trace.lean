@@ -25,6 +25,8 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
   `TauCeti.ModularForm.analyticAt_cuspFunction_normRest`.
 * `TauCeti.ModularForm.slashInvariantNorm_apply_eq_galoisProd_mul_normRest`, with
   `TauCeti.ModularForm.norm_apply_eq_galoisProd_mul_normRest` as its modular-form corollary.
+* `TauCeti.ModularForm.normRest_apply_eq_div`: how to compute the remainder off the zeros of
+  the Galois product.
 
 The remainder and the decomposition itself are algebraic, so they are stated for
 `SlashInvariantForm.norm` under `SlashInvariantFormClass`; only analyticity at the cusp
@@ -234,6 +236,17 @@ public lemma slashInvariantNorm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
     ← Finset.prod_filter_mul_prod_filter_not Finset.univ (· ∈ tPowCosets 𝒢),
     Finset.filter_univ_mem, prod_tPowCosets_quotientFunc f τ, normRest_def,
     Finset.prod_apply]
+
+/-- Off the zeros of the Galois product, `normRest` **is** the quotient of the norm by that
+product. This is what pins the remainder down: together with the decomposition it says how to
+compute `normRest` at a point, with no reference to the coset indexing used to define it. The
+zeros of `galoisProd` are the translates of the zeros of `f`, so for `f ≠ 0` this determines
+`normRest` off a discrete set. -/
+public lemma normRest_apply_eq_div {τ : ℍ}
+    (h : galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ ≠ 0) :
+    normRest f τ = _root_.SlashInvariantForm.norm 𝒮ℒ f τ /
+      galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ := by
+  rw [eq_div_iff h, slashInvariantNorm_apply_eq_galoisProd_mul_normRest, mul_comm]
 
 end Algebraic
 
