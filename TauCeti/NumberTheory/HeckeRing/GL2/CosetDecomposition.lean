@@ -43,6 +43,16 @@ these representatives are in `GL2/UpperTriangularDelta0.lean`.
   hypothesis mathlib's `IsBoundedAtImInfty.slash` asks for.
 * `HeckeRing.GL2.det_upperTriRep_pos`: they have determinant `p > 0`, which is what lets scalars
   pass through a slash by them without the `σ` twist.
+
+## Provenance
+
+No code is ported: the equivalence is a fact about this repository's own `UpperTriEntries`. The
+"classical `T_p` bookkeeping" it adapts to is that of the AINTLIB `LeanModularForms` project
+(Chris Birkbeck, Apache-2.0), `LeanModularForms/HeckeRIngs/GL2/HeckeT_p.lean` at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`, whose `heckeT_p_ut` sums over `b ∈ Finset.range p`
+and whose `T_p_upper p _ b = !![1, b; 0, p]` is `upperTriGL` at `n = 2`, `a = ![1, p]`. This file
+exists so that such a sum transfers onto the existing general-`n` decomposition instead of
+restating the index.
 -/
 
 public section
@@ -69,15 +79,23 @@ dependent function on the ordered index pairs, and by `uniqueIndexPair` there is
 The stated fibre `Fin (a 1 / a 0)` is the fibre `Fin (a default.val.2 / a default.val.1)` that
 `Equiv.piUnique` produces: `default` is *definitionally* `⟨(0, 1), _⟩`, since that is the field
 of `uniqueIndexPair`. It is not syntactically that, which is why the specialisation below needs
-`finCongr` rather than a rewrite. -/
+`finCongr` rather than a rewrite.
+
+`@[expose]` is load-bearing, not decoration: the four characteristic lemmas below are proved by
+`rfl`, and without it the compiler rejects them with "this theorem is exported from the current
+module, [so] all definitions that need to be unfolded to prove this theorem must be exposed".
+Removing it does not trade one API for another — it leaves the equivalence with no usable
+characteristic equations at all. -/
 @[expose]
 def upperTriEntriesEquiv (a : Fin 2 → ℕ) : UpperTriEntries 2 a ≃ Fin (a 1 / a 0) :=
   Equiv.piUnique _
 
+/-- The equivalence reads off the coordinate at the unique index pair. -/
 @[simp]
 lemma upperTriEntriesEquiv_apply {a : Fin 2 → ℕ} (B : UpperTriEntries 2 a) :
     upperTriEntriesEquiv a B = B default := rfl
 
+/-- Its inverse installs a given coordinate at the unique index pair. -/
 @[simp]
 lemma upperTriEntriesEquiv_symm_apply_default {a : Fin 2 → ℕ} (b : Fin (a 1 / a 0)) :
     (upperTriEntriesEquiv a).symm b default = b := rfl
@@ -89,10 +107,13 @@ familiar `!![1, b; 0, p]`. -/
 def upperTriEntriesEquivFin (p : ℕ) : UpperTriEntries 2 ![1, p] ≃ Fin p :=
   (upperTriEntriesEquiv _).trans (finCongr (by simp))
 
+/-- At `a = ![1, p]` the offset read off is the coordinate, as natural numbers: the fibres
+`Fin (![1, p] 1 / ![1, p] 0)` and `Fin p` are definitionally but not syntactically equal. -/
 @[simp]
 lemma upperTriEntriesEquivFin_val {p : ℕ} (B : UpperTriEntries 2 ![1, p]) :
     (upperTriEntriesEquivFin p B : ℕ) = (B default : ℕ) := rfl
 
+/-- At `a = ![1, p]` the coordinate installed is the offset, as natural numbers. -/
 @[simp]
 lemma upperTriEntriesEquivFin_symm_val {p : ℕ} (b : Fin p) :
     (((upperTriEntriesEquivFin p).symm b default : ℕ)) = (b : ℕ) := rfl

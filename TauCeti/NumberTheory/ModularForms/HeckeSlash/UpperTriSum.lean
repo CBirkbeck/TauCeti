@@ -65,13 +65,17 @@ variable (k : ℤ) (p : ℕ)
 noncomputable def heckeSlashUpperTri (f : ℍ → ℂ) : ℍ → ℂ :=
   ∑ b : Fin p, f ∣[k] upperTriRep p b
 
+/-- The defining equation of `heckeSlashUpperTri`, which is its interface: the definition is
+not `@[expose]`, so its body is opaque downstream. -/
 lemma heckeSlashUpperTri_def (f : ℍ → ℂ) :
     heckeSlashUpperTri k p f = ∑ b : Fin p, f ∣[k] upperTriRep p b := (rfl)
 
+/-- The sum sends the zero function to zero. -/
 @[simp] lemma heckeSlashUpperTri_zero : heckeSlashUpperTri k p 0 = 0 := by
   rw [heckeSlashUpperTri]
   exact Finset.sum_eq_zero fun b _ ↦ SlashAction.zero_slash k (upperTriRep p b)
 
+/-- The sum is additive in `f`, since each slash is. -/
 @[simp] lemma heckeSlashUpperTri_add (f g : ℍ → ℂ) :
     heckeSlashUpperTri k p (f + g) = heckeSlashUpperTri k p f + heckeSlashUpperTri k p g := by
   simp [heckeSlashUpperTri, Finset.sum_add_distrib]

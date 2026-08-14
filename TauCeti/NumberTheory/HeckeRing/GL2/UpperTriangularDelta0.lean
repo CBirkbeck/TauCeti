@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DiagonalCoset
-public import TauCeti.NumberTheory.HeckeRing.GL2.CosetDecomposition
+public import TauCeti.NumberTheory.HeckeRing.GLn.CosetDecomposition
 
 /-!
 # Upper-triangular coset representatives at level `N`
