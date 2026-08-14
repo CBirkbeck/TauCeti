@@ -179,26 +179,14 @@ private theorem eventually_dist_parameterizedPath_lt {γ : E → C(K, F)} {p₀ 
     (Metric.continuousAt_iff'.mp hpath ε hε)
 
 /-- **A path's Picard residual vanishes exactly when it satisfies the Picard integral equation.**
-The residual is the path minus its initial value and integrated field, so the two sides are the
-same statement read as an equation of paths and pointwise on `[0, 1]` respectively. Mathlib states
-the same correspondence for its own path space as `ODE.FunSpace.isFixedPt_next_iff`. -/
-private theorem picardResidual_eq_zero_iff (gc : C(E × F, F)) (x₀ : F)
-    (p : E) (q : C(Set.Icc (0 : ℝ) 1, F)) :
-    picardResidual gc x₀ (p, q) = 0 ↔
-      ∀ t : Set.Icc (0 : ℝ) 1,
-        q t = x₀ + ∫ s in (0 : ℝ)..t, gc (p, q (Set.projIcc 0 1 zero_le_one s)) := by
-  constructor
-  · intro hq t
-    simpa only [picardResidual_apply, ContinuousMap.sub_apply, ContinuousMap.add_apply,
-      ContinuousMap.const_apply, ContinuousMap.unitIntervalIntegral_apply,
-      ContinuousMap.comp_apply, parameterizedPath_apply, ContinuousMap.zero_apply, sub_sub,
-      sub_eq_zero] using congrArg (fun r : C(Set.Icc (0 : ℝ) 1, F) ↦ r t) hq
-  · intro h
-    ext t
-    simpa only [picardResidual_apply, ContinuousMap.sub_apply, ContinuousMap.add_apply,
-      ContinuousMap.const_apply, ContinuousMap.unitIntervalIntegral_apply,
-      ContinuousMap.comp_apply, parameterizedPath_apply, ContinuousMap.zero_apply, sub_sub,
-      sub_eq_zero] using h t
+The residual is the path minus the constant path at `x₀` minus the integrated field, so the two
+sides are the same statement read as an equation of paths and pointwise on `[0, 1]` respectively.
+Mathlib states the same equivalence for its own path space as `ODE.FunSpace.isFixedPt_next_iff`. -/
+private theorem picardResidual_eq_zero_iff (gc : C(E × F, F)) (x₀ : F) (p : E)
+    (q : C(Set.Icc (0 : ℝ) 1, F)) :
+    picardResidual gc x₀ (p, q) = 0 ↔ ∀ t : Set.Icc (0 : ℝ) 1,
+      q t = x₀ + ∫ s in (0 : ℝ)..t, gc (p, q (Set.projIcc 0 1 zero_le_one s)) := by
+  simp [ContinuousMap.ext_iff, sub_sub, sub_eq_zero]
 
 /-- A smooth parameterized autonomous vector field which vanishes at the base parameter admits a
 locally smooth family of solutions through a fixed initial state. The result is stated at every
