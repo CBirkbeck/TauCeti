@@ -39,7 +39,7 @@ open UniformSpace
 /-- **Maps out of the completion of a localisation are determined on the base ring.** Two
 continuous ring homomorphisms `Ŝ → B` into a Hausdorff topological semiring that agree after
 composing with `A → S → Ŝ` are equal. -/
-theorem hom_ext_completion_of_isLocalization {A S : Type*} [CommRing A] [CommRing S]
+theorem hom_ext_completion_of_isLocalization {A S : Type*} [CommSemiring A] [CommRing S]
     [Algebra A S] (M : Submonoid A) [IsLocalization M S]
     [UniformSpace S] [IsUniformAddGroup S] [IsTopologicalRing S]
     {B : Type*} [Semiring B] [TopologicalSpace B] [T2Space B]

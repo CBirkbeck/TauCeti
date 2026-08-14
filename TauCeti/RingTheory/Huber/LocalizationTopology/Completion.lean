@@ -35,12 +35,17 @@ complete Hausdorff targets.
   `completionLocalization_ringOfDefinition` and `mem_completionLocalization_idealOfDefinition`:
   the completed pair's API, reducing to the concrete `D` and `J`.
 * `continuous_toCompletionLoc`: the structure map `A → A⟨T/s⟩` is continuous.
-* `isHuberRing_completion_locTopology` and
-  `hom_ext_toCompletionLoc`: two continuous ring homomorphisms out of `A⟨T/s⟩` agreeing on `A`
-  are equal, so a map out of `A⟨T/s⟩` is determined by its restriction to `A`.
-* `TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_completion_locTopology`:
-  `A⟨T/s⟩` is Huber, and the universal
-  property holds across it for complete Hausdorff targets.
+* `isHuberRing_completion_locTopology`: `A⟨T/s⟩` is a Huber ring — the completed pair above is a
+  pair of definition for it.
+* `existsUnique_continuous_ringHom_completion_locTopology`: the universal property, for complete
+  Hausdorff targets.
+* `hom_ext_toCompletionLoc`: two continuous ring homomorphisms out of `A⟨T/s⟩` agreeing on `A` are
+  equal, so a map out of `A⟨T/s⟩` is determined by its restriction to `A`. Unlike the universal
+  property this needs no hypothesis on `s` or the fractions — those govern which maps exist, not
+  when two agree — and its target need only be a Hausdorff topological semiring.
+* `eq_id_of_comp_toCompletionLoc` and `eq_comp_of_comp_toCompletionLoc`: the identity and
+  composition laws that roadmap Layer 3.1 asks of restriction maps, both corollaries of the
+  previous item.
 
 ## Provenance
 
@@ -322,6 +327,30 @@ theorem existsUnique_continuous_ringHom_completion_locTopology {B : Type*} [Comm
       (uniformContinuous_addMonoidHom_of_continuous hgc) fun x ↦ ?_).symm
     simpa [UniformSpace.Completion.coeRingHom] using (congrArg (fun h ↦ h x) hcoe).symm
 
+/-- **Maps out of `A⟨T/s⟩` are determined on `A`.** Two continuous ring homomorphisms into a
+Hausdorff topological semiring that agree after composing with the structure map from `A` are
+equal.
+
+This is `TauCeti.hom_ext_completion_of_isLocalization` at `Submonoid.powers s`, and its content is
+the bridge: `⇑UniformSpace.Completion.coeRingHom` is the coercion `((↑) : S → Completion S)` by the
+definition of `coeRingHom`, so composing with it is exactly `toCompletionLoc`. Crossing that
+definitional equality once here keeps it out of every consumer. -/
+theorem hom_ext_toCompletionLoc [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A)
+    (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) {B : Type*} [Semiring B] [TopologicalSpace B] [T2Space B] :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    ∀ (g h : UniformSpace.Completion S →+* B), Continuous g → Continuous h →
+      g.comp (toCompletionLoc P T s S hden) = h.comp (toCompletionLoc P T s S hden) → g = h := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  intro g h hg hh hcomp
+  refine TauCeti.hom_ext_completion_of_isLocalization (Submonoid.powers s) g h hg hh
+    (RingHom.ext fun a ↦ ?_)
+  exact congrArg (fun k : A →+* B ↦ k a) hcomp
+
 /-- **The identity law.** A continuous ring endomorphism of `A⟨T/s⟩` fixing the structure map from
 `A` is the identity, since the identity fixes it too. -/
 theorem eq_id_of_comp_toCompletionLoc [IsTopologicalRing A] (P : PairOfDefinition A)
@@ -338,15 +367,9 @@ theorem eq_id_of_comp_toCompletionLoc [IsTopologicalRing A] (P : PairOfDefinitio
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
   intro g hg hcomp
-  -- `⇑UniformSpace.Completion.coeRingHom` is the coercion `((↑) : S → Completion S)` by the
-  -- definition of `coeRingHom`, so composing with it is exactly `toCompletionLoc`. That
-  -- unfolding is the only definitional bridge these proofs cross, and this states it once.
-  have hbridge : ∀ (k : UniformSpace.Completion S →+* UniformSpace.Completion S) (a : A),
-      ((k.comp UniformSpace.Completion.coeRingHom).comp (algebraMap A S)) a
-        = (k.comp (toCompletionLoc P T s S hden)) a := fun _ _ ↦ rfl
-  refine TauCeti.hom_ext_completion_of_isLocalization (Submonoid.powers s) g (RingHom.id _)
-    hg continuous_id (RingHom.ext fun a ↦ ?_)
-  rw [hbridge g a, hbridge (RingHom.id _) a, hcomp, RingHom.id_comp]
+  refine hom_ext_toCompletionLoc P T s S hden g (RingHom.id _) hg continuous_id ?_
+  rw [RingHom.id_comp]
+  exact hcomp
 
 /-- **The composition law.** For three presentations, a continuous ring homomorphism
 `A⟨T/s⟩ → A⟨T''/s''⟩` compatible with the structure maps is the composite of the maps through
@@ -387,12 +410,7 @@ theorem eq_comp_of_comp_toCompletionLoc [IsTopologicalRing A] (P : PairOfDefinit
   have hcomp : k.comp (toCompletionLoc P T s S hden)
       = (h.comp g).comp (toCompletionLoc P T s S hden) := by
     rw [RingHom.comp_assoc, hgc, hhc]; exact hkc
-  have hbridge : ∀ (k : UniformSpace.Completion S →+* UniformSpace.Completion S'') (a : A),
-      ((k.comp UniformSpace.Completion.coeRingHom).comp (algebraMap A S)) a
-        = (k.comp (toCompletionLoc P T s S hden)) a := fun _ _ ↦ rfl
-  refine TauCeti.hom_ext_completion_of_isLocalization (Submonoid.powers s) k (h.comp g)
-    hk (hh.comp hg) (RingHom.ext fun a ↦ ?_)
-  rw [hbridge k a, hbridge (h.comp g) a, hcomp]
+  refine hom_ext_toCompletionLoc P T s S hden k (h.comp g) hk (hh.comp hg) hcomp
 
 end PairOfDefinition
 
