@@ -251,6 +251,18 @@ theorem comp_assoc {W₄ : WeierstrassCurve.Affine F} (χ : Isogeny W₃ W₄) (
     (φ : Isogeny W₁ W₂) : (χ.comp ψ).comp φ = χ.comp (ψ.comp φ) :=
   Isogeny.ext <| AlgHom.ext fun x ↦ by simp
 
+/-- **Right cancellation**: precomposition with a fixed isogeny is injective.
+
+An isogeny is determined by its coordinate pullback, and the composite's pullback is
+`φ.fieldPullback ∘ ψ.pullback`. Since `φ.fieldPullback` is a ring homomorphism out of a field it
+is injective, so the two pullbacks agree and the isogenies are equal. Silverman proves the
+corresponding statement by subtracting the two isogenies; at the pullback level no group
+structure on isogenies is needed. -/
+theorem comp_right_cancel {φ : Isogeny W₁ W₂} {ψ₁ ψ₂ : Isogeny W₂ W₃}
+    (h : ψ₁.comp φ = ψ₂.comp φ) : ψ₁ = ψ₂ :=
+  Isogeny.ext <| AlgHom.ext fun x ↦ φ.fieldPullback.toRingHom.injective <| by
+    simpa using congrArg (fun χ : Isogeny W₁ W₃ ↦ χ.pullback x) h
+
 end Isogeny
 
 end TauCeti
