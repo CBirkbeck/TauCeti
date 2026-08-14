@@ -38,8 +38,8 @@ converge because `Â` is complete, and their sums exhibit the element as a combi
 
 ## Main results
 
-* `TauCeti.Huber.PairOfDefinition.isBounded_image_coe_of_isBounded` and
-  `TauCeti.Huber.PairOfDefinition.isPowerBounded_coe_of_isPowerBounded`: boundedness and
+* `TauCeti.Huber.PairOfDefinition.isBounded_image_completion_coe_of_isBounded` and
+  `TauCeti.Huber.PairOfDefinition.isPowerBounded_completion_coe_of_isPowerBounded`: boundedness and
   power-boundedness transfer from `A` to its completion along the canonical map.
 * `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_completion`: the closures of the images of
   the powers `Iⁿ` are a neighbourhood basis of zero in `Â`.
@@ -442,8 +442,12 @@ theorem mem_completion_idealOfDefinition (P : PairOfDefinition A)
       (⟨x, by rw [← completion_ringOfDefinition P]; exact x.2⟩ :
         P.completionRingOfDefinition) ∈ P.completionIdeal := (Iff.rfl)
 
-/-- The image of a bounded subset of `A` is bounded in the completion. -/
-theorem isBounded_image_coe_of_isBounded (P : PairOfDefinition A) {X : Set A}
+/-- The image of a bounded subset of `A` is bounded in the completion.
+
+The closure argument follows AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, branch
+`dev/adic-spaces` at `37bbdaeb9`), `projects/AdicSpaces/Adic spaces/LocalizationTopology.lean:545`,
+where it is stated for the rational-localisation completion. No proof was copied. -/
+theorem isBounded_image_completion_coe_of_isBounded (P : PairOfDefinition A) {X : Set A}
     (hX : IsBounded X) : IsBounded (((↑) : A → Completion A) '' X) := by
   rw [isBounded_iff]
   intro U hU
@@ -473,7 +477,7 @@ theorem isBounded_image_coe_of_isBounded (P : PairOfDefinition A) {X : Set A}
     (image_closure_subset_closure_image hcont ⟨y, hy, rfl⟩)
 
 /-- **A power-bounded element of `A` stays power-bounded in `Â`.** -/
-theorem isPowerBounded_coe_of_isPowerBounded (P : PairOfDefinition A) {a : A}
+theorem isPowerBounded_completion_coe_of_isPowerBounded (P : PairOfDefinition A) {a : A}
     (ha : IsPowerBounded a) : IsPowerBounded ((a : Completion A)) := by
   have h : Set.range (((a : Completion A)) ^ · : ℕ → Completion A)
       = ((↑) : A → Completion A) '' Set.range (a ^ · : ℕ → A) := by
@@ -484,7 +488,7 @@ theorem isPowerBounded_coe_of_isPowerBounded (P : PairOfDefinition A) {a : A}
     · rintro ⟨_, ⟨k, rfl⟩, rfl⟩
       exact ⟨k, (map_pow Completion.coeRingHom a k).symm⟩
   rw [isPowerBounded_iff, h]
-  exact P.isBounded_image_coe_of_isBounded (isPowerBounded_iff.mp ha)
+  exact P.isBounded_image_completion_coe_of_isBounded (isPowerBounded_iff.mp ha)
 
 end PairOfDefinition
 
