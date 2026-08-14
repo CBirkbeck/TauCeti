@@ -44,7 +44,6 @@ Hausdorff topological `A`-algebra, with all of that structure found by instance 
   discrete topology is strongly noetherian — over a discrete ring the restricted series are
   the polynomials, already complete, and the Hilbert basis theorem applies. In particular
   `ℤ`, every field, and every noetherian ring discretely topologised witness the predicate.
-
 * `TauCeti.Huber.isNoetherianRing_completion_of_isStronglyNoetherian`: at zero variables the
   predicate says exactly that the separated completion `Â` is noetherian. The identification
   behind it is topological, not merely a ring isomorphism: the weight at `k = 0` is the empty
