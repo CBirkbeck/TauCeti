@@ -128,9 +128,16 @@ lemma upperTriRep_def (b : Fin p) :
 /-- The representatives have positive determinant: `det !![1, b; 0, p] = p > 0`. -/
 lemma det_upperTriRep_pos (b : Fin p) :
     0 < (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ).det := by
-  rw [upperTriRep_def, upperTriGL_coe (fun i ↦ by fin_cases i <;> simp [b.pos]),
-    Matrix.det_mul, Matrix.det_diagonal]
-  simp [Matrix.det_fin_two, Matrix.map_apply, Fin.prod_univ_two, b.pos]
+  have hpos : ∀ i : Fin 2, 0 < ![1, p] i := fun i ↦ by fin_cases i <;> simp [b.pos]
+  have hdiag : (0 : ℚ) < (↑(natDiagGL 2 ![1, p]) : Matrix (Fin 2) (Fin 2) ℚ).det :=
+    natDiagGL_det_pos 2 ![1, p] hpos
+  have hunit := RingHom.map_det (Int.castRingHom ℚ)
+    (unitriMat ((upperTriEntriesEquivFin p).symm b))
+  rw [det_unitriMat] at hunit
+  have hunit' : ((unitriMat ((upperTriEntriesEquivFin p).symm b)).map
+      (Int.cast : ℤ → ℚ)).det = 1 := by simpa using hunit.symm
+  rw [upperTriRep_def, upperTriGL_def, Units.val_mul, Matrix.det_mul]
+  simpa [hunit'] using hdiag
 
 end HeckeRing.GL2
 
