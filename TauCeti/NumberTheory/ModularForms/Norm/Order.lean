@@ -66,30 +66,18 @@ public lemma orderOfVanishingAt_norm (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) (
     (fun q _ ↦ SlashInvariantForm.mdifferentiable_quotientFunc f q)
     (fun q _ ↦ SlashInvariantForm.quotientFunc_ne_zero hf q) p
 
-/-- The norm vanishes at a point to at least the order the form itself does: the form is the
-identity-coset factor of the product, and the other factors contribute non-negative orders.
-
-This is the "the zeros of the norm dominate the zeros of the form" step, which transports
-finiteness of the zero set down from the level-one norm to the original form. -/
-public lemma orderOfVanishingAt_le_orderOfVanishingAt_norm (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0)
-    (p : ℍ) : orderOfVanishingAt (⇑f) p ≤
-      orderOfVanishingAt (⇑(_root_.ModularForm.norm ℋ f)) p := by
-  rw [orderOfVanishingAt_norm f hf p]
+/-- The norm vanishes at a point to at least the order the form itself does: the zeros of the
+norm dominate the zeros of the form. -/
+public lemma orderOfVanishingAt_le_orderOfVanishingAt_norm (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) (p : ℍ) :
+    orderOfVanishingAt (⇑f) p ≤ orderOfVanishingAt (⇑(_root_.ModularForm.norm ℋ f)) p := by
   let _ : Fintype (ℋ ⧸ 𝒢.subgroupOf ℋ) := Fintype.ofFinite _
-  rw [finsum_eq_sum_of_fintype]
-  -- The coset space is not a group — `𝒢.subgroupOf ℋ` need not be normal — so the identity
+  rw [orderOfVanishingAt_norm f hf p, finsum_eq_sum_of_fintype]
+  -- The form is the identity-coset factor of the product and the other factors have non-negative
+  -- order. The coset space is not a group — `𝒢.subgroupOf ℋ` need not be normal — so the identity
   -- coset is spelled `⟦1⟧` rather than `1`.
-  have h1 : _root_.SlashInvariantForm.quotientFunc f (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) = ⇑f := by
-    rw [_root_.SlashInvariantForm.quotientFunc_mk]
-    simp
-  calc orderOfVanishingAt (⇑f) p
-      = orderOfVanishingAt
-          (_root_.SlashInvariantForm.quotientFunc f (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ)) p := by rw [h1]
-    _ ≤ ∑ q, orderOfVanishingAt (_root_.SlashInvariantForm.quotientFunc f q) p :=
-        Finset.single_le_sum
-          (fun q _ ↦ orderOfVanishingAt_nonneg
-            (SlashInvariantForm.mdifferentiable_quotientFunc f q) p)
-          (Finset.mem_univ _)
+  simpa using Finset.single_le_sum
+    (fun q _ ↦ orderOfVanishingAt_nonneg (SlashInvariantForm.mdifferentiable_quotientFunc f q) p)
+    (Finset.mem_univ (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ))
 
 end ModularForm
 
