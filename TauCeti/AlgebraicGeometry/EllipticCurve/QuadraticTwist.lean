@@ -710,25 +710,19 @@ private theorem exists_smul_eq_quadraticTwist_of_map_eq_negVariableChange_mul
     (hρ : ρ • E'.baseChange L = E.baseChange L) {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1)
     (hρmap : ρ.map (σ : L →+* L) = (E.baseChange L).negVariableChange * ρ) :
     ∃ C : VariableChange K, C • E' = E.quadraticTwist L := by
-  -- composing `ρ` with the inverse trace-norm change of variables cancels the cocycle, so the
-  -- composite descends to `K`
-  obtain ⟨θ, hθ⟩ := Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap K L
-  have hinj := FaithfulSMul.algebraMap_injective K L
-  set C₁ := E.quadraticTwistOfTraceNormVariableChange hθ hσ with hC₁
-  have hcoc := E.map_quadraticTwistOfTraceNormVariableChange hθ hσ
-  have hχiso : (C₁⁻¹ * ρ) • E'.baseChange L
-      = (E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ)).baseChange L := by
-    rw [mul_smul, hρ, hC₁, E.inv_quadraticTwistOfTraceNormVariableChange_smul hθ hσ]
-  have hχinv : (C₁⁻¹ * ρ).map (σ : L →+* L) = C₁⁻¹ * ρ := by
-    rw [VariableChange.map_mul, VariableChange.map_inv, hcoc, hρmap, mul_inv_rev,
-      (E.baseChange L).negVariableChange_inv, mul_assoc,
+  -- the twist's own change of variables carries the opposite cocycle, so `T · ρ` is
+  -- `σ`-invariant and descends to `K`
+  have hχiso : (E.quadraticTwistVariableChange L * ρ) • E'.baseChange L
+      = (E.quadraticTwist L).baseChange L := by
+    rw [mul_smul, hρ, E.quadraticTwistVariableChange_smul L]
+  have hχinv : (E.quadraticTwistVariableChange L * ρ).map (σ : L →+* L)
+      = E.quadraticTwistVariableChange L * ρ := by
+    rw [VariableChange.map_mul, E.map_quadraticTwistVariableChange L hσ, hρmap, mul_assoc,
       ← mul_assoc (E.baseChange L).negVariableChange,
       (E.baseChange L).negVariableChange_mul_self, one_mul]
   obtain ⟨χK, hχK⟩ := VariableChange.exists_baseChange_eq_of_map_eq L hσ hχinv
-  have hE'T : χK • E' = E.quadraticTwistOf (Algebra.trace K L θ) (Algebra.norm K θ) :=
-    smul_eq_of_baseChange_smul_eq L hinj χK (by rw [hχK]; exact hχiso)
-  obtain ⟨C₀, hC₀⟩ := E.exists_smul_quadraticTwist_eq hθ
-  exact ⟨C₀⁻¹ * χK, by rw [mul_smul, hE'T, ← hC₀, inv_smul_smul]⟩
+  exact ⟨χK, smul_eq_of_baseChange_smul_eq L (FaithfulSMul.algebraMap_injective K L) χK
+    (by rw [hχK]; exact hχiso)⟩
 
 variable (L) in
 /-- **Classification of the forms of `E` split by `L/K`, for `j(E) ∉ {0, 1728}`.** A curve over `K`
