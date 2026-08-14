@@ -29,8 +29,8 @@ the entrywise description of the representatives is not restated.
 
 ## Main results
 
-* `HeckeRing.GL2.heckeSlashUpperTri_def`: the characteristic equation, which is the interface
-  since the definition is not `@[expose]`.
+* `HeckeRing.GL2.heckeSlashUpperTri_def`: the characteristic equation, the convenient rewrite
+  for turning the operator back into its sum.
 * `HeckeRing.GL2.heckeSlashUpperTri_zero`, `heckeSlashUpperTri_add`,
   `heckeSlashUpperTri_smul`: linearity in `f`.
 The representatives themselves, and their upper-triangularity and positive determinant, live in
@@ -65,8 +65,8 @@ variable (k : ℤ) (p : ℕ)
 noncomputable def heckeSlashUpperTri (f : ℍ → ℂ) : ℍ → ℂ :=
   ∑ b : Fin p, f ∣[k] upperTriRep p b
 
-/-- The defining equation of `heckeSlashUpperTri`, which is its interface: the definition is
-not `@[expose]`, so its body is opaque downstream. -/
+/-- The defining equation of `heckeSlashUpperTri`: the convenient rewrite for turning the
+operator back into its sum. -/
 lemma heckeSlashUpperTri_def (f : ℍ → ℂ) :
     heckeSlashUpperTri k p f = ∑ b : Fin p, f ∣[k] upperTriRep p b := (rfl)
 
