@@ -23,7 +23,7 @@ order of the norm is the sum of the orders of the factors.
 * `TauCeti.SlashInvariantForm.quotientFunc_ne_zero`: a coset factor of the norm of a nonzero
   form is nonzero.
 * `TauCeti.ModularForm.orderOfVanishingAt_norm`: the vanishing order of the norm at a point
-  is the sum of the vanishing orders of the coset factors.
+  is the sum, over the coset space, of the vanishing orders of the coset factors.
 -/
 
 open UpperHalfPlane
@@ -51,26 +51,15 @@ end SlashInvariantForm
 namespace ModularForm
 
 variable [𝒢.IsFiniteRelIndex ℋ] [ℋ.HasDetPlusMinusOne] [ModularFormClass F 𝒢 k]
-  [Fintype (ℋ ⧸ 𝒢.subgroupOf ℋ)]
-
-/-- The norm, as a function, is the product of the coset factors. -/
-private lemma coe_norm_eq_prod (f : F) :
-    (⇑(_root_.ModularForm.norm ℋ f) : ℍ → ℂ) =
-      ∏ q : ℋ ⧸ 𝒢.subgroupOf ℋ, _root_.SlashInvariantForm.quotientFunc f q := by
-  ext τ
-  -- The two products differ only in the `Fintype` instance on the coset space: the norm
-  -- builds its own with `Fintype.ofFinite`, while this statement takes one as an argument.
-  -- `Fintype` is a subsingleton, so the two index sets — and hence the products — agree.
-  simp only [_root_.ModularForm.coe_norm, Finset.prod_apply]
-  congr!
 
 /-- The vanishing order of the norm at an interior point is the sum of the vanishing orders
 of its coset factors. -/
 public lemma orderOfVanishingAt_norm (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) (p : ℍ) :
     orderOfVanishingAt (⇑(_root_.ModularForm.norm ℋ f)) p =
-      ∑ q : ℋ ⧸ 𝒢.subgroupOf ℋ,
+      ∑ᶠ q : ℋ ⧸ 𝒢.subgroupOf ℋ,
         orderOfVanishingAt (_root_.SlashInvariantForm.quotientFunc f q) p := by
-  rw [coe_norm_eq_prod]
+  let _ : Fintype (ℋ ⧸ 𝒢.subgroupOf ℋ) := Fintype.ofFinite _
+  rw [finsum_eq_sum_of_fintype, _root_.ModularForm.coe_norm]
   exact orderOfVanishingAt_prod
     (fun q _ ↦ SlashInvariantForm.mdifferentiable_quotientFunc f q)
     (fun q _ ↦ SlashInvariantForm.quotientFunc_ne_zero hf q) p
