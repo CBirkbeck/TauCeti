@@ -23,6 +23,17 @@ an operator preserves vanishing at the cusps is an induction over the summands, 
   bounded, at every point of `OnePoint ℝ`.
 * `OnePoint.IsZeroAt.sum`, `OnePoint.IsBoundedAt.sum`: a finite sum of functions vanishing
   (resp. bounded) at `c` vanishes (resp. is bounded) at `c`.
+
+## Provenance
+
+No code is transcribed here, but the gap these lemmas fill was identified from the AINTLIB
+`LeanModularForms` project (Chris Birkbeck, Apache-2.0):
+`LeanModularForms/HeckeRIngs/GL2/AdjointTheory.lean` lines 62-71, at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`. Its `heckeT_p_ut_zero_at_cusps` open-codes this
+induction with `Finset.sum_induction`, and obtains the base case by constructing a zero
+`CuspForm` purely to invoke `zero_at_cusps'` — because `IsZeroAt c 0 k` is not stated anywhere.
+The statements below are about Mathlib's `OnePoint.IsZeroAt`/`IsBoundedAt` and are given at
+arbitrary `c`, `k` and index type.
 -/
 
 public section
