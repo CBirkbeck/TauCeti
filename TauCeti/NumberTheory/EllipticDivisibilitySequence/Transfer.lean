@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.NumberTheory.EllipticDivisibilitySequence
+import Mathlib.Order.Fin.Tuple
 
 /-!
 # Index bookkeeping for the descent on the elliptic relator
@@ -47,12 +48,11 @@ Parity is spelled as Mathlib spells it for this API — the unbundled conjunctio
 predicate over `Int.negOnePow`. Matching the upstream shape means those two lemmas apply with no
 conversion at the use sites, and avoids standing a second parity predicate next to Mathlib's.
 
-The ordering half is likewise a plain conjunction of the three adjacent inequalities rather than
-`StrictAnti ![a, b, c, d]`. Mathlib's `StrictAnti` is a predicate on order-preserving *functions*,
-and it is nowhere applied to a `Matrix.cons` tuple in Mathlib itself; the descent, meanwhile,
-consumes exactly the three adjacent comparisons at every site, so bundling them into a function on
-`Fin 4` and unbundling them again at each use would add a layer without adding a fact.
-`Fin.strictAnti_iff_succ_lt` is the bridge if a caller ever wants the bundled form.
+The ordering half reuses Mathlib's tuple API: it is `StrictAnti ![a, b, c, d]`, not a hand-rolled
+chain of three inequalities. `Mathlib/Order/Fin/Tuple.lean` states that API through `vecCons` —
+`strictAnti_vecCons` and `strictAnti_vecEmpty`, both `@[simp]` — so `simp` unfolds the tuple form
+into the adjacent comparisons the descent consumes, and `nonnegStrictDecreasing₄_def` records that
+normal form once for downstream use.
 
 ## Provenance
 
@@ -80,14 +80,18 @@ public section
 namespace IsEllipticNet
 
 /-- The four indices are nonnegative and strictly decreasing. Nonnegativity is bundled in because
-the descent needs it wherever it needs the ordering. -/
-def NonnegStrictDecreasing₄ (a b c d : ℤ) : Prop := 0 ≤ d ∧ d < c ∧ c < b ∧ b < a
+the descent needs it wherever it needs the ordering; the decreasing half is Mathlib's
+`StrictAnti` on the tuple. -/
+def NonnegStrictDecreasing₄ (a b c d : ℤ) : Prop := 0 ≤ d ∧ StrictAnti ![a, b, c, d]
 
-/-- The defining formula for `NonnegStrictDecreasing₄`. The definition body is not exposed, so this
-equation lemma is how a consumer computes with it, and it is the normal form `simp` uses. -/
+/-- The adjacent-inequality form of `NonnegStrictDecreasing₄`. The definition body is not exposed,
+so this equation lemma is how a consumer computes with it, and it is the normal form `simp` uses. -/
 @[simp]
 theorem nonnegStrictDecreasing₄_def (a b c d : ℤ) :
-    NonnegStrictDecreasing₄ a b c d ↔ 0 ≤ d ∧ d < c ∧ c < b ∧ b < a := Iff.rfl
+    NonnegStrictDecreasing₄ a b c d ↔ 0 ≤ d ∧ d < c ∧ c < b ∧ b < a := by
+  unfold NonnegStrictDecreasing₄
+  simp
+  omega
 
 /-- **Same parity survives the transfer.** Stated for the transferred quadruple exactly as
 `atomRel_avg_sub` produces it, with the last index raw. -/
@@ -117,6 +121,7 @@ theorem nonnegStrictDecreasing₄_avg_sub {a b c d : ℤ}
     NonnegStrictDecreasing₄ ((a + b + c + d) / 2 - d) ((a + b + c + d) / 2 - c)
       ((a + b + c + d) / 2 - b) |(a + b + c + d) / 2 - a| := by
   obtain ⟨h₁, h₂, h₃⟩ := parity
+  rw [nonnegStrictDecreasing₄_def] at anti ⊢
   obtain ⟨hd, hdc, hcb, hba⟩ := anti
   refine ⟨abs_nonneg _, ?_, by omega, by omega⟩
   rcases abs_cases ((a + b + c + d) / 2 - a) with ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] <;> omega
@@ -128,6 +133,7 @@ theorem six_le_of_parity_of_nonnegStrictDecreasing₄ {a b c d : ℤ}
     (anti : NonnegStrictDecreasing₄ a b c d) :
     6 ≤ a := by
   obtain ⟨h₁, h₂, h₃⟩ := parity
+  rw [nonnegStrictDecreasing₄_def] at anti
   obtain ⟨hd, hdc, hcb, hba⟩ := anti
   omega
 
