@@ -125,6 +125,8 @@ theorem weightedEvalHomCompletion_coe (hT : IsWeightFamily T) (hφ : ContinuousA
       = weightedEvalHom hT hφ hb f :=
   Completion.extensionHom_coe (weightedEvalHom hT hφ hb) (continuous_weightedEvalHom hT hφ hb) f
 
+/-- The extended evaluation homomorphism is continuous: it is a `UniformSpace.Completion`
+extension, and those are continuous by construction. -/
 theorem continuous_weightedEvalHomCompletion (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
     (hb : IsWeightBounded φ T b) : Continuous (weightedEvalHomCompletion hT hφ hb) :=
   Completion.continuous_extension
