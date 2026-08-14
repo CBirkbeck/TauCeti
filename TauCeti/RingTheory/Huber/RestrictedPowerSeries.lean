@@ -146,7 +146,7 @@ theorem isRestricted_iff {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
 
 /-- Unfolding lemma for `TauCeti.Huber.IsRestricted` over a semiring, through
 `MvPowerSeries.coeff`. The body is not exposed, so this is how consumers recover the defining
-convergence condition; it holds because `coeff` is projection. -/
+convergence condition where the coefficients form a semiring. -/
 theorem isRestricted_iff_coeff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
     {f : MvPowerSeries (Fin k) A} :
     IsRestricted f ↔
@@ -202,8 +202,7 @@ theorem IsRestricted.neg {k : ℕ} {M : Type*} [AddGroup M] [TopologicalSpace M]
 The scalar ring is unrelated to the coefficients' own structure — only the action has to be
 continuous in the vector variable, which is `ContinuousConstSMul`. Stated so that consumers
 holding `IsRestricted` can use it directly, as they can `IsRestricted.add` and
-`IsRestricted.neg`; `restrictedMvPowerSeriesSubmodule` does not go through it, being
-`Filter.zeroAtFilterSubmodule` itself. -/
+`IsRestricted.neg`. -/
 theorem IsRestricted.smul {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M]
     [TopologicalSpace M] [Module R M] [ContinuousConstSMul R M] {f : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (c : R) : IsRestricted (c • f) :=
