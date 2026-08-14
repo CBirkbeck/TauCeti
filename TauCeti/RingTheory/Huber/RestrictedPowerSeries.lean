@@ -167,10 +167,9 @@ theorem isRestricted_zero (k : ℕ) (M : Type*) [Zero M] [TopologicalSpace M] :
 
 /-- **A series with finite support is restricted.**
 
-This is the introduction rule at module coefficients: `isRestricted_zero` gives only `0`, and the
-closure lemmas combine members without producing new ones, so without this nothing nonzero could
-be shown to lie in `M⟨T₁, …, Tₖ⟩`. `isRestricted_one` and `isRestricted_algebraMap` are its
-special cases at `1` and at a constant. -/
+A sufficient condition, and the convenient introduction rule at module coefficients, where the
+closure lemmas only combine existing members. `isRestricted_monomial` is its case at a single
+index, and `isRestricted_one` and `isRestricted_algebraMap` follow from that. -/
 theorem isRestricted_of_hasFiniteSupport {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
     {f : MvPowerSeries (Fin k) M}
     (hf : Function.HasFiniteSupport (f : (Fin k →₀ ℕ) → M)) : IsRestricted f :=
