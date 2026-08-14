@@ -21,7 +21,7 @@ rational description avoids conjugation altogether.
 
 ## Main results
 
-* `isCusp_smul_map_ratCast`: if `c` is a cusp of `𝒮ℒ` then so is `g • c`, for any
+* `IsCusp.smul_map_ratCast`: if `c` is a cusp of `𝒮ℒ` then so is `g • c`, for any
   `g : GL (Fin 2) ℚ` pushed forward to `ℝ`.
 -/
 
@@ -33,7 +33,7 @@ open scoped MatrixGroups
 
 /-- **Rational matrices carry cusps of `𝒮ℒ` to cusps of `𝒮ℒ`.** A cusp is a rational point of
 `OnePoint ℝ`, and `g` has rational entries. -/
-lemma isCusp_smul_map_ratCast {c : OnePoint ℝ} (g : GL (Fin 2) ℚ) (hc : IsCusp c 𝒮ℒ) :
+lemma IsCusp.smul_map_ratCast {c : OnePoint ℝ} (hc : IsCusp c 𝒮ℒ) (g : GL (Fin 2) ℚ) :
     IsCusp (g.map (Rat.castHom ℝ) • c) 𝒮ℒ := by
   rw [isCusp_SL2Z_iff] at hc ⊢
   obtain ⟨x, rfl⟩ := hc

@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.NumberTheory.ModularForms.BoundedAtCusp
-public import TauCeti.NumberTheory.ModularForms.CuspsRat
+public import TauCeti.NumberTheory.ModularForms.Cusps.Rat
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 
 /-!
@@ -15,7 +15,7 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 `heckeSlashSum` is a finite sum of slashes, so its behaviour at a cusp follows from that of its
 summands. A slash is zero at `c` exactly when the original function is zero at `g • c`
 (`OnePoint.IsZeroAt.smul_iff`), and `g • c` is again a cusp because the representatives are
-rational (`isCusp_smul_map_ratCast`). So a function vanishing at every cusp has a slash sum
+rational (`IsCusp.smul_map_ratCast`). So a function vanishing at every cusp has a slash sum
 vanishing at every cusp, whatever representatives were chosen.
 
 This is the step the Layer 2 statement "`Tₙ` preserves `S_k`" rests on. The cusp hypothesis is
@@ -56,7 +56,7 @@ lemma isZeroAt_heckeSlashSum {f : ℍ → ℂ}
     c.IsZeroAt (heckeSlashSum k D f) k := by
   rw [heckeSlashSum_def]
   exact OnePoint.IsZeroAt.sum fun i _ ↦
-    OnePoint.IsZeroAt.smul_iff.mp (hf _ (isCusp_smul_map_ratCast _ hc))
+    OnePoint.IsZeroAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
 
 /-- **The slash sum is bounded at every cusp** when the function is. -/
 lemma isBoundedAt_heckeSlashSum {f : ℍ → ℂ}
@@ -64,7 +64,7 @@ lemma isBoundedAt_heckeSlashSum {f : ℍ → ℂ}
     (hc : IsCusp c 𝒮ℒ) : c.IsBoundedAt (heckeSlashSum k D f) k := by
   rw [heckeSlashSum_def]
   exact OnePoint.IsBoundedAt.sum fun i _ ↦
-    OnePoint.IsBoundedAt.smul_iff.mp (hf _ (isCusp_smul_map_ratCast _ hc))
+    OnePoint.IsBoundedAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
 
 end HeckeRing.GL2
 
