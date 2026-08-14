@@ -116,7 +116,7 @@ private theorem exists_pow_mul_locSubring_mem {B : Type*} [Ring B] [TopologicalS
         rintro w (hw | rfl)
         · exact Subalgebra.algebraMap_mem _ (⟨w, hw⟩ : locSubring P U' s S)
         · exact Algebra.subset_adjoin rfl
-      exact h_le (locSubring_insert_le P t U' s S hx)
+      exact h_le ((locSubring_insert P t U' s S).le hx)
     rw [Algebra.adjoin_singleton_eq_range_aeval, AlgHom.mem_range] at hx_adj
     obtain ⟨p, hp⟩ := hx_adj
     rw [← hp, Polynomial.aeval_eq_sum_range, Finset.sum_mul, map_sum]
@@ -125,16 +125,16 @@ private theorem exists_pow_mul_locSubring_mem {B : Type*} [Ring B] [TopologicalS
       map_mul, map_pow]
     exact hzV (Set.mul_mem_mul (hWV (hm _ (p.coeff i).property b hb)) ⟨i, rfl⟩)
 
-/-- The span step of `continuous_of_continuous_algebraMap_of_isPowerBounded`: once `f` sends every
-`x · b` with `x ∈ D` and `b ∈ Iᵐ` into `W`, it sends every `r · d` with `d` in the span of those
-products into `W` too.
+/-- If `f` sends every `x · b` with `x ∈ D` and `b ∈ Iᵐ` into `W`, then it sends `r · d` into `W`
+for every `r ∈ D` and every `d` in the `D`-span of the image of `Iᵐ`.
 
-Split out because it is a `Submodule.span_induction` over `d` with `r` generalised, which is the
-only reason `r` is universally quantified inside the conclusion rather than fixed at `1`. -/
-private theorem mem_of_mem_span_locIdeal_pow {B : Type*} [Ring B] [TopologicalSpace B]
+The conclusion quantifies over `r` rather than fixing `r = 1` because that is what makes the
+statement usable: multiplying a span element by a further `r` stays in the span, so the `r` has to
+travel through. `W` is an arbitrary additive subgroup, so `B` needs no topology here at all. -/
+private theorem mem_of_mem_span_locIdeal_pow {B : Type*} [Ring B]
     (P : PairOfDefinition A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (f : S →+* B) (W : OpenAddSubgroup B) {m : ℕ}
+    (f : S →+* B) (W : AddSubgroup B) {m : ℕ}
     (hm : ∀ x ∈ locSubring P T s S, ∀ b ∈ P.idealOfDefinition ^ m,
       f (x * algebraMap A S (b : A)) ∈ (W : Set B))
     {d : locSubring P T s S}
@@ -150,7 +150,7 @@ private theorem mem_of_mem_span_locIdeal_pow {B : Type*} [Ring B] [TopologicalSp
     simp
   · intro d₁ d₂ _ _ h₁ h₂ r
     rw [mul_add, map_add, map_add]
-    exact W.toAddSubgroup.add_mem (h₁ r) (h₂ r)
+    exact W.add_mem (h₁ r) (h₂ r)
   · intro c d _ hd r
     rw [smul_eq_mul, ← mul_assoc]
     exact hd (r * c)
@@ -185,7 +185,7 @@ theorem continuous_of_continuous_algebraMap_of_isPowerBounded {B : Type*}
   obtain ⟨d, hd, rfl⟩ := (mem_locIdealImage_iff P T s S m).mp hx
   refine hWV ?_
   rw [locIdeal_pow_eq_span] at hd
-  simpa using mem_of_mem_span_locIdeal_pow P T s S f W hm hd 1
+  simpa using mem_of_mem_span_locIdeal_pow P T s S f W.toAddSubgroup hm hd 1
 
 
 /-! ### The universal property -/
