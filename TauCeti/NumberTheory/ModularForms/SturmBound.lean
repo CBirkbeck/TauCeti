@@ -19,7 +19,7 @@ For `𝒢 ≤ GL(2, ℝ)` of finite relative index in `𝒮ℒ` with discrete st
 
 The proof lifts the level-one bound `ModularForm.sturm_bound_levelOne` through the norm map:
 the norm of `f` vanishes exactly when `f` does, and by the decomposition
-`TauCeti.ModularForm.norm_eq_galoisProd_mul_normRest` sufficient vanishing of `f` at `∞`
+`TauCeti.ModularForm.norm_apply_eq_galoisProd_mul_normRest` sufficient vanishing of `f` at `∞`
 propagates to the norm.
 
 ## Main declarations
@@ -84,13 +84,13 @@ lemma qExpansion_one_norm_order_eq :
       ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) :=
     SlashInvariantFormClass.periodic_comp_ofComplex f
       Subgroup.integerCuspWidth_mem_strictPeriods
-  -- `norm_eq_galoisProd_mul_normRest` is a pointwise identity; `funext` converts it to an
-  -- equality of functions so the `q`-expansion of the norm literally becomes that of the
-  -- product, and `qExpansion_mul` (with both cusp functions analytic at `0`) splits it.
+  -- `norm_apply_eq_galoisProd_mul_normRest` is a pointwise identity; `funext` converts it
+  -- to an equality of functions so the `q`-expansion of the norm literally becomes that of
+  -- the product, and `qExpansion_mul` (both cusp functions being analytic at `0`) splits it.
   have h_qexp : qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f) =
       qExpansion 1 (galoisProd (Subgroup.integerCuspWidth 𝒢) ⇑f) *
         qExpansion 1 (normRest f) := by
-    rw [funext (norm_eq_galoisProd_mul_normRest f)]
+    rw [funext (norm_apply_eq_galoisProd_mul_normRest f)]
     exact qExpansion_mul (analyticAt_cuspFunction_zero one_pos
       (galoisProd_periodic_one hf_n_per) (mdifferentiable_galoisProd f.holo')
       (isBoundedAtImInfty_galoisProd hf_bdd)) (analyticAt_cuspFunction_normRest f)
