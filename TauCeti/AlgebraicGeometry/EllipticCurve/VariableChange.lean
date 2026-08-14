@@ -20,6 +20,10 @@ automorphism fixes it) and `map_smul_baseChange_eq` (the conjugate of an isomorp
 changes is again one). Comparing an isomorphism with its conjugate via the last of these is what
 produces the Galois cocycle used by the twist classification.
 
+That cocycle comparison lands on a product `C * [-1]`, so the four components of such a product
+are read off once here, as `mul_negVariableChange_u/_r/_s/_t`, rather than by unfolding
+`VariableChange.mul_def` against the components of `[-1]` at each use.
+
 The negation is the nontrivial automorphism in the `Aut (E, O)`
 milestone of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 1, proved in
 `TauCeti/AlgebraicGeometry/EllipticCurve/Aut.lean` to exhaust `Aut(E)` with the identity when
@@ -59,6 +63,31 @@ def negVariableChange : VariableChange R :=
 
 @[simp] lemma negVariableChange_t : E.negVariableChange.t = -E.a₃ := by
   simp only [negVariableChange]
+
+/-! ### Components of a change of variables composed with `[-1]` -/
+
+section MulNegVariableChange
+
+variable (C : VariableChange R)
+
+@[simp] lemma mul_negVariableChange_u : (C * E.negVariableChange).u = -C.u := by
+  simp only [VariableChange.mul_def, negVariableChange_u, mul_neg, mul_one]
+
+@[simp] lemma mul_negVariableChange_r : (C * E.negVariableChange).r = C.r := by
+  simp only [VariableChange.mul_def, negVariableChange_u, negVariableChange_r, Units.val_neg,
+    Units.val_one, neg_one_sq, mul_one, add_zero]
+
+@[simp] lemma mul_negVariableChange_s : (C * E.negVariableChange).s = -C.s - E.a₁ := by
+  simp only [VariableChange.mul_def, negVariableChange_u, negVariableChange_s, Units.val_neg,
+    Units.val_one, neg_mul, one_mul, sub_eq_add_neg]
+
+@[simp] lemma mul_negVariableChange_t :
+    (C * E.negVariableChange).t = -C.t - C.r * E.a₁ - E.a₃ := by
+  simp only [VariableChange.mul_def, negVariableChange_u, negVariableChange_s,
+    negVariableChange_t, Units.val_neg, Units.val_one]
+  ring
+
+end MulNegVariableChange
 
 /-- The negation automorphism fixes the curve. -/
 @[simp] lemma negVariableChange_smul_self : E.negVariableChange • E = E := by
