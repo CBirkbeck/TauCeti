@@ -123,15 +123,20 @@ private theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 
         (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w)).arg +
         ((-1 / 2 + H * Complex.I - w) / ((ρ : ℂ) - w)).arg +
         ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w)).arg := by
-    simpa [Complex.log_im] using congrArg Complex.im
-      ((inv_mul_eq_iff_eq_mul₀ Complex.two_pi_I_ne_zero).mp (hsum.symm.trans hn)).symm
+    -- clear the `(2πI)⁻¹`, then read off the imaginary part: each `log`'s is its argument
+    have hmul := (inv_mul_eq_iff_eq_mul₀ Complex.two_pi_I_ne_zero).mp (hsum.symm.trans hn)
+    have hIm' := congrArg Complex.im hmul.symm
+    simpa [Complex.log_im, Complex.add_im, Complex.mul_im] using hIm'
   have hb₁ := Complex.neg_pi_lt_arg (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w))
   have hb₂ := Complex.neg_pi_lt_arg (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w))
   have hb₃ := Complex.neg_pi_lt_arg ((-1 / 2 + H * Complex.I - w) / ((ρ : ℂ) - w))
   have hb₄ := Complex.neg_pi_lt_arg ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w))
-  have hn2 : (-2 : ℤ) < n := by exact_mod_cast (show (-2 : ℝ) < (n : ℝ) by nlinarith)
-  have hn0 : n < 0 := by exact_mod_cast (show (n : ℝ) < 0 by nlinarith)
-  rw [hn, show n = -1 by lia]
+  have hn2R : (-2 : ℝ) < (n : ℝ) := by nlinarith
+  have hn0R : (n : ℝ) < 0 := by nlinarith
+  have hn2 : (-2 : ℤ) < n := by exact_mod_cast hn2R
+  have hn0 : n < 0 := by exact_mod_cast hn0R
+  have hneg : n = -1 := by lia
+  rw [hn, hneg]
   norm_num
 
 /-- Points of the lifted segment and of the strip box satisfy the interior avoidance
