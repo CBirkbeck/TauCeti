@@ -290,6 +290,8 @@ noncomputable def restrictedMvPowerSeriesCompletionEquiv :
       weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight :=
   UniformSpace.Completion.completeRingEquivSelf _
 
+/-- The comparison undoes the canonical inclusion: on a restricted series regarded as an element
+of the completion, it returns that series. -/
 @[simp]
 theorem restrictedMvPowerSeriesCompletionEquiv_coe
     (f : weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight) :
@@ -297,6 +299,8 @@ theorem restrictedMvPowerSeriesCompletionEquiv_coe
       = f :=
   UniformSpace.Completion.completeRingEquivSelf_coe _ f
 
+/-- The inverse comparison **is** the canonical inclusion: it sends a restricted series to
+itself, regarded as an element of the completion. -/
 @[simp]
 theorem restrictedMvPowerSeriesCompletionEquiv_symm_apply
     (f : weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight) :
@@ -331,12 +335,15 @@ noncomputable def restrictedMvPowerSeriesCompletionAlgEquiv :
       weightedRestrictedSubring (fun _ : Fin k ↦ ({1} : Set A)) isWeightFamily_one_weight :=
   UniformSpace.Completion.completeAlgEquivSelf _ A
 
+/-- The `A`-algebra equivalence has the same underlying map as the ring equivalence, so `simp`
+normalises the algebra bundling onto the ring one. -/
 @[simp]
 theorem coe_restrictedMvPowerSeriesCompletionAlgEquiv :
     ⇑(restrictedMvPowerSeriesCompletionAlgEquiv k A)
       = ⇑(restrictedMvPowerSeriesCompletionEquiv k A) :=
   UniformSpace.Completion.coe_completeAlgEquivSelf _ A
 
+/-- The inverses agree too, so the two bundlings normalise together in both directions. -/
 @[simp]
 theorem coe_restrictedMvPowerSeriesCompletionAlgEquiv_symm :
     ⇑(restrictedMvPowerSeriesCompletionAlgEquiv k A).symm
