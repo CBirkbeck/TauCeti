@@ -72,8 +72,13 @@ that image bounded and its circle-image length finite. Nothing is claimed here a
 genuine crosscut; that is settled downstream.
 
 Neither injectivity of `f` nor any hypothesis on the frontier of the image is involved: this is
-the length--area input to the theorem below, separated from the Jordan-curve geometry. -/
-private theorem exists_radius_diam_image_ball_inter_sphere_le (hr : 0 < r)
+the length--area input to the theorem below, separated from the Jordan-curve geometry.
+
+This strengthens `TauCeti.exists_diam_image_ball_inter_sphere_le_of_lintegral_ne_top`, which
+selects the same radius but discards the finite circle-image length that produced the bound. The
+theorem below needs that witness twice over -- both closing theorems take it -- so it cannot be
+derived from the weaker form. -/
+private theorem exists_diam_image_ball_inter_sphere_le_and_circleImageLength_ne_top (hr : 0 < r)
     (hf : DifferentiableOn ℂ f (ball c r))
     (hdir : ∫⁻ z in ball c r, ‖deriv f z‖ₑ ^ 2 ≠ ⊤) {κ R : ℝ} (hκ : 0 < κ) (hR : 0 < R) :
     ∃ ρ ∈ Ioo 0 R, ρ < 2 * r ∧ circleImageLength f (ball c r) ζ ρ ≠ ⊤ ∧
@@ -115,13 +120,13 @@ theorem exists_isJordanCurve_superset_closure_image_ball_inter_sphere_diam_le
         J ⊆ closure (f '' ball c r) ∧ diam J ≤ ε := by
   obtain ⟨δ, hδ, hpath⟩ :=
     hfrontier.exists_pos_forall_exists_path_injective_diam_le (by positivity : (0 : ℝ) < ε / 2)
-  -- one radius `κ` serves both roles below: it caps the crosscut at half the tolerance and
-  -- keeps its two ends within the distance `δ` the path-joining theorem needs
+  -- one scale `κ` serves both roles below: it caps the crosscut diameter at half the tolerance
+  -- and keeps its two ends within the distance `δ` the path-joining theorem needs
   obtain ⟨κ, hκ, hκε, hκδ⟩ : ∃ κ : ℝ, 0 < κ ∧ κ ≤ ε / 2 ∧ κ < δ :=
     ⟨min (ε / 2) (δ / 2), lt_min (by positivity) (by positivity), min_le_left _ _,
       (min_le_right _ _).trans_lt (by linarith)⟩
   obtain ⟨ρ, hρ, hρr, hlenFin, hcross, hcrossBounded⟩ :=
-    exists_radius_diam_image_ball_inter_sphere_le (ζ := ζ) hr hf hdir hκ hR
+    exists_diam_image_ball_inter_sphere_le_and_circleImageLength_ne_top (ζ := ζ) hr hf hdir hκ hR
   have hcrossSub : closure (f '' (ball c r ∩ sphere ζ ρ)) ⊆ closure (f '' ball c r) :=
     closure_mono (image_mono inter_subset_left)
   by_cases hends :
