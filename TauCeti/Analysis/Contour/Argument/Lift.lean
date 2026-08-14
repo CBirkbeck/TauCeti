@@ -367,29 +367,34 @@ private theorem exists_monotone_partition_mesh_lt {a b δ : ℝ} (hab : a ≤ b)
     rw [abs_of_nonneg (by linarith)] at hbd
     linarith
 
-/-- **The polar form at a point, from the partition data alone.** For a monotone `s` with
-`s 0 = a` and no node sent to `w`, any `t` between `s 0`
-and `s N` satisfies `γ t - w = ‖γ t - w‖ · exp (I · θ t)`, where
-`θ t = arg (γ a - w) + ∑_{j < N} (log (segRatio γ w (s j) (s (j+1)) t)).im`. -/
-private theorem polar_form_of_partition {γ : ℝ → ℂ} {w : ℂ} {a : ℝ} {N : ℕ} {s : ℕ → ℝ}
-    (hN_pos : 0 < N) (hs_zero : s 0 = a) (hs_mono : Monotone s)
-    (hs_avoid : ∀ j < N, γ (s j) - w ≠ 0) {t : ℝ}
+/-- **The polar form at a point, from the partition data alone.** For a monotone `s` sending no
+node `s j` with `j < N` to `w`, any `t` between `s 0` and `s N` satisfies
+`γ t - w = ‖γ t - w‖ · exp (I · θ t)`, where
+`θ t = arg (γ (s 0) - w) + ∑_{j < N} (log (segRatio γ w (s j) (s (j+1)) t)).im`.
+
+For `N = 0` this is the ordinary polar identity at `s 0`, with no hypothesis at all. -/
+private theorem polar_form_of_partition {γ : ℝ → ℂ} {w : ℂ} {N : ℕ} {s : ℕ → ℝ}
+    (hs_mono : Monotone s) (hs_avoid : ∀ j < N, γ (s j) - w ≠ 0) {t : ℝ}
     (h_cov_lo : s 0 ≤ t) (h_cov_hi : t ≤ s N) :
     γ t - w = (‖γ t - w‖ : ℂ) * Complex.exp (Complex.I *
-      ((Complex.arg (γ a - w) +
+      ((Complex.arg (γ (s 0) - w) +
         ∑ j ∈ Finset.range N,
           (Complex.log (segRatio γ w (s j) (s (j + 1)) t)).im : ℝ) : ℂ)) := by
-  have h_avoid_a : γ a - w ≠ 0 := hs_zero ▸ hs_avoid 0 hN_pos
+  rcases Nat.eq_zero_or_pos N with rfl | hN_pos
+  · -- no segments: `t` is pinned to `s 0` and the sum is empty
+    rw [le_antisymm h_cov_hi h_cov_lo]
+    simpa [mul_comm] using (Complex.norm_mul_exp_arg_mul_I (γ (s 0) - w)).symm
+  have h_avoid_a : γ (s 0) - w ≠ 0 := hs_avoid 0 hN_pos
   obtain ⟨k, hk_lt, hk_lo, hk_hi⟩ := exists_covering_segment hN_pos hs_mono h_cov_lo h_cov_hi
   have h_telescope := prod_segRatio_telescope hs_mono hs_avoid hk_lt hk_lo hk_hi
-  rw [hs_zero] at h_telescope
-  have h_prod_eq : (γ a - w) *
+  have h_prod_eq : (γ (s 0) - w) *
       ∏ j ∈ Finset.range N, segRatio γ w (s j) (s (j + 1)) t = γ t - w := by
     rw [h_telescope, mul_div_cancel₀ _ h_avoid_a]
   rcases eq_or_ne (γ t - w) 0 with h0 | h0
   · simp [h0]
-  -- the product is the nonzero `γ t - w` up to the nonzero factor `γ a - w`, so no factor vanishes
-  have hprod_ne : (γ a - w) *
+  -- the product is the nonzero `γ t - w` up to the nonzero factor `γ (s 0) - w`, so no factor
+  -- vanishes
+  have hprod_ne : (γ (s 0) - w) *
       ∏ j ∈ Finset.range N, segRatio γ w (s j) (s (j + 1)) t ≠ 0 := by
     rw [h_prod_eq]; exact h0
   exact polar_form_of_prod (zs := fun j ↦ segRatio γ w (s j) (s (j + 1)) t)
@@ -440,9 +445,9 @@ theorem exists_continuousOn_arg_lift_with_partition {γ : ℝ → ℂ} {w : ℂ}
       (hs_in j (Finset.mem_range.mp hj).le) (hs_in (j + 1) (Finset.mem_range.mp hj))
       (hs_le j) (hs_mesh j)
   -- Lift property
-  · exact fun t ht => polar_form_of_partition hN_pos hs_zero hs_mono
-      (fun j hj ↦ hs_avoid j hj.le)
-      (by rw [hs_zero]; exact ht.1) (by rw [hs_N]; exact ht.2)
+  · exact fun t ht => by
+      simpa [hs_zero] using polar_form_of_partition hs_mono (fun j hj ↦ hs_avoid j hj.le)
+        (by rw [hs_zero]; exact ht.1) (by rw [hs_N]; exact ht.2)
 
 end TauCeti.Contour
 
