@@ -260,11 +260,12 @@ private lemma submatrix_doubleForkEmbedding_eq (h : IsFiniteType A)
 graph, a vertex adjacent to the start of a nontrivial path and off that path differs from every
 vertex adjacent to the path's end. -/
 private theorem ne_of_adj_first_of_adj_last {V : Type*} {G : SimpleGraph V}
-    (hG : G.IsAcyclic) {u v : V} {q : G.Walk u v} (hq : q.IsPath) (hlen : q.length ≠ 0)
+    (hG : G.IsAcyclic) {u v : V} (huv : u ≠ v) {q : G.Walk u v} (hq : q.IsPath)
     {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) : a ≠ b := by
   intro hab
   -- `a — u — … — v` and the single edge `a — v` are two paths with the same ends, so equal;
-  -- but the first is longer, since `q` is not nil.
+  -- but the first is longer, since `u ≠ v` keeps `q` from being nil.
+  have hlen : q.length ≠ 0 := fun h => huv (SimpleGraph.Walk.eq_of_length_eq_zero h)
   have heq := (hG.subsingleton_path a v).elim
     (⟨q.cons ha.symm, hq.cons ha'⟩ : G.Path a v)
     (SimpleGraph.Path.singleton (hab ▸ hb).symm)
@@ -353,7 +354,7 @@ theorem exists_doubleFork_submatrix (h : IsFiniteType A) {u v : B}
     hright_ne_penultimate i
       (h.isAcyclic_diagramGraph.eq_penultimate_of_adj_end hq (hright_adj i) hi)
   have hleft_right_ne (i j : Fin 2) : leftVertex i ≠ rightVertex j :=
-    ne_of_adj_first_of_adj_last h.isAcyclic_diagramGraph hq (by omega)
+    ne_of_adj_first_of_adj_last h.isAcyclic_diagramGraph huv_ne hq
       (hleft_adj i) (hleft_not_mem i) (hright_adj j)
   have hleft_right_not_adj (i j : Fin 2) : ¬G.Adj (leftVertex i) (rightVertex j) :=
     not_adj_of_adj_first_of_adj_last h.isAcyclic_diagramGraph hq
