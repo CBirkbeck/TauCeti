@@ -15,6 +15,9 @@ coordinate rings of two presentations of a rational subset, which roadmap Layer 
 *satisfying the identity and composition laws*: both laws are corollaries, because each says that
 two maps agreeing on `A` coincide.
 
+The target of the extensionality lemma is only required to be a semiring with a Hausdorff
+topology; no compatibility between the two is used.
+
 The proof does not go through the universal property. `A` reaches `A⟨T/s⟩` in two steps — the
 localisation map `A → Aₛ`, then the completion map — and each step is an epimorphism in the
 relevant sense: `IsLocalization.ringHom_ext` for the first, and density of `Aₛ` in its completion
@@ -55,15 +58,18 @@ namespace PairOfDefinition
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
 /-- **Maps out of `A⟨T/s⟩` are determined on `A`.** Two continuous ring homomorphisms
-`A⟨T/s⟩ → B` into a Hausdorff topological ring that agree after composing with the structure map
-from `A` are equal.
+`A⟨T/s⟩ → B` that agree after composing with the structure map from `A` are equal.
+
+`B` need only be a semiring carrying a Hausdorff topology: the argument uses neither
+commutativity nor additive inverses, and it never asks that the topology be compatible with the
+ring operations — only that continuous maps agreeing on a dense set agree.
 
 `A` reaches `A⟨T/s⟩` through `Aₛ`, and agreeing on `A` forces agreement on `Aₛ` by
 `IsLocalization.ringHom_ext`, hence on the completion by density. No hypothesis on `s` or on the
 fractions is needed: those govern which maps exist, not when two agree. -/
 theorem hom_ext_toCompletionLoc (P : PairOfDefinition A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (hden : HasDenominatorPower P T s S) {B : Type*} [CommRing B] [TopologicalSpace B] [T2Space B] :
+    (hden : HasDenominatorPower P T s S) {B : Type*} [Semiring B] [TopologicalSpace B] [T2Space B] :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
