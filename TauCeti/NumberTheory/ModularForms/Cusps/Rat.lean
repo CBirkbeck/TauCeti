@@ -53,6 +53,11 @@ lemma IsCusp.smul_map_ratCast {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic]
   rw [Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z, isCusp_SL2Z_iff] at hc ⊢
   obtain ⟨x, rfl⟩ := hc
   refine ⟨g • x, ?_⟩
+  -- `DivisionRing.toRatAlgebra` *defines* `algebraMap ℚ ℝ` to be `Rat.castHom ℝ`, so the two are
+  -- the same term and no propositional rewrite between them exists — mathlib states none
+  -- (`Rat.algebraMap_eq_castHom`, `Rat.coe_algebraMap`, `Rat.algebraMap_def` are all absent).
+  -- The statement uses the `algebraMap` spelling to match `SlashActionRat.lean`; the proof needs
+  -- the `castHom` spelling for `Rat.coe_castHom`, and this `rfl` is the only bridge available.
   rw [show (algebraMap ℚ ℝ) = (Rat.castHom ℝ) from rfl, ← Rat.coe_castHom, OnePoint.map_smul]
 
 end
