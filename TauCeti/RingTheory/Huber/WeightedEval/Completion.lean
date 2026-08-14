@@ -1,7 +1,6 @@
 /-
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Chris Birkbeck
 -/
 module
 
@@ -11,7 +10,8 @@ public import Mathlib.Topology.Algebra.UniformRing
 /-!
 # The universal property of the completed algebra of `A⟨X⟩_T`
 
-Wedhorn's Proposition 5.50 (`existsUnique_continuous_ringHom_weightedRestrictedSubring`) is the
+Wedhorn's Proposition 5.50 —
+`existsUnique_continuous_ringHom_weightedRestrictedSubring_of_isWeightedVarPowerBounded` — is the
 universal property of the restricted-series ring `A⟨X⟩_T` itself. This file carries it across the
 separated completion: a ring homomorphism `φ : A →+* B` into a complete Hausdorff nonarchimedean
 ring, continuous at zero, together with weight-bounded values `bᵢ`, extends to the completion of
@@ -21,25 +21,34 @@ Neither half is new mathematics; both compose 5.50 with a standard property of t
 Existence is `UniformSpace.Completion.extensionHom` applied to the evaluation homomorphism, which
 is available exactly because the target is already assumed complete and Hausdorff — the same
 hypotheses 5.50 carries, so the completed statement asks for nothing extra. Uniqueness is
-`UniformSpace.Completion.ext`: two continuous maps out of a completion that agree on the image of
-the coercion are equal, and agreement there is 5.50's own uniqueness clause applied to the
-restrictions along `UniformSpace.Completion.coeRingHom`.
+`completion_weightedRestrictedSubring_ringHom_ext_of_continuous`, itself
+`UniformSpace.Completion.ext` — two continuous maps out of a completion that agree on the image of
+the coercion are equal — applied to 5.50's own uniqueness clause for the restrictions along
+`UniformSpace.Completion.coeRingHom`.
 
-At the trivial weight family `Tᵢ = {1}` the completion is the algebra the roadmap writes
+At the trivial weight family `Tᵢ = {1}` the domain is the completed restricted power-series
+algebra `TauCeti.Huber.restrictedMvPowerSeriesCompletion k A`, which the roadmap writes
 `A⟨X₁,…,Xₖ⟩` for an arbitrary Tate ring, so this is that algebra's universal property. It is
 stated for a general weight family because nothing in the argument uses triviality.
 
 ## Main definitions
 
-* `TauCeti.Huber.completionEvalHom` : the evaluation homomorphism of 5.50, extended to the
-  completion.
+* `weightedEvalHomCompletion`: the evaluation homomorphism of 5.50, extended to the completion.
 
 ## Main results
 
-* `TauCeti.Huber.existsUnique_continuous_ringHom_completion` :
-  Proposition 5.50 for the completion of `A⟨X⟩_T`.
-* `TauCeti.Huber.completionEvalHom_weightedC` and
-  `TauCeti.Huber.completionEvalHom_weightedX` : its values on the constants and the variables.
+* `existsUnique_continuous_ringHom_completion_weightedRestrictedSubring`: the `∃!` that the phrase
+  "universal property" names, under `IsWeightBounded`.
+* existsUnique_continuous_ringHom_completion_weightedRestrictedSubring_of_isWeightedVarPowerBounded
+  — the same under `IsWeightedVarPowerBounded`, the coordinatewise condition Proposition 5.50
+  states. This is the one to cite as 5.50.
+* `completion_weightedRestrictedSubring_ringHom_ext_of_continuous`: the uniqueness half on its own,
+  which asks of the target only a semiring structure and a Hausdorff topology.
+* `weightedEvalHomCompletion_coe`: the value of the extension on the image of `A⟨X⟩_T`. The body of
+  the definition is not exported, so this is how a consumer computes with it.
+* `continuous_weightedEvalHomCompletion`: the extension is continuous.
+* `weightedEvalHomCompletion_weightedC` and `weightedEvalHomCompletion_weightedX`: the values of
+  `weightedEvalHomCompletion` on the constants and the variables.
 
 ## References
 
@@ -52,45 +61,91 @@ namespace TauCeti.Huber
 
 open UniformSpace
 
-variable {k : ℕ} {A B : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
-  [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B] [CompleteSpace B]
-  [T3Space B] {φ : A →+* B} {T : Fin k → Set A} {b : Fin k → B}
+variable {k : ℕ} {A : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
+  {T : Fin k → Set A}
+
+/-! ### Uniqueness
+
+Uniqueness asks far less of the target than existence does, so it is proved first, under its own
+hypotheses on `B`. -/
+
+section Uniqueness
+
+variable {B : Type*} [Semiring B] [TopologicalSpace B] [T2Space B]
+
+/-- **A continuous homomorphism out of the completion of `A⟨X⟩_T` is determined by its values on
+the generators.** Two of them agreeing on every constant series *and* every variable are equal.
+
+This is `weightedRestrictedSubring_ringHom_ext_of_continuous` carried across the completion: that
+lemma identifies the two restrictions along `UniformSpace.Completion.coeRingHom`, and
+`UniformSpace.Completion.ext` propagates the agreement to the completion by density of the image
+of the coercion. The completeness and `T3Space` hypotheses that the universal property below
+carries are what the evaluation homomorphism needs in order to exist; uniqueness needs neither. -/
+theorem completion_weightedRestrictedSubring_ringHom_ext_of_continuous (hT : IsWeightFamily T)
+    {f g : Completion (weightedRestrictedSubring T hT) →+* B} (hf : Continuous f)
+    (hg : Continuous g) (hC : ∀ a, f (weightedC T hT a) = g (weightedC T hT a))
+    (hX : ∀ i, f (weightedX T hT i) = g (weightedX T hT i)) : f = g := by
+  -- `⇑UniformSpace.Completion.coeRingHom` is the coercion `((↑) : _ → Completion _)`, by the
+  -- definition of `coeRingHom`, so composing with it is restriction along the coercion. That
+  -- unfolding is the only definitional bridge the proof crosses, and `hcomp` states it once.
+  have hcomp : ∀ (h : Completion (weightedRestrictedSubring T hT) →+* B)
+      (x : weightedRestrictedSubring T hT), (h.comp Completion.coeRingHom) x = h x :=
+    fun _ _ ↦ rfl
+  have key : f.comp Completion.coeRingHom = g.comp Completion.coeRingHom :=
+    weightedRestrictedSubring_ringHom_ext_of_continuous hT
+      (by simpa only [RingHom.coe_comp] using hf.comp Completion.continuous_coeRingHom)
+      (by simpa only [RingHom.coe_comp] using hg.comp Completion.continuous_coeRingHom)
+      (fun a ↦ (hcomp f _).trans ((hC a).trans (hcomp g _).symm))
+      fun i ↦ (hcomp f _).trans ((hX i).trans (hcomp g _).symm)
+  exact DFunLike.coe_injective (Completion.ext hf hg fun x ↦
+    (hcomp f x).symm.trans ((DFunLike.congr_fun key x).trans (hcomp g x)))
+
+end Uniqueness
+
+/-! ### The extended evaluation homomorphism and the universal property -/
+
+section UniversalProperty
+
+variable {B : Type*} [CommRing B] [UniformSpace B] [IsUniformAddGroup B] [NonarchimedeanRing B]
+  [CompleteSpace B] [T3Space B] {φ : A →+* B} {b : Fin k → B}
 
 /-- The evaluation homomorphism of Proposition 5.50, extended to the completion of `A⟨X⟩_T`.
 The extension exists because the target is complete and Hausdorff. -/
-@[expose] noncomputable def completionEvalHom (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
+noncomputable def weightedEvalHomCompletion (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
     (hb : IsWeightBounded φ T b) :
     Completion (weightedRestrictedSubring T hT) →+* B :=
   Completion.extensionHom (weightedEvalHom hT hφ hb) (continuous_weightedEvalHom hT hφ hb)
 
+/-- The extension is the evaluation homomorphism on the image of `A⟨X⟩_T`. The body of
+`weightedEvalHomCompletion` is not exported, so this is how a consumer computes with it. -/
 @[simp]
-theorem completionEvalHom_coe (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
+theorem weightedEvalHomCompletion_coe (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
     (hb : IsWeightBounded φ T b) (f : weightedRestrictedSubring T hT) :
-    completionEvalHom hT hφ hb (f : Completion (weightedRestrictedSubring T hT))
+    weightedEvalHomCompletion hT hφ hb (f : Completion (weightedRestrictedSubring T hT))
       = weightedEvalHom hT hφ hb f :=
   Completion.extensionHom_coe (weightedEvalHom hT hφ hb) (continuous_weightedEvalHom hT hφ hb) f
 
-theorem continuous_completionEvalHom (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
-    (hb : IsWeightBounded φ T b) : Continuous (completionEvalHom hT hφ hb) :=
+theorem continuous_weightedEvalHomCompletion (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
+    (hb : IsWeightBounded φ T b) : Continuous (weightedEvalHomCompletion hT hφ hb) :=
   Completion.continuous_extension
 
 /-- The value on a constant. Not a `simp` lemma: `simp` reaches it through
-`completionEvalHom_coe` and `weightedEvalHom_weightedC` already. -/
-theorem completionEvalHom_weightedC (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
+`weightedEvalHomCompletion_coe` and `weightedEvalHom_weightedC` already. -/
+theorem weightedEvalHomCompletion_weightedC (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
     (hb : IsWeightBounded φ T b) (a : A) :
-    completionEvalHom hT hφ hb
+    weightedEvalHomCompletion hT hφ hb
       ((weightedC T hT a : weightedRestrictedSubring T hT) :
         Completion (weightedRestrictedSubring T hT)) = φ a := by
-  rw [completionEvalHom_coe, weightedEvalHom_weightedC]
+  rw [weightedEvalHomCompletion_coe, weightedEvalHom_weightedC]
 
 /-- The value on a variable. Not a `simp` lemma, for the same reason as
-`completionEvalHom_weightedC`. -/
-theorem completionEvalHom_weightedX (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
+`weightedEvalHomCompletion_weightedC`. -/
+theorem weightedEvalHomCompletion_weightedX (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
     (hb : IsWeightBounded φ T b) (i : Fin k) :
-    completionEvalHom hT hφ hb
+    weightedEvalHomCompletion hT hφ hb
       ((weightedX T hT i : weightedRestrictedSubring T hT) :
         Completion (weightedRestrictedSubring T hT)) = b i := by
-  rw [completionEvalHom_coe, weightedEvalHom_weightedX]
+  rw [weightedEvalHomCompletion_coe, weightedEvalHom_weightedX]
 
 /-- **The universal property of the completion of `A⟨X⟩_T`, under `IsWeightBounded`.** Given
 `φ : A →+* B` continuous at zero and weight-bounded values `b`, there is exactly one continuous
@@ -99,34 +154,28 @@ sending each `Xᵢ` to `bᵢ`.
 
 This mirrors `existsUnique_continuous_ringHom_weightedRestrictedSubring`, the uncompleted
 statement under the same uniform hypothesis. Proposition 5.50's own hypothesis is the
-coordinatewise one, so the theorem to cite as 5.50 is
-`existsUnique_continuous_ringHom_completion_of_isWeightedVarPowerBounded` below.
+coordinatewise one, so the theorem to cite as 5.50 is the `_of_isWeightedVarPowerBounded` form of
+this one, below:
+`existsUnique_continuous_ringHom_completion_weightedRestrictedSubring_of_isWeightedVarPowerBounded`.
 
-As in the uncompleted statement, uniqueness is among *continuous* homomorphisms. Here that is not
-a convenience: the completion is a closure of the image of `A⟨X⟩_T`, so the values on that image
-determine a continuous map and nothing else. -/
-theorem existsUnique_continuous_ringHom_completion (hT : IsWeightFamily T)
-    (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b) :
+As in the uncompleted statement, uniqueness is among *continuous* homomorphisms, and continuity is
+used at both steps of the argument: 5.50 pins `ψ` down on the image of `A⟨X⟩_T` from its values on
+the constants and the variables, by density of the polynomials, and the density of that image in
+the completion carries the agreement the rest of the way. Whether a discontinuous homomorphism
+with the same values can exist is not addressed here. -/
+theorem existsUnique_continuous_ringHom_completion_weightedRestrictedSubring
+    (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b) :
     ∃! ψ : Completion (weightedRestrictedSubring T hT) →+* B, Continuous ψ ∧
       (∀ a, ψ ((weightedC T hT a : weightedRestrictedSubring T hT) :
           Completion (weightedRestrictedSubring T hT)) = φ a) ∧
       ∀ i, ψ ((weightedX T hT i : weightedRestrictedSubring T hT) :
-        Completion (weightedRestrictedSubring T hT)) = b i := by
-  refine ⟨completionEvalHom hT hφ hb, ⟨continuous_completionEvalHom hT hφ hb,
-    completionEvalHom_weightedC hT hφ hb, completionEvalHom_weightedX hT hφ hb⟩, ?_⟩
-  rintro ψ ⟨hψc, hψC, hψX⟩
-  -- Restricted along the coercion, `ψ` is a continuous ring map out of `A⟨X⟩_T` taking the values
-  -- Proposition 5.50 pins down, so it is the evaluation homomorphism there.
-  have key : ψ.comp Completion.coeRingHom = weightedEvalHom hT hφ hb :=
-    (existsUnique_continuous_ringHom_weightedRestrictedSubring hT hφ hb).unique
-      ⟨hψc.comp (Completion.continuous_coe _), hψC, hψX⟩
-      ⟨continuous_weightedEvalHom hT hφ hb, weightedEvalHom_weightedC hT hφ hb,
-        weightedEvalHom_weightedX hT hφ hb⟩
-  -- Two continuous maps out of a completion agreeing on that image are equal.
-  refine DFunLike.coe_injective
-    (Completion.ext hψc (continuous_completionEvalHom hT hφ hb) fun f ↦ ?_)
-  rw [completionEvalHom_coe]
-  exact congrArg (fun g : weightedRestrictedSubring T hT →+* B ↦ g f) key
+        Completion (weightedRestrictedSubring T hT)) = b i :=
+  ⟨weightedEvalHomCompletion hT hφ hb, ⟨continuous_weightedEvalHomCompletion hT hφ hb,
+      weightedEvalHomCompletion_weightedC hT hφ hb, weightedEvalHomCompletion_weightedX hT hφ hb⟩,
+    fun _ ⟨hψ, hC, hX⟩ ↦ completion_weightedRestrictedSubring_ringHom_ext_of_continuous hT hψ
+      (continuous_weightedEvalHomCompletion hT hφ hb)
+      (fun a ↦ (hC a).trans (weightedEvalHomCompletion_weightedC hT hφ hb a).symm)
+      fun i ↦ (hX i).trans (weightedEvalHomCompletion_weightedX hT hφ hb i).symm⟩
 
 /-- **Wedhorn 5.50 for the completed algebra**, under the hypothesis Proposition 5.50 itself
 carries: each weighted variable `φ(Tᵢ) · bᵢ` power-bounded as a set, one index at a time.
@@ -135,13 +184,19 @@ This is the theorem to cite as 5.50 for the completion. It is the statement abov
 `isWeightBounded_of_isWeightedVarPowerBounded`, exactly as
 `existsUnique_continuous_ringHom_weightedRestrictedSubring_of_isWeightedVarPowerBounded` relates
 to its own uniform form. -/
-theorem existsUnique_continuous_ringHom_completion_of_isWeightedVarPowerBounded
+theorem
+  existsUnique_continuous_ringHom_completion_weightedRestrictedSubring_of_isWeightedVarPowerBounded
     (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0) (hb : IsWeightedVarPowerBounded φ T b) :
     ∃! ψ : Completion (weightedRestrictedSubring T hT) →+* B, Continuous ψ ∧
       (∀ a, ψ ((weightedC T hT a : weightedRestrictedSubring T hT) :
           Completion (weightedRestrictedSubring T hT)) = φ a) ∧
       ∀ i, ψ ((weightedX T hT i : weightedRestrictedSubring T hT) :
         Completion (weightedRestrictedSubring T hT)) = b i :=
-  existsUnique_continuous_ringHom_completion hT hφ (isWeightBounded_of_isWeightedVarPowerBounded hb)
+  existsUnique_continuous_ringHom_completion_weightedRestrictedSubring hT hφ
+    (isWeightBounded_of_isWeightedVarPowerBounded hb)
+
+end UniversalProperty
 
 end TauCeti.Huber
+
+end
