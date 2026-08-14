@@ -38,6 +38,16 @@ these representatives are in `GL2/UpperTriangularDelta0.lean`.
 * `HeckeRing.GL2.upperTriEntriesEquivFin_val`, `upperTriEntriesEquivFin_symm_val`: the same for
   `a = ![1, p]`, as an identity of natural numbers — the two fibres `Fin (![1, p] 1 / ![1, p] 0)`
   and `Fin p` are definitionally but not syntactically equal.
+
+## Provenance
+
+No code is ported: the equivalence is a fact about this repository's own `UpperTriEntries`. The
+"classical `T_p` bookkeeping" it adapts to is that of the AINTLIB `LeanModularForms` project
+(Chris Birkbeck, Apache-2.0), `LeanModularForms/HeckeRIngs/GL2/HeckeT_p.lean` at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`, whose `heckeT_p_ut` sums over `b ∈ Finset.range p`
+and whose `T_p_upper p _ b = !![1, b; 0, p]` is `upperTriGL` at `n = 2`, `a = ![1, p]`. This file
+exists so that such a sum transfers onto the existing general-`n` decomposition instead of
+restating the index.
 -/
 
 public section
