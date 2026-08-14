@@ -55,7 +55,10 @@ with a uniformity preamble.
   the closed embedding and is this lemma's consumer.
 * The `CategoryTheory.ObjectProperty.IsClosedUnderIsomorphisms` instance for
   `TauCeti.TopCommRingCat.isCompleteSeparated` : the property transfers along isomorphisms,
-  an isomorphism being in particular a closed embedding.
+  an isomorphism being in particular a closed embedding — which is
+  `TauCeti.TopCommRingCat.isClosedEmbedding_inv`, in turn resting on
+  `TauCeti.TopCommRingCat.coe_homeoOfIso_mapIso_symm`, the named identification of the induced
+  homeomorphism's underlying function with `e.inv`.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.pi` : a product of complete separated objects
   is complete separated. This is the closure half for products; the limit cones and the
   creation statement for the inclusion `CompleteSeparatedTopCommRingCat ⥤ TopCommRingCat`
@@ -170,14 +173,28 @@ def isCompleteSeparated : ObjectProperty TopCommRingCat.{u} :=
 theorem isCompleteSeparated_iff (R : TopCommRingCat.{u}) :
     isCompleteSeparated R ↔ IsCompleteSeparated R := (Iff.rfl)
 
+/-- **The homeomorphism an isomorphism induces has `e.inv` as its underlying function.** It holds
+by `rfl`, but through `forget₂`, `mapIso` and `TopCat.homeoOfIso` in turn; naming it keeps the
+transfer below from depending on that chain unfolding. -/
+theorem coe_homeoOfIso_mapIso_symm {R S : TopCommRingCat.{u}} (e : R ≅ S) :
+    ⇑(TopCat.homeoOfIso ((forget₂ TopCommRingCat.{u} TopCat.{u}).mapIso e)).symm = ⇑e.inv :=
+  rfl
+
+/-- The inverse of an isomorphism of topological commutative rings is a closed embedding: it is
+the induced homeomorphism, transported along `coe_homeoOfIso_mapIso_symm`. -/
+theorem isClosedEmbedding_inv {R S : TopCommRingCat.{u}} (e : R ≅ S) :
+    Topology.IsClosedEmbedding ⇑e.inv :=
+  coe_homeoOfIso_mapIso_symm e ▸
+    (TopCat.homeoOfIso ((forget₂ TopCommRingCat.{u} TopCat.{u}).mapIso e)).symm.isClosedEmbedding
+
 /-- The complete separated property transfers along isomorphisms of topological commutative
 rings: an isomorphism is in particular a closed embedding, so this is
 `IsCompleteSeparated.of_isClosedEmbedding` applied to the inverse. -/
 instance : (isCompleteSeparated.{u}).IsClosedUnderIsomorphisms where
   of_iso e hR :=
-    (isCompleteSeparated_iff _).mpr <| IsCompleteSeparated.of_isClosedEmbedding e.inv
-      (TopCat.homeoOfIso ((forget₂ TopCommRingCat.{u} TopCat.{u}).mapIso e)).symm.isClosedEmbedding
-      ((isCompleteSeparated_iff _).mp hR)
+    (isCompleteSeparated_iff _).mpr <|
+      IsCompleteSeparated.of_isClosedEmbedding e.inv (isClosedEmbedding_inv e)
+        ((isCompleteSeparated_iff _).mp hR)
 
 end TauCeti.TopCommRingCat
 
