@@ -14,10 +14,10 @@ A cusp of `𝒮ℒ` is exactly a rational point of `OnePoint ℝ` (`isCusp_SL2Z_
 over `ℚ` carries rational points to rational points. So the cusps of `𝒮ℒ` are stable under the
 action of every element of `GL (Fin 2) ℚ`, not merely under `𝒮ℒ` itself.
 
-This is what the Hecke operators need. Their representatives have determinant `p > 1`, so they
-lie outside `𝒮ℒ` and `OnePoint.IsCusp.smul_of_mem` does not apply; the general
-`OnePoint.IsCusp.smul` only places the image cusp in a *conjugate* subgroup. Going through the
-rational description avoids conjugation altogether.
+This is what the Hecke operators need. A rational representative need not lie in `𝒮ℒ` at all,
+so `OnePoint.IsCusp.smul_of_mem` does not apply to it, and the general `OnePoint.IsCusp.smul`
+only places the image cusp in a *conjugate* subgroup. Going through the rational description
+avoids conjugation altogether, and asks nothing of the determinant beyond invertibility.
 
 ## Main results
 
