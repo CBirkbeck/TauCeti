@@ -9,11 +9,10 @@ public import Mathlib.NumberTheory.ModularForms.Cusps
 /-!
 # Rational matrices carry cusps to cusps
 
-A cusp of `𝒮ℒ` is exactly a rational point of `OnePoint ℝ` (`isCusp_SL2Z_iff`), and a matrix
-over `ℚ` carries rational points to rational points. So the cusps of `𝒮ℒ` are stable under the
-action of every element of `GL (Fin 2) ℚ`, not merely under `𝒮ℒ` itself — and for an arithmetic
-`Γ` the cusps are the same set (`Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z`), so the statement
-is given at that generality.
+`IsCusp.smul` moves a cusp of `Γ` to a cusp of the conjugate `ConjAct.toConjAct g • Γ`, and for
+a rational `g` that conjugate is again arithmetic (`Subgroup.IsArithmetic.conj`). Since every
+arithmetic subgroup has the same cusps as `𝒮ℒ`
+(`Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z`), the cusp transports straight back to `Γ`.
 
 This is what the Hecke operators need. A rational representative need not lie in `𝒮ℒ` at all,
 so `IsCusp.smul_of_mem` does not apply to it, and the general `IsCusp.smul`
@@ -33,30 +32,27 @@ come from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0),
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, where it is packaged as `glMap_smul_isCusp_Gamma1`.
 
 The **proof is not ported**: that declaration is specific to `Γ₁(N)`, whereas this one is stated
-for an arbitrary arithmetic subgroup and reduces to `𝒮ℒ` through mathlib's
-`Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z` and the rational description of the cusps of
-`𝒮ℒ` (`isCusp_SL2Z_iff`), neither of which the source uses.
+for an arbitrary arithmetic subgroup and is a three-line composition of mathlib's
+`IsCusp.smul`, `Subgroup.IsArithmetic.conj` and
+`Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z`, none of which the source uses.
 -/
 
 public section
 
 open Matrix Matrix.SpecialLinearGroup
 
-open scoped MatrixGroups
+open scoped MatrixGroups Pointwise
 
 /-- **Rational matrices carry cusps to cusps**, for any arithmetic `Γ`. Its cusps are those of
 `𝒮ℒ`, which are the rational points of `OnePoint ℝ`, and `g` has rational entries. -/
 lemma IsCusp.smul_map_ratCast {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {c : OnePoint ℝ}
     (hc : IsCusp c Γ) (g : GL (Fin 2) ℚ) :
     IsCusp (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g • c) Γ := by
-  rw [Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z, isCusp_SL2Z_iff] at hc ⊢
-  obtain ⟨x, rfl⟩ := hc
-  refine ⟨g • x, ?_⟩
-  -- `DivisionRing.toRatAlgebra` *defines* `algebraMap ℚ ℝ` to be `Rat.castHom ℝ`, so the two are
-  -- the same term and no propositional rewrite between them exists — mathlib states none
-  -- (`Rat.algebraMap_eq_castHom`, `Rat.coe_algebraMap`, `Rat.algebraMap_def` are all absent).
-  -- The statement uses the `algebraMap` spelling to match `SlashActionRat.lean`; the proof needs
-  -- the `castHom` spelling for `Rat.coe_castHom`, and this `rfl` is the only bridge available.
-  rw [show (algebraMap ℚ ℝ) = (Rat.castHom ℝ) from rfl, ← Rat.coe_castHom, OnePoint.map_smul]
+  have : (ConjAct.toConjAct (Matrix.GeneralLinearGroup.map (Rat.castHom ℝ) g) • Γ).IsArithmetic :=
+    Subgroup.IsArithmetic.conj Γ g
+  rw [Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z,
+    ← Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z
+      (ConjAct.toConjAct (Matrix.GeneralLinearGroup.map (Rat.castHom ℝ) g) • Γ)]
+  exact hc.smul _
 
 end
