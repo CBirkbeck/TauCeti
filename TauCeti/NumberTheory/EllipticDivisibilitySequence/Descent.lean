@@ -73,9 +73,10 @@ declarations `rel₆_eq₃`, `rel₆_eq₃'`, `rel₆_eq₁₀`, `rel₄_iff_eve
 `Rel₄OfValid`, `rel₄_fix₁_of_fix₂`, `rel₄_of_fix₂`, `rel₄_of_min₂`, `rel₄_of_anti_oddRec_evenRec`,
 `rel₄_of_oddRec_evenRec` and `IsEllSequence.of_oddRec_evenRec`. That file's header reads `Authors:
 David Kurniadi Angdinata`; following this repository's convention for adapted material the upstream
-authorship is credited here rather than in the copyright header. That file is part of the joint
-LutzNagell development with J. Xu, who authors the neighbouring `Universal.lean` and co-authors
-`DivisionPolynomialOmega.lean`; both are credited for what this repository takes from it.
+authorship is credited here rather than in the copyright header. J. Xu is acknowledged for the
+surrounding LutzNagell development — he authors `Universal.lean` and co-authors
+`DivisionPolynomialOmega.lean` at the same revision — as context for this port, not as an author of
+the declarations above.
 
 The source states its expansions against its own `addMulSub` and `rel₄`, which Mathlib now
 supplies as `atom` and `atomRel` with the same definitions, so those statements transfer by

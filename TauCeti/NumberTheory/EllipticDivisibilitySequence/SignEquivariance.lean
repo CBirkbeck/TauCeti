@@ -62,9 +62,9 @@ source's `relFin4_perm'` — the sign-cancelled orientation — was **considered
 has no consumer until the descent slice, and lands there beside `rel₄_of_oddRec_evenRec`, the proof
 that uses it. That file's header reads `Authors: David Kurniadi Angdinata`; following this
 repository's convention for adapted material the upstream authorship is credited here rather than
-in the copyright header. That file is part of the joint LutzNagell development with J. Xu, who
-authors the neighbouring `Universal.lean` and co-authors `DivisionPolynomialOmega.lean`; both are
-credited for what this repository takes from it.
+in the copyright header. J. Xu is acknowledged for the surrounding LutzNagell development — he
+authors `Universal.lean` and co-authors `DivisionPolynomialOmega.lean` at the same revision — as
+context for this port, not as an author of the declarations above.
 
 Restated over Mathlib's names for this API: the source's `rel₄` is `IsEllipticNet.atomRel` and its
 `addMulSub` is `IsEllipticNet.atom`, and the source's standing `neg : ∀ k, W (-k) = -W k` hypothesis

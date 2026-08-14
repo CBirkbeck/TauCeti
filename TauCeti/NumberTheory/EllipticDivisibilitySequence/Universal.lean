@@ -69,9 +69,10 @@ declarations `Param`, `universalNormEDS`, `normEDS_eq_aeval`, `compl₂EDS_eq_ae
 about elliptic divisibility sequences and makes its namespace equally generic; that rename is an
 adaptation made in this repository, not upstream's name. That file's header reads `Authors: David
 Kurniadi Angdinata`; following this repository's convention for adapted material the upstream
-authorship is credited here rather than in the copyright header. That file is part of the joint
-LutzNagell development with J. Xu, who authors the neighbouring `Universal.lean` and co-authors
-`DivisionPolynomialOmega.lean`; both are credited for what this repository takes from it.
+authorship is credited here rather than in the copyright header. J. Xu is acknowledged for the
+surrounding LutzNagell development — he authors `Universal.lean` and co-authors
+`DivisionPolynomialOmega.lean` at the same revision — as context for this port, not as an author of
+the declarations above.
 
 The same declarations sit in **Mathlib PR #13057** (open, last updated 2024-07-31), the
 upstreaming of that AINTLIB file, so they are portable under this project's rule and deduplicate
