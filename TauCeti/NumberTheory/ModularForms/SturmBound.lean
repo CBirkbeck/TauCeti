@@ -70,7 +70,8 @@ private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.s
   rw [hnRw]
   exact qExpansion_order_le_qExpansion_nat_mul_order strictWidthInfty_pos_of_finiteRelIndex
     hm'_pos hf_w_per (OnePoint.isBoundedAt_infty_iff.mp
-      (ModularFormClass.bdd_at_cusps f Subgroup.isCusp_infty_of_finiteRelIndex)) f.holo'
+      (ModularFormClass.bdd_at_cusps f <| IsCusp.of_isFiniteRelIndex (ℋ := 𝒮ℒ) <|
+        isCusp_SL2Z_iff.mpr ⟨OnePoint.infty, rfl⟩)) f.holo'
 
 /-- **Sturm bound for subgroups of `GL(2, ℝ)` of finite relative index in `SL(2, ℤ)`** with
 discrete strict periods. A modular form of weight `k` whose `q`-expansion at the cusp `∞`

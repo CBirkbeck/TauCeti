@@ -350,7 +350,8 @@ public lemma qExpansion_one_norm_order_eq :
         + (qExpansion 1 (normRest f)).order := by
   have hn_pos : 0 < Subgroup.integerCuspWidth 𝒢 := Subgroup.integerCuspWidth_pos
   have hf_bdd : IsBoundedAtImInfty f := OnePoint.isBoundedAt_infty_iff.mp <|
-    ModularFormClass.bdd_at_cusps f Subgroup.isCusp_infty_of_finiteRelIndex
+    ModularFormClass.bdd_at_cusps f <| IsCusp.of_isFiniteRelIndex (ℋ := 𝒮ℒ) <|
+      isCusp_SL2Z_iff.mpr ⟨OnePoint.infty, rfl⟩
   have hf_n_per : Function.Periodic (⇑f ∘ ofComplex)
       ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) :=
     SlashInvariantFormClass.periodic_comp_ofComplex f
