@@ -221,7 +221,7 @@ private lemma prod_range_div_complex (a : ℕ → ℂ) (k : ℕ) (ha : ∀ j ≤
 This is the key identity making `Im(log)` of each `segRatio` add up to a
 continuous argument lift of `t ↦ γ t - w`. -/
 private theorem prod_segRatio_telescope {γ : ℝ → ℂ} {w : ℂ} {N : ℕ} {s : ℕ → ℝ}
-    (hs_mono : Monotone s) (h_avoid : ∀ j ≤ N, γ (s j) - w ≠ 0)
+    (hs_mono : Monotone s) (h_avoid : ∀ j < N, γ (s j) - w ≠ 0)
     {t : ℝ} {k : ℕ} (hk : k < N) (hk_lo : s k ≤ t) (hk_hi : t ≤ s (k + 1)) :
     ∏ j ∈ Finset.range N, segRatio γ w (s j) (s (j + 1)) t = (γ t - w) / (γ (s 0) - w) := by
   -- Split range N = range (k+1) ∪ Ico (k+1) N
@@ -232,7 +232,7 @@ private theorem prod_segRatio_telescope {γ : ℝ → ℂ} {w : ℂ} {N : ℕ} {
       segRatio γ w (s j) (s (j + 1)) t = 1 := by
     intro j hj
     rw [Finset.mem_Ico] at hj
-    refine segRatio_eq_one_of_le ?_ (h_avoid j hj.2.le)
+    refine segRatio_eq_one_of_le ?_ (h_avoid j hj.2)
     exact hk_hi.trans (hs_mono hj.1)
   rw [Finset.prod_congr rfl h_ico_eq_one, Finset.prod_const_one, mul_one]
   -- Peel off middle term j = k from range (k+1)
@@ -249,10 +249,10 @@ private theorem prod_segRatio_telescope {γ : ℝ → ℂ} {w : ℂ} {N : ℕ} {
   rw [segRatio_eq_div_of_mem_Icc ⟨hk_lo, hk_hi⟩]
   -- Apply telescoping lemma to range k product
   rw [prod_range_div_complex (fun j ↦ γ (s j) - w) k
-        (fun j hj ↦ h_avoid j (hj.trans hk.le))]
+        (fun j hj ↦ h_avoid j (lt_of_le_of_lt hj hk))]
   -- Cancel γ s_k - w
   rw [div_mul_div_comm, mul_comm (γ (s k) - w) (γ t - w),
-      mul_div_mul_right _ _ (h_avoid k hk.le)]
+      mul_div_mul_right _ _ (h_avoid k hk)]
 
 /-! ### Continuous arg-lift summand (continued) -/
 
@@ -373,13 +373,13 @@ and `s N` satisfies `γ t - w = ‖γ t - w‖ · exp (I · θ t)`, where
 `θ t = arg (γ a - w) + ∑_{j < N} (log (segRatio γ w (s j) (s (j+1)) t)).im`. -/
 private theorem polar_form_of_partition {γ : ℝ → ℂ} {w : ℂ} {a : ℝ} {N : ℕ} {s : ℕ → ℝ}
     (hN_pos : 0 < N) (hs_zero : s 0 = a) (hs_mono : Monotone s)
-    (hs_avoid : ∀ j ≤ N, γ (s j) - w ≠ 0) {t : ℝ}
+    (hs_avoid : ∀ j < N, γ (s j) - w ≠ 0) {t : ℝ}
     (h_cov_lo : s 0 ≤ t) (h_cov_hi : t ≤ s N) :
     γ t - w = (‖γ t - w‖ : ℂ) * Complex.exp (Complex.I *
       ((Complex.arg (γ a - w) +
         ∑ j ∈ Finset.range N,
           (Complex.log (segRatio γ w (s j) (s (j + 1)) t)).im : ℝ) : ℂ)) := by
-  have h_avoid_a : γ a - w ≠ 0 := hs_zero ▸ hs_avoid 0 (Nat.zero_le N)
+  have h_avoid_a : γ a - w ≠ 0 := hs_zero ▸ hs_avoid 0 hN_pos
   obtain ⟨k, hk_lt, hk_lo, hk_hi⟩ := exists_covering_segment hN_pos hs_mono h_cov_lo h_cov_hi
   have h_telescope := prod_segRatio_telescope hs_mono hs_avoid hk_lt hk_lo hk_hi
   rw [hs_zero] at h_telescope
@@ -425,16 +425,12 @@ theorem exists_continuousOn_arg_lift_with_partition {γ : ℝ → ℂ} {w : ℂ}
   have hs_avoid : ∀ j ≤ N, γ (s j) - w ≠ 0 := fun j hj ↦
     sub_ne_zero.mpr (h_avoid (s j) (hs_in j hj))
   have hs_le : ∀ j, s j ≤ s (j + 1) := fun j ↦ hs_mono (Nat.le_succ _)
-  -- both the `slitPlane` conclusion and the nonvanishing the telescoping product needs read
-  -- off this one fact
-  have h_seg : ∀ j, j < N → ∀ t, segRatio γ w (s j) (s (j + 1)) t ∈ Complex.slitPlane :=
-    fun j hj ↦ segRatio_mem_slitPlane hρ_pos h_dist_lb h_unif
-      (hs_in j hj.le) (hs_in (j + 1) hj) (hs_le j) (hs_mesh j)
   have h_slit : ∀ j, j < N → ∀ t ∈ Icc (s j) (s (j + 1)),
       (γ t - w) / (γ (s j) - w) ∈ Complex.slitPlane := by
     intro j hj t ht
     rw [← segRatio_eq_div_of_mem_Icc ht]
-    exact h_seg j hj t
+    exact segRatio_mem_slitPlane hρ_pos h_dist_lb h_unif
+      (hs_in j hj.le) (hs_in (j + 1) hj) (hs_le j) (hs_mesh j) t
   refine ⟨N, s, hN_pos, hs_zero, hs_N, hs_mono, hs_in, hs_avoid, h_slit, ?_, ?_⟩
   -- Continuity of θ
   · refine ContinuousOn.add continuousOn_const ?_
@@ -444,7 +440,8 @@ theorem exists_continuousOn_arg_lift_with_partition {γ : ℝ → ℂ} {w : ℂ}
       (hs_in j (Finset.mem_range.mp hj).le) (hs_in (j + 1) (Finset.mem_range.mp hj))
       (hs_le j) (hs_mesh j)
   -- Lift property
-  · exact fun t ht => polar_form_of_partition hN_pos hs_zero hs_mono hs_avoid
+  · exact fun t ht => polar_form_of_partition hN_pos hs_zero hs_mono
+      (fun j hj ↦ hs_avoid j hj.le)
       (by rw [hs_zero]; exact ht.1) (by rw [hs_N]; exact ht.2)
 
 end TauCeti.Contour
