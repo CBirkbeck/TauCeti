@@ -116,9 +116,6 @@ repository's general-`n` family at `a = ![1, p]`. -/
 noncomputable def upperTriRep (b : Fin p) : GL (Fin 2) ℚ :=
   upperTriGL ((upperTriEntriesEquivFin p).symm b)
 
-lemma upperTriRep_def (b : Fin p) :
-    upperTriRep p b = upperTriGL ((upperTriEntriesEquivFin p).symm b) := (rfl)
-
 /-- **The representatives are upper triangular** — the hypothesis mathlib's
 `IsBoundedAtImInfty.slash` asks for. At `n = 2` this is the `(1, 0)` entry of
 `upperTriGL_apply_eq_zero_of_lt`. -/
@@ -137,7 +134,7 @@ lemma det_upperTriRep_pos (b : Fin p) :
   rw [det_unitriMat] at hunit
   have hunit' : ((unitriMat ((upperTriEntriesEquivFin p).symm b)).map
       (Int.cast : ℤ → ℚ)).det = 1 := by simpa using hunit.symm
-  rw [upperTriRep_def, upperTriGL_def, Units.val_mul, Matrix.det_mul]
+  rw [upperTriRep, upperTriGL_def, Units.val_mul, Matrix.det_mul]
   simpa [hunit'] using hdiag
 
 end HeckeRing.GL2
