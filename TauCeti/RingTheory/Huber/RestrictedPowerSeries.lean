@@ -144,8 +144,8 @@ theorem isRestricted_iff_coeff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSp
 /-- `0` is restricted: its coefficients are constantly `0`. -/
 @[simp]
 theorem isRestricted_zero (k : ℕ) (M : Type*) [Zero M] [TopologicalSpace M] :
-    IsRestricted (0 : MvPowerSeries (Fin k) M) := by
-  exact zero_zeroAtFilter _
+    IsRestricted (0 : MvPowerSeries (Fin k) M) :=
+  zero_zeroAtFilter _
 
 /-- `1` is restricted: every coefficient but the `0`-th vanishes. -/
 @[simp]
@@ -175,21 +175,17 @@ theorem isRestricted_of_finite_ne_zero {k : ℕ} {M : Type*} [Zero M] [Topologic
   filter_upwards [hf.compl_mem_cofinite] with s hs
   exact (not_not.mp hs).symm
 
-/-- A sum of restricted series is restricted.
-
-Unlike `IsRestricted.smul`, which closes through Mathlib's `Filter.Tendsto.const_smul_zero`, this
-and `IsRestricted.neg` rewrite the limit by hand: Mathlib packages the zero-limit case for the
-scalar action but not for addition or negation, so `Tendsto.add` lands at `𝓝 (0 + 0)`. -/
+/-- A sum of restricted series is restricted. -/
 theorem IsRestricted.add {k : ℕ} {M : Type*} [AddMonoid M] [TopologicalSpace M]
     [ContinuousAdd M] {f g : MvPowerSeries (Fin k) M}
-    (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f + g) := by
-  exact (isRestricted_iff_zeroAtFilter.mp hf).add (isRestricted_iff_zeroAtFilter.mp hg)
+    (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f + g) :=
+  (isRestricted_iff_zeroAtFilter.mp hf).add (isRestricted_iff_zeroAtFilter.mp hg)
 
 /-- The negation of a restricted series is restricted. -/
 theorem IsRestricted.neg {k : ℕ} {M : Type*} [AddGroup M] [TopologicalSpace M]
     [ContinuousNeg M] {f : MvPowerSeries (Fin k) M}
-    (hf : IsRestricted f) : IsRestricted (-f) := by
-  exact (isRestricted_iff_zeroAtFilter.mp hf).neg
+    (hf : IsRestricted f) : IsRestricted (-f) :=
+  (isRestricted_iff_zeroAtFilter.mp hf).neg
 
 /-- Scaling a restricted series by a constant leaves it restricted.
 
@@ -199,8 +195,8 @@ continuous in the vector variable, which is `ContinuousConstSMul`. This is the c
 `IsRestricted` can use it directly, as they can `IsRestricted.add` and `IsRestricted.neg`. -/
 theorem IsRestricted.smul {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M]
     [TopologicalSpace M] [Module R M] [ContinuousConstSMul R M] {f : MvPowerSeries (Fin k) M}
-    (hf : IsRestricted f) (c : R) : IsRestricted (c • f) := by
-  exact (isRestricted_iff_zeroAtFilter.mp hf).smul c
+    (hf : IsRestricted f) (c : R) : IsRestricted (c • f) :=
+  (isRestricted_iff_zeroAtFilter.mp hf).smul c
 
 /-- Restrictedness, restated: for every open additive subgroup `W`, all but finitely many
 coefficients lie in `W`. This is the form the convolution argument actually consumes. -/
