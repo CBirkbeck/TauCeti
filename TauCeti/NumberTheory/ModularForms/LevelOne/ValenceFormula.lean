@@ -27,8 +27,7 @@ contour identity.
 
 ## Main declarations
 
-* `finsum_orderOfVanishingOnOrbit_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero`
-  (in `TauCeti.ModularForm`): the valence formula.
+* `valence_formula` (in `TauCeti.ModularForm`): the valence formula.
 
 ## References
 
@@ -51,8 +50,7 @@ namespace ModularForm
 /-- **The valence formula** for weight-`k` modular forms on `SL₂(ℤ)`: for `f ≠ 0`, the cusp
 order, the half-weighted order at `i`, the third-weighted order at `ρ` and the orders along
 the non-elliptic orbits sum to `k / 12`. -/
-theorem finsum_orderOfVanishingOnOrbit_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero
-    {F : Type*} [FunLike F ℍ ℂ] {k : ℤ} [ModularFormClass F 𝒮ℒ k] (f : F)
+theorem valence_formula {F : Type*} [FunLike F ℍ ℂ] {k : ℤ} [ModularFormClass F 𝒮ℒ k] (f : F)
     (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     ((∑ᶠ q : NonEllipticOrbit, orderOfVanishingOnOrbit f q.val : ℤ) : ℂ)
         + 1 / 2 * ((orderOfVanishingAt ⇑f UpperHalfPlane.I : ℤ) : ℂ)
