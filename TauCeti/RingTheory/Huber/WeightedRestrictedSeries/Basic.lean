@@ -6,6 +6,7 @@ module
 
 public import TauCeti.RingTheory.Huber.RestrictedPowerSeries
 public import TauCeti.Topology.Algebra.Nonarchimedean.Absorption
+public import Mathlib.RingTheory.MvPowerSeries.Equiv
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 public import Mathlib.Algebra.Ring.Subgroup
 public import Mathlib.RingTheory.MvPowerSeries.Trunc
@@ -68,11 +69,16 @@ counterexample in `IsWeightFamily`'s docstring shows the hypothesis is not autom
   ring of restricted power series (Wedhorn Example 5.54).
 * `TauCeti.Huber.weightedPolynomials`, the polynomials as a subring of `A⟨X⟩_T`, with
   `mem_weightedPolynomials_iff` identifying it with finite support and the generators
-  `weightedC`/`weightedX` in it; `TauCeti.Huber.dense_weightedPolynomials` is Wedhorn 5.49, read
-  off the predicate-level `exists_mvPolynomial_forall_coeff_sub_mem`.
+  `weightedC`/`weightedX` in it; `TauCeti.Huber.dense_weightedPolynomials` is Wedhorn 5.49(1),
+  read off the predicate-level `exists_mvPolynomial_forall_coeff_sub_mem`.
 * `TauCeti.Huber.weightedPolynomialEquiv`, with `discreteTopology_weightedRestrictedSubring`
   and `weightedPolynomials_eq_top`: over a discrete ring the weighted topology is discrete and
   `A⟨X⟩_T` is exactly the polynomial ring.
+* `TauCeti.Huber.weightedRestrictedSubring_fin_zero` and
+  `TauCeti.Huber.weightedRestrictedSubringFinZeroEquiv`, with
+  `continuous_weightedRestrictedSubringFinZeroEquiv` and its `_symm`: in no variables every
+  series is restricted, so `A⟨X⟩_T` is `A` — and topologically so, since the weight is the empty
+  product and `Tν · U` collapses to `U`.
 * `TauCeti.Huber.IsWeightedRestricted.map`, with `weightMul_map_le` and `image_weightPow`:
   restrictedness is preserved by a continuous ring map carrying each `T i` into `S i`. This is
   what `weightedMap` is built from; `weightedMap_weightedX` says it fixes the variables, while
@@ -106,6 +112,21 @@ those coefficients to vanish; the closure lemmas below need no nonemptiness hypo
 This construction is not the same as retopologising the ordinary `A⟨X⟩` by transporting along a
 substitution `X ↦ f X`: there the weight multiplies the coefficient rather than the
 neighbourhood, and the carrier does not vary with `T`. Here the carrier itself depends on `T`.
+
+Nor is it Mathlib's `MvPowerSeries.IsRestricted`, despite that also being a weighted condition.
+Mathlib weights by a polyradius `c : σ → ℝ` over a *normed* ring, asking that
+`‖coeff t f‖ * ∏ i, c i ^ t i` tend to `0` along the cofinite filter. A Huber ring's topology is
+nonarchimedean but in general carries no norm, so no polyradius is available to state that
+condition, and the weight family here is a family of *subsets* `Tᵢ ⊆ A` acting on neighbourhood
+subgroups rather than a family of reals scaling coefficient norms. The two do agree at the
+trivial weight when the norm is *ultrametric*: the balls `{a ; ‖a‖ < r}` are then additive
+subgroups, and every open subgroup contains one, so quantifying over all open subgroups is the
+same as quantifying over the balls and the condition becomes `‖coeff ν f‖ → 0` along the
+cofinite filter. Over a general normed ring they do not agree: over `ℝ`, as above, the condition
+here is vacuous while Mathlib's still asks for `‖coeff ν f‖ → 0`. The unweighted predicate of
+`TauCeti/RingTheory/Huber/RestrictedPowerSeries.lean` is a topological limit rather than a
+condition on subgroups, and that file remarks on the comparison for it — in prose, not as a
+proved declaration. Neither notion is a special case of the other in general.
 
 The finite-family absorption fact the multiplicative arguments run on — finitely many fixed
 elements are absorbed into their own targets by a single open subgroup — mentions no weight, so
@@ -144,8 +165,9 @@ The API layout — the `isWeightedRestricted_zero/one/add/neg/mul` series, the s
 
 ## References
 
-* [T. Wedhorn, *Adic Spaces*][wedhorn_adic], Remark and Definition 5.48, equation (5.6.1), and
-  Example 5.54 for the case `Tᵢ = {1}`.
+* [T. Wedhorn, *Adic Spaces*][wedhorn_adic], Remark and Definition 5.48, equation (5.6.1),
+  Proposition 5.49(1) for the density of the polynomials, and Example 5.54 for the case
+  `Tᵢ = {1}`.
 -/
 
 open Filter Pointwise Topology
@@ -862,7 +884,7 @@ theorem isWeightedRestricted_toMvPowerSeries (T : Fin k → Set A) (p : MvPolyno
     IsWeightedRestricted T (p : MvPowerSeries (Fin k) A) :=
   isWeightedRestricted_of_finite_support T (finite_support_toMvPowerSeries p)
 
-/-- **Wedhorn 5.49, the approximation step**, at predicate level: a `T`-restricted series is
+/-- **Wedhorn 5.49(1), the approximation step**, at predicate level: a `T`-restricted series is
 approximated by a polynomial, coefficientwise inside `Tν · U`. Neither a nonarchimedean
 hypothesis on `A` nor `IsWeightFamily T` is needed — only the ambient `[CommRing A]` and
 `[TopologicalSpace A]` that `OpenAddSubgroup A` already asks for. -/
@@ -951,7 +973,7 @@ theorem weightedX_mem_weightedPolynomials [NonarchimedeanRing A] {T : Fin k → 
     {hT : IsWeightFamily T} (i : Fin k) : weightedX T hT i ∈ weightedPolynomials T hT :=
   ⟨MvPolynomial.X i, weightedPolynomialHom_X i⟩
 
-/-- **Wedhorn 5.49**: the polynomials are dense in `A⟨X⟩_T`. -/
+/-- **Wedhorn 5.49(1)**: the polynomials are dense in `A⟨X⟩_T`. -/
 theorem dense_weightedPolynomials [NonarchimedeanRing A] {T : Fin k → Set A}
     (hT : IsWeightFamily T) :
     Dense (weightedPolynomials T hT : Set (weightedRestrictedSubring T hT)) := by
@@ -1054,6 +1076,71 @@ noncomputable def weightedPolynomialEquiv [NonarchimedeanRing A] [DiscreteTopolo
 theorem weightedPolynomialEquiv_apply [NonarchimedeanRing A] [DiscreteTopology A]
     {T : Fin k → Set A} {hT : IsWeightFamily T} (p : MvPolynomial (Fin k) A) :
     weightedPolynomialEquiv T hT p = weightedPolynomialHom T hT p := (rfl)
+
+/-! ### Zero variables
+
+At `k = 0` the coefficient index is a subsingleton, so restrictedness is vacuous and the
+ring of restricted series is `A` itself — topologically, since the weight is the empty
+product and `Tν · U` collapses to `U`. -/
+
+section ZeroVariables
+
+/-- **At zero variables every power series is restricted.** There is only one monomial, so the
+coefficient family is indexed by a subsingleton and converges to zero along the cofinite filter
+vacuously. -/
+theorem weightedRestrictedSubring_fin_zero [NonarchimedeanRing A] :
+    weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight = ⊤ := by
+  ext f
+  simp [isWeightedRestricted_one_weight_iff, Filter.cofinite_eq_bot]
+
+/-- **`A⟨⟩ = A`**: the restricted power series in no variables are `A` itself, as a ring. -/
+noncomputable def weightedRestrictedSubringFinZeroEquiv [NonarchimedeanRing A] :
+    weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight ≃+* A :=
+  (RingEquiv.subringCongr weightedRestrictedSubring_fin_zero).trans <|
+    Subring.topEquiv.trans (MvPowerSeries.isEmptyEquiv (Fin 0) A).toRingEquiv
+
+/-- The zero-variable comparison is the constant coefficient. -/
+@[simp]
+theorem weightedRestrictedSubringFinZeroEquiv_apply [NonarchimedeanRing A]
+    (f : weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight) :
+    weightedRestrictedSubringFinZeroEquiv f =
+      MvPowerSeries.constantCoeff (f : MvPowerSeries (Fin 0) A) := (rfl)
+
+/-- The zero-variable comparison is continuous. -/
+theorem continuous_weightedRestrictedSubringFinZeroEquiv [NonarchimedeanRing A] :
+    Continuous (weightedRestrictedSubringFinZeroEquiv (A := A)) := by
+  refine continuous_of_continuousAt_zero
+    weightedRestrictedSubringFinZeroEquiv.toAddMonoidHom ?_
+  rw [ContinuousAt, map_zero,
+    (hasBasis_nhds_zero_weightedTopology isWeightFamily_one_weight).tendsto_left_iff]
+  intro V hV
+  obtain ⟨U, hUV⟩ := NonarchimedeanAddGroup.is_nonarchimedean V hV
+  refine ⟨U, trivial, fun f hf ↦ hUV ?_⟩
+  have h := mem_weightedNhd.mp hf 0
+  rw [weightMul_one_weight] at h
+  simpa using h
+
+/-- The inverse comparison sends `a` to the constant series. -/
+@[simp]
+theorem coe_weightedRestrictedSubringFinZeroEquiv_symm [NonarchimedeanRing A] (a : A) :
+    ((weightedRestrictedSubringFinZeroEquiv.symm a :
+        weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight) :
+      MvPowerSeries (Fin 0) A) = MvPowerSeries.C a := (rfl)
+
+/-- The inverse of the zero-variable comparison is continuous. -/
+theorem continuous_weightedRestrictedSubringFinZeroEquiv_symm [NonarchimedeanRing A] :
+    Continuous (weightedRestrictedSubringFinZeroEquiv (A := A)).symm := by
+  refine continuous_of_continuousAt_zero
+    (weightedRestrictedSubringFinZeroEquiv (A := A)).symm.toAddMonoidHom ?_
+  rw [ContinuousAt, map_zero,
+    (hasBasis_nhds_zero_weightedTopology isWeightFamily_one_weight).tendsto_right_iff]
+  intro U _
+  filter_upwards [U.isOpen.mem_nhds U.zero_mem] with a ha
+  refine mem_weightedNhd.mpr fun ν ↦ ?_
+  rw [weightMul_one_weight]
+  simpa [Subsingleton.elim ν 0] using ha
+
+end ZeroVariables
 
 /-! ### The uniform structure
 
