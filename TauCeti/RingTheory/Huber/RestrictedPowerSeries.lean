@@ -127,8 +127,13 @@ theorem isRestricted_iff {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
 
 /-- **`IsRestricted` is `Filter.ZeroAtFilter` at the cofinite filter**, on the coefficient
 function. Mathlib's predicate is the general notion — a function tending to `0` along a filter —
-and restrictedness is its instance at `cofinite`. Every closure property below is Mathlib's,
-cited through this lemma rather than reproved. -/
+and restrictedness is its instance at `cofinite`.
+
+The four closure properties that do not involve multiplication — `isRestricted_zero`,
+`IsRestricted.add`, `IsRestricted.neg` and `IsRestricted.smul` — are cited through this lemma
+rather than reproved. `isRestricted_one`, `isRestricted_algebraMap`,
+`isRestricted_of_finite_ne_zero` and `IsRestricted.mul` are proved here; the last is the
+convolution argument this file exists for, and has no Mathlib counterpart. -/
 theorem isRestricted_iff_zeroAtFilter {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
     {f : MvPowerSeries (Fin k) M} :
     IsRestricted f ↔ Filter.ZeroAtFilter cofinite (f : (Fin k →₀ ℕ) → M) := (Iff.rfl)
@@ -145,6 +150,8 @@ theorem isRestricted_iff_coeff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSp
 @[simp]
 theorem isRestricted_zero (k : ℕ) (M : Type*) [Zero M] [TopologicalSpace M] :
     IsRestricted (0 : MvPowerSeries (Fin k) M) :=
+  -- `(0 : MvPowerSeries (Fin k) M)` *is* the `Pi` zero: the instance is `inferInstanceAs`, so no
+  -- coercion step is needed and none is available — Mathlib states no such lemma at `[Zero M]`.
   zero_zeroAtFilter _
 
 /-- `1` is restricted: every coefficient but the `0`-th vanishes. -/
@@ -179,12 +186,16 @@ theorem isRestricted_of_finite_ne_zero {k : ℕ} {M : Type*} [Zero M] [Topologic
 theorem IsRestricted.add {k : ℕ} {M : Type*} [AddMonoid M] [TopologicalSpace M]
     [ContinuousAdd M] {f g : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f + g) :=
+  -- `(f + g)`'s coefficient function is the pointwise sum by definition: `MvPowerSeries`'
+  -- `AddMonoid` instance is `inferInstanceAs` of the `Pi` one, so this is `rfl` and not a step.
   (isRestricted_iff_zeroAtFilter.mp hf).add (isRestricted_iff_zeroAtFilter.mp hg)
 
 /-- The negation of a restricted series is restricted. -/
 theorem IsRestricted.neg {k : ℕ} {M : Type*} [AddGroup M] [TopologicalSpace M]
     [ContinuousNeg M] {f : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) : IsRestricted (-f) :=
+  -- As in `IsRestricted.add`: the `AddGroup` instance is the `Pi` one, so negation is pointwise
+  -- by definition.
   (isRestricted_iff_zeroAtFilter.mp hf).neg
 
 /-- Scaling a restricted series by a constant leaves it restricted.
@@ -196,6 +207,8 @@ continuous in the vector variable, which is `ContinuousConstSMul`. This is the c
 theorem IsRestricted.smul {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M]
     [TopologicalSpace M] [Module R M] [ContinuousConstSMul R M] {f : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (c : R) : IsRestricted (c • f) :=
+  -- As in `IsRestricted.add`: the `Module` instance is the `Pi` one, so the scalar action is
+  -- pointwise by definition.
   (isRestricted_iff_zeroAtFilter.mp hf).smul c
 
 /-- Restrictedness, restated: for every open additive subgroup `W`, all but finitely many
