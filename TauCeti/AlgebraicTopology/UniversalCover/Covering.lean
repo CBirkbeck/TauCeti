@@ -189,18 +189,15 @@ private theorem quotient_mk_eq_refl_of_ofBasedPath_append_eq {α : BasedPath x�
     (Path.Homotopic.Quotient.mk γ : Path.Homotopic.Quotient
         (BasedPath.endpoint α) (BasedPath.endpoint α)) =
       Path.Homotopic.Quotient.refl (BasedPath.endpoint α) := by
-  have h_append_eq :
-      Path.Homotopic.Quotient.mk (α.toPath.trans γ) = Path.Homotopic.Quotient.mk α.toPath := by
-    have h_end' : ofBasedPath x₀ (BasedPath.ofPath (α.toPath.trans γ)) =
-        ofBasedPath x₀ (BasedPath.ofPath α.toPath) := by
-      rw [BasedPath.ofPath_toPath_self]
-      exact h_end
-    rw [ofBasedPath_ofPath, ofBasedPath_ofPath] at h_end'
-    simpa using h_end'
   apply Quotient.sound
   apply Path.Homotopic.trans_left_cancel (e := α.toPath)
-  exact (Path.Homotopic.Quotient.exact h_append_eq).trans
-    (Path.Homotopic.trans_refl α.toPath).symm
+  have h := toPath_homotopic_of_ofBasedPath_eq h_end
+  simp only [BasedPath.toPath_append] at h
+  have h' : Path.Homotopic (α.toPath.trans γ) α.toPath := by
+    convert h using 2
+    ext t
+    rfl
+  exact h'.trans (Path.Homotopic.trans_refl α.toPath).symm
 
 /-- The universal cover is simply connected. -/
 instance simplyConnectedSpace [LocallyPathConnectedSpace X] [PathConnectedSpace X]
