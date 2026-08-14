@@ -56,9 +56,7 @@ with a uniformity preamble.
 * The `CategoryTheory.ObjectProperty.IsClosedUnderIsomorphisms` instance for
   `TauCeti.TopCommRingCat.isCompleteSeparated` : the property transfers along isomorphisms,
   an isomorphism being in particular a closed embedding — which is
-  `TauCeti.TopCommRingCat.isClosedEmbedding_inv`, in turn resting on
-  `TauCeti.TopCommRingCat.coe_homeoOfIso_mapIso_symm`, the named identification of the induced
-  homeomorphism's underlying function with `e.inv`.
+  `TauCeti.TopCommRingCat.isClosedEmbedding_inv`.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.pi` : a product of complete separated objects
   is complete separated. This is the closure half for products; the limit cones and the
   creation statement for the inclusion `CompleteSeparatedTopCommRingCat ⥤ TopCommRingCat`
@@ -174,9 +172,10 @@ theorem isCompleteSeparated_iff (R : TopCommRingCat.{u}) :
     isCompleteSeparated R ↔ IsCompleteSeparated R := (Iff.rfl)
 
 /-- **The homeomorphism an isomorphism induces has `e.inv` as its underlying function.** It holds
-by `rfl`, but through `forget₂`, `mapIso` and `TopCat.homeoOfIso` in turn; naming it keeps the
-transfer below from depending on that chain unfolding. -/
-theorem coe_homeoOfIso_mapIso_symm {R S : TopCommRingCat.{u}} (e : R ≅ S) :
+by `rfl`, but through `forget₂`, `mapIso` and `TopCat.homeoOfIso` in turn; naming it keeps
+`isClosedEmbedding_inv` from depending on that chain unfolding. Private: it exposes the internal
+representation and has no consumer beyond that lemma. -/
+private theorem coe_homeoOfIso_mapIso_symm {R S : TopCommRingCat.{u}} (e : R ≅ S) :
     ⇑(TopCat.homeoOfIso ((forget₂ TopCommRingCat.{u} TopCat.{u}).mapIso e)).symm = ⇑e.inv :=
   rfl
 
