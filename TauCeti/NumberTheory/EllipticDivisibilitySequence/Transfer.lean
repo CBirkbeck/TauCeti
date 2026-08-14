@@ -33,14 +33,10 @@ terminate.
 
 ## Main results
 
-* `IsEllipticNet.parity_abs_avg_sub`: same parity survives the transfer, in the form the descent
-  consumes — after `atomRel_abs₄` has absorbed the sign. The raw-index form that `atomRel_avg_sub`
-  produces is a private step inside its proof rather than a second public spelling.
-* `IsEllipticNet.nonnegStrictAnti₄_def` / `nonnegStrictAnti₄_iff`: the predicate's defining body,
-  and its adjacent-inequality normal form.
-* `IsEllipticNet.nonnegStrictAnti₄_abs_avg_sub`: nonnegativity and strict decrease survive it,
-  under the gap `d + 2 ≤ c` rather than parity — parity is what the descent has, but only the gap
-  is what the proof uses.
+* `IsEllipticNet.parity_abs_avg_sub`: same parity survives the transfer, with the witness taken
+  relative to the entry `atomRel_abs₄` leaves under an absolute value.
+* `IsEllipticNet.nonnegStrictAnti₄_iff`: the predicate as its four adjacent inequalities.
+* `IsEllipticNet.nonnegStrictAnti₄_abs_avg_sub`: nonnegativity and strict decrease survive it.
 * `IsEllipticNet.six_le_of_parity_of_nonnegStrictAnti₄`: a strictly decreasing quadruple
   of one parity with `0 ≤ d` has `6 ≤ a` — consecutive indices differ by at least two, three
   times over.
@@ -62,10 +58,16 @@ normal form once for downstream use.
 **On the imports.** The rule here is: **public** for what the public *statements* mention,
 **private** for what only the proofs need. So `Mathlib.Algebra.Order.Group.Int` and
 `…Group.Unbundled.Abs` are public — the statements use ℤ arithmetic and `|…|` — as is
-`Mathlib.Order.Fin.Tuple`, since `nonnegStrictAnti₄_def` mentions `StrictAnti ![…]` and that
+`Mathlib.Order.Fin.Tuple`, since `NonnegStrictAnti₄` is defined by `StrictAnti ![…]` and that
 module supplies the vector notation too. `Mathlib.Data.Int.ModEq` and `Mathlib.Algebra.Order.Group
 .Abs` are private, each used only inside a proof — the latter for `abs_cases`, which is
 `to_additive`-generated from `mabs_cases` and so appears under no literal definition of its own.
+
+**On the hypotheses.** `nonnegStrictAnti₄_abs_avg_sub` takes the four inequalities separately
+rather than a bundled `NonnegStrictAnti₄` plus a gap: the descent supplies parity, from which
+`d + 2 ≤ c` follows by `omega`, and bundling would have carried `d < c` alongside the strictly
+stronger gap. Only `parity_abs_avg_sub` and `six_le_of_parity_of_nonnegStrictAnti₄` genuinely need
+parity as parity.
 
 This file does **not** import `Mathlib.NumberTheory.EllipticDivisibilitySequence`. No declaration
 here mentions `atom`, `atomRel` or `rel`: the statements are about ℤ arithmetic, order and parity,
@@ -103,14 +105,7 @@ the descent needs it wherever it needs the ordering; the decreasing half is Math
 `StrictAnti` on the tuple. -/
 def NonnegStrictAnti₄ (a b c d : ℤ) : Prop := 0 ≤ d ∧ StrictAnti ![a, b, c, d]
 
-/-- The defining body of `NonnegStrictAnti₄`, for a consumer that wants the tuple form and
-Mathlib's `StrictAnti` API directly rather than the adjacent inequalities. -/
-theorem nonnegStrictAnti₄_def (a b c d : ℤ) :
-    NonnegStrictAnti₄ a b c d ↔ 0 ≤ d ∧ StrictAnti ![a, b, c, d] := Iff.rfl
-
-/-- `NonnegStrictAnti₄` unfolded to its adjacent inequalities. Not a restatement of the
-defining body — that is `nonnegStrictAnti₄_def` — but the equivalent form the descent consumes,
-and the normal form `simp` rewrites to. -/
+/-- `NonnegStrictAnti₄` as its four adjacent inequalities. -/
 @[simp]
 theorem nonnegStrictAnti₄_iff (a b c d : ℤ) :
     NonnegStrictAnti₄ a b c d ↔ 0 ≤ d ∧ d < c ∧ c < b ∧ b < a := by
@@ -119,9 +114,7 @@ theorem nonnegStrictAnti₄_iff (a b c d : ℤ) :
   omega
 
 /-- **Same parity survives the transfer**, for the transferred quadruple exactly as
-`atomRel_avg_sub` produces it, with the last index raw. Private: it is the step through which
-`parity_abs_avg_sub` is proved, and that absolute-value form is the shape every consumer wants,
-so exporting both would put two spellings of one fact on the public surface. -/
+`atomRel_avg_sub` produces it, with the last index raw. -/
 private theorem parity_avg_sub {a b c d : ℤ}
     (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) :
     ((a + b + c + d) / 2 - a) % 2 = ((a + b + c + d) / 2 - d) % 2 ∧
@@ -130,10 +123,8 @@ private theorem parity_avg_sub {a b c d : ℤ}
   obtain ⟨h₁, h₂, h₃⟩ := parity
   omega
 
-/-- **Same parity survives the transfer**, in the form the descent consumes: the parity witness is
-written relative to `|(a + b + c + d) / 2 - a|`, the entry `atomRel_abs₄` leaves under an absolute
-value. This is the only public parity statement here; the raw-index step it goes through is
-private. -/
+/-- **Same parity survives the transfer**, with the parity witness written relative to
+`|(a + b + c + d) / 2 - a|`, the entry `atomRel_abs₄` leaves under an absolute value. -/
 theorem parity_abs_avg_sub {a b c d : ℤ}
     (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) :
     |(a + b + c + d) / 2 - a| % 2 = ((a + b + c + d) / 2 - d) % 2 ∧
@@ -145,18 +136,12 @@ theorem parity_abs_avg_sub {a b c d : ℤ}
   exact ⟨habs.trans h₁, habs.trans h₂, habs.trans h₃⟩
 
 /-- **Nonnegativity and strict decrease survive the transfer.** The last index needs its absolute
-value: `m - a` is the one difference that can be negative, `a` being the largest index.
-
-The hypothesis is the **gap** `d + 2 ≤ c`, not parity. The descent supplies parity, and
-`d % 2 = c % 2` together with `d < c` gives the gap — but only the gap is used, so demanding
-parity here would state the lemma at a narrower level than it holds. A caller that has parity
-closes the difference by `omega`. -/
-theorem nonnegStrictAnti₄_abs_avg_sub {a b c d : ℤ} (hcd : d + 2 ≤ c)
-    (anti : NonnegStrictAnti₄ a b c d) :
+value: `m - a` is the one difference that can be negative, `a` being the largest index. -/
+theorem nonnegStrictAnti₄_abs_avg_sub {a b c d : ℤ}
+    (hd : 0 ≤ d) (hcd : d + 2 ≤ c) (hcb : c < b) (hba : b < a) :
     NonnegStrictAnti₄ ((a + b + c + d) / 2 - d) ((a + b + c + d) / 2 - c)
       ((a + b + c + d) / 2 - b) |(a + b + c + d) / 2 - a| := by
-  rw [nonnegStrictAnti₄_iff] at anti ⊢
-  obtain ⟨hd, hdc, hcb, hba⟩ := anti
+  rw [nonnegStrictAnti₄_iff]
   refine ⟨abs_nonneg _, ?_, by omega, by omega⟩
   rcases abs_cases ((a + b + c + d) / 2 - a) with ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] <;> omega
 
