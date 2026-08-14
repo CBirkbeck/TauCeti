@@ -126,12 +126,9 @@ private theorem exists_pow_mul_locSubring_mem {B : Type*} [Ring B] [TopologicalS
     exact hzV (Set.mul_mem_mul (hWV (hm _ (p.coeff i).property b hb)) ⟨i, rfl⟩)
 
 /-- If `f` sends every `x · b` with `x ∈ D` and `b ∈ Iᵐ` into `W`, then it sends `r · d` into `W`
-for every `r ∈ D` and every `d` in the `D`-span of the image of `Iᵐ`.
-
-The conclusion quantifies over `r` rather than fixing `r = 1` because that is what makes the
-statement usable: multiplying a span element by a further `r` stays in the span, so the `r` has to
-travel through. `W` is an arbitrary additive subgroup, so `B` needs no topology here at all. -/
-private theorem mem_of_mem_span_locIdeal_pow {B : Type*} [Ring B]
+for every `r ∈ D` and every `d` in the `D`-span of the image of `Iᵐ`. `W` is an arbitrary additive
+subgroup. -/
+private theorem map_mul_mem_of_mem_span_locIdeal_pow {B : Type*} [Ring B]
     (P : PairOfDefinition A) (T : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (f : S →+* B) (W : AddSubgroup B) {m : ℕ}
@@ -185,7 +182,7 @@ theorem continuous_of_continuous_algebraMap_of_isPowerBounded {B : Type*}
   obtain ⟨d, hd, rfl⟩ := (mem_locIdealImage_iff P T s S m).mp hx
   refine hWV ?_
   rw [locIdeal_pow_eq_span] at hd
-  simpa using mem_of_mem_span_locIdeal_pow P T s S f W.toAddSubgroup hm hd 1
+  simpa using map_mul_mem_of_mem_span_locIdeal_pow P T s S f W.toAddSubgroup hm hd 1
 
 
 /-! ### The universal property -/
