@@ -80,4 +80,70 @@ theorem continuous_algebraMap_restrictedMvPowerSeriesCompletion :
   exact ((UniformSpace.Completion.continuous_coe _).comp h).congr fun a ↦
     (UniformSpace.Completion.algebraMap_def _ _ a).symm
 
+/-! ### Zero variables -/
+
+section ZeroVariables
+
+variable {A}
+
+/-- **`A⟨⟩` is the separated completion of `A`**, as topological rings: the ring isomorphism
+between the two completions induced by the zero-variable comparison
+`weightedRestrictedSubringFinZeroEquiv`, which is a homeomorphism, through
+`UniformSpace.Completion.mapRingEquiv`. -/
+noncomputable def restrictedMvPowerSeriesCompletionFinZeroEquiv :
+    letI := IsTopologicalAddGroup.rightUniformSpace A
+    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+    restrictedMvPowerSeriesCompletion 0 A ≃+* UniformSpace.Completion A :=
+  letI := IsTopologicalAddGroup.rightUniformSpace A
+  letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+  UniformSpace.Completion.mapRingEquiv weightedRestrictedSubringFinZeroEquiv
+    continuous_weightedRestrictedSubringFinZeroEquiv
+    continuous_weightedRestrictedSubringFinZeroEquiv_symm
+
+/-- On the canonical image of a restricted series, the comparison of completions is the
+comparison of the rings underneath. -/
+@[simp]
+theorem restrictedMvPowerSeriesCompletionFinZeroEquiv_coe
+    (f : weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight) :
+    letI := IsTopologicalAddGroup.rightUniformSpace A
+    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+    restrictedMvPowerSeriesCompletionFinZeroEquiv (f : restrictedMvPowerSeriesCompletion 0 A) =
+      ((weightedRestrictedSubringFinZeroEquiv f : A) : UniformSpace.Completion A) :=
+  let _ := IsTopologicalAddGroup.rightUniformSpace A
+  let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+  UniformSpace.Completion.mapRingHom_coe continuous_weightedRestrictedSubringFinZeroEquiv f
+
+/-- On the canonical image of an element of `A`, the inverse comparison is the canonical image of
+the inverse ring comparison. -/
+@[simp]
+theorem restrictedMvPowerSeriesCompletionFinZeroEquiv_symm_coe (a : A) :
+    letI := IsTopologicalAddGroup.rightUniformSpace A
+    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+    (restrictedMvPowerSeriesCompletionFinZeroEquiv (A := A)).symm (a : UniformSpace.Completion A) =
+      (weightedRestrictedSubringFinZeroEquiv.symm a : restrictedMvPowerSeriesCompletion 0 A) :=
+  let _ := IsTopologicalAddGroup.rightUniformSpace A
+  let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+  UniformSpace.Completion.mapRingHom_coe
+    continuous_weightedRestrictedSubringFinZeroEquiv_symm a
+
+/-- The comparison of completions is continuous. -/
+theorem continuous_restrictedMvPowerSeriesCompletionFinZeroEquiv :
+    letI := IsTopologicalAddGroup.rightUniformSpace A
+    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+    Continuous (restrictedMvPowerSeriesCompletionFinZeroEquiv (A := A)) :=
+  let _ := IsTopologicalAddGroup.rightUniformSpace A
+  let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+  UniformSpace.Completion.continuous_map
+
+/-- Its inverse is continuous. -/
+theorem continuous_restrictedMvPowerSeriesCompletionFinZeroEquiv_symm :
+    letI := IsTopologicalAddGroup.rightUniformSpace A
+    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+    Continuous (restrictedMvPowerSeriesCompletionFinZeroEquiv (A := A)).symm :=
+  let _ := IsTopologicalAddGroup.rightUniformSpace A
+  let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
+  UniformSpace.Completion.continuous_map
+
+end ZeroVariables
+
 end TauCeti.Huber

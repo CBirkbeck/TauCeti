@@ -42,10 +42,11 @@ discrete case below is proved through it.
   discrete topology is strongly noetherian — over a discrete ring the restricted series are
   the polynomials, already complete, and the Hilbert basis theorem applies. In particular
   `ℤ`, every field, and every noetherian ring discretely topologised witness the predicate.
-* `TauCeti.Huber.isNoetherianRing_completion_of_isStronglyNoetherian`: at zero variables the
-  predicate says exactly that the separated completion `Â` is noetherian. The identification
-  behind it is topological, not merely a ring isomorphism: the weight at `k = 0` is the empty
-  product, so `Tν · U` is `U` and the two neighbourhood bases correspond.
+* `TauCeti.Huber.isNoetherianRing_completion_of_isStronglyNoetherian`: the zero-variable
+  *consequence* of the predicate — strong noetherianness quantifies over every `k`, and its
+  `k = 0` component says the separated completion `Â` is noetherian. The identification behind it
+  is topological, not merely a ring isomorphism: the weight at `k = 0` is the empty product, so
+  `Tν · U` is `U` and the two neighbourhood bases correspond.
 
 The second half of that roadmap sentence — that `A` itself is noetherian when it is already
 complete and Hausdorff — needs completeness stated against the group uniformity introduced
@@ -109,54 +110,10 @@ section ZeroVariables
 
 variable {A}
 
-/-- **`A⟨⟩` is the separated completion of `A`**, as topological rings: the ring isomorphism
-between the two completions induced by the zero-variable comparison
-`weightedRestrictedSubringFinZeroEquiv`, which is a homeomorphism, through
-`UniformSpace.Completion.mapRingEquiv`. -/
-noncomputable def restrictedMvPowerSeriesCompletionFinZeroEquiv :
-    letI := IsTopologicalAddGroup.rightUniformSpace A
-    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-    restrictedMvPowerSeriesCompletion 0 A ≃+* UniformSpace.Completion A :=
-  letI := IsTopologicalAddGroup.rightUniformSpace A
-  letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-  UniformSpace.Completion.mapRingEquiv weightedRestrictedSubringFinZeroEquiv
-    continuous_weightedRestrictedSubringFinZeroEquiv
-    continuous_weightedRestrictedSubringFinZeroEquiv_symm
-
-/-- On the canonical image of a restricted series, the comparison of completions is the
-comparison of the rings underneath. -/
-@[simp]
-theorem restrictedMvPowerSeriesCompletionFinZeroEquiv_coe
-    (f : weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight) :
-    letI := IsTopologicalAddGroup.rightUniformSpace A
-    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-    restrictedMvPowerSeriesCompletionFinZeroEquiv (f : restrictedMvPowerSeriesCompletion 0 A) =
-      ((weightedRestrictedSubringFinZeroEquiv f : A) : UniformSpace.Completion A) :=
-  let _ := IsTopologicalAddGroup.rightUniformSpace A
-  let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-  UniformSpace.Completion.mapRingHom_coe continuous_weightedRestrictedSubringFinZeroEquiv f
-
-/-- The comparison of completions is continuous. -/
-theorem continuous_restrictedMvPowerSeriesCompletionFinZeroEquiv :
-    letI := IsTopologicalAddGroup.rightUniformSpace A
-    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-    Continuous (restrictedMvPowerSeriesCompletionFinZeroEquiv (A := A)) :=
-  let _ := IsTopologicalAddGroup.rightUniformSpace A
-  let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-  UniformSpace.Completion.continuous_map
-
-/-- Its inverse is continuous. -/
-theorem continuous_restrictedMvPowerSeriesCompletionFinZeroEquiv_symm :
-    letI := IsTopologicalAddGroup.rightUniformSpace A
-    letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-    Continuous (restrictedMvPowerSeriesCompletionFinZeroEquiv (A := A)).symm :=
-  let _ := IsTopologicalAddGroup.rightUniformSpace A
-  let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-  UniformSpace.Completion.continuous_map
-
-/-- **At zero variables, strong noetherianness says that the separated completion `Â` is
-noetherian.** This is the `k = 0` reading of `TauCeti.Huber.IsStronglyNoetherian`, transported
-along the identification of `A⟨⟩` with `Â`. -/
+/-- **The zero-variable consequence of strong noetherianness: the separated completion `Â` is
+noetherian.** This is the `k = 0` component of `TauCeti.Huber.IsStronglyNoetherian` — which
+quantifies over every `k`, so this is one consequence of it rather than a characterisation —
+transported along the identification of `A⟨⟩` with `Â`. -/
 theorem isNoetherianRing_completion_of_isStronglyNoetherian [IsStronglyNoetherian A] :
     letI := IsTopologicalAddGroup.rightUniformSpace A
     letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
