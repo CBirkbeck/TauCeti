@@ -178,8 +178,7 @@ theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A]
   isRestricted_of_hasFiniteSupport <| (Set.finite_singleton (0 : Fin k →₀ ℕ)).subset fun s hs ↦ by
     simp only [Set.mem_singleton_iff]
     by_contra h
-    exact hs (by simp [show ((1 : MvPowerSeries (Fin k) A) : (Fin k →₀ ℕ) → A) s
-      = MvPowerSeries.coeff s 1 from rfl, MvPowerSeries.coeff_one, h])
+    exact hs (by simp [← MvPowerSeries.coeff_apply, MvPowerSeries.coeff_one, h])
 
 /-- A sum of restricted series is restricted. -/
 theorem IsRestricted.add {k : ℕ} {M : Type*} [AddMonoid M] [TopologicalSpace M]
@@ -360,10 +359,8 @@ theorem isRestricted_algebraMap {k : ℕ} {A : Type*} [CommSemiring A]
   isRestricted_of_hasFiniteSupport <| (Set.finite_singleton (0 : Fin k →₀ ℕ)).subset fun s hs ↦ by
     simp only [Set.mem_singleton_iff]
     by_contra h
-    exact hs (by simp [show ((algebraMap A (MvPowerSeries (Fin k) A) a :
-      MvPowerSeries (Fin k) A) : (Fin k →₀ ℕ) → A) s
-      = MvPowerSeries.coeff s (algebraMap A (MvPowerSeries (Fin k) A) a) from rfl,
-      MvPowerSeries.algebraMap_apply, MvPowerSeries.coeff_C, h])
+    exact hs (by simp [← MvPowerSeries.coeff_apply, MvPowerSeries.algebraMap_apply,
+      MvPowerSeries.coeff_C, h])
 
 /-- The restricted power series subring inherits an `A`-algebra structure from the
 `MvPowerSeries` algebra instance, since constant power series are restricted. -/
