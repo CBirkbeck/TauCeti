@@ -90,10 +90,13 @@ lemmas delegate to `zero_zeroAtFilter` and `ZeroAtFilter.add`/`.neg`/`.smul`, an
 a reconstruction of it. The Huber-specific names are kept because `M⟨T₁, …, Tₖ⟩` is the object the
 roadmap names, but no closure property is proved here that Mathlib already has.
 
-`isRestricted_iff` unfolds the predicate through plain coefficient application, which is
-what module coefficients admit; `isRestricted_iff_coeff` unfolds it through
+`isRestricted_iff` unfolds the predicate through `Filter.ZeroAtFilter`, which is the form the
+delegations use and what module coefficients admit; `isRestricted_iff_coeff` unfolds it through
 `MvPowerSeries.coeff`, the accessor to prefer wherever the coefficients form a semiring. The two
 agree definitionally, because `coeff` is projection.
+
+`isRestricted_of_hasFiniteSupport` delegates separately, through `tendsto_cofinite_pure_iff`, and
+`isRestricted_one` and `isRestricted_algebraMap` are its special cases at `1` and at a constant.
 
 The closure of the restricted power series under multiplication (convolution) requires
 that `A` is a topological ring. The proof that the convolution of two sequences tending
@@ -135,15 +138,8 @@ def IsRestricted {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
 
 /-- **`IsRestricted` is `Filter.ZeroAtFilter` at the cofinite filter**, on the coefficient
 function. Mathlib's predicate is the general notion — a function tending to `0` along a filter —
-and restrictedness is its instance at `cofinite`.
-
-`IsRestricted.add`, `IsRestricted.neg` and `IsRestricted.smul` cross to Mathlib through this
-lemma, delegating to `ZeroAtFilter.add`, `.neg` and `.smul`. `isRestricted_zero` is
-`zero_zeroAtFilter` and needs no crossing, and `isRestricted_of_hasFiniteSupport` goes through
-`tendsto_cofinite_pure_iff` instead. What is proved here rather than delegated is
-`IsRestricted.mul`, the convolution argument this file exists for, which has no Mathlib
-counterpart; `isRestricted_one` and `isRestricted_algebraMap` are special cases of the
-finite-support rule. -/
+and restrictedness is its instance at `cofinite`. The body is not exposed, so this is how a
+consumer at module coefficients recovers the defining condition. -/
 theorem isRestricted_iff {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
     {f : MvPowerSeries (Fin k) M} :
     IsRestricted f ↔ Filter.ZeroAtFilter cofinite (f : (Fin k →₀ ℕ) → M) := (Iff.rfl)
