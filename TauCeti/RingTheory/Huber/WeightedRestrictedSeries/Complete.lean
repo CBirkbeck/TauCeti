@@ -31,15 +31,17 @@ same underlying map — as that ring isomorphism and as the `A`-algebra equivale
 `TauCeti.Huber.coe_restrictedMvPowerSeriesCompletionAlgEquiv_symm` — and both it and its
 inverse are uniformly continuous, hence continuous by `UniformContinuous.continuous`.
 
+The completeness proof names its one definitional step — that the subring's uniformity is the
+one its subgroup basis induces — as a `private` lemma, so that the argument does not silently
+depend on the two being reducibly equal. It is private because it is a specialization of
+Mathlib's `AddGroupFilterBasis.cauchy_iff` with a single use here, not new API.
+
 ## Main results
 
 * `TauCeti.Huber.uniformContinuous_coeff_one_weight` : at trivial weights the coefficient
   maps are uniformly continuous.
 * `TauCeti.Huber.instT0Space_one_weight` : the restricted series over a Hausdorff base are
   Hausdorff.
-* `TauCeti.Huber.exists_mem_forall_sub_mem_weightedNhd` : a Cauchy filter on `A⟨X⟩_T` is
-  uniformly Cauchy on each defining subgroup — the step that identifies the subring's
-  uniformity with the one its subgroup basis induces.
 * `TauCeti.Huber.instCompleteSpace_one_weight` : the restricted series over a complete base
   are complete.
 * `TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv` : the comparison —
@@ -92,7 +94,7 @@ Mathlib's `AddGroupFilterBasis.cauchy_iff` at the basis `weightedNhd_subgroups_b
 registers, and it exists to name that step once: the uniformity carried by
 `weightedRestrictedSubring` and the one the filter basis induces are the same structure, but
 only definitionally, and the completeness proof below should not depend on that unfolding. -/
-theorem exists_mem_forall_sub_mem_weightedNhd {T : Fin k → Set A} {hT : IsWeightFamily T}
+private theorem exists_mem_forall_sub_mem_weightedNhd {T : Fin k → Set A} {hT : IsWeightFamily T}
     {F : Filter (weightedRestrictedSubring T hT)} (hF : Cauchy F) (U : OpenAddSubgroup A) :
     ∃ M ∈ F, ∀ᵉ (x ∈ M) (y ∈ M), y - x ∈ weightedNhd T hT U.toAddSubgroup :=
   ((weightedNhd_subgroups_basis hT).toRingFilterBasis.toAddGroupFilterBasis.cauchy_iff.mp hF).2 _
