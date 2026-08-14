@@ -111,7 +111,14 @@ namespace IsEllipticNet
 
 /-- **The cancellation `reducedInvarNum` is named for**: the invariant numerator of a normalised EDS
 at `s = 1` is `reducedInvarNum` times `b`. The factor of `b` is constant in `m`, which is what makes
-the reduced form the one the division-polynomial identities are stated over. -/
+the reduced form the one the division-polynomial identities are stated over.
+
+The **priority is load-bearing**, not decoration. `invarNum_def` is itself `@[simp]`, and at equal
+priority it wins on this term: with a plain `@[simp]` here, `simp` still rewrites
+`invarNum (normEDS b c d) 1 m` to the fully expanded formula and this lemma never fires. At `high`
+it fires first, and because `reducedInvarNum_def` is deliberately *not* `@[simp]` the result then
+stays folded at `reducedInvarNum b c d m * b`, which is the normal form this file exists to name. -/
+@[simp high]
 theorem invarNum_normEDS_one_eq_reducedInvarNum_mul :
     invarNum (normEDS b c d) 1 m = reducedInvarNum b c d m * b := by
   simp_rw [reducedInvarNum_def, right_distrib, complEDS₂_mul_b, mul_assoc 2 _ b,
