@@ -73,8 +73,8 @@ instance : (isCompleteSeparated.{u}).IsClosedUnderLimitsOfShape WalkingParallelP
       (IsLimit.conePointsIsoOfNatIso (equalizerForkIsLimit f g) (limit.isLimit F)
         (diagramIsoParallelPair F).symm)
       ((isCompleteSeparated_iff _).mpr (IsCompleteSeparated.of_isClosedEmbedding
-        ⟨(RingHom.eqLocus f.val g.val).subtype, continuous_subtype_val⟩
-        hcl.isClosedEmbedding_subtypeVal ((isCompleteSeparated_iff _).mp (hF .zero)))))
+        (equalizerFork f g).ι (coe_equalizerFork_ι f g ▸ hcl.isClosedEmbedding_subtypeVal)
+        ((isCompleteSeparated_iff _).mp (hF .zero)))))
 
 end TauCeti.TopCommRingCat
 

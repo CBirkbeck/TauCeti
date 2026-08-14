@@ -58,9 +58,10 @@ with a uniformity preamble.
   an isomorphism being in particular a closed embedding — which is
   `TauCeti.TopCommRingCat.isClosedEmbedding_inv`.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.pi` : a product of complete separated objects
-  is complete separated. This is the closure half for products; the limit cones and the
-  creation statement for the inclusion `CompleteSeparatedTopCommRingCat ⥤ TopCommRingCat`
-  (roadmap Layer 3.2) are the follow-up, not proved here.
+  is complete separated. This is the closure half for products; the closure instance it feeds,
+  the products that instance supplies to `CompleteSeparatedTopCommRingCat`, and their creation
+  by the inclusion `CompleteSeparatedTopCommRingCat ⥤ TopCommRingCat` (roadmap Layer 3.2) are
+  in `CompleteSeparated/Limits.lean`.
 -/
 
 public section
