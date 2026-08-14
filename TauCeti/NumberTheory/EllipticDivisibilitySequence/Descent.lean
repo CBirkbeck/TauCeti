@@ -258,9 +258,11 @@ private theorem atomRelVanishes_of_min {a : ℤ} (one : W 1 ∈ R⁰) (two : W 2
     · exact fix.2 hlt₃ same anti
 
 /-- The even base case, as a relator: all four indices are even, so `atomRel_two_mul` applies. -/
-private theorem atomRel_even_eq_rel (m : ℤ) :
-    atomRel W (2 * m) (2 * (m - 1)) (2 * 1) (2 * 0) = rel W m (m - 1) 1 0 := by
-  rw [atomRel_two_mul]
+private theorem atomRel_even_eq_rel (k : ℤ) :
+    atomRel W (2 * k) (2 * (k - 1)) (2 * k % 2 + 2) (2 * k % 2) = rel W k (k - 1) 1 0 := by
+  have hlast : (2 * k % 2 : ℤ) = 2 * 0 := by omega
+  have hthird : (2 : ℤ) * 0 + 2 = 2 * 1 := by norm_num
+  rw [hlast, hthird, atomRel_two_mul]
   norm_num
 
 /-- The odd base case, as a relator. All four indices are odd, so `atom_odd` reduces every atom
@@ -268,35 +270,14 @@ and no reasoning about truncated division survives. The source proves the corres
 equivalence under `set_option allowUnsafeReducibility true` together with
 `attribute [local reducible] Nat.rawCast`; putting the indices in `2 * _ + 1` form removes the
 need for either. -/
-private theorem atomRel_odd_eq_rel (m : ℤ) :
-    atomRel W (2 * m + 1) (2 * (m - 1) + 1) (2 * 1 + 1) (2 * 0 + 1)
-      = rel W (m + 1) (m - 1) 1 0 := by
-  simp_rw [atomRel, atom_odd, rel]
-  ring_nf
-
-/-- **The relator vanishes at an even first index** whose two lower indices sit at the minimal
-pair `(2, 0)`, given the odd recurrence at that one place. -/
-private theorem atomRel_even_eq_zero_of_oddRec {k b : ℤ} (hodd : rel W k (k - 1) 1 0 = 0)
-    (hb : b = 2 * (k - 1)) :
-    atomRel W (2 * k) b (2 * k % 2 + 2) (2 * k % 2) = 0 := by
-  -- `atomRel_even_eq_rel` carries every index in `2 * _` form, which is what lets
-  -- `atomRel_two_mul` fire; the goal's indices have to be put in that form first.
-  have hlast : (2 * k % 2 : ℤ) = 2 * 0 := by omega
-  have hthird : (2 : ℤ) * 0 + 2 = 2 * 1 := by norm_num
-  rw [hlast, hthird, hb, atomRel_even_eq_rel]
-  exact hodd
-
-/-- **The relator vanishes at an odd first index** whose two lower indices sit at the minimal
-pair `(3, 1)`, given the even recurrence at that one place. -/
-private theorem atomRel_odd_eq_zero_of_evenRec {k b : ℤ}
-    (heven : rel W (k + 1) (k - 1) 1 0 = 0) (hb : b = 2 * (k - 1) + 1) :
-    atomRel W (2 * k + 1) b ((2 * k + 1) % 2 + 2) ((2 * k + 1) % 2) = 0 := by
-  -- Likewise `atomRel_odd_eq_rel` carries its indices in `2 * _ + 1` form, which is what lets
-  -- `atom_odd` reduce each atom without any reasoning about truncated division.
+private theorem atomRel_odd_eq_rel (k : ℤ) :
+    atomRel W (2 * k + 1) (2 * (k - 1) + 1) ((2 * k + 1) % 2 + 2) ((2 * k + 1) % 2)
+      = rel W (k + 1) (k - 1) 1 0 := by
   have hlast : ((2 * k + 1) % 2 : ℤ) = 2 * 0 + 1 := by omega
   have hthird : (2 : ℤ) * 0 + 1 + 2 = 2 * 1 + 1 := by norm_num
-  rw [hlast, hthird, hb, atomRel_odd_eq_rel]
-  exact heven
+  rw [hlast, hthird]
+  simp_rw [atomRel, atom_odd, rel]
+  ring_nf
 
 /-- **The descent.** The two doubling recurrences, holding from `m = 2` and `m = 3` on, force the
 full four-index relation at every valid quadruple. The induction is on the largest index: below
@@ -331,9 +312,11 @@ private theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
         (nonnegStrictAnti₄_abs_avg_sub h1 (by omega) h2 h3)
     · rcases Int.emod_two_eq_zero_or_one a' with hp | hp
       · obtain ⟨k, rfl⟩ : ∃ k, a' = 2 * k := ⟨a' / 2, by omega⟩
-        exact atomRel_even_eq_zero_of_oddRec (by simpa using oddRec (k - 1) (by omega)) (by omega)
+        rw [show b' = 2 * (k - 1) by omega, atomRel_even_eq_rel]
+        simpa using oddRec (k - 1) (by omega)
       · obtain ⟨k, rfl⟩ : ∃ k, a' = 2 * k + 1 := ⟨a' / 2, by omega⟩
-        exact atomRel_odd_eq_zero_of_evenRec (evenRec k (by omega)) (by omega)
+        rw [show b' = 2 * (k - 1) + 1 by omega, atomRel_odd_eq_rel]
+        exact evenRec k (by omega)
 
 /-- The relator vanishes at three even indices in strict decrease above `0`, against a last
 index of `0`: the descent's hypothesis at exactly the shape the sorting step below produces. -/
