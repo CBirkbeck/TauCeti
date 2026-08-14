@@ -18,13 +18,14 @@ draws this as a corollary of Theorem 7.10: `Cont A` is closed in `Spv (A, IA)`, 
 subspace of a spectral space is spectral.
 
 The closedness half is `TauCeti.ValuationSpectrum.isClosed_val_preimage_cont`; this file draws
-the conclusion. A closed subset is in particular pro-constructible, so
-`TauCeti.ValuationSpectrum.spectralSpace_of_isProConstructible_val_preimage` applies with the
+the conclusion. A closed subset is in particular pro-constructible, hence spectral in the
+spectral space `Spv (A, IA)`, so
+`TauCeti.ValuationSpectrum.spectralSpace_of_spectralSpace_val_preimage` applies with the
 Theorem 7.10 inclusion `Cont A ⊆ Spv (A, IA)`.
 
-Neither statement descends from `Spv A`: the inclusion `Spv (A, IA) → Spv A` is not a spectral
-map (Remark 7.6), which is why the argument is run on the subspace and transported back along a
-homeomorphism.
+The argument is run on the subspace and transported back along a homeomorphism rather than
+carried out in `Spv A`, because the inclusion `Spv (A, IA) → Spv A` is not a spectral map
+(Remark 7.6) and the general preservation theorems are therefore unavailable along it.
 
 ## Main results
 
@@ -49,9 +50,9 @@ theorem spectralSpace_cont_of_pairOfDefinition (P : PairOfDefinition A) :
   -- `IsClosed.isProConstructible` reads the spectrality of `Spv (A, IA)` off the context.
   have := spectralSpace_spvOfIdeal P.extendedIdealOfDefinition
     ⟨P.extendedIdealOfDefinition, P.fg_extendedIdealOfDefinition, rfl⟩
-  exact spectralSpace_of_isProConstructible_val_preimage _ _
+  exact spectralSpace_of_spectralSpace_val_preimage _ _
     (cont_subset_spvOfIdeal_extendedIdealOfDefinition P)
-    (isClosed_val_preimage_cont P).isProConstructible
+    (isClosed_val_preimage_cont P).isProConstructible.spectralSpace
 
 /-- **Wedhorn Corollary 7.12**: over a Huber ring the continuous points form a spectral space —
 by instance synthesis, with the pair of definition chosen from

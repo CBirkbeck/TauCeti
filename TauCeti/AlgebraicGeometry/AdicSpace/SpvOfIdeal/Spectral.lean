@@ -479,22 +479,20 @@ theorem spectralSpace_spvOfIdeal (I : Ideal A)
     (isClopen_patchTopologyOfIdeal_of_mem_rationalFamily I hfg)
 
 /-- **Spectrality of a subspace of `Spv A` through its trace on `Spv (A, I)`.** A subset
-contained in `Spv (A, I)` is spectral as soon as its trace there is pro-constructible: the trace
-is then a pro-constructible subspace of the spectral space `Spv (A, I)`, hence spectral, and the
-subset is homeomorphic to it because both carry the topology induced from `Spv A`.
+contained in `Spv (A, I)` is spectral as soon as its trace there is: the subset is homeomorphic
+to its trace, because both carry the topology induced from `Spv A`.
 
-The detour through `Spv (A, I)` is forced. The same argument does not run in `Spv A`, because
-the inclusion `Spv (A, I) → Spv A` is not a spectral map (Remark 7.6), so pro-constructibility
-of a trace does not descend. Both spectrality results for subspaces of `Spv A` have this shape —
-`Cont A` by Corollary 7.12 and `Spa (A, A⁺)` by Theorem 7.35 — differing only in which
-pro-constructibility is supplied. -/
-theorem spectralSpace_of_isProConstructible_val_preimage (I : Ideal A)
+The argument is run on `Spv (A, I)` rather than on `Spv A` because the inclusion
+`Spv (A, I) → Spv A` is not a spectral map (Remark 7.6), so the general preservation theorems
+are unavailable along it; that rules out this route, not every possible descent argument. Both
+spectrality results for subspaces of `Spv A` have this shape — `Cont A` by Corollary 7.12 and
+`Spa (A, A⁺)` by Theorem 7.35 — differing only in how the trace is shown spectral, in each case
+by pro-constructibility in the spectral space `Spv (A, I)`. -/
+theorem spectralSpace_of_spectralSpace_val_preimage (I : Ideal A)
     (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {S : Set (Spv A)}
     (hsub : S ⊆ spvOfIdeal I hfg)
-    (h : IsProConstructible (Subtype.val ⁻¹' S : Set (spvOfIdeal I hfg))) :
+    (h : SpectralSpace (Subtype.val ⁻¹' S : Set (spvOfIdeal I hfg))) :
     SpectralSpace S := by
-  have := spectralSpace_spvOfIdeal I hfg
-  have := h.spectralSpace
   -- Both sides carry the topology induced from `Spv A`, so the embedding of the subspace
   -- restricts to a homeomorphism from the trace of `S` onto `S`.
   let e := Topology.IsEmbedding.subtypeVal.homeomorphOfSubsetRange
