@@ -15,20 +15,16 @@ coordinate rings of two presentations of a rational subset, which roadmap Layer 
 *satisfying the identity and composition laws*: both laws are corollaries, because each says that
 two maps agreeing on `A` coincide.
 
-The target of the extensionality lemma is only required to be a semiring with a Hausdorff
-topology; no compatibility between the two is used.
 
-The proof does not go through the universal property. `A` reaches `A⟨T/s⟩` in two steps — the
-localisation map `A → Aₛ`, then the completion map — and each step is an epimorphism in the
-relevant sense: `IsLocalization.ringHom_ext` for the first, and density of `Aₛ` in its completion
-(`UniformSpace.Completion.ext`) for the second. Only continuity of the two maps is needed. In
-particular none of the *existence* hypotheses appear — `s` a unit, the fractions power-bounded —
-since those are what make a map exist, not what makes two of them equal.
+
+Both laws are corollaries of one extensionality principle, `hom_ext_toCompletionLoc`, which lives
+with the completion itself in `TauCeti.RingTheory.Huber.LocalizationTopology.Completion` because it
+is about maps out of `A⟨T/s⟩` and mentions no second presentation. In particular neither law needs
+the *existence* hypotheses — `s` a unit, the fractions power-bounded — since those are what make a
+map exist, not what makes two of them equal.
 
 ## Main results
 
-* `TauCeti.Huber.PairOfDefinition.hom_ext_toCompletionLoc`: two continuous ring homomorphisms out
-  of `A⟨T/s⟩` that agree on `A` are equal.
 * `TauCeti.Huber.PairOfDefinition.eq_id_of_comp_toCompletionLoc`: the identity law.
 * `TauCeti.Huber.PairOfDefinition.eq_comp_of_comp_toCompletionLoc`: the composition law.
 
@@ -56,36 +52,6 @@ namespace TauCeti.Huber
 namespace PairOfDefinition
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
-
-/-- **Maps out of `A⟨T/s⟩` are determined on `A`.** Two continuous ring homomorphisms
-`A⟨T/s⟩ → B` that agree after composing with the structure map from `A` are equal.
-
-`B` need only be a semiring carrying a Hausdorff topology: the argument uses neither
-commutativity nor additive inverses, and it never asks that the topology be compatible with the
-ring operations — only that continuous maps agreeing on a dense set agree.
-
-`A` reaches `A⟨T/s⟩` through `Aₛ`, and agreeing on `A` forces agreement on `Aₛ` by
-`IsLocalization.ringHom_ext`, hence on the completion by density. No hypothesis on `s` or on the
-fractions is needed: those govern which maps exist, not when two agree. -/
-theorem hom_ext_toCompletionLoc (P : PairOfDefinition A) (T : Finset A) (s : A)
-    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
-    (hden : HasDenominatorPower P T s S) {B : Type*} [Semiring B] [TopologicalSpace B] [T2Space B] :
-    letI := locUniformSpace P T s S hden
-    letI := isUniformAddGroup_locUniformSpace P T s S hden
-    letI := isTopologicalRing_locUniformSpace P T s S hden
-    ∀ (g h : UniformSpace.Completion S →+* B), Continuous g → Continuous h →
-      g.comp (toCompletionLoc P T s S hden) = h.comp (toCompletionLoc P T s S hden) → g = h := by
-  let _ := locUniformSpace P T s S hden
-  have _ := isUniformAddGroup_locUniformSpace P T s S hden
-  have _ := isTopologicalRing_locUniformSpace P T s S hden
-  intro g h hg hh hcomp
-  have hS : (g.comp UniformSpace.Completion.coeRingHom : S →+* B)
-      = h.comp UniformSpace.Completion.coeRingHom := by
-    refine IsLocalization.ringHom_ext (Submonoid.powers s) (RingHom.ext fun a ↦ ?_)
-    simpa [toCompletionLoc_apply, UniformSpace.Completion.coeRingHom] using
-      congrArg (fun k : A →+* B ↦ k a) hcomp
-  exact DFunLike.ext' (UniformSpace.Completion.ext hg hh fun a ↦
-    congrArg (fun k : S →+* B ↦ k a) hS)
 
 /-- **The identity law.** A continuous ring endomorphism of `A⟨T/s⟩` fixing the structure map from
 `A` is the identity, since the identity fixes it too. -/

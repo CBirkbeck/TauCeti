@@ -35,7 +35,10 @@ complete Hausdorff targets.
   the completed pair's API, reducing to the concrete `D` and `J`.
 * `continuous_toCompletionLoc`: the structure map `A → A⟨T/s⟩` is continuous.
 * `isHuberRing_completion_locTopology` and
-  `existsUnique_continuous_ringHom_completion_locTopology`: `A⟨T/s⟩` is Huber, and the universal
+  `hom_ext_toCompletionLoc`: two continuous ring homomorphisms out of `A⟨T/s⟩` agreeing on `A`
+  are equal, so a map out of `A⟨T/s⟩` is determined by its restriction to `A`.
+* `TauCeti.Huber.PairOfDefinition.existsUnique_continuous_ringHom_completion_locTopology`:
+  `A⟨T/s⟩` is Huber, and the universal
   property holds across it for complete Hausdorff targets.
 
 ## Provenance
@@ -317,6 +320,37 @@ theorem existsUnique_continuous_ringHom_completion_locTopology {B : Type*} [Comm
       (uniformContinuous_addMonoidHom_of_continuous hfc)
       (uniformContinuous_addMonoidHom_of_continuous hgc) fun x ↦ ?_).symm
     simpa [UniformSpace.Completion.coeRingHom] using (congrArg (fun h ↦ h x) hcoe).symm
+
+/-- **Maps out of `A⟨T/s⟩` are determined on `A`.** Two continuous ring homomorphisms
+`A⟨T/s⟩ → B` that agree after composing with the structure map from `A` are equal.
+
+`B` need only be a semiring carrying a Hausdorff topology: the argument uses neither
+commutativity nor additive inverses, and it never asks that the topology be compatible with the
+ring operations — only that continuous maps agreeing on a dense set agree.
+
+`A` reaches `A⟨T/s⟩` through `Aₛ`, and agreeing on `A` forces agreement on `Aₛ` by
+`IsLocalization.ringHom_ext`, hence on the completion by density. No hypothesis on `s` or on the
+fractions is needed: those govern which maps exist, not when two agree. -/
+theorem hom_ext_toCompletionLoc [IsTopologicalRing A] (P : PairOfDefinition A) (T : Finset A)
+    (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) {B : Type*} [Semiring B] [TopologicalSpace B] [T2Space B] :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    ∀ (g h : UniformSpace.Completion S →+* B), Continuous g → Continuous h →
+      g.comp (toCompletionLoc P T s S hden) = h.comp (toCompletionLoc P T s S hden) → g = h := by
+  let _ := locUniformSpace P T s S hden
+  have _ := isUniformAddGroup_locUniformSpace P T s S hden
+  have _ := isTopologicalRing_locUniformSpace P T s S hden
+  intro g h hg hh hcomp
+  have hS : (g.comp UniformSpace.Completion.coeRingHom : S →+* B)
+      = h.comp UniformSpace.Completion.coeRingHom := by
+    refine IsLocalization.ringHom_ext (Submonoid.powers s) (RingHom.ext fun a ↦ ?_)
+    simpa [toCompletionLoc_apply, UniformSpace.Completion.coeRingHom] using
+      congrArg (fun k : A →+* B ↦ k a) hcomp
+  exact DFunLike.ext' (UniformSpace.Completion.ext hg hh fun a ↦
+    congrArg (fun k : S →+* B ↦ k a) hS)
 
 end PairOfDefinition
 
