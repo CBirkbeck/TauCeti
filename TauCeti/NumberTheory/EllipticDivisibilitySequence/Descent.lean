@@ -4,7 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
 public import Mathlib.NumberTheory.EllipticDivisibilitySequence
+public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Transfer
 
 /-!
 # Expanding a product of an elliptic atom with an elliptic relator
@@ -99,5 +101,59 @@ theorem atom_sq_mul_atomRel_eq (c d m n r s : ℤ) :
       + atom W c d * (atom W n r * atomRel W m s c d - atom W n s * atomRel W m r c d
         + atom W r s * atomRel W m n c d) := by
   simp_rw [atomRel]; ring
+
+open scoped nonZeroDivisors
+
+/-- **The relator vanishes at a valid quadruple.** "Valid" is: one parity, nonnegative, strictly
+decreasing. The two hypotheses live inside the predicate rather than outside it because the
+descent applies its induction hypothesis at quadruples whose validity is not known in advance;
+carrying them here means the recursive call is a `Prop` about indices alone. -/
+def AtomRelVanishes (a b c d : ℤ) : Prop :=
+  (d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) → NonnegStrictAnti₄ a b c d →
+    atomRel W a b c d = 0
+
+variable {W}
+
+/-- The three relators common to both expansions used by `atomRelVanishes_of_forall_le`. Each
+carries the fixed pair `c₀, d₀` in its last two places and a first index at most `a`, so each is
+in range of the descent hypothesis; the chain `d₀ < c₀ < c < b < a` is what makes all three
+valid quadruples. -/
+private theorem atomRel_triple_eq_zero {a b c c₀ d₀ : ℤ}
+    (rel : ∀ {a' b' : ℤ}, a' ≤ a → AtomRelVanishes W a' b' c₀ d₀)
+    (par : c₀ % 2 = d₀ % 2) (same : d₀ % 2 = a % 2 ∧ d₀ % 2 = b % 2 ∧ d₀ % 2 = c % 2)
+    (le : 0 ≤ d₀) (lt : d₀ < c₀) (hc : c₀ < c) (hcb : c < b) (hba : b < a) :
+    atomRel W b c c₀ d₀ = 0 ∧ atomRel W a c c₀ d₀ = 0 ∧ atomRel W a b c₀ d₀ = 0 := by
+  obtain ⟨ha, hb, hcc⟩ := same
+  refine ⟨rel hba.le ⟨by omega, by omega, by omega⟩ ?_,
+    rel le_rfl ⟨by omega, by omega, by omega⟩ ?_,
+    rel le_rfl ⟨by omega, by omega, by omega⟩ ?_⟩ <;>
+    rw [nonnegStrictAnti₄_iff] <;> omega
+
+/-- **Lowering the last index onto a fixed pair.** Given vanishing at every quadruple
+`(a', b, c₀, d₀)` with `a' ≤ a`, the relator vanishes at `(a, b, c, c₀)` outright, and at
+`(a, b, c, d₀)` once `c₀ < c`. Both follow from a three-term expansion trading the relator's
+last index for the pair `c₀, d₀`, after which every summand carries a factor already known to
+vanish. -/
+theorem atomRelVanishes_of_forall_le {a c₀ d₀ : ℤ} (par : c₀ % 2 = d₀ % 2) (le : 0 ≤ d₀)
+    (lt : d₀ < c₀) (rel : ∀ {a' b : ℤ}, a' ≤ a → AtomRelVanishes W a' b c₀ d₀)
+    (mem : atom W c₀ d₀ ∈ R⁰) (b c : ℤ) :
+    AtomRelVanishes W a b c c₀ ∧ (c₀ < c → AtomRelVanishes W a b c d₀) := by
+  constructor
+  · intro same anti
+    rw [nonnegStrictAnti₄_iff] at anti
+    obtain ⟨-, hc, hcb, hba⟩ := anti
+    obtain ⟨h₁, h₂, h₃⟩ := atomRel_triple_eq_zero rel par
+      ⟨by omega, by omega, by omega⟩ le lt hc hcb hba
+    refine mem.2 _ ?_
+    rw [mul_comm, atom_mul_atomRel_eq_of_last_eq_fst, h₁, h₂, h₃]
+    ring
+  · intro hc same anti
+    rw [nonnegStrictAnti₄_iff] at anti
+    obtain ⟨-, hdc, hcb, hba⟩ := anti
+    obtain ⟨h₁, h₂, h₃⟩ := atomRel_triple_eq_zero rel par
+      ⟨by omega, by omega, by omega⟩ le lt hc hcb hba
+    refine mem.2 _ ?_
+    rw [mul_comm, atom_mul_atomRel_eq_of_last_eq_snd, h₁, h₂, h₃]
+    ring
 
 end IsEllipticNet
