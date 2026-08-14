@@ -83,4 +83,20 @@ lemma upperTriGL_mem_Delta0_of_coprime {a : Fin 2 → ℕ}
     (Gamma0Image_le_Delta0 N ((mem_Gamma0Image_iff N).mpr
       ⟨unitriSL B, unitriSL_mem_Gamma0 N B, rfl⟩))
 
+/-- At `n = 2` there is exactly one ordered index pair, `(0, 1)`, so `UpperTriEntries` is a
+function on a one-element type. -/
+instance uniqueIndexPair : Unique {ij : Fin 2 × Fin 2 // ij.1 < ij.2} where
+  default := ⟨(0, 1), by decide⟩
+  uniq := by rintro ⟨ij, h⟩; apply Subtype.ext; revert h; revert ij; decide
+
+/-- **The classical index of the upper-triangular representatives.** For `a = ![1, p]` the entry
+assignments are just the offsets `b ∈ Fin p`, so `upperTriGL` at these entries runs over the
+familiar `!![1, b; 0, p]`.
+
+This is the adapter between this repository's general-`n` decomposition and the classical
+`T_p` bookkeeping, which sums over `b` directly: a sum over `UpperTriEntries 2 ![1, p]`
+transfers along this equivalence rather than being restated. -/
+def upperTriEntriesEquivFin (p : ℕ) : UpperTriEntries 2 ![1, p] ≃ Fin p :=
+  (Equiv.piUnique _).trans (finCongr (by change ![1, p] 1 / ![1, p] 0 = p; simp))
+
 end HeckeRing.GL2
