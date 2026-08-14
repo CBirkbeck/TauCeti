@@ -658,12 +658,9 @@ variable (L) in
 a genuinely nontrivial operation: this is what `map_quadraticTwistOfTraceNormVariableChange`
 deliberately stopped short of claiming, and the `j`-hypotheses are exactly what it lacked.
 
-Where the hypotheses enter: the only use of them is to get `Aut(Eᴸ) = {±1}`, via
-`eq_one_or_eq_negVariableChange_baseChange`, which carries `j ≠ 0` and `j ≠ 1728` along the base
-change and hands them to `eq_one_or_eq_negVariableChange_of_smul_eq`. At those two values the
-automorphism group can be strictly larger and the argument has nothing to run on. That is a
-statement about *this proof*; whether the theorem itself fails without them is not settled here,
-and no counterexample is asserted. -/
+What the `j`-hypotheses buy is `Aut(Eᴸ) = {±1}`
+(`eq_one_or_eq_negVariableChange_baseChange`). At `j ∈ {0, 1728}` the automorphism group can be
+strictly larger, and the statement is not claimed there; nor is a counterexample asserted. -/
 theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728) :
     ¬∃ C : VariableChange K, C • E.quadraticTwist L = E := by
   rintro ⟨CK, hCK⟩
@@ -709,10 +706,10 @@ variable (L) in
 that becomes isomorphic to `E` over `L` is isomorphic over `K` either to `E` or to its quadratic
 twist by `L` — and, by `not_exists_smul_quadraticTwist_eq`, those two alternatives are distinct.
 
-The mechanism: such forms are classified by `H¹(Gal(L/K), Aut Eᴸ) = Hom(ℤ/2, {±1})`, of order two,
-and the two cases below are the two cocycles. `Aut Eᴸ = {±1}` is where `j ∉ {0, 1728}` enters
-(`eq_one_or_eq_negVariableChange_baseChange`); for the excluded `j` the automorphism group is
-larger and there can be more forms. -/
+There are exactly two alternatives because such forms are classified by
+`H¹(Gal(L/K), Aut Eᴸ) = Hom(ℤ/2, {±1})`, a group of order two. The `j`-hypotheses are what give
+`Aut Eᴸ = {±1}` (`eq_one_or_eq_negVariableChange_baseChange`); for the excluded `j` the
+automorphism group is larger and there can be more forms. -/
 theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728)
     (E' : WeierstrassCurve K)
     (h : ∃ C : VariableChange L, C • E'.baseChange L = E.baseChange L) :
