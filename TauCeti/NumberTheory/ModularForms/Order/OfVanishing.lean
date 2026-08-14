@@ -14,9 +14,10 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.Manifold
 `TauCeti.orderOfVanishingAt f z` is the order of vanishing of `f : ℍ → ℂ` at `z ∈ ℍ`, read
 as the meromorphic order of `f ∘ ofComplex` at `z`. For a nonzero holomorphic function it
 detects vanishing (`orderOfVanishingAt_eq_zero_iff`), and it transports along the slash
-action of any positive-determinant matrix (`orderOfVanishingAt_slash`), so for a
-slash-invariant form it is constant along the group action (`orderOfVanishingAt_smul`,
-a corollary) — the interior half of the order dictionary feeding the valence formula. The order at the cusps (`ℚ`-normalized at
+action of any positive-determinant matrix (`orderOfVanishingAt_slash`); for a
+slash-invariant form it is therefore constant along the group action
+(`orderOfVanishingAt_smul`, a corollary) — the interior half of the order dictionary
+feeding the valence formula. The order at the cusps (`ℚ`-normalized at
 irregular cusps in odd weight) belongs to the general-level layer and is not defined here.
 
 ## Main declarations
