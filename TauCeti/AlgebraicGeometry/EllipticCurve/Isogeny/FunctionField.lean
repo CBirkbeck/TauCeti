@@ -36,10 +36,10 @@ field. `TauCeti.Isogeny.comp` therefore lives here rather than beside `TauCeti.I
   its function-field law and `TauCeti.Isogeny.id_comp`, `TauCeti.Isogeny.comp_id`,
   `TauCeti.Isogeny.comp_assoc` the unit and associativity laws. The pointedness obligation is
   discharged privately when `comp` is defined.
-* `TauCeti.Isogeny.comp_right_injective` and `TauCeti.Isogeny.comp_right_cancel`: precomposition
-  by a fixed isogeny is injective. This is the uniqueness half of the dual isogeny
-  (Silverman III.6.2), reached without the group structure on `Hom` that Silverman's subtraction
-  argument uses.
+* `TauCeti.Isogeny.comp_right_injective` and `TauCeti.Isogeny.comp_right_inj`: precomposition
+  by a fixed isogeny is injective. Equivalently, a factorisation `ψ = λ.comp φ` through a fixed
+  `φ` determines its factor `λ` uniquely — the uniqueness half of factoring an isogeny, reached
+  without the group structure on `Hom` that Silverman's subtraction argument uses.
 
 Adapted from the AINTLIB project (`github.com/CBirkbeck/AINTLIB`, at revision
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache 2.0 per the source file's header, by Chris
@@ -270,9 +270,10 @@ theorem comp_right_injective (φ : Isogeny W₁ W₂) :
   Isogeny.ext <| (AlgHom.cancel_left φ.fieldPullback.toRingHom.injective).mp <| by
     simpa using congrArg Isogeny.pullback h
 
-/-- Two isogenies agree exactly when they agree after precomposition by a fixed isogeny. -/
+/-- Two isogenies agree exactly when they agree after precomposition by a fixed isogeny. So a
+factorisation through a fixed `φ` determines its factor uniquely. -/
 @[simp]
-theorem comp_right_cancel {φ : Isogeny W₁ W₂} {ψ₁ ψ₂ : Isogeny W₂ W₃} :
+theorem comp_right_inj {φ : Isogeny W₁ W₂} {ψ₁ ψ₂ : Isogeny W₂ W₃} :
     ψ₁.comp φ = ψ₂.comp φ ↔ ψ₁ = ψ₂ :=
   (comp_right_injective φ).eq_iff
 
