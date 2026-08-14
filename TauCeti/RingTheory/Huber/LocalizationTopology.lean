@@ -7,7 +7,6 @@ module
 public import TauCeti.RingTheory.Localization.Away
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 public import Mathlib.RingTheory.Adjoin.Polynomial.Basic
-public import TauCeti.RingTheory.Huber.Basic
 public import TauCeti.RingTheory.Huber.Completion
 
 /-!
@@ -1105,9 +1104,9 @@ theorem continuous_toCompletionLoc [IsTopologicalRing A] (P : PairOfDefinition A
 /-- **`A⟨T/s⟩` is a Huber ring**: the separated completion of `Aₛ` under `locTopology` —
 Wedhorn's `A⟨T/s⟩` — carries a pair of definition.
 
-The statement introduces the topology, its ring structure and the canonical uniformity, because
-`locTopology` is not an instance and `UniformSpace.Completion S` is not well-formed without
-them. -/
+The statement introduces `locUniformSpace`, `isUniformAddGroup_locUniformSpace` and
+`isTopologicalRing_locUniformSpace`, because `locTopology` is not an instance and
+`UniformSpace.Completion S` is not well-formed without them. -/
 theorem isHuberRing_completion_locTopology [IsTopologicalRing A] (P : PairOfDefinition A)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) :
@@ -1156,11 +1155,10 @@ theorem existsUnique_continuous_ringHom_completion_locTopology {B : Type*} [Comm
       simpa [UniformSpace.Completion.coeRingHom] using h
     have hcoe : g.comp UniformSpace.Completion.coeRingHom = f :=
       huniq _ ⟨hgc.comp UniformSpace.Completion.continuous_coeRingHom, hcomp⟩
-    refine RingHom.coe_inj (Continuous.ext_on UniformSpace.Completion.denseRange_coe hgc
-      UniformSpace.Completion.continuous_extension ?_)
-    rintro _ ⟨x, rfl⟩
-    simpa [UniformSpace.Completion.coeRingHom, UniformSpace.Completion.extensionHom_coe] using
-      congrArg (fun h => h x) hcoe
+    refine RingHom.coe_inj (UniformSpace.Completion.extension_unique
+      (uniformContinuous_addMonoidHom_of_continuous hfc)
+      (uniformContinuous_addMonoidHom_of_continuous hgc) fun x ↦ ?_).symm
+    simpa [UniformSpace.Completion.coeRingHom] using (congrArg (fun h ↦ h x) hcoe).symm
 
 end PairOfDefinition
 
