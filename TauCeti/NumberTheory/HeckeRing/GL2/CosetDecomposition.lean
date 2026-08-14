@@ -30,16 +30,16 @@ these representatives are in `GL2/UpperTriangularDelta0.lean`.
 * `HeckeRing.GL2.upperTriEntriesEquiv`: `UpperTriEntries 2 a ≃ Fin (a 1 / a 0)`, for an
   arbitrary tuple `a`.
 * `HeckeRing.GL2.upperTriEntriesEquivFin`: its specialisation `UpperTriEntries 2 ![1, p] ≃ Fin p`.
-* `HeckeRing.GL2.upperTriRep`: the `b`-th representative `!![1, b; 0, p]`.
 
 ## Main results
 
 * `HeckeRing.GL2.upperTriEntriesEquiv_apply`, `upperTriEntriesEquiv_symm_apply_default`: the
   equivalence reads off, and installs, the coordinate at the unique index pair.
 * `HeckeRing.GL2.upperTriEntriesEquivFin_apply_val` and
-  `upperTriEntriesEquivFin_symm_apply_default_val`: the same for `a = ![1, p]`, as an identity of
-  natural numbers: the fibre `Fin (![1, p] 1 / ![1, p] 0)` is `Fin (p / 1)`, which `finCongr`
-  carries to `Fin p` along `p / 1 = p`.
+  `upperTriEntriesEquivFin_symm_apply_default_val`: the same for
+  `a = ![1, p]`, as an identity of natural numbers — the two fibres `Fin (![1, p] 1 / ![1, p] 0)`
+  is `Fin (p / 1)`, which `finCongr` carries to `Fin p` along `p / 1 = p`.
+
 * `HeckeRing.GL2.upperTriRep_apply_one_zero`: the representatives are upper triangular — the
   hypothesis mathlib's `IsBoundedAtImInfty.slash` asks for.
 * `HeckeRing.GL2.det_upperTriRep_pos`: they have determinant `p > 0`, which is what lets scalars
@@ -104,15 +104,12 @@ def upperTriEntriesEquivFin (p : ℕ) : UpperTriEntries 2 ![1, p] ≃ Fin p :=
 `Fin (![1, p] 1 / ![1, p] 0)` is `Fin (p / 1)`, carried to `Fin p` by `finCongr`. -/
 @[simp]
 lemma upperTriEntriesEquivFin_apply_val {p : ℕ} (B : UpperTriEntries 2 ![1, p]) :
-    (upperTriEntriesEquivFin p B : ℕ) = (B default : ℕ) := by
-  rw [upperTriEntriesEquivFin, Equiv.trans_apply, upperTriEntriesEquiv_apply, finCongr_apply_coe]
+    (upperTriEntriesEquivFin p B : ℕ) = (B default : ℕ) := (rfl)
 
 /-- At `a = ![1, p]` the coordinate installed is the offset, as natural numbers. -/
 @[simp]
 lemma upperTriEntriesEquivFin_symm_apply_default_val {p : ℕ} (b : Fin p) :
-    (((upperTriEntriesEquivFin p).symm b default : ℕ)) = (b : ℕ) := by
-  rw [upperTriEntriesEquivFin, Equiv.symm_trans_apply, upperTriEntriesEquiv_symm_apply_default,
-    finCongr_symm_apply_coe]
+    (((upperTriEntriesEquivFin p).symm b default : ℕ)) = (b : ℕ) := (rfl)
 
 /-- The `b`-th upper-triangular representative `!![1, b; 0, p]`, as an element of this
 repository's general-`n` family at `a = ![1, p]`. -/
