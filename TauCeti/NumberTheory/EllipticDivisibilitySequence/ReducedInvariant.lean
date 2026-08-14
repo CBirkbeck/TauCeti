@@ -65,8 +65,8 @@ this file respells with `reduced` written out. That file's header reads `Authors
 following this repository's convention for adapted material the upstream authorship is credited
 here rather than in the copyright header.
 
-The same declarations sit in **Mathlib PR #13057** (open, last updated 2024-07-31), the upstreaming
-of that AINTLIB file, so they are portable under this project's rule and deduplicate when it lands.
+The same declarations sit in **Mathlib PR #13057**, the upstreaming of that AINTLIB file, so they
+are portable under this project's rule and deduplicate if and when it lands.
 They are spelt with Mathlib's later names (`compl₂EDS → complEDS₂`, `IsEllSequence →
 IsEllipticSequence`), which #13057 predates, and follow `ComplAux.lean` in keeping the
 `normEDS`-family declarations in the **root** namespace where Mathlib keeps `normEDS`, `complEDS`
