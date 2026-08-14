@@ -177,18 +177,6 @@ private theorem mdifferentiableAt_mvfderiv_apply
   rw [Function.comp_apply, tangentMap_snd, mvfderiv_apply_eq_mfderiv_apply]
   rfl
 
-omit [CompleteSpace E] [IsManifold I (minSmoothness 𝕜 2) M] in
-/-- **The coordinate representation of a function has the same order of smoothness.** Composing
-`f` with the inverse chart gives a map on `Set.range I` that is `ContDiffWithinAt` of the same
-order `n` at the chart image of the point. -/
-private theorem contDiffWithinAt_comp_extChartAt_symm {f : M → F} {x : M}
-    (hf : CMDiffAt n f x) :
-    ContDiffWithinAt 𝕜 n (f ∘ (extChartAt I x).symm) (Set.range I) (extChartAt I x x) := by
-  have hfWithin : ContMDiffWithinAt I 𝓘(𝕜, F) n f Set.univ x := hf
-  have hsymm := contMDiffWithinAt_extChartAt_symm_range_self (I := I) (n := n) x
-  exact contMDiffWithinAt_iff_contDiffWithinAt.mp
-    (ContMDiffWithinAt.comp_of_eq hfWithin hsymm (Set.mapsTo_univ _ _) (extChartAt_to_inv x))
-
 /-- Let `f` have enough derivatives for symmetry of its second derivative at `x`, and let `V` and
 `W` be differentiable vector fields there. Then the differential of `f` on the manifold bracket is
 the commutator of its directional derivatives. This is the manifold counterpart of Mathlib's
@@ -236,7 +224,8 @@ theorem mvfderiv_mlieBracket {f : M → F} {V W : ∀ x : M, TangentSpace I x} {
   rw [← hchain_apply]
   simp only [mfderivWithin_eq_fderivWithin]
   -- Pull the vector fields back and invoke the normed-space bracket identity.
-  have hfcoord := contDiffWithinAt_comp_extChartAt_symm (hf.of_le hn)
+  have hfcoord := contMDiffWithinAt_iff_contDiffWithinAt.mp
+    (contMDiffAt_iff_source.mp (hf.of_le hn))
   have hVcoord : DifferentiableWithinAt 𝕜
       (mpullbackWithin 𝓘(𝕜, E) I (extChartAt I x).symm V (Set.range I))
       (Set.range I) (extChartAt I x x) := by
