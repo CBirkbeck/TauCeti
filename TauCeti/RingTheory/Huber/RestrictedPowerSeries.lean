@@ -127,9 +127,11 @@ lie in `U`. This is the defining property of elements of `M⟨T₁, …, Tₖ⟩
 `A⟨T₁, …, Tₖ⟩` in the case of ring coefficients.
 
 The coefficients need carry no algebraic structure beyond a distinguished `0`: the condition is
-about a family of points converging in `M`. The stronger binders appear only where a proof needs
-them — `isRestricted_one` and `IsRestricted.mul` are about the ring structure, and the module
-coefficients used for `M⟨X⟩` are not a semiring at all.
+about a family of points converging in `M`. Stronger binders appear below wherever the *statement*
+names an operation, because that is where Mathlib's `MvPowerSeries` instances put the floor —
+`f + g` needs `[AddMonoid M]` and `c • f` needs `[Module R M]` for the expression to be
+well-formed at all, not because the convergence argument needs them. The module coefficients used
+for `M⟨X⟩` are not a semiring, which is why the predicate itself must not ask for one.
 
 See Wedhorn, (5.6.1) and §6.7. -/
 def IsRestricted {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
@@ -171,14 +173,23 @@ theorem isRestricted_of_hasFiniteSupport {k : ℕ} {M : Type*} [Zero M] [Topolog
     (hf : Function.HasFiniteSupport (f : (Fin k →₀ ℕ) → M)) : IsRestricted f :=
   (tendsto_cofinite_pure_iff.mpr hf).mono_right (pure_le_nhds 0)
 
+/-- **A monomial is restricted**: its support is a single multi-index.
+
+This is the constant-series fact in general. `isRestricted_one` and `isRestricted_algebraMap` are
+its cases at `monomial 0 1` and `monomial 0 a`, and unlike the latter it needs no commutativity,
+so it covers `C a` over a noncommutative semiring. -/
+theorem isRestricted_monomial {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
+    (n : Fin k →₀ ℕ) (a : A) : IsRestricted (MvPowerSeries.monomial n a) :=
+  isRestricted_of_hasFiniteSupport <| (Set.finite_singleton n).subset fun s hs ↦ by
+    have h : MvPowerSeries.coeff s (MvPowerSeries.monomial n a) ≠ 0 := by
+      rwa [MvPowerSeries.coeff_apply]
+    exact Set.mem_singleton_iff.mpr (MvPowerSeries.eq_of_coeff_monomial_ne_zero h)
+
 /-- `1` is restricted: every coefficient but the `0`-th vanishes. -/
 @[simp]
 theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A] :
-    IsRestricted (1 : MvPowerSeries (Fin k) A) :=
-  isRestricted_of_hasFiniteSupport <| (Set.finite_singleton (0 : Fin k →₀ ℕ)).subset fun s hs ↦ by
-    simp only [Set.mem_singleton_iff]
-    by_contra h
-    exact hs (by simp [← MvPowerSeries.coeff_apply, MvPowerSeries.coeff_one, h])
+    IsRestricted (1 : MvPowerSeries (Fin k) A) := by
+  simpa using isRestricted_monomial (0 : Fin k →₀ ℕ) (1 : A)
 
 /-- A sum of restricted series is restricted. -/
 theorem IsRestricted.add {k : ℕ} {M : Type*} [AddMonoid M] [TopologicalSpace M]
@@ -198,10 +209,10 @@ theorem IsRestricted.neg {k : ℕ} {M : Type*} [AddGroup M] [TopologicalSpace M]
 
 /-- Scaling a restricted series by a constant leaves it restricted.
 
-The scalar ring is unrelated to the coefficients' own structure — only the action has to be
-continuous in the vector variable, which is `ContinuousConstSMul`. Stated so that consumers
-holding `IsRestricted` can use it directly, as they can `IsRestricted.add` and
-`IsRestricted.neg`. -/
+`R` need not be the coefficients' own ring: any semiring acting on `M` will do, and what the
+scaling asks beyond that module structure is continuity of each `c • ·` in the vector variable,
+which is `ContinuousConstSMul`. Stated so that consumers holding `IsRestricted` can use it
+directly, as they can `IsRestricted.add` and `IsRestricted.neg`. -/
 theorem IsRestricted.smul {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M]
     [TopologicalSpace M] [Module R M] [ContinuousConstSMul R M] {f : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (c : R) : IsRestricted (c • f) :=
@@ -355,12 +366,9 @@ coefficient `a` at multi-index `0` and `0` elsewhere, so it trivially tends to `
 @[simp]
 theorem isRestricted_algebraMap {k : ℕ} {A : Type*} [CommSemiring A]
     [TopologicalSpace A] (a : A) :
-    IsRestricted (algebraMap A (MvPowerSeries (Fin k) A) a) :=
-  isRestricted_of_hasFiniteSupport <| (Set.finite_singleton (0 : Fin k →₀ ℕ)).subset fun s hs ↦ by
-    simp only [Set.mem_singleton_iff]
-    by_contra h
-    exact hs (by simp [← MvPowerSeries.coeff_apply, MvPowerSeries.algebraMap_apply,
-      MvPowerSeries.coeff_C, h])
+    IsRestricted (algebraMap A (MvPowerSeries (Fin k) A) a) := by
+  rw [MvPowerSeries.algebraMap_apply, ← MvPowerSeries.monomial_zero_eq_C_apply]
+  exact isRestricted_monomial 0 a
 
 /-- The restricted power series subring inherits an `A`-algebra structure from the
 `MvPowerSeries` algebra instance, since constant power series are restricted. -/
