@@ -108,7 +108,7 @@ private lemma norm_circleIntegral_cuspFunction_div_pow_le
 /-- If `cuspFunction h f = O(‖q‖^N)` near `0`, then the `n`-th `q`-coefficient vanishes for
 `n < N`. -/
 public lemma qExpansion_coeff_eq_zero_of_cuspFunction_isBigO_pow
-    [ModularFormClass F Γ k] [Γ.HasDetPlusMinusOne] [DiscreteTopology Γ]
+    [ModularFormClass F Γ k]
     (f : F) (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) {N n : ℕ} (hn : n < N)
     (hO : cuspFunction h f =O[𝓝 (0 : ℂ)] (fun q : ℂ ↦ ‖q‖ ^ N)) :
     (qExpansion h f).coeff n = 0 := by
