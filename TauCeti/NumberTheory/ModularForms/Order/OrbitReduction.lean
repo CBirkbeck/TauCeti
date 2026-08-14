@@ -189,7 +189,7 @@ private lemma exists_of_norm_eq_one_of_re_pos [ModularFormClass F 𝒮ℒ k] {f 
   have hne : ((ModularGroup.S • p₀ : ℍ) : ℂ) ≠ (ρ : ℂ) := fun h ↦
     hqρ (horb ▸ congrArg Quotient.mk'' (UpperHalfPlane.coe_injective h))
   refine ⟨ModularGroup.S • p₀, mem_canonicalReps.mpr ⟨mem_fdZeros.mpr
-    ⟨ModularGroup.S_smul_mem_fd hfd hnorm, hord'⟩,
+    ⟨ModularGroup.S_smul_mem_fd_of_norm_eq_one hfd.2 hnorm, hord'⟩,
       Or.inr (Or.inr ⟨hne, ModularGroup.norm_coe_S_smul_of_norm_eq_one hnorm, ?_⟩)⟩, horb⟩
   rw [coe_re, ModularGroup.re_S_smul_of_norm_eq_one hnorm]
   exact neg_lt_zero.mpr (coe_re p₀ ▸ hpos)

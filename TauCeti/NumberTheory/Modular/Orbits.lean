@@ -147,20 +147,21 @@ lemma re_S_smul_of_norm_eq_one {p : ℍ} (hp : ‖(p : ℂ)‖ = 1) :
     (_root_.ModularGroup.S • p).re = -p.re := by
   rw [re_S_smul, Complex.normSq_eq_norm_sq, hp, one_pow, div_one]
 
-/-- On the unit circle the inversion preserves the closed fundamental domain: the norm stays
-at `1`, and the real-part bound is symmetric under the sign flip. -/
-lemma S_smul_mem_fd {p : ℍ} (hp : p ∈ 𝒟) (hnorm : ‖(p : ℂ)‖ = 1) :
+/-- On the unit circle a point with the fundamental domain's real-part bound is carried into
+the closed fundamental domain by the inversion: the norm stays at `1`, and the real-part
+bound is symmetric under the sign flip. -/
+lemma S_smul_mem_fd_of_norm_eq_one {p : ℍ} (hre : |p.re| ≤ 1 / 2) (hnorm : ‖(p : ℂ)‖ = 1) :
     _root_.ModularGroup.S • p ∈ 𝒟 := by
   refine ⟨?_, ?_⟩
   · rw [Complex.normSq_eq_norm_sq, norm_coe_S_smul_of_norm_eq_one hnorm]
     norm_num
   · rw [re_S_smul_of_norm_eq_one hnorm, abs_neg]
-    exact hp.2
+    exact hre
 
 /-- The inversion is an involution of `ℍ`. -/
-lemma S_smul_S_smul (p : ℍ) : _root_.ModularGroup.S • (_root_.ModularGroup.S • p) = p :=
-  UpperHalfPlane.ext <| by
-    rw [modular_S_smul, modular_S_smul, coe_mk, coe_mk, neg_inv, neg_neg, inv_inv]
+@[simp]
+lemma S_smul_S_smul (p : ℍ) : _root_.ModularGroup.S • (_root_.ModularGroup.S • p) = p := by
+  rw [← SL_neg_smul, ← _root_.ModularGroup.S_inv, inv_smul_smul]
 
 /-- A point of the closed fundamental domain lying in the `SL(2, ℤ)`-orbit of `i` is `i`
 itself: the boundary identifications of `𝒟` fix `i`. -/

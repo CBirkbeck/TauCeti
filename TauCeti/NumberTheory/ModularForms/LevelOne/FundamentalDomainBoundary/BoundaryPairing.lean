@@ -145,7 +145,7 @@ private lemma S_smul_mem_of_norm_eq_one (hS : ∀ q ∈ S, orderOfVanishingAt g 
     (hnorm : ‖(p : ℂ)‖ = 1) (hne : orderOfVanishingAt g p ≠ 0) :
     ModularGroup.S • p ∈ S ∧ ‖((ModularGroup.S • p : ℍ) : ℂ)‖ = 1 ∧
       ((ModularGroup.S • p : ℍ) : ℂ).re = -(p : ℂ).re :=
-  ⟨hcomp _ (ModularGroup.S_smul_mem_fd (hS p hp hne) hnorm) (hord ▸ hne),
+  ⟨hcomp _ (ModularGroup.S_smul_mem_fd_of_norm_eq_one (hS p hp hne).2 hnorm) (hord ▸ hne),
     ModularGroup.norm_coe_S_smul_of_norm_eq_one hnorm,
     by rw [coe_re, ModularGroup.re_S_smul_of_norm_eq_one hnorm, coe_re]⟩
 
