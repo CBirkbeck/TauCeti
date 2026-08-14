@@ -35,7 +35,7 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
   nonzero form is nonzero.
 * `TauCeti.ModularForm.qExpansion_one_norm_order_eq`: the `q`-expansion order of the norm at
   `∞` splits as the order of `f` plus the order of the remainder.
-* `TauCeti.ModularForm.qExpansion_normRest_ne_zero`: the remainder's `q`-expansion is a
+* `TauCeti.ModularForm.qExpansion_one_normRest_ne_zero`: the remainder's `q`-expansion is a
   nonzero power series.
 
 The remainder and the decomposition itself are algebraic, so they are stated for
@@ -385,7 +385,8 @@ public lemma qExpansion_one_norm_order_eq :
 
 This is what makes the order at `∞` of `normRest f` finite, so that it can appear as a
 summand in a cusp-order count. -/
-public lemma qExpansion_normRest_ne_zero (hf : (⇑f : ℍ → ℂ) ≠ 0) : qExpansion 1 (normRest f) ≠ 0 :=
+public lemma qExpansion_one_normRest_ne_zero (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    qExpansion 1 (normRest f) ≠ 0 :=
   mt (qExpansion_eq_zero_iff one_pos (periodic_normRest f) (mdifferentiable_normRest f)
     (isBoundedAtImInfty_normRest f)).mp (normRest_ne_zero f hf)
 
