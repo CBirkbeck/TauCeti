@@ -72,6 +72,16 @@ private theorem fderivWithin_chart_apply_mpullbackWithin
     ((isInvertible_mfderivWithin_extChartAt_symm hz).self_apply_inverse _)
 
 omit [CompleteSpace E] in
+private theorem eventually_mdifferentiableAt_of_contMDiffAt
+    {f : M → F} {x : M} (hf : CMDiffAt n f x) (hn : minSmoothness 𝕜 2 ≤ n) :
+    ∀ᶠ y in 𝓝 x, MDiffAt f y := by
+  have h2n : (2 : ℕ∞ω) ≤ n :=
+    (le_minSmoothness (𝕜 := 𝕜) (n := (2 : ℕ∞ω))).trans hn
+  filter_upwards [(contMDiffAt_iff_contMDiffAt_nhds (n := 2) (by norm_num)).1
+    (hf.of_le h2n)] with y hy
+  exact hy.mdifferentiableAt (by norm_num)
+
+omit [CompleteSpace E] in
 private theorem eventuallyEq_chart_directionalDerivative
     {f : M → F} {U : ∀ y : M, TangentSpace I y} {x : M}
     (hf : CMDiffAt n f x) (hn : minSmoothness 𝕜 2 ≤ n) :
@@ -79,13 +89,7 @@ private theorem eventuallyEq_chart_directionalDerivative
       (mpullbackWithin 𝓘(𝕜, E) I (extChartAt I x).symm U (Set.range I) z)) =ᶠ[
       𝓝[Set.range I] (extChartAt I x x)]
     (fun y ↦ mvfderiv I f y (U y)) ∘ (extChartAt I x).symm := by
-  have hf_eventually : ∀ᶠ y in 𝓝 x, MDiffAt f y := by
-    have h2n : (2 : ℕ∞ω) ≤ n :=
-      (le_minSmoothness (𝕜 := 𝕜) (n := (2 : ℕ∞ω))).trans hn
-    have hf₂ : CMDiffAt 2 f x := hf.of_le h2n
-    filter_upwards [(contMDiffAt_iff_contMDiffAt_nhds (n := 2) (by norm_num)).1 hf₂]
-      with y hy
-    exact hy.mdifferentiableAt (by norm_num)
+  have hf_eventually := eventually_mdifferentiableAt_of_contMDiffAt hf hn
   have hsymm_tendsto : Tendsto (extChartAt I x).symm
       (𝓝[Set.range I] (extChartAt I x x)) (𝓝 x) := by
     simpa only [extChartAt_to_inv] using
@@ -127,16 +131,6 @@ private theorem exists_open_contMDiffOn_two
     ⟨s, hs, hfs⟩
   exact ⟨interior s, isOpen_interior,
     isOpen_interior.mem_nhds (mem_interior_iff_mem_nhds.mpr hs), hfs.mono interior_subset⟩
-
-omit [CompleteSpace E] in
-private theorem eventually_mdifferentiableAt_of_contMDiffAt
-    {f : M → F} {x : M} (hf : CMDiffAt n f x) (hn : minSmoothness 𝕜 2 ≤ n) :
-    ∀ᶠ y in 𝓝 x, MDiffAt f y := by
-  have h2n : (2 : ℕ∞ω) ≤ n :=
-    (le_minSmoothness (𝕜 := 𝕜) (n := (2 : ℕ∞ω))).trans hn
-  filter_upwards [(contMDiffAt_iff_contMDiffAt_nhds (n := 2) (by norm_num)).1
-    (hf.of_le h2n)] with y hy
-  exact hy.mdifferentiableAt (by norm_num)
 
 omit [CompleteSpace E] in
 private theorem eventuallyEq_tangentMapWithin_apply
