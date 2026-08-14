@@ -35,7 +35,8 @@ the roadmap's designated prior formalisation of this material. Three groups, bec
 this PR did different things to different declarations.
 
 **AINTLIB's in definition, statement and proof.** `restrictedMvPowerSeriesSubring`,
-`IsRestricted.finite_coeff_notMem`, the private convolution helpers, and `IsRestricted.mul` — the
+`restrictedMvPowerSeriesSubring.instAlgebra`, `IsRestricted.finite_coeff_notMem`, the private
+convolution helpers, and `IsRestricted.mul` — the
 convolution argument this file exists for. `IsRestricted.mul`'s proof is unchanged here apart from
 three call sites renamed to `isRestricted_iff_coeff`.
 
@@ -46,8 +47,9 @@ were near-identical `tendsto_nhds`/`mem_cofinite` arguments and are now special 
 `isRestricted_of_hasFiniteSupport`. `IsRestricted` itself is AINTLIB's statement at weaker
 coefficient binders — `[Zero]` and a topology, where the original asked for a semiring.
 
-**Original here.** `isRestricted_of_hasFiniteSupport`, `IsRestricted.smul`,
-`restrictedMvPowerSeriesSubmodule` and `mem_restrictedMvPowerSeriesSubmodule`.
+**Original here.** `isRestricted_monomial`, `isRestricted_of_hasFiniteSupport`,
+`IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule` and
+`mem_restrictedMvPowerSeriesSubmodule`.
 
 The name `isRestricted_iff` needs care: the port introduced it for the `coeff`-form unfolding
 lemma, which is now `isRestricted_iff_coeff`. The statement the name carries here — unfolding
@@ -62,8 +64,9 @@ no `M⟨X⟩` there, and §0.5's "restricted series with coefficients in a compl
 has no AINTLIB counterpart to credit.
 
 The port additionally moves the declarations into the `TauCeti.Huber` namespace, opts into the
-Lean module system with the definition bodies unexposed — hence the added `isRestricted_iff_coeff`
-and `mem_restrictedMvPowerSeriesSubring` — tracks the Mathlib rename of `Set.mem_setOf_eq` to
+Lean module system with the definition bodies unexposed — hence the added `isRestricted_iff_coeff`,
+`mem_restrictedMvPowerSeriesSubring` and `coe_algebraMap_restrictedMvPowerSeriesSubring` — tracks
+the Mathlib rename of `Set.mem_setOf_eq` to
 `Set.mem_ofPred_eq`, renames the predicate from AINTLIB's `IsRestrictedAdic` (nothing here is
 adic), and drops hypotheses that the individual proofs never used.
 
