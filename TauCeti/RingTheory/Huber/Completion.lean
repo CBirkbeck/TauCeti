@@ -38,9 +38,10 @@ converge because `Â` is complete, and their sums exhibit the element as a combi
 
 ## Main results
 
-* `TauCeti.Huber.PairOfDefinition.isBounded_image_completion_coe_of_isBounded` and
-  `TauCeti.Huber.PairOfDefinition.isPowerBounded_completion_coe_of_isPowerBounded`: boundedness and
-  power-boundedness transfer from `A` to its completion along the canonical map.
+* `TauCeti.Huber.isBounded_image_completion_coe_of_isBounded` and
+  `TauCeti.Huber.isPowerBounded_completion_coe_of_isPowerBounded`: boundedness and
+  power-boundedness transfer from `A` to its completion along the canonical map. Both are stated
+  for a Huber ring, with no pair of definition in the signature.
 * `TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero_completion`: the closures of the images of
   the powers `Iⁿ` are a neighbourhood basis of zero in `Â`.
 * `TauCeti.Huber.PairOfDefinition.completionIdeal_pow`: `Îⁿ` is the closure of the image of `Iⁿ`.
@@ -442,13 +443,19 @@ theorem mem_completion_idealOfDefinition (P : PairOfDefinition A)
       (⟨x, by rw [← completion_ringOfDefinition P]; exact x.2⟩ :
         P.completionRingOfDefinition) ∈ P.completionIdeal := (Iff.rfl)
 
-/-- The image of a bounded subset of `A` is bounded in the completion.
+end PairOfDefinition
+
+/-- **The image of a bounded subset of `A` is bounded in `Â`.**
+
+Stated for a Huber ring rather than for a chosen pair of definition: the conclusion does not
+mention one, so the choice is internal to the proof.
 
 The closure argument follows AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, branch
 `dev/adic-spaces` at `37bbdaeb9`), `projects/AdicSpaces/Adic spaces/LocalizationTopology.lean:545`,
 where it is stated for the rational-localisation completion. No proof was copied. -/
-theorem isBounded_image_completion_coe_of_isBounded (P : PairOfDefinition A) {X : Set A}
+theorem isBounded_image_completion_coe_of_isBounded [IsHuberRing A] {X : Set A}
     (hX : IsBounded X) : IsBounded (((↑) : A → Completion A) '' X) := by
+  refine (IsHuberRing.nonempty_pairOfDefinition (A := A)).elim fun P ↦ ?_
   rw [isBounded_iff]
   intro U hU
   obtain ⟨n, -, hnU⟩ := (P.hasBasis_nhds_zero_completion).mem_iff.mp hU
@@ -462,35 +469,27 @@ theorem isBounded_image_completion_coe_of_isBounded (P : PairOfDefinition A) {X 
   -- the closure of the first into the closure of the second.
   have hcont : Continuous (fun u : Completion A ↦ u * (x : Completion A)) :=
     continuous_id.mul continuous_const
-  have hmaps : ∀ z ∈ ((↑) : A → Completion A) '' (P.idealImage m : Set A),
-      z * (x : Completion A)
-        ∈ closure (((↑) : A → Completion A) '' (P.idealImage n : Set A)) := by
+  have hmaps : ((↑) : A → Completion A) '' (P.idealImage m : Set A)
+      ⊆ (fun u : Completion A ↦ u * (x : Completion A)) ⁻¹'
+        closure (((↑) : A → Completion A) '' (P.idealImage n : Set A)) := by
     rintro _ ⟨a, ha, rfl⟩
-    rw [← Completion.coe_mul]
+    rw [Set.mem_preimage, ← Completion.coe_mul]
     exact subset_closure ⟨a * x, hXW (Set.mul_mem_mul (hmW ha) hxX), rfl⟩
-  have himg : (fun u : Completion A ↦ u * (x : Completion A)) ''
-      (((↑) : A → Completion A) '' (P.idealImage m : Set A))
-      ⊆ closure (((↑) : A → Completion A) '' (P.idealImage n : Set A)) := by
-    rintro _ ⟨z, hz, rfl⟩
-    exact hmaps z hz
-  exact closure_minimal himg isClosed_closure
+  exact closure_minimal (Set.image_subset_iff.mpr hmaps) isClosed_closure
     (image_closure_subset_closure_image hcont ⟨y, hy, rfl⟩)
 
 /-- **A power-bounded element of `A` stays power-bounded in `Â`.** -/
-theorem isPowerBounded_completion_coe_of_isPowerBounded (P : PairOfDefinition A) {a : A}
+theorem isPowerBounded_completion_coe_of_isPowerBounded [IsHuberRing A] {a : A}
     (ha : IsPowerBounded a) : IsPowerBounded ((a : Completion A)) := by
+  -- the coercion is `⇑Completion.coeRingHom`, so it commutes with powers; stated once here
+  have hcoe : ∀ k : ℕ, ((a : Completion A)) ^ k = ((a ^ k : A) : Completion A) :=
+    fun k ↦ (map_pow Completion.coeRingHom a k).symm
   have h : Set.range (((a : Completion A)) ^ · : ℕ → Completion A)
       = ((↑) : A → Completion A) '' Set.range (a ^ · : ℕ → A) := by
-    ext y
-    constructor
-    · rintro ⟨k, rfl⟩
-      exact ⟨a ^ k, ⟨k, rfl⟩, map_pow Completion.coeRingHom a k⟩
-    · rintro ⟨_, ⟨k, rfl⟩, rfl⟩
-      exact ⟨k, (map_pow Completion.coeRingHom a k).symm⟩
+    simpa only [hcoe] using Set.range_comp' (((↑) : A → Completion A)) (a ^ · : ℕ → A)
   rw [isPowerBounded_iff, h]
-  exact P.isBounded_image_completion_coe_of_isBounded (isPowerBounded_iff.mp ha)
+  exact isBounded_image_completion_coe_of_isBounded (isPowerBounded_iff.mp ha)
 
-end PairOfDefinition
 
 /-- Wedhorn Remark 6.8: the completion of a Huber ring is a Huber ring. -/
 instance IsHuberRing.completion [IsHuberRing A] : IsHuberRing (Completion A) :=
