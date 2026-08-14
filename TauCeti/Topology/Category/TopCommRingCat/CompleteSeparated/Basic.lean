@@ -41,6 +41,9 @@ Hausdorff form the equalizer arguments consume.
   it gives the canonical witnesses — the family the structure presheaf's values come from —
   as the `example` below records.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.t2Space` : separatedness in Hausdorff form.
+* `TauCeti.TopCommRingCat.IsCompleteSeparated.of_isClosedEmbedding` : a closed subobject of a
+  complete separated ring is complete separated. This is where Hausdorffness does its work, and
+  the equalizer closure in `CompleteSeparated/Limits.lean` is its consumer.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.pi` : a product of complete separated objects
   is complete separated. This is the closure half for products; the limit cones and the
   creation statement for the inclusion `CompleteSeparatedTopCommRingCat ⥤ TopCommRingCat`
@@ -121,6 +124,22 @@ theorem IsCompleteSeparated.pi {β : Type v} {f : β → TopCommRingCat.{max u v
   -- `IsUniformAddGroup.rightUniformSpace_eq` identifies it with `Pi.uniformSpace`.
   rw [IsUniformAddGroup.rightUniformSpace_eq]
   infer_instance
+
+/-- A closed embedding of topological rings pulls the complete separated property back: the
+image is a closed subring of a complete Hausdorff ring, hence complete, and separatedness is
+inherited. This is where Hausdorffness of the codomain does its work. -/
+theorem IsCompleteSeparated.of_isClosedEmbedding {R S : TopCommRingCat.{u}} (f : R ⟶ S)
+    (hf : Topology.IsClosedEmbedding f) (hS : IsCompleteSeparated S) :
+    IsCompleteSeparated R := by
+  have : T0Space S := hS.t0Space
+  refine ⟨?_, hf.toIsEmbedding.t0Space⟩
+  let _ : UniformSpace S := IsTopologicalAddGroup.rightUniformSpace S
+  let _ : UniformSpace R := IsTopologicalAddGroup.rightUniformSpace R
+  have : IsUniformAddGroup S := isUniformAddGroup_of_addCommGroup
+  have : IsUniformAddGroup R := isUniformAddGroup_of_addCommGroup
+  have : CompleteSpace S := hS.completeSpace
+  exact (AddMonoidHom.isUniformInducing_of_isInducing (f := f.val) hf.toIsInducing).completeSpace
+    hf.isClosed_range.isComplete
 
 /-- The complete separated objects, as a named `ObjectProperty` — the form the subcategory
 and its instance machinery key on. Consumers go through `isCompleteSeparated_iff` and the

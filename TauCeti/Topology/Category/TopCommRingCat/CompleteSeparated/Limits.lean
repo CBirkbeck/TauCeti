@@ -18,15 +18,14 @@ inclusion into `TopCommRingCat` — Mathlib's
 `CategoryTheory.ObjectProperty.createsLimitFullSubcategoryInclusionOfClosed` applied to the
 closure instances proved here. The equalizer closure is where separatedness of the codomain
 is used: the equalizing locus is closed in a Hausdorff codomain, and a closed subring of a
-complete separated ring is complete separated.
+complete separated ring is complete separated (`IsCompleteSeparated.of_isClosedEmbedding`,
+in `CompleteSeparated/Basic.lean`).
 
 ## Main results
 
 * The `CategoryTheory.ObjectProperty.IsClosedUnderIsomorphisms` instance for
   `TauCeti.TopCommRingCat.isCompleteSeparated` : the property transfers along isomorphisms of
   topological rings.
-* `TauCeti.TopCommRingCat.IsCompleteSeparated.of_isClosedEmbedding` : a closed subobject of
-  a complete separated ring is complete separated.
 * The `IsClosedUnderLimitsOfShape` instances for discrete shapes and parallel pairs. These are
   what the inclusion needs in order to create the limits, so
   `TauCeti.CompleteSeparatedTopCommRingCat` acquires products and equalizers from them:
@@ -64,22 +63,6 @@ instance : (isCompleteSeparated.{u}).IsClosedUnderIsomorphisms where
     have : CompleteSpace R := hR'.completeSpace
     exact ((AddMonoidHom.isUniformInducing_of_isInducing (f := e.inv.val)
       φ.isInducing).completeSpace_congr φ.surjective).mpr ‹_›
-
-/-- A closed embedding of topological rings pulls the complete separated property back: the
-image is a closed subring of a complete Hausdorff ring, hence complete, and separatedness is
-inherited. This is where Hausdorffness of the codomain does its work. -/
-theorem IsCompleteSeparated.of_isClosedEmbedding {R S : TopCommRingCat.{u}} (f : R ⟶ S)
-    (hf : Topology.IsClosedEmbedding f) (hS : IsCompleteSeparated S) :
-    IsCompleteSeparated R := by
-  have : T0Space S := hS.t0Space
-  refine ⟨?_, hf.toIsEmbedding.t0Space⟩
-  let _ : UniformSpace S := IsTopologicalAddGroup.rightUniformSpace S
-  let _ : UniformSpace R := IsTopologicalAddGroup.rightUniformSpace R
-  have : IsUniformAddGroup S := isUniformAddGroup_of_addCommGroup
-  have : IsUniformAddGroup R := isUniformAddGroup_of_addCommGroup
-  have : CompleteSpace S := hS.completeSpace
-  exact (AddMonoidHom.isUniformInducing_of_isInducing (f := f.val) hf.toIsInducing).completeSpace
-    hf.isClosed_range.isComplete
 
 /-- Complete separated objects are closed under products in `TopCommRingCat`. -/
 instance {β : Type v} :
