@@ -20,7 +20,7 @@ subspace of a spectral space is spectral.
 The closedness half is `TauCeti.ValuationSpectrum.isClosed_val_preimage_cont`; this file draws
 the conclusion. A closed subset is in particular pro-constructible, hence spectral in the
 spectral space `Spv (A, IA)`, so
-`TauCeti.ValuationSpectrum.spectralSpace_of_spectralSpace_val_preimage` applies with the
+`TauCeti.spectralSpace_of_isEmbedding` carries it back along the subtype embedding, using the
 Theorem 7.10 inclusion `Cont A ⊆ Spv (A, IA)`.
 
 The argument is run on the subspace and transported back along a homeomorphism rather than
@@ -50,8 +50,11 @@ theorem spectralSpace_cont_of_pairOfDefinition (P : PairOfDefinition A) :
   -- `IsClosed.isProConstructible` reads the spectrality of `Spv (A, IA)` off the context.
   have := spectralSpace_spvOfIdeal P.extendedIdealOfDefinition
     ⟨P.extendedIdealOfDefinition, P.fg_extendedIdealOfDefinition, rfl⟩
-  exact spectralSpace_of_spectralSpace_val_preimage _ _
-    (cont_subset_spvOfIdeal_extendedIdealOfDefinition P)
+  have hsub : cont A ⊆ Set.range ((↑) : spvOfIdeal P.extendedIdealOfDefinition
+      ⟨P.extendedIdealOfDefinition, P.fg_extendedIdealOfDefinition, rfl⟩ → Spv A) := by
+    rw [Subtype.range_val]
+    exact cont_subset_spvOfIdeal_extendedIdealOfDefinition P
+  exact spectralSpace_of_isEmbedding Topology.IsEmbedding.subtypeVal hsub
     (isClosed_val_preimage_cont P).isProConstructible.spectralSpace
 
 /-- **Wedhorn Corollary 7.12**: over a Huber ring the continuous points form a spectral space —

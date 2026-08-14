@@ -8,7 +8,7 @@ module
 public import Mathlib.Topology.Spectral.Hom
 public import TauCeti.AlgebraicGeometry.AdicSpace.RestrictToIdeal
 public import TauCeti.AlgebraicGeometry.AdicSpace.PatchPresentation
-import TauCeti.Topology.Spectral.SpectralMap
+public import TauCeti.Topology.Spectral.SpectralMap
 import TauCeti.Topology.Spectral.PatchCriterion
 
 /-!
@@ -477,30 +477,6 @@ theorem spectralSpace_spvOfIdeal (I : Ideal A)
   spectralSpace_of_isClopen_generateFrom (instTopologicalSpace_spvOfIdeal_eq_generateFrom I hfg)
     (compactSpace_patchTopologyOfIdeal I hfg)
     (isClopen_patchTopologyOfIdeal_of_mem_rationalFamily I hfg)
-
-/-- **Spectrality of a subspace of `Spv A` through its trace on `Spv (A, I)`.** A subset
-contained in `Spv (A, I)` is spectral as soon as its trace there is: the subset is homeomorphic
-to its trace, because both carry the topology induced from `Spv A`.
-
-The argument is run on `Spv (A, I)` rather than on `Spv A` because the inclusion
-`Spv (A, I) → Spv A` is not a spectral map (Remark 7.6), so the general preservation theorems
-are unavailable along it; that rules out this route, not every possible descent argument. Both
-spectrality results for subspaces of `Spv A` have this shape — `Cont A` by Corollary 7.12 and
-`Spa (A, A⁺)` by Theorem 7.35 — differing only in how the trace is shown spectral, in each case
-by pro-constructibility in the spectral space `Spv (A, I)`. -/
-theorem spectralSpace_of_spectralSpace_val_preimage (I : Ideal A)
-    (hfg : ∃ J : Ideal A, J.FG ∧ I.radical = J.radical) {S : Set (Spv A)}
-    (hsub : S ⊆ spvOfIdeal I hfg)
-    (h : SpectralSpace (Subtype.val ⁻¹' S : Set (spvOfIdeal I hfg))) :
-    SpectralSpace S := by
-  -- Both sides carry the topology induced from `Spv A`, so the embedding of the subspace
-  -- restricts to a homeomorphism from the trace of `S` onto `S`.
-  let e := Topology.IsEmbedding.subtypeVal.homeomorphOfSubsetRange
-    (Subtype.range_val (s := (spvOfIdeal I hfg : Set (Spv A))) ▸ hsub)
-  -- `Topology.IsOpenEmbedding.spectralSpace` transfers along `e`, once `e` has carried
-  -- compactness across; a homeomorphism is in particular an open embedding.
-  have : CompactSpace S := e.compactSpace
-  exact e.symm.isOpenEmbedding.spectralSpace
 
 /-- **Wedhorn Lemma 7.5(1), the quasi-compactness half.** Every member of `R` is a quasi-compact
 open of `Spv (A, I)` — the property Wedhorn states alongside "basis", and the one that
