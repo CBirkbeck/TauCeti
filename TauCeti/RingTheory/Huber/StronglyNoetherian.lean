@@ -8,6 +8,7 @@ module
 public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries
 public import TauCeti.Topology.Algebra.UniformRing
 public import TauCeti.Topology.UniformSpace.DiscreteUniformity
+public import Mathlib.RingTheory.MvPowerSeries.Equiv
 public import Mathlib.RingTheory.Polynomial.Basic
 
 /-!
@@ -112,5 +113,76 @@ instance IsStronglyNoetherian.of_discreteTopology [DiscreteTopology A] [IsNoethe
     exact isNoetherianRing_of_ringEquiv _
       ((weightedPolynomialEquiv _ isWeightFamily_one_weight).trans
         (UniformSpace.Completion.completeRingEquivSelf _).symm)
+
+/-! ### Zero variables -/
+
+section ZeroVariables
+
+variable {A}
+
+/-- **At zero variables every power series is restricted.** There is only one monomial, so the
+coefficient family is indexed by a subsingleton and converges to zero along the cofinite filter
+vacuously. -/
+theorem weightedRestrictedSubring_fin_zero :
+    weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight = ⊤ := by
+  ext f
+  simp [isWeightedRestricted_one_weight_iff, Filter.cofinite_eq_bot]
+
+omit [TopologicalSpace A] [NonarchimedeanRing A] in
+/-- At zero variables the weight subgroup `Tν · U` is just `U`: the weight is the empty product
+`{1}`, and the subgroup that generates absorbs into `U`. -/
+theorem weightMul_fin_zero (ν : Fin 0 →₀ ℕ) (U : AddSubgroup A) :
+    weightMul (fun _ : Fin 0 ↦ ({1} : Set A)) ν U = U := by
+  rw [weightMul_def, weightPow_def]
+  simp
+
+/-- **`A⟨⟩ = A`**: the restricted power series in no variables are `A` itself, as a ring. -/
+noncomputable def weightedRestrictedSubringFinZeroEquiv :
+    weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight ≃+* A :=
+  (RingEquiv.subringCongr weightedRestrictedSubring_fin_zero).trans <|
+    Subring.topEquiv.trans (MvPowerSeries.isEmptyEquiv (Fin 0) A).toRingEquiv
+
+/-- The zero-variable comparison is the constant coefficient. -/
+@[simp]
+theorem weightedRestrictedSubringFinZeroEquiv_apply
+    (f : weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight) :
+    weightedRestrictedSubringFinZeroEquiv f =
+      MvPowerSeries.constantCoeff (f : MvPowerSeries (Fin 0) A) := (rfl)
+
+/-- The zero-variable comparison is continuous. -/
+theorem continuous_weightedRestrictedSubringFinZeroEquiv :
+    Continuous (weightedRestrictedSubringFinZeroEquiv (A := A)) := by
+  refine continuous_of_continuousAt_zero
+    weightedRestrictedSubringFinZeroEquiv.toAddMonoidHom ?_
+  rw [ContinuousAt, map_zero,
+    (hasBasis_nhds_zero_weightedTopology isWeightFamily_one_weight).tendsto_left_iff]
+  intro V hV
+  obtain ⟨U, hUV⟩ := NonarchimedeanAddGroup.is_nonarchimedean V hV
+  refine ⟨U, trivial, fun f hf ↦ hUV ?_⟩
+  have h := mem_weightedNhd.mp hf 0
+  rw [weightMul_fin_zero] at h
+  simpa using h
+
+/-- The inverse comparison sends `a` to the constant series. -/
+@[simp]
+theorem coe_weightedRestrictedSubringFinZeroEquiv_symm (a : A) :
+    ((weightedRestrictedSubringFinZeroEquiv.symm a :
+        weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight) :
+      MvPowerSeries (Fin 0) A) = MvPowerSeries.C a := (rfl)
+
+/-- The inverse of the zero-variable comparison is continuous. -/
+theorem continuous_weightedRestrictedSubringFinZeroEquiv_symm :
+    Continuous (weightedRestrictedSubringFinZeroEquiv (A := A)).symm := by
+  refine continuous_of_continuousAt_zero
+    (weightedRestrictedSubringFinZeroEquiv (A := A)).symm.toAddMonoidHom ?_
+  rw [ContinuousAt, map_zero,
+    (hasBasis_nhds_zero_weightedTopology isWeightFamily_one_weight).tendsto_right_iff]
+  intro U _
+  filter_upwards [U.isOpen.mem_nhds U.zero_mem] with a ha
+  refine mem_weightedNhd.mpr fun ν ↦ ?_
+  rw [weightMul_fin_zero]
+  simpa [Subsingleton.elim ν 0] using ha
+
+end ZeroVariables
 
 end TauCeti.Huber
