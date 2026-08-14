@@ -116,20 +116,18 @@ private theorem measurableSet_tendsto_average_integral {f : α → E} (hf : Meas
       (κ := ⟨((↑) : ProbabilityMeasure α → Measure α), measurable_subtype_coe⟩)).measurable.comp
         measurable_fst)
 
-/-- **On each fibre of the mixture the averages converge almost surely.** For a bounded measurable
-`f` and a probability measure `Q`, the pairing of `Q` with an i.i.d. `Q`-path lands almost surely
-in the set where the averages of `f` converge to `∫ f dQ`.
+/-- **On each fibre of the mixture the averages converge almost surely.** For `f` measurable and
+integrable against a probability measure `Q`, the pairing of `Q` with an i.i.d. `Q`-path lands
+almost surely in the set where the averages of `f` converge to `∫ f dQ`.
 
 This is the classical strong law, read on the fibre `(δ_Q, Q^{⊗ℕ})`; nothing about the directing
 measure or the process is involved. -/
 private theorem measure_compl_tendsto_average_integral_eq_zero {f : α → E} (hf : Measurable f)
-    {C : ℝ} (hbdd : ∀ x, ‖f x‖ ≤ C) (Q : ProbabilityMeasure α) :
+    (Q : ProbabilityMeasure α) (hint : Integrable f (Q : Measure α)) :
     ((Measure.dirac Q).prod (Measure.infinitePi fun _ : ℕ => (Q : Measure α)))
       {z : ProbabilityMeasure α × (ℕ → α) |
         Tendsto (fun n : ℕ => (n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, f (z.2 i)) atTop
           (𝓝 (∫ y, f y ∂(z.1 : Measure α)))}ᶜ = 0 := by
-  have hint : Integrable f (Q : Measure α) :=
-    Integrable.of_bound hf.aestronglyMeasurable C (.of_forall hbdd)
   have hsl : ∀ᵐ x ∂(Measure.infinitePi fun _ : ℕ => (Q : Measure α)),
       (Q, x) ∈ {z : ProbabilityMeasure α × (ℕ → α) |
         Tendsto (fun n : ℕ => (n : ℝ)⁻¹ • ∑ i ∈ Finset.range n, f (z.2 i)) atTop
@@ -164,7 +162,8 @@ theorem ConditionallyIIDWith.tendsto_average_ae [IsFiniteMeasure μ]
   have hfibre : ∀ Q : ProbabilityMeasure α,
       ((Measure.dirac Q).prod (Measure.infinitePi fun _ : ℕ => (Q : Measure α))) Gᶜ = 0 := by
     rw [hG]
-    exact fun Q => measure_compl_tendsto_average_integral_eq_zero hf hbdd Q
+    exact fun Q => measure_compl_tendsto_average_integral_eq_zero hf Q
+      (Integrable.of_bound hf.aestronglyMeasurable C (.of_forall hbdd))
   have hker : Measurable fun Q : ProbabilityMeasure α =>
       (Measure.dirac Q).prod (Measure.infinitePi fun _ : ℕ => (Q : Measure α)) :=
     TauCeti.MeasureTheory.measurable_dirac_prod_infinitePi_const
