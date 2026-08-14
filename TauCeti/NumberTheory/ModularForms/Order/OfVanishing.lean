@@ -184,6 +184,7 @@ variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ �
 transports the order from the translated point back to the original one. No invariance is
 needed — the slash factor is analytic and nonvanishing, so only the composition with the
 Möbius action moves the order. -/
+@[simp]
 lemma orderOfVanishingAt_slash (g : ℍ → ℂ) {γ : GL (Fin 2) ℝ} (hdet : 0 < γ.val.det) (z : ℍ) :
     orderOfVanishingAt (g ∣[k] γ) z = orderOfVanishingAt g (γ • z) := by
   have hden_ne : ((γ 1 0 : ℂ) * (z : ℂ) + (γ 1 1 : ℂ)) ≠ 0 := by
