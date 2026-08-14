@@ -12,14 +12,16 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant
 
 For a normalised EDS `normEDS b c d`, the invariant of `IsEllipticNet` at `s = 1` carries factors
 that are constant in the index: `IsEllipticNet.invarNum` is divisible by `b = W 2`, and
-`IsEllipticNet.invarDenom` by `b * c = W 2 * W 3`. This file names the two quotients — `redInvarNum`
-and `redInvarDenom` — and proves the cancellation for the numerator.
+`IsEllipticNet.invarDenom` is expected to be divisible by `b * c = W 2 * W 3`. This file names
+`redInvarNum` and **proves** its cancellation; `redInvarDenom` is only the candidate piecewise
+expression for the reduced denominator, since the theorem identifying it as the quotient is not
+available here (see below).
 
 The numerator's reduced form is a sum rather than a quotient: `redInvarNum` is defined outright as
 
 `redInvarNum b c d m = complEDS₂ b c d m + normEDS b c d m ^ 3 * b + 2 * complEDS₂Aux b c d m`,
 
-and `invarNum_eq_redInvarNum_mul` is what identifies it as the cancellation, `invarNum` being
+and `invarNum_one_eq_redInvarNum_mul` is what identifies it as the cancellation, `invarNum` being
 `redInvarNum * b`. Reading it the other way, `complEDS₂_eq_redInvarNum_sub` expresses the second
 complement through the invariant — the step by which the elliptic-net identities reach the division
 polynomials in the Lutz–Nagell development.
@@ -33,15 +35,15 @@ polynomials in the Lutz–Nagell development.
 
 ## Main results
 
-* `IsEllipticNet.invarNum_eq_redInvarNum_mul`: `invarNum (normEDS b c d) 1 m` is
+* `IsEllipticNet.invarNum_one_eq_redInvarNum_mul`: `invarNum (normEDS b c d) 1 m` is
   `redInvarNum b c d m * b` — the cancellation the reduced numerator is named for.
 * `complEDS₂_eq_redInvarNum_sub`: the second complement read off the reduced numerator.
-* `IsEllipticNet.invarNum_normEDS`: the invariant numerator of a normalised EDS at `s = 1`, with
+* `IsEllipticNet.invarNum_one_normEDS`: the invariant numerator of a normalised EDS at `s = 1`, with
   `W 1 = 1` and `W 2 = b` substituted. This is a measured prerequisite of
-  `invarNum_eq_redInvarNum_mul` rather than an addition: that proof cancels `b` against the
+  `invarNum_one_eq_redInvarNum_mul` rather than an addition: that proof cancels `b` against the
   substituted `W 2`, so the substituted form has to exist first. The source names it for the same
-  reason, and the blocked layer's `invarNum_normEDS_two` and `invarDenom_normEDS_two` are the same
-  shape at a fixed index.
+  reason, and the blocked layer's `invarNum_one_normEDS_two` and `invarDenom_normEDS_two` are the
+  same shape at a fixed index.
 
 ## What is deliberately not here
 
@@ -64,8 +66,8 @@ the source discharges the ellipticity variables over exactly this block.
 
 Ported from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
-`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `invarNum_normEDS`, `redInvarNum`,
-`compl₂EDS_eq_redInvarNum_sub`, `invarNum_eq_redInvarNum_mul` and `redInvarDenom`. That file's
+`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `invarNum_one_normEDS`, `redInvarNum`,
+`compl₂EDS_eq_redInvarNum_sub`, `invarNum_one_eq_redInvarNum_mul` and `redInvarDenom`. That file's
 header reads `Authors: Junyan Xu`; following this repository's convention for adapted material the
 upstream authorship is credited here rather than in the copyright header.
 
@@ -77,7 +79,7 @@ IsEllipticSequence`), which #13057 predates, and follow `ComplAux.lean` in keepi
 and `complEDS₂`; the two results about `IsEllipticNet.invarNum` stay in that namespace, after their
 left-hand sides.
 
-One adaptation is forced rather than chosen: the source proves `invarNum_normEDS` by
+One adaptation is forced rather than chosen: the source proves `invarNum_one_normEDS` by
 `simp [invarNum]`, unfolding the definition. That does not port, because `Invariant.lean` exports
 `invarNum`'s body unexposed — from an importing module `simp [invarNum]` is rejected outright — so
 the proof goes through the `@[simp]` equation lemma `IsEllipticNet.invarNum_def` instead.
@@ -91,7 +93,7 @@ namespace IsEllipticNet
 
 /-- The invariant numerator of a normalised EDS at `s = 1`, with `W 1 = 1` and `W 2 = b`
 substituted. -/
-theorem invarNum_normEDS (n : ℤ) :
+theorem invarNum_one_normEDS (n : ℤ) :
     invarNum (normEDS b c d) 1 n =
       normEDS b c d (n + 2) * normEDS b c d (n - 1) ^ 2
         + normEDS b c d (n + 1) ^ 2 * normEDS b c d (n - 2)
@@ -101,7 +103,7 @@ theorem invarNum_normEDS (n : ℤ) :
 end IsEllipticNet
 
 /-- The invariant numerator of a normalised EDS with one factor of `b` cancelled. Stated as the sum
-it reduces to rather than as a quotient; `IsEllipticNet.invarNum_eq_redInvarNum_mul` is what
+it reduces to rather than as a quotient; `IsEllipticNet.invarNum_one_eq_redInvarNum_mul` is what
 identifies it as the cancellation. -/
 def redInvarNum : R :=
   complEDS₂ b c d m + normEDS b c d m ^ 3 * b + 2 * complEDS₂Aux b c d m
@@ -126,16 +128,18 @@ namespace IsEllipticNet
 /-- **The cancellation `redInvarNum` is named for**: the invariant numerator of a normalised EDS at
 `s = 1` is `redInvarNum` times `b`. The factor of `b` is constant in `m`, which is what makes the
 reduced form the one the division-polynomial identities are stated over. -/
-theorem invarNum_eq_redInvarNum_mul :
+theorem invarNum_one_eq_redInvarNum_mul :
     invarNum (normEDS b c d) 1 m = redInvarNum b c d m * b := by
   simp_rw [redInvarNum_def, right_distrib, complEDS₂_mul_b, mul_assoc 2 _ b, complEDS₂Aux_mul_b,
-    invarNum_normEDS]
+    invarNum_one_normEDS]
   ring
 
 end IsEllipticNet
 
-/-- The denominator `W (m + 1) * W m * W (m - 1)` of the invariant of a normalised EDS, with the
-constant factor `W 3 * W 2 = c * b` cancelled.
+/-- The **candidate** reduced denominator: the piecewise expression intended to be
+`W (m + 1) * W m * W (m - 1)` with the constant factor `W 3 * W 2 = c * b` cancelled. That
+identification is `invarDenom_eq_redInvarDenom_mul`, which is *not* proved here — it routes through
+`IsEllipticSequence.normEDS` — so this definition stands on its formula alone for now.
 
 The definition splits on `m % 6`. Among any three consecutive indices `m - 1, m, m + 1` exactly
 which are divisible by `2` and by `3` depends on the residue, and the complement sequences
@@ -152,3 +156,20 @@ def redInvarDenom : R :=
   if m % 6 = 2 then C 3 ((m + 1) / 3) * C 2 (m / 2) * W (m - 1) else
   if m % 6 = 4 then C 3 ((m - 1) / 3) * C 2 (m / 2) * W (m + 1) else
   if m % 6 = 3 then C 3 (m / 3) * C 2 ((m - 1) / 2) * W (m + 1) else 0
+
+/-- The defining formula for `redInvarDenom`, residue by residue. The definition body is not
+exposed, so this equation lemma is how a consumer computes with it. -/
+theorem redInvarDenom_def :
+    redInvarDenom b c d m =
+      if m % 6 = 0 then (normEDS b c d 5 - d ^ 2) * complEDS b c d 6 (m / 6) *
+        normEDS b c d (m + 1) * normEDS b c d (m - 1) else
+      if m % 6 = 1 then (normEDS b c d 5 - d ^ 2) * complEDS b c d 6 ((m - 1) / 6) *
+        normEDS b c d (m + 1) * normEDS b c d m else
+      if m % 6 = 5 then (normEDS b c d 5 - d ^ 2) * complEDS b c d 6 ((m + 1) / 6) *
+        normEDS b c d m * normEDS b c d (m - 1) else
+      if m % 6 = 2 then complEDS b c d 3 ((m + 1) / 3) * complEDS b c d 2 (m / 2) *
+        normEDS b c d (m - 1) else
+      if m % 6 = 4 then complEDS b c d 3 ((m - 1) / 3) * complEDS b c d 2 (m / 2) *
+        normEDS b c d (m + 1) else
+      if m % 6 = 3 then complEDS b c d 3 (m / 3) * complEDS b c d 2 ((m - 1) / 2) *
+        normEDS b c d (m + 1) else 0 := (rfl)
