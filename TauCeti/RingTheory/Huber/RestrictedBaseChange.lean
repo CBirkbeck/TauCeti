@@ -118,12 +118,8 @@ theorem isRestricted_baseChange [ContinuousSMul A M] [ContinuousAdd M]
   | zero => simp
   | add y z _ _ hy hz => simpa using hy.add hz
   | smul a y _ hy =>
-      have hc : Tendsto (fun v : M ↦ a • v) (nhds 0) (nhds (a • (0 : M))) :=
-        (continuous_const_smul a).tendsto 0
-      rw [smul_zero] at hc
       rw [map_smul]
-      exact (isRestricted_iff (f := a • baseChange y)).mpr
-        (hc.comp ((isRestricted_iff (f := baseChange y)).mp hy))
+      exact hy.smul a
 
 /-! ### Between the restricted objects -/
 
