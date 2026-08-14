@@ -7,6 +7,7 @@ module
 public import Mathlib.RingTheory.MvPowerSeries.Basic
 public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 public import Mathlib.Order.Filter.ZeroAndBoundedAtFilter
+public import TauCeti.RingTheory.Huber.Bounded
 
 /-!
 # Restricted Power Series
@@ -36,9 +37,12 @@ this PR did different things to different declarations.
 
 **AINTLIB's in definition, statement and proof.** `restrictedMvPowerSeriesSubring`,
 `restrictedMvPowerSeriesSubring.instAlgebra`, `IsRestricted.finite_coeff_notMem`, the private
-convolution helpers, and `IsRestricted.mul` — the
-convolution argument this file exists for. `IsRestricted.mul`'s proof is unchanged here apart from
-three call sites renamed to `isRestricted_iff_coeff`.
+helpers `finite_shift_bad_set` and `coeff_mul_mem_of_forall_mem`, and `IsRestricted.mul` — the
+convolution argument this file exists for. That convolution argument is AINTLIB's; what differs
+here is three call sites renamed to `isRestricted_iff_coeff`, and the choice of absorbing
+neighbourhood, which now comes from Mathlib's `exists_mem_nhds_zero_mul_subset` on the left and
+`TauCeti.Huber.isBounded_of_isCompact` on the right, in place of AINTLIB's inline `Aᵐᵒᵖ`
+transport.
 
 **AINTLIB's in statement, with proofs rewritten here.** Five: `isRestricted_zero`,
 `IsRestricted.add` and `IsRestricted.neg`, which now delegate to Mathlib's `Filter.ZeroAtFilter`
@@ -279,27 +283,6 @@ private theorem coeff_mul_mem_of_forall_mem {k : ℕ} {A : Type*} [Ring A] [Topo
     · exact SetLike.mem_coe.mp (hWV _ (not_not.mp haS) _ (not_not.mp hbS))
 
 
-/-- A neighbourhood of `0` that two compact sets absorb into `V`, on the left and on the right.
-
-Both halves are needed for the convolution bound in `IsRestricted.mul`, where the two sides come
-from the two factors. -/
-private theorem exists_mem_nhds_zero_two_sided_mul_subset {A : Type*} [Ring A] [TopologicalSpace A]
-    [IsTopologicalRing A] {F G : Set A} (hF : IsCompact F) (hG : IsCompact G) {V : Set A}
-    (hV : V ∈ nhds (0 : A)) :
-    ∃ T ∈ nhds (0 : A), (∀ a ∈ F, ∀ y ∈ T, a * y ∈ V) ∧ ∀ b ∈ G, ∀ x ∈ T, x * b ∈ V := by
-  obtain ⟨T₁, hT₁mem, hT₁⟩ := exists_mem_nhds_zero_mul_subset hF hV
-  -- The right-hand half is Mathlib's one-sided statement in `Aᵐᵒᵖ`, transported back.
-  have hVop : MulOpposite.unop ⁻¹' V ∈ nhds (0 : Aᵐᵒᵖ) :=
-    MulOpposite.continuous_unop.continuousAt.preimage_mem_nhds (by simpa using hV)
-  obtain ⟨T₂, hT₂mem, hT₂⟩ :=
-    exists_mem_nhds_zero_mul_subset (hG.image MulOpposite.continuous_op) hVop
-  refine ⟨T₁ ∩ MulOpposite.op ⁻¹' T₂, Filter.inter_mem hT₁mem
-    (MulOpposite.continuous_op.continuousAt.preimage_mem_nhds (by simpa using hT₂mem)),
-    fun a ha y hy ↦ hT₁ (Set.mul_mem_mul ha hy.1), ?_⟩
-  intro b hb x hx
-  have hmem := hT₂ (Set.mul_mem_mul (Set.mem_image_of_mem _ hb) (Set.mem_preimage.mp hx.2))
-  simpa only [Set.mem_preimage, MulOpposite.unop_mul, MulOpposite.unop_op] using hmem
-
 /-- A product of restricted series is restricted. This is the only field of
 `restrictedMvPowerSeriesSubring` that needs `A` nonarchimedean: the coefficient convolution is
 a finite sum, and it is nonarchimedeanness that keeps such a sum inside an open subgroup. -/
@@ -317,15 +300,15 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
   set Sg := {s | MvPowerSeries.coeff s g ∉ (W : Set A)}
   have hSf : Sf.Finite := hf.finite_coeff_notMem W
   have hSg : Sg.Finite := hg.finite_coeff_notMem W
-  -- A neighbourhood of `0` that the finitely many large coefficients multiply into `V`, on both
-  -- sides; the two finite coefficient sets are compact.
-  obtain ⟨T, hT_nhds, hTl, hTr⟩ := exists_mem_nhds_zero_two_sided_mul_subset
-    (hSf.image fun a => MvPowerSeries.coeff a f).isCompact
-    (hSg.image fun b => MvPowerSeries.coeff b g).isCompact (V.isOpen.mem_nhds V.zero_mem)
-  have hT_left : ∀ a ∈ hSf.toFinset, ∀ y ∈ T, MvPowerSeries.coeff a f * y ∈ (V : Set A) :=
-    fun a ha y hy => hTl _ (Set.mem_image_of_mem _ (hSf.mem_toFinset.mp ha)) y hy
-  have hT_right : ∀ b ∈ hSg.toFinset, ∀ x ∈ T, x * MvPowerSeries.coeff b g ∈ (V : Set A) :=
-    fun b hb x hx => hTr _ (Set.mem_image_of_mem _ (hSg.mem_toFinset.mp hb)) x hx
+  -- One neighbourhood of `0` absorbing the finitely many large coefficients of both factors:
+  -- `f`'s on the left, from Mathlib, and `g`'s on the right, from `isBounded_of_isCompact`.
+  have hVnhds : (V : Set A) ∈ nhds (0 : A) := V.isOpen.mem_nhds V.zero_mem
+  obtain ⟨T₁, hT₁mem, hT₁⟩ := exists_mem_nhds_zero_mul_subset
+    (hSf.image fun a => MvPowerSeries.coeff a f).isCompact hVnhds
+  have hBg := isBounded_of_isCompact (hSg.image fun b => MvPowerSeries.coeff b g).isCompact
+  obtain ⟨T₂, hT₂mem, hT₂⟩ := isBounded_iff.mp hBg _ hVnhds
+  set T := T₁ ∩ T₂
+  have hT_nhds : T ∈ nhds (0 : A) := Filter.inter_mem hT₁mem hT₂mem
   have hgT : {s | MvPowerSeries.coeff s g ∉ T}.Finite :=
     (Filter.mem_cofinite.mp (isRestricted_iff_coeff.mp hg hT_nhds)).subset (fun s hs => hs)
   have hfT : {s | MvPowerSeries.coeff s f ∉ T}.Finite :=
@@ -343,8 +326,8 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
   obtain ⟨hnB1, hnB2⟩ := hnB
   exact hVU (coeff_mul_mem_of_forall_mem V W T
     (fun x hx y hy => hWV ⟨x, hx, y, hy, rfl⟩)
-    (fun a ha => hT_left a (hSf.mem_toFinset.mpr ha))
-    (fun b hb => hT_right b (hSg.mem_toFinset.mpr hb))
+    (fun a ha y hy => hT₁ (Set.mul_mem_mul (Set.mem_image_of_mem _ ha) hy.1))
+    (fun b hb x hx => hT₂ (Set.mul_mem_mul hx.2 (Set.mem_image_of_mem _ hb)))
     n
     (fun a ha han => not_not.mp (hnB1 a (hSf.mem_toFinset.mpr ha) han))
     (fun b hb hbn => not_not.mp (hnB2 b (hSg.mem_toFinset.mpr hb) hbn)))

@@ -21,8 +21,10 @@ where it is the condition cutting out the rings of definition of a Huber ring.
 `isBounded_singleton` and `isBounded_finite` — are stated exactly as in William Coram's
 mathlib4#40013 (several proofs follow it too), so that the two can be identified once that pull
 request lands. Everything else here is new: `isBounded_iUnion`, the nonarchimedean
-`IsBounded.addSubgroupClosure`, `IsBounded.add` and `isBounded_sup`, and the image and transport
-lemmas. The
+`IsBounded.addSubgroupClosure`, `IsBounded.add` and `isBounded_sup`, the image and transport
+lemmas, and `isBounded_of_isCompact` — whose statement is new here, while its `Mᵐᵒᵖ` transport of
+Mathlib's `exists_mem_nhds_zero_mul_subset` is the argument AINTLIB carried inline inside
+`IsRestricted.mul`. The
 selection and ordering of results follows AINTLIB's `Bounded.lean`, the roadmap's designated
 prior formalisation of this layer; its proofs were not used.
 
@@ -35,6 +37,9 @@ prior formalisation of this layer; its proofs were not used.
 * `TauCeti.Huber.isBounded_iff`: unfolding lemma for `IsBounded`.
 * `TauCeti.Huber.isBounded_finsetProd`: a finite pointwise product of bounded sets is bounded.
 * `TauCeti.Huber.isBounded_finite`: finite sets are bounded.
+* `TauCeti.Huber.isBounded_of_isCompact`: compact sets are bounded. Mathlib's
+  `exists_mem_nhds_zero_mul_subset` absorbs a compact set on the right; this is the left-hand
+  form `IsBounded` asks for.
 * `TauCeti.Huber.IsBounded.union`, `TauCeti.Huber.IsBounded.mul`: unions and pointwise products
   of bounded sets are bounded.
 * `TauCeti.Huber.IsBounded.add`, `TauCeti.Huber.IsBounded.addSubgroupClosure`: over a ring with a
@@ -170,6 +175,21 @@ theorem isBounded_singleton (a : M) : IsBounded ({a} : Set M) :=
 theorem isBounded_finite {S : Set M} (hS : S.Finite) : IsBounded S := by
   refine Set.Finite.induction_on S hS isBounded_empty fun {a s} _ _ ih ↦ ?_
   exact Set.insert_eq a s ▸ (isBounded_singleton a).union ih
+
+/-- Every compact subset is bounded. -/
+theorem isBounded_of_isCompact {K : Set M} (hK : IsCompact K) : IsBounded K := by
+  intro U hU
+  -- Mathlib's `exists_mem_nhds_zero_mul_subset` absorbs a compact set on the *right*
+  -- (`K * V ⊆ U`); `IsBounded` asks for the left. The two are exchanged by `Mᵐᵒᵖ`.
+  have hUop : MulOpposite.unop ⁻¹' U ∈ 𝓝 (0 : Mᵐᵒᵖ) :=
+    MulOpposite.continuous_unop.continuousAt.preimage_mem_nhds (by simpa using hU)
+  obtain ⟨V, hVmem, hV⟩ :=
+    exists_mem_nhds_zero_mul_subset (hK.image MulOpposite.continuous_op) hUop
+  refine ⟨MulOpposite.op ⁻¹' V,
+    MulOpposite.continuous_op.continuousAt.preimage_mem_nhds (by simpa using hVmem), ?_⟩
+  rintro _ ⟨v, hv, x, hx, rfl⟩
+  have hmem := hV (Set.mul_mem_mul (Set.mem_image_of_mem _ hx) hv)
+  simpa only [Set.mem_preimage, MulOpposite.unop_mul, MulOpposite.unop_op] using hmem
 
 end ContinuousMul
 
