@@ -5,16 +5,17 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.RingTheory.Localization.Defs
-public import Mathlib.Topology.Algebra.UniformRing
+public import TauCeti.Topology.Algebra.UniformRing
 
 /-!
 # Maps out of the completion of a localisation
 
 A continuous ring homomorphism out of the completion of a localisation `S` of `A` is determined by
-its restriction to `A`. This factors into two independent steps, and both are recorded separately
-because the first is about completions alone:
+its restriction to `A`. This factors into two independent steps:
 
-* agreeing on `S` forces agreement on `Ŝ`, because `S` is dense in it;
+* agreeing on `S` forces agreement on `Ŝ`, because `S` is dense in it — that half is about
+  completions alone and lives in `TauCeti.Topology.Algebra.UniformRing` as
+  `UniformSpace.Completion.ringHom_ext_of_continuous`;
 * agreeing after `algebraMap A S` forces agreement on `S`, by `IsLocalization.ringHom_ext`.
 
 Only continuity is required of the two maps, and the target need only be a semiring carrying a
@@ -23,9 +24,6 @@ nothing is asked of the submonoid.
 
 ## Main results
 
-* `TauCeti.completion_ringHom_ext_of_continuous`: two continuous ring homomorphisms out of a
-  completion agreeing on the image of the coercion are equal. This is the completion half on its
-  own, with no localisation in sight.
 * `TauCeti.completion_localization_ringHom_ext_of_continuous`: two continuous ring homomorphisms
   out of `Ŝ` agreeing on `A` are equal.
 
@@ -41,20 +39,6 @@ namespace TauCeti
 
 open UniformSpace
 
-/-- **Maps out of a completion are determined on the image of the coercion.** Two continuous ring
-homomorphisms `R̂ → B` into a Hausdorff topological semiring that agree after composing with
-`Completion.coeRingHom` are equal.
-
-This is `UniformSpace.Completion.ext` packaged for ring homomorphisms: composing with
-`Completion.coeRingHom` is restriction along the coercion, and density of the image does the rest.
--/
-theorem completion_ringHom_ext_of_continuous {R : Type*} [CommRing R] [UniformSpace R]
-    [IsUniformAddGroup R] [IsTopologicalRing R]
-    {B : Type*} [Semiring B] [TopologicalSpace B] [T2Space B]
-    {g h : Completion R →+* B} (hg : Continuous g) (hh : Continuous h)
-    (hcomp : g.comp Completion.coeRingHom = h.comp Completion.coeRingHom) : g = h :=
-  DFunLike.ext' (Completion.ext hg hh fun x ↦ congrArg (fun k : R →+* B ↦ k x) hcomp)
-
 /-- **Maps out of the completion of a localisation are determined on the base ring.** Two
 continuous ring homomorphisms `Ŝ → B` into a Hausdorff topological semiring that agree after
 composing with `A → S → Ŝ` are equal. -/
@@ -65,6 +49,6 @@ theorem completion_localization_ringHom_ext_of_continuous {A S : Type*} [CommSem
     {g h : Completion S →+* B} (hg : Continuous g) (hh : Continuous h)
     (hcomp : (g.comp Completion.coeRingHom).comp (algebraMap A S)
       = (h.comp Completion.coeRingHom).comp (algebraMap A S)) : g = h :=
-  completion_ringHom_ext_of_continuous hg hh (IsLocalization.ringHom_ext M hcomp)
+  Completion.ringHom_ext_of_continuous hg hh (IsLocalization.ringHom_ext M hcomp)
 
 end TauCeti

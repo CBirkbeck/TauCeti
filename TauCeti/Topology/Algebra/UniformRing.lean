@@ -38,6 +38,8 @@ this repository's convention for lemmas about external types.
 
 ## Main results
 
+* `UniformSpace.Completion.ringHom_ext_of_continuous`: two continuous ring homomorphisms out of
+  a completion that agree on the image of the coercion are equal.
 * `UniformSpace.Completion.coe_completeRingEquivSelf` and
   `UniformSpace.Completion.coe_completeRingEquivSelf_symm`: the isomorphism is
   `UniformCompletion.completeEquivSelf` and its inverse is the coercion into the completion.
@@ -49,6 +51,25 @@ this repository's convention for lemmas about external types.
 public section
 
 namespace UniformSpace.Completion
+
+section Ext
+
+variable {R : Type*} [Ring R] [UniformSpace R] [IsTopologicalRing R] [IsUniformAddGroup R]
+  {B : Type*} [Semiring B] [TopologicalSpace B] [T2Space B]
+
+/-- **Maps out of a completion are determined on the image of the coercion.** Two continuous
+ring homomorphisms `R̂ → B` into a Hausdorff topological semiring that agree after composing
+with `coeRingHom` are equal.
+
+This is `UniformSpace.Completion.ext` packaged for ring homomorphisms: composing with
+`coeRingHom` is restriction along the coercion, and density of the image does the rest. Nothing
+is asked of `B` beyond a semiring structure and a Hausdorff topology — no compatibility between
+the two is used — and `R` need not be commutative. -/
+theorem ringHom_ext_of_continuous {g h : Completion R →+* B} (hg : Continuous g)
+    (hh : Continuous h) (hcomp : g.comp coeRingHom = h.comp coeRingHom) : g = h :=
+  DFunLike.ext' (ext hg hh fun x ↦ congrArg (fun k : R →+* B ↦ k x) hcomp)
+
+end Ext
 
 variable (S : Type*) [Ring S] [UniformSpace S] [IsTopologicalRing S] [IsUniformAddGroup S]
   [CompleteSpace S] [T0Space S]

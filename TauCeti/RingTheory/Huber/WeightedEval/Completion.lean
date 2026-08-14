@@ -6,7 +6,6 @@ module
 
 public import TauCeti.RingTheory.Huber.WeightedEval.UniversalProperty
 public import TauCeti.RingTheory.Localization.Completion
-public import Mathlib.Topology.Algebra.UniformRing
 
 /-!
 # The universal property of the completed algebra of `A⟨X⟩_T`
@@ -77,10 +76,10 @@ the generators.** Two of them agreeing on every constant series *and* every vari
 
 This is `weightedRestrictedSubring_ringHom_ext_of_continuous` carried across the completion: that
 lemma identifies the two restrictions along `UniformSpace.Completion.coeRingHom`, and
-`TauCeti.completion_ringHom_ext_of_continuous` propagates the agreement to the completion by
-density of the image of the coercion. The completeness and `T3Space` hypotheses that the universal
-property below carries are what the evaluation homomorphism needs in order to exist; uniqueness
-needs neither. -/
+`UniformSpace.Completion.ringHom_ext_of_continuous` propagates the agreement to the completion
+by density of the image of the coercion. The completeness and `T3Space` hypotheses that the
+universal property below carries are what the evaluation homomorphism needs in order to exist;
+uniqueness needs neither. -/
 theorem completion_weightedRestrictedSubring_ringHom_ext_of_continuous (hT : IsWeightFamily T)
     {f g : Completion (weightedRestrictedSubring T hT) →+* B} (hf : Continuous f)
     (hg : Continuous g) (hC : ∀ a, f (weightedC T hT a) = g (weightedC T hT a))
@@ -91,7 +90,7 @@ theorem completion_weightedRestrictedSubring_ringHom_ext_of_continuous (hT : IsW
   have hcomp : ∀ (h : Completion (weightedRestrictedSubring T hT) →+* B)
       (x : weightedRestrictedSubring T hT), (h.comp Completion.coeRingHom) x = h x :=
     fun _ _ ↦ rfl
-  exact TauCeti.completion_ringHom_ext_of_continuous hf hg
+  exact Completion.ringHom_ext_of_continuous hf hg
     (weightedRestrictedSubring_ringHom_ext_of_continuous hT
       (by simpa only [RingHom.coe_comp] using hf.comp Completion.continuous_coeRingHom)
       (by simpa only [RingHom.coe_comp] using hg.comp Completion.continuous_coeRingHom)
