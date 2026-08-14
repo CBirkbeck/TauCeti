@@ -279,6 +279,27 @@ private theorem coeff_mul_mem_of_forall_mem {k : ℕ} {A : Type*} [Ring A] [Topo
     · exact SetLike.mem_coe.mp (hWV _ (not_not.mp haS) _ (not_not.mp hbS))
 
 
+/-- A neighbourhood of `0` that two finite sets absorb into `V`, on the left and on the right.
+
+Mathlib's `exists_mem_nhds_zero_mul_subset` gives the one-sided statement; the right-hand half is
+that statement in `Aᵐᵒᵖ`, transported back. Both halves are needed for the convolution bound in
+`IsRestricted.mul`, where the two sides come from the two factors. -/
+private theorem exists_mem_nhds_zero_two_sided_mul_subset {A : Type*} [Ring A]
+    [TopologicalSpace A] [IsTopologicalRing A] {F G : Set A} (hF : F.Finite) (hG : G.Finite)
+    {V : Set A} (hV : V ∈ nhds (0 : A)) :
+    ∃ T ∈ nhds (0 : A), (∀ a ∈ F, ∀ y ∈ T, a * y ∈ V) ∧ ∀ b ∈ G, ∀ x ∈ T, x * b ∈ V := by
+  obtain ⟨T₁, hT₁mem, hT₁⟩ := exists_mem_nhds_zero_mul_subset hF.isCompact hV
+  have hVop : MulOpposite.unop ⁻¹' V ∈ nhds (0 : Aᵐᵒᵖ) :=
+    MulOpposite.continuous_unop.continuousAt.preimage_mem_nhds (by simpa using hV)
+  obtain ⟨T₂, hT₂mem, hT₂⟩ :=
+    exists_mem_nhds_zero_mul_subset (hG.image MulOpposite.op).isCompact hVop
+  refine ⟨T₁ ∩ MulOpposite.op ⁻¹' T₂, Filter.inter_mem hT₁mem
+    (MulOpposite.continuous_op.continuousAt.preimage_mem_nhds (by simpa using hT₂mem)),
+    fun a ha y hy ↦ hT₁ (Set.mul_mem_mul ha hy.1), ?_⟩
+  intro b hb x hx
+  have hmem := hT₂ (Set.mul_mem_mul (Set.mem_image_of_mem _ hb) (Set.mem_preimage.mp hx.2))
+  simpa only [Set.mem_preimage, MulOpposite.unop_mul, MulOpposite.unop_op] using hmem
+
 /-- A product of restricted series is restricted. This is the only field of
 `restrictedMvPowerSeriesSubring` that needs `A` nonarchimedean: the coefficient convolution is
 a finite sum, and it is nonarchimedeanness that keeps such a sum inside an open subgroup. -/
@@ -298,26 +319,13 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
   have hSg : Sg.Finite := hg.finite_coeff_notMem W
   -- A neighbourhood of `0` that the finitely many large coefficients multiply into `V`, on the
   -- left directly and on the right through the opposite ring.
-  obtain ⟨T₁, hT₁mem, hT₁⟩ := exists_mem_nhds_zero_mul_subset
-    (hSf.image fun a => MvPowerSeries.coeff a f).isCompact (V.isOpen.mem_nhds V.zero_mem)
-  have hVop : MulOpposite.unop ⁻¹' (V : Set A) ∈ nhds (0 : Aᵐᵒᵖ) :=
-    MulOpposite.continuous_unop.continuousAt.preimage_mem_nhds
-      (by simpa using V.isOpen.mem_nhds V.zero_mem)
-  obtain ⟨T₂, hT₂mem, hT₂⟩ := exists_mem_nhds_zero_mul_subset
-    (hSg.image fun b => MulOpposite.op (MvPowerSeries.coeff b g)).isCompact hVop
-  set T : Set A := T₁ ∩ MulOpposite.op ⁻¹' T₂ with hTdef
-  have hT_nhds : T ∈ nhds (0 : A) :=
-    Filter.inter_mem hT₁mem
-      (MulOpposite.continuous_op.continuousAt.preimage_mem_nhds (by simpa using hT₂mem))
+  obtain ⟨T, hT_nhds, hTl, hTr⟩ := exists_mem_nhds_zero_two_sided_mul_subset
+    (hSf.image fun a => MvPowerSeries.coeff a f) (hSg.image fun b => MvPowerSeries.coeff b g)
+    (V.isOpen.mem_nhds V.zero_mem)
   have hT_left : ∀ a ∈ hSf.toFinset, ∀ y ∈ T, MvPowerSeries.coeff a f * y ∈ (V : Set A) :=
-    fun a ha y hy =>
-      hT₁ (Set.mul_mem_mul (Set.mem_image_of_mem _ (hSf.mem_toFinset.mp ha)) hy.1)
-  have hT_right : ∀ b ∈ hSg.toFinset, ∀ x ∈ T, x * MvPowerSeries.coeff b g ∈ (V : Set A) := by
-    intro b hb x hx
-    -- `hT₂` lives in `Aᵐᵒᵖ`, where the product is reversed; unopping it gives the `A`-statement.
-    have hmem := hT₂ (Set.mul_mem_mul (Set.mem_image_of_mem _ (hSg.mem_toFinset.mp hb))
-      (Set.mem_preimage.mp hx.2))
-    simpa only [Set.mem_preimage, MulOpposite.unop_mul, MulOpposite.unop_op] using hmem
+    fun a ha y hy => hTl _ (Set.mem_image_of_mem _ (hSf.mem_toFinset.mp ha)) y hy
+  have hT_right : ∀ b ∈ hSg.toFinset, ∀ x ∈ T, x * MvPowerSeries.coeff b g ∈ (V : Set A) :=
+    fun b hb x hx => hTr _ (Set.mem_image_of_mem _ (hSg.mem_toFinset.mp hb)) x hx
   have hgT : {s | MvPowerSeries.coeff s g ∉ T}.Finite :=
     (Filter.mem_cofinite.mp (isRestricted_iff_coeff.mp hg hT_nhds)).subset (fun s hs => hs)
   have hfT : {s | MvPowerSeries.coeff s f ∉ T}.Finite :=
