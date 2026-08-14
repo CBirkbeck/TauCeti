@@ -28,6 +28,8 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
 * `TauCeti.ModularForm.normRest_def`: the remainder as a product of coset factors.
 * `TauCeti.ModularForm.normRest_apply_eq_div`: how to compute the remainder off the zeros of
   the Galois product.
+* `TauCeti.ModularForm.qExpansion_one_norm_order_eq`: the `q`-expansion order of the norm at
+  `∞` splits as the order of `f` plus the order of the remainder.
 
 The remainder and the decomposition itself are algebraic, so they are stated for
 `SlashInvariantForm.norm` under `SlashInvariantFormClass`; only analyticity at the cusp
@@ -302,6 +304,42 @@ public lemma norm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
   have hcoe : _root_.ModularForm.norm 𝒮ℒ f τ = _root_.SlashInvariantForm.norm 𝒮ℒ f τ := by
     rw [_root_.ModularForm.coe_norm, _root_.SlashInvariantForm.coe_norm]
   rw [hcoe, slashInvariantForm_norm_apply_eq_galoisProd_mul_normRest]
+
+/-- The `q`-expansion order of the norm at the cusp `∞` splits as the order of `f` at width
+`Subgroup.integerCuspWidth 𝒢` plus the order of the remainder factor `normRest f`.
+
+No discreteness hypothesis is needed: the conversion between `𝒢.strictWidthInfty` and
+`Subgroup.integerCuspWidth 𝒢`, which is where discreteness enters, belongs to the
+inequality `qExpansion_order_le_qExpansion_norm_order` derived from this.
+
+Not `@[simp]`: `ModularForm.coe_norm` is itself an unconditional simp lemma, so the
+left-hand side is not in simp normal form — it simplifies on to the raw coset product. -/
+public lemma qExpansion_one_norm_order_eq :
+    (qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f)).order =
+      (qExpansion ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) f).order
+        + (qExpansion 1 (normRest f)).order := by
+  have hn_pos : 0 < Subgroup.integerCuspWidth 𝒢 := Subgroup.integerCuspWidth_pos
+  have hf_bdd : IsBoundedAtImInfty f := by
+    have hpos : (0 : ℝ) < Subgroup.integerCuspWidth 𝒢 := by
+      exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢)
+    exact OnePoint.isBoundedAt_infty_iff.mp <| ModularFormClass.bdd_at_cusps f <|
+      Subgroup.isCusp_of_mem_strictPeriods hpos Subgroup.integerCuspWidth_mem_strictPeriods
+  have hf_n_per : Function.Periodic (⇑f ∘ ofComplex)
+      ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) :=
+    SlashInvariantFormClass.periodic_comp_ofComplex f
+      Subgroup.integerCuspWidth_mem_strictPeriods
+  -- `norm_apply_eq_galoisProd_mul_normRest` is a pointwise identity; `funext` converts it
+  -- to an equality of functions so the `q`-expansion of the norm literally becomes that of
+  -- the product, and `qExpansion_mul` (both cusp functions being analytic at `0`) splits it.
+  have h_qexp : qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f) =
+      qExpansion 1 (galoisProd (Subgroup.integerCuspWidth 𝒢) ⇑f) *
+        qExpansion 1 (normRest f) := by
+    rw [funext (norm_apply_eq_galoisProd_mul_normRest f)]
+    exact qExpansion_mul (analyticAt_cuspFunction_zero one_pos
+      (galoisProd_periodic_one hf_n_per) (mdifferentiable_galoisProd (ModularFormClass.holo f))
+      (isBoundedAtImInfty_galoisProd hf_bdd)) (analyticAt_cuspFunction_normRest f)
+  rw [h_qexp, PowerSeries.order_mul,
+    qExpansion_one_galoisProd_order_eq hn_pos hf_n_per hf_bdd (ModularFormClass.holo f)]
 
 end Analytic
 

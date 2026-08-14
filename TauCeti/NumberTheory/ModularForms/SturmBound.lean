@@ -24,8 +24,6 @@ propagates to the norm.
 
 ## Main declarations
 
-* `TauCeti.ModularForm.qExpansion_one_norm_order_eq`: the `q`-expansion order of the norm
-  splits as the order of `f` plus the order of the remainder factor.
 * `TauCeti.ModularForm.sturm_bound_finiteIndex`: the Sturm bound for finite relative index.
 * `TauCeti.ModularForm.sturm_bound_finiteIndex_SL2Z`: the classical form for finite-index
   subgroups of `SL(2, ℤ)`.
@@ -66,36 +64,6 @@ private lemma isBoundedAtImInfty_of_finiteRelIndex : IsBoundedAtImInfty f :=
       (by exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢) :
         (0 : ℝ) < Subgroup.integerCuspWidth 𝒢)
       Subgroup.integerCuspWidth_mem_strictPeriods
-
-/-- The `q`-expansion order of the norm at the cusp `∞` splits as the order of `f` at width
-`Subgroup.integerCuspWidth 𝒢` plus the order of the remainder factor `normRest f`.
-
-This is the equality behind `qExpansion_order_le_qExpansion_norm_order`. Unlike that
-inequality it needs no discreteness hypothesis: discreteness enters only through the
-conversion between `𝒢.strictWidthInfty` and `Subgroup.integerCuspWidth 𝒢`, which happens
-on the inequality side. -/
-lemma qExpansion_one_norm_order_eq :
-    (qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f)).order =
-      (qExpansion ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) f).order
-        + (qExpansion 1 (normRest f)).order := by
-  have hn_pos : 0 < Subgroup.integerCuspWidth 𝒢 := Subgroup.integerCuspWidth_pos
-  have hf_bdd : IsBoundedAtImInfty f := isBoundedAtImInfty_of_finiteRelIndex f
-  have hf_n_per : Function.Periodic (⇑f ∘ ofComplex)
-      ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) :=
-    SlashInvariantFormClass.periodic_comp_ofComplex f
-      Subgroup.integerCuspWidth_mem_strictPeriods
-  -- `norm_apply_eq_galoisProd_mul_normRest` is a pointwise identity; `funext` converts it
-  -- to an equality of functions so the `q`-expansion of the norm literally becomes that of
-  -- the product, and `qExpansion_mul` (both cusp functions being analytic at `0`) splits it.
-  have h_qexp : qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f) =
-      qExpansion 1 (galoisProd (Subgroup.integerCuspWidth 𝒢) ⇑f) *
-        qExpansion 1 (normRest f) := by
-    rw [funext (norm_apply_eq_galoisProd_mul_normRest f)]
-    exact qExpansion_mul (analyticAt_cuspFunction_zero one_pos
-      (galoisProd_periodic_one hf_n_per) (mdifferentiable_galoisProd f.holo')
-      (isBoundedAtImInfty_galoisProd hf_bdd)) (analyticAt_cuspFunction_normRest f)
-  rw [h_qexp, PowerSeries.order_mul,
-    qExpansion_one_galoisProd_order_eq hn_pos hf_n_per hf_bdd f.holo']
 
 private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.strictPeriods] :
     (qExpansion 𝒢.strictWidthInfty f).order ≤
