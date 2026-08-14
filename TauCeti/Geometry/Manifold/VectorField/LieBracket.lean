@@ -177,35 +177,17 @@ private theorem mdifferentiableAt_mvfderiv_apply
   rw [Function.comp_apply, tangentMap_snd, mvfderiv_apply_eq_mfderiv_apply]
   rfl
 
-/-- **A vector field differentiable at a point pulls back to a differentiable coordinate field.**
-The pullback is taken along the inverse chart, so the coordinate field is differentiable within
-`Set.range I` at the chart image of the point. -/
-private theorem differentiableWithinAt_mpullbackWithin_extChartAt_symm
-    {U : ∀ x : M, TangentSpace I x} {x : M}
-    (hU : MDiffAt (fun y ↦ (U y : TangentBundle I M)) x) :
-    DifferentiableWithinAt 𝕜
-      (mpullbackWithin 𝓘(𝕜, E) I (extChartAt I x).symm U (Set.range I))
-      (Set.range I) (extChartAt I x x) := by
-  have hU' : MDiffAt[Set.univ] (fun y ↦ (U y : TangentBundle I M)) x :=
-    hU.mdifferentiableWithinAt
-  simpa using hU'.differentiableWithinAt_mpullbackWithin_vectorField
-
 omit [CompleteSpace E] [IsManifold I (minSmoothness 𝕜 2) M] in
-/-- **The coordinate representation of a function keeps its smoothness.** Composing `f` with the
-inverse chart gives a map on `Set.range I` that is `ContDiffWithinAt` of order `minSmoothness 𝕜 2`
-at the chart image of the point. -/
+/-- **The coordinate representation of a function has the same order of smoothness.** Composing
+`f` with the inverse chart gives a map on `Set.range I` that is `ContDiffWithinAt` of the same
+order `n` at the chart image of the point. -/
 private theorem contDiffWithinAt_comp_extChartAt_symm {f : M → F} {x : M}
-    (hf : CMDiffAt n f x) (hn : minSmoothness 𝕜 2 ≤ n) :
-    ContDiffWithinAt 𝕜 (minSmoothness 𝕜 2) (f ∘ (extChartAt I x).symm)
-      (Set.range I) (extChartAt I x x) := by
-  have hfWithin : ContMDiffWithinAt I 𝓘(𝕜, F) (minSmoothness 𝕜 2) f Set.univ x :=
-    hf.of_le hn
-  have hsymm := contMDiffWithinAt_extChartAt_symm_range_self
-    (I := I) (n := minSmoothness 𝕜 2) x
-  have hcomp := ContMDiffWithinAt.comp_of_eq
-    hfWithin
-    hsymm (Set.mapsTo_univ _ _) (extChartAt_to_inv x)
-  exact contMDiffWithinAt_iff_contDiffWithinAt.mp hcomp
+    (hf : CMDiffAt n f x) :
+    ContDiffWithinAt 𝕜 n (f ∘ (extChartAt I x).symm) (Set.range I) (extChartAt I x x) := by
+  have hfWithin : ContMDiffWithinAt I 𝓘(𝕜, F) n f Set.univ x := hf
+  have hsymm := contMDiffWithinAt_extChartAt_symm_range_self (I := I) (n := n) x
+  exact contMDiffWithinAt_iff_contDiffWithinAt.mp
+    (ContMDiffWithinAt.comp_of_eq hfWithin hsymm (Set.mapsTo_univ _ _) (extChartAt_to_inv x))
 
 /-- Let `f` have enough derivatives for symmetry of its second derivative at `x`, and let `V` and
 `W` be differentiable vector fields there. Then the differential of `f` on the manifold bracket is
@@ -254,9 +236,17 @@ theorem mvfderiv_mlieBracket {f : M → F} {V W : ∀ x : M, TangentSpace I x} {
   rw [← hchain_apply]
   simp only [mfderivWithin_eq_fderivWithin]
   -- Pull the vector fields back and invoke the normed-space bracket identity.
-  have hfcoord := contDiffWithinAt_comp_extChartAt_symm hf hn
-  have hVcoord := differentiableWithinAt_mpullbackWithin_extChartAt_symm hV
-  have hWcoord := differentiableWithinAt_mpullbackWithin_extChartAt_symm hW
+  have hfcoord := contDiffWithinAt_comp_extChartAt_symm (hf.of_le hn)
+  have hVcoord : DifferentiableWithinAt 𝕜
+      (mpullbackWithin 𝓘(𝕜, E) I (extChartAt I x).symm V (Set.range I))
+      (Set.range I) (extChartAt I x x) := by
+    simpa using (hV.mdifferentiableWithinAt (s := Set.univ))
+      |>.differentiableWithinAt_mpullbackWithin_vectorField
+  have hWcoord : DifferentiableWithinAt 𝕜
+      (mpullbackWithin 𝓘(𝕜, E) I (extChartAt I x).symm W (Set.range I))
+      (Set.range I) (extChartAt I x x) := by
+    simpa using (hW.mdifferentiableWithinAt (s := Set.univ))
+      |>.differentiableWithinAt_mpullbackWithin_vectorField
   -- Identify chart directional derivatives with their manifold counterparts.
   have hf_chart : MDiffAt f ((extChartAt I x).symm (extChartAt I x x)) := by
     simpa only [extChartAt_to_inv] using hf'
