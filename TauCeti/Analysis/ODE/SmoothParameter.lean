@@ -78,7 +78,7 @@ private theorem picardResidual_apply (f : C(E × F, F)) (x₀ : F)
       ContinuousMap.unitIntervalIntegral (f.comp (parameterizedPath p)) := by
   rfl
 
-/-- A smooth vector field gives a smooth Picard residual. -/
+/-- A vector field of class `Cⁿ` gives a Picard residual of class `Cⁿ`. -/
 private theorem contDiff_picardResidual (n : ℕ) (f : C(E × F, F))
     (hf : ContDiff ℝ n f) (x₀ : F) :
     ContDiff ℝ n (picardResidual f x₀) := by
@@ -136,7 +136,8 @@ private theorem hasDerivWithinAt_Icc_of_forall_eq_picard
   · exact ht
 
 /-- **The path-derivative of the Picard residual at the constant base solution is invertible.**
-For a smooth field vanishing near `x₀` at the base parameter `p₀`, the restriction of
+For a continuously differentiable field vanishing near `x₀` at the base parameter `p₀`, the
+restriction of
 `fderiv ℝ (picardResidual gc x₀)` to the path direction is invertible at `(p₀, const x₀)`. -/
 private theorem isInvertible_fderiv_picardResidual_comp_inr
     (gc : C(E × F, F)) (hg : ContDiff ℝ 1 gc) (p₀ : E) (x₀ : F)
