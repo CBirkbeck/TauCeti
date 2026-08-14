@@ -23,8 +23,9 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
 * `TauCeti.SlashInvariantForm.isBoundedAtImInfty_quotientFunc`.
 * `TauCeti.ModularForm.normRest`, `TauCeti.ModularForm.periodic_normRest` and
   `TauCeti.ModularForm.analyticAt_cuspFunction_normRest`.
-* `TauCeti.ModularForm.slashInvariantNorm_apply_eq_galoisProd_mul_normRest`, with
+* `TauCeti.ModularForm.slashInvariantForm_norm_apply_eq_galoisProd_mul_normRest`, with
   `TauCeti.ModularForm.norm_apply_eq_galoisProd_mul_normRest` as its modular-form corollary.
+* `TauCeti.ModularForm.normRest_def`: the remainder as a product of coset factors.
 * `TauCeti.ModularForm.normRest_apply_eq_div`: how to compute the remainder off the zeros of
   the Galois product.
 
@@ -192,24 +193,43 @@ outside the `T`-power cosets, so that the norm is the Galois product of the inte
 translates of `f` times this factor.
 
 Under `SlashInvariantFormClass` alone it is `1`-periodic (`periodic_normRest`) and is
-characterised by `slashInvariantNorm_apply_eq_galoisProd_mul_normRest`. Analyticity is the
+characterised by `slashInvariantForm_norm_apply_eq_galoisProd_mul_normRest`. Analyticity is the
 one property that needs `f` to be a modular form: see `analyticAt_cuspFunction_normRest`. -/
 public noncomputable def normRest : ℍ → ℂ := by
   classical
   let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
   exact ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q
 
--- Kept private, with `tPowCoset`/`tPowCosets`: the indexing by `T`-power cosets is how the
--- decomposition is proved, not part of what it asserts. The public interface is
--- `periodic_normRest`, `analyticAt_cuspFunction_normRest`, the decomposition and
--- `normRest_apply_eq_div`, none of whose statements mention the index set.
+-- The working form, stated against the private `tPowCosets`. `normRest_def` below is the
+-- same product with the index set written out, and is the public one; `tPowCoset` and
+-- `tPowCosets` stay private, bridged by `tPowCosets_eq_image`.
 /-- `normRest` as the product over the cosets that are not represented by a power of `T`,
 for any choice of the finiteness and decidability instances on the coset space. -/
 @[simp]
-private lemma normRest_def [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
+private lemma normRest_eq_prod_tPowCosets [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
     [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
     normRest f = ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q := by
   unfold normRest
+  congr!
+
+omit [𝒢.IsFiniteRelIndex 𝒮ℒ] in
+private lemma tPowCosets_eq_image [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
+    tPowCosets 𝒢 = Finset.univ.image fun j : Fin (Subgroup.integerCuspWidth 𝒢) ↦
+      (⟦(mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ)) ^ (j : ℕ))⟧ :
+        𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) :=
+  rfl
+
+/-- **The remainder as a product.** `normRest f` is the product of the coset factors
+`quotientFunc f q` over those `q` that are not the class of a power of `T` below the integer
+cusp width, for any choice of the finiteness and decidability instances on the coset space. -/
+public lemma normRest_def [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
+    [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
+    normRest f = ∏ q ∈ Finset.univ.filter (· ∉ Finset.univ.image
+        fun j : Fin (Subgroup.integerCuspWidth 𝒢) ↦
+          (⟦(mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ)) ^ (j : ℕ))⟧ :
+            𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))),
+      quotientFunc f q := by
+  rw [normRest_eq_prod_tPowCosets, tPowCosets_eq_image]
   congr!
 
 /-- `normRest` is `1`-periodic. -/
@@ -217,7 +237,7 @@ public lemma periodic_normRest : Function.Periodic (normRest f ∘ ofComplex) 1 
   classical
   let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
   refine periodic_comp_ofComplex_iff.mpr fun τ ↦ ?_
-  rw [normRest_def, Finset.prod_apply, Finset.prod_apply]
+  rw [normRest_eq_prod_tPowCosets, Finset.prod_apply, Finset.prod_apply]
   exact prod_quotientFunc_one_vadd f τ
 
 /-- **Decomposition of the norm at the cusp**, with the remainder factor named: the norm is
@@ -226,26 +246,27 @@ times `normRest f`.
 
 Stated for `SlashInvariantForm.norm`: the decomposition is algebraic, so it needs only slash
 invariance. `norm_apply_eq_galoisProd_mul_normRest` is the modular-form corollary. -/
-public lemma slashInvariantNorm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
+public lemma slashInvariantForm_norm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
     _root_.SlashInvariantForm.norm 𝒮ℒ f τ =
       galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * normRest f τ := by
   classical
   let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
   rw [_root_.SlashInvariantForm.coe_norm, Finset.prod_apply,
     ← Finset.prod_filter_mul_prod_filter_not Finset.univ (· ∈ tPowCosets 𝒢),
-    Finset.filter_univ_mem, prod_tPowCosets_quotientFunc f τ, normRest_def,
+    Finset.filter_univ_mem, prod_tPowCosets_quotientFunc f τ, normRest_eq_prod_tPowCosets,
     Finset.prod_apply]
 
 /-- Off the zeros of the Galois product, `normRest` **is** the quotient of the norm by that
-product. This is what pins the remainder down: together with the decomposition it says how to
-compute `normRest` at a point, with no reference to the coset indexing used to define it. The
-zeros of `galoisProd` are the translates of the zeros of `f`, so for `f ≠ 0` this determines
-`normRest` off a discrete set. -/
+product: together with the decomposition, this says how to compute `normRest` at a point with
+no reference to the coset indexing used to define it.
+
+Nothing is claimed here about the size of the excluded set — slash invariance alone gives no
+zero-isolation property. -/
 public lemma normRest_apply_eq_div {τ : ℍ}
     (h : galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ ≠ 0) :
     normRest f τ = _root_.SlashInvariantForm.norm 𝒮ℒ f τ /
       galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ := by
-  rw [eq_div_iff h, slashInvariantNorm_apply_eq_galoisProd_mul_normRest, mul_comm]
+  rw [eq_div_iff h, slashInvariantForm_norm_apply_eq_galoisProd_mul_normRest, mul_comm]
 
 end Algebraic
 
@@ -263,15 +284,15 @@ public lemma analyticAt_cuspFunction_normRest :
   classical
   let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
   exact analyticAt_cuspFunction_zero one_pos (periodic_normRest f)
-    (normRest_def f ▸ MDifferentiable.prod fun q _ ↦
+    (normRest_eq_prod_tPowCosets f ▸ MDifferentiable.prod fun q _ ↦
       SlashInvariantForm.mdifferentiable_quotientFunc f q)
-    (normRest_def f ▸ Filter.BoundedAtFilter.prod _ fun q _ ↦
+    (normRest_eq_prod_tPowCosets f ▸ Filter.BoundedAtFilter.prod _ fun q _ ↦
       SlashInvariantForm.isBoundedAtImInfty_quotientFunc f q)
 
 /-- **Decomposition of the norm at the cusp** for a modular form: the norm of `f` from `𝒢`
 down to `𝒮ℒ` is the Galois product of the first `Subgroup.integerCuspWidth 𝒢` integer
 translates of `f` times `normRest f`. This is the form to rewrite with when `f` is a modular
-form; `slashInvariantNorm_apply_eq_galoisProd_mul_normRest` is the general statement. -/
+form; `slashInvariantForm_norm_apply_eq_galoisProd_mul_normRest` is the general statement. -/
 public lemma norm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
     _root_.ModularForm.norm 𝒮ℒ f τ =
       galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * normRest f τ := by
@@ -280,7 +301,7 @@ public lemma norm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
   -- left to definitional unfolding.
   have hcoe : _root_.ModularForm.norm 𝒮ℒ f τ = _root_.SlashInvariantForm.norm 𝒮ℒ f τ := by
     rw [_root_.ModularForm.coe_norm, _root_.SlashInvariantForm.coe_norm]
-  rw [hcoe, slashInvariantNorm_apply_eq_galoisProd_mul_normRest]
+  rw [hcoe, slashInvariantForm_norm_apply_eq_galoisProd_mul_normRest]
 
 end Analytic
 
