@@ -439,11 +439,9 @@ private theorem exists_div_algebraMap_eq (z : W.FunctionField) :
   obtain ⟨⟨b, m, hm⟩, hbm⟩ :=
     IsLocalization.surj (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) z
   obtain ⟨d, hd, rfl⟩ := hm
-  have hd0 : algebraMap F[X] W.FunctionField d ≠ 0 := by
-    rw [IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField]
-    exact (map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective W.CoordinateRing
-      W.FunctionField)).mpr ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective F[X]
-      W.CoordinateRing)).mpr (mem_nonZeroDivisors_iff_ne_zero.mp hd))
+  have hd0 : algebraMap F[X] W.FunctionField d ≠ 0 :=
+    (map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective F[X] W.FunctionField)).mpr
+      (mem_nonZeroDivisors_iff_ne_zero.mp hd)
   refine ⟨b, d, mem_nonZeroDivisors_iff_ne_zero.mp hd, ?_⟩
   rw [eq_comm, eq_div_iff hd0,
     IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, hbm]
@@ -455,11 +453,8 @@ private theorem exists_algebraMap_eq [W.IsElliptic] {z : W.FunctionField}
     ∃ b : W.CoordinateRing, algebraMap W.CoordinateRing W.FunctionField b = z := by
   -- write `z = b / d` with `b` in the coordinate ring and `d` in `F[X]`
   obtain ⟨b, d, hd0, rfl⟩ := exists_div_algebraMap_eq W z
-  have hinjK : Function.Injective (algebraMap F[X] W.FunctionField) := by
-    rw [IsScalarTower.algebraMap_eq F[X] W.CoordinateRing W.FunctionField]
-    exact (FaithfulSMul.algebraMap_injective _ _).comp (FaithfulSMul.algebraMap_injective _ _)
-  have hdK : algebraMap F[X] W.FunctionField d ≠ 0 := fun h =>
-    hd0 (hinjK (h.trans (map_zero _).symm))
+  have hdK : algebraMap F[X] W.FunctionField d ≠ 0 :=
+    (map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective F[X] W.FunctionField)).mpr hd0
   -- the trace and the norm of `z`
   obtain ⟨p, q, hpq⟩ := exists_smul_basis_eq b
   have htr := dvd_trace_of_isIntegral_div W hd0 hpq hz
