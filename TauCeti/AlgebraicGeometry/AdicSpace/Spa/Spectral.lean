@@ -67,26 +67,14 @@ theorem isProConstructible_val_preimage_spa (P : PairOfDefinition A) (Aplus : Su
   exact (isClosed_val_preimage_cont P).isProConstructible.inter
     (isProConstructible_val_preimage_setOfPred_forall_vle_one _ _ (Aplus : Set A))
 
-/-- `spa Aplus` is a spectral space, from an explicit pair of definition: its trace on the
-spectral space `Spv (A, IA)` is pro-constructible, pro-constructible subspaces of spectral
-spaces are spectral, and `spa Aplus` is homeomorphic to that trace. At a ring of integral
-elements this is Wedhorn's Theorem 7.35; the instance below supplies it for any Huber ring
-without naming a pair. -/
+/-- `spa Aplus` is a spectral space, from an explicit pair of definition: its trace on
+`Spv (A, IA)` is pro-constructible, so `spectralSpace_of_isProConstructible_val_preimage`
+applies to the Theorem 7.10 inclusion. At a ring of integral elements this is Wedhorn's
+Theorem 7.35; the instance below supplies it for any Huber ring without naming a pair. -/
 theorem spectralSpace_spa_of_pairOfDefinition (P : PairOfDefinition A) (Aplus : Subring A) :
-    SpectralSpace (spa Aplus) := by
-  have := spectralSpace_spvOfIdeal P.extendedIdealOfDefinition
-    ⟨P.extendedIdealOfDefinition, P.fg_extendedIdealOfDefinition, rfl⟩
-  have := (isProConstructible_val_preimage_spa P Aplus).spectralSpace
-  -- Both sides carry the topology induced from `Spv A`, so the embedding of the subspace
-  -- restricts to a homeomorphism from the preimage of `spa Aplus` onto it.
-  let e := Topology.IsEmbedding.subtypeVal.homeomorphOfSubsetRange
-    (Subtype.range_val (s := (spvOfIdeal P.extendedIdealOfDefinition
-      ⟨P.extendedIdealOfDefinition, P.fg_extendedIdealOfDefinition, rfl⟩ : Set (Spv A))) ▸
-      spa_subset_spvOfIdeal P Aplus)
-  -- `Topology.IsOpenEmbedding.spectralSpace` transfers along `e`, once `e` has carried
-  -- compactness across; a homeomorphism is in particular an open embedding.
-  have : CompactSpace (spa Aplus) := e.compactSpace
-  exact e.symm.isOpenEmbedding.spectralSpace
+    SpectralSpace (spa Aplus) :=
+  spectralSpace_of_isProConstructible_val_preimage _ _ (spa_subset_spvOfIdeal P Aplus)
+    (isProConstructible_val_preimage_spa P Aplus)
 
 /-- **Wedhorn Theorem 7.35** (at a ring of integral elements): over a Huber ring, `spa Aplus`
 is a spectral space — by instance synthesis, with the pair of definition chosen from
