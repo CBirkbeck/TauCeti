@@ -87,6 +87,23 @@ choice of the finiteness and decidability instances on the coset space. -/
   unfold restProd
   congr!
 
+/-- The norm of `f` splits off the identity coset: it is `f` times the product of the
+nontrivial factors. -/
+public lemma norm_apply_eq_mul_restProd (f : ModularForm (G Γ) k) (τ : ℍ) :
+    _root_.ModularForm.norm 𝒮ℒ f τ = f τ * restProd f τ := by
+  let _ : Fintype (Q Γ) := Fintype.ofFinite (Q Γ)
+  let _ : DecidableEq (Q Γ) := Classical.decEq _
+  have hone : SlashInvariantForm.quotientFunc (ℋ := 𝒮ℒ) (𝒢 := G Γ) (k := k) f
+      (⟦(1 : 𝒮ℒ)⟧ : Q Γ) τ = f τ := by
+    simp [SlashInvariantForm.quotientFunc_mk]
+  calc
+    _root_.ModularForm.norm 𝒮ℒ f τ =
+        ∏ q : Q Γ, SlashInvariantForm.quotientFunc (ℋ := 𝒮ℒ) (𝒢 := G Γ) (k := k) f q τ := by
+      simp [_root_.ModularForm.coe_norm]
+    _ = f τ * restProd f τ := by
+      rw [restProd_apply, Finset.prod_apply, ← hone]
+      exact (Finset.mul_prod_erase Finset.univ _ (Finset.mem_univ _)).symm
+
 /-- The product `restProd` is bounded at `Im z → ∞`. -/
 public lemma isBoundedAtImInfty_restProd (f : ModularForm (G Γ) k) :
     IsBoundedAtImInfty (restProd f) := by
