@@ -36,7 +36,7 @@ stated for a general weight family because nothing in the argument uses triviali
 
 ## Main results
 
-* `TauCeti.Huber.existsUnique_continuous_ringHom_completion_weightedRestrictedSubring` :
+* `TauCeti.Huber.existsUnique_continuous_ringHom_completion` :
   Proposition 5.50 for the completion of `A⟨X⟩_T`.
 * `TauCeti.Huber.completionEvalHom_weightedC` and
   `TauCeti.Huber.completionEvalHom_weightedX` : its values on the constants and the variables.
@@ -92,14 +92,20 @@ theorem completionEvalHom_weightedX (hT : IsWeightFamily T) (hφ : ContinuousAt 
         Completion (weightedRestrictedSubring T hT)) = b i := by
   rw [completionEvalHom_coe, weightedEvalHom_weightedX]
 
-/-- **Proposition 5.50 for the completed algebra.** Given `φ : A →+* B` continuous at zero and
-weight-bounded values `b`, there is exactly one continuous ring homomorphism from the completion
-of `A⟨X⟩_T` to `B` restricting to `φ` on the constants and sending each `Xᵢ` to `bᵢ`.
+/-- **The universal property of the completion of `A⟨X⟩_T`, under `IsWeightBounded`.** Given
+`φ : A →+* B` continuous at zero and weight-bounded values `b`, there is exactly one continuous
+ring homomorphism from the completion of `A⟨X⟩_T` to `B` restricting to `φ` on the constants and
+sending each `Xᵢ` to `bᵢ`.
+
+This mirrors `existsUnique_continuous_ringHom_weightedRestrictedSubring`, the uncompleted
+statement under the same uniform hypothesis. Proposition 5.50's own hypothesis is the
+coordinatewise one, so the theorem to cite as 5.50 is
+`existsUnique_continuous_ringHom_completion_of_isWeightedVarPowerBounded` below.
 
 As in the uncompleted statement, uniqueness is among *continuous* homomorphisms. Here that is not
 a convenience: the completion is a closure of the image of `A⟨X⟩_T`, so the values on that image
 determine a continuous map and nothing else. -/
-theorem existsUnique_continuous_ringHom_completion_weightedRestrictedSubring (hT : IsWeightFamily T)
+theorem existsUnique_continuous_ringHom_completion (hT : IsWeightFamily T)
     (hφ : ContinuousAt φ 0) (hb : IsWeightBounded φ T b) :
     ∃! ψ : Completion (weightedRestrictedSubring T hT) →+* B, Continuous ψ ∧
       (∀ a, ψ ((weightedC T hT a : weightedRestrictedSubring T hT) :
@@ -121,5 +127,21 @@ theorem existsUnique_continuous_ringHom_completion_weightedRestrictedSubring (hT
     (Completion.ext hψc (continuous_completionEvalHom hT hφ hb) fun f ↦ ?_)
   rw [completionEvalHom_coe]
   exact congrArg (fun g : weightedRestrictedSubring T hT →+* B ↦ g f) key
+
+/-- **Wedhorn 5.50 for the completed algebra**, under the hypothesis Proposition 5.50 itself
+carries: each weighted variable `φ(Tᵢ) · bᵢ` power-bounded as a set, one index at a time.
+
+This is the theorem to cite as 5.50 for the completion. It is the statement above composed with
+`isWeightBounded_of_isWeightedVarPowerBounded`, exactly as
+`existsUnique_continuous_ringHom_weightedRestrictedSubring_of_isWeightedVarPowerBounded` relates
+to its own uniform form. -/
+theorem existsUnique_continuous_ringHom_completion_of_isWeightedVarPowerBounded
+    (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0) (hb : IsWeightedVarPowerBounded φ T b) :
+    ∃! ψ : Completion (weightedRestrictedSubring T hT) →+* B, Continuous ψ ∧
+      (∀ a, ψ ((weightedC T hT a : weightedRestrictedSubring T hT) :
+          Completion (weightedRestrictedSubring T hT)) = φ a) ∧
+      ∀ i, ψ ((weightedX T hT i : weightedRestrictedSubring T hT) :
+        Completion (weightedRestrictedSubring T hT)) = b i :=
+  existsUnique_continuous_ringHom_completion hT hφ (isWeightBounded_of_isWeightedVarPowerBounded hb)
 
 end TauCeti.Huber
