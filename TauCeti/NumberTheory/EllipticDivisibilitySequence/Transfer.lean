@@ -57,6 +57,15 @@ chain of three inequalities. `Mathlib/Order/Fin/Tuple.lean` states that API thro
 into the adjacent comparisons the descent consumes, and `nonnegStrictAnti₄_iff` records that
 normal form once for downstream use.
 
+**On the imports.** No *declaration* here mentions `atomRel`; the EDS import is nevertheless kept
+public rather than replaced by narrow modules. Replacing it was tried and costs more than it saves:
+dropping it loses `abs`, then `AddGroup ℤ`, then `abs_cases`, each surfacing only at the next build,
+because that one import transitively carries the ℤ ordered-algebra stack these proofs run on. The
+file also lives in `EllipticDivisibilitySequence/`, declares into `IsEllipticNet`, and exists to
+feed `atomRel_avg_sub` and `atomRel_abs₄`, so a consumer of this module wants EDS in scope anyway.
+`Mathlib.Data.Fin.VecNotation` is public because `nonnegStrictAnti₄_def` mentions `![…]` in its
+statement; `Mathlib.Data.Int.ModEq` stays private, being used only inside a proof.
+
 ## Provenance
 
 Ported from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
@@ -126,12 +135,10 @@ theorem parity_abs_avg_sub {a b c d : ℤ}
 
 /-- **Nonnegativity and strict decrease survive the transfer.** The last index needs its absolute
 value: `m - a` is the one difference that can be negative, `a` being the largest index. -/
-theorem nonnegStrictAnti₄_avg_sub {a b c d : ℤ}
-    (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2)
+theorem nonnegStrictAnti₄_avg_sub {a b c d : ℤ} (parity : d % 2 = c % 2)
     (anti : NonnegStrictAnti₄ a b c d) :
     NonnegStrictAnti₄ ((a + b + c + d) / 2 - d) ((a + b + c + d) / 2 - c)
       ((a + b + c + d) / 2 - b) |(a + b + c + d) / 2 - a| := by
-  obtain ⟨h₁, h₂, h₃⟩ := parity
   rw [nonnegStrictAnti₄_iff] at anti ⊢
   obtain ⟨hd, hdc, hcb, hba⟩ := anti
   refine ⟨abs_nonneg _, ?_, by omega, by omega⟩
