@@ -47,8 +47,6 @@ stated for a general weight family because nothing in the argument uses triviali
 * `weightedEvalHomCompletion_coe`: the value of the extension on the image of `A⟨X⟩_T`. The body of
   the definition is not exported, so this is how a consumer computes with it.
 * `continuous_weightedEvalHomCompletion`: the extension is continuous.
-* `weightedEvalHomCompletion_weightedC` and `weightedEvalHomCompletion_weightedX`: the values of
-  `weightedEvalHomCompletion` on the constants and the variables.
 
 ## References
 
@@ -131,24 +129,6 @@ theorem continuous_weightedEvalHomCompletion (hT : IsWeightFamily T) (hφ : Cont
     (hb : IsWeightBounded φ T b) : Continuous (weightedEvalHomCompletion hT hφ hb) :=
   Completion.continuous_extension
 
-/-- The value on a constant. Not a `simp` lemma: `simp` reaches it through
-`weightedEvalHomCompletion_coe` and `weightedEvalHom_weightedC` already. -/
-theorem weightedEvalHomCompletion_weightedC (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
-    (hb : IsWeightBounded φ T b) (a : A) :
-    weightedEvalHomCompletion hT hφ hb
-      ((weightedC T hT a : weightedRestrictedSubring T hT) :
-        Completion (weightedRestrictedSubring T hT)) = φ a := by
-  rw [weightedEvalHomCompletion_coe, weightedEvalHom_weightedC]
-
-/-- The value on a variable. Not a `simp` lemma, for the same reason as
-`weightedEvalHomCompletion_weightedC`. -/
-theorem weightedEvalHomCompletion_weightedX (hT : IsWeightFamily T) (hφ : ContinuousAt φ 0)
-    (hb : IsWeightBounded φ T b) (i : Fin k) :
-    weightedEvalHomCompletion hT hφ hb
-      ((weightedX T hT i : weightedRestrictedSubring T hT) :
-        Completion (weightedRestrictedSubring T hT)) = b i := by
-  rw [weightedEvalHomCompletion_coe, weightedEvalHom_weightedX]
-
 /-- **The universal property of the completion of `A⟨X⟩_T`, under `IsWeightBounded`.** Given
 `φ : A →+* B` continuous at zero and weight-bounded values `b`, there is exactly one continuous
 ring homomorphism from the completion of `A⟨X⟩_T` to `B` restricting to `φ` on the constants and
@@ -171,13 +151,22 @@ theorem existsUnique_continuous_ringHom_completion_weightedRestrictedSubring
       (∀ a, ψ ((weightedC T hT a : weightedRestrictedSubring T hT) :
           Completion (weightedRestrictedSubring T hT)) = φ a) ∧
       ∀ i, ψ ((weightedX T hT i : weightedRestrictedSubring T hT) :
-        Completion (weightedRestrictedSubring T hT)) = b i :=
-  ⟨weightedEvalHomCompletion hT hφ hb, ⟨continuous_weightedEvalHomCompletion hT hφ hb,
-      weightedEvalHomCompletion_weightedC hT hφ hb, weightedEvalHomCompletion_weightedX hT hφ hb⟩,
+        Completion (weightedRestrictedSubring T hT)) = b i := by
+  -- The extension's values on the generators: its value on the image of `A⟨X⟩_T` composed with
+  -- the uncompleted evaluation's own computations.
+  have hC₀ : ∀ a, weightedEvalHomCompletion hT hφ hb
+      ((weightedC T hT a : weightedRestrictedSubring T hT) :
+        Completion (weightedRestrictedSubring T hT)) = φ a := fun a ↦ by
+    rw [weightedEvalHomCompletion_coe, weightedEvalHom_weightedC]
+  have hX₀ : ∀ i, weightedEvalHomCompletion hT hφ hb
+      ((weightedX T hT i : weightedRestrictedSubring T hT) :
+        Completion (weightedRestrictedSubring T hT)) = b i := fun i ↦ by
+    rw [weightedEvalHomCompletion_coe, weightedEvalHom_weightedX]
+  exact ⟨weightedEvalHomCompletion hT hφ hb,
+    ⟨continuous_weightedEvalHomCompletion hT hφ hb, hC₀, hX₀⟩,
     fun _ ⟨hψ, hC, hX⟩ ↦ completion_weightedRestrictedSubring_ringHom_ext_of_continuous hT hψ
       (continuous_weightedEvalHomCompletion hT hφ hb)
-      (fun a ↦ (hC a).trans (weightedEvalHomCompletion_weightedC hT hφ hb a).symm)
-      fun i ↦ (hX i).trans (weightedEvalHomCompletion_weightedX hT hφ hb i).symm⟩
+      (fun a ↦ (hC a).trans (hC₀ a).symm) fun i ↦ (hX i).trans (hX₀ i).symm⟩
 
 /-- **Wedhorn 5.50 for the completed algebra**, under the hypothesis Proposition 5.50 itself
 carries: each weighted variable `φ(Tᵢ) · bᵢ` power-bounded as a set, one index at a time.
