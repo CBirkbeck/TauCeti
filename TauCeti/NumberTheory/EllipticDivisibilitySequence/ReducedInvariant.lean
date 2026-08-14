@@ -32,6 +32,8 @@ by which the elliptic-net identities reach the division polynomials in the Lutz�
 * `IsEllipticNet.invarNum_normEDS_one_eq_reducedInvarNum_mul`: `invarNum (normEDS b c d) 1 m` is
   `reducedInvarNum b c d m * b` — the cancellation the reduced numerator is named for.
 * `complEDS₂_eq_reducedInvarNum_sub`: the second complement read off the reduced numerator.
+* `map_reducedInvarNum`: it is natural in the coefficient ring, so a specialisation or base change
+  may be pushed through it rather than around the unexposed body.
 
 ## What is deliberately not here
 
@@ -79,7 +81,7 @@ the proof goes through the `@[simp]` equation lemma `IsEllipticNet.invarNum_def`
 
 public section
 
-variable {R : Type*} [CommRing R] (b c d : R) (m : ℤ)
+variable {R S : Type*} [CommRing R] [CommRing S] (b c d : R) (m : ℤ)
 
 /-- The invariant numerator of a normalised EDS with one factor of `b` cancelled. Stated as the sum
 it reduces to rather than as a quotient;
@@ -116,3 +118,11 @@ theorem invarNum_normEDS_one_eq_reducedInvarNum_mul :
   ring
 
 end IsEllipticNet
+
+variable {F : Type*} [FunLike F R S] [RingHomClass F R S] (f : F)
+
+/-- The reduced numerator is natural in the coefficient ring. -/
+@[simp]
+theorem map_reducedInvarNum :
+    f (reducedInvarNum b c d m) = reducedInvarNum (f b) (f c) (f d) m := by
+  simp [reducedInvarNum_def, map_ofNat]
