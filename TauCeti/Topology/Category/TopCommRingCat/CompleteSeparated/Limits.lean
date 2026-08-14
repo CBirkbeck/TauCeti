@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated
+public import TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Basic
 public import TauCeti.Topology.Category.TopCommRingCat.Limits
 public import Mathlib.CategoryTheory.Limits.FullSubcategory
 
@@ -27,9 +27,10 @@ complete separated ring is complete separated.
   topological rings.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.of_isClosedEmbedding` : a closed subobject of
   a complete separated ring is complete separated.
-* The `IsClosedUnderLimitsOfShape` instances for discrete shapes and parallel pairs, and the
-  resulting products and equalizers in `TauCeti.CompleteSeparatedTopCommRingCat`, created by
-  the inclusion.
+* The `IsClosedUnderLimitsOfShape` instances for discrete shapes and parallel pairs. These are
+  what the inclusion needs in order to create the limits, so
+  `TauCeti.CompleteSeparatedTopCommRingCat` acquires products and equalizers from them:
+  products through the `HasProducts` instance below, equalizers by synthesis alone.
 -/
 
 public section
@@ -116,8 +117,10 @@ namespace TauCeti.CompleteSeparatedTopCommRingCat
 noncomputable instance : HasProducts.{v} CompleteSeparatedTopCommRingCat.{max u v} :=
   fun _ ↦ inferInstance
 
-/-- Equalizers in the complete separated category, created by the inclusion. -/
-noncomputable instance : HasEqualizers CompleteSeparatedTopCommRingCat.{u} :=
-  inferInstance
+-- Equalizers need no instance of their own: `HasEqualizers` unfolds to
+-- `HasLimitsOfShape WalkingParallelPair`, which the closure instance above already synthesizes
+-- through `hasLimitsOfShape_of_closedUnderLimits`. `HasProducts` does need one, being a `∀`
+-- over the index type rather than a single `HasLimitsOfShape`.
+example : HasEqualizers CompleteSeparatedTopCommRingCat.{u} := inferInstance
 
 end TauCeti.CompleteSeparatedTopCommRingCat
