@@ -29,8 +29,9 @@ the entrywise description of the representatives is not restated.
 
 ## Main results
 
-* `HeckeRing.GL2.heckeSlashUpperTri_def`: the characteristic equation, the convenient rewrite
-  for turning the operator back into its sum.
+* `HeckeRing.GL2.heckeSlashUpperTri_def` and `heckeSlashUpperTri_apply`: the characteristic
+  equation and its pointwise form, the convenient rewrites for turning the operator back into
+  its sum.
 * `HeckeRing.GL2.heckeSlashUpperTri_zero`, `heckeSlashUpperTri_add`,
   `heckeSlashUpperTri_smul`: linearity in `f`.
 The representatives themselves, and their upper-triangularity and positive determinant, live in
@@ -69,6 +70,12 @@ noncomputable def heckeSlashUpperTri (f : ℍ → ℂ) : ℍ → ℂ :=
 operator back into its sum. -/
 lemma heckeSlashUpperTri_def (f : ℍ → ℂ) :
     heckeSlashUpperTri k p f = ∑ b : Fin p, f ∣[k] upperTriRep p b := (rfl)
+
+/-- The pointwise form of the defining equation: consumers working at a point of `ℍ` — cusp
+and `q`-expansion arguments in particular — need the value, not the function. -/
+lemma heckeSlashUpperTri_apply (f : ℍ → ℂ) (τ : ℍ) :
+    heckeSlashUpperTri k p f τ = ∑ b : Fin p, (f ∣[k] upperTriRep p b) τ := by
+  rw [heckeSlashUpperTri_def, Finset.sum_apply]
 
 /-- The sum sends the zero function to zero. -/
 @[simp] lemma heckeSlashUpperTri_zero : heckeSlashUpperTri k p 0 = 0 := by
