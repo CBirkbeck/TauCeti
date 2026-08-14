@@ -1,0 +1,103 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+-/
+module
+
+public import Mathlib.NumberTheory.EllipticDivisibilitySequence
+
+/-!
+# Expanding a product of an elliptic atom with an elliptic relator
+
+The descent that recovers the full four-index elliptic relation from the two doubling
+recurrences works by rewriting a relator on four unconstrained indices into relators that all
+carry a fixed pair `c, d` of small indices. This file supplies the algebraic identities that
+perform that rewriting; the ordering and parity bookkeeping that makes the resulting induction
+terminate is in `Transfer.lean`.
+
+All four are polynomial identities in the atoms: `atomRel` is a fixed quadratic expression in
+`atom`, so each statement expands on both sides to a combination of products of two atoms, and
+`ring` closes it. No index arithmetic is involved — the atoms' arguments are carried along
+unchanged — which is why nothing here needs the parity hypotheses that `atom_even`, `atom_odd`
+and `atomRel_eq` require.
+
+## Main results
+
+* `atom_mul_atomRel_eq_of_last_eq_fst`, `atom_mul_atomRel_eq_of_last_eq_snd`: when the relator's
+  last index is already one of the atom's two indices, the product is a three-term combination.
+* `atom_mul_atomRel_eq`: for four unconstrained relator indices, a ten-term combination.
+* `atom_sq_mul_atomRel_eq`: the nine-term combination obtained from the previous two, which is
+  the form the descent actually consumes.
+
+## Provenance
+
+Adapted from J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
+(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
+`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `rel₆_eq₃`, `rel₆_eq₃'`, `rel₆_eq₁₀`
+and `addMulSub_sq_mul_rel₄_eq₉`. That file's header reads `Authors: Junyan Xu`; following this
+repository's convention for adapted material the upstream authorship is credited here rather
+than in the copyright header.
+
+The source states these against its own `addMulSub` and `rel₄`, which Mathlib now supplies as
+`IsEllipticNet.atom` and `IsEllipticNet.atomRel` with the same definitions, so the statements
+transfer by renaming. The source also carries an abbreviation `rel₆ W k l a b c d` for the
+product `addMulSub W k l * rel₄ W a b c d`, together with a `@[simp]` lemma unfolding it. That
+abbreviation is **not** ported: it names a product rather than a concept, it exists only to
+shorten these four statements, and a wrapper whose sole purpose is to be unfolded again at
+every use site is a second public spelling of `atom _ _ * atomRel _ _ _ _`. The statements below
+therefore write the product out.
+-/
+
+public section
+
+namespace IsEllipticNet
+
+variable {R : Type*} [CommRing R] (W : ℤ → R)
+
+/-- **Expanding over a fixed pair, when the relator already ends at the atom's first index.**
+Each relator on the right carries both `c` and `d`, so this trades one occurrence of `c` for
+the pair `c, d`. -/
+theorem atom_mul_atomRel_eq_of_last_eq_fst (c d m n r : ℤ) :
+    atom W c d * atomRel W m n r c =
+      atom W m c * atomRel W n r c d - atom W n c * atomRel W m r c d
+        + atom W r c * atomRel W m n c d := by
+  simp_rw [atomRel]; ring
+
+/-- **Expanding over a fixed pair, when the relator already ends at the atom's second index.**
+The companion of `atom_mul_atomRel_eq_of_last_eq_fst` with the roles of `c` and `d` exchanged
+in the atoms, the relators on the right being the same three. -/
+theorem atom_mul_atomRel_eq_of_last_eq_snd (c d m n r : ℤ) :
+    atom W c d * atomRel W m n r d =
+      atom W m d * atomRel W n r c d - atom W n d * atomRel W m r c d
+        + atom W r d * atomRel W m n c d := by
+  simp_rw [atomRel]; ring
+
+/-- **Expanding over a fixed pair, for four unconstrained relator indices.** Every relator on
+the right has at least one index drawn from the fixed pair `c, d`, which is what lets the
+descent lower the indices it is working on. -/
+theorem atom_mul_atomRel_eq (c d m n r s : ℤ) :
+    atom W c d * atomRel W m n r s =
+      atom W n d * atomRel W m r s c - atom W r d * atomRel W m n s c
+        + atom W s d * atomRel W m n r c
+      + atom W n c * atomRel W m r s d - atom W r c * atomRel W m n s d
+        + atom W s c * atomRel W m n r d
+      + atom W n r * atomRel W m s c d - atom W n s * atomRel W m r c d
+        + atom W r s * atomRel W m n c d
+      - 2 * (atom W m d * atomRel W n r s c) := by
+  simp_rw [atomRel]; ring
+
+/-- **The squared-atom form, in which every relator on the right carries the whole fixed pair.**
+This is the shape the descent consumes: the first two bracketed groups are the right-hand sides
+of `atom_mul_atomRel_eq_of_last_eq_snd` and `…_fst`, and the third is the last group of
+`atom_mul_atomRel_eq`. Squaring the atom is the price of having no index left outside `c, d`. -/
+theorem atom_sq_mul_atomRel_eq (c d m n r s : ℤ) :
+    atom W c d ^ 2 * atomRel W m n r s =
+      atom W m c * (atom W n d * atomRel W r s c d - atom W r d * atomRel W n s c d
+        + atom W s d * atomRel W n r c d)
+      - atom W m d * (atom W n c * atomRel W r s c d - atom W r c * atomRel W n s c d
+        + atom W s c * atomRel W n r c d)
+      + atom W c d * (atom W n r * atomRel W m s c d - atom W n s * atomRel W m r c d
+        + atom W r s * atomRel W m n c d) := by
+  simp_rw [atomRel]; ring
+
+end IsEllipticNet
