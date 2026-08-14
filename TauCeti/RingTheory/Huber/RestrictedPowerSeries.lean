@@ -32,10 +32,15 @@ the roadmap's designated prior formalisation of this material. That attribution 
 `restrictedMvPowerSeriesSubring` and the convolution argument behind `IsRestricted.mul`, whose
 definitions, statements and proof are all AINTLIB's work. The module-coefficient declarations —
 `isRestricted_iff_apply`, `IsRestricted.const_smul`, `restrictedMvPowerSeriesSubmodule` and
-`mem_restrictedMvPowerSeriesSubmodule`, together with the weakening of `IsRestricted`'s
-coefficient binders to `[Zero]` and a topology — have no AINTLIB counterpart and are original
-here. The port moves the declarations into the `TauCeti.Huber`
-namespace, opts into the Lean module system with the definition bodies unexposed — hence the added
+`mem_restrictedMvPowerSeriesSubmodule` — have no AINTLIB counterpart and are original here.
+
+Four further declarations are AINTLIB's, restated at weaker coefficient binders: `IsRestricted`
+itself, now asking the coefficients only for a `0` and a topology, and `isRestricted_zero`,
+`IsRestricted.add` and `IsRestricted.neg`, now at `[Zero]`, `[AddMonoid] [ContinuousAdd]` and
+`[AddGroup] [ContinuousNeg]`. Their statements and proofs are otherwise unchanged.
+
+The port moves the declarations into the `TauCeti.Huber` namespace, opts into the Lean module
+system with the definition bodies unexposed — hence the added
 `isRestricted_iff` and `mem_restrictedMvPowerSeriesSubring` — tracks the Mathlib rename of
 `Set.mem_setOf_eq` to `Set.mem_ofPred_eq`, renames the predicate from AINTLIB's `IsRestrictedAdic`
 (nothing here is adic), and drops hypotheses that the individual proofs never used.
