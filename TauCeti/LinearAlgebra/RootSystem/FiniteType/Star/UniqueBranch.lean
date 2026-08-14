@@ -257,42 +257,29 @@ private lemma submatrix_doubleForkEmbedding_eq (h : IsFiniteType A)
       exact (h.diagramGraph_adj_iff.mp hadj).2 hzero'
 
 /-- **The outer ends of the two branches at the ends of a path are distinct.** In an acyclic
-graph, a vertex adjacent to the start of a nontrivial path and off that path differs from every
-vertex adjacent to the path's end. -/
+graph, a vertex adjacent to the start of a path with distinct endpoints and off that path differs
+from every vertex adjacent to the path's end. -/
 private theorem ne_of_adj_first_of_adj_last {V : Type*} {G : SimpleGraph V}
     (hG : G.IsAcyclic) {u v : V} (huv : u ≠ v) {q : G.Walk u v} (hq : q.IsPath)
-    {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) : a ≠ b := by
-  intro hab
-  -- `a — u — … — v` and the single edge `a — v` are two paths with the same ends, so equal;
-  -- but the first is longer, since `u ≠ v` keeps `q` from being nil.
-  have hlen : q.length ≠ 0 := fun h => huv (SimpleGraph.Walk.eq_of_length_eq_zero h)
-  have heq := (hG.subsingleton_path a v).elim
-    (⟨q.cons ha.symm, hq.cons ha'⟩ : G.Path a v)
-    (SimpleGraph.Path.singleton (hab ▸ hb).symm)
-  have h := congrArg (fun r : G.Path a v ↦ r.val.length) heq
-  simp only [SimpleGraph.Walk.length_cons, SimpleGraph.Path.singleton_coe,
-    (hab ▸ hb).symm.length_toWalk] at h
-  omega
+    {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) : a ≠ b := fun hab ↦
+  -- `a = b` makes `a` adjacent to the far end `v` of the path `a — u — … — v`, so acyclicity
+  -- forces `v` to be that path's second vertex, which is `u`.
+  huv <| (SimpleGraph.Walk.snd_cons q ha.symm).symm.trans
+    (hG.eq_snd_of_adj_start (hq.cons ha' (h := ha.symm)) (hab ▸ hb).symm
+      (SimpleGraph.Walk.end_mem_support _)).symm
 
 /-- **The outer ends of the two branches at the ends of a path are not adjacent.** In an acyclic
 graph, no edge joins a vertex adjacent to the start of a path to a vertex adjacent to its end, when
 both lie off the path. -/
 private theorem not_adj_of_adj_first_of_adj_last {V : Type*} {G : SimpleGraph V}
-    (hG : G.IsAcyclic) {u v : V} {q : G.Walk u v} (hq : q.IsPath)
-    {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) (hb' : b ∉ q.support) :
-    ¬G.Adj a b := by
+    (hG : G.IsAcyclic) {u v : V} {q : G.Walk u v} (hq : q.IsPath) {a b : V} (ha : G.Adj u a)
+    (ha' : a ∉ q.support) (hb : G.Adj v b) (hb' : b ∉ q.support) : ¬G.Adj a b := by
   intro hadj
-  -- `a — u — … — v — b` and the single edge `a — b` are two paths with the same ends.
-  have hb'' : b ∉ (q.cons ha.symm).support := by
-    simp only [SimpleGraph.Walk.support_cons, List.mem_cons, not_or]
-    exact ⟨hadj.ne', hb'⟩
-  have heq := (hG.subsingleton_path a b).elim
-    (⟨(q.cons ha.symm).concat hb, (hq.cons ha').concat hb'' hb⟩ : G.Path a b)
-    (SimpleGraph.Path.singleton hadj)
-  have h := congrArg (fun r : G.Path a b ↦ r.val.length) heq
-  simp only [SimpleGraph.Walk.length_concat, SimpleGraph.Walk.length_cons,
-    SimpleGraph.Path.singleton_coe, hadj.length_toWalk] at h
-  omega
+  -- The paths `a — u — … — v` and `a — b` leave `a` with adjacent far ends, and `v` misses the
+  -- edge `a — b`, so acyclicity puts `b` on the first path; but `b` is neither `a` nor on `q`.
+  have hmem := hG.mem_support_of_ne_mem_support_of_adj_of_isPath (hq.cons ha' (h := ha.symm))
+    hadj.isPath_toWalk hb (by simp [hb.ne, ne_of_mem_of_not_mem q.end_mem_support ha'])
+  simp [hadj.ne', hb'] at hmem
 
 /-- **Two distinct branch vertices in one simply-laced finite-type component contain an affine
 `D` principal submatrix.** The middle `Fin (n + 2)` is the path between the branch vertices, and
