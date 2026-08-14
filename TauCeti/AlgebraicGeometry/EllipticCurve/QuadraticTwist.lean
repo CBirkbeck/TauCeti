@@ -703,19 +703,16 @@ theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : 
   exact mul_right_cancel (((mul_left_cancel hchain).trans (one_mul C₁).symm))
 
 omit [E.IsElliptic] in
-/-- **The nontrivial cocycle gives the twist.** If an `L`-isomorphism `ρ : E'ᴸ ≅ Eᴸ` has Galois
-cocycle `[-1]` — that is, `σρ = [-1]·ρ` — then `E'` is `K`-isomorphic to the quadratic twist of
-`E`. Composing `ρ` with the inverse of the trace–norm change of variables cancels that cocycle, so
-the composite descends to `K`.
-
-The `j`-hypotheses are not needed: this is the branch *after* the automorphism dichotomy has been
-applied, and it uses only the shape of the cocycle it produced. -/
+/-- **An `L`-isomorphism `E'ᴸ ≅ Eᴸ` whose Galois conjugate differs from it by `[-1]` makes `E'`
+`K`-isomorphic to the quadratic twist of `E`.** -/
 private theorem exists_smul_eq_quadraticTwist_of_map_eq_negVariableChange_mul
     {E' : WeierstrassCurve K} {ρ : VariableChange L}
-    (hρ : ρ • E'.baseChange L = E.baseChange L) {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1) {θ : L}
-    (hθ : θ ∉ Set.range (algebraMap K L))
+    (hρ : ρ • E'.baseChange L = E.baseChange L) {σ : L ≃ₐ[K] L} (hσ : σ ≠ 1)
     (hρmap : ρ.map (σ : L →+* L) = (E.baseChange L).negVariableChange * ρ) :
     ∃ C : VariableChange K, C • E' = E.quadraticTwist L := by
+  -- composing `ρ` with the inverse trace-norm change of variables cancels the cocycle, so the
+  -- composite descends to `K`
+  obtain ⟨θ, hθ⟩ := Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap K L
   have hinj := FaithfulSMul.algebraMap_injective K L
   set C₁ := E.quadraticTwistOfTraceNormVariableChange hθ hσ with hC₁
   have hcoc := E.map_quadraticTwistOfTraceNormVariableChange hθ hσ
@@ -749,7 +746,6 @@ theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj�
       ∃ C : VariableChange K, C • E' = E.quadraticTwist L := by
   obtain ⟨ρ, hρ⟩ := h
   obtain ⟨σ, hσ⟩ := Algebra.IsQuadraticExtension.exists_algEquiv_ne_one K L
-  obtain ⟨θ, hθ⟩ := Algebra.IsQuadraticExtension.exists_notMem_range_algebraMap K L
   have hinj := FaithfulSMul.algebraMap_injective K L
   -- the Galois conjugate of `ρ` is again an isomorphism `E'ᴸ ≅ Eᴸ`, so `σρ · ρ⁻¹` fixes `Eᴸ`
   have hσρ : (ρ.map (σ : L →+* L)) • E'.baseChange L = E.baseChange L :=
@@ -765,7 +761,7 @@ theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj�
       VariableChange.exists_baseChange_eq_of_map_eq L hσ (mul_inv_eq_one.mp hbcase)
     exact ⟨ρK, smul_eq_of_baseChange_smul_eq L hinj ρK (by rw [hρK]; exact hρ)⟩
   · -- nontrivial cocycle: `E'` is the twist
-    exact .inr (E.exists_smul_eq_quadraticTwist_of_map_eq_negVariableChange_mul hρ hσ hθ
+    exact .inr (E.exists_smul_eq_quadraticTwist_of_map_eq_negVariableChange_mul hρ hσ
       (mul_inv_eq_iff_eq_mul.mp hbcase))
 
 end Classification
