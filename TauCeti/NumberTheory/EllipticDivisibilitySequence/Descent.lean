@@ -114,6 +114,13 @@ def AtomRelVanishes (a b c d : ℤ) : Prop :=
 
 variable {W}
 
+/-- The minimal same-parity pair above zero, `(a % 2 + 2, a % 2)`, has its atom a nonzerodivisor
+as soon as `W 1` and `W 2` are: the two parities give `W 1 * W 1` and `W 2 * W 1`. -/
+private theorem atom_emod_mem_nonZeroDivisors (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰) (a : ℤ) :
+    atom W (a % 2 + 2) (a % 2) ∈ R⁰ := by
+  rcases Int.emod_two_eq_zero_or_one a with h | h <;> rw [h] <;> norm_num [atom] <;>
+    exact mul_mem ‹_› ‹_›
+
 /-- The three relators common to both expansions used by `atomRelVanishes_of_forall_le`. Each
 carries the fixed pair `c₀, d₀` in its last two places and a first index at most `a`, so each is
 in range of the descent hypothesis; the chain `d₀ < c₀ < c < b < a` is what makes all three
@@ -189,5 +196,31 @@ theorem atomRelVanishes_of_lt {a c₀ d₀ : ℤ} (par : c₀ % 2 = d₀ % 2) (l
   refine mem.2 _ ?_
   rw [mul_comm, atom_mul_atomRel_eq, e₁, e₂, e₃, e₄, e₅, e₆, e₇, e₈, e₉, e₁₀]
   ring
+
+/-- **Only the minimal pair needs checking.** If the relator vanishes at every quadruple whose
+last two indices are the minimal same-parity pair `(a % 2 + 2, a % 2)`, it vanishes at every
+valid quadruple with first index `a`. The three remaining cases are `d` above the pair, `d` at
+its top, and `d` at its bottom; in the `%2` spelling each is closed by `omega`, where the source
+needed a chain of `Int.negOnePow` lemmas. -/
+theorem atomRelVanishes_of_min {a : ℤ} (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
+    (rel : ∀ {a' b : ℤ}, a' ≤ a → AtomRelVanishes W a' b (a % 2 + 2) (a % 2)) (b c d : ℤ) :
+    AtomRelVanishes W a b c d := by
+  intro same anti
+  have par : (a % 2 + 2) % 2 = a % 2 % 2 := by omega
+  have le : (0 : ℤ) ≤ a % 2 := by omega
+  have lt : a % 2 < a % 2 + 2 := by omega
+  have mem := atom_emod_mem_nonZeroDivisors one two (W := W) a
+  have hda := same.1
+  obtain ⟨hd, hdc, hcb, hba⟩ := (nonnegStrictAnti₄_iff a b c d).mp anti
+  rcases lt_or_ge (a % 2 + 2) d with hlt | hge
+  · exact atomRelVanishes_of_lt par le lt rel mem b c d hlt (by omega) same anti
+  have fix := atomRelVanishes_of_forall_le par le lt rel mem b c
+  rcases hge.eq_or_lt with heq | hlt₂
+  · subst heq; exact fix.1 same anti
+  · have hdm : d = a % 2 := by omega
+    subst hdm
+    rcases (show a % 2 + 2 = c ∨ a % 2 + 2 < c by omega) with heq₂ | hlt₃
+    · subst heq₂; exact rel le_rfl same anti
+    · exact fix.2 hlt₃ same anti
 
 end IsEllipticNet
