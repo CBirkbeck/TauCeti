@@ -223,4 +223,61 @@ theorem atomRelVanishes_of_min {a : ℤ} (one : W 1 ∈ R⁰) (two : W 2 ∈ R�
     · subst heq₂; exact rel le_rfl same anti
     · exact fix.2 hlt₃ same anti
 
+/-- The even base case, as a relator: all four indices are even, so `atomRel_two_mul` applies. -/
+private theorem atomRel_even_eq_rel (m : ℤ) :
+    atomRel W (2 * m) (2 * (m - 1)) (2 * 1) (2 * 0) = rel W m (m - 1) 1 0 := by
+  rw [atomRel_two_mul]
+  norm_num
+
+/-- The odd base case, as a relator. All four indices are odd, so `atom_odd` reduces every atom
+and no reasoning about truncated division survives. The source proves the corresponding
+equivalence under `set_option allowUnsafeReducibility true` together with
+`attribute [local reducible] Nat.rawCast`; putting the indices in `2 * _ + 1` form removes the
+need for either. -/
+private theorem atomRel_odd_eq_rel (m : ℤ) :
+    atomRel W (2 * m + 1) (2 * (m - 1) + 1) (2 * 1 + 1) (2 * 0 + 1)
+      = rel W (m + 1) (m - 1) 1 0 := by
+  simp_rw [atomRel, atom_odd, rel]
+  ring_nf
+
+/-- **The descent.** The two doubling recurrences, holding from `m = 2` and `m = 3` on, force the
+full four-index relation at every valid quadruple. The induction is on the largest index: below
+`6` no valid quadruple exists, and above it `atomRelVanishes_of_min` reduces to the minimal
+pair, where either the gap `b + 2 < a` admits the transfer down to a smaller first index, or
+`b + 2 = a` lands on one of the two recurrences according to parity. -/
+theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
+    (oddRec : ∀ m : ℤ, 2 ≤ m → rel W (m + 1) m 1 0 = 0)
+    (evenRec : ∀ m : ℤ, 3 ≤ m → rel W (m + 1) (m - 1) 1 0 = 0) :
+    ∀ a b c d : ℤ, AtomRelVanishes W a b c d := by
+  intro a
+  induction a using Int.strongRec (m := 6)
+  next a ha =>
+    intro b c d same anti
+    exact absurd ha (not_lt.mpr (six_le_of_parity_of_nonnegStrictAnti₄ same anti))
+  next a h6 ih =>
+    intro b c d
+    refine atomRelVanishes_of_min one two ?_ b c d
+    intro a' b' haa
+    rcases haa.lt_or_eq with hlt | rfl
+    · exact ih a' hlt b' _ _
+    intro same anti
+    obtain ⟨h0, h1, h2, h3⟩ := (nonnegStrictAnti₄_iff _ _ _ _).mp anti
+    have hpb := same.2.1
+    rcases (show b' + 2 < a' ∨ b' + 2 = a' by omega) with hb | hb
+    · rw [← atomRel_avg_sub W same, ← atomRel_abs₄]
+      exact ih _ (by omega) _ _ _ (parity_abs_avg_sub same)
+        (nonnegStrictAnti₄_abs_avg_sub h1 (by omega) h2 h3)
+    · rcases Int.emod_two_eq_zero_or_one a' with hp | hp
+      · obtain ⟨k, rfl⟩ : ∃ k, a' = 2 * k := ⟨a' / 2, by omega⟩
+        have hodd := oddRec (k - 1) (by omega)
+        rw [sub_add_cancel] at hodd
+        rw [show (2 * k % 2 : ℤ) = 2 * 0 by omega, show (2 : ℤ) * 0 + 2 = 2 * 1 by norm_num,
+          show b' = 2 * (k - 1) by omega, atomRel_even_eq_rel]
+        exact hodd
+      · obtain ⟨k, rfl⟩ : ∃ k, a' = 2 * k + 1 := ⟨a' / 2, by omega⟩
+        rw [show ((2 * k + 1) % 2 : ℤ) = 2 * 0 + 1 by omega,
+          show (2 : ℤ) * 0 + 1 + 2 = 2 * 1 + 1 by norm_num,
+          show b' = 2 * (k - 1) + 1 by omega, atomRel_odd_eq_rel]
+        exact evenRec k (by omega)
+
 end IsEllipticNet
