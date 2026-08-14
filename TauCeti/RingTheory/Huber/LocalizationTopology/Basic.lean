@@ -38,6 +38,10 @@ universal property in `LocalizationTopology.UniversalProperty`, the completion `
   `nonarchimedeanRing_locTopology`: the contract of `locTopology`, to be used in place of
   unfolding the construction.
 * `isHuberRing_locTopology`: `Aₛ` under `locTopology` is a Huber ring.
+* `isBounded_image_algebraMap_of_isBounded` and `isPowerBounded_algebraMap_of_isPowerBounded`:
+  boundedness and power-boundedness transfer from `A` to `Aₛ` along the structure map. The
+  `locSubring` route gives this only for a ring of definition; these hold for any bounded set,
+  which is what a subring of `A` larger than `A₀` — such as `A⁺` — needs.
 
 ## Provenance
 
@@ -578,6 +582,70 @@ theorem isPowerBounded_of_mem_locSubring [IsTopologicalRing A] (P : PairOfDefini
     IsPowerBounded x := by
   let _ := locTopology P T s S hden
   exact (isBounded_locSubring P T s S hden).isPowerBounded_of_mem hx
+
+/-- The multiplicative step behind `isBounded_image_algebraMap_of_isBounded`: if multiplying by
+`x` carries `Iᵐ` into `Iⁿ`, then it carries the `m`-th basic neighbourhood of `Aₛ` into the
+`n`-th. -/
+private theorem locIdealImage_mul_algebraMap_subset (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    {m n : ℕ} {x : A} (hx : ∀ w ∈ P.idealImage m, w * x ∈ P.idealImage n)
+    {d : locSubring P T s S} (hd : d ∈ (locIdeal P T s S ^ m : Ideal (locSubring P T s S))) :
+    (d : S) * algebraMap A S x ∈ locIdealImage P T s S n := by
+  rw [locIdeal, ← Ideal.map_pow, ← Ideal.span_eq (P.idealOfDefinition ^ m), Ideal.map_span] at hd
+  induction hd using Submodule.span_induction with
+  | mem z hz =>
+    obtain ⟨b, hb, rfl⟩ := hz
+    rw [toLocSubring_apply, ← map_mul]
+    obtain ⟨b', hb', hbx⟩ := (P.mem_idealImage n).mp
+      (hx _ ((P.mem_idealImage m).mpr ⟨b, hb, rfl⟩))
+    rw [← hbx]
+    exact algebraMap_mem_locIdealImage P T s S hb'
+  | zero => simp
+  | add u v _ _ hu hv => simpa [add_mul] using (locIdealImage P T s S n).add_mem hu hv
+  | smul c u _ hu =>
+    have : ((c • u : locSubring P T s S) : S) * algebraMap A S x
+        = (c : S) * ((u : S) * algebraMap A S x) := by
+      push_cast [smul_eq_mul]; ring
+    rw [this, mul_comm]
+    exact locIdealImage_mul_locSubring_subset P T s S n
+      (Set.mul_mem_mul hu c.2)
+
+/-- **The image of a bounded subset of `A` is bounded in `Aₛ`.** -/
+theorem isBounded_image_algebraMap_of_isBounded [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) {X : Set A} (hX : IsBounded X) :
+    letI := locTopology P T s S hden
+    IsBounded (algebraMap A S '' X) := by
+  let _ := locTopology P T s S hden
+  rw [isBounded_iff]
+  intro U hU
+  obtain ⟨n, -, hnU⟩ := (hasBasis_nhds_zero_locTopology P T s S hden).mem_iff.mp hU
+  obtain ⟨W, hW, hXW⟩ := isBounded_iff.mp hX (P.idealImage n)
+    ((P.isOpen_idealImage n).mem_nhds (P.idealImage n).zero_mem)
+  obtain ⟨m, -, hmW⟩ := P.hasBasis_nhds_zero.mem_iff.mp hW
+  refine ⟨_, (hasBasis_nhds_zero_locTopology P T s S hden).mem_of_mem (i := m) trivial,
+    Set.Subset.trans ?_ hnU⟩
+  rintro _ ⟨y, hy, _, ⟨x, hxX, rfl⟩, rfl⟩
+  obtain ⟨d, hd, rfl⟩ := (mem_locIdealImage_iff P T s S m).mp hy
+  exact locIdealImage_mul_algebraMap_subset P T s S
+    (fun w hw ↦ hXW (Set.mul_mem_mul (hmW hw) hxX)) hd
+
+/-- **A power-bounded element of `A` stays power-bounded in `Aₛ`.** -/
+theorem isPowerBounded_algebraMap_of_isPowerBounded [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) {a : A} (ha : IsPowerBounded a) :
+    letI := locTopology P T s S hden
+    IsPowerBounded (algebraMap A S a) := by
+  let _ := locTopology P T s S hden
+  have h : Set.range ((algebraMap A S a) ^ · : ℕ → S)
+      = algebraMap A S '' Set.range (a ^ · : ℕ → A) := by
+    ext y
+    constructor
+    · rintro ⟨k, rfl⟩; exact ⟨a ^ k, ⟨k, rfl⟩, map_pow _ a k⟩
+    · rintro ⟨_, ⟨k, rfl⟩, rfl⟩; exact ⟨k, (map_pow _ a k).symm⟩
+  rw [isPowerBounded_iff, h]
+  exact isBounded_image_algebraMap_of_isBounded P T s S hden (isPowerBounded_iff.mp ha)
+
 
 /-- The distinguished fractions `t/s` are power-bounded: they lie in `D`, and every element of
 `D` is. -/
