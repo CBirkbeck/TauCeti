@@ -84,11 +84,7 @@ private theorem image_smul_eq_image_smul_of_inter_nonempty
   have hone : g⁻¹ * h * g' = 1 := by
     refine hdisj _ ⟨u, Set.mem_smul_set.mpr ⟨u', hu', ?_⟩, hu⟩
     rw [mul_smul, mul_smul, hhu, inv_smul_smul]
-  have hgg' : g = h * g' := by
-    have h2 : g * (g⁻¹ * h * g') = h * g' := by
-      rw [← mul_assoc, mul_inv_cancel_left]
-    rw [hone, mul_one] at h2
-    exact h2
+  have hgg' : g = h * g' := eq_of_inv_mul_eq_one (by simpa [mul_assoc] using hone)
   rw [hgg', mul_smul]
   simp only [← Set.image_smul, Set.image_image, hmap]
 
@@ -158,11 +154,10 @@ private theorem isEvenlyCovered_of_smul_disjoint (hq : IsQuotientCoveringMap q G
     exact ⟨qH (g • u), ⟨g • u, Set.smul_mem_smul_set hu, rfl⟩, by rw [hrqH, hq.map_smul]⟩
   · -- Distinct sheets are disjoint.
     rintro ⟨S, g, rfl⟩ ⟨S', g', rfl⟩ hne
-    simp only [Function.onFun, Set.disjoint_iff_inter_eq_empty]
     by_contra hcon
     exact hne (Subtype.ext (image_smul_eq_image_smul_of_inter_nonempty
       hqH.apply_eq_iff_mem_orbit hdisj
-      (Set.nonempty_iff_ne_empty.mpr hcon)))
+      (Set.not_disjoint_iff_nonempty_inter.mp hcon)))
   · -- The sheets exhaust the preimage of the base set.
     intro z hz
     obtain ⟨w, rfl⟩ := hqH.surjective z
