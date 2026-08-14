@@ -4,8 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ValencePV
+public import TauCeti.NumberTheory.ModularForms.Order.AtCusp
 public import TauCeti.NumberTheory.ModularForms.Order.OrbitReduction
+import TauCeti.NumberTheory.ModularForms.LevelOne.FundamentalDomainBoundary.ValencePV
 
 /-!
 # The valence formula for level-one modular forms
@@ -18,16 +19,23 @@ nonzero weight-`k` modular form on `SL₂(ℤ)`,
 The proof assembles the two sides of the development. The contour side
 (`FundamentalDomainBoundary/ValencePV.lean`) proves the identity for the divisor points of
 any finite set capturing all zeros of the closed fundamental domain; instantiating it at the
-canonical divisor set `fdZeros` discharges both capture hypotheses definitionally. The orbit
-side (`Order/OrbitReduction.lean`) rewrites the full non-elliptic orbit sum first as the sum
-over the canonical left representatives and then as the three point-sum families — strict
-interior, left vertical edge, left half-arc — which are literally the families of the contour
-identity.
+canonical divisor set `fdZeros` discharges both capture hypotheses using `mem_fdZeros`. The
+orbit side (`Order/OrbitReduction.lean`) rewrites the full non-elliptic orbit sum first as
+the sum over the canonical left representatives and then as the three point-sum families —
+strict interior, left vertical edge, left half-arc — which are literally the families of the
+contour identity.
 
 ## Main declarations
 
 * `finsum_orderOfVanishingOnOrbit_add_elliptic_add_qExpansionOrderAtCusp_eq_of_ne_zero`
   (in `TauCeti.ModularForm`): the valence formula.
+
+## References
+
+The statement shape follows AINTLIB's `valence_formula_textbook_orbit_finsum`
+([github.com/CBirkbeck/AINTLIB](https://github.com/CBirkbeck/AINTLIB), commit `2baa76f742`,
+Apache 2.0, `projects/LeanModularForms/LeanModularForms/ForMathlib/ValenceFormula.lean`),
+with its `h_core` hypothesis discharged by the contour development rather than assumed.
 -/
 
 public section
