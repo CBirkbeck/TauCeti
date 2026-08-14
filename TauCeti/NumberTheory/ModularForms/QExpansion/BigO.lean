@@ -46,18 +46,21 @@ namespace TauCeti.UpperHalfPlane
 
 noncomputable section
 
-variable {h : ℝ} {F : Type*} [FunLike F ℍ ℂ] {f : F}
+variable {h : ℝ} {f : ℍ → ℂ}
 
 /-- A function on `ℍ` that is `h`-periodic with cusp function analytic at `0` tends to
 `valueAtInfty` along `atImInfty`. -/
-public lemma tendsto_valueAtInfty (hh : 0 < h) (hper : Function.Periodic (⇑f ∘ ofComplex) h)
-    (hfanalytic : AnalyticAt ℂ (cuspFunction h f) 0) :
-    Tendsto (fun τ : ℍ ↦ f τ) atImInfty (𝓝 (valueAtInfty f)) := by
-  have ht : Tendsto (fun τ : ℍ ↦ f τ) atImInfty (𝓝 (cuspFunction h f 0)) := by
-    refine Filter.Tendsto.congr (fun τ ↦ ?_)
-      ((hfanalytic.continuousAt.tendsto).comp (qParam_tendsto_atImInfty hh))
+public lemma tendsto_valueAtInfty (hh : 0 < h) (hper : Function.Periodic (f ∘ ofComplex) h)
+    (hcont : ContinuousAt (cuspFunction h f) 0) :
+    Tendsto f atImInfty (𝓝 (valueAtInfty f)) := by
+  have ht : Tendsto f atImInfty (𝓝 (cuspFunction h f 0)) := by
+    refine Filter.Tendsto.congr (fun τ ↦ ?_) (hcont.tendsto.comp (qParam_tendsto_atImInfty hh))
     simpa using eq_cuspFunction τ hh.ne' hper
-  simpa [cuspFunction_apply_zero hh hfanalytic hper] using ht
+  simpa [valueAtInfty, ht.limUnder_eq] using ht
+
+section PowerSeries
+
+variable {F : Type*} [FunLike F ℍ ℂ] {f : F}
 
 /-- The power series of the cusp function at `0` is the `q`-expansion. -/
 private lemma hasFPowerSeriesAt_cuspFunction (hfanalytic : AnalyticAt ℂ (cuspFunction h f) 0) :
@@ -112,6 +115,8 @@ public lemma qExpansion_coeff_eq_zero_of_cuspFunction_isBigO_pow
     qExpansionFormalMultilinearSeries_coeff] using
     hhom.continuousMultilinearMap_apply_eq_zero 1
 
+end PowerSeries
+
 end
 
 end TauCeti.UpperHalfPlane
@@ -126,7 +131,8 @@ public lemma tendsto_valueAtInfty [ModularFormClass F Γ k] (f : F) (hh : 0 < h)
     Tendsto (fun τ : ℍ ↦ f τ) atImInfty (𝓝 (valueAtInfty f)) :=
   TauCeti.UpperHalfPlane.tendsto_valueAtInfty hh
     (SlashInvariantFormClass.periodic_comp_ofComplex (k := k) f hΓ)
-    (_root_.ModularFormClass.analyticAt_cuspFunction_zero (F := F) (k := k) (f := f) hh hΓ)
+    (_root_.ModularFormClass.analyticAt_cuspFunction_zero (F := F) (k := k) (f := f)
+      hh hΓ).continuousAt
 
 /-- If the first `N` `q`-coefficients of a modular form vanish, then its cusp function is
 `O(‖q‖^N)` near `0`. -/
