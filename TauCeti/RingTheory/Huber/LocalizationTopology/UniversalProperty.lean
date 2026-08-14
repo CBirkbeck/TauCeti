@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Basic
+public import Mathlib.RingTheory.Adjoin.Polynomial.Basic
 
 /-!
 # The localisation topology: the universal property
@@ -16,15 +17,23 @@ the second half of Wedhorn's Proposition and Definition 5.51.
 The construction of the topology is in `LocalizationTopology.Basic`, and the completion `A⟨T/s⟩`
 in `LocalizationTopology.Completion`.
 
+The power-boundedness prerequisites this needs — `isPowerBounded_of_mem_locSubring` and
+`isPowerBounded_divBy`, which say every element of `D`, in particular each fraction `t/s`, is
+power-bounded — are in `LocalizationTopology.Basic` and imported from there.
+
 ## Main results
 
-* `isPowerBounded_of_mem_locSubring` and `isPowerBounded_divBy`: every element of `D` — in
-  particular each fraction `t/s` — is power-bounded.
 * `continuous_of_continuous_algebraMap_of_isPowerBounded`: a sufficient criterion for a ring
   homomorphism out of `Aₛ` to be continuous. The converse is not proved here.
 * `existsUnique_continuous_ringHom_locTopology`: the universal property — a continuous
   `φ : A →+* B` inverting `s` and sending each `t/s` to a power-bounded element extends to `Aₛ` in
   exactly one continuous way.
+
+## Provenance
+
+The declarations here are relocated from the AINTLIB port recorded in
+`LocalizationTopology.Basic`; see that module's Provenance section for the source file and
+commit. This module adds no new mathematics.
 
 ## References
 

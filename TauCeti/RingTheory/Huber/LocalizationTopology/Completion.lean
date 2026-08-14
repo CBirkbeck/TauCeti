@@ -38,6 +38,12 @@ complete Hausdorff targets.
   `existsUnique_continuous_ringHom_completion_locTopology`: `A⟨T/s⟩` is Huber, and the universal
   property holds across it for complete Hausdorff targets.
 
+## Provenance
+
+`A⟨T/s⟩` and its universal property are this repository's own, built on the localisation topology
+of `LocalizationTopology.Basic`, which is the AINTLIB port — see that module's Provenance section
+for the source file and commit.
+
 ## References
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition and Definition 5.51, §5.6

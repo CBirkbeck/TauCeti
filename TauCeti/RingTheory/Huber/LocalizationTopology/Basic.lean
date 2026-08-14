@@ -6,7 +6,6 @@ module
 
 public import TauCeti.RingTheory.Localization.Away
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
-public import Mathlib.RingTheory.Adjoin.Polynomial.Basic
 public import TauCeti.RingTheory.Huber.Basic
 
 /-!
