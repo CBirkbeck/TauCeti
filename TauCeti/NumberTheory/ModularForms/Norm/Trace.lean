@@ -72,12 +72,12 @@ variable [𝒢.IsFiniteRelIndex 𝒮ℒ]
 
 variable (𝒢) in
 /-- The coset of `T ^ j` in `𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ)`. -/
-public def tPowCoset (j : ℕ) : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ) :=
+private def tPowCoset (j : ℕ) : 𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ) :=
   ⟦(mapGL ℝ).rangeRestrict ((ModularGroup.T : SL(2, ℤ))^j)⟧
 
 variable (𝒢) in
 /-- The cosets of `T ^ j` for `j < integerCuspWidth 𝒢`, as a finset. -/
-public def tPowCosets [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
+private def tPowCosets [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
     Finset (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) :=
   Finset.univ.image fun j : Fin (Subgroup.integerCuspWidth 𝒢) ↦ tPowCoset 𝒢 j
 
@@ -172,16 +172,22 @@ private lemma prod_tPowCosets_quotientFunc [DecidableEq (𝒮ℒ ⧸ (𝒢.subgr
 
 /-- The remainder factor of the norm at the cusp `∞`: the product of the coset factors
 outside the `T`-power cosets, so that the norm is the Galois product of the integer
-translates of `f` times this factor. Its value is `normRest_eq_prod`. -/
+translates of `f` times this factor. It is characterised by
+`norm_eq_galoisProd_mul_normRest`, and is `1`-periodic and analytic at `∞`. -/
 public noncomputable def normRest : ℍ → ℂ := by
   classical
   let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
   exact ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q
 
 /-- `normRest` as the product over the cosets that are not represented by a power of `T`,
-for any choice of the finiteness and decidability instances on the coset space. -/
+for any choice of the finiteness and decidability instances on the coset space.
+
+Private, together with `tPowCoset`/`tPowCosets`: the indexing by `T`-power cosets is how
+the decomposition is *proved*, not part of what it asserts. The public interface is
+`periodic_normRest`, `analyticAt_cuspFunction_normRest` and
+`norm_eq_galoisProd_mul_normRest`, none of whose statements mention the index set. -/
 @[simp]
-public lemma normRest_eq_prod [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
+private lemma normRest_eq_prod [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
     [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
     normRest f = ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q := by
   unfold normRest
