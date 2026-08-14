@@ -20,9 +20,10 @@ automorphism fixes it) and `map_smul_baseChange_eq` (the conjugate of an isomorp
 changes is again one). Comparing an isomorphism with its conjugate via the last of these is what
 produces the Galois cocycle used by the twist classification.
 
-That cocycle comparison lands on a product `C * [-1]`, so the four components of such a product
-are read off once here, as `mul_negVariableChange_u/_r/_s/_t`, rather than by unfolding
-`VariableChange.mul_def` against the components of `[-1]` at each use.
+That cocycle comparison lands on a product `C * [-1]`. Mathlib gives a product only as a whole
+structure literal (`VariableChange.mul_def`), so this file also reads off its components:
+`VariableChange.mul_u/_r/_s/_t` for an arbitrary product, and `mul_negVariableChange_u/_r/_s/_t`
+for the `[-1]` case, the latter derived from the former. Only the `[-1]` four are `@[simp]`.
 
 The negation is the nontrivial automorphism in the `Aut (E, O)`
 milestone of `TauCetiRoadmap/EllipticCurves/README.md` §Layer 1, proved in
@@ -63,31 +64,6 @@ def negVariableChange : VariableChange R :=
 
 @[simp] lemma negVariableChange_t : E.negVariableChange.t = -E.a₃ := by
   simp only [negVariableChange]
-
-/-! ### Components of a change of variables composed with `[-1]` -/
-
-section MulNegVariableChange
-
-variable (C : VariableChange R)
-
-@[simp] lemma mul_negVariableChange_u : (C * E.negVariableChange).u = -C.u := by
-  simp only [VariableChange.mul_def, negVariableChange_u, mul_neg, mul_one]
-
-@[simp] lemma mul_negVariableChange_r : (C * E.negVariableChange).r = C.r := by
-  simp only [VariableChange.mul_def, negVariableChange_u, negVariableChange_r, Units.val_neg,
-    Units.val_one, neg_one_sq, mul_one, add_zero]
-
-@[simp] lemma mul_negVariableChange_s : (C * E.negVariableChange).s = -C.s - E.a₁ := by
-  simp only [VariableChange.mul_def, negVariableChange_u, negVariableChange_s, Units.val_neg,
-    Units.val_one, neg_mul, one_mul, sub_eq_add_neg]
-
-@[simp] lemma mul_negVariableChange_t :
-    (C * E.negVariableChange).t = -C.t - C.r * E.a₁ - E.a₃ := by
-  simp only [VariableChange.mul_def, negVariableChange_u, negVariableChange_s,
-    negVariableChange_t, Units.val_neg, Units.val_one]
-  ring
-
-end MulNegVariableChange
 
 /-- The negation automorphism fixes the curve. -/
 @[simp] lemma negVariableChange_smul_self : E.negVariableChange • E = E := by
@@ -147,7 +123,57 @@ enough. -/
     (C * D).map φ = C.map φ * D.map φ :=
   _root_.map_mul (VariableChange.mapHom φ) C D
 
+/-! ### Components of a product
+
+Mathlib gives the composition of two changes of variables as a single structure literal,
+`VariableChange.mul_def`. These read off its four components one at a time, which is the form a
+goal about one component needs. Deliberately not `@[simp]`: rewriting a product to its components
+is not a normal form, and doing it eagerly would undo the packaging `mul_def` provides. -/
+
+variable (C C' : VariableChange R)
+
+lemma mul_u : (C * C').u = C.u * C'.u := rfl
+
+lemma mul_r : (C * C').r = C.r * (C'.u : R) ^ 2 + C'.r := rfl
+
+lemma mul_s : (C * C').s = (C'.u : R) * C.s + C'.s := rfl
+
+lemma mul_t : (C * C').t = C.t * (C'.u : R) ^ 3 + C.r * C'.s * (C'.u : R) ^ 2 + C'.t := rfl
+
 end VariableChange
+
+/-! ### Components of a change of variables composed with `[-1]`
+
+`[-1]` has `u = -1`, so composing with it negates `u`, fixes `r`, and shifts `s` and `t` by the
+curve's `a₁` and `a₃`. These are the four `VariableChange.mul_*` projections above specialised to
+`negVariableChange` and simplified; unlike those, they *are* `@[simp]`, because the right-hand
+sides are the normal form wanted downstream — the cocycle comparisons of the twist classification
+land on exactly these products. -/
+
+variable (C : VariableChange R)
+
+/-- Composing with `[-1]` negates the scaling factor `u`. -/
+@[simp] lemma mul_negVariableChange_u : (C * E.negVariableChange).u = -C.u := by
+  rw [VariableChange.mul_u, negVariableChange_u, mul_neg, mul_one]
+
+/-- Composing with `[-1]` leaves the translation `r` unchanged, `[-1]` having `r = 0` and
+`u = -1` entering squared. -/
+@[simp] lemma mul_negVariableChange_r : (C * E.negVariableChange).r = C.r := by
+  rw [VariableChange.mul_r, negVariableChange_u, negVariableChange_r, Units.val_neg,
+    Units.val_one, neg_one_sq, mul_one, add_zero]
+
+/-- Composing with `[-1]` negates the shear `s` and shifts it by the curve's `a₁`. -/
+@[simp] lemma mul_negVariableChange_s : (C * E.negVariableChange).s = -C.s - E.a₁ := by
+  rw [VariableChange.mul_s, negVariableChange_u, negVariableChange_s, Units.val_neg,
+    Units.val_one, neg_mul, one_mul, sub_eq_add_neg]
+
+/-- Composing with `[-1]` negates the translation `t` and shifts it by `r * a₁` and the curve's
+`a₃`. -/
+@[simp] lemma mul_negVariableChange_t :
+    (C * E.negVariableChange).t = -C.t - C.r * E.a₁ - E.a₃ := by
+  rw [VariableChange.mul_t, negVariableChange_u, negVariableChange_s, negVariableChange_t,
+    Units.val_neg, Units.val_one]
+  ring
 
 section BaseChange
 
