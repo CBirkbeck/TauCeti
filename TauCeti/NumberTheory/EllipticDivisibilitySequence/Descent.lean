@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.Algebra.GroupWithZero.NonZeroDivisors
-public import Mathlib.NumberTheory.EllipticDivisibilitySequence
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Recurrence
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Transfer
 import TauCeti.NumberTheory.EllipticDivisibilitySequence.SignEquivariance
@@ -251,7 +250,10 @@ private theorem atomRelVanishes_of_min {a : ℤ} (one : W 1 ∈ R⁰) (two : W 2
   · subst heq; exact fix.1 same anti
   · have hdm : d = a % 2 := by omega
     subst hdm
-    rcases (show a % 2 + 2 = c ∨ a % 2 + 2 < c by omega) with heq₂ | hlt₃
+    -- `c` carries the parity of `a` and exceeds `a % 2`, so it is at least `a % 2 + 2`: either
+    -- the quadruple is already the minimal pair, or the previous lemma's second case applies.
+    have hcmin : a % 2 + 2 = c ∨ a % 2 + 2 < c := by omega
+    rcases hcmin with heq₂ | hlt₃
     · subst heq₂; exact rel le_rfl same anti
     · exact fix.2 hlt₃ same anti
 
@@ -295,7 +297,11 @@ private theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
     intro same anti
     obtain ⟨h0, h1, h2, h3⟩ := (nonnegStrictAnti₄_iff _ _ _ _).mp anti
     have hpb := same.2.1
-    rcases (show b' + 2 < a' ∨ b' + 2 = a' by omega) with hb | hb
+    -- `b'` and `a'` share a parity and `b' < a'`, so the gap is at least two. A wider gap can be
+    -- transferred down to a smaller first index; a gap of exactly two is where the recurrences
+    -- live, and is the only place the induction bottoms out.
+    have hgap : b' + 2 < a' ∨ b' + 2 = a' := by omega
+    rcases hgap with hb | hb
     · rw [← atomRel_avg_sub W same, ← atomRel_abs₄]
       exact ih _ (by omega) _ _ _ (parity_abs_avg_sub same)
         (nonnegStrictAnti₄_abs_avg_sub h1 (by omega) h2 h3)
@@ -303,13 +309,20 @@ private theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
       · obtain ⟨k, rfl⟩ : ∃ k, a' = 2 * k := ⟨a' / 2, by omega⟩
         have hodd := oddRec (k - 1) (by omega)
         rw [sub_add_cancel] at hodd
-        rw [show (2 * k % 2 : ℤ) = 2 * 0 by omega, show (2 : ℤ) * 0 + 2 = 2 * 1 by norm_num,
-          show b' = 2 * (k - 1) by omega, atomRel_even_eq_rel]
+        -- `atomRel_even_eq_rel` carries every index in `2 * _` form, which is what lets
+        -- `atomRel_two_mul` fire; the goal's indices have to be put in that form first.
+        have hlast : (2 * k % 2 : ℤ) = 2 * 0 := by omega
+        have hthird : (2 : ℤ) * 0 + 2 = 2 * 1 := by norm_num
+        have hsecond : b' = 2 * (k - 1) := by omega
+        rw [hlast, hthird, hsecond, atomRel_even_eq_rel]
         exact hodd
       · obtain ⟨k, rfl⟩ : ∃ k, a' = 2 * k + 1 := ⟨a' / 2, by omega⟩
-        rw [show ((2 * k + 1) % 2 : ℤ) = 2 * 0 + 1 by omega,
-          show (2 : ℤ) * 0 + 1 + 2 = 2 * 1 + 1 by norm_num,
-          show b' = 2 * (k - 1) + 1 by omega, atomRel_odd_eq_rel]
+        -- Likewise `atomRel_odd_eq_rel` carries its indices in `2 * _ + 1` form, which is what
+        -- lets `atom_odd` reduce each atom without any reasoning about truncated division.
+        have hlast : ((2 * k + 1) % 2 : ℤ) = 2 * 0 + 1 := by omega
+        have hthird : (2 : ℤ) * 0 + 1 + 2 = 2 * 1 + 1 := by norm_num
+        have hsecond : b' = 2 * (k - 1) + 1 := by omega
+        rw [hlast, hthird, hsecond, atomRel_odd_eq_rel]
         exact evenRec k (by omega)
 
 /-- Three distinct positive even indices, in any order, against a last index of `0`. The six
