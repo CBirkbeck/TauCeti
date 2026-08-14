@@ -151,9 +151,34 @@ change of variables scales the Weierstrass polynomial by `u⁶`, and `u` is a un
       - (C.u : R) ^ 3 * y * u_pow_mul_variableChange_a₃ W C
       + (C.u : R) ^ 2 * x * u_pow_mul_variableChange_a₄ W C + u_pow_mul_variableChange_a₆ W C
 
+/-- **The `Y`-partial derivative under the change of variables**, scaling by `u³`. Both sides are
+`polynomialY` evaluated at a point, written in the expanded form that `evalEval_polynomialY` and
+`nonsingular_iff'` produce; this is the second row of the matrix in `variableChange_nonsingular`
+below. -/
+private lemma variableChange_polynomialY_eval (x y : R) :
+    2 * ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
+        + W.a₁ * ((C.u : R) ^ 2 * x + C.r) + W.a₃
+      = (C.u : R) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃) := by
+  linear_combination (-(C.u : R) ^ 2 * x) * u_mul_variableChange_a₁ W C
+    - u_pow_mul_variableChange_a₃ W C
+
+/-- **The `X`-partial derivative under the change of variables**, scaling by `u⁴` and shearing by
+an `s`-multiple of the `Y`-partial. Both sides are `polynomialX` evaluated at a point, in the same
+expanded form as `variableChange_polynomialY_eval`; this is the first row of the matrix in
+`variableChange_nonsingular` below, and the only place the shear `s` enters a derivative. -/
+private lemma variableChange_polynomialX_eval (x y : R) :
+    W.a₁ * ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
+        - (3 * ((C.u : R) ^ 2 * x + C.r) ^ 2 + 2 * W.a₂ * ((C.u : R) ^ 2 * x + C.r) + W.a₄)
+      = (C.u : R) ^ 4 * ((C • W).a₁ * y - (3 * x ^ 2 + 2 * (C • W).a₂ * x + (C • W).a₄))
+        - C.s * ((C.u : R) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃)) := by
+  linear_combination (-(C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x) * u_mul_variableChange_a₁ W C
+    + (2 * (C.u : R) ^ 2 * x) * u_pow_mul_variableChange_a₂ W C
+    + C.s * u_pow_mul_variableChange_a₃ W C + u_pow_mul_variableChange_a₄ W C
+
 /-- **Nonsingularity transfers across the change of variables.** The two partial derivatives
-transform by the matrix `![![u⁴, -su³], ![0, u³]]`, which is invertible because `u` is, so
-`W_X ≠ 0 ∨ W_Y ≠ 0` holds at the image exactly when it holds at the source.
+transform by the matrix `![![u⁴, -su³], ![0, u³]]` — the two lemmas just above — which is
+invertible because `u` is, so `W_X ≠ 0 ∨ W_Y ≠ 0` holds at the image exactly when it holds at the
+source.
 
 This is what lets the point map of `Affine/Point/VariableChange.lean` avoid `[W.IsElliptic]`:
 `equation_iff_nonsingular` would supply nonsingularity from the equation, but only for an elliptic
@@ -162,23 +187,10 @@ curve, whereas carrying a point to a point needs no such hypothesis. -/
     W.toAffine.Nonsingular ((C.u : R) ^ 2 * x + C.r)
         ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
       ↔ (C • W).toAffine.Nonsingular x y := by
-  -- `W_Y` scales by `u³`
-  have hY : 2 * ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
-        + W.a₁ * ((C.u : R) ^ 2 * x + C.r) + W.a₃
-      = (C.u : R) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃) := by
-    linear_combination (-(C.u : R) ^ 2 * x) * u_mul_variableChange_a₁ W C
-      - u_pow_mul_variableChange_a₃ W C
-  -- `W_X` scales by `u⁴`, shifted by an `s`-multiple of `W_Y`
-  have hX : W.a₁ * ((C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x + C.t)
-        - (3 * ((C.u : R) ^ 2 * x + C.r) ^ 2 + 2 * W.a₂ * ((C.u : R) ^ 2 * x + C.r) + W.a₄)
-      = (C.u : R) ^ 4 * ((C • W).a₁ * y - (3 * x ^ 2 + 2 * (C • W).a₂ * x + (C • W).a₄))
-        - C.s * ((C.u : R) ^ 3 * (2 * y + (C • W).a₁ * x + (C • W).a₃)) := by
-    linear_combination (-(C.u : R) ^ 3 * y + (C.u : R) ^ 2 * C.s * x) * u_mul_variableChange_a₁ W C
-      + (2 * (C.u : R) ^ 2 * x) * u_pow_mul_variableChange_a₂ W C
-      + C.s * u_pow_mul_variableChange_a₃ W C + u_pow_mul_variableChange_a₄ W C
   rw [nonsingular_iff', nonsingular_iff', variableChange_equation]
   refine and_congr_right fun _ ↦ ?_
-  rw [hX, hY, ← not_and_or, ← not_and_or]
+  rw [variableChange_polynomialX_eval W C x y, variableChange_polynomialY_eval W C x y,
+    ← not_and_or, ← not_and_or]
   refine not_congr ⟨fun ⟨h1, h2⟩ ↦ ?_, fun ⟨h1, h2⟩ ↦ ?_⟩
   · have hB := (C.u.isUnit.pow 3).mul_right_eq_zero.mp h2
     rw [hB, mul_zero, mul_zero, sub_zero] at h1
