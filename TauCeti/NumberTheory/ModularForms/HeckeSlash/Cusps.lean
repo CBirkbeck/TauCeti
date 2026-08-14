@@ -20,12 +20,9 @@ vanishing at every cusp, whatever representatives were chosen.
 
 This is the step the Layer 2 statement "`Tₙ` preserves `S_k`" rests on.
 
-**These lemmas are about `𝒮ℒ`**, i.e. level one: both the hypothesis and the conclusion quantify
-over cusps of `𝒮ℒ`, because `IsCusp.smul_map_ratCast` is proved from `isCusp_SL2Z_iff`, mathlib's
-description of the cusps of `𝒮ℒ` as the rational points. A `CuspForm Γ k` supplies
-`zero_at_cusps'` at the cusps of its *own* `Γ`, so applying these to a general `Γ` needs a
-comparison between the cusps of `Γ` and those of `𝒮ℒ` first; for `Γ = 𝒮ℒ` the hypothesis is
-immediate.
+Both are stated for an arbitrary arithmetic `Γ`, which is the hypothesis a `CuspForm Γ k`
+supplies through `zero_at_cusps'`. `IsCusp.smul_map_ratCast` reduces to `𝒮ℒ` internally via
+`Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z`, so no comparison is left for the caller.
 
 ## Main results
 
@@ -56,17 +53,17 @@ variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 /-- **The slash sum vanishes at every cusp** when the function does. Each summand `f ∣[k] g` is
 zero at the cusp `c` because `f` is zero at the cusp `g • c`, and `OnePoint.IsZeroAt` is closed
 under finite sums. -/
-lemma isZeroAt_heckeSlashSum {f : ℍ → ℂ}
-    (hf : ∀ c : OnePoint ℝ, IsCusp c 𝒮ℒ → c.IsZeroAt f k) {c : OnePoint ℝ} (hc : IsCusp c 𝒮ℒ) :
+lemma isZeroAt_heckeSlashSum {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {f : ℍ → ℂ}
+    (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsZeroAt f k) {c : OnePoint ℝ} (hc : IsCusp c Γ) :
     c.IsZeroAt (heckeSlashSum k D f) k := by
   rw [heckeSlashSum_def]
   exact OnePoint.IsZeroAt.sum fun i _ ↦
     OnePoint.IsZeroAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
 
 /-- **The slash sum is bounded at every cusp** when the function is. -/
-lemma isBoundedAt_heckeSlashSum {f : ℍ → ℂ}
-    (hf : ∀ c : OnePoint ℝ, IsCusp c 𝒮ℒ → c.IsBoundedAt f k) {c : OnePoint ℝ}
-    (hc : IsCusp c 𝒮ℒ) : c.IsBoundedAt (heckeSlashSum k D f) k := by
+lemma isBoundedAt_heckeSlashSum {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {f : ℍ → ℂ}
+    (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsBoundedAt f k) {c : OnePoint ℝ}
+    (hc : IsCusp c Γ) : c.IsBoundedAt (heckeSlashSum k D f) k := by
   rw [heckeSlashSum_def]
   exact OnePoint.IsBoundedAt.sum fun i _ ↦
     OnePoint.IsBoundedAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
