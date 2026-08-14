@@ -428,7 +428,7 @@ private theorem locIdealImage_mul_algebraMap_subset (P : PairOfDefinition A)
     {m n : ℕ} {x : A} (hx : ∀ w ∈ P.idealImage m, w * x ∈ P.idealImage n)
     {d : locSubring P T s S} (hd : d ∈ (locIdeal P T s S ^ m : Ideal (locSubring P T s S))) :
     (d : S) * algebraMap A S x ∈ locIdealImage P T s S n := by
-  rw [locIdeal, ← Ideal.map_pow, ← Ideal.span_eq (P.idealOfDefinition ^ m), Ideal.map_span] at hd
+  rw [locIdeal_pow_eq_span] at hd
   induction hd using Submodule.span_induction with
   | mem z hz =>
     obtain ⟨b, hb, rfl⟩ := hz
