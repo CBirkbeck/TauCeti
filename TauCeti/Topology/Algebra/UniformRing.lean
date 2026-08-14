@@ -66,11 +66,15 @@ noncomputable def completeRingEquivSelf : UniformSpace.Completion S ≃+* S :=
   RingEquiv.ofBijective (extensionHom (RingHom.id S) continuous_id)
     (coe_extensionHom_id S ▸ (UniformCompletion.completeEquivSelf (α := S)).bijective)
 
+/-- The isomorphism undoes the canonical inclusion: on an element of `S` regarded as an
+element of the completion, it returns that element. -/
 @[simp]
 theorem completeRingEquivSelf_coe (a : S) :
     completeRingEquivSelf S (a : UniformSpace.Completion S) = a :=
   extensionHom_coe (RingHom.id S) continuous_id a
 
+/-- The inverse isomorphism **is** the canonical inclusion: it sends an element of `S` to
+itself, regarded as an element of the completion. -/
 @[simp]
 theorem completeRingEquivSelf_symm_apply (a : S) :
     (completeRingEquivSelf S).symm a = (a : UniformSpace.Completion S) :=
@@ -112,10 +116,13 @@ noncomputable def completeAlgEquivSelf : UniformSpace.Completion S ≃ₐ[R] S :
     rw [algebraMap_def]
     exact completeRingEquivSelf_coe S _
 
+/-- The algebra equivalence has the same underlying map as the ring isomorphism, so `simp`
+normalises the `R`-algebra bundling onto the ring one. -/
 @[simp]
 theorem coe_completeAlgEquivSelf :
     ⇑(completeAlgEquivSelf S R) = ⇑(completeRingEquivSelf S) := (rfl)
 
+/-- The inverses agree too, so the two bundlings normalise together in both directions. -/
 @[simp]
 theorem coe_completeAlgEquivSelf_symm :
     ⇑(completeAlgEquivSelf S R).symm = ⇑(completeRingEquivSelf S).symm := (rfl)

@@ -132,11 +132,8 @@ theorem IsWeightFamily.continuous_coeff {T : Fin k → Set A} (hT : IsWeightFami
   obtain ⟨W, hWV⟩ := NonarchimedeanAddGroup.is_nonarchimedean V hV
   obtain ⟨N, hN, hNW⟩ := isBounded_iff.mp hb (W : Set A) (W.isOpen.mem_nhds W.zero_mem)
   obtain ⟨U, hUN⟩ := NonarchimedeanAddGroup.is_nonarchimedean N hN
-  have hle : weightMul T ν U.toAddSubgroup ≤ W.toAddSubgroup := by
-    rw [weightMul_def]
-    refine (AddSubgroup.closure_le _).mpr ?_
-    rintro _ ⟨t, ht, u, hu, rfl⟩
-    exact hNW ⟨u, hUN hu, t, ht, mul_comm u t⟩
+  have hle : weightMul T ν U.toAddSubgroup ≤ W.toAddSubgroup :=
+    weightMul_le.mpr fun t ht u hu ↦ hNW ⟨u, hUN hu, t, ht, mul_comm u t⟩
   exact ⟨U, trivial, fun f hf ↦ hWV (hle (mem_weightedNhd.mp hf ν))⟩
 
 /-- **`A⟨X⟩_T` over a Hausdorff base is Hausdorff** (Wedhorn 5.49(2)) as soon as every weight is
