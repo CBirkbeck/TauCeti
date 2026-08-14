@@ -13,7 +13,8 @@ public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 
 The classical `T_p` is a sum of slashes by the representatives `!![1, b; 0, p]` for `b < p`,
 together with one further term when `p ∤ N`. This file defines that first sum, `heckeSlashUpperTri`,
-and records that it is `ℂ`-linear in `f`.
+and records that `f ↦ heckeSlashUpperTri k p f` is `ℂ`-linear: it preserves zero, addition and
+scalar multiplication. (Linearity in `f` only; this is not yet bundled as a `LinearMap`.)
 
 Why these representatives: mathlib's `IsBoundedAtImInfty.slash` requires `g 1 0 = 0`, so
 boundedness of a slash at the cusp `∞` is available exactly for upper-triangular `g`. That is why
@@ -32,7 +33,10 @@ the entrywise description of the representatives is not restated.
   equations, which are the interface since neither definition is `@[expose]`.
 * `HeckeRing.GL2.upperTriRep_apply_one_zero`: the representatives are upper triangular — the
   hypothesis mathlib's `IsBoundedAtImInfty.slash` requires.
-* `HeckeRing.GL2.heckeSlashUpperTri_add`, `heckeSlashUpperTri_zero`: additivity in `f`.
+* `HeckeRing.GL2.heckeSlashUpperTri_zero`, `heckeSlashUpperTri_add`,
+  `heckeSlashUpperTri_smul`: linearity in `f`.
+* `HeckeRing.GL2.det_upperTriRep_pos`: the representatives have determinant `p > 0`, which is
+  what lets scalars pass through the slash without the `σ` twist.
 
 ## Provenance
 
@@ -85,8 +89,24 @@ lemma heckeSlashUpperTri_def (f : ℍ → ℂ) :
   rw [heckeSlashUpperTri]
   exact Finset.sum_eq_zero fun b _ ↦ SlashAction.zero_slash k (upperTriRep p b)
 
+/-- The representatives have positive determinant: `det !![1, b; 0, p] = p > 0`. -/
+lemma det_upperTriRep_pos (b : Fin p) :
+    0 < (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ).det := by
+  rw [upperTriRep_def, upperTriGL_coe (fun i ↦ by fin_cases i <;> simp [b.pos]),
+    Matrix.det_mul, Matrix.det_diagonal]
+  simp [Matrix.det_fin_two, Matrix.map_apply, Fin.prod_univ_two, b.pos]
+
 @[simp] lemma heckeSlashUpperTri_add (f g : ℍ → ℂ) :
     heckeSlashUpperTri k p (f + g) = heckeSlashUpperTri k p f + heckeSlashUpperTri k p g := by
   simp [heckeSlashUpperTri, Finset.sum_add_distrib]
+
+/-- **Scalars pass through the sum.** With `heckeSlashUpperTri_add` and
+`heckeSlashUpperTri_zero` this is the `ℂ`-linearity of `f ↦ heckeSlashUpperTri k p f`. The
+scalar generality matches `ModularForm.rat_smul_slash_of_det_pos`. -/
+@[simp] lemma heckeSlashUpperTri_smul {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α)
+    (f : ℍ → ℂ) : heckeSlashUpperTri k p (c • f) = c • heckeSlashUpperTri k p f := by
+  rw [heckeSlashUpperTri_def, heckeSlashUpperTri_def, Finset.smul_sum]
+  exact Finset.sum_congr rfl fun b _ ↦
+    ModularForm.rat_smul_slash_of_det_pos k (det_upperTriRep_pos p b) f c
 
 end HeckeRing.GL2
