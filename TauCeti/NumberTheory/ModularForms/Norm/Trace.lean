@@ -23,8 +23,8 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
 * `TauCeti.SlashInvariantForm.isBoundedAtImInfty_quotientFunc`.
 * `TauCeti.ModularForm.normRest`, `TauCeti.ModularForm.periodic_normRest` and
   `TauCeti.ModularForm.analyticAt_cuspFunction_normRest`.
-* `TauCeti.ModularForm.slashInvariantNorm_eq_galoisProd_mul_normRest`, with
-  `TauCeti.ModularForm.norm_eq_galoisProd_mul_normRest` as its modular-form corollary.
+* `TauCeti.ModularForm.slashInvariantNorm_apply_eq_galoisProd_mul_normRest`, with
+  `TauCeti.ModularForm.norm_apply_eq_galoisProd_mul_normRest` as its modular-form corollary.
 
 The remainder and the decomposition itself are algebraic, so they are stated for
 `SlashInvariantForm.norm` under `SlashInvariantFormClass`; only analyticity at the cusp
@@ -187,8 +187,11 @@ private lemma prod_tPowCosets_quotientFunc [DecidableEq (𝒮ℒ ⧸ (𝒢.subgr
 
 /-- The remainder factor of the norm at the cusp `∞`: the product of the coset factors
 outside the `T`-power cosets, so that the norm is the Galois product of the integer
-translates of `f` times this factor. It is characterised by
-`norm_eq_galoisProd_mul_normRest`, and is `1`-periodic and analytic at `∞`. -/
+translates of `f` times this factor.
+
+Under `SlashInvariantFormClass` alone it is `1`-periodic (`periodic_normRest`) and is
+characterised by `slashInvariantNorm_apply_eq_galoisProd_mul_normRest`. Analyticity is the
+one property that needs `f` to be a modular form: see `analyticAt_cuspFunction_normRest`. -/
 public noncomputable def normRest : ℍ → ℂ := by
   classical
   let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
@@ -200,7 +203,7 @@ for any choice of the finiteness and decidability instances on the coset space.
 Private, together with `tPowCoset`/`tPowCosets`: the indexing by `T`-power cosets is how
 the decomposition is *proved*, not part of what it asserts. The public interface is
 `periodic_normRest`, `analyticAt_cuspFunction_normRest` and
-`norm_eq_galoisProd_mul_normRest`, none of whose statements mention the index set. -/
+`norm_apply_eq_galoisProd_mul_normRest`, none of whose statements mention the index set. -/
 @[simp]
 private lemma normRest_def [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
     [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
@@ -221,8 +224,8 @@ the Galois product of the first `Subgroup.integerCuspWidth 𝒢` integer transla
 times `normRest f`.
 
 Stated for `SlashInvariantForm.norm`: the decomposition is algebraic, so it needs only slash
-invariance. `norm_eq_galoisProd_mul_normRest` is the modular-form corollary. -/
-public lemma slashInvariantNorm_eq_galoisProd_mul_normRest (τ : ℍ) :
+invariance. `norm_apply_eq_galoisProd_mul_normRest` is the modular-form corollary. -/
+public lemma slashInvariantNorm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
     _root_.SlashInvariantForm.norm 𝒮ℒ f τ =
       galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * normRest f τ := by
   classical
@@ -254,11 +257,18 @@ public lemma analyticAt_cuspFunction_normRest :
       SlashInvariantForm.isBoundedAtImInfty_quotientFunc f q)
 
 /-- **Decomposition of the norm at the cusp** for a modular form: the corollary of
-`slashInvariantNorm_eq_galoisProd_mul_normRest` at `ModularForm.norm`. -/
-public lemma norm_eq_galoisProd_mul_normRest (τ : ℍ) :
+`slashInvariantNorm_apply_eq_galoisProd_mul_normRest` at `ModularForm.norm`.
+
+`ModularForm.norm` and `SlashInvariantForm.norm` share an underlying function, but not a
+spelling, and `rw` matches syntactically — so this is the form in which the general theorem
+can be applied to a modular form, and the bridge is taken through the two `coe_norm` lemmas
+rather than left to definitional unfolding. -/
+public lemma norm_apply_eq_galoisProd_mul_normRest (τ : ℍ) :
     _root_.ModularForm.norm 𝒮ℒ f τ =
-      galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * normRest f τ :=
-  slashInvariantNorm_eq_galoisProd_mul_normRest f τ
+      galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * normRest f τ := by
+  have hcoe : _root_.ModularForm.norm 𝒮ℒ f τ = _root_.SlashInvariantForm.norm 𝒮ℒ f τ := by
+    rw [_root_.ModularForm.coe_norm, _root_.SlashInvariantForm.coe_norm]
+  rw [hcoe, slashInvariantNorm_apply_eq_galoisProd_mul_normRest]
 
 end Analytic
 
