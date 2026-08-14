@@ -158,8 +158,10 @@ lemma S_smul_mem_fd_of_norm_eq_one {p : ℍ} (hre : |p.re| ≤ 1 / 2) (hnorm : �
   · rw [re_S_smul_of_norm_eq_one hnorm, abs_neg]
     exact hre
 
+-- Not `@[simp]`: the simpNF linter rewrites the stated LHS through the unconditional simp
+-- lemma `ModularGroup.sl_moeb` to the `GL (Fin 2) ℝ`-lifted double action, the same reason
+-- `norm_coe_S_smul` and `re_S_smul` above are not tagged.
 /-- The inversion is an involution of `ℍ`. -/
-@[simp]
 lemma S_smul_S_smul (p : ℍ) : _root_.ModularGroup.S • (_root_.ModularGroup.S • p) = p := by
   rw [← _root_.ModularGroup.SL_neg_smul, ← _root_.ModularGroup.S_inv, inv_smul_smul]
 
