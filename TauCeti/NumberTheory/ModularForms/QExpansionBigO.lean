@@ -42,8 +42,8 @@ noncomputable section
 variable {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} {h : ℝ} {F : Type*} [FunLike F ℍ ℂ]
 
 /-- Values of a modular form tend to `valueAtInfty` along `atImInfty`. -/
-public lemma modularForm_tendsto_valueAtInfty [ModularFormClass F Γ k] [Γ.HasDetPlusMinusOne]
-    [DiscreteTopology Γ] (f : F) (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) :
+public lemma modularForm_tendsto_valueAtInfty [ModularFormClass F Γ k]
+    (f : F) (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) :
     Tendsto (fun τ : ℍ ↦ f τ) atImInfty (𝓝 (valueAtInfty f)) := by
   have hAn := ModularFormClass.analyticAt_cuspFunction_zero (f := f) hh hΓ
   have hper := SlashInvariantFormClass.periodic_comp_ofComplex f hΓ
@@ -56,7 +56,7 @@ public lemma modularForm_tendsto_valueAtInfty [ModularFormClass F Γ k] [Γ.HasD
 /-- If the first `N` `q`-coefficients vanish, then the cusp function is `O(‖q‖^N)` near
 `0`. -/
 public lemma cuspFunction_isBigO_pow_of_qExpansion_coeff_eq_zero
-    [ModularFormClass F Γ k] [Γ.HasDetPlusMinusOne] [DiscreteTopology Γ]
+    [ModularFormClass F Γ k]
     (f : F) (hh : 0 < h) (hΓ : h ∈ Γ.strictPeriods) (N : ℕ)
     (hcoeff : ∀ n < N, (qExpansion h f).coeff n = 0) :
     cuspFunction h f =O[𝓝 (0 : ℂ)] (fun q : ℂ ↦ ‖q‖ ^ N) := by
@@ -76,7 +76,6 @@ public lemma cuspFunction_isBigO_pow_of_qExpansion_coeff_eq_zero
   simpa [zero_add, hps] using hFPS.isBigO_sub_partialSum_pow N
 
 private lemma norm_cuspFunction_div_pow_le_of_ball_bound
-    [ModularFormClass F Γ k] [Γ.HasDetPlusMinusOne] [DiscreteTopology Γ]
     (f : F) {C' δ : ℝ} {N n : ℕ} (hn : n < N) (hC' : 0 ≤ C')
     (hδ : Metric.ball (0 : ℂ) δ ⊆ {z | ‖cuspFunction h f z‖ ≤ C' * ‖z‖ ^ N})
     {R : ℝ} (hR0 : 0 < R) (hRltδ : R < δ) (hRlt1 : R < 1) {z : ℂ}
@@ -99,7 +98,6 @@ private lemma norm_cuspFunction_div_pow_le_of_ball_bound
       field_simp
 
 private lemma norm_circleIntegral_cuspFunction_div_pow_le
-    [ModularFormClass F Γ k] [Γ.HasDetPlusMinusOne] [DiscreteTopology Γ]
     (f : F) {C' δ : ℝ} {N n : ℕ} (hn : n < N) (hC' : 0 ≤ C')
     (hδ : Metric.ball (0 : ℂ) δ ⊆ {z | ‖cuspFunction h f z‖ ≤ C' * ‖z‖ ^ N})
     {R : ℝ} (hR0 : 0 < R) (hRltδ : R < δ) (hRlt1 : R < 1) :
