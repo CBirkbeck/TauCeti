@@ -7,7 +7,7 @@ module
 public import Mathlib.RingTheory.MvPowerSeries.Basic
 public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 public import Mathlib.Order.Filter.ZeroAndBoundedAtFilter
-public import TauCeti.RingTheory.Huber.Bounded
+import TauCeti.RingTheory.Huber.Bounded
 
 /-!
 # Restricted Power Series
@@ -41,8 +41,7 @@ helpers `finite_shift_bad_set` and `coeff_mul_mem_of_forall_mem`, and `IsRestric
 convolution argument this file exists for. That convolution argument is AINTLIB's; what differs
 here is three call sites renamed to `isRestricted_iff_coeff`, and the choice of absorbing
 neighbourhood, which now comes from Mathlib's `exists_mem_nhds_zero_mul_subset` on the left and
-`TauCeti.Huber.isBounded_of_isCompact` on the right, in place of AINTLIB's inline `Aᵐᵒᵖ`
-transport.
+`TauCeti.Huber.isBounded_finite` on the right, in place of AINTLIB's inline `Aᵐᵒᵖ` transport.
 
 **AINTLIB's in statement, with proofs rewritten here.** Five: `isRestricted_zero`,
 `IsRestricted.add` and `IsRestricted.neg`, which now delegate to Mathlib's `Filter.ZeroAtFilter`
@@ -301,11 +300,11 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
   have hSf : Sf.Finite := hf.finite_coeff_notMem W
   have hSg : Sg.Finite := hg.finite_coeff_notMem W
   -- One neighbourhood of `0` absorbing the finitely many large coefficients of both factors:
-  -- `f`'s on the left, from Mathlib, and `g`'s on the right, from `isBounded_of_isCompact`.
+  -- `f`'s on the left, from Mathlib, and `g`'s on the right, from `isBounded_finite`.
   have hVnhds : (V : Set A) ∈ nhds (0 : A) := V.isOpen.mem_nhds V.zero_mem
   obtain ⟨T₁, hT₁mem, hT₁⟩ := exists_mem_nhds_zero_mul_subset
     (hSf.image fun a => MvPowerSeries.coeff a f).isCompact hVnhds
-  have hBg := isBounded_of_isCompact (hSg.image fun b => MvPowerSeries.coeff b g).isCompact
+  have hBg := isBounded_finite (hSg.image fun b => MvPowerSeries.coeff b g)
   obtain ⟨T₂, hT₂mem, hT₂⟩ := isBounded_iff.mp hBg _ hVnhds
   set T := T₁ ∩ T₂
   have hT_nhds : T ∈ nhds (0 : A) := Filter.inter_mem hT₁mem hT₂mem
