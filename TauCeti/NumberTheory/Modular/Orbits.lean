@@ -161,7 +161,7 @@ lemma S_smul_mem_fd_of_norm_eq_one {p : ℍ} (hre : |p.re| ≤ 1 / 2) (hnorm : �
 /-- The inversion is an involution of `ℍ`. -/
 @[simp]
 lemma S_smul_S_smul (p : ℍ) : _root_.ModularGroup.S • (_root_.ModularGroup.S • p) = p := by
-  rw [← SL_neg_smul, ← _root_.ModularGroup.S_inv, inv_smul_smul]
+  rw [← _root_.ModularGroup.SL_neg_smul, ← _root_.ModularGroup.S_inv, inv_smul_smul]
 
 /-- A point of the closed fundamental domain lying in the `SL(2, ℤ)`-orbit of `i` is `i`
 itself: the boundary identifications of `𝒟` fix `i`. -/
