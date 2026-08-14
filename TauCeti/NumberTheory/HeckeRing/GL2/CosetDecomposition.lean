@@ -72,15 +72,23 @@ dependent function on the ordered index pairs, and by `uniqueIndexPair` there is
 The stated fibre `Fin (a 1 / a 0)` is the fibre `Fin (a default.val.2 / a default.val.1)` that
 `Equiv.piUnique` produces: `default` is *definitionally* `⟨(0, 1), _⟩`, since that is the field
 of `uniqueIndexPair`. It is not syntactically that, which is why the specialisation below needs
-`finCongr` rather than a rewrite. -/
+`finCongr` rather than a rewrite.
+
+`@[expose]` is load-bearing, not decoration: the four characteristic lemmas below are proved by
+`rfl`, and without it the compiler rejects them with "this theorem is exported from the current
+module, [so] all definitions that need to be unfolded to prove this theorem must be exposed".
+Removing it does not trade one API for another — it leaves the equivalence with no usable
+characteristic equations at all. -/
 @[expose]
 def upperTriEntriesEquiv (a : Fin 2 → ℕ) : UpperTriEntries 2 a ≃ Fin (a 1 / a 0) :=
   Equiv.piUnique _
 
+/-- The equivalence reads off the coordinate at the unique index pair. -/
 @[simp]
 lemma upperTriEntriesEquiv_apply {a : Fin 2 → ℕ} (B : UpperTriEntries 2 a) :
     upperTriEntriesEquiv a B = B default := rfl
 
+/-- Its inverse installs a given coordinate at the unique index pair. -/
 @[simp]
 lemma upperTriEntriesEquiv_symm_apply_default {a : Fin 2 → ℕ} (b : Fin (a 1 / a 0)) :
     (upperTriEntriesEquiv a).symm b default = b := rfl
@@ -92,10 +100,13 @@ familiar `!![1, b; 0, p]`. -/
 def upperTriEntriesEquivFin (p : ℕ) : UpperTriEntries 2 ![1, p] ≃ Fin p :=
   (upperTriEntriesEquiv _).trans (finCongr (by simp))
 
+/-- At `a = ![1, p]` the offset read off is the coordinate, as natural numbers: the fibres
+`Fin (![1, p] 1 / ![1, p] 0)` and `Fin p` are definitionally but not syntactically equal. -/
 @[simp]
 lemma upperTriEntriesEquivFin_val {p : ℕ} (B : UpperTriEntries 2 ![1, p]) :
     (upperTriEntriesEquivFin p B : ℕ) = (B default : ℕ) := rfl
 
+/-- At `a = ![1, p]` the coordinate installed is the offset, as natural numbers. -/
 @[simp]
 lemma upperTriEntriesEquivFin_symm_val {p : ℕ} (b : Fin p) :
     (((upperTriEntriesEquivFin p).symm b default : ℕ)) = (b : ℕ) := rfl
