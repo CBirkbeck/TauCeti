@@ -24,6 +24,8 @@ order of the norm is the sum of the orders of the factors.
   form is nonzero.
 * `TauCeti.ModularForm.orderOfVanishingAt_norm`: the vanishing order of the norm at a point
   is the sum, over the coset space, of the vanishing orders of the coset factors.
+* `TauCeti.ModularForm.orderOfVanishingAt_le_orderOfVanishingAt_norm`: the norm vanishes to
+  at least the order the form does, so the zeros of the norm dominate those of the form.
 -/
 
 open UpperHalfPlane
@@ -63,6 +65,31 @@ public lemma orderOfVanishingAt_norm (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) (
   exact orderOfVanishingAt_prod
     (fun q _ ↦ SlashInvariantForm.mdifferentiable_quotientFunc f q)
     (fun q _ ↦ SlashInvariantForm.quotientFunc_ne_zero hf q) p
+
+/-- The norm vanishes at a point to at least the order the form itself does: the form is the
+identity-coset factor of the product, and the other factors contribute non-negative orders.
+
+This is the "the zeros of the norm dominate the zeros of the form" step, which transports
+finiteness of the zero set down from the level-one norm to the original form. -/
+public lemma orderOfVanishingAt_le_orderOfVanishingAt_norm (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0)
+    (p : ℍ) : orderOfVanishingAt (⇑f) p ≤
+      orderOfVanishingAt (⇑(_root_.ModularForm.norm ℋ f)) p := by
+  rw [orderOfVanishingAt_norm f hf p]
+  let _ : Fintype (ℋ ⧸ 𝒢.subgroupOf ℋ) := Fintype.ofFinite _
+  rw [finsum_eq_sum_of_fintype]
+  -- The coset space is not a group — `𝒢.subgroupOf ℋ` need not be normal — so the identity
+  -- coset is spelled `⟦1⟧` rather than `1`.
+  have h1 : _root_.SlashInvariantForm.quotientFunc f (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) = ⇑f := by
+    rw [_root_.SlashInvariantForm.quotientFunc_mk]
+    simp
+  calc orderOfVanishingAt (⇑f) p
+      = orderOfVanishingAt
+          (_root_.SlashInvariantForm.quotientFunc f (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ)) p := by rw [h1]
+    _ ≤ ∑ q, orderOfVanishingAt (_root_.SlashInvariantForm.quotientFunc f q) p :=
+        Finset.single_le_sum
+          (fun q _ ↦ orderOfVanishingAt_nonneg
+            (SlashInvariantForm.mdifferentiable_quotientFunc f q) p)
+          (Finset.mem_univ _)
 
 end ModularForm
 
