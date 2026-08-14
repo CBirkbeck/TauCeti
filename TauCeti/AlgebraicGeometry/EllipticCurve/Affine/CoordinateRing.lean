@@ -190,7 +190,7 @@ this says `W_X` vanishes at the point once `W_Y` does.
 
 Neither primality of `π` nor any field structure is used: this is the chain rule and
 `Polynomial.pow_sub_one_dvd_derivative_of_pow_dvd`. -/
-private theorem dvd_a₁_mul_add_of_sq_dvd {π g : R[X]}
+private theorem dvd_a₁_mul_add_of_dvd_two_mul_sub_of_sq_dvd {π g : R[X]}
     (hs : π ∣ 2 * g - (C W.a₁ * X + C W.a₃))
     (hsq : π ^ 2 ∣ g ^ 2 - g * (C W.a₁ * X + C W.a₃) -
       (X ^ 3 + C W.a₂ * X ^ 2 + C W.a₄ * X + C W.a₆)) :
@@ -221,7 +221,8 @@ image of `X` and `β` that of `-g`, and that both partial derivatives vanish the
 
 * `π ∣ H` gives the equation of `W`;
 * `π ∣ 2g - s` gives `W_Y(x₀, β) = 2β + a₁x₀ + a₃ = 0`;
-* `π ∣ a₁g + c'` — `dvd_a₁_mul_add_of_sq_dvd` — gives `W_X(x₀, β) = a₁β - (3x₀² + 2a₂x₀ + a₄) = 0`.
+* `π ∣ a₁g + c'` gives `W_X(x₀, β) = a₁β - (3x₀² + 2a₂x₀ + a₄) = 0`; this is the third divisibility
+  and it comes from the other two, by `dvd_a₁_mul_add_of_dvd_two_mul_sub_of_sq_dvd`.
 
 That is a singular point of an elliptic curve. The argument is uniform in the characteristic,
 unlike the route through `Squarefree (4X³ + b₂X² + 2b₄X + b₆)`. -/
@@ -235,7 +236,7 @@ private theorem not_sq_dvd_of_dvd_two_mul_sub [W.IsElliptic] {π g : F[X]} (hπ 
     rw [AdjoinRoot.aeval_eq]; exact AdjoinRoot.mk_eq_zero.mpr hr
   have h₁ := hev _ ((dvd_pow_self π two_ne_zero).trans hsq)
   have h₂ := hev _ hs
-  have h₃ := hev _ (dvd_a₁_mul_add_of_sq_dvd W hs hsq)
+  have h₃ := hev _ (dvd_a₁_mul_add_of_dvd_two_mul_sub_of_sq_dvd W hs hsq)
   simp only [map_sub, map_add, map_mul, map_pow, map_ofNat, aeval_C, aeval_X] at h₁ h₂ h₃
   have key : (W.map (algebraMap F (AdjoinRoot π))).Nonsingular (AdjoinRoot.root π)
       (-aeval (AdjoinRoot.root π) g) := equation_iff_nonsingular.mp <| by
