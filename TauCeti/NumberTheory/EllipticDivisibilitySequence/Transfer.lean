@@ -51,7 +51,7 @@ conversion at the use sites, and avoids standing a second parity predicate next 
 The ordering half reuses Mathlib's tuple API: it is `StrictAnti ![a, b, c, d]`, not a hand-rolled
 chain of three inequalities. `Mathlib/Order/Fin/Tuple.lean` states that API through `vecCons` —
 `strictAnti_vecCons` and `strictAnti_vecEmpty`, both `@[simp]` — so `simp` unfolds the tuple form
-into the adjacent comparisons the descent consumes, and `nonnegStrictAnti₄_def` records that
+into the adjacent comparisons the descent consumes, and `nonnegStrictAnti₄_iff` records that
 normal form once for downstream use.
 
 ## Provenance
@@ -84,10 +84,11 @@ the descent needs it wherever it needs the ordering; the decreasing half is Math
 `StrictAnti` on the tuple. -/
 def NonnegStrictAnti₄ (a b c d : ℤ) : Prop := 0 ≤ d ∧ StrictAnti ![a, b, c, d]
 
-/-- The adjacent-inequality form of `NonnegStrictAnti₄`. The definition body is not exposed,
-so this equation lemma is how a consumer computes with it, and it is the normal form `simp` uses. -/
+/-- `NonnegStrictAnti₄` unfolded to its adjacent inequalities. Not a restatement of the
+defining body — that is `0 ≤ d ∧ StrictAnti ![a, b, c, d]` — but the equivalent form consumers
+want, and the normal form `simp` rewrites to. -/
 @[simp]
-theorem nonnegStrictAnti₄_def (a b c d : ℤ) :
+theorem nonnegStrictAnti₄_iff (a b c d : ℤ) :
     NonnegStrictAnti₄ a b c d ↔ 0 ≤ d ∧ d < c ∧ c < b ∧ b < a := by
   unfold NonnegStrictAnti₄
   simp
@@ -123,7 +124,7 @@ theorem nonnegStrictAnti₄_avg_sub {a b c d : ℤ}
     NonnegStrictAnti₄ ((a + b + c + d) / 2 - d) ((a + b + c + d) / 2 - c)
       ((a + b + c + d) / 2 - b) |(a + b + c + d) / 2 - a| := by
   obtain ⟨h₁, h₂, h₃⟩ := parity
-  rw [nonnegStrictAnti₄_def] at anti ⊢
+  rw [nonnegStrictAnti₄_iff] at anti ⊢
   obtain ⟨hd, hdc, hcb, hba⟩ := anti
   refine ⟨abs_nonneg _, ?_, by omega, by omega⟩
   rcases abs_cases ((a + b + c + d) / 2 - a) with ⟨h, _⟩ | ⟨h, _⟩ <;> rw [h] <;> omega
@@ -135,7 +136,7 @@ theorem six_le_of_parity_of_nonnegStrictAnti₄ {a b c d : ℤ}
     (anti : NonnegStrictAnti₄ a b c d) :
     6 ≤ a := by
   obtain ⟨h₁, h₂, h₃⟩ := parity
-  rw [nonnegStrictAnti₄_def] at anti
+  rw [nonnegStrictAnti₄_iff] at anti
   obtain ⟨hd, hdc, hcb, hba⟩ := anti
   omega
 
