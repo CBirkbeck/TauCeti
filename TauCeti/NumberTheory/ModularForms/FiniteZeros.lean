@@ -6,6 +6,7 @@ module
 
 public import Mathlib.NumberTheory.Modular
 public import TauCeti.NumberTheory.ModularForms.Order.AtCusp
+public import TauCeti.NumberTheory.ModularForms.Norm.Order
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
 
@@ -23,6 +24,8 @@ finite-support input to the valence formula.
 * `TauCeti.ModularForm.exists_height_nonvanishing`: a nonzero form does not vanish at
   points of imaginary part above some height.
 * `TauCeti.ModularForm.finite_zeros_in_fd`: finiteness of the nonzero-order points in `𝒟`.
+* `TauCeti.ModularForm.finite_zeros_in_fd_of_isFiniteRelIndex`: the same at any level of
+  finite relative index, obtained from the level-one statement through the norm.
 
 ## References
 
@@ -81,6 +84,24 @@ lemma finite_zeros_in_fd [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → �
     MeromorphicOn.divisor_apply h_mero hpK]
   intro h0
   exact hp_ord (by rwa [orderOfVanishingAt_def])
+
+/-- A nonzero modular form on a subgroup of finite relative index in `𝒮ℒ` has only finitely
+many zeros in the standard fundamental domain.
+
+The norm of `f` is a level-one form, so `finite_zeros_in_fd` applies to it, and `f` vanishes
+to no greater order than its norm does — so the zero set of `f` sits inside a finite one. -/
+lemma finite_zeros_in_fd_of_isFiniteRelIndex {𝒢 : Subgroup (GL (Fin 2) ℝ)}
+    [𝒢.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F 𝒢 k] (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    Set.Finite {p : ℍ | p ∈ 𝒟 ∧ orderOfVanishingAt f p ≠ 0} := by
+  -- `norm_ne_zero` states the bundled form is nonzero; `finite_zeros_in_fd` needs the coercion.
+  have hN : (⇑(_root_.ModularForm.norm 𝒮ℒ f) : ℍ → ℂ) ≠ 0 := fun h =>
+    _root_.ModularForm.norm_ne_zero 𝒮ℒ hf (DFunLike.coe_injective (by simpa using h))
+  refine (finite_zeros_in_fd hN).subset fun p ⟨hp, hord⟩ ↦ ⟨hp, ?_⟩
+  -- A nonzero order is positive and is dominated by the norm's, so the norm's is nonzero too.
+  have h0 : 0 ≤ orderOfVanishingAt (⇑f) p :=
+    orderOfVanishingAt_nonneg (ModularFormClass.holo f) p
+  have hle := orderOfVanishingAt_le_orderOfVanishingAt_norm (ℋ := 𝒮ℒ) f hf p
+  omega
 
 end ModularForm
 
