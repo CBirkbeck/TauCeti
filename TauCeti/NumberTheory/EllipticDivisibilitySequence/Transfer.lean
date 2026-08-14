@@ -38,7 +38,9 @@ terminate.
   produces is a private step inside its proof rather than a second public spelling.
 * `IsEllipticNet.nonnegStrictAnti₄_def` / `nonnegStrictAnti₄_iff`: the predicate's defining body,
   and its adjacent-inequality normal form.
-* `IsEllipticNet.nonnegStrictAnti₄_abs_avg_sub`: nonnegativity and strict decrease survive it.
+* `IsEllipticNet.nonnegStrictAnti₄_abs_avg_sub`: nonnegativity and strict decrease survive it,
+  under the gap `d + 2 ≤ c` rather than parity — parity is what the descent has, but only the gap
+  is what the proof uses.
 * `IsEllipticNet.six_le_of_parity_of_nonnegStrictAnti₄`: a strictly decreasing quadruple
   of one parity with `0 ≤ d` has `6 ≤ a` — consecutive indices differ by at least two, three
   times over.
@@ -143,8 +145,13 @@ theorem parity_abs_avg_sub {a b c d : ℤ}
   exact ⟨habs.trans h₁, habs.trans h₂, habs.trans h₃⟩
 
 /-- **Nonnegativity and strict decrease survive the transfer.** The last index needs its absolute
-value: `m - a` is the one difference that can be negative, `a` being the largest index. -/
-theorem nonnegStrictAnti₄_abs_avg_sub {a b c d : ℤ} (parity : d % 2 = c % 2)
+value: `m - a` is the one difference that can be negative, `a` being the largest index.
+
+The hypothesis is the **gap** `d + 2 ≤ c`, not parity. The descent supplies parity, and
+`d % 2 = c % 2` together with `d < c` gives the gap — but only the gap is used, so demanding
+parity here would state the lemma at a narrower level than it holds. A caller that has parity
+closes the difference by `omega`. -/
+theorem nonnegStrictAnti₄_abs_avg_sub {a b c d : ℤ} (hcd : d + 2 ≤ c)
     (anti : NonnegStrictAnti₄ a b c d) :
     NonnegStrictAnti₄ ((a + b + c + d) / 2 - d) ((a + b + c + d) / 2 - c)
       ((a + b + c + d) / 2 - b) |(a + b + c + d) / 2 - a| := by
