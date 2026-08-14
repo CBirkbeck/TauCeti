@@ -36,6 +36,8 @@ these representatives are in `GL2/UpperTriangularDelta0.lean`.
 
 * `HeckeRing.GL2.upperTriEntriesEquiv_apply`, `upperTriEntriesEquiv_symm_apply_default`: the
   equivalence reads off, and installs, the coordinate at the unique index pair.
+* `HeckeRing.GL2.val_finCongr`, `val_finCongr_symm`: transport along `finCongr` leaves the
+  underlying natural number alone. Mathlib states `finCongr` but no value lemma for it.
 * `HeckeRing.GL2.upperTriEntriesEquivFin_apply_val` and
   `upperTriEntriesEquivFin_symm_apply_default_val`: the same for `a = ![1, p]`, as an identity of
   natural numbers: the fibre `Fin (![1, p] 1 / ![1, p] 0)` is `Fin (p / 1)`, which `finCongr`
@@ -94,6 +96,18 @@ lemma upperTriEntriesEquiv_apply {a : Fin 2 → ℕ} (B : UpperTriEntries 2 a) :
 lemma upperTriEntriesEquiv_symm_apply_default {a : Fin 2 → ℕ} (b : Fin (a 1 / a 0)) :
     (upperTriEntriesEquiv a).symm b default = b := (rfl)
 
+/-- **Transport along `finCongr` does not move the underlying natural number.** Mathlib states
+`finCongr` but no lemma for its underlying value, so the specialisations below would otherwise
+have to appeal to how `Fin.cast` reduces. -/
+@[simp]
+lemma val_finCongr {m n : ℕ} (h : m = n) (i : Fin m) : ((finCongr h i : Fin n) : ℕ) = (i : ℕ) :=
+  rfl
+
+/-- The same for the inverse transport. -/
+@[simp]
+lemma val_finCongr_symm {m n : ℕ} (h : m = n) (i : Fin n) :
+    (((finCongr h).symm i : Fin m) : ℕ) = (i : ℕ) := rfl
+
 /-- **The classical index of the upper-triangular representatives.** For `a = ![1, p]` the entry
 assignments are just the offsets `b ∈ Fin p`, so `upperTriGL` at these entries runs over the
 familiar `!![1, b; 0, p]`. -/
@@ -104,12 +118,15 @@ def upperTriEntriesEquivFin (p : ℕ) : UpperTriEntries 2 ![1, p] ≃ Fin p :=
 `Fin (![1, p] 1 / ![1, p] 0)` is `Fin (p / 1)`, carried to `Fin p` by `finCongr`. -/
 @[simp]
 lemma upperTriEntriesEquivFin_apply_val {p : ℕ} (B : UpperTriEntries 2 ![1, p]) :
-    (upperTriEntriesEquivFin p B : ℕ) = (B default : ℕ) := (rfl)
+    (upperTriEntriesEquivFin p B : ℕ) = (B default : ℕ) := by
+  rw [upperTriEntriesEquivFin, Equiv.trans_apply, upperTriEntriesEquiv_apply, val_finCongr]
 
 /-- At `a = ![1, p]` the coordinate installed is the offset, as natural numbers. -/
 @[simp]
 lemma upperTriEntriesEquivFin_symm_apply_default_val {p : ℕ} (b : Fin p) :
-    (((upperTriEntriesEquivFin p).symm b default : ℕ)) = (b : ℕ) := (rfl)
+    (((upperTriEntriesEquivFin p).symm b default : ℕ)) = (b : ℕ) := by
+  rw [upperTriEntriesEquivFin, Equiv.symm_trans_apply, upperTriEntriesEquiv_symm_apply_default,
+    val_finCongr_symm]
 
 /-- The `b`-th upper-triangular representative `!![1, b; 0, p]`, as an element of this
 repository's general-`n` family at `a = ![1, p]`. -/
