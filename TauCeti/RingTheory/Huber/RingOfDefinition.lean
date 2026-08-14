@@ -104,7 +104,7 @@ private theorem mul_mem_addSubgroupClosure_mul_range_pow (B : Subring A) (a : A)
 omit [TopologicalSpace A] in
 /-- **The subring `B[a]` presented additively**: the additive closure of `B · aᴺ`, which is a
 subring by the multiplicative closure above. Naming it lets the induction step below adjoin `a`
-to `B` and reason about the result through `mem_subringMulRangePow`, rather than carrying an
+to `B` and reason about the result through `mul_pow_mem_subringMulRangePow`, rather than carrying an
 anonymous `Subring` literal and its carrier equation. -/
 private def subringMulRangePow (B : Subring A) (a : A) : Subring A where
   carrier := AddSubgroup.closure ((B : Set A) * Set.range (a ^ · : ℕ → A))
@@ -117,14 +117,8 @@ private def subringMulRangePow (B : Subring A) (a : A) : Subring A where
   neg_mem' hx := (AddSubgroup.closure _).neg_mem hx
 
 omit [TopologicalSpace A] in
-/-- Its carrier is the additive closure, definitionally. -/
-private theorem coe_subringMulRangePow (B : Subring A) (a : A) :
-    (subringMulRangePow B a : Set A) =
-      AddSubgroup.closure ((B : Set A) * Set.range (a ^ · : ℕ → A)) := (rfl)
-
-omit [TopologicalSpace A] in
 /-- Every product of an element of `B` with a power of `a` lies in it. -/
-private theorem mem_subringMulRangePow {B : Subring A} {a b : A} (hb : b ∈ B) (n : ℕ) :
+private theorem mul_pow_mem_subringMulRangePow {B : Subring A} {a b : A} (hb : b ∈ B) (n : ℕ) :
     b * a ^ n ∈ subringMulRangePow B a :=
   AddSubgroup.subset_closure
     (Set.mul_mem_mul (s := (B : Set A)) (t := Set.range (a ^ · : ℕ → A)) hb ⟨n, rfl⟩)
@@ -149,13 +143,13 @@ theorem isBounded_subringClosure_union_finset [NonarchimedeanAddGroup A]
     have hgen : (B₀ : Set A) ∪ (insert a S : Finset A) ⊆ (subringMulRangePow B a : Set A) := by
       rw [Finset.coe_insert]
       rintro x (hx | hxa | hx)
-      · simpa using mem_subringMulRangePow
+      · simpa using mul_pow_mem_subringMulRangePow
           (Subring.subset_closure (Set.mem_union_left _ hx)) 0
-      · subst x; simpa using mem_subringMulRangePow B.one_mem 1
-      · simpa using mem_subringMulRangePow
+      · subst x; simpa using mul_pow_mem_subringMulRangePow B.one_mem 1
+      · simpa using mul_pow_mem_subringMulRangePow
           (Subring.subset_closure (Set.mem_union_right _ hx)) 0
     exact hM.addSubgroupClosure.subset
-      (coe_subringMulRangePow B a ▸ Subring.closure_le.mpr hgen)
+      (Subring.closure_le.mpr hgen)
 
 namespace PairOfDefinition
 
