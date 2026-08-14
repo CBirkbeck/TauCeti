@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import Mathlib.Data.Fin.VecNotation
 public import Mathlib.NumberTheory.EllipticDivisibilitySequence
 import Mathlib.Data.Int.ModEq
 import Mathlib.Order.Fin.Tuple
@@ -35,6 +36,8 @@ terminate.
   `atomRel_avg_sub` produces it.
 * `IsEllipticNet.parity_abs_avg_sub`: the same after `atomRel_abs₄` absorbs the sign on the last
   index — the shape the descent consumes.
+* `IsEllipticNet.nonnegStrictAnti₄_def` / `nonnegStrictAnti₄_iff`: the predicate's defining body,
+  and its adjacent-inequality normal form.
 * `IsEllipticNet.nonnegStrictAnti₄_avg_sub`: nonnegativity and strict decrease survive it.
 * `IsEllipticNet.six_le_of_parity_of_nonnegStrictAnti₄`: a strictly decreasing quadruple
   of one parity with `0 ≤ d` has `6 ≤ a` — consecutive indices differ by at least two, three
@@ -84,9 +87,14 @@ the descent needs it wherever it needs the ordering; the decreasing half is Math
 `StrictAnti` on the tuple. -/
 def NonnegStrictAnti₄ (a b c d : ℤ) : Prop := 0 ≤ d ∧ StrictAnti ![a, b, c, d]
 
+/-- The defining body of `NonnegStrictAnti₄`, for a consumer that wants the tuple form and
+Mathlib's `StrictAnti` API directly rather than the adjacent inequalities. -/
+theorem nonnegStrictAnti₄_def (a b c d : ℤ) :
+    NonnegStrictAnti₄ a b c d ↔ 0 ≤ d ∧ StrictAnti ![a, b, c, d] := Iff.rfl
+
 /-- `NonnegStrictAnti₄` unfolded to its adjacent inequalities. Not a restatement of the
-defining body — that is `0 ≤ d ∧ StrictAnti ![a, b, c, d]` — but the equivalent form consumers
-want, and the normal form `simp` rewrites to. -/
+defining body — that is `nonnegStrictAnti₄_def` — but the equivalent form the descent consumes,
+and the normal form `simp` rewrites to. -/
 @[simp]
 theorem nonnegStrictAnti₄_iff (a b c d : ℤ) :
     NonnegStrictAnti₄ a b c d ↔ 0 ≤ d ∧ d < c ∧ c < b ∧ b < a := by
