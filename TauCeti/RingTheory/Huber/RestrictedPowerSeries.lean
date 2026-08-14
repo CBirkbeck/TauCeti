@@ -173,11 +173,11 @@ theorem isRestricted_of_hasFiniteSupport {k : ℕ} {M : Type*} [Zero M] [Topolog
     (hf : Function.HasFiniteSupport (f : (Fin k →₀ ℕ) → M)) : IsRestricted f :=
   (tendsto_cofinite_pure_iff.mpr hf).mono_right (pure_le_nhds 0)
 
-/-- **A monomial is restricted**: its support is a single multi-index.
+/-- **A monomial is restricted**: its support is contained in `{n}`, and is empty when `a = 0`.
 
-This is the constant-series fact in general. `isRestricted_one` and `isRestricted_algebraMap` are
-its cases at `monomial 0 1` and `monomial 0 a`, and unlike the latter it needs no commutativity,
-so it covers `C a` over a noncommutative semiring. -/
+The constant series are the case `n = 0`: `isRestricted_one` and `isRestricted_algebraMap` follow
+from `monomial 0 1` and `monomial 0 a`. Unlike `isRestricted_algebraMap` this needs no
+commutativity, so it also covers `C a` over a noncommutative semiring. -/
 theorem isRestricted_monomial {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
     (n : Fin k →₀ ℕ) (a : A) : IsRestricted (MvPowerSeries.monomial n a) :=
   isRestricted_of_hasFiniteSupport <| (Set.finite_singleton n).subset fun s hs ↦ by
