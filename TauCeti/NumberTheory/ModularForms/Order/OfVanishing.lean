@@ -180,6 +180,33 @@ lemma orderOfVanishingAt_pow (hf : MDiff f) (n : ℕ) (z : ℍ) :
 
 variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
 
+/-- The vanishing order of a slash translate: slashing by a matrix of positive determinant
+transports the order from the translated point back to the original one. No invariance is
+needed — the slash factor is analytic and nonvanishing, so only the composition with the
+Möbius action moves the order. -/
+lemma orderOfVanishingAt_slash (g : ℍ → ℂ) {γ : GL (Fin 2) ℝ} (hdet : 0 < γ.val.det) (z : ℍ) :
+    orderOfVanishingAt (g ∣[k] γ) z = orderOfVanishingAt g (γ • z) := by
+  have hden_ne : ((γ 1 0 : ℂ) * (z : ℂ) + (γ 1 1 : ℂ)) ≠ 0 := by
+    simpa [denom] using denom_ne_zero γ z
+  have hdet_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ≠ 0 := by
+    exact_mod_cast (abs_pos.mpr (γ.det : ℝˣ).ne_zero).ne'
+  have hcongr : ((g ∣[k] γ) ∘ ofComplex) =ᶠ[nhds (z : ℂ)]
+      (fun w : ℂ ↦ ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1) *
+        ((γ 1 0 : ℂ) * w + (γ 1 1 : ℂ)) ^ (-k)) * (fun w : ℂ ↦ g (γ • ofComplex w)) := by
+    filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds z.im_pos] with w hw
+    simp [Function.comp_apply, ModularForm.slash_apply, σ, hdet, denom,
+      ofComplex_apply_of_im_pos hw, mul_comm, mul_assoc, mul_left_comm]
+  have h_an : AnalyticAt ℂ (fun w : ℂ ↦ ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1) *
+      ((γ 1 0 : ℂ) * w + (γ 1 1 : ℂ)) ^ (-k)) (z : ℂ) :=
+    AnalyticAt.mul analyticAt_const (AnalyticAt.zpow (by fun_prop) hden_ne)
+  have h_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1) *
+      ((γ 1 0 : ℂ) * (z : ℂ) + (γ 1 1 : ℂ)) ^ (-k) ≠ 0 :=
+    mul_ne_zero (zpow_ne_zero _ hdet_ne) (zpow_ne_zero _ hden_ne)
+  unfold orderOfVanishingAt
+  rw [meromorphicOrderAt_congr (hcongr.filter_mono nhdsWithin_le_nhds),
+    meromorphicOrderAt_mul_of_ne_zero h_an h_ne, meromorphicOrderAt_comp_smul hdet,
+    Function.comp_def]
+
 /-- The vanishing order of a slash-invariant form is constant along the action of any
 positive-determinant element of the group. -/
 -- Not a `simp` lemma: the subgroup `Γ` occurs only in the hypotheses, so `simpNF` rejects
@@ -187,27 +214,7 @@ positive-determinant element of the group. -/
 lemma orderOfVanishingAt_smul [SlashInvariantFormClass F Γ k] (f : F) {γ}
     (hγ : γ ∈ Γ) (hdet : 0 < γ.val.det) (z : ℍ) :
     orderOfVanishingAt f (γ • z) = orderOfVanishingAt f z := by
-  have hdet_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ≠ 0 := by
-    exact_mod_cast (abs_pos.mpr (γ.det : ℝˣ).ne_zero).ne'
-  have hcongr : (fun w : ℂ ↦ f (γ • ofComplex w)) =ᶠ[nhds (z : ℂ)]
-      (fun w : ℂ ↦ ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (1 - k) *
-        ((γ 1 0 : ℂ) * w + (γ 1 1 : ℂ)) ^ k) * (⇑f ∘ ofComplex) := by
-    filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds z.im_pos] with w hw
-    rw [Pi.mul_apply, Function.comp_apply, ofComplex_apply_of_im_pos hw]
-    simpa [denom, mul_assoc] using SlashInvariantForm.slash_action_eqn_of_det_pos f hγ hdet ⟨w, hw⟩
-  have h_an : AnalyticAt ℂ (fun w : ℂ ↦ ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (1 - k) *
-      ((γ 1 0 : ℂ) * w + (γ 1 1 : ℂ)) ^ k) (z : ℂ) := by
-    refine AnalyticAt.mul analyticAt_const (AnalyticAt.zpow (by fun_prop) ?_)
-    simpa [denom] using denom_ne_zero γ z
-  have h_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (1 - k) *
-      ((γ 1 0 : ℂ) * (z : ℂ) + (γ 1 1 : ℂ)) ^ k ≠ 0 :=
-    mul_ne_zero (zpow_ne_zero _ hdet_ne)
-      (zpow_ne_zero _ (by simpa [denom] using denom_ne_zero γ z))
-  unfold orderOfVanishingAt
-  conv_lhs => rw [Function.comp_def]
-  rw [← meromorphicOrderAt_comp_smul hdet,
-    meromorphicOrderAt_congr (hcongr.filter_mono nhdsWithin_le_nhds),
-    meromorphicOrderAt_mul_of_ne_zero h_an h_ne]
+  rw [← orderOfVanishingAt_slash (⇑f) hdet z, SlashInvariantFormClass.slash_action_eq f γ hγ]
 
 /-- The meromorphic order of a `c`-periodic function agrees at `z + c` and at `z`. Only a proof
 helper for `orderOfVanishingAt_eq_of_coe_eq_add`: it is a fact about periodic functions on `ℂ`,
