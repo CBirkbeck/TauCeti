@@ -23,7 +23,12 @@ translates of `f` times a `1`-periodic remainder analytic at `∞`.
 * `TauCeti.SlashInvariantForm.isBoundedAtImInfty_quotientFunc`.
 * `TauCeti.ModularForm.normRest`, `TauCeti.ModularForm.periodic_normRest` and
   `TauCeti.ModularForm.analyticAt_cuspFunction_normRest`.
-* `TauCeti.ModularForm.norm_eq_galoisProd_mul_normRest`.
+* `TauCeti.ModularForm.slashInvariantNorm_eq_galoisProd_mul_normRest`, with
+  `TauCeti.ModularForm.norm_eq_galoisProd_mul_normRest` as its modular-form corollary.
+
+The remainder and the decomposition itself are algebraic, so they are stated for
+`SlashInvariantForm.norm` under `SlashInvariantFormClass`; only analyticity at the cusp
+needs `f` to be a modular form.
 
 ## References
 
@@ -40,13 +45,14 @@ open TauCeti.UpperHalfPlane
 open scoped ModularForm Topology Filter Manifold MatrixGroups Pointwise
 
 variable {𝒢 ℋ : Subgroup (GL (Fin 2) ℝ)} {F : Type*} (f : F) [FunLike F ℍ ℂ] {k : ℤ}
-  [ModularFormClass F 𝒢 k]
 
 local notation "𝒬" => ℋ ⧸ (𝒢.subgroupOf ℋ)
 
 namespace TauCeti
 
 namespace SlashInvariantForm
+
+variable [ModularFormClass F 𝒢 k]
 
 /-- Each translate in the package `quotientFunc` of a modular form is holomorphic. -/
 lemma mdifferentiable_quotientFunc (q : 𝒬) : MDiff (quotientFunc f q) :=
@@ -69,6 +75,15 @@ section NormDecomposition
 open _root_.Matrix.SpecialLinearGroup
 
 variable [𝒢.IsFiniteRelIndex 𝒮ℒ]
+
+/-! ### The algebraic layer
+
+Everything up to the decomposition itself is a statement about the coset product, so it
+needs only slash invariance. Analyticity at the cusp is separated out below. -/
+
+section Algebraic
+
+variable [SlashInvariantFormClass F 𝒢 k]
 
 variable (𝒢) in
 /-- The coset of `T ^ j` in `𝒮ℒ ⧸ (𝒢 ⊓ 𝒮ℒ)`. -/
@@ -187,7 +202,7 @@ the decomposition is *proved*, not part of what it asserts. The public interface
 `periodic_normRest`, `analyticAt_cuspFunction_normRest` and
 `norm_eq_galoisProd_mul_normRest`, none of whose statements mention the index set. -/
 @[simp]
-private lemma normRest_eq_prod [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
+private lemma normRest_def [Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))]
     [DecidableEq (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ))] :
     normRest f = ∏ q ∈ Finset.univ.filter (· ∉ tPowCosets 𝒢), quotientFunc f q := by
   unfold normRest
@@ -198,8 +213,34 @@ public lemma periodic_normRest : Function.Periodic (normRest f ∘ ofComplex) 1 
   classical
   let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
   refine periodic_comp_ofComplex_iff.mpr fun τ ↦ ?_
-  rw [normRest_eq_prod, Finset.prod_apply, Finset.prod_apply]
+  rw [normRest_def, Finset.prod_apply, Finset.prod_apply]
   exact prod_quotientFunc_one_vadd f τ
+
+/-- **Decomposition of the norm at the cusp**, with the remainder factor named: the norm is
+the Galois product of the first `Subgroup.integerCuspWidth 𝒢` integer translates of `f`
+times `normRest f`.
+
+Stated for `SlashInvariantForm.norm`: the decomposition is algebraic, so it needs only slash
+invariance. `norm_eq_galoisProd_mul_normRest` is the modular-form corollary. -/
+public lemma slashInvariantNorm_eq_galoisProd_mul_normRest (τ : ℍ) :
+    _root_.SlashInvariantForm.norm 𝒮ℒ f τ =
+      galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * normRest f τ := by
+  classical
+  let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
+  rw [_root_.SlashInvariantForm.coe_norm, Finset.prod_apply,
+    ← Finset.prod_filter_mul_prod_filter_not Finset.univ (· ∈ tPowCosets 𝒢),
+    Finset.filter_univ_mem, prod_tPowCosets_quotientFunc f τ, normRest_def,
+    Finset.prod_apply]
+
+end Algebraic
+
+/-! ### The analytic layer
+
+Holomorphy and boundedness of the translates need `f` to be a modular form. -/
+
+section Analytic
+
+variable [ModularFormClass F 𝒢 k]
 
 /-- The cusp function of `normRest` is analytic at `0`. -/
 public lemma analyticAt_cuspFunction_normRest :
@@ -207,23 +248,19 @@ public lemma analyticAt_cuspFunction_normRest :
   classical
   let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
   exact analyticAt_cuspFunction_zero one_pos (periodic_normRest f)
-    (normRest_eq_prod f ▸ MDifferentiable.prod fun q _ ↦
+    (normRest_def f ▸ MDifferentiable.prod fun q _ ↦
       SlashInvariantForm.mdifferentiable_quotientFunc f q)
-    (normRest_eq_prod f ▸ Filter.BoundedAtFilter.prod _ fun q _ ↦
+    (normRest_def f ▸ Filter.BoundedAtFilter.prod _ fun q _ ↦
       SlashInvariantForm.isBoundedAtImInfty_quotientFunc f q)
 
-/-- **Decomposition of the norm at the cusp**, with the remainder factor named: the norm is
-the Galois product of the first `Subgroup.integerCuspWidth 𝒢` integer translates of `f`
-times `normRest f`. -/
+/-- **Decomposition of the norm at the cusp** for a modular form: the corollary of
+`slashInvariantNorm_eq_galoisProd_mul_normRest` at `ModularForm.norm`. -/
 public lemma norm_eq_galoisProd_mul_normRest (τ : ℍ) :
     _root_.ModularForm.norm 𝒮ℒ f τ =
-      galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * normRest f τ := by
-  classical
-  let _ : Fintype (𝒮ℒ ⧸ (𝒢.subgroupOf 𝒮ℒ)) := Fintype.ofFinite _
-  rw [_root_.ModularForm.coe_norm, Finset.prod_apply,
-    ← Finset.prod_filter_mul_prod_filter_not Finset.univ (· ∈ tPowCosets 𝒢),
-    Finset.filter_univ_mem, prod_tPowCosets_quotientFunc f τ, normRest_eq_prod,
-    Finset.prod_apply]
+      galoisProd (Subgroup.integerCuspWidth 𝒢) (f : ℍ → ℂ) τ * normRest f τ :=
+  slashInvariantNorm_eq_galoisProd_mul_normRest f τ
+
+end Analytic
 
 end NormDecomposition
 
