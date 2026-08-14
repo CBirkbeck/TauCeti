@@ -24,6 +24,8 @@ propagates to the norm.
 
 ## Main declarations
 
+* `TauCeti.ModularForm.qExpansion_one_norm_order_eq`: the `q`-expansion order of the norm
+  splits as the order of `f` plus the order of the remainder factor.
 * `TauCeti.ModularForm.sturm_bound_finiteIndex`: the Sturm bound for finite relative index.
 * `TauCeti.ModularForm.sturm_bound_finiteIndex_SL2Z`: the classical form for finite-index
   subgroups of `SL(2, ℤ)`.
@@ -58,22 +60,30 @@ private lemma strictWidthInfty_pos_of_finiteRelIndex {𝒢 : Subgroup (GL (Fin 2
   exact (by exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢) : (0 : ℝ) <
     Subgroup.integerCuspWidth 𝒢).ne' hnRw
 
-private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.strictPeriods] :
-    (qExpansion 𝒢.strictWidthInfty f).order ≤
-      (qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f)).order := by
-  obtain ⟨m', hm'_pos, hnRw⟩ :=
-    Subgroup.exists_pos_nat_integerCuspWidth_eq_mul_strictWidthInfty (𝒢 := 𝒢)
+private lemma isBoundedAtImInfty_of_finiteRelIndex : IsBoundedAtImInfty f :=
+  OnePoint.isBoundedAt_infty_iff.mp <| f.bdd_at_cusps' <|
+    Subgroup.isCusp_of_mem_strictPeriods
+      (by exact_mod_cast Subgroup.integerCuspWidth_pos (𝒢 := 𝒢) :
+        (0 : ℝ) < Subgroup.integerCuspWidth 𝒢)
+      Subgroup.integerCuspWidth_mem_strictPeriods
+
+/-- The `q`-expansion order of the norm at the cusp `∞` splits as the order of `f` at width
+`Subgroup.integerCuspWidth 𝒢` plus the order of the remainder factor `normRest f`.
+
+This is the equality behind `qExpansion_order_le_qExpansion_norm_order`. Unlike that
+inequality it needs no discreteness hypothesis: discreteness enters only through the
+conversion between `𝒢.strictWidthInfty` and `Subgroup.integerCuspWidth 𝒢`, which happens
+on the inequality side. -/
+lemma qExpansion_one_norm_order_eq :
+    (qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f)).order =
+      (qExpansion ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) f).order
+        + (qExpansion 1 (normRest f)).order := by
   have hn_pos : 0 < Subgroup.integerCuspWidth 𝒢 := Subgroup.integerCuspWidth_pos
-  have hnR_pos : (0 : ℝ) < Subgroup.integerCuspWidth 𝒢 := by exact_mod_cast hn_pos
-  have hf_w_per : Function.Periodic (⇑f ∘ ofComplex) 𝒢.strictWidthInfty :=
-    SlashInvariantFormClass.periodic_comp_ofComplex f 𝒢.strictWidthInfty_mem_strictPeriods
-  have hf_bdd : IsBoundedAtImInfty f := OnePoint.isBoundedAt_infty_iff.mp <|
-    f.bdd_at_cusps' <|
-      Subgroup.isCusp_of_mem_strictPeriods hnR_pos Subgroup.integerCuspWidth_mem_strictPeriods
+  have hf_bdd : IsBoundedAtImInfty f := isBoundedAtImInfty_of_finiteRelIndex f
   have hf_n_per : Function.Periodic (⇑f ∘ ofComplex)
-      ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) := by
-    rw [hnRw]
-    exact_mod_cast hf_w_per.nat_mul m'
+      ((Subgroup.integerCuspWidth 𝒢 : ℕ) : ℝ) :=
+    SlashInvariantFormClass.periodic_comp_ofComplex f
+      Subgroup.integerCuspWidth_mem_strictPeriods
   -- `norm_eq_galoisProd_mul_normRest` is a pointwise identity; `funext` converts it to an
   -- equality of functions so the `q`-expansion of the norm literally becomes that of the
   -- product, and `qExpansion_mul` (with both cusp functions analytic at `0`) splits it.
@@ -86,10 +96,19 @@ private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.s
       (isBoundedAtImInfty_galoisProd hf_bdd)) (analyticAt_cuspFunction_normRest f)
   rw [h_qexp, PowerSeries.order_mul,
     qExpansion_one_galoisProd_order_eq hn_pos hf_n_per hf_bdd f.holo']
+
+private lemma qExpansion_order_le_qExpansion_norm_order [DiscreteTopology 𝒢.strictPeriods] :
+    (qExpansion 𝒢.strictWidthInfty f).order ≤
+      (qExpansion 1 (_root_.ModularForm.norm 𝒮ℒ f)).order := by
+  obtain ⟨m', hm'_pos, hnRw⟩ :=
+    Subgroup.exists_pos_nat_integerCuspWidth_eq_mul_strictWidthInfty (𝒢 := 𝒢)
+  have hf_w_per : Function.Periodic (⇑f ∘ ofComplex) 𝒢.strictWidthInfty :=
+    SlashInvariantFormClass.periodic_comp_ofComplex f 𝒢.strictWidthInfty_mem_strictPeriods
+  rw [qExpansion_one_norm_order_eq f]
   refine le_trans ?_ le_self_add
   rw [hnRw]
-  exact qExpansion_order_le_qExpansion_nat_mul_order strictWidthInfty_pos_of_finiteRelIndex hm'_pos
-    hf_w_per hf_bdd f.holo'
+  exact qExpansion_order_le_qExpansion_nat_mul_order strictWidthInfty_pos_of_finiteRelIndex
+    hm'_pos hf_w_per (isBoundedAtImInfty_of_finiteRelIndex f) f.holo'
 
 /-- **Sturm bound for subgroups of `GL(2, ℝ)` of finite relative index in `SL(2, ℤ)`** with
 discrete strict periods. A modular form of weight `k` whose `q`-expansion at the cusp `∞`
