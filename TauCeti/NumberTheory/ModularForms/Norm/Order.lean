@@ -68,30 +68,29 @@ public lemma orderOfVanishingAt_norm (f : F) (hf : (⇑f : ℍ → ℂ) ≠ 0) (
     (fun q _ ↦ SlashInvariantForm.mdifferentiable_quotientFunc f q)
     (fun q _ ↦ SlashInvariantForm.quotientFunc_ne_zero hf q) p
 
-/-- Each coset factor of the norm of a nonzero form vanishes at a point to at most the order
-the norm itself does: it is one summand of a sum of non-negative orders. -/
+/-- Each coset factor of the norm of a form vanishes at a point to at most the order the norm
+itself does. -/
 public lemma orderOfVanishingAt_quotientFunc_le_orderOfVanishingAt_norm (f : F)
-    (hf : (⇑f : ℍ → ℂ) ≠ 0) (q : ℋ ⧸ 𝒢.subgroupOf ℋ) (p : ℍ) :
+    (q : ℋ ⧸ 𝒢.subgroupOf ℋ) (p : ℍ) :
     orderOfVanishingAt (_root_.SlashInvariantForm.quotientFunc f q) p ≤
       orderOfVanishingAt (⇑(_root_.ModularForm.norm ℋ f)) p := by
-  let _ : Fintype (ℋ ⧸ 𝒢.subgroupOf ℋ) := Fintype.ofFinite _
-  rw [orderOfVanishingAt_norm f hf p, finsum_eq_sum_of_fintype]
-  exact Finset.single_le_sum
-    (fun r _ ↦ orderOfVanishingAt_nonneg (SlashInvariantForm.mdifferentiable_quotientFunc f r) p)
-    (Finset.mem_univ q)
+  rcases eq_or_ne (⇑f : ℍ → ℂ) 0 with hf | hf
+  · -- Every coset factor of the zero form is zero, and so is its norm.
+    have hq : _root_.SlashInvariantForm.quotientFunc f q = 0 :=
+      Quotient.inductionOn q fun g ↦ (SlashAction.slash_eq_zero_iff k g.val⁻¹ _).2 hf
+    simp [hq, (_root_.ModularForm.norm_eq_zero_iff ℋ f).mpr hf]
+  · rw [orderOfVanishingAt_norm f hf p]
+    exact single_le_finsum q (Set.toFinite _) fun r ↦
+      orderOfVanishingAt_nonneg (SlashInvariantForm.mdifferentiable_quotientFunc f r) p
 
 /-- The norm vanishes at a point to at least the order the form itself does: the zeros of the
 norm dominate the zeros of the form. -/
 public lemma orderOfVanishingAt_le_orderOfVanishingAt_norm (f : F) (p : ℍ) :
     orderOfVanishingAt (⇑f) p ≤ orderOfVanishingAt (⇑(_root_.ModularForm.norm ℋ f)) p := by
-  rcases eq_or_ne (⇑f : ℍ → ℂ) 0 with hf | hf
-  · -- The norm of the zero form is zero, so both sides are the order of the same function.
-    rw [hf, (_root_.ModularForm.norm_eq_zero_iff ℋ f).mpr hf]
-    simp
-  · -- The form is the factor at the identity coset. That coset space is not a group —
-    -- `𝒢.subgroupOf ℋ` need not be normal — so the identity coset is spelled `⟦1⟧`, not `1`.
-    simpa using orderOfVanishingAt_quotientFunc_le_orderOfVanishingAt_norm f hf
-      (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) p
+  -- The form is the factor at the identity coset. That coset space is not a group —
+  -- `𝒢.subgroupOf ℋ` need not be normal — so the identity coset is spelled `⟦1⟧`, not `1`.
+  simpa using orderOfVanishingAt_quotientFunc_le_orderOfVanishingAt_norm f
+    (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) p
 
 end ModularForm
 
