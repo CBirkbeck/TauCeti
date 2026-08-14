@@ -55,8 +55,7 @@ with a uniformity preamble.
   the closed embedding and is this lemma's consumer.
 * The `CategoryTheory.ObjectProperty.IsClosedUnderIsomorphisms` instance for
   `TauCeti.TopCommRingCat.isCompleteSeparated` : the property transfers along isomorphisms,
-  an isomorphism being in particular a closed embedding — which is
-  `TauCeti.TopCommRingCat.isClosedEmbedding_inv`.
+  an isomorphism being in particular a closed embedding — read off `TopCat.homeoOfIso`.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.pi` : a product of complete separated objects
   is complete separated. This is the closure half for products; the closure instance it feeds,
   the products that instance supplies to `CompleteSeparatedTopCommRingCat`, and their creation
@@ -172,20 +171,17 @@ def isCompleteSeparated : ObjectProperty TopCommRingCat.{u} :=
 theorem isCompleteSeparated_iff (R : TopCommRingCat.{u}) :
     isCompleteSeparated R ↔ IsCompleteSeparated R := (Iff.rfl)
 
-/-- The inverse of an isomorphism of topological commutative rings is a closed embedding: it is
-the induced homeomorphism, whose underlying function is `e.inv` by `rfl` — through `forget₂`,
-`mapIso` and `TopCat.homeoOfIso` in turn. -/
-theorem isClosedEmbedding_inv {R S : TopCommRingCat.{u}} (e : R ≅ S) :
-    Topology.IsClosedEmbedding ⇑e.inv :=
-  (TopCat.homeoOfIso ((forget₂ TopCommRingCat.{u} TopCat.{u}).mapIso e)).symm.isClosedEmbedding
-
 /-- The complete separated property transfers along isomorphisms of topological commutative
 rings: an isomorphism is in particular a closed embedding, so this is
-`IsCompleteSeparated.of_isClosedEmbedding` applied to the inverse. -/
+`IsCompleteSeparated.of_isClosedEmbedding` applied to the inverse. That `e.inv` is a closed
+embedding is the induced homeomorphism's own projection — its underlying function is `e.inv` by
+`rfl`, through `forget₂`, `mapIso` and `TopCat.homeoOfIso` in turn. -/
 instance : (isCompleteSeparated.{u}).IsClosedUnderIsomorphisms where
   of_iso e hR :=
     (isCompleteSeparated_iff _).mpr <|
-      IsCompleteSeparated.of_isClosedEmbedding e.inv (isClosedEmbedding_inv e)
+      IsCompleteSeparated.of_isClosedEmbedding e.inv
+        (TopCat.homeoOfIso
+          ((forget₂ TopCommRingCat.{u} TopCat.{u}).mapIso e)).symm.isClosedEmbedding
         ((isCompleteSeparated_iff _).mp hR)
 
 end TauCeti.TopCommRingCat
