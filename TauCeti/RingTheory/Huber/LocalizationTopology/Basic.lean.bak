@@ -629,7 +629,7 @@ theorem isPowerBounded_algebraMap_of_isPowerBounded [IsTopologicalRing A] (P : P
   let _ := locTopology P T s S hden
   have h : Set.range ((algebraMap A S a) ^ · : ℕ → S)
       = algebraMap A S '' Set.range (a ^ · : ℕ → A) := by
-    simpa only [← map_pow] using Set.range_comp' (algebraMap A S) (a ^ ·)
+    simpa only [map_pow] using Set.range_comp' (algebraMap A S) (a ^ ·)
   rw [isPowerBounded_iff, h]
   exact isBounded_image_algebraMap_of_isBounded P T s S hden (isPowerBounded_iff.mp ha)
 
