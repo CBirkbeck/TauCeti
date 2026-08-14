@@ -275,17 +275,17 @@ private theorem ne_of_adj_first_of_adj_last {V : Type*} {G : SimpleGraph V}
   omega
 
 /-- **The outer ends of the two branches at the ends of a path are not adjacent.** In an acyclic
-graph, no edge joins a vertex adjacent to the start of a path to a distinct vertex adjacent to its
-end, when both lie off the path. -/
+graph, no edge joins a vertex adjacent to the start of a path to a vertex adjacent to its end, when
+both lie off the path. -/
 private theorem not_adj_of_adj_first_of_adj_last {V : Type*} {G : SimpleGraph V}
     (hG : G.IsAcyclic) {u v : V} {q : G.Walk u v} (hq : q.IsPath)
-    {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) (hb' : b ∉ q.support)
-    (hab : a ≠ b) : ¬G.Adj a b := by
+    {a b : V} (ha : G.Adj u a) (ha' : a ∉ q.support) (hb : G.Adj v b) (hb' : b ∉ q.support) :
+    ¬G.Adj a b := by
   intro hadj
   -- `a — u — … — v — b` and the single edge `a — b` are two paths with the same ends.
   have hb'' : b ∉ (q.cons ha.symm).support := by
     simp only [SimpleGraph.Walk.support_cons, List.mem_cons, not_or]
-    exact ⟨hab.symm, hb'⟩
+    exact ⟨hadj.ne', hb'⟩
   have heq := (hG.subsingleton_path a b).elim
     (⟨(q.cons ha.symm).concat hb, (hq.cons ha').concat hb'' hb⟩ : G.Path a b)
     (SimpleGraph.Path.singleton hadj)
@@ -358,7 +358,7 @@ theorem exists_doubleFork_submatrix (h : IsFiniteType A) {u v : B}
       (hleft_adj i) (hleft_not_mem i) (hright_adj j)
   have hleft_right_not_adj (i j : Fin 2) : ¬G.Adj (leftVertex i) (rightVertex j) :=
     not_adj_of_adj_first_of_adj_last h.isAcyclic_diagramGraph hq
-      (hleft_adj i) (hleft_not_mem i) (hright_adj j) (hright_not_mem j) (hleft_right_ne i j)
+      (hleft_adj i) (hleft_not_mem i) (hright_adj j) (hright_not_mem j)
   have he' := doubleForkEmbedding_injective hq hn leftVertex rightVertex hleft_inj hright_inj
     hleft_not_mem hright_not_mem hleft_right_ne
   -- Every vertex of the double fork lies in the component of `u`, so `hsl` applies to it.
