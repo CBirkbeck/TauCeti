@@ -65,20 +65,22 @@ variable {E X Y : Type*} [TopologicalSpace E] [TopologicalSpace X] [TopologicalS
 
 namespace IsQuotientCoveringMap
 
+omit [TopologicalSpace E] [TopologicalSpace Y] in
 /-- **Translates of `U` whose images in `Y` meet have the same image.** When the `G`-translates of
-`U` are pairwise disjoint, the sets `qH '' (g • U)` are therefore pairwise equal or disjoint. -/
+`U` are pairwise disjoint, the sets `qH '' (g • U)` are therefore pairwise equal or disjoint. This
+is a statement about the fibres of `qH` alone: no topology enters. -/
 private theorem image_smul_eq_image_smul_of_inter_nonempty
-    (hqH : IsQuotientCoveringMap qH H) {U : Set E}
+    (horbit : ∀ {e₁ e₂ : E}, qH e₁ = qH e₂ ↔ e₁ ∈ MulAction.orbit H e₂) {U : Set E}
     (hdisj : ∀ g : G, (g • U ∩ U).Nonempty → g = 1) {g g' : G}
     (hmeet : (qH '' (g • U) ∩ qH '' (g' • U)).Nonempty) :
     qH '' (g • U) = qH '' (g' • U) := by
   obtain ⟨z, ⟨w, hw, rfl⟩, w', hw', hww'⟩ := hmeet
   obtain ⟨u, hu, rfl⟩ := Set.mem_smul_set.mp hw
   obtain ⟨u', hu', rfl⟩ := Set.mem_smul_set.mp hw'
-  obtain ⟨⟨h, hh⟩, hhu'⟩ := hqH.apply_eq_iff_mem_orbit.mp hww'.symm
+  obtain ⟨⟨h, hh⟩, hhu'⟩ := horbit.mp hww'.symm
   -- `H` acts on `E` through `G`, so the orbit witness is an element of `G` fixing `qH`.
   have hhu : h • (g' • u') = g • u := hhu'
-  have hmap : ∀ e : E, qH (h • e) = qH e := fun _ => hqH.map_smul ⟨h, hh⟩
+  have hmap : ∀ e : E, qH (h • e) = qH e := fun _ => horbit.mpr ⟨⟨h, hh⟩, rfl⟩
   have hone : g⁻¹ * h * g' = 1 := by
     refine hdisj _ ⟨u, Set.mem_smul_set.mpr ⟨u', hu', ?_⟩, hu⟩
     rw [mul_smul, mul_smul, hhu, inv_smul_smul]
@@ -158,7 +160,8 @@ private theorem isEvenlyCovered_of_smul_disjoint (hq : IsQuotientCoveringMap q G
     rintro ⟨S, g, rfl⟩ ⟨S', g', rfl⟩ hne
     simp only [Function.onFun, Set.disjoint_iff_inter_eq_empty]
     by_contra hcon
-    exact hne (Subtype.ext (image_smul_eq_image_smul_of_inter_nonempty hqH hdisj
+    exact hne (Subtype.ext (image_smul_eq_image_smul_of_inter_nonempty
+      hqH.apply_eq_iff_mem_orbit hdisj
       (Set.nonempty_iff_ne_empty.mpr hcon)))
   · -- The sheets exhaust the preimage of the base set.
     intro z hz
