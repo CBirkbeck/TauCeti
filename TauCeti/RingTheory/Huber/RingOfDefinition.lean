@@ -18,7 +18,7 @@ from the smaller ring, and the new ideal of definition is the `Ideal.map` of the
 finite generation comes for free. Boundedness of the larger ring is the only real hypothesis, and
 both applications get it from the lattice: `A₀[T]` is `A₀ ⊔ Subring.closure T`, bounded by
 `isBounded_sup` against Wedhorn 5.30(2). That combination is recorded upstream as
-`isBounded_subringClosure_union_finset` in `TauCeti.RingTheory.Huber.PowerBounded`, since it
+`isBounded_subringClosure_union` in `TauCeti.RingTheory.Huber.PowerBounded`, since it
 mentions no pair of definition. The join case is `PairOfDefinition.enlargeSup`, which takes an
 arbitrary bounded `B`; joining two rings of definition is the case where `B` is one of them.
 
@@ -172,7 +172,8 @@ def adjoin (P : PairOfDefinition A) (T : Finset A) (hT : ∀ t ∈ T, IsPowerBou
     PairOfDefinition A :=
   letI := P.toNonarchimedeanRing
   P.enlarge (Subring.closure ((P.ringOfDefinition : Set A) ∪ (T : Set A))) (P.le_adjoinRing T)
-    (isBounded_subringClosure_union_finset P.ringOfDefinition P.isBounded_ringOfDefinition T hT)
+    (isBounded_subringClosure_union P.ringOfDefinition P.isBounded_ringOfDefinition
+      T.finite_toSet hT)
 
 /-- The ring of definition of `P.adjoin T hT` is the subring `A₀[T]`. -/
 @[simp]

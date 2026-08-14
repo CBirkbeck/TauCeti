@@ -190,9 +190,7 @@ what makes the `Finset` product of sets available in the first place, and no con
 required. -/
 theorem isBounded_finsetProd {ι : Type*} (s : Finset ι) {S : ι → Set M}
     (hS : ∀ i ∈ s, IsBounded (S i)) : IsBounded (∏ i ∈ s, S i) :=
-  s.prod_induction S IsBounded (fun _ _ ↦ IsBounded.mul)
-    (isBounded_pair_zero_one.subset
-      (Set.singleton_subset_iff.mpr (Set.mem_insert_iff.mpr (Or.inr rfl)))) hS
+  s.prod_induction S IsBounded (fun _ _ ↦ IsBounded.mul) isBounded_singleton_one hS
 
 end CommMonoidWithZero
 
