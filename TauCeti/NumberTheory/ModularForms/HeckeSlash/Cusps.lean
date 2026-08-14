@@ -50,23 +50,23 @@ open scoped MatrixGroups ModularForm
 
 variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 
-/-- **The slash sum vanishes at every cusp** when the function does. Each summand `f ∣[k] g` is
-zero at the cusp `c` because `f` is zero at the cusp `g • c`, and `OnePoint.IsZeroAt` is closed
-under finite sums. -/
+/-- **The slash sum vanishes at every cusp** when the function does. -/
 lemma isZeroAt_heckeSlashSum {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {f : ℍ → ℂ}
     (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsZeroAt f k) {c : OnePoint ℝ} (hc : IsCusp c Γ) :
     c.IsZeroAt (heckeSlashSum k D f) k := by
   rw [heckeSlashSum_def]
-  exact OnePoint.IsZeroAt.sum fun i _ ↦
-    OnePoint.IsZeroAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
+  refine OnePoint.IsZeroAt.sum fun i _ ↦ ?_
+  rw [ModularForm.rat_slash]
+  exact OnePoint.IsZeroAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
 
 /-- **The slash sum is bounded at every cusp** when the function is. -/
 lemma isBoundedAt_heckeSlashSum {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {f : ℍ → ℂ}
     (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsBoundedAt f k) {c : OnePoint ℝ}
     (hc : IsCusp c Γ) : c.IsBoundedAt (heckeSlashSum k D f) k := by
   rw [heckeSlashSum_def]
-  exact OnePoint.IsBoundedAt.sum fun i _ ↦
-    OnePoint.IsBoundedAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
+  refine OnePoint.IsBoundedAt.sum fun i _ ↦ ?_
+  rw [ModularForm.rat_slash]
+  exact OnePoint.IsBoundedAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
 
 end HeckeRing.GL2
 
