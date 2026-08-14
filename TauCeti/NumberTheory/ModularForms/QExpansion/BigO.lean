@@ -12,9 +12,10 @@ public import Mathlib.NumberTheory.ModularForms.QExpansion
 
 The dictionary between vanishing of the first `N` `q`-coefficients of a periodic function
 on `ℍ` and `O(‖q‖^N)` growth of its cusp function at `0`, in both directions, together with
-the limit of the function's values along `Im τ → ∞`. The general layer asks only for
-analyticity of the cusp function at `0` (with periodicity for the limit); the corollaries
-specialize to modular forms. These are the analytic inputs of the norm step of the
+the limit of the function's values along `Im τ → ∞`. The general layer asks only what each
+statement needs: analyticity of the cusp function at `0` for the two dictionary directions,
+and mere continuity there — with periodicity — for the limit. The corollaries specialize to
+modular forms. These are the analytic inputs of the norm step of the
 general-level valence reduction: growth bounds are multiplicative, so they transport
 coefficient vanishing through the norm map to level one.
 
@@ -23,8 +24,8 @@ coefficient vanishing through the norm map to level one.
 * `TauCeti.UpperHalfPlane.cuspFunction_isBigO_pow_of_qExpansion_coeff_eq_zero` and
   `TauCeti.UpperHalfPlane.qExpansion_coeff_eq_zero_of_cuspFunction_isBigO_pow`: the two
   directions of the dictionary, for any function whose cusp function is analytic at `0`.
-* `TauCeti.UpperHalfPlane.tendsto_valueAtInfty`: an `h`-periodic function with cusp
-  function analytic at `0` tends to `valueAtInfty` along `atImInfty`.
+* `TauCeti.UpperHalfPlane.tendsto_valueAtInfty`: an `h`-periodic function whose cusp
+  function is merely continuous at `0` tends to `valueAtInfty` along `atImInfty`.
 * The `TauCeti.ModularFormClass` corollaries of all three, for a modular form on a
   subgroup with `h` in its strict period set.
 
@@ -48,8 +49,8 @@ noncomputable section
 
 variable {h : ℝ} {f : ℍ → ℂ}
 
-/-- A function on `ℍ` that is `h`-periodic with cusp function analytic at `0` tends to
-`valueAtInfty` along `atImInfty`. -/
+/-- A function on `ℍ` that is `h`-periodic and whose cusp function is continuous at `0`
+tends to `valueAtInfty` along `atImInfty`. -/
 public lemma tendsto_valueAtInfty (hh : 0 < h) (hper : Function.Periodic (f ∘ ofComplex) h)
     (hcont : ContinuousAt (cuspFunction h f) 0) :
     Tendsto f atImInfty (𝓝 (valueAtInfty f)) := by
