@@ -19,6 +19,8 @@ an operator preserves vanishing at the cusps is an induction over the summands, 
 
 ## Main declarations
 
+* `UpperHalfPlane.isZeroAtImInfty_zero`: the zero analogue of Mathlib's
+  `zero_form_isBoundedAtImInfty`, which is absent upstream.
 * `OnePoint.IsZeroAt.zero`, `OnePoint.IsBoundedAt.zero`: the zero function vanishes, and is
   bounded, at every point of `OnePoint ℝ`.
 * `OnePoint.IsZeroAt.sum`, `OnePoint.IsBoundedAt.sum`: a finite sum of functions vanishing
@@ -42,6 +44,21 @@ open UpperHalfPlane
 
 open scoped ModularForm
 
+namespace UpperHalfPlane
+
+/-- **The zero function is zero at `im → ∞`.** Mathlib provides the bounded analogue,
+`zero_form_isBoundedAtImInfty`, but not this one, so every consumer has to reach past
+`IsZeroAtImInfty` to `Filter.zero_zeroAtFilter` itself. The unfolding is done once, here.
+
+`IsZeroAtImInfty` is a non-`@[expose]` wrapper for `ZeroAtFilter atImInfty`, so the `!` is
+required: plain `simpa using` cannot cross that boundary. This is the proof Mathlib gives for
+the same goal in `CuspForm.instZero`. -/
+@[simp]
+lemma isZeroAtImInfty_zero : IsZeroAtImInfty (0 : ℍ → ℂ) := by
+  simpa using! Filter.zero_zeroAtFilter _
+
+end UpperHalfPlane
+
 namespace OnePoint
 
 variable {c : OnePoint ℝ} {k : ℤ} {ι : Type*} {s : Finset ι} {F : ι → ℍ → ℂ}
@@ -50,10 +67,7 @@ variable {c : OnePoint ℝ} {k : ℤ} {ι : Type*} {s : Finset ι} {F : ι → �
 @[simp]
 lemma IsZeroAt.zero : IsZeroAt c (0 : ℍ → ℂ) k := fun _ _ ↦ by
   rw [SlashAction.zero_slash]
-  -- `IsZeroAtImInfty` is a non-`@[expose]` wrapper for `ZeroAtFilter atImInfty`, so the `!` is
-  -- required: plain `simpa using` cannot cross that boundary. This is the same proof Mathlib
-  -- gives for the same goal in `CuspForm.instZero` (`NumberTheory/ModularForms/Basic.lean`).
-  simpa using! Filter.zero_zeroAtFilter _
+  exact isZeroAtImInfty_zero
 
 /-- The zero function is bounded at every point of `OnePoint ℝ`. -/
 @[simp]
