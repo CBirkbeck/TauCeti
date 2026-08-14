@@ -31,7 +31,7 @@ the roadmap's designated prior formalisation of this material. That attribution 
 **ring-coefficient** material — `IsRestricted` as originally stated, its closure lemmas,
 `restrictedMvPowerSeriesSubring` and the convolution argument behind `IsRestricted.mul`, whose
 definitions, statements and proof are all AINTLIB's work. The module-coefficient declarations —
-`isRestricted_iff_apply`, `IsRestricted.const_smul`, `restrictedMvPowerSeriesSubmodule` and
+`isRestricted_iff`, `IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule` and
 `mem_restrictedMvPowerSeriesSubmodule` — have no AINTLIB counterpart and are original here.
 
 Four further declarations are AINTLIB's, restated at weaker coefficient binders: `IsRestricted`
@@ -41,7 +41,7 @@ itself, now asking the coefficients only for a `0` and a topology, and `isRestri
 
 The port moves the declarations into the `TauCeti.Huber` namespace, opts into the Lean module
 system with the definition bodies unexposed — hence the added
-`isRestricted_iff` and `mem_restrictedMvPowerSeriesSubring` — tracks the Mathlib rename of
+`isRestricted_iff_coeff` and `mem_restrictedMvPowerSeriesSubring` — tracks the Mathlib rename of
 `Set.mem_setOf_eq` to `Set.mem_ofPred_eq`, renames the predicate from AINTLIB's `IsRestrictedAdic`
 (nothing here is adic), and drops hypotheses that the individual proofs never used.
 
@@ -61,10 +61,10 @@ The restricted power series ring is defined as a subring of `MvPowerSeries (Fin 
 This is the canonical concrete definition. `M⟨T₁, …, Tₖ⟩` is cut out of
 `MvPowerSeries (Fin k) M` by the same condition, as an `A`-submodule.
 
-`isRestricted_iff_apply` unfolds the predicate through plain coefficient application, which is
-what module coefficients admit; `isRestricted_iff` unfolds it through `MvPowerSeries.coeff`, the
-accessor to prefer wherever the coefficients form a semiring. The two agree definitionally,
-because `coeff` is projection.
+`isRestricted_iff` unfolds the predicate through plain coefficient application, which is
+what module coefficients admit; `isRestricted_iff_coeff` unfolds it through
+`MvPowerSeries.coeff`, the accessor to prefer wherever the coefficients form a semiring. The two
+agree definitionally, because `coeff` is projection.
 
 The closure of the restricted power series under multiplication (convolution) requires
 that `A` is a topological ring. The proof that the convolution of two sequences tending
@@ -86,6 +86,33 @@ universe u
 
 namespace TauCeti.Huber
 
+/-! ### Pointwise reductions
+
+`MvPowerSeries σ M` is by definition `(σ →₀ ℕ) → M`, and its `Zero`, `AddMonoid`, `AddGroup` and
+`Module` instances are the corresponding `Pi` instances transported by `inferInstanceAs`. Each
+lemma here is therefore `rfl`. They exist so that the closure proofs below cite a named fact
+rather than lean silently on that reduction, and they are `private` because Mathlib supplies the
+`coeff`-level versions wherever the coefficients form a semiring — these are needed only in the
+generality where `MvPowerSeries.coeff` does not apply. -/
+
+private theorem coe_zero_apply {k : ℕ} {M : Type*} [Zero M] (s : Fin k →₀ ℕ) :
+    ((0 : MvPowerSeries (Fin k) M) : (Fin k →₀ ℕ) → M) s = 0 := (rfl)
+
+private theorem coe_add_apply {k : ℕ} {M : Type*} [AddMonoid M] (f g : MvPowerSeries (Fin k) M)
+    (s : Fin k →₀ ℕ) :
+    ((f + g : MvPowerSeries (Fin k) M) : (Fin k →₀ ℕ) → M) s
+      = (f : (Fin k →₀ ℕ) → M) s + (g : (Fin k →₀ ℕ) → M) s := (rfl)
+
+private theorem coe_neg_apply {k : ℕ} {M : Type*} [AddGroup M] (f : MvPowerSeries (Fin k) M)
+    (s : Fin k →₀ ℕ) :
+    ((-f : MvPowerSeries (Fin k) M) : (Fin k →₀ ℕ) → M) s
+      = -((f : (Fin k →₀ ℕ) → M) s) := (rfl)
+
+private theorem coe_smul_apply {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M] [Module R M]
+    (c : R) (f : MvPowerSeries (Fin k) M) (s : Fin k →₀ ℕ) :
+    ((c • f : MvPowerSeries (Fin k) M) : (Fin k →₀ ℕ) → M) s
+      = c • ((f : (Fin k →₀ ℕ) → M) s) := (rfl)
+
 /-! ### Restricted power series -/
 
 /-- An element `f` of the multivariate power series ring `M⦃X₁, …, Xₖ⦄` is **restricted**
@@ -106,9 +133,9 @@ def IsRestricted {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
 
 /-- Unfolding lemma for `TauCeti.Huber.IsRestricted` over coefficients with no algebraic
 structure: the body is not exposed, so this is how consumers recover the defining convergence
-condition. Over a semiring, `isRestricted_iff` states the same thing through
+condition. Over a semiring, `isRestricted_iff_coeff` states the same thing through
 `MvPowerSeries.coeff`, which is the accessor to prefer when it applies. -/
-theorem isRestricted_iff_apply {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
+theorem isRestricted_iff {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace M]
     {f : MvPowerSeries (Fin k) M} :
     IsRestricted f ↔
       Tendsto (fun s : Fin k →₀ ℕ => (f : (Fin k →₀ ℕ) → M) s) cofinite (nhds 0) := (Iff.rfl)
@@ -116,7 +143,7 @@ theorem isRestricted_iff_apply {k : ℕ} {M : Type*} [Zero M] [TopologicalSpace 
 /-- Unfolding lemma for `TauCeti.Huber.IsRestricted` over a semiring, through
 `MvPowerSeries.coeff`. The body is not exposed, so this is how consumers recover the defining
 convergence condition; it holds because `coeff` is projection. -/
-theorem isRestricted_iff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
+theorem isRestricted_iff_coeff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
     {f : MvPowerSeries (Fin k) A} :
     IsRestricted f ↔
       Tendsto (fun s : Fin k →₀ ℕ => MvPowerSeries.coeff s f) cofinite (nhds 0) := (Iff.rfl)
@@ -125,14 +152,14 @@ theorem isRestricted_iff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSpace A]
 @[simp]
 theorem isRestricted_zero (k : ℕ) (M : Type*) [Zero M] [TopologicalSpace M] :
     IsRestricted (0 : MvPowerSeries (Fin k) M) := by
-  rw [isRestricted_iff_apply]
+  simp only [isRestricted_iff, coe_zero_apply]
   exact tendsto_const_nhds
 
 /-- `1` is restricted: every coefficient but the `0`-th vanishes. -/
 @[simp]
 theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A] :
     IsRestricted (1 : MvPowerSeries (Fin k) A) := by
-  rw [isRestricted_iff]
+  rw [isRestricted_iff_coeff]
   apply tendsto_nhds.mpr
   intro U hU h0U
   rw [Filter.mem_cofinite]
@@ -147,19 +174,17 @@ theorem isRestricted_one (k : ℕ) (A : Type*) [Semiring A] [TopologicalSpace A]
 theorem IsRestricted.add {k : ℕ} {M : Type*} [AddMonoid M] [TopologicalSpace M]
     [ContinuousAdd M] {f g : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f + g) := by
-  rw [isRestricted_iff_apply]
-  have h := (isRestricted_iff_apply.mp hf).add (isRestricted_iff_apply.mp hg)
-  rw [add_zero] at h
-  exact h
+  simp only [isRestricted_iff, coe_add_apply]
+  have h := (isRestricted_iff.mp hf).add (isRestricted_iff.mp hg)
+  rwa [add_zero] at h
 
 /-- The negation of a restricted series is restricted. -/
 theorem IsRestricted.neg {k : ℕ} {M : Type*} [AddGroup M] [TopologicalSpace M]
     [ContinuousNeg M] {f : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) : IsRestricted (-f) := by
-  rw [isRestricted_iff_apply]
-  have h := (isRestricted_iff_apply.mp hf).neg
-  rw [neg_zero] at h
-  exact h
+  simp only [isRestricted_iff, coe_neg_apply]
+  have h := (isRestricted_iff.mp hf).neg
+  rwa [neg_zero] at h
 
 /-- Scaling a restricted series by a constant leaves it restricted.
 
@@ -167,20 +192,20 @@ The scalar ring is unrelated to the coefficients' own structure — only the act
 continuous in the vector variable, which is `ContinuousConstSMul`. This is the closure fact
 `restrictedMvPowerSeriesSubmodule` is built from, stated separately so consumers holding
 `IsRestricted` can use it directly, as they can `IsRestricted.add` and `IsRestricted.neg`. -/
-theorem IsRestricted.const_smul {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M]
+theorem IsRestricted.smul {k : ℕ} {R M : Type*} [Semiring R] [AddCommMonoid M]
     [TopologicalSpace M] [Module R M] [ContinuousConstSMul R M] {f : MvPowerSeries (Fin k) M}
     (hf : IsRestricted f) (c : R) : IsRestricted (c • f) := by
-  rw [isRestricted_iff_apply]
-  have h := (isRestricted_iff_apply.mp hf).const_smul c
-  rw [smul_zero] at h
-  exact h
+  simp only [isRestricted_iff, coe_smul_apply]
+  have h := (isRestricted_iff.mp hf).const_smul c
+  rwa [smul_zero] at h
 
 /-- Restrictedness, restated: for every open additive subgroup `W`, all but finitely many
 coefficients lie in `W`. This is the form the convolution argument actually consumes. -/
 theorem IsRestricted.finite_coeff_notMem {k : ℕ} {A : Type*} [Ring A]
     [TopologicalSpace A] {f : MvPowerSeries (Fin k) A} (hf : IsRestricted f)
     (W : OpenAddSubgroup A) : {s | MvPowerSeries.coeff s f ∉ (W : Set A)}.Finite := by
-  have := (tendsto_nhds.mp (isRestricted_iff.mp hf)) _ W.isOpen (SetLike.mem_coe.mpr W.zero_mem)
+  have := (tendsto_nhds.mp (isRestricted_iff_coeff.mp hf)) _ W.isOpen
+    (SetLike.mem_coe.mpr W.zero_mem)
   rwa [Filter.mem_cofinite] at this
 
 /-- The "bad" indices contributed by one side of a coefficient convolution form a finite set:
@@ -237,7 +262,7 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
     [NonarchimedeanRing A] {f g : MvPowerSeries (Fin k) A}
     (hf : IsRestricted f) (hg : IsRestricted g) : IsRestricted (f * g) := by
   classical
-  rw [isRestricted_iff]
+  rw [isRestricted_iff_coeff]
   rw [tendsto_nhds]
   intro U hU h0U
   rw [Filter.mem_cofinite]
@@ -270,9 +295,9 @@ theorem IsRestricted.mul {k : ℕ} {A : Type*} [Ring A] [TopologicalSpace A]
       (Set.mem_preimage.mp hx.2))
     simpa only [Set.mem_preimage, MulOpposite.unop_mul, MulOpposite.unop_op] using hmem
   have hgT : {s | MvPowerSeries.coeff s g ∉ T}.Finite :=
-    (Filter.mem_cofinite.mp (isRestricted_iff.mp hg hT_nhds)).subset (fun s hs => hs)
+    (Filter.mem_cofinite.mp (isRestricted_iff_coeff.mp hg hT_nhds)).subset (fun s hs => hs)
   have hfT : {s | MvPowerSeries.coeff s f ∉ T}.Finite :=
-    (Filter.mem_cofinite.mp (isRestricted_iff.mp hf hT_nhds)).subset (fun s hs => hs)
+    (Filter.mem_cofinite.mp (isRestricted_iff_coeff.mp hf hT_nhds)).subset (fun s hs => hs)
   set B := {n | ∃ a ∈ hSf.toFinset, a ≤ n ∧ MvPowerSeries.coeff (n - a) g ∉ T} ∪
            {n | ∃ b ∈ hSg.toFinset, b ≤ n ∧ MvPowerSeries.coeff (n - b) f ∉ T}
   have hB_finite : B.Finite :=
@@ -321,7 +346,7 @@ coefficient `a` at multi-index `0` and `0` elsewhere, so it trivially tends to `
 theorem isRestricted_algebraMap {k : ℕ} {A : Type*} [CommSemiring A]
     [TopologicalSpace A] (a : A) :
     IsRestricted (algebraMap A (MvPowerSeries (Fin k) A) a) := by
-  rw [isRestricted_iff]
+  rw [isRestricted_iff_coeff]
   apply tendsto_nhds.mpr
   intro U hU h0U
   rw [Filter.mem_cofinite]
@@ -372,7 +397,7 @@ def restrictedMvPowerSeriesSubmodule (k : ℕ) (A M : Type*) [Semiring A] [AddCo
   carrier := {f | IsRestricted f}
   zero_mem' := isRestricted_zero k M
   add_mem' := IsRestricted.add
-  smul_mem' c _f hf := hf.const_smul c
+  smul_mem' c _f hf := hf.smul c
 
 /-- Membership in `M⟨T₁, …, Tₖ⟩` is restrictedness. -/
 @[simp]
