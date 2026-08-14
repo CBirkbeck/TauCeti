@@ -14,14 +14,14 @@ public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 is one of the two conditions separating `SlashInvariantForm` from `ModularForm`; the other,
 boundedness at the cusps, is not addressed here.
 
-The proof is short because both halves are already in mathlib: `MDifferentiable.slash` for a
-single slash, and `MDifferentiable.sum` for the finite sum. The only step particular to this
-development is that `heckeSlashSum` slashes by *rational* matrices, so `ModularForm.rat_slash`
-restates each summand as a slash by the corresponding real matrix before mathlib's lemma applies.
+Holomorphy is one of the two conditions a `ModularForm` carries over a `SlashInvariantForm`. A
+consumer building the descent needs this together with boundedness at the cusps; only the former
+is available here, and nothing in this file assumes `f` is slash-invariant, so it applies to any
+holomorphic `f : ℍ → ℂ`.
 
 ## Main results
 
-* `HeckeRing.GL2.mdiff_heckeSlashSum`: `heckeSlashSum k D f` is holomorphic when `f` is.
+* `HeckeRing.GL2.mdifferentiable_heckeSlashSum`: `heckeSlashSum k D f` is holomorphic when `f` is.
 
 ## References
 
@@ -43,11 +43,13 @@ variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 (`heckeSlashSum_slash_invariant_of_mem_SLnZ`) this supplies one of the two extra conditions a
 `ModularForm` carries over a `SlashInvariantForm`; boundedness at the cusps is separate and is
 not proved here. -/
-lemma mdiff_heckeSlashSum {f : ℍ → ℂ} (hf : MDiff f) : MDiff (heckeSlashSum k D f) := by
+lemma mdifferentiable_heckeSlashSum {f : ℍ → ℂ} (hf : MDiff f) : MDiff (heckeSlashSum k D f) := by
+  -- `heckeSlashSum` is not `@[expose]`, so `heckeSlashSum_def` is what makes the sum visible;
+  -- `MDifferentiable.sum` then reduces to one summand. That summand slashes by a *rational*
+  -- matrix, and `rat_slash` restates it at the real image, which is the form mathlib's
+  -- `MDifferentiable.slash` applies to.
   rw [heckeSlashSum_def]
   refine MDifferentiable.sum fun i _ ↦ ?_
-  -- each summand slashes by a rational matrix; `rat_slash` restates it at the real image, which
-  -- is the form mathlib's `MDifferentiable.slash` applies to
   rw [ModularForm.rat_slash]
   exact hf.slash k _
 
