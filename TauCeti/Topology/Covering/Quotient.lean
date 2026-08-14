@@ -77,11 +77,14 @@ private theorem image_smul_eq_image_smul_of_inter_nonempty
   -- A point common to the two images is `qH (g • u) = qH (g' • u')` for some `u, u' ∈ U`.
   obtain ⟨_, ⟨_, ⟨u, hu, rfl⟩, rfl⟩, _, ⟨u', hu', rfl⟩, hww'⟩ := hmeet
   obtain ⟨⟨h, hh⟩, hhu'⟩ := horbit.mp hww'.symm
-  -- `H` acts on `E` through `G`, so the orbit witness is an element of `G` fixing `qH`.
-  have hmap : ∀ e : E, qH (h • e) = qH e := fun _ => horbit.mpr ⟨⟨h, hh⟩, rfl⟩
+  -- `H` acts through the coercion to `G` — `MulAction.subgroup_smul_def` — so the orbit witness is
+  -- an element of `G` fixing `qH`, and `hhu'` retypes to the ambient action.
+  have hhu : h • (g' • u') = g • u := hhu'
+  have hmap : ∀ e : E, qH (h • e) = qH e := fun e =>
+    horbit.mpr ⟨⟨h, hh⟩, MulAction.subgroup_smul_def ⟨h, hh⟩ e⟩
   have hgg' : g = h * g' := eq_of_inv_mul_eq_one <| by
     refine hdisj _ ⟨u, Set.mem_smul_set.mpr ⟨u', hu', ?_⟩, hu⟩
-    rw [mul_smul, mul_smul, show h • (g' • u') = g • u from hhu', inv_smul_smul]
+    rw [mul_smul, mul_smul, hhu, inv_smul_smul]
   simp [hgg', mul_smul, ← Set.image_smul, Set.image_image, hmap]
 
 /-- The evenly covered neighbourhood of `q e` cut out by a set `U` around `e` whose `G`-translates
