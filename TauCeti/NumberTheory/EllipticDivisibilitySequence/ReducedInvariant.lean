@@ -70,8 +70,10 @@ are portable under this project's rule and deduplicate if and when it lands.
 They are spelt with Mathlib's later names (`compl₂EDS → complEDS₂`, `IsEllSequence →
 IsEllipticSequence`), which #13057 predates, and follow `ComplAux.lean` in keeping the
 `normEDS`-family declarations in the **root** namespace where Mathlib keeps `normEDS`, `complEDS`
-and `complEDS₂`; the two results about `IsEllipticNet.invarNum` stay in that namespace, after their
-left-hand sides.
+and `complEDS₂`. Placement follows each left-hand side, so `reducedInvarNum`,
+`reducedInvarNum_def`, `complEDS₂_eq_reducedInvarNum_sub` and `map_reducedInvarNum` all sit at
+root, and only `invarNum_normEDS_one_eq_reducedInvarNum_mul`, whose left-hand side is an
+`IsEllipticNet` term, sits in that namespace.
 
 One adaptation is forced rather than chosen: the source proves `invarNum_normEDS` by
 `simp [invarNum]`, unfolding the definition. That does not port, because `Invariant.lean` exports
