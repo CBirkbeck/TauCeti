@@ -20,7 +20,10 @@ recorded as `coe_extensionHom_id` — which supplies bijectivity. The name follo
 Everything else here is read off that identification. The isomorphism is uniformly continuous
 because `UniformCompletion.completeEquivSelf` is a uniform equivalence, and its inverse is
 uniformly continuous because it *is* the canonical map into the completion. Over a base ring
-`R` the same map is `R`-linear, giving `UniformSpace.Completion.completeAlgEquivSelf`.
+`R` acting by *uniformly continuous* scalar multiplication the same map is `R`-linear, giving
+`UniformSpace.Completion.completeAlgEquivSelf`. Uniform continuity of the action is not a
+convenience: it is what makes the completion an `R`-algebra in the first place, since that is
+what `UniformSpace.Completion.algebra` requires.
 
 The declarations live in the root `UniformSpace.Completion` namespace they extend, following
 this repository's convention for lemmas about external types.
@@ -30,7 +33,8 @@ this repository's convention for lemmas about external types.
 * `UniformSpace.Completion.completeRingEquivSelf`: the ring isomorphism
   `UniformSpace.Completion S ≃+* S`.
 * `UniformSpace.Completion.completeAlgEquivSelf`: the same map as an `R`-algebra equivalence,
-  for a complete Hausdorff topological `R`-algebra `S`.
+  for a complete Hausdorff topological `R`-algebra `S` whose scalar multiplication by `R` is
+  uniformly continuous (`UniformContinuousConstSMul R S`).
 
 ## Main results
 
@@ -99,9 +103,10 @@ section Algebra
 
 variable (R : Type*) [CommSemiring R] [Algebra R S] [UniformContinuousConstSMul R S]
 
-/-- For a complete Hausdorff topological `R`-algebra, the extension of the identity is an
-`R`-algebra equivalence from the completion: `completeRingEquivSelf` is `R`-linear, since it
-fixes the image of `R`. -/
+/-- For a complete Hausdorff topological `R`-algebra `S` whose scalar multiplication by `R` is
+uniformly continuous (`UniformContinuousConstSMul R S`, which is what gives the completion its
+`R`-algebra structure), the extension of the identity is an `R`-algebra equivalence from the
+completion: `completeRingEquivSelf` is `R`-linear, since it fixes the image of `R`. -/
 noncomputable def completeAlgEquivSelf : UniformSpace.Completion S ≃ₐ[R] S :=
   AlgEquiv.ofRingEquiv (f := completeRingEquivSelf S) fun r ↦ by
     rw [algebraMap_def]
