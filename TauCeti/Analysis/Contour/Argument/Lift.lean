@@ -368,13 +368,12 @@ private theorem exists_monotone_partition_mesh_lt {a b δ : ℝ} (hab : a ≤ b)
     linarith
 
 /-- **The polar form at a point, from the partition data alone.** For a monotone `s` with
-`s 0 = a`, no node sent to `w`, and every segment ratio in the slit plane, any `t` between `s 0`
+`s 0 = a` and no node sent to `w`, any `t` between `s 0`
 and `s N` satisfies `γ t - w = ‖γ t - w‖ · exp (I · θ t)`, where
 `θ t = arg (γ a - w) + ∑_{j < N} (log (segRatio γ w (s j) (s (j+1)) t)).im`. -/
 private theorem polar_form_of_partition {γ : ℝ → ℂ} {w : ℂ} {a : ℝ} {N : ℕ} {s : ℕ → ℝ}
     (hN_pos : 0 < N) (hs_zero : s 0 = a) (hs_mono : Monotone s)
     (hs_avoid : ∀ j ≤ N, γ (s j) - w ≠ 0) {t : ℝ}
-    (h_ratio_ne : ∀ j < N, segRatio γ w (s j) (s (j + 1)) t ≠ 0)
     (h_cov_lo : s 0 ≤ t) (h_cov_hi : t ≤ s N) :
     γ t - w = (‖γ t - w‖ : ℂ) * Complex.exp (Complex.I *
       ((Complex.arg (γ a - w) +
@@ -387,8 +386,14 @@ private theorem polar_form_of_partition {γ : ℝ → ℂ} {w : ℂ} {a : ℝ} {
   have h_prod_eq : (γ a - w) *
       ∏ j ∈ Finset.range N, segRatio γ w (s j) (s (j + 1)) t = γ t - w := by
     rw [h_telescope, mul_div_cancel₀ _ h_avoid_a]
+  rcases eq_or_ne (γ t - w) 0 with h0 | h0
+  · simp [h0]
+  -- the product is the nonzero `γ t - w` up to the nonzero factor `γ a - w`, so no factor vanishes
+  have hprod_ne : (γ a - w) *
+      ∏ j ∈ Finset.range N, segRatio γ w (s j) (s (j + 1)) t ≠ 0 := by
+    rw [h_prod_eq]; exact h0
   exact polar_form_of_prod (zs := fun j ↦ segRatio γ w (s j) (s (j + 1)) t)
-    h_avoid_a (fun j hj ↦ h_ratio_ne j (Finset.mem_range.mp hj)) h_prod_eq
+    h_avoid_a (Finset.prod_ne_zero_iff.mp (right_ne_zero_of_mul hprod_ne)) h_prod_eq
 
 /-! ### Main theorem: argument lift on `[a, b]` -/
 
@@ -440,7 +445,6 @@ theorem exists_continuousOn_arg_lift_with_partition {γ : ℝ → ℂ} {w : ℂ}
       (hs_le j) (hs_mesh j)
   -- Lift property
   · exact fun t ht => polar_form_of_partition hN_pos hs_zero hs_mono hs_avoid
-      (fun j hj ↦ Complex.slitPlane_ne_zero (h_seg j hj t))
       (by rw [hs_zero]; exact ht.1) (by rw [hs_N]; exact ht.2)
 
 end TauCeti.Contour
