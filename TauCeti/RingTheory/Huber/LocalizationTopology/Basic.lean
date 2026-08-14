@@ -170,11 +170,9 @@ theorem locSubring_mono (P : PairOfDefinition A) {T U : Finset A} (s : A)
 that fraction adjoined *as an algebra over it*. The recursive step for `locSubring` on a `Finset`,
 with `locSubring_empty` as its base.
 
-Stated as an `Algebra.adjoin` over `locSubring P U s S` rather than as a `Subring.closure` of the
-union, matching the shape of `locSubring` itself. The two are equal by
-`Algebra.adjoin_eq_ring_closure`, but the adjoin form is the one a consumer wants: it is what
-`Algebra.adjoin_singleton_eq_range_aeval` consumes, so an induction over `U` can pass straight to
-polynomials in `t/s` with coefficients in the smaller subring. -/
+The `Algebra.adjoin` form matches the shape of `locSubring` itself, and says concretely that an
+element of `locSubring P (insert t U) s S` is a polynomial in `t/s` with coefficients in the
+smaller subring. -/
 @[simp]
 theorem locSubring_insert [DecidableEq A] (P : PairOfDefinition A) (t : A)
     (U : Finset A) (s : A)
