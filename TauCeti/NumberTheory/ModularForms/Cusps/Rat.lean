@@ -25,6 +25,18 @@ avoids conjugation altogether, and asks nothing of the determinant beyond invert
 
 * `IsCusp.smul_map_ratCast`: if `c` is a cusp of an arithmetic `Γ` then so is `g • c`, for any
   `g : GL (Fin 2) ℚ` pushed forward to `ℝ`.
+
+## Provenance
+
+The need for this lemma, and its role as the cusp-stability step under a Hecke representative,
+come from the AINTLIB `LeanModularForms` project (Chris Birkbeck, Apache-2.0),
+`LeanModularForms/HeckeRIngs/GL2/AdjointTheory.lean` at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`, where it is packaged as `glMap_smul_isCusp_Gamma1`.
+
+The **proof is not ported**: that declaration is specific to `Γ₁(N)`, whereas this one is stated
+for an arbitrary arithmetic subgroup and reduces to `𝒮ℒ` through mathlib's
+`Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z` and the rational description of the cusps of
+`𝒮ℒ` (`isCusp_SL2Z_iff`), neither of which the source uses.
 -/
 
 public section
