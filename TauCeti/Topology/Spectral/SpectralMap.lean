@@ -78,8 +78,8 @@ homeomorphism between the two.
 
 This is the shape every "prove it on a subspace and carry it back" spectrality argument takes.
 It is worth stating separately because the *reason* one works on the subspace is usually that the
-inclusion is not a spectral map, so the general preservation theorems are unavailable and the
-homeomorphism is the only route back. -/
+inclusion is not a spectral map, which makes the general preservation theorems unavailable along
+it; this lemma supplies the homeomorphism route instead. -/
 theorem spectralSpace_of_isEmbedding {f : X → Y} (hf : Topology.IsEmbedding f) {S : Set Y}
     (hS : S ⊆ Set.range f) (h : SpectralSpace (f ⁻¹' S)) : SpectralSpace S := by
   -- The embedding restricts to a homeomorphism `f ⁻¹' S ≃ₜ S`.
