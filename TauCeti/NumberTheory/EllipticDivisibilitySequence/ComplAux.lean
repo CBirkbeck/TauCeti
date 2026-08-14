@@ -55,12 +55,14 @@ factors move.
 
 ## Provenance
 
-Ported from D. K. Angdinata and J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
+Ported from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`),
 declarations `compl₂EDSAux`, `compl₂EDSAux_two`, `compl₂EDSAux_mul_b` and `map_compl₂EDSAux`. That
 file's header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
-adapted material the upstream authorship is credited here to both rather than in the copyright
-header.
+adapted material the upstream authorship is credited here rather than in the copyright header. That
+file is part of the joint LutzNagell development with J. Xu, who authors the neighbouring
+`Universal.lean` and co-authors `DivisionPolynomialOmega.lean`; both are credited for what this
+repository takes from it.
 
 The same declarations sit in **Mathlib PR #13057** (open, last updated 2024-07-31), the upstreaming
 of that AINTLIB file, so they are portable under this project's rule and deduplicate when it lands.

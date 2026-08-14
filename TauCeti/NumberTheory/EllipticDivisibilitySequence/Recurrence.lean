@@ -39,11 +39,14 @@ unit, so solving for `W (2 * m + 1)` or `W (2 * m)` requires a hypothesis this f
 
 ## Provenance
 
-Adapted from D. K. Angdinata and J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
+Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`),
 declarations `OddRec`, `EvenRec`, `rel₃_iff_oddRec` and `rel₃_iff_evenRec`. That file's header
 reads `Authors: David Kurniadi Angdinata`; following this repository's convention for adapted
-material the upstream authorship is credited here to both rather than in the copyright header.
+material the upstream authorship is credited here rather than in the copyright header. That file is
+part of the joint LutzNagell development with J. Xu, who authors the neighbouring `Universal.lean`
+and co-authors `DivisionPolynomialOmega.lean`; both are credited for what this repository takes
+from it.
 
 The adaptation is substantial, because Mathlib has since absorbed most of what the source had to
 build for itself. The source states its equivalences against `Rel₃`, a three-index relation of its

@@ -42,12 +42,14 @@ waiting on, not the slice that lands them.
 
 ## Provenance
 
-Adapted from D. K. Angdinata and J. Xu's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
+Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`),
 declarations `IsEllSequence.normEDS_of_mem_nonZeroDivisors` and `IsEllSequence.normEDS`. That
 file's header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
-adapted material the upstream authorship is credited here to both rather than in the copyright
-header.
+adapted material the upstream authorship is credited here rather than in the copyright header. That
+file is part of the joint LutzNagell development with J. Xu, who authors the neighbouring
+`Universal.lean` and co-authors `DivisionPolynomialOmega.lean`; both are credited for what this
+repository takes from it.
 
 The source proves the hypothesis-carrying version from its own descent development; here that
 step is `isEllipticSequence_iff`, so the helper is six lines rather than a file. The universal
