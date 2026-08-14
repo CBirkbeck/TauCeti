@@ -77,7 +77,8 @@ specialisations are discharged with.
   `TauCeti.Huber.t0Space_weightedRestrictedSubring_one_weight`,
   `TauCeti.Huber.uniformContinuous_coeff_one_weight` and
   `TauCeti.Huber.completeSpace_weightedRestrictedSubring_one_weight` : those four at the
-  trivial weight family, the last two as instances. This is the case the comparison needs.
+  trivial weight family. The `T0Space` and `CompleteSpace` ones are the registered instances;
+  the two coefficient-map results are theorems. This is the case the comparison needs.
 * `TauCeti.Huber.restrictedMvPowerSeriesCompletionEquiv` : the comparison — `A⟨X₁,…,Xₖ⟩` is
   the plain restricted-series ring, whenever that ring is complete and Hausdorff.
 * `TauCeti.Huber.restrictedMvPowerSeriesCompletionAlgEquiv` : the same comparison as an
