@@ -85,9 +85,11 @@ one-line proof and consumers reaching for the pre-normalised sequence would othe
 redo it.
 
 Deliberately **not** ported here: `universalNormEDS_ne_zero` and
-`universalNormEDS_mem_nonZeroDivisors`. They rest on `normEDS 2 3 2 = id`, whose proof needs
-`normEDS` to be known an elliptic sequence — which the pinned Mathlib does not know, and which is
-the content of the separate open Mathlib PR #42453. They belong with whichever slice ports that.
+`universalNormEDS_mem_nonZeroDivisors`. They rest on `normEDS 2 3 2 = id`, which needs two
+things: `normEDS` known to be an elliptic sequence, which is now `isEllipticSequence_normEDS` in
+`NormEDS.lean`, and an extensionality principle for elliptic sequences — two such sequences
+agreeing at the indices that determine them are equal — which this repository does not have.
+They belong with whichever slice ports that principle.
 -/
 
 public section
