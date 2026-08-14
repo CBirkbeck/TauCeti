@@ -78,9 +78,14 @@ open MonoidWithZeroHom TauCeti
 
 variable {A : Type*} [CommRing A] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
-/-- **Sending a unit of `WithZero G` into `G` and coercing back recovers its value.** The
-equality holds by `rfl`, but only up to unfolding `OrderMonoidIso.unitsWithZero`, so the proofs
-below need it as a rewrite rather than being able to cross the two forms silently. -/
+/-- **Sending a unit of `WithZero G` into `G` and coercing back recovers its value.**
+
+`OrderMonoidIso.unitsWithZero` carries `WithZero.unitsWithZeroEquiv` as its `toMulEquiv` field,
+definitionally, which is why Mathlib's `WithZero.coe_unitsWithZeroEquiv_eq_units_val` typechecks
+against this statement directly. The equality itself is *not* `rfl`: unfolding leaves
+`↑(WithZero.unzero u.ne_zero) = u.val`, which needs `WithZero.coe_unzero` — a case analysis that
+does not reduce for a variable. Since the defeq is not syntactic, the proofs below rewrite with
+this lemma, or close with it by `exact`. -/
 private theorem coe_unitsWithZero_eq_units_val {G : Type*} [Group G] [Preorder G]
     (u : (WithZero G)ˣ) :
     ((OrderMonoidIso.unitsWithZero u : G) : WithZero G) = (u : WithZero G) :=
@@ -90,7 +95,7 @@ private theorem coe_unitsWithZero_eq_units_val {G : Type*} [Group G] [Preorder G
 names. This is the bridge between membership in a transported convex subgroup, which is phrased
 through `OrderMonoidIso.unitsWithZero`, and the introduction rules for `cΓ_v(I)`, which are
 phrased through `valueGroup.mk`. -/
-private theorem unitsWithZeroEquiv_mk0_restrict (v : Valuation A Γ₀) {a : A}
+private theorem unitsWithZero_mk0_restrict (v : Valuation A Γ₀) {a : A}
     (h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0) (ha : v.restrict a ≠ 0) :
     OrderMonoidIso.unitsWithZero (Units.mk0 (v.restrict a) ha) =
       valueGroup.mk (.ofClass v) 1 a (by simp) h0 := by
@@ -106,7 +111,7 @@ private theorem mk0_restrict_mem_comapUnitsWithZero (v : Valuation A Γ₀) (I :
     Units.mk0 (v.restrict a) ha ∈
       ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg) := by
   have h0 : (MonoidWithZeroHom.ofClass v) a ≠ 0 := fun h => ha (v.restrict_eq_zero_iff.mpr h)
-  rw [ConvexSubgroup.mem_comapUnitsWithZero, unitsWithZeroEquiv_mk0_restrict v h0 ha]
+  rw [ConvexSubgroup.mem_comapUnitsWithZero, unitsWithZero_mk0_restrict v h0 ha]
   refine characteristicSubgroup_le_characteristicSubgroupOfIdeal v I hfg
     (valueGroup_mk_mem_characteristicSubgroup_of_one_le_value h0 ?_)
   have hr : v.restrict 1 ≤ v.restrict a := by simpa using h1
@@ -171,7 +176,7 @@ private theorem mk0_restrict_mem_comapUnitsWithZero_iff (v : Valuation A Γ₀) 
     Units.mk0 (v.restrict a) (fun h => h0 (v.restrict_eq_zero_iff.mp h)) ∈
         ConvexSubgroup.comapUnitsWithZero (characteristicSubgroupOfIdeal v I hfg) ↔
       valueGroup.mk (.ofClass v) 1 a (by simp) h0 ∈ characteristicSubgroupOfIdeal v I hfg := by
-  rw [ConvexSubgroup.mem_comapUnitsWithZero, unitsWithZeroEquiv_mk0_restrict v h0 _]
+  rw [ConvexSubgroup.mem_comapUnitsWithZero, unitsWithZero_mk0_restrict v h0 _]
 
 /-- Off `cΓ_v(I)`, the restriction vanishes. The hypothesis is non-membership in `cΓ_v(I)`
 itself; the transport is applied internally.
