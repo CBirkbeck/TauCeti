@@ -84,12 +84,13 @@ theorem nonneg_of_discrim_le_zero {R : Type*} [CommRing R] [LinearOrder R]
 /-- Some member of the progression `x₀ + m * ℤ` puts `2 a x + z` within `a * m` of zero, for any
 constant `z`.
 
-Take the one nearest the value that would make `2 a x + z` vanish: the rounding error is at most
-a half, and the progression's gap scales it by `2 a m`. This is where the factor `m` in the
-height hypothesis of `discrim_le_zero_of_pos_of_nonneg_on_progression` comes from; there `z` is
-the form's `b * y`, which enters only as a constant. -/
+This is the point-selection step of `discrim_le_zero_of_pos_of_nonneg_on_progression`, and the
+source of the factor `m` in that theorem's height hypothesis. There `z` is the form's `b * y`,
+which enters only as a constant. -/
 private theorem exists_abs_two_mul_add_le {a m x₀ z : ℤ} (ha : 0 < a) (hm : 0 < m) :
     ∃ k : ℤ, |2 * a * (x₀ + m * k) + z| ≤ a * m := by
+  -- take the member nearest the value that would make `2 a x + z` vanish: the rounding error is
+  -- at most a half, and the progression's gap scales it by `2 a m`
   have ham : (0 : ℚ) < 2 * (a : ℚ) * (m : ℚ) := by
     have h1 : (0 : ℚ) < (a : ℚ) := by exact_mod_cast ha
     have h2 : (0 : ℚ) < (m : ℚ) := by exact_mod_cast hm
