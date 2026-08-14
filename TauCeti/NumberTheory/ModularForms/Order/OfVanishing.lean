@@ -13,9 +13,10 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.Manifold
 
 `TauCeti.orderOfVanishingAt f z` is the order of vanishing of `f : ℍ → ℂ` at `z ∈ ℍ`, read
 as the meromorphic order of `f ∘ ofComplex` at `z`. For a nonzero holomorphic function it
-detects vanishing (`orderOfVanishingAt_eq_zero_iff`), and for a slash-invariant form it is
-constant along the group action (`orderOfVanishingAt_smul`) — the interior half of the
-order dictionary feeding the valence formula. The order at the cusps (`ℚ`-normalized at
+detects vanishing (`orderOfVanishingAt_eq_zero_iff`), and it transports along the slash
+action of any positive-determinant matrix (`orderOfVanishingAt_slash`), so for a
+slash-invariant form it is constant along the group action (`orderOfVanishingAt_smul`,
+a corollary) — the interior half of the order dictionary feeding the valence formula. The order at the cusps (`ℚ`-normalized at
 irregular cusps in odd weight) belongs to the general-level layer and is not defined here.
 
 ## Main declarations
@@ -27,7 +28,10 @@ irregular cusps in odd weight) belongs to the general-level layer and is not def
   `Finset.prod` and power versions.
 * `TauCeti.orderOfVanishingAt_pos_iff`: for a nonzero holomorphic function, positive
   order characterizes the zeros.
-* `TauCeti.orderOfVanishingAt_smul`: invariance along the action of the group.
+* `TauCeti.orderOfVanishingAt_slash`: the order of a slash translate at `z` is the order at
+  `γ • z`, for any positive-determinant `γ`.
+* `TauCeti.orderOfVanishingAt_smul`: invariance along the action of the group, a corollary
+  of the slash statement.
 * `TauCeti.orderOfVanishingAt_eq_of_coe_eq_add`: invariance under the period translation, for
   a periodic function.
 
@@ -180,28 +184,29 @@ lemma orderOfVanishingAt_pow (hf : MDiff f) (n : ℕ) (z : ℍ) :
 
 variable {F : Type*} {Γ : Subgroup (GL (Fin 2) ℝ)} {k : ℤ} [FunLike F ℍ ℂ]
 
-/-- The vanishing order of a slash translate: slashing by a matrix of positive determinant
-transports the order from the translated point back to the original one. No invariance is
-needed — the slash factor is analytic and nonvanishing, so only the composition with the
-Möbius action moves the order. -/
+/-- The vanishing order of a slash translate: the order of `g ∣[k] γ` at `z` is the order of
+`g` at `γ • z`. Positive determinant makes the slash's `σ γ` twist trivial and keeps the
+Möbius action on `ℍ`; no invariance of `g` under `γ` is assumed. -/
 @[simp]
-lemma orderOfVanishingAt_slash (g : ℍ → ℂ) {γ : GL (Fin 2) ℝ} (hdet : 0 < γ.val.det) (z : ℍ) :
+lemma orderOfVanishingAt_slash (g : ℍ → ℂ) {γ : GL (Fin 2) ℝ}
+    (hdet : 0 < γ.val.det) (z : ℍ) :
     orderOfVanishingAt (g ∣[k] γ) z = orderOfVanishingAt g (γ • z) := by
-  have hden_ne : ((γ 1 0 : ℂ) * (z : ℂ) + (γ 1 1 : ℂ)) ≠ 0 := by
-    simpa [denom] using denom_ne_zero γ z
+  have hden_ne : denom γ (z : ℂ) ≠ 0 := denom_ne_zero γ z
   have hdet_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ≠ 0 := by
     exact_mod_cast (abs_pos.mpr (γ.det : ℝˣ).ne_zero).ne'
   have hcongr : ((g ∣[k] γ) ∘ ofComplex) =ᶠ[nhds (z : ℂ)]
-      (fun w : ℂ ↦ ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1) *
-        ((γ 1 0 : ℂ) * w + (γ 1 1 : ℂ)) ^ (-k)) * (fun w : ℂ ↦ g (γ • ofComplex w)) := by
+      (fun w : ℂ ↦ ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1) * denom γ w ^ (-k)) *
+        (fun w : ℂ ↦ g (γ • ofComplex w)) := by
     filter_upwards [isOpen_upperHalfPlaneSet.mem_nhds z.im_pos] with w hw
-    simp [Function.comp_apply, ModularForm.slash_apply, σ, hdet, denom,
-      ofComplex_apply_of_im_pos hw, mul_comm, mul_assoc, mul_left_comm]
+    rw [Function.comp_apply, ModularForm.slash_apply_of_det_pos k hdet g (ofComplex w),
+      Pi.mul_apply, ofComplex_apply_of_im_pos hw]
+    ring
+  -- `denom` is unfolded only here, where `fun_prop` needs to see the linear form in `w`.
   have h_an : AnalyticAt ℂ (fun w : ℂ ↦ ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1) *
-      ((γ 1 0 : ℂ) * w + (γ 1 1 : ℂ)) ^ (-k)) (z : ℂ) :=
-    AnalyticAt.mul analyticAt_const (AnalyticAt.zpow (by fun_prop) hden_ne)
-  have h_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1) *
-      ((γ 1 0 : ℂ) * (z : ℂ) + (γ 1 1 : ℂ)) ^ (-k) ≠ 0 :=
+      denom γ w ^ (-k)) (z : ℂ) :=
+    AnalyticAt.mul analyticAt_const
+      (AnalyticAt.zpow (by unfold denom; fun_prop) hden_ne)
+  have h_ne : ((|(γ.det : ℝ)| : ℝ) : ℂ) ^ (k - 1) * denom γ (z : ℂ) ^ (-k) ≠ 0 :=
     mul_ne_zero (zpow_ne_zero _ hdet_ne) (zpow_ne_zero _ hden_ne)
   unfold orderOfVanishingAt
   rw [meromorphicOrderAt_congr (hcongr.filter_mono nhdsWithin_le_nhds),
@@ -215,7 +220,8 @@ positive-determinant element of the group. -/
 lemma orderOfVanishingAt_smul [SlashInvariantFormClass F Γ k] (f : F) {γ}
     (hγ : γ ∈ Γ) (hdet : 0 < γ.val.det) (z : ℍ) :
     orderOfVanishingAt f (γ • z) = orderOfVanishingAt f z := by
-  rw [← orderOfVanishingAt_slash (⇑f) hdet z, SlashInvariantFormClass.slash_action_eq f γ hγ]
+  rw [← orderOfVanishingAt_slash (k := k) (⇑f) hdet z,
+    SlashInvariantFormClass.slash_action_eq f γ hγ]
 
 /-- The meromorphic order of a `c`-periodic function agrees at `z + c` and at `z`. Only a proof
 helper for `orderOfVanishingAt_eq_of_coe_eq_add`: it is a fact about periodic functions on `ℂ`,
