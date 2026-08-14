@@ -429,27 +429,24 @@ private theorem sq_dvd_norm_of_isIntegral_div {b : W.CoordinateRing} {d p q : F[
   rw [hprod]
   exact hz.mul (hz.map (conjFunctionField W : W.FunctionField →ₐ[F[X]] W.FunctionField))
 
-/-- **Every element of the function field has a polynomial denominator.** Writing `z = b₁ / b₂`
-with both in the coordinate ring, multiply through by `conj b₂`: the denominator becomes
-`b₂ * conj b₂`, which is the norm of `b₂` and so already lies in `F[X]`.
-
+/-- **Every element of the function field is a coordinate-ring element over a nonzero
+polynomial**: the denominator can be taken in `F[X]`, not merely in the coordinate ring.
 Ellipticity of `W` is not needed. -/
 private theorem exists_div_algebraMap_eq (z : W.FunctionField) :
     ∃ (b : W.CoordinateRing) (d : F[X]), d ≠ 0 ∧
       algebraMap W.CoordinateRing W.FunctionField b /
         algebraMap F[X] W.FunctionField d = z := by
-  obtain ⟨b₁, b₂, hb₂, rfl⟩ := IsFractionRing.div_surjective (A := W.CoordinateRing) z
-  have hb₂0 : b₂ ≠ 0 := mem_nonZeroDivisors_iff_ne_zero.mp hb₂
-  have hcb₂0 : CoordinateRing.conj W b₂ ≠ 0 := fun h =>
-    hb₂0 <| (CoordinateRing.conj W).injective (by rw [h, map_zero])
-  have hdB : algebraMap F[X] W.CoordinateRing (Algebra.norm F[X] b₂) =
-      b₂ * CoordinateRing.conj W b₂ := (CoordinateRing.mul_conj W b₂).symm
-  have hcb₂K : algebraMap W.CoordinateRing W.FunctionField (CoordinateRing.conj W b₂) ≠ 0 :=
-    fun h => hcb₂0 ((FaithfulSMul.algebraMap_injective _ _) (h.trans (map_zero _).symm))
-  refine ⟨b₁ * CoordinateRing.conj W b₂, Algebra.norm F[X] b₂,
-    fun h => (mul_ne_zero hb₂0 hcb₂0) (by rw [← hdB, h, map_zero]), ?_⟩
-  rw [IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, hdB, map_mul, map_mul,
-    mul_div_mul_right _ _ hcb₂K]
+  obtain ⟨⟨b, m, hm⟩, hbm⟩ :=
+    IsLocalization.surj (Algebra.algebraMapSubmonoid W.CoordinateRing (nonZeroDivisors F[X])) z
+  obtain ⟨d, hd, rfl⟩ := hm
+  have hd0 : algebraMap F[X] W.FunctionField d ≠ 0 := by
+    rw [IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField]
+    exact (map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective W.CoordinateRing
+      W.FunctionField)).mpr ((map_ne_zero_iff _ (FaithfulSMul.algebraMap_injective F[X]
+      W.CoordinateRing)).mpr (mem_nonZeroDivisors_iff_ne_zero.mp hd))
+  refine ⟨b, d, mem_nonZeroDivisors_iff_ne_zero.mp hd, ?_⟩
+  rw [eq_comm, eq_div_iff hd0,
+    IsScalarTower.algebraMap_apply F[X] W.CoordinateRing W.FunctionField, hbm]
 
 /-- Every element of the function field of an elliptic curve that is integral over `F[X]` already
 lies in the coordinate ring. -/
