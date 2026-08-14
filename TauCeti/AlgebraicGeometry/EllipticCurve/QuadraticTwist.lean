@@ -659,7 +659,7 @@ a genuinely nontrivial operation: this is what `map_quadraticTwistOfTraceNormVar
 deliberately stopped short of claiming, and the `j`-hypotheses are exactly what it lacked.
 
 What the `j`-hypotheses buy is `Aut(Eᴸ) = {±1}`
-(`eq_one_or_eq_negVariableChange_baseChange`). At `j ∈ {0, 1728}` the automorphism group can be
+(`eq_one_or_eq_negVariableChange_map`). At `j ∈ {0, 1728}` the automorphism group can be
 strictly larger, and the statement is not claimed there; nor is a counterexample asserted. -/
 theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728) :
     ¬∃ C : VariableChange K, C • E.quadraticTwist L = E := by
@@ -687,7 +687,8 @@ theorem not_exists_smul_quadraticTwist_eq (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : 
     rw [ha, mul_smul, hC₁, E.inv_quadraticTwistOfTraceNormVariableChange_smul hθ hσ, hψiso]
   have haC : a * C₁ = ψ := by rw [ha, mul_assoc, inv_mul_cancel, mul_one]
   have hamap : a.map (σ : L →+* L) = a := by
-    rcases E.eq_one_or_eq_negVariableChange_baseChange hinj hj₀ hj₁₇₂₈ haut with hcase | hcase
+    rcases E.eq_one_or_eq_negVariableChange_map (f := algebraMap K L) hinj hj₀ hj₁₇₂₈ haut with
+      hcase | hcase
     · rw [hcase]; exact VariableChange.map_one _
     · rw [hcase]; exact E.negVariableChange_baseChange_map L (σ : L →ₐ[K] L)
   -- applying `σ` to `ψ = a · C₁` forces `[-1] = 1`
@@ -708,7 +709,7 @@ twist by `L` — and, by `not_exists_smul_quadraticTwist_eq`, those two alternat
 
 There are exactly two alternatives because such forms are classified by
 `H¹(Gal(L/K), Aut Eᴸ) = Hom(ℤ/2, {±1})`, a group of order two. The `j`-hypotheses are what give
-`Aut Eᴸ = {±1}` (`eq_one_or_eq_negVariableChange_baseChange`); for the excluded `j` the
+`Aut Eᴸ = {±1}` (`eq_one_or_eq_negVariableChange_map`); for the excluded `j` the
 automorphism group is larger and there can be more forms. -/
 theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj₁₇₂₈ : E.j ≠ 1728)
     (E' : WeierstrassCurve K)
@@ -727,7 +728,8 @@ theorem exists_smul_eq_or_exists_smul_eq_quadraticTwist (hj₀ : E.j ≠ 0) (hj�
   have hρinv : ρ⁻¹ • E.baseChange L = E'.baseChange L := by rw [← hρ, inv_smul_smul]
   have hb : (ρ.map (σ : L →+* L) * ρ⁻¹) • E.baseChange L = E.baseChange L := by
     rw [mul_smul, hρinv, hσρ]
-  rcases E.eq_one_or_eq_negVariableChange_baseChange hinj hj₀ hj₁₇₂₈ hb with hbcase | hbcase
+  rcases E.eq_one_or_eq_negVariableChange_map (f := algebraMap K L) hinj hj₀ hj₁₇₂₈ hb with
+    hbcase | hbcase
   · -- trivial cocycle: `ρ` is `σ`-invariant, so it descends and `E' ≅ E` over `K`
     left
     obtain ⟨ρK, hρK⟩ :=
