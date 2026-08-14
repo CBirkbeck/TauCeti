@@ -144,22 +144,23 @@ theorem restrictedMvPowerSeriesCompletionFinZeroEquiv_symm_coe (a : A) :
 theorem continuous_restrictedMvPowerSeriesCompletionFinZeroEquiv :
     letI := IsTopologicalAddGroup.rightUniformSpace A
     letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-    Continuous (restrictedMvPowerSeriesCompletionFinZeroEquiv (A := A)) :=
+    Continuous (restrictedMvPowerSeriesCompletionFinZeroEquiv (A := A)) := by
   let _ := IsTopologicalAddGroup.rightUniformSpace A
   let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-  -- `mapRingEquiv f hf hf'` is built from `mapRingHom f hf`, whose underlying function is
-  -- `Completion.map f` by `UniformSpace.Completion.coe_mapRingHom`; continuity is that of `map`.
-  show Continuous (UniformSpace.Completion.map _) from UniformSpace.Completion.continuous_map
+  simp only [restrictedMvPowerSeriesCompletionFinZeroEquiv]
+  exact UniformSpace.Completion.continuous_map.congr fun x ↦
+    (UniformSpace.Completion.mapRingEquiv_apply _ _ _ x).symm
 
 /-- Its inverse is continuous. -/
 theorem continuous_restrictedMvPowerSeriesCompletionFinZeroEquiv_symm :
     letI := IsTopologicalAddGroup.rightUniformSpace A
     letI : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-    Continuous (restrictedMvPowerSeriesCompletionFinZeroEquiv (A := A)).symm :=
+    Continuous (restrictedMvPowerSeriesCompletionFinZeroEquiv (A := A)).symm := by
   let _ := IsTopologicalAddGroup.rightUniformSpace A
   let _ : IsUniformAddGroup A := isUniformAddGroup_of_addCommGroup
-  -- the inverse of `mapRingEquiv` is `mapRingHom` of the inverse map, again `Completion.map`
-  show Continuous (UniformSpace.Completion.map _) from UniformSpace.Completion.continuous_map
+  simp only [restrictedMvPowerSeriesCompletionFinZeroEquiv]
+  exact UniformSpace.Completion.continuous_map.congr fun x ↦
+    (UniformSpace.Completion.mapRingEquiv_symm_apply _ _ _ x).symm
 
 end ZeroVariables
 
