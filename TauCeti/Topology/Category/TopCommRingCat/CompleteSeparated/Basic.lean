@@ -24,11 +24,18 @@ elimination lemmas below package that transfer so consumers never perform it by 
 Separatedness is stated as `T0Space`, with `IsCompleteSeparated.t2Space` providing the
 Hausdorff form the equalizer arguments consume.
 
+The predicate pins that uniformity explicitly, so that it does not depend on what is in
+scope; the `scoped instance`s `uniformSpace` and `isUniformAddGroup` then make it ambient, so
+proofs inside `TauCeti.TopCommRingCat` speak of `CompleteSpace R` directly instead of opening
+with a uniformity preamble.
+
 ## Main definitions
 
 * `TauCeti.TopCommRingCat.IsCompleteSeparated`: complete and Hausdorff for the group
   uniformity of the topology.
 * `TauCeti.TopCommRingCat.isCompleteSeparated`: the same, as a named `ObjectProperty`.
+* `TauCeti.TopCommRingCat.uniformSpace` and `TauCeti.TopCommRingCat.isUniformAddGroup`: that
+  group uniformity on every object, as `scoped instance`s.
 * `TauCeti.CompleteSeparatedTopCommRingCat`: the full subcategory of `TopCommRingCat` on
   the complete separated objects, with `CompleteSeparatedTopCommRingCat.of` and element
   coercion.
@@ -42,8 +49,13 @@ Hausdorff form the equalizer arguments consume.
   as the `example` below records.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.t2Space` : separatedness in Hausdorff form.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.of_isClosedEmbedding` : a closed subobject of a
-  complete separated ring is complete separated. This is where Hausdorffness does its work, and
-  the equalizer closure in `CompleteSeparated/Limits.lean` is its consumer.
+  complete separated ring is complete separated. Closedness of the range is what supplies
+  completeness, and separatedness is inherited along the embedding. The Hausdorffness input
+  sits one level up, in the equalizer closure in `CompleteSeparated/Limits.lean` that produces
+  the closed embedding and is this lemma's consumer.
+* The `CategoryTheory.ObjectProperty.IsClosedUnderIsomorphisms` instance for
+  `TauCeti.TopCommRingCat.isCompleteSeparated` : the property transfers along isomorphisms,
+  an isomorphism being in particular a closed embedding.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.pi` : a product of complete separated objects
   is complete separated. This is the closure half for products; the limit cones and the
   creation statement for the inclusion `CompleteSeparatedTopCommRingCat ⥤ TopCommRingCat`
@@ -70,6 +82,17 @@ structure IsCompleteSeparated (R : TopCommRingCat.{u}) : Prop where
     CompleteSpace R
   /-- Separatedness; `T0Space` suffices. -/
   t0Space : T0Space R
+
+/-- The group uniformity of the topology, on every object. It is `scoped` because it is a
+convention of this namespace rather than of `TopCommRingCat` at large: it is the uniformity
+`IsCompleteSeparated` is stated for, so with it in scope a proof can say `CompleteSpace R`
+without first installing the uniformity by hand. -/
+noncomputable scoped instance uniformSpace (R : TopCommRingCat.{u}) : UniformSpace R :=
+  IsTopologicalAddGroup.rightUniformSpace R
+
+/-- The group uniformity of `uniformSpace` is a uniformity of additive groups. -/
+scoped instance isUniformAddGroup (R : TopCommRingCat.{u}) : IsUniformAddGroup R :=
+  isUniformAddGroup_of_addCommGroup
 
 /-- **Introduction from a native uniformity**: a complete Hausdorff uniform topological ring
 is complete separated as a topological ring — the group uniformity of its topology equals
@@ -105,8 +128,6 @@ additive group, `T0Space` upgrades to `T2Space`. -/
 theorem IsCompleteSeparated.t2Space {R : TopCommRingCat.{u}} (h : IsCompleteSeparated R) :
     T2Space R := by
   have := h.t0Space
-  let _ : UniformSpace R := IsTopologicalAddGroup.rightUniformSpace R
-  have : IsUniformAddGroup R := isUniformAddGroup_of_addCommGroup
   infer_instance
 
 /-- **A product of complete separated topological rings is complete separated**: the product
@@ -114,8 +135,6 @@ carries the product uniformity, for which it is complete and Hausdorff. -/
 theorem IsCompleteSeparated.pi {β : Type v} {f : β → TopCommRingCat.{max u v}}
     (hf : ∀ b, IsCompleteSeparated (f b)) :
     IsCompleteSeparated (TopCommRingCat.of (∀ b, f b)) := by
-  let _ : ∀ b, UniformSpace (f b) := fun b ↦ IsTopologicalAddGroup.rightUniformSpace _
-  have huag : ∀ b, IsUniformAddGroup (f b) := fun b ↦ isUniformAddGroup_of_addCommGroup
   have hcompl : ∀ b, CompleteSpace (f b) := fun b ↦ (hf b).completeSpace
   have ht0 : ∀ b, T0Space (f b) := fun b ↦ (hf b).t0Space
   refine ⟨?_, inferInstance⟩
@@ -126,17 +145,16 @@ theorem IsCompleteSeparated.pi {β : Type v} {f : β → TopCommRingCat.{max u v
   infer_instance
 
 /-- A closed embedding of topological rings pulls the complete separated property back: the
-image is a closed subring of a complete Hausdorff ring, hence complete, and separatedness is
-inherited. This is where Hausdorffness of the codomain does its work. -/
+range is closed in a complete space, hence complete, and `IsUniformInducing.completeSpace`
+carries completeness back along the embedding, while `IsEmbedding.t0Space` inherits
+separatedness. Completeness itself asks for no separation axiom; Hausdorffness enters one
+level up, in the equalizer closure in `CompleteSeparated/Limits.lean` that produces the closed
+embedding. -/
 theorem IsCompleteSeparated.of_isClosedEmbedding {R S : TopCommRingCat.{u}} (f : R ⟶ S)
     (hf : Topology.IsClosedEmbedding f) (hS : IsCompleteSeparated S) :
     IsCompleteSeparated R := by
   have : T0Space S := hS.t0Space
   refine ⟨?_, hf.toIsEmbedding.t0Space⟩
-  let _ : UniformSpace S := IsTopologicalAddGroup.rightUniformSpace S
-  let _ : UniformSpace R := IsTopologicalAddGroup.rightUniformSpace R
-  have : IsUniformAddGroup S := isUniformAddGroup_of_addCommGroup
-  have : IsUniformAddGroup R := isUniformAddGroup_of_addCommGroup
   have : CompleteSpace S := hS.completeSpace
   exact (AddMonoidHom.isUniformInducing_of_isInducing (f := f.val) hf.toIsInducing).completeSpace
     hf.isClosed_range.isComplete
@@ -151,6 +169,15 @@ def isCompleteSeparated : ObjectProperty TopCommRingCat.{u} :=
 @[simp]
 theorem isCompleteSeparated_iff (R : TopCommRingCat.{u}) :
     isCompleteSeparated R ↔ IsCompleteSeparated R := (Iff.rfl)
+
+/-- The complete separated property transfers along isomorphisms of topological commutative
+rings: an isomorphism is in particular a closed embedding, so this is
+`IsCompleteSeparated.of_isClosedEmbedding` applied to the inverse. -/
+instance : (isCompleteSeparated.{u}).IsClosedUnderIsomorphisms where
+  of_iso e hR :=
+    (isCompleteSeparated_iff _).mpr <| IsCompleteSeparated.of_isClosedEmbedding e.inv
+      (TopCat.homeoOfIso ((forget₂ TopCommRingCat.{u} TopCat.{u}).mapIso e)).symm.isClosedEmbedding
+      ((isCompleteSeparated_iff _).mp hR)
 
 end TauCeti.TopCommRingCat
 

@@ -13,23 +13,28 @@ public import Mathlib.CategoryTheory.Limits.FullSubcategory
 # Products and equalizers of complete separated topological rings
 
 Roadmap Layer 3.2's second half: the full subcategory
-`TauCeti.CompleteSeparatedTopCommRingCat` has products and equalizers, created by the
-inclusion into `TopCommRingCat` — Mathlib's
-`CategoryTheory.ObjectProperty.createsLimitFullSubcategoryInclusionOfClosed` applied to the
-closure instances proved here. The equalizer closure is where separatedness of the codomain
-is used: the equalizing locus is closed in a Hausdorff codomain, and a closed subring of a
-complete separated ring is complete separated (`IsCompleteSeparated.of_isClosedEmbedding`,
-in `CompleteSeparated/Basic.lean`).
+`TauCeti.CompleteSeparatedTopCommRingCat` has products and equalizers, and the inclusion into
+`TopCommRingCat` creates them. Both come from the closure instances proved here:
+`CategoryTheory.Limits.hasLimitsOfShape_of_closedUnderLimits` supplies the limits, and
+`CategoryTheory.Limits.createsLimitsOfShapeFullSubcategoryInclusion` their creation by the
+inclusion. The equalizer closure is where separatedness of the codomain is used: the
+equalizing locus is closed in a Hausdorff codomain, and a closed subring of a complete
+separated ring is complete separated (`IsCompleteSeparated.of_isClosedEmbedding`, in
+`CompleteSeparated/Basic.lean`).
 
 ## Main results
 
-* The `CategoryTheory.ObjectProperty.IsClosedUnderIsomorphisms` instance for
-  `TauCeti.TopCommRingCat.isCompleteSeparated` : the property transfers along isomorphisms of
-  topological rings.
 * The `IsClosedUnderLimitsOfShape` instances for discrete shapes and parallel pairs. These are
   what the inclusion needs in order to create the limits, so
-  `TauCeti.CompleteSeparatedTopCommRingCat` acquires products and equalizers from them:
-  products through the `HasProducts` instance below, equalizers by synthesis alone.
+  `TauCeti.CompleteSeparatedTopCommRingCat` acquires products and equalizers, and its inclusion
+  acquires `CreatesLimitsOfShape` for both shapes, by synthesis alone — as the `example`s below
+  record.
+
+## References
+
+* T. Wedhorn, *Adic Spaces*, arXiv:1910.05934v1 — the structure presheaf of §8.1 takes values
+  in complete separated topological rings, and the sheaf condition of §8.2 is an equalizer of a
+  pair of maps between products in that category, so both shapes are needed there.
 -/
 
 public section
@@ -39,30 +44,6 @@ universe v u
 open CategoryTheory CategoryTheory.Limits
 
 namespace TauCeti.TopCommRingCat
-
-/-- The complete separated property transfers along isomorphisms of topological commutative
-rings: an isomorphism is in particular a homeomorphism of the underlying additive groups,
-and the group uniformity is functorial under it. -/
-instance : (isCompleteSeparated.{u}).IsClosedUnderIsomorphisms where
-  of_iso := by
-    intro R S e hR
-    let φ : S ≃ₜ R :=
-      { toFun := e.inv
-        invFun := e.hom
-        left_inv := fun x ↦ congrArg (fun g : S ⟶ S ↦ (g : S → S) x) e.inv_hom_id
-        right_inv := fun x ↦ congrArg (fun g : R ⟶ R ↦ (g : R → R) x) e.hom_inv_id
-        continuous_toFun := e.inv.2
-        continuous_invFun := e.hom.2 }
-    have hR' := (isCompleteSeparated_iff _).mp hR
-    have : T0Space R := hR'.t0Space
-    refine (isCompleteSeparated_iff _).mpr ⟨?_, φ.isEmbedding.t0Space⟩
-    let _ : UniformSpace S := IsTopologicalAddGroup.rightUniformSpace S
-    let _ : UniformSpace R := IsTopologicalAddGroup.rightUniformSpace R
-    have : IsUniformAddGroup S := isUniformAddGroup_of_addCommGroup
-    have : IsUniformAddGroup R := isUniformAddGroup_of_addCommGroup
-    have : CompleteSpace R := hR'.completeSpace
-    exact ((AddMonoidHom.isUniformInducing_of_isInducing (f := e.inv.val)
-      φ.isInducing).completeSpace_congr φ.surjective).mpr ‹_›
 
 /-- Complete separated objects are closed under products in `TopCommRingCat`. -/
 instance {β : Type v} :
@@ -83,8 +64,11 @@ instance : (isCompleteSeparated.{u}).IsClosedUnderLimitsOfShape WalkingParallelP
     set f := F.map WalkingParallelPairHom.left
     set g := F.map WalkingParallelPairHom.right
     have : T2Space (F.obj .one) := ((isCompleteSeparated_iff _).mp (hF .one)).t2Space
-    have hcl : IsClosed (RingHom.eqLocus f.val g.val : Set (F.obj .zero)) :=
-      isClosed_eq f.2 g.2
+    have hcl : IsClosed (RingHom.eqLocus f.val g.val : Set (F.obj .zero)) := by
+      have hset : ((RingHom.eqLocus f.val g.val : Subring _) : Set (F.obj .zero)) =
+          {x | f.val x = g.val x} := Set.ext fun _ ↦ RingHom.mem_eqLocus
+      rw [hset]
+      exact isClosed_eq f.2 g.2
     exact ObjectProperty.prop_of_iso _
       (IsLimit.conePointsIsoOfNatIso (equalizerForkIsLimit f g) (limit.isLimit F)
         (diagramIsoParallelPair F).symm)
@@ -96,14 +80,20 @@ end TauCeti.TopCommRingCat
 
 namespace TauCeti.CompleteSeparatedTopCommRingCat
 
-/-- Products in the complete separated category, created by the inclusion. -/
-noncomputable instance : HasProducts.{v} CompleteSeparatedTopCommRingCat.{max u v} :=
-  fun _ ↦ inferInstance
+-- Neither the limits nor their creation needs an instance of its own: both follow from the
+-- closure instances above by synthesis alone, through
+-- `hasLimitsOfShape_of_closedUnderLimits` and `createsLimitsOfShapeFullSubcategoryInclusion`
+-- respectively. These `example`s pin that down, so that losing either would break the build.
+example : HasProducts.{v} CompleteSeparatedTopCommRingCat.{max u v} := inferInstance
 
--- Equalizers need no instance of their own: `HasEqualizers` unfolds to
--- `HasLimitsOfShape WalkingParallelPair`, which the closure instance above already synthesizes
--- through `hasLimitsOfShape_of_closedUnderLimits`. `HasProducts` does need one, being a `∀`
--- over the index type rather than a single `HasLimitsOfShape`.
 example : HasEqualizers CompleteSeparatedTopCommRingCat.{u} := inferInstance
+
+noncomputable example {β : Type v} :
+    CreatesLimitsOfShape (Discrete β) (TopCommRingCat.isCompleteSeparated.{max u v}).ι :=
+  inferInstance
+
+noncomputable example :
+    CreatesLimitsOfShape WalkingParallelPair (TopCommRingCat.isCompleteSeparated.{u}).ι :=
+  inferInstance
 
 end TauCeti.CompleteSeparatedTopCommRingCat
