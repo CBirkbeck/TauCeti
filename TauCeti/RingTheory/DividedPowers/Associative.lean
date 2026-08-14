@@ -141,6 +141,19 @@ theorem self_mul_dividedPower (n : ℕ) (x : A) :
     x * dividedPower n x = (n + 1) • dividedPower (n + 1) x := by
   simpa [add_comm 1 n] using mul_dividedPower 1 n x
 
+/-- **Raising the left divided power, scaled.** Multiplying by `x` on the left turns
+`x^[m] · y^[n]` into `m + 1` copies of `x^[m+1] · y^[n]`. -/
+theorem succ_nsmul_dividedPower_succ_mul (m n : ℕ) (x y : A) :
+    (m + 1) • (dividedPower (m + 1) x * dividedPower n y) =
+      x * (dividedPower m x * dividedPower n y) := by
+  calc
+    (m + 1) • (dividedPower (m + 1) x * dividedPower n y) =
+        ((m + 1) • dividedPower (m + 1) x) * dividedPower n y := by
+          simp only [nsmul_eq_mul]
+          rw [mul_assoc]
+    _ = (x * dividedPower m x) * dividedPower n y := by rw [self_mul_dividedPower]
+    _ = x * (dividedPower m x * dividedPower n y) := mul_assoc _ _ _
+
 /-- The first-order recurrence solved for the successor divided power. -/
 theorem dividedPower_succ (n : ℕ) (x : A) :
     dividedPower (n + 1) x = ((n + 1 : ℕ) : ℚ)⁻¹ • (dividedPower n x * x) := by
