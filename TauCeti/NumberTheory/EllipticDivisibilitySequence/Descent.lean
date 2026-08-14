@@ -223,6 +223,24 @@ theorem atomRelVanishes_of_min {a : ℤ} (one : W 1 ∈ R⁰) (two : W 2 ∈ R�
     · subst heq₂; exact rel le_rfl same anti
     · exact fix.2 hlt₃ same anti
 
+/-- **The relator is antisymmetric in its first two indices.** -/
+theorem atomRel_swap₁₂ (odd : W.Odd) (a b c d : ℤ) :
+    atomRel W b a c d = -atomRel W a b c d := by
+  rw [atomRel, atomRel, ← neg_atom odd a b]; ring
+
+/-- **The relator is antisymmetric in its middle two indices.** -/
+theorem atomRel_swap₂₃ (odd : W.Odd) (a b c d : ℤ) :
+    atomRel W a c b d = -atomRel W a b c d := by
+  rw [atomRel, atomRel, ← neg_atom odd b c]; ring
+
+/-- **The relator is antisymmetric in its last two indices.** Together with `atomRel_swap₁₂` and
+`atomRel_swap₂₃` these are the adjacent transpositions, so the relator is alternating under the
+whole symmetric group on its four indices. Mathlib supplies the `atomRel_same`, `atomRel_neg`
+and `atomRel_abs` families but not these. -/
+theorem atomRel_swap₃₄ (odd : W.Odd) (a b c d : ℤ) :
+    atomRel W a b d c = -atomRel W a b c d := by
+  rw [atomRel, atomRel, ← neg_atom odd c d]; ring
+
 /-- The even base case, as a relator: all four indices are even, so `atomRel_two_mul` applies. -/
 private theorem atomRel_even_eq_rel (m : ℤ) :
     atomRel W (2 * m) (2 * (m - 1)) (2 * 1) (2 * 0) = rel W m (m - 1) 1 0 := by
