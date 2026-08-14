@@ -138,14 +138,6 @@ theorem weightedRestrictedSubring_fin_zero :
   ext f
   simp [isWeightedRestricted_one_weight_iff, Filter.cofinite_eq_bot]
 
-omit [TopologicalSpace A] [NonarchimedeanRing A] in
-/-- At zero variables the weight subgroup `Tν · U` is just `U`: the weight is the empty product
-`{1}`, and the subgroup that generates absorbs into `U`. -/
-theorem weightMul_fin_zero (ν : Fin 0 →₀ ℕ) (U : AddSubgroup A) :
-    weightMul (fun _ : Fin 0 ↦ ({1} : Set A)) ν U = U := by
-  rw [weightMul_def, weightPow_def]
-  simp
-
 /-- **`A⟨⟩ = A`**: the restricted power series in no variables are `A` itself, as a ring. -/
 noncomputable def weightedRestrictedSubringFinZeroEquiv :
     weightedRestrictedSubring (fun _ : Fin 0 ↦ ({1} : Set A)) isWeightFamily_one_weight ≃+* A :=
@@ -170,7 +162,7 @@ theorem continuous_weightedRestrictedSubringFinZeroEquiv :
   obtain ⟨U, hUV⟩ := NonarchimedeanAddGroup.is_nonarchimedean V hV
   refine ⟨U, trivial, fun f hf ↦ hUV ?_⟩
   have h := mem_weightedNhd.mp hf 0
-  rw [weightMul_fin_zero] at h
+  rw [weightMul_one_weight] at h
   simpa using h
 
 /-- The inverse comparison sends `a` to the constant series. -/
@@ -190,7 +182,7 @@ theorem continuous_weightedRestrictedSubringFinZeroEquiv_symm :
   intro U _
   filter_upwards [U.isOpen.mem_nhds U.zero_mem] with a ha
   refine mem_weightedNhd.mpr fun ν ↦ ?_
-  rw [weightMul_fin_zero]
+  rw [weightMul_one_weight]
   simpa [Subsingleton.elim ν 0] using ha
 
 /-- **`A⟨⟩` is the separated completion of `A`.** The zero-variable comparison is a topological
