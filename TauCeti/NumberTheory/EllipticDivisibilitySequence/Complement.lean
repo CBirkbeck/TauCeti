@@ -54,9 +54,10 @@ about the sequence rather than about `ℤ`, and is the single rewrite done by ha
 Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at `dev/modular-curves @ 9fec8eba7652` — the revision
 `TauCetiRoadmap/EllipticCurves/README.md` pins for the NagellLutz project. Source declaration
-`normEDS_mul_complEDS_of_mem` (`:1324`), which is `private` there and public here, being this
-slice's deliverable rather than a step; the name gains Mathlib's full `_of_mem_nonZeroDivisors`
-suffix. The two unconditional forms adapt `normEDS_mul_complEDS` (`:1339`) and
+`normEDS_mul_complEDS_of_mem` (`:1324`), which is `private` in both — it was public here while it
+was this file's deliverable, and returned to being a step once the unconditional form landed; the
+name gains Mathlib's full `_of_mem_nonZeroDivisors` suffix. The two unconditional forms adapt
+`normEDS_mul_complEDS` (`:1339`) and
 `normEDS_mul_complEDS_div` (`:1350`) of that same file, under their source names. That file's
 header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
 adapted material the upstream authorship is credited here rather than in the copyright header.
