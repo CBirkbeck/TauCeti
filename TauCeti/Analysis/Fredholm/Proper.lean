@@ -74,10 +74,9 @@ holds for `f` on `N`, with the left side scaled by `1 - C * ε`; it has content 
 
 This is the absorption step behind Peetre's lemma: a bound below modulo `P` is stable under a
 Lipschitz-small perturbation. -/
-private theorem norm_sub_le_of_approximatesLinearOn {P : E →L[𝕜] E} {C : ℝ} {N : Set E} {ε : ℝ≥0}
+private theorem one_sub_mul_norm_sub_le {P : E →L[𝕜] E} {C : ℝ} {N : Set E} {ε : ℝ≥0}
     (hC : 0 ≤ C) (hest : ∀ z, ‖z‖ ≤ C * ‖f' z‖ + ‖P z‖)
-    (happ : ApproximatesLinearOn f f' N ε)
-    {x : E} (hx : x ∈ N) {y : E} (hy : y ∈ N) :
+    (happ : ApproximatesLinearOn f f' N ε) {x : E} (hx : x ∈ N) {y : E} (hy : y ∈ N) :
     (1 - C * (ε : ℝ)) * ‖x - y‖ ≤ C * ‖f x - f y‖ + ‖P x - P y‖ := by
   have h1 := hest (x - y)
   have h2 := happ x hx y hy
@@ -122,7 +121,7 @@ theorem _root_.HasStrictFDerivAt.exists_mem_nhds_forall_isCompact_inter_preimage
   have key : ∀ x ∈ N, ∀ y ∈ N,
       ‖x - y‖ ≤ 2 * (C * ‖f x - f y‖) + 2 * ‖P x - P y‖ := by
     intro x hx y hy
-    have h := norm_sub_le_of_approximatesLinearOn hC.le hest happN hx hy
+    have h := one_sub_mul_norm_sub_le hC.le hest happN hx hy
     rw [hCε] at h
     linarith
   refine ⟨N, Metric.closedBall_mem_nhds a (by linarith), fun L hL => ?_⟩
