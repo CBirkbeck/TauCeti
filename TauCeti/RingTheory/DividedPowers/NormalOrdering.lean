@@ -127,6 +127,22 @@ private theorem sum_sub_nsmul_add_succ_nsmul (u : ℕ → A) {M C : ℕ} (hMC : 
               rw [← add_smul, hcoeffQ]
         _ = _ := by rw [← smul_add]
 
+-- Multiplying the `z`-`x` tail of a normal-ordered summand by `x` lengthens its final
+-- `x`-power. This serves twice: once inside `mul_normalOrderTerm` for a general summand, and
+-- once on its own at the main theorem's last summand `k = n`, where no commutator term
+-- remains because the `y`-power is zero.
+private theorem mul_normalOrderLast {x z : A} (hxz : Commute x z) {m n : ℕ} (hnm : n ≤ m) :
+    x * (dividedPower n z * dividedPower (m - n) x) =
+      (m + 1 - n) • (dividedPower n z * dividedPower (m + 1 - n) x) := by
+  have hmn : m + 1 - n = (m - n) + 1 := by omega
+  have hxzn : Commute x (dividedPower n z) := by
+    simpa using commute_dividedPower_dividedPower hxz 1 n
+  have hxx :
+      x * dividedPower (m - n) x =
+        (m + 1 - n) • dividedPower (m + 1 - n) x := by
+    rw [self_mul_dividedPower, hmn]
+  rw [← mul_assoc, hxzn.eq, mul_assoc, hxx, mul_smul_comm]
+
 -- Multiplying one normal-ordered summand by `x` either lengthens its final `x`-power or uses
 -- the commutator and lengthens its middle `z`-power. These are the two adjacent contributions
 -- combined by `sum_sub_nsmul_add_succ_nsmul`.
@@ -139,26 +155,15 @@ private theorem mul_normalOrderTerm {x y z : A} (hxy : x * y = y * x + z)
           (dividedPower (n - (k + 1)) y * dividedPower (k + 1) z *
             dividedPower (m + 1 - (k + 1)) x) := by
   have hnk : n - k = (n - (k + 1)) + 1 := by omega
-  have hmk : m + 1 - k = (m - k) + 1 := by omega
   have hmk' : m + 1 - (k + 1) = m - k := by omega
-  have hxzk : Commute x (dividedPower k z) := by
-    simpa using commute_dividedPower_dividedPower hxz 1 k
   have hxy' :
       x * dividedPower (n - k) y =
         dividedPower (n - k) y * x + dividedPower (n - (k + 1)) y * z := by
     rw [hnk]
     exact mul_dividedPower_of_commutator_eq hxy hyz _
-  have hxx :
-      x * dividedPower (m - k) x =
-        (m + 1 - k) • dividedPower (m + 1 - k) x := by
-    rw [self_mul_dividedPower, hmk]
   have hzz :
       z * dividedPower k z = (k + 1) • dividedPower (k + 1) z :=
     self_mul_dividedPower k z
-  have hxmove :
-      x * (dividedPower k z * dividedPower (m - k) x) =
-        dividedPower k z * (x * dividedPower (m - k) x) := by
-    rw [← mul_assoc, hxzk.eq, mul_assoc]
   have hzmove :
       z * (dividedPower k z * dividedPower (m - k) x) =
         (z * dividedPower k z) * dividedPower (m - k) x := by
@@ -169,7 +174,7 @@ private theorem mul_normalOrderTerm {x y z : A} (hxy : x * y = y * x + z)
         (m + 1 - k) •
           (dividedPower (n - k) y * dividedPower k z *
             dividedPower (m + 1 - k) x) := by
-    rw [hxmove, hxx, mul_smul_comm, mul_smul_comm, mul_assoc]
+    rw [mul_normalOrderLast hxz hkm, mul_smul_comm, mul_assoc]
   have hsecond :
       dividedPower (n - (k + 1)) y *
           (z * (dividedPower k z * dividedPower (m - k) x)) =
@@ -182,19 +187,6 @@ private theorem mul_normalOrderTerm {x y z : A} (hxy : x * y = y * x + z)
     mul_assoc (dividedPower (n - k) y) x,
     mul_assoc (dividedPower (n - (k + 1)) y) z]
   rw [hfirst, hsecond, hmk']
-
--- At the last summand `k = n`, no commutator term remains because the `y`-power is zero.
-private theorem mul_normalOrderLast {x z : A} (hxz : Commute x z) {m n : ℕ} (hnm : n ≤ m) :
-    x * (dividedPower n z * dividedPower (m - n) x) =
-      (m + 1 - n) • (dividedPower n z * dividedPower (m + 1 - n) x) := by
-  have hmn : m + 1 - n = (m - n) + 1 := by omega
-  have hxzn : Commute x (dividedPower n z) := by
-    simpa using commute_dividedPower_dividedPower hxz 1 n
-  have hxx :
-      x * dividedPower (m - n) x =
-        (m + 1 - n) • dividedPower (m + 1 - n) x := by
-    rw [self_mul_dividedPower, hmn]
-  rw [← mul_assoc, hxzn.eq, mul_assoc, hxx, mul_smul_comm]
 
 /-- **Coefficient-one normal ordering for divided powers with central commutator.** Suppose
 `x * y = y * x + z`, and `z` commutes with both `x` and `y`. Then
