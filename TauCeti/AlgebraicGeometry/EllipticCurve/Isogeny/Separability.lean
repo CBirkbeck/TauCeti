@@ -4,7 +4,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.Algebra.Algebra.Hom
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Degree
 public import Mathlib.FieldTheory.PurelyInseparable.Basic
 import Mathlib.FieldTheory.PurelyInseparable.Tower
@@ -136,20 +135,20 @@ theorem inseparableDegree_eq_finInsepDegree (φ : Isogeny W₁ W₂)
 /-- **The degree factors as separable times inseparable.** This is the field-theoretic
 factorisation transported to isogenies; it is what makes "the inseparable part is a Frobenius
 power" a statement about `inseparableDegree`. -/
+@[simp]
 theorem separableDegree_mul_inseparableDegree (φ : Isogeny W₁ W₂) :
     φ.separableDegree * φ.inseparableDegree = φ.degree :=
   (Field.finSepDegree_mul_finInsepDegree _ _).trans φ.degree_def.symm
 
-/-- **Every isogeny has a strictly positive separable degree** — the separable part of the
-extension is never trivial, so the factorisation `separableDegree * inseparableDegree = degree`
-never degenerates on this side. -/
+/-- **Every isogeny has a strictly positive separable degree** — in particular never zero, so this
+factor of `separableDegree_mul_inseparableDegree` can be cancelled against `degree`. It is
+frequently `1`: that is the separable case, not a degenerate one. -/
 theorem separableDegree_pos (φ : Isogeny W₁ W₂) : 0 < φ.separableDegree := by
   simpa [separableDegree_def] using
     NeZero.pos (Field.finSepDegree φ.fieldPullback.fieldRange W₁.FunctionField)
 
-/-- **Every isogeny has a strictly positive inseparable degree**, so the other factor of
-`separableDegree_mul_inseparableDegree` is never trivial either. This is what makes cancelling
-either factor against `degree` legitimate. -/
+/-- **Every isogeny has a strictly positive inseparable degree**, likewise never zero, so either
+factor of `separableDegree_mul_inseparableDegree` may be cancelled against `degree`. -/
 theorem inseparableDegree_pos (φ : Isogeny W₁ W₂) : 0 < φ.inseparableDegree := by
   simpa [inseparableDegree_def] using
     NeZero.pos (Field.finInsepDegree φ.fieldPullback.fieldRange W₁.FunctionField)
@@ -236,9 +235,12 @@ theorem separableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  have hφ := φ.fieldPullback.algebraMap_toAlgebra_apply
-  have hψ := ψ.fieldPullback.algebraMap_toAlgebra_apply
-  have hc := (ψ.comp φ).fieldPullback.algebraMap_toAlgebra_apply
+  have hφ := fun z ↦ congrFun
+    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra φ.fieldPullback.toRingHom)) z
+  have hψ := fun z ↦ congrFun
+    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra ψ.fieldPullback.toRingHom)) z
+  have hc := fun z ↦ congrFun
+    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra (ψ.comp φ).fieldPullback.toRingHom)) z
   -- discharges the tower law's `[Algebra.IsAlgebraic E K]` side condition
   have _ := TauCeti.AlgHom.finiteDimensional_of_fieldRange φ.fieldPullback hφ
   rw [(ψ.comp φ).separableDegree_eq_finSepDegree hc, ψ.separableDegree_eq_finSepDegree hψ,
@@ -258,9 +260,12 @@ theorem inseparableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂)
   have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  have hφ := φ.fieldPullback.algebraMap_toAlgebra_apply
-  have hψ := ψ.fieldPullback.algebraMap_toAlgebra_apply
-  have hc := (ψ.comp φ).fieldPullback.algebraMap_toAlgebra_apply
+  have hφ := fun z ↦ congrFun
+    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra φ.fieldPullback.toRingHom)) z
+  have hψ := fun z ↦ congrFun
+    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra ψ.fieldPullback.toRingHom)) z
+  have hc := fun z ↦ congrFun
+    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra (ψ.comp φ).fieldPullback.toRingHom)) z
   -- the inseparable tower law needs `[Algebra.IsAlgebraic F E]`, the *lower* extension — so the
   -- finiteness required here is `ψ`'s, unlike `separableDegree_comp`, which needs `φ`'s
   have _ := TauCeti.AlgHom.finiteDimensional_of_fieldRange ψ.fieldPullback hψ

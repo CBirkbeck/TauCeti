@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
-public import TauCeti.Algebra.Algebra.Hom
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.FunctionField
 import Mathlib.NumberTheory.FunctionField
 import TauCeti.FieldTheory.IntermediateField.FieldRange
@@ -182,9 +181,15 @@ theorem degree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   have htower : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  rw [φ.degree_eq_finrank φ.fieldPullback.algebraMap_toAlgebra_apply,
-    ψ.degree_eq_finrank ψ.fieldPullback.algebraMap_toAlgebra_apply,
-    (ψ.comp φ).degree_eq_finrank (ψ.comp φ).fieldPullback.algebraMap_toAlgebra_apply]
+  -- the structure map of `f.toRingHom.toAlgebra` is `f`. `RingHom.algebraMap_toAlgebra` states
+  -- that as an equality of ring homomorphisms, so it is applied pointwise through `DFunLike.coe`.
+  have hφ := fun z ↦ congrFun
+    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra φ.fieldPullback.toRingHom)) z
+  have hψ := fun z ↦ congrFun
+    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra ψ.fieldPullback.toRingHom)) z
+  have hc := fun z ↦ congrFun
+    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra (ψ.comp φ).fieldPullback.toRingHom)) z
+  rw [φ.degree_eq_finrank hφ, ψ.degree_eq_finrank hψ, (ψ.comp φ).degree_eq_finrank hc]
   exact (Module.finrank_mul_finrank W₃.FunctionField W₂.FunctionField W₁.FunctionField).symm
 
 end Isogeny
