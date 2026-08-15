@@ -98,21 +98,10 @@ private theorem windingNumber_fdBoundary_eq_inv_two_pi_I_mul_sum_log (hx : |w.re
     windingNumber_fdBoundarySegment4_eq_log hx₁, windingNumber_fdBoundarySegment5_eq_log hyH]
   ring
 
-/-- The winding number of the closed boundary contour about an off-curve point is an
-integer. -/
-private theorem exists_int_windingNumber_fdBoundary (hw : ∀ t ∈ Icc (0 : ℝ) 5,
-    fdBoundary H t ≠ w) : ∃ n : ℤ, windingNumber (fdBoundary H) 0 5 w = n := by
-  obtain ⟨P, hP, hdiff⟩ := (isPiecewiseC1On_fdBoundary H).exists_countable_differentiableAt
-  exact exists_int_windingNumber_of_closed (P := P) (fdBoundary_closed H).symm hP
-    (continuous_fdBoundary H).continuousOn hdiff
-    (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
-    (intervalIntegrable_inv_sub_mul_deriv (continuous_fdBoundary H).continuousOn
-      (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
-      (isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv)
-
-/-- Reading the imaginary part off the normalized log sum: `2πn` is the sum of the four
-piece arguments. Each logarithm's imaginary part is its argument. -/
-private theorem two_pi_mul_eq_sum_arg_of_windingNumber_eq (hx : |w.re| < 1 / 2) (hy1 : 1 < w.im)
+/-- If the winding number of the boundary contour about a point of the open strip equals the
+integer `n`, then `2 * π * n` is the sum of the arguments of the four piece ratios. -/
+private theorem two_pi_mul_int_eq_sum_arg_of_windingNumber_fdBoundary_eq
+    (hx : |w.re| < 1 / 2) (hy1 : 1 < w.im)
     (hyH : w.im < H) {n : ℤ} (hn : windingNumber (fdBoundary H) 0 5 w = n) :
     2 * Real.pi * (n : ℝ) = (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w)).arg +
       (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w)).arg +
@@ -130,9 +119,11 @@ private theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 
   obtain ⟨hx₁, hx₂⟩ := abs_lt.mp hx
   have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_lt_one.le
   have hnorm : 1 < ‖w‖ := hy1.trans_le (Complex.im_le_norm w)
-  obtain ⟨n, hn⟩ := exists_int_windingNumber_fdBoundary
-    (fdBoundary_ne_of_abs_re_lt_half_of_one_lt_norm_of_im_lt hx hnorm hyH)
-  have hIm := two_pi_mul_eq_sum_arg_of_windingNumber_eq hx hy1 hyH hn
+  obtain ⟨n, hn⟩ := (isPiecewiseC1On_fdBoundary H).exists_int_windingNumber
+    (fdBoundary_closed H).symm
+    (by rw [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)]
+        exact fdBoundary_ne_of_abs_re_lt_half_of_one_lt_norm_of_im_lt hx hnorm hyH)
+  have hIm := two_pi_mul_int_eq_sum_arg_of_windingNumber_fdBoundary_eq hx hy1 hyH hn
   -- the four endpoint differences turn clockwise, so each argument lies in `(-π, 0)`; the
   -- sum is then in `(-4π, 0)`, which pins the integer to `-1`
   have ha₁ : (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w)).arg < 0 :=
