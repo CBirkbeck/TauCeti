@@ -77,7 +77,8 @@ Xu is acknowledged for the surrounding LutzNagell development — he authors `Un
 co-authors `DivisionPolynomialOmega.lean` at the same revision — as context for this port, not as
 an author of the declarations above.
 
-The net strengthening here adapts one further declaration of that same file, `net_normEDS`.
+The net strengthening here adapts one further declaration of that same file, `net_normEDS`, and
+`normEDS_two_three_two` below adapts the declaration of that name.
 
 The source proves the hypothesis-carrying version from its own descent development; here that step
 is `Descent.lean`'s `IsEllipticNet.of_rel`, fed the two recurrences in relator form, so the helper
