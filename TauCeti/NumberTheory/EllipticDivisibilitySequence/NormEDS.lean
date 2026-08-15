@@ -17,7 +17,15 @@ relation, for arbitrary `b`, `c`, `d` in any commutative ring. Being an elliptic
 the last index held at `0`.
 
 Knowing that, one specialisation can be identified outright: `normEDS 2 3 2` is the identity
-sequence, since the two are elliptic sequences agreeing at the four indices that determine one.
+sequence. Its base values are `1, 2, 3, 4`, `id` is an elliptic sequence too, and
+`IsEllipticSequence.ext` makes two elliptic sequences agreeing at `1, 2, 3, 4` equal given that
+the first two values are nonzerodivisors — here `1` and `2` in `ℤ`. `Universal.lean` records this
+identity as what `universalNormEDS_ne_zero` and `universalNormEDS_mem_nonZeroDivisors` rest on,
+and had it down as blocked on that extensionality principle; `Ext.lean` supplies it.
+
+The `ℤ` statement is the one with consumers, but it is not the general one: applying the unique
+ring map out of `ℤ` gives `normEDS (2 : R) 3 2 = Int.cast` over every commutative ring, and both
+are stated below.
 
 The three-index statement is the first half of the TODO Mathlib records at
 `Mathlib/NumberTheory/EllipticDivisibilitySequence.lean:70`, "prove that `normEDS` satisfies
@@ -42,8 +50,11 @@ distinction where the identity is proved.
 
 * `isEllipticNet_normEDS`: `IsEllipticNet (normEDS b c d)`, with no hypothesis on the parameters.
 * `isEllipticSequence_normEDS`: its `s = 0` case.
-* `normEDS_two_three_two_eq_id`: `normEDS (2 : ℤ) 3 2 = id`, the one specialisation the
-  extensionality principle pins outright.
+* `normEDS_two_three_two_eq_intCast`: `normEDS (2 : R) 3 2 = Int.cast` over any commutative ring.
+* `normEDS_two_three_two_eq_id`: its `R = ℤ` case, `normEDS (2 : ℤ) 3 2 = id`. Kept as a named
+  theorem rather than left to the general form because it is what the universal-parameter
+  arguments consume — they specialise at `(2, 3, 2)` in `ℤ` — and because it is the `simp` form
+  there, `Int.cast` on `ℤ` being the identity.
 
 The first consumer this unlocks is `IsEllipticNet.invarNum_mul_invarDenom`, which callers can
 apply to `isEllipticNet_normEDS` directly; it is deliberately not restated here as a
@@ -143,13 +154,7 @@ theorem isEllipticNet_normEDS (b c d : R) : IsEllipticNet (normEDS b c d) := by
 theorem isEllipticSequence_normEDS (b c d : R) : IsEllipticSequence (normEDS b c d) :=
   (isEllipticNet_normEDS b c d).isEllipticSequence
 
-/-- **`normEDS 2 3 2` is the identity.** Its base values are `1, 2, 3, 4` and it is an elliptic
-sequence, as is `id`; `IsEllipticSequence.ext` makes two elliptic sequences agreeing at
-`1, 2, 3, 4` equal, given that the first two values are nonzerodivisors — here `1` and `2` in `ℤ`.
-
-`Universal.lean` names this as the fact `universalNormEDS_ne_zero` and
-`universalNormEDS_mem_nonZeroDivisors` rest on, and recorded it as blocked on that extensionality
-principle; `Ext.lean` supplies it and `IsEllipticSequence.id` the other sequence. -/
+/-- **`normEDS 2 3 2` is the identity sequence on `ℤ`.** -/
 @[simp]
 theorem normEDS_two_three_two_eq_id : normEDS (2 : ℤ) 3 2 = id := by
   refine (isEllipticSequence_normEDS 2 3 2).ext IsEllipticSequence.id ?_ ?_ ?_ ?_ ?_ ?_
@@ -159,3 +164,12 @@ theorem normEDS_two_three_two_eq_id : normEDS (2 : ℤ) 3 2 = id := by
   · simp
   · simp
   · simp
+
+/-- **`normEDS 2 3 2` is the integer cast, over any commutative ring.** The identity on `ℤ`
+transported along the unique ring map out of it. -/
+theorem normEDS_two_three_two_eq_intCast (R : Type*) [CommRing R] :
+    normEDS (2 : R) 3 2 = Int.cast := by
+  funext n
+  have h := map_normEDS (f := Int.castRingHom R) (b := (2 : ℤ)) (c := 3) (d := 2) n
+  rw [normEDS_two_three_two_eq_id] at h
+  simpa using h.symm
