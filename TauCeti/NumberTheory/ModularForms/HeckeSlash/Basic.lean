@@ -19,10 +19,11 @@ determinant, because the scalar passes through the slash only on that branch.
 ⚠ **It is not yet an action, and on a general `f : ℍ → ℂ` it is not even well defined.**
 `heckeSlashSum` is a sum over *chosen* representatives — `D.out` for the double coset and
 `i.out` for each of its left cosets — and on an arbitrary function the choice changes the
-answer: replacing `σᵢ` by `hσᵢ` for `h ∈ Γ₁` multiplies the representative `(σᵢδ)ᵀ` by
-`hᵀ` on the right, and `f ∣[k] (Xhᵀ) = (f ∣[k] X) ∣[k] hᵀ` differs from `f ∣[k] X` unless the
-slash by `hᵀ` is trivial on that function. Even the identity double coset can therefore send a
-raw `f` to `f ∣[k] h` rather than to `f`.
+answer. A different representative of the same left coset is `σᵢ' δ = σᵢ δ h₂` for some
+`h₂ ∈ Γ₂`, so transposing gives `(σᵢ' δ)ᵀ = h₂ᵀ (σᵢ δ)ᵀ`: the representative is multiplied by
+`h₂ᵀ ∈ Γ₂ᵀ` on the **left**. Since `f ∣[k] (h₂ᵀ X) = (f ∣[k] h₂ᵀ) ∣[k] X`, the summand moves
+unless the slash by `h₂ᵀ` is trivial on `f`. Even the identity double coset can therefore send a
+raw `f` to `f ∣[k] h₂ᵀ` rather than to `f`.
 
 What repairs it is slash-invariance of `f`, and that is the content of Shimura's Proposition
 3.37. ⚠ **Two different groups are involved, and they are easy to conflate.**
@@ -194,7 +195,9 @@ lemma transposeRep_mem_posDetInt (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
   transposeRep_def D i ▸
     transposeGLEquiv_mem_posDetInt 2 (mul_mem (hΓ₁ i.out.2) hD)
 
-/-- The representatives have positive determinant — the `0 < det` half of
+/-- The representatives have positive determinant, in the shape
+`ModularForm.rat_smul_slash_of_det_pos` consumes.
+
 `transposeRep_mem_posDetInt`, in the shape `ModularForm.rat_smul_slash_of_det_pos` consumes. -/
 lemma det_transposeRep_pos (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
     (hD : (D.out : GL (Fin 2) ℚ) ∈ posDetInt 2)
