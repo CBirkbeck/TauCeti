@@ -21,10 +21,10 @@ an orbit is wanted in.
 *Along an orbit* the stabiliser order does not change: related points have conjugate
 stabilisers, by `MulAction.stabilizerEquivStabilizerOfOrbitRel`.
 
-*Along a quotient* it divides: if a normal `N` acts trivially — in the form of a compatibility
-between the `G`-action and the induced `G ⧸ N`-action — then the quotient map restricts to a
-surjection of stabilisers with kernel `N`, so the `G`-order is `Nat.card N` times the
-`G ⧸ N`-order.
+*Along a quotient* it divides: if a normal `N` and the induced `G ⧸ N`-action are compatible at
+the point in question — which makes every element of `N` fix that point, though not necessarily
+any other — then the quotient map restricts to a surjection of its stabiliser onto the
+`G ⧸ N` one with kernel `N`, so the `G`-order is `Nat.card N` times the `G ⧸ N`-order.
 
 ## Main results
 
