@@ -31,9 +31,9 @@ order of the norm is the sum of the orders of the factors.
   `TauCeti.ModularForm.orderOfVanishingAt_le_orderOfVanishingAt_norm` as the identity-coset
   corollary — so the zeros of the norm dominate those of the form.
 * `TauCeti.ModularForm.finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero_subgroup`: the
-  consumer of that domination — at any level of finite relative index in `𝒮ℒ`, the
-  nonzero-order points of a form meet only finitely many `𝒢`-orbits, which is finite support
-  of the interior order divisor on `𝒢 \ ℍ`.
+  consumer of that domination — at any level of finite relative index in `𝒮ℒ`, the image in
+  `𝒢 \ ℍ` of the points at which a form has nonzero vanishing order is finite. Equivalently,
+  those points meet only finitely many `𝒢`-orbits.
 
 ## References
 
@@ -160,11 +160,16 @@ private lemma finite_image_orbit_mk_orbit (𝒢 : Subgroup (GL (Fin 2) ℝ))
   exact ⟨Quotient.mk'' ⟨p, hp⟩, rfl⟩
 
 /-- **At any level of finite relative index in `𝒮ℒ`, the nonzero-order points of a form meet
-only finitely many `𝒢`-orbits** — finite support of the interior order divisor on `𝒢 \ ℍ`.
+only finitely many `𝒢`-orbits**: the image in `𝒢 \ ℍ` of `{p | orderOfVanishingAt f p ≠ 0}` is
+finite.
 
-`𝒢` is a subgroup of `GL (Fin 2) ℝ` and is *not* assumed to lie inside `𝒮ℒ`; only the relative
-index is finite. The nonzero-order set is covered by the finitely many `SL(2, ℤ)`-orbits its
-points lie on, and each of those meets only finitely many `𝒢`-orbits. -/
+⚠ This is *not* stated as finite support of an order divisor on `𝒢 \ ℍ`, and cannot be: no order
+function descends to that quotient here, because `𝒢` need not lie inside `𝒮ℒ` and its
+negative-determinant elements are not known to preserve the order. The claim is about the image
+of a set of points, nothing more.
+
+The nonzero-order set is covered by the finitely many `SL(2, ℤ)`-orbits its points lie on, and
+each of those meets only finitely many `𝒢`-orbits. -/
 public lemma finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero_subgroup
     {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F 𝒢 k] (f : F) :
     Set.Finite ((Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient 𝒢 ℍ) ''
