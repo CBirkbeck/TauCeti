@@ -23,8 +23,10 @@ own index and representatives.
 
 ## Main results
 
-* `OnePoint.isZeroAt_sum_rat_slash`, `OnePoint.isBoundedAt_sum_rat_slash`: a finite sum of
-  rational slashes inherits vanishing, resp. boundedness, at the cusps.
+* `OnePoint.isZeroAt_rat_slash`, `OnePoint.isBoundedAt_rat_slash`: a single rational slash
+  inherits vanishing, resp. boundedness, at the cusps.
+* `OnePoint.isZeroAt_sum_rat_slash`, `OnePoint.isBoundedAt_sum_rat_slash`: the same for a finite
+  sum, obtained by closing the summand-wise statements under `OnePoint.IsZeroAt.sum`.
 
 ## Provenance
 
@@ -49,20 +51,32 @@ variable (k : ℤ) {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {ι : Type
 
 /-- **Any finite sum of rational slashes vanishes at every cusp** when the function does. The
 matrices are unconstrained: only their rationality is used, via `IsCusp.smul_map_ratCast`. -/
-lemma isZeroAt_sum_rat_slash (s : Finset ι) (g : ι → GL (Fin 2) ℚ)
+lemma isZeroAt_rat_slash (g : GL (Fin 2) ℚ)
     (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsZeroAt f k) (hc : IsCusp c Γ) :
-    c.IsZeroAt (∑ i ∈ s, f ∣[k] g i) k := by
-  refine OnePoint.IsZeroAt.sum fun i _ ↦ ?_
+    c.IsZeroAt (f ∣[k] g) k := by
   rw [ModularForm.rat_slash]
   exact OnePoint.IsZeroAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
 
+/-- **A finite sum of rational slashes vanishes at every cusp** — the summand-wise statement
+`isZeroAt_rat_slash` closed under `OnePoint.IsZeroAt.sum`. -/
+lemma isZeroAt_sum_rat_slash (s : Finset ι) (g : ι → GL (Fin 2) ℚ)
+    (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsZeroAt f k) (hc : IsCusp c Γ) :
+    c.IsZeroAt (∑ i ∈ s, f ∣[k] g i) k :=
+  OnePoint.IsZeroAt.sum fun i _ ↦ isZeroAt_rat_slash k (g i) hf hc
+
 /-- **Any finite sum of rational slashes is bounded at every cusp** when the function is. -/
-lemma isBoundedAt_sum_rat_slash (s : Finset ι) (g : ι → GL (Fin 2) ℚ)
+lemma isBoundedAt_rat_slash (g : GL (Fin 2) ℚ)
     (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsBoundedAt f k) (hc : IsCusp c Γ) :
-    c.IsBoundedAt (∑ i ∈ s, f ∣[k] g i) k := by
-  refine OnePoint.IsBoundedAt.sum fun i _ ↦ ?_
+    c.IsBoundedAt (f ∣[k] g) k := by
   rw [ModularForm.rat_slash]
   exact OnePoint.IsBoundedAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
+
+/-- **A finite sum of rational slashes is bounded at every cusp** — the summand-wise statement
+`isBoundedAt_rat_slash` closed under `OnePoint.IsBoundedAt.sum`. -/
+lemma isBoundedAt_sum_rat_slash (s : Finset ι) (g : ι → GL (Fin 2) ℚ)
+    (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsBoundedAt f k) (hc : IsCusp c Γ) :
+    c.IsBoundedAt (∑ i ∈ s, f ∣[k] g i) k :=
+  OnePoint.IsBoundedAt.sum fun i _ ↦ isBoundedAt_rat_slash k (g i) hf hc
 
 end OnePoint
 
