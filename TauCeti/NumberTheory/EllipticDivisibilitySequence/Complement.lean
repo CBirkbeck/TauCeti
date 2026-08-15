@@ -11,8 +11,9 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.NormEDS
 
 Mathlib defines `complEDS b c d k` to witness `normEDS b c d k ∣ normEDS b c d (n * k)`, but
 proves the witnessing identity `normEDS b c d k * complEDS b c d k n = normEDS b c d (n * k)`
-only at `k = 2`, as `normEDS_mul_complEDS₂`. This file proves it at every `k`, on the hypothesis
-that `normEDS b c d k` is a nonzerodivisor.
+only at `k = 2`, as `normEDS_mul_complEDS₂`. This file proves it at every `k`, **unconditionally**:
+the induction runs on a nonzerodivisor hypothesis, which is then discharged over `ℤ[B, C, D]` and
+specialised away.
 
 That identity is the second conjunct of the TODO Mathlib records at
 `Mathlib/NumberTheory/EllipticDivisibilitySequence.lean:70`, "prove that `normEDS` satisfies
@@ -21,9 +22,6 @@ slice of its own.
 
 ## Main results
 
-* `normEDS_mul_complEDS_of_mem_nonZeroDivisors`:
-  `normEDS b c d k * complEDS b c d k n = normEDS b c d (n * k)`, for every `n`, over any
-  commutative ring, whenever `normEDS b c d k` is a nonzerodivisor.
 * `normEDS_mul_complEDS`: the same identity with **no hypothesis at all**, obtained from the
   previous one by specialising from the universal parameters.
 * `normEDS_mul_complEDS_div`: its divisor form,
@@ -34,8 +32,9 @@ slice of its own.
 The nonzerodivisor hypothesis is what the induction consumes. The odd step derives the identity
 multiplied through by `normEDS b c d k`, and cancelling that factor is the only use of `hk`; the
 even step and both base cases are unconditional. It is removable by specialising from the
-universal parameters, where the sequence is a nonzerodivisor at every index — the route
-`NormEDS.lean` takes for `isEllipticNet_normEDS`. That is now available: `universalNormEDS_ne_zero`
+universal parameters, where the sequence is a nonzerodivisor at every **nonzero** index — the
+route `NormEDS.lean` takes for `isEllipticNet_normEDS`. It vanishes at `k = 0`, so that case is
+split off first and closed by `simp`. The route is now available: `universalNormEDS_ne_zero`
 (`NormEDS.lean`) gives the nonvanishing, and `mem_nonZeroDivisors_of_ne_zero` turns it into the
 hypothesis this induction consumes, `ℤ[B, C, D]` being a domain.
 
@@ -92,7 +91,8 @@ variable {R : Type*} [CommRing R] {b c d : R}
 
 `complEDS b c d k n` is Mathlib's division-free candidate for `W (n * k) / W k`; this is the
 identity that makes it one, given that `normEDS b c d k` is a nonzerodivisor. -/
-theorem normEDS_mul_complEDS_of_mem_nonZeroDivisors {k : ℤ} (hk : normEDS b c d k ∈ R⁰) (n : ℤ) :
+private theorem normEDS_mul_complEDS_of_mem_nonZeroDivisors {k : ℤ} (hk : normEDS b c d k ∈ R⁰)
+    (n : ℤ) :
     normEDS b c d k * complEDS b c d k n = normEDS b c d (n * k) := by
   induction n using Int.negInduction with
   | nat n =>
