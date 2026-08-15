@@ -26,6 +26,9 @@ supplies through `zero_at_cusps'`. `IsCusp.smul_map_ratCast` reduces to `𝒮ℒ
 
 ## Main results
 
+* `HeckeRing.GL2.isZeroAt_sum_rat_slash`, `isBoundedAt_sum_rat_slash`: **any** finite sum
+  of rational slashes inherits vanishing, resp. boundedness, at the cusps. The
+  representatives are unconstrained — only their rationality is used.
 * `HeckeRing.GL2.isZeroAt_heckeSlashSum`: the slash sum of a function vanishing at every cusp
   vanishes at every cusp.
 * `HeckeRing.GL2.isBoundedAt_heckeSlashSum`: the same for boundedness.
@@ -50,23 +53,44 @@ open scoped MatrixGroups ModularForm
 
 variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 
+section RatSlashSum
+
+variable {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {ι : Type*} {f : ℍ → ℂ}
+  {c : OnePoint ℝ}
+
+/-- **Any finite sum of rational slashes vanishes at every cusp** when the function does. The
+representatives are unconstrained: what matters is only that each is rational, so that `g • c` is
+again a cusp. -/
+lemma isZeroAt_sum_rat_slash (s : Finset ι) (g : ι → GL (Fin 2) ℚ)
+    (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsZeroAt f k) (hc : IsCusp c Γ) :
+    c.IsZeroAt (∑ i ∈ s, f ∣[k] g i) k := by
+  refine OnePoint.IsZeroAt.sum fun i _ ↦ ?_
+  rw [ModularForm.rat_slash]
+  exact OnePoint.IsZeroAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
+
+/-- **Any finite sum of rational slashes is bounded at every cusp** when the function is. -/
+lemma isBoundedAt_sum_rat_slash (s : Finset ι) (g : ι → GL (Fin 2) ℚ)
+    (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsBoundedAt f k) (hc : IsCusp c Γ) :
+    c.IsBoundedAt (∑ i ∈ s, f ∣[k] g i) k := by
+  refine OnePoint.IsBoundedAt.sum fun i _ ↦ ?_
+  rw [ModularForm.rat_slash]
+  exact OnePoint.IsBoundedAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
+
+end RatSlashSum
+
 /-- **The slash sum vanishes at every cusp** when the function does. -/
 lemma isZeroAt_heckeSlashSum {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {f : ℍ → ℂ}
     (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsZeroAt f k) {c : OnePoint ℝ} (hc : IsCusp c Γ) :
     c.IsZeroAt (heckeSlashSum k D f) k := by
   rw [heckeSlashSum_def]
-  refine OnePoint.IsZeroAt.sum fun i _ ↦ ?_
-  rw [ModularForm.rat_slash]
-  exact OnePoint.IsZeroAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
+  exact isZeroAt_sum_rat_slash k _ _ hf hc
 
 /-- **The slash sum is bounded at every cusp** when the function is. -/
 lemma isBoundedAt_heckeSlashSum {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {f : ℍ → ℂ}
     (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsBoundedAt f k) {c : OnePoint ℝ}
     (hc : IsCusp c Γ) : c.IsBoundedAt (heckeSlashSum k D f) k := by
   rw [heckeSlashSum_def]
-  refine OnePoint.IsBoundedAt.sum fun i _ ↦ ?_
-  rw [ModularForm.rat_slash]
-  exact OnePoint.IsBoundedAt.smul_iff.mp (hf _ (hc.smul_map_ratCast _))
+  exact isBoundedAt_sum_rat_slash k _ _ hf hc
 
 end HeckeRing.GL2
 
