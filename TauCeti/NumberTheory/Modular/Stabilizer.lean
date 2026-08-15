@@ -90,13 +90,13 @@ private theorem card_stabilizer_of_coe_eq {s : Finset SL(2, ℤ)}
   rw [← SetLike.coe_sort_coe, h, Nat.card_coe_set_eq]
   simp
 
-/-- **The stabiliser of `i` has order `4`**: the centre `±1` together with `±S`, the inversion
-fixing `i`. In `PSL(2, ℤ)` this is the elliptic order `e_i = 2`.
+-- None of the cardinality evaluations below is `@[simp]`, and none can be: their common
+-- left-hand side `Nat.card (stabilizer SL(2, ℤ) z)` is not in simp-normal form, because
+-- `MulAction.mem_stabilizer_iff` and `ModularGroup.sl_moeb` rewrite the membership condition
+-- underneath the `Nat.card`, so `simpNF` rejects the attribute on every one of them.
 
-None of the cardinality evaluations in this file is `@[simp]`, and none can be: their common
-left-hand side `Nat.card (stabilizer SL(2, ℤ) z)` is not in simp-normal form, because
-`MulAction.mem_stabilizer_iff` and `ModularGroup.sl_moeb` rewrite the membership condition
-underneath the `Nat.card`. `simpNF` rejects the attribute on every one of them. -/
+/-- **The stabiliser of `i` has order `4`**: the centre `±1` together with `±S`, the inversion
+fixing `i`. In `PSL(2, ℤ)` this is the elliptic order `e_i = 2`. -/
 theorem card_stabilizer_I : Nat.card (stabilizer SL(2, ℤ) I) = 4 :=
   (card_stabilizer_of_coe_eq (s := {1, -1, S, -S}) (by ext g; simpa using stabilizer_I)).trans
     (by decide)
