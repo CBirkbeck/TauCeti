@@ -81,6 +81,48 @@ private lemma arg_div_neg {z₁ z₂ : ℂ} (hnum : z₂.im * z₁.re - z₂.re 
   rw [Complex.arg_neg_iff, Complex.div_im, div_sub_div_same]
   exact div_neg_of_neg_of_pos hnum (Complex.normSq_pos.mpr hz₁)
 
+/-- The winding number of the boundary contour about a point of the open strip is the
+normalized sum of the four pieces' principal logarithms. -/
+private theorem windingNumber_fdBoundary_eq_inv_two_pi_I_mul_sum_log (hx : |w.re| < 1 / 2)
+    (hy1 : 1 < w.im) (hyH : w.im < H) :
+    windingNumber (fdBoundary H) 0 5 w = (2 * (Real.pi : ℂ) * Complex.I)⁻¹ *
+      (Complex.log (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w)) +
+        Complex.log (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w)) +
+        Complex.log ((-1 / 2 + H * Complex.I - w) / ((ρ : ℂ) - w)) +
+        Complex.log ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w))) := by
+  obtain ⟨hx₁, hx₂⟩ := abs_lt.mp hx
+  have hnorm : 1 < ‖w‖ := hy1.trans_le ((le_abs_self _).trans (Complex.abs_im_le_norm w))
+  rw [windingNumber_fdBoundary_eq_sum_pieces
+      (fdBoundary_ne_of_abs_re_lt_half_of_one_lt_norm_of_im_lt hx hnorm hyH),
+    windingNumber_fdBoundarySegment1_eq_log hx₂, windingNumber_fdBoundary_arc_eq_log hy1,
+    windingNumber_fdBoundarySegment4_eq_log hx₁, windingNumber_fdBoundarySegment5_eq_log hyH]
+  ring
+
+/-- The winding number of the closed boundary contour about an off-curve point is an
+integer. -/
+private theorem exists_int_windingNumber_fdBoundary (hw : ∀ t ∈ Icc (0 : ℝ) 5,
+    fdBoundary H t ≠ w) : ∃ n : ℤ, windingNumber (fdBoundary H) 0 5 w = n := by
+  obtain ⟨P, hP, hdiff⟩ := (isPiecewiseC1On_fdBoundary H).exists_countable_differentiableAt
+  exact exists_int_windingNumber_of_closed (P := P) (fdBoundary_closed H).symm hP
+    (continuous_fdBoundary H).continuousOn hdiff
+    (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
+    (intervalIntegrable_inv_sub_mul_deriv (continuous_fdBoundary H).continuousOn
+      (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
+      (isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv)
+
+/-- Reading the imaginary part off the normalized log sum: `2πn` is the sum of the four
+piece arguments. Each logarithm's imaginary part is its argument. -/
+private theorem two_pi_mul_eq_sum_arg_of_windingNumber_eq (hx : |w.re| < 1 / 2) (hy1 : 1 < w.im)
+    (hyH : w.im < H) {n : ℤ} (hn : windingNumber (fdBoundary H) 0 5 w = n) :
+    2 * Real.pi * (n : ℝ) = (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w)).arg +
+      (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w)).arg +
+      ((-1 / 2 + H * Complex.I - w) / ((ρ : ℂ) - w)).arg +
+      ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w)).arg := by
+  -- clear the `(2πI)⁻¹`, then read off the imaginary part: each `log`'s is its argument
+  have hmul := (inv_mul_eq_iff_eq_mul₀ Complex.two_pi_I_ne_zero).mp
+    ((windingNumber_fdBoundary_eq_inv_two_pi_I_mul_sum_log hx hy1 hyH).symm.trans hn)
+  simpa [Complex.log_im, Complex.add_im, Complex.mul_im] using congrArg Complex.im hmul.symm
+
 /-- The winding number of the boundary contour is `-1` on the open strip above the corner
 row: the region `|re w| < 1/2`, `1 < im w < H`. -/
 private theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 1 / 2)
@@ -88,8 +130,11 @@ private theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 
   obtain ⟨hx₁, hx₂⟩ := abs_lt.mp hx
   have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_lt_one.le
   have hnorm : 1 < ‖w‖ := hy1.trans_le ((le_abs_self _).trans (Complex.abs_im_le_norm w))
-  have hw := fdBoundary_ne_of_abs_re_lt_half_of_one_lt_norm_of_im_lt hx hnorm hyH
-  -- the four endpoint differences turn clockwise: the piece arguments are strictly negative
+  obtain ⟨n, hn⟩ := exists_int_windingNumber_fdBoundary
+    (fdBoundary_ne_of_abs_re_lt_half_of_one_lt_norm_of_im_lt hx hnorm hyH)
+  have hIm := two_pi_mul_eq_sum_arg_of_windingNumber_eq hx hy1 hyH hn
+  -- the four endpoint differences turn clockwise, so each argument lies in `(-π, 0)`; the
+  -- sum is then in `(-4π, 0)`, which pins the integer to `-1`
   have ha₁ : (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w)).arg < 0 :=
     arg_div_neg <| by norm_num [ρ]; nlinarith
   have ha₂ : (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w)).arg < 0 :=
@@ -98,35 +143,6 @@ private theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 
     arg_div_neg <| by norm_num [ρ]; nlinarith
   have ha₄ : ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w)).arg < 0 :=
     arg_div_neg <| by norm_num [ρ]; nlinarith
-  -- the winding number is the normalized sum of the four principal logarithms
-  have hsum : windingNumber (fdBoundary H) 0 5 w =
-      (2 * (Real.pi : ℂ) * Complex.I)⁻¹ *
-        (Complex.log (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w)) +
-          Complex.log (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w)) +
-          Complex.log ((-1 / 2 + H * Complex.I - w) / ((ρ : ℂ) - w)) +
-          Complex.log ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w))) := by
-    rw [windingNumber_fdBoundary_eq_sum_pieces hw,
-      windingNumber_fdBoundarySegment1_eq_log hx₂, windingNumber_fdBoundary_arc_eq_log hy1,
-      windingNumber_fdBoundarySegment4_eq_log hx₁, windingNumber_fdBoundarySegment5_eq_log hyH]
-    ring
-  -- integrality
-  obtain ⟨P, hP, hdiff⟩ := (isPiecewiseC1On_fdBoundary H).exists_countable_differentiableAt
-  obtain ⟨n, hn⟩ := exists_int_windingNumber_of_closed (P := P)
-    (fdBoundary_closed H).symm hP (continuous_fdBoundary H).continuousOn hdiff
-    (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
-    (intervalIntegrable_inv_sub_mul_deriv (continuous_fdBoundary H).continuousOn
-      (by rwa [uIcc_of_le (by norm_num : (0 : ℝ) ≤ 5)])
-      (isPiecewiseC1On_fdBoundary H).intervalIntegrable_deriv)
-  -- extract the argument sum and pin the integer
-  have hIm : 2 * Real.pi * (n : ℝ) =
-      (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w)).arg +
-        (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w)).arg +
-        ((-1 / 2 + H * Complex.I - w) / ((ρ : ℂ) - w)).arg +
-        ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w)).arg := by
-    -- clear the `(2πI)⁻¹`, then read off the imaginary part: each `log`'s is its argument
-    have hmul := (inv_mul_eq_iff_eq_mul₀ Complex.two_pi_I_ne_zero).mp (hsum.symm.trans hn)
-    have hIm' := congrArg Complex.im hmul.symm
-    simpa [Complex.log_im, Complex.add_im, Complex.mul_im] using hIm'
   have hb₁ := Complex.neg_pi_lt_arg (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w))
   have hb₂ := Complex.neg_pi_lt_arg (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w))
   have hb₃ := Complex.neg_pi_lt_arg ((-1 / 2 + H * Complex.I - w) / ((ρ : ℂ) - w))
