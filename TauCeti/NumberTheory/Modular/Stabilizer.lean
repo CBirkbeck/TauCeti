@@ -43,6 +43,11 @@ literally the `q` with `q ≠ ⟦i⟧` and `q ≠ ⟦ρ⟧`.
   orbits.
 * `TauCeti.ModularGroup.card_stabilizer_eq_two_of_orbit_ne_I_of_orbit_ne_ρ`: order `2` on every
   other orbit.
+* `TauCeti.ModularGroup.card_stabilizer_eq_two_mul_card_stabilizer_psl`: the projective order is
+  the matrix one halved.
+* `TauCeti.ModularGroup.card_stabilizer_psl_I`, `TauCeti.ModularGroup.card_stabilizer_psl_ρ` and
+  `TauCeti.ModularGroup.card_stabilizer_psl_eq_one_of_orbit_ne_I_of_orbit_ne_ρ`: the resulting
+  elliptic orders `e_i = 2`, `e_ρ = 3` and `e_P = 1`.
 
 ## References
 
@@ -95,7 +100,7 @@ private theorem card_stabilizer_of_coe_eq {s : Finset SL(2, ℤ)}
   rw [← SetLike.coe_sort_coe, h, Nat.card_coe_set_eq]
   simp
 
--- None of the cardinality evaluations below is `@[simp]`, and none can be: their common
+-- None of the `SL(2, ℤ)` counts below is `@[simp]`, and none can be: their common
 -- left-hand side `Nat.card (stabilizer SL(2, ℤ) z)` is not in simp-normal form, because
 -- `MulAction.mem_stabilizer_iff` and `ModularGroup.sl_moeb` rewrite the membership condition
 -- underneath the `Nat.card`, so `simpNF` rejects the attribute on every one of them.
@@ -167,13 +172,11 @@ private theorem card_center : Nat.card (Subgroup.center SL(2, ℤ)) = 2 := by
 
 /-- **The `SL(2, ℤ)`-stabiliser order is twice the `PSL(2, ℤ)` one.** The two differ exactly by
 the centre `±1`, which acts trivially on `ℍ`, so every projective stabiliser is the matrix one
-halved — the passage from the counts `4`, `6`, `2` to the elliptic orders `e_P`.
-
-Both halves are general: the division on passing to a quotient is `card_stabilizer_quotient`,
-and `pslMk_smul` is exactly the compatibility it asks for. -/
+halved — the passage from the counts `4`, `6`, `2` to the elliptic orders `e_P`. -/
 theorem card_stabilizer_eq_two_mul_card_stabilizer_psl (z : ℍ) :
     Nat.card (stabilizer SL(2, ℤ) z) = 2 * Nat.card (stabilizer PSL(2, ℤ) z) := by
-  rw [TauCeti.card_stabilizer_quotient _ z fun g ↦ UpperHalfPlane.pslMk_smul g z, card_center]
+  rw [TauCeti.card_stabilizer_eq_card_mul_card_stabilizer_quotient _ z
+    fun g ↦ UpperHalfPlane.pslMk_smul g z, card_center]
 
 -- Neither elliptic order below is `@[simp]`, tested: `MulAction.mem_stabilizer_iff` rewrites
 -- `Nat.card (stabilizer G z)` into a `Nat.card` of a subtype underneath, so the left-hand side is
