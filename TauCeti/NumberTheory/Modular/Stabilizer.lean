@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.GroupTheory.GroupAction.Stabilizer
 public import TauCeti.NumberTheory.Modular.Orbits
 
 /-!
@@ -28,8 +29,6 @@ literally the `q` with `q ≠ ⟦i⟧` and `q ≠ ⟦ρ⟧`.
 
 ## Main declarations
 
-* `TauCeti.ModularGroup.card_stabilizer_smul`: the order is invariant along the action, so it
-  is an invariant of the orbit rather than of the point.
 * `TauCeti.ModularGroup.finite_stabilizer`: every point stabiliser is finite, so the elliptic
   order is defined at every point of `ℍ`.
 * `TauCeti.ModularGroup.card_stabilizer_I` and `TauCeti.ModularGroup.card_stabilizer_ρ`: the
@@ -67,17 +66,6 @@ private theorem finite_stabilizer_of_smul (g : SL(2, ℤ))
   Finite.of_equiv _ (stabilizerEquivStabilizerOfOrbitRel
     (⟨g, rfl⟩ : MulAction.orbitRel SL(2, ℤ) ℍ (g • z) z)).toEquiv
 
-/-- **The stabiliser order is invariant along the action**, the stabilisers of `g • z` and of
-`z` being conjugate. This is the transport rule behind every count below: it is what lets the
-valence formula attach the weight `1 / e_P` to an orbit rather than to a chosen point of it.
-
-Not `@[simp]`: the left-hand side is not in simp-normal form, since `ModularGroup.sl_moeb`
-rewrites the `SL(2, ℤ)`-action inside it, and `simpNF` rejects the attribute for that reason. -/
-theorem card_stabilizer_smul (g : SL(2, ℤ)) (z : ℍ) :
-    Nat.card (stabilizer SL(2, ℤ) (g • z)) = Nat.card (stabilizer SL(2, ℤ) z) :=
-  Nat.card_congr (stabilizerEquivStabilizerOfOrbitRel
-    (⟨g, rfl⟩ : MulAction.orbitRel SL(2, ℤ) ℍ (g • z) z)).toEquiv
-
 /-- **Every point stabiliser is finite**, so the elliptic order `e_P` is defined at every point
 of `ℍ` and not only inside the fundamental domain. -/
 instance finite_stabilizer (z : ℍ) : Finite (stabilizer SL(2, ℤ) z) := by
@@ -99,11 +87,16 @@ instance finite_stabilizer (z : ℍ) : Finite (stabilizer SL(2, ℤ) z) := by
 private theorem card_stabilizer_of_coe_eq {s : Finset SL(2, ℤ)}
     (h : (stabilizer SL(2, ℤ) w : Set SL(2, ℤ)) = ↑s) :
     Nat.card (stabilizer SL(2, ℤ) w) = s.card := by
-  rw [← SetLike.coe_sort_coe, h, Nat.card_coe_set_eq, Set.ncard_eq_toFinset_card']
+  rw [← SetLike.coe_sort_coe, h, Nat.card_coe_set_eq]
   simp
 
 /-- **The stabiliser of `i` has order `4`**: the centre `±1` together with `±S`, the inversion
-fixing `i`. In `PSL(2, ℤ)` this is the elliptic order `e_i = 2`. -/
+fixing `i`. In `PSL(2, ℤ)` this is the elliptic order `e_i = 2`.
+
+None of the cardinality evaluations in this file is `@[simp]`, and none can be: their common
+left-hand side `Nat.card (stabilizer SL(2, ℤ) z)` is not in simp-normal form, because
+`MulAction.mem_stabilizer_iff` and `ModularGroup.sl_moeb` rewrite the membership condition
+underneath the `Nat.card`. `simpNF` rejects the attribute on every one of them. -/
 theorem card_stabilizer_I : Nat.card (stabilizer SL(2, ℤ) I) = 4 :=
   (card_stabilizer_of_coe_eq (s := {1, -1, S, -S}) (by ext g; simpa using stabilizer_I)).trans
     (by decide)
