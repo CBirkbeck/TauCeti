@@ -439,8 +439,10 @@ theorem mem_restrictedMvPowerSeriesSubmodule {k : ℕ} {A M : Type*} [Semiring A
     {f : MvPowerSeries (Fin k) M} :
     f ∈ restrictedMvPowerSeriesSubmodule k A M ↔ IsRestricted f := (Iff.rfl)
 
-/-- Membership in `M⟨T₁, …, Tₖ⟩` for a product module is componentwise. -/
-@[simp]
+/-- Membership in `M⟨T₁, …, Tₖ⟩` for a product module is componentwise.
+
+Deliberately not `@[simp]`: `mem_restrictedMvPowerSeriesSubmodule` and `isRestricted_pi_iff`
+already carry the left-hand side to the same normal form. -/
 theorem mem_restrictedMvPowerSeriesSubmodule_pi_iff {k : ℕ} {A : Type*} {ι : Type*}
     {M : ι → Type*} [Semiring A] [∀ i, AddCommMonoid (M i)] [∀ i, TopologicalSpace (M i)]
     [∀ i, Module A (M i)] [∀ i, ContinuousAdd (M i)] [∀ i, ContinuousConstSMul A (M i)]
