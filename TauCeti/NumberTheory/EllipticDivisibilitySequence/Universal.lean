@@ -120,18 +120,16 @@ identity between such terms can be proved here once and read off for every ring 
 parameters. -/
 noncomputable def universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ := normEDS (X B) (X C) (X D)
 
-/-- The `simp` expansion of `universalNormEDS`: `normEDS` at the three indeterminates. It is the
+/-- The defining equation of `universalNormEDS`: `normEDS` at the three indeterminates. It is the
 stable name for that expansion, so downstream proofs rewrite with a lemma rather than unfolding a
-definition; it does not hide the representation, and its right-hand side is that representation. -/
-@[simp]
-theorem universalNormEDS_apply (n : ℤ) :
-    universalNormEDS n = normEDS (X NormEDSParam.B) (X NormEDSParam.C) (X NormEDSParam.D) n := (rfl)
+definition; it does not hide the representation, and its right-hand side is that representation.
 
-/-- The function-level form of `universalNormEDS_apply`. Downstream modules cannot see the body,
-so a rewrite under a function-valued argument — `invarNum`, `IsEllipticNet` — needs this rather
-than the pointwise equation; stating it here, where `rfl` closes it, keeps consumers from
-rebuilding it with `funext`. -/
-theorem universalNormEDS_eq :
+It is stated at the level of functions, not pointwise. Downstream modules cannot see the body, so a
+rewrite under a function-valued argument — `invarNum`, `IsEllipticNet` — needs this form; the
+pointwise one is `congrFun universalNormEDS_def n`, and `@[simp]` rewrites the head constant, so
+applied occurrences reach the same normal form either way. -/
+@[simp]
+theorem universalNormEDS_def :
     (universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ)
       = normEDS (X NormEDSParam.B) (X NormEDSParam.C) (X NormEDSParam.D) := (rfl)
 

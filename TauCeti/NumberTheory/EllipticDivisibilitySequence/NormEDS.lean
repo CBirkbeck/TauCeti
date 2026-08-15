@@ -143,7 +143,7 @@ theorem isEllipticNet_normEDS (b c d : R) : IsEllipticNet (normEDS b c d) := by
   -- Supply the defining equation rather than leaving it to `isDefEq`: `universalNormEDS`'s body
   -- is not exposed, so unification cannot cheaply see it as `normEDS (X B) (X C) (X D)`.
   have huniv : IsEllipticNet (universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ) := by
-    rw [universalNormEDS_eq]
+    rw [universalNormEDS_def]
     exact isEllipticNet_normEDS_of_mem (mem_nonZeroDivisors_of_ne_zero (X_ne_zero B))
   intro p q r s
   -- `map_rel` is stated for `f ∘ W`, `normEDS_eq_aeval` for the eta-expanded lambda.
