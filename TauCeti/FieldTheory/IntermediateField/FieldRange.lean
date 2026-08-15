@@ -63,29 +63,32 @@ private theorem algebraMap_equivFieldRange (f : K →ₐ[F] L) (z : K) :
   rfl
 
 /-- **The separable degree above the range of a field embedding equals the one above its
-source.** The separable analogue of `finrank_fieldRange`, for an algebraic `K`-algebra structure
-on `L` whose structure map is `f`.
-
-Its inseparable twin needs no algebraicity, because Mathlib's inseparable tower law asks only for
-the lower step; the separable one asks for the upper. -/
-theorem finSepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebraMap K L z = f z)
-    [Algebra.IsAlgebraic K L] :
+source.** The separable analogue of `finrank_fieldRange`, for any `K`-algebra structure on `L`
+whose structure map is `f`. No algebraicity is needed: the two embedding sets are the same maps,
+carrying `K`-linearity and `f.fieldRange`-linearity interchangeably. -/
+theorem finSepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebraMap K L z = f z) :
     Field.finSepDegree f.fieldRange L = Field.finSepDegree K L := by
   let _ : Algebra K f.fieldRange := (f.equivFieldRange).toAlgHom.toRingHom.toAlgebra
-  have : IsScalarTower K f.fieldRange L :=
+  have htow : IsScalarTower K f.fieldRange L :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       rw [RingHom.algebraMap_toAlgebra]
       exact (h z).trans (_root_.AlgHom.equivFieldRange_apply_coe f z).symm
-  have h1 : Field.finSepDegree K f.fieldRange = 1 := by
-    have he : Field.finSepDegree K K = Field.finSepDegree K f.fieldRange :=
-      Field.finSepDegree_eq_of_equiv K K f.fieldRange
-        (AlgEquiv.ofRingEquiv (f := (f.equivFieldRange).toRingEquiv)
-          (algebraMap_equivFieldRange f))
-    rw [← he, Field.finSepDegree_self]
-  have : Algebra.IsAlgebraic (f.fieldRange) L := Algebra.IsAlgebraic.tower_top (K := K) _
-  have hmul := Field.finSepDegree_mul_finSepDegree_of_isAlgebraic K f.fieldRange L
-  rw [h1, one_mul] at hmul
-  exact hmul
+  have htow2 : IsScalarTower K f.fieldRange (AlgebraicClosure L) :=
+    IsScalarTower.of_algebraMap_eq fun z ↦ by
+      rw [IsScalarTower.algebraMap_apply K L (AlgebraicClosure L),
+        IsScalarTower.algebraMap_apply K f.fieldRange L,
+        ← IsScalarTower.algebraMap_apply (f.fieldRange) L (AlgebraicClosure L)]
+  have hsurj : Function.Surjective (algebraMap K f.fieldRange) := fun r ↦
+    ⟨f.equivFieldRange.symm r, by
+      rw [RingHom.algebraMap_toAlgebra]; exact f.equivFieldRange.apply_symm_apply r⟩
+  unfold Field.finSepDegree
+  refine Nat.card_congr ⟨fun σ => σ.restrictScalars K, fun σ => ⟨σ.toRingHom, ?_⟩, ?_, ?_⟩
+  · intro r
+    obtain ⟨k, rfl⟩ := hsurj r
+    simp only [← IsScalarTower.algebraMap_apply]
+    simp
+  · intro σ; rfl
+  · intro σ; rfl
 
 /-- **The inseparable degree above the range of a field embedding equals the one above its
 source.** Needs only the `K`-algebra structure on `L` whose structure map is `f` — no
