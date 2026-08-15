@@ -50,9 +50,10 @@ with a uniformity preamble.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.t2Space` : separatedness in Hausdorff form.
 * `TauCeti.TopCommRingCat.IsCompleteSeparated.of_isClosedEmbedding` : a closed subobject of a
   complete separated ring is complete separated. Closedness of the range is what supplies
-  completeness, and separatedness is inherited along the embedding. The Hausdorffness input
-  sits one level up, in the equalizer closure in `CompleteSeparated/Limits.lean` that produces
-  the closed embedding and is this lemma's consumer.
+  completeness, and separatedness is inherited along the embedding. Its consumers are the
+  `IsClosedUnderIsomorphisms` instance below, which needs no Hausdorffness because an
+  isomorphism is already a closed embedding, and the equalizer closure in
+  `CompleteSeparated/Limits.lean`, which is where the Hausdorffness input sits.
 * The `CategoryTheory.ObjectProperty.IsClosedUnderIsomorphisms` instance for
   `TauCeti.TopCommRingCat.isCompleteSeparated` : the property transfers along isomorphisms,
   an isomorphism being in particular a closed embedding — read off `TopCat.homeoOfIso`.
@@ -186,6 +187,8 @@ instance : (isCompleteSeparated.{u}).IsClosedUnderIsomorphisms where
 
 end TauCeti.TopCommRingCat
 
+open scoped TauCeti.TopCommRingCat
+
 namespace TauCeti
 
 /-- The category of complete separated topological commutative rings: the full subcategory
@@ -213,14 +216,6 @@ theorem of_obj (R : Type u) [CommRing R] [UniformSpace R] [IsTopologicalRing R]
 
 instance (X : CompleteSeparatedTopCommRingCat.{u}) : T2Space X.obj :=
   ((TopCommRingCat.isCompleteSeparated_iff _).mp X.property).t2Space
-
-/-- Objects carry the group uniformity of their topology, so that the defining completeness
-is available by inference. -/
-noncomputable instance (X : CompleteSeparatedTopCommRingCat.{u}) : UniformSpace X.obj :=
-  IsTopologicalAddGroup.rightUniformSpace X.obj
-
-instance (X : CompleteSeparatedTopCommRingCat.{u}) : IsUniformAddGroup X.obj :=
-  isUniformAddGroup_of_addCommGroup
 
 instance (X : CompleteSeparatedTopCommRingCat.{u}) : CompleteSpace X.obj :=
   ((TopCommRingCat.isCompleteSeparated_iff _).mp X.property).completeSpace
