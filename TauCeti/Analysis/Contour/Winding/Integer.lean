@@ -162,8 +162,9 @@ theorem exists_int_windingNumber_of_closed {γ : ℝ → ℂ} {w : ℂ} {a b : �
     rw [hrev, hm]; push_cast; ring
 
 /-- **Piecewise-`C¹` form of winding-number integrality.** For a closed piecewise-`C¹` curve that
-avoids `w`, the winding number about `w` is an integer. The finite breakpoint set supplies all raw
-regularity hypotheses of `exists_int_windingNumber_of_closed`. -/
+avoids `w`, the winding number about `w` is an integer. Piecewise-`C¹` regularity supplies the
+continuity, differentiability and integrability hypotheses of
+`exists_int_windingNumber_of_closed`. -/
 theorem IsPiecewiseC1On.exists_int_windingNumber {γ : ℝ → ℂ} {a b : ℝ} {w : ℂ}
     (hγ : IsPiecewiseC1On γ a b) (hclosed : γ a = γ b)
     (h_avoid : ∀ t ∈ Set.uIcc a b, γ t ≠ w) :
