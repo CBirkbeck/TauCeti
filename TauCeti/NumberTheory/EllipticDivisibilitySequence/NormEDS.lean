@@ -39,8 +39,9 @@ distinction where the identity is proved.
 * `isEllipticNet_normEDS`: `IsEllipticNet (normEDS b c d)`, with no hypothesis on the parameters.
 * `isEllipticSequence_normEDS`: its `s = 0` case.
 
-The first consumer this unlocks is `IsEllipticNet.invarNum_mul_invarDenom`, which is applied to
-`isEllipticNet_normEDS` directly rather than restated here.
+The first consumer this unlocks is `IsEllipticNet.invarNum_mul_invarDenom`, which callers can
+apply to `isEllipticNet_normEDS` directly; it is deliberately not restated here as a
+specialisation.
 
 The `s = 0` case is kept as a named theorem rather than left to `.isEllipticSequence` at each
 use: `IsEllipticSequence` is the predicate Mathlib defines, `IsEllipticDvdSequence` is

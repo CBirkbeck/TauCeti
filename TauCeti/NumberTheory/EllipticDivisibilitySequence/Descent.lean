@@ -353,8 +353,8 @@ private theorem atomRelVanishes_of_rel (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
 
 /-- **Four pairwise distinct nonnegative indices of one parity, in any order.** The tuple is
 sorted by `Tuple.sort` and the relator read off the sorted order, `atomRelFin4_perm` supplying the
-sign. Unlike the three-index case below, no index is pinned at `0`, so there is no distinguished
-minimum and the general permutation argument is what the sorting needs. -/
+sign. No index is pinned at `0` here, so there is no distinguished minimum and the sorting needs
+the general permutation argument rather than the six orderings of three free indices. -/
 private theorem atomRelFin4_eq_zero_of_injective (odd : W.Odd)
     (descent : ∀ a b c d : ℤ, AtomRelVanishes W a b c d) {t : Fin 4 → ℤ}
     (nonneg : ∀ i, 0 ≤ t i) (par : ∀ i j, t i % 2 = t j % 2) (inj : Function.Injective t) :
