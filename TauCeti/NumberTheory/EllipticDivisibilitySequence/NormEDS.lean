@@ -43,7 +43,8 @@ free indices, not three — so stopping at the sequence would leave that consume
 for every `b`, `c`, `d`, `s`, `m` and `n`.
 
 That is **weaker** than index-independence of an invariant ratio, which needs the denominators
-invertible and so does not hold over a general commutative ring; `Invariant.lean` states the
+invertible and so does not hold over a general commutative ring; `Invariant/Basic.lean` states
+the
 distinction where the identity is proved.
 
 ## Main results

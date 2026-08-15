@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
-public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant
+public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant.Basic
 
 /-!
 # The invariant polynomial of a Weierstrass curve
@@ -78,8 +78,9 @@ material the upstream authorship is credited here rather than in the copyright h
 Two adaptations, neither of them a choice:
 
 * the source proves `φ_mul_ψ` by `rw [φ, invarDenom]`, unfolding both definitions. The
-  `invarDenom` half does not port: `EllipticDivisibilitySequence/Invariant.lean` exports that body
-  unexposed, so from this module `rw [invarDenom]` has nothing to rewrite with. It goes through the
+  `invarDenom` half does not port: `EllipticDivisibilitySequence/Invariant/Basic.lean` exports
+  that body unexposed, so from this module `rw [invarDenom]` has nothing to rewrite with. It goes
+  through the
   equation lemma `IsEllipticNet.invarDenom_def` instead. `φ` unfolds as before, being Mathlib's.
 * the source's local `C_simp` macro is written out at its three use sites rather than carried
   across, a macro being more surface than the one `simp only` call it abbreviates.

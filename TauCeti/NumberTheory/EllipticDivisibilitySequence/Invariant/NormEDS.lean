@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant
+public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant.Basic
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.NormEDS
 
 /-!
@@ -13,13 +13,13 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.NormEDS
 For an elliptic net `W`, `invarNum_mul_invarDenom` gives the **cross-multiplied** identity
 `invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m`. Over a general
 `CommRing` that is all it gives: a denominator may vanish or be a zero divisor, so there is no
-quotient to call constant — `Invariant.lean` makes the same caveat. A normalised EDS is an
+quotient to call constant — `Invariant/Basic.lean` makes the same caveat. A normalised EDS is an
 elliptic net unconditionally (`isEllipticNet_normEDS`), so evaluating at the single index `n = 2`
 pins the cross-multiplied relation for every other index.
 
 ## Main results
 
-* `invarNum_normEDS_two`, `invarDenom_normEDS_two`: at `s = 1`, `n = 2` the numerator is
+* `invarNum_normEDS_one_two`, `invarDenom_normEDS_one_two`: at `s = 1`, `n = 2` the numerator is
   `(d + b ^ 4) * b` and the denominator is `c * b`.
 * `invarNum_normEDS_one_mul_c_eq_invarDenom_mul`: the cross-multiplied consequence,
   `invarNum (normEDS b c d) 1 m * c = invarDenom (normEDS b c d) 1 m * (d + b ^ 4)`, for every `m`
@@ -42,7 +42,8 @@ the hypothesis-carrying form and exists only to be specialised.
 
 ## Provenance
 
-Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
+Adapted from D. K. Angdinata's
+`projects/NagellLutz/LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at `dev/modular-curves @ 9fec8eba7652` — the revision
 `TauCetiRoadmap/EllipticCurves/README.md` pins for the NagellLutz project. Source declarations
 `invarNum_normEDS_two` (`:977`), `invarDenom_normEDS_two` (`:980`),
@@ -50,11 +51,21 @@ Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in
 header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
 adapted material the upstream authorship is credited here rather than in the copyright header.
 
-Two of those are renamed here. The source's `invar₂_normEDS` advertises an index `2` that its
+All four are renamed here. The source's `invar₂_normEDS` advertises an index `2` that its
 statement never mentions — the `2` enters only through the proof — so it is
 `invarNum_normEDS_one_mul_c_eq_invarDenom_mul` below, describing the conclusion, and its
-hypothesis-carrying helper is `…mulAux`. The source's `invar_normEDS` step needs no declaration at
-all: it is this repository's `invarNum_mul_invarDenom` applied to `isEllipticNet_normEDS`.
+hypothesis-carrying helper is `…mulAux`. The two evaluations gain the first index: `invarNum` and
+`invarDenom` take two, and the source's `…_two` names only the second, so `…_one_two` is what
+distinguishes them from an evaluation at some other `s`. The source's `invar_normEDS` step needs no
+declaration at all: it is this repository's `invarNum_mul_invarDenom` applied to
+`isEllipticNet_normEDS`.
+
+## Placement
+
+`Invariant/Basic.lean` states the invariant of a general elliptic net and the cross-multiplication
+identity it satisfies; this file is its specialisation to `normEDS`. They share the `Invariant`
+subject directory rather than sitting flat beside each other, so that further specialisations have
+somewhere to go.
 -/
 
 public section
@@ -74,7 +85,8 @@ already carries `@[simp high] invarNum_normEDS_one_eq_reducedInvarNum_mul`, whic
 `invarNum (normEDS b c d) 1 m` for every `m` — including `2`. So this left-hand side is not in simp
 normal form, and marking it `simp` makes `simpNF` fail the build. It stays useful as a rewrite
 named explicitly, which is how the proof below uses it. -/
-theorem invarNum_normEDS_two (b c d : R) : invarNum (normEDS b c d) 1 2 = (d + b ^ 4) * b := by
+theorem invarNum_normEDS_one_two (b c d : R) :
+    invarNum (normEDS b c d) 1 2 = (d + b ^ 4) * b := by
   simp [right_distrib, ← pow_succ, ← pow_add]
 
 /-- The denominator of the invariant of `normEDS b c d` at `s = 1`, `n = 2`.
@@ -83,7 +95,7 @@ theorem invarNum_normEDS_two (b c d : R) : invarNum (normEDS b c d) 1 2 = (d + b
 three-factor formula instead. There is no general `invarDenom … = _ * b` lemma upstream, so unlike
 the numerator this left-hand side *is* in simp normal form. -/
 @[simp high]
-theorem invarDenom_normEDS_two (b c d : R) : invarDenom (normEDS b c d) 1 2 = c * b := by
+theorem invarDenom_normEDS_one_two (b c d : R) : invarDenom (normEDS b c d) 1 2 = c * b := by
   simp
 
 /-- `invarNum_normEDS_one_mul_c_eq_invarDenom_mul` under a nonzerodivisor hypothesis on `b`, which
@@ -93,7 +105,7 @@ private theorem invarNum_normEDS_one_mul_c_eq_invarDenom_mulAux (hb : b ∈ R⁰
     invarNum (normEDS b c d) 1 m * c = invarDenom (normEDS b c d) 1 m * (d + b ^ 4) := by
   rw [← mul_cancel_right_mem_nonZeroDivisors hb]
   have h := invarNum_mul_invarDenom (isEllipticNet_normEDS b c d) 1 m 2
-  rw [invarNum_normEDS_two, invarDenom_normEDS_two] at h
+  rw [invarNum_normEDS_one_two, invarDenom_normEDS_one_two] at h
   linear_combination h
 
 /-- **The invariant of a normalised EDS, pinned at `s = 1`.** For every `m`, and with no

@@ -5,7 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.ComplAux
-public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant
+public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant.Basic
 
 /-!
 # The reduced invariant of a normalised EDS
@@ -85,7 +85,8 @@ root, and only `invarNum_normEDS_one_eq_reducedInvarNum_mul`, whose left-hand si
 `IsEllipticNet` term, sits in that namespace.
 
 One adaptation is forced rather than chosen: the source proves `invarNum_normEDS` by
-`simp [invarNum]`, unfolding the definition. That does not port, because `Invariant.lean` exports
+`simp [invarNum]`, unfolding the definition. That does not port, because `Invariant/Basic.lean`
+exports
 `invarNum`'s body unexposed — from an importing module `simp [invarNum]` is rejected outright — so
 the proof goes through the `@[simp]` equation lemma `IsEllipticNet.invarNum_def` instead.
 -/
