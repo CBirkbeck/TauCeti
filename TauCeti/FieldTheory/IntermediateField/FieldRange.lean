@@ -53,8 +53,8 @@ theorem finrank_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebra
     hsquare).symm
 
 /-- **The separable degree above the range of a field embedding equals the one above its
-source.** The separable analogue of `finrank_fieldRange`, for any `K`-algebra structure on `L`
-whose structure map is `f`. -/
+source.** The separable analogue of `finrank_fieldRange`, for an algebraic `K`-algebra structure
+on `L` whose structure map is `f`. -/
 theorem finSepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebraMap K L z = f z)
     [Algebra.IsAlgebraic K L] :
     Field.finSepDegree f.fieldRange L = Field.finSepDegree K L := by
