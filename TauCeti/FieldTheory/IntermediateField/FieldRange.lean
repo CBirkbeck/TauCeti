@@ -7,6 +7,7 @@ module
 public import Mathlib.FieldTheory.IntermediateField.Basic
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.FieldTheory.PurelyInseparable.Basic
+import Mathlib.FieldTheory.PurelyInseparable.Tower
 
 /-!
 # The degree above the range of a field embedding
@@ -76,14 +77,25 @@ theorem finSepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, al
 /-- **The inseparable degree above the range of a field embedding equals the one above its
 source**, under the same hypotheses as `finSepDegree_fieldRange`. -/
 theorem finInsepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebraMap K L z = f z)
-    [FiniteDimensional K L] :
+    [Algebra.IsAlgebraic K L] :
     Field.finInsepDegree f.fieldRange L = Field.finInsepDegree K L := by
-  have hsep := finSepDegree_fieldRange f h
-  have hrank := finrank_fieldRange f h
-  have hL := Field.finSepDegree_mul_finInsepDegree (f.fieldRange) L
-  have hK := Field.finSepDegree_mul_finInsepDegree K L
-  rw [hsep] at hL
-  rw [hrank] at hL
-  exact Nat.eq_of_mul_eq_mul_left (NeZero.pos (Field.finSepDegree K L)) (hL.trans hK.symm)
+  let _ : Algebra K f.fieldRange := (f.equivFieldRange).toAlgHom.toRingHom.toAlgebra
+  have : IsScalarTower K f.fieldRange L :=
+    IsScalarTower.of_algebraMap_eq fun z ↦ by
+      rw [RingHom.algebraMap_toAlgebra]
+      exact (h z).trans (_root_.AlgHom.equivFieldRange_apply_coe f z).symm
+  have h1 : Field.finInsepDegree K f.fieldRange = 1 := by
+    have he : Field.finInsepDegree K K = Field.finInsepDegree K f.fieldRange :=
+      Field.finInsepDegree_eq_of_equiv K K f.fieldRange
+        (AlgEquiv.ofRingEquiv (f := (f.equivFieldRange).toRingEquiv) fun z ↦ by
+          rw [RingHom.algebraMap_toAlgebra]; rfl)
+    rw [← he, Field.finInsepDegree_self]
+  have : FiniteDimensional K f.fieldRange :=
+    Module.Finite.of_surjective (Algebra.linearMap K f.fieldRange) fun y ↦
+      ⟨f.equivFieldRange.symm y, by
+        simp [Algebra.linearMap_apply, RingHom.algebraMap_toAlgebra]⟩
+  have hmul := Field.finInsepDegree_mul_finInsepDegree_of_isAlgebraic K f.fieldRange L
+  rw [h1, one_mul] at hmul
+  exact hmul
 
 end TauCeti.AlgHom
