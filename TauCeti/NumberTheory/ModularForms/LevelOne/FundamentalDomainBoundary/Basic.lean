@@ -483,8 +483,7 @@ lemma im_fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
   rw [fdBoundary_of_le_four h3 h4, fdBoundarySegment4_apply, AffineMap.lineMap_apply_module']
   have hchord : ((-1 / 2 + H * Complex.I : ℂ) - (ρ : ℂ)).im = H - Real.sqrt 3 / 2 := by
     simp [ρ]
-  have hρ : (ρ : ℂ).im = Real.sqrt 3 / 2 := by simp [ρ]
-  rw [Complex.add_im, Complex.smul_im, hchord, hρ, smul_eq_mul, add_comm]
+  rw [Complex.add_im, Complex.smul_im, hchord, rho_im, smul_eq_mul, add_comm]
 
 /-- The right vertical has constant real part `1/2`. -/
 theorem re_fdBoundarySegment1 (H : ℝ) {t : ℝ} (ht : t ∈ Icc (0 : ℝ) 1) :

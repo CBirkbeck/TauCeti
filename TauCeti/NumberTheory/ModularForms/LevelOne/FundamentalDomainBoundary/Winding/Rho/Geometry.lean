@@ -95,8 +95,7 @@ makes the signed bound vacuous. -/
 theorem norm_fdBoundary_sub_rho_segment5 (ht : t ∈ Icc (4 : ℝ) 5) :
     |H - Real.sqrt 3 / 2| ≤ ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ := by
   have him : (fdBoundary H t - (UpperHalfPlane.ρ : ℂ)).im = H - Real.sqrt 3 / 2 := by
-    rw [Complex.sub_im, im_fdBoundarySegment5 H ht]
-    simp [UpperHalfPlane.ρ]
+    rw [Complex.sub_im, im_fdBoundarySegment5 H ht, rho_im]
   have h1 : |(fdBoundary H t - (UpperHalfPlane.ρ : ℂ)).im| ≤
       ‖fdBoundary H t - (UpperHalfPlane.ρ : ℂ)‖ := Complex.abs_im_le_norm _
   exact him ▸ h1
@@ -145,10 +144,7 @@ theorem fdBoundary_sub_rho_mem_slitPlane_of_mem_Icc_four_five (hH : Real.sqrt 3 
     (ht : t ∈ Icc (4 : ℝ) 5) :
     fdBoundary H t - (UpperHalfPlane.ρ : ℂ) ∈ Complex.slitPlane := by
   refine Complex.mem_slitPlane_iff.mpr (Or.inr ?_)
-  rw [Complex.sub_im, im_fdBoundarySegment5 H ht]
-  have hrho : ((UpperHalfPlane.ρ : ℂ)).im = Real.sqrt 3 / 2 := by
-    simp [UpperHalfPlane.ρ]
-  rw [hrho]
+  rw [Complex.sub_im, im_fdBoundarySegment5 H ht, rho_im]
   positivity
 
 /-- The polar form of the shifted contour just before the corner. -/
