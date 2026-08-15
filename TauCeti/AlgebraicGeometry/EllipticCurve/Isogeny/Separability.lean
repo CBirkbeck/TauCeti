@@ -66,10 +66,11 @@ Both definitions are unconditional: no separability hypothesis, so purely insepa
 such as Frobenius are covered, matching `Isogeny.finiteDimensional`.
 
 Multiplicativity under composition is `separableDegree_comp` and `inseparableDegree_comp`, matching
-`degree_comp`. Only the separable one runs the tower `F(W₃) ⊆ F(W₂) ⊆ F(W₁)`, through the
-transports off `AlgHom.fieldRange` beside `finrank_fieldRange`. The inseparable one is then
-**derived by cancellation** rather than repeating that argument: both sides multiply by the same
-positive separable degree to give `degree_comp`.
+`degree_comp`. Both run the tower `F(W₃) ⊆ F(W₂) ⊆ F(W₁)` against their own Mathlib tower law,
+through the transports off `AlgHom.fieldRange` beside `finrank_fieldRange`. The two are not quite
+symmetric: the separable law's algebraicity side condition is on the upper extension and the
+inseparable law's is on the lower one, so they call `finiteDimensional_of_fieldRange` on `φ` and on
+`ψ` respectively.
 
 ## Provenance
 
@@ -228,32 +229,37 @@ theorem separableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   let _ := φ.fieldPullback.toRingHom.toAlgebra
   let _ := ψ.fieldPullback.toRingHom.toAlgebra
   let _ := (ψ.comp φ).fieldPullback.toRingHom.toAlgebra
-  have hφ := φ.algebraMap_toAlgebra_fieldPullback
-  have hψ := ψ.algebraMap_toAlgebra_fieldPullback
-  have hc := (ψ.comp φ).algebraMap_toAlgebra_fieldPullback
   have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  have h₁ := TauCeti.AlgHom.finiteDimensional_of_fieldRange φ.fieldPullback hφ
-  rw [(ψ.comp φ).separableDegree_eq_finSepDegree hc, ψ.separableDegree_eq_finSepDegree hψ,
-    φ.separableDegree_eq_finSepDegree hφ]
+  -- discharges the tower law's `[Algebra.IsAlgebraic E K]` side condition
+  have _ := TauCeti.AlgHom.finiteDimensional_of_fieldRange φ.fieldPullback fun _ ↦ rfl
+  rw [(ψ.comp φ).separableDegree_eq_finSepDegree fun _ ↦ rfl,
+    ψ.separableDegree_eq_finSepDegree fun _ ↦ rfl,
+    φ.separableDegree_eq_finSepDegree fun _ ↦ rfl]
   exact (Field.finSepDegree_mul_finSepDegree_of_isAlgebraic W₃.FunctionField W₂.FunctionField
     W₁.FunctionField).symm
 
-/-- **The inseparable degree is multiplicative under composition.**
-
-Derived by cancellation rather than by re-running `separableDegree_comp`'s tower: both sides
-multiply by the same positive separable degree to give `degree_comp`. Concretely,
-`sep(ψ∘φ) · insep(ψ∘φ) = deg(ψ∘φ) = deg ψ · deg φ = (sep ψ · insep ψ)(sep φ · insep φ)`, and
-`sep(ψ∘φ) = sep ψ · sep φ` is already known, so the inseparable factors agree. -/
+/-- **The inseparable degree is multiplicative under composition**, by the inseparable tower
+formula for `F(W₃) ⊆ F(W₂) ⊆ F(W₁)` — the inseparable counterpart of `separableDegree_comp`, and
+the second factor of `degree_comp`. -/
 @[simp]
 theorem inseparableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
-    (ψ.comp φ).inseparableDegree = ψ.inseparableDegree * φ.inseparableDegree :=
-  Nat.eq_of_mul_eq_mul_left (Nat.mul_pos ψ.separableDegree_pos φ.separableDegree_pos) <| by
-    rw [← separableDegree_comp ψ φ, (ψ.comp φ).separableDegree_mul_inseparableDegree,
-      degree_comp, ← ψ.separableDegree_mul_inseparableDegree,
-      ← φ.separableDegree_mul_inseparableDegree, separableDegree_comp]
-    ring
+    (ψ.comp φ).inseparableDegree = ψ.inseparableDegree * φ.inseparableDegree := by
+  let _ := φ.fieldPullback.toRingHom.toAlgebra
+  let _ := ψ.fieldPullback.toRingHom.toAlgebra
+  let _ := (ψ.comp φ).fieldPullback.toRingHom.toAlgebra
+  have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
+    IsScalarTower.of_algebraMap_eq fun z ↦ by
+      simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
+  -- the inseparable tower law needs `[Algebra.IsAlgebraic F E]`, the *lower* extension — so the
+  -- finiteness required here is `ψ`'s, unlike `separableDegree_comp`, which needs `φ`'s
+  have _ := TauCeti.AlgHom.finiteDimensional_of_fieldRange ψ.fieldPullback fun _ ↦ rfl
+  rw [(ψ.comp φ).inseparableDegree_eq_finInsepDegree fun _ ↦ rfl,
+    ψ.inseparableDegree_eq_finInsepDegree fun _ ↦ rfl,
+    φ.inseparableDegree_eq_finInsepDegree fun _ ↦ rfl]
+  exact (Field.finInsepDegree_mul_finInsepDegree_of_isAlgebraic W₃.FunctionField
+    W₂.FunctionField W₁.FunctionField).symm
 
 end Isogeny
 
