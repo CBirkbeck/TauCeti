@@ -37,19 +37,23 @@ which receives both.
 
 ## Implementation notes
 
-**The definition and its computation rule sit at the same level, deliberately.**
-`ClassGroup.extendedRelNormHom` would elaborate under the weaker `IsDomain A`, since
-`ClassGroup.extendedHom` asks only for domains with `Module.IsTorsionFree A M`. It is not stated
-there. The computation rule unavoidably needs `IsDedekindDomain A` — it speaks about
-`ClassGroup.mk0` on `A`, and Mathlib states `ClassGroup.extendedHom_mk0` under that hypothesis —
-so at the weaker level the definition would have an unexposed body and no lemma relating it to
-either composand: opaque to every consumer. Generality that nothing can characterise is not
-generality, so both declarations carry `IsDedekindDomain A`.
+**The definition sits one level below its computation rule.**
+`ClassGroup.extendedRelNormHom` needs only `IsDomain A`, since `ClassGroup.extendedHom` asks for
+domains with `Module.IsTorsionFree A M` and the norm side constrains `M` and `R` alone. It is
+stated there, and `extendedRelNormHom_apply` characterises it at that level, so a consumer holding
+only `IsDomain A` has both the composite and the lemma identifying it with `relNorm ∘ extendedHom`.
 
-**Why the three types are distinct.** With the source and target ring literally equal — the
-endomorphism case — Lean cannot keep two `Algebra R FF` structures apart, an instance diamond the
-source of the same construction records in its own header. Stating the composite at three types
-avoids it by construction rather than by `@`-elaboration.
+`extendedRelNormHom_mk0` unavoidably needs `IsDedekindDomain A` — it speaks about
+`ClassGroup.mk0` on `A`, and Mathlib states `ClassGroup.extendedHom_mk0` under that hypothesis —
+so the stronger assumption is carried on that one declaration rather than on the whole file.
+
+**Why the three type parameters.** They support the intended cross-ring use, where `A` and `R` are
+the coordinate rings of the source and target of an isogeny with no map between them. Nothing
+prevents a caller instantiating `A` and `R` with the same type; what the separate parameters buy is
+that the *intended* use does not have to. The same-ring formulation of this composite runs into an
+instance diamond — two `Algebra R FF` structures Lean cannot keep apart — which the source of that
+construction records in its own header; a caller who does instantiate both to one type inherits
+that elaboration problem rather than escaping it.
 
 ## Provenance
 
@@ -82,7 +86,9 @@ variable (A M R : Type*) [CommRing A] [CommRing M] [CommRing R]
   [IsDedekindDomain M] [IsDedekindDomain R] [Algebra A M] [Module.IsTorsionFree A M]
   [Algebra R M] [Module.Finite R M] [Module.IsTorsionFree R M]
 
-variable [IsDedekindDomain A]
+section IsDomain
+
+variable [IsDomain A]
 
 /-- **Extend a class into `M`, then norm it down to `R`.** The extension direction is Mathlib's
 `ClassGroup.extendedHom`, along `A → M`; the norm is `ClassGroup.relNorm`, down the module-finite
@@ -91,16 +97,33 @@ of two rings with no map between them. -/
 noncomputable def extendedRelNormHom : ClassGroup A →* ClassGroup R :=
   relNorm.comp (extendedHom A M)
 
+/-- **The composite, unfolded**: `extendedRelNormHom` sends a class to the relative norm of its
+extension. This is what characterises the definition at its own generality — no Dedekind
+hypothesis on `A` is involved — so a consumer can relate it to both composands without reaching
+for the integral-representative rule below. -/
+@[simp]
+theorem extendedRelNormHom_apply (x : ClassGroup A) :
+    extendedRelNormHom A M R x = relNorm (extendedHom A M x) := by
+  rw [extendedRelNormHom, MonoidHom.comp_apply]
+
+end IsDomain
+
+section IsDedekindDomain
+
+variable [IsDedekindDomain A]
+
 /-- The value of `ClassGroup.extendedRelNormHom` on the class of a nonzero integral ideal: extend
 the ideal into `M`, take its relative norm down to `R`, and read off the class. This is the
 computation rule, obtained from `ClassGroup.extendedHom_mk0` and `ClassGroup.relNorm_mk0`.
 
-`IsDedekindDomain A` is what `ClassGroup.mk0` on `A` needs; see the implementation notes for why
-the definition carries it too. -/
+`IsDedekindDomain A` is what `ClassGroup.mk0` on `A` needs, and is carried on this declaration
+alone; the definition and `extendedRelNormHom_apply` sit at `IsDomain A`. -/
 @[simp]
 theorem extendedRelNormHom_mk0 (I : (Ideal A)⁰) :
     extendedRelNormHom A M R (ClassGroup.mk0 I) =
       ClassGroup.mk0 (Ideal.relNorm0 R (extendedIdeal A M I)) := by
   rw [extendedRelNormHom, MonoidHom.comp_apply, extendedHom_mk0, relNorm_mk0]
+
+end IsDedekindDomain
 
 end ClassGroup
