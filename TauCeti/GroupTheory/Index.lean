@@ -6,6 +6,10 @@ module
 
 public import Mathlib.GroupTheory.Index
 
+-- the pointwise product `↑(H ⊔ N) = ↑H * ↑N` serves only the proof below, so it stays off the
+-- public surface
+import Mathlib.Algebra.Group.Subgroup.Pointwise
+
 /-!
 # Consequences of the index formula
 
@@ -47,6 +51,40 @@ lemma le_withCenter {G : Type*} [Group G] (Γ : Subgroup G) : Γ ≤ Γ.withCent
 instance instFiniteIndexWithCenter {G : Type*} [Group G] (Γ : Subgroup G)
     [Γ.FiniteIndex] : Γ.withCenter.FiniteIndex :=
   Subgroup.finiteIndex_of_le Γ.le_withCenter
+
+variable {G : Type*} [Group G] {Γ : Subgroup G} {a : G}
+
+/-- **Adjoining a two-element centre either changes nothing or doubles the index.** When the
+centre is `{1, a}` and `a ∉ Γ`, the subgroup `Γ` has relative index exactly `2` in
+`Γ.withCenter`; when `a ∈ Γ` the two subgroups coincide and the relative index is `1`.
+
+For `Γ ≤ SL(2, ℤ)` the centre is `{±I}` and `a = -I`, so this is the quantitative form of the
+dichotomy recorded on `Subgroup.withCenter`: cosets of `Γ` count each translate of `𝒟` twice
+unless `-I ∈ Γ` already.
+
+`a` is not assumed to be an involution — that follows, since `a * a` lies in the centre and
+`a * a = a` would force `a = 1 ∈ Γ`. -/
+theorem relIndex_withCenter_eq_two (ha : a ∈ Subgroup.center G) (haΓ : a ∉ Γ)
+    (hcenter : ∀ c ∈ Subgroup.center G, c = 1 ∨ c = a) : Γ.relIndex Γ.withCenter = 2 := by
+  have ha2 : a * a = 1 := by
+    rcases hcenter _ ((Subgroup.center G).mul_mem ha ha) with h | h
+    · exact h
+    · exact absurd (mul_eq_left.mp h ▸ Γ.one_mem) haΓ
+  refine Subgroup.relIndex_eq_two_iff_exists_notMem_and.mpr
+    ⟨a, Subgroup.mem_sup_right ha, haΓ, fun b hb ↦ ?_⟩
+  -- `withCenter` is a supremum with a normal subgroup, so its elements factor as `g * c`
+  rw [Subgroup.withCenter_def, ← SetLike.mem_coe, Subgroup.mul_normal] at hb
+  obtain ⟨g, hg, c, hc, rfl⟩ := hb
+  rcases hcenter c hc with rfl | rfl
+  · exact Or.inr (by simpa using hg)
+  · exact Or.inl (by simpa [mul_assoc, ha2] using hg)
+
+/-- **The index halves on adjoining a central involution outside `Γ`.** The counting form of
+`Subgroup.relIndex_withCenter_eq_two`: it is `Γ.withCenter`, not `Γ`, whose cosets index the
+distinct translates, so a count over `Γ`-cosets is twice the geometric one. -/
+theorem index_eq_two_mul_index_withCenter (ha : a ∈ Subgroup.center G) (haΓ : a ∉ Γ)
+    (hcenter : ∀ c ∈ Subgroup.center G, c = 1 ∨ c = a) : Γ.index = 2 * Γ.withCenter.index := by
+  rw [← Subgroup.relIndex_mul_index Γ.le_withCenter, relIndex_withCenter_eq_two ha haΓ hcenter]
 
 end Subgroup
 
