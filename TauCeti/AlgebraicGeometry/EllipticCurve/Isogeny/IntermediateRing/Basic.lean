@@ -26,6 +26,8 @@ because `mapsInfinity` is precisely the assertion that it lands there.
 
 * `TauCeti.Isogeny.algebraMap_mem_intermediateRing`: the source coordinate ring lands in it.
 * `TauCeti.Isogeny.pullback_mem_intermediateRing`: so does the target coordinate ring.
+* `TauCeti.Isogeny.isIntegralClosure_intermediateRing`: it really is the integral closure, in
+  Mathlib's `IsIntegralClosure` sense.
 * `TauCeti.Isogeny.id_intermediateRing`: an identity isogeny's intermediate ring is the
   coordinate ring itself, sitting inside its own fraction field.
 
@@ -147,6 +149,28 @@ noncomputable def pullbackToIntermediateRing (φ : Isogeny W₁ W₂) :
 @[simp]
 theorem coe_pullbackToIntermediateRing (φ : Isogeny W₁ W₂) (x : W₂.CoordinateRing) :
     (φ.pullbackToIntermediateRing x : W₁.FunctionField) = φ.pullback x := (rfl)
+
+/-- **The intermediate ring really is the integral closure**, in Mathlib's `IsIntegralClosure`
+sense: an element of `W₁.FunctionField` lies in it exactly when it is integral over
+`W₂.CoordinateRing`, and the inclusion into the function field is injective.
+
+Stated for an arbitrary `W₂.CoordinateRing`-algebra structure on `W₁.FunctionField` whose
+structure map is the pullback, so that a caller's own structure is accepted rather than only the
+locally-built one `intermediateRing` is defined against. Nothing here assumes separability. -/
+theorem isIntegralClosure_intermediateRing (φ : Isogeny W₁ W₂)
+    [inst : Algebra W₂.CoordinateRing W₁.FunctionField]
+    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
+    IsIntegralClosure φ.intermediateRing W₂.CoordinateRing W₁.FunctionField := by
+  -- the caller's structure and the pullback-induced one agree on the structure map, so they are
+  -- the same instance; substituting makes `mem_intermediateRing_iff` apply on the nose
+  have halg : inst = φ.pullback.toRingHom.toAlgebra := Algebra.algebra_ext _ _ h
+  subst halg
+  let _ := φ.pullback.toRingHom.toAlgebra
+  exact
+    { algebraMap_injective := Subtype.val_injective
+      isIntegral_iff := fun {x} ↦
+        ⟨fun hx ↦ ⟨⟨x, (φ.mem_intermediateRing_iff x).2 hx⟩, rfl⟩,
+         fun ⟨y, hy⟩ ↦ hy ▸ (φ.mem_intermediateRing_iff _).1 y.2⟩ }
 
 /-- **The identity isogeny's intermediate ring is the coordinate ring itself**, embedded in its
 own fraction field: nothing in the function field beyond an integrally closed coordinate ring is
