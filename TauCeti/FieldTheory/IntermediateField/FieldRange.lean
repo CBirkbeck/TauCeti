@@ -6,8 +6,7 @@ module
 
 public import Mathlib.FieldTheory.IntermediateField.Basic
 public import Mathlib.LinearAlgebra.Dimension.Finrank
-public import Mathlib.FieldTheory.SeparableClosure
-import Mathlib.FieldTheory.PurelyInseparable.Tower
+public import TauCeti.FieldTheory.SeparableDegree
 
 /-!
 # The degree above the range of a field embedding
@@ -29,7 +28,9 @@ different embeddings `f` induce different structures, so none can be registered 
 
 * `TauCeti.AlgHom.finrank_fieldRange`: `[L : f.fieldRange] = [L : K]`.
 * `TauCeti.AlgHom.finSepDegree_fieldRange` and `TauCeti.AlgHom.finInsepDegree_fieldRange`: the
-  same for the separable and inseparable degrees.
+  same for the separable and inseparable degrees. These are the `f.fieldRange` cases of the
+  general transports in `TauCeti.FieldTheory.SeparableDegree`, which is where a caller holding
+  some other surjectively-presented intermediate field should look.
 -/
 
 public section
@@ -53,8 +54,7 @@ theorem finrank_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebra
     hsquare).symm
 
 /-- **The separable degree above the range of a field embedding equals the one above its
-source.** `f.equivFieldRange` is onto, so an `L`-embedding is `f.fieldRange`-linear exactly when
-it is `K`-linear and the two embedding sets coincide. -/
+source.** The `f.fieldRange` case of `Field.finSepDegree_eq_of_surjective`. -/
 theorem finSepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebraMap K L z = f z) :
     Field.finSepDegree f.fieldRange L = Field.finSepDegree K L := by
   let _ : Algebra K f.fieldRange := (f.equivFieldRange).toAlgHom.toRingHom.toAlgebra
@@ -62,15 +62,12 @@ theorem finSepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, al
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       rw [RingHom.algebraMap_toAlgebra]
       exact (h z).trans (_root_.AlgHom.equivFieldRange_apply_coe f z).symm
-  have hsurj : Function.Surjective (algebraMap K f.fieldRange) := fun r ↦
+  exact Field.finSepDegree_eq_of_surjective fun r ↦
     ⟨f.equivFieldRange.symm r, by
       rw [RingHom.algebraMap_toAlgebra]; exact f.equivFieldRange.apply_symm_apply r⟩
-  unfold Field.finSepDegree
-  exact Nat.card_congr (AlgHom.extendScalarsOfSurjective hsurj).symm
 
 /-- **The inseparable degree above the range of a field embedding equals the one above its
-source.** Along the same identification: the lower step of the tower `K → f.fieldRange → L` is
-bijective, hence of degree one, so the tower law leaves the upper step's degree unchanged. -/
+source.** The `f.fieldRange` case of `Field.finInsepDegree_eq_of_surjective`. -/
 theorem finInsepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebraMap K L z = f z) :
     Field.finInsepDegree f.fieldRange L = Field.finInsepDegree K L := by
   let _ : Algebra K f.fieldRange := (f.equivFieldRange).toAlgHom.toRingHom.toAlgebra
@@ -78,19 +75,8 @@ theorem finInsepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, 
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       rw [RingHom.algebraMap_toAlgebra]
       exact (h z).trans (_root_.AlgHom.equivFieldRange_apply_coe f z).symm
-  have hsurj : Function.Surjective (algebraMap K f.fieldRange) := fun r ↦
+  exact Field.finInsepDegree_eq_of_surjective fun r ↦
     ⟨f.equivFieldRange.symm r, by
       rw [RingHom.algebraMap_toAlgebra]; exact f.equivFieldRange.apply_symm_apply r⟩
-  have : FiniteDimensional K f.fieldRange :=
-    Module.Finite.of_surjective (Algebra.linearMap K f.fieldRange) hsurj
-  have hrank : Module.finrank K f.fieldRange = 1 :=
-    Module.finrank_of_bijective_algebraMap ⟨FaithfulSMul.algebraMap_injective _ _, hsurj⟩
-  have h1 : Field.finInsepDegree K f.fieldRange = 1 := by
-    have hmul := Field.finSepDegree_mul_finInsepDegree K f.fieldRange
-    rw [hrank] at hmul
-    exact Nat.eq_one_of_mul_eq_one_left hmul
-  have hmul := Field.finInsepDegree_mul_finInsepDegree_of_isAlgebraic K f.fieldRange L
-  rw [h1, one_mul] at hmul
-  exact hmul
 
 end TauCeti.AlgHom
