@@ -109,11 +109,15 @@ asked of `Δ` at all beyond containing the chosen `δ`.
   the slash action's conjugation `σ` is trivial and scalars commute past it
   (`ModularForm.rat_smul_slash_of_det_pos`), whereas over a general `GL(2, ℚ)`-element the twist
   is complex conjugation and linearity would fail. So `transposeRep_mem_posDetInt`,
-  `det_transposeRep_pos` and `heckeSlashSum_smul` — and only those — ask for positivity, and only
-  of the two factors of `σᵢ δ` that actually appear. `transposeRep_mem_posDetInt` concludes a
-  `posDetInt` membership and so needs integrality; the other two conclude statements about
-  determinants alone and ask only `Γ₁ ≤ GLPos (Fin 2) ℚ` and `δ ∈ GLPos (Fin 2) ℚ`. Neither `Γ₂`
-  nor the rest of `Δ` is constrained. At the level-one pair these come from
+  `det_transposeRep_pos` and `heckeSlashSum_smul` — and only those — mention determinants, and
+  each asks for the weakest form it can. `transposeRep_mem_posDetInt` concludes a `posDetInt`
+  membership and so needs integrality. `det_transposeRep_pos` concludes a statement about
+  determinants alone, so it asks only `Γ₁ ≤ GLPos (Fin 2) ℚ` and `δ ∈ GLPos (Fin 2) ℚ`.
+  `heckeSlashSum_smul` asks less still: not a condition on the factors but
+  `∀ i, 0 < det (transposeRep D i)`, since a product can be positive with neither factor positive
+  and a factorwise hypothesis would exclude those cases. `det_transposeRep_pos` is how callers
+  supply it. Neither `Γ₂` nor the rest of `Δ` is constrained anywhere. At the level-one pair these
+  come from
   `SLnZ_le_posDetInt 2` and `D.out.2` composed with `posDetInt_le_glpos`.
 
 ⚠ Positivity being available at level `N` is *not* enough to read the sum there as a Hecke
@@ -132,11 +136,13 @@ See "Which group the representatives are cosets of" above.
   since neither definition is `@[expose]`. The last two are the function-level and pointwise
   forms of the same equation.
 * `HeckeRing.GL2.det_transposeRep_pos`: the representatives have positive determinant, given
-  `Γ₁ ≤ posDetInt 2` and `δ ∈ posDetInt 2`.
+  `Γ₁ ≤ GLPos (Fin 2) ℚ` and `δ ∈ GLPos (Fin 2) ℚ`.
 * `HeckeRing.GL2.heckeSlashSum_add` and `heckeSlashSum_zero`: additivity and vanishing on `0`,
   with no hypothesis beyond finiteness of the index type.
-* `HeckeRing.GL2.heckeSlashSum_smul`: homogeneity, which additionally needs the two positivity
-  hypotheses above. Together with `heckeSlashSum_add` it gives `ℂ`-linearity.
+* `HeckeRing.GL2.heckeSlashSum_smul`: homogeneity, which additionally needs each representative
+  to have positive determinant — the hypothesis is that, not the factorwise condition, since a
+  product can be positive with neither factor positive. `det_transposeRep_pos` supplies it.
+  Together with `heckeSlashSum_add` this gives `ℂ`-linearity.
 
 ## Provenance
 
@@ -200,11 +206,13 @@ lemma transposeRep_mem_posDetInt (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
 /-- The representatives have positive determinant, in the shape
 `ModularForm.rat_smul_slash_of_det_pos` consumes.
 
-`transposeRep_mem_posDetInt`, in the shape `ModularForm.rat_smul_slash_of_det_pos` consumes.
-
 This asks only for positivity, not for the integrality `posDetInt 2` also carries: the conclusion
 is about determinants alone, and `det (σᵢ δ)ᵀ = det σᵢ · det δ`. A `posDetInt` hypothesis is
-converted by `posDetInt_le_glpos`. -/
+converted by `posDetInt_le_glpos`.
+
+Factorwise positivity is *sufficient*, not necessary — a product can be positive with neither
+factor positive — so `heckeSlashSum_smul` takes the positivity of each representative directly
+and this lemma is the convenient way to supply it. -/
 lemma det_transposeRep_pos (hΓ₁ : Γ₁ ≤ Matrix.GLPos (Fin 2) ℚ)
     (hD : (D.out : GL (Fin 2) ℚ) ∈ Matrix.GLPos (Fin 2) ℚ)
     (i : DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)) :
@@ -283,18 +291,20 @@ lemma heckeSlashSum_zero : heckeSlashSum k D 0 = 0 := by
 /-- **The slash sum is homogeneous in `f`**: a scalar acting on `ℂ` through the scalar tower
 passes out of the sum. With `heckeSlashSum_add`, at `α := ℂ`, this gives `ℂ`-linearity.
 
-Unlike additivity, this needs the two factors of `σᵢ δ` to have positive determinant — exactly
-`Γ₁ ≤ posDetInt 2` and `δ ∈ posDetInt 2`, with `Γ₂` and the rest of `Δ` unconstrained — because
-the scalar passes through the slash only on that branch. -/
+Unlike additivity, this needs each representative to have positive determinant, because the
+scalar passes through the slash only on that branch. That is asked for directly rather than
+factorwise: `det (σᵢ δ)ᵀ > 0` is what the proof uses, and a product can be positive with neither
+factor positive, so hypotheses on `Γ₁` and `δ` separately would exclude cases the theorem covers.
+`det_transposeRep_pos` is the convenient sufficient condition. -/
 @[simp]
-lemma heckeSlashSum_smul (hΓ₁ : Γ₁ ≤ Matrix.GLPos (Fin 2) ℚ)
-    (hD : (D.out : GL (Fin 2) ℚ) ∈ Matrix.GLPos (Fin 2) ℚ)
+lemma heckeSlashSum_smul
+    (hpos : ∀ i, 0 < (transposeRep D i : Matrix (Fin 2) (Fin 2) ℚ).det)
     {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α) (f : ℍ → ℂ) :
     heckeSlashSum k D (c • f) = c • heckeSlashSum k D f := by
   rw [heckeSlashSum, heckeSlashSum]
   -- each representative has positive determinant, so the slash carries no `σ` twist: the
   -- scalar leaves the summands one at a time, and only then comes out of the sum as a whole
   exact (Finset.sum_congr rfl fun i _ ↦ ModularForm.rat_smul_slash_of_det_pos k
-    (det_transposeRep_pos D hΓ₁ hD i) f c).trans Finset.smul_sum.symm
+    (hpos i) f c).trans Finset.smul_sum.symm
 
 end HeckeRing.GL2
