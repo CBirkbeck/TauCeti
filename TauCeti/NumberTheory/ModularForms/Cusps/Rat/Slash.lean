@@ -26,7 +26,8 @@ own index and representatives.
 * `OnePoint.isZeroAt_rat_slash`, `OnePoint.isBoundedAt_rat_slash`: a single rational slash
   inherits vanishing, resp. boundedness, at the cusps.
 * `OnePoint.isZeroAt_sum_rat_slash`, `OnePoint.isBoundedAt_sum_rat_slash`: the same for a finite
-  sum, obtained by closing the summand-wise statements under `OnePoint.IsZeroAt.sum`.
+  sum, obtained by closing the summand-wise statements under `OnePoint.IsZeroAt.sum` and
+  `OnePoint.IsBoundedAt.sum` respectively.
 
 ## Provenance
 
@@ -49,8 +50,8 @@ open scoped MatrixGroups ModularForm
 variable (k : ℤ) {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {ι : Type*} {f : ℍ → ℂ}
   {c : OnePoint ℝ}
 
-/-- **Any finite sum of rational slashes vanishes at every cusp** when the function does. The
-matrices are unconstrained: only their rationality is used, via `IsCusp.smul_map_ratCast`. -/
+/-- **A rational slash vanishes at every cusp** when the function does. The matrix is
+unconstrained: only its rationality is used, via `IsCusp.smul_map_ratCast`. -/
 lemma isZeroAt_rat_slash (g : GL (Fin 2) ℚ)
     (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsZeroAt f k) (hc : IsCusp c Γ) :
     c.IsZeroAt (f ∣[k] g) k := by
@@ -64,7 +65,7 @@ lemma isZeroAt_sum_rat_slash (s : Finset ι) (g : ι → GL (Fin 2) ℚ)
     c.IsZeroAt (∑ i ∈ s, f ∣[k] g i) k :=
   OnePoint.IsZeroAt.sum fun i _ ↦ isZeroAt_rat_slash k (g i) hf hc
 
-/-- **Any finite sum of rational slashes is bounded at every cusp** when the function is. -/
+/-- **A rational slash is bounded at every cusp** when the function is. -/
 lemma isBoundedAt_rat_slash (g : GL (Fin 2) ℚ)
     (hf : ∀ c : OnePoint ℝ, IsCusp c Γ → c.IsBoundedAt f k) (hc : IsCusp c Γ) :
     c.IsBoundedAt (f ∣[k] g) k := by
