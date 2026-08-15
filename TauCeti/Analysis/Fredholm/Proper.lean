@@ -72,7 +72,7 @@ and `f` approximates `f'` on `N` to within `(2 * C)⁻¹`. Then on `N` the same 
 in place of `f'`, at the cost of a factor two. -/
 private theorem norm_sub_le_of_approximatesLinearOn {P : E →L[𝕜] E} {C : ℝ} {N : Set E} {ε : ℝ≥0}
     (hC : 0 < C) (hest : ∀ z, ‖z‖ ≤ C * ‖f' z‖ + ‖P z‖)
-    (happ : ApproximatesLinearOn f f' N ε) (hε : (ε : ℝ) = (2 * C)⁻¹)
+    (happ : ApproximatesLinearOn f f' N ε) (hε : (ε : ℝ) ≤ (2 * C)⁻¹)
     {x : E} (hx : x ∈ N) {y : E} (hy : y ∈ N) :
     ‖x - y‖ ≤ 2 * (C * ‖f x - f y‖) + 2 * ‖P x - P y‖ := by
   have h1 := hest (x - y)
@@ -83,10 +83,13 @@ private theorem norm_sub_le_of_approximatesLinearOn {P : E →L[𝕜] E} {C : �
     exact (norm_sub_le _ _).trans (by linarith)
   have h4 : C * ‖f' (x - y)‖ ≤ C * (‖f x - f y‖ + (ε : ℝ) * ‖x - y‖) :=
     mul_le_mul_of_nonneg_left h3 hC.le
+  have hCε : C * (ε : ℝ) ≤ 1 / 2 := by
+    have h := mul_le_mul_of_nonneg_left hε hC.le
+    rwa [show C * (2 * C)⁻¹ = 1 / 2 by field_simp] at h
   have h5 : C * (‖f x - f y‖ + (ε : ℝ) * ‖x - y‖)
-      = C * ‖f x - f y‖ + 1 / 2 * ‖x - y‖ := by
-    rw [mul_add, ← mul_assoc, hε]
-    field_simp
+      ≤ C * ‖f x - f y‖ + 1 / 2 * ‖x - y‖ := by
+    have hnn : (0 : ℝ) ≤ ‖x - y‖ := norm_nonneg _
+    nlinarith
   rw [map_sub P x y] at h1
   linarith
 
@@ -120,7 +123,7 @@ theorem _root_.HasStrictFDerivAt.exists_mem_nhds_forall_isCompact_inter_preimage
   -- the two-sided bound on `N`
   have key : ∀ x ∈ N, ∀ y ∈ N,
       ‖x - y‖ ≤ 2 * (C * ‖f x - f y‖) + 2 * ‖P x - P y‖ := fun _ hx _ hy =>
-    norm_sub_le_of_approximatesLinearOn hC hest happN hεcoe hx hy
+    norm_sub_le_of_approximatesLinearOn hC hest happN hεcoe.le hx hy
   refine ⟨N, Metric.closedBall_mem_nhds a (by linarith), fun L hL => ?_⟩
   -- the compact box the projection lands in
   have hPmem : ∀ x, P x ∈ f'.ker := by
