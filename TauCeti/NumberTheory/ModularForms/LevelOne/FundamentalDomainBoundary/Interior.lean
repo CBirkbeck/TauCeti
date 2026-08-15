@@ -83,7 +83,7 @@ private lemma arg_div_neg {z₁ z₂ : ℂ} (hnum : z₂.im * z₁.re - z₂.re 
 
 /-- The winding number of the boundary contour about a point of the open strip is the
 normalized sum of the four pieces' principal logarithms. -/
-private theorem windingNumber_fdBoundary_eq_inv_two_pi_I_mul_sum_log (hx : |w.re| < 1 / 2)
+private theorem windingNumber_fdBoundary_eq_two_pi_I_inv_mul_sum_log (hx : |w.re| < 1 / 2)
     (hy1 : 1 < w.im) (hyH : w.im < H) :
     windingNumber (fdBoundary H) 0 5 w = (2 * (Real.pi : ℂ) * Complex.I)⁻¹ *
       (Complex.log (((ρ : ℂ) + 1 - w) / (1 / 2 + H * Complex.I - w)) +
@@ -109,7 +109,7 @@ private theorem two_pi_mul_int_eq_sum_arg_of_windingNumber_fdBoundary_eq
       ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w)).arg := by
   -- clear the `(2πI)⁻¹`, then read off the imaginary part: each `log`'s is its argument
   have hmul := (inv_mul_eq_iff_eq_mul₀ Complex.two_pi_I_ne_zero).mp
-    ((windingNumber_fdBoundary_eq_inv_two_pi_I_mul_sum_log hx hy1 hyH).symm.trans hn)
+    ((windingNumber_fdBoundary_eq_two_pi_I_inv_mul_sum_log hx hy1 hyH).symm.trans hn)
   simpa [Complex.log_im, Complex.add_im, Complex.mul_im] using congrArg Complex.im hmul.symm
 
 /-- The winding number of the boundary contour is `-1` on the open strip above the corner
