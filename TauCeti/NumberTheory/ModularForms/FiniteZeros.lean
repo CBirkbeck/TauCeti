@@ -85,28 +85,21 @@ lemma finite_zeros_in_fd [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → �
   intro h0
   exact hp_ord (by rwa [orderOfVanishingAt_def])
 
-/-- A modular form on a subgroup of finite relative index in `𝒮ℒ` has only finitely many
-zeros in the standard fundamental domain.
-
-The norm of `f` is a level-one form, so `finite_zeros_in_fd` applies to it, and `f` vanishes
-to no greater order than its norm does — so the zero set of `f` sits inside a finite one. -/
-lemma finite_zeros_in_fd_of_isFiniteRelIndex {𝒢 : Subgroup (GL (Fin 2) ℝ)}
-    [𝒢.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F 𝒢 k] :
+/-- The set of points of the fundamental domain at which the vanishing order of a modular
+form on a subgroup of finite relative index in `𝒮ℒ` is nonzero is finite. -/
+lemma finite_zeros_in_fd_of_isFiniteRelIndex [Γ.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F Γ k] :
     Set.Finite {p : ℍ | p ∈ 𝒟 ∧ orderOfVanishingAt f p ≠ 0} := by
   rcases eq_or_ne (⇑f : ℍ → ℂ) 0 with hf | hf
   · -- The zero form has order `0` everywhere, so the set is empty.
-    have h0 : ∀ q : ℍ, orderOfVanishingAt (0 : ℍ → ℂ) q = 0 := fun q ↦
-      orderOfVanishingAt_const 0 q
-    simp [hf, h0]
-  -- `norm_ne_zero` states the bundled form is nonzero; `finite_zeros_in_fd` needs the coercion.
-  have hN : (⇑(_root_.ModularForm.norm 𝒮ℒ f) : ℍ → ℂ) ≠ 0 := fun h =>
-    _root_.ModularForm.norm_ne_zero 𝒮ℒ hf (DFunLike.coe_injective (by simpa using h))
+    simp [hf, Pi.zero_def]
+  -- The norm of `f` is a level-one form, so `finite_zeros_in_fd` applies to it; `norm_ne_zero`
+  -- is about the bundled form, while `finite_zeros_in_fd` needs the coercion.
+  have hN : (⇑(_root_.ModularForm.norm 𝒮ℒ f) : ℍ → ℂ) ≠ 0 := fun h ↦
+    _root_.ModularForm.norm_ne_zero 𝒮ℒ hf ((FunLike.coe_zero_iff _).mp h)
   refine (finite_zeros_in_fd hN).subset fun p ⟨hp, hord⟩ ↦ ⟨hp, ?_⟩
   -- A nonzero order is positive and is dominated by the norm's, so the norm's is nonzero too.
-  have h0 : 0 ≤ orderOfVanishingAt (⇑f) p :=
-    orderOfVanishingAt_nonneg (ModularFormClass.holo f) p
-  have hle := orderOfVanishingAt_le_orderOfVanishingAt_norm (ℋ := 𝒮ℒ) f p
-  omega
+  exact (((orderOfVanishingAt_nonneg (ModularFormClass.holo f) p).lt_of_ne' hord).trans_le
+    (orderOfVanishingAt_le_orderOfVanishingAt_norm f p)).ne'
 
 end ModularForm
 
