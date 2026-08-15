@@ -47,6 +47,29 @@ This is original work. Mathlib carries both composands but not the composite, an
 `relNorm`-of-an-extension appears there in any spelling; the same-ring specialisation
 `relNorm ∘ extendedHom` — which is the `Module.finrank` power map rather than a map between
 different class groups — is a separate statement and does not subsume this one.
+
+## Provenance
+
+No AINTLIB material is ported, but that repository has closely related work which motivated
+this file's shape, and the relationship is worth stating rather than leaving implicit. At
+`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `dev/modular-curves @ 513e83879e2f`:
+
+* `HasseWeil/Pic0/IsogenyClassGroup.lean` (`classNorm`, `classMap`, `classNorm_comp_classMap`)
+  is the **endomorphism** case — `α : Isogeny E E`, so both sides are
+  `ClassGroup E.CoordinateRing` and the extension is twisted by `ch.toAlgebra`. That is the
+  same-ring composite, not a map between two class groups. Its header also records a genuine
+  instance diamond in that formulation: with the source and target ring literally equal, Lean
+  cannot keep two `Algebra R FF` structures apart. Stating this at three distinct types
+  `A`, `M`, `R` avoids the diamond by construction rather than by `@`-elaboration, which is
+  the reason for the three-type signature above.
+* `HasseWeil/EC/IsogenyAG/TwoCurveNormConorm.lean` is genuinely two-curve, but at the
+  **field** level: its `conorm` is `Algebra.norm : K(E₁) →* K(E₂)`, not a class-group map. Its
+  header records why the coordinate-ring route is unavailable for a two-curve isogeny — there
+  is no comorphism `F[E₂] → F[E₁]`, since `φ*(x_gen₂)` has poles on the affine kernel — and
+  routes around it through `integralClosure (localized φ*F[E₂]) K(E₁)`, the object TauCeti
+  calls `Isogeny.intermediateRing`. So the source reaches for the intermediate ring for
+  exactly the reason this API exists; what it does not do is take the class-group composite
+  through it.
 -/
 
 public section
