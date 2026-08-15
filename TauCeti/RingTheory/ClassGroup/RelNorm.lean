@@ -137,6 +137,7 @@ theorem relNorm_mk0 (I : (Ideal S)⁰) :
 /-- **Norm of an extended ideal is the `finrank`-th power**, on nonzero ideals: the
 `(Ideal R)⁰`-level form of Mathlib's `Ideal.relNorm_algebraMap`, against Mathlib's
 `ClassGroup.extendedIdeal`. -/
+@[simp]
 theorem _root_.Ideal.relNorm0_extendedIdeal (I : (Ideal R)⁰) :
     Ideal.relNorm0 R (ClassGroup.extendedIdeal R S I) = I ^ Module.finrank R S := by
   refine Subtype.ext ?_
@@ -148,6 +149,7 @@ theorem _root_.Ideal.relNorm0_extendedIdeal (I : (Ideal R)⁰) :
 The extension direction is Mathlib's `ClassGroup.extendedHom`; the arithmetic is Mathlib's
 `Ideal.relNorm_algebraMap`, which needs no separability, Galois or perfect-field hypothesis, so
 neither does this. Only the composite with `relNorm` is new. -/
+@[simp]
 theorem relNorm_extendedHom (c : ClassGroup R) :
     relNorm (ClassGroup.extendedHom R S c) = c ^ Module.finrank R S := by
   obtain ⟨I, rfl⟩ := ClassGroup.mk0_surjective c
