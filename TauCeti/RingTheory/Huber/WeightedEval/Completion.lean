@@ -22,8 +22,9 @@ Existence is `UniformSpace.Completion.extensionHom` applied to the evaluation ho
 is available exactly because the target is already assumed complete and Hausdorff — the same
 hypotheses 5.50 carries, so the completed statement asks for nothing extra. Uniqueness is
 `completion_weightedRestrictedSubring_ringHom_ext_of_continuous`, itself
-`UniformSpace.Completion.ext` — two continuous maps out of a completion that agree on the image of
-the coercion are equal — applied to 5.50's own uniqueness clause for the restrictions along
+`UniformSpace.Completion.ringHom_ext_of_continuous` — two continuous ring homomorphisms out of a
+completion that agree after composing with the coercion are equal — applied to 5.50's own
+uniqueness clause for the restrictions along
 `UniformSpace.Completion.coeRingHom`.
 
 At the trivial weight family `Tᵢ = {1}` the domain is the completed restricted power-series
