@@ -92,7 +92,7 @@ noncomputable def heckeSlashEnd : Module.End ℂ (SlashInvariantForm 𝒮ℒ k) 
   toFun := heckeSlashInvariant k D
   map_add' f g := by ext τ; simp [heckeSlashInvariant, heckeSlashSum_add]
   map_smul' c f := by
-    ext τ; simp [heckeSlashInvariant, heckeSlashSum_smul k D le_rfl]
+    ext τ; simp [heckeSlashInvariant, heckeSlashSum_smul k D (SLnZ_le_posDetInt 2) D.out.2]
 
 /-- The endomorphism is `heckeSlashSum` on underlying functions. This characterises it directly,
 without exposing the bundling. -/

@@ -12,7 +12,9 @@ public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 # The slash sum over a double-coset decomposition
 
 A Hecke operator acts on a modular form by slashing it against representatives of the double
-coset and summing. This file defines that sum and records that it is `ℂ`-linear in `f`.
+coset and summing. This file defines that sum. It is unconditionally *additive* in `f` and kills
+`0`; homogeneity — and so `ℂ`-linearity — additionally needs the representatives to have positive
+determinant, because the scalar passes through the slash only on that branch.
 
 ⚠ **It is not yet an action, and on a general `f : ℍ → ℂ` it is not even well defined.**
 `heckeSlashSum` is a sum over *chosen* representatives — `D.out` for the double coset and
@@ -58,8 +60,9 @@ level-`N` operator.** `SLnZ 2` is transpose-stable (`transposeGLEquiv_mem_SLnZ`,
 sum is Shimura's operator for `Γ₁ δ Γ₂` acting on `Γ₁`-invariant functions. A congruence
 subgroup is **not** transpose-stable: transposition swaps the off-diagonal entries, so
 `!![1, 1; 0, 1] ∈ Γ₁(N)` for every `N` while its transpose lies in `Γ₁(N)` only when `N = 1`,
-and `Γ₁(N)ᵀ = Γ¹(N)`. At such a triple the sum below is still perfectly well defined, but it is
-the operator attached to `Γ₂ᵀ δᵀ Γ₁ᵀ`, **not** an operator on `Γ₁(N)`-invariant forms. Anything
+and `Γ₁(N)ᵀ = Γ¹(N)`. At such a triple the expression below is still defined — it is a finite sum
+over chosen representatives, nothing more — but the cosets it runs over belong to `Γ₂ᵀ δᵀ Γ₁ᵀ`,
+so it is in no sense an operator on `Γ₁(N)`-invariant forms. Anything
 that wants the latter must first reconcile that orientation — either by carrying the correctly
 transposed source and target subgroups, or by a device that avoids the transpose altogether
 (upper-triangular representatives, as in `HeckeSlash/UpperTri/`).
@@ -78,22 +81,23 @@ same one that proves the Hecke ring commutative; this file only needs that it pr
 
 ## An arbitrary Hecke triple, and where positivity is actually needed
 
-The sum is stated for an arbitrary `IsHeckeTriple Δ Γ₁ Γ₂` rather than only for the level-one
-pair `(posDetInt 2, SLnZ 2, SLnZ 2)`. The triple is what makes the sum *finite*: it is exactly
-the hypothesis under which `DecompQuotient Γ₁ Γ₂ δ` carries a `Fintype`, since `Δ` commensurates
-`Γ₂` and the two subgroups are commensurable. Being an instance argument, it is found by
-synthesis and no call site mentions it.
+The declarations are stated over an arbitrary triple `HeckeCoset Δ Γ₁ Γ₂` rather than the
+level-one pair `(posDetInt 2, SLnZ 2, SLnZ 2)`, and each carries only what it uses. Nothing is
+asked of `Δ` at all beyond containing the chosen `δ`.
 
-Beyond finiteness, nothing in `transposeRep` or in the sum needs more than the group law, so
-those, their characteristic equations, additivity and vanishing on `0` take no further
-hypothesis. Positivity of the determinant enters exactly once, in **homogeneity**: on the
-positive branch the slash action's conjugation `σ` is trivial and scalars commute past it
-(`ModularForm.rat_smul_slash_of_det_pos`), whereas over a general `GL(2, ℚ)`-element the twist is
-complex conjugation and linearity would fail. So `transposeRep_mem_posDetInt`,
-`det_transposeRep_pos` and `heckeSlashSum_smul` — and only those — carry `Δ ≤ posDetInt 2`. One
-inclusion suffices for both factors of `σᵢ δ`, because `IsHeckeTriple.mem_of_mem_left` already
-places `Γ₁` inside `Δ`. The level-one pair satisfies it by `le_rfl`, and `Δ₀(N)` by
-`Delta0_le_posDetInt`.
+* `transposeRep` and its characteristic equation need only the group law.
+* The **sum** and its additivity and vanishing on `0` need only that the index type is finite,
+  so they take `[Fintype (DecompQuotient Γ₁ Γ₂ δ)]` directly. A Hecke triple supplies that
+  instance (`HeckeRing/Basic.lean`) and is strictly stronger — it also demands commensurability
+  and that `Δ` commensurate `Γ₂`, none of which the sum uses.
+* Positivity of the determinant enters exactly once, in **homogeneity**: on the positive branch
+  the slash action's conjugation `σ` is trivial and scalars commute past it
+  (`ModularForm.rat_smul_slash_of_det_pos`), whereas over a general `GL(2, ℚ)`-element the twist
+  is complex conjugation and linearity would fail. So `transposeRep_mem_posDetInt`,
+  `det_transposeRep_pos` and `heckeSlashSum_smul` — and only those — ask for positivity, and only
+  of the two factors of `σᵢ δ` that actually appear: `Γ₁ ≤ posDetInt 2` and `δ ∈ posDetInt 2`.
+  Neither `Γ₂` nor the rest of `Δ` is constrained. At the level-one pair these are
+  `SLnZ_le_posDetInt 2` and `D.out.2`.
 
 ⚠ Positivity being available at level `N` is *not* enough to read the sum there as a Hecke
 operator: what fails at a congruence subgroup is the transpose orientation, not the determinant.
@@ -110,10 +114,12 @@ See "Which group the representatives are cosets of" above.
   `HeckeRing.GL2.heckeSlashSum_apply`: the characteristic equations, which are the interface
   since neither definition is `@[expose]`. The last two are the function-level and pointwise
   forms of the same equation.
-* `HeckeRing.GL2.det_transposeRep_pos`: the representatives have positive determinant, when the
-  triple lies in `posDetInt 2`.
-* `HeckeRing.GL2.heckeSlashSum_add`, `heckeSlashSum_zero`, `heckeSlashSum_smul`: `ℂ`-linearity,
-  the last under that same hypothesis.
+* `HeckeRing.GL2.det_transposeRep_pos`: the representatives have positive determinant, given
+  `Γ₁ ≤ posDetInt 2` and `δ ∈ posDetInt 2`.
+* `HeckeRing.GL2.heckeSlashSum_add` and `heckeSlashSum_zero`: additivity and vanishing on `0`,
+  with no hypothesis beyond finiteness of the index type.
+* `HeckeRing.GL2.heckeSlashSum_smul`: homogeneity, which additionally needs the two positivity
+  hypotheses above. Together with `heckeSlashSum_add` it gives `ℂ`-linearity.
 
 ## Provenance
 
@@ -146,9 +152,11 @@ variable (k : ℤ) {Δ : Submonoid (GL (Fin 2) ℚ)} {Γ₁ Γ₂ : Subgroup (GL
   (D : HeckeCoset Δ Γ₁ Γ₂)
 
 /-- The transposed left-coset representative `(σᵢ δ)ᵀ = δᵀ σᵢᵀ`, where `δ` is the chosen
-representative of the double coset `D` and `σᵢ` runs over its left-coset decomposition. The
-transpose turns it into a representative of a right coset `Γ₁(σᵢ δ)ᵀ`, which is what a right
-action needs. -/
+representative of the double coset `D` and `σᵢ` runs over its left-coset decomposition of
+`Γ₁ δ Γ₂`. The transpose turns it into a representative of the right coset `Γ₂ᵀ(σᵢ δ)ᵀ`, which
+is the handedness a right action needs — the enclosing double coset being the transposed
+`Γ₂ᵀ δᵀ Γ₁ᵀ`, since transposition reverses the flanks. ⚠ The group on the left is `Γ₂ᵀ`, not
+`Γ₁`; see "Which group the representatives are cosets of" in the module docstring. -/
 noncomputable def transposeRep (i : DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)) :
     GL (Fin 2) ℚ :=
   (transposeGLEquiv 2 ((i.out : GL (Fin 2) ℚ) * (D.out : GL (Fin 2) ℚ))).unop
@@ -164,25 +172,27 @@ lemma transposeRep_def (i : DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ))
     transposeRep D i =
       (transposeGLEquiv 2 ((i.out : GL (Fin 2) ℚ) * (D.out : GL (Fin 2) ℚ))).unop := (rfl)
 
--- From here on the triple is a Hecke triple. That is what makes `DecompQuotient` finite, so it is
--- needed by every statement below and by none above; it is introduced here rather than `omit`ted
--- from the two declarations that do without it.
-variable [IsHeckeTriple Δ Γ₁ Γ₂]
-
-/-- Each representative lies in `posDetInt 2`, provided `Δ` does: the left-coset representatives
-lie in `Γ₁ ≤ Δ` by `IsHeckeTriple.mem_of_mem_left`, so one inclusion covers both factors. -/
-lemma transposeRep_mem_posDetInt (hΔ : Δ ≤ posDetInt 2)
+/-- Each representative lies in `posDetInt 2` when the two factors of `σᵢ δ` do. Only `Γ₁` and the
+chosen `δ` are constrained: nothing is asked of `Γ₂`, and nothing of `Δ` beyond containing `δ`. -/
+lemma transposeRep_mem_posDetInt (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
+    (hD : (D.out : GL (Fin 2) ℚ) ∈ posDetInt 2)
     (i : DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)) : transposeRep D i ∈ posDetInt 2 :=
   transposeRep_def D i ▸
-    transposeGLEquiv_mem_posDetInt 2
-      (mul_mem (hΔ (IsHeckeTriple.mem_of_mem_left Γ₂ i.out.2)) (hΔ D.out.2))
+    transposeGLEquiv_mem_posDetInt 2 (mul_mem (hΓ₁ i.out.2) hD)
 
 /-- The representatives have positive determinant — the `0 < det` half of
 `transposeRep_mem_posDetInt`, in the shape `ModularForm.rat_smul_slash_of_det_pos` consumes. -/
-lemma det_transposeRep_pos (hΔ : Δ ≤ posDetInt 2)
+lemma det_transposeRep_pos (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
+    (hD : (D.out : GL (Fin 2) ℚ) ∈ posDetInt 2)
     (i : DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)) :
     0 < (transposeRep D i : Matrix (Fin 2) (Fin 2) ℚ).det :=
-  ((mem_posDetInt_iff 2).mp (transposeRep_mem_posDetInt D hΔ i)).2
+  ((mem_posDetInt_iff 2).mp (transposeRep_mem_posDetInt D hΓ₁ hD i)).2
+
+-- From here on the sum needs its index type to be finite, and that is *all* it needs: a Hecke
+-- triple supplies this `Fintype` (`HeckeRing/Basic.lean`) but is strictly stronger, so the
+-- instance is stated directly. It is introduced here rather than `omit`ted from the four
+-- declarations above, which do without it.
+variable [Fintype (DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ))]
 
 /-- **The slash sum over a chosen decomposition of a double coset**:
 `∑ᵢ f ∣[k] (σᵢ δ)ᵀ`, over the transposed representatives of the left-coset decomposition of
@@ -232,12 +242,14 @@ passes out of the sum. With `heckeSlashSum_add`, at `α := ℂ`, this gives `ℂ
 Unlike additivity, this needs the triple to sit inside `posDetInt 2`: the scalar passes through
 the slash only on the positive-determinant branch. -/
 @[simp]
-lemma heckeSlashSum_smul (hΔ : Δ ≤ posDetInt 2) {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ]
-    (c : α) (f : ℍ → ℂ) : heckeSlashSum k D (c • f) = c • heckeSlashSum k D f := by
+lemma heckeSlashSum_smul (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
+    (hD : (D.out : GL (Fin 2) ℚ) ∈ posDetInt 2)
+    {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α) (f : ℍ → ℂ) :
+    heckeSlashSum k D (c • f) = c • heckeSlashSum k D f := by
   rw [heckeSlashSum, heckeSlashSum]
   -- each representative has positive determinant, so the slash carries no `σ` twist: the
   -- scalar leaves the summands one at a time, and only then comes out of the sum as a whole
   exact (Finset.sum_congr rfl fun i _ ↦ ModularForm.rat_smul_slash_of_det_pos k
-    (det_transposeRep_pos D hΔ i) f c).trans Finset.smul_sum.symm
+    (det_transposeRep_pos D hΓ₁ hD i) f c).trans Finset.smul_sum.symm
 
 end HeckeRing.GL2

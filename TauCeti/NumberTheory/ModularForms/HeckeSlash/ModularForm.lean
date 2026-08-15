@@ -109,7 +109,7 @@ noncomputable def heckeSlashModularFormEnd : Module.End ℂ (ModularForm 𝒮ℒ
   toFun := heckeSlashModularForm k D
   map_add' f g := by ext τ; simp [coe_heckeSlashModularForm, heckeSlashSum_add]
   map_smul' c f := by
-    ext τ; simp [coe_heckeSlashModularForm, heckeSlashSum_smul k D le_rfl]
+    ext τ; simp [coe_heckeSlashModularForm, heckeSlashSum_smul k D (SLnZ_le_posDetInt 2) D.out.2]
 
 /-- **The double coset as a `ℂ`-linear endomorphism of `CuspForm 𝒮ℒ k`** — the action preserves
 cuspidality. -/
@@ -117,7 +117,7 @@ noncomputable def heckeSlashCuspFormEnd : Module.End ℂ (CuspForm 𝒮ℒ k) wh
   toFun := heckeSlashCuspForm k D
   map_add' f g := by ext τ; simp [coe_heckeSlashCuspForm, heckeSlashSum_add]
   map_smul' c f := by
-    ext τ; simp [coe_heckeSlashCuspForm, heckeSlashSum_smul k D le_rfl]
+    ext τ; simp [coe_heckeSlashCuspForm, heckeSlashSum_smul k D (SLnZ_le_posDetInt 2) D.out.2]
 
 /-- The endomorphism is `heckeSlashSum` on underlying functions. -/
 @[simp] lemma coe_heckeSlashModularFormEnd (f : ModularForm 𝒮ℒ k) :
