@@ -172,8 +172,11 @@ with `locSubring_empty` as its base.
 
 The `Algebra.adjoin` form matches the shape of `locSubring` itself, and says concretely that an
 element of `locSubring P (insert t U) s S` is a polynomial in `t/s` with coefficients in the
-smaller subring. -/
-@[simp]
+smaller subring.
+
+Not a `simp` lemma: `locSubring P U s S` occurs on the right as a type index, so simp rewrites the
+outermost `insert` and then stalls rather than reaching a normal form. The `Subring.closure` form
+this replaced did iterate, which is why the attribute was there. -/
 theorem locSubring_insert [DecidableEq A] (P : PairOfDefinition A) (t : A)
     (U : Finset A) (s : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] :
