@@ -7,7 +7,6 @@ module
 public import Mathlib.FieldTheory.IntermediateField.Basic
 public import Mathlib.LinearAlgebra.Dimension.Finrank
 public import Mathlib.FieldTheory.SeparableClosure
-import Mathlib.FieldTheory.PurelyInseparable.Basic
 import Mathlib.FieldTheory.PurelyInseparable.Tower
 
 /-!
@@ -82,18 +81,11 @@ theorem finSepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, al
     ⟨f.equivFieldRange.symm r, by
       rw [RingHom.algebraMap_toAlgebra]; exact f.equivFieldRange.apply_symm_apply r⟩
   unfold Field.finSepDegree
-  refine Nat.card_congr ⟨fun σ => σ.restrictScalars K, fun σ => ⟨σ.toRingHom, ?_⟩, ?_, ?_⟩
-  · intro r
-    obtain ⟨k, rfl⟩ := hsurj r
-    simp only [← IsScalarTower.algebraMap_apply]
-    simp
-  · intro σ; rfl
-  · intro σ; rfl
+  exact Nat.card_congr (AlgHom.extendScalarsOfSurjective hsurj).symm
 
 /-- **The inseparable degree above the range of a field embedding equals the one above its
-source.** Needs only the `K`-algebra structure on `L` whose structure map is `f` — no
-algebraicity of `L / K`, unlike its separable twin, because Mathlib's inseparable tower law asks
-only for the lower step. -/
+source.** The inseparable analogue of `finSepDegree_fieldRange`, for any `K`-algebra structure on
+`L` whose structure map is `f`. -/
 theorem finInsepDegree_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebraMap K L z = f z) :
     Field.finInsepDegree f.fieldRange L = Field.finInsepDegree K L := by
   let _ : Algebra K f.fieldRange := (f.equivFieldRange).toAlgHom.toRingHom.toAlgebra
