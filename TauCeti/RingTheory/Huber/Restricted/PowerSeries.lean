@@ -31,6 +31,8 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
   `Subalgebra`, so `Subalgebra.val` does not apply.
 * `isRestricted_of_hasFiniteSupport`: the introduction rule at module coefficients — finitely many
   nonzero coefficients suffice.
+* `isRestricted_pi_iff`, with `mem_restrictedMvPowerSeriesSubmodule_pi_iff`: restrictedness of a
+  series with coefficients in a product is componentwise, at the predicate and at the submodule.
 
 ## Provenance
 
@@ -162,6 +164,15 @@ theorem isRestricted_iff_coeff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSp
     {f : MvPowerSeries (Fin k) A} :
     IsRestricted f ↔
       Tendsto (fun s : Fin k →₀ ℕ => MvPowerSeries.coeff s f) cofinite (nhds 0) := (Iff.rfl)
+
+/-- A series with coefficients in a product is restricted exactly when each of its components
+is. No finiteness is needed: the product topology is the topology of pointwise convergence, so
+the two sides are the same statement about the same filter. -/
+theorem isRestricted_pi_iff {k : ℕ} {ι : Type*} {M : ι → Type*} [∀ i, Zero (M i)]
+    [∀ i, TopologicalSpace (M i)] {f : MvPowerSeries (Fin k) (∀ i, M i)} :
+    IsRestricted f ↔ ∀ i, IsRestricted
+      (show MvPowerSeries (Fin k) (M i) from fun s ↦ (f : (Fin k →₀ ℕ) → ∀ i, M i) s i) :=
+  tendsto_pi_nhds
 
 /-- `0` is restricted: its coefficients are constantly `0`. -/
 @[simp]
@@ -426,5 +437,15 @@ theorem mem_restrictedMvPowerSeriesSubmodule {k : ℕ} {A M : Type*} [Semiring A
     [TopologicalSpace M] [Module A M] [ContinuousAdd M] [ContinuousConstSMul A M]
     {f : MvPowerSeries (Fin k) M} :
     f ∈ restrictedMvPowerSeriesSubmodule k A M ↔ IsRestricted f := (Iff.rfl)
+
+/-- Membership in `M⟨T₁, …, Tₖ⟩` for a product module is componentwise. -/
+theorem mem_restrictedMvPowerSeriesSubmodule_pi_iff {k : ℕ} {A : Type*} {ι : Type*}
+    {M : ι → Type*} [Semiring A] [∀ i, AddCommMonoid (M i)] [∀ i, TopologicalSpace (M i)]
+    [∀ i, Module A (M i)] [∀ i, ContinuousAdd (M i)] [∀ i, ContinuousConstSMul A (M i)]
+    {f : MvPowerSeries (Fin k) (∀ i, M i)} :
+    f ∈ restrictedMvPowerSeriesSubmodule k A (∀ i, M i) ↔ ∀ i,
+      (show MvPowerSeries (Fin k) (M i) from fun s ↦ (f : (Fin k →₀ ℕ) → ∀ i, M i) s i) ∈
+        restrictedMvPowerSeriesSubmodule k A (M i) :=
+  isRestricted_pi_iff
 
 end TauCeti.Huber
