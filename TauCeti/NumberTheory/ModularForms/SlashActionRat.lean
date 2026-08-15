@@ -34,6 +34,10 @@ and `𝒮ℒ` are ranges of `mapGL` out of the same `SL₂(ℤ)`, so mathlib's
 corollaries of it. `slash_eq_of_mem_SLnZ` is the form consumers want: real invariance under `𝒮ℒ`
 gives rational invariance under `SLnZ 2`.
 
+The file also carries the rational forms of mathlib's two behaviour-at-`i∞` slash lemmas, in the
+`UpperHalfPlane` namespace: they belong beside `rat_slash`, which is the bridge their proofs
+cross, rather than in any module about particular matrices.
+
 ## Main results
 
 * `ModularForm.rat_slash`: the rational action is the real one at the mapped matrix.
@@ -48,6 +52,9 @@ gives rational invariance under `SLnZ 2`.
   of the `SLnZ 2` / `𝒮ℒ` correspondence.
 * `ModularForm.slash_eq_of_mem_SLnZ`: real slash-invariance under `𝒮ℒ` gives rational
   slash-invariance under `SLnZ 2`.
+* `UpperHalfPlane.IsBoundedAtImInfty.rat_slash`, `UpperHalfPlane.IsZeroAtImInfty.rat_slash`: the
+  rational forms of mathlib's `.slash` lemmas — boundedness and vanishing at `i∞` survive a
+  rational slash whose matrix has vanishing `(1, 0)` entry.
 
 ## Provenance
 
