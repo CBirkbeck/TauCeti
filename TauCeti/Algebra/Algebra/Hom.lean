@@ -46,8 +46,14 @@ public section
 is the applied form, stated for an `AlgHom` so that the right-hand side is `f z`.
 
 Consumers wanting a hypothesis `∀ z, algebraMap A B z = f z` can pass this lemma directly, since
-`z` is explicit. -/
+`z` is explicit.
+
+The proof goes through `RingHom.algebraMap_toAlgebra` and `AlgHom.coe_toRingHom` rather than
+`rfl`. Both sides are definitionally equal, so `rfl` closes it — but only by reducing through
+`toRingHom`, `toAlgebra`, `algebraMap` and two coercions, which is exactly the fragile
+wrapper-and-coercion defeq this lemma exists to spare its call sites. Deriving it from the two
+named lemmas keeps that reduction out of the proof term. -/
 theorem AlgHom.algebraMap_toAlgebra_apply {R A B : Type*} [CommSemiring R] [CommSemiring A]
     [CommSemiring B] [Algebra R A] [Algebra R B] (f : A →ₐ[R] B) (z : A) :
-    @algebraMap A B _ _ f.toRingHom.toAlgebra z = f z :=
-  rfl
+    @algebraMap A B _ _ f.toRingHom.toAlgebra z = f z := by
+  rw [RingHom.algebraMap_toAlgebra, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
