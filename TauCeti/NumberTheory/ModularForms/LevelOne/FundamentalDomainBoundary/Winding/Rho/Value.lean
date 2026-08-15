@@ -364,13 +364,9 @@ private lemma truncated_integral_spec_rho (hH : Real.sqrt 3 / 2 < H) (hε : 0 < 
   set δL := fdBoundaryArcExcisionHalfWidth ε with hδL_def
   have hHpos : (0 : ℝ) < H - Real.sqrt 3 / 2 := by linarith
   set δR := ε / (H - Real.sqrt 3 / 2) with hδR_def
-  have hδR_pos : 0 < δR := by rw [hδR_def]; positivity
-  have hδR_le : δR ≤ 1 := by
-    rw [hδR_def, div_le_one hHpos]
-    linarith
-  have hlin : δR * (H - Real.sqrt 3 / 2) = ε := by
-    rw [hδR_def]
-    exact div_mul_cancel₀ ε hHpos.ne'
+  have hδR_pos : 0 < δR := div_pos hε hHpos
+  have hδR_le : δR ≤ 1 := (div_le_one hHpos).2 hεH.le
+  have hlin : δR * (H - Real.sqrt 3 / 2) = ε := div_mul_cancel₀ ε hHpos.ne'
   obtain ⟨hi_left, hi_right, hval⟩ :=
     ftc_logDeriv_telescope_rho H hH hδL_pos hδL_lt hδR_pos hδR_le
   have hae_left := Contour.ae_logDeriv_sub_eq_truncated (γ := fdBoundary H)
@@ -440,12 +436,7 @@ theorem hasCauchyPVAt_fdBoundary_rho (hH : Real.sqrt 3 / 2 < H) :
       refine continuous_const.sub ((Complex.continuous_ofReal.comp ?_).mul continuous_const)
       exact Real.continuous_arcsin.comp (continuous_id.div_const 2)
     simpa [Real.arcsin_zero] using (hc.tendsto 0).mono_left nhdsWithin_le_nhds
-  refine Contour.hasCauchyPVAt_iff.mpr ⟨?_, ?_⟩
-  · filter_upwards [hIoo] with ε hε
-    exact (hspec ε hε).1
-  · refine Tendsto.congr' ?_ hcont
-    filter_upwards [hIoo] with ε hε
-    exact ((hspec ε hε).2).symm
+  exact Contour.HasCauchyPVAt.of_tendsto hcont (eventually_of_mem hIoo hspec)
 
 /-- **The winding number of the boundary contour at `ρ` is `-1/6`**: the corner `ρ`
 sits on the contour with interior angle `π/3`, and the principal-value normalization
