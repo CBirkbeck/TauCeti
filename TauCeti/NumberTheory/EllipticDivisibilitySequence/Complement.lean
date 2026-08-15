@@ -24,6 +24,10 @@ slice of its own.
 * `normEDS_mul_complEDS_of_mem_nonZeroDivisors`:
   `normEDS b c d k * complEDS b c d k n = normEDS b c d (n * k)`, for every `n`, over any
   commutative ring, whenever `normEDS b c d k` is a nonzerodivisor.
+* `normEDS_mul_complEDS`: the same identity with **no hypothesis at all**, obtained from the
+  previous one by specialising from the universal parameters.
+* `normEDS_mul_complEDS_div`: its divisor form,
+  `normEDS b c d k * complEDS b c d k (n / k) = normEDS b c d n` whenever `k ∣ n`.
 
 ## Implementation notes
 
@@ -53,9 +57,10 @@ Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in
 `TauCetiRoadmap/EllipticCurves/README.md` pins for the NagellLutz project. Source declaration
 `normEDS_mul_complEDS_of_mem` (`:1324`), which is `private` there and public here, being this
 slice's deliverable rather than a step; the name gains Mathlib's full `_of_mem_nonZeroDivisors`
-suffix. That file's header reads `Authors: David Kurniadi Angdinata`; following this repository's
-convention for adapted material the upstream authorship is credited here rather than in the
-copyright header.
+suffix. The two unconditional forms adapt `normEDS_mul_complEDS` (`:1339`) and
+`normEDS_mul_complEDS_div` (`:1350`) of that same file, under their source names. That file's
+header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
+adapted material the upstream authorship is credited here rather than in the copyright header.
 
 Three departures from the source, all forced by Mathlib having since absorbed the construction.
 
@@ -76,6 +81,8 @@ bookkeeping disappears and the even step is four rewrites.
 -/
 
 public section
+
+open MvPolynomial NormEDSParam
 
 open scoped nonZeroDivisors
 
@@ -117,3 +124,31 @@ theorem normEDS_mul_complEDS_of_mem_nonZeroDivisors {k : ℤ} (hk : normEDS b c 
       linear_combination (norm := ring_nf) hell
   | neg hn n =>
     rw [neg_mul, normEDS_neg, complEDS_neg, mul_neg, hn n]
+
+/-- **The complement of a normalised EDS witnesses divisibility at every multiple**, with no
+hypothesis at all. The nonzerodivisor hypothesis of the previous result is discharged by proving
+it over `ℤ[B, C, D]`, where `universalNormEDS k` is a nonzerodivisor for every `k ≠ 0`, and
+specialising along `aeval`. -/
+theorem normEDS_mul_complEDS (b c d : R) (k n : ℤ) :
+    normEDS b c d k * complEDS b c d k n = normEDS b c d (n * k) := by
+  rcases eq_or_ne k 0 with rfl | hk
+  · simp
+  -- `universalNormEDS`'s body is unexposed, so its nonvanishing reaches this shape through the
+  -- `@[simp]` equation lemma rather than by unification; `ℤ[B, C, D]` is a domain, so
+  -- `mem_nonZeroDivisors_of_ne_zero` then supplies exactly the hypothesis above.
+  have hmem : normEDS (X NormEDSParam.B : MvPolynomial NormEDSParam ℤ) (X NormEDSParam.C)
+      (X NormEDSParam.D) k ∈ (MvPolynomial NormEDSParam ℤ)⁰ :=
+    mem_nonZeroDivisors_of_ne_zero (by simpa using universalNormEDS_ne_zero hk)
+  have key := congr(aeval (NormEDSParam.rec b c d)
+    $(normEDS_mul_complEDS_of_mem_nonZeroDivisors hmem n))
+  simpa only [map_mul, map_normEDS, map_complEDS, aeval_X] using key
+
+/-- **The complement at a divisor of the index.** `complEDS b c d k (n / k)` is the cofactor of
+`normEDS b c d k` in `normEDS b c d n` whenever `k ∣ n`, which is the shape a consumer splitting an
+index by its divisors wants. -/
+theorem normEDS_mul_complEDS_div (b c d : R) {k n : ℤ} (dvd : k ∣ n) :
+    normEDS b c d k * complEDS b c d k (n / k) = normEDS b c d n := by
+  obtain ⟨n, rfl⟩ := dvd
+  rcases eq_or_ne k 0 with rfl | hk
+  · simp
+  rw [Int.mul_ediv_cancel_left _ hk, normEDS_mul_complEDS, mul_comm]
