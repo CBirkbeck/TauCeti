@@ -112,9 +112,9 @@ theorem index_eq_two_mul_index_sup (N : Subgroup G) [N.Normal] (ha : a ∈ N) (h
   rw [← Subgroup.relIndex_mul_index (le_sup_left : Γ ≤ Γ ⊔ N), relIndex_sup_eq_two N ha haΓ hN]
 
 /-- **When the centre is `{1, a}` and `a ∉ Γ`, `Γ` has relative index exactly `2` in
-`Γ.withCenter`.** The centre reading of `Subgroup.relIndex_sup_eq_two`. Only this branch is
-proved; the complementary `a ∈ Γ` case, in which the two subgroups coincide, is an unformalised
-remark.
+`Γ.withCenter`.** The centre reading of `Subgroup.relIndex_sup_eq_two`. This is the branch in
+which the two subgroups genuinely differ; the complementary case, in which they coincide, is
+`Subgroup.withCenter_eq_self_iff` above.
 
 For `Γ ≤ SL(2, ℤ)` the centre is `{±I}` and `a = -I`, so this is the quantitative form of the
 dichotomy recorded on `Subgroup.withCenter`: cosets of `Γ` count each translate of `𝒟` twice
