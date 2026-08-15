@@ -168,6 +168,7 @@ theorem isRestricted_iff_coeff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSp
 /-- A series with coefficients in a product is restricted exactly when each of its components
 is. No finiteness is needed: the product topology is the topology of pointwise convergence, so
 the two sides are the same statement about the same filter. -/
+@[simp]
 theorem isRestricted_pi_iff {k : ℕ} {ι : Type*} {M : ι → Type*} [∀ i, Zero (M i)]
     [∀ i, TopologicalSpace (M i)] {f : MvPowerSeries (Fin k) (∀ i, M i)} :
     IsRestricted f ↔ ∀ i, IsRestricted
@@ -439,13 +440,15 @@ theorem mem_restrictedMvPowerSeriesSubmodule {k : ℕ} {A M : Type*} [Semiring A
     f ∈ restrictedMvPowerSeriesSubmodule k A M ↔ IsRestricted f := (Iff.rfl)
 
 /-- Membership in `M⟨T₁, …, Tₖ⟩` for a product module is componentwise. -/
+@[simp]
 theorem mem_restrictedMvPowerSeriesSubmodule_pi_iff {k : ℕ} {A : Type*} {ι : Type*}
     {M : ι → Type*} [Semiring A] [∀ i, AddCommMonoid (M i)] [∀ i, TopologicalSpace (M i)]
     [∀ i, Module A (M i)] [∀ i, ContinuousAdd (M i)] [∀ i, ContinuousConstSMul A (M i)]
     {f : MvPowerSeries (Fin k) (∀ i, M i)} :
     f ∈ restrictedMvPowerSeriesSubmodule k A (∀ i, M i) ↔ ∀ i,
       (show MvPowerSeries (Fin k) (M i) from fun s ↦ (f : (Fin k →₀ ℕ) → ∀ i, M i) s i) ∈
-        restrictedMvPowerSeriesSubmodule k A (M i) :=
-  isRestricted_pi_iff
+        restrictedMvPowerSeriesSubmodule k A (M i) := by
+  simp only [mem_restrictedMvPowerSeriesSubmodule]
+  exact isRestricted_pi_iff
 
 end TauCeti.Huber
