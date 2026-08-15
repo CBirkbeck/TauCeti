@@ -91,7 +91,7 @@ private theorem windingNumber_fdBoundary_eq_inv_two_pi_I_mul_sum_log (hx : |w.re
         Complex.log ((-1 / 2 + H * Complex.I - w) / ((ρ : ℂ) - w)) +
         Complex.log ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w))) := by
   obtain ⟨hx₁, hx₂⟩ := abs_lt.mp hx
-  have hnorm : 1 < ‖w‖ := hy1.trans_le ((le_abs_self _).trans (Complex.abs_im_le_norm w))
+  have hnorm : 1 < ‖w‖ := hy1.trans_le (Complex.im_le_norm w)
   rw [windingNumber_fdBoundary_eq_sum_pieces
       (fdBoundary_ne_of_abs_re_lt_half_of_one_lt_norm_of_im_lt hx hnorm hyH),
     windingNumber_fdBoundarySegment1_eq_log hx₂, windingNumber_fdBoundary_arc_eq_log hy1,
@@ -129,7 +129,7 @@ private theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 
     (hy1 : 1 < w.im) (hyH : w.im < H) : windingNumber (fdBoundary H) 0 5 w = -1 := by
   obtain ⟨hx₁, hx₂⟩ := abs_lt.mp hx
   have h32 : Real.sqrt 3 / 2 ≤ 1 := sqrt_three_div_two_lt_one.le
-  have hnorm : 1 < ‖w‖ := hy1.trans_le ((le_abs_self _).trans (Complex.abs_im_le_norm w))
+  have hnorm : 1 < ‖w‖ := hy1.trans_le (Complex.im_le_norm w)
   obtain ⟨n, hn⟩ := exists_int_windingNumber_fdBoundary
     (fdBoundary_ne_of_abs_re_lt_half_of_one_lt_norm_of_im_lt hx hnorm hyH)
   have hIm := two_pi_mul_eq_sum_arg_of_windingNumber_eq hx hy1 hyH hn
@@ -147,13 +147,10 @@ private theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 
   have hb₂ := Complex.neg_pi_lt_arg (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w))
   have hb₃ := Complex.neg_pi_lt_arg ((-1 / 2 + H * Complex.I - w) / ((ρ : ℂ) - w))
   have hb₄ := Complex.neg_pi_lt_arg ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w))
-  have hn2R : (-2 : ℝ) < (n : ℝ) := by nlinarith
-  have hn0R : (n : ℝ) < 0 := by nlinarith
-  have hn2 : (-2 : ℤ) < n := by exact_mod_cast hn2R
-  have hn0 : n < 0 := by exact_mod_cast hn0R
+  have hn2 : (-2 : ℤ) < n := by exact_mod_cast (show (-2 : ℝ) < (n : ℝ) by nlinarith)
+  have hn0 : n < 0 := by exact_mod_cast (show (n : ℝ) < 0 by nlinarith)
   have hneg : n = -1 := by lia
-  rw [hn, hneg]
-  norm_num
+  simp [hn, hneg]
 
 /-- Points of the lifted segment and of the strip box satisfy the interior avoidance
 facts: strip-bounded real part, norm above the circle, height below the ceiling. -/
@@ -190,7 +187,7 @@ private lemma interior_avoiding_facts (hH : 1 < H) {w : ℂ} (hnorm : 1 < ‖w�
       rw [Complex.sq_norm, Complex.normSq_apply, hre', him']
       nlinarith
     nlinarith [norm_nonneg (a • w + b • ((w.re : ℂ) + (y : ℝ) * Complex.I))]
-  · exact ⟨hz.1, lt_of_lt_of_le hz.2.1 ((le_abs_self _).trans (Complex.abs_im_le_norm z)),
+  · exact ⟨hz.1, hz.2.1.trans_le (Complex.im_le_norm z),
       hz.2.2⟩
 
 /-- **The boundary contour winds `-1` about every point of the open truncated fundamental
