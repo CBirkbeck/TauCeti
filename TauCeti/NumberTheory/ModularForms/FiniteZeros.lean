@@ -11,13 +11,19 @@ public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
 
 /-!
-# Finite zeros of a level-one modular form in the fundamental domain
+# Finite zeros of a modular form in the fundamental domain
 
 A nonzero level-one modular form does not vanish above some height, since its cusp
 function is nonvanishing on a punctured `q`-ball; its remaining nonzero-order points in
 the standard fundamental domain lie in a truncated fundamental domain, which is compact,
 so by the accumulation-point argument and the identity theorem they are finite — the
 finite-support input to the valence formula.
+
+At any level of finite relative index in `𝒮ℒ` the same finiteness is read off the
+level-one statement through the norm: the norm of the form is a level-one form whose
+vanishing order dominates the form's, so the nonzero-order points of the form sit inside
+those of its norm. No nonvanishing hypothesis is needed there, the zero form having
+order `0` at every point.
 
 ## Main declarations
 
