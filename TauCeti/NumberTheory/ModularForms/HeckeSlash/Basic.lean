@@ -79,7 +79,7 @@ Transposition is available as the anti-involution of `GLn/TransposeAntiInvolutio
 same one that proves the Hecke ring commutative; this file only needs that it preserves
 `posDetInt 2`, and only for the three declarations that mention determinants at all.
 
-## An arbitrary Hecke triple, and where positivity is actually needed
+## An arbitrary triple, and what each declaration actually needs
 
 The declarations are stated over an arbitrary triple `HeckeCoset Δ Γ₁ Γ₂` rather than the
 level-one pair `(posDetInt 2, SLnZ 2, SLnZ 2)`, and each carries only what it uses. Nothing is
@@ -198,10 +198,13 @@ variable [Fintype (DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ))]
 `∑ᵢ f ∣[k] (σᵢ δ)ᵀ`, over the transposed representatives of the left-coset decomposition of
 `Γ₁ δ Γ₂`.
 
-⚠ The transposed representatives enumerate right cosets of `Γ₂ᵀ`, so this is Shimura's
-`f ∣[Γ₁ α Γ₂]ₖ` (§3.4 (3.4.1), up to the `det` normalising factor) precisely when `Γ₂ᵀ = Γ₁` —
-which holds for the transpose-stable level-one pair and fails for a congruence subgroup. See
-"Which group the representatives are cosets of" in the module docstring.
+⚠ The transposed representatives enumerate right cosets of `Γ₂ᵀ` inside `Γ₂ᵀ δᵀ Γ₁ᵀ`. Reading
+this as Shimura's `f ∣[Γ₁ α Γ₂]ₖ` (§3.4 (3.4.1), up to the `det` normalising factor) therefore
+needs **two** things, not one: the flanks must match, `Γ₂ᵀ = Γ₁` (equivalently `Γ₁ᵀ = Γ₂`), *and*
+the double coset itself must be transpose-stable, `Γ₁ δᵀ Γ₂ = Γ₁ δ Γ₂` — matching the flanks alone
+leaves `δᵀ` where `δ` should be. Both hold at the level-one pair, where transposition preserves
+`SL₂(ℤ)` and fixes every double coset; the identification is asserted here only for that case.
+See "Which group the representatives are cosets of" in the module docstring.
 
 ⚠ This depends on the chosen representatives `D.out` and `i.out`, and on a general
 `f : ℍ → ℂ` the value changes with them — see the module docstring. Slash-invariance of `f` is
@@ -239,8 +242,9 @@ lemma heckeSlashSum_zero : heckeSlashSum k D 0 = 0 := by
 /-- **The slash sum is homogeneous in `f`**: a scalar acting on `ℂ` through the scalar tower
 passes out of the sum. With `heckeSlashSum_add`, at `α := ℂ`, this gives `ℂ`-linearity.
 
-Unlike additivity, this needs the triple to sit inside `posDetInt 2`: the scalar passes through
-the slash only on the positive-determinant branch. -/
+Unlike additivity, this needs the two factors of `σᵢ δ` to have positive determinant — exactly
+`Γ₁ ≤ posDetInt 2` and `δ ∈ posDetInt 2`, with `Γ₂` and the rest of `Δ` unconstrained — because
+the scalar passes through the slash only on that branch. -/
 @[simp]
 lemma heckeSlashSum_smul (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
     (hD : (D.out : GL (Fin 2) ℚ) ∈ posDetInt 2)
