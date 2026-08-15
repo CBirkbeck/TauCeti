@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.NumberTheory.ModularForms.BoundedAtCusp
 public import TauCeti.NumberTheory.ModularForms.Cusps.Rat.Slash
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 
@@ -34,7 +33,7 @@ supplies through `zero_at_cusps'`. `IsCusp.smul_map_ratCast` reduces to `𝒮ℒ
 
 The shape is AINTLIB's `heckeT_p_ut_zero_at_cusps`
 ([`LeanModularForms/HeckeRIngs/GL2/AdjointTheory.lean`](https://github.com/CBirkbeck/AINTLIB)
-lines 62-71, commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck),
+lines 62-70, commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck),
 which runs that argument by hand with `Finset.sum_induction` over its own representatives, once
 per call site. Here it is factored: the general statement for an arbitrary finite family of
 rational matrices lives in `ModularForms/Cusps/Rat/Slash.lean`, and this module only specialises it
