@@ -12,9 +12,10 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Recurrence
 # An elliptic sequence is determined by its first four terms
 
 Two elliptic sequences that agree at `1, 2, 3, 4` are equal, provided the first two terms are
-nonzerodivisors. The two doubling recurrences determine every later term from four earlier ones,
-`Elementary.lean` supplies the value at `0` and the behaviour at negative indices, and
-`normEDSRec` is the induction that puts those together.
+nonzerodivisors. The two doubling recurrences determine every later term from a bounded window of
+earlier ones — five for the even step, four for the odd — `Elementary.lean` supplies the value at
+`0` and the behaviour at negative indices, and `normEDSRec` is the induction that puts those
+together.
 
 ## Main results
 
