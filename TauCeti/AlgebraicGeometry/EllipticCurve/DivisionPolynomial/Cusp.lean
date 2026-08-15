@@ -20,9 +20,11 @@ whereas `ψ₂ = 2Y + a₁X + a₃` contains no `bᵢ` at all and collapses dire
 * `WeierstrassCurve.cusp_ψ₂`, `.cusp_Ψ₂Sq`, `.cusp_Ψ₃`, `.cusp_preΨ₄`: on the cusp curve
   `ψ₂ = 2Y`, `Ψ₂Sq = 4X³`, `Ψ₃ = 3X⁴` and `preΨ₄ = 2X⁶`.
 
-These are the four base values of the `preNormEDS` family — `preΨ' n` is generated from
-`Ψ₂Sq ^ 2`, `Ψ₃` and `preΨ₄` — so together they let `simp` reduce `preΨ`, `ΨSq` and `Φ` on the
-cusp curve as well.
+Three of these parameterise the univariate family: `preΨ'` is generated from `Ψ₂Sq ^ 2`, `Ψ₃`
+and `preΨ₄`, so collapsing those collapses `preΨ`, `ΨSq` and `Φ` on the cusp curve too — but only
+once the consumer unfolds whichever of those definitions it is working with, since they are
+definitions rather than simp lemmas and bare `simp` does not reduce them. `ψ₂` is not one of the
+three; it serves the bivariate division polynomials.
 
 ## Implementation notes
 
