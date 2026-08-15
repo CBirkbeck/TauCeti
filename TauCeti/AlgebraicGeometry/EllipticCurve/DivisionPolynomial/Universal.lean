@@ -29,8 +29,8 @@ Each proof is the same two steps: unfold `polyEval` into a `map` followed by `ev
   auxiliary `preΨ₄`, are the universal ones evaluated through `Universal.polyEval`.
 * `WeierstrassCurve.Universal.isEllipticSequence_polyToField_ψ`: the universal `ψ` family, taken
   into `Universal.Field`, is an elliptic sequence.
-* `WeierstrassCurve.Universal.polyEval_cusp_ψ`: specialised to the cusp curve at `(1, 1)`, the
-  `n`-division polynomial evaluates to `n` itself.
+* `WeierstrassCurve.Universal.polyEval_cusp_ψ`, `.polyEval_cusp_φ`: specialised to the cusp curve
+  at `(1, 1)`, `ψₙ` evaluates to `n` itself and the numerator `φₙ` to `1`.
 
 ## Implementation notes
 
@@ -43,18 +43,20 @@ turns `polyEval (cusp ℤ) 1 1 (curve.ψ n)` into those three evaluated at `(1, 
 `3` and `2` — so the sequence is `normEDS 2 3 2`, and the identity of #3364 finishes it. That is
 the only reason this file imports `Cusp.lean`.
 
-**Three cusp companions of the source are deliberately absent, for two different reasons.**
-`polyEval_cusp_ψc` and `polyEval_cusp_ω` need `ψc` and `two_mul_ω`, both part of the `ω` API that
-`DivisionPolynomial/Invariant.lean` records as not yet here. `polyEval_cusp_φ` is blocked
-differently, and the obstruction is worth recording because it is the module system rather than a
-missing prerequisite: the source closes it with `simp_rw [φ, map_sub, …, polyEval]`, unfolding
+**`polyEval_cusp_φ` does not port as written, and the reason is the module system rather than a
+missing prerequisite.** The source closes it with `simp_rw [φ, map_sub, …, polyEval]`, unfolding
 `polyEval`'s definition, which is rejected across a module boundary — *"Invalid simp theorem
-`polyEval`: Expected a definition with an exposed body"*. The usual escape is unavailable too,
-because `map_sub` does not fire on `polyEval (cusp ℤ) 1 1 (A - B)` by `rw` or `simp only`, so the
-ring hom cannot be pushed inward first; and plain `simp`, which does get through via
-`polyEval_apply`, rewrites `polyEval` into `evalEval ∘ Polynomial.map` and thereby destroys the
-left-hand side `polyEval_cusp_ψ` needs to match. It waits for either an `evalEval`-level restatement
-or an exposed `polyEval`.
+`polyEval`: Expected a definition with an exposed body"*. Supplying the equation lemma instead does
+not help either: `polyEval`'s image lives in `Poly`, whose `Sub` and `Mul` instances are themselves
+unexposed, so a bare `map_sub` cannot solve `?f` in the pattern `?f (?a - ?b)` and fails to fire at
+all. **Naming the ring hom is what fixes it** — `map_sub (polyEval (cusp ℤ) 1 1)` makes the match
+first-order, and the same for `map_mul` and `map_pow`. That leaves the arithmetic
+`polyEval (cusp ℤ) 1 1 (C X) * n ^ 2 - (n + 1) * (n - 1) = 1`, which `ring` closes once `C X`
+evaluates to `1`.
+
+The remaining two companions, `polyEval_cusp_ψc` and `polyEval_cusp_ω`, need `ψc` and `two_mul_ω`,
+both part of the `ω` API that `DivisionPolynomial/Invariant.lean` records as not yet here. Those are
+ordinary missing prerequisites and arrive with `ω`.
 
 The companion transport for `ω` is **not** here. It cannot be: `WeierstrassCurve.ω` does not exist
 in this repository or in the pinned Mathlib, and neither does the `map_ω` such a proof would rewrite
@@ -76,13 +78,14 @@ That file's header reads `Authors: David Kurniadi Angdinata, Junyan Xu`; followi
 repository's convention for adapted material the upstream authorship is credited here rather than
 in the copyright header.
 
-`polyEval_cusp_ψ` adapts that same file's declaration of that name, at the roadmap's NagellLutz
-pin `dev/modular-curves @ 9fec8eba7652`. The proof is the source's, with two changes: `ψ` needs
-qualifying because this file opens `Universal` rather than `WeierstrassCurve` alone, and the
-source's `normEDS_two_three_two` hint is dropped rather than renamed — `normEDS_two_three_two_eq_id`
-is redundant here, since #3364's general `normEDS_two_three_two_eq_intCast` is `@[simp]` and reaches
-the same normal form first. The source's `polyEval_cusp_φ`, `polyEval_cusp_ψc` and
-`polyEval_cusp_ω` are excluded for the reasons above.
+`polyEval_cusp_ψ` and `polyEval_cusp_φ` adapt that same file's declarations of those names, at the
+roadmap's NagellLutz pin `dev/modular-curves @ 9fec8eba7652`. Three changes. `ψ` and `φ` need
+qualifying, because this file opens `Universal` rather than `WeierstrassCurve` alone. The source's
+`normEDS_two_three_two` hint is dropped rather than renamed — `normEDS_two_three_two_eq_id` is
+redundant here, since #3364's general `normEDS_two_three_two_eq_intCast` is `@[simp]` and reaches
+the same normal form first. And `polyEval_cusp_φ`'s proof is restructured for the reason given
+above: the source's unfold of `polyEval` is unavailable, so each `map_*` names its ring hom.
+The source's `polyEval_cusp_ψc` and `polyEval_cusp_ω` are excluded.
 
 The `evalEval_*` statements are the source's unchanged. Docstrings are added here, and the
 source's shared `variable {m n : ℤ}` is narrowed to `n`: of those five only `evalEval_ψ` and
@@ -146,6 +149,18 @@ lemma polyEval_cusp_ψ : polyEval (cusp ℤ) 1 1 (curve.ψ n) = n := by
   rw [WeierstrassCurve.ψ, map_normEDS, ← evalEval_ψ₂, ← evalEval_Ψ₃, ← evalEval_preΨ₄, cusp_ψ₂,
     cusp_Ψ₃, cusp_preΨ₄]
   simp [evalEval]
+
+/-- **On the cusp curve at `(1, 1)`, the numerator `φₙ` evaluates to `1`.**
+
+Each `map_*` names its ring hom explicitly. `Poly`'s own `Sub`/`Mul` instances are unexposed, so
+the bare `map_sub` cannot solve `?f` for `?f (?a - ?b)`; supplying `polyEval (cusp ℤ) 1 1` makes
+the match first-order and it goes through. -/
+lemma polyEval_cusp_φ : polyEval (cusp ℤ) 1 1 (curve.φ n) = 1 := by
+  rw [WeierstrassCurve.φ, map_sub (polyEval (cusp ℤ) 1 1), map_mul (polyEval (cusp ℤ) 1 1),
+    map_mul (polyEval (cusp ℤ) 1 1), map_pow (polyEval (cusp ℤ) 1 1), polyEval_cusp_ψ,
+    polyEval_cusp_ψ, polyEval_cusp_ψ]
+  simp [polyEval_apply, evalEval]
+  ring
 
 end Universal
 
