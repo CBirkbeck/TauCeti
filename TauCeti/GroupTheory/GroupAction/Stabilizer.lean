@@ -66,10 +66,11 @@ then the stabiliser of `a` in `G` is `Nat.card N` times its stabiliser in `G ⧸
 Compatibility is asked for only at `a`, not globally, since that is all the count needs; a caller
 holding the global statement supplies `fun g ↦ h g a`.
 
-The compatibility hypothesis forces `N` to act trivially, so `N` sits inside every stabiliser
-and the quotient map restricts to a surjection of stabilisers with kernel `N`; the count is
-then Lagrange. This is the step from a matrix-group stabiliser order to the projective one —
-the elliptic orders `e_P` of a Fuchsian group are the `PSL` counts, half the `SL` counts. -/
+The compatibility hypothesis makes every element of `N` fix `a`, so `N ≤ stabilizer G a`, and
+the quotient map restricts to a surjection of that stabiliser onto the `G ⧸ N` one with kernel
+`N`; the count is then Lagrange. This is the step from a matrix-group stabiliser order to the
+projective one — the elliptic orders `e_P` of a Fuchsian group are the `PSL` counts, half the
+`SL` counts. -/
 theorem card_stabilizer_quotient (N : Subgroup G) [N.Normal] [MulAction (G ⧸ N) α] (a : α)
     (hcompat : ∀ g : G, (QuotientGroup.mk g : G ⧸ N) • a = g • a) :
     Nat.card (MulAction.stabilizer G a) =
