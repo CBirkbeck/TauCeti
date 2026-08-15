@@ -37,7 +37,7 @@ The shape is AINTLIB's `heckeT_p_ut_zero_at_cusps`
 lines 62-71, commit `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck),
 which runs that argument by hand with `Finset.sum_induction` over its own representatives, once
 per call site. Here it is factored: the general statement for an arbitrary finite family of
-rational matrices lives in `ModularForms/Cusps/RatSlash.lean`, and this module only specialises it
+rational matrices lives in `ModularForms/Cusps/Rat/Slash.lean`, and this module only specialises it
 to `heckeSlashSum`.
 -/
 
