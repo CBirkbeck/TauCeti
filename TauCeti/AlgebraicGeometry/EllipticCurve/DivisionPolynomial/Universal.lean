@@ -150,12 +150,9 @@ lemma polyEval_cusp_ψ : polyEval (cusp ℤ) 1 1 (curve.ψ n) = n := by
     cusp_Ψ₃, cusp_preΨ₄]
   simp [evalEval]
 
-/-- **On the cusp curve at `(1, 1)`, the numerator `φₙ` evaluates to `1`.**
-
-Each `map_*` names its ring hom explicitly. `Poly`'s own `Sub`/`Mul` instances are unexposed, so
-the bare `map_sub` cannot solve `?f` for `?f (?a - ?b)`; supplying `polyEval (cusp ℤ) 1 1` makes
-the match first-order and it goes through. -/
+/-- **On the cusp curve at `(1, 1)`, the numerator `φₙ` evaluates to `1`.** -/
 lemma polyEval_cusp_φ : polyEval (cusp ℤ) 1 1 (curve.φ n) = 1 := by
+  -- Each `map_*` names its ring hom; the implementation notes say why unification cannot.
   rw [WeierstrassCurve.φ, map_sub (polyEval (cusp ℤ) 1 1), map_mul (polyEval (cusp ℤ) 1 1),
     map_mul (polyEval (cusp ℤ) 1 1), map_pow (polyEval (cusp ℤ) 1 1), polyEval_cusp_ψ,
     polyEval_cusp_ψ, polyEval_cusp_ψ]
