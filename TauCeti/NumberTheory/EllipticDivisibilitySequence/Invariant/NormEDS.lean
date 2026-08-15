@@ -15,7 +15,7 @@ For an elliptic net `W`, `invarNum_mul_invarDenom` gives the **cross-multiplied*
 `CommRing` that is all it gives: a denominator may vanish or be a zero divisor, so there is no
 quotient to call constant — `Invariant/Basic.lean` makes the same caveat. A normalised EDS is an
 elliptic net unconditionally (`isEllipticNet_normEDS`), so evaluating at the single index `n = 2`
-pins the cross-multiplied relation for every other index.
+yields the stated cross-multiplied identity for every other index.
 
 ## Main results
 
