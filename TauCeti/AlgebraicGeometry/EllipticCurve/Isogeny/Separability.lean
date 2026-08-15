@@ -6,7 +6,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Degree
 public import Mathlib.FieldTheory.PurelyInseparable.Basic
-public import Mathlib.FieldTheory.PurelyInseparable.Tower
+import Mathlib.FieldTheory.PurelyInseparable.Tower
 import TauCeti.FieldTheory.IntermediateField.FieldRange
 
 /-!
@@ -23,9 +23,16 @@ this file names those two parts and records that they multiply to the degree.
 
 ## Main results
 
+* `TauCeti.Isogeny.separableDegree_eq_finSepDegree` and
+  `TauCeti.Isogeny.inseparableDegree_eq_finInsepDegree`: the two degrees read off an arbitrary
+  algebra structure induced by the pullback, rather than over the field range — the separable
+  analogues of `degree_eq_finrank`, and how a caller relates these numbers to
+  `W₂.FunctionField`.
 * `TauCeti.Isogeny.separableDegree_mul_inseparableDegree`: the two multiply to `degree`.
 * `TauCeti.Isogeny.separableDegree_pos` and `TauCeti.Isogeny.inseparableDegree_pos`: both are
   positive, so neither factor is degenerate.
+* `TauCeti.Isogeny.separableDegree_id` and `TauCeti.Isogeny.inseparableDegree_id`: both are `1`
+  for the identity isogeny.
 * `TauCeti.Isogeny.separableDegree_comp` and `TauCeti.Isogeny.inseparableDegree_comp`: both are
   multiplicative under composition, matching `degree_comp`.
 * `TauCeti.Isogeny.separableDegree_eq_degree_of_isSeparable` and
@@ -55,9 +62,24 @@ This follows Layer 1 of `TauCetiRoadmap/EllipticCurves/README.md`, which fixes t
 Both definitions are unconditional: no separability hypothesis, so purely inseparable isogenies
 such as Frobenius are covered, matching `Isogeny.finiteDimensional`.
 
-Multiplicativity under composition is `separableDegree_comp` and `inseparableDegree_comp`,
-matching `degree_comp`. Both go through the tower `F(W₃) ⊆ F(W₂) ⊆ F(W₁)`, using the separable
-transports off `AlgHom.fieldRange` that sit beside `finrank_fieldRange`.
+Multiplicativity under composition is `separableDegree_comp` and `inseparableDegree_comp`, matching
+`degree_comp`. Only the separable one runs the tower `F(W₃) ⊆ F(W₂) ⊆ F(W₁)`, through the
+transports off `AlgHom.fieldRange` beside `finrank_fieldRange`. The inseparable one is then
+**derived by cancellation** rather than repeating that argument: both sides multiply by the same
+positive separable degree to give `degree_comp`.
+
+## Provenance
+
+⚠ *mathlib-track*. `TauCetiRoadmap/EllipticCurves/README.md` tags the Layer-1 first-theory bullet
+— which lists "the separable and inseparable degrees" — as "proven in the shared upstream
+development, consumed and deduplicated when its PRs land". Those degrees are proved in
+D. Angdinata's shared upstream isogeny development in its function-field form, ahead of the
+Mathlib PRs; they are built here in the coordinate-ring form this repository's `Isogeny` uses,
+until those land. The same note appears in `Degree.lean`, `Basic.lean` and `FunctionField.lean`.
+
+The arithmetic content is Mathlib's — `Field.finSepDegree_mul_finInsepDegree` and the tower laws;
+this file transports it to isogenies along `degree_def`. No AINTLIB material is used: that
+source's isogeny development carries separability as a hypothesis rather than measuring it.
 
 ## References
 
@@ -90,9 +112,13 @@ theorem separableDegree_def (φ : Isogeny W₁ W₂) :
 theorem inseparableDegree_def (φ : Isogeny W₁ W₂) :
     φ.inseparableDegree = Field.finInsepDegree φ.fieldPullback.fieldRange W₁.FunctionField := (rfl)
 
-/-- Finiteness above the pullback's range transfers to the function field itself. Private: it
-exists to feed the transports below, and consumers read finiteness off `Isogeny.finiteDimensional`.
--/
+/-- Finiteness above the pullback's range transfers to the function field itself.
+
+`Isogeny.finiteDimensional` gives `FiniteDimensional φ.fieldPullback.fieldRange W₁.FunctionField`;
+this moves it across the `equivFieldRange` identification to `W₂.FunctionField`, which no public
+declaration supplies. Its one consumer is `separableDegree_comp`, where it discharges the
+`Algebra.IsAlgebraic` side condition of the tower law — not the `fieldRange` transports, which
+take no finiteness at all. -/
 private theorem finiteDimensional_of_finiteDimensional_fieldRange (φ : Isogeny W₁ W₂)
     [Algebra W₂.FunctionField W₁.FunctionField]
     (h : ∀ z, algebraMap W₂.FunctionField W₁.FunctionField z = φ.fieldPullback z) :
@@ -116,7 +142,6 @@ theorem separableDegree_eq_finSepDegree (φ : Isogeny W₁ W₂)
     [Algebra W₂.FunctionField W₁.FunctionField]
     (h : ∀ z, algebraMap W₂.FunctionField W₁.FunctionField z = φ.fieldPullback z) :
     φ.separableDegree = Field.finSepDegree W₂.FunctionField W₁.FunctionField :=
-  have := φ.finiteDimensional_of_finiteDimensional_fieldRange h
   (φ.separableDegree_def).trans (TauCeti.AlgHom.finSepDegree_fieldRange φ.fieldPullback h)
 
 /-- **The inseparable degree read off any algebra structure induced by the pullback.** -/
@@ -124,7 +149,6 @@ theorem inseparableDegree_eq_finInsepDegree (φ : Isogeny W₁ W₂)
     [Algebra W₂.FunctionField W₁.FunctionField]
     (h : ∀ z, algebraMap W₂.FunctionField W₁.FunctionField z = φ.fieldPullback z) :
     φ.inseparableDegree = Field.finInsepDegree W₂.FunctionField W₁.FunctionField :=
-  have := φ.finiteDimensional_of_finiteDimensional_fieldRange h
   (φ.inseparableDegree_def).trans (TauCeti.AlgHom.finInsepDegree_fieldRange φ.fieldPullback h)
 
 /-- **The degree factors as separable times inseparable.** This is the field-theoretic
@@ -223,34 +247,25 @@ theorem separableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
   have h₁ := φ.finiteDimensional_of_finiteDimensional_fieldRange hφ
-  have h₂ := ψ.finiteDimensional_of_finiteDimensional_fieldRange hψ
-  have h₃ := (ψ.comp φ).finiteDimensional_of_finiteDimensional_fieldRange hc
   rw [(ψ.comp φ).separableDegree_eq_finSepDegree hc, ψ.separableDegree_eq_finSepDegree hψ,
     φ.separableDegree_eq_finSepDegree hφ]
   exact (Field.finSepDegree_mul_finSepDegree_of_isAlgebraic W₃.FunctionField W₂.FunctionField
     W₁.FunctionField).symm
 
-/-- **The inseparable degree is multiplicative under composition**, by the same tower as
-`separableDegree_comp`. -/
+/-- **The inseparable degree is multiplicative under composition.**
+
+Derived by cancellation rather than by re-running `separableDegree_comp`'s tower: both sides
+multiply by the same positive separable degree to give `degree_comp`. Concretely,
+`sep(ψ∘φ) · insep(ψ∘φ) = deg(ψ∘φ) = deg ψ · deg φ = (sep ψ · insep ψ)(sep φ · insep φ)`, and
+`sep(ψ∘φ) = sep ψ · sep φ` is already known, so the inseparable factors agree. -/
 @[simp]
 theorem inseparableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
-    (ψ.comp φ).inseparableDegree = ψ.inseparableDegree * φ.inseparableDegree := by
-  let _ := φ.fieldPullback.toRingHom.toAlgebra
-  let _ := ψ.fieldPullback.toRingHom.toAlgebra
-  let _ := (ψ.comp φ).fieldPullback.toRingHom.toAlgebra
-  have hφ := φ.algebraMap_fieldPullback_eq
-  have hψ := ψ.algebraMap_fieldPullback_eq
-  have hc := (ψ.comp φ).algebraMap_fieldPullback_eq
-  have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
-    IsScalarTower.of_algebraMap_eq fun z ↦ by
-      simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  have h₁ := φ.finiteDimensional_of_finiteDimensional_fieldRange hφ
-  have h₂ := ψ.finiteDimensional_of_finiteDimensional_fieldRange hψ
-  have h₃ := (ψ.comp φ).finiteDimensional_of_finiteDimensional_fieldRange hc
-  rw [(ψ.comp φ).inseparableDegree_eq_finInsepDegree hc, ψ.inseparableDegree_eq_finInsepDegree hψ,
-    φ.inseparableDegree_eq_finInsepDegree hφ]
-  exact (Field.finInsepDegree_mul_finInsepDegree_of_isAlgebraic (F := W₃.FunctionField)
-    (E := W₂.FunctionField) (K := W₁.FunctionField)).symm
+    (ψ.comp φ).inseparableDegree = ψ.inseparableDegree * φ.inseparableDegree :=
+  Nat.eq_of_mul_eq_mul_left (Nat.mul_pos ψ.separableDegree_pos φ.separableDegree_pos) <| by
+    rw [← separableDegree_comp ψ φ, (ψ.comp φ).separableDegree_mul_inseparableDegree,
+      degree_comp, ← ψ.separableDegree_mul_inseparableDegree,
+      ← φ.separableDegree_mul_inseparableDegree, separableDegree_comp]
+    ring
 
 end Isogeny
 
