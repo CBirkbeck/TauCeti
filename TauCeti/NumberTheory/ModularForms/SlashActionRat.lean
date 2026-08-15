@@ -169,6 +169,27 @@ lemma slash_eq_of_mem_SLnZ (k : ℤ) {f : ℍ → ℂ} (hf : ∀ γ ∈ 𝒮ℒ,
 
 end ModularForm
 
+namespace UpperHalfPlane
+
+/-- **The rational form of `IsBoundedAtImInfty.slash`.** Mathlib's lemma is stated for the real
+slash; the matrix and its hypothesis are given here over `ℚ`, since
+`Matrix.GeneralLinearGroup.map` acts entrywise and so carries `g 1 0 = 0` along
+`algebraMap ℚ ℝ`. -/
+lemma IsBoundedAtImInfty.rat_slash (k : ℤ) {g : GL (Fin 2) ℚ}
+    (hg : (g : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0) {f : ℍ → ℂ} (hf : IsBoundedAtImInfty f) :
+    IsBoundedAtImInfty (f ∣[k] g) := by
+  rw [ModularForm.rat_slash]
+  exact hf.slash k (by simp [hg])
+
+/-- **The rational form of `IsZeroAtImInfty.slash`.** -/
+lemma IsZeroAtImInfty.rat_slash (k : ℤ) {g : GL (Fin 2) ℚ}
+    (hg : (g : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0) {f : ℍ → ℂ} (hf : IsZeroAtImInfty f) :
+    IsZeroAtImInfty (f ∣[k] g) := by
+  rw [ModularForm.rat_slash]
+  exact hf.slash k (by simp [hg])
+
+end UpperHalfPlane
+
 /-- A form invariant under `𝒮ℒ` is fixed by the rational slash action of every element of
 `SLnZ 2`. -/
 theorem _root_.SlashInvariantFormClass.slash_eq_of_mem_SLnZ {F : Type*} [FunLike F ℍ ℂ]
