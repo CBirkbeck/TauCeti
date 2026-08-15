@@ -37,6 +37,8 @@ forces the values at `c = 0` and `c = 1` to agree.
 
 * `TauCeti.isFredholm_one_sub` and `TauCeti.isFredholm_one_add`: `1 - K` and `1 + K` are Fredholm
   for `K` compact.
+* `TauCeti.isFredholm_add_of_hasFiniteRange_sub_one`: a compact perturbation of an operator that
+  is the identity up to finite range is Fredholm.
 * `ContinuousLinearMap.IsFredholm.add_of_isCompactOperator`: a compact perturbation of a Fredholm
   operator is Fredholm.
 * `TauCeti.ContinuousLinearMap.index_add_of_isCompactOperator`: a compact perturbation leaves the
@@ -76,6 +78,19 @@ theorem isFredholm_one_add {K : E →L[𝕜] E} (hK : IsCompactOperator K) :
   rw [hrw]
   exact isFredholm_one_sub hneg
 
+/-- **A compact perturbation of a near-identity operator is Fredholm.** If `A` agrees with the
+identity up to an operator of finite range, and `K` is compact, then `A + K` is Fredholm.
+
+This is where Riesz--Schauder enters Atkinson's argument. A quasi-inverse `S` of a Fredholm `T`
+does not invert it on the nose: `S ∘ T` is the identity only up to finite rank, so the operator
+actually handed to Riesz--Schauder is not `1 + K` but a near-identity `A` plus a compact `K`. -/
+theorem isFredholm_add_of_hasFiniteRange_sub_one {A K : E →L[𝕜] E}
+    (hA : LinearMap.HasFiniteRange ((A - 1 : E →L[𝕜] E) : E →ₗ[𝕜] E)) (hK : IsCompactOperator K) :
+    ContinuousLinearMap.IsFredholm (A + K) := by
+  have hrw : A + K = (1 + K) + (A - 1) := by abel
+  rw [hrw]
+  exact (isFredholm_one_add hK).add_hasFiniteRange hA
+
 variable {T C : E →L[𝕜] F}
 
 /-- A compact perturbation of a Fredholm operator between Banach spaces is Fredholm.
@@ -97,29 +112,11 @@ theorem _root_.ContinuousLinearMap.IsFredholm.add_of_isCompactOperator
       ContinuousLinearMap.toLinearMap_one, Module.End.one_eq_id] using
       LinearMap.FiniteRangeSetoid.equiv_iff_hasFiniteRange.mp hS.2
   have hcomp₁ : ContinuousLinearMap.IsFredholm (S.comp (T + C)) := by
-    have hcompact : IsCompactOperator (S.comp C) := by
-      have hcomp : (⇑(S.comp C) : E → E) = ⇑S ∘ ⇑C := by
-        ext x
-        rw [Function.comp_apply, ContinuousLinearMap.comp_apply]
-      rw [hcomp]
-      exact hC.clm_comp S
-    have hrw : S.comp (T + C) = (1 + S.comp C) + (S.comp T - 1) := by
-      rw [ContinuousLinearMap.comp_add]
-      abel
-    rw [hrw]
-    exact (isFredholm_one_add hcompact).add_hasFiniteRange hleft
+    rw [ContinuousLinearMap.comp_add]
+    exact isFredholm_add_of_hasFiniteRange_sub_one hleft (hC.clm_comp S :)
   have hcomp₂ : ContinuousLinearMap.IsFredholm ((T + C).comp S) := by
-    have hcompact : IsCompactOperator (C.comp S) := by
-      have hcomp : (⇑(C.comp S) : F → F) = ⇑C ∘ ⇑S := by
-        ext x
-        rw [Function.comp_apply, ContinuousLinearMap.comp_apply]
-      rw [hcomp]
-      exact hC.comp_clm S
-    have hrw : (T + C).comp S = (1 + C.comp S) + (T.comp S - 1) := by
-      rw [ContinuousLinearMap.add_comp]
-      abel
-    rw [hrw]
-    exact (isFredholm_one_add hcompact).add_hasFiniteRange hright
+    rw [ContinuousLinearMap.add_comp]
+    exact isFredholm_add_of_hasFiniteRange_sub_one hright (hC.comp_clm S :)
   refine ContinuousLinearMap.IsFredholm.of_finite_ker_coker _ ?_ ?_
   · -- The kernel of `T + C` sits inside that of `S ∘ (T + C)`.
     have hker : LinearMap.ker ((T + C : E →L[𝕜] F) : E →ₗ[𝕜] F)
