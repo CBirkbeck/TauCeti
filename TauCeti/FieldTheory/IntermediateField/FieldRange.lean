@@ -65,17 +65,10 @@ arrives in — gets finiteness over `K` itself, and with it the `Algebra.IsAlgeb
 the separable and inseparable tower laws take. -/
 theorem finiteDimensional_of_fieldRange (f : K →ₐ[F] L) [Algebra K L]
     (h : ∀ z, algebraMap K L z = f z) [FiniteDimensional f.fieldRange L] :
-    FiniteDimensional K L := by
-  let _ : Algebra K f.fieldRange := (f.equivFieldRange).toAlgHom.toRingHom.toAlgebra
-  have : IsScalarTower K f.fieldRange L :=
-    IsScalarTower.of_algebraMap_eq fun z ↦ by
-      rw [RingHom.algebraMap_toAlgebra]
-      exact (h z).trans (_root_.AlgHom.equivFieldRange_apply_coe f z).symm
-  have : FiniteDimensional K f.fieldRange :=
-    Module.Finite.of_surjective (Algebra.linearMap K _) fun y ↦
-      ⟨f.equivFieldRange.symm y, by
-        simp [Algebra.linearMap_apply, RingHom.algebraMap_toAlgebra]⟩
-  exact FiniteDimensional.trans K f.fieldRange L
+    FiniteDimensional K L :=
+  Module.Finite.of_equiv_equiv f.equivFieldRange.toRingEquiv.symm (RingEquiv.refl L) <| by
+    ext z
+    simpa [h] using (_root_.AlgHom.equivFieldRange_apply_coe f (f.equivFieldRange.symm z)).symm
 
 /-- **The separable degree above the range of a field embedding equals the one above its
 source.** The `f.fieldRange` case of `Field.finSepDegree_eq_of_surjective`. -/
