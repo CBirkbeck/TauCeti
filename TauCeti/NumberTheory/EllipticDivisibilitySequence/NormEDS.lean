@@ -5,7 +5,6 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Descent
-public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Universal
 
 /-!
@@ -23,15 +22,23 @@ conjunct needs a general `normEDS_mul_complEDS`, of which Mathlib has only the `
 is left to its own slice.
 
 The net is what the invariant layer needs. `IsEllipticNet.invarNum_mul_invarDenom` takes an
-`IsEllipticNet` hypothesis — the cross identity is proved from the relation at four free indices,
-not three — so stopping at the sequence would leave that consumer unusable for `normEDS`.
+`IsEllipticNet` hypothesis — its cross-multiplication identity is proved from the relation at four
+free indices, not three — so stopping at the sequence would leave that consumer inapplicable to
+`normEDS`. Applied to `isEllipticNet_normEDS` it gives, for every `b`, `c`, `d`,
+
+`invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m`.
+
+That is **weaker** than index-independence of an invariant ratio, which needs the denominators
+invertible and so does not hold over a general commutative ring; `Invariant.lean` states the
+distinction where the identity is proved.
 
 ## Main results
 
 * `isEllipticNet_normEDS`: `IsEllipticNet (normEDS b c d)`, with no hypothesis on the parameters.
 * `isEllipticSequence_normEDS`: its `s = 0` case.
-* `IsEllipticNet.invarNum_mul_invarDenom_normEDS`: the invariant of `normEDS` is symmetric in its
-  two indices — the first consumer the net unlocks.
+
+The first consumer this unlocks is `IsEllipticNet.invarNum_mul_invarDenom`, which is applied to
+`isEllipticNet_normEDS` directly rather than restated here.
 
 ## Implementation notes
 
@@ -53,7 +60,8 @@ waiting on, not the slice that lands them.
 Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
 `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations
-`IsEllSequence.normEDS_of_mem_nonZeroDivisors` and `IsEllSequence.normEDS`. That file's header
+`IsEllSequence.normEDS_of_mem_nonZeroDivisors`, `IsEllSequence.normEDS`, `net_normEDS` and
+`IsEllSequence.invar`. That file's header
 reads `Authors: David Kurniadi Angdinata`; following this repository's convention for adapted
 material the upstream authorship is credited here rather than in the copyright header. J. Xu is
 acknowledged for the surrounding LutzNagell development — he authors `Universal.lean` and
@@ -108,16 +116,3 @@ theorem isEllipticNet_normEDS (b c d : R) : IsEllipticNet (normEDS b c d) := by
 /-- **A normalised EDS is an elliptic sequence**, the last index of the net held at `0`. -/
 theorem isEllipticSequence_normEDS (b c d : R) : IsEllipticSequence (normEDS b c d) :=
   (isEllipticNet_normEDS b c d).isEllipticSequence
-
-/-- **The invariant of a normalised EDS is symmetric in its two indices.** This is what the
-elliptic-net structure buys for `normEDS`: `IsEllipticNet.invarNum_mul_invarDenom` needs the full
-four-index relation, which `isEllipticNet_normEDS` now supplies unconditionally, so the cross
-identity holds for every `b`, `c`, `d` over any commutative ring.
-
-It is the entry point to the invariant and denominator layer — `invar₂`, `redInvar` and the
-reduced denominator are read off it — and the reason this file proves the net rather than
-stopping at the sequence. -/
-theorem IsEllipticNet.invarNum_mul_invarDenom_normEDS (b c d : R) (s m n : ℤ) :
-    invarNum (normEDS b c d) s m * invarDenom (normEDS b c d) s n =
-      invarNum (normEDS b c d) s n * invarDenom (normEDS b c d) s m :=
-  invarNum_mul_invarDenom (isEllipticNet_normEDS b c d) s m n
