@@ -42,10 +42,9 @@ hypotheses that `atom_even`, `atom_odd` and `atomRel_eq` carry.
 ## Main results
 
 * `isEllipticNet_iff`: the equivalence at **four** indices, and the headline result of the file.
-* `isEllipticSequence_iff`: its `s = 0` case, the three-index equivalence.
+* `isEllipticSequence_iff`: the classical three-index equivalence, its `s = 0` case.
 * `IsEllipticNet.isEllipticNet_of_rel`: the hard direction of the first, with the recurrences in
   relator form.
-* `IsEllipticNet.isEllipticSequence_of_rel`: the `s = 0` case of that.
 * `IsEllipticNet.atom_mul_atomRel_eq_of_last_eq_fst`, `…_of_last_eq_snd`,
   `IsEllipticNet.atom_mul_atomRel_eq`: the three-term and ten-term expansions that drive it.
 
@@ -54,6 +53,13 @@ hypotheses that `atom_even`, `atom_odd` and `atomRel_eq` carry.
 The descent itself is private. `AtomRelVanishes` and the three lemmas lowering it are shaped by
 this proof rather than by any consumer, and the interface a caller wants is the equivalence and
 its hard direction.
+
+Both levels are stated. `isEllipticNet_iff` is the stronger statement and everything is proved
+through it, but `IsEllipticSequence` is the predicate Mathlib defines and that
+`IsEllipticDvdSequence` is built from, so the three-index equivalence is kept named rather than
+left as `(isEllipticNet_iff …).mpr … |>.isEllipticSequence` at each use. The relator-form
+`isEllipticSequence_of_rel` is *not* kept: it restated `isEllipticNet_of_rel` in the spelling
+this file uses internally, and had no consumer.
 
 That predicate carries the parity and ordering conditions *inside* it. The induction applies its
 hypothesis at quadruples whose validity is not known in advance, so the recursive call has to be
@@ -371,8 +377,7 @@ private theorem atomRelFin4_eq_zero_of_injective (odd : W.Odd)
 /-- **The relator vanishes at any quadruple of one parity.** All four indices are made
 nonnegative by sign equivariance, a coincidence between any two is one of Mathlib's
 `atomRel_same` lemmas, and the remaining pairwise-distinct case is sorted. This is the net
-statement, and the only reduction the file needs: the sequence case is `isEllipticSequence_of_rel`
-applying it at `d = 0`. -/
+statement, and the only reduction the file needs: the sequence case is its `d = 0` instance. -/
 private theorem atomRel_eq_zero_of_parity (odd : W.Odd) (zero : W 0 = 0)
     (descent : ∀ a b c d : ℤ, AtomRelVanishes W a b c d) {a b c d : ℤ}
     (parity : d % 2 = a % 2 ∧ d % 2 = b % 2 ∧ d % 2 = c % 2) :
@@ -406,29 +411,17 @@ private theorem atomRel_eq_zero_of_parity (odd : W.Odd) (zero : W 0 = 0)
 
 /-- **An elliptic net from the two doubling recurrences.** A sequence that is odd, vanishes at
 `0`, has `W 1` and `W 2` nonzerodivisors, and satisfies the odd recurrence from `m = 2` and the
-even one from `m = 3`, satisfies the full four-index relation at *every* quadruple.
-
-`rel_eq` writes `rel W p q r s` as the relator at `(2p + s, 2q + s, 2r + s, s)`, whose four
-indices are all congruent to `s`, so this is exactly `atomRel_eq_zero_of_parity` at that
-quadruple. -/
+even one from `m = 3`, satisfies the full four-index relation at *every* quadruple. -/
 theorem isEllipticNet_of_rel (odd : W.Odd) (zero : W 0 = 0) (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
     (oddRec : ∀ m : ℤ, 2 ≤ m → rel W (m + 1) m 1 0 = 0)
     (evenRec : ∀ m : ℤ, 3 ≤ m → rel W (m + 1) (m - 1) 1 0 = 0) :
     IsEllipticNet W := by
+  -- `rel_eq` writes `rel W p q r s` as the relator at `(2p + s, 2q + s, 2r + s, s)`, whose four
+  -- indices are all congruent to `s`, so this is `atomRel_eq_zero_of_parity` at that quadruple.
   intro p q r s
   rw [rel_eq]
   exact atomRel_eq_zero_of_parity odd zero (atomRelVanishes_of_rel one two oddRec evenRec)
     ⟨by omega, by omega, by omega⟩
-
-/-- **An elliptic sequence from its two doubling recurrences**, the last index held at `0`.
-
-This is the converse direction to `IsEllipticSequence.rel_odd` and `rel_even`: those read the two
-recurrences off the relation, this rebuilds the relation from them. -/
-theorem isEllipticSequence_of_rel (odd : W.Odd) (zero : W 0 = 0) (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
-    (oddRec : ∀ m : ℤ, 2 ≤ m → rel W (m + 1) m 1 0 = 0)
-    (evenRec : ∀ m : ℤ, 3 ≤ m → rel W (m + 1) (m - 1) 1 0 = 0) :
-    IsEllipticSequence W :=
-  (isEllipticNet_of_rel odd zero one two oddRec evenRec).isEllipticSequence
 
 end IsEllipticNet
 
@@ -437,14 +430,10 @@ that is odd, vanishes at `0` and has `W 1`, `W 2` nonzerodivisors, the **four**-
 every quadruple is equivalent to the odd recurrence from `m = 2` and the even one from `m = 3` —
 finitely many equations per index rather than a condition on quadruples.
 
-The forward direction reads the two recurrences off the net through its `s = 0` sequence; the
-reverse is the descent, which rebuilds the whole net from them.
-
-So under these hypotheses being an elliptic net and being an elliptic sequence are the same
-condition, which is what makes `isEllipticSequence_iff` below a corollary. They are not the same
-condition in general: `normEDS b c d` at arbitrary parameters need not have `W 2 = b` a
-nonzerodivisor, and `NormEDS.lean` reaches the net there by transporting from the universal ring
-rather than through this equivalence. -/
+Under these hypotheses, therefore, being an elliptic net and being an elliptic sequence are the
+same condition. They are not the same condition in general: `normEDS b c d` at arbitrary
+parameters need not have `W 2 = b` a nonzerodivisor, and `NormEDS.lean` obtains the net there
+without this equivalence. -/
 theorem isEllipticNet_iff {R : Type*} [CommRing R] {W : ℤ → R} (odd : W.Odd) (zero : W 0 = 0)
     (one : W 1 ∈ nonZeroDivisors R) (two : W 2 ∈ nonZeroDivisors R) :
     IsEllipticNet W ↔
@@ -464,9 +453,8 @@ sequence that is odd, vanishes at `0` and has `W 1`, `W 2` nonzerodivisors, the 
 three-index relation is equivalent to the odd recurrence from `m = 2` and the even one from
 `m = 3` — finitely many equations per index rather than a condition on triples.
 
-The forward direction is `IsEllipticSequence.rel_odd` and `rel_even`, which read the two
-recurrences off the relation; the reverse is `isEllipticNet_iff` at `s = 0`, the descent having
-rebuilt the entire net from the same two recurrences. -/
+This is the classical statement, about the predicate `IsEllipticSequence`; `isEllipticNet_iff`
+is its four-index strengthening. -/
 theorem isEllipticSequence_iff {R : Type*} [CommRing R] {W : ℤ → R} (odd : W.Odd) (zero : W 0 = 0)
     (one : W 1 ∈ nonZeroDivisors R) (two : W 2 ∈ nonZeroDivisors R) :
     IsEllipticSequence W ↔

@@ -42,6 +42,13 @@ distinction where the identity is proved.
 The first consumer this unlocks is `IsEllipticNet.invarNum_mul_invarDenom`, which is applied to
 `isEllipticNet_normEDS` directly rather than restated here.
 
+The `s = 0` case is kept as a named theorem rather than left to `.isEllipticSequence` at each
+use: `IsEllipticSequence` is the predicate Mathlib defines, `IsEllipticDvdSequence` is
+`IsEllipticSequence ∧ IsDvdSequence`, and so this is the term discharging the first conjunct of
+the TODO cited above. Three files already name it as the fact they rest on —
+`Universal.lean`, `ReducedInvariant.lean` and
+`AlgebraicGeometry/EllipticCurve/DivisionPolynomial/Invariant.lean`.
+
 ## Implementation notes
 
 The direct argument needs `normEDS b c d 2 = b` to be a nonzerodivisor, which is a genuine
@@ -100,9 +107,8 @@ private theorem isEllipticNet_normEDS_of_mem (hb : b ∈ R⁰) :
     simp only [normEDS_one, normEDS_two, one_pow, mul_one]
     linear_combination normEDS_even b c d m
 
-/-- **A normalised EDS is an elliptic net.** No hypothesis on `b`, `c`, `d`: the statement is
-proved over `ℤ[B, C, D]`, where the second term is the indeterminate `X B` and so a nonzerodivisor,
-and transported along `aeval` to an arbitrary commutative ring. -/
+/-- **A normalised EDS is an elliptic net**, for arbitrary `b`, `c`, `d` over any commutative
+ring. In particular no nonzerodivisor hypothesis is needed on the parameters. -/
 theorem isEllipticNet_normEDS (b c d : R) : IsEllipticNet (normEDS b c d) := by
   -- Supply the defining equation rather than leaving it to `isDefEq`: `universalNormEDS`'s body
   -- is not exposed, so unification cannot cheaply see it as `normEDS (X B) (X C) (X D)`.
