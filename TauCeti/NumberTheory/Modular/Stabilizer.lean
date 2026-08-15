@@ -5,6 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.LinearAlgebra.SpecialLinearGroup
+public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
 public import TauCeti.NumberTheory.Modular.Orbits
 
@@ -163,26 +165,16 @@ private theorem center_le_stabilizer (z : ℍ) :
     Subgroup.center SL(2, ℤ) ≤ stabilizer SL(2, ℤ) z :=
   fun c hc ↦ UpperHalfPlane.smul_eq_self_of_mem_center c hc z
 
--- the centre of `SL(2, ℤ)` is `{±1}`
+-- the centre of `SL(2, ℤ)` has order two. Built on Mathlib rather than on an explicit `{±1}`
+-- computation: the matrix and module special linear groups agree (`toLin'_equiv`), the module
+-- one has centre the roots of unity (`centerEquivRootsOfUnity`), and `-1` is a primitive second
+-- root over `ℤ`.
 private theorem card_center : Nat.card (Subgroup.center SL(2, ℤ)) = 2 := by
-  have h : (Subgroup.center SL(2, ℤ) : Set SL(2, ℤ)) =
-      (({1, -1} : Finset SL(2, ℤ)) : Set SL(2, ℤ)) := by
-    ext g
-    simp only [SetLike.mem_coe, Matrix.SpecialLinearGroup.mem_center_iff, Finset.coe_insert,
-      Finset.coe_singleton, Set.mem_insert_iff, Set.mem_singleton_iff]
-    constructor
-    · rintro ⟨r, hr, hrc⟩
-      have hr2 : r * r = 1 := by
-        have : r ^ 2 = 1 := by simpa using hr
-        rwa [sq] at this
-      rcases mul_self_eq_one_iff.mp hr2 with rfl | rfl
-      · left; ext i j; simpa using congrFun (congrFun hrc.symm i) j
-      · right; ext i j; simpa using congrFun (congrFun hrc.symm i) j
-    · rintro (rfl | rfl)
-      · exact ⟨1, by simp, by simp [Matrix.scalar]⟩
-      · exact ⟨-1, by simp, by ext i j; simp [Matrix.scalar]⟩
-  rw [← SetLike.coe_sort_coe, h, Nat.card_coe_set_eq, Set.ncard_coe_finset]
-  decide
+  have hroot : IsPrimitiveRoot (-1 : ℤ) 2 := IsPrimitiveRoot.neg_one 0 (by norm_num)
+  have hrank : max (Module.finrank ℤ (Fin 2 → ℤ)) 1 = 2 := by simp
+  rw [Nat.card_congr (Subgroup.centerCongr Matrix.SpecialLinearGroup.toLin'_equiv).toEquiv,
+    Nat.card_congr (SpecialLinearGroup.centerEquivRootsOfUnity (R := ℤ) (V := Fin 2 → ℤ)).toEquiv,
+    hrank, hroot.card_rootsOfUnity]
 
 -- the quotient map restricted to a point stabiliser
 private noncomputable def toPsl (z : ℍ) :
