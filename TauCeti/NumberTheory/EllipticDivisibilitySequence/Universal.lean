@@ -92,9 +92,10 @@ Deliberately **not** ported here: `universalNormEDS_ne_zero` and
 which is now `isEllipticSequence_normEDS` in `NormEDS.lean`, and an extensionality principle for
 elliptic sequences — the source's `IsEllSequence.ext`, that two elliptic sequences agreeing at
 the indices which determine them are equal — which is now `IsEllipticSequence.ext` in `Ext.lean`.
-Both prerequisites are therefore present, and `normEDS 2 3 2 = id` is `normEDS_two_three_two` in
-`NormEDS.lean`; these two remain unported but are no longer blocked. They belong
-with whichever slice ports that principle.
+Both prerequisites are therefore present, and `normEDS 2 3 2 = id` is
+`normEDS_two_three_two_eq_id` in `NormEDS.lean`; these two remain unported but are no longer
+blocked. They belong with whichever slice needs them — as of writing, the general
+`normEDS_mul_complEDS`, whose unconditional form is what they discharge the hypothesis of.
 -/
 
 public section

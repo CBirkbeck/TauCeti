@@ -5,8 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Descent
-public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Ext
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Universal
+import TauCeti.NumberTheory.EllipticDivisibilitySequence.Ext
 
 /-!
 # A normalised EDS is an elliptic net
@@ -15,6 +15,9 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Universal
 construction. This file draws the consequence: it satisfies the full **four**-index elliptic
 relation, for arbitrary `b`, `c`, `d` in any commutative ring. Being an elliptic *sequence* is
 the last index held at `0`.
+
+Knowing that, one specialisation can be identified outright: `normEDS 2 3 2` is the identity
+sequence, since the two are elliptic sequences agreeing at the four indices that determine one.
 
 The three-index statement is the first half of the TODO Mathlib records at
 `Mathlib/NumberTheory/EllipticDivisibilitySequence.lean:70`, "prove that `normEDS` satisfies
@@ -39,6 +42,8 @@ distinction where the identity is proved.
 
 * `isEllipticNet_normEDS`: `IsEllipticNet (normEDS b c d)`, with no hypothesis on the parameters.
 * `isEllipticSequence_normEDS`: its `s = 0` case.
+* `normEDS_two_three_two_eq_id`: `normEDS (2 : ℤ) 3 2 = id`, the one specialisation the
+  extensionality principle pins outright.
 
 The first consumer this unlocks is `IsEllipticNet.invarNum_mul_invarDenom`, which callers can
 apply to `isEllipticNet_normEDS` directly; it is deliberately not restated here as a
@@ -62,13 +67,15 @@ survives only in the private helper, applied once at the indeterminates.
 
 `Universal.lean` records `universalNormEDS_ne_zero` and `universalNormEDS_mem_nonZeroDivisors`
 as belonging with "whichever slice ports" the fact proved here. They are still not ported: they
-rest on `normEDS 2 3 2 = id`, which is `normEDS_two_three_two` below. The extensionality principle
+rest on `normEDS 2 3 2 = id`, which is `normEDS_two_three_two_eq_id` below. The extensionality
+principle
 that identity needs is `IsEllipticSequence.ext`, which this repository now has, so the obstacle
 recorded for those two is gone; what remains is the work itself.
 
 ## Provenance
 
-Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
+Adapted from D. K. Angdinata's `projects/NagellLutz/LutzNagell/EllipticDivisibilitySequence.lean`
+in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`),
 declarations `IsEllSequence.normEDS_of_mem_nonZeroDivisors` and `IsEllSequence.normEDS`. That
 file's header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
@@ -78,7 +85,14 @@ co-authors `DivisionPolynomialOmega.lean` at the same revision — as context fo
 an author of the declarations above.
 
 The net strengthening here adapts one further declaration of that same file, `net_normEDS`, and
-`normEDS_two_three_two` below adapts the declaration of that name.
+`normEDS_two_three_two_eq_id` below adapts its `normEDS_two_three_two` (`:1236`), renamed to state
+its conclusion. That declaration is byte-identical at the roadmap's NagellLutz pin
+(`dev/modular-curves @ 9fec8eba7652`, `:1235`); the revision named above is used throughout so
+that this file cites one source revision rather than two.
+
+Its proof is the source's, with `IsEllipticSequence.id` in place of the deprecated
+`isEllSequence_id` alias, and the four base-value hypotheses discharged by `simp` rather than by
+`simp only` followed by `exacts`.
 
 The source proves the hypothesis-carrying version from its own descent development; here that step
 is `Descent.lean`'s `IsEllipticNet.of_rel`, fed the two recurrences in relator form, so the helper
@@ -130,18 +144,18 @@ theorem isEllipticSequence_normEDS (b c d : R) : IsEllipticSequence (normEDS b c
   (isEllipticNet_normEDS b c d).isEllipticSequence
 
 /-- **`normEDS 2 3 2` is the identity.** Its base values are `1, 2, 3, 4` and it is an elliptic
-sequence, as is `id`; two elliptic sequences agreeing at `1, 2, 3, 4` are equal.
+sequence, as is `id`; `IsEllipticSequence.ext` makes two elliptic sequences agreeing at
+`1, 2, 3, 4` equal, given that the first two values are nonzerodivisors — here `1` and `2` in `ℤ`.
 
 `Universal.lean` names this as the fact `universalNormEDS_ne_zero` and
-`universalNormEDS_mem_nonZeroDivisors` rest on. It was recorded there as blocked on an
-extensionality principle for elliptic sequences; `IsEllipticSequence.ext` is that principle, and
-`IsEllipticNet.id` supplies the other side. -/
-theorem normEDS_two_three_two : normEDS (2 : ℤ) 3 2 = id := by
-  refine (isEllipticSequence_normEDS 2 3 2).ext IsEllipticNet.id.isEllipticSequence
-    ?_ ?_ ?_ ?_ ?_ ?_
-  · simp [normEDS_one]
-  · simp [normEDS_two]
-  · simp [normEDS_one]
-  · simp [normEDS_two]
-  · simp [normEDS_three]
-  · simp [normEDS_four]
+`universalNormEDS_mem_nonZeroDivisors` rest on, and recorded it as blocked on that extensionality
+principle; `Ext.lean` supplies it and `IsEllipticSequence.id` the other sequence. -/
+@[simp]
+theorem normEDS_two_three_two_eq_id : normEDS (2 : ℤ) 3 2 = id := by
+  refine (isEllipticSequence_normEDS 2 3 2).ext IsEllipticSequence.id ?_ ?_ ?_ ?_ ?_ ?_
+  · simp
+  · simp
+  · simp
+  · simp
+  · simp
+  · simp
