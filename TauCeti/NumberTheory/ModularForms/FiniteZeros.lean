@@ -19,19 +19,20 @@ the standard fundamental domain lie in a truncated fundamental domain, which is 
 so by the accumulation-point argument and the identity theorem they are finite — the
 finite-support input to the valence formula.
 
-At any level of finite relative index in `𝒮ℒ` the same finiteness is read off the
-level-one statement through the norm: the norm of the form is a level-one form whose
-vanishing order dominates the form's, so the nonzero-order points of the form sit inside
-those of its norm. No nonvanishing hypothesis is needed there, the zero form having
-order `0` at every point.
+That level-one argument is the engine, but it is not the statement this file exports: at any
+level of finite relative index in `𝒮ℒ` the same finiteness is read off it through the norm.
+The norm of the form is a level-one form whose vanishing order dominates the form's, so the
+nonzero-order points of the form sit inside those of its norm. The general statement needs
+no nonvanishing hypothesis, the zero form having order `0` at every point, so it subsumes
+the level-one one — which is therefore kept private, as the compactness engine rather than
+as a second public entry point.
 
 ## Main declarations
 
 * `TauCeti.ModularForm.exists_height_nonvanishing`: a nonzero form does not vanish at
   points of imaginary part above some height.
-* `TauCeti.ModularForm.finite_zeros_in_fd`: finiteness of the nonzero-order points in `𝒟`.
-* `TauCeti.ModularForm.finite_zeros_in_fd_of_isFiniteRelIndex`: the same at any level of
-  finite relative index, obtained from the level-one statement through the norm.
+* `TauCeti.ModularForm.finite_zeros_in_fd`: finiteness of the nonzero-order points in `𝒟`,
+  for a form on any subgroup of finite relative index in `𝒮ℒ`.
 
 ## References
 
@@ -65,8 +66,12 @@ lemma exists_height_nonvanishing [ModularFormClass F Γ k] (hh : 0 < h)
   exact hfp
 
 /-- The set of points of the fundamental domain at which the vanishing order of a nonzero
-level-one modular form is nonzero is finite. -/
-lemma finite_zeros_in_fd [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+level-one modular form is nonzero is finite.
+
+This is the compactness engine behind `finite_zeros_in_fd`, which is the general statement
+and subsumes this one; it stays private so that there is a single public entry point. -/
+private lemma finite_zeros_in_fd_levelOne [ModularFormClass F 𝒮ℒ k]
+    (hf : (⇑f : ℍ → ℂ) ≠ 0) :
     Set.Finite {p : ℍ | p ∈ 𝒟 ∧ orderOfVanishingAt f p ≠ 0} := by
   obtain ⟨H₀, hH₀_no⟩ := exists_height_nonvanishing one_pos (by simp) hf
   have hK : IsCompact (UpperHalfPlane.coe '' ModularGroup.truncatedFundamentalDomain H₀) :=
@@ -92,17 +97,20 @@ lemma finite_zeros_in_fd [ModularFormClass F 𝒮ℒ k] (hf : (⇑f : ℍ → �
   exact hp_ord (by rwa [orderOfVanishingAt_def])
 
 /-- The set of points of the fundamental domain at which the vanishing order of a modular
-form on a subgroup of finite relative index in `𝒮ℒ` is nonzero is finite. -/
-lemma finite_zeros_in_fd_of_isFiniteRelIndex [Γ.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F Γ k] :
+form on a subgroup of finite relative index in `𝒮ℒ` is nonzero is finite.
+
+No nonvanishing hypothesis: at `f = 0` the order is `0` at every point, so the set is empty.
+That is what lets this subsume the level-one statement rather than sit beside it. -/
+lemma finite_zeros_in_fd [Γ.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F Γ k] :
     Set.Finite {p : ℍ | p ∈ 𝒟 ∧ orderOfVanishingAt f p ≠ 0} := by
   rcases eq_or_ne (⇑f : ℍ → ℂ) 0 with hf | hf
   · -- The zero form has order `0` everywhere, so the set is empty.
     simp [hf, Pi.zero_def]
-  -- The norm of `f` is a level-one form, so `finite_zeros_in_fd` applies to it; `norm_ne_zero`
-  -- is about the bundled form, while `finite_zeros_in_fd` needs the coercion.
+  -- The norm of `f` is a level-one form, so the level-one engine applies to it;
+  -- `norm_ne_zero` is about the bundled form, while it needs the coercion.
   have hN : (⇑(_root_.ModularForm.norm 𝒮ℒ f) : ℍ → ℂ) ≠ 0 := fun h ↦
     _root_.ModularForm.norm_ne_zero 𝒮ℒ hf ((FunLike.coe_zero_iff _).mp h)
-  refine (finite_zeros_in_fd hN).subset fun p ⟨hp, hord⟩ ↦ ⟨hp, ?_⟩
+  refine (finite_zeros_in_fd_levelOne hN).subset fun p ⟨hp, hord⟩ ↦ ⟨hp, ?_⟩
   -- A nonzero order is positive and is dominated by the norm's, so the norm's is nonzero too.
   exact (((orderOfVanishingAt_nonneg (ModularFormClass.holo f) p).lt_of_ne' hord).trans_le
     (orderOfVanishingAt_le_orderOfVanishingAt_norm f p)).ne'
