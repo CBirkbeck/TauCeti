@@ -15,9 +15,10 @@ Two results about `UniformSpace.Completion` as a *ring*, both in the root
 
 `UniformSpace.Completion.ringHom_ext_of_continuous` is `UniformSpace.Completion.ext` for ring
 homomorphisms: two continuous ring homomorphisms out of `Completion R` that agree after composing
-with the coercion from `R` are equal. It asks nothing of `R` beyond a uniform additive group
-structure — in particular neither `CompleteSpace` nor `T0Space` — and lives here because it is a
-statement about the completion functor rather than about any ring being completed. It is what lets
+with the coercion from `R` are equal. `R` is a topological ring carrying a compatible uniform
+additive-group structure, and nothing more: neither `CompleteSpace` nor `T0Space` is required, and
+`R` need not be commutative. It lives here because it is a statement about the completion functor
+rather than about any ring being completed, and it is what lets
 consumers state uniqueness on the base ring instead of on the completion.
 
 ## The completion of a complete separated ring is itself
