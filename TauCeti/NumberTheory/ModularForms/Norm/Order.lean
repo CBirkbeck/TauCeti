@@ -37,16 +37,19 @@ order of the norm is the sum of the orders of the factors.
 
 ## References
 
-* The route is the one in PR #3330
-  (`TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnSubgroupOrbit`,
-  `Order/SubgroupOrbits.lean`): order domination under the norm sends the support into the
-  finite support of the level-one norm, and finite index makes the fibres of the orbit
-  comparison finite. That theorem takes `Γ ≤ SL(2, ℤ)` of finite index and descends the order
-  itself to `Γ`-orbits; the variant here takes `𝒢 ≤ GL (Fin 2) ℝ` of finite *relative* index in
-  `𝒮ℒ`, which **need not lie inside `𝒮ℒ`**. That difference is why the order is not descended
-  here: `𝒢` may contain elements of negative determinant, under which the vanishing order is not
-  known to be invariant (`orderOfVanishingAt_smul` asks for `0 < det`), so only the image of the
-  nonzero-order set in `𝒢 \ ℍ` is claimed, not a well-defined order function on it.
+* The two-step route used here — order domination under the norm carries the support into the
+  finite support of the level-one norm, and finite index makes the fibres of the orbit comparison
+  finite — was arrived at independently of, and concurrently with,
+  [PR #3330](https://github.com/TauCetiProject/TauCeti/pull/3330), which proposes the same
+  argument for a subgroup of `SL(2, ℤ)` of finite index. That pull request is unmerged at the time
+  of writing, so nothing here depends on it and it is cited as prior art rather than as a
+  reference into this library.
+
+  The statements differ in the group: this one takes `𝒢 ≤ GL (Fin 2) ℝ` of finite *relative* index
+  in `𝒮ℒ`, which **need not lie inside `𝒮ℒ`**. That is also why the order is not descended to the
+  quotient here — `𝒢` may contain elements of negative determinant, under which the vanishing
+  order is not known to be invariant (`orderOfVanishingAt_smul` asks for `0 < det`) — so only the
+  image of the nonzero-order set in `𝒢 \ ℍ` is claimed, not an order function on it.
 -/
 
 open UpperHalfPlane
