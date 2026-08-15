@@ -16,9 +16,10 @@ that this is *not* the roadmap's Layer 2(b) target because holomorphy and the cu
 not yet carried along. This file supplies exactly that: the two remaining structure fields.
 
 Invariance comes from `heckeSlashEnd`, holomorphy from `mdifferentiable_heckeSlashSum`, and
-boundedness at the cusps from `isBoundedAt_heckeSlashSum`; `coe_heckeSlashEnd` is what lets the
-latter two, which are stated about the raw function `heckeSlashSum`, be read as statements about
-the bundled form. The cusp-form case is then *derived* from the modular-form one, adding only
+boundedness at the cusps from `isBoundedAt_heckeSlashSum`. Because `heckeSlashEnd` is not
+`@[expose]`, a structure field's `.toFun` does not reduce to the coercion by itself, so each
+such field names the coercion form with `change`, then rewrites by `coe_heckeSlashEnd`.
+The cusp-form case is then *derived* from the modular-form one, adding only
 `zero_at_cusps'`, so neither invariance nor holomorphy is proved twice.
 
 Both maps are also bundled as `Module.End ℂ`, which is the form Hecke operators are consumed in:
@@ -29,18 +30,18 @@ the two cusp lemmas need. Descending further to `Γ₁(N)` is a separate step.
 
 ## Main definitions
 
-* `HeckeRing.GL2.heckeSlashModularForm`: the double coset acting on `ModularForm 𝒮ℒ k`.
-* `HeckeRing.GL2.heckeSlashCuspForm`: the same on `CuspForm 𝒮ℒ k`, which is the statement that
+* `HeckeRing.GL2.heckeSlashModularFormEnd`: the double coset as a `ℂ`-linear endomorphism of
+  `ModularForm 𝒮ℒ k`.
+* `HeckeRing.GL2.heckeSlashCuspFormEnd`: the same on `CuspForm 𝒮ℒ k`, which is the statement that
   **the action preserves cuspidality**.
-* `HeckeRing.GL2.heckeSlashModularFormEnd`, `heckeSlashCuspFormEnd`: both bundled as
-  `Module.End ℂ`.
+
+The unbundled constructors behind them are private; the bundled operators are the interface,
+since composition is what the Hecke ring will consume.
 
 ## Main results
 
-* `HeckeRing.GL2.coe_heckeSlashModularForm`, `coe_heckeSlashCuspForm`: both are `heckeSlashSum`
-  on underlying functions.
-* `HeckeRing.GL2.heckeSlashModularFormEnd_apply`, `heckeSlashCuspFormEnd_apply`: the bundled
-  endomorphisms are the unbundled maps on elements.
+* `HeckeRing.GL2.coe_heckeSlashModularFormEnd`, `coe_heckeSlashCuspFormEnd`: both endomorphisms
+  are `heckeSlashSum` on underlying functions.
 
 ## Provenance
 
@@ -69,48 +70,35 @@ namespace HeckeRing.GL2
 
 variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 
-/-- The structure projection of `heckeSlashEnd` is `heckeSlashSum`. `coe_heckeSlashEnd` states
-this for the coercion `⇑`; the structure fields below are phrased with the projection `.toFun`
-instead, and `heckeSlashEnd` being unexposed keeps the two from reducing into one another. This
-bridge is what lets those fields be discharged by `rw` and `exact` rather than by an unrestricted
-simp call. -/
-private lemma toFun_heckeSlashEnd (f : SlashInvariantForm 𝒮ℒ k) :
-    (heckeSlashEnd k D f).toFun = heckeSlashSum k D f :=
-  coe_heckeSlashEnd k D f
-
-/-- **The double coset acting on modular forms.** The underlying function is `heckeSlashSum`;
-invariance is `heckeSlashEnd`, holomorphy is `mdifferentiable_heckeSlashSum`, and boundedness at
-the cusps is `isBoundedAt_heckeSlashSum`. -/
-noncomputable def heckeSlashModularForm (f : ModularForm 𝒮ℒ k) : ModularForm 𝒮ℒ k where
+/-- **The double coset acting on modular forms.** Invariance is `heckeSlashEnd`, holomorphy is
+`mdifferentiable_heckeSlashSum`, and boundedness at the cusps is `isBoundedAt_heckeSlashSum`.
+The public interface is the bundled `heckeSlashModularFormEnd`. -/
+private noncomputable def heckeSlashModularForm (f : ModularForm 𝒮ℒ k) : ModularForm 𝒮ℒ k where
   toSlashInvariantForm := heckeSlashEnd k D f.toSlashInvariantForm
   holo' := by
     rw [coe_heckeSlashEnd]; exact mdifferentiable_heckeSlashSum k D f.holo'
-  bdd_at_cusps' hc := by
-    rw [toFun_heckeSlashEnd]
+  -- `heckeSlashEnd` is unexposed, so the field's `.toFun` does not reduce to the coercion on
+  -- its own; `change` names the coercion form, after which `coe_heckeSlashEnd` applies.
+  bdd_at_cusps' := fun {c} hc ↦ by
+    change c.IsBoundedAt (⇑(heckeSlashEnd k D f.toSlashInvariantForm)) k
+    rw [coe_heckeSlashEnd]
     exact isBoundedAt_heckeSlashSum k D (fun _ h ↦ f.bdd_at_cusps' h) hc
 
-/-- The action is `heckeSlashSum` on underlying functions. -/
-@[simp] lemma coe_heckeSlashModularForm (f : ModularForm 𝒮ℒ k) :
+private lemma coe_heckeSlashModularForm (f : ModularForm 𝒮ℒ k) :
     ⇑(heckeSlashModularForm k D f) = heckeSlashSum k D f :=
   coe_heckeSlashEnd k D f.toSlashInvariantForm
 
-/-- The projection form of `coe_heckeSlashModularForm`, for the same reason as
-`toFun_heckeSlashEnd`: the cusp-form field below is phrased with `.toFun`. -/
-private lemma toFun_heckeSlashModularForm (f : ModularForm 𝒮ℒ k) :
-    (heckeSlashModularForm k D f).toFun = heckeSlashSum k D f :=
-  coe_heckeSlashModularForm k D f
-
 /-- **The double coset acting on cusp forms** — the action preserves cuspidality. Only the
-vanishing field is new: invariance and holomorphy are taken from `heckeSlashModularForm` at the
-underlying modular form, so the two constructions are not proved twice. -/
-noncomputable def heckeSlashCuspForm (f : CuspForm 𝒮ℒ k) : CuspForm 𝒮ℒ k :=
+vanishing field is new: invariance and holomorphy come from `heckeSlashModularForm` at the
+underlying modular form, so neither is proved twice. -/
+private noncomputable def heckeSlashCuspForm (f : CuspForm 𝒮ℒ k) : CuspForm 𝒮ℒ k :=
   { heckeSlashModularForm k D (f : ModularForm 𝒮ℒ k) with
-    zero_at_cusps' := fun hc ↦ by
-      rw [toFun_heckeSlashModularForm]
+    zero_at_cusps' := fun {c} hc ↦ by
+      change c.IsZeroAt (⇑(heckeSlashModularForm k D (f : ModularForm 𝒮ℒ k))) k
+      rw [coe_heckeSlashModularForm]
       exact isZeroAt_heckeSlashSum k D (fun _ h ↦ f.zero_at_cusps' h) hc }
 
-/-- The action is `heckeSlashSum` on underlying functions. -/
-@[simp] lemma coe_heckeSlashCuspForm (f : CuspForm 𝒮ℒ k) :
+private lemma coe_heckeSlashCuspForm (f : CuspForm 𝒮ℒ k) :
     ⇑(heckeSlashCuspForm k D f) = heckeSlashSum k D f :=
   coe_heckeSlashModularForm k D (f : ModularForm 𝒮ℒ k)
 
@@ -119,22 +107,25 @@ Hecke operators are consumed in: bundling is what lets them compose and later ca
 structure. -/
 noncomputable def heckeSlashModularFormEnd : Module.End ℂ (ModularForm 𝒮ℒ k) where
   toFun := heckeSlashModularForm k D
-  map_add' f g := by ext τ; simp [heckeSlashSum_add]
-  map_smul' c f := by ext τ; simp [heckeSlashSum_smul]
+  map_add' f g := by ext τ; simp [coe_heckeSlashModularForm, heckeSlashSum_add]
+  map_smul' c f := by ext τ; simp [coe_heckeSlashModularForm, heckeSlashSum_smul]
 
-/-- **The double coset as a `ℂ`-linear endomorphism of `CuspForm 𝒮ℒ k`.** -/
+/-- **The double coset as a `ℂ`-linear endomorphism of `CuspForm 𝒮ℒ k`** — the action preserves
+cuspidality. -/
 noncomputable def heckeSlashCuspFormEnd : Module.End ℂ (CuspForm 𝒮ℒ k) where
   toFun := heckeSlashCuspForm k D
-  map_add' f g := by ext τ; simp [heckeSlashSum_add]
-  map_smul' c f := by ext τ; simp [heckeSlashSum_smul]
+  map_add' f g := by ext τ; simp [coe_heckeSlashCuspForm, heckeSlashSum_add]
+  map_smul' c f := by ext τ; simp [coe_heckeSlashCuspForm, heckeSlashSum_smul]
 
-/-- The endomorphism is `heckeSlashModularForm` on elements. -/
-@[simp] lemma heckeSlashModularFormEnd_apply (f : ModularForm 𝒮ℒ k) :
-    heckeSlashModularFormEnd k D f = heckeSlashModularForm k D f := (rfl)
+/-- The endomorphism is `heckeSlashSum` on underlying functions. -/
+@[simp] lemma coe_heckeSlashModularFormEnd (f : ModularForm 𝒮ℒ k) :
+    ⇑(heckeSlashModularFormEnd k D f) = heckeSlashSum k D f :=
+  coe_heckeSlashModularForm k D f
 
-/-- The endomorphism is `heckeSlashCuspForm` on elements. -/
-@[simp] lemma heckeSlashCuspFormEnd_apply (f : CuspForm 𝒮ℒ k) :
-    heckeSlashCuspFormEnd k D f = heckeSlashCuspForm k D f := (rfl)
+/-- The endomorphism is `heckeSlashSum` on underlying functions. -/
+@[simp] lemma coe_heckeSlashCuspFormEnd (f : CuspForm 𝒮ℒ k) :
+    ⇑(heckeSlashCuspFormEnd k D f) = heckeSlashSum k D f :=
+  coe_heckeSlashCuspForm k D f
 
 end HeckeRing.GL2
 
