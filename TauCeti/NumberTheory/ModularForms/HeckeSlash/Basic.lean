@@ -27,8 +27,8 @@ raw `f` to `f ∣[k] h` rather than to `f`.
 What repairs it is slash-invariance of `f`, and that is the proof of Shimura's Proposition
 3.37: right multiplication permutes the representatives, so the sum is again invariant once `f`
 is invariant under the group they are right cosets of. ⚠ **That group is `Γ₂ᵀ`, not `Γ₁`** —
-see "Which group the representatives are cosets of" below; the two agree exactly when the
-triple is transpose-stable, as the level-one pair is. That theorem, and the descent of this sum
+see "Which group the representatives are cosets of" below; the two coincide exactly when
+`Γ₂ᵀ = Γ₁`, which the level-one pair satisfies. That theorem, and the descent of this sum
 to a genuine operator on
 `SlashInvariantForm` and `ModularForm`, are deliberately **not** in this file — the reindexing
 argument is substantial and is a different claim. Until then this is an auxiliary sum, named to
@@ -55,9 +55,12 @@ to `⊔ᵢ Γ₂ᵀ (σᵢ δ)ᵀ`. So `transposeRep` enumerates right cosets of
 that makes the sum well defined is invariance under `Γ₂ᵀ`.
 
 ⚠ **This is why the level-one pair is special, and why the generality here stops short of a
-level-`N` operator.** `SLnZ 2` is transpose-stable (`transposeGLEquiv_mem_SLnZ`, which is just
-`det` and integrality surviving transposition) and sits on both flanks, so `Γ₂ᵀ = Γ₁` and the
-sum is Shimura's operator for `Γ₁ δ Γ₂` acting on `Γ₁`-invariant functions. A congruence
+level-`N` operator.** Throughout, a *group* is called transpose-stable when transposition maps it
+to itself. `SLnZ 2` is (`transposeGLEquiv_mem_SLnZ`, which is just `det` and integrality
+surviving transposition) and sits on both flanks, giving `Γ₂ᵀ = Γ₁`; transposition moreover fixes
+every double coset `SLnZ 2 · δ · SLnZ 2`. Those are two separate facts, and the sum is Shimura's
+operator for `Γ₁ δ Γ₂` acting on `Γ₁`-invariant functions only because **both** hold — flank
+agreement alone would leave `δᵀ` where `δ` should be. A congruence
 subgroup is **not** transpose-stable: transposition swaps the off-diagonal entries, so
 `!![1, 1; 0, 1] ∈ Γ₁(N)` for every `N` while its transpose lies in `Γ₁(N)` only when `N = 1`,
 and `Γ₁(N)ᵀ = Γ¹(N)`. At such a triple the expression below is still defined — it is a finite sum
