@@ -302,23 +302,6 @@ private lemma excised_weight_fdBoundary_arc_four_sub {H : ℝ} {S : Finset ℂ} 
   · rw [ite_eq_right hc, ite_eq_right fun h => hc (hsymm.mp h), logDeriv_fdBoundary_arc ht,
       logDeriv_fdBoundary_arc h4t]
 
-/-- The excised arc integrand is interval-integrable on the whole of `[1, 3]` as soon as it is on
-the first half `[1, 2]`: integrability on the second half is not assumed, it is a consequence of
-the arc pairing. -/
-private lemma intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
-    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ}
-    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
-    (hd : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
-      DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
-    (hne : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
-      (⇑f ∘ ofComplex) (fdBoundary H t) ≠ 0)
-    (hint : IntervalIntegrable (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-      else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) volume 1 2) :
-    IntervalIntegrable (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-      else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) volume 1 3 :=
-  hint.trans <| intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundarySegment3
-    f hS hnorm hinv hd hne hint
-
 /-- Integrating the pointwise pairing over `[1, 3]`: the direct and reflected excised
 integrands sum to the excised weight term.
 
@@ -394,9 +377,10 @@ theorem two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBo
   have hrefl : (∫ t in (1 : ℝ)..3, G (4 - t)) = ∫ t in (1 : ℝ)..3, G t := by
     have h := intervalIntegral.integral_comp_sub_left (a := (1 : ℝ)) (b := 3) (d := (4 : ℝ)) G
     rwa [h43, h41] at h
+  -- Integrability on `[2, 3]` is not assumed: the pairing gives it from the `[1, 2]` half.
   have hint13 : IntervalIntegrable G volume 1 3 :=
-    intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc f hS hnorm hinv
-      hd hne hint
+    hint.trans <| intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundarySegment3
+      f hS hnorm hinv hd hne hint
   have hintrefl : IntervalIntegrable (fun t => G (4 - t)) volume 1 3 := by
     have h := hint13.comp_sub_left 4
     rw [h43, h41] at h
