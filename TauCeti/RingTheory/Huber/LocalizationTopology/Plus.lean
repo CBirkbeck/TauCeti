@@ -48,8 +48,9 @@ construction (`isIntegrallyClosedIn_completedPlusSubring`) and power-boundedness
 (`completedPlusSubring_le_powerBoundedSubring`). **Openness is not proved here.** It reduces, by
 `Subgroup.isOpen_of_openSubgroup` and the `isOpen_ringOfDefinition` field of the completed pair,
 to containing that pair's ring of definition — and since that ring is a *closure* of an image
-while `A_U⁺` carries no topological closure, the containment needs `A_U⁺` to be closed, which is
-not available here.
+while `A_U⁺` carries no topological closure, the only route available here — `closure_le` — asks
+for `A_U⁺` to be closed. That is sufficient rather than necessary: a direct argument for the
+containment would do as well, and none is on hand.
 
 ## Provenance
 
@@ -282,8 +283,9 @@ theorem completedPlusSubring_le_powerBoundedSubring [IsHuberRing A] (P : PairOfD
         ≤ powerBoundedSubring S := by
       rw [Algebra.adjoin_eq_ring_closure, Subring.closure_le]
       rintro w (⟨⟨a, ha⟩, rfl⟩ | ⟨⟨t, ht⟩, rfl⟩)
-      · exact mem_powerBoundedSubring.mpr (isPowerBounded_algebraMap_locUniformSpace P T s S hden
-          (mem_powerBoundedSubring.mp (hAplus ha)))
+      · exact mem_powerBoundedSubring.mpr
+          (isPowerBounded_algebraMap_of_isPowerBounded_locUniformSpace P T s S hden
+            (mem_powerBoundedSubring.mp (hAplus ha)))
       · exact mem_powerBoundedSubring.mpr (isPowerBounded_divBy_locUniformSpace P T s S hden ht)
     exact mem_powerBoundedSubring.mp (hle hy)
   exact mem_powerBoundedSubring.mpr (isPowerBounded_completion_coe_of_isPowerBounded hyS)

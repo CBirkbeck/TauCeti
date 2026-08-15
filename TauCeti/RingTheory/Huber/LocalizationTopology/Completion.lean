@@ -133,7 +133,8 @@ theorem isHuberRing_locUniformSpace [IsTopologicalRing A] (P : PairOfDefinition 
 /-- The image of a power-bounded element of `A` is power-bounded in `Aₛ`, at the uniformity's
 topology. `isPowerBounded_algebraMap_of_isPowerBounded` states this at `locTopology`; a consumer
 holding the uniformity cannot cross the identification itself, since neither body is exposed. -/
-theorem isPowerBounded_algebraMap_locUniformSpace [IsTopologicalRing A] (P : PairOfDefinition A)
+theorem isPowerBounded_algebraMap_of_isPowerBounded_locUniformSpace [IsTopologicalRing A]
+    (P : PairOfDefinition A)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) {a : A} (ha : IsPowerBounded a) :
     letI := locUniformSpace P T s S hden
