@@ -133,6 +133,17 @@ theorem degree_eq_finrank (φ : Isogeny W₁ W₂) [Algebra W₂.FunctionField W
     φ.degree = Module.finrank W₂.FunctionField W₁.FunctionField :=
   φ.degree_def.trans (AlgHom.finrank_fieldRange φ.fieldPullback h)
 
+/-- **The canonical witness for the `h` hypothesis of `degree_eq_finrank`.** For the algebra
+structure the pullback itself induces, the structure map *is* the pullback, so this discharges
+`h` at the default choice. `degree_eq_finrank` and its separable and inseparable analogues in
+`Isogeny/Separability.lean` all take that hypothesis; this is what a consumer applies rather than
+re-deriving the term. -/
+theorem algebraMap_toAlgebra_fieldPullback (φ : Isogeny W₁ W₂) (z : W₂.FunctionField) :
+    @algebraMap W₂.FunctionField W₁.FunctionField _ _ φ.fieldPullback.toRingHom.toAlgebra z =
+      φ.fieldPullback z := by
+  rw [RingHom.algebraMap_toAlgebra]
+  exact congrFun (AlgHom.coe_toRingHom φ.fieldPullback) z
+
 /-- **The degree of an isogeny is positive.** The extension is finite and the source function
 field is nontrivial. -/
 theorem degree_pos (φ : Isogeny W₁ W₂) : 0 < φ.degree := by
@@ -180,15 +191,9 @@ theorem degree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   have htower : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  rw [φ.degree_eq_finrank fun z ↦ by
-      rw [RingHom.algebraMap_toAlgebra]
-      exact congrFun (AlgHom.coe_toRingHom φ.fieldPullback) z,
-    ψ.degree_eq_finrank fun z ↦ by
-      rw [RingHom.algebraMap_toAlgebra]
-      exact congrFun (AlgHom.coe_toRingHom ψ.fieldPullback) z,
-    (ψ.comp φ).degree_eq_finrank fun z ↦ by
-      rw [RingHom.algebraMap_toAlgebra]
-      exact congrFun (AlgHom.coe_toRingHom (ψ.comp φ).fieldPullback) z]
+  rw [φ.degree_eq_finrank φ.algebraMap_toAlgebra_fieldPullback,
+    ψ.degree_eq_finrank ψ.algebraMap_toAlgebra_fieldPullback,
+    (ψ.comp φ).degree_eq_finrank (ψ.comp φ).algebraMap_toAlgebra_fieldPullback]
   exact (Module.finrank_mul_finrank W₃.FunctionField W₂.FunctionField W₁.FunctionField).symm
 
 end Isogeny

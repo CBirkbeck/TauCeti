@@ -42,7 +42,8 @@ this file names those two parts and records that they multiply to the degree.
   `TauCeti.Isogeny.inseparableDegree_eq_degree_of_isPurelyInseparable`: the purely inseparable
   case. No declaration consumes these yet; they are the shape the roadmap's Frobenius milestone
   ("`π_q`, purely inseparable of degree `q`") will need.
-* `TauCeti.Isogeny.separableDegree_eq_one_iff` and `TauCeti.Isogeny.inseparableDegree_eq_one_iff`:
+* `TauCeti.Isogeny.separableDegree_eq_one_iff_isPurelyInseparable` and
+  `TauCeti.Isogeny.inseparableDegree_eq_one_iff_isSeparable`:
   the biconditional forms, for a consumer holding a computed degree rather than an assumed class.
 
 ## Design
@@ -205,26 +206,17 @@ theorem inseparableDegree_eq_degree_of_isPurelyInseparable (φ : Isogeny W₁ W�
 The `@[simp]` lemmas above eliminate an assumed instance; this is the way back, for a consumer
 holding a computed degree and wanting the class. Both directions matter once `[n]` and Frobenius
 are in play, where the degree is what gets calculated. -/
-theorem separableDegree_eq_one_iff (φ : Isogeny W₁ W₂) :
+theorem separableDegree_eq_one_iff_isPurelyInseparable (φ : Isogeny W₁ W₂) :
     φ.separableDegree = 1 ↔
       IsPurelyInseparable φ.fieldPullback.fieldRange W₁.FunctionField :=
   φ.separableDegree_def ▸ (isPurelyInseparable_iff_finSepDegree_eq_one _ _).symm
 
 /-- **An inseparable degree of `1` characterises separability**, the companion of
-`separableDegree_eq_one_iff`. -/
-theorem inseparableDegree_eq_one_iff (φ : Isogeny W₁ W₂) :
+`separableDegree_eq_one_iff_isPurelyInseparable`. -/
+theorem inseparableDegree_eq_one_iff_isSeparable (φ : Isogeny W₁ W₂) :
     φ.inseparableDegree = 1 ↔
       Algebra.IsSeparable φ.fieldPullback.fieldRange W₁.FunctionField :=
   φ.inseparableDegree_def ▸ (isSeparable_iff_finInsepDegree_eq_one _ _).symm
-
-/-- The pullback-induced algebra structure has the pullback as its structure map. The composition
-laws below each need this three times — for `φ`, for `ψ` and for `ψ.comp φ` — and it is the
-hypothesis every `_eq_finSepDegree`-style lemma in this file takes. -/
-private theorem algebraMap_fieldPullback_eq (φ : Isogeny W₁ W₂) (z : W₂.FunctionField) :
-    @algebraMap W₂.FunctionField W₁.FunctionField _ _ φ.fieldPullback.toRingHom.toAlgebra z =
-      φ.fieldPullback z := by
-  rw [RingHom.algebraMap_toAlgebra]
-  exact congrFun (AlgHom.coe_toRingHom φ.fieldPullback) z
 
 variable {W₃ : WeierstrassCurve.Affine F}
 
@@ -236,9 +228,9 @@ theorem separableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   let _ := φ.fieldPullback.toRingHom.toAlgebra
   let _ := ψ.fieldPullback.toRingHom.toAlgebra
   let _ := (ψ.comp φ).fieldPullback.toRingHom.toAlgebra
-  have hφ := φ.algebraMap_fieldPullback_eq
-  have hψ := ψ.algebraMap_fieldPullback_eq
-  have hc := (ψ.comp φ).algebraMap_fieldPullback_eq
+  have hφ := φ.algebraMap_toAlgebra_fieldPullback
+  have hψ := ψ.algebraMap_toAlgebra_fieldPullback
+  have hc := (ψ.comp φ).algebraMap_toAlgebra_fieldPullback
   have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
