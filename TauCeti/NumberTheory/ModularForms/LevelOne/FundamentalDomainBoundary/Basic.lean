@@ -28,6 +28,7 @@ anchors of the valence-formula contour.
 
 * `TauCeti.ModularForm.fdBoundary` (with the segments `fdBoundarySegment1` … `fdBoundarySegment5`,
   built from `AffineMap.lineMap` and `circleMap`).
+* `TauCeti.ModularForm.rho_im`: the corner `ρ` sits on the row `Im = √3/2`.
 * `TauCeti.ModularForm.fdBoundary_apply_three`: the parameter `3` lands on `ρ`.
 * `TauCeti.ModularForm.fdBoundary_closed`: the contour is closed.
 * `TauCeti.ModularForm.continuous_fdBoundary`: the contour is (globally) continuous.
@@ -55,6 +56,16 @@ open scoped Real
 namespace TauCeti
 
 namespace ModularForm
+
+/-- **The corner `ρ` sits on the row `Im = √3/2`**, the height at which the two vertical
+edges of `𝒟` meet the unit circle.
+
+Not `@[simp]`, tested: Mathlib's `UpperHalfPlane.coe_im` is already `@[simp]` and rewrites the
+left-hand side `(↑ρ).im` to `ρ.im` — the `ℍ`-valued imaginary part — so this statement is not in
+simp-normal form and `simpNF` rejects the attribute. The lemma is a `rw` target for goals that
+arrive in the complex form, which is how `Complex.sub_im` and friends leave them. -/
+theorem rho_im : (UpperHalfPlane.ρ : ℂ).im = Real.sqrt 3 / 2 := by
+  norm_num [UpperHalfPlane.ρ]
 
 /-- Segment 1: the right vertical from `1/2 + H·i` through `ρ + 1`, over `t ∈ [0, 1]`. -/
 def fdBoundarySegment1 (H : ℝ) : ℝ → ℂ := fun t ↦

@@ -57,7 +57,10 @@ namespace ModularForm
 variable {H δ t : ℝ}
 
 /-- **The corner `ρ + 1` sits on the same row `Im = √3/2` as `ρ`**: the shift is by a real
-number, which does not move the imaginary part. -/
+number, which does not move the imaginary part.
+
+Not `@[simp]`, for the same reason as `rho_im`: simp reaches `ρ.im` through
+`Complex.add_im`, `UpperHalfPlane.coe_im` and `Complex.one_im` before this could fire. -/
 theorem rho_add_one_im : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
   rw [Complex.add_im, rho_im, Complex.one_im, add_zero]
 

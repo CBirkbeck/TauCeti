@@ -21,7 +21,6 @@ interior angle `π/3`, which is exactly the gap between the two one-sided argume
 
 ## Main declarations
 
-* `TauCeti.ModularForm.rho_im` (the corner sits on the row `Im = √3/2`).
 * `TauCeti.ModularForm.norm_fdBoundary_sub_rho_arc` (the chord distance).
 * `TauCeti.ModularForm.fdBoundary_sub_rho_of_mem_Icc_three_four` (the linear form).
 * `TauCeti.ModularForm.log_fdBoundary_three_sub_sub_rho`,
@@ -43,11 +42,6 @@ namespace TauCeti
 namespace ModularForm
 
 variable {H δ t : ℝ}
-
-/-- **The corner `ρ` sits on the row `Im = √3/2`**, the height at which the two vertical
-edges of `𝒟` meet the unit circle. -/
-theorem rho_im : (UpperHalfPlane.ρ : ℂ).im = Real.sqrt 3 / 2 := by
-  norm_num [UpperHalfPlane.ρ]
 
 /-- The corner `ρ` is the unit-circle point of angle `2π/3`. -/
 private lemma rho_eq_exp :
