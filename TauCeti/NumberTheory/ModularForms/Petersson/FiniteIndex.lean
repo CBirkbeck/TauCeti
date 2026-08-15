@@ -137,15 +137,10 @@ theorem _root_.Subgroup.mem_withCenter_iff_exists_eq_or_eq_neg {γ : SL(2, ℤ)}
   · obtain ⟨a, ha, b, hb, rfl⟩ := Subgroup.mem_withCenter_iff.mp hγ
     obtain ⟨r, hr, hscal⟩ := Matrix.SpecialLinearGroup.mem_center_iff.mp hb
     have hb1 : b = 1 ∨ b = -1 := by
-      have : r = 1 ∨ r = -1 :=
+      have hr1 : r = 1 ∨ r = -1 :=
         Int.isUnit_iff.mp (IsUnit.of_mul_eq_one r (by simpa [pow_two] using hr))
-      rcases this with rfl | rfl
-      · exact Or.inl (Subtype.ext (by simpa using hscal.symm))
-      · exact Or.inr (Subtype.ext (by simpa using hscal.symm))
-    refine ⟨a, ha, ?_⟩
-    rcases hb1 with rfl | rfl
-    · exact Or.inl (by simp)
-    · exact Or.inr (by simp)
+      rcases hr1 with rfl | rfl <;> [left; right] <;> exact Subtype.ext (by simpa using hscal.symm)
+    exact ⟨a, ha, by rcases hb1 with rfl | rfl <;> simp⟩
   · rintro ⟨γ', hγ', rfl | rfl⟩
     · exact Γ.le_withCenter hγ'
     · have hcenter : (-1 : SL(2, ℤ)) ∈ Subgroup.center SL(2, ℤ) :=

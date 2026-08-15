@@ -56,7 +56,8 @@ lemma center_le_withCenter {G : Type*} [Group G] (Γ : Subgroup G) :
   le_sup_right
 
 /-- **Characteristic membership for `withCenter`**: an element of `Γ·Z(G)` is one of `Γ` times a
-central one. The centre is normal, so the supremum is the pointwise product.
+central one. The centre is normal, so this is exactly `Subgroup.mem_sup_of_normal_right`; the
+product is oriented `γ * c = g` to match that lemma and the rest of mathlib's `mem_sup` family.
 
 Not `@[simp]`, tested: its left-hand side `g ∈ Γ.withCenter` is the same shape as that of the
 `SL(2, ℤ)`-specific `Subgroup.mem_withCenter_iff_exists_eq_or_eq_neg`, which *is* `@[simp]` and
@@ -64,10 +65,8 @@ resolves the centre to `{±1}`. Tagging this one too takes that lemma's left-han
 simp-normal form — `simpNF` rejects it — and would pre-empt the sharper rewrite everywhere the
 group is `SL(2, ℤ)`. -/
 theorem mem_withCenter_iff {G : Type*} [Group G] {Γ : Subgroup G} {g : G} :
-    g ∈ Γ.withCenter ↔ ∃ γ ∈ Γ, ∃ c ∈ Subgroup.center G, g = γ * c := by
-  rw [withCenter_def, Subgroup.mem_sup_of_normal_right]
-  exact ⟨fun ⟨γ, hγ, c, hc, h⟩ ↦ ⟨γ, hγ, c, hc, h.symm⟩,
-    fun ⟨γ, hγ, c, hc, h⟩ ↦ ⟨γ, hγ, c, hc, h.symm⟩⟩
+    g ∈ Γ.withCenter ↔ ∃ γ ∈ Γ, ∃ c ∈ Subgroup.center G, γ * c = g :=
+  Subgroup.mem_sup_of_normal_right
 
 /-- **Adjoining the centre changes nothing exactly when the centre is already inside `Γ`** —
 the other half of the dichotomy `Subgroup.withCenter` describes. -/
