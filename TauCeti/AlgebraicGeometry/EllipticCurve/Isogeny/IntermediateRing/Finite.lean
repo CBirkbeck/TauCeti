@@ -40,6 +40,10 @@ produces the `W₂.CoordinateRing`-structure on the intermediate ring from the b
 `φ.pullbackToIntermediateRing` — `letI := φ.pullbackToIntermediateRing.toAlgebra` — which is why
 `IntermediateRing/Basic.lean` corestricts the pullback rather than registering an instance.
 
+That `letI` supplies the `Algebra` but not the `IsScalarTower` this theorem also takes, so it is
+not by itself the whole setup. `Isogeny.isScalarTower_intermediateRing` supplies the tower from the
+same corestriction, and the two together are what a caller needs.
+
 ## Provenance
 
 The statement and the proof route — `IsIntegralClosure.finite` against a normal base — are those of

@@ -28,6 +28,8 @@ because `mapsInfinity` is precisely the assertion that it lands there.
 * `TauCeti.Isogeny.pullback_mem_intermediateRing`: so does the target coordinate ring.
 * `TauCeti.Isogeny.isIntegralClosure_intermediateRing`: it really is the integral closure, in
   Mathlib's `IsIntegralClosure` sense.
+* `TauCeti.Isogeny.isScalarTower_intermediateRing`: the corestricted pullback puts it in a scalar
+  tower under `W₂.CoordinateRing`, which is the other half of a consumer's setup.
 * `TauCeti.Isogeny.id_intermediateRing`: an identity isogeny's intermediate ring is the
   coordinate ring itself, sitting inside its own fraction field.
 
@@ -152,6 +154,24 @@ noncomputable def pullbackToIntermediateRing (φ : Isogeny W₁ W₂) :
 @[simp]
 theorem coe_pullbackToIntermediateRing (φ : Isogeny W₁ W₂) (x : W₂.CoordinateRing) :
     (φ.pullbackToIntermediateRing x : W₁.FunctionField) = φ.pullback x := (rfl)
+
+/-- **The corestricted pullback puts the intermediate ring in a scalar tower.** With
+`letI := φ.pullbackToIntermediateRing.toAlgebra`, the target coordinate ring acts on
+`W₁.FunctionField` through the intermediate ring exactly as it does directly.
+
+This is the second half of the one-line setup a consumer needs: `pullbackToIntermediateRing`
+supplies the `Algebra`, and this supplies the `IsScalarTower` that every downstream statement over
+the intermediate ring also asks for. -/
+theorem isScalarTower_intermediateRing (φ : Isogeny W₁ W₂)
+    [Algebra W₂.CoordinateRing W₁.FunctionField]
+    [inst : Algebra W₂.CoordinateRing φ.intermediateRing]
+    (halg : inst = φ.pullbackToIntermediateRing.toAlgebra)
+    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
+    IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField := by
+  subst halg
+  -- `subst` leaves the structure as a bare term, so re-register it for synthesis
+  let _ := φ.pullbackToIntermediateRing.toAlgebra
+  exact IsScalarTower.of_algebraMap_eq fun x ↦ by rw [h]; rfl
 
 /-- **The intermediate ring really is the integral closure**, in Mathlib's `IsIntegralClosure`
 sense: an element of `W₁.FunctionField` lies in it exactly when it is integral over
