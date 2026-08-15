@@ -44,16 +44,17 @@ the hypothesis-carrying form and exists only to be specialised.
 
 Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at `dev/modular-curves @ 9fec8eba7652` — the revision
-`TauCetiRoadmap/EllipticCurves/README.md` pins for the NagellLutz project. Declarations
-`invarNum_normEDS_two`, `invarDenom_normEDS_two`,
-`invarNum_normEDS_one_mul_c_eq_invarDenom_mul_of_mem_nonZeroDivisors` and
-`invarNum_normEDS_one_mul_c_eq_invarDenom_mul`. That file's header reads `Authors: David Kurniadi
-Angdinata`; following this
-repository's convention for adapted material the upstream authorship is credited here rather than
-in the copyright header.
+`TauCetiRoadmap/EllipticCurves/README.md` pins for the NagellLutz project. Source declarations
+`invarNum_normEDS_two` (`:977`), `invarDenom_normEDS_two` (`:980`),
+`invar₂_normEDS_of_mem_nonZeroDivisors` (`:1485`) and `invar₂_normEDS` (`:1492`). That file's
+header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
+adapted material the upstream authorship is credited here rather than in the copyright header.
 
-The source's `invar_normEDS` step is this repository's `invarNum_mul_invarDenom` applied to
-`isEllipticNet_normEDS`, so no separate declaration is needed for it.
+Two of those are renamed here. The source's `invar₂_normEDS` advertises an index `2` that its
+statement never mentions — the `2` enters only through the proof — so it is
+`invarNum_normEDS_one_mul_c_eq_invarDenom_mul` below, describing the conclusion, and its
+hypothesis-carrying helper is `…mulAux`. The source's `invar_normEDS` step needs no declaration at
+all: it is this repository's `invarNum_mul_invarDenom` applied to `isEllipticNet_normEDS`.
 -/
 
 public section
