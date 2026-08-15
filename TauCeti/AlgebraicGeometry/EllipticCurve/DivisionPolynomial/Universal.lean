@@ -47,11 +47,16 @@ Adapted from `LutzNagell/ZSMul.lean` in AINTLIB (`github.com/CBirkbeck/AINTLIB`,
 at `dev/modular-curves @ 9fec8eba7652` — the revision `TauCetiRoadmap/EllipticCurves/README.md`
 pins for the NagellLutz project. Declarations `Universal.evalEval_ψ₂`, `evalEval_Ψ₃`,
 `evalEval_preΨ₄`, `evalEval_ψ` and `evalEval_φ`; the sixth, `evalEval_ω`, is excluded for the
-reason above. That file's header reads `Authors: David Kurniadi Angdinata, Junyan Xu`.
+reason above. `isEllipticSequence_polyToField_ψ` adapts that same file's `isEllSequence_ψᵤ`.
+That file's header reads `Authors: David Kurniadi Angdinata, Junyan Xu`; following this
+repository's convention for adapted material the upstream authorship is credited here rather than
+in the copyright header.
 
-The statements are the source's unchanged. Docstrings are added here, and the source's shared
-`variable {m n : ℤ}` is narrowed to `n`: of the five results only `evalEval_ψ` and `evalEval_φ`
-carry an index, and both use `n` alone.
+The `evalEval_*` statements are the source's unchanged. Docstrings are added here, and the
+source's shared `variable {m n : ℤ}` is narrowed to `n`: of those five only `evalEval_ψ` and
+`evalEval_φ` carry an index, and both use `n` alone. `isEllSequence_ψᵤ` is stated upstream through
+an `abbrev ψᵤ` and its own `ψᵤ_eq_normEDS`; here the abbreviation is dropped and that equation is
+inlined as a `have`, so the statement is spelled on `fun n ↦ polyToField (curve.ψ n)` directly.
 -/
 
 public section
