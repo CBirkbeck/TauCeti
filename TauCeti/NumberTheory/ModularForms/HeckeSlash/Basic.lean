@@ -24,12 +24,21 @@ answer: replacing `σᵢ` by `hσᵢ` for `h ∈ Γ₁` multiplies the represent
 slash by `hᵀ` is trivial on that function. Even the identity double coset can therefore send a
 raw `f` to `f ∣[k] h` rather than to `f`.
 
-What repairs it is slash-invariance of `f`, and that is the proof of Shimura's Proposition
-3.37: right multiplication permutes the representatives, so the sum is again invariant once `f`
-is invariant under the group they are right cosets of. ⚠ **That group is `Γ₂ᵀ`, not `Γ₁`** —
-see "Which group the representatives are cosets of" below; the two coincide exactly when
-`Γ₂ᵀ = Γ₁`, which the level-one pair satisfies. That theorem, and the descent of this sum
-to a genuine operator on
+What repairs it is slash-invariance of `f`, and that is the content of Shimura's Proposition
+3.37. ⚠ **Two different groups are involved, and they are easy to conflate.**
+
+* **Choice-independence of the sum** needs `f` invariant under `Γ₂ᵀ`. Replacing `σᵢ` by another
+  representative of its class multiplies `(σᵢ δ)ᵀ` on the *left* by an element of `Γ₂ᵀ`, and
+  `f ∣[k] (hX) = (f ∣[k] h) ∣[k] X`, so the summand is unchanged exactly when `f ∣[k] h = f`
+  there. This is what makes the sum well defined at all.
+* **Invariance of the output** is a `Γ₁ᵀ` statement. Right multiplication by `γ ∈ Γ₁ᵀ` sends
+  `δᵀ σᵢᵀ` to `δᵀ (σᵢᵀ γ)` and so permutes the representatives, leaving the sum fixed.
+
+So in general the sum maps `Γ₂ᵀ`-invariant functions to `Γ₁ᵀ`-invariant ones: a map *between*
+invariance classes, **not** an endomorphism of one. It becomes an endomorphism only when those
+groups agree — see "Which group the representatives are cosets of" below, which is also where
+the level-one pair's two coincidences are recorded. Proposition 3.37 itself, and the descent of
+this sum to a genuine operator on
 `SlashInvariantForm` and `ModularForm`, are deliberately **not** in this file — the reindexing
 argument is substantial and is a different claim. Until then this is an auxiliary sum, named to
 say so, and every consumer must supply the invariance hypothesis itself.
@@ -90,8 +99,10 @@ asked of `Δ` at all beyond containing the chosen `δ`.
 
 * `transposeRep` and its characteristic equation need only the group law.
 * The **sum** and its additivity and vanishing on `0` need only that the index type is finite,
-  so they take `[Fintype (DecompQuotient Γ₁ Γ₂ δ)]` directly. A Hecke triple supplies that
-  instance (`HeckeRing/Basic.lean`) and is strictly stronger — it also demands commensurability
+  so they take `[Finite (DecompQuotient Γ₁ Γ₂ δ)]` directly — the proposition, not the
+  data-bearing `Fintype`, since no chosen enumeration is used; the `Fintype` that `∑` needs is
+  installed once as a local instance. A Hecke triple supplies that finiteness
+  (`HeckeRing/Basic.lean`) and is strictly stronger — it also demands commensurability
   and that `Δ` commensurate `Γ₂`, none of which the sum uses.
 * Positivity of the determinant enters exactly once, in **homogeneity**: on the positive branch
   the slash action's conjugation `σ` is trivial and scalars commute past it
@@ -192,10 +203,21 @@ lemma det_transposeRep_pos (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
   ((mem_posDetInt_iff 2).mp (transposeRep_mem_posDetInt D hΓ₁ hD i)).2
 
 -- From here on the sum needs its index type to be finite, and that is *all* it needs: a Hecke
--- triple supplies this `Fintype` (`HeckeRing/Basic.lean`) but is strictly stronger, so the
--- instance is stated directly. It is introduced here rather than `omit`ted from the four
--- declarations above, which do without it.
-variable [Fintype (DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ))]
+-- triple supplies this finiteness (`HeckeRing/Basic.lean`) but is strictly stronger, so it is
+-- assumed directly. It is introduced here rather than `omit`ted from the four declarations
+-- above, which do without it.
+--
+-- The assumption is the *proposition* `Finite`, not the data-bearing `Fintype`: the sum needs no
+-- chosen enumeration, only that one exists. The `Fintype` the `∑` notation requires is then
+-- installed once, as a local instance, so every statement below is written against a single
+-- instance and none has to carry a `letI`. Everything here is already `noncomputable`.
+variable [Finite (DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ))]
+
+/-- The enumeration `∑` needs, obtained from the `Finite` assumption by choice. It is `local`
+and `noncomputable`: the sum below does not depend on which enumeration is chosen, so no
+declaration in this file should carry one as data. -/
+noncomputable local instance : Fintype (DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)) :=
+  Fintype.ofFinite _
 
 /-- **The slash sum over a chosen decomposition of a double coset**:
 `∑ᵢ f ∣[k] (σᵢ δ)ᵀ`, over the transposed representatives of the left-coset decomposition of
@@ -210,11 +232,16 @@ leaves `δᵀ` where `δ` should be. Both hold at the level-one pair, where tran
 See "Which group the representatives are cosets of" in the module docstring.
 
 ⚠ This depends on the chosen representatives `D.out` and `i.out`, and on a general
-`f : ℍ → ℂ` the value changes with them — see the module docstring. Slash-invariance of `f` is
-*sufficient* to make it independent of the choices, and so an action; that is a separate
-theorem. Whether it is also necessary is not claimed here — a particular `f` and `D` could be
-independent by cancellation. Do not read this definition as "the Hecke operator" until the
-sufficiency theorem is available. -/
+`f : ℍ → ℂ` the value changes with them — see the module docstring. Invariance of `f` under
+`Γ₂ᵀ` is *sufficient* to make it independent of those choices; whether it is also necessary is
+not claimed here, since a particular `f` and `D` could be independent by cancellation. That
+sufficiency is a separate theorem and is not proved in this file.
+
+⚠ Choice-independence is **not** the same as being an action, and this docstring does not claim
+the latter. What right multiplication gives is invariance of the *output* under `Γ₁ᵀ`, a
+different group from the `Γ₂ᵀ` the input must be invariant under. Do not read this definition as
+"the Hecke operator" until both the sufficiency theorem and the agreement of those two groups
+are available. -/
 noncomputable def heckeSlashSum (f : ℍ → ℂ) : ℍ → ℂ :=
   ∑ i : DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ), f ∣[k] transposeRep D i
 
