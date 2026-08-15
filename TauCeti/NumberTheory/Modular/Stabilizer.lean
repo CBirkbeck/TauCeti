@@ -28,6 +28,8 @@ literally the `q` with `q ≠ ⟦i⟧` and `q ≠ ⟦ρ⟧`.
 
 ## Main declarations
 
+* `TauCeti.ModularGroup.card_stabilizer_smul`: the order is invariant along the action, so it
+  is an invariant of the orbit rather than of the point.
 * `TauCeti.ModularGroup.finite_stabilizer`: every point stabiliser is finite, so the elliptic
   order is defined at every point of `ℍ`.
 * `TauCeti.ModularGroup.card_stabilizer_I` and `TauCeti.ModularGroup.card_stabilizer_ρ`: the
@@ -35,7 +37,8 @@ literally the `q` with `q ≠ ⟦i⟧` and `q ≠ ⟦ρ⟧`.
 * `TauCeti.ModularGroup.card_stabilizer_of_orbit_eq_I` and
   `TauCeti.ModularGroup.card_stabilizer_of_orbit_eq_ρ`: the same orders everywhere on those two
   orbits.
-* `TauCeti.ModularGroup.card_stabilizer_eq_two_of_orbit_ne`: order `2` on every other orbit.
+* `TauCeti.ModularGroup.card_stabilizer_eq_two_of_orbit_ne_I_of_orbit_ne_ρ`: order `2` on every
+  other orbit.
 
 ## References
 
@@ -64,7 +67,13 @@ private theorem finite_stabilizer_of_smul (g : SL(2, ℤ))
   Finite.of_equiv _ (stabilizerEquivStabilizerOfOrbitRel
     (⟨g, rfl⟩ : MulAction.orbitRel SL(2, ℤ) ℍ (g • z) z)).toEquiv
 
-private theorem card_stabilizer_smul (g : SL(2, ℤ)) (z : ℍ) :
+/-- **The stabiliser order is invariant along the action**, the stabilisers of `g • z` and of
+`z` being conjugate. This is the transport rule behind every count below: it is what lets the
+valence formula attach the weight `1 / e_P` to an orbit rather than to a chosen point of it.
+
+Not `@[simp]`: the left-hand side is not in simp-normal form, since `ModularGroup.sl_moeb`
+rewrites the `SL(2, ℤ)`-action inside it, and `simpNF` rejects the attribute for that reason. -/
+theorem card_stabilizer_smul (g : SL(2, ℤ)) (z : ℍ) :
     Nat.card (stabilizer SL(2, ℤ) (g • z)) = Nat.card (stabilizer SL(2, ℤ) z) :=
   Nat.card_congr (stabilizerEquivStabilizerOfOrbitRel
     (⟨g, rfl⟩ : MulAction.orbitRel SL(2, ℤ) ℍ (g • z) z)).toEquiv
@@ -125,7 +134,7 @@ theorem card_stabilizer_of_orbit_eq_ρ
 /-- **Away from the two elliptic orbits the stabiliser is just the centre**, of order `2`, so
 `e_P = 1` in `PSL(2, ℤ)`. No fundamental-domain membership is asked of `z`: the exclusions are
 read on its orbit, which is what the valence formula's non-elliptic index type carries. -/
-theorem card_stabilizer_eq_two_of_orbit_ne (z : ℍ)
+theorem card_stabilizer_eq_two_of_orbit_ne_I_of_orbit_ne_ρ (z : ℍ)
     (hI : (Quotient.mk'' z : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) ≠ Quotient.mk'' I)
     (hρ : (Quotient.mk'' z : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) ≠ Quotient.mk'' ρ) :
     Nat.card (stabilizer SL(2, ℤ) z) = 2 := by
