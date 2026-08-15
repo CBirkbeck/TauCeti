@@ -38,13 +38,14 @@ Mathlib's `GL(2, ℝ)`-invariance).
 * `UpperHalfPlane.glPosToPSL2R_smul` — the det-normalized projective representative of a
   `GL(2, ℝ)⁺` element (multiplicative by `Real.sqrt_mul` together with the centrality of
   positive scalars) acts on `ℍ` exactly as the original element.
-* `UpperHalfPlane.stabilizer_eq_comap_stabilizer_psl`, `UpperHalfPlane.center_le_stabilizer`
-  and `UpperHalfPlane.card_center_specialLinearGroup_two_int` — the point stabilisers before
-  and after the central quotient: the `SL(2, ℤ)`-stabiliser is the preimage of the
-  `PSL(2, ℤ)`-one, the centre sits inside it, and the centre has order `2`.
+* `UpperHalfPlane.stabilizer_eq_comap_stabilizer_psl` and `UpperHalfPlane.center_le_stabilizer`
+  — the point stabilisers before and after the central quotient: the `SL(2, R)`-stabiliser is
+  the preimage of the `PSL(2, R)`-one, and the centre sits inside it.
 
-Ported from the AINTLIB `LeanModularForms` project
-(`LeanModularForms/Modularforms/PSL2Action.lean`); the AINTLIB Jacobian computation of
+The `PSL` actions, their faithfulness and the invariant-measure instances are ported from the
+AINTLIB `LeanModularForms` project (`LeanModularForms/Modularforms/PSL2Action.lean`); the two
+point-stabiliser results above are **original to this module** and have no AINTLIB counterpart.
+Of the ported material, the AINTLIB Jacobian computation of
 `SL(2, ℤ)`-invariance of the hyperbolic measure is **not** ported — Mathlib's
 `SMulInvariantMeasure (GL (Fin 2) ℝ) ℍ volume` subsumes it, and all invariance instances
 here descend from it.
@@ -216,52 +217,21 @@ theorem glPosToPSL2R_smul (g : GL(2, ℝ)⁺) (τ : ℍ) :
 
 /-! ### Point stabilisers, before and after the central quotient -/
 
-/-- **The `SL(2, ℤ)`-stabiliser of a point is the preimage of its `PSL(2, ℤ)`-stabiliser**
-under the central quotient. Both groups see the same stabiliser, read once with `±1` and once
-without. -/
+/-- **The `SL(2, R)`-stabiliser of a point is the preimage of its `PSL(2, R)`-stabiliser**
+under the central quotient. Both groups see the same stabiliser, read once with the centre and
+once without. -/
 theorem stabilizer_eq_comap_stabilizer_psl (z : ℍ) :
-    MulAction.stabilizer SL(2, ℤ) z =
-      (MulAction.stabilizer PSL(2, ℤ) z).comap
-        (QuotientGroup.mk' (Subgroup.center SL(2, ℤ))) := by
+    MulAction.stabilizer SL(2, R) z =
+      (MulAction.stabilizer PSL(2, R) z).comap
+        (QuotientGroup.mk' (Subgroup.center SL(2, R))) := by
   ext g
   simp [MulAction.mem_stabilizer_iff]
 
-/-- The centre lies in every point stabiliser, `±1` acting trivially on `ℍ`. Together with
-`stabilizer_eq_comap_stabilizer_psl` this exhibits the `PSL(2, ℤ)`-stabiliser as the
-`SL(2, ℤ)`-stabiliser modulo the centre. -/
+/-- The centre lies in every point stabiliser, its elements acting trivially on `ℍ`. Together
+with `stabilizer_eq_comap_stabilizer_psl` this exhibits the `PSL(2, R)`-stabiliser as the
+`SL(2, R)`-stabiliser modulo the centre. -/
 theorem center_le_stabilizer (z : ℍ) :
-    Subgroup.center SL(2, ℤ) ≤ MulAction.stabilizer SL(2, ℤ) z :=
+    Subgroup.center SL(2, R) ≤ MulAction.stabilizer SL(2, R) z :=
   fun c hc ↦ smul_eq_self_of_mem_center c hc z
-
-/-- **The centre of `SL(2, ℤ)` is `{±1}`, of order `2`.** This is the factor separating the
-`SL(2, ℤ)`-stabiliser orders from the `PSL(2, ℤ)` elliptic orders `e_P` that weight the valence
-formula: `e_i = 4 / 2 = 2` and `e_ρ = 6 / 2 = 3`.
-
-Proved from `Matrix.SpecialLinearGroup.mem_center_iff` directly rather than through
-`Matrix.SpecialLinearGroup.centerEquivRootsOfUnity`, whose statement would still leave
-`Nat.card (rootsOfUnity 2 ℤ)` to compute. -/
-theorem card_center_specialLinearGroup_two_int :
-    Nat.card (Subgroup.center SL(2, ℤ)) = 2 := by
-  have h : (Subgroup.center SL(2, ℤ) : Set SL(2, ℤ)) =
-      (({1, -1} : Finset SL(2, ℤ)) : Set SL(2, ℤ)) := by
-    ext g
-    simp only [SetLike.mem_coe, Matrix.SpecialLinearGroup.mem_center_iff, Finset.coe_insert,
-      Finset.coe_singleton, Set.mem_insert_iff, Set.mem_singleton_iff]
-    constructor
-    · rintro ⟨r, hr, hrc⟩
-      -- a scalar matrix of determinant one over `ℤ` has scalar `±1`
-      have hr2 : r * r = 1 := by
-        have : r ^ 2 = 1 := by simpa using hr
-        rwa [sq] at this
-      rcases mul_self_eq_one_iff.mp hr2 with rfl | rfl
-      · left; ext i j; simpa using congrFun (congrFun hrc.symm i) j
-      · right; ext i j; simpa using congrFun (congrFun hrc.symm i) j
-    · rintro (rfl | rfl)
-      · exact ⟨1, by simp, by simp [Matrix.scalar]⟩
-      · exact ⟨-1, by simp, by ext i j; simp [Matrix.scalar]⟩
-  rw [← SetLike.coe_sort_coe, h, Nat.card_coe_set_eq, Set.ncard_eq_toFinset_card']
-  simp only [Finset.coe_insert, Finset.coe_singleton, Set.toFinset_insert,
-    Set.toFinset_singleton]
-  decide
 
 end UpperHalfPlane
