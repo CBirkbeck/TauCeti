@@ -24,10 +24,11 @@ apply exactly where a caller already has `IsEllipticSequence W` in hand.
 
 * `IsEllipticSequence.zero`: `W 0 = 0`, given that some even term is a nonzerodivisor.
 * `IsEllipticSequence.neg`: `W (-m) = -W m`, given that `W 1` and `W 2` are nonzerodivisors.
-* `IsEllipticSequence.odd`: the same, packaged as Mathlib's `Function.Odd`.
 
-Nothing else is exported. The symmetrisation the oddness proof turns on is a local `have` inside
-it rather than a theorem: it is a step of that argument, not a fact a caller wants.
+Nothing else is exported. `W.Odd` unfolds to `neg`'s statement, so consumers taking Mathlib's
+spelling — `SignEquivariance.lean` and `Descent.lean` — apply `neg` itself rather than a second
+declaration. The symmetrisation the oddness proof turns on is likewise a local `have`: a step of
+that argument, not a fact a caller wants.
 
 ## Implementation notes
 
@@ -72,10 +73,7 @@ namespace IsEllipticSequence
 
 variable {R : Type*} [CommRing R] {W : ℤ → R}
 
-/-- **An elliptic sequence vanishes at `0`**, given that some even term is a nonzerodivisor.
-
-At `(m, m, 2 * m)` the relator's two outer terms are equal and cancel, leaving
-`W 0 * W (2 * m) ^ 3`. -/
+/-- **An elliptic sequence vanishes at `0`**, given that some even term is a nonzerodivisor. -/
 protected theorem zero (h : IsEllipticSequence W) (m : ℤ) (mem : W (2 * m) ∈ R⁰) : W 0 = 0 := by
   have key : W 0 * W (2 * m) ^ 3 = 0 := by
     have := h m m (2 * m)
@@ -86,8 +84,7 @@ protected theorem zero (h : IsEllipticSequence W) (m : ℤ) (mem : W (2 * m) ∈
 
 /-- **An elliptic sequence is an odd function**, given that `W 1` and `W 2` are nonzerodivisors.
 
-Both terms are needed because the two parities divide by different quantities: the even case by
-`W 2 * W 1 ^ 2`, the odd case by `W 1 ^ 3`. -/
+`W.Odd` is this statement, so a caller wanting Mathlib's spelling applies this directly. -/
 protected theorem neg (h : IsEllipticSequence W) (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰) (m : ℤ) :
     W (-m) = -W m := by
   -- Adding the relator to itself with the first two indices exchanged cancels its outer terms
@@ -108,10 +105,5 @@ protected theorem neg (h : IsEllipticSequence W) (one : W 1 ∈ R⁰) (two : W 2
   · have := key (-k) (k + 1) 1
     ring_nf at this ⊢
     exact (mul_mem one (pow_mem one 2)).2 _ (by linear_combination this)
-
-/-- **An elliptic sequence is odd**, in Mathlib's `Function.Odd` spelling — the form
-`SignEquivariance.lean` and `Descent.lean` take as a hypothesis. -/
-protected theorem odd (h : IsEllipticSequence W) (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰) : W.Odd :=
-  fun m ↦ h.neg one two m
 
 end IsEllipticSequence
