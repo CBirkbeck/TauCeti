@@ -51,11 +51,13 @@ one, which is all its proof uses; the elliptic case is that hypothesis discharge
 `WeierstrassCurve.Affine.isIntegrallyClosed_coordinateRing`, and is not given a separate name
 because nothing would consume it.
 
-The structural theory of this ring — module-finiteness over `W₂.CoordinateRing`, and its being a
-Dedekind domain — is deliberately not proved here. Every route to it in Mathlib
-(`IsIntegralClosure.finite`, `integralClosure.isDedekindDomain`) carries an
-`Algebra.IsSeparable` hypothesis, so the inseparable case that this roadmap wants is separate
-work rather than a corollary of the definition.
+The structural theory of this ring is not proved here. Module-finiteness over `W₂.CoordinateRing`
+is in the sibling `IntermediateRing/Finite.lean` as `moduleFinite_intermediateRing`, for a
+separable function-field extension; Dedekindness is still absent. Every route to either in Mathlib
+(`IsIntegralClosure.finite`, `integralClosure.isDedekindDomain`) carries an `Algebra.IsSeparable`
+hypothesis, so the inseparable case — which is expected to be true, by Noether's finiteness
+theorem for the module-finiteness half — remains separate work rather than a corollary of the
+definition.
 
 This opens the "points come along" milestone of Layer 1 of
 `TauCetiRoadmap/EllipticCurves/README.md`, which names this object as "the **intermediate ring**
@@ -74,11 +76,12 @@ in `projects/HasseWeil/HasseWeil/Curves/RamificationFinite.lean`.
 
 What is adapted here is the object and the observation that the integral closure over the
 *coordinate* ring — rather than over a localization — is the right home for the norm and
-class-group route to the induced map on points. The structural instances are deliberately **not**
-ported: the source proves them for a fixed extension carrying `[Algebra.IsSeparable K L]`, with
-the algebra structures supplied as instance arguments, whereas this file takes the pullback-induced
-structure locally and assumes no separability. None of the declarations below is a transcription
-of a source declaration.
+class-group route to the induced map on points. Of the structural instances, only
+module-finiteness is ported, and in the sibling `IntermediateRing/Finite.lean` rather than here,
+under the source's own `[Algebra.IsSeparable K L]`; the rest are not. The source proves them for
+a fixed extension with the algebra structures supplied as instance arguments, whereas this file
+takes the pullback-induced structure locally and assumes no separability. None of the declarations
+below is a transcription of a source declaration.
 
 ## References
 
@@ -152,7 +155,7 @@ theorem coe_pullbackToIntermediateRing (φ : Isogeny W₁ W₂) (x : W₂.Coordi
 
 /-- **The intermediate ring really is the integral closure**, in Mathlib's `IsIntegralClosure`
 sense: an element of `W₁.FunctionField` lies in it exactly when it is integral over
-`W₂.CoordinateRing`, and the inclusion into the function field is injective.
+`W₂.CoordinateRing`.
 
 Stated for an arbitrary `W₂.CoordinateRing`-algebra structure on `W₁.FunctionField` whose
 structure map is the pullback, so that a caller's own structure is accepted rather than only the
@@ -166,11 +169,7 @@ theorem isIntegralClosure_intermediateRing (φ : Isogeny W₁ W₂)
   have halg : inst = φ.pullback.toRingHom.toAlgebra := Algebra.algebra_ext _ _ h
   subst halg
   let _ := φ.pullback.toRingHom.toAlgebra
-  exact
-    { algebraMap_injective := Subtype.val_injective
-      isIntegral_iff := fun {x} ↦
-        ⟨fun hx ↦ ⟨⟨x, (φ.mem_intermediateRing_iff x).2 hx⟩, rfl⟩,
-         fun ⟨y, hy⟩ ↦ hy ▸ (φ.mem_intermediateRing_iff _).1 y.2⟩ }
+  exact integralClosure.isIntegralClosure W₂.CoordinateRing W₁.FunctionField
 
 /-- **The identity isogeny's intermediate ring is the coordinate ring itself**, embedded in its
 own fraction field: nothing in the function field beyond an integrally closed coordinate ring is
