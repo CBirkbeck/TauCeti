@@ -509,7 +509,7 @@ theorem hasCauchyPVAt_fdBoundary_vertical (hre : w.re = 2⁻¹ ∨ w.re = -(2⁻
     rcases hre with h | h
     · exact truncated_integral_spec_right h him_lo himH hε.1 h1 ha hc hv
     · exact truncated_integral_spec_left h him_lo himH hε.1 h1 ha hc hv
-  exact Contour.hasCauchyPVAt_of_tendsto tendsto_const_nhds (eventually_of_mem hIoo hspec)
+  exact Contour.HasCauchyPVAt.of_tendsto tendsto_const_nhds (eventually_of_mem hIoo hspec)
 
 /-- **The winding number of the boundary contour at a vertical-edge point is `-1/2`**: the
 point sits on an open vertical edge, and the principal-value normalization sees exactly half

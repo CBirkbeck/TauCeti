@@ -48,6 +48,8 @@ versus `MeromorphicOn` (on a set).
 * `hasCauchyPVAt_iff` — restates the predicate as its two defining clauses, so consumers can
   characterize `HasCauchyPVAt` without unfolding its hidden body; the value `cauchyPVAt` is read off
   a witness through `HasCauchyPVAt.cauchyPVAt_eq`.
+* `HasCauchyPVAt.of_tendsto` — the shared `ε → 0` closing step: from a closed form `F` that the
+  excised integral eventually equals, and its limit `L`, concludes `HasCauchyPVAt` at `L`.
 * `intervalIntegrable_truncated_and_integral_truncated_eq_zero_of_norm_le` — where the curve
   stays within `ε` of the centre, the truncated integrand is integrable and integrates to `0`.
 * `HasCauchyPVAt.intro` — build the predicate from its two clauses; `HasCauchyPVAt.tendsto`,
@@ -133,7 +135,7 @@ packages that step, so a caller supplies only the closed form `F` and its limit.
 The excised integral is asked to equal `F ε` rather than a specific shape such as `L - c ε`,
 because the closed forms met in practice differ: constant in `ε` along a straight edge, and
 `L` minus an `arcsin` correction at a corner or along an arc. -/
-theorem hasCauchyPVAt_of_tendsto {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ L : ℂ} {F : ℝ → ℂ}
+theorem HasCauchyPVAt.of_tendsto {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ L : ℂ} {F : ℝ → ℂ}
     (hF : Tendsto F (𝓝[>] (0 : ℝ)) (𝓝 L))
     (h : ∀ᶠ ε in 𝓝[>] (0 : ℝ), IntervalIntegrable
         (fun t ↦ if ‖γ t - z₀‖ > ε then f (γ t) * deriv γ t else 0) MeasureTheory.volume a b ∧
