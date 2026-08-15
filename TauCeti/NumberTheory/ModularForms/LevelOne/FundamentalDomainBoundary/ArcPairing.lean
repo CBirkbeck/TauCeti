@@ -302,13 +302,11 @@ private lemma excised_weight_fdBoundary_arc_four_sub {H : ℝ} {S : Finset ℂ} 
   · rw [ite_eq_right hc, ite_eq_right fun h => hc (hsymm.mp h), logDeriv_fdBoundary_arc ht,
       logDeriv_fdBoundary_arc h4t]
 
-/-- The excised arc integrand is interval-integrable on the whole of `[1, 3]` as soon as it is
-on the first half `[1, 2]`. The pairing rewrites the reflected integrand as the weight minus
-the direct one — so integrability on the second half is derived rather than assumed — and the
-weight is bounded, hence integrable. -/
+/-- The excised arc integrand is interval-integrable on the whole of `[1, 3]` as soon as it is on
+the first half `[1, 2]`: integrability on the second half is not assumed, it is a consequence of
+the arc pairing. -/
 private lemma intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary_arc
-    [SlashInvariantFormClass F Γ k]
-    (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ}
+    [SlashInvariantFormClass F Γ k] (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hd : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
       DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
@@ -317,38 +315,9 @@ private lemma intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBo
     (hint : IntervalIntegrable (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
       else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) volume 1 2) :
     IntervalIntegrable (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-      else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) volume 1 3 := by
-  set G : ℝ → ℂ := fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-    else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t) with hG
-  -- The excised weight is bounded, hence integrable on the first half. The ascription on `hWc`
-  -- is load-bearing: it pins `H`, `S` and `ε`, which are otherwise unconstrained here.
-  have hWc : ∀ c : ℂ, IntervalIntegrable
-      (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ) else c) volume 1 2 :=
-    fun c => intervalIntegrable_excised_const c 1 2
-  -- On the arc the contour's logarithmic derivative is constant, so the excised weight is one
-  -- of those bounded models.
-  have hWint : IntervalIntegrable
-      (fun t => if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then (0 : ℂ)
-        else -((k : ℂ) * logDeriv (fdBoundary H) t)) volume 1 2 :=
-    (hWc (-((k : ℂ) * (((Real.pi / 6 : ℝ) : ℂ) * Complex.I)))).congr_uIoo fun t ht => by
-      rw [Set.uIoo_of_le (by norm_num : (1 : ℝ) ≤ 2)] at ht
-      have ht3 : t ∈ Ioo (1 : ℝ) 3 := ⟨ht.1, by linarith [ht.2]⟩
-      by_cases hc : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε
-      · simp [hc]
-      · simp [hc, logDeriv_fdBoundary_arc ht3]
-  have hreflint12 : IntervalIntegrable (fun t => G (4 - t)) volume 1 2 :=
-    (hWint.sub hint).congr_uIoo fun t ht => by
-      rw [Set.uIoo_of_le (by norm_num : (1 : ℝ) ≤ 2)] at ht
-      have ht3 : t ∈ Ioo (1 : ℝ) 3 := ⟨ht.1, by linarith [ht.2]⟩
-      have hp := excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS ht3
-        hnorm hinv (hd t ht) (hne t ht)
-      rw [hG]
-      linear_combination -hp
-  have hint23 : IntervalIntegrable G volume 2 3 := by
-    have h := hreflint12.comp_sub_left 4
-    rw [(by norm_num : (4 : ℝ) - 1 = 3), (by norm_num : (4 : ℝ) - 2 = 2)] at h
-    simpa only [sub_sub_self] using h.symm
-  exact hint.trans hint23
+      else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) volume 1 3 :=
+  hint.trans <| intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundarySegment3
+    f hS hnorm hinv hd hne hint
 
 /-- Integrating the pointwise pairing over `[1, 3]`: the direct and reflected excised
 integrands sum to the excised weight term.
