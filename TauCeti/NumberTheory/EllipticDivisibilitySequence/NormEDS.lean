@@ -53,8 +53,9 @@ distinction where the identity is proved.
 * `normEDS_two_three_two_eq_intCast`: `normEDS (2 : R) 3 2 = Int.cast` over any commutative ring.
 * `normEDS_two_three_two_eq_id`: its `R = ℤ` case, `normEDS (2 : ℤ) 3 2 = id`. Kept as a named
   theorem rather than left to the general form because it is what the universal-parameter
-  arguments consume — they specialise at `(2, 3, 2)` in `ℤ` — and because it is the `simp` form
-  there, `Int.cast` on `ℤ` being the identity.
+  arguments consume — they specialise at `(2, 3, 2)` in `ℤ`. Only the general form is `@[simp]`:
+  tagging both makes `normEDS 2 3 2` rewrite to `Int.cast`, so the `ℤ` left-hand side is no longer
+  in normal form and `simpNF` fails the build.
 
 The first consumer this unlocks is `IsEllipticNet.invarNum_mul_invarDenom`, which callers can
 apply to `isEllipticNet_normEDS` directly; it is deliberately not restated here as a
@@ -155,7 +156,6 @@ theorem isEllipticSequence_normEDS (b c d : R) : IsEllipticSequence (normEDS b c
   (isEllipticNet_normEDS b c d).isEllipticSequence
 
 /-- **`normEDS 2 3 2` is the identity sequence on `ℤ`.** -/
-@[simp]
 theorem normEDS_two_three_two_eq_id : normEDS (2 : ℤ) 3 2 = id := by
   refine (isEllipticSequence_normEDS 2 3 2).ext IsEllipticSequence.id ?_ ?_ ?_ ?_ ?_ ?_
   · simp
@@ -167,6 +167,7 @@ theorem normEDS_two_three_two_eq_id : normEDS (2 : ℤ) 3 2 = id := by
 
 /-- **`normEDS 2 3 2` is the integer cast, over any commutative ring.** The identity on `ℤ`
 transported along the unique ring map out of it. -/
+@[simp]
 theorem normEDS_two_three_two_eq_intCast (R : Type*) [CommRing R] :
     normEDS (2 : R) 3 2 = Int.cast := by
   funext n
