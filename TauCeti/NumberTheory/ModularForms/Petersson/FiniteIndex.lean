@@ -8,6 +8,7 @@ module
 public import TauCeti.NumberTheory.ModularForms.Basic
 public import TauCeti.NumberTheory.ModularForms.Petersson.Basic
 public import TauCeti.GroupTheory.Index
+public import TauCeti.NumberTheory.ModularForms.WithCenter
 public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 
 /-!
@@ -43,7 +44,6 @@ positive-definite Hermitian form is all that the adjoint theory downstream needs
 
 ## Main results
 
-* `Subgroup.mem_withCenter_iff_exists_eq_or_eq_neg`: an element of `Γ·{±I}` is `±` one of `Γ`.
 * `CuspForm.exists_slash_eq_smul_of_mem_withCenter`: slashing by an element of `Γ·{±I}` scales
   every form by one and the same unimodular constant.
 * `CuspForm.peterssonInner_slash_of_mem_withCenter`: the summand is independent of the coset
@@ -126,27 +126,6 @@ private theorem out_one_mem_WithCenter :
       ((QuotientGroup.mk 1 : SL(2, ℤ) ⧸ Γ.withCenter)).out : SL(2, ℤ) ⧸ Γ.withCenter) =
       QuotientGroup.mk 1 := Quotient.out_eq _
   simpa using (Γ.withCenter).inv_mem (QuotientGroup.eq.mp h)
-
-omit [Γ.FiniteIndex] in
-/-- Membership in `Γ·{±I}`: its elements are exactly `±` the elements of `Γ`. The adjoined
-centre of `SL₂(ℤ)` is `{±I}`, so the supremum only adds the negatives. -/
-@[simp]
-theorem _root_.Subgroup.mem_withCenter_iff_exists_eq_or_eq_neg {γ : SL(2, ℤ)} :
-    γ ∈ Γ.withCenter ↔ ∃ γ' ∈ Γ, γ = γ' ∨ γ = -γ' := by
-  refine ⟨fun hγ ↦ ?_, ?_⟩
-  · obtain ⟨a, ha, b, hb, rfl⟩ := Subgroup.mem_withCenter_iff.mp hγ
-    obtain ⟨r, hr, hscal⟩ := Matrix.SpecialLinearGroup.mem_center_iff.mp hb
-    have hb1 : b = 1 ∨ b = -1 := by
-      have hr1 : r = 1 ∨ r = -1 :=
-        Int.isUnit_iff.mp (IsUnit.of_mul_eq_one r (by simpa [pow_two] using hr))
-      rcases hr1 with rfl | rfl <;> [left; right] <;> exact Subtype.ext (by simpa using hscal.symm)
-    exact ⟨a, ha, by rcases hb1 with rfl | rfl <;> simp⟩
-  · rintro ⟨γ', hγ', rfl | rfl⟩
-    · exact Γ.le_withCenter hγ'
-    · have hcenter : (-1 : SL(2, ℤ)) ∈ Subgroup.center SL(2, ℤ) :=
-        Subgroup.mem_center_iff.mpr fun g ↦ by rw [neg_one_mul, mul_neg_one]
-      exact mul_neg_one γ' ▸
-        Γ.withCenter.mul_mem (Γ.le_withCenter hγ') (Γ.center_le_withCenter hcenter)
 
 omit [Γ.FiniteIndex] in
 /-- **Slashing by `Γ·{±I}` scales every form by one and the same unimodular constant**: by `1`
