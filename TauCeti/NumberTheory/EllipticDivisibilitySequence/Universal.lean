@@ -127,6 +127,14 @@ definition; it does not hide the representation, and its right-hand side is that
 theorem universalNormEDS_apply (n : ℤ) :
     universalNormEDS n = normEDS (X NormEDSParam.B) (X NormEDSParam.C) (X NormEDSParam.D) n := (rfl)
 
+/-- The function-level form of `universalNormEDS_apply`. Downstream modules cannot see the body,
+so a rewrite under a function-valued argument — `invarNum`, `IsEllipticNet` — needs this rather
+than the pointwise equation; stating it here, where `rfl` closes it, keeps consumers from
+rebuilding it with `funext`. -/
+theorem universalNormEDS_eq :
+    (universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ)
+      = normEDS (X NormEDSParam.B) (X NormEDSParam.C) (X NormEDSParam.D) := (rfl)
+
 /-- **Every sequence of the form `normEDS b c d` is a specialization of the universal one.** -/
 theorem normEDS_eq_aeval :
     normEDS b c d = fun n ↦ aeval (NormEDSParam.rec b c d) (universalNormEDS n) := by

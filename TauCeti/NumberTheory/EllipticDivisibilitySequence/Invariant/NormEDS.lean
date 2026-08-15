@@ -37,17 +37,17 @@ Cancelling that `b` needs `b` to be a nonzerodivisor, which is **not** implied b
 cancellation. The hypothesis is therefore discharged the same way `NormEDS.lean` discharges it for
 `isEllipticNet_normEDS`: prove the statement over `MvPolynomial NormEDSParam ℤ`, where the
 indeterminate `X B` *is* a nonzerodivisor, then specialise along `aeval`.
-`invarNum_normEDS_one_mul_c_eq_invarDenom_mulAux` is
+`invarNum_normEDS_one_mul_c_eq_invarDenom_mul_of_mem` is
 the hypothesis-carrying form and exists only to be specialised.
 
-**The two evaluations carry opposite `simp` decisions, and the asymmetry is not an oversight.**
-`invarDenom_normEDS_one_two` is `@[simp high]`, because `invarDenom_def` is itself `@[simp]` and at
-equal priority expands the three-factor formula instead; there is no general
-`invarDenom … = _ * b` lemma upstream, so its left-hand side *is* in simp normal form.
-`invarNum_normEDS_one_two` is deliberately **not** a simp lemma: `ReducedInvariant.lean` already
-carries `@[simp high] invarNum_normEDS_one_eq_reducedInvarNum_mul`, which rewrites
-`invarNum (normEDS b c d) 1 m` for every `m` — including `2` — so that left-hand side is not in
-normal form and tagging it makes `simpNF` fail the build. It stays useful as a rewrite named
+**Neither evaluation is a simp lemma.** Both are proved *by* `simp` from the definitional
+expansions, so tagging them adds no rewrite the default set does not already perform; and
+`invarNum`'s left-hand side additionally stops being in normal form downstream, where a module
+importing both this file and `ReducedInvariant.lean` also sees
+`@[simp high] invarNum_normEDS_one_eq_reducedInvarNum_mul` rewriting
+`invarNum (normEDS b c d) 1 m` for every `m`, including `2`. That lemma is not in scope in *this*
+module — it is the consumer's environment that decides — which is why the reason is stated here as
+a downstream fact rather than a local one. Both stay useful as rewrites named
 explicitly, which is how the proof below uses it.
 
 ## Provenance
@@ -61,14 +61,14 @@ Adapted from D. K. Angdinata's
 header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
 adapted material the upstream authorship is credited here rather than in the copyright header.
 
-All four are renamed here. The source's `invar₂_normEDS` advertises an index `2` that its
-statement never mentions — the `2` enters only through the proof — so it is
+All four are renamed here. The source's `invar₂_normEDS` advertises an index `2` that its statement
+never mentions — the `2` enters only through the proof — so it is
 `invarNum_normEDS_one_mul_c_eq_invarDenom_mul` below, describing the conclusion, and its
-hypothesis-carrying helper is `…mulAux`. The two evaluations gain the first index: `invarNum` and
-`invarDenom` take two, and the source's `…_two` names only the second, so `…_one_two` is what
-distinguishes them from an evaluation at some other `s`. The source's `invar_normEDS` step needs no
-declaration at all: it is this repository's `invarNum_mul_invarDenom` applied to
-`isEllipticNet_normEDS`.
+hypothesis-carrying helper is `…_of_mem`, matching `isEllipticNet_normEDS_of_mem`. The two
+evaluations gain the first index: `invarNum` and `invarDenom` take two, and the source's `…_two`
+names only the second, so `…_one_two` is what distinguishes them from an evaluation at some other
+`s`. The source's `invar_normEDS` step needs no declaration at all: it is this repository's
+`invarNum_mul_invarDenom` applied to `isEllipticNet_normEDS`.
 
 ## Placement
 
@@ -96,14 +96,13 @@ theorem invarNum_normEDS_one_two (b c d : R) :
   simp [right_distrib, ← pow_succ, ← pow_add]
 
 /-- The denominator of the invariant of `normEDS b c d` at `s = 1`, `n = 2`: it is `c * b`. -/
-@[simp high]
 theorem invarDenom_normEDS_one_two (b c d : R) : invarDenom (normEDS b c d) 1 2 = c * b := by
   simp
 
 /-- `invarNum_normEDS_one_mul_c_eq_invarDenom_mul` under a nonzerodivisor hypothesis on `b`, which
 the unconditional form
 discharges by specialising from the universal parameters. -/
-private theorem invarNum_normEDS_one_mul_c_eq_invarDenom_mulAux (hb : b ∈ R⁰) (m : ℤ) :
+private theorem invarNum_normEDS_one_mul_c_eq_invarDenom_mul_of_mem (hb : b ∈ R⁰) (m : ℤ) :
     invarNum (normEDS b c d) 1 m * c = invarDenom (normEDS b c d) 1 m * (d + b ^ 4) := by
   rw [← mul_cancel_right_mem_nonZeroDivisors hb]
   have h := invarNum_mul_invarDenom (isEllipticNet_normEDS b c d) 1 m 2
@@ -119,16 +118,14 @@ the equation holds vacuously. `Invariant/Basic.lean` makes the same distinction 
 `invarNum_mul_invarDenom` is proved. -/
 theorem invarNum_normEDS_one_mul_c_eq_invarDenom_mul (b c d : R) (m : ℤ) :
     invarNum (normEDS b c d) 1 m * c = invarDenom (normEDS b c d) 1 m * (d + b ^ 4) := by
-  have huniv := invarNum_normEDS_one_mul_c_eq_invarDenom_mulAux
+  have huniv := invarNum_normEDS_one_mul_c_eq_invarDenom_mul_of_mem
     (b := (X B : MvPolynomial NormEDSParam ℤ)) (c := X C) (d := X D)
     (mem_nonZeroDivisors_of_ne_zero (X_ne_zero (R := ℤ) B)) m
   have key := congr(aeval (NormEDSParam.rec b c d) $huniv)
-  -- `universalNormEDS`'s body is unexposed, so the function-level equation has to be supplied;
-  -- `universalNormEDS_apply` is pointwise and cannot fire under `invarNum`.
-  have hfun : (universalNormEDS : ℤ → MvPolynomial NormEDSParam ℤ)
-      = normEDS (X B) (X NormEDSParam.C) (X D) := funext universalNormEDS_apply
+  -- `universalNormEDS_apply` is pointwise and cannot fire under `invarNum`, so the function-level
+  -- `universalNormEDS_eq` is what rewrites here.
   rw [normEDS_eq_aeval (b := b) (c := c) (d := d), ← Function.comp_def, ← map_invarNum,
-    ← map_invarDenom, hfun]
+    ← map_invarDenom, universalNormEDS_eq]
   simpa only [map_mul, map_add, map_pow, aeval_X] using key
 
 end IsEllipticNet
