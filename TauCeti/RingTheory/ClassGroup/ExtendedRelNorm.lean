@@ -100,8 +100,14 @@ noncomputable def extendedRelNormHom : ClassGroup A →* ClassGroup R :=
 /-- **The composite, unfolded**: `extendedRelNormHom` sends a class to the relative norm of its
 extension. This is what characterises the definition at its own generality — no Dedekind
 hypothesis on `A` is involved — so a consumer can relate it to both composands without reaching
-for the integral-representative rule below. -/
-@[simp]
+for the integral-representative rule below.
+
+**Deliberately not `@[simp]`.** Tagging it would rewrite the left-hand side of
+`extendedRelNormHom_mk0` into `relNorm (extendedHom A M (ClassGroup.mk0 I))`, and stop there:
+`ClassGroup.relNorm_mk0` is `@[simp]` but Mathlib's `ClassGroup.extendedHom_mk0` is not, so the
+composite form is a dead end rather than a step toward the normal form
+`ClassGroup.mk0 (Ideal.relNorm0 R (extendedIdeal A M I))`. Two overlapping simp lemmas here also
+put `extendedRelNormHom_mk0` out of simp-normal form, which the `simpNF` linter rejects. -/
 theorem extendedRelNormHom_apply (x : ClassGroup A) :
     extendedRelNormHom A M R x = relNorm (extendedHom A M x) := by
   rw [extendedRelNormHom, MonoidHom.comp_apply]
