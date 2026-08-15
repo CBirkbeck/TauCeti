@@ -307,11 +307,11 @@ integrands sum to the excised weight term.
 
 The pointwise identity is only assumed on the first half. It is symmetric under `t ↦ 4 - t`,
 so on the second half it follows from the first through
-`excised_weight_fdBoundary_arc_four_sub`; the two fixed points `t = 2, 3` are null, which is
-why this is an almost-everywhere congruence. -/
-private lemma intervalIntegral_excised_arc_add_four_sub [SlashInvariantFormClass F Γ k]
-    (f : F) (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ}
-    (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S)
+`excised_weight_fdBoundary_arc_four_sub`; the reflection's fixed point `t = 2` and the
+endpoint `t = 3` are null, which is why this is an almost-everywhere congruence. -/
+private lemma intervalIntegral_excised_arc_add_four_sub [SlashInvariantFormClass F Γ k] (f : F)
+    (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ} (hnorm : ∀ s ∈ S, ‖s‖ = 1)
+    (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hd : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
       DifferentiableAt ℂ (⇑f ∘ ofComplex) (fdBoundary H t))
     (hne : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
@@ -319,27 +319,21 @@ private lemma intervalIntegral_excised_arc_add_four_sub [SlashInvariantFormClass
     (∫ t in (1 : ℝ)..3, ((if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
         else deriv (fdBoundary H) t • logDeriv (⇑f ∘ ofComplex) (fdBoundary H t)) +
       (if ∃ s ∈ S, ‖fdBoundary H (4 - t) - s‖ ≤ ε then 0
-        else deriv (fdBoundary H) (4 - t) •
-          logDeriv (⇑f ∘ ofComplex) (fdBoundary H (4 - t))))) =
+        else deriv (fdBoundary H) (4 - t) • logDeriv (⇑f ∘ ofComplex) (fdBoundary H (4 - t))))) =
       ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
         else -((k : ℂ) * logDeriv (fdBoundary H) t)) := by
   refine intervalIntegral.integral_congr_ae ?_
-  have h23 : ∀ᵐ t : ℝ, t ≠ 2 ∧ t ≠ 3 := by
-    filter_upwards [compl_mem_ae_iff.mpr (measure_singleton (2 : ℝ)),
-      compl_mem_ae_iff.mpr (measure_singleton (3 : ℝ))] with t h2 h3 using ⟨h2, h3⟩
-  filter_upwards [h23] with t ht2 htI
-  have ht3 : t ∈ Ioo (1 : ℝ) 3 := by
-    rw [Set.uIoc_of_le (by norm_num : (1 : ℝ) ≤ 3)] at htI
-    exact ⟨htI.1, lt_of_le_of_ne htI.2 ht2.2⟩
-  rcases lt_or_gt_of_ne ht2.1 with h2 | h2
-  · exact excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS ht3 hnorm hinv
-      (hd t ⟨ht3.1, h2⟩) (hne t ⟨ht3.1, h2⟩)
-  · have hu : 4 - t ∈ Ioo (1 : ℝ) 2 := ⟨by linarith [ht3.2], by linarith⟩
-    have hu3 : 4 - t ∈ Ioo (1 : ℝ) 3 := ⟨hu.1, by linarith [hu.2]⟩
-    have h := excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS hu3
-      hnorm hinv (hd _ hu) (hne _ hu)
-    rw [sub_sub_self (4 : ℝ) t, excised_weight_fdBoundary_arc_four_sub hnorm hinv ht3] at h
-    linear_combination h
+  filter_upwards [volume.ae_ne (2 : ℝ), volume.ae_ne (3 : ℝ)] with t ht2 ht3 htI
+  rw [Set.uIoc_of_le (by norm_num : (1 : ℝ) ≤ 3)] at htI
+  have ht13 : t ∈ Ioo (1 : ℝ) 3 := ⟨htI.1, htI.2.lt_of_ne ht3⟩
+  rcases ht2.lt_or_gt with h2 | h2
+  · exact excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS ht13 hnorm hinv
+      (hd t ⟨ht13.1, h2⟩) (hne t ⟨ht13.1, h2⟩)
+  · have hu : 4 - t ∈ Ioo (1 : ℝ) 2 := ⟨by linarith [ht13.2], by linarith⟩
+    have h := excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg f hS
+      ⟨hu.1, by linarith [hu.2]⟩ hnorm hinv (hd _ hu) (hne _ hu)
+    rw [sub_sub_self (4 : ℝ) t, excised_weight_fdBoundary_arc_four_sub hnorm hinv ht13] at h
+    exact (add_comm _ _).trans h
 
 /-- **The excised arc integral collapses to the weight term.** Integrating the pointwise pairing
 over `[1, 3]`, where the reflection `t ↦ 4 - t` maps the interval to itself, the excised arc
