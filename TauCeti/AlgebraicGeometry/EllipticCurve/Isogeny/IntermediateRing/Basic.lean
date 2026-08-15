@@ -171,7 +171,9 @@ theorem isScalarTower_intermediateRing (φ : Isogeny W₁ W₂)
   subst halg
   -- `subst` leaves the structure as a bare term, so re-register it for synthesis
   let _ := φ.pullbackToIntermediateRing.toAlgebra
-  exact IsScalarTower.of_algebraMap_eq fun x ↦ by rw [h]; rfl
+  refine IsScalarTower.of_algebraMap_eq fun x ↦ ?_
+  rw [h]
+  exact (φ.coe_pullbackToIntermediateRing x).symm
 
 /-- **The intermediate ring really is the integral closure**, in Mathlib's `IsIntegralClosure`
 sense: an element of `W₁.FunctionField` lies in it exactly when it is integral over

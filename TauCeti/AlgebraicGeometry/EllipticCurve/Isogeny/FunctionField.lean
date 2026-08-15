@@ -216,7 +216,9 @@ theorem fieldPullback_unique (φ : Isogeny W₁ W₂)
 function-field pullback.
 
 This is the bridge every consumer needs that holds a coordinate-level witness but must transport a
-`W₂.FunctionField`-level property — finiteness, separability, integral closedness — across it. -/
+property of the *extension* across it — finite-dimensionality, separability, or integrality of an
+element over `W₂.FunctionField`. Properties intrinsic to a ring, `IsIntegrallyClosed` among them,
+do not depend on this structure map and are not what it carries. -/
 theorem algebraMap_functionField_eq_fieldPullback (φ : Isogeny W₁ W₂)
     [Algebra W₂.CoordinateRing W₁.FunctionField] [Algebra W₂.FunctionField W₁.FunctionField]
     [IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField]
