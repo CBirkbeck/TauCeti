@@ -138,8 +138,12 @@ private theorem windingNumber_fdBoundary_eq_neg_one_of_one_lt_im (hx : |w.re| < 
   have hb₂ := Complex.neg_pi_lt_arg (((ρ : ℂ) - w) / ((ρ : ℂ) + 1 - w))
   have hb₃ := Complex.neg_pi_lt_arg ((-1 / 2 + H * Complex.I - w) / ((ρ : ℂ) - w))
   have hb₄ := Complex.neg_pi_lt_arg ((1 / 2 + H * Complex.I - w) / (-1 / 2 + H * Complex.I - w))
-  have hn2 : (-2 : ℤ) < n := by exact_mod_cast (show (-2 : ℝ) < (n : ℝ) by nlinarith)
-  have hn0 : n < 0 := by exact_mod_cast (show (n : ℝ) < 0 by nlinarith)
+  -- the bound is real-valued: `hIm` reads `2 * π * n` against the four argument bounds, and
+  -- `Real.pi`'s own bounds are facts about `ℝ`, so `n` is pinned there and then cast back
+  have hn2R : (-2 : ℝ) < (n : ℝ) := by nlinarith
+  have hn0R : (n : ℝ) < 0 := by nlinarith
+  have hn2 : (-2 : ℤ) < n := by exact_mod_cast hn2R
+  have hn0 : n < 0 := by exact_mod_cast hn0R
   have hneg : n = -1 := by lia
   simp [hn, hneg]
 
