@@ -93,21 +93,19 @@ variable {G : Type*} [Group G] {Γ : Subgroup G} {a : G}
 `2`.** If every element of `N` is `1` or `a`, and `a ∉ Γ`, then `Γ ⊔ N` splits into the two
 cosets `Γ` and `Γ * a`.
 
-Only `Γ ≤ Subgroup.normalizer N` is asked for, not normality of `N` in the whole group: all the
-proof needs is that `Γ ⊔ N` is the pointwise product `Γ * N`, which
-`Subgroup.coe_mul_of_left_le_normalizer_right` supplies from the weaker hypothesis. A globally
-normal `N` is the special case `Subgroup.le_normalizer_of_normal`.
+Only normalisation by `Γ` is asked for, not normality of `N` in the whole group, so a
+two-element subgroup normalised by `Γ` alone is covered. A globally normal `N` is the special
+case `Subgroup.le_normalizer_of_normal`.
 
 Stated for an arbitrary `N` rather than for the centre, because the centre is often larger than
 two elements — in `GL (Fin 2) ℝ` it is every scalar — while the two-element subgroup one actually
 wants there is `Subgroup.zpowers (-1)`. A caller supplies whichever `N` is in hand.
 
-`a` is not assumed to be an involution: `a * a` lies in `N`, hence is `1` or `a`, and `a * a = a`
-would force `a = 1 ∈ Γ`.
+`a` is not assumed to be an involution; it follows from the hypotheses that it is one.
 
 Generalises Mathlib's `Subgroup.relindex_adjoinNegOne_eq_two`
 (`Mathlib/NumberTheory/ModularForms/ArithmeticSubgroups.lean`) from `𝒢 ≤ GL n R` with `a = -1` to
-an arbitrary group, by the same `Subgroup.relIndex_eq_two_iff_exists_notMem_and` criterion. -/
+an arbitrary group. -/
 theorem relIndex_sup_eq_two (N : Subgroup G) (hnorm : Γ ≤ Subgroup.normalizer N) (ha : a ∈ N)
     (haΓ : a ∉ Γ) (hN : ∀ c ∈ N, c = 1 ∨ c = a) : Γ.relIndex (Γ ⊔ N) = 2 := by
   have ha2 : a * a = 1 := by
