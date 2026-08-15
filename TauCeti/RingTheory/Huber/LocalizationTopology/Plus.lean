@@ -41,11 +41,15 @@ closure, in `A_U`, of the image of `A⁺[T/s]`.
 * `TauCeti.Huber.PairOfDefinition.toCompletionLoc_mem_completedPlusSubring` and
   `TauCeti.Huber.PairOfDefinition.divBy_mem_completedPlusSubring`: the image of `A⁺` and each
   fraction `t/s` lie in `A_U⁺`, which is what the roadmap's description of its generators asks.
+* `TauCeti.Huber.PairOfDefinition.completedPlusSubring_le_powerBoundedSubring`: `A_U⁺ ⊆ (A_U)°`.
 
-That `(A_U, A_U⁺)` is a Huber pair — that `A_U⁺` is open and power-bounded — is **not** proved
-here. The power-boundedness half needs `IsPowerBounded a` in `A` to transfer to
-`algebraMap A Aₛ a`, which the repository does not yet have: the existing route covers `A₀`'s
-image through `locSubring`, and `A⁺` is not contained in a ring of definition.
+Of the three conditions making `(A_U, A_U⁺)` a Huber pair, two are here: integral closedness by
+construction (`isIntegrallyClosedIn_completedPlusSubring`) and power-boundedness
+(`completedPlusSubring_le_powerBoundedSubring`). **Openness is not proved here.** It reduces, by
+`Subgroup.isOpen_of_openSubgroup` and the `isOpen_ringOfDefinition` field of the completed pair,
+to containing that pair's ring of definition — and since that ring is a *closure* of an image
+while `A_U⁺` carries no topological closure, the containment needs `A_U⁺` to be closed, which is
+not available here.
 
 ## Provenance
 
@@ -61,7 +65,8 @@ is the *topological closure* of the image of `(A⁺[T/s])^int` — an integral c
 describes a single integral closure of that image, and each additional layer enlarges the
 generating subring, so the objects agree only after an identification theorem that is not
 available here. Their shape buys closedness of `A_U⁺`, which their power-boundedness argument then
-uses; that cost is deferred rather than avoided, and is noted above. No proof was copied and
+uses; that cost is deferred rather than avoided, and is what the openness note above
+records. No proof was copied and
 nothing here is ported.
 
 ## References
