@@ -25,10 +25,17 @@ apply exactly where a caller already has `IsEllipticSequence W` in hand.
 * `IsEllipticSequence.zero`: `W 0 = 0`, given that some even term is a nonzerodivisor.
 * `IsEllipticSequence.neg`: `W (-m) = -W m`, given that `W 1` and `W 2` are nonzerodivisors.
 
-Nothing else is exported. `W.Odd` unfolds to `neg`'s statement, so consumers taking Mathlib's
-spelling — `SignEquivariance.lean` and `Descent.lean` — apply `neg` itself rather than a second
-declaration. The symmetrisation the oddness proof turns on is likewise a local `have`: a step of
-that argument, not a fact a caller wants.
+Nothing else is exported. `W.Odd` unfolds to `neg`'s statement, so a second declaration for
+Mathlib's spelling would be a definitional restatement; a caller wanting `W.Odd` supplies `neg`
+directly. No file consumes either lemma yet — `SignEquivariance.lean` and `Descent.lean` take
+`W.Odd` and `W 0 = 0` as *hypotheses* and do not import this module. The symmetrisation the
+oddness proof turns on is likewise a local `have`: a step of that argument, not a fact a caller
+wants.
+
+Neither lemma is `@[simp]`, and neither can be: `W` is a variable, so `W (-m)` has a variable head
+symbol and Lean rejects the attribute outright — simp would have to try the rewrite at every step.
+Mathlib tags `normEDS_neg`, `preNormEDS_neg` and `complEDS_neg` because those are stated for the
+*concrete* sequences, whose head symbol is a constant.
 
 ## Implementation notes
 
