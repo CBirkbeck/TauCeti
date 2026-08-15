@@ -5,6 +5,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Descent
+public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Ext
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Universal
 
 /-!
@@ -61,9 +62,9 @@ survives only in the private helper, applied once at the indeterminates.
 
 `Universal.lean` records `universalNormEDS_ne_zero` and `universalNormEDS_mem_nonZeroDivisors`
 as belonging with "whichever slice ports" the fact proved here. They are still not ported: they
-rest on `normEDS 2 3 2 = id`, which additionally needs an extensionality principle for elliptic
-sequences that this repository does not yet have. This file is the prerequisite they were
-waiting on, not the slice that lands them.
+rest on `normEDS 2 3 2 = id`, which is `normEDS_two_three_two` below. The extensionality principle
+that identity needs is `IsEllipticSequence.ext`, which this repository now has, so the obstacle
+recorded for those two is gone; what remains is the work itself.
 
 ## Provenance
 
@@ -126,3 +127,20 @@ theorem isEllipticNet_normEDS (b c d : R) : IsEllipticNet (normEDS b c d) := by
 /-- **A normalised EDS is an elliptic sequence**, the last index of the net held at `0`. -/
 theorem isEllipticSequence_normEDS (b c d : R) : IsEllipticSequence (normEDS b c d) :=
   (isEllipticNet_normEDS b c d).isEllipticSequence
+
+/-- **`normEDS 2 3 2` is the identity.** Its base values are `1, 2, 3, 4` and it is an elliptic
+sequence, as is `id`; two elliptic sequences agreeing at `1, 2, 3, 4` are equal.
+
+`Universal.lean` names this as the fact `universalNormEDS_ne_zero` and
+`universalNormEDS_mem_nonZeroDivisors` rest on. It was recorded there as blocked on an
+extensionality principle for elliptic sequences; `IsEllipticSequence.ext` is that principle, and
+`IsEllipticNet.id` supplies the other side. -/
+theorem normEDS_two_three_two : normEDS (2 : ℤ) 3 2 = id := by
+  refine (isEllipticSequence_normEDS 2 3 2).ext IsEllipticNet.id.isEllipticSequence
+    ?_ ?_ ?_ ?_ ?_ ?_
+  · simp [normEDS_one]
+  · simp [normEDS_two]
+  · simp [normEDS_one]
+  · simp [normEDS_two]
+  · simp [normEDS_three]
+  · simp [normEDS_four]
