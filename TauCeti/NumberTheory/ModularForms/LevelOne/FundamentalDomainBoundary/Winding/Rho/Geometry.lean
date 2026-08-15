@@ -21,6 +21,7 @@ interior angle `π/3`, which is exactly the gap between the two one-sided argume
 
 ## Main declarations
 
+* `TauCeti.ModularForm.rho_im` (the corner sits on the row `Im = √3/2`).
 * `TauCeti.ModularForm.norm_fdBoundary_sub_rho_arc` (the chord distance).
 * `TauCeti.ModularForm.fdBoundary_sub_rho_of_mem_Icc_three_four` (the linear form).
 * `TauCeti.ModularForm.log_fdBoundary_three_sub_sub_rho`,
@@ -42,6 +43,11 @@ namespace TauCeti
 namespace ModularForm
 
 variable {H δ t : ℝ}
+
+/-- **The corner `ρ` sits on the row `Im = √3/2`**, the height at which the two vertical
+edges of `𝒟` meet the unit circle. -/
+theorem rho_im : (UpperHalfPlane.ρ : ℂ).im = Real.sqrt 3 / 2 := by
+  norm_num [UpperHalfPlane.ρ]
 
 /-- The corner `ρ` is the unit-circle point of angle `2π/3`. -/
 private lemma rho_eq_exp :
@@ -236,8 +242,8 @@ theorem eq_three_of_fdBoundary_eq_rho (hH : H ≠ Real.sqrt 3 / 2) (ht : t ∈ I
         · exact absurd (by linarith) hH
       · have hz : fdBoundary H t - (UpperHalfPlane.ρ : ℂ) = 0 := norm_eq_zero.mp h0
         have him := congrArg Complex.im hz
-        have hρ : (UpperHalfPlane.ρ : ℂ).im = Real.sqrt 3 / 2 := by norm_num [UpperHalfPlane.ρ]
-        rw [Complex.sub_im, im_fdBoundarySegment5 H ⟨h4.le, ht.2⟩, hρ, Complex.zero_im] at him
+        rw [Complex.sub_im, im_fdBoundarySegment5 H ⟨h4.le, ht.2⟩, rho_im,
+          Complex.zero_im] at him
         exact absurd (by linarith) hH
 
 end ModularForm

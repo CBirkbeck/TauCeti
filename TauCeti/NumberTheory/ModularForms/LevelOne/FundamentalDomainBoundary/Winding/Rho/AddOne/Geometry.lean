@@ -31,6 +31,7 @@ angle `π/3`, which is exactly the gap between the one-sided argument limits `π
 
 ## Main declarations
 
+* `TauCeti.ModularForm.rho_add_one_im` (the corner shares the row `Im = √3/2` with `ρ`).
 * `TauCeti.ModularForm.fdBoundary_sub_rho_add_one_of_mem_Icc_zero_one` (the linear form).
 * `TauCeti.ModularForm.norm_fdBoundary_sub_rho_add_one_arc` (the chord distance) and
   `TauCeti.ModularForm.norm_fdBoundary_sub_rho_add_one_arc_le` (its monotonicity in the
@@ -55,9 +56,10 @@ namespace ModularForm
 
 variable {H δ t : ℝ}
 
-/-- The corner `ρ + 1` sits on the row `Im = √3/2`, the height of the corner of `𝒟`. -/
-private lemma rho_add_one_im : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
-  simp [UpperHalfPlane.ρ]
+/-- **The corner `ρ + 1` sits on the same row `Im = √3/2` as `ρ`**: the shift is by a real
+number, which does not move the imaginary part. -/
+theorem rho_add_one_im : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
+  rw [Complex.add_im, rho_im, Complex.one_im, add_zero]
 
 /-- The corner `ρ + 1` is the unit-circle point of angle `π/3`. -/
 private lemma rho_add_one_eq_exp :
