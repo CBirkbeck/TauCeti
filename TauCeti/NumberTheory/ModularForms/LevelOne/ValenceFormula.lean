@@ -64,8 +64,8 @@ theorem valence_formula {F : Type*} [FunLike F ℍ ℂ] {k : ℤ} [ModularFormCl
         + ∑ p ∈ (fdZeros f).filter
             (fun p : ℍ ↦ (p : ℂ) ≠ (ρ : ℂ) ∧ ‖(p : ℂ)‖ = 1 ∧ (p : ℂ).re < 0),
           orderOfVanishingAt ⇑f p : ℤ) : ℂ) := by
-    exact_mod_cast (finsum_orderOfVanishingOnOrbit_eq_sum_canonicalReps).trans
-      (sum_canonicalReps_split)
+    exact_mod_cast (finsum_orderOfVanishingOnOrbit_eq_sum_canonicalReps f).trans
+      (sum_canonicalReps_split f)
   have key := sum_orderOfVanishingAt_add_elliptic_add_qExpansionOrderAtCusp_eq
     f hf (S := fdZeros f) (fun p hp _ ↦ (mem_fdZeros.mp hp).1)
     (fun p hpfd hord ↦ mem_fdZeros.mpr ⟨hpfd, hord⟩)

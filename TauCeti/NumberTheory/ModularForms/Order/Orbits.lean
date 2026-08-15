@@ -79,7 +79,7 @@ lemma orderOfVanishingOnOrbit_mk [SlashInvariantFormClass F 𝒮ℒ k] (p : ℍ)
   rfl
 
 /-- Only finitely many orbits of a level-one form carry nonzero order. -/
-lemma hasFiniteSupport_orderOfVanishingOnOrbit [ModularFormClass F 𝒮ℒ k] {f : F} :
+lemma hasFiniteSupport_orderOfVanishingOnOrbit [ModularFormClass F 𝒮ℒ k] (f : F) :
     (orderOfVanishingOnOrbit f).HasFiniteSupport :=
   -- the `rfl` pattern rewrites `q` to `⟦p⟧`, after which `orderOfVanishingOnOrbit_mk` fires
   (finite_zeros_in_fd (f := f)).of_surjOn Quotient.mk'' fun q hq ↦
@@ -178,10 +178,10 @@ abbrev NonEllipticOrbit : Type :=
 /-- Only finitely many non-elliptic orbits of a level-one form carry nonzero order: the finite
 support of `orderOfVanishingOnOrbit`, restricted along the inclusion of the non-elliptic
 orbits. -/
-lemma hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic [ModularFormClass F 𝒮ℒ k] {f : F} :
+lemma hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic [ModularFormClass F 𝒮ℒ k] (f : F) :
     Function.HasFiniteSupport fun q : NonEllipticOrbit ↦ orderOfVanishingOnOrbit f q.val :=
   Function.HasFiniteSupport.fun_comp_of_injective Subtype.val_injective
-    hasFiniteSupport_orderOfVanishingOnOrbit
+    (hasFiniteSupport_orderOfVanishingOnOrbit f)
 
 end ModularForm
 

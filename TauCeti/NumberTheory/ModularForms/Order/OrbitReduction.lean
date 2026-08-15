@@ -122,8 +122,7 @@ theorem orbit_mk_ne_I_and_ne_ρ_of_mem_canonicalReps [ModularFormClass F 𝒮ℒ
 
 /-- The orbit map is injective on the canonical representatives, which lie left of the
 boundary identifications of `𝒟`. -/
-theorem orbit_mk_injOn_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
-    :
+theorem orbit_mk_injOn_canonicalReps [ModularFormClass F 𝒮ℒ k] (f : F) :
     Set.InjOn (fun p : ℍ ↦ (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ))
       ↑(canonicalReps f) := by
   refine ModularGroup.orbit_mk_injOn_fd_left.mono fun p hp ↦ ?_
@@ -224,30 +223,29 @@ theorem exists_mem_canonicalReps_orbit_mk_eq [ModularFormClass F 𝒮ℒ k] {f :
 /-- The `∑ᶠ` over the non-elliptic orbit space equals the sum over the canonical
 representatives: the orbit map matches `canonicalReps` bijectively with the non-elliptic
 orbits of nonzero order, and the order is orbit-constant. -/
-theorem finsum_orderOfVanishingOnOrbit_eq_sum_canonicalReps [ModularFormClass F 𝒮ℒ k] {f : F}
-    :
+theorem finsum_orderOfVanishingOnOrbit_eq_sum_canonicalReps [ModularFormClass F 𝒮ℒ k] (f : F) :
     ∑ᶠ q : NonEllipticOrbit, orderOfVanishingOnOrbit f q.val =
       ∑ p ∈ canonicalReps f, orderOfVanishingAt f p := by
-  rw [finsum_eq_sum _ (hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic)]
+  rw [finsum_eq_sum _ (hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic f)]
   refine (Finset.sum_bij
     (fun p hp ↦ (⟨Quotient.mk'' p, orbit_mk_ne_I_and_ne_ρ_of_mem_canonicalReps hp⟩ :
       NonEllipticOrbit))
     ?_ ?_ ?_ ?_).symm
   · intro p hp
-    refine (hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic).mem_toFinset.mpr ?_
+    refine (hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic f).mem_toFinset.mpr ?_
     simpa using (mem_fdZeros.mp (mem_canonicalReps.mp hp).1).2
   · intro p₁ h₁ p₂ h₂ h
-    exact orbit_mk_injOn_canonicalReps h₁ h₂ (congrArg Subtype.val h)
+    exact orbit_mk_injOn_canonicalReps f h₁ h₂ (congrArg Subtype.val h)
   · intro q hq
     obtain ⟨p, hp, hporb⟩ := exists_mem_canonicalReps_orbit_mk_eq q.2.1 q.2.2
-      ((hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic).mem_toFinset.mp hq)
+      ((hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic f).mem_toFinset.mp hq)
     exact ⟨p, hp, Subtype.ext hporb⟩
   · intro p hp
     exact (orderOfVanishingOnOrbit_mk f p).symm
 
 /-- The canonical-representative sum splits into the three family sums of the core identity:
 strict interior, left vertical edge, and left half-arc minus `ρ`. -/
-theorem sum_canonicalReps_split [ModularFormClass F 𝒮ℒ k] {f : F} :
+theorem sum_canonicalReps_split [ModularFormClass F 𝒮ℒ k] (f : F) :
     ∑ p ∈ canonicalReps f, orderOfVanishingAt f p =
       ∑ p ∈ (fdZeros f).filter (fun p : ℍ ↦ 1 < ‖(p : ℂ)‖ ∧ |(p : ℂ).re| < 1 / 2),
           orderOfVanishingAt f p +
