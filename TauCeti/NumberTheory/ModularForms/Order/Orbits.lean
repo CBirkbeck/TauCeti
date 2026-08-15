@@ -11,6 +11,7 @@ public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 import Mathlib.Algebra.FiniteSupport.Basic
 import TauCeti.NumberTheory.Modular.Orbits
 import TauCeti.NumberTheory.ModularForms.FiniteZeros
+import TauCeti.NumberTheory.ModularForms.Norm.Order
 
 /-!
 # The vanishing order on `SL(2, ℤ)`-orbits
@@ -38,6 +39,9 @@ formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.
   `i` and `ρ` — the index type of the valence formula's divisor sum.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic`: the finite
   support restricted to the non-elliptic orbits.
+* `TauCeti.ModularForm.finite_orbits_image_of_orderOfVanishingAt_ne_zero`: at any level of
+  finite relative index, the nonzero-order points meet only finitely many `SL(2, ℤ)`-orbits —
+  read off the level-one statement through the norm.
 
 ## References
 
@@ -182,6 +186,29 @@ lemma hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic [ModularFormClass F �
     Function.HasFiniteSupport fun q : NonEllipticOrbit ↦ orderOfVanishingOnOrbit f q.val :=
   Function.HasFiniteSupport.fun_comp_of_injective Subtype.val_injective
     (hasFiniteSupport_orderOfVanishingOnOrbit hf)
+
+
+/-- **The nonzero-order points of a form of any level meet only finitely many
+`SL(2, ℤ)`-orbits.** The norm of the form is a level-one form whose vanishing order dominates
+the form's, so each orbit carrying a nonzero order of `f` carries one of `Nm f`, and those are
+finite in number.
+
+⚠ This counts `SL(2, ℤ)`-orbits, not `𝒢`-orbits. Each `SL(2, ℤ)`-orbit splits into finitely
+many `𝒢`-orbits when `𝒢` has finite relative index, so the `𝒢`-orbit count is finite too, but
+that step is not taken here. -/
+lemma finite_orbits_image_of_orderOfVanishingAt_ne_zero {𝒢 : Subgroup (GL (Fin 2) ℝ)}
+    [𝒢.IsFiniteRelIndex 𝒮ℒ] [Subgroup.HasDetPlusMinusOne 𝒮ℒ] [ModularFormClass F 𝒢 k] {f : F}
+    (hf : (⇑f : ℍ → ℂ) ≠ 0) :
+    Set.Finite ((fun p : ℍ ↦ (Quotient.mk'' p : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ)) ''
+      {p : ℍ | orderOfVanishingAt f p ≠ 0}) := by
+  have hN : (⇑(_root_.ModularForm.norm 𝒮ℒ f) : ℍ → ℂ) ≠ 0 := fun h ↦
+    _root_.ModularForm.norm_ne_zero 𝒮ℒ hf ((FunLike.coe_zero_iff _).mp h)
+  refine (hasFiniteSupport_orderOfVanishingOnOrbit hN).subset ?_
+  rintro q ⟨p, hp, rfl⟩
+  -- a nonzero order is positive, and the norm's order dominates it, so the norm's is nonzero
+  simp only [Function.mem_support, ne_eq, orderOfVanishingOnOrbit_mk]
+  exact (((orderOfVanishingAt_nonneg (ModularFormClass.holo f) p).lt_of_ne' hp).trans_le
+    (orderOfVanishingAt_le_orderOfVanishingAt_norm f p)).ne'
 
 end ModularForm
 
