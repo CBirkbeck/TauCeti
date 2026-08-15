@@ -55,8 +55,10 @@ links have landed. For the first, `net_normEDS` is `isEllipticNet_normEDS` (`Nor
 `invar_normEDS` is `invarNum_mul_invarDenom` (`Invariant/Basic.lean`) and `invar₂_normEDS` is
 `invarNum_normEDS_one_mul_eq_invarDenom_mul` (`Invariant/NormEDS.lean`), so what remains is
 `redInvar_normEDS` alone. The second chain is complete: `Complement.lean` proves
-`normEDS_mul_complEDS` unconditionally and `normEDS_mul_complEDS_div` at a divisor, the source's
-`normEDS_mul_complEDS_of_mem` having become a private step of the first.
+`normEDS_mul_complEDS` unconditionally, the source's `normEDS_mul_complEDS_of_mem` having become a
+private step of it. The source's remaining link `normEDS_mul_complEDS_div` is not a separate
+declaration here — at a divisor `k ∣ n` it is `Int.mul_ediv_cancel_left` away from the
+unconditional form, so a consumer that splits an index by its divisors rewrites there directly.
 Carrying the bare definition across before them would add a formula that no consumer can state
 anything about, so it waits for the layer that gives it meaning. Everything below is independent
 of that fact: nothing carries an ellipticity hypothesis, and the source discharges the

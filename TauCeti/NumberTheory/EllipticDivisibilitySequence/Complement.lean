@@ -24,8 +24,6 @@ slice of its own.
 
 * `normEDS_mul_complEDS`: the same identity with **no hypothesis at all**, obtained from the
   previous one by specialising from the universal parameters.
-* `normEDS_mul_complEDS_div`: its divisor form,
-  `normEDS b c d k * complEDS b c d k (n / k) = normEDS b c d n` whenever `k ∣ n`.
 
 ## Implementation notes
 
@@ -56,9 +54,10 @@ Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in
 `TauCetiRoadmap/EllipticCurves/README.md` pins for the NagellLutz project. Source declaration
 `normEDS_mul_complEDS_of_mem` (`:1324`), which is `private` in both — it was public here while it
 was this file's deliverable, and returned to being a step once the unconditional form landed; the
-name gains Mathlib's full `_of_mem_nonZeroDivisors` suffix. The two unconditional forms adapt
-`normEDS_mul_complEDS` (`:1339`) and
-`normEDS_mul_complEDS_div` (`:1350`) of that same file, under their source names. That file's
+name gains Mathlib's full `_of_mem_nonZeroDivisors` suffix. The unconditional form adapts
+`normEDS_mul_complEDS` (`:1339`) of that same file, under its source name. The source's divisor
+reindexing `normEDS_mul_complEDS_div` (`:1350`) is deliberately not ported: it has no consumer
+here, and it is one `Int.mul_ediv_cancel_left` rewrite from the form that is. That file's
 header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
 adapted material the upstream authorship is credited here rather than in the copyright header.
 
@@ -144,13 +143,3 @@ theorem normEDS_mul_complEDS (b c d : R) (k n : ℤ) :
   have key := congr(aeval (NormEDSParam.rec b c d)
     $(normEDS_mul_complEDS_of_mem_nonZeroDivisors hmem n))
   simpa only [map_mul, map_normEDS, map_complEDS, aeval_X] using key
-
-/-- **The complement at a divisor of the index.** `complEDS b c d k (n / k)` is the cofactor of
-`normEDS b c d k` in `normEDS b c d n` whenever `k ∣ n`, which is the shape a consumer splitting an
-index by its divisors wants. -/
-theorem normEDS_mul_complEDS_div (b c d : R) {k n : ℤ} (dvd : k ∣ n) :
-    normEDS b c d k * complEDS b c d k (n / k) = normEDS b c d n := by
-  obtain ⟨n, rfl⟩ := dvd
-  rcases eq_or_ne k 0 with rfl | hk
-  · simp
-  rw [Int.mul_ediv_cancel_left _ hk, normEDS_mul_complEDS, mul_comm]
