@@ -241,6 +241,23 @@ lemma fdBoundaryArcExcisionHalfWidth_pos_and_lt_one_and_two_mul_sin_eq {ε : ℝ
     rw [hδπ, Real.sin_arcsin (by linarith) (by linarith)]
     ring
 
+/-- **The vertical excision half-width does what it is for.** On a vertical edge of the truncated
+domain, running from height `√3/2` to `H`, an excision radius `ε` below the edge's length is cut
+out by the parameter fraction `ε / (H - √3/2)`: that fraction lies in `(0, 1]` and scales back to
+`ε` along the edge.
+
+The companion of `fdBoundaryArcExcisionHalfWidth_pos_and_lt_one_and_two_mul_sin_eq` for the
+straight pieces, and like it shared by the corner constructions at `ρ` and at `ρ + 1` — the two
+corners exchange which side is the arc and which the vertical, so each uses one lemma for the arc
+and this one for the edge. -/
+lemma fdBoundaryVerticalExcisionFraction_pos_and_le_one_and_mul_eq {ε : ℝ}
+    (hH : Real.sqrt 3 / 2 < H) (hε : 0 < ε) (hεH : ε < H - Real.sqrt 3 / 2) :
+    0 < ε / (H - Real.sqrt 3 / 2) ∧ ε / (H - Real.sqrt 3 / 2) ≤ 1 ∧
+      ε / (H - Real.sqrt 3 / 2) * (H - Real.sqrt 3 / 2) = ε := by
+  have hHpos : (0 : ℝ) < H - Real.sqrt 3 / 2 := by linarith
+  refine ⟨by positivity, ?_, div_mul_cancel₀ ε hHpos.ne'⟩
+  rw [div_le_one hHpos]
+  linarith
 
 end ModularForm
 end TauCeti
