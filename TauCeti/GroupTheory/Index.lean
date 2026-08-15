@@ -23,6 +23,8 @@ exactly `2` in `Γ ⊔ N`, so `Γ.index = 2 * (Γ ⊔ N).index`. Taking `N` to b
 
 ## Main results
 
+* `Subgroup.mem_withCenter_iff` and `Subgroup.withCenter_eq_self_iff`: membership in `Γ·Z(G)`,
+  and the case in which adjoining the centre changes nothing.
 * `Subgroup.relIndex_sup_eq_two`, `Subgroup.index_eq_two_mul_index_sup`: the relative index `2`
   and the index doubling, for a normal `N` whose elements are `1` and `a ∉ Γ`.
 * `Subgroup.relIndex_withCenter_eq_two`, `Subgroup.index_eq_two_mul_index_withCenter`: the same
@@ -54,6 +56,21 @@ theorem withCenter_def {G : Type*} [Group G] (Γ : Subgroup G) :
 /-- `Γ` sits inside `Γ` with the centre adjoined. -/
 lemma le_withCenter {G : Type*} [Group G] (Γ : Subgroup G) : Γ ≤ Γ.withCenter :=
   le_sup_left
+
+/-- **Characteristic membership for `withCenter`**: an element of `Γ·Z(G)` is one of `Γ` times a
+central one. The centre is normal, so the supremum is the pointwise product. -/
+theorem mem_withCenter_iff {G : Type*} [Group G] {Γ : Subgroup G} {g : G} :
+    g ∈ Γ.withCenter ↔ ∃ γ ∈ Γ, ∃ c ∈ Subgroup.center G, g = γ * c := by
+  rw [withCenter_def, Subgroup.mem_sup_of_normal_right]
+  exact ⟨fun ⟨γ, hγ, c, hc, h⟩ ↦ ⟨γ, hγ, c, hc, h.symm⟩,
+    fun ⟨γ, hγ, c, hc, h⟩ ↦ ⟨γ, hγ, c, hc, h.symm⟩⟩
+
+/-- **Adjoining the centre changes nothing exactly when the centre is already inside `Γ`** —
+the other half of the dichotomy `Subgroup.withCenter` describes. -/
+@[simp]
+theorem withCenter_eq_self_iff {G : Type*} [Group G] {Γ : Subgroup G} :
+    Γ.withCenter = Γ ↔ Subgroup.center G ≤ Γ :=
+  sup_eq_left
 
 instance instFiniteIndexWithCenter {G : Type*} [Group G] (Γ : Subgroup G)
     [Γ.FiniteIndex] : Γ.withCenter.FiniteIndex :=

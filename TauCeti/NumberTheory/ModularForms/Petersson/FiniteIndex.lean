@@ -43,7 +43,7 @@ positive-definite Hermitian form is all that the adjoint theory downstream needs
 
 ## Main results
 
-* `Subgroup.mem_withCenter_iff`: an element of `Γ·{±I}` is `±` one of `Γ`.
+* `Subgroup.mem_withCenter_iff_eq_neg`: an element of `Γ·{±I}` is `±` one of `Γ`.
 * `CuspForm.exists_slash_eq_smul_of_mem_withCenter`: slashing by an element of `Γ·{±I}` scales
   every form by one and the same unimodular constant.
 * `CuspForm.peterssonInner_slash_of_mem_withCenter`: the summand is independent of the coset
@@ -131,7 +131,7 @@ omit [Γ.FiniteIndex] in
 /-- Membership in `Γ·{±I}`: its elements are exactly `±` the elements of `Γ`. The adjoined
 centre of `SL₂(ℤ)` is `{±I}`, so the supremum only adds the negatives. -/
 @[simp]
-theorem _root_.Subgroup.mem_withCenter_iff {γ : SL(2, ℤ)} :
+theorem _root_.Subgroup.mem_withCenter_iff_eq_neg {γ : SL(2, ℤ)} :
     γ ∈ Γ.withCenter ↔ ∃ γ' ∈ Γ, γ = γ' ∨ γ = -γ' := by
   refine ⟨fun hγ ↦ ?_, ?_⟩
   · rw [Subgroup.withCenter_def, ← SetLike.mem_coe, Subgroup.mul_normal] at hγ
@@ -160,7 +160,7 @@ trivially on `ℍ` and contributes only the automorphy factor. Unimodularity `co
 what makes the constant invisible to the conjugate-linear Petersson pairing. -/
 theorem exists_slash_eq_smul_of_mem_withCenter {γ : SL(2, ℤ)} (hγ : γ ∈ Γ.withCenter) :
     ∃ c : ℂ, conj c * c = 1 ∧ ∀ f : CuspForm (Γ.map (mapGL ℝ)) k, ⇑f ∣[k] γ = c • ⇑f := by
-  obtain ⟨γ', hγ', hcase⟩ := Subgroup.mem_withCenter_iff.mp hγ
+  obtain ⟨γ', hγ', hcase⟩ := Subgroup.mem_withCenter_iff_eq_neg.mp hγ
   rcases hcase with rfl | rfl
   · exact ⟨1, by simp, fun f ↦ by rw [SlashInvariantFormClass.SL_slash_eq f _ hγ', one_smul]⟩
   · refine ⟨(-1 : ℂ) ^ k, ?_, fun f ↦ ?_⟩
