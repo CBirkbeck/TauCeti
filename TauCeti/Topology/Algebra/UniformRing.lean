@@ -58,7 +58,7 @@ variable {R : Type*} [Ring R] [UniformSpace R] [IsTopologicalRing R] [IsUniformA
   {B : Type*} [Semiring B] [TopologicalSpace B] [T2Space B]
 
 /-- **Maps out of a completion are determined on the image of the coercion.** Two continuous
-ring homomorphisms `R̂ → B` into a Hausdorff topological semiring that agree after composing
+ring homomorphisms `R̂ → B` into a semiring carrying a Hausdorff topology that agree after composing
 with `coeRingHom` are equal.
 
 This is `UniformSpace.Completion.ext` packaged for ring homomorphisms: composing with
