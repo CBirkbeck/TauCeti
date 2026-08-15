@@ -5,10 +5,12 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.LinearAlgebra.SpecialLinearGroup
-public import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
 public import TauCeti.NumberTheory.Modular.Orbits
+
+-- these two serve only the private centre computation, so they stay off the public surface
+import Mathlib.LinearAlgebra.SpecialLinearGroup
+import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
 /-!
 # Orders of the point stabilisers of the modular group
@@ -213,15 +215,20 @@ theorem card_stabilizer_eq_two_mul_card_stabilizer_psl (z : ℍ) :
     exact Subgroup.card_eq_card_quotient_mul_card_subgroup _
   rw [hquot, hker, mul_comm]
 
-/-- **The elliptic order at `i` is `e_i = 2`**, the weight the valence formula gives that
-orbit. -/
+-- Neither elliptic order below is `@[simp]`, tested: `MulAction.mem_stabilizer_iff` rewrites
+-- `Nat.card (stabilizer G z)` into a `Nat.card` of a subtype underneath, so the left-hand side is
+-- not in simp-normal form and `simpNF` rejects the attribute — the same reason recorded above for
+-- `card_stabilizer_smul` over `SL(2, ℤ)`.
+
+/-- **The elliptic order at `i` is `e_i = 2`** — the order of the `PSL(2, ℤ)`-stabiliser, not the
+weight: the valence formula weights that orbit by the reciprocal `1 / e_i = 1 / 2`. -/
 theorem card_stabilizer_psl_I : Nat.card (stabilizer PSL(2, ℤ) I) = 2 := by
   have h := card_stabilizer_eq_two_mul_card_stabilizer_psl I
   rw [card_stabilizer_I] at h
   omega
 
-/-- **The elliptic order at `ρ` is `e_ρ = 3`**, the weight the valence formula gives that
-orbit. -/
+/-- **The elliptic order at `ρ` is `e_ρ = 3`** — again the stabiliser order; the valence formula
+weights that orbit by `1 / e_ρ = 1 / 3`. -/
 theorem card_stabilizer_psl_ρ : Nat.card (stabilizer PSL(2, ℤ) ρ) = 3 := by
   have h := card_stabilizer_eq_two_mul_card_stabilizer_psl ρ
   rw [card_stabilizer_ρ] at h
