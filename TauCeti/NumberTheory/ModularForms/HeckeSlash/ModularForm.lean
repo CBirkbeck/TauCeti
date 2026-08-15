@@ -69,23 +69,36 @@ namespace HeckeRing.GL2
 
 variable (k : ℤ) (D : HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2))
 
+/-- The structure projection of `heckeSlashEnd` is `heckeSlashSum`. `coe_heckeSlashEnd` states
+this for the coercion `⇑`; the structure fields below are phrased with the projection `.toFun`
+instead, and `heckeSlashEnd` being unexposed keeps the two from reducing into one another. This
+bridge is what lets those fields be discharged by `rw` and `exact` rather than by an unrestricted
+simp call. -/
+private lemma toFun_heckeSlashEnd (f : SlashInvariantForm 𝒮ℒ k) :
+    (heckeSlashEnd k D f).toFun = heckeSlashSum k D f :=
+  coe_heckeSlashEnd k D f
+
 /-- **The double coset acting on modular forms.** The underlying function is `heckeSlashSum`;
 invariance is `heckeSlashEnd`, holomorphy is `mdifferentiable_heckeSlashSum`, and boundedness at
 the cusps is `isBoundedAt_heckeSlashSum`. -/
 noncomputable def heckeSlashModularForm (f : ModularForm 𝒮ℒ k) : ModularForm 𝒮ℒ k where
   toSlashInvariantForm := heckeSlashEnd k D f.toSlashInvariantForm
   holo' := by
-    simpa only [coe_heckeSlashEnd] using! mdifferentiable_heckeSlashSum k D f.holo'
-  -- The cusp field needs the unrestricted simp set: `coe_heckeSlashEnd` alone rewrites the
-  -- coercion but not the structure projection `.toFun`, which `heckeSlashEnd` being unexposed
-  -- keeps opaque. The `!` is likewise load-bearing; plain `simpa` cannot cross that boundary.
+    rw [coe_heckeSlashEnd]; exact mdifferentiable_heckeSlashSum k D f.holo'
   bdd_at_cusps' hc := by
-    simpa using! isBoundedAt_heckeSlashSum k D (fun _ h ↦ f.bdd_at_cusps' h) hc
+    rw [toFun_heckeSlashEnd]
+    exact isBoundedAt_heckeSlashSum k D (fun _ h ↦ f.bdd_at_cusps' h) hc
 
 /-- The action is `heckeSlashSum` on underlying functions. -/
 @[simp] lemma coe_heckeSlashModularForm (f : ModularForm 𝒮ℒ k) :
     ⇑(heckeSlashModularForm k D f) = heckeSlashSum k D f :=
   coe_heckeSlashEnd k D f.toSlashInvariantForm
+
+/-- The projection form of `coe_heckeSlashModularForm`, for the same reason as
+`toFun_heckeSlashEnd`: the cusp-form field below is phrased with `.toFun`. -/
+private lemma toFun_heckeSlashModularForm (f : ModularForm 𝒮ℒ k) :
+    (heckeSlashModularForm k D f).toFun = heckeSlashSum k D f :=
+  coe_heckeSlashModularForm k D f
 
 /-- **The double coset acting on cusp forms** — the action preserves cuspidality. Only the
 vanishing field is new: invariance and holomorphy are taken from `heckeSlashModularForm` at the
@@ -93,8 +106,8 @@ underlying modular form, so the two constructions are not proved twice. -/
 noncomputable def heckeSlashCuspForm (f : CuspForm 𝒮ℒ k) : CuspForm 𝒮ℒ k :=
   { heckeSlashModularForm k D (f : ModularForm 𝒮ℒ k) with
     zero_at_cusps' := fun hc ↦ by
-      simpa [coe_heckeSlashModularForm] using!
-        isZeroAt_heckeSlashSum k D (fun _ h ↦ f.zero_at_cusps' h) hc }
+      rw [toFun_heckeSlashModularForm]
+      exact isZeroAt_heckeSlashSum k D (fun _ h ↦ f.zero_at_cusps' h) hc }
 
 /-- The action is `heckeSlashSum` on underlying functions. -/
 @[simp] lemma coe_heckeSlashCuspForm (f : CuspForm 𝒮ℒ k) :
