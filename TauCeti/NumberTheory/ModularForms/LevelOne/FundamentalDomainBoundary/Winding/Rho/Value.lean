@@ -94,11 +94,8 @@ private lemma telescope_rho_piece_arc_first (H : ℝ) :
           (fdBoundary H t - (UpperHalfPlane.ρ : ℂ)) =
       Complex.log (fdBoundary H 2 - (UpperHalfPlane.ρ : ℂ)) -
         Complex.log (fdBoundary H 1 - (UpperHalfPlane.ρ : ℂ)) := by
-  have heval : ∀ s ∈ Icc (1 : ℝ) 2, fdBoundary H s = fdBoundarySegment2 s := by
-    intro s hs
-    rcases eq_or_lt_of_le hs.1 with h1 | h1
-    · rw [← h1, fdBoundary_apply_one, fdBoundarySegment2_apply_one]
-    · exact fdBoundary_of_le_two h1 hs.2
+  have heval : ∀ s ∈ Icc (1 : ℝ) 2, fdBoundary H s = fdBoundarySegment2 s :=
+    fun _ hs ↦ eqOn_fdBoundarySegment2 H hs
   have hd : deriv (fun s ↦ fdBoundarySegment2 s - (UpperHalfPlane.ρ : ℂ)) = fun s ↦
       (Real.pi / 2 - Real.pi / 3) •
         (circleMap 0 1 (Real.pi / 3 + (s - 1) * (Real.pi / 2 - Real.pi / 3)) * Complex.I) :=
@@ -135,11 +132,9 @@ private lemma telescope_rho_piece_arc_second (H : ℝ) (hδL : 0 < δL) (hδL1 :
       Complex.log (fdBoundary H (3 - δL) - (UpperHalfPlane.ρ : ℂ)) -
         Complex.log (fdBoundary H 2 - (UpperHalfPlane.ρ : ℂ)) := by
   have hab : (2 : ℝ) ≤ 3 - δL := by linarith
-  have heval : ∀ s ∈ Icc (2 : ℝ) (3 - δL), fdBoundary H s = fdBoundarySegment3 s := by
-    intro s hs
-    rcases eq_or_lt_of_le hs.1 with h2 | h2
-    · rw [← h2, fdBoundary_apply_two, fdBoundarySegment3_apply_two]
-    · exact fdBoundary_of_le_three h2 (by linarith [hs.2])
+  -- the excised range sits inside `[2, 3]`, so the segment identification restricts to it
+  have heval : ∀ s ∈ Icc (2 : ℝ) (3 - δL), fdBoundary H s = fdBoundarySegment3 s :=
+    fun _ hs ↦ eqOn_fdBoundarySegment3 H ⟨hs.1, by linarith [hs.2]⟩
   have hd : deriv (fun s ↦ fdBoundarySegment3 s - (UpperHalfPlane.ρ : ℂ)) = fun s ↦
       (2 * Real.pi / 3 - Real.pi / 2) •
         (circleMap 0 1 (Real.pi / 2 + (s - 2) * (2 * Real.pi / 3 - Real.pi / 2)) *
@@ -209,11 +204,8 @@ private lemma telescope_rho_piece_ceiling (hH : Real.sqrt 3 / 2 < H) :
           (fdBoundary H t - (UpperHalfPlane.ρ : ℂ)) =
       Complex.log (fdBoundary H 5 - (UpperHalfPlane.ρ : ℂ)) -
         Complex.log (fdBoundary H 4 - (UpperHalfPlane.ρ : ℂ)) := by
-  have heval : ∀ s ∈ Icc (4 : ℝ) 5, fdBoundary H s = fdBoundarySegment5 H s := by
-    intro s hs
-    rcases eq_or_lt_of_le hs.1 with h4 | h4
-    · rw [← h4, fdBoundary_apply_four, fdBoundarySegment5_apply_four]
-    · exact fdBoundary_of_gt_four h4
+  have heval : ∀ s ∈ Icc (4 : ℝ) 5, fdBoundary H s = fdBoundarySegment5 H s :=
+    fun _ hs ↦ eqOn_fdBoundarySegment5 H hs
   have hd : deriv (fun s ↦ fdBoundarySegment5 H s - (UpperHalfPlane.ρ : ℂ)) =
       fun _ ↦ (1 : ℂ) :=
     funext fun s ↦ by rw [deriv_sub_const, deriv_fdBoundarySegment5]
