@@ -27,6 +27,8 @@ different embeddings `f` induce different structures, so none can be registered 
 ## Main results
 
 * `TauCeti.AlgHom.finrank_fieldRange`: `[L : f.fieldRange] = [L : K]`.
+* `TauCeti.AlgHom.finiteDimensional_of_fieldRange`: finiteness over the range transfers to the
+  source — the same identification read for the property rather than the number.
 * `TauCeti.AlgHom.finSepDegree_fieldRange` and `TauCeti.AlgHom.finInsepDegree_fieldRange`: the
   same for the separable and inseparable degrees. These are the `f.fieldRange` cases of the
   general transports in `TauCeti.FieldTheory.SeparableDegree`, which is where a caller holding
@@ -52,6 +54,28 @@ theorem finrank_fieldRange (f : K →ₐ[F] L) [Algebra K L] (h : ∀ z, algebra
     exact (_root_.AlgHom.equivFieldRange_apply_coe f z).trans (h z).symm
   exact (Algebra.finrank_eq_of_equiv_equiv f.equivFieldRange.toRingEquiv (RingEquiv.refl L)
     hsquare).symm
+
+/-- **Finiteness above the range of a field embedding transfers to its source.** The range
+restriction `f.equivFieldRange` is onto, so `f.fieldRange` is finite over `K`, and the tower
+`K → f.fieldRange → L` carries finiteness the rest of the way.
+
+The counterpart of `finrank_fieldRange` for the property rather than the number: a caller who
+knows only that `L` is finite over the *range* — which is the form an intermediate field usually
+arrives in — gets finiteness over `K` itself, and with it the `Algebra.IsAlgebraic` side condition
+the separable and inseparable tower laws take. -/
+theorem finiteDimensional_of_fieldRange (f : K →ₐ[F] L) [Algebra K L]
+    (h : ∀ z, algebraMap K L z = f z) [FiniteDimensional f.fieldRange L] :
+    FiniteDimensional K L := by
+  let _ : Algebra K f.fieldRange := (f.equivFieldRange).toAlgHom.toRingHom.toAlgebra
+  have : IsScalarTower K f.fieldRange L :=
+    IsScalarTower.of_algebraMap_eq fun z ↦ by
+      rw [RingHom.algebraMap_toAlgebra]
+      exact (h z).trans (_root_.AlgHom.equivFieldRange_apply_coe f z).symm
+  have : FiniteDimensional K f.fieldRange :=
+    Module.Finite.of_surjective (Algebra.linearMap K _) fun y ↦
+      ⟨f.equivFieldRange.symm y, by
+        simp [Algebra.linearMap_apply, RingHom.algebraMap_toAlgebra]⟩
+  exact FiniteDimensional.trans K f.fieldRange L
 
 /-- **The separable degree above the range of a field embedding equals the one above its
 source.** The `f.fieldRange` case of `Field.finSepDegree_eq_of_surjective`. -/

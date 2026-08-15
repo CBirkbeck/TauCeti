@@ -42,6 +42,8 @@ this file names those two parts and records that they multiply to the degree.
   `TauCeti.Isogeny.inseparableDegree_eq_degree_of_isPurelyInseparable`: the purely inseparable
   case. No declaration consumes these yet; they are the shape the roadmap's Frobenius milestone
   ("`π_q`, purely inseparable of degree `q`") will need.
+* `TauCeti.Isogeny.separableDegree_eq_one_iff` and `TauCeti.Isogeny.inseparableDegree_eq_one_iff`:
+  the biconditional forms, for a consumer holding a computed degree rather than an assumed class.
 
 ## Design
 
@@ -111,29 +113,6 @@ theorem separableDegree_def (φ : Isogeny W₁ W₂) :
 /-- The defining formula for `inseparableDegree`. -/
 theorem inseparableDegree_def (φ : Isogeny W₁ W₂) :
     φ.inseparableDegree = Field.finInsepDegree φ.fieldPullback.fieldRange W₁.FunctionField := (rfl)
-
-/-- Finiteness above the pullback's range transfers to the function field itself.
-
-`Isogeny.finiteDimensional` gives `FiniteDimensional φ.fieldPullback.fieldRange W₁.FunctionField`;
-this moves it across the `equivFieldRange` identification to `W₂.FunctionField`, which no public
-declaration supplies. Its one consumer is `separableDegree_comp`, where it discharges the
-`Algebra.IsAlgebraic` side condition of the tower law — not the `fieldRange` transports, which
-take no finiteness at all. -/
-private theorem finiteDimensional_of_finiteDimensional_fieldRange (φ : Isogeny W₁ W₂)
-    [Algebra W₂.FunctionField W₁.FunctionField]
-    (h : ∀ z, algebraMap W₂.FunctionField W₁.FunctionField z = φ.fieldPullback z) :
-    FiniteDimensional W₂.FunctionField W₁.FunctionField := by
-  let _ : Algebra W₂.FunctionField φ.fieldPullback.fieldRange :=
-    (φ.fieldPullback.equivFieldRange).toAlgHom.toRingHom.toAlgebra
-  have : IsScalarTower W₂.FunctionField φ.fieldPullback.fieldRange W₁.FunctionField :=
-    IsScalarTower.of_algebraMap_eq fun z ↦ by
-      rw [RingHom.algebraMap_toAlgebra]
-      exact (h z).trans (AlgHom.equivFieldRange_apply_coe φ.fieldPullback z).symm
-  have : FiniteDimensional W₂.FunctionField φ.fieldPullback.fieldRange :=
-    Module.Finite.of_surjective (Algebra.linearMap W₂.FunctionField _) fun y ↦
-      ⟨φ.fieldPullback.equivFieldRange.symm y, by
-        simp [Algebra.linearMap_apply, RingHom.algebraMap_toAlgebra]⟩
-  exact FiniteDimensional.trans W₂.FunctionField φ.fieldPullback.fieldRange W₁.FunctionField
 
 /-- **The separable degree read off any algebra structure induced by the pullback**, the
 separable analogue of `degree_eq_finrank`. Stated for an arbitrary structure whose map is
@@ -221,6 +200,23 @@ theorem inseparableDegree_eq_degree_of_isPurelyInseparable (φ : Isogeny W₁ W�
     φ.inseparableDegree = φ.degree := by
   rw [inseparableDegree_def, degree_def, IsPurelyInseparable.finInsepDegree_eq]
 
+/-- **A separable degree of `1` characterises pure inseparability**, not merely follows from it.
+
+The `@[simp]` lemmas above eliminate an assumed instance; this is the way back, for a consumer
+holding a computed degree and wanting the class. Both directions matter once `[n]` and Frobenius
+are in play, where the degree is what gets calculated. -/
+theorem separableDegree_eq_one_iff (φ : Isogeny W₁ W₂) :
+    φ.separableDegree = 1 ↔
+      IsPurelyInseparable φ.fieldPullback.fieldRange W₁.FunctionField :=
+  φ.separableDegree_def ▸ (isPurelyInseparable_iff_finSepDegree_eq_one _ _).symm
+
+/-- **An inseparable degree of `1` characterises separability**, the companion of
+`separableDegree_eq_one_iff`. -/
+theorem inseparableDegree_eq_one_iff (φ : Isogeny W₁ W₂) :
+    φ.inseparableDegree = 1 ↔
+      Algebra.IsSeparable φ.fieldPullback.fieldRange W₁.FunctionField :=
+  φ.inseparableDegree_def ▸ (isSeparable_iff_finInsepDegree_eq_one _ _).symm
+
 /-- The pullback-induced algebra structure has the pullback as its structure map. The composition
 laws below each need this three times — for `φ`, for `ψ` and for `ψ.comp φ` — and it is the
 hypothesis every `_eq_finSepDegree`-style lemma in this file takes. -/
@@ -246,7 +242,7 @@ theorem separableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  have h₁ := φ.finiteDimensional_of_finiteDimensional_fieldRange hφ
+  have h₁ := TauCeti.AlgHom.finiteDimensional_of_fieldRange φ.fieldPullback hφ
   rw [(ψ.comp φ).separableDegree_eq_finSepDegree hc, ψ.separableDegree_eq_finSepDegree hψ,
     φ.separableDegree_eq_finSepDegree hφ]
   exact (Field.finSepDegree_mul_finSepDegree_of_isAlgebraic W₃.FunctionField W₂.FunctionField
