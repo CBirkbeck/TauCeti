@@ -161,8 +161,7 @@ theorem card_stabilizer_eq_two_of_orbit_ne_I_of_orbit_ne_ρ (z : ℍ)
 /-! ### The projective orders `e_P` -/
 
 -- the centre sits inside every point stabiliser, since `±1` acts trivially on `ℍ`
-private theorem center_le_stabilizer (z : ℍ) :
-    Subgroup.center SL(2, ℤ) ≤ stabilizer SL(2, ℤ) z :=
+private theorem center_le_stabilizer (z : ℍ) : Subgroup.center SL(2, ℤ) ≤ stabilizer SL(2, ℤ) z :=
   fun c hc ↦ UpperHalfPlane.smul_eq_self_of_mem_center c hc z
 
 -- the centre of `SL(2, ℤ)` has order two. Built on Mathlib rather than on an explicit `{±1}`
@@ -177,8 +176,7 @@ private theorem card_center : Nat.card (Subgroup.center SL(2, ℤ)) = 2 := by
     hrank, hroot.card_rootsOfUnity]
 
 -- the quotient map restricted to a point stabiliser
-private noncomputable def toPsl (z : ℍ) :
-    stabilizer SL(2, ℤ) z →* stabilizer PSL(2, ℤ) z where
+private noncomputable def toPsl (z : ℍ) : stabilizer SL(2, ℤ) z →* stabilizer PSL(2, ℤ) z where
   toFun h := ⟨((h : SL(2, ℤ)) : PSL(2, ℤ)), by
     rw [MulAction.mem_stabilizer_iff, UpperHalfPlane.pslMk_smul]; exact h.2⟩
   map_one' := rfl
