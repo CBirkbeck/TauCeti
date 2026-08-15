@@ -8,6 +8,7 @@ module
 public import Mathlib.NumberTheory.ModularForms.NormTrace
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 import TauCeti.NumberTheory.ModularForms.Norm.Trace
+import Mathlib.GroupTheory.GroupAction.Quotient
 import TauCeti.NumberTheory.ModularForms.Order.Orbits
 
 /-!
@@ -29,19 +30,23 @@ order of the norm is the sum of the orders of the factors.
   factor vanishes to at most the order the norm does, with
   `TauCeti.ModularForm.orderOfVanishingAt_le_orderOfVanishingAt_norm` as the identity-coset
   corollary — so the zeros of the norm dominate those of the form.
-* `TauCeti.ModularForm.finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero`: the first
+* `TauCeti.ModularForm.finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero_subgroup`: the
   consumer of that domination — at any level of finite relative index in `𝒮ℒ`, the
-  nonzero-order points meet only finitely many `SL(2, ℤ)`-orbits.
+  nonzero-order points of a form meet only finitely many `𝒢`-orbits, which is finite support
+  of the interior order divisor on `𝒢 \ ℍ`.
 
 ## References
 
-* The finiteness argument is the one in PR #3330
+* The route is the one in PR #3330
   (`TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnSubgroupOrbit`,
   `Order/SubgroupOrbits.lean`): order domination under the norm sends the support into the
-  finite support of the level-one norm. That theorem takes `Γ ≤ SL(2, ℤ)` of finite index and
-  concludes finite support on `Γ`-orbits; the variant here takes a subgroup of `GL (Fin 2) ℝ`
-  of finite *relative* index in `𝒮ℒ`, which need not lie inside `𝒮ℒ`, and counts
-  `SL(2, ℤ)`-orbits.
+  finite support of the level-one norm, and finite index makes the fibres of the orbit
+  comparison finite. That theorem takes `Γ ≤ SL(2, ℤ)` of finite index and descends the order
+  itself to `Γ`-orbits; the variant here takes `𝒢 ≤ GL (Fin 2) ℝ` of finite *relative* index in
+  `𝒮ℒ`, which **need not lie inside `𝒮ℒ`**. That difference is why the order is not descended
+  here: `𝒢` may contain elements of negative determinant, under which the vanishing order is not
+  known to be invariant (`orderOfVanishingAt_smul` asks for `0 < det`), so only the image of the
+  nonzero-order set in `𝒢 \ ℍ` is claimed, not a well-defined order function on it.
 -/
 
 open UpperHalfPlane
@@ -108,13 +113,9 @@ public lemma orderOfVanishingAt_le_orderOfVanishingAt_norm (f : F) (p : ℍ) :
   simpa using orderOfVanishingAt_quotientFunc_le_orderOfVanishingAt_norm f
     (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) p
 
-/-- **At any level of finite relative index in `𝒮ℒ`, the nonzero-order points of a form meet
-only finitely many `SL(2, ℤ)`-orbits.**
-
-⚠ This counts `SL(2, ℤ)`-orbits, not `𝒢`-orbits. Finite relative index makes `𝒢 ⊓ 𝒮ℒ` a
-finite-index subgroup of `𝒮ℒ`, so each `SL(2, ℤ)`-orbit meets only finitely many `𝒢`-orbits
-and the `𝒢`-orbit count is finite too — but that step is not taken here. -/
-public lemma finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero
+/-- At any level of finite relative index in `𝒮ℒ`, the nonzero-order points of a form meet only
+finitely many `SL(2, ℤ)`-orbits — the level-one statement, read through the norm. -/
+private lemma finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero
     {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F 𝒢 k] (f : F) :
     Set.Finite ((Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) ''
       {p : ℍ | orderOfVanishingAt f p ≠ 0}) := by
@@ -125,6 +126,58 @@ public lemma finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero
   simpa only [Function.mem_support, orderOfVanishingOnOrbit_mk] using
     (((orderOfVanishingAt_nonneg (ModularFormClass.holo f) p).lt_of_ne' hp).trans_le
       (orderOfVanishingAt_le_orderOfVanishingAt_norm f p)).ne'
+
+/-- The `SL(2, ℤ)`-orbit and the `𝒮ℒ`-orbit of a point are the same subset of `ℍ`: `𝒮ℒ` is by
+definition the image of `SL(2, ℤ)` in `GL (Fin 2) ℝ`, through which the action factors. -/
+private lemma orbit_sl_eq_orbit_slGL (z : ℍ) :
+    MulAction.orbit SL(2, ℤ) z = MulAction.orbit 𝒮ℒ z := by
+  ext p
+  constructor
+  · rintro ⟨g, rfl⟩
+    exact ⟨⟨Matrix.SpecialLinearGroup.mapGL ℝ g, ⟨g, rfl⟩⟩, rfl⟩
+  · rintro ⟨⟨_, g, rfl⟩, rfl⟩
+    exact ⟨g, rfl⟩
+
+/-- **A single `SL(2, ℤ)`-orbit meets only finitely many `𝒢`-orbits**, whenever `𝒢` has finite
+relative index in `𝒮ℒ`. Purely group-theoretic: `𝒢 ⊓ 𝒮ℒ` is a finite-index subgroup of `𝒮ℒ`, so
+it cuts the (pretransitive) `𝒮ℒ`-orbit into finitely many pieces, and each piece lies in one
+`𝒢`-orbit. -/
+private lemma finite_image_orbit_mk_orbit (𝒢 : Subgroup (GL (Fin 2) ℝ))
+    [𝒢.IsFiniteRelIndex 𝒮ℒ] (z : ℍ) :
+    Set.Finite ((Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient 𝒢 ℍ) ''
+      MulAction.orbit SL(2, ℤ) z) := by
+  rw [orbit_sl_eq_orbit_slGL]
+  have : Finite (MulAction.orbitRel.Quotient (𝒢.subgroupOf 𝒮ℒ) (MulAction.orbit 𝒮ℒ z)) :=
+    Subgroup.finite_quotient_of_pretransitive_of_index_ne_zero Subgroup.relIndex_ne_zero
+  -- the `𝒢`-class of a point of the orbit depends only on its `𝒢 ⊓ 𝒮ℒ`-piece
+  set F : MulAction.orbitRel.Quotient (𝒢.subgroupOf 𝒮ℒ) (MulAction.orbit 𝒮ℒ z) →
+      MulAction.orbitRel.Quotient 𝒢 ℍ :=
+    fun q ↦ Quotient.liftOn' q (fun p ↦ Quotient.mk'' p.val) (by
+      rintro ⟨a, ha⟩ ⟨b, hb⟩ ⟨h, hh⟩
+      have hval : ((h : ↥𝒮ℒ) : GL (Fin 2) ℝ) • b = a := congrArg Subtype.val hh
+      exact Quotient.sound' ⟨(⟨((h : ↥𝒮ℒ) : GL (Fin 2) ℝ), h.2⟩ : ↥𝒢), hval⟩) with hF
+  refine (Set.finite_range F).subset ?_
+  rintro _ ⟨p, hp, rfl⟩
+  exact ⟨Quotient.mk'' ⟨p, hp⟩, rfl⟩
+
+/-- **At any level of finite relative index in `𝒮ℒ`, the nonzero-order points of a form meet
+only finitely many `𝒢`-orbits** — finite support of the interior order divisor on `𝒢 \ ℍ`.
+
+`𝒢` is a subgroup of `GL (Fin 2) ℝ` and is *not* assumed to lie inside `𝒮ℒ`; only the relative
+index is finite. The nonzero-order set is covered by the finitely many `SL(2, ℤ)`-orbits its
+points lie on, and each of those meets only finitely many `𝒢`-orbits. -/
+public lemma finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero_subgroup
+    {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F 𝒢 k] (f : F) :
+    Set.Finite ((Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient 𝒢 ℍ) ''
+      {p : ℍ | orderOfVanishingAt f p ≠ 0}) := by
+  refine ((finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero f).biUnion
+    (t := fun q : MulAction.orbitRel.Quotient SL(2, ℤ) ℍ ↦
+      (Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient 𝒢 ℍ) '' q.orbit)
+    fun q _ ↦ ?_).subset ?_
+  · induction q using Quotient.inductionOn' with
+    | _ p => simpa [MulAction.orbitRel.Quotient.orbit_mk] using finite_image_orbit_mk_orbit 𝒢 p
+  · rintro _ ⟨p, hp, rfl⟩
+    exact Set.mem_biUnion ⟨p, hp, rfl⟩ ⟨p, by simp, rfl⟩
 
 end ModularForm
 
