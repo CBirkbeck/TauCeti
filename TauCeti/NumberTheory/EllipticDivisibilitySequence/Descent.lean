@@ -396,18 +396,18 @@ private theorem atomRel_eq_zero_of_parity (odd : W.Odd) (zero : W 0 = 0)
   · rw [← hbd, atomRel_same₂₄ odd]; simp [zero]
   by_cases hcd : |c| = |d|
   · rw [← hcd, atomRel_same₃₄]; simp [zero]
+  have habs : ∀ x : ℤ, |x| % 2 = x % 2 := fun _ ↦ Int.abs_modEq_two
   have hpar : ∀ i j : Fin 4, (![|a|, |b|, |c|, |d|] : Fin 4 → ℤ) i % 2 =
       (![|a|, |b|, |c|, |d|] : Fin 4 → ℤ) j % 2 := by
-    have ha : |a| % 2 = a % 2 := Int.abs_modEq_two
-    have hb : |b| % 2 = b % 2 := Int.abs_modEq_two
-    have hc : |c| % 2 = c % 2 := Int.abs_modEq_two
-    have hd : |d| % 2 = d % 2 := Int.abs_modEq_two
-    intro i j; fin_cases i <;> fin_cases j <;> simp <;> omega
+    intro i j; fin_cases i <;> fin_cases j <;> simp [habs] <;> omega
   have hinj : Function.Injective (![|a|, |b|, |c|, |d|] : Fin 4 → ℤ) := by
     intro i j hij
     fin_cases i <;> fin_cases j <;> simp_all
-  simpa using atomRelFin4_eq_zero_of_injective odd descent
-    (t := ![|a|, |b|, |c|, |d|]) (fun i ↦ by fin_cases i <;> simp [abs_nonneg]) hpar hinj
+  have hzero := atomRelFin4_eq_zero_of_injective odd descent (t := ![|a|, |b|, |c|, |d|])
+    (fun i ↦ by fin_cases i <;> simp [abs_nonneg]) hpar hinj
+  -- `atomRelFin4_def` is the bridge back to `atomRel`; `simp` then only reduces the projections.
+  rw [atomRelFin4_def] at hzero
+  simpa using hzero
 
 /-- **An elliptic net from the two doubling recurrences.** A sequence that is odd, vanishes at
 `0`, has `W 1` and `W 2` nonzerodivisors, and satisfies the odd recurrence from `m = 2` and the
