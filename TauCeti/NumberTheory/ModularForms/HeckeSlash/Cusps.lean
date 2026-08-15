@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.NumberTheory.ModularForms.BoundedAtCusp
-public import TauCeti.NumberTheory.ModularForms.Cusps.RatSlash
+public import TauCeti.NumberTheory.ModularForms.Cusps.Rat.Slash
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Basic
 
 /-!
