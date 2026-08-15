@@ -6,6 +6,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
+public import TauCeti.NumberTheory.EllipticDivisibilitySequence.NormEDS
 
 /-!
 # Division polynomials of the universal curve
@@ -25,6 +26,8 @@ Each proof is the same two steps: unfold `polyEval` into a `map` followed by `ev
 * `WeierstrassCurve.Universal.evalEval_ψ₂`, `.evalEval_Ψ₃`, `.evalEval_preΨ₄`, `.evalEval_ψ`,
   `.evalEval_φ`: the polynomials `ψ₂`, `Ψ₃`, `ψₙ` and `φₙ` of `W` at `(x, y)`, together with the
   auxiliary `preΨ₄`, are the universal ones evaluated through `Universal.polyEval`.
+* `WeierstrassCurve.Universal.isEllipticSequence_polyToField_ψ`: the universal `ψ` family, taken
+  into `Universal.Field`, is an elliptic sequence.
 
 ## Implementation notes
 
@@ -84,6 +87,22 @@ lemma evalEval_ψ : (W.ψ n).evalEval x y = polyEval W x y (curve.ψ n) := by
 /-- The numerator `φₙ` of `W` at `(x, y)` is the universal one under `polyEval`. -/
 lemma evalEval_φ : (W.φ n).evalEval x y = polyEval W x y (curve.φ n) := by
   simp_rw [polyEval_apply, ← map_φ, map_specialize]
+
+/-- **The universal `ψ` family is an elliptic sequence.** Pushing `ψₙ` of the universal curve into
+`Universal.Field` gives a normalised EDS, hence an elliptic sequence — over the universal field,
+with no hypothesis on any coefficient.
+
+This is the form `Universal.lean` needs: it records `universalNormEDS_ne_zero` and
+`universalNormEDS_mem_nonZeroDivisors` as absent because they rest on `normEDS 2 3 2 = id`, which
+requires recognising the universal division polynomials as a `normEDS` in the first place. -/
+lemma isEllipticSequence_polyToField_ψ :
+    IsEllipticSequence fun n : ℤ ↦ polyToField (curve.ψ n) := by
+  have h : (fun n : ℤ ↦ polyToField (curve.ψ n))
+      = normEDS (polyToField curve.ψ₂) (polyToField (Polynomial.C curve.Ψ₃))
+          (polyToField (Polynomial.C curve.preΨ₄)) := by
+    funext n; rw [← _root_.map_normEDS]; rfl
+  rw [h]
+  exact isEllipticSequence_normEDS _ _ _
 
 end Universal
 
