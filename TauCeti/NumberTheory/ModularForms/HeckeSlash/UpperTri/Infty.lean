@@ -24,6 +24,8 @@ crosses `ModularForm.rat_slash` first — the same bridge `HeckeSlash/Cusps.lean
 
 ## Main results
 
+* `HeckeRing.GL2.isBoundedAtImInfty_rat_slash`, `isZeroAtImInfty_rat_slash`: the rational form
+  of mathlib's `.slash` lemmas, for any `g : GL (Fin 2) ℚ` with vanishing `(1, 0)` entry.
 * `HeckeRing.GL2.isBoundedAtImInfty_slash_upperTriRep`,
   `HeckeRing.GL2.isZeroAtImInfty_slash_upperTriRep`: slashing by a representative preserves
   boundedness, resp. vanishing, at `i∞`.
@@ -54,21 +56,31 @@ namespace HeckeRing.GL2
 
 variable (k : ℤ) (p : ℕ)
 
+/-- **The rational form of `IsBoundedAtImInfty.slash`.** Mathlib's lemma is about the real
+slash; the hypothesis and the matrix are stated here over `ℚ`, since `GeneralLinearGroup.map`
+acts entrywise and so carries `g 1 0 = 0` along `algebraMap ℚ ℝ`. -/
+lemma isBoundedAtImInfty_rat_slash {g : GL (Fin 2) ℚ}
+    (hg : (g : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0) {f : ℍ → ℂ} (hf : IsBoundedAtImInfty f) :
+    IsBoundedAtImInfty (f ∣[k] g) := by
+  rw [ModularForm.rat_slash]
+  exact hf.slash k (by simp [hg])
+
+/-- **The rational form of `IsZeroAtImInfty.slash`.** -/
+lemma isZeroAtImInfty_rat_slash {g : GL (Fin 2) ℚ}
+    (hg : (g : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0) {f : ℍ → ℂ} (hf : IsZeroAtImInfty f) :
+    IsZeroAtImInfty (f ∣[k] g) := by
+  rw [ModularForm.rat_slash]
+  exact hf.slash k (by simp [hg])
+
 /-- **Slashing by a representative preserves boundedness at `i∞`.** -/
 lemma isBoundedAtImInfty_slash_upperTriRep {f : ℍ → ℂ} (hf : IsBoundedAtImInfty f) (b : Fin p) :
-    IsBoundedAtImInfty (f ∣[k] (upperTriRep p b : GL (Fin 2) ℚ)) := by
-  rw [ModularForm.rat_slash]
-  -- the real matrix is still upper triangular: `Matrix.GeneralLinearGroup.map` acts
-  -- entrywise, so this is `upperTriRep_apply_one_zero` transported along `algebraMap ℚ ℝ`
-  exact hf.slash k (by simp)
+    IsBoundedAtImInfty (f ∣[k] (upperTriRep p b : GL (Fin 2) ℚ)) :=
+  isBoundedAtImInfty_rat_slash k (upperTriRep_apply_one_zero p b) hf
 
 /-- **Slashing by a representative preserves vanishing at `i∞`.** -/
 lemma isZeroAtImInfty_slash_upperTriRep {f : ℍ → ℂ} (hf : IsZeroAtImInfty f) (b : Fin p) :
-    IsZeroAtImInfty (f ∣[k] (upperTriRep p b : GL (Fin 2) ℚ)) := by
-  rw [ModularForm.rat_slash]
-  -- the real matrix is still upper triangular: `Matrix.GeneralLinearGroup.map` acts
-  -- entrywise, so this is `upperTriRep_apply_one_zero` transported along `algebraMap ℚ ℝ`
-  exact hf.slash k (by simp)
+    IsZeroAtImInfty (f ∣[k] (upperTriRep p b : GL (Fin 2) ℚ)) :=
+  isZeroAtImInfty_rat_slash k (upperTriRep_apply_one_zero p b) hf
 
 end HeckeRing.GL2
 
