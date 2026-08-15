@@ -68,7 +68,10 @@ the cusps is `isBoundedAt_heckeSlashSum`. -/
 noncomputable def heckeSlashModularForm (f : ModularForm 𝒮ℒ k) : ModularForm 𝒮ℒ k where
   toSlashInvariantForm := heckeSlashEnd k D f.toSlashInvariantForm
   holo' := by
-    simpa using! mdifferentiable_heckeSlashSum k D f.holo'
+    simpa only [coe_heckeSlashEnd] using! mdifferentiable_heckeSlashSum k D f.holo'
+  -- The cusp field needs the unrestricted simp set: `coe_heckeSlashEnd` alone rewrites the
+  -- coercion but not the structure projection `.toFun`, which `heckeSlashEnd` being unexposed
+  -- keeps opaque. The `!` is likewise load-bearing; plain `simpa` cannot cross that boundary.
   bdd_at_cusps' hc := by
     simpa using! isBoundedAt_heckeSlashSum k D (fun _ h ↦ f.bdd_at_cusps' h) hc
 
@@ -76,7 +79,7 @@ noncomputable def heckeSlashModularForm (f : ModularForm 𝒮ℒ k) : ModularFor
 noncomputable def heckeSlashCuspForm (f : CuspForm 𝒮ℒ k) : CuspForm 𝒮ℒ k where
   toSlashInvariantForm := heckeSlashEnd k D f.toSlashInvariantForm
   holo' := by
-    simpa using! mdifferentiable_heckeSlashSum k D f.holo'
+    simpa only [coe_heckeSlashEnd] using! mdifferentiable_heckeSlashSum k D f.holo'
   zero_at_cusps' hc := by
     simpa using! isZeroAt_heckeSlashSum k D (fun _ h ↦ f.zero_at_cusps' h) hc
 
