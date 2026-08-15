@@ -197,6 +197,15 @@ theorem inseparableDegree_eq_degree_of_isPurelyInseparable (φ : Isogeny W₁ W�
     φ.inseparableDegree = φ.degree := by
   rw [inseparableDegree_def, degree_def, IsPurelyInseparable.finInsepDegree_eq]
 
+/-- The pullback-induced algebra structure has the pullback as its structure map. The composition
+laws below each need this three times — for `φ`, for `ψ` and for `ψ.comp φ` — and it is the
+hypothesis every `_eq_finSepDegree`-style lemma in this file takes. -/
+private theorem algebraMap_fieldPullback_eq (φ : Isogeny W₁ W₂) (z : W₂.FunctionField) :
+    @algebraMap W₂.FunctionField W₁.FunctionField _ _ φ.fieldPullback.toRingHom.toAlgebra z =
+      φ.fieldPullback z := by
+  rw [RingHom.algebraMap_toAlgebra]
+  exact congrFun (AlgHom.coe_toRingHom φ.fieldPullback) z
+
 variable {W₃ : WeierstrassCurve.Affine F}
 
 /-- **The separable degree is multiplicative under composition**, by the tower formula for
@@ -207,16 +216,9 @@ theorem separableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   let _ := φ.fieldPullback.toRingHom.toAlgebra
   let _ := ψ.fieldPullback.toRingHom.toAlgebra
   let _ := (ψ.comp φ).fieldPullback.toRingHom.toAlgebra
-  have hφ : ∀ z, algebraMap W₂.FunctionField W₁.FunctionField z = φ.fieldPullback z := fun z ↦ by
-    rw [RingHom.algebraMap_toAlgebra]
-    exact congrFun (AlgHom.coe_toRingHom φ.fieldPullback) z
-  have hψ : ∀ z, algebraMap W₃.FunctionField W₂.FunctionField z = ψ.fieldPullback z := fun z ↦ by
-    rw [RingHom.algebraMap_toAlgebra]
-    exact congrFun (AlgHom.coe_toRingHom ψ.fieldPullback) z
-  have hc : ∀ z, algebraMap W₃.FunctionField W₁.FunctionField z = (ψ.comp φ).fieldPullback z :=
-    fun z ↦ by
-      rw [RingHom.algebraMap_toAlgebra]
-      exact congrFun (AlgHom.coe_toRingHom (ψ.comp φ).fieldPullback) z
+  have hφ := φ.algebraMap_fieldPullback_eq
+  have hψ := ψ.algebraMap_fieldPullback_eq
+  have hc := (ψ.comp φ).algebraMap_fieldPullback_eq
   have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
@@ -236,16 +238,9 @@ theorem inseparableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂)
   let _ := φ.fieldPullback.toRingHom.toAlgebra
   let _ := ψ.fieldPullback.toRingHom.toAlgebra
   let _ := (ψ.comp φ).fieldPullback.toRingHom.toAlgebra
-  have hφ : ∀ z, algebraMap W₂.FunctionField W₁.FunctionField z = φ.fieldPullback z := fun z ↦ by
-    rw [RingHom.algebraMap_toAlgebra]
-    exact congrFun (AlgHom.coe_toRingHom φ.fieldPullback) z
-  have hψ : ∀ z, algebraMap W₃.FunctionField W₂.FunctionField z = ψ.fieldPullback z := fun z ↦ by
-    rw [RingHom.algebraMap_toAlgebra]
-    exact congrFun (AlgHom.coe_toRingHom ψ.fieldPullback) z
-  have hc : ∀ z, algebraMap W₃.FunctionField W₁.FunctionField z = (ψ.comp φ).fieldPullback z :=
-    fun z ↦ by
-      rw [RingHom.algebraMap_toAlgebra]
-      exact congrFun (AlgHom.coe_toRingHom (ψ.comp φ).fieldPullback) z
+  have hφ := φ.algebraMap_fieldPullback_eq
+  have hψ := ψ.algebraMap_fieldPullback_eq
+  have hc := (ψ.comp φ).algebraMap_fieldPullback_eq
   have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
