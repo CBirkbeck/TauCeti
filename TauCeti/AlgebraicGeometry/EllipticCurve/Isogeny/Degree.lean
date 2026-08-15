@@ -7,9 +7,7 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.FunctionField
 import Mathlib.NumberTheory.FunctionField
--- Non-public: `AlgHom.algebraMap_toAlgebra_apply` supplies the `∀ z, algebraMap _ _ z = f z`
 -- witnesses inside the proofs below; it appears in no statement here.
-import TauCeti.Algebra.Algebra.Hom
 import TauCeti.FieldTheory.IntermediateField.FieldRange
 
 /-!
@@ -184,9 +182,12 @@ theorem degree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   have htower : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  have hφ := φ.fieldPullback.algebraMap_toAlgebra_apply
-  have hψ := ψ.fieldPullback.algebraMap_toAlgebra_apply
-  have hc := (ψ.comp φ).fieldPullback.algebraMap_toAlgebra_apply
+  have hφ : ∀ z, algebraMap _ _ z = φ.fieldPullback z := fun z ↦ by
+    rw [RingHom.algebraMap_toAlgebra, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
+  have hψ : ∀ z, algebraMap _ _ z = ψ.fieldPullback z := fun z ↦ by
+    rw [RingHom.algebraMap_toAlgebra, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
+  have hc : ∀ z, algebraMap _ _ z = (ψ.comp φ).fieldPullback z := fun z ↦ by
+    rw [RingHom.algebraMap_toAlgebra, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
   rw [φ.degree_eq_finrank hφ, ψ.degree_eq_finrank hψ, (ψ.comp φ).degree_eq_finrank hc]
   exact (Module.finrank_mul_finrank W₃.FunctionField W₂.FunctionField W₁.FunctionField).symm
 
