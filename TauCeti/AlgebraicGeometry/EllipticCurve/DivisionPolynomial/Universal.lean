@@ -23,8 +23,8 @@ Each proof is the same two steps: unfold `polyEval` into a `map` followed by `ev
 ## Main results
 
 * `WeierstrassCurve.Universal.evalEval_ψ₂`, `.evalEval_Ψ₃`, `.evalEval_preΨ₄`, `.evalEval_ψ`,
-  `.evalEval_φ`: the division polynomials `ψ₂`, `Ψ₃`, `preΨ₄`, `ψₙ` and `φₙ` of `W` at `(x, y)`
-  are the universal ones evaluated through `Universal.polyEval`.
+  `.evalEval_φ`: the polynomials `ψ₂`, `Ψ₃`, `ψₙ` and `φₙ` of `W` at `(x, y)`, together with the
+  auxiliary `preΨ₄`, are the universal ones evaluated through `Universal.polyEval`.
 
 ## Implementation notes
 
@@ -47,7 +47,8 @@ pins for the NagellLutz project. Declarations `Universal.evalEval_ψ₂`, `evalE
 reason above. That file's header reads `Authors: David Kurniadi Angdinata, Junyan Xu`.
 
 The statements are the source's unchanged. Docstrings are added here, and the source's shared
-`variable {m n : ℤ}` is narrowed to `n`, which is the only index either statement mentions.
+`variable {m n : ℤ}` is narrowed to `n`: of the five results only `evalEval_ψ` and `evalEval_φ`
+carry an index, and both use `n` alone.
 -/
 
 public section
