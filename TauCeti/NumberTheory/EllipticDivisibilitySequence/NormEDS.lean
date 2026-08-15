@@ -60,15 +60,15 @@ waiting on, not the slice that lands them.
 ## Provenance
 
 Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
-(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
-`1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations
-`IsEllSequence.normEDS_of_mem_nonZeroDivisors`, `IsEllSequence.normEDS`, `net_normEDS` and
-`IsEllSequence.invar`. That file's header
-reads `Authors: David Kurniadi Angdinata`; following this repository's convention for adapted
-material the upstream authorship is credited here rather than in the copyright header. J. Xu is
-acknowledged for the surrounding LutzNagell development — he authors `Universal.lean` and
+(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`),
+declarations `IsEllSequence.normEDS_of_mem_nonZeroDivisors` and `IsEllSequence.normEDS`. That
+file's header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
+adapted material the upstream authorship is credited here rather than in the copyright header. J.
+Xu is acknowledged for the surrounding LutzNagell development — he authors `Universal.lean` and
 co-authors `DivisionPolynomialOmega.lean` at the same revision — as context for this port, not as
 an author of the declarations above.
+
+The net strengthening here adapts one further declaration of that same file, `net_normEDS`.
 
 The source proves the hypothesis-carrying version from its own descent development; here that step
 is `Descent.lean`'s `IsEllipticNet.isEllipticNet_of_rel`, fed the two recurrences in relator form,
