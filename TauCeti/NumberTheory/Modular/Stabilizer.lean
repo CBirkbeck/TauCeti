@@ -74,7 +74,7 @@ private theorem finite_stabilizer_of_subset (s : Finset SL(2, ℤ))
 private theorem finite_stabilizer_of_smul (g : SL(2, ℤ))
     (h : Finite (stabilizer SL(2, ℤ) (g • z))) : Finite (stabilizer SL(2, ℤ) z) :=
   Finite.of_equiv _ (stabilizerEquivStabilizerOfOrbitRel
-    (⟨g, rfl⟩ : MulAction.orbitRel SL(2, ℤ) ℍ (g • z) z)).toEquiv
+    (MulAction.orbitRel_apply.mpr (MulAction.mem_orbit z g))).toEquiv
 
 /-- **Every point stabiliser is finite**, so the elliptic order `e_P` is defined at every point
 of `ℍ` and not only inside the fundamental domain. -/
@@ -175,7 +175,7 @@ the centre `±1`, which acts trivially on `ℍ`, so every projective stabiliser 
 halved — the passage from the counts `4`, `6`, `2` to the elliptic orders `e_P`. -/
 theorem card_stabilizer_eq_two_mul_card_stabilizer_psl (z : ℍ) :
     Nat.card (stabilizer SL(2, ℤ) z) = 2 * Nat.card (stabilizer PSL(2, ℤ) z) := by
-  rw [TauCeti.card_stabilizer_eq_card_mul_card_stabilizer_quotient _ z
+  rw [TauCeti.card_stabilizer_eq_card_subgroup_mul_card_stabilizer_quotient _ z
     fun g ↦ UpperHalfPlane.pslMk_smul g z, card_center]
 
 -- Neither elliptic order below is `@[simp]`, tested: `MulAction.mem_stabilizer_iff` rewrites

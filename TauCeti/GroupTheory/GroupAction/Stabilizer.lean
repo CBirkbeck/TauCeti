@@ -32,7 +32,8 @@ subgroup quotiented out.
   with `TauCeti.card_stabilizer_smul` the translate-presented corollary.
 * `TauCeti.card_stabilizer_eq_card_ker_mul_card_stabilizer`: the stabiliser order divides by
   `Nat.card f.ker` along a surjection `f`, with
-  `TauCeti.card_stabilizer_eq_card_mul_card_stabilizer_quotient` the quotient-map corollary.
+  `TauCeti.card_stabilizer_eq_card_subgroup_mul_card_stabilizer_quotient` the quotient-map
+  corollary.
 -/
 
 public section
@@ -72,23 +73,20 @@ theorem card_stabilizer_eq_card_ker_mul_card_stabilizer {H : Type*} [Group H] [M
     Nat.card (MulAction.stabilizer G a) =
       Nat.card f.ker * Nat.card (MulAction.stabilizer H a) := by
   -- `QuotientGroup.preimageMkEquivSubgroupProdSet` would shorten this, but it is stated only
-  -- for `QuotientGroup.mk`; at this generality the kernel-and-Lagrange chain is the route.
+  -- for `QuotientGroup.mk`; at this generality the kernel-and-Lagrange chain is the route, and
+  -- the whole of it rests on this one transport, used in both directions.
+  have hmem : ∀ g : G, g ∈ MulAction.stabilizer G a ↔ f g ∈ MulAction.stabilizer H a :=
+    fun g ↦ by simp [MulAction.mem_stabilizer_iff, hcompat g]
   have hle : f.ker ≤ MulAction.stabilizer G a := fun n hn ↦
-    MulAction.mem_stabilizer_iff.mpr <|
-      (hcompat n).symm.trans <| by rw [MonoidHom.mem_ker.mp hn, one_smul]
+    (hmem n).mpr (by simp [MonoidHom.mem_ker.mp hn])
   let φ : MulAction.stabilizer G a →* MulAction.stabilizer H a :=
-    (f.comp (MulAction.stabilizer G a).subtype).codRestrict _ fun g ↦
-      MulAction.mem_stabilizer_iff.mpr <|
-        (hcompat _).trans (MulAction.mem_stabilizer_iff.mp g.2)
+    (f.comp (MulAction.stabilizer G a).subtype).codRestrict _ fun g ↦ (hmem _).mp g.2
   have hsurj : Function.Surjective φ := fun ⟨q, hq⟩ ↦ by
     obtain ⟨g, rfl⟩ := hf q
-    exact ⟨⟨g, MulAction.mem_stabilizer_iff.mpr <|
-      (hcompat g).symm.trans (MulAction.mem_stabilizer_iff.mp hq)⟩, rfl⟩
-  -- `g` lies in the kernel of `φ` exactly when `f g = 1`, i.e. when `g` lies in `f.ker`
-  have hker : φ.ker = f.ker.subgroupOf (MulAction.stabilizer G a) := by
-    ext g
-    rw [MonoidHom.mem_ker, Subgroup.mem_subgroupOf, Subtype.ext_iff, MonoidHom.mem_ker]
-    rfl
+    -- `rfl` here is the `codRestrict`/`Subtype.val` unfolding of `φ`
+    exact ⟨⟨g, (hmem g).mpr hq⟩, rfl⟩
+  have hker : φ.ker = f.ker.subgroupOf (MulAction.stabilizer G a) :=
+    MonoidHom.ker_codRestrict _ _ _
   rw [← Nat.card_congr (QuotientGroup.quotientKerEquivOfSurjective _ hsurj).toEquiv,
     ← Nat.card_congr (Subgroup.subgroupOfEquivOfLe hle).toEquiv, ← hker, mul_comm]
   exact Subgroup.card_eq_card_quotient_mul_card_subgroup _
@@ -96,9 +94,11 @@ theorem card_stabilizer_eq_card_ker_mul_card_stabilizer {H : Type*} [Group H] [M
 /-- **Passing to a quotient group divides stabiliser orders by the subgroup**: the case of
 `card_stabilizer_eq_card_ker_mul_card_stabilizer` for the quotient map, whose kernel is `N`.
 
-This is the step from a matrix-group stabiliser order to the projective one — the elliptic
-orders `e_P` of a Fuchsian group are the `PSL` counts, half the `SL` counts. -/
-theorem card_stabilizer_eq_card_mul_card_stabilizer_quotient (N : Subgroup G) [N.Normal]
+This is the step from a matrix-group stabiliser order to the projective one. The divisor is
+`Nat.card N` in general; for `SL(2, ℤ) ↠ PSL(2, ℤ)` that is the centre `±1`, so there the
+elliptic orders `e_P` are the matrix counts halved. For a Fuchsian `Γ` with `-I ∉ Γ` the two
+counts coincide. -/
+theorem card_stabilizer_eq_card_subgroup_mul_card_stabilizer_quotient (N : Subgroup G) [N.Normal]
     [MulAction (G ⧸ N) α] (a : α)
     (hcompat : ∀ g : G, (QuotientGroup.mk g : G ⧸ N) • a = g • a) :
     Nat.card (MulAction.stabilizer G a) =
