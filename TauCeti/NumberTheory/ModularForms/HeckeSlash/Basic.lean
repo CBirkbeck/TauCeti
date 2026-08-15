@@ -110,9 +110,11 @@ asked of `Δ` at all beyond containing the chosen `δ`.
   (`ModularForm.rat_smul_slash_of_det_pos`), whereas over a general `GL(2, ℚ)`-element the twist
   is complex conjugation and linearity would fail. So `transposeRep_mem_posDetInt`,
   `det_transposeRep_pos` and `heckeSlashSum_smul` — and only those — ask for positivity, and only
-  of the two factors of `σᵢ δ` that actually appear: `Γ₁ ≤ posDetInt 2` and `δ ∈ posDetInt 2`.
-  Neither `Γ₂` nor the rest of `Δ` is constrained. At the level-one pair these are
-  `SLnZ_le_posDetInt 2` and `D.out.2`.
+  of the two factors of `σᵢ δ` that actually appear. `transposeRep_mem_posDetInt` concludes a
+  `posDetInt` membership and so needs integrality; the other two conclude statements about
+  determinants alone and ask only `Γ₁ ≤ GLPos (Fin 2) ℚ` and `δ ∈ GLPos (Fin 2) ℚ`. Neither `Γ₂`
+  nor the rest of `Δ` is constrained. At the level-one pair these come from
+  `SLnZ_le_posDetInt 2` and `D.out.2` composed with `posDetInt_le_glpos`.
 
 ⚠ Positivity being available at level `N` is *not* enough to read the sum there as a Hecke
 operator: what fails at a congruence subgroup is the transpose orientation, not the determinant.
@@ -198,12 +200,18 @@ lemma transposeRep_mem_posDetInt (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
 /-- The representatives have positive determinant, in the shape
 `ModularForm.rat_smul_slash_of_det_pos` consumes.
 
-`transposeRep_mem_posDetInt`, in the shape `ModularForm.rat_smul_slash_of_det_pos` consumes. -/
-lemma det_transposeRep_pos (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
-    (hD : (D.out : GL (Fin 2) ℚ) ∈ posDetInt 2)
+`transposeRep_mem_posDetInt`, in the shape `ModularForm.rat_smul_slash_of_det_pos` consumes.
+
+This asks only for positivity, not for the integrality `posDetInt 2` also carries: the conclusion
+is about determinants alone, and `det (σᵢ δ)ᵀ = det σᵢ · det δ`. A `posDetInt` hypothesis is
+converted by `posDetInt_le_glpos`. -/
+lemma det_transposeRep_pos (hΓ₁ : Γ₁ ≤ Matrix.GLPos (Fin 2) ℚ)
+    (hD : (D.out : GL (Fin 2) ℚ) ∈ Matrix.GLPos (Fin 2) ℚ)
     (i : DecompQuotient Γ₁ Γ₂ (D.out : GL (Fin 2) ℚ)) :
-    0 < (transposeRep D i : Matrix (Fin 2) (Fin 2) ℚ).det :=
-  ((mem_posDetInt_iff 2).mp (transposeRep_mem_posDetInt D hΓ₁ hD i)).2
+    0 < (transposeRep D i : Matrix (Fin 2) (Fin 2) ℚ).det := by
+  have h := mul_mem (hΓ₁ i.out.2) hD
+  rw [transposeRep_def, transposeGLEquiv_coe, Matrix.det_transpose]
+  simpa using h
 
 -- From here on the sum needs its index type to be finite, and that is *all* it needs: a Hecke
 -- triple supplies this finiteness (`HeckeRing/Basic.lean`) but is strictly stronger, so it is
@@ -279,8 +287,8 @@ Unlike additivity, this needs the two factors of `σᵢ δ` to have positive det
 `Γ₁ ≤ posDetInt 2` and `δ ∈ posDetInt 2`, with `Γ₂` and the rest of `Δ` unconstrained — because
 the scalar passes through the slash only on that branch. -/
 @[simp]
-lemma heckeSlashSum_smul (hΓ₁ : Γ₁.toSubmonoid ≤ posDetInt 2)
-    (hD : (D.out : GL (Fin 2) ℚ) ∈ posDetInt 2)
+lemma heckeSlashSum_smul (hΓ₁ : Γ₁ ≤ Matrix.GLPos (Fin 2) ℚ)
+    (hD : (D.out : GL (Fin 2) ℚ) ∈ Matrix.GLPos (Fin 2) ℚ)
     {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (c : α) (f : ℍ → ℂ) :
     heckeSlashSum k D (c • f) = c • heckeSlashSum k D f := by
   rw [heckeSlashSum, heckeSlashSum]
