@@ -375,8 +375,13 @@ theorem two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBo
     have h := hint13.comp_sub_left 4
     rw [h43, h41] at h
     exact h.symm
-  have hsum := intervalIntegral_excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg
-    f hS hnorm hinv hd hne
+  -- Stated against `G` rather than taken raw from the lemma: `set` leaves `hsum`'s own
+  -- statement spelled out, and the `integral_add` rewrite below is phrased in `G`.
+  have hsum : (∫ t in (1 : ℝ)..3, (G t + G (4 - t))) =
+      ∫ t in (1 : ℝ)..3, (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
+        else -((k : ℂ) * logDeriv (fdBoundary H) t)) :=
+    intervalIntegral_excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg
+      f hS hnorm hinv hd hne
   rw [intervalIntegral.integral_add hint13 hintrefl, hrefl] at hsum
   rw [two_mul, hsum, ← intervalIntegral.integral_const_mul]
   refine intervalIntegral.integral_congr fun t _ => ?_
