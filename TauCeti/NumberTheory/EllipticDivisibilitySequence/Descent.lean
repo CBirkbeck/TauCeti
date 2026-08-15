@@ -43,8 +43,8 @@ hypotheses that `atom_even`, `atom_odd` and `atomRel_eq` carry.
 
 * `isEllipticNet_iff`: the equivalence at **four** indices, and the headline result of the file.
 * `isEllipticSequence_iff`: the classical three-index equivalence, its `s = 0` case.
-* `IsEllipticNet.isEllipticNet_of_rel`: the hard direction of the first, with the recurrences in
-  relator form.
+* `IsEllipticNet.of_rel`: the hard direction of the first, with the recurrences in relator
+  form.
 * `IsEllipticNet.atom_mul_atomRel_eq_of_last_eq_fst`, `…_of_last_eq_snd`,
   `IsEllipticNet.atom_mul_atomRel_eq`: the three-term and ten-term expansions that drive it.
 
@@ -58,7 +58,7 @@ Both levels are stated. `isEllipticNet_iff` is the stronger statement and everyt
 through it, but `IsEllipticSequence` is the predicate Mathlib defines and that
 `IsEllipticDvdSequence` is built from, so the three-index equivalence is kept named rather than
 left as `(isEllipticNet_iff …).mpr … |>.isEllipticSequence` at each use. The relator-form
-`isEllipticSequence_of_rel` is *not* kept: it restated `isEllipticNet_of_rel` in the spelling
+`isEllipticSequence_of_rel` is *not* kept: it restated `IsEllipticNet.of_rel` in the spelling
 this file uses internally, and had no consumer.
 
 That predicate carries the parity and ordering conditions *inside* it. The induction applies its
@@ -412,7 +412,7 @@ private theorem atomRel_eq_zero_of_parity (odd : W.Odd) (zero : W 0 = 0)
 /-- **An elliptic net from the two doubling recurrences.** A sequence that is odd, vanishes at
 `0`, has `W 1` and `W 2` nonzerodivisors, and satisfies the odd recurrence from `m = 2` and the
 even one from `m = 3`, satisfies the full four-index relation at *every* quadruple. -/
-theorem isEllipticNet_of_rel (odd : W.Odd) (zero : W 0 = 0) (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
+theorem of_rel (odd : W.Odd) (zero : W 0 = 0) (one : W 1 ∈ R⁰) (two : W 2 ∈ R⁰)
     (oddRec : ∀ m : ℤ, 2 ≤ m → rel W (m + 1) m 1 0 = 0)
     (evenRec : ∀ m : ℤ, 3 ≤ m → rel W (m + 1) (m - 1) 1 0 = 0) :
     IsEllipticNet W := by
@@ -442,7 +442,7 @@ theorem isEllipticNet_iff {R : Type*} [CommRing R] {W : ℤ → R} (odd : W.Odd)
             W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2) := by
   refine ⟨fun h ↦ ⟨fun m _ ↦ h.isEllipticSequence.rel_odd m,
     fun m _ ↦ h.isEllipticSequence.rel_even m⟩, fun ⟨hodd, heven⟩ ↦ ?_⟩
-  refine IsEllipticNet.isEllipticNet_of_rel odd zero one two (fun m hm ↦ ?_) fun m hm ↦ ?_
+  refine IsEllipticNet.of_rel odd zero one two (fun m hm ↦ ?_) fun m hm ↦ ?_
   · rw [IsEllipticNet.rel_odd]
     linear_combination hodd m hm
   · rw [IsEllipticNet.rel_even]

@@ -79,9 +79,9 @@ an author of the declarations above.
 The net strengthening here adapts one further declaration of that same file, `net_normEDS`.
 
 The source proves the hypothesis-carrying version from its own descent development; here that step
-is `Descent.lean`'s `IsEllipticNet.isEllipticNet_of_rel`, fed the two recurrences in relator form,
-so the helper is six lines rather than a file. The universal transport is the source's argument,
-with `normEDS_eq_aeval` in place of its inline rewriting.
+is `Descent.lean`'s `IsEllipticNet.of_rel`, fed the two recurrences in relator form, so the helper
+is six lines rather than a file. The universal transport is the source's argument, with
+`normEDS_eq_aeval` in place of its inline rewriting.
 -/
 
 public section
@@ -94,11 +94,11 @@ variable {R : Type*} [CommRing R] {b c d : R}
 /-- **A normalised EDS is an elliptic net, given that `b` is a nonzerodivisor.** Superseded by
 `isEllipticNet_normEDS`, which carries no hypothesis; this is the form that transports.
 
-The two recurrences are supplied in relator form, which is what `isEllipticNet_of_rel` consumes;
+The two recurrences are supplied in relator form, which is what `IsEllipticNet.of_rel` consumes;
 `rel_odd` and `rel_even` turn each into the equation `normEDS_odd` and `normEDS_even` state. -/
 private theorem isEllipticNet_normEDS_of_mem (hb : b ∈ R⁰) :
     IsEllipticNet (normEDS b c d) := by
-  refine IsEllipticNet.isEllipticNet_of_rel (fun k ↦ normEDS_neg b c d k) (normEDS_zero b c d)
+  refine IsEllipticNet.of_rel (fun k ↦ normEDS_neg b c d k) (normEDS_zero b c d)
     (by simp [normEDS_one]) (by simpa [normEDS_two] using hb) (fun m _ ↦ ?_) fun m _ ↦ ?_
   · rw [IsEllipticNet.rel_odd]
     simp only [normEDS_one, one_pow, mul_one]
