@@ -11,7 +11,6 @@ public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 import Mathlib.Algebra.FiniteSupport.Basic
 import TauCeti.NumberTheory.Modular.Orbits
 import TauCeti.NumberTheory.ModularForms.FiniteZeros
-import TauCeti.NumberTheory.ModularForms.Norm.Order
 
 /-!
 # The vanishing order on `SL(2, ℤ)`-orbits
@@ -40,9 +39,6 @@ empty. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.Or
   `i` and `ρ` — the index type of the valence formula's divisor sum.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic`: the finite
   support restricted to the non-elliptic orbits.
-* `TauCeti.ModularForm.finite_orbit_mk_image_setOf_orderOfVanishingAt_ne_zero`: at any level of
-  finite relative index, the nonzero-order points of a form meet only finitely many
-  `SL(2, ℤ)`-orbits — read off the level-one statement through the norm.
 
 ## References
 
@@ -186,24 +182,6 @@ lemma hasFiniteSupport_orderOfVanishingOnOrbit_nonElliptic [ModularFormClass F �
     Function.HasFiniteSupport fun q : NonEllipticOrbit ↦ orderOfVanishingOnOrbit f q.val :=
   Function.HasFiniteSupport.fun_comp_of_injective Subtype.val_injective
     (hasFiniteSupport_orderOfVanishingOnOrbit f)
-
-/-- **At any level of finite relative index in `𝒮ℒ`, the nonzero-order points of a form meet
-only finitely many `SL(2, ℤ)`-orbits.**
-
-⚠ This counts `SL(2, ℤ)`-orbits, not `𝒢`-orbits. Finite relative index makes `𝒢 ⊓ 𝒮ℒ` a
-finite-index subgroup of `𝒮ℒ`, so each `SL(2, ℤ)`-orbit meets only finitely many `𝒢`-orbits
-and the `𝒢`-orbit count is finite too — but that step is not taken here. -/
-lemma finite_orbit_mk_image_setOf_orderOfVanishingAt_ne_zero {𝒢 : Subgroup (GL (Fin 2) ℝ)}
-    [𝒢.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F 𝒢 k] (f : F) :
-    Set.Finite ((Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) ''
-      {p : ℍ | orderOfVanishingAt f p ≠ 0}) := by
-  -- pass to the norm: a level-one form, so only finitely many orbits carry nonzero order
-  refine (hasFiniteSupport_orderOfVanishingOnOrbit (_root_.ModularForm.norm 𝒮ℒ f)).subset ?_
-  rintro q ⟨p, hp, rfl⟩
-  -- a nonzero order is positive, and the norm's order dominates it, so the norm's is nonzero
-  simpa only [Function.mem_support, orderOfVanishingOnOrbit_mk] using
-    (((orderOfVanishingAt_nonneg (ModularFormClass.holo f) p).lt_of_ne' hp).trans_le
-      (orderOfVanishingAt_le_orderOfVanishingAt_norm f p)).ne'
 
 end ModularForm
 

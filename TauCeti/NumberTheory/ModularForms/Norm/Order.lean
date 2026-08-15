@@ -8,6 +8,7 @@ module
 public import Mathlib.NumberTheory.ModularForms.NormTrace
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 import TauCeti.NumberTheory.ModularForms.Norm.Trace
+import TauCeti.NumberTheory.ModularForms.Order.Orbits
 
 /-!
 # Orders along the norm map
@@ -28,9 +29,24 @@ order of the norm is the sum of the orders of the factors.
   factor vanishes to at most the order the norm does, with
   `TauCeti.ModularForm.orderOfVanishingAt_le_orderOfVanishingAt_norm` as the identity-coset
   corollary — so the zeros of the norm dominate those of the form.
+* `TauCeti.ModularForm.finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero`: the first
+  consumer of that domination — at any level of finite relative index in `𝒮ℒ`, the
+  nonzero-order points meet only finitely many `SL(2, ℤ)`-orbits.
+
+## References
+
+* The finiteness argument is the one in PR #3330
+  (`TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnSubgroupOrbit`,
+  `Order/SubgroupOrbits.lean`): order domination under the norm sends the support into the
+  finite support of the level-one norm. That theorem takes `Γ ≤ SL(2, ℤ)` of finite index and
+  concludes finite support on `Γ`-orbits; the variant here takes a subgroup of `GL (Fin 2) ℝ`
+  of finite *relative* index in `𝒮ℒ`, which need not lie inside `𝒮ℒ`, and counts
+  `SL(2, ℤ)`-orbits.
 -/
 
 open UpperHalfPlane
+
+open scoped ModularForm MatrixGroups
 
 namespace TauCeti
 
@@ -91,6 +107,24 @@ public lemma orderOfVanishingAt_le_orderOfVanishingAt_norm (f : F) (p : ℍ) :
   -- `𝒢.subgroupOf ℋ` need not be normal — so the identity coset is spelled `⟦1⟧`, not `1`.
   simpa using orderOfVanishingAt_quotientFunc_le_orderOfVanishingAt_norm f
     (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) p
+
+/-- **At any level of finite relative index in `𝒮ℒ`, the nonzero-order points of a form meet
+only finitely many `SL(2, ℤ)`-orbits.**
+
+⚠ This counts `SL(2, ℤ)`-orbits, not `𝒢`-orbits. Finite relative index makes `𝒢 ⊓ 𝒮ℒ` a
+finite-index subgroup of `𝒮ℒ`, so each `SL(2, ℤ)`-orbit meets only finitely many `𝒢`-orbits
+and the `𝒢`-orbit count is finite too — but that step is not taken here. -/
+public lemma finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero
+    {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F 𝒢 k] (f : F) :
+    Set.Finite ((Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) ''
+      {p : ℍ | orderOfVanishingAt f p ≠ 0}) := by
+  -- pass to the norm: a level-one form, so only finitely many orbits carry nonzero order
+  refine (hasFiniteSupport_orderOfVanishingOnOrbit (_root_.ModularForm.norm 𝒮ℒ f)).subset ?_
+  rintro q ⟨p, hp, rfl⟩
+  -- a nonzero order is positive, and the norm's order dominates it, so the norm's is nonzero
+  simpa only [Function.mem_support, orderOfVanishingOnOrbit_mk] using
+    (((orderOfVanishingAt_nonneg (ModularFormClass.holo f) p).lt_of_ne' hp).trans_le
+      (orderOfVanishingAt_le_orderOfVanishingAt_norm f p)).ne'
 
 end ModularForm
 
