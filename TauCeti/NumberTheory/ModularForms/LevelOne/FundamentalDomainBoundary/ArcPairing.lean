@@ -286,21 +286,16 @@ theorem intervalIntegrable_excised_deriv_smul_logDeriv_comp_ofComplex_fdBoundary
   linear_combination -hp
 
 /-- The excised weight term is invariant under the arc reflection `t ↦ 4 - t`: the excision
-test is, by `excised_fdBoundary_arc_reflection_iff`, and the contour's own logarithmic
-derivative is the constant `π/6 · I` on the whole open arc. -/
+test is invariant by `excised_fdBoundary_arc_reflection_iff`, and the contour's own
+logarithmic derivative is the constant `π/6 · I` on the whole open arc. -/
 private lemma excised_weight_fdBoundary_arc_four_sub {H : ℝ} {S : Finset ℂ} {ε : ℝ} {t : ℝ}
     (hnorm : ∀ s ∈ S, ‖s‖ = 1) (hinv : ∀ s ∈ S, -1 / s ∈ S) (ht : t ∈ Ioo (1 : ℝ) 3) :
     (if ∃ s ∈ S, ‖fdBoundary H (4 - t) - s‖ ≤ ε then 0
       else -((k : ℂ) * logDeriv (fdBoundary H) (4 - t))) =
-    (if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0
-      else -((k : ℂ) * logDeriv (fdBoundary H) t)) := by
+    if ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε then 0 else -((k : ℂ) * logDeriv (fdBoundary H) t) := by
   have h4t : 4 - t ∈ Ioo (1 : ℝ) 3 := ⟨by linarith [ht.2], by linarith [ht.1]⟩
-  have hsymm := excised_fdBoundary_arc_reflection_iff (H := H) (S := S) (ε := ε)
-    ⟨ht.1.le, ht.2.le⟩ hnorm hinv
-  by_cases hc : ∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε
-  · rw [ite_eq_left hc, ite_eq_left (hsymm.mpr hc)]
-  · rw [ite_eq_right hc, ite_eq_right fun h => hc (hsymm.mp h), logDeriv_fdBoundary_arc ht,
-      logDeriv_fdBoundary_arc h4t]
+  rw [logDeriv_fdBoundary_arc ht, logDeriv_fdBoundary_arc h4t]
+  exact if_congr (excised_fdBoundary_arc_reflection_iff ⟨ht.1.le, ht.2.le⟩ hnorm hinv) rfl rfl
 
 /-- Integrating the pointwise pairing over `[1, 3]`: the direct and reflected excised
 integrands sum to the excised weight term.
