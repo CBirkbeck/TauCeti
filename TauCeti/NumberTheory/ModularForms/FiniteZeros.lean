@@ -24,9 +24,11 @@ That is what lets the orbit-level finite-support statements downstream drop thei
 
 ⚠ `𝒟` here is the fundamental domain of `𝒮ℒ`, and this file is level-one throughout. The
 general-level analogue is **not** obtained by widening the group while keeping this region:
-for `Γ` of relative index `n > 1` each `𝒮ℒ`-orbit splits into up to `n` `Γ`-orbits and only
-one of them meets `𝒟`, so bounding the zeros inside `𝒟` does not bound the order divisor on
-`Γ \ ℍ`. The general statement belongs at the orbit level, downstream of
+for `Γ` of relative index `n > 1` an `𝒮ℒ`-orbit splits into up to `n` `Γ`-orbits, and `𝒟`
+need not meet all of them, so bounding the zeros inside `𝒟` does not bound the order divisor
+on `Γ \ ℍ`. (It can meet more than one: `𝒟` is closed, and its boundary carries `𝒮ℒ`-equivalent
+representatives — the two vertical edges under `T`, the two arc halves under `S` — which may
+fall in distinct `Γ`-orbits.) The general statement belongs at the orbit level, downstream of
 `TauCeti.ModularForm.orderOfVanishingOnOrbit`.
 
 ## Main declarations
