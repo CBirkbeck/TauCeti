@@ -23,9 +23,11 @@ slash by `hᵀ` is trivial on that function. Even the identity double coset can 
 raw `f` to `f ∣[k] h` rather than to `f`.
 
 What repairs it is slash-invariance of `f`, and that is the proof of Shimura's Proposition
-3.37: for `f` invariant under `Γ₁` the sum is again invariant, because right multiplication
-merely permutes the representatives. That theorem, and the descent of this sum to a genuine
-operator on
+3.37: right multiplication permutes the representatives, so the sum is again invariant once `f`
+is invariant under the group they are right cosets of. ⚠ **That group is `Γ₂ᵀ`, not `Γ₁`** —
+see "Which group the representatives are cosets of" below; the two agree exactly when the
+triple is transpose-stable, as the level-one pair is. That theorem, and the descent of this sum
+to a genuine operator on
 `SlashInvariantForm` and `ModularForm`, are deliberately **not** in this file — the reindexing
 argument is substantial and is a different claim. Until then this is an auxiliary sum, named to
 say so, and every consumer must supply the invariance hypothesis itself.
@@ -41,6 +43,26 @@ that is, the `Xᵢ` must represent **right** cosets `HXᵢ`.
 Transposition exchanges the two: if `HδH = ⊔ᵢ (σᵢδ)H` then `HδH = ⊔ᵢ H(δᵀσᵢᵀ)`, because
 transposition is an anti-automorphism preserving `SL₂(ℤ)` and fixing every double coset. So the
 representative used here is `(σᵢδ)ᵀ`, which is `transposeRep`.
+
+## Which group the representatives are cosets of
+
+The display above is the level-one case, where a single `H = SL₂(ℤ)` sits on both sides. In
+general transposition is an *anti*-homomorphism, so it reverses the two flanks:
+`(Γ₁ δ Γ₂)ᵀ = Γ₂ᵀ δᵀ Γ₁ᵀ`, and the left-coset decomposition `Γ₁ δ Γ₂ = ⊔ᵢ (σᵢ δ) Γ₂` transposes
+to `⊔ᵢ Γ₂ᵀ (σᵢ δ)ᵀ`. So `transposeRep` enumerates right cosets of **`Γ₂ᵀ`**, and the invariance
+that makes the sum well defined is invariance under `Γ₂ᵀ`.
+
+⚠ **This is why the level-one pair is special, and why the generality here stops short of a
+level-`N` operator.** `SLnZ 2` is transpose-stable (`transposeGLEquiv_mem_SLnZ`, which is just
+`det` and integrality surviving transposition) and sits on both flanks, so `Γ₂ᵀ = Γ₁` and the
+sum is Shimura's operator for `Γ₁ δ Γ₂` acting on `Γ₁`-invariant functions. A congruence
+subgroup is **not** transpose-stable: transposition swaps the off-diagonal entries, so
+`!![1, 1; 0, 1] ∈ Γ₁(N)` for every `N` while its transpose lies in `Γ₁(N)` only when `N = 1`,
+and `Γ₁(N)ᵀ = Γ¹(N)`. At such a triple the sum below is still perfectly well defined, but it is
+the operator attached to `Γ₂ᵀ δᵀ Γ₁ᵀ`, **not** an operator on `Γ₁(N)`-invariant forms. Anything
+that wants the latter must first reconcile that orientation — either by carrying the correctly
+transposed source and target subgroups, or by a device that avoids the transpose altogether
+(upper-triangular representatives, as in `HeckeSlash/UpperTri/`).
 
 The transpose is an artefact of which handedness Mathlib's `DecompQuotient` supplies, not of the
 mathematics. Shimura decomposes `Γ₁αΓ₂ = ⊔ᵥ Γ₁aᵥ` — the group on the **left** — so his slash,
@@ -70,8 +92,12 @@ positive branch the slash action's conjugation `σ` is trivial and scalars commu
 complex conjugation and linearity would fail. So `transposeRep_mem_posDetInt`,
 `det_transposeRep_pos` and `heckeSlashSum_smul` — and only those — carry `Δ ≤ posDetInt 2`. One
 inclusion suffices for both factors of `σᵢ δ`, because `IsHeckeTriple.mem_of_mem_left` already
-places `Γ₁` inside `Δ`. The level-one pair satisfies it by `le_rfl`, and a congruence subgroup at
-level `N` sits inside `posDetInt 2` for the same reason `SLnZ_le_posDetInt` records.
+places `Γ₁` inside `Δ`. The level-one pair satisfies it by `le_rfl`, and `Δ₀(N)` by
+`Delta0_le_posDetInt`.
+
+⚠ Positivity being available at level `N` is *not* enough to read the sum there as a Hecke
+operator: what fails at a congruence subgroup is the transpose orientation, not the determinant.
+See "Which group the representatives are cosets of" above.
 
 ## Main definitions
 
@@ -160,7 +186,12 @@ lemma det_transposeRep_pos (hΔ : Δ ≤ posDetInt 2)
 
 /-- **The slash sum over a chosen decomposition of a double coset**:
 `∑ᵢ f ∣[k] (σᵢ δ)ᵀ`, over the transposed representatives of the left-coset decomposition of
-`HδH` (Shimura's `f ∣[Γ₁ α Γ₂]ₖ`, §3.4 (3.4.1), up to the `det` normalising factor).
+`Γ₁ δ Γ₂`.
+
+⚠ The transposed representatives enumerate right cosets of `Γ₂ᵀ`, so this is Shimura's
+`f ∣[Γ₁ α Γ₂]ₖ` (§3.4 (3.4.1), up to the `det` normalising factor) precisely when `Γ₂ᵀ = Γ₁` —
+which holds for the transpose-stable level-one pair and fails for a congruence subgroup. See
+"Which group the representatives are cosets of" in the module docstring.
 
 ⚠ This depends on the chosen representatives `D.out` and `i.out`, and on a general
 `f : ℍ → ℂ` the value changes with them — see the module docstring. Slash-invariance of `f` is
