@@ -68,15 +68,19 @@ variable {R : Type*} [CommRing R] {b c d : R} {m : ℤ}
 
 /-- The numerator of the invariant of `normEDS b c d` at `s = 1`, `n = 2`.
 
-`@[simp high]` for the reason `invarNum_normEDS_one_eq_reducedInvarNum_mul` records: `invarNum_def`
-is itself `@[simp]`, so at equal priority `simp` expands the six-term formula and this evaluation
-never fires. -/
-@[simp high]
+**Deliberately not a simp lemma**, unlike its denominator counterpart. `ReducedInvariant.lean`
+already carries `@[simp high] invarNum_normEDS_one_eq_reducedInvarNum_mul`, which rewrites
+`invarNum (normEDS b c d) 1 m` for every `m` — including `2`. So this left-hand side is not in simp
+normal form, and marking it `simp` makes `simpNF` fail the build. It stays useful as a rewrite
+named explicitly, which is how the proof below uses it. -/
 theorem invarNum_normEDS_two (b c d : R) : invarNum (normEDS b c d) 1 2 = (d + b ^ 4) * b := by
   simp [right_distrib, ← pow_succ, ← pow_add]
 
-/-- The denominator of the invariant of `normEDS b c d` at `s = 1`, `n = 2`. `@[simp high]` for the
-same reason as `invarNum_normEDS_two`. -/
+/-- The denominator of the invariant of `normEDS b c d` at `s = 1`, `n = 2`.
+
+`@[simp high]` because `invarDenom_def` is itself `@[simp]` and at equal priority expands the
+three-factor formula instead. There is no general `invarDenom … = _ * b` lemma upstream, so unlike
+the numerator this left-hand side *is* in simp normal form. -/
 @[simp high]
 theorem invarDenom_normEDS_two (b c d : R) : invarDenom (normEDS b c d) 1 2 = c * b := by
   simp
