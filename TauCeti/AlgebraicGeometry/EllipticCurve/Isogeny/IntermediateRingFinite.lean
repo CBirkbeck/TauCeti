@@ -46,6 +46,28 @@ namespace Isogeny
 
 variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 
+/-- **The intermediate ring really is the integral closure**, in Mathlib's `IsIntegralClosure`
+sense. Both fields are already available: the inclusion of a subring into its ambient field is
+injective, and the integrality characterisation is `mem_intermediateRing_iff`.
+
+Stated for an arbitrary `W₂.CoordinateRing`-algebra structure on `W₁.FunctionField` whose
+structure map is the pullback, so that a caller's own structure is accepted rather than the
+locally-built one that `intermediateRing` is defined against. -/
+theorem isIntegralClosure_intermediateRing (φ : Isogeny W₁ W₂)
+    [inst : Algebra W₂.CoordinateRing W₁.FunctionField]
+    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
+    IsIntegralClosure φ.intermediateRing W₂.CoordinateRing W₁.FunctionField := by
+  -- the caller's structure and the pullback-induced one agree on the structure map, so they are
+  -- literally the same instance; substituting makes `mem_intermediateRing_iff` apply on the nose
+  have halg : inst = φ.pullback.toRingHom.toAlgebra := Algebra.algebra_ext _ _ h
+  subst halg
+  let _ := φ.pullback.toRingHom.toAlgebra
+  exact
+    { algebraMap_injective := Subtype.val_injective
+      isIntegral_iff := fun {x} ↦
+        ⟨fun hx ↦ ⟨⟨x, (φ.mem_intermediateRing_iff x).2 hx⟩, rfl⟩,
+         fun ⟨y, hy⟩ ↦ hy ▸ (φ.mem_intermediateRing_iff _).1 y.2⟩ }
+
 /-- **The intermediate ring is module-finite over the target coordinate ring**, for a separable
 isogeny of elliptic curves.
 
@@ -60,10 +82,12 @@ theorem moduleFinite_intermediateRing (φ : Isogeny W₁ W₂) [W₂.IsElliptic]
     [IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField]
     [Algebra W₂.CoordinateRing φ.intermediateRing]
     [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField]
-    [IsIntegralClosure φ.intermediateRing W₂.CoordinateRing W₁.FunctionField]
     [FiniteDimensional W₂.FunctionField W₁.FunctionField]
-    [Algebra.IsSeparable W₂.FunctionField W₁.FunctionField] :
+    [Algebra.IsSeparable W₂.FunctionField W₁.FunctionField]
+    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
     Module.Finite W₂.CoordinateRing φ.intermediateRing := by
+  -- the integral-closure property is not assumed: it is what `intermediateRing` is
+  have := φ.isIntegralClosure_intermediateRing h
   -- `IsIntegralClosure.finite` wants the base normal; that is the seeded smoothness milestone
   have := WeierstrassCurve.Affine.isIntegrallyClosed_coordinateRing W₂
   exact IsIntegralClosure.finite W₂.CoordinateRing W₂.FunctionField W₁.FunctionField
