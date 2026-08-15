@@ -55,6 +55,10 @@ namespace ModularForm
 
 variable {H δ t : ℝ}
 
+/-- The corner `ρ + 1` sits on the row `Im = √3/2`, the height of the corner of `𝒟`. -/
+private lemma rho_add_one_im : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
+  simp [UpperHalfPlane.ρ]
+
 /-- The corner `ρ + 1` is the unit-circle point of angle `π/3`. -/
 private lemma rho_add_one_eq_exp :
     (UpperHalfPlane.ρ : ℂ) + 1 = Complex.exp (((Real.pi / 3 : ℝ) : ℂ) * Complex.I) := by
@@ -62,7 +66,7 @@ private lemma rho_add_one_eq_exp :
   · rw [Complex.exp_ofReal_mul_I_re, Real.cos_pi_div_three]
     norm_num [UpperHalfPlane.ρ]
   · rw [Complex.exp_ofReal_mul_I_im, Real.sin_pi_div_three]
-    norm_num [UpperHalfPlane.ρ]
+    exact rho_add_one_im
 
 /-- The corner `ρ + 1` as a point of the unit circle traced by `circleMap`. -/
 private lemma rho_add_one_eq_circleMap :
@@ -154,8 +158,7 @@ below the corner row, where `H - √3/2 < 0` makes the signed bound vacuous. -/
 theorem norm_fdBoundary_sub_rho_add_one_segment5 (ht : t ∈ Icc (4 : ℝ) 5) :
     |H - Real.sqrt 3 / 2| ≤ ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := by
   have him : (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im = H - Real.sqrt 3 / 2 := by
-    rw [Complex.sub_im, im_fdBoundarySegment5 H ht]
-    norm_num [UpperHalfPlane.ρ]
+    rw [Complex.sub_im, im_fdBoundarySegment5 H ht, rho_add_one_im]
   have h1 : |(fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im| ≤
       ‖fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)‖ := Complex.abs_im_le_norm _
   exact him ▸ h1
@@ -178,39 +181,30 @@ private lemma sqrt_three_div_two_lt_sin {θ : ℝ} (h1 : Real.pi / 3 < θ)
 /-- On the arc the shifted contour stays in the closed upper half-plane. -/
 theorem im_fdBoundary_sub_rho_add_one_arc_nonneg (H : ℝ) (ht : t ∈ Icc (1 : ℝ) 3) :
     0 ≤ (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im := by
-  have him1 : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
-    norm_num [UpperHalfPlane.ρ]
   -- On the arc the contour does not depend on the height, so the corner-row bound already
   -- proved for a contour at the corner height transports to this one.
   have htransport : fdBoundary H t = fdBoundary (Real.sqrt 3 / 2) t := by
     rw [eqOn_fdBoundary_arc H ht, eqOn_fdBoundary_arc (Real.sqrt 3 / 2) ht]
   have ht05 : t ∈ Icc (0 : ℝ) 5 := ⟨by linarith [ht.1], by linarith [ht.2]⟩
-  have hbase := sqrt_three_div_two_le_im_fdBoundary (H := Real.sqrt 3 / 2) le_rfl ht05
-  rw [Complex.sub_im, him1, htransport]
-  linarith
+  rw [Complex.sub_im, rho_add_one_im, htransport]
+  linarith [sqrt_three_div_two_le_im_fdBoundary (H := Real.sqrt 3 / 2) le_rfl ht05]
 
 /-- Strictly inside the arc the shifted contour has positive height. -/
 theorem im_fdBoundary_sub_rho_add_one_arc_pos (H : ℝ) (ht1 : 1 < t) (ht3 : t < 3) :
     0 < (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im := by
   have hcurve : fdBoundary H t = circleMap 0 1 ((t + 1) * (Real.pi / 6)) :=
     eqOn_fdBoundary_arc H ⟨ht1.le, ht3.le⟩
-  have him1 : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
-    norm_num [UpperHalfPlane.ρ]
-  rw [Complex.sub_im, hcurve, circleMap_zero_im, one_mul, him1]
-  have := sqrt_three_div_two_lt_sin (θ := (t + 1) * (Real.pi / 6))
-    (by nlinarith [Real.pi_pos]) (by nlinarith [Real.pi_pos])
-  linarith
+  rw [Complex.sub_im, hcurve, circleMap_zero_im, one_mul, rho_add_one_im]
+  linarith [sqrt_three_div_two_lt_sin (θ := (t + 1) * (Real.pi / 6))
+    (by nlinarith [Real.pi_pos]) (by nlinarith [Real.pi_pos])]
 
 /-- The shifted contour stays in the closed upper half-plane over the whole parameter
 range: the contour clears the corner row `√3/2`, which is the height of `ρ + 1`. -/
 theorem im_fdBoundary_sub_rho_add_one_nonneg (hH : Real.sqrt 3 / 2 ≤ H)
     (ht : t ∈ Icc (0 : ℝ) 5) :
     0 ≤ (fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1)).im := by
-  have h := sqrt_three_div_two_le_im_fdBoundary hH ht
-  have him : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
-    norm_num [UpperHalfPlane.ρ]
-  rw [Complex.sub_im, him]
-  linarith
+  rw [Complex.sub_im, rho_add_one_im]
+  linarith [sqrt_three_div_two_le_im_fdBoundary hH ht]
 
 /-- The polar form of the shifted contour just after the corner. -/
 private lemma fdBoundary_one_add_sub_rho_add_one_eq (H : ℝ) (hδ : 0 < δ) (hδ2 : δ ≤ 2) :
@@ -289,11 +283,9 @@ theorem eq_one_of_fdBoundary_eq_rho_add_one (hH : H ≠ Real.sqrt 3 / 2) (ht : t
       · have := norm_fdBoundary_sub_rho_add_one_segment4 H ⟨h3.le, h4⟩
         rw [h0] at this
         norm_num at this
-      · have hz : fdBoundary H t - ((UpperHalfPlane.ρ : ℂ) + 1) = 0 := norm_eq_zero.mp h0
-        have him := congrArg Complex.im hz
-        have hρ : ((UpperHalfPlane.ρ : ℂ) + 1).im = Real.sqrt 3 / 2 := by
-          norm_num [UpperHalfPlane.ρ]
-        rw [Complex.sub_im, im_fdBoundarySegment5 H ⟨h4.le, ht.2⟩, hρ, Complex.zero_im] at him
+      · have him := congrArg Complex.im (norm_eq_zero.mp h0)
+        rw [Complex.sub_im, im_fdBoundarySegment5 H ⟨h4.le, ht.2⟩, rho_add_one_im,
+          Complex.zero_im] at him
         exact absurd (by linarith) hH
 
 end ModularForm
