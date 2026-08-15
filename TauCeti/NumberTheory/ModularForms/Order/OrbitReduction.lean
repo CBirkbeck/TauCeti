@@ -31,7 +31,7 @@ closed-domain descriptions (`orbit_mk_eq_I_iff`, `orbit_mk_eq_ρ_iff`).
 ## Main declarations
 
 * `TauCeti.ModularForm.fdZeros`: the canonical complete divisor set — the nonzero-order points
-  of the closed fundamental domain of a nonzero level-one form.
+  of the closed fundamental domain of a level-one form, empty for the zero form.
 * `TauCeti.ModularForm.canonicalReps`: one representative per non-elliptic orbit of nonzero
   order — the strict-interior, left-vertical and left-half-arc points of `fdZeros`.
 * `TauCeti.ModularForm.exists_mem_canonicalReps_orbit_mk_eq`: every non-elliptic orbit of
@@ -63,8 +63,10 @@ namespace ModularForm
 
 variable {k : ℤ} {F : Type*} [FunLike F ℍ ℂ]
 
-/-- The canonical complete divisor set of a nonzero level-one form: the finitely many points
-of the closed fundamental domain `𝒟` carrying nonzero vanishing order, as a `Finset`. -/
+/-- The canonical complete divisor set of a level-one form: the finitely many points of the
+closed fundamental domain `𝒟` carrying nonzero vanishing order, as a `Finset`.
+
+No nonvanishing hypothesis — the zero form has order `0` everywhere, so this is empty for it. -/
 def fdZeros [ModularFormClass F 𝒮ℒ k] (f : F) : Finset ℍ := (finite_zeros_in_fd (f := f)).toFinset
 
 /-- Membership in the canonical divisor set: a point of `𝒟` of nonzero order. -/

@@ -16,16 +16,17 @@ import TauCeti.NumberTheory.ModularForms.FiniteZeros
 # The vanishing order on `SL(2, ℤ)`-orbits
 
 The vanishing order of a level-one modular form is constant on `SL(2, ℤ)`-orbits of `ℍ`,
-so it descends to the orbit space (`TauCeti.ModularForm.orderOfVanishingOnOrbit`), and for a nonzero
-form only finitely many orbits carry nonzero order — the summation index of the valence
-formula. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.Orbits`.
+so it descends to the orbit space (`TauCeti.ModularForm.orderOfVanishingOnOrbit`), and only
+finitely many orbits carry nonzero order — the summation index of the valence formula. No
+nonvanishing hypothesis is needed: the zero form has order `0` on every orbit, so its support is
+empty. The generic orbit facts it rides live in `TauCeti.NumberTheory.Modular.Orbits`.
 
 ## Main declarations
 
 * `TauCeti.ModularForm.orderOfVanishingOnOrbit`: the order descended to
   `MulAction.orbitRel.Quotient SL(2, ℤ) ℍ`.
-* `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit`: finite support on orbits for a
-  nonzero form.
+* `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnOrbit`: finite support on orbits, the
+  zero form having empty support.
 * `TauCeti.ModularForm.sum_orderOfVanishingAt_eq_finsum_orbit`: a divisor sum over an arbitrary
   index set, reindexed over the orbits its points represent, given that the index-to-orbit
   composite is injective.
