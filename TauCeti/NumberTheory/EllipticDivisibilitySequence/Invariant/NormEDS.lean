@@ -40,6 +40,16 @@ indeterminate `X B` *is* a nonzerodivisor, then specialise along `aeval`.
 `invarNum_normEDS_one_mul_c_eq_invarDenom_mulAux` is
 the hypothesis-carrying form and exists only to be specialised.
 
+**The two evaluations carry opposite `simp` decisions, and the asymmetry is not an oversight.**
+`invarDenom_normEDS_one_two` is `@[simp high]`, because `invarDenom_def` is itself `@[simp]` and at
+equal priority expands the three-factor formula instead; there is no general
+`invarDenom … = _ * b` lemma upstream, so its left-hand side *is* in simp normal form.
+`invarNum_normEDS_one_two` is deliberately **not** a simp lemma: `ReducedInvariant.lean` already
+carries `@[simp high] invarNum_normEDS_one_eq_reducedInvarNum_mul`, which rewrites
+`invarNum (normEDS b c d) 1 m` for every `m` — including `2` — so that left-hand side is not in
+normal form and tagging it makes `simpNF` fail the build. It stays useful as a rewrite named
+explicitly, which is how the proof below uses it.
+
 ## Provenance
 
 Adapted from D. K. Angdinata's
@@ -78,22 +88,14 @@ namespace IsEllipticNet
 
 variable {R : Type*} [CommRing R] {b c d : R} {m : ℤ}
 
-/-- The numerator of the invariant of `normEDS b c d` at `s = 1`, `n = 2`.
+/-- The numerator of the invariant of `normEDS b c d` at `s = 1`, `n = 2`: it is `(d + b ^ 4) * b`.
 
-**Deliberately not a simp lemma**, unlike its denominator counterpart. `ReducedInvariant.lean`
-already carries `@[simp high] invarNum_normEDS_one_eq_reducedInvarNum_mul`, which rewrites
-`invarNum (normEDS b c d) 1 m` for every `m` — including `2`. So this left-hand side is not in simp
-normal form, and marking it `simp` makes `simpNF` fail the build. It stays useful as a rewrite
-named explicitly, which is how the proof below uses it. -/
+Not a simp lemma, unlike its denominator counterpart; the module's implementation notes say why. -/
 theorem invarNum_normEDS_one_two (b c d : R) :
     invarNum (normEDS b c d) 1 2 = (d + b ^ 4) * b := by
   simp [right_distrib, ← pow_succ, ← pow_add]
 
-/-- The denominator of the invariant of `normEDS b c d` at `s = 1`, `n = 2`.
-
-`@[simp high]` because `invarDenom_def` is itself `@[simp]` and at equal priority expands the
-three-factor formula instead. There is no general `invarDenom … = _ * b` lemma upstream, so unlike
-the numerator this left-hand side *is* in simp normal form. -/
+/-- The denominator of the invariant of `normEDS b c d` at `s = 1`, `n = 2`: it is `c * b`. -/
 @[simp high]
 theorem invarDenom_normEDS_one_two (b c d : R) : invarDenom (normEDS b c d) 1 2 = c * b := by
   simp
@@ -108,8 +110,13 @@ private theorem invarNum_normEDS_one_mul_c_eq_invarDenom_mulAux (hb : b ∈ R⁰
   rw [invarNum_normEDS_one_two, invarDenom_normEDS_one_two] at h
   linear_combination h
 
-/-- **The invariant of a normalised EDS, pinned at `s = 1`.** For every `m`, and with no
-hypothesis on `b`, `c`, `d`. -/
+/-- **The cross-multiplied invariant identity at `s = 1`**, for every `m` and with no hypothesis on
+`b`, `c`, `d`.
+
+It is an identity between products, not a statement that a quotient is constant: over a general
+`CommRing` a denominator may vanish or be a zero divisor, and if `c` and `d + b ^ 4` both vanish
+the equation holds vacuously. `Invariant/Basic.lean` makes the same distinction where
+`invarNum_mul_invarDenom` is proved. -/
 theorem invarNum_normEDS_one_mul_c_eq_invarDenom_mul (b c d : R) (m : ℤ) :
     invarNum (normEDS b c d) 1 m * c = invarDenom (normEDS b c d) 1 m * (d + b ^ 4) := by
   have huniv := invarNum_normEDS_one_mul_c_eq_invarDenom_mulAux
