@@ -589,7 +589,8 @@ lemma im_fdBoundary_of_le_one (h1 : t ≤ 1) :
     (fdBoundary H t).im = H + t * (Real.sqrt 3 / 2 - H) := by
   rw [fdBoundary_of_le_one h1, fdBoundarySegment1_apply, AffineMap.lineMap_apply_module']
   have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).im = Real.sqrt 3 / 2 - H := by
-    simp [ρ]
+    rw [Complex.sub_im, Complex.add_im, rho_im]
+    simp
   have him : (1 / 2 + H * Complex.I : ℂ).im = H := by simp
   rw [Complex.add_im, Complex.smul_im, hchord, him, smul_eq_mul, add_comm]
 

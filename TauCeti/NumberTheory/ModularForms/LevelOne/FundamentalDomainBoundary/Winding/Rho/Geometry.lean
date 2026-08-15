@@ -51,7 +51,7 @@ private lemma rho_eq_exp :
   · rw [Complex.exp_ofReal_mul_I_re, h23, Real.cos_pi_sub, Real.cos_pi_div_three]
     norm_num [UpperHalfPlane.ρ]
   · rw [Complex.exp_ofReal_mul_I_im, h23, Real.sin_pi_sub, Real.sin_pi_div_three]
-    norm_num [UpperHalfPlane.ρ]
+    exact rho_im
 
 /-- On the arc the distance from `ρ` is the chord distance: `2·sin(|t - 3|·π/12)` up to
 the absolute value inside the sine. -/
