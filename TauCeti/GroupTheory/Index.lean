@@ -16,6 +16,12 @@ subgroup.
 
 Because the order of a subgroup divides the order of the group -- with the index as cofactor --
 invertibility of the order of a finite group in a semiring passes to every subgroup.
+
+## Main results
+
+* `Subgroup.mem_withCenter_iff`: an element of `Γ·Z(G)` is one of `Γ` times a central one.
+* `Subgroup.withCenter_eq_self_iff`: adjoining the centre changes nothing exactly when the
+  centre already lies inside `Γ`.
 -/
 
 public section
@@ -43,6 +49,32 @@ theorem withCenter_def {G : Type*} [Group G] (Γ : Subgroup G) :
 /-- `Γ` sits inside `Γ` with the centre adjoined. -/
 lemma le_withCenter {G : Type*} [Group G] (Γ : Subgroup G) : Γ ≤ Γ.withCenter :=
   le_sup_left
+
+/-- The centre sits inside `Γ` with the centre adjoined — the other half of the supremum. -/
+lemma center_le_withCenter {G : Type*} [Group G] (Γ : Subgroup G) :
+    Subgroup.center G ≤ Γ.withCenter :=
+  le_sup_right
+
+/-- **Characteristic membership for `withCenter`**: an element of `Γ·Z(G)` is one of `Γ` times a
+central one. The centre is normal, so the supremum is the pointwise product.
+
+Not `@[simp]`, tested: its left-hand side `g ∈ Γ.withCenter` is the same shape as that of the
+`SL(2, ℤ)`-specific `Subgroup.mem_withCenter_iff_exists_eq_or_eq_neg`, which *is* `@[simp]` and
+resolves the centre to `{±1}`. Tagging this one too takes that lemma's left-hand side out of
+simp-normal form — `simpNF` rejects it — and would pre-empt the sharper rewrite everywhere the
+group is `SL(2, ℤ)`. -/
+theorem mem_withCenter_iff {G : Type*} [Group G] {Γ : Subgroup G} {g : G} :
+    g ∈ Γ.withCenter ↔ ∃ γ ∈ Γ, ∃ c ∈ Subgroup.center G, g = γ * c := by
+  rw [withCenter_def, Subgroup.mem_sup_of_normal_right]
+  exact ⟨fun ⟨γ, hγ, c, hc, h⟩ ↦ ⟨γ, hγ, c, hc, h.symm⟩,
+    fun ⟨γ, hγ, c, hc, h⟩ ↦ ⟨γ, hγ, c, hc, h.symm⟩⟩
+
+/-- **Adjoining the centre changes nothing exactly when the centre is already inside `Γ`** —
+the other half of the dichotomy `Subgroup.withCenter` describes. -/
+@[simp]
+theorem withCenter_eq_self_iff {G : Type*} [Group G] {Γ : Subgroup G} :
+    Γ.withCenter = Γ ↔ Subgroup.center G ≤ Γ :=
+  sup_eq_left
 
 instance instFiniteIndexWithCenter {G : Type*} [Group G] (Γ : Subgroup G)
     [Γ.FiniteIndex] : Γ.withCenter.FiniteIndex :=
