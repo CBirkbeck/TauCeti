@@ -126,11 +126,12 @@ theorem normEDS_mul_complEDS_of_mem_nonZeroDivisors {k : ℤ} (hk : normEDS b c 
     rw [neg_mul, normEDS_neg, complEDS_neg, mul_neg, hn n]
 
 /-- **The complement of a normalised EDS witnesses divisibility at every multiple**, with no
-hypothesis at all. The nonzerodivisor hypothesis of the previous result is discharged by proving
-it over `ℤ[B, C, D]`, where `universalNormEDS k` is a nonzerodivisor for every `k ≠ 0`, and
-specialising along `aeval`. -/
+hypothesis at all. -/
+@[simp]
 theorem normEDS_mul_complEDS (b c d : R) (k n : ℤ) :
     normEDS b c d k * complEDS b c d k n = normEDS b c d (n * k) := by
+  -- The previous result's nonzerodivisor hypothesis is discharged over `ℤ[B, C, D]`, where
+  -- `universalNormEDS k` is a nonzerodivisor for every `k ≠ 0`, and specialised along `aeval`.
   rcases eq_or_ne k 0 with rfl | hk
   · simp
   -- `universalNormEDS`'s body is unexposed, so its nonvanishing reaches this shape through the
