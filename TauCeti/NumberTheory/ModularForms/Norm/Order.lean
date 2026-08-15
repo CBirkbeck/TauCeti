@@ -113,8 +113,8 @@ public lemma orderOfVanishingAt_le_orderOfVanishingAt_norm (f : F) (p : ℍ) :
   simpa using orderOfVanishingAt_quotientFunc_le_orderOfVanishingAt_norm f
     (⟦1⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) p
 
-/-- At any level of finite relative index in `𝒮ℒ`, the nonzero-order points of a form meet only
-finitely many `SL(2, ℤ)`-orbits — the level-one statement, read through the norm. -/
+-- Step 1: the nonzero-order points meet only finitely many `SL(2, ℤ)`-orbits, which is the
+-- level-one finite-support statement read through the norm.
 private lemma finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero
     {𝒢 : Subgroup (GL (Fin 2) ℝ)} [𝒢.IsFiniteRelIndex 𝒮ℒ] [ModularFormClass F 𝒢 k] (f : F) :
     Set.Finite ((Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient SL(2, ℤ) ℍ) ''
@@ -127,8 +127,8 @@ private lemma finite_image_orbit_mk_setOf_orderOfVanishingAt_ne_zero
     (((orderOfVanishingAt_nonneg (ModularFormClass.holo f) p).lt_of_ne' hp).trans_le
       (orderOfVanishingAt_le_orderOfVanishingAt_norm f p)).ne'
 
-/-- The `SL(2, ℤ)`-orbit and the `𝒮ℒ`-orbit of a point are the same subset of `ℍ`: `𝒮ℒ` is by
-definition the image of `SL(2, ℤ)` in `GL (Fin 2) ℝ`, through which the action factors. -/
+-- `𝒮ℒ` is by definition the image of `SL(2, ℤ)` in `GL (Fin 2) ℝ`, and the action factors
+-- through it, so the two orbits of a point are the same subset of `ℍ`.
 private lemma orbit_sl_eq_orbit_slGL (z : ℍ) :
     MulAction.orbit SL(2, ℤ) z = MulAction.orbit 𝒮ℒ z := by
   ext p
@@ -138,10 +138,9 @@ private lemma orbit_sl_eq_orbit_slGL (z : ℍ) :
   · rintro ⟨⟨_, g, rfl⟩, rfl⟩
     exact ⟨g, rfl⟩
 
-/-- **A single `SL(2, ℤ)`-orbit meets only finitely many `𝒢`-orbits**, whenever `𝒢` has finite
-relative index in `𝒮ℒ`. Purely group-theoretic: `𝒢 ⊓ 𝒮ℒ` is a finite-index subgroup of `𝒮ℒ`, so
-it cuts the (pretransitive) `𝒮ℒ`-orbit into finitely many pieces, and each piece lies in one
-`𝒢`-orbit. -/
+-- Step 2, and the crux: a single `SL(2, ℤ)`-orbit meets only finitely many `𝒢`-orbits. This is
+-- purely group-theoretic — `𝒢 ⊓ 𝒮ℒ` is a finite-index subgroup of `𝒮ℒ`, so it cuts the
+-- pretransitive `𝒮ℒ`-orbit into finitely many pieces, and each piece lies in one `𝒢`-orbit.
 private lemma finite_image_orbit_mk_orbit (𝒢 : Subgroup (GL (Fin 2) ℝ))
     [𝒢.IsFiniteRelIndex 𝒮ℒ] (z : ℍ) :
     Set.Finite ((Quotient.mk'' : ℍ → MulAction.orbitRel.Quotient 𝒢 ℍ) ''
