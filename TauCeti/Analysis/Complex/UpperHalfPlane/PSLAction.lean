@@ -220,18 +220,15 @@ theorem glPosToPSL2R_smul (g : GL(2, ℝ)⁺) (τ : ℍ) :
 /-- **The `SL(2, R)`-stabiliser of a point is the preimage of its `PSL(2, R)`-stabiliser**
 under the central quotient. Both groups see the same stabiliser, read once with the centre and
 once without. -/
-theorem stabilizer_eq_comap_stabilizer_psl (z : ℍ) :
-    MulAction.stabilizer SL(2, R) z =
-      (MulAction.stabilizer PSL(2, R) z).comap
-        (QuotientGroup.mk' (Subgroup.center SL(2, R))) := by
+theorem stabilizer_eq_comap_stabilizer_psl (z : ℍ) : MulAction.stabilizer SL(2, R) z =
+    (MulAction.stabilizer PSL(2, R) z).comap (QuotientGroup.mk' (Subgroup.center SL(2, R))) := by
   ext g
   simp [MulAction.mem_stabilizer_iff]
 
 /-- The centre lies in every point stabiliser, its elements acting trivially on `ℍ`. Together
 with `stabilizer_eq_comap_stabilizer_psl` this exhibits the `PSL(2, R)`-stabiliser as the
 `SL(2, R)`-stabiliser modulo the centre. -/
-theorem center_le_stabilizer (z : ℍ) :
-    Subgroup.center SL(2, R) ≤ MulAction.stabilizer SL(2, R) z :=
+theorem center_le_stabilizer (z : ℍ) : Subgroup.center SL(2, R) ≤ MulAction.stabilizer SL(2, R) z :=
   fun c hc ↦ smul_eq_self_of_mem_center c hc z
 
 end UpperHalfPlane
