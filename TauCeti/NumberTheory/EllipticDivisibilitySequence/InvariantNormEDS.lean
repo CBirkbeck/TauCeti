@@ -95,9 +95,9 @@ private theorem invarNum_normEDS_one_mul_c_eq_invarDenom_mulAux (hb : b ∈ R⁰
 hypothesis on `b`, `c`, `d`. -/
 theorem invarNum_normEDS_one_mul_c_eq_invarDenom_mul (b c d : R) (m : ℤ) :
     invarNum (normEDS b c d) 1 m * c = invarDenom (normEDS b c d) 1 m * (d + b ^ 4) := by
-  have huniv := invarNum_normEDS_one_mul_c_eq_invarDenom_mulAux (b := (X B : MvPolynomial
-  NormEDSParam ℤ))
-    (c := X C) (d := X D) (mem_nonZeroDivisors_of_ne_zero (X_ne_zero (R := ℤ) B)) m
+  have huniv := invarNum_normEDS_one_mul_c_eq_invarDenom_mulAux
+    (b := (X B : MvPolynomial NormEDSParam ℤ)) (c := X C) (d := X D)
+    (mem_nonZeroDivisors_of_ne_zero (X_ne_zero (R := ℤ) B)) m
   have key := congr(aeval (NormEDSParam.rec b c d) $huniv)
   -- `universalNormEDS`'s body is unexposed, so the function-level equation has to be supplied;
   -- `universalNormEDS_apply` is pointwise and cannot fire under `invarNum`.
