@@ -126,6 +126,21 @@ theorem hasCauchyPVAt_iff {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀
           (𝓝[>] 0) (𝓝 L) :=
   Iff.rfl
 
+/-- **The `ε → 0` passage, once.** A principal value is computed by exhibiting the excised
+integral in closed form on a punctured right-neighbourhood of `0` and taking the limit; this
+packages that step, so a caller supplies only the closed form `F` and its limit.
+
+The excised integral is asked to equal `F ε` rather than a specific shape such as `L - c ε`,
+because the closed forms met in practice differ: constant in `ε` along a straight edge, and
+`L` minus an `arcsin` correction at a corner or along an arc. -/
+theorem hasCauchyPVAt_of_tendsto {γ : ℝ → ℂ} {a b : ℝ} {f : ℂ → ℂ} {z₀ L : ℂ} {F : ℝ → ℂ}
+    (hF : Tendsto F (𝓝[>] (0 : ℝ)) (𝓝 L))
+    (h : ∀ᶠ ε in 𝓝[>] (0 : ℝ), IntervalIntegrable
+        (fun t ↦ if ‖γ t - z₀‖ > ε then f (γ t) * deriv γ t else 0) MeasureTheory.volume a b ∧
+      ∫ t in a..b, (if ‖γ t - z₀‖ > ε then f (γ t) * deriv γ t else 0) = F ε) :
+    HasCauchyPVAt γ a b f z₀ L :=
+  hasCauchyPVAt_iff.mpr ⟨h.mono fun _ hε ↦ hε.1, hF.congr' (h.mono fun _ hε ↦ hε.2.symm)⟩
+
 /-- The **Cauchy principal value at `z₀`** of `∮_γ f`, excluding the symmetric `ε`-ball about `z₀`.
 `limUnder`-based; returns junk when the limit does not exist, so use `HasCauchyPVAt` for the
 predicate and `HasCauchyPVAt.cauchyPVAt_eq` to read the value off it. -/
