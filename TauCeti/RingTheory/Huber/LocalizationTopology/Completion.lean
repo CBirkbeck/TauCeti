@@ -119,9 +119,10 @@ theorem isTopologicalRing_locUniformSpace [IsTopologicalRing A] (P : PairOfDefin
   isTopologicalRing_locTopology P T s S hden
 
 /-- `Aₛ` is a Huber ring for the topology `locUniformSpace` induces. The third companion of
-`locUniformSpace`, stated at that topology rather than at `locTopology` for the same reason as the
-other two: neither body is exposed, so a consumer working at the uniformity cannot cross the
-identification itself. Without this, `powerBoundedSubring S` is unreachable there. -/
+`locUniformSpace`, alongside the two above. A consumer working at the uniformity can reach the
+`locTopology`-stated form by transporting along `locUniformSpace_toTopologicalSpace`; this
+restates it so that it does not have to, which is what makes `powerBoundedSubring S` convenient to
+name there. -/
 theorem isHuberRing_locUniformSpace [IsTopologicalRing A] (P : PairOfDefinition A)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     (hden : HasDenominatorPower P T s S) :
@@ -131,8 +132,9 @@ theorem isHuberRing_locUniformSpace [IsTopologicalRing A] (P : PairOfDefinition 
   isHuberRing_locTopology P T s S hden
 
 /-- The image of a power-bounded element of `A` is power-bounded in `Aₛ`, at the uniformity's
-topology. `isPowerBounded_algebraMap_of_isPowerBounded` states this at `locTopology`; a consumer
-holding the uniformity cannot cross the identification itself, since neither body is exposed. -/
+topology. `isPowerBounded_algebraMap_of_isPowerBounded` states this at `locTopology`; this is the
+same fact restated so that a consumer holding the uniformity need not transport along
+`locUniformSpace_toTopologicalSpace` itself. -/
 theorem isPowerBounded_algebraMap_of_isPowerBounded_locUniformSpace [IsTopologicalRing A]
     (P : PairOfDefinition A)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
