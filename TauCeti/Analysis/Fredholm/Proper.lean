@@ -69,17 +69,18 @@ variable {f : E → F} {f' : E →L[𝕜] F} {a : E}
 
 omit [ProperSpace 𝕜] [CompleteSpace E] [CompleteSpace F] in
 /-- **An a priori estimate survives a nonlinear approximation, degraded by its quality.** Suppose
-every vector is controlled by its image under `f'` together with an auxiliary linear map `P`, as
-`‖z‖ ≤ C * ‖f' z‖ + ‖P z‖`, and `f` approximates `f'` on `N` to within `ε`. Then the same control
-holds for `f` on `N`, with the left side scaled by `1 - C * ε`; it has content exactly when
-`C * ε < 1`, and taking `ε ≤ (2 * C)⁻¹` gives the factor-two form the properness argument uses.
+every vector is controlled by its image under `f'` together with an auxiliary additive map `P`,
+as `‖z‖ ≤ C * ‖f' z‖ + ‖P z‖`, and `f` approximates `f'` on `N` to within `ε`. Then the same
+control holds for `f` on `N`, with the left side scaled by `1 - C * ε`; it has content exactly
+when `C * ε < 1`, and taking `ε ≤ (2 * C)⁻¹` gives the factor-two form properness uses.
 
-`P` is only required to be linear: neither idempotence nor any constraint on its target is used.
-Taking it to be the projection onto `ker f'` from
-`ContinuousLinearMap.exists_projection_norm_le` recovers the Peetre estimate, which characterises
-semi-Fredholm operators — see Wendl, *Fredholm operators*, Lemma 5.2. -/
-theorem one_sub_mul_norm_sub_le {G : Type*} [NormedAddCommGroup G] [Module 𝕜 G]
-    {P : E →ₗ[𝕜] G} {C : ℝ} {N : Set E} {ε : ℝ≥0}
+Nothing about `P` beyond `map_sub` enters, so it need only be additive into a seminormed additive
+group — no scalar-linearity, no idempotence, no constraint on its target. Taking it to be the
+projection onto `ker f'` from `ContinuousLinearMap.exists_projection_norm_le` recovers the Peetre
+estimate, which characterises semi-Fredholm operators — see Wendl, *Fredholm operators*,
+Lemma 5.2. -/
+theorem one_sub_mul_norm_sub_le {G : Type*} [SeminormedAddGroup G]
+    {P : E →+ G} {C : ℝ} {N : Set E} {ε : ℝ≥0}
     (hC : 0 ≤ C) (hest : ∀ z, ‖z‖ ≤ C * ‖f' z‖ + ‖P z‖)
     (happ : ApproximatesLinearOn f f' N ε) {x : E} (hx : x ∈ N) {y : E} (hy : y ∈ N) :
     (1 - C * (ε : ℝ)) * ‖x - y‖ ≤ C * ‖f x - f y‖ + ‖P x - P y‖ := by
@@ -126,9 +127,9 @@ theorem _root_.HasStrictFDerivAt.exists_mem_nhds_forall_isCompact_inter_preimage
   have key : ∀ x ∈ N, ∀ y ∈ N,
       ‖x - y‖ ≤ 2 * (C * ‖f x - f y‖) + 2 * ‖P x - P y‖ := by
     intro x hx y hy
-    have h := one_sub_mul_norm_sub_le (P := (P : E →ₗ[𝕜] E)) hC.le hest happN hx hy
+    have h := one_sub_mul_norm_sub_le (P := P.toLinearMap.toAddMonoidHom) hC.le hest happN hx hy
     rw [hCε] at h
-    simp only [ContinuousLinearMap.coe_coe] at h
+    simp only [LinearMap.toAddMonoidHom_coe, ContinuousLinearMap.coe_coe] at h
     linarith
   refine ⟨N, Metric.closedBall_mem_nhds a (by linarith), fun L hL => ?_⟩
   -- the compact box the projection lands in
