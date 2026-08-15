@@ -353,21 +353,19 @@ private theorem atomRelFin4_eq_zero_of_injective (odd : W.Odd)
     (nonneg : ∀ i, 0 ≤ t i) (par : ∀ i j, t i % 2 = t j % 2) (inj : Function.Injective t) :
     atomRelFin4 W t = 0 := by
   set σ : Equiv.Perm (Fin 4) := Fin.revPerm.trans (Tuple.sort t) with hσ
-  -- `t ∘ Tuple.sort t` is monotone, so precomposing with the reversal makes it antitone; with `t`
-  -- injective that antitone tuple is *strictly* decreasing, which is what the descent consumes.
-  have hanti : ∀ i j : Fin 4, i < j → (t ∘ σ) j < (t ∘ σ) i := by
-    intro i j hij
-    refine lt_of_le_of_ne (Tuple.monotone_sort t (by simpa [hσ] using Fin.rev_le_rev.mpr hij.le)) ?_
-    exact fun h ↦ absurd ((σ.injective (inj h)).symm) (by simpa using hij.ne)
+  -- `t ∘ Tuple.sort t` is monotone and injective, hence strictly monotone; precomposing with the
+  -- reversal turns that into the strict decrease the descent consumes.
+  have hstrict : StrictMono (t ∘ Tuple.sort t) :=
+    (Tuple.monotone_sort t).strictMono_of_injective (inj.comp (Tuple.sort t).injective)
+  have hanti : ∀ i j : Fin 4, i < j → (t ∘ σ) j < (t ∘ σ) i := fun i j hij ↦ by
+    simpa [hσ, Function.comp_assoc] using hstrict (Fin.rev_lt_rev.mpr hij)
   have hzero : atomRelFin4 W (t ∘ σ) = 0 := by
     rw [atomRelFin4_def]
     refine descent _ _ _ _ ⟨par _ _, par _ _, par _ _⟩ ?_
     rw [nonnegStrictAnti₄_iff]
     exact ⟨nonneg _, hanti 2 3 (by decide), hanti 1 2 (by decide), hanti 0 1 (by decide)⟩
   rw [atomRelFin4_perm odd σ t] at hzero
-  -- the sign is a unit of `ℤ`, so it cancels; splitting on `±1` avoids naming a units lemma
-  rcases Int.units_eq_one_or (Equiv.Perm.sign σ) with h | h <;> rw [h] at hzero <;>
-    simpa using hzero
+  exact (smul_eq_zero_iff_eq (Equiv.Perm.sign σ)).mp hzero
 
 /-- **The relator vanishes at any quadruple of one parity.** All four indices are made
 nonnegative by sign equivariance, a coincidence between any two is one of Mathlib's
