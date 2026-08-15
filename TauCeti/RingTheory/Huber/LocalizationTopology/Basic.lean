@@ -182,17 +182,21 @@ theorem locSubring_insert [DecidableEq A] (P : PairOfDefinition A) (t : A)
     (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] :
     locSubring P (insert t U) s S =
       (Algebra.adjoin ↥(locSubring P U s S) ({divBy t s} : Set S)).toSubring := by
-  refine le_antisymm ((locSubring_le_iff P _ s S).mpr ⟨fun a ha ↦ ?_, fun t' ht' ↦ ?_⟩) ?_
-  · exact Subalgebra.algebraMap_mem _
-      (⟨_, algebraMap_mem_locSubring P U s S ha⟩ : locSubring P U s S)
-  · rcases Finset.mem_insert.mp ht' with rfl | ht'U
-    · exact Algebra.subset_adjoin rfl
-    · exact Subalgebra.algebraMap_mem _
-        (⟨_, divBy_mem_locSubring P U s S ht'U⟩ : locSubring P U s S)
-  · rw [Algebra.adjoin_eq_ring_closure, Subring.closure_le]
-    rintro w (⟨⟨w, hw⟩, rfl⟩ | rfl)
-    · exact locSubring_mono P s S (Finset.subset_insert t U) hw
-    · exact divBy_mem_locSubring P _ s S (Finset.mem_insert_self t U)
+  -- the fractions indexed by `insert t U` are those indexed by `U`, with `t/s` adjoined
+  have hrange : Set.range (fun u : ↥(insert t U) ↦ (divBy (u : A) s : S))
+      = insert (divBy t s : S) (Set.range fun u : ↥U ↦ (divBy (u : A) s : S)) := by
+    ext x
+    simp only [Set.mem_range, Set.mem_insert_iff, Subtype.exists, Finset.mem_insert, exists_prop]
+    constructor
+    · rintro ⟨a, (rfl | ha), rfl⟩
+      · exact Or.inl rfl
+      · exact Or.inr ⟨a, ha, rfl⟩
+    · rintro (rfl | ⟨a, ha, rfl⟩)
+      · exact ⟨t, Or.inl rfl, rfl⟩
+      · exact ⟨a, Or.inr ha, rfl⟩
+  rw [locSubring, hrange, Set.insert_eq, Set.union_comm,
+    Algebra.adjoin_union_eq_adjoin_adjoin]
+  rfl
 
 /-! ### The standing hypothesis -/
 
