@@ -52,7 +52,9 @@ That fact is `isEllipticSequence_normEDS` in `NormEDS.lean`, proved here through
 (`Mathlib/NumberTheory/EllipticDivisibilitySequence.lean`: "prove that `normEDS` satisfies
 `IsEllipticDvdSequence`"). What the denominator side still lacks is the rest of each chain above:
 `redInvar_normEDS ← invar₂_normEDS ← invar_normEDS ← net_normEDS` for the first, and
-`normEDS_mul_complEDS_div ← normEDS_mul_complEDS ← normEDS_mul_complEDS_of_mem` for the second.
+`normEDS_mul_complEDS_div ← normEDS_mul_complEDS` for the second: that chain's base link, the
+source's `normEDS_mul_complEDS_of_mem`, is `normEDS_mul_complEDS_of_mem_nonZeroDivisors` in
+`Complement.lean`.
 Carrying the bare definition across before them would add a formula that no consumer can state
 anything about, so it waits for the layer that gives it meaning. Everything below is independent
 of that fact: nothing carries an ellipticity hypothesis, and the source discharges the
