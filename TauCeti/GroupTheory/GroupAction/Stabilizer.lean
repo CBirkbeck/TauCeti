@@ -7,6 +7,7 @@ module
 
 public import Mathlib.GroupTheory.Coset.Card
 public import Mathlib.GroupTheory.GroupAction.Basic
+public import Mathlib.GroupTheory.Index
 public import Mathlib.GroupTheory.QuotientGroup.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 
@@ -87,9 +88,9 @@ theorem card_stabilizer_eq_card_ker_mul_card_stabilizer {H : Type*} [Group H] [M
     exact ⟨⟨g, (hmem g).mpr hq⟩, rfl⟩
   have hker : φ.ker = f.ker.subgroupOf (MulAction.stabilizer G a) :=
     MonoidHom.ker_codRestrict _ _ _
-  rw [← Nat.card_congr (QuotientGroup.quotientKerEquivOfSurjective _ hsurj).toEquiv,
-    ← Nat.card_congr (Subgroup.subgroupOfEquivOfLe hle).toEquiv, ← hker, mul_comm]
-  exact Subgroup.card_eq_card_quotient_mul_card_subgroup _
+  rw [← φ.ker.card_mul_index, Subgroup.index_ker, MonoidHom.range_eq_top.mpr hsurj, hker,
+    Nat.card_congr (Subgroup.subgroupOfEquivOfLe hle).toEquiv]
+  simp
 
 /-- **Passing to a quotient group divides stabiliser orders by the subgroup**: the case of
 `card_stabilizer_eq_card_ker_mul_card_stabilizer` for the quotient map, whose kernel is `N`.
