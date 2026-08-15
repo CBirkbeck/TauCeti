@@ -7,6 +7,9 @@ module
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Degree
 public import Mathlib.FieldTheory.PurelyInseparable.Basic
 import Mathlib.FieldTheory.PurelyInseparable.Tower
+-- Non-public: `AlgHom.algebraMap_toAlgebra_apply` supplies the `∀ z, algebraMap _ _ z = f z`
+-- witnesses inside the proofs below; it appears in no statement here.
+import TauCeti.Algebra.Algebra.Hom
 import TauCeti.FieldTheory.IntermediateField.FieldRange
 
 /-!
@@ -235,12 +238,9 @@ theorem separableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  have hφ := fun z ↦ congrFun
-    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra φ.fieldPullback.toRingHom)) z
-  have hψ := fun z ↦ congrFun
-    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra ψ.fieldPullback.toRingHom)) z
-  have hc := fun z ↦ congrFun
-    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra (ψ.comp φ).fieldPullback.toRingHom)) z
+  have hφ := φ.fieldPullback.algebraMap_toAlgebra_apply
+  have hψ := ψ.fieldPullback.algebraMap_toAlgebra_apply
+  have hc := (ψ.comp φ).fieldPullback.algebraMap_toAlgebra_apply
   -- discharges the tower law's `[Algebra.IsAlgebraic E K]` side condition
   have _ := TauCeti.AlgHom.finiteDimensional_of_fieldRange φ.fieldPullback hφ
   rw [(ψ.comp φ).separableDegree_eq_finSepDegree hc, ψ.separableDegree_eq_finSepDegree hψ,
@@ -260,12 +260,9 @@ theorem inseparableDegree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂)
   have : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  have hφ := fun z ↦ congrFun
-    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra φ.fieldPullback.toRingHom)) z
-  have hψ := fun z ↦ congrFun
-    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra ψ.fieldPullback.toRingHom)) z
-  have hc := fun z ↦ congrFun
-    (congrArg DFunLike.coe (RingHom.algebraMap_toAlgebra (ψ.comp φ).fieldPullback.toRingHom)) z
+  have hφ := φ.fieldPullback.algebraMap_toAlgebra_apply
+  have hψ := ψ.fieldPullback.algebraMap_toAlgebra_apply
+  have hc := (ψ.comp φ).fieldPullback.algebraMap_toAlgebra_apply
   -- the inseparable tower law needs `[Algebra.IsAlgebraic F E]`, the *lower* extension — so the
   -- finiteness required here is `ψ`'s, unlike `separableDegree_comp`, which needs `φ`'s
   have _ := TauCeti.AlgHom.finiteDimensional_of_fieldRange ψ.fieldPullback hψ
