@@ -83,8 +83,11 @@ theorem card_stabilizer_quotient (N : Subgroup G) [N.Normal] [MulAction (G ⧸ N
   have hsurj : Function.Surjective φ := fun ⟨q, hq⟩ ↦ by
     obtain ⟨g, rfl⟩ := QuotientGroup.mk_surjective q
     exact ⟨⟨g, (hcompat g).symm.trans hq⟩, rfl⟩
-  have hker : φ.ker = N.subgroupOf (MulAction.stabilizer G a) :=
-    Subgroup.ext fun _ ↦ Subtype.ext_iff.trans (QuotientGroup.eq_one_iff _)
+  -- `g` is in the kernel exactly when its image is `1` in `G ⧸ N`, i.e. when `g` lies in `N`
+  have hker : φ.ker = N.subgroupOf (MulAction.stabilizer G a) := by
+    ext g
+    rw [MonoidHom.mem_ker, Subgroup.mem_subgroupOf, Subtype.ext_iff]
+    exact QuotientGroup.eq_one_iff _
   rw [← Nat.card_congr (QuotientGroup.quotientKerEquivOfSurjective _ hsurj).toEquiv,
     ← Nat.card_congr (Subgroup.subgroupOfEquivOfLe hle).toEquiv, ← hker, mul_comm]
   exact Subgroup.card_eq_card_quotient_mul_card_subgroup _
