@@ -15,11 +15,10 @@ a rational `g` that conjugate is again arithmetic (`Subgroup.IsArithmetic.conj`)
 arithmetic subgroup has the same cusps as `𝒮ℒ`
 (`Subgroup.IsArithmetic.isCusp_iff_isCusp_SL2Z`), the cusp transports straight back to `Γ`.
 
-This is what the Hecke operators need. A rational representative need not lie in `𝒮ℒ` at all,
-so `IsCusp.smul_of_mem` does not apply to it, and the general `IsCusp.smul`
-only places the image cusp in a *conjugate* subgroup. Going through the rational description
-goes through that conjugate rather than around it, and asks nothing of the determinant beyond
-invertibility.
+This is what the Hecke operators need. A rational representative need not lie in `Γ` at all, so
+`IsCusp.smul_of_mem` does not apply to it, and the general `IsCusp.smul` only places the image
+cusp in a *conjugate* subgroup. What repairs that is arithmeticity of the conjugate, as above;
+nothing is asked of the determinant beyond invertibility.
 
 ## Main results
 
@@ -45,8 +44,8 @@ open Matrix Matrix.SpecialLinearGroup
 
 open scoped MatrixGroups Pointwise
 
-/-- **Rational matrices carry cusps to cusps**, for any arithmetic `Γ`. Its cusps are those of
-`𝒮ℒ`, which are the rational points of `OnePoint ℝ`, and `g` has rational entries. -/
+/-- **Rational matrices carry cusps to cusps**: a `g : GL (Fin 2) ℚ`, pushed forward to `ℝ`,
+sends a cusp of an arithmetic `Γ` to a cusp of `Γ`. -/
 lemma IsCusp.smul_map_ratCast {Γ : Subgroup (GL (Fin 2) ℝ)} [Γ.IsArithmetic] {c : OnePoint ℝ}
     (hc : IsCusp c Γ) (g : GL (Fin 2) ℚ) :
     IsCusp (Matrix.GeneralLinearGroup.map (algebraMap ℚ ℝ) g • c) Γ := by
