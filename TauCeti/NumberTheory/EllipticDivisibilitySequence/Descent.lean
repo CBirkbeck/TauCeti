@@ -13,12 +13,12 @@ import Mathlib.Tactic.FinCases
 import TauCeti.NumberTheory.EllipticDivisibilitySequence.SignEquivariance
 
 /-!
-# An elliptic sequence from its two doubling recurrences
+# An elliptic net from its two doubling recurrences
 
-`IsEllipticSequence W` is a condition on every triple of integers. This file proves it
-equivalent to two families of equations indexed by a *single* integer — the odd doubling
-recurrence from `m = 2` on and the even one from `m = 3` on — for a sequence that is odd,
-vanishes at `0`, and has `W 1` and `W 2` nonzerodivisors.
+`IsEllipticNet W` is a condition on every quadruple of integers, `IsEllipticSequence W` on every
+triple. This file proves both equivalent to two families of equations indexed by a *single*
+integer — the odd doubling recurrence from `m = 2` on and the even one from `m = 3` on — for a
+sequence that is odd, vanishes at `0`, and has `W 1` and `W 2` nonzerodivisors.
 
 The forward direction is `Recurrence.lean`. The reverse is the descent proved here, by
 induction on the largest index `a`:
@@ -41,11 +41,11 @@ hypotheses that `atom_even`, `atom_odd` and `atomRel_eq` carry.
 
 ## Main results
 
-* `isEllipticSequence_iff`: the equivalence, and the headline result of the file.
-* `IsEllipticNet.isEllipticNet_of_rel`: the same two recurrences give the **four**-index
-  relation at every quadruple, not only the three-index one.
-* `IsEllipticNet.isEllipticSequence_of_rel`: its hard direction, with the recurrences in
-  relator form — now the `s = 0` case of the net.
+* `isEllipticNet_iff`: the equivalence at **four** indices, and the headline result of the file.
+* `isEllipticSequence_iff`: its `s = 0` case, the three-index equivalence.
+* `IsEllipticNet.isEllipticNet_of_rel`: the hard direction of the first, with the recurrences in
+  relator form.
+* `IsEllipticNet.isEllipticSequence_of_rel`: the `s = 0` case of that.
 * `IsEllipticNet.atom_mul_atomRel_eq_of_last_eq_fst`, `…_of_last_eq_snd`,
   `IsEllipticNet.atom_mul_atomRel_eq`: the three-term and ten-term expansions that drive it.
 
@@ -431,23 +431,46 @@ theorem isEllipticSequence_of_rel (odd : W.Odd) (zero : W 0 = 0) (one : W 1 ∈ 
 
 end IsEllipticNet
 
+/-- **Being an elliptic net is exactly satisfying the two doubling recurrences.** For a sequence
+that is odd, vanishes at `0` and has `W 1`, `W 2` nonzerodivisors, the **four**-index relation at
+every quadruple is equivalent to the odd recurrence from `m = 2` and the even one from `m = 3` —
+finitely many equations per index rather than a condition on quadruples.
+
+The forward direction reads the two recurrences off the net through its `s = 0` sequence; the
+reverse is the descent, which rebuilds the whole net from them.
+
+So under these hypotheses being an elliptic net and being an elliptic sequence are the same
+condition, which is what makes `isEllipticSequence_iff` below a corollary. They are not the same
+condition in general: `normEDS b c d` at arbitrary parameters need not have `W 2 = b` a
+nonzerodivisor, and `NormEDS.lean` reaches the net there by transporting from the universal ring
+rather than through this equivalence. -/
+theorem isEllipticNet_iff {R : Type*} [CommRing R] {W : ℤ → R} (odd : W.Odd) (zero : W 0 = 0)
+    (one : W 1 ∈ nonZeroDivisors R) (two : W 2 ∈ nonZeroDivisors R) :
+    IsEllipticNet W ↔
+      (∀ m : ℤ, 2 ≤ m → W (2 * m + 1) * W 1 ^ 3 = W (m + 2) * W m ^ 3 - W (m - 1) * W (m + 1) ^ 3)
+        ∧ ∀ m : ℤ, 3 ≤ m → W (2 * m) * W 2 * W 1 ^ 2 =
+            W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2) := by
+  refine ⟨fun h ↦ ⟨fun m _ ↦ h.isEllipticSequence.rel_odd m,
+    fun m _ ↦ h.isEllipticSequence.rel_even m⟩, fun ⟨hodd, heven⟩ ↦ ?_⟩
+  refine IsEllipticNet.isEllipticNet_of_rel odd zero one two (fun m hm ↦ ?_) fun m hm ↦ ?_
+  · rw [IsEllipticNet.rel_odd]
+    linear_combination hodd m hm
+  · rw [IsEllipticNet.rel_even]
+    linear_combination heven m hm
+
 /-- **Being an elliptic sequence is exactly satisfying the two doubling recurrences.** For a
 sequence that is odd, vanishes at `0` and has `W 1`, `W 2` nonzerodivisors, the whole
 three-index relation is equivalent to the odd recurrence from `m = 2` and the even one from
 `m = 3` — finitely many equations per index rather than a condition on triples.
 
 The forward direction is `IsEllipticSequence.rel_odd` and `rel_even`, which read the two
-recurrences off the relation; the reverse is the descent, which rebuilds the relation from
-them. -/
+recurrences off the relation; the reverse is `isEllipticNet_iff` at `s = 0`, the descent having
+rebuilt the entire net from the same two recurrences. -/
 theorem isEllipticSequence_iff {R : Type*} [CommRing R] {W : ℤ → R} (odd : W.Odd) (zero : W 0 = 0)
     (one : W 1 ∈ nonZeroDivisors R) (two : W 2 ∈ nonZeroDivisors R) :
     IsEllipticSequence W ↔
       (∀ m : ℤ, 2 ≤ m → W (2 * m + 1) * W 1 ^ 3 = W (m + 2) * W m ^ 3 - W (m - 1) * W (m + 1) ^ 3)
         ∧ ∀ m : ℤ, 3 ≤ m → W (2 * m) * W 2 * W 1 ^ 2 =
-            W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2) := by
-  refine ⟨fun h ↦ ⟨fun m _ ↦ h.rel_odd m, fun m _ ↦ h.rel_even m⟩, fun ⟨hodd, heven⟩ ↦ ?_⟩
-  refine IsEllipticNet.isEllipticSequence_of_rel odd zero one two (fun m hm ↦ ?_) fun m hm ↦ ?_
-  · rw [IsEllipticNet.rel_odd]
-    linear_combination hodd m hm
-  · rw [IsEllipticNet.rel_even]
-    linear_combination heven m hm
+            W m * (W (m - 1) ^ 2 * W (m + 2) - W (m - 2) * W (m + 1) ^ 2) :=
+  ⟨fun h ↦ ⟨fun m _ ↦ h.rel_odd m, fun m _ ↦ h.rel_even m⟩,
+    fun h ↦ ((isEllipticNet_iff odd zero one two).mpr h).isEllipticSequence⟩

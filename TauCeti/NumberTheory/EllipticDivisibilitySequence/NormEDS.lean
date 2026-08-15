@@ -24,9 +24,11 @@ is left to its own slice.
 The net is what the invariant layer needs. `IsEllipticNet.invarNum_mul_invarDenom` takes an
 `IsEllipticNet` hypothesis — its cross-multiplication identity is proved from the relation at four
 free indices, not three — so stopping at the sequence would leave that consumer inapplicable to
-`normEDS`. Applied to `isEllipticNet_normEDS` it gives, for every `b`, `c`, `d`,
+`normEDS`. Applied to `isEllipticNet_normEDS` it gives, writing `W` for `normEDS b c d`,
 
-`invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m`.
+`invarNum W s m * invarDenom W s n = invarNum W s n * invarDenom W s m`
+
+for every `b`, `c`, `d`, `s`, `m` and `n`.
 
 That is **weaker** than index-independence of an invariant ratio, which needs the denominators
 invertible and so does not hold over a general commutative ring; `Invariant.lean` states the
@@ -68,9 +70,10 @@ acknowledged for the surrounding LutzNagell development — he authors `Universa
 co-authors `DivisionPolynomialOmega.lean` at the same revision — as context for this port, not as
 an author of the declarations above.
 
-The source proves the hypothesis-carrying version from its own descent development; here that
-step is `isEllipticSequence_iff`, so the helper is six lines rather than a file. The universal
-transport is the source's argument, with `normEDS_eq_aeval` in place of its inline rewriting.
+The source proves the hypothesis-carrying version from its own descent development; here that step
+is `Descent.lean`'s `IsEllipticNet.isEllipticNet_of_rel`, fed the two recurrences in relator form,
+so the helper is six lines rather than a file. The universal transport is the source's argument,
+with `normEDS_eq_aeval` in place of its inline rewriting.
 -/
 
 public section
