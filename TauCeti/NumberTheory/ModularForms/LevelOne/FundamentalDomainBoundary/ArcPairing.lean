@@ -304,7 +304,8 @@ The pointwise identity is only assumed on the first half. It is symmetric under 
 so on the second half it follows from the first through
 `excised_weight_fdBoundary_arc_four_sub`; the reflection's fixed point `t = 2` and the
 endpoint `t = 3` are null, which is why this is an almost-everywhere congruence. -/
-private lemma intervalIntegral_excised_arc_add_four_sub [SlashInvariantFormClass F Γ k] (f : F)
+private lemma intervalIntegral_excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg
+    [SlashInvariantFormClass F Γ k] (f : F)
     (hS : ModularGroup.S ∈ Γ) {H : ℝ} {S : Finset ℂ} {ε : ℝ} (hnorm : ∀ s ∈ S, ‖s‖ = 1)
     (hinv : ∀ s ∈ S, -1 / s ∈ S)
     (hd : ∀ t ∈ Ioo (1 : ℝ) 2, ¬(∃ s ∈ S, ‖fdBoundary H t - s‖ ≤ ε) →
@@ -374,7 +375,8 @@ theorem two_mul_intervalIntegral_excised_deriv_smul_logDeriv_comp_ofComplex_fdBo
     have h := hint13.comp_sub_left 4
     rw [h43, h41] at h
     exact h.symm
-  have hsum := intervalIntegral_excised_arc_add_four_sub f hS hnorm hinv hd hne
+  have hsum := intervalIntegral_excised_logDeriv_comp_ofComplex_fdBoundary_arc_add_four_sub_eq_neg
+    f hS hnorm hinv hd hne
   rw [intervalIntegral.integral_add hint13 hintrefl, hrefl] at hsum
   rw [two_mul, hsum, ← intervalIntegral.integral_const_mul]
   refine intervalIntegral.integral_congr fun t _ => ?_
