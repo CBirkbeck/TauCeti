@@ -22,6 +22,17 @@ without these each call site reruns it.
 
 * `Filter.ZeroAtFilter.sum`: a finite sum of functions vanishing along `l` vanishes along `l`.
 * `Filter.BoundedAtFilter.sum`: a finite sum of functions bounded along `l` is bounded along `l`.
+
+## Provenance
+
+No code is transcribed. The gap was identified while porting the cusp chain of the AINTLIB
+`LeanModularForms` project (Chris Birkbeck, Apache-2.0),
+`LeanModularForms/HeckeRIngs/GL2/AdjointTheory.lean` at commit
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`: its `heckeT_p_ut_zero_at_cusps` (lines 62-70)
+open-codes precisely this induction with `Finset.sum_induction`, which is also the proof plan
+`BoundedAtFilter.sum` follows below. The statements here are about Mathlib's
+`Filter.ZeroAtFilter` / `Filter.BoundedAtFilter` at an arbitrary filter and index type, not about
+modular forms.
 -/
 
 public section
@@ -32,10 +43,8 @@ namespace Filter
 
 variable {α β ι : Type*} {l : Filter α} {s : Finset ι} {f : ι → α → β}
 
-/-- **A finite sum of functions vanishing along `l` vanishes along `l`.** This is the additive
-companion of `Filter.BoundedAtFilter.prod`, and it is `zeroAtFilterAddSubmonoid`'s closure under
-`Finset.sum`. It needs `AddCommMonoid` rather than the submonoid's `AddZeroClass`, since that is
-what `Finset.sum` itself requires. -/
+/-- **A finite sum of functions vanishing along `l` vanishes along `l`.** The additive companion
+of `Filter.BoundedAtFilter.prod`. The `AddCommMonoid` hypothesis is what `Finset.sum` requires. -/
 theorem ZeroAtFilter.sum [TopologicalSpace β] [AddCommMonoid β] [ContinuousAdd β]
     (h : ∀ i ∈ s, ZeroAtFilter l (f i)) : ZeroAtFilter l (∑ i ∈ s, f i) :=
   sum_mem (S := zeroAtFilterAddSubmonoid l) h
