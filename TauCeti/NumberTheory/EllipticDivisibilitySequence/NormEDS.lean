@@ -56,6 +56,8 @@ distinction where the identity is proved.
   arguments consume — they specialise at `(2, 3, 2)` in `ℤ`. Only the general form is `@[simp]`:
   tagging both makes `normEDS 2 3 2` rewrite to `Int.cast`, so the `ℤ` left-hand side is no longer
   in normal form and `simpNF` fails the build.
+* `universalNormEDS_ne_zero`, `universalNormEDS_mem_nonZeroDivisors`: the universal sequence
+  vanishes only at `0`, which is what the previous item buys.
 
 The first consumer this unlocks is `IsEllipticNet.invarNum_mul_invarDenom`, which callers can
 apply to `isEllipticNet_normEDS` directly; it is deliberately not restated here as a
@@ -77,12 +79,10 @@ domain is a domain, and then transporting along `aeval`. Every `normEDS b c d` i
 specialisation of `universalNormEDS`, which is what `normEDS_eq_aeval` says, so the hypothesis
 survives only in the private helper, applied once at the indeterminates.
 
-`Universal.lean` records `universalNormEDS_ne_zero` and `universalNormEDS_mem_nonZeroDivisors`
-as belonging with "whichever slice ports" the fact proved here. They are still not ported: they
-rest on `normEDS 2 3 2 = id`, which is `normEDS_two_three_two_eq_id` below. The extensionality
-principle
-that identity needs is `IsEllipticSequence.ext`, which this repository now has, so the obstacle
-recorded for those two is gone; what remains is the work itself.
+`universalNormEDS_ne_zero` and `universalNormEDS_mem_nonZeroDivisors` are here rather than in
+`Universal.lean`, where the definition lives, because they rest on `normEDS 2 3 2 = id` and so on
+`IsEllipticSequence.ext` — both downstream of that file, which this one imports. Stating them
+there would invert the import direction.
 
 ## Provenance
 
@@ -174,3 +174,17 @@ theorem normEDS_two_three_two_eq_intCast (R : Type*) [CommRing R] :
   have h := map_normEDS (f := Int.castRingHom R) (b := (2 : ℤ)) (c := 3) (d := 2) n
   rw [normEDS_two_three_two_eq_id] at h
   simpa using h.symm
+
+/-- **The universal normalised EDS is nonzero away from `0`.** Specialising the three
+indeterminates at `(2, 3, 2)` sends `universalNormEDS n` to `n` itself, by
+`normEDS_two_three_two_eq_id`, so a vanishing value forces a vanishing index. -/
+theorem universalNormEDS_ne_zero {n : ℤ} (hn : n ≠ 0) : universalNormEDS n ≠ 0 := fun h ↦ hn <| by
+  apply_fun aeval (NormEDSParam.rec (2 : ℤ) 3 2) at h
+  simpa using h
+
+/-- **The universal normalised EDS is a nonzerodivisor away from `0`**, `ℤ[B, C, D]` being a
+domain. This is the hypothesis a universal-specialisation argument needs in order to cancel a
+value of the sequence, as opposed to cancelling one of the parameters. -/
+theorem universalNormEDS_mem_nonZeroDivisors {n : ℤ} (hn : n ≠ 0) :
+    universalNormEDS n ∈ (MvPolynomial NormEDSParam ℤ)⁰ :=
+  mem_nonZeroDivisors_of_ne_zero (universalNormEDS_ne_zero hn)
