@@ -326,14 +326,16 @@ theorem isHuberRing_completion_locTopology [IsTopologicalRing A] (P : PairOfDefi
   ⟨⟨completionLocalization P T s S hden⟩⟩
 
 /-- **Maps out of `A⟨T/s⟩` are determined on `A`.** Two continuous ring homomorphisms into a
-Hausdorff topological semiring that agree after composing with the structure map from `A` are
-equal.
+semiring carrying a Hausdorff topology that agree after composing with the structure map
+from `A` are equal.
 
-This is `TauCeti.completion_localization_ringHom_ext_of_continuous` at `Submonoid.powers s`, and
-its content is the bridge: `⇑UniformSpace.Completion.coeRingHom` is the coercion
-`((↑) : S → Completion S)` by the definition of `coeRingHom`, so composing with it is exactly
-`toCompletionLoc`. Crossing that
-definitional equality once here keeps it out of every consumer. -/
+This is `TauCeti.completion_localization_ringHom_ext_of_continuous` at `Submonoid.powers s`. The
+bridge it crosses is the unexported body of `toCompletionLoc`, namely
+`UniformSpace.Completion.coeRingHom.comp (algebraMap A S)`: reassociating that composition turns
+`g.comp (toCompletionLoc …)` into `(g.comp coeRingHom).comp (algebraMap A S)`, which is the
+hypothesis that lemma takes. Nothing is unfolded at the level of coercions — the argument stays
+with bundled `RingHom`s throughout. Crossing the unexported body once here keeps it out of every
+consumer. -/
 theorem completion_locTopology_ringHom_ext_of_continuous [IsTopologicalRing A]
     (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S]
     [IsLocalization.Away s S] (hden : HasDenominatorPower P T s S)
