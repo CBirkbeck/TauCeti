@@ -57,10 +57,13 @@ carrier. That form does not drive typeclass search, so a count through `Nat.card
 junk value `0` on an infinite type — has to bridge to `Finite` by hand at each use. This does it
 once, for every properly discontinuous action.
 
-For the modular case no further instance is needed: Mathlib's
+For an action of a subgroup of `GL(2, ℝ)` no further instance is needed: Mathlib's
 `Subgroup.IsArithmetic.properlyDiscontinuous` supplies proper discontinuity for an arithmetic
 `𝒢 ≤ GL(2, ℝ)`, and the image of a finite-index `Γ ≤ SL(2, ℤ)` is arithmetic, so both shapes
-reach `Finite` through this instance alone. -/
+reach `Finite` through this instance alone. The stabiliser of a point under `SL(2, ℤ)` itself is
+*not* one of those shapes — `SL(2, ℤ)` is a type, not a `Subgroup (GL (Fin 2) ℝ)`, so there is no
+`ProperlyDiscontinuousSMul SL(2, ℤ) ℍ` to apply — and stays with the hand-proved
+`TauCeti.ModularGroup.finite_stabilizer`. -/
 @[to_additive
 /-- **A properly discontinuous additive action has finite point stabilisers**, as a `Finite`
 instance. Mathlib's `ProperlyDiscontinuousVAdd.finite_stabilizer` states it as `Set.Finite` of
