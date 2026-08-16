@@ -143,8 +143,9 @@ theorem separableDegree_mul_inseparableDegree (φ : Isogeny W₁ W₂) :
 
 /-- **Every isogeny has a strictly positive separable degree** — in particular never zero, so this
 factor of `separableDegree_mul_inseparableDegree` can be cancelled against `degree`. It is
-frequently `1`, which is nondegenerate: by `separableDegree_eq_one_iff` it characterises the
-*purely inseparable* case. Separability is characterised by inseparable degree `1`. -/
+frequently `1`, which is nondegenerate: by
+`separableDegree_eq_one_iff_isPurelyInseparable` it characterises the *purely inseparable*
+case. Separability is characterised by inseparable degree `1`. -/
 theorem separableDegree_pos (φ : Isogeny W₁ W₂) : 0 < φ.separableDegree := by
   simpa [separableDegree_def] using
     NeZero.pos (Field.finSepDegree φ.fieldPullback.fieldRange W₁.FunctionField)
