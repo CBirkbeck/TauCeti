@@ -24,8 +24,6 @@ order of the norm is the sum of the orders of the factors.
 
 * `TauCeti.SlashInvariantForm.quotientFunc_ne_zero`: a coset factor of the norm of a nonzero
   form is nonzero.
-* `TauCeti.SlashInvariantForm.orderOfVanishingAt_quotientFunc_mk`: a coset factor's vanishing
-  order at `p` is the form's own order at a translate of `p`.
 * `TauCeti.ModularForm.orderOfVanishingAt_norm`: the vanishing order of the norm at a point
   is the sum, over the coset space, of the vanishing orders of the coset factors.
 * `TauCeti.ModularForm.orderOfVanishingAt_quotientFunc_le_orderOfVanishingAt_norm`: each coset
@@ -74,24 +72,6 @@ public lemma quotientFunc_ne_zero [SlashInvariantFormClass F 𝒢 k] {f : F}
   | h g =>
     rw [_root_.SlashInvariantForm.quotientFunc_mk]
     exact fun hzero ↦ hf ((SlashAction.slash_eq_zero_iff k g.val⁻¹ (⇑f : ℍ → ℂ)).1 hzero)
-
-/-- **A coset factor's vanishing order at `p` is the form's order at a translate of `p`.** The
-factor at the class of `h` is `f ∣[k] h⁻¹`, so its order at `p` is the order of `f` at
-`h⁻¹ • p`.
-
-This is what turns the norm's order — a sum over the coset space, by
-`TauCeti.ModularForm.orderOfVanishingAt_norm` — into a statement about the orders of `f` itself
-at a family of points, which is the shape the general-level valence formula sums over orbits.
-
-The determinant hypothesis is not removable at this generality: `ℋ` is only asked to satisfy
-`Subgroup.HasDetPlusMinusOne`, so `h` may have determinant `-1`, while the order transports
-along the slash action only for positive determinant. For `ℋ = 𝒮ℒ`, the case the valence
-formula uses, every determinant is `1`. -/
-public lemma orderOfVanishingAt_quotientFunc_mk [SlashInvariantFormClass F 𝒢 k] (f : F) (h : ℋ)
-    (hdet : 0 < ((h : GL (Fin 2) ℝ)⁻¹).val.det) (p : ℍ) :
-    orderOfVanishingAt (_root_.SlashInvariantForm.quotientFunc f (⟦h⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ)) p =
-      orderOfVanishingAt (⇑f) (((h : GL (Fin 2) ℝ)⁻¹) • p) := by
-  rw [_root_.SlashInvariantForm.quotientFunc_mk, orderOfVanishingAt_slash (k := k) _ hdet]
 
 end SlashInvariantForm
 
