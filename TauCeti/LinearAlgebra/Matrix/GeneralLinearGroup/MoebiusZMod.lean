@@ -77,13 +77,24 @@ The statement being realised is AINTLIB's `moebiusFin` / `moebiusFin_injective`
 ([`LeanModularForms/HeckeRIngs/GL2/HeckeT_p.lean`](https://github.com/CBirkbeck/AINTLIB), commit
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, lines 124-242, Apache-2.0, Chris Birkbeck).
 
-`dvd_add_mul_iff_eq_of_dvd` is AINTLIB's `dvd_topLeft_add_iff_eq_canonicalIndex`
-(same file, lines 301-310), at the weaker hypothesis `((M.det : ℤ) : ZMod p) ≠ 0` in place of the
-source's `M.det = 1`, with `b₀` implicit. Its proof is not the source's: AINTLIB rewrites through
-the `if`-split in its own `moebiusFin`, whereas here the two evaluation branches do that work and
-the argument is `(moebiusFin M h).injective` applied to two equal values.
-`finEquiv_apply_eq_natCast` has no AINTLIB counterpart — the source writes its reindexing directly
-in `ZMod p` and so never needs the `Fin`/`ZMod` bridge.
+The two pole lemmas are AINTLIB's, in the same file and at the same commit:
+
+* `dvd_add_mul_iff_eq_of_dvd` is `dvd_topLeft_add_iff_eq_canonicalIndex` (lines 301-310);
+* `dvd_add_mul_canonicalIndex` is `dvd_topLeft_add_canonicalIndex` (lines 263-276).
+
+Both are stated at a weaker hypothesis than the source: `((M 1 0 : ℤ) : ZMod p) ≠ 0` in place of
+`M.det = 1`, since only invertibility of that coefficient is used. `b₀` is implicit, and the
+section supplies the binders the source passes explicitly.
+
+**Neither proof is the source's.** AINTLIB proves uniqueness by rewriting through the `if`-split
+in its own `moebiusFin`; here it is arithmetic in `ZMod p` — two indices satisfying the
+divisibility differ by something `M 1 0` kills — and the Möbius action does not appear.
+`existsUnique_dvd_add_mul` combines the two and has no counterpart in the source, which never
+states the uniqueness and existence together.
+
+`ZMod.finEquiv_apply` and `ZMod.val_finEquiv_symm` (in `TauCeti/Data/ZMod/FinEquiv.lean`) have no
+AINTLIB counterpart either: the source writes its reindexing directly in `ZMod p` and so never
+needs the `Fin`/`ZMod` bridge in either direction.
 
 **No code is transcribed.** The source builds the map by hand as an `if`-split on whether the
 denominator vanishes, and proves injectivity by a four-way case analysis resting on five
