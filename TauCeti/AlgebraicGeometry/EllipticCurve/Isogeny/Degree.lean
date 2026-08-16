@@ -4,9 +4,11 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import TauCeti.Algebra.Algebra.Hom
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.FunctionField
 import Mathlib.NumberTheory.FunctionField
+-- witnesses inside the proofs below; it appears in no statement here.
 import TauCeti.FieldTheory.IntermediateField.FieldRange
 
 /-!
@@ -41,6 +43,8 @@ degree off any algebra structure whose structure map is the pullback.
   measures is finite, the inseparable case included.
 * `TauCeti.Isogeny.degree_eq_finrank`: the degree read off an arbitrary algebra structure
   induced by the pullback.
+* `TauCeti.Isogeny.finiteDimensional_functionField`: the function-field extension is finite, for
+  any algebra structure whose structure map is the pullback.
 * `TauCeti.Isogeny.degree_pos`: an isogeny has positive degree.
 * `TauCeti.Isogeny.degree_eq_one_iff`: degree one means the function-field pullback is onto;
   `TauCeti.Isogeny.degree_id` is the identity's case, and is the `@[simp]` normal form of a
@@ -131,11 +135,24 @@ theorem degree_eq_finrank (φ : Isogeny W₁ W₂) [Algebra W₂.FunctionField W
     φ.degree = Module.finrank W₂.FunctionField W₁.FunctionField :=
   φ.degree_def.trans (AlgHom.finrank_fieldRange φ.fieldPullback h)
 
+
 /-- **The degree of an isogeny is positive.** The extension is finite and the source function
 field is nontrivial. -/
 theorem degree_pos (φ : Isogeny W₁ W₂) : 0 < φ.degree := by
   rw [degree_def]
   exact Module.finrank_pos
+
+/-- **An isogeny's function-field extension is finite.**
+
+`Isogeny.finiteDimensional` gives this over `φ.fieldPullback.fieldRange`; this is the same fact for
+any algebra structure whose structure map is the pullback, which is the form consumers hold. It
+takes the same hypothesis as `degree_eq_finrank`, and needs nothing beyond it: every isogeny has
+positive degree, and the degree *is* the relevant `finrank`. -/
+theorem finiteDimensional_functionField (φ : Isogeny W₁ W₂)
+    [Algebra W₂.FunctionField W₁.FunctionField]
+    (h : ∀ z, algebraMap W₂.FunctionField W₁.FunctionField z = φ.fieldPullback z) :
+    FiniteDimensional W₂.FunctionField W₁.FunctionField :=
+  FiniteDimensional.of_finrank_pos (φ.degree_eq_finrank h ▸ φ.degree_pos)
 
 /-- The degree of an isogeny is nonzero, the `≠` form of `degree_pos`. -/
 @[simp]
@@ -166,15 +183,13 @@ theorem degree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   have htower : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  rw [φ.degree_eq_finrank fun z ↦ by
-      rw [RingHom.algebraMap_toAlgebra]
-      exact congrFun (AlgHom.coe_toRingHom φ.fieldPullback) z,
-    ψ.degree_eq_finrank fun z ↦ by
-      rw [RingHom.algebraMap_toAlgebra]
-      exact congrFun (AlgHom.coe_toRingHom ψ.fieldPullback) z,
-    (ψ.comp φ).degree_eq_finrank fun z ↦ by
-      rw [RingHom.algebraMap_toAlgebra]
-      exact congrFun (AlgHom.coe_toRingHom (ψ.comp φ).fieldPullback) z]
+  have hφ : ∀ z, algebraMap _ _ z = φ.fieldPullback z :=
+    φ.fieldPullback.algebraMap_toAlgebra_apply
+  have hψ : ∀ z, algebraMap _ _ z = ψ.fieldPullback z :=
+    ψ.fieldPullback.algebraMap_toAlgebra_apply
+  have hc : ∀ z, algebraMap _ _ z = (ψ.comp φ).fieldPullback z :=
+    (ψ.comp φ).fieldPullback.algebraMap_toAlgebra_apply
+  rw [φ.degree_eq_finrank hφ, ψ.degree_eq_finrank hψ, (ψ.comp φ).degree_eq_finrank hc]
   exact (Module.finrank_mul_finrank W₃.FunctionField W₂.FunctionField W₁.FunctionField).symm
 
 end Isogeny
