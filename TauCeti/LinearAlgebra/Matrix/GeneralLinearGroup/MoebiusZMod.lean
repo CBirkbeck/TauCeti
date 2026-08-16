@@ -138,6 +138,30 @@ lemma moebiusGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
   · intro hz; linear_combination hz
   · intro hz; linear_combination hz
 
+/-- **The value at an affine point**, in the entries of `M`. Together with `moebiusGL_smul_infty`
+this is the whole action: `Equiv.removeNone` chooses between the two according to whether this
+`ite` takes its first branch, which is what `moebiusGL_smul_coe_eq_infty_iff` decides. -/
+@[simp]
+lemma moebiusGL_smul_coe (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0)
+    (k : ZMod p) :
+    moebiusGL M h • (k : OnePoint (ZMod p)) =
+      if ((M 1 0 : ℤ) : ZMod p) * k + ((M 0 0 : ℤ) : ZMod p) = 0 then ∞
+      else ((((M 1 1 : ℤ) : ZMod p) * k + ((M 0 1 : ℤ) : ZMod p)) /
+        (((M 1 0 : ℤ) : ZMod p) * k + ((M 0 0 : ℤ) : ZMod p)) : ZMod p) := by
+  rw [smul_some_eq_ite, moebiusGL_coe]
+  simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_zero]
+
+/-- **The value at the point at infinity**, in the entries of `M`. This is the value
+`Equiv.removeNone` splices in at the pole, so it is the ingredient `moebiusGL_smul_coe` and the
+pole criterion do not supply. -/
+@[simp]
+lemma moebiusGL_smul_infty (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
+    moebiusGL M h • (∞ : OnePoint (ZMod p)) =
+      if ((M 1 0 : ℤ) : ZMod p) = 0 then ∞
+      else ((((M 1 1 : ℤ) : ZMod p)) / (((M 1 0 : ℤ) : ZMod p)) : ZMod p) := by
+  rw [smul_infty_eq_ite, moebiusGL_coe]
+  simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_zero]
+
 /-- **The Möbius reindexing of `Fin p`.** Mathlib's action of `moebiusGL M h` on
 `OnePoint (ZMod p)` is a permutation; `Equiv.removeNone` deletes `∞` from it, patching the pole to
 the image of `∞`, and `Equiv.permCongr` along `ZMod.finEquiv` transports the result to `Fin p`. -/
