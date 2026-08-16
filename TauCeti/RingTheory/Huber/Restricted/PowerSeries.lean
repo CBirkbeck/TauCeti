@@ -31,8 +31,8 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
   `Subalgebra`, so `Subalgebra.val` does not apply.
 * `isRestricted_of_hasFiniteSupport`: the introduction rule at module coefficients — finitely many
   nonzero coefficients suffice.
-* `isRestricted_pi_iff`, with `mem_restrictedMvPowerSeriesSubmodule_pi_iff`: restrictedness of a
-  series with coefficients in a product is componentwise, at the predicate and at the submodule.
+* `isRestricted_pi_iff`: restrictedness of a series with coefficients in a product is
+  componentwise.
 
 ## Provenance
 
@@ -56,8 +56,10 @@ were near-identical `tendsto_nhds`/`mem_cofinite` arguments and are now special 
 coefficient binders — `[Zero]` and a topology, where the original asked for a semiring.
 
 **Original here.** `isRestricted_monomial`, `isRestricted_of_hasFiniteSupport`,
-`IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule` and
-`mem_restrictedMvPowerSeriesSubmodule`.
+`IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule`, `mem_restrictedMvPowerSeriesSubmodule`
+and `isRestricted_pi_iff`. The last has no AINTLIB counterpart: the source states restrictedness
+only for a single coefficient module, and never for a product. Its content is Mathlib's
+`tendsto_pi_nhds`, so what is original here is the statement, not the argument.
 
 The name `isRestricted_iff` needs care: the port introduced it for the `coeff`-form unfolding
 lemma, which is now `isRestricted_iff_coeff`. The statement the name carries here — unfolding
@@ -166,13 +168,24 @@ theorem isRestricted_iff_coeff {k : ℕ} {A : Type*} [Semiring A] [TopologicalSp
       Tendsto (fun s : Fin k →₀ ℕ => MvPowerSeries.coeff s f) cofinite (nhds 0) := (Iff.rfl)
 
 /-- A series with coefficients in a product is restricted exactly when each of its components
-is. No finiteness is needed: the product topology is the topology of pointwise convergence, so
-the two sides are the same statement about the same filter. -/
-@[simp]
+is. No finiteness is needed: the product topology is the topology of pointwise convergence.
+
+The two sides are **equivalent, not identical**. The bridge is Mathlib's `tendsto_pi_nhds`, which
+rests on `nhds_pi` — a proved lemma, not `rfl`; contrast `isRestricted_iff_coeff` and
+`mem_restrictedMvPowerSeriesSubmodule`, whose `(Iff.rfl)` proofs mark a genuine defeq.
+
+Deliberately **not** `@[simp]`: the right-hand side is a componentwise form that no other lemma in
+this file can match, so tagging it would rewrite `IsRestricted` goals at product coefficients into
+a shape `isRestricted_zero`, `isRestricted_one` and `isRestricted_monomial` no longer close. -/
 theorem isRestricted_pi_iff {k : ℕ} {ι : Type*} {M : ι → Type*} [∀ i, Zero (M i)]
     [∀ i, TopologicalSpace (M i)] {f : MvPowerSeries (Fin k) (∀ i, M i)} :
     IsRestricted f ↔ ∀ i, IsRestricted
       (show MvPowerSeries (Fin k) (M i) from fun s ↦ (f : (Fin k →₀ ℕ) → ∀ i, M i) s i) :=
+  -- `tendsto_pi_nhds` typechecks against this statement through three defeqs, none of them
+  -- unfolded by a rewrite: `IsRestricted`'s unexposed body is the `Tendsto … cofinite (nhds 0)`
+  -- of `isRestricted_iff_coeff`; `MvPowerSeries (Fin k) M` is `(Fin k →₀ ℕ) → M`, which is why
+  -- the `show` ascription above is needed to state the component series at all; and the `0` of
+  -- the product is the pointwise `0`, so `nhds 0` on either side is the same filter.
   tendsto_pi_nhds
 
 /-- `0` is restricted: its coefficients are constantly `0`. -/
@@ -438,19 +451,5 @@ theorem mem_restrictedMvPowerSeriesSubmodule {k : ℕ} {A M : Type*} [Semiring A
     [TopologicalSpace M] [Module A M] [ContinuousAdd M] [ContinuousConstSMul A M]
     {f : MvPowerSeries (Fin k) M} :
     f ∈ restrictedMvPowerSeriesSubmodule k A M ↔ IsRestricted f := (Iff.rfl)
-
-/-- Membership in `M⟨T₁, …, Tₖ⟩` for a product module is componentwise.
-
-Deliberately not `@[simp]`: `mem_restrictedMvPowerSeriesSubmodule` and `isRestricted_pi_iff`
-already carry the left-hand side to the same normal form. -/
-theorem mem_restrictedMvPowerSeriesSubmodule_pi_iff {k : ℕ} {A : Type*} {ι : Type*}
-    {M : ι → Type*} [Semiring A] [∀ i, AddCommMonoid (M i)] [∀ i, TopologicalSpace (M i)]
-    [∀ i, Module A (M i)] [∀ i, ContinuousAdd (M i)] [∀ i, ContinuousConstSMul A (M i)]
-    {f : MvPowerSeries (Fin k) (∀ i, M i)} :
-    f ∈ restrictedMvPowerSeriesSubmodule k A (∀ i, M i) ↔ ∀ i,
-      (show MvPowerSeries (Fin k) (M i) from fun s ↦ (f : (Fin k →₀ ℕ) → ∀ i, M i) s i) ∈
-        restrictedMvPowerSeriesSubmodule k A (M i) := by
-  simp only [mem_restrictedMvPowerSeriesSubmodule]
-  exact isRestricted_pi_iff
 
 end TauCeti.Huber
