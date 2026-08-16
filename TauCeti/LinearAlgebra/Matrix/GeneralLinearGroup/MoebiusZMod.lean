@@ -16,9 +16,12 @@ An integer matrix `M` whose determinant is a unit mod `p` permutes `Fin p` by th
 
 `b ↦ (M 0 1 + b * M 1 1) / (M 0 0 + b * M 1 0)  (mod p)`   **where the denominator is nonzero**,
 
-and by `b ↦ M 1 1 / M 1 0` at the one index where it vanishes. That second clause is *not* the
-first evaluated at a zero denominator: division by zero in `ZMod p` is `0`, whereas the pole is
-genuinely carried to the image of `∞` by the projective action.
+and by `b ↦ M 1 1 / M 1 0` at the **at most one** index where it vanishes. Such an index exists
+exactly when `M 1 0 ≢ 0 (mod p)`, and is then `-M 0 0 / M 1 0`; when `M 1 0 ≡ 0` the determinant
+forces `M 0 0 ≢ 0`, the denominator never vanishes, and there is no pole at all (take `M = 1`).
+
+The second clause is *not* the first evaluated at a zero denominator: division by zero in `ZMod p`
+is `0`, whereas the pole is genuinely carried to the image of `∞` by the projective action.
 
 This is Mathlib's Möbius action of `GL (Fin 2) (ZMod p)` on `OnePoint (ZMod p)` restricted to the
 affine part: `Equiv.removeNone` deletes the point at infinity from the induced permutation,
@@ -32,12 +35,12 @@ rather than change them — but the statements below mention no Hecke notion.
 
 ## Main definitions
 
-* `TauCeti.reindexGL`: the `GL (Fin 2) (ZMod p)` element whose action gives the rule above.
+* `TauCeti.moebiusGL`: the `GL (Fin 2) (ZMod p)` element whose action gives the rule above.
 * `TauCeti.moebiusFin`: the reindexing, as an `Equiv.Perm (Fin p)`.
 
 ## Main results
 
-* `TauCeti.reindexGL_smul_coe_eq_infty_iff`: the pole sits exactly where the denominator
+* `TauCeti.moebiusGL_smul_coe_eq_infty_iff`: the pole sits exactly where the denominator
   `M 0 0 + k * M 1 0` vanishes mod `p` — the form the divisibility arguments downstream need.
 
 Injectivity is not stated separately: `moebiusFin` is an `Equiv`, so consumers use
@@ -74,7 +77,7 @@ denominator sends `k` to `∞` rather than to a quotient by zero.
 
 That permutation leaves the determinant alone, so the only hypothesis is that `M` is invertible
 mod `p`. -/
-noncomputable def reindexGL (M : Matrix (Fin 2) (Fin 2) ℤ)
+noncomputable def moebiusGL (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) : GL (Fin 2) (ZMod p) :=
   Matrix.GeneralLinearGroup.mkOfDetNeZero
     !![((M 1 1 : ℤ) : ZMod p), ((M 0 1 : ℤ) : ZMod p);
@@ -87,8 +90,8 @@ noncomputable def reindexGL (M : Matrix (Fin 2) (Fin 2) ℤ)
       exact h (by linear_combination hz))
 
 @[simp]
-lemma reindexGL_coe (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
-    (reindexGL M h : Matrix (Fin 2) (Fin 2) (ZMod p)) =
+lemma moebiusGL_coe (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
+    (moebiusGL M h : Matrix (Fin 2) (Fin 2) (ZMod p)) =
       !![((M 1 1 : ℤ) : ZMod p), ((M 0 1 : ℤ) : ZMod p);
          ((M 1 0 : ℤ) : ZMod p), ((M 0 0 : ℤ) : ZMod p)] := (rfl)
 
@@ -96,11 +99,11 @@ lemma reindexGL_coe (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod 
 `M 0 0 + k * M 1 0` vanishes mod `p`. Downstream arguments phrase the exceptional index as a
 divisibility, and this is the bridge to it. -/
 @[simp]
-lemma reindexGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
+lemma moebiusGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) (k : ZMod p) :
-    reindexGL M h • (k : OnePoint (ZMod p)) = ∞ ↔
+    moebiusGL M h • (k : OnePoint (ZMod p)) = ∞ ↔
       ((M 0 0 : ℤ) : ZMod p) + k * ((M 1 0 : ℤ) : ZMod p) = 0 := by
-  rw [smul_some_eq_ite, reindexGL_coe]
+  rw [smul_some_eq_ite, moebiusGL_coe]
   simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_zero]
   split_ifs with hz
   · simp only [true_iff]
@@ -108,23 +111,23 @@ lemma reindexGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
   · simp only [coe_ne_infty, false_iff]
     exact fun hk => hz (by linear_combination hk)
 
-/-- **The Möbius reindexing of `Fin p`.** Mathlib's action of `reindexGL M h` on
+/-- **The Möbius reindexing of `Fin p`.** Mathlib's action of `moebiusGL M h` on
 `OnePoint (ZMod p)` is a permutation; `Equiv.removeNone` deletes `∞` from it, patching the pole to
 the image of `∞`, and `Equiv.permCongr` along `ZMod.finEquiv` transports the result to `Fin p`. -/
 noncomputable def moebiusFin (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
     Equiv.Perm (Fin p) :=
-  haveI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
   (ZMod.finEquiv p).toEquiv.symm.permCongr
-    (Equiv.removeNone (MulAction.toPerm (reindexGL M h) : Equiv.Perm (OnePoint (ZMod p))))
+    (Equiv.removeNone (MulAction.toPerm (moebiusGL M h) : Equiv.Perm (OnePoint (ZMod p))))
 
 /-- The characteristic equation of `moebiusFin`: consumers rewrite through this to Mathlib's
 `Equiv.removeNone` and `MulAction.toPerm` API rather than unfolding the definition. Together with
-`reindexGL_smul_coe_eq_infty_iff` (which says where the pole is) and Mathlib's `smul_some_eq_ite`
-(which gives the affine value) it determines the map at every index. -/
+`moebiusGL_smul_coe_eq_infty_iff` (where the pole is) and Mathlib's `smul_some_eq_ite` (the affine
+value) this gives the map away from the pole. Computing the value *at* the pole needs
+`Equiv.removeNone_none` together with `OnePoint.smul_infty_eq_ite`, since that value is
+`removeNone`'s fallback `e none` rather than anything the affine rule sees. -/
 lemma moebiusFin_def (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
-    haveI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
     moebiusFin M h = (ZMod.finEquiv p).toEquiv.symm.permCongr
-      (Equiv.removeNone (MulAction.toPerm (reindexGL M h) : Equiv.Perm (OnePoint (ZMod p)))) :=
+      (Equiv.removeNone (MulAction.toPerm (moebiusGL M h) : Equiv.Perm (OnePoint (ZMod p)))) :=
   (rfl)
 
 end TauCeti
