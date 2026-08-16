@@ -40,6 +40,11 @@ rather than change them — but the statements below mention no Hecke notion.
 
 ## Main results
 
+* `TauCeti.smul_some_eq_infty_iff`: over an arbitrary field, a Möbius image is `∞` exactly when
+  the denominator vanishes. Mathlib states the *value* of the action (`smul_some_eq_ite`) but not
+  this criterion; the `ZMod p` statements below are derived from it.
+* `TauCeti.moebiusGL_smul_coe` and `TauCeti.moebiusGL_smul_infty`: the two values of the action,
+  in the entries of `M`. The second is what `Equiv.removeNone` splices in at the pole.
 * `TauCeti.moebiusGL_smul_coe_eq_infty_iff`: the pole sits exactly where the denominator
   `M 0 0 + k * M 1 0` vanishes mod `p` — the form the divisibility arguments downstream need.
 
