@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.GroupTheory.GroupAction.Stabilizer
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
 import Mathlib.Algebra.FiniteSupport.Basic
@@ -40,6 +41,8 @@ image of a subgroup of `SL(2, ℤ)` has determinant `1` throughout.
   `Γ`-orbit space.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnSubgroupOrbit`: finite support of
   the interior order divisor of a general-level modular form.
+* `TauCeti.ModularForm.stabilizerOrderOnSubgroupOrbit`: the elliptic order `e_P` of an orbit,
+  the weight the general-level valence formula attaches to it.
 
 ## References
 
@@ -101,6 +104,27 @@ public theorem hasFiniteSupport_orderOfVanishingOnSubgroupOrbit
   intro q hq
   induction q using Quotient.inductionOn' with
   | _ p => exact ⟨p, by simpa using hq, rfl⟩
+
+/-- **The elliptic order `e_P` of a `Γ`-orbit**: the order of the stabiliser of any of its
+points in `Γ`, viewed in `GL(2, ℝ)`.
+
+Well-defined because points of one orbit have conjugate stabilisers, so equal `Nat.card` —
+`TauCeti.card_stabilizer_of_orbitRel`. This is the weight the general-level valence formula
+attaches to an orbit, appearing there as `1 / e_P`. -/
+public def stabilizerOrderOnSubgroupOrbit
+    (q : MulAction.orbitRel.Quotient (Γ : Subgroup (GL (Fin 2) ℝ)) ℍ) : ℕ :=
+  Quotient.liftOn' q
+    (fun p ↦ Nat.card (MulAction.stabilizer (Γ : Subgroup (GL (Fin 2) ℝ)) p))
+    fun _ _ h ↦ card_stabilizer_of_orbitRel h
+
+/-- Evaluating `e_P` on the orbit of `p` recovers the stabiliser order at `p`. -/
+@[simp]
+public lemma stabilizerOrderOnSubgroupOrbit_mk (p : ℍ) :
+    stabilizerOrderOnSubgroupOrbit (Γ := Γ) (Quotient.mk'' p) =
+      Nat.card (MulAction.stabilizer (Γ : Subgroup (GL (Fin 2) ℝ)) p) := by
+  unfold stabilizerOrderOnSubgroupOrbit
+  rfl
+
 
 end ModularForm
 
