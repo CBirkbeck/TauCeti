@@ -8,6 +8,7 @@ module
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Logic.Equiv.Option
 public import Mathlib.Topology.Compactification.OnePoint.ProjectiveLine
+public import TauCeti.Data.ZMod.FinEquiv
 public import TauCeti.Topology.Compactification.OnePoint.ProjectiveLine
 
 /-!
@@ -54,8 +55,8 @@ notion.
 The pole criterion itself is `OnePoint.smul_some_eq_infty_iff`, which this file adds to Mathlib's
 action API in `TauCeti/Topology/Compactification/OnePoint/ProjectiveLine.lean`; the two value
 lemmas come straight from Mathlib's `smul_some_eq_ite` / `smul_infty_eq_ite`.
-* `TauCeti.finEquiv_moebiusFin_apply_of_ne_zero` and
-  `TauCeti.finEquiv_moebiusFin_apply_of_eq_zero`: the two evaluation branches on `Fin p`, read
+* `TauCeti.natCast_moebiusFin_of_ne_zero` and
+  `TauCeti.natCast_moebiusFin_of_eq_zero`: the two evaluation branches on `Fin p`, read
   back through `ZMod.finEquiv` — the affine quotient where the denominator does not vanish, and
   the image of `∞` at the single index where it does.
 These two are the elimination API for `moebiusFin`: its body is sealed across the module
@@ -180,35 +181,36 @@ private lemma moebiusFin_apply (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : �
           Equiv.Perm (OnePoint (ZMod p))) ((ZMod.finEquiv p) b)) := by
   simp [moebiusFin, Equiv.permCongr_apply]
 /-- **The reindexing off the pole.** Where the denominator does not vanish, the index goes to the
-affine Möbius value, read back through `ZMod.finEquiv`. -/
+affine Möbius value, read in `ZMod p` through the natural cast of its index. -/
 @[simp]
-lemma finEquiv_moebiusFin_apply_of_ne_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
+lemma natCast_moebiusFin_of_ne_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) (b : Fin p)
-    (hb : ((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 0 : ℤ) : ZMod p) ≠ 0) :
-    (ZMod.finEquiv p) (moebiusFin M h b) =
-      (((M 1 1 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 1 : ℤ) : ZMod p)) /
-        (((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 0 : ℤ) : ZMod p)) := by
+    (hb : ((M 1 0 : ℤ) : ZMod p) * ((b : ℕ) : ZMod p) + ((M 0 0 : ℤ) : ZMod p) ≠ 0) :
+    ((moebiusFin M h b : ℕ) : ZMod p) =
+      (((M 1 1 : ℤ) : ZMod p) * ((b : ℕ) : ZMod p) + ((M 0 1 : ℤ) : ZMod p)) /
+        (((M 1 0 : ℤ) : ZMod p) * ((b : ℕ) : ZMod p) + ((M 0 0 : ℤ) : ZMod p)) := by
   have hval : (MulAction.toPerm
       (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)) :
-        Equiv.Perm (OnePoint (ZMod p))) ((ZMod.finEquiv p b : ZMod p) : OnePoint (ZMod p)) =
-      ((((M 1 1 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 1 : ℤ) : ZMod p)) /
-        (((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 0 : ℤ) : ZMod p)) :
+        Equiv.Perm (OnePoint (ZMod p))) ((((b : ℕ) : ZMod p) : ZMod p) : OnePoint (ZMod p)) =
+      ((((M 1 1 : ℤ) : ZMod p) * ((b : ℕ) : ZMod p) + ((M 0 1 : ℤ) : ZMod p)) /
+        (((M 1 0 : ℤ) : ZMod p) * ((b : ℕ) : ZMod p) + ((M 0 0 : ℤ) : ZMod p)) :
           ZMod p) := by
     simpa [Matrix.map_apply, hb] using
       moebiusGL_smul_some (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)
-        (ZMod.finEquiv p b)
+        ((b : ℕ) : ZMod p)
   have := Equiv.removeNone_some _ ⟨_, hval⟩
-  rw [moebiusFin_apply, RingEquiv.apply_symm_apply]
+  conv_lhs => rw [← ZMod.finEquiv_apply]
+  rw [moebiusFin_apply, RingEquiv.apply_symm_apply, ZMod.finEquiv_apply]
   exact Option.some_inj.mp (this.trans hval)
 
 /-- **The reindexing at the pole.** At the single index where the denominator vanishes, the value
 is the image of `∞`. The denominator's leading entry cannot also vanish there: if it did the
 determinant would vanish mod `p`, so the quotient below is not a division by zero. -/
 @[simp]
-lemma finEquiv_moebiusFin_apply_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
+lemma natCast_moebiusFin_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) (b : Fin p)
-    (hb : ((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 0 : ℤ) : ZMod p) = 0) :
-    (ZMod.finEquiv p) (moebiusFin M h b) =
+    (hb : ((M 1 0 : ℤ) : ZMod p) * ((b : ℕ) : ZMod p) + ((M 0 0 : ℤ) : ZMod p) = 0) :
+    ((moebiusFin M h b : ℕ) : ZMod p) =
       ((M 1 1 : ℤ) : ZMod p) / ((M 1 0 : ℤ) : ZMod p) := by
   have h10 : ((M 1 0 : ℤ) : ZMod p) ≠ 0 := by
     intro hz
@@ -218,7 +220,7 @@ lemma finEquiv_moebiusFin_apply_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
     exact h (by rw [hb, hz]; ring)
   have hinf : (MulAction.toPerm
       (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)) :
-        Equiv.Perm (OnePoint (ZMod p))) ((ZMod.finEquiv p b : ZMod p) : OnePoint (ZMod p)) =
+        Equiv.Perm (OnePoint (ZMod p))) ((((b : ℕ) : ZMod p) : ZMod p) : OnePoint (ZMod p)) =
       (∞ : OnePoint (ZMod p)) := by
     simp [Matrix.map_apply, hb]
   have hnone := Equiv.removeNone_none _ hinf
@@ -228,38 +230,31 @@ lemma finEquiv_moebiusFin_apply_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
       ((((M 1 1 : ℤ) : ZMod p) / ((M 1 0 : ℤ) : ZMod p) : ZMod p) : OnePoint (ZMod p)) := by
     simpa [Matrix.map_apply, h10] using
       moebiusGL_smul_infty (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)
-  rw [moebiusFin_apply, RingEquiv.apply_symm_apply]
+  conv_lhs => rw [← ZMod.finEquiv_apply]
+  rw [moebiusFin_apply, RingEquiv.apply_symm_apply, ZMod.finEquiv_apply]
   exact Option.some_inj.mp (hnone.trans hval)
 
-/-- `ZMod.finEquiv` at an index is the natural cast of its value. Mathlib defines `finEquiv` and
-states nothing about applying it, so this is the bridge between the `Fin p` indexing and the
-`ZMod p` arithmetic the pole condition is phrased in. -/
-lemma finEquiv_apply_eq_natCast {n : ℕ} [NeZero n] (j : Fin n) :
-    (ZMod.finEquiv n) j = ((j : ℕ) : ZMod n) := by
-  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 :=
-    ⟨n - 1, (Nat.succ_pred_eq_of_pos (Nat.pos_of_ne_zero (NeZero.ne n))).symm⟩
-  exact (Fin.cast_val_eq_self j).symm
+/-- **The pole index is unique.** `natCast_moebiusFin_of_eq_zero` computes the reindexing
+at an index where the denominator vanishes, but assumes such an index is given. This says there is
+at most one: if `b₀` is a pole index then an index `i` is one exactly when `i = b₀`.
 
-/-- **The pole index is unique.** `finEquiv_moebiusFin_apply_of_eq_zero` computes the reindexing at
-an index where the denominator vanishes, but assumes such an index is given. This says there is at
-most one: if `b₀` is a pole index then an index `i` is one exactly when `i = b₀`.
-
-Stated as a divisibility over `ℤ`, which is the form the downstream Hecke sums are phrased in;
-`ZMod.intCast_zmod_eq_zero_iff_dvd` is the bridge to the `ZMod p` equation the proof uses. -/
+The hypothesis is only that the coefficient `M 1 0` is invertible mod `p` — the statement is
+arithmetic in `ZMod p` and does not need the determinant, nor the Möbius action it conditions.
+Stated as a divisibility over `ℤ`, which is the form the downstream Hecke sums are phrased in. -/
 lemma dvd_add_mul_iff_eq_of_dvd (M : Matrix (Fin 2) (Fin 2) ℤ)
-    (h : ((M.det : ℤ) : ZMod p) ≠ 0) {b₀ : Fin p}
+    (h10 : ((M 1 0 : ℤ) : ZMod p) ≠ 0) {b₀ : Fin p}
     (hb₀ : (p : ℤ) ∣ (M 0 0 + (b₀ : ℕ) * M 1 0)) (i : Fin p) :
     (p : ℤ) ∣ (M 0 0 + (i : ℕ) * M 1 0) ↔ i = b₀ := by
-  have key : ∀ j : Fin p, (p : ℤ) ∣ (M 0 0 + (j : ℕ) * M 1 0) →
-      ((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p j) + ((M 0 0 : ℤ) : ZMod p) = 0 := by
-    intro j hj
-    have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hj
-    rw [finEquiv_apply_eq_natCast]
-    push_cast at hz ⊢
-    linear_combination hz
   refine ⟨fun hi ↦ ?_, fun hji ↦ hji ▸ hb₀⟩
-  refine (moebiusFin M h).injective ((ZMod.finEquiv p).injective ?_)
-  rw [finEquiv_moebiusFin_apply_of_eq_zero M h i (key i hi),
-    finEquiv_moebiusFin_apply_of_eq_zero M h b₀ (key b₀ hb₀)]
+  have h1 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hi
+  have h2 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hb₀
+  push_cast at h1 h2
+  refine (ZMod.finEquiv p).injective ?_
+  rw [ZMod.finEquiv_apply, ZMod.finEquiv_apply]
+  have hsub : (((i : ℕ) : ZMod p) - ((b₀ : ℕ) : ZMod p)) * ((M 1 0 : ℤ) : ZMod p) = 0 := by
+    linear_combination h1 - h2
+  rcases mul_eq_zero.mp hsub with hz | hz
+  · exact sub_eq_zero.mp hz
+  · exact absurd hz h10
 
 end TauCeti
