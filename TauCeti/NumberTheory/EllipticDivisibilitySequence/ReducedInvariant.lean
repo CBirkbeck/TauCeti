@@ -92,13 +92,22 @@ source discharges the ellipticity variables over exactly this block.
 
 ## Provenance
 
-Ported from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
-(`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`),
-declarations `invarNum_normEDS`, `redInvarNum`, `compl₂EDS_eq_redInvarNum_sub`,
+Ported from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in the AINTLIB
+**NagellLutz** project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), at the revision
+`TauCetiRoadmap` pins for that project, `dev/modular-curves @ 9fec8eba7652`. Declarations
+`invarNum_normEDS`, `redInvarNum`, `compl₂EDS_eq_redInvarNum_sub`,
 `invarNum_eq_redInvarNum_mul` and `map_redInvarNum` for the numerator, and `redInvarDenom`,
 `redInvarDenom_zero`, `redInvarDenom_one`, `redInvarDenom_two`, `map_redInvarDenom` and
 `invarDenom_eq_redInvarDenom_mul` for the denominator — the source's own names, which this file
 respells with `reduced` written out.
+
+Those names also occur in AINTLIB's **HasseWeil** project, pinned separately at
+`dev/hasse-weil @ 513e83879e2f`, so the credit above picks between two candidates rather than
+recording the only match a search returns. Two details fix it on NagellLutz. That project spells
+the cancellation `invarDenom_eq_redInvarDenom_mul`, where HasseWeil spells it
+`invarDenom_normEDS_eq_redInvarDenom_mul`; and its `map_redInvarDenom` is oriented
+`f (redInvarDenom …) = redInvarDenom (f b) …`, where HasseWeil states the converse. This file
+carries the NagellLutz spelling and the NagellLutz orientation in both places.
 
 Six declarations here are **not** from that file: the `reducedInvarDenom_of_emod_eq_*` branch
 lemmas have no counterpart in the source, which eliminates the split inline. The divisor-form
