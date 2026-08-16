@@ -372,8 +372,10 @@ theorem stabilizer_smul_eq_mackeySubgroup_subgroupOf (s : G) (Γ : Subgroup G) (
 This is `card_doubleCoset_mul_card_mackeySubgroup` with `H = stabilizer G p`, read through
 `stabilizer_smul_eq_mackeySubgroup_subgroupOf` so that the second factor is a stabilizer rather
 than a Mackey subgroup. It is the multiplicity with which a `Γ`-orbit inside the `G`-orbit of `p`
-is counted when a sum over `Γ`-cosets is regrouped into a sum over `Γ`-orbits: dividing by
-`Nat.card Γ` turns the coset count into the weight `1 / |Stab_Γ(s • p)|`.
+is counted when a sum over `Γ`-cosets is regrouped into a sum over `Γ`-orbits: rearranged, it
+reads `|Γ s Stab(p)| / (|Γ| · |Stab_G(p)|) = 1 / |Stab_Γ(s • p)|`, so the double coset carries
+exactly the weight `1 / |Stab_Γ(s • p)|` once normalised by `|Γ| · |Stab_G(p)|` — both of which
+are independent of `s`.
 
 As with the formula it comes from, `Nat.card`'s convention that an infinite type has cardinality
 `0` means no finiteness hypothesis is needed. -/
