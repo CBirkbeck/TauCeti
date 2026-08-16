@@ -218,8 +218,7 @@ noncomputable def orbitOfCosetTranslate {𝒢 ℋ : Subgroup G} (p : α) (q : �
 -- definitional step inside this module and leave this lemma as the whole interface for importers.
 @[simp]
 theorem orbitOfCosetTranslate_mk {𝒢 ℋ : Subgroup G} (p : α) (h : ℋ) :
-    orbitOfCosetTranslate (𝒢 := 𝒢) p (⟦h⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) =
-      Quotient.mk'' ((h : G)⁻¹ • p) :=
+    orbitOfCosetTranslate (𝒢 := 𝒢) p (⟦h⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) = Quotient.mk'' ((h : G)⁻¹ • p) :=
   (rfl)
 
 end GeneralAction
