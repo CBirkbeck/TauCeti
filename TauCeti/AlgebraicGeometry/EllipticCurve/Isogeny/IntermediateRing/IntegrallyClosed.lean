@@ -29,21 +29,25 @@ isogenies, Frobenius included, and does not inherit the separability hypothesis 
 
 ## Design
 
-The hypotheses are those needed to *name* the integral closure, not to prove it normal. `h` fixes
-the `W₂.CoordinateRing`-algebra structure on `W₁.FunctionField` as the pullback, which is what
-`Isogeny.isIntegralClosure_intermediateRing` needs; the algebra structure on `φ.intermediateRing`
-and its scalar tower are what let integrality transit through it. A consumer builds both from the
-bundled `φ.pullbackToIntermediateRing` — `letI := φ.pullbackToIntermediateRing.toAlgebra` — together
-with `Isogeny.isScalarTower_intermediateRing`, exactly as for the finiteness result.
+**The statement takes the isogeny and nothing else.** Its conclusion mentions only
+`φ.intermediateRing`, so an `Algebra` argument, a scalar tower or a hypothesis pinning a structure
+map would all be proof infrastructure escaping into the API: every consumer would have to rebuild
+them to use a fact that does not depend on them. The structures the proof does need are the
+canonical ones — the pullback acting on `W₁.FunctionField`, and its corestriction
+`Isogeny.pullbackToIntermediateRing` acting on the intermediate ring — so the proof installs them
+itself.
 
-**Why not hypothesis-free.** The statement itself mentions no algebra structure, and mathematically
-it needs none: `intermediateRing` builds its own internally, and Mathlib's
-`IsIntegrallyClosedIn (integralClosure R A).toSubring A` is an unconditional instance. That instance
-cannot be used here, because `intermediateRing`'s body is not exposed across the module boundary —
-`Basic.lean` says so and offers `mem_intermediateRing_iff` as the escape hatch — so synthesis cannot
-see the two objects coincide. Every route from this module to the integral-closure property runs
-through `Isogeny.isIntegralClosure_intermediateRing`, which takes `h`. Removing the remaining
-hypotheses is therefore a change to `Basic.lean`'s exposed surface, not to this file.
+They stay local rather than becoming global instances: `IntermediateRing/Basic.lean` records that
+registering the pullback-induced structure would reintroduce the very diamond the `Subring` choice
+avoids, since one curve can receive several pullbacks. A `letI` inside a proof is the scoped use
+that design leaves open.
+
+**Why the sibling still takes them.** `Isogeny.moduleFinite_intermediateRing` concludes
+`Module.Finite W₂.CoordinateRing φ.intermediateRing` — its statement names the base and is therefore
+*relative to* a `W₂.CoordinateRing`-algebra structure, which the caller must supply and which the
+statement must let the caller choose. Being integrally closed is an absolute property of a single
+ring, so nothing is left for a caller to fix. The difference is in what the two statements say, not
+a difference of convention between the two files.
 
 ## Provenance
 
@@ -60,8 +64,9 @@ through the corestricted pullback, and the statement of normality on its own rat
 by-product of the Dedekind instance — which is what lets it hold without the finiteness that
 instance carries.
 
-The proof route — transitivity of integrality, then
-`IsIntegrallyClosed.of_isIntegrallyClosedIn` — is assembled from Mathlib and is not the source's.
+The proof route is assembled from Mathlib: `IsIntegrallyClosedIn.of_isIntegralClosure` for the
+closure being closed in the ambient field, then `IsIntegrallyClosed.of_isIntegrallyClosedIn` to
+read that as an absolute property over a field. Neither step is the source's.
 -/
 
 public section
@@ -76,24 +81,23 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 `W₂.CoordinateRing` in `W₁.FunctionField`, and an integral closure is integrally closed in the
 ambient ring by transitivity of integrality; over a field that upgrades to `IsIntegrallyClosed`.
 
-No finiteness and no separability: unlike the sibling `Isogeny.moduleFinite_intermediateRing` this
-covers inseparable isogenies, Frobenius included. -/
-theorem isIntegrallyClosed_intermediateRing (φ : Isogeny W₁ W₂)
-    [Algebra W₂.CoordinateRing W₁.FunctionField]
-    [Algebra W₂.CoordinateRing φ.intermediateRing]
-    [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField]
-    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
+No hypotheses beyond the isogeny: the algebra structures the proof runs through are the canonical
+pullback ones, installed locally rather than asked of the caller.
+
+No finiteness and no separability either: unlike the sibling `Isogeny.moduleFinite_intermediateRing`
+this covers inseparable isogenies, Frobenius included. -/
+theorem isIntegrallyClosed_intermediateRing (φ : Isogeny W₁ W₂) :
     IsIntegrallyClosed φ.intermediateRing := by
+  let _ := φ.pullback.toRingHom.toAlgebra
+  let _ := φ.pullbackToIntermediateRing.toAlgebra
+  have hpb : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x := fun x ↦ by
+    rw [RingHom.algebraMap_toAlgebra, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
+  have : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
+    φ.isScalarTower_intermediateRing rfl hpb
   -- the integral-closure property is not assumed: it is what `intermediateRing` is
-  have := φ.isIntegralClosure_intermediateRing h
-  have : Algebra.IsIntegral W₂.CoordinateRing φ.intermediateRing :=
-    IsIntegralClosure.isIntegral_algebra W₂.CoordinateRing W₁.FunctionField
-  have : IsIntegrallyClosedIn φ.intermediateRing W₁.FunctionField := by
-    rw [isIntegrallyClosedIn_iff]
-    refine ⟨FaithfulSMul.algebraMap_injective _ _, fun {x} hx ↦ ?_⟩
-    -- `x` is integral over the closure, hence over `W₂.CoordinateRing`, hence already in it
-    exact (IsIntegralClosure.isIntegral_iff (A := φ.intermediateRing)).mp
-      (isIntegral_trans (R := W₂.CoordinateRing) x hx)
+  have := φ.isIntegralClosure_intermediateRing hpb
+  have : IsIntegrallyClosedIn φ.intermediateRing W₁.FunctionField :=
+    IsIntegrallyClosedIn.of_isIntegralClosure W₂.CoordinateRing
   exact IsIntegrallyClosed.of_isIntegrallyClosedIn _ W₁.FunctionField
 
 end Isogeny
