@@ -6,146 +6,109 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.Algebra.Field.ZMod
-public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
-public import Mathlib.Tactic.LinearCombination
+public import Mathlib.Logic.Equiv.Option
+public import Mathlib.Topology.Compactification.OnePoint.ProjectiveLine
 
 /-!
 # The Möbius reindexing of the upper-triangular representatives
 
-An integer matrix `M` of determinant `1` permutes the index set `Fin p` of the upper-triangular
-representatives `!![1, b; 0, p]`, by the Möbius rule
+An integer matrix `M` whose determinant is a unit mod `p` permutes the index set `Fin p` of the
+upper-triangular representatives `!![1, b; 0, p]`, by the Möbius rule
 
-`b ↦ (M 0 1 + b * M 1 1) / (M 0 0 + b * M 1 0)  (mod p)`,
+`b ↦ (M 0 1 + b * M 1 1) / (M 0 0 + b * M 1 0)  (mod p)`.
 
-with the quotient `M 1 1 / M 1 0` used when the denominator vanishes. This file defines that map,
-`moebiusFin`, and proves it injective — hence a permutation of a finite type. It is the
-combinatorial input to the `Γ₁(N)`-invariance of the Hecke operator: slashing the sum of
+This is Mathlib's Möbius action of `GL (Fin 2) (ZMod p)` on `OnePoint (ZMod p)` restricted to the
+affine part: `Equiv.removeNone` deletes the point at infinity from the induced permutation,
+patching the pole to the image of `∞`. Transporting along `ZMod.finEquiv` gives a permutation of
+`Fin p`.
+
+It is the combinatorial input to the `Γ₁(N)`-invariance of the Hecke operator: slashing the sum of
 representatives by `M` permutes the summands rather than changing them.
-
-## Why this is not `Projectivization`
-
-`moebiusFin` is the action of `M` on `ℙ¹(ZMod p)` read in the affine coordinate, the `if` branch
-being the point at infinity. Mathlib has the action — `MulAction PGL(ι, K) (ℙ K (ι → K))` in
-`Mathlib/LinearAlgebra/Projectivization/Action.lean` — but no affine chart: there is no
-`Projectivization ≃ OnePoint` and no `toAffine`/`ofAffine` API anywhere in Mathlib, and
-`Projectivization/PSL/PSL2.lean` uses the action only to run Iwasawa's simplicity criterion.
-Expressing `moebiusFin` through `Projectivization` would therefore mean building that chart first,
-which is strictly more work than the map itself and is not what the consumers need — they need a
-term of `Fin p → Fin p` to reindex a `Finset.sum`.
 
 ## Main definitions
 
-* `HeckeRing.GL2.moebiusFin`: the reindexing map `Fin p → Fin p` attached to an integer matrix.
+* `HeckeRing.GL2.reindexGL`: the `GL (Fin 2) (ZMod p)` element whose action gives the rule above.
+* `HeckeRing.GL2.moebiusFin`: the reindexing, as an `Equiv.Perm (Fin p)`.
 
 ## Main results
 
-* `HeckeRing.GL2.moebiusFin_injective`: it is injective when `det M = 1` and `p` is prime.
+* `HeckeRing.GL2.reindexGL_smul_coe_eq_infty_iff`: the pole sits exactly where the denominator
+  `M 0 0 + k * M 1 0` vanishes mod `p` — the form the divisibility arguments downstream need.
+
+Injectivity is not stated separately: `moebiusFin` is an `Equiv`, so consumers use
+`Equiv.injective`.
 
 ## Provenance
 
-Ported from the AINTLIB `LeanModularForms` project
+The statement being realised is AINTLIB's `moebiusFin` / `moebiusFin_injective`
 ([`LeanModularForms/HeckeRIngs/GL2/HeckeT_p.lean`](https://github.com/CBirkbeck/AINTLIB), commit
-`2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck), lines 124-242:
-`moebiusFin` and `moebiusFin_injective`.
+`2baa76f742bdb4fb8ee323fabba41203bd390e08`, lines 124-242, Apache-2.0, Chris Birkbeck).
 
-Three of the source's five supporting lemmas are **not** reproduced. `ZMod p` is a field for prime
-`p` (`Mathlib/Algebra/Field/ZMod.lean`), which turns them into library calls: "`p ∣ a * b` and
-`p ∤ b` gives `p ∣ a`" is `mul_eq_zero`, "congruent with both `< p`" is `ZMod.val_cast_of_lt`, and
-the cross-multiplication step is `div_eq_div_iff`. Only the two determinant-driven exclusions carry
-content; they appear below as `botLeft_ne_zero_of_add_mul_eq_zero` and `moebiusFin_ne_of_eq_zero`.
+**No code is transcribed.** The source builds the map by hand as an `if`-split on whether the
+denominator vanishes, and proves injectivity by a four-way case analysis resting on five
+supporting lemmas. All of that is already Mathlib's: the map is `Equiv.removeNone` applied to
+`instGLAction` (`Mathlib/Topology/Compactification/OnePoint/ProjectiveLine.lean`), and injectivity
+is `Equiv.injective`. The entries are permuted along the anti-diagonal because Mathlib's affine
+rule is `k ↦ (g 0 0 * k + g 0 1) / (g 1 0 * k + g 1 1)` (`smul_some_eq_ite`) while the source reads
+`M` in the other order.
 -/
 
 public section
 
 namespace HeckeRing.GL2
 
-open Matrix
+open Matrix OnePoint
 
-variable {p : ℕ}
+variable {p : ℕ} [Fact p.Prime]
 
-/-- **The Möbius reindexing attached to an integer matrix.** On the affine coordinate `b` this is
-`(M 0 1 + b * M 1 1) / (M 0 0 + b * M 1 0)` in `ZMod p`; when that denominator vanishes — the
-image is the point at infinity — the value is `M 1 1 / M 1 0` instead.
+/-- **The matrix whose Möbius action is the reindexing.** The entries of `M` are reduced mod `p`
+and permuted along the anti-diagonal, so that Mathlib's affine rule
+`k ↦ (g 0 0 * k + g 0 1) / (g 1 0 * k + g 1 1)` reads as
+`k ↦ (M 0 1 + k * M 1 1) / (M 0 0 + k * M 1 0)`.
 
-The definition asks only `NeZero p`, which is what `ZMod.val_lt` needs; primality enters only in
-`moebiusFin_injective`. -/
-def moebiusFin [NeZero p] (M : Matrix (Fin 2) (Fin 2) ℤ) (b : Fin p) : Fin p :=
-  if ((M 0 0 + (b : ℕ) * M 1 0 : ℤ) : ZMod p) = 0 then
-    ⟨(((M 1 1 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p)⁻¹).val, ZMod.val_lt _⟩
-  else
-    ⟨(((M 0 1 + (b : ℕ) * M 1 1 : ℤ) : ZMod p) *
-      ((M 0 0 + (b : ℕ) * M 1 0 : ℤ) : ZMod p)⁻¹).val, ZMod.val_lt _⟩
-
-variable [NeZero p] [Fact p.Prime] {M : Matrix (Fin 2) (Fin 2) ℤ}
-
-omit [NeZero p] in
-/-- **A vanishing denominator forces the bottom-left entry to be a unit.** If `M 0 0 + c * M 1 0`
-vanishes mod `p` and `M 1 0` did too, then `M 0 0` would vanish as well and `det M` could not be
-`1`. -/
-private lemma botLeft_ne_zero_of_add_mul_eq_zero
-    (hdet : ((M 0 0 : ℤ) : ZMod p) * ((M 1 1 : ℤ) : ZMod p) -
-      ((M 0 1 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p) = 1)
-    {c : ℤ} (hc : ((M 0 0 + c * M 1 0 : ℤ) : ZMod p) = 0) : ((M 1 0 : ℤ) : ZMod p) ≠ 0 := by
-  intro h10
-  have h00 : ((M 0 0 : ℤ) : ZMod p) = 0 := by
-    push_cast at hc
-    rw [h10, mul_zero, add_zero] at hc
-    exact hc
-  rw [h00, h10, zero_mul, mul_zero, sub_zero] at hdet
-  exact zero_ne_one hdet
-
-omit [NeZero p] in
-/-- **The two branches of `moebiusFin` never agree.** If one denominator vanishes and the other
-does not, cross-multiplying the two candidate values collapses `det M` to `0`. -/
-private lemma moebiusFin_ne_of_eq_zero
-    (hdet : ((M 0 0 : ℤ) : ZMod p) * ((M 1 1 : ℤ) : ZMod p) -
-      ((M 0 1 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p) = 1)
-    {c d : ℤ} (hc : ((M 0 0 + c * M 1 0 : ℤ) : ZMod p) = 0)
-    (hd : ((M 0 0 + d * M 1 0 : ℤ) : ZMod p) ≠ 0) :
-    ((M 1 1 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p)⁻¹ ≠
-      ((M 0 1 + d * M 1 1 : ℤ) : ZMod p) * ((M 0 0 + d * M 1 0 : ℤ) : ZMod p)⁻¹ := by
-  intro heq
-  have h10 := botLeft_ne_zero_of_add_mul_eq_zero hdet hc
-  rw [← div_eq_mul_inv, ← div_eq_mul_inv, div_eq_div_iff h10 hd] at heq
-  push_cast at heq hdet
-  exact one_ne_zero (show (1 : ZMod p) = 0 by linear_combination heq - hdet)
-
-/-- **The reindexing is injective**, hence a permutation of `Fin p`.
-
-The four cases are on whether each denominator vanishes mod `p`. When both vanish, subtracting
-leaves `(b₁ - b₂) * M 1 0 = 0` with `M 1 0` a unit; when neither does, cross-multiplying and using
-`det M = 1` leaves `b₁ = b₂`; the mixed cases are impossible by `moebiusFin_ne_of_eq_zero`. -/
-theorem moebiusFin_injective (M : Matrix (Fin 2) (Fin 2) ℤ) (hdet : M.det = 1) :
-    Function.Injective (moebiusFin (p := p) M) := by
-  have hdetp : ((M 0 0 : ℤ) : ZMod p) * ((M 1 1 : ℤ) : ZMod p) -
-      ((M 0 1 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p) = 1 := by
-    have h := congrArg (fun z : ℤ => (z : ZMod p)) (det_fin_two M ▸ hdet)
-    push_cast at h
-    exact h
-  intro b₁ b₂ heq
-  have hv := congrArg Fin.val heq
-  simp only [moebiusFin] at hv
-  split_ifs at hv with h₁ h₂ h₂
-  · have hsub : (((b₁ : ℕ) : ZMod p) - ((b₂ : ℕ) : ZMod p)) * ((M 1 0 : ℤ) : ZMod p) = 0 := by
-      have h := h₁.trans h₂.symm
+That permutation leaves the determinant alone, so the only hypothesis is that `M` is invertible
+mod `p`. -/
+@[expose] noncomputable def reindexGL (M : Matrix (Fin 2) (Fin 2) ℤ)
+    (h : ((M.det : ℤ) : ZMod p) ≠ 0) : GL (Fin 2) (ZMod p) :=
+  Matrix.GeneralLinearGroup.mkOfDetNeZero
+    !![((M 1 1 : ℤ) : ZMod p), ((M 0 1 : ℤ) : ZMod p);
+       ((M 1 0 : ℤ) : ZMod p), ((M 0 0 : ℤ) : ZMod p)]
+    (by
+      rw [Matrix.det_fin_two_of]
+      rw [Matrix.det_fin_two] at h
       push_cast at h
-      linear_combination h
-    have hb := sub_eq_zero.mp
-      ((mul_eq_zero.mp hsub).resolve_right (botLeft_ne_zero_of_add_mul_eq_zero hdetp h₁))
-    have h := congrArg ZMod.val hb
-    rwa [ZMod.val_cast_of_lt b₁.isLt, ZMod.val_cast_of_lt b₂.isLt, Fin.val_inj] at h
-  · exact absurd (ZMod.val_injective p hv) (moebiusFin_ne_of_eq_zero hdetp h₁ h₂)
-  · exact absurd (ZMod.val_injective p hv).symm (moebiusFin_ne_of_eq_zero hdetp h₂ h₁)
-  · have hcross : ((M 0 1 + (b₁ : ℕ) * M 1 1 : ℤ) : ZMod p) *
-        ((M 0 0 + (b₂ : ℕ) * M 1 0 : ℤ) : ZMod p) =
-        ((M 0 1 + (b₂ : ℕ) * M 1 1 : ℤ) : ZMod p) *
-        ((M 0 0 + (b₁ : ℕ) * M 1 0 : ℤ) : ZMod p) := by
-      rw [← div_eq_div_iff h₁ h₂, div_eq_mul_inv, div_eq_mul_inv]
-      exact ZMod.val_injective p hv
-    have hb : ((b₁ : ℕ) : ZMod p) = ((b₂ : ℕ) : ZMod p) := by
-      push_cast at hcross hdetp
-      linear_combination hcross - (((b₁ : ℕ) : ZMod p) - ((b₂ : ℕ) : ZMod p)) * hdetp
-    have h := congrArg ZMod.val hb
-    rwa [ZMod.val_cast_of_lt b₁.isLt, ZMod.val_cast_of_lt b₂.isLt, Fin.val_inj] at h
+      intro hz
+      exact h (by linear_combination hz))
+
+@[simp]
+lemma reindexGL_coe (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
+    (reindexGL M h : Matrix (Fin 2) (Fin 2) (ZMod p)) =
+      !![((M 1 1 : ℤ) : ZMod p), ((M 0 1 : ℤ) : ZMod p);
+         ((M 1 0 : ℤ) : ZMod p), ((M 0 0 : ℤ) : ZMod p)] := rfl
+
+/-- **The pole of the reindexing.** An affine point `k` goes to `∞` exactly when the denominator
+`M 0 0 + k * M 1 0` vanishes mod `p`. Downstream arguments phrase the exceptional index as a
+divisibility, and this is the bridge to it. -/
+lemma reindexGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
+    (h : ((M.det : ℤ) : ZMod p) ≠ 0) (k : ZMod p) :
+    reindexGL M h • (k : OnePoint (ZMod p)) = ∞ ↔
+      ((M 0 0 : ℤ) : ZMod p) + k * ((M 1 0 : ℤ) : ZMod p) = 0 := by
+  rw [smul_some_eq_ite, reindexGL_coe]
+  simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_zero]
+  split_ifs with hz
+  · simp only [true_iff]
+    linear_combination hz
+  · simp only [coe_ne_infty, false_iff]
+    exact fun hk => hz (by linear_combination hk)
+
+/-- **The Möbius reindexing of `Fin p`.** Mathlib's action of `reindexGL M h` on
+`OnePoint (ZMod p)` is a permutation; `Equiv.removeNone` deletes `∞` from it, patching the pole to
+the image of `∞`, and `ZMod.finEquiv` transports the result to `Fin p`. -/
+noncomputable def moebiusFin (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
+    Equiv.Perm (Fin p) :=
+  haveI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+  (ZMod.finEquiv p).toEquiv.trans
+    ((Equiv.removeNone (MulAction.toPerm (reindexGL M h) : Equiv.Perm (OnePoint (ZMod p)))).trans
+      (ZMod.finEquiv p).toEquiv.symm)
 
 end HeckeRing.GL2
