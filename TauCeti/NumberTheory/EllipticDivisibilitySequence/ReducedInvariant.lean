@@ -201,36 +201,42 @@ theorem reducedInvarDenom_def : reducedInvarDenom b c d m =
 elimination principle for `reducedInvarDenom`: the whole content of the definition is the split, so
 a consumer that knows `m % 6` should reach its branch directly rather than rewriting by
 `reducedInvarDenom_def` and discharging the preceding `if` conditions by hand. -/
+@[simp]
 theorem reducedInvarDenom_of_emod_eq_zero (h : m % 6 = 0) :
     reducedInvarDenom b c d m = (normEDS b c d 5 - d ^ 2) * complEDS b c d 6 (m / 6) *
       normEDS b c d (m + 1) * normEDS b c d (m - 1) := by
   simp [reducedInvarDenom_def, h]
 
 /-- The residue-`1` branch, selected. -/
+@[simp]
 theorem reducedInvarDenom_of_emod_eq_one (h : m % 6 = 1) :
     reducedInvarDenom b c d m = (normEDS b c d 5 - d ^ 2) * complEDS b c d 6 ((m - 1) / 6) *
       normEDS b c d (m + 1) * normEDS b c d m := by
   simp [reducedInvarDenom_def, h]
 
 /-- The residue-`5` branch, selected. -/
+@[simp]
 theorem reducedInvarDenom_of_emod_eq_five (h : m % 6 = 5) :
     reducedInvarDenom b c d m = (normEDS b c d 5 - d ^ 2) * complEDS b c d 6 ((m + 1) / 6) *
       normEDS b c d m * normEDS b c d (m - 1) := by
   simp [reducedInvarDenom_def, h]
 
 /-- The residue-`2` branch, selected. -/
+@[simp]
 theorem reducedInvarDenom_of_emod_eq_two (h : m % 6 = 2) :
     reducedInvarDenom b c d m =
       complEDS b c d 3 ((m + 1) / 3) * complEDS b c d 2 (m / 2) * normEDS b c d (m - 1) := by
   simp [reducedInvarDenom_def, h]
 
 /-- The residue-`4` branch, selected. -/
+@[simp]
 theorem reducedInvarDenom_of_emod_eq_four (h : m % 6 = 4) :
     reducedInvarDenom b c d m =
       complEDS b c d 3 ((m - 1) / 3) * complEDS b c d 2 (m / 2) * normEDS b c d (m + 1) := by
   simp [reducedInvarDenom_def, h]
 
 /-- The residue-`3` branch, selected — the final `else`, so no positive condition remains. -/
+@[simp]
 theorem reducedInvarDenom_of_emod_eq_three (h : m % 6 = 3) :
     reducedInvarDenom b c d m =
       complEDS b c d 3 (m / 3) * complEDS b c d 2 ((m - 1) / 2) * normEDS b c d (m + 1) := by
@@ -239,9 +245,10 @@ theorem reducedInvarDenom_of_emod_eq_three (h : m % 6 = 3) :
 /-- The formula vanishes at `0`. The factor responsible is the *complement*, not a `normEDS`: at
 `m = 0` the residue-`0` branch is `(W 5 - d ^ 2) * complEDS b c d 6 0 * normEDS b c d 1 *
 normEDS b c d (-1)`, whose `normEDS` factors are `1` and `-1`, and `complEDS_zero` kills it. -/
-@[simp]
+-- Not `@[simp]`: with the per-residue lemmas tagged, `simp` derives this from
+-- `reducedInvarDenom_of_emod_eq_zero`, and `simpNF` rejects the redundant annotation.
 theorem reducedInvarDenom_zero : reducedInvarDenom b c d 0 = 0 := by
-  simp [reducedInvarDenom_def]
+  simp
 
 /-- It vanishes at `1` as well, by the same mechanism: at `m = 1` the residue-`1` branch is
 `(W 5 - d ^ 2) * complEDS b c d 6 ((1 - 1) / 6) * normEDS b c d 2 * normEDS b c d 1`, and
@@ -249,14 +256,14 @@ theorem reducedInvarDenom_zero : reducedInvarDenom b c d 0 = 0 := by
 branch. -/
 @[simp]
 theorem reducedInvarDenom_one : reducedInvarDenom b c d 1 = 0 := by
-  simp [reducedInvarDenom_def]
+  simp
 
 /-- The formula takes the value `1` at `2`, the residue-`2` branch collapsing to
 `complEDS b c d 3 1 * complEDS b c d 2 1 * normEDS b c d 1`. This is the value that fixes the
 formula's normalisation. -/
 @[simp]
 theorem reducedInvarDenom_two : reducedInvarDenom b c d 2 = 1 := by
-  simp [reducedInvarDenom_def]
+  simp
 
 /-- **The second complement read off the reduced numerator.** This is the direction the Lutz–Nagell
 development uses: it expresses `complEDS₂` through the invariant of the elliptic net, rather than
