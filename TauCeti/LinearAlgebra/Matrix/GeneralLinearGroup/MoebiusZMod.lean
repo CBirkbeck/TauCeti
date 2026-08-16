@@ -14,7 +14,11 @@ public import Mathlib.Topology.Compactification.OnePoint.ProjectiveLine
 
 An integer matrix `M` whose determinant is a unit mod `p` permutes `Fin p` by the Möbius rule
 
-`b ↦ (M 0 1 + b * M 1 1) / (M 0 0 + b * M 1 0)  (mod p)`.
+`b ↦ (M 0 1 + b * M 1 1) / (M 0 0 + b * M 1 0)  (mod p)`   **where the denominator is nonzero**,
+
+and by `b ↦ M 1 1 / M 1 0` at the one index where it vanishes. That second clause is *not* the
+first evaluated at a zero denominator: division by zero in `ZMod p` is `0`, whereas the pole is
+genuinely carried to the image of `∞` by the projective action.
 
 This is Mathlib's Möbius action of `GL (Fin 2) (ZMod p)` on `OnePoint (ZMod p)` restricted to the
 affine part: `Equiv.removeNone` deletes the point at infinity from the induced permutation,
@@ -65,11 +69,12 @@ variable {p : ℕ} [Fact p.Prime]
 /-- **The matrix whose Möbius action is the reindexing.** The entries of `M` are reduced mod `p`
 and permuted along the anti-diagonal, so that Mathlib's affine rule
 `k ↦ (g 0 0 * k + g 0 1) / (g 1 0 * k + g 1 1)` reads as
-`k ↦ (M 0 1 + k * M 1 1) / (M 0 0 + k * M 1 0)`.
+`k ↦ (M 0 1 + k * M 1 1) / (M 0 0 + k * M 1 0)` — on `OnePoint (ZMod p)`, where a vanishing
+denominator sends `k` to `∞` rather than to a quotient by zero.
 
 That permutation leaves the determinant alone, so the only hypothesis is that `M` is invertible
 mod `p`. -/
-@[expose] noncomputable def reindexGL (M : Matrix (Fin 2) (Fin 2) ℤ)
+noncomputable def reindexGL (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) : GL (Fin 2) (ZMod p) :=
   Matrix.GeneralLinearGroup.mkOfDetNeZero
     !![((M 1 1 : ℤ) : ZMod p), ((M 0 1 : ℤ) : ZMod p);
@@ -85,11 +90,12 @@ mod `p`. -/
 lemma reindexGL_coe (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
     (reindexGL M h : Matrix (Fin 2) (Fin 2) (ZMod p)) =
       !![((M 1 1 : ℤ) : ZMod p), ((M 0 1 : ℤ) : ZMod p);
-         ((M 1 0 : ℤ) : ZMod p), ((M 0 0 : ℤ) : ZMod p)] := rfl
+         ((M 1 0 : ℤ) : ZMod p), ((M 0 0 : ℤ) : ZMod p)] := (rfl)
 
 /-- **The pole of the reindexing.** An affine point `k` goes to `∞` exactly when the denominator
 `M 0 0 + k * M 1 0` vanishes mod `p`. Downstream arguments phrase the exceptional index as a
 divisibility, and this is the bridge to it. -/
+@[simp]
 lemma reindexGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) (k : ZMod p) :
     reindexGL M h • (k : OnePoint (ZMod p)) = ∞ ↔
