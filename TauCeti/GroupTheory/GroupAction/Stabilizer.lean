@@ -9,7 +9,6 @@ public import Mathlib.GroupTheory.GroupAction.Basic
 public import Mathlib.GroupTheory.Index
 public import Mathlib.GroupTheory.QuotientGroup.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
-public import Mathlib.Topology.Algebra.ConstMulAction
 
 /-!
 # Cardinality of stabilisers under the two standard transports
@@ -45,17 +44,6 @@ public section
 namespace TauCeti
 
 variable {G α : Type*} [Group G] [MulAction G α]
-
-/-- **A properly discontinuous action has finite point stabilisers**, as a `Finite` instance.
-
-Mathlib's `ProperlyDiscontinuousSMul.finite_stabilizer` (Alex Kontorovich and Heather Macbeth,
-`Mathlib/Topology/Algebra/ConstMulAction.lean`) states this as `Set.Finite` of the stabiliser's
-carrier. That form does not drive typeclass search, so every count through `Nat.card` — which is
-the junk value `0` on an infinite type — has to bridge to `Finite` by hand. This does it once. -/
-instance finite_stabilizer_of_properlyDiscontinuousSMul {T : Type*} [TopologicalSpace T]
-    [MulAction G T] [ProperlyDiscontinuousSMul G T] (x : T) :
-    Finite (MulAction.stabilizer G x) :=
-  (ProperlyDiscontinuousSMul.finite_stabilizer x).to_subtype
 
 /-- **The order of a stabiliser is constant along an orbit**: points related by the orbit
 relation have conjugate stabilisers, hence stabilisers of equal cardinality.

@@ -5,13 +5,10 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.GroupTheory.GroupAction.Stabilizer
 public import TauCeti.NumberTheory.ModularForms.Order.OfVanishing
 
-public import Mathlib.NumberTheory.ModularForms.ArithmeticSubgroups
-
 import Mathlib.Algebra.FiniteSupport.Basic
-import Mathlib.NumberTheory.ModularForms.ProperlyDiscontinuous
+import Mathlib.NumberTheory.ModularForms.ArithmeticSubgroups
 import TauCeti.NumberTheory.ModularForms.Norm.Order
 
 /-!
@@ -45,8 +42,6 @@ image of a subgroup of `SL(2, ℤ)` has determinant `1` throughout.
 
 ## Main declarations
 
-* `TauCeti.ModularForm.properlyDiscontinuousSMul_coe`: the image of any `Γ ≤ SL(2, ℤ)` acts
-  properly discontinuously on `ℍ`, which makes its point stabilisers finite.
 * `TauCeti.ModularForm.orderOfVanishingOnSubgroupOrbit`: the order descended to the
   `Γ`-orbit space.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnSubgroupOrbit`: finite support of
@@ -75,27 +70,6 @@ namespace TauCeti
 namespace ModularForm
 
 variable {Γ : Subgroup SL(2, ℤ)} {k : ℤ} {F : Type*} [FunLike F ℍ ℂ]
-
-/-- **The image in `GL(2, ℝ)` of any subgroup of `SL(2, ℤ)` acts properly discontinuously on
-`ℍ`**, inheriting it from `𝒮ℒ`.
-
-Mathlib's `Subgroup.IsArithmetic.properlyDiscontinuous` covers a `𝒢 ≤ GL(2, ℝ)` commensurable
-with `𝒮ℒ`, so it needs `Γ` of finite index; the descent used here asks only `↑Γ ≤ 𝒮ℒ` and so
-holds for every `Γ`. Both steps are David Loeffler's — `properlyDiscontinuousSL2ZRange` for `𝒮ℒ`
-and `Subgroup.properlyDiscontinuousSMul_of_le` for the descent.
-
-Point stabilisers of `↑Γ` are then finite by
-`TauCeti.finite_stabilizer_of_properlyDiscontinuousSMul`, with no further modular input: that is
-what stops `Nat.card` of a stabiliser being the junk value `0`, and so what makes the elliptic
-order `e_P` meaningful at every level. Note the count that instance gives is of the **matrix**
-stabiliser, which is `2 e_P` when `-I ∈ Γ`, not `e_P`. -/
-instance properlyDiscontinuousSMul_coe (Γ : Subgroup SL(2, ℤ)) :
-    ProperlyDiscontinuousSMul (Γ : Subgroup (GL (Fin 2) ℝ)) ℍ :=
-  -- the coercion is by definition `Γ.map (mapGL ℝ)`, and `𝒮ℒ` is that map's range
-  have hle : (Γ : Subgroup (GL (Fin 2) ℝ)) ≤ 𝒮ℒ :=
-    Subgroup.map_le_range (Matrix.SpecialLinearGroup.mapGL ℝ) Γ
-  Subgroup.properlyDiscontinuousSMul_of_le
-    (inferInstanceAs (ProperlyDiscontinuousSMul 𝒮ℒ ℍ)) hle
 
 /-- The vanishing order of a form for `Γ ≤ SL(2, ℤ)`, descended to the `Γ`-orbit space of
 the upper half-plane. -/
