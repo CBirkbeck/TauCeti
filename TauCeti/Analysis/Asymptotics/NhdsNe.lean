@@ -17,7 +17,9 @@ what closes that gap, and this file records the resulting extension.
 Mathlib has the special case `g = 1` (`Asymptotics.isBigO_one_nhds_ne_iff`,
 `Mathlib/Analysis/Asymptotics/Lemmas.lean:120`), stated as an `iff` and needing no hypothesis at
 `a`, because there the bounding function has norm `1` at every point. For a general `g` the
-hypothesis is not removable, and only one direction survives.
+hypothesis is not removable — but it is only the punctured-to-unpunctured direction that needs
+it. The converse direction is free and unconditional: `nhdsWithin_le_nhds` gives `𝓝[≠] a ≤ 𝓝 a`,
+so `IsBigO.mono` restricts any bound on `𝓝 a` back to the punctured filter.
 
 ## Main results
 
@@ -47,8 +49,9 @@ the punctured neighbourhood already works at `a`, since the left-hand side there
 right-hand side is a nonnegative multiple of a norm.
 
 The hypothesis cannot be dropped: where `‖g a‖ = 0 < ‖f a‖` the conclusion fails at `a` for every
-constant. Note it asks only that the *norm* of `f` vanish at `a` — `E` carries no zero, so this is
-weaker than `f a = 0` and is all the argument uses. -/
+constant. It is an equation between real numbers — it constrains `‖f a‖` alone and asks for no
+zero on `E`, which is why `E` is assumed nothing beyond `[Norm E]`. There is deliberately no
+`f a = 0` variant: at this generality that does not typecheck. -/
 theorem IsBigO.of_nhds_ne_of_norm_eq_zero (hO : f =O[𝓝[≠] a] g) (hf : ‖f a‖ = 0) :
     f =O[𝓝 a] g := by
   obtain ⟨C, hC0, hC⟩ := hO.exists_nonneg
