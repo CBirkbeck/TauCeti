@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
+public import TauCeti.Algebra.Algebra.Hom
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.FunctionField.Finrank
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.FunctionField
 import Mathlib.NumberTheory.FunctionField
@@ -182,12 +183,12 @@ theorem degree_comp (ψ : Isogeny W₂ W₃) (φ : Isogeny W₁ W₂) :
   have htower : IsScalarTower W₃.FunctionField W₂.FunctionField W₁.FunctionField :=
     IsScalarTower.of_algebraMap_eq fun z ↦ by
       simp [RingHom.algebraMap_toAlgebra, comp_fieldPullback]
-  have hφ : ∀ z, algebraMap _ _ z = φ.fieldPullback z := fun z ↦ by
-    rw [RingHom.algebraMap_toAlgebra, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
-  have hψ : ∀ z, algebraMap _ _ z = ψ.fieldPullback z := fun z ↦ by
-    rw [RingHom.algebraMap_toAlgebra, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
-  have hc : ∀ z, algebraMap _ _ z = (ψ.comp φ).fieldPullback z := fun z ↦ by
-    rw [RingHom.algebraMap_toAlgebra, AlgHom.toRingHom_eq_coe, AlgHom.coe_toRingHom]
+  have hφ : ∀ z, algebraMap _ _ z = φ.fieldPullback z :=
+    φ.fieldPullback.algebraMap_toAlgebra_apply
+  have hψ : ∀ z, algebraMap _ _ z = ψ.fieldPullback z :=
+    ψ.fieldPullback.algebraMap_toAlgebra_apply
+  have hc : ∀ z, algebraMap _ _ z = (ψ.comp φ).fieldPullback z :=
+    (ψ.comp φ).fieldPullback.algebraMap_toAlgebra_apply
   rw [φ.degree_eq_finrank hφ, ψ.degree_eq_finrank hψ, (ψ.comp φ).degree_eq_finrank hc]
   exact (Module.finrank_mul_finrank W₃.FunctionField W₂.FunctionField W₁.FunctionField).symm
 
