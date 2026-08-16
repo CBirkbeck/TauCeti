@@ -103,12 +103,11 @@ lemma reindexGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
 
 /-- **The Möbius reindexing of `Fin p`.** Mathlib's action of `reindexGL M h` on
 `OnePoint (ZMod p)` is a permutation; `Equiv.removeNone` deletes `∞` from it, patching the pole to
-the image of `∞`, and `ZMod.finEquiv` transports the result to `Fin p`. -/
+the image of `∞`, and `Equiv.permCongr` along `ZMod.finEquiv` transports the result to `Fin p`. -/
 noncomputable def moebiusFin (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
     Equiv.Perm (Fin p) :=
   haveI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
-  (ZMod.finEquiv p).toEquiv.trans
-    ((Equiv.removeNone (MulAction.toPerm (reindexGL M h) : Equiv.Perm (OnePoint (ZMod p)))).trans
-      (ZMod.finEquiv p).toEquiv.symm)
+  (ZMod.finEquiv p).toEquiv.symm.permCongr
+    (Equiv.removeNone (MulAction.toPerm (reindexGL M h) : Equiv.Perm (OnePoint (ZMod p))))
 
 end HeckeRing.GL2
