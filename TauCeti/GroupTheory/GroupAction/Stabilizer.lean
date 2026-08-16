@@ -14,12 +14,16 @@ public import Mathlib.SetTheory.Cardinal.Finite
 # Cardinality of stabilisers under the two standard transports
 
 A count defined through a point stabiliser is useful only alongside the rules for moving it.
-Two such rules are recorded here, both consequences of Mathlib machinery rather than new
-mathematics, and both stated for `Nat.card` because that is the form a numerical invariant of
-an orbit is wanted in.
+Three such rules are recorded here, all consequences of Mathlib machinery rather than new
+mathematics. The first two are stated for `Nat.card`, because that is the form a numerical
+invariant of an orbit is wanted in; the third is the finiteness that makes such a count
+nonzero.
 
 *Along an orbit* the stabiliser order does not change: related points have conjugate
 stabilisers, by `MulAction.stabilizerEquivStabilizerOfOrbitRel`.
+
+*Down a chain of subgroups* finiteness descends: a stabiliser in `H` injects into the
+stabiliser in any larger `K`.
 
 *Along a surjection* it divides: if `f : G →* H` is onto and the two actions agree at the point
 in question, then the `G`-order of that point's stabiliser is `Nat.card f.ker` times its
@@ -34,6 +38,8 @@ subgroup quotiented out.
   `Nat.card f.ker` along a surjection `f`, with
   `TauCeti.card_stabilizer_eq_card_subgroup_mul_card_stabilizer_quotient` the quotient-map
   corollary.
+* `TauCeti.finite_stabilizer_of_le`: a finite stabiliser in `K` forces a finite stabiliser in
+  every `H ≤ K`.
 -/
 
 public section
@@ -106,6 +112,20 @@ theorem card_stabilizer_eq_card_subgroup_mul_card_stabilizer_quotient (N : Subgr
   have h := card_stabilizer_eq_card_ker_mul_card_stabilizer (QuotientGroup.mk' N)
     (QuotientGroup.mk'_surjective N) a hcompat
   rwa [QuotientGroup.ker_mk'] at h
+
+/-- **Stabiliser finiteness descends to a smaller subgroup**: the stabiliser of `a` in `H`
+injects into its stabiliser in any larger subgroup `K`, along `Subgroup.inclusion`.
+
+Mathlib inherits proper discontinuity along `Subgroup Γ → Γ`
+(`Mathlib/Topology/Algebra/Group/DiscontinuousSubgroup.lean`), which settles the case of a
+subgroup of the *acting* group. This covers the other common presentation, where `H` and `K`
+are two subgroups of one ambient group and all that is known is `H ≤ K` — the shape that arises
+when a Fuchsian group is handed to you inside `GL(2, ℝ)` rather than inside its own
+level-one group. -/
+theorem finite_stabilizer_of_le {H K : Subgroup G} (hle : H ≤ K) (a : α)
+    [Finite (MulAction.stabilizer K a)] : Finite (MulAction.stabilizer H a) :=
+  Finite.of_injective (fun g ↦ (⟨Subgroup.inclusion hle g.1, g.2⟩ : MulAction.stabilizer K a))
+    fun _ _ hab ↦ Subtype.ext (Subgroup.inclusion_injective hle (Subtype.ext_iff.mp hab))
 
 end TauCeti
 

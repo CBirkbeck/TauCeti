@@ -8,9 +8,12 @@ module
 public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
 public import TauCeti.GroupTheory.GroupAction.Stabilizer
 public import TauCeti.NumberTheory.Modular.Orbits
+-- the coercion `Subgroup SL(2, ℤ) → Subgroup (GL (Fin 2) ℝ)` is named by a statement below
+public import Mathlib.NumberTheory.ModularForms.ArithmeticSubgroups
 
--- these two serve only the private centre computation, so they stay off the public surface
+-- these serve only proof bodies, so they stay off the public surface
 import Mathlib.LinearAlgebra.SpecialLinearGroup
+import Mathlib.NumberTheory.ModularForms.ProperlyDiscontinuous
 import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
 /-!
@@ -36,6 +39,8 @@ literally the `q` with `q ≠ ⟦i⟧` and `q ≠ ⟦ρ⟧`.
 
 * `TauCeti.ModularGroup.finite_stabilizer`: every point stabiliser is finite, so the elliptic
   order is defined at every point of `ℍ`.
+* `TauCeti.ModularGroup.finite_stabilizer_coe`: the same at every level — the image in
+  `GL(2, ℝ)` of any subgroup of `SL(2, ℤ)` has finite point stabilisers.
 * `TauCeti.ModularGroup.card_stabilizer_I` and `TauCeti.ModularGroup.card_stabilizer_ρ`: the
   orders `4` and `6` at the two elliptic points themselves.
 * `TauCeti.ModularGroup.card_stabilizer_of_orbit_eq_I` and
@@ -206,6 +211,16 @@ theorem card_stabilizer_psl_eq_one_of_orbit_ne_I_of_orbit_ne_ρ (z : ℍ)
   have h := card_stabilizer_eq_two_mul_card_stabilizer_psl z
   rw [card_stabilizer_eq_two_of_orbit_ne_I_of_orbit_ne_ρ z hI hρ] at h
   omega
+
+/-- **Point stabilisers stay finite at every level.** The image in `GL(2, ℝ)` of a subgroup of
+the modular group inherits finite point stabilisers from `𝒮ℒ`, which acts properly
+discontinuously on `ℍ`. Finiteness is what stops `Nat.card` of that stabiliser — the elliptic
+order `e_P` attached to a `Γ`-orbit — from being the junk value `0`, so that the weight
+`1 / e_P` carried by the general-level valence formula is meaningful. -/
+instance finite_stabilizer_coe (Γ : Subgroup SL(2, ℤ)) (z : ℍ) :
+    Finite (stabilizer (Γ : Subgroup (GL (Fin 2) ℝ)) z) := by
+  have : Finite (stabilizer 𝒮ℒ z) := (ProperlyDiscontinuousSMul.finite_stabilizer z).to_subtype
+  exact finite_stabilizer_of_le (Subgroup.map_le_range (Matrix.SpecialLinearGroup.mapGL ℝ) Γ) z
 
 end ModularGroup
 
