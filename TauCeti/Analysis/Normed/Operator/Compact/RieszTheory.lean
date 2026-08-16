@@ -314,8 +314,8 @@ private lemma surjective_mkQ_comp_ker_subtype {T : X →L[𝕜] X} {n : ℕ}
   · have hmem : (T ^ (n + 1)) z ∈ LinearMap.range (T : X →ₗ[𝕜] X) :=
       ⟨(T ^ n) z, by rw [pow_succ']; rfl⟩
     simp only [LinearMap.comp_apply, Submodule.subtype_apply, Submodule.mkQ_apply]
-    rw [Submodule.Quotient.eq]
-    simpa using neg_mem hmem
+    rw [Submodule.Quotient.eq, sub_sub_cancel_left]
+    exact neg_mem hmem
 
 /-- The cokernel of a compact perturbation of the identity is finite dimensional. -/
 theorem finiteDimensional_quotient_range_one_sub (hK : IsCompactOperator K) :
