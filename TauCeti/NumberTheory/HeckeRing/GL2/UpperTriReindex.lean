@@ -52,7 +52,7 @@ Three of the source's five supporting lemmas are **not** reproduced. `ZMod p` is
 `p` (`Mathlib/Algebra/Field/ZMod.lean`), which turns them into library calls: "`p ∣ a * b` and
 `p ∤ b` gives `p ∣ a`" is `mul_eq_zero`, "congruent with both `< p`" is `ZMod.val_cast_of_lt`, and
 the cross-multiplication step is `div_eq_div_iff`. Only the two determinant-driven exclusions carry
-content; they appear below as `mul_inv_ne_of_add_mul_eq_zero` and `moebiusFin_ne_of_eq_zero`.
+content; they appear below as `botLeft_ne_zero_of_add_mul_eq_zero` and `moebiusFin_ne_of_eq_zero`.
 -/
 
 public section
@@ -82,7 +82,7 @@ omit [NeZero p] in
 /-- **A vanishing denominator forces the bottom-left entry to be a unit.** If `M 0 0 + c * M 1 0`
 vanishes mod `p` and `M 1 0` did too, then `M 0 0` would vanish as well and `det M` could not be
 `1`. -/
-private lemma mul_inv_ne_of_add_mul_eq_zero
+private lemma botLeft_ne_zero_of_add_mul_eq_zero
     (hdet : ((M 0 0 : ℤ) : ZMod p) * ((M 1 1 : ℤ) : ZMod p) -
       ((M 0 1 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p) = 1)
     {c : ℤ} (hc : ((M 0 0 + c * M 1 0 : ℤ) : ZMod p) = 0) : ((M 1 0 : ℤ) : ZMod p) ≠ 0 := by
@@ -105,7 +105,7 @@ private lemma moebiusFin_ne_of_eq_zero
     ((M 1 1 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p)⁻¹ ≠
       ((M 0 1 + d * M 1 1 : ℤ) : ZMod p) * ((M 0 0 + d * M 1 0 : ℤ) : ZMod p)⁻¹ := by
   intro heq
-  have h10 := mul_inv_ne_of_add_mul_eq_zero hdet hc
+  have h10 := botLeft_ne_zero_of_add_mul_eq_zero hdet hc
   rw [← div_eq_mul_inv, ← div_eq_mul_inv, div_eq_div_iff h10 hd] at heq
   push_cast at heq hdet
   exact one_ne_zero (show (1 : ZMod p) = 0 by linear_combination heq - hdet)
@@ -131,7 +131,7 @@ theorem moebiusFin_injective (M : Matrix (Fin 2) (Fin 2) ℤ) (hdet : M.det = 1)
       push_cast at h
       linear_combination h
     have hb := sub_eq_zero.mp
-      ((mul_eq_zero.mp hsub).resolve_right (mul_inv_ne_of_add_mul_eq_zero hdetp h₁))
+      ((mul_eq_zero.mp hsub).resolve_right (botLeft_ne_zero_of_add_mul_eq_zero hdetp h₁))
     have h := congrArg ZMod.val hb
     rwa [ZMod.val_cast_of_lt b₁.isLt, ZMod.val_cast_of_lt b₂.isLt, Fin.val_inj] at h
   · exact absurd (ZMod.val_injective p hv) (moebiusFin_ne_of_eq_zero hdetp h₁ h₂)
