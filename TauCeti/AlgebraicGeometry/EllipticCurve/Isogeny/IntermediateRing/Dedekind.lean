@@ -35,9 +35,15 @@ Noetherianity from the trace pairing, which is nondegenerate exactly in the sepa
 
 So the hypothesis set here matches the sibling `Isogeny.moduleFinite_intermediateRing` rather than
 `Isogeny.isIntegrallyClosed_intermediateRing`, and for the same reason: both go through the trace.
-In particular this statement does **not** cover inseparable isogenies, Frobenius included, whereas
-the normality of the same ring does. That asymmetry is real rather than an artefact of the route
-taken — see `IntermediateRing/Finite.lean`, which flags the general case as separate work.
+
+**The hypothesis is a limitation of the route, not of the result.** `W₂.CoordinateRing` is a
+finite-type algebra over a field and therefore Nagata, so its normalization in a finite extension
+is finite — and the conclusion is expected to hold with no separability at all, inseparable
+isogenies and Frobenius included. What blocks that here is availability: every finiteness route in
+`Mathlib/RingTheory/DedekindDomain/IntegralClosure.lean` sits under `Algebra.IsSeparable`, and the
+pinned Mathlib carries no usable Nagata normalization-finiteness API. Removing the hypothesis
+therefore means building that route first, which is separate work; this is the interim result.
+`IntermediateRing/Finite.lean` records the same limitation for the finiteness half.
 
 `IsDedekindDomain W₂.CoordinateRing` is taken as a hypothesis rather than derived. For an elliptic
 curve it is supplied by `WeierstrassCurve.Affine.isDedekindDomain_coordinateRing`, which needs
@@ -72,8 +78,10 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 `W₂.CoordinateRing` in `W₁.FunctionField`, and the integral closure of a Dedekind domain in a
 finite separable extension of its fraction field is again Dedekind.
 
-Separability is genuinely needed, unlike for `Isogeny.isIntegrallyClosed_intermediateRing`: the
-Noetherian half of the conjunction comes from the trace pairing. -/
+Separability is required by the route rather than by the statement: the Noetherian half of the
+conjunction is obtained from the trace pairing, which is what Mathlib's
+`IsIntegralClosure.isDedekindDomain` uses. The conclusion is expected to hold inseparably too,
+since `W₂.CoordinateRing` is Nagata — see the module docstring. -/
 theorem isDedekindDomain_intermediateRing (φ : Isogeny W₁ W₂)
     [IsDedekindDomain W₂.CoordinateRing]
     [Algebra W₂.CoordinateRing W₁.FunctionField]
