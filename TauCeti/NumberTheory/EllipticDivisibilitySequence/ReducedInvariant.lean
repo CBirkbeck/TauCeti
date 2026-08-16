@@ -73,8 +73,8 @@ statement hypothesis-free.
 The numerator needs none of this because its cancellation is an identity between polynomial
 expressions, proved by `ring` from the complement recurrences rather than through a division.
 
-The divisor form is `normEDS_mul_complEDS_div` below. Each residue reduces `W k * complEDS b c d k
-(n / k)` to
+The divisor form is `normEDS_mul_complEDS_div`, which this development adds to `Complement.lean`
+beside the identity it reindexes. Each residue reduces `W k * complEDS b c d k (n / k)` to
 `W n` by `normEDS_mul_complEDS` — which is stated at `W (n * k)` — followed
 by `Int.ediv_mul_cancel` on the divisibility that `m % 6 = r` supplies. The factor
 `W 5 - d ^ 2` carried by the residues `0`, `1` and `5` is `W 6` with `b * c` removed, which is
@@ -116,9 +116,10 @@ complement identity they rest on lives in `Complement.lean` as `normEDS_mul_comp
 The source's `invarDenom_eq_redInvarDenom_mul`, which identifies the denominator formula as the
 cancelled quotient, is ported here as
 `IsEllipticNet.invarDenom_normEDS_one_eq_reducedInvarDenom_mul`. Both links the source's proof
-uses are available in this repository: `normEDS_mul_complEDS_div` is replaced by the unconditional
-`normEDS_mul_complEDS` (`Complement.lean`) together with `Int.ediv_mul_cancel`, and
-`normEDS_six_eq_mul` is `WeierstrassCurve.normEDS_six` (`Six.lean`).
+uses are available in this repository: `normEDS_mul_complEDS_div` is ported by this development
+into `Complement.lean`, derived there from the unconditional `normEDS_mul_complEDS` together with
+`Int.ediv_mul_cancel` rather than proved afresh, and `normEDS_six_eq_mul` is
+`WeierstrassCurve.normEDS_six` (`Six.lean`).
 
 That file's header reads `Authors: David Kurniadi Angdinata`; following this
 repository's convention for adapted material the upstream authorship is credited here rather than
@@ -195,8 +196,19 @@ def reducedInvarDenom : R :=
   else if m % 6 = 4 then C 3 ((m - 1) / 3) * C 2 (m / 2) * W (m + 1)
   else C 3 (m / 3) * C 2 ((m - 1) / 2) * W (m + 1)
 
-/-- The defining formula for `reducedInvarDenom`, not `@[simp]` for the same reason
-`reducedInvarNum_def` is not. -/
+/-- The defining formula for `reducedInvarDenom`. The definition body is not exposed, so this
+equation lemma is how a consumer computes with it.
+
+Not `@[simp]`, but **not** for `reducedInvarNum_def`'s reason. There the point is that `simp`
+should never unfold the term at all. Here it should: the whole content of `reducedInvarDenom` is
+the residue split, so the six `reducedInvarDenom_of_emod_eq_*` lemmas below *are* `@[simp]` and do
+unfold it — each into a single product, once the residue is known.
+
+What is wrong is unfolding it into the six-way `if` chain, which is what tagging this lemma would
+do: every goal mentioning `reducedInvarDenom` would acquire five undischarged conditions, and the
+branch lemmas would then have nothing left to fire on. So the simp normal form of
+`reducedInvarDenom b c d m` is "the selected branch, when `m % 6` is known, and the folded term
+otherwise" — which is exactly this lemma off simp and those six on. -/
 theorem reducedInvarDenom_def : reducedInvarDenom b c d m =
     if m % 6 = 0 then
       (normEDS b c d 5 - d ^ 2) * complEDS b c d 6 (m / 6) *
