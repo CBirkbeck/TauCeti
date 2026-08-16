@@ -71,6 +71,14 @@ The statement being realised is AINTLIB's `moebiusFin` / `moebiusFin_injective`
 ([`LeanModularForms/HeckeRIngs/GL2/HeckeT_p.lean`](https://github.com/CBirkbeck/AINTLIB), commit
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, lines 124-242, Apache-2.0, Chris Birkbeck).
 
+`dvd_add_mul_iff_eq_of_dvd` is AINTLIB's `dvd_topLeft_add_iff_eq_canonicalIndex`
+(same file, lines 301-310), at the weaker hypothesis `((M.det : ℤ) : ZMod p) ≠ 0` in place of the
+source's `M.det = 1`, with `b₀` implicit. Its proof is not the source's: AINTLIB rewrites through
+the `if`-split in its own `moebiusFin`, whereas here the two evaluation branches do that work and
+the argument is `(moebiusFin M h).injective` applied to two equal values.
+`finEquiv_apply_eq_natCast` has no AINTLIB counterpart — the source writes its reindexing directly
+in `ZMod p` and so never needs the `Fin`/`ZMod` bridge.
+
 **No code is transcribed.** The source builds the map by hand as an `if`-split on whether the
 denominator vanishes, and proves injectivity by a four-way case analysis resting on five
 supporting lemmas. All of that is already Mathlib's: the map is `Equiv.removeNone` applied to
@@ -226,9 +234,10 @@ lemma finEquiv_moebiusFin_apply_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
 /-- `ZMod.finEquiv` at an index is the natural cast of its value. Mathlib defines `finEquiv` and
 states nothing about applying it, so this is the bridge between the `Fin p` indexing and the
 `ZMod p` arithmetic the pole condition is phrased in. -/
-lemma finEquiv_apply_eq_natCast (j : Fin p) : (ZMod.finEquiv p) j = ((j : ℕ) : ZMod p) := by
-  obtain ⟨k, rfl⟩ : ∃ k, p = k + 1 :=
-    ⟨p - 1, (Nat.succ_pred_eq_of_pos (Fact.out : p.Prime).pos).symm⟩
+lemma finEquiv_apply_eq_natCast {n : ℕ} [NeZero n] (j : Fin n) :
+    (ZMod.finEquiv n) j = ((j : ℕ) : ZMod n) := by
+  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 :=
+    ⟨n - 1, (Nat.succ_pred_eq_of_pos (Nat.pos_of_ne_zero (NeZero.ne n))).symm⟩
   exact (Fin.cast_val_eq_self j).symm
 
 /-- **The pole index is unique.** `finEquiv_moebiusFin_apply_of_eq_zero` computes the reindexing at
