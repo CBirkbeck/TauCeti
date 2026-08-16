@@ -96,19 +96,6 @@ theorem one_sub_mul_norm_sub_le {G : Type*} [SeminormedAddGroup G]
   nlinarith
 
 omit [ProperSpace 𝕜] [CompleteSpace E] [CompleteSpace F] in
-/-- **At approximation quality `C * ε = 1 / 2` the estimate becomes a two-sided bound with a
-factor of two.** This is `one_sub_mul_norm_sub_le` at the `ε` that halves the left-hand factor;
-the factor two is the form the properness argument consumes. -/
-private theorem norm_sub_le_two_mul_add_two_mul {G : Type*} [SeminormedAddGroup G] {P : E →+ G}
-    {C : ℝ} {N : Set E} {ε : ℝ≥0} (hC : 0 ≤ C) (hCε : C * (ε : ℝ) = 1 / 2)
-    (hest : ∀ z, ‖z‖ ≤ C * ‖f' z‖ + ‖P z‖) (happ : ApproximatesLinearOn f f' N ε)
-    {x : E} (hx : x ∈ N) {y : E} (hy : y ∈ N) :
-    ‖x - y‖ ≤ 2 * (C * ‖f x - f y‖) + 2 * ‖P x - P y‖ := by
-  have h := one_sub_mul_norm_sub_le hC hest happ hx hy
-  rw [hCε] at h
-  linarith
-
-omit [ProperSpace 𝕜] [CompleteSpace E] [CompleteSpace F] in
 /-- **The two-sided bound is exactly anti-Lipschitzness of the coordinate `x ↦ (f x, P x)`.**
 The bound of `one_sub_mul_norm_sub_le` controls `‖x - y‖` by the two components separately; since
 the product norm is the maximum, each is at most the distance between the pairs, and the two
@@ -146,9 +133,10 @@ private theorem exists_isCompact_forall_mem_of_norm_le {V : Submodule 𝕜 E}
     ∃ K : Set E, IsCompact K ∧ ∀ x, ‖x‖ ≤ r → P x ∈ K := by
   have : ProperSpace V := FiniteDimensional.proper 𝕜 V
   refine ⟨V.subtypeL '' Metric.closedBall (0 : V) (‖P‖ * r),
-    (isCompact_closedBall _ _).image V.subtypeL.continuous, fun x hx => ⟨⟨P x, hPV x⟩, ?_, rfl⟩⟩
+    (isCompact_closedBall _ _).image V.subtypeL.continuous,
+    fun x hx => ⟨⟨P x, hPV x⟩, ?_, V.subtypeL_apply _⟩⟩
   simp only [Metric.mem_closedBall, dist_zero_right]
-  calc ‖(⟨P x, hPV x⟩ : V)‖ = ‖P x‖ := rfl
+  calc ‖(⟨P x, hPV x⟩ : V)‖ = ‖P x‖ := Submodule.coe_norm _
     _ ≤ ‖P‖ * ‖x‖ := P.le_opNorm x
     _ ≤ ‖P‖ * r := by gcongr
 
@@ -182,9 +170,12 @@ theorem _root_.HasStrictFDerivAt.exists_mem_nhds_forall_isCompact_inter_preimage
   -- the two-sided bound on `N`
   have hCε : C * (ε : ℝ) = 1 / 2 := by rw [hεcoe]; field_simp
   have key : ∀ x ∈ N, ∀ y ∈ N,
-      ‖x - y‖ ≤ 2 * (C * ‖f x - f y‖) + 2 * ‖P x - P y‖ := fun x hx y hy => by
-    simpa using norm_sub_le_two_mul_add_two_mul (P := P.toLinearMap.toAddMonoidHom) hC.le hCε
-      hest happN hx hy
+      ‖x - y‖ ≤ 2 * (C * ‖f x - f y‖) + 2 * ‖P x - P y‖ := by
+    intro x hx y hy
+    have h := one_sub_mul_norm_sub_le (P := P.toLinearMap.toAddMonoidHom) hC.le hest happN hx hy
+    rw [hCε] at h
+    simp only [LinearMap.toAddMonoidHom_coe, ContinuousLinearMap.coe_coe] at h
+    linarith
   refine ⟨N, Metric.closedBall_mem_nhds a (by linarith), fun L hL => ?_⟩
   -- the compact box the projection lands in
   have hPmem : ∀ x, P x ∈ f'.ker := by
