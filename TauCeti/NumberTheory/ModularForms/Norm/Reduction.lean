@@ -44,7 +44,7 @@ atop Mathlib's `ModularForm.norm` coset API and this repository's `Norm/Trace` h
 `DimGenCongLevels/NormTransfer.lean`, where it is the declaration of the same name.
 -/
 
-open scoped MatrixGroups Topology
+open scoped MatrixGroups
 open Filter UpperHalfPlane
 
 namespace TauCeti.ModularForm.NormReduction
