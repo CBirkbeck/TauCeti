@@ -214,9 +214,16 @@ theorem card_stabilizer_psl_eq_one_of_orbit_ne_I_of_orbit_ne_ρ (z : ℍ)
 
 /-- **Point stabilisers stay finite at every level.** The image in `GL(2, ℝ)` of a subgroup of
 the modular group inherits finite point stabilisers from `𝒮ℒ`, which acts properly
-discontinuously on `ℍ`. Finiteness is what stops `Nat.card` of that stabiliser — the elliptic
-order `e_P` attached to a `Γ`-orbit — from being the junk value `0`, so that the weight
-`1 / e_P` carried by the general-level valence formula is meaningful. -/
+discontinuously on `ℍ`.
+
+This is finiteness of the **matrix** stabiliser, and `Nat.card` of it is *not* the elliptic order
+`e_P` that the valence formula weights by `1 / e_P`: `-I` acts trivially on `ℍ`, so when `-I ∈ Γ`
+this stabiliser contains the central kernel and its order is `2 e_P`. What finiteness buys is
+that the count is not the junk value `0` — `Nat.card` of an infinite type — which is what makes
+the central-quotient definition of `e_P` meaningful downstream.
+`card_stabilizer_eq_two_mul_card_stabilizer_psl` above is the level-one instance of that
+conversion; the level-`Γ` one, where the divisor is the part of the centre `Γ` contains rather
+than always `2`, is a separate change. -/
 instance finite_stabilizer_coe (Γ : Subgroup SL(2, ℤ)) (z : ℍ) :
     Finite (stabilizer (Γ : Subgroup (GL (Fin 2) ℝ)) z) := by
   have : Finite (stabilizer 𝒮ℒ z) := (ProperlyDiscontinuousSMul.finite_stabilizer z).to_subtype
