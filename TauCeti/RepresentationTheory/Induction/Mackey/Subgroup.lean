@@ -72,6 +72,10 @@ roadmap-specific subgroup the induction and restriction of that layer run along.
 * `TauCeti.relIndex_mackeySubgroup_conj`: that index depends only on the double coset.
 * `TauCeti.card_doubleCoset_mul_card_mackeySubgroup`: the double-coset size formula
   `|KsH| · |K ⊓ sHs⁻¹| = |K| · |H|`.
+* `TauCeti.stabilizer_smul_eq_mackeySubgroup_subgroupOf`: the same stabilizer description for an
+  arbitrary `G`-set, at a translate `s • p`.
+* `TauCeti.card_doubleCoset_mul_card_stabilizer_smul`: the size formula read at such a point,
+  `|Γ s Stab(p)| · |Stab_Γ(s • p)| = |Γ| · |Stab_G(p)|`.
 
 ## References
 
@@ -341,6 +345,46 @@ theorem relIndex_mackeySubgroup_conj {s k h : G} {H K : Subgroup G} (hk : k ∈ 
       = (MulAut.conj k • mackeySubgroup s H K).relIndex (MulAut.conj k • K) := by
         rw [mackeySubgroup_conj hk hh, Subgroup.conj_smul_eq_self_of_mem hk]
     _ = (mackeySubgroup s H K).relIndex K := Subgroup.relIndex_pointwise_smul _ _ _
+
+section Translate
+
+variable {α : Type*} [MulAction G α]
+
+/-- **The Mackey subgroup is a stabilizer, for an arbitrary action.** For a point `p` of any
+`G`-set and `s : G`, the stabilizer of the translate `s • p` in a subgroup `Γ` is the Mackey
+subgroup of `Γ` and `stabilizer G p` at `s`, read inside `Γ`.
+
+`stabilizer_eq_mackeySubgroup_subgroupOf` above is the same statement for the translation action
+of `Γ` on `G ⧸ H`. Neither implies the other: that one is stated for Mathlib's
+`mulLeftCosetsCompSubtypeVal` action on cosets, this one for the restriction of scalars
+`Subgroup.instMulAction`, and `MulAction ↥Γ (G ⧸ H)` has both. The general form is the one a sum
+over the points of an arbitrary `G`-set needs. -/
+theorem stabilizer_smul_eq_mackeySubgroup_subgroupOf (s : G) (Γ : Subgroup G) (p : α) :
+    stabilizer (↥Γ) (s • p) = (mackeySubgroup s (stabilizer G p) Γ).subgroupOf Γ := by
+  ext g
+  rw [Subgroup.mem_subgroupOf, mem_mackeySubgroup_iff, mem_stabilizer_iff, Subgroup.smul_def,
+    mem_stabilizer_iff, mul_smul, mul_smul]
+  exact ⟨fun hg => ⟨g.2, inv_smul_eq_iff.mpr hg⟩, fun hg => inv_smul_eq_iff.mp hg.2⟩
+
+/-- **The double-coset size formula at a point of an arbitrary `G`-set**:
+`|Γ s Stab(p)| · |Stab_Γ(s • p)| = |Γ| · |Stab_G(p)|`.
+
+This is `card_doubleCoset_mul_card_mackeySubgroup` with `H = stabilizer G p`, read through
+`stabilizer_smul_eq_mackeySubgroup_subgroupOf` so that the second factor is a stabilizer rather
+than a Mackey subgroup. It is the multiplicity with which a `Γ`-orbit inside the `G`-orbit of `p`
+is counted when a sum over `Γ`-cosets is regrouped into a sum over `Γ`-orbits: dividing by
+`Nat.card Γ` turns the coset count into the weight `1 / |Stab_Γ(s • p)|`.
+
+As with the formula it comes from, `Nat.card`'s convention that an infinite type has cardinality
+`0` means no finiteness hypothesis is needed. -/
+theorem card_doubleCoset_mul_card_stabilizer_smul (s : G) (Γ : Subgroup G) (p : α) :
+    Nat.card (DoubleCoset.doubleCoset s (Γ : Set G) (stabilizer G p : Set G)) *
+        Nat.card (stabilizer (↥Γ) (s • p)) = Nat.card Γ * Nat.card (stabilizer G p) := by
+  rw [stabilizer_smul_eq_mackeySubgroup_subgroupOf,
+    Nat.card_congr (Subgroup.subgroupOfEquivOfLe mackeySubgroup_le_right).toEquiv]
+  exact card_doubleCoset_mul_card_mackeySubgroup s (stabilizer G p) Γ
+
+end Translate
 
 end Orbit
 
