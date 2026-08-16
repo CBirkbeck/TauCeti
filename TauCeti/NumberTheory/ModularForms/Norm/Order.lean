@@ -77,6 +77,31 @@ end SlashInvariantForm
 
 namespace ModularForm
 
+/-- **The `𝒢`-orbit a coset of the norm sends a point to.** The factor of the norm at the class
+of `h` is `f ∣[k] h⁻¹`, so it reads `f` at `h⁻¹ • p`; this records which `𝒢`-orbit that lands
+in, as a function of the class of `h` alone.
+
+Well-definedness is the substance: a different representative is `h * g` with `g ∈ 𝒢`, and
+`(h * g)⁻¹ • p = g⁻¹ • (h⁻¹ • p)` lies in the same `𝒢`-orbit. It is what lets the norm's
+coset-indexed order sum be regrouped into a sum over `𝒢`-orbits, which is the step the
+general-level valence formula needs. -/
+noncomputable def orbitOfCosetTranslate (p : ℍ) (q : ℋ ⧸ 𝒢.subgroupOf ℋ) :
+    MulAction.orbitRel.Quotient 𝒢 ℍ :=
+  Quotient.liftOn' q (fun h ↦ Quotient.mk'' (((h : GL (Fin 2) ℝ))⁻¹ • p))
+    fun a b hab ↦ by
+      refine Quotient.sound' ?_
+      rw [MulAction.orbitRel_apply, MulAction.mem_orbit_iff]
+      exact ⟨⟨((a : GL (Fin 2) ℝ))⁻¹ * (b : GL (Fin 2) ℝ),
+        (Subgroup.mem_subgroupOf.mp (QuotientGroup.leftRel_apply.mp hab))⟩, by
+        simp [Subgroup.smul_def, mul_smul]⟩
+
+/-- Evaluating `orbitOfCosetTranslate` on the class of `h` gives the orbit of `h⁻¹ • p`. -/
+@[simp]
+lemma orbitOfCosetTranslate_mk (p : ℍ) (h : ℋ) :
+    orbitOfCosetTranslate (𝒢 := 𝒢) p (⟦h⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) =
+      Quotient.mk'' (((h : GL (Fin 2) ℝ))⁻¹ • p) :=
+  rfl
+
 variable [𝒢.IsFiniteRelIndex ℋ] [ℋ.HasDetPlusMinusOne] [ModularFormClass F 𝒢 k]
 
 /-- The vanishing order of the norm at an interior point is the sum of the vanishing orders
