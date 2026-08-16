@@ -67,16 +67,39 @@ namespace TauCeti
 
 open Matrix OnePoint
 
+section Field
+
+variable {K : Type*} [Field K] [DecidableEq K]
+
+/-- **When a Möbius image is the point at infinity.** Mathlib's `smul_some_eq_ite` gives the
+*value* of `g • (k : OnePoint K)`; this is the companion criterion for the exceptional case, which
+Mathlib does not state. -/
+@[simp]
+lemma smul_some_eq_infty_iff {g : GL (Fin 2) K} {k : K} :
+    g • (k : OnePoint K) = ∞ ↔ (g : Matrix (Fin 2) (Fin 2) K) 1 0 * k +
+      (g : Matrix (Fin 2) (Fin 2) K) 1 1 = 0 := by
+  rw [smul_some_eq_ite]
+  split_ifs with hz
+  · simp [hz]
+  · simp [hz]
+
+end Field
+
 variable {p : ℕ} [Fact p.Prime]
 
 /-- **The matrix whose Möbius action is the reindexing.** The entries of `M` are reduced mod `p`
-and permuted along the anti-diagonal, so that Mathlib's affine rule
+and reflected along the anti-diagonal, so that Mathlib's affine rule
 `k ↦ (g 0 0 * k + g 0 1) / (g 1 0 * k + g 1 1)` reads as
 `k ↦ (M 0 1 + k * M 1 1) / (M 0 0 + k * M 1 0)` — on `OnePoint (ZMod p)`, where a vanishing
 denominator sends `k` to `∞` rather than to a quotient by zero.
 
-That permutation leaves the determinant alone, so the only hypothesis is that `M` is invertible
-mod `p`. -/
+The reflection leaves the determinant alone, so the only hypothesis is invertibility mod `p`.
+
+This is stated over `ZMod p` rather than an arbitrary field **for elaboration cost, not for
+mathematical reasons**: with a generic `[Field K]` the `mkOfDetNeZero` application below exceeds
+the default heartbeat budget when instantiated at `ZMod p`, and raising `maxHeartbeats` is
+forbidden here. The reusable half of the generality is `smul_some_eq_infty_iff` above, which is
+stated for every field. -/
 noncomputable def moebiusGL (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) : GL (Fin 2) (ZMod p) :=
   Matrix.GeneralLinearGroup.mkOfDetNeZero
@@ -97,19 +120,18 @@ lemma moebiusGL_coe (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod 
 
 /-- **The pole of the reindexing.** An affine point `k` goes to `∞` exactly when the denominator
 `M 0 0 + k * M 1 0` vanishes mod `p`. Downstream arguments phrase the exceptional index as a
-divisibility, and this is the bridge to it. -/
+divisibility, and this is the bridge to it. Proved from the field-level
+`smul_some_eq_infty_iff`. -/
 @[simp]
 lemma moebiusGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) (k : ZMod p) :
     moebiusGL M h • (k : OnePoint (ZMod p)) = ∞ ↔
       ((M 0 0 : ℤ) : ZMod p) + k * ((M 1 0 : ℤ) : ZMod p) = 0 := by
-  rw [smul_some_eq_ite, moebiusGL_coe]
+  rw [smul_some_eq_infty_iff, moebiusGL_coe]
   simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_zero]
-  split_ifs with hz
-  · simp only [true_iff]
-    linear_combination hz
-  · simp only [coe_ne_infty, false_iff]
-    exact fun hk => hz (by linear_combination hk)
+  constructor
+  · intro hz; linear_combination hz
+  · intro hz; linear_combination hz
 
 /-- **The Möbius reindexing of `Fin p`.** Mathlib's action of `moebiusGL M h` on
 `OnePoint (ZMod p)` is a permutation; `Equiv.removeNone` deletes `∞` from it, patching the pole to
