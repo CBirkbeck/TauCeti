@@ -223,4 +223,34 @@ lemma finEquiv_moebiusFin_apply_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
   rw [moebiusFin_apply, RingEquiv.apply_symm_apply]
   exact Option.some_inj.mp (hnone.trans hval)
 
+/-- `ZMod.finEquiv` at an index is the natural cast of its value. Mathlib defines `finEquiv` and
+states nothing about applying it, so this is the bridge between the `Fin p` indexing and the
+`ZMod p` arithmetic the pole condition is phrased in. -/
+lemma finEquiv_apply_eq_natCast (j : Fin p) : (ZMod.finEquiv p) j = ((j : ℕ) : ZMod p) := by
+  obtain ⟨k, rfl⟩ : ∃ k, p = k + 1 :=
+    ⟨p - 1, (Nat.succ_pred_eq_of_pos (Fact.out : p.Prime).pos).symm⟩
+  exact (Fin.cast_val_eq_self j).symm
+
+/-- **The pole index is unique.** `finEquiv_moebiusFin_apply_of_eq_zero` computes the reindexing at
+an index where the denominator vanishes, but assumes such an index is given. This says there is at
+most one: if `b₀` is a pole index then an index `i` is one exactly when `i = b₀`.
+
+Stated as a divisibility over `ℤ`, which is the form the downstream Hecke sums are phrased in;
+`ZMod.intCast_zmod_eq_zero_iff_dvd` is the bridge to the `ZMod p` equation the proof uses. -/
+lemma dvd_add_mul_iff_eq_of_dvd (M : Matrix (Fin 2) (Fin 2) ℤ)
+    (h : ((M.det : ℤ) : ZMod p) ≠ 0) {b₀ : Fin p}
+    (hb₀ : (p : ℤ) ∣ (M 0 0 + (b₀ : ℕ) * M 1 0)) (i : Fin p) :
+    (p : ℤ) ∣ (M 0 0 + (i : ℕ) * M 1 0) ↔ i = b₀ := by
+  have key : ∀ j : Fin p, (p : ℤ) ∣ (M 0 0 + (j : ℕ) * M 1 0) →
+      ((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p j) + ((M 0 0 : ℤ) : ZMod p) = 0 := by
+    intro j hj
+    have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hj
+    rw [finEquiv_apply_eq_natCast]
+    push_cast at hz ⊢
+    linear_combination hz
+  refine ⟨fun hi ↦ ?_, fun hji ↦ hji ▸ hb₀⟩
+  refine (moebiusFin M h).injective ((ZMod.finEquiv p).injective ?_)
+  rw [finEquiv_moebiusFin_apply_of_eq_zero M h i (key i hi),
+    finEquiv_moebiusFin_apply_of_eq_zero M h b₀ (key b₀ hb₀)]
+
 end TauCeti
