@@ -18,9 +18,9 @@ The natural reduction map `SL₂(ℤ) → SL₂(ℤ/dℤ)` is surjective (strong
 `SL₂`; Shimura §1.6, Serre Ch. VII), and the base-change map `SL(n, R) → GL(n, S)` sends
 `-I` to `-I`.
 
-Both of those concern `±I`, and so does the third result here: over a commutative ring
-without zero divisors the centre of `SL₂` is exactly `{±I}`, the scalar form Mathlib gives
-having no other square roots of `1` to offer.
+The third result pins down `±I` itself, which is what the base-change statement moves around:
+over a commutative ring without zero divisors the centre of `SL₂` is exactly `{±I}`, the
+scalar form Mathlib gives having no other square roots of `1` to offer.
 
 The surjectivity is ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GLn/SL2Surjection.lean`, Chris Birkbeck). Prerequisite for the
@@ -65,10 +65,10 @@ variable {R : Type*} [CommRing R]
 into an alternative. The hypothesis is needed, not incidental — over `ZMod 8` the scalar `3`
 also squares to `1`, so the centre is strictly larger than `{±I}` there.
 
-Not `@[simp]`, matching the lemma it specialises: Mathlib's
-`Matrix.SpecialLinearGroup.mem_center_iff` (`Mathlib/LinearAlgebra/Matrix/SpecialLinearGroup.lean`)
-carries no attribute either, and central membership is a hypothesis one discharges rather than a
-term one normalises. -/
+`@[simp]` because the rewrite terminates: it takes a structured membership to a disjunction of
+equalities, and nothing rewrites `γ ∈ Subgroup.center _` first — Mathlib's general
+`Subgroup.mem_center_iff` is `@[to_additive]` but carries no `simp` attribute. -/
+@[simp]
 theorem mem_center_iff_eq_one_or_eq_neg_one [NoZeroDivisors R] {γ : SpecialLinearGroup (Fin 2) R} :
     γ ∈ Subgroup.center (SpecialLinearGroup (Fin 2) R) ↔ γ = 1 ∨ γ = -1 := by
   refine ⟨fun hγ ↦ ?_, ?_⟩
