@@ -23,7 +23,11 @@ slice of its own.
 ## Main results
 
 * `normEDS_mul_complEDS`: the same identity with **no hypothesis at all**, obtained from the
-  previous one by specialising from the universal parameters.
+  private nonzerodivisor form by specialising from the universal parameters.
+* `normEDS_dvd_normEDS_mul`: the divisibility it witnesses, `normEDS b c d k ∣ normEDS b c d
+  (n * k)` — Mathlib's `normEDS_dvd_normEDS_two_mul` at an arbitrary multiplier.
+* `isDvdSequence_normEDS`: the same fact as `IsDvdSequence (normEDS b c d)`, the predicate form
+  in which Mathlib's TODO states this conjunct.
 
 ## Implementation notes
 
@@ -52,12 +56,12 @@ about the sequence rather than about `ℤ`, and is the single rewrite done by ha
 Adapted from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0) at `dev/modular-curves @ 9fec8eba7652` — the revision
 `TauCetiRoadmap/EllipticCurves/README.md` pins for the NagellLutz project. Source declaration
-`normEDS_mul_complEDS_of_mem` (`:1324`), which is `private` in both — it was public here while it
-was this file's deliverable, and returned to being a step once the unconditional form landed; the
-name gains Mathlib's full `_of_mem_nonZeroDivisors` suffix. The unconditional form adapts
+`normEDS_mul_complEDS_of_mem` (`:1324`), `private` in both, the name gaining Mathlib's full
+`_of_mem_nonZeroDivisors` suffix. The unconditional form adapts
 `normEDS_mul_complEDS` (`:1339`) of that same file, under its source name. The source's divisor
-reindexing `normEDS_mul_complEDS_div` (`:1350`) is deliberately not ported: it has no consumer
-here, and it is one `Int.mul_ediv_cancel_left` rewrite from the form that is. That file's
+reindexing `normEDS_mul_complEDS_div` (`:1350`) is deliberately not ported: what consumers take
+from it is the divisibility, and that is stated directly here as `normEDS_dvd_normEDS_mul` and
+`isDvdSequence_normEDS`, so the reindexing itself would have no call site. That file's
 header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
 adapted material the upstream authorship is credited here rather than in the copyright header.
 
@@ -134,12 +138,28 @@ theorem normEDS_mul_complEDS (b c d : R) (k n : ℤ) :
   -- `universalNormEDS k` is a nonzerodivisor for every `k ≠ 0`, and specialised along `aeval`.
   rcases eq_or_ne k 0 with rfl | hk
   · simp
-  -- `universalNormEDS`'s body is unexposed, so its nonvanishing reaches this shape through the
-  -- `@[simp]` equation lemma rather than by unification; `ℤ[B, C, D]` is a domain, so
+  -- `universalNormEDS`'s body is unexposed, so its nonvanishing reaches this shape through
+  -- `universalNormEDS_def` rather than by unification; `ℤ[B, C, D]` is a domain, so
   -- `mem_nonZeroDivisors_of_ne_zero` then supplies exactly the hypothesis above.
   have hmem : normEDS (X NormEDSParam.B : MvPolynomial NormEDSParam ℤ) (X NormEDSParam.C)
       (X NormEDSParam.D) k ∈ (MvPolynomial NormEDSParam ℤ)⁰ :=
-    mem_nonZeroDivisors_of_ne_zero (by simpa using universalNormEDS_ne_zero hk)
+    mem_nonZeroDivisors_of_ne_zero
+      (by simpa only [universalNormEDS_def, ne_eq] using universalNormEDS_ne_zero hk)
   have key := congr(aeval (NormEDSParam.rec b c d)
     $(normEDS_mul_complEDS_of_mem_nonZeroDivisors hmem n))
   simpa only [map_mul, map_normEDS, map_complEDS, aeval_X] using key
+
+/-- **A normalised EDS divides itself at every multiple of the index.** This is Mathlib's
+`normEDS_dvd_normEDS_two_mul` with the doubling replaced by an arbitrary multiplier, the
+complement supplying the cofactor. -/
+theorem normEDS_dvd_normEDS_mul (b c d : R) (k n : ℤ) :
+    normEDS b c d k ∣ normEDS b c d (n * k) :=
+  ⟨_, (normEDS_mul_complEDS b c d k n).symm⟩
+
+/-- **A normalised EDS is a divisibility sequence.** This is the second conjunct of the TODO
+Mathlib records for `normEDS`, in the predicate form the TODO states it in; the first conjunct is
+`isEllipticSequence_normEDS`. -/
+theorem isDvdSequence_normEDS (b c d : R) : IsDvdSequence (normEDS b c d) := by
+  rintro k _ ⟨n, rfl⟩
+  rw [mul_comm]
+  exact normEDS_dvd_normEDS_mul b c d k n
