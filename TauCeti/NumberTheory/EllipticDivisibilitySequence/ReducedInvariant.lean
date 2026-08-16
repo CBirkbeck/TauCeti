@@ -149,8 +149,8 @@ theorem reducedInvarNum_def : reducedInvarNum b c d m =
 /-- The reduced invariant denominator, the counterpart of `reducedInvarNum`.
 
 `IsEllipticNet.invarDenom_normEDS_one_eq_reducedInvarDenom_mul` is what identifies this with
-`invarDenom (normEDS b c d) 1 m` divided by `b * c`, under the nonzerodivisor hypotheses recorded
-in the module docstring. The paragraph below motivates the shape of the split.
+`invarDenom (normEDS b c d) 1 m` divided by `b * c`, unconditionally over any commutative ring.
+The paragraph below motivates the shape of the split.
 
 `invarDenom (normEDS b c d) 1 m` is `W (m + 1) * W m * W (m - 1)`, and the divisibility
 `W k ∣ W (n * k)` witnessed by Mathlib's `complEDS` lets `b = W 2` and `c = W 3` be taken out of
@@ -162,9 +162,10 @@ case has `6 ∣ m`, so the middle factor `W m` gives up `b * c` at once through
 is split between two factors, one giving up `b` through a `2`-complement and another giving up `c`
 through a `3`-complement.
 
-The factor `normEDS b c d 5 - d ^ 2` appearing in the residues `0`, `1` and `5` is the extra
-factor the `6`-complement carries relative to the `2`- and `3`-complements used in the other
-three. It is not claimed to be a unit: over an arbitrary commutative ring nothing here proves it
+The factor `normEDS b c d 5 - d ^ 2` appearing in the residues `0`, `1` and `5` is `normEDS b c d
+6` with `b * c` removed: `WeierstrassCurve.normEDS_six` reads `W 6 = (W 5 - d ^ 2) * b * c`, so a
+residue that takes `b * c` out through the single `6`-complement is left carrying the remaining
+factor. It is not claimed to be a unit: over an arbitrary commutative ring nothing here proves it
 invertible. -/
 def reducedInvarDenom : R :=
   let C := complEDS b c d
@@ -277,7 +278,14 @@ definition its meaning.
 `normEDS b c d k`; the divisibility that `Int.ediv_mul_cancel` needs comes from `m % 6 = r`
 itself. The residues `0`, `1` and `5` additionally rewrite `normEDS b c d 6` through
 `WeierstrassCurve.normEDS_six` (`Six.lean`), which is likewise an identity rather than a
-hypothesis. -/
+hypothesis.
+
+The **priority is load-bearing**, exactly as for the numerator counterpart. `invarDenom_def` is
+itself `@[simp]`, and at equal priority it wins on this term: with a plain `@[simp]` the left-hand
+side would expand to `W (m + 1) * W m * W (m - 1)` and this lemma would never fire. At `high` it
+fires first, and because `reducedInvarDenom_def` is deliberately not `@[simp]` the result stays
+folded at `reducedInvarDenom b c d m * (b * c)`. -/
+@[simp high]
 theorem invarDenom_normEDS_one_eq_reducedInvarDenom_mul :
     invarDenom (normEDS b c d) 1 m = reducedInvarDenom b c d m * (b * c) := by
   have e : ∀ k n : ℤ, k ∣ n →
