@@ -10,10 +10,9 @@ public import Mathlib.Logic.Equiv.Option
 public import Mathlib.Topology.Compactification.OnePoint.ProjectiveLine
 
 /-!
-# The Möbius reindexing of the upper-triangular representatives
+# The Möbius permutation of `Fin p` attached to an integer matrix
 
-An integer matrix `M` whose determinant is a unit mod `p` permutes the index set `Fin p` of the
-upper-triangular representatives `!![1, b; 0, p]`, by the Möbius rule
+An integer matrix `M` whose determinant is a unit mod `p` permutes `Fin p` by the Möbius rule
 
 `b ↦ (M 0 1 + b * M 1 1) / (M 0 0 + b * M 1 0)  (mod p)`.
 
@@ -22,17 +21,19 @@ affine part: `Equiv.removeNone` deletes the point at infinity from the induced p
 patching the pole to the image of `∞`. Transporting along `ZMod.finEquiv` gives a permutation of
 `Fin p`.
 
-It is the combinatorial input to the `Γ₁(N)`-invariance of the Hecke operator: slashing the sum of
-representatives by `M` permutes the summands rather than changing them.
+Nothing here is specific to any one application. The motivating consumer is the `Γ₁(N)`-invariance
+of the Hecke operator, where `Fin p` indexes the upper-triangular representatives `!![1, b; 0, p]`
+and this permutation is what makes slashing the representative sum by `M` permute the summands
+rather than change them — but the statements below mention no Hecke notion.
 
 ## Main definitions
 
-* `HeckeRing.GL2.reindexGL`: the `GL (Fin 2) (ZMod p)` element whose action gives the rule above.
-* `HeckeRing.GL2.moebiusFin`: the reindexing, as an `Equiv.Perm (Fin p)`.
+* `TauCeti.reindexGL`: the `GL (Fin 2) (ZMod p)` element whose action gives the rule above.
+* `TauCeti.moebiusFin`: the reindexing, as an `Equiv.Perm (Fin p)`.
 
 ## Main results
 
-* `HeckeRing.GL2.reindexGL_smul_coe_eq_infty_iff`: the pole sits exactly where the denominator
+* `TauCeti.reindexGL_smul_coe_eq_infty_iff`: the pole sits exactly where the denominator
   `M 0 0 + k * M 1 0` vanishes mod `p` — the form the divisibility arguments downstream need.
 
 Injectivity is not stated separately: `moebiusFin` is an `Equiv`, so consumers use
@@ -55,7 +56,7 @@ rule is `k ↦ (g 0 0 * k + g 0 1) / (g 1 0 * k + g 1 1)` (`smul_some_eq_ite`) w
 
 public section
 
-namespace HeckeRing.GL2
+namespace TauCeti
 
 open Matrix OnePoint
 
@@ -110,4 +111,14 @@ noncomputable def moebiusFin (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ
   (ZMod.finEquiv p).toEquiv.symm.permCongr
     (Equiv.removeNone (MulAction.toPerm (reindexGL M h) : Equiv.Perm (OnePoint (ZMod p))))
 
-end HeckeRing.GL2
+/-- The characteristic equation of `moebiusFin`: consumers rewrite through this to Mathlib's
+`Equiv.removeNone` and `MulAction.toPerm` API rather than unfolding the definition. Together with
+`reindexGL_smul_coe_eq_infty_iff` (which says where the pole is) and Mathlib's `smul_some_eq_ite`
+(which gives the affine value) it determines the map at every index. -/
+lemma moebiusFin_def (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
+    haveI : NeZero p := ⟨(Fact.out : p.Prime).ne_zero⟩
+    moebiusFin M h = (ZMod.finEquiv p).toEquiv.symm.permCongr
+      (Equiv.removeNone (MulAction.toPerm (reindexGL M h) : Equiv.Perm (OnePoint (ZMod p)))) :=
+  (rfl)
+
+end TauCeti
