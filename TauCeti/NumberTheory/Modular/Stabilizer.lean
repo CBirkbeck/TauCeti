@@ -45,8 +45,6 @@ literally the `q` with `q ≠ ⟦i⟧` and `q ≠ ⟦ρ⟧`.
   other orbit.
 * `TauCeti.ModularGroup.card_stabilizer_eq_two_mul_card_stabilizer_psl`: the projective order is
   the matrix one halved.
-* `TauCeti.ModularGroup.card_stabilizer_eq_card_center_subgroupOf_mul_card_stabilizer_map`: the
-  same halving at level `Γ`, dividing by the part of the centre that `Γ` contains.
 * `TauCeti.ModularGroup.card_stabilizer_psl_I`, `TauCeti.ModularGroup.card_stabilizer_psl_ρ` and
   `TauCeti.ModularGroup.card_stabilizer_psl_eq_one_of_orbit_ne_I_of_orbit_ne_ρ`: the resulting
   elliptic orders `e_i = 2`, `e_ρ = 3` and `e_P = 1`.
@@ -179,43 +177,6 @@ theorem card_stabilizer_eq_two_mul_card_stabilizer_psl (z : ℍ) :
     Nat.card (stabilizer SL(2, ℤ) z) = 2 * Nat.card (stabilizer PSL(2, ℤ) z) := by
   rw [TauCeti.card_stabilizer_eq_card_subgroup_mul_card_stabilizer_quotient _ z
     fun g ↦ UpperHalfPlane.pslMk_smul g z, card_center]
-
-/-- **The same halving at level `Γ`, by the part of the centre that `Γ` contains.** For a
-subgroup `Γ ≤ SL(2, ℤ)`, the matrix stabiliser of `z` in `Γ` is
-`Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ)` times the stabiliser of `z` in the image
-of `Γ` in `PSL(2, ℤ)`. That second factor is the elliptic order `e_P` the general-level valence
-formula weights by `1 / e_P`.
-
-The divisor is the centre read inside `Γ` — equivalently `Γ ⊓ Subgroup.center SL(2, ℤ)`. Since
-that centre is `{±1}` (`Matrix.SpecialLinearGroup.mem_center_iff_eq_one_or_eq_neg_one`, in
-`LinearAlgebra/Matrix/SpecialLinearGroup/Basic.lean`, together with `card_center` above), the
-divisor is `2` when `-1 ∈ Γ` and `1` otherwise; so for a `Γ` avoiding `-1` the matrix and
-projective orders agree. Neither of those two evaluations is proved here.
-
-`card_stabilizer_eq_two_mul_card_stabilizer_psl` is the case `Γ = ⊤`, and is deliberately left
-proved directly from the quotient-map transport rather than derived from this: at `⊤` the three
-transports it would need — `Subgroup.topEquiv`, the centre inside `⊤`, and `⊤.map (mk' _) = ⊤` —
-come to more than its own three-line proof. -/
-theorem card_stabilizer_eq_card_center_subgroupOf_mul_card_stabilizer_map (Γ : Subgroup SL(2, ℤ))
-    (z : ℍ) : Nat.card (stabilizer Γ z) = Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) *
-      Nat.card (stabilizer (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) z) := by
-  have hmem : ∀ g : Γ, QuotientGroup.mk' (Subgroup.center SL(2, ℤ)) (g : SL(2, ℤ)) ∈
-      Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ))) := fun g ↦ Subgroup.mem_map_of_mem _ g.2
-  have hker : (((QuotientGroup.mk' (Subgroup.center SL(2, ℤ))).comp Γ.subtype).codRestrict
-      (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) hmem).ker =
-      (Subgroup.center SL(2, ℤ)).subgroupOf Γ := by
-    ext x
-    -- `MonoidHom.ker_codRestrict` will not `rw` here: its `{S} [SetLike S N]` binders leave the
-    -- pattern unmatchable, so the coercion is unfolded by hand instead
-    rw [MonoidHom.mem_ker, Subgroup.mem_subgroupOf, ← OneMemClass.coe_eq_one]
-    exact QuotientGroup.eq_one_iff (x : SL(2, ℤ))
-  -- the transported map is the quotient map restricted to `Γ` and corestricted to its image:
-  -- onto by construction, and it agrees with the `SL(2, ℤ)`-action at `z` because `pslMk_smul`
-  -- is `rfl`
-  rw [TauCeti.card_stabilizer_eq_card_ker_mul_card_stabilizer (G := Γ) (α := ℍ)
-    (((QuotientGroup.mk' (Subgroup.center SL(2, ℤ))).comp Γ.subtype).codRestrict _ hmem)
-    (by rintro ⟨q, γ, hγ, rfl⟩; exact ⟨⟨γ, hγ⟩, rfl⟩) z (fun g ↦ UpperHalfPlane.pslMk_smul _ _),
-    hker]
 
 -- Neither elliptic order below is `@[simp]`, tested: `MulAction.mem_stabilizer_iff` rewrites
 -- `Nat.card (stabilizer G z)` into a `Nat.card` of a subtype underneath, so the left-hand side is
