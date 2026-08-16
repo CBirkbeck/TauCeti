@@ -17,9 +17,9 @@ is torsion-free as a module over either of them.
 
 ## Main results
 
-* `TauCeti.Isogeny.toIntermediateRing_injective` and
-  `TauCeti.Isogeny.pullbackToIntermediateRing_injective`: the two corestrictions of
-  `IntermediateRing/Basic.lean` are injective.
+* `TauCeti.Isogeny.pullbackToIntermediateRing_injective`: the corestricted pullback is injective.
+  Its source-side companion `toIntermediateRing_injective` needs nothing from this module, so it
+  lives in `IntermediateRing/Basic.lean` beside the map it is about.
 * `TauCeti.Isogeny.isTorsionFree_intermediateRing_source` and
   `TauCeti.Isogeny.isTorsionFree_intermediateRing_target`: the corresponding
   `Module.IsTorsionFree` facts.
@@ -28,14 +28,21 @@ is torsion-free as a module over either of them.
 
 `ClassGroup.extendedRelNormHom` (`RingTheory/ClassGroup/ExtendedRelNorm.lean`) is stated over a
 module-finite extension of Dedekind domains and asks for `Module.IsTorsionFree` on **both** sides
-of the extension it norms along. Instantiating it at an isogeny means supplying exactly these two
-facts for `φ.intermediateRing`, which is what `Isogeny.pushClass` does.
+of the extension it norms along. Nothing in this repository supplies those two arguments for
+`φ.intermediateRing`, so that declaration cannot currently be instantiated at an isogeny at all;
+these two results are what close that gap.
+
+The planned consumer is `Isogeny.pushClass`, the class-group pushforward named at
+`TauCetiRoadmap/EllipticCurves/README.md:1092`. It does **not** exist in this repository yet —
+it is a roadmap target, not a declaration — so nothing here depends on it.
 
 ## Design
 
-**Two absolute lemmas, then two relative ones, and the split is not cosmetic.** Injectivity of
-`toIntermediateRing` and `pullbackToIntermediateRing` mentions nothing but those two maps, so it
-is stated outright. `Module.IsTorsionFree R M` names the base `R`, so it is a statement *relative
+**Absolute lemmas before relative ones, and the split is not cosmetic.** Injectivity of
+`toIntermediateRing` and `pullbackToIntermediateRing` mentions nothing but those two maps, so each
+is stated outright — and, being absolute, each belongs beside its own map rather than here, which
+is why only the pullback one is in this file: its proof is the only half needing
+`Isogeny/FunctionField.lean`. `Module.IsTorsionFree R M` names the base `R`, so it is *relative
 to* an algebra structure a caller has chosen; there is no canonical one to install here, because
 registering the pullback-induced structure globally is the diamond `IntermediateRing/Basic.lean`
 exists to avoid. A relative statement therefore has to accept the structure, which is why the two
@@ -43,8 +50,8 @@ exists to avoid. A relative statement therefore has to accept the structure, whi
 `isScalarTower_intermediateRing`, and the same distinction that keeps
 `isIntegrallyClosed_intermediateRing` hypothesis-free while `moduleFinite_intermediateRing` is not.
 
-Consumers that already have the injectivity can skip the typeclass dance entirely and use the
-first two lemmas with `Module.isTorsionFree_iff_algebraMap_injective` themselves.
+Consumers that already have the injectivity can skip the typeclass dance entirely and pair the two
+`*_injective` lemmas with `Module.isTorsionFree_iff_algebraMap_injective` themselves.
 
 **`theorem`, not `instance`.** Registering these would mean registering the algebra structures
 they are stated over, which is the diamond again; callers supply them locally, as they already do
@@ -76,17 +83,20 @@ namespace Isogeny
 
 variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 
-/-- **The source coordinate ring embeds in the intermediate ring.** The corestriction is of
-`algebraMap W₁.CoordinateRing W₁.FunctionField`, which is injective because the function field is
-by definition the fraction field of the coordinate ring. -/
-theorem toIntermediateRing_injective (φ : Isogeny W₁ W₂) :
-    Function.Injective φ.toIntermediateRing := fun x y hxy ↦
-  IsFractionRing.injective W₁.CoordinateRing W₁.FunctionField <| by
-    simpa only [coe_toIntermediateRing] using congrArg Subtype.val hxy
-
 /-- **The target coordinate ring embeds in the intermediate ring**, through the pullback. This is
 `pullback_injective` corestricted; the pullback of an isogeny is injective because `φ^*x₂` is
-transcendental over the base field. -/
+transcendental over the base field.
+
+The source-side companion, `toIntermediateRing_injective`, needs nothing from this module and
+lives in `IntermediateRing/Basic.lean` beside the map it is about — where, being in the defining
+file, it is `RingHom.injective_codRestrict.mpr` outright.
+
+That generic criterion is *not* available here. It has to see that
+`pullbackToIntermediateRing` is a `codRestrict`, and this module only imports the definition,
+whose body is not exposed; the elaborator reports `Function.Injective ⇑(φ.pullback.codRestrict ?m
+?m)` against the expected `Function.Injective ⇑φ.pullbackToIntermediateRing` and cannot close the
+gap. The exported `@[simp]` lemma `coe_pullbackToIntermediateRing` is what crosses the boundary
+instead, so injectivity is transported along the coercion rather than read off the construction. -/
 theorem pullbackToIntermediateRing_injective (φ : Isogeny W₁ W₂) :
     Function.Injective φ.pullbackToIntermediateRing := fun x y hxy ↦
   φ.pullback_injective <| by
