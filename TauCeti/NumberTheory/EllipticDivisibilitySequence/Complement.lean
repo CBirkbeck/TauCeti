@@ -163,3 +163,15 @@ theorem isDvdSequence_normEDS (b c d : R) : IsDvdSequence (normEDS b c d) := by
   rintro k _ ⟨n, rfl⟩
   rw [mul_comm]
   exact normEDS_dvd_normEDS_mul b c d k n
+
+/-- **The complement at a divisor.** When `k ∣ n`, the `k`-complement at index `n / k` multiplies
+`normEDS b c d k` back up to `normEDS b c d n`. This is the divisor-indexed form of
+`normEDS_mul_complEDS` (`Complement.lean`), which is stated at `n * k`; `Int.ediv_mul_cancel` is
+what converts between the two. Unconditional, like the identity it rests on.
+
+Its consumers are the six residue branches of
+`IsEllipticNet.invarDenom_normEDS_one_eq_reducedInvarDenom_mul`, each of which reindexes one
+complement this way. -/
+theorem normEDS_mul_complEDS_div (k n : ℤ) (hn : k ∣ n) :
+    normEDS b c d k * complEDS b c d k (n / k) = normEDS b c d n := by
+  rw [normEDS_mul_complEDS, Int.ediv_mul_cancel hn]
