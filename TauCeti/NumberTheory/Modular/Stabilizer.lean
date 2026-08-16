@@ -216,6 +216,13 @@ theorem card_stabilizer_psl_eq_one_of_orbit_ne_I_of_orbit_ne_ρ (z : ℍ)
 the modular group inherits finite point stabilisers from `𝒮ℒ`, which acts properly
 discontinuously on `ℍ`.
 
+Every step is Mathlib's, all of it David Loeffler's: `properlyDiscontinuousSL2ZRange`
+(`Mathlib/NumberTheory/ModularForms/ProperlyDiscontinuous.lean`) for `𝒮ℒ`,
+`Subgroup.properlyDiscontinuousSMul_of_le`
+(`Mathlib/Topology/Algebra/Group/DiscontinuousSubgroup.lean`) to descend that along `↑Γ ≤ 𝒮ℒ`,
+and `ProperlyDiscontinuousSMul.finite_stabilizer` to read off finiteness. What is added here is
+only the instance, so that typeclass search finds it at the general level.
+
 This is finiteness of the **matrix** stabiliser, and `Nat.card` of it is *not* the elliptic order
 `e_P` that the valence formula weights by `1 / e_P`: `-I` acts trivially on `ℍ`, so when `-I ∈ Γ`
 this stabiliser contains the central kernel and its order is `2 e_P`. What finiteness buys is
@@ -226,8 +233,11 @@ conversion; the level-`Γ` one, where the divisor is the part of the centre `Γ`
 than always `2`, is a separate change. -/
 instance finite_stabilizer_coe (Γ : Subgroup SL(2, ℤ)) (z : ℍ) :
     Finite (stabilizer (Γ : Subgroup (GL (Fin 2) ℝ)) z) := by
-  have : Finite (stabilizer 𝒮ℒ z) := (ProperlyDiscontinuousSMul.finite_stabilizer z).to_subtype
-  exact finite_stabilizer_of_le (Subgroup.map_le_range (Matrix.SpecialLinearGroup.mapGL ℝ) Γ) z
+  have : ProperlyDiscontinuousSMul (Γ : Subgroup (GL (Fin 2) ℝ)) ℍ :=
+    Subgroup.properlyDiscontinuousSMul_of_le
+      (inferInstanceAs (ProperlyDiscontinuousSMul 𝒮ℒ ℍ))
+      (Subgroup.map_le_range (Matrix.SpecialLinearGroup.mapGL ℝ) Γ)
+  exact (ProperlyDiscontinuousSMul.finite_stabilizer z).to_subtype
 
 end ModularGroup
 
