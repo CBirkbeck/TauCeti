@@ -12,8 +12,15 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Completion
 
 A rational subset `U = R(T/s)` of `Spa(A,A⁺)` has many presentations `(T,s)`, and the roadmap's
 Layer 3.1 asks for the canonical isomorphism between the localisations they give, together with
-compatibility for three presentations. This file supplies both, in the form that depends only on
-the comparison maps being compatible with the structure maps from `A`.
+compatibility for three presentations. **This file does not discharge that target.** It supplies
+the conditional half: *given* comparison maps compatible with the structure maps from `A`, they
+are mutually inverse and compose correctly.
+
+What is missing is the passage from equality of two rational subsets to the existence of those
+maps — the step Mathlib-side `rationalSubset_subset_rationalSubset_iff` stops short of, in its own
+words "leaving the passage from those facts to invertibility of `s` and power-boundedness of `t/s`
+in the coordinate ring as a separate, genuinely algebraic step" (Wedhorn §8.2). Until that exists,
+nothing here can be instantiated at two presentations of one subset.
 
 Everything here is uniqueness, in the sense that no comparison map is constructed: given maps in
 both directions that commute with the structure maps, they are mutually inverse, and given three
