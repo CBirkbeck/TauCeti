@@ -8,12 +8,9 @@ module
 public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
 public import TauCeti.GroupTheory.GroupAction.Stabilizer
 public import TauCeti.NumberTheory.Modular.Orbits
--- the coercion `Subgroup SL(2, ℤ) → Subgroup (GL (Fin 2) ℝ)` is named by a statement below
-public import Mathlib.NumberTheory.ModularForms.ArithmeticSubgroups
 
--- these serve only proof bodies, so they stay off the public surface
+-- these two serve only the private centre computation, so they stay off the public surface
 import Mathlib.LinearAlgebra.SpecialLinearGroup
-import Mathlib.NumberTheory.ModularForms.ProperlyDiscontinuous
 import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
 /-!
@@ -39,8 +36,6 @@ literally the `q` with `q ≠ ⟦i⟧` and `q ≠ ⟦ρ⟧`.
 
 * `TauCeti.ModularGroup.finite_stabilizer`: every point stabiliser is finite, so the elliptic
   order is defined at every point of `ℍ`.
-* `TauCeti.ModularGroup.finite_stabilizer_coe`: the same at every level — the image in
-  `GL(2, ℝ)` of any subgroup of `SL(2, ℤ)` has finite point stabilisers.
 * `TauCeti.ModularGroup.card_stabilizer_I` and `TauCeti.ModularGroup.card_stabilizer_ρ`: the
   orders `4` and `6` at the two elliptic points themselves.
 * `TauCeti.ModularGroup.card_stabilizer_of_orbit_eq_I` and
@@ -211,33 +206,6 @@ theorem card_stabilizer_psl_eq_one_of_orbit_ne_I_of_orbit_ne_ρ (z : ℍ)
   have h := card_stabilizer_eq_two_mul_card_stabilizer_psl z
   rw [card_stabilizer_eq_two_of_orbit_ne_I_of_orbit_ne_ρ z hI hρ] at h
   omega
-
-/-- **Point stabilisers stay finite at every level.** The image in `GL(2, ℝ)` of a subgroup of
-the modular group inherits finite point stabilisers from `𝒮ℒ`, which acts properly
-discontinuously on `ℍ`.
-
-Every step is Mathlib's, all of it David Loeffler's: `properlyDiscontinuousSL2ZRange`
-(`Mathlib/NumberTheory/ModularForms/ProperlyDiscontinuous.lean`) for `𝒮ℒ`,
-`Subgroup.properlyDiscontinuousSMul_of_le`
-(`Mathlib/Topology/Algebra/Group/DiscontinuousSubgroup.lean`) to descend that along `↑Γ ≤ 𝒮ℒ`,
-and `ProperlyDiscontinuousSMul.finite_stabilizer` to read off finiteness. What is added here is
-only the instance, so that typeclass search finds it at the general level.
-
-This is finiteness of the **matrix** stabiliser, and `Nat.card` of it is *not* the elliptic order
-`e_P` that the valence formula weights by `1 / e_P`: `-I` acts trivially on `ℍ`, so when `-I ∈ Γ`
-this stabiliser contains the central kernel and its order is `2 e_P`. What finiteness buys is
-that the count is not the junk value `0` — `Nat.card` of an infinite type — which is what makes
-the central-quotient definition of `e_P` meaningful downstream.
-`card_stabilizer_eq_two_mul_card_stabilizer_psl` above is the level-one instance of that
-conversion; the level-`Γ` one, where the divisor is the part of the centre `Γ` contains rather
-than always `2`, is a separate change. -/
-instance finite_stabilizer_coe (Γ : Subgroup SL(2, ℤ)) (z : ℍ) :
-    Finite (stabilizer (Γ : Subgroup (GL (Fin 2) ℝ)) z) := by
-  have : ProperlyDiscontinuousSMul (Γ : Subgroup (GL (Fin 2) ℝ)) ℍ :=
-    Subgroup.properlyDiscontinuousSMul_of_le
-      (inferInstanceAs (ProperlyDiscontinuousSMul 𝒮ℒ ℍ))
-      (Subgroup.map_le_range (Matrix.SpecialLinearGroup.mapGL ℝ) Γ)
-  exact (ProperlyDiscontinuousSMul.finite_stabilizer z).to_subtype
 
 end ModularGroup
 
