@@ -145,12 +145,12 @@ subgroup of `SL(2, ℤ)` and `N` the centre: there the divisor measures how much
 Evaluating that divisor is a fact about the particular `Γ` and is not proved here. -/
 theorem card_stabilizer_eq_card_subgroupOf_mul_card_stabilizer_map (N : Subgroup G) [N.Normal]
     [MulAction (G ⧸ N) α] (Γ : Subgroup G) (a : α)
-    (hcompat : ∀ g : G, (QuotientGroup.mk g : G ⧸ N) • a = g • a) :
+    (hcompat : ∀ g : Γ, (QuotientGroup.mk (g : G) : G ⧸ N) • a = (g : G) • a) :
     Nat.card (MulAction.stabilizer Γ a) = Nat.card (N.subgroupOf Γ) *
       Nat.card (MulAction.stabilizer (Γ.map (QuotientGroup.mk' N)) a) := by
   rw [card_stabilizer_eq_card_ker_mul_card_stabilizer ((QuotientGroup.mk' N).subgroupMap Γ)
-    (MonoidHom.subgroupMap_surjective _ _) a fun g ↦ hcompat (g : G),
-    Subgroup.ker_subgroupMap, QuotientGroup.ker_mk']
+    (MonoidHom.subgroupMap_surjective _ _) a hcompat, Subgroup.ker_subgroupMap,
+    QuotientGroup.ker_mk']
 
 end TauCeti
 
