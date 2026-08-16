@@ -178,9 +178,10 @@ lemma mem_posDetInt_iff {g : GL (Fin n) ℚ} :
   simp [posDetInt, Submonoid.mem_inf, Matrix.mem_glpos,
     Matrix.GeneralLinearGroup.val_det_apply]
 
-/-- `Δ` forgets to the positive-determinant subgroup. `posDetInt` is a meet, so this is one
-projection of it — but the meet is not visible outside this file (`posDetInt` is not `@[expose]`),
-so consumers that need only positivity, and not integrality, must go through this lemma. -/
+/-- `posDetInt n` is contained in the positive-determinant submonoid, forgetting integrality.
+`posDetInt n` is defined as a meet, so this is one projection of it — but the meet is not visible
+outside this file (`posDetInt` is not `@[expose]`), so consumers that need only positivity, and
+not integrality, must go through this lemma. -/
 lemma posDetInt_le_glpos : posDetInt n ≤ (Matrix.GLPos (Fin n) ℚ).toSubmonoid := inf_le_right
 
 end PosDetInt
