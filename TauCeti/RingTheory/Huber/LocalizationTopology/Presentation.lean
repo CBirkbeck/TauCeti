@@ -41,6 +41,12 @@ single application of one of them.
 * `TauCeti.Huber.PairOfDefinition.eq_comp_of_comp_toCompletionLoc_eq_three`: compatibility for
   three presentations — the comparison from the first to the third is the composite through the
   second.
+* `TauCeti.Huber.PairOfDefinition.presentationRingEquiv_toRingHom` and
+  `…_symm_toRingHom`: the characteristic equations — the isomorphism is the forward map it was
+  built from, and its inverse is the backward one, so it introduces nothing new.
+* `TauCeti.Huber.PairOfDefinition.continuous_presentationRingEquiv` and
+  `…_toRingHom_comp_toCompletionLoc`: it is continuous, and compatible with the structure maps
+  from `A` — the property that determines it.
 
 ## What this file does not do
 
@@ -174,6 +180,105 @@ theorem eq_comp_of_comp_toCompletionLoc_eq_three [IsTopologicalRing A]
   have _ := isTopologicalRing_locUniformSpace P T'' s'' S'' hden''
   intro g h k hg hh hk hgc hhc hkc
   exact eq_comp_of_comp_toCompletionLoc_eq P T s S hden _ _ g hg hgc h hh hhc k hk hkc
+
+/-- **The comparison isomorphism is the map it was built from.** The characteristic equation of
+`presentationRingEquiv`: it does not introduce a new map, it packages `g` together with the
+inverse supplied by `h`. -/
+@[simp]
+theorem presentationRingEquiv_toRingHom [IsTopologicalRing A]
+    (P : PairOfDefinition A) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S)
+    (T' : Finset A) (s' : A)
+    (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s' S']
+    (hden' : HasDenominatorPower P T' s' S') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    ∀ (g : UniformSpace.Completion S →+* UniformSpace.Completion S')
+      (h : UniformSpace.Completion S' →+* UniformSpace.Completion S)
+      (hg : Continuous g) (hh : Continuous h)
+      (hgc : g.comp (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden')
+      (hhc : h.comp (toCompletionLoc P T' s' S' hden') = toCompletionLoc P T s S hden),
+      ((presentationRingEquiv P T s S hden T' s' S' hden' g h hg hh hgc hhc).toRingHom) = g := by
+  intro g h hg hh hgc hhc
+  rfl
+
+/-- The inverse of the comparison isomorphism is the backward map it was built from. -/
+@[simp]
+theorem presentationRingEquiv_symm_toRingHom [IsTopologicalRing A]
+    (P : PairOfDefinition A) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S)
+    (T' : Finset A) (s' : A)
+    (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s' S']
+    (hden' : HasDenominatorPower P T' s' S') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    ∀ (g : UniformSpace.Completion S →+* UniformSpace.Completion S')
+      (h : UniformSpace.Completion S' →+* UniformSpace.Completion S)
+      (hg : Continuous g) (hh : Continuous h)
+      (hgc : g.comp (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden')
+      (hhc : h.comp (toCompletionLoc P T' s' S' hden') = toCompletionLoc P T s S hden),
+      ((presentationRingEquiv P T s S hden T' s' S' hden' g h hg hh hgc hhc).symm.toRingHom)
+        = h := by
+  intro g h hg hh hgc hhc
+  rfl
+
+/-- The comparison isomorphism is continuous, being `g`. -/
+theorem continuous_presentationRingEquiv [IsTopologicalRing A]
+    (P : PairOfDefinition A) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S)
+    (T' : Finset A) (s' : A)
+    (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s' S']
+    (hden' : HasDenominatorPower P T' s' S') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    ∀ (g : UniformSpace.Completion S →+* UniformSpace.Completion S')
+      (h : UniformSpace.Completion S' →+* UniformSpace.Completion S)
+      (hg : Continuous g) (hh : Continuous h)
+      (hgc : g.comp (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden')
+      (hhc : h.comp (toCompletionLoc P T' s' S' hden') = toCompletionLoc P T s S hden),
+      Continuous (presentationRingEquiv P T s S hden T' s' S' hden' g h hg hh hgc hhc) := by
+  intro g h hg hh hgc hhc
+  exact hg
+
+/-- The comparison isomorphism is compatible with the structure maps from `A`, which is the
+property that determines it. -/
+theorem presentationRingEquiv_toRingHom_comp_toCompletionLoc [IsTopologicalRing A]
+    (P : PairOfDefinition A) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S)
+    (T' : Finset A) (s' : A)
+    (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s' S']
+    (hden' : HasDenominatorPower P T' s' S') :
+    letI := locUniformSpace P T s S hden
+    letI := isUniformAddGroup_locUniformSpace P T s S hden
+    letI := isTopologicalRing_locUniformSpace P T s S hden
+    letI := locUniformSpace P T' s' S' hden'
+    letI := isUniformAddGroup_locUniformSpace P T' s' S' hden'
+    letI := isTopologicalRing_locUniformSpace P T' s' S' hden'
+    ∀ (g : UniformSpace.Completion S →+* UniformSpace.Completion S')
+      (h : UniformSpace.Completion S' →+* UniformSpace.Completion S)
+      (hg : Continuous g) (hh : Continuous h)
+      (hgc : g.comp (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden')
+      (hhc : h.comp (toCompletionLoc P T' s' S' hden') = toCompletionLoc P T s S hden),
+      ((presentationRingEquiv P T s S hden T' s' S' hden' g h hg hh hgc hhc).toRingHom).comp
+        (toCompletionLoc P T s S hden) = toCompletionLoc P T' s' S' hden' := by
+  intro g h hg hh hgc hhc
+  exact hgc
 
 end PairOfDefinition
 
