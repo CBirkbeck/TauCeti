@@ -51,18 +51,16 @@ notion.
 
 * `TauCeti.moebiusGL_smul_some` and `TauCeti.moebiusGL_smul_infty`: the two values of the action,
   in the entries of `M`. The second is what `Equiv.removeNone` splices in at the pole.
-* `TauCeti.moebiusGL_smul_some_eq_infty_iff`: the pole sits exactly where the denominator
-  `M 0 0 + k * M 1 0` vanishes — the form the divisibility arguments downstream need. It is
-  derived from `OnePoint.smul_some_eq_infty_iff`, which this file adds to Mathlib's action API in
-  `TauCeti/Topology/Compactification/OnePoint/ProjectiveLine.lean`; the two value lemmas come
-  straight from Mathlib's `smul_some_eq_ite` / `smul_infty_eq_ite`.
+The pole criterion itself is `OnePoint.smul_some_eq_infty_iff`, which this file adds to Mathlib's
+action API in `TauCeti/Topology/Compactification/OnePoint/ProjectiveLine.lean`; the two value
+lemmas come straight from Mathlib's `smul_some_eq_ite` / `smul_infty_eq_ite`.
 * `TauCeti.finEquiv_moebiusFin_apply_of_ne_zero` and
   `TauCeti.finEquiv_moebiusFin_apply_of_eq_zero`: the two evaluation branches on `Fin p`, read
   back through `ZMod.finEquiv` — the affine quotient where the denominator does not vanish, and
   the image of `∞` at the single index where it does.
-* `TauCeti.moebiusFin_apply`: the underlying characteristic equation the two branches are proved
-  from, which is how a consumer reaches the value lemmas above without unfolding a body that is
-  sealed across the module boundary.
+These two are the elimination API for `moebiusFin`: its body is sealed across the module
+boundary, so `unfold` is not available to a consumer, and the equation they are proved from is
+private scaffold rather than public surface.
 
 Injectivity is not stated separately: `moebiusFin` is an `Equiv`, so consumers use
 `Equiv.injective`.
@@ -120,26 +118,9 @@ section Action
 -- assumption, and is stated without one.
 variable [DecidableEq K]
 
-/-- **The pole of the reindexing.** An affine point `k` goes to `∞` exactly when the denominator
-`M 0 0 + k * M 1 0` vanishes. Downstream arguments phrase the exceptional index as a
-divisibility, and this is the bridge to it. Proved from `smul_some_eq_infty_iff`.
-
-Deliberately **not** `@[simp]`: with `smul_some_eq_infty_iff` and `moebiusGL_coe` both simp
-lemmas, simp already reduces this left-hand side — to `M 1 0 * k + M 0 0 = 0`, the orientation
-Mathlib's `smul_some_eq_ite` produces. This lemma exists to offer the other orientation,
-`M 0 0 + k * M 1 0 = 0`, which is the one the divisibility arguments downstream are phrased in;
-tagging it would put it out of simp normal form. -/
-lemma moebiusGL_smul_some_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) K) (h : M.det ≠ 0) (k : K) :
-    moebiusGL M h • (k : OnePoint K) = ∞ ↔ M 0 0 + k * M 1 0 = 0 := by
-  rw [smul_some_eq_infty_iff, moebiusGL_coe]
-  simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_zero]
-  constructor
-  · intro hz; linear_combination hz
-  · intro hz; linear_combination hz
-
 /-- **The value at an affine point**, in the entries of `M`. Together with `moebiusGL_smul_infty`
 this is the whole action: `Equiv.removeNone` chooses between the two according to whether this
-`ite` takes its first branch, which is what `moebiusGL_smul_some_eq_infty_iff` decides.
+`ite` takes its first branch, which is what `OnePoint.smul_some_eq_infty_iff` decides.
 
 Not `@[simp]`, matching Mathlib's deliberate choice for `smul_some_eq_ite` / `smul_infty_eq_ite`:
 rewriting to an `ite` pre-empts the pole criterion rather than helping it. -/
@@ -179,11 +160,11 @@ noncomputable def moebiusFin (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ
 `Equiv.removeNone` of Mathlib's action, conjugated along `ZMod.finEquiv`; reading it this way
 strips the conjugation and leaves a statement the value lemmas above apply to directly
 (`moebiusGL_smul_some` off the pole, `moebiusGL_smul_infty` at it, with
-`moebiusGL_smul_some_eq_infty_iff` deciding which).
+`OnePoint.smul_some_eq_infty_iff` deciding which).
 
 This is what a consumer uses: the body of `moebiusFin` is sealed across the module boundary, so
 `unfold` is not available to it. -/
-lemma moebiusFin_apply (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0)
+private lemma moebiusFin_apply (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0)
     (b : Fin p) :
     moebiusFin M h b = (ZMod.finEquiv p).symm
       (Equiv.removeNone (MulAction.toPerm
@@ -192,6 +173,7 @@ lemma moebiusFin_apply (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZM
   simp [moebiusFin, Equiv.permCongr_apply]
 /-- **The reindexing off the pole.** Where the denominator does not vanish, the index goes to the
 affine Möbius value, read back through `ZMod.finEquiv`. -/
+@[simp]
 lemma finEquiv_moebiusFin_apply_of_ne_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) (b : Fin p)
     (hb : ((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 0 : ℤ) : ZMod p) ≠ 0) :
@@ -214,6 +196,7 @@ lemma finEquiv_moebiusFin_apply_of_ne_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
 /-- **The reindexing at the pole.** At the single index where the denominator vanishes, the value
 is the image of `∞`. The denominator's leading entry cannot also vanish there: if it did the
 determinant would vanish mod `p`, so the quotient below is not a division by zero. -/
+@[simp]
 lemma finEquiv_moebiusFin_apply_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) (b : Fin p)
     (hb : ((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 0 : ℤ) : ZMod p) = 0) :
