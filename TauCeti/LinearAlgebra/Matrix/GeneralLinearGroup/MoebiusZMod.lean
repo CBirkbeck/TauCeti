@@ -28,6 +28,10 @@ affine part: `Equiv.removeNone` deletes the point at infinity from the induced p
 patching the pole to the image of `∞`. Transporting along `ZMod.finEquiv` gives a permutation of
 `Fin p`.
 
+The `GL` element and its action are set up over an **arbitrary field**; only the passage to
+`Fin p` needs `ZMod p`, and the reduction of `M` enters there through
+`det_map_intCast_ne_zero`.
+
 Nothing here is specific to any one application. The motivating consumer is the `Γ₁(N)`-invariance
 of the Hecke operator, where `Fin p` indexes the upper-triangular representatives `!![1, b; 0, p]`
 and this permutation is what makes slashing the representative sum by `M` permute the summands
@@ -35,18 +39,22 @@ rather than change them — but the statements below mention no Hecke notion.
 
 ## Main definitions
 
-* `TauCeti.moebiusGL`: the `GL (Fin 2) (ZMod p)` element whose action gives the rule above.
+* `TauCeti.moebiusGL`: the `GL (Fin 2) K` element, over any field, whose action gives the rule
+  above.
 * `TauCeti.moebiusFin`: the reindexing, as an `Equiv.Perm (Fin p)`.
 
 ## Main results
 
 * `TauCeti.smul_some_eq_infty_iff`: over an arbitrary field, a Möbius image is `∞` exactly when
   the denominator vanishes. Mathlib states the *value* of the action (`smul_some_eq_ite`) but not
-  this criterion; the `ZMod p` statements below are derived from it.
-* `TauCeti.moebiusGL_smul_coe` and `TauCeti.moebiusGL_smul_infty`: the two values of the action,
+  this criterion; everything below is derived from it.
+* `TauCeti.moebiusGL_smul_some` and `TauCeti.moebiusGL_smul_infty`: the two values of the action,
   in the entries of `M`. The second is what `Equiv.removeNone` splices in at the pole.
-* `TauCeti.moebiusGL_smul_coe_eq_infty_iff`: the pole sits exactly where the denominator
-  `M 0 0 + k * M 1 0` vanishes mod `p` — the form the divisibility arguments downstream need.
+* `TauCeti.moebiusGL_smul_some_eq_infty_iff`: the pole sits exactly where the denominator
+  `M 0 0 + k * M 1 0` vanishes — the form the divisibility arguments downstream need.
+* `TauCeti.moebiusFin_apply`: the value at an index, with the `ZMod.finEquiv` conjugation
+  cancelled, which is how a consumer reaches the value lemmas above without unfolding a body
+  that is sealed across the module boundary.
 
 Injectivity is not stated separately: `moebiusFin` is an `Equiv`, so consumers use
 `Equiv.injective`.
@@ -74,7 +82,35 @@ open Matrix OnePoint
 
 section Field
 
-variable {K : Type*} [Field K] [DecidableEq K]
+variable {K : Type*} [Field K]
+
+/-- **The matrix whose Möbius action is the reindexing.** The entries of `M` are reflected along
+the anti-diagonal, so that Mathlib's affine rule
+`k ↦ (g 0 0 * k + g 0 1) / (g 1 0 * k + g 1 1)` reads as
+`k ↦ (M 0 1 + k * M 1 1) / (M 0 0 + k * M 1 0)` — on `OnePoint K`, where a vanishing denominator
+sends `k` to `∞` rather than to a quotient by zero.
+
+The reflection leaves the determinant alone, so the only hypothesis is invertibility. -/
+noncomputable def moebiusGL (M : Matrix (Fin 2) (Fin 2) K) (h : M.det ≠ 0) : GL (Fin 2) K :=
+  Matrix.GeneralLinearGroup.mkOfDetNeZero !![M 1 1, M 0 1; M 1 0, M 0 0]
+    (by
+      rw [Matrix.det_fin_two_of]
+      rw [Matrix.det_fin_two] at h
+      intro hz
+      exact h (by linear_combination hz))
+
+@[simp]
+lemma moebiusGL_coe (M : Matrix (Fin 2) (Fin 2) K) (h : M.det ≠ 0) :
+    (moebiusGL M h : Matrix (Fin 2) (Fin 2) K) = !![M 1 1, M 0 1; M 1 0, M 0 0] := (rfl)
+
+section Action
+
+-- `[DecidableEq K]` is a hypothesis of the *statements* below, not of their proofs: Mathlib's
+-- `instGLAction` — the action they are about — is itself declared under
+-- `[Field K] [DecidableEq K]` (`Topology/Compactification/OnePoint/ProjectiveLine.lean:124`), so
+-- `g • (k : OnePoint K)` does not elaborate without it. `moebiusGL` above needs no such
+-- assumption, and is stated without one.
+variable [DecidableEq K]
 
 /-- **When a Möbius image is the point at infinity.** Mathlib's `smul_some_eq_ite` gives the
 *value* of `g • (k : OnePoint K)`; this is the companion criterion for the exceptional case, which
@@ -88,55 +124,17 @@ lemma smul_some_eq_infty_iff {g : GL (Fin 2) K} {k : K} :
   · simp [hz]
   · simp [hz]
 
-end Field
-
-variable {p : ℕ} [Fact p.Prime]
-
-/-- **The matrix whose Möbius action is the reindexing.** The entries of `M` are reduced mod `p`
-and reflected along the anti-diagonal, so that Mathlib's affine rule
-`k ↦ (g 0 0 * k + g 0 1) / (g 1 0 * k + g 1 1)` reads as
-`k ↦ (M 0 1 + k * M 1 1) / (M 0 0 + k * M 1 0)` — on `OnePoint (ZMod p)`, where a vanishing
-denominator sends `k` to `∞` rather than to a quotient by zero.
-
-The reflection leaves the determinant alone, so the only hypothesis is invertibility mod `p`.
-
-This is stated over `ZMod p` rather than an arbitrary field **for elaboration cost, not for
-mathematical reasons**: with a generic `[Field K]` the `mkOfDetNeZero` application below exceeds
-the default heartbeat budget when instantiated at `ZMod p`, and raising `maxHeartbeats` is
-forbidden here. The reusable half of the generality is `smul_some_eq_infty_iff` above, which is
-stated for every field. -/
-noncomputable def moebiusGL (M : Matrix (Fin 2) (Fin 2) ℤ)
-    (h : ((M.det : ℤ) : ZMod p) ≠ 0) : GL (Fin 2) (ZMod p) :=
-  Matrix.GeneralLinearGroup.mkOfDetNeZero
-    !![((M 1 1 : ℤ) : ZMod p), ((M 0 1 : ℤ) : ZMod p);
-       ((M 1 0 : ℤ) : ZMod p), ((M 0 0 : ℤ) : ZMod p)]
-    (by
-      rw [Matrix.det_fin_two_of]
-      rw [Matrix.det_fin_two] at h
-      push_cast at h
-      intro hz
-      exact h (by linear_combination hz))
-
-@[simp]
-lemma moebiusGL_coe (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
-    (moebiusGL M h : Matrix (Fin 2) (Fin 2) (ZMod p)) =
-      !![((M 1 1 : ℤ) : ZMod p), ((M 0 1 : ℤ) : ZMod p);
-         ((M 1 0 : ℤ) : ZMod p), ((M 0 0 : ℤ) : ZMod p)] := (rfl)
-
 /-- **The pole of the reindexing.** An affine point `k` goes to `∞` exactly when the denominator
-`M 0 0 + k * M 1 0` vanishes mod `p`. Downstream arguments phrase the exceptional index as a
-divisibility, and this is the bridge to it. Proved from the field-level
-`smul_some_eq_infty_iff`.
+`M 0 0 + k * M 1 0` vanishes. Downstream arguments phrase the exceptional index as a
+divisibility, and this is the bridge to it. Proved from `smul_some_eq_infty_iff`.
 
 Deliberately **not** `@[simp]`: with `smul_some_eq_infty_iff` and `moebiusGL_coe` both simp
 lemmas, simp already reduces this left-hand side — to `M 1 0 * k + M 0 0 = 0`, the orientation
 Mathlib's `smul_some_eq_ite` produces. This lemma exists to offer the other orientation,
 `M 0 0 + k * M 1 0 = 0`, which is the one the divisibility arguments downstream are phrased in;
 tagging it would put it out of simp normal form. -/
-lemma moebiusGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
-    (h : ((M.det : ℤ) : ZMod p) ≠ 0) (k : ZMod p) :
-    moebiusGL M h • (k : OnePoint (ZMod p)) = ∞ ↔
-      ((M 0 0 : ℤ) : ZMod p) + k * ((M 1 0 : ℤ) : ZMod p) = 0 := by
+lemma moebiusGL_smul_some_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) K) (h : M.det ≠ 0) (k : K) :
+    moebiusGL M h • (k : OnePoint K) = ∞ ↔ M 0 0 + k * M 1 0 = 0 := by
   rw [smul_some_eq_infty_iff, moebiusGL_coe]
   simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_zero]
   constructor
@@ -145,45 +143,63 @@ lemma moebiusGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
 
 /-- **The value at an affine point**, in the entries of `M`. Together with `moebiusGL_smul_infty`
 this is the whole action: `Equiv.removeNone` chooses between the two according to whether this
-`ite` takes its first branch, which is what `moebiusGL_smul_coe_eq_infty_iff` decides. -/
+`ite` takes its first branch, which is what `moebiusGL_smul_some_eq_infty_iff` decides. -/
 @[simp]
-lemma moebiusGL_smul_coe (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0)
-    (k : ZMod p) :
-    moebiusGL M h • (k : OnePoint (ZMod p)) =
-      if ((M 1 0 : ℤ) : ZMod p) * k + ((M 0 0 : ℤ) : ZMod p) = 0 then ∞
-      else ((((M 1 1 : ℤ) : ZMod p) * k + ((M 0 1 : ℤ) : ZMod p)) /
-        (((M 1 0 : ℤ) : ZMod p) * k + ((M 0 0 : ℤ) : ZMod p)) : ZMod p) := by
+lemma moebiusGL_smul_some (M : Matrix (Fin 2) (Fin 2) K) (h : M.det ≠ 0) (k : K) :
+    moebiusGL M h • (k : OnePoint K) =
+      if M 1 0 * k + M 0 0 = 0 then ∞
+      else ((M 1 1 * k + M 0 1) / (M 1 0 * k + M 0 0) : K) := by
   rw [smul_some_eq_ite, moebiusGL_coe]
   simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_zero]
 
 /-- **The value at the point at infinity**, in the entries of `M`. This is the value
-`Equiv.removeNone` splices in at the pole, so it is the ingredient `moebiusGL_smul_coe` and the
+`Equiv.removeNone` splices in at the pole, so it is the ingredient `moebiusGL_smul_some` and the
 pole criterion do not supply. -/
 @[simp]
-lemma moebiusGL_smul_infty (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
-    moebiusGL M h • (∞ : OnePoint (ZMod p)) =
-      if ((M 1 0 : ℤ) : ZMod p) = 0 then ∞
-      else ((((M 1 1 : ℤ) : ZMod p)) / (((M 1 0 : ℤ) : ZMod p)) : ZMod p) := by
+lemma moebiusGL_smul_infty (M : Matrix (Fin 2) (Fin 2) K) (h : M.det ≠ 0) :
+    moebiusGL M h • (∞ : OnePoint K) =
+      if M 1 0 = 0 then ∞ else ((M 1 1 / M 1 0 : K)) := by
   rw [smul_infty_eq_ite, moebiusGL_coe]
   simp only [Matrix.of_apply, Matrix.cons_val', Matrix.cons_val_one, Matrix.cons_val_zero]
 
-/-- **The Möbius reindexing of `Fin p`.** Mathlib's action of `moebiusGL M h` on
-`OnePoint (ZMod p)` is a permutation; `Equiv.removeNone` deletes `∞` from it, patching the pole to
-the image of `∞`, and `Equiv.permCongr` along `ZMod.finEquiv` transports the result to `Fin p`. -/
+end Action
+
+end Field
+
+variable {p : ℕ} [Fact p.Prime]
+
+/-- Reducing an integer matrix mod `p` preserves invertibility, in the form `moebiusGL` needs.
+Proved by the direct `2 × 2` determinant computation rather than through `RingHom.map_det`, whose
+statement is oriented the other way and does not match `Matrix.map` spelled with a bare cast. -/
+lemma det_map_intCast_ne_zero {M : Matrix (Fin 2) (Fin 2) ℤ}
+    (h : ((M.det : ℤ) : ZMod p) ≠ 0) : (M.map (Int.cast : ℤ → ZMod p)).det ≠ 0 := by
+  rw [Matrix.det_fin_two] at h ⊢
+  push_cast at h
+  simpa [Matrix.map_apply] using h
+
+/-- **The Möbius reindexing of `Fin p`.** Mathlib's action of `moebiusGL` on `OnePoint (ZMod p)`
+is a permutation; `Equiv.removeNone` deletes `∞` from it, patching the pole to the image of `∞`,
+and `Equiv.permCongr` along `ZMod.finEquiv` transports the result to `Fin p`. -/
 noncomputable def moebiusFin (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
     Equiv.Perm (Fin p) :=
   (ZMod.finEquiv p).toEquiv.symm.permCongr
-    (Equiv.removeNone (MulAction.toPerm (moebiusGL M h) : Equiv.Perm (OnePoint (ZMod p))))
+    (Equiv.removeNone (MulAction.toPerm
+      (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (det_map_intCast_ne_zero h)) :
+        Equiv.Perm (OnePoint (ZMod p))))
 
-/-- The characteristic equation of `moebiusFin`: consumers rewrite through this to Mathlib's
-`Equiv.removeNone` and `MulAction.toPerm` API rather than unfolding the definition. Together with
-`moebiusGL_smul_coe_eq_infty_iff` (where the pole is) and Mathlib's `smul_some_eq_ite` (the affine
-value) this gives the map away from the pole. Computing the value *at* the pole needs
-`Equiv.removeNone_none` together with `OnePoint.smul_infty_eq_ite`, since that value is
-`removeNone`'s fallback `e none` rather than anything the affine rule sees. -/
-lemma moebiusFin_def (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0) :
-    moebiusFin M h = (ZMod.finEquiv p).toEquiv.symm.permCongr
-      (Equiv.removeNone (MulAction.toPerm (moebiusGL M h) : Equiv.Perm (OnePoint (ZMod p)))) :=
-  (rfl)
+/-- **The reindexing at an index**, with the conjugation cancelled. `moebiusFin` is
+`Equiv.removeNone` of Mathlib's action, conjugated along `ZMod.finEquiv`; reading it this way
+strips the conjugation and leaves a statement the value lemmas above apply to directly
+(`moebiusGL_smul_some` off the pole, `moebiusGL_smul_infty` at it, with
+`moebiusGL_smul_some_eq_infty_iff` deciding which).
 
+This is what a consumer uses: the body of `moebiusFin` is sealed across the module boundary, so
+`unfold` is not available to it. -/
+lemma moebiusFin_apply (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0)
+    (b : Fin p) :
+    moebiusFin M h b = (ZMod.finEquiv p).symm
+      (Equiv.removeNone (MulAction.toPerm
+        (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (det_map_intCast_ne_zero h)) :
+          Equiv.Perm (OnePoint (ZMod p))) ((ZMod.finEquiv p) b)) := by
+  simp [moebiusFin, Equiv.permCongr_apply]
 end TauCeti
