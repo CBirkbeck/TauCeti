@@ -40,8 +40,6 @@ numbers, which is the group-theoretic half of the statement that the permutation
 * `TauCeti.orbitRel_smul_iff_mem_doubleCoset_stabilizer`: the same for an arbitrary action —
   two translates of a point share a `K`-orbit exactly when the translating elements share a
   `K`-`stabilizer` double coset.
-* `TauCeti.mem_stabilizer_subgroup_iff`: membership in a subgroup's stabilizer, read in the
-  ambient group.
 * `TauCeti.orbitOfCosetTranslate_eq_iff`: the fibres of that index map are the orbits of
   `stabilizer ℋ p` on `ℋ ⧸ 𝒢.subgroupOf ℋ`, so a fibre count is an orbit-stabiliser count.
 * `TauCeti.preimage_orbit_eq_doubleCoset`: the double coset `KsH` is the preimage of the
@@ -225,12 +223,6 @@ theorem orbitOfCosetTranslate_mk {𝒢 ℋ : Subgroup G} (p : α) (h : ℋ) :
     orbitOfCosetTranslate (𝒢 := 𝒢) p (⟦h⟧ : ℋ ⧸ 𝒢.subgroupOf ℋ) = Quotient.mk'' ((h : G)⁻¹ • p) :=
   (rfl)
 
-/-- Membership in the stabilizer of a subgroup, read in the ambient group. Stated so that proofs
-do not have to rely on the two memberships happening to unfold to the same thing. -/
-theorem mem_stabilizer_subgroup_iff {ℋ : Subgroup G} (p : α) (s : ℋ) :
-    s ∈ stabilizer ℋ p ↔ (s : G) ∈ stabilizer G p := by
-  rw [mem_stabilizer_iff, mem_stabilizer_iff, Subgroup.smul_def]
-
 /-- **The fibres of `orbitOfCosetTranslate` are the `stabilizer ℋ p`-orbits.** Two classes have
 the same image exactly when they lie in one orbit of the stabilizer of `p`, acting on the coset
 space by left translation.
@@ -260,21 +252,22 @@ theorem orbitOfCosetTranslate_eq_iff {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ
           exact hy2 ▸ mul_mem (mul_mem b.2 (inv_mem (hle (SetLike.mem_coe.1 hx)))) (inv_mem a.2)
         have ha : (a : G) = y⁻¹ * (b : G) * x⁻¹ := by
           rw [← inv_inv (a : G), hr]; simp [mul_assoc]
-        refine ⟨⟨(⟨y, hyH⟩ : ℋ)⁻¹, inv_mem ((mem_stabilizer_subgroup_iff p _).2
+        refine ⟨⟨(⟨y, hyH⟩ : ℋ)⁻¹, inv_mem ((Subgroup.mem_subgroupOf (H := stabilizer G p)).2
           (SetLike.mem_coe.1 hy))⟩, ?_⟩
-        -- the action is left translation, so the goal is a coset equality with witness `x⁻¹`
-        change (((⟨y, hyH⟩ : ℋ)⁻¹ * b : ℋ) : ℋ ⧸ 𝒢.subgroupOf ℋ) = (a : ℋ ⧸ 𝒢.subgroupOf ℋ)
-        rw [QuotientGroup.eq, Subgroup.mem_subgroupOf]
+        -- the action is left translation (the idiom at `mem_doubleCoset_iff_mk_mem_orbit`), so
+        -- the goal is a coset equality, with witness `x⁻¹`
+        rw [compHom_smul_def (Subgroup.subtype (stabilizer ℋ p)), Subgroup.coe_subtype,
+          Quotient.smul_coe, smul_eq_mul, QuotientGroup.eq, Subgroup.mem_subgroupOf]
         have hval : ((((⟨y, hyH⟩ : ℋ)⁻¹ * b)⁻¹ * a : ℋ) : G) = x⁻¹ := by
           rw [Subgroup.coe_mul, Subgroup.coe_inv, Subgroup.coe_mul, Subgroup.coe_inv, ha]
           simp [mul_assoc]
         exact hval ▸ SetLike.mem_coe.1 (inv_mem hx)
       · rintro ⟨s, hs⟩
-        rw [show (s • (b : ℋ ⧸ 𝒢.subgroupOf ℋ)) = (((s : ℋ) * b : ℋ) :
-          ℋ ⧸ 𝒢.subgroupOf ℋ) from rfl, QuotientGroup.eq, Subgroup.mem_subgroupOf] at hs
+        rw [compHom_smul_def (Subgroup.subtype (stabilizer ℋ p)), Subgroup.coe_subtype,
+          Quotient.smul_coe, smul_eq_mul, QuotientGroup.eq, Subgroup.mem_subgroupOf] at hs
         refine ⟨(((((s : ℋ) * b)⁻¹ * a : ℋ)⁻¹ : ℋ) : G), SetLike.mem_coe.2 (inv_mem hs),
           ((s : ℋ) : G)⁻¹,
-          SetLike.mem_coe.2 (inv_mem ((mem_stabilizer_subgroup_iff p _).1 s.2)), ?_⟩
+          SetLike.mem_coe.2 (inv_mem ((Subgroup.mem_subgroupOf (H := stabilizer G p)).1 s.2)), ?_⟩
         rw [Subgroup.coe_inv, Subgroup.coe_mul, Subgroup.coe_inv, Subgroup.coe_mul]
         simp [mul_assoc]
 
