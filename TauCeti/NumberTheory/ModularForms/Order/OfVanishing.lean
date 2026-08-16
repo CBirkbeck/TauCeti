@@ -222,6 +222,20 @@ lemma orderOfVanishingAt_slash (g : ℍ → ℂ) {γ : GL (Fin 2) ℝ}
     meromorphicOrderAt_mul_of_ne_zero h_an h_ne, meromorphicOrderAt_comp_smul hdet,
     Function.comp_def]
 
+/-- **Every element of `𝒮ℒ` has positive determinant**: it is the image of a matrix of
+determinant `1`.
+
+This is the hypothesis `orderOfVanishingAt_slash` and `orderOfVanishingAt_smul` below take, and
+every modular call site discharges it the same way. Keying it on membership in `𝒮ℒ` rather than
+on `Matrix.SpecialLinearGroup.mapGL` covers both shapes the call sites come in: a direct image
+`mapGL ℝ γ` (via `MonoidHom.mem_range.mpr ⟨γ, rfl⟩`) and an element of the image of a subgroup
+`Γ ≤ SL(2, ℤ)` (via `Subgroup.map_le_range`). -/
+theorem det_pos_of_mem_slGL {g : GL (Fin 2) ℝ} (hg : g ∈ 𝒮ℒ) :
+    0 < (g : Matrix (Fin 2) (Fin 2) ℝ).det := by
+  obtain ⟨γ, rfl⟩ := hg
+  rw [← Matrix.GeneralLinearGroup.val_det_apply, Matrix.SpecialLinearGroup.det_mapGL]
+  exact one_pos
+
 /-- The vanishing order of a slash-invariant form is constant along the action of any
 positive-determinant element of the group. -/
 -- Not a `simp` lemma: the subgroup `Γ` occurs only in the hypotheses, so `simpNF` rejects
