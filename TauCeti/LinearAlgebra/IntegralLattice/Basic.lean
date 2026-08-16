@@ -4,9 +4,9 @@ Released under Apache 2.0 license as described in the file LICENSE.
 -/
 module
 
-public import Mathlib.Algebra.Module.Lattice
 public import Mathlib.LinearAlgebra.BilinearForm.DualLattice
 public import Mathlib.LinearAlgebra.Matrix.BilinearForm
+public import TauCeti.Algebra.Module.Lattice
 
 /-!
 # Integral symmetric lattices
@@ -27,6 +27,7 @@ The form restricts to a canonical `ℤ`-bilinear form on the carrier.  Conversel
 ## Main definitions
 
 * `TauCeti.IntegralLattice`: an integral symmetric lattice in a rational vector space.
+* `TauCeti.IntegralLattice.IsNondegenerate`: the nondegeneracy mixin for an integral lattice.
 * `TauCeti.IntegralLattice.form_mem_one`: the rational form takes integer values on lattice vectors.
 * `TauCeti.IntegralLattice.rationalBasis`: the ambient `ℚ`-basis extending a chosen `ℤ`-basis of
   the carrier.
@@ -35,8 +36,11 @@ The form restricts to a canonical `ℤ`-bilinear form on the carrier.  Conversel
   integrality proof.
 * `TauCeti.IntegralLattice.ofBasis`: the lattice spanned by a basis on which a given form is
   integral.
+* `TauCeti.IntegralLattice.ofBasis.basis`: the canonical carrier basis induced by a rational basis.
 * `TauCeti.IntegralLattice.ofGramMatrix`: the lattice and form determined by an integral
   symmetric Gram matrix.
+* `TauCeti.IntegralLattice.ofGramMatrix.basis`: the canonical carrier basis induced by a rational
+  basis.
 -/
 
 public section
@@ -82,6 +86,11 @@ instance : CoeFun (IntegralLattice V) fun _ ↦ V → V → ℚ :=
 @[simp]
 theorem coe_form_apply (L : IntegralLattice V) (x y : V) : L x y = L.form x y := rfl
 
+/-- The flipped rational bilinear form of an integral lattice equals the form itself. -/
+@[simp]
+theorem form_flip (L : IntegralLattice V) : L.form.flip = L.form :=
+  LinearMap.ext fun x ↦ LinearMap.ext fun y ↦ L.isSymm.eq y x
+
 /-- The value of the rational form on lattice vectors is integral. -/
 theorem form_mem_one (L : IntegralLattice V) (x y : L) :
     L.form x y ∈ (1 : Submodule ℤ ℚ) :=
@@ -96,6 +105,10 @@ noncomputable def rationalBasis (L : IntegralLattice V) :
 theorem rationalBasis_apply (L : IntegralLattice V) (i : Module.Free.ChooseBasisIndex ℤ L) :
     L.rationalBasis i = (Module.Free.chooseBasis ℤ L i : V) :=
   Basis.extendOfIsLattice_apply ℚ (Module.Free.chooseBasis ℤ L) i
+
+/-- The ambient rational vector space of an integral lattice is finite-dimensional. -/
+theorem finiteDimensional (L : IntegralLattice V) : FiniteDimensional ℚ V :=
+  Module.Finite.of_basis L.rationalBasis
 
 /-- The `ℤ`-finrank of the carrier of an integral lattice equals the `ℚ`-finrank of the ambient
 space. -/
@@ -112,6 +125,18 @@ theorem ext {L M : IntegralLattice V} (hcarrier : L.carrier = M.carrier)
   cases hcarrier
   cases hform
   rfl
+
+/-- An integral lattice is nondegenerate when its ambient rational bilinear form is
+nondegenerate. This is a mixin rather than a field of `IntegralLattice`, so degenerate lattices
+remain objects of the same type. -/
+class IsNondegenerate (L : IntegralLattice V) : Prop where
+  /-- The rational bilinear form has trivial kernel. -/
+  nondegenerate : L.form.Nondegenerate
+
+/-- The ambient form of a nondegenerate integral lattice is nondegenerate. -/
+theorem form_nondegenerate (L : IntegralLattice V) [L.IsNondegenerate] :
+    L.form.Nondegenerate :=
+  IsNondegenerate.nondegenerate
 
 /-- The integral bilinear form induced on the carrier.
 
@@ -201,18 +226,17 @@ theorem ofBasis_form (b : Basis ι ℚ V) (B : LinearMap.BilinForm ℚ V) (hB : 
     (hint : ∀ i j, B (b i) (b j) ∈ (1 : Submodule ℤ ℚ)) :
     (ofBasis b B hB hint).form = B := (rfl)
 
-/-- The canonical embedding of the basis vector `b i` into the carrier of `ofBasis b B hB hint`. -/
-noncomputable def ofBasis.basisElem (b : Basis ι ℚ V) (B : LinearMap.BilinForm ℚ V) (hB : B.IsSymm)
-    (hint : ∀ i j, B (b i) (b j) ∈ (1 : Submodule ℤ ℚ)) (i : ι) :
-    ofBasis b B hB hint :=
-  ⟨b i, by rw [ofBasis_carrier]; exact Submodule.subset_span (Set.mem_range_self i)⟩
+/-- The canonical carrier basis of `ofBasis b B hB hint` induced by `b`. -/
+noncomputable def ofBasis.basis (b : Basis ι ℚ V) (B : LinearMap.BilinForm ℚ V) (hB : B.IsSymm)
+    (hint : ∀ i j, B (b i) (b j) ∈ (1 : Submodule ℤ ℚ)) :
+    Basis ι ℤ (ofBasis b B hB hint) :=
+  b.restrictScalars ℤ
 
 @[simp]
-theorem ofBasis.coe_basisElem (b : Basis ι ℚ V) (B : LinearMap.BilinForm ℚ V) (hB : B.IsSymm)
+theorem ofBasis.coe_basis (b : Basis ι ℚ V) (B : LinearMap.BilinForm ℚ V) (hB : B.IsSymm)
     (hint : ∀ i j, B (b i) (b j) ∈ (1 : Submodule ℤ ℚ)) (i : ι) :
-    (ofBasis.basisElem b B hB hint i : V) = b i := by
-  unfold ofBasis.basisElem
-  rfl
+    (ofBasis.basis b B hB hint i : V) = b i :=
+  b.restrictScalars_apply ℤ i
 
 end Basis
 
@@ -242,18 +266,16 @@ theorem ofGramMatrix_form (b : Basis ι ℚ V) (G : Matrix ι ι ℤ) (hG : G.Is
     (ofGramMatrix b G hG).form = Matrix.toBilin b (G.map (algebraMap ℤ ℚ)) := (rfl)
 
 open Classical in
-/-- The canonical embedding of the basis vector `b i` into the carrier of
-`ofGramMatrix b G hG`. -/
-noncomputable def ofGramMatrix.basisElem (b : Basis ι ℚ V) (G : Matrix ι ι ℤ) (hG : G.IsSymm)
-    (i : ι) : ofGramMatrix b G hG :=
-  ⟨b i, by rw [ofGramMatrix_carrier]; exact Submodule.subset_span (Set.mem_range_self i)⟩
+/-- The canonical carrier basis of `ofGramMatrix b G hG` induced by `b`. -/
+noncomputable def ofGramMatrix.basis (b : Basis ι ℚ V) (G : Matrix ι ι ℤ) (hG : G.IsSymm) :
+    Basis ι ℤ (ofGramMatrix b G hG) :=
+  b.restrictScalars ℤ
 
 open Classical in
 @[simp]
-theorem ofGramMatrix.coe_basisElem (b : Basis ι ℚ V) (G : Matrix ι ι ℤ) (hG : G.IsSymm)
-    (i : ι) : (ofGramMatrix.basisElem b G hG i : V) = b i := by
-  unfold ofGramMatrix.basisElem
-  rfl
+theorem ofGramMatrix.coe_basis (b : Basis ι ℚ V) (G : Matrix ι ι ℤ) (hG : G.IsSymm) (i : ι) :
+    (ofGramMatrix.basis b G hG i : V) = b i :=
+  b.restrictScalars_apply ℤ i
 
 open Classical in
 /-- Evaluating the induced integral form of `ofGramMatrix` on embedded basis vectors recovers
@@ -261,11 +283,11 @@ the corresponding entry of the Gram matrix. -/
 @[simp]
 theorem integralForm_ofGramMatrix_apply (b : Basis ι ℚ V) (G : Matrix ι ι ℤ) (hG : G.IsSymm)
     (i j : ι) :
-    (ofGramMatrix b G hG).integralForm (ofGramMatrix.basisElem b G hG i)
-      (ofGramMatrix.basisElem b G hG j) = G i j := by
+    (ofGramMatrix b G hG).integralForm (ofGramMatrix.basis b G hG i)
+      (ofGramMatrix.basis b G hG j) = G i j := by
   apply Int.cast_injective (α := ℚ)
-  rw [integralForm_cast, ofGramMatrix_form, ofGramMatrix.coe_basisElem,
-    ofGramMatrix.coe_basisElem, ← LinearMap.BilinForm.toMatrix_apply (b := b),
+  rw [integralForm_cast, ofGramMatrix_form, ofGramMatrix.coe_basis,
+    ofGramMatrix.coe_basis, ← LinearMap.BilinForm.toMatrix_apply (b := b),
     LinearMap.BilinForm.toMatrix_toBilin, Matrix.map_apply]
   rfl
 
