@@ -73,7 +73,8 @@ statement hypothesis-free.
 The numerator needs none of this because its cancellation is an identity between polynomial
 expressions, proved by `ring` from the complement recurrences rather than through a division.
 
-No divisor-form lemma is involved. Each residue reduces `W k * complEDS b c d k (n / k)` to
+The divisor form is `normEDS_mul_complEDS_div` below. Each residue reduces `W k * complEDS b c d k
+(n / k)` to
 `W n` by `normEDS_mul_complEDS` — which is stated at `W (n * k)` — followed
 by `Int.ediv_mul_cancel` on the divisibility that `m % 6 = r` supplies. The factor
 `W 5 - d ^ 2` carried by the residues `0`, `1` and `5` is `W 6` with `b * c` removed, which is
@@ -95,8 +96,13 @@ Ported from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in 
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`),
 declarations `invarNum_normEDS`, `redInvarNum`, `compl₂EDS_eq_redInvarNum_sub`,
 `invarNum_eq_redInvarNum_mul` and `map_redInvarNum` for the numerator, and `redInvarDenom`,
-`redInvarDenom_zero`, `redInvarDenom_one`, `redInvarDenom_two` and `map_redInvarDenom` for the
-denominator — the source's own names, which this file respells with `reduced` written out.
+`redInvarDenom_zero`, `redInvarDenom_one`, `redInvarDenom_two`, `map_redInvarDenom` and
+`invarDenom_eq_redInvarDenom_mul` for the denominator — the source's own names, which this file
+respells with `reduced` written out.
+
+Three declarations here are **not** from that file: the six `reducedInvarDenom_of_emod_eq_*`
+branch lemmas and `normEDS_mul_complEDS_div` have no counterpart in the source, which eliminates
+the split inline and reaches the divisor form through a chain this repository does not carry.
 
 The source's `invarDenom_eq_redInvarDenom_mul`, which identifies the denominator formula as the
 cancelled quotient, is ported here as
@@ -111,8 +117,10 @@ in the copyright header. J. Xu is acknowledged for the surrounding LutzNagell de
 authors `Universal.lean` and co-authors `DivisionPolynomialOmega.lean` at the same revision — as
 context for this port, not as an author of the declarations above.
 
-The same declarations sit in **Mathlib PR #13057**, the upstreaming of that AINTLIB file, so they
-are portable under this project's rule and deduplicate if and when it lands.
+The **numerator** declarations sit in **Mathlib PR #13057**, the upstreaming of that AINTLIB
+file, so they are portable under this project's rule and deduplicate if and when it lands. That
+PR does not carry the denominator side, so nothing added here for the denominator is covered by
+it — the deduplication claim scopes to the numerator alone.
 They are spelt with Mathlib's later names (`compl₂EDS → complEDS₂`, `IsEllSequence →
 IsEllipticSequence`), which #13057 predates, and follow `ComplAux.lean` in keeping the
 `normEDS`-family declarations in the **root** namespace where Mathlib keeps `normEDS`, `complEDS`
@@ -273,6 +281,18 @@ theorem complEDS₂_eq_reducedInvarNum_sub :
       reducedInvarNum b c d m - normEDS b c d m ^ 3 * b - 2 * complEDS₂Aux b c d m := by
   rw [reducedInvarNum_def]; ring
 
+/-- **The complement at a divisor.** When `k ∣ n`, the `k`-complement at index `n / k` multiplies
+`normEDS b c d k` back up to `normEDS b c d n`. This is the divisor-indexed form of
+`normEDS_mul_complEDS` (`Complement.lean`), which is stated at `n * k`; `Int.ediv_mul_cancel` is
+what converts between the two. Unconditional, like the identity it rests on.
+
+Its consumers are the six residue branches of
+`IsEllipticNet.invarDenom_normEDS_one_eq_reducedInvarDenom_mul`, each of which reindexes one
+complement this way. -/
+theorem normEDS_mul_complEDS_div (k n : ℤ) (hn : k ∣ n) :
+    normEDS b c d k * complEDS b c d k (n / k) = normEDS b c d n := by
+  rw [normEDS_mul_complEDS, Int.ediv_mul_cancel hn]
+
 namespace IsEllipticNet
 
 /-- **The cancellation `reducedInvarDenom` is named for**: the invariant denominator of a
@@ -295,25 +315,28 @@ folded at `reducedInvarDenom b c d m * (b * c)`. -/
 @[simp high]
 theorem invarDenom_normEDS_one_eq_reducedInvarDenom_mul :
     invarDenom (normEDS b c d) 1 m = reducedInvarDenom b c d m * (b * c) := by
-  have e : ∀ k n : ℤ, k ∣ n →
-      normEDS b c d k * complEDS b c d k (n / k) = normEDS b c d n := fun k n hn ↦ by
-    rw [normEDS_mul_complEDS, Int.ediv_mul_cancel hn]
   have hcase : m % 6 = 0 ∨ m % 6 = 1 ∨ m % 6 = 2 ∨ m % 6 = 3 ∨ m % 6 = 4 ∨ m % 6 = 5 := by omega
   rw [invarDenom_def]
   rcases hcase with h | h | h | h | h | h
-  · rw [reducedInvarDenom_of_emod_eq_zero b c d m h, ← e 6 m (by omega),
+  · rw [reducedInvarDenom_of_emod_eq_zero b c d m h,
+    ← normEDS_mul_complEDS_div b c d 6 m (by omega),
       WeierstrassCurve.normEDS_six]
     ring
-  · rw [reducedInvarDenom_of_emod_eq_one b c d m h, ← e 6 (m - 1) (by omega),
+  · rw [reducedInvarDenom_of_emod_eq_one b c d m h,
+    ← normEDS_mul_complEDS_div b c d 6 (m - 1) (by omega),
       WeierstrassCurve.normEDS_six]
     ring
-  · rw [reducedInvarDenom_of_emod_eq_two b c d m h, ← e 3 (m + 1) (by omega),
-      ← e 2 m (by omega), normEDS_two, normEDS_three]; ring
-  · rw [reducedInvarDenom_of_emod_eq_three b c d m h, ← e 3 m (by omega),
-      ← e 2 (m - 1) (by omega), normEDS_two, normEDS_three]; ring
-  · rw [reducedInvarDenom_of_emod_eq_four b c d m h, ← e 3 (m - 1) (by omega),
-      ← e 2 m (by omega), normEDS_two, normEDS_three]; ring
-  · rw [reducedInvarDenom_of_emod_eq_five b c d m h, ← e 6 (m + 1) (by omega),
+  · rw [reducedInvarDenom_of_emod_eq_two b c d m h,
+    ← normEDS_mul_complEDS_div b c d 3 (m + 1) (by omega),
+      ← normEDS_mul_complEDS_div b c d 2 m (by omega), normEDS_two, normEDS_three]; ring
+  · rw [reducedInvarDenom_of_emod_eq_three b c d m h,
+    ← normEDS_mul_complEDS_div b c d 3 m (by omega),
+      ← normEDS_mul_complEDS_div b c d 2 (m - 1) (by omega), normEDS_two, normEDS_three]; ring
+  · rw [reducedInvarDenom_of_emod_eq_four b c d m h,
+    ← normEDS_mul_complEDS_div b c d 3 (m - 1) (by omega),
+      ← normEDS_mul_complEDS_div b c d 2 m (by omega), normEDS_two, normEDS_three]; ring
+  · rw [reducedInvarDenom_of_emod_eq_five b c d m h,
+    ← normEDS_mul_complEDS_div b c d 6 (m + 1) (by omega),
       WeierstrassCurve.normEDS_six]
     ring
 
