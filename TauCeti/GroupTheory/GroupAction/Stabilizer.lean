@@ -11,7 +11,7 @@ public import Mathlib.GroupTheory.QuotientGroup.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
 
 /-!
-# Cardinality of stabilisers under the two standard transports
+# Stabilisers under the standard transports: order and finiteness
 
 A count defined through a point stabiliser is useful only alongside the rules for moving it.
 Three such rules are recorded here, all consequences of Mathlib machinery rather than new
