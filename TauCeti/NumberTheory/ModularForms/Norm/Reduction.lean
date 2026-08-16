@@ -29,6 +29,8 @@ of `Γ` as a strict period at level one.
   translates, characterized by `restProd_apply` and bounded at `Im z → ∞`.
 * `TauCeti.ModularForm.NormReduction.strictWidthInfty_mem_strictPeriods_levelOne`: the
   strict cusp width of `G Γ` is a strict period of the full level-one group.
+* `TauCeti.ModularForm.NormReduction.valueAtInfty_norm_eq_zero_of_valueAtInfty_eq_zero`:
+  vanishing at the cusp `∞` transfers from a form to its level-one norm.
 
 ## References
 
@@ -37,6 +39,9 @@ Reduced from AINTLIB's `LeanModularForms` project
 Apache 2.0, the file
 `projects/LeanModularForms/LeanModularForms/Modularforms/DimGenCongLevels/NormReduction.lean`),
 atop Mathlib's `ModularForm.norm` coset API and this repository's `Norm/Trace` helpers.
+
+`valueAtInfty_norm_eq_zero_of_valueAtInfty_eq_zero` comes from a second file of that project,
+`DimGenCongLevels/NormTransfer.lean`, where it is the declaration of the same name.
 -/
 
 open scoped MatrixGroups Topology
@@ -116,31 +121,22 @@ public lemma isBoundedAtImInfty_restProd (f : ModularForm (G Γ) k) :
         TauCeti.SlashInvariantForm.isBoundedAtImInfty_quotientFunc f q
 
 /-- **The norm inherits vanishing at the cusp `∞`**: if `f` tends to `0` at `i∞`, so does its
-level-one norm. The cusp-side counterpart of the interior domination in `Norm/Order.lean`.
-
-The norm splits as `f * restProd f` (`norm_apply_eq_mul_restProd`); the second factor is merely
-bounded at `i∞` (`isBoundedAtImInfty_restProd`), so a null first factor drags the product to `0`,
-and both `f` and the norm are read against their own cusp widths — `G Γ`'s for `f`, level one's
-for the norm, the two linked by `strictWidthInfty_mem_strictPeriods_levelOne`. -/
-public lemma valueAtInfty_norm_eq_zero_of_valueAtInfty_eq_zero
-    [Fact (IsCusp OnePoint.infty (G Γ))] (f : ModularForm (G Γ) k)
+level-one norm. The cusp-side counterpart of the interior domination in `Norm/Order.lean`. -/
+public lemma valueAtInfty_norm_eq_zero_of_valueAtInfty_eq_zero (f : ModularForm (G Γ) k)
     (hval0 : valueAtInfty (f : ℍ → ℂ) = 0) :
     valueAtInfty (⇑(_root_.ModularForm.norm 𝒮ℒ f)) = 0 := by
-  have : Fact (IsCusp OnePoint.infty (𝒮ℒ : Subgroup (GL (Fin 2) ℝ))) :=
+  have hSL : Fact (IsCusp OnePoint.infty (𝒮ℒ : Subgroup (GL (Fin 2) ℝ))) :=
     ⟨Subgroup.isCusp_of_mem_strictPeriods one_pos (by simp)⟩
+  -- `∞` is a cusp of `G Γ` because it is one of `𝒮ℒ`, and the index is finite.
+  have : Fact (IsCusp OnePoint.infty (G Γ)) := ⟨IsCusp.of_isFiniteRelIndex hSL.out⟩
   have hh : 0 < (G Γ).strictWidthInfty := (G Γ).strictWidthInfty_pos_iff.mpr Fact.out
-  -- `f` itself tends to `0`, because its value at `∞` is `0`.
-  have ht_f : Tendsto (fun τ : ℍ ↦ f τ) atImInfty (𝓝 (0 : ℂ)) := by
-    simpa [hval0] using TauCeti.ModularFormClass.tendsto_valueAtInfty (Γ := G Γ) (k := k) f hh
-      (Subgroup.strictWidthInfty_mem_strictPeriods (𝒢 := G Γ))
-  -- the remaining factors stay bounded, so the product still tends to `0`
-  have ht_norm : Tendsto (fun τ : ℍ ↦ _root_.ModularForm.norm 𝒮ℒ f τ) atImInfty (𝓝 (0 : ℂ)) := by
-    have hbd : IsBoundedUnder (· ≤ ·) atImInfty fun τ : ℍ ↦ ‖restProd f τ‖ := by
-      simpa [Function.comp_def] using
-        (isBoundedAtImInfty_restProd (Γ := Γ) (k := k) f).isBoundedUnder_le
-    simpa [norm_apply_eq_mul_restProd, smul_eq_mul, Pi.mul_def] using
-      NormedField.tendsto_zero_smul_of_tendsto_zero_of_bounded ht_f hbd
-  -- read the norm against level one's own cusp width
+  have ht_f : ZeroAtFilter atImInfty (f : ℍ → ℂ) := by
+    simpa [ZeroAtFilter, hval0] using TauCeti.ModularFormClass.tendsto_valueAtInfty
+      (Γ := G Γ) (k := k) f hh (Subgroup.strictWidthInfty_mem_strictPeriods (𝒢 := G Γ))
+  have hsplit : (⇑(_root_.ModularForm.norm 𝒮ℒ f)) = (f : ℍ → ℂ) * restProd f :=
+    funext (norm_apply_eq_mul_restProd f)
+  have ht_norm : ZeroAtFilter atImInfty (⇑(_root_.ModularForm.norm 𝒮ℒ f)) :=
+    hsplit ▸ ht_f.mul_boundedAtFilter (isBoundedAtImInfty_restProd (Γ := Γ) (k := k) f)
   exact (tendsto_nhds_unique ht_norm <|
     TauCeti.ModularFormClass.tendsto_valueAtInfty (Γ := (𝒮ℒ : Subgroup (GL (Fin 2) ℝ)))
       (_root_.ModularForm.norm 𝒮ℒ f) hh (strictWidthInfty_mem_strictPeriods_levelOne Γ)).symm
