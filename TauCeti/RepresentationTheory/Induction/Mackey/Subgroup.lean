@@ -75,6 +75,12 @@ roadmap-specific subgroup the induction and restriction of that layer run along.
   `|KsH| · |K ⊓ sHs⁻¹| = |K| · |H|`.
 * `TauCeti.stabilizer_smul_eq_mackeySubgroup_subgroupOf`: the same stabilizer description for an
   arbitrary `G`-set, at a translate `s • p`.
+* `TauCeti.mackeySubgroup_inv_swap`: swapping the two subgroups and inverting the representative
+  conjugates the Mackey subgroup.
+* `TauCeti.card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_inv_smul`: the multiplicity
+  identity behind regrouping a sum over `ℋ ⧸ 𝒢.subgroupOf ℋ` into a sum over `𝒢`-orbits — a
+  fiber of the index map has as many elements as `|stabilizer ℋ p|` divided by the order of the
+  stabilizer of the translated point.
 
 ## References
 
@@ -364,6 +370,66 @@ theorem stabilizer_smul_eq_mackeySubgroup_subgroupOf (s : G) (Γ : Subgroup G) (
   rw [Subgroup.mem_subgroupOf, mem_mackeySubgroup_iff, mem_stabilizer_iff, Subgroup.smul_def,
     mem_stabilizer_iff, mul_smul, mul_smul]
   exact ⟨fun hg => ⟨g.2, inv_smul_eq_iff.mpr hg⟩, fun hg => inv_smul_eq_iff.mp hg.2⟩
+
+/-- **Orbit-stabiliser for the fibres of `orbitOfCosetTranslate`.** The number of coset classes
+that translate `p` into the same orbit as `h` does, times the order of the stabiliser of that
+class inside `stabilizer ℋ p`, is the order of `stabilizer ℋ p`.
+
+No finiteness is needed: `MulAction.index_stabilizer` and `Subgroup.index_mul_card` both hold
+under `Nat.card`'s convention that an infinite type has cardinality `0`. -/
+theorem card_fiber_orbitOfCosetTranslate_mul_card_stabilizer {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ)
+    (p : α) (h : ℋ) :
+    Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
+        orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} *
+      Nat.card (stabilizer (↥(stabilizer ℋ p)) ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))) =
+        Nat.card (stabilizer ℋ p) := by
+  -- the fibre is the orbit of the class of `h` under `stabilizer ℋ p`
+  have hset : {r : ℋ ⧸ 𝒢.subgroupOf ℋ | orbitOfCosetTranslate p r =
+      orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} =
+      orbit (stabilizer ℋ p) ((h : ℋ ⧸ 𝒢.subgroupOf ℋ)) :=
+    Set.ext fun r => orbitOfCosetTranslate_eq_iff hle p r _
+  rw [show Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
+        orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} =
+      (orbit (stabilizer ℋ p) ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))).ncard from by
+    rw [← hset, ← Nat.card_coe_set_eq]; rfl, ← MulAction.index_stabilizer,
+    Subgroup.index_mul_card]
+
+/-- Swapping the two subgroups of a Mackey subgroup and inverting the representative conjugates
+it: `K ⊓ s⁻¹Hs = s⁻¹ (H ⊓ sKs⁻¹) s`. -/
+theorem mackeySubgroup_inv_swap (H K : Subgroup G) (x : G) :
+    mackeySubgroup x⁻¹ H K = MulAut.conj x⁻¹ • mackeySubgroup x K H := by
+  rw [mackeySubgroup_def, mackeySubgroup_def, Subgroup.smul_inf, map_inv, inv_smul_smul,
+    inf_comm]
+
+/-- **The stabiliser of a coset and the stabiliser of the translated point have the same order.**
+The class of `h` in `ℋ ⧸ 𝒢.subgroupOf ℋ` is stabilised inside `stabilizer ℋ p` by exactly as many
+elements as `h⁻¹ • p` is stabilised by inside `𝒢.subgroupOf ℋ`: the two subgroups are conjugate
+by `h`. -/
+theorem card_stabilizer_coset_eq_card_stabilizer_inv_smul (𝒢 ℋ : Subgroup G) (p : α) (h : ℋ) :
+    Nat.card (stabilizer (↥(stabilizer ℋ p)) ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))) =
+      Nat.card (stabilizer (↥(𝒢.subgroupOf ℋ)) ((h : ℋ)⁻¹ • p)) := by
+  rw [stabilizer_eq_mackeySubgroup_subgroupOf, stabilizer_smul_eq_mackeySubgroup_subgroupOf,
+    Nat.card_congr (Subgroup.subgroupOfEquivOfLe mackeySubgroup_le_right).toEquiv,
+    Nat.card_congr (Subgroup.subgroupOfEquivOfLe mackeySubgroup_le_right).toEquiv,
+    mackeySubgroup_inv_swap,
+    Nat.card_congr (Subgroup.equivSMul (MulAut.conj (h : ℋ)⁻¹)
+      (mackeySubgroup (h : ℋ) (𝒢.subgroupOf ℋ) (stabilizer ℋ p))).toEquiv]
+
+/-- **The multiplicity identity for the coset-to-orbit index map.** The number of coset classes
+translating `p` into the same orbit as `h` does, times the order of the stabiliser of `h⁻¹ • p`,
+is the order of the stabiliser of `p`.
+
+This is the weight that turns a sum over `ℋ ⧸ 𝒢.subgroupOf ℋ` into a sum over `𝒢`-orbits with
+the ramification factors of the orbit-stabiliser count. Composition of
+`card_fiber_orbitOfCosetTranslate_mul_card_stabilizer` with
+`card_stabilizer_coset_eq_card_stabilizer_inv_smul`. -/
+theorem card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_inv_smul {𝒢 ℋ : Subgroup G}
+    (hle : 𝒢 ≤ ℋ) (p : α) (h : ℋ) :
+    Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
+        orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} *
+      Nat.card (stabilizer (↥(𝒢.subgroupOf ℋ)) ((h : ℋ)⁻¹ • p)) = Nat.card (stabilizer ℋ p) := by
+  rw [← card_stabilizer_coset_eq_card_stabilizer_inv_smul,
+    card_fiber_orbitOfCosetTranslate_mul_card_stabilizer hle]
 
 end Translate
 
