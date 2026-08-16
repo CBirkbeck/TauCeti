@@ -61,6 +61,10 @@ For the modular case no further instance is needed: Mathlib's
 `Subgroup.IsArithmetic.properlyDiscontinuous` supplies proper discontinuity for an arithmetic
 `𝒢 ≤ GL(2, ℝ)`, and the image of a finite-index `Γ ≤ SL(2, ℤ)` is arithmetic, so both shapes
 reach `Finite` through this instance alone. -/
+@[to_additive
+/-- **A properly discontinuous additive action has finite point stabilisers**, as a `Finite`
+instance. Mathlib's `ProperlyDiscontinuousVAdd.finite_stabilizer` states it as `Set.Finite` of
+the stabiliser's carrier, which does not drive typeclass search; this bridges it once. -/]
 instance finite_stabilizer_of_properlyDiscontinuousSMul {G T : Type*} [Group G]
     [TopologicalSpace T] [MulAction G T] [ProperlyDiscontinuousSMul G T] (x : T) :
     Finite (MulAction.stabilizer G x) :=
