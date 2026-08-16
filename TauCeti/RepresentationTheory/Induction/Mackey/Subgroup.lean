@@ -74,8 +74,6 @@ roadmap-specific subgroup the induction and restriction of that layer run along.
   `|KsH| · |K ⊓ sHs⁻¹| = |K| · |H|`.
 * `TauCeti.stabilizer_smul_eq_mackeySubgroup_subgroupOf`: the same stabilizer description for an
   arbitrary `G`-set, at a translate `s • p`.
-* `TauCeti.card_doubleCoset_mul_card_stabilizer_smul`: the size formula read at such a point,
-  `|Γ s Stab(p)| · |Stab_Γ(s • p)| = |Γ| · |Stab_G(p)|`.
 
 ## References
 
@@ -365,26 +363,6 @@ theorem stabilizer_smul_eq_mackeySubgroup_subgroupOf (s : G) (Γ : Subgroup G) (
   rw [Subgroup.mem_subgroupOf, mem_mackeySubgroup_iff, mem_stabilizer_iff, Subgroup.smul_def,
     mem_stabilizer_iff, mul_smul, mul_smul]
   exact ⟨fun hg => ⟨g.2, inv_smul_eq_iff.mpr hg⟩, fun hg => inv_smul_eq_iff.mp hg.2⟩
-
-/-- **The double-coset size formula at a point of an arbitrary `G`-set**:
-`|Γ s Stab(p)| · |Stab_Γ(s • p)| = |Γ| · |Stab_G(p)|`.
-
-This is `card_doubleCoset_mul_card_mackeySubgroup` with `H = stabilizer G p`, read through
-`stabilizer_smul_eq_mackeySubgroup_subgroupOf` so that the second factor is a stabilizer rather
-than a Mackey subgroup. It is the multiplicity with which a `Γ`-orbit inside the `G`-orbit of `p`
-is counted when a sum over `Γ`-cosets is regrouped into a sum over `Γ`-orbits: rearranged, it
-reads `|Γ s Stab(p)| / (|Γ| · |Stab_G(p)|) = 1 / |Stab_Γ(s • p)|`, so the double coset carries
-exactly the weight `1 / |Stab_Γ(s • p)|` once normalised by `|Γ| · |Stab_G(p)|` — both of which
-are independent of `s`.
-
-As with the formula it comes from, `Nat.card`'s convention that an infinite type has cardinality
-`0` means no finiteness hypothesis is needed. -/
-theorem card_doubleCoset_mul_card_stabilizer_smul (s : G) (Γ : Subgroup G) (p : α) :
-    Nat.card (DoubleCoset.doubleCoset s (Γ : Set G) (stabilizer G p : Set G)) *
-        Nat.card (stabilizer (↥Γ) (s • p)) = Nat.card Γ * Nat.card (stabilizer G p) := by
-  rw [stabilizer_smul_eq_mackeySubgroup_subgroupOf,
-    Nat.card_congr (Subgroup.subgroupOfEquivOfLe mackeySubgroup_le_right).toEquiv]
-  exact card_doubleCoset_mul_card_mackeySubgroup s (stabilizer G p) Γ
 
 end Translate
 
