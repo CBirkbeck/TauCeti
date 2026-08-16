@@ -5,7 +5,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Basic
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Degree
+-- Proof-only: `finiteDimensional_functionField` is used inside the proof, not in the statement.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Degree
 public import Mathlib.RingTheory.DedekindDomain.IntegralClosure
 
 /-!
@@ -87,11 +88,14 @@ theorem isDedekindDomain_intermediateRing (φ : Isogeny W₁ W₂)
     [Algebra W₂.CoordinateRing W₁.FunctionField]
     [Algebra W₂.FunctionField W₁.FunctionField]
     [IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField]
-    [Algebra W₂.CoordinateRing φ.intermediateRing]
-    [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField]
     [Algebra.IsSeparable W₂.FunctionField W₁.FunctionField]
     (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
     IsDedekindDomain φ.intermediateRing := by
+  -- the algebra structure on the intermediate ring and its tower are the canonical ones built
+  -- from `φ`, so they are installed here rather than demanded of the caller
+  let _ := φ.pullbackToIntermediateRing.toAlgebra
+  have : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
+    φ.isScalarTower_intermediateRing rfl h
   -- the integral-closure property is not assumed: it is what `intermediateRing` is
   have := φ.isIntegralClosure_intermediateRing h
   have := φ.finiteDimensional_functionField (φ.algebraMap_functionField_eq_fieldPullback h)
