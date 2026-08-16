@@ -40,11 +40,20 @@ So the hypothesis set here matches the sibling `Isogeny.moduleFinite_intermediat
 **The hypothesis is a limitation of the route, not of the result.** `W₂.CoordinateRing` is a
 finite-type algebra over a field and therefore Nagata, so its normalization in a finite extension
 is finite — and the conclusion is expected to hold with no separability at all, inseparable
-isogenies and Frobenius included. What blocks that here is availability: every finiteness route in
-`Mathlib/RingTheory/DedekindDomain/IntegralClosure.lean` sits under `Algebra.IsSeparable`, and the
-pinned Mathlib carries no usable Nagata normalization-finiteness API. Removing the hypothesis
-therefore means building that route first, which is separate work; this is the interim result.
-`IntermediateRing/Finite.lean` records the same limitation for the finiteness half.
+isogenies and Frobenius included. What blocks that here is availability, and it is measurable:
+every route to the Noetherian half in `Mathlib/RingTheory/DedekindDomain/IntegralClosure.lean`
+falls under the section variable `[Algebra.IsSeparable K L]` declared at its line 147, and the
+pinned Mathlib has no Krull–Akizuki (the identifier and the hyphenated prose spelling both occur
+zero times, against 69 files mentioning `IsDedekindDomain`) and no usable Nagata
+normalization-finiteness API.
+
+Removing the hypothesis therefore means building that route first. That is not an open-ended
+wish: `TauCetiRoadmap/EllipticCurves/README.md:1096` already names
+`RingTheory/IntegralClosure/NormalizationFinite` as one of the supports of this same isogeny
+development. So the inseparable statement is scheduled work with a home, and a slice of its own
+under this repository's one-topic-per-PR rule — not something to be folded into this file. This
+is the interim result until it lands. `IntermediateRing/Finite.lean` records the same limitation
+for the finiteness half.
 
 `IsDedekindDomain W₂.CoordinateRing` is taken as a hypothesis rather than derived. For an elliptic
 curve it is supplied by `WeierstrassCurve.Affine.isDedekindDomain_coordinateRing`, which needs
@@ -79,10 +88,8 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 `W₂.CoordinateRing` in `W₁.FunctionField`, and the integral closure of a Dedekind domain in a
 finite separable extension of its fraction field is again Dedekind.
 
-Separability is required by the route rather than by the statement: the Noetherian half of the
-conjunction is obtained from the trace pairing, which is what Mathlib's
-`IsIntegralClosure.isDedekindDomain` uses. The conclusion is expected to hold inseparably too,
-since `W₂.CoordinateRing` is Nagata — see the module docstring. -/
+Separability is a restriction of the proof route, not of the result; the module docstring's
+Design section says why, and what removing it would take. -/
 theorem isDedekindDomain_intermediateRing (φ : Isogeny W₁ W₂)
     [IsDedekindDomain W₂.CoordinateRing]
     [Algebra W₂.CoordinateRing W₁.FunctionField]
