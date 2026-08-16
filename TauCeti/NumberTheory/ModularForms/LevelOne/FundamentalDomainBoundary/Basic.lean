@@ -29,6 +29,8 @@ anchors of the valence-formula contour.
 * `TauCeti.ModularForm.fdBoundary` (with the segments `fdBoundarySegment1` … `fdBoundarySegment5`,
   built from `AffineMap.lineMap` and `circleMap`).
 * `TauCeti.ModularForm.rho_im`: the corner `ρ` sits on the row `Im = √3/2`.
+* `TauCeti.ModularForm.segment1_chord_im`: the right vertical's chord spans the height
+  difference `√3/2 - H`.
 * `TauCeti.ModularForm.fdBoundary_apply_three`: the parameter `3` lands on `ρ`.
 * `TauCeti.ModularForm.fdBoundary_closed`: the contour is closed.
 * `TauCeti.ModularForm.continuous_fdBoundary`: the contour is (globally) continuous.
@@ -583,16 +585,23 @@ lemma re_fdBoundary_of_le_one (h1 : t ≤ 1) : (fdBoundary H t).re = 1 / 2 := by
   rw [Complex.add_re, Complex.smul_re, hchord, smul_eq_mul, mul_zero, zero_add]
   simp
 
+/-- **The segment-1 chord spans the height difference**: the right vertical runs from the ceiling
+`H` to the corner row `√3/2`, so its chord has imaginary part `√3/2 - H`.
+
+Not `@[simp]`, for the same reason as `rho_im`: `UpperHalfPlane.coe_im` normalises `(↑ρ).im` away
+before this could fire, so the left-hand side is not in simp-normal form. -/
+theorem segment1_chord_im :
+    ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).im = Real.sqrt 3 / 2 - H := by
+  rw [Complex.sub_im, Complex.add_im, rho_im]
+  simp
+
 /-- The right vertical runs affinely in height from the ceiling `H` to the corner row `√3/2`,
 descending when the ceiling is above that row and ascending when it is below. -/
 lemma im_fdBoundary_of_le_one (h1 : t ≤ 1) :
     (fdBoundary H t).im = H + t * (Real.sqrt 3 / 2 - H) := by
   rw [fdBoundary_of_le_one h1, fdBoundarySegment1_apply, AffineMap.lineMap_apply_module']
-  have hchord : ((ρ : ℂ) + 1 - (1 / 2 + H * Complex.I)).im = Real.sqrt 3 / 2 - H := by
-    rw [Complex.sub_im, Complex.add_im, rho_im]
-    simp
   have him : (1 / 2 + H * Complex.I : ℂ).im = H := by simp
-  rw [Complex.add_im, Complex.smul_im, hchord, him, smul_eq_mul, add_comm]
+  rw [Complex.add_im, Complex.smul_im, segment1_chord_im, him, smul_eq_mul, add_comm]
 
 /-- The left vertical has constant real part `-1/2`. -/
 lemma re_fdBoundary_of_le_four (h3 : 3 < t) (h4 : t ≤ 4) :
