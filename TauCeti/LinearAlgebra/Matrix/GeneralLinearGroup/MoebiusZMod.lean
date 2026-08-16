@@ -56,9 +56,13 @@ notion.
   derived from `OnePoint.smul_some_eq_infty_iff`, which this file adds to Mathlib's action API in
   `TauCeti/Topology/Compactification/OnePoint/ProjectiveLine.lean`; the two value lemmas come
   straight from Mathlib's `smul_some_eq_ite` / `smul_infty_eq_ite`.
-* `TauCeti.moebiusFin_apply`: the value at an index, with the `ZMod.finEquiv` conjugation
-  cancelled, which is how a consumer reaches the value lemmas above without unfolding a body
-  that is sealed across the module boundary.
+* `TauCeti.finEquiv_moebiusFin_apply_of_ne_zero` and
+  `TauCeti.finEquiv_moebiusFin_apply_of_eq_zero`: the two evaluation branches on `Fin p`, read
+  back through `ZMod.finEquiv` — the affine quotient where the denominator does not vanish, and
+  the image of `∞` at the single index where it does.
+* `TauCeti.moebiusFin_apply`: the underlying characteristic equation the two branches are proved
+  from, which is how a consumer reaches the value lemmas above without unfolding a body that is
+  sealed across the module boundary.
 
 Injectivity is not stated separately: `moebiusFin` is an `Equiv`, so consumers use
 `Equiv.injective`.
@@ -186,4 +190,54 @@ lemma moebiusFin_apply (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZM
         (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)) :
           Equiv.Perm (OnePoint (ZMod p))) ((ZMod.finEquiv p) b)) := by
   simp [moebiusFin, Equiv.permCongr_apply]
+/-- **The reindexing off the pole.** Where the denominator does not vanish, the index goes to the
+affine Möbius value, read back through `ZMod.finEquiv`. -/
+lemma finEquiv_moebiusFin_apply_of_ne_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
+    (h : ((M.det : ℤ) : ZMod p) ≠ 0) (b : Fin p)
+    (hb : ((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 0 : ℤ) : ZMod p) ≠ 0) :
+    (ZMod.finEquiv p) (moebiusFin M h b) =
+      (((M 1 1 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 1 : ℤ) : ZMod p)) /
+        (((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 0 : ℤ) : ZMod p)) := by
+  have hval : (MulAction.toPerm
+      (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)) :
+        Equiv.Perm (OnePoint (ZMod p))) ((ZMod.finEquiv p b : ZMod p) : OnePoint (ZMod p)) =
+      ((((M 1 1 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 1 : ℤ) : ZMod p)) /
+        (((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 0 : ℤ) : ZMod p)) :
+          ZMod p) := by
+    simpa [Matrix.map_apply, hb] using
+      moebiusGL_smul_some (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)
+        (ZMod.finEquiv p b)
+  have := Equiv.removeNone_some _ ⟨_, hval⟩
+  rw [moebiusFin_apply, RingEquiv.apply_symm_apply]
+  exact Option.some_inj.mp (this.trans hval)
+
+/-- **The reindexing at the pole.** At the single index where the denominator vanishes, the value
+is the image of `∞`. The denominator's leading entry cannot also vanish there: if it did the
+determinant would vanish mod `p`, so the quotient below is not a division by zero. -/
+lemma finEquiv_moebiusFin_apply_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
+    (h : ((M.det : ℤ) : ZMod p) ≠ 0) (b : Fin p)
+    (hb : ((M 1 0 : ℤ) : ZMod p) * (ZMod.finEquiv p b) + ((M 0 0 : ℤ) : ZMod p) = 0) :
+    (ZMod.finEquiv p) (moebiusFin M h b) =
+      ((M 1 1 : ℤ) : ZMod p) / ((M 1 0 : ℤ) : ZMod p) := by
+  have h10 : ((M 1 0 : ℤ) : ZMod p) ≠ 0 := by
+    intro hz
+    rw [hz, zero_mul, zero_add] at hb
+    rw [Matrix.det_fin_two] at h
+    push_cast at h
+    exact h (by rw [hb, hz]; ring)
+  have hinf : (MulAction.toPerm
+      (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)) :
+        Equiv.Perm (OnePoint (ZMod p))) ((ZMod.finEquiv p b : ZMod p) : OnePoint (ZMod p)) =
+      (∞ : OnePoint (ZMod p)) := by
+    simp [Matrix.map_apply, hb]
+  have hnone := Equiv.removeNone_none _ hinf
+  have hval : (MulAction.toPerm
+      (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)) :
+        Equiv.Perm (OnePoint (ZMod p))) (∞ : OnePoint (ZMod p)) =
+      ((((M 1 1 : ℤ) : ZMod p) / ((M 1 0 : ℤ) : ZMod p) : ZMod p) : OnePoint (ZMod p)) := by
+    simpa [Matrix.map_apply, h10] using
+      moebiusGL_smul_infty (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)
+  rw [moebiusFin_apply, RingEquiv.apply_symm_apply]
+  exact Option.some_inj.mp (hnone.trans hval)
+
 end TauCeti
