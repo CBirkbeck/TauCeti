@@ -41,8 +41,8 @@ image of a subgroup of `SL(2, ℤ)` has determinant `1` throughout.
   `Γ`-orbit space.
 * `TauCeti.ModularForm.hasFiniteSupport_orderOfVanishingOnSubgroupOrbit`: finite support of
   the interior order divisor of a general-level modular form.
-* `TauCeti.ModularForm.stabilizerOrderOnSubgroupOrbit`: the elliptic order `e_P` of an orbit,
-  the weight the general-level valence formula attaches to it.
+* `TauCeti.ModularForm.stabilizerOrderOnSubgroupOrbit`: the *matrix* stabiliser order of an
+  orbit — the primitive the elliptic order `e_P` is obtained from, not `e_P` itself.
 
 ## References
 
@@ -105,19 +105,26 @@ public theorem hasFiniteSupport_orderOfVanishingOnSubgroupOrbit
   induction q using Quotient.inductionOn' with
   | _ p => exact ⟨p, by simpa using hq, rfl⟩
 
-/-- **The elliptic order `e_P` of a `Γ`-orbit**: the order of the stabiliser of any of its
+/-- **The matrix stabiliser order of a `Γ`-orbit**: the order of the stabiliser of any of its
 points in `Γ`, viewed in `GL(2, ℝ)`.
 
 Well-defined because points of one orbit have conjugate stabilisers, so equal `Nat.card` —
-`TauCeti.card_stabilizer_of_orbitRel`. This is the weight the general-level valence formula
-attaches to an orbit, appearing there as `1 / e_P`. -/
+`TauCeti.card_stabilizer_of_orbitRel`.
+
+⚠ This is **not** the elliptic order `e_P` that the valence formula weights by `1 / e_P`. That
+one is projective, and `-I` acts trivially on `ℍ`, so whenever `-I ∈ Γ` the centre lies in every
+stabiliser here and this order is `2 * e_P`. `Modular/Stabilizer.lean` records exactly that pair
+at level one — matrix orders `2`, `4`, `6` off the elliptic orbits and at `[i]`, `[ρ]`, against
+the projective `e_P = 1`, `e_i = 2`, `e_ρ = 3` — connected by
+`TauCeti.ModularGroup.card_stabilizer_eq_two_mul_card_stabilizer_psl`. Descending to `e_P` at
+level `Γ` is the next rung; this is the primitive it is built from. -/
 public def stabilizerOrderOnSubgroupOrbit
     (q : MulAction.orbitRel.Quotient (Γ : Subgroup (GL (Fin 2) ℝ)) ℍ) : ℕ :=
   Quotient.liftOn' q
     (fun p ↦ Nat.card (MulAction.stabilizer (Γ : Subgroup (GL (Fin 2) ℝ)) p))
     fun _ _ h ↦ card_stabilizer_of_orbitRel h
 
-/-- Evaluating `e_P` on the orbit of `p` recovers the stabiliser order at `p`. -/
+/-- Evaluating it on the orbit of `p` recovers the stabiliser order at `p`. -/
 @[simp]
 public lemma stabilizerOrderOnSubgroupOrbit_mk (p : ℍ) :
     stabilizerOrderOnSubgroupOrbit (Γ := Γ) (Quotient.mk'' p) =
