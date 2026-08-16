@@ -55,10 +55,14 @@ notion.
 The pole criterion itself is `OnePoint.smul_some_eq_infty_iff`, which this file adds to Mathlib's
 action API in `TauCeti/Topology/Compactification/OnePoint/ProjectiveLine.lean`; the two value
 lemmas come straight from Mathlib's `smul_some_eq_ite` / `smul_infty_eq_ite`.
-* `TauCeti.natCast_moebiusFin_of_ne_zero` and
-  `TauCeti.natCast_moebiusFin_of_eq_zero`: the two evaluation branches on `Fin p`, read
-  back through `ZMod.finEquiv` — the affine quotient where the denominator does not vanish, and
-  the image of `∞` at the single index where it does.
+* `TauCeti.natCast_moebiusFin_of_ne_zero` and `TauCeti.natCast_moebiusFin_of_eq_zero`: the two
+  evaluation branches, read in `ZMod p` through the natural cast of the index — the affine
+  quotient where the denominator does not vanish, and the image of `∞` at the single index where
+  it does.
+* `TauCeti.dvd_add_mul_canonicalIndex` and `TauCeti.dvd_add_mul_iff_eq_of_dvd`: when `M 1 0` is
+  invertible mod `p` a pole index **exists**, at `-M 0 0 / M 1 0`, and it is **unique**. Together:
+  exactly one index is carried to `∞`. Both are stated as divisibilities over `ℤ`, the form the
+  downstream Hecke sums use, and neither needs the determinant — they are arithmetic in `ZMod p`.
 These two are the elimination API for `moebiusFin`: its body is sealed across the module
 boundary, so `unfold` is not available to a consumer, and the equation they are proved from is
 private scaffold rather than public surface.
@@ -256,5 +260,20 @@ lemma dvd_add_mul_iff_eq_of_dvd (M : Matrix (Fin 2) (Fin 2) ℤ)
   rcases mul_eq_zero.mp hsub with hz | hz
   · exact sub_eq_zero.mp hz
   · exact absurd hz h10
+
+/-- **The pole index exists.** When the coefficient `M 1 0` is invertible mod `p` the denominator
+does vanish somewhere, at the index `-M 0 0 / M 1 0` read back into `Fin p`. With
+`dvd_add_mul_iff_eq_of_dvd` this says the reindexing has *exactly one* pole index. -/
+lemma dvd_add_mul_canonicalIndex (M : Matrix (Fin 2) (Fin 2) ℤ)
+    (h10 : ((M 1 0 : ℤ) : ZMod p) ≠ 0) :
+    (p : ℤ) ∣ (M 0 0 +
+      (((-((M 0 0 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p)⁻¹).val : ℕ)) * M 1 0) := by
+  rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
+  push_cast
+  rw [ZMod.natCast_val, ZMod.cast_id]
+  have hcancel : (-((M 0 0 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p)⁻¹) * ((M 1 0 : ℤ) : ZMod p) =
+      -((M 0 0 : ℤ) : ZMod p) := by
+    rw [mul_assoc, mul_comm ((M 1 0 : ℤ) : ZMod p)⁻¹ _, mul_inv_cancel₀ h10, mul_one]
+  rw [hcancel, add_neg_cancel]
 
 end TauCeti
