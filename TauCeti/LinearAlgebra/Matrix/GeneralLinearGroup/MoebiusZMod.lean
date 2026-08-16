@@ -121,8 +121,13 @@ lemma moebiusGL_coe (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod 
 /-- **The pole of the reindexing.** An affine point `k` goes to `∞` exactly when the denominator
 `M 0 0 + k * M 1 0` vanishes mod `p`. Downstream arguments phrase the exceptional index as a
 divisibility, and this is the bridge to it. Proved from the field-level
-`smul_some_eq_infty_iff`. -/
-@[simp]
+`smul_some_eq_infty_iff`.
+
+Deliberately **not** `@[simp]`: with `smul_some_eq_infty_iff` and `moebiusGL_coe` both simp
+lemmas, simp already reduces this left-hand side — to `M 1 0 * k + M 0 0 = 0`, the orientation
+Mathlib's `smul_some_eq_ite` produces. This lemma exists to offer the other orientation,
+`M 0 0 + k * M 1 0 = 0`, which is the one the divisibility arguments downstream are phrased in;
+tagging it would put it out of simp normal form. -/
 lemma moebiusGL_smul_coe_eq_infty_iff (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) (k : ZMod p) :
     moebiusGL M h • (k : OnePoint (ZMod p)) = ∞ ↔
