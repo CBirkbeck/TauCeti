@@ -75,7 +75,7 @@ AINTLIB's `topologicallyNilpotent_subseteq_union_definitionIdeals` in
 statement was consulted: AINTLIB's proof is a `sorry`**, whose note blames missing
 definition-ring-enlargement infrastructure. Tau Ceti already had the ring-side enlargement, and what
 was missing was the *ideal*-side `enlargeIdeal` supplied here, so no proof was ported. The
-`@[expose]` on `enlargeIdeal` and the openness corollary have no AINTLIB counterpart.
+component lemmas of `enlargeIdeal` and the openness corollary have no AINTLIB counterpart.
 
 `enlargeSup`, `sup` and the boundedness input `isBounded_sup` are **not** covered by that
 attribution: AINTLIB cites Corollary 6.4 only for its parts (1)–(3), and has no counterpart to the
@@ -112,21 +112,20 @@ variable [IsTopologicalRing A]
 
 /-! ### Enlarging the ideal of definition -/
 
-/-- If `x ^ k ∈ I ^ n` then `(I ⊔ span {x}) ^ (n + (k + 1)) ≤ I ^ n`: in a product of `n + k + 1`
-factors from `I ⊔ span {x}`, either `n` come from `I`, or at least `k + 1` are multiples of `x` and
-the product is divisible by `x ^ (k + 1) = x · x ^ k ∈ I ^ n`.
+/-- If `x ^ k ∈ I ^ n` then `(I ⊔ span {x}) ^ (n + k) ≤ I ^ n`: Mathlib's binomial bound splits the
+product into `I ^ n ⊔ span {x} ^ k`, and the second summand is `span {x ^ k}`, which `h` places
+inside `I ^ n`.
 
 Kept private: it is a general fact about ideals with no other consumer here, and Mathlib's
 `Ideal.sup_pow_add_le_pow_sup_pow` already does the binomial step. -/
 private theorem sup_span_singleton_pow_le {R : Type*} [CommRing R] (I : Ideal R) (x : R) (n k : ℕ)
-    (h : x ^ k ∈ I ^ n) : (I ⊔ Ideal.span {x}) ^ (n + (k + 1)) ≤ I ^ n := by
+    (h : x ^ k ∈ I ^ n) : (I ⊔ Ideal.span {x}) ^ (n + k) ≤ I ^ n := by
   refine Ideal.sup_pow_add_le_pow_sup_pow.trans (sup_le le_rfl ?_)
-  rw [Ideal.span_singleton_pow, Ideal.span_le, Set.singleton_subset_iff, pow_succ]
-  exact Ideal.mul_mem_right _ _ h
+  rw [Ideal.span_singleton_pow, Ideal.span_le, Set.singleton_subset_iff]
+  exact h
 
 /-- **Adjoining a topologically nilpotent element to the ideal of definition.** The ring of
 definition is unchanged and the ideal becomes `I ⊔ span {y}`. -/
-@[expose]
 noncomputable def enlargeIdeal (Q : PairOfDefinition A) {y : Q.ringOfDefinition}
     (hy : IsTopologicallyNilpotent y) : PairOfDefinition A where
   ringOfDefinition := Q.ringOfDefinition
@@ -142,7 +141,7 @@ noncomputable def enlargeIdeal (Q : PairOfDefinition A) {y : Q.ringOfDefinition}
     refine isAdic_iff.mpr ⟨fun n ↦ Ideal.isOpen_of_isOpen_subideal (hle n) (hopen n), fun s hs ↦ ?_⟩
     obtain ⟨n, hn⟩ := hnhd s hs
     obtain ⟨k, hk⟩ := hy.exists_pow_mem_of_mem_nhds ((hopen n).mem_nhds (Ideal.zero_mem _))
-    exact ⟨n + (k + 1),
+    exact ⟨n + k,
       (SetLike.coe_subset_coe.mpr (sup_span_singleton_pow_le _ _ _ _ hk)).trans hn⟩
 
 /-- The ring of definition is unchanged by `enlargeIdeal`. -/
@@ -151,13 +150,12 @@ theorem enlargeIdeal_ringOfDefinition (Q : PairOfDefinition A) {y : Q.ringOfDefi
     (hy : IsTopologicallyNilpotent y) :
     (Q.enlargeIdeal hy).ringOfDefinition = Q.ringOfDefinition := (rfl)
 
-/-- The ideal of definition gains exactly `y`: it becomes `I ⊔ span {y}`. Stating this needs
-`enlargeIdeal` to be `@[expose]`, since the two sides live over `ringOfDefinition`s that agree
-only by unfolding the construction. -/
+/-- The ideal of definition gains exactly `y`: it becomes `I ⊔ span {y}`. -/
 @[simp]
 theorem enlargeIdeal_idealOfDefinition (Q : PairOfDefinition A) {y : Q.ringOfDefinition}
     (hy : IsTopologicallyNilpotent y) :
-    (Q.enlargeIdeal hy).idealOfDefinition = Q.idealOfDefinition ⊔ Ideal.span {y} := (rfl)
+    (Q.enlargeIdeal hy).idealOfDefinition =
+      (enlargeIdeal_ringOfDefinition Q hy) ▸ (Q.idealOfDefinition ⊔ Ideal.span {y}) := (rfl)
 
 /-- Every power of the ideal of definition, carried into a larger subring `B`, is open in `B`.
 
