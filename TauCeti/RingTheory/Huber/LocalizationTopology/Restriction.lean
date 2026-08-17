@@ -234,6 +234,7 @@ theorem continuous_restrictionRingHom :
 
 /-- **The restriction map is compatible with the structure maps from `A`.** This is the equation
 that characterises it, and the reason it is a map of `A`-algebras. -/
+@[simp]
 theorem restrictionRingHom_comp_toCompletionLoc :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
