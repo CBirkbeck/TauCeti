@@ -34,6 +34,8 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
   nonzero coefficients suffice.
 * `isRestricted_pi_iff`: restrictedness of a series with coefficients in a product is
   componentwise.
+* `restrictedMvPowerSeriesSubringLinearEquiv`: at `M = A` the subring and the submodule of
+  restricted series are `A`-linearly isomorphic.
 * `restrictedMvPowerSeriesSubmodulePiEquiv`: that criterion as an `A`-linear equivalence,
   `(∏ i, M i)⟨T₁, …, Tₖ⟩ ≃ₗ[A] ∏ i, M i⟨T₁, …, Tₖ⟩`.
 
@@ -60,13 +62,16 @@ coefficient binders — `[Zero]` and a topology, where the original asked for a 
 
 **Original here.** `isRestricted_monomial`, `isRestricted_of_hasFiniteSupport`,
 `IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule`, `mem_restrictedMvPowerSeriesSubmodule`,
-`isRestricted_pi_iff`, and `restrictedMvPowerSeriesSubmodulePiEquiv` with its two computation
-lemmas `restrictedMvPowerSeriesSubmodulePiEquiv_apply` and `_symm_apply`. The product statements
-have no AINTLIB counterpart at all: the source states restrictedness only for a single coefficient
-module, and never for a product, so neither the criterion nor the equivalence packaging it appears
-there. `isRestricted_pi_iff`'s content is Mathlib's `tendsto_pi_nhds`, so what is original in it is
-the statement rather than the argument; the equivalence and its computation lemmas are original in
-both.
+`isRestricted_pi_iff`, `restrictedMvPowerSeriesSubmodulePiEquiv` and
+`restrictedMvPowerSeriesSubringLinearEquiv`, each with its computation lemmas.
+
+None of the last three has an AINTLIB counterpart, for two different reasons. The two product
+statements have none because the source states restrictedness only for a single coefficient
+module and never for a product, so neither the criterion nor the equivalence packaging it appears
+there; of these, `isRestricted_pi_iff`'s content is Mathlib's `tendsto_pi_nhds`, so what is
+original in it is the statement rather than the argument, while the equivalence is original in
+both. `restrictedMvPowerSeriesSubringLinearEquiv` has none because the source never introduces the
+submodule at all, so the subring is the only object it has to identify.
 
 The name `isRestricted_iff` needs care: the port introduced it for the `coeff`-form unfolding
 lemma, which is now `isRestricted_iff_coeff`. The statement the name carries here — unfolding
@@ -462,6 +467,44 @@ theorem mem_restrictedMvPowerSeriesSubmodule {k : ℕ} {A M : Type*} [Semiring A
     {f : MvPowerSeries (Fin k) M} :
     f ∈ restrictedMvPowerSeriesSubmodule k A M ↔ IsRestricted f := (Iff.rfl)
 
+/-- **`A⟨T₁, …, Tₖ⟩` as a submodule over itself**: at `M = A` the subring and the submodule cut
+out the same series, so they are `A`-linearly isomorphic.
+
+They are different structures over one carrier — `restrictedMvPowerSeriesSubring` is a `Subring`
+carrying an `Algebra A` instance, `restrictedMvPowerSeriesSubmodule` is a `Submodule A` — so the
+identification is not a coercion. It is what lets a statement about `M⟨T⟩` at `M = A` meet the
+tensor-product API, which produces the subring. -/
+noncomputable def restrictedMvPowerSeriesSubringLinearEquiv (k : ℕ) (A : Type*) [CommRing A]
+    [TopologicalSpace A] [NonarchimedeanRing A] :
+    restrictedMvPowerSeriesSubring k A ≃ₗ[A] restrictedMvPowerSeriesSubmodule k A A where
+  toFun f := ⟨f.1, mem_restrictedMvPowerSeriesSubmodule.mpr
+    (mem_restrictedMvPowerSeriesSubring.mp f.2)⟩
+  invFun g := ⟨g.1, mem_restrictedMvPowerSeriesSubring.mpr
+    (mem_restrictedMvPowerSeriesSubmodule.mp g.2)⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_add' _ _ := rfl
+  -- The subring's scalar action is `Algebra.smul_def`, the submodule's is pointwise; they agree
+  -- on the underlying series but not syntactically, so this one field is not `rfl`.
+  map_smul' a x := Subtype.ext <| by
+    simp only [Algebra.smul_def, Subring.coe_mul, RingHom.id_apply,
+      coe_algebraMap_restrictedMvPowerSeriesSubring, SetLike.val_smul]
+
+/-- `restrictedMvPowerSeriesSubringLinearEquiv` is the identity on the underlying series. Its body
+is not exposed, so this is how a consumer computes with it. -/
+@[simp]
+theorem coe_restrictedMvPowerSeriesSubringLinearEquiv {k : ℕ} {A : Type*} [CommRing A]
+    [TopologicalSpace A] [NonarchimedeanRing A] (f : restrictedMvPowerSeriesSubring k A) :
+    ((restrictedMvPowerSeriesSubringLinearEquiv k A f : restrictedMvPowerSeriesSubmodule k A A) :
+      MvPowerSeries (Fin k) A) = (f : MvPowerSeries (Fin k) A) := (rfl)
+
+/-- Its inverse is likewise the identity on the underlying series. -/
+@[simp]
+theorem coe_restrictedMvPowerSeriesSubringLinearEquiv_symm {k : ℕ} {A : Type*} [CommRing A]
+    [TopologicalSpace A] [NonarchimedeanRing A] (g : restrictedMvPowerSeriesSubmodule k A A) :
+    (((restrictedMvPowerSeriesSubringLinearEquiv k A).symm g :
+      restrictedMvPowerSeriesSubring k A) : MvPowerSeries (Fin k) A) =
+      (g : MvPowerSeries (Fin k) A) := (rfl)
 /-- **`(∏ i, M i)⟨T₁, …, Tₖ⟩` is `∏ i, M i⟨T₁, …, Tₖ⟩`**: a restricted series valued in a product
 is the tuple of its componentwise restricted series, `A`-linearly.
 
