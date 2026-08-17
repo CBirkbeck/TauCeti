@@ -45,6 +45,8 @@ than `Ideal.map`, and a comap of a finitely generated ideal need not be finitely
 * `TauCeti.Huber.isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition`: the topologically
   nilpotent elements are exactly the union of the ideals of definition — the ideal-side companion
   of Corollary 6.4 below.
+* `TauCeti.Huber.isOpen_setOf_isTopologicallyNilpotent`: consequently the topologically nilpotent
+  elements form an *open* set, each ideal of definition having open image in `A`.
 * `TauCeti.Huber.isPowerBounded_iff_exists_mem_ringOfDefinition`: the power-bounded subring is
   the union of the rings of definition.
 
@@ -378,5 +380,24 @@ theorem isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition {a : A} :
       Ideal.mem_sup_right (Ideal.mem_span_singleton_self _)⟩
   · rintro ⟨P, h, ha⟩
     exact P.isTopologicallyNilpotent_of_mem_idealOfDefinition ha
+
+/-- **The topologically nilpotent elements of a Huber ring form an open set.** By the previous
+result they are the union, over pairs of definition, of the image of the ideal of definition in
+`A`; and each such image is open (`PairOfDefinition.isOpen_idealImage`). -/
+theorem isOpen_setOf_isTopologicallyNilpotent :
+    IsOpen {x : A | IsTopologicallyNilpotent x} := by
+  have hunion : {x : A | IsTopologicallyNilpotent x}
+      = ⋃ P : PairOfDefinition A, (P.idealImage 1 : Set A) := by
+    ext x
+    simp only [Set.mem_ofPred_eq, Set.mem_iUnion, SetLike.mem_coe]
+    constructor
+    · intro hx
+      obtain ⟨P, hmem, hI⟩ := isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition.mp hx
+      exact ⟨P, (P.mem_idealImage 1).mpr ⟨⟨x, hmem⟩, by simpa using hI, rfl⟩⟩
+    · rintro ⟨P, hP⟩
+      obtain ⟨y, hy, rfl⟩ := (P.mem_idealImage 1).mp hP
+      exact P.isTopologicallyNilpotent_of_mem_idealOfDefinition (by simpa using hy)
+  rw [hunion]
+  exact isOpen_iUnion fun P ↦ P.isOpen_idealImage 1
 
 end TauCeti.Huber
