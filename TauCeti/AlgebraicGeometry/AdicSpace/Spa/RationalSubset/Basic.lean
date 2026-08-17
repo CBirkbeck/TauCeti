@@ -70,14 +70,12 @@ layer deferred above.
   relatively open in the subspace `spa A⁺`.
 * `TauCeti.ValuationSpectrum.rationalSubset_inter` : the intersection identity above — the
   set-level half of Remark 7.30(5).
-* `TauCeti.ValuationSpectrum.rationalSubset_eq_mul_insert_of_subset` : a contained rational subset
-  is re-presented by the product pair, whose denominator has the containing denominator as a
-  factor — the re-presentation step of Wedhorn §8.2.
-* `TauCeti.ValuationSpectrum.exists_refinement_of_subset` : that re-presentation packaged as the
-  two *set-level* refinement inputs — from `R(T'/s') ⊆ R(T/s)`, a presentation `R(T''/(s · r))` of
-  the smaller subset with `t · r ∈ T''` for every `t ∈ T`. Constructing a restriction map needs one
-  further, algebraic input beyond these, the standing `HasDenominatorPower` hypothesis for the
-  finer pair, which this file does not supply.
+* `TauCeti.ValuationSpectrum.exists_refinement_of_subset` : the re-presentation step of Wedhorn
+  §8.2 — from `R(T'/s') ⊆ R(T/s)`, a presentation `R(T''/(s · s'))` of the smaller subset whose
+  denominator has each original denominator as a factor and whose numerators contain `t · s'` for
+  `t ∈ T` and `t' · s` for `t' ∈ T'`. Constructing a restriction map needs one further, algebraic
+  input beyond these, the standing `HasDenominatorPower` hypothesis for the new pair, which this
+  file does not supply.
 * `TauCeti.ValuationSpectrum.spa_eq_biUnion_rationalSubset_of_span_eq_top` : a finite set
   generating the unit ideal gives a standard rational cover, the forward implication of
   Corollary 7.53.
@@ -206,46 +204,32 @@ theorem rationalSubset_inter (Aplus : Subring A) (T₁ T₂ : Finset A) (s₁ s�
 /-! ### Re-presenting a contained rational subset -/
 
 open scoped Classical Pointwise in
-/-- **A contained rational subset is re-presented by the product pair**, with numerators `U₁U₂` for
-`U₁ = insert s T` and `U₂ = insert s' T'` and denominator `s · s'`.
+/-- **A containment of rational subsets yields a presentation of the smaller one over the product
+denominator.** If `R(T'/s') ⊆ R(T/s)` then `R(T'/s')` has a presentation `R(T''/(s · s'))` whose
+numerators contain `t · s'` for every `t ∈ T` and `t' · s` for every `t' ∈ T'`.
 
-Its point is the *denominator*: on the right `s` divides `s · s'`, so in a localisation presented by
-the product pair the element `s` is invertible by construction. That is the re-presentation step of
-Wedhorn §8.2, and it is what a map out of the coordinate ring of `R(T/s)` needs.
+The denominator is the point: it is divisible by `s`, so in a localisation presented by this pair
+`s` is invertible by construction, and each numerator condition makes the fractions of one of the
+two original presentations distinguished fractions of the new one. Those are the *set-level* inputs
+a restriction map `A⟨T/s⟩ → A⟨T''/(s · s')⟩` is built from, and this is the re-presentation step of
+Wedhorn §8.2.
 
-The proof is the observation that a contained set is its own intersection with the containing one,
-after which `rationalSubset_inter` computes that intersection. Nothing here is a statement about
-coordinate rings — see `exists_refinement_of_subset` for the packaged form those consume. -/
-theorem rationalSubset_eq_mul_insert_of_subset (Aplus : Subring A) (T T' : Finset A) (s s' : A)
-    (h : rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s) :
-    rationalSubset Aplus T' s'
-      = rationalSubset Aplus (insert s T * insert s' T') (s * s') := by
-  rw [← rationalSubset_inter, Set.inter_eq_right.mpr h]
+**They are not by themselves enough to construct that map.** A presentation also carries the
+standing hypothesis `HasDenominatorPower` for the new pair, an algebraic obligation about the ideal
+of definition that this file does not supply — nothing here mentions coordinate rings at all.
 
-open scoped Classical Pointwise in
-/-- **A containment of rational subsets yields a refining presentation of the smaller one.** If
-`R(T'/s') ⊆ R(T/s)` then `R(T'/s')` has a presentation `R(T''/(s · r))` whose denominator is a
-multiple of `s` and whose numerators contain `t · r` for every `t ∈ T`.
-
-Those are the two *set-level* refinement inputs a restriction map `A⟨T/s⟩ → A⟨T''/(s · r)⟩` is
-built from: the denominator condition makes `s` invertible in the finer coordinate ring, and the
-numerator condition makes each `t/s` one of its distinguished fractions. **They are not by
-themselves enough to construct that map.** A presentation also carries the standing hypothesis
-`HasDenominatorPower` for the finer pair, which is an algebraic obligation about the ideal of
-definition and is not supplied here — nothing in this file mentions coordinate rings at all.
-
-So the role of this theorem is to convert a containment of subsets, which is what a presheaf on a
-basis is indexed by, into the two conditions the universal property of `A⟨T/s⟩` asks about the
-fractions. The witness is the product presentation, with cofactor `r = s'`.
-
-It is stated as an existential rather than with the witness spelled out because a consumer needs
-only that *some* refining presentation exists; which one is an artefact of the proof. -/
+Both numerator conditions are given rather than only the one for `T`, because discharging that
+standing hypothesis for a product denominator needs the fractions of *each* factor; a consumer
+holding one alone could not use it. -/
 theorem exists_refinement_of_subset (Aplus : Subring A) (T T' : Finset A) (s s' : A)
     (h : rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s) :
-    ∃ (T'' : Finset A) (r : A), rationalSubset Aplus T' s' = rationalSubset Aplus T'' (s * r)
-      ∧ ∀ t ∈ T, t * r ∈ T'' :=
-  ⟨insert s T * insert s' T', s', rationalSubset_eq_mul_insert_of_subset Aplus T T' s s' h,
-    fun _ ht ↦ Finset.mul_mem_mul (Finset.mem_insert_of_mem ht) (Finset.mem_insert_self s' T')⟩
+    ∃ T'' : Finset A, rationalSubset Aplus T' s' = rationalSubset Aplus T'' (s * s')
+      ∧ (∀ t ∈ T, t * s' ∈ T'') ∧ ∀ t' ∈ T', t' * s ∈ T'' :=
+  ⟨insert s T * insert s' T', by rw [← rationalSubset_inter, Set.inter_eq_right.mpr h],
+    fun _ ht ↦ Finset.mul_mem_mul (Finset.mem_insert_of_mem ht) (Finset.mem_insert_self s' T'),
+    fun t' ht' ↦ by
+      rw [mul_comm t' s]
+      exact Finset.mul_mem_mul (Finset.mem_insert_self s T) (Finset.mem_insert_of_mem ht')⟩
 
 /-- Generalization of the pointwise forward implication of Wedhorn Corollary 7.53 (which assumes
 a complete Hausdorff affinoid ring): for an arbitrary commutative ring `A` and subring `A⁺`, if `T`
