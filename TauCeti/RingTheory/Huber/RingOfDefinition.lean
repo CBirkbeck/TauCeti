@@ -168,8 +168,11 @@ unfolding `enlargeIdeal`, whose body is sealed, so `y ∈ (Q.enlargeIdeal hy).id
 cannot be stated directly: its `Membership` instance would have to unify
 `↥Q.ringOfDefinition` with `↥(Q.enlargeIdeal hy).ringOfDefinition`. Taking the membership witness
 as an argument is also exactly the shape the existential in
-`isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition` needs. -/
-@[simp]
+`isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition` needs.
+
+Deliberately not `@[simp]`: `enlargeIdeal_idealOfDefinition` already is, so `simp` rewrites the
+ideal to `I ⊔ span {y}` and this statement's left-hand side is not in simp-normal form. It is an
+introduction rule to `exact`, not a rewrite. -/
 theorem mem_enlargeIdeal_idealOfDefinition (Q : PairOfDefinition A) {y : Q.ringOfDefinition}
     (hy : IsTopologicallyNilpotent y) (h : (y : A) ∈ (Q.enlargeIdeal hy).ringOfDefinition) :
     (⟨(y : A), h⟩ : (Q.enlargeIdeal hy).ringOfDefinition) ∈
