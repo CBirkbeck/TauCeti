@@ -381,8 +381,17 @@ theorem isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition {a : A} :
   · intro ha
     obtain ⟨P, hmem⟩ := isPowerBounded_iff_exists_mem_ringOfDefinition.mp
       (IsPowerBounded.of_isTopologicallyNilpotent ha)
-    exact ⟨P.enlargeIdeal (isTopologicallyNilpotent_mk hmem ha), hmem,
-      Ideal.mem_sup_right (Ideal.mem_span_singleton_self _)⟩
+    -- `y` is the element itself, viewed in the ring of definition it was just placed in
+    set y : P.ringOfDefinition := ⟨a, hmem⟩ with hy
+    have hnil : IsTopologicallyNilpotent y := isTopologicallyNilpotent_mk hmem ha
+    -- it lies in the enlarged ideal because that ideal is `I ⊔ span {y}`
+    have hmem' : y ∈ P.idealOfDefinition ⊔ Ideal.span {y} :=
+      Ideal.mem_sup_right (Ideal.mem_span_singleton_self y)
+    refine ⟨P.enlargeIdeal hnil, hmem, ?_⟩
+    -- the enlarged pair has the same ring of definition, and its ideal is `I ⊔ span {y}`;
+    -- `show` records both identifications rather than leaving them to silent reduction
+    change y ∈ P.idealOfDefinition ⊔ Ideal.span {y}
+    exact hmem'
   · rintro ⟨P, h, ha⟩
     exact P.isTopologicallyNilpotent_of_mem_idealOfDefinition ha
 
