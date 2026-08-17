@@ -33,6 +33,8 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
   nonzero coefficients suffice.
 * `isRestricted_pi_iff`: restrictedness of a series with coefficients in a product is
   componentwise.
+* `restrictedMvPowerSeriesSubmodulePiEquiv`: that criterion as an `A`-linear equivalence,
+  `(∏ i, M i)⟨T₁, …, Tₖ⟩ ≃ₗ[A] ∏ i, M i⟨T₁, …, Tₖ⟩`.
 
 ## Provenance
 
@@ -176,8 +178,8 @@ The two sides are **equivalent, not identical** — unlike `isRestricted_iff_coe
 is not a definitional unfolding.
 
 Deliberately **not** `@[simp]`: the right-hand side is a componentwise form that no other lemma in
-this file can match, so tagging it would rewrite `IsRestricted` goals at product coefficients into
-a shape `isRestricted_zero`, `isRestricted_one` and `isRestricted_monomial` no longer close. -/
+this file can act on, so tagging it would rewrite `IsRestricted` goals at product coefficients into
+a dead end for anything beyond the lemmas that already close them. -/
 theorem isRestricted_pi_iff {k : ℕ} {ι : Type*} {M : ι → Type*} [∀ i, Zero (M i)]
     [∀ i, TopologicalSpace (M i)] {f : MvPowerSeries (Fin k) (∀ i, M i)} :
     IsRestricted f ↔ ∀ i, IsRestricted
@@ -454,5 +456,45 @@ theorem mem_restrictedMvPowerSeriesSubmodule {k : ℕ} {A M : Type*} [Semiring A
     [TopologicalSpace M] [Module A M] [ContinuousAdd M] [ContinuousConstSMul A M]
     {f : MvPowerSeries (Fin k) M} :
     f ∈ restrictedMvPowerSeriesSubmodule k A M ↔ IsRestricted f := (Iff.rfl)
+
+/-- **`(∏ i, M i)⟨T₁, …, Tₖ⟩` is `∏ i, M i⟨T₁, …, Tₖ⟩`**: a restricted series valued in a product
+is the tuple of its componentwise restricted series, `A`-linearly.
+
+No finiteness of the index is needed. This is the target half of Wedhorn's Remark 8.29 in the
+finite free case, where `M` is `Fin n → A`. -/
+noncomputable def restrictedMvPowerSeriesSubmodulePiEquiv (k : ℕ) (A : Type*) {ι : Type*}
+    (M : ι → Type*) [Semiring A] [∀ i, AddCommMonoid (M i)] [∀ i, TopologicalSpace (M i)]
+    [∀ i, Module A (M i)] [∀ i, ContinuousAdd (M i)] [∀ i, ContinuousConstSMul A (M i)] :
+    restrictedMvPowerSeriesSubmodule k A (∀ i, M i) ≃ₗ[A]
+      ∀ i, restrictedMvPowerSeriesSubmodule k A (M i) where
+  toFun f i := ⟨fun s ↦ f.1 s i, isRestricted_pi_iff.mp f.2 i⟩
+  invFun g := ⟨fun s i ↦ (g i).1 s, isRestricted_pi_iff.mpr fun i ↦ (g i).2⟩
+  left_inv _ := rfl
+  right_inv _ := rfl
+  map_add' _ _ := rfl
+  map_smul' _ _ := rfl
+
+/-- `restrictedMvPowerSeriesSubmodulePiEquiv` reads off the `i`-th component. Its body is not
+exposed, so this is how a consumer computes with it. -/
+@[simp]
+theorem restrictedMvPowerSeriesSubmodulePiEquiv_apply {k : ℕ} {A : Type*} {ι : Type*}
+    {M : ι → Type*} [Semiring A] [∀ i, AddCommMonoid (M i)] [∀ i, TopologicalSpace (M i)]
+    [∀ i, Module A (M i)] [∀ i, ContinuousAdd (M i)] [∀ i, ContinuousConstSMul A (M i)]
+    (f : restrictedMvPowerSeriesSubmodule k A (∀ i, M i)) (i : ι) (s : Fin k →₀ ℕ) :
+    ((restrictedMvPowerSeriesSubmodulePiEquiv k A M f i :
+      MvPowerSeries (Fin k) (M i)) : (Fin k →₀ ℕ) → M i) s =
+      ((f : MvPowerSeries (Fin k) (∀ i, M i)) : (Fin k →₀ ℕ) → ∀ i, M i) s i := (rfl)
+
+/-- The inverse of `restrictedMvPowerSeriesSubmodulePiEquiv` assembles a tuple of restricted
+series into one. -/
+@[simp]
+theorem restrictedMvPowerSeriesSubmodulePiEquiv_symm_apply {k : ℕ} {A : Type*} {ι : Type*}
+    {M : ι → Type*} [Semiring A] [∀ i, AddCommMonoid (M i)] [∀ i, TopologicalSpace (M i)]
+    [∀ i, Module A (M i)] [∀ i, ContinuousAdd (M i)] [∀ i, ContinuousConstSMul A (M i)]
+    (g : ∀ i, restrictedMvPowerSeriesSubmodule k A (M i)) (s : Fin k →₀ ℕ) (i : ι) :
+    ((((restrictedMvPowerSeriesSubmodulePiEquiv k A M).symm g :
+        restrictedMvPowerSeriesSubmodule k A (∀ i, M i)) :
+      MvPowerSeries (Fin k) (∀ i, M i)) : (Fin k →₀ ℕ) → ∀ i, M i) s i =
+      ((g i : MvPowerSeries (Fin k) (M i)) : (Fin k →₀ ℕ) → M i) s := (rfl)
 
 end TauCeti.Huber
