@@ -21,8 +21,9 @@ Both sides live here because they share the enlargement machinery: the ring-side
 the ring and grows only the ideal. The ideal-side statement is also proved *from* the ring-side one,
 reusing `isPowerBounded_iff_exists_mem_ringOfDefinition` below rather than rebuilding a pair.
 
-Both rest on the same observation, isolated here as `PairOfDefinition.enlarge`: **a bounded
-subring containing a ring of definition is itself a ring of definition.** Openness is inherited
+The two ring-side parts rest on a single observation, isolated here as
+`PairOfDefinition.enlarge`: **a bounded subring containing a ring of definition is itself a ring of
+definition.** Openness is inherited
 from the smaller ring, and the new ideal of definition is the `Ideal.map` of the old one, so
 finite generation comes for free. Boundedness of the larger ring is the only real hypothesis, and
 both applications get it from the lattice: `A₀[T]` is `A₀ ⊔ Subring.closure T`, bounded by
