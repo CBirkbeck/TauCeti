@@ -34,9 +34,9 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 * `TauCeti.Localization.divBy_mul_cancel_left` and
   `TauCeti.Localization.divBy_mul_cancel_right`: `(s · t)/s = t` and `(t · s)/s = t`.
 * `TauCeti.Localization.divBy_self`: `s/s = 1`.
-* `TauCeti.Localization.algebraMap_mul_divBy_of_eq_mul` and
-  `TauCeti.Localization.isUnit_algebraMap_of_dvd`: a factor of `s` is invertible in `S`, with the
-  cofactor over `s` as its explicit inverse.
+* `TauCeti.Localization.algebraMap_mul_divBy_of_eq_mul`: the inverse of a factor of `s` is the
+  cofactor over `s`. Mathlib's `IsLocalization.Away.isUnit_of_dvd` already gives the unitness; this
+  names the inverse.
 
 ## Provenance
 
@@ -155,21 +155,21 @@ theorem divBy_self : (divBy s s : S) = 1 := by
 
 /-! ### Factors of the denominator
 
-Inverting `s` inverts every factor of it, and the inverse of a factor is again a fraction over
-`s`, namely the cofactor. So a localisation away from a product may be used as a localisation
-away from either factor, with a named inverse rather than one produced by `IsUnit.unit`. -/
+Inverting `s` inverts every factor of it, and the inverse of such a factor is again a fraction
+over `s`, namely the cofactor. Mathlib's `IsLocalization.Away.isUnit_of_dvd` already supplies the
+unitness; what it does not do is *name the inverse*, and an inverse obtained from `IsUnit.unit` is
+chosen rather than constructed, so it cannot be computed with. The lemma below closes that gap. -/
 
 /-- **The cofactor is the inverse.** If `s = a · b` then `b/s` is a right inverse of `a` in `S`,
-since `a · (b/s) = (a · b)/s = s/s = 1`. -/
+since `a · (b/s) = (a · b)/s = s/s = 1`.
+
+Mathlib's `IsLocalization.Away.isUnit_of_dvd` gives `IsUnit (algebraMap A S a)` from `a ∣ s` and is
+the lemma to cite for that; this identifies the inverse it does not name. Wedhorn needs the named
+form when passing from a presentation of a rational subset to one whose denominator is a multiple
+of the original, since the fractions over the old denominator have to be rewritten over the new
+one. -/
 theorem algebraMap_mul_divBy_of_eq_mul {a b : A} (h : s = a * b) :
     algebraMap A S a * divBy b s = 1 := by
   rw [← divBy_mul, ← h, divBy_self]
-
-/-- **A factor of the inverted element becomes a unit.** Wedhorn uses this to pass from a
-presentation of a rational subset to one whose denominator is a multiple of the original: the
-old denominator stays invertible in the finer localisation. Its inverse is named by
-`algebraMap_mul_divBy_of_eq_mul`, which is what computing with the fractions needs. -/
-theorem isUnit_algebraMap_of_dvd {a : A} (h : a ∣ s) : IsUnit (algebraMap A S a) :=
-  h.elim fun _ hb ↦ IsUnit.of_mul_eq_one _ (algebraMap_mul_divBy_of_eq_mul s hb)
 
 end TauCeti.Localization
