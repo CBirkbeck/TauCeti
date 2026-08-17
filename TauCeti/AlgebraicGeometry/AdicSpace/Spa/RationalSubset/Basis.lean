@@ -264,7 +264,15 @@ theorem isCompact_of_mem_spaRationalFamily [IsHuberRing A] {Aplus : Subring A}
 This is the previous two results combined: being a basis shrinks each point's cover member to a
 rational neighbourhood, and quasi-compactness then keeps finitely many of them. It is the shape a
 sheaf criterion on the rational basis consumes, where the cover is arbitrary but the Čech complex
-must be built from the basis itself. -/
+must be built from the basis itself.
+
+The two-step argument follows AINTLIB's `exists_finite_rational_refinement_huber` and its Tate-only
+`exists_finite_rational_refinement` (branch `dev/adic-spaces`, commit `37bbdaeb`, Apache 2.0), in
+`projects/AdicSpaces/Adic spaces/RestrictedLimitSheaf.lean`. Two differences: quasi-compactness is a
+hypothesis there and is discharged here by `isCompact_of_mem_spaRationalFamily`; and the conclusion
+there is a `Finset` of a bundled index type over `RationalLocData`, whereas this states a finite
+subfamily of `spaRationalFamily` with the containment as a side condition, matching the vocabulary
+this file already uses. -/
 theorem exists_finite_spaRationalFamily_refinement [IsHuberRing A] {Aplus : Subring A}
     {U : Set (spa Aplus)} (hU : U ∈ spaRationalFamily Aplus) {ι : Type*}
     (V : ι → Set (spa Aplus)) (hVopen : ∀ i, IsOpen (V i)) (hcover : U ⊆ ⋃ i, V i) :
