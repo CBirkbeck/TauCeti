@@ -40,6 +40,11 @@ than `Ideal.map`, and a comap of a finitely generated ideal need not be finitely
   components and inclusions.
 * `TauCeti.Huber.PairOfDefinition.sup`: the join of two rings of definition is a ring of
   definition.
+* `TauCeti.Huber.PairOfDefinition.enlargeIdeal`: adjoining a topologically nilpotent element to
+  the *ideal* of definition again gives a pair of definition, with the same ring of definition.
+* `TauCeti.Huber.isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition`: the topologically
+  nilpotent elements are exactly the union of the ideals of definition — the ideal-side companion
+  of Corollary 6.4 below.
 * `TauCeti.Huber.isPowerBounded_iff_exists_mem_ringOfDefinition`: the power-bounded subring is
   the union of the rings of definition.
 
@@ -74,6 +79,52 @@ omit [NonarchimedeanRing A] in
 private theorem le_adjoinRing (P : PairOfDefinition A) (T : Finset A) :
     P.ringOfDefinition ≤ Subring.closure ((P.ringOfDefinition : Set A) ∪ (T : Set A)) :=
   fun _ ha ↦ Subring.subset_closure (Set.mem_union_left _ ha)
+
+/-! ### Enlarging the ideal of definition -/
+
+/-- If `x ^ k ∈ I ^ n` then `(I ⊔ span {x}) ^ (n + (k + 1)) ≤ I ^ n`: in a product of `n + k + 1`
+factors from `I ⊔ span {x}`, either `n` come from `I`, or at least `k + 1` are multiples of `x` and
+the product is divisible by `x ^ (k + 1) = x · x ^ k ∈ I ^ n`.
+
+Kept private: it is a general fact about ideals with no other consumer here, and Mathlib's
+`Ideal.sup_pow_add_le_pow_sup_pow` already does the binomial step. -/
+private theorem sup_span_singleton_pow_le {R : Type*} [CommRing R] (I : Ideal R) (x : R) (n k : ℕ)
+    (h : x ^ k ∈ I ^ n) : (I ⊔ Ideal.span {x}) ^ (n + (k + 1)) ≤ I ^ n := by
+  refine Ideal.sup_pow_add_le_pow_sup_pow.trans (sup_le le_rfl ?_)
+  rw [Ideal.span_singleton_pow, Ideal.span_le, Set.singleton_subset_iff, pow_succ]
+  exact Ideal.mul_mem_right _ _ h
+
+/-- **Adjoining a topologically nilpotent element to the ideal of definition.** The ring of
+definition is unchanged and the ideal becomes `I ⊔ span {y}`.
+
+The ideal grows, so its powers stay open; and it does not grow too far, because `y` being
+topologically nilpotent puts a power of it inside each `I ^ n`, after which
+`sup_span_singleton_pow_le` bounds a power of the larger ideal by `I ^ n`. Both directions of
+`isAdic` therefore reduce to the corresponding facts for `I`. -/
+noncomputable def enlargeIdeal (Q : PairOfDefinition A) {y : Q.ringOfDefinition}
+    (hy : IsTopologicallyNilpotent y) : PairOfDefinition A where
+  ringOfDefinition := Q.ringOfDefinition
+  isOpen_ringOfDefinition := Q.isOpen_ringOfDefinition
+  idealOfDefinition := Q.idealOfDefinition ⊔ Ideal.span {y}
+  fg_idealOfDefinition := Submodule.FG.sup Q.fg_idealOfDefinition
+    (by simpa [Ideal.span] using Submodule.fg_span_singleton y)
+  isAdic_idealOfDefinition := by
+    obtain ⟨hopen, hnhd⟩ := isAdic_iff.mp Q.isAdic_idealOfDefinition
+    have hle : ∀ n : ℕ, (Q.idealOfDefinition ^ n : Ideal Q.ringOfDefinition)
+        ≤ (Q.idealOfDefinition ⊔ Ideal.span {y}) ^ n :=
+      fun n ↦ pow_le_pow_left' le_sup_left n
+    refine isAdic_iff.mpr ⟨fun n ↦ Ideal.isOpen_of_isOpen_subideal (hle n) (hopen n), fun s hs ↦ ?_⟩
+    obtain ⟨n, hn⟩ := hnhd s hs
+    obtain ⟨k, hk⟩ := hy.exists_pow_mem_of_mem_nhds ((hopen n).mem_nhds (Ideal.zero_mem _))
+    exact ⟨n + (k + 1),
+      (SetLike.coe_subset_coe.mpr (sup_span_singleton_pow_le _ _ _ _ hk)).trans hn⟩
+
+/-- The ring of definition is unchanged by `enlargeIdeal`. -/
+@[simp]
+theorem enlargeIdeal_ringOfDefinition (Q : PairOfDefinition A) {y : Q.ringOfDefinition}
+    (hy : IsTopologicallyNilpotent y) :
+    (Q.enlargeIdeal hy).ringOfDefinition = Q.ringOfDefinition := (rfl)
+
 
 end PairOfDefinition
 
@@ -295,5 +346,37 @@ theorem isPowerBounded_iff_exists_mem_ringOfDefinition {a : A} :
     exact ⟨P.adjoin T hT, P.mem_adjoin_of_mem T hT (by simp [T])⟩
   · rintro ⟨P, ha⟩
     exact mem_powerBoundedSubring.mp (P.le_powerBoundedSubring ha)
+
+omit [IsTopologicalRing A] [IsHuberRing A] in
+/-- Topological nilpotence descends to a subring, which carries the subspace topology. -/
+theorem isTopologicallyNilpotent_mk {B : Subring A} {x : A} (hx : x ∈ B)
+    (h : IsTopologicallyNilpotent x) : IsTopologicallyNilpotent (⟨x, hx⟩ : B) := by
+  have h' : Filter.Tendsto (fun k : ℕ ↦ x ^ k) Filter.atTop (nhds 0) := h
+  rw [IsTopologicallyNilpotent, nhds_induced, Filter.tendsto_comap_iff]
+  simpa [Function.comp_def] using h'
+
+/-- **The ideal-side companion of Corollary 6.4**: an element of a Huber ring is topologically
+nilpotent exactly when it belongs to some ideal of definition. Equivalently, the topologically
+nilpotent elements are the union of all ideals of definition.
+
+The forward direction is the substantial one, and it is where `enlargeIdeal` is used: adjoin `a`
+to a ring of definition (it is power-bounded, being topologically nilpotent), then adjoin it to
+that pair's ideal. -/
+theorem isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition {a : A} :
+    IsTopologicallyNilpotent a ↔
+      ∃ (P : PairOfDefinition A) (h : a ∈ P.ringOfDefinition),
+        (⟨a, h⟩ : P.ringOfDefinition) ∈ P.idealOfDefinition := by
+  constructor
+  · intro ha
+    obtain ⟨P⟩ := IsHuberRing.nonempty_pairOfDefinition (A := A)
+    let T : Finset A := {a}
+    have hT : ∀ t ∈ T, IsPowerBounded t := by
+      simpa [T] using IsPowerBounded.of_isTopologicallyNilpotent ha
+    have hmem : a ∈ (P.adjoin T hT).ringOfDefinition :=
+      P.mem_adjoin_of_mem T hT (by simp [T])
+    exact ⟨(P.adjoin T hT).enlargeIdeal (isTopologicallyNilpotent_mk hmem ha), hmem,
+      Ideal.mem_sup_right (Ideal.mem_span_singleton_self _)⟩
+  · rintro ⟨P, h, ha⟩
+    exact P.isTopologicallyNilpotent_of_mem_idealOfDefinition ha
 
 end TauCeti.Huber
