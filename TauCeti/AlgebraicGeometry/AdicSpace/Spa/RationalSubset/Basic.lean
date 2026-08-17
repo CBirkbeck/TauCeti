@@ -70,6 +70,12 @@ layer deferred above.
   relatively open in the subspace `spa A⁺`.
 * `TauCeti.ValuationSpectrum.rationalSubset_inter` : the intersection identity above — the
   set-level half of Remark 7.30(5).
+* `TauCeti.ValuationSpectrum.rationalSubset_eq_inter_of_subset` : a contained rational subset is
+  its own intersection with the larger one, hence re-presentable with the larger denominator as a
+  factor — the re-presentation step of Wedhorn §8.2.
+* `TauCeti.ValuationSpectrum.exists_refinement_of_subset` : that re-presentation packaged as the
+  *refinement* data a restriction map needs — from `R(T'/s') ⊆ R(T/s)`, a presentation
+  `R(T''/(s · r))` of the smaller subset with `t · r ∈ T''` for every `t ∈ T`.
 * `TauCeti.ValuationSpectrum.spa_eq_biUnion_rationalSubset_of_span_eq_top` : a finite set
   generating the unit ideal gives a standard rational cover, the forward implication of
   Corollary 7.53.
@@ -194,6 +200,45 @@ theorem rationalSubset_inter (Aplus : Subring A) (T₁ T₂ : Finset A) (s₁ s�
       = rationalSubset Aplus (insert s₁ T₁ * insert s₂ T₂) (s₁ * s₂) := by
   rw [rationalSubset_def, rationalSubset_def, rationalSubset_def, ← basicOpenFinset_inter]
   exact (Set.inter_inter_distrib_left _ _ _).symm
+
+/-! ### Re-presenting a contained rational subset -/
+
+open scoped Classical Pointwise in
+/-- **A contained rational subset is its own intersection with the larger one**, so
+`rationalSubset_inter` re-presents it with the larger denominator as a factor:
+`R(T'/s') = R((U T' ∪-augmented product)/(s · s'))` where the numerators are `U₁U₂` for
+`U₁ = insert s T` and `U₂ = insert s' T'`.
+
+This is the re-presentation step of Wedhorn §8.2. Its point is the *denominator*: on the right
+`s` divides `s · s'`, so in a localisation presented by the right-hand pair the element `s`
+is invertible by construction, which is what a map out of the coordinate ring of `R(T/s)`
+needs. Nothing here is a statement about coordinate rings — see
+`exists_refinement_of_subset` for the packaged form those consume. -/
+theorem rationalSubset_eq_inter_of_subset (Aplus : Subring A) (T T' : Finset A) (s s' : A)
+    (h : rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s) :
+    rationalSubset Aplus T' s'
+      = rationalSubset Aplus (insert s T * insert s' T') (s * s') := by
+  rw [← rationalSubset_inter, Set.inter_eq_right.mpr h]
+
+open scoped Classical Pointwise in
+/-- **A containment of rational subsets yields a refining presentation of the smaller one.** If
+`R(T'/s') ⊆ R(T/s)` then `R(T'/s')` has a presentation `R(T''/(s · r))` whose denominator is a
+multiple of `s` and whose numerators contain `t · r` for every `t ∈ T`.
+
+Those two conditions are exactly the *refinement* hypotheses under which a restriction map
+`A⟨T/s⟩ → A⟨T''/(s · r)⟩` exists, so this is the set-level input to the structure presheaf's
+restriction maps: it converts a containment of subsets, which is what a presheaf on a basis is
+indexed by, into the algebraic data the universal property of `A⟨T/s⟩` consumes. The witness is
+the intersection presentation, with cofactor `r = s'`.
+
+It is stated as an existential rather than with the witness spelled out because a consumer needs
+only that *some* refining presentation exists; which one is an artefact of the proof. -/
+theorem exists_refinement_of_subset (Aplus : Subring A) (T T' : Finset A) (s s' : A)
+    (h : rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s) :
+    ∃ (T'' : Finset A) (r : A), rationalSubset Aplus T' s' = rationalSubset Aplus T'' (s * r)
+      ∧ ∀ t ∈ T, t * r ∈ T'' :=
+  ⟨insert s T * insert s' T', s', rationalSubset_eq_inter_of_subset Aplus T T' s s' h,
+    fun _ ht ↦ Finset.mul_mem_mul (Finset.mem_insert_of_mem ht) (Finset.mem_insert_self s' T')⟩
 
 /-- Generalization of the pointwise forward implication of Wedhorn Corollary 7.53 (which assumes
 a complete Hausdorff affinoid ring): for an arbitrary commutative ring `A` and subring `A⁺`, if `T`
