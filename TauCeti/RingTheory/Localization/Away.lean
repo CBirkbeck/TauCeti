@@ -49,6 +49,11 @@ over a commutative semiring, linked to Mathlib's `IsLocalization.Away.invSelf`, 
 the Huber namespace because nothing about them is topological. The topological part of that port
 is `TauCeti/RingTheory/Huber/LocalizationTopology/Basic.lean`, which records the same provenance.
 
+`divBy_mul_divBy_of_eq_mul` and `awayLift_divBy` are **later additions with no AINTLIB analogue** —
+checked against `dev/adic-spaces` at commit `37bbdaeb9`, which has neither the splitting identity
+for a factored denominator nor any statement about `IsLocalization.Away.lift` on distinguished
+fractions. Both are proved here directly from Mathlib's `mk'` API.
+
 ## References
 
 * [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
@@ -169,16 +174,10 @@ denominators into a product of two fractions over the *common* denominator, so t
 recognised separately. -/
 theorem divBy_mul_divBy_of_eq_mul {u r : A} (h : s = u * r) (a b : A) :
     divBy (a * b) s = (divBy (a * r) s : S) * divBy (b * u) s := by
-  refine (IsLocalization.Away.algebraMap_isUnit s).mul_left_cancel ?_
-  have hR : algebraMap A S s * ((divBy (a * r) s : S) * divBy (b * u) s)
-      = algebraMap A S (a * b) :=
-    calc algebraMap A S s * ((divBy (a * r) s : S) * divBy (b * u) s)
-        = algebraMap A S s * divBy (b * u) s * divBy (a * r) s := by ring
-      _ = algebraMap A S (b * u) * divBy (a * r) s := by rw [algebraMap_mul_divBy]
-      _ = divBy (b * u * (a * r)) s := (divBy_mul (a * r) s (b * u)).symm
-      _ = algebraMap A S (a * b) := by
-          rw [show b * u * (a * r) = a * b * s by rw [h]; ring, divBy_mul_cancel_right]
-  rw [algebraMap_mul_divBy, hR]
+  rw [divBy_def, divBy_def, divBy_def, ← IsLocalization.mk'_mul,
+    show (a * r) * (b * u) = (a * b) * s by rw [h]; ring]
+  exact (IsLocalization.mk'_cancel (S := S) (a * b)
+    ⟨s, Submonoid.mem_powers s⟩ ⟨s, Submonoid.mem_powers s⟩).symm
 
 /-! ### Passing to a localisation at a multiple
 
@@ -197,16 +196,7 @@ theorem awayLift_divBy {V W : Type*} [CommSemiring V] [CommSemiring W] [Algebra 
     (u r w : A) (hw : w = u * r) [IsLocalization.Away u V] [IsLocalization.Away w W]
     (hu : IsUnit (algebraMap A W u)) (a : A) :
     IsLocalization.Away.lift u hu (divBy a u : V) = (divBy (a * r) w : W) := by
-  refine hu.mul_left_cancel ?_
-  have hL : algebraMap A W u * IsLocalization.Away.lift u hu (divBy a u : V)
-      = algebraMap A W a :=
-    calc algebraMap A W u * IsLocalization.Away.lift u hu (divBy a u : V)
-        = IsLocalization.Away.lift u hu (algebraMap A V u * divBy a u) := by
-          rw [map_mul, IsLocalization.Away.lift_eq (S := V) u hu u]
-      _ = algebraMap A W a := by
-          rw [algebraMap_mul_divBy, IsLocalization.Away.lift_eq (S := V) u hu a]
-  have hR : algebraMap A W u * (divBy (a * r) w : W) = algebraMap A W a := by
-    rw [← divBy_mul, show u * (a * r) = a * w by rw [hw]; ring, divBy_mul_cancel_right]
-  rw [hL, hR]
+  rw [divBy_def, IsLocalization.Away.lift, IsLocalization.lift_mk'_spec, ← divBy_mul,
+    show u * (a * r) = a * w by rw [hw]; ring, divBy_mul_cancel_right]
 
 end TauCeti.Localization
