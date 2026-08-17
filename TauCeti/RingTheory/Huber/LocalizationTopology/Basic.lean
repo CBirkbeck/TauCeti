@@ -231,6 +231,70 @@ theorem hasDenominatorPower_of_pow_le_span (P : PairOfDefinition A) (T : Finset 
   rw [hb', divBy_mul_cancel_left]
   exact algebraMap_mem_locSubring P T s S c.property
 
+/-! ### Passing to a denominator that is a multiple
+
+A localisation away from `u` maps to one away from a multiple `w = u * r`, and under that map `D`
+lands inside the finer `D` as soon as each `t * r`, for `t ∈ U`, is one of the finer numerators. So
+the standing hypothesis `HasDenominatorPower` transfers, and for a *product* denominator the two
+factors' hypotheses combine. That is what makes the intersection of two rational subsets a
+legitimate presentation, which is how nested presentations get compared (Wedhorn §8.2). -/
+
+/-- **`D` maps into the finer `D`.** With `w = u * r`, the comparison map `Aᵤ → A_w` carries
+`locSubring P U u V` into `locSubring P Tw w W`, provided each `t * r` for `t ∈ U` is a numerator of
+the target. Both generating families land where they must: `A₀` by `algebraMap_mem_locSubring`, and
+`t/u`, which `awayLift_divBy` identifies with the distinguished fraction `(t * r)/w`. -/
+theorem mem_locSubring_awayLift (P : PairOfDefinition A) (U : Finset A) (u : A)
+    (V : Type*) [CommRing V] [Algebra A V] [IsLocalization.Away u V]
+    (Tw : Finset A) (w : A) (W : Type*) [CommRing W] [Algebra A W] [IsLocalization.Away w W]
+    (r : A) (hw : w = u * r) (hgen : ∀ t ∈ U, t * r ∈ Tw)
+    {x : V} (hx : x ∈ locSubring P U u V) :
+    IsLocalization.Away.lift u (IsLocalization.Away.isUnit_of_dvd w ⟨r, hw⟩) x
+      ∈ locSubring P Tw w W := by
+  have hle : locSubring P U u V ≤
+      (locSubring P Tw w W).comap
+        (IsLocalization.Away.lift u (IsLocalization.Away.isUnit_of_dvd w ⟨r, hw⟩)) := by
+    refine (locSubring_le_iff P U u V).mpr ⟨fun a ha ↦ ?_, fun t ht ↦ ?_⟩
+    · rw [Subring.mem_comap, IsLocalization.Away.lift_eq]
+      exact algebraMap_mem_locSubring P Tw w W ha
+    · rw [Subring.mem_comap, awayLift_divBy u r w hw _ t]
+      exact divBy_mem_locSubring P Tw w W (hgen t ht)
+  exact hle hx
+
+/-- **The standing hypothesis for a product denominator.** If `(T, s)` and `(T', s')` both satisfy
+`HasDenominatorPower`, and the numerator set `T''` contains every `t * s'` for `t ∈ T` and every
+`t' * s` for `t' ∈ T'`, then `(T'', s * s')` satisfies it too.
+
+The exponent adds: for `b ∈ I ^ (N + N')` write `b` as a sum of products `x * y` with `x ∈ I ^ N`
+and `y ∈ I ^ N'`, and split `(x * y)/(s * s')` as `(x * s')/(s * s') · (y * s)/(s * s')`
+(`divBy_mul_divBy_of_eq_mul`). Each factor is the image of a fraction that the corresponding
+hypothesis already places in the coarser `D`, so `mem_locSubring_awayLift` puts it in the finer one,
+which is a subring and therefore closed under the products and sums involved.
+
+`insert s T * insert s' T'` — the numerator set `rationalSubset_inter` produces for an intersection
+of rational subsets — satisfies both membership conditions, which is the intended instance. -/
+theorem hasDenominatorPower_mul (P : PairOfDefinition A) (T T' T'' : Finset A) (s s' : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (S' : Type*) [CommRing S'] [Algebra A S'] [IsLocalization.Away s' S']
+    (S'' : Type*) [CommRing S''] [Algebra A S''] [IsLocalization.Away (s * s') S'']
+    (hT : ∀ t ∈ T, t * s' ∈ T'') (hT' : ∀ t ∈ T', t * s ∈ T'')
+    (hden : HasDenominatorPower P T s S) (hden' : HasDenominatorPower P T' s' S') :
+    HasDenominatorPower P T'' (s * s') S'' := by
+  obtain ⟨N, hN⟩ := hden
+  obtain ⟨N', hN'⟩ := hden'
+  refine ⟨N + N', fun b hb ↦ ?_⟩
+  rw [pow_add] at hb
+  refine Submodule.mul_induction_on hb (fun x hx y hy ↦ ?_) (fun p q hp hq ↦ ?_)
+  · have hx' : (divBy ((x : A) * s') (s * s') : S'') ∈ locSubring P T'' (s * s') S'' := by
+      have := mem_locSubring_awayLift P T s S T'' (s * s') S'' s' rfl hT (hN x hx)
+      rwa [awayLift_divBy s s' (s * s') rfl _ (x : A)] at this
+    have hy' : (divBy ((y : A) * s) (s * s') : S'') ∈ locSubring P T'' (s * s') S'' := by
+      have := mem_locSubring_awayLift P T' s' S' T'' (s * s') S'' s (mul_comm s s') hT' (hN' y hy)
+      rwa [awayLift_divBy s' s (s * s') (mul_comm s s') _ (y : A)] at this
+    rw [Subring.coe_mul, divBy_mul_divBy_of_eq_mul (s * s') rfl (x : A) (y : A)]
+    exact Subring.mul_mem _ hx' hy'
+  · rw [Subring.coe_add, divBy_add]
+    exact Subring.add_mem _ hp hq
+
 /-! ### The candidate ideal of definition `J` -/
 
 /-- The ring homomorphism `A₀ →+* D` induced by `algebraMap`. -/

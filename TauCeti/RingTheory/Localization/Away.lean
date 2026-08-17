@@ -34,6 +34,10 @@ Huber namespace, alongside `TauCeti/RingTheory/Localization/DenIdeal.lean`.
 * `TauCeti.Localization.divBy_mul_cancel_left` and
   `TauCeti.Localization.divBy_mul_cancel_right`: `(s · t)/s = t` and `(t · s)/s = t`.
 * `TauCeti.Localization.divBy_self`: `s/s = 1`.
+* `TauCeti.Localization.divBy_mul_divBy_of_eq_mul`: for `s = u * r`, the fraction `(a · b)/s`
+  splits as `(a · r)/s · (b · u)/s`, each half carrying one factor of the denominator.
+* `TauCeti.Localization.awayLift_divBy`: the comparison map to a localisation at a multiple
+  `w = u * r` rescales fractions by the cofactor, sending `a/u` to `(a · r)/w`.
 
 ## Provenance
 
@@ -149,5 +153,60 @@ and stops, where before `invSelf_mul_algebraMap` it could reach `1` through Math
 theorem divBy_self : (divBy s s : S) = 1 := by
   rw [divBy_def]
   exact IsLocalization.mk'_self S (Submonoid.mem_powers s)
+
+/-! ### A factored denominator
+
+When `s` factors as `u * r`, a fraction over `s` can be split so that each half carries one factor,
+and a fraction over `u` alone can be rewritten over `s`. These are the identities that let a
+presentation be replaced by one with a larger denominator. -/
+
+/-- **Splitting a fraction over a factored denominator.** If `s = u * r` then `(a · b)/s` factors as
+`(a · r)/s · (b · u)/s`: each half keeps one factor of the denominator, so `a/u` and `b/r` are
+recovered as fractions over `s` itself.
+
+Both sides agree after multiplying by `s`, which is a unit. This is what turns a product of
+denominators into a product of two fractions over the *common* denominator, so that each can be
+recognised separately. -/
+theorem divBy_mul_divBy_of_eq_mul {u r : A} (h : s = u * r) (a b : A) :
+    divBy (a * b) s = (divBy (a * r) s : S) * divBy (b * u) s := by
+  refine (IsLocalization.Away.algebraMap_isUnit s).mul_left_cancel ?_
+  have hR : algebraMap A S s * ((divBy (a * r) s : S) * divBy (b * u) s)
+      = algebraMap A S (a * b) :=
+    calc algebraMap A S s * ((divBy (a * r) s : S) * divBy (b * u) s)
+        = algebraMap A S s * divBy (b * u) s * divBy (a * r) s := by ring
+      _ = algebraMap A S (b * u) * divBy (a * r) s := by rw [algebraMap_mul_divBy]
+      _ = divBy (b * u * (a * r)) s := (divBy_mul (a * r) s (b * u)).symm
+      _ = algebraMap A S (a * b) := by
+          rw [show b * u * (a * r) = a * b * s by rw [h]; ring, divBy_mul_cancel_right]
+  rw [algebraMap_mul_divBy, hR]
+
+/-! ### Passing to a localisation at a multiple
+
+A localisation away from `u` maps to a localisation away from any multiple `w = u * r`, by
+`IsLocalization.Away.lift` at the unit `IsLocalization.Away.isUnit_of_dvd` supplies. The one thing
+a consumer needs to know about that map is what it does to fractions, and the answer is that it
+rescales numerator and denominator by the cofactor. -/
+
+/-- **The comparison map rescales fractions by the cofactor**: if `w = u * r` then the map
+`Aᵤ → A_w` induced by `IsLocalization.Away.lift` sends `a/u` to `(a · r)/w`.
+
+Both sides become `a` after multiplying by `u`, which is a unit in `A_w`, so they agree. This is
+what lets a fraction over the coarser denominator be recognised as a *distinguished* fraction of
+the finer presentation. -/
+theorem awayLift_divBy {V W : Type*} [CommSemiring V] [CommSemiring W] [Algebra A V] [Algebra A W]
+    (u r w : A) (hw : w = u * r) [IsLocalization.Away u V] [IsLocalization.Away w W]
+    (hu : IsUnit (algebraMap A W u)) (a : A) :
+    IsLocalization.Away.lift u hu (divBy a u : V) = (divBy (a * r) w : W) := by
+  refine hu.mul_left_cancel ?_
+  have hL : algebraMap A W u * IsLocalization.Away.lift u hu (divBy a u : V)
+      = algebraMap A W a :=
+    calc algebraMap A W u * IsLocalization.Away.lift u hu (divBy a u : V)
+        = IsLocalization.Away.lift u hu (algebraMap A V u * divBy a u) := by
+          rw [map_mul, IsLocalization.Away.lift_eq (S := V) u hu u]
+      _ = algebraMap A W a := by
+          rw [algebraMap_mul_divBy, IsLocalization.Away.lift_eq (S := V) u hu a]
+  have hR : algebraMap A W u * (divBy (a * r) w : W) = algebraMap A W a := by
+    rw [← divBy_mul, show u * (a * r) = a * w by rw [hw]; ring, divBy_mul_cancel_right]
+  rw [hL, hR]
 
 end TauCeti.Localization
