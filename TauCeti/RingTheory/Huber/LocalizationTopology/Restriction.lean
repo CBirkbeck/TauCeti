@@ -125,9 +125,8 @@ theorem isUnit_toCompletionLoc_of_dvd {a : A} (h : a ∣ s) :
 /-- **The inverse of that unit is the cofactor fraction.** If `s = a * r` then the inverse of the
 image of `a` in `A⟨T/s⟩` is the image of `r/s`.
 
-`IsUnit.unit` is chosen rather than constructed, so without this the inverse cannot be computed
-with. The hypothesis is unitness rather than divisibility, so that the statement applies to
-whichever proof of it a caller already holds. -/
+The hypothesis is unitness rather than divisibility, so the statement applies to whichever proof of
+it a caller already holds. -/
 theorem toCompletionLoc_unit_inv_eq {a r : A} (h : s = a * r)
     (hu : letI := locUniformSpace P T s S hden
       letI := isUniformAddGroup_locUniformSpace P T s S hden
@@ -141,8 +140,9 @@ theorem toCompletionLoc_unit_inv_eq {a r : A} (h : s = a * r)
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
   refine Units.inv_eq_of_mul_eq_one_right ?_
-  rw [hu.unit_spec, toCompletionLoc_apply, ← UniformSpace.Completion.coe_mul,
-    algebraMap_mul_divBy_of_eq_mul s h, UniformSpace.Completion.coe_one]
+  -- `a * (r/s) = (a * r)/s = s/s = 1`, then transport along the completion map
+  rw [hu.unit_spec, toCompletionLoc_apply, ← UniformSpace.Completion.coe_mul, ← divBy_mul, ← h,
+    divBy_self, UniformSpace.Completion.coe_one]
 
 /-- **`t/a` is power-bounded when `t * r` is a numerator.** If the denominator factors as
 `s = a * r` and `t * r` lies in `T`, then `t/a` is the distinguished fraction `(t * r)/s`, which is
@@ -179,8 +179,8 @@ include r hs'' hT in
 `t ∈ T`, is a numerator of the second presentation, then exactly one continuous ring homomorphism
 `A⟨T/s⟩ → A⟨T''/s''⟩` is compatible with the structure maps from `A`.
 
-Both hypotheses of `existsUnique_continuous_ringHom_completion_locTopology` are supplied by the
-lemmas above, so nothing is assumed beyond the refinement. -/
+Nothing is assumed beyond the refinement: the invertibility and power-boundedness the universal
+property asks for are consequences of it. -/
 theorem existsUnique_continuous_ringHom_of_refines :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
@@ -207,9 +207,9 @@ include r hs'' hT in
 /-- **The restriction map of a refinement**, `A⟨T/s⟩ → A⟨T''/s''⟩`: the unique continuous ring
 homomorphism compatible with the structure maps from `A`.
 
-`continuous_restrictionRingHom` and `restrictionRingHom_comp_toCompletionLoc` are those two
-defining properties and `eq_restrictionRingHom` says they determine the map; the body is not
-exported, so they are how a consumer computes with it. -/
+Its two defining properties are `continuous_restrictionRingHom` and
+`restrictionRingHom_comp_toCompletionLoc`, and `eq_restrictionRingHom` says they determine it. Those
+three are the interface to use. -/
 noncomputable def restrictionRingHom :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
@@ -269,35 +269,31 @@ theorem eq_restrictionRingHom :
 
 /-- **The identity law.** A presentation refines itself with cofactor `1`, and the restriction map
 that gives is the identity — the unit axiom for this family of maps. -/
-theorem restrictionRingHom_self (h1 : s = s * 1) (hT1 : ∀ t ∈ T, t * 1 ∈ T) :
+@[simp]
+theorem restrictionRingHom_self :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
-    restrictionRingHom P T s S hden T s S hden 1 h1 hT1
-      = RingHom.id (UniformSpace.Completion S) := by
+    restrictionRingHom P T s S hden T s S hden 1 (mul_one s).symm
+        (fun t ht ↦ by rwa [mul_one]) = RingHom.id (UniformSpace.Completion S) := by
   let _ := locUniformSpace P T s S hden
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
-  exact (eq_restrictionRingHom P T s S hden T s S hden 1 h1 hT1 (RingHom.id _) continuous_id
-    (RingHom.id_comp _)).symm
+  exact (eq_restrictionRingHom P T s S hden T s S hden 1 (mul_one s).symm
+    (fun t ht ↦ by rwa [mul_one]) (RingHom.id _) continuous_id (RingHom.id_comp _)).symm
 
 /-- **The composition law.** Refinements compose — a refinement with cofactor `r` followed by one
 with cofactor `r₂` is a refinement with cofactor `r * r₂` — and the restriction map of the
 composite is the composite of the restriction maps. This is the cocycle axiom for this family of
 maps, and with `restrictionRingHom_self` it is what makes the assignment functorial.
 
-The proof is one application of `eq_restrictionRingHom`: the composite is continuous and carries
-the structure map of `A⟨T/s⟩` to that of `A⟨T'''/s'''⟩`, so it is the restriction map of the
-composite refinement.
-
-`h3` and `hT3` *are* that composite refinement. They follow from the other four hypotheses by
-`mul_assoc`, and are taken as arguments so that the statement mentions no proof terms; which proofs
-are supplied is immaterial, as they are propositions. -/
+The composite refinement is derived here rather than assumed: its denominator and numerator
+conditions follow from the two given refinements by associativity. -/
+@[simp]
 theorem restrictionRingHom_comp_restrictionRingHom (T''' : Finset A) (s''' : A) (S''' : Type*)
     [CommRing S'''] [Algebra A S'''] [IsLocalization.Away s''' S''']
     (hden''' : HasDenominatorPower P T''' s''' S''') (r₂ : A) (hs''' : s''' = s'' * r₂)
-    (hT₂ : ∀ t ∈ T'', t * r₂ ∈ T''') (h3 : s''' = s * (r * r₂))
-    (hT3 : ∀ t ∈ T, t * (r * r₂) ∈ T''') :
+    (hT₂ : ∀ t ∈ T'', t * r₂ ∈ T''') :
     letI := locUniformSpace P T s S hden
     letI := isUniformAddGroup_locUniformSpace P T s S hden
     letI := isTopologicalRing_locUniformSpace P T s S hden
@@ -309,7 +305,9 @@ theorem restrictionRingHom_comp_restrictionRingHom (T''' : Finset A) (s''' : A) 
     letI := isTopologicalRing_locUniformSpace P T''' s''' S''' hden'''
     (restrictionRingHom P T'' s'' S'' hden'' T''' s''' S''' hden''' r₂ hs''' hT₂).comp
           (restrictionRingHom P T s S hden T'' s'' S'' hden'' r hs'' hT)
-        = restrictionRingHom P T s S hden T''' s''' S''' hden''' (r * r₂) h3 hT3 := by
+        = restrictionRingHom P T s S hden T''' s''' S''' hden''' (r * r₂)
+          (by rw [hs''', hs'', mul_assoc])
+          (fun t ht ↦ by rw [← mul_assoc]; exact hT₂ _ (hT t ht)) := by
   let _ := locUniformSpace P T s S hden
   have _ := isUniformAddGroup_locUniformSpace P T s S hden
   have _ := isTopologicalRing_locUniformSpace P T s S hden
@@ -319,7 +317,9 @@ theorem restrictionRingHom_comp_restrictionRingHom (T''' : Finset A) (s''' : A) 
   let _ := locUniformSpace P T''' s''' S''' hden'''
   have _ := isUniformAddGroup_locUniformSpace P T''' s''' S''' hden'''
   have _ := isTopologicalRing_locUniformSpace P T''' s''' S''' hden'''
-  refine eq_restrictionRingHom P T s S hden T''' s''' S''' hden''' (r * r₂) h3 hT3 _
+  -- the composite is continuous and carries the structure map of `A⟨T/s⟩` to that of
+  -- `A⟨T'''/s'''⟩`, so `eq_restrictionRingHom` identifies it
+  refine eq_restrictionRingHom P T s S hden T''' s''' S''' hden''' (r * r₂) _ _ _
     ((continuous_restrictionRingHom P T'' s'' S'' hden'' T''' s''' S''' hden'''
       r₂ hs''' hT₂).comp
       (continuous_restrictionRingHom P T s S hden T'' s'' S'' hden'' r hs'' hT)) ?_
