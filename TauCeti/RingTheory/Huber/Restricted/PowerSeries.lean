@@ -58,10 +58,14 @@ were near-identical `tendsto_nhds`/`mem_cofinite` arguments and are now special 
 coefficient binders — `[Zero]` and a topology, where the original asked for a semiring.
 
 **Original here.** `isRestricted_monomial`, `isRestricted_of_hasFiniteSupport`,
-`IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule`, `mem_restrictedMvPowerSeriesSubmodule`
-and `isRestricted_pi_iff`. The last has no AINTLIB counterpart: the source states restrictedness
-only for a single coefficient module, and never for a product. Its content is Mathlib's
-`tendsto_pi_nhds`, so what is original here is the statement, not the argument.
+`IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule`, `mem_restrictedMvPowerSeriesSubmodule`,
+`isRestricted_pi_iff`, and `restrictedMvPowerSeriesSubmodulePiEquiv` with its two computation
+lemmas `restrictedMvPowerSeriesSubmodulePiEquiv_apply` and `_symm_apply`. The product statements
+have no AINTLIB counterpart at all: the source states restrictedness only for a single coefficient
+module, and never for a product, so neither the criterion nor the equivalence packaging it appears
+there. `isRestricted_pi_iff`'s content is Mathlib's `tendsto_pi_nhds`, so what is original in it is
+the statement rather than the argument; the equivalence and its computation lemmas are original in
+both.
 
 The name `isRestricted_iff` needs care: the port introduced it for the `coeff`-form unfolding
 lemma, which is now `isRestricted_iff_coeff`. The statement the name carries here — unfolding
