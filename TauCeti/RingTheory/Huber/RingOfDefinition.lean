@@ -53,7 +53,8 @@ than `Ideal.map`, and a comap of a finitely generated ideal need not be finitely
 * `TauCeti.Huber.PairOfDefinition.enlargeIdeal`: adjoining a topologically nilpotent element to
   the *ideal* of definition again gives a pair of definition, with `enlargeIdeal_ringOfDefinition`
   and `enlargeIdeal_idealOfDefinition` naming its two components — the ring is unchanged and the
-  ideal becomes `I ⊔ span {y}`.
+  ideal becomes `I ⊔ span {y}` — and `mem_enlargeIdeal_idealOfDefinition` recording that the
+  adjoined element is in it, which is the form consumers use.
 * `TauCeti.Huber.isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition`: the topologically
   nilpotent elements are exactly the union of the ideals of definition — the ideal-side companion
   of Corollary 6.4 below.
@@ -156,6 +157,25 @@ theorem enlargeIdeal_idealOfDefinition (Q : PairOfDefinition A) {y : Q.ringOfDef
     (hy : IsTopologicallyNilpotent y) :
     (Q.enlargeIdeal hy).idealOfDefinition =
       (enlargeIdeal_ringOfDefinition Q hy) ▸ (Q.idealOfDefinition ⊔ Ideal.span {y}) := (rfl)
+
+/-- **The adjoined element lies in the enlarged ideal of definition.** This is the introduction
+rule the enlargement exists for, and it reaches the membership through
+`enlargeIdeal_idealOfDefinition` rather than by unfolding the constructor.
+
+The element is presented as `⟨(y : A), h⟩` over the *enlarged* ring of definition rather than as
+`y` itself. The two rings are equal — that is `enlargeIdeal_ringOfDefinition` — but only by
+unfolding `enlargeIdeal`, whose body is sealed, so `y ∈ (Q.enlargeIdeal hy).idealOfDefinition`
+cannot be stated directly: its `Membership` instance would have to unify
+`↥Q.ringOfDefinition` with `↥(Q.enlargeIdeal hy).ringOfDefinition`. Taking the membership witness
+as an argument is also exactly the shape the existential in
+`isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition` needs. -/
+@[simp]
+theorem mem_enlargeIdeal_idealOfDefinition (Q : PairOfDefinition A) {y : Q.ringOfDefinition}
+    (hy : IsTopologicallyNilpotent y) (h : (y : A) ∈ (Q.enlargeIdeal hy).ringOfDefinition) :
+    (⟨(y : A), h⟩ : (Q.enlargeIdeal hy).ringOfDefinition) ∈
+      (Q.enlargeIdeal hy).idealOfDefinition := by
+  rw [Q.enlargeIdeal_idealOfDefinition hy]
+  exact Ideal.mem_sup_right (Ideal.mem_span_singleton_self y)
 
 /-- Every power of the ideal of definition, carried into a larger subring `B`, is open in `B`.
 
@@ -384,14 +404,8 @@ theorem isTopologicallyNilpotent_iff_exists_mem_idealOfDefinition {a : A} :
     -- `y` is the element itself, viewed in the ring of definition it was just placed in
     set y : P.ringOfDefinition := ⟨a, hmem⟩ with hy
     have hnil : IsTopologicallyNilpotent y := isTopologicallyNilpotent_mk hmem ha
-    -- it lies in the enlarged ideal because that ideal is `I ⊔ span {y}`
-    have hmem' : y ∈ P.idealOfDefinition ⊔ Ideal.span {y} :=
-      Ideal.mem_sup_right (Ideal.mem_span_singleton_self y)
-    refine ⟨P.enlargeIdeal hnil, hmem, ?_⟩
-    -- the enlarged pair has the same ring of definition, and its ideal is `I ⊔ span {y}`;
-    -- `show` records both identifications rather than leaving them to silent reduction
-    change y ∈ P.idealOfDefinition ⊔ Ideal.span {y}
-    exact hmem'
+    -- enlarging by `y` puts it in the ideal of definition, leaving the ring of definition alone
+    exact ⟨P.enlargeIdeal hnil, hmem, P.mem_enlargeIdeal_idealOfDefinition hnil hmem⟩
   · rintro ⟨P, h, ha⟩
     exact P.isTopologicallyNilpotent_of_mem_idealOfDefinition ha
 
