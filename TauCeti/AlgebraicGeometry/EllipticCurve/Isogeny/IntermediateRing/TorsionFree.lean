@@ -28,9 +28,9 @@ is torsion-free as a module over either of them.
 
 `ClassGroup.extendedRelNormHom` (`RingTheory/ClassGroup/ExtendedRelNorm.lean`) is stated over a
 module-finite extension of Dedekind domains and asks for `Module.IsTorsionFree` on **both** sides
-of the extension it norms along. Nothing in this repository supplies those two arguments for
-`φ.intermediateRing`, so that declaration cannot currently be instantiated at an isogeny at all;
-these two results are what close that gap.
+of the extension it norms along. No existing declaration or instance discharged those two
+obligations for `φ.intermediateRing`, so every consumer otherwise had to prove them locally from
+the injectivity facts; these two results supply them once, reusably.
 
 The planned consumer is `Isogeny.pushClass`, the class-group pushforward named at
 `TauCetiRoadmap/EllipticCurves/README.md:1092`. It does **not** exist in this repository yet —
@@ -87,18 +87,17 @@ variable {F : Type*} [Field F] {W₁ W₂ : WeierstrassCurve.Affine F}
 `pullback_injective` corestricted; the pullback of an isogeny is injective because `φ^*x₂` is
 transcendental over the base field.
 
-The source-side companion, `toIntermediateRing_injective`, needs nothing from this module and
-lives in `IntermediateRing/Basic.lean` beside the map it is about — where, being in the defining
-file, it is `RingHom.injective_codRestrict.mpr` outright.
-
-That generic criterion is *not* available here. It has to see that
-`pullbackToIntermediateRing` is a `codRestrict`, and this module only imports the definition,
-whose body is not exposed; the elaborator reports `Function.Injective ⇑(φ.pullback.codRestrict ?m
-?m)` against the expected `Function.Injective ⇑φ.pullbackToIntermediateRing` and cannot close the
-gap. The exported `@[simp]` lemma `coe_pullbackToIntermediateRing` is what crosses the boundary
-instead, so injectivity is transported along the coercion rather than read off the construction. -/
+The source-side companion is `toIntermediateRing_injective`, in `IntermediateRing/Basic.lean`
+beside the map it is about. -/
+@[grind]
 theorem pullbackToIntermediateRing_injective (φ : Isogeny W₁ W₂) :
     Function.Injective φ.pullbackToIntermediateRing := fun x y hxy ↦
+  -- Not `RingHom.injective_codRestrict.mpr`: that criterion must see `pullbackToIntermediateRing`
+  -- as a `codRestrict`, and this module imports only the definition, whose body is unexposed. The
+  -- elaborator then reports `Function.Injective ⇑(φ.pullback.codRestrict ?m ?m)` against the
+  -- expected `Function.Injective ⇑φ.pullbackToIntermediateRing`. The exported `@[simp]` lemma
+  -- `coe_pullbackToIntermediateRing` crosses that boundary, so injectivity transports along the
+  -- coercion instead.
   φ.pullback_injective <| by
     simpa only [coe_pullbackToIntermediateRing] using congrArg Subtype.val hxy
 
