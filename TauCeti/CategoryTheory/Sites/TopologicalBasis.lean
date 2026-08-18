@@ -32,6 +32,8 @@ Mathlib names this construction as an open project in the module docstring of
 
 ## Main results
 
+* `TauCeti.TopologicalSpace.Opens.isBasis_of_isTopologicalBasis` : a topological basis given as
+  a family of *sets* yields one given as a family of `Opens`.
 * `TauCeti.TopologicalSpace.Opens.basisCoverage_toGrothendieck` : it generates
   `Opens.grothendieckTopology X`.
 * `TauCeti.TopologicalSpace.Opens.isSheaf_iff_isSheafFor_basisCoverage` : a `Type`-valued
@@ -60,6 +62,21 @@ universe u
 namespace TopologicalSpace.Opens
 
 variable {X : Type u} [TopologicalSpace X] {B : Set (Opens X)}
+
+/-- **A basis of sets is a basis of opens.** `Opens.IsBasis` wants a `Set (Opens X)`, while every
+basis in the library — `TopologicalSpace.IsTopologicalBasis` — is a `Set (Set X)`; the two are
+carried across by taking the opens whose underlying set is a member, since every member of a
+topological basis is open. -/
+theorem isBasis_of_isTopologicalBasis {S : Set (Set X)} (hS : IsTopologicalBasis S) :
+    Opens.IsBasis {U : Opens X | (U : Set X) ∈ S} := by
+  have himg : ((↑) : Opens X → Set X) '' {U : Opens X | (U : Set X) ∈ S} = S := by
+    ext V
+    constructor
+    · rintro ⟨U, hU, rfl⟩
+      exact hU
+    · exact fun hV ↦ ⟨⟨V, hS.isOpen hV⟩, hV, rfl⟩
+  rw [Opens.IsBasis, himg]
+  exact hS
 
 /-- The presieves of a basis cover: every member lies in `B`, and together they cover `U`
 pointwise. -/
