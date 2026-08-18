@@ -16,7 +16,7 @@ the standing hypothesis `HasDenominatorPower` under which `A⟨T/s⟩` is built.
 bundles the three, taking the localisation to be `Localization.Away s` so that the bundle is a
 type rather than a family over types.
 
-`Presentation.Refines` is the refinement relation of `LocalizationTopology.Restriction`, with the
+`Presentation.RefinedBy` is the refinement relation of `LocalizationTopology.Restriction`, with the
 cofactor existentially quantified: `q` refines `p` when some `r` has `q.den = p.den * r` and carries
 every numerator of `p` into a numerator of `q`. It is reflexive (`r = 1`) and transitive
 (`r * r₂`), so it is a `Preorder`, and the associated category is what the structure presheaf is
@@ -28,7 +28,7 @@ indexed by.
 ## Main definitions
 
 * `TauCeti.Huber.PairOfDefinition.Presentation` : a presentation `(T, s, hden)`.
-* `TauCeti.Huber.PairOfDefinition.Presentation.Refines` : the refinement relation.
+* `TauCeti.Huber.PairOfDefinition.Presentation.RefinedBy` : the refinement relation.
 * `TauCeti.Huber.PairOfDefinition.presentationFunctor` : the functor into
   `CompleteSeparatedTopCommRingCat`.
 
@@ -72,17 +72,18 @@ structure Presentation (P : PairOfDefinition A) where
 
 variable {P : PairOfDefinition A}
 
-/-- **`q` refines `p`**: some cofactor `r` writes `q.den` as `p.den * r` and carries every
+/-- **`p` is refined by `q`**: some cofactor `r` writes `q.den` as `p.den * r` and carries every
 numerator of `p` to a numerator of `q`. This is the relation of
-`PairOfDefinition.restrictionRingHom`, with the cofactor existentially quantified. -/
-@[expose]
-def Presentation.Refines (p q : Presentation P) : Prop :=
+`PairOfDefinition.restrictionRingHom`, with the cofactor existentially quantified.
+
+The receiver is the *coarser* presentation, matching `p ≤ q`. -/
+def Presentation.RefinedBy (p q : Presentation P) : Prop :=
   ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num
 
 /-- Refinement is a preorder: a presentation refines itself with cofactor `1`, and refinements
 compose with cofactor `r * r₂`. -/
 instance : Preorder (Presentation P) where
-  le := Presentation.Refines
+  le := Presentation.RefinedBy
   le_refl p := by exact ⟨1, (mul_one _).symm, fun t ht ↦ by rwa [mul_one]⟩
   le_trans _ _ _ hpq hqw := by
     obtain ⟨r, hr, hT⟩ := hpq
@@ -91,7 +92,18 @@ instance : Preorder (Presentation P) where
       fun t ht ↦ by rw [← mul_assoc]; exact hT₂ _ (hT t ht)⟩
 
 omit [IsTopologicalRing A] in
-theorem Presentation.le_def {p q : Presentation P} : p ≤ q ↔ p.Refines q := Iff.rfl
+theorem Presentation.le_def {p q : Presentation P} : p ≤ q ↔ p.RefinedBy q := Iff.rfl
+
+omit [IsTopologicalRing A] in
+/-- **The refinement relation, unfolded.** The body of `RefinedBy` is not exported, so this is how
+a consumer produces or consumes a refinement. -/
+theorem Presentation.refinedBy_iff {p q : Presentation P} :
+    p.RefinedBy q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
+
+omit [IsTopologicalRing A] in
+/-- `≤` unfolded to the cofactor condition, combining `le_def` and `refinedBy_iff`. -/
+theorem Presentation.le_iff {p q : Presentation P} :
+    p ≤ q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
 
 /-! ### The functor into `CompleteSeparatedTopCommRingCat` -/
 
@@ -101,7 +113,6 @@ noncomputable abbrev Presentation.obj (p : Presentation P) : CompleteSeparatedTo
 
 /-- The restriction morphism attached to a refinement, taking an arbitrary cofactor. It does not
 depend on that choice: see `Presentation.hom_eq`. -/
-@[expose]
 noncomputable def Presentation.hom {p q : Presentation P} (h : p ≤ q) : p.obj ⟶ q.obj :=
   restrictionObjHom P p.num p.den _ p.hden q.num q.den _ q.hden
     h.choose h.choose_spec.1 h.choose_spec.2
@@ -117,7 +128,12 @@ theorem Presentation.hom_eq {p q : Presentation P} (h : p ≤ q) (r : A) (hr : q
 
 /-- **The structure presheaf's diagram.** `p ↦ A⟨p.num / p.den⟩`, with the restriction morphisms
 as its action on refinements. Functoriality is exactly `restrictionObjHom_self` and
-`restrictionObjHom_comp_restrictionObjHom`, reached through `Presentation.hom_eq`. -/
+`restrictionObjHom_comp_restrictionObjHom`, reached through `Presentation.hom_eq`.
+
+`@[expose]` is load-bearing and cannot be dropped: the public `obj`/`map` equations below are
+proved by `rfl`, and an exported theorem may only unfold exposed definitions. Sealing the functor
+makes those equations unstatable, so the exposure is what *provides* the public API rather than
+bypassing it. -/
 @[expose]
 noncomputable def presentationFunctor (P : PairOfDefinition A) :
     Presentation P ⥤ CompleteSeparatedTopCommRingCat.{v} where
@@ -135,6 +151,16 @@ noncomputable def presentationFunctor (P : PairOfDefinition A) :
         (fun t ht ↦ by rw [← mul_assoc]; exact hT₂ _ (hT t ht))]
     exact (restrictionObjHom_comp_restrictionObjHom P p.num p.den _ p.hden q.num q.den _ q.hden
       r hr hT w.num w.den _ w.hden r₂ hr₂ hT₂).symm
+
+/-- The functor takes a presentation to its own object. -/
+@[simp]
+theorem presentationFunctor_obj (P : PairOfDefinition A) (p : Presentation P) :
+    (presentationFunctor P).obj p = p.obj := rfl
+
+/-- The functor takes a refinement to its restriction morphism. -/
+@[simp]
+theorem presentationFunctor_map (P : PairOfDefinition A) {p q : Presentation P} (h : p ⟶ q) :
+    (presentationFunctor P).map h = Presentation.hom h.le := rfl
 
 end PairOfDefinition
 
