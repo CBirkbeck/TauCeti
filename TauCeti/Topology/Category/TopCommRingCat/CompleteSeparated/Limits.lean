@@ -11,7 +11,7 @@ public import Mathlib.CategoryTheory.Limits.Constructions.LimitsOfProductsAndEqu
 public import Mathlib.CategoryTheory.Limits.FullSubcategory
 
 /-!
-# Products and equalizers of complete separated topological rings
+# Limits of complete separated topological rings
 
 Roadmap Layer 3.2's second half: the full subcategory
 `TauCeti.CompleteSeparatedTopCommRingCat` has products and equalizers, and the inclusion into
@@ -25,6 +25,8 @@ separated ring is complete separated (`IsCompleteSeparated.of_isClosedEmbedding`
 
 ## Main results
 
+* `HasLimits CompleteSeparatedTopCommRingCat`: all small limits, obtained from the products and
+  equalizers below through `has_limits_of_hasEqualizers_and_products`.
 * The `IsClosedUnderLimitsOfShape` instances for discrete shapes and parallel pairs. These are
   what the inclusion needs in order to create the limits, so
   `TauCeti.CompleteSeparatedTopCommRingCat` acquires products and equalizers, and its inclusion
@@ -102,8 +104,11 @@ noncomputable example :
     CreatesLimitsOfShape WalkingParallelPair (TopCommRingCat.isCompleteSeparated.{u}).ι :=
   inferInstance
 
--- PROBE: does HasLimits follow from products + equalizers?
-example : HasLimits CompleteSeparatedTopCommRingCat.{u} :=
+/-- **All small limits**, from the products and equalizers above. This is what lets a limit be
+formed over a general shape rather than only over discrete shapes and parallel pairs; the
+structure presheaf of an adic space is a limit over a category of rational presentations, which
+is neither. -/
+noncomputable instance : HasLimits CompleteSeparatedTopCommRingCat.{u} :=
   has_limits_of_hasEqualizers_and_products
 
 end TauCeti.CompleteSeparatedTopCommRingCat
