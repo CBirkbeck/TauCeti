@@ -59,14 +59,16 @@ lemmas come straight from Mathlib's `smul_some_eq_ite` / `smul_infty_eq_ite`.
   evaluation branches, read in `ZMod p` through the natural cast of the index — the affine
   quotient where the denominator does not vanish, and the image of `∞` at the single index where
   it does.
-* `TauCeti.existsUnique_dvd_add_mul`: when `M 1 0` is invertible mod `p` **exactly one** index is
-  carried to `∞`. `TauCeti.dvd_add_mul_canonicalIndex` and `TauCeti.dvd_add_mul_iff_eq_of_dvd` are
-  its two halves — existence at `-M 0 0 / M 1 0`, and uniqueness. All three are stated as
-  divisibilities over `ℤ`, the form the downstream Hecke sums use, and none needs the
-  determinant — they are arithmetic in `ZMod p`.
-These two are the elimination API for `moebiusFin`: its body is sealed across the module
-boundary, so `unfold` is not available to a consumer, and the equation they are proved from is
-private scaffold rather than public surface.
+* `TauCeti.existsUnique_dvd_add_mul`: for coefficients `a c : ℤ` with `c` invertible mod `p`,
+  **exactly one** index is carried to `∞`. `TauCeti.dvd_add_mul_canonicalIndex` and
+  `TauCeti.dvd_add_mul_iff_eq_of_dvd` are its two halves — existence at `-a / c`, and uniqueness.
+  All three are stated in the two coefficients rather than in a matrix, since no other entry
+  occurs, and as divisibilities over `ℤ`, the form the downstream Hecke sums use. At the Möbius
+  consumer `a` and `c` are `M 0 0` and `M 1 0`; none of the three needs the determinant, as they
+  are arithmetic in `ZMod p`.
+The two evaluation lemmas above are the elimination API for `moebiusFin`: its body is sealed
+across the module boundary, so `unfold` is not available to a consumer, and the equation they are
+proved from is private scaffold rather than public surface.
 
 Injectivity is not stated separately: `moebiusFin` is an `Equiv`, so consumers use
 `Equiv.injective`.
@@ -254,7 +256,7 @@ lemma natCast_moebiusFin_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
 at an index where the denominator vanishes, but assumes such an index is given. This says there is
 at most one: if `b₀` is a pole index then an index `i` is one exactly when `i = b₀`.
 
-The hypothesis is only that the coefficient `M 1 0` is invertible mod `p` — the statement is
+The hypothesis is only that the coefficient `c` is invertible mod `p` — the statement is
 arithmetic in `ZMod p` and does not need the determinant, nor the Möbius action it conditions.
 Stated as a divisibility over `ℤ`, which is the form the downstream Hecke sums are phrased in.
 
@@ -262,49 +264,46 @@ Not `@[simp]`, and it cannot be: `b₀` appears only in the hypothesis, so `simp
 infer it from the left-hand side and the rule would never fire. simpNF rejects the tag for exactly
 that reason. `existsUnique_dvd_add_mul` is the form to reach for when the pole index is not
 already in hand. -/
-lemma dvd_add_mul_iff_eq_of_dvd (M : Matrix (Fin 2) (Fin 2) ℤ)
-    (h10 : ((M 1 0 : ℤ) : ZMod p) ≠ 0) {b₀ : Fin p}
-    (hb₀ : (p : ℤ) ∣ (M 0 0 + (b₀ : ℕ) * M 1 0)) (i : Fin p) :
-    (p : ℤ) ∣ (M 0 0 + (i : ℕ) * M 1 0) ↔ i = b₀ := by
+lemma dvd_add_mul_iff_eq_of_dvd (a c : ℤ) (hc : ((c : ℤ) : ZMod p) ≠ 0) {b₀ : Fin p}
+    (hb₀ : (p : ℤ) ∣ (a + (b₀ : ℕ) * c)) (i : Fin p) :
+    (p : ℤ) ∣ (a + (i : ℕ) * c) ↔ i = b₀ := by
   refine ⟨fun hi ↦ ?_, fun hji ↦ hji ▸ hb₀⟩
   have h1 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hi
   have h2 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hb₀
   push_cast at h1 h2
   refine (ZMod.finEquiv p).injective ?_
   rw [ZMod.finEquiv_apply, ZMod.finEquiv_apply]
-  have hsub : (((i : ℕ) : ZMod p) - ((b₀ : ℕ) : ZMod p)) * ((M 1 0 : ℤ) : ZMod p) = 0 := by
+  have hsub : (((i : ℕ) : ZMod p) - ((b₀ : ℕ) : ZMod p)) * ((c : ℤ) : ZMod p) = 0 := by
     linear_combination h1 - h2
   rcases mul_eq_zero.mp hsub with hz | hz
   · exact sub_eq_zero.mp hz
-  · exact absurd hz h10
+  · exact absurd hz hc
 
-/-- **The pole index exists.** When the coefficient `M 1 0` is invertible mod `p` the denominator
-does vanish somewhere, at the index `-M 0 0 / M 1 0` read back into `Fin p`. With
+/-- **The pole index exists.** When the coefficient `c` is invertible mod `p` the denominator
+does vanish somewhere, at the index `-a / c` read back into `Fin p`. With
 `dvd_add_mul_iff_eq_of_dvd` this says the reindexing has *exactly one* pole index. -/
-lemma dvd_add_mul_canonicalIndex (M : Matrix (Fin 2) (Fin 2) ℤ)
-    (h10 : ((M 1 0 : ℤ) : ZMod p) ≠ 0) :
-    (p : ℤ) ∣ (M 0 0 +
-      (((-((M 0 0 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p)⁻¹).val : ℕ)) * M 1 0) := by
+lemma dvd_add_mul_canonicalIndex (a c : ℤ) (hc : ((c : ℤ) : ZMod p) ≠ 0) :
+    (p : ℤ) ∣ (a +
+      (((-((a : ℤ) : ZMod p) * ((c : ℤ) : ZMod p)⁻¹).val : ℕ)) * c) := by
   rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
   push_cast
   rw [ZMod.natCast_val, ZMod.cast_id]
-  have hcancel : (-((M 0 0 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p)⁻¹) * ((M 1 0 : ℤ) : ZMod p) =
-      -((M 0 0 : ℤ) : ZMod p) := by
-    rw [mul_assoc, mul_comm ((M 1 0 : ℤ) : ZMod p)⁻¹ _, mul_inv_cancel₀ h10, mul_one]
+  have hcancel : (-((a : ℤ) : ZMod p) * ((c : ℤ) : ZMod p)⁻¹) * ((c : ℤ) : ZMod p) =
+      -((a : ℤ) : ZMod p) := by
+    rw [mul_assoc, mul_comm ((c : ℤ) : ZMod p)⁻¹ _, mul_inv_cancel₀ hc, mul_one]
   rw [hcancel, add_neg_cancel]
 
-/-- **Exactly one pole index.** When `M 1 0` is invertible mod `p` there is a unique index whose
+/-- **Exactly one pole index.** When `c` is invertible mod `p` there is a unique index whose
 denominator vanishes — the statement `dvd_add_mul_canonicalIndex` and `dvd_add_mul_iff_eq_of_dvd`
 combine to, and the one a consumer indexing by `Fin p` wants. -/
-theorem existsUnique_dvd_add_mul (M : Matrix (Fin 2) (Fin 2) ℤ)
-    (h10 : ((M 1 0 : ℤ) : ZMod p) ≠ 0) :
-    ∃! i : Fin p, (p : ℤ) ∣ (M 0 0 + (i : ℕ) * M 1 0) := by
-  refine ⟨(ZMod.finEquiv p).symm (-((M 0 0 : ℤ) : ZMod p) * ((M 1 0 : ℤ) : ZMod p)⁻¹), ?_, ?_⟩
+theorem existsUnique_dvd_add_mul (a c : ℤ) (hc : ((c : ℤ) : ZMod p) ≠ 0) :
+    ∃! i : Fin p, (p : ℤ) ∣ (a + (i : ℕ) * c) := by
+  refine ⟨(ZMod.finEquiv p).symm (-((a : ℤ) : ZMod p) * ((c : ℤ) : ZMod p)⁻¹), ?_, ?_⟩
   · simp only [ZMod.val_finEquiv_symm]
-    exact dvd_add_mul_canonicalIndex M h10
+    exact dvd_add_mul_canonicalIndex a c hc
   · intro y hy
-    refine (dvd_add_mul_iff_eq_of_dvd M h10 ?_ y).mp hy
+    refine (dvd_add_mul_iff_eq_of_dvd a c hc ?_ y).mp hy
     simp only [ZMod.val_finEquiv_symm]
-    exact dvd_add_mul_canonicalIndex M h10
+    exact dvd_add_mul_canonicalIndex a c hc
 
 end TauCeti

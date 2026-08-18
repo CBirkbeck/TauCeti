@@ -24,16 +24,9 @@ public section
 
 namespace ZMod
 
-/-- **Applying `ZMod.finEquiv` is the natural cast.** Mathlib defines `finEquiv` and states no
-evaluation rule for it, so without this a `Fin n`-indexed statement cannot meet `ZMod n`
-arithmetic.
-
-The proof is a definitional reduction, and deliberately so. `ZMod.finEquiv` is `RingEquiv.refl` on
-the successor branch and `ZMod (k + 1)` unfolds to `Fin (k + 1)`, so the two sides are the same
-term once those are unfolded. `simp` cannot do it: `Fin.cast_val_eq_self` is stated at `Fin n`
-while this goal's cast lands in `ZMod (k + 1)`, and although the types agree after unfolding, the
-`NatCast` instances are syntactically different — `simp` reports the lemma unused. `exact`
-succeeds because it checks up to definitional equality. -/
+/-- **Applying `ZMod.finEquiv` is the natural cast.** `ZMod.finEquiv n j` is the image of `j.val`
+under `Nat.cast`. Mathlib defines `finEquiv` and states no evaluation rule for it, so without this
+a `Fin n`-indexed statement cannot meet `ZMod n` arithmetic. -/
 @[simp]
 lemma finEquiv_apply {n : ℕ} [NeZero n] (j : Fin n) :
     (ZMod.finEquiv n) j = ((j : ℕ) : ZMod n) := by
