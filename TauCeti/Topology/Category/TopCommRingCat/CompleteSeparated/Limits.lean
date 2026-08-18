@@ -7,6 +7,7 @@ module
 
 public import TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Basic
 public import TauCeti.Topology.Category.TopCommRingCat.Limits
+public import Mathlib.CategoryTheory.Limits.Constructions.LimitsOfProductsAndEqualizers
 public import Mathlib.CategoryTheory.Limits.FullSubcategory
 
 /-!
@@ -100,5 +101,9 @@ noncomputable example {β : Type v} :
 noncomputable example :
     CreatesLimitsOfShape WalkingParallelPair (TopCommRingCat.isCompleteSeparated.{u}).ι :=
   inferInstance
+
+-- PROBE: does HasLimits follow from products + equalizers?
+example : HasLimits CompleteSeparatedTopCommRingCat.{u} :=
+  has_limits_of_hasEqualizers_and_products
 
 end TauCeti.CompleteSeparatedTopCommRingCat
