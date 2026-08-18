@@ -18,14 +18,14 @@ that a later proof of either immediately yields the group isomorphism.
 
 ## Main definitions
 
-* `TauCeti.WeierstrassCurve.Affine.Point.ClassRepresentableByPoints`: every ideal class is
+* `WeierstrassCurve.Affine.Point.ClassRepresentableByPoints`: every ideal class is
   trivial or the class of `XYIdeal' h` for a nonsingular affine point.
-* `TauCeti.WeierstrassCurve.Affine.Point.toClassEquivOfSurjective`: the group isomorphism
+* `WeierstrassCurve.Affine.Point.toClassEquivOfSurjective`: the group isomorphism
   `W.Point ≃+ Additive (ClassGroup W.CoordinateRing)` obtained from a proof of surjectivity.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.Affine.Point.toClass_surjective_iff_classRepresentableByPoints`:
+* `WeierstrassCurve.Affine.Point.toClass_surjective_iff_classRepresentableByPoints`:
   surjectivity of `toClass` is equivalent to that predicate.
 
 ## What this is, mathematically
@@ -79,11 +79,7 @@ public section
 
 open WeierstrassCurve.Affine
 
-namespace TauCeti
-
 namespace WeierstrassCurve.Affine.Point
-
-open _root_.WeierstrassCurve.Affine.Point
 
 variable {F : Type*} [Field F] {W : _root_.WeierstrassCurve.Affine F} [DecidableEq F]
 
@@ -158,5 +154,3 @@ theorem toClassEquivOfSurjective_apply
     toClassEquivOfSurjective hsurj P = toClass P := (rfl)
 
 end WeierstrassCurve.Affine.Point
-
-end TauCeti
