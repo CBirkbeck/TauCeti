@@ -463,14 +463,21 @@ def restrictedMvPowerSeriesSubmodule (k : ℕ) (A M : Type*) [Semiring A] [AddCo
     Submodule A (MvPowerSeries (Fin k) M) :=
   Filter.zeroAtFilterSubmodule A (Filter.cofinite : Filter (Fin k →₀ ℕ))
 
-/-- A continuous zero-preserving map pushes restricted series forward: `φ ∘ f` is restricted
-whenever `f` is. Continuity is what carries the coefficients' convergence to `0` across. -/
+/-- A zero-preserving map that is continuous **at `0`** pushes restricted series forward: `φ ∘ f`
+is restricted whenever `f` is. Restrictedness is convergence of the coefficients to `0` along
+`cofinite`, so only the behaviour of `φ` at `0` is involved; global continuity is not needed. For
+a linear `φ` between topological modules the two hypotheses coincide, which is why the induced map
+`restrictedMvPowerSeriesSubmoduleMap` below still takes `Continuous`.
+
+The `show` fixes the elaboration of the coefficient function as a `MvPowerSeries`: that type is a
+plain `def` for `(Fin k →₀ ℕ) → N`, so without the ascription the lambda elaborates at the bare
+function type and `IsRestricted` does not apply to it. -/
 theorem IsRestricted.map {k : ℕ} {M N : Type*} [Zero M] [TopologicalSpace M] [Zero N]
-    [TopologicalSpace N] {φ : M → N} (hφ : Continuous φ) (h0 : φ 0 = 0)
+    [TopologicalSpace N] {φ : M → N} (hφ : ContinuousAt φ 0) (h0 : φ 0 = 0)
     {f : MvPowerSeries (Fin k) M} (hf : IsRestricted f) :
     IsRestricted (show MvPowerSeries (Fin k) N from fun s ↦ φ ((f : (Fin k →₀ ℕ) → M) s)) := by
   refine isRestricted_iff.mpr ?_
-  have h := (hφ.tendsto 0).comp (isRestricted_iff.mp hf)
+  have h := Filter.Tendsto.comp hφ (isRestricted_iff.mp hf)
   rwa [h0] at h
 
 /-- Membership in `M⟨T₁, …, Tₖ⟩` is restrictedness. -/
@@ -487,14 +494,15 @@ noncomputable def restrictedMvPowerSeriesSubmoduleMap {k : ℕ} {A M N : Type*} 
     [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
     [ContinuousAdd N] [ContinuousConstSMul A N] (φ : M →ₗ[A] N) (hφ : Continuous φ) :
     restrictedMvPowerSeriesSubmodule k A M →ₗ[A] restrictedMvPowerSeriesSubmodule k A N where
-  toFun f := ⟨fun s ↦ φ (f.1 s), (mem_restrictedMvPowerSeriesSubmodule.mp f.2).map hφ (map_zero φ)⟩
+  toFun f := ⟨fun s ↦ φ (f.1 s),
+    (mem_restrictedMvPowerSeriesSubmodule.mp f.2).map hφ.continuousAt (map_zero φ)⟩
   map_add' _ _ := Subtype.ext (funext fun _ ↦ map_add φ _ _)
   map_smul' _ _ := Subtype.ext (funext fun _ ↦ map_smul φ _ _)
 
 /-- `restrictedMvPowerSeriesSubmoduleMap` is `φ` coefficientwise. Its body is not exposed, so this
 is how a consumer computes with it. -/
 @[simp]
-theorem coe_restrictedMvPowerSeriesSubmoduleMap {k : ℕ} {A M N : Type*} [Semiring A]
+theorem coeff_restrictedMvPowerSeriesSubmoduleMap {k : ℕ} {A M N : Type*} [Semiring A]
     [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
     [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
     [ContinuousAdd N] [ContinuousConstSMul A N] (φ : M →ₗ[A] N) (hφ : Continuous φ)
@@ -510,9 +518,11 @@ theorem restrictedMvPowerSeriesSubmoduleMap_id {k : ℕ} {A M : Type*} [Semiring
     [ContinuousConstSMul A M] :
     restrictedMvPowerSeriesSubmoduleMap (k := k) (LinearMap.id (R := A) (M := M))
       continuous_id = LinearMap.id :=
-  LinearMap.ext fun _ ↦ Subtype.ext rfl
+  LinearMap.ext fun _ ↦ Subtype.ext <| funext fun _ ↦ by
+    simp [coeff_restrictedMvPowerSeriesSubmoduleMap]
 
 /-- The induced maps compose. -/
+@[simp]
 theorem restrictedMvPowerSeriesSubmoduleMap_comp {k : ℕ} {A M N P : Type*} [Semiring A]
     [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
     [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
@@ -522,7 +532,8 @@ theorem restrictedMvPowerSeriesSubmoduleMap_comp {k : ℕ} {A M N P : Type*} [Se
     restrictedMvPowerSeriesSubmoduleMap (k := k) (ψ.comp φ) (hψ.comp hφ) =
       (restrictedMvPowerSeriesSubmoduleMap ψ hψ).comp
         (restrictedMvPowerSeriesSubmoduleMap φ hφ) :=
-  LinearMap.ext fun _ ↦ Subtype.ext rfl
+  LinearMap.ext fun _ ↦ Subtype.ext <| funext fun _ ↦ by
+    simp [coeff_restrictedMvPowerSeriesSubmoduleMap]
 
 /-- **`A⟨T₁, …, Tₖ⟩` as a submodule over itself**: at `M = A` the subring and the submodule cut
 out the same series, so they are `A`-linearly isomorphic.

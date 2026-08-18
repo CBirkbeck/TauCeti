@@ -194,6 +194,7 @@ theorem coeff_restrictedMvPowerSeriesBaseChange_tmul (m : M)
 /-- **The comparison map is natural in `M`.** A continuous `A`-linear `φ : M → N` commutes with
 base change, so a presentation of `M` can be pushed through `M ↦ M⟨T₁, …, Tₖ⟩`. This is the
 naturality the finitely generated case of Remark 8.29 runs on. -/
+@[simp]
 theorem restrictedMvPowerSeriesSubmoduleMap_baseChange {N : Type*} [AddCommMonoid N]
     [TopologicalSpace N] [Module A N] [ContinuousSMul A N] [ContinuousAdd N]
     (φ : M →ₗ[A] N) (hφ : Continuous φ)
@@ -205,7 +206,7 @@ theorem restrictedMvPowerSeriesSubmoduleMap_baseChange {N : Type*} [AddCommMonoi
   | tmul m f =>
       apply Subtype.ext
       funext s
-      simp [coe_restrictedMvPowerSeriesSubmoduleMap,
+      simp [coeff_restrictedMvPowerSeriesSubmoduleMap,
         coeff_restrictedMvPowerSeriesBaseChange_tmul]
   | add y z hy hz => simp [hy, hz]
 
