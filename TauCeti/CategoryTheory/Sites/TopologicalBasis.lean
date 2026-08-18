@@ -7,7 +7,6 @@ module
 
 public import Mathlib.CategoryTheory.Sites.Coverage
 public import Mathlib.CategoryTheory.Sites.Spaces
-public import Mathlib.Topology.Sets.Opens
 public import TauCeti.Topology.Sets.Opens
 
 /-!
