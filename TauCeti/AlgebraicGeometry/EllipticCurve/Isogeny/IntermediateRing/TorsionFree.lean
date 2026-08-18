@@ -127,10 +127,12 @@ theorem isTorsionFree_intermediateRing_target (φ : Isogeny W₁ W₂)
 
 /-! ### Instantiation guards
 
-The defect these results fix was an unsatisfiable instance block: `ClassGroup.extendedRelNormHom`
-typechecked, passed every rubric and merged while no consumer could discharge its
-`Module.IsTorsionFree` arguments. Nothing but *applying* a declaration detects that, so the two
-applications are kept here rather than checked once and deleted. If a later change to the
+The gap these results close is a missing instance, not an unsatisfiable one:
+`ClassGroup.extendedRelNormHom` merged with `Module.IsTorsionFree` arguments that no declaration
+or instance in this repository discharged, so every consumer had to prove them locally — as
+the two theorems above now do, once and reusably. Nothing but *applying* a declaration
+detects that gap, so the two applications are kept here rather than checked once and
+deleted. If a later change to the
 hypotheses above makes them undischargeable, this file stops building instead of the consumer.
 
 Mathlib keeps such `example`s for the same purpose — 157 of them are bare `inferInstance` guards. -/
