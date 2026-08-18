@@ -31,10 +31,16 @@ that a later proof of either immediately yields the group isomorphism.
 
 ## What this is, mathematically
 
-`ClassRepresentableByPoints` is the genus-1 divisor-reduction statement: on a smooth genus-1
-curve every degree-0 divisor class is represented by `(P) - (O)` for a rational point `P`.
-Isolating it turns "prove `toClass` is surjective" into a statement about divisors rather than
-about the group homomorphism, which is the form the geometric proof takes.
+`ClassRepresentableByPoints` says every element of `ClassGroup W.CoordinateRing` is the class of
+an `XYIdeal'` at a nonsingular affine point, or trivial. It is stated for an arbitrary affine
+Weierstrass curve; nothing here assumes smoothness or ellipticity, and no divisor group occurs in
+the definition.
+
+On a smooth genus-1 curve, and under the identification of the affine ideal class group with
+degree-zero divisor classes, it becomes the familiar divisor-reduction statement — every such
+class is `(P) - (O)` for a rational point `P`. That is the reading which motivates isolating the
+predicate, since it turns "prove `toClass` is surjective" into the form the geometric proof takes;
+but it is an interpretation under extra hypotheses, not the content of the definition.
 
 ## What is deliberately not here
 
@@ -84,13 +90,18 @@ namespace WeierstrassCurve.Affine.Point
 
 variable {F : Type*} [Field F] {W : _root_.WeierstrassCurve.Affine F} [DecidableEq F]
 
-/-- **The genus-1 divisor-reduction predicate.** Every element of the affine ideal class group
+/-- **Every ideal class is represented by a point.** Each element of the affine ideal class group
 `ClassGroup W.CoordinateRing` is either trivial or the class of `XYIdeal' h` for a nonsingular
 affine point `(x, y)`.
 
-Geometrically this says every degree-0 divisor class on the curve is represented by `(P) - (O)`
-for a rational point `P`. It is exactly the characterisation of the range of `toClass` needed for
-surjectivity — see `toClass_surjective_iff_classRepresentableByPoints`. -/
+This is stated for an arbitrary affine Weierstrass curve: neither smoothness nor ellipticity is
+assumed, and no divisor group appears in the definition. Under the hypotheses that make `W` a
+smooth genus-1 curve, and the identification of `ClassGroup W.CoordinateRing` with degree-zero
+divisor classes, it reads as the familiar statement that every such class is `(P) - (O)` for a
+rational point `P` — but that reading is an interpretation, not part of what is defined here.
+
+It is exactly the characterisation of the range of `toClass` needed for surjectivity — see
+`toClass_surjective_iff_classRepresentableByPoints`. -/
 def ClassRepresentableByPoints (W : _root_.WeierstrassCurve.Affine F) : Prop :=
   ∀ g : ClassGroup W.CoordinateRing,
     g = 1 ∨ ∃ (x y : F) (h : W.Nonsingular x y),
@@ -106,14 +117,14 @@ private theorem mem_range_toClass_of_classRep (g : ClassGroup W.CoordinateRing)
   · exact ⟨0, by rw [toClass_zero, hg]; rfl⟩
   · exact ⟨some x y h, by rw [toClass_some, hg]; rfl⟩
 
-/-- The divisor-reduction predicate implies surjectivity of `toClass`. -/
+/-- Representability of every ideal class by a point implies surjectivity of `toClass`. -/
 theorem toClass_surjective_of_classRepresentableByPoints (hrep : ClassRepresentableByPoints W) :
     Function.Surjective (toClass (W := W)) := by
   intro c
   obtain ⟨P, hP⟩ := mem_range_toClass_of_classRep (Additive.toMul c) (hrep _)
   exact ⟨P, by rwa [ofMul_toMul] at hP⟩
 
-/-- Surjectivity of `toClass` implies the divisor-reduction predicate. -/
+/-- Surjectivity of `toClass` implies every ideal class is represented by a point. -/
 theorem classRepresentableByPoints_of_toClass_surjective
     (hsurj : Function.Surjective (toClass (W := W))) :
     ClassRepresentableByPoints W := by
@@ -130,9 +141,9 @@ theorem classRepresentableByPoints_of_toClass_surjective
       rw [toClass_some] at hP
       exact (Additive.ofMul.injective hP).symm
 
-/-- **Surjectivity of `toClass` is equivalent to the genus-1 divisor-reduction predicate.**
+/-- **Surjectivity of `toClass` is equivalent to representability of every ideal class.**
 This records exactly what remains to be proved for full surjectivity: that every ideal class is
-represented by a rational point. -/
+represented by a rational point. On a smooth genus-1 curve that is divisor reduction. -/
 theorem toClass_surjective_iff_classRepresentableByPoints :
     Function.Surjective (toClass (W := W)) ↔ ClassRepresentableByPoints W :=
   ⟨classRepresentableByPoints_of_toClass_surjective,
@@ -142,13 +153,14 @@ theorem toClass_surjective_iff_classRepresentableByPoints :
 by a proof of surjectivity. Mathlib's `toClass_injective` is the other half of bijectivity and
 needs no hypothesis, so any proof of surjectivity upgrades `toClass` to an isomorphism.
 
-The body is not exposed; `toClassEquivOfSurjective_apply` below is the computation rule, and it
-is proved in term mode, which checks at full transparency and so crosses the module boundary that
-`rfl` as a tactic does not. -/
+The body is not exposed; `toClassEquivOfSurjective_apply` below is the computation rule. -/
 noncomputable def toClassEquivOfSurjective (hsurj : Function.Surjective (toClass (W := W))) :
     W.Point ≃+ Additive (ClassGroup W.CoordinateRing) :=
   AddEquiv.ofBijective toClass ⟨toClass_injective, hsurj⟩
 
+-- Proved in term mode rather than by the `rfl` tactic: term-mode elaboration checks at full
+-- transparency and so crosses the module boundary that the tactic does not. This is why
+-- `toClassEquivOfSurjective` needs no `@[expose]`.
 @[simp]
 theorem toClassEquivOfSurjective_apply
     (hsurj : Function.Surjective (toClass (W := W))) (P : W.Point) :
