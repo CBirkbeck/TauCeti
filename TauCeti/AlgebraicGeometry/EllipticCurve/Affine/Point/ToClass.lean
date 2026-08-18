@@ -101,7 +101,7 @@ def ClassRepresentableByPoints (W : _root_.WeierstrassCurve.Affine F) : Prop :=
 
 /-- Each class of an `XYIdeal'`, and the trivial class, lies in the range of `toClass`. This is
 the content-free half of the range characterisation: it only unfolds `toClass`. -/
-theorem mem_range_toClass_of_classRep (g : ClassGroup W.CoordinateRing)
+private theorem mem_range_toClass_of_classRep (g : ClassGroup W.CoordinateRing)
     (hg : g = 1 ∨ ∃ (x y : F) (h : W.Nonsingular x y),
       g = ClassGroup.mk W.FunctionField (CoordinateRing.XYIdeal' (W := W) h)) :
     Additive.ofMul g ∈ Set.range (toClass (W := W)) := by
@@ -125,7 +125,7 @@ theorem classRepresentableByPoints_of_toClass_surjective
   cases P with
   | zero =>
       left
-      rw [show (zero : W.Point) = 0 from rfl, toClass_zero] at hP
+      rw [← zero_def, toClass_zero] at hP
       exact (Additive.ofMul.injective hP).symm
   | some x y h =>
       right
@@ -145,9 +145,9 @@ theorem toClass_surjective_iff_classRepresentableByPoints :
 by a proof of surjectivity. Mathlib's `toClass_injective` is the other half of bijectivity and
 needs no hypothesis, so any proof of surjectivity upgrades `toClass` to an isomorphism.
 
-`@[expose]` so that `toClassEquivOfSurjective_apply` below is provable by `rfl`: without it the
-body does not unfold across the module boundary and the equation lemma cannot be stated. -/
-@[expose]
+The body is not exposed; `toClassEquivOfSurjective_apply` below is the computation rule, and it
+is proved in term mode, which checks at full transparency and so crosses the module boundary that
+`rfl` as a tactic does not. -/
 noncomputable def toClassEquivOfSurjective (hsurj : Function.Surjective (toClass (W := W))) :
     W.Point ≃+ Additive (ClassGroup W.CoordinateRing) :=
   AddEquiv.ofBijective toClass ⟨toClass_injective, hsurj⟩
@@ -155,8 +155,7 @@ noncomputable def toClassEquivOfSurjective (hsurj : Function.Surjective (toClass
 @[simp]
 theorem toClassEquivOfSurjective_apply
     (hsurj : Function.Surjective (toClass (W := W))) (P : W.Point) :
-    toClassEquivOfSurjective hsurj P = toClass P :=
-  rfl
+    toClassEquivOfSurjective hsurj P = toClass P := (rfl)
 
 end WeierstrassCurve.Affine.Point
 
