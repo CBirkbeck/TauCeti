@@ -244,23 +244,23 @@ noncomputable def tensorFinPiEquiv (k n : ℕ) (A : Type*) [CommRing A] [Topolog
   (TensorProduct.comm A _ _).trans
     (TensorProduct.piScalarRight A A (restrictedMvPowerSeriesSubring k A) (Fin n))
 
-/-- `restrictedMvPowerSeriesFinPiEquiv` reads off the `i`-th component series. Its body is a
-composite of two equivalences whose own bodies are unexposed, so this is how a consumer computes
-with it. -/
+/-- `restrictedMvPowerSeriesFinPiEquiv` reads off the `i`-th component series: its `s`-th
+coefficient is the `i`-th entry of `f`'s. -/
 @[simp]
 theorem restrictedMvPowerSeriesFinPiEquiv_apply
     (f : restrictedMvPowerSeriesSubmodule k A (Fin n → A)) (i : Fin n) (s : Fin k →₀ ℕ) :
     ((restrictedMvPowerSeriesFinPiEquiv k n A f i : MvPowerSeries (Fin k) A) :
       (Fin k →₀ ℕ) → A) s =
       (((f : MvPowerSeries (Fin k) (Fin n → A)) : (Fin k →₀ ℕ) → Fin n → A) s) i := by
+  -- The equivalence is a composite of two whose bodies are unexposed, so this is the lemma every
+  -- consumer computes through rather than unfolding.
   simp only [restrictedMvPowerSeriesFinPiEquiv, LinearEquiv.trans_apply,
     LinearEquiv.piCongrRight_apply, coe_restrictedMvPowerSeriesSubringLinearEquiv_symm,
     restrictedMvPowerSeriesSubmodulePiEquiv_apply]
 
 /-- `restrictedMvPowerSeriesFinPiEquiv.symm` assembles a tuple of component series into a
-tuple-valued series, coefficientwise. The inverse of a composite equivalence does not compute
-definitionally the way the forward direction does, so this is derived from
-`restrictedMvPowerSeriesFinPiEquiv_apply` rather than proved directly. -/
+tuple-valued series: the `i`-th entry of its `s`-th coefficient is the `s`-th coefficient of the
+`i`-th component. -/
 @[simp]
 theorem restrictedMvPowerSeriesFinPiEquiv_symm_apply
     (g : Fin n → restrictedMvPowerSeriesSubring k A) (i : Fin n) (s : Fin k →₀ ℕ) :
@@ -268,6 +268,8 @@ theorem restrictedMvPowerSeriesFinPiEquiv_symm_apply
         restrictedMvPowerSeriesSubmodule k A (Fin n → A)) :
       MvPowerSeries (Fin k) (Fin n → A)) : (Fin k →₀ ℕ) → Fin n → A) s i =
       ((g i : MvPowerSeries (Fin k) A) : (Fin k →₀ ℕ) → A) s := by
+  -- Derived from the forward lemma: the inverse of a composite equivalence does not compute
+  -- definitionally the way the forward direction does.
   have h := restrictedMvPowerSeriesFinPiEquiv_apply
     ((restrictedMvPowerSeriesFinPiEquiv k n A).symm g) i s
   rw [LinearEquiv.apply_symm_apply] at h
@@ -297,13 +299,11 @@ theorem restrictedMvPowerSeriesFinPiEquiv_baseChange
       funext i
       apply Subtype.ext
       funext s
-      simp only [restrictedMvPowerSeriesFinPiEquiv, LinearEquiv.trans_apply,
-        LinearEquiv.piCongrRight_apply, coe_restrictedMvPowerSeriesSubringLinearEquiv_symm,
-        restrictedMvPowerSeriesSubmodulePiEquiv_apply,
-        coeff_restrictedMvPowerSeriesBaseChange_tmul, Pi.smul_apply, smul_eq_mul,
-        tensorFinPiEquiv, TensorProduct.comm_tmul, TensorProduct.piScalarRight_apply,
-        TensorProduct.piScalarRightHom_tmul]
-      rw [coeff_coe_smul_restrictedMvPowerSeriesSubring, mul_comm, MvPowerSeries.coeff_apply]
+      rw [restrictedMvPowerSeriesFinPiEquiv_apply, tensorFinPiEquiv_tmul,
+        coeff_restrictedMvPowerSeriesBaseChange_tmul,
+        coeff_coe_smul_restrictedMvPowerSeriesSubring]
+      simp only [Pi.smul_apply, smul_eq_mul]
+      rw [mul_comm, MvPowerSeries.coeff_apply]
   | add y z hy hz => simp [hy, hz]
 
 /-- **Remark 8.29 for a finite free module, as an isomorphism.** The comparison map
