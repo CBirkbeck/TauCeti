@@ -1,6 +1,7 @@
 /-
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
 module
 
@@ -79,6 +80,12 @@ noncomputable def conjF (hs : HodgeStructureOn W ω n) (p : ℤ) : Submodule ℂ
 theorem conjF_def (hs : HodgeStructureOn W ω n) (p : ℤ) :
     hs.conjF p = (hs.F p).map ω.toEquiv.toLinearMap :=
   (rfl)
+
+/-- The conjugate of the Hodge filtration is decreasing. -/
+theorem conjF_antitone (hs : HodgeStructureOn W ω n) : Antitone hs.conjF :=
+  fun p q hpq ↦ by
+    rw [hs.conjF_def, hs.conjF_def]
+    exact Submodule.map_mono (hs.F_antitone hpq)
 
 /-- Membership in a conjugate filtration step is detected by applying the conjugation. -/
 @[simp]
