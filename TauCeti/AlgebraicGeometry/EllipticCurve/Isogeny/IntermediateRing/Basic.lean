@@ -149,7 +149,7 @@ theorem coe_toIntermediateRing (φ : Isogeny W₁ W₂) (x : W₁.CoordinateRing
 /-- **The source coordinate ring embeds in the intermediate ring.** The corestricted map is
 `algebraMap W₁.CoordinateRing W₁.FunctionField`, injective because the function field is by
 definition the fraction field of the coordinate ring, and corestriction preserves that. -/
-@[grind]
+@[grind .]
 theorem toIntermediateRing_injective (φ : Isogeny W₁ W₂) :
     Function.Injective φ.toIntermediateRing :=
   RingHom.injective_codRestrict.mpr
