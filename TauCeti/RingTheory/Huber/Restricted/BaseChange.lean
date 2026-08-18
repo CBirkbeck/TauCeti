@@ -40,7 +40,11 @@ type `M ⊗[A] MvPowerSeries (Fin k) A →ₗ[A] MvPowerSeries (Fin k) M`.
   in the ambient series, the restricted map is the ambient one, at a general element and at a pure
   tensor; `coeff_restrictedMvPowerSeriesBaseChange_tmul` reads off a single coefficient.
 
-* `restrictedMvPowerSeriesFinPiEquiv_baseChange`: **Remark 8.29 in the finite free case**. For
+* `restrictedMvPowerSeriesBaseChangeFinEquiv`, with
+  `bijective_restrictedMvPowerSeriesBaseChange_fin`: **Remark 8.29's conclusion in the finite free
+  case** — the comparison map packaged as a linear
+  equivalence, and its bijectivity in the form a reduction argument consumes.
+* `restrictedMvPowerSeriesFinPiEquiv_baseChange`: the transported equality behind it. For
   `M = Fin n → A` the comparison map is Mathlib's tensor-pi equivalence transported along
   `restrictedMvPowerSeriesFinPiEquiv`, so it is an isomorphism — the base case the finitely
   generated statement reduces to.
@@ -61,6 +65,11 @@ the gap:
   unascribed `(Fin k →₀ ℕ) → M` form they rewrite to a term the goal no longer matches
   syntactically.
 * `mvPowerSeriesBaseChange_tmul` restates Mathlib's `piScalarRightHom_tmul` at the series type.
+
+The finite free equality is stated as `finPiEquiv (baseChange x) = tensorFinPiEquiv x` rather
+than through `(finPiEquiv …).symm`, because the equivalences' bodies are unexposed: `_apply`
+computes across the module boundary while `_symm_apply` on a *composite* does not. The isomorphism
+itself is then packaged separately, so consumers get a `LinearEquiv` without paying that cost.
 
 Coefficients are read through the `(· : (Fin k →₀ ℕ) → M)` ascription, as `IsRestricted` itself is
 phrased: `MvPowerSeries.coeff` is unavailable here because it is `R`-linear on `R`-valued series
@@ -235,14 +244,30 @@ noncomputable def tensorFinPiEquiv (k n : ℕ) (A : Type*) [CommRing A] [Topolog
   (TensorProduct.comm A _ _).trans
     (TensorProduct.piScalarRight A A (restrictedMvPowerSeriesSubring k A) (Fin n))
 
+/-- `restrictedMvPowerSeriesFinPiEquiv` reads off the `i`-th component series. Its body is a
+composite of two equivalences whose own bodies are unexposed, so this is how a consumer computes
+with it. -/
+@[simp]
+theorem restrictedMvPowerSeriesFinPiEquiv_apply
+    (f : restrictedMvPowerSeriesSubmodule k A (Fin n → A)) (i : Fin n) (s : Fin k →₀ ℕ) :
+    ((restrictedMvPowerSeriesFinPiEquiv k n A f i : MvPowerSeries (Fin k) A) :
+      (Fin k →₀ ℕ) → A) s =
+      (((f : MvPowerSeries (Fin k) (Fin n → A)) : (Fin k →₀ ℕ) → Fin n → A) s) i := by
+  simp only [restrictedMvPowerSeriesFinPiEquiv, LinearEquiv.trans_apply,
+    LinearEquiv.piCongrRight_apply, coe_restrictedMvPowerSeriesSubringLinearEquiv_symm,
+    restrictedMvPowerSeriesSubmodulePiEquiv_apply]
+
+/-- `tensorFinPiEquiv` on a pure tensor is the scalar action componentwise. -/
+@[simp]
+theorem tensorFinPiEquiv_tmul (m : Fin n → A) (f : restrictedMvPowerSeriesSubring k A) (i : Fin n) :
+    tensorFinPiEquiv k n A (TensorProduct.tmul A m f) i = m i • f := (rfl)
+
 /-- **Wedhorn Remark 8.29 for a finite free module**: transported along the two identifications,
 the comparison map is Mathlib's tensor-pi equivalence. Both are isomorphisms, so the comparison
 map is one too.
 
-Stated in this direction rather than through `(restrictedMvPowerSeriesFinPiEquiv …).symm` because
-the equivalences' bodies are not exposed: `_apply` computes, `_symm_apply` on a composite does
-not. The whole content is commutativity of `A` — the tensor side produces `m i * coeff s f` and
-the comparison map produces `coeff s f * m i`. -/
+The whole content is commutativity of `A`: the tensor side produces `m i * coeff s f` and the
+comparison map produces `coeff s f * m i`. -/
 theorem restrictedMvPowerSeriesFinPiEquiv_baseChange
     (x : TensorProduct A (Fin n → A) (restrictedMvPowerSeriesSubring k A)) :
     restrictedMvPowerSeriesFinPiEquiv k n A (restrictedMvPowerSeriesBaseChange x) =
@@ -261,6 +286,37 @@ theorem restrictedMvPowerSeriesFinPiEquiv_baseChange
         TensorProduct.piScalarRightHom_tmul]
       rw [coeff_coe_smul_restrictedMvPowerSeriesSubring, mul_comm, MvPowerSeries.coeff_apply]
   | add y z hy hz => simp [hy, hz]
+
+/-- **Remark 8.29 for a finite free module, as an isomorphism.** The comparison map
+`restrictedMvPowerSeriesBaseChange` at `M = Fin n → A`, packaged as a linear equivalence; see
+`coe_restrictedMvPowerSeriesBaseChangeFinEquiv` for the identification with the map itself. -/
+noncomputable def restrictedMvPowerSeriesBaseChangeFinEquiv (k n : ℕ) (A : Type*) [CommRing A]
+    [TopologicalSpace A] [NonarchimedeanRing A] :
+    TensorProduct A (Fin n → A) (restrictedMvPowerSeriesSubring k A) ≃ₗ[A]
+      restrictedMvPowerSeriesSubmodule k A (Fin n → A) :=
+  (tensorFinPiEquiv k n A).trans (restrictedMvPowerSeriesFinPiEquiv k n A).symm
+
+/-- The finite free isomorphism *is* the comparison map. -/
+@[simp]
+theorem coe_restrictedMvPowerSeriesBaseChangeFinEquiv
+    (x : TensorProduct A (Fin n → A) (restrictedMvPowerSeriesSubring k A)) :
+    restrictedMvPowerSeriesBaseChangeFinEquiv k n A x = restrictedMvPowerSeriesBaseChange x := by
+  rw [restrictedMvPowerSeriesBaseChangeFinEquiv, LinearEquiv.trans_apply,
+    LinearEquiv.symm_apply_eq, restrictedMvPowerSeriesFinPiEquiv_baseChange]
+
+/-- **The comparison map is bijective for a finite free module** — Remark 8.29's conclusion in the
+base case, in the form a reduction argument consumes. -/
+theorem bijective_restrictedMvPowerSeriesBaseChange_fin :
+    Function.Bijective (restrictedMvPowerSeriesBaseChange :
+      TensorProduct A (Fin n → A) (restrictedMvPowerSeriesSubring k A) →
+        restrictedMvPowerSeriesSubmodule k A (Fin n → A)) := by
+  have h : (restrictedMvPowerSeriesBaseChange :
+      TensorProduct A (Fin n → A) (restrictedMvPowerSeriesSubring k A) →
+        restrictedMvPowerSeriesSubmodule k A (Fin n → A)) =
+      restrictedMvPowerSeriesBaseChangeFinEquiv k n A :=
+    funext fun x ↦ (coe_restrictedMvPowerSeriesBaseChangeFinEquiv x).symm
+  rw [h]
+  exact (restrictedMvPowerSeriesBaseChangeFinEquiv k n A).bijective
 
 end FiniteFree
 
