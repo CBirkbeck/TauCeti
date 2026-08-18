@@ -36,6 +36,8 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
   componentwise.
 * `restrictedMvPowerSeriesSubringLinearEquiv`: at `M = A` the subring and the submodule of
   restricted series are `A`-linearly isomorphic.
+* `restrictedMvPowerSeriesSubmoduleMap`: `M ↦ M⟨T₁, …, Tₖ⟩` is functorial in continuous
+  `A`-linear maps, with `IsRestricted.map` at the predicate level and the two functor laws.
 * `restrictedMvPowerSeriesSubmodulePiEquiv`: that criterion as an `A`-linear equivalence,
   `(∏ i, M i)⟨T₁, …, Tₖ⟩ ≃ₗ[A] ∏ i, M i⟨T₁, …, Tₖ⟩`.
 
@@ -63,7 +65,8 @@ coefficient binders — `[Zero]` and a topology, where the original asked for a 
 **Original here.** `isRestricted_monomial`, `isRestricted_of_hasFiniteSupport`,
 `IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule`, `mem_restrictedMvPowerSeriesSubmodule`,
 `isRestricted_pi_iff`, `restrictedMvPowerSeriesSubmodulePiEquiv` and
-`restrictedMvPowerSeriesSubringLinearEquiv`, each with its computation lemmas.
+`restrictedMvPowerSeriesSubringLinearEquiv`, each with its computation lemmas, together with
+`IsRestricted.map`, `restrictedMvPowerSeriesSubmoduleMap` and its laws.
 
 None of the last three has an AINTLIB counterpart, for two different reasons. The two product
 statements have none because the source states restrictedness only for a single coefficient
@@ -460,12 +463,66 @@ def restrictedMvPowerSeriesSubmodule (k : ℕ) (A M : Type*) [Semiring A] [AddCo
     Submodule A (MvPowerSeries (Fin k) M) :=
   Filter.zeroAtFilterSubmodule A (Filter.cofinite : Filter (Fin k →₀ ℕ))
 
+/-- A continuous zero-preserving map pushes restricted series forward: `φ ∘ f` is restricted
+whenever `f` is. Continuity is what carries the coefficients' convergence to `0` across. -/
+theorem IsRestricted.map {k : ℕ} {M N : Type*} [Zero M] [TopologicalSpace M] [Zero N]
+    [TopologicalSpace N] {φ : M → N} (hφ : Continuous φ) (h0 : φ 0 = 0)
+    {f : MvPowerSeries (Fin k) M} (hf : IsRestricted f) :
+    IsRestricted (show MvPowerSeries (Fin k) N from fun s ↦ φ ((f : (Fin k →₀ ℕ) → M) s)) := by
+  refine isRestricted_iff.mpr ?_
+  have h := (hφ.tendsto 0).comp (isRestricted_iff.mp hf)
+  rwa [h0] at h
+
 /-- Membership in `M⟨T₁, …, Tₖ⟩` is restrictedness. -/
 @[simp]
 theorem mem_restrictedMvPowerSeriesSubmodule {k : ℕ} {A M : Type*} [Semiring A] [AddCommMonoid M]
     [TopologicalSpace M] [Module A M] [ContinuousAdd M] [ContinuousConstSMul A M]
     {f : MvPowerSeries (Fin k) M} :
     f ∈ restrictedMvPowerSeriesSubmodule k A M ↔ IsRestricted f := (Iff.rfl)
+
+/-- **`M ↦ M⟨T₁, …, Tₖ⟩` is functorial**: a continuous `A`-linear map induces one on restricted
+series, coefficientwise. -/
+noncomputable def restrictedMvPowerSeriesSubmoduleMap {k : ℕ} {A M N : Type*} [Semiring A]
+    [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
+    [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
+    [ContinuousAdd N] [ContinuousConstSMul A N] (φ : M →ₗ[A] N) (hφ : Continuous φ) :
+    restrictedMvPowerSeriesSubmodule k A M →ₗ[A] restrictedMvPowerSeriesSubmodule k A N where
+  toFun f := ⟨fun s ↦ φ (f.1 s), (mem_restrictedMvPowerSeriesSubmodule.mp f.2).map hφ (map_zero φ)⟩
+  map_add' _ _ := Subtype.ext (funext fun _ ↦ map_add φ _ _)
+  map_smul' _ _ := Subtype.ext (funext fun _ ↦ map_smul φ _ _)
+
+/-- `restrictedMvPowerSeriesSubmoduleMap` is `φ` coefficientwise. Its body is not exposed, so this
+is how a consumer computes with it. -/
+@[simp]
+theorem coe_restrictedMvPowerSeriesSubmoduleMap {k : ℕ} {A M N : Type*} [Semiring A]
+    [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
+    [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
+    [ContinuousAdd N] [ContinuousConstSMul A N] (φ : M →ₗ[A] N) (hφ : Continuous φ)
+    (f : restrictedMvPowerSeriesSubmodule k A M) (s : Fin k →₀ ℕ) :
+    (((restrictedMvPowerSeriesSubmoduleMap (k := k) φ hφ f :
+        restrictedMvPowerSeriesSubmodule k A N) : MvPowerSeries (Fin k) N) :
+      (Fin k →₀ ℕ) → N) s = φ (((f : MvPowerSeries (Fin k) M) : (Fin k →₀ ℕ) → M) s) := (rfl)
+
+/-- The identity induces the identity. -/
+@[simp]
+theorem restrictedMvPowerSeriesSubmoduleMap_id {k : ℕ} {A M : Type*} [Semiring A]
+    [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
+    [ContinuousConstSMul A M] :
+    restrictedMvPowerSeriesSubmoduleMap (k := k) (LinearMap.id (R := A) (M := M))
+      continuous_id = LinearMap.id :=
+  LinearMap.ext fun _ ↦ Subtype.ext rfl
+
+/-- The induced maps compose. -/
+theorem restrictedMvPowerSeriesSubmoduleMap_comp {k : ℕ} {A M N P : Type*} [Semiring A]
+    [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
+    [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
+    [ContinuousAdd N] [ContinuousConstSMul A N] [AddCommMonoid P] [TopologicalSpace P]
+    [Module A P] [ContinuousAdd P] [ContinuousConstSMul A P]
+    (ψ : N →ₗ[A] P) (hψ : Continuous ψ) (φ : M →ₗ[A] N) (hφ : Continuous φ) :
+    restrictedMvPowerSeriesSubmoduleMap (k := k) (ψ.comp φ) (hψ.comp hφ) =
+      (restrictedMvPowerSeriesSubmoduleMap ψ hψ).comp
+        (restrictedMvPowerSeriesSubmoduleMap φ hφ) :=
+  LinearMap.ext fun _ ↦ Subtype.ext rfl
 
 /-- **`A⟨T₁, …, Tₖ⟩` as a submodule over itself**: at `M = A` the subring and the submodule cut
 out the same series, so they are `A`-linearly isomorphic.

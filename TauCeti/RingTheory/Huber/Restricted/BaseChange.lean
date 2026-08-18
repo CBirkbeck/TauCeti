@@ -34,6 +34,9 @@ type `M ⊗[A] MvPowerSeries (Fin k) A →ₗ[A] MvPowerSeries (Fin k) M`.
 * `IsRestricted.mvPowerSeriesBaseChange_tmul`: that series is restricted whenever `f` is. It is
   where `ContinuousSMul A M` is used — continuity of `a ↦ a • m` in the *scalar*, which
   `ContinuousConstSMul` does not give.
+* `restrictedMvPowerSeriesSubmoduleMap_baseChange`: the comparison map is **natural in `M`** —
+  a continuous `A`-linear map commutes with base change, which is what lets a presentation of `M`
+  be pushed through the functor.
 * `coe_restrictedMvPowerSeriesBaseChange`, with `coe_restrictedMvPowerSeriesBaseChange_tmul`: read
   in the ambient series, the restricted map is the ambient one, at a general element and at a pure
   tensor; `coeff_restrictedMvPowerSeriesBaseChange_tmul` reads off a single coefficient.
@@ -187,6 +190,24 @@ theorem coeff_restrictedMvPowerSeriesBaseChange_tmul (m : M)
       (Fin k →₀ ℕ) → M) s = MvPowerSeries.coeff s (f : MvPowerSeries (Fin k) A) • m := by
   rw [coe_restrictedMvPowerSeriesBaseChange_tmul]
   exact coeff_mvPowerSeriesBaseChange_tmul m _ s
+
+/-- **The comparison map is natural in `M`.** A continuous `A`-linear `φ : M → N` commutes with
+base change, so a presentation of `M` can be pushed through `M ↦ M⟨T₁, …, Tₖ⟩`. This is the
+naturality the finitely generated case of Remark 8.29 runs on. -/
+theorem restrictedMvPowerSeriesSubmoduleMap_baseChange {N : Type*} [AddCommMonoid N]
+    [TopologicalSpace N] [Module A N] [ContinuousSMul A N] [ContinuousAdd N]
+    (φ : M →ₗ[A] N) (hφ : Continuous φ)
+    (x : TensorProduct A M (restrictedMvPowerSeriesSubring k A)) :
+    restrictedMvPowerSeriesSubmoduleMap φ hφ (restrictedMvPowerSeriesBaseChange x) =
+      restrictedMvPowerSeriesBaseChange (TensorProduct.map φ LinearMap.id x) := by
+  induction x using TensorProduct.induction_on with
+  | zero => simp
+  | tmul m f =>
+      apply Subtype.ext
+      funext s
+      simp [coe_restrictedMvPowerSeriesSubmoduleMap,
+        coeff_restrictedMvPowerSeriesBaseChange_tmul]
+  | add y z hy hz => simp [hy, hz]
 
 end Restricted
 
