@@ -41,7 +41,7 @@ type `M ⊗[A] MvPowerSeries (Fin k) A →ₗ[A] MvPowerSeries (Fin k) M`.
   tensor; `coeff_restrictedMvPowerSeriesBaseChange_tmul` reads off a single coefficient.
 
 * `restrictedMvPowerSeriesBaseChangeFinEquiv`, with
-  `bijective_restrictedMvPowerSeriesBaseChange_fin`: **Remark 8.29's conclusion in the finite free
+  `restrictedMvPowerSeriesBaseChange_fin_bijective`: **Remark 8.29's conclusion in the finite free
   case** — the comparison map packaged as a linear
   equivalence, and its bijectivity in the form a reduction argument consumes.
 * `restrictedMvPowerSeriesFinPiEquiv_baseChange`: the transported equality behind it. For
@@ -257,10 +257,28 @@ theorem restrictedMvPowerSeriesFinPiEquiv_apply
     LinearEquiv.piCongrRight_apply, coe_restrictedMvPowerSeriesSubringLinearEquiv_symm,
     restrictedMvPowerSeriesSubmodulePiEquiv_apply]
 
+/-- `restrictedMvPowerSeriesFinPiEquiv.symm` assembles a tuple of component series into a
+tuple-valued series, coefficientwise. The inverse of a composite equivalence does not compute
+definitionally the way the forward direction does, so this is derived from
+`restrictedMvPowerSeriesFinPiEquiv_apply` rather than proved directly. -/
+@[simp]
+theorem restrictedMvPowerSeriesFinPiEquiv_symm_apply
+    (g : Fin n → restrictedMvPowerSeriesSubring k A) (i : Fin n) (s : Fin k →₀ ℕ) :
+    ((((restrictedMvPowerSeriesFinPiEquiv k n A).symm g :
+        restrictedMvPowerSeriesSubmodule k A (Fin n → A)) :
+      MvPowerSeries (Fin k) (Fin n → A)) : (Fin k →₀ ℕ) → Fin n → A) s i =
+      ((g i : MvPowerSeries (Fin k) A) : (Fin k →₀ ℕ) → A) s := by
+  have h := restrictedMvPowerSeriesFinPiEquiv_apply
+    ((restrictedMvPowerSeriesFinPiEquiv k n A).symm g) i s
+  rw [LinearEquiv.apply_symm_apply] at h
+  exact h.symm
+
 /-- `tensorFinPiEquiv` on a pure tensor is the scalar action componentwise. -/
 @[simp]
 theorem tensorFinPiEquiv_tmul (m : Fin n → A) (f : restrictedMvPowerSeriesSubring k A) (i : Fin n) :
-    tensorFinPiEquiv k n A (TensorProduct.tmul A m f) i = m i • f := (rfl)
+    tensorFinPiEquiv k n A (TensorProduct.tmul A m f) i = m i • f := by
+  simp only [tensorFinPiEquiv, LinearEquiv.trans_apply, TensorProduct.comm_tmul,
+    TensorProduct.piScalarRight_apply, TensorProduct.piScalarRightHom_tmul]
 
 /-- **Wedhorn Remark 8.29 for a finite free module**: transported along the two identifications,
 the comparison map is Mathlib's tensor-pi equivalence. Both are isomorphisms, so the comparison
@@ -268,6 +286,7 @@ map is one too.
 
 The whole content is commutativity of `A`: the tensor side produces `m i * coeff s f` and the
 comparison map produces `coeff s f * m i`. -/
+@[simp]
 theorem restrictedMvPowerSeriesFinPiEquiv_baseChange
     (x : TensorProduct A (Fin n → A) (restrictedMvPowerSeriesSubring k A)) :
     restrictedMvPowerSeriesFinPiEquiv k n A (restrictedMvPowerSeriesBaseChange x) =
@@ -289,7 +308,7 @@ theorem restrictedMvPowerSeriesFinPiEquiv_baseChange
 
 /-- **Remark 8.29 for a finite free module, as an isomorphism.** The comparison map
 `restrictedMvPowerSeriesBaseChange` at `M = Fin n → A`, packaged as a linear equivalence; see
-`coe_restrictedMvPowerSeriesBaseChangeFinEquiv` for the identification with the map itself. -/
+`restrictedMvPowerSeriesBaseChangeFinEquiv_apply` for the identification with the map itself. -/
 noncomputable def restrictedMvPowerSeriesBaseChangeFinEquiv (k n : ℕ) (A : Type*) [CommRing A]
     [TopologicalSpace A] [NonarchimedeanRing A] :
     TensorProduct A (Fin n → A) (restrictedMvPowerSeriesSubring k A) ≃ₗ[A]
@@ -298,7 +317,7 @@ noncomputable def restrictedMvPowerSeriesBaseChangeFinEquiv (k n : ℕ) (A : Typ
 
 /-- The finite free isomorphism *is* the comparison map. -/
 @[simp]
-theorem coe_restrictedMvPowerSeriesBaseChangeFinEquiv
+theorem restrictedMvPowerSeriesBaseChangeFinEquiv_apply
     (x : TensorProduct A (Fin n → A) (restrictedMvPowerSeriesSubring k A)) :
     restrictedMvPowerSeriesBaseChangeFinEquiv k n A x = restrictedMvPowerSeriesBaseChange x := by
   rw [restrictedMvPowerSeriesBaseChangeFinEquiv, LinearEquiv.trans_apply,
@@ -306,7 +325,7 @@ theorem coe_restrictedMvPowerSeriesBaseChangeFinEquiv
 
 /-- **The comparison map is bijective for a finite free module** — Remark 8.29's conclusion in the
 base case, in the form a reduction argument consumes. -/
-theorem bijective_restrictedMvPowerSeriesBaseChange_fin :
+theorem restrictedMvPowerSeriesBaseChange_fin_bijective :
     Function.Bijective (restrictedMvPowerSeriesBaseChange :
       TensorProduct A (Fin n → A) (restrictedMvPowerSeriesSubring k A) →
         restrictedMvPowerSeriesSubmodule k A (Fin n → A)) := by
@@ -314,7 +333,7 @@ theorem bijective_restrictedMvPowerSeriesBaseChange_fin :
       TensorProduct A (Fin n → A) (restrictedMvPowerSeriesSubring k A) →
         restrictedMvPowerSeriesSubmodule k A (Fin n → A)) =
       restrictedMvPowerSeriesBaseChangeFinEquiv k n A :=
-    funext fun x ↦ (coe_restrictedMvPowerSeriesBaseChangeFinEquiv x).symm
+    funext fun x ↦ (restrictedMvPowerSeriesBaseChangeFinEquiv_apply x).symm
   rw [h]
   exact (restrictedMvPowerSeriesBaseChangeFinEquiv k n A).bijective
 
