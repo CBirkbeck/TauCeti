@@ -22,9 +22,11 @@ stated for an arbitrary presheaf, so it does not mention the structure presheaf;
 
 ## Main results
 
-* `TauCeti.ValuationSpectrum.spaRationalOpens` : the rational family as a set of `Opens`.
-* `TauCeti.ValuationSpectrum.isBasis_spaRationalOpens` : it is a basis in the `Opens` sense.
 * `TauCeti.ValuationSpectrum.isSheaf_iff_isSheafFor_rationalCover` : the criterion.
+
+The rational basis itself, in the `Opens` form this consumes, is
+`TauCeti.ValuationSpectrum.isBasis_spaRationalOpens` in
+`TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basis`.
 
 ## References
 
@@ -39,16 +41,6 @@ open CategoryTheory _root_.TopologicalSpace TauCeti.Huber TauCeti.TopologicalSpa
 public section
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
-
-/-- The rational family of `Spa(A,A⁺)`, as a set of `Opens` rather than of sets. -/
-def spaRationalOpens (Aplus : Subring A) : Set (Opens ↥(spa Aplus)) :=
-  {U : Opens ↥(spa Aplus) | (U : Set ↥(spa Aplus)) ∈ spaRationalFamily Aplus}
-
-/-- **The rational opens are a basis** in the `Opens.IsBasis` sense, which is the form the sheaf
-criterion consumes. -/
-theorem isBasis_spaRationalOpens [IsHuberRing A] (Aplus : Subring A) :
-    Opens.IsBasis (spaRationalOpens Aplus) :=
-  isBasis_of_isTopologicalBasis (isTopologicalBasis_spaRationalFamily Aplus)
 
 /-- **Sheafhood on `Spa(A,A⁺)` is decided by rational covers.** A presheaf valued in any category
 is a sheaf for the topology of the adic spectrum exactly when it satisfies the sheaf condition for

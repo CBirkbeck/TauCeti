@@ -8,6 +8,7 @@ module
 public import Mathlib.CategoryTheory.Sites.Coverage
 public import Mathlib.CategoryTheory.Sites.Spaces
 public import Mathlib.Topology.Sets.Opens
+public import TauCeti.Topology.Sets.Opens
 
 /-!
 # The coverage a topological basis induces on `Opens X`
@@ -32,8 +33,9 @@ Mathlib names this construction as an open project in the module docstring of
 
 ## Main results
 
-* `TauCeti.TopologicalSpace.Opens.isBasis_of_isTopologicalBasis` : a topological basis given as
-  a family of *sets* yields one given as a family of `Opens`.
+* `TauCeti.TopologicalSpace.Opens.isBasisCover_iff`, with `IsBasisCover.mem_basis` and
+  `IsBasisCover.exists_mem` : the two clauses of a basis cover, for consumers that cannot
+  unfold the definition.
 * `TauCeti.TopologicalSpace.Opens.basisCoverage_toGrothendieck` : it generates
   `Opens.grothendieckTopology X`.
 * `TauCeti.TopologicalSpace.Opens.isSheaf_iff_isSheafFor_basisCoverage` : a `Type`-valued
@@ -53,7 +55,7 @@ weakening `CategoryTheory.Coverage` exists for.
 
 namespace TauCeti
 
-open CategoryTheory TopologicalSpace
+open CategoryTheory _root_.TopologicalSpace
 
 public section
 
@@ -63,26 +65,26 @@ namespace TopologicalSpace.Opens
 
 variable {X : Type u} [TopologicalSpace X] {B : Set (Opens X)}
 
-/-- **A basis of sets is a basis of opens.** `Opens.IsBasis` wants a `Set (Opens X)`, while every
-basis in the library — `TopologicalSpace.IsTopologicalBasis` — is a `Set (Set X)`; the two are
-carried across by taking the opens whose underlying set is a member, since every member of a
-topological basis is open. -/
-theorem isBasis_of_isTopologicalBasis {S : Set (Set X)} (hS : IsTopologicalBasis S) :
-    Opens.IsBasis {U : Opens X | (U : Set X) ∈ S} := by
-  have himg : ((↑) : Opens X → Set X) '' {U : Opens X | (U : Set X) ∈ S} = S := by
-    ext V
-    constructor
-    · rintro ⟨U, hU, rfl⟩
-      exact hU
-    · exact fun hV ↦ ⟨⟨V, hS.isOpen hV⟩, hV, rfl⟩
-  rw [Opens.IsBasis, himg]
-  exact hS
-
 /-- The presieves of a basis cover: every member lies in `B`, and together they cover `U`
 pointwise. -/
 def IsBasisCover (B : Set (Opens X)) {U : Opens X} (R : Presieve U) : Prop :=
   (∀ ⦃V : Opens X⦄ ⦃f : V ⟶ U⦄, R f → V ∈ B) ∧
     ∀ x ∈ U, ∃ (V : Opens X) (f : V ⟶ U), R f ∧ x ∈ V
+
+/-- **The two clauses of a basis cover.** `IsBasisCover` is a definition and its body is not
+exposed, so this is how a consumer outside this module builds one or takes it apart. -/
+theorem isBasisCover_iff {U : Opens X} {R : Presieve U} :
+    IsBasisCover B R ↔
+      (∀ ⦃V : Opens X⦄ ⦃f : V ⟶ U⦄, R f → V ∈ B) ∧
+        ∀ x ∈ U, ∃ (V : Opens X) (f : V ⟶ U), R f ∧ x ∈ V := Iff.rfl
+
+/-- Every member of a basis cover lies in the basis. -/
+theorem IsBasisCover.mem_basis {U : Opens X} {R : Presieve U} (hR : IsBasisCover B R)
+    ⦃V : Opens X⦄ ⦃f : V ⟶ U⦄ (hf : R f) : V ∈ B := hR.1 hf
+
+/-- A basis cover covers its object pointwise. -/
+theorem IsBasisCover.exists_mem {U : Opens X} {R : Presieve U} (hR : IsBasisCover B R) {x : X}
+    (hx : x ∈ U) : ∃ (V : Opens X) (f : V ⟶ U), R f ∧ x ∈ V := hR.2 x hx
 
 /-- **The coverage a basis induces on `Opens X`.** Its covering presieves are the basis covers.
 
@@ -103,6 +105,8 @@ def basisCoverage (hB : Opens.IsBasis B) : Coverage (Opens X) where
     · rintro W g ⟨-, W', e, he, hWle⟩
       exact ⟨W', homOfLE hWle, e, he, Subsingleton.elim _ _⟩
 
+/-- Membership in the basis coverage is being a basis cover; this is the normal form. -/
+@[simp]
 theorem mem_basisCoverage (hB : Opens.IsBasis B) {U : Opens X} {R : Presieve U} :
     R ∈ basisCoverage hB U ↔ IsBasisCover B R := Iff.rfl
 
