@@ -5,14 +5,14 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated
+public import TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated.Basic
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Restriction
 
 /-!
 # Restriction maps as morphisms of complete separated rings
 
 `LocalizationTopology.Restriction` builds the restriction map `A⟨T/s⟩ → A⟨T''/s''⟩` of a
-refinement as a continuous ring homomorphism, and `LocalizationTopology.CompleteSeparated`
+refinement as a continuous ring homomorphism, and `LocalizationTopology.CompleteSeparated.Basic`
 exhibits `A⟨T/s⟩` as an object of `CompleteSeparatedTopCommRingCat`. This module joins the two:
 the restriction map becomes a *morphism* of that category, and the identity and composition laws
 of the ring homomorphisms become the identity and composition laws of the morphisms.
