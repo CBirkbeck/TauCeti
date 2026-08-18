@@ -100,11 +100,6 @@ a consumer produces or consumes a refinement. -/
 theorem Presentation.refinedBy_iff {p q : Presentation P} :
     p.RefinedBy q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
 
-omit [IsTopologicalRing A] in
-/-- `≤` unfolded to the cofactor condition, combining `le_def` and `refinedBy_iff`. -/
-theorem Presentation.le_iff {p q : Presentation P} :
-    p ≤ q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
-
 /-! ### The functor into `CompleteSeparatedTopCommRingCat` -/
 
 /-- The object `A⟨T/s⟩` attached to a presentation. -/
@@ -130,10 +125,12 @@ theorem Presentation.hom_eq {p q : Presentation P} (h : p ≤ q) (r : A) (hr : q
 as its action on refinements. Functoriality is exactly `restrictionObjHom_self` and
 `restrictionObjHom_comp_restrictionObjHom`, reached through `Presentation.hom_eq`.
 
-`@[expose]` is load-bearing and cannot be dropped: the public `obj`/`map` equations below are
-proved by `rfl`, and an exported theorem may only unfold exposed definitions. Sealing the functor
-makes those equations unstatable, so the exposure is what *provides* the public API rather than
-bypassing it. -/
+`@[expose]` is load-bearing, for a narrower reason than exposure usually carries: with the body
+sealed, `presentationFunctor_map` below does not typecheck *as a statement*. Its two sides live in
+`(presentationFunctor P).obj p ⟶ (presentationFunctor P).obj q` and in `p.obj ⟶ q.obj`, and only
+unfolding the functor identifies those types. `presentationFunctor_obj` is statable either way; it
+is the `map` equation, and the definitional reindexing a limit over this category needs, that the
+exposure provides. -/
 @[expose]
 noncomputable def presentationFunctor (P : PairOfDefinition A) :
     Presentation P ⥤ CompleteSeparatedTopCommRingCat.{v} where
