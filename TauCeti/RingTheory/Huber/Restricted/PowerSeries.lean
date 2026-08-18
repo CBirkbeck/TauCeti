@@ -36,7 +36,7 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
   componentwise.
 * `restrictedMvPowerSeriesSubringLinearEquiv`: at `M = A` the subring and the submodule of
   restricted series are `A`-linearly isomorphic.
-* `restrictedMvPowerSeriesSubmoduleMap`: `M ↦ M⟨T₁, …, Tₖ⟩` is functorial in continuous
+* `restrictedMvPowerSeriesSubmoduleMap`: `M ↦ M⟨T₁, …, Tₖ⟩` is functorial in zero-continuous
   `A`-linear maps, with `IsRestricted.map` at the predicate level and the two functor laws.
 * `restrictedMvPowerSeriesSubmodulePiEquiv`: that criterion as an `A`-linear equivalence,
   `(∏ i, M i)⟨T₁, …, Tₖ⟩ ≃ₗ[A] ∏ i, M i⟨T₁, …, Tₖ⟩`.
@@ -491,8 +491,8 @@ theorem mem_restrictedMvPowerSeriesSubmodule {k : ℕ} {A M : Type*} [Semiring A
     {f : MvPowerSeries (Fin k) M} :
     f ∈ restrictedMvPowerSeriesSubmodule k A M ↔ IsRestricted f := (Iff.rfl)
 
-/-- **`M ↦ M⟨T₁, …, Tₖ⟩` is functorial**: a continuous `A`-linear map induces one on restricted
-series, coefficientwise. -/
+/-- **`M ↦ M⟨T₁, …, Tₖ⟩` is functorial**: an `A`-linear map continuous **at `0`** induces one on
+restricted series, coefficientwise. Only continuity at `0` is used — see `IsRestricted.map`. -/
 noncomputable def restrictedMvPowerSeriesSubmoduleMap {k : ℕ} {A M N : Type*} [Semiring A]
     [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
     [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
