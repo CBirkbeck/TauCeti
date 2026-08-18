@@ -465,11 +465,13 @@ def restrictedMvPowerSeriesSubmodule (k : ℕ) (A M : Type*) [Semiring A] [AddCo
 
 /-- A zero-preserving map that is continuous **at `0`** pushes restricted series forward: `φ ∘ f`
 is restricted whenever `f` is. Restrictedness is convergence of the coefficients to `0` along
-`cofinite`, so only the behaviour of `φ` at `0` is involved; global continuity is not needed. For
-a linear `φ` between topological modules the two hypotheses coincide, which is why the induced map
-`restrictedMvPowerSeriesSubmoduleMap` below takes the same hypothesis: `ContinuousAdd` alone does
-not make the topologies translation-invariant, so continuity at `0` does not upgrade to global
-continuity even for a linear map. A caller holding `Continuous φ` passes `hφ.continuousAt`.
+`cofinite`, so only the behaviour of `φ` at `0` is involved; global continuity is not needed.
+
+The induced map `restrictedMvPowerSeriesSubmoduleMap` below takes the same hypothesis, and not the
+stronger one, because they do **not** coincide here: continuity at `0` upgrades to global
+continuity for a linear map only when the topology is translation-invariant, and these modules
+carry `ContinuousAdd` rather than `IsTopologicalAddGroup`. A caller holding `Continuous φ` passes
+`hφ.continuousAt`.
 
 The `show` fixes the elaboration of the coefficient function as a `MvPowerSeries`: that type is a
 plain `def` for `(Fin k →₀ ℕ) → N`, so without the ascription the lambda elaborates at the bare
