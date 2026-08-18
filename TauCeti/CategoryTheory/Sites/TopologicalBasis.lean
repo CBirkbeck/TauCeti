@@ -34,8 +34,11 @@ Mathlib names this construction as an open project in the module docstring of
 
 * `TauCeti.TopologicalSpace.Opens.basisCoverage_toGrothendieck` : it generates
   `Opens.grothendieckTopology X`.
-* `TauCeti.TopologicalSpace.Opens.isSheaf_iff_isSheafFor_basisCoverage` : a presheaf is a
-  sheaf for the space exactly when it is a sheaf for every basis cover.
+* `TauCeti.TopologicalSpace.Opens.isSheaf_iff_isSheafFor_basisCoverage` : a `Type`-valued
+  presheaf is a sheaf for the space exactly when it is a sheaf for every basis cover.
+* `TauCeti.TopologicalSpace.Opens.isSheaf_iff_isSheafFor_basisCoverage_comp` : the same
+  criterion for a presheaf valued in an arbitrary category, which is the form
+  `TopCat.Presheaf.IsSheaf` is stated in.
 
 ## Why a coverage and not a pretopology
 
@@ -115,6 +118,22 @@ theorem isSheaf_iff_isSheafFor_basisCoverage (hB : Opens.IsBasis B)
       ∀ ⦃U : Opens X⦄ (R : Presieve U), IsBasisCover B R → Presieve.IsSheafFor P R := by
   rw [← basisCoverage_toGrothendieck hB, Presieve.isSheaf_coverage]
   rfl
+
+/-- **The basis sheaf criterion in an arbitrary target category.** `Presheaf.IsSheaf` is by
+definition the `Type`-valued condition on `P ⋙ coyoneda.obj (op E)` for every object `E`, so the
+criterion transfers objectwise.
+
+This is the form the structure presheaf of an adic space is checked in: `TopCat.Presheaf.IsSheaf F`
+unfolds to `Presheaf.IsSheaf (Opens.grothendieckTopology X) F`, and its target category is
+`CompleteSeparatedTopCommRingCat`. -/
+theorem isSheaf_iff_isSheafFor_basisCoverage_comp (hB : Opens.IsBasis B) {C : Type*} [Category C]
+    (P : (Opens X)ᵒᵖ ⥤ C) :
+    Presheaf.IsSheaf (Opens.grothendieckTopology X) P ↔
+      ∀ (E : C) ⦃U : Opens X⦄ (R : Presieve U), IsBasisCover B R →
+        Presieve.IsSheafFor (P ⋙ coyoneda.obj (Opposite.op E)) R := by
+  constructor
+  · exact fun h E _ R hR ↦ (isSheaf_iff_isSheafFor_basisCoverage hB _).mp (h E) R hR
+  · exact fun h E ↦ (isSheaf_iff_isSheafFor_basisCoverage hB _).mpr fun _ R hR ↦ h E R hR
 
 end TopologicalSpace.Opens
 
