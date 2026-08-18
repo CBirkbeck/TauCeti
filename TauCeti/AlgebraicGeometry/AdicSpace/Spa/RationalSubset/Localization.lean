@@ -6,7 +6,7 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basic
-public import TauCeti.RingTheory.Huber.LocalizationTopology.Restriction
+public import TauCeti.RingTheory.Huber.LocalizationTopology.Basic
 
 /-!
 # A containment of rational subsets presents the smaller one over the larger
@@ -17,9 +17,14 @@ public import TauCeti.RingTheory.Huber.LocalizationTopology.Restriction
 none of that on its face.
 
 This file closes the gap, and it is the first place where the `Spa` side and the localisation
-topology meet. From `R(T'/s') ⊆ R(T/s)` alone it produces a presentation `(T'', s * s')` of the
-smaller subset which *is* a refinement of `(T, s)`, with its denominator hypothesis discharged
-rather than assumed — exactly the three inputs `restrictionRingHom` asks for, with `r = s'`.
+topology meet. Given the containment `R(T'/s') ⊆ R(T/s)` **together with a `HasDenominatorPower`
+for each of the two presentations it compares**, it produces a presentation `(T'', s * s')` of the
+smaller subset which *is* a refinement of `(T, s)` — exactly the three inputs `restrictionRingHom`
+asks for, with `r = s'`.
+
+What the containment buys is the *third* hypothesis: only the denominator condition for the
+product presentation is derived here. The two input ones are assumed, as they must be — a
+containment of subsets says nothing about how either localisation is topologised.
 
 Both halves are already on `main` and are composed here rather than reproved: the refined
 numerator set is `TauCeti.ValuationSpectrum.exists_refinement_of_subset`, and the denominator
@@ -45,9 +50,13 @@ open TauCeti.Huber TauCeti.Huber.PairOfDefinition
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A]
 
-/-- **A containment of rational subsets refines the presentation.** If `R(T'/s') ⊆ R(T/s)` then the
-smaller subset has a presentation `(T'', s * s')` which refines `(T, s)` along `r = s'`, and whose
-denominator hypothesis holds in any localisation away from `s * s'`.
+/-- **A containment of rational subsets refines the presentation.** If `R(T'/s') ⊆ R(T/s)`, and
+each of the two presentations carries a `HasDenominatorPower`, then the smaller subset has a
+presentation `(T'', s * s')` which refines `(T, s)` along `r = s'` and whose own denominator
+hypothesis holds in any localisation away from `s * s'`.
+
+Only that last condition is derived; `hden` and `hden'` are hypotheses, since a containment of
+subsets carries no information about the topologies on `S` and `S'`.
 
 These are precisely the inputs of
 `TauCeti.Huber.PairOfDefinition.restrictionRingHom … s' rfl hT`, so a consumer obtains the
