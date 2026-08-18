@@ -53,9 +53,11 @@ the algebra structure locally and pairing the two `*_injective` lemmas with
 `[Algebra R A] [IsDomain R] [IsDomain A]`, so the structure still has to be in scope; only the
 explicit argument goes away.
 
-**`theorem`, not `instance`.** Registering these would mean registering the algebra structures
-they are stated over, which is the diamond again; callers supply them locally, as they already do
-for `isScalarTower_intermediateRing`.
+**`theorem`, not `instance`.** Each takes an explicit hypothesis — that the supplied structure
+map agrees pointwise with the corestricted embedding — and instance resolution has no way to
+discharge a `∀ x, algebraMap … x = …` goal. An instance could keep `[Algebra …]` as an input, but
+not that. So these are applied explicitly, by a caller who has chosen a local algebra structure
+and can supply `fun _ ↦ rfl` for it, as with `isScalarTower_intermediateRing`.
 
 An alternative route exists for the target side: `IsIntegralClosure.isTorsionFree`
 (`Mathlib/RingTheory/IntegralClosure/IsIntegralClosure/Basic.lean`) descends torsion-freeness from
