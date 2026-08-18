@@ -7,7 +7,6 @@ module
 
 public import Mathlib.CategoryTheory.Sites.Coverage
 public import Mathlib.CategoryTheory.Sites.Spaces
-public import TauCeti.Topology.Sets.Opens
 
 /-!
 # The coverage a topological basis induces on `Opens X`
