@@ -197,7 +197,7 @@ naturality the finitely generated case of Remark 8.29 runs on. -/
 @[simp]
 theorem restrictedMvPowerSeriesSubmoduleMap_baseChange {N : Type*} [AddCommMonoid N]
     [TopologicalSpace N] [Module A N] [ContinuousSMul A N] [ContinuousAdd N]
-    (φ : M →ₗ[A] N) (hφ : Continuous φ)
+    (φ : M →ₗ[A] N) (hφ : ContinuousAt φ 0)
     (x : TensorProduct A M (restrictedMvPowerSeriesSubring k A)) :
     restrictedMvPowerSeriesSubmoduleMap φ hφ (restrictedMvPowerSeriesBaseChange x) =
       restrictedMvPowerSeriesBaseChange (TensorProduct.map φ LinearMap.id x) := by

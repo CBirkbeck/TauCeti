@@ -467,7 +467,9 @@ def restrictedMvPowerSeriesSubmodule (k : ℕ) (A M : Type*) [Semiring A] [AddCo
 is restricted whenever `f` is. Restrictedness is convergence of the coefficients to `0` along
 `cofinite`, so only the behaviour of `φ` at `0` is involved; global continuity is not needed. For
 a linear `φ` between topological modules the two hypotheses coincide, which is why the induced map
-`restrictedMvPowerSeriesSubmoduleMap` below still takes `Continuous`.
+`restrictedMvPowerSeriesSubmoduleMap` below takes the same hypothesis: `ContinuousAdd` alone does
+not make the topologies translation-invariant, so continuity at `0` does not upgrade to global
+continuity even for a linear map. A caller holding `Continuous φ` passes `hφ.continuousAt`.
 
 The `show` fixes the elaboration of the coefficient function as a `MvPowerSeries`: that type is a
 plain `def` for `(Fin k →₀ ℕ) → N`, so without the ascription the lambda elaborates at the bare
@@ -492,10 +494,10 @@ series, coefficientwise. -/
 noncomputable def restrictedMvPowerSeriesSubmoduleMap {k : ℕ} {A M N : Type*} [Semiring A]
     [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
     [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
-    [ContinuousAdd N] [ContinuousConstSMul A N] (φ : M →ₗ[A] N) (hφ : Continuous φ) :
+    [ContinuousAdd N] [ContinuousConstSMul A N] (φ : M →ₗ[A] N) (hφ : ContinuousAt φ 0) :
     restrictedMvPowerSeriesSubmodule k A M →ₗ[A] restrictedMvPowerSeriesSubmodule k A N where
   toFun f := ⟨fun s ↦ φ (f.1 s),
-    (mem_restrictedMvPowerSeriesSubmodule.mp f.2).map hφ.continuousAt (map_zero φ)⟩
+    (mem_restrictedMvPowerSeriesSubmodule.mp f.2).map hφ (map_zero φ)⟩
   map_add' _ _ := Subtype.ext (funext fun _ ↦ map_add φ _ _)
   map_smul' _ _ := Subtype.ext (funext fun _ ↦ map_smul φ _ _)
 
@@ -505,7 +507,7 @@ is how a consumer computes with it. -/
 theorem coeff_restrictedMvPowerSeriesSubmoduleMap {k : ℕ} {A M N : Type*} [Semiring A]
     [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
     [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
-    [ContinuousAdd N] [ContinuousConstSMul A N] (φ : M →ₗ[A] N) (hφ : Continuous φ)
+    [ContinuousAdd N] [ContinuousConstSMul A N] (φ : M →ₗ[A] N) (hφ : ContinuousAt φ 0)
     (f : restrictedMvPowerSeriesSubmodule k A M) (s : Fin k →₀ ℕ) :
     (((restrictedMvPowerSeriesSubmoduleMap (k := k) φ hφ f :
         restrictedMvPowerSeriesSubmodule k A N) : MvPowerSeries (Fin k) N) :
@@ -517,7 +519,7 @@ theorem restrictedMvPowerSeriesSubmoduleMap_id {k : ℕ} {A M : Type*} [Semiring
     [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
     [ContinuousConstSMul A M] :
     restrictedMvPowerSeriesSubmoduleMap (k := k) (LinearMap.id (R := A) (M := M))
-      continuous_id = LinearMap.id :=
+      continuousAt_id = LinearMap.id :=
   LinearMap.ext fun _ ↦ Subtype.ext <| funext fun _ ↦ by
     simp [coeff_restrictedMvPowerSeriesSubmoduleMap]
 
@@ -528,8 +530,8 @@ theorem restrictedMvPowerSeriesSubmoduleMap_comp {k : ℕ} {A M N P : Type*} [Se
     [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
     [ContinuousAdd N] [ContinuousConstSMul A N] [AddCommMonoid P] [TopologicalSpace P]
     [Module A P] [ContinuousAdd P] [ContinuousConstSMul A P]
-    (ψ : N →ₗ[A] P) (hψ : Continuous ψ) (φ : M →ₗ[A] N) (hφ : Continuous φ) :
-    restrictedMvPowerSeriesSubmoduleMap (k := k) (ψ.comp φ) (hψ.comp hφ) =
+    (ψ : N →ₗ[A] P) (hψ : ContinuousAt ψ 0) (φ : M →ₗ[A] N) (hφ : ContinuousAt φ 0) :
+    restrictedMvPowerSeriesSubmoduleMap (k := k) (ψ.comp φ) (hψ.comp_of_eq hφ (map_zero φ)) =
       (restrictedMvPowerSeriesSubmoduleMap ψ hψ).comp
         (restrictedMvPowerSeriesSubmoduleMap φ hφ) :=
   LinearMap.ext fun _ ↦ Subtype.ext <| funext fun _ ↦ by
