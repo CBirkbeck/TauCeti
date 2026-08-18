@@ -6,6 +6,9 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.Basic
+-- Proof-only: `pullback_injective` is used inside `pullbackToIntermediateRing_injective`, not in
+-- any statement.
+import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.FunctionField
 
 /-!
 # The intermediate ring of an isogeny
@@ -27,6 +30,9 @@ because `mapsInfinity` is precisely the assertion that it lands there.
 
 * `TauCeti.Isogeny.algebraMap_mem_intermediateRing`: the source coordinate ring lands in it.
 * `TauCeti.Isogeny.pullback_mem_intermediateRing`: so does the target coordinate ring.
+* `TauCeti.Isogeny.toIntermediateRing_injective` and
+  `TauCeti.Isogeny.pullbackToIntermediateRing_injective`: both coordinate rings *embed* in it,
+  through the corestricted `algebraMap` and the corestricted pullback respectively.
 * `TauCeti.Isogeny.isIntegralClosure_intermediateRing`: it really is the integral closure, in
   Mathlib's `IsIntegralClosure` sense.
 * `TauCeti.Isogeny.isScalarTower_intermediateRing`: the corestricted pullback puts it in a scalar
@@ -149,7 +155,7 @@ theorem coe_toIntermediateRing (φ : Isogeny W₁ W₂) (x : W₁.CoordinateRing
 /-- **The source coordinate ring embeds in the intermediate ring.** The corestricted map is
 `algebraMap W₁.CoordinateRing W₁.FunctionField`, injective because the function field is by
 definition the fraction field of the coordinate ring, and corestriction preserves that. -/
-@[grind .]
+@[grind inj]
 theorem toIntermediateRing_injective (φ : Isogeny W₁ W₂) :
     Function.Injective φ.toIntermediateRing :=
   RingHom.injective_codRestrict.mpr
@@ -164,6 +170,15 @@ noncomputable def pullbackToIntermediateRing (φ : Isogeny W₁ W₂) :
 @[simp]
 theorem coe_pullbackToIntermediateRing (φ : Isogeny W₁ W₂) (x : W₂.CoordinateRing) :
     (φ.pullbackToIntermediateRing x : W₁.FunctionField) = φ.pullback x := (rfl)
+
+/-- **The target coordinate ring embeds in the intermediate ring**, through the pullback. This is
+`pullback_injective` corestricted; the pullback of an isogeny is injective because `φ^*x₂` is
+transcendental over the base field. The source-side companion is `toIntermediateRing_injective`
+above. -/
+@[grind inj]
+theorem pullbackToIntermediateRing_injective (φ : Isogeny W₁ W₂) :
+    Function.Injective φ.pullbackToIntermediateRing :=
+  RingHom.injective_codRestrict.mpr φ.pullback_injective
 
 /-- **The corestricted pullback puts the intermediate ring in a scalar tower.** With
 `letI := φ.pullbackToIntermediateRing.toAlgebra`, the target coordinate ring acts on
