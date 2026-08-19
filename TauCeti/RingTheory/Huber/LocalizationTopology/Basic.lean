@@ -41,6 +41,9 @@ universal property in `LocalizationTopology.UniversalProperty`, the completion `
 * `hasDenominatorPower_of_idealOfDefinition_le_span`: numerators containing a subset of `A₀`
   whose span contains `I` supply the standing denominator-power hypothesis for every denominator.
 * `isHuberRing_locTopology`: `Aₛ` under `locTopology` is a Huber ring.
+* `mem_locIdealImage_add_iff`: when the ideal of definition is principal on `π`, the
+  neighbourhood filtration is `π`-adic — level `n + k` is exactly the `πᵏ`-multiples of level
+  `n`. This sharpens `locIdealImage_antitone` from "decreasing" to a uniform rate.
 * `isBounded_image_algebraMap_of_isBounded` and `isPowerBounded_algebraMap_of_isPowerBounded`:
   bounded sets have bounded image, so power-orbits transfer and each power-bounded *element*
   stays power-bounded. The `locSubring` route reaches only a ring of definition, whose
@@ -499,6 +502,71 @@ theorem locIdealImage_mul_locSubring_subset (P : PairOfDefinition A) (T : Finset
     rw [locIdealImage_zero, Subring.coe_toAddSubgroup]
   rw [h]
   exact locIdealImage_mul_subset_add P T s S n 0
+
+/-- With a principal ideal of definition, an element of `I ^ (n + k)` is `πᵏ` times one of
+`I ^ n`. This is the arithmetic behind `mem_locIdealImage_add_iff`, isolated from the localisation
+so that the span induction there has a single generator step to discharge. -/
+private theorem exists_mem_pow_eq_pi_pow_mul (P : PairOfDefinition A) {pi : P.ringOfDefinition}
+    (hpi : P.idealOfDefinition = Ideal.span {pi}) (n k : ℕ)
+    {b : P.ringOfDefinition} (hb : b ∈ P.idealOfDefinition ^ (n + k)) :
+    ∃ c ∈ P.idealOfDefinition ^ n, b = pi ^ k * c := by
+  rw [hpi, Ideal.span_singleton_pow] at hb
+  obtain ⟨d, hd⟩ := Ideal.mem_span_singleton'.mp hb
+  refine ⟨d * pi ^ n, ?_, ?_⟩
+  · rw [hpi, Ideal.span_singleton_pow]
+    exact Ideal.mem_span_singleton'.mpr ⟨d, rfl⟩
+  · rw [← hd, pow_add]; ring
+
+/-- **The neighbourhood filtration is `π`-adic** when the ideal of definition is principal on `π`:
+level `n + k` consists of exactly the `πᵏ`-multiples of level `n`.
+
+`locIdealImage_antitone` records only that the filtration decreases. This says by how much: the
+`k` levels between `n + k` and `n` are spent on `πᵏ` and nothing else, so a member of `n + k`
+divides by `πᵏ` back into `n`, and every such multiple is already that deep. The depth is
+therefore *uniform in the element*, which an inclusion alone does not give.
+
+Both directions are needed in practice: the forward one to divide, the reverse to certify that
+the quotient's depth is recovered when it is multiplied back. -/
+theorem mem_locIdealImage_add_iff (P : PairOfDefinition A) (T : Finset A) (s : A)
+    (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    {pi : P.ringOfDefinition} (hpi : P.idealOfDefinition = Ideal.span {pi}) (n k : ℕ) {x : S} :
+    x ∈ locIdealImage P T s S (n + k) ↔
+      ∃ y ∈ locIdealImage P T s S n, x = algebraMap A S ((pi : A) ^ k) * y := by
+  constructor
+  · intro hx
+    obtain ⟨d, hd, rfl⟩ := (mem_locIdealImage_iff P T s S (n + k)).mp hx
+    clear hx
+    rw [locIdeal_pow_eq_span] at hd
+    induction hd using Submodule.span_induction with
+    | mem z hz =>
+        obtain ⟨b, hb, rfl⟩ := hz
+        obtain ⟨c, hc, hbc⟩ := exists_mem_pow_eq_pi_pow_mul P hpi n k hb
+        refine ⟨(toLocSubring P T s S c : S), (mem_locIdealImage_iff P T s S n).mpr
+          ⟨toLocSubring P T s S c, toLocSubring_mem_locIdeal_pow P T s S hc, rfl⟩, ?_⟩
+        rw [toLocSubring_apply, toLocSubring_apply, hbc]
+        push_cast
+        rfl
+    | zero => exact ⟨0, (locIdealImage P T s S n).zero_mem, by simp⟩
+    | add p q _ _ hp hq =>
+        obtain ⟨y₁, hy₁, he₁⟩ := hp
+        obtain ⟨y₂, hy₂, he₂⟩ := hq
+        exact ⟨y₁ + y₂, (locIdealImage P T s S n).add_mem hy₁ hy₂, by
+          change ((p : S) + (q : S)) = _
+          rw [he₁, he₂]; ring⟩
+    | smul e p _ hp =>
+        obtain ⟨y, hy, he⟩ := hp
+        refine ⟨y * (e : S), locIdealImage_mul_locSubring_subset P T s S n
+          (Set.mul_mem_mul hy e.2), ?_⟩
+        change ((e : S) * (p : S)) = _
+        rw [he]; ring
+  · rintro ⟨y, hy, rfl⟩
+    have hpik : algebraMap A S ((pi : A) ^ k) ∈ locIdealImage P T s S k := by
+      have hmem : pi ^ k ∈ P.idealOfDefinition ^ k := by
+        rw [hpi, Ideal.span_singleton_pow]
+        exact Ideal.mem_span_singleton_self _
+      simpa using algebraMap_mem_locIdealImage P T s S hmem
+    have h := locIdealImage_mul_subset_add P T s S k n (Set.mul_mem_mul hpik hy)
+    rwa [Nat.add_comm k n] at h
 
 /-- Multiplying `1/s` by an element of `Jᴺ` lands back in `D`, once `N` is large enough that
 `b/s ∈ D` for every `b ∈ Iᴺ`. -/
