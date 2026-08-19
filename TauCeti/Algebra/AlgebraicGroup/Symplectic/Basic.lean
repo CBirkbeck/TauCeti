@@ -85,53 +85,21 @@ open CategoryTheory Matrix WithConv
 
 namespace TauCeti.Symplectic
 
+open GeneralLinear
+
 universe u w
 
 variable (R : Type u) [CommRing R] (m : ℕ)
 
 /-! ### The defining relation matrix -/
 
-/-- The localized generic matrix of `GL (m + m)`, read in the bundled coordinate Hopf algebra. -/
-noncomputable def genericMatrix :
-    Matrix (Fin (m + m)) (Fin (m + m)) (GeneralLinear.coordinateHopfAlgebra R (m + m)) :=
-  (GeneralLinear.localizedGenericMatrix R (m + m)).map
-    (GeneralLinear.coordinateHopfAlgebraAlgEquiv R (m + m))
-
-/-- An entry of the bundled generic matrix is the bundled image of the corresponding polynomial
-generator. -/
-theorem genericMatrix_apply (i j : Fin (m + m)) :
-    genericMatrix R m i j =
-      GeneralLinear.coordinateHopfAlgebraAlgEquiv R (m + m)
-        (GeneralLinear.coordinateRingMap R (m + m) (MvPolynomial.X (i, j))) := by
-  rw [genericMatrix, Matrix.map_apply, GeneralLinear.localizedGenericMatrix_apply]
-
-/-- The inverse of the localized generic matrix, read in the bundled coordinate Hopf algebra. -/
-private noncomputable def genericMatrixInv :
-    Matrix (Fin (m + m)) (Fin (m + m)) (GeneralLinear.coordinateHopfAlgebra R (m + m)) :=
-  ((GeneralLinear.localizedGenericMatrix R (m + m))⁻¹).map
-    (GeneralLinear.coordinateHopfAlgebraAlgEquiv R (m + m))
-
-/-- The bundled generic matrix and its bundled inverse multiply to the identity. -/
-private theorem genericMatrix_mul_genericMatrixInv :
-    genericMatrix R m * genericMatrixInv R m = 1 := by
-  rw [genericMatrix, genericMatrixInv, ← Matrix.map_mul,
-    Matrix.mul_nonsing_inv _ (GeneralLinear.isUnit_det_localizedGenericMatrix R (m + m))]
-  exact Matrix.map_one _ (map_zero _) (map_one _)
-
-/-- The bundled inverse and the bundled generic matrix multiply to the identity. -/
-private theorem genericMatrixInv_mul_genericMatrix :
-    genericMatrixInv R m * genericMatrix R m = 1 := by
-  rw [genericMatrix, genericMatrixInv, ← Matrix.map_mul,
-    Matrix.nonsing_inv_mul _ (GeneralLinear.isUnit_det_localizedGenericMatrix R (m + m))]
-  exact Matrix.map_one _ (map_zero _) (map_one _)
-
 /-- **The matrix of defining relations** of the symplectic subgroup scheme:
 `X Jₘ Xᵀ - Jₘ` over the coordinate Hopf algebra of `GL (m + m)`. -/
 noncomputable def relationMatrix :
     Matrix (Fin (m + m)) (Fin (m + m)) (GeneralLinear.coordinateHopfAlgebra R (m + m)) :=
-  genericMatrix R m *
+  bundledGenericMatrix R (m + m) *
       (JFin m R).map (algebraMap R (GeneralLinear.coordinateHopfAlgebra R (m + m))) *
-      (genericMatrix R m)ᵀ -
+      (bundledGenericMatrix R (m + m))ᵀ -
     (JFin m R).map (algebraMap R (GeneralLinear.coordinateHopfAlgebra R (m + m)))
 
 /-- The set of defining relations: the entries of the relation matrix. -/
@@ -148,8 +116,8 @@ the generic matrix maps entrywise, and the constant form maps to the constant fo
 private theorem relationMatrix_map {T : Type*} [CommRing T] [Algebra R T]
     (phi : GeneralLinear.coordinateHopfAlgebra R (m + m) →ₐ[R] T) :
     (relationMatrix R m).map phi =
-      (genericMatrix R m).map phi * (JFin m R).map (algebraMap R T) *
-          ((genericMatrix R m).map phi)ᵀ -
+      (bundledGenericMatrix R (m + m)).map phi * (JFin m R).map (algebraMap R T) *
+          ((bundledGenericMatrix R (m + m)).map phi)ᵀ -
         (JFin m R).map (algebraMap R T) := by
   have hJ : ((JFin m R).map
         (algebraMap R (GeneralLinear.coordinateHopfAlgebra R (m + m)))).map phi =
@@ -172,52 +140,28 @@ private theorem entry_mul_mul_mem {S : Type*} [CommRing S] (K : Ideal S) {μ : �
 
 /-! ### The three Hopf-ideal closure conditions -/
 
-/-- The counit sends the bundled generic matrix to the identity matrix. -/
-private theorem genericMatrix_map_counit :
-    (genericMatrix R m).map
-        (Bialgebra.counitAlgHom R (GeneralLinear.coordinateHopfAlgebra R (m + m))) = 1 := by
-  ext i j
-  rw [Matrix.map_apply, genericMatrix_apply, Bialgebra.counitAlgHom_apply,
-    GeneralLinear.coordinateHopfAlgebra_counit_X, Matrix.one_apply]
-
 /-- The counit vanishes on every defining relation. -/
 private theorem counit_relationMatrix (i j : Fin (m + m)) :
     Coalgebra.counit (R := R) (relationMatrix R m i j) = 0 := by
   have h := congrFun (congrFun (relationMatrix_map R m
     (Bialgebra.counitAlgHom R (GeneralLinear.coordinateHopfAlgebra R (m + m)))) i) j
   rw [Matrix.map_apply, Bialgebra.counitAlgHom_apply] at h
-  rw [h, genericMatrix_map_counit, Algebra.algebraMap_self, RingHom.coe_id, Matrix.map_id,
+  rw [h, bundledGenericMatrix_map_counit, Algebra.algebraMap_self, RingHom.coe_id, Matrix.map_id,
     Matrix.transpose_one, Matrix.one_mul, Matrix.mul_one, sub_self, Matrix.zero_apply]
-
-/-- The comultiplication sends the bundled generic matrix to the product of its two tensor
-inclusions: `Δ X = (X ⊗ 1)(1 ⊗ X)`. -/
-private theorem genericMatrix_map_comul :
-    (genericMatrix R m).map
-        (Bialgebra.comulAlgHom R (GeneralLinear.coordinateHopfAlgebra R (m + m))) =
-      (genericMatrix R m).map
-          (Algebra.TensorProduct.includeLeft (R := R) (S := R)) *
-        (genericMatrix R m).map (Algebra.TensorProduct.includeRight (R := R)) := by
-  ext i j
-  rw [Matrix.map_apply, genericMatrix_apply, Bialgebra.comulAlgHom_apply,
-    GeneralLinear.coordinateHopfAlgebra_comul_X, Matrix.mul_apply]
-  refine Finset.sum_congr rfl fun k _ => ?_
-  rw [Matrix.map_apply, Matrix.map_apply, genericMatrix_apply, genericMatrix_apply,
-    Algebra.TensorProduct.includeLeft_apply, Algebra.TensorProduct.includeRight_apply,
-    Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
 
 /-- The comultiplication of the relation matrix decomposes as a right-tensor-framed copy of the
 relations plus the left tensor inclusion of the relations. -/
 private theorem relationMatrix_map_comul :
     (relationMatrix R m).map
         (Bialgebra.comulAlgHom R (GeneralLinear.coordinateHopfAlgebra R (m + m))) =
-      (genericMatrix R m).map (Algebra.TensorProduct.includeLeft (R := R) (S := R)) *
+      (bundledGenericMatrix R (m + m)).map (Algebra.TensorProduct.includeLeft (R := R) (S := R)) *
           (relationMatrix R m).map (Algebra.TensorProduct.includeRight (R := R)) *
-          ((genericMatrix R m).map
+          ((bundledGenericMatrix R (m + m)).map
             (Algebra.TensorProduct.includeLeft (R := R) (S := R)))ᵀ +
         (relationMatrix R m).map
           (Algebra.TensorProduct.includeLeft (R := R) (S := R)) := by
   rw [relationMatrix_map R m, relationMatrix_map R m, relationMatrix_map R m,
-    genericMatrix_map_comul, Matrix.transpose_mul]
+    bundledGenericMatrix_map_comul, Matrix.transpose_mul]
   conv_rhs => rw [Matrix.mul_sub, Matrix.sub_mul, sub_add_sub_cancel]
   simp only [Matrix.mul_assoc]
 
@@ -245,44 +189,36 @@ private theorem comul_relationMatrix_mem (i j : Fin (m + m)) :
       (H := GeneralLinear.coordinateHopfAlgebra R (m + m))
       (Ideal.subset_span (relationMatrix_mem_relationSet R m i j))
 
-/-- The antipode sends the bundled generic matrix to its bundled inverse. -/
-private theorem genericMatrix_map_antipode :
-    (genericMatrix R m).map
-        (HopfAlgebra.antipodeAlgHom (R := R)
-          (A := GeneralLinear.coordinateHopfAlgebra R (m + m))) =
-      genericMatrixInv R m := by
-  ext i j
-  rw [Matrix.map_apply, genericMatrix_apply, HopfAlgebra.antipodeAlgHom_apply,
-    GeneralLinear.coordinateHopfAlgebra_antipode_X, genericMatrixInv, Matrix.map_apply]
-
 /-- The antipode image of the relation matrix is the negative of the relation matrix framed by
 the bundled inverse: `X⁻¹ Jₘ (X⁻¹)ᵀ - Jₘ = -(X⁻¹ (X Jₘ Xᵀ - Jₘ) (X⁻¹)ᵀ)`. -/
 private theorem relationMatrix_map_antipode :
     (relationMatrix R m).map
         (HopfAlgebra.antipodeAlgHom (R := R)
           (A := GeneralLinear.coordinateHopfAlgebra R (m + m))) =
-      -(genericMatrixInv R m * relationMatrix R m * (genericMatrixInv R m)ᵀ) := by
-  have ht : (genericMatrix R m)ᵀ * (genericMatrixInv R m)ᵀ = 1 := by
-    rw [← Matrix.transpose_mul, genericMatrixInv_mul_genericMatrix, Matrix.transpose_one]
-  have hkey : genericMatrixInv R m * relationMatrix R m * (genericMatrixInv R m)ᵀ =
+      -(bundledGenericMatrixInv R (m + m) * relationMatrix R m *
+        (bundledGenericMatrixInv R (m + m))ᵀ) := by
+  have ht : (bundledGenericMatrix R (m + m))ᵀ * (bundledGenericMatrixInv R (m + m))ᵀ = 1 := by
+    rw [← Matrix.transpose_mul, bundledGenericMatrixInv_mul, Matrix.transpose_one]
+  have hkey : bundledGenericMatrixInv R (m + m) * relationMatrix R m *
+      (bundledGenericMatrixInv R (m + m))ᵀ =
       (JFin m R).map (algebraMap R (GeneralLinear.coordinateHopfAlgebra R (m + m))) -
-        genericMatrixInv R m *
+        bundledGenericMatrixInv R (m + m) *
           (JFin m R).map (algebraMap R (GeneralLinear.coordinateHopfAlgebra R (m + m))) *
-          (genericMatrixInv R m)ᵀ := by
+          (bundledGenericMatrixInv R (m + m))ᵀ := by
     rw [relationMatrix, Matrix.mul_sub, Matrix.sub_mul]
     congr 1
-    calc genericMatrixInv R m *
-          (genericMatrix R m *
+    calc bundledGenericMatrixInv R (m + m) *
+          (bundledGenericMatrix R (m + m) *
             (JFin m R).map (algebraMap R (GeneralLinear.coordinateHopfAlgebra R (m + m))) *
-            (genericMatrix R m)ᵀ) *
-          (genericMatrixInv R m)ᵀ
-        = genericMatrixInv R m * genericMatrix R m *
+            (bundledGenericMatrix R (m + m))ᵀ) *
+          (bundledGenericMatrixInv R (m + m))ᵀ
+        = bundledGenericMatrixInv R (m + m) * bundledGenericMatrix R (m + m) *
             (JFin m R).map (algebraMap R (GeneralLinear.coordinateHopfAlgebra R (m + m))) *
-            ((genericMatrix R m)ᵀ * (genericMatrixInv R m)ᵀ) := by
+            ((bundledGenericMatrix R (m + m))ᵀ * (bundledGenericMatrixInv R (m + m))ᵀ) := by
           simp only [Matrix.mul_assoc]
       _ = (JFin m R).map (algebraMap R (GeneralLinear.coordinateHopfAlgebra R (m + m))) := by
-          rw [genericMatrixInv_mul_genericMatrix, ht, Matrix.one_mul, Matrix.mul_one]
-  rw [relationMatrix_map R m, genericMatrix_map_antipode, hkey, neg_sub]
+          rw [bundledGenericMatrixInv_mul, ht, Matrix.one_mul, Matrix.mul_one]
+  rw [relationMatrix_map R m, bundledGenericMatrix_map_antipode, hkey, neg_sub]
 
 /-- The antipode carries every defining relation into the span of the relations. -/
 private theorem antipode_relationMatrix_mem (i j : Fin (m + m)) :
@@ -446,11 +382,11 @@ private theorem ofConv_relationMatrix
           (GeneralLinear.pointToGeneralLinear (m + m) g :
             Matrix (Fin (m + m)) (Fin (m + m)) A)ᵀ -
         JFin m A := by
-  have hg : (genericMatrix R m).map g.ofConv =
+  have hg : (bundledGenericMatrix R (m + m)).map g.ofConv =
       (GeneralLinear.pointToGeneralLinear (m + m) g :
         Matrix (Fin (m + m)) (Fin (m + m)) A) := by
     ext i j
-    rw [Matrix.map_apply, genericMatrix_apply]
+    rw [Matrix.map_apply, bundledGenericMatrix_apply]
     exact (GeneralLinear.pointToGeneralLinear_apply (m + m) g i j).symm
   rw [relationMatrix_map R m g.ofConv, hg, JFin_map]
 

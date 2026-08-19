@@ -661,6 +661,75 @@ theorem finiteTypeCoordinateHopfAlgebra_obj :
     (finiteTypeCoordinateHopfAlgebra R n).obj = coordinateHopfAlgebra R n :=
   (rfl)
 
+/-! ### The generic matrix in the bundled Hopf algebra
+
+The classical subgroup schemes (orthogonal, symplectic, ...) are all cut out of `GL n` by a
+relation on the same object: the localized generic matrix read in the bundled coordinate Hopf
+algebra. Its behaviour under the structure maps is independent of which relation is imposed, so
+it is recorded here once. -/
+
+/-- The localized generic matrix of `GL n`, read in the bundled coordinate Hopf algebra. -/
+noncomputable def bundledGenericMatrix :
+    Matrix (Fin n) (Fin n) (coordinateHopfAlgebra R n) :=
+  (localizedGenericMatrix R n).map (coordinateHopfAlgebraAlgEquiv R n)
+
+/-- An entry of the bundled generic matrix is the bundled image of the corresponding polynomial
+generator. -/
+@[simp]
+theorem bundledGenericMatrix_apply (i j : Fin n) :
+    bundledGenericMatrix R n i j =
+      coordinateHopfAlgebraAlgEquiv R n (coordinateRingMap R n (MvPolynomial.X (i, j))) := by
+  rw [bundledGenericMatrix, Matrix.map_apply, localizedGenericMatrix_apply]
+
+/-- The inverse of the localized generic matrix, read in the bundled coordinate Hopf algebra. -/
+noncomputable def bundledGenericMatrixInv :
+    Matrix (Fin n) (Fin n) (coordinateHopfAlgebra R n) :=
+  ((localizedGenericMatrix R n)⁻¹).map (coordinateHopfAlgebraAlgEquiv R n)
+
+/-- The bundled generic matrix and its bundled inverse multiply to the identity. -/
+theorem bundledGenericMatrix_mul_inv :
+    bundledGenericMatrix R n * bundledGenericMatrixInv R n = 1 := by
+  rw [bundledGenericMatrix, bundledGenericMatrixInv, ← Matrix.map_mul,
+    Matrix.mul_nonsing_inv _ (isUnit_det_localizedGenericMatrix R n)]
+  exact Matrix.map_one _ (map_zero _) (map_one _)
+
+/-- The bundled inverse and the bundled generic matrix multiply to the identity. -/
+theorem bundledGenericMatrixInv_mul :
+    bundledGenericMatrixInv R n * bundledGenericMatrix R n = 1 := by
+  rw [bundledGenericMatrix, bundledGenericMatrixInv, ← Matrix.map_mul,
+    Matrix.nonsing_inv_mul _ (isUnit_det_localizedGenericMatrix R n)]
+  exact Matrix.map_one _ (map_zero _) (map_one _)
+
+/-- The counit sends the bundled generic matrix to the identity matrix. -/
+theorem bundledGenericMatrix_map_counit :
+    (bundledGenericMatrix R n).map (Bialgebra.counitAlgHom R (coordinateHopfAlgebra R n)) = 1 := by
+  ext i j
+  rw [Matrix.map_apply, bundledGenericMatrix_apply, Bialgebra.counitAlgHom_apply,
+    coordinateHopfAlgebra_counit_X, Matrix.one_apply]
+
+/-- The comultiplication sends the bundled generic matrix to the matrix product of its two
+tensor-factor images. -/
+theorem bundledGenericMatrix_map_comul :
+    (bundledGenericMatrix R n).map (Bialgebra.comulAlgHom R (coordinateHopfAlgebra R n)) =
+      (bundledGenericMatrix R n).map (Algebra.TensorProduct.includeLeft (R := R) (S := R)) *
+        (bundledGenericMatrix R n).map (Algebra.TensorProduct.includeRight (R := R)) := by
+  ext i j
+  rw [Matrix.map_apply, bundledGenericMatrix_apply, Bialgebra.comulAlgHom_apply,
+    coordinateHopfAlgebra_comul_X, Matrix.mul_apply]
+  refine Finset.sum_congr rfl fun k _ => ?_
+  rw [Matrix.map_apply, Matrix.map_apply, bundledGenericMatrix_apply, bundledGenericMatrix_apply,
+    Algebra.TensorProduct.includeLeft_apply, Algebra.TensorProduct.includeRight_apply,
+    Algebra.TensorProduct.tmul_mul_tmul, one_mul, mul_one]
+
+/-- The antipode sends the bundled generic matrix to its bundled inverse. -/
+theorem bundledGenericMatrix_map_antipode :
+    (bundledGenericMatrix R n).map
+        (HopfAlgebra.antipodeAlgHom (R := R) (A := coordinateHopfAlgebra R n)) =
+      bundledGenericMatrixInv R n := by
+  ext i j
+  rw [Matrix.map_apply, bundledGenericMatrix_apply, HopfAlgebra.antipodeAlgHom_apply,
+    coordinateHopfAlgebra_antipode_X, bundledGenericMatrixInv, Matrix.map_apply]
+
 end GeneralLinear
 
 end TauCeti
