@@ -80,9 +80,9 @@ The two pole lemmas AINTLIB also states are not here: being arithmetic in `ZMod 
 or determinant in sight, they live in `TauCeti.Data.ZMod.DvdAddMul`, which carries their
 provenance.
 
-`ZMod.finEquiv_apply` and `ZMod.val_finEquiv_symm` (in `TauCeti/Data/ZMod/FinEquiv.lean`) have no
-AINTLIB counterpart either: the source writes its reindexing directly in `ZMod p` and so never
-needs the `Fin`/`ZMod` bridge in either direction.
+`ZMod.finEquiv_apply` and `ZMod.finEquiv_symm_apply_val` (in `TauCeti/Data/ZMod/FinEquiv.lean`)
+have no AINTLIB counterpart either: the source writes its reindexing directly in `ZMod p` and so
+never needs the `Fin`/`ZMod` bridge in either direction.
 
 **No code is transcribed.** The source builds the map by hand as an `if`-split on whether the
 denominator vanishes, and proves injectivity by a four-way case analysis resting on five

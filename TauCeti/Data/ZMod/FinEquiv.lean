@@ -11,14 +11,13 @@ public import Mathlib.Data.ZMod.Basic
 # Applying `ZMod.finEquiv`
 
 Mathlib defines `ZMod.finEquiv : Fin n ≃+* ZMod n` for `[NeZero n]` and states nothing about
-applying it. Both equalities below are definitional; this file states them as `@[simp]` rules so
-that an argument indexed by `Fin n` rewrites into `ZMod n` arithmetic instead of being unfolded at
-each use.
+applying it. This file states the two evaluation rules as `@[simp]` lemmas, so that an argument
+indexed by `Fin n` rewrites into `ZMod n` arithmetic instead of being unfolded at each use.
 
 ## Main results
 
 * `ZMod.finEquiv_apply`: `ZMod.finEquiv n j` is the natural cast of `j.val`.
-* `ZMod.val_finEquiv_symm`: it is `(ZMod.finEquiv n).symm` that produces the canonical `Fin n`
+* `ZMod.finEquiv_symm_apply_val`: it is `(ZMod.finEquiv n).symm` that produces the canonical `Fin n`
   representative of an element of `ZMod n`, and that representative's coerced natural value is
   the element's `val`.
 -/
@@ -30,15 +29,14 @@ namespace ZMod
 /-- **Applying `ZMod.finEquiv` is the natural cast.** `ZMod.finEquiv n j` is the image of `j.val`
 under `Nat.cast`.
 
-The equality holds definitionally — the proof below is `Fin.cast_val_eq_self` after splitting off
-the successor — so this is a convenience rather than a bridge that has to exist. Mathlib defines
-`finEquiv` and states no evaluation rule for it; tagging one `@[simp]` is what lets a
-`Fin n`-indexed statement rewrite into `ZMod n` arithmetic without unfolding at each site. -/
+This is not definitional: the cast `((j : ℕ) : ZMod n)` reduces the natural `j.val` modulo `n`
+again, and it is `Fin.cast_val_eq_self` that says doing so returns `j`. Only the `ZMod n` / `Fin n`
+type and instance mismatch is bridged by defeq. Mathlib states no evaluation rule for `finEquiv`,
+so this is the lemma a `Fin n`-indexed statement rewrites through. -/
 @[simp]
 lemma finEquiv_apply {n : ℕ} [NeZero n] (j : Fin n) :
     (ZMod.finEquiv n) j = ((j : ℕ) : ZMod n) := by
-  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 :=
-    ⟨n - 1, (Nat.succ_pred_eq_of_pos (Nat.pos_of_ne_zero (NeZero.ne n))).symm⟩
+  obtain ⟨k, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (NeZero.ne n)
   exact (Fin.cast_val_eq_self j).symm
 
 /-- **The canonical `Fin n` representative of `z : ZMod n` has natural value `z.val`.** The
@@ -46,10 +44,11 @@ representative is produced by `(ZMod.finEquiv n).symm`, not by `finEquiv` itself
 other way. This is the companion of `finEquiv_apply`, and the form needed to index by `Fin n` an
 element obtained by solving in `ZMod n`. -/
 @[simp]
-lemma val_finEquiv_symm {n : ℕ} [NeZero n] (z : ZMod n) :
+lemma finEquiv_symm_apply_val {n : ℕ} [NeZero n] (z : ZMod n) :
     (((ZMod.finEquiv n).symm z : Fin n) : ℕ) = z.val := by
-  obtain ⟨k, rfl⟩ : ∃ k, n = k + 1 :=
-    ⟨n - 1, (Nat.succ_pred_eq_of_pos (Nat.pos_of_ne_zero (NeZero.ne n))).symm⟩
-  rfl
+  -- Through the stated rules rather than the `ZMod (k+1) = Fin (k+1)` reduction: rewrite `z` as
+  -- `finEquiv` of its representative, then evaluate with `finEquiv_apply`.
+  conv_rhs => rw [← (ZMod.finEquiv n).apply_symm_apply z, finEquiv_apply]
+  exact (ZMod.val_natCast_of_lt ((ZMod.finEquiv n).symm z).isLt).symm
 
 end ZMod

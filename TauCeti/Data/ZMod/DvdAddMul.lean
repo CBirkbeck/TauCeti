@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Tactic.LinearCombination
 public import TauCeti.Data.ZMod.FinEquiv
 
@@ -69,7 +68,7 @@ The hypothesis is only that the coefficient `c` is a unit mod `n` — the statem
 `ZMod n` and does not need the determinant, nor the Möbius action it conditions. Stated as a
 divisibility over `ℤ`, which is the form the downstream Hecke sums are phrased in.
 
-`existsUnique_dvd_add_mul` is the form to reach for when the pole index is not already in hand. -/
+`existsUnique_dvd_add_mul` is the form to reach for when no solution is already in hand. -/
 lemma dvd_add_mul_iff_eq_of_dvd (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) {b₀ : Fin n}
     (hb₀ : (n : ℤ) ∣ (a + (b₀ : ℕ) * c)) (i : Fin n) :
     (n : ℤ) ∣ (a + (i : ℕ) * c) ↔ i = b₀ := by
@@ -83,31 +82,31 @@ lemma dvd_add_mul_iff_eq_of_dvd (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) {
     linear_combination h1 - h2
   exact sub_eq_zero.mp (hc.mul_left_eq_zero.mp hsub)
 
-/-- **The pole index exists.** When the coefficient `c` is a unit mod `n` the denominator does
-vanish somewhere, at the index `-a / c` read back into `Fin n`. With `dvd_add_mul_iff_eq_of_dvd`
-this says the reindexing has *exactly one* pole index. -/
+/-- **A solution exists.** When the coefficient `c` is a unit mod `n` the divisibility holds at the
+index `-a / c` read back into `Fin n` — the residue solving `a + i * c ≡ 0`. With
+`dvd_add_mul_iff_eq_of_dvd` this says the solution is unique. -/
 lemma dvd_add_mul_val_neg_mul_inv (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) :
     (n : ℤ) ∣ (a +
-      (((-((a : ℤ) : ZMod n) * (↑hc.unit⁻¹ : ZMod n)).val : ℕ)) * c) := by
+      (((-((a : ℤ) : ZMod n) * ((c : ℤ) : ZMod n)⁻¹).val : ℕ)) * c) := by
   rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
   push_cast
   rw [ZMod.natCast_val, ZMod.cast_id]
-  have hcancel : (-((a : ℤ) : ZMod n) * (↑hc.unit⁻¹ : ZMod n)) * ((c : ℤ) : ZMod n) =
+  have hcancel : (-((a : ℤ) : ZMod n) * ((c : ℤ) : ZMod n)⁻¹) * ((c : ℤ) : ZMod n) =
       -((a : ℤ) : ZMod n) := by
-    rw [mul_assoc, hc.val_inv_mul, mul_one]
+    rw [mul_assoc, ZMod.inv_mul_of_unit _ hc, mul_one]
   rw [hcancel, add_neg_cancel]
 
-/-- **Exactly one pole index.** When `c` is a unit mod `n` there is a unique index whose
-denominator vanishes — the statement `dvd_add_mul_val_neg_mul_inv` and `dvd_add_mul_iff_eq_of_dvd`
-combine to, and the one a consumer indexing by `Fin n` wants. -/
+/-- **Exactly one index solves the divisibility.** When `c` is a unit mod `n` there is a unique
+`i : Fin n` with `n ∣ a + i * c` — the statement `dvd_add_mul_val_neg_mul_inv` and
+`dvd_add_mul_iff_eq_of_dvd` combine to, and the one a consumer indexing by `Fin n` wants. -/
 theorem existsUnique_dvd_add_mul (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) :
     ∃! i : Fin n, (n : ℤ) ∣ (a + (i : ℕ) * c) := by
-  refine ⟨(ZMod.finEquiv n).symm (-((a : ℤ) : ZMod n) * (↑hc.unit⁻¹ : ZMod n)), ?_, ?_⟩
-  · simp only [ZMod.val_finEquiv_symm]
+  refine ⟨(ZMod.finEquiv n).symm (-((a : ℤ) : ZMod n) * ((c : ℤ) : ZMod n)⁻¹), ?_, ?_⟩
+  · simp only [ZMod.finEquiv_symm_apply_val]
     exact dvd_add_mul_val_neg_mul_inv a c hc
   · intro y hy
     refine (dvd_add_mul_iff_eq_of_dvd a c hc ?_ y).mp hy
-    simp only [ZMod.val_finEquiv_symm]
+    simp only [ZMod.finEquiv_symm_apply_val]
     exact dvd_add_mul_val_neg_mul_inv a c hc
 
 end TauCeti
