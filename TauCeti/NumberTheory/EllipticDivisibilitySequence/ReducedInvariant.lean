@@ -8,6 +8,7 @@ module
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.ComplAux
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Complement
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant.Basic
+public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant.NormEDS
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Six
 
 /-!
@@ -380,3 +381,34 @@ not depend on the ring, so a ring map passes it unchanged. -/
 theorem map_reducedInvarDenom :
     f (reducedInvarDenom b c d m) = reducedInvarDenom (f b) (f c) (f d) m := by
   simp [reducedInvarDenom_def, apply_ite f]
+
+section ReducedInvariantIdentity
+
+open MvPolynomial NormEDSParam
+open scoped nonZeroDivisors
+
+/-- `reducedInvarNum_eq_reducedInvarDenom_mul` under nonzerodivisor hypotheses on `b` and `c`,
+which the unconditional form discharges by specialising from the universal parameters. -/
+private theorem reducedInvarNum_eq_reducedInvarDenom_mul_of_mem (hb : b ∈ R⁰) (hc : c ∈ R⁰) :
+    reducedInvarNum b c d m = reducedInvarDenom b c d m * (d + b ^ 4) := by
+  rw [← mul_cancel_right_mem_nonZeroDivisors hb, ← mul_cancel_right_mem_nonZeroDivisors hc,
+    ← IsEllipticNet.invarNum_normEDS_one_eq_reducedInvarNum_mul,
+    IsEllipticNet.invarNum_normEDS_one_mul_eq_invarDenom_mul,
+    IsEllipticNet.invarDenom_normEDS_one_eq_reducedInvarDenom_mul]
+  ring
+
+/-- **The reduced invariant identity**: for a normalised EDS the reduced numerator is the
+reduced denominator times `d + b ^ 4`, for every `m` and with no hypothesis on `b`, `c`, `d`.
+This is the link `DivisionPolynomial/Invariant.lean` records as the one remaining input to
+`ω` (the source's `redInvar_normEDS`). -/
+theorem reducedInvarNum_eq_reducedInvarDenom_mul :
+    reducedInvarNum b c d m = reducedInvarDenom b c d m * (d + b ^ 4) := by
+  have huniv := reducedInvarNum_eq_reducedInvarDenom_mul_of_mem
+    (b := (X B : MvPolynomial NormEDSParam ℤ)) (c := X C) (d := X D) (m := m)
+    (mem_nonZeroDivisors_of_ne_zero (X_ne_zero (R := ℤ) B))
+    (mem_nonZeroDivisors_of_ne_zero (X_ne_zero (R := ℤ) C))
+  have key := congr(aeval (NormEDSParam.rec b c d) $huniv)
+  simpa only [map_reducedInvarNum, map_reducedInvarDenom, map_mul, map_add, map_pow, aeval_X]
+    using key
+
+end ReducedInvariantIdentity
