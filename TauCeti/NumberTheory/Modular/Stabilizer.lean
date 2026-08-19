@@ -7,6 +7,7 @@ module
 
 public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
 public import TauCeti.GroupTheory.GroupAction.Stabilizer
+public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 public import TauCeti.NumberTheory.Modular.Orbits
 
 -- these two serve only the private centre computation, so they stay off the public surface
@@ -194,24 +195,6 @@ theorem card_stabilizer_eq_card_center_mul_card_stabilizer_psl {Γ : Subgroup SL
   TauCeti.card_stabilizer_eq_card_subgroupOf_mul_card_stabilizer_map _ Γ z
     fun _ ↦ UpperHalfPlane.pslMk_smul _ _
 
--- the centre of `SL(2, ℤ)` is `{±I}`: `Matrix.SpecialLinearGroup.mem_center_iff` presents a
--- central element as a scalar matrix `r • I` with `r ^ 2 = 1`, and `±1` are the only units of `ℤ`
-private theorem eq_one_or_neg_one_of_mem_center {A : SL(2, ℤ)}
-    (hA : A ∈ Subgroup.center SL(2, ℤ)) : A = 1 ∨ A = -1 := by
-  obtain ⟨r, hr, hrA⟩ := Matrix.SpecialLinearGroup.mem_center_iff.mp hA
-  simp only [Fintype.card_fin] at hr
-  have h0 : (r - 1) * (r + 1) = 0 := by linear_combination hr
-  rcases mul_eq_zero.mp h0 with h | h
-  · have hr1 : r = 1 := by omega
-    subst hr1
-    exact Or.inl (Subtype.ext (by simpa using hrA.symm))
-  · have hr1 : r = -1 := by omega
-    subst hr1
-    exact Or.inr (Subtype.ext (by simpa using hrA.symm))
-
-private theorem neg_one_mem_center : (-1 : SL(2, ℤ)) ∈ Subgroup.center SL(2, ℤ) :=
-  Subgroup.mem_center_iff.mpr fun g ↦ by ext i j; simp
-
 private theorem neg_one_ne_one : (-1 : SL(2, ℤ)) ≠ 1 := by
   intro h
   have := congrArg (fun A : SL(2, ℤ) ↦ (A : Matrix (Fin 2) (Fin 2) ℤ) 0 0) h
@@ -252,11 +235,13 @@ theorem card_center_subgroupOf_eq_one_iff (Γ : Subgroup SL(2, ℤ)) :
   · intro h hneg
     -- `-I` would be a second element, so triviality forces it out of `Γ`
     have hx := (Subgroup.eq_bot_iff_forall _).mp h (⟨-1, hneg⟩ : Γ)
-      (Subgroup.mem_subgroupOf.mpr neg_one_mem_center)
+      (Subgroup.mem_subgroupOf.mpr
+        (Matrix.SpecialLinearGroup.mem_center_iff_eq_one_or_eq_neg_one.mpr (Or.inr rfl)))
     exact neg_one_ne_one (by simpa using Subtype.ext_iff.mp hx)
   · intro hneg
     refine (Subgroup.eq_bot_iff_forall _).mpr fun x hx ↦ ?_
-    rcases eq_one_or_neg_one_of_mem_center (Subgroup.mem_subgroupOf.mp hx) with hx1 | hx1
+    rcases Matrix.SpecialLinearGroup.mem_center_iff_eq_one_or_eq_neg_one.mp
+      (Subgroup.mem_subgroupOf.mp hx) with hx1 | hx1
     · exact Subtype.ext hx1
     · -- `x.2 : ↑x ∈ Γ`, and `hx1` identifies `↑x` with `-I`, so the membership transports
       have hm : (-1 : SL(2, ℤ)) ∈ Γ := hx1 ▸ x.2
