@@ -44,6 +44,8 @@ roadmap, and does not yet exist.
 
 * `TauCeti.levelRaise_mem_cuspFormsOld` and `TauCeti.cuspFormsOld_le`: the introduction and
   elimination rules for the old subspace.
+* `TauCeti.levelRaise_mem_cuspFormsOldMultiples`: the introduction rule for the refined old
+  subspace.
 * `TauCeti.cuspFormsOldMultiples_le_cuspFormsOld` and
   `TauCeti.cuspFormsOldMultiples_le_of_dvd`: the refined old subspace sits inside the old
   subspace, and shrinks as the level condition tightens.
@@ -262,6 +264,20 @@ def cuspFormsOldMultiples (N : ℕ) [NeZero N] (k : ℤ) (m : ℕ) :
     have : NeZero M := neZero_of_mul_dvd_right h.1
     (cuspFormsNew M k).map
       (CuspForm.levelRaiseₗ (k := k) d (Gamma1_map_le_conjAct_scaleGL_of_dvd h.1))
+
+/-- **Introduction rule**: a newform at a proper divisor level divisible by `m`, level-raised,
+lies in `cuspFormsOldMultiples`. -/
+theorem levelRaise_mem_cuspFormsOldMultiples [NeZero N] {m : ℕ} (h : d * M ∣ N) (hM : M ≠ N)
+    (hm : m ∣ M) (k : ℤ) (g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k)
+    (hg : haveI : NeZero M := ⟨fun hM ↦ NeZero.ne N (by simpa [hM] using h)⟩
+      g ∈ cuspFormsNew M k) :
+    haveI : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using h)⟩
+    CuspForm.levelRaiseₗ (k := k) d (Gamma1_map_le_conjAct_scaleGL_of_dvd h) g ∈
+      cuspFormsOldMultiples N k m :=
+  let _ := neZero_of_mul_dvd_left h
+  let _ := neZero_of_mul_dvd_right h
+  Submodule.mem_iSup_of_mem M (Submodule.mem_iSup_of_mem d
+    (Submodule.mem_iSup_of_mem ⟨h, hM, hm⟩ (Submodule.mem_map_of_mem hg)))
 
 /-- **Newforms level-raised from proper divisor levels are old**, whatever the level condition
 `m ∣ M` selects. Only `d * M ∣ N` and `M ≠ N` are used — the newness of the raised form and the
