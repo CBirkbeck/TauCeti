@@ -31,6 +31,9 @@ single application of one of them.
 
 ## Main definitions
 
+* `TauCeti.Huber.PairOfDefinition.Presentation`: the bundle `(num, den, hasDenominatorPower)` of
+  a presentation, with the refinement preorder `Presentation.RefinedBy`, its cofactor accessors,
+  and the common refinement `Presentation.prod` making refinement directed.
 * `TauCeti.Huber.PairOfDefinition.presentationRingEquiv`: the canonical isomorphism
   `A⟨T/s⟩ ≃+* A⟨T'/s'⟩` assembled from compatible comparison maps in both directions.
 
@@ -68,6 +71,134 @@ namespace TauCeti.Huber
 variable {A : Type*} [CommRing A] [TopologicalSpace A]
 
 namespace PairOfDefinition
+
+/-! ### The bundle of presentations, and refinement
+
+The comparison theory below works with two presentations given separately; consumers indexing a
+construction by *all* presentations — the intended structure presheaf — need them bundled and
+ordered. Refinement here is a cofactor condition on the presentation data. It is sufficient for
+containment of the rational subsets, but the converse passage is the same missing algebraic step
+described above, so no equivalence with `R(q.num/q.den) ⊆ R(p.num/p.den)` is claimed. -/
+
+variable {P : PairOfDefinition A}
+
+/-- **A presentation of a rational localization**: a numerator finset, a denominator, and the
+standing `HasDenominatorPower` hypothesis for the localization away from the denominator. -/
+@[ext]
+structure Presentation (P : PairOfDefinition A) where
+  /-- The numerators. -/
+  num : Finset A
+  /-- The denominator. -/
+  den : A
+  /-- The denominator-power hypothesis for `Localization.Away den`. -/
+  hasDenominatorPower : HasDenominatorPower P num den (Localization.Away den)
+
+/-- **The refinement relation**: `q` refines `p` when some cofactor `r` has
+`q.den = p.den * r` and carries every numerator of `p` into a numerator of `q`. -/
+def Presentation.RefinedBy (p q : Presentation P) : Prop :=
+  ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num
+
+/-- The witness facts for the trivial refinement, with cofactor `1`. -/
+theorem Presentation.refinedBy_one (p : Presentation P) :
+    p.den = p.den * 1 ∧ ∀ t ∈ p.num, t * 1 ∈ p.num :=
+  ⟨(mul_one _).symm, fun t ht ↦ by rwa [mul_one]⟩
+
+/-- The witness facts for a composite refinement: the cofactors multiply. -/
+theorem Presentation.refinedBy_mul {p q w : Presentation P} {r r₂ : A}
+    (hr : q.den = p.den * r) (hT : ∀ t ∈ p.num, t * r ∈ q.num)
+    (hr₂ : w.den = q.den * r₂) (hT₂ : ∀ t ∈ q.num, t * r₂ ∈ w.num) :
+    w.den = p.den * (r * r₂) ∧ ∀ t ∈ p.num, t * (r * r₂) ∈ w.num :=
+  ⟨by rw [hr₂, hr, mul_assoc],
+    fun t ht ↦ by rw [← mul_assoc]; exact hT₂ _ (hT t ht)⟩
+
+/-- Every presentation refines itself, with cofactor `1`. -/
+theorem Presentation.refinedBy_self (p : Presentation P) : p.RefinedBy p :=
+  ⟨1, p.refinedBy_one.1, p.refinedBy_one.2⟩
+
+/-- Refinements compose: the cofactors multiply. -/
+theorem Presentation.RefinedBy.trans {p q w : Presentation P} (hpq : p.RefinedBy q)
+    (hqw : q.RefinedBy w) : p.RefinedBy w := by
+  obtain ⟨r, hr, hT⟩ := hpq
+  obtain ⟨r₂, hr₂, hT₂⟩ := hqw
+  exact ⟨r * r₂, (Presentation.refinedBy_mul hr hT hr₂ hT₂).1,
+    (Presentation.refinedBy_mul hr hT hr₂ hT₂).2⟩
+
+/-- Refinement is a preorder, by `Presentation.refinedBy_self` and
+`Presentation.RefinedBy.trans`. -/
+instance : Preorder (Presentation P) where
+  le := Presentation.RefinedBy
+  le_refl := Presentation.refinedBy_self
+  le_trans _ _ _ := Presentation.RefinedBy.trans
+
+/-- The order relation of the `Preorder` instance is `RefinedBy`; composing with
+`Presentation.refinedBy_iff` completes the documented route from `p ≤ q` to the cofactor. -/
+theorem Presentation.le_def {p q : Presentation P} : p ≤ q ↔ p.RefinedBy q := Iff.rfl
+
+/-- **The refinement relation, unfolded.** The body of `RefinedBy` is not exported, so this —
+after crossing `≤` to `RefinedBy` with `Presentation.le_def` — is how a consumer produces or
+consumes a refinement. -/
+theorem Presentation.refinedBy_iff {p q : Presentation P} :
+    p.RefinedBy q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
+
+/-- **The chosen cofactor of a refinement.** Extraction from `h : p ≤ q` crosses the `≤`-to-
+existential boundary through `le_def` and `refinedBy_iff`, here, once; everything about the
+restriction morphism goes through this accessor and its two spec lemmas. -/
+noncomputable def Presentation.cofactor {p q : Presentation P} (h : p ≤ q) : A :=
+  (Presentation.refinedBy_iff.mp (Presentation.le_def.mp h)).choose
+
+/-- The denominator of a refinement is the coarser denominator times the cofactor. -/
+theorem Presentation.den_eq_mul_cofactor {p q : Presentation P} (h : p ≤ q) :
+    q.den = p.den * Presentation.cofactor h :=
+  (Presentation.refinedBy_iff.mp (Presentation.le_def.mp h)).choose_spec.1
+
+/-- The cofactor carries numerators of the coarser presentation into the finer one. -/
+theorem Presentation.mul_cofactor_mem {p q : Presentation P} (h : p ≤ q) {t : A}
+    (ht : t ∈ p.num) : t * Presentation.cofactor h ∈ q.num :=
+  (Presentation.refinedBy_iff.mp (Presentation.le_def.mp h)).choose_spec.2 t ht
+
+open scoped Classical Pointwise in
+/-- **The product presentation**, refining both factors: the numerators are the pairwise
+products of the factors' numerator sets augmented by their own denominators, and the denominator
+is the product. The augmentation matches `rationalSubset_inter`'s presentation of an
+intersection, which is what keeps the numerator span open when both factors' spans are
+(`isOpen_span_insert_mul_insert`) — the property the structure presheaf's index needs. -/
+noncomputable def Presentation.prod (p q : Presentation P) : Presentation P where
+  num := insert p.den p.num * insert q.den q.num
+  den := p.den * q.den
+  hasDenominatorPower := by
+    classical
+    exact hasDenominatorPower_mul P p.num q.num _ p.den q.den (Localization.Away p.den)
+      (Localization.Away q.den) (Localization.Away (p.den * q.den))
+      (fun _ ht ↦ Finset.mul_mem_mul (Finset.mem_insert_of_mem ht) (Finset.mem_insert_self _ _))
+      (fun t ht ↦ mul_comm p.den t ▸
+        Finset.mul_mem_mul (Finset.mem_insert_self _ _) (Finset.mem_insert_of_mem ht))
+      p.hasDenominatorPower q.hasDenominatorPower
+
+open scoped Classical Pointwise in
+/-- The product presentation refines its left factor, with cofactor the right denominator. -/
+theorem Presentation.le_prod_left (p q : Presentation P) : p ≤ p.prod q :=
+  ⟨q.den, rfl, fun _ ht ↦
+    Finset.mul_mem_mul (Finset.mem_insert_of_mem ht) (Finset.mem_insert_self _ _)⟩
+
+open scoped Classical Pointwise in
+/-- The product presentation refines its right factor, with cofactor the left denominator. -/
+theorem Presentation.le_prod_right (p q : Presentation P) : q ≤ p.prod q :=
+  ⟨p.den, mul_comm p.den q.den, fun t ht ↦ mul_comm p.den t ▸
+    Finset.mul_mem_mul (Finset.mem_insert_self _ _) (Finset.mem_insert_of_mem ht)⟩
+
+/-- **Any two presentations admit a common refinement** — their product presentation — so the
+refinement preorder is directed: presentations of the same rational subset never sit as
+independent factors in a limit over this order, because both map onwards to the product. -/
+theorem Presentation.directed (p q : Presentation P) :
+    ∃ w : Presentation P, p ≤ w ∧ q ≤ w :=
+  ⟨p.prod q, p.le_prod_left q, p.le_prod_right q⟩
+
+/-- The refinement preorder is directed. -/
+instance : IsDirected (Presentation P) (· ≤ ·) :=
+  ⟨Presentation.directed⟩
+
+/-! ### Comparing two presentations of the same subset -/
+
 
 /-- **Compatible comparison maps between two presentations are mutually inverse.** If `g` carries
 the structure map of `A⟨T/s⟩` to that of `A⟨T'/s'⟩` and `h` carries it back, then `h ∘ g` fixes
