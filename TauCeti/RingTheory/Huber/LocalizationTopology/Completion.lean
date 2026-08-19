@@ -148,6 +148,17 @@ theorem isHuberRing_locUniformSpace [IsTopologicalRing A] (P : PairOfDefinition 
     IsHuberRing S :=
   isHuberRing_locTopology P T s S hden
 
+/-- `Aₛ` is nonarchimedean for the topology `locUniformSpace` induces. The `locUniformSpace`
+companion of `nonarchimedean_locTopology`, in the same series as the three above; it is what
+lets the completion `A⟨T/s⟩` inherit `NonarchimedeanRing`, and with it the power-bounded
+subring `A⟨T/s⟩°`. -/
+theorem nonarchimedeanRing_locUniformSpace [IsTopologicalRing A] (P : PairOfDefinition A)
+    (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
+    (hden : HasDenominatorPower P T s S) :
+    letI := locUniformSpace P T s S hden
+    NonarchimedeanRing S :=
+  nonarchimedeanRing_locTopology P T s S hden
+
 /-- The image of a power-bounded element of `A` is power-bounded in `Aₛ`, at the uniformity's
 topology. `isPowerBounded_algebraMap_of_isPowerBounded` states this at `locTopology`; this is the
 same fact restated so that a consumer holding the uniformity need not transport along
