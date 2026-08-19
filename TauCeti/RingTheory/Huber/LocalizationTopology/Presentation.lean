@@ -134,7 +134,7 @@ theorem Presentation.refinedBy_witness_mul {p q w : Presentation P} {r r₂ : A}
     fun t ht ↦ by rw [← mul_assoc]; exact hT₂ _ (hT t ht)⟩
 
 /-- Every presentation refines itself, with cofactor `1`. -/
-theorem Presentation.refinedBy_self (p : Presentation P) : p.RefinedBy p :=
+theorem Presentation.RefinedBy.refl (p : Presentation P) : p.RefinedBy p :=
   ⟨1, p.refinedBy_witness_one.1, p.refinedBy_witness_one.2⟩
 
 /-- Refinements compose: the cofactors multiply. -/
@@ -145,7 +145,7 @@ theorem Presentation.RefinedBy.trans {p q w : Presentation P} (hpq : p.RefinedBy
   exact ⟨r * r₂, (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).1,
     (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).2⟩
 
-/-- Refinement is a preorder, by `Presentation.refinedBy_self` and
+/-- Refinement is a preorder, by `Presentation.RefinedBy.refl` and
 `Presentation.RefinedBy.trans`.
 
 These two stay as named theorems rather than being inlined into the fields below. The instance is
@@ -155,7 +155,7 @@ body this file deliberately does not export — inlining gives
 is not exposed, so it may unfold it; that asymmetry is what forces the two names. -/
 instance : Preorder (Presentation P) where
   le := Presentation.RefinedBy
-  le_refl := Presentation.refinedBy_self
+  le_refl := Presentation.RefinedBy.refl
   le_trans _ _ _ := Presentation.RefinedBy.trans
 
 /-- **The refinement preorder, unfolded in one step**: the single introduction/elimination
