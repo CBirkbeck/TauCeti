@@ -141,12 +141,15 @@ noncomputable def upperTriRep (b : Fin p) : GL (Fin 2) ℚ :=
     (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0 :=
   upperTriGL_apply_eq_zero_of_lt (fun i ↦ by fin_cases i <;> simp [b.pos]) _ (by decide)
 
-/-- **The remaining coset representative** `!![p, 0; 0, 1]`, as `natDiagGL 2 ![p, 1]`.
+/-- **The diagonal representative** `!![p, 0; 0, 1]`, as `natDiagGL 2 ![p, 1]`.
 
-For `p ∤ N` the double coset of `diag(1, p)` has `p + 1` left cosets, not `p`: the `p`
-upper-triangular ones `upperTriRep p b` and this one. It is diagonal, hence upper triangular,
-so it satisfies the same `(1, 0) = 0` hypothesis that mathlib's `IsBoundedAtImInfty.slash`
-asks for — the whole `p + 1`-term sum stays inside that machinery. -/
+For a **prime** `p ∤ N` the double coset of `diag(1, p)` has `p + 1` left cosets: the `p`
+upper-triangular ones `upperTriRep p b` and this one. That count is primality-specific — at a
+composite `p` the triangular decomposition has `∑_{d ∣ p} d` representatives, seven at `p = 4` —
+so nothing here claims a coset decomposition for general `p`.
+
+It is diagonal, hence upper triangular, so it satisfies the same `(1, 0) = 0` hypothesis that
+mathlib's `IsBoundedAtImInfty.slash` asks for, for every `p`. -/
 noncomputable def diagRep : GL (Fin 2) ℚ :=
   natDiagGL 2 ![p, 1]
 
