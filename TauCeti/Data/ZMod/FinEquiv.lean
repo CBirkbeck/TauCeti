@@ -11,8 +11,9 @@ public import Mathlib.Data.ZMod.Basic
 # Applying `ZMod.finEquiv`
 
 Mathlib defines `ZMod.finEquiv : Fin n ≃+* ZMod n` for `[NeZero n]` and states nothing about
-applying it. This file supplies the evaluation rule, so that an argument indexed by `Fin n` can be
-carried into `ZMod n` arithmetic.
+applying it. Both equalities below are definitional; this file states them as `@[simp]` rules so
+that an argument indexed by `Fin n` rewrites into `ZMod n` arithmetic instead of being unfolded at
+each use.
 
 ## Main results
 
@@ -27,8 +28,12 @@ public section
 namespace ZMod
 
 /-- **Applying `ZMod.finEquiv` is the natural cast.** `ZMod.finEquiv n j` is the image of `j.val`
-under `Nat.cast`. Mathlib defines `finEquiv` and states no evaluation rule for it, so without this
-a `Fin n`-indexed statement cannot meet `ZMod n` arithmetic. -/
+under `Nat.cast`.
+
+The equality holds definitionally — the proof below is `Fin.cast_val_eq_self` after splitting off
+the successor — so this is a convenience rather than a bridge that has to exist. Mathlib defines
+`finEquiv` and states no evaluation rule for it; tagging one `@[simp]` is what lets a
+`Fin n`-indexed statement rewrite into `ZMod n` arithmetic without unfolding at each site. -/
 @[simp]
 lemma finEquiv_apply {n : ℕ} [NeZero n] (j : Fin n) :
     (ZMod.finEquiv n) j = ((j : ℕ) : ZMod n) := by
