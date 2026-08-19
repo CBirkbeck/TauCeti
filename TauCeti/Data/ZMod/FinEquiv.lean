@@ -30,16 +30,15 @@ open Fin.CommRing in
 /-- **Applying `ZMod.finEquiv` is the natural cast.** `ZMod.finEquiv n j` is the image of `j.val`
 under `Nat.cast`.
 
-This is not definitional: the cast `((j : ℕ) : ZMod n)` reduces the natural `j.val` modulo `n`
-again, and it is `Fin.cast_val_eq_self` that says doing so returns `j`. The proof goes through
-stated lemmas rather than defeq — `Fin.cast_val_eq_self` to put `j` in natural-cast form, then
-`map_natCast` for the ring hom — so it does not depend on `finEquiv` being defined by cases on
-`n`. `Fin.instCommRing` is scoped (`Mathlib/Data/ZMod/Defs.lean`), hence the `open`. Mathlib
-states no evaluation rule for `finEquiv`, so this is the lemma a `Fin n`-indexed statement
-rewrites through. -/
+Mathlib defines `finEquiv` and states no evaluation rule for it in either direction, so this is
+the lemma a `Fin n`-indexed statement rewrites through to reach `ZMod n`. -/
 @[simp]
 lemma finEquiv_apply {n : ℕ} [NeZero n] (j : Fin n) :
     (ZMod.finEquiv n) j = ((j : ℕ) : ZMod n) := by
+  -- Through stated lemmas rather than defeq: `Fin.cast_val_eq_self` puts `j` in natural-cast
+  -- form, then `map_natCast` moves the cast across the ring hom. So the proof does not depend on
+  -- `finEquiv` being defined by cases on `n`. `Fin.instCommRing` is scoped
+  -- (`Mathlib/Data/ZMod/Defs.lean`), hence the `open Fin.CommRing in` above.
   conv_lhs => rw [← Fin.cast_val_eq_self j]
   exact map_natCast (ZMod.finEquiv n) j.val
 
