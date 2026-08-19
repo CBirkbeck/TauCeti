@@ -29,6 +29,10 @@ every edge of the Dynkin diagram, so the simple roots span the whole space insid
 
 * `TauCeti.RootPairing.isIrreducible_of_connected_diagramGraph_cartanMatrix`: a connected base
   diagram makes a root system irreducible.
+* `TauCeti.RootPairing.eq_bot_of_forall_root_not_mem`: a submodule invariant under the simple
+  reflections and containing no simple root is trivial.
+* `TauCeti.RootPairing.root_mem_of_pairing_ne_zero`: membership of a root in a
+  reflection-invariant submodule propagates along a nonzero pairing.
 * `TauCeti.DynkinType.connected_diagramGraph_cartanMatrix`: every valid standard Dynkin diagram is
   connected.
 * `TauCeti.HasCartanType.isIrreducible`: a root system of valid Cartan type is irreducible.
@@ -238,7 +242,7 @@ trivial.** If `q` is invariant under the reflection at each element of the base'
 misses the root there, then `q = ⊥`.
 
 Invariance is asked at the support only, not under every reflection of `P`. -/
-private theorem eq_bot_of_forall_root_not_mem [P.IsRootSystem] {b : P.Base} {q : Submodule K M}
+theorem eq_bot_of_forall_root_not_mem [P.IsRootSystem] {b : P.Base} {q : Submodule K M}
     (hinv : ∀ i : b.support, q ∈ Module.End.invtSubmodule (P.reflection i))
     (h : ∀ i : b.support, P.root i ∉ q) : q = ⊥ := by
   -- Missing every simple root puts `q` inside all the simple coroot kernels; the coweight basis
@@ -259,23 +263,22 @@ private theorem eq_bot_of_forall_root_not_mem [P.IsRootSystem] {b : P.Base} {q :
     simpa using LinearMap.mem_ker.mp (hallker i)
   rw [map_smul, hz, smul_zero]
 
-/-- **Membership of a root in a reflection-invariant submodule propagates along an edge of the
-Dynkin diagram.** If `u` and `v` are adjacent and the root at `u` lies in `q`, so does the root
-at `v`.
+omit [CharZero K] [P.IsCrystallographic] in
+/-- **Membership of a root in a reflection-invariant submodule propagates along a nonzero
+pairing.** If `q` is invariant under the reflection at `v`, the pairing of `u` with `v` is
+nonzero, and the root at `u` lies in `q`, then so does the root at `v`.
 
-Only invariance under the single reflection at `v` is needed, not invariance at every index,
-and the root-system hypothesis is not needed at all. -/
-private theorem root_mem_of_adj_of_root_mem {b : P.Base} {q : Submodule K M}
-    {u v : b.support} (hinvv : q ∈ Module.End.invtSubmodule (P.reflection v))
-    (hadj : (diagramGraph b.cartanMatrix).Adj u v) (hu : P.root u ∈ q) : P.root v ∈ q := by
-  -- Reflecting `u` in `v` keeps us inside `q`; subtracting leaves a nonzero multiple of `root v`,
-  -- and the multiplier is invertible because adjacency forbids a vanishing pairing.
+Only invariance under the single reflection at `v` is needed, not invariance at every index; no
+base, no crystallographic structure, no characteristic assumption and no root-system hypothesis are
+involved. Diagram adjacency enters only at the call site, as the source of the nonvanishing
+pairing. -/
+theorem root_mem_of_pairing_ne_zero {q : Submodule K M} {u v : ι}
+    (hinvv : q ∈ Module.End.invtSubmodule (P.reflection v))
+    (hpair : P.pairing u v ≠ 0) (hu : P.root u ∈ q) : P.root v ∈ q := by
+  -- Reflecting `u` in `v` keeps us inside `q`; subtracting leaves a multiple of `root v`, and the
+  -- multiplier is invertible by hypothesis.
   have hrefl : P.reflection v (P.root u) ∈ q :=
     (Module.End.mem_invtSubmodule _).mp hinvv hu
-  have hpair : P.pairing u v ≠ 0 := by
-    intro hp
-    exact (diagramGraph_adj.mp hadj).2.1
-      (b.cartanMatrix_apply_eq_zero_iff_pairing.mpr hp)
   have hsmul : P.pairing u v • P.root v ∈ q := by
     simpa only [P.reflection_apply_root, sub_sub_cancel] using q.sub_mem hu hrefl
   exact (q.smul_mem_iff hpair).mp hsmul
@@ -295,9 +298,12 @@ theorem isIrreducible_of_connected_diagramGraph_cartanMatrix [P.IsRootSystem] (b
     by_contra! h
     exact hq (eq_bot_of_forall_root_not_mem (b := b) (fun i ↦ hinv i) h)
   obtain ⟨i, hi⟩ := hsimple
+  -- adjacency in the diagram is exactly nonvanishing of the Cartan entry, hence of the pairing
   have propagate {u v : b.support} (hadj : (diagramGraph b.cartanMatrix).Adj u v)
       (hu : P.root u ∈ q) : P.root v ∈ q :=
-    root_mem_of_adj_of_root_mem (hinv v) hadj hu
+    root_mem_of_pairing_ne_zero (hinv v)
+      (fun hp ↦ (diagramGraph_adj.mp hadj).2.1
+        (b.cartanMatrix_apply_eq_zero_iff_pairing.mpr hp)) hu
   have hall : ∀ j : b.support, P.root j ∈ q := by
     intro j
     obtain ⟨w⟩ := hconn.preconnected i j
