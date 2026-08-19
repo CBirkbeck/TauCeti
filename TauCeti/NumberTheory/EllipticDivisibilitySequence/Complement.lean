@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.NormEDS
-public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Six
 
 /-!
 # The complement of a normalised EDS at a general multiple
@@ -66,9 +65,9 @@ reindexing `normEDS_mul_complEDS_div` (`:1350`) is ported here too, under its so
 That reverses an earlier decision recorded in this file, and the reason is worth keeping: the
 reindexing was left out because what consumers took from it was the divisibility, stated directly
 here as `normEDS_dvd_normEDS_mul` and `isDvdSequence_normEDS`, so it had no call site. It has
-three now: the constant-times-complement shapes `normEDS_eq_mul_complEDS_two`/`_three`/`_six`
-below each divide one known index out of it, and through those shapes the reduced-invariant
-cancellation in `ReducedInvariant.lean` reaches its six residue branches. The source file's
+call sites now: the reduced-invariant cancellation in `ReducedInvariant.lean` reaches its six
+residue branches through three private constant-times-complement shapes derived from this
+identity there. The source file's
 header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
 adapted material the upstream authorship is credited here rather than in the copyright header.
 
@@ -183,26 +182,3 @@ theorem normEDS_mul_complEDS_div (k n : ℤ) (hn : k ∣ n) :
     normEDS b c d k * complEDS b c d k (n / k) = normEDS b c d n := by
   rw [normEDS_mul_complEDS, Int.ediv_mul_cancel hn]
 
-/-! ### The value at a multiple of 2, 3 and 6
-
-`normEDS_mul_complEDS_div` reindexes a complement but leaves `normEDS b c d k` standing. At
-`k = 2, 3, 6` that factor is a known constant, so the whole value factors as constant times
-complement. These are the three shapes the residue split of `reducedInvarDenom` consumes: residues
-`2`, `3` and `4` use the `2`- and `3`-forms, and residues `0`, `1` and `5` use the `6`-form. -/
-
-/-- **The value at an even index**, `normEDS b c d 2` being `b`. -/
-theorem normEDS_eq_mul_complEDS_two (n : ℤ) (hn : (2 : ℤ) ∣ n) :
-    normEDS b c d n = b * complEDS b c d 2 (n / 2) := by
-  rw [← normEDS_mul_complEDS_div 2 n hn, normEDS_two]
-
-/-- **The value at a multiple of three**, `normEDS b c d 3` being `c`. -/
-theorem normEDS_eq_mul_complEDS_three (n : ℤ) (hn : (3 : ℤ) ∣ n) :
-    normEDS b c d n = c * complEDS b c d 3 (n / 3) := by
-  rw [← normEDS_mul_complEDS_div 3 n hn, normEDS_three]
-
-/-- **The value at a multiple of six.** Here the constant is `normEDS b c d 6`, which
-`WeierstrassCurve.normEDS_six` (`Six.lean`) expands to `(normEDS b c d 5 - d ^ 2) * b * c` — the
-`b * c` that `reducedInvarDenom` exists to have cancelled. -/
-theorem normEDS_eq_mul_complEDS_six (n : ℤ) (hn : (6 : ℤ) ∣ n) :
-    normEDS b c d n = (normEDS b c d 5 - d ^ 2) * b * c * complEDS b c d 6 (n / 6) := by
-  rw [← normEDS_mul_complEDS_div 6 n hn, WeierstrassCurve.normEDS_six]
