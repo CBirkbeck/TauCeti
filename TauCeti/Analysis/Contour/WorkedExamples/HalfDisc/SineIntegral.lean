@@ -293,11 +293,7 @@ converge to `π`: Jordan's lemma kills the arc contribution of
 `integral_sin_mul_div_neg_self_eq`. -/
 theorem tendsto_integral_sin_mul_div_neg_self_atTop (ha : 0 < a) :
     Tendsto (fun R : ℝ => ∫ t in -R..R, Real.sin (a * t) / t) atTop (𝓝 Real.pi) := by
-  have harc : Tendsto (fun R : ℝ => (Real.pi : ℂ) * Complex.I -
-      ∫ θ in (0 : ℝ)..Real.pi,
-        dirichletIntegrand a (circleMap 0 R θ) * deriv (circleMap 0 R) θ)
-      atTop (𝓝 ((Real.pi : ℂ) * Complex.I)) := by
-    simpa using tendsto_const_nhds.sub (tendsto_integral_arc_dirichlet_atTop ha)
+  have harc := tendsto_sub_integral_arc_dirichlet ha
   have hmul : Tendsto
       (fun R : ℝ => ((∫ t in -R..R, Real.sin (a * t) / t : ℝ) : ℂ) * Complex.I)
       atTop (𝓝 ((Real.pi : ℂ) * Complex.I)) := by

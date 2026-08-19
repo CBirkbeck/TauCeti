@@ -36,6 +36,8 @@ supplies is exactly the regime the naive `ML` bound cannot reach.
 * `TauCeti.Contour.residue_dirichletIntegrand` — `Res₀ (e^{iaz}/z) = 1`, for every frequency.
 * `TauCeti.Contour.neg_one_le_meromorphicOrderAt_dirichletIntegrand` — the pole is at worst
   simple, the hypothesis the half-residue theorem consumes.
+* `TauCeti.Contour.tendsto_sub_integral_arc_dirichlet` — `π i` minus the arc contribution
+  converges to `π i`.
 * `TauCeti.Contour.hasCauchyPV_realSegment_dirichlet` — for each radius, the principal value
   along `[-R, R]` on the real axis is `π i` minus the arc contribution.
 * `TauCeti.Contour.tendsto_integral_arc_dirichlet_atTop` — the arc contribution vanishes, by
@@ -130,8 +132,9 @@ theorem tendsto_integral_arc_dirichlet_atTop {a : ℝ} (ha : 0 < a) :
   rw [dirichletIntegrand_eq]
   ring
 
-/-- The auxiliary limit: `π i` minus the arc contribution converges to `π i`. -/
-private theorem tendsto_sub_integral_arc_dirichlet {a : ℝ} (ha : 0 < a) :
+/-- **The auxiliary limit: `π i` minus the arc contribution converges to `π i`.** Jordan's lemma
+kills the arc contribution, so subtracting it from the constant leaves the constant. -/
+theorem tendsto_sub_integral_arc_dirichlet {a : ℝ} (ha : 0 < a) :
     Tendsto (fun R : ℝ => (Real.pi : ℂ) * Complex.I -
       ∫ θ in (0 : ℝ)..Real.pi,
         dirichletIntegrand a (circleMap 0 R θ) * deriv (circleMap 0 R) θ)
