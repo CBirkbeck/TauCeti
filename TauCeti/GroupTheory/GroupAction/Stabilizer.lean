@@ -167,7 +167,11 @@ theorem card_stabilizer_subgroupOf {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ) 
     Nat.card (MulAction.stabilizer (↥(𝒢.subgroupOf ℋ)) a) =
       Nat.card (MulAction.stabilizer 𝒢 a) := by
   rw [card_stabilizer_eq_card_ker_mul_card_stabilizer (Subgroup.subgroupOfEquivOfLe hle).toMonoidHom
-      (Subgroup.subgroupOfEquivOfLe hle).surjective a fun _ ↦ rfl,
+      (Subgroup.subgroupOfEquivOfLe hle).surjective a
+      -- both groups act through the same element of `G`; `Subgroup.smul_def` unfolds the two
+      -- `Subgroup.instMulAction` layers and `subgroupOfEquivOfLe`'s structure projection, rather
+      -- than leaving that chain to `rfl`
+      fun g ↦ by simp [Subgroup.smul_def],
     MonoidHom.ker_eq_bot _ (Subgroup.subgroupOfEquivOfLe hle).injective]
   simp
 
