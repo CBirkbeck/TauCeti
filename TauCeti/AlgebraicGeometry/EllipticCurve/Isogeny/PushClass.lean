@@ -108,10 +108,7 @@ section PushClass
 variable (φ : Isogeny W₁ W₂)
   [IsDomain W₁.CoordinateRing] [IsDedekindDomain W₂.CoordinateRing]
   [Algebra W₁.CoordinateRing φ.intermediateRing]
-  [Algebra W₂.CoordinateRing W₁.FunctionField]
   [Algebra W₂.CoordinateRing φ.intermediateRing]
-  [IsScalarTower W₁.CoordinateRing φ.intermediateRing W₁.FunctionField]
-  [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField]
   [IsDedekindDomain φ.intermediateRing]
   [Module.Finite W₂.CoordinateRing φ.intermediateRing]
   [Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing]
@@ -123,27 +120,34 @@ variable (φ : Isogeny W₁ W₂)
 The two coordinate rings carry no map between them; the intermediate ring is what connects
 them, receiving `W₁.CoordinateRing` by inclusion and lying module-finite over
 `W₂.CoordinateRing`. -/
-noncomputable def pushClassMonoidHom :
+noncomputable def pushClassMonoidHom
+    [Algebra W₂.CoordinateRing W₁.FunctionField]
+    [IsScalarTower W₁.CoordinateRing φ.intermediateRing W₁.FunctionField]
+    [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField] :
     ClassGroup W₁.CoordinateRing →* ClassGroup W₂.CoordinateRing :=
   ClassGroup.extendedRelNormHom W₁.CoordinateRing φ.intermediateRing W₂.CoordinateRing
 
-omit [Algebra W₂.CoordinateRing W₁.FunctionField]
-  [IsScalarTower W₁.CoordinateRing φ.intermediateRing W₁.FunctionField]
-  [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField] in
 /-- **The composite, unfolded.** This is `ClassGroup.extendedRelNormHom_apply` transported to the
 isogeny, and it is what characterises `pushClassMonoidHom` at its own generality.
 
 The pinning hypotheses are `omit`ted: they fix *which* algebra structures the definitions are about,
 and this identity holds for whatever structures are in scope, so requiring them here would be a
 hypothesis the proof does not use. -/
-theorem pushClassMonoidHom_apply (x : ClassGroup W₁.CoordinateRing) :
+theorem pushClassMonoidHom_apply
+    [Algebra W₂.CoordinateRing W₁.FunctionField]
+    [IsScalarTower W₁.CoordinateRing φ.intermediateRing W₁.FunctionField]
+    [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField]
+    (x : ClassGroup W₁.CoordinateRing) :
     φ.pushClassMonoidHom x =
       ClassGroup.relNorm (ClassGroup.extendedHom W₁.CoordinateRing φ.intermediateRing x) :=
   ClassGroup.extendedRelNormHom_apply W₁.CoordinateRing φ.intermediateRing W₂.CoordinateRing x
 
 /-- **The additive form of `Isogeny.pushClassMonoidHom`.** The point group is described additively
 by its class group, so this is the shape the induced map on points is built from. -/
-noncomputable def pushClass :
+noncomputable def pushClass
+    [Algebra W₂.CoordinateRing W₁.FunctionField]
+    [IsScalarTower W₁.CoordinateRing φ.intermediateRing W₁.FunctionField]
+    [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField] :
     Additive (ClassGroup W₁.CoordinateRing) →+ Additive (ClassGroup W₂.CoordinateRing) :=
   MonoidHom.toAdditive φ.pushClassMonoidHom
 
@@ -177,6 +181,8 @@ noncomputable example (φ : Isogeny W₁ W₂)
     ClassGroup W₁.CoordinateRing →* ClassGroup W₂.CoordinateRing :=
   letI : Algebra W₁.CoordinateRing φ.intermediateRing := φ.toIntermediateRing.toAlgebra
   letI : Algebra W₂.CoordinateRing φ.intermediateRing := φ.pullbackToIntermediateRing.toAlgebra
+  haveI : IsScalarTower W₁.CoordinateRing φ.intermediateRing W₁.FunctionField :=
+    IsScalarTower.of_algebraMap_eq fun x ↦ (φ.coe_toIntermediateRing x).symm
   haveI : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
     φ.isScalarTower_intermediateRing rfl h
   haveI := φ.isDedekindDomain_intermediateRing h
