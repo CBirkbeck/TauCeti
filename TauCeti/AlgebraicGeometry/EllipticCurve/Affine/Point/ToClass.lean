@@ -45,9 +45,12 @@ but it is an interpretation under extra hypotheses, not the content of the defin
 ## What is deliberately not here
 
 **No proof that either side holds.** The two directions below are formal — they unfold `toClass`
-and re-package a witness — and neither carries an ellipticity hypothesis. A proof of the
-predicate does: it recovers a point from an ideal and needs that point to be nonsingular, which
-comes from `Δ ≠ 0`. That step is a separate slice and will carry `[W.IsElliptic]`.
+and re-package a witness — and neither carries an ellipticity hypothesis. The geometric proof
+planned for the predicate itself, to be imported from AINTLIB, *will* carry `[W.IsElliptic]`:
+it recovers a point from an ideal and has to exhibit that point as nonsingular, which it gets
+from `Δ ≠ 0`. That is a property of the route that proof takes, not of the predicate — the
+statement is about an arbitrary affine Weierstrass curve, and nothing here rules out establishing
+it for a particular non-elliptic one by other means. That step is a separate slice.
 
 Keeping the split at exactly this line is the point of the file. Everything here is true of any
 affine Weierstrass curve over a field, so nothing downstream that only needs the *equivalence*
