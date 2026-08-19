@@ -289,17 +289,17 @@ theorem baseChangeExp_mul_baseChangeExp_of_commutator_eq_three_nsmul
     exact h
   · -- Outside the truncation the reordered sextuple has a vanishing factor.
     have hvx : ∀ q, kx ≤ q → (integralDividedPower x M q (hMx q)).baseChange R = 0 :=
-      fun q hq => baseChange_integralDividedPower_eq_zero_of_le x M hMx hkx hq
+      fun q hq => baseChange_integralDividedPower_eq_zero_of_le x M (hMx q) hkx hq
     have hvy : ∀ a, ky ≤ a → (integralDividedPower y M a (hMy a)).baseChange R = 0 :=
-      fun a ha => baseChange_integralDividedPower_eq_zero_of_le y M hMy hky ha
+      fun a ha => baseChange_integralDividedPower_eq_zero_of_le y M (hMy a) hky ha
     have hvz : ∀ b, kz ≤ b → (integralDividedPower z M b (hMz b)).baseChange R = 0 :=
-      fun b hb => baseChange_integralDividedPower_eq_zero_of_le z M hMz hkz hb
+      fun b hb => baseChange_integralDividedPower_eq_zero_of_le z M (hMz b) hkz hb
     have hvw : ∀ c, kw ≤ c → (integralDividedPower w M c (hMw c)).baseChange R = 0 :=
-      fun c hc => baseChange_integralDividedPower_eq_zero_of_le w M hMw hkw hc
+      fun c hc => baseChange_integralDividedPower_eq_zero_of_le w M (hMw c) hkw hc
     have hvv : ∀ d, kv ≤ d → (integralDividedPower v M d (hMv d)).baseChange R = 0 :=
-      fun d hd => baseChange_integralDividedPower_eq_zero_of_le v M hMv hkv hd
+      fun d hd => baseChange_integralDividedPower_eq_zero_of_le v M (hMv d) hkv hd
     have hvs' : ∀ e, ks ≤ e → (integralDividedPower s M e (hMs e)).baseChange R = 0 :=
-      fun e he => baseChange_integralDividedPower_eq_zero_of_le s M hMs hks he
+      fun e he => baseChange_integralDividedPower_eq_zero_of_le s M (hMs e) hks he
     rintro a b c d e q (habc | hqbc)
     · rcases le_or_gt ky a with ha | ha
       · simp [hvy a ha]
