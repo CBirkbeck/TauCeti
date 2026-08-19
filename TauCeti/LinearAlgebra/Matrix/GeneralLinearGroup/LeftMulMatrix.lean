@@ -96,11 +96,11 @@ theorem unitsLeftMulMatrix_map_algebraMap (r : Rˣ) :
       Matrix.GeneralLinearGroup.scalar ι r := by
   refine Units.ext ?_
   have hr : ((Units.map (algebraMap R S : R →* S) r : Sˣ) : S) = algebraMap R S (r : R) := rfl
+  -- After commuting the algebra map past `leftMulMatrix`, the two sides are the scalar matrix
+  -- written two ways: `Matrix.scalar` is the matrix algebra's own `algebraMap` by definition.
   rw [coe_unitsLeftMulMatrix, Matrix.GeneralLinearGroup.coe_scalar, hr,
     (Algebra.leftMulMatrix b).commutes (r : R)]
-  ext i j
-  rw [Matrix.algebraMap_matrix_apply, Matrix.scalar_apply, Matrix.diagonal_apply]
-  simp
+  rfl
 
 end Semiring
 
