@@ -9,9 +9,8 @@ public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
 public import TauCeti.GroupTheory.GroupAction.Stabilizer
 public import TauCeti.NumberTheory.Modular.Orbits
 
--- proof-only: the centre identification and the private `card_center` computation are used
--- inside theorem proofs, never in a public statement, so these stay off the public surface
-import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
+-- proof-only: the private `card_center` computation is used inside theorem proofs, never in a
+-- public statement, so this stays off the public surface
 import Mathlib.LinearAlgebra.SpecialLinearGroup
 import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
@@ -48,10 +47,6 @@ literally the `q` with `q ≠ ⟦i⟧` and `q ≠ ⟦ρ⟧`.
 * `TauCeti.ModularGroup.card_stabilizer_eq_card_center_mul_card_stabilizer_psl`: for any
   `Γ ≤ SL(2, ℤ)`, the stabiliser order in `Γ` splits off the part of the centre that `Γ`
   contains, leaving the projective order in `Γ`'s image in `PSL(2, ℤ)`.
-* `TauCeti.ModularGroup.card_center_subgroupOf_eq_two_iff` and
-  `TauCeti.ModularGroup.card_center_subgroupOf_eq_one_iff`: that centre factor is `2` exactly when
-  `-I ∈ Γ`, and `1` exactly when it is not — the membership decides which case occurs, with
-  `TauCeti.ModularGroup.card_center_subgroupOf_eq_one_or_two` the unindexed corollary.
 * `TauCeti.ModularGroup.card_stabilizer_eq_two_mul_card_stabilizer_psl`: the projective order is
   the matrix one halved.
 * `TauCeti.ModularGroup.card_stabilizer_psl_I`, `TauCeti.ModularGroup.card_stabilizer_psl_ρ` and
@@ -182,7 +177,8 @@ private theorem card_center : Nat.card (Subgroup.center SL(2, ℤ)) = 2 := by
 /-- **The stabiliser order in `Γ` splits off the part of the centre that `Γ` contains.** For any
 `Γ ≤ SL(2, ℤ)`, the order of the stabiliser of `z` in `Γ` is the order of `Γ ⊓ ±1` times the
 order of the stabiliser in the image of `Γ` in `PSL(2, ℤ)` — the projective, elliptic order. The
-factor is `2` when `-I ∈ Γ` and `1` otherwise, by `card_center_subgroupOf_eq_two_iff` below.
+factor is `2` when `-I ∈ Γ` and `1` otherwise, by
+`Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_two_iff`.
 
 This is the general-level form of the halving below, and it is exactly one application of
 `TauCeti.card_stabilizer_eq_card_subgroupOf_mul_card_stabilizer_map`: no quotient action of `Γ`
@@ -195,85 +191,6 @@ theorem card_stabilizer_eq_card_center_mul_card_stabilizer_psl {Γ : Subgroup SL
         Nat.card (stabilizer (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) z) :=
   TauCeti.card_stabilizer_eq_card_subgroupOf_mul_card_stabilizer_map _ Γ z
     fun _ ↦ UpperHalfPlane.pslMk_smul _ _
-
-private theorem neg_one_ne_one : (-1 : SL(2, ℤ)) ≠ 1 := by
-  intro h
-  have := congrArg (fun A : SL(2, ℤ) ↦ (A : Matrix (Fin 2) (Fin 2) ℤ) 0 0) h
-  simp at this
-
--- the count is between one and two: the identity is always there, and the inclusion of
--- `Γ ⊓ {±I}` into `{±I}` caps it by `card_center`
-private theorem card_center_subgroupOf_le_two (Γ : Subgroup SL(2, ℤ)) :
-    0 < Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) ∧
-      Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) ≤ 2 := by
-  -- `mem_subgroupOf` is what moves the membership across the inclusion
-  have hinj : Function.Injective
-      (fun x : (Subgroup.center SL(2, ℤ)).subgroupOf Γ ↦
-        (⟨((x : Γ) : SL(2, ℤ)), Subgroup.mem_subgroupOf.mp x.2⟩ : Subgroup.center SL(2, ℤ))) := by
-    intro a b h
-    rw [Subtype.mk.injEq] at h
-    exact Subtype.ext (Subtype.ext h)
-  have h2 : Nat.card (Subgroup.center SL(2, ℤ)) = 2 := card_center
-  have : Finite (Subgroup.center SL(2, ℤ)) :=
-    Nat.finite_of_card_ne_zero (by rw [h2]; omega)
-  have : Finite ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) := Finite.of_injective _ hinj
-  have hle : Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) ≤
-      Nat.card (Subgroup.center SL(2, ℤ)) := Nat.card_le_card_of_injective _ hinj
-  -- `h2` is used as a hypothesis, never rewritten: `rw [← card_center]` would abstract the `2`
-  -- in `SL(2, ℤ)` too, since that numeral is the matrix dimension
-  exact ⟨Nat.card_pos, by omega⟩
-
-/-- **The complementary case**: the factor is `1` exactly when `-I ∉ Γ`, i.e. when the matrix and
-projective stabiliser orders agree. -/
--- Not `@[simp]`, tested: `simpNF` rejects it because the left-hand side is already reducible —
--- `Subgroup.card_eq_one` then `Subgroup.subgroupOf_eq_bot` rewrite `Nat.card (center.subgroupOf Γ)
--- = 1` to `Disjoint (center SL(2, ℤ)) Γ`, so it is not in simp-normal form. The `= 2` companion
--- below has no such reduction and does carry the attribute.
-theorem card_center_subgroupOf_eq_one_iff (Γ : Subgroup SL(2, ℤ)) :
-    Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 1 ↔ (-1 : SL(2, ℤ)) ∉ Γ := by
-  rw [Subgroup.card_eq_one]
-  constructor
-  · intro h hneg
-    -- `-I` would be a second element, so triviality forces it out of `Γ`
-    have hx := (Subgroup.eq_bot_iff_forall _).mp h (⟨-1, hneg⟩ : Γ)
-      (Subgroup.mem_subgroupOf.mpr
-        (Matrix.SpecialLinearGroup.mem_center_iff_eq_one_or_eq_neg_one.mpr (Or.inr rfl)))
-    exact neg_one_ne_one (by simpa using Subtype.ext_iff.mp hx)
-  · intro hneg
-    refine (Subgroup.eq_bot_iff_forall _).mpr fun x hx ↦ ?_
-    rcases Matrix.SpecialLinearGroup.mem_center_iff_eq_one_or_eq_neg_one.mp
-      (Subgroup.mem_subgroupOf.mp hx) with hx1 | hx1
-    · exact Subtype.ext hx1
-    · -- `x.2 : ↑x ∈ Γ`, and `hx1` identifies `↑x` with `-I`, so the membership transports
-      have hm : (-1 : SL(2, ℤ)) ∈ Γ := hx1 ▸ x.2
-      exact absurd hm hneg
-
-/-- **The `±I` factor is `2` exactly when `-I ∈ Γ`.** The part of the centre that `Γ` contains is
-`{I}` or `{±I}` according to whether `Γ` contains `-I`, so the factor in the splitting
-`card_stabilizer_eq_card_center_mul_card_stabilizer_psl` is decided by that single membership. -/
-@[simp]
-theorem card_center_subgroupOf_eq_two_iff (Γ : Subgroup SL(2, ℤ)) :
-    Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 2 ↔ (-1 : SL(2, ℤ)) ∈ Γ := by
-  obtain ⟨hpos, hle⟩ := card_center_subgroupOf_le_two Γ
-  constructor
-  · intro h
-    by_contra hneg
-    have h1 := (card_center_subgroupOf_eq_one_iff Γ).mpr hneg
-    omega
-  · intro hneg
-    have h1 : Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) ≠ 1 := fun h ↦
-      (card_center_subgroupOf_eq_one_iff Γ).mp h hneg
-    omega
-
-/-- **The `±I` factor is `1` or `2`.** The unindexed corollary of
-`card_center_subgroupOf_eq_two_iff`, for a consumer that needs only the bound — to know that the
-projective order divides the matrix one, say — and not the membership. -/
-theorem card_center_subgroupOf_eq_one_or_two (Γ : Subgroup SL(2, ℤ)) :
-    Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 1 ∨
-      Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 2 := by
-  by_cases h : (-1 : SL(2, ℤ)) ∈ Γ
-  · exact Or.inr ((card_center_subgroupOf_eq_two_iff Γ).mpr h)
-  · exact Or.inl ((card_center_subgroupOf_eq_one_iff Γ).mpr h)
 
 /-- **The `SL(2, ℤ)`-stabiliser order is twice the `PSL(2, ℤ)` one.** The two differ exactly by
 the centre `±1`, which acts trivially on `ℍ`, so every projective stabiliser is the matrix one
