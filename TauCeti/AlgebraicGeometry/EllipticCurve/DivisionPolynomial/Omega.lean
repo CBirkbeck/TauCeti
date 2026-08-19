@@ -79,6 +79,10 @@ theorem isEllipticSequence_ψ : IsEllipticSequence W.ψ := by
 division-polynomial parameters. `ψ_mul_ψc` below is the identity it is named for. -/
 def ψc : ℤ → R[X][Y] := complEDS₂ W.ψ₂ (C W.Ψ₃) (C W.preΨ₄)
 
+/-- The defining formula for `ψc`, at the level of functions. The definition body is not
+exposed, so this equation lemma is how a consumer in another module computes with it. -/
+theorem ψc_def : W.ψc = complEDS₂ W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) := (rfl)
+
 /-- The `ω` family of division polynomials: `ω n` gives the second coordinate in Jacobian
 coordinates of scalar multiplication by `n`. -/
 protected def ω (n : ℤ) : R[X][Y] :=
