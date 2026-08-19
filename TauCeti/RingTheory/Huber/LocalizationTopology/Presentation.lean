@@ -170,7 +170,7 @@ theorem Presentation.le_def {p q : Presentation P} :
     p ≤ q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
 
 open scoped Classical Pointwise in
-/-- **The product presentation**, refining both factors: the numerators are the pairwise
+/-- **The common refinement**, refining both factors: the numerators are the pairwise
 products of the factors' numerator sets augmented by their own denominators, and the denominator
 is the product. The augmentation matches `rationalSubset_inter`'s presentation of an
 intersection.
@@ -191,26 +191,26 @@ noncomputable def Presentation.commonRefinement (p q : Presentation P) : Present
       p.hasDenominatorPower q.hasDenominatorPower
 
 open scoped Classical Pointwise in
-/-- The numerators of the product presentation. The body of `prod` is not exported, so this is
-how a consumer computes with it — in particular, how it is matched against
+/-- The numerator equation for the common refinement. The body of `commonRefinement` is not
+exported, so this is how a consumer computes with it — in particular, how it is matched against
 `rationalSubset_inter`'s presentation of an intersection. -/
 @[simp]
 theorem Presentation.commonRefinement_num (p q : Presentation P) :
     (p.commonRefinement q).num = insert p.den p.num * insert q.den q.num := (rfl)
 
-/-- The denominator of the product presentation. -/
+/-- The denominator equation for the common refinement. -/
 @[simp]
 theorem Presentation.commonRefinement_den (p q : Presentation P) :
     (p.commonRefinement q).den = p.den * q.den := (rfl)
 
 open scoped Classical Pointwise in
-/-- The product presentation refines its left factor, with cofactor the right denominator. -/
+/-- The common refinement refines its left factor, with cofactor the right denominator. -/
 theorem Presentation.le_commonRefinement_left (p q : Presentation P) : p ≤ p.commonRefinement q :=
   ⟨q.den, rfl, fun _ ht ↦
     Finset.mul_mem_mul (Finset.mem_insert_of_mem ht) (Finset.mem_insert_self _ _)⟩
 
 open scoped Classical Pointwise in
-/-- The product presentation refines its right factor, with cofactor the left denominator. -/
+/-- The common refinement refines its right factor, with cofactor the left denominator. -/
 theorem Presentation.le_commonRefinement_right (p q : Presentation P) : q ≤ p.commonRefinement q :=
   ⟨p.den, mul_comm p.den q.den, fun t ht ↦ mul_comm p.den t ▸
     Finset.mul_mem_mul (Finset.mem_insert_self _ _) (Finset.mem_insert_of_mem ht)⟩
