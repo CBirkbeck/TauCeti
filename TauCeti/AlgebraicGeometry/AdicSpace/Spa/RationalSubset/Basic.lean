@@ -255,6 +255,31 @@ theorem spaRationalOpen_inf (Aplus : Subring A) (T₁ T₂ : Finset A) (s₁ s�
   simp only [coe_spaRationalOpen, _root_.TopologicalSpace.Opens.coe_inf]
   rw [← rationalSubset_inter, Set.preimage_inter]
 
+/-- **Refining a presentation shrinks its rational subset.** If the denominator gains a cofactor
+`r` and every numerator, multiplied by `r`, is a numerator of the refinement, then the refined
+rational subset is contained in the original.
+
+This is the antitonicity that makes the presentation index of a rational open into a diagram over
+the *opens*: refinement goes one way, containment the other. -/
+theorem rationalSubset_subset_of_cofactor (Aplus : Subring A) {T T' : Finset A} {s s' r : A}
+    (hr : s' = s * r) (hT : ∀ t ∈ T, t * r ∈ T') :
+    rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s := by
+  refine (rationalSubset_subset_rationalSubset_iff Aplus T T' s s').mpr fun v hv ↦ ?_
+  obtain ⟨-, hle, hne⟩ := (mem_rationalSubset_iff Aplus T' s' v).mp hv
+  rw [hr] at hne
+  -- the cofactor is off the support, else the refined denominator would be
+  have hrne : ¬ v.toValuativeRel.vle r 0 := fun hc ↦ hne (by
+    simpa using @ValuativeRel.mul_vle_mul_right A _ v.toValuativeRel _ _ hc s)
+  refine ⟨fun t ht ↦ ?_, fun hc ↦ hne ?_⟩
+  · exact @ValuativeRel.vle_mul_cancel A _ v.toValuativeRel _ _ _ hrne (hr ▸ hle _ (hT t ht))
+  · simpa using @ValuativeRel.mul_vle_mul_left A _ v.toValuativeRel _ _ hc r
+
+/-- The `Opens` form of `rationalSubset_subset_of_cofactor`. -/
+theorem spaRationalOpen_le_of_cofactor (Aplus : Subring A) {T T' : Finset A} {s s' r : A}
+    (hr : s' = s * r) (hT : ∀ t ∈ T, t * r ∈ T') :
+    spaRationalOpen Aplus T' s' ≤ spaRationalOpen Aplus T s := fun _ hx ↦
+  rationalSubset_subset_of_cofactor Aplus hr hT hx
+
 /-! ### Re-presenting a contained rational subset -/
 
 open scoped Classical Pointwise in
