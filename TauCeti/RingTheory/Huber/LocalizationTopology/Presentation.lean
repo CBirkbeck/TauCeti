@@ -23,8 +23,9 @@ in the coordinate ring as a separate, genuinely algebraic step" (Wedhorn §8.2).
 nothing here can be instantiated at two presentations of one subset.
 
 The file has two halves. The first bundles a presentation as `Presentation` and orders those
-bundles by refinement — the `Preorder` and `IsDirected` instances, `Presentation.prod` as the
-common refinement, and `le_iff` as the route from `p ≤ q` to a cofactor.
+bundles by refinement — the `Preorder` and `IsDirected` instances,
+`Presentation.commonRefinement` as the common refinement, and `le_iff` as the route from `p ≤ q`
+to a cofactor.
 
 The second is the comparison theory, and there **everything is uniqueness**: no comparison map is
 constructed. Given maps in both directions that commute with the structure maps, they are mutually
@@ -38,8 +39,9 @@ is a single application of one of them.
 
 * `TauCeti.Huber.PairOfDefinition.Presentation`: the bundle `(num, den, hasDenominatorPower)` of
   a presentation, with the refinement preorder `Presentation.RefinedBy` and the common
-  refinement `Presentation.prod` making refinement directed. `Presentation.prod_num` and
-  `Presentation.prod_den` are its projection equations, since the body is not exported.
+  refinement `Presentation.commonRefinement` making refinement directed.
+  `Presentation.commonRefinement_num` and `Presentation.commonRefinement_den` are its projection
+  equations, since the body is not exported.
 * `TauCeti.Huber.PairOfDefinition.presentationRingEquiv`: the canonical isomorphism
   `A⟨T/s⟩ ≃+* A⟨T'/s'⟩` assembled from compatible comparison maps in both directions.
 
@@ -144,7 +146,13 @@ theorem Presentation.RefinedBy.trans {p q w : Presentation P} (hpq : p.RefinedBy
     (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).2⟩
 
 /-- Refinement is a preorder, by `Presentation.refinedBy_self` and
-`Presentation.RefinedBy.trans`. -/
+`Presentation.RefinedBy.trans`.
+
+These two stay as named theorems rather than being inlined into the fields below. The instance is
+`public`, so its body is exposed for typeclass resolution and cannot unfold `RefinedBy`, whose
+body this file deliberately does not export — inlining gives
+`Invalid ⟨...⟩ notation: The expected type p.RefinedBy p is not an inductive type`. A theorem body
+is not exposed, so it may unfold it; that asymmetry is what forces the two names. -/
 instance : Preorder (Presentation P) where
   le := Presentation.RefinedBy
   le_refl := Presentation.refinedBy_self
@@ -165,7 +173,7 @@ intersection.
 `Presentation` carries no openness or admissibility field, so nothing here tracks or preserves
 openness of the numerator ideal; a consumer that needs it — the structure presheaf's index — must
 carry and re-establish it itself. -/
-noncomputable def Presentation.prod (p q : Presentation P) : Presentation P where
+noncomputable def Presentation.commonRefinement (p q : Presentation P) : Presentation P where
   num := insert p.den p.num * insert q.den q.num
   den := p.den * q.den
   hasDenominatorPower := by
@@ -182,39 +190,35 @@ open scoped Classical Pointwise in
 how a consumer computes with it — in particular, how it is matched against
 `rationalSubset_inter`'s presentation of an intersection. -/
 @[simp]
-theorem Presentation.prod_num (p q : Presentation P) :
-    (p.prod q).num = insert p.den p.num * insert q.den q.num := (rfl)
+theorem Presentation.commonRefinement_num (p q : Presentation P) :
+    (p.commonRefinement q).num = insert p.den p.num * insert q.den q.num := (rfl)
 
 /-- The denominator of the product presentation. -/
 @[simp]
-theorem Presentation.prod_den (p q : Presentation P) :
-    (p.prod q).den = p.den * q.den := (rfl)
+theorem Presentation.commonRefinement_den (p q : Presentation P) :
+    (p.commonRefinement q).den = p.den * q.den := (rfl)
 
 open scoped Classical Pointwise in
 /-- The product presentation refines its left factor, with cofactor the right denominator. -/
-theorem Presentation.le_prod_left (p q : Presentation P) : p ≤ p.prod q :=
+theorem Presentation.le_commonRefinement_left (p q : Presentation P) : p ≤ p.commonRefinement q :=
   ⟨q.den, rfl, fun _ ht ↦
     Finset.mul_mem_mul (Finset.mem_insert_of_mem ht) (Finset.mem_insert_self _ _)⟩
 
 open scoped Classical Pointwise in
 /-- The product presentation refines its right factor, with cofactor the left denominator. -/
-theorem Presentation.le_prod_right (p q : Presentation P) : q ≤ p.prod q :=
+theorem Presentation.le_commonRefinement_right (p q : Presentation P) : q ≤ p.commonRefinement q :=
   ⟨p.den, mul_comm p.den q.den, fun t ht ↦ mul_comm p.den t ▸
     Finset.mul_mem_mul (Finset.mem_insert_self _ _) (Finset.mem_insert_of_mem ht)⟩
 
-/-- **Any two presentations admit a common refinement** — their product presentation — so the
-refinement preorder is directed: presentations of the same rational subset never sit as
-independent factors in a limit over this order, because both map onwards to the product. -/
-theorem Presentation.directed (p q : Presentation P) :
-    ∃ w : Presentation P, p ≤ w ∧ q ≤ w :=
-  ⟨p.prod q, p.le_prod_left q, p.le_prod_right q⟩
-
-/-- The refinement preorder is directed. -/
+/-- **The refinement preorder is directed**: any two presentations admit a common refinement,
+namely `Presentation.commonRefinement`. So presentations of the same rational subset never sit as
+independent factors in a limit over this order — both map onwards to a common refinement. The
+existential form is `exists_ge_ge`, which this instance supplies generically. -/
 instance : IsDirected (Presentation P) (· ≤ ·) :=
-  ⟨Presentation.directed⟩
+  ⟨fun p q ↦ ⟨p.commonRefinement q, p.le_commonRefinement_left q,
+    p.le_commonRefinement_right q⟩⟩
 
 /-! ### Comparing two presentations of the same subset -/
-
 
 /-- **Compatible comparison maps between two presentations are mutually inverse.** If `g` carries
 the structure map of `A⟨T/s⟩` to that of `A⟨T'/s'⟩` and `h` carries it back, then `h ∘ g` fixes
