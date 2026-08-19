@@ -274,6 +274,16 @@ omit [IsTopologicalRing A] in
 theorem mem_spaRationalOpens {Aplus : Subring A} {U : Opens (spa Aplus)} :
     U ∈ spaRationalOpens Aplus ↔ (U : Set (spa Aplus)) ∈ spaRationalFamily Aplus := Iff.rfl
 
+omit [IsTopologicalRing A] in
+/-- A rational open with open numerator ideal belongs to the rational family of opens: the bridge
+between naming one open (`spaRationalOpen`) and quantifying over the family
+(`spaRationalOpens`). -/
+theorem spaRationalOpen_mem_spaRationalOpens {Aplus : Subring A} {T : Finset A} {s : A}
+    (hT : IsOpen (Ideal.span (T : Set A) : Set A)) :
+    spaRationalOpen Aplus T s ∈ spaRationalOpens Aplus :=
+  mem_spaRationalOpens.mpr ⟨T, s, hT, spaRationalOpen_coe Aplus T s⟩
+
+
 /-- **The rational opens are a basis** in the `Opens.IsBasis` sense, which is the form the sheaf
 criterion on a basis consumes. -/
 theorem isBasis_spaRationalOpens [IsHuberRing A] (Aplus : Subring A) :

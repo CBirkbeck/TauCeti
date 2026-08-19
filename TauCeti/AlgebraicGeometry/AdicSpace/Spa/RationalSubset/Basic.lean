@@ -7,6 +7,7 @@ module
 
 import TauCeti.RingTheory.Valuation.CofinalIdeal.Greatest
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.Basic
+public import Mathlib.Topology.Sets.Opens
 
 /-!
 # Rational subsets of the adic spectrum
@@ -186,6 +187,30 @@ theorem isOpen_val_preimage_rationalSubset (Aplus : Subring A) (T : Finset A) (s
     IsOpen (Subtype.val ⁻¹' rationalSubset Aplus T s : Set (spa Aplus)) := by
   rw [val_preimage_rationalSubset]
   exact (isOpen_basicOpenFinset T s).preimage continuous_subtype_val
+
+open _root_.TopologicalSpace in
+/-- **The rational subset `R(T/s)`, as an open of the adic spectrum.** The `Opens` packaging of
+`isOpen_val_preimage_rationalSubset`, for consumers indexed by the opens of `spa A⁺` — the
+structure presheaf and the sheaf criteria.
+
+This is the pointwise companion of `spaRationalOpens` (`RationalSubset/Basis.lean`), which is the
+*family* of such opens as a `Set (Opens _)` and cannot name the open a particular `(T, s)`
+presents; conversely membership there additionally demands an open numerator ideal, which naming
+the open does not need. `spaRationalOpen_mem_spaRationalOpens` there is the bridge. -/
+def spaRationalOpen (Aplus : Subring A) (T : Finset A) (s : A) : Opens ↥(spa Aplus) :=
+  ⟨Subtype.val ⁻¹' rationalSubset Aplus T s, isOpen_val_preimage_rationalSubset Aplus T s⟩
+
+open _root_.TopologicalSpace in
+/-- The underlying set of `spaRationalOpen`. -/
+@[simp]
+theorem spaRationalOpen_coe (Aplus : Subring A) (T : Finset A) (s : A) :
+    (spaRationalOpen Aplus T s : Set ↥(spa Aplus)) =
+      Subtype.val ⁻¹' rationalSubset Aplus T s := (rfl)
+
+open _root_.TopologicalSpace in
+/-- Membership in `spaRationalOpen` is membership in the rational subset. -/
+theorem mem_spaRationalOpen_iff {Aplus : Subring A} {T : Finset A} {s : A} {x : ↥(spa Aplus)} :
+    x ∈ spaRationalOpen Aplus T s ↔ (x : Spv A) ∈ rationalSubset Aplus T s := Iff.rfl
 
 open scoped Classical Pointwise in
 /-- **The set-level half of Wedhorn Remark 7.30(5)**: writing `Uᵢ = insert sᵢ Tᵢ` for each
