@@ -51,6 +51,29 @@ noncomputable section
 variable {K : Type u} {G : Type w} {V : Type v}
 variable [Field K] [Monoid G] [AddCommGroup V] [Module K V]
 
+/-- **Unipotence passes to an invariant submodule.** If `f - 1` is nilpotent and `f` maps `p` into
+itself, then the restriction of `f` to `p` again differs from the identity by a nilpotent. -/
+private theorem isNilpotent_restrict_sub_one {W : Type*} [AddCommGroup W] [Module K W]
+    {f : Module.End K W} {p : Submodule K W} (hf : Set.MapsTo f p p)
+    (hnil : IsNilpotent (f - 1)) : IsNilpotent (f.restrict hf - 1) := by
+  have h1 : Set.MapsTo (1 : Module.End K W) p p := fun _ hx ↦ hx
+  have hsub : Set.MapsTo (f - (1 : Module.End K W)) p p :=
+    fun _ hx ↦ p.sub_mem (hf hx) (h1 hx)
+  have hone : (1 : Module.End K p) = (1 : Module.End K W).restrict h1 := by
+    simpa using (LinearMap.restrict_smul_one (p := p) (1 : K)).symm
+  rw [hone, LinearMap.restrict_sub hf h1 hsub]
+  exact Module.End.isNilpotent.restrict hsub hnil
+
+/-- **A unipotent endomorphism has trace equal to the dimension.** If `f - 1` is nilpotent then
+the trace of `f` is the rank of the module, viewed in the ground field. -/
+private theorem trace_eq_finrank_of_isNilpotent_sub_one {W : Type*} [AddCommGroup W] [Module K W]
+    [Module.Finite K W] {f : Module.End K W} (hnil : IsNilpotent (f - 1)) :
+    LinearMap.trace K W f = (Module.finrank K W : K) := by
+  -- the trace of a nilpotent vanishes, and trace is additive
+  have h := LinearMap.isNilpotent_trace_of_isNilpotent hnil
+  rw [map_sub, LinearMap.trace_one] at h
+  exact sub_eq_zero.mp h.eq_zero
+
 private theorem _root_.Representation.exists_common_fixed_vector_of_isUnipotent_of_isAlgClosed
     [IsAlgClosed K] [FiniteDimensional K V] [Nontrivial V]
     (ρ : _root_.Representation K G V)
@@ -64,26 +87,12 @@ private theorem _root_.Representation.exists_common_fixed_vector_of_isUnipotent_
   have hsurjective :=
     _root_.Representation.asAlgebraHom_surjective_of_isIrreducible S.toRepresentation hSirr
   have hSUnipotent (g : G) : IsNilpotent (S.toRepresentation g - 1) := by
-    have hρ : Set.MapsTo (ρ g) S.toSubmodule S.toSubmodule :=
-      S.apply_mem_toSubmodule g
-    have h1 : Set.MapsTo (1 : Module.End K V) S.toSubmodule S.toSubmodule :=
-      fun _ hx ↦ hx
-    have hsub : Set.MapsTo ((ρ g : Module.End K V) - (1 : Module.End K V))
-        S.toSubmodule S.toSubmodule :=
-      fun _ hx ↦ S.toSubmodule.sub_mem (hρ hx) (h1 hx)
-    have hrestrict := Module.End.isNilpotent.restrict hsub (hunipotent g)
     rw [Subrepresentation.toRepresentation_apply]
-    have hone : (1 : Module.End K S.toSubmodule) =
-        (1 : Module.End K V).restrict h1 := by
-      simpa using (LinearMap.restrict_smul_one (p := S.toSubmodule) (1 : K)).symm
-    rw [hone, LinearMap.restrict_sub hρ h1 hsub]
-    exact hrestrict
+    exact isNilpotent_restrict_sub_one (S.apply_mem_toSubmodule g) (hunipotent g)
   have htrace (g : G) :
       LinearMap.trace K S.toSubmodule (S.toRepresentation g) =
-        (Module.finrank K S.toSubmodule : K) := by
-    have hnil := LinearMap.isNilpotent_trace_of_isNilpotent (hSUnipotent g)
-    rw [map_sub, LinearMap.trace_one] at hnil
-    exact sub_eq_zero.mp hnil.eq_zero
+        (Module.finrank K S.toSubmodule : K) :=
+    trace_eq_finrank_of_isNilpotent_sub_one (hSUnipotent g)
   have htrivial (g : G) : S.toRepresentation g = 1 := by
     apply sub_eq_zero.mp
     apply LinearMap.eq_zero_of_trace_mul_eq_zero
