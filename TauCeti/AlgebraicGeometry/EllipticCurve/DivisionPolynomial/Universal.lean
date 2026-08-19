@@ -168,12 +168,12 @@ lemma evalEval_ω : (W.ω n).evalEval x y = polyEval W x y (curve.ω n) := by
 lemma polyEval_cusp_ψc : polyEval (cusp ℤ) 1 1 (curve.ψc n) = 2 := by
   rw [ψc_def, map_complEDS₂, ← evalEval_ψ₂, ← evalEval_Ψ₃, ← evalEval_preΨ₄, cusp_ψ₂,
     cusp_Ψ₃, cusp_preΨ₄]
-  simp [evalEval, complEDS₂_two_three_two]
+  simp [evalEval]
 
-/-- **On the cusp curve at `(1, 1)`, `ω n` evaluates to `1`.** The cusp evaluation of
-`two_mul_ω`, with every other term known: `ψc` gives `2`, `φ` gives `1`, and the cusp's
-`a₁` and `a₃` vanish, so twice the value is `2`. -/
+/-- **On the cusp curve at `(1, 1)`, `ω n` evaluates to `1`.** -/
 lemma polyEval_cusp_ω : polyEval (cusp ℤ) 1 1 (curve.ω n) = 1 := by
+  -- Evaluate `two_mul_ω` at the cusp: `ψc` gives `2`, `φ` gives `1`, the cusp's `a₁` and `a₃`
+  -- vanish, so twice the value is `2`.
   have h := congr(polyEval (cusp ℤ) 1 1 $(two_mul_ω curve n))
   rw [map_mul (polyEval (cusp ℤ) 1 1), map_sub (polyEval (cusp ℤ) 1 1),
     map_sub (polyEval (cusp ℤ) 1 1), map_mul (polyEval (cusp ℤ) 1 1),
