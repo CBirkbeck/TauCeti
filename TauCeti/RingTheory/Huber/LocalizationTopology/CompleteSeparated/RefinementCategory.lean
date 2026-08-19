@@ -24,7 +24,8 @@ for containment of the rational subsets, not (yet) proved equivalent to it.
 
 ## Main definitions
 
-* `TauCeti.Huber.PairOfDefinition.Presentation.obj` : the object `A⟨T/s⟩` of a presentation.
+* `TauCeti.Huber.PairOfDefinition.Presentation.completionLocObj` : the object `A⟨T/s⟩` of a
+  presentation.
 * `TauCeti.Huber.PairOfDefinition.Presentation.restrictionHom` : the restriction morphism of a
   refinement, from an arbitrary choice of cofactor.
 * `TauCeti.Huber.PairOfDefinition.presentationFunctor` : the functor into
@@ -35,7 +36,7 @@ for containment of the rational subsets, not (yet) proved equivalent to it.
 * `TauCeti.Huber.PairOfDefinition.Presentation.restrictionHom_eq` : cofactor-independence — the
   morphism is computed by *any* cofactor witnessing the refinement.
 * `TauCeti.Huber.PairOfDefinition.Presentation.restrictionHom_refl` and
-  `…restrictionHom_trans` : the identity and composition laws, stated on `restrictionHom`
+  `…restrictionHom_comp` : the identity and composition laws, stated on `restrictionHom`
   itself so that simp-normalised goals can still reach them.
 
 ## Why the cofactor must be quantified away
@@ -83,9 +84,11 @@ namespace PairOfDefinition
 
 variable {P : PairOfDefinition A}
 
-/-- The object `A⟨T/s⟩` attached to a presentation. -/
-noncomputable abbrev Presentation.obj (p : Presentation P) : CompleteSeparatedTopCommRingCat.{v} :=
-  completionLocObj P p.num p.den (Localization.Away p.den) p.hasDenominatorPower
+/-- The completed rational localization `A⟨T/s⟩` attached to a presentation, as an object. -/
+noncomputable abbrev Presentation.completionLocObj (p : Presentation P) :
+    CompleteSeparatedTopCommRingCat.{v} :=
+  _root_.TauCeti.Huber.PairOfDefinition.completionLocObj P p.num p.den (Localization.Away p.den)
+    p.hasDenominatorPower
 
 /-- **The chosen cofactor of a refinement**, an implementation detail of
 `Presentation.restrictionHom`. Extraction from `h : p ≤ q` crosses the `≤`-to-existential
@@ -111,7 +114,7 @@ private theorem Presentation.mul_cofactor_mem {p q : Presentation P} (h : p ≤ 
 depend on that choice — `Presentation.restrictionHom_eq` — and it is the preorder-category
 counterpart of `restrictionObjHom`, not Mathlib's arrow `LE.le.hom`. -/
 noncomputable def Presentation.restrictionHom {p q : Presentation P} (h : p ≤ q) :
-    p.obj ⟶ q.obj :=
+    p.completionLocObj ⟶ q.completionLocObj :=
   restrictionObjHom P p.num p.den _ p.hasDenominatorPower q.num q.den _ q.hasDenominatorPower
     (Presentation.cofactor h) (Presentation.den_eq_mul_cofactor h)
     fun _ ↦ Presentation.mul_cofactor_mem h
@@ -130,46 +133,48 @@ theorem Presentation.restrictionHom_eq {p q : Presentation P} (h : p ≤ q) (r :
 /-- The restriction morphism of the trivial refinement is the identity. -/
 @[simp]
 theorem Presentation.restrictionHom_refl (p : Presentation P) :
-    Presentation.restrictionHom (le_refl p) = 𝟙 p.obj := by
-  rw [Presentation.restrictionHom_eq (r := 1) (hr := p.refinedBy_one.1)
-    (hT := p.refinedBy_one.2)]
+    Presentation.restrictionHom (le_refl p) = 𝟙 p.completionLocObj := by
+  rw [Presentation.restrictionHom_eq (r := 1) (hr := p.refinedBy_witness_one.1)
+    (hT := p.refinedBy_witness_one.2)]
   exact restrictionObjHom_self P p.num p.den _ p.hasDenominatorPower
 
 /-- Restriction morphisms compose along composite refinements. -/
-@[simp]
-theorem Presentation.restrictionHom_trans {p q w : Presentation P} (h₁ : p ≤ q) (h₂ : q ≤ w) :
+@[reassoc (attr := simp)]
+theorem Presentation.restrictionHom_comp {p q w : Presentation P} (h₁ : p ≤ q) (h₂ : q ≤ w) :
     Presentation.restrictionHom h₁ ≫ Presentation.restrictionHom h₂ =
       Presentation.restrictionHom (h₁.trans h₂) := by
   obtain ⟨r, hr, hT⟩ := Presentation.le_iff.mp h₁
   obtain ⟨r₂, hr₂, hT₂⟩ := Presentation.le_iff.mp h₂
   rw [Presentation.restrictionHom_eq h₁ r hr hT, Presentation.restrictionHom_eq h₂ r₂ hr₂ hT₂,
     Presentation.restrictionHom_eq (h₁.trans h₂) (r * r₂)
-      (Presentation.refinedBy_mul hr hT hr₂ hT₂).1 (Presentation.refinedBy_mul hr hT hr₂ hT₂).2]
+      (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).1
+      (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).2]
   exact restrictionObjHom_comp_restrictionObjHom P p.num p.den _ p.hasDenominatorPower q.num
     q.den _ q.hasDenominatorPower r hr hT w.num w.den _ w.hasDenominatorPower r₂ hr₂ hT₂
 
 /-- **The functor `p ↦ A⟨p.num / p.den⟩`** from the refinement category into
 `CompleteSeparatedTopCommRingCat`, with the restriction morphisms as its action on arrows.
-Functoriality is `restrictionHom_refl` and `restrictionHom_trans`.
+Functoriality is `restrictionHom_refl` and `restrictionHom_comp`.
 
 `@[expose]` is load-bearing, for a narrower reason than exposure usually carries: with the body
 sealed, `presentationFunctor_map` below does not typecheck *as a statement*. Its two sides live
-in `(presentationFunctor P).obj p ⟶ (presentationFunctor P).obj q` and in `p.obj ⟶ q.obj`, and
-only unfolding the functor identifies those types. `presentationFunctor_obj` is statable either
+in `(presentationFunctor P).obj p ⟶ (presentationFunctor P).obj q` and in
+`p.completionLocObj ⟶ q.completionLocObj`, and only unfolding the functor identifies those
+types. `presentationFunctor_obj` is statable either
 way; it is the `map` equation, and the definitional reindexing a limit over this category
 needs, that the exposure provides. -/
 @[expose]
 noncomputable def presentationFunctor (P : PairOfDefinition A) :
     Presentation P ⥤ CompleteSeparatedTopCommRingCat.{v} where
-  obj p := p.obj
+  obj p := p.completionLocObj
   map {_ _} h := Presentation.restrictionHom h.le
   map_id p := Presentation.restrictionHom_refl p
-  map_comp {_ _ _} f g := (Presentation.restrictionHom_trans f.le g.le).symm
+  map_comp {_ _ _} f g := (Presentation.restrictionHom_comp f.le g.le).symm
 
 /-- The functor takes a presentation to its own object. -/
 @[simp]
 theorem presentationFunctor_obj (P : PairOfDefinition A) (p : Presentation P) :
-    (presentationFunctor P).obj p = p.obj := rfl
+    (presentationFunctor P).obj p = p.completionLocObj := rfl
 
 /-- The functor takes a refinement to its restriction morphism. -/
 @[simp]

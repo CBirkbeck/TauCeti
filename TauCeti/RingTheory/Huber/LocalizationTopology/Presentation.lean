@@ -59,8 +59,20 @@ becomes a unit in `A⟨T/s⟩` and each `t'/s'` power-bounded there, which is wh
 property is applied to produce the comparison maps this file consumes. Until that is available
 the isomorphism is stated from the hypotheses rather than from equality of subsets.
 
+## Provenance
+
+The bundle-and-refinement section is adapted from AINTLIB (see References): the idea of indexing
+the structure presheaf by presentation data rather than by rational subsets, and the refinement
+relation between presentations, are `StructurePresheafLimit.lean`'s. The bundling differs
+deliberately — AINTLIB threads `RationalLocData` records through explicit hypotheses, while here
+`Presentation` packs `(num, den, hasDenominatorPower)` so that refinement is a `Preorder` and
+downstream constructions can be functorial. The comparison theory in the rest of this file is
+original to this repository.
+
 ## References
 
+* [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
+  commit `37bbdaeb`, `projects/AdicSpaces/Adic spaces/StructurePresheafLimit.lean`, Apache-2.0.
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic], §8.1–8.2.
 -/
 
@@ -99,12 +111,12 @@ def Presentation.RefinedBy (p q : Presentation P) : Prop :=
   ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num
 
 /-- The witness facts for the trivial refinement, with cofactor `1`. -/
-theorem Presentation.refinedBy_one (p : Presentation P) :
+theorem Presentation.refinedBy_witness_one (p : Presentation P) :
     p.den = p.den * 1 ∧ ∀ t ∈ p.num, t * 1 ∈ p.num :=
   ⟨(mul_one _).symm, fun t ht ↦ by rwa [mul_one]⟩
 
 /-- The witness facts for a composite refinement: the cofactors multiply. -/
-theorem Presentation.refinedBy_mul {p q w : Presentation P} {r r₂ : A}
+theorem Presentation.refinedBy_witness_mul {p q w : Presentation P} {r r₂ : A}
     (hr : q.den = p.den * r) (hT : ∀ t ∈ p.num, t * r ∈ q.num)
     (hr₂ : w.den = q.den * r₂) (hT₂ : ∀ t ∈ q.num, t * r₂ ∈ w.num) :
     w.den = p.den * (r * r₂) ∧ ∀ t ∈ p.num, t * (r * r₂) ∈ w.num :=
@@ -113,15 +125,15 @@ theorem Presentation.refinedBy_mul {p q w : Presentation P} {r r₂ : A}
 
 /-- Every presentation refines itself, with cofactor `1`. -/
 theorem Presentation.refinedBy_self (p : Presentation P) : p.RefinedBy p :=
-  ⟨1, p.refinedBy_one.1, p.refinedBy_one.2⟩
+  ⟨1, p.refinedBy_witness_one.1, p.refinedBy_witness_one.2⟩
 
 /-- Refinements compose: the cofactors multiply. -/
 theorem Presentation.RefinedBy.trans {p q w : Presentation P} (hpq : p.RefinedBy q)
     (hqw : q.RefinedBy w) : p.RefinedBy w := by
   obtain ⟨r, hr, hT⟩ := hpq
   obtain ⟨r₂, hr₂, hT₂⟩ := hqw
-  exact ⟨r * r₂, (Presentation.refinedBy_mul hr hT hr₂ hT₂).1,
-    (Presentation.refinedBy_mul hr hT hr₂ hT₂).2⟩
+  exact ⟨r * r₂, (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).1,
+    (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).2⟩
 
 /-- Refinement is a preorder, by `Presentation.refinedBy_self` and
 `Presentation.RefinedBy.trans`. -/
@@ -130,18 +142,8 @@ instance : Preorder (Presentation P) where
   le_refl := Presentation.refinedBy_self
   le_trans _ _ _ := Presentation.RefinedBy.trans
 
-/-- The order relation of the `Preorder` instance is `RefinedBy`. For the route from `p ≤ q`
-straight to a cofactor, prefer the one-step `Presentation.le_iff`. -/
-theorem Presentation.le_def {p q : Presentation P} : p ≤ q ↔ p.RefinedBy q := Iff.rfl
-
-/-- **The refinement relation, unfolded.** The body of `RefinedBy` is not exported, so this is
-how a consumer produces or consumes a `RefinedBy`. Starting from `p ≤ q`, use
-`Presentation.le_iff` instead of chaining this with `Presentation.le_def`. -/
-theorem Presentation.refinedBy_iff {p q : Presentation P} :
-    p.RefinedBy q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
-
-/-- **The refinement preorder, unfolded in one step.** `Presentation.le_def` composed with
-`Presentation.refinedBy_iff`, as a single introduction/elimination lemma for `≤`: this is the
+/-- **The refinement preorder, unfolded in one step**: the single introduction/elimination
+lemma for `≤`. The body of `RefinedBy` is not exported, so this is the
 route from `p ≤ q` to a cofactor, and the two-hop chain should not be used. -/
 theorem Presentation.le_iff {p q : Presentation P} :
     p ≤ q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
