@@ -56,6 +56,37 @@ variable {k : Type u} {H : Type v} {M : Type w} {n : ℕ}
 variable [CommRing k] [AddCommMonoid H] [Module k H] [Coalgebra k H]
 variable [AddCommGroup M] [Module k M] [Comodule k H M]
 
+/-- **The coaction condition at a single index pins down that column of the coefficient matrix
+on and below the diagonal.** If the coaction of `b j` reduces, modulo the span of the basis
+vectors preceding `j`, to `b j ⊗ₜ 1`, then `coefficientMatrix b i j` is `1` at `i = j` and `0`
+at every row `i` below it.
+
+Only the coaction condition at `j` is used, not the condition at every index. -/
+private theorem coefficientMatrix_apply_of_le [One H] (b : Basis (Fin n) k M) {i j : Fin n}
+    (hj : TensorProduct.map (b.flag j.castSucc).mkQ (LinearMap.id : H →ₗ[k] H)
+        (coact (C := H) (b j)) = Submodule.Quotient.mk (b j) ⊗ₜ[k] (1 : H))
+    (hji : j ≤ i) :
+    coefficientMatrix (C := H) b i j = if i = j then 1 else 0 := by
+  -- Pair the coaction condition with the `i`-th coordinate, which kills the preceding flag and
+  -- so descends to the quotient; what survives is the matrix coefficient at `(i, j)`.
+  let q := (b.flag j.castSucc).mkQ
+  let phi : (M ⧸ b.flag j.castSucc) →ₗ[k] k :=
+    (b.flag j.castSucc).liftQ (b.coord i)
+      (b.flag_le_ker_coord (Fin.castSucc_le_castSucc_iff.mpr hji))
+  have heq := congrArg
+    (fun z ↦ TensorProduct.lid k H
+      (TensorProduct.map phi (LinearMap.id : H →ₗ[k] H) z)) hj
+  rw [TensorProduct.map_map] at heq
+  have hcomp : phi.comp q = b.coord i :=
+    (b.flag j.castSucc).liftQ_mkQ (b.coord i) _
+  rw [hcomp, LinearMap.id_comp] at heq
+  rw [← matrixCoefficient_def] at heq
+  rw [coefficientMatrix_apply]
+  by_cases hij : i = j
+  · subst i
+    simpa [phi, q, Submodule.liftQ_apply, Basis.coord_apply] using heq
+  · simpa [phi, q, Submodule.liftQ_apply, Basis.coord_apply, hij] using heq
+
 /-- A coefficient matrix is upper unitriangular exactly when each basis vector is fixed by the
 coaction modulo the span of the preceding basis vectors. -/
 theorem coefficientMatrix_isUpperUnitriangular_iff [One H] (b : Basis (Fin n) k M) :
@@ -80,32 +111,13 @@ theorem coefficientMatrix_isUpperUnitriangular_iff [One H] (b : Basis (Fin n) k 
       · simp [h.isUpperTriangular hij]
     · simp
   · intro h
-    have hcoeff (i j : Fin n) (hji : j ≤ i) :
-        coefficientMatrix (C := H) b i j = if i = j then 1 else 0 := by
-      let q := (b.flag j.castSucc).mkQ
-      let phi : (M ⧸ b.flag j.castSucc) →ₗ[k] k :=
-        (b.flag j.castSucc).liftQ (b.coord i)
-          (b.flag_le_ker_coord (Fin.castSucc_le_castSucc_iff.mpr hji))
-      have heq := congrArg
-        (fun z ↦ TensorProduct.lid k H
-          (TensorProduct.map phi (LinearMap.id : H →ₗ[k] H) z)) (h j)
-      rw [TensorProduct.map_map] at heq
-      have hcomp : phi.comp q = b.coord i := by
-        exact (b.flag j.castSucc).liftQ_mkQ (b.coord i) _
-      rw [hcomp, LinearMap.id_comp] at heq
-      rw [← matrixCoefficient_def] at heq
-      rw [coefficientMatrix_apply]
-      by_cases hij : i = j
-      · subst i
-        simpa [phi, q, Submodule.liftQ_apply, Basis.coord_apply] using heq
-      · simpa [phi, q, Submodule.liftQ_apply, Basis.coord_apply, hij] using heq
     rw [Matrix.isUpperUnitriangular_def]
     refine ⟨?_, ?_⟩
     · intro i j hji
       have hji' : j < i := by simpa only [id_eq] using hji
-      simpa [hji'.ne'] using hcoeff i j hji'.le
+      simpa [hji'.ne'] using coefficientMatrix_apply_of_le b (h j) hji'.le
     · intro i
-      rw [hcoeff i i le_rfl]
+      rw [coefficientMatrix_apply_of_le b (h i) le_rfl]
       simp
 
 /-- The coaction of a basis vector in a stable initial segment belongs to the tensor product of
