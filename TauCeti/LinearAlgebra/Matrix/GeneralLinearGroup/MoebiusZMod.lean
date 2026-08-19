@@ -8,6 +8,7 @@ module
 public import Mathlib.Algebra.Field.ZMod
 public import Mathlib.Logic.Equiv.Option
 public import Mathlib.Topology.Compactification.OnePoint.ProjectiveLine
+public import TauCeti.Data.ZMod.DvdAddMul
 public import TauCeti.Data.ZMod.FinEquiv
 public import TauCeti.Topology.Compactification.OnePoint.ProjectiveLine
 
@@ -55,6 +56,9 @@ notion.
 The pole criterion itself is `OnePoint.smul_some_eq_infty_iff`, which this file adds to Mathlib's
 action API in `TauCeti/Topology/Compactification/OnePoint/ProjectiveLine.lean`; the two value
 lemmas come straight from Mathlib's `smul_some_eq_ite` / `smul_infty_eq_ite`.
+* `TauCeti.existsUnique_denominator_eq_zero`: exactly one index is a pole — the Möbius
+  denominator vanishes at exactly one `b : Fin p`. This is what makes "the" pole index well
+  defined, and it is the hypothesis separating the two evaluation lemmas below.
 * `TauCeti.natCast_moebiusFin_of_ne_zero` and `TauCeti.natCast_moebiusFin_of_eq_zero`: the two
   evaluation branches, read in `ZMod p` through the natural cast of the index — the affine
   quotient where the denominator does not vanish, and the image of `∞` at the single index where
@@ -237,5 +241,29 @@ lemma natCast_moebiusFin_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
   conv_lhs => rw [← ZMod.finEquiv_apply]
   rw [moebiusFin_apply, RingEquiv.apply_symm_apply, ZMod.finEquiv_apply]
   exact Option.some_inj.mp (hnone.trans hval)
+
+/-- **Exactly one index is a pole of the reindexing.** The Möbius denominator
+`M 1 0 * b + M 0 0` vanishes at exactly one `b : Fin p` when `M 1 0` is invertible mod `p`.
+
+This is the hypothesis dividing `natCast_moebiusFin_of_ne_zero` from
+`natCast_moebiusFin_of_eq_zero`, so together the three say that `moebiusFin` is the affine Möbius
+value everywhere except at one index, where it is the image of `∞`. It is
+`TauCeti.existsUnique_dvd_add_mul` read in `ZMod p`: over a prime modulus a nonzero leading
+coefficient is a unit, and `ZMod.intCast_zmod_eq_zero_iff_dvd` exchanges the vanishing for the
+integer divisibility that lemma states. -/
+theorem existsUnique_denominator_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
+    (h10 : ((M 1 0 : ℤ) : ZMod p) ≠ 0) :
+    ∃! b : Fin p,
+      ((M 1 0 : ℤ) : ZMod p) * ((b : ℕ) : ZMod p) + ((M 0 0 : ℤ) : ZMod p) = 0 := by
+  have hc : IsUnit (((M 1 0 : ℤ) : ZMod p)) := isUnit_iff_ne_zero.mpr h10
+  obtain ⟨b, hb, hbu⟩ := existsUnique_dvd_add_mul (n := p) (M 0 0) (M 1 0) hc
+  refine ⟨b, ?_, fun y hy ↦ hbu y ?_⟩
+  · have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ p).mpr hb
+    push_cast at hz
+    linear_combination hz
+  · dsimp only
+    rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
+    push_cast
+    linear_combination hy
 
 end TauCeti
