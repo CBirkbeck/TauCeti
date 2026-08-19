@@ -92,14 +92,23 @@ invar_normEDS ← net_normEDS`, written in the source's names — is complete: `
 (`Invariant/NormEDS.lean`), and `redInvar_normEDS` is
 `reducedInvarNum_eq_reducedInvarDenom_mul` below.
 
-Everything below is independent of all of that: nothing carries an ellipticity hypothesis, and the
-source discharges the ellipticity variables over exactly this block.
+Everything below **except the final identity** is independent of all of that: no other
+declaration carries an ellipticity hypothesis, and the source discharges the ellipticity
+variables over exactly this block. `reducedInvarNum_eq_reducedInvarDenom_mul` is the exception —
+its proof consumes the two cancellations of this file together with
+`invarNum_normEDS_one_mul_eq_invarDenom_mul` from the chain above.
 
 ## Provenance
 
 Ported from D. K. Angdinata's `LutzNagell/EllipticDivisibilitySequence.lean` in the AINTLIB
 **NagellLutz** project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), at the revision
-`TauCetiRoadmap` pins for that project, `dev/modular-curves @ 9fec8eba7652`. Declarations
+`TauCetiRoadmap` pins for that project, `dev/modular-curves @ 9fec8eba7652`. The reduced
+invariant identity was ported later, read at `main @ 1c1c74664e40071c2c2165bc55ca2616a67ccd6b`:
+`reducedInvarNum_eq_reducedInvarDenom_mul` adapts that file's `redInvar_normEDS` (`:1514`) and
+its private `_of_mem` form adapts `redInvar_normEDS_of_mem_nonZeroDivisors` (`:1506`), respelt
+`reducedInvar*` like the rest of this file; both are byte-identical at the two revisions, and
+the earlier pin is kept for the block below so each declaration cites the revision it was read
+at. Declarations
 `invarNum_normEDS`, `redInvarNum`, `compl₂EDS_eq_redInvarNum_sub`,
 `invarNum_eq_redInvarNum_mul` and `map_redInvarNum` for the numerator, and `redInvarDenom`,
 `redInvarDenom_zero`, `redInvarDenom_one`, `redInvarDenom_two`, `map_redInvarDenom` and
@@ -401,7 +410,11 @@ private theorem reducedInvarNum_eq_reducedInvarDenom_mul_of_mem (hb : b ∈ R⁰
 
 /-- **The reduced invariant identity**: for a normalised EDS the reduced numerator is the
 reduced denominator times `d + b ^ 4`, for every `m` and with no hypothesis on `b`, `c`, `d` —
-the source's `redInvar_normEDS`. -/
+the source's `redInvar_normEDS`. `@[simp]` as the canonical elimination rule for
+`reducedInvarNum`: the rewrite removes the `reducedInvarNum` head, chaining after
+`invarNum_normEDS_one_eq_reducedInvarNum_mul` rather than racing it, and
+`reducedInvarNum_def` is deliberately outside the simp set. -/
+@[simp]
 theorem reducedInvarNum_eq_reducedInvarDenom_mul :
     reducedInvarNum b c d m = reducedInvarDenom b c d m * (d + b ^ 4) := by
   -- Prove it where `b` and `c` are nonzerodivisors — the universal parameters — and specialise.
