@@ -39,6 +39,8 @@ subgroup quotiented out.
   corollary and
   `TauCeti.card_stabilizer_eq_card_subgroupOf_mul_card_stabilizer_map` its relative form, for a
   subgroup mapped into the quotient.
+* `TauCeti.card_stabilizer_subgroupOf`: the degenerate case of that surjection, where the map is
+  the isomorphism `𝒢.subgroupOf ℋ ≃* 𝒢` and the order is unchanged.
 -/
 
 public section
@@ -151,6 +153,23 @@ theorem card_stabilizer_eq_card_subgroupOf_mul_card_stabilizer_map (N : Subgroup
   rw [card_stabilizer_eq_card_ker_mul_card_stabilizer ((QuotientGroup.mk' N).subgroupMap Γ)
     (MonoidHom.subgroupMap_surjective _ _) a hcompat, Subgroup.ker_subgroupMap,
     QuotientGroup.ker_mk']
+
+/-- **Stabiliser orders agree across `subgroupOf`.** For `𝒢 ≤ ℋ`, a point has the same stabiliser
+order in `𝒢.subgroupOf ℋ` as in `𝒢` itself: the two groups act through the same elements of `G`,
+and `Subgroup.subgroupOfEquivOfLe` matches them.
+
+This is the degenerate case of `card_stabilizer_eq_card_ker_mul_card_stabilizer` — the comparison
+map is an isomorphism, so the kernel factor is `1` — and it is the transport wanted whenever an
+orbit count produced inside `ℋ` has to be read against the `𝒢`-orbit it weights, since
+`cardStabilizerOnOrbit` reads the order in `𝒢`. Mathlib's `stabilizerEquivStabilizer` transports
+between two *points* of one group, not between two groups at one point, so it does not apply. -/
+theorem card_stabilizer_subgroupOf {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ) (a : α) :
+    Nat.card (MulAction.stabilizer (↥(𝒢.subgroupOf ℋ)) a) =
+      Nat.card (MulAction.stabilizer 𝒢 a) := by
+  rw [card_stabilizer_eq_card_ker_mul_card_stabilizer (Subgroup.subgroupOfEquivOfLe hle).toMonoidHom
+      (Subgroup.subgroupOfEquivOfLe hle).surjective a fun _ ↦ rfl,
+    MonoidHom.ker_eq_bot _ (Subgroup.subgroupOfEquivOfLe hle).injective]
+  simp
 
 end TauCeti
 
