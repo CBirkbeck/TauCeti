@@ -7,7 +7,6 @@ module
 
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.ComplAux
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Complement
-public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant.Basic
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Invariant.NormEDS
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.Six
 
