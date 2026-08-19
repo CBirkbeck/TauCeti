@@ -22,12 +22,17 @@ words "leaving the passage from those facts to invertibility of `s` and power-bo
 in the coordinate ring as a separate, genuinely algebraic step" (Wedhorn §8.2). Until that exists,
 nothing here can be instantiated at two presentations of one subset.
 
-Everything here is uniqueness, in the sense that no comparison map is constructed: given maps in
-both directions that commute with the structure maps, they are mutually inverse, and given three
-presentations the comparison through the middle one is the direct comparison. That is exactly
-what `TauCeti.Huber.PairOfDefinition.eq_id_of_comp_toCompletionLoc_eq_self` and
-`…eq_comp_of_comp_toCompletionLoc_eq` say about maps out of `A⟨T/s⟩`, so each proof here is a
-single application of one of them.
+The file has two halves. The first bundles a presentation as `Presentation` and orders those
+bundles by refinement — the `Preorder` and `IsDirected` instances, `Presentation.prod` as the
+common refinement, and `le_iff` as the route from `p ≤ q` to a cofactor.
+
+The second is the comparison theory, and there **everything is uniqueness**: no comparison map is
+constructed. Given maps in both directions that commute with the structure maps, they are mutually
+inverse, and given three presentations the comparison through the middle one is the direct
+comparison. That is exactly what
+`TauCeti.Huber.PairOfDefinition.eq_id_of_comp_toCompletionLoc_eq_self` and
+`…eq_comp_of_comp_toCompletionLoc_eq` say about maps out of `A⟨T/s⟩`, so each proof in that half
+is a single application of one of them.
 
 ## Main definitions
 
@@ -90,8 +95,10 @@ namespace PairOfDefinition
 The comparison theory below works with two presentations given separately; consumers indexing a
 construction by *all* presentations — the intended structure presheaf — need them bundled and
 ordered. Refinement here is a cofactor condition on the presentation data. It is sufficient for
-containment of the rational subsets, but the converse passage is the same missing algebraic step
-described above, so no equivalence with `R(q.num/q.den) ⊆ R(p.num/p.den)` is claimed. -/
+containment of the rational subsets. The converse is not claimed, and the gap is *not* the
+comparison-map step described above: `exists_refinement_of_subset` already produces numerator and
+denominator data from a containment. What it does not supply is the standing `HasDenominatorPower`
+hypothesis for the re-presented pair, which is what `Presentation` requires. -/
 
 variable {P : PairOfDefinition A}
 
@@ -144,8 +151,8 @@ instance : Preorder (Presentation P) where
   le_trans _ _ _ := Presentation.RefinedBy.trans
 
 /-- **The refinement preorder, unfolded in one step**: the single introduction/elimination
-lemma for `≤`. The body of `RefinedBy` is not exported, so this is the
-route from `p ≤ q` to a cofactor, and the two-hop chain should not be used. -/
+lemma for `≤`. The body of `RefinedBy` is not exported, so this is the route from `p ≤ q` to a
+cofactor. -/
 theorem Presentation.le_iff {p q : Presentation P} :
     p ≤ q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
 
@@ -153,8 +160,11 @@ open scoped Classical Pointwise in
 /-- **The product presentation**, refining both factors: the numerators are the pairwise
 products of the factors' numerator sets augmented by their own denominators, and the denominator
 is the product. The augmentation matches `rationalSubset_inter`'s presentation of an
-intersection, which is what keeps the numerator span open when both factors' spans are
-(`isOpen_span_insert_mul_insert`) — the property the structure presheaf's index needs. -/
+intersection.
+
+`Presentation` carries no openness or admissibility field, so nothing here tracks or preserves
+openness of the numerator ideal; a consumer that needs it — the structure presheaf's index — must
+carry and re-establish it itself. -/
 noncomputable def Presentation.prod (p q : Presentation P) : Presentation P where
   num := insert p.den p.num * insert q.den q.num
   den := p.den * q.den
