@@ -180,4 +180,3 @@ complement this way. -/
 theorem normEDS_mul_complEDS_div (k n : ℤ) (hn : k ∣ n) :
     normEDS b c d k * complEDS b c d k (n / k) = normEDS b c d n := by
   rw [normEDS_mul_complEDS, Int.ediv_mul_cancel hn]
-
