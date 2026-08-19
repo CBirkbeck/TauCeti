@@ -79,6 +79,14 @@ This opens the "points come along" milestone of Layer 1 of
 
 ## Provenance
 
+⚠ *mathlib-track*. `TauCetiRoadmap/EllipticCurves/README.md:1092` lists the `IntermediateRing`,
+and `pushClass` by ideal extension and relative norm (`ClassGroup.extendedRelNormHom`), among the
+components of D. Angdinata's shared isogeny development, on the way to `toPointHom`; the two
+embeddings added here are what that relative-norm step requires of the intermediate ring, since
+ideal extension along a non-injective map loses the information the class-group route needs. The
+siblings `Finite.lean`, `Dedekind.lean` and `IntegrallyClosed.lean` carry the same flag for the
+same object.
+
 The choice of object is taken from the AINTLIB project (`github.com/CBirkbeck/AINTLIB`, at
 revision `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache 2.0 per the source file's header, by
 Chris Birkbeck): `projects/HasseWeil/HasseWeil/Curves/NormConormIntegralClosure.lean`, which
