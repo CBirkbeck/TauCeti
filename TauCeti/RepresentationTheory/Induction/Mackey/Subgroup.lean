@@ -77,10 +77,12 @@ roadmap-specific subgroup the induction and restriction of that layer run along.
   arbitrary `G`-set, at a translate `s • p`.
 * `TauCeti.mackeySubgroup_inv_swap`: swapping the two subgroups and inverting the representative
   conjugates the Mackey subgroup.
+* `TauCeti.card_stabilizer_subgroupOf`: for `𝒢 ≤ ℋ`, stabiliser orders in `𝒢.subgroupOf ℋ` and
+  in `𝒢` agree — the transport a consumer of the identity below needs.
 * `TauCeti.card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_inv_smul`: the multiplicity
-  identity behind regrouping a sum over `ℋ ⧸ 𝒢.subgroupOf ℋ` into a sum over `𝒢`-orbits — a
-  fiber of the index map has as many elements as `|stabilizer ℋ p|` divided by the order of the
-  stabilizer of the translated point.
+  identity behind regrouping a sum over `ℋ ⧸ 𝒢.subgroupOf ℋ` into a sum over `𝒢`-orbits — the
+  fiber size times `|stabilizer (𝒢.subgroupOf ℋ) (h⁻¹ • p)|` is `|stabilizer ℋ p|`. Stated
+  multiplicatively, so it holds also when the stabilisers are infinite (`Nat.card = 0`).
 
 ## References
 
@@ -414,6 +416,24 @@ theorem card_stabilizer_coset_eq_card_stabilizer_inv_smul (𝒢 ℋ : Subgroup G
     mackeySubgroup_inv_swap,
     Nat.card_congr (Subgroup.equivSMul (MulAut.conj (h : ℋ)⁻¹)
       (mackeySubgroup (h : ℋ) (𝒢.subgroupOf ℋ) (stabilizer ℋ p))).toEquiv]
+
+/-- **Stabiliser orders agree across `subgroupOf`.** For `𝒢 ≤ ℋ`, a point has the same
+stabiliser order in `𝒢.subgroupOf ℋ` as in `𝒢` itself: `Subgroup.subgroupOfEquivOfLe` matches the
+two groups, and both act through the same underlying element of `G`, so it restricts to the
+stabilisers.
+
+This is the transport a consumer of `card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_inv_smul`
+needs, since that identity's weight is stated in `𝒢.subgroupOf ℋ` while the fibres it counts are
+`𝒢`-orbits — `TauCeti.cardStabilizerOnOrbit` reads the order in `𝒢`. Mathlib's
+`stabilizerEquivStabilizer` transports between two *points* of one group, not between two groups
+at one point, so this is not available off the shelf. -/
+theorem card_stabilizer_subgroupOf {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ) (a : α) :
+    Nat.card (stabilizer (↥(𝒢.subgroupOf ℋ)) a) = Nat.card (stabilizer 𝒢 a) :=
+  Nat.card_congr
+    { toFun := fun x ↦ ⟨Subgroup.subgroupOfEquivOfLe hle x.1, x.2⟩
+      invFun := fun x ↦ ⟨(Subgroup.subgroupOfEquivOfLe hle).symm x.1, x.2⟩
+      left_inv := fun x ↦ by ext; simp
+      right_inv := fun x ↦ by ext; simp }
 
 /-- **The multiplicity identity for the coset-to-orbit index map.** The number of coset classes
 translating `p` into the same orbit as `h` does, times the order of the stabiliser of `h⁻¹ • p`,
