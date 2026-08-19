@@ -50,18 +50,6 @@ Everything in this file is a statement about subgroups of `G`, with no coefficie
 representations; it is placed with the induction files because `mackeySubgroup` is the
 roadmap-specific subgroup the induction and restriction of that layer run along.
 
-The last two statements of the final section are the one exception in motivation rather than in
-vocabulary — the section opens with the core Mackey material
-`stabilizer_smul_eq_mackeySubgroup_subgroupOf`. They are the transport of, and the composite with,
-the fibre count of the coset-to-orbit index map
-of `TauCeti.GroupTheory.DoubleCoset.Orbits`, which is bookkeeping wanted by Layer 1 of the
-ModularForms roadmap rather than by the induction layers; they are here, and not upstream with
-that index map, because each is proved *from* the two stabilizer-as-Mackey-subgroup descriptions
-above and so cannot be stated before them. The parts with no Mackey content at all —
-the orbit-stabiliser fibre count itself and the `subgroupOf` transport of stabiliser orders — do
-live upstream, as `TauCeti.card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_coset` and
-`TauCeti.card_stabilizer_subgroupOf`.
-
 ## Main definitions
 
 * `TauCeti.mackeySubgroup`: the subgroup `K ⊓ sHs⁻¹`.
@@ -88,17 +76,6 @@ live upstream, as `TauCeti.card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_
   `|KsH| · |K ⊓ sHs⁻¹| = |K| · |H|`.
 * `TauCeti.stabilizer_smul_eq_mackeySubgroup_subgroupOf`: the same stabilizer description for an
   arbitrary `G`-set, at a translate `s • p`.
-* `TauCeti.mackeySubgroup_inv_swap`: swapping the two subgroups and inverting the representative
-  conjugates the Mackey subgroup, with `TauCeti.card_mackeySubgroup_inv_swap` the resulting
-  equality of orders `|K ⊓ sHs⁻¹| = |H ⊓ s⁻¹Ks|`.
-* `TauCeti.card_stabilizer_coset_eq_card_stabilizer_inv_smul`: the class of `g` in `G ⧸ H` has, in
-  `stabilizer G p`, a stabiliser of the same order as `g⁻¹ • p` has in `H`.
-* `TauCeti.card_fiber_orbitOfCosetTranslate_mul_cardStabilizerOnOrbit`: the multiplicity identity
-  behind regrouping a sum over `ℋ ⧸ 𝒢.subgroupOf ℋ` into a sum over `𝒢`-orbits — the fibre size
-  times the stabiliser order on the orbit is `|stabilizer ℋ p|`, with
-  `TauCeti.card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_inv_smul` its form at a chosen
-  representative. Stated multiplicatively, so it holds also when the stabilisers are infinite
-  (`Nat.card = 0`).
 
 ## References
 
@@ -260,24 +237,6 @@ theorem mackeySubgroup_conj {k h : G} (hk : k ∈ K) (hh : h ∈ H) :
     Subgroup.conj_smul_eq_self_of_mem hk, conj_mul_smul, conj_mul_smul,
     Subgroup.conj_smul_eq_self_of_mem hh]
 
-/-- Swapping the two subgroups of a Mackey subgroup and inverting the representative conjugates
-it: `K ⊓ s⁻¹Hs = s⁻¹ (H ⊓ sKs⁻¹) s`. -/
-theorem mackeySubgroup_inv_swap (H K : Subgroup G) (s : G) :
-    mackeySubgroup s⁻¹ H K = MulAut.conj s⁻¹ • mackeySubgroup s K H := by
-  rw [mackeySubgroup_def, mackeySubgroup_def, Subgroup.smul_inf, map_inv, inv_smul_smul,
-    inf_comm]
-
-/-- **The classical symmetry of the double-coset count**: `|K ⊓ sHs⁻¹| = |H ⊓ s⁻¹Ks|`. The
-cardinality corollary of `mackeySubgroup_inv_swap`, conjugation being an isomorphism.
-
-This is where the `MulAut.conj`/`equivSMul` step belongs: it is a statement about subgroups, with
-no action and no point in sight. The stabiliser-order comparison in `section Translate` below is
-its instance at `H := H`, `K := stabilizer G p`. -/
-theorem card_mackeySubgroup_inv_swap (H K : Subgroup G) (s : G) :
-    Nat.card (mackeySubgroup s H K) = Nat.card (mackeySubgroup s⁻¹ K H) := by
-  rw [mackeySubgroup_inv_swap, Nat.card_congr
-    (Subgroup.equivSMul (MulAut.conj s⁻¹) (mackeySubgroup s H K)).toEquiv]
-
 /-- The Mackey subgroups of two representatives of one double coset are isomorphic, by
 conjugation.  This is the invariance that makes the *index* of the Mackey subgroup, and hence the
 dimension of the Mackey summand, a function of the double coset alone. -/
@@ -411,70 +370,6 @@ theorem stabilizer_smul_eq_mackeySubgroup_subgroupOf (s : G) (Γ : Subgroup G) (
   rw [Subgroup.mem_subgroupOf, mem_mackeySubgroup_iff, mem_stabilizer_iff, Subgroup.smul_def,
     mem_stabilizer_iff, mul_smul, mul_smul]
   exact ⟨fun hg => ⟨g.2, inv_smul_eq_iff.mpr hg⟩, fun hg => inv_smul_eq_iff.mp hg.2⟩
-
-/-- **The stabiliser of a coset and the stabiliser of the translated point have the same order.**
-The class of `g` in `G ⧸ H` is stabilised inside `stabilizer G p` by exactly as many elements as
-`g⁻¹ • p` is stabilised by inside `H`: both subgroups are Mackey subgroups of the pair
-`(H, stabilizer G p)`, so this is `card_mackeySubgroup_inv_swap` read through the two stabiliser
-descriptions. All the conjugation content sits in that subgroup-level lemma; what is added here is
-only the identification of the two stabilisers as Mackey subgroups.
-
-Stated at the level of a single group acting on `α`; the two-group form used below is the instance
-`G := ↥ℋ`, `H := 𝒢.subgroupOf ℋ`, `g := ↑h`. -/
--- Not `@[simp]`, tested: this file's own `@[simp] stabilizer_eq_mackeySubgroup_subgroupOf`
--- rewrites the left-hand side to
--- `Nat.card ((mackeySubgroup g H (stabilizer G p)).subgroupOf (stabilizer G p))`, so it is not in
--- simp-normal form and `simpNF` rejects the attribute.
-theorem card_stabilizer_coset_eq_card_stabilizer_inv_smul (H : Subgroup G) (p : α) (g : G) :
-    Nat.card (stabilizer (↥(stabilizer G p)) ((g : G ⧸ H))) =
-      Nat.card (stabilizer (↥H) (g⁻¹ • p)) := by
-  rw [stabilizer_eq_mackeySubgroup_subgroupOf, stabilizer_smul_eq_mackeySubgroup_subgroupOf,
-    Nat.card_congr (Subgroup.subgroupOfEquivOfLe mackeySubgroup_le_right).toEquiv,
-    Nat.card_congr (Subgroup.subgroupOfEquivOfLe mackeySubgroup_le_right).toEquiv,
-    card_mackeySubgroup_inv_swap]
-
-/-- **The multiplicity identity for the coset-to-orbit index map.** The number of coset classes
-translating `p` into the orbit `orbitOfCosetTranslate p q`, times the stabiliser order **on that
-orbit**, is the order of the stabiliser of `p` **inside `ℋ`**.
-
-The weight is `TauCeti.cardStabilizerOnOrbit`, a function of the orbit rather than of a
-representative, because that is the shape the consumer needs: a sum over
-`MulAction.orbitRel.Quotient 𝒢 α` weights each orbit once, and the roadmap sum `Σ_P (1/e_P)`
-reads `e_P` off the orbit. Stating it at a representative would leave every use site to redo
-`QuotientGroup.induction_on` and rewrite the order into orbit form by hand.
-
-Composition of `TauCeti.card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_coset` with
-`card_stabilizer_coset_eq_card_stabilizer_inv_smul`, the weight then carried from
-`𝒢.subgroupOf ℋ` down to `𝒢` by `TauCeti.card_stabilizer_subgroupOf`. -/
-theorem card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_inv_smul {𝒢 ℋ : Subgroup G}
-    (hle : 𝒢 ≤ ℋ) (p : α) (h : ℋ) :
-    Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
-        orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} *
-      Nat.card (stabilizer 𝒢 ((h : ℋ)⁻¹ • p)) = Nat.card (stabilizer ℋ p) := by
-  rw [← card_stabilizer_subgroupOf hle, ← card_stabilizer_coset_eq_card_stabilizer_inv_smul,
-    card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_coset hle]
-
-/-- **The orbit-indexed form**, which is the one a consumer wants: the weight is
-`TauCeti.cardStabilizerOnOrbit`, a function of the orbit rather than of a representative.
-
-A sum over `MulAction.orbitRel.Quotient 𝒢 α` weights each orbit once, and the roadmap sum
-`Σ_P (1/e_P)` reads `e_P` off the orbit, so a use site holding a class `q` can apply this directly
-instead of doing `QuotientGroup.induction_on` and rewriting the order into orbit form by hand. -/
-theorem card_fiber_orbitOfCosetTranslate_mul_cardStabilizerOnOrbit {𝒢 ℋ : Subgroup G}
-    (hle : 𝒢 ≤ ℋ) (p : α) (q : ℋ ⧸ 𝒢.subgroupOf ℋ) :
-    Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
-        orbitOfCosetTranslate (𝒢 := 𝒢) p q} *
-      cardStabilizerOnOrbit (orbitOfCosetTranslate (𝒢 := 𝒢) p q) = Nat.card (stabilizer ℋ p) := by
-  induction q using QuotientGroup.induction_on with
-  | H h =>
-    -- the weight at the class of `h` is the order in `𝒢` at `h⁻¹ • p`; `simp` rather than `rw`
-    -- because `QuotientGroup.induction_on` supplies the class as `↑h`, which does not
-    -- syntactically match the `⟦h⟧` of `orbitOfCosetTranslate_mk`
-    have hw : cardStabilizerOnOrbit (orbitOfCosetTranslate (𝒢 := 𝒢) p
-        ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))) = Nat.card (stabilizer 𝒢 ((h : ℋ)⁻¹ • p)) := by
-      simp [Subgroup.smul_def]
-    rw [hw]
-    exact card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_inv_smul hle p h
 
 end Translate
 
