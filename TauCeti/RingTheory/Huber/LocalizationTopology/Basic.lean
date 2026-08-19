@@ -509,12 +509,10 @@ comparison map `Aᵤ → A_w` carries `locIdealImage P U u V n` into `locIdealIm
 the same index `n` — passing to a multiple of the denominator costs no depth.
 
 This is the filtration companion of `awayLift_mem_locSubring`, which carries `D` itself. The two
-together are what a comparison of nested presentations needs: the topologies on both sides are
-defined by these filtrations, so continuity of the comparison map is exactly this statement.
-
-The generators of `Jⁿ` are images of `Iⁿ`, which the comparison map sends to the corresponding
-generators on the finer side; the `smul` case is where `awayLift_mem_locSubring` enters, placing
-the scalar in the finer `D` so that `locIdealImage_mul_locSubring_subset` applies. -/
+together are what a comparison of nested presentations needs. Since both topologies have these
+filtrations as a neighbourhood basis of zero, the same-index inclusion **implies** continuity of
+the comparison map; it is strictly stronger than continuity, which would allow the index to
+grow. -/
 theorem awayLift_mem_locIdealImage (P : PairOfDefinition A) (U : Finset A) (u : A)
     (V : Type*) [CommRing V] [Algebra A V] [IsLocalization.Away u V]
     (Tw : Finset A) (w : A) (W : Type*) [CommRing W] [Algebra A W] [IsLocalization.Away w W]
