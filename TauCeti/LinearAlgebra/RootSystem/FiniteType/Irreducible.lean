@@ -233,17 +233,19 @@ variable {K M N ι : Type*} [Field K] [CharZero K] [AddCommGroup M] [Module K M]
   [AddCommGroup N] [Module K N] {P : RootPairing ι K M N} [P.IsCrystallographic]
 
 omit [P.IsCrystallographic] in
-/-- **A reflection-invariant submodule containing no simple root is trivial.** If `q` is invariant
-under every reflection of `P` and misses the root at each element of the base's support, then
-`q = ⊥`. -/
+/-- **A submodule invariant under the simple reflections and containing no simple root is
+trivial.** If `q` is invariant under the reflection at each element of the base's support and
+misses the root there, then `q = ⊥`.
+
+Invariance is asked at the support only, not under every reflection of `P`. -/
 private theorem eq_bot_of_forall_root_not_mem [P.IsRootSystem] {b : P.Base} {q : Submodule K M}
-    (hinv : ∀ i, q ∈ Module.End.invtSubmodule (P.reflection i))
+    (hinv : ∀ i : b.support, q ∈ Module.End.invtSubmodule (P.reflection i))
     (h : ∀ i : b.support, P.root i ∉ q) : q = ⊥ := by
   -- Missing every simple root puts `q` inside all the simple coroot kernels; the coweight basis
   -- then kills every pairing, and perfection of the pairing forces `q` to vanish.
-  have hle : q ≤ ⨅ i : b.support, LinearMap.ker (P.coroot' i) := by
-    refine le_iInf fun i ↦ _root_.RootPairing.invtRootSubmodule.le_ker_coroot' ⟨q, ?_⟩ (h i)
-    exact P.mem_invtRootSubmodule_iff.mpr hinv
+  have hle : q ≤ ⨅ i : b.support, LinearMap.ker (P.coroot' i) :=
+    le_iInf fun i ↦ (Submodule.mem_invtSubmodule_reflection_iff (P.flip.root_coroot_two i)
+      (Submodule.disjoint_span_singleton_of_notMem (h i))).mp (hinv i)
   refine eq_bot_iff.mpr fun x hx => ?_
   apply P.toPerfPair.injective
   apply LinearMap.ext
@@ -291,7 +293,7 @@ theorem isIrreducible_of_connected_diagramGraph_cartanMatrix [P.IsRootSystem] (b
   intro q hinv hq
   have hsimple : ∃ i : b.support, P.root i ∈ q := by
     by_contra! h
-    exact hq (eq_bot_of_forall_root_not_mem hinv h)
+    exact hq (eq_bot_of_forall_root_not_mem (b := b) (fun i ↦ hinv i) h)
   obtain ⟨i, hi⟩ := hsimple
   have propagate {u v : b.support} (hadj : (diagramGraph b.cartanMatrix).Adj u v)
       (hu : P.root u ∈ q) : P.root v ∈ q :=
