@@ -44,8 +44,8 @@ roadmap, and does not yet exist.
 
 * `TauCeti.levelRaise_mem_cuspFormsOld` and `TauCeti.cuspFormsOld_le`: the introduction and
   elimination rules for the old subspace.
-* `TauCeti.levelRaise_mem_cuspFormsOldMultiples`: the introduction rule for the refined old
-  subspace.
+* `TauCeti.levelRaise_mem_cuspFormsOldMultiples` and `TauCeti.cuspFormsOldMultiples_le`: the
+  introduction and elimination rules for the refined old subspace.
 * `TauCeti.cuspFormsOldMultiples_le_cuspFormsOld` and
   `TauCeti.cuspFormsOldMultiples_le_of_dvd`: the refined old subspace sits inside the old
   subspace, and shrinks as the level condition tightens.
@@ -289,6 +289,28 @@ theorem cuspFormsOldMultiples_le_cuspFormsOld (N : ℕ) [NeZero N] (k : ℤ) (m 
   rintro x ⟨f, -, rfl⟩
   have : NeZero d := neZero_of_mul_dvd_left h.1
   simpa using levelRaise_mem_cuspFormsOld h.1 h.2.1 k f
+
+/-- **Elimination rule for the refined old subspace**: a subspace containing every level-raise of
+a newform from a proper divisor level divisible by `m` contains the whole refined old subspace.
+
+This is the companion to `levelRaise_mem_cuspFormsOldMultiples`. It is what downstream proofs use
+rather than the lattice lemmas directly: supplying `V` explicitly determines the ambient module,
+where a bare `iSup_le` against a `Submodule.comap` leaves the `CompleteLattice` instance stuck on
+a metavariable. -/
+theorem cuspFormsOldMultiples_le [NeZero N] {m : ℕ}
+    {V : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)}
+    (hV : ∀ (M d : ℕ) (h : d * M ∣ N), M ≠ N → m ∣ M →
+      ∀ g : CuspForm ((Gamma1 M).map (mapGL ℝ)) k,
+        haveI : NeZero M := ⟨fun hM ↦ NeZero.ne N (by simpa [hM] using h)⟩
+        g ∈ cuspFormsNew M k →
+        haveI : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using h)⟩
+        CuspForm.levelRaise d (Gamma1_map_le_conjAct_scaleGL_of_dvd h) g ∈ V) :
+    cuspFormsOldMultiples N k m ≤ V := by
+  refine iSup_le fun M ↦ iSup_le fun d ↦ iSup_le fun h ↦ ?_
+  have := neZero_of_mul_dvd_left h.1
+  have := neZero_of_mul_dvd_right h.1
+  rintro _ ⟨g, hg, rfl⟩
+  simpa using hV M d h.1 h.2.1 h.2.2 g hg
 
 /-- `cuspFormsOldMultiples` is monotone in the level condition: a coarser divisibility
 requirement admits more generators. -/
