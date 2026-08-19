@@ -191,7 +191,9 @@ private theorem complEDS₂_two_three_two_int (n : ℤ) : complEDS₂ (2 : ℤ) 
   have h := complEDS₂_mul_b (b := (2 : ℤ)) (c := 3) (d := 2) n
   rw [normEDS_two_three_two_eq_id] at h
   simp only [id_eq] at h
-  rw [show (n - 1) ^ 2 * (n + 2) - (n - 2) * (n + 1) ^ 2 = 4 by ring] at h
+  -- `omega` is linear, so the cubic right side must first collapse to the constant it equals.
+  have h4 : (n - 1) ^ 2 * (n + 2) - (n - 2) * (n + 1) ^ 2 = 4 := by ring
+  rw [h4] at h
   omega
 
 /-- **The 2-complement of `normEDS 2 3 2` is the constant `2`, over any commutative ring**:
