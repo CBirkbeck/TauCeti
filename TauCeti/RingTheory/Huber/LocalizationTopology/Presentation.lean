@@ -33,7 +33,8 @@ single application of one of them.
 
 * `TauCeti.Huber.PairOfDefinition.Presentation`: the bundle `(num, den, hasDenominatorPower)` of
   a presentation, with the refinement preorder `Presentation.RefinedBy` and the common
-  refinement `Presentation.prod` making refinement directed.
+  refinement `Presentation.prod` making refinement directed. `Presentation.prod_num` and
+  `Presentation.prod_den` are its projection equations, since the body is not exported.
 * `TauCeti.Huber.PairOfDefinition.presentationRingEquiv`: the canonical isomorphism
   `A⟨T/s⟩ ≃+* A⟨T'/s'⟩` assembled from compatible comparison maps in both directions.
 
@@ -165,6 +166,19 @@ noncomputable def Presentation.prod (p q : Presentation P) : Presentation P wher
       (fun t ht ↦ mul_comm p.den t ▸
         Finset.mul_mem_mul (Finset.mem_insert_self _ _) (Finset.mem_insert_of_mem ht))
       p.hasDenominatorPower q.hasDenominatorPower
+
+open scoped Classical Pointwise in
+/-- The numerators of the product presentation. The body of `prod` is not exported, so this is
+how a consumer computes with it — in particular, how it is matched against
+`rationalSubset_inter`'s presentation of an intersection. -/
+@[simp]
+theorem Presentation.prod_num (p q : Presentation P) :
+    (p.prod q).num = insert p.den p.num * insert q.den q.num := (rfl)
+
+/-- The denominator of the product presentation. -/
+@[simp]
+theorem Presentation.prod_den (p q : Presentation P) :
+    (p.prod q).den = p.den * q.den := (rfl)
 
 open scoped Classical Pointwise in
 /-- The product presentation refines its left factor, with cofactor the right denominator. -/
