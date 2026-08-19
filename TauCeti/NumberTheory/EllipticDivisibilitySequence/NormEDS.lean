@@ -119,6 +119,13 @@ is `Descent.lean`'s `IsEllipticNet.of_rel`, fed the two recurrences in relator f
 is six lines rather than a file. The universal transport is the source's argument, with
 `normEDS_eq_aeval` in place of its inline rewriting.
 
+`complEDS₂_two_three_two` adapts that same file's `compl₂EDS_two_three_two` (`:1243`, at the
+`main` revision named above), restated over an arbitrary commutative ring — the source states
+only the `ℤ` case — and rerouted: the `ℤ` proof reads the value off Mathlib's `complEDS₂_mul_b`
+at the identity sequence, with no case split, where the source cancels `n` off
+`normEDS_mul_complEDS₂` behind an `n = 0` split; the general form transports along
+`Int.castRingHom`, exactly as `normEDS_two_three_two_eq_intCast` above.
+
 `universalNormEDS_ne_zero` adapts the same file's `universalNormEDS_ne_zero` (`:1251`) at the
 roadmap's NagellLutz pin `dev/modular-curves @ 9fec8eba7652`. One departure: the source proves it
 by `simp only [universalNormEDS, …]`, unfolding the definition. That does not port —

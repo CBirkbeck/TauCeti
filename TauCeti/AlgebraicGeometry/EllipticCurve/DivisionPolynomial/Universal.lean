@@ -8,7 +8,6 @@ module
 public import Mathlib.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Cusp
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Omega
-public import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
 
 /-!
 # Division polynomials of the universal curve
@@ -163,6 +162,10 @@ lemma polyEval_cusp_φ : polyEval (cusp ℤ) 1 1 (curve.φ n) = 1 := by
 /-- The `ω`-division polynomial of `W` at `(x, y)` is the universal one under `polyEval`. -/
 lemma evalEval_ω : (W.ω n).evalEval x y = polyEval W x y (curve.ω n) := by
   simp_rw [polyEval_apply, ← map_ω, map_specialize]
+
+/-- The complement `ψc n` of `W` at `(x, y)` is the universal one under `polyEval`. -/
+lemma evalEval_ψc : (W.ψc n).evalEval x y = polyEval W x y (curve.ψc n) := by
+  simp_rw [polyEval_apply, ← map_ψc, map_specialize]
 
 /-- **On the cusp curve at `(1, 1)`, the complement `ψc n` evaluates to `2`.** -/
 lemma polyEval_cusp_ψc : polyEval (cusp ℤ) 1 1 (curve.ψc n) = 2 := by
