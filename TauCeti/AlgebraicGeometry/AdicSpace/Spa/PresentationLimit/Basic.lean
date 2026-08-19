@@ -163,7 +163,7 @@ theorem RationalIndex.directed (i j : RationalIndex P Aplus V) :
   · rw [PairOfDefinition.Presentation.prod_num]
     exact isOpen_span_insert_mul_insert P i.isOpen_span_num j.isOpen_span_num
   · rw [PairOfDefinition.Presentation.prod_num, PairOfDefinition.Presentation.prod_den,
-      spaRationalOpen_inf]
+      ← spaRationalOpen_inf]
     exact inf_le_left.trans i.spaRationalOpen_le
 
 /-- The directedness instance. It is **not** what makes the limit exist —

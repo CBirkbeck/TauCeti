@@ -208,7 +208,12 @@ theorem coe_spaRationalOpen (Aplus : Subring A) (T : Finset A) (s : A) :
       Subtype.val ⁻¹' rationalSubset Aplus T s := (rfl)
 
 open _root_.TopologicalSpace in
-/-- Membership in `spaRationalOpen` is membership in the rational subset. -/
+/-- Membership in `spaRationalOpen` is membership in the rational subset.
+
+`@[simp]`, like its siblings `mem_rationalSubset_iff` and `mem_spaRationalOpens`, and it is the
+*only* route: `spaRationalOpen`'s body is sealed, so `Opens.mem_mk` cannot fire, and
+`simp only [coe_spaRationalOpen, Set.mem_preimage]` makes no progress on a membership goal. -/
+@[simp]
 theorem mem_spaRationalOpen_iff {Aplus : Subring A} {T : Finset A} {s : A} {x : ↥(spa Aplus)} :
     x ∈ spaRationalOpen Aplus T s ↔ (x : Spv A) ∈ rationalSubset Aplus T s := Iff.rfl
 
@@ -228,13 +233,16 @@ theorem rationalSubset_inter (Aplus : Subring A) (T₁ T₂ : Finset A) (s₁ s�
   exact (Set.inter_inter_distrib_left _ _ _).symm
 
 open scoped Classical Pointwise in
-/-- **The `Opens` companion of `rationalSubset_inter`**: the rational open of the product
-presentation — insert-augmented numerators, product denominator — is the intersection of the two
-factors' rational opens. This is what makes the structure presheaf's index directed
-symmetrically. -/
+/-- **The `Opens` companion of `rationalSubset_inter`**: the intersection of two rational opens
+is the rational open of the product presentation — insert-augmented numerators, product
+denominator. This is what makes the presentation index directed symmetrically.
+
+Oriented like `rationalSubset_inter`, and with `⊓` as the head of the left-hand side so the name
+describes it: the two layers then share one normal form. -/
+@[simp]
 theorem spaRationalOpen_inf (Aplus : Subring A) (T₁ T₂ : Finset A) (s₁ s₂ : A) :
-    spaRationalOpen Aplus (insert s₁ T₁ * insert s₂ T₂) (s₁ * s₂) =
-      spaRationalOpen Aplus T₁ s₁ ⊓ spaRationalOpen Aplus T₂ s₂ := by
+    spaRationalOpen Aplus T₁ s₁ ⊓ spaRationalOpen Aplus T₂ s₂ =
+      spaRationalOpen Aplus (insert s₁ T₁ * insert s₂ T₂) (s₁ * s₂) := by
   apply _root_.TopologicalSpace.Opens.ext
   simp only [coe_spaRationalOpen, _root_.TopologicalSpace.Opens.coe_inf]
   rw [← rationalSubset_inter, Set.preimage_inter]
