@@ -51,9 +51,9 @@ private theorem asAlgebraHom_comp_apply (e : Fin lam.card ≃ Fin m.card)
       simpa only [map_add, LinearMap.add_apply] using congrArg₂ (fun u v => u + v) ha hb
   | single g r => simp [Representation.asAlgebraHom_single]
 
-/-- **Transporting a transposition along an equivalence transposes the images.** -/
-private theorem permCongrHom_swap {α β : Type*} [DecidableEq α] [DecidableEq β] (e : α ≃ β)
-    (a b : α) : e.permCongrHom (Equiv.swap a b) = Equiv.swap (e a) (e b) := by
+/-- **Transporting a transposition along the relabelling transposes the images.** -/
+private theorem permCongrHom_swap (e : Fin lam.card ≃ Fin m.card) (a b : Fin lam.card) :
+    e.permCongrHom (Equiv.swap a b) = Equiv.swap (e a) (e b) := by
   refine Equiv.ext fun z => ?_
   -- Unfold the conjugation just far enough to apply `Equiv.map_swap`.
   change e (Equiv.swap a b (e.symm z)) = Equiv.swap (e a) (e b) z
@@ -78,10 +78,15 @@ private theorem transportedColumnAntisymmetrizer_mul_single_swap
       (MonoidAlgebra.mapDomainAlgHom ℚ ℚ e.permCongrHom.toMonoidHom)
           (MonoidAlgebra.single (Equiv.swap (e.symm x) (e.symm y)) 1) =
         MonoidAlgebra.single (Equiv.swap x y) 1 := by
+    -- `mapDomainAlgHom` is reducibly `mapDomain`, but `mapDomain_single` is stated for the bare
+    -- operation and will not rewrite under the bundled algebra map, so expose it first.
     change MonoidAlgebra.mapDomain e.permCongrHom
       (MonoidAlgebra.single (Equiv.swap (e.symm x) (e.symm y)) 1) = _
     rw [MonoidAlgebra.mapDomain_single, hp]
   rw [hsingle] at h
+  -- `h` is phrased in the unfolded `mapDomainAlgHom … (columnAntisymmetrizer t)`; fold it back
+  -- into `transportedColumnAntisymmetrizer`, which is that expression by definition. A `rw` cannot
+  -- do this: the definition is not an equation lemma.
   change transportedColumnAntisymmetrizer e t * MonoidAlgebra.single (Equiv.swap x y) 1 =
     ((Equiv.Perm.sign (Equiv.swap (e.symm x) (e.symm y)) : ℤ) : ℚ) •
       transportedColumnAntisymmetrizer e t at h
