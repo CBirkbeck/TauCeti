@@ -241,6 +241,10 @@ private theorem card_center_subgroupOf_le_two (Γ : Subgroup SL(2, ℤ)) :
 
 /-- **The complementary case**: the factor is `1` exactly when `-I ∉ Γ`, i.e. when the matrix and
 projective stabiliser orders agree. -/
+-- Not `@[simp]`, tested: `simpNF` rejects it because the left-hand side is already reducible —
+-- `Subgroup.card_eq_one` then `Subgroup.subgroupOf_eq_bot` rewrite `Nat.card (center.subgroupOf Γ)
+-- = 1` to `Disjoint (center SL(2, ℤ)) Γ`, so it is not in simp-normal form. The `= 2` companion
+-- below has no such reduction and does carry the attribute.
 theorem card_center_subgroupOf_eq_one_iff (Γ : Subgroup SL(2, ℤ)) :
     Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 1 ↔ (-1 : SL(2, ℤ)) ∉ Γ := by
   rw [Subgroup.card_eq_one]
@@ -254,11 +258,14 @@ theorem card_center_subgroupOf_eq_one_iff (Γ : Subgroup SL(2, ℤ)) :
     refine (Subgroup.eq_bot_iff_forall _).mpr fun x hx ↦ ?_
     rcases eq_one_or_neg_one_of_mem_center (Subgroup.mem_subgroupOf.mp hx) with hx1 | hx1
     · exact Subtype.ext hx1
-    · exact absurd (show (-1 : SL(2, ℤ)) ∈ Γ from hx1 ▸ x.2) hneg
+    · -- `x.2 : ↑x ∈ Γ`, and `hx1` identifies `↑x` with `-I`, so the membership transports
+      have hm : (-1 : SL(2, ℤ)) ∈ Γ := hx1 ▸ x.2
+      exact absurd hm hneg
 
 /-- **The `±I` factor is `2` exactly when `-I ∈ Γ`.** The part of the centre that `Γ` contains is
 `{I}` or `{±I}` according to whether `Γ` contains `-I`, so the factor in the splitting
 `card_stabilizer_eq_card_center_mul_card_stabilizer_psl` is decided by that single membership. -/
+@[simp]
 theorem card_center_subgroupOf_eq_two_iff (Γ : Subgroup SL(2, ℤ)) :
     Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 2 ↔ (-1 : SL(2, ℤ)) ∈ Γ := by
   obtain ⟨hpos, hle⟩ := card_center_subgroupOf_le_two Γ
