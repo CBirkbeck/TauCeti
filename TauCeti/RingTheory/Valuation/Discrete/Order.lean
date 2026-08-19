@@ -219,29 +219,32 @@ identifies the valuation subrings, and membership of the subring is exactly nonn
 additive order.
 
 Only equivalence is needed; neither valuation has to be surjective. -/
-theorem ord_nonneg_iff_of_isEquiv {v w : _root_.Valuation F ℤᵐ⁰} (h : v.IsEquiv w)
+theorem IsEquiv.ord_nonneg_iff {v w : _root_.Valuation F ℤᵐ⁰} (h : v.IsEquiv w)
     (f : F) : 0 ≤ ord v f ↔ 0 ≤ ord w f := by
-  rw [← mem_valuationSubring_iff_ord_nonneg v, ← mem_valuationSubring_iff_ord_nonneg w]
+  rw [← mem_valuationSubring_iff_ord_nonneg v, ← mem_valuationSubring_iff_ord_nonneg w,
+    _root_.Valuation.mem_valuationSubring_iff, _root_.Valuation.mem_valuationSubring_iff]
   exact h.le_one_iff_le_one
 
 /-- **Equivalent valuations agree on which elements have order zero.** This is the additive-order
-analogue of `Valuation.IsEquiv.eq_zero`, and says the two valuations have the same units.
+analogue of `Valuation.IsEquiv.eq_one_iff_eq_one`: away from `0`, order zero says the valuation is
+`1`, so the two valuations have the same units. The junk value `ord v 0 = 0` is absorbed on both
+sides.
 
 Only equivalence is needed; neither valuation has to be surjective. -/
-theorem ord_eq_zero_iff_of_isEquiv {v w : _root_.Valuation F ℤᵐ⁰} (h : v.IsEquiv w)
+theorem IsEquiv.ord_eq_zero_iff {v w : _root_.Valuation F ℤᵐ⁰} (h : v.IsEquiv w)
     (f : F) : ord v f = 0 ↔ ord w f = 0 := by
   -- Nonnegativity at `f` and at `f⁻¹` together pin the order to zero, and `ord_inv` turns the
   -- second into nonpositivity at `f`.
-  have hf := ord_nonneg_iff_of_isEquiv h f
-  have hinv := ord_nonneg_iff_of_isEquiv h f⁻¹
+  have hf := h.ord_nonneg_iff f
+  have hinv := h.ord_nonneg_iff f⁻¹
   rw [ord_inv, ord_inv] at hinv
   omega
 
 /-- Two equivalent normalized `ℤᵐ⁰`-valuations are equal. -/
 theorem eq_of_isEquiv_of_surjective {v w : _root_.Valuation F ℤᵐ⁰}
     (hv : Function.Surjective v) (hw : Function.Surjective w) (h : v.IsEquiv w) : v = w := by
-  have hmem := ord_nonneg_iff_of_isEquiv h
-  have hzero := ord_eq_zero_iff_of_isEquiv h
+  have hmem := h.ord_nonneg_iff
+  have hzero := h.ord_eq_zero_iff
   -- Choose order-one elements for both normalized valuations and compare their orders.
   obtain ⟨t, ht⟩ := ord_surjective v hv 1
   obtain ⟨s, hs⟩ := ord_surjective w hw 1
