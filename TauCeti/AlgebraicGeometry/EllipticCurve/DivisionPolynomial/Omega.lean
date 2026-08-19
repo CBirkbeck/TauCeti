@@ -101,6 +101,7 @@ theorem ω_spec (n : ℤ) :
   simp only [map_ofNat, C_add, C_mul, C_pow]
   ring1
 
+/-- `ω_spec` solved for `2 ω n`. -/
 theorem two_mul_ω (n : ℤ) :
     2 * W.ω n = W.ψc n - CC W.a₁ * W.φ n * W.ψ n - CC W.a₃ * W.ψ n ^ 3 := by
   rw [← ω_spec]; abel
@@ -109,6 +110,7 @@ theorem two_mul_ω (n : ℤ) :
 theorem ψ_mul_ψc (n : ℤ) : W.ψ n * W.ψc n = W.ψ (2 * n) :=
   normEDS_mul_complEDS₂ _ _ _ _
 
+/-- `ω` at `0` is `1`. -/
 @[simp] theorem ω_zero : W.ω 0 = 1 := by
   simp only [WeierstrassCurve.ω, EuclideanDomain.zero_mod,
     reducedInvarDenom_of_emod_six_eq_zero, EuclideanDomain.zero_div, complEDS_zero, mul_zero,
@@ -117,6 +119,7 @@ theorem ψ_mul_ψc (n : ℤ) : W.ψ n * W.ψc n = W.ψ (2 * n) :=
     ↓reduceIte, sub_neg_eq_add, ψ_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
     add_zero]
 
+/-- `ω` at `1` is `Y`, matching `ψ 1 = 1` and `φ 1 = X`. -/
 @[simp] theorem ω_one : W.ω 1 = Y := by
   simp only [WeierstrassCurve.ω, ψ₂, Int.reduceMod, reducedInvarDenom_of_emod_six_eq_one,
     sub_self, EuclideanDomain.zero_div, complEDS_zero, mul_zero, Int.reduceAdd, normEDS_two,
@@ -125,13 +128,21 @@ theorem ψ_mul_ψc (n : ℤ) : W.ψ n * W.ψc n = W.ψ (2 * n) :=
     ← Affine.Y_sub_polynomialY, ψ_one]
   ring1
 
+/-- `ψc` is an even family. -/
 @[simp] theorem ψc_neg (n : ℤ) : W.ψc (-n) = W.ψc n := by simp only [ψc_def, complEDS₂_neg]
 
 end
 
 section Map
 
+/-- `ψc` is natural in the coefficient ring. -/
+@[simp]
+theorem map_ψc (f : R →+* S) (n : ℤ) : (W.map f).ψc n = (W.ψc n).map (mapRingHom f) := by
+  simp_rw [ψc_def, ← coe_mapRingHom, map_complEDS₂, map_ψ₂, map_Ψ₃, map_preΨ₄]
+  simp
+
 open Affine in
+/-- `ω` is natural in the coefficient ring. -/
 @[simp]
 theorem map_ω (f : R →+* S) (n : ℤ) : (W.map f).ω n = (W.ω n).map (mapRingHom f) := by
   simp_rw [WeierstrassCurve.ω, ← coe_mapRingHom, map_add, map_sub, map_mul,
