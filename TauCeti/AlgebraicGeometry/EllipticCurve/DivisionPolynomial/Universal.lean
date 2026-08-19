@@ -32,6 +32,11 @@ Each proof is the same two steps: unfold `polyEval` into a `map` followed by `ev
 * `WeierstrassCurve.Universal.polyEval_cusp_ψ`, `.polyEval_cusp_φ`, `.polyEval_cusp_ψc`,
   `.polyEval_cusp_ω`: specialised to the cusp curve at `(1, 1)`, `ψₙ` evaluates to `n` itself,
   the numerator `φₙ` to `1`, the complement `ψc n` to `2`, and `ωₙ` to `1`.
+* `WeierstrassCurve.Universal.polyToField_ψ_ne_zero`, `.polyToField_φ_ne_zero`: in
+  `Universal.Field`, `ψₙ` is nonzero for every `n ≠ 0` and `φₙ` for every `n` — the cusp
+  evaluations above, read back through the retraction onto `ℤ`.
+* `WeierstrassCurve.Universal.polyToField_ψ₂Sq`: `Ψ₂Sq` is the square of `ψ 2` in the universal
+  field, the Weierstrass relation being exactly what `Universal.Ring` quotients out.
 
 ## Implementation notes
 
@@ -94,6 +99,13 @@ an `abbrev ψᵤ` and its own `ψᵤ_eq_normEDS`; here the abbreviation is dropp
 of `ψ` with `normEDS` is the named `ψ_eq_normEDS` (`DivisionPolynomial/NormEDS.lean`), and a
 `have` transports it through `polyToField`, so the statement is spelled on
 `fun n ↦ polyToField (curve.ψ n)` directly.
+
+The nonvanishing block adapts, at the same `main` revision, `ψᵤ_ne_zero` (`:141`, respelt
+`polyToField_ψ_ne_zero` with the abbreviation dropped as above), `polyToField_φ_ne_zero` (`:148`,
+source name kept) and `polyToField_ψ₂Sq` (`:154`, source name kept). One departure beyond the
+`ψᵤ` respelling: the source rewrites through its `polyToField_polynomial`, which has no
+counterpart here — the vanishing of the Weierstrass polynomial is inlined as a `have` through
+`AdjoinRoot.mk_self`, the same step `Universal.lean`'s `equation_point` uses.
 -/
 
 public section
@@ -185,6 +197,32 @@ lemma polyEval_cusp_ω : polyEval (cusp ℤ) 1 1 (curve.ω n) = 1 := by
   -- The residual `a₁`/`a₃` terms sit under `CC`, whose body is unexposed and has no cusp value
   -- lemma, so no named rewrite can kill them; evaluating the wrappers is the one route left.
   simpa [polyEval_apply, evalEval] using h
+
+/-- **The universal `ψₙ` is nonzero in `Universal.Field` for every `n ≠ 0`.** Evaluating at the
+cusp curve's point `(1, 1)` retracts the universal coefficients onto `ℤ`, where `ψₙ` reads off as
+`n` itself (`polyEval_cusp_ψ`) — so `ψₙ = 0` would force `n = 0`. This is the nonvanishing the
+`n • (X, Y)` coordinate formulas divide by. -/
+lemma polyToField_ψ_ne_zero (h0 : n ≠ 0) : polyToField (curve.ψ n) ≠ 0 := fun h ↦ by
+  rw [polyToField_apply, map_eq_zero_iff _ (IsFractionRing.injective _ _)] at h
+  replace h := congr(ringEval (equation_cusp_one_one ℤ) $h)
+  rw [ringEval_mk, polyEval_cusp_ψ, map_zero] at h
+  exact h0 h
+
+/-- **The universal `φₙ` is nonzero in `Universal.Field`, for every `n`.** The same cusp
+retraction: at `(1, 1)` it evaluates to `1` (`polyEval_cusp_φ`). -/
+lemma polyToField_φ_ne_zero : polyToField (curve.φ n) ≠ 0 := fun h ↦ by
+  rw [polyToField_apply, map_eq_zero_iff _ (IsFractionRing.injective _ _)] at h
+  replace h := congr(ringEval (equation_cusp_one_one ℤ) $h)
+  rw [ringEval_mk, polyEval_cusp_φ, map_zero] at h
+  exact one_ne_zero h
+
+/-- **`Ψ₂Sq` in the universal field is the square of `ψ 2`.** The `4 · polynomial` correction in
+`ψ₂_sq` is exactly the relation `Universal.Ring` quotients out, so it vanishes under
+`polyToField`. -/
+lemma polyToField_ψ₂Sq : polyToField (C curve.Ψ₂Sq) = polyToField (curve.ψ 2) ^ 2 := by
+  have hpoly : polyToField curve.toAffine.polynomial = 0 := by
+    rw [polyToField_apply, AdjoinRoot.mk_self, map_zero]
+  rw [← map_pow, ψ_two, ψ₂_sq, map_add, map_mul, hpoly, mul_zero, add_zero]
 
 end Universal
 
