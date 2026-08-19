@@ -37,7 +37,7 @@ the Huber development that consumes it.
 
 Adapted from AINTLIB's `ArtinRees.controlled_lift`, branch `dev/adic-spaces`, commit `37bbdaeb`,
 Apache-2.0, Chris Birkbeck, `projects/AdicSpaces/Adic spaces/ArtinReesConvergence.lean`, whose
-reference is Wedhorn Lemma 8.31. Three differences, all generalisations:
+reference is Wedhorn Lemma 8.31. Two generalisations:
 
 * the source fixes the ambient module to `Fin l → R` and the source of the surjection to
   `Fin k → R`, presenting the map as `∑ j, c j • s j` for a chosen spanning family; here the
@@ -46,8 +46,9 @@ reference is Wedhorn Lemma 8.31. Three differences, all generalisations:
   `Fintype.linearCombination`, and the image computation is `Submodule.map_smul''` composed with
   `Submodule.map_top`;
 * the source takes the Artin–Rees conclusion as a hypothesis `hAR` together with the constant
-  `k₀`; here both come from `Ideal.exists_pow_inf_eq_pow_smul`, so no caller has to supply them;
-* the source's `pi_smul_top_component` is not ported: it has no consumer.
+  `k₀`; here both come from `Ideal.exists_pow_inf_eq_pow_smul`, so no caller has to supply them.
+
+One declaration is not ported: the source's `pi_smul_top_component`, which has no consumer.
 
 ## References
 
