@@ -7,10 +7,11 @@ module
 
 public import TauCeti.Analysis.Complex.UpperHalfPlane.PSLAction
 public import TauCeti.GroupTheory.GroupAction.Stabilizer
-public import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 public import TauCeti.NumberTheory.Modular.Orbits
 
--- these two serve only the private centre computation, so they stay off the public surface
+-- proof-only: the centre identification and the private `card_center` computation are used
+-- inside theorem proofs, never in a public statement, so these stay off the public surface
+import TauCeti.LinearAlgebra.Matrix.SpecialLinearGroup.Basic
 import Mathlib.LinearAlgebra.SpecialLinearGroup
 import Mathlib.RingTheory.RootsOfUnity.PrimitiveRoots
 
