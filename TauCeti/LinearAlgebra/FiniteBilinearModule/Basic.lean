@@ -430,6 +430,30 @@ theorem prod_pairing (B : FiniteBilinearModule) (x y : A.carrier × B.carrier) :
     (prod A B).pairing x y = A.pairing x.1 y.1 + B.pairing x.2 y.2 :=
   rfl
 
+/-- In the left argument, a vector supported in the first factor pairs through that factor
+alone. -/
+theorem prod_pairing_inl_left (B : FiniteBilinearModule) (x : A.carrier)
+    (y : A.carrier × B.carrier) : (prod A B).pairing (x, 0) y = A.pairing x y.1 := by
+  rw [prod_pairing, pairing_zero_left, add_zero]
+
+/-- In the left argument, a vector supported in the second factor pairs through that factor
+alone. -/
+theorem prod_pairing_inr_left (B : FiniteBilinearModule) (x : B.carrier)
+    (y : A.carrier × B.carrier) : (prod A B).pairing (0, x) y = B.pairing x y.2 := by
+  rw [prod_pairing, pairing_zero_left, zero_add]
+
+/-- In the right argument, a vector supported in the first factor pairs through that factor
+alone. -/
+theorem prod_pairing_inl_right (B : FiniteBilinearModule) (x : A.carrier × B.carrier)
+    (y : A.carrier) : (prod A B).pairing x (y, 0) = A.pairing x.1 y := by
+  rw [prod_pairing, pairing_zero_right, add_zero]
+
+/-- In the right argument, a vector supported in the second factor pairs through that factor
+alone. -/
+theorem prod_pairing_inr_right (B : FiniteBilinearModule) (x : A.carrier × B.carrier)
+    (y : B.carrier) : (prod A B).pairing x (0, y) = B.pairing x.2 y := by
+  rw [prod_pairing, pairing_zero_right, zero_add]
+
 /-- An orthogonal direct sum of finite bilinear modules is nondegenerate if and only if both
 factors are nondegenerate. -/
 @[simp]
@@ -437,47 +461,26 @@ theorem isNondegenerate_prod (B : FiniteBilinearModule) :
     (A.prod B).IsNondegenerate ↔ A.IsNondegenerate ∧ B.IsNondegenerate := by
   rw [(A.prod B).isNondegenerate_iff_injective, A.isNondegenerate_iff_injective,
     B.isNondegenerate_iff_injective]
+  -- Each direction pairs against a vector supported in one factor, where `prod_pairing` leaves a
+  -- single summand; testing on `(u, 0)` and `(0, v)` separates the two factors.
   constructor
-  · intro h
-    constructor
-    · intro x y hxy
-      have heq : (A.prod B).pairing (x, 0) = (A.prod B).pairing (y, 0) := by
+  · refine fun h ↦ ⟨fun x y hxy ↦ ?_, fun x y hxy ↦ ?_⟩
+    · have heq : (A.prod B).pairing (x, 0) = (A.prod B).pairing (y, 0) := by
         ext ⟨u, v⟩
-        have h1 : (A.prod B).pairing (x, 0) (u, v) = A.pairing x u := by
-          rw [prod_pairing, pairing_zero_left, add_zero]
-        have h2 : (A.prod B).pairing (y, 0) (u, v) = A.pairing y u := by
-          rw [prod_pairing, pairing_zero_left, add_zero]
-        rw [h1, h2, DFunLike.congr_fun hxy u]
-      have := h heq
-      exact Prod.ext_iff.mp this |>.1
-    · intro x y hxy
-      have heq : (A.prod B).pairing (0, x) = (A.prod B).pairing (0, y) := by
+        rw [prod_pairing_inl_left, prod_pairing_inl_left, DFunLike.congr_fun hxy u]
+      exact (Prod.ext_iff.mp (h heq)).1
+    · have heq : (A.prod B).pairing (0, x) = (A.prod B).pairing (0, y) := by
         ext ⟨u, v⟩
-        have h1 : (A.prod B).pairing (0, x) (u, v) = B.pairing x v := by
-          rw [prod_pairing, pairing_zero_left, zero_add]
-        have h2 : (A.prod B).pairing (0, y) (u, v) = B.pairing y v := by
-          rw [prod_pairing, pairing_zero_left, zero_add]
-        rw [h1, h2, DFunLike.congr_fun hxy v]
-      have := h heq
-      exact Prod.ext_iff.mp this |>.2
+        rw [prod_pairing_inr_left, prod_pairing_inr_left, DFunLike.congr_fun hxy v]
+      exact (Prod.ext_iff.mp (h heq)).2
   · rintro ⟨hA, hB⟩ ⟨x₁, y₁⟩ ⟨x₂, y₂⟩ hxy
-    have hx : A.pairing x₁ = A.pairing x₂ := by
-      ext u
-      have heq := DFunLike.congr_fun hxy (u, 0)
-      have h1 : (A.prod B).pairing (x₁, y₁) (u, 0) = A.pairing x₁ u := by
-        rw [prod_pairing, pairing_zero_right, add_zero]
-      have h2 : (A.prod B).pairing (x₂, y₂) (u, 0) = A.pairing x₂ u := by
-        rw [prod_pairing, pairing_zero_right, add_zero]
-      exact h1.symm.trans (heq.trans h2)
-    have hy : B.pairing y₁ = B.pairing y₂ := by
-      ext v
-      have heq := DFunLike.congr_fun hxy (0, v)
-      have h1 : (A.prod B).pairing (x₁, y₁) (0, v) = B.pairing y₁ v := by
-        rw [prod_pairing, pairing_zero_right, zero_add]
-      have h2 : (A.prod B).pairing (x₂, y₂) (0, v) = B.pairing y₂ v := by
-        rw [prod_pairing, pairing_zero_right, zero_add]
-      exact h1.symm.trans (heq.trans h2)
-    exact Prod.ext (hA hx) (hB hy)
+    refine Prod.ext (hA ?_) (hB ?_)
+    · ext u
+      have h := DFunLike.congr_fun hxy (u, 0)
+      rwa [prod_pairing_inl_right, prod_pairing_inl_right] at h
+    · ext v
+      have h := DFunLike.congr_fun hxy (0, v)
+      rwa [prod_pairing_inr_right, prod_pairing_inr_right] at h
 
 /-- The radical is the kernel of the adjoint pairing. -/
 def radical : AddSubgroup A := A.pairing.ker
