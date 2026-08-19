@@ -30,9 +30,10 @@ forgetful map, and the value is its limit — which exists because
 `CompleteSeparatedTopCommRingCat` has all small limits.
 
 Everything here is stated for an arbitrary `Subring` of a topological ring carrying a pair of
-definition. It is Wedhorn's structure presheaf only under his standing hypotheses — a Huber
-ring, a ring of integral elements — none of which is imposed by the definitions; the sibling
-`spa` and `rationalSubset` carry the same convention.
+definition. Wedhorn's standing hypotheses — a Huber ring, a ring of integral elements — are
+likewise not imposed; the sibling `spa` and `rationalSubset` carry the same convention. Adding
+them would not turn this into `𝒪_X`: what is missing is the initiality of the indexing functor,
+not the hypotheses.
 
 ## Main definitions
 
@@ -52,8 +53,8 @@ ring, a ring of integral elements — none of which is imposed by the definition
 * `TauCeti.Huber.PairOfDefinition.isSheafy_iff` : sheafiness unfolds to Mathlib's sheaf
   condition (`IsSheafy` is not exposed; this is the route across).
 * `presentationLimitPresheaf_obj`, `presentationLimitPresheaf_map` : its simp interface.
-* `RationalIndex.directed` : the index is directed, so presentations of the same subset never
-  sit as independent factors in the limit.
+* `RationalIndex.directed` : the index is directed, so presentations of the same subset are
+  constrained through a common refinement.
 
 The limit interface is Mathlib's own: `presentationLimitObj` and
 `presentationLimitMap` are `@[expose]`d as `limit (rationalIndexDiagram P Aplus V)` and
@@ -66,7 +67,8 @@ apply to them directly — no parallel projection API is introduced.
 give canonically isomorphic but not equal rings. Indexing the limit by presentations avoids
 having to choose one. Any two indices map onwards to a common refinement
 (`RationalIndex.directed`, via the product presentation), so presentations of the same subset
-never sit as independent factors in the limit.
+are constrained through a common refinement. That is weaker than identifying their components,
+which would need the unproved initiality.
 
 **The comparison with Wedhorn's limit over rational *subsets* is not proved here.** It is an
 initiality (cofinality) statement about the forgetful functor from presentations to rational
@@ -106,7 +108,12 @@ variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 /-- **The index of the presentation-indexed limit**: presentations with open numerator ideal —
 the rational-basis condition of `spaRationalFamily` — whose rational subset is contained in
 `V`. Without the openness condition the index would range over presentations outside the
-rational basis, and the limit would not be over Wedhorn's rational opens. -/
+rational basis.
+
+The openness condition is necessary but not evidently sufficient: `Presentation` also carries
+`hasDenominatorPower`, which this repository nowhere derives from `IsOpen (Ideal.span num)`. So
+the index may be a proper subfamily of the rational opens contained in `V`, and showing it covers
+all of them is part of the outstanding comparison, not something recorded here. -/
 @[ext]
 structure RationalIndex (P : PairOfDefinition A) (Aplus : Subring A)
     (V : Opens ↥(spa Aplus)) where
@@ -132,7 +139,8 @@ theorem RationalIndex.le_def {i j : RationalIndex P Aplus V} : i ≤ j ↔ i.pre
 numerator span is open by `isOpen_span_insert_mul_insert` (this is what the insert-augmented
 numerators of `Presentation.prod` are for), and its rational open is the intersection of the
 factors' (`spaRationalOpen_inf`), hence contained in `V` through either factor. Presentations
-of the same rational subset therefore never sit as independent factors in the limit below. -/
+of the same rational subset are therefore constrained through a common refinement — weaker than
+identifying their components, which needs the unproved initiality. -/
 theorem RationalIndex.directed (i j : RationalIndex P Aplus V) :
     ∃ k : RationalIndex P Aplus V, i ≤ k ∧ j ≤ k := by
   classical
@@ -144,7 +152,10 @@ theorem RationalIndex.directed (i j : RationalIndex P Aplus V) :
       spaRationalOpen_inf]
     exact inf_le_left.trans i.spaRationalOpen_le
 
-/-- The directedness instance the limit over the index consumes. -/
+/-- The directedness instance. It is **not** what makes the limit exist —
+`CompleteSeparatedTopCommRingCat` has all small limits
+(`Topology/Category/TopCommRingCat/CompleteSeparated/Limits.lean`) — and nothing in this file
+consumes it. It is recorded for the eventual cofinality/initiality argument. -/
 instance : IsDirected (RationalIndex P Aplus V) (· ≤ ·) :=
   ⟨RationalIndex.directed⟩
 
@@ -181,7 +192,7 @@ theorem rationalIndexDiagram_map {i j : RationalIndex P Aplus V} (h : i ⟶ j) :
       PairOfDefinition.Presentation.restrictionHom (leOfHom h) := (rfl)
 
 variable (P) in
-/-- **The value of the structure presheaf on an open**: the limit of `A⟨T/s⟩` over the
+/-- **The value of the presentation-indexed presheaf on an open**: the limit of `A⟨T/s⟩` over the
 presentations with open numerator ideal whose rational subset is contained in `V`
 (Wedhorn §8.1). The limit exists because `CompleteSeparatedTopCommRingCat` has all small
 limits; `@[expose]` publishes the body, so Mathlib's `limit.π`/`limit.lift`/`limit.hom_ext`
@@ -264,7 +275,8 @@ theorem presentationLimitPresheaf_map (P : PairOfDefinition A) (Aplus : Subring 
     {V W : (Opens ↥(spa Aplus))ᵒᵖ} (h : V ⟶ W) :
     (presentationLimitPresheaf P Aplus).map h = presentationLimitMap P (leOfHom h.unop) := (rfl)
 
-/-- **The presentation data `P` is sheafy over `Aplus`**: the structure presheaf built from
+/-- **The presentation data `P` is sheafy over `Aplus`**: the presentation-indexed presheaf
+built from
 `P`'s presentations is a sheaf, in the sense of Mathlib's `CategoryTheory.Presheaf.IsSheaf` for
 the Grothendieck topology of the adic spectrum of `Aplus`.
 

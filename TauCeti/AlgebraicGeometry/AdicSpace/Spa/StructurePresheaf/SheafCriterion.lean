@@ -12,12 +12,13 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.Basic
 /-!
 # Sheafiness is decided by rational covers
 
-`PairOfDefinition.IsSheafy` is stated in Mathlib's shape: the structure presheaf is a sheaf
+`PairOfDefinition.IsSheafy` is stated in Mathlib's shape: the presentation-indexed presheaf is
+a sheaf
 for the Grothendieck topology of the adic spectrum, quantifying over *all* opens and *all*
 covers.
 Wedhorn instead checks only covers by rational subsets. This file reconciles the two, by
 applying the rational-cover criterion of `RationalSubset.SheafCriterion` — itself the basis
-sheaf criterion at the basis of rational subsets — to the structure presheaf.
+sheaf criterion at the basis of rational subsets — to the presentation-indexed presheaf.
 
 ## Main results
 
@@ -40,7 +41,8 @@ universe v
 variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
 /-- **Sheafiness is decided by rational covers.** The pair `(P, Aplus)` is sheafy exactly when
-its structure presheaf satisfies the sheaf condition for every cover of an open by rational
+its presentation-indexed presheaf satisfies the sheaf condition for every cover of an open by
+rational
 subsets.
 
 This is what makes the Mathlib-shaped definition usable: `PairOfDefinition.IsSheafy`
