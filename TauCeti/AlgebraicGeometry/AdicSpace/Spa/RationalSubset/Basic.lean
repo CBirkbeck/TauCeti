@@ -53,6 +53,8 @@ layer deferred above.
 
 * `TauCeti.ValuationSpectrum.rationalSubset` : the rational subset `R(T/s)` of `spa A⁺`, as a
   `Set (Spv A)`.
+* `TauCeti.ValuationSpectrum.spaRationalOpen` : the same subset as an `Opens ↥(spa A⁺)` — the form
+  a presheaf indexes on.
 
 ## Main results
 
@@ -71,7 +73,13 @@ layer deferred above.
 * `TauCeti.ValuationSpectrum.isOpen_val_preimage_rationalSubset` : a rational subset is
   relatively open in the subspace `spa A⁺`.
 * `TauCeti.ValuationSpectrum.rationalSubset_inter` : the intersection identity above — the
-  set-level half of Remark 7.30(5).
+  set-level half of Remark 7.30(5), and
+  `TauCeti.ValuationSpectrum.spaRationalOpen_inf` : its `Opens` companion, oriented the same way
+  so the two layers share one `simp` normal form.
+* `TauCeti.ValuationSpectrum.coe_spaRationalOpen` and
+  `TauCeti.ValuationSpectrum.mem_spaRationalOpen_iff` : the set-level and membership-level
+  characterizations of `spaRationalOpen`. The body is sealed, so the membership one is the only
+  route to `x ∈ spaRationalOpen …`.
 * `TauCeti.ValuationSpectrum.exists_refinement_of_subset` : the re-presentation step of Wedhorn
   §8.2 — from `R(T'/s') ⊆ R(T/s)`, a presentation `R(T''/(s · s'))` of the smaller subset whose
   denominator has each original denominator as a factor and whose numerators contain `t · s'` for

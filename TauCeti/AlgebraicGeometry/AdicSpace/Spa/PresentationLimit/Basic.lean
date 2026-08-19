@@ -328,7 +328,7 @@ theorem presentationLimitPresheaf_map (P : PairOfDefinition A) (Aplus : Subring 
     {V W : (Opens ↥(spa Aplus))ᵒᵖ} (h : V ⟶ W) :
     (presentationLimitPresheaf P Aplus).map h = presentationLimitMap P (leOfHom h.unop) := (rfl)
 
-/-- **The presentation data `P` is sheafy over `Aplus`**: the presentation-indexed presheaf
+/-- **The presentation-indexed presheaf of `P` over `Aplus` is a sheaf**: that presheaf
 built from
 `P`'s presentations is a sheaf, in the sense of Mathlib's `CategoryTheory.Presheaf.IsSheaf` for
 the Grothendieck topology of the adic spectrum of `Aplus`.

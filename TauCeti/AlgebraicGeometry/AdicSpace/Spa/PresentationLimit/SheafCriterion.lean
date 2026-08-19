@@ -10,7 +10,7 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.SheafCriter
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.PresentationLimit.Basic
 
 /-!
-# Sheafiness is decided by rational covers
+# The presentation-indexed presheaf is a sheaf iff it is one on rational covers
 
 `PairOfDefinition.HasSheafyPresentationLimit` is stated in Mathlib's shape: the
 presentation-indexed presheaf is a sheaf
@@ -55,18 +55,23 @@ public section
 
 variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
-/-- **Sheafiness is decided by rational covers.** The pair `(P, Aplus)` is sheafy exactly when its
-presentation-indexed presheaf satisfies the sheaf condition for every cover of an open by rational
-subsets.
+/-- **Rational covers decide it.** The presentation-indexed presheaf of `(P, Aplus)` is a sheaf
+exactly when it satisfies the sheaf condition for every cover of an open by rational subsets. No
+pair-level sheafiness is asserted: the presheaf is not known to be Wedhorn's `𝒪_X`.
 
 This is what makes the Mathlib-shaped definition usable: `HasSheafyPresentationLimit` quantifies
-over all opens and all covers, while Wedhorn checks only rational ones. -/
+over all opens and all covers, while Wedhorn checks only rational ones.
+
+No `[IsHuberRing A]` binder: that class is `Nonempty (PairOfDefinition A)`, which the explicit
+`P` already supplies, so requiring it would block a caller holding a pair of definition but no
+registered instance. -/
 theorem hasSheafyPresentationLimit_iff_isSheafFor_rationalCover
-    [IsHuberRing A] (P : PairOfDefinition A) (Aplus : Subring A) :
+    (P : PairOfDefinition A) (Aplus : Subring A) :
     P.HasSheafyPresentationLimit Aplus ↔
       ∀ (E : CompleteSeparatedTopCommRingCat.{v}) ⦃U : Opens ↥(spa Aplus)⦄ (R : Presieve U),
         IsBasisCover (spaRationalOpens Aplus) R →
         Presieve.IsSheafFor (presentationLimitPresheaf P Aplus ⋙ coyoneda.obj (Opposite.op E)) R :=
+  haveI : IsHuberRing A := ⟨⟨P⟩⟩
   (P.hasSheafyPresentationLimit_iff Aplus).trans (isSheaf_iff_isSheafFor_rationalCover Aplus _)
 
 end

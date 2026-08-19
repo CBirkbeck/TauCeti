@@ -55,6 +55,11 @@ the basis arguments uses it.
 * `TauCeti.ValuationSpectrum.spa_eq_biUnion_rationalSubset_of_isTateRing_of_isOpen`: over a Tate
   ring, if a finite set `T` generates an open ideal, then the standard rational subsets cover
   `spa Aplus` (Wedhorn Corollary 7.53 specialization).
+* `TauCeti.ValuationSpectrum.isOpen_span_insert_mul_insert`: the insert-augmented product of two
+  open-span numerator sets again spans an open ideal — what keeps the product presentation inside
+  the rational basis.
+* `TauCeti.ValuationSpectrum.spaRationalOpen_mem_spaRationalOpens`: a named rational open with
+  open numerator ideal is a member of the family.
 
 ## References
 
