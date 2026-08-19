@@ -378,27 +378,27 @@ theorem stabilizer_smul_eq_mackeySubgroup_subgroupOf (s : G) (Γ : Subgroup G) (
   exact ⟨fun hg => ⟨g.2, inv_smul_eq_iff.mpr hg⟩, fun hg => inv_smul_eq_iff.mp hg.2⟩
 
 /-- **Orbit-stabiliser for the fibres of `orbitOfCosetTranslate`.** The number of coset classes
-that translate `p` into the same orbit as `h` does, times the order of the stabiliser of that
-class inside `stabilizer ℋ p`, is the order of `stabilizer ℋ p`.
+that translate `p` into the same orbit as `q` does, times the order of the stabiliser of `q`
+inside `stabilizer ℋ p`, is the order of `stabilizer ℋ p`.
+
+Stated for an arbitrary class `q`, not for the class of a chosen representative: the proof never
+uses one, so a consumer holding a class need not do `QuotientGroup.induction_on` first.
 
 No finiteness is needed: `MulAction.index_stabilizer` and `Subgroup.index_mul_card` both hold
 under `Nat.card`'s convention that an infinite type has cardinality `0`. -/
 theorem card_fiber_orbitOfCosetTranslate_mul_card_stabilizer {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ)
-    (p : α) (h : ℋ) :
+    (p : α) (q : ℋ ⧸ 𝒢.subgroupOf ℋ) :
     Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
-        orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} *
-      Nat.card (stabilizer (↥(stabilizer ℋ p)) ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))) =
-        Nat.card (stabilizer ℋ p) := by
-  -- the fibre is the orbit of the class of `h` under `stabilizer ℋ p`
+        orbitOfCosetTranslate (𝒢 := 𝒢) p q} *
+      Nat.card (stabilizer (↥(stabilizer ℋ p)) q) = Nat.card (stabilizer ℋ p) := by
+  -- the fibre is the orbit of `q` under `stabilizer ℋ p`
   have hset : {r : ℋ ⧸ 𝒢.subgroupOf ℋ | orbitOfCosetTranslate p r =
-      orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} =
-      orbit (stabilizer ℋ p) ((h : ℋ ⧸ 𝒢.subgroupOf ℋ)) :=
+      orbitOfCosetTranslate (𝒢 := 𝒢) p q} = orbit (stabilizer ℋ p) q :=
     Set.ext fun r => orbitOfCosetTranslate_eq_iff hle p r _
   -- `Set.coe_ofPred` is the subtype/`Set.Elem` step; spelling it out keeps the proof off the
   -- unstated defeq, which has already been renamed once upstream (`Set.coe_setOf`)
   have hcard : Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
-      orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} =
-      (orbit (stabilizer ℋ p) ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))).ncard := by
+      orbitOfCosetTranslate (𝒢 := 𝒢) p q} = (orbit (stabilizer ℋ p) q).ncard := by
     rw [← hset, ← Nat.card_coe_set_eq, Set.coe_ofPred]
   rw [hcard, ← MulAction.index_stabilizer, Subgroup.index_mul_card]
 
