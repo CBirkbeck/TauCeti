@@ -32,8 +32,8 @@ single application of one of them.
 ## Main definitions
 
 * `TauCeti.Huber.PairOfDefinition.Presentation`: the bundle `(num, den, hasDenominatorPower)` of
-  a presentation, with the refinement preorder `Presentation.RefinedBy`, its cofactor accessors,
-  and the common refinement `Presentation.prod` making refinement directed.
+  a presentation, with the refinement preorder `Presentation.RefinedBy` and the common
+  refinement `Presentation.prod` making refinement directed.
 * `TauCeti.Huber.PairOfDefinition.presentationRingEquiv`: the canonical isomorphism
   `A⟨T/s⟩ ≃+* A⟨T'/s'⟩` assembled from compatible comparison maps in both directions.
 
@@ -130,31 +130,21 @@ instance : Preorder (Presentation P) where
   le_refl := Presentation.refinedBy_self
   le_trans _ _ _ := Presentation.RefinedBy.trans
 
-/-- The order relation of the `Preorder` instance is `RefinedBy`; composing with
-`Presentation.refinedBy_iff` completes the documented route from `p ≤ q` to the cofactor. -/
+/-- The order relation of the `Preorder` instance is `RefinedBy`. For the route from `p ≤ q`
+straight to a cofactor, prefer the one-step `Presentation.le_iff`. -/
 theorem Presentation.le_def {p q : Presentation P} : p ≤ q ↔ p.RefinedBy q := Iff.rfl
 
-/-- **The refinement relation, unfolded.** The body of `RefinedBy` is not exported, so this —
-after crossing `≤` to `RefinedBy` with `Presentation.le_def` — is how a consumer produces or
-consumes a refinement. -/
+/-- **The refinement relation, unfolded.** The body of `RefinedBy` is not exported, so this is
+how a consumer produces or consumes a `RefinedBy`. Starting from `p ≤ q`, use
+`Presentation.le_iff` instead of chaining this with `Presentation.le_def`. -/
 theorem Presentation.refinedBy_iff {p q : Presentation P} :
     p.RefinedBy q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
 
-/-- **The chosen cofactor of a refinement.** Extraction from `h : p ≤ q` crosses the `≤`-to-
-existential boundary through `le_def` and `refinedBy_iff`, here, once; everything about the
-restriction morphism goes through this accessor and its two spec lemmas. -/
-noncomputable def Presentation.cofactor {p q : Presentation P} (h : p ≤ q) : A :=
-  (Presentation.refinedBy_iff.mp (Presentation.le_def.mp h)).choose
-
-/-- The denominator of a refinement is the coarser denominator times the cofactor. -/
-theorem Presentation.den_eq_mul_cofactor {p q : Presentation P} (h : p ≤ q) :
-    q.den = p.den * Presentation.cofactor h :=
-  (Presentation.refinedBy_iff.mp (Presentation.le_def.mp h)).choose_spec.1
-
-/-- The cofactor carries numerators of the coarser presentation into the finer one. -/
-theorem Presentation.mul_cofactor_mem {p q : Presentation P} (h : p ≤ q) {t : A}
-    (ht : t ∈ p.num) : t * Presentation.cofactor h ∈ q.num :=
-  (Presentation.refinedBy_iff.mp (Presentation.le_def.mp h)).choose_spec.2 t ht
+/-- **The refinement preorder, unfolded in one step.** `Presentation.le_def` composed with
+`Presentation.refinedBy_iff`, as a single introduction/elimination lemma for `≤`: this is the
+route from `p ≤ q` to a cofactor, and the two-hop chain should not be used. -/
+theorem Presentation.le_iff {p q : Presentation P} :
+    p ≤ q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
 
 open scoped Classical Pointwise in
 /-- **The product presentation**, refining both factors: the numerators are the pairwise

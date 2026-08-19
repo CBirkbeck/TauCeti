@@ -46,6 +46,13 @@ presentations, not by extra data. Quantifying the cofactor away is only legitima
 restriction morphism does not depend on it — `restrictionObjHom_congr` — which is what lets the
 functor's action be defined by an arbitrary choice and still be functorial.
 
+For the same reason the cofactor accessor and its two spec lemmas are `private` here rather than
+public in `LocalizationTopology/Presentation.lean`: they name a `choose` witness with no
+mathematical content, so exporting them would let a consumer depend on the choice. The public
+route from `p ≤ q` to a cofactor is `Presentation.le_iff`, and the public statement about
+the morphism is
+`Presentation.restrictionHom_eq`, which holds for every cofactor.
+
 ## Provenance
 
 Adapted from AINTLIB's `StructurePresheafLimit.lean` (see References): the idea of indexing the
@@ -80,6 +87,26 @@ variable {P : PairOfDefinition A}
 noncomputable abbrev Presentation.obj (p : Presentation P) : CompleteSeparatedTopCommRingCat.{v} :=
   completionLocObj P p.num p.den (Localization.Away p.den) p.hasDenominatorPower
 
+/-- **The chosen cofactor of a refinement**, an implementation detail of
+`Presentation.restrictionHom`. Extraction from `h : p ≤ q` crosses the `≤`-to-existential
+boundary through `Presentation.le_iff`, here, once. The choice carries no mathematical content
+— `Presentation.restrictionHom_eq` computes the morphism from *any* cofactor — so it stays
+private and consumers go through that lemma. -/
+private noncomputable def Presentation.cofactor {p q : Presentation P} (h : p ≤ q) : A :=
+  (Presentation.le_iff.mp h).choose
+
+omit [IsTopologicalRing A] in
+/-- The denominator of a refinement is the coarser denominator times the chosen cofactor. -/
+private theorem Presentation.den_eq_mul_cofactor {p q : Presentation P} (h : p ≤ q) :
+    q.den = p.den * Presentation.cofactor h :=
+  (Presentation.le_iff.mp h).choose_spec.1
+
+omit [IsTopologicalRing A] in
+/-- The chosen cofactor carries numerators of the coarser presentation into the finer one. -/
+private theorem Presentation.mul_cofactor_mem {p q : Presentation P} (h : p ≤ q) {t : A}
+    (ht : t ∈ p.num) : t * Presentation.cofactor h ∈ q.num :=
+  (Presentation.le_iff.mp h).choose_spec.2 t ht
+
 /-- The restriction morphism attached to a refinement, taking the chosen cofactor. It does not
 depend on that choice — `Presentation.restrictionHom_eq` — and it is the preorder-category
 counterpart of `restrictionObjHom`, not Mathlib's arrow `LE.le.hom`. -/
@@ -113,8 +140,8 @@ theorem Presentation.restrictionHom_refl (p : Presentation P) :
 theorem Presentation.restrictionHom_trans {p q w : Presentation P} (h₁ : p ≤ q) (h₂ : q ≤ w) :
     Presentation.restrictionHom h₁ ≫ Presentation.restrictionHom h₂ =
       Presentation.restrictionHom (h₁.trans h₂) := by
-  obtain ⟨r, hr, hT⟩ := Presentation.refinedBy_iff.mp (Presentation.le_def.mp h₁)
-  obtain ⟨r₂, hr₂, hT₂⟩ := Presentation.refinedBy_iff.mp (Presentation.le_def.mp h₂)
+  obtain ⟨r, hr, hT⟩ := Presentation.le_iff.mp h₁
+  obtain ⟨r₂, hr₂, hT₂⟩ := Presentation.le_iff.mp h₂
   rw [Presentation.restrictionHom_eq h₁ r hr hT, Presentation.restrictionHom_eq h₂ r₂ hr₂ hT₂,
     Presentation.restrictionHom_eq (h₁.trans h₂) (r * r₂)
       (Presentation.refinedBy_mul hr hT hr₂ hT₂).1 (Presentation.refinedBy_mul hr hT hr₂ hT₂).2]
