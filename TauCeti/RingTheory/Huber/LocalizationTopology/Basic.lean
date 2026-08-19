@@ -508,13 +508,15 @@ theorem locIdealImage_mul_locSubring_subset (P : PairOfDefinition A) (T : Finset
   rw [h]
   exact locIdealImage_mul_subset_add P T s S n 0
 
-/-- With a principal ideal of definition, an element of `I ^ (n + k)` is `πᵏ` times one of
-`I ^ n`. This is the arithmetic behind `mem_locIdealImage_add_iff`, isolated from the localisation
-so that the span induction there has a single generator step to discharge. -/
+/-- **Division in a principal ideal of definition.** When `I = (π)`, membership in `I ^ (n + k)`
+factors as `πᵏ` times a member of `I ^ n`. The statement is about `A₀` and its ideal alone; no
+localisation appears. -/
 private theorem exists_mem_pow_eq_pi_pow_mul (P : PairOfDefinition A) {pi : P.ringOfDefinition}
     (hpi : P.idealOfDefinition = Ideal.span {pi}) (n k : ℕ)
     {b : P.ringOfDefinition} (hb : b ∈ P.idealOfDefinition ^ (n + k)) :
     ∃ c ∈ P.idealOfDefinition ^ n, b = pi ^ k * c := by
+  -- kept separate from `mem_locIdealImage_add_iff` so that its span induction has a single
+  -- generator step to discharge
   rw [hpi, Ideal.span_singleton_pow] at hb
   obtain ⟨d, hd⟩ := Ideal.mem_span_singleton'.mp hb
   refine ⟨d * pi ^ n, ?_, ?_⟩
