@@ -65,9 +65,8 @@ reindexing `normEDS_mul_complEDS_div` (`:1350`) is ported here too, under its so
 That reverses an earlier decision recorded in this file, and the reason is worth keeping: the
 reindexing was left out because what consumers took from it was the divisibility, stated directly
 here as `normEDS_dvd_normEDS_mul` and `isDvdSequence_normEDS`, so it had no call site. It has
-call sites now: the reduced-invariant cancellation in `ReducedInvariant.lean` reaches its six
-residue branches through three private constant-times-complement shapes derived from this
-identity there. The source file's
+eight now: the reduced-invariant cancellation in `ReducedInvariant.lean` reindexes one or two
+complements through it in each of its six residue branches. The source file's
 header reads `Authors: David Kurniadi Angdinata`; following this repository's convention for
 adapted material the upstream authorship is credited here rather than in the copyright header.
 

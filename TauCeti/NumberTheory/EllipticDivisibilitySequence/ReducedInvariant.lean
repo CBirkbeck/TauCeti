@@ -112,9 +112,8 @@ carries the NagellLutz spelling and the NagellLutz orientation in both places.
 
 Six declarations here are **not** from that file: the `reducedInvarDenom_of_emod_six_eq_*` branch
 lemmas have no counterpart in the source, which eliminates the split inline. The cancellation
-proof below reaches each branch through three private constant-times-complement shapes, likewise
-not in the source, which derive from the divisor-form identity `normEDS_mul_complEDS_div`
-(`Complement.lean`).
+proof below reaches each branch through the divisor-form identity `normEDS_mul_complEDS_div`
+(`Complement.lean`) directly.
 
 The source's `invarDenom_eq_redInvarDenom_mul`, which identifies the denominator formula as the
 cancelled quotient, is ported here as
@@ -307,22 +306,6 @@ theorem complEDS₂_eq_reducedInvarNum_sub :
 
 namespace IsEllipticNet
 
-/-- `normEDS b c d n` at an even index is `b` times a `2`-complement. -/
-private theorem normEDS_eq_mul_complEDS_two (n : ℤ) (hn : (2 : ℤ) ∣ n) :
-    normEDS b c d n = b * complEDS b c d 2 (n / 2) := by
-  rw [← normEDS_mul_complEDS_div 2 n hn, normEDS_two]
-
-/-- `normEDS b c d n` at a multiple of three is `c` times a `3`-complement. -/
-private theorem normEDS_eq_mul_complEDS_three (n : ℤ) (hn : (3 : ℤ) ∣ n) :
-    normEDS b c d n = c * complEDS b c d 3 (n / 3) := by
-  rw [← normEDS_mul_complEDS_div 3 n hn, normEDS_three]
-
-/-- `normEDS b c d n` at a multiple of six is `(normEDS b c d 5 - d ^ 2) * b * c` times a
-`6`-complement. -/
-private theorem normEDS_eq_mul_complEDS_six (n : ℤ) (hn : (6 : ℤ) ∣ n) :
-    normEDS b c d n = (normEDS b c d 5 - d ^ 2) * b * c * complEDS b c d 6 (n / 6) := by
-  rw [← normEDS_mul_complEDS_div 6 n hn, WeierstrassCurve.normEDS_six]
-
 /-- **The cancellation `reducedInvarDenom` is named for**: the invariant denominator of a
 normalised EDS at `s = 1` is `reducedInvarDenom` times `b * c`. This is what identifies the
 six-way formula as the denominator with its constant factor removed, and so what gives the
@@ -336,17 +319,32 @@ folded at `reducedInvarDenom b c d m * (b * c)`. -/
 @[simp high]
 theorem invarDenom_normEDS_one_eq_reducedInvarDenom_mul :
     invarDenom (normEDS b c d) 1 m = reducedInvarDenom b c d m * (b * c) := by
-  -- Split on `m % 6`; in each branch the residue selects the branch lemma, `omega` discharges
-  -- the divisibilities the three constant-times-complement shapes need, and `ring` closes.
+  -- Split on `m % 6`; each branch reindexes one or two complements through
+  -- `normEDS_mul_complEDS_div`, on the divisibility that `m % 6 = r` supplies.
   have hcase : m % 6 = 0 ∨ m % 6 = 1 ∨ m % 6 = 2 ∨ m % 6 = 3 ∨ m % 6 = 4 ∨ m % 6 = 5 := by omega
   rw [invarDenom_def]
-  rcases hcase with h | h | h | h | h | h <;>
-    simp (disch := omega) only [reducedInvarDenom_of_emod_six_eq_zero,
-      reducedInvarDenom_of_emod_six_eq_one, reducedInvarDenom_of_emod_six_eq_two,
-      reducedInvarDenom_of_emod_six_eq_three, reducedInvarDenom_of_emod_six_eq_four,
-      reducedInvarDenom_of_emod_six_eq_five, normEDS_eq_mul_complEDS_six,
-      normEDS_eq_mul_complEDS_three, normEDS_eq_mul_complEDS_two] <;>
-  ring
+  rcases hcase with h | h | h | h | h | h
+  · rw [reducedInvarDenom_of_emod_six_eq_zero b c d m h,
+      ← normEDS_mul_complEDS_div 6 m (by omega), WeierstrassCurve.normEDS_six]
+    ring
+  · rw [reducedInvarDenom_of_emod_six_eq_one b c d m h,
+      ← normEDS_mul_complEDS_div 6 (m - 1) (by omega), WeierstrassCurve.normEDS_six]
+    ring
+  · rw [reducedInvarDenom_of_emod_six_eq_two b c d m h,
+      ← normEDS_mul_complEDS_div 3 (m + 1) (by omega),
+      ← normEDS_mul_complEDS_div 2 m (by omega), normEDS_two, normEDS_three]
+    ring
+  · rw [reducedInvarDenom_of_emod_six_eq_three b c d m h,
+      ← normEDS_mul_complEDS_div 3 m (by omega),
+      ← normEDS_mul_complEDS_div 2 (m - 1) (by omega), normEDS_two, normEDS_three]
+    ring
+  · rw [reducedInvarDenom_of_emod_six_eq_four b c d m h,
+      ← normEDS_mul_complEDS_div 3 (m - 1) (by omega),
+      ← normEDS_mul_complEDS_div 2 m (by omega), normEDS_two, normEDS_three]
+    ring
+  · rw [reducedInvarDenom_of_emod_six_eq_five b c d m h,
+      ← normEDS_mul_complEDS_div 6 (m + 1) (by omega), WeierstrassCurve.normEDS_six]
+    ring
 
 /-- **The cancellation `reducedInvarNum` is named for**: the invariant numerator of a normalised EDS
 at `s = 1` is `reducedInvarNum` times `b`. The factor of `b` is constant in `m`, which is what makes
