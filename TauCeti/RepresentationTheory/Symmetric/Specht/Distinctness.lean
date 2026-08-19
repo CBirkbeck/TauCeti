@@ -66,18 +66,17 @@ private theorem transportedColumnAntisymmetrizer_mul_single_swap
         ((e.symm.trans (Equiv.swap (e.symm x) (e.symm y))).trans e) := rfl
     rw [hrfl, Equiv.symm_trans_swap_trans]
     simp
-  have h := congrArg (MonoidAlgebra.mapDomainAlgHom ℚ ℚ e.permCongrHom.toMonoidHom)
+  -- Transport along the bundled `MonoidAlgebra.domCongr`, not the bare `mapDomainAlgHom`: the two
+  -- are the same algebra map (`MonoidAlgebra.domCongr_toAlgHom`), but only the bundled one carries
+  -- the `single` computation `MonoidAlgebra.domCongr_single`.
+  have h := congrArg (MonoidAlgebra.domCongr ℚ ℚ e.permCongrHom)
     (mul_columnAntisymmetrizer_right t ⟨Equiv.swap (e.symm x) (e.symm y), hp₀⟩)
   rw [map_mul, map_smul] at h
   have hsingle :
-      (MonoidAlgebra.mapDomainAlgHom ℚ ℚ e.permCongrHom.toMonoidHom)
+      MonoidAlgebra.domCongr ℚ ℚ e.permCongrHom
           (MonoidAlgebra.single (Equiv.swap (e.symm x) (e.symm y)) 1) =
         MonoidAlgebra.single (Equiv.swap x y) 1 := by
-    rw [show (MonoidAlgebra.mapDomainAlgHom ℚ ℚ e.permCongrHom.toMonoidHom)
-        (MonoidAlgebra.single (Equiv.swap (e.symm x) (e.symm y)) 1) =
-        MonoidAlgebra.domCongr ℚ ℚ e.permCongrHom
-          (MonoidAlgebra.single (Equiv.swap (e.symm x) (e.symm y)) 1) from rfl,
-      MonoidAlgebra.domCongr_single, hp]
+    rw [MonoidAlgebra.domCongr_single, hp]
   rw [hsingle] at h
   -- `h` is phrased in the unfolded `mapDomainAlgHom … (columnAntisymmetrizer t)`; fold it back
   -- into `transportedColumnAntisymmetrizer`, which is that expression by definition. A `rw` cannot
