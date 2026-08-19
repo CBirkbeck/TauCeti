@@ -27,18 +27,16 @@ so that convergence is forced by the choice rather than hoped for.
 
 ## Main results
 
-* `exists_tendsto_cofinite_atTop`: a countable type carries a function to `ℕ` tending to infinity
-  cofinitely. This is the cap, and it is what makes the index below total.
 * `exists_lift_tendsto_cofinite_nhds_zero`: the lifting statement.
 
 ## Implementation notes
 
 The index of the neighbourhood a lift is drawn from is
-`Nat.findGreatest (fun m ↦ g α ∈ φ '' V m) (r α)`, where `r` is any function to `ℕ` tending to
-infinity cofinitely — one exists because `ι` is countable. **The cap by `r α` is what makes the
-definition total.** Without it the natural index is the largest `m` with `g α ∈ φ '' V m`, which is
-undefined exactly when `g α` lies in every `φ '' V m`; capping removes that case rather than
-splitting on it.
+`Nat.findGreatest (fun m ↦ g α ∈ φ '' V m) (r α)`, where `r` is an injection of `ι` into `ℕ` —
+one exists because `ι` is countable, and it tends to infinity cofinitely because `cofinite` is
+`atTop` on `ℕ`. **The cap by `r α` is what makes the definition total.** Without it the natural
+index is the largest `m` with `g α ∈ φ '' V m`, which is undefined exactly when `g α` lies in
+every `φ '' V m`; capping removes that case rather than splitting on it.
 
 No algebraic structure is used: `M` and `N` carry only a topology and a distinguished point. In
 particular the neighbourhoods `V n` are not assumed to be subgroups, which the argument would need
@@ -56,16 +54,6 @@ public section
 
 variable {ι : Type*} [Countable ι] {M N : Type*} [TopologicalSpace M] [TopologicalSpace N]
   [Zero M] [Zero N]
-
-/-- **A countable type carries a function to `ℕ` tending to infinity cofinitely.** Any injection
-into `ℕ` will do: the set where it is below `N` has at most `N` elements.
-
-This is the cap used below. Mathlib has `Countable.exists_injective_nat` and
-`Nat.cofinite_eq_atTop` separately; this composes them into the form a diagonal argument wants. -/
-theorem exists_tendsto_cofinite_atTop (ι : Type*) [Countable ι] :
-    ∃ r : ι → ℕ, Tendsto r (Filter.cofinite : Filter ι) atTop := by
-  obtain ⟨e, he⟩ := exists_injective_nat ι
-  exact ⟨e, Nat.cofinite_eq_atTop ▸ he.tendsto_cofinite⟩
 
 omit [Countable ι] [TopologicalSpace M] [TopologicalSpace N] [Zero M] [Zero N] in
 /-- Preimages chosen inside a prescribed neighbourhood **whenever one is available there**, and
@@ -97,7 +85,9 @@ theorem exists_lift_tendsto_cofinite_nhds_zero (φ : M → N) (hsurj : Function.
     (g : ι → N) (hg : Tendsto g (Filter.cofinite : Filter ι) (𝓝 0)) :
     ∃ f : ι → M, (∀ α, φ (f α) = g α) ∧ Tendsto f (Filter.cofinite : Filter ι) (𝓝 0) := by
   classical
-  obtain ⟨r, hr⟩ := exists_tendsto_cofinite_atTop ι
+  obtain ⟨r, hr⟩ := exists_injective_nat ι
+  replace hr : Tendsto r (Filter.cofinite : Filter ι) atTop :=
+    Nat.cofinite_eq_atTop ▸ hr.tendsto_cofinite
   obtain ⟨f, hf⟩ := exists_choice_mem φ hsurj V g
     (fun α ↦ Nat.findGreatest (fun m ↦ g α ∈ φ '' V m) (r α))
   refine ⟨f, fun α ↦ (hf α).1, ?_⟩
