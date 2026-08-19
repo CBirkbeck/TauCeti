@@ -130,8 +130,9 @@ variable [IsTopologicalRing A]
 open Classical in
 /-- If two numerator ideals are open, then so is the ideal spanned by the product of the
 numerator sets after adjoining their respective denominators. This is the admissibility half of
-the intersection formula for rational subsets. -/
-private theorem isOpen_span_insert_mul_insert (P : PairOfDefinition A)
+the intersection formula for rational subsets, and the openness half of the structure presheaf's
+index directedness. -/
+theorem isOpen_span_insert_mul_insert (P : PairOfDefinition A)
     {T₁ T₂ : Finset A} {s₁ s₂ : A}
     (hT₁ : IsOpen (Ideal.span (T₁ : Set A) : Set A))
     (hT₂ : IsOpen (Ideal.span (T₂ : Set A) : Set A)) :
@@ -273,6 +274,16 @@ omit [IsTopologicalRing A] in
 @[simp]
 theorem mem_spaRationalOpens {Aplus : Subring A} {U : Opens (spa Aplus)} :
     U ∈ spaRationalOpens Aplus ↔ (U : Set (spa Aplus)) ∈ spaRationalFamily Aplus := Iff.rfl
+
+omit [IsTopologicalRing A] in
+/-- A rational open with open numerator ideal belongs to the rational family of opens: the bridge
+between naming one open (`spaRationalOpen`) and quantifying over the family
+(`spaRationalOpens`). -/
+theorem spaRationalOpen_mem_spaRationalOpens {Aplus : Subring A} {T : Finset A} {s : A}
+    (hT : IsOpen (Ideal.span (T : Set A) : Set A)) :
+    spaRationalOpen Aplus T s ∈ spaRationalOpens Aplus :=
+  mem_spaRationalOpens.mpr ⟨T, s, hT, coe_spaRationalOpen Aplus T s⟩
+
 
 /-- **The rational opens are a basis** in the `Opens.IsBasis` sense, which is the form the sheaf
 criterion on a basis consumes. -/

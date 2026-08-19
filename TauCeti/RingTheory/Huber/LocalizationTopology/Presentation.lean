@@ -167,6 +167,18 @@ noncomputable def Presentation.prod (p q : Presentation P) : Presentation P wher
       p.hasDenominatorPower q.hasDenominatorPower
 
 open scoped Classical Pointwise in
+/-- The numerators of the product presentation. The body of `prod` is not exported, so this is
+how a consumer computes with it. -/
+@[simp]
+theorem Presentation.prod_num (p q : Presentation P) :
+    (p.prod q).num = insert p.den p.num * insert q.den q.num := (rfl)
+
+/-- The denominator of the product presentation. -/
+@[simp]
+theorem Presentation.prod_den (p q : Presentation P) :
+    (p.prod q).den = p.den * q.den := (rfl)
+
+open scoped Classical Pointwise in
 /-- The product presentation refines its left factor, with cofactor the right denominator. -/
 theorem Presentation.le_prod_left (p q : Presentation P) : p ≤ p.prod q :=
   ⟨q.den, rfl, fun _ ht ↦
