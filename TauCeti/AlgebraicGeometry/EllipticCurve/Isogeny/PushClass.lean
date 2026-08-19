@@ -1,10 +1,13 @@
 /-
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Basic
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Dedekind
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.Finite
 public import TauCeti.RingTheory.ClassGroup.ExtendedRelNorm
 
 /-!
@@ -34,11 +37,10 @@ of class groups.
 statement about it takes the algebra structures as arguments. This file follows the shape the
 `IntermediateRing/` series already uses rather than inventing a second convention.
 
-**Every hypothesis is an argument, and each has a supplier elsewhere.** Nothing here is derived,
-so this file imports only what its *statements* mention — `IntermediateRing/Basic` for
-`intermediateRing` itself, and `ClassGroup/ExtendedRelNorm` for the composite. The suppliers live
-with the object they describe, in the one-property-per-file `IntermediateRing/` series, and this
-file is independent of all of them: it neither imports nor calls any:
+**Every hypothesis is an argument, and each has a supplier elsewhere.** Nothing among the
+declarations below is derived: each takes its instances, so none of them depends on when a supplier
+lands. The suppliers live with the object they describe, in the one-property-per-file
+`IntermediateRing/` series:
 
 * `[IsDedekindDomain φ.intermediateRing]` — `Isogeny.isDedekindDomain_intermediateRing`, which
   additionally needs separability of the function-field extension. Taking the conclusion keeps
@@ -46,14 +48,22 @@ file is independent of all of them: it neither imports nor calls any:
   to be Dedekind by another route, so the inseparable case is excluded by whichever lemma
   supplies the instance rather than silently here.
 * `[Module.Finite W₂.CoordinateRing φ.intermediateRing]` — `Isogeny.moduleFinite_intermediateRing`.
-* the two `[Module.IsTorsionFree …]` — `Isogeny.isTorsionFree_intermediateRing_source` and
-  `_target`. Those are what make `ClassGroup.extendedRelNormHom` applicable at all: its variable
-  block requires them, and until they existed the composite could be stated but never
-  instantiated.
+* the two `[Module.IsTorsionFree …]` — Mathlib's `Module.isTorsionFree_iff_algebraMap_injective`
+  applied to the two embeddings `Isogeny.toIntermediateRing_injective` and
+  `Isogeny.pullbackToIntermediateRing_injective`. A consumer whose algebra structures are the
+  corestricted maps discharges them with
+  `Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective` on the source
+  side and the `pullbackToIntermediateRing` analogue on the target side. These are what make
+  `ClassGroup.extendedRelNormHom` applicable at all: its variable block requires them.
 
-This file derives none of the three — each is an argument — so it compiles and is correct
-independently of when the suppliers land, and becomes instantiable exactly when all three are
-available together.
+  **There is deliberately no `Isogeny.isTorsionFree_intermediateRing` to cite.** Named lemmas of
+  that shape were written alongside the embeddings and removed there as one-step wrappers of the
+  `iff` above: a `theorem` carrying an explicit pointwise hypothesis can never be selected by
+  instance search, so it saves a consumer nothing over the one-liner.
+
+This file derives none of these — each is an argument — so it compiles and is correct independently
+of when the suppliers land, and the `example` below witnesses that the block is jointly
+satisfiable rather than vacuous.
 
 `ClassGroup.extendedRelNormHom` orders its rings `A M R` — source, middle, target — so the
 instantiation is `A := W₁.CoordinateRing`, `M := φ.intermediateRing`, `R := W₂.CoordinateRing`.
@@ -128,6 +138,46 @@ noncomputable def pushClass :
   MonoidHom.toAdditive φ.pushClassMonoidHom
 
 end PushClass
+
+section Instantiable
+
+/-- **The variable block above is jointly satisfiable, and this witnesses it.**
+
+Every instance argument of `pushClassMonoidHom` is an argument rather than a derived fact, which is
+what keeps the definitions independent of supplier landing order — but it also means the block is
+never checked. A definition whose instance arguments nothing can satisfy elaborates without
+complaint and is found to be unusable only when a consumer first tries it.
+
+So the eight are discharged here from declarations that exist. Beyond the block itself this costs
+only separability of the function-field extension and the ambient tower on `W₁.FunctionField`: the
+integral closedness that the Dedekind and finiteness suppliers ask for is already implied by
+`[IsDedekindDomain W₂.CoordinateRing]`, and the two torsion-free halves need nothing but the
+embeddings. Producing the map is the whole content — it typechecks only if all eight resolve.
+
+Kept as an `example`: it is a satisfiability check with no downstream consumer, so it should not add
+a name to the public namespace. The same device guards
+`Analysis/Complex/Conformal/DiscInjection.lean` against a vacuously-true statement. -/
+noncomputable example (φ : Isogeny W₁ W₂)
+    [IsDomain W₁.CoordinateRing] [IsDedekindDomain W₂.CoordinateRing]
+    [Algebra W₂.CoordinateRing W₁.FunctionField]
+    [Algebra W₂.FunctionField W₁.FunctionField]
+    [IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField]
+    [Algebra.IsSeparable W₂.FunctionField W₁.FunctionField]
+    (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
+    ClassGroup W₁.CoordinateRing →* ClassGroup W₂.CoordinateRing :=
+  letI : Algebra W₁.CoordinateRing φ.intermediateRing := φ.toIntermediateRing.toAlgebra
+  letI : Algebra W₂.CoordinateRing φ.intermediateRing := φ.pullbackToIntermediateRing.toAlgebra
+  haveI : IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField :=
+    φ.isScalarTower_intermediateRing rfl h
+  haveI := φ.isDedekindDomain_intermediateRing h
+  haveI := φ.moduleFinite_intermediateRing h
+  haveI : Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing :=
+    Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective
+  haveI : Module.IsTorsionFree W₂.CoordinateRing φ.intermediateRing :=
+    Module.isTorsionFree_iff_algebraMap_injective.mpr φ.pullbackToIntermediateRing_injective
+  φ.pushClassMonoidHom
+
+end Instantiable
 
 end Isogeny
 
