@@ -50,6 +50,9 @@ by which the elliptic-net identities reach the division polynomials in the Lutz�
   discharging the preceding `if` conditions.
 * `reducedInvarDenom_zero`, `reducedInvarDenom_one`, `reducedInvarDenom_two`: its values at the
   small indices; the last is what fixes the normalisation.
+* `reducedInvarNum_eq_reducedInvarDenom_mul`: the reduced invariant identity,
+  `reducedInvarNum b c d m = reducedInvarDenom b c d m * (d + b ^ 4)`, with no hypothesis on
+  `b`, `c`, `d`.
 
 ## Both cancellations, and why neither needs a hypothesis
 
@@ -82,12 +85,12 @@ by `Int.ediv_mul_cancel` on the divisibility that `m % 6 = r` supplies. The fact
 `W 5 - d ^ 2` carried by the residues `0`, `1` and `5` is `W 6` with `b * c` removed, which is
 `WeierstrassCurve.normEDS_six` (`Six.lean`).
 
-For the other half of the reduced-invariant theory — `redInvar_normEDS ← invar₂_normEDS ←
-invar_normEDS ← net_normEDS`, written in the source's names — every lower link has now landed:
-`net_normEDS` is `isEllipticNet_normEDS` (`NormEDS.lean`), `invar_normEDS` is
-`invarNum_mul_invarDenom` (`Invariant/Basic.lean`), and `invar₂_normEDS` is
-`invarNum_normEDS_one_mul_eq_invarDenom_mul` (`Invariant/NormEDS.lean`), so `redInvar_normEDS`
-alone remains there.
+The other half of the reduced-invariant theory — `redInvar_normEDS ← invar₂_normEDS ←
+invar_normEDS ← net_normEDS`, written in the source's names — is complete: `net_normEDS` is
+`isEllipticNet_normEDS` (`NormEDS.lean`), `invar_normEDS` is `invarNum_mul_invarDenom`
+(`Invariant/Basic.lean`), `invar₂_normEDS` is `invarNum_normEDS_one_mul_eq_invarDenom_mul`
+(`Invariant/NormEDS.lean`), and `redInvar_normEDS` is
+`reducedInvarNum_eq_reducedInvarDenom_mul` below.
 
 Everything below is independent of all of that: nothing carries an ellipticity hypothesis, and the
 source discharges the ellipticity variables over exactly this block.
@@ -387,8 +390,7 @@ section ReducedInvariantIdentity
 open MvPolynomial NormEDSParam
 open scoped nonZeroDivisors
 
-/-- `reducedInvarNum_eq_reducedInvarDenom_mul` under nonzerodivisor hypotheses on `b` and `c`,
-which the unconditional form discharges by specialising from the universal parameters. -/
+/-- `reducedInvarNum_eq_reducedInvarDenom_mul` under nonzerodivisor hypotheses on `b` and `c`. -/
 private theorem reducedInvarNum_eq_reducedInvarDenom_mul_of_mem (hb : b ∈ R⁰) (hc : c ∈ R⁰) :
     reducedInvarNum b c d m = reducedInvarDenom b c d m * (d + b ^ 4) := by
   rw [← mul_cancel_right_mem_nonZeroDivisors hb, ← mul_cancel_right_mem_nonZeroDivisors hc,
@@ -398,17 +400,16 @@ private theorem reducedInvarNum_eq_reducedInvarDenom_mul_of_mem (hb : b ∈ R⁰
   ring
 
 /-- **The reduced invariant identity**: for a normalised EDS the reduced numerator is the
-reduced denominator times `d + b ^ 4`, for every `m` and with no hypothesis on `b`, `c`, `d`.
-This is the link `DivisionPolynomial/Invariant.lean` records as the one remaining input to
-`ω` (the source's `redInvar_normEDS`). -/
+reduced denominator times `d + b ^ 4`, for every `m` and with no hypothesis on `b`, `c`, `d` —
+the source's `redInvar_normEDS`. -/
 theorem reducedInvarNum_eq_reducedInvarDenom_mul :
     reducedInvarNum b c d m = reducedInvarDenom b c d m * (d + b ^ 4) := by
+  -- Prove it where `b` and `c` are nonzerodivisors — the universal parameters — and specialise.
   have huniv := reducedInvarNum_eq_reducedInvarDenom_mul_of_mem
     (b := (X B : MvPolynomial NormEDSParam ℤ)) (c := X C) (d := X D) (m := m)
     (mem_nonZeroDivisors_of_ne_zero (X_ne_zero (R := ℤ) B))
     (mem_nonZeroDivisors_of_ne_zero (X_ne_zero (R := ℤ) C))
-  have key := congr(aeval (NormEDSParam.rec b c d) $huniv)
   simpa only [map_reducedInvarNum, map_reducedInvarDenom, map_mul, map_add, map_pow, aeval_X]
-    using key
+    using congr(aeval (NormEDSParam.rec b c d) $huniv)
 
 end ReducedInvariantIdentity
