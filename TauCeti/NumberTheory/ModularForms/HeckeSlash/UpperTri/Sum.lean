@@ -132,11 +132,11 @@ lemma heckeSlashUpperTriAddDiag_apply (f : ℍ → ℂ) (τ : ℍ) :
       (∑ b : Fin p, (f ∣[k] upperTriRep p b) τ) + (f ∣[k] diagRep p) τ := by
   rw [heckeSlashUpperTriAddDiag_def, Pi.add_apply, heckeSlashUpperTri_apply]
 
-/-- The full sum sends the zero function to zero. -/
+/-- The augmented sum sends the zero function to zero. -/
 @[simp] lemma heckeSlashUpperTriAddDiag_zero : heckeSlashUpperTriAddDiag k p 0 = 0 := by
   rw [heckeSlashUpperTriAddDiag_def, heckeSlashUpperTri_zero, SlashAction.zero_slash, add_zero]
 
-/-- The full sum is additive in `f`, since each slash is. -/
+/-- The augmented sum is additive in `f`, since each slash is. -/
 @[simp] lemma heckeSlashUpperTriAddDiag_add (f g : ℍ → ℂ) :
     heckeSlashUpperTriAddDiag k p (f + g) =
       heckeSlashUpperTriAddDiag k p f + heckeSlashUpperTriAddDiag k p g := by
@@ -146,13 +146,14 @@ lemma heckeSlashUpperTriAddDiag_apply (f : ℍ → ℂ) (τ : ℍ) :
 
 /-- **Scalars pass through the augmented sum.** With `heckeSlashUpperTriAddDiag_add` and
 `heckeSlashUpperTriAddDiag_zero` this is the `ℂ`-linearity of
-`f ↦ heckeSlashUpperTriAddDiag k p f`. The positivity hypothesis is what
-`ModularForm.rat_smul_slash_of_det_pos` needs for the extra representative. -/
+`f ↦ heckeSlashUpperTriAddDiag k p f`. Unconditional in `p`, matching
+`heckeSlashUpperTri_smul`: `det_diagRep_pos` needs no positivity, since `natDiagGL`'s junk
+value is the identity. -/
 @[simp] lemma heckeSlashUpperTriAddDiag_smul {α : Type*} [DistribSMul α ℂ]
-    [IsScalarTower α ℂ ℂ] (hp : 0 < p)
+    [IsScalarTower α ℂ ℂ]
     (c : α) (f : ℍ → ℂ) :
       heckeSlashUpperTriAddDiag k p (c • f) = c • heckeSlashUpperTriAddDiag k p f := by
   rw [heckeSlashUpperTriAddDiag_def, heckeSlashUpperTriAddDiag_def, heckeSlashUpperTri_smul,
-    smul_add, ModularForm.rat_smul_slash_of_det_pos k (det_diagRep_pos p hp) f c]
+    smul_add, ModularForm.rat_smul_slash_of_det_pos k (det_diagRep_pos p) f c]
 
 end HeckeRing.GL2

@@ -161,16 +161,23 @@ noncomputable def diagRep : GL (Fin 2) ℚ :=
   fin_cases i <;> fin_cases j <;> simp [diagRep, natDiagGL_coe 2 ![p, 1] ha]
 
 /-- **The remaining representative is upper triangular too** — being diagonal, its `(1, 0)`
-entry vanishes, which is the hypothesis `IsBoundedAtImInfty.slash` asks for. -/
-@[simp] lemma diagRep_apply_one_zero (hp : 0 < p) :
-    (↑(diagRep p) : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0 := by
-  simp [coe_diagRep p hp]
+entry vanishes, which is the hypothesis `IsBoundedAtImInfty.slash` asks for.
 
-/-- The remaining representative has positive determinant: `det !![p, 0; 0, 1] = p > 0`. -/
-lemma det_diagRep_pos (hp : 0 < p) :
-    0 < (↑(diagRep p) : Matrix (Fin 2) (Fin 2) ℚ).det := by
-  have ha : ∀ i : Fin 2, 0 < ![p, 1] i := fun i ↦ by fin_cases i <;> simp [hp]
-  simpa [diagRep] using natDiagGL_det_pos 2 ![p, 1] ha
+Unconditional in `p`: at `p = 0` the positivity condition fails and `natDiagGL` takes its junk
+value `1`, whose off-diagonal entries also vanish. -/
+@[simp] lemma diagRep_apply_one_zero :
+    (↑(diagRep p) : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0 := by
+  by_cases hp : 0 < p
+  · simp [coe_diagRep p hp]
+  · have ha : ¬ ∀ i : Fin 2, 0 < ![p, 1] i := fun h ↦ hp (by simpa using h 0)
+    simp [diagRep, natDiagGL_of_not_pos 2 ha]
+
+/-- The remaining representative has positive determinant. Unconditional in `p`: this is the
+`posDetInt` membership `natDiagGL_mem_posDetInt`, which already covers the junk branch, rather
+than a fresh derivation from `natDiagGL_det_pos`. -/
+lemma det_diagRep_pos :
+    0 < (↑(diagRep p) : Matrix (Fin 2) (Fin 2) ℚ).det :=
+  ((mem_posDetInt_iff 2).mp (natDiagGL_mem_posDetInt 2 ![p, 1])).2
 
 /-- The representatives have positive determinant: `det !![1, b; 0, p] = p > 0`. -/
 lemma det_upperTriRep_pos (b : Fin p) :
