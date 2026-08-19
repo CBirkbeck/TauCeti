@@ -46,6 +46,8 @@ Huber ring is nonarchimedean, which is exactly the hypothesis under which
 * `TauCeti.Huber.IsHuberRing.isCountablyGenerated_nhds_zero`: its neighbourhoods of zero are
   countably generated. With the previous bullet these are exactly the two hypotheses Henkel's open
   mapping theorem asks of the underlying group, so both are instances.
+* `TauCeti.Huber.IsHuberRing.firstCountableTopology`: and so it is first countable, which is the
+  class Mathlib's instances are keyed on — products and subtypes inherit countability from it.
 * `TauCeti.Huber.IsHuberRing.quotient`: a quotient of a Huber ring is a Huber ring.
 * `TauCeti.Huber.PairOfDefinition.isBounded_ringOfDefinition`: a ring of definition is bounded,
   hence `A₀ ≤ A°` (`TauCeti.Huber.PairOfDefinition.le_powerBoundedSubring`). This is the
@@ -480,6 +482,18 @@ point — it is what lets a Huber ring be handed to that theorem without the cal
 anything. -/
 instance IsHuberRing.isCountablyGenerated_nhds_zero : (𝓝 (0 : A)).IsCountablyGenerated :=
   IsHuberRing.nonempty_pairOfDefinition.elim fun P ↦ P.hasBasis_nhds_zero.isCountablyGenerated
+
+/-- **A Huber ring is first countable.** Every point's neighbourhoods are countably generated,
+not just zero's: translation by `a` is a homeomorphism carrying `𝓝 0` to `𝓝 a`, and the image of a
+countably generated filter is countably generated.
+
+This is the form Mathlib's own machinery consumes. `IsHuberRing.isCountablyGenerated_nhds_zero`
+above is about `𝓝 0` alone, which is what the proofs use, but `FirstCountableTopology` is the class
+that Mathlib's instances are keyed on — so recording it here is what makes products such as
+`Fin m → A`, subtypes, and quotients inherit countability automatically rather than one bespoke
+lemma at a time. -/
+instance IsHuberRing.firstCountableTopology : FirstCountableTopology A :=
+  ⟨fun a ↦ by rw [← map_add_left_nhds_zero a]; infer_instance⟩
 
 /-- Wedhorn Corollary 6.4: the power-bounded subring of a Huber ring is open. -/
 theorem isOpen_powerBoundedSubring : IsOpen (powerBoundedSubring A : Set A) := by
