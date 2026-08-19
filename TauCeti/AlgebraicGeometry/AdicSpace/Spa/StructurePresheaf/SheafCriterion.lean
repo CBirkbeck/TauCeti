@@ -12,8 +12,8 @@ public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.Basic
 /-!
 # Sheafiness is decided by rational covers
 
-`PairOfDefinition.IsSheafy` is stated in Mathlib's shape: the presentation-indexed presheaf is
-a sheaf
+`PairOfDefinition.IsPresentationLimitSheaf` is stated in Mathlib's shape: the
+presentation-indexed presheaf is a sheaf
 for the Grothendieck topology of the adic spectrum, quantifying over *all* opens and *all*
 covers.
 Wedhorn instead checks only covers by rational subsets. This file reconciles the two, by
@@ -22,7 +22,7 @@ sheaf criterion at the basis of rational subsets — to the presentation-indexed
 
 ## Main results
 
-* `TauCeti.Huber.PairOfDefinition.isSheafy_iff_isSheafFor_rationalCover` : the
+* `TauCeti.Huber.PairOfDefinition.isPresentationLimitSheaf_iff_isSheafFor_rationalCover` : the
   reconciliation.
 
 ## References
@@ -45,15 +45,15 @@ its presentation-indexed presheaf satisfies the sheaf condition for every cover 
 rational
 subsets.
 
-This is what makes the Mathlib-shaped definition usable: `PairOfDefinition.IsSheafy`
+This is what makes the Mathlib-shaped definition usable: `PairOfDefinition.IsPresentationLimitSheaf`
 quantifies over all opens and all covers, while Wedhorn checks only rational ones. -/
-theorem _root_.TauCeti.Huber.PairOfDefinition.isSheafy_iff_isSheafFor_rationalCover
+theorem _root_.TauCeti.Huber.PairOfDefinition.isPresentationLimitSheaf_iff_isSheafFor_rationalCover
     [IsHuberRing A] (P : PairOfDefinition A) (Aplus : Subring A) :
-    P.IsSheafy Aplus ↔
+    P.IsPresentationLimitSheaf Aplus ↔
       ∀ (E : CompleteSeparatedTopCommRingCat.{v}) ⦃U : Opens ↥(spa Aplus)⦄ (R : Presieve U),
         IsBasisCover (spaRationalOpens Aplus) R →
         Presieve.IsSheafFor (presentationLimitPresheaf P Aplus ⋙ coyoneda.obj (Opposite.op E)) R :=
-  (P.isSheafy_iff Aplus).trans (isSheaf_iff_isSheafFor_rationalCover Aplus _)
+  (P.isPresentationLimitSheaf_iff Aplus).trans (isSheaf_iff_isSheafFor_rationalCover Aplus _)
 
 end
 

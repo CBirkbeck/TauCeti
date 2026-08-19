@@ -43,15 +43,16 @@ not the hypotheses.
   for `𝒪_X(V)`.
 * `TauCeti.ValuationSpectrum.presentationLimitMap` : the restriction morphism of a containment.
 * `TauCeti.ValuationSpectrum.presentationLimitPresheaf` : the presheaf itself.
-* `TauCeti.Huber.PairOfDefinition.IsSheafy` : the chosen presentation data is sheafy over
-  `Aplus`, i.e. that presheaf is a sheaf. The name is the roadmap's (`AdicSpaces/README.md:522`,
-  `Huber.IsSheafyPair`); until the initiality statement is proved it is sheafiness of the
-  presentation-indexed presheaf, which is what this file can state.
+* `TauCeti.Huber.PairOfDefinition.IsPresentationLimitSheaf` : the presentation-indexed
+  presheaf is a sheaf. It is named for the presheaf it actually tests: until the initiality
+  statement is proved, that presheaf is not known to be Wedhorn's `𝒪_X`, so this is not yet the
+  roadmap's `Huber.IsSheafyPair` (`AdicSpaces/README.md:522`) — which the rename leaves free.
 
 ## Main results
 
-* `TauCeti.Huber.PairOfDefinition.isSheafy_iff` : sheafiness unfolds to Mathlib's sheaf
-  condition (`IsSheafy` is not exposed; this is the route across).
+* `TauCeti.Huber.PairOfDefinition.isPresentationLimitSheaf_iff` : sheafiness unfolds to
+  Mathlib's sheaf
+  condition (`IsPresentationLimitSheaf` is not exposed; this is the route across).
 * `presentationLimitPresheaf_obj`, `presentationLimitPresheaf_map` : its simp interface.
 * `RationalIndex.directed` : the index is directed, so presentations of the same subset are
   constrained through a common refinement.
@@ -290,16 +291,17 @@ arbitrary subring, and independence of the chosen pair of definition — that `l
 pairs of definition. The roadmap's names `IsSheafyPair A Aplus`, `IsSheafyRing A` and
 `IsStablySheafyRing A` are all left free for the `P`-independent notions this one feeds once
 that independence is available. -/
-def _root_.TauCeti.Huber.PairOfDefinition.IsSheafy (P : PairOfDefinition A)
+def _root_.TauCeti.Huber.PairOfDefinition.IsPresentationLimitSheaf (P : PairOfDefinition A)
     (Aplus : Subring A) : Prop :=
   CategoryTheory.Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
     (presentationLimitPresheaf P Aplus)
 
-/-- `PairOfDefinition.IsSheafy` unfolds to Mathlib's sheaf condition. The body is not
+/-- `PairOfDefinition.IsPresentationLimitSheaf` unfolds to Mathlib's sheaf condition. The body
+is not
 exported, so this is how a consumer moves between the two. -/
-theorem _root_.TauCeti.Huber.PairOfDefinition.isSheafy_iff (P : PairOfDefinition A)
+theorem _root_.TauCeti.Huber.PairOfDefinition.isPresentationLimitSheaf_iff (P : PairOfDefinition A)
     (Aplus : Subring A) :
-    P.IsSheafy Aplus ↔
+    P.IsPresentationLimitSheaf Aplus ↔
       CategoryTheory.Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
         (presentationLimitPresheaf P Aplus) := Iff.rfl
 
