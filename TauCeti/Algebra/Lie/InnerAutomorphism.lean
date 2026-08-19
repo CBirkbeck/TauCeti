@@ -156,12 +156,11 @@ attribute [local instance 100] LieRing.ofAssociativeRing
 variable {A : Type*} [Ring A] [Algebra ℚ A]
 
 /-- **The nilpotent exponential commutes with passage to the opposite ring.** Taking `exp` in
-`Aᵐᵒᵖ` and reading the result back in `A` gives `exp` in `A`.
-
-Mathlib's `IsNilpotent.exp` API carries `map_exp` for ring homomorphisms, but `MulOpposite.op` is
-an anti-homomorphism, so that lemma does not apply. -/
+`Aᵐᵒᵖ` and reading the result back in `A` gives `exp` in `A`. -/
 private theorem unop_exp_op {x : A} (hx : IsNilpotent x) :
     MulOpposite.unop (IsNilpotent.exp (MulOpposite.op x)) = IsNilpotent.exp x := by
+  -- `map_exp` covers ring homomorphisms, but `MulOpposite.op` is an anti-homomorphism, so it does
+  -- not apply here; compare the two truncated sums directly instead.
   obtain ⟨k, hk⟩ := hx
   have hk_op : MulOpposite.op x ^ k = 0 := by
     rw [← MulOpposite.op_pow, hk, MulOpposite.op_zero]
