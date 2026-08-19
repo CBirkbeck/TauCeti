@@ -21,17 +21,17 @@ satisfies
 namely the index whose natural value is `ZMod.val (-a * c⁻¹)`, where `c⁻¹` is the inverse of the
 unit.
 
-The uniqueness statement is available in **two forms**, exchanged by
-`ZMod.intCast_zmod_eq_zero_iff_dvd`: as the divisibility over `ℤ` displayed above, which is how
-the downstream Hecke sums are phrased, and as the equation
+All of it is arithmetic in `ZMod n` — no matrix, determinant or group action occurs — so that is
+where the file starts. `existsUnique_mul_add_eq_zero` solves `c * z + a = 0` for `z : ZMod n`;
+`ZMod.finEquiv` re-indexes it by `Fin n`; and one exchange lemma,
+`dvd_add_mul_iff_mul_natCast_add_eq_zero`, carries a single index between the equation and the
+divisibility. Every other result here is a corollary of those three, so the cast argument is made
+exactly once in the file rather than once per direction per statement.
 
-```text
-((c : ℤ) : ZMod n) * ((i : ℕ) : ZMod n) + ((a : ℤ) : ZMod n) = 0
-```
-
-in `ZMod n`, which is what a consumer holding a vanishing condition rather than a divisibility
-wants. Either way the content is arithmetic in `ZMod n`: no matrix, determinant or group action
-occurs.
+The uniqueness statement is therefore available in **two forms**. The `ZMod n` one takes its
+coefficients in `ZMod n` itself, so a consumer already holding residues needs no integer
+preimages; the `ℤ` one is the divisibility displayed above, which is how the downstream Hecke sums
+are phrased.
 
 Invertibility of `c` is the only thing the argument uses, so nothing here asks for a prime
 modulus. Over a prime `p` the hypothesis is implied by `((c : ℤ) : ZMod p) ≠ 0`, since `ZMod p` is
@@ -39,14 +39,18 @@ then a field.
 
 ## Main results
 
+* `TauCeti.existsUnique_mul_add_eq_zero`: the underlying algebra — in `ZMod n` a unit coefficient
+  makes `c * z + a = 0` uniquely solvable.
+* `TauCeti.existsUnique_mul_natCast_add_eq_zero`: the same, indexed by `Fin n` along
+  `ZMod.finEquiv`.
+* `TauCeti.dvd_add_mul_iff_mul_natCast_add_eq_zero`: the exchange between the two forms, at a
+  single index.
+* `TauCeti.existsUnique_dvd_add_mul`: existence and uniqueness as a divisibility over `ℤ`, the
+  form the downstream Hecke sums are phrased in.
 * `TauCeti.dvd_add_mul_iff_eq_of_dvd`: given one such index, an index satisfies the divisibility
   exactly when it equals that one.
-* `TauCeti.dvd_add_mul_val_neg_mul_inv`: such an index exists, with natural value
+* `TauCeti.dvd_add_mul_val_neg_mul_inv`: the explicit witness, of natural value
   `ZMod.val (-a * c⁻¹)`.
-* `TauCeti.existsUnique_dvd_add_mul`: the two combined — existence and uniqueness, as a
-  divisibility over `ℤ`.
-* `TauCeti.existsUnique_mul_natCast_add_eq_zero`: the same uniqueness read as an equation in
-  `ZMod n`, so that the cast argument is made once here rather than at each use site.
 
 ## Provenance
 
@@ -62,11 +66,12 @@ arbitrary nonzero modulus, and assume only `IsUnit ((c : ℤ) : ZMod n)`, since 
 one coefficient is all the argument uses. `b₀` is implicit, and the section supplies the binders the
 source passes explicitly.
 
-**Neither proof is the source's.** AINTLIB proves uniqueness by rewriting through the `if`-split in
-its own `moebiusFin`; here it is arithmetic in `ZMod n` — two indices satisfying the divisibility
-differ by something the unit `c` kills — and no group action appears. `existsUnique_dvd_add_mul`
-combines the two and has no counterpart in the source, which never states existence and uniqueness
-together.
+**Neither proof is the source's, and the direction is reversed.** AINTLIB proves uniqueness by
+rewriting through the `if`-split in its own `moebiusFin`, taking the two divisibility statements as
+primitive. Here the primitive is the `ZMod n` equation — `existsUnique_mul_add_eq_zero`, where the
+unit `c` cancels and no group action appears — and both ported statements are corollaries of it,
+reached through `ZMod.finEquiv` and the single exchange lemma. `existsUnique_dvd_add_mul` has no
+counterpart in the source, which never states existence and uniqueness together.
 -/
 
 public section
@@ -75,72 +80,71 @@ namespace TauCeti
 
 variable {n : ℕ} [NeZero n]
 
+omit [NeZero n] in
+/-- **The underlying algebra.** In `ZMod n` a unit coefficient makes the linear equation
+`c * z + a = 0` uniquely solvable, with solution `-a * c⁻¹`.
+
+Everything else in this file is this fact re-indexed or re-cast; stating it here means the
+unit-cancellation argument is made once. -/
+lemma existsUnique_mul_add_eq_zero (a c : ZMod n) (hc : IsUnit c) :
+    ∃! z : ZMod n, c * z + a = 0 := by
+  have hci : c * c⁻¹ = 1 := ZMod.mul_inv_of_unit c hc
+  refine ⟨-a * c⁻¹, by linear_combination -a * hci, fun y hy ↦ ?_⟩
+  refine sub_eq_zero.mp (hc.mul_right_eq_zero.mp ?_)
+  linear_combination hy + a * hci
+
+/-- **Exactly one index solves the equation in `ZMod n`.** The `Fin n`-indexed face of
+`existsUnique_mul_add_eq_zero`, transported along `ZMod.finEquiv`.
+
+The coefficients are elements of `ZMod n`, not integers read through `Int.cast`, so a consumer
+already holding residues applies this directly. -/
+theorem existsUnique_mul_natCast_add_eq_zero (a c : ZMod n) (hc : IsUnit c) :
+    ∃! i : Fin n, c * ((i : ℕ) : ZMod n) + a = 0 :=
+  ((ZMod.finEquiv n).toEquiv.existsUnique_congr fun i ↦ by
+    simp [ZMod.finEquiv_apply]).mpr (existsUnique_mul_add_eq_zero a c hc)
+
+omit [NeZero n] in
+/-- **The exchange between the two forms**, at a single index: `n` divides `a + i * c` over `ℤ`
+exactly when the corresponding equation holds in `ZMod n`.
+
+This is the only place the `ℤ`/`ZMod n` cast argument is made; the `∃!` statements transport
+through it with `existsUnique_congr` rather than repeating it per direction. -/
+lemma dvd_add_mul_iff_mul_natCast_add_eq_zero (a c : ℤ) (i : ℕ) :
+    (n : ℤ) ∣ (a + i * c) ↔
+      ((c : ℤ) : ZMod n) * ((i : ℕ) : ZMod n) + ((a : ℤ) : ZMod n) = 0 := by
+  rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
+  push_cast
+  constructor <;> intro h <;> linear_combination h
+
+/-- **Exactly one index solves the divisibility.** When `c` is a unit mod `n` there is a unique
+`i : Fin n` with `n ∣ a + i * c`. This is the form a consumer indexing by `Fin n` wants, and the
+form the downstream Hecke sums are phrased in. -/
+theorem existsUnique_dvd_add_mul (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) :
+    ∃! i : Fin n, (n : ℤ) ∣ (a + (i : ℕ) * c) :=
+  (existsUnique_congr fun i : Fin n ↦
+      dvd_add_mul_iff_mul_natCast_add_eq_zero a c (i : ℕ)).mpr
+    (existsUnique_mul_natCast_add_eq_zero ((a : ℤ) : ZMod n) ((c : ℤ) : ZMod n) hc)
+
 /-- **At most one index.** If `b₀` satisfies the divisibility then an index `i` satisfies it
 exactly when `i = b₀`.
 
-The only hypothesis is that `c` is a unit mod `n`; the argument is arithmetic in `ZMod n`. Stated
-as a divisibility over `ℤ`, which is the form the downstream Hecke sums are phrased in.
-
-`existsUnique_dvd_add_mul` is the form to reach for when no solution is already in hand. -/
+`existsUnique_dvd_add_mul` is the form to reach for when no solution is already in hand; this is
+the form to reach for when one is. -/
 lemma dvd_add_mul_iff_eq_of_dvd (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) {b₀ : Fin n}
     (hb₀ : (n : ℤ) ∣ (a + (b₀ : ℕ) * c)) (i : Fin n) :
     (n : ℤ) ∣ (a + (i : ℕ) * c) ↔ i = b₀ := by
-  refine ⟨fun hi ↦ ?_, fun hji ↦ hji ▸ hb₀⟩
-  have h1 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ n).mpr hi
-  have h2 := (ZMod.intCast_zmod_eq_zero_iff_dvd _ n).mpr hb₀
-  push_cast at h1 h2
-  refine (ZMod.finEquiv n).injective ?_
-  rw [ZMod.finEquiv_apply, ZMod.finEquiv_apply]
-  have hsub : (((i : ℕ) : ZMod n) - ((b₀ : ℕ) : ZMod n)) * ((c : ℤ) : ZMod n) = 0 := by
-    linear_combination h1 - h2
-  exact sub_eq_zero.mp (hc.mul_left_eq_zero.mp hsub)
+  obtain ⟨b, -, hbu⟩ := existsUnique_dvd_add_mul a c hc
+  exact ⟨fun hi ↦ (hbu i hi).trans (hbu b₀ hb₀).symm, fun hji ↦ hji ▸ hb₀⟩
 
-/-- **A solution exists.** When the coefficient `c` is a unit mod `n` the divisibility holds at
-the natural number `ZMod.val (-a * c⁻¹)`, the canonical representative of the residue solving
-`a + i * c ≡ 0`. The index is a natural number here, not an element of `Fin n`; the `Fin n` form
-is `existsUnique_dvd_add_mul`, which combines this with `dvd_add_mul_iff_eq_of_dvd` to get
-uniqueness as well. -/
+/-- **The explicit witness.** The unique index of `existsUnique_dvd_add_mul` has natural value
+`ZMod.val (-a * c⁻¹)`, the canonical representative of the residue solving the equation. -/
 lemma dvd_add_mul_val_neg_mul_inv (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) :
     (n : ℤ) ∣ (a +
       (((-((a : ℤ) : ZMod n) * ((c : ℤ) : ZMod n)⁻¹).val : ℕ)) * c) := by
-  rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-  push_cast
-  rw [ZMod.natCast_val, ZMod.cast_id]
-  have hcancel : (-((a : ℤ) : ZMod n) * ((c : ℤ) : ZMod n)⁻¹) * ((c : ℤ) : ZMod n) =
-      -((a : ℤ) : ZMod n) := by
-    rw [mul_assoc, ZMod.inv_mul_of_unit _ hc, mul_one]
-  rw [hcancel, add_neg_cancel]
-
-/-- **Exactly one index solves the divisibility.** When `c` is a unit mod `n` there is a unique
-`i : Fin n` with `n ∣ a + i * c`. This is what `dvd_add_mul_val_neg_mul_inv` and
-`dvd_add_mul_iff_eq_of_dvd` combine to, and the form a consumer indexing by `Fin n` wants. -/
-theorem existsUnique_dvd_add_mul (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) :
-    ∃! i : Fin n, (n : ℤ) ∣ (a + (i : ℕ) * c) := by
-  have hb : (n : ℤ) ∣ (a + (((ZMod.finEquiv n).symm
-      (-((a : ℤ) : ZMod n) * ((c : ℤ) : ZMod n)⁻¹) : Fin n) : ℕ) * c) := by
-    simp only [ZMod.finEquiv_symm_apply_val]
-    exact dvd_add_mul_val_neg_mul_inv a c hc
-  exact ⟨_, hb, fun y hy ↦ (dvd_add_mul_iff_eq_of_dvd a c hc hb y).mp hy⟩
-
-/-- **Exactly one index solves the equation in `ZMod n`.** The `ZMod n` face of
-`existsUnique_dvd_add_mul`: for a unit coefficient `c` there is a unique `i : Fin n` with
-`c * i + a = 0`, read through the natural cast of the index.
-
-The two forms are exchanged by `ZMod.intCast_zmod_eq_zero_iff_dvd`. This one is what a consumer
-holding a vanishing condition rather than a divisibility wants, so that the cast argument is made
-once here instead of at each use site. -/
-theorem existsUnique_mul_natCast_add_eq_zero (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) :
-    ∃! i : Fin n,
-      ((c : ℤ) : ZMod n) * ((i : ℕ) : ZMod n) + ((a : ℤ) : ZMod n) = 0 := by
-  obtain ⟨b, hb, hbu⟩ := existsUnique_dvd_add_mul (n := n) a c hc
-  refine ⟨b, ?_, fun y hy ↦ hbu y ?_⟩
-  · have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ n).mpr hb
-    push_cast at hz
-    linear_combination hz
-  · dsimp only
-    rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
-    push_cast
-    linear_combination hy
+  have hci : ((c : ℤ) : ZMod n) * ((c : ℤ) : ZMod n)⁻¹ = 1 :=
+    ZMod.mul_inv_of_unit _ hc
+  rw [dvd_add_mul_iff_mul_natCast_add_eq_zero, ZMod.natCast_val, ZMod.cast_id]
+  linear_combination -((a : ℤ) : ZMod n) * hci
 
 end TauCeti
 
