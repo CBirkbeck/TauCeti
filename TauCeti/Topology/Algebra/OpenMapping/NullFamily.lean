@@ -1,0 +1,121 @@
+/-
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
+-/
+module
+
+public import Mathlib.Order.Filter.CountablyGenerated
+public import Mathlib.Order.Filter.Cofinite
+public import Mathlib.Order.Filter.AtTopBot.Basic
+public import Mathlib.Data.Nat.Find
+public import Mathlib.Topology.Basic
+
+/-!
+# Lifting a null family along an open surjection
+
+A family `g : ι → N` is *null* when it tends to `0` along the cofinite filter — all but finitely
+many of its members lie in any given neighbourhood of zero. This file shows that a surjection
+which carries neighbourhoods of zero onto neighbourhoods of zero lifts null families to null
+families: the lift can be chosen so that it is null too, not merely so that it exists.
+
+That the lifts exist pointwise is only surjectivity. The content is that they can be chosen
+*uniformly enough to still converge*, and this genuinely needs a construction: choosing a preimage
+of `g α` for each `α` independently can leave the lifts spread out even when the `g α` collapse to
+zero. The fix is to choose the preimage of `g α` from a neighbourhood whose index grows with `α`,
+so that convergence is forced by the choice rather than hoped for.
+
+## Main results
+
+* `exists_tendsto_cofinite_atTop`: a countable type carries a function to `ℕ` tending to infinity
+  cofinitely. This is the cap, and it is what makes the index below total.
+* `exists_lift_tendsto_cofinite_nhds_zero`: the lifting statement.
+
+## Implementation notes
+
+The index of the neighbourhood a lift is drawn from is
+`Nat.findGreatest (fun m ↦ g α ∈ φ '' V m) (r α)`, where `r` is any function to `ℕ` tending to
+infinity cofinitely — one exists because `ι` is countable. **The cap by `r α` is what makes the
+definition total.** Without it the natural index is the largest `m` with `g α ∈ φ '' V m`, which is
+undefined exactly when `g α` lies in every `φ '' V m`; capping removes that case rather than
+splitting on it.
+
+No algebraic structure is used: `M` and `N` carry only a topology and a distinguished point. In
+particular the neighbourhoods `V n` are not assumed to be subgroups, which the argument would need
+if it ever added two lifts — it never does, choosing each independently.
+
+The hypothesis is `∀ n, φ '' V n ∈ 𝓝 0` rather than `IsOpenMap φ`, since that is exactly what the
+proof consumes; openness of `φ` is one way to supply it, and a `Filter.map` equality is another.
+-/
+
+namespace TauCeti
+
+open Filter Topology Set
+
+public section
+
+variable {ι : Type*} [Countable ι] {M N : Type*} [TopologicalSpace M] [TopologicalSpace N]
+  [Zero M] [Zero N]
+
+/-- **A countable type carries a function to `ℕ` tending to infinity cofinitely.** Any injection
+into `ℕ` will do: the set where it is below `N` has at most `N` elements.
+
+This is the cap used below. Mathlib has `Countable.exists_injective_nat` and
+`Nat.cofinite_eq_atTop` separately; this composes them into the form a diagonal argument wants. -/
+theorem exists_tendsto_cofinite_atTop (ι : Type*) [Countable ι] :
+    ∃ r : ι → ℕ, Tendsto r (Filter.cofinite : Filter ι) atTop := by
+  obtain ⟨e, he⟩ := exists_injective_nat ι
+  exact ⟨e, Nat.cofinite_eq_atTop ▸ he.tendsto_cofinite⟩
+
+omit [Countable ι] [TopologicalSpace M] [TopologicalSpace N] [Zero M] [Zero N] in
+/-- Preimages chosen inside a prescribed neighbourhood **whenever one is available there**, and
+arbitrary otherwise. Surjectivity gives a preimage in every case; the second component is the part
+that matters, and it is vacuous exactly on the finitely many indices the main proof discards. -/
+private theorem exists_choice_mem (φ : M → N) (hsurj : Function.Surjective φ) (V : ℕ → Set M)
+    (g : ι → N) (n : ι → ℕ) :
+    ∃ f : ι → M, ∀ α, φ (f α) = g α ∧ (g α ∈ φ '' V (n α) → f α ∈ V (n α)) := by
+  classical
+  have pick : ∀ α, ∃ x : M, φ x = g α ∧ (g α ∈ φ '' V (n α) → x ∈ V (n α)) := by
+    intro α
+    by_cases h : g α ∈ φ '' V (n α)
+    · obtain ⟨x, hxV, hxg⟩ := h
+      exact ⟨x, hxg, fun _ ↦ hxV⟩
+    · obtain ⟨x, hx⟩ := hsurj (g α)
+      exact ⟨x, hx, fun hc ↦ absurd hc h⟩
+  choose f hf1 hf2 using pick
+  exact ⟨f, fun α ↦ ⟨hf1 α, hf2 α⟩⟩
+
+/-- **A null family lifts to a null family along an open surjection.** If `φ` is surjective and
+carries each member of an antitone neighbourhood basis `V` of `0` onto a neighbourhood of `0`, then
+any family tending to `0` cofinitely has a `φ`-preimage family that also tends to `0` cofinitely.
+
+Pointwise lifting is surjectivity alone; the statement is that a *single* choice of lifts can be
+made to converge. -/
+theorem exists_lift_tendsto_cofinite_nhds_zero (φ : M → N) (hsurj : Function.Surjective φ)
+    (V : ℕ → Set M) (hV : (𝓝 (0 : M)).HasAntitoneBasis V)
+    (hVmem : ∀ n, φ '' V n ∈ 𝓝 (0 : N))
+    (g : ι → N) (hg : Tendsto g (Filter.cofinite : Filter ι) (𝓝 0)) :
+    ∃ f : ι → M, (∀ α, φ (f α) = g α) ∧ Tendsto f (Filter.cofinite : Filter ι) (𝓝 0) := by
+  classical
+  obtain ⟨r, hr⟩ := exists_tendsto_cofinite_atTop ι
+  obtain ⟨f, hf⟩ := exists_choice_mem φ hsurj V g
+    (fun α ↦ Nat.findGreatest (fun m ↦ g α ∈ φ '' V m) (r α))
+  refine ⟨f, fun α ↦ (hf α).1, ?_⟩
+  rw [hV.toHasBasis.tendsto_right_iff]
+  intro N _
+  have hfin : {α | g α ∉ φ '' V N}.Finite := by
+    simpa [Filter.eventually_cofinite] using hg.eventually_mem (hVmem N)
+  have hfin2 : {α | r α < N}.Finite := by
+    simpa [Filter.eventually_cofinite, not_le] using hr.eventually_ge_atTop N
+  rw [Filter.eventually_cofinite]
+  refine (hfin.union hfin2).subset fun α hα ↦ ?_
+  by_cases h1 : g α ∈ φ '' V N
+  · by_cases h2 : N ≤ r α
+    · exact absurd (hV.antitone (Nat.le_findGreatest (P := fun m ↦ g α ∈ φ '' V m) h2 h1)
+        ((hf α).2 (Nat.findGreatest_spec (P := fun m ↦ g α ∈ φ '' V m) h2 h1))) hα
+    · exact Or.inr (not_le.mp h2)
+  · exact Or.inl h1
+
+end
+
+end TauCeti
