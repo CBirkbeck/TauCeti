@@ -132,57 +132,56 @@ theorem eq_one_of_isIdempotentElem_of_forall_algHom_apply_eq_one {a : A}
   rw [map_sub, map_one, sub_eq_zero]
   exact h f
 
+/-- **The agreement element of two idempotents is idempotent.** For idempotents `a` and `b` of a
+commutative ring, `a * b + (1 - a) * (1 - b)` is again idempotent. The name records that any ring
+homomorphism sending `a` and `b` to a common value sends this element to `1`. -/
+private theorem isIdempotentElem_mul_add_one_sub_mul_one_sub {R : Type*} [CommRing R] {a b : R}
+    (ha : IsIdempotentElem a) (hb : IsIdempotentElem b) :
+    IsIdempotentElem (a * b + (1 - a) * (1 - b)) := by
+  -- the two summands are orthogonal idempotents, so their sum squares to the sum of their squares
+  have hx : IsIdempotentElem (a * b) := ha.mul hb
+  have hy : IsIdempotentElem ((1 - a) * (1 - b)) := ha.one_sub.mul hb.one_sub
+  have hxy : a * b * ((1 - a) * (1 - b)) = 0 := by
+    calc
+      a * b * ((1 - a) * (1 - b)) = (a * (1 - a)) * (b * (1 - b)) := by ring
+      _ = 0 := by rw [mul_sub, mul_one, ha.eq, sub_self, zero_mul]
+  dsimp only [IsIdempotentElem]
+  rw [add_mul, mul_add, mul_add, hxy, mul_comm ((1 - a) * (1 - b)) (a * b), hxy, hx.eq, hy.eq]
+  simp
+
+/-- **An idempotent absorbs the agreement element onto the product.** For an idempotent `a` and
+any `b`, multiplying `a * b + (1 - a) * (1 - b)` by `a` gives `a * b`. -/
+private theorem mul_mul_add_one_sub_mul_one_sub {R : Type*} [CommRing R] {a b : R}
+    (ha : IsIdempotentElem a) : a * (a * b + (1 - a) * (1 - b)) = a * b := by
+  calc
+    a * (a * b + (1 - a) * (1 - b)) = (a * a) * b + (a - a * a) * (1 - b) := by ring
+    _ = a * b := by rw [ha.eq]; ring
+
 /-- Two idempotents in a finite-type algebra are equal when they have the same value at every
 point valued in an algebraically closed extension of the ground field. No reducedness assumption
 is needed: idempotents are already insensitive to nilpotents. -/
 theorem eq_of_isIdempotentElem_of_forall_algHom_apply_eq {a b : A}
     (ha : IsIdempotentElem a) (hb : IsIdempotentElem b)
     (h : ∀ f : A →ₐ[k] K, f a = f b) : a = b := by
-  let x := a * b
-  let y := (1 - a) * (1 - b)
-  let c := x + y
-  have hc : IsIdempotentElem c := by
-    have hx : IsIdempotentElem x := ha.mul hb
-    have hy : IsIdempotentElem y := ha.one_sub.mul hb.one_sub
-    have hxy : x * y = 0 := by
-      dsimp only [x, y]
-      calc
-        a * b * ((1 - a) * (1 - b)) = (a * (1 - a)) * (b * (1 - b)) := by ring
-        _ = 0 := by rw [mul_sub, mul_one, ha.eq, sub_self, zero_mul]
-    dsimp only [c, IsIdempotentElem]
-    rw [add_mul, mul_add, mul_add, hxy, mul_comm y x, hxy, hx.eq, hy.eq]
-    simp
-  have hc_one : c = 1 := by
+  -- the agreement element is an idempotent taking the value `1` at every point, hence `1`; both
+  -- `a` and `b` then absorb it onto `a * b`
+  have hc_one : a * b + (1 - a) * (1 - b) = 1 := by
     apply eq_one_of_isIdempotentElem_of_forall_algHom_apply_eq_one
-      (k := k) (A := A) (K := K) hc
+      (k := k) (A := A) (K := K) (isIdempotentElem_mul_add_one_sub_mul_one_sub ha hb)
     intro (f : A →ₐ[k] K)
-    dsimp only [c, x, y]
     calc
-      f (a * b + (1 - a) * (1 - b)) =
-          f (a * b) + f ((1 - a) * (1 - b)) := f.map_add _ _
-      _ = f a * f b + f (1 - a) * f (1 - b) :=
-        congrArg₂ (fun p q ↦ p + q) (f.map_mul _ _) (f.map_mul _ _)
-      _ = f a * f b + (1 - f a) * (1 - f b) := by
-        rw [map_sub, map_one, map_sub, map_one]
+      f (a * b + (1 - a) * (1 - b)) = f a * f b + (1 - f a) * (1 - f b) := by
+        simp only [map_add, map_mul, map_sub, map_one]
       _ = f b * f b + (1 - f b) * (1 - f b) := by rw [h f]
       _ = 1 - 2 * f b + 2 * (f b * f b) := by ring
       _ = 1 := by rw [(hb.map f).eq]; ring
+  have hswap : b * a + (1 - b) * (1 - a) = a * b + (1 - a) * (1 - b) := by ring
   calc
-    a = a * c := by rw [hc_one, mul_one]
-    _ = a * b := by
-      dsimp only [c, x, y]
-      calc
-        a * (a * b + (1 - a) * (1 - b)) =
-            (a * a) * b + (a - a * a) * (1 - b) := by ring
-        _ = a * b := by rw [ha.eq]; ring
-    _ = b * c := by
-      symm
-      dsimp only [c, x, y]
-      calc
-        b * (a * b + (1 - a) * (1 - b)) =
-            a * (b * b) + (1 - a) * (b - b * b) := by ring
-        _ = a * b := by rw [hb.eq]; ring
-    _ = b := by rw [hc_one, mul_one]
+    a = a * (a * b + (1 - a) * (1 - b)) := by rw [hc_one, mul_one]
+    _ = a * b := mul_mul_add_one_sub_mul_one_sub ha
+    _ = b * a := mul_comm a b
+    _ = b * (b * a + (1 - b) * (1 - a)) := (mul_mul_add_one_sub_mul_one_sub hb).symm
+    _ = b := by rw [hswap, hc_one, mul_one]
 
 variable [IsReduced A]
 
