@@ -185,20 +185,18 @@ to (`moebiusGL_smul_some` off the pole, `moebiusGL_smul_infty` at it, with
 `OnePoint.smul_some_eq_infty_iff` deciding which).
 
 The cast is part of the statement rather than something a caller reintroduces, so both evaluation
-lemmas rewrite with it directly.
-
-The proof puts both sides into `ZMod.finEquiv` form before appealing to `simp`. An explicit
-`simp only` chain would be preferable, but the goal after `Equiv.permCongr_apply` carries
-`(ZMod.finEquiv p).symm.symm` — `moebiusFin` is built from `(ZMod.finEquiv p).toEquiv.symm`, so
-that double symm is on the `Equiv`, not the `RingEquiv` — and neither `Equiv.symm_symm` nor
-`RingEquiv.symm_symm` discharges it inside `simp only`. Until a lemma set is found that closes
-it, the `rw`-then-`simp` route stays. -/
+lemmas rewrite with it directly. -/
 private lemma natCast_moebiusFin (M : Matrix (Fin 2) (Fin 2) ℤ)
     (h : ((M.det : ℤ) : ZMod p) ≠ 0) (b : Fin p) :
     ((moebiusFin M h b : ℕ) : ZMod p) =
       Equiv.removeNone (MulAction.toPerm
         (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (det_map_ne_zero M h)) :
           Equiv.Perm (OnePoint (ZMod p))) (((b : ℕ) : ZMod p)) := by
+  -- Both sides go into `ZMod.finEquiv` form before `simp`. An explicit `simp only` chain would
+  -- be preferable, but after `Equiv.permCongr_apply` the goal carries `(ZMod.finEquiv p).symm.symm`
+  -- — `moebiusFin` is built from `(ZMod.finEquiv p).toEquiv.symm`, so that double symm is on the
+  -- `Equiv`, not the `RingEquiv` — and neither `Equiv.symm_symm` nor `RingEquiv.symm_symm`
+  -- discharges it inside `simp only`. Until a lemma set closes it, this route stays.
   rw [← ZMod.finEquiv_apply, ← ZMod.finEquiv_apply]
   simp [moebiusFin, Equiv.permCongr_apply]
 /-- **The reindexing off the pole.** Where the denominator does not vanish, the index goes to the
