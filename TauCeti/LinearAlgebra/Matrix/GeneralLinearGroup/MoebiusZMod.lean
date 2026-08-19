@@ -64,9 +64,11 @@ lemmas come straight from Mathlib's `smul_some_eq_ite` / `smul_infty_eq_ite`.
   quotient where the denominator does not vanish, and the image of `∞` at the single index where
   it does.
 
-The statement that exactly one index is carried to `∞` is arithmetic in `ZMod p`, mentions no
-matrix, and lives in `TauCeti.Data.ZMod.DvdAddMul`; at a Möbius consumer its coefficients `a` and
-`c` are `M 0 0` and `M 1 0`.
+Uniqueness of the pole is proved in two steps. The arithmetic — that exactly one residue solves
+`n ∣ a + i * c` for a unit `c` — mentions no matrix and lives in
+`TauCeti.Data.ZMod.DvdAddMul` as `TauCeti.existsUnique_dvd_add_mul`. Its Möbius specialisation,
+with `a` and `c` instantiated to `M 0 0` and `M 1 0` and the divisibility exchanged for vanishing
+in `ZMod p`, is `TauCeti.existsUnique_denominator_eq_zero` below.
 The two evaluation lemmas above are the elimination API for `moebiusFin`: its body is sealed
 across the module boundary, so `unfold` is not available to a consumer, and the equation they are
 proved from is private scaffold rather than public surface.
@@ -173,20 +175,22 @@ noncomputable def moebiusFin (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ
       (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)) :
         Equiv.Perm (OnePoint (ZMod p))))
 
-/-- **The reindexing at an index**, with the conjugation cancelled. `moebiusFin` is
-`Equiv.removeNone` of Mathlib's action, conjugated along `ZMod.finEquiv`; reading it this way
-strips the conjugation and leaves a statement the value lemmas above apply to directly
-(`moebiusGL_smul_some` off the pole, `moebiusGL_smul_infty` at it, with
+/-- **The reindexing at an index**, cast into `ZMod p` and with the conjugation cancelled.
+`moebiusFin` is `Equiv.removeNone` of Mathlib's action, conjugated along `ZMod.finEquiv`; stating
+it after the cast strips the conjugation and leaves exactly the shape the value lemmas above apply
+to (`moebiusGL_smul_some` off the pole, `moebiusGL_smul_infty` at it, with
 `OnePoint.smul_some_eq_infty_iff` deciding which).
 
-This is what a consumer uses: the body of `moebiusFin` is sealed across the module boundary, so
-`unfold` is not available to it. -/
-private lemma moebiusFin_apply (M : Matrix (Fin 2) (Fin 2) ℤ) (h : ((M.det : ℤ) : ZMod p) ≠ 0)
-    (b : Fin p) :
-    moebiusFin M h b = (ZMod.finEquiv p).symm
-      (Equiv.removeNone (MulAction.toPerm
+The cast is part of the statement rather than something a caller reintroduces, so both evaluation
+lemmas rewrite with it directly and neither has to leave the `ZMod.finEquiv` simp-normal form and
+return to it. -/
+private lemma natCast_moebiusFin (M : Matrix (Fin 2) (Fin 2) ℤ)
+    (h : ((M.det : ℤ) : ZMod p) ≠ 0) (b : Fin p) :
+    ((moebiusFin M h b : ℕ) : ZMod p) =
+      Equiv.removeNone (MulAction.toPerm
         (moebiusGL (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)) :
-          Equiv.Perm (OnePoint (ZMod p))) ((ZMod.finEquiv p) b)) := by
+          Equiv.Perm (OnePoint (ZMod p))) (((b : ℕ) : ZMod p)) := by
+  rw [← ZMod.finEquiv_apply, ← ZMod.finEquiv_apply]
   simp [moebiusFin, Equiv.permCongr_apply]
 /-- **The reindexing off the pole.** Where the denominator does not vanish, the index goes to the
 affine Möbius value, read in `ZMod p` through the natural cast of its index. -/
@@ -207,8 +211,7 @@ lemma natCast_moebiusFin_of_ne_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
       moebiusGL_smul_some (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)
         ((b : ℕ) : ZMod p)
   have := Equiv.removeNone_some _ ⟨_, hval⟩
-  conv_lhs => rw [← ZMod.finEquiv_apply]
-  rw [moebiusFin_apply, RingEquiv.apply_symm_apply, ZMod.finEquiv_apply]
+  rw [natCast_moebiusFin]
   exact Option.some_inj.mp (this.trans hval)
 
 /-- **The reindexing at the pole.** At the single index where the denominator vanishes, the value
@@ -238,8 +241,7 @@ lemma natCast_moebiusFin_of_eq_zero (M : Matrix (Fin 2) (Fin 2) ℤ)
       ((((M 1 1 : ℤ) : ZMod p) / ((M 1 0 : ℤ) : ZMod p) : ZMod p) : OnePoint (ZMod p)) := by
     simpa [Matrix.map_apply, h10] using
       moebiusGL_smul_infty (M.map (Int.cast : ℤ → ZMod p)) (by rwa [Int.cast_det] at h)
-  conv_lhs => rw [← ZMod.finEquiv_apply]
-  rw [moebiusFin_apply, RingEquiv.apply_symm_apply, ZMod.finEquiv_apply]
+  rw [natCast_moebiusFin]
   exact Option.some_inj.mp (hnone.trans hval)
 
 /-- **Exactly one index is a pole of the reindexing.** The Möbius denominator

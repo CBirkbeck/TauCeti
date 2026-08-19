@@ -82,9 +82,11 @@ lemma dvd_add_mul_iff_eq_of_dvd (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) {
     linear_combination h1 - h2
   exact sub_eq_zero.mp (hc.mul_left_eq_zero.mp hsub)
 
-/-- **A solution exists.** When the coefficient `c` is a unit mod `n` the divisibility holds at the
-index `-a / c` read back into `Fin n` — the residue solving `a + i * c ≡ 0`. With
-`dvd_add_mul_iff_eq_of_dvd` this says the solution is unique. -/
+/-- **A solution exists.** When the coefficient `c` is a unit mod `n` the divisibility holds at
+the natural number `ZMod.val (-a * c⁻¹)`, the canonical representative of the residue solving
+`a + i * c ≡ 0`. The index is a natural number here, not an element of `Fin n`; the `Fin n` form
+is `existsUnique_dvd_add_mul`, which combines this with `dvd_add_mul_iff_eq_of_dvd` to get
+uniqueness as well. -/
 lemma dvd_add_mul_val_neg_mul_inv (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) :
     (n : ℤ) ∣ (a +
       (((-((a : ℤ) : ZMod n) * ((c : ℤ) : ZMod n)⁻¹).val : ℕ)) * c) := by
