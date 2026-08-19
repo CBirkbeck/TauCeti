@@ -449,6 +449,13 @@ noncomputable def trivialSection (p : PrimeSpectrum A) : Spv A :=
   ofValuation
     (Valuation.trivialValuation p.asIdeal : Valuation A (WithZero (Multiplicative ℤ)))
 
+/-- The defining equation of `trivialSection`, exported so downstream modules can relate the
+packaged point to its `ofValuation` spelling — in particular to test continuity through
+`isContinuous_ofValuation_iff`, which `trivialSection` itself does not re-export. -/
+lemma trivialSection_def (p : PrimeSpectrum A) :
+    trivialSection p = ofValuation
+      (Valuation.trivialValuation p.asIdeal : Valuation A (WithZero (Multiplicative ℤ))) := (rfl)
+
 /-- The valuative relation of a trivial-valuation point: `v(f) ≤ v(s)` holds precisely
 when `f` lies in the prime or `s` does not. -/
 @[simp]
