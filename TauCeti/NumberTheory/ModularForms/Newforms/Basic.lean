@@ -299,10 +299,8 @@ theorem cuspFormsOldMultiples_le_cuspFormsOld (N : ℕ) [NeZero N] (k : ℤ) (m 
 /-- **Elimination rule for the refined old subspace**: a subspace containing every level-raise of
 a newform from a proper divisor level divisible by `m` contains the whole refined old subspace.
 
-This is the companion to `levelRaise_mem_cuspFormsOldMultiples`. It is what downstream proofs use
-rather than the lattice lemmas directly: supplying `V` explicitly determines the ambient module,
-where a bare `iSup_le` against a `Submodule.comap` leaves the `CompleteLattice` instance stuck on
-a metavariable. -/
+This is the companion to `levelRaise_mem_cuspFormsOldMultiples`, and it is what downstream
+proofs use rather than the lattice lemmas directly. -/
 theorem cuspFormsOldMultiples_le [NeZero N] {m : ℕ}
     {V : Submodule ℂ (CuspForm ((Gamma1 N).map (mapGL ℝ)) k)}
     (hV : ∀ (M d : ℕ) (h : d * M ∣ N), M ≠ N → m ∣ M →
@@ -316,7 +314,11 @@ theorem cuspFormsOldMultiples_le [NeZero N] {m : ℕ}
   have := neZero_of_mul_dvd_left h.1
   have := neZero_of_mul_dvd_right h.1
   rintro _ ⟨g, hg, rfl⟩
-  simpa using hV M d h.1 h.2.1 h.2.2 g hg
+  -- Why consumers want this rule rather than the lattice lemmas: a bare `iSup_le` against a
+  -- `Submodule.comap` leaves the `CompleteLattice` instance stuck on a metavariable, whereas an
+  -- explicit `V` determines the ambient module. `levelRaiseₗ_apply` bridges the generator's
+  -- `levelRaiseₗ` application to the bare `levelRaise` that `hV` is stated with.
+  simpa only [CuspForm.levelRaiseₗ_apply] using hV M d h.1 h.2.1 h.2.2 g hg
 
 /-- `cuspFormsOldMultiples` is monotone in the level condition: a coarser divisibility
 requirement admits more generators. -/

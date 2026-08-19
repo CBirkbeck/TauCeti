@@ -93,8 +93,10 @@ theorem cuspFormsOldMultiples_map_diamondOpCusp_le (u : (ZMod N)ˣ) (m : ℕ) :
   have : NeZero d := ⟨fun hd ↦ NeZero.ne N (by simpa [hd] using h)⟩
   have : NeZero M := ⟨fun hM' ↦ NeZero.ne N (by simpa [hM'] using h)⟩
   rw [Submodule.mem_comap, CuspForm.diamondOpCusp_levelRaise h]
-  simpa using levelRaise_mem_cuspFormsOldMultiples h hM hm k _
-    (diamondOpCusp_mem_cuspFormsNew _ hg)
+  -- `levelRaiseₗ_apply` bridges the introduction rule's `levelRaiseₗ` to the bare `levelRaise`
+  -- that `diamondOpCusp_levelRaise` produced above
+  simpa only [CuspForm.levelRaiseₗ_apply] using
+    levelRaise_mem_cuspFormsOldMultiples h hM hm k _ (diamondOpCusp_mem_cuspFormsNew _ hg)
 
 /-- The refined old subspace is diamond-stable, in the membership form. -/
 theorem diamondOpCusp_mem_cuspFormsOldMultiples (u : (ZMod N)ˣ) {m : ℕ}
