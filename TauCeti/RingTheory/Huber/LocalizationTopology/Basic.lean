@@ -556,14 +556,12 @@ theorem mem_locIdealImage_add_iff (P : PairOfDefinition A) (T : Finset A) (s : A
         obtain ⟨y₁, hy₁, he₁⟩ := hp
         obtain ⟨y₂, hy₂, he₂⟩ := hq
         exact ⟨y₁ + y₂, (locIdealImage P T s S n).add_mem hy₁ hy₂, by
-          change ((p : S) + (q : S)) = _
-          rw [he₁, he₂]; ring⟩
+          rw [AddMemClass.coe_add, he₁, he₂]; ring⟩
     | smul e p _ hp =>
         obtain ⟨y, hy, he⟩ := hp
         refine ⟨y * (e : S), locIdealImage_mul_locSubring_subset P T s S n
           (Set.mul_mem_mul hy e.2), ?_⟩
-        change ((e : S) * (p : S)) = _
-        rw [he]; ring
+        rw [coe_smul_locSubring, he]; ring
   · rintro ⟨y, hy, rfl⟩
     have hpik : algebraMap A S ((pi : A) ^ k) ∈ locIdealImage P T s S k := by
       have hmem : pi ^ k ∈ P.idealOfDefinition ^ k := by
