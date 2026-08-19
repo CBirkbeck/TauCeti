@@ -65,6 +65,21 @@ This file derives none of these — each is an argument — so it compiles and i
 of when the suppliers land, and the `example` below witnesses that the block is jointly
 satisfiable rather than vacuous.
 
+**Open: the two `Algebra` arguments are not tied to `φ`.** Nothing forces them to be
+`toIntermediateRing` and `pullbackToIntermediateRing`, so the declarations below are a family
+indexed by the caller's choice of structure rather than *the* map induced by the isogeny. For
+`φ = Isogeny.id W`, precomposing either structure with a nontrivial `F`-automorphism of
+`W.CoordinateRing` satisfies every argument above — injectivity, finiteness and Dedekindness are
+all automorphism-stable — and yields a different map, so `(Isogeny.id W).pushClass` need not be
+the identity. Any functoriality statement, and `toPointHom`, will need this closed first.
+
+The obvious repair does not work here: adding `[IsScalarTower …]` arguments to constrain the
+structures makes them *unused* arguments of a definition whose body never mentions them, and
+`lint-env`'s `unusedArguments` linter rejects that as a new violation — the escape hatches are a
+`@[nolint]` plus an allowlist line under `scripts/`, which is not a fix. Closing this properly means
+building the structures inside the definition from the corestricted maps rather than accepting them,
+which changes what the declaration asks of a caller and is left for review to weigh.
+
 `ClassGroup.extendedRelNormHom` orders its rings `A M R` — source, middle, target — so the
 instantiation is `A := W₁.CoordinateRing`, `M := φ.intermediateRing`, `R := W₂.CoordinateRing`.
 
@@ -108,10 +123,7 @@ section PushClass
 variable (φ : Isogeny W₁ W₂)
   [IsDomain W₁.CoordinateRing] [IsDedekindDomain W₂.CoordinateRing]
   [Algebra W₁.CoordinateRing φ.intermediateRing]
-  [Algebra W₂.CoordinateRing W₁.FunctionField]
   [Algebra W₂.CoordinateRing φ.intermediateRing]
-  [IsScalarTower W₁.CoordinateRing φ.intermediateRing W₁.FunctionField]
-  [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField]
   [IsDedekindDomain φ.intermediateRing]
   [Module.Finite W₂.CoordinateRing φ.intermediateRing]
   [Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing]
@@ -127,15 +139,8 @@ noncomputable def pushClassMonoidHom :
     ClassGroup W₁.CoordinateRing →* ClassGroup W₂.CoordinateRing :=
   ClassGroup.extendedRelNormHom W₁.CoordinateRing φ.intermediateRing W₂.CoordinateRing
 
-omit [Algebra W₂.CoordinateRing W₁.FunctionField]
-  [IsScalarTower W₁.CoordinateRing φ.intermediateRing W₁.FunctionField]
-  [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField] in
 /-- **The composite, unfolded.** This is `ClassGroup.extendedRelNormHom_apply` transported to the
-isogeny, and it is what characterises `pushClassMonoidHom` at its own generality.
-
-The pinning hypotheses are `omit`ted: they fix *which* algebra structures the definitions are about,
-and this identity holds for whatever structures are in scope, so requiring them here would be a
-hypothesis the proof does not use. -/
+isogeny, and it is what characterises `pushClassMonoidHom` at its own generality. -/
 theorem pushClassMonoidHom_apply (x : ClassGroup W₁.CoordinateRing) :
     φ.pushClassMonoidHom x =
       ClassGroup.relNorm (ClassGroup.extendedHom W₁.CoordinateRing φ.intermediateRing x) :=
