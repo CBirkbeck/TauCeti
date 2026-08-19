@@ -46,6 +46,7 @@ literally the `q` with `q ≠ ⟦i⟧` and `q ≠ ⟦ρ⟧`.
 * `TauCeti.ModularGroup.card_stabilizer_eq_card_center_mul_card_stabilizer_psl`: for any
   `Γ ≤ SL(2, ℤ)`, the stabiliser order in `Γ` splits off the part of the centre that `Γ`
   contains, leaving the projective order in `Γ`'s image in `PSL(2, ℤ)`.
+* `TauCeti.ModularGroup.card_center_subgroupOf_eq_one_or_two`: that centre factor is `1` or `2`.
 * `TauCeti.ModularGroup.card_stabilizer_eq_two_mul_card_stabilizer_psl`: the projective order is
   the matrix one halved.
 * `TauCeti.ModularGroup.card_stabilizer_psl_I`, `TauCeti.ModularGroup.card_stabilizer_psl_ρ` and
@@ -189,6 +190,32 @@ theorem card_stabilizer_eq_card_center_mul_card_stabilizer_psl {Γ : Subgroup SL
         Nat.card (stabilizer (Γ.map (QuotientGroup.mk' (Subgroup.center SL(2, ℤ)))) z) :=
   TauCeti.card_stabilizer_eq_card_subgroupOf_mul_card_stabilizer_map _ Γ z
     fun _ ↦ UpperHalfPlane.pslMk_smul _ _
+
+/-- **The `±I` factor is `1` or `2`.** The part of the centre that `Γ` contains has order `2`
+when `-I ∈ Γ` and `1` otherwise, there being nothing else in `{±I}` — which is what turns the
+splitting `card_stabilizer_eq_card_center_mul_card_stabilizer_psl` into a statement about a
+factor of two. Stated as a disjunction rather than a case split on `-I ∈ Γ`, so a consumer that
+only needs a bound can use it without deciding the membership. -/
+theorem card_center_subgroupOf_eq_one_or_two (Γ : Subgroup SL(2, ℤ)) :
+    Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 1 ∨
+      Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 2 := by
+  -- the inclusion of `Γ ⊓ {±I}` into `{±I}`; `mem_subgroupOf` is what moves the membership
+  have hinj : Function.Injective
+      (fun x : (Subgroup.center SL(2, ℤ)).subgroupOf Γ ↦
+        (⟨((x : Γ) : SL(2, ℤ)), Subgroup.mem_subgroupOf.mp x.2⟩ : Subgroup.center SL(2, ℤ))) := by
+    intro a b h
+    rw [Subtype.mk.injEq] at h
+    exact Subtype.ext (Subtype.ext h)
+  have h2 : Nat.card (Subgroup.center SL(2, ℤ)) = 2 := card_center
+  have : Finite (Subgroup.center SL(2, ℤ)) :=
+    Nat.finite_of_card_ne_zero (by rw [h2]; omega)
+  have : Finite ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) := Finite.of_injective _ hinj
+  have hle : Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) ≤
+      Nat.card (Subgroup.center SL(2, ℤ)) := Nat.card_le_card_of_injective _ hinj
+  have hpos : 0 < Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) := Nat.card_pos
+  -- `h2` is used as a hypothesis, never rewritten: `rw [← card_center]` would abstract the `2`
+  -- in `SL(2, ℤ)` too, since that numeral is the matrix dimension
+  omega
 
 /-- **The `SL(2, ℤ)`-stabiliser order is twice the `PSL(2, ℤ)` one.** The two differ exactly by
 the centre `±1`, which acts trivially on `ℍ`, so every projective stabiliser is the matrix one
