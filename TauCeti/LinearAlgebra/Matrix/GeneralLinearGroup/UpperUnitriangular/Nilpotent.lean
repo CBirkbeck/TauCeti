@@ -99,6 +99,15 @@ private theorem VanishesBelow.mul {r s : ℕ} {M N : Matrix (Fin n) (Fin n) R}
   · rw [hM i k hik, zero_mul]
   · rw [hN k j (by omega), mul_zero]
 
+/-- **Commutators add the number of forced zero superdiagonals.** If `M - 1` vanishes below `r`
+and `N - 1` vanishes below `s`, then `M * N - N * M` vanishes below `r + s`. -/
+private theorem VanishesBelow.mul_sub_mul_of_sub_one {r s : ℕ} {M N : Matrix (Fin n) (Fin n) R}
+    (hM : VanishesBelow r (M - 1)) (hN : VanishesBelow s (N - 1)) :
+    VanishesBelow (r + s) (M * N - N * M) := by
+  -- the two copies of `1` cancel: `M * N - N * M = (M - 1) * (N - 1) - (N - 1) * (M - 1)`
+  have heq : M * N - N * M = (M - 1) * (N - 1) - (N - 1) * (M - 1) := by noncomm_ring
+  exact heq.symm ▸ (hM.mul hN).sub (by simpa only [Nat.add_comm] using hN.mul hM)
+
 /-- Right multiplication by an upper-triangular matrix preserves the number of forced zero
 superdiagonals. -/
 private theorem VanishesBelow.mul_isUpperTriangular {r : ℕ}
@@ -216,6 +225,19 @@ theorem superdiagonalSubgroup_eq_bot_of_le {r : ℕ} (hnr : n ≤ r) :
   have h := (mem_superdiagonalSubgroup_iff r g).mp hg i j (by omega)
   simpa [Matrix.one_apply, hij.ne] using h
 
+/-- **The group commutator of two units, minus one, is their ring commutator times the inverse of
+the reversed product.** In any ring, `↑⁅u, v⁆ - 1 = (↑u * ↑v - ↑v * ↑u) * ↑(v * u)⁻¹`.
+
+This is what turns a statement about the group commutator into one about the ring commutator,
+where an additivity property of a filtration can be applied. -/
+private theorem units_commutatorElement_sub_one {A : Type*} [Ring A] (u v : Aˣ) :
+    ((⁅u, v⁆ : Aˣ) : A) - 1 = ((u : A) * (v : A) - (v : A) * (u : A)) * (((v * u)⁻¹ : Aˣ) : A) := by
+  have hcancel : (v : A) * (u : A) * (((v * u)⁻¹ : Aˣ) : A) = 1 := by
+    rw [← Units.val_mul]
+    exact (v * u).mul_inv
+  rw [sub_mul, hcancel, commutatorElement_def, _root_.mul_inv_rev]
+  simp [mul_assoc]
+
 /-- Commutators add filtration degrees: `[U^r, U^s] ≤ U^(r+s)`. -/
 theorem commutator_superdiagonalSubgroup_le (r s : ℕ) :
     ⁅superdiagonalSubgroup (R := R) (n := n) r,
@@ -223,50 +245,17 @@ theorem commutator_superdiagonalSubgroup_le (r s : ℕ) :
       superdiagonalSubgroup (R := R) (n := n) (r + s) := by
   rw [Subgroup.commutator_le]
   intro g hg h hh
-  let G := ((g : Matrix.GeneralLinearGroup (Fin n) R) : Matrix (Fin n) (Fin n) R)
-  let H := ((h : Matrix.GeneralLinearGroup (Fin n) R) : Matrix (Fin n) (Fin n) R)
-  have hGH : VanishesBelow (r + s) ((G - 1) * (H - 1)) := hg.mul hh
-  have hHG : VanishesBelow (r + s) ((H - 1) * (G - 1)) := by
-    simpa only [Nat.add_comm] using hh.mul hg
-  have hdiff : VanishesBelow (r + s) (G * H - H * G) := by
-    have heq : G * H - H * G = (G - 1) * (H - 1) - (H - 1) * (G - 1) := by
-      noncomm_ring
-    exact heq.symm ▸ hGH.sub hHG
-  let Ginv := (((g⁻¹ : upperUnitriangularGroup (Fin n) R) :
-    Matrix.GeneralLinearGroup (Fin n) R) : Matrix (Fin n) (Fin n) R)
-  let Hinv := (((h⁻¹ : upperUnitriangularGroup (Fin n) R) :
-    Matrix.GeneralLinearGroup (Fin n) R) : Matrix (Fin n) (Fin n) R)
-  let K := (((h * g)⁻¹ : upperUnitriangularGroup (Fin n) R) :
-    Matrix.GeneralLinearGroup (Fin n) R)
-  have hright : VanishesBelow (r + s) ((G * H - H * G) * (K : Matrix (Fin n) (Fin n) R)) :=
-    hdiff.mul_isUpperTriangular (isUpperTriangular ((h * g)⁻¹))
-  have heq :
-      (((⁅g, h⁆ : upperUnitriangularGroup (Fin n) R) :
-          Matrix.GeneralLinearGroup (Fin n) R) : Matrix (Fin n) (Fin n) R) - 1 =
-        (G * H - H * G) * (K : Matrix (Fin n) (Fin n) R) := by
-    have hmul : H * G * (K : Matrix (Fin n) (Fin n) R) = 1 := by
-      -- The product and `K` are the values of a unit and its inverse.
-      change ((h * g).1 : Matrix (Fin n) (Fin n) R) *
-        ((h * g).1⁻¹ : Matrix.GeneralLinearGroup (Fin n) R) = 1
-      exact Units.mul_inv (h * g).1
-    have hK :
-        Ginv * Hinv = (K : Matrix (Fin n) (Fin n) R) := by
-      simp [Ginv, Hinv, K]
-    rw [commutatorElement_def]
-    simp only [Subgroup.coe_mul, Units.val_mul]
-    -- The group wrappers have reduced; name their four underlying matrices explicitly.
-    change G * H * Ginv * Hinv - 1 = (G * H - H * G) * (K : Matrix (Fin n) (Fin n) R)
-    rw [mul_assoc (G * H), hK]
-    calc
-      G * H * (K : Matrix (Fin n) (Fin n) R) - 1 =
-          G * H * (K : Matrix (Fin n) (Fin n) R) -
-            H * G * (K : Matrix (Fin n) (Fin n) R) := by rw [hmul]
-      _ = (G * H - H * G) * (K : Matrix (Fin n) (Fin n) R) := by rw [sub_mul]
-  -- Reduce subgroup membership to the matrix filtration used to define it.
+  -- Reduce subgroup membership to the matrix filtration used to define it, rewrite the group
+  -- commutator as a ring commutator, and use that the filtration is additive on those.
   change VanishesBelow (r + s)
     (((((⁅g, h⁆ : upperUnitriangularGroup (Fin n) R) :
       Matrix.GeneralLinearGroup (Fin n) R) : Matrix (Fin n) (Fin n) R)) - 1)
-  exact heq.symm ▸ hright
+  have hcomm : ((⁅g, h⁆ : upperUnitriangularGroup (Fin n) R) :
+      Matrix.GeneralLinearGroup (Fin n) R) =
+        ⁅(g : Matrix.GeneralLinearGroup (Fin n) R),
+          (h : Matrix.GeneralLinearGroup (Fin n) R)⁆ := rfl
+  rw [hcomm, units_commutatorElement_sub_one]
+  exact (hg.mul_sub_mul_of_sub_one hh).mul_isUpperTriangular (isUpperTriangular ((h * g)⁻¹))
 
 private theorem lowerCentralSeries_le_superdiagonalSubgroup (r : ℕ) :
     (⊤ : Subgroup (upperUnitriangularGroup (Fin n) R)).lowerCentralSeries r ≤
