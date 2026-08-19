@@ -366,8 +366,9 @@ the reduced form the one the division-polynomial identities are stated over.
 The **priority is load-bearing**, not decoration. `invarNum_def` is itself `@[simp]`, and at equal
 priority it wins on this term: with a plain `@[simp]` here, `simp` still rewrites
 `invarNum (normEDS b c d) 1 m` to the fully expanded formula and this lemma never fires. At `high`
-it fires first, and because `reducedInvarNum_def` is deliberately *not* `@[simp]` the result then
-stays folded at `reducedInvarNum b c d m * b`, which is the normal form this file exists to name. -/
+it fires first, and because `reducedInvarNum_def` is deliberately *not* `@[simp]` the result never
+unfolds; `reducedInvarNum_eq_reducedInvarDenom_mul` carries it one step further, so the simp
+normal form is `reducedInvarDenom b c d m * (d + b ^ 4) * b`. -/
 @[simp high]
 theorem invarNum_normEDS_one_eq_reducedInvarNum_mul :
     invarNum (normEDS b c d) 1 m = reducedInvarNum b c d m * b := by
@@ -381,7 +382,8 @@ end IsEllipticNet
 variable {F : Type*} [FunLike F R S] [RingHomClass F R S] (f : F)
 
 /-- The reduced numerator is natural in the coefficient ring. -/
-@[simp]
+-- Not `@[simp]`: with `reducedInvarNum_eq_reducedInvarDenom_mul` in the set, `simp` derives this
+-- from `map_reducedInvarDenom`, and `simpNF` rejects the redundant annotation.
 theorem map_reducedInvarNum :
     f (reducedInvarNum b c d m) = reducedInvarNum (f b) (f c) (f d) m := by
   simp [reducedInvarNum_def, map_ofNat]
