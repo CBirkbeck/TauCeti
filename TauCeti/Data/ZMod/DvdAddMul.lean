@@ -9,7 +9,7 @@ public import Mathlib.Tactic.LinearCombination
 public import TauCeti.Data.ZMod.FinEquiv
 
 /-!
-# Exactly one residue index divides a linear form
+# Exactly one residue index solves `n ∣ a + i * c`
 
 For a nonzero modulus `n` and integers `a c` with `c` a unit mod `n`, exactly one `i : Fin n`
 satisfies
@@ -64,9 +64,8 @@ variable {n : ℕ} [NeZero n]
 /-- **At most one index.** If `b₀` satisfies the divisibility then an index `i` satisfies it
 exactly when `i = b₀`.
 
-The hypothesis is only that the coefficient `c` is a unit mod `n` — the statement is arithmetic in
-`ZMod n` and does not need the determinant, nor the Möbius action it conditions. Stated as a
-divisibility over `ℤ`, which is the form the downstream Hecke sums are phrased in.
+The only hypothesis is that `c` is a unit mod `n`; the argument is arithmetic in `ZMod n`. Stated
+as a divisibility over `ℤ`, which is the form the downstream Hecke sums are phrased in.
 
 `existsUnique_dvd_add_mul` is the form to reach for when no solution is already in hand. -/
 lemma dvd_add_mul_iff_eq_of_dvd (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) {b₀ : Fin n}
@@ -108,6 +107,26 @@ theorem existsUnique_dvd_add_mul (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) 
     simp only [ZMod.finEquiv_symm_apply_val]
     exact dvd_add_mul_val_neg_mul_inv a c hc
   exact ⟨_, hb, fun y hy ↦ (dvd_add_mul_iff_eq_of_dvd a c hc hb y).mp hy⟩
+
+/-- **Exactly one index solves the equation in `ZMod n`.** The `ZMod n` face of
+`existsUnique_dvd_add_mul`: for a unit coefficient `c` there is a unique `i : Fin n` with
+`c * i + a = 0`, read through the natural cast of the index.
+
+The two forms are exchanged by `ZMod.intCast_zmod_eq_zero_iff_dvd`. This one is what a consumer
+holding a vanishing condition rather than a divisibility wants, so that the cast argument is made
+once here instead of at each use site. -/
+theorem existsUnique_mul_natCast_add_eq_zero (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) :
+    ∃! i : Fin n,
+      ((c : ℤ) : ZMod n) * ((i : ℕ) : ZMod n) + ((a : ℤ) : ZMod n) = 0 := by
+  obtain ⟨b, hb, hbu⟩ := existsUnique_dvd_add_mul (n := n) a c hc
+  refine ⟨b, ?_, fun y hy ↦ hbu y ?_⟩
+  · have hz := (ZMod.intCast_zmod_eq_zero_iff_dvd _ n).mpr hb
+    push_cast at hz
+    linear_combination hz
+  · dsimp only
+    rw [← ZMod.intCast_zmod_eq_zero_iff_dvd]
+    push_cast
+    linear_combination hy
 
 end TauCeti
 
