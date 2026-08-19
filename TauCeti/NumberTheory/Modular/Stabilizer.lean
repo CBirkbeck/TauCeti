@@ -191,11 +191,16 @@ theorem card_stabilizer_eq_card_center_mul_card_stabilizer_psl {Γ : Subgroup SL
   TauCeti.card_stabilizer_eq_card_subgroupOf_mul_card_stabilizer_map _ Γ z
     fun _ ↦ UpperHalfPlane.pslMk_smul _ _
 
-/-- **The `±I` factor is `1` or `2`.** The part of the centre that `Γ` contains has order `2`
-when `-I ∈ Γ` and `1` otherwise, there being nothing else in `{±I}` — which is what turns the
+/-- **The `±I` factor is `1` or `2`.** The part of the centre that `Γ` contains has order at most
+two, there being nothing in `{±I}` beyond the identity and `-I` — which is what turns the
 splitting `card_stabilizer_eq_card_center_mul_card_stabilizer_psl` into a statement about a
-factor of two. Stated as a disjunction rather than a case split on `-I ∈ Γ`, so a consumer that
-only needs a bound can use it without deciding the membership. -/
+factor of at most two.
+
+⚠ This is the unindexed disjunction only: it does **not** say which case occurs. The natural
+sharpening is `Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 2 ↔ (-1 : SL(2, ℤ)) ∈ Γ`,
+from which this follows as a corollary; it needs the identification of the centre as `{1, -1}`
+(available from `card_center` together with `SpecialLinearGroup.mem_center_iff`) and is not
+proved here. -/
 theorem card_center_subgroupOf_eq_one_or_two (Γ : Subgroup SL(2, ℤ)) :
     Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 1 ∨
       Nat.card ((Subgroup.center SL(2, ℤ)).subgroupOf Γ) = 2 := by
