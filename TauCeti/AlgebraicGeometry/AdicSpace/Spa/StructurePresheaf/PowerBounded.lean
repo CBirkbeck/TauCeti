@@ -14,7 +14,7 @@ public import TauCeti.RingTheory.Huber.PowerBounded
 Wedhorn §8.1 pairs the structure presheaf with an integral subpresheaf `𝒪_X⁺`. **This file does
 not define that object.** It defines the subring of sections all of whose components are
 power-bounded, and proves that restriction preserves it — so the assignment is a subpresheaf of
-`structurePresheaf` in the only sense available before sheafification questions arise: a
+`presentationLimitPresheaf` in the only sense available before sheafification questions arise: a
 compatible family of subrings.
 
 ## What this is not: the relation to `𝒪_X⁺`
@@ -41,9 +41,9 @@ claim no `𝒪_X⁺` notation.
 
 * `TauCeti.ValuationSpectrum.mem_structurePresheafPowerBoundedSubring_iff` : membership is
   component-wise power-boundedness.
-* `TauCeti.ValuationSpectrum.structurePresheafMap_mem_structurePresheafPowerBoundedSubring` :
+* `TauCeti.ValuationSpectrum.presentationLimitMap_mem_structurePresheafPowerBoundedSubring` :
   restriction preserves the subring, with no continuity input — a restriction's components are a
-  subset of the original's (`structurePresheafMap_π`), so the condition is inherited outright.
+  subset of the original's (`limit.pre_π`), so the condition is inherited outright.
 
 ## Why per-component, not power-bounded in the limit ring
 
@@ -89,27 +89,32 @@ are power-bounded — the intersection over the index of the comaps of the power
 of the values. This is not the valuation-defined `𝒪_X⁺`; see the module docstring. -/
 noncomputable def structurePresheafPowerBoundedSubring (Aplus : Subring A)
     (V : Opens ↥(spa Aplus)) :
-    Subring ↥(structurePresheafObj P Aplus V) :=
+    Subring ↥(presentationLimitObj P Aplus V) :=
   ⨅ i : RationalIndex P Aplus V,
-    (powerBoundedSubring _).comap (structurePresheafπ P Aplus V i).1.1
+    (powerBoundedSubring _).comap
+      (show presentationLimitObj P Aplus V ⟶ i.pres.completionLocObj from
+        limit.π (rationalIndexDiagram P Aplus V) i).1.1
 
 /-- Membership is power-boundedness of every component. -/
-theorem mem_structurePresheafPowerBoundedSubring_iff {f : ↥(structurePresheafObj P Aplus V)} :
+theorem mem_structurePresheafPowerBoundedSubring_iff {f : ↥(presentationLimitObj P Aplus V)} :
     f ∈ structurePresheafPowerBoundedSubring P Aplus V ↔
-      ∀ i : RationalIndex P Aplus V, IsPowerBounded ((structurePresheafπ P Aplus V i).1.1 f) := by
+      ∀ i : RationalIndex P Aplus V, IsPowerBounded
+        ((show presentationLimitObj P Aplus V ⟶ i.pres.completionLocObj from
+          limit.π (rationalIndexDiagram P Aplus V) i).1.1 f) := by
   simp [structurePresheafPowerBoundedSubring, Subring.mem_iInf]
 
 /-- **Restriction preserves the power-bounded sections**: the components of a restriction are a
-subset of the original section's components (`structurePresheafMap_π`), so no continuity or
+subset of the original section's components (`limit.pre_π`), so no continuity or
 boundedness of the restriction map enters. -/
-theorem structurePresheafMap_mem_structurePresheafPowerBoundedSubring {V W : Opens ↥(spa Aplus)}
-    (h : W ≤ V) {f : ↥(structurePresheafObj P Aplus V)}
+theorem presentationLimitMap_mem_structurePresheafPowerBoundedSubring {V W : Opens ↥(spa Aplus)}
+    (h : W ≤ V) {f : ↥(presentationLimitObj P Aplus V)}
     (hf : f ∈ structurePresheafPowerBoundedSubring P Aplus V) :
-    (structurePresheafMap P h).1.1 f ∈ structurePresheafPowerBoundedSubring P Aplus W := by
+    (presentationLimitMap P h).1.1 f ∈ structurePresheafPowerBoundedSubring P Aplus W := by
   rw [mem_structurePresheafPowerBoundedSubring_iff] at hf ⊢
   intro i
-  have hπ := congrArg (fun g ↦ g.1.1 f) (structurePresheafMap_π (P := P) h i)
-  simpa using hπ ▸ hf ⟨i.pres, i.hopen, i.le_open.trans h⟩
+  have hπ := congrArg (fun g ↦ g.1.1 f)
+    (limit.pre_π (rationalIndexDiagram P Aplus V) (rationalIndexInclusionOfLE P h) i)
+  simpa using hπ ▸ hf ⟨i.pres, i.isOpen_span_num, i.spaRationalOpen_le.trans h⟩
 
 end
 
