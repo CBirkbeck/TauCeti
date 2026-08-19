@@ -43,16 +43,16 @@ not the hypotheses.
   for `𝒪_X(V)`.
 * `TauCeti.ValuationSpectrum.presentationLimitMap` : the restriction morphism of a containment.
 * `TauCeti.ValuationSpectrum.presentationLimitPresheaf` : the presheaf itself.
-* `TauCeti.Huber.PairOfDefinition.IsPresentationLimitSheaf` : the presentation-indexed
+* `TauCeti.Huber.PairOfDefinition.HasSheafyPresentationLimit` : the presentation-indexed
   presheaf is a sheaf. It is named for the presheaf it actually tests: until the initiality
   statement is proved, that presheaf is not known to be Wedhorn's `𝒪_X`, so this is not yet the
   roadmap's `Huber.IsSheafyPair` (`AdicSpaces/README.md:522`) — which the rename leaves free.
 
 ## Main results
 
-* `TauCeti.Huber.PairOfDefinition.isPresentationLimitSheaf_iff` : sheafiness unfolds to
+* `TauCeti.Huber.PairOfDefinition.hasSheafyPresentationLimit_iff` : sheafiness unfolds to
   Mathlib's sheaf
-  condition (`IsPresentationLimitSheaf` is not exposed; this is the route across).
+  condition (`HasSheafyPresentationLimit` is not exposed; this is the route across).
 * `presentationLimitPresheaf_obj`, `presentationLimitPresheaf_map` : its simp interface.
 * `RationalIndex.directed` : the index is directed, so presentations of the same subset are
   constrained through a common refinement.
@@ -75,8 +75,9 @@ which would need the unproved initiality.
 initiality (cofinality) statement about the forgetful functor from presentations to rational
 opens: expected, but not formalized, and nothing in this file depends on it. Because it is
 unproved, nothing here is named `structurePresheaf` or claimed to *be* `𝒪_X` — the declarations
-say `presentationLimit`, and the identification, once proved, should be a theorem relating the
-two limits rather than a renaming of this one.
+say `presentationLimit`, and so does the directory holding them. The identification, once proved,
+should be a theorem relating the two limits rather than a renaming of this one, and
+`Spa/StructurePresheaf/` is left free for the file that proves it.
 
 ## Provenance
 
@@ -291,17 +292,17 @@ arbitrary subring, and independence of the chosen pair of definition — that `l
 pairs of definition. The roadmap's names `IsSheafyPair A Aplus`, `IsSheafyRing A` and
 `IsStablySheafyRing A` are all left free for the `P`-independent notions this one feeds once
 that independence is available. -/
-def _root_.TauCeti.Huber.PairOfDefinition.IsPresentationLimitSheaf (P : PairOfDefinition A)
+def _root_.TauCeti.Huber.PairOfDefinition.HasSheafyPresentationLimit (P : PairOfDefinition A)
     (Aplus : Subring A) : Prop :=
   CategoryTheory.Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
     (presentationLimitPresheaf P Aplus)
 
-/-- `PairOfDefinition.IsPresentationLimitSheaf` unfolds to Mathlib's sheaf condition. The body
+/-- `PairOfDefinition.HasSheafyPresentationLimit` unfolds to Mathlib's sheaf condition. The body
 is not
 exported, so this is how a consumer moves between the two. -/
-theorem _root_.TauCeti.Huber.PairOfDefinition.isPresentationLimitSheaf_iff (P : PairOfDefinition A)
-    (Aplus : Subring A) :
-    P.IsPresentationLimitSheaf Aplus ↔
+theorem _root_.TauCeti.Huber.PairOfDefinition.hasSheafyPresentationLimit_iff
+    (P : PairOfDefinition A) (Aplus : Subring A) :
+    P.HasSheafyPresentationLimit Aplus ↔
       CategoryTheory.Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
         (presentationLimitPresheaf P Aplus) := Iff.rfl
 
