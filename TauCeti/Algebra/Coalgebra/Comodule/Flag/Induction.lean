@@ -110,6 +110,26 @@ private theorem fixedSpan_finrank (v : M)
   change finrank k (k ∙ v) = 1
   exact finrank_span_singleton hv₀
 
+/-- **The line spanned by a nonzero fixed vector has an upper-unitriangular coefficient matrix.**
+A nonzero vector with trivial coaction spans a one-dimensional subcomodule, and a basis of that
+subcomodule has upper-unitriangular coefficient matrix.
+
+There is nothing to check above the diagonal in rank one; the content is that the single diagonal
+entry is `1`, which is the vector being fixed. -/
+private theorem exists_basis_coefficientMatrix_isUpperUnitriangular_fixedSpan [Module.Flat k H]
+    (v : M) (hvcoact : coact (R := k) (C := H) (M := M) v = v ⊗ₜ[k] (1 : H)) (hv : v ≠ 0) :
+    ∃ b : Basis (Fin 1) k (fixedSpan v hvcoact),
+      (coefficientMatrix (C := H) b).IsUpperUnitriangular := by
+  let _ : AddCommGroup (fixedSpan v hvcoact) := Module.addCommMonoidToAddCommGroup k
+  have hfinrank : finrank k (fixedSpan v hvcoact) = 1 := fixedSpan_finrank v hvcoact hv
+  let vL : fixedSpan v hvcoact := ⟨v, Submodule.mem_span_singleton_self v⟩
+  have hvL : vL ≠ 0 := fun h ↦ hv (congrArg Subtype.val h)
+  refine ⟨FiniteDimensional.basisSingleton (Fin 1) hfinrank vL hvL, ?_⟩
+  rw [coefficientMatrix_isUpperUnitriangular_iff]
+  intro i
+  rw [fixedSpan_coact v hvcoact _]
+  simp
+
 /-- If every nonzero finite-dimensional `H`-comodule has a nonzero fixed vector, then every
 finite-dimensional `H`-comodule has a basis with upper-unitriangular coefficient matrix.
 
@@ -130,34 +150,20 @@ theorem exists_basis_coefficientMatrix_isUpperUnitriangular_of_fixed_vectors
         let _ : Module.Flat k H := Module.Flat.of_free
         obtain ⟨v, hv, hvcoact⟩ := (hasNonzeroFixedVector_iff (k := k) (H := H) (M := M)).mp
           (hfixed M)
-        let L : Subcomodule k H M := fixedSpan v hvcoact
-        let _ : AddCommGroup L := Module.addCommMonoidToAddCommGroup k
-        have hLfinrank : finrank k L = 1 := fixedSpan_finrank v hvcoact hv
-        let vL : L := ⟨v, Submodule.mem_span_singleton_self v⟩
-        have hvL : vL ≠ 0 := by
-          intro h
-          exact hv (congrArg Subtype.val h)
-        let bL : Basis (Fin 1) k L :=
-          FiniteDimensional.basisSingleton (Fin 1) hLfinrank vL hvL
-        have hbL_fixed (i : Fin 1) :
-            coact (R := k) (C := H) (M := L) (bL i) = bL i ⊗ₜ[k] (1 : H) :=
-          fixedSpan_coact v hvcoact (bL i)
-        have hbL : (coefficientMatrix (C := H) bL).IsUpperUnitriangular := by
-          rw [coefficientMatrix_isUpperUnitriangular_iff]
-          intro i
-          rw [hbL_fixed i]
-          simp
-        let Q := M ⧸ L.toSubmodule
-        have hQdim : finrank k Q < d := by
-          -- Unfold the local quotient abbreviation so the generic finrank bound applies.
-          change finrank k (M ⧸ L.toSubmodule) < d
-          have hsum := Module.finrank_quotient_add_finrank_le L.toSubmodule
-          have hLto : finrank k L.toSubmodule = 1 := (finrank_toSubmodule L).trans hLfinrank
+        let _ : AddCommGroup (fixedSpan v hvcoact) := Module.addCommMonoidToAddCommGroup k
+        obtain ⟨bL, hbL⟩ :=
+          exists_basis_coefficientMatrix_isUpperUnitriangular_fixedSpan v hvcoact hv
+        have hQdim : finrank k (M ⧸ (fixedSpan v hvcoact).toSubmodule) < d := by
+          have hsum :=
+            Module.finrank_quotient_add_finrank_le (fixedSpan v hvcoact).toSubmodule
+          have hLto : finrank k (fixedSpan v hvcoact).toSubmodule = 1 :=
+            (finrank_toSubmodule _).trans (fixedSpan_finrank v hvcoact hv)
           rw [hLto, hdim] at hsum
           omega
-        obtain ⟨n, bQ, hbQ⟩ := ih (finrank k Q) hQdim (M := Q) rfl
-        exact ⟨1 + n, extensionBasis L bL bQ,
-          coefficientMatrix_extensionBasis_isUpperUnitriangular L bL bQ hbL hbQ⟩
+        obtain ⟨n, bQ, hbQ⟩ :=
+          ih _ hQdim (M := M ⧸ (fixedSpan v hvcoact).toSubmodule) rfl
+        exact ⟨1 + n, extensionBasis _ bL bQ,
+          coefficientMatrix_extensionBasis_isUpperUnitriangular _ bL bQ hbL hbQ⟩
       · let _ : Subsingleton M := not_nontrivial_iff_subsingleton.mp hM
         have hzero : finrank k M = 0 := Module.finrank_zero_of_subsingleton
         let b : Basis (Fin 0) k M := finBasisOfFinrankEq k M hzero
