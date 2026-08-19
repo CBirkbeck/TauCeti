@@ -394,11 +394,13 @@ theorem card_fiber_orbitOfCosetTranslate_mul_card_stabilizer {𝒢 ℋ : Subgrou
       orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} =
       orbit (stabilizer ℋ p) ((h : ℋ ⧸ 𝒢.subgroupOf ℋ)) :=
     Set.ext fun r => orbitOfCosetTranslate_eq_iff hle p r _
-  rw [show Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
-        orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} =
-      (orbit (stabilizer ℋ p) ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))).ncard from by
-    rw [← hset, ← Nat.card_coe_set_eq]; rfl, ← MulAction.index_stabilizer,
-    Subgroup.index_mul_card]
+  -- `Set.coe_ofPred` is the subtype/`Set.Elem` step; spelling it out keeps the proof off the
+  -- unstated defeq, which has already been renamed once upstream (`Set.coe_setOf`)
+  have hcard : Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
+      orbitOfCosetTranslate (𝒢 := 𝒢) p ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))} =
+      (orbit (stabilizer ℋ p) ((h : ℋ ⧸ 𝒢.subgroupOf ℋ))).ncard := by
+    rw [← hset, ← Nat.card_coe_set_eq, Set.coe_ofPred]
+  rw [hcard, ← MulAction.index_stabilizer, Subgroup.index_mul_card]
 
 /-- Swapping the two subgroups of a Mackey subgroup and inverting the representative conjugates
 it: `K ⊓ s⁻¹Hs = s⁻¹ (H ⊓ sKs⁻¹) s`. -/
