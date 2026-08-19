@@ -94,11 +94,14 @@ protected def ω (n : ℤ) : R[X][Y] :=
 `2 ω n + a₁ φ n ψ n + a₃ (ψ n)³ = ψc n`. -/
 theorem ω_spec (n : ℤ) :
     2 * W.ω n + CC W.a₁ * W.φ n * W.ψ n + CC W.a₃ * W.ψ n ^ 3 = W.ψc n := by
+  -- The directed steps: reindex `ψc` through the reduced invariant, cancel, and open `ω`.
   rw [ψc_def, complEDS₂_eq_reducedInvarNum_sub, reducedInvarNum_eq_reducedInvarDenom_mul,
     preΨ₄_add_ψ₂_pow_four, mul_assoc (C _), φ_mul_ψ, ψ_eq_normEDS,
     IsEllipticNet.invarDenom_normEDS_one_eq_reducedInvarDenom_mul, WeierstrassCurve.ω,
-    ← ψ_eq_normEDS, invar_def, b₂, b₄, ψ₂, polynomialY, polynomialX, negPolynomial]
-  simp only [map_ofNat, C_add, C_mul, C_pow]
+    ← ψ_eq_normEDS]
+  -- The rest is undirected normalisation: unfold the curve constants and push `C` through.
+  simp only [invar_def, b₂, b₄, ψ₂, polynomialY, polynomialX, negPolynomial, map_ofNat, C_add,
+    C_mul, C_pow]
   ring1
 
 /-- `ω_spec` solved for `2 ω n`. -/
