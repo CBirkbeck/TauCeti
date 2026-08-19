@@ -106,6 +106,25 @@ theorem dominates_of_forall_swap_smul_ne {lam : YoungDiagram} (t : YoungTableau 
 
 /-! ## The column antisymmetrizer acting on a tabloid -/
 
+/-- **An algebra element absorbed by a fixing group element, up to sign, annihilates the vector.**
+If `g` fixes `v` and right multiplication by `g` negates `a`, then `a` acts as zero on `v`.
+
+Over `ℚ` this is the two-torsion-free step behind every antisymmetrizer vanishing argument: the
+value equals its own negation, hence is zero. -/
+theorem asAlgebraHom_eq_zero_of_mul_single_eq_neg {G V : Type*} [Group G] [AddCommGroup V]
+    [Module ℚ V] (ρ : Representation ℚ G V) {a : MonoidAlgebra ℚ G} {g : G} {v : V}
+    (hfix : ρ g v = v) (hneg : a * MonoidAlgebra.single g 1 = -a) :
+    ρ.asAlgebraHom a v = 0 := by
+  have key : ρ.asAlgebraHom a v = -(ρ.asAlgebraHom a v) := by
+    conv_lhs => rw [← hfix]
+    rw [← Representation.asAlgebraHom_single_one ρ, ← Module.End.mul_apply, ← map_mul, hneg,
+      map_neg, LinearMap.neg_apply]
+  have h2 : (2 : ℚ) • ρ.asAlgebraHom a v = 0 := by
+    rw [two_smul]
+    nth_rewrite 2 [key]
+    exact add_neg_cancel _
+  exact (smul_eq_zero.mp h2).resolve_left two_ne_zero
+
 /-- **The column antisymmetrizer kills a tabloid fixed by an odd column permutation.**  The
 antisymmetrizer absorbs such a permutation up to its sign, which is `-1`, while the tabloid is
 left alone, so the value is its own negative. -/
@@ -122,19 +141,7 @@ theorem asAlgebraHom_columnAntisymmetrizer_single_eq_zero {lam : YoungDiagram}
       -columnAntisymmetrizer t := by
     rw [mul_columnAntisymmetrizer_right t ⟨p, hp⟩, hsign]
     simp
-  have key : (permutationModule μ).ρ.asAlgebraHom (columnAntisymmetrizer t)
-        (MonoidAlgebra.single q 1) =
-      -((permutationModule μ).ρ.asAlgebraHom (columnAntisymmetrizer t)
-        (MonoidAlgebra.single q 1)) := by
-    conv_lhs => rw [← hfix']
-    rw [← Representation.asAlgebraHom_single_one (permutationModule μ).ρ,
-      ← Module.End.mul_apply, ← map_mul, hneg, map_neg, LinearMap.neg_apply]
-  have h2 : (2 : ℚ) • (permutationModule μ).ρ.asAlgebraHom (columnAntisymmetrizer t)
-      (MonoidAlgebra.single q 1) = 0 := by
-    rw [two_smul]
-    nth_rewrite 2 [key]
-    exact add_neg_cancel _
-  exact (smul_eq_zero.mp h2).resolve_left two_ne_zero
+  exact asAlgebraHom_eq_zero_of_mul_single_eq_neg _ hfix' hneg
 
 /-- **James's dominance lemma.**  If the column antisymmetrizer of a `lam`-tableau `t` does not
 annihilate the `μ`-tabloid `q`, then the shape of `t` dominates `μ`.

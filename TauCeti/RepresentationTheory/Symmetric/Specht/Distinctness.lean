@@ -51,14 +51,6 @@ private theorem asAlgebraHom_comp_apply (e : Fin lam.card ≃ Fin m.card)
       simpa only [map_add, LinearMap.add_apply] using congrArg₂ (fun u v => u + v) ha hb
   | single g r => simp [Representation.asAlgebraHom_single]
 
-/-- **Transporting a transposition along the relabelling transposes the images.** -/
-private theorem permCongrHom_swap (e : Fin lam.card ≃ Fin m.card) (a b : Fin lam.card) :
-    e.permCongrHom (Equiv.swap a b) = Equiv.swap (e a) (e b) := by
-  refine Equiv.ext fun z => ?_
-  -- Unfold the conjugation just far enough to apply `Equiv.map_swap`.
-  change e (Equiv.swap a b (e.symm z)) = Equiv.swap (e a) (e b) z
-  simpa using e.injective.map_swap a b (e.symm z)
-
 /-- **A transposition of two entries in the same column negates the transported column
 antisymmetrizer.** -/
 private theorem transportedColumnAntisymmetrizer_mul_single_swap
@@ -70,7 +62,10 @@ private theorem transportedColumnAntisymmetrizer_mul_single_swap
   -- transposition.
   have hp₀ : Equiv.swap (e.symm x) (e.symm y) ∈ colSubgroup t := swap_mem_colSubgroup hcol
   have hp : e.permCongrHom (Equiv.swap (e.symm x) (e.symm y)) = Equiv.swap x y := by
-    simpa using permCongrHom_swap e (e.symm x) (e.symm y)
+    have hrfl : e.permCongrHom (Equiv.swap (e.symm x) (e.symm y)) =
+        ((e.symm.trans (Equiv.swap (e.symm x) (e.symm y))).trans e) := rfl
+    rw [hrfl, Equiv.symm_trans_swap_trans]
+    simp
   have h := congrArg (MonoidAlgebra.mapDomainAlgHom ℚ ℚ e.permCongrHom.toMonoidHom)
     (mul_columnAntisymmetrizer_right t ⟨Equiv.swap (e.symm x) (e.symm y), hp₀⟩)
   rw [map_mul, map_smul] at h
@@ -78,11 +73,11 @@ private theorem transportedColumnAntisymmetrizer_mul_single_swap
       (MonoidAlgebra.mapDomainAlgHom ℚ ℚ e.permCongrHom.toMonoidHom)
           (MonoidAlgebra.single (Equiv.swap (e.symm x) (e.symm y)) 1) =
         MonoidAlgebra.single (Equiv.swap x y) 1 := by
-    -- `mapDomainAlgHom` is reducibly `mapDomain`, but `mapDomain_single` is stated for the bare
-    -- operation and will not rewrite under the bundled algebra map, so expose it first.
-    change MonoidAlgebra.mapDomain e.permCongrHom
-      (MonoidAlgebra.single (Equiv.swap (e.symm x) (e.symm y)) 1) = _
-    rw [MonoidAlgebra.mapDomain_single, hp]
+    rw [show (MonoidAlgebra.mapDomainAlgHom ℚ ℚ e.permCongrHom.toMonoidHom)
+        (MonoidAlgebra.single (Equiv.swap (e.symm x) (e.symm y)) 1) =
+        MonoidAlgebra.domCongr ℚ ℚ e.permCongrHom
+          (MonoidAlgebra.single (Equiv.swap (e.symm x) (e.symm y)) 1) from rfl,
+      MonoidAlgebra.domCongr_single, hp]
   rw [hsingle] at h
   -- `h` is phrased in the unfolded `mapDomainAlgHom … (columnAntisymmetrizer t)`; fold it back
   -- into `transportedColumnAntisymmetrizer`, which is that expression by definition. A `rw` cannot
@@ -104,20 +99,8 @@ private theorem transportedColumnAntisymmetrizer_single_eq_zero
   have hfix' : (permutationModule (shapePartition m)).ρ (Equiv.swap x y)
       (MonoidAlgebra.single q (1 : ℚ)) = MonoidAlgebra.single q 1 := by
     rw [Representation.ofMulAction_single, hfix]
-  have hneg := transportedColumnAntisymmetrizer_mul_single_swap e t hxy hcol
-  have key : (permutationModule (shapePartition m)).ρ.asAlgebraHom
-        (transportedColumnAntisymmetrizer e t) (MonoidAlgebra.single q 1) =
-      -((permutationModule (shapePartition m)).ρ.asAlgebraHom
-        (transportedColumnAntisymmetrizer e t) (MonoidAlgebra.single q 1)) := by
-    conv_lhs => rw [← hfix']
-    rw [← Representation.asAlgebraHom_single_one (permutationModule (shapePartition m)).ρ,
-      ← Module.End.mul_apply, ← map_mul, hneg, map_neg, LinearMap.neg_apply]
-  have htwo : (2 : ℚ) • (permutationModule (shapePartition m)).ρ.asAlgebraHom
-      (transportedColumnAntisymmetrizer e t) (MonoidAlgebra.single q 1) = 0 := by
-    rw [two_smul]
-    nth_rewrite 2 [key]
-    exact add_neg_cancel _
-  exact (smul_eq_zero.mp htwo).resolve_left two_ne_zero
+  exact asAlgebraHom_eq_zero_of_mul_single_eq_neg _ hfix'
+    (transportedColumnAntisymmetrizer_mul_single_swap e t hxy hcol)
 
 private theorem coe_toRepresentation_apply {G V : Type*} [Group G]
     [AddCommGroup V] [Module ℚ V] {ρ : Representation ℚ G V}
