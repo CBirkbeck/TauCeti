@@ -108,7 +108,10 @@ section PushClass
 variable (φ : Isogeny W₁ W₂)
   [IsDomain W₁.CoordinateRing] [IsDedekindDomain W₂.CoordinateRing]
   [Algebra W₁.CoordinateRing φ.intermediateRing]
+  [Algebra W₂.CoordinateRing W₁.FunctionField]
   [Algebra W₂.CoordinateRing φ.intermediateRing]
+  [IsScalarTower W₁.CoordinateRing φ.intermediateRing W₁.FunctionField]
+  [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField]
   [IsDedekindDomain φ.intermediateRing]
   [Module.Finite W₂.CoordinateRing φ.intermediateRing]
   [Module.IsTorsionFree W₁.CoordinateRing φ.intermediateRing]
@@ -124,8 +127,15 @@ noncomputable def pushClassMonoidHom :
     ClassGroup W₁.CoordinateRing →* ClassGroup W₂.CoordinateRing :=
   ClassGroup.extendedRelNormHom W₁.CoordinateRing φ.intermediateRing W₂.CoordinateRing
 
+omit [Algebra W₂.CoordinateRing W₁.FunctionField]
+  [IsScalarTower W₁.CoordinateRing φ.intermediateRing W₁.FunctionField]
+  [IsScalarTower W₂.CoordinateRing φ.intermediateRing W₁.FunctionField] in
 /-- **The composite, unfolded.** This is `ClassGroup.extendedRelNormHom_apply` transported to the
-isogeny, and it is what characterises `pushClassMonoidHom` at its own generality. -/
+isogeny, and it is what characterises `pushClassMonoidHom` at its own generality.
+
+The pinning hypotheses are `omit`ted: they fix *which* algebra structures the definitions are about,
+and this identity holds for whatever structures are in scope, so requiring them here would be a
+hypothesis the proof does not use. -/
 theorem pushClassMonoidHom_apply (x : ClassGroup W₁.CoordinateRing) :
     φ.pushClassMonoidHom x =
       ClassGroup.relNorm (ClassGroup.extendedHom W₁.CoordinateRing φ.intermediateRing x) :=
