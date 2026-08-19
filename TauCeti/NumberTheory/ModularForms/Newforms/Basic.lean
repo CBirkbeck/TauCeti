@@ -292,7 +292,9 @@ theorem cuspFormsOldMultiples_le_cuspFormsOld (N : ℕ) [NeZero N] (k : ℤ) (m 
   refine iSup_le fun M ↦ iSup_le fun d ↦ iSup_le fun h ↦ ?_
   rintro x ⟨f, -, rfl⟩
   have : NeZero d := neZero_of_mul_dvd_left h.1
-  simpa using levelRaise_mem_cuspFormsOld h.1 h.2.1 k f
+  -- the generator is a `levelRaiseₗ` application; `levelRaiseₗ_apply` is the bridge to the
+  -- bare `levelRaise` that the old subspace's introduction rule is stated with
+  simpa only [CuspForm.levelRaiseₗ_apply] using levelRaise_mem_cuspFormsOld h.1 h.2.1 k f
 
 /-- **Elimination rule for the refined old subspace**: a subspace containing every level-raise of
 a newform from a proper divisor level divisible by `m` contains the whole refined old subspace.
