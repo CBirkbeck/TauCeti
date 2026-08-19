@@ -24,7 +24,7 @@ nothing here can be instantiated at two presentations of one subset.
 
 The file has two halves. The first bundles a presentation as `Presentation` and orders those
 bundles by refinement — the `Preorder` and `IsDirected` instances,
-`Presentation.commonRefinement` as the common refinement, and `le_iff` as the route from `p ≤ q`
+`Presentation.commonRefinement` as the common refinement, and `le_def` as the route from `p ≤ q`
 to a cofactor.
 
 The second is the comparison theory, and there **everything is uniqueness**: no comparison map is
@@ -160,8 +160,13 @@ instance : Preorder (Presentation P) where
 
 /-- **The refinement preorder, unfolded in one step**: the single introduction/elimination
 lemma for `≤`. The body of `RefinedBy` is not exported, so this is the route from `p ≤ q` to a
-cofactor. -/
-theorem Presentation.le_iff {p q : Presentation P} :
+cofactor.
+
+`le_def`, not `le_iff`: this is the one-step definitional unfolding of a custom `≤`, which is
+what Mathlib names `le_def` (`Order/Quotient.lean`, `Order/Hom/Basic.lean`,
+`Order/Preorder/Finsupp.lean`, several of them `.rfl` as here). Bare `le_iff` there is reserved
+for characterisations that are not the definition. -/
+theorem Presentation.le_def {p q : Presentation P} :
     p ≤ q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
 
 open scoped Classical Pointwise in
