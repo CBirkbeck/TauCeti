@@ -23,6 +23,10 @@ scalar multiple of one of the elements, or is central for the two elements it is
 * `TauCeti.Associative.mul_pow_eq_pow_mul_add_zsmul`: moving an element past a power of an
   integer-eigenvector for its commutator.
 * `TauCeti.Associative.mul_pow_eq_pow_mul_add_intCast`: the same identity in shifted-factor form.
+* `TauCeti.Associative.pow_succ_mul_eq_mul_pow_succ_add_nsmul`: moving an element past a power of
+  another releases that many copies of a central commutator.
+* `TauCeti.Associative.pow_mul_pow_succ_eq_zero_of_pow_succ_mul_pow_eq_zero`: extracting one such
+  copy trades a power of the nilpotent element for a power of the commutator.
 * `TauCeti.Associative.isNilpotent_of_commutator_eq`: a commutator commuting with both of its
   arguments is nilpotent as soon as one of them is.
 * `TauCeti.Associative.isNilpotent_of_commutator_eq_nsmul`: the same conclusion when the
@@ -66,45 +70,53 @@ section CentralCommutator
 
 variable {A : Type*} [Ring A] [Algebra ℚ A] {x y z : A}
 
+omit [Algebra ℚ A] in
+/-- **Moving `y` past a power of `x` releases that many copies of a central commutator.** If
+`x * y = y * x + z` and `z` commutes with `x`, then `x ^ (m + 1) * y` is `y * x ^ (m + 1)` plus
+`m + 1` copies of `z * x ^ m`.
+
+Only commutation of `z` with `x` is used; `y` may be arbitrary, and no divisibility of the
+coefficients is needed, so this holds over any ring. -/
+theorem pow_succ_mul_eq_mul_pow_succ_add_nsmul (hxy : x * y = y * x + z) (hxz : Commute x z)
+    (m : ℕ) : x ^ (m + 1) * y = y * x ^ (m + 1) + (m + 1) • (z * x ^ m) := by
+  induction m with
+  | zero => simpa using hxy
+  | succ m ih =>
+    have hzx : x * (z * x ^ m) = z * x ^ (m + 1) := by
+      rw [← mul_assoc, hxz.eq, mul_assoc, ← pow_succ']
+    calc x ^ (m + 1 + 1) * y = x * (x ^ (m + 1) * y) := by rw [← mul_assoc, ← pow_succ']
+      _ = x * y * x ^ (m + 1) + (m + 1) • (z * x ^ (m + 1)) := by
+          rw [ih, mul_add, ← mul_assoc, mul_smul_comm, hzx]
+      _ = y * x ^ (m + 1 + 1) + (z * x ^ (m + 1) + (m + 1) • (z * x ^ (m + 1))) := by
+          rw [hxy, add_mul, mul_assoc, ← pow_succ', add_assoc]
+      _ = y * x ^ (m + 1 + 1) + (m + 1 + 1) • (z * x ^ (m + 1)) := by
+          rw [← succ_nsmul']
+
+/-- **Extracting one copy of a central commutator trades a power of `x` for a power of `z`.** If
+`x ^ (m + 1)` annihilates `z ^ k` on the left, then `x ^ m` annihilates `z ^ (k + 1)`. -/
+theorem pow_mul_pow_succ_eq_zero_of_pow_succ_mul_pow_eq_zero (hxy : x * y = y * x + z)
+    (hxz : Commute x z) (hyz : Commute y z) {m k : ℕ} (h : x ^ (m + 1) * z ^ k = 0) :
+    x ^ m * z ^ (k + 1) = 0 := by
+  -- Pushing `y` to the right kills the product outright.
+  have hA : x ^ (m + 1) * y * z ^ k = 0 := by
+    rw [mul_assoc, ← (hyz.symm.pow_left k).eq, ← mul_assoc, h, zero_mul]
+  -- Pushing it to the left leaves the released copies of `z`.
+  have hB : x ^ (m + 1) * y * z ^ k = (m + 1) • (x ^ m * z ^ (k + 1)) := by
+    rw [pow_succ_mul_eq_mul_pow_succ_add_nsmul hxy hxz m, add_mul, mul_assoc, h, mul_zero,
+      zero_add, smul_mul_assoc, (hxz.symm.pow_right m).eq, mul_assoc, ← pow_succ']
+  have hkey : ((m + 1 : ℕ) : ℚ) • (x ^ m * z ^ (k + 1)) = 0 := by
+    rw [Nat.cast_smul_eq_nsmul ℚ, ← hB]
+    exact hA
+  have hc : (((m + 1 : ℕ) : ℚ))⁻¹ • (((m + 1 : ℕ) : ℚ) • (x ^ m * z ^ (k + 1))) = 0 := by
+    rw [hkey, smul_zero]
+  rwa [inv_smul_smul₀ (Nat.cast_ne_zero.mpr m.succ_ne_zero)] at hc
+
 /-- **Nilpotency of a central commutator.** If `x * y = y * x + z` with `z` commuting with both `x`
-and `y`, then `z` is nilpotent as soon as `x` is, with the same nilpotency exponent: over a
-`ℚ`-algebra, moving `y` past `xⁿ` releases `n` copies of `z`, and `xⁿ = 0` propagates down to
-`zⁿ = 0`. -/
+and `y`, then `z` is nilpotent as soon as `x` is, with the same nilpotency exponent. -/
 theorem isNilpotent_of_commutator_eq (hxy : x * y = y * x + z) (hxz : Commute x z)
     (hyz : Commute y z) (hx : IsNilpotent x) : IsNilpotent z := by
   obtain ⟨n, hn⟩ := hx
-  -- Moving `y` past a power of `x` releases that many copies of the commutator.
-  have hpow : ∀ m : ℕ, x ^ (m + 1) * y = y * x ^ (m + 1) + (m + 1) • (z * x ^ m) := by
-    intro m
-    induction m with
-    | zero => simpa using hxy
-    | succ m ih =>
-      have hzx : x * (z * x ^ m) = z * x ^ (m + 1) := by
-        rw [← mul_assoc, hxz.eq, mul_assoc, ← pow_succ']
-      calc x ^ (m + 1 + 1) * y = x * (x ^ (m + 1) * y) := by rw [← mul_assoc, ← pow_succ']
-        _ = x * y * x ^ (m + 1) + (m + 1) • (z * x ^ (m + 1)) := by
-            rw [ih, mul_add, ← mul_assoc, mul_smul_comm, hzx]
-        _ = y * x ^ (m + 1 + 1) + (z * x ^ (m + 1) + (m + 1) • (z * x ^ (m + 1))) := by
-            rw [hxy, add_mul, mul_assoc, ← pow_succ', add_assoc]
-        _ = y * x ^ (m + 1 + 1) + (m + 1 + 1) • (z * x ^ (m + 1)) := by
-            rw [← succ_nsmul']
-  -- Each copy of `z` extracted this way lowers the power of `x` that annihilates it.
-  have hstep : ∀ m k : ℕ, x ^ (m + 1) * z ^ k = 0 → x ^ m * z ^ (k + 1) = 0 := by
-    intro m k h
-    -- Pushing `y` to the right kills the product outright.
-    have hA : x ^ (m + 1) * y * z ^ k = 0 := by
-      rw [mul_assoc, ← (hyz.symm.pow_left k).eq, ← mul_assoc, h, zero_mul]
-    -- Pushing it to the left leaves the released copies of `z`.
-    have hB : x ^ (m + 1) * y * z ^ k = (m + 1) • (x ^ m * z ^ (k + 1)) := by
-      rw [hpow m, add_mul, mul_assoc, h, mul_zero, zero_add, smul_mul_assoc,
-        (hxz.symm.pow_right m).eq, mul_assoc, ← pow_succ']
-    have hkey : ((m + 1 : ℕ) : ℚ) • (x ^ m * z ^ (k + 1)) = 0 := by
-      rw [Nat.cast_smul_eq_nsmul ℚ, ← hB]
-      exact hA
-    have hc : (((m + 1 : ℕ) : ℚ))⁻¹ • (((m + 1 : ℕ) : ℚ) • (x ^ m * z ^ (k + 1))) = 0 := by
-      rw [hkey, smul_zero]
-    rwa [inv_smul_smul₀ (Nat.cast_ne_zero.mpr m.succ_ne_zero)] at hc
-  -- Peel the powers of `x` off one at a time.
+  -- Peel the powers of `x` off one at a time, trading each for a power of `z`.
   have hpeel : ∀ k ≤ n, x ^ (n - k) * z ^ k = 0 := by
     intro k
     induction k with
@@ -112,7 +124,8 @@ theorem isNilpotent_of_commutator_eq (hxy : x * y = y * x + z) (hxz : Commute x 
     | succ k ih =>
       intro hk
       have heq : n - k = n - (k + 1) + 1 := by omega
-      exact hstep (n - (k + 1)) k (by rw [← heq]; exact ih (by omega))
+      exact pow_mul_pow_succ_eq_zero_of_pow_succ_mul_pow_eq_zero hxy hxz hyz
+        (by rw [← heq]; exact ih (by omega))
   exact ⟨n, by simpa using hpeel n le_rfl⟩
 
 /-- If `x * y = y * x + n • z` for a nonzero natural number `n`, with `z` commuting with `x`
