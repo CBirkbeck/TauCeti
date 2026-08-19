@@ -54,13 +54,25 @@ not the hypotheses.
   Mathlib's sheaf
   condition (`HasSheafyPresentationLimit` is not exposed; this is the route across).
 * `presentationLimitPresheaf_obj`, `presentationLimitPresheaf_map` : its simp interface.
+* `presentationLimitMap_π` : the characteristic equation of the restriction morphism, and
+  `presentationLimitMap_refl` / `presentationLimitMap_comp` : its identity and composition laws,
+  which is what the presheaf's functor laws are.
 * `RationalIndex.directed` : the index is directed, so presentations of the same subset are
   constrained through a common refinement.
 
-The limit interface is Mathlib's own: `presentationLimitObj` and
-`presentationLimitMap` are `@[expose]`d as `limit (rationalIndexDiagram P Aplus V)` and
-`limit.pre …`, so `limit.π`, `limit.lift`, `limit.hom_ext`, `limit.pre_π` and `limit.pre_pre`
-apply to them directly — no parallel projection API is introduced.
+The limit interface is Mathlib's own: `presentationLimitObj` and `presentationLimitMap` are
+`@[expose]`d as `limit (rationalIndexDiagram P Aplus V)` and `limit.pre …`, so `limit.π`,
+`limit.lift` and `limit.hom_ext` apply to them directly and no parallel projection API is
+introduced.
+
+The two *reindexing* lemmas are the exception. `limit.pre_π` and `limit.pre_pre` are stated with
+`E ⋙ F`, which is `rationalIndexInclusionOfLE ⋙ rationalIndexDiagram`; recognising that as
+`rationalIndexDiagram` is definitional but beyond the transparency `rw` uses, which is why Mathlib
+itself reaches those two with `erw`. Three `rfl` lemmas name the identities involved —
+`rationalIndexInclusionOfLE_comp_diagram`, `rationalIndexInclusionOfLE_refl` and
+`rationalIndexInclusionOfLE_comp` — and `presentationLimitMap_π`, `_refl` and `_comp` are proved
+in term mode, where they are accepted. Each of those three docstrings names the identity its proof
+consumes, so a consumer never meets the `erw`.
 
 ## Why the index is presentations and not subsets
 
@@ -224,15 +236,66 @@ theorem rationalIndexInclusionOfLE_comp {V W X : Opens ↥(spa Aplus)} (h₁ : X
     rationalIndexInclusionOfLE P h₁ ⋙ rationalIndexInclusionOfLE P h₂ =
       rationalIndexInclusionOfLE P (h₁.trans h₂) := (rfl)
 
+/-- **Reindexing the larger diagram along the inclusion is the smaller diagram.** This is the
+identity the limit's reindexing lemmas consume; naming it is what lets `limit.pre_π` be reached
+by `rw` instead of `erw`. -/
+theorem rationalIndexInclusionOfLE_comp_diagram {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
+    rationalIndexInclusionOfLE P h ⋙ rationalIndexDiagram P Aplus V =
+      rationalIndexDiagram P Aplus W := (rfl)
+
 variable (P) in
 /-- **The restriction morphism of a containment `W ≤ V`**: the limit over
 the presentations inside `V` (with open numerator ideal) maps to the limit over the smaller
-index, by reindexing along `rationalIndexInclusionOfLE`. `@[expose]`d as `limit.pre …`, so
-`limit.pre_π` and `limit.pre_pre` apply to it directly. -/
+index, by reindexing along `rationalIndexInclusionOfLE`. `@[expose]`d as `limit.pre …`.
+
+Mathlib's `limit.pre_π` does *not* match this syntactically: it is stated with
+`limit.π (E ⋙ F)`, and seeing `rationalIndexInclusionOfLE _ _ ⋙ rationalIndexDiagram _ _ _` as
+`rationalIndexDiagram _ _ _` needs `rationalIndexInclusionOfLE_comp_diagram`. The consumer-facing
+equations are `presentationLimitMap_π`, `presentationLimitMap_refl` and
+`presentationLimitMap_comp` below; none of them requires reproducing that step. -/
 @[expose]
 noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
     presentationLimitObj P Aplus V ⟶ presentationLimitObj P Aplus W :=
   limit.pre (rationalIndexDiagram P Aplus V) (rationalIndexInclusionOfLE P h)
+
+variable (P) in
+/-- **The characteristic equation of `presentationLimitMap`**: composing with a projection of the
+smaller limit is the projection of the larger one at the included index. This is `limit.pre_π`
+for this diagram, stated at the shape consumers actually meet.
+
+The term type-checks because `rationalIndexInclusionOfLE_comp_diagram` holds: `limit.pre_π`'s
+`E ⋙ F` is `rationalIndexInclusionOfLE P h ⋙ rationalIndexDiagram P Aplus V`, definitionally the
+smaller diagram.
+
+`@[simp]` but deliberately not `@[reassoc (attr := simp)]`, unlike `presentationLimitMap_comp`
+below: the generated `presentationLimitMap_π_assoc` is provable from this lemma by `simp` alone,
+because the right-hand side is a bare projection, and `lint-env`'s simpNF pass rejects it. -/
+@[simp]
+theorem presentationLimitMap_π {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
+    (j : RationalIndex P Aplus W) :
+    presentationLimitMap P h ≫ limit.π (rationalIndexDiagram P Aplus W) j =
+      limit.π (rationalIndexDiagram P Aplus V) ((rationalIndexInclusionOfLE P h).obj j) :=
+  limit.pre_π (F := rationalIndexDiagram P Aplus V) (E := rationalIndexInclusionOfLE P h) j
+
+variable (P) in
+/-- Restricting along `le_refl` is the identity. The defeq consumed is
+`rationalIndexInclusionOfLE_refl`: the included index of `j` along `le_refl` is `j`. -/
+@[simp]
+theorem presentationLimitMap_refl (V : Opens ↥(spa Aplus)) :
+    presentationLimitMap P (le_refl V) = 𝟙 (presentationLimitObj P Aplus V) :=
+  limit.hom_ext fun j ↦
+    (presentationLimitMap_π P (le_refl V) j).trans (Category.id_comp _).symm
+
+variable (P) in
+/-- Restricting twice is restricting once. This is `limit.pre_pre`, and the defeq consumed is
+`rationalIndexInclusionOfLE_comp`: composing the two inclusions is the inclusion of the composite
+containment. -/
+@[reassoc (attr := simp)]
+theorem presentationLimitMap_comp {V W X : Opens ↥(spa Aplus)} (h₁ : X ≤ W) (h₂ : W ≤ V) :
+    presentationLimitMap P h₂ ≫ presentationLimitMap P h₁ =
+      presentationLimitMap P (h₁.trans h₂) :=
+  limit.pre_pre (rationalIndexDiagram P Aplus V) (rationalIndexInclusionOfLE P h₂)
+    (rationalIndexInclusionOfLE P h₁)
 
 /-- **The presentation-indexed presheaf** on the adic spectrum of `Aplus`, valued in
 `CompleteSeparatedTopCommRingCat`: on each open the limit of the completed rational
@@ -247,23 +310,11 @@ noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Su
     (Opens ↥(spa Aplus))ᵒᵖ ⥤ CompleteSeparatedTopCommRingCat.{v} where
   obj V := presentationLimitObj P Aplus V.unop
   map h := presentationLimitMap P (leOfHom h.unop)
-  -- Both functor laws are reindexing identities for the limit, through the named functor
-  -- identities `rationalIndexInclusionOfLE_refl`/`_comp`.
-  map_id V := by
-    apply limit.hom_ext
-    intro j
-    -- `erw`, not `rw`: matching `limit.pre_π` needs
-    -- `rationalIndexInclusionOfLE _ _ ⋙ rationalIndexDiagram _ _ _` to be seen as
-    -- `rationalIndexDiagram _ _ _`; the sealed `Presentation.RefinedBy` (reached through the
-    -- `Preorder` instance inside the index category's homs) blocks that identification at the
-    -- transparency `rw` uses.
-    erw [limit.pre_π, Category.id_comp]
-    rfl
-  map_comp {X Y Z} f g := by
-    simp only [presentationLimitMap]
-    exact (limit.pre_pre (rationalIndexDiagram P Aplus X.unop)
-      (rationalIndexInclusionOfLE P (leOfHom f.unop))
-      (rationalIndexInclusionOfLE P (leOfHom g.unop))).symm
+  -- Both laws are the corresponding equations for `presentationLimitMap`, which state the
+  -- reindexing identities once rather than re-deriving them from `limit.pre_π` here. Those two
+  -- lemmas, not these fields, are what a simp-normalised goal reaches for.
+  map_id V := presentationLimitMap_refl P V.unop
+  map_comp _ _ := (presentationLimitMap_comp P _ _).symm
 
 /-- The presheaf's value on an open is `presentationLimitObj`. -/
 @[simp]
