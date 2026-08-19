@@ -141,6 +141,34 @@ noncomputable def upperTriRep (b : Fin p) : GL (Fin 2) ℚ :=
     (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0 :=
   upperTriGL_apply_eq_zero_of_lt (fun i ↦ by fin_cases i <;> simp [b.pos]) _ (by decide)
 
+/-- **The remaining coset representative** `!![p, 0; 0, 1]`, as `natDiagGL 2 ![p, 1]`.
+
+For `p ∤ N` the double coset of `diag(1, p)` has `p + 1` left cosets, not `p`: the `p`
+upper-triangular ones `upperTriRep p b` and this one. It is diagonal, hence upper triangular,
+so it satisfies the same `(1, 0) = 0` hypothesis that mathlib's `IsBoundedAtImInfty.slash`
+asks for — the whole `p + 1`-term sum stays inside that machinery. -/
+noncomputable def diagRep : GL (Fin 2) ℚ :=
+  natDiagGL 2 ![p, 1]
+
+/-- The matrix of `diagRep p` is `!![p, 0; 0, 1]`. -/
+@[simp] lemma coe_diagRep (hp : 0 < p) :
+    (↑(diagRep p) : Matrix (Fin 2) (Fin 2) ℚ) = !![(p : ℚ), 0; 0, 1] := by
+  have ha : ∀ i : Fin 2, 0 < ![p, 1] i := fun i ↦ by fin_cases i <;> simp [hp]
+  ext i j
+  fin_cases i <;> fin_cases j <;> simp [diagRep, natDiagGL_coe 2 ![p, 1] ha]
+
+/-- **The remaining representative is upper triangular too** — being diagonal, its `(1, 0)`
+entry vanishes, which is the hypothesis `IsBoundedAtImInfty.slash` asks for. -/
+@[simp] lemma diagRep_apply_one_zero (hp : 0 < p) :
+    (↑(diagRep p) : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0 := by
+  simp [coe_diagRep p hp]
+
+/-- The remaining representative has positive determinant: `det !![p, 0; 0, 1] = p > 0`. -/
+lemma det_diagRep_pos (hp : 0 < p) :
+    0 < (↑(diagRep p) : Matrix (Fin 2) (Fin 2) ℚ).det := by
+  have ha : ∀ i : Fin 2, 0 < ![p, 1] i := fun i ↦ by fin_cases i <;> simp [hp]
+  simpa [diagRep] using natDiagGL_det_pos 2 ![p, 1] ha
+
 /-- The representatives have positive determinant: `det !![1, b; 0, p] = p > 0`. -/
 lemma det_upperTriRep_pos (b : Fin p) :
     0 < (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ).det := by

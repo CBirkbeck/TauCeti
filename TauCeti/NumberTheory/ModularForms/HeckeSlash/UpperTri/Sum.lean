@@ -27,6 +27,8 @@ the entrywise description of the representatives is not restated.
 ## Main definitions
 
 * `HeckeRing.GL2.heckeSlashUpperTri`: the sum `∑ b < p, f ∣[k] !![1, b; 0, p]`.
+* `HeckeRing.GL2.heckeSlashFull`: that sum together with the one further representative
+  `!![p, 0; 0, 1]` — the whole `T_p` sum in the `p ∤ N` case.
 
 ## Main results
 
@@ -35,6 +37,8 @@ the entrywise description of the representatives is not restated.
   its sum.
 * `HeckeRing.GL2.heckeSlashUpperTri_zero`, `heckeSlashUpperTri_add`,
   `heckeSlashUpperTri_smul`: linearity in `f`.
+* `HeckeRing.GL2.heckeSlashFull_def`, `heckeSlashFull_eq_sum_add`, `heckeSlashFull_apply`,
+  and `heckeSlashFull_zero` / `_add` / `_smul`: the same interface for the full sum.
 The representatives themselves, and their upper-triangularity and positive determinant, live in
 `HeckeRing/GL2/CosetDecomposition.lean`; this file is only the slash sum built from them.
 
@@ -96,5 +100,48 @@ scalar generality matches `ModularForm.rat_smul_slash_of_det_pos`. -/
   rw [heckeSlashUpperTri_def, heckeSlashUpperTri_def, Finset.smul_sum]
   exact Finset.sum_congr rfl fun b _ ↦
     ModularForm.rat_smul_slash_of_det_pos k (det_upperTriRep_pos p b) f c
+
+/-- **The full `T_p` sum for `p ∤ N`**: the `p` upper-triangular terms together with the one
+further representative `!![p, 0; 0, 1]`.
+
+`heckeSlashUpperTri` is the whole operator only when `p ∣ N`. For `p ∤ N` the double coset of
+`diag(1, p)` has `p + 1` left cosets, and this is the sum over all of them. Every representative
+here is upper triangular — `diagRep` is diagonal — so `IsBoundedAtImInfty.slash` applies to each
+term exactly as it does to `heckeSlashUpperTri`. -/
+noncomputable def heckeSlashFull (f : ℍ → ℂ) : ℍ → ℂ :=
+  heckeSlashUpperTri k p f + f ∣[k] diagRep p
+
+/-- The defining equation of `heckeSlashFull`, in terms of the partial sum. -/
+lemma heckeSlashFull_def (f : ℍ → ℂ) :
+    heckeSlashFull k p f = heckeSlashUpperTri k p f + f ∣[k] diagRep p := (rfl)
+
+/-- `heckeSlashFull` written out over all `p + 1` representatives. -/
+lemma heckeSlashFull_eq_sum_add (f : ℍ → ℂ) :
+    heckeSlashFull k p f = (∑ b : Fin p, f ∣[k] upperTriRep p b) + f ∣[k] diagRep p := by
+  rw [heckeSlashFull_def, heckeSlashUpperTri_def]
+
+/-- The pointwise form, for consumers working at a point of `ℍ`. -/
+lemma heckeSlashFull_apply (f : ℍ → ℂ) (τ : ℍ) :
+    heckeSlashFull k p f τ = (∑ b : Fin p, (f ∣[k] upperTriRep p b) τ) + (f ∣[k] diagRep p) τ := by
+  rw [heckeSlashFull_def, Pi.add_apply, heckeSlashUpperTri_apply]
+
+/-- The full sum sends the zero function to zero. -/
+@[simp] lemma heckeSlashFull_zero : heckeSlashFull k p 0 = 0 := by
+  rw [heckeSlashFull_def, heckeSlashUpperTri_zero, SlashAction.zero_slash, add_zero]
+
+/-- The full sum is additive in `f`, since each slash is. -/
+@[simp] lemma heckeSlashFull_add (f g : ℍ → ℂ) :
+    heckeSlashFull k p (f + g) = heckeSlashFull k p f + heckeSlashFull k p g := by
+  rw [heckeSlashFull_def, heckeSlashFull_def, heckeSlashFull_def, heckeSlashUpperTri_add,
+    SlashAction.add_slash]
+  ring
+
+/-- **Scalars pass through the full sum.** With `heckeSlashFull_add` and `heckeSlashFull_zero`
+this is the `ℂ`-linearity of `f ↦ heckeSlashFull k p f`. The positivity hypothesis is what
+`ModularForm.rat_smul_slash_of_det_pos` needs for the extra representative. -/
+@[simp] lemma heckeSlashFull_smul {α : Type*} [DistribSMul α ℂ] [IsScalarTower α ℂ ℂ] (hp : 0 < p)
+    (c : α) (f : ℍ → ℂ) : heckeSlashFull k p (c • f) = c • heckeSlashFull k p f := by
+  rw [heckeSlashFull_def, heckeSlashFull_def, heckeSlashUpperTri_smul, smul_add,
+    ModularForm.rat_smul_slash_of_det_pos k (det_diagRep_pos p hp) f c]
 
 end HeckeRing.GL2
