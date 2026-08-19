@@ -54,6 +54,8 @@ coercion. Injectivity on the interior is likewise left to the call site, being t
 
 ## Main declarations
 
+* `TauCeti.lineMap_mem_Ioo` — for `a < b`, the affine reparametrisation `AffineMap.lineMap a b`
+  carries the interior of the unit interval, taken in the order of the subtype, into `Ioo a b`.
 * `TauCeti.extendIoo` — a function on `Ioo a b`, extended across both ends by prescribed values,
   with `TauCeti.extendIoo_apply_of_mem_Ioo`, `TauCeti.extendIoo_apply_of_le_left` and
   `TauCeti.extendIoo_apply_of_left_lt_of_right_le` computing it at every point, and
@@ -94,7 +96,7 @@ private theorem lineMap_mem_Icc (hab : a ≤ b) (t : I) :
 
 /-- The affine parametrisation from the unit interval to `Icc a b` sends its interior into
 `Ioo a b`. -/
-private theorem lineMap_mem_Ioo (hab : a < b) {t : I}
+theorem lineMap_mem_Ioo (hab : a < b) {t : I}
     (ht : t ∈ Ioo (0 : I) 1) : AffineMap.lineMap a b (t : ℝ) ∈ Ioo a b := by
   rw [← openSegment_eq_Ioo hab]
   exact lineMap_mem_openSegment ℝ a b (by simpa using ht)

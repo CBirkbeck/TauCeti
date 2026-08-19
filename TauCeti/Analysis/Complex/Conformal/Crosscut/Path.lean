@@ -219,10 +219,6 @@ private theorem injOn_Ioo_and_mapsTo_image_of_eq_circleMap_lineMap {X : Type*} {
       γ t = g (circleMap ζ ρ (AffineMap.lineMap a b (t : ℝ)))) :
     InjOn γ (Ioo (0 : unitInterval) 1) ∧
       ∀ t ∈ Ioo (0 : unitInterval) 1, γ t ∈ g '' S := by
-  have hline : ∀ t ∈ Ioo (0 : unitInterval) 1,
-      AffineMap.lineMap a b (t : ℝ) ∈ Ioo a b := fun t ht => by
-    rw [← openSegment_eq_Ioo hab]
-    exact lineMap_mem_openSegment ℝ a b (by simpa using ht)
   -- `circleMap` is injective on an arc no longer than a full turn, so the angular composite is
   -- injective on `Ioo a b`; the affine parametrisation then carries that to `γ`
   have hcircle : InjOn (circleMap ζ ρ) (Ioo a b) :=
@@ -233,9 +229,10 @@ private theorem injOn_Ioo_and_mapsTo_image_of_eq_circleMap_lineMap {X : Type*} {
   refine ⟨fun x hx y hy hxy => ?_, fun t ht => ?_⟩
   · rw [hγformula x hx, hγformula y hy] at hxy
     exact Subtype.ext
-      (AffineMap.lineMap_injective ℝ hab.ne (hginj (hline x hx) (hline y hy) hxy))
+      (AffineMap.lineMap_injective ℝ hab.ne
+        (hginj (lineMap_mem_Ioo hab hx) (lineMap_mem_Ioo hab hy) hxy))
   · rw [hγformula t ht]
-    exact ⟨circleMap ζ ρ _, hmaps (hline t ht), rfl⟩
+    exact ⟨circleMap ζ ρ _, hmaps (lineMap_mem_Ioo hab ht), rfl⟩
 
 /-- **An injective finite-length circular image crosscut has no repetitions except possibly at its
 endpoints.** Under the hypotheses of
