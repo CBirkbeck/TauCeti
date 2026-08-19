@@ -13,11 +13,14 @@ public import Mathlib.CategoryTheory.Sites.Spaces
 public import TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Limits
 
 /-!
-# The structure presheaf of an adic spectrum
+# The presentation-indexed limit of completed rational localizations
 
 Wedhorn §8.1 assigns `A⟨T/s⟩` to the rational subset `R(T/s)` and extends the assignment to an
-arbitrary open `V ⊆ Spa(A,A⁺)` by a limit of completed rational localizations. This file
-constructs that limit.
+arbitrary open `V ⊆ Spa(A,A⁺)` by a limit of completed rational localizations. This file builds
+the limit **indexed by presentations** rather than by rational subsets. Identifying it with
+Wedhorn's `𝒪_X` is an initiality statement about the indexing functor which is *not* proved
+here, so the declarations are named for the construction rather than for the target — see
+"Why the index is presentations and not subsets" below.
 
 The index is `RationalIndex`: a presentation with open numerator ideal — the rational-basis
 condition — whose rational subset is contained in `V`, ordered by refinement.
@@ -35,22 +38,25 @@ ring, a ring of integral elements — none of which is imposed by the definition
 
 * `TauCeti.ValuationSpectrum.RationalIndex` : the index category for an open.
 * `TauCeti.ValuationSpectrum.rationalIndexDiagram` : the diagram it indexes.
-* `TauCeti.ValuationSpectrum.structurePresheafObj` : the value `𝒪_X(V)`.
-* `TauCeti.ValuationSpectrum.structurePresheafMap` : the restriction morphism of a containment.
-* `TauCeti.ValuationSpectrum.structurePresheaf` : the presheaf itself.
+* `TauCeti.ValuationSpectrum.presentationLimitObj` : the limit over the index, the candidate
+  for `𝒪_X(V)`.
+* `TauCeti.ValuationSpectrum.presentationLimitMap` : the restriction morphism of a containment.
+* `TauCeti.ValuationSpectrum.presentationLimitPresheaf` : the presheaf itself.
 * `TauCeti.Huber.PairOfDefinition.IsSheafy` : the chosen presentation data is sheafy over
-  `Aplus`, i.e. that presheaf is a sheaf.
+  `Aplus`, i.e. that presheaf is a sheaf. The name is the roadmap's (`AdicSpaces/README.md:522`,
+  `Huber.IsSheafyPair`); until the initiality statement is proved it is sheafiness of the
+  presentation-indexed presheaf, which is what this file can state.
 
 ## Main results
 
 * `TauCeti.Huber.PairOfDefinition.isSheafy_iff` : sheafiness unfolds to Mathlib's sheaf
   condition (`IsSheafy` is not exposed; this is the route across).
-* `structurePresheaf_obj`, `structurePresheaf_map` : the simp interface of the presheaf.
+* `presentationLimitPresheaf_obj`, `presentationLimitPresheaf_map` : its simp interface.
 * `RationalIndex.directed` : the index is directed, so presentations of the same subset never
   sit as independent factors in the limit.
 
-The limit interface for `𝒪_X(V)` is Mathlib's own: `structurePresheafObj` and
-`structurePresheafMap` are `@[expose]`d as `limit (rationalIndexDiagram P Aplus V)` and
+The limit interface is Mathlib's own: `presentationLimitObj` and
+`presentationLimitMap` are `@[expose]`d as `limit (rationalIndexDiagram P Aplus V)` and
 `limit.pre …`, so `limit.π`, `limit.lift`, `limit.hom_ext`, `limit.pre_π` and `limit.pre_pre`
 apply to them directly — no parallel projection API is introduced.
 
@@ -60,9 +66,14 @@ apply to them directly — no parallel projection API is introduced.
 give canonically isomorphic but not equal rings. Indexing the limit by presentations avoids
 having to choose one. Any two indices map onwards to a common refinement
 (`RationalIndex.directed`, via the product presentation), so presentations of the same subset
-never sit as independent factors in the limit; the full comparison with Wedhorn's limit over
-rational *subsets* is an initiality statement about the indexing functor and is not yet
-formalized — it is expected, not proved, and nothing in this file depends on it.
+never sit as independent factors in the limit.
+
+**The comparison with Wedhorn's limit over rational *subsets* is not proved here.** It is an
+initiality (cofinality) statement about the forgetful functor from presentations to rational
+opens: expected, but not formalized, and nothing in this file depends on it. Because it is
+unproved, nothing here is named `structurePresheaf` or claimed to *be* `𝒪_X` — the declarations
+say `presentationLimit`, and the identification, once proved, should be a theorem relating the
+two limits rather than a renaming of this one.
 
 ## Provenance
 
@@ -92,7 +103,7 @@ universe v
 
 variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
-/-- **The index of the limit defining `𝒪_X(V)`**: presentations with open numerator ideal —
+/-- **The index of the presentation-indexed limit**: presentations with open numerator ideal —
 the rational-basis condition of `spaRationalFamily` — whose rational subset is contained in
 `V`. Without the openness condition the index would range over presentations outside the
 rational basis, and the limit would not be over Wedhorn's rational opens. -/
@@ -149,7 +160,7 @@ def rationalIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
   Monotone.functor (f := RationalIndex.pres) fun _ _ h ↦ h
 
 variable (P) in
-/-- **The diagram `𝒪_X(V)` is the limit of**: each presentation with open numerator ideal and
+/-- **The diagram the limit is taken over**: each presentation with open numerator ideal and
 rational subset inside `V` contributes `A⟨T/s⟩`, and a refinement contributes its restriction
 morphism. -/
 @[expose]
@@ -176,7 +187,7 @@ presentations with open numerator ideal whose rational subset is contained in `V
 limits; `@[expose]` publishes the body, so Mathlib's `limit.π`/`limit.lift`/`limit.hom_ext`
 apply to it directly. -/
 @[expose]
-noncomputable def structurePresheafObj (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
+noncomputable def presentationLimitObj (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     CompleteSeparatedTopCommRingCat.{v} :=
   limit (rationalIndexDiagram P Aplus V)
 
@@ -201,24 +212,28 @@ theorem rationalIndexInclusionOfLE_comp {V W X : Opens ↥(spa Aplus)} (h₁ : X
       rationalIndexInclusionOfLE P (h₁.trans h₂) := (rfl)
 
 variable (P) in
-/-- **The restriction morphism `𝒪_X(V) ⟶ 𝒪_X(W)` of a containment `W ≤ V`**: the limit over
+/-- **The restriction morphism of a containment `W ≤ V`**: the limit over
 the presentations inside `V` (with open numerator ideal) maps to the limit over the smaller
 index, by reindexing along `rationalIndexInclusionOfLE`. `@[expose]`d as `limit.pre …`, so
 `limit.pre_π` and `limit.pre_pre` apply to it directly. -/
 @[expose]
-noncomputable def structurePresheafMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
-    structurePresheafObj P Aplus V ⟶ structurePresheafObj P Aplus W :=
+noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
+    presentationLimitObj P Aplus V ⟶ presentationLimitObj P Aplus W :=
   limit.pre (rationalIndexDiagram P Aplus V) (rationalIndexInclusionOfLE P h)
 
-/-- **The structure presheaf** `V ↦ 𝒪_X(V)` on the adic spectrum of `Aplus`, valued in
-`CompleteSeparatedTopCommRingCat` (Wedhorn §8.1): on each open the limit of the completed
-rational localizations of the presentations with open numerator ideal inside it, restricting
-along containments by reindexing. -/
+/-- **The presentation-indexed presheaf** on the adic spectrum of `Aplus`, valued in
+`CompleteSeparatedTopCommRingCat`: on each open the limit of the completed rational
+localizations of the presentations with open numerator ideal inside it, restricting along
+containments by reindexing.
+
+This is the candidate for Wedhorn's `𝒪_X` (§8.1). It is not identified with it here: that needs
+the initiality of the forgetful functor to rational opens, which is not proved — see the module
+docstring. -/
 @[expose]
-noncomputable def structurePresheaf (P : PairOfDefinition A) (Aplus : Subring A) :
+noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Subring A) :
     (Opens ↥(spa Aplus))ᵒᵖ ⥤ CompleteSeparatedTopCommRingCat.{v} where
-  obj V := structurePresheafObj P Aplus V.unop
-  map h := structurePresheafMap P (leOfHom h.unop)
+  obj V := presentationLimitObj P Aplus V.unop
+  map h := presentationLimitMap P (leOfHom h.unop)
   -- Both functor laws are reindexing identities for the limit, through the named functor
   -- identities `rationalIndexInclusionOfLE_refl`/`_comp`.
   map_id V := by
@@ -232,22 +247,22 @@ noncomputable def structurePresheaf (P : PairOfDefinition A) (Aplus : Subring A)
     erw [limit.pre_π, Category.id_comp]
     rfl
   map_comp {X Y Z} f g := by
-    simp only [structurePresheafMap]
+    simp only [presentationLimitMap]
     exact (limit.pre_pre (rationalIndexDiagram P Aplus X.unop)
       (rationalIndexInclusionOfLE P (leOfHom f.unop))
       (rationalIndexInclusionOfLE P (leOfHom g.unop))).symm
 
-/-- The presheaf's value on an open is `structurePresheafObj`. -/
+/-- The presheaf's value on an open is `presentationLimitObj`. -/
 @[simp]
-theorem structurePresheaf_obj (P : PairOfDefinition A) (Aplus : Subring A)
+theorem presentationLimitPresheaf_obj (P : PairOfDefinition A) (Aplus : Subring A)
     (V : (Opens ↥(spa Aplus))ᵒᵖ) :
-    (structurePresheaf P Aplus).obj V = structurePresheafObj P Aplus V.unop := (rfl)
+    (presentationLimitPresheaf P Aplus).obj V = presentationLimitObj P Aplus V.unop := (rfl)
 
-/-- The presheaf's action on a containment is `structurePresheafMap`. -/
+/-- The presheaf's action on a containment is `presentationLimitMap`. -/
 @[simp]
-theorem structurePresheaf_map (P : PairOfDefinition A) (Aplus : Subring A)
+theorem presentationLimitPresheaf_map (P : PairOfDefinition A) (Aplus : Subring A)
     {V W : (Opens ↥(spa Aplus))ᵒᵖ} (h : V ⟶ W) :
-    (structurePresheaf P Aplus).map h = structurePresheafMap P (leOfHom h.unop) := (rfl)
+    (presentationLimitPresheaf P Aplus).map h = presentationLimitMap P (leOfHom h.unop) := (rfl)
 
 /-- **The presentation data `P` is sheafy over `Aplus`**: the structure presheaf built from
 `P`'s presentations is a sheaf, in the sense of Mathlib's `CategoryTheory.Presheaf.IsSheaf` for
@@ -266,7 +281,7 @@ that independence is available. -/
 def _root_.TauCeti.Huber.PairOfDefinition.IsSheafy (P : PairOfDefinition A)
     (Aplus : Subring A) : Prop :=
   CategoryTheory.Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
-    (structurePresheaf P Aplus)
+    (presentationLimitPresheaf P Aplus)
 
 /-- `PairOfDefinition.IsSheafy` unfolds to Mathlib's sheaf condition. The body is not
 exported, so this is how a consumer moves between the two. -/
@@ -274,7 +289,7 @@ theorem _root_.TauCeti.Huber.PairOfDefinition.isSheafy_iff (P : PairOfDefinition
     (Aplus : Subring A) :
     P.IsSheafy Aplus ↔
       CategoryTheory.Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
-        (structurePresheaf P Aplus) := Iff.rfl
+        (presentationLimitPresheaf P Aplus) := Iff.rfl
 
 end
 

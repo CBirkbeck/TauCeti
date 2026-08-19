@@ -50,7 +50,7 @@ theorem _root_.TauCeti.Huber.PairOfDefinition.isSheafy_iff_isSheafFor_rationalCo
     P.IsSheafy Aplus ↔
       ∀ (E : CompleteSeparatedTopCommRingCat.{v}) ⦃U : Opens ↥(spa Aplus)⦄ (R : Presieve U),
         IsBasisCover (spaRationalOpens Aplus) R →
-        Presieve.IsSheafFor (structurePresheaf P Aplus ⋙ coyoneda.obj (Opposite.op E)) R :=
+        Presieve.IsSheafFor (presentationLimitPresheaf P Aplus ⋙ coyoneda.obj (Opposite.op E)) R :=
   (P.isSheafy_iff Aplus).trans (isSheaf_iff_isSheafFor_rationalCover Aplus _)
 
 end
