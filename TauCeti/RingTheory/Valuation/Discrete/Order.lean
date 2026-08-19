@@ -219,7 +219,7 @@ identifies the valuation subrings, and membership of the subring is exactly nonn
 additive order.
 
 Only equivalence is needed; neither valuation has to be surjective. -/
-private theorem ord_nonneg_iff_of_isEquiv {v w : _root_.Valuation F ℤᵐ⁰} (h : v.IsEquiv w)
+theorem ord_nonneg_iff_of_isEquiv {v w : _root_.Valuation F ℤᵐ⁰} (h : v.IsEquiv w)
     (f : F) : 0 ≤ ord v f ↔ 0 ≤ ord w f := by
   rw [← mem_valuationSubring_iff_ord_nonneg v, ← mem_valuationSubring_iff_ord_nonneg w]
   exact h.le_one_iff_le_one
@@ -228,7 +228,7 @@ private theorem ord_nonneg_iff_of_isEquiv {v w : _root_.Valuation F ℤᵐ⁰} (
 analogue of `Valuation.IsEquiv.eq_zero`, and says the two valuations have the same units.
 
 Only equivalence is needed; neither valuation has to be surjective. -/
-private theorem ord_eq_zero_iff_of_isEquiv {v w : _root_.Valuation F ℤᵐ⁰} (h : v.IsEquiv w)
+theorem ord_eq_zero_iff_of_isEquiv {v w : _root_.Valuation F ℤᵐ⁰} (h : v.IsEquiv w)
     (f : F) : ord v f = 0 ↔ ord w f = 0 := by
   -- Nonnegativity at `f` and at `f⁻¹` together pin the order to zero, and `ord_inv` turns the
   -- second into nonpositivity at `f`.
