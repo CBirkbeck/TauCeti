@@ -66,14 +66,13 @@ noncomputable section
 open Affine (polynomial polynomialX polynomialY negPolynomial)
 
 /-- The `ψ` family is `normEDS` at the curve's division-polynomial parameters, stated at the
-level of functions so that both applied and unapplied occurrences of `ψ` rewrite. -/
+level of functions for rewriting under function-valued arguments such as
+`IsEllipticNet.invarDenom`, where the per-application equation cannot fire. -/
 theorem ψ_eq_normEDS : W.ψ = normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) := rfl
 
-/-- The `ψ` family of division polynomials is an elliptic sequence: it is `normEDS` at the
-curve's parameters, and a normalised EDS is an elliptic sequence. -/
-theorem isEllipticSequence_ψ : IsEllipticSequence W.ψ := by
-  rw [ψ_eq_normEDS]
-  exact isEllipticSequence_normEDS _ _ _
+/-- The `ψ` family of division polynomials is an elliptic sequence. -/
+theorem isEllipticSequence_ψ : IsEllipticSequence W.ψ :=
+  isEllipticSequence_normEDS _ _ _
 
 /-- The complement of `ψ n` in `ψ (2n)`: the parameter-level `complEDS₂` at the curve's
 division-polynomial parameters. `ψ_mul_ψc` below is the identity it is named for. -/
@@ -95,12 +94,12 @@ protected def ω (n : ℤ) : R[X][Y] :=
 `2 ω n + a₁ φ n ψ n + a₃ (ψ n)³ = ψc n`. -/
 theorem ω_spec (n : ℤ) :
     2 * W.ω n + CC W.a₁ * W.φ n * W.ψ n + CC W.a₃ * W.ψ n ^ 3 = W.ψc n := by
-  rw [ψc, complEDS₂_eq_reducedInvarNum_sub, reducedInvarNum_eq_reducedInvarDenom_mul,
+  rw [ψc_def, complEDS₂_eq_reducedInvarNum_sub, reducedInvarNum_eq_reducedInvarDenom_mul,
     preΨ₄_add_ψ₂_pow_four, mul_assoc (C _), φ_mul_ψ, ψ_eq_normEDS,
     IsEllipticNet.invarDenom_normEDS_one_eq_reducedInvarDenom_mul, WeierstrassCurve.ω,
     ← ψ_eq_normEDS, invar_def, b₂, b₄, ψ₂, polynomialY, polynomialX, negPolynomial]
   simp only [map_ofNat, C_add, C_mul, C_pow]
-  ring
+  ring1
 
 theorem two_mul_ω (n : ℤ) :
     2 * W.ω n = W.ψc n - CC W.a₁ * W.φ n * W.ψ n - CC W.a₃ * W.ψ n ^ 3 := by
@@ -110,13 +109,23 @@ theorem two_mul_ω (n : ℤ) :
 theorem ψ_mul_ψc (n : ℤ) : W.ψ n * W.ψc n = W.ψ (2 * n) :=
   normEDS_mul_complEDS₂ _ _ _ _
 
-@[simp] theorem ω_zero : W.ω 0 = 1 := by simp [WeierstrassCurve.ω, complEDS₂Aux_def]
+@[simp] theorem ω_zero : W.ω 0 = 1 := by
+  simp only [WeierstrassCurve.ω, EuclideanDomain.zero_mod,
+    reducedInvarDenom_of_emod_six_eq_zero, EuclideanDomain.zero_div, complEDS_zero, mul_zero,
+    zero_add, normEDS_one, mul_one, zero_sub, Int.reduceNeg, normEDS_neg, zero_mul,
+    complEDS₂Aux_def, preNormEDS_neg, preNormEDS_two, preNormEDS_one, one_pow, Even.zero,
+    ↓reduceIte, sub_neg_eq_add, ψ_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
+    add_zero]
 
 @[simp] theorem ω_one : W.ω 1 = Y := by
-  simp [WeierstrassCurve.ω, ψ₂, complEDS₂Aux_def, ← Affine.Y_sub_polynomialY]
-  ring
+  simp only [WeierstrassCurve.ω, ψ₂, Int.reduceMod, reducedInvarDenom_of_emod_six_eq_one,
+    sub_self, EuclideanDomain.zero_div, complEDS_zero, mul_zero, Int.reduceAdd, normEDS_two,
+    zero_mul, normEDS_one, mul_one, complEDS₂Aux_def, Int.reduceSub, preNormEDS_neg,
+    preNormEDS_one, preNormEDS_two, one_pow, Int.not_even_one, ↓reduceIte, zero_sub,
+    ← Affine.Y_sub_polynomialY, ψ_one]
+  ring1
 
-@[simp] theorem ψc_neg (n : ℤ) : W.ψc (-n) = W.ψc n := by simp [ψc]
+@[simp] theorem ψc_neg (n : ℤ) : W.ψc (-n) = W.ψc n := by simp only [ψc_def, complEDS₂_neg]
 
 end
 
@@ -131,18 +140,18 @@ theorem map_ω (f : R →+* S) (n : ℤ) : (W.map f).ω n = (W.ω n).map (mapRin
   simp
 
 open Universal in
-/-- `ω_neg` over the universal curve, where the coefficient ring is a domain and `2` is a
-nonzerodivisor, so the identity may be doubled and read off `two_mul_ω`. -/
+/-- `ω_neg` over the universal curve. -/
 private theorem universal_ω_neg (n : ℤ) :
     curve.ω (-n) = curve.ω n + CC curve.a₁ * curve.φ n * curve.ψ n
       + CC curve.a₃ * curve.ψ n ^ 3 := by
+  -- Double both sides — `2` is a nonzerodivisor here — and read the identity off `two_mul_ω`.
   rw [← mul_cancel_left_mem_nonZeroDivisors
     (mem_nonZeroDivisors_of_ne_zero (two_ne_zero (α := Universal.Poly)))]
   simp_rw [left_distrib, two_mul_ω, ψc_neg, ψ_neg, φ_neg]
-  ring
+  ring1
 
 open Universal in
-/-- The parity rule for `ω`, specialised from the universal curve. -/
+/-- The parity rule for `ω`. -/
 theorem ω_neg (n : ℤ) :
     W.ω (-n) = W.ω n + CC W.a₁ * W.φ n * W.ψ n + CC W.a₃ * W.ψ n ^ 3 := by
   rw [← W.map_specialize, map_ω, universal_ω_neg, map_φ, map_ω, map_ψ]
