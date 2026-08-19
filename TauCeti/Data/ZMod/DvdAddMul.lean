@@ -97,17 +97,15 @@ lemma dvd_add_mul_val_neg_mul_inv (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n))
   rw [hcancel, add_neg_cancel]
 
 /-- **Exactly one index solves the divisibility.** When `c` is a unit mod `n` there is a unique
-`i : Fin n` with `n ∣ a + i * c` — the statement `dvd_add_mul_val_neg_mul_inv` and
-`dvd_add_mul_iff_eq_of_dvd` combine to, and the one a consumer indexing by `Fin n` wants. -/
+`i : Fin n` with `n ∣ a + i * c`. This is what `dvd_add_mul_val_neg_mul_inv` and
+`dvd_add_mul_iff_eq_of_dvd` combine to, and the form a consumer indexing by `Fin n` wants. -/
 theorem existsUnique_dvd_add_mul (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) :
     ∃! i : Fin n, (n : ℤ) ∣ (a + (i : ℕ) * c) := by
-  refine ⟨(ZMod.finEquiv n).symm (-((a : ℤ) : ZMod n) * ((c : ℤ) : ZMod n)⁻¹), ?_, ?_⟩
-  · simp only [ZMod.finEquiv_symm_apply_val]
-    exact dvd_add_mul_val_neg_mul_inv a c hc
-  · intro y hy
-    refine (dvd_add_mul_iff_eq_of_dvd a c hc ?_ y).mp hy
+  have hb : (n : ℤ) ∣ (a + (((ZMod.finEquiv n).symm
+      (-((a : ℤ) : ZMod n) * ((c : ℤ) : ZMod n)⁻¹) : Fin n) : ℕ) * c) := by
     simp only [ZMod.finEquiv_symm_apply_val]
     exact dvd_add_mul_val_neg_mul_inv a c hc
+  exact ⟨_, hb, fun y hy ↦ (dvd_add_mul_iff_eq_of_dvd a c hc hb y).mp hy⟩
 
 end TauCeti
 
