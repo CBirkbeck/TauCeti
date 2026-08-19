@@ -30,10 +30,8 @@ open Fin.CommRing in
 /-- **Applying `ZMod.finEquiv` is the natural cast.** `ZMod.finEquiv n j` is the image of `j.val`
 under `Nat.cast`.
 
-This is not definitional: the cast `((j : ℕ) : ZMod n)` reduces the natural `j.val` modulo `n`
-again, and it is `Fin.cast_val_eq_self` that says doing so returns `j`. Mathlib states no
-evaluation rule for `finEquiv`, so this is the lemma a `Fin n`-indexed statement rewrites
-through. -/
+Mathlib defines `finEquiv` and states no evaluation rule for it in either direction, so this is
+the lemma a `Fin n`-indexed statement rewrites through to reach `ZMod n`. -/
 @[simp]
 lemma finEquiv_apply {n : ℕ} [NeZero n] (j : Fin n) :
     (ZMod.finEquiv n) j = ((j : ℕ) : ZMod n) := by
