@@ -421,6 +421,10 @@ only the identification of the two stabilisers as Mackey subgroups.
 
 Stated at the level of a single group acting on `α`; the two-group form used below is the instance
 `G := ↥ℋ`, `H := 𝒢.subgroupOf ℋ`, `g := ↑h`. -/
+-- Not `@[simp]`, tested: this file's own `@[simp] stabilizer_eq_mackeySubgroup_subgroupOf`
+-- rewrites the left-hand side to
+-- `Nat.card ((mackeySubgroup g H (stabilizer G p)).subgroupOf (stabilizer G p))`, so it is not in
+-- simp-normal form and `simpNF` rejects the attribute.
 theorem card_stabilizer_coset_eq_card_stabilizer_inv_smul (H : Subgroup G) (p : α) (g : G) :
     Nat.card (stabilizer (↥(stabilizer G p)) ((g : G ⧸ H))) =
       Nat.card (stabilizer (↥H) (g⁻¹ • p)) := by
@@ -435,7 +439,7 @@ orbit**, is the order of the stabiliser of `p` **inside `ℋ`**.
 
 The weight is `TauCeti.cardStabilizerOnOrbit`, a function of the orbit rather than of a
 representative, because that is the shape the consumer needs: a sum over
-`MulAction.orbitRel.Quotient 𝒢 α` weights each orbit once, and the roadmap product `Σ_P (1/e_P)`
+`MulAction.orbitRel.Quotient 𝒢 α` weights each orbit once, and the roadmap sum `Σ_P (1/e_P)`
 reads `e_P` off the orbit. Stating it at a representative would leave every use site to redo
 `QuotientGroup.induction_on` and rewrite the order into orbit form by hand.
 
@@ -453,7 +457,7 @@ theorem card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_inv_smul {𝒢 ℋ 
 /-- **The orbit-indexed form**, which is the one a consumer wants: the weight is
 `TauCeti.cardStabilizerOnOrbit`, a function of the orbit rather than of a representative.
 
-A sum over `MulAction.orbitRel.Quotient 𝒢 α` weights each orbit once, and the roadmap product
+A sum over `MulAction.orbitRel.Quotient 𝒢 α` weights each orbit once, and the roadmap sum
 `Σ_P (1/e_P)` reads `e_P` off the orbit, so a use site holding a class `q` can apply this directly
 instead of doing `QuotientGroup.induction_on` and rewriting the order into orbit form by hand. -/
 theorem card_fiber_orbitOfCosetTranslate_mul_cardStabilizerOnOrbit {𝒢 ℋ : Subgroup G}

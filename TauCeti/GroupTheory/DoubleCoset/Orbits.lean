@@ -8,7 +8,9 @@ module
 public import TauCeti.GroupTheory.GroupAction.Burnside
 public import Mathlib.GroupTheory.Coset.Card
 public import Mathlib.GroupTheory.DoubleCoset
-public import Mathlib.GroupTheory.Index
+-- proof-only: `index_stabilizer` and `index_mul_card` are used inside the fibre count,
+-- so this stays off the public surface of the Orbits API
+import Mathlib.GroupTheory.Index
 
 /-!
 # Double cosets as orbits

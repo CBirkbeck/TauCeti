@@ -163,6 +163,10 @@ map is an isomorphism, so the kernel factor is `1` — and it is the transport w
 orbit count produced inside `ℋ` has to be read against the `𝒢`-orbit it weights, since
 `cardStabilizerOnOrbit` reads the order in `𝒢`. Mathlib's `stabilizerEquivStabilizer` transports
 between two *points* of one group, not between two groups at one point, so it does not apply. -/
+-- Not `@[simp]`, tested: the same reason as `card_stabilizer_smul` above — the left-hand side is
+-- not in simp-normal form, because `MulAction.mem_stabilizer_iff` rewrites the membership
+-- condition underneath the `Nat.card`, taking it to `Nat.card { x // x • a = a }`. `simpNF`
+-- rejects the attribute.
 theorem card_stabilizer_subgroupOf {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ) (a : α) :
     Nat.card (MulAction.stabilizer (↥(𝒢.subgroupOf ℋ)) a) =
       Nat.card (MulAction.stabilizer 𝒢 a) := by
