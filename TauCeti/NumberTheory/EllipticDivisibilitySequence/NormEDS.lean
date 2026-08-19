@@ -178,6 +178,17 @@ theorem normEDS_two_three_two_eq_id : normEDS (2 : ℤ) 3 2 = id := by
   · simp
   · simp
 
+/-- **The 2-complement of the identity sequence is the constant `2`**: for `normEDS 2 3 2`
+on `ℤ`, the complement of `n` in `2n`. At `n = 0` this is Mathlib's `complEDS₂_zero`; away
+from `0` it is read off `normEDS_mul_complEDS₂` by cancelling `n`. -/
+theorem complEDS₂_two_three_two (n : ℤ) : complEDS₂ (2 : ℤ) 3 2 n = 2 := by
+  obtain rfl | hn := eq_or_ne n 0
+  · exact complEDS₂_zero ..
+  · have h := normEDS_mul_complEDS₂ (2 : ℤ) 3 2 n
+    rw [normEDS_two_three_two_eq_id] at h
+    simp only [id] at h
+    exact mul_right_cancel₀ hn (by linarith)
+
 /-- **`normEDS 2 3 2` is the integer cast, over any commutative ring.** The identity on `ℤ`
 transported along the unique ring map out of it. -/
 @[simp]
