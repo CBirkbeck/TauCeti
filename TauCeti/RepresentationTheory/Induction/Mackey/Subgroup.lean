@@ -92,6 +92,10 @@ homomorphisms `mackeyToK` and `mackeyToConjH`, and Layer 4, which asks for the i
 Mackey data "under replacing `s` by `h₁ s h₂`" as its own lemma.  `mackeySubgroup` is pinned in the
 accompanying `Suggested.lean`.
 
+Layer 1 of `TauCetiRoadmap/ModularForms/README.md`, "General level — by the coset norm", whose
+orbit/stabiliser/cusp-width bookkeeping the fibre-multiplicity declarations at the end of this
+file supply; they are not asked for by the InductionRestriction layers above.
+
 * [J.-P. Serre, *Linear Representations of Finite Groups*][serre1977], Section 7.3.
 -/
 
@@ -398,8 +402,8 @@ theorem card_fiber_orbitOfCosetTranslate_mul_card_stabilizer {𝒢 ℋ : Subgrou
 
 /-- Swapping the two subgroups of a Mackey subgroup and inverting the representative conjugates
 it: `K ⊓ s⁻¹Hs = s⁻¹ (H ⊓ sKs⁻¹) s`. -/
-theorem mackeySubgroup_inv_swap (H K : Subgroup G) (x : G) :
-    mackeySubgroup x⁻¹ H K = MulAut.conj x⁻¹ • mackeySubgroup x K H := by
+theorem mackeySubgroup_inv_swap (H K : Subgroup G) (s : G) :
+    mackeySubgroup s⁻¹ H K = MulAut.conj s⁻¹ • mackeySubgroup s K H := by
   rw [mackeySubgroup_def, mackeySubgroup_def, Subgroup.smul_inf, map_inv, inv_smul_smul,
     inf_comm]
 
@@ -436,11 +440,15 @@ theorem card_stabilizer_subgroupOf {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ) 
       right_inv := fun x ↦ by ext; simp }
 
 /-- **The multiplicity identity for the coset-to-orbit index map.** The number of coset classes
-translating `p` into the same orbit as `h` does, times the order of the stabiliser of `h⁻¹ • p`,
-is the order of the stabiliser of `p`.
+translating `p` into the same orbit as `h` does, times the order of the stabiliser of `h⁻¹ • p`
+**inside `𝒢.subgroupOf ℋ`**, is the order of `stabilizer ℋ p`. Both ambient groups matter: read
+in `ℋ` the statement would be false, since `stabilizer ℋ (h⁻¹ • p)` is conjugate to
+`stabilizer ℋ p` while the fibre is generally not a singleton.
 
-This is the weight that turns a sum over `ℋ ⧸ 𝒢.subgroupOf ℋ` into a sum over `𝒢`-orbits with
-the ramification factors of the orbit-stabiliser count. Composition of
+This is the weight behind regrouping a sum over `ℋ ⧸ 𝒢.subgroupOf ℋ` into a sum over `𝒢`-orbits.
+Note the weight is stated in `𝒢.subgroupOf ℋ`, whereas the orbits are `𝒢`-orbits and
+`TauCeti.cardStabilizerOnOrbit` reads the order in `𝒢`; `card_stabilizer_subgroupOf` above is the
+transport between the two. Composition of
 `card_fiber_orbitOfCosetTranslate_mul_card_stabilizer` with
 `card_stabilizer_coset_eq_card_stabilizer_inv_smul`. -/
 theorem card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_inv_smul {𝒢 ℋ : Subgroup G}
