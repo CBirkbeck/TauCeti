@@ -8,7 +8,7 @@ module
 public import TauCeti.NumberTheory.HeckeRing.GLn.CosetDecomposition
 
 /-!
-# The upper-triangular entry assignments at `n = 2`
+# The `T_p` coset representatives at `n = 2`
 
 `GLn/CosetDecomposition.lean` indexes the upper-triangular coset representatives by the bounded
 entry assignments `UpperTriEntries n a`, a dependent function on the ordered index pairs
@@ -21,6 +21,10 @@ It is the adapter between the general-`n` decomposition and the classical `T_p` 
 which sums over `b` directly: a sum over `UpperTriEntries 2 ![1, p]` transfers along this
 equivalence rather than being restated.
 
+Alongside the upper-triangular family this file records the remaining representative,
+`diagRep p = !![p, 0; 0, 1]`, so that both families and the two facts every slash argument needs
+of them — upper-triangularity and positive determinant — sit together.
+
 Nothing here involves a level or a congruence subgroup; the level-`N` membership statements for
 these representatives are in `GL2/UpperTriangularDelta0.lean`.
 
@@ -30,6 +34,7 @@ these representatives are in `GL2/UpperTriangularDelta0.lean`.
 * `HeckeRing.GL2.upperTriEntriesEquiv`: `UpperTriEntries 2 a ≃ Fin (a 1 / a 0)`, for an
   arbitrary tuple `a`.
 * `HeckeRing.GL2.upperTriEntriesEquivFin`: its specialisation `UpperTriEntries 2 ![1, p] ≃ Fin p`.
+* `HeckeRing.GL2.diagRep`: the diagonal representative `!![p, 0; 0, 1]`, as `natDiagGL 2 ![p, 1]`.
 
 ## Main results
 
@@ -47,6 +52,12 @@ these representatives are in `GL2/UpperTriangularDelta0.lean`.
 * `HeckeRing.GL2.det_upperTriRep_pos`: they have determinant `p > 0`, which is what lets scalars
   pass through a slash by them without the `σ` twist.
 
+* `HeckeRing.GL2.coe_diagRep`: the entrywise description of the diagonal representative, for
+  `0 < p`.
+* `HeckeRing.GL2.diagRep_apply_one_zero` and `det_diagRep_pos`: it too is upper triangular and
+  has positive determinant — both unconditionally in `p`, since `natDiagGL`'s junk value is the
+  identity.
+
 ## Provenance
 
 No code is ported: the equivalence is a fact about this repository's own `UpperTriEntries`. The
@@ -55,7 +66,14 @@ No code is ported: the equivalence is a fact about this repository's own `UpperT
 `2baa76f742bdb4fb8ee323fabba41203bd390e08`, whose `heckeT_p_ut` sums over `b ∈ Finset.range p`
 and whose `T_p_upper p _ b = !![1, b; 0, p]` is `upperTriGL` at `n = 2`, `a = ![1, p]`. This file
 exists so that such a sum transfers onto the existing general-`n` decomposition instead of
-restating the index.
+restating the index. `diagRep` is the same file's `T_p_lower` (line 52), the diagonal
+representative `[[p, 0], [0, 1]]`, restated here as `natDiagGL 2 ![p, 1]` rather than as a fresh
+matrix literal.
+
+## References
+
+* [DS] Diamond–Shurman, *A first course in modular forms*, Proposition 5.2.1 — the `p + 1` left
+  cosets of the double coset of `diag(1, p)` over `Γ₀(N)`, the decomposition `diagRep` completes.
 -/
 
 public section
@@ -141,12 +159,39 @@ noncomputable def upperTriRep (b : Fin p) : GL (Fin 2) ℚ :=
     (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ) 1 0 = 0 :=
   upperTriGL_apply_eq_zero_of_lt (fun i ↦ by fin_cases i <;> simp [b.pos]) _ (by decide)
 
-/-- **The diagonal representative** `!![p, 0; 0, 1]`, as `natDiagGL 2 ![p, 1]`.
+/-- The representatives have positive determinant: `det !![1, b; 0, p] = p > 0`. -/
+lemma det_upperTriRep_pos (b : Fin p) :
+    0 < (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ).det := by
+  have hpos : ∀ i : Fin 2, 0 < ![1, p] i := fun i ↦ by fin_cases i <;> simp [b.pos]
+  have hdiag : (0 : ℚ) < (↑(natDiagGL 2 ![1, p]) : Matrix (Fin 2) (Fin 2) ℚ).det :=
+    natDiagGL_det_pos 2 ![1, p] hpos
+  have hunit := RingHom.map_det (Int.castRingHom ℚ)
+    (unitriMat ((upperTriEntriesEquivFin p).symm b))
+  rw [det_unitriMat] at hunit
+  have hunit' : ((unitriMat ((upperTriEntriesEquivFin p).symm b)).map
+      (Int.cast : ℤ → ℚ)).det = 1 := by simpa using hunit.symm
+  rw [upperTriRep, upperTriGL_def, Units.val_mul, Matrix.det_mul]
+  simpa [hunit'] using hdiag
 
-For a **prime** `p ∤ N` the double coset of `diag(1, p)` has `p + 1` left cosets: the `p`
-upper-triangular ones `upperTriRep p b` and this one. That count is primality-specific — at a
-composite `p` the triangular decomposition has `∑_{d ∣ p} d` representatives, seven at `p = 4` —
-so nothing here claims a coset decomposition for general `p`.
+/-- **The diagonal representative** `!![p, 0; 0, 1]`, as `natDiagGL 2 ![p, 1]`. That entrywise
+description needs `0 < p`, which is why `coe_diagRep` carries the hypothesis: at `p = 0` the
+positivity condition fails and `natDiagGL` returns its junk value `1` (`natDiagGL_of_not_pos`).
+
+For a **prime** `p ∤ N`, over `Γ₀(N)` and with trivial character, the double coset of `diag(1, p)`
+has `p + 1` left cosets: the `p` upper-triangular ones `upperTriRep p b` and this one. Both
+qualifiers are load-bearing. With nebentypus `χ` the last term acquires a factor `χ(p)`, and over
+`Γ₁(N)` the untwisted matrix is not a coset representative at all — it is one only up to a `Γ₀(N)`
+twist, which is exactly what supplies the `χ(p)` in the recurrence.
+
+The count is primality-specific too, and `∑_{d ∣ p} d` counts the wrong thing to compare against
+`p + 1`: it counts *all* determinant-`p` classes, seven at `p = 4`, spread over more than one
+double coset. The double coset of `diag(1, 4)` alone has six left cosets; the seventh class is the
+scalar `2 • 1`, which lies in the double coset of `diag(2, 2)`. Six or seven, both exceed the five
+terms available at `p = 4`, so nothing here claims a coset decomposition for general `p`.
+
+Over `ℝ` this same matrix is `TauCeti.scaleGL p` (`ModularForms/Degeneracy.lean`), where slashing
+by it is the level-raising operator `V_p`; the analytic facts about it — `denom_scaleGL`,
+`coe_scaleGL_smul` — are proved there and are not restated here.
 
 It is diagonal, hence upper triangular, so it satisfies the same `(1, 0) = 0` hypothesis that
 mathlib's `IsBoundedAtImInfty.slash` asks for, for every `p`. -/
@@ -178,20 +223,6 @@ than a fresh derivation from `natDiagGL_det_pos`. -/
 lemma det_diagRep_pos :
     0 < (↑(diagRep p) : Matrix (Fin 2) (Fin 2) ℚ).det :=
   ((mem_posDetInt_iff 2).mp (natDiagGL_mem_posDetInt 2 ![p, 1])).2
-
-/-- The representatives have positive determinant: `det !![1, b; 0, p] = p > 0`. -/
-lemma det_upperTriRep_pos (b : Fin p) :
-    0 < (↑(upperTriRep p b) : Matrix (Fin 2) (Fin 2) ℚ).det := by
-  have hpos : ∀ i : Fin 2, 0 < ![1, p] i := fun i ↦ by fin_cases i <;> simp [b.pos]
-  have hdiag : (0 : ℚ) < (↑(natDiagGL 2 ![1, p]) : Matrix (Fin 2) (Fin 2) ℚ).det :=
-    natDiagGL_det_pos 2 ![1, p] hpos
-  have hunit := RingHom.map_det (Int.castRingHom ℚ)
-    (unitriMat ((upperTriEntriesEquivFin p).symm b))
-  rw [det_unitriMat] at hunit
-  have hunit' : ((unitriMat ((upperTriEntriesEquivFin p).symm b)).map
-      (Int.cast : ℤ → ℚ)).det = 1 := by simpa using hunit.symm
-  rw [upperTriRep, upperTriGL_def, Units.val_mul, Matrix.det_mul]
-  simpa [hunit'] using hdiag
 
 end HeckeRing.GL2
 

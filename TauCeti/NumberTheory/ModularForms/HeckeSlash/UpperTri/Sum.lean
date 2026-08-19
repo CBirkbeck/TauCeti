@@ -12,9 +12,10 @@ public import TauCeti.NumberTheory.ModularForms.SlashActionRat
 # The upper-triangular part of the Hecke operator
 
 The classical `T_p` is a sum of slashes by the representatives `!![1, b; 0, p]` for `b < p`,
-together with one further term when `p ∤ N`. This file defines that first sum, `heckeSlashUpperTri`,
-and records that `f ↦ heckeSlashUpperTri k p f` is `ℂ`-linear: it preserves zero, addition and
-scalar multiplication. (Linearity in `f` only; this is not yet bundled as a `LinearMap`.)
+together with one further term when `p ∤ N`. This file defines both: the triangular sum
+`heckeSlashUpperTri`, and the augmented sum `heckeSlashUpperTriAddDiag` adjoining the diagonal
+representative. For each it records `ℂ`-linearity in `f`: zero, addition and scalar multiplication
+are preserved. (Linearity in `f` only; neither is yet bundled as a `LinearMap`.)
 
 Why these representatives: mathlib's `IsBoundedAtImInfty.slash` requires `g 1 0 = 0`, so it
 applies when `g` is upper triangular. (Sufficient, not necessary — the zero function stays
@@ -28,8 +29,8 @@ the entrywise description of the representatives is not restated.
 
 * `HeckeRing.GL2.heckeSlashUpperTri`: the sum `∑ b < p, f ∣[k] !![1, b; 0, p]`.
 * `HeckeRing.GL2.heckeSlashUpperTriAddDiag`: that sum together with the diagonal representative
-  `!![p, 0; 0, 1]`. For **prime** `p ∤ N` this is the whole `T_p` coset sum; that identification
-  is primality-specific and is not proved here.
+  `!![p, 0; 0, 1]`. For **prime** `p ∤ N`, over `Γ₀(N)` and with trivial character, this is the
+  whole `T_p` coset sum; the identification needs both qualifiers and is not proved here.
 
 ## Main results
 
@@ -38,8 +39,8 @@ the entrywise description of the representatives is not restated.
   its sum.
 * `HeckeRing.GL2.heckeSlashUpperTri_zero`, `heckeSlashUpperTri_add`,
   `heckeSlashUpperTri_smul`: linearity in `f`.
-* `HeckeRing.GL2.heckeSlashUpperTriAddDiag_def`, `…_eq_sum_add`, `…_apply`, and
-  `…_zero` / `_add` / `_smul`: the same interface for the augmented sum.
+* `HeckeRing.GL2.heckeSlashUpperTriAddDiag_def`, `…_apply`, and `…_zero` / `_add` / `_smul`: the
+  same interface for the augmented sum.
 The representatives themselves, and their upper-triangularity and positive determinant, live in
 `HeckeRing/GL2/CosetDecomposition.lean`; this file is only the slash sum built from them.
 
@@ -52,10 +53,21 @@ The shape is AINTLIB's `heckeT_p_ut`
 representatives — `T_p_upper p _ b` is `upperTriGL` at `n = 2`, `a = ![1, p]` — so AINTLIB's
 `T_p_upper` is not reproduced.
 
+`heckeSlashUpperTriAddDiag` follows the same project's `heckeT_p_fun` (`HeckeT_p.lean`, lines
+110-115), which adjoins a diagonal term to `heckeT_p_ut`, and its prime-`T_p` dispatch
+`heckeT_p_all` (`HeckeT_n.lean`, lines 434-437). One deliberate difference, and it is why the
+docstrings below qualify the `T_p` claim: AINTLIB's extra term is
+`(⇑(diamondOp k ⟨p⟩ f)) ∣[k] T_p_lower p`, carrying the diamond operator, where the term here is
+the untwisted `f ∣[k] diagRep p`. The two agree exactly when the nebentypus is trivial. The
+twisted form needs `diamondOp`, which this file does not import.
+
 ## References
 
 * [G. Shimura, *Introduction to the arithmetic theory of automorphic functions*][shimura1971],
   §3.4.
+* [DS] Diamond–Shurman, *A first course in modular forms*, Proposition 5.2.1 — the `p + 1`
+  representatives of the `T_p` coset decomposition for `p ∤ N`, the source AINTLIB's
+  `heckeT_p_fun` cites for the same statement.
 -/
 
 public section
@@ -106,11 +118,18 @@ scalar generality matches `ModularForm.rat_smul_slash_of_det_pos`. -/
 `heckeSlashUpperTri` plus `f ∣[k] diagRep p`.
 
 ⚠ This is **not** claimed to be the full `T_p` coset sum. It is that only for **prime** `p ∤ N`,
-where the double coset of `diag(1, p)` has exactly `p + 1` left cosets; at a composite `p` the
-triangular decomposition has `∑_{d ∣ p} d` representatives — seven at `p = 4` against the five
-terms here — so the identification is primality-specific and is not proved in this file. The
-definition itself is well formed for every `p`, which is why no `Nat.Prime` hypothesis is
-imposed on it.
+over `Γ₀(N)` and with trivial character, where the double coset of `diag(1, p)` has exactly
+`p + 1` left cosets. Both qualifiers are load-bearing: with nebentypus `χ` the diagonal term is
+`χ(p) • f ∣[k] diagRep p`, and over `Γ₁(N)` the untwisted matrix is not a coset representative at
+all. AINTLIB's `heckeT_p_fun` carries precisely that twist — its extra term is
+`(⟨p⟩ f) ∣[k] T_p_lower p`.
+
+The count is primality-specific too, and `∑_{d ∣ p} d` is not the number to compare with `p + 1`:
+it counts *all* determinant-`p` classes, seven at `p = 4`, spread over more than one double coset.
+The double coset of `diag(1, 4)` alone has six left cosets, the seventh class being the scalar
+`2 • 1`, which lies in the double coset of `diag(2, 2)`. Six or seven, both exceed the five terms
+available here, so the identification is not proved in this file. The definition itself is well
+formed for every `p`, which is why no `Nat.Prime` hypothesis is imposed on it.
 
 Every representative summed here is upper triangular — `diagRep` is diagonal — so
 `IsBoundedAtImInfty.slash` applies to each term exactly as it does to `heckeSlashUpperTri`. -/
@@ -120,11 +139,6 @@ noncomputable def heckeSlashUpperTriAddDiag (f : ℍ → ℂ) : ℍ → ℂ :=
 /-- The defining equation of `heckeSlashUpperTriAddDiag`, in terms of the partial sum. -/
 lemma heckeSlashUpperTriAddDiag_def (f : ℍ → ℂ) :
     heckeSlashUpperTriAddDiag k p f = heckeSlashUpperTri k p f + f ∣[k] diagRep p := (rfl)
-
-/-- `heckeSlashUpperTriAddDiag` written out over all `p + 1` representatives. -/
-lemma heckeSlashUpperTriAddDiag_eq_sum_add (f : ℍ → ℂ) :
-    heckeSlashUpperTriAddDiag k p f = (∑ b : Fin p, f ∣[k] upperTriRep p b) + f ∣[k] diagRep p := by
-  rw [heckeSlashUpperTriAddDiag_def, heckeSlashUpperTri_def]
 
 /-- The pointwise form, for consumers working at a point of `ℍ`. -/
 lemma heckeSlashUpperTriAddDiag_apply (f : ℍ → ℂ) (τ : ℍ) :
