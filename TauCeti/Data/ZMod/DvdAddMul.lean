@@ -19,8 +19,19 @@ satisfies
 ```
 
 namely the index whose natural value is `ZMod.val (-a * c⁻¹)`, where `c⁻¹` is the inverse of the
-unit. The statements are divisibilities over `ℤ`, which is the form the downstream Hecke sums are
-phrased in, and they are arithmetic in `ZMod n`: no matrix, determinant or group action occurs.
+unit.
+
+The uniqueness statement is available in **two forms**, exchanged by
+`ZMod.intCast_zmod_eq_zero_iff_dvd`: as the divisibility over `ℤ` displayed above, which is how
+the downstream Hecke sums are phrased, and as the equation
+
+```text
+((c : ℤ) : ZMod n) * ((i : ℕ) : ZMod n) + ((a : ℤ) : ZMod n) = 0
+```
+
+in `ZMod n`, which is what a consumer holding a vanishing condition rather than a divisibility
+wants. Either way the content is arithmetic in `ZMod n`: no matrix, determinant or group action
+occurs.
 
 Invertibility of `c` is the only thing the argument uses, so nothing here asks for a prime
 modulus. Over a prime `p` the hypothesis is implied by `((c : ℤ) : ZMod p) ≠ 0`, since `ZMod p` is
@@ -32,7 +43,10 @@ then a field.
   exactly when it equals that one.
 * `TauCeti.dvd_add_mul_val_neg_mul_inv`: such an index exists, with natural value
   `ZMod.val (-a * c⁻¹)`.
-* `TauCeti.existsUnique_dvd_add_mul`: the two combined — existence and uniqueness.
+* `TauCeti.existsUnique_dvd_add_mul`: the two combined — existence and uniqueness, as a
+  divisibility over `ℤ`.
+* `TauCeti.existsUnique_mul_natCast_add_eq_zero`: the same uniqueness read as an equation in
+  `ZMod n`, so that the cast argument is made once here rather than at each use site.
 
 ## Provenance
 
