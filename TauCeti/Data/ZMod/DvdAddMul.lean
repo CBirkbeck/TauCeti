@@ -50,7 +50,8 @@ then a field.
 * `TauCeti.dvd_add_mul_iff_eq_of_dvd`: given one such index, an index satisfies the divisibility
   exactly when it equals that one.
 * `TauCeti.dvd_add_mul_val_neg_mul_inv`: the explicit witness, of natural value
-  `ZMod.val (-a * c⁻¹)`.
+  `ZMod.val (-a * c⁻¹)`, and `TauCeti.exists_dvd_sub_val_mul`: the same for the `a - j * c`
+  phrasing, which is what the `Γ₀(pᵏ)` index computation consumes.
 
 ## Provenance
 
@@ -145,6 +146,16 @@ lemma dvd_add_mul_val_neg_mul_inv (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n))
     ZMod.mul_inv_of_unit _ hc
   rw [dvd_add_mul_iff_mul_natCast_add_eq_zero, ZMod.natCast_val, ZMod.cast_id]
   linear_combination -((a : ℤ) : ZMod n) * hci
+
+/-- **The subtraction form of the explicit witness.** Some consumers phrase the divisibility as
+`a - j * c` rather than `a + j * c`; this is `dvd_add_mul_val_neg_mul_inv` at `-c`, so the sign
+flip is made here once rather than at each such site. The witness is stated as an existential
+because those consumers only need *a* residue, not the canonical one. -/
+lemma exists_dvd_sub_val_mul (a c : ℤ) (hc : IsUnit ((c : ℤ) : ZMod n)) :
+    ∃ j : ZMod n, (n : ℤ) ∣ a - (j.val : ℤ) * c :=
+  ⟨_, by
+    have h := dvd_add_mul_val_neg_mul_inv (n := n) a (-c) (by simpa using hc.neg)
+    simpa [sub_eq_add_neg, mul_neg] using h⟩
 
 end TauCeti
 
