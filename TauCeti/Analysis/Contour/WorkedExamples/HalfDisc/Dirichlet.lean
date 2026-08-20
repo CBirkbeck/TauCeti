@@ -132,13 +132,13 @@ theorem tendsto_integral_arc_dirichlet_atTop {a : ℝ} (ha : 0 < a) :
   rw [dirichletIntegrand_eq]
   ring
 
-/-- **The auxiliary limit: `π i` minus the arc contribution converges to `π i`.** Jordan's lemma
-kills the arc contribution, so subtracting it from the constant leaves the constant. -/
+/-- **The auxiliary limit: `π i` minus the arc contribution converges to `π i`.** -/
 theorem tendsto_sub_integral_arc_dirichlet {a : ℝ} (ha : 0 < a) :
     Tendsto (fun R : ℝ => (Real.pi : ℂ) * Complex.I -
       ∫ θ in (0 : ℝ)..Real.pi,
         dirichletIntegrand a (circleMap 0 R θ) * deriv (circleMap 0 R) θ)
       atTop (𝓝 ((Real.pi : ℂ) * Complex.I)) := by
+  -- Jordan's lemma kills the arc contribution, so subtracting it from the constant leaves it
   simpa using tendsto_const_nhds.sub (tendsto_integral_arc_dirichlet_atTop ha)
 
 /-- **The improper principal value.** As the radius grows, the Cauchy principal values of
