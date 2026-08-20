@@ -117,6 +117,19 @@ theorem card_center_le_two [NoZeroDivisors R] :
   rw [h, Nat.card_coe_set_eq]
   exact (Set.ncard_insert_le _ _).trans (by simp)
 
+/-- **The centre of `SL₂` has exactly two elements** once `-I ≠ I`. `card_center_le_two` is the
+unconditional bound; this is the value, and it is what a consumer evaluating the centre factor of
+a stabiliser splitting needs. In characteristic `2` the hypothesis fails and the centre is the
+singleton `{I}`. -/
+theorem card_center_eq_two [NoZeroDivisors R]
+    (hne : (-1 : SpecialLinearGroup (Fin 2) R) ≠ 1) :
+    Nat.card (Subgroup.center (SpecialLinearGroup (Fin 2) R)) = 2 := by
+  have h : Nat.card (Subgroup.center (SpecialLinearGroup (Fin 2) R)) =
+      Nat.card ({1, -1} : Set (SpecialLinearGroup (Fin 2) R)) :=
+    Nat.card_congr (Equiv.subtypeEquivRight fun _ ↦ mem_center_iff_eq_one_or_eq_neg_one)
+  rw [h, Nat.card_coe_set_eq]
+  exact Set.ncard_pair (Ne.symm hne)
+
 -- the count is between one and two: the identity is always there, and the inclusion of
 -- `Γ ⊓ {±I}` into `{±I}` caps it by `card_center_le_two`
 private theorem card_center_subgroupOf_le_two [NoZeroDivisors R]
