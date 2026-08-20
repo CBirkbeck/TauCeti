@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Omega
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Universal
 
 /-!
@@ -18,7 +17,8 @@ elements of `Universal.Field`. This file defines those two rational functions, `
 development, not here — and develops the `smulX` calculus that identification consumes: values
 at `0`, `1` and `2`, the offset `ψₙ₊₁ψₙ₋₁/ψₙ²` from the `X`-coordinate, evenness in `n`,
 nonvanishing, the difference `smulX m - smulX n` as a single quotient, and the separation
-statement `smulX m = smulX n ↔ m = n ∨ m = -n`.
+statement `smulX m = smulX n ↔ m = n ∨ m = -n`. `smulY`'s own negative-index rule is here too:
+a negative index negates the point, so `smulY (-n)` is the `negY` of `(smulX n, smulY n)`.
 
 ## Main definitions
 
@@ -34,6 +34,8 @@ statement `smulX m = smulX n ↔ m = n ∨ m = -n`.
 * `WeierstrassCurve.Universal.Affine.smulX_ne_zero`: `smulX n ≠ 0` for `n ≠ 0`.
 * `WeierstrassCurve.Universal.Affine.smulX_eq_smulX_iff`: `smulX m = smulX n ↔ m = n ∨ m = -n`,
   the field-level form of the fact that `x`-coordinates separate multiples up to sign.
+* `WeierstrassCurve.Universal.Affine.smulY_neg`: `smulY (-n)` is the `negY` of the coordinates
+  at `n` — the long-Weierstrass correction that `ω_neg` carries, read in the universal field.
 
 ## Provenance
 
@@ -41,13 +43,17 @@ Ported from J. Xu and D. K. Angdinata's `projects/NagellLutz/LutzNagell/ZSMul.le
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main @
 1c1c74664e40071c2c2165bc55ca2616a67ccd6b`): `smulX` (`:164`), `smulY` (`:168`), the value
 lemmas (`:171`–`:174`), `smulX_eq` (`:176`), `smulX_two` (`:183`), `smulX_sub_smulX` (`:186`),
-`smulX_neg` (`:201`), `smulX_ne_zero` (`:203`), `smulX_ne_smulX` (`:206`) and
-`smulX_eq_smulX_iff` (`:217`). The source's `ψᵤ` abbreviation is dropped in favour of
-`polyToField (curve.ψ n)`, the `DivisionPolynomial/Universal.lean` convention. Two departures
+`smulX_neg` (`:201`), `smulX_ne_zero` (`:203`), `smulX_ne_smulX` (`:206`),
+`smulX_eq_smulX_iff` (`:217`), and `smulY_neg` with its private field-level auxiliary
+(`:288`–`:291`), pulled forward from the slope slice's range so that `smulY` does not ship
+without its negative-index rule. The source's `ψᵤ` abbreviation is dropped in favour of
+`polyToField (curve.ψ n)`, the `DivisionPolynomial/Universal.lean` convention. Three departures
 beyond the respelling: the elliptic-sequence step of `smulX_sub_smulX` is respelt through
 `IsEllipticNet.rel` and `linear_combination` (the source converts against its
-`isEllSequence_ψᵤ`, a statement shape Mathlib has since replaced), and the equation lemmas
-`smulX_def` and `smulY_def` are added for consumers in other modules, as in `Omega.lean`.
+`isEllSequence_ψᵤ`, a statement shape Mathlib has since replaced); the equation lemmas
+`smulX_def` and `smulY_def` are added for consumers in other modules, as in `Omega.lean`; and
+`smulY_neg` names its ring hom (`map_neg polyToField`) where the source unfolds `ψᵤ`, because
+an unnamed `map_neg` does not fire on a `polyToField` application in this direction.
 `smulX_sub_sub_smulX_add` (`:196`) is deliberately not ported here: its consumers are the slope
 and addition formulas, and it ships with them.
 -/
@@ -123,7 +129,21 @@ lemma smulX_sub_smulX (hm : m ≠ 0) (hn : n ≠ 0) :
   linear_combination -key
 
 /-- `smulX` is even in `n`. -/
-lemma smulX_neg : smulX (-n) = smulX n := by simp [smulX_def, φ_neg, ψ_neg]
+@[simp] lemma smulX_neg : smulX (-n) = smulX n := by simp [smulX_def, φ_neg, ψ_neg]
+
+private lemma smulY_neg_aux {F : Type*} [Field F] {a₁ a₃ x y z : F} (hz : z ≠ 0) :
+    (y + a₁ * x * z + a₃ * z ^ 3) / (-z) ^ 3 = -(y / z ^ 3) - a₁ * (x / z ^ 2) - a₃ := by
+  rw [neg_pow]
+  field_simp
+  ring
+
+/-- `smulY` at a negative index is the negation of the point at the positive one: the
+long-Weierstrass `negY` of the coordinates `(smulX n, smulY n)`. -/
+lemma smulY_neg (h0 : n ≠ 0) :
+    smulY (-n) = pointedCurve.toAffine.negY (smulX n) (smulY n) := by
+  simp only [WeierstrassCurve.Affine.negY, pointedCurve_a₁, pointedCurve_a₃, smulX_def, smulY_def,
+    ψ_neg, ω_neg, map_add, map_neg polyToField, map_mul, map_pow]
+  exact smulY_neg_aux (polyToField_ψ_ne_zero h0)
 
 /-- `smulX n` is nonzero for `n ≠ 0`. -/
 lemma smulX_ne_zero (h0 : n ≠ 0) : smulX n ≠ 0 :=
@@ -140,7 +160,7 @@ lemma smulX_ne_smulX (ne : m ≠ n) (ne_neg : m ≠ -n) : smulX m ≠ smulX n :=
     apply polyToField_ψ_ne_zero <;> omega
 
 /-- Two values of `smulX` agree exactly when the indices agree up to sign. -/
-lemma smulX_eq_smulX_iff : smulX m = smulX n ↔ m = n ∨ m = -n := by
+@[simp] lemma smulX_eq_smulX_iff : smulX m = smulX n ↔ m = n ∨ m = -n := by
   refine ⟨fun h ↦ ?_, ?_⟩
   · contrapose! h
     exact smulX_ne_smulX h.1 h.2
