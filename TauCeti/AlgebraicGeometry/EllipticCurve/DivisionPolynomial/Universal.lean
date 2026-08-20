@@ -35,7 +35,7 @@ Each proof is the same two steps: unfold `polyEval` into a `map` followed by `ev
 * `WeierstrassCurve.Universal.polyToField_ψ_ne_zero`, `.polyToField_φ_ne_zero`: in
   `Universal.Field`, `ψₙ` is nonzero for every `n ≠ 0` and `φₙ` for every `n` — the cusp
   evaluations above, read back through the retraction onto `ℤ`.
-* `WeierstrassCurve.Universal.polyToField_ψ₂Sq`: `Ψ₂Sq` is the square of `ψ 2` in the universal
+* `WeierstrassCurve.Universal.polyToField_Ψ₂Sq`: `Ψ₂Sq` is the square of `ψ 2` in the universal
   field, the Weierstrass relation being exactly what `Universal.Ring` quotients out.
 
 ## Implementation notes
@@ -102,7 +102,8 @@ of `ψ` with `normEDS` is the named `ψ_eq_normEDS` (`DivisionPolynomial/NormEDS
 
 The nonvanishing block adapts, at the same `main` revision, `ψᵤ_ne_zero` (`:141`, respelt
 `polyToField_ψ_ne_zero` with the abbreviation dropped as above), `polyToField_φ_ne_zero` (`:148`,
-source name kept) and `polyToField_ψ₂Sq` (`:154`, source name kept). One departure beyond the
+source name kept) and `polyToField_ψ₂Sq` (`:154`, here `polyToField_Ψ₂Sq`: the constant in its
+conclusion is `Ψ₂Sq`, capitalised). One departure beyond the
 `ψᵤ` respelling: the source rewrites through its `polyToField_polynomial`, which has no
 counterpart here — the vanishing of the Weierstrass polynomial is inlined as a `have` through
 `AdjoinRoot.mk_self`, the same step `Universal.lean`'s `equation_point` uses.
@@ -216,13 +217,12 @@ lemma polyToField_φ_ne_zero : polyToField (curve.φ n) ≠ 0 := fun h ↦ by
   rw [ringEval_mk, polyEval_cusp_φ, map_zero] at h
   exact one_ne_zero h
 
-/-- **`Ψ₂Sq` in the universal field is the square of `ψ 2`.** The `4 · polynomial` correction in
-`ψ₂_sq` is exactly the relation `Universal.Ring` quotients out, so it vanishes under
-`polyToField`. -/
-lemma polyToField_ψ₂Sq : polyToField (C curve.Ψ₂Sq) = polyToField (curve.ψ 2) ^ 2 := by
-  have hpoly : polyToField curve.toAffine.polynomial = 0 := by
-    rw [polyToField_apply, AdjoinRoot.mk_self, map_zero]
-  rw [← map_pow, ψ_two, ψ₂_sq, map_add, map_mul, hpoly, mul_zero, add_zero]
+/-- **`Ψ₂Sq` in the universal field is the square of `ψ 2`**: the coordinate-ring identity
+`mk_ψ₂_sq`, pushed into the field of fractions. -/
+lemma polyToField_Ψ₂Sq : polyToField (C curve.Ψ₂Sq) = polyToField (curve.ψ 2) ^ 2 := by
+  rw [ψ_two, polyToField_apply, polyToField_apply, ← map_pow]
+  exact (congrArg (algebraMap Universal.Ring Universal.Field)
+    (Affine.CoordinateRing.mk_ψ₂_sq curve)).symm
 
 end Universal
 
