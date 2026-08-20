@@ -36,10 +36,11 @@ diamond operators of the ModularForms roadmap (Layer 0), where it realizes every
 * `Matrix.SpecialLinearGroup.finite_center` and
   `Matrix.SpecialLinearGroup.card_center_le_two`: that centre is finite, of order at most two.
 * `Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_two_iff` and
-  `Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_one_iff`: for `Γ ≤ SL(2, ℤ)`, the part of
-  the centre that `Γ` contains has order `2` exactly when `-I ∈ Γ` and `1` exactly when it does
-  not, with `Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_one_or_two` the unindexed
-  corollary.
+  `Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_one_iff`: for a subgroup `Γ ≤ SL₂`, the
+  part of the centre that `Γ` contains has order `2` exactly when `-I ∈ Γ` and `1` exactly when
+  it does not — both under `-1 ≠ 1`, which fails only in characteristic `2`.
+* `Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_one_or_two`: that order is `1` or `2`,
+  needing no hypothesis beyond `NoZeroDivisors R`.
 
 ## References
 
@@ -87,8 +88,8 @@ theorem mem_center_iff_eq_one_or_eq_neg_one [NoZeroDivisors R] {γ : SpecialLine
     · exact Subgroup.one_mem _
     · exact Subgroup.mem_center_iff.mpr fun g ↦ by rw [neg_one_mul, mul_neg_one]
 
-/-- The centre of `SL₂` is finite: by `mem_center_iff_eq_one_or_eq_neg_one` it is the two-element
-set `{±I}`.
+/-- The centre of `SL₂` is finite: by `mem_center_iff_eq_one_or_eq_neg_one` it is the set `{±I}`,
+which has at most two elements — exactly two unless `1 = -1` in `R`, where it is a singleton.
 
 The type ascription on `e` is load-bearing. Without it, instance search is asked for
 `Finite { x // x = 1 ∨ x = -1 }` and fails: that subtype is definitionally `↥({1, -1} : Set _)`
@@ -117,19 +118,20 @@ theorem card_center_le_two [NoZeroDivisors R] :
 
 -- the count is between one and two: the identity is always there, and the inclusion of
 -- `Γ ⊓ {±I}` into `{±I}` caps it by `card_center_le_two`
-private theorem card_center_subgroupOf_le_two (Γ : Subgroup (SpecialLinearGroup (Fin 2) ℤ)) :
-    0 < Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) ℤ)).subgroupOf Γ) ∧
-      Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) ℤ)).subgroupOf Γ) ≤ 2 := by
+private theorem card_center_subgroupOf_le_two [NoZeroDivisors R]
+    (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
+    0 < Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ∧
+      Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ≤ 2 := by
   -- `mem_subgroupOf` is what moves the membership across the inclusion
   have hinj : Function.Injective
-      (fun x : (Subgroup.center (SpecialLinearGroup (Fin 2) ℤ)).subgroupOf Γ ↦
-        (⟨((x : Γ) : SpecialLinearGroup (Fin 2) ℤ), Subgroup.mem_subgroupOf.mp x.2⟩ :
-          Subgroup.center (SpecialLinearGroup (Fin 2) ℤ))) := by
+      (fun x : (Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ ↦
+        (⟨((x : Γ) : SpecialLinearGroup (Fin 2) R), Subgroup.mem_subgroupOf.mp x.2⟩ :
+          Subgroup.center (SpecialLinearGroup (Fin 2) R))) := by
     intro a b h
     rw [Subtype.mk.injEq] at h
     exact Subtype.ext (Subtype.ext h)
-  have : Finite (Subgroup.center (SpecialLinearGroup (Fin 2) ℤ)) := finite_center
-  have : Finite ((Subgroup.center (SpecialLinearGroup (Fin 2) ℤ)).subgroupOf Γ) :=
+  have : Finite (Subgroup.center (SpecialLinearGroup (Fin 2) R)) := finite_center
+  have : Finite ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) :=
     Finite.of_injective _ hinj
   exact ⟨Nat.card_pos, (Nat.card_le_card_of_injective _ hinj).trans card_center_le_two⟩
 
@@ -139,17 +141,14 @@ projective stabiliser orders agree. -/
 -- `Subgroup.card_eq_one` then `Subgroup.subgroupOf_eq_bot` rewrite
 -- `Nat.card (center.subgroupOf Γ) = 1` to `Disjoint (center _) Γ`, so it is not in simp-normal
 -- form. The `= 2` companion below has no such reduction and does carry the attribute.
-theorem card_center_subgroupOf_eq_one_iff (Γ : Subgroup (SpecialLinearGroup (Fin 2) ℤ)) :
-    Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) ℤ)).subgroupOf Γ) = 1 ↔
-      (-1 : SpecialLinearGroup (Fin 2) ℤ) ∉ Γ := by
+theorem card_center_subgroupOf_eq_one_iff [NoZeroDivisors R]
+    (hne : (-1 : SpecialLinearGroup (Fin 2) R) ≠ 1)
+    (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
+    Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) = 1 ↔
+      (-1 : SpecialLinearGroup (Fin 2) R) ∉ Γ := by
   rw [Subgroup.card_eq_one]
   constructor
   · intro h hneg
-    have hne : (-1 : SpecialLinearGroup (Fin 2) ℤ) ≠ 1 := by
-      intro h1
-      have := congrArg
-        (fun A : SpecialLinearGroup (Fin 2) ℤ ↦ (A : Matrix (Fin 2) (Fin 2) ℤ) 0 0) h1
-      simp at this
     -- `-I` would be a second element, so triviality forces it out of `Γ`
     have hx := (Subgroup.eq_bot_iff_forall _).mp h (⟨-1, hneg⟩ : Γ)
       (Subgroup.mem_subgroupOf.mpr (mem_center_iff_eq_one_or_eq_neg_one.mpr (Or.inr rfl)))
@@ -159,36 +158,43 @@ theorem card_center_subgroupOf_eq_one_iff (Γ : Subgroup (SpecialLinearGroup (Fi
     rcases mem_center_iff_eq_one_or_eq_neg_one.mp (Subgroup.mem_subgroupOf.mp hx) with hx1 | hx1
     · exact Subtype.ext hx1
     · -- `x.2 : ↑x ∈ Γ`, and `hx1` identifies `↑x` with `-I`, so the membership transports
-      have hm : (-1 : SpecialLinearGroup (Fin 2) ℤ) ∈ Γ := hx1 ▸ x.2
+      have hm : (-1 : SpecialLinearGroup (Fin 2) R) ∈ Γ := hx1 ▸ x.2
       exact absurd hm hneg
 
 /-- **The `±I` factor is `2` exactly when `-I ∈ Γ`.** The part of the centre that `Γ` contains is
 `{I}` or `{±I}` according to whether `Γ` contains `-I`, so the centre factor in the stabiliser
-splitting for a subgroup of `SL(2, ℤ)` is decided by that single membership. -/
+splitting for a subgroup of `SL₂` is decided by that single membership.
+
+Needs `-1 ≠ 1`: in characteristic `2` the centre is the singleton `{I}` and the count is always
+`1`. The unindexed `card_center_subgroupOf_eq_one_or_two` needs no such hypothesis. -/
 @[simp]
-theorem card_center_subgroupOf_eq_two_iff (Γ : Subgroup (SpecialLinearGroup (Fin 2) ℤ)) :
-    Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) ℤ)).subgroupOf Γ) = 2 ↔
-      (-1 : SpecialLinearGroup (Fin 2) ℤ) ∈ Γ := by
+theorem card_center_subgroupOf_eq_two_iff [NoZeroDivisors R]
+    (hne : (-1 : SpecialLinearGroup (Fin 2) R) ≠ 1)
+    (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
+    Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) = 2 ↔
+      (-1 : SpecialLinearGroup (Fin 2) R) ∈ Γ := by
   obtain ⟨hpos, hle⟩ := card_center_subgroupOf_le_two Γ
   constructor
   · intro h
     by_contra hneg
-    have h1 := (card_center_subgroupOf_eq_one_iff Γ).mpr hneg
+    have h1 := (card_center_subgroupOf_eq_one_iff hne Γ).mpr hneg
     omega
   · intro hneg
-    have h1 : Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) ℤ)).subgroupOf Γ) ≠ 1 :=
-      fun h ↦ (card_center_subgroupOf_eq_one_iff Γ).mp h hneg
+    have h1 : Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ≠ 1 :=
+      fun h ↦ (card_center_subgroupOf_eq_one_iff hne Γ).mp h hneg
     omega
 
 /-- **The `±I` factor is `1` or `2`.** The unindexed corollary of
 `card_center_subgroupOf_eq_two_iff`, for a consumer that needs only the bound — to know that the
 projective order divides the matrix one, say — and not the membership. -/
-theorem card_center_subgroupOf_eq_one_or_two (Γ : Subgroup (SpecialLinearGroup (Fin 2) ℤ)) :
-    Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) ℤ)).subgroupOf Γ) = 1 ∨
-      Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) ℤ)).subgroupOf Γ) = 2 := by
-  by_cases h : (-1 : SpecialLinearGroup (Fin 2) ℤ) ∈ Γ
-  · exact Or.inr ((card_center_subgroupOf_eq_two_iff Γ).mpr h)
-  · exact Or.inl ((card_center_subgroupOf_eq_one_iff Γ).mpr h)
+theorem card_center_subgroupOf_eq_one_or_two [NoZeroDivisors R]
+    (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
+    Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) = 1 ∨
+      Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) = 2 := by
+  -- no `-1 ≠ 1` hypothesis: the disjunction is exactly `0 < n ≤ 2`, and when `1 = -1` the
+  -- centre is a singleton so the first branch holds
+  obtain ⟨hpos, hle⟩ := card_center_subgroupOf_le_two Γ
+  omega
 
 /-- The `(1,0)` coordinate of the inverse of an `SL₂` element, from `SL2_inv_expl`. -/
 @[simp]
