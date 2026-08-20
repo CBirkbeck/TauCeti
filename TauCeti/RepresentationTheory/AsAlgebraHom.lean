@@ -8,9 +8,9 @@ module
 public import Mathlib.RepresentationTheory.Basic
 
 /-!
-# Group-algebra elements that annihilate a fixed vector
+# Monoid-algebra elements that annihilate a fixed vector
 
-An element `a` of the group algebra `k[G]` acting through a representation `ρ` kills a vector `v`
+An element `a` of the monoid algebra `k[G]` acting through a representation `ρ` kills a vector `v`
 as soon as two conditions meet: some `g` fixes `v`, and right multiplication by `g` negates `a`.
 Then `ρ.asAlgebraHom a v` is its own negative, so it vanishes as soon as doubling is injective
 on `V`.
@@ -20,27 +20,27 @@ That is the mechanism behind the column-antisymmetrizer vanishing arguments of
 indices absorbs each permutation of those indices up to its sign, so against a vector fixed by an
 odd such permutation the two conditions hold and the action is zero.
 
-Nothing here is specific to symmetric groups or to `ℚ`. The group, the module and the scalars are
-arbitrary, and nothing is asked of `2` in `k` at all: the hypothesis is that doubling is injective
-on `V`, taken as an explicit assumption rather than read off the scalars. So this covers
+Nothing here is specific to symmetric groups or to `ℚ`. `G` is a monoid, and the module and the
+scalars are arbitrary; nothing is asked of `2` in `k` at all: the hypothesis is that doubling is
+injective on `V`, taken as an explicit assumption rather than read off the scalars. So this covers
 torsion-free modules over `ℤ`, where `2` is not a unit, and equally modules over a ring with zero
 divisors whose additive group has no `2`-torsion.
 
 ## Main results
 
-* `Representation.asAlgebraHom_eq_zero_of_mul_single_eq_neg`: an algebra element negated by right
-  multiplication by a group element fixing `v` annihilates `v`.
+* `Representation.asAlgebraHom_eq_zero_of_mul_single_eq_neg`: with doubling injective on `V`, an
+  algebra element negated by right multiplication by an element fixing `v` annihilates `v`.
 -/
 
 public section
 
 namespace Representation
 
-variable {k G V : Type*} [CommRing k] [Group G] [AddCommGroup V] [Module k V]
+variable {k G V : Type*} [CommRing k] [Monoid G] [AddCommGroup V] [Module k V]
 
-/-- **An algebra element absorbed by a fixing group element, up to sign, annihilates the vector.**
-If `g` fixes `v` and right multiplication by `single g 1` negates `a`, then `a` acts as zero
-on `v`. -/
+/-- **An algebra element absorbed by a fixing element, up to sign, annihilates the vector.**
+If doubling is injective on `V`, `g` fixes `v`, and right multiplication by `single g 1` negates
+`a`, then `a` acts as zero on `v`. -/
 theorem asAlgebraHom_eq_zero_of_mul_single_eq_neg
     (h2inj : Function.Injective fun w : V ↦ (2 : ℕ) • w)
     (ρ : Representation k G V) {a : MonoidAlgebra k G} {g : G} {v : V} (hfix : ρ g v = v)
