@@ -29,6 +29,8 @@ basis is on each block, and what the coordinates of a vector are there.
   the two blocks.
 * `TauCeti.extensionBasis_repr_castAdd` and `TauCeti.extensionBasis_repr_natAdd`: the coordinates
   of a vector on the two blocks.
+* `TauCeti.extensionBasis_repr_castAdd_of_mem` and `TauCeti.extensionBasis_repr_natAdd_of_mem`: the
+  same for an ambient vector known to lie in the submodule, whose second-block coordinates vanish.
 -/
 
 public section
@@ -61,8 +63,10 @@ theorem extensionBasis_natAdd_mkQ (p : Submodule R V) (bp : Basis (Fin m) R p)
   rw [extensionBasis, Basis.reindex_apply, finSumFinEquiv_symm_apply_natAdd,
     Basis.sumQuot_inr]
 
-/-- The first-block coordinates of a vector of the submodule are its coordinates there. -/
-@[simp]
+/-- The first-block coordinates of a vector of the submodule are its coordinates there.
+
+Not a `simp` lemma: `extensionBasis_repr_castAdd_of_mem` is the `simp` normal form, matching how
+Mathlib annotates `Module.Basis.sumQuot_repr_inl` and `sumQuot_repr_inl_of_mem`. -/
 theorem extensionBasis_repr_castAdd (p : Submodule R V) (bp : Basis (Fin m) R p)
     (bq : Basis (Fin n) R (V ⧸ p)) (x : p) (i : Fin m) :
     (extensionBasis p bp bq).repr x (Fin.castAdd n i) = bp.repr x i := by
@@ -76,5 +80,21 @@ theorem extensionBasis_repr_natAdd (p : Submodule R V) (bp : Basis (Fin m) R p)
     (extensionBasis p bp bq).repr x (Fin.natAdd m j) = bq.repr (p.mkQ x) j := by
   rw [extensionBasis, Basis.repr_reindex_apply, finSumFinEquiv_symm_apply_natAdd,
     Basis.sumQuot_repr_inr]
+
+/-- The first-block coordinates of an ambient vector lying in the submodule are its coordinates
+there. -/
+@[simp]
+theorem extensionBasis_repr_castAdd_of_mem (p : Submodule R V) (bp : Basis (Fin m) R p)
+    (bq : Basis (Fin n) R (V ⧸ p)) (x : V) (hx : x ∈ p) (i : Fin m) :
+    (extensionBasis p bp bq).repr x (Fin.castAdd n i) = bp.repr ⟨x, hx⟩ i :=
+  extensionBasis_repr_castAdd p bp bq ⟨x, hx⟩ i
+
+/-- A vector of the submodule has no second-block coordinates: this is the vanishing of the
+off-diagonal block. -/
+theorem extensionBasis_repr_natAdd_of_mem (p : Submodule R V) (bp : Basis (Fin m) R p)
+    (bq : Basis (Fin n) R (V ⧸ p)) (x : V) (hx : x ∈ p) (j : Fin n) :
+    (extensionBasis p bp bq).repr x (Fin.natAdd m j) = 0 := by
+  rw [extensionBasis, Basis.repr_reindex_apply, finSumFinEquiv_symm_apply_natAdd,
+    Basis.sumQuot_repr_inr_of_mem _ _ _ hx]
 
 end TauCeti
