@@ -28,6 +28,8 @@ for the two elements it is built from.
 * `TauCeti.Associative.mul_pow_eq_pow_mul_add_nsmul_of_commutator_eq`: moving an element across a
   power releases that many copies of the commutator, when the commutator commutes with the element
   being powered.
+* `TauCeti.Associative.pow_mul_eq_mul_pow_add_nsmul_of_commutator_eq`: the mirrored orientation,
+  moving an element across a power standing to its left.
 * `TauCeti.Associative.isNilpotent_of_commutator_eq`: a commutator commuting with both of its
   arguments is nilpotent as soon as one of them is.
 * `TauCeti.Associative.isNilpotent_of_commutator_eq_nsmul`: the same conclusion when the
@@ -97,7 +99,7 @@ theorem mul_pow_eq_pow_mul_add_nsmul_of_commutator_eq {x y z : A} (hxy : x * y =
 /-- **Moving `y` past a power of `x` releases that many copies of the commutator.** If
 `x * y = y * x + z` and `z` commutes with `x`, then `x ^ n * y` is `y * x ^ n` plus `n` copies of
 `x ^ (n - 1) * z`. -/
-private theorem pow_mul_eq_mul_pow_add_nsmul_of_commutator_eq {x y z : A}
+theorem pow_mul_eq_mul_pow_add_nsmul_of_commutator_eq {x y z : A}
     (hxy : x * y = y * x + z)
     (hxz : Commute x z) (n : ℕ) :
     x ^ n * y = y * x ^ n + n • (x ^ (n - 1) * z) := by
