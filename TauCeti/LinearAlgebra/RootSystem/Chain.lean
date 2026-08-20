@@ -95,8 +95,8 @@ lemma chainBEntry_eq_cartanMatrix_B {n : ℕ} (i j : Fin n) :
 The entry at `(a, s)` contributes only when `s` is `a`, its predecessor, or its successor, and the
 successor contribution is doubled at the short end.
 
-No bound on `s` is needed: the identity is pointwise, so neither the length of the chain nor the
-position of `a` within it appears. -/
+The identity is pointwise: neither the length of the chain nor the position of `a` within it
+appears. -/
 private theorem chainBEntry_mul_eq_add_add {R : Type*} [Ring R] (L a s : ℕ) (g : ℕ → R) :
     ((chainBEntry L a s : ℤ) : R) * g s
       = (if s = a then 2 * g a else 0) + (if s + 1 = a then -g s else 0)
@@ -114,16 +114,16 @@ private theorem chainBEntry_mul_eq_add_add {R : Type*} [Ring R] (L a s : ℕ) (g
   · rw [chainBEntry_eq_zero (Ne.symm h1) (fun h ↦ h3 h.symm) h2]
     split_ifs <;> first | (exfalso; omega) | (push_cast; noncomm_ring)
 
-/-- **A shifted indicator over a range sums to minus the weight at the predecessor.** The single
-surviving term sits at `a - 1`, which `a < m` places inside the range; at `a = 0` there is no
-predecessor and the sum is zero. -/
+/-- **A shifted indicator over a range sums to minus the weight at the predecessor.** At `a = 0`
+there is no predecessor and the sum is zero. -/
 private theorem sum_range_ite_succ_eq {R : Type*} [Ring R] {m a : ℕ} (ha : a < m) (g : ℕ → R) :
     ∑ s ∈ Finset.range m, (if s + 1 = a then -g s else 0)
       = -(if a = 0 then 0 else g (a - 1)) := by
   match a with
   | 0 => simp
   | k + 1 =>
-    -- reindex `s + 1 = k + 1` to `s = k`, then collapse the single surviving term
+    -- reindex `s + 1 = k + 1` to `s = k`, then collapse the single surviving term, which sits at
+    -- `a - 1` and is placed inside the range by `a < m`
     have hcongr : ∀ s ∈ Finset.range m, (if s + 1 = k + 1 then -g s else 0)
         = (if s = k then -g k else 0) := by
       intro s _
