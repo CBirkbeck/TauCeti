@@ -117,6 +117,17 @@ theorem card_center_le_two [NoZeroDivisors R] :
   rw [h, Nat.card_coe_set_eq]
   exact (Set.ncard_insert_le _ _).trans (by simp)
 
+/-- `-I ≠ I` in `SL₂` is exactly `(2 : R) ≠ 0`, read off the `(0,0)` entry. Stated as a helper so
+the `@[simp]` lemmas below can take `[NeZero (2 : R)]`, which simp's discharger can settle by
+typeclass synthesis, rather than an explicit hypothesis, which it cannot. -/
+private theorem neg_one_ne_one_of_neZero_two [NeZero (2 : R)] :
+    (-1 : SpecialLinearGroup (Fin 2) R) ≠ 1 := fun h ↦ by
+  have h00 := congrArg (fun g : SpecialLinearGroup (Fin 2) R ↦
+    (g : Matrix (Fin 2) (Fin 2) R) 0 0) h
+  simp only [Fin.isValue, SpecialLinearGroup.coe_neg, SpecialLinearGroup.coe_one,
+    Matrix.neg_apply, one_apply_eq] at h00
+  exact NeZero.ne (2 : R) (by linear_combination -h00)
+
 /-- **The centre of `SL₂` has exactly two elements** once `-I ≠ I`. `card_center_le_two` is the
 unconditional bound; this is the value, and it is what a consumer evaluating the centre factor of
 a stabiliser splitting needs. In characteristic `2` the hypothesis fails and the centre is the
@@ -159,8 +170,7 @@ projective stabiliser orders agree. -/
 -- `disjoint_center_iff_neg_one_notMem` is the simp-reachable form: it states the same fact at the
 -- normal form this one reduces to, so a goal that simp has already rewritten to `Disjoint` is
 -- still closed.
-theorem card_center_subgroupOf_eq_one_iff [NoZeroDivisors R]
-    (hne : (-1 : SpecialLinearGroup (Fin 2) R) ≠ 1)
+theorem card_center_subgroupOf_eq_one_iff [NoZeroDivisors R] [NeZero (2 : R)]
     (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
     Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) = 1 ↔
       (-1 : SpecialLinearGroup (Fin 2) R) ∉ Γ := by
@@ -170,7 +180,7 @@ theorem card_center_subgroupOf_eq_one_iff [NoZeroDivisors R]
     -- `-I` would be a second element, so triviality forces it out of `Γ`
     have hx := (Subgroup.eq_bot_iff_forall _).mp h (⟨-1, hneg⟩ : Γ)
       (Subgroup.mem_subgroupOf.mpr (mem_center_iff_eq_one_or_eq_neg_one.mpr (Or.inr rfl)))
-    exact hne (by simpa using Subtype.ext_iff.mp hx)
+    exact neg_one_ne_one_of_neZero_two (by simpa using Subtype.ext_iff.mp hx)
   · intro hneg
     refine (Subgroup.eq_bot_iff_forall _).mpr fun x hx ↦ ?_
     rcases mem_center_iff_eq_one_or_eq_neg_one.mp (Subgroup.mem_subgroupOf.mp hx) with hx1 | hx1
@@ -192,13 +202,12 @@ Needs `-1 ≠ 1` for the same reason as the `= 2` companion: in characteristic `
 trivial, so it is disjoint from every `Γ` while `-I = I` does lie in `Γ` whenever `Γ` is
 nontrivial. -/
 @[simp]
-theorem disjoint_center_iff_neg_one_notMem [NoZeroDivisors R]
-    (hne : (-1 : SpecialLinearGroup (Fin 2) R) ≠ 1)
+theorem disjoint_center_iff_neg_one_notMem [NoZeroDivisors R] [NeZero (2 : R)]
     (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
     Disjoint (Subgroup.center (SpecialLinearGroup (Fin 2) R)) Γ ↔
       (-1 : SpecialLinearGroup (Fin 2) R) ∉ Γ := by
   rw [← Subgroup.subgroupOf_eq_bot, ← Subgroup.card_eq_one]
-  exact card_center_subgroupOf_eq_one_iff hne Γ
+  exact card_center_subgroupOf_eq_one_iff Γ
 
 /-- **The `±I` factor is `2` exactly when `-I ∈ Γ`.** The part of the centre that `Γ` contains is
 `{I}` or `{±I}` according to whether `Γ` contains `-I`, so the centre factor in the stabiliser
@@ -207,8 +216,7 @@ splitting for a subgroup of `SL₂` is decided by that single membership.
 Needs `-1 ≠ 1`: in characteristic `2` the centre is the singleton `{I}` and the count is always
 `1`. The unindexed `card_center_subgroupOf_eq_one_or_two` needs no such hypothesis. -/
 @[simp]
-theorem card_center_subgroupOf_eq_two_iff [NoZeroDivisors R]
-    (hne : (-1 : SpecialLinearGroup (Fin 2) R) ≠ 1)
+theorem card_center_subgroupOf_eq_two_iff [NoZeroDivisors R] [NeZero (2 : R)]
     (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
     Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) = 2 ↔
       (-1 : SpecialLinearGroup (Fin 2) R) ∈ Γ := by
@@ -216,11 +224,11 @@ theorem card_center_subgroupOf_eq_two_iff [NoZeroDivisors R]
   constructor
   · intro h
     by_contra hneg
-    have h1 := (card_center_subgroupOf_eq_one_iff hne Γ).mpr hneg
+    have h1 := (card_center_subgroupOf_eq_one_iff Γ).mpr hneg
     omega
   · intro hneg
     have h1 : Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ≠ 1 :=
-      fun h ↦ (card_center_subgroupOf_eq_one_iff hne Γ).mp h hneg
+      fun h ↦ (card_center_subgroupOf_eq_one_iff Γ).mp h hneg
     omega
 
 /-- **The `±I` factor is `1` or `2`.** The unindexed corollary of
