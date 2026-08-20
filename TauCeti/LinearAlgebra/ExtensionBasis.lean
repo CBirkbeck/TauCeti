@@ -15,8 +15,9 @@ basis of `V` indexed by a sum type. An induction on `Module.finrank` wants that 
 `Fin (m + n)` instead, so that the two blocks are picked out by `Fin.castAdd` and `Fin.natAdd` and
 the resulting matrices are visibly block triangular.
 
-This file records that reindexing together with the four equations locating the blocks: what the
-basis is on each block, and what the coordinates of a vector are there.
+This file records that reindexing together with the six equations locating the blocks: what the
+basis is on each block, what the coordinates of a vector are there, and the two `_of_mem` variants
+stated for an ambient vector known to lie in the submodule.
 
 ## Main definitions
 
