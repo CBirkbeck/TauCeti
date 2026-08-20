@@ -30,7 +30,7 @@ or to be central for the two elements it is built from.
   integer-eigenvector for its commutator.
 * `TauCeti.Associative.mul_pow_eq_pow_mul_add_intCast`: the same identity in shifted-factor form.
 * `TauCeti.Associative.mul_pow_eq_pow_mul_add_nsmul_of_commutator_eq`: moving an element across a
-  power releases that many copies of the commutator, when the commutator commutes with the element
+  power releases that many copies of the correction term, when that term commutes with the element
   being powered.
 * `TauCeti.Associative.pow_mul_eq_mul_pow_add_nsmul_of_commutator_eq`: the mirrored orientation,
   moving an element across a power standing to its left.
@@ -77,7 +77,7 @@ section PowerCommutator
 
 variable {A : Type*} [Semiring A]
 
-/-- **Moving an element across a power releases that many copies of the commutator.** If
+/-- **Moving an element across a power releases that many copies of the correction term.** If
 `x * y = y * x + z` and `z` commutes with `y`, then `x * y ^ n` is `y ^ n * x` plus `n` copies of
 `y ^ (n - 1) * z`. -/
 theorem mul_pow_eq_pow_mul_add_nsmul_of_commutator_eq {x y z : A} (hxy : x * y = y * x + z)
@@ -100,7 +100,7 @@ theorem mul_pow_eq_pow_mul_add_nsmul_of_commutator_eq {x y z : A} (hxy : x * y =
           noncomm_ring
 
 
-/-- **Moving `y` past a power of `x` releases that many copies of the commutator.** If
+/-- **Moving `y` past a power of `x` releases that many copies of the correction term.** If
 `x * y = y * x + z` and `z` commutes with `x`, then `x ^ n * y` is `y * x ^ n` plus `n` copies of
 `x ^ (n - 1) * z`. -/
 theorem pow_mul_eq_mul_pow_add_nsmul_of_commutator_eq {x y z : A}
