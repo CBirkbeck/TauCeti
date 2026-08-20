@@ -160,14 +160,12 @@ theorem card_stabilizer_eq_card_subgroupOf_mul_card_stabilizer_map (N : Subgroup
     QuotientGroup.ker_mk']
 
 /-- **Stabiliser orders agree across `subgroupOf`.** For `𝒢 ≤ ℋ`, a point has the same stabiliser
-order in `𝒢.subgroupOf ℋ` as in `𝒢` itself: the two groups act through the same elements of `G`,
-and `Subgroup.subgroupOfEquivOfLe` matches them.
+order in `𝒢.subgroupOf ℋ` as in `𝒢` itself.
 
-This is the degenerate case of `card_stabilizer_eq_card_ker_mul_card_stabilizer` — the comparison
-map is an isomorphism, so the kernel factor is `1` — and it is the transport wanted whenever an
-orbit count produced inside `ℋ` has to be read against the `𝒢`-orbit it weights, since
-`cardStabilizerOnOrbit` reads the order in `𝒢`. Mathlib's `stabilizerEquivStabilizer` transports
-between two *points* of one group, not between two groups at one point, so it does not apply. -/
+This is the transport wanted whenever an orbit count produced inside `ℋ` has to be read against
+the `𝒢`-orbit it weights, since `cardStabilizerOnOrbit` reads the order in `𝒢`. Mathlib's
+`stabilizerEquivStabilizer` transports between two *points* of one group, not between two groups
+at one point, so it does not apply here. -/
 -- Not `@[simp]`, tested: the same reason as `card_stabilizer_smul` above — the left-hand side is
 -- not in simp-normal form, because `MulAction.mem_stabilizer_iff` rewrites the membership
 -- condition underneath the `Nat.card`, taking it to `Nat.card { x // x • a = a }`. `simpNF`
@@ -175,6 +173,9 @@ between two *points* of one group, not between two groups at one point, so it do
 theorem card_stabilizer_subgroupOf {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ) (a : α) :
     Nat.card (MulAction.stabilizer (↥(𝒢.subgroupOf ℋ)) a) =
       Nat.card (MulAction.stabilizer 𝒢 a) := by
+  -- the degenerate case of `card_stabilizer_eq_card_ker_mul_card_stabilizer`: the two groups act
+  -- through the same elements of `G`, so the comparison map `Subgroup.subgroupOfEquivOfLe` is an
+  -- isomorphism and the kernel factor is `1`
   rw [card_stabilizer_eq_card_ker_mul_card_stabilizer (Subgroup.subgroupOfEquivOfLe hle).toMonoidHom
       (Subgroup.subgroupOfEquivOfLe hle).surjective a
       -- both groups act through the same element of `G`; `Subgroup.smul_def` unfolds the two
@@ -190,9 +191,6 @@ open scoped Pointwise in
 The class of `g` in `G ⧸ H` is stabilised inside `stabilizer G p` by exactly as many elements as
 `g⁻¹ • p` is stabilised by inside `H`.
 
-Conjugation by `g` is the bijection: an `x` fixing `p` and fixing the class of `g` satisfies
-`g⁻¹ * x * g ∈ H`, and that conjugate fixes `g⁻¹ • p`; conjugating back is the inverse.
-
 Stated at the level of a single group acting on `α`; the two-group form used below is the instance
 `G := ↥ℋ`, `H := 𝒢.subgroupOf ℋ`, `g := ↑h`. -/
 -- Not `@[simp]`, tested: `simpNF` runs over
@@ -203,6 +201,8 @@ Stated at the level of a single group acting on `α`; the two-group form used be
 theorem card_stabilizer_coset_eq_card_stabilizer_inv_smul (H : Subgroup G) (p : α) (g : G) :
     Nat.card (stabilizer (↥(stabilizer G p)) ((g : G ⧸ H))) =
       Nat.card (stabilizer (↥H) (g⁻¹ • p)) := by
+  -- conjugation by `g` is the bijection: an `x` fixing `p` and fixing the class of `g` satisfies
+  -- `g⁻¹ * x * g ∈ H`, and that conjugate fixes `g⁻¹ • p`; conjugating back is the inverse
   refine Nat.card_congr ⟨fun x => ⟨⟨g⁻¹ * (x : G) * g, ?_⟩, ?_⟩,
     fun h => ⟨⟨g * (h : G) * g⁻¹, ?_⟩, ?_⟩, fun x => ?_, fun h => ?_⟩
   · -- the stabiliser of a coset is the conjugate subgroup, by `stabilizer_quotientGroup_mk`
