@@ -9,7 +9,6 @@ public import TauCeti.RingTheory.DividedPowers.Associative
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Abel
 import Mathlib.Tactic.Module
-import Mathlib.Tactic.NoncommRing
 
 /-!
 # Normal ordering divided powers with a central commutator

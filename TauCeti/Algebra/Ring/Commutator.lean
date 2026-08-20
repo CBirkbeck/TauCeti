@@ -14,11 +14,15 @@ import Mathlib.Tactic.NoncommRing
 import Mathlib.Tactic.Ring
 
 /-!
-# Commutators in associative rings
+# Commutators in associative semirings and rings
 
-This file records identities for moving elements past powers when their ring commutator is a
-scalar multiple of one of the elements, commutes with the element being powered, or is central
-for the two elements it is built from.
+This file records identities for moving elements past powers when the two elements almost commute.
+
+Over a semiring the hypothesis is written as a relation, `x * y = y * x + z`, since there is no
+subtraction to form a commutator with: the two power identities of `section PowerCommutator` need
+only that `z` commutes with the element being powered. Over a ring the same `z` is the commutator
+`x * y - y * x`, and the remaining results ask it to be a scalar multiple of one of the elements,
+or to be central for the two elements it is built from.
 
 ## Main results
 
