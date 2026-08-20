@@ -60,6 +60,9 @@ distinction where the identity is proved.
   in normal form and `simpNF` fails the build.
 * `universalNormEDS_ne_zero`: the universal sequence vanishes only at `0`, which is what the
   previous item buys.
+* `complEDS₂_two_three_two`: the 2-complement of the identity sequence is the constant `2` —
+  `complEDS₂ (2 : R) 3 2 n = 2` over any commutative ring, transported from the `ℤ` case along
+  `Int.castRingHom` exactly as `normEDS_two_three_two_eq_intCast`.
 
 The first consumer this unlocks is `IsEllipticNet.invarNum_mul_invarDenom`, which callers can
 apply to `isEllipticNet_normEDS` directly; it is deliberately not restated here as a

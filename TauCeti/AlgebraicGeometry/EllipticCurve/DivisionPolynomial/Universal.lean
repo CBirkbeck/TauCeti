@@ -24,12 +24,14 @@ Each proof is the same two steps: unfold `polyEval` into a `map` followed by `ev
 ## Main results
 
 * `WeierstrassCurve.Universal.evalEval_ψ₂`, `.evalEval_Ψ₃`, `.evalEval_preΨ₄`, `.evalEval_ψ`,
-  `.evalEval_φ`: the polynomials `ψ₂`, `Ψ₃`, `ψₙ` and `φₙ` of `W` at `(x, y)`, together with the
-  auxiliary `preΨ₄`, are the universal ones evaluated through `Universal.polyEval`.
+  `.evalEval_φ`, `.evalEval_ω`, `.evalEval_ψc`: the polynomials `ψ₂`, `Ψ₃`, `ψₙ`, `φₙ`, `ωₙ` and
+  the complement `ψc n` of `W` at `(x, y)`, together with the auxiliary `preΨ₄`, are the
+  universal ones evaluated through `Universal.polyEval`.
 * `WeierstrassCurve.Universal.isEllipticSequence_polyToField_ψ`: the universal `ψ` family, taken
   into `Universal.Field`, is an elliptic sequence.
-* `WeierstrassCurve.Universal.polyEval_cusp_ψ`, `.polyEval_cusp_φ`: specialised to the cusp curve
-  at `(1, 1)`, `ψₙ` evaluates to `n` itself and the numerator `φₙ` to `1`.
+* `WeierstrassCurve.Universal.polyEval_cusp_ψ`, `.polyEval_cusp_φ`, `.polyEval_cusp_ψc`,
+  `.polyEval_cusp_ω`: specialised to the cusp curve at `(1, 1)`, `ψₙ` evaluates to `n` itself,
+  the numerator `φₙ` to `1`, the complement `ψc n` to `2`, and `ωₙ` to `1`.
 
 ## Implementation notes
 
