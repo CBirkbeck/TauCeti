@@ -123,7 +123,10 @@ theorem asAlgebraHom_columnAntisymmetrizer_single_eq_zero {lam : YoungDiagram}
       -columnAntisymmetrizer t := by
     rw [mul_columnAntisymmetrizer_right t ⟨p, hp⟩, hsign]
     simp
-  exact Representation.asAlgebraHom_eq_zero_of_mul_single_eq_neg _ hfix' hneg
+  -- the permutation module is a `ℚ`-vector space, so doubling is injective on it
+  have : IsAddTorsionFree (permutationModule μ) := .of_module_rat _
+  exact Representation.asAlgebraHom_eq_zero_of_mul_single_eq_neg
+    (nsmul_right_injective two_ne_zero) _ hfix' hneg
 
 /-- **James's dominance lemma.**  If the column antisymmetrizer of a `lam`-tableau `t` does not
 annihilate the `μ`-tabloid `q`, then the shape of `t` dominates `μ`.

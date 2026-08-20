@@ -97,7 +97,10 @@ private theorem transportedColumnAntisymmetrizer_single_eq_zero
   have hfix' : (permutationModule (shapePartition m)).ρ (Equiv.swap x y)
       (MonoidAlgebra.single q (1 : ℚ)) = MonoidAlgebra.single q 1 := by
     rw [Representation.ofMulAction_single, hfix]
-  exact Representation.asAlgebraHom_eq_zero_of_mul_single_eq_neg _ hfix'
+  -- the permutation module is a `ℚ`-vector space, so doubling is injective on it
+  have : IsAddTorsionFree (permutationModule (shapePartition m)) := .of_module_rat _
+  exact Representation.asAlgebraHom_eq_zero_of_mul_single_eq_neg
+    (nsmul_right_injective two_ne_zero) _ hfix'
     (transportedColumnAntisymmetrizer_mul_single_swap e t hxy hcol)
 
 private theorem coe_toRepresentation_apply {G V : Type*} [Group G]

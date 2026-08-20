@@ -21,9 +21,10 @@ indices absorbs each permutation of those indices up to its sign, so against a v
 odd such permutation the two conditions hold and the action is zero.
 
 Nothing here is specific to symmetric groups or to `ℚ`. The group, the module and the scalars are
-arbitrary, and `2` is not required to be invertible in `k` — only to act injectively on `V`, which
-is what `[IsCancelMulZero k]`, `[Module.IsTorsionFree k V]` and `[NeZero (2 : k)]` supply. In
-particular this covers torsion-free modules over `ℤ`, where `2` is not a unit.
+arbitrary, and nothing is asked of `2` in `k` at all: the hypothesis is that doubling is injective
+on `V`, taken as an explicit assumption rather than read off the scalars. So this covers
+torsion-free modules over `ℤ`, where `2` is not a unit, and equally modules over a ring with zero
+divisors whose additive group has no `2`-torsion.
 
 ## Main results
 
@@ -40,8 +41,8 @@ variable {k G V : Type*} [CommRing k] [Group G] [AddCommGroup V] [Module k V]
 /-- **An algebra element absorbed by a fixing group element, up to sign, annihilates the vector.**
 If `g` fixes `v` and right multiplication by `single g 1` negates `a`, then `a` acts as zero
 on `v`. -/
-theorem asAlgebraHom_eq_zero_of_mul_single_eq_neg [IsCancelMulZero k]
-    [Module.IsTorsionFree k V] [NeZero (2 : k)]
+theorem asAlgebraHom_eq_zero_of_mul_single_eq_neg
+    (h2inj : Function.Injective fun w : V ↦ (2 : ℕ) • w)
     (ρ : Representation k G V) {a : MonoidAlgebra k G} {g : G} {v : V} (hfix : ρ g v = v)
     (hneg : a * MonoidAlgebra.single g 1 = -a) :
     ρ.asAlgebraHom a v = 0 := by
@@ -50,11 +51,10 @@ theorem asAlgebraHom_eq_zero_of_mul_single_eq_neg [IsCancelMulZero k]
     conv_lhs => rw [← hfix]
     rw [← Representation.asAlgebraHom_single_one ρ, ← Module.End.mul_apply, ← map_mul, hneg,
       map_neg, LinearMap.neg_apply]
-  have h2 : (2 : k) • ρ.asAlgebraHom a v = 0 := by
-    rw [two_smul]
-    nth_rewrite 2 [key]
-    exact add_neg_cancel _
-  -- and doubling is injective, so a value equal to its own negation is zero
-  exact (smul_eq_zero.mp h2).resolve_left (NeZero.ne _)
+  -- so doubling it agrees with doubling `0`, and doubling is injective
+  refine h2inj ?_
+  simp only [two_nsmul, add_zero]
+  nth_rewrite 1 [key]
+  exact neg_add_cancel _
 
 end Representation
