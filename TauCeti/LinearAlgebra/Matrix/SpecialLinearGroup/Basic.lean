@@ -40,7 +40,7 @@ diamond operators of the ModularForms roadmap (Layer 0), where it realizes every
 * `Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_two_iff` and
   `Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_one_iff`: for a subgroup `Γ ≤ SL₂`, the
   part of the centre that `Γ` contains has order `2` exactly when `-I ∈ Γ` and `1` exactly when
-  it does not — both under `-1 ≠ 1`, which fails only in characteristic `2`.
+  it does not — both under `-1 ≠ 1`, which fails exactly when `(2 : R) = 0`.
 * `Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_one_or_two`: that order is `1` or `2`,
   needing no hypothesis beyond `NoZeroDivisors R`.
 
