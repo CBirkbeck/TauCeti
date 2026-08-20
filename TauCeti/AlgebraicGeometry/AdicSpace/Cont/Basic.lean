@@ -120,6 +120,34 @@ theorem isContinuous_ofValuation_iff {Γ₀ : Type*} [LinearOrderedCommGroupWith
     (w : Valuation A Γ₀) : (ofValuation w).IsContinuous ↔ w.IsContinuous :=
   (isEquiv_valuation_ofValuation w).isContinuous_iff
 
+/-- **A trivial-valuation point is continuous exactly when its prime ideal is open.** Every
+value set of `trivialSection p` is `∅` (testing below a vanishing value) or `p.asIdeal` itself
+(testing below a surviving value), so continuity amounts to openness of the prime; conversely
+the test below `1` recovers the ideal. This is the continuity interface of the sealed
+`trivialSection` — it rests on `trivialSection_vle_iff`, not on the definition's body. -/
+theorem isContinuous_trivialSection_iff (p : PrimeSpectrum A) :
+    (trivialSection p).IsContinuous ↔ IsOpen (p.asIdeal : Set A) := by
+  classical
+  have hset : ∀ b : A,
+      {a : A | (trivialSection p).valuation a < (trivialSection p).valuation b}
+        = if b ∈ p.asIdeal then (∅ : Set A) else ↑p.asIdeal := by
+    intro b
+    ext a
+    simp only [Set.mem_ofPred_eq, ← not_le, valuation_le_iff, trivialSection_vle_iff, not_or,
+      not_not]
+    by_cases hb : b ∈ p.asIdeal <;> simp [hb]
+  rw [isContinuous_def, Valuation.isContinuous_def]
+  constructor
+  · intro h
+    have h1 : (1 : A) ∉ p.asIdeal := (Ideal.ne_top_iff_one _).mp p.isPrime.ne_top
+    have := h 1
+    rwa [hset 1, ite_eq_right h1] at this
+  · intro hp b
+    rw [hset b]
+    split_ifs
+    · exact isOpen_empty
+    · exact hp
+
 /-- **Wedhorn Remark 7.8(2).** Over a discrete ring every point is continuous. -/
 @[simp]
 theorem cont_eq_univ [DiscreteTopology A] : cont A = Set.univ :=

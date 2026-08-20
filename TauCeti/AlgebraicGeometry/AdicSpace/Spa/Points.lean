@@ -50,23 +50,13 @@ public section
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A]
 
--- The trivial valuation of an open prime ideal `𝔭` is continuous: every set `{a | v a < v b}`
--- with `v b ≠ 0` is `𝔭` itself, which is open.
-private theorem isContinuous_trivialValuation {𝔭 : Ideal A} [𝔭.IsPrime]
-    (h𝔭 : IsOpen (𝔭 : Set A)) :
-    (Valuation.trivialValuation 𝔭 : Valuation A (WithZero (Multiplicative ℤ))).IsContinuous := by
-  refine (Valuation.isContinuous_iff_forall_ne_zero _).mpr fun b hb ↦ ?_
-  convert h𝔭 using 1
-  ext a
-  aesop (add simp Valuation.trivialValuation_apply, safe apply lt_of_le_of_ne)
-
 /-- **Proposition 7.51**, for open prime ideals: an open prime ideal `𝔭` is the support of a
 point of the adic spectrum — the point of its trivial valuation, `trivialSection ⟨𝔭, ‹_›⟩`.
 Wedhorn states the proposition for maximal ideals; the proof needs only primality. -/
 theorem exists_mem_spa_supp_eq (Aplus : Subring A) (𝔭 : Ideal A) [𝔭.IsPrime]
     (h𝔭 : IsOpen (𝔭 : Set A)) : ∃ v ∈ spa Aplus, supp v = 𝔭 := by
   refine ⟨trivialSection ⟨𝔭, ‹_›⟩, (mem_spa_iff Aplus _).mpr ⟨?_, fun a _ ↦ ?_⟩, ?_⟩
-  · exact (isContinuous_ofValuation_iff _).mpr (isContinuous_trivialValuation h𝔭)
+  · exact (isContinuous_trivialSection_iff _).mpr h𝔭
   · exact (trivialSection_vle_iff _ a 1).mpr
       (Or.inr ((Ideal.ne_top_iff_one 𝔭).mp ‹𝔭.IsPrime›.ne_top))
   · rw [← suppFun_asIdeal, suppFun_trivialSection]

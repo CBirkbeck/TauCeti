@@ -445,10 +445,7 @@ theorem suppFun_comap {B : Type*} [CommRing B] (φ : A →+* B) (v : Spv B) :
 
 /-- The trivial-valuation section of the support map (Wedhorn, Remark 4.6): the point of
 `Spv A` given by the trivial valuation attached to a prime ideal. -/
--- Exposed: downstream modules test continuity of this point through
--- `isContinuous_ofValuation_iff`, which needs the `ofValuation` spelling definitionally;
--- a sealed body would leave the packaged point without a continuity interface.
-@[expose] noncomputable def trivialSection (p : PrimeSpectrum A) : Spv A :=
+noncomputable def trivialSection (p : PrimeSpectrum A) : Spv A :=
   ofValuation
     (Valuation.trivialValuation p.asIdeal : Valuation A (WithZero (Multiplicative ℤ)))
 
