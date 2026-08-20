@@ -249,14 +249,14 @@ theorem rationalIndexInclusionOfLE_comp_diagram {V W : Opens ↥(spa Aplus)} (h 
 variable (P) in
 /-- **The restriction morphism of a containment `W ≤ V`**: the limit over
 the presentations inside `V` (with open numerator ideal) maps to the limit over the smaller
-index, by reindexing along `rationalIndexInclusionOfLE`. `@[expose]`d as `limit.pre …`.
+index, by reindexing along `rationalIndexInclusionOfLE`. The body is sealed: everything a
+consumer needs is `presentationLimitMap_π`, `_refl` and `_comp` below.
 
 Mathlib's `limit.pre_π` does *not* match this syntactically: it is stated with
 `limit.π (E ⋙ F)`, and seeing `rationalIndexInclusionOfLE _ _ ⋙ rationalIndexDiagram _ _ _` as
 `rationalIndexDiagram _ _ _` needs `rationalIndexInclusionOfLE_comp_diagram`. The consumer-facing
 equations are `presentationLimitMap_π`, `presentationLimitMap_refl` and
 `presentationLimitMap_comp` below; none of them requires reproducing that step. -/
-@[expose]
 noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
     presentationLimitObj P Aplus V ⟶ presentationLimitObj P Aplus W :=
   limit.pre (rationalIndexDiagram P Aplus V) (rationalIndexInclusionOfLE P h)
