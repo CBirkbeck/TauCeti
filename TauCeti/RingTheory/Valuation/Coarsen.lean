@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import Mathlib.Algebra.Order.Hom.MonoidWithZero
 public import Mathlib.RingTheory.Valuation.Basic
 public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 
@@ -15,8 +14,8 @@ public import TauCeti.Algebra.Order.Group.ConvexSubgroup
 Collapsing a convex subgroup `H` of the value units of `Γ₀` coarsens any `Γ₀`-valued
 valuation: values are pushed along `Γ₀ ≃ WithZero Γ₀ˣ → WithZero (Γ₀ˣ ⧸ H)`, which is
 monotone precisely because `H` is convex. The support is unchanged, bounds by `1` survive,
-and values whose units avoid `H` land strictly below `1` — the three facts the height-one
-generization of Wedhorn's Lemma 7.45 consumes.
+and a value that is at most `1` whose unit avoids `H` lands strictly below `1` — the three
+facts the height-one generization of Wedhorn's Lemma 7.45 consumes.
 
 ## Main definitions
 
@@ -28,7 +27,7 @@ generization of Wedhorn's Lemma 7.45 consumes.
 
 * `Valuation.coarsenByUnits_supp` : coarsening preserves the support.
 * `Valuation.coarsenByUnits_lt_one_of_notMem` : the collapse detects non-membership — a value
-  whose unit avoids `H` drops strictly below `1`. (Bounds by `1` come from
+  at most `1` whose unit avoids `H` drops strictly below `1`. (Bounds by `1` come from
   `coarsenMapOfValueGroup_monotone` directly; no specialization is exported for them.)
 
 ## Provenance
@@ -69,8 +68,9 @@ theorem coarsenMapOfValueGroup_monotone (H : ConvexSubgroup Γ₀ˣ) :
     (OrderMonoidIso.withZeroUnits (α := Γ₀)).symm.toOrderIso.monotone
 
 open Classical in
-/-- The coarsening map sends a unit to its class. -/
-theorem coarsenMapOfValueGroup_apply_unit (H : ConvexSubgroup Γ₀ˣ) (g : Γ₀ˣ) :
+/-- The coarsening map sends the value of a unit to its class. -/
+@[simp]
+theorem coarsenMapOfValueGroup_apply_coe (H : ConvexSubgroup Γ₀ˣ) (g : Γ₀ˣ) :
     coarsenMapOfValueGroup H (g : Γ₀) = (QuotientGroup.mk' H.toSubgroup g :) := by
   have h : ((OrderMonoidIso.withZeroUnits (α := Γ₀)).symm.toMonoidWithZeroHom (g : Γ₀))
       = (g : WithZero Γ₀ˣ) := WithZero.withZeroUnitsEquiv_symm_apply_coe g
@@ -94,6 +94,7 @@ noncomputable def coarsenByUnits (v : Valuation R Γ₀) (H : ConvexSubgroup Γ�
   v.map (coarsenMapOfValueGroup H) (coarsenMapOfValueGroup_monotone H)
 
 /-- Coarsening applies the coarsening map to each value. -/
+@[simp]
 theorem coarsenByUnits_apply (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ) (r : R) :
     v.coarsenByUnits H r = coarsenMapOfValueGroup H (v r) :=
   Valuation.map_apply _ _ _ _
@@ -103,18 +104,11 @@ the class of its unit is strictly below `1` in the quotient. -/
 theorem coarsenByUnits_lt_one_of_notMem (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     {a : R} (ha_ne : v a ≠ 0) (ha_le : v a ≤ 1)
     (hm : Units.mk0 (v a) ha_ne ∉ H) : v.coarsenByUnits H a < 1 := by
-  rw [coarsenByUnits_apply,
-    show v a = (Units.mk0 (v a) ha_ne : Γ₀) from rfl,
-    coarsenMapOfValueGroup_apply_unit H (Units.mk0 (v a) ha_ne)]
-  have hlt : Units.mk0 (v a) ha_ne < 1 := by
-    rcases ha_le.lt_or_eq with h | h
-    · simpa [← Units.val_lt_val] using h
-    · refine absurd ?_ hm
-      have h1 : Units.mk0 (v a) ha_ne = 1 := Units.ext (by simpa using h)
-      rw [h1]
-      exact one_mem H
-  have := H.quotientMk_lt_one_of_notMem hlt hm
-  exact_mod_cast this
+  have hle : Units.mk0 (v a) ha_ne ≤ 1 := by
+    rw [← Units.val_le_val, Units.val_mk0, Units.val_one]
+    exact ha_le
+  rw [coarsenByUnits_apply, ← Units.val_mk0 ha_ne, coarsenMapOfValueGroup_apply_coe]
+  exact_mod_cast H.quotientMk_lt_one_of_notMem hle hm
 
 section Supp
 
@@ -129,8 +123,7 @@ theorem coarsenByUnits_supp (v : Valuation S Γ₀) (H : ConvexSubgroup Γ₀ˣ)
   ext r
   simp only [mem_supp_iff, coarsenByUnits_apply]
   refine ⟨fun h ↦ by_contra fun hr ↦ ?_, fun h ↦ by rw [h, map_zero]⟩
-  rw [show v r = (Units.mk0 (v r) hr : Γ₀) from rfl,
-    coarsenMapOfValueGroup_apply_unit H (Units.mk0 (v r) hr)] at h
+  rw [← Units.val_mk0 hr, coarsenMapOfValueGroup_apply_coe] at h
   exact WithZero.coe_ne_zero h
 
 end Supp
