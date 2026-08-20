@@ -5,7 +5,7 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.StructurePresheaf.Basic
+public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.PresentationLimit.Basic
 public import TauCeti.RingTheory.Huber.PowerBounded
 
 /-!
@@ -43,7 +43,7 @@ claim no `𝒪_X⁺` notation.
   component-wise power-boundedness.
 * `TauCeti.ValuationSpectrum.presentationLimitMap_mem_presentationLimitPowerBoundedSubring` :
   restriction preserves the subring, with no continuity input — a restriction's components are a
-  subset of the original's (`limit.pre_π`), so the condition is inherited outright.
+  subset of the original's (`presentationLimitMap_π`), so the condition is inherited outright.
 
 ## Why per-component, not power-bounded in the limit ring
 
@@ -94,19 +94,18 @@ noncomputable def presentationLimitPowerBoundedSubring (Aplus : Subring A)
     Subring ↥(presentationLimitObj P Aplus V) :=
   ⨅ i : RationalIndex P Aplus V,
     (powerBoundedSubring _).comap
-      (show presentationLimitObj P Aplus V ⟶ i.pres.completionLocObj from
-        limit.π (rationalIndexDiagram P Aplus V) i).1.1
+      (presentationLimitπ P Aplus V i).1.1
 
 /-- Membership is power-boundedness of every component. -/
+@[simp]
 theorem mem_presentationLimitPowerBoundedSubring_iff {f : ↥(presentationLimitObj P Aplus V)} :
     f ∈ presentationLimitPowerBoundedSubring P Aplus V ↔
       ∀ i : RationalIndex P Aplus V, IsPowerBounded
-        ((show presentationLimitObj P Aplus V ⟶ i.pres.completionLocObj from
-          limit.π (rationalIndexDiagram P Aplus V) i).1.1 f) := by
+        ((presentationLimitπ P Aplus V i).1.1 f) := by
   simp [presentationLimitPowerBoundedSubring, Subring.mem_iInf]
 
 /-- **Restriction preserves the power-bounded sections**: the components of a restriction are a
-subset of the original section's components (`limit.pre_π`), so no continuity or
+subset of the original section's components (`presentationLimitMap_π`), so no continuity or
 boundedness of the restriction map enters. -/
 theorem presentationLimitMap_mem_presentationLimitPowerBoundedSubring {V W : Opens ↥(spa Aplus)}
     (h : W ≤ V) {f : ↥(presentationLimitObj P Aplus V)}
@@ -114,8 +113,7 @@ theorem presentationLimitMap_mem_presentationLimitPowerBoundedSubring {V W : Ope
     (presentationLimitMap P h).1.1 f ∈ presentationLimitPowerBoundedSubring P Aplus W := by
   rw [mem_presentationLimitPowerBoundedSubring_iff] at hf ⊢
   intro i
-  have hπ := congrArg (fun g ↦ g.1.1 f)
-    (limit.pre_π (rationalIndexDiagram P Aplus V) (rationalIndexInclusionOfLE P h) i)
+  have hπ := congrArg (fun g ↦ g.1.1 f) (presentationLimitMap_π P h i)
   simpa using hπ ▸ hf ⟨i.pres, i.isOpen_span_num, i.spaRationalOpen_le.trans h⟩
 
 end
