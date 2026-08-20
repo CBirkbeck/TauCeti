@@ -11,9 +11,9 @@ public import Mathlib.RepresentationTheory.Basic
 # Monoid-algebra elements that annihilate a fixed vector
 
 An element `a` of the monoid algebra `k[G]` acting through a representation `ρ` kills a vector `v`
-as soon as two conditions meet: some `g` fixes `v`, and right multiplication by `g` negates `a`.
-Then `ρ.asAlgebraHom a v` is its own negative, so it vanishes as soon as doubling is injective
-on `V`.
+when three conditions meet: doubling is injective on `V`, some `g` fixes `v`, and right
+multiplication by `g` negates `a`. The last two make `ρ.asAlgebraHom a v` its own negative, and
+injective doubling turns being its own negative into vanishing.
 
 That is the mechanism behind the column-antisymmetrizer vanishing arguments of
 `TauCeti/RepresentationTheory/Symmetric/`, which are its consumers: the antisymmetrizer of a set of
