@@ -53,8 +53,13 @@ type `M ⊗[A] MvPowerSeries (Fin k) A →ₗ[A] MvPowerSeries (Fin k) M`.
   `restrictedMvPowerSeriesFinPiEquiv`, so it is an isomorphism — the base case the finitely
   generated statement reduces to.
 
-The isomorphism for a general finitely generated `M` — Remark 8.29 proper, which needs `M`
-presented over a complete strongly noetherian Tate ring — is not proved here.
+* `restrictedMvPowerSeriesBaseChange_surjective_of_presentation`: **Remark 8.29's comparison map
+  is surjective** for an `M` presented by a strict surjection `Aᵐ ↠ M`. Only the presentation is
+  used — no noetherian hypothesis and no property of its kernel, both of which belong to
+  injectivity.
+
+The *injectivity* half for a general finitely generated `M` — and so Remark 8.29 proper, which
+needs `M` presented over a complete strongly noetherian Tate ring — is not proved here.
 
 ## Implementation notes
 
@@ -360,6 +365,34 @@ theorem restrictedMvPowerSeriesBaseChange_fin_bijective :
     funext fun x ↦ (restrictedMvPowerSeriesBaseChangeFinEquiv_apply x).symm
   rw [h]
   exact (restrictedMvPowerSeriesBaseChangeFinEquiv k n A).bijective
+
+/-- **Remark 8.29's comparison map is surjective for a finitely generated module.** If `M` is
+presented by a *strict* surjection `Aᵐ ↠ M` — one that is continuous at `0` and open — then every
+restricted series with coefficients in `M` comes from `M ⊗[A] A⟨T₁, …, Tₖ⟩`.
+
+The three ingredients meet here and each supplies one thing. The presentation lifts a restricted
+series over `M` to one over `Aᵐ` (`restrictedMvPowerSeriesSubmoduleMap_surjective`, where openness
+is what makes the lifted coefficients converge); the finite free case identifies that with a
+tensor (`restrictedMvPowerSeriesBaseChange_fin_bijective`); and naturality carries it back down
+(`restrictedMvPowerSeriesSubmoduleMap_baseChange`). No noetherian hypothesis and no property of
+the kernel are needed — those enter only for *injectivity*, which is the other half of Remark 8.29
+and is not proved here.
+
+Over a complete Tate ring the openness hypothesis is `TauCeti.Huber.IsTateRing.isOpenMap`. -/
+theorem restrictedMvPowerSeriesBaseChange_surjective_of_presentation {m : ℕ} {M : Type*}
+    [AddCommGroup M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
+    [ContinuousSMul A M] [(nhds (0 : Fin m → A)).IsCountablyGenerated]
+    (p : (Fin m → A) →ₗ[A] M) (hp : ContinuousAt p 0) (hsurj : Function.Surjective p)
+    (hopen : IsOpenMap p) :
+    Function.Surjective (restrictedMvPowerSeriesBaseChange :
+      TensorProduct A M (restrictedMvPowerSeriesSubring k A) →
+        restrictedMvPowerSeriesSubmodule k A M) := by
+  intro y
+  have hmap : nhds (0 : M) ≤ Filter.map p (nhds (0 : Fin m → A)) := map_zero p ▸ hopen.nhds_le 0
+  obtain ⟨x, hx⟩ := restrictedMvPowerSeriesSubmoduleMap_surjective (k := k) p hp hsurj hmap y
+  obtain ⟨z, hz⟩ := (restrictedMvPowerSeriesBaseChange_fin_bijective (k := k) (n := m)).2 x
+  exact ⟨TensorProduct.map p LinearMap.id z, by
+    rw [← restrictedMvPowerSeriesSubmoduleMap_baseChange p hp z, hz, hx]⟩
 
 end FiniteFree
 
