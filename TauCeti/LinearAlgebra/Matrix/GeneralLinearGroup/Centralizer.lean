@@ -247,7 +247,7 @@ variable {F : Type*} [Field F] {E : Type*} [Field E] [Algebra F E]
 commutant description of `TauCeti.commute_fin_two_iff` can be compared with `Algebra.leftMulMatrix`
 through `AlgHom.commutes`. -/
 private theorem scalar_eq_algebraMap (c : F) :
-    Matrix.scalar (Fin 2) c = algebraMap F (Matrix (Fin 2) (Fin 2) F) c := rfl
+    Matrix.scalar (Fin 2) c = algebraMap F (Matrix (Fin 2) (Fin 2) F) c := (rfl)
 
 /-- An element of the non-split torus not coming from `F` is not a scalar matrix: multiplication by
 `x` on `E` is multiplication by an element of `F` exactly when `x` lies in `F`. -/
