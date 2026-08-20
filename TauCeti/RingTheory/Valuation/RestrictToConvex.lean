@@ -40,9 +40,11 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out:
 * `Valuation.one_le_restrictToConvex` : a value at least `1` stays at least `1`. The converse
   bounds are the general `restrictToConvex_le_iff` and `restrictToConvex_lt_coe_iff` at `1`.
 * `Valuation.restrictToConvex_mul_inv_le_one` and `Valuation.one_lt_restrictToConvex_mul_inv` :
-  a restricted value divided by a kept value that dominates it lands at or below `1`, and strictly
-  above `1` when the domination is strict. The `_pow` forms specialize the divisor to `t ^ n`,
-  which is the shape Wedhorn's Lemma 7.44 extension indexes by.
+  the two directions of the quotient bound, and they are not the same comparison. Dividing by a
+  kept value that dominates the numerator (`v a ≤ v b`) lands at or below `1`; the quotient is
+  strictly *above* `1` in the opposite case, when the numerator strictly dominates the kept
+  divisor (`v b < v a`). The `_pow` forms specialize the divisor to `t ^ n`, which is the shape
+  Wedhorn's Lemma 7.44 extension indexes by.
 * `Valuation.supp_le_restrictToConvex_supp` : the support can only grow.
 * `Valuation.mk0_mem_of_inv_le_of_le` : `H` keeps every value bracketed by an attained value
   `≥ 1` and its inverse — so the characteristic values of `v` all survive the restriction.
