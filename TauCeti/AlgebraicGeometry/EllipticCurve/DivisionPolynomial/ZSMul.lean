@@ -61,8 +61,8 @@ its ring hom (`map_neg polyToField`) where the source unfolds `ψᵤ`, because a
 same direction problem — the source's forward
 `simp only [φ, ψᵤ, map_sub, map_mul, map_pow, ← add_div]` does not fire here — so it instead
 maps a polynomial-level identity with `congrArg polyToField` and clears the denominator with
-`field_simp` and `linear_combination`. Finally `@[simp]` is added to `smulX_neg`,
-`smulX_ne_zero` and `smulX_eq_smulX_iff`, which the source leaves untagged.
+`field_simp` and `linear_combination`. Finally `@[simp]` is added to `smulX_neg`, `smulY_neg`,
+`smulX_ne_zero` and `smulX_eq_smulX_iff`; the source tags only the four value lemmas.
 
 `smulX_sub_sub_smulX_add` (`:196`) is deliberately not ported here: its consumers are the slope
 and addition formulas, and it ships with them.
