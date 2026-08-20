@@ -139,12 +139,15 @@ private theorem isIntegral_t_of_smul_eq {W₁ W₂ : WeierstrassCurve K} [IsInte
     rw [← hD, variableChange_a₆]
     simp only [Units.val_inv_eq_inv_val]
     field
+  -- The constant term is `u₀⁶ · a₆(W₂)` MINUS the bracketed `r`-polynomial in `W₁`'s invariants;
+  -- written as a subtraction so the sign of the `a₆(W₂)` term cannot be misread across the wrap.
   refine ⟨.X ^ 2 + (.C ((W₁.integralModel R).a₃ + rR * (W₁.integralModel R).a₁) * .X
-      + .C (-((W₁.integralModel R).a₆ + rR * (W₁.integralModel R).a₄
-        + rR ^ 2 * (W₁.integralModel R).a₂ + rR ^ 3) + (↑u₀ : R) ^ 6 * (W₂.integralModel R).a₆)),
+      + .C ((↑u₀ : R) ^ 6 * (W₂.integralModel R).a₆
+        - ((W₁.integralModel R).a₆ + rR * (W₁.integralModel R).a₄
+          + rR ^ 2 * (W₁.integralModel R).a₂ + rR ^ 3))),
     Polynomial.monic_X_pow_add (by compute_degree!), ?_⟩
   rw [← Polynomial.aeval_def]
-  simp only [map_add, map_neg, map_mul, map_pow, Polynomial.aeval_X, Polynomial.aeval_C]
+  simp only [map_add, map_sub, map_mul, map_pow, Polynomial.aeval_X, Polynomial.aeval_C]
   rw [integralModel_a₁_eq R W₁, integralModel_a₂_eq R W₁, integralModel_a₃_eq R W₁,
     integralModel_a₄_eq R W₁, integralModel_a₆_eq R W₁, integralModel_a₆_eq R W₂, hau, hrR]
   linear_combination ha₆
