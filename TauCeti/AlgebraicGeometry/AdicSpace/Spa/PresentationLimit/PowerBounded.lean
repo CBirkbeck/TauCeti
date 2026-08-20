@@ -85,6 +85,20 @@ variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   {P : PairOfDefinition A} {Aplus : Subring A} {V : Opens ↥(spa Aplus)}
 
 variable (P) in
+/-- The limit's projection at `i`, with its codomain read as that presentation's own completed
+localization rather than as a value of the diagram.
+
+The transport is definitional (`rationalIndexDiagram_obj`) but **load-bearing**, not cosmetic:
+`powerBoundedSubring` needs a `NonarchimedeanRing` instance, and at the diagram-value spelling
+instance search does not find one. Using `presentationLimitπ` unascribed fails with
+`failed to synthesize NonarchimedeanRing ((rationalIndexDiagram P Aplus V).obj i).obj.α` —
+tested. Naming it here puts that ascription in one place instead of at each use site. -/
+noncomputable def presentationLimitπCompletion (Aplus : Subring A) (V : Opens ↥(spa Aplus))
+    (i : RationalIndex P Aplus V) :
+    presentationLimitObj P Aplus V ⟶ i.pres.completionLocObj :=
+  presentationLimitπ P Aplus V i
+
+variable (P) in
 /-- **The power-bounded sections**: the subring of `presentationLimitObj P Aplus V` — the
 candidate for `𝒪_X(V)`, not known to be it — of sections all of whose components
 are power-bounded — the intersection over the index of the comaps of the power-bounded subrings
@@ -94,14 +108,14 @@ noncomputable def presentationLimitPowerBoundedSubring (Aplus : Subring A)
     Subring ↥(presentationLimitObj P Aplus V) :=
   ⨅ i : RationalIndex P Aplus V,
     (powerBoundedSubring _).comap
-      (presentationLimitπ P Aplus V i).1.1
+      (presentationLimitπCompletion P Aplus V i).1.1
 
 /-- Membership is power-boundedness of every component. -/
 @[simp]
 theorem mem_presentationLimitPowerBoundedSubring_iff {f : ↥(presentationLimitObj P Aplus V)} :
     f ∈ presentationLimitPowerBoundedSubring P Aplus V ↔
       ∀ i : RationalIndex P Aplus V, IsPowerBounded
-        ((presentationLimitπ P Aplus V i).1.1 f) := by
+        ((presentationLimitπCompletion P Aplus V i).1.1 f) := by
   simp [presentationLimitPowerBoundedSubring, Subring.mem_iInf]
 
 /-- **Restriction preserves the power-bounded sections**: the components of a restriction are a
