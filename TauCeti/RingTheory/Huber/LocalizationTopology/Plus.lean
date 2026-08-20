@@ -44,8 +44,8 @@ below, as an object of `Aₛ` in its own right rather than as a layer of `A_U⁺
 * `TauCeti.Huber.PairOfDefinition.toCompletionLoc_mem_completedPlusSubring` and
   `TauCeti.Huber.PairOfDefinition.divBy_mem_completedPlusSubring`: the image of `A⁺` and each
   fraction `t/s` lie in `A_U⁺`, which is what the roadmap's description of its generators asks.
-* `TauCeti.Huber.PairOfDefinition.isPowerBounded_of_mem_adjoin_plus`: inside `Aₛ`, every element
-  of `A⁺[T/s]` is power-bounded.
+* `TauCeti.Huber.PairOfDefinition.isPowerBounded_of_mem_adjoin_plus`: when every element of `A⁺`
+  is power-bounded in `A`, so is every element of `A⁺[T/s]` in `Aₛ`.
 * `TauCeti.Huber.PairOfDefinition.completedPlusSubring_le_powerBoundedSubring`: `A_U⁺ ⊆ (A_U)°`.
 * `TauCeti.Huber.PairOfDefinition.locSubring_mul_idealOfDefinition_mem_adjoin_plus`: the
   absorption itself — inside `Aₛ`, an element of `D = A₀[T/s]` times an element of the ideal
@@ -53,8 +53,9 @@ below, as an object of `Aₛ` in its own right rather than as a layer of `A_U⁺
 * `TauCeti.Huber.PairOfDefinition.locIdealImage_one_le_adjoin_plus`: inside `Aₛ`, and before any
   completion, `A⁺[T/s]` absorbs the first basic neighbourhood of zero — the first step toward the
   openness of `A_U⁺` discussed below.
-* `TauCeti.Huber.PairOfDefinition.isRingOfIntegralElements_integralClosure_adjoin_plus`:
-  the integral closure of `A⁺[T/s]` **in `Aₛ`** is a ring of integral elements of `Aₛ`.
+* `TauCeti.Huber.PairOfDefinition.isRingOfIntegralElements_integralClosure_adjoin_plus`: when
+  `A⁺` consists of power-bounded elements and contains the image of the ideal of definition, the
+  integral closure of `A⁺[T/s]` **in `Aₛ`** is a ring of integral elements of `Aₛ`.
 
 Of the three conditions making `(A_U, A_U⁺)` a Huber pair, two are here: integral closedness by
 construction (`isIntegrallyClosedIn_completedPlusSubring`) and power-boundedness
@@ -278,8 +279,8 @@ theorem completedPlusSubring_le_iff (P : PairOfDefinition A) (Aplus : Subring A)
   rw [completedPlusSubring]
   exact Subring.integralClosure_subring_le_iff
 
-/-- **Every element of `A⁺[T/s]` is power-bounded**, inside `Aₛ` and before any completion. This
-is the pre-completion half of
+/-- **When every element of `A⁺` is power-bounded, so is every element of `A⁺[T/s]`**, inside `Aₛ`
+and before any completion. This is the pre-completion half of
 `TauCeti.Huber.PairOfDefinition.completedPlusSubring_le_powerBoundedSubring`, whose proof it
 supplies. -/
 theorem isPowerBounded_of_mem_adjoin_plus (P : PairOfDefinition A) (Aplus : Subring A)
@@ -453,9 +454,10 @@ theorem locIdealImage_one_le_adjoin_plus (P : PairOfDefinition A) (Aplus : Subri
   obtain ⟨d, hd, rfl⟩ := (mem_locIdealImage_iff P T s S 1).mp hx
   exact Subring.mem_toAddSubgroup.mpr (Subalgebra.mem_toSubring.mpr (one_mul d ▸ hJ d hd 1))
 
-/-- **The integral closure of `A⁺[T/s]` in `Aₛ` is a ring of integral elements** of the localised
-topology: it is open, integrally closed in `Aₛ`, and contained in `(Aₛ)°`. Those are the three
-conditions a Huber pair asks of its plus ring.
+/-- **When `A⁺` consists of power-bounded elements and contains the image of the ideal of
+definition, the integral closure of `A⁺[T/s]` in `Aₛ` is a ring of integral elements** of the
+localised topology: it is open, integrally closed in `Aₛ`, and contained in `(Aₛ)°`. Those are the
+three conditions a Huber pair asks of its plus ring.
 
 The integral closure is taken here in `Aₛ`, not in `A⟨T/s⟩`, so this is a statement about the
 localisation and leaves the openness of `A_U⁺` itself where the discussion above records it. -/
