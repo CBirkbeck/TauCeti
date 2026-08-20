@@ -141,9 +141,9 @@ theorem card_center_eq_two [NoZeroDivisors R]
   rw [h, Nat.card_coe_set_eq]
   exact Set.ncard_pair (Ne.symm hne)
 
--- the count is between one and two: the identity is always there, and the inclusion of
--- `Γ ⊓ {±I}` into `{±I}` caps it by `card_center_le_two`
-private theorem card_center_subgroupOf_le_two [NoZeroDivisors R]
+-- the count is between one and two, and the name says both halves: the identity is always
+-- there, and the inclusion of `Γ ⊓ {±I}` into `{±I}` caps it by `card_center_le_two`
+private theorem card_center_subgroupOf_pos_and_le_two [NoZeroDivisors R]
     (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
     0 < Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ∧
       Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ≤ 2 := by
@@ -198,9 +198,10 @@ however `Γ` is chosen — so the content is that `-I` is the only other candida
 finishes the job. Stating it separately is what makes the `= 1` case simp-reachable at all,
 since the cardinality form cannot itself carry `@[simp]`.
 
-Needs `-1 ≠ 1` for the same reason as the `= 2` companion: in characteristic `2` the centre is
-trivial, so it is disjoint from every `Γ` while `-I = I` does lie in `Γ` whenever `Γ` is
-nontrivial. -/
+Needs `(2 : R) ≠ 0` for the same reason as the `= 2` companion: in characteristic `2` the centre
+is the singleton `{I}`, so it is disjoint from every `Γ` — while `-I = I ∈ Γ` for *every* `Γ`,
+including `⊥`, since `I` always lies in a subgroup. Without the hypothesis the equivalence fails
+for all `Γ`, not merely for nontrivial ones. -/
 @[simp]
 theorem disjoint_center_iff_neg_one_notMem [NoZeroDivisors R] [NeZero (2 : R)]
     (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
@@ -220,7 +221,7 @@ theorem card_center_subgroupOf_eq_two_iff [NoZeroDivisors R] [NeZero (2 : R)]
     (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
     Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) = 2 ↔
       (-1 : SpecialLinearGroup (Fin 2) R) ∈ Γ := by
-  obtain ⟨hpos, hle⟩ := card_center_subgroupOf_le_two Γ
+  obtain ⟨hpos, hle⟩ := card_center_subgroupOf_pos_and_le_two Γ
   constructor
   · intro h
     by_contra hneg
@@ -231,16 +232,17 @@ theorem card_center_subgroupOf_eq_two_iff [NoZeroDivisors R] [NeZero (2 : R)]
       fun h ↦ (card_center_subgroupOf_eq_one_iff Γ).mp h hneg
     omega
 
-/-- **The `±I` factor is `1` or `2`.** The unindexed corollary of
-`card_center_subgroupOf_eq_two_iff`, for a consumer that needs only the bound — to know that the
-projective order divides the matrix one, say — and not the membership. -/
+/-- **The `±I` factor is always `1` or `2`**, with no hypothesis on `R` beyond `NoZeroDivisors`:
+the `= 1` case is what characteristic `2` gives, where `-I = I` and the centre is the singleton
+`{I}`. This is the form for a consumer that needs only the two-way split and not the `-I ∈ Γ`
+membership that decides between them. -/
 theorem card_center_subgroupOf_eq_one_or_two [NoZeroDivisors R]
     (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
     Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) = 1 ∨
       Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) = 2 := by
   -- no `-1 ≠ 1` hypothesis: the disjunction is exactly `0 < n ≤ 2`, and when `1 = -1` the
   -- centre is a singleton so the first branch holds
-  obtain ⟨hpos, hle⟩ := card_center_subgroupOf_le_two Γ
+  obtain ⟨hpos, hle⟩ := card_center_subgroupOf_pos_and_le_two Γ
   omega
 
 /-- The `(1,0)` coordinate of the inverse of an `SL₂` element, from `SL2_inv_expl`. -/
