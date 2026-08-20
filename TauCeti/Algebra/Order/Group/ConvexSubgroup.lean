@@ -639,6 +639,23 @@ instance quotientIsOrderedMonoid : IsOrderedMonoid (Γ ⧸ H.toSubgroup) where
     rw [h]
     exact hab
 
+/-- The quotient map `Γ →* Γ ⧸ H.toSubgroup` is monotone. This re-exports the condensation's
+`Quotient.mk_monotone`: importing modules cannot unfold the sealed `quotientLinearOrder`, so
+they must take monotonicity from here. -/
+theorem quotientMk_monotone : Monotone (QuotientGroup.mk' H.toSubgroup) := Quotient.mk_monotone
+
+/-- The quotient map sends elements at most `1` to elements at most `1`. -/
+theorem quotientMk_le_one {a : Γ} (ha : a ≤ 1) :
+    (QuotientGroup.mk' H.toSubgroup a : Γ ⧸ H.toSubgroup) ≤ 1 := by
+  simpa using H.quotientMk_monotone ha
+
+/-- An element strictly below `1` and outside `H` stays strictly below `1` in the quotient:
+its class is at most `1` by monotonicity and cannot be `1`, which would put it in `H`. -/
+theorem quotientMk_lt_one_of_notMem {a : Γ} (ha : a < 1) (haH : a ∉ H) :
+    (QuotientGroup.mk' H.toSubgroup a : Γ ⧸ H.toSubgroup) < 1 := by
+  refine (H.quotientMk_le_one ha.le).lt_of_ne fun heq ↦ haH ?_
+  exact (QuotientGroup.eq_one_iff a).mp (by simpa using heq)
+
 end Quotient
 
 end TotalOrder
