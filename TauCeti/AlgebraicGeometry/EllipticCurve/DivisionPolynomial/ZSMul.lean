@@ -17,8 +17,8 @@ elements of `Universal.Field`. This file defines those two rational functions, `
 development, not here — and develops the `smulX` calculus that identification consumes: values
 at `0`, `1` and `2`, the offset `ψₙ₊₁ψₙ₋₁/ψₙ²` from the `X`-coordinate, evenness in `n`,
 nonvanishing, the difference `smulX m - smulX n` as a single quotient, and the separation
-statement `smulX m = smulX n ↔ m = n ∨ m = -n`. `smulY`'s own negative-index rule is here too:
-a negative index negates the point, so `smulY (-n)` is the `negY` of `(smulX n, smulY n)`.
+statement `smulX m = smulX n ↔ m = n ∨ m = -n`. `smulY`'s own sign rule is here too: negating
+a nonzero index negates the point, so `smulY (-n)` is the `negY` of `(smulX n, smulY n)`.
 
 ## Main definitions
 
@@ -34,8 +34,9 @@ a negative index negates the point, so `smulY (-n)` is the `negY` of `(smulX n, 
 * `WeierstrassCurve.Universal.Affine.smulX_ne_zero`: `smulX n ≠ 0` for `n ≠ 0`.
 * `WeierstrassCurve.Universal.Affine.smulX_eq_smulX_iff`: `smulX m = smulX n ↔ m = n ∨ m = -n`,
   the field-level form of the fact that `x`-coordinates separate multiples up to sign.
-* `WeierstrassCurve.Universal.Affine.smulY_neg`: `smulY (-n)` is the `negY` of the coordinates
-  at `n` — the long-Weierstrass correction that `ω_neg` carries, read in the universal field.
+* `WeierstrassCurve.Universal.Affine.smulY_neg`: for `n ≠ 0`, `smulY (-n)` is the `negY` of the
+  coordinates at `n` — the long-Weierstrass correction that `ω_neg` carries, in the universal
+  field.
 
 ## Provenance
 
@@ -137,8 +138,8 @@ private lemma smulY_neg_aux {F : Type*} [Field F] {a₁ a₃ x y z : F} (hz : z 
   field_simp
   ring
 
-/-- `smulY` at a negative index is the negation of the point at the positive one: the
-long-Weierstrass `negY` of the coordinates `(smulX n, smulY n)`. -/
+/-- Negating a nonzero index negates the point: `smulY (-n)` is the long-Weierstrass `negY`
+of the coordinates `(smulX n, smulY n)`. -/
 lemma smulY_neg (h0 : n ≠ 0) :
     smulY (-n) = pointedCurve.toAffine.negY (smulX n) (smulY n) := by
   simp only [WeierstrassCurve.Affine.negY, pointedCurve_a₁, pointedCurve_a₃, smulX_def, smulY_def,
