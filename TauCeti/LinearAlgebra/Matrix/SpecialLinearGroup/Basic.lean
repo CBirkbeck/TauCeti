@@ -91,14 +91,13 @@ theorem mem_center_iff_eq_one_or_eq_neg_one [NoZeroDivisors R] {γ : SpecialLine
     · exact Subgroup.mem_center_iff.mpr fun g ↦ by rw [neg_one_mul, mul_neg_one]
 
 /-- The centre of `SL₂` is finite: by `mem_center_iff_eq_one_or_eq_neg_one` it is the set `{±I}`,
-which has at most two elements — exactly two unless `1 = -1` in `R`, where it is a singleton.
-
-The type ascription on `e` is load-bearing. Without it, instance search is asked for
-`Finite { x // x = 1 ∨ x = -1 }` and fails: that subtype is definitionally `↥({1, -1} : Set _)`
-but resolution does not see through the membership unfolding. -/
+which has at most two elements — exactly two unless `1 = -1` in `R`, where it is a singleton. -/
 theorem finite_center [NoZeroDivisors R] :
     Finite (Subgroup.center (SpecialLinearGroup (Fin 2) R)) := by
   have hf : Finite ({1, -1} : Set (SpecialLinearGroup (Fin 2) R)) := Set.toFinite _
+  -- the type ascription on `e` is load-bearing: without it instance search is asked for
+  -- `Finite { x // x = 1 ∨ x = -1 }` and fails, since that subtype is definitionally
+  -- `↥({1, -1} : Set _)` but resolution does not see through the membership unfolding
   have e : (Subgroup.center (SpecialLinearGroup (Fin 2) R)) ≃
       ({1, -1} : Set (SpecialLinearGroup (Fin 2) R)) :=
     Equiv.subtypeEquivRight fun _ ↦ mem_center_iff_eq_one_or_eq_neg_one
@@ -124,18 +123,19 @@ private theorem card_center_subgroupOf_le_two [NoZeroDivisors R]
     (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
     0 < Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ∧
       Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ≤ 2 := by
-  -- `mem_subgroupOf` is what moves the membership across the inclusion
-  have hinj : Function.Injective
-      (fun x : (Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ ↦
-        (⟨((x : Γ) : SpecialLinearGroup (Fin 2) R), Subgroup.mem_subgroupOf.mp x.2⟩ :
-          Subgroup.center (SpecialLinearGroup (Fin 2) R))) := by
-    intro a b h
-    rw [Subtype.mk.injEq] at h
-    exact Subtype.ext (Subtype.ext h)
   have : Finite (Subgroup.center (SpecialLinearGroup (Fin 2) R)) := finite_center
+  -- `Γ.subtype` carries the `subgroupOf` isomorphically onto `center ⊓ Γ` in the ambient group,
+  -- which is where the inclusion into the centre can be taken
+  have hcard : Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) =
+      Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R) ⊓ Γ :
+        Subgroup (SpecialLinearGroup (Fin 2) R))) := by
+    rw [Nat.card_congr (Subgroup.equivMapOfInjective _ _ Γ.subtype_injective).toEquiv,
+      Subgroup.subgroupOf_map_subtype]
+  have hfin : Finite ((Subgroup.center (SpecialLinearGroup (Fin 2) R) ⊓ Γ :
+      Subgroup (SpecialLinearGroup (Fin 2) R))) := Finite.Set.subset _ (by exact inf_le_left)
   have : Finite ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) :=
-    Finite.of_injective _ hinj
-  exact ⟨Nat.card_pos, (Nat.card_le_card_of_injective _ hinj).trans card_center_le_two⟩
+    Nat.finite_of_card_ne_zero (by rw [hcard]; exact Nat.card_pos.ne')
+  exact ⟨Nat.card_pos, hcard ▸ (Subgroup.card_le_of_le inf_le_left).trans card_center_le_two⟩
 
 /-- **The complementary case**: the factor is `1` exactly when `-I ∉ Γ`, i.e. when the matrix and
 projective stabiliser orders agree. -/
