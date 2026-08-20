@@ -39,6 +39,10 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out:
   restricted value compared against an abstract member of `H`.
 * `Valuation.one_le_restrictToConvex` : a value at least `1` stays at least `1`. The converse
   bounds are the general `restrictToConvex_le_iff` and `restrictToConvex_lt_coe_iff` at `1`.
+* `Valuation.restrictToConvex_mul_inv_le_one` and `Valuation.one_lt_restrictToConvex_mul_inv` :
+  a restricted value divided by a kept value that dominates it lands at or below `1`, and strictly
+  above `1` when the domination is strict. The `_pow` forms specialize the divisor to `t ^ n`,
+  which is the shape Wedhorn's Lemma 7.44 extension indexes by.
 * `Valuation.supp_le_restrictToConvex_supp` : the support can only grow.
 * `Valuation.mk0_mem_of_inv_le_of_le` : `H` keeps every value bracketed by an attained value
   `≥ 1` and its inverse — so the characteristic values of `v` all survive the restriction.
@@ -402,23 +406,55 @@ theorem restrictToConvex_eq_zero_iff (v : Valuation R Γ₀) (H : ConvexSubgroup
     simp only [hr, false_or]
     exact ⟨fun h ↦ ⟨hr, h⟩, fun ⟨_, h⟩ ↦ h⟩
 
+/-- **Dividing a restricted value by a kept value that dominates it lands at or below `1`.**
+Only the order comparison and membership of the divisor are used; nothing here is special to a
+power. -/
+theorem restrictToConvex_mul_inv_le_one (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) {a b : R}
+    (hb : v b ≠ 0) (hmem : Units.mk0 (v b) hb ∈ H) (hab : v a ≤ v b) :
+    v.restrictToConvex H hH a * (v.restrictToConvex H hH b)⁻¹ ≤ 1 := by
+  have hbr : v.restrictToConvex H hH b ≠ 0 := by simp [restrictToConvex_apply_of_mem v H hH hb hmem]
+  have hle : v.restrictToConvex H hH a ≤ v.restrictToConvex H hH b := by
+    rw [restrictToConvex_le_iff]
+    exact Or.inr ⟨hbr, hab⟩
+  simpa using mul_inv_le_one_of_le₀ hle zero_le
+
 /-- Dividing a restricted value by a kept power that dominates it lands at or below `1`. This
 is the well-definedness bound of the extension `v(a/tⁿ) = v(a)·v(t)⁻ⁿ` in Wedhorn's Lemma 7.44,
 for the fixed exponent `n` the domination hypothesis `v a ≤ v (t ^ n)` is stated at. Nothing here
 lets `n` be raised: when `v t < 1` a larger exponent shrinks `v (t ^ n)` and can break that
-hypothesis. -/
+hypothesis.
+
+This is `restrictToConvex_mul_inv_le_one` at `b = t ^ n`; the power is what the extension's
+consumer indexes by, so it is named separately. -/
 theorem restrictToConvex_mul_inv_pow_le_one (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) {t a : R} {n : ℕ}
     (ht : v t ≠ 0) (hmem : Units.mk0 (v t) ht ∈ H) (ha : v a ≤ v (t ^ n)) :
     v.restrictToConvex H hH a * (v.restrictToConvex H hH t)⁻¹ ^ n ≤ 1 := by
-  have htr : v.restrictToConvex H hH t ≠ 0 := by simp [restrictToConvex_apply_of_mem v H hH ht hmem]
-  have hpow : v.restrictToConvex H hH a ≤ v.restrictToConvex H hH t ^ n := by
-    rw [← map_pow, restrictToConvex_le_iff]
-    exact Or.inr ⟨by simpa using pow_ne_zero n htr, ha⟩
-  simpa using mul_inv_le_one_of_le₀ hpow zero_le
+  have htn : v (t ^ n) ≠ 0 := v.map_pow t n ▸ pow_ne_zero n ht
+  have hmk : Units.mk0 (v (t ^ n)) htn = Units.mk0 (v t) ht ^ n := by ext; simp
+  have hmemn : Units.mk0 (v (t ^ n)) htn ∈ H := hmk ▸ pow_mem hmem n
+  have h := restrictToConvex_mul_inv_le_one v H hH htn hmemn ha
+  rwa [map_pow, ← inv_pow] at h
+
+/-- **A restricted value strictly dominating a kept value stays strictly above `1` after
+dividing by it.** As with the `≤` form, only the comparison and the divisor's membership matter. -/
+theorem one_lt_restrictToConvex_mul_inv (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
+    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) {a b : R}
+    (hb : v b ≠ 0) (hmem : Units.mk0 (v b) hb ∈ H) (hlt : v b < v a) :
+    1 < v.restrictToConvex H hH a * (v.restrictToConvex H hH b)⁻¹ := by
+  have ha : v a ≠ 0 := (zero_le.trans_lt hlt).ne'
+  have hmema : Units.mk0 (v a) ha ∈ H :=
+    mem_of_mem_of_le hH ha hmem (by simpa [← Units.val_le_val] using hlt.le)
+  have hbr : v.restrictToConvex H hH b ≠ 0 := by simp [restrictToConvex_apply_of_mem v H hH hb hmem]
+  have hlt' : v.restrictToConvex H hH b < v.restrictToConvex H hH a := by
+    rw [restrictToConvex_apply_of_mem v H hH hb hmem, restrictToConvex_apply_of_mem v H hH ha hmema]
+    simpa [← Units.val_lt_val] using hlt
+  rwa [← div_eq_mul_inv, one_lt_div₀ (zero_lt_iff.mpr hbr)]
 
 /-- A restricted value strictly dominating a kept power stays strictly above `1` after dividing
-by that power. This is the "the extension exceeds `1`" leg of Wedhorn's Lemma 7.44. -/
+by that power. This is the "the extension exceeds `1`" leg of Wedhorn's Lemma 7.44, and is
+`one_lt_restrictToConvex_mul_inv` at `b = t ^ n`. -/
 theorem one_lt_restrictToConvex_mul_inv_pow (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) {t a : R} {n : ℕ}
     (ht : v t ≠ 0) (hmem : Units.mk0 (v t) ht ∈ H) (hlt : v (t ^ n) < v a) :
@@ -426,15 +462,8 @@ theorem one_lt_restrictToConvex_mul_inv_pow (v : Valuation R Γ₀) (H : ConvexS
   have htn : v (t ^ n) ≠ 0 := v.map_pow t n ▸ pow_ne_zero n ht
   have hmk : Units.mk0 (v (t ^ n)) htn = Units.mk0 (v t) ht ^ n := by ext; simp
   have hmemn : Units.mk0 (v (t ^ n)) htn ∈ H := hmk ▸ pow_mem hmem n
-  have ha : v a ≠ 0 := (zero_le.trans_lt hlt).ne'
-  have hmema : Units.mk0 (v a) ha ∈ H :=
-    mem_of_mem_of_le hH ha hmemn (by simpa [← Units.val_le_val] using hlt.le)
-  have htr : v.restrictToConvex H hH t ≠ 0 := by simp [restrictToConvex_apply_of_mem v H hH ht hmem]
-  have hpow : v.restrictToConvex H hH t ^ n < v.restrictToConvex H hH a := by
-    rw [← map_pow, restrictToConvex_apply_of_mem v H hH htn hmemn,
-      restrictToConvex_apply_of_mem v H hH ha hmema]
-    simpa [← Units.val_lt_val] using hlt
-  rwa [inv_pow, ← div_eq_mul_inv, one_lt_div₀ (zero_lt_iff.mpr (pow_ne_zero n htr))]
+  have h := one_lt_restrictToConvex_mul_inv v H hH htn hmemn hlt
+  rwa [map_pow, ← inv_pow] at h
 
 /-- The support can only grow under the restriction: every zero of `v` is a zero of the
 restricted valuation, alongside the discarded values. Stated over a commutative ring because
