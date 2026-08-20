@@ -6,9 +6,8 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.LinearAlgebra.Eigenspace.JointEigenvector.Kolchin
-public import TauCeti.LinearAlgebra.ExtensionBasis
 public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.UpperUnitriangular.Nilpotent
-import Mathlib.LinearAlgebra.Dimension.Constructions
+import TauCeti.LinearAlgebra.ExtensionBasis
 import Mathlib.RingTheory.Nilpotent.Lemmas
 
 /-!

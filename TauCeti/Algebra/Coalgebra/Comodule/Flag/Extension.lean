@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.LinearAlgebra.Dimension.Constructions
 public import TauCeti.LinearAlgebra.ExtensionBasis
 public import TauCeti.Algebra.Coalgebra.Comodule.Flag.Basic
 public import TauCeti.Algebra.Coalgebra.Subcomodule.Induced

@@ -91,11 +91,15 @@ theorem extensionBasis_repr_castAdd_of_mem (p : Submodule R V) (bp : Basis (Fin 
   extensionBasis_repr_castAdd p bp bq ⟨x, hx⟩ i
 
 /-- A vector of the submodule has no second-block coordinates: this is the vanishing of the
-off-diagonal block. -/
+off-diagonal block.
+
+Not a `simp` lemma: `extensionBasis_repr_natAdd` above already is, so this left-hand side is not in
+`simp` normal form and marking it trips `simpNF`. Mathlib annotates its `sumQuot` counterparts the
+same way — `sumQuot_repr_inr` is `simp` and `sumQuot_repr_inr_of_mem` is not. -/
 theorem extensionBasis_repr_natAdd_of_mem (p : Submodule R V) (bp : Basis (Fin m) R p)
     (bq : Basis (Fin n) R (V ⧸ p)) (x : V) (hx : x ∈ p) (j : Fin n) :
     (extensionBasis p bp bq).repr x (Fin.natAdd m j) = 0 := by
-  rw [extensionBasis, Basis.repr_reindex_apply, finSumFinEquiv_symm_apply_natAdd,
-    Basis.sumQuot_repr_inr_of_mem _ _ _ hx]
+  rw [extensionBasis_repr_natAdd, Submodule.mkQ_apply,
+    (Submodule.Quotient.mk_eq_zero p).mpr hx, map_zero, Finsupp.coe_zero, Pi.zero_apply]
 
 end TauCeti
