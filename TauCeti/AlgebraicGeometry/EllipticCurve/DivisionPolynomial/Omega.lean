@@ -6,22 +6,25 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Invariant
+public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.NormEDS
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Universal
 public import TauCeti.NumberTheory.EllipticDivisibilitySequence.ReducedInvariant
 
 /-!
 # The omega family of division polynomials
 
-`ω n` is the bivariate polynomial giving the second (Jacobian) coordinate of scalar
-multiplication by `n` on a Weierstrass curve, completing the `(φ, ψ)` pair of Mathlib's
-division-polynomial API. This file defines `ω` and the 2-complement `ψc` of `ψ`, and proves
-the identity that pins `ω` down,
+`ω n` is the bivariate polynomial that the scalar-multiplication development identifies as the
+second (Jacobian) coordinate of multiplication by `n` on a Weierstrass curve — that
+identification is proved there, not here. This file supplies the polynomial itself, completing
+the `(φ, ψ)` pair of Mathlib's division-polynomial API: it defines `ω` and the 2-complement
+`ψc` of `ψ`, and proves the defining identity
 
 `2 ω n + a₁ φ n ψ n + a₃ (ψ n)³ = ψc n`,
 
-together with the value lemmas `ω_zero` and `ω_one`, the parity rules `ω_neg` and `ψc_neg`,
-the complement identity `ψ n * ψc n = ψ (2n)`, naturality in the coefficient ring, and the
-ellipticity of the `ψ` family itself.
+which pins down `2 ω n` in general and `ω` itself wherever `2` is a nonzerodivisor — the
+equation lemma `ω_def` is the unconditional handle. Alongside: the value lemmas `ω_zero` and
+`ω_one`, the parity rules `ω_neg` and `ψc_neg`, the complement identity `ψ n * ψc n = ψ (2n)`,
+and naturality in the coefficient ring for both families.
 
 ## Main definitions
 
@@ -31,10 +34,13 @@ ellipticity of the `ψ` family itself.
 ## Main results
 
 * `WeierstrassCurve.ω_spec`: `2 ω n + a₁ φ n ψ n + a₃ (ψ n)³ = ψc n`.
+* `WeierstrassCurve.ω_def`: the defining formula, as an equation lemma — the unexposed body's
+  handle for consumers, and the only one that determines `ω` where `2` is a zero divisor.
 * `WeierstrassCurve.ψ_mul_ψc`: `ψ n * ψc n = ψ (2n)`.
 * `WeierstrassCurve.ω_neg`: `ω (-n) = ω n + a₁ φ n ψ n + a₃ (ψ n)³`, proved over the
   universal curve — where `2` is a nonzerodivisor — and specialised.
-* `WeierstrassCurve.isEllipticSequence_ψ`: the `ψ` family is an elliptic sequence.
+* `WeierstrassCurve.map_ψc`, `.map_ω`, `.baseChange_ψc`, `.baseChange_ω`: naturality in the
+  coefficient ring, in both the ring-hom and the algebra-tower form of the `ψ`/`φ` siblings.
 
 ## Provenance
 
@@ -42,14 +48,24 @@ Ported from J. Xu and D. K. Angdinata's `LutzNagell/DivisionPolynomialOmega.lean
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main` at
 `1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declarations `ψc`, `ω`, `ω_spec`, `two_mul_ω`,
 `ψc_spec` (here `ψ_mul_ψc`, naming its left-hand side), `ω_zero`, `ω_one`, `ψc_neg`,
-`map_ω`, `universal_ω_neg`, `ω_neg` and `isEllSequence_ψ` (here `isEllipticSequence_ψ`,
-matching Mathlib's predicate name). That file's header reads
+`map_ω`, `universal_ω_neg` and `ω_neg`. That file's header reads
 `Authors: Junyan Xu, David Kurniadi Angdinata`; following this repository's convention for
 adapted material the upstream authorship is credited here rather than in the copyright
 header. The invariant-polynomial half of that source file is already in
 `DivisionPolynomial/Invariant.lean`; this file is the `ω` half, unblocked by
 `reducedInvarNum_eq_reducedInvarDenom_mul` (`ReducedInvariant.lean`), the port of the
-source's `redInvar_normEDS`.
+source's `redInvar_normEDS`. Its `isEllSequence_ψ` is ported separately, in
+`DivisionPolynomial/NormEDS.lean`, which needs none of the reduced-invariant theory.
+
+The specification realised here and the well-definedness argument behind `ω_neg` are both
+stated in the module docstring of pinned Mathlib's
+`Mathlib/AlgebraicGeometry/EllipticCurve/DivisionPolynomial/Basic.lean` (D. K. Angdinata):
+`ωₙ := (ψ₂ₙ / ψₙ - ψₙ(a₁φₙ + a₃ψₙ²)) / 2`, with `2` dividing that difference in the
+characteristic-zero universal ring and `ωₙ` its image under the universal morphism. This file
+discharges that docstring's `TODO: the bivariate polynomials ωₙ`. The remaining declarations
+with no source counterpart are the equation lemmas `ψc_def` and `ω_def` (the module system
+keeps both bodies unexposed, so each needs a named handle), `map_ψc`, and the two
+`baseChange_*` forms, which follow Mathlib's sibling `baseChange_ψ`/`baseChange_φ`.
 -/
 
 open Polynomial
@@ -65,18 +81,9 @@ noncomputable section
 
 open Affine (polynomial polynomialX polynomialY negPolynomial)
 
-/-- The `ψ` family is `normEDS` at the curve's division-polynomial parameters, stated at the
-level of functions for rewriting under function-valued arguments such as
-`IsEllipticNet.invarDenom`, where the per-application equation cannot fire. -/
-theorem ψ_eq_normEDS : W.ψ = normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) := rfl
-
-/-- The `ψ` family of division polynomials is an elliptic sequence. -/
-theorem isEllipticSequence_ψ : IsEllipticSequence W.ψ :=
-  isEllipticSequence_normEDS _ _ _
-
 /-- The complement of `ψ n` in `ψ (2n)`: the parameter-level `complEDS₂` at the curve's
 division-polynomial parameters. `ψ_mul_ψc` below is the identity it is named for. -/
-def ψc : ℤ → R[X][Y] := complEDS₂ W.ψ₂ (C W.Ψ₃) (C W.preΨ₄)
+protected def ψc : ℤ → R[X][Y] := complEDS₂ W.ψ₂ (C W.Ψ₃) (C W.preΨ₄)
 
 /-- The defining formula for `ψc`, at the level of functions. The definition body is not
 exposed, so this equation lemma is how a consumer in another module computes with it. -/
@@ -89,6 +96,16 @@ protected def ω (n : ℤ) : R[X][Y] :=
     ((CC W.a₁ * polynomialY W - polynomialX W) * C W.Ψ₃
       + 4 * polynomial W * (2 * polynomial W + C W.Ψ₂Sq))
   - complEDS₂Aux W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) n + negPolynomial W * W.ψ n ^ 3
+
+/-- The defining formula for `ω`. The definition body is not exposed, so this equation lemma is
+how a consumer in another module computes with it: `ω_spec` fixes only `2 * W.ω n`, which
+determines nothing where `2` is a zero divisor. Deliberately not `@[simp]`, for `ψc_def`'s
+reason. -/
+theorem ω_def (n : ℤ) : W.ω n =
+    reducedInvarDenom W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) n *
+      ((CC W.a₁ * polynomialY W - polynomialX W) * C W.Ψ₃
+        + 4 * polynomial W * (2 * polynomial W + C W.Ψ₂Sq))
+    - complEDS₂Aux W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) n + negPolynomial W * W.ψ n ^ 3 := (rfl)
 
 /-- **The defining identity of `ω`**:
 `2 ω n + a₁ φ n ψ n + a₃ (ψ n)³ = ψc n`. -/
@@ -113,22 +130,16 @@ theorem two_mul_ω (n : ℤ) :
 theorem ψ_mul_ψc (n : ℤ) : W.ψ n * W.ψc n = W.ψ (2 * n) :=
   normEDS_mul_complEDS₂ _ _ _ _
 
-/-- `ω` at `0` is `1`. -/
+/-- `ω` at `0` is `1`: the reduced denominator and `ψ 0` both vanish, and the auxiliary term
+contributes its value `-1`. -/
 @[simp] theorem ω_zero : W.ω 0 = 1 := by
-  simp only [WeierstrassCurve.ω, EuclideanDomain.zero_mod,
-    reducedInvarDenom_of_emod_six_eq_zero, EuclideanDomain.zero_div, complEDS_zero, mul_zero,
-    zero_add, normEDS_one, mul_one, zero_sub, Int.reduceNeg, normEDS_neg, zero_mul,
-    complEDS₂Aux_def, preNormEDS_neg, preNormEDS_two, preNormEDS_one, one_pow, Even.zero,
-    ↓reduceIte, sub_neg_eq_add, ψ_zero, ne_eq, OfNat.ofNat_ne_zero, not_false_eq_true, zero_pow,
-    add_zero]
+  rw [ω_def, reducedInvarDenom_zero, complEDS₂Aux_zero, ψ_zero]
+  ring
 
-/-- `ω` at `1` is `Y`, matching `ψ 1 = 1` and `φ 1 = X`. -/
+/-- `ω` at `1` is `Y`, matching `ψ 1 = 1` and `φ 1 = X`: the reduced denominator vanishes, the
+auxiliary term contributes `-ψ₂ = -polynomialY`, and `polynomialY + negPolynomial = Y`. -/
 @[simp] theorem ω_one : W.ω 1 = Y := by
-  simp only [WeierstrassCurve.ω, ψ₂, Int.reduceMod, reducedInvarDenom_of_emod_six_eq_one,
-    sub_self, EuclideanDomain.zero_div, complEDS_zero, mul_zero, Int.reduceAdd, normEDS_two,
-    zero_mul, normEDS_one, mul_one, complEDS₂Aux_def, Int.reduceSub, preNormEDS_neg,
-    preNormEDS_one, preNormEDS_two, one_pow, Int.not_even_one, ↓reduceIte, zero_sub,
-    ← Affine.Y_sub_polynomialY, ψ_one]
+  rw [ω_def, reducedInvarDenom_one, complEDS₂Aux_one, ψ_one, ψ₂, ← Affine.Y_sub_polynomialY]
   ring1
 
 /-- `ψc` is an even family. -/
@@ -165,13 +176,33 @@ private theorem universal_ω_neg (n : ℤ) :
   ring1
 
 open Universal in
-/-- The parity rule for `ω`. -/
+/-- The parity rule for `ω`, `@[simp]` like its `ψ`/`φ`/`ψc` counterparts: without it the
+negative index has no elimination route at all. -/
+@[simp]
 theorem ω_neg (n : ℤ) :
     W.ω (-n) = W.ω n + CC W.a₁ * W.φ n * W.ψ n + CC W.a₃ * W.ψ n ^ 3 := by
   rw [← W.map_specialize, map_ω, universal_ω_neg, map_φ, map_ω, map_ψ]
   simp
 
 end Map
+
+section BaseChange
+
+variable {S : Type*} [CommRing S] [Algebra R S] {A : Type*} [CommRing A] [Algebra R A]
+  [Algebra S A] [IsScalarTower R S A] {B : Type*} [CommRing B] [Algebra R B] [Algebra S B]
+  [IsScalarTower R S B] (f : A →ₐ[S] B)
+
+/-- `ψc` commutes with base change across an algebra homomorphism, in the form of Mathlib's
+`baseChange_ψ`. -/
+lemma baseChange_ψc (n : ℤ) : (W⁄B).ψc n = ((W⁄A).ψc n).map (mapRingHom f) := by
+  rw [← map_ψc, map_baseChange]
+
+/-- `ω` commutes with base change across an algebra homomorphism, in the form of Mathlib's
+`baseChange_φ`. -/
+lemma baseChange_ω (n : ℤ) : (W⁄B).ω n = ((W⁄A).ω n).map (mapRingHom f) := by
+  rw [← map_ω, map_baseChange]
+
+end BaseChange
 
 end
 
