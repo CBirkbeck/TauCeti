@@ -15,14 +15,18 @@ import Mathlib.Tactic.Field
 
 A change of variables `D : VariableChange K` carrying one integral Weierstrass model to another
 need not be integral itself: its scaling factor `D.u` is a unit of `K`, and `D.r`, `D.s`, `D.t` are
-elements of `K`. This file shows that as soon as `D.u` comes from a unit of `R`, the rest follows —
-`D` is the base change of a `VariableChange R`.
+elements of `K`. This file shows that when `R` is integrally closed in `K`, as soon as `D.u` comes
+from a unit of `R` the rest follows — `D` is the base change of a `VariableChange R`.
 
 ## Main results
 
-* `WeierstrassCurve.exists_variableChange_baseChange_eq_of_smul_eq`: if `D • W₁ = W₂` with `W₁` and
-  `W₂` integral and `D.u` the image of a unit of `R`, then `D = C₀.baseChange K` for some
-  `C₀ : VariableChange R`.
+* `WeierstrassCurve.VariableChange.exists_baseChange_eq_of_smul_eq`: for `R` integrally closed in
+  `K` (`IsIntegrallyClosedIn R K`), if `D • W₁ = W₂` with `W₁` and `W₂` integral over `R` and `D.u`
+  the image of a unit of `R`, then `D = C₀.baseChange K` for some `C₀ : VariableChange R`.
+
+The integral-closedness hypothesis is what the proof actually consumes. A discrete valuation ring
+with its fraction field is the intended application and satisfies it through
+`isIntegrallyClosed_iff_isIntegrallyClosedIn`, but no valuation is used anywhere below.
 
 ## How it is proved
 
@@ -61,14 +65,16 @@ Ported from FLT, https://github.com/ImperialCollegeLondon/FLT
 commit is FLT PR #1088, "Quadratic twist to split multiplicative reduction". The mathematics is
 unchanged: the same three polynomials, the same `linear_combination` certificates. The single
 66-line proof is split into the three integrality arguments plus their assembly, so that no
-declaration exceeds the length cap.
+declaration exceeds the length cap. Two hypotheses are weakened relative to the source, which
+states the descent for a discrete valuation ring: the integrality certificates need only
+`Algebra R K`, and the assembly needs only `IsIntegrallyClosedIn R K`.
 -/
 
 public section
 
 namespace WeierstrassCurve
 
-open IsDiscreteValuationRing IsDedekindDomain.HeightOneSpectrum
+namespace VariableChange
 
 variable (R : Type*) [CommRing R] {K : Type*} [Field K] [Algebra R K]
 
@@ -150,23 +156,26 @@ discrete-valuation-ring and fraction-field hypotheses come in. -/
 
 section Descent
 
-variable [IsDomain R] [IsDiscreteValuationRing R] [IsFractionRing R K]
+variable [IsIntegrallyClosedIn R K]
 
 /-- **A change of variables between two integral models whose scaling factor is a unit of `R` is
-defined over `R`.** The coordinates `r`, `s`, `t` are each integral over `R` — roots of monic
-polynomials read off the change-of-variables formulas for the `b₆`/`b₈`/`a₂`/`a₆`-invariants — and
-`R`, being a discrete valuation ring, is integrally closed. -/
-theorem exists_variableChange_baseChange_eq_of_smul_eq {W₁ W₂ : WeierstrassCurve K}
+the base change of a change of variables over `R`.** `R` is assumed integrally closed in `K`; `W₁`
+and `W₂` integral over `R`; and `D.u` the image of `u₀ : Rˣ`. The witness has that same `u₀` as its
+scaling factor. -/
+theorem exists_baseChange_eq_of_smul_eq {W₁ W₂ : WeierstrassCurve K}
     [IsIntegral R W₁] [IsIntegral R W₂] (D : VariableChange K) (hD : D • W₁ = W₂) (u₀ : Rˣ)
     (hau : algebraMap R K ↑u₀ = ↑D.u) : ∃ C₀ : VariableChange R, C₀.baseChange K = D := by
-  obtain ⟨rR, hrR⟩ := IsIntegrallyClosed.isIntegral_iff.mp (isIntegral_r_of_smul_eq R D hD u₀ hau)
+  obtain ⟨rR, hrR⟩ :=
+    IsIntegrallyClosedIn.isIntegral_iff.mp (isIntegral_r_of_smul_eq R D hD u₀ hau)
   obtain ⟨sR, hsR⟩ :=
-    IsIntegrallyClosed.isIntegral_iff.mp (isIntegral_s_of_smul_eq R D hD u₀ hau rR hrR)
+    IsIntegrallyClosedIn.isIntegral_iff.mp (isIntegral_s_of_smul_eq R D hD u₀ hau rR hrR)
   obtain ⟨tR, htR⟩ :=
-    IsIntegrallyClosed.isIntegral_iff.mp (isIntegral_t_of_smul_eq R D hD u₀ hau rR hrR)
+    IsIntegrallyClosedIn.isIntegral_iff.mp (isIntegral_t_of_smul_eq R D hD u₀ hau rR hrR)
   exact ⟨⟨u₀, rR, sR, tR⟩, VariableChange.ext (Units.ext hau) hrR hsR htR⟩
 
 end Descent
+
+end VariableChange
 
 end WeierstrassCurve
 
