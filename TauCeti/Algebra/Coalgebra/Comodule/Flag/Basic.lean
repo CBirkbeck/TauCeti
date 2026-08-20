@@ -59,9 +59,7 @@ variable [AddCommGroup M] [Module k M] [Comodule k H M]
 /-- **The coaction condition at a single index pins down that column of the coefficient matrix
 on and below the diagonal.** If the coaction of `b j` reduces, modulo the span of the basis
 vectors preceding `j`, to `b j ⊗ₜ 1`, then `coefficientMatrix b i j` is `1` at `i = j` and `0`
-at every row `i` below it.
-
-Only the coaction condition at `j` is used, not the condition at every index. -/
+at every row `i` below it. -/
 private theorem coefficientMatrix_apply_of_le [One H] (b : Basis (Fin n) k M) {i j : Fin n}
     (hj : TensorProduct.map (b.flag j.castSucc).mkQ (LinearMap.id : H →ₗ[k] H)
         (coact (C := H) (b j)) = Submodule.Quotient.mk (b j) ⊗ₜ[k] (1 : H))
