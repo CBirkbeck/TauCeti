@@ -78,8 +78,14 @@ describes a single integral closure of that image, and each additional layer enl
 generating subring, so the objects agree only after an identification theorem that is not
 available here. Their shape buys closedness of `A_U⁺`, which their power-boundedness argument then
 uses; that cost is deferred rather than avoided, and is what the openness note above
-records. No proof was copied and
-nothing here is ported.
+records.
+
+The absorption results are adapted from the same AINTLIB file:
+`locSubring_mul_idealOfDefinition_mem_adjoin_plus` and `locIdealImage_one_le_adjoin_plus` follow
+`RationalLocData.locNhd_one_subset_locPlusSubring` and the neighbourhood step of
+`RationalLocData.completedPlusSubringBase_isOpen`. Their openness
+proof itself is **not** adapted: it closes by `Subring.isClosed_topologicalClosure`, which their
+extra closure layer supplies and this file's definition does not. No proof text was copied.
 
 ## References
 
@@ -314,14 +320,7 @@ Two facts carry it. Every element of `I` is topologically nilpotent
 (`TauCeti.Huber.PairOfDefinition.isTopologicallyNilpotent_of_mem_idealOfDefinition`) and so lies in
 `A⁺`, which is open and integrally closed
 (`TauCeti.Huber.IsRingOfIntegralElements.mem_of_isTopologicallyNilpotent`); and `I` is an ideal
-*of `A₀`*, so a coefficient contributed by `A₀` can be pushed onto the numerator instead.
-
-The second fact is what a naive argument misses, and it dictates the shape of the proof. Running
-over `D` with the predicate `c · I ⊆ A⁺[T/s]` breaks at the multiplicative step, because `A₀ ⊄ A⁺`
-leaves `c` itself outside `A⁺[T/s]`. So the proof runs instead over the transporter of
-`W = {z | z · I ⊆ A⁺[T/s]}` into itself: unlike `W`, that *is* a subring, so
-`TauCeti.Huber.PairOfDefinition.locSubring_le_iff` decides it on the generators of `D`, where the
-two facts apply directly. Multiplying by `1` recovers `W`. -/
+*of `A₀`*, so a coefficient contributed by `A₀` can be pushed onto the numerator instead. -/
 theorem locSubring_mul_idealOfDefinition_mem_adjoin_plus [NonarchimedeanRing A]
     (P : PairOfDefinition A) (Aplus : Subring A) (hAplus : IsRingOfIntegralElements Aplus)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
@@ -329,6 +328,10 @@ theorem locSubring_mul_idealOfDefinition_mem_adjoin_plus [NonarchimedeanRing A]
     (hi : i ∈ P.idealOfDefinition) :
     c * algebraMap A S (i : A) ∈
       Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S)) := by
+  -- Running over `D` with the predicate `c · I ⊆ A⁺[T/s]` breaks at the multiplicative step:
+  -- `A₀ ⊄ A⁺` leaves `c` itself outside `A⁺[T/s]`. So run instead over the transporter of
+  -- `W = {z | z · I ⊆ A⁺[T/s]}` into itself — unlike `W`, that is a subring, so `locSubring_le_iff`
+  -- decides it on the generators of `D`. Multiplying by `1` recovers `W`.
   have hdiv : ∀ t ∈ T,
       (divBy t s : S) ∈ Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S)) :=
     fun t ht ↦ Algebra.subset_adjoin ⟨⟨t, ht⟩, rfl⟩
