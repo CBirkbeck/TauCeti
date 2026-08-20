@@ -52,8 +52,9 @@ Adapted from the AINTLIB `NagellLutz` project (`github.com/CBirkbeck/AINTLIB`, A
 `shortCurveQ_equation_iff` (`:58`) and `shortCurveZ_delta` (`:63`, not ported — see above).
 
 Three departures. The source fixes `ℤ` and `ℚ`; here the construction needs only `Zero R`
-(`WeierstrassCurve` is a bare structure) and `map_shortCurve` relates the two, so the `ℤ → ℚ` pair of the classical
-statement is one definition and a base change rather than two definitions. The source's ten
+(`WeierstrassCurve` is a bare structure), and `map_shortCurve` relates the two — so the `ℤ → ℚ`
+pair of the classical statement is one definition plus a base change, not two definitions.
+The source's ten
 `@[simp]` coefficient lemmas — `shortCurve{Z,Q}_a₁` through `_a₆` — collapse to four here. Six of
 the ten are `a₁ = a₂ = a₃ = 0` stated once for each of the source's two curves; over one general
 ring those become three, of which `a₂` is already Mathlib's simp-tagged `a₂_of_isShortNF`, leaving
