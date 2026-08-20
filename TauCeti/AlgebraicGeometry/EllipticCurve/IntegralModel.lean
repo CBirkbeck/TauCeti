@@ -48,7 +48,7 @@ which is why they are stated after it rather than beside it.
 That file is where this repository keeps its `VariableChange` API, and the statement below is about
 `VariableChange.baseChange`, so it would sit there naturally — except that the proof needs
 `WeierstrassCurve.IsIntegral` and `integralModel`, i.e. Mathlib's `EllipticCurve.Reduction` with its
-valuation and discrete-valuation-ring machinery. `VariableChange.lean` currently imports only
+valuation machinery. `VariableChange.lean` currently imports only
 `Mathlib.AlgebraicGeometry.EllipticCurve.VariableChange`, and three modules import it; putting the
 descent there would push the reduction cone onto all of them. The topic here is integral models, so
 the file is named for them.
@@ -151,8 +151,10 @@ private theorem isIntegral_t_of_smul_eq {W₁ W₂ : WeierstrassCurve K} [IsInte
 
 /-! ### Assembly
 
-Pulling the three roots back into `R` needs `R` integrally closed in `K`, which is where the
-discrete-valuation-ring and fraction-field hypotheses come in. -/
+Pulling the three roots back into `R` is exactly `IsIntegrallyClosedIn R K`, and that is the only
+hypothesis this section adds. A discrete valuation ring together with its fraction field is the
+intended way to obtain it — see `isIntegrallyClosed_iff_isIntegrallyClosedIn` — but nothing here
+requires a valuation, and `K` need not be a fraction field. -/
 
 section Descent
 
