@@ -61,10 +61,20 @@ definitions involved, and belongs upstream once its consumers are in place.
 
 Ported from FLT, https://github.com/ImperialCollegeLondon/FLT
 @ `bc2fe8ff7396469a16c2a6d51d6117f5825d93a0` (Apache-2.0), file
-`FLT/Mathlib/AlgebraicGeometry/EllipticCurve/Reduction.lean`, declaration
-`WeierstrassCurve.isMinimal_of_valuation_c₄_eq_one`, by Kevin Buzzard. Statement and proof are
-taken unchanged; only the section's variable block is restated and the `open`s are narrowed to
-Mathlib's own `Minimal` section, since this file carries no other declarations.
+`FLT/Mathlib/AlgebraicGeometry/EllipticCurve/Reduction.lean`, by Kevin Buzzard — the source commit
+is FLT PR #1088, "Quadratic twist to split multiplicative reduction". Four declarations are taken
+from it:
+
+* `isMinimal_of_valuation_c₄_eq_one`;
+* `valuation_Δ_aux_smul_le`;
+* `valuation_Δ_eq_of_isMinimal_smul`;
+* `valuation_u_eq_one_of_isMinimal_smul`.
+
+Statements and proofs are taken unchanged, with three deliberate divergences: the section's
+variable block is restated here; the `open`s are narrowed to those of Mathlib's own `Minimal`
+section; and `valuation_Δ_aux_smul_le` is **private** here where the source exports it, because it
+is phrased through the internal `valuation_Δ_aux` rather than the ordinary valuation and exists only
+to serve the comparison below.
 -/
 
 public section
@@ -103,8 +113,10 @@ the same curve therefore pin each other: each is at least as good as the other, 
 valuations agree, and the change of variables between them can only scale `Δ` by a unit. -/
 
 /-- **No integral change of variables increases the discriminant valuation of a minimal model.**
-This is the maximality field of `IsMinimal`, with the `MaximalFor` comparison discharged. -/
-theorem valuation_Δ_aux_smul_le {W : WeierstrassCurve K} [hm : IsMinimal R W]
+This is the maximality field of `IsMinimal`, with the `MaximalFor` comparison discharged. Kept
+private: it is stated through `valuation_Δ_aux`, Mathlib's internal `{v // v ≤ 1}` wrapper, whereas
+the results below speak of the ordinary valuation. -/
+private theorem valuation_Δ_aux_smul_le {W : WeierstrassCurve K} [hm : IsMinimal R W]
     (D : VariableChange K) (hint : IsIntegral R (D • W)) :
     valuation_Δ_aux R (D • W) ≤ valuation_Δ_aux R ((1 : VariableChange K) • W) :=
   (le_total (valuation_Δ_aux R ((1 : VariableChange K) • W)) (valuation_Δ_aux R (D • W))).elim
@@ -118,12 +130,10 @@ theorem valuation_Δ_eq_of_isMinimal_smul {W₁ W₂ : WeierstrassCurve K} [IsMi
     valuation K (maximalIdeal R) W₂.Δ = valuation K (maximalIdeal R) W₁.Δ := by
   rw [← valuation_Δ_aux_eq_of_isIntegral R W₂, ← valuation_Δ_aux_eq_of_isIntegral R W₁]
   refine le_antisymm (Subtype.coe_le_coe.mpr ?_) (Subtype.coe_le_coe.mpr ?_)
-  · have hsub := valuation_Δ_aux_smul_le R D
-      (show IsIntegral R (D • W₁) by rw [hD]; infer_instance)
+  · have hsub := valuation_Δ_aux_smul_le R D (by rw [hD]; infer_instance)
     rwa [hD, one_smul] at hsub
   · have hW₁eq : W₁ = D⁻¹ • W₂ := by rw [← hD, inv_smul_smul]
-    have hsub := valuation_Δ_aux_smul_le R D⁻¹
-      (show IsIntegral R (D⁻¹ • W₂) by rw [← hW₁eq]; infer_instance)
+    have hsub := valuation_Δ_aux_smul_le R D⁻¹ (by rw [← hW₁eq]; infer_instance)
     rwa [← hW₁eq, one_smul] at hsub
 
 /-- **The scaling factor of a change of variables between two minimal models of an elliptic curve
