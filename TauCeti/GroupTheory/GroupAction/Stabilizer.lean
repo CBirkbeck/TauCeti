@@ -9,8 +9,8 @@ public import Mathlib.GroupTheory.GroupAction.Basic
 public import Mathlib.GroupTheory.Index
 public import Mathlib.GroupTheory.QuotientGroup.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
-public import TauCeti.Algebra.Group.Subgroup.Pointwise
-public import TauCeti.GroupTheory.QuotientGroup.Basic
+import TauCeti.Algebra.Group.Subgroup.Pointwise
+import TauCeti.GroupTheory.QuotientGroup.Basic
 
 /-!
 # Cardinality of stabilisers under the two standard transports

@@ -289,11 +289,14 @@ theorem orbitOfCosetTranslate_eq_iff {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ
 that translate `p` into the same orbit as `q` does, times the order of the stabiliser of `q`
 inside `stabilizer ℋ p`, is the order of `stabilizer ℋ p`.
 
-Stated for an arbitrary class `q`, not for the class of a chosen representative: the proof never
-uses one, so a consumer holding a class need not do `QuotientGroup.induction_on` first.
+`q` ranges over arbitrary classes rather than classes of a chosen representative, so a consumer
+already holding a class can apply this directly, with no `QuotientGroup.induction_on` step and no
+representative to discharge afterwards. Use `..._inv_smul` below when a representative is what is
+in hand instead.
 
-No finiteness is needed: `MulAction.index_stabilizer` and `Subgroup.index_mul_card` both hold
-under `Nat.card`'s convention that an infinite type has cardinality `0`. -/
+Carries no finiteness hypothesis, and holds verbatim in the infinite case under `Nat.card`'s
+convention that an infinite type has cardinality `0` — so it may be used without first
+establishing that any of the three groups is finite. -/
 theorem card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_coset {𝒢 ℋ : Subgroup G}
     (hle : 𝒢 ≤ ℋ) (p : α) (q : ℋ ⧸ 𝒢.subgroupOf ℋ) :
     Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
@@ -318,9 +321,11 @@ stabiliser of the translate `h⁻¹ • p` **inside `𝒢`**, is the order of th
 The orbit-indexed form, which is what a consumer summing over orbits wants, is
 `card_fiber_orbitOfCosetTranslate_mul_cardStabilizerOnOrbit` below.
 
-Composition of `card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_coset` with
-`card_stabilizer_coset_eq_card_stabilizer_inv_smul`, the weight then carried from
-`𝒢.subgroupOf ℋ` down to `𝒢` by `TauCeti.card_stabilizer_subgroupOf`. -/
+This is the form to reach for when a representative `h : ℋ` is what is in hand rather than a
+class, and when the stabiliser weight is wanted in `𝒢` itself rather than in `𝒢.subgroupOf ℋ` —
+the shape a coset-indexed sum over `𝒢`-stabilisers needs. For an arbitrary class, and for the
+weight in `𝒢.subgroupOf ℋ`, use
+`card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_coset` above. -/
 theorem card_fiber_orbitOfCosetTranslate_mul_card_stabilizer_inv_smul {𝒢 ℋ : Subgroup G}
     (hle : 𝒢 ≤ ℋ) (p : α) (h : ℋ) :
     Nat.card {r : ℋ ⧸ 𝒢.subgroupOf ℋ // orbitOfCosetTranslate p r =
