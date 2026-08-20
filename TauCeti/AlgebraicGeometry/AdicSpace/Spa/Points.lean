@@ -66,8 +66,7 @@ Wedhorn states the proposition for maximal ideals; the proof needs only primalit
 theorem exists_mem_spa_supp_eq (Aplus : Subring A) (𝔭 : Ideal A) [𝔭.IsPrime]
     (h𝔭 : IsOpen (𝔭 : Set A)) : ∃ v ∈ spa Aplus, supp v = 𝔭 := by
   refine ⟨trivialSection ⟨𝔭, ‹_›⟩, (mem_spa_iff Aplus _).mpr ⟨?_, fun a _ ↦ ?_⟩, ?_⟩
-  · rw [trivialSection_def]
-    exact (isContinuous_ofValuation_iff _).mpr (isContinuous_trivialValuation h𝔭)
+  · exact (isContinuous_ofValuation_iff _).mpr (isContinuous_trivialValuation h𝔭)
   · exact (trivialSection_vle_iff _ a 1).mpr
       (Or.inr ((Ideal.ne_top_iff_one 𝔭).mp ‹𝔭.IsPrime›.ne_top))
   · rw [← suppFun_asIdeal, suppFun_trivialSection]
