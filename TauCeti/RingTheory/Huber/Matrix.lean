@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import Mathlib.LinearAlgebra.Matrix.Module
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import TauCeti.RingTheory.Huber.PowerBounded
 public import TauCeti.Topology.Algebra.Nonarchimedean.GeometricSeries
@@ -15,30 +16,70 @@ public import TauCeti.Topology.Algebra.Nonarchimedean.GeometricSeries
 Over a complete nonarchimedean ring, `1 - B` is invertible as soon as every entry of `B` is
 topologically nilpotent, and consequently a family satisfying `yᵢ = ∑ⱼ Bᵢⱼ • yⱼ` vanishes.
 
-The module the family lives in carries **no topology**: the whole topological input is the
-invertibility of `1 - B`, after which the conclusion is linear algebra. That is what makes this
-usable where the module is an abstract subquotient.
+The vanishing argument is split from its topological input. Once `1 - B` is a unit the conclusion
+is pure algebra, and `TauCeti.Huber.eq_zero_of_isUnit_one_sub` states it that way: the module `P`
+carries **no topology**, which is what lets it be applied where `P` is an abstract subquotient.
 
 ## Main results
 
+* `TauCeti.Huber.eq_zero_of_isUnit_one_sub`: the algebraic core — a family fixed by `B` vanishes
+  as soon as `1 - B` is a unit. No topology on `P`, and none on `A` beyond what `B` needs.
 * `TauCeti.Huber.isTopologicallyNilpotent_one_sub_det_one_sub`: `1 - det (1 - B)` is topologically
   nilpotent.
 * `TauCeti.Huber.isUnit_one_sub_of_isTopologicallyNilpotent_entries`: hence `1 - B` is a unit.
-* `TauCeti.Huber.eq_zero_of_forall_eq_sum_smul`: a family fixed by such a `B` is zero.
+* `TauCeti.Huber.eq_zero_of_forall_eq_sum_smul`: the two combined.
 
 ## References
 
 * [S. Bosch, U. Güntzer and R. Remmert, *Non-Archimedean Analysis*][bosch_guntzer_remmert],
   §3.7.2/1, where this is the algebraic engine behind closedness of finitely generated submodules.
+
+## Provenance
+
+AINTLIB (`github.com/CBirkbeck/AINTLIB` @ `37bbdaeb9`, Apache-2.0) has all three of the
+topological statements in `projects/AdicSpaces/Adic spaces/Bounded.lean` —
+`IsTopologicallyNilpotent.one_sub_det_one_sub_matrix` (:666),
+`IsTopologicallyNilpotent.isUnit_one_sub_matrix` (:704) and
+`eq_zero_of_forall_eq_sum_topNilp_smul` (:740) — and takes **the same route**: lift to the
+power-bounded subring, reduce modulo the topologically nilpotent ideal, apply `RingHom.map_det`,
+then `Matrix.isUnit_iff_isUnit_det`. This module was written against this repository's own API and
+compared afterwards; since the routes coincide it should be read as a re-derivation of that
+argument rather than an independent one. Nothing was copied: the names differ throughout, the
+hypotheses here are the plain nonarchimedean bundle rather than AINTLIB's section variables, the
+vanishing step goes through Mathlib's `Matrix.Module` action, and the algebraic core is split out,
+which AINTLIB does not do.
 -/
 
 public section
 
+open scoped Matrix.Module
+
 namespace TauCeti.Huber
 
+/-! ### The algebraic core -/
+
+/-- **Nakayama once `1 - B` is known to be a unit.** A family with `yᵢ = ∑ⱼ Bᵢⱼ • yⱼ` is killed by
+`1 - B` under the `Matrix n n A`-action on `n → P`, so invertibility of `1 - B` forces `y = 0`.
+
+Nothing topological appears: `P` carries no topology, and `A` is an arbitrary commutative ring.
+The topological content of this file is entirely in producing `hU`. -/
+theorem eq_zero_of_isUnit_one_sub {A : Type*} [CommRing A] {n : Type*} [Fintype n] [DecidableEq n]
+    {P : Type*} [AddCommGroup P] [Module A P] {B : Matrix n n A} (hU : IsUnit (1 - B))
+    {y : n → P} (hy : ∀ i, y i = ∑ j, B i j • y j) : y = 0 := by
+  have hrel : (1 - B) • y = 0 := by
+    funext i
+    simp only [Matrix.Module.smul_apply, Matrix.sub_apply, sub_smul, Finset.sum_sub_distrib,
+      Matrix.one_apply, ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true,
+      one_smul, Pi.zero_apply]
+    rw [← hy i, sub_self]
+  obtain ⟨U, hUeq⟩ := hU
+  simpa [smul_smul, ← hUeq, ← mul_smul] using
+    congrArg (fun v ↦ (↑U⁻¹ : Matrix n n A) • v) hrel
+
+/-! ### The topological input -/
+
 variable {A : Type*} [CommRing A] [UniformSpace A] [T2Space A] [CompleteSpace A]
-  [IsUniformAddGroup A] [NonarchimedeanRing A]
-  {n : Type*} [Fintype n] [DecidableEq n]
+  [IsUniformAddGroup A] [NonarchimedeanRing A] {n : Type*} [Fintype n] [DecidableEq n]
 
 /-- The entries of `B`, viewed in `A°`. Topologically nilpotent elements are power-bounded, so
 this is well defined, and it is what puts `B` inside the ideal `A°°` where the determinant
@@ -57,7 +98,6 @@ theorem isTopologicallyNilpotent_one_sub_det_one_sub {B : Matrix n n A}
     IsTopologicallyNilpotent (1 - (1 - B).det) := by
   set I := topologicallyNilpotentIdeal A with hI
   set B' := toPowerBoundedMatrix B hB with hB'
-  -- Modulo `A°°` the matrix `1 - B'` is the identity, so its determinant is `1`.
   have hmap : (Ideal.Quotient.mk I).mapMatrix (1 - B') = 1 := by
     ext i j
     have hzero : Ideal.Quotient.mk I (B' i j) = 0 :=
@@ -66,7 +106,6 @@ theorem isTopologicallyNilpotent_one_sub_det_one_sub {B : Matrix n n A}
       Matrix.one_apply, apply_ite (Ideal.Quotient.mk I)]
   have hmod : Ideal.Quotient.mk I (1 - B').det = 1 := by
     rw [RingHom.map_det, hmap, Matrix.det_one]
-  -- So `1 - det (1 - B')` lies in `A°°`, and `A°°` is topological nilpotence.
   have hmem : (1 : powerBoundedSubring A) - (1 - B').det ∈ I := by
     rw [← Ideal.Quotient.eq_zero_iff_mem, map_sub, hmod, map_one, sub_self]
   have hcoemap : (powerBoundedSubring A).subtype.mapMatrix (1 - B') = 1 - B := by
@@ -74,9 +113,8 @@ theorem isTopologicallyNilpotent_one_sub_det_one_sub {B : Matrix n n A}
     simp [RingHom.mapMatrix_apply, Matrix.map_apply, Matrix.sub_apply, Matrix.one_apply,
       hB', toPowerBoundedMatrix, apply_ite ((↑) : powerBoundedSubring A → A)]
   have hcoe : ((1 - B').det : A) = (1 - B).det := by
-    rw [show (((1 - B').det : powerBoundedSubring A) : A)
-      = (powerBoundedSubring A).subtype (1 - B').det from rfl,
-      RingHom.map_det, hcoemap]
+    simpa only [← RingHom.map_det, Subring.coe_subtype] using
+      congrArg Matrix.det hcoemap
   simpa [hcoe] using (mem_topologicallyNilpotentIdeal.mp hmem)
 
 /-- **`1 - B` is invertible when every entry of `B` is topologically nilpotent.** The determinant
@@ -89,29 +127,13 @@ theorem isUnit_one_sub_of_isTopologicallyNilpotent_entries {B : Matrix n n A}
 
 omit [DecidableEq n] in
 /-- **Nakayama for topologically nilpotent entries.** If every entry of `B` is topologically
-nilpotent and `yᵢ = ∑ⱼ Bᵢⱼ • yⱼ` for every `i`, then every `yᵢ` vanishes.
-
-`P` carries no topology: `1 - B` is a unit by the statement above, and applying its inverse to the
-relation `∑ⱼ (1 - B)ᵢⱼ • yⱼ = 0` is pure linear algebra. -/
+nilpotent and `yᵢ = ∑ⱼ Bᵢⱼ • yⱼ` for every `i`, then every `yᵢ` vanishes. This is
+`TauCeti.Huber.eq_zero_of_isUnit_one_sub` with its hypothesis discharged. -/
 theorem eq_zero_of_forall_eq_sum_smul {P : Type*} [AddCommGroup P] [Module A P]
     {B : Matrix n n A} (hB : ∀ i j, IsTopologicallyNilpotent (B i j))
     {y : n → P} (hy : ∀ i, y i = ∑ j, B i j • y j) (k : n) : y k = 0 := by
   classical
-  obtain ⟨U, hU⟩ := isUnit_one_sub_of_isTopologicallyNilpotent_entries hB
-  -- The relation says `(1 - B)` kills `y` in the sense of the matrix action on `n → P`.
-  have hrel : ∀ i, ∑ j, (1 - B) i j • y j = 0 := by
-    intro i
-    simp only [Matrix.sub_apply, sub_smul, Finset.sum_sub_distrib, Matrix.one_apply,
-      ite_smul, zero_smul, Finset.sum_ite_eq, Finset.mem_univ, ite_true, one_smul]
-    rw [← hy i, sub_self]
-  -- Apply the inverse: `y k = ∑ⱼ (U⁻¹ (1 - B))ₖⱼ • yⱼ`, and the inner sums all vanish.
-  have hinv : (↑U⁻¹ : Matrix n n A) * (1 - B) = 1 := by rw [← hU]; exact U.inv_mul
-  calc y k = ∑ j, (1 : Matrix n n A) k j • y j := by
-        simp [Matrix.one_apply, ite_smul]
-    _ = ∑ j, ((↑U⁻¹ : Matrix n n A) * (1 - B)) k j • y j := by rw [hinv]
-    _ = ∑ i, (↑U⁻¹ : Matrix n n A) k i • ∑ j, (1 - B) i j • y j := by
-        simp_rw [Matrix.mul_apply, Finset.sum_smul, ← smul_smul, Finset.smul_sum]
-        exact Finset.sum_comm
-    _ = 0 := by simp only [hrel, smul_zero, Finset.sum_const_zero]
+  have := eq_zero_of_isUnit_one_sub (isUnit_one_sub_of_isTopologicallyNilpotent_entries hB) hy
+  rw [this, Pi.zero_apply]
 
 end TauCeti.Huber
