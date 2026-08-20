@@ -610,6 +610,9 @@ theorem restrictedMvPowerSeriesSubmoduleMap_surjective {k : ℕ} {A M N : Type*}
   obtain ⟨f, hfg, hf⟩ := TauCeti.exists_lift_tendsto_cofinite_nhds φ hsurj hopen
     (fun s ↦ ((g : MvPowerSeries (Fin k) N) : (Fin k →₀ ℕ) → N) s)
     (isRestricted_iff.mp (mem_restrictedMvPowerSeriesSubmodule.mp g.2))
+  -- `MvPowerSeries (Fin k) M` is a plain `def` for `(Fin k →₀ ℕ) → M`, and the lift `f` is produced
+  -- at the bare function type. The `show` is what makes it elaborate as a series so that
+  -- `IsRestricted` applies — the file's standing idiom, documented at `IsRestricted.map`.
   refine ⟨⟨show MvPowerSeries (Fin k) M from f,
       mem_restrictedMvPowerSeriesSubmodule.mpr (isRestricted_iff.mpr hf)⟩,
     restrictedMvPowerSeriesSubmodule_ext fun s ↦ ?_⟩

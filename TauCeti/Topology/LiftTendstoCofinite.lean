@@ -5,11 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Order.Filter.CountablyGenerated
 public import Mathlib.Order.Filter.Cofinite
-public import Mathlib.Order.Filter.AtTopBot.Basic
-public import Mathlib.Data.Nat.Find
 public import Mathlib.Topology.Basic
+import Mathlib.Data.Nat.Find
 
 /-!
 # Lifting a convergent family along a surjection
@@ -89,7 +87,13 @@ neighbourhood filter of `m₀` into that of `n₀`, then any family tending to `
 
 Pointwise lifting is surjectivity alone; the statement is that a *single* choice of lifts can be
 made to converge. Note that `IsOpenMap φ` supplies the filter hypothesis only together with
-`φ m₀ = n₀`; openness by itself places the images around `φ m₀`, not around `n₀`. -/
+`φ m₀ = n₀`; openness by itself places the images around `φ m₀`, not around `n₀`.
+
+**Two countability hypotheses are essential**, and both are instance arguments rather than
+explicit ones. `[(𝓝 m₀).IsCountablyGenerated]` is what produces the antitone basis the lifts are
+drawn from, and `[Countable ι]` — from the variable block — is what supplies the injection
+`ι ↪ ℕ` that caps the construction. Neither is bookkeeping: without the first there is no
+sequence of neighbourhoods to index, and without the second the cap has nothing to grow along. -/
 theorem exists_lift_tendsto_cofinite_nhds {m₀ : M} {n₀ : N} [(𝓝 m₀).IsCountablyGenerated]
     (φ : M → N) (hsurj : Function.Surjective φ) (hmap : 𝓝 n₀ ≤ Filter.map φ (𝓝 m₀))
     (g : ι → N) (hg : Tendsto g (Filter.cofinite : Filter ι) (𝓝 n₀)) :
