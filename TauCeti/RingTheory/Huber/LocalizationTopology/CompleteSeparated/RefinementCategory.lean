@@ -134,8 +134,8 @@ theorem Presentation.restrictionHom_eq {p q : Presentation P} (h : p ≤ q) (r :
 @[simp]
 theorem Presentation.restrictionHom_refl (p : Presentation P) :
     Presentation.restrictionHom (le_refl p) = 𝟙 p.completionLocObj := by
-  rw [Presentation.restrictionHom_eq (r := 1) (hr := p.refinedBy_witness_one.1)
-    (hT := p.refinedBy_witness_one.2)]
+  rw [Presentation.restrictionHom_eq (r := 1) (hr := p.cofactor_one.1)
+    (hT := p.cofactor_one.2)]
   exact restrictionObjHom_self P p.num p.den _ p.hasDenominatorPower
 
 /-- Restriction morphisms compose along composite refinements. -/
@@ -147,8 +147,8 @@ theorem Presentation.restrictionHom_comp {p q w : Presentation P} (h₁ : p ≤ 
   obtain ⟨r₂, hr₂, hT₂⟩ := Presentation.le_def.mp h₂
   rw [Presentation.restrictionHom_eq h₁ r hr hT, Presentation.restrictionHom_eq h₂ r₂ hr₂ hT₂,
     Presentation.restrictionHom_eq (h₁.trans h₂) (r * r₂)
-      (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).1
-      (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).2]
+      (Presentation.cofactor_mul hr hT hr₂ hT₂).1
+      (Presentation.cofactor_mul hr hT hr₂ hT₂).2]
   exact restrictionObjHom_comp_restrictionObjHom P p.num p.den _ p.hasDenominatorPower q.num
     q.den _ q.hasDenominatorPower r hr hT w.num w.den _ w.hasDenominatorPower r₂ hr₂ hT₂
 

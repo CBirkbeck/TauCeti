@@ -110,13 +110,15 @@ structure Presentation (P : PairOfDefinition A) where
 def Presentation.RefinedBy (p q : Presentation P) : Prop :=
   ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num
 
-/-- The witness facts for the trivial refinement, with cofactor `1`. -/
-theorem Presentation.refinedBy_witness_one (p : Presentation P) :
+/-- **`1` is a cofactor from `p` to itself**: its denominator equation and numerator
+condition both hold trivially. -/
+theorem Presentation.cofactor_one (p : Presentation P) :
     p.den = p.den * 1 ∧ ∀ t ∈ p.num, t * 1 ∈ p.num :=
   ⟨(mul_one _).symm, fun t ht ↦ by rwa [mul_one]⟩
 
-/-- The witness facts for a composite refinement: the cofactors multiply. -/
-theorem Presentation.refinedBy_witness_mul {p q w : Presentation P} {r r₂ : A}
+/-- **Cofactors compose by multiplication**: if `r` is a cofactor from `p` to `q` and `r₂` one
+from `q` to `w`, then `r * r₂` is a cofactor from `p` to `w`. -/
+theorem Presentation.cofactor_mul {p q w : Presentation P} {r r₂ : A}
     (hr : q.den = p.den * r) (hT : ∀ t ∈ p.num, t * r ∈ q.num)
     (hr₂ : w.den = q.den * r₂) (hT₂ : ∀ t ∈ q.num, t * r₂ ∈ w.num) :
     w.den = p.den * (r * r₂) ∧ ∀ t ∈ p.num, t * (r * r₂) ∈ w.num :=
@@ -125,15 +127,15 @@ theorem Presentation.refinedBy_witness_mul {p q w : Presentation P} {r r₂ : A}
 
 /-- Every presentation refines itself, with cofactor `1`. -/
 theorem Presentation.RefinedBy.refl (p : Presentation P) : p.RefinedBy p :=
-  ⟨1, p.refinedBy_witness_one.1, p.refinedBy_witness_one.2⟩
+  ⟨1, p.cofactor_one.1, p.cofactor_one.2⟩
 
 /-- Refinements compose: the cofactors multiply. -/
 theorem Presentation.RefinedBy.trans {p q w : Presentation P} (hpq : p.RefinedBy q)
     (hqw : q.RefinedBy w) : p.RefinedBy w := by
   obtain ⟨r, hr, hT⟩ := hpq
   obtain ⟨r₂, hr₂, hT₂⟩ := hqw
-  exact ⟨r * r₂, (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).1,
-    (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).2⟩
+  exact ⟨r * r₂, (Presentation.cofactor_mul hr hT hr₂ hT₂).1,
+    (Presentation.cofactor_mul hr hT hr₂ hT₂).2⟩
 
 /-- Refinement is a preorder, by `Presentation.RefinedBy.refl` and
 `Presentation.RefinedBy.trans`. -/

@@ -5,7 +5,6 @@ Authors: Chris Birkbeck
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basis
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.SheafCriterion
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.PresentationLimit.Basic
 
