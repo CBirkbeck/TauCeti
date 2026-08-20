@@ -140,7 +140,7 @@ private lemma smulY_neg_aux {F : Type*} [Field F] {a₁ a₃ x y z : F} (hz : z 
 
 /-- Negating a nonzero index negates the point: `smulY (-n)` is the long-Weierstrass `negY`
 of the coordinates `(smulX n, smulY n)`. -/
-lemma smulY_neg (h0 : n ≠ 0) :
+@[simp] lemma smulY_neg (h0 : n ≠ 0) :
     smulY (-n) = pointedCurve.toAffine.negY (smulX n) (smulY n) := by
   simp only [WeierstrassCurve.Affine.negY, pointedCurve_a₁, pointedCurve_a₃, smulX_def, smulY_def,
     ψ_neg, ω_neg, map_add, map_neg polyToField, map_mul, map_pow]
