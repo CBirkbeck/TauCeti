@@ -8,8 +8,8 @@ module
 public import Mathlib.RingTheory.MvPowerSeries.Basic
 public import Mathlib.Topology.Algebra.Nonarchimedean.Basic
 public import Mathlib.Order.Filter.ZeroAndBoundedAtFilter
-public import TauCeti.Topology.LiftTendstoCofinite
 import Mathlib.Data.Finsupp.Encodable
+import TauCeti.Topology.LiftTendstoCofinite
 import TauCeti.Order.Filter.ZeroAndBoundedAtFilter
 import TauCeti.RingTheory.Huber.Bounded
 
