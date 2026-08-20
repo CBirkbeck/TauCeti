@@ -10,16 +10,24 @@ public import Mathlib.Topology.Algebra.Module.Basic
 /-!
 # A submodule of a topological module is a topological module
 
-A submodule carries the subspace topology, and Mathlib already reaches `↥p` for two of the three
-continuity classes that make it a module topology: `SMulMemClass.continuousSMul` gives the jointly
-continuous action, and `Submodule.topologicalAddGroup` gives `ContinuousAdd` when the ambient
-module is a topological *group*. The remaining two cases are what this file supplies, each at the
-generality of its own class.
+A submodule carries the subspace topology. Of the three continuity classes that make that
+topology a module topology, Mathlib supplies **one outright** and **one under extra hypotheses**:
 
-Neither is reachable by weakening: `ContinuousAdd` on an `AddCommMonoid` ambient is out of
-`Submodule.topologicalAddGroup`'s reach, and the constant-scalar action needs **no topology on
-`A`** — which is exactly the form `TauCeti.Huber.restrictedMvPowerSeriesSubmodule` takes, and the
-reason `SMulMemClass.continuousSMul` does not cover it.
+* `SMulMemClass.continuousSMul` gives the jointly continuous action `A × ↥p → ↥p` on any `SetLike`
+  subobject, with no side conditions beyond the ambient `ContinuousSMul A M`. This file adds
+  nothing there.
+* `Submodule.topologicalAddGroup` gives `ContinuousAdd ↥p`, but only for a `Ring A` acting on an
+  `AddCommGroup M` that is already a topological *group*.
+
+So there are exactly two gaps, and they are what this file fills:
+
+* **`ContinuousAdd` at the generality of its own class** — an `AddCommMonoid` ambient with
+  `ContinuousAdd` is outside `Submodule.topologicalAddGroup`'s hypotheses, and
+  `AddSubmonoid.continuousAdd`, which is at the right generality, is not keyed on `Submodule`.
+* **`ContinuousConstSMul` with no topology on the scalars** — `SMulMemClass.continuousSMul` needs
+  a topology on `A` and `ContinuousSMul A M`, whereas
+  `TauCeti.Huber.restrictedMvPowerSeriesSubmodule` asks only for `ContinuousConstSMul A M` with
+  `A` untopologised. That is the form this instance is for.
 
 ## Main results
 
