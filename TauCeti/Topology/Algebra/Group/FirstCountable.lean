@@ -21,9 +21,11 @@ assume — Henkel's open mapping theorem and
 `NonarchimedeanAddGroup.exists_antitone_basis_openAddSubgroup` both state it that way — whereas
 `FirstCountableTopology` is the class **Mathlib's own instances are keyed on**. Without the bridge
 the two do not meet. For a countable index type `ι`, countable generation of `𝓝 (0 : ι → G)`
-does not follow from countable generation at `0` in `G`, because `𝓝` on a `Pi` type is not
-syntactically a `Filter.pi`, so `Filter.pi.isCountablyGenerated` never fires. With this instance
-that product, and the subtype and additive-quotient forms, all resolve.
+is a mathematical *consequence* of countable generation at `0` in `G` — but it does not
+**synthesize**: `𝓝` on a `Pi` type is not syntactically a `Filter.pi`, so
+`Filter.pi.isCountablyGenerated` never fires on the goal as stated. The obstruction there is
+purely one of instance search. With this instance that product, and the subtype and
+additive-quotient forms, all resolve.
 
 Countability of the index set is a real hypothesis there and not merely a syntactic one: an
 uncountable product of nontrivial groups is not first countable at all, which is why Mathlib's `Pi`
