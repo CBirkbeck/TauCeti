@@ -31,8 +31,8 @@ which have no business importing Lie-algebra theory use it.
 * `Matrix.pow_apply_diag_of_isUpperTriangular` — the diagonal of a power of an upper-triangular
   matrix is the corresponding power of the diagonal entry.
 * `Matrix.isUpperUnitriangular_geom_sum_of_isUpperTriangular_of_diag_eq_zero` — the geometric
-  series in a strictly upper-triangular matrix is upper unitriangular, for any truncation whose
-  range contains the zeroth power, and
+  series in a strictly upper-triangular matrix is upper unitriangular, for any truncation that is
+  positive whenever the index type is inhabited, and
   `Matrix.isUpperUnitriangular_geom_sum_card_of_isUpperTriangular_of_diag_eq_zero` for the
   truncation at the size of the matrix.
 * `Matrix.inv_apply_diag_mul_of_isUpperTriangular` — on the diagonal, the inverse inverts
@@ -194,14 +194,17 @@ theorem pow_apply_diag_of_isUpperTriangular {T : Type*} [Semiring T] {M : Matrix
   | succ k ih =>
       rw [pow_succ, mul_apply_diag_of_isUpperTriangular (hM.pow k) hM, ih, ← pow_succ]
 
-/-- **The geometric series in a strictly upper-triangular matrix, truncated at the size of the
-matrix, is upper unitriangular**, for any truncation whose range contains the zeroth power. -/
+/-- **A geometric series in a strictly upper-triangular matrix is upper unitriangular**, for any
+truncation `k` that is positive whenever the index type is inhabited.
+
+Over an empty index type both conditions are vacuous, so nothing is asked of `k` there. -/
 theorem isUpperUnitriangular_geom_sum_of_isUpperTriangular_of_diag_eq_zero
     {T : Type*} [Semiring T] {M : Matrix n n T} (hM : M.IsUpperTriangular)
-    (hdiag : ∀ i, M i i = 0) {k : ℕ} (hk : 0 < k) :
+    (hdiag : ∀ i, M i i = 0) {k : ℕ} (hk : Nonempty n → 0 < k) :
     (∑ j ∈ Finset.range k, M ^ j).IsUpperUnitriangular := by
   -- below the diagonal every power vanishes; on the diagonal every power after the zeroth does,
-  -- leaving the `1` that `M ^ 0` contributes
+  -- leaving the `1` that `M ^ 0` contributes -- and the index `i` is itself the inhabitant that
+  -- makes the range nonempty
   rw [Matrix.isUpperUnitriangular_def]
   refine ⟨?_, ?_⟩
   · intro i j hji
@@ -209,25 +212,19 @@ theorem isUpperUnitriangular_geom_sum_of_isUpperTriangular_of_diag_eq_zero
     exact Finset.sum_eq_zero fun l _ ↦ (hM.pow l) hji
   · intro i
     simp only [Matrix.sum_apply, pow_apply_diag_of_isUpperTriangular hM, hdiag i]
-    simp [zero_pow_eq, hk]
+    simp [zero_pow_eq, hk ⟨i⟩]
 
 /-- **The geometric series in a strictly upper-triangular matrix, truncated at the size of the
 matrix, is upper unitriangular.**
 
 This is the truncation that appears when inverting `1 - M`, being the exponent at which `M` has
-already died (`Matrix.pow_card_eq_zero_of_isUpperTriangular_of_diag_eq_zero`). It needs no
-nonemptiness hypothesis: over an empty index type the range is empty too, and the conclusion is
-vacuous. -/
+already died (`Matrix.pow_card_eq_zero_of_isUpperTriangular_of_diag_eq_zero`). -/
 theorem isUpperUnitriangular_geom_sum_card_of_isUpperTriangular_of_diag_eq_zero
     {T : Type*} [Semiring T] {M : Matrix n n T} (hM : M.IsUpperTriangular)
     (hdiag : ∀ i, M i i = 0) :
-    (∑ j ∈ Finset.range (Fintype.card n), M ^ j).IsUpperUnitriangular := by
-  rcases isEmpty_or_nonempty n with hn | hn
-  · -- an empty index type makes both unitriangularity conditions vacuous
-    rw [Matrix.isUpperUnitriangular_def]
-    exact ⟨fun i ↦ (IsEmpty.false i).elim, fun i ↦ (IsEmpty.false i).elim⟩
-  · exact isUpperUnitriangular_geom_sum_of_isUpperTriangular_of_diag_eq_zero hM hdiag
-      Fintype.card_pos
+    (∑ j ∈ Finset.range (Fintype.card n), M ^ j).IsUpperUnitriangular :=
+  isUpperUnitriangular_geom_sum_of_isUpperTriangular_of_diag_eq_zero hM hdiag
+    fun _ ↦ Fintype.card_pos
 
 variable {S : Type*} [CommRing S] {M : Matrix n n S}
 
