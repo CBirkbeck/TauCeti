@@ -10,19 +10,23 @@ public import Mathlib.Topology.Algebra.Module.Basic
 /-!
 # A submodule of a topological module is a topological module
 
-A submodule carries the subspace topology, and Mathlib records `Submodule.topologicalAddGroup`
-for an ambient topological *group*. The three continuity classes that make the subspace topology
-a module topology are not instances, so typeclass search cannot form a statement about `↥p` for
-`p : Submodule A M` unless the ambient module is a group and only additive structure is wanted.
+A submodule carries the subspace topology, and Mathlib already reaches `↥p` for two of the three
+continuity classes that make it a module topology: `SMulMemClass.continuousSMul` gives the jointly
+continuous action, and `Submodule.topologicalAddGroup` gives `ContinuousAdd` when the ambient
+module is a topological *group*. The remaining two cases are what this file supplies, each at the
+generality of its own class.
 
-This file supplies them, at the generality of the classes themselves: an `AddCommMonoid` ambient
-suffices, and each class is inherited separately.
+Neither is reachable by weakening: `ContinuousAdd` on an `AddCommMonoid` ambient is out of
+`Submodule.topologicalAddGroup`'s reach, and the constant-scalar action needs **no topology on
+`A`** — which is exactly the form `TauCeti.Huber.restrictedMvPowerSeriesSubmodule` takes, and the
+reason `SMulMemClass.continuousSMul` does not cover it.
 
 ## Main results
 
-* `Submodule.continuousAdd`: addition on `↥p` is continuous.
-* `Submodule.continuousConstSMul`: each scalar acts continuously on `↥p`.
-* `Submodule.continuousSMul`: the action `A × ↥p → ↥p` is jointly continuous.
+* `Submodule.continuousAdd`: addition on `↥p` is continuous, asking only `ContinuousAdd` of the
+  ambient module rather than a topological group structure.
+* `Submodule.continuousConstSMul`: each scalar acts continuously on `↥p`, with no topology on the
+  scalars.
 -/
 
 public section
@@ -41,14 +45,6 @@ instance continuousAdd [ContinuousAdd M] (p : Submodule A M) : ContinuousAdd p :
 the action is the restriction of that one. -/
 instance continuousConstSMul [ContinuousConstSMul A M] (p : Submodule A M) :
     ContinuousConstSMul A p :=
-  ⟨fun a ↦ ((continuous_const_smul a).comp continuous_subtype_val).subtype_mk _⟩
-
-/-- **The scalar action on a submodule is jointly continuous.** With
-`ContinuousSMul.continuousConstSMul` this subsumes `Submodule.continuousConstSMul`, which is
-stated separately because it needs no topology on `A`. -/
-instance continuousSMul [TopologicalSpace A] [ContinuousSMul A M] (p : Submodule A M) :
-    ContinuousSMul A p :=
-  ⟨(continuous_smul.comp
-    (continuous_fst.prodMk (continuous_subtype_val.comp continuous_snd))).subtype_mk _⟩
+  Topology.IsInducing.subtypeVal.continuousConstSMul id rfl
 
 end Submodule
