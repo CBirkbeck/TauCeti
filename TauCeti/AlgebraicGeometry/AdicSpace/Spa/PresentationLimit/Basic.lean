@@ -151,18 +151,21 @@ theorem RationalIndex.le_def {i j : RationalIndex P Aplus V} : i ≤ j ↔ i.pre
 
 /-- **The index is directed**: the product presentation of two indices is again an index — its
 numerator span is open by `isOpen_span_insert_mul_insert` (this is what the insert-augmented
-numerators of `Presentation.prod` are for), and its rational open is the intersection of the
-factors' (`spaRationalOpen_inf`), hence contained in `V` through either factor. Presentations
+numerators of `Presentation.commonRefinement` are for), and its rational open is the
+intersection of the
+factors' (`spaRationalOpen_inf`), hence contained in `V` through either factor.
+Presentations
 of the same rational subset are therefore constrained through a common refinement — weaker than
 identifying their components, which needs the unproved initiality. -/
 theorem RationalIndex.directed (i j : RationalIndex P Aplus V) :
     ∃ k : RationalIndex P Aplus V, i ≤ k ∧ j ≤ k := by
   classical
-  refine ⟨⟨i.pres.prod j.pres, ?_, ?_⟩,
-    i.pres.le_prod_left j.pres, i.pres.le_prod_right j.pres⟩
-  · rw [PairOfDefinition.Presentation.prod_num]
+  refine ⟨⟨i.pres.commonRefinement j.pres, ?_, ?_⟩,
+    i.pres.le_commonRefinement_left j.pres, i.pres.le_commonRefinement_right j.pres⟩
+  · rw [PairOfDefinition.Presentation.commonRefinement_num]
     exact isOpen_span_insert_mul_insert P i.isOpen_span_num j.isOpen_span_num
-  · rw [PairOfDefinition.Presentation.prod_num, PairOfDefinition.Presentation.prod_den,
+  · rw [PairOfDefinition.Presentation.commonRefinement_num,
+      PairOfDefinition.Presentation.commonRefinement_den,
       ← spaRationalOpen_inf]
     exact inf_le_left.trans i.spaRationalOpen_le
 

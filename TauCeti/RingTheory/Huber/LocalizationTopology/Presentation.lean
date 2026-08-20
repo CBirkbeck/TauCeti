@@ -33,7 +33,7 @@ single application of one of them.
 
 * `TauCeti.Huber.PairOfDefinition.Presentation`: the bundle `(num, den, hasDenominatorPower)` of
   a presentation, with the refinement preorder `Presentation.RefinedBy` and the common
-  refinement `Presentation.prod` making refinement directed.
+  refinement `Presentation.commonRefinement` making refinement directed.
 * `TauCeti.Huber.PairOfDefinition.presentationRingEquiv`: the canonical isomorphism
   `A⟨T/s⟩ ≃+* A⟨T'/s'⟩` assembled from compatible comparison maps in both directions.
 
@@ -124,7 +124,7 @@ theorem Presentation.refinedBy_witness_mul {p q w : Presentation P} {r r₂ : A}
     fun t ht ↦ by rw [← mul_assoc]; exact hT₂ _ (hT t ht)⟩
 
 /-- Every presentation refines itself, with cofactor `1`. -/
-theorem Presentation.refinedBy_self (p : Presentation P) : p.RefinedBy p :=
+theorem Presentation.RefinedBy.refl (p : Presentation P) : p.RefinedBy p :=
   ⟨1, p.refinedBy_witness_one.1, p.refinedBy_witness_one.2⟩
 
 /-- Refinements compose: the cofactors multiply. -/
@@ -135,26 +135,26 @@ theorem Presentation.RefinedBy.trans {p q w : Presentation P} (hpq : p.RefinedBy
   exact ⟨r * r₂, (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).1,
     (Presentation.refinedBy_witness_mul hr hT hr₂ hT₂).2⟩
 
-/-- Refinement is a preorder, by `Presentation.refinedBy_self` and
+/-- Refinement is a preorder, by `Presentation.RefinedBy.refl` and
 `Presentation.RefinedBy.trans`. -/
 instance : Preorder (Presentation P) where
   le := Presentation.RefinedBy
-  le_refl := Presentation.refinedBy_self
+  le_refl := Presentation.RefinedBy.refl
   le_trans _ _ _ := Presentation.RefinedBy.trans
 
 /-- **The refinement preorder, unfolded in one step**: the single introduction/elimination
 lemma for `≤`. The body of `RefinedBy` is not exported, so this is the
 route from `p ≤ q` to a cofactor, and the two-hop chain should not be used. -/
-theorem Presentation.le_iff {p q : Presentation P} :
+theorem Presentation.le_def {p q : Presentation P} :
     p ≤ q ↔ ∃ r : A, q.den = p.den * r ∧ ∀ t ∈ p.num, t * r ∈ q.num := Iff.rfl
 
 open scoped Classical Pointwise in
-/-- **The product presentation**, refining both factors: the numerators are the pairwise
+/-- **The common refinement**, refining both factors: the numerators are the pairwise
 products of the factors' numerator sets augmented by their own denominators, and the denominator
 is the product. The augmentation matches `rationalSubset_inter`'s presentation of an
 intersection, which is what keeps the numerator span open when both factors' spans are
 (`isOpen_span_insert_mul_insert`) — the property the structure presheaf's index needs. -/
-noncomputable def Presentation.prod (p q : Presentation P) : Presentation P where
+noncomputable def Presentation.commonRefinement (p q : Presentation P) : Presentation P where
   num := insert p.den p.num * insert q.den q.num
   den := p.den * q.den
   hasDenominatorPower := by
@@ -167,35 +167,35 @@ noncomputable def Presentation.prod (p q : Presentation P) : Presentation P wher
       p.hasDenominatorPower q.hasDenominatorPower
 
 open scoped Classical Pointwise in
-/-- The numerators of the product presentation. The body of `prod` is not exported, so this is
-how a consumer computes with it. -/
+/-- The numerator equation for the common refinement. The body of `commonRefinement` is not
+exported, so this is how a consumer computes with it. -/
 @[simp]
-theorem Presentation.prod_num (p q : Presentation P) :
-    (p.prod q).num = insert p.den p.num * insert q.den q.num := (rfl)
+theorem Presentation.commonRefinement_num (p q : Presentation P) :
+    (p.commonRefinement q).num = insert p.den p.num * insert q.den q.num := (rfl)
 
-/-- The denominator of the product presentation. -/
+/-- The denominator equation for the common refinement. -/
 @[simp]
-theorem Presentation.prod_den (p q : Presentation P) :
-    (p.prod q).den = p.den * q.den := (rfl)
+theorem Presentation.commonRefinement_den (p q : Presentation P) :
+    (p.commonRefinement q).den = p.den * q.den := (rfl)
 
 open scoped Classical Pointwise in
-/-- The product presentation refines its left factor, with cofactor the right denominator. -/
-theorem Presentation.le_prod_left (p q : Presentation P) : p ≤ p.prod q :=
+/-- The common refinement refines its left factor, with cofactor the right denominator. -/
+theorem Presentation.le_commonRefinement_left (p q : Presentation P) : p ≤ p.commonRefinement q :=
   ⟨q.den, rfl, fun _ ht ↦
     Finset.mul_mem_mul (Finset.mem_insert_of_mem ht) (Finset.mem_insert_self _ _)⟩
 
 open scoped Classical Pointwise in
-/-- The product presentation refines its right factor, with cofactor the left denominator. -/
-theorem Presentation.le_prod_right (p q : Presentation P) : q ≤ p.prod q :=
+/-- The common refinement refines its right factor, with cofactor the left denominator. -/
+theorem Presentation.le_commonRefinement_right (p q : Presentation P) : q ≤ p.commonRefinement q :=
   ⟨p.den, mul_comm p.den q.den, fun t ht ↦ mul_comm p.den t ▸
     Finset.mul_mem_mul (Finset.mem_insert_self _ _) (Finset.mem_insert_of_mem ht)⟩
 
-/-- **Any two presentations admit a common refinement** — their product presentation — so the
+/-- **Any two presentations admit a common refinement** — `Presentation.commonRefinement` — so the
 refinement preorder is directed: presentations of the same rational subset never sit as
 independent factors in a limit over this order, because both map onwards to the product. -/
 theorem Presentation.directed (p q : Presentation P) :
     ∃ w : Presentation P, p ≤ w ∧ q ≤ w :=
-  ⟨p.prod q, p.le_prod_left q, p.le_prod_right q⟩
+  ⟨p.commonRefinement q, p.le_commonRefinement_left q, p.le_commonRefinement_right q⟩
 
 /-- The refinement preorder is directed. -/
 instance : IsDirected (Presentation P) (· ≤ ·) :=
