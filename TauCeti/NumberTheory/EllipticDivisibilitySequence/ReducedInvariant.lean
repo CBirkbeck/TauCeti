@@ -310,6 +310,32 @@ theorem complEDS₂_eq_reducedInvarNum_sub :
       reducedInvarNum b c d m - normEDS b c d m ^ 3 * b - 2 * complEDS₂Aux b c d m := by
   rw [reducedInvarNum_def]; ring
 
+/-- **The value of `normEDS` at an index divisible by `6`.** The whole constant `b * c` comes out:
+`normEDS_mul_complEDS_div` splits the index into `6` and its `6`-complement, and `normEDS_six`
+evaluates the small factor. This is the step the `m % 6 ∈ {0, 1, 5}` branches of
+`IsEllipticNet.invarDenom_normEDS_one_eq_reducedInvarDenom_mul` share, where the divisible index is
+`m`, `m - 1` and `m + 1` respectively. -/
+private theorem normEDS_of_six_dvd (k : ℤ) (h : (6 : ℤ) ∣ k) :
+    normEDS b c d k = (normEDS b c d 5 - d ^ 2) * complEDS b c d 6 (k / 6) * (b * c) := by
+  rw [← normEDS_mul_complEDS_div 6 k h, WeierstrassCurve.normEDS_six]
+  ring
+
+/-- **The value of `normEDS` at an index divisible by `3`.** One factor of `c = W 3` comes out. The
+`m % 6 ∈ {2, 3, 4}` branches of `IsEllipticNet.invarDenom_normEDS_one_eq_reducedInvarDenom_mul`
+pair this with `normEDS_of_two_dvd`: there `b * c` is released from two indices rather than one,
+since no single index among `m + 1`, `m`, `m - 1` is divisible by `6`. -/
+private theorem normEDS_of_three_dvd (k : ℤ) (h : (3 : ℤ) ∣ k) :
+    normEDS b c d k = complEDS b c d 3 (k / 3) * c := by
+  rw [← normEDS_mul_complEDS_div 3 k h, normEDS_three]
+  ring
+
+/-- **The value of `normEDS` at an index divisible by `2`.** One factor of `b = W 2` comes out; see
+`normEDS_of_three_dvd` for the pairing that uses it. -/
+private theorem normEDS_of_two_dvd (k : ℤ) (h : (2 : ℤ) ∣ k) :
+    normEDS b c d k = complEDS b c d 2 (k / 2) * b := by
+  rw [← normEDS_mul_complEDS_div 2 k h, normEDS_two]
+  ring
+
 namespace IsEllipticNet
 
 /-- **The cancellation `reducedInvarDenom` is named for**: the invariant denominator of a
@@ -325,31 +351,27 @@ folded at `reducedInvarDenom b c d m * (b * c)`. -/
 @[simp high]
 theorem invarDenom_normEDS_one_eq_reducedInvarDenom_mul :
     invarDenom (normEDS b c d) 1 m = reducedInvarDenom b c d m * (b * c) := by
-  -- Split on `m % 6`; each branch reindexes one or two complements through
-  -- `normEDS_mul_complEDS_div`, on the divisibility that `m % 6 = r` supplies.
+  -- Split on `m % 6`. Each branch selects its `reducedInvarDenom` value, then releases `b * c`
+  -- from the one index divisible by `6`, or from the pair divisible by `3` and by `2`.
   have hcase : m % 6 = 0 ∨ m % 6 = 1 ∨ m % 6 = 2 ∨ m % 6 = 3 ∨ m % 6 = 4 ∨ m % 6 = 5 := by omega
   rw [invarDenom_def]
   rcases hcase with h | h | h | h | h | h
-  · rw [reducedInvarDenom_of_emod_six_eq_zero b c d m h,
-      ← normEDS_mul_complEDS_div 6 m (by omega), WeierstrassCurve.normEDS_six]
+  · rw [reducedInvarDenom_of_emod_six_eq_zero b c d m h, normEDS_of_six_dvd b c d m (by omega)]
     ring
   · rw [reducedInvarDenom_of_emod_six_eq_one b c d m h,
-      ← normEDS_mul_complEDS_div 6 (m - 1) (by omega), WeierstrassCurve.normEDS_six]
+      normEDS_of_six_dvd b c d (m - 1) (by omega)]
     ring
   · rw [reducedInvarDenom_of_emod_six_eq_two b c d m h,
-      ← normEDS_mul_complEDS_div 3 (m + 1) (by omega),
-      ← normEDS_mul_complEDS_div 2 m (by omega), normEDS_two, normEDS_three]
+      normEDS_of_three_dvd b c d (m + 1) (by omega), normEDS_of_two_dvd b c d m (by omega)]
     ring
   · rw [reducedInvarDenom_of_emod_six_eq_three b c d m h,
-      ← normEDS_mul_complEDS_div 3 m (by omega),
-      ← normEDS_mul_complEDS_div 2 (m - 1) (by omega), normEDS_two, normEDS_three]
+      normEDS_of_three_dvd b c d m (by omega), normEDS_of_two_dvd b c d (m - 1) (by omega)]
     ring
   · rw [reducedInvarDenom_of_emod_six_eq_four b c d m h,
-      ← normEDS_mul_complEDS_div 3 (m - 1) (by omega),
-      ← normEDS_mul_complEDS_div 2 m (by omega), normEDS_two, normEDS_three]
+      normEDS_of_three_dvd b c d (m - 1) (by omega), normEDS_of_two_dvd b c d m (by omega)]
     ring
   · rw [reducedInvarDenom_of_emod_six_eq_five b c d m h,
-      ← normEDS_mul_complEDS_div 6 (m + 1) (by omega), WeierstrassCurve.normEDS_six]
+      normEDS_of_six_dvd b c d (m + 1) (by omega)]
     ring
 
 /-- **The cancellation `reducedInvarNum` is named for**: the invariant numerator of a normalised EDS
