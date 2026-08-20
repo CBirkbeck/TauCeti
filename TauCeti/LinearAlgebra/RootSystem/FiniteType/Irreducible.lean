@@ -7,6 +7,7 @@ module
 
 public import TauCeti.LinearAlgebra.RootSystem.FiniteType.Diagram
 public import Mathlib.LinearAlgebra.RootSystem.Irreducible
+public import TauCeti.LinearAlgebra.RootSystem.InvariantSubmodule
 import Mathlib.Combinatorics.SimpleGraph.Hasse
 
 public section
@@ -31,8 +32,6 @@ every edge of the Dynkin diagram, so the simple roots span the whole space insid
   diagram makes a root system irreducible.
 * `TauCeti.RootPairing.eq_bot_of_forall_root_not_mem`: a submodule invariant under the simple
   reflections and containing no simple root is trivial.
-* `TauCeti.RootPairing.root_mem_of_pairing_ne_zero`: membership of a root in a
-  reflection-invariant submodule propagates along a nonzero pairing.
 * `TauCeti.DynkinType.connected_diagramGraph_cartanMatrix`: every valid standard Dynkin diagram is
   connected.
 * `TauCeti.HasCartanType.isIrreducible`: a root system of valid Cartan type is irreducible.
@@ -262,26 +261,6 @@ theorem eq_bot_of_forall_root_not_mem [P.IsRootSystem] {b : P.Base} {q : Submodu
       simpa using hle hx
     simpa using LinearMap.mem_ker.mp (hallker i)
   rw [map_smul, hz, smul_zero]
-
-omit [CharZero K] [P.IsCrystallographic] in
-/-- **Membership of a root in a reflection-invariant submodule propagates along a nonzero
-pairing.** If `q` is invariant under the reflection at `v`, the pairing of `u` with `v` is
-nonzero, and the root at `u` lies in `q`, then so does the root at `v`.
-
-Only invariance under the single reflection at `v` is needed, not invariance at every index; no
-base, no crystallographic structure, no characteristic assumption and no root-system hypothesis are
-involved. Diagram adjacency enters only at the call site, as the source of the nonvanishing
-pairing. -/
-theorem root_mem_of_pairing_ne_zero {q : Submodule K M} {u v : ι}
-    (hinvv : q ∈ Module.End.invtSubmodule (P.reflection v))
-    (hpair : P.pairing u v ≠ 0) (hu : P.root u ∈ q) : P.root v ∈ q := by
-  -- Reflecting `u` in `v` keeps us inside `q`; subtracting leaves a multiple of `root v`, and the
-  -- multiplier is invertible by hypothesis.
-  have hrefl : P.reflection v (P.root u) ∈ q :=
-    (Module.End.mem_invtSubmodule _).mp hinvv hu
-  have hsmul : P.pairing u v • P.root v ∈ q := by
-    simpa only [P.reflection_apply_root, sub_sub_cancel] using q.sub_mem hu hrefl
-  exact (q.smul_mem_iff hpair).mp hsmul
 
 /-- A crystallographic root system with a connected Dynkin diagram is irreducible.
 
