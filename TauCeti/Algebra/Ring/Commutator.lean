@@ -10,6 +10,7 @@ public import Mathlib.Algebra.Algebra.Rat
 public import Mathlib.RingTheory.Nilpotent.Defs
 import Mathlib.RingTheory.Nilpotent.Basic
 import Mathlib.Tactic.Abel
+import Mathlib.Tactic.NoncommRing
 import Mathlib.Tactic.Ring
 
 /-!
@@ -23,10 +24,10 @@ scalar multiple of one of the elements, or is central for the two elements it is
 * `TauCeti.Associative.mul_pow_eq_pow_mul_add_zsmul`: moving an element past a power of an
   integer-eigenvector for its commutator.
 * `TauCeti.Associative.mul_pow_eq_pow_mul_add_intCast`: the same identity in shifted-factor form.
-* `TauCeti.Associative.pow_succ_mul_eq_mul_pow_succ_add_nsmul`: moving an element past a power of
-  another releases that many copies of a central commutator.
-* `TauCeti.Associative.pow_mul_pow_succ_eq_zero_of_pow_succ_mul_pow_eq_zero`: extracting one such
-  copy trades a power of the nilpotent element for a power of the commutator.
+* `TauCeti.Associative.mul_pow_of_commutator_eq`: moving an element across a power releases that
+  many copies of the commutator, when the commutator commutes with the element being powered.
+* `TauCeti.Associative.pow_mul_eq_mul_pow_add_nsmul`: the same identity with the roles of the two
+  elements exchanged.
 * `TauCeti.Associative.isNilpotent_of_commutator_eq`: a commutator commuting with both of its
   arguments is nilpotent as soon as one of them is.
 * `TauCeti.Associative.isNilpotent_of_commutator_eq_nsmul`: the same conclusion when the
@@ -66,34 +67,56 @@ theorem mul_pow_eq_pow_mul_add_intCast (hxy : x * y - y * x = c • y) (n : ℕ)
   rw [mul_pow_eq_pow_mul_add_zsmul hxy, zsmul_eq_mul', mul_add, Int.cast_mul,
     Int.cast_natCast, (Nat.cast_commute n (c : A)).eq]
 
+section PowerCommutator
+
+variable {A : Type*} [Semiring A]
+
+/-- **Moving an element across a power releases that many copies of the commutator.** If
+`x * y = y * x + z` and `z` commutes with `y`, then `x * y ^ n` is `y ^ n * x` plus `n` copies of
+`y ^ (n - 1) * z`. -/
+theorem mul_pow_of_commutator_eq {x y z : A} (hxy : x * y = y * x + z)
+    (hyz : Commute y z) (n : ℕ) :
+    x * y ^ n = y ^ n * x + n • (y ^ (n - 1) * z) := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      cases n with
+      | zero => simpa using hxy
+      | succ n =>
+          simp only [Nat.add_sub_cancel] at ih ⊢
+          rw [pow_succ, ← mul_assoc, ih, add_mul, mul_assoc (y ^ (n + 1)) x y,
+            hxy, mul_add]
+          -- Expose the final successor separately: rewriting `add_nsmul` on `n + 2` directly
+          -- would split the coefficient as `n` and `2`, rather than the required `n + 1` and `1`.
+          rw [show n + 2 = (n + 1) + 1 by omega, add_nsmul, one_nsmul]
+          noncomm_ring [hyz.eq, pow_succ]
+          simp only [nsmul_eq_mul, Nat.cast_add, Nat.cast_ofNat, mul_one]
+          noncomm_ring
+
+end PowerCommutator
+
 section CentralCommutator
 
 variable {A : Type*} [Ring A] [Algebra ℚ A] {x y z : A}
 
 omit [Algebra ℚ A] in
 /-- **Moving `y` past a power of `x` releases that many copies of a central commutator.** If
-`x * y = y * x + z` and `z` commutes with `x`, then `x ^ (m + 1) * y` is `y * x ^ (m + 1)` plus
-`m + 1` copies of `z * x ^ m`.
+`x * y = y * x + z` and `z` commutes with `x`, then `x ^ n * y` is `y * x ^ n` plus `n` copies of
+`x ^ (n - 1) * z`.
 
 The section's `[Algebra ℚ A]` is omitted: the identity holds over any ring. -/
-theorem pow_succ_mul_eq_mul_pow_succ_add_nsmul (hxy : x * y = y * x + z) (hxz : Commute x z)
-    (m : ℕ) : x ^ (m + 1) * y = y * x ^ (m + 1) + (m + 1) • (z * x ^ m) := by
-  induction m with
-  | zero => simpa using hxy
-  | succ m ih =>
-    have hzx : x * (z * x ^ m) = z * x ^ (m + 1) := by
-      rw [← mul_assoc, hxz.eq, mul_assoc, ← pow_succ']
-    calc x ^ (m + 1 + 1) * y = x * (x ^ (m + 1) * y) := by rw [← mul_assoc, ← pow_succ']
-      _ = x * y * x ^ (m + 1) + (m + 1) • (z * x ^ (m + 1)) := by
-          rw [ih, mul_add, ← mul_assoc, mul_smul_comm, hzx]
-      _ = y * x ^ (m + 1 + 1) + (z * x ^ (m + 1) + (m + 1) • (z * x ^ (m + 1))) := by
-          rw [hxy, add_mul, mul_assoc, ← pow_succ', add_assoc]
-      _ = y * x ^ (m + 1 + 1) + (m + 1 + 1) • (z * x ^ (m + 1)) := by
-          rw [← succ_nsmul']
+theorem pow_mul_eq_mul_pow_add_nsmul (hxy : x * y = y * x + z) (hxz : Commute x z) (n : ℕ) :
+    x ^ n * y = y * x ^ n + n • (x ^ (n - 1) * z) := by
+  -- the mirror image of `mul_pow_of_commutator_eq`, reached by exchanging `x` and `y` and
+  -- negating the commutator
+  have h := mul_pow_of_commutator_eq (x := y) (y := x) (z := -z)
+    (by rw [hxy]; abel) hxz.neg_right n
+  rw [mul_neg, smul_neg, ← sub_eq_add_neg, eq_sub_iff_add_eq] at h
+  exact h.symm
 
 /-- **Extracting one copy of a central commutator trades a power of `x` for a power of `z`.** If
 `x ^ (m + 1)` annihilates `z ^ k` on the left, then `x ^ m` annihilates `z ^ (k + 1)`. -/
-theorem pow_mul_pow_succ_eq_zero_of_pow_succ_mul_pow_eq_zero (hxy : x * y = y * x + z)
+private theorem pow_mul_pow_succ_eq_zero_of_pow_succ_mul_pow_eq_zero (hxy : x * y = y * x + z)
     (hxz : Commute x z) (hyz : Commute y z) {m k : ℕ} (h : x ^ (m + 1) * z ^ k = 0) :
     x ^ m * z ^ (k + 1) = 0 := by
   -- Pushing `y` to the right kills the product outright.
@@ -101,8 +124,8 @@ theorem pow_mul_pow_succ_eq_zero_of_pow_succ_mul_pow_eq_zero (hxy : x * y = y * 
     rw [mul_assoc, ← (hyz.symm.pow_left k).eq, ← mul_assoc, h, zero_mul]
   -- Pushing it to the left leaves the released copies of `z`.
   have hB : x ^ (m + 1) * y * z ^ k = (m + 1) • (x ^ m * z ^ (k + 1)) := by
-    rw [pow_succ_mul_eq_mul_pow_succ_add_nsmul hxy hxz m, add_mul, mul_assoc, h, mul_zero,
-      zero_add, smul_mul_assoc, (hxz.symm.pow_right m).eq, mul_assoc, ← pow_succ']
+    rw [pow_mul_eq_mul_pow_add_nsmul hxy hxz (m + 1), Nat.add_sub_cancel, add_mul,
+      mul_assoc, h, mul_zero, zero_add, smul_mul_assoc, mul_assoc, ← pow_succ']
   have hkey : ((m + 1 : ℕ) : ℚ) • (x ^ m * z ^ (k + 1)) = 0 := by
     rw [Nat.cast_smul_eq_nsmul ℚ, ← hB]
     exact hA
