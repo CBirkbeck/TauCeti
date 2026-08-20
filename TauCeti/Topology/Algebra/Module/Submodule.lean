@@ -10,25 +10,22 @@ public import Mathlib.Topology.Algebra.Module.Basic
 /-!
 # A submodule of a topological module is a topological module
 
-Mathlib gives a submodule of a topological module its subspace topology, and records
-`Submodule.topologicalAddGroup` for the case of an ambient topological *group*. The three
-continuity classes that make the subspace topology a module topology are not instances, so
-typeclass search cannot form a statement about `↥p` for `p : Submodule A M` unless the ambient
-module is a group and only additive structure is wanted.
+A submodule carries the subspace topology, and Mathlib records `Submodule.topologicalAddGroup`
+for an ambient topological *group*. The three continuity classes that make the subspace topology
+a module topology are not instances, so typeclass search cannot form a statement about `↥p` for
+`p : Submodule A M` unless the ambient module is a group and only additive structure is wanted.
 
 This file supplies them, at the generality of the classes themselves: an `AddCommMonoid` ambient
 suffices, and each class is inherited separately.
 
 ## Main results
 
-* `TauCeti.Submodule.continuousAdd`: addition on `↥p` is continuous.
-* `TauCeti.Submodule.continuousConstSMul`: each scalar acts continuously on `↥p`.
-* `TauCeti.Submodule.continuousSMul`: the action `A × ↥p → ↥p` is jointly continuous.
+* `Submodule.continuousAdd`: addition on `↥p` is continuous.
+* `Submodule.continuousConstSMul`: each scalar acts continuously on `↥p`.
+* `Submodule.continuousSMul`: the action `A × ↥p → ↥p` is jointly continuous.
 -/
 
 public section
-
-namespace TauCeti
 
 namespace Submodule
 
@@ -47,13 +44,11 @@ instance continuousConstSMul [ContinuousConstSMul A M] (p : Submodule A M) :
   ⟨fun a ↦ ((continuous_const_smul a).comp continuous_subtype_val).subtype_mk _⟩
 
 /-- **The scalar action on a submodule is jointly continuous.** With
-`ContinuousSMul.continuousConstSMul` this subsumes `TauCeti.Submodule.continuousConstSMul`, which
-is stated separately because it needs no topology on `A`. -/
+`ContinuousSMul.continuousConstSMul` this subsumes `Submodule.continuousConstSMul`, which is
+stated separately because it needs no topology on `A`. -/
 instance continuousSMul [TopologicalSpace A] [ContinuousSMul A M] (p : Submodule A M) :
     ContinuousSMul A p :=
   ⟨(continuous_smul.comp
     (continuous_fst.prodMk (continuous_subtype_val.comp continuous_snd))).subtype_mk _⟩
 
 end Submodule
-
-end TauCeti
