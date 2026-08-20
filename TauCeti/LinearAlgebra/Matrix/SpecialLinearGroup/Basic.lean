@@ -35,6 +35,8 @@ diamond operators of the ModularForms roadmap (Layer 0), where it realizes every
   `{±I}` when `R` has no zero divisors.
 * `Matrix.SpecialLinearGroup.finite_center` and
   `Matrix.SpecialLinearGroup.card_center_le_two`: that centre is finite, of order at most two.
+* `Matrix.SpecialLinearGroup.disjoint_center_iff_neg_one_notMem`: the simp-normal form of the
+  `= 1` case, `Disjoint (center _) Γ ↔ -I ∉ Γ`.
 * `Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_two_iff` and
   `Matrix.SpecialLinearGroup.card_center_subgroupOf_eq_one_iff`: for a subgroup `Γ ≤ SL₂`, the
   part of the centre that `Γ` contains has order `2` exactly when `-I ∈ Γ` and `1` exactly when
@@ -141,6 +143,9 @@ projective stabiliser orders agree. -/
 -- `Subgroup.card_eq_one` then `Subgroup.subgroupOf_eq_bot` rewrite
 -- `Nat.card (center.subgroupOf Γ) = 1` to `Disjoint (center _) Γ`, so it is not in simp-normal
 -- form. The `= 2` companion below has no such reduction and does carry the attribute.
+-- `disjoint_center_iff_neg_one_notMem` is the simp-reachable form: it states the same fact at the
+-- normal form this one reduces to, so a goal that simp has already rewritten to `Disjoint` is
+-- still closed.
 theorem card_center_subgroupOf_eq_one_iff [NoZeroDivisors R]
     (hne : (-1 : SpecialLinearGroup (Fin 2) R) ≠ 1)
     (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
@@ -160,6 +165,25 @@ theorem card_center_subgroupOf_eq_one_iff [NoZeroDivisors R]
     · -- `x.2 : ↑x ∈ Γ`, and `hx1` identifies `↑x` with `-I`, so the membership transports
       have hm : (-1 : SpecialLinearGroup (Fin 2) R) ∈ Γ := hx1 ▸ x.2
       exact absurd hm hneg
+
+/-- **`Γ` misses the centre exactly when it misses `-I`.** This is
+`card_center_subgroupOf_eq_one_iff` restated at its simp-normal form: `simp` rewrites
+`Nat.card (center.subgroupOf Γ) = 1` through `Subgroup.card_eq_one` and
+`Subgroup.subgroupOf_eq_bot` into `Disjoint (center _) Γ`, and this is the rule that then
+finishes the job. Stating it separately is what makes the `= 1` case simp-reachable at all,
+since the cardinality form cannot itself carry `@[simp]`.
+
+Needs `-1 ≠ 1` for the same reason as the `= 2` companion: in characteristic `2` the centre is
+trivial, so it is disjoint from every `Γ` while `-I = I` does lie in `Γ` whenever `Γ` is
+nontrivial. -/
+@[simp]
+theorem disjoint_center_iff_neg_one_notMem [NoZeroDivisors R]
+    (hne : (-1 : SpecialLinearGroup (Fin 2) R) ≠ 1)
+    (Γ : Subgroup (SpecialLinearGroup (Fin 2) R)) :
+    Disjoint (Subgroup.center (SpecialLinearGroup (Fin 2) R)) Γ ↔
+      (-1 : SpecialLinearGroup (Fin 2) R) ∉ Γ := by
+  rw [← Subgroup.subgroupOf_eq_bot, ← Subgroup.card_eq_one]
+  exact card_center_subgroupOf_eq_one_iff hne Γ
 
 /-- **The `±I` factor is `2` exactly when `-I ∈ Γ`.** The part of the centre that `Γ` contains is
 `{I}` or `{±I}` according to whether `Γ` contains `-I`, so the centre factor in the stabiliser
