@@ -19,14 +19,13 @@ explicit `y² = x³ + Ax + B` — the classical form of the Nagell–Lutz theore
 constructor, so it is supplied here, with the `IsShortNF` instance that connects it to everything
 Mathlib already proves.
 
-Only the two coefficient values are stated as lemmas. Every other fact about `shortCurve` —
-`a₁ = a₂ = a₃ = 0`, the `b`- and `c`-invariants, `Δ` and `j` — is inherited through the instance
-rather than restated, so `Δ_shortCurve` below is `Mathlib`'s `Δ_of_isShortNF` read at these
-coefficients.
+Only the coefficient values are stated as lemmas, and only those Mathlib does not already tag
+`@[simp]`. Every other fact about `shortCurve` — the `b`- and `c`-invariants, `Δ` and `j` — is
+inherited through the `IsShortNF` instance rather than restated.
 
 ## Main definitions
 
-* `TauCeti.WeierstrassCurve.shortCurve`: the curve `y² = x³ + Ax + B` over a commutative ring.
+* `TauCeti.WeierstrassCurve.shortCurve`: the curve `y² = x³ + Ax + B`, over any `Zero`.
 
 ## Main results
 
@@ -35,9 +34,11 @@ coefficients.
 * `TauCeti.WeierstrassCurve.map_shortCurve`: short form is preserved by a ring hom, and the
   coefficients transport. Mathlib has no `IsShortNF`-under-`map` instance, so this is what lets a
   curve over `ℤ` be base changed to `ℚ` and stay recognisably short.
-* `TauCeti.WeierstrassCurve.Δ_shortCurve`: the classical discriminant `-16(4A³ + 27B²)`.
-* `TauCeti.WeierstrassCurve.equation_shortCurve_iff`: a point lies on it exactly when
+* `TauCeti.WeierstrassCurve.shortCurve_equation_iff`: a point lies on it exactly when
   `y² = x³ + Ax + B`.
+
+The classical discriminant `-16(4A³ + 27B²)` is *not* restated: it is Mathlib's `Δ_of_isShortNF`,
+which the instance below makes applicable and the coefficient lemmas reduce.
 
 This is a prerequisite of the Nagell–Lutz milestone of
 `TauCetiRoadmap/EllipticCurves/README.md`, Layer 6, item "The torsion subgroup and Nagell–Lutz",
@@ -48,16 +49,19 @@ whose classical statement is about this curve and its discriminant.
 Adapted from the AINTLIB `NagellLutz` project (`github.com/CBirkbeck/AINTLIB`, Apache-2.0,
 `main @ 1c1c74664e40071c2c2165bc55ca2616a67ccd6b`),
 `LutzNagell/LutzNagellTheorem/ShortWeierstrass.lean`: `shortCurveZ` (`:30`), `shortCurveQ` (`:34`),
-`shortCurveQ_equation_iff` (`:58`) and `shortCurveZ_delta` (`:63`).
+`shortCurveQ_equation_iff` (`:58`) and `shortCurveZ_delta` (`:63`, not ported — see above).
 
-Three departures. The source fixes `ℤ` and `ℚ`; here the construction is over an arbitrary
-commutative ring and `map_shortCurve` relates the two, so the `ℤ → ℚ` pair of the classical
+Three departures. The source fixes `ℤ` and `ℚ`; here the construction needs only `Zero R`
+(`WeierstrassCurve` is a bare structure) and `map_shortCurve` relates the two, so the `ℤ → ℚ` pair of the classical
 statement is one definition and a base change rather than two definitions. The source's ten
-`@[simp]` coefficient lemmas — `shortCurve{Z,Q}_a₁` through `_a₆` — are not ported: eight of them
-are `a₁ = a₂ = a₃ = 0` twice over, which the `IsShortNF` instance supplies through Mathlib's
-`a₁_of_isShortNF`, `a₂_of_isShortNF` and `a₃_of_isShortNF`. And `shortCurveZ_delta` is not proved
-from `simp [Δ, b₂, b₄, b₆, b₈]; ring1` as the source does but read off Mathlib's
-`Δ_of_isShortNF`, which states exactly `-16(4a₄³ + 27a₆²)`.
+`@[simp]` coefficient lemmas — `shortCurve{Z,Q}_a₁` through `_a₆` — collapse to four here. Six of
+the ten are `a₁ = a₂ = a₃ = 0` stated once for each of the source's two curves; over one general
+ring those become three, of which `a₂` is already Mathlib's simp-tagged `a₂_of_isShortNF`, leaving
+`shortCurve_a₁` and `shortCurve_a₃` (Mathlib does not tag those two). The remaining four,
+`shortCurve{Z,Q}_a₄` and `_a₆`, likewise collapse to `shortCurve_a₄` and `shortCurve_a₆`, since
+`map_shortCurve` transports them to the base change. And `shortCurveZ_delta` is not ported at all:
+it is exactly Mathlib's `Δ_of_isShortNF`, `W.Δ = -16 * (4 * W.a₄ ^ 3 + 27 * W.a₆ ^ 2)`, which the
+coefficient simp lemmas above already reduce at `shortCurve A B`.
 -/
 
 public section
@@ -68,9 +72,13 @@ namespace WeierstrassCurve
 
 open _root_.WeierstrassCurve
 
-variable {R S : Type*} [CommRing R] [CommRing S] (A B : R)
+section Zero
 
-/-- The short Weierstrass curve `y² = x³ + Ax + B`. -/
+variable {R : Type*} [Zero R] (A B : R)
+
+/-- The short Weierstrass curve `y² = x³ + Ax + B`. Only `Zero R` is needed to write it down;
+`WeierstrassCurve` is a bare structure and the three vanishing coefficients are the only
+requirement. -/
 def shortCurve : _root_.WeierstrassCurve R where
   a₁ := 0
   a₂ := 0
@@ -78,13 +86,21 @@ def shortCurve : _root_.WeierstrassCurve R where
   a₄ := A
   a₆ := B
 
+@[simp] lemma shortCurve_a₁ : (shortCurve A B).a₁ = 0 := (rfl)
+
+@[simp] lemma shortCurve_a₃ : (shortCurve A B).a₃ = 0 := (rfl)
+
 @[simp] lemma shortCurve_a₄ : (shortCurve A B).a₄ = A := (rfl)
 
 @[simp] lemma shortCurve_a₆ : (shortCurve A B).a₆ = B := (rfl)
 
+end Zero
+
+variable {R S : Type*} [CommRing R] [CommRing S] (A B : R)
+
 /-- `shortCurve A B` is in short normal form. This instance is the point of the definition: it
-hands the curve to Mathlib's whole `*_of_isShortNF` family, so the vanishing coefficients and
-every invariant come for free rather than being restated here. -/
+hands the curve to Mathlib's whole `*_of_isShortNF` family, so every invariant — the `b`- and
+`c`-families, `Δ` and `j` — comes for free rather than being restated here. -/
 instance : (shortCurve A B).IsShortNF := ⟨(rfl), (rfl), (rfl)⟩
 
 /-- A ring hom carries `shortCurve` to `shortCurve` on the images of the coefficients. Mathlib has
@@ -93,13 +109,8 @@ the classical Nagell–Lutz statement — recognisably in short form. -/
 @[simp] lemma map_shortCurve (f : R →+* S) : (shortCurve A B).map f = shortCurve (f A) (f B) := by
   ext <;> simp [shortCurve, _root_.WeierstrassCurve.map]
 
-/-- The discriminant of `y² = x³ + Ax + B` is `-16(4A³ + 27B²)`, Mathlib's `Δ_of_isShortNF` read
-at these coefficients. -/
-lemma Δ_shortCurve : (shortCurve A B).Δ = -16 * (4 * A ^ 3 + 27 * B ^ 2) := by
-  simpa using (shortCurve A B).Δ_of_isShortNF
-
 /-- A point lies on `y² = x³ + Ax + B` exactly when it satisfies that equation. -/
-lemma equation_shortCurve_iff (x y : R) :
+@[simp] lemma shortCurve_equation_iff (x y : R) :
     (shortCurve A B).toAffine.Equation x y ↔ y ^ 2 = x ^ 3 + A * x + B := by
   rw [Affine.equation_iff]
   simp [shortCurve]
