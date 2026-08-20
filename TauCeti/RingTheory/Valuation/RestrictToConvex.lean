@@ -43,8 +43,9 @@ hypothesis that `H` absorbs every attained value `≥ 1` is what rules that out:
   the two directions of the quotient bound, and they are not the same comparison. Dividing by a
   kept value that dominates the numerator (`v a ≤ v b`) lands at or below `1`; the quotient is
   strictly *above* `1` in the opposite case, when the numerator strictly dominates the kept
-  divisor (`v b < v a`). The `_pow` forms specialize the divisor to `t ^ n`, which is the shape
-  Wedhorn's Lemma 7.44 extension indexes by.
+  divisor (`v b < v a`). Wedhorn's Lemma 7.44 extension indexes its divisor by a power, and
+  instantiates these at `b = t ^ n` — `pow_mem` supplies the membership, `map_pow` and `inv_pow`
+  the rewriting.
 * `Valuation.supp_le_restrictToConvex_supp` : the support can only grow.
 * `Valuation.mk0_mem_of_inv_le_of_le` : `H` keeps every value bracketed by an attained value
   `≥ 1` and its inverse — so the characteristic values of `v` all survive the restriction.
@@ -61,8 +62,11 @@ Ported from AINTLIB (`github.com/CBirkbeck/AINTLIB`, Apache-2.0), branch `dev/ad
 `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`, project `projects/AdicSpaces/`,
 file `Adic spaces/ValuationContinuity.lean`, declarations `convexRestrictFun` and
 `restrictToConvexBounded`, together with the bound and support lemmas ported here:
-`supp_le_restrictToConvex_supp` (:724), `restrictToConvex_mul_inv_pow_le_one` (:814) and
-`one_lt_restrictToConvex_mul_inv_pow` (:839). That file's `restrictToConvex_le_one` (:733) and
+`supp_le_restrictToConvex_supp` (:724). The source's `restrictToConvex_mul_inv_pow_le_one` (:814)
+and `one_lt_restrictToConvex_mul_inv_pow` (:839) are **generalised rather than ported**: their
+content is here as `restrictToConvex_mul_inv_le_one` and
+`one_lt_restrictToConvex_mul_inv`, stated for an arbitrary kept divisor, of which the
+source's power forms are the case `b = t ^ n`. That file's `restrictToConvex_le_one` (:733) and
 `restrictToConvex_lt_one_of_val_lt_one` (:786) are deliberately **not** ported: here they are
 one-line specializations of `restrictToConvex_le_iff` and `restrictToConvex_lt_coe_iff` at `1`,
 so a caller applies those directly. That development carries
@@ -421,24 +425,6 @@ theorem restrictToConvex_mul_inv_le_one (v : Valuation R Γ₀) (H : ConvexSubgr
     exact Or.inr ⟨hbr, hab⟩
   simpa using mul_inv_le_one_of_le₀ hle zero_le
 
-/-- Dividing a restricted value by a kept power that dominates it lands at or below `1`. This
-is the well-definedness bound of the extension `v(a/tⁿ) = v(a)·v(t)⁻ⁿ` in Wedhorn's Lemma 7.44,
-for the fixed exponent `n` the domination hypothesis `v a ≤ v (t ^ n)` is stated at. Nothing here
-lets `n` be raised: when `v t < 1` a larger exponent shrinks `v (t ^ n)` and can break that
-hypothesis.
-
-This is `restrictToConvex_mul_inv_le_one` at `b = t ^ n`; the power is what the extension's
-consumer indexes by, so it is named separately. -/
-theorem restrictToConvex_mul_inv_pow_le_one (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
-    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) {t a : R} {n : ℕ}
-    (ht : v t ≠ 0) (hmem : Units.mk0 (v t) ht ∈ H) (ha : v a ≤ v (t ^ n)) :
-    v.restrictToConvex H hH a * (v.restrictToConvex H hH t)⁻¹ ^ n ≤ 1 := by
-  have htn : v (t ^ n) ≠ 0 := v.map_pow t n ▸ pow_ne_zero n ht
-  have hmk : Units.mk0 (v (t ^ n)) htn = Units.mk0 (v t) ht ^ n := by ext; simp
-  have hmemn : Units.mk0 (v (t ^ n)) htn ∈ H := hmk ▸ pow_mem hmem n
-  have h := restrictToConvex_mul_inv_le_one v H hH htn hmemn ha
-  rwa [map_pow, ← inv_pow] at h
-
 /-- **A restricted value strictly dominating a kept value stays strictly above `1` after
 dividing by it.** As with the `≤` form, only the comparison and the divisor's membership matter. -/
 theorem one_lt_restrictToConvex_mul_inv (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
@@ -453,19 +439,6 @@ theorem one_lt_restrictToConvex_mul_inv (v : Valuation R Γ₀) (H : ConvexSubgr
     rw [restrictToConvex_apply_of_mem v H hH hb hmem, restrictToConvex_apply_of_mem v H hH ha hmema]
     simpa [← Units.val_lt_val] using hlt
   rwa [← div_eq_mul_inv, one_lt_div₀ (zero_lt_iff.mpr hbr)]
-
-/-- A restricted value strictly dominating a kept power stays strictly above `1` after dividing
-by that power. This is the "the extension exceeds `1`" leg of Wedhorn's Lemma 7.44, and is
-`one_lt_restrictToConvex_mul_inv` at `b = t ^ n`. -/
-theorem one_lt_restrictToConvex_mul_inv_pow (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
-    (hH : ∀ a : R, ∀ ha : v a ≠ 0, 1 ≤ v a → Units.mk0 (v a) ha ∈ H) {t a : R} {n : ℕ}
-    (ht : v t ≠ 0) (hmem : Units.mk0 (v t) ht ∈ H) (hlt : v (t ^ n) < v a) :
-    1 < v.restrictToConvex H hH a * (v.restrictToConvex H hH t)⁻¹ ^ n := by
-  have htn : v (t ^ n) ≠ 0 := v.map_pow t n ▸ pow_ne_zero n ht
-  have hmk : Units.mk0 (v (t ^ n)) htn = Units.mk0 (v t) ht ^ n := by ext; simp
-  have hmemn : Units.mk0 (v (t ^ n)) htn ∈ H := hmk ▸ pow_mem hmem n
-  have h := one_lt_restrictToConvex_mul_inv v H hH htn hmemn hlt
-  rwa [map_pow, ← inv_pow] at h
 
 /-- The support can only grow under the restriction: every zero of `v` is a zero of the
 restricted valuation, alongside the discarded values. Stated over a commutative ring because
