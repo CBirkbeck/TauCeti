@@ -474,18 +474,15 @@ theorem isRingOfIntegralElements_integralClosure_adjoin_plus (P : PairOfDefiniti
   have _ := isTopologicalRing_locTopology P T s S hden
   have _ := nonarchimedeanRing_locTopology P T s S hden
   set E := Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))
-  -- Integral closedness is Mathlib's, and power-boundedness is decided by `A⁺[T/s]` alone because
-  -- `(Aₛ)°` is integrally closed; only openness has to be argued.
-  refine ⟨?_, inferInstance, Subring.integralClosure_subring_le_iff.mpr fun x hx ↦
-    mem_powerBoundedSubring.mpr (isPowerBounded_of_mem_adjoin_plus P Aplus hAplus T s S hden hx)⟩
-  -- `A⁺[T/s]` absorbs the first basic neighbourhood of zero, and it lies inside its own integral
-  -- closure, so that closure contains an open additive subgroup.
-  rw [← Subring.coe_toAddSubgroup]
-  refine AddSubgroup.isOpen_mono (H₁ := locIdealImage P T s S 1) (fun y hy ↦ ?_)
-    (isOpen_locIdealImage P T s S hden 1)
-  refine Subring.mem_toAddSubgroup.mpr (Subalgebra.mem_toSubring.mpr ?_)
-  exact Subalgebra.algebraMap_mem (integralClosure ↥E S)
-    (⟨y, locIdealImage_one_le_adjoin_plus P Aplus hIplus T s S hy⟩ : ↥E)
+  -- `A⁺[T/s]` absorbs the first basic neighbourhood of zero, so it is itself open.
+  have hopen : IsOpen (E.toSubring : Set S) := by
+    rw [← Subring.coe_toAddSubgroup]
+    exact AddSubgroup.isOpen_mono (locIdealImage_one_le_adjoin_plus P Aplus hIplus T s S)
+      (isOpen_locIdealImage P T s S hden 1)
+  -- Power-boundedness is decided by `A⁺[T/s]` alone.
+  have hpb : E.toSubring ≤ powerBoundedSubring S := fun _ hx ↦
+    mem_powerBoundedSubring.mpr (isPowerBounded_of_mem_adjoin_plus P Aplus hAplus T s S hden hx)
+  exact Pair.isRingOfIntegralElements_integralClosure hopen hpb
 
 end Topological
 
