@@ -166,7 +166,9 @@ theorem card_center_subgroupOf_eq_one_iff [NoZeroDivisors R]
       have hm : (-1 : SpecialLinearGroup (Fin 2) R) ∈ Γ := hx1 ▸ x.2
       exact absurd hm hneg
 
-/-- **`Γ` misses the centre exactly when it misses `-I`.** This is
+/-- **`Γ` meets the centre only in the identity exactly when it does not contain `-I`.**
+`Disjoint` of subgroups is triviality of the intersection, not emptiness — `1` lies in both
+however `Γ` is chosen — so the content is that `-I` is the only other candidate. This is
 `card_center_subgroupOf_eq_one_iff` restated at its simp-normal form: `simp` rewrites
 `Nat.card (center.subgroupOf Γ) = 1` through `Subgroup.card_eq_one` and
 `Subgroup.subgroupOf_eq_bot` into `Disjoint (center _) Γ`, and this is the rule that then
