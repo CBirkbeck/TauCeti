@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.RingTheory.Polynomial.IsIntegral
 public import TauCeti.AlgebraicGeometry.EllipticCurve.Denominator
 public import TauCeti.RingTheory.Polynomial.IsIntegral
 

@@ -34,8 +34,10 @@ with its fraction field is the intended application and satisfies it through
 Each of `r`, `s`, `t` is exhibited as a root of an explicit **monic** polynomial over `R`, built
 from the change-of-variables formulas for the invariants, and `R` is integrally closed:
 
-* `r` from the `b₆`- and `b₈`-relations, as a root of a quartic — the two relations are combined as
-  `b₈-relation − r · b₆-relation`, which cancels the `r⁴` and `r³` terms that neither alone does;
+* `r` from the `b₆`- and `b₈`-relations, as a root of a quartic. The two are combined as
+  `b₈-relation − r · b₆-relation`: that cancels the `r³ · b₂` terms and turns `3r⁴ − 4r⁴` into
+  `−r⁴`, leaving `b₈ + 2r · b₆ + r² · b₄ − r⁴`. The `r⁴` term does not cancel and must not — it is
+  the quartic's leading term;
 * `s` from the `a₂`-relation, as a root of a quadratic, once `r` is known to lie in `R`;
 * `t` from the `a₆`-relation, likewise a quadratic, once `r` is known.
 
