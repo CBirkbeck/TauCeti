@@ -75,8 +75,7 @@ omit [Algebra ℚ A] in
 `x * y = y * x + z` and `z` commutes with `x`, then `x ^ (m + 1) * y` is `y * x ^ (m + 1)` plus
 `m + 1` copies of `z * x ^ m`.
 
-Only commutation of `z` with `x` is used; `y` may be arbitrary, and no divisibility of the
-coefficients is needed, so this holds over any ring. -/
+The section's `[Algebra ℚ A]` is omitted: the identity holds over any ring. -/
 theorem pow_succ_mul_eq_mul_pow_succ_add_nsmul (hxy : x * y = y * x + z) (hxz : Commute x z)
     (m : ℕ) : x ^ (m + 1) * y = y * x ^ (m + 1) + (m + 1) • (z * x ^ m) := by
   induction m with
