@@ -99,8 +99,7 @@ theorem coarsenByUnits_apply (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ
     v.coarsenByUnits H r = coarsenMapOfValueGroup H (v r) :=
   Valuation.map_apply _ _ _ _
 
-/-- A value whose unit avoids `H` lands strictly below `1` when it was at most `1`:
-the class of its unit is strictly below `1` in the quotient. -/
+/-- A value at most `1` whose unit avoids `H` lands strictly below `1` after coarsening. -/
 theorem coarsenByUnits_lt_one_of_notMem (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ)
     {a : R} (ha_ne : v a ≠ 0) (ha_le : v a ≤ 1)
     (hm : Units.mk0 (v a) ha_ne ∉ H) : v.coarsenByUnits H a < 1 := by
@@ -116,15 +115,13 @@ section Supp
 -- more than the rest of the file; the construction above needs no commutativity.
 variable {S : Type*} [CommRing S] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
-/-- Coarsening preserves the support: the coarsening map kills no nonzero value, since a
-nonzero value is a unit and units land on their classes. -/
+/-- Coarsening preserves the support. -/
 theorem coarsenByUnits_supp (v : Valuation S Γ₀) (H : ConvexSubgroup Γ₀ˣ) :
     (v.coarsenByUnits H).supp = v.supp := by
+  -- the coarsening map is a `→*₀` out of a `GroupWithZero`, so Mathlib's `map_eq_zero` already
+  -- says it kills no nonzero value; nothing about the construction has to be reopened
   ext r
-  simp only [mem_supp_iff, coarsenByUnits_apply]
-  refine ⟨fun h ↦ by_contra fun hr ↦ ?_, fun h ↦ by rw [h, map_zero]⟩
-  rw [← Units.val_mk0 hr, coarsenMapOfValueGroup_apply_coe] at h
-  exact WithZero.coe_ne_zero h
+  simp only [mem_supp_iff, coarsenByUnits_apply, map_eq_zero]
 
 end Supp
 
