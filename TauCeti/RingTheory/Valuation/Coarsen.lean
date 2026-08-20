@@ -86,7 +86,7 @@ public section
 
 open TauCeti
 
-variable {R : Type*} [CommRing R] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+variable {R : Type*} [Ring R] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
 
 /-- Coarsening a valuation by a convex subgroup of the units of its value monoid. -/
 noncomputable def coarsenByUnits (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ) :
@@ -97,17 +97,6 @@ noncomputable def coarsenByUnits (v : Valuation R Γ₀) (H : ConvexSubgroup Γ�
 theorem coarsenByUnits_apply (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ) (r : R) :
     v.coarsenByUnits H r = coarsenMapOfValueGroup H (v r) :=
   Valuation.map_apply _ _ _ _
-
-/-- Coarsening preserves the support: the coarsening map kills no nonzero value, since a
-nonzero value is a unit and units land on their classes. -/
-theorem coarsenByUnits_supp (v : Valuation R Γ₀) (H : ConvexSubgroup Γ₀ˣ) :
-    (v.coarsenByUnits H).supp = v.supp := by
-  ext r
-  simp only [mem_supp_iff, coarsenByUnits_apply]
-  refine ⟨fun h ↦ by_contra fun hr ↦ ?_, fun h ↦ by rw [h, map_zero]⟩
-  rw [show v r = (Units.mk0 (v r) hr : Γ₀) from rfl,
-    coarsenMapOfValueGroup_apply_unit H (Units.mk0 (v r) hr)] at h
-  exact WithZero.coe_ne_zero h
 
 /-- A value whose unit avoids `H` lands strictly below `1` when it was at most `1`:
 the class of its unit is strictly below `1` in the quotient. -/
@@ -126,6 +115,25 @@ theorem coarsenByUnits_lt_one_of_notMem (v : Valuation R Γ₀) (H : ConvexSubgr
       exact one_mem H
   have := H.quotientMk_lt_one_of_notMem hlt hm
   exact_mod_cast this
+
+section Supp
+
+-- `Valuation.supp` is defined only over a commutative ring, so this one statement asks for
+-- more than the rest of the file; the construction above needs no commutativity.
+variable {S : Type*} [CommRing S] {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀]
+
+/-- Coarsening preserves the support: the coarsening map kills no nonzero value, since a
+nonzero value is a unit and units land on their classes. -/
+theorem coarsenByUnits_supp (v : Valuation S Γ₀) (H : ConvexSubgroup Γ₀ˣ) :
+    (v.coarsenByUnits H).supp = v.supp := by
+  ext r
+  simp only [mem_supp_iff, coarsenByUnits_apply]
+  refine ⟨fun h ↦ by_contra fun hr ↦ ?_, fun h ↦ by rw [h, map_zero]⟩
+  rw [show v r = (Units.mk0 (v r) hr : Γ₀) from rfl,
+    coarsenMapOfValueGroup_apply_unit H (Units.mk0 (v r) hr)] at h
+  exact WithZero.coe_ne_zero h
+
+end Supp
 
 end
 
