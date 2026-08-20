@@ -62,10 +62,11 @@ private theorem transportedColumnAntisymmetrizer_mul_single_swap
   -- transposition.
   have hp₀ : Equiv.swap (e.symm x) (e.symm y) ∈ colSubgroup t := swap_mem_colSubgroup hcol
   have hp : e.permCongrHom (Equiv.swap (e.symm x) (e.symm y)) = Equiv.swap x y := by
-    have hrfl : e.permCongrHom (Equiv.swap (e.symm x) (e.symm y)) =
-        ((e.symm.trans (Equiv.swap (e.symm x) (e.symm y))).trans e) := rfl
-    rw [hrfl, Equiv.symm_trans_swap_trans]
-    simp
+    -- `permCongrHom` acts by conjugation, and conjugating a transposition by an injection
+    -- transposes the images.
+    refine Equiv.ext fun z ↦ ?_
+    rw [Equiv.permCongrHom_coe, Equiv.permCongr_apply]
+    simpa using e.injective.map_swap (e.symm x) (e.symm y) (e.symm z)
   -- Transport along the bundled `MonoidAlgebra.domCongr`, not the bare `mapDomainAlgHom`: the two
   -- are the same algebra map (`MonoidAlgebra.domCongr_toAlgHom`), but only the bundled one carries
   -- the `single` computation `MonoidAlgebra.domCongr_single`.
