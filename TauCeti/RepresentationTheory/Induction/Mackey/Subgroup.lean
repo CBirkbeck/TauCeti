@@ -8,7 +8,6 @@ module
 public import Mathlib.GroupTheory.Index
 public import TauCeti.Algebra.Group.Subgroup.Pointwise
 public import TauCeti.GroupTheory.DoubleCoset.Orbits
-public import TauCeti.GroupTheory.GroupAction.Stabilizer
 public import TauCeti.GroupTheory.QuotientGroup.Basic
 
 /-!
@@ -84,11 +83,6 @@ Layer 3 of `TauCetiRoadmap/RepresentationTheory/InductionRestriction/README.md`,
 homomorphisms `mackeyToK` and `mackeyToConjH`, and Layer 4, which asks for the invariance of the
 Mackey data "under replacing `s` by `h₁ s h₂`" as its own lemma.  `mackeySubgroup` is pinned in the
 accompanying `Suggested.lean`.
-
-Layer 1 of `TauCetiRoadmap/ModularForms/README.md`, "General level — by the coset norm", part of
-whose orbit/stabiliser bookkeeping the two multiplicity statements of the final section supply;
-they are not asked for by the InductionRestriction layers above, and they are here only because
-their proofs are Mackey ones. Nothing here touches that layer's cusp-width item.
 
 * [J.-P. Serre, *Linear Representations of Finite Groups*][serre1977], Section 7.3.
 -/

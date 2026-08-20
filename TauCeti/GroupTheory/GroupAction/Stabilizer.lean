@@ -9,6 +9,8 @@ public import Mathlib.GroupTheory.GroupAction.Basic
 public import Mathlib.GroupTheory.Index
 public import Mathlib.GroupTheory.QuotientGroup.Basic
 public import Mathlib.SetTheory.Cardinal.Finite
+public import TauCeti.Algebra.Group.Subgroup.Pointwise
+public import TauCeti.GroupTheory.QuotientGroup.Basic
 
 /-!
 # Cardinality of stabilisers under the two standard transports
@@ -41,6 +43,9 @@ subgroup quotiented out.
   subgroup mapped into the quotient.
 * `TauCeti.card_stabilizer_subgroupOf`: the degenerate case of that surjection, where the map is
   the isomorphism `𝒢.subgroupOf ℋ ≃* 𝒢` and the order is unchanged.
+* `TauCeti.card_stabilizer_coset_eq_card_stabilizer_inv_smul`: the class of `g` in `G ⧸ H` has,
+  inside `stabilizer G p`, a stabiliser of the same order as `g⁻¹ • p` has inside `H` —
+  conjugation by `g` is the bijection.
 -/
 
 public section
@@ -178,6 +183,49 @@ theorem card_stabilizer_subgroupOf {𝒢 ℋ : Subgroup G} (hle : 𝒢 ≤ ℋ) 
       fun g ↦ by simp [Subgroup.smul_def],
     MonoidHom.ker_eq_bot _ (Subgroup.subgroupOfEquivOfLe hle).injective]
   simp
+
+open MulAction in
+open scoped Pointwise in
+/-- **The stabiliser of a coset and the stabiliser of the translated point have the same order.**
+The class of `g` in `G ⧸ H` is stabilised inside `stabilizer G p` by exactly as many elements as
+`g⁻¹ • p` is stabilised by inside `H`.
+
+Conjugation by `g` is the bijection: an `x` fixing `p` and fixing the class of `g` satisfies
+`g⁻¹ * x * g ∈ H`, and that conjugate fixes `g⁻¹ • p`; conjugating back is the inverse.
+
+Stated at the level of a single group acting on `α`; the two-group form used below is the instance
+`G := ↥ℋ`, `H := 𝒢.subgroupOf ℋ`, `g := ↑h`. -/
+-- Not `@[simp]`, tested: `simpNF` runs over
+-- the whole library, so the downstream global `@[simp]`
+-- `TauCeti.stabilizer_eq_mackeySubgroup_subgroupOf` rewrites the left-hand side to
+-- `Nat.card ((mackeySubgroup g H (stabilizer G p)).subgroupOf (stabilizer G p))` regardless of
+-- which module carries the attribute. The obstruction is that lemma, not this one's placement.
+theorem card_stabilizer_coset_eq_card_stabilizer_inv_smul (H : Subgroup G) (p : α) (g : G) :
+    Nat.card (stabilizer (↥(stabilizer G p)) ((g : G ⧸ H))) =
+      Nat.card (stabilizer (↥H) (g⁻¹ • p)) := by
+  refine Nat.card_congr ⟨fun x => ⟨⟨g⁻¹ * (x : G) * g, ?_⟩, ?_⟩,
+    fun h => ⟨⟨g * (h : G) * g⁻¹, ?_⟩, ?_⟩, fun x => ?_, fun h => ?_⟩
+  · -- the stabiliser of a coset is the conjugate subgroup, by `stabilizer_quotientGroup_mk`
+    have hx := x.2
+    rw [mem_stabilizer_iff, compHom_smul_def (Subgroup.subtype (stabilizer G p)),
+      Subgroup.coe_subtype, ← mem_stabilizer_iff, stabilizer_quotientGroup_mk,
+      mem_conj_smul] at hx
+    exact hx
+  · -- `g⁻¹ * x * g` sends `g⁻¹ • p` to `g⁻¹ • (x • p)`, and `x` fixes `p`
+    have hp := (x : ↥(stabilizer G p)).2
+    rw [mem_stabilizer_iff] at hp
+    rw [mem_stabilizer_iff, Subgroup.smul_def, mul_smul, mul_smul, smul_inv_smul, hp]
+  · -- `hh` is stated for the `↥H`-action; `Subgroup.smul_def` puts it in the `G`-action the
+    -- conjugated element acts by
+    have hh := h.2
+    rw [mem_stabilizer_iff, Subgroup.smul_def] at hh
+    rw [mem_stabilizer_iff, mul_smul, mul_smul, hh, smul_inv_smul]
+  · -- same route back: membership in the conjugate subgroup is `h ∈ H` after cancellation
+    rw [mem_stabilizer_iff, compHom_smul_def (Subgroup.subtype (stabilizer G p)),
+      Subgroup.coe_subtype, ← mem_stabilizer_iff, stabilizer_quotientGroup_mk, mem_conj_smul]
+    simp [mul_assoc]
+  · exact Subtype.ext (Subtype.ext (by simp [mul_assoc]))
+  · exact Subtype.ext (Subtype.ext (by simp [mul_assoc]))
 
 end TauCeti
 
