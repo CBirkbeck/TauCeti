@@ -24,34 +24,40 @@ of class groups.
 * `TauCeti.Isogeny.pushClass`: the same map written additively, which is the form the point
   group consumes.
 
-## Main results
-
-
 ## Design
 
-**The instance arguments are explicit, and deliberately so.** `Isogeny.intermediateRing` is a
-`Subring W₁.FunctionField` carrying no `Algebra` instance over either coordinate ring —
-`IntermediateRing/Basic.lean` records that an instance would reintroduce a diamond — so every
-statement about it takes the algebra structures as arguments. This file follows the shape the
-`IntermediateRing/` series already uses rather than inventing a second convention.
+**The intermediate ring's algebra structures are built here, not accepted.**
+`Isogeny.intermediateRing` is a `Subring W₁.FunctionField` carrying no `Algebra` instance over
+either coordinate ring — `IntermediateRing/Basic.lean` records that an instance would reintroduce a
+diamond — so the two structures have to come from somewhere. Taking them as arguments would leave
+the exported map a *family indexed by the caller's choice*: nothing would force them to be
+`toIntermediateRing` and `pullbackToIntermediateRing`. For `φ = Isogeny.id W`, precomposing either
+with a nontrivial `F`-automorphism of `W.CoordinateRing` satisfies every hypothesis — injectivity,
+finiteness and Dedekindness are all automorphism-stable — while yielding a different map, so
+`(Isogeny.id W).pushClass` would not need to be the identity. The definitions below therefore build
+both structures internally from the corestricted embeddings, which is what makes them *the* maps
+induced by `φ`, and what a functoriality statement and `toPointHom` need.
 
-**Every hypothesis is an argument, and each has a supplier elsewhere.** Nothing among the
-declarations below is derived: each takes its instances, so none of them depends on when a supplier
-lands. The suppliers live with the object they describe, in the one-property-per-file
-`IntermediateRing/` series:
+**What `h` is for.** The one thing that cannot be built is the agreement between the ambient
+`Algebra W₂.CoordinateRing W₁.FunctionField` and `φ.pullback`:
 
-* `[IsDedekindDomain φ.intermediateRing]` — `Isogeny.isDedekindDomain_intermediateRing`, which
-  additionally needs separability of the function-field extension. Taking the conclusion keeps
-  that condition at the call site and leaves this statement true for any intermediate ring known
-  to be Dedekind by another route, so the inseparable case is excluded by whichever lemma
-  supplies the instance rather than silently here.
-* `[Module.Finite W₂.CoordinateRing φ.intermediateRing]` — `Isogeny.moduleFinite_intermediateRing`.
-* the two `[Module.IsTorsionFree …]` — Mathlib's `Module.isTorsionFree_iff_algebraMap_injective`
-  applied to the two embeddings `Isogeny.toIntermediateRing_injective` and
-  `Isogeny.pullbackToIntermediateRing_injective`. A consumer whose algebra structures are the
-  corestricted maps discharges them with
-  `Module.isTorsionFree_iff_algebraMap_injective.mpr φ.toIntermediateRing_injective` on the source
-  side and the `pullbackToIntermediateRing` analogue on the target side. These are what make
+`h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x`
+
+That structure is a `variable`, so it need not be the pullback's; `h` pins it, and it is what
+`Isogeny.isScalarTower_intermediateRing` consumes to place `φ.intermediateRing` between
+`W₂.CoordinateRing` and `W₁.FunctionField`. The `example` below witnesses that `h` is satisfiable
+rather than vacuous: it holds by construction when the ambient structure is the pullback's own.
+
+**Every other hypothesis is discharged internally**, from suppliers that live with the object they
+describe, in the one-property-per-file `IntermediateRing/` series:
+
+* `IsDedekindDomain φ.intermediateRing` — `Isogeny.isDedekindDomain_intermediateRing`. That lemma is
+  where separability of the function-field extension is consumed, so the inseparable case is
+  excluded there rather than silently here;
+* `Module.Finite W₂.CoordinateRing φ.intermediateRing` — `Isogeny.moduleFinite_intermediateRing`;
+* both `Module.IsTorsionFree` instances — Mathlib's `Module.isTorsionFree_iff_algebraMap_injective`
+  applied to `Isogeny.toIntermediateRing_injective` and
+  `Isogeny.pullbackToIntermediateRing_injective`. These are what make
   `ClassGroup.extendedRelNormHom` applicable at all: its variable block requires them.
 
   **There is deliberately no `Isogeny.isTorsionFree_intermediateRing` to cite.** Named lemmas of
@@ -59,24 +65,8 @@ lands. The suppliers live with the object they describe, in the one-property-per
   `iff` above: a `theorem` carrying an explicit pointwise hypothesis can never be selected by
   instance search, so it saves a consumer nothing over the one-liner.
 
-This file derives none of these — each is an argument — so it compiles and is correct independently
-of when the suppliers land, and the `example` below witnesses that the block is jointly
-satisfiable rather than vacuous.
-
-**Open: the two `Algebra` arguments are not tied to `φ`.** Nothing forces them to be
-`toIntermediateRing` and `pullbackToIntermediateRing`, so the declarations below are a family
-indexed by the caller's choice of structure rather than *the* map induced by the isogeny. For
-`φ = Isogeny.id W`, precomposing either structure with a nontrivial `F`-automorphism of
-`W.CoordinateRing` satisfies every argument above — injectivity, finiteness and Dedekindness are
-all automorphism-stable — and yields a different map, so `(Isogeny.id W).pushClass` need not be
-the identity. Any functoriality statement, and `toPointHom`, will need this closed first.
-
-The obvious repair does not work here: adding `[IsScalarTower …]` arguments to constrain the
-structures makes them *unused* arguments of a definition whose body never mentions them, and
-`lint-env`'s `unusedArguments` linter rejects that as a new violation — the escape hatches are a
-`@[nolint]` plus an allowlist line under `scripts/`, which is not a fix. Closing this properly means
-building the structures inside the definition from the corestricted maps rather than accepting them,
-which changes what the declaration asks of a caller and is left for review to weigh.
+The instance arguments that remain are ambient facts about the curves and their function fields,
+not about the intermediate ring, so they stay arguments.
 
 `ClassGroup.extendedRelNormHom` orders its rings `A M R` — source, middle, target — so the
 instantiation is `A := W₁.CoordinateRing`, `M := φ.intermediateRing`, `R := W₂.CoordinateRing`.
@@ -95,8 +85,9 @@ repository states the surrounding API:
   f.IntermediateRing`, ordering the rings target-source-middle; `TauCeti.ClassGroup`'s own
   `extendedRelNormHom` orders them source-middle-target, so the arguments are permuted here;
 * the source obtains its algebra structures from a `letI := f.pullback.coordinateRingAlgebra`
-  inside each proof, whereas `intermediateRing` here carries no such instance by design, so they
-  are explicit arguments instead.
+  inside each proof; `intermediateRing` here carries no such instance by design, so the same is
+  done from the corestricted embeddings, but inside the definition rather than inside a proof —
+  which is what lets the exported map be canonical.
 
 The source's `pushFractionalIdeal` and `pushClassMonoidHom_mk` are **not** ported. They are
 stated through `ClassGroup.normIntegralUnitIdeal` and `ClassGroup.integralUnitIdealRep`, an
