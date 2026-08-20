@@ -77,8 +77,12 @@ instantiation is `A := W₁.CoordinateRing`, `M := φ.intermediateRing`, `R := W
 extension and relative norm (`ClassGroup.extendedRelNormHom`)" among the components of
 D. Angdinata's shared isogeny development, on the way to `toPointHom`.
 
-Adapted from that development's `Isogeny.lean` (Apache-2.0, by David Kurniadi Angdinata),
-declarations `pushClassMonoidHom` and `pushClass`. Two adaptations are forced by how this
+Adapted from that development's `Isogeny.lean`, by David Kurniadi Angdinata, declarations
+`pushClassMonoidHom` and `pushClass`. No revision is cited because there is none to cite: the
+roadmap records this source as shared with its authors ahead of its Mathlib PRs, with "no public
+revision to pin, so the shared files are the contract", and directs that it be pinned to the PR
+numbers once those exist. For the same reason no licence is asserted here — the roadmap states one
+for its other pinned sources and none for this one. Two adaptations are forced by how this
 repository states the surrounding API:
 
 * the source writes `ClassGroup.extendedRelNormHom W₂.CoordinateRing W₁.CoordinateRing
