@@ -116,8 +116,7 @@ private lemma abs_le_two_of_dotProduct_self {x : Fin 8 → ℤ} (hx : x ⬝ᵥ x
 
 /-- **A norm-eight integer vector with every coordinate even is twice a norm-two vector.**
 
-Stated for an arbitrary finite index type: neither the dimension nor the lattice condition plays
-any part. -/
+The index type is an arbitrary `Fintype`; the dimension plays no part. -/
 private theorem exists_eq_two_smul_of_forall_even {ι : Type*} [Fintype ι] {x : ι → ℤ}
     (heven : ∀ j, (2 : ℤ) ∣ x j) (hnorm : x ⬝ᵥ x = 8) :
     ∃ y : ι → ℤ, x = (2 : ℤ) • y ∧ y ⬝ᵥ y = 2 := by
