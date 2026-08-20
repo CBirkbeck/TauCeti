@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.RingTheory.Huber.LocalizationTopology.Completion
-public import TauCeti.RingTheory.Huber.Pair
 
 /-!
 # The plus ring `A_U⁺` of a rational localisation
@@ -316,13 +315,15 @@ definition `I`, the product `c · i` already lies in the subring `A⁺[T/s]` who
 packages it as a statement about the first basic neighbourhood of zero. The strategy is
 Wedhorn's, in the proofs of Proposition 7.19 and Lemma 7.20.
 
-Two facts carry it. Every element of `I` is topologically nilpotent
-(`TauCeti.Huber.PairOfDefinition.isTopologicallyNilpotent_of_mem_idealOfDefinition`) and so lies in
-`A⁺`, which is open and integrally closed
-(`TauCeti.Huber.IsRingOfIntegralElements.mem_of_isTopologicallyNilpotent`); and `I` is an ideal
-*of `A₀`*, so a coefficient contributed by `A₀` can be pushed onto the numerator instead. -/
-theorem locSubring_mul_idealOfDefinition_mem_adjoin_plus [NonarchimedeanRing A]
-    (P : PairOfDefinition A) (Aplus : Subring A) (hAplus : IsRingOfIntegralElements Aplus)
+Two facts carry it. The image of `I` lies in `Aplus`, which is the hypothesis `hIplus`; and `I`
+is an ideal *of `A₀`*, so a coefficient contributed by `A₀` can be pushed onto the numerator
+instead. Only the containment is needed, not power-boundedness or a nonarchimedean topology: for a
+ring of integral elements `A⁺` it is discharged by
+`TauCeti.Huber.IsRingOfIntegralElements.mem_of_isTopologicallyNilpotent` applied to
+`TauCeti.Huber.PairOfDefinition.isTopologicallyNilpotent_of_mem_idealOfDefinition`. -/
+theorem locSubring_mul_idealOfDefinition_mem_adjoin_plus
+    (P : PairOfDefinition A) (Aplus : Subring A)
+    (hIplus : ∀ j : P.ringOfDefinition, j ∈ P.idealOfDefinition → (j : A) ∈ Aplus)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S]
     {c : S} (hc : c ∈ locSubring P T s S) {i : P.ringOfDefinition}
     (hi : i ∈ P.idealOfDefinition) :
@@ -339,10 +340,9 @@ theorem locSubring_mul_idealOfDefinition_mem_adjoin_plus [NonarchimedeanRing A]
       algebraMap A S a ∈ Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S)) :=
     fun a ha ↦ Subalgebra.algebraMap_mem _ (⟨a, ha⟩ : Aplus)
   set E := Algebra.adjoin Aplus (Set.range fun t : T ↦ (divBy (t : A) s : S))
-  -- The ideal of definition is topologically nilpotent, hence lands in `A⁺` and so in `A⁺[T/s]`.
+  -- The ideal of definition lands in `A⁺` by hypothesis, hence in `A⁺[T/s]`.
   have hI : ∀ j ∈ P.idealOfDefinition, algebraMap A S (j : A) ∈ E := fun j hj ↦
-    hplus _ (hAplus.mem_of_isTopologicallyNilpotent
-      (P.isTopologicallyNilpotent_of_mem_idealOfDefinition hj))
+    hplus _ (hIplus j hj)
   -- `W`: the elements of `Aₛ` carrying the image of `I` into `A⁺[T/s]`. It is an additive
   -- subgroup, but not a subring.
   let W : AddSubgroup S :=
@@ -387,8 +387,8 @@ subgroup of `Aₛ`.
 Only the packaging is here. `J` is spanned over `D` by the image of `I`, so a span induction
 reduces the containment to the absorption itself,
 `TauCeti.Huber.PairOfDefinition.locSubring_mul_idealOfDefinition_mem_adjoin_plus`. -/
-theorem locIdealImage_one_le_adjoin_plus [NonarchimedeanRing A] (P : PairOfDefinition A)
-    (Aplus : Subring A) (hAplus : IsRingOfIntegralElements Aplus)
+theorem locIdealImage_one_le_adjoin_plus (P : PairOfDefinition A) (Aplus : Subring A)
+    (hIplus : ∀ j : P.ringOfDefinition, j ∈ P.idealOfDefinition → (j : A) ∈ Aplus)
     (T : Finset A) (s : A) (S : Type*) [CommRing S] [Algebra A S] [IsLocalization.Away s S] :
     locIdealImage P T s S 1 ≤
       (Algebra.adjoin Aplus
@@ -405,7 +405,7 @@ theorem locIdealImage_one_le_adjoin_plus [NonarchimedeanRing A] (P : PairOfDefin
       obtain ⟨i, hi, rfl⟩ := hy
       intro c
       rw [MulMemClass.coe_mul, toLocSubring_apply]
-      exact locSubring_mul_idealOfDefinition_mem_adjoin_plus P Aplus hAplus T s S c.2 hi
+      exact locSubring_mul_idealOfDefinition_mem_adjoin_plus P Aplus hIplus T s S c.2 hi
     | zero =>
       intro c
       rw [mul_zero, ZeroMemClass.coe_zero]
