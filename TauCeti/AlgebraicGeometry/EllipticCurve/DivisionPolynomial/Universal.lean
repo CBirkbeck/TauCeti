@@ -85,8 +85,9 @@ their siblings — qualified names, ring-hom-named `map_*` rewrites in place of 
 `polyEval` — plus `ψc_def` in place of unfolding `ψc`, whose body is likewise unexposed.
 
 The `evalEval_*` statements are the source's unchanged. Docstrings are added here, and the
-source's shared `variable {m n : ℤ}` is narrowed to `n`: of those five only `evalEval_ψ` and
-`evalEval_φ` carry an index, and both use `n` alone. `isEllSequence_ψᵤ` is stated upstream through
+source's shared `variable {m n : ℤ}` is narrowed to `n`: of the seven transports only
+`evalEval_ψ`, `evalEval_φ`, `evalEval_ω` and `evalEval_ψc` carry an index, and all four use `n`
+alone. `isEllSequence_ψᵤ` is stated upstream through
 an `abbrev ψᵤ` and its own `ψᵤ_eq_normEDS`; here the abbreviation is dropped, the identification
 of `ψ` with `normEDS` is the named `ψ_eq_normEDS` (`DivisionPolynomial/NormEDS.lean`), and a
 `have` transports it through `polyToField`, so the statement is spelled on
@@ -175,10 +176,12 @@ lemma polyEval_cusp_ψc : polyEval (cusp ℤ) 1 1 (curve.ψc n) = 2 := by
 /-- **On the cusp curve at `(1, 1)`, `ω n` evaluates to `1`.** -/
 lemma polyEval_cusp_ω : polyEval (cusp ℤ) 1 1 (curve.ω n) = 1 := by
   -- Evaluate `two_mul_ω` at the cusp: `ψc` gives `2`, `φ` gives `1`, the cusp's `a₁` and `a₃`
-  -- vanish, so twice the value is `2`.
+  -- vanish, so `h` collapses to `2 * (the goal's left side) = 2` and the `2` cancels.
   have h := congr(polyEval (cusp ℤ) 1 1 $(two_mul_ω curve n))
   simp only [map_mul (polyEval (cusp ℤ) 1 1), map_sub (polyEval (cusp ℤ) 1 1),
     map_pow (polyEval (cusp ℤ) 1 1), polyEval_cusp_ψc, polyEval_cusp_ψ, polyEval_cusp_φ] at h
+  -- The residual `a₁`/`a₃` terms sit under `CC`, whose body is unexposed and has no cusp value
+  -- lemma, so no named rewrite can kill them; evaluating the wrappers is the one route left.
   simpa [polyEval_apply, evalEval] using h
 
 end Universal
