@@ -11,15 +11,23 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.Isogeny.IntermediateRing.F
 public import TauCeti.RingTheory.ClassGroup.ExtendedRelNorm
 
 /-!
-# The class-group map induced by an isogeny
+# The class-group map induced by a separable isogeny
 
-For an isogeny `φ : Isogeny W₁ W₂`, extending an ideal of `W₁.CoordinateRing` into the
-intermediate ring and taking the relative norm down to `W₂.CoordinateRing` gives a homomorphism
-of class groups.
+For an isogeny `φ : Isogeny W₁ W₂` **whose function-field extension is separable**, extending an
+ideal of `W₁.CoordinateRing` into the intermediate ring and taking the relative norm down to
+`W₂.CoordinateRing` gives a homomorphism of class groups.
+
+**Separability is a real restriction on the isogenies covered, not bookkeeping.** It appears as
+`[Algebra.IsSeparable W₂.FunctionField W₁.FunctionField]` in the variable block below, and it is
+load-bearing: `Isogeny.isDedekindDomain_intermediateRing` needs it, ultimately because Mathlib's
+`IsIntegralClosure.isDedekindDomain` is stated for separable extensions and has no inseparable
+variant. So the inseparable isogenies — the Frobenius isogeny in characteristic `p` above all —
+are **not** covered by anything in this file. Removing the hypothesis is upstream work in Mathlib
+(Dedekindness of the integral closure in a finite inseparable extension), not a restatement here.
 
 ## Main definitions
 
-* `TauCeti.Isogeny.pushClassMonoidHom`: the multiplicative form,
+* `TauCeti.Isogeny.pushClassMonoidHom`: the multiplicative form, for a separable `φ`,
   `ClassGroup W₁.CoordinateRing →* ClassGroup W₂.CoordinateRing`.
 * `TauCeti.Isogeny.pushClass`: the same map written additively, which is the form the point
   group consumes.
@@ -127,12 +135,16 @@ variable (φ : Isogeny W₁ W₂)
   [IsScalarTower W₂.CoordinateRing W₂.FunctionField W₁.FunctionField]
   [Algebra.IsSeparable W₂.FunctionField W₁.FunctionField]
 
-/-- **The class-group map induced by an isogeny**, multiplicatively: extend a class of
+/-- **The class-group map induced by a separable isogeny**, multiplicatively: extend a class of
 `W₁.CoordinateRing` into the intermediate ring, then norm it down to `W₂.CoordinateRing`.
 
 The two coordinate rings carry no map between them; the intermediate ring is what connects
 them, receiving `W₁.CoordinateRing` by inclusion and lying module-finite over
-`W₂.CoordinateRing`. -/
+`W₂.CoordinateRing`.
+
+Requires `[Algebra.IsSeparable W₂.FunctionField W₁.FunctionField]` from the variable block, so
+this is the separable case only and does not cover Frobenius; see the module docstring for why
+that hypothesis cannot currently be dropped. -/
 noncomputable def pushClassMonoidHom
     (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
     ClassGroup W₁.CoordinateRing →* ClassGroup W₂.CoordinateRing :=
@@ -149,7 +161,8 @@ noncomputable def pushClassMonoidHom
   ClassGroup.extendedRelNormHom W₁.CoordinateRing φ.intermediateRing W₂.CoordinateRing
 
 /-- **The additive form of `Isogeny.pushClassMonoidHom`.** The point group is described additively
-by its class group, so this is the shape the induced map on points is built from. -/
+by its class group, so this is the shape the induced map on points is built from. Inherits that
+definition's separability hypothesis. -/
 noncomputable def pushClass
     (h : ∀ x, algebraMap W₂.CoordinateRing W₁.FunctionField x = φ.pullback x) :
     Additive (ClassGroup W₁.CoordinateRing) →+ Additive (ClassGroup W₂.CoordinateRing) :=
