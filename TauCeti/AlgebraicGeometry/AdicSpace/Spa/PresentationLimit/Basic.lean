@@ -232,6 +232,24 @@ noncomputable def presentationLimitπ (Aplus : Subring A) (V : Opens ↥(spa Apl
     presentationLimitObj P Aplus V ⟶ (rationalIndexDiagram P Aplus V).obj i :=
   limit.π (rationalIndexDiagram P Aplus V) i
 
+variable (P) in
+/-- **The projections form a cone over the diagram**: composing a projection with a diagram map is
+the projection at the target. This is `limit.w` for this diagram, stated through
+`presentationLimitπ` so that a consumer can see the compatibility without unfolding
+`presentationLimitObj`'s sealed body.
+
+Deliberately **not** `@[simp]`, and neither is any restatement of it — both options were tried
+against `lint-env` and rejected. As written, `rationalIndexDiagram_map` (itself `@[simp]`)
+rewrites this left-hand side into `Presentation.restrictionHom` form, so it is not in simp-normal
+form. Restating it *at* that normal form fails differently: `restrictionHom` takes the containment
+as a proof argument, so simp has no matchable key and the rule "does not simplify when using the
+simp lemma on itself", i.e. would never fire. The compatibility is therefore stated as a plain
+theorem; a consumer needing it under `simp` converts with `rationalIndexDiagram_map`. -/
+theorem presentationLimitπ_map {i j : RationalIndex P Aplus V} (f : i ⟶ j) :
+    presentationLimitπ P Aplus V i ≫ (rationalIndexDiagram P Aplus V).map f =
+      presentationLimitπ P Aplus V j :=
+  limit.w (rationalIndexDiagram P Aplus V) f
+
 /-- **Hom-extensionality for the presentation-indexed limit**: two morphisms into it are equal
 once all their projections agree. `P`, `Aplus` and `V` are implicit here, being determined by the
 morphisms. -/
