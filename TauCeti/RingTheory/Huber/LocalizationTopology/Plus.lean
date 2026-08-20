@@ -53,12 +53,15 @@ closure, in `A_U`, of the image of `A⁺[T/s]`.
 
 Of the three conditions making `(A_U, A_U⁺)` a Huber pair, two are here: integral closedness by
 construction (`isIntegrallyClosedIn_completedPlusSubring`) and power-boundedness
-(`completedPlusSubring_le_powerBoundedSubring`). **Openness is not proved here.** It reduces, by
-`Subgroup.isOpen_of_openSubgroup` and the `isOpen_ringOfDefinition` field of the completed pair,
-to containing that pair's ring of definition — and since that ring is a *closure* of an image
-while `A_U⁺` carries no topological closure, the only route available here — `closure_le` — asks
-for `A_U⁺` to be closed. That is sufficient rather than necessary: a direct argument for the
-containment would do as well, and none is on hand.
+(`completedPlusSubring_le_powerBoundedSubring`). **Openness is still not proved here**, but its
+pre-completion half is: `locIdealImage_one_le_adjoin_plus` shows that `A⁺[T/s]` absorbs the first
+basic neighbourhood of zero in `Aₛ`, so `A_U⁺` contains the image of that neighbourhood.
+
+What remains is a statement about the completion rather than about `Aₛ`. The neighbourhoods of
+zero in `A⟨T/s⟩` are the *closures* of the images of the `locIdealImage`, so absorbing an image
+does not by itself make `A_U⁺` a neighbourhood of zero; that step needs `A_U⁺` to be closed. As
+`A_U⁺` is an integral closure taken in the completion, its closedness is exactly the
+identification recorded below as Huber's Lemma 2.4.3, which is not available here.
 
 ## Provenance
 
