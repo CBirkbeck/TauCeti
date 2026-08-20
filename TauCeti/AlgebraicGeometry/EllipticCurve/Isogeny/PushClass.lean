@@ -155,12 +155,15 @@ end PushClass
 
 section Instantiable
 
-/-- **The definitions' hypotheses are satisfiable.** The algebra structures are no longer a
-caller's choice — `pushClassMonoidHom` builds them from `φ` — so what remains to witness is that
-the pinning hypothesis `h` can be met at all. It is met by construction whenever the ambient
-`W₂.CoordinateRing`-algebra structure on `W₁.FunctionField` is the pullback's own.
+/- **The definitions' hypotheses are satisfiable** (documentation, not public API). The algebra
+structures are no longer a caller's choice — `pushClassMonoidHom` builds them from `φ` — so what
+remains to witness is that the pinning hypothesis `h` can be met at all. It is met by construction
+whenever the ambient `W₂.CoordinateRing`-algebra structure on `W₁.FunctionField` is the pullback's
+own. Without this the definitions could be unusable, satisfied by nothing.
 
-Kept as an `example`: a satisfiability check with no downstream consumer, as in
+Kept as an `example`, and behind a plain block comment rather than a docstring: it is a one-off
+sanity check with no downstream consumer, and an unnamed declaration's doc comment reaches no
+generated documentation. This follows the non-vacuity check in
 `Analysis/Complex/Conformal/DiscInjection.lean`. -/
 example (φ : Isogeny W₁ W₂) :
     letI : Algebra W₂.CoordinateRing W₁.FunctionField := φ.pullback.toRingHom.toAlgebra
