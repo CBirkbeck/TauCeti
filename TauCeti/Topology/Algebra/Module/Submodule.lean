@@ -27,14 +27,16 @@ So there are exactly two gaps, and they are what this file fills:
 * **`ContinuousConstSMul` with no topology on the scalars** — `SMulMemClass.continuousSMul` needs
   a topology on `A` and `ContinuousSMul A M`, whereas
   `TauCeti.Huber.restrictedMvPowerSeriesSubmodule` asks only for `ContinuousConstSMul A M` with
-  `A` untopologised. That is the form this instance is for.
+  `A` untopologised. That is the form this instance is for, and it is stated at
+  `SMulMemClass` — the same generality mathlib gives the joint action — rather than at
+  `Submodule`.
 
 ## Main results
 
 * `Submodule.continuousAdd`: addition on `↥p` is continuous, asking only `ContinuousAdd` of the
   ambient module rather than a topological group structure.
-* `Submodule.continuousConstSMul`: each scalar acts continuously on `↥p`, with no topology on the
-  scalars.
+* `SMulMemClass.continuousConstSMul`: each scalar acts continuously on any scalar-closed
+  subobject, with no topology on the scalars; the submodule case follows by inference.
 -/
 
 public section
@@ -49,10 +51,21 @@ topological group. A `ContinuousAdd` ambient is enough. -/
 instance continuousAdd [ContinuousAdd M] (p : Submodule A M) : ContinuousAdd p :=
   inferInstanceAs (ContinuousAdd p.toAddSubmonoid)
 
-/-- **Each scalar acts continuously on a submodule**, since it does so on the ambient module and
-the action is the restriction of that one. -/
-instance continuousConstSMul [ContinuousConstSMul A M] (p : Submodule A M) :
-    ContinuousConstSMul A p :=
+end Submodule
+
+namespace SMulMemClass
+
+/-- **Each scalar acts continuously on a scalar-closed subobject.** The action is the restriction
+of the ambient one along an inducing map, so `Topology.IsInducing.continuousConstSMul` gives it
+directly.
+
+This is the constant-scalar counterpart of Mathlib's `SMulMemClass.continuousSMul`, and it is
+stated at the same generality: any `SetLike` subobject closed under the action. It is *not*
+subsumed by that instance, which needs a topology on the scalars and joint continuity, whereas
+this one asks neither — which is what `TauCeti.Huber.restrictedMvPowerSeriesSubmodule` needs, since
+it takes `ContinuousConstSMul A M` with `A` untopologised. -/
+instance continuousConstSMul {S X : Type*} [SetLike S X] [SMul A X] [TopologicalSpace X]
+    [ContinuousConstSMul A X] [SMulMemClass S A X] (s : S) : ContinuousConstSMul A s :=
   Topology.IsInducing.subtypeVal.continuousConstSMul id rfl
 
-end Submodule
+end SMulMemClass
