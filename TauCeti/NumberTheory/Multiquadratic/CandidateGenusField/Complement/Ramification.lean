@@ -45,13 +45,11 @@ namespace TauCeti.Multiquadratic
 
 variable {d : ℤ}
 
-/-- **Distinct chosen prime discriminants have coprime data.** The rational prime attached to one
-chosen prime-discriminant factor is coprime to the absolute value of any other.
-
-Only the two members and their distinctness are needed; the spec of `genusPrimeDiscriminants` is
-re-derived here rather than threaded in. -/
+/-- **The rational prime of one chosen prime discriminant is coprime to every other.** For
+distinct chosen prime-discriminant factors `P` and `Q` of `fundamentalDiscriminant d`, the
+rational prime attached to `P` is coprime to `|Q|`. -/
 private theorem coprime_primeDiscriminantPrime_natAbs_of_ne (hd : Squarefree d)
-    (P Q : {R // R ∈ genusPrimeDiscriminants hd}) (hQP : Q ≠ P) :
+    {P Q : {R // R ∈ genusPrimeDiscriminants hd}} (hQP : Q ≠ P) :
     Nat.Coprime (primeDiscriminantPrime P.val) (Q.val).natAbs := by
   -- If the prime divided the other discriminant it would *be* the prime attached to it, and
   -- injectivity of that assignment would identify the two factors.
@@ -100,7 +98,7 @@ theorem isUnramifiedIn_candidateGenusFieldComplement_omittedPrime (hd : Squarefr
   let p := primeDiscriminantPrime P.val
   have hp : p.Prime := prime_primeDiscriminantPrime (hs P.val P.property)
   have hcoprimeFactor (Q : ι) : Nat.Coprime p (D Q).natAbs :=
-    coprime_primeDiscriminantPrime_natAbs_of_ne hd P Q.val Q.property
+    coprime_primeDiscriminantPrime_natAbs_of_ne hd Q.property
   have hcoprime : Nat.Coprime p
       (NumberField.discr (candidateGenusFieldComplement hd P)).natAbs := by
     rw [hdisc]
