@@ -42,11 +42,14 @@ public section
 open Polynomial
 
 /-- **An element satisfying a monic quadratic relation with integral coefficients is integral.**
-This is `IsIntegral.of_aeval_monic_of_isIntegral_coeff` for `X ^ 2 + C b * X + C c`, with the
-degree computation and the per-coefficient obligations discharged. -/
+`y`, `b` and `c` live in an arbitrary commutative `R`-algebra `A`, and the relation is an equation
+in `A` rather than a statement about `Polynomial.aeval`, so a caller supplies whatever identity it
+already holds. -/
 theorem IsIntegral.of_sq_add_mul_add_eq_zero {R : Type*} [CommRing R] {A : Type*} [CommRing A]
     [Algebra R A] {b c y : A} (hb : IsIntegral R b) (hc : IsIntegral R c)
     (h : y ^ 2 + b * y + c = 0) : IsIntegral R y := by
+  -- `IsIntegral.of_aeval_monic_of_isIntegral_coeff` for `X ^ 2 + C b * X + C c`, with the degree
+  -- computation and the per-coefficient obligations discharged index by index.
   nontriviality A
   have hdeg : (X ^ 2 + (C b * X + C c) : A[X]).natDegree = 2 := by compute_degree!
   refine IsIntegral.of_aeval_monic_of_isIntegral_coeff (p := X ^ 2 + (C b * X + C c))
