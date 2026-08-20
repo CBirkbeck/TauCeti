@@ -116,7 +116,8 @@ private theorem chainBEntry_mul_eq_add_add {R : Type*} [Ring R] (L a s : ℕ) (g
 
 /-- **A shifted indicator over a range sums to minus the weight at the predecessor.** At `a = 0`
 there is no predecessor and the sum is zero. -/
-private theorem sum_range_ite_succ_eq {R : Type*} [Ring R] {m a : ℕ} (ha : a < m) (g : ℕ → R) :
+private theorem sum_range_ite_succ_eq {R : Type*} [AddCommGroup R] {m a : ℕ} (ha : a ≤ m)
+    (g : ℕ → R) :
     ∑ s ∈ Finset.range m, (if s + 1 = a then -g s else 0)
       = -(if a = 0 then 0 else g (a - 1)) := by
   match a with
@@ -153,7 +154,7 @@ theorem sum_range_chainBEntry_mul {R : Type*} [Ring R] {L m a : ℕ} (ha : a < m
     by_cases hm : a + 1 = m
     · simp [Finset.mem_range, hm]
     · rw [ite_eq_left (Finset.mem_range.2 (by omega)), ite_eq_right hm]
-  rw [h1, sum_range_ite_succ_eq ha g, h3]
+  rw [h1, sum_range_ite_succ_eq ha.le g, h3]
   noncomm_ring
 
 /-- The Cartan-matrix entry of a **chain** between the positions `s` and `t` along it: `2` on the
