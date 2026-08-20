@@ -85,7 +85,8 @@ theorem mul_dividedPower_of_commutator_eq {x y z : A} (hxy : x * y = y * x + z)
     x * dividedPower (n + 1) y =
       dividedPower (n + 1) y * x + dividedPower n y * z := by
   simp only [dividedPower_def]
-  rw [mul_smul_comm, smul_mul_assoc, mul_pow_of_commutator_eq hxy hyz, smul_add]
+  rw [mul_smul_comm, smul_mul_assoc, mul_pow_eq_pow_mul_add_nsmul_of_commutator_eq hxy hyz,
+    smul_add]
   simp only [Nat.add_sub_cancel]
   congr 1
   rw [smul_mul_assoc, ← Nat.cast_smul_eq_nsmul ℚ, ← mul_smul]
