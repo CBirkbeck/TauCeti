@@ -89,6 +89,12 @@ protected def ψc : ℤ → R[X][Y] := complEDS₂ W.ψ₂ (C W.Ψ₃) (C W.pre�
 exposed, so this equation lemma is how a consumer in another module computes with it. -/
 theorem ψc_def : W.ψc = complEDS₂ W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) := (rfl)
 
+/-- `ψc` at `0` is `2`. -/
+@[simp] theorem ψc_zero : W.ψc 0 = 2 := by rw [ψc_def, complEDS₂_zero]
+
+/-- `ψc` at `1` is `ψ₂`, matching `ψ 1 * ψc 1 = ψ 2`. -/
+@[simp] theorem ψc_one : W.ψc 1 = W.ψ₂ := by rw [ψc_def, complEDS₂_one]
+
 /-- The `ω` family of division polynomials: `ω n` gives the second coordinate in Jacobian
 coordinates of scalar multiplication by `n`. -/
 protected def ω (n : ℤ) : R[X][Y] :=
@@ -130,14 +136,13 @@ theorem two_mul_ω (n : ℤ) :
 theorem ψ_mul_ψc (n : ℤ) : W.ψ n * W.ψc n = W.ψ (2 * n) :=
   normEDS_mul_complEDS₂ _ _ _ _
 
-/-- `ω` at `0` is `1`: the reduced denominator and `ψ 0` both vanish, and the auxiliary term
-contributes its value `-1`. -/
+/-- `ω` at `0` is `1`, matching `ψ 0 = 0` and `φ 0 = 1`. -/
 @[simp] theorem ω_zero : W.ω 0 = 1 := by
   rw [ω_def, reducedInvarDenom_zero, complEDS₂Aux_zero, ψ_zero]
   ring
 
-/-- `ω` at `1` is `Y`, matching `ψ 1 = 1` and `φ 1 = X`: the reduced denominator vanishes, the
-auxiliary term contributes `-ψ₂ = -polynomialY`, and `polynomialY + negPolynomial = Y`. -/
+/-- `ω` at `1` is `Y`, matching `ψ 1 = 1` and `φ 1 = X`: the point `1 • (X, Y)` is `(X, Y)`
+itself. -/
 @[simp] theorem ω_one : W.ω 1 = Y := by
   rw [ω_def, reducedInvarDenom_one, complEDS₂Aux_one, ψ_one, ψ₂, ← Affine.Y_sub_polynomialY]
   ring1

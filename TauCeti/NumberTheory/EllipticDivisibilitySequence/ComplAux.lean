@@ -92,13 +92,11 @@ theorem complEDS₂Aux_def : complEDS₂Aux b c d m =
     preNormEDS (b ^ 4) c d (m - 2) * preNormEDS (b ^ 4) c d (m + 1) ^ 2 *
       if Even m then 1 else b := (rfl)
 
-/-- The auxiliary term at `0` is `-1`: its first factor is `preNormEDS _ _ _ (-2) = -1` and the
-other two are `1`. -/
+/-- The auxiliary term at `0` is `-1`. -/
 @[simp]
 theorem complEDS₂Aux_zero : complEDS₂Aux b c d 0 = -1 := by simp [complEDS₂Aux_def]
 
-/-- The auxiliary term at `1` is `-b`: its first factor is `preNormEDS _ _ _ (-1) = -1` and the
-index is odd, so the parity factor contributes the `b`. -/
+/-- The auxiliary term at `1` is `-b`. -/
 @[simp]
 theorem complEDS₂Aux_one : complEDS₂Aux b c d 1 = -b := by simp [complEDS₂Aux_def]
 
