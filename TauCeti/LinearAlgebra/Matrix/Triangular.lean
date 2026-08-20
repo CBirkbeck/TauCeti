@@ -184,6 +184,7 @@ theorem mul_apply_diag_of_isUpperTriangular (hA : A.IsUpperTriangular)
 
 /-- The diagonal of a power of an upper-triangular matrix is the corresponding power of the
 diagonal entry. -/
+@[simp]
 theorem pow_apply_diag_of_isUpperTriangular {T : Type*} [Semiring T] {M : Matrix n n T}
     (hM : M.IsUpperTriangular) (k : ℕ) (i : n) : (M ^ k) i i = M i i ^ k := by
   induction k with
