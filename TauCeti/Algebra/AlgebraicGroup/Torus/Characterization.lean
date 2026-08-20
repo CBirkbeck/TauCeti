@@ -60,7 +60,7 @@ private theorem exists_mulEquiv_finsupp_int
 /-- **A finitely generated torsion-free commutative group has the coordinate ring of a split
 torus.** For such a `G` there is a rank `n` and an isomorphism of diagonalizable coordinate rings
 between the character group of `ULift (Fin n)` and `G`. -/
-private theorem exists_iso_coordinateRing_characterGroup (K : Type u) [Field K]
+private theorem exists_iso_coordinateRing_characterGroup (K : Type u) [CommRing K]
     (G : FGCommGrpCat.{u}) [IsMulTorsionFree G] :
     ∃ n : ℕ, Nonempty (DiagonalizableGroup.coordinateRing K
         (SplitTorus.characterGroup (ULift.{u} (Fin n))) ≅
