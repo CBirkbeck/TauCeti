@@ -45,16 +45,25 @@ Ported from J. Xu and D. K. Angdinata's `projects/NagellLutz/LutzNagell/ZSMul.le
 1c1c74664e40071c2c2165bc55ca2616a67ccd6b`): `smulX` (`:164`), `smulY` (`:168`), the value
 lemmas (`:171`–`:174`), `smulX_eq` (`:176`), `smulX_two` (`:183`), `smulX_sub_smulX` (`:186`),
 `smulX_neg` (`:201`), `smulX_ne_zero` (`:203`), `smulX_ne_smulX` (`:206`),
-`smulX_eq_smulX_iff` (`:217`), and `smulY_neg` with its private field-level auxiliary
-(`:288`–`:291`), pulled forward from the slope slice's range so that `smulY` does not ship
-without its negative-index rule. The source's `ψᵤ` abbreviation is dropped in favour of
-`polyToField (curve.ψ n)`, the `DivisionPolynomial/Universal.lean` convention. Three departures
-beyond the respelling: the elliptic-sequence step of `smulX_sub_smulX` is respelt through
-`IsEllipticNet.rel` and `linear_combination` (the source converts against its
-`isEllSequence_ψᵤ`, a statement shape Mathlib has since replaced); the equation lemmas
-`smulX_def` and `smulY_def` are added for consumers in other modules, as in `Omega.lean`; and
-`smulY_neg` names its ring hom (`map_neg polyToField`) where the source unfolds `ψᵤ`, because
-an unnamed `map_neg` does not fire on a `polyToField` application in this direction.
+`smulX_eq_smulX_iff` (`:217`), and `smulY_neg` (`:290`), pulled forward from the slope slice's
+range so that `smulY` does not ship without its negative-index rule. The source's `ψᵤ`
+abbreviation is dropped in favour of `polyToField (curve.ψ n)`, the
+`DivisionPolynomial/Universal.lean` convention.
+
+Five departures beyond that respelling. The elliptic-sequence step of `smulX_sub_smulX` is
+respelt through `IsEllipticNet.rel` and `linear_combination` (the source converts against its
+`isEllSequence_ψᵤ`, a statement shape Mathlib has since replaced). The equation lemmas
+`smulX_def` and `smulY_def` are added for consumers in other modules, as in `Omega.lean`.
+`smulY_neg` reads its coordinate identity off Mathlib's `Jacobian.negY_of_Z_ne_zero` at
+`(φₙ : ωₙ : ψₙ)` instead of the source's private field-level auxiliary (`:286`), still naming
+its ring hom (`map_neg polyToField`) where the source unfolds `ψᵤ`, because an unnamed
+`map_neg` does not fire on a `polyToField` application in this direction. `smulX_eq` meets that
+same direction problem — the source's forward
+`simp only [φ, ψᵤ, map_sub, map_mul, map_pow, ← add_div]` does not fire here — so it instead
+maps a polynomial-level identity with `congrArg polyToField` and clears the denominator with
+`field_simp` and `linear_combination`. Finally `@[simp]` is added to `smulX_neg`,
+`smulX_ne_zero` and `smulX_eq_smulX_iff`, which the source leaves untagged.
+
 `smulX_sub_sub_smulX_add` (`:196`) is deliberately not ported here: its consumers are the slope
 and addition formulas, and it ships with them.
 -/
@@ -106,11 +115,15 @@ theorem smulY_def (n : ℤ) : smulY n = polyToField (curve.ω n) / polyToField (
 lemma smulX_eq (hn : n ≠ 0) :
     smulX n = smulX 1 - polyToField (curve.ψ (n + 1)) * polyToField (curve.ψ (n - 1)) /
       polyToField (curve.ψ n) ^ 2 := by
+  have hψ : polyToField (curve.ψ n) ≠ 0 := polyToField_ψ_ne_zero hn
   have h : curve.φ n + curve.ψ (n + 1) * curve.ψ (n - 1) = C X * curve.ψ n ^ 2 := by
     rw [WeierstrassCurve.φ]
     ring
-  rw [smulX_def, eq_sub_iff_add_eq, ← add_div, ← map_mul, ← map_add, h,
-    div_eq_iff (pow_ne_zero 2 (polyToField_ψ_ne_zero hn)), smulX_one, ← map_pow, ← map_mul]
+  have hF := congrArg polyToField h
+  simp only [map_add polyToField, map_mul polyToField, map_pow polyToField] at hF
+  rw [smulX_def, smulX_one]
+  field_simp
+  linear_combination hF
 
 /-- `smulX` at `2`, in terms of the `X`-coordinate and `ψ₃/ψ₂²`. -/
 lemma smulX_two : smulX 2 = smulX 1 - polyToField (curve.ψ 3) / polyToField (curve.ψ 2) ^ 2 := by
@@ -132,22 +145,25 @@ lemma smulX_sub_smulX (hm : m ≠ 0) (hn : n ≠ 0) :
 /-- `smulX` is even in `n`. -/
 @[simp] lemma smulX_neg : smulX (-n) = smulX n := by simp [smulX_def, φ_neg, ψ_neg]
 
-private lemma smulY_neg_aux {F : Type*} [Field F] {a₁ a₃ x y z : F} (hz : z ≠ 0) :
-    (y + a₁ * x * z + a₃ * z ^ 3) / (-z) ^ 3 = -(y / z ^ 3) - a₁ * (x / z ^ 2) - a₃ := by
-  rw [neg_pow]
-  field_simp
-  ring
-
 /-- Negating a nonzero index negates the point: `smulY (-n)` is the long-Weierstrass `negY`
 of the coordinates `(smulX n, smulY n)`. -/
 @[simp] lemma smulY_neg (h0 : n ≠ 0) :
     smulY (-n) = pointedCurve.toAffine.negY (smulX n) (smulY n) := by
-  simp only [WeierstrassCurve.Affine.negY, pointedCurve_a₁, pointedCurve_a₃, smulX_def, smulY_def,
-    ψ_neg, ω_neg, map_add, map_neg polyToField, map_mul, map_pow]
-  exact smulY_neg_aux (polyToField_ψ_ne_zero h0)
+  -- The identity is Mathlib's Jacobian-to-affine `negY` formula at `(φₙ : ωₙ : ψₙ)`.
+  have key := WeierstrassCurve.Jacobian.negY_of_Z_ne_zero (W := pointedCurve)
+    (P := ![polyToField (curve.φ n), polyToField (curve.ω n), polyToField (curve.ψ n)])
+    (by simpa using polyToField_ψ_ne_zero h0)
+  simp only [WeierstrassCurve.Jacobian.negY_eq, pointedCurve_a₁, pointedCurve_a₃,
+    Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.head_cons, Matrix.cons_val_two,
+    Matrix.tail_cons] at key
+  refine .trans ?_ key
+  -- `ω_neg` negates the numerator and `ψ_neg` the denominator's cube, so the signs cancel.
+  rw [smulY_def, ψ_neg, ω_neg]
+  simp only [map_add polyToField, map_mul polyToField, map_pow polyToField, map_neg polyToField]
+  ring
 
 /-- `smulX n` is nonzero for `n ≠ 0`. -/
-lemma smulX_ne_zero (h0 : n ≠ 0) : smulX n ≠ 0 :=
+@[simp] lemma smulX_ne_zero (h0 : n ≠ 0) : smulX n ≠ 0 :=
   div_ne_zero polyToField_φ_ne_zero (pow_ne_zero _ <| polyToField_ψ_ne_zero h0)
 
 /-- `smulX` separates indices that agree in neither order nor sign. -/
