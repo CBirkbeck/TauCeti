@@ -60,10 +60,12 @@ not the hypotheses.
 * `RationalIndex.directed` : the index is directed, so presentations of the same subset are
   constrained through a common refinement.
 
-The limit interface is Mathlib's own: `presentationLimitObj` and `presentationLimitMap` are
-`@[expose]`d as `limit (rationalIndexDiagram P Aplus V)` and `limit.pre …`, so `limit.π`,
-`limit.lift` and `limit.hom_ext` apply to them directly and no parallel projection API is
-introduced.
+Both `presentationLimitObj` and `presentationLimitMap` are **sealed**, so a consumer never
+depends on the object being Mathlib's chosen `limit`. The interface is the universal property,
+named here: `presentationLimitπ` projects, `presentationLimitObj_hom_ext` proves two maps into it
+equal, and `presentationLimitLift` builds one with `presentationLimitLift_π` as its characteristic
+equation. `presentationLimitMap_π`, `_refl` and `_comp` state how restriction meets the
+projections.
 
 The two *reindexing* lemmas are the exception. `limit.pre_π` and `limit.pre_pre` are stated with
 `E ⋙ F`, which is `rationalIndexInclusionOfLE ⋙ rationalIndexDiagram`; recognising that as
@@ -211,13 +213,50 @@ theorem rationalIndexDiagram_map {i j : RationalIndex P Aplus V} (h : i ⟶ j) :
 variable (P) in
 /-- **The value of the presentation-indexed presheaf on an open**: the limit of `A⟨T/s⟩` over the
 presentations with open numerator ideal whose rational subset is contained in `V`
-(Wedhorn §8.1). The limit exists because `CompleteSeparatedTopCommRingCat` has all small
-limits; `@[expose]` publishes the body, so Mathlib's `limit.π`/`limit.lift`/`limit.hom_ext`
-apply to it directly. -/
-@[expose]
+(Wedhorn §8.1). The limit exists because `CompleteSeparatedTopCommRingCat` has all small limits.
+
+The body is sealed. A consumer works through the universal property below —
+`presentationLimitπ` for a component, `presentationLimitObj_hom_ext` to prove two maps into it
+equal, and `presentationLimitLift` with `presentationLimitLift_π` to build one — rather than
+through the fact that this happens to be Mathlib's chosen `limit`. -/
 noncomputable def presentationLimitObj (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     CompleteSeparatedTopCommRingCat.{v} :=
   limit (rationalIndexDiagram P Aplus V)
+
+variable (P) in
+/-- **The projection of the presentation-indexed limit at one index.** With
+`presentationLimitObj`'s body sealed this is how a component is reached; `presentationLimitMap_π`
+below states how it interacts with restriction. -/
+noncomputable def presentationLimitπ (Aplus : Subring A) (V : Opens ↥(spa Aplus))
+    (i : RationalIndex P Aplus V) :
+    presentationLimitObj P Aplus V ⟶ (rationalIndexDiagram P Aplus V).obj i :=
+  limit.π (rationalIndexDiagram P Aplus V) i
+
+/-- **Hom-extensionality for the presentation-indexed limit**: two morphisms into it are equal
+once all their projections agree. `P`, `Aplus` and `V` are implicit here, being determined by the
+morphisms. -/
+theorem presentationLimitObj_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
+    {f g : W ⟶ presentationLimitObj P Aplus V}
+    (h : ∀ i, f ≫ presentationLimitπ P Aplus V i = g ≫ presentationLimitπ P Aplus V i) :
+    f = g :=
+  limit.hom_ext h
+
+variable (P) in
+/-- **The morphism into the limit determined by a compatible family**: the universal property's
+existence half, with `presentationLimitLift_π` as its characteristic equation and
+`presentationLimitObj_hom_ext` giving uniqueness. -/
+noncomputable def presentationLimitLift (Aplus : Subring A) (V : Opens ↥(spa Aplus))
+    (c : Cone (rationalIndexDiagram P Aplus V)) :
+    c.pt ⟶ presentationLimitObj P Aplus V :=
+  limit.lift (rationalIndexDiagram P Aplus V) c
+
+/-- **The characteristic equation of `presentationLimitLift`**: its projection at an index is the
+cone's leg there. -/
+@[simp]
+theorem presentationLimitLift_π (c : Cone (rationalIndexDiagram P Aplus V))
+    (i : RationalIndex P Aplus V) :
+    presentationLimitLift P Aplus V c ≫ presentationLimitπ P Aplus V i = c.π.app i :=
+  limit.lift_π c i
 
 variable (P) in
 /-- Enlarging the open along `W ≤ V` includes the smaller index into the larger: a presentation
@@ -276,8 +315,8 @@ because the right-hand side is a bare projection, and `lint-env`'s simpNF pass r
 @[simp]
 theorem presentationLimitMap_π {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
     (j : RationalIndex P Aplus W) :
-    presentationLimitMap P h ≫ limit.π (rationalIndexDiagram P Aplus W) j =
-      limit.π (rationalIndexDiagram P Aplus V) ((rationalIndexInclusionOfLE P h).obj j) :=
+    presentationLimitMap P h ≫ presentationLimitπ P Aplus W j =
+      presentationLimitπ P Aplus V ((rationalIndexInclusionOfLE P h).obj j) :=
   limit.pre_π (F := rationalIndexDiagram P Aplus V) (E := rationalIndexInclusionOfLE P h) j
 
 variable (P) in
@@ -286,7 +325,7 @@ variable (P) in
 @[simp]
 theorem presentationLimitMap_refl (V : Opens ↥(spa Aplus)) :
     presentationLimitMap P (le_refl V) = 𝟙 (presentationLimitObj P Aplus V) :=
-  limit.hom_ext fun j ↦
+  presentationLimitObj_hom_ext fun j ↦
     (presentationLimitMap_π P (le_refl V) j).trans (Category.id_comp _).symm
 
 variable (P) in
