@@ -392,8 +392,13 @@ and is not proved here.
 `hmap` is stated as the filter inequality the proof consumes rather than as `IsOpenMap p`, which is
 strictly stronger: `M` carries `ContinuousAdd` rather than `IsTopologicalAddGroup`, so without
 translation invariance global openness does not follow from openness at `0`. A caller holding
-`IsOpenMap p` passes `map_zero p ▸ hopen.nhds_le 0`; over a complete Tate ring that open map is
-`TauCeti.Huber.IsTateRing.isOpenMap`. -/
+`IsOpenMap p` passes `map_zero p ▸ hopen.nhds_le 0`.
+
+One source of such an open map is `TauCeti.Huber.IsTateRing.isOpenMap`, but only when *its* own
+hypotheses hold, which are considerably stronger than anything asked for here: beyond `A` being a
+complete Tate ring, it wants both modules complete uniform additive groups with countably
+generated uniformities, the source nonarchimedean and the target `T0`. None of that is needed
+here, which is why the hypothesis is the filter inequality rather than a Tate-ring bundle. -/
 theorem restrictedMvPowerSeriesBaseChange_surjective_of_presentation {m : ℕ} {M : Type*}
     [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
     [ContinuousSMul A M] [(nhds (0 : Fin m → A)).IsCountablyGenerated]
