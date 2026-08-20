@@ -12,18 +12,22 @@ public import Mathlib.Topology.Algebra.Ring.Ideal
 /-!
 # Completions of nonarchimedean groups and rings
 
-Two facts about the Hausdorff completion that need only the additive, resp. ring, structure:
-the closure of the image of an open additive subgroup is open, and the kernel of the completion
-map is the closure of the zero ideal.
+Three facts about the Hausdorff completion that need only the additive, resp. ring, structure:
+the closure of the image of an open additive subgroup is open, that closure pulls back along the
+completion map to the subgroup itself, and the kernel of the completion map is the closure of the
+zero ideal.
 
-They are stated here rather than alongside the Huber-ring theory that uses them, since neither
-mentions a pair of definition or an adic topology, and they live in the `UniformSpace.Completion`
-namespace of the construction they describe rather than in a `TauCeti` one.
+They are stated here rather than alongside the Huber-ring theory that uses them, since none of
+them mentions a pair of definition or an adic topology, and they live in the
+`UniformSpace.Completion` namespace of the construction they describe rather than in a `TauCeti`
+one.
 
 ## Main results
 
 * `UniformSpace.Completion.isOpen_closure_image_coe`: the closure in `Â` of the image of an open
   additive subgroup of `A` is open.
+* `UniformSpace.Completion.preimage_closure_image_coe`: the preimage in `A` of that closure is the
+  subgroup itself.
 * `UniformSpace.Completion.ker_coeRingHom`: the kernel of `A → Â` is the closure of `⊥`.
 
 ## References
@@ -32,7 +36,7 @@ namespace of the construction they describe rather than in a `TauCeti` one.
   the completion of a topological group and ring; `ker_coeRingHom` is the statement there that
   the completion map has kernel `closure {0}`.
 * Mathlib's `Mathlib/Topology/Algebra/Nonarchimedean/Completion.lean`, whose
-  `Completion.isDenseInducing_coe` neighbourhood arguments both proofs follow.
+  `Completion.isDenseInducing_coe` all three proofs go through.
 -/
 
 public section
@@ -52,6 +56,21 @@ theorem isOpen_closure_image_coe {G : AddSubgroup A} (hG : IsOpen (G : Set A)) :
   have hmem := Completion.isDenseInducing_coe.closure_image_mem_nhds (hG.mem_nhds G.zero_mem)
   rw [Completion.coe_zero] at hmem
   exact AddSubgroup.isOpen_of_mem_nhds ((G.map Completion.toCompl).topologicalClosure) hmem
+
+/-- The preimage under `A → Â` of the closure of the image of an open additive subgroup `G` is
+`G` itself, so an open subgroup is recovered from its image in the completion.
+
+Companion to `isOpen_closure_image_coe`, which says that same closure is *open* in `Â`; this one
+says what it pulls back to. Openness is doing real work here beyond making the closure nice: `A`
+need not be Hausdorff, so `A → Â` need not be injective, and it is `G` being open — hence closed —
+that collapses the preimage to `G` rather than to `G + closure {0}`. -/
+theorem preimage_closure_image_coe {G : AddSubgroup A} (hG : IsOpen (G : Set A)) :
+    ((↑) : A → Completion A) ⁻¹' closure (((↑) : A → Completion A) '' (G : Set A)) =
+      (G : Set A) := by
+  -- The completion map is inducing, so the left-hand side is the closure of `G` in `A`; an open
+  -- additive subgroup is closed, so that closure is `G`.
+  rw [← Completion.isDenseInducing_coe.isInducing.closure_eq_preimage_closure_image,
+    (G.isClosed_of_isOpen hG).closure_eq]
 
 end AddGroup
 
