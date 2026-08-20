@@ -124,18 +124,18 @@ private theorem card_center_subgroupOf_le_two [NoZeroDivisors R]
     0 < Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ∧
       Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ≤ 2 := by
   have : Finite (Subgroup.center (SpecialLinearGroup (Fin 2) R)) := finite_center
-  -- `Γ.subtype` carries the `subgroupOf` isomorphically onto `center ⊓ Γ` in the ambient group,
-  -- which is where the inclusion into the centre can be taken
-  have hcard : Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) =
-      Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R) ⊓ Γ :
-        Subgroup (SpecialLinearGroup (Fin 2) R))) := by
-    rw [Nat.card_congr (Subgroup.equivMapOfInjective _ _ Γ.subtype_injective).toEquiv,
-      Subgroup.subgroupOf_map_subtype]
-  have hfin : Finite ((Subgroup.center (SpecialLinearGroup (Fin 2) R) ⊓ Γ :
-      Subgroup (SpecialLinearGroup (Fin 2) R))) := Finite.Set.subset _ (by exact inf_le_left)
+  -- `subgroupOf` is `comap` along `Γ.subtype`, so the order divides the centre's outright; the
+  -- ascription states the divisibility in `subgroupOf` form rather than `comap` form
+  have hdvd : Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ∣
+      Nat.card (Subgroup.center (SpecialLinearGroup (Fin 2) R)) :=
+    Subgroup.card_comap_dvd_of_injective _ Γ.subtype Γ.subtype_injective
+  have hne : Nat.card ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) ≠ 0 := by
+    intro h
+    rw [h, zero_dvd_iff] at hdvd
+    exact Nat.card_pos.ne' hdvd
   have : Finite ((Subgroup.center (SpecialLinearGroup (Fin 2) R)).subgroupOf Γ) :=
-    Nat.finite_of_card_ne_zero (by rw [hcard]; exact Nat.card_pos.ne')
-  exact ⟨Nat.card_pos, hcard ▸ (Subgroup.card_le_of_le inf_le_left).trans card_center_le_two⟩
+    Nat.finite_of_card_ne_zero hne
+  exact ⟨Nat.card_pos, (Nat.le_of_dvd Nat.card_pos hdvd).trans card_center_le_two⟩
 
 /-- **The complementary case**: the factor is `1` exactly when `-I ∉ Γ`, i.e. when the matrix and
 projective stabiliser orders agree. -/
