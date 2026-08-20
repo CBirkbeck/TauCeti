@@ -35,7 +35,7 @@ claim no `𝒪_X⁺` notation.
 ## Main definitions
 
 * `TauCeti.ValuationSpectrum.presentationLimitPowerBoundedSubring` : the subring of
-  `𝒪_X(V)` of sections with power-bounded components.
+  `presentationLimitObj P Aplus V` of sections with power-bounded components.
 
 ## Main results
 
@@ -47,7 +47,8 @@ claim no `𝒪_X⁺` notation.
 
 ## Why per-component, not power-bounded in the limit ring
 
-`𝒪_X(V)` is itself a topological ring, so "power-bounded in `𝒪_X(V)`" is statable — but a
+`presentationLimitObj P Aplus V` is itself a topological ring, so "power-bounded in it" is
+statable — but a
 continuous ring homomorphism need not preserve power-boundedness (`IsPowerBounded.map` needs an
 image condition beyond continuity), so restriction-compatibility of that definition is a real
 theorem needing real hypotheses. The component-wise definition makes compatibility a reindexing
@@ -60,10 +61,10 @@ consumer needs it.
 Adapted from AINTLIB's `IntegralStructureSheaf.lean` (see References), which defines
 `integralPresheafValue D = powerBoundedSubring (presheafValue D)` on each rational value and
 stops there — no compatibility with restriction is stated, and the sheaf-cohomology placeholders
-in that file are not ported. The generalisation from per-value to a subring of every `𝒪_X(V)`
-with restriction-compatibility is new here; the nonarchimedean instance it needs on the values
-is `nonarchimedeanRing_locUniformSpace` (`LocalizationTopology/Completion.lean`), added for this
-file.
+in that file are not ported. The generalisation from per-value to a subring of every
+`presentationLimitObj P Aplus V` with restriction-compatibility is new here; the nonarchimedean
+instance it needs on the values comes from `isHuberRing_completion_locTopology`
+(`LocalizationTopology/Completion.lean`) through the global `IsHuberRing.toNonarchimedeanRing`.
 
 ## References
 
@@ -84,7 +85,8 @@ variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   {P : PairOfDefinition A} {Aplus : Subring A} {V : Opens ↥(spa Aplus)}
 
 variable (P) in
-/-- **The power-bounded sections**: the subring of `𝒪_X(V)` of sections all of whose components
+/-- **The power-bounded sections**: the subring of `presentationLimitObj P Aplus V` — the
+candidate for `𝒪_X(V)`, not known to be it — of sections all of whose components
 are power-bounded — the intersection over the index of the comaps of the power-bounded subrings
 of the values. This is not the valuation-defined `𝒪_X⁺`; see the module docstring. -/
 noncomputable def presentationLimitPowerBoundedSubring (Aplus : Subring A)
