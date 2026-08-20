@@ -6,6 +6,7 @@ Authors: Claude
 module
 
 public import TauCeti.RingTheory.DividedPowers.RootString.Basic
+import Mathlib.Tactic.Module
 
 /-!
 # Normal ordering divided powers along the type-`G₂` root string
@@ -102,16 +103,6 @@ private theorem mul_pow_of_commutator_eq_two_nsmul {a d : A} (hxz : x * z = z * 
       have hp2 : z ^ (b + 2) = z ^ (b + 1) * z := by
         rw [show b + 2 = b + 1 + 1 from by omega, pow_succ]
       have hp1 : z ^ (b + 1) = z ^ b * z := by rw [pow_succ]
-      have hfin : ∀ T P Q : A,
-          T + P + ((b + 2) • P + (2 * (b + 2)) • Q) + ((b + 2) * (b + 1)) • Q =
-            T + (b + 3) • P + ((b + 3) * (b + 2)) • Q := by
-        intro T P Q
-        have h1 : (b + 3) • P = P + (b + 2) • P := by
-          rw [show b + 3 = 1 + (b + 2) from by omega, add_smul, one_smul]
-        have h2 : ((b + 3) * (b + 2)) • Q = (2 * (b + 2)) • Q + ((b + 2) * (b + 1)) • Q := by
-          rw [← add_smul, show 2 * (b + 2) + (b + 2) * (b + 1) = (b + 3) * (b + 2) from by ring]
-        rw [h1, h2]
-        abel
       rw [show b + 1 + 2 = b + 3 from by omega, show b + 1 + 1 = b + 2 from by omega]
       calc x * z ^ (b + 3)
           = (x * z ^ (b + 2)) * z := by rw [hp3, ← mul_assoc]
@@ -126,7 +117,8 @@ private theorem mul_pow_of_commutator_eq_two_nsmul {a d : A} (hxz : x * z = z * 
               ((b + 2) * (b + 1)) • (z ^ (b + 1) * d) := by
             rw [mul_add, ← mul_assoc, ← hp3, mul_add, ← mul_assoc, ← hp2, mul_smul_comm, smul_add,
               smul_smul, mul_comm (b + 2) 2, ← mul_assoc, ← hp1]
-        _ = _ := hfin _ _ _
+        -- Collecting the two released terms is pure `ℕ`-smul bookkeeping.
+        _ = _ := by module
 
 /-- **Moving one element across a divided power with a non-central commutator.** Suppose
 `x * z = z * x + a` and `a * z = z * a + 2 • d`, with `d` commuting with `z`. Then
