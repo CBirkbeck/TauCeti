@@ -61,11 +61,12 @@ first-order, and the same for `map_mul` and `map_pow`. That leaves the arithmeti
 evaluates to `1`.
 
 The remaining two companions, `polyEval_cusp_ψc` and `polyEval_cusp_ω`, together with the sixth
-transport `evalEval_ω`, needed `ψc`, `two_mul_ω` and `map_ω` — the `ω` API this passage once
-recorded as not yet here. `DivisionPolynomial/Omega.lean` now supplies all three, on top of
-`reducedInvarNum_eq_reducedInvarDenom_mul`, so they are below: `evalEval_ω` closes the transport
-family, `polyEval_cusp_ψc` reads the complement off `complEDS₂_two_three_two`, and
-`polyEval_cusp_ω` divides the cusp evaluation of `two_mul_ω` by two.
+and seventh transports `evalEval_ψc` and `evalEval_ω`, needed `ψc`, `two_mul_ω`, `map_ψc` and
+`map_ω` — the `ω` API this passage once recorded as not yet here. `DivisionPolynomial/Omega.lean`
+now supplies all four, on top of `reducedInvarNum_eq_reducedInvarDenom_mul`, so they are below:
+`evalEval_ψc` and `evalEval_ω` close the transport family, `polyEval_cusp_ψc` reads the
+complement off `complEDS₂_two_three_two`, and `polyEval_cusp_ω` divides the cusp evaluation of
+`two_mul_ω` by two.
 
 ## Provenance
 
@@ -73,7 +74,7 @@ Adapted from `LutzNagell/ZSMul.lean` in AINTLIB (`github.com/CBirkbeck/AINTLIB`,
 at `dev/modular-curves @ 9fec8eba7652` — the revision `TauCetiRoadmap/EllipticCurves/README.md`
 pins for the NagellLutz project. Declarations `Universal.evalEval_ψ₂`, `evalEval_Ψ₃`,
 `evalEval_preΨ₄`, `evalEval_ψ`, `evalEval_φ` and (added with the `ω` port, read at
-`main @ 1c1c74664e40071c2c2165bc55ca2616a67ccd6b`) `evalEval_ω`.
+`main @ 1c1c74664e40071c2c2165bc55ca2616a67ccd6b`) `evalEval_ψc` and `evalEval_ω`.
 `isEllipticSequence_polyToField_ψ` adapts that same file's `isEllSequence_ψᵤ`.
 That file's header reads `Authors: David Kurniadi Angdinata, Junyan Xu`; following this
 repository's convention for adapted material the upstream authorship is credited here rather than
