@@ -5,7 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Module.Submodule.Basic
+public import Mathlib.Algebra.Module.Submodule.Defs
 public import Mathlib.Topology.Algebra.IsUniformGroup.Basic
 
 /-!
@@ -16,13 +16,24 @@ underlying subobject: `Subgroup.isUniformGroup` gives the additive version for a
 and the countably generated uniformity is inherited by any subtype. Neither is keyed on
 `Submodule`, so typeclass search does not find either at `↥p`.
 
-Mathlib works around the first by hand: `Topology/Algebra/Module/FiniteDimension.lean` writes
-`s.toAddSubgroup.isUniformAddGroup` into a local `let` at two separate proofs.
+Mathlib works around the first by hand: `Topology/Algebra/Module/FiniteDimension.lean` installs
+`s.toAddSubgroup.isUniformAddGroup` locally at two separate proofs, once with `let` and once with
+`haveI`.
 
 ## Main results
 
 * `Submodule.isUniformAddGroup`: `↥p` is a uniform additive group.
 * `Submodule.isCountablyGenerated_uniformity`: `↥p` inherits a countably generated uniformity.
+
+## The consumer
+
+`TauCeti.Huber.IsTateRing.isOpenMap` — Layer 0.6 of `TauCetiRoadmap/AdicSpaces/README.md`, on
+`origin/main` — asks four things of its *target*: `CompleteSpace`, `T0Space`, `IsUniformAddGroup`
+and a countably generated uniformity. Applying it to a submodule target therefore needs these two,
+and nothing else supplies them; the other two come from `IsClosed.completeSpace_coe` and the
+subspace topology. Layer 4.1 is where that application is wanted ("use Layer 0's open mapping
+theorem to show that the relevant images are closed"), but the theorem being applied, and the gap
+that stops it applying, are both Layer 0.
 -/
 
 public section
