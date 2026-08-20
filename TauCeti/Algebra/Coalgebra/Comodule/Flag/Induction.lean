@@ -112,10 +112,7 @@ private theorem fixedSpan_finrank (v : M)
 
 /-- **The line spanned by a nonzero fixed vector has an upper-unitriangular coefficient matrix.**
 A nonzero vector with trivial coaction spans a one-dimensional subcomodule, and a basis of that
-subcomodule has upper-unitriangular coefficient matrix.
-
-There is nothing to check above the diagonal in rank one; the content is that the single diagonal
-entry is `1`, which is the vector being fixed. -/
+subcomodule has upper-unitriangular coefficient matrix. -/
 private theorem exists_basis_coefficientMatrix_isUpperUnitriangular_fixedSpan [Module.Flat k H]
     (v : M) (hvcoact : coact (R := k) (C := H) (M := M) v = v ⊗ₜ[k] (1 : H)) (hv : v ≠ 0) :
     ∃ b : Basis (Fin 1) k (fixedSpan v hvcoact),
@@ -125,6 +122,8 @@ private theorem exists_basis_coefficientMatrix_isUpperUnitriangular_fixedSpan [M
   let vL : fixedSpan v hvcoact := ⟨v, Submodule.mem_span_singleton_self v⟩
   have hvL : vL ≠ 0 := fun h ↦ hv (congrArg Subtype.val h)
   refine ⟨FiniteDimensional.basisSingleton (Fin 1) hfinrank vL hvL, ?_⟩
+  -- in rank one there is nothing above the diagonal, so all that is left is the single diagonal
+  -- entry, and that is `1` because the spanning vector is fixed
   rw [coefficientMatrix_isUpperUnitriangular_iff]
   intro i
   rw [fixedSpan_coact v hvcoact _]
