@@ -8,7 +8,6 @@ module
 public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Complete
 public import TauCeti.Topology.UniformSpace.DiscreteUniformity
 public import Mathlib.RingTheory.Polynomial.Basic
-import TauCeti.Topology.Algebra.UniformRing
 
 /-!
 # Strong noetherianness of a nonarchimedean ring
