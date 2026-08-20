@@ -77,10 +77,17 @@ coefficient binders — `[Zero]` and a topology, where the original asked for a 
 `IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule`, `mem_restrictedMvPowerSeriesSubmodule`,
 `isRestricted_pi_iff`, `restrictedMvPowerSeriesSubmodulePiEquiv` and
 `restrictedMvPowerSeriesSubringLinearEquiv`, each with its computation lemmas, together with
-`IsRestricted.map`, `restrictedMvPowerSeriesSubmoduleMap` and its laws, and
+`IsRestricted.map`, `restrictedMvPowerSeriesSubmoduleMap` with its laws and
+`restrictedMvPowerSeriesSubmoduleMap_surjective`, and
 `coeff_coe_smul_restrictedMvPowerSeriesSubring`.
 
 **None of those has an AINTLIB counterpart**, for three different reasons.
+
+`restrictedMvPowerSeriesSubmoduleMap_surjective` has none for the same reason as the rest of the
+induced-map material: AINTLIB states restricted series over a coefficient *ring* only, so it has no
+induced map at module coefficients and a fortiori no surjectivity statement about one. Wedhorn
+Remark 8.29 is credited for the mathematics; the lifting construction it delegates to
+(`TauCeti.exists_lift_tendsto_cofinite_nhds`) is original here too.
 
 The two product statements — `isRestricted_pi_iff` and `restrictedMvPowerSeriesSubmodulePiEquiv` —
 have none because the source states restrictedness only for a single coefficient module and never
@@ -576,7 +583,7 @@ Surjectivity coefficientwise is immediate from surjectivity of `φ`; what is not
 supplies, is that the chosen preimages can be made to *converge*. Lifting each coefficient
 independently can leave the lifts spread out even though the original coefficients tend to `0`, in
 which case the lift is a power series but not a restricted one. See
-`TauCeti.exists_lift_tendsto_cofinite_nhds_zero`, where the choice is made.
+`TauCeti.exists_lift_tendsto_cofinite_nhds`, where the choice is made.
 
 This is the step Wedhorn's Remark 8.29 needs in order to descend from a presentation: applied to a
 presentation `Aᵐ ↠ M`, together with the finite free case, it is what makes the comparison map for
@@ -595,7 +602,7 @@ theorem restrictedMvPowerSeriesSubmoduleMap_surjective {k : ℕ} {A M N : Type*}
     intro n
     have h := hopen.nhds_le 0 (Filter.image_mem_map (hV.toHasBasis.mem_of_mem (i := n) trivial))
     rwa [map_zero φ] at h
-  obtain ⟨f, hfg, hf⟩ := TauCeti.exists_lift_tendsto_cofinite_nhds_zero φ hsurj V hV hVmem
+  obtain ⟨f, hfg, hf⟩ := TauCeti.exists_lift_tendsto_cofinite_nhds φ hsurj V hV hVmem
     (fun s ↦ ((g : MvPowerSeries (Fin k) N) : (Fin k →₀ ℕ) → N) s)
     (mem_restrictedMvPowerSeriesSubmodule.mp g.2)
   exact ⟨⟨f, mem_restrictedMvPowerSeriesSubmodule.mpr hf⟩,

@@ -12,12 +12,17 @@ public import Mathlib.Data.Nat.Find
 public import Mathlib.Topology.Basic
 
 /-!
-# Lifting a null family along an open surjection
+# Lifting a convergent family along a surjection
 
-A family `g : ι → N` is *null* when it tends to `0` along the cofinite filter — all but finitely
-many of its members lie in any given neighbourhood of zero. This file shows that a surjection
-which carries neighbourhoods of zero onto neighbourhoods of zero lifts null families to null
-families: the lift can be chosen so that it is null too, not merely so that it exists.
+A family `g : ι → N` converges to `n₀` along the cofinite filter when all but finitely many of its
+members lie in any given neighbourhood of `n₀`. This file shows that a surjection which carries a
+neighbourhood basis of `m₀` onto neighbourhoods of `n₀` lifts such a family to one converging to
+`m₀`: the lift can be chosen convergent, not merely made to exist.
+
+**Openness is not the hypothesis, and would not suffice on its own.** `IsOpenMap φ` makes `φ '' V n`
+open around `φ m₀`, which is a neighbourhood of `n₀` only when `φ m₀ = n₀`. The application is
+therefore a *zero-preserving* open surjection — an `A`-linear map, say — and that is the form
+`TauCeti.Huber` uses it in.
 
 That the lifts exist pointwise is only surjectivity. The content is that they can be chosen
 *uniformly enough to still converge*, and this genuinely needs a construction: choosing a preimage
@@ -27,7 +32,7 @@ so that convergence is forced by the choice rather than hoped for.
 
 ## Main results
 
-* `exists_lift_tendsto_cofinite_nhds_zero`: the lifting statement.
+* `exists_lift_tendsto_cofinite_nhds`: the lifting statement.
 
 ## Implementation notes
 
@@ -42,8 +47,10 @@ No algebraic structure is used: `M` and `N` carry only a topology and a distingu
 particular the neighbourhoods `V n` are not assumed to be subgroups, which the argument would need
 if it ever added two lifts — it never does, choosing each independently.
 
-The hypothesis is `∀ n, φ '' V n ∈ 𝓝 0` rather than `IsOpenMap φ`, since that is exactly what the
-proof consumes; openness of `φ` is one way to supply it, and a `Filter.map` equality is another.
+The hypothesis is `∀ n, φ '' V n ∈ 𝓝 n₀` rather than `IsOpenMap φ`, since that is exactly what the
+proof consumes; an open `φ` with `φ m₀ = n₀` is one way to supply it, and a `Filter.map` equality is
+another. Nothing about `m₀` and `n₀` is used beyond their neighbourhood filters — no zero, and no
+algebra.
 -/
 
 namespace TauCeti
@@ -53,9 +60,8 @@ open Filter Topology Set
 public section
 
 variable {ι : Type*} [Countable ι] {M N : Type*} [TopologicalSpace M] [TopologicalSpace N]
-  [Zero M] [Zero N]
 
-omit [Countable ι] [TopologicalSpace M] [TopologicalSpace N] [Zero M] [Zero N] in
+omit [Countable ι] [TopologicalSpace M] [TopologicalSpace N] in
 /-- Preimages chosen inside a prescribed neighbourhood **whenever one is available there**, and
 arbitrary otherwise. Surjectivity gives a preimage in every case; the second component is the part
 that matters, and it is vacuous exactly on the finitely many indices the main proof discards. -/
@@ -73,17 +79,19 @@ private theorem exists_choice_mem (φ : M → N) (hsurj : Function.Surjective φ
   choose f hf1 hf2 using pick
   exact ⟨f, fun α ↦ ⟨hf1 α, hf2 α⟩⟩
 
-/-- **A null family lifts to a null family along an open surjection.** If `φ` is surjective and
-carries each member of an antitone neighbourhood basis `V` of `0` onto a neighbourhood of `0`, then
-any family tending to `0` cofinitely has a `φ`-preimage family that also tends to `0` cofinitely.
+/-- **A convergent family lifts to a convergent family.** If `φ` is surjective and carries each
+member of an antitone neighbourhood basis `V` of `m₀` onto a neighbourhood of `n₀`, then any family
+tending to `n₀` cofinitely has a `φ`-preimage family tending to `m₀` cofinitely.
 
 Pointwise lifting is surjectivity alone; the statement is that a *single* choice of lifts can be
-made to converge. -/
-theorem exists_lift_tendsto_cofinite_nhds_zero (φ : M → N) (hsurj : Function.Surjective φ)
-    (V : ℕ → Set M) (hV : (𝓝 (0 : M)).HasAntitoneBasis V)
-    (hVmem : ∀ n, φ '' V n ∈ 𝓝 (0 : N))
-    (g : ι → N) (hg : Tendsto g (Filter.cofinite : Filter ι) (𝓝 0)) :
-    ∃ f : ι → M, (∀ α, φ (f α) = g α) ∧ Tendsto f (Filter.cofinite : Filter ι) (𝓝 0) := by
+made to converge. Note that `IsOpenMap φ` supplies the neighbourhood hypothesis only together with
+`φ m₀ = n₀`; openness by itself places the images around `φ m₀`, not around `n₀`. -/
+theorem exists_lift_tendsto_cofinite_nhds {m₀ : M} {n₀ : N}
+    (φ : M → N) (hsurj : Function.Surjective φ)
+    (V : ℕ → Set M) (hV : (𝓝 m₀).HasAntitoneBasis V)
+    (hVmem : ∀ n, φ '' V n ∈ 𝓝 n₀)
+    (g : ι → N) (hg : Tendsto g (Filter.cofinite : Filter ι) (𝓝 n₀)) :
+    ∃ f : ι → M, (∀ α, φ (f α) = g α) ∧ Tendsto f (Filter.cofinite : Filter ι) (𝓝 m₀) := by
   classical
   obtain ⟨r, hr⟩ := exists_injective_nat ι
   replace hr : Tendsto r (Filter.cofinite : Filter ι) atTop :=
