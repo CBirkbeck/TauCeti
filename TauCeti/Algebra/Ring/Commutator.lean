@@ -17,7 +17,8 @@ import Mathlib.Tactic.Ring
 # Commutators in associative rings
 
 This file records identities for moving elements past powers when their ring commutator is a
-scalar multiple of one of the elements, or is central for the two elements it is built from.
+scalar multiple of one of the elements, commutes with the element being powered, or is central
+for the two elements it is built from.
 
 ## Main results
 
@@ -26,8 +27,6 @@ scalar multiple of one of the elements, or is central for the two elements it is
 * `TauCeti.Associative.mul_pow_eq_pow_mul_add_intCast`: the same identity in shifted-factor form.
 * `TauCeti.Associative.mul_pow_of_commutator_eq`: moving an element across a power releases that
   many copies of the commutator, when the commutator commutes with the element being powered.
-* `TauCeti.Associative.pow_mul_eq_mul_pow_add_nsmul`: the same identity with the roles of the two
-  elements exchanged.
 * `TauCeti.Associative.isNilpotent_of_commutator_eq`: a commutator commuting with both of its
   arguments is nilpotent as soon as one of them is.
 * `TauCeti.Associative.isNilpotent_of_commutator_eq_nsmul`: the same conclusion when the
@@ -100,12 +99,13 @@ section CentralCommutator
 variable {A : Type*} [Ring A] [Algebra ℚ A] {x y z : A}
 
 omit [Algebra ℚ A] in
-/-- **Moving `y` past a power of `x` releases that many copies of a central commutator.** If
+/-- **Moving `y` past a power of `x` releases that many copies of the commutator.** If
 `x * y = y * x + z` and `z` commutes with `x`, then `x ^ n * y` is `y * x ^ n` plus `n` copies of
 `x ^ (n - 1) * z`.
 
 The section's `[Algebra ℚ A]` is omitted: the identity holds over any ring. -/
-theorem pow_mul_eq_mul_pow_add_nsmul (hxy : x * y = y * x + z) (hxz : Commute x z) (n : ℕ) :
+private theorem pow_mul_eq_mul_pow_add_nsmul (hxy : x * y = y * x + z) (hxz : Commute x z)
+    (n : ℕ) :
     x ^ n * y = y * x ^ n + n • (x ^ (n - 1) * z) := by
   -- the mirror image of `mul_pow_of_commutator_eq`, reached by exchanging `x` and `y` and
   -- negating the commutator
