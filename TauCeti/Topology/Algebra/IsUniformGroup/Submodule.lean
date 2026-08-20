@@ -25,15 +25,25 @@ Mathlib works around the first by hand: `Topology/Algebra/Module/FiniteDimension
 * `Submodule.isUniformAddGroup`: `↥p` is a uniform additive group.
 * `Submodule.isCountablyGenerated_uniformity`: `↥p` inherits a countably generated uniformity.
 
-## The consumer
+## The consumer: Layer 0.6's own unfinished half
 
-`TauCeti.Huber.IsTateRing.isOpenMap` — Layer 0.6 of `TauCetiRoadmap/AdicSpaces/README.md`, on
-`origin/main` — asks four things of its *target*: `CompleteSpace`, `T0Space`, `IsUniformAddGroup`
-and a countably generated uniformity. Applying it to a submodule target therefore needs these two,
-and nothing else supplies them; the other two come from `IsClosed.completeSpace_coe` and the
-subspace topology. Layer 4.1 is where that application is wanted ("use Layer 0's open mapping
-theorem to show that the relevant images are closed"), but the theorem being applied, and the gap
-that stops it applying, are both Layer 0.
+`TauCetiRoadmap/AdicSpaces/README.md` §0.6 asks for "Wedhorn Theorem 6.16 **and Propositions
+6.17–6.18**". Theorem 6.16 has landed, as `TauCeti.Huber.IsTateRing.isOpenMap`; Propositions
+6.17–6.18 have not, and two module docstrings on `main` already record them as outstanding
+(`Huber/ZeroSequenceOfUnits.lean` and `Topology/Algebra/OpenMapping/Basic.lean`, both under
+References).
+
+Proposition 6.18(2) is "`u` is continuous and **open onto its image**", and that is a statement
+about the corestriction `u.rangeRestrict : M → ↥(LinearMap.range u)`. Its target is a *submodule*,
+so applying `IsTateRing.isOpenMap` there needs the four hypotheses that theorem puts on its target:
+`CompleteSpace` and `T0Space`, which come free from `IsClosed.completeSpace_coe` and the subspace
+topology, and `IsUniformAddGroup` and a countably generated uniformity, which are exactly these two
+instances and which nothing else supplies. Without them 6.18(2) cannot be stated in the form 6.16
+would discharge.
+
+Layer 4.1 is where 6.18(2) is eventually spent — its text says to "use Layer 0's open mapping
+theorem to show that the relevant images are closed" — but the target these instances unblock is
+Layer 0's own.
 -/
 
 public section
