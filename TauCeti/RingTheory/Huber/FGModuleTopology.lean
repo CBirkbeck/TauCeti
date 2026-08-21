@@ -32,6 +32,8 @@ generation first does work one layer up, where a single exponent has to serve a 
 * `TauCeti.Huber.PairOfDefinition.exists_pow_smul_mem`: a power of `ϖ` carries any element of
   the `A`-span of `M₀` into `M₀`.
 * `TauCeti.Huber.PairOfDefinition.submodulesBasis_pow_smul`: the family is a `SubmodulesBasis`.
+* `TauCeti.Huber.PairOfDefinition.pow_smul_mem_pow_smul`: the `A`-side bridge — an element of
+  `M₀` scaled by the ambient `sⁿ` lands in `ϖⁿ • M₀`, so consumers need no coercion plumbing.
 * `TauCeti.Huber.pow_smul_antitone`: the family is antitone, over any subring.
 
 ## Implementation notes
@@ -67,6 +69,19 @@ namespace TauCeti.Huber.PairOfDefinition
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   {M : Type*} [AddCommGroup M] [Module A M]
+
+omit [TopologicalSpace A] [IsTopologicalRing A] in
+/-- **The `A`-side bridge.** Membership in `rⁿ • M₀` is stated in Mathlib's terms with the
+subring scalar `r : S`, but every surrounding fact — `pow_add_smul_mem`, `exists_pow_smul_mem`,
+`IsPseudoUniformizer.hasBasis_nhds_zero` — speaks the ambient `s : A`. This is the crossing, so a
+consumer never has to redo the coercion plumbing by hand.
+
+Only this direction holds: the converse would need multiplication by `sⁿ` to be injective. -/
+@[simp]
+theorem pow_smul_mem_pow_smul {S : Subring A} {s : A} (hs0 : s ∈ S) (M₀ : Submodule S M) {y : M}
+    (hy : y ∈ M₀) (n : ℕ) : s ^ n • y ∈ (⟨s, hs0⟩ : S) ^ n • M₀ :=
+  Submodule.mem_smul_pointwise_iff_exists _ _ _ |>.mpr
+    ⟨y, hy, by rw [Subring.smul_def]; push_cast; ring_nf⟩
 
 omit [TopologicalSpace A] [IsTopologicalRing A] in
 /-- **The family is antitone**, which is the `inter` half of `SubmodulesBasis`. Raising the
