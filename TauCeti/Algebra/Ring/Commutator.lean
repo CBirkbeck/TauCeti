@@ -19,10 +19,10 @@ import Mathlib.Tactic.Ring
 This file records identities for moving elements past powers when the two elements almost commute.
 
 Over a semiring the hypothesis is written as a relation, `x * y = y * x + z`, since there is no
-subtraction to form a commutator with: the two power identities of `section PowerCommutator` need
-only that `z` commutes with the element being powered. Over a ring the same `z` is the commutator
-`x * y - y * x`, and the remaining results ask it to be a scalar multiple of one of the elements,
-or to be central for the two elements it is built from.
+subtraction to form a commutator with: the power identities need only that `z` commutes with the
+element being powered, and the nilpotency results additionally need a `ℚ`-algebra structure, to
+divide by the multiplicity a power releases. Over a ring the same `z` is the commutator
+`x * y - y * x`, which is the form the integer-eigenvector results take.
 
 ## Main results
 
@@ -124,7 +124,7 @@ end PowerCommutator
 
 section CentralCommutator
 
-variable {A : Type*} [Ring A] [Algebra ℚ A] {x y z : A}
+variable {A : Type*} [Semiring A] [Algebra ℚ A] {x y z : A}
 
 /-- **Extracting one copy of a central commutator trades a power of `x` for a power of `z`.** If
 `x ^ (m + 1)` annihilates `z ^ k` on the left, then `x ^ m` annihilates `z ^ (k + 1)`. -/
