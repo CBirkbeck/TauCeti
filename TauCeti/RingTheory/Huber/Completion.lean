@@ -522,16 +522,14 @@ image of an *open* subring `G` can be replaced by the image of an element of `G`
 Openness is exactly what is used: it makes `Ĝ` a neighbourhood of zero, so multiplication by `z`
 carries a small enough neighbourhood of `y` back into `Ĝ`, and `y` lies in the closure of the
 image of `G`, which supplies a point of that neighbourhood. -/
-private theorem exists_mem_sub_mul_mem_topologicalClosure {G : Subring A}
-    (hG : IsOpen (G : Set A)) {y : Completion A}
-    (hy : y ∈ (G.map Completion.coeRingHom).topologicalClosure) (z : Completion A) :
-    ∃ d ∈ G, ((d : Completion A) - y) * z
-      ∈ (G.map Completion.coeRingHom).topologicalClosure := by
+private theorem exists_mem_sub_mul_mem_topologicalClosure {G : Subring A} (hG : IsOpen (G : Set A))
+    {y : Completion A} (hy : y ∈ (G.map Completion.coeRingHom).topologicalClosure)
+    (z : Completion A) :
+    ∃ d ∈ G, ((d : Completion A) - y) * z ∈ (G.map Completion.coeRingHom).topologicalClosure := by
   set Gh := (G.map Completion.coeRingHom).topologicalClosure
   have hVopen : IsOpen {w : Completion A | (w - y) * z ∈ Gh} :=
     (Completion.isOpen_closure_image_coe (G := G.toAddSubgroup) hG).preimage (by fun_prop)
-  have hV : y ∈ {w : Completion A | (w - y) * z ∈ Gh} := by simp
-  obtain ⟨w, hw, d, hdG, rfl⟩ := mem_closure_iff_nhds.mp hy _ (hVopen.mem_nhds hV)
+  obtain ⟨_, hw, d, hdG, rfl⟩ := mem_closure_iff.mp hy _ hVopen <| by simp
   exact ⟨d, hdG, hw⟩
 
 /-- Huber's Lemma 2.4.3(iv) for a single element of `A`: if the image in `Â` of `b : A` is integral
