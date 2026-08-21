@@ -382,7 +382,7 @@ As with the formula it comes from, `Nat.card`'s convention that an infinite type
 `0` means no finiteness hypothesis is needed. -/
 theorem card_doubleCoset_mul_card_stabilizer_smul (s : G) (Γ : Subgroup G) (p : α) :
     Nat.card (DoubleCoset.doubleCoset s (Γ : Set G) (stabilizer G p : Set G)) *
-        Nat.card (stabilizer (↥Γ) (s • p)) = Nat.card Γ * Nat.card (stabilizer G p) := by
+        Nat.card (stabilizer Γ (s • p)) = Nat.card Γ * Nat.card (stabilizer G p) := by
   rw [stabilizer_smul_eq_mackeySubgroup_subgroupOf,
     Nat.card_congr (Subgroup.subgroupOfEquivOfLe mackeySubgroup_le_right).toEquiv]
   exact card_doubleCoset_mul_card_mackeySubgroup s (stabilizer G p) Γ
