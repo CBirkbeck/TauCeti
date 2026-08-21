@@ -88,7 +88,7 @@ is the statement the Nagell–Lutz layer consumes.
   — the induction step.
 * `WeierstrassCurve.Universal.Affine.zsmul_point_eq_smulX_smulY`: **the identification**. For
   `n ≠ 0` the pair `(smulX n, smulY n)` is nonsingular and `n • (X, Y)` is the affine point it
-  names. `nonsingular_smulX_smulY` is the witness on its own.
+  names.
 * `WeierstrassCurve.Universal.Affine.zsmul_point_ne_zero`, `.Jacobian.zsmul_point_ne_zero`:
   the distinguished point is not torsion, in affine and in Jacobian coordinates; whence
   `Jacobian.zsmul_point_injective`, that `n ↦ n • point` is injective.
@@ -181,7 +181,7 @@ polynomial-level certificate as a `have` and map it with `congrArg polyToField`,
 
 The identification block below adds, at the same revision, `smulX_sub_sub_smulX_add` (`:196`),
 `smulX_add` (`:300`), `smulY_add_sub_negY` (`:324`), `eq_of_sub_negY_eq` (`:345`),
-`zsmul_point_eq_smulX_smulY` (`:353`), `nonsingular_smulX_smulY` (`:394`),
+`zsmul_point_eq_smulX_smulY` (`:353`),
 `Affine.zsmul_point_ne_zero` (`:398`), `Jacobian.zsmul_point_ne_zero` (`:411`),
 `Jacobian.zsmul_point_injective` (`:416`), `smulPoly`, `smulRing` and
 `smulField` (`:423`–`:427`), `algebraMap_comp_smulRing` (`:429`) and
@@ -642,12 +642,6 @@ theorem zsmul_point_eq_smulX_smulY : n ≠ 0 →
     simp_rw [smulX_neg, smulY_neg h0, neg_smul, eq, Affine.Point.neg_some]
     exact ⟨(Affine.nonsingular_neg ..).mpr ns, trivial⟩
 
-/-- The pair `(smulX n, smulY n)` is a nonsingular point of the universal curve, for `n ≠ 0`:
-the witness carried by `zsmul_point_eq_smulX_smulY`. -/
-lemma nonsingular_smulX_smulY (hn : n ≠ 0) :
-    Affine.Nonsingular pointedCurve.toAffine (smulX n) (smulY n) :=
-  (zsmul_point_eq_smulX_smulY hn).1
-
 /-- **The distinguished point `(X, Y)` on the universal curve is not torsion.** Every nonzero
 multiple of it has affine coordinates, so none of them is the point at infinity. -/
 lemma zsmul_point_ne_zero (h0 : n ≠ 0) : n • point ≠ 0 := by
@@ -728,10 +722,6 @@ theorem zsmul_point_eq_smulField : (n • Jacobian.point).point = ⟦smulField n
 
 /-- `smulPoly` at `0` is the triple `(1, 1, 0)`. -/
 @[simp] lemma smulPoly_zero : smulPoly 0 = ![1, 1, 0] := by simp [smulPoly]
-
-/-- `smulRing` at `0` is the triple `(1, 1, 0)`. -/
-@[simp] lemma smulRing_zero : smulRing 0 = ![1, 1, 0] := by
-  simp [smulRing, smulPoly_zero, comp_fin3]
 
 /-- `smulField` at `0` is the triple `(1 : 1 : 0)`, the point at infinity. -/
 @[simp] lemma smulField_zero : smulField 0 = ![1, 1, 0] := by
