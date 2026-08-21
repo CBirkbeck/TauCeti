@@ -7,8 +7,8 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.Cartan
 import Mathlib.Tactic.NoncommRing
-import TauCeti.Data.Fin.Basic
 import Mathlib.Tactic.Push
+import TauCeti.Data.Fin.Basic
 
 public section
 
