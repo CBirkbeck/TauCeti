@@ -70,6 +70,7 @@ statement needs no hypothesis on `n` at all: at `n = 0` the triple is the point 
   — the induction step.
 * `WeierstrassCurve.Universal.Affine.zsmul_point_eq_smulX_smulY`: **the identification**. For
   `n ≠ 0` the pair `(smulX n, smulY n)` is nonsingular and `n • (X, Y)` is the affine point it
+  names, the statement carrying that nonsingularity as its existential witness.
 * `WeierstrassCurve.Universal.Affine.zsmul_point_ne_zero`, `.Jacobian.zsmul_point_ne_zero`:
   the distinguished point is not torsion, in affine and in Jacobian coordinates; whence
   `Jacobian.zsmul_point_injective`, that `n ↦ n • point` is injective.
