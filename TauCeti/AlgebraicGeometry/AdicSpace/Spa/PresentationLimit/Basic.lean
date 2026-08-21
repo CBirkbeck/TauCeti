@@ -72,30 +72,24 @@ not the hypotheses.
 * The `IsFilteredOrEmpty` instance on `RationalIndex` : two indices have a common refinement, so
   presentations of the same subset are constrained through one.
 
-Both `presentationLimitObj` and `presentationLimitMap` are **sealed**, so a consumer never
-depends on the object being Mathlib's chosen `limit`. The interface is the universal property,
-named here: `presentationLimitπ` projects, `presentationLimitObj_hom_ext` proves two maps into it
-equal, and `presentationLimitLift` builds one with `presentationLimitLift_π` as its characteristic
-equation. `presentationLimitMap_π`, `_refl` and `_comp` state how restriction meets the
-projections.
+The interface is the universal property, and it is Mathlib's: `presentationLimitCone` is the
+cone, `presentationLimitIsLimit` its limit proof, and `presentationLimitπ`,
+`presentationLimitObj_hom_ext`, `presentationLimitLift` and `presentationLimitLift_π` are the
+projections, uniqueness and existence read off it. A consumer needing anything else — cofinality,
+`IsLimit.conePointUniqueUpToIso`, the extension's counit — reaches for it in Mathlib rather than
+here, which is why the definitions are exposed rather than sealed.
 
-The two *reindexing* lemmas are the exception. `limit.pre_π` and `limit.pre_pre` are stated with
-`E ⋙ F`, which is `rationalIndexInclusionOfLE ⋙ rationalIndexDiagram`; recognising that as
-`rationalIndexDiagram` is definitional but beyond the transparency `rw` uses, which is why Mathlib
-itself reaches those two with `erw`. Three `rfl` lemmas *state* the identities involved —
-`rationalIndexInclusionOfLE_comp_diagram`, `rationalIndexInclusionOfLE_refl` and
-`rationalIndexInclusionOfLE_comp`. **None of the three is applied in a proof**, and none is meant
-to be: `presentationLimitMap_π`, `_refl` and `_comp` are proved in term mode, where the identities
-hold definitionally and no rewrite is needed. The three exist so a reader can see which definitional
-equality each term leans on, and so a consumer never meets the `erw`.
+Reindexing needs no lemmas of its own. `presentationLimitMap` is the presheaf's own action, so
+`_refl` and `_comp` are its functor laws and `_π` is `limit.lift_π`; the inclusion of one index
+into another is `StructuredArrow.map`, whose functoriality is Mathlib's.
 
 ## Why the index is presentations and not subsets
 
 `A⟨T/s⟩` is built from the data `(T, s)`, and two presentations of the *same* rational subset
 give canonically isomorphic but not equal rings. Indexing the limit by presentations avoids
-having to choose one. Any two indices map onwards to a common refinement
-(`RationalIndex.directed`, via the product presentation), so presentations of the same subset
-are constrained through a common refinement. That is weaker than identifying their components,
+having to choose one. Any two indices map onwards to a common refinement — this is the
+`IsFilteredOrEmpty` instance, via the product presentation — so presentations of the same subset
+are constrained through one. That is weaker than identifying their components,
 which would need the unproved initiality.
 
 **The comparison with Wedhorn's limit over rational *subsets* is not proved here.** It is an
