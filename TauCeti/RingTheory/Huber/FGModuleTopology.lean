@@ -59,6 +59,14 @@ def fgFamily (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOfDefinition)
   ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) • M₀
 
 omit [IsTopologicalRing A] in
+/-- **Unfolding lemma for the family.** The definition is not `@[expose]`d, so a downstream file
+that needs to see `ϖⁿ • M₀` as a pointwise scalar multiple — to destructure a membership, or to
+feed `Submodule.smul_mem_pointwise_smul` — rewrites with this first. -/
+theorem fgFamily_def (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOfDefinition)
+    (M₀ : Submodule P.ringOfDefinition M) (n : ℕ) :
+    P.fgFamily hs0 M₀ n = ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) • M₀ := (rfl)
+
+omit [IsTopologicalRing A] in
 /-- The family is antitone, which is the `inter` half of `SubmodulesBasis`. -/
 theorem fgFamily_antitone (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOfDefinition)
     (M₀ : Submodule P.ringOfDefinition M) : Antitone (P.fgFamily hs0 M₀) := by
