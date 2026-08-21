@@ -73,9 +73,12 @@ theorem le_commonKernelHopfIdeal_iff (f : ∀ i, H ⟶ K i) (I : HopfIdeal R H) 
   · intro h
     exact le_sSup h
 
-/-- **An endomorphism that intertwines the family along a reindexing preserves the common-kernel
-ideal.** If every `f i` factors as `φ` followed by some other member `f (s i)` of the family, then
-the inverse image of the common-kernel ideal along `φ` is again contained in it.
+/-- **An endomorphism that intertwines the family along a reindexing pulls the common-kernel ideal
+back into itself.** If every `f i` factors as `φ` followed by some other member `f (s i)` of the
+family, then the inverse image of the common-kernel ideal along `φ` is again contained in it.
+
+The conclusion is one containment, not invariance: an automorphism fixing the ideal needs this
+lemma once for itself and once for its inverse.
 
 The reindexing `s` is an arbitrary function `ι → ι`; at `s = id` the hypothesis reads `φ ≫ f i =
 f i`, so the statement specialises to an endomorphism fixing the family pointwise. -/
