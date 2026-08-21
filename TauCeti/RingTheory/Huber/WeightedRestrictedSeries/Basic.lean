@@ -1353,7 +1353,12 @@ isomorphism of *topological* rings.
 
 Both directions of each hypothesis are asked for separately rather than derived: `e` carrying
 `T i` into `S i` does not by itself make `e.symm` carry `S i` back into `T i`, since the weights
-are arbitrary sets and the inclusion may be strict. -/
+are arbitrary sets and the inclusion may be strict.
+
+The assembly follows Mathlib's `mapPiLocalization_bijective`
+(`Mathlib/RingTheory/Spectrum/Maximal/Localization.lean`), which likewise shows a map and the one
+induced by the inverse to be mutually inverse by rewriting with the functor laws, rather than by
+unfolding either side. -/
 noncomputable def weightedCongr [NonarchimedeanRing A] [NonarchimedeanRing B] (e : A ≃+* B)
     (he : Continuous ⇑(e : A →+* B)) (he' : Continuous ⇑(e.symm : B →+* A))
     {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
