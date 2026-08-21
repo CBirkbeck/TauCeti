@@ -223,15 +223,13 @@ namespace WeierstrassCurve.Universal.Affine
 
 variable {m n : ℤ}
 
-/-- The rational function `φₙ/ψₙ²` in the universal field, which the scalar-multiplication
-development identifies as the affine `X`-coordinate of `n • (X, Y)` on the universal curve —
-that identification is proved there, not here. -/
+/-- The rational function `φₙ/ψₙ²` in the universal field. For `n ≠ 0` it is the affine
+`X`-coordinate of `n • (X, Y)` on the universal curve, by `zsmul_point_eq_smulX_smulY` below. -/
 def smulX (n : ℤ) : Universal.Field :=
   polyToField (curve.φ n) / polyToField (curve.ψ n) ^ 2
 
-/-- The rational function `ωₙ/ψₙ³` in the universal field, which the scalar-multiplication
-development identifies as the affine `Y`-coordinate of `n • (X, Y)` on the universal curve —
-that identification is proved there, not here. -/
+/-- The rational function `ωₙ/ψₙ³` in the universal field. For `n ≠ 0` it is the affine
+`Y`-coordinate of `n • (X, Y)` on the universal curve, by `zsmul_point_eq_smulX_smulY` below. -/
 def smulY (n : ℤ) : Universal.Field :=
   polyToField (curve.ω n) / polyToField (curve.ψ n) ^ 3
 
@@ -434,10 +432,9 @@ lemma smulX_sub_sub_smulX_add (add_ne : n + m ≠ 0) (sub_ne : n - m ≠ 0) :
 
 /-- **The addition formula for the `X`-coordinate.** `smulX (n + m)` is `smulX (n - m)` less the
 product of the two vertical gaps, divided by the square of the horizontal one — the classical
-chord construction, written in the `smulX`/`smulY` calculus.
-
-Both sides become quotients of `ψ`'s once `smulY_sub_negY`, `smulX_sub_smulX` and
-`smulX_sub_sub_smulX_add` are applied, and the identity is then pure field algebra. -/
+chord construction, written in the `smulX`/`smulY` calculus. -/
+-- Both sides become quotients of `ψ`'s once `smulY_sub_negY`, `smulX_sub_smulX` and
+-- `smulX_sub_sub_smulX_add` are applied; the identity is then pure field algebra.
 lemma smulX_add (hm : m ≠ 0) (hn : n ≠ 0) (add_ne : n + m ≠ 0) (sub_ne : n - m ≠ 0) :
     smulX (n + m) = smulX (n - m) -
       (smulY n - pointedCurve.toAffine.negY (smulX n) (smulY n)) *
@@ -452,11 +449,10 @@ lemma smulX_add (hm : m ≠ 0) (hn : n ≠ 0) (add_ne : n + m ≠ 0) (sub_ne : n
 
 /-- **The addition formula for the vertical gap.** The gap at `n + m` is a difference of the gaps
 at `m` and at `n`, each weighted by a horizontal distance, over the horizontal distance between
-`n` and `m`.
-
-The certificate is the elliptic-net relation `ER(n + m, n, n - m, m)` of the universal `ψ` family
-— the shift `s = m` is nonzero, which is why `isEllipticNet_polyToField_ψ` is needed here and the
-elliptic-*sequence* consequence used by `smulX_sub_smulX` is not enough. -/
+`n` and `m`. -/
+-- The certificate is the elliptic-net relation `ER(n + m, n, n - m, m)` of the universal `ψ`
+-- family. The shift `s = m` is nonzero, which is why `isEllipticNet_polyToField_ψ` is needed and
+-- the elliptic-*sequence* consequence used by `smulX_sub_smulX` is not enough.
 lemma smulY_add_sub_negY (hm : m ≠ 0) (hn : n ≠ 0) (add_ne : n + m ≠ 0) (sub_ne : n - m ≠ 0) :
     smulY (n + m) - pointedCurve.toAffine.negY (smulX (n + m)) (smulY (n + m)) =
       ((smulY m - pointedCurve.toAffine.negY (smulX m) (smulY m)) * (smulX n - smulX (n + m)) -
@@ -497,14 +493,13 @@ private lemma eq_of_sub_negY_eq {F : Type*} [Field F] (h2 : (2 : F) ≠ 0)
 /-- **The affine coordinates of `n • (X, Y)` are `(smulX n, smulY n)`.** This is the theorem the
 whole `smulX`/`smulY` calculus above was built for: the rational functions `φₙ/ψₙ²` and `ωₙ/ψₙ³`
 really are the coordinates of the `n`-fold multiple of the distinguished point on the universal
-curve, for every nonzero `n`.
-
-Strong induction on `n > 0`, then `Int.negInduction` for the sign. The base cases are `n = 1`,
-where both sides are `(X, Y)`, and `n = 2`, which is the doubling `addX_smul_one_smul_one` and
-`addY_smul_one_smul_one`. The step writes `(n + 1) • P` as `(n • P) + P` and matches coordinates
-against Mathlib's chord formula: `smulX_add` against `Affine.addX_eq_addX_negY_sub`, and
-`smulY_add_sub_negY` against `Affine.addY_sub_negY_addY` — the latter determines `smulY` only
-through the map `z ↦ z - negY x z`, which `eq_of_sub_negY_eq` inverts. -/
+curve, for every nonzero `n`. -/
+-- Strong induction on `n > 0`, then `Int.negInduction` for the sign. Base cases `n = 1`, where
+-- both sides are `(X, Y)`, and `n = 2`, the doubling `addX_smul_one_smul_one` /
+-- `addY_smul_one_smul_one`. The step writes `(n + 1) • P` as `(n • P) + P` and matches
+-- coordinates against Mathlib's chord formula: `smulX_add` against `addX_eq_addX_negY_sub`, and
+-- `smulY_add_sub_negY` against `addY_sub_negY_addY` — the latter determines `smulY` only through
+-- `z ↦ z - negY x z`, which `eq_of_sub_negY_eq` inverts.
 theorem zsmul_point_eq_smulX_smulY : n ≠ 0 →
     ∃ h : Affine.Nonsingular pointedCurve.toAffine (smulX n) (smulY n),
       n • point = .some _ _ h := by
