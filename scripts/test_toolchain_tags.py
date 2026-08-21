@@ -147,8 +147,8 @@ class Report(unittest.TestCase):
 
     def test_the_rule_is_part_of_the_output(self):
         text = tt.render(self.ROWS)
-        self.assertIn("FIRST commit on `main`", text)
-        self.assertIn("Tags are never moved", text)
+        self.assertIn("first commit on `main`", text)
+        self.assertIn("reports it and changes nothing", text)
 
     def test_it_names_the_command_for_each_ready_release(self):
         text = tt.render(self.ROWS)
@@ -196,16 +196,41 @@ class UnreachableReleases(unittest.TestCase):
         self.assertEqual(row["status"], "out-of-scope")
         self.assertIn(tt.EARLIEST_RELEASE, row["reason"])
 
+    def _with_cache_answer(self, answer):
+        original = tt.cache_published
+        self.addCleanup(setattr, tt, "cache_published", original)
+        def fake(toolchain, sha):
+            if isinstance(answer, Exception):
+                raise answer
+            return answer
+        tt.cache_published = fake
+
     def test_a_hand_made_tag_on_an_unreachable_release_is_reported_as_tagged(self):
         # A release main never ran on can still be tagged by hand off a main commit. The
         # report saying "no tag is possible" over the top of an existing tag would be the
         # tool contradicting the repository.
+        self._with_cache_answer(False)
         row = tt._unreachable_row("v4.33.0", {"v4.33.0": "e" * 40})
         self.assertEqual(row["status"], "tagged")
         self.assertEqual(row["commit"], "e" * 40)
         self.assertIn("constructed by hand", row["reason"])
-        self.assertIn("no published Lake cache", row["reason"])
         self.assertNotIn("No tag is possible", tt.render([row]))
+
+    def test_whether_a_hand_made_tag_has_a_cache_is_checked_not_assumed(self):
+        # Nothing publishes for a commit off main automatically, so "no cache" is the usual
+        # answer, but one can be uploaded by hand. Asserting it rather than asking made the
+        # report wrong the moment that happened.
+        self._with_cache_answer(True)
+        self.assertIn("a Lake cache was published",
+                      tt._unreachable_row("v4.33.0", {"v4.33.0": "e" * 40})["reason"])
+        self._with_cache_answer(False)
+        self.assertIn("no published Lake cache",
+                      tt._unreachable_row("v4.33.0", {"v4.33.0": "e" * 40})["reason"])
+
+    def test_an_unreadable_cache_is_not_reported_as_absent(self):
+        self._with_cache_answer(RuntimeError("the cache answered HTTP 500"))
+        self.assertIn("could not be checked",
+                      tt._unreachable_row("v4.33.0", {"v4.33.0": "e" * 40})["reason"])
 
     def test_the_report_explains_why_no_tag_is_possible(self):
         rows = [tt._unreachable_row("v4.33.0", {})]
@@ -252,7 +277,7 @@ class CommandLine(unittest.TestCase):
         out = io.StringIO()
         with redirect_stdout(out), self.assertRaises(SystemExit):
             tt.main(["--help"])
-        self.assertIn("FIRST commit on `main`", out.getvalue())
+        self.assertIn("first commit on `main`", out.getvalue())
 
 
 if __name__ == "__main__":
