@@ -120,7 +120,8 @@ private theorem chainBEntry_mul_eq_add_add {R : Type*} [NonAssocRing R] (L a s :
 collects `2 g a`, the weight of the position before it - absent at the head of the chain - and the
 weight of the position after it, doubled when that position is the short end and absent when the row
 is the short end itself. Only ring operations and integer casts are used. -/
-theorem sum_range_chainBEntry_mul {R : Type*} [Ring R] {L m a : ℕ} (ha : a < m) (g : ℕ → R) :
+theorem sum_range_chainBEntry_mul {R : Type*} [NonAssocRing R] {L m a : ℕ} (ha : a < m)
+    (g : ℕ → R) :
     ∑ s ∈ Finset.range m, (chainBEntry L a s : R) * g s
       = 2 * g a - (if a = 0 then 0 else g (a - 1))
         - (if a + 1 = m then 0 else (if a + 1 = L then 2 else 1) * g (a + 1)) := by
