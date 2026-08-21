@@ -1360,14 +1360,8 @@ noncomputable def weightedCongr [NonarchimedeanRing A] [NonarchimedeanRing B] (e
     (hTS : ∀ i, (e : A →+* B) '' T i ⊆ S i) (hST : ∀ i, (e.symm : B →+* A) '' S i ⊆ T i) :
     weightedRestrictedSubring T hT ≃+* weightedRestrictedSubring S hS :=
   RingEquiv.ofRingHom (weightedMap he hT hS hTS) (weightedMap he' hS hT hST)
-    (RingHom.ext fun x ↦ Subtype.ext (by
-      rw [RingHom.coe_comp, Function.comp_apply, coe_weightedMap, coe_weightedMap,
-        ← RingHom.comp_apply, ← MvPowerSeries.map_comp]
-      simp))
-    (RingHom.ext fun x ↦ Subtype.ext (by
-      rw [RingHom.coe_comp, Function.comp_apply, coe_weightedMap, coe_weightedMap,
-        ← RingHom.comp_apply, ← MvPowerSeries.map_comp]
-      simp))
+    (by rw [← weightedMap_comp]; simp_rw [RingEquiv.comp_symm, weightedMap_id])
+    (by rw [← weightedMap_comp]; simp_rw [RingEquiv.symm_comp, weightedMap_id])
 
 /-- `TauCeti.Huber.weightedCongr` is `TauCeti.Huber.weightedMap`; the body of the definition is
 not exported, so this is how a consumer computes with it. -/
@@ -1396,7 +1390,8 @@ theorem continuous_weightedCongr [NonarchimedeanRing A] [NonarchimedeanRing B] (
     {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
     (hTS : ∀ i, (e : A →+* B) '' T i ⊆ S i) (hST : ∀ i, (e.symm : B →+* A) '' S i ⊆ T i) :
     Continuous (weightedCongr e he he' hT hS hTS hST) :=
-  continuous_weightedMap he hT hS hTS
+  (continuous_weightedMap he hT hS hTS).congr fun f ↦
+    (weightedCongr_apply e he he' hT hS hTS hST f).symm
 
 /-- The inverse of `TauCeti.Huber.weightedCongr` is continuous, so it is an isomorphism of
 topological rings. -/
@@ -1405,7 +1400,8 @@ theorem continuous_weightedCongr_symm [NonarchimedeanRing A] [NonarchimedeanRing
     {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
     (hTS : ∀ i, (e : A →+* B) '' T i ⊆ S i) (hST : ∀ i, (e.symm : B →+* A) '' S i ⊆ T i) :
     Continuous (weightedCongr e he he' hT hS hTS hST).symm :=
-  continuous_weightedMap he' hS hT hST
+  (continuous_weightedMap he' hS hT hST).congr fun f ↦
+    (weightedCongr_symm_apply e he he' hT hS hTS hST f).symm
 
 
 end Functoriality
