@@ -101,12 +101,6 @@ theorem ker_coeRingHom :
     _ ↔ x - 0 ∈ closure ({0} : Set A) := addGroup_inseparable_iff
     _ ↔ x ∈ closure ((⊥ : Ideal A) : Set A) := by rw [sub_zero]; simp
 
-end Ring
-
-section IntegrallyClosed
-
-variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
-
 /-- The closure `Ĝ` in `Â` of the image of a subring `G` of `A` is, as a set, the closure of the
 image of `G` under the completion coercion. This unfolds `Subring.topologicalClosure` and
 `Subring.map` in one step; it is how every argument below passes between `Ĝ` and that closure. -/
@@ -130,6 +124,12 @@ theorem isOpen_topologicalClosure_map_coeRingHom {G : Subring A} (hG : IsOpen (G
     IsOpen ((G.map Completion.coeRingHom).topologicalClosure : Set (Completion A)) := by
   rw [coe_topologicalClosure_map_coeRingHom, ← Subring.coe_toAddSubgroup]
   exact isOpen_closure_image_coe (G := G.toAddSubgroup) (by rwa [Subring.coe_toAddSubgroup])
+
+end Ring
+
+section IntegrallyClosed
+
+variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
 
 /-- The one analytic step of Huber's Lemma 2.4.3(iv): an element `y` of the closure `Ĝ` of the
 image of an *open* subring `G` can be replaced by the image of an element of `G` so closely that
