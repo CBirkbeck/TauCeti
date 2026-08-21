@@ -19,25 +19,24 @@ explicit `y² = x³ + Ax + B` — the classical form of the Nagell–Lutz theore
 constructor, so it is supplied here, with the `IsShortNF` instance that connects it to everything
 Mathlib already proves.
 
-Only `a₄` and `a₆` are stated as lemmas. The three vanishing coefficients need none: with the
-`IsShortNF` instance in scope `simp` already discharges `(shortCurve A B).a₁ = 0` and `a₃`, and
-`a₂` besides, so a `@[simp]` lemma for any of them would be a simpNF duplicate — measured, by
-checking whether `simp` closes each goal with that lemma disabled. `rw`-style access to them is
-Mathlib's `a₁_of_isShortNF` family. Every other fact about `shortCurve` — the `b`- and
-`c`-invariants, `Δ` and `j` — is likewise inherited through the instance rather than restated.
+All five coefficients are stated as `@[simp]` lemmas, in the `Zero` section. They are not
+redundant with Mathlib's `a₁_of_isShortNF` family: that family needs the `IsShortNF` instance,
+which needs `CommRing`, so at `Zero R` generality it is unavailable and `simp` cannot otherwise
+reduce a projection of the opaque constructor. Every other fact about `shortCurve` — the `b`- and
+`c`-invariants, `Δ` and `j` — is inherited through the instance rather than restated.
 
 ## Main definitions
 
-* `TauCeti.WeierstrassCurve.shortCurve`: the curve `y² = x³ + Ax + B`, over any `Zero`.
+* `WeierstrassCurve.shortCurve`: the curve `y² = x³ + Ax + B`, over any `Zero`.
 
 ## Main results
 
-* `TauCeti.WeierstrassCurve.instIsShortNFShortCurve`: it is in short normal form, which is what
+* `WeierstrassCurve.instIsShortNFShortCurve`: it is in short normal form, which is what
   makes Mathlib's `*_of_isShortNF` family apply to it.
-* `TauCeti.WeierstrassCurve.map_shortCurve`: short form is preserved by a ring hom, and the
+* `WeierstrassCurve.map_shortCurve`: short form is preserved by a ring hom, and the
   coefficients transport. Mathlib has no `IsShortNF`-under-`map` instance, so this is what lets a
   curve over `ℤ` be base changed to `ℚ` and stay recognisably short.
-* `TauCeti.WeierstrassCurve.shortCurve_equation_iff`: a point lies on it exactly when
+* `WeierstrassCurve.shortCurve_equation_iff`: a point lies on it exactly when
   `y² = x³ + Ax + B`.
 
 The classical discriminant `-16(4A³ + 27B²)` is *not* restated: it is Mathlib's `Δ_of_isShortNF`,
@@ -58,23 +57,16 @@ Three departures. The source fixes `ℤ` and `ℚ`; here the construction needs 
 (`WeierstrassCurve` is a bare structure), and `map_shortCurve` relates the two — so the `ℤ → ℚ`
 pair of the classical statement is one definition plus a base change, not two definitions.
 The source's ten
-`@[simp]` coefficient lemmas — `shortCurve{Z,Q}_a₁` through `_a₆` — collapse to four here. Six of
-the ten are `a₁ = a₂ = a₃ = 0` stated once for each of the source's two curves; over one general
-ring those become three, of which `a₂` is already Mathlib's simp-tagged `a₂_of_isShortNF`, leaving
-`shortCurve_a₁` and `shortCurve_a₃` (Mathlib does not tag those two). The remaining four,
-`shortCurve{Z,Q}_a₄` and `_a₆`, likewise collapse to `shortCurve_a₄` and `shortCurve_a₆`, since
-`map_shortCurve` transports them to the base change. And `shortCurveZ_delta` is not ported at all:
-it is exactly Mathlib's `Δ_of_isShortNF`, `W.Δ = -16 * (4 * W.a₄ ^ 3 + 27 * W.a₆ ^ 2)`, which the
-coefficient simp lemmas above already reduce at `shortCurve A B`.
+`@[simp]` coefficient lemmas — `shortCurve{Z,Q}_a₁` through `_a₆` — collapse to five, one per
+coefficient, because the ℤ and ℚ copies become one general statement that `map_shortCurve`
+transports to any base change. And `shortCurveZ_delta` is not ported at all: it is exactly
+Mathlib's `Δ_of_isShortNF`, `W.Δ = -16 * (4 * W.a₄ ^ 3 + 27 * W.a₆ ^ 2)`, which the coefficient
+lemmas above already reduce at `shortCurve A B`.
 -/
 
 public section
 
-namespace TauCeti
-
 namespace WeierstrassCurve
-
-open _root_.WeierstrassCurve
 
 section Zero
 
@@ -83,12 +75,18 @@ variable {R : Type*} [Zero R] (A B : R)
 /-- The short Weierstrass curve `y² = x³ + Ax + B`. Only `Zero R` is needed to write it down;
 `WeierstrassCurve` is a bare structure and the three vanishing coefficients are the only
 requirement. -/
-def shortCurve : _root_.WeierstrassCurve R where
+def shortCurve : WeierstrassCurve R where
   a₁ := 0
   a₂ := 0
   a₃ := 0
   a₄ := A
   a₆ := B
+
+@[simp] lemma shortCurve_a₁ : (shortCurve A B).a₁ = 0 := (rfl)
+
+@[simp] lemma shortCurve_a₂ : (shortCurve A B).a₂ = 0 := (rfl)
+
+@[simp] lemma shortCurve_a₃ : (shortCurve A B).a₃ = 0 := (rfl)
 
 @[simp] lemma shortCurve_a₄ : (shortCurve A B).a₄ = A := (rfl)
 
@@ -107,7 +105,7 @@ instance : (shortCurve A B).IsShortNF := ⟨(rfl), (rfl), (rfl)⟩
 no instance propagating `IsShortNF` along `map`, so this is what keeps a base change — `ℤ → ℚ` in
 the classical Nagell–Lutz statement — recognisably in short form. -/
 @[simp] lemma map_shortCurve (f : R →+* S) : (shortCurve A B).map f = shortCurve (f A) (f B) := by
-  ext <;> simp [shortCurve, _root_.WeierstrassCurve.map]
+  ext <;> simp [shortCurve, WeierstrassCurve.map]
 
 /-- A point lies on `y² = x³ + Ax + B` exactly when it satisfies that equation. -/
 @[simp] lemma shortCurve_equation_iff (x y : R) :
@@ -116,5 +114,3 @@ the classical Nagell–Lutz statement — recognisably in short form. -/
   simp [shortCurve]
 
 end WeierstrassCurve
-
-end TauCeti
