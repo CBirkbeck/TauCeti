@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.LinearAlgebra.Matrix.Module
 public import TauCeti.LinearAlgebra.Matrix.Module
 public import Mathlib.LinearAlgebra.Matrix.NonsingularInverse
 public import TauCeti.RingTheory.Huber.PowerBounded
