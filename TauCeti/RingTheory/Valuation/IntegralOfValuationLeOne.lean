@@ -54,6 +54,12 @@ namespace TauCeti
 
 open ValuativeRel
 
+/-- `ValuativeRel.ofValuation v` compares by `v`: this is how the relation is defined, and the
+only step of the proof below that is definitional rather than lemma-driven. Naming it confines
+that unfolding to one place; the `comap` layer goes through `Valuation.comap_apply` instead. -/
+private theorem vle_ofValuation {S Γ : Type*} [Ring S] [LinearOrderedCommGroupWithZero Γ]
+    (v : Valuation S Γ) (x y : S) : (ofValuation v).vle x y ↔ v x ≤ v y := Iff.rfl
+
 /-- **The valuative criterion for integrality.** If `v x ≤ 1` for every valuation `v` of `R`
 satisfying `v b ≤ 1` for all `b ∈ B`, then `x` is integral over `B`.
 
@@ -71,10 +77,11 @@ theorem isIntegral_of_forall_valuation_le_one {R : Type*} [CommRing R] [IsDomain
     exact mt (isIntegral_algebraMap_iff hinj).mp hni
   -- Stacks 090P(1): a valuation subring containing the closure but missing `i x`
   obtain ⟨V, hVle, hxV⟩ := Subring.exists_le_valuationSubring_of_isIntegrallyClosedIn hxni
-  -- `vle` for the pulled-back relation is the valuation inequality, by definition of
-  -- `ofValuation` and `comap`. Naming it once keeps that unfolding out of the two uses below.
+  -- `vle` for the pulled-back relation is the valuation inequality: `vle_ofValuation` for the
+  -- relation and `Valuation.comap_apply` for the pullback, rather than one `Iff.rfl` across both
   have hvle_iff : ∀ y z : R, (ofValuation (V.valuation.comap i)).vle y z ↔
-      V.valuation (i y) ≤ V.valuation (i z) := fun _ _ ↦ Iff.rfl
+      V.valuation (i y) ≤ V.valuation (i z) := fun y z ↦ by
+    rw [vle_ofValuation, Valuation.comap_apply, Valuation.comap_apply]
   -- pull `V.valuation` back to `R`; it is `≤ 1` on `B`
   have hB : ∀ b ∈ B, (ofValuation (V.valuation.comap i)).vle b 1 := by
     intro b hb
