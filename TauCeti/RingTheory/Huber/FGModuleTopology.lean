@@ -117,4 +117,49 @@ theorem exists_pow_smul_mem (P : PairOfDefinition A) {s : A} (hs : IsTopological
         rw [pow_add]; ring
       rw [he]; exact M₀.smul_mem _ hk
 
+/-- **The `smul` half of `SubmodulesBasis`**: every scalar close enough to `0` in `A₀` carries a
+given `m` into `ϖⁿ • M₀`.
+
+`m` is carried into `M₀` by `ϖᵏ` for some `k` (`exists_pow_smul_mem`), and `ϖⁿ⁺ᵏ A₀` is a
+neighbourhood of `0`; the two combine by arithmetic inside `A₀`. -/
+theorem fgFamily_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
+    (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
+    (hspan : Submodule.span A (M₀ : Set M) = ⊤) (m : M) (n : ℕ) :
+    ∀ᶠ a in 𝓝 (0 : P.ringOfDefinition), a • m ∈ P.fgFamily hs0 M₀ n := by
+  obtain ⟨k, hk⟩ := P.exists_pow_smul_mem hs.isTopologicallyNilpotent hs0 M₀ hspan m
+  have hnhd : ∀ᶠ a : P.ringOfDefinition in 𝓝 0,
+      (a : A) ∈ (s ^ (n + k)) • (P.ringOfDefinition : Set A) :=
+    continuous_subtype_val.continuousAt.preimage_mem_nhds
+      (by simpa using (hs.hasBasis_nhds_zero P).mem_of_mem (i := n + k) trivial)
+  filter_upwards [hnhd] with a ha
+  obtain ⟨b, hb, hab⟩ := ha
+  have hmem : (⟨b, hb⟩ : P.ringOfDefinition) • (s ^ k • m) ∈ M₀ := M₀.smul_mem _ hk
+  have he : a • m = ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) •
+      ((⟨b, hb⟩ : P.ringOfDefinition) • (s ^ k • m)) := by
+    have hscal : ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • (⟨b, hb⟩ : P.ringOfDefinition)) •
+        (s ^ k) = (a : A) := by
+      change ((((⟨s, hs0⟩ : P.ringOfDefinition) ^ n * ⟨b, hb⟩ : P.ringOfDefinition)) : A)
+          * s ^ k = (a : A)
+      push_cast
+      rw [← hab, pow_add]; ring
+    rw [← smul_assoc, ← smul_assoc, hscal]
+    rfl
+  rw [he]
+  exact Submodule.smul_mem_pointwise_smul _ _ _ hmem
+
+/-- **Wedhorn Remark 6.19.** For a pseudouniformiser `ϖ` in a ring of definition `A₀`, and a
+finitely generated `A₀`-submodule `M₀` spanning `M` over `A`, the family `ϖⁿ • M₀` is a
+`SubmodulesBasis`.
+
+`SubmodulesBasis.topology` is then the topology of Wedhorn's Proposition 6.18(1), and
+`SubmodulesBasis.nonarchimedean` makes `M` a nonarchimedean additive group for it. -/
+theorem fgFamily_submodulesBasis (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
+    (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
+    (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
+    SubmodulesBasis (P.fgFamily hs0 M₀) where
+  inter i j :=
+    ⟨max i j, le_inf (P.fgFamily_antitone hs0 M₀ (le_max_left i j))
+      (P.fgFamily_antitone hs0 M₀ (le_max_right i j))⟩
+  smul m i := P.fgFamily_smul hs hs0 M₀ hspan m i
+
 end TauCeti.Huber.PairOfDefinition
