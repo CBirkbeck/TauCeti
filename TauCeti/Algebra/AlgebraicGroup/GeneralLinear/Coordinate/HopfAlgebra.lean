@@ -338,8 +338,8 @@ private theorem adjoin_X_union_antipode_X :
         coordinateRingMap R n (MvPolynomial.X ij)) ∪
       Set.range (fun ij : Fin n × Fin n =>
         antipode R n (coordinateRingMap R n (MvPolynomial.X ij))))
-  -- each generating family sits in one side of the union, so `adjoin_mono` lifts the two lemmas
-  -- above into `B`
+  -- each generating family sits in one side of the union, so `adjoin_mono` lifts the helper's
+  -- conclusion into `B`
   have hpoly : ∀ p : MatrixMonoid.CoordinateRing R n, coordinateRingMap R n p ∈ B := fun p =>
     Algebra.adjoin_mono Set.subset_union_left
       (mem_adjoin_range_apply_X n (coordinateRingMap R n) p)
