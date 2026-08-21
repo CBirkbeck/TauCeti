@@ -429,8 +429,9 @@ private def quotient [IsTopologicalRing A] (P : PairOfDefinition A) (J : Ideal A
 /-- **Some power of a topologically nilpotent `s` carries any `c : A` into the ring of
 definition.** The ring of definition is open and `sⁿ c → 0`, so `sⁿ c` is eventually inside it.
 
-This is the `c ≠ 1` form of `TauCeti.Huber.IsPseudoUniformizer.eventually_pow_mem_ringOfDefinition`,
-and it asks only for topological nilpotence rather than for a pseudouniformiser. -/
+This is the arbitrary-`c` generalisation of
+`TauCeti.Huber.IsPseudoUniformizer.eventually_pow_mem_ringOfDefinition`, which is the case
+`c = 1`; it also asks only for topological nilpotence rather than for a pseudouniformiser. -/
 theorem exists_pow_mul_mem [IsTopologicalRing A] (P : PairOfDefinition A) {s : A}
     (hs : IsTopologicallyNilpotent s) (c : A) : ∃ i : ℕ, s ^ i * c ∈ P.ringOfDefinition :=
   ((hs.mul_const c).eventually

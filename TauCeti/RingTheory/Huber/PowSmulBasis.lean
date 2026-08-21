@@ -5,8 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.Algebra.Module.Submodule.Pointwise
 public import TauCeti.RingTheory.Huber.Basic
-public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 
 /-!
 # The `ϖⁿ • M₀` submodules basis, and the `A`-module topology it induces
@@ -17,8 +17,9 @@ as a `SubmodulesBasis`, which is Mathlib's machinery for turning such a family i
 `SubmodulesBasis.topology` and `.nonarchimedean` then apply.
 
 **Two of Proposition 6.18(1)'s clauses are established for the induced topology** — that it is an
-`A`-module topology (`fgModuleFilterBasis`, since `SubmodulesBasis.toModuleFilterBasis` gives only
-an `A₀`-module one) and that it is first countable at `0` (`isCountablyGenerated_nhds_zero`).
+`A`-module topology (`moduleFilterBasis_pow_smul`, since `SubmodulesBasis.toModuleFilterBasis`
+gives only an `A₀`-module one) and that it is first countable at `0`
+(`isCountablyGenerated_nhds_zero`).
 
 **Completeness and uniqueness are not.** 6.18(1) asserts the topology is the *unique* complete
 first-countable `A`-module topology on a finitely generated module; neither half is proved below,
@@ -33,17 +34,17 @@ definition, so a caller holding `powerBoundedSubring A` can use them.
 
 ## Main results
 
-* `TauCeti.Huber.PairOfDefinition.pow_add_smul_mem`: `M₀` absorbs further powers of `ϖ`.
 * `TauCeti.Huber.PairOfDefinition.exists_pow_smul_mem`: a power of `ϖ` carries any element of
   the `A`-span of `M₀` into `M₀`.
 * `TauCeti.Huber.PairOfDefinition.submodulesBasis_pow_smul`: the family is a `SubmodulesBasis`.
-* `TauCeti.Huber.PairOfDefinition.pow_smul_mem_pow_smul`: the `A`-side bridge — an element of
-  `M₀` scaled by the ambient `sⁿ` lands in `ϖⁿ • M₀`, so consumers need no coercion plumbing.
-* `TauCeti.Huber.pow_smul_antitone`: the family is antitone, over any subring.
-* `TauCeti.Huber.PairOfDefinition.fgModuleFilterBasis`: the same family as a filter basis for
-  scalars from `A`, not just from `A₀` — Proposition 6.18(1)'s `A`-module clause.
+* `TauCeti.Huber.PairOfDefinition.moduleFilterBasis_pow_smul`: the same family as a filter basis
+  for scalars from `A`, not just from `A₀` — Proposition 6.18(1)'s `A`-module clause.
 * `TauCeti.Huber.PairOfDefinition.isCountablyGenerated_nhds_zero`: the induced topology has a
   countable fundamental system of neighbourhoods of `0` — 6.18(1)'s first-countability clause.
+
+The elementary facts about `rⁿ • M₀` over an arbitrary subring — antitonicity, absorption of
+further powers, and the ambient-scalar bridge — carry no Huber content and live in
+`TauCeti.Algebra.Module.Submodule.Pointwise`.
 
 ## Implementation notes
 
@@ -51,11 +52,9 @@ The neighbourhoods are `A₀`-submodules, not `A`-submodules, so `SubmodulesBasi
 at `R := P.ringOfDefinition`: `M` carries its `A₀`-module structure by restriction of scalars
 along `A₀ → A`, which typeclass inference supplies unaided.
 
-The family is written out as `ϖⁿ • M₀` rather than wrapped in a definition of its own. Mathlib's
-pointwise action on submodules already *is* that operation:
-`Submodule.mem_smul_pointwise_iff_exists` characterises membership and
-`Submodule.smul_le_self_of_tower` gives the shrinking, so a wrapper would only oblige this file
-to restate both.
+The family is written out as `ϖⁿ • M₀` rather than wrapped in a definition of its own: Mathlib's
+pointwise action on submodules already *is* that operation, and
+`TauCeti.Algebra.Module.Submodule.Pointwise` supplies the facts about it.
 
 The family is `ϖⁿ • M₀` rather than `Iⁿ • M₀` for the ideal of definition `I`. That is Wedhorn's
 own indexing, and it is what the proofs below run on: both `exists_pow_smul_mem` and
@@ -79,48 +78,6 @@ namespace TauCeti.Huber.PairOfDefinition
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   {M : Type*} [AddCommGroup M] [Module A M]
 
-omit [TopologicalSpace A] [IsTopologicalRing A] in
-/-- **The `A`-side bridge.** Membership in `rⁿ • M₀` is stated in Mathlib's terms with the
-subring scalar `r : S`, but every surrounding fact — `pow_add_smul_mem`, `exists_pow_smul_mem`,
-`IsPseudoUniformizer.hasBasis_nhds_zero` — speaks the ambient `s : A`. This is the crossing, so a
-consumer never has to redo the coercion plumbing by hand.
-
-Only this direction holds: the converse would need multiplication by `sⁿ` to be injective.
-
-Not `@[simp]`: the left-hand side is already reducible by
-`Submodule.mem_smul_pointwise_iff_exists`, so simp would rather rewrite it than close it, and the
-simpNF linter says so. This is a bridge to apply, not a normalisation. -/
-theorem pow_smul_mem_pow_smul {S : Subring A} {s : A} (hs0 : s ∈ S) (M₀ : Submodule S M) {y : M}
-    (hy : y ∈ M₀) (n : ℕ) : s ^ n • y ∈ (⟨s, hs0⟩ : S) ^ n • M₀ :=
-  Submodule.mem_smul_pointwise_iff_exists _ _ _ |>.mpr
-    ⟨y, hy, by rw [Subring.smul_def]; push_cast; ring_nf⟩
-
-omit [TopologicalSpace A] [IsTopologicalRing A] in
-/-- **The family is antitone**, which is the `inter` half of `SubmodulesBasis`. Raising the
-exponent multiplies by a further `ϖ`, and `Submodule.smul_le_self_of_tower` says that shrinks
-the submodule. -/
-theorem pow_smul_antitone {S : Subring A} {r : S} (M₀ : Submodule S M) :
-    Antitone fun n : ℕ ↦ r ^ n • M₀ := by
-  intro i j hij
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hij
-  calc r ^ (i + d) • M₀ = r ^ i • (r ^ d • M₀) := by rw [pow_add, mul_smul]
-    _ ≤ r ^ i • M₀ := smul_mono_right _ (M₀.smul_le_self_of_tower _)
-
-omit [TopologicalSpace A] [IsTopologicalRing A] in
-/-- **A submodule over a subring absorbs further powers of a scalar from that subring**: raising
-the exponent cannot leave `M₀`, because the extra factor is itself a scalar from `S`.
-
-Stated for an arbitrary subring rather than a ring of definition — none of the `PairOfDefinition`
-structure is used, and a caller holding `powerBoundedSubring A` or any other open subring can
-apply it. -/
-theorem pow_add_smul_mem {S : Subring A} {s : A} (hs0 : s ∈ S) (M₀ : Submodule S M)
-    (j k : ℕ) (z : M) (hz : s ^ k • z ∈ M₀) : s ^ (j + k) • z ∈ M₀ := by
-  have he : s ^ (j + k) • z = (⟨s, hs0⟩ : S) ^ j • (s ^ k • z) := by
-    rw [Subring.smul_def, ← smul_assoc, smul_eq_mul]
-    congr 1
-    push_cast
-    rw [pow_add]
-  rw [he]; exact M₀.smul_mem _ hz
 
 /-- **A power of `s` carries any element of `M = A · M₀` into `M₀`.** This is where the
 hypothesis `A · M₀ = M` is spent, and it is what makes the `smul` condition of
@@ -137,10 +94,10 @@ theorem exists_pow_smul_mem (P : PairOfDefinition A) {s : A} (hs : IsTopological
       refine ⟨max kx ky, ?_⟩
       have hx' : s ^ (max kx ky) • x ∈ M₀ := by
         have he : max kx ky = (max kx ky - kx) + kx := by omega
-        rw [he]; exact pow_add_smul_mem hs0 M₀ _ _ _ hkx
+        rw [he]; exact M₀.pow_add_smul_mem hs0 _ _ _ hkx
       have hy' : s ^ (max kx ky) • y ∈ M₀ := by
         have he : max kx ky = (max kx ky - ky) + ky := by omega
-        rw [he]; exact pow_add_smul_mem hs0 M₀ _ _ _ hky
+        rw [he]; exact M₀.pow_add_smul_mem hs0 _ _ _ hky
       rw [smul_add]; exact M₀.add_mem hx' hy'
   | smul c x _ ih =>
       obtain ⟨k, hk⟩ := ih
@@ -200,14 +157,15 @@ theorem submodulesBasis_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudo
     (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
     SubmodulesBasis ((⟨s, hs0⟩ : P.ringOfDefinition) ^ · • M₀) where
   inter i j :=
-    ⟨max i j, le_inf (pow_smul_antitone M₀ (le_max_left i j))
-      (pow_smul_antitone M₀ (le_max_right i j))⟩
+    ⟨max i j, le_inf (M₀.pow_smul_antitone (le_max_left i j))
+      (M₀.pow_smul_antitone (le_max_right i j))⟩
   smul m i := P.eventually_smul_mem_pow_smul hs hs0 M₀ hspan m i
 
 /-- **The A-module filter basis.** `SubmodulesBasis.toModuleFilterBasis` only ever produces a
 filter basis over `A₀`; Wedhorn's Proposition 6.18(1) is about an `A`-module topology, so the
 three `ModuleFilterBasis` axioms are re-established with scalars from `A`. -/
-def fgModuleFilterBasis (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
+@[expose]
+def moduleFilterBasis_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
     (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
     (hspan : Submodule.span A (M₀ : Set M) = ⊤) : ModuleFilterBasis A M where
   __ := (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).toModuleFilterBasis.toAddGroupFilterBasis
@@ -226,9 +184,9 @@ def fgModuleFilterBasis (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformiz
     simp only [SetLike.mem_coe, Set.mem_preimage, Submodule.mem_smul_pointwise_iff_exists] at hx ⊢
     obtain ⟨y, hy, rfl⟩ := hx
     refine ⟨(⟨s ^ k * a, hk⟩ : P.ringOfDefinition) • y, M₀.smul_mem _ hy, ?_⟩
-    change ((((⟨s, hs0⟩ : P.ringOfDefinition) ^ n : P.ringOfDefinition)) : A) •
-        (((((⟨s ^ k * a, hk⟩ : P.ringOfDefinition))) : A) • y)
-      = a • ((((⟨s, hs0⟩ : P.ringOfDefinition) ^ (n + k) : P.ringOfDefinition)) : A) • y
+    -- Both sides scale `y`; `Subring.smul_def` puts the `A₀`-scalars into `A` so that the two
+    -- can be compared there.
+    simp only [Subring.smul_def]
     rw [smul_smul, smul_smul]
     congr 1
     push_cast
@@ -244,13 +202,36 @@ def fgModuleFilterBasis (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformiz
         ((⟨b, hb⟩ : P.ringOfDefinition) • (s ^ k • m)) := by
       have hscal : ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • (⟨b, hb⟩ : P.ringOfDefinition)) •
           (s ^ k) = c := by
-        change ((((⟨s, hs0⟩ : P.ringOfDefinition) ^ n * ⟨b, hb⟩ : P.ringOfDefinition)) : A)
-            * s ^ k = c
+        -- `Subring.smul_def` moves the `A₀`-scalar into `A`, where `smul_eq_mul` makes the
+        -- outer action a product and `push_cast` clears the coercions.
+        simp only [Subring.smul_def, smul_eq_mul]
         push_cast
         rw [← hcb, pow_add]; ring
       rw [← smul_assoc, ← smul_assoc, hscal]
     rw [SetLike.mem_coe, he]
     exact Submodule.smul_mem_pointwise_smul _ _ _ hmem
+
+/-- **Membership in the filter basis is the `ϖⁿ • M₀` family**, in normal form, so a consumer
+never unfolds `TauCeti.Huber.PairOfDefinition.moduleFilterBasis_pow_smul`. -/
+@[simp]
+theorem mem_moduleFilterBasis_pow_smul_sets (P : PairOfDefinition A) {s : A}
+    (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
+    (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤)
+    {U : Set M} :
+    U ∈ (P.moduleFilterBasis_pow_smul hs hs0 M₀ hspan).sets ↔
+      ∃ n : ℕ, U = ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ : Submodule _ M) :=
+  Iff.rfl
+
+/-- **The `A`-module topology is the `A₀`-level one.** Widening the scalars from `A₀` to `A`
+re-establishes the `ModuleFilterBasis` axioms but does not change the underlying
+`AddGroupFilterBasis`, hence not the topology. -/
+@[simp]
+theorem moduleFilterBasis_pow_smul_topology (P : PairOfDefinition A) {s : A}
+    (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
+    (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
+    (P.moduleFilterBasis_pow_smul hs hs0 M₀ hspan).topology
+      = (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).topology :=
+  rfl
 
 /-- **The topology has a countable fundamental system of neighbourhoods of `0`.** The family is
 indexed by `ℕ`, so this is `Filter.HasBasis.isCountablyGenerated` once the basis is transported
@@ -258,7 +239,7 @@ off `SubmodulesBasis`'s `Set`-indexed form. -/
 theorem isCountablyGenerated_nhds_zero (P : PairOfDefinition A) {s : A}
     (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
     (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
-    (@nhds M (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).topology
+    (@nhds M (P.moduleFilterBasis_pow_smul hs hs0 M₀ hspan).topology
       0).IsCountablyGenerated := by
   set hB := P.submodulesBasis_pow_smul hs hs0 M₀ hspan
   let _ := hB.topology
