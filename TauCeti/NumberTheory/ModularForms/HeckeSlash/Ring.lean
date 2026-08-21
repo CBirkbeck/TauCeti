@@ -51,6 +51,13 @@ noncomputable def heckeSlashSumRing {N : ℕ} [NeZero N] (k : ℤ)
       (c : ℂ) • heckeSlashSum k D f :=
   HeckeCosetModule.sum_single_index ℤ (by simp)
 
+/-- The action is additive in the ring element. -/
+@[simp] lemma heckeSlashSumRing_add {N : ℕ} [NeZero N] (k : ℤ)
+    (T₁ T₂ : 𝕋 (Delta0 N) ((Gamma1 N).map (mapGL ℚ)) ℤ) (f : ℍ → ℂ) :
+    heckeSlashSumRing (N := N) k (T₁ + T₂) f =
+      heckeSlashSumRing (N := N) k T₁ f + heckeSlashSumRing (N := N) k T₂ f :=
+  Finsupp.sum_add_index' (by simp) (by intro a b₁ b₂; push_cast; rw [add_smul])
+
 end
 
 end HeckeRing.GL2
