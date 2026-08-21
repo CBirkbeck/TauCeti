@@ -34,9 +34,11 @@ scaling factor of valuation `1`.
 * `WeierstrassCurve.HasSplitMultiplicativeReduction.of_isMinimal_smul`: split multiplicative
   reduction transfers along such a change of variables.
 
-The third is what the last one runs on. `v (u) = 1` over a discrete valuation ring says `u` is a
-unit of `R`, which is the hypothesis that descends a change of variables between two integral
-models to `R` — and a change of variables defined over `R` is one the reduction can see, which is
+The third is what the last one runs on, though it is only half of what the descent needs.
+`v (u) = 1` over a discrete valuation ring says `u` is a unit of `R`; turning that into a change of
+variables actually *defined* over `R` is the job of
+`WeierstrassCurve.VariableChange.exists_baseChange_eq_of_smul_eq`, which also consumes integrality
+of both models. A change of variables defined over `R` is one the reduction can see, and that is
 what carries split multiplicativity across.
 
 ## Why this is the useful form
@@ -200,9 +202,11 @@ minimal Weierstrass models of an elliptic curve over `K` are related by a change
 
 This is what makes split multiplicative reduction a property of the curve at the place rather than
 of the equation presenting it. Mathlib's class is stated through a *chosen* integral model, so the
-transfer is not definitional: it needs `D` to be defined over `R`, which is exactly what
-`valuation_u_eq_one_of_isMinimal_smul` supplies. A form of Silverman, *The Arithmetic of Elliptic
-Curves*, Remark VII.1.3(b), on the uniqueness of minimal models over a discrete valuation ring. -/
+transfer is not definitional: it needs `D` to be defined over `R`. Two results combine to give
+that — `valuation_u_eq_one_of_isMinimal_smul` supplies the unit scaling factor, and
+`VariableChange.exists_baseChange_eq_of_smul_eq` turns that unit, with integrality of both models,
+into the descent. A form of Silverman, *The Arithmetic of Elliptic Curves*, Remark VII.1.3(b), on
+the uniqueness of minimal models over a discrete valuation ring. -/
 theorem HasSplitMultiplicativeReduction.of_isMinimal_smul {W₁ W₂ : WeierstrassCurve K}
     [IsMinimal R W₂] [W₁.IsElliptic] (D : VariableChange K) (hD : D • W₁ = W₂)
     (h₁ : W₁.HasSplitMultiplicativeReduction R) : W₂.HasSplitMultiplicativeReduction R := by
