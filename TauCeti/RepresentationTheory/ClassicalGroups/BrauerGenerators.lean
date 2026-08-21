@@ -8,6 +8,7 @@ module
 public import TauCeti.RepresentationTheory.ClassicalGroups.Orthogonal
 public import TauCeti.RepresentationTheory.Symmetric.TensorAction.Basic
 public import TauCeti.RepresentationTheory.Tensor.Power
+import Mathlib.LinearAlgebra.PiTensorProduct.Basis
 
 /-!
 # The cap, the cup, and the Brauer relations on the tensor square
@@ -250,69 +251,24 @@ theorem orthogonalCap_comp_piTensorProductMap {A : Matrix (Fin n) (Fin n) k} (hA
     PiTensorProduct.map_tprod, orthogonalCap_tprod, Matrix.mulVecLin_apply]
   rw [Matrix.dotProduct_mulVec, Matrix.vecMul_mulVec, hA, Matrix.vecMul_one]
 
-/-- A sum over the functions `Fin 2 → Fin n` is a double sum. -/
-private theorem sum_pi_fin_two {M : Type*} [AddCommMonoid M] (f : Fin n → Fin n → M) :
-    ∑ r : Fin 2 → Fin n, f (r 0) (r 1) = ∑ p : Fin n, ∑ q : Fin n, f p q :=
-  Eq.trans
-    (Fintype.sum_equiv (piFinTwoEquiv fun _ : Fin 2 => Fin n) _
-      (fun pq : Fin n × Fin n => f pq.1 pq.2) fun _ => rfl)
-    (Fintype.sum_prod_type' f)
-
-/-- A pure tensor of standard basis vectors on two strands, written in `![·, ·]` form. -/
-private theorem tprod_single_pi_fin_two (r : Fin 2 → Fin n) :
-    PiTensorProduct.tprod k (fun i : Fin 2 => Pi.single (r i) (1 : k))
-      = PiTensorProduct.tprod k ![Pi.single (r 0) (1 : k), Pi.single (r 1) (1 : k)] := by
-  congr 1
-  funext i
-  fin_cases i <;> simp
-
 /-- **The cup is invariant** under every matrix `A` with `A * Aᵀ = 1`. This is the other one-sided
 identity: the cap consumes `Aᵀ * A = 1` and the cup consumes `A * Aᵀ = 1`. -/
 theorem piTensorProductMap_comp_orthogonalCup {A : Matrix (Fin n) (Fin n) k} (hA : A * Aᵀ = 1) :
     PiTensorProduct.map (fun _ : Fin 2 => Matrix.mulVecLin A) ∘ₗ orthogonalCup k n =
       orthogonalCup k n := by
+  classical
   refine LinearMap.ext_ring ?_
   simp only [LinearMap.coe_comp, Function.comp_apply, orthogonalCup_apply_one, map_sum,
     PiTensorProduct.map_tprod, Matrix.mulVecLin_apply]
-  -- Expand each column of `A` in the standard basis and collect the coefficients.
-  calc
-    ∑ j : Fin n, PiTensorProduct.tprod k (fun _ : Fin 2 => A *ᵥ Pi.single j (1 : k))
-        = ∑ j : Fin n, ∑ r : Fin 2 → Fin n,
-            (∏ i : Fin 2, A (r i) j) •
-              PiTensorProduct.tprod k fun i : Fin 2 => Pi.single (r i) (1 : k) := by
-          refine Finset.sum_congr rfl fun j _ => ?_
-          have hcol : A *ᵥ Pi.single j (1 : k) = ∑ p : Fin n, A p j • Pi.single p (1 : k) := by
-            rw [Matrix.mulVec_single_one, ← (Pi.basisFun k (Fin n)).sum_repr (A.col j)]
-            simp [Matrix.col_apply]
-          simp_rw [hcol]
-          rw [MultilinearMap.map_sum (PiTensorProduct.tprod k)
-            (g := fun _ : Fin 2 => fun p : Fin n => A p j • Pi.single p (1 : k))]
-          exact Finset.sum_congr rfl fun r _ => MultilinearMap.map_smul_univ _ _ _
-    _ = ∑ r : Fin 2 → Fin n,
-          ((1 : Matrix (Fin n) (Fin n) k) (r 0) (r 1)) •
-            PiTensorProduct.tprod k fun i : Fin 2 => Pi.single (r i) (1 : k) := by
-          rw [Finset.sum_comm]
-          refine Finset.sum_congr rfl fun r _ => ?_
-          rw [← Finset.sum_smul, ← hA]
-          congr 1
-          simp [Matrix.mul_apply, Fin.prod_univ_two]
-    _ = ∑ p : Fin n, ∑ q : Fin n,
-          ((1 : Matrix (Fin n) (Fin n) k) p q) •
-            PiTensorProduct.tprod k ![Pi.single p (1 : k), Pi.single q (1 : k)] := by
-          rw [← sum_pi_fin_two fun p q => ((1 : Matrix (Fin n) (Fin n) k) p q) •
-            PiTensorProduct.tprod k ![Pi.single p (1 : k), Pi.single q (1 : k)]]
-          exact Finset.sum_congr rfl fun r _ => by rw [tprod_single_pi_fin_two]
-    _ = ∑ j : Fin n, PiTensorProduct.tprod k fun _ : Fin 2 => Pi.single j (1 : k) := by
-          refine Finset.sum_congr rfl fun p _ => ?_
-          rw [Finset.sum_eq_single p]
-          · rw [Matrix.one_apply_eq, one_smul]
-            congr 1
-            funext i
-            fin_cases i <;> simp
-          · intro q _ hq
-            rw [Matrix.one_apply_ne (Ne.symm hq), zero_smul]
-          · intro h
-            exact absurd (Finset.mem_univ p) h
+  -- compare coordinates in the basis of the tensor square induced by the standard basis
+  refine (Basis.piTensorProduct fun _ : Fin 2 => Pi.basisFun k (Fin n)).ext_elem fun r => ?_
+  simp only [map_sum, Finset.sum_apply, Finsupp.coe_finsetSum,
+    Basis.piTensorProduct_repr_tprod_apply, Pi.basisFun_repr, Fin.prod_univ_two,
+    Matrix.mulVec_single_one, Matrix.col_apply, Pi.single_apply]
+  -- both sides are the `(r 0, r 1)` entry of `A * Aᵀ`, which `hA` identifies with the identity
+  have hAA := congrFun (congrFun hA (r 0)) (r 1)
+  simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply] at hAA
+  simpa [Matrix.one_apply, eq_comm] using hAA
 
 end Invariance
 
