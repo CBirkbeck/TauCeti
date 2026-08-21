@@ -820,22 +820,11 @@ the triple at `n`, rescaled by `-1`. -/
 -- `ψ_neg`. The `(-1)ᵏ` factors are cleared by `ring` rather than `simp`, because instance search
 -- finds no `HasDistribNeg Poly` and the sign simp set therefore does not fire here.
 @[simp] lemma smulPoly_neg : smulPoly (-n) = (-1 : Poly) • neg curvePoly (smulPoly n) := by
-  -- Each `change` names the `i`-th component of the two tuples, for the same reason as in
-  -- `ringEval_comp_smulRing`: `fin_cases` leaves the index as `⟨0, ⋯⟩`/`⟨1, ⋯⟩`/`⟨2, ⋯⟩`, whereas
-  -- `fin3_def_ext` and `Matrix.cons_val_two` match the numerals `0`/`1`/`2`. `Fin.mk_zero` and
-  -- `Fin.mk_one` bridge the first two indices, but Mathlib has no `Fin.mk_two`: at the third,
-  -- `rw [Matrix.cons_val_two]` fails with "did not find an occurrence of `Matrix.vecCons ?x ?u 2`"
-  -- and `simp only` reports the lemma unused, because the index is still `(fun i => i) ⟨2, ⋯⟩`.
-  -- `smulPoly` and `smul_fin3`/`neg` are `abbrev`-level, so the projection is definitional and
-  -- `change` states it rather than deriving it.
+  -- `fin_cases` leaves the index as `⟨i, ⋯⟩` rather than the numeral, which `simp only` with
+  -- explicit `Matrix.cons_val_*` lemmas cannot match; the default `simp` set can, via the
+  -- `Fin.reduceFinMk` simproc, after which the tuple projections and `ring` finish all three.
   funext i
-  fin_cases i
-  · change curve.φ (-n) = (-1 : Poly) ^ 2 * curve.φ n
-    rw [φ_neg]; ring
-  · change curve.ω (-n) = (-1 : Poly) ^ 3 * negY curvePoly (smulPoly n)
-    rw [ω_neg_eq_neg_negY]; ring
-  · change curve.ψ (-n) = (-1 : Poly) * curve.ψ n
-    rw [ψ_neg]; ring
+  fin_cases i <;> simp [smulPoly, smul_fin3, neg, negY, φ_neg, ψ_neg] <;> ring
 
 /-- The negation rule over the universal ring. -/
 @[simp] lemma smulRing_neg :
@@ -942,21 +931,12 @@ what turns each identity over `curveRing` into the same identity for `W` at `(x,
 @[simp] lemma ringEval_comp_smulRing (n : ℤ) :
     ringEval eqn ∘ Jacobian.smulRing n = smulEval W x y n := by
   -- Coordinatewise, each coordinate being `ringEval_mk` followed by the matching `evalEval_*`.
-  -- Each `change` names the `i`-th component of two `![_, _, _]` tuples; `smulRing` and `smulEval`
-  -- are `abbrev`s, so that projection is definitional. A rewrite cannot replace it here:
-  -- `fin_cases` leaves the index as `⟨0, ⋯⟩`/`⟨1, ⋯⟩`/`⟨2, ⋯⟩`, while Mathlib's projection lemmas
-  -- (`fin3_def_ext`, `Matrix.cons_val_two`) match the *numerals* `0`/`1`/`2`. `Fin.mk_zero` and
-  -- `Fin.mk_one` bridge the first two, but there is no `Fin.mk_two`: at the third,
-  -- `rw [Matrix.cons_val_two]` fails to find `Matrix.vecCons ?x ?u 2` and `simp only` reports the
-  -- lemma unused, the index still being `(fun i => i) ⟨2, ⋯⟩`.
+  -- `fin_cases` leaves the index as `⟨i, ⋯⟩` rather than a numeral, so `simp only` with explicit
+  -- `Matrix.cons_val_*` lemmas cannot match it; the default `simp` set reduces it through the
+  -- `Fin.reduceFinMk` simproc, and the three coordinates then close uniformly.
   funext i
-  fin_cases i
-  · change ringEval eqn (AdjoinRoot.mk _ (curve.φ n)) = (W.φ n).evalEval x y
-    rw [ringEval_mk, evalEval_φ]
-  · change ringEval eqn (AdjoinRoot.mk _ (curve.ω n)) = (W.ω n).evalEval x y
-    rw [ringEval_mk, evalEval_ω]
-  · change ringEval eqn (AdjoinRoot.mk _ (curve.ψ n)) = (W.ψ n).evalEval x y
-    rw [ringEval_mk, evalEval_ψ]
+  fin_cases i <;> simp [Jacobian.smulRing, smulEval, ringEval_mk, evalEval_φ, evalEval_ω,
+    evalEval_ψ]
 
 end Universal
 
