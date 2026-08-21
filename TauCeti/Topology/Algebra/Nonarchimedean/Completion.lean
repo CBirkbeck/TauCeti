@@ -26,8 +26,6 @@ one.
 
 * `UniformSpace.Completion.isOpen_closure_image_coe`: the closure in `Â` of the image of an open
   additive subgroup of `A` is open.
-* `UniformSpace.Completion.preimage_closure_image_coe`: the preimage in `A` of the closure of the
-  image of a closed additive subgroup is the subgroup itself.
 * `UniformSpace.Completion.ker_coeRingHom`: the kernel of `A → Â` is the closure of `⊥`.
 
 ## References
@@ -56,22 +54,6 @@ theorem isOpen_closure_image_coe {G : AddSubgroup A} (hG : IsOpen (G : Set A)) :
   have hmem := Completion.isDenseInducing_coe.closure_image_mem_nhds (hG.mem_nhds G.zero_mem)
   rw [Completion.coe_zero] at hmem
   exact AddSubgroup.isOpen_of_mem_nhds ((G.map Completion.toCompl).topologicalClosure) hmem
-
-omit [IsUniformAddGroup A] in
-/-- The preimage under `A → Â` of the closure of the image of a closed additive subgroup `G` is
-`G` itself, so a closed subgroup is recovered from its image in the completion.
-
-Companion to `isOpen_closure_image_coe`, which says that for an *open* `G` that same closure is
-open in `Â`; this one says what it pulls back to, and asks only that `G` be closed. Closedness is
-the real content: `A` need not be Hausdorff, so `A → Â` need not be injective, and it is `G` being
-closed that collapses the preimage to `G` rather than to `G + closure {0}`. An open subgroup is
-closed (`AddSubgroup.isClosed_of_isOpen`), which is how the open case is obtained. -/
-@[simp]
-theorem preimage_closure_image_coe {G : AddSubgroup A} (hG : IsClosed (G : Set A)) :
-    ((↑) : A → Completion A) ⁻¹' closure (((↑) : A → Completion A) '' (G : Set A)) =
-      (G : Set A) := by
-  -- The completion map is inducing, so the left-hand side is the closure of `G` in `A`.
-  rw [← Completion.isDenseInducing_coe.isInducing.closure_eq_preimage_closure_image, hG.closure_eq]
 
 end AddGroup
 
