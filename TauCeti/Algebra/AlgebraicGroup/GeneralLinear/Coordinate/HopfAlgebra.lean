@@ -316,7 +316,7 @@ private theorem exists_eq_mul_inverse_algebraMap_pow {A : Type*} [CommSemiring A
 
 /-- Every value of an algebra map out of the matrix coordinate ring lies in the algebra generated
 by the values it takes on the variables. -/
-private theorem mem_adjoin_range_apply_X {A : Type*} [CommRing A] [Algebra R A]
+private theorem mem_adjoin_range_apply_X {A : Type*} [Semiring A] [Algebra R A]
     (f : MatrixMonoid.CoordinateRing R n →ₐ[R] A) (p : MatrixMonoid.CoordinateRing R n) :
     f p ∈ Algebra.adjoin R (Set.range fun ij : Fin n × Fin n => f (MvPolynomial.X ij)) := by
   -- adjoining an image is the image of the adjoin, and the variables generate everything
