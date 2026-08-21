@@ -17,17 +17,20 @@ Over a complete nonarchimedean ring, `1 - B` is invertible as soon as every entr
 topologically nilpotent, and consequently a family satisfying `yᵢ = ∑ⱼ Bᵢⱼ • yⱼ` vanishes.
 
 The vanishing argument is split from its topological input. Once `1 - B` is a unit the conclusion
-is pure algebra, and `TauCeti.Huber.eq_zero_of_isUnit_one_sub` states it that way: the module `P`
-carries **no topology**, which is what lets it be applied where `P` is an abstract subquotient.
+is pure algebra, and `TauCeti.Huber.eq_zero_of_isUnit_one_sub_of_forall_eq_sum_smul` states
+it that way: the module `P` carries **no topology**, and `A` need not be commutative, which is
+what lets it be applied where `P` is an abstract subquotient.
 
 ## Main results
 
-* `TauCeti.Huber.eq_zero_of_isUnit_one_sub`: the algebraic core — a family fixed by `B` vanishes
-  as soon as `1 - B` is a unit. No topology on `P`, and none on `A` beyond what `B` needs.
+* `TauCeti.Huber.eq_zero_of_isUnit_one_sub_of_forall_eq_sum_smul`: the algebraic core — a
+  family fixed by `B` vanishes as soon as `1 - B` is a unit. No topology on `P`, and `A` is an
+  arbitrary ring.
 * `TauCeti.Huber.isTopologicallyNilpotent_one_sub_det_one_sub`: `1 - det (1 - B)` is topologically
   nilpotent.
 * `TauCeti.Huber.isUnit_one_sub_of_isTopologicallyNilpotent_entries`: hence `1 - B` is a unit.
-* `TauCeti.Huber.eq_zero_of_forall_eq_sum_smul`: the two combined.
+* `TauCeti.Huber.eq_zero_of_isTopologicallyNilpotent_entries_of_forall_eq_sum_smul`:
+  the two combined.
 
 ## References
 
@@ -61,10 +64,12 @@ namespace TauCeti.Huber
 /-- **Nakayama once `1 - B` is known to be a unit.** A family with `yᵢ = ∑ⱼ Bᵢⱼ • yⱼ` is killed by
 `1 - B` under the `Matrix n n A`-action on `n → P`, so invertibility of `1 - B` forces `y = 0`.
 
-Nothing topological appears: `P` carries no topology, and `A` is an arbitrary commutative ring.
+Nothing topological appears: `P` carries no topology, and `A` is an arbitrary ring — the
+matrix action needs no commutativity.
 The topological content of this file is entirely in producing `hU`. -/
-theorem eq_zero_of_isUnit_one_sub {A : Type*} [CommRing A] {n : Type*} [Fintype n] [DecidableEq n]
-    {P : Type*} [AddCommGroup P] [Module A P] {B : Matrix n n A} (hU : IsUnit (1 - B))
+theorem eq_zero_of_isUnit_one_sub_of_forall_eq_sum_smul {A : Type*} [Ring A] {n : Type*}
+    [Fintype n] [DecidableEq n] {P : Type*} [AddCommGroup P] [Module A P]
+    {B : Matrix n n A} (hU : IsUnit (1 - B))
     {y : n → P} (hy : ∀ i, y i = ∑ j, B i j • y j) : y = 0 := by
   have hrel : (1 - B) • y = 0 := by
     funext i
@@ -128,12 +133,13 @@ theorem isUnit_one_sub_of_isTopologicallyNilpotent_entries {B : Matrix n n A}
 omit [DecidableEq n] in
 /-- **Nakayama for topologically nilpotent entries.** If every entry of `B` is topologically
 nilpotent and `yᵢ = ∑ⱼ Bᵢⱼ • yⱼ` for every `i`, then every `yᵢ` vanishes. This is
-`TauCeti.Huber.eq_zero_of_isUnit_one_sub` with its hypothesis discharged. -/
-theorem eq_zero_of_forall_eq_sum_smul {P : Type*} [AddCommGroup P] [Module A P]
-    {B : Matrix n n A} (hB : ∀ i j, IsTopologicallyNilpotent (B i j))
+`TauCeti.Huber.eq_zero_of_isUnit_one_sub_of_forall_eq_sum_smul` with its hypothesis discharged. -/
+theorem eq_zero_of_isTopologicallyNilpotent_entries_of_forall_eq_sum_smul {P : Type*}
+    [AddCommGroup P] [Module A P] {B : Matrix n n A} (hB : ∀ i j, IsTopologicallyNilpotent (B i j))
     {y : n → P} (hy : ∀ i, y i = ∑ j, B i j • y j) (k : n) : y k = 0 := by
   classical
-  have := eq_zero_of_isUnit_one_sub (isUnit_one_sub_of_isTopologicallyNilpotent_entries hB) hy
+  have := eq_zero_of_isUnit_one_sub_of_forall_eq_sum_smul
+    (isUnit_one_sub_of_isTopologicallyNilpotent_entries hB) hy
   rw [this, Pi.zero_apply]
 
 end TauCeti.Huber
