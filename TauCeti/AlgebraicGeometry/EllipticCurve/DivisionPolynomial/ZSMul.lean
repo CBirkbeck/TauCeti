@@ -70,7 +70,6 @@ statement needs no hypothesis on `n` at all: at `n = 0` the triple is the point 
   — the induction step.
 * `WeierstrassCurve.Universal.Affine.zsmul_point_eq_smulX_smulY`: **the identification**. For
   `n ≠ 0` the pair `(smulX n, smulY n)` is nonsingular and `n • (X, Y)` is the affine point it
-  names. `nonsingular_smulX_smulY` is the witness on its own.
 * `WeierstrassCurve.Universal.Affine.zsmul_point_ne_zero`, `.Jacobian.zsmul_point_ne_zero`:
   the distinguished point is not torsion, in affine and in Jacobian coordinates; whence
   `Jacobian.zsmul_point_injective`, that `n ↦ n • point` is injective.
@@ -148,9 +147,9 @@ polynomial-level certificate as a `have` and map it with `congrArg polyToField`,
 
 The identification block below adds, at the same revision, `smulX_sub_sub_smulX_add` (`:196`),
 `smulX_add` (`:300`), `smulY_add_sub_negY` (`:324`), `eq_of_sub_negY_eq` (`:345`),
-`zsmul_point_eq_smulX_smulY` (`:353`), `nonsingular_smulX_smulY` (`:394`),
+`zsmul_point_eq_smulX_smulY` (`:353`),
 `Affine.zsmul_point_ne_zero` (`:398`), `Jacobian.zsmul_point_ne_zero` (`:411`),
-`Jacobian.zsmul_point_injective` (`:416`), `Jacobian.point_point` (`:420`), `smulPoly`, `smulRing`
+`Jacobian.zsmul_point_injective` (`:416`), `smulPoly`, `smulRing`
 and
 `smulField` (`:423`–`:427`), `algebraMap_comp_smulRing` (`:429`) and
 `Jacobian.zsmul_point_eq_smulField` (`:433`). The first three come from before the previous
@@ -166,12 +165,10 @@ One prerequisite is **strengthened rather than transcribed**, in
 `isEllipticNet_normEDS` was already available, so the change is two tokens, and
 `smulX_sub_smulX`, the one existing call site, takes the `s = 0` instance.
 
-A second prerequisite is **added**, in `EllipticCurve/Universal.lean`: the instance
-`CharZero Universal.Field`. That file's provenance previously recorded that the field case came
-free from `CharZero Universal.Ring` "through `IsFractionRing`". It does not: Mathlib has no
-`CharZero` instance for a fraction ring, `CharZero (FractionRing Universal.Ring)` fails to
-synthesize, and the transfer along `RingHom.charZero_iff` has to be declared. `eq_of_sub_negY_eq`
-is the first consumer, needing `(2 : Universal.Field) ≠ 0`.
+`eq_of_sub_negY_eq` is the first consumer of `(2 : Universal.Field) ≠ 0`. **No second instance is
+declared for it.** Mathlib's `IsFractionRing.charZero` derives `CharZero Universal.Field` from the
+`CharZero Universal.Ring` instance in `EllipticCurve/Universal.lean`; this file imports
+`Mathlib.Algebra.CharP.Algebra` so that derivation is in scope.
 
 One statement is restated. The source's `zsmul_point_ne` (`:416`) is the pairwise form
 `m ≠ n → m • point ≠ n • point`; here it is `zsmul_point_injective`, the equivalent
@@ -190,7 +187,7 @@ the nonsingularity witness mentions the cast, and no rewrite of the equation alo
 type-correct. And the two chord formulas are stated without the source's cosmetic
 `let ψ₂ x y := y - negY x y` binder, which the source immediately removes again with `change`.
 And of the block's three candidate `@[simp]` lemmas only `algebraMap_comp_smulRing` carries the
-tag. `point_point` and `zsmul_point_eq_smulField` cannot: `Jacobian.point_def` and
+tag. `zsmul_point_eq_smulField` cannot: `Jacobian.point_def` and
 `Affine.point_def` are both `@[simp]`, so simpNF reports the left-hand sides
 `Jacobian.point.point` and `(n • Jacobian.point).point` as not in normal form — they reduce
 to `(Point.fromAffine (Affine.Point.mk ⋯)).point` before either lemma could fire. Both were
@@ -206,10 +203,13 @@ The source's `instance : AddGroup ((curve.baseChange Universal.Field).toAffine.P
 an `inferInstance` cache and is not needed, and neither is its second
 `attribute [local instance] Classical.propDecidable` (`:406`), for the reason already given.
 
-`point_point` and `algebraMap_comp_smulRing` have no consumer yet. Both are named in the source's
-own Jacobian block and are consumed by the doubling-and-addition identities of the next slice;
-they ship here so that `smulRing` and `smulField` do not arrive without the two lemmas that
-relate them.
+**Two of the source's declarations are not ported: `nonsingular_smulX_smulY` (`:394`) and
+`point_point` (`:420`).** The first is `(zsmul_point_eq_smulX_smulY hn).1` — a projection with no
+consumer here or downstream; the second restates `Jacobian.point_def`, `Affine.point_def` and
+`Point.fromAffine_some` without adding content, and at `1c1c7466` occurs exactly once per copy,
+its own definition. `algebraMap_comp_smulRing` (`:429`) **is** kept: the next slice cites it four
+times, and unlike upstream, where `algebraMap _ _ ∘ smulRing n = smulField n` is `rfl`, here it is
+not — `polyToField`'s body is unexposed.
 -/
 
 public section
@@ -550,12 +550,6 @@ theorem zsmul_point_eq_smulX_smulY : n ≠ 0 →
     simp_rw [smulX_neg, smulY_neg h0, neg_smul, eq, Affine.Point.neg_some]
     exact ⟨(Affine.nonsingular_neg ..).mpr ns, trivial⟩
 
-/-- The pair `(smulX n, smulY n)` is a nonsingular point of the universal curve, for `n ≠ 0`:
-the witness carried by `zsmul_point_eq_smulX_smulY`. -/
-lemma nonsingular_smulX_smulY (hn : n ≠ 0) :
-    Affine.Nonsingular pointedCurve.toAffine (smulX n) (smulY n) :=
-  (zsmul_point_eq_smulX_smulY hn).1
-
 /-- **The distinguished point `(X, Y)` on the universal curve is not torsion.** Every nonzero
 multiple of it has affine coordinates, so none of them is the point at infinity. -/
 lemma zsmul_point_ne_zero (h0 : n ≠ 0) : n • point ≠ 0 := by
@@ -588,13 +582,6 @@ lemma zsmul_point_injective : Function.Injective fun n : ℤ ↦ n • Jacobian.
   by_contra hmn
   exact zsmul_point_ne_zero (sub_ne_zero.mpr hmn) (by rw [sub_zsmul]; exact sub_eq_zero_of_eq h)
 
-/-- The point class underlying the Jacobian distinguished point is `⟦(X : Y : 1)⟧`. -/
--- Not `@[simp]`: `Jacobian.point_def` and `Affine.point_def` are both `@[simp]`, so simpNF
--- reports this left-hand side as not in normal form — `Jacobian.point.point` reduces to
--- `(Point.fromAffine (Affine.Point.mk ⋯)).point` before this lemma could fire.
-lemma point_point : Jacobian.point.point = ⟦![polyToField (C X), polyToField Y, 1]⟧ := by
-  rw [Jacobian.point_def, Affine.point_def, Affine.Point.mk, Point.fromAffine_some]
-
 /-- The three families of universal division polynomials as a 3-tuple. -/
 abbrev smulPoly (n : ℤ) : Fin 3 → Poly := ![curve.φ n, curve.ω n, curve.ψ n]
 
@@ -620,7 +607,7 @@ becoming `(1 : 1 : 0)`, the point at infinity.
 For `n ≠ 0` the two triples differ by the scalar `ψₙ⁻¹`, which is what `Quotient.sound` needs:
 Jacobian coordinates scale as `(u²x, u³y, uz)`, and those are precisely the powers by which
 `smulX` and `smulY` divide. -/
--- Not `@[simp]`, for the same reason as `point_point`: the two `point_def` lemmas rewrite
+-- Not `@[simp]`: `Jacobian.point_def` and `Affine.point_def` are both `@[simp]`, so they rewrite
 -- `Jacobian.point` inside this left-hand side, so simpNF rejects the tag.
 theorem zsmul_point_eq_smulField : (n • Jacobian.point).point = ⟦smulField n⟧ := by
   rw [← fin3_def (smulField n)]
