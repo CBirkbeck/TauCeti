@@ -176,8 +176,8 @@ private theorem isIntegral_of_isIntegral_topologicalClosure_coe {G : Subring A}
       ← Completion.isDenseInducing_coe.isInducing.closure_eq_preimage_closure_image,
       ← Subring.coe_toAddSubgroup, (G.toAddSubgroup.isClosed_of_isOpen hG).closure_eq]
   obtain ⟨n, c, hcmem, hc⟩ := TauCeti.exists_pow_add_sum_eq_zero_of_isIntegral hb
-  choose d hdG hd using fun i ↦
-    exists_mem_coe_sub_mul_mem_topologicalClosure hG (hcmem i) ((b : Completion A) ^ i)
+  choose! d hdG hd using fun (i : ℕ) (hi : i < n + 1) ↦
+    exists_mem_coe_sub_mul_mem_topologicalClosure hG (hcmem i hi) ((b : Completion A) ^ i)
   obtain ⟨e, hedef⟩ : ∃ e : A, e = b ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), d i * b ^ i := ⟨_, rfl⟩
   -- the perturbed relation evaluates inside `Ĝ`, so its value comes from `G`
   have hecoe : (e : Completion A)
@@ -187,7 +187,7 @@ private theorem isIntegral_of_isIntegral_topologicalClosure_coe {G : Subring A}
     linear_combination hc
   have heG : e ∈ G := by
     rw [← SetLike.mem_coe, ← hpre, Set.mem_preimage, SetLike.mem_coe, hecoe]
-    exact Subring.sum_mem _ fun i _ ↦ hd i
+    exact Subring.sum_mem _ fun i hi ↦ hd i (Finset.mem_range.mp hi)
   -- subtracting that value from the constant term leaves a relation for `b` over `G`
   have harith : b ^ (n + 1)
       + ((∑ i ∈ Finset.range n, d (i + 1) * b ^ (i + 1)) + (d 0 - e) * b ^ 0) = 0 := by
@@ -195,9 +195,9 @@ private theorem isIntegral_of_isIntegral_topologicalClosure_coe {G : Subring A}
     ring
   refine TauCeti.isIntegral_of_pow_add_sum_eq_zero (n := n)
     (c := fun i ↦ Nat.casesOn i (d 0 - e) fun j ↦ d (j + 1)) ?_ ?_
-  · rintro (_ | j)
-    · exact sub_mem (hdG 0) heG
-    · exact hdG (j + 1)
+  · rintro (_ | j) hi
+    · exact sub_mem (hdG 0 hi) heG
+    · exact hdG (j + 1) hi
   · rwa [Finset.sum_range_succ']
 
 /-- **Huber's Lemma 2.4.3(iv)**: the closure in `Â` of the image of an open subring `G` of `A` that

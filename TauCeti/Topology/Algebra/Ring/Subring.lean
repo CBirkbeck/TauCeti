@@ -7,7 +7,6 @@ module
 
 public import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 public import Mathlib.Topology.Algebra.OpenSubgroup
-public import Mathlib.Topology.Algebra.Ring.Basic
 
 /-!
 # Subrings of a topological ring
