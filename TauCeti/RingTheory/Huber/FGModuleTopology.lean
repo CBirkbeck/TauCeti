@@ -40,8 +40,10 @@ route out, and reaching for `@[expose]` instead would make an implementation com
 without leaving any API behind.
 
 The family is `ϖⁿ • M₀` rather than `Iⁿ • M₀` for the ideal of definition `I`. That is Wedhorn's
-own indexing, and it is forced: the `smul` condition needs `Iⁿ · ϖᵏ` to contain a neighbourhood
-of `0`, which holds only when `I = ϖA₀` — exactly the hypothesis Remark 6.19 runs under.
+own indexing, and it is what the proofs below run on: both `exists_pow_smul_mem` and
+`fgFamily_smul` consume the pseudouniformiser's own neighbourhood basis,
+`TauCeti.Huber.IsPseudoUniformizer.hasBasis_nhds_zero`. This is a choice of presentation and not
+a constraint — nothing here shows an `I`-indexed family would fail.
 
 ## References
 
