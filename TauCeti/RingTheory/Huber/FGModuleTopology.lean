@@ -25,12 +25,19 @@ such a family into a topology; `SubmodulesBasis.topology` and `.nonarchimedean` 
 * `TauCeti.Huber.PairOfDefinition.exists_pow_smul_mem`: a power of `ϖ` carries any element of
   `M` into `M₀`. This is where `A · M₀ = M` is spent.
 * `TauCeti.Huber.PairOfDefinition.fgFamily_submodulesBasis`: the family is a `SubmodulesBasis`.
+* `TauCeti.Huber.PairOfDefinition.fgFamily_def`: the unfolding lemma, which is how a downstream
+  module sees the family as a pointwise scalar multiple at all.
 
 ## Implementation notes
 
 The neighbourhoods are `A₀`-submodules, not `A`-submodules, so `SubmodulesBasis` is instantiated
 at `R := P.ringOfDefinition`: `M` carries its `A₀`-module structure by restriction of scalars
 along `A₀ → A`, which typeclass inference supplies unaided.
+
+`fgFamily` is a plain `def`, not `@[expose]`d, so its body is visible only inside this file. Every
+proof below therefore sees through it, but no other module does; `fgFamily_def` is the intended
+route out, and reaching for `@[expose]` instead would make an implementation composite public
+without leaving any API behind.
 
 The family is `ϖⁿ • M₀` rather than `Iⁿ • M₀` for the ideal of definition `I`. That is Wedhorn's
 own indexing, and it is forced: the `smul` condition needs `Iⁿ · ϖᵏ` to contain a neighbourhood
