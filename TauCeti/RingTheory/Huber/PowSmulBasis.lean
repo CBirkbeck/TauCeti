@@ -208,15 +208,16 @@ theorem isCountablyGenerated_nhds_zero (P : PairOfDefinition A) {s : A}
     (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
     (@nhds M (P.powSmulModuleFilterBasis hs hs0 M₀ hspan).topology
       0).IsCountablyGenerated := by
-  set hB := P.submodulesBasis_pow_smul hs hs0 M₀ hspan
-  let _ := hB.topology
+  set B := P.powSmulModuleFilterBasis hs hs0 M₀ hspan with hB
+  let _ := B.topology
   have hbasis : (𝓝 (0 : M)).HasBasis (fun _ : ℕ ↦ True)
       fun n ↦ ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ : Set M) := by
-    refine hB.toModuleFilterBasis.toAddGroupFilterBasis.nhds_zero_hasBasis.to_hasBasis ?_ ?_
-    · rintro _ ⟨n, rfl⟩
+    refine B.toAddGroupFilterBasis.nhds_zero_hasBasis.to_hasBasis ?_ ?_
+    · intro U hU
+      obtain ⟨n, rfl⟩ := (P.mem_powSmulModuleFilterBasis hs hs0 M₀ hspan).mp hU
       exact ⟨n, trivial, subset_rfl⟩
     · rintro n -
-      exact ⟨_, ⟨n, rfl⟩, subset_rfl⟩
+      exact ⟨_, (P.mem_powSmulModuleFilterBasis hs hs0 M₀ hspan).mpr ⟨n, rfl⟩, subset_rfl⟩
   exact hbasis.isCountablyGenerated
 
 end TauCeti.Huber.PairOfDefinition
