@@ -7,6 +7,7 @@ module
 
 public import TauCeti.RingTheory.Huber.ZeroSequenceOfUnits
 public import TauCeti.Topology.Algebra.OpenMapping.Henkel
+public import TauCeti.Topology.Algebra.IsUniformGroup.Submodule
 import Mathlib.Topology.Baire.CompleteMetrizable
 
 /-!
@@ -133,6 +134,39 @@ theorem IsTateRing.isQuotientMap (f : M →ₗ[A] N) (hf : Function.Surjective f
     (hfc : ContinuousAt (f : M → N) 0) : IsQuotientMap (f : M → N) :=
   HasZeroSequenceOfUnits.isQuotientMap f hf hfc
     fun _ ↦ (continuous_id.smul continuous_const).continuousAt
+
+section OpenIdeal
+
+variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
+  [IsTateRing A] [CompleteSpace A] [T0Space A]
+
+/-- **An open principal ideal makes multiplication an open map.** Over a complete Tate ring, if
+`t · A` is open then `x ↦ t * x` carries open sets to open sets.
+
+This is the open mapping theorem's first consumer. `x ↦ t * x` is a surjective `A`-linear map onto
+the ideal `t · A`, which is complete because an open subgroup is closed; `IsTateRing.isOpenMap`
+makes that corestriction open, and the inclusion of an open ideal is open, so the composite is. -/
+theorem isOpenMap_mul_of_isOpen_span {t : A}
+    (ht : IsOpen ((Ideal.span {t} : Ideal A) : Set A)) : IsOpenMap (fun a : A ↦ t * a) := by
+  have _ : (𝓤 A).IsCountablyGenerated := IsUniformAddGroup.uniformity_countably_generated
+  set p : Ideal A := Ideal.span {t} with hp
+  have hmem : ∀ a : A, t * a ∈ p := fun a ↦
+    Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self t)
+  have _ : CompleteSpace p := (p.toAddSubgroup.isClosed_of_isOpen ht).completeSpace_coe
+  let f : A →ₗ[A] p := LinearMap.codRestrict p (LinearMap.lsmul A A t) hmem
+  have hsurj : Function.Surjective f := by
+    rintro ⟨x, hx⟩
+    obtain ⟨a, rfl⟩ := Ideal.mem_span_singleton'.mp hx
+    exact ⟨a, Subtype.ext (mul_comm t a)⟩
+  -- the ascription is load-bearing: without it `continuous_induced_rng` unifies against the
+  -- topology induced by `t * ·` rather than the subtype topology on `↥p`.
+  have hcont : Continuous (f : A → p) := continuous_induced_rng.mpr (continuous_const_mul t)
+  have hopen : IsOpenMap (f : A → p) := IsTateRing.isOpenMap f hsurj hcont.continuousAt
+  have hcomp : (fun a : A ↦ t * a) = (Subtype.val : p → A) ∘ (f : A → p) := rfl
+  rw [hcomp]
+  exact (ht.isOpenMap_subtype_val).comp hopen
+
+end OpenIdeal
 
 end TauCeti.Huber
 
