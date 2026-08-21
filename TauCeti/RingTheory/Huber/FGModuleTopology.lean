@@ -68,4 +68,53 @@ theorem fgFamily_antitone (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOf
   refine ⟨((⟨s, hs0⟩ : P.ringOfDefinition) ^ d) • y, M₀.smul_mem _ hy, ?_⟩
   simp [smul_smul, ← pow_add, Nat.add_comm]
 
+/-- Some power of a topologically nilpotent `s` carries any `c : A` into the ring of
+definition — the ring of definition is open, and `sⁿ c → 0`. -/
+theorem exists_pow_mul_mem (P : PairOfDefinition A) {s : A} (hs : IsTopologicallyNilpotent s)
+    (c : A) : ∃ i : ℕ, s ^ i * c ∈ P.ringOfDefinition :=
+  ((hs.mul_const c).eventually
+    (P.isOpen_ringOfDefinition.mem_nhds (by simp))).exists
+
+/-- **A power of `s` carries any element of `M = A · M₀` into `M₀`.** This is where the
+hypothesis `A · M₀ = M` is spent, and it is what makes the `smul` condition of
+`SubmodulesBasis` an identity inside `A₀`. -/
+theorem exists_pow_smul_mem (P : PairOfDefinition A) {s : A} (hs : IsTopologicallyNilpotent s)
+    (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
+    (hspan : Submodule.span A (M₀ : Set M) = ⊤) (m : M) :
+    ∃ k : ℕ, s ^ k • m ∈ M₀ := by
+  have key : ∀ (j k : ℕ) (z : M), s ^ k • z ∈ M₀ → s ^ (j + k) • z ∈ M₀ := by
+    intro j k z hz
+    have he : s ^ (j + k) • z = (⟨s, hs0⟩ : P.ringOfDefinition) ^ j • (s ^ k • z) := by
+      rw [← smul_assoc]
+      congr 1
+      change s ^ (j + k) = (((⟨s, hs0⟩ : P.ringOfDefinition) ^ j : P.ringOfDefinition) : A) * s ^ k
+      push_cast
+      rw [pow_add]
+    rw [he]; exact M₀.smul_mem _ hz
+  have hm : m ∈ Submodule.span A (M₀ : Set M) := hspan ▸ Submodule.mem_top
+  induction hm using Submodule.span_induction with
+  | mem x hx => exact ⟨0, by simpa using hx⟩
+  | zero => exact ⟨0, by simp⟩
+  | add x y _ _ ihx ihy =>
+      obtain ⟨kx, hkx⟩ := ihx; obtain ⟨ky, hky⟩ := ihy
+      refine ⟨max kx ky, ?_⟩
+      have hx' : s ^ (max kx ky) • x ∈ M₀ := by
+        have he : max kx ky = (max kx ky - kx) + kx := by omega
+        rw [he]; exact key _ _ _ hkx
+      have hy' : s ^ (max kx ky) • y ∈ M₀ := by
+        have he : max kx ky = (max kx ky - ky) + ky := by omega
+        rw [he]; exact key _ _ _ hky
+      rw [smul_add]; exact M₀.add_mem hx' hy'
+  | smul c x _ ih =>
+      obtain ⟨k, hk⟩ := ih
+      obtain ⟨i, hi⟩ := P.exists_pow_mul_mem hs c
+      refine ⟨i + k, ?_⟩
+      have he : s ^ (i + k) • (c • x) = (⟨s ^ i * c, hi⟩ : P.ringOfDefinition) • (s ^ k • x) := by
+        rw [smul_smul, ← smul_assoc]
+        congr 1
+        change s ^ (i + k) * c = (((⟨s ^ i * c, hi⟩ : P.ringOfDefinition)) : A) * s ^ k
+        push_cast
+        rw [pow_add]; ring
+      rw [he]; exact M₀.smul_mem _ hk
+
 end TauCeti.Huber.PairOfDefinition
