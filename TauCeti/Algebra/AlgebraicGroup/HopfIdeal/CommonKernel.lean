@@ -90,12 +90,8 @@ theorem comap_commonKernelHopfIdeal_le_of_comp_eq {L : _root_.CommHopfAlgCat.{v}
   -- the intertwining square turns that into `f i x = 0`
   rw [le_commonKernelHopfIdeal_iff]
   intro i x hx
-  rw [RingHom.mem_ker]
-  have hzero := RingHom.mem_ker.mp
-    (commonKernelHopfIdeal_toIdeal_le_ker f (s i) (HopfIdeal.mem_comap.mp hx))
-  have hcomp := congrArg (fun g : H ⟶ L => g.hom x) (hs i)
-  rw [_root_.CommHopfAlgCat.comp_apply] at hcomp
-  exact hcomp.symm.trans hzero
+  simpa [← hs i] using
+    RingHom.mem_ker.mp (commonKernelHopfIdeal_toIdeal_le_ker f (s i) (HopfIdeal.mem_comap.mp hx))
 
 /-- The morphism from the common-kernel quotient induced by the `i`th member of the family. -/
 noncomputable def commonKernelLift (f : ∀ i, H ⟶ K i) (i : ι) :
