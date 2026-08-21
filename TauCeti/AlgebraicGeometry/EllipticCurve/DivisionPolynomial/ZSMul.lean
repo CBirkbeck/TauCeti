@@ -242,13 +242,16 @@ The final block below completes the port of the source file, adding, at the same
 `smulPoly_neg` (`:496`), `smulRing_neg` (`:499`), `smulField_neg` (`:502`), `smulPoly_zero` and
 `smulField_zero` (`:505`–`:506`), `addXYZ_smulField` (`:508`), `addXYZ_smulRing` (`:533`),
 `addXYZ_smulField₁` (`:539`), `addXYZ_smulRing₁` (`:546`), then `smulEval` (`:560`),
-`ringEval_comp_smulRing` (`:566`), `ringEval_ψ` (`:572`), `dblXYZ_smulEval` (`:577`),
+`ringEval_comp_smulRing` (`:566`), `dblXYZ_smulEval` (`:577`),
 `addXYZ_smulEval` (`:581`), `addXYZ_smulEval₁` (`:589`) and `zsmul_eq_smulEval` (`:599`).
 The two zero lemmas are moved ahead of `dblXYZ_smulField`, which uses `smulField_zero` to
 identify the `n = 0` triple; the source proves that case by unfolding `dblXYZ` instead.
-`ringEval_comp_smulRing` and `ringEval_ψ` are placed in the `Universal` namespace rather than at
+`ringEval_comp_smulRing` is placed in the `Universal` namespace rather than at
 `WeierstrassCurve` level as upstream, matching where `EllipticCurve/Universal.lean` keeps the rest
 of the `ringEval` API. The source's `curveRing_map_ringEval` is this repository's `map_ringEval`.
+The source's `ringEval_ψ` (`:572`) is **not ported**: it is the third coordinate of
+`ringEval_comp_smulRing`, used once, so it lives as a typed local `have` in `addXYZ_smulEval`
+rather than as public API.
 Of the source's three `₁`-suffixed adjacent-index lemmas, two are ported and renamed —
 `addXYZ_smulRing₁` and `addXYZ_smulEval₁` become `addXYZ_smulRing_add_one` and
 `addXYZ_smulEval_add_one`, the `₁` being a bare index rather than a description of the conclusion.
@@ -947,17 +950,6 @@ what turns each identity over `curveRing` into the same identity for `W` at `(x,
   · change ringEval eqn (AdjoinRoot.mk _ (curve.ψ n)) = (W.ψ n).evalEval x y
     rw [ringEval_mk, evalEval_ψ]
 
-/-- The third coordinate of `ringEval_comp_smulRing`: the universal `ψₙ` specializes to `ψₙ(x,y)`.
-Separated out because the addition formula's scaling factor is a bare `ψ`, not a triple. -/
--- Not `@[simp]`, unlike `ringEval_comp_smulRing`: this left-hand side is an *application*,
--- `ringEval eqn (mk _ (curve.ψ n))`, which the already-`@[simp]` `ringEval_mk` and
--- `polyEval_apply` rewrite first, so simpNF reports it as not in normal form. The composition
--- `ringEval eqn ∘ smulRing n` in `ringEval_comp_smulRing` has no such decomposition and tags
--- cleanly. Verified by a full `lint-env`: with the tag, exactly one new violation.
-lemma ringEval_ψ (n : ℤ) :
-    ringEval eqn (AdjoinRoot.mk _ (curve.ψ n)) = evalEval x y (W.ψ n) :=
-  congr_fun (ringEval_comp_smulRing eqn n) 2
-
 end Universal
 
 include eqn in
@@ -973,7 +965,12 @@ scaling factor and all. -/
 lemma addXYZ_smulEval (m n : ℤ) :
     addXYZ W (smulEval W x y m) (smulEval W x y n) =
       evalEval x y (W.ψ (n - m)) • smulEval W x y (n + m) := by
-  simp_rw [← Universal.ringEval_comp_smulRing eqn, ← Universal.ringEval_ψ eqn]
+  -- The scaling factor is a bare `ψ`, not a triple, so it needs the third coordinate of
+  -- `ringEval_comp_smulRing` on its own — `congr_fun … 2` is that projection. Kept as a local
+  -- `have` rather than a named lemma: this is its only use.
+  have hψ : ∀ k : ℤ, Universal.ringEval eqn (AdjoinRoot.mk _ (curve.ψ k)) = evalEval x y (W.ψ k) :=
+    fun k ↦ congr_fun (Universal.ringEval_comp_smulRing eqn k) 2
+  simp_rw [← Universal.ringEval_comp_smulRing eqn, ← hψ]
   rw [← comp_smul, ← Jacobian.addXYZ_smulRing, ← map_addXYZ]
   simp_rw [map_ringEval]
 
