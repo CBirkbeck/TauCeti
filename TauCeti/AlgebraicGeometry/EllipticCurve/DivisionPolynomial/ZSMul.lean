@@ -917,6 +917,14 @@ for a nonsingular `(x, y)`, these are the Jacobian coordinates of `n • (x, y)`
 `zsmul_eq_smulEval` below, which assumes `[Field F]`, and it is not claimed over a general `R`. -/
 abbrev smulEval (n : ℤ) : Fin 3 → R := evalEval x y ∘ ![W.φ n, W.ω n, W.ψ n]
 
+/-- `smulEval` at `0` is `(1, 1, 0)`, the Jacobian triple of the point at infinity. -/
+@[simp] lemma smulEval_zero : smulEval W x y 0 = ![1, 1, 0] := by
+  simp [smulEval, comp_fin3, evalEval]
+
+/-- `smulEval` at `1` is `(x, y, 1)`: the point `(x, y)` itself, in Jacobian coordinates. -/
+@[simp] lemma smulEval_one : smulEval W x y 1 = ![x, y, 1] := by
+  simp [smulEval, comp_fin3, evalEval]
+
 variable {W} (eqn : Affine.Equation W x y)
 
 namespace Universal
@@ -931,8 +939,9 @@ what turns each identity over `curveRing` into the same identity for `W` at `(x,
   -- are `abbrev`s, so that projection is definitional. A rewrite cannot replace it here:
   -- `fin_cases` leaves the index as `⟨0, ⋯⟩`/`⟨1, ⋯⟩`/`⟨2, ⋯⟩`, while Mathlib's projection lemmas
   -- (`fin3_def_ext`, `Matrix.cons_val_two`) match the *numerals* `0`/`1`/`2`. `Fin.mk_zero` and
-  -- `Fin.mk_one` bridge the first two, but there is no `Fin.mk_two`, so the third coordinate has
-  -- no rewrite route at all — verified by building each variant.
+  -- `Fin.mk_one` bridge the first two, but there is no `Fin.mk_two`: at the third,
+  -- `rw [Matrix.cons_val_two]` fails to find `Matrix.vecCons ?x ?u 2` and `simp only` reports the
+  -- lemma unused, the index still being `(fun i => i) ⟨2, ⋯⟩`.
   funext i
   fin_cases i
   · change ringEval eqn (AdjoinRoot.mk _ (curve.φ n)) = (W.φ n).evalEval x y
@@ -999,12 +1008,10 @@ theorem zsmul_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : ℤ) :
   | nat n =>
     refine n.strong_induction_on fun n ih ↦ ?_
     obtain _ | _ | n := n
-    · rw [Nat.cast_zero, zero_smul, smulEval, comp_fin3]
-      congrm(⟦?_⟧)
-      simp [evalEval]
-    · rw [Nat.cast_one, one_smul, smulEval, comp_fin3]
-      congrm(⟦?_⟧)
-      simp [evalEval]
+    · rw [Nat.cast_zero, zero_smul, smulEval_zero]
+      rfl
+    · rw [Nat.cast_one, one_smul, smulEval_one]
+      rfl
     obtain ⟨n, rfl | rfl⟩ := n.even_or_odd'
     · rw [show (2 * n + 1 + 1 : ℕ) = 2 * (n + 1) by omega, Nat.cast_mul, mul_smul, natCast_zsmul,
         two_nsmul, Point.add_point, ih _ (by omega), addMap_eq, add_self, dblXYZ_smulEval h.1]
