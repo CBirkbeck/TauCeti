@@ -10,6 +10,7 @@ public import Mathlib.RingTheory.Ideal.Maps
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Mathlib.Topology.Algebra.Nonarchimedean.Completion
 public import Mathlib.Topology.Algebra.Ring.Ideal
+public import TauCeti.RingTheory.IntegralClosure.PowRelation
 public import TauCeti.Topology.Algebra.Ring.Subring
 
 /-!
@@ -61,41 +62,6 @@ of `G`.
 public section
 
 open UniformSpace
-
-section IntegralRelations
-
-open Polynomial
-
-/-- An element integral over a subring `S` satisfies a monic relation of positive degree with
-coefficients in `S`. Writing the degree as `n + 1` builds the positivity into the shape, which is
-what lets the constant coefficient be adjusted below without disturbing the leading one. -/
-private theorem exists_pow_add_sum_eq_zero_of_isIntegral {R : Type*} [CommRing R] {S : Subring R}
-    {x : R} (hx : IsIntegral S x) : ∃ (n : ℕ) (c : ℕ → R), (∀ i, c i ∈ S) ∧ x ^ (n + 1) +
-      ∑ i ∈ Finset.range (n + 1), c i * x ^ i = 0 := by
-  obtain ⟨p, hmonic, heval⟩ := hx
-  -- multiplying the relation by `x` shifts the coefficients up by one, which makes the degree
-  -- positive even when `p` is constant
-  refine ⟨p.natDegree, fun i ↦ Nat.casesOn i 0 fun j ↦ (p.coeff j : R), ?_, ?_⟩
-  · rintro (_ | j)
-    · exact S.zero_mem
-    · exact (p.coeff j).2
-  · have h0 : (∑ i ∈ Finset.range p.natDegree, (p.coeff i : R) * x ^ i) + x ^ p.natDegree = 0 := by
-      rw [← heval, eval₂_eq_sum_range, Finset.sum_range_succ, hmonic.coeff_natDegree]
-      simp [Algebra.algebraMap_ofSubsemiring_apply]
-    rw [Finset.sum_range_succ', add_comm]
-    simpa [add_mul, Finset.sum_mul, mul_assoc, ← pow_succ] using congrArg (· * x) h0
-
-/-- The converse of `exists_pow_add_sum_eq_zero_of_isIntegral`: a monic relation of positive degree
-with coefficients in a subring `S` exhibits its root as integral over `S`. -/
-private theorem isIntegral_of_pow_add_sum_eq_zero {R : Type*} [CommRing R] {S : Subring R} {x : R}
-    {n : ℕ} {c : ℕ → R} (hcS : ∀ i, c i ∈ S)
-    (h : x ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), c i * x ^ i = 0) : IsIntegral S x :=
-  -- the witness sums over `Fin (n + 1)`, the shape `degree_sum_fin_lt` bounds directly
-  ⟨X ^ (n + 1) + ∑ i : Fin (n + 1), C (⟨c i, hcS i⟩ : S) * X ^ (i : ℕ),
-    monic_X_pow_add (degree_sum_fin_lt _), by
-      simpa [eval₂_finsetSum, Finset.sum_range, Algebra.algebraMap_ofSubsemiring_apply] using h⟩
-
-end IntegralRelations
 
 namespace UniformSpace.Completion
 
@@ -211,7 +177,7 @@ private theorem isIntegral_of_isIntegral_topologicalClosure_coe {G : Subring A}
     rw [coe_topologicalClosure_map_coeRingHom,
       ← Completion.isDenseInducing_coe.isInducing.closure_eq_preimage_closure_image,
       ← Subring.coe_toAddSubgroup, (G.toAddSubgroup.isClosed_of_isOpen hG).closure_eq]
-  obtain ⟨n, c, hcmem, hc⟩ := exists_pow_add_sum_eq_zero_of_isIntegral hb
+  obtain ⟨n, c, hcmem, hc⟩ := TauCeti.exists_pow_add_sum_eq_zero_of_isIntegral hb
   choose d hdG hd using fun i ↦
     exists_mem_coe_sub_mul_mem_topologicalClosure hG (hcmem i) ((b : Completion A) ^ i)
   obtain ⟨e, hedef⟩ : ∃ e : A, e = b ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), d i * b ^ i := ⟨_, rfl⟩
@@ -229,7 +195,7 @@ private theorem isIntegral_of_isIntegral_topologicalClosure_coe {G : Subring A}
       + ((∑ i ∈ Finset.range n, d (i + 1) * b ^ (i + 1)) + (d 0 - e) * b ^ 0) = 0 := by
     rw [hedef, Finset.sum_range_succ']
     ring
-  refine isIntegral_of_pow_add_sum_eq_zero (n := n)
+  refine TauCeti.isIntegral_of_pow_add_sum_eq_zero (n := n)
     (c := fun i ↦ Nat.casesOn i (d 0 - e) fun j ↦ d (j + 1)) ?_ ?_
   · rintro (_ | j)
     · exact sub_mem (hdG 0) heG
