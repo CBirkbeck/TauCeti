@@ -120,11 +120,8 @@ theorem pow_add_smul_mem (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOfD
     (M₀ : Submodule P.ringOfDefinition M) (j k : ℕ) (z : M) (hz : s ^ k • z ∈ M₀) :
     s ^ (j + k) • z ∈ M₀ := by
   have he : s ^ (j + k) • z = (⟨s, hs0⟩ : P.ringOfDefinition) ^ j • (s ^ k • z) := by
-    rw [← smul_assoc]
+    rw [Subring.smul_def, ← smul_assoc, smul_eq_mul]
     congr 1
-    -- `push_cast` acts on `A`-valued arithmetic, so the `A₀`-side product is first rewritten
-    -- with its coercion to `A` written out; that is all this `change` does.
-    change s ^ (j + k) = (((⟨s, hs0⟩ : P.ringOfDefinition) ^ j : P.ringOfDefinition) : A) * s ^ k
     push_cast
     rw [pow_add]
   rw [he]; exact M₀.smul_mem _ hz
@@ -154,10 +151,8 @@ theorem exists_pow_smul_mem (P : PairOfDefinition A) {s : A} (hs : IsTopological
       obtain ⟨i, hi⟩ := P.exists_pow_mul_mem hs c
       refine ⟨i + k, ?_⟩
       have he : s ^ (i + k) • (c • x) = (⟨s ^ i * c, hi⟩ : P.ringOfDefinition) • (s ^ k • x) := by
-        rw [smul_smul, ← smul_assoc]
+        rw [smul_smul, Subring.smul_def, ← smul_assoc, smul_eq_mul]
         congr 1
-        -- as in `pow_add_smul_mem`: spell the `A₀` element's coercion so `push_cast` can act.
-        change s ^ (i + k) * c = (((⟨s ^ i * c, hi⟩ : P.ringOfDefinition)) : A) * s ^ k
         push_cast
         rw [pow_add]; ring
       rw [he]; exact M₀.smul_mem _ hk
@@ -184,9 +179,7 @@ theorem powSmulFamily_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudoUnifor
       ((⟨b, hb⟩ : P.ringOfDefinition) • (s ^ k • m)) := by
     have hscal : ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • (⟨b, hb⟩ : P.ringOfDefinition)) •
         (s ^ k) = (a : A) := by
-      -- the `A₀`-scalars are recombined on the `A` side, where `push_cast` and `ring` apply.
-      change ((((⟨s, hs0⟩ : P.ringOfDefinition) ^ n * ⟨b, hb⟩ : P.ringOfDefinition)) : A)
-          * s ^ k = (a : A)
+      rw [smul_eq_mul, Subring.smul_def, smul_eq_mul]
       push_cast
       rw [← hab, pow_add]; ring
     rw [← smul_assoc, ← smul_assoc, hscal]
