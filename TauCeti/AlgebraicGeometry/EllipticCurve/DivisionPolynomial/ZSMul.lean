@@ -105,8 +105,8 @@ is the statement the Nagell–Lutz layer consumes.
   coordinate's share of that, the `ω` parity rule in Jacobian form.
 * `WeierstrassCurve.Universal.ringEval_comp_smulRing`: `smulEval` is the specialization of
   `smulRing` along the homomorphism a point of `W` induces — the bridge from the universal
-  identities to a concrete curve, and what `dblXYZ_smulEval`, `addXYZ_smulEval` and
-  `addXYZ_smulEval_add_one` are proved through.
+  identities to a concrete curve, and what `dblXYZ_smulEval` and `addXYZ_smulEval` are proved
+  through.
 * `WeierstrassCurve.zsmul_eq_smulEval`: **the headline**. Over a field, `n • (x, y)` in Jacobian
   coordinates is `(φₙ(x,y) : ωₙ(x,y) : ψₙ(x,y))`, for every nonsingular `(x, y)` and every `n`.
 
@@ -251,12 +251,12 @@ of the `ringEval` API. The source's `curveRing_map_ringEval` is this repository'
 The source's `ringEval_ψ` (`:572`) is **not ported**: it is the third coordinate of
 `ringEval_comp_smulRing`, used once, so it lives as a typed local `have` in `addXYZ_smulEval`
 rather than as public API.
-Of the source's three `₁`-suffixed adjacent-index lemmas, **only `addXYZ_smulEval₁` (`:589`) is
-ported**, as `addXYZ_smulEval_add_one` — the `₁` being a bare index rather than a description of
-the conclusion. Its `Field` and `Ring` siblings (`:539`, `:546`) are each `addXYZ_smul{Field,Ring}`
-followed by `add_sub_cancel_left`, `ψ_one`, `map_one` and `one_smul`, and neither has a consumer
-here: the evaluated form is derived from `addXYZ_smulEval` in the same four steps, so the
-intermediate specialisations earn nothing.
+**None of the source's three `₁`-suffixed adjacent-index lemmas is ported** (`:539`, `:546`,
+`:589`). Each is its `addXYZ_smul{Field,Ring,Eval}` parent followed by `add_sub_cancel_left`,
+`ψ_one`, `map_one`/`evalEval_one` and `one_smul` — the scaling factor at adjacent indices is
+`ψ` of a gap of `1`. Only the `Eval` form ever had a consumer, and only one, so those four
+rewrites are appended to that call site's own `rw` chain instead; the intermediate
+specialisations earn nothing.
 
 **`point_point` (`:420`) is not ported at all, and the previous slice's copy of it is deleted
 here.** That slice predicted this block would supply a consumer; it does not. At `1c1c7466` the
@@ -962,16 +962,6 @@ lemma addXYZ_smulEval (m n : ℤ) :
   rw [← comp_smul, ← Jacobian.addXYZ_smulRing, ← map_addXYZ]
   simp_rw [map_ringEval]
 
-include eqn in
-/-- **The adjacent-index addition formula for a concrete curve**, the unscaled case of
-`addXYZ_smulEval` and the odd step of the induction below. -/
-lemma addXYZ_smulEval_add_one (n : ℤ) :
-    addXYZ W (smulEval W x y n) (smulEval W x y (n + 1)) = smulEval W x y (2 * n + 1) := by
-  rw [addXYZ_smulEval eqn, add_sub_cancel_left, WeierstrassCurve.ψ_one, Polynomial.evalEval_one,
-    one_smul]
-  congr 1
-  ring
-
 end WeierstrassCurve
 
 namespace WeierstrassCurve
@@ -995,7 +985,7 @@ not a specialization of one of them. -/
 -- Even-odd strong induction on `n ≥ 0`, then `Int.negInduction` for the sign. The base cases
 -- `n = 0` and `n = 1` are `(1 : 1 : 0)` and `(x : y : 1)`. The even step writes `2 * (m + 1) • P`
 -- through Mathlib's `add_self` and `dblXYZ_smulEval`; the odd step writes
--- `(m + 1) • P + (m + 2) • P` through `add_of_not_equiv` and `addXYZ_smulEval_add_one`. The two
+-- `(m + 1) • P + (m + 2) • P` through `add_of_not_equiv` and `addXYZ_smulEval`. The two
 -- summands are distinct because their difference is `P`, which is a nonzero affine point — not
 -- because `P` is non-torsion, which this theorem does not assume. The negative case rescales by
 -- `-1`, which is `smulRing_neg` specialized along the point.
@@ -1028,8 +1018,11 @@ theorem zsmul_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : ℤ) :
         rw [ih (n + 1) (by omega), ih (n + 1 + 1) (by omega)]
         exact Quotient.sound hequiv
       have hcast : ((n + 1 + 1 : ℕ) : ℤ) = ((n + 1 : ℕ) : ℤ) + 1 := by push_cast; ring
+      -- `addXYZ_smulEval` at the adjacent indices scales by `ψ` of the gap, which is `ψ 1 = 1`;
+      -- the three rewrites after it discharge that factor.
       rw [Point.add_point, ih (n + 1) (by omega), ih (n + 1 + 1) (by omega), addMap_eq,
-        add_of_not_equiv hnequiv, hcast, addXYZ_smulEval_add_one h.1]
+        add_of_not_equiv hnequiv, hcast, addXYZ_smulEval h.1, add_sub_cancel_left,
+        WeierstrassCurve.ψ_one, Polynomial.evalEval_one, one_smul]
       congrm(⟦W.smulEval x y ?_⟧)
       ring
   | neg ih n =>
