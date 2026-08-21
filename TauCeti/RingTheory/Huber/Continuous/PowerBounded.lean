@@ -22,9 +22,9 @@ Wedhorn's Remark 7.40(1). Stating the archimedean property and the witness direc
 through `Valuation.RankOne` and `IsAnalyticPoint` keeps the statement at the level its proof uses.
 
 The argument is Wedhorn's. Suppose `1 < v a`. Archimedeanness gives `n` with
-`1 < v a ^ n * v b`, so `1 < v (a ^ n * b)`. But `a ^ n` is power-bounded and `b` is
+`(v b)⁻¹ ≤ v a ^ n`, hence `1 ≤ v (a ^ n * b)`. But `a ^ n` is power-bounded and `b` is
 topologically nilpotent, so `a ^ n * b` is topologically nilpotent, and continuity forces
-`v (a ^ n * b) < 1`.
+`v (a ^ n * b) < 1`. The two bounds are incompatible, so no such `a` exists.
 
 ## Main results
 
@@ -54,8 +54,7 @@ fails, since the trivial valuation is continuous and unbounded on `A°`. -/
 theorem le_one_of_isPowerBounded {v : Valuation A Γ₀} (hv : v.IsContinuous) {b : A}
     (hb : IsTopologicallyNilpotent b) (hb0 : v b ≠ 0) {a : A} (ha : IsPowerBounded a) :
     v a ≤ 1 := by
-  by_contra hgt
-  rw [not_le] at hgt
+  by_contra! hgt
   -- archimedeanness of the value monoid: some power of `v a` overtakes `(v b)⁻¹`
   obtain ⟨n, hn⟩ := MulArchimedean.arch (v b)⁻¹ hgt
   -- so `a ^ n * b` has value at least `1`
