@@ -25,6 +25,8 @@ one.
 
 * `UniformSpace.Completion.isOpen_closure_image_coe`: the closure in `Â` of the image of an open
   additive subgroup of `A` is open.
+* `UniformSpace.Completion.preimage_closure_image_coe`: a *closed* additive subgroup is the
+  preimage of the closure of its image, so membership downstairs can be tested upstairs.
 * `UniformSpace.Completion.ker_coeRingHom`: the kernel of `A → Â` is the closure of `⊥`.
 
 ## References
@@ -53,6 +55,19 @@ theorem isOpen_closure_image_coe {G : AddSubgroup A} (hG : IsOpen (G : Set A)) :
   have hmem := Completion.isDenseInducing_coe.closure_image_mem_nhds (hG.mem_nhds G.zero_mem)
   rw [Completion.coe_zero] at hmem
   exact AddSubgroup.isOpen_of_mem_nhds ((G.map Completion.toCompl).topologicalClosure) hmem
+
+omit [IsUniformAddGroup A] in
+/-- **A closed additive subgroup is the preimage of the closure of its image in the completion.**
+`A → Â` is an inducing map, so the closure of any set is the preimage of the closure of its
+image; for a closed subgroup the left-hand side is the subgroup itself.
+
+This is the form a consumer meets: it turns a membership question in `A` about the closure
+downstairs into one about `Â`, without unfolding the generic inducing-map argument each time. -/
+@[simp]
+theorem preimage_closure_image_coe {G : AddSubgroup A} (hG : IsClosed (G : Set A)) :
+    ((↑) : A → Completion A) ⁻¹' closure (((↑) : A → Completion A) '' (G : Set A))
+      = (G : Set A) := by
+  rw [← Completion.isDenseInducing_coe.isInducing.closure_eq_preimage_closure_image, hG.closure_eq]
 
 end AddGroup
 
