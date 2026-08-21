@@ -45,6 +45,11 @@ where the convergent/restricted power series ring is (5.6.1) in §5.6.
   out of a module with a countable neighbourhood basis at `0` — the lifted coefficients can then
   be chosen to still tend to `0`, which lifting them one at a time does not give. This is what
   lets Wedhorn's Remark 8.29 descend from a presentation.
+* `mem_ker_restrictedMvPowerSeriesSubmoduleMap` and
+  `restrictedMvPowerSeriesSubmoduleMap_injective`: the kernel of the induced map is detected
+  coefficientwise, so the functor preserves injectivity. Together with
+  `restrictedMvPowerSeriesSubmoduleMap_surjective` these are the exactness inputs Remark 8.29
+  needs at the two ends.
 * `restrictedMvPowerSeriesSubmodule_ext`: coefficientwise agreement is equality in `M⟨T₁, …, Tₖ⟩`
   — the elimination rule `MvPowerSeries.ext` cannot supply at module coefficients.
 * `coeff_coe_smul_restrictedMvPowerSeriesSubring`: the scalar action on `A⟨T₁, …, Tₖ⟩` is
@@ -618,6 +623,37 @@ theorem restrictedMvPowerSeriesSubmoduleMap_surjective {k : ℕ} {A M N : Type*}
     restrictedMvPowerSeriesSubmodule_ext fun s ↦ ?_⟩
   rw [coeff_restrictedMvPowerSeriesSubmoduleMap]
   exact hfg s
+
+/-- **The kernel is coefficientwise**: a restricted series is killed by `φ` exactly when every one
+of its coefficients is. `MvPowerSeries` is a `def` for a function type and `M⟨T₁, …, Tₖ⟩` is a
+`Submodule` of it, so this criterion is two coercions away from `LinearMap.mem_ker`. -/
+theorem mem_ker_restrictedMvPowerSeriesSubmoduleMap {k : ℕ} {A M N : Type*} [Semiring A]
+    [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
+    [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
+    [ContinuousAdd N] [ContinuousConstSMul A N] (φ : M →ₗ[A] N) (hφ : ContinuousAt φ 0)
+    {f : restrictedMvPowerSeriesSubmodule k A M} :
+    f ∈ LinearMap.ker (restrictedMvPowerSeriesSubmoduleMap (k := k) φ hφ) ↔
+      ∀ s, ((f : MvPowerSeries (Fin k) M) : (Fin k →₀ ℕ) → M) s ∈ LinearMap.ker φ := by
+  simp only [LinearMap.mem_ker]
+  constructor
+  · intro h s
+    rw [← coeff_restrictedMvPowerSeriesSubmoduleMap φ hφ f s, h]
+    rfl
+  · intro h
+    ext s
+    rw [coeff_restrictedMvPowerSeriesSubmoduleMap]
+    exact h s
+
+/-- **`M ↦ M⟨T₁, …, Tₖ⟩` preserves injectivity.** -/
+theorem restrictedMvPowerSeriesSubmoduleMap_injective {k : ℕ} {A M N : Type*} [Semiring A]
+    [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
+    [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
+    [ContinuousAdd N] [ContinuousConstSMul A N] (φ : M →ₗ[A] N) (hφ : ContinuousAt φ 0)
+    (hinj : Function.Injective φ) :
+    Function.Injective (restrictedMvPowerSeriesSubmoduleMap (k := k) φ hφ) := fun f g h ↦
+  restrictedMvPowerSeriesSubmodule_ext fun s ↦ hinj <| by
+    rw [← coeff_restrictedMvPowerSeriesSubmoduleMap φ hφ f s,
+      ← coeff_restrictedMvPowerSeriesSubmoduleMap φ hφ g s, h]
 
 /-- **`A⟨T₁, …, Tₖ⟩` as a submodule over itself**: at `M = A` the subring and the submodule cut
 out the same series, so they are `A`-linearly isomorphic.
