@@ -69,11 +69,12 @@ projections.
 The two *reindexing* lemmas are the exception. `limit.pre_π` and `limit.pre_pre` are stated with
 `E ⋙ F`, which is `rationalIndexInclusionOfLE ⋙ rationalIndexDiagram`; recognising that as
 `rationalIndexDiagram` is definitional but beyond the transparency `rw` uses, which is why Mathlib
-itself reaches those two with `erw`. Three `rfl` lemmas name the identities involved —
+itself reaches those two with `erw`. Three `rfl` lemmas *state* the identities involved —
 `rationalIndexInclusionOfLE_comp_diagram`, `rationalIndexInclusionOfLE_refl` and
-`rationalIndexInclusionOfLE_comp` — and `presentationLimitMap_π`, `_refl` and `_comp` are proved
-in term mode, where they are accepted. Each of those three docstrings names the identity its proof
-consumes, so a consumer never meets the `erw`.
+`rationalIndexInclusionOfLE_comp`. **None of the three is applied in a proof**, and none is meant
+to be: `presentationLimitMap_π`, `_refl` and `_comp` are proved in term mode, where the identities
+hold definitionally and no rewrite is needed. The three exist so a reader can see which definitional
+equality each term leans on, and so a consumer never meets the `erw`.
 
 ## Why the index is presentations and not subsets
 
@@ -337,8 +338,9 @@ theorem presentationLimitMap_π {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
   limit.pre_π (F := rationalIndexDiagram P Aplus V) (E := rationalIndexInclusionOfLE P h) j
 
 variable (P) in
-/-- Restricting along `le_refl` is the identity. The defeq consumed is
-`rationalIndexInclusionOfLE_refl`: the included index of `j` along `le_refl` is `j`. -/
+/-- Restricting along `le_refl` is the identity. The definitional equality the term leans on is
+the one *stated* by `rationalIndexInclusionOfLE_refl` — the included index of `j` along `le_refl`
+is `j`. That lemma is not applied here; the equality holds by `rfl`. -/
 @[simp]
 theorem presentationLimitMap_refl (V : Opens ↥(spa Aplus)) :
     presentationLimitMap P (le_refl V) = 𝟙 (presentationLimitObj P Aplus V) :=
@@ -346,9 +348,10 @@ theorem presentationLimitMap_refl (V : Opens ↥(spa Aplus)) :
     (presentationLimitMap_π P (le_refl V) j).trans (Category.id_comp _).symm
 
 variable (P) in
-/-- Restricting twice is restricting once. This is `limit.pre_pre`, and the defeq consumed is
-`rationalIndexInclusionOfLE_comp`: composing the two inclusions is the inclusion of the composite
-containment. -/
+/-- Restricting twice is restricting once. This is `limit.pre_pre`, and the definitional equality
+the term leans on is the one *stated* by `rationalIndexInclusionOfLE_comp` — composing the two
+inclusions is the inclusion of the composite containment. That lemma is not applied here; the
+equality holds by `rfl`. -/
 @[reassoc (attr := simp)]
 theorem presentationLimitMap_comp {V W X : Opens ↥(spa Aplus)} (h₁ : X ≤ W) (h₂ : W ≤ V) :
     presentationLimitMap P h₂ ≫ presentationLimitMap P h₁ =
