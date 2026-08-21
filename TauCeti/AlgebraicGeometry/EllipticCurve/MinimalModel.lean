@@ -205,10 +205,10 @@ transfer is not definitional: it needs `D` to be defined over `R`, which is exac
 Curves*, Remark VII.1.3(b), on the uniqueness of minimal models over a discrete valuation ring. -/
 theorem HasSplitMultiplicativeReduction.of_isMinimal_smul {W₁ W₂ : WeierstrassCurve K}
     [IsMinimal R W₂] [W₁.IsElliptic] (D : VariableChange K) (hD : D • W₁ = W₂)
-    (h₁ : W₁.HasSplitMultiplicativeReduction R) :
-    W₂.HasSplitMultiplicativeReduction R := by
-  -- `W₁` is minimal because it has multiplicative reduction, so this is not a hypothesis.
-  have : IsMinimal R W₁ := h₁.toHasMultiplicativeReduction.toIsMinimal
+    (h₁ : W₁.HasSplitMultiplicativeReduction R) : W₂.HasSplitMultiplicativeReduction R := by
+  -- `W₁` is minimal because it has multiplicative reduction, so that is not a hypothesis.
+  have hm₁ := h₁.toHasMultiplicativeReduction
+  have : IsMinimal R W₁ := hm₁.toIsMinimal
   -- `v (D.u) = 1`, so `D.u` is the image of a unit of `R` and `D` descends to some `C₀` over `R`.
   have hvu := valuation_u_eq_one_of_isMinimal_smul R D hD
   obtain ⟨u₀, hau⟩ :=
@@ -221,13 +221,10 @@ theorem HasSplitMultiplicativeReduction.of_isMinimal_smul {W₁ W₂ : Weierstra
   -- `W₂` is again multiplicative, since `v (u) = 1` fixes the valuations of both `Δ` and `c₄`.
   have hc₄eq : valuation K (maximalIdeal R) W₂.c₄ = valuation K (maximalIdeal R) W₁.c₄ := by
     rw [← hD, variableChange_c₄, map_mul]
-    simp only [Units.val_inv_eq_inv_val, map_pow, map_inv₀, hvu, inv_one, one_pow, one_mul]
+    simp [hvu]
   have hmult₂ : W₂.HasMultiplicativeReduction R :=
-    { badReduction := by
-        rw [valuation_Δ_eq_of_isMinimal_smul R D hD]
-        exact h₁.toHasMultiplicativeReduction.badReduction
-      multiplicativeReduction := by
-        rw [hc₄eq]; exact h₁.toHasMultiplicativeReduction.multiplicativeReduction }
+    { badReduction := by rw [valuation_Δ_eq_of_isMinimal_smul R D hD]; exact hm₁.badReduction
+      multiplicativeReduction := by rw [hc₄eq]; exact hm₁.multiplicativeReduction }
   -- and its integral model is `C₀ •` that of `W₁`, so their node polynomials split together.
   refine { hmult₂ with splitMultiplicativeReduction := ?_ }
   have hint₂ : W₂.integralModel R = C₀ • W₁.integralModel R :=
