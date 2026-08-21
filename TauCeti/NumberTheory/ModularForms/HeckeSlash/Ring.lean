@@ -21,6 +21,8 @@ which the abstract ring acts on spaces of modular forms.
 
 ## Main results
 
+* `heckeSlashSumRing_zero`, `heckeSlashSumRing_single`, `heckeSlashSumRing_add`: the
+  computation rules, giving the value on `0`, on a basis element, and on a sum.
 -/
 
 open Matrix Matrix.SpecialLinearGroup UpperHalfPlane CongruenceSubgroup DoubleCoset
