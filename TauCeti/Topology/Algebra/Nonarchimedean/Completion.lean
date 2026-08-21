@@ -12,10 +12,9 @@ public import Mathlib.Topology.Algebra.Ring.Ideal
 /-!
 # Completions of nonarchimedean groups and rings
 
-Three facts about the Hausdorff completion that need only the additive, resp. ring, structure:
-the closure of the image of an open additive subgroup is open, the closure of the image of a
-*closed* additive subgroup pulls back along the completion map to the subgroup itself, and the
-kernel of the completion map is the closure of the zero ideal.
+Two facts about the Hausdorff completion that need only the additive, resp. ring, structure:
+the closure of the image of an open additive subgroup is open, and the kernel of the completion
+map is the closure of the zero ideal.
 
 They are stated here rather than alongside the Huber-ring theory that uses them, since none of
 them mentions a pair of definition or an adic topology, and they live in the
@@ -34,7 +33,7 @@ one.
   the completion of a topological group and ring; `ker_coeRingHom` is the statement there that
   the completion map has kernel `closure {0}`.
 * Mathlib's `Mathlib/Topology/Algebra/Nonarchimedean/Completion.lean`, whose
-  `Completion.isDenseInducing_coe` all three proofs go through.
+  `Completion.isDenseInducing_coe` both proofs go through.
 -/
 
 public section
