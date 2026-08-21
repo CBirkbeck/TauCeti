@@ -140,15 +140,19 @@ theorem weightedMapCompletion_id (hT : IsWeightFamily T) :
         (by simpa only [RingHom.coe_id] using continuous_id) hT hT
         (fun _ ↦ by simpa only [RingHom.coe_id] using (Set.image_id _).subset)
       = RingHom.id (UniformSpace.Completion (weightedRestrictedSubring T hT)) := by
-  refine RingHom.ext fun f ↦ ?_
-  refine UniformSpace.Completion.induction_on f
-    (isClosed_eq (continuous_weightedMapCompletion _ _ _ _) continuous_id) fun a ↦ ?_
-  rw [weightedMapCompletion_coe, RingHom.id_apply, weightedMap_id, RingHom.id_apply]
+  simp only [weightedMapCompletion, weightedMap_id]
+  exact UniformSpace.Completion.mapRingHom_id
 
 /-- **The composition law**: the map induced by a composite is the composite of the induced maps.
 With `TauCeti.Huber.weightedMapCompletion_id` this is what makes `A⟨X⟩_T` functorial in the pair
-`(A, T)` at the level of completions, which is the level the roadmap's naturality statement in
-Remark 8.29 is about. -/
+`(A, T)` at the level of completions — the §0.4 weighted restricted-series functoriality.
+
+It is **not** Remark 8.29's naturality, which varies the *module* with the coefficient ring fixed;
+an earlier version of this docstring claimed otherwise and was wrong.
+
+Deliberately **not** `@[simp]`: the `simpNF` linter rejects it, because the hypotheses
+`∀ i, φ '' T i ⊆ S i` are not in simp normal form — simp rewrites them to `T i ⊆ φ ⁻¹' S i` via
+`Set.image_subset_iff`, so the lemma would never fire. -/
 theorem weightedMapCompletion_comp {C : Type*} [CommRing C] [TopologicalSpace C]
     [NonarchimedeanRing C] {ψ : B →+* C} {R : Fin k → Set C} (hφ : Continuous φ)
     (hψ : Continuous ψ) (hT : IsWeightFamily T) (hS : IsWeightFamily S) (hR : IsWeightFamily R)
@@ -159,13 +163,8 @@ theorem weightedMapCompletion_comp {C : Type*} [CommRing C] [TopologicalSpace C]
           simpa only [RingHom.coe_comp, Set.image_comp] using
             (Set.image_mono (hTS i)).trans (hSR i))
       = (weightedMapCompletion hψ hS hR hSR).comp (weightedMapCompletion hφ hT hS hTS) := by
-  refine RingHom.ext fun f ↦ ?_
-  refine UniformSpace.Completion.induction_on f
-    (isClosed_eq (continuous_weightedMapCompletion _ _ _ _)
-      ((continuous_weightedMapCompletion _ _ _ _).comp
-        (continuous_weightedMapCompletion _ _ _ _))) fun a ↦ ?_
-  simp only [weightedMapCompletion_coe, RingHom.coe_comp, Function.comp_apply]
-  exact congrArg _ (RingHom.congr_fun (weightedMap_comp hφ hψ hT hS hR hTS hSR) a)
+  simp only [weightedMapCompletion, weightedMap_comp hφ hψ hT hS hR hTS hSR]
+  exact (UniformSpace.Completion.mapRingHom_comp _ _).symm
 
 end Functoriality
 
