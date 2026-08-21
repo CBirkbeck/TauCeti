@@ -70,4 +70,23 @@ theorem pow_add_smul_mem {S : Subring A} (M₀ : Submodule S M) {s : A} (hs0 : s
     rw [pow_add]
   rw [he]; exact M₀.smul_mem _ hz
 
+/-- **Scaling into `sⁿ • M₀`.** If `c` factors as `s ^ (n + k) • b` with `b : S`, and `s ^ k • m`
+already lies in `M₀`, then `c • m` lies in `sⁿ • M₀`.
+
+This is the step that both a submodules-basis `smul` condition and a module-filter-basis
+`smul_right'` axiom reduce to, which is why it is stated once here rather than inline at each. -/
+theorem smul_mem_pow_smul {S : Subring A} (M₀ : Submodule S M) {s : A} (hs0 : s ∈ S) {b : A}
+    (hb : b ∈ S) {c : A} {m : M} {n k : ℕ} (hcb : s ^ (n + k) • b = c)
+    (hk : s ^ k • m ∈ M₀) : c • m ∈ (⟨s, hs0⟩ : S) ^ n • M₀ := by
+  have hmem : (⟨b, hb⟩ : S) • (s ^ k • m) ∈ M₀ := M₀.smul_mem _ hk
+  have he : c • m = ((⟨s, hs0⟩ : S) ^ n) • ((⟨b, hb⟩ : S) • (s ^ k • m)) := by
+    have hscal : ((⟨s, hs0⟩ : S) ^ n • (⟨b, hb⟩ : S)) • (s ^ k) = c := by
+      simp only [Subring.smul_def, smul_eq_mul]
+      push_cast
+      rw [← hcb, smul_eq_mul, pow_add]
+      exact mul_right_comm _ _ _
+    rw [← smul_assoc, ← smul_assoc, hscal]
+  rw [he]
+  exact Submodule.smul_mem_pointwise_smul _ _ _ hmem
+
 end Submodule

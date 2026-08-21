@@ -127,20 +127,10 @@ theorem eventually_smul_mem_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPs
       (by simpa using (hs.hasBasis_nhds_zero P).mem_of_mem (i := n + k) trivial)
   filter_upwards [hnhd] with a ha
   obtain ⟨b, hb, hab⟩ := ha
-  have hmem : (⟨b, hb⟩ : P.ringOfDefinition) • (s ^ k • m) ∈ M₀ := M₀.smul_mem _ hk
-  have he : a • m = ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) •
-      ((⟨b, hb⟩ : P.ringOfDefinition) • (s ^ k • m)) := by
-    have hscal : ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • (⟨b, hb⟩ : P.ringOfDefinition)) •
-        (s ^ k) = (a : A) := by
-      rw [smul_eq_mul, Subring.smul_def, smul_eq_mul]
-      push_cast
-      rw [← hab, pow_add]; ring
-    rw [← smul_assoc, ← smul_assoc, hscal]
-    -- both sides are now the same `A₀`-action applied to the same element; the `A₀`-action on
-    -- `M` is restriction of scalars along `A₀ → A`, so this last step is definitional.
-    rfl
-  rw [he]
-  exact Submodule.smul_mem_pointwise_smul _ _ _ hmem
+  -- `a` is an `A₀`-scalar while the shared lemma speaks the ambient `A`; the two actions on `M`
+  -- agree because the `A₀`-action is restriction of scalars along `A₀ → A`.
+  rw [Subring.smul_def]
+  exact M₀.smul_mem_pow_smul hs0 hb hab hk
 
 /-- **The `ϖⁿ • M₀` family is a `SubmodulesBasis`**, for a pseudouniformiser `ϖ` in a ring of
 definition `A₀` and an `A₀`-submodule `M₀` spanning `M` over `A`.
@@ -164,7 +154,6 @@ theorem submodulesBasis_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudo
 /-- **The A-module filter basis.** `SubmodulesBasis.toModuleFilterBasis` only ever produces a
 filter basis over `A₀`; Wedhorn's Proposition 6.18(1) is about an `A`-module topology, so the
 three `ModuleFilterBasis` axioms are re-established with scalars from `A`. -/
-@[expose]
 def powSmulModuleFilterBasis (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
     (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
     (hspan : Submodule.span A (M₀ : Set M) = ⊤) : ModuleFilterBasis A M where
@@ -197,19 +186,8 @@ def powSmulModuleFilterBasis (P : PairOfDefinition A) {s : A} (hs : IsPseudoUnif
       (hspan ▸ Submodule.mem_top)
     filter_upwards [(hs.hasBasis_nhds_zero P).mem_of_mem (i := n + k) trivial] with c hc
     obtain ⟨b, hb, hcb⟩ := hc
-    have hmem : (⟨b, hb⟩ : P.ringOfDefinition) • (s ^ k • m) ∈ M₀ := M₀.smul_mem _ hk
-    have he : c • m = ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) •
-        ((⟨b, hb⟩ : P.ringOfDefinition) • (s ^ k • m)) := by
-      have hscal : ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • (⟨b, hb⟩ : P.ringOfDefinition)) •
-          (s ^ k) = c := by
-        -- `Subring.smul_def` moves the `A₀`-scalar into `A`, where `smul_eq_mul` makes the
-        -- outer action a product and `push_cast` clears the coercions.
-        simp only [Subring.smul_def, smul_eq_mul]
-        push_cast
-        rw [← hcb, pow_add]; ring
-      rw [← smul_assoc, ← smul_assoc, hscal]
-    rw [SetLike.mem_coe, he]
-    exact Submodule.smul_mem_pointwise_smul _ _ _ hmem
+    rw [SetLike.mem_coe]
+    exact M₀.smul_mem_pow_smul hs0 hb hcb hk
 
 /-- **Membership in the filter basis is the `ϖⁿ • M₀` family**, in normal form, so a consumer
 never unfolds `TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis`. -/
@@ -221,17 +199,6 @@ theorem mem_powSmulModuleFilterBasis (P : PairOfDefinition A) {s : A}
     U ∈ (P.powSmulModuleFilterBasis hs hs0 M₀ hspan).toFilterBasis ↔
       ∃ n : ℕ, U = ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ : Submodule _ M) :=
   Iff.rfl
-
-/-- **The `A`-module topology is the `A₀`-level one.** Widening the scalars from `A₀` to `A`
-re-establishes the `ModuleFilterBasis` axioms but does not change the underlying
-`AddGroupFilterBasis`, hence not the topology. -/
-@[simp]
-theorem powSmulModuleFilterBasis_topology (P : PairOfDefinition A) {s : A}
-    (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
-    (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
-    (P.powSmulModuleFilterBasis hs hs0 M₀ hspan).topology
-      = (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).topology :=
-  rfl
 
 /-- **The topology has a countable fundamental system of neighbourhoods of `0`.** The family is
 indexed by `ℕ`, so this is `Filter.HasBasis.isCountablyGenerated` once the basis is transported
