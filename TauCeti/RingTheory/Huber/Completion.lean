@@ -91,8 +91,7 @@ theorem mem_completionRingOfDefinition_iff (P : PairOfDefinition A) {x : Complet
 /-- The ring of definition of the completion is open. -/
 theorem isOpen_completionRingOfDefinition (P : PairOfDefinition A) :
     IsOpen (P.completionRingOfDefinition : Set (Completion A)) :=
-  UniformSpace.Completion.isOpen_closure_image_coe (G := P.ringOfDefinition.toAddSubgroup)
-    P.isOpen_ringOfDefinition
+  UniformSpace.Completion.isOpen_topologicalClosure_map_coeRingHom P.isOpen_ringOfDefinition
 
 /-- The closure in `Â` of the image of `Iⁿ`, as an additive subgroup. These closures are the
 neighbourhood basis of zero of the completion, and they turn out to be the powers of the ideal of
