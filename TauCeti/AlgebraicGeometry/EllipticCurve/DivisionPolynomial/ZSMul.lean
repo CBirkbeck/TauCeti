@@ -20,12 +20,12 @@ nonvanishing, the difference `smulX m - smulX n` as a single quotient, and the s
 statement `smulX m = smulX n ↔ m = n ∨ m = -n`. `smulY`'s own sign rule is here too: negating
 a nonzero index negates the point, so `smulY (-n)` is the `negY` of `(smulX n, smulY n)`.
 
-The second half of the file turns that calculus on the point `(X, Y)` itself. The vertical gap
-`smulY n - negY (smulX n) (smulY n)` is `ψ₂ₙ/ψₙ⁴`, hence nonzero, so no multiple of the
-distinguished point is `2`-torsion; at `n = 1` the gap is `ψ₂`, which selects the tangent branch of
-Mathlib's `Affine.slope` and gives the tangent slope `slopeOne` the closed form `-Wₓ/ψ₂`. Feeding
-that slope to Mathlib's affine addition formula doubles the point, and both coordinates come out as
-the division-polynomial expressions: `addX … = smulX 2` and `addY … = smulY 2`.
+The second half of the file turns that calculus on the pair `(smulX 1, smulY 1)`, which is the
+distinguished point `(X, Y)` itself. The vertical gap `smulY n - negY (smulX n) (smulY n)` is
+`ψ₂ₙ/ψₙ⁴`, hence nonzero, so `smulY n` never equals the `negY` of its own pair; at `n = 1` the gap
+is `ψ₂`, which selects the tangent branch of Mathlib's `Affine.slope` and gives the tangent slope
+`slopeOne` the closed form `-Wₓ/ψ₂`. Feeding that slope to Mathlib's affine addition formula sends
+`(smulX 1, smulY 1)` to `(smulX 2, smulY 2)`: `addX … = smulX 2` and `addY … = smulY 2`.
 
 ## Main definitions
 
@@ -45,9 +45,9 @@ the division-polynomial expressions: `addX … = smulX 2` and `addY … = smulY 
 * `WeierstrassCurve.Universal.Affine.smulY_neg`: for `n ≠ 0`, `smulY (-n)` is the `negY` of the
   coordinates at `n` — the long-Weierstrass correction that `ω_neg` carries, in the universal
   field.
-* `WeierstrassCurve.Universal.Affine.smulY_sub_negY`: the vertical gap at an `n`-fold multiple is
-  `ψ₂ₙ/ψₙ⁴`, whence `smulY_ne_negY` — no nonzero multiple of `(X, Y)` is `2`-torsion — and its
-  `n = 1` case `smulY_one_ne_negY`.
+* `WeierstrassCurve.Universal.Affine.smulY_sub_negY`: the gap `smulY n - negY (smulX n) (smulY n)`
+  is `ψ₂ₙ/ψₙ⁴`, whence `smulY_ne_negY` — the gap never vanishes for `n ≠ 0` — and its `n = 1` case
+  `smulY_one_ne_negY`.
 * `WeierstrassCurve.Universal.Affine.slopeOne_eq_neg_div`: the tangent slope at `(X, Y)` is
   `-Wₓ/ψ₂`, the ratio of the two partial derivatives of the Weierstrass polynomial.
 * `WeierstrassCurve.Universal.Affine.addX_smul_one_smul_one`,
@@ -188,7 +188,7 @@ lemma smulX_two : smulX 2 = smulX 1 - polyToField (curve.ψ 3) / polyToField (cu
 lemma smulX_sub_smulX (hm : m ≠ 0) (hn : n ≠ 0) :
     smulX m - smulX n = polyToField (curve.ψ (n + m)) * polyToField (curve.ψ (n - m)) /
       (polyToField (curve.ψ n) * polyToField (curve.ψ m)) ^ 2 := by
-  have key := isEllipticSequence_polyToField_ψ n m 1
+  have key := isEllipticNet_polyToField_ψ n m 1 0
   simp only [IsEllipticNet.rel, add_zero, ψ_one, map_one, mul_one] at key
   rw [smulX_eq hm, smulX_eq hn, sub_sub_sub_cancel_left,
     div_sub_div _ _ (pow_ne_zero 2 (polyToField_ψ_ne_zero hn))
@@ -238,9 +238,9 @@ lemma smulX_ne_smulX (ne : m ≠ n) (ne_neg : m ≠ -n) : smulX m ≠ smulX n :=
   · rintro (rfl | rfl)
     exacts [rfl, smulX_neg]
 
-/-- **The vertical gap at an `n`-fold multiple is `ψ₂ₙ/ψₙ⁴`**: the amount by which `smulY n`
-exceeds the `Y`-coordinate of the negated point. Being a quotient of nonzero `ψ`'s it never
-vanishes, which is what puts every such point in the tangent branch of `Affine.slope`.
+/-- **The gap between `smulY n` and the `negY` of its own pair is `ψ₂ₙ/ψₙ⁴`.** Being a quotient of
+nonzero `ψ`'s it never vanishes, which is what puts the pair `(smulX n, smulY n)` in the tangent
+branch of `Affine.slope`.
 
 The proof reads the negated coordinate off `smulY_neg` — negating the index is negating the point —
 so that the gap becomes `smulY n - smulY (-n)`; `ω_neg` turns its numerator into
@@ -264,16 +264,16 @@ lemma smulY_one_sub_negY :
     smulY 1 - pointedCurve.toAffine.negY (smulX 1) (smulY 1) = polyToField (curve.ψ 2) := by
   rw [smulY_sub_negY one_ne_zero, mul_one, ψ_one, map_one, one_pow, div_one]
 
-/-- **No nonzero multiple of the distinguished point is `2`-torsion.** The gap computed above is
-`ψ₂ₙ/ψₙ⁴`, a quotient of nonzero elements, so it never vanishes. -/
+/-- **`smulY n` never equals the `negY` of its own pair, for `n ≠ 0`.** The gap computed above is
+`ψ₂ₙ/ψₙ⁴`, a quotient of nonzero elements. -/
 lemma smulY_ne_negY (h0 : n ≠ 0) :
     smulY n ≠ pointedCurve.toAffine.negY (smulX n) (smulY n) := by
   rw [← sub_ne_zero, smulY_sub_negY h0]
   exact div_ne_zero (polyToField_ψ_ne_zero (by omega))
     (pow_ne_zero _ (polyToField_ψ_ne_zero h0))
 
-/-- **The distinguished point itself is not `2`-torsion**, the case of `smulY_ne_negY` that
-selects the tangent branch of `Affine.slope` in `slopeOne_eq_neg_div`. -/
+/-- **The `n = 1` case**, at the distinguished point itself: this is what selects the tangent
+branch of `Affine.slope` in `slopeOne_eq_neg_div`. -/
 lemma smulY_one_ne_negY : smulY 1 ≠ pointedCurve.toAffine.negY (smulX 1) (smulY 1) :=
   smulY_ne_negY one_ne_zero
 
@@ -306,8 +306,8 @@ lemma slopeOne_eq_neg_div :
     map_pow polyToField, map_ofNat]
   ring
 
-/-- **Doubling the distinguished point, `X`-coordinate.** Mathlib's affine addition formula, run
-on `(X, Y)` against itself along the tangent `slopeOne`, returns `smulX 2`.
+/-- **Mathlib's `addX` at `(smulX 1, smulX 1)` along the tangent slope is `smulX 2`.** The affine
+addition formula run on the distinguished point against itself lands on the value at `2`.
 
 The certificate is `C_Ψ₃`, which expresses `Ψ₃` through the partial derivatives of the Weierstrass
 polynomial: pushed into the universal field, `Ψ₂Sq` becomes `ψ₂²` (`polyToField_Ψ₂Sq`) and the
@@ -323,8 +323,9 @@ lemma addX_smul_one_smul_one :
   field_simp
   linear_combination hF
 
-/-- **Doubling the distinguished point, `Y`-coordinate.** The same formula returns `smulY 2`,
-which is what identifies `(smulX 2, smulY 2)` as `2 • (X, Y)`.
+/-- **The same for `addY`: it returns `smulY 2`.** Together with the previous lemma this is the
+doubling step the later identification of `n • (X, Y)` runs through — that identification itself
+is proved in the scalar-multiplication development, not here.
 
 Here the certificate is `ω_def` at `2`: the reduced-invariant denominator is `1` and the
 complement's auxiliary term `0` (`reducedInvarDenom_two`, `complEDS₂Aux_two`), the multiples of
