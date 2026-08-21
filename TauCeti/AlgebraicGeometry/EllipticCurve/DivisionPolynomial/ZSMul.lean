@@ -24,8 +24,9 @@ here too: negating a nonzero index negates the point, so `smulY (-n)` is the `ne
 The middle of the file turns that calculus on the pair `(smulX 1, smulY 1)`, which is the
 distinguished point `(X, Y)` itself. For `n ≠ 0` the vertical gap
 `smulY n - negY (smulX n) (smulY n)` is `ψ₂ₙ/ψₙ⁴`, hence nonzero, so `smulY n` never equals the
-`negY` of its own pair — both statements need that hypothesis, since `ψ₀ = 0` makes the quotient
-meaningless at `n = 0`; at `n = 1` the gap
+`negY` of its own pair. The quotient formula genuinely needs `n ≠ 0`, since `ψ₀ = 0` leaves it
+meaningless; `smulY_ne_negY` carries the same hypothesis because it is *derived* from that formula,
+not because it fails at `n = 0` — there it reads `0 ≠ -a₃`, which holds. At `n = 1` the gap
 is `ψ₂`, which selects the tangent branch of Mathlib's `Affine.slope` and gives the tangent slope
 `slopeOne` the closed form `-Wₓ/ψ₂`. Feeding that slope to Mathlib's affine addition formula sends
 `(smulX 1, smulY 1)` to `(smulX 2, smulY 2)`: `addX … = smulX 2` and `addY … = smulY 2`. Those two
@@ -240,9 +241,10 @@ The final block below completes the port of the source file, adding, at the same
 `dblXYZ_smulRing` (`:480`), `addZ_smulPoly` (`:484`), `ω_neg_eq_neg_negY` (`:489`),
 `smulPoly_neg` (`:496`), `smulRing_neg` (`:499`), `smulField_neg` (`:502`), `smulPoly_zero` and
 `smulField_zero` (`:505`–`:506`), `addXYZ_smulField` (`:508`), `addXYZ_smulRing` (`:533`),
-`addXYZ_smulField₁` (`:539`), `addXYZ_smulRing₁` (`:546`), then `smulEval` (`:560`),
-`ringEval_comp_smulRing` (`:566`), `dblXYZ_smulEval` (`:577`),
-`addXYZ_smulEval` (`:581`), `addXYZ_smulEval₁` (`:589`) and `zsmul_eq_smulEval` (`:599`).
+then `smulEval` (`:560`), `ringEval_comp_smulRing` (`:566`), `dblXYZ_smulEval` (`:577`),
+`addXYZ_smulEval` (`:581`) and `zsmul_eq_smulEval` (`:599`). The three `₁`-suffixed
+adjacent-index lemmas (`:539`, `:546`, `:589`) are in the source's range but are **not** ported,
+for the reason given below.
 The two zero lemmas are moved ahead of `dblXYZ_smulField`, which uses `smulField_zero` to
 identify the `n = 0` triple; the source proves that case by unfolding `dblXYZ` instead.
 `ringEval_comp_smulRing` is placed in the `Universal` namespace rather than at
@@ -273,7 +275,7 @@ reason. Upstream `curveField = curvePoly.map polyToField` definitionally, so a c
 transport such as `map_dblZ` lands on `curveField` with no further step; here it lands on
 `curvePoly.map polyToField` and the identification has to be cited. Both proofs that cite it do so
 after `map_dblZ`. `map_addZ` is not in that class: `addZ` takes no curve argument, so its transport
-never mentions a mapped curve. It carries `@[simp]`, as does
+never mentions a mapped curve. `map_polyToField` carries `@[simp]`, as does
 `ringEval_comp_smulRing`: both are map-specialization normal forms, reducing a mapped universal
 object to the concrete one it names, and neither loops. `api-design` asked for both tags in round
 three, over an initial judgement here that two explicit call sites did not warrant the global
