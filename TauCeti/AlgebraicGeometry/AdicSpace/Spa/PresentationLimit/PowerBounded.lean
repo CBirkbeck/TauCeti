@@ -52,9 +52,13 @@ statable — but a
 continuous ring homomorphism need not preserve power-boundedness (`IsPowerBounded.map` needs an
 image condition beyond continuity), so restriction-compatibility of that definition is a real
 theorem needing real hypotheses. The component-wise definition makes compatibility a reindexing
-triviality, and it is the faithful generalisation of the source's per-value definition. The two
-agree on components by construction; comparing them on the limit ring is deferred until a
-consumer needs it.
+triviality, and it is the faithful generalisation of the source's per-value definition, which it
+reproduces at each component by construction.
+
+Nothing here relates this subring to power-boundedness *in the limit ring*: neither implication
+between "every component is power-bounded" and "the section is power-bounded in
+`presentationLimitObj`" is proved, or used. The subring is componentwise by definition, and that
+is all it is.
 
 ## Provenance
 

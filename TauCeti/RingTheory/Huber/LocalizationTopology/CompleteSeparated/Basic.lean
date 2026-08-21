@@ -121,7 +121,7 @@ instance (P : PairOfDefinition A) (T : Finset A) (s : A) (S : Type u) [CommRing 
   let _ := isUniformAddGroup_locUniformSpace P T s S hden
   let _ := isTopologicalRing_locUniformSpace P T s S hden
   let _ := isHuberRing_completion_locTopology P T s S hden
-  rw [show (completionLocObj P T s S hden).obj = _ from completionLocObj_obj P T s S hden]
+  rw [completionLocObj_obj P T s S hden]
   exact inferInstanceAs (NonarchimedeanRing (UniformSpace.Completion S))
 
 /-! ### Comparison morphisms between presentationwise objects -/
