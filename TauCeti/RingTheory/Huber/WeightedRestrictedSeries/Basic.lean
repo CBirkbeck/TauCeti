@@ -1344,15 +1344,6 @@ theorem weightedMap_weightedX [NonarchimedeanRing A] [NonarchimedeanRing B] {φ 
     weightedMap hφ hT hS hTS (weightedX T hT i) = weightedX S hS i :=
   Subtype.ext (by simp [MvPowerSeries.map_X])
 
-omit [TopologicalSpace A] [TopologicalSpace B] in
-/-- If `e` carries each weight `T i` onto `S i`, then `e.symm` carries `S i` back into `T i`.
-This is the reverse inclusion `weightedMapEquiv` needs for its inverse direction. -/
-theorem symm_image_subset_of_image_eq (e : A ≃+* B) {T : Fin k → Set A}
-    {S : Fin k → Set B} (hTS : ∀ i, (e : A →+* B) '' T i = S i) (i : Fin k) :
-    (e.symm : B →+* A) '' S i ⊆ T i := by
-  rw [← hTS i, ← Set.image_comp]
-  simp
-
 /-- **A topological ring isomorphism of coefficients induces one of weighted series rings.**
 Given `e : A ≃+* B` continuous in both directions and carrying each weight `T i` onto `S i`, the
 induced map on weighted series is a ring isomorphism;
@@ -1369,7 +1360,8 @@ noncomputable def weightedMapEquiv [NonarchimedeanRing A] [NonarchimedeanRing B]
     weightedRestrictedSubring T hT ≃+* weightedRestrictedSubring S hS :=
   -- the two inverse laws follow the idiom of Mathlib's `mapPiLocalization_bijective`
   RingEquiv.ofRingHom (weightedMap he hT hS fun i ↦ (hTS i).le)
-    (weightedMap he' hS hT (symm_image_subset_of_image_eq e hTS))
+    (weightedMap he' hS hT (fun i ↦ (show (e.symm : B →+* A) '' S i = T i by
+      rw [← hTS i, ← Set.image_comp]; simp).le))
     (by rw [← weightedMap_comp]; simp_rw [RingEquiv.comp_symm, weightedMap_id])
     (by rw [← weightedMap_comp]; simp_rw [RingEquiv.symm_comp, weightedMap_id])
 
@@ -1395,7 +1387,8 @@ theorem weightedMapEquiv_symm_toRingHom [NonarchimedeanRing A] [NonarchimedeanRi
     (hTS : ∀ i, (e : A →+* B) '' T i = S i) :
     ((weightedMapEquiv e he he' hT hS hTS).symm :
       weightedRestrictedSubring S hS →+* weightedRestrictedSubring T hT)
-      = weightedMap he' hS hT (symm_image_subset_of_image_eq e hTS) := by
+      = weightedMap he' hS hT (fun i ↦ (show (e.symm : B →+* A) '' S i = T i by
+      rw [← hTS i, ← Set.image_comp]; simp).le) := by
   ext f
   simp [weightedMapEquiv, RingEquiv.ofRingHom_symm]
 
@@ -1416,7 +1409,8 @@ theorem weightedMapEquiv_symm_apply [NonarchimedeanRing A] [NonarchimedeanRing B
     {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
     (hTS : ∀ i, (e : A →+* B) '' T i = S i) (f : weightedRestrictedSubring S hS) :
     (weightedMapEquiv e he he' hT hS hTS).symm f
-      = weightedMap he' hS hT (symm_image_subset_of_image_eq e hTS) f := by
+      = weightedMap he' hS hT (fun i ↦ (show (e.symm : B →+* A) '' S i = T i by
+      rw [← hTS i, ← Set.image_comp]; simp).le) f := by
   simp [weightedMapEquiv, RingEquiv.ofRingHom_symm]
 
 /-- `TauCeti.Huber.weightedMapEquiv` is continuous. -/
@@ -1434,7 +1428,8 @@ theorem continuous_weightedMapEquiv_symm [NonarchimedeanRing A] [NonarchimedeanR
     {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
     (hTS : ∀ i, (e : A →+* B) '' T i = S i) :
     Continuous (weightedMapEquiv e he he' hT hS hTS).symm :=
-  (continuous_weightedMap he' hS hT (symm_image_subset_of_image_eq e hTS)).congr fun f ↦
+  (continuous_weightedMap he' hS hT (fun i ↦ (show (e.symm : B →+* A) '' S i = T i by
+      rw [← hTS i, ← Set.image_comp]; simp).le)).congr fun f ↦
     (weightedMapEquiv_symm_apply e he he' hT hS hTS f).symm
 
 
