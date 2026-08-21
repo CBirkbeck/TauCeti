@@ -98,14 +98,9 @@ private theorem mul_pow_of_commutator_eq_two_nsmul {a d : A} (hxz : x * z = z * 
         _ = z * (z * x + a) + (z * a + 2 • d) := by rw [hxz, haz]
         _ = _ := by rw [mul_add, ← mul_assoc]; abel
   | succ b ih =>
-      have hp3 : z ^ (b + 3) = z ^ (b + 2) * z := by
-        rw [show b + 3 = b + 2 + 1 from by omega, pow_succ]
-      have hp2 : z ^ (b + 2) = z ^ (b + 1) * z := by
-        rw [show b + 2 = b + 1 + 1 from by omega, pow_succ]
-      have hp1 : z ^ (b + 1) = z ^ b * z := by rw [pow_succ]
       rw [show b + 1 + 2 = b + 3 from by omega, show b + 1 + 1 = b + 2 from by omega]
       calc x * z ^ (b + 3)
-          = (x * z ^ (b + 2)) * z := by rw [hp3, ← mul_assoc]
+          = (x * z ^ (b + 2)) * z := by rw [pow_succ z (b + 2), ← mul_assoc]
         _ = z ^ (b + 2) * (x * z) + (b + 2) • (z ^ (b + 1) * (a * z)) +
               ((b + 2) * (b + 1)) • (z ^ b * (d * z)) := by
             rw [ih, add_mul, add_mul, smul_mul_assoc, smul_mul_assoc, mul_assoc, mul_assoc,
@@ -115,8 +110,9 @@ private theorem mul_pow_of_commutator_eq_two_nsmul {a d : A} (hxz : x * z = z * 
         _ = (z ^ (b + 3) * x + z ^ (b + 2) * a) +
               ((b + 2) • (z ^ (b + 2) * a) + (2 * (b + 2)) • (z ^ (b + 1) * d)) +
               ((b + 2) * (b + 1)) • (z ^ (b + 1) * d) := by
-            rw [mul_add, ← mul_assoc, ← hp3, mul_add, ← mul_assoc, ← hp2, mul_smul_comm, smul_add,
-              smul_smul, mul_comm (b + 2) 2, ← mul_assoc, ← hp1]
+            rw [mul_add, ← mul_assoc, ← pow_succ z (b + 2), mul_add, ← mul_assoc,
+              ← pow_succ z (b + 1), mul_smul_comm, smul_add, smul_smul, mul_comm (b + 2) 2,
+              ← mul_assoc, ← pow_succ z b]
         -- Collecting the two released terms is pure `ℕ`-smul bookkeeping.
         _ = _ := by module
 
