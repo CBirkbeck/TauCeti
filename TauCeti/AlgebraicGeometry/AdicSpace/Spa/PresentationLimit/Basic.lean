@@ -121,6 +121,7 @@ universe v
 
 variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
+omit [IsTopologicalRing A] in
 /-- **The index of the presentation-indexed limit**: presentations with open numerator ideal —
 the rational-basis condition of `spaRationalFamily` — whose rational subset is contained in
 `V`. Without the openness condition the index would range over presentations outside the
