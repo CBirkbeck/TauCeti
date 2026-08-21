@@ -206,10 +206,9 @@ lemma polyToField_apply (p : Poly) :
 
 /-- **The Weierstrass polynomial vanishes in the universal field.** It is exactly the element
 `Universal.Ring` quotients out, so `polyToField` kills it — which is how an identity over
-`pointedCurve` discards the multiples of `curve.polynomial` that clearing denominators throws up.
-
-Not `@[simp]`, unlike upstream: `polyToField_apply` is `@[simp]` here, so `simp` already reaches
-`0` on its own and simpNF rejects the tag as redundant. -/
+`pointedCurve` discards the multiples of `curve.polynomial` that clearing denominators throws up. -/
+-- Not `@[simp]`, unlike upstream: `polyToField_apply` is `@[simp]` here, so `simp` already reaches
+-- `0` on its own and a full-library `lint-env` run rejects the tag as a simpNF duplicate.
 lemma polyToField_polynomial : polyToField curve.polynomial = 0 := by
   rw [polyToField_apply, AdjoinRoot.mk_self, map_zero]
 

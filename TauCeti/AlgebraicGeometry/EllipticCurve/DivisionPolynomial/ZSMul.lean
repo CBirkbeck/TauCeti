@@ -240,11 +240,10 @@ lemma smulX_ne_smulX (ne : m ≠ n) (ne_neg : m ≠ -n) : smulX m ≠ smulX n :=
 
 /-- **The gap between `smulY n` and the `negY` of its own pair is `ψ₂ₙ/ψₙ⁴`.** Being a quotient of
 nonzero `ψ`'s it never vanishes, which is what puts the pair `(smulX n, smulY n)` in the tangent
-branch of `Affine.slope`.
-
-The proof reads the negated coordinate off `smulY_neg` — negating the index is negating the point —
-so that the gap becomes `smulY n - smulY (-n)`; `ω_neg` turns its numerator into
-`2ωₙ + a₁φₙψₙ + a₃ψₙ³`, which `ω_spec` names `ψc n` and `ψ_mul_ψc` divides into `ψ₂ₙ/ψₙ`. -/
+branch of `Affine.slope`. -/
+-- The proof reads the negated coordinate off `smulY_neg`, so the gap becomes
+-- `smulY n - smulY (-n)`; `ω_neg` turns the numerator into `2ωₙ + a₁φₙψₙ + a₃ψₙ³`, which
+-- `ω_spec` names `ψc n` and `ψ_mul_ψc` divides into `ψ₂ₙ/ψₙ`.
 lemma smulY_sub_negY (h0 : n ≠ 0) :
     smulY n - pointedCurve.toAffine.negY (smulX n) (smulY n) =
       polyToField (curve.ψ (2 * n)) / polyToField (curve.ψ n) ^ 4 := by
@@ -290,10 +289,8 @@ lemma is how a consumer in another module computes with it. -/
 theorem slopeOne_def :
     slopeOne = pointedCurve.toAffine.slope (smulX 1) (smulX 1) (smulY 1) (smulY 1) := (rfl)
 
-/-- **The tangent slope in closed form**: `-Wₓ/ψ₂`, the two partial derivatives of the Weierstrass
-polynomial at `(X, Y)`. `smulY_one_ne_negY` puts `Affine.slope` in its tangent branch, whose
-denominator `smulY 1 - negY …` is `ψ₂` by `smulY_one_sub_negY`; the numerator is then `polynomialX`
-read backwards. -/
+/-- **The tangent slope in closed form**: `-Wₓ/ψ₂`, the ratio of the two partial derivatives of
+the Weierstrass polynomial at `(X, Y)`. -/
 lemma slopeOne_eq_neg_div :
     slopeOne = -polyToField curve.polynomialX / polyToField (curve.ψ 2) := by
   have h : curve.polynomialX
@@ -307,12 +304,10 @@ lemma slopeOne_eq_neg_div :
   ring
 
 /-- **Mathlib's `addX` at `(smulX 1, smulX 1)` along the tangent slope is `smulX 2`.** The affine
-addition formula run on the distinguished point against itself lands on the value at `2`.
-
-The certificate is `C_Ψ₃`, which expresses `Ψ₃` through the partial derivatives of the Weierstrass
-polynomial: pushed into the universal field, `Ψ₂Sq` becomes `ψ₂²` (`polyToField_Ψ₂Sq`) and the
-Weierstrass polynomial itself vanishes (`polyToField_polynomial`), leaving exactly the numerator
-identity that clearing `ψ₂²` out of `addX` demands. -/
+addition formula run on the distinguished point against itself lands on the value at `2`. -/
+-- The certificate is `C_Ψ₃`, expressing `Ψ₃` through the partial derivatives: in the universal
+-- field `Ψ₂Sq` becomes `ψ₂²` and the Weierstrass polynomial vanishes, leaving the numerator
+-- identity that clearing `ψ₂²` out of `addX` demands.
 lemma addX_smul_one_smul_one :
     pointedCurve.toAffine.addX (smulX 1) (smulX 1) slopeOne = smulX 2 := by
   have hψ₂ : polyToField (curve.ψ 2) ≠ 0 := polyToField_ψ_ne_zero two_ne_zero
@@ -325,12 +320,10 @@ lemma addX_smul_one_smul_one :
 
 /-- **The same for `addY`: it returns `smulY 2`.** Together with the previous lemma this is the
 doubling step the later identification of `n • (X, Y)` runs through — that identification itself
-is proved in the scalar-multiplication development, not here.
-
-Here the certificate is `ω_def` at `2`: the reduced-invariant denominator is `1` and the
-complement's auxiliary term `0` (`reducedInvarDenom_two`, `complEDS₂Aux_two`), the multiples of
-the Weierstrass polynomial vanish in the field, `polynomialY` is `ψ₂` and `C Ψ₃` is `ψ₃`, so `ω₂`
-becomes `(a₁ψ₂ - Wₓ)ψ₃ + (-Y - a₁X - a₃)ψ₂³` — the numerator `addY` produces over `ψ₂³`. -/
+is proved in the scalar-multiplication development, not here. -/
+-- The certificate is `ω_def` at `2`: the reduced-invariant denominator is `1` and the
+-- complement's auxiliary term `0`, the multiples of the Weierstrass polynomial vanish,
+-- `polynomialY` is `ψ₂` and `C Ψ₃` is `ψ₃`, giving the numerator `addY` produces over `ψ₂³`.
 lemma addY_smul_one_smul_one :
     pointedCurve.toAffine.addY (smulX 1) (smulX 1) (smulY 1) slopeOne = smulY 2 := by
   have hψ₂ : polyToField (curve.ψ 2) ≠ 0 := polyToField_ψ_ne_zero two_ne_zero
