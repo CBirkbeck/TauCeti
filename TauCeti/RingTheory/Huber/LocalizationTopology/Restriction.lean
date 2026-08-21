@@ -96,7 +96,11 @@ So the construction here is unconditional where AINTLIB's rests on an assumed cl
   7.18 and 7.41 are the criterion the containment form needs; Definition 7.14, which names rings
   of integral elements, is a different result and does not supply it.
 * [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
-  commit `37bbdaeb`, `projects/AdicSpaces/Adic spaces/Presheaf.lean`.
+  commit `37bbdaeb9`, under `projects/AdicSpaces/`:
+  * `Adic spaces/Presheaf.lean` — the restriction maps built from a containment.
+  * `Adic spaces/PresheafIdentification.lean` — the decomposition into Propositions 7.18 and 7.41.
+  * `docs/TICKETS-axiom-clean.md` — records that combination as an open ticket, under the *adic
+    Nullstellensatz* name used above.
 -/
 
 namespace TauCeti.Huber
