@@ -151,6 +151,7 @@ theorem coe_topologicalClosure_map_coeRingHom (G : Subring A) :
 
 /-- Membership in the closure `Ĝ` in `Â` of the image of a subring `G` of `A`, in the form the
 `closure` API consumes. -/
+@[simp]
 theorem mem_topologicalClosure_map_coeRingHom_iff {G : Subring A} {x : Completion A} :
     x ∈ (G.map Completion.coeRingHom).topologicalClosure
       ↔ x ∈ closure (((↑) : A → Completion A) '' (G : Set A)) := by
@@ -234,9 +235,7 @@ private theorem isIntegral_of_isIntegral_topologicalClosure_coe {G : Subring A}
   · rwa [Finset.sum_range_succ']
 
 /-- **Huber's Lemma 2.4.3(iv)**: the closure in `Â` of the image of an open subring `G` of `A` that
-is integrally closed in `A` is integrally closed in `Â`.
-
-The proof route is in the module docstring and signposted in the body. -/
+is integrally closed in `A` is integrally closed in `Â`. -/
 theorem isIntegrallyClosedIn_topologicalClosure_map_coeRingHom {G : Subring A}
     (hG : IsOpen (G : Set A)) [IsIntegrallyClosedIn G A] :
     IsIntegrallyClosedIn ((G.map Completion.coeRingHom).topologicalClosure) (Completion A) := by
