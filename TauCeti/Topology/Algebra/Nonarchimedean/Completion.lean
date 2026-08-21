@@ -149,6 +149,15 @@ theorem coe_topologicalClosure_map_coeRingHom (G : Subring A) :
       = closure (((↑) : A → Completion A) '' (G : Set A)) := by
   rw [Subring.coe_topologicalClosure, Subring.coe_map, coe_coeRingHom]
 
+/-- Membership in the closure `Ĝ` in `Â` of the image of a subring `G` of `A`, in the form the
+`closure` API consumes. This is the `mem_`-half of the pair whose `coe_` half is above; the
+proofs below pass between the two forms at three separate sites. -/
+@[simp]
+theorem mem_topologicalClosure_map_coeRingHom_iff {G : Subring A} {x : Completion A} :
+    x ∈ (G.map Completion.coeRingHom).topologicalClosure
+      ↔ x ∈ closure (((↑) : A → Completion A) '' (G : Set A)) := by
+  rw [← SetLike.mem_coe, coe_topologicalClosure_map_coeRingHom]
+
 /-- The closure in `Â` of the image of an open subring of `A` is open: the subring form of
 `isOpen_closure_image_coe`. -/
 theorem isOpen_topologicalClosure_map_coeRingHom {G : Subring A} (hG : IsOpen (G : Set A)) :
@@ -177,7 +186,7 @@ private theorem exists_mem_coe_sub_mul_mem_topologicalClosure {G : Subring A}
     exact Subring.zero_mem _
   obtain ⟨_, hw, d, hdG, rfl⟩ :=
     mem_closure_iff.mp
-      (by rwa [← SetLike.mem_coe, coe_topologicalClosure_map_coeRingHom] at hy) _ hVopen hyV
+      (mem_topologicalClosure_map_coeRingHom_iff.mp hy) _ hVopen hyV
   exact ⟨d, hdG, hw⟩
 
 /-- Huber's Lemma 2.4.3(iv) for a single element of `A`: if the image in `Â` of `b : A` is integral
@@ -236,7 +245,7 @@ theorem isIntegrallyClosedIn_topologicalClosure_map_coeRingHom {G : Subring A}
   -- the integral closure `H` of `Ĝ` is a subring containing the open `Ĝ`, hence is itself open
   have hHopen := isOpen_integralClosure_toSubring (isOpen_topologicalClosure_map_coeRingHom hG)
   -- so it is enough to meet the image of `G` in every neighbourhood `t` of `a`
-  rw [← SetLike.mem_coe, coe_topologicalClosure_map_coeRingHom]
+  rw [mem_topologicalClosure_map_coeRingHom_iff]
   refine mem_closure_iff_nhds.mpr fun t ht ↦ ?_
   -- density supplies a `b : A` whose image lies in `t` and, being in the open `H`, is integral
   obtain ⟨b, hb⟩ := Completion.denseRange_coe.mem_nhds (Filter.inter_mem ht
