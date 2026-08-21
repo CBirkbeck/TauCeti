@@ -52,7 +52,9 @@ not the hypotheses.
 * `TauCeti.ValuationSpectrum.presentationLimitObj` : its value, the candidate for `𝒪_X(V)`.
 * `TauCeti.ValuationSpectrum.presentationLimitCone` : the cone that value is a limit of, with
   `presentationLimitIsLimit` its universal property — the two together are the whole interface,
-  used through Mathlib's `IsLimit` API rather than through local wrappers.
+  used through Mathlib's `IsLimit` API rather than through local wrappers, and
+  `presentationLimitCone_pt` identifies the cone's point with `presentationLimitObj` so that
+  `.lift` and `.hom_ext` land at the named object.
 * `TauCeti.ValuationSpectrum.presentationLimitMap` : the restriction morphism of a containment.
 * `TauCeti.Huber.PairOfDefinition.HasSheafyPresentationLimit` : the presentation-indexed
   presheaf is a sheaf. It is named for the presheaf it actually tests: until the initiality
@@ -267,6 +269,15 @@ noncomputable def presentationLimitIsLimit (Aplus : Subring A) (V : Opens ↥(sp
     IsLimit (presentationLimitCone P Aplus V) :=
   limit.isLimit (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)
 
+/-- **The cone's point is the value of the presheaf.** `presentationLimitIsLimit` is stated about
+`presentationLimitCone`, whose `.pt` is this object; without this equation a consumer applying
+`.lift` or `.hom_ext` would have to unfold `presentationLimitCone` to see what it produces. -/
+@[simp]
+theorem presentationLimitCone_pt (P : PairOfDefinition A) (Aplus : Subring A)
+    (V : Opens ↥(spa Aplus)) :
+    (presentationLimitCone P Aplus V).pt = presentationLimitObj P Aplus V := by
+  simp [presentationLimitCone, presentationLimitObj, presentationLimitPresheaf]
+
 variable (P) in
 /-- **The projection of the presentation-indexed limit at one index**: the leg of
 `presentationLimitCone` there. -/
@@ -301,7 +312,6 @@ theorem presentationLimitπ_restrictionHom {i j : RationalIndex P Aplus V} (f : 
 variable (P) in
 /-- **The restriction morphism of a containment `W ≤ V`**: the presheaf's action, which unfolds to
 the reindexing of the limit along `StructuredArrow.map`. -/
-@[expose]
 noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
     presentationLimitObj P Aplus V ⟶ presentationLimitObj P Aplus W :=
   (presentationLimitPresheaf P Aplus).map (homOfLE h).op
