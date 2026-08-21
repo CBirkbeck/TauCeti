@@ -556,22 +556,16 @@ private theorem isIntegral_of_isIntegral_topologicalClosure {G : Subring A}
   obtain ⟨n, c, hcmem, hc⟩ := exists_pow_add_sum_eq_zero_of_isIntegral hb
   choose d hdG hd using fun i ↦
     exists_mem_sub_mul_mem_topologicalClosure hG (hcmem i) ((b : Completion A) ^ i)
-  obtain ⟨e, hedef⟩ : ∃ e : A, e = b ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), d i * b ^ i :=
-    ⟨_, rfl⟩
+  obtain ⟨e, hedef⟩ : ∃ e : A, e = b ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), d i * b ^ i := ⟨_, rfl⟩
   -- the perturbed relation evaluates inside `Ĝ`, so its value comes from `G`
   have hecoe : (e : Completion A)
       = ∑ i ∈ Finset.range (n + 1), ((d i : Completion A) - c i) * (b : Completion A) ^ i := by
-    have hpush : (e : Completion A) = (b : Completion A) ^ (n + 1)
-        + ∑ i ∈ Finset.range (n + 1), (d i : Completion A) * (b : Completion A) ^ i := by
-      simp only [hedef, hcoe, map_add, map_pow, map_sum, map_mul]
-    simp only [sub_mul, Finset.sum_sub_distrib, hpush]
+    simp only [hedef, hcoe, map_add, map_pow, map_sum, map_mul, sub_mul,
+      Finset.sum_sub_distrib] at hc ⊢
     linear_combination hc
   have heG : e ∈ G := by
-    have hmem : e ∈ ((↑) : A → Completion A) ⁻¹' (Gh : Set (Completion A)) := by
-      change (e : Completion A) ∈ Gh
-      rw [hecoe]
-      exact Gh.sum_mem fun i _ ↦ hd i
-    rwa [hpre] at hmem
+    rw [← SetLike.mem_coe, ← hpre, Set.mem_preimage, SetLike.mem_coe, hecoe]
+    exact Gh.sum_mem fun i _ ↦ hd i
   -- subtracting that value from the constant term leaves a relation for `b` over `G`
   have harith : b ^ (n + 1)
       + ((∑ i ∈ Finset.range n, d (i + 1) * b ^ (i + 1)) + (d 0 - e) * b ^ 0) = 0 := by
@@ -582,8 +576,7 @@ private theorem isIntegral_of_isIntegral_topologicalClosure {G : Subring A}
   · rintro (_ | j)
     · exact sub_mem (hdG 0) heG
     · exact hdG (j + 1)
-  · rw [Finset.sum_range_succ']
-    exact harith
+  · rwa [Finset.sum_range_succ']
 
 /-- **Huber's Lemma 2.4.3(iv)**: the closure in `Â` of the image of an open subring `G` of `A` that
 is integrally closed in `A` is integrally closed in `Â`.
