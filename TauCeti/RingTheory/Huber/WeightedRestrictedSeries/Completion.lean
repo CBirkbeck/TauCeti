@@ -118,8 +118,8 @@ noncomputable def weightedMapCompletion (hφ : Continuous φ) (hT : IsWeightFami
   UniformSpace.Completion.mapRingHom (weightedMap hφ hT hS hTS)
     (continuous_weightedMap hφ hT hS hTS)
 
-/-- The value of `TauCeti.Huber.weightedMapCompletion` on the image of `A⟨X⟩_T`. The body of the
-definition is not exported, so this is how a consumer computes with it. -/
+/-- The value of `TauCeti.Huber.weightedMapCompletion` on the canonical image of a weighted
+restricted series: it agrees with `TauCeti.Huber.weightedMap`. -/
 @[simp]
 theorem weightedMapCompletion_coe (hφ : Continuous φ) (hT : IsWeightFamily T)
     (hS : IsWeightFamily S) (hTS : ∀ i, φ '' T i ⊆ S i) (f : weightedRestrictedSubring T hT) :
@@ -143,28 +143,31 @@ theorem weightedMapCompletion_id (hT : IsWeightFamily T) :
   simp only [weightedMapCompletion, weightedMap_id]
   exact UniformSpace.Completion.mapRingHom_id
 
-/-- **The composition law**: the map induced by a composite is the composite of the induced maps.
-With `TauCeti.Huber.weightedMapCompletion_id` this is what makes `A⟨X⟩_T` functorial in the pair
-`(A, T)` at the level of completions — the §0.4 weighted restricted-series functoriality.
+/-- **The composition law**: composing the maps induced by `φ` and `ψ` gives the map induced by
+`ψ ∘ φ`. Stated in the collapsing direction, matching
+`UniformSpace.Completion.mapRingHom_comp`, so that a composite normalizes to a single induced
+map. With `TauCeti.Huber.weightedMapCompletion_id` this is what makes `A⟨X⟩_T` functorial in the
+pair `(A, T)` at the level of completions — the §0.4 weighted restricted-series functoriality.
 
-It is **not** Remark 8.29's naturality, which varies the *module* with the coefficient ring fixed;
-an earlier version of this docstring claimed otherwise and was wrong.
+This is **not** Remark 8.29's naturality, which varies the *module* with the coefficient ring
+fixed.
 
-Deliberately **not** `@[simp]`: the `simpNF` linter rejects it, because the hypotheses
-`∀ i, φ '' T i ⊆ S i` are not in simp normal form — simp rewrites them to `T i ⊆ φ ⁻¹' S i` via
-`Set.image_subset_iff`, so the lemma would never fire. -/
+A caller holding a weight hypothesis in the form `φ '' T i ⊆ S i` converts it with
+`Set.image_subset_iff`. -/
+@[simp]
 theorem weightedMapCompletion_comp {C : Type*} [CommRing C] [TopologicalSpace C]
     [NonarchimedeanRing C] {ψ : B →+* C} {R : Fin k → Set C} (hφ : Continuous φ)
     (hψ : Continuous ψ) (hT : IsWeightFamily T) (hS : IsWeightFamily S) (hR : IsWeightFamily R)
-    (hTS : ∀ i, φ '' T i ⊆ S i) (hSR : ∀ i, ψ '' S i ⊆ R i) :
-    weightedMapCompletion (φ := ψ.comp φ)
-        (by simpa only [RingHom.coe_comp] using hψ.comp hφ) hT hR
-        (fun i ↦ by
-          simpa only [RingHom.coe_comp, Set.image_comp] using
-            (Set.image_mono (hTS i)).trans (hSR i))
-      = (weightedMapCompletion hψ hS hR hSR).comp (weightedMapCompletion hφ hT hS hTS) := by
-  simp only [weightedMapCompletion, weightedMap_comp hφ hψ hT hS hR hTS hSR]
-  exact (UniformSpace.Completion.mapRingHom_comp _ _).symm
+    (hTS : ∀ i, T i ⊆ φ ⁻¹' S i) (hSR : ∀ i, S i ⊆ ψ ⁻¹' R i) :
+    (weightedMapCompletion hψ hS hR fun i ↦ Set.image_subset_iff.mpr (hSR i)).comp
+        (weightedMapCompletion hφ hT hS fun i ↦ Set.image_subset_iff.mpr (hTS i))
+      = weightedMapCompletion (φ := ψ.comp φ)
+          (by simpa only [RingHom.coe_comp] using hψ.comp hφ) hT hR
+          (fun i ↦ Set.image_subset_iff.mpr ((hTS i).trans (Set.preimage_mono (hSR i)))) := by
+  have hTS' : ∀ i, φ '' T i ⊆ S i := fun i ↦ Set.image_subset_iff.mpr (hTS i)
+  have hSR' : ∀ i, ψ '' S i ⊆ R i := fun i ↦ Set.image_subset_iff.mpr (hSR i)
+  simp only [weightedMapCompletion, weightedMap_comp hφ hψ hT hS hR hTS' hSR']
+  exact UniformSpace.Completion.mapRingHom_comp _ _
 
 end Functoriality
 
