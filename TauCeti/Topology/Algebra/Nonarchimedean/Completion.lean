@@ -25,8 +25,8 @@ mentions a pair of definition or an adic topology, and they live in the `Uniform
 namespace of the construction they describe rather than in a `TauCeti` one.
 
 The last of the three is Huber's Lemma 2.4.3(iv), Wedhorn's Lemma 7.47(4): if `G` is *open*
-and integrally closed in `A`, the closure `Ĝ` of its image in `Â` is integrally closed in `Â`.
-The proof below is Huber's. The integral closure `H` of `Ĝ` in `Â` contains the open subring
+and integrally closed in `A`, the closure `Ĝ` of its image in `Â` is integrally closed in `Â`.
+The proof below is Huber's. The integral closure `H` of `Ĝ` in `Â` contains the open subring
 `Ĝ`, hence is open, so every neighbourhood of a point of `H` meets the image of `A` inside `H`.
 For such an image `i b`, an integral relation over `Ĝ` is perturbed one coefficient at a time
 into a relation whose coefficients come from `G`; openness of `Ĝ` keeps the value of the
@@ -37,14 +37,14 @@ of `G`.
 
 ## Main results
 
-* `UniformSpace.Completion.isOpen_closure_image_coe`: the closure in `Â` of the image of an open
+* `UniformSpace.Completion.isOpen_closure_image_coe`: the closure in `Â` of the image of an open
   additive subgroup of `A` is open, and
   `UniformSpace.Completion.isOpen_topologicalClosure_map_coeRingHom` says the same of an open
   subring.
-* `UniformSpace.Completion.ker_coeRingHom`: the kernel of `A → Â` is the closure of `⊥`.
+* `UniformSpace.Completion.ker_coeRingHom`: the kernel of `A → Â` is the closure of `⊥`.
 * `UniformSpace.Completion.isIntegrallyClosedIn_topologicalClosure_map_coeRingHom`:
-  Huber's Lemma 2.4.3(iv), the closure in `Â` of the image of an open subring of `A` integrally
-  closed in `A` is integrally closed in `Â`.
+  Huber's Lemma 2.4.3(iv), the closure in `Â` of the image of an open subring of `A` integrally
+  closed in `A` is integrally closed in `Â`.
 
 ## References
 
@@ -83,13 +83,13 @@ section Ring
 
 variable {A : Type*} [Ring A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
 
-/-- The completion map `A →+* Â`, read as a function, is the coercion `A → Â`. Mathlib's
+/-- The completion map `A →+* Â`, read as a function, is the coercion `A → Â`. Mathlib's
 `Filter.Germ.coe_coeRingHom` is the same statement for germs. -/
 @[simp]
 theorem coe_coeRingHom :
     ⇑(Completion.coeRingHom : A →+* Completion A) = ((↑) : A → Completion A) := (rfl)
 
-/-- The kernel of the completion map `A → Â` is the closure of the zero ideal. -/
+/-- The kernel of the completion map `A → Â` is the closure of the zero ideal. -/
 theorem ker_coeRingHom :
     RingHom.ker (Completion.coeRingHom : A →+* Completion A) = (⊥ : Ideal A).closure := by
   ext x
@@ -107,7 +107,7 @@ section IntegrallyClosed
 
 variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [IsTopologicalRing A]
 
-/-- The closure `Ĝ` in `Â` of the image of a subring `G` of `A` is, as a set, the closure of the
+/-- The closure `Ĝ` in `Â` of the image of a subring `G` of `A` is, as a set, the closure of the
 image of `G` under the completion coercion. This unfolds `Subring.topologicalClosure` and
 `Subring.map` in one step; it is how every argument below passes between `Ĝ` and that closure. -/
 theorem coe_topologicalClosure_map_coeRingHom (G : Subring A) :
@@ -115,7 +115,7 @@ theorem coe_topologicalClosure_map_coeRingHom (G : Subring A) :
       = closure (((↑) : A → Completion A) '' (G : Set A)) := by
   rw [Subring.topologicalClosure_coe, Subring.coe_map, coe_coeRingHom]
 
-/-- Membership in the closure `Ĝ` in `Â` of the image of a subring `G` of `A`, in the form the
+/-- Membership in the closure `Ĝ` in `Â` of the image of a subring `G` of `A`, in the form the
 `closure` API consumes. This is the `mem_`-half of the pair whose `coe_` half is above; the
 proofs below pass between the two forms at three separate sites. -/
 @[simp]
@@ -124,7 +124,7 @@ theorem mem_topologicalClosure_map_coeRingHom_iff {G : Subring A} {x : Completio
       ↔ x ∈ closure (((↑) : A → Completion A) '' (G : Set A)) := by
   rw [← SetLike.mem_coe, coe_topologicalClosure_map_coeRingHom]
 
-/-- The closure in `Â` of the image of an open subring of `A` is open: the subring form of
+/-- The closure in `Â` of the image of an open subring of `A` is open: the subring form of
 `isOpen_closure_image_coe`. -/
 theorem isOpen_topologicalClosure_map_coeRingHom {G : Subring A} (hG : IsOpen (G : Set A)) :
     IsOpen ((G.map Completion.coeRingHom).topologicalClosure : Set (Completion A)) := by
@@ -155,7 +155,7 @@ private theorem exists_mem_coe_sub_mul_mem_topologicalClosure {G : Subring A}
       (mem_topologicalClosure_map_coeRingHom_iff.mp hy) _ hVopen hyV
   exact ⟨d, hdG, hw⟩
 
-/-- Huber's Lemma 2.4.3(iv) for a single element of `A`: if the image in `Â` of `b : A` is integral
+/-- Huber's Lemma 2.4.3(iv) for a single element of `A`: if the image in `Â` of `b : A` is integral
 over the closure `Ĝ` of the image of an open subring `G`, then `b` is already integral over `G`.
 
 An integral relation for the image of `b` over `Ĝ` is perturbed one coefficient at a time by
@@ -202,8 +202,8 @@ private theorem isIntegral_of_isIntegral_topologicalClosure_coe {G : Subring A}
     · exact hdG (j + 1)
   · rwa [Finset.sum_range_succ']
 
-/-- **Huber's Lemma 2.4.3(iv)**: the closure in `Â` of the image of an open subring `G` of `A` that
-is integrally closed in `A` is integrally closed in `Â`. -/
+/-- **Huber's Lemma 2.4.3(iv)**: the closure in `Â` of the image of an open subring `G` of `A` that
+is integrally closed in `A` is integrally closed in `Â`. -/
 theorem isIntegrallyClosedIn_topologicalClosure_map_coeRingHom {G : Subring A}
     (hG : IsOpen (G : Set A)) [IsIntegrallyClosedIn G A] :
     IsIntegrallyClosedIn ((G.map Completion.coeRingHom).topologicalClosure) (Completion A) := by
