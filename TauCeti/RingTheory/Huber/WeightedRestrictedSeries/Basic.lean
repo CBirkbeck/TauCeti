@@ -1346,19 +1346,16 @@ theorem weightedMap_weightedX [NonarchimedeanRing A] [NonarchimedeanRing B] {φ 
 
 /-- **A topological ring isomorphism of coefficients induces one of weighted series rings.**
 Given `e : A ≃+* B` continuous in both directions and carrying the weights across in both
-directions, `TauCeti.Huber.weightedMap` applied to `e` and to `e.symm` are mutually inverse —
-by `TauCeti.Huber.weightedMap_id` and `TauCeti.Huber.weightedMap_comp` — so they assemble into a
-ring isomorphism. `TauCeti.Huber.continuous_weightedCongr` and its `_symm` make it an
-isomorphism of *topological* rings.
+directions, the induced map on weighted series is a ring isomorphism;
+`TauCeti.Huber.continuous_weightedCongr` and its `_symm` make it one of *topological* rings, and
+`TauCeti.Huber.weightedCongr_apply` is how it computes.
 
 Both directions of each hypothesis are asked for separately rather than derived: `e` carrying
 `T i` into `S i` does not by itself make `e.symm` carry `S i` back into `T i`, since the weights
 are arbitrary sets and the inclusion may be strict.
 
-The assembly follows Mathlib's `mapPiLocalization_bijective`
-(`Mathlib/RingTheory/Spectrum/Maximal/Localization.lean`), which likewise shows a map and the one
-induced by the inverse to be mutually inverse by rewriting with the functor laws, rather than by
-unfolding either side. -/
+Source: Mathlib's `mapPiLocalization_bijective`
+(`Mathlib/RingTheory/Spectrum/Maximal/Localization.lean`). -/
 noncomputable def weightedCongr [NonarchimedeanRing A] [NonarchimedeanRing B] (e : A ≃+* B)
     (he : Continuous ⇑(e : A →+* B)) (he' : Continuous ⇑(e.symm : B →+* A))
     {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
