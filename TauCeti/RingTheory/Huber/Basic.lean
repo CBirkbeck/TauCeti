@@ -46,6 +46,8 @@ Huber ring is nonarchimedean, which is exactly the hypothesis under which
 * `TauCeti.Huber.IsHuberRing.isCountablyGenerated_nhds_zero`: its neighbourhoods of zero are
   countably generated. With the previous bullet these are exactly the two hypotheses Henkel's open
   mapping theorem asks of the underlying group, so both are instances.
+* `TauCeti.Huber.IsHuberRing.isCountablyGenerated_nhds_zero_pi`: the same for a countable power
+  `ι → A`, which is what makes a free module `Aᵐ` usable by Remark 8.29's comparison map.
 * `TauCeti.Huber.IsHuberRing.quotient`: a quotient of a Huber ring is a Huber ring.
 * `TauCeti.Huber.PairOfDefinition.isBounded_ringOfDefinition`: a ring of definition is bounded,
   hence `A₀ ≤ A°` (`TauCeti.Huber.PairOfDefinition.le_powerBoundedSubring`). This is the
@@ -480,6 +482,24 @@ point — it is what lets a Huber ring be handed to that theorem without the cal
 anything. -/
 instance IsHuberRing.isCountablyGenerated_nhds_zero : (𝓝 (0 : A)).IsCountablyGenerated :=
   IsHuberRing.nonempty_pairOfDefinition.elim fun P ↦ P.hasBasis_nhds_zero.isCountablyGenerated
+
+/-- **A countable power of a Huber ring also has countably generated neighbourhoods of zero.**
+The product topology's filter at `0` is the product of the coordinate filters (`nhds_pi`), and a
+countable product of countably generated filters is countably generated
+(`Filter.pi.isCountablyGenerated`), so this reduces immediately to
+`TauCeti.Huber.IsHuberRing.isCountablyGenerated_nhds_zero` above.
+
+Being an instance is again the point, and here it is what makes a *free module* `Aᵐ` usable: the
+comparison map of Wedhorn's Remark 8.29 is surjective for a finitely generated module only under
+`[(nhds (0 : Fin m → A)).IsCountablyGenerated]`
+(`TauCeti.Huber.restrictedMvPowerSeriesBaseChange_surjective_of_presentation`), and nothing else
+supplies that hypothesis. `Countable` rather than `Finite` because `Filter.pi.isCountablyGenerated`
+asks only for that, and the extra generality costs nothing. -/
+instance IsHuberRing.isCountablyGenerated_nhds_zero_pi {ι : Type*} [Countable ι] :
+    (𝓝 (0 : ι → A)).IsCountablyGenerated := by
+  rw [nhds_pi]
+  simp only [Pi.zero_apply]
+  infer_instance
 
 /-- Wedhorn Corollary 6.4: the power-bounded subring of a Huber ring is open. -/
 theorem isOpen_powerBoundedSubring : IsOpen (powerBoundedSubring A : Set A) := by
