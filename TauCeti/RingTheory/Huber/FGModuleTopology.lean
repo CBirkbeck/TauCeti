@@ -79,13 +79,6 @@ theorem pow_smul_antitone {S : Subring A} {r : S} (M₀ : Submodule S M) :
   calc r ^ (i + d) • M₀ = r ^ i • (r ^ d • M₀) := by rw [pow_add, mul_smul]
     _ ≤ r ^ i • M₀ := smul_mono_right _ (M₀.smul_le_self_of_tower _)
 
-/-- Some power of a topologically nilpotent `s` carries any `c : A` into the ring of
-definition — the ring of definition is open, and `sⁿ c → 0`. -/
-theorem exists_pow_mul_mem (P : PairOfDefinition A) {s : A} (hs : IsTopologicallyNilpotent s)
-    (c : A) : ∃ i : ℕ, s ^ i * c ∈ P.ringOfDefinition :=
-  ((hs.mul_const c).eventually
-    (P.isOpen_ringOfDefinition.mem_nhds (by simp))).exists
-
 omit [IsTopologicalRing A] in
 /-- `M₀` absorbs further powers of `s`: raising the exponent cannot leave it, because the extra
 factor is itself a scalar from `A₀`. -/
