@@ -582,22 +582,24 @@ private theorem isIntegral_of_isIntegral_topologicalClosure {G : Subring A}
 is integrally closed in `A` is integrally closed in `Â`.
 
 Neither a Huber structure nor a pair of definition takes part: a topological ring carrying a
-compatible uniformity is enough. The integral closure `H` of `Ĝ` in `Â` is a subring containing the
-open subring `Ĝ`, hence itself open, so every neighbourhood of a point of `H` meets the image of
-`A` inside `H`; `isIntegral_of_isIntegral_topologicalClosure` places the element of `A` found there
-in `G`, which exhibits the point as a limit of the image of `G`. -/
+compatible uniformity is enough, which is why this sits apart from the pair-of-definition
+material above. The proof route is in the module docstring and signposted in the body. -/
 theorem isIntegrallyClosedIn_topologicalClosure_map_coeRingHom {G : Subring A}
     (hG : IsOpen (G : Set A)) [IsIntegrallyClosedIn G A] :
     IsIntegrallyClosedIn ((G.map Completion.coeRingHom).topologicalClosure) (Completion A) := by
   set Gh := (G.map Completion.coeRingHom).topologicalClosure
   refine Subring.isIntegrallyClosedIn_iff.mpr fun a ha ↦ ?_
+  -- the integral closure `H` of the closure of the image is a subring containing that open
+  -- subring, hence is itself open
   have hle : Gh.toAddSubgroup ≤ (integralClosure Gh (Completion A)).toSubring.toAddSubgroup :=
     fun x hx ↦ (integralClosure Gh (Completion A)).algebraMap_mem ⟨x, hx⟩
   have hHopen : IsOpen ((integralClosure Gh (Completion A)).toSubring : Set (Completion A)) :=
     AddSubgroup.isOpen_mono hle (Completion.isOpen_closure_image_coe (G := G.toAddSubgroup) hG)
+  -- so it is enough to meet the image of `G` in every neighbourhood `t` of `a`
   change a ∈ closure (((↑) : A → Completion A) '' (G : Set A))
   refine mem_closure_iff_nhds.mpr fun t ht ↦ ?_
   have haH : a ∈ (integralClosure Gh (Completion A)).toSubring := ha
+  -- density supplies a `b : A` whose image lies in `t` and, being in the open `H`, is integral
   obtain ⟨b, hb⟩ := Completion.denseRange_coe.mem_nhds (Filter.inter_mem ht (hHopen.mem_nhds haH))
   exact ⟨(b : Completion A), hb.1, b,
     Subring.isIntegrallyClosedIn_iff.mp ‹_› (isIntegral_of_isIntegral_topologicalClosure hG hb.2),
