@@ -37,6 +37,8 @@ explicit.
 * `TauCeti.Huber.Pair.Hom.id`, `TauCeti.Huber.Pair.Hom.comp`: morphisms of Huber pairs compose,
   associatively and unitally (`TauCeti.Huber.Pair.Hom.comp_assoc`,
   `TauCeti.Huber.Pair.Hom.id_comp`, `TauCeti.Huber.Pair.Hom.comp_id`).
+* `TauCeti.Huber.Pair.isRingOfIntegralElements_integralClosure`: the integral closure of an open
+  subring contained in the power-bounded subring is a ring of integral elements.
 * `TauCeti.Huber.Pair.quotient`: the quotient Huber pair, whose plus ring is the integral closure
   of the image of the original plus ring.
 * `TauCeti.Huber.Pair.Hom.quotientLift`: the universal factorisation of a morphism annihilating
@@ -202,6 +204,18 @@ def powerBounded : Pair A where
 @[simp]
 theorem powerBounded_plus : (powerBounded A).plus = powerBoundedSubring A := (rfl)
 
+omit [IsTopologicalRing A] in
+/-- The integral closure of an open subring contained in `powerBoundedSubring` is a ring of
+integral elements. -/
+theorem isRingOfIntegralElements_integralClosure [NonarchimedeanRing A] {R : Subring A}
+    (hopen : IsOpen (R : Set A)) (hpb : R ≤ powerBoundedSubring A) :
+    IsRingOfIntegralElements (integralClosure R A).toSubring where
+  -- `R` is open, and it sits inside its own integral closure via `algebraMap`, so the closure
+  -- contains an open additive subgroup.
+  isOpen := isOpen_integralClosure_toSubring hopen
+  isIntegrallyClosedIn := inferInstance
+  le_powerBoundedSubring := Subring.integralClosure_subring_le_iff.mpr hpb
+
 section Quotient
 
 /-- The quotient of a Huber pair by `J` (Wedhorn Definition 7.22). Its plus ring is the
@@ -222,11 +236,7 @@ noncomputable def quotient (S : Pair A) (J : Ideal A) : Pair (A ⧸ J) where
       exact mem_powerBoundedSubring.mpr <|
         ha_power.map_of_isOpenMap continuous_quotient_mk'.continuousAt
           (QuotientRing.isOpenMap_coe J)
-    refine
-      { isOpen := isOpen_integralClosure_toSubring hR_open
-        isIntegrallyClosedIn := inferInstance
-        le_powerBoundedSubring := ?_ }
-    exact Subring.integralClosure_subring_le_iff.mpr hR_power
+    exact isRingOfIntegralElements_integralClosure hR_open hR_power
 
 /-- The plus ring of the quotient pair is the integral closure of the image plus ring. -/
 @[simp]
