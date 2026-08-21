@@ -319,11 +319,10 @@ by the values it takes on the variables. -/
 private theorem mem_adjoin_range_apply_X {A : Type*} [CommRing A] [Algebra R A]
     (f : MatrixMonoid.CoordinateRing R n →ₐ[R] A) (p : MatrixMonoid.CoordinateRing R n) :
     f p ∈ Algebra.adjoin R (Set.range fun ij : Fin n × Fin n => f (MvPolynomial.X ij)) := by
-  -- `f` is the evaluation sending each variable to its own image, so `p` is that evaluation at `p`
-  rw [Algebra.adjoin_range_eq_range_aeval]
-  refine ⟨p, ?_⟩
-  conv_rhs => rw [MvPolynomial.aeval_unique f]
-  rfl
+  -- adjoining an image is the image of the adjoin, and the variables generate everything
+  rw [Set.range_comp' f MvPolynomial.X, Algebra.adjoin_image, MvPolynomial.adjoin_range_X,
+    Algebra.map_top]
+  exact ⟨p, rfl⟩
 
 private theorem adjoin_X_union_antipode_X :
     Algebra.adjoin R
