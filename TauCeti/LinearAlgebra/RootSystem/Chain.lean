@@ -99,7 +99,7 @@ successor contribution is doubled at the short end.
 The identity is pointwise in `s`: it mentions neither the summation range of the row it is used in
 nor any bound on `a`. The chain length `L` does appear, in the doubled coefficient at the short
 end. -/
-private theorem chainBEntry_mul_eq_add_add {R : Type*} [Ring R] (L a s : ℕ) (g : ℕ → R) :
+private theorem chainBEntry_mul_eq_add_add {R : Type*} [NonAssocRing R] (L a s : ℕ) (g : ℕ → R) :
     ((chainBEntry L a s : ℤ) : R) * g s
       = (if s = a then 2 * g a else 0) + (if s + 1 = a then -g s else 0)
         + (if s = a + 1 then -((if a + 1 = L then 2 else 1) * g (a + 1)) else 0) := by
