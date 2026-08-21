@@ -93,9 +93,10 @@ private theorem coordinateBialgHom_antipode_X_mem_faithfulCoefficientAlgebra
           (GeneralLinear.coordinateHopfAlgebraAlgEquiv R n
             (GeneralLinear.coordinateRingMap R n (MvPolynomial.X (i, j))))) ∈
       faithfulCoefficientAlgebra (R := R) (H := H) (M := M) := by
-  -- the morphism commutes with the antipode, so the image is the antipode of the matrix
-  -- coefficient at `(i, j)` — a generator of the right summand
-  rw [BialgHomClass.map_antipode, coordinateBialgHom_X, coefficientMatrix_apply]
+  -- the antipode generator is an entry of the inverse generic matrix, whose image is the
+  -- antipode of the matrix coefficient at `(i, j)` — a generator of the right summand
+  rw [GeneralLinear.coordinateHopfAlgebra_antipode_X, coordinateBialgHom_antipode_X,
+    coefficientMatrix_apply]
   apply Algebra.mem_sup_right
   exact ⟨matrixCoefficient (R := R) (C := H) (b.coord i) (b j),
     matrixCoefficient_mem_subalgebra (R := R) (C := H) (b.coord i) (b j),
