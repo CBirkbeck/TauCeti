@@ -22,8 +22,10 @@ here too: negating a nonzero index negates the point, so `smulY (-n)` is the `ne
 `(smulX n, smulY n)`.
 
 The middle of the file turns that calculus on the pair `(smulX 1, smulY 1)`, which is the
-distinguished point `(X, Y)` itself. The vertical gap `smulY n - negY (smulX n) (smulY n)` is
-`ψ₂ₙ/ψₙ⁴`, hence nonzero, so `smulY n` never equals the `negY` of its own pair; at `n = 1` the gap
+distinguished point `(X, Y)` itself. For `n ≠ 0` the vertical gap
+`smulY n - negY (smulX n) (smulY n)` is `ψ₂ₙ/ψₙ⁴`, hence nonzero, so `smulY n` never equals the
+`negY` of its own pair — both statements need that hypothesis, since `ψ₀ = 0` makes the quotient
+meaningless at `n = 0`; at `n = 1` the gap
 is `ψ₂`, which selects the tangent branch of Mathlib's `Affine.slope` and gives the tangent slope
 `slopeOne` the closed form `-Wₓ/ψ₂`. Feeding that slope to Mathlib's affine addition formula sends
 `(smulX 1, smulY 1)` to `(smulX 2, smulY 2)`: `addX … = smulX 2` and `addY … = smulY 2`. Those two
@@ -94,8 +96,8 @@ is the statement the Nagell–Lutz layer consumes.
   `(n • point).point = ⟦(φₙ : ωₙ : ψₙ)⟧`, with no hypothesis on `n`.
 * `WeierstrassCurve.Universal.Jacobian.dblXYZ_smulField`, `.addXYZ_smulField`: Mathlib's Jacobian
   doubling and addition formulas evaluated on the universal triples, as equalities of triples.
-  `.addXYZ_smulField₁` is the unscaled adjacent-index case, and `.dblXYZ_smulRing`,
-  `.addXYZ_smulRing`, `.addXYZ_smulRing₁` are the same three over `Universal.Ring`.
+  `.addXYZ_smulField_add_one` is the unscaled adjacent-index case, and `.dblXYZ_smulRing`,
+  `.addXYZ_smulRing`, `.addXYZ_smulRing_add_one` are the same three over `Universal.Ring`.
 * `WeierstrassCurve.Universal.Jacobian.dblZ_smulPoly`, `.addZ_smulPoly`: the `Z`-coordinates of
   those two formulas, `ψ₂ₙ` and `ψₙ₊ₘψₙ₋ₘ`, already in the polynomial ring — no reduction modulo
   the Weierstrass polynomial is needed for the third coordinate.
@@ -105,7 +107,7 @@ is the statement the Nagell–Lutz layer consumes.
 * `WeierstrassCurve.Universal.ringEval_comp_smulRing`: `smulEval` is the specialization of
   `smulRing` along the homomorphism a point of `W` induces — the bridge from the universal
   identities to a concrete curve, and what `dblXYZ_smulEval`, `addXYZ_smulEval` and
-  `addXYZ_smulEval₁` are proved through.
+  `addXYZ_smulEval_add_one` are proved through.
 * `WeierstrassCurve.zsmul_eq_smulEval`: **the headline**. Over a field, `n • (x, y)` in Jacobian
   coordinates is `(φₙ(x,y) : ωₙ(x,y) : ψₙ(x,y))`, for every nonsingular `(x, y)` and every `n`.
 
@@ -247,6 +249,10 @@ identify the `n = 0` triple; the source proves that case by unfolding `dblXYZ` i
 `ringEval_comp_smulRing` and `ringEval_ψ` are placed in the `Universal` namespace rather than at
 `WeierstrassCurve` level as upstream, matching where `EllipticCurve/Universal.lean` keeps the rest
 of the `ringEval` API. The source's `curveRing_map_ringEval` is this repository's `map_ringEval`.
+The source's three `₁`-suffixed adjacent-index lemmas are renamed on port: `addXYZ_smulField₁`,
+`addXYZ_smulRing₁` and `addXYZ_smulEval₁` become `addXYZ_smulField_add_one`,
+`addXYZ_smulRing_add_one` and `addXYZ_smulEval_add_one` — the `₁` is a bare index rather than a
+description of the conclusion.
 
 **`point_point` (`:420`) is not ported at all, and the previous slice's copy of it is deleted
 here.** That slice predicted this block would supply a consumer; it does not. At `1c1c7466` the
@@ -896,14 +902,14 @@ lemma addXYZ_smulRing :
 /-- **Adjacent indices add without any scaling**: `ψ₍ₙ₊₁₎₋ₙ` is `ψ₁ = 1`, so `addXYZ` on the
 triples at `n` and `n + 1` is the triple at `2n + 1` exactly. This is the odd step of the
 scalar-multiplication induction. -/
-lemma addXYZ_smulField₁ :
+lemma addXYZ_smulField_add_one :
     addXYZ pointedCurve (smulField n) (smulField (n + 1)) = smulField (2 * n + 1) := by
   rw [addXYZ_smulField, add_sub_cancel_left, ψ_one, map_one, one_smul]
   congr 1
   omega
 
-/-- `addXYZ_smulField₁` over the universal ring. -/
-lemma addXYZ_smulRing₁ :
+/-- `addXYZ_smulField_add_one` over the universal ring. -/
+lemma addXYZ_smulRing_add_one :
     addXYZ curveRing (smulRing n) (smulRing (n + 1)) = smulRing (2 * n + 1) := by
   rw [addXYZ_smulRing, add_sub_cancel_left, ψ_one, map_one, one_smul]
   congr 1
@@ -919,8 +925,9 @@ variable {R : Type*} [CommRing R] (W : WeierstrassCurve R) {x y : R}
 
 variable (x y) in
 /-- The division polynomials of `W` evaluated at a point `(x, y)`, as a Jacobian triple
-`(φₙ(x,y), ωₙ(x,y), ψₙ(x,y))`. For a nonsingular `(x, y)` these are the Jacobian coordinates of
-`n • (x, y)`, which is `zsmul_eq_smulEval` below. -/
+`(φₙ(x,y), ωₙ(x,y), ψₙ(x,y))`. The definition needs only a commutative ring. **Over a field**, and
+for a nonsingular `(x, y)`, these are the Jacobian coordinates of `n • (x, y)` — that reading is
+`zsmul_eq_smulEval` below, which assumes `[Field F]`, and it is not claimed over a general `R`. -/
 abbrev smulEval (n : ℤ) : Fin 3 → R := evalEval x y ∘ ![W.φ n, W.ω n, W.ψ n]
 
 variable {W} (eqn : Affine.Equation W x y)
@@ -950,6 +957,11 @@ what turns each identity over `curveRing` into the same identity for `W` at `(x,
 
 /-- The third coordinate of `ringEval_comp_smulRing`: the universal `ψₙ` specializes to `ψₙ(x,y)`.
 Separated out because the addition formula's scaling factor is a bare `ψ`, not a triple. -/
+-- Not `@[simp]`, unlike `ringEval_comp_smulRing`: this left-hand side is an *application*,
+-- `ringEval eqn (mk _ (curve.ψ n))`, which the already-`@[simp]` `ringEval_mk` and
+-- `polyEval_apply` rewrite first, so simpNF reports it as not in normal form. The composition
+-- `ringEval eqn ∘ smulRing n` in `ringEval_comp_smulRing` has no such decomposition and tags
+-- cleanly. Verified by a full `lint-env`: with the tag, exactly one new violation.
 lemma ringEval_ψ (n : ℤ) :
     ringEval eqn (AdjoinRoot.mk _ (curve.ψ n)) = evalEval x y (W.ψ n) :=
   congr_fun (ringEval_comp_smulRing eqn n) 2
@@ -976,9 +988,9 @@ lemma addXYZ_smulEval (m n : ℤ) :
 include eqn in
 /-- **The adjacent-index addition formula for a concrete curve**, the unscaled case of
 `addXYZ_smulEval` and the odd step of the induction below. -/
-lemma addXYZ_smulEval₁ (n : ℤ) :
+lemma addXYZ_smulEval_add_one (n : ℤ) :
     addXYZ W (smulEval W x y n) (smulEval W x y (n + 1)) = smulEval W x y (2 * n + 1) := by
-  simp_rw [← Universal.ringEval_comp_smulRing eqn, ← Jacobian.addXYZ_smulRing₁, ← map_addXYZ,
+  simp_rw [← Universal.ringEval_comp_smulRing eqn, ← Jacobian.addXYZ_smulRing_add_one, ← map_addXYZ,
     map_ringEval]
 
 end WeierstrassCurve
@@ -1004,8 +1016,9 @@ not a specialization of one of them. -/
 -- Even-odd strong induction on `n ≥ 0`, then `Int.negInduction` for the sign. The base cases
 -- `n = 0` and `n = 1` are `(1 : 1 : 0)` and `(x : y : 1)`. The even step writes `2 * (m + 1) • P`
 -- through Mathlib's `add_self` and `dblXYZ_smulEval`; the odd step writes
--- `(m + 1) • P + (m + 2) • P` through `add_of_not_equiv` and `addXYZ_smulEval₁`, the two summands
--- being distinct because `P` is not torsion. The negative case rescales by `-1`, which is
+-- `(m + 1) • P + (m + 2) • P` through `add_of_not_equiv` and `addXYZ_smulEval_add_one`, the
+-- two summands being distinct because `P` is not torsion. The negative case rescales by `-1`,
+-- which is
 -- `smulRing_neg` specialized along the point.
 theorem zsmul_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : ℤ) :
     (n • Point.fromAffine (Affine.Point.some _ _ h)).point = ⟦smulEval W x y n⟧ := by
@@ -1037,7 +1050,7 @@ theorem zsmul_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : ℤ) :
         exact Quotient.sound hequiv
       have hcast : ((n + 1 + 1 : ℕ) : ℤ) = ((n + 1 : ℕ) : ℤ) + 1 := by push_cast; ring
       rw [Point.add_point, ih (n + 1) (by omega), ih (n + 1 + 1) (by omega), addMap_eq,
-        add_of_not_equiv hnequiv, hcast, addXYZ_smulEval₁ h.1]
+        add_of_not_equiv hnequiv, hcast, addXYZ_smulEval_add_one h.1]
       congrm(⟦W.smulEval x y ?_⟧)
       ring
   | neg ih n =>
