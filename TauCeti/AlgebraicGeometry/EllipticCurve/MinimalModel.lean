@@ -5,8 +5,9 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import TauCeti.AlgebraicGeometry.EllipticCurve.IntegralModel
-public import TauCeti.AlgebraicGeometry.EllipticCurve.NodePolynomial
+public import Mathlib.AlgebraicGeometry.EllipticCurve.Reduction
+import TauCeti.AlgebraicGeometry.EllipticCurve.IntegralModel
+import TauCeti.AlgebraicGeometry.EllipticCurve.NodePolynomial
 
 /-!
 # Minimal models: a criterion, their comparison, and what transfers between them
@@ -229,10 +230,9 @@ theorem HasSplitMultiplicativeReduction.of_isMinimal_smul {W₁ W₂ : Weierstra
         rw [hc₄eq]; exact h₁.toHasMultiplicativeReduction.multiplicativeReduction }
   -- and its integral model is `C₀ •` that of `W₁`, so their node polynomials split together.
   refine { hmult₂ with splitMultiplicativeReduction := ?_ }
-  have hint₂ : W₂.integralModel R = C₀ • W₁.integralModel R := by
-    apply map_injective (IsFractionRing.injective R K)
-    change (W₂.integralModel R).baseChange K = (C₀ • W₁.integralModel R).baseChange K
-    exact (baseChange_integralModel_eq R W₂).trans hW₂eq.symm
+  have hint₂ : W₂.integralModel R = C₀ • W₁.integralModel R :=
+    map_injective (IsFractionRing.injective R K)
+      ((baseChange_integralModel_eq R W₂).trans hW₂eq.symm)
   rw [hint₂, ← nodePolynomial_def]
   exact (splits_variableChange_nodePolynomial_map_iff
     (algebraMap R (IsLocalRing.ResidueField R)) (W₁.integralModel R) C₀).mpr
