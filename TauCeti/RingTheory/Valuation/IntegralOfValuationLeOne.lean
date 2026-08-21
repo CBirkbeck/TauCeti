@@ -5,7 +5,8 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.RingTheory.Valuation.LocalSubring
+import Mathlib.RingTheory.Valuation.LocalSubring
+public import Mathlib.RingTheory.IntegralClosure.IsIntegral.Defs
 public import Mathlib.RingTheory.Valuation.ValuativeRel.Basic
 
 /-!
@@ -40,6 +41,11 @@ domain.
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), Proposition 7.18, stated
   there with the proof given as the citation [Hu2, Lemma 3.3].
+* [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), commit `37bbdaeb9`,
+  `projects/AdicSpaces/Adic spaces/Presheaf.lean`, `isIntegral_of_forall_valuation_le_one` — the
+  proof route followed here. **Adapted, not copied**: that declaration carries an openness
+  hypothesis its own underscore marks as unused, so the topology is dropped and the statement
+  here is purely algebraic, which is why this file sits under `RingTheory/Valuation/`.
 -/
 
 public section
@@ -65,16 +71,19 @@ theorem isIntegral_of_forall_valuation_le_one {R : Type*} [CommRing R] [IsDomain
     exact mt (isIntegral_algebraMap_iff hinj).mp hni
   -- Stacks 090P(1): a valuation subring containing the closure but missing `i x`
   obtain ⟨V, hVle, hxV⟩ := Subring.exists_le_valuationSubring_of_isIntegrallyClosedIn hxni
+  -- `vle` for the pulled-back relation is the valuation inequality, by definition of
+  -- `ofValuation` and `comap`. Naming it once keeps that unfolding out of the two uses below.
+  have hvle_iff : ∀ y z : R, (ofValuation (V.valuation.comap i)).vle y z ↔
+      V.valuation (i y) ≤ V.valuation (i z) := fun _ _ ↦ Iff.rfl
   -- pull `V.valuation` back to `R`; it is `≤ 1` on `B`
   have hB : ∀ b ∈ B, (ofValuation (V.valuation.comap i)).vle b 1 := by
     intro b hb
-    change V.valuation (i b) ≤ V.valuation (i 1)
+    rw [hvle_iff]
     simp only [map_one, ValuationSubring.valuation_le_one_iff]
     exact hVle (Subalgebra.algebraMap_mem (integralClosure B (FractionRing R)) ⟨b, hb⟩)
   -- the hypothesis then puts `i x` in `V`, which is the contradiction
   refine hxV ?_
   rw [← V.valuation_le_one_iff]
-  have hx : V.valuation (i x) ≤ V.valuation (i 1) := hvle _ hB
-  simpa only [map_one] using hx
+  simpa only [map_one] using (hvle_iff x 1).mp (hvle _ hB)
 
 end TauCeti
