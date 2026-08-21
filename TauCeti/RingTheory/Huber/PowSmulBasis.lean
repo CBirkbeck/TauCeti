@@ -17,7 +17,7 @@ as a `SubmodulesBasis`, which is Mathlib's machinery for turning such a family i
 `SubmodulesBasis.topology` and `.nonarchimedean` then apply.
 
 **Two of Proposition 6.18(1)'s clauses are established for the induced topology** — that it is an
-`A`-module topology (`moduleFilterBasis_pow_smul`, since `SubmodulesBasis.toModuleFilterBasis`
+`A`-module topology (`powSmulModuleFilterBasis`, since `SubmodulesBasis.toModuleFilterBasis`
 gives only an `A₀`-module one) and that it is first countable at `0`
 (`isCountablyGenerated_nhds_zero`).
 
@@ -37,7 +37,7 @@ definition, so a caller holding `powerBoundedSubring A` can use them.
 * `TauCeti.Huber.PairOfDefinition.exists_pow_smul_mem`: a power of `ϖ` carries any element of
   the `A`-span of `M₀` into `M₀`.
 * `TauCeti.Huber.PairOfDefinition.submodulesBasis_pow_smul`: the family is a `SubmodulesBasis`.
-* `TauCeti.Huber.PairOfDefinition.moduleFilterBasis_pow_smul`: the same family as a filter basis
+* `TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis`: the same family as a filter basis
   for scalars from `A`, not just from `A₀` — Proposition 6.18(1)'s `A`-module clause.
 * `TauCeti.Huber.PairOfDefinition.isCountablyGenerated_nhds_zero`: the induced topology has a
   countable fundamental system of neighbourhoods of `0` — 6.18(1)'s first-countability clause.
@@ -165,7 +165,7 @@ theorem submodulesBasis_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudo
 filter basis over `A₀`; Wedhorn's Proposition 6.18(1) is about an `A`-module topology, so the
 three `ModuleFilterBasis` axioms are re-established with scalars from `A`. -/
 @[expose]
-def moduleFilterBasis_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
+def powSmulModuleFilterBasis (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
     (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
     (hspan : Submodule.span A (M₀ : Set M) = ⊤) : ModuleFilterBasis A M where
   __ := (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).toModuleFilterBasis.toAddGroupFilterBasis
@@ -212,13 +212,13 @@ def moduleFilterBasis_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudoUn
     exact Submodule.smul_mem_pointwise_smul _ _ _ hmem
 
 /-- **Membership in the filter basis is the `ϖⁿ • M₀` family**, in normal form, so a consumer
-never unfolds `TauCeti.Huber.PairOfDefinition.moduleFilterBasis_pow_smul`. -/
+never unfolds `TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis`. -/
 @[simp]
-theorem mem_moduleFilterBasis_pow_smul_sets (P : PairOfDefinition A) {s : A}
+theorem mem_powSmulModuleFilterBasis (P : PairOfDefinition A) {s : A}
     (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
     (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤)
     {U : Set M} :
-    U ∈ (P.moduleFilterBasis_pow_smul hs hs0 M₀ hspan).sets ↔
+    U ∈ (P.powSmulModuleFilterBasis hs hs0 M₀ hspan).toFilterBasis ↔
       ∃ n : ℕ, U = ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ : Submodule _ M) :=
   Iff.rfl
 
@@ -226,10 +226,10 @@ theorem mem_moduleFilterBasis_pow_smul_sets (P : PairOfDefinition A) {s : A}
 re-establishes the `ModuleFilterBasis` axioms but does not change the underlying
 `AddGroupFilterBasis`, hence not the topology. -/
 @[simp]
-theorem moduleFilterBasis_pow_smul_topology (P : PairOfDefinition A) {s : A}
+theorem powSmulModuleFilterBasis_topology (P : PairOfDefinition A) {s : A}
     (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
     (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
-    (P.moduleFilterBasis_pow_smul hs hs0 M₀ hspan).topology
+    (P.powSmulModuleFilterBasis hs hs0 M₀ hspan).topology
       = (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).topology :=
   rfl
 
@@ -239,7 +239,7 @@ off `SubmodulesBasis`'s `Set`-indexed form. -/
 theorem isCountablyGenerated_nhds_zero (P : PairOfDefinition A) {s : A}
     (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
     (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
-    (@nhds M (P.moduleFilterBasis_pow_smul hs hs0 M₀ hspan).topology
+    (@nhds M (P.powSmulModuleFilterBasis hs hs0 M₀ hspan).topology
       0).IsCountablyGenerated := by
   set hB := P.submodulesBasis_pow_smul hs hs0 M₀ hspan
   let _ := hB.topology
