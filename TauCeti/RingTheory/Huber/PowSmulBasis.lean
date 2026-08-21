@@ -9,7 +9,7 @@ public import TauCeti.RingTheory.Huber.Basic
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 
 /-!
-# The topology induced by the `ϖⁿ • M₀` basis on a module over a Tate ring
+# The `ϖⁿ • M₀` submodules basis on a module over a Tate ring
 
 Let `A` be a Tate ring, `A₀` a ring of definition, `ϖ ∈ A₀` a pseudouniformiser, and `M₀` an
 `A₀`-submodule of an `A`-module `M` with `A · M₀ = M`. This file exhibits the family `ϖⁿ • M₀`
@@ -19,12 +19,14 @@ as a `SubmodulesBasis`, which is Mathlib's machinery for turning such a family i
 **What is proved here is the basis, not an identification.** Wedhorn's Remark 6.19 says this
 family is a fundamental system of neighbourhoods of `0` for *the* topology of his Proposition
 6.18(1), and 6.18(1) asserts that topology is the unique complete first-countable `A`-module
-topology. Neither the uniqueness nor the identification is proved below, so nothing here may be
-called *the* canonical topology yet.
+topology. Neither the uniqueness nor the identification is proved below, which is why the file is
+named for the basis rather than for a topology.
 
 **The hypotheses are weaker than Wedhorn's, deliberately.** Remark 6.19 assumes `A` noetherian
 and `M₀` finitely generated; no declaration below uses either — only `A · M₀ = M`. Finite
 generation first does work one layer up, where a single exponent has to serve a whole submodule.
+Several declarations are weaker still, taking an arbitrary `S : Subring A` rather than a ring of
+definition, so a caller holding `powerBoundedSubring A` can use them.
 
 ## Main results
 
@@ -76,8 +78,11 @@ subring scalar `r : S`, but every surrounding fact — `pow_add_smul_mem`, `exis
 `IsPseudoUniformizer.hasBasis_nhds_zero` — speaks the ambient `s : A`. This is the crossing, so a
 consumer never has to redo the coercion plumbing by hand.
 
-Only this direction holds: the converse would need multiplication by `sⁿ` to be injective. -/
-@[simp]
+Only this direction holds: the converse would need multiplication by `sⁿ` to be injective.
+
+Not `@[simp]`: the left-hand side is already reducible by
+`Submodule.mem_smul_pointwise_iff_exists`, so simp would rather rewrite it than close it, and the
+simpNF linter says so. This is a bridge to apply, not a normalisation. -/
 theorem pow_smul_mem_pow_smul {S : Subring A} {s : A} (hs0 : s ∈ S) (M₀ : Submodule S M) {y : M}
     (hy : y ∈ M₀) (n : ℕ) : s ^ n • y ∈ (⟨s, hs0⟩ : S) ^ n • M₀ :=
   Submodule.mem_smul_pointwise_iff_exists _ _ _ |>.mpr
@@ -94,13 +99,16 @@ theorem pow_smul_antitone {S : Subring A} {r : S} (M₀ : Submodule S M) :
   calc r ^ (i + d) • M₀ = r ^ i • (r ^ d • M₀) := by rw [pow_add, mul_smul]
     _ ≤ r ^ i • M₀ := smul_mono_right _ (M₀.smul_le_self_of_tower _)
 
-omit [IsTopologicalRing A] in
-/-- `M₀` absorbs further powers of `s`: raising the exponent cannot leave it, because the extra
-factor is itself a scalar from `A₀`. -/
-theorem pow_add_smul_mem (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOfDefinition)
-    (M₀ : Submodule P.ringOfDefinition M) (j k : ℕ) (z : M) (hz : s ^ k • z ∈ M₀) :
-    s ^ (j + k) • z ∈ M₀ := by
-  have he : s ^ (j + k) • z = (⟨s, hs0⟩ : P.ringOfDefinition) ^ j • (s ^ k • z) := by
+omit [TopologicalSpace A] [IsTopologicalRing A] in
+/-- **A submodule over a subring absorbs further powers of a scalar from that subring**: raising
+the exponent cannot leave `M₀`, because the extra factor is itself a scalar from `S`.
+
+Stated for an arbitrary subring rather than a ring of definition — none of the `PairOfDefinition`
+structure is used, and a caller holding `powerBoundedSubring A` or any other open subring can
+apply it. -/
+theorem pow_add_smul_mem {S : Subring A} {s : A} (hs0 : s ∈ S) (M₀ : Submodule S M)
+    (j k : ℕ) (z : M) (hz : s ^ k • z ∈ M₀) : s ^ (j + k) • z ∈ M₀ := by
+  have he : s ^ (j + k) • z = (⟨s, hs0⟩ : S) ^ j • (s ^ k • z) := by
     rw [Subring.smul_def, ← smul_assoc, smul_eq_mul]
     congr 1
     push_cast
@@ -122,10 +130,10 @@ theorem exists_pow_smul_mem (P : PairOfDefinition A) {s : A} (hs : IsTopological
       refine ⟨max kx ky, ?_⟩
       have hx' : s ^ (max kx ky) • x ∈ M₀ := by
         have he : max kx ky = (max kx ky - kx) + kx := by omega
-        rw [he]; exact P.pow_add_smul_mem hs0 M₀ _ _ _ hkx
+        rw [he]; exact pow_add_smul_mem hs0 M₀ _ _ _ hkx
       have hy' : s ^ (max kx ky) • y ∈ M₀ := by
         have he : max kx ky = (max kx ky - ky) + ky := by omega
-        rw [he]; exact P.pow_add_smul_mem hs0 M₀ _ _ _ hky
+        rw [he]; exact pow_add_smul_mem hs0 M₀ _ _ _ hky
       rw [smul_add]; exact M₀.add_mem hx' hy'
   | smul c x _ ih =>
       obtain ⟨k, hk⟩ := ih
