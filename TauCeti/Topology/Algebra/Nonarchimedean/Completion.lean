@@ -12,9 +12,10 @@ public import Mathlib.Topology.Algebra.Ring.Ideal
 /-!
 # Completions of nonarchimedean groups and rings
 
-Two facts about the Hausdorff completion that need only the additive, resp. ring, structure:
-the closure of the image of an open additive subgroup is open, and the kernel of the completion
-map is the closure of the zero ideal.
+Three facts about the Hausdorff completion: the closure of the image of an open additive
+subgroup is open, a closed set is the preimage of the closure of its image, and the kernel of the
+completion map is the closure of the zero ideal. The first needs only the additive structure and
+the last the ring structure; the middle one needs neither, being about the inducing map alone.
 
 They are stated here rather than alongside the Huber-ring theory that uses them, since none of
 them mentions a pair of definition or an adic topology, and they live in the
@@ -25,8 +26,8 @@ one.
 
 * `UniformSpace.Completion.isOpen_closure_image_coe`: the closure in `Â` of the image of an open
   additive subgroup of `A` is open.
-* `UniformSpace.Completion.preimage_closure_image_coe`: a *closed* additive subgroup is the
-  preimage of the closure of its image, so membership downstairs can be tested upstairs.
+* `UniformSpace.Completion.preimage_closure_image_coe`: a *closed set* is the preimage of the
+  closure of its image, so membership downstairs can be tested upstairs.
 * `UniformSpace.Completion.ker_coeRingHom`: the kernel of `A → Â` is the closure of `⊥`.
 
 ## References
@@ -56,20 +57,25 @@ theorem isOpen_closure_image_coe {G : AddSubgroup A} (hG : IsOpen (G : Set A)) :
   rw [Completion.coe_zero] at hmem
   exact AddSubgroup.isOpen_of_mem_nhds ((G.map Completion.toCompl).topologicalClosure) hmem
 
-omit [IsUniformAddGroup A] in
-/-- **A closed additive subgroup is the preimage of the closure of its image in the completion.**
-`A → Â` is an inducing map, so the closure of any set is the preimage of the closure of its
-image; for a closed subgroup the left-hand side is the subgroup itself.
+end AddGroup
+
+section ClosedSet
+
+variable {A : Type*} [UniformSpace A]
+
+/-- **A closed set is the preimage of the closure of its image in the completion.** `A → Â` is an
+inducing map, so the closure of any set is the preimage of the closure of its image; for a closed
+set the left-hand side is the set itself.
 
 This is the form a consumer meets: it turns a membership question in `A` about the closure
-downstairs into one about `Â`, without unfolding the generic inducing-map argument each time. -/
+downstairs into one about `Â`, without unfolding the generic inducing-map argument each time. No
+algebraic structure enters — for a closed additive subgroup `G`, apply it to `(G : Set A)`. -/
 @[simp]
-theorem preimage_closure_image_coe {G : AddSubgroup A} (hG : IsClosed (G : Set A)) :
-    ((↑) : A → Completion A) ⁻¹' closure (((↑) : A → Completion A) '' (G : Set A))
-      = (G : Set A) := by
-  rw [← Completion.isDenseInducing_coe.isInducing.closure_eq_preimage_closure_image, hG.closure_eq]
+theorem preimage_closure_image_coe {s : Set A} (hs : IsClosed s) :
+    ((↑) : A → Completion A) ⁻¹' closure (((↑) : A → Completion A) '' s) = s := by
+  rw [← Completion.isDenseInducing_coe.isInducing.closure_eq_preimage_closure_image, hs.closure_eq]
 
-end AddGroup
+end ClosedSet
 
 section Ker
 
