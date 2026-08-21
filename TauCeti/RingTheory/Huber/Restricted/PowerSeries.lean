@@ -82,8 +82,10 @@ coefficient binders — `[Zero]` and a topology, where the original asked for a 
 `IsRestricted.smul`, `restrictedMvPowerSeriesSubmodule`, `mem_restrictedMvPowerSeriesSubmodule`,
 `isRestricted_pi_iff`, `restrictedMvPowerSeriesSubmodulePiEquiv` and
 `restrictedMvPowerSeriesSubringLinearEquiv`, each with its computation lemmas, together with
-`IsRestricted.map`, `restrictedMvPowerSeriesSubmoduleMap` with its laws and
-`restrictedMvPowerSeriesSubmoduleMap_surjective`, and
+`IsRestricted.map`, `restrictedMvPowerSeriesSubmoduleMap` with its laws,
+`restrictedMvPowerSeriesSubmoduleMap_surjective`,
+`mem_ker_restrictedMvPowerSeriesSubmoduleMap` and
+`restrictedMvPowerSeriesSubmoduleMap_injective`, and
 `coeff_coe_smul_restrictedMvPowerSeriesSubring`.
 
 **None of those has an AINTLIB counterpart**, for three different reasons.
@@ -93,6 +95,9 @@ induced-map material: AINTLIB states restricted series over a coefficient *ring*
 induced map at module coefficients and a fortiori no surjectivity statement about one. Wedhorn
 Remark 8.29 is credited for the mathematics; the lifting construction it delegates to
 (`TauCeti.exists_lift_tendsto_cofinite_nhds`) is original here too.
+`mem_ker_restrictedMvPowerSeriesSubmoduleMap` and
+`restrictedMvPowerSeriesSubmoduleMap_injective` are the same statement at the other end of the
+exactness, and have no counterpart there for the same reason.
 
 The two product statements — `isRestricted_pi_iff` and `restrictedMvPowerSeriesSubmodulePiEquiv` —
 have none because the source states restrictedness only for a single coefficient module and never
@@ -624,9 +629,9 @@ theorem restrictedMvPowerSeriesSubmoduleMap_surjective {k : ℕ} {A M N : Type*}
   rw [coeff_restrictedMvPowerSeriesSubmoduleMap]
   exact hfg s
 
-/-- **The kernel is coefficientwise**: a restricted series is killed by `φ` exactly when every one
-of its coefficients is. `MvPowerSeries` is a `def` for a function type and `M⟨T₁, …, Tₖ⟩` is a
-`Submodule` of it, so this criterion is two coercions away from `LinearMap.mem_ker`. -/
+/-- **The kernel is coefficientwise**: a restricted series is killed by `φ` exactly when every
+one of its coefficients is. -/
+@[simp]
 theorem mem_ker_restrictedMvPowerSeriesSubmoduleMap {k : ℕ} {A M N : Type*} [Semiring A]
     [AddCommMonoid M] [TopologicalSpace M] [Module A M] [ContinuousAdd M]
     [ContinuousConstSMul A M] [AddCommMonoid N] [TopologicalSpace N] [Module A N]
