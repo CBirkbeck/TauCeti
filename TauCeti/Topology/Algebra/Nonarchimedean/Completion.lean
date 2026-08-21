@@ -5,7 +5,6 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.Algebra.Polynomial.Monic
 public import Mathlib.RingTheory.Ideal.Maps
 public import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 public import Mathlib.Topology.Algebra.Nonarchimedean.Completion
@@ -55,8 +54,8 @@ of `G`.
 * R. Huber, *Bewertungsspektrum und rigide Geometrie*, Regensburger Mathematische Schriften 23,
   Universität Regensburg, 1993, Lemma 2.4.3(iv), whose proof
   `UniformSpace.Completion.isIntegrallyClosedIn_topologicalClosure_map_coeRingHom` follows.
-* Mathlib's `Mathlib/Topology/Algebra/Nonarchimedean/Completion.lean`, whose
-  `Completion.isDenseInducing_coe` neighbourhood arguments these proofs follow.
+* Mathlib's `Mathlib/Topology/Algebra/Nonarchimedean/Completion.lean`, whose openness proof runs
+  the same `closure_image_mem_nhds`-then-`isOpen_of_mem_nhds` argument these proofs follow.
 -/
 
 public section
@@ -141,8 +140,7 @@ image of `G`, which supplies a point of that neighbourhood. -/
 private theorem exists_mem_coe_sub_mul_mem_topologicalClosure {G : Subring A}
     (hG : IsOpen (G : Set A)) {y : Completion A}
     (hy : y ∈ (G.map Completion.coeRingHom).topologicalClosure) (z : Completion A) :
-    ∃ d ∈ G, ((d : Completion A) - y) * z
-      ∈ (G.map Completion.coeRingHom).topologicalClosure := by
+    ∃ d ∈ G, ((d : Completion A) - y) * z ∈ (G.map Completion.coeRingHom).topologicalClosure := by
   have hVopen : IsOpen ((fun w : Completion A ↦ (w - y) * z) ⁻¹'
       ((G.map Completion.coeRingHom).topologicalClosure : Set (Completion A))) :=
     (isOpen_topologicalClosure_map_coeRingHom hG).preimage (by fun_prop)
