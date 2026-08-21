@@ -31,7 +31,9 @@ topologically nilpotent, so `a ^ n * b` is topologically nilpotent, and continui
 
 ## Main results
 
-* `TauCeti.Huber.le_one_of_isPowerBounded`: Proposition 7.41.
+* `Valuation.IsContinuous.le_one_of_isPowerBounded`: Proposition 7.41. Stated in the
+  `Valuation.IsContinuous` namespace so it is reachable by dot notation on the continuity
+  hypothesis, alongside `Valuation.IsContinuous.lt_one_of_isTopologicallyNilpotent`.
 
 ## References
 
@@ -42,9 +44,9 @@ topologically nilpotent, so `a ^ n * b` is topologically nilpotent, and continui
 
 public section
 
-namespace TauCeti.Huber
+namespace Valuation
 
-open TauCeti Valuation
+open TauCeti.Huber
 
 variable {A : Type*} [CommRing A] [TopologicalSpace A]
 variable {Γ₀ : Type*} [LinearOrderedCommGroupWithZero Γ₀] [MulArchimedean Γ₀]
@@ -59,9 +61,9 @@ The witness `b` is what analyticity supplies (Wedhorn Remark 7.40(1)), and it is
 Give `A` the discrete topology: every element is then power-bounded, every valuation is continuous
 (`Valuation.isContinuous_of_discreteTopology`), and `0` is the only topologically nilpotent
 element, so no witness exists — and any `v` with `1 < v a` refutes the conclusion. -/
-theorem le_one_of_isPowerBounded {v : Valuation A Γ₀} (hv : v.IsContinuous) {b : A}
-    (hb : IsTopologicallyNilpotent b) (hb0 : v b ≠ 0) {a : A} (ha : IsPowerBounded a) :
-    v a ≤ 1 := by
+theorem IsContinuous.le_one_of_isPowerBounded {v : Valuation A Γ₀} (hv : v.IsContinuous)
+    {b : A} (hb : IsTopologicallyNilpotent b) (hb0 : v b ≠ 0) {a : A}
+    (ha : IsPowerBounded a) : v a ≤ 1 := by
   by_contra! hgt
   -- archimedeanness of `Γ₀`: some power of `v a` overtakes `(v b)⁻¹`
   obtain ⟨n, hn⟩ := MulArchimedean.arch (v b)⁻¹ hgt
@@ -73,6 +75,4 @@ theorem le_one_of_isPowerBounded {v : Valuation A Γ₀} (hv : v.IsContinuous) {
   exact absurd hab (not_le.mpr (hv.lt_one_of_isTopologicallyNilpotent
     ((ha.pow n).isTopologicallyNilpotent_mul hb)))
 
-end Huber
-
-end TauCeti
+end Valuation
