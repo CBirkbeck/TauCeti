@@ -80,7 +80,11 @@ cone and `presentationLimitIsLimit` its limit proof. Everything the universal pr
 `.lift` and its `.fac`, `.hom_ext`, `IsLimit.conePointUniqueUpToIso`, cofinality — is reached
 through that `IsLimit` directly rather than through wrappers named here; only
 `presentationLimitπ`, which the restriction equations below are stated with, has a local name.
-This is why the definitions are exposed rather than sealed.
+
+`presentationLimitObj` is `@[expose]` because `presentationLimitPresheaf_map` does not elaborate
+otherwise — its two sides are morphisms whose types agree only once the object unfolds.
+`presentationLimitMap`, the cone and its limit proof carry no exposure: their characteristic
+equations are the interface.
 
 Reindexing needs no lemmas of its own. `presentationLimitMap` is the presheaf's own action, so
 `_refl` and `_comp` are its functor laws and `_π` is `limit.lift_π`; the inclusion of one index
@@ -255,8 +259,9 @@ noncomputable def presentationLimitObj (Aplus : Subring A) (V : Opens ↥(spa Ap
 
 variable (P) in
 /-- **The cone the value is a limit of**: its point is `presentationLimitObj` and its legs are the
-projections to the completed rational localizations. This is Mathlib's `RightExtension.coneAt`,
-so `presentationLimitIsLimit` and the whole `IsLimit` API are available on it. -/
+projections to the completed rational localizations. It is Mathlib's `limit.cone` at the
+Kan-extension indexing diagram, so `presentationLimitIsLimit` is `limit.isLimit` and the whole
+`IsLimit` API applies. -/
 noncomputable def presentationLimitCone (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     Cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P) :=
   limit.cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)
