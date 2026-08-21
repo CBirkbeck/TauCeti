@@ -443,13 +443,9 @@ private theorem ofHom_distribBaseChange_symm_comp_ofHom
       (SemimoduleCat.ofHom f ⊗ₘ SemimoduleCat.ofHom g) ≫
         SemimoduleCat.ofHom
           (TensorProduct.AlgebraTensorModule.distribBaseChange R A M N).symm.toLinearMap := by
-  apply SemimoduleCat.hom_ext
-  -- `hom_ext` leaves categorical composition and tensoring wrapped by `ofHom`; rewriting cannot
-  -- reach their linear maps, so reduce those wrappers to `comp` and `TensorProduct.map`
-  change fg.comp (TensorProduct.AlgebraTensorModule.distribBaseChange R A M N).symm.toLinearMap =
-    (TensorProduct.AlgebraTensorModule.distribBaseChange R A M N).symm.toLinearMap.comp
-      (TensorProduct.map f g)
-  exact hfg.symm
+  -- categorical composition and `⊗ₘ` are `ofHom` of `LinearMap.comp` and `TensorProduct.map` by
+  -- definition, so the linear-map identity transports by congruence
+  exact congrArg SemimoduleCat.ofHom hfg.symm
 
 /-- A natural automorphism of scalar extension is monoidal when its transported linear
 components preserve the tensor unit and tensor products. -/
