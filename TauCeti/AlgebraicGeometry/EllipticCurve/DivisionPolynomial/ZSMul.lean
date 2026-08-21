@@ -766,11 +766,8 @@ lemma dblXYZ_smulField : dblXYZ pointedCurve (smulField n) = smulField (2 * n) :
     simp
   refine (equiv_iff_eq_of_Z_eq ?_ (polyToField_ψ_ne_zero (mul_ne_zero two_ne_zero hn))).mp
     (Quotient.exact ?_)
-    -- `equiv_iff_eq_of_Z_eq` asks for the two `z` components, and `change` names them. Mathlib
-    -- defines `dblXYZ` as the tuple `![dblX, dblY, dblZ]` but publishes no `dblXYZ_z` projection
-    -- lemma (`Jacobian/Formula.lean` has only `dblXYZ_smul`), so there is nothing to rewrite with.
-  · change dblZ pointedCurve (smulField n) = polyToField (curve.ψ (2 * n))
-    rw [← dblZ_smulPoly, ← map_dblZ polyToField (smulPoly n)]
+  · rw [dblXYZ_Z, show smulField (2 * n) (2 : Fin 3) = polyToField (curve.ψ (2 * n)) from rfl,
+      ← dblZ_smulPoly, ← map_dblZ polyToField (smulPoly n)]
     simp only [map_polyToField]
   · have h2 : ((2 : ℤ) • (n • Jacobian.point)).point = ⟦dblXYZ pointedCurve (smulField n)⟧ := by
       rw [two_zsmul, Point.add_point, zsmul_point_eq_smulField, addMap_eq, add_self]
@@ -871,10 +868,8 @@ lemma addXYZ_smulField :
       ← map_dblZ polyToField (smulPoly m), smulField_zero]
     simp only [map_polyToField]
   refine (equiv_iff_eq_of_Z_eq ?_ ?_).mp (Quotient.exact ?_)
-    -- Both `change`s below name a `z` component, for the same reason as in `dblXYZ_smulField`:
-    -- `addXYZ` is the tuple `![addX, addY, addZ]` and Mathlib publishes no `addXYZ_z` lemma.
-  · change addZ (smulField m) (smulField n)
-        = polyToField (curve.ψ (n - m)) * polyToField (curve.ψ (n + m))
+  · rw [addXYZ_Z, show (polyToField (curve.ψ (n - m)) • smulField (n + m)) (2 : Fin 3) =
+      polyToField (curve.ψ (n - m)) * polyToField (curve.ψ (n + m)) from rfl]
     have hF := congrArg polyToField (addZ_smulPoly (m := m) (n := n))
     simp only [addZ, smulPoly, smulField, Function.comp_def, fin3_def_ext, map_sub polyToField,
       map_mul polyToField, map_pow polyToField] at hF ⊢
