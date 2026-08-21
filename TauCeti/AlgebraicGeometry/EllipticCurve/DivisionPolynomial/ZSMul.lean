@@ -179,7 +179,7 @@ polynomial-level certificate as a `have` and map it with `congrArg polyToField`,
 `polyToField (C X)` into `algebraMap _ _ (AdjoinRoot.of _ X)` while leaving
 `polyToField curve.polynomialX` folded, and the two sides of the goal then share no atoms.
 
-The identification block below adds, at the same revision, `smulX_sub_sub_smulX_add` (`:196`),
+The identification block below adds, at the same revision,
 `smulX_add` (`:300`), `smulY_add_sub_negY` (`:324`), `eq_of_sub_negY_eq` (`:345`),
 `zsmul_point_eq_smulX_smulY` (`:353`),
 `Affine.zsmul_point_ne_zero` (`:398`), `Jacobian.zsmul_point_ne_zero` (`:411`),
@@ -512,21 +512,12 @@ lemma addY_smul_one_smul_one :
   field_simp
   ring
 
-/-- The difference `smulX (n - m) - smulX (n + m)` as a single quotient, with numerator
-`ψ₂ₙψ₂ₘ`: this is `smulX_sub_smulX` at the pair `(n - m, n + m)`, whose index sum and difference
-collapse to `2n` and `2m`. -/
-lemma smulX_sub_sub_smulX_add (add_ne : n + m ≠ 0) (sub_ne : n - m ≠ 0) :
-    smulX (n - m) - smulX (n + m) =
-      polyToField (curve.ψ (2 * n)) * polyToField (curve.ψ (2 * m)) /
-        (polyToField (curve.ψ (n + m)) * polyToField (curve.ψ (n - m))) ^ 2 := by
-  rw [smulX_sub_smulX sub_ne add_ne]
-  simp only [show n + m + (n - m) = 2 * n by ring, show n + m - (n - m) = 2 * m by ring]
-
 /-- **The addition formula for the `X`-coordinate.** `smulX (n + m)` is `smulX (n - m)` less the
 product of the two vertical gaps, divided by the square of the horizontal one — the classical
 chord construction, written in the `smulX`/`smulY` calculus. -/
--- Both sides become quotients of `ψ`'s once `smulY_sub_negY`, `smulX_sub_smulX` and
--- `smulX_sub_sub_smulX_add` are applied; the identity is then pure field algebra.
+-- Both sides become quotients of `ψ`'s once `smulY_sub_negY` and `smulX_sub_smulX` are applied
+-- — the latter twice, the second time at the pair `(n - m, n + m)` whose index sum and difference
+-- collapse to `2n` and `2m`, which is the local `hsub`. The identity is then pure field algebra.
 lemma smulX_add (hm : m ≠ 0) (hn : n ≠ 0) (add_ne : n + m ≠ 0) (sub_ne : n - m ≠ 0) :
     smulX (n + m) = smulX (n - m) -
       (smulY n - pointedCurve.toAffine.negY (smulX n) (smulY n)) *
@@ -535,8 +526,13 @@ lemma smulX_add (hm : m ≠ 0) (hn : n ≠ 0) (add_ne : n + m ≠ 0) (sub_ne : n
   have hψn : polyToField (curve.ψ n) ≠ 0 := polyToField_ψ_ne_zero hn
   have hψa : polyToField (curve.ψ (n + m)) ≠ 0 := polyToField_ψ_ne_zero add_ne
   have hψs : polyToField (curve.ψ (n - m)) ≠ 0 := polyToField_ψ_ne_zero sub_ne
+  have hsub : smulX (n - m) - smulX (n + m) =
+      polyToField (curve.ψ (2 * n)) * polyToField (curve.ψ (2 * m)) /
+        (polyToField (curve.ψ (n + m)) * polyToField (curve.ψ (n - m))) ^ 2 := by
+    rw [smulX_sub_smulX sub_ne add_ne]
+    simp only [show n + m + (n - m) = 2 * n by ring, show n + m - (n - m) = 2 * m by ring]
   rw [eq_sub_iff_add_eq, ← eq_sub_iff_add_eq', smulY_sub_negY hm, smulY_sub_negY hn,
-    smulX_sub_smulX hm hn, smulX_sub_sub_smulX_add add_ne sub_ne]
+    smulX_sub_smulX hm hn, hsub]
   field_simp
 
 /-- **The addition formula for the vertical gap.** The gap at `n + m` is a difference of the gaps
