@@ -50,8 +50,8 @@ end Subring
 
 variable {B : Type*} [CommRing B] [TopologicalSpace B] [IsTopologicalRing B]
 
-/-- The integral closure of an open subring `R` of a topological ring `B` is open: it contains the
-image of `R`, and an additive subgroup containing an open one is open. -/
+/-- The integral closure of an open subring `R` of a topological ring `B` is open: it contains `R`
+itself, as the image of `algebraMap`, and an additive subgroup containing an open one is open. -/
 theorem isOpen_integralClosure_toSubring {R : Subring B} (hR : IsOpen (R : Set B)) :
     IsOpen ((integralClosure R B).toSubring : Set B) :=
   AddSubgroup.isOpen_mono (H₁ := R.toAddSubgroup)
