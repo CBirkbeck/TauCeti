@@ -11,10 +11,12 @@ public import TauCeti.RingTheory.Huber.WeightedRestrictedSeries.Basic
 /-!
 # The weight condition from openness, via the open mapping theorem
 
-`TauCeti.Huber.IsWeightFamily` asks that `Tᵢ^m · U` be a neighbourhood of `0` for every
-neighbourhood `U` — that multiplication by a weight is an open *map*. The roadmap instead phrases
-the condition as each `Tᵢ · A` being *open*, and `IsWeightFamily.of_exists_isOpenMap_mul`'s
-docstring records that the two coincide only under an open mapping theorem.
+`TauCeti.Huber.IsWeightFamily` asks that `closure (Tᵢ^m * U)` be a neighbourhood of `0` for every
+neighbourhood `U` of `0`. That is a condition on the *family*, not on any one weight: openness of
+multiplication by a single `t ∈ Tᵢ` is a sufficient hypothesis supplying it, via
+`IsWeightFamily.of_exists_isOpenMap_mul`, not a restatement of it. The roadmap phrases its own
+condition as each `Tᵢ · A` being *open*, which meets the family condition only under an open
+mapping theorem.
 
 Over a complete Tate ring that theorem is available, as `TauCeti.Huber.IsTateRing.isOpenMap`.
 
@@ -36,7 +38,8 @@ pulling Baire category theory and the whole Henkel stack into the file that mere
 
 * `TauCeti.Huber.isOpenMap_mul_of_isOpen_span`: over a complete Tate ring, an open principal
   ideal makes multiplication by its generator an open map.
-* `TauCeti.Huber.IsWeightFamily.of_isOpen_span`: a family each of whose weights contains an
+* `TauCeti.Huber.IsWeightFamily.of_exists_isOpen_span_singleton`:
+  a family each of whose weights contains an
   element with open principal ideal is a weight family. **Not** the roadmap's collective-span
   hypothesis — see above.
 
@@ -59,10 +62,9 @@ ideal is open, the family is a weight family.
 This is *stronger* than asking that `span (Tᵢ)` be open, which is what the roadmap states; see the
 module docstring for why the two differ and what the collective version needs.
 
-It is `TauCeti.Huber.IsWeightFamily.of_exists_isOpenMap_mul` fed by
-`TauCeti.Huber.isOpenMap_mul_of_isOpen_span`; the completeness and Tate hypotheses are what that
-open mapping theorem needs, and are not used elsewhere. -/
-theorem IsWeightFamily.of_isOpen_span {k : ℕ} {T : Fin k → Set A}
+The completeness and Tate hypotheses are what the open mapping theorem behind it needs; nothing
+else in the statement uses them. -/
+theorem IsWeightFamily.of_exists_isOpen_span_singleton {k : ℕ} {T : Fin k → Set A}
     (h : ∀ i, ∃ t ∈ T i, IsOpen ((Ideal.span {t} : Ideal A) : Set A)) : IsWeightFamily T :=
   IsWeightFamily.of_exists_isOpenMap_mul fun i ↦
     (h i).imp fun _ ht ↦ ⟨ht.1, isOpenMap_mul_of_isOpen_span ht.2⟩
