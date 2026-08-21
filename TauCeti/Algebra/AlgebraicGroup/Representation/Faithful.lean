@@ -108,10 +108,10 @@ private theorem coordinateBialgHom_range_le_faithfulCoefficientAlgebra
     (coordinateBialgHom (H := H) b).toAlgHom.range ≤
       faithfulCoefficientAlgebra (R := R) (H := H) (M := M) := by
   let f := (coordinateBialgHom (H := H) b).toAlgHom
-  let S := faithfulCoefficientAlgebra (R := R) (H := H) (M := M)
-  have htop : (⊤ : Subalgebra R (GeneralLinear.coordinateHopfAlgebra R n)) ≤ S.comap f := by
+  have htop : (⊤ : Subalgebra R (GeneralLinear.coordinateHopfAlgebra R n)) ≤
+      (faithfulCoefficientAlgebra (R := R) (H := H) (M := M)).comap f := by
     -- rewriting `⊤` as the adjoin of the generators produces the generating set, so it need not be
-    -- written out; membership in `S.comap f` then unfolds to the two lemmas above, which are
+    -- written out; the resulting membership goal then unfolds to the two lemmas above, which are
     -- stated for the bundled bialgebra morphism rather than its algebra-hom coercion
     rw [← GeneralLinear.adjoin_coordinateHopfAlgebra_X_union_antipode_X, Algebra.adjoin_le_iff]
     rintro x (⟨⟨i, j⟩, rfl⟩ | ⟨⟨i, j⟩, rfl⟩)
