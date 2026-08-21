@@ -92,14 +92,14 @@ variable (P) in
 /-- The limit's projection at `i`, with its codomain read as that presentation's own completed
 localization rather than as a value of the diagram.
 
-The transport is definitional (`rationalIndexDiagram_obj`) but **load-bearing**, not cosmetic:
+The transport is definitional (`rationalDiagram_obj`) but **load-bearing**, not cosmetic:
 `powerBoundedSubring` needs a `NonarchimedeanRing` instance, and at the diagram-value spelling
-instance search does not find one. Using `presentationLimitπ` unascribed fails with
-`failed to synthesize NonarchimedeanRing ((rationalIndexDiagram P Aplus V).obj i).obj.α` —
-tested. Naming it here puts that ascription in one place instead of at each use site. -/
+instance search does not find one. Using `presentationLimitπ` unascribed fails to synthesize
+`NonarchimedeanRing` at the diagram-value spelling of the codomain — tested. Naming it here puts
+that ascription in one place instead of at each use site. -/
 noncomputable def presentationLimitπCompletion (Aplus : Subring A) (V : Opens ↥(spa Aplus))
     (i : RationalIndex P Aplus V) :
-    presentationLimitObj P Aplus V ⟶ i.pres.completionLocObj :=
+    presentationLimitObj P Aplus V ⟶ i.right.obj.completionLocObj :=
   presentationLimitπ P Aplus V i
 
 variable (P) in
@@ -132,7 +132,7 @@ theorem presentationLimitMap_mem_presentationLimitPowerBoundedSubring {V W : Ope
   rw [mem_presentationLimitPowerBoundedSubring_iff] at hf ⊢
   intro i
   have hπ := congrArg (fun g ↦ g.1.1 f) (presentationLimitMap_π P h i)
-  simpa using hπ ▸ hf ⟨i.pres, i.isOpen_span_num, i.spaRationalOpen_le.trans h⟩
+  simpa using hπ ▸ hf ((StructuredArrow.map (homOfLE h).op).obj i)
 
 end
 

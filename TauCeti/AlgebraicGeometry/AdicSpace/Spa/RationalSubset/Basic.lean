@@ -259,8 +259,8 @@ theorem spaRationalOpen_inf (Aplus : Subring A) (T₁ T₂ : Finset A) (s₁ s�
 `r` and every numerator, multiplied by `r`, is a numerator of the refinement, then the refined
 rational subset is contained in the original.
 
-This is the antitonicity that makes the presentation index of a rational open into a diagram over
-the *opens*: refinement goes one way, containment the other. -/
+This is the antitonicity that makes `rationalInclusion` a functor to `(Opens _)ᵒᵖ`: refinement
+goes one way, containment the other. -/
 theorem rationalSubset_subset_of_cofactor (Aplus : Subring A) {T T' : Finset A} {s s' r : A}
     (hr : s' = s * r) (hT : ∀ t ∈ T, t * r ∈ T') :
     rationalSubset Aplus T' s' ⊆ rationalSubset Aplus T s := by
