@@ -21,8 +21,9 @@ which the abstract ring acts on spaces of modular forms.
 
 ## Main results
 
-* `heckeSlashSumRing_zero`, `heckeSlashSumRing_single`, `heckeSlashSumRing_add`: the
-  computation rules, giving the value on `0`, on a basis element, and on a sum.
+* `heckeSlashSumRing_zero`, `heckeSlashSumRing_single`, `heckeSlashSumRing_add`,
+  `heckeSlashSumRing_one`: the computation rules, giving the value on `0`, on a basis
+  element, on a sum, and on the ring identity.
 -/
 
 open Matrix Matrix.SpecialLinearGroup UpperHalfPlane CongruenceSubgroup DoubleCoset
@@ -59,6 +60,15 @@ noncomputable def heckeSlashSumRing {N : ℕ} [NeZero N] (k : ℤ)
     heckeSlashSumRing (N := N) k (T₁ + T₂) f =
       heckeSlashSumRing (N := N) k T₁ f + heckeSlashSumRing (N := N) k T₂ f :=
   Finsupp.sum_add_index' (by simp) (by intro a b₁ b₂; push_cast; rw [add_smul])
+
+/-- The identity of the Hecke ring acts by the slash sum of the identity double coset. -/
+@[simp] lemma heckeSlashSumRing_one {N : ℕ} [NeZero N] (k : ℤ) (f : ℍ → ℂ) :
+    heckeSlashSumRing (N := N) k 1 f =
+      heckeSlashSum k (1 : HeckeCoset (Delta0 N) ((Gamma1 N).map (mapGL ℚ))
+        ((Gamma1 N).map (mapGL ℚ))) f := by
+  change heckeSlashSumRing (N := N) k (HeckeCosetModule.single ℤ 1 1) f = _
+  rw [heckeSlashSumRing_single]
+  norm_num
 
 end
 
