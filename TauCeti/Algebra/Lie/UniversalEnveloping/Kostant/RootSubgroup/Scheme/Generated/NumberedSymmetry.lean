@@ -361,12 +361,13 @@ private theorem kostantGeneratedDefiningIdeal_comap_numberedSymmetryCoordinateIs
   -- the automorphism intertwines the family along a section of `σ`, its inverse along `σ` itself
   have hhom : J.comap c.hom.hom (ConcreteCategory.bijective_of_isIso c.hom).2 ≤ J := by
     rw [hfam]
-    refine CommHopfAlgCat.comap_commonKernelHopfIdeal_le _ c.hom _ (Function.surjInv hσ) fun i => ?_
+    refine CommHopfAlgCat.comap_commonKernelHopfIdeal_le_of_comp_eq _ c.hom _
+      (Function.surjInv hσ) fun i => ?_
     rw [kostantNumberedSymmetryCoordinateIso_hom_comp_rootSubgroupCoordinateMap
       e h ρ M hM hnil b σ θ hθM hθe (Function.surjInv hσ i), Function.surjInv_eq hσ i]
   have hinv : J.comap c.inv.hom (ConcreteCategory.bijective_of_isIso c.inv).2 ≤ J := by
     rw [hfam]
-    refine CommHopfAlgCat.comap_commonKernelHopfIdeal_le _ c.inv _ σ fun i => ?_
+    refine CommHopfAlgCat.comap_commonKernelHopfIdeal_le_of_comp_eq _ c.inv _ σ fun i => ?_
     rw [← kostantNumberedSymmetryCoordinateIso_hom_comp_rootSubgroupCoordinateMap
       e h ρ M hM hnil b σ θ hθM hθe i, Iso.inv_hom_id_assoc]
   apply le_antisymm hhom
