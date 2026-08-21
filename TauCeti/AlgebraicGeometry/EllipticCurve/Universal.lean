@@ -333,9 +333,11 @@ curve to `ℤ[A₁,⋯,A₆,X,Y]` and its base change to the universal field agr
 
 Upstream this identity is `rfl` and is never named. Here it is not `rfl`: the module system leaves
 `polyToField`'s body unexposed, so the two coefficient families cannot be compared by unfolding,
-and the identity has to be read off `algebraMap_field_eq_comp` instead. Every Jacobian formula
-transported from `Poly` to `Universal.Field` — `map_dblZ`, `map_addZ` and their `XYZ` companions
-all produce `curvePoly.map polyToField` — needs it. -/
+and the identity has to be read off `algebraMap_field_eq_comp` instead. The **curve-dependent**
+Jacobian transports state their left-hand side over `W.map f`, so pushing one from `Poly` to
+`Universal.Field` produces `curvePoly.map polyToField` and needs this lemma to land on
+`pointedCurve`: `map_dblZ`, `map_dblXYZ`, `map_addX`, `map_addY`, `map_addXYZ`. `map_addZ` is
+**not** among them — `addZ` takes no curve argument, so its transport is curve-free. -/
 @[simp] lemma map_polyToField : curvePoly.map polyToField = pointedCurve :=
   (congrArg (WeierstrassCurve.map curve) algebraMap_field_eq_comp).symm
 

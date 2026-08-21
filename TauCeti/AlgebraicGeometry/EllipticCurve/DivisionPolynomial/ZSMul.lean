@@ -265,9 +265,11 @@ decorative: upstream `algebraMap _ _ ∘ smulRing n = smulField n` holds by `rfl
 not, `polyToField`'s body being unexposed.
 
 One prerequisite is added, in `EllipticCurve/Universal.lean`: `map_polyToField`, for the same
-reason. Upstream `curveField = curvePoly.map polyToField` definitionally, so `map_dblZ` and
-`map_addZ` land on `curveField` with no further step; here they land on `curvePoly.map polyToField`
-and the identification has to be cited. Two proofs below cite it. It carries `@[simp]`, as does
+reason. Upstream `curveField = curvePoly.map polyToField` definitionally, so a curve-dependent
+transport such as `map_dblZ` lands on `curveField` with no further step; here it lands on
+`curvePoly.map polyToField` and the identification has to be cited. Both proofs that cite it do so
+after `map_dblZ`. `map_addZ` is not in that class: `addZ` takes no curve argument, so its transport
+never mentions a mapped curve. It carries `@[simp]`, as does
 `ringEval_comp_smulRing`: both are map-specialization normal forms, reducing a mapped universal
 object to the concrete one it names, and neither loops. `api-design` asked for both tags in round
 three, over an initial judgement here that two explicit call sites did not warrant the global
