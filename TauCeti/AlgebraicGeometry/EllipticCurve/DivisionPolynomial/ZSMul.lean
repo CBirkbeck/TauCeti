@@ -46,7 +46,8 @@ the division-polynomial expressions: `addX … = smulX 2` and `addY … = smulY 
   coordinates at `n` — the long-Weierstrass correction that `ω_neg` carries, in the universal
   field.
 * `WeierstrassCurve.Universal.Affine.smulY_sub_negY`: the vertical gap at an `n`-fold multiple is
-  `ψ₂ₙ/ψₙ⁴`, and `smulY_one_ne_negY` is its `n = 1` consequence — `(X, Y)` is not `2`-torsion.
+  `ψ₂ₙ/ψₙ⁴`, whence `smulY_ne_negY` — no nonzero multiple of `(X, Y)` is `2`-torsion — and its
+  `n = 1` case `smulY_one_ne_negY`.
 * `WeierstrassCurve.Universal.Affine.slopeOne_eq_neg_div`: the tangent slope at `(X, Y)` is
   `-Wₓ/ψ₂`, the ratio of the two partial derivatives of the Weierstrass polynomial.
 * `WeierstrassCurve.Universal.Affine.addX_smul_one_smul_one`,
@@ -83,6 +84,11 @@ The tangent-and-doubling block below adds, at the same revision, `smulY_sub_negY
 `smulY_one_sub_negY` (`:233`), `smulY_one_ne_negY` (`:237`), `slopeOne` (`:241`),
 `slopeOne_eq_neg_div` (`:244`), `addX_smul_one_smul_one` (`:261`) and `addY_smul_one_smul_one`
 (`:277`), with the same `ψᵤ` respelling and one added equation lemma, `slopeOne_def`.
+
+One statement is generalised rather than transcribed. The source proves only `smulY_one_ne_negY`
+(`:237`); here `smulY_ne_negY` states it for every `n ≠ 0`, which `smulY_sub_negY` already gives —
+the gap `ψ₂ₙ/ψₙ⁴` is a quotient of nonzero elements — and the source's statement is recovered as
+the `n = 1` case.
 
 None of the source's four private field-level auxiliaries in that range is ported, because none
 of them has a consumer left here.
@@ -258,12 +264,18 @@ lemma smulY_one_sub_negY :
     smulY 1 - pointedCurve.toAffine.negY (smulX 1) (smulY 1) = polyToField (curve.ψ 2) := by
   rw [smulY_sub_negY one_ne_zero, mul_one, ψ_one, map_one, one_pow, div_one]
 
-/-- **The distinguished point is not `2`-torsion.** `(X, Y)` differs from its own negative,
-because the gap between them is `ψ₂`, which is nonzero in the universal field. This is the side
-condition that selects the tangent branch of `Affine.slope` in `slopeOne_eq_neg_div`. -/
-lemma smulY_one_ne_negY : smulY 1 ≠ pointedCurve.toAffine.negY (smulX 1) (smulY 1) := by
-  rw [← sub_ne_zero, smulY_one_sub_negY]
-  exact polyToField_ψ_ne_zero two_ne_zero
+/-- **No nonzero multiple of the distinguished point is `2`-torsion.** The gap computed above is
+`ψ₂ₙ/ψₙ⁴`, a quotient of nonzero elements, so it never vanishes. -/
+lemma smulY_ne_negY (h0 : n ≠ 0) :
+    smulY n ≠ pointedCurve.toAffine.negY (smulX n) (smulY n) := by
+  rw [← sub_ne_zero, smulY_sub_negY h0]
+  exact div_ne_zero (polyToField_ψ_ne_zero (by omega))
+    (pow_ne_zero _ (polyToField_ψ_ne_zero h0))
+
+/-- **The distinguished point itself is not `2`-torsion**, the case of `smulY_ne_negY` that
+selects the tangent branch of `Affine.slope` in `slopeOne_eq_neg_div`. -/
+lemma smulY_one_ne_negY : smulY 1 ≠ pointedCurve.toAffine.negY (smulX 1) (smulY 1) :=
+  smulY_ne_negY one_ne_zero
 
 open scoped Classical in
 /-- The slope of the tangent line to `pointedCurve` at its distinguished point `(X, Y)`: Mathlib's
