@@ -47,6 +47,10 @@ polynomial) with distinguished point `(X,Y)`.
   `Universal.Ring`, so it transports identities over `curveRing`, not over `pointedCurve`, which
   lives over `Universal.Field`. An identity stated there needs its denominators cleared into
   `Universal.Ring` first.
+* `WeierstrassCurve.Universal.map_polyToField`: `curvePoly` pushed along `polyToField` is
+  `pointedCurve`. Named rather than left definitional, because the module system does not expose
+  `polyToField`'s body; this is what lands a Jacobian formula transported from `Poly` on
+  `pointedCurve` rather than on an unreduced base change.
 * `WeierstrassCurve.Universal.ringHom_ext`: two homomorphisms out of `Universal.Ring` agreeing on
   the coefficient ring and on the two distinguished coordinates are equal — the uniqueness half of
   the universal property, since those generate.
@@ -85,15 +89,17 @@ their lemmas), and the specialization API (`specialize`, `polyEval`, `ringEval` 
 compatibility lemmas).
 
 Three groups are **not** simple ports, and are listed among the adaptations below: `ringHom_ext`
-is new; the `CharZero Universal.Ring` instance **replaces** the source's `Poly.two_ne_zero` and
+is new, and so is `map_polyToField` — upstream that identity is definitional and is taken as `rfl`
+inside the `ZSMul.lean` proofs that need it, which this repository's unexposed `polyToField` makes
+impossible; the `CharZero Universal.Ring` instance **replaces** the source's `Poly.two_ne_zero` and
 `Field.two_ne_zero` rather than porting them, and carries the field case with it — Mathlib derives
 `CharZero Universal.Field` from it through `IsFractionRing.charZero`, so no second instance is
 declared. That derivation is why `Mathlib.Algebra.CharP.Algebra` is imported: without it
 `(2 : Universal.Field) ≠ 0`, which the division-polynomial addition formulas need, does not
-synthesize. And
-the equation lemmas for the opaque definitions
-(`polyToField_apply`, `Affine.point_def`, `Jacobian.point_def`, `pointedCurve_Δ`) exist because
-this repository's module system leaves definition bodies unexposed.
+synthesize. And the equation lemmas for the opaque definitions (`polyToField_apply`,
+`Affine.point_def`, `Jacobian.point_def`, `pointedCurve_Δ`) exist because this repository's
+module system leaves definition bodies unexposed.
+
 That file's header reads `Authors: Junyan Xu`; following this repository's convention for adapted
 material, the upstream authorship is credited here rather than in the copyright header.
 
@@ -321,6 +327,18 @@ abbrev curvePoly : WeierstrassCurve Poly := curve.baseChange Poly
 /-- The base change of the universal curve from `ℤ[A₁,⋯,A₆]` to `ℤ[A₁,⋯,A₆,X,Y]/⟨P⟩`
 (the universal ring), where `P` is the Weierstrass polynomial. -/
 abbrev curveRing : WeierstrassCurve Universal.Ring := curve.baseChange Universal.Ring
+
+/-- Pushing `curvePoly` along `polyToField` gives `pointedCurve`: the base change of the universal
+curve to `ℤ[A₁,⋯,A₆,X,Y]` and its base change to the universal field agree along `polyToField`.
+
+Upstream this identity is `rfl` and is never named. Here it is not `rfl`: the module system leaves
+`polyToField`'s body unexposed, so the two coefficient families cannot be compared by unfolding,
+and the identity has to be read off `algebraMap_field_eq_comp` instead. Every Jacobian formula
+transported from `Poly` to `Universal.Field` — `map_dblZ`, `map_addZ` and their `XYZ` companions
+all produce `curvePoly.map polyToField` — needs it. -/
+lemma map_polyToField : curvePoly.map polyToField = pointedCurve :=
+  (congrArg (WeierstrassCurve.map curve) algebraMap_field_eq_comp).symm
+
 end Universal
 
 open Universal
