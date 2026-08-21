@@ -135,8 +135,8 @@ variable [IsTopologicalRing A]
 open Classical in
 /-- If two numerator ideals are open, then so is the ideal spanned by the product of the
 numerator sets after adjoining their respective denominators. This is the admissibility half of
-the intersection formula for rational subsets, and the openness half of the structure presheaf's
-index directedness. -/
+the intersection formula for rational subsets, and the openness half of the presentation-indexed
+presheaf's index filteredness. -/
 theorem isOpen_span_insert_mul_insert (P : PairOfDefinition A)
     {T₁ T₂ : Finset A} {s₁ s₂ : A}
     (hT₁ : IsOpen (Ideal.span (T₁ : Set A) : Set A))

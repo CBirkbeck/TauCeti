@@ -199,7 +199,7 @@ theorem isOpen_val_preimage_rationalSubset (Aplus : Subring A) (T : Finset A) (s
 open _root_.TopologicalSpace in
 /-- **The rational subset `R(T/s)`, as an open of the adic spectrum.** The `Opens` packaging of
 `isOpen_val_preimage_rationalSubset`, for consumers indexed by the opens of `spa A⁺` — the
-structure presheaf and the sheaf criteria.
+presentation-indexed presheaf and the sheaf criteria.
 
 This is the pointwise companion of `spaRationalOpens` (`RationalSubset/Basis.lean`), which is the
 *family* of such opens as a `Set (Opens _)` and cannot name the open a particular `(T, s)`
