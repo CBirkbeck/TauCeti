@@ -116,11 +116,10 @@ given `m` into `ϖⁿ • M₀`.
 `m` is carried into `M₀` by `ϖᵏ` for some `k` (`exists_pow_smul_mem`), and `ϖⁿ⁺ᵏ A₀` is a
 neighbourhood of `0`; the two combine by arithmetic inside `A₀`. -/
 theorem eventually_smul_mem_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
-    (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
-    (hspan : Submodule.span A (M₀ : Set M) = ⊤) (m : M) (n : ℕ) :
+    (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M) {m : M}
+    (hm : m ∈ Submodule.span A (M₀ : Set M)) (n : ℕ) :
     ∀ᶠ a in 𝓝 (0 : P.ringOfDefinition), a • m ∈ (⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ := by
-  obtain ⟨k, hk⟩ := P.exists_pow_smul_mem hs.isTopologicallyNilpotent hs0 M₀
-    (hspan ▸ Submodule.mem_top)
+  obtain ⟨k, hk⟩ := P.exists_pow_smul_mem hs.isTopologicallyNilpotent hs0 M₀ hm
   have hnhd : ∀ᶠ a : P.ringOfDefinition in 𝓝 0,
       (a : A) ∈ (s ^ (n + k)) • (P.ringOfDefinition : Set A) :=
     continuous_subtype_val.continuousAt.preimage_mem_nhds
@@ -149,11 +148,16 @@ theorem submodulesBasis_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudo
   inter i j :=
     ⟨max i j, le_inf (M₀.pow_smul_antitone (le_max_left i j))
       (M₀.pow_smul_antitone (le_max_right i j))⟩
-  smul m i := P.eventually_smul_mem_pow_smul hs hs0 M₀ hspan m i
+  smul _ i := P.eventually_smul_mem_pow_smul hs hs0 M₀ (hspan ▸ Submodule.mem_top) i
 
 /-- **The A-module filter basis.** `SubmodulesBasis.toModuleFilterBasis` only ever produces a
 filter basis over `A₀`; Wedhorn's Proposition 6.18(1) is about an `A`-module topology, so the
-three `ModuleFilterBasis` axioms are re-established with scalars from `A`. -/
+three `ModuleFilterBasis` axioms are re-established with scalars from `A`.
+
+Exposed because `TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis_topology` states an
+equation between this basis's topology and the `SubmodulesBasis` one, which no proof can
+establish without unfolding this body. -/
+@[expose]
 def powSmulModuleFilterBasis (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
     (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
     (hspan : Submodule.span A (M₀ : Set M) = ⊤) : ModuleFilterBasis A M where
@@ -199,6 +203,18 @@ theorem mem_powSmulModuleFilterBasis (P : PairOfDefinition A) {s : A}
     U ∈ (P.powSmulModuleFilterBasis hs hs0 M₀ hspan).toFilterBasis ↔
       ∃ n : ℕ, U = ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ : Submodule _ M) :=
   Iff.rfl
+
+/-- **The `A`-module topology is the `A₀`-level one.** Widening the scalars from `A₀` to `A`
+re-establishes the `ModuleFilterBasis` axioms but leaves the underlying `AddGroupFilterBasis`
+untouched, hence the topology too. This is what lets a consumer transport
+`SubmodulesBasis.nonarchimedean` and the rest of the `A₀`-level API across. -/
+@[simp]
+theorem powSmulModuleFilterBasis_topology (P : PairOfDefinition A) {s : A}
+    (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
+    (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
+    (P.powSmulModuleFilterBasis hs hs0 M₀ hspan).topology
+      = (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).topology :=
+  rfl
 
 /-- **The topology has a countable fundamental system of neighbourhoods of `0`.** The family is
 indexed by `ℕ`, so this is `Filter.HasBasis.isCountablyGenerated` once the basis is transported
