@@ -768,6 +768,9 @@ lemma dblXYZ_smulField : dblXYZ pointedCurve (smulField n) = smulField (2 * n) :
     simp
   refine (equiv_iff_eq_of_Z_eq ?_ (polyToField_ψ_ne_zero (mul_ne_zero two_ne_zero hn))).mp
     (Quotient.exact ?_)
+  -- `equiv_iff_eq_of_Z_eq` compares two `z` components. `dblXYZ_Z` rewrites the left one;
+  -- the right is the third slot of the literal tuple `smulField (2 * n)`, so naming it is
+  -- `rfl` — `smulField` is an `abbrev` over `![φ, ω, ψ]` and the projection reduces.
   · rw [dblXYZ_Z, show smulField (2 * n) (2 : Fin 3) = polyToField (curve.ψ (2 * n)) from rfl,
       ← dblZ_smulPoly, ← map_dblZ polyToField (smulPoly n)]
     simp only [map_polyToField]
@@ -870,12 +873,17 @@ lemma addXYZ_smulField :
       ← map_dblZ polyToField (smulPoly m), smulField_zero]
     simp only [map_polyToField]
   refine (equiv_iff_eq_of_Z_eq ?_ ?_).mp (Quotient.exact ?_)
+  -- Same shape as `dblXYZ_smulField`: `addXYZ_Z` rewrites the left `z` component, and the
+  -- right is the third slot of a `ψ₍ₙ₋ₘ₎`-scaled tuple. Scalar action on `Fin 3 → _` is
+  -- pointwise, so that projection is again `rfl`.
   · rw [addXYZ_Z, show (polyToField (curve.ψ (n - m)) • smulField (n + m)) (2 : Fin 3) =
       polyToField (curve.ψ (n - m)) * polyToField (curve.ψ (n + m)) from rfl]
     have hF := congrArg polyToField (addZ_smulPoly (m := m) (n := n))
     simp only [addZ, smulPoly, smulField, Function.comp_def, fin3_def_ext, map_sub polyToField,
       map_mul polyToField, map_pow polyToField] at hF ⊢
     linear_combination hF
+  -- The nonvanishing side-goal is stated on the same scaled projection; `change` names it
+  -- rather than re-deriving the reduction just performed above.
   · change polyToField (curve.ψ (n - m)) * polyToField (curve.ψ (n + m)) ≠ 0
     exact mul_ne_zero (polyToField_ψ_ne_zero (by omega)) (polyToField_ψ_ne_zero (by omega))
   · have hne : ¬ smulField m ≈ smulField n := fun hequiv ↦ h <| zsmul_point_injective <|
