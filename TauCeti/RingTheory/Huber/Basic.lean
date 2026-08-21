@@ -42,9 +42,6 @@ Huber ring is nonarchimedean, which is exactly the hypothesis under which
 * `TauCeti.Huber.IsAdic.comap`: an adic topology transports along a ring equivalence that is an
   inducing map. This is what lets a ring of definition carry an ideal of definition that natively
   lives in a merely equivalent ring, which is what `TauCeti.Huber.PairOfDefinition` needs.
-* `TauCeti.Huber.IsHuberRing.exists_nhds_zero_forall_isTopologicallyNilpotent`:
-  a Huber ring has a whole neighbourhood of zero of topologically nilpotent elements — the form
-  an argument over a matrix needs, where every entry must be nilpotent at once.
 * `TauCeti.Huber.IsHuberRing.toNonarchimedeanRing`: a Huber ring is nonarchimedean.
 * `TauCeti.Huber.IsHuberRing.isCountablyGenerated_nhds_zero`: its neighbourhoods of zero are
   countably generated. With the previous bullet these are exactly the two hypotheses Henkel's open
@@ -357,6 +354,18 @@ theorem isTopologicallyNilpotent_of_mem_idealOfDefinition (P : PairOfDefinition 
   refine (P.mem_idealImage n).mpr ⟨a ^ m, ?_, by push_cast; ring⟩
   exact Ideal.pow_le_pow_right hm (Ideal.pow_mem_pow ha m)
 
+/-- **An element of the image of `Iⁿ` is topologically nilpotent**, for `n ≠ 0`. Unpacking the
+membership gives an element of `Iⁿ ⊆ I`, so `isTopologicallyNilpotent_of_mem_idealOfDefinition`
+applies. This is the form consumers meet, `idealImage` being what
+`TauCeti.Huber.PairOfDefinition.hasBasis_nhds_zero` is stated with.
+
+`n ≠ 0` is needed, not incidental: `I ^ 0 = ⊤`, so `idealImage 0` is the image of the whole ring
+of definition and its elements are not topologically nilpotent in general. -/
+theorem isTopologicallyNilpotent_of_mem_idealImage (P : PairOfDefinition A) {n : ℕ} (hn : n ≠ 0)
+    {a : A} (ha : a ∈ P.idealImage n) : IsTopologicallyNilpotent a := by
+  obtain ⟨y, hy, rfl⟩ := (P.mem_idealImage n).mp ha
+  exact P.isTopologicallyNilpotent_of_mem_idealOfDefinition (Ideal.pow_le_self hn hy)
+
 /-- A ring admitting a pair of definition is nonarchimedean. -/
 theorem toNonarchimedeanRing [IsTopologicalRing A] (P : PairOfDefinition A) :
     NonarchimedeanRing A where
@@ -483,28 +492,6 @@ point — it is what lets a Huber ring be handed to that theorem without the cal
 anything. -/
 instance IsHuberRing.isCountablyGenerated_nhds_zero : (𝓝 (0 : A)).IsCountablyGenerated :=
   IsHuberRing.nonempty_pairOfDefinition.elim fun P ↦ P.hasBasis_nhds_zero.isCountablyGenerated
-
-/-- **A Huber ring has a neighbourhood of zero all of whose elements are topologically
-nilpotent.** The image of an ideal of definition is such a neighbourhood: it is open, and its
-elements are topologically nilpotent because their powers run through the images of the `Iⁿ`,
-which are a basis of `𝓝 0`.
-
-Being able to *choose* a whole neighbourhood, rather than one element at a time, is what
-arguments over a matrix need — every entry drawn from `W` is then topologically nilpotent at
-once, which is the hypothesis of Nakayama for such a matrix. Note the statement asks nothing of
-`A` beyond being Huber; no pseudouniformiser and no Tate hypothesis appear.
-
-Provenance: AINTLIB (`github.com/CBirkbeck/AINTLIB` @ `37bbdaeb9`, Apache-2.0,
-`projects/AdicSpaces/`) states the same shape under `[IsTateRing A]`, taking `W = ϖ • A°` for a
-pseudouniformiser `ϖ`. Consulted, not ported: this version assumes only that `A` is Huber, where
-no pseudouniformiser need exist. -/
-theorem IsHuberRing.exists_nhds_zero_forall_isTopologicallyNilpotent :
-    ∃ W ∈ 𝓝 (0 : A), ∀ a ∈ W, IsTopologicallyNilpotent a :=
-  IsHuberRing.nonempty_pairOfDefinition.elim fun P ↦
-    ⟨(P.idealImage 1 : Set A), (P.isOpen_idealImage 1).mem_nhds (P.idealImage 1).zero_mem,
-      fun a (ha : a ∈ P.idealImage 1) ↦ by
-        obtain ⟨y, hy, rfl⟩ := (P.mem_idealImage 1).mp ha
-        exact P.isTopologicallyNilpotent_of_mem_idealOfDefinition (by simpa using hy)⟩
 
 /-- Wedhorn Corollary 6.4: the power-bounded subring of a Huber ring is open. -/
 theorem isOpen_powerBoundedSubring : IsOpen (powerBoundedSubring A : Set A) := by
