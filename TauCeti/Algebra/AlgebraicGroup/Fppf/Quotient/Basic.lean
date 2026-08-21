@@ -1,6 +1,7 @@
 /-
 Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
 module
 
@@ -76,6 +77,15 @@ noncomputable def pointwiseQuotientPresheafGrp
   groupFunctorGrp
     (pointwiseQuotientPresheaf H I hI ⋙ GrpCat.uliftFunctor.{u + 1, u})
 
+/-- Unfold the pointwise quotient presheaf group object to the group object associated to its
+group-valued functor. -/
+theorem pointwiseQuotientPresheafGrp_def
+    (H : _root_.CommHopfAlgCat.{u} R) (I : HopfIdeal R H) (hI : I.IsNormal) :
+    pointwiseQuotientPresheafGrp H I hI =
+      groupFunctorGrp
+        (pointwiseQuotientPresheaf H I hI ⋙ GrpCat.uliftFunctor.{u + 1, u}) := by
+  rw [pointwiseQuotientPresheafGrp.eq_1]
+
 /-- The quotient projection as a morphism of group objects in type-valued presheaves. -/
 noncomputable def pointwiseQuotientPresheafGrpProjection
     (H : _root_.CommHopfAlgCat.{u} R) (I : HopfIdeal R H) (hI : I.IsNormal) :
@@ -114,6 +124,18 @@ theorem pointwiseQuotientPresheafGrpProjection_hom_hom
   rw [pointwiseQuotientPresheafGrpProjection.eq_1]
   rfl
 
+/-- Evaluating the universe-lifted pointwise quotient projection amounts to applying the
+pointwise projection and then lifting its value. -/
+theorem pointwiseQuotientPresheafProjection_ulift_app_apply
+    (H : _root_.CommHopfAlgCat.{u} R) (I : HopfIdeal R H) (hI : I.IsNormal)
+    (A : ((CommAlgCat.{u} R)ᵒᵖ)ᵒᵖ)
+    (x : ULift (HopfAlgebra.points (R := R) (H := H) A.unop.unop)) :
+    ((Functor.whiskerRight
+      (Functor.whiskerRight (pointwiseQuotientPresheafProjection H I hI)
+        GrpCat.uliftFunctor.{u + 1, u}) (forget GrpCat.{u + 1})).app A) x =
+      ULift.up (((pointwiseQuotientPresheafProjection H I hI).app A) x.down) :=
+  rfl
+
 /-- The fppf quotient sheaf associated to a normal Hopf ideal, as a group object in type-valued
 fppf sheaves.
 
@@ -126,6 +148,16 @@ noncomputable def fppfQuotientSheaf (H : _root_.CommHopfAlgCat.{u} R)
     Functor.Monoidal.ofChosenFiniteProducts _
   exact (presheafToSheaf (CommAlgCat.fppfTopology R) (Type (u + 1))).mapGrp.obj
     (pointwiseQuotientPresheafGrp H I hI)
+
+/-- Unfold the fppf quotient group object to the image of its pointwise presheaf group object
+under sheafification. -/
+theorem fppfQuotientSheaf_def (H : _root_.CommHopfAlgCat.{u} R)
+    (I : HopfIdeal R H) (hI : I.IsNormal) :
+    fppfQuotientSheaf H I hI =
+      let F := presheafToSheaf (CommAlgCat.fppfTopology R) (Type (u + 1))
+      let _ : F.Monoidal := Functor.Monoidal.ofChosenFiniteProducts F
+      F.mapGrp.obj (pointwiseQuotientPresheafGrp H I hI) := by
+  rw [fppfQuotientSheaf.eq_1]
 
 /-- The canonical morphism from the fppf sheaf of points of `G` to the fppf quotient sheaf
 `G / V(I)`. -/
