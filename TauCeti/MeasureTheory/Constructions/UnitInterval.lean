@@ -165,13 +165,14 @@ theorem volume_preimage_cellIdx (hi : i < m) :
 variable {V E : Type*} [Fintype V] [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
 
 open scoped Classical in
-/-- **The cells cut the cube into boxes, exactly one of which holds a given point.** Evaluating a
-function on the cell indices of `x` is the same as summing its indicator contributions over the
-boxes indexed by all `#V`-tuples of cells.
+/-- **The cells cut the cube into products of fibres, exactly one of which holds a given point.**
+Evaluating a function on the cell indices of `x` is the same as summing its indicator contributions
+over the products `univ.pi fun v => cellIdx m ⁻¹' {ψ v}` indexed by all `#V`-tuples of cells.
 
 Nothing measure-theoretic is involved: the boxes are just preimages of the cell map, and `E` needs
 only the additive structure that `Set.indicator` and the sum require. -/
-private theorem eq_sum_indicator_cellBox {V E : Type*} [Fintype V] [AddCommMonoid E] (hm : 0 < m)
+private theorem pi_comp_cellIdx_eq_sum_indicator {V E : Type*} [Fintype V] [AddCommMonoid E]
+    (hm : 0 < m)
     (f : (V → ℕ) → E) (x : V → I) :
     f (fun v => cellIdx m (x v))
       = ∑ ψ : V → Fin m, (univ.pi fun v => cellIdx m ⁻¹' {((ψ v : ℕ))}).indicator
@@ -214,7 +215,8 @@ theorem integral_pi_comp_cellIdx_eq_inv_smul_sum (hm : 0 < m) (f : (V → ℕ) �
               (fun _ => f fun v => (ψ v : ℕ)) x
             ∂(Measure.pi fun _ : V => (volume : Measure I)) := by
         rw [← integral_finsetSum _ fun ψ _ => (integrable_const _).indicator (hboxMeas ψ)]
-        exact integral_congr_ae (Filter.Eventually.of_forall (eq_sum_indicator_cellBox hm f))
+        exact integral_congr_ae
+          (Filter.Eventually.of_forall (pi_comp_cellIdx_eq_sum_indicator hm f))
     _ = ∑ ψ : V → Fin m, ((m : ℝ)⁻¹) ^ Fintype.card V • f fun v => (ψ v : ℕ) := by
         refine Finset.sum_congr rfl fun ψ _ => ?_
         rw [integral_indicator_const _ (hboxMeas ψ), measureReal_def, hboxVol ψ]
