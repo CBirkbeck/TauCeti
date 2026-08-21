@@ -9,18 +9,21 @@ public import TauCeti.RingTheory.Huber.Basic
 public import Mathlib.Topology.Algebra.Nonarchimedean.Bases
 
 /-!
-# The `ϖⁿ • M₀` submodules basis on a module over a Tate ring
+# The `ϖⁿ • M₀` submodules basis, and the `A`-module topology it induces
 
 Let `A` be a Tate ring, `A₀` a ring of definition, `ϖ ∈ A₀` a pseudouniformiser, and `M₀` an
 `A₀`-submodule of an `A`-module `M` with `A · M₀ = M`. This file exhibits the family `ϖⁿ • M₀`
 as a `SubmodulesBasis`, which is Mathlib's machinery for turning such a family into a topology;
 `SubmodulesBasis.topology` and `.nonarchimedean` then apply.
 
-**What is proved here is the basis, not an identification.** Wedhorn's Remark 6.19 says this
-family is a fundamental system of neighbourhoods of `0` for *the* topology of his Proposition
-6.18(1), and 6.18(1) asserts that topology is the unique complete first-countable `A`-module
-topology. Neither the uniqueness nor the identification is proved below, which is why the file is
-named for the basis rather than for a topology.
+**Two of Proposition 6.18(1)'s clauses are established for the induced topology** — that it is an
+`A`-module topology (`fgModuleFilterBasis`, since `SubmodulesBasis.toModuleFilterBasis` gives only
+an `A₀`-module one) and that it is first countable at `0` (`isCountablyGenerated_nhds_zero`).
+
+**Completeness and uniqueness are not.** 6.18(1) asserts the topology is the *unique* complete
+first-countable `A`-module topology on a finitely generated module; neither half is proved below,
+so this is a construction of that topology's neighbourhood basis together with two of its
+properties, not an identification with the topology 6.18(1) characterises.
 
 **The hypotheses are weaker than Wedhorn's, deliberately.** Remark 6.19 assumes `A` noetherian
 and `M₀` finitely generated; no declaration below uses either — only `A · M₀ = M`. Finite
@@ -37,6 +40,10 @@ definition, so a caller holding `powerBoundedSubring A` can use them.
 * `TauCeti.Huber.PairOfDefinition.pow_smul_mem_pow_smul`: the `A`-side bridge — an element of
   `M₀` scaled by the ambient `sⁿ` lands in `ϖⁿ • M₀`, so consumers need no coercion plumbing.
 * `TauCeti.Huber.pow_smul_antitone`: the family is antitone, over any subring.
+* `TauCeti.Huber.PairOfDefinition.fgModuleFilterBasis`: the same family as a filter basis for
+  scalars from `A`, not just from `A₀` — Proposition 6.18(1)'s `A`-module clause.
+* `TauCeti.Huber.PairOfDefinition.isCountablyGenerated_nhds_zero`: the induced topology has a
+  countable fundamental system of neighbourhoods of `0` — 6.18(1)'s first-countability clause.
 
 ## Implementation notes
 
@@ -196,5 +203,72 @@ theorem submodulesBasis_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudo
     ⟨max i j, le_inf (pow_smul_antitone M₀ (le_max_left i j))
       (pow_smul_antitone M₀ (le_max_right i j))⟩
   smul m i := P.eventually_smul_mem_pow_smul hs hs0 M₀ hspan m i
+
+/-- **The A-module filter basis.** `SubmodulesBasis.toModuleFilterBasis` only ever produces a
+filter basis over `A₀`; Wedhorn's Proposition 6.18(1) is about an `A`-module topology, so the
+three `ModuleFilterBasis` axioms are re-established with scalars from `A`. -/
+def fgModuleFilterBasis (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
+    (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
+    (hspan : Submodule.span A (M₀ : Set M) = ⊤) : ModuleFilterBasis A M where
+  __ := (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).toModuleFilterBasis.toAddGroupFilterBasis
+  smul' := by
+    -- `V = A₀` works because each `ϖⁿ • M₀` is an `A₀`-submodule; Mathlib's `A₀`-level
+    -- construction can take `V = univ` for the same reason one level down.
+    rintro _ ⟨n, rfl⟩
+    refine ⟨(P.ringOfDefinition : Set A),
+      P.isOpen_ringOfDefinition.mem_nhds P.ringOfDefinition.zero_mem, _, ⟨n, rfl⟩, ?_⟩
+    rintro _ ⟨a, ha, m, hm, rfl⟩
+    exact ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀).smul_mem ⟨a, ha⟩ hm
+  smul_left' := by
+    rintro a _ ⟨n, rfl⟩
+    obtain ⟨k, hk⟩ := P.exists_pow_mul_mem hs.isTopologicallyNilpotent a
+    refine ⟨_, ⟨n + k, rfl⟩, fun x hx ↦ ?_⟩
+    simp only [SetLike.mem_coe, Set.mem_preimage, Submodule.mem_smul_pointwise_iff_exists] at hx ⊢
+    obtain ⟨y, hy, rfl⟩ := hx
+    refine ⟨(⟨s ^ k * a, hk⟩ : P.ringOfDefinition) • y, M₀.smul_mem _ hy, ?_⟩
+    change ((((⟨s, hs0⟩ : P.ringOfDefinition) ^ n : P.ringOfDefinition)) : A) •
+        (((((⟨s ^ k * a, hk⟩ : P.ringOfDefinition))) : A) • y)
+      = a • ((((⟨s, hs0⟩ : P.ringOfDefinition) ^ (n + k) : P.ringOfDefinition)) : A) • y
+    rw [smul_smul, smul_smul]
+    congr 1
+    push_cast
+    rw [pow_add]; ring
+  smul_right' := by
+    rintro m _ ⟨n, rfl⟩
+    obtain ⟨k, hk⟩ := P.exists_pow_smul_mem hs.isTopologicallyNilpotent hs0 M₀
+      (hspan ▸ Submodule.mem_top)
+    filter_upwards [(hs.hasBasis_nhds_zero P).mem_of_mem (i := n + k) trivial] with c hc
+    obtain ⟨b, hb, hcb⟩ := hc
+    have hmem : (⟨b, hb⟩ : P.ringOfDefinition) • (s ^ k • m) ∈ M₀ := M₀.smul_mem _ hk
+    have he : c • m = ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) •
+        ((⟨b, hb⟩ : P.ringOfDefinition) • (s ^ k • m)) := by
+      have hscal : ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • (⟨b, hb⟩ : P.ringOfDefinition)) •
+          (s ^ k) = c := by
+        change ((((⟨s, hs0⟩ : P.ringOfDefinition) ^ n * ⟨b, hb⟩ : P.ringOfDefinition)) : A)
+            * s ^ k = c
+        push_cast
+        rw [← hcb, pow_add]; ring
+      rw [← smul_assoc, ← smul_assoc, hscal]
+    rw [SetLike.mem_coe, he]
+    exact Submodule.smul_mem_pointwise_smul _ _ _ hmem
+
+/-- **The topology has a countable fundamental system of neighbourhoods of `0`.** The family is
+indexed by `ℕ`, so this is `Filter.HasBasis.isCountablyGenerated` once the basis is transported
+off `SubmodulesBasis`'s `Set`-indexed form. -/
+theorem isCountablyGenerated_nhds_zero (P : PairOfDefinition A) {s : A}
+    (hs : IsPseudoUniformizer s) (hs0 : s ∈ P.ringOfDefinition)
+    (M₀ : Submodule P.ringOfDefinition M) (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
+    (@nhds M (P.submodulesBasis_pow_smul hs hs0 M₀ hspan).topology
+      0).IsCountablyGenerated := by
+  set hB := P.submodulesBasis_pow_smul hs hs0 M₀ hspan
+  let _ := hB.topology
+  have hbasis : (𝓝 (0 : M)).HasBasis (fun _ : ℕ ↦ True)
+      fun n ↦ ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ : Set M) := by
+    refine hB.toModuleFilterBasis.toAddGroupFilterBasis.nhds_zero_hasBasis.to_hasBasis ?_ ?_
+    · rintro _ ⟨n, rfl⟩
+      exact ⟨n, trivial, subset_rfl⟩
+    · rintro n -
+      exact ⟨_, ⟨n, rfl⟩, subset_rfl⟩
+  exact hbasis.isCountablyGenerated
 
 end TauCeti.Huber.PairOfDefinition
