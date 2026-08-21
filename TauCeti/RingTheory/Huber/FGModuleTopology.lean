@@ -21,6 +21,7 @@ such a family into a topology; `SubmodulesBasis.topology` and `.nonarchimedean` 
 
 ## Main results
 
+* `TauCeti.Huber.PairOfDefinition.pow_add_smul_mem`: `M₀` absorbs further powers of `ϖ`.
 * `TauCeti.Huber.PairOfDefinition.exists_pow_smul_mem`: a power of `ϖ` carries any element of
   `M` into `M₀`. This is where `A · M₀ = M` is spent.
 * `TauCeti.Huber.PairOfDefinition.fgFamily_submodulesBasis`: the family is a `SubmodulesBasis`.
@@ -75,6 +76,20 @@ theorem exists_pow_mul_mem (P : PairOfDefinition A) {s : A} (hs : IsTopologicall
   ((hs.mul_const c).eventually
     (P.isOpen_ringOfDefinition.mem_nhds (by simp))).exists
 
+omit [IsTopologicalRing A] in
+/-- `M₀` absorbs further powers of `s`: raising the exponent cannot leave it, because the extra
+factor is itself a scalar from `A₀`. -/
+theorem pow_add_smul_mem (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOfDefinition)
+    (M₀ : Submodule P.ringOfDefinition M) (j k : ℕ) (z : M) (hz : s ^ k • z ∈ M₀) :
+    s ^ (j + k) • z ∈ M₀ := by
+  have he : s ^ (j + k) • z = (⟨s, hs0⟩ : P.ringOfDefinition) ^ j • (s ^ k • z) := by
+    rw [← smul_assoc]
+    congr 1
+    change s ^ (j + k) = (((⟨s, hs0⟩ : P.ringOfDefinition) ^ j : P.ringOfDefinition) : A) * s ^ k
+    push_cast
+    rw [pow_add]
+  rw [he]; exact M₀.smul_mem _ hz
+
 /-- **A power of `s` carries any element of `M = A · M₀` into `M₀`.** This is where the
 hypothesis `A · M₀ = M` is spent, and it is what makes the `smul` condition of
 `SubmodulesBasis` an identity inside `A₀`. -/
@@ -82,15 +97,6 @@ theorem exists_pow_smul_mem (P : PairOfDefinition A) {s : A} (hs : IsTopological
     (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
     (hspan : Submodule.span A (M₀ : Set M) = ⊤) (m : M) :
     ∃ k : ℕ, s ^ k • m ∈ M₀ := by
-  have key : ∀ (j k : ℕ) (z : M), s ^ k • z ∈ M₀ → s ^ (j + k) • z ∈ M₀ := by
-    intro j k z hz
-    have he : s ^ (j + k) • z = (⟨s, hs0⟩ : P.ringOfDefinition) ^ j • (s ^ k • z) := by
-      rw [← smul_assoc]
-      congr 1
-      change s ^ (j + k) = (((⟨s, hs0⟩ : P.ringOfDefinition) ^ j : P.ringOfDefinition) : A) * s ^ k
-      push_cast
-      rw [pow_add]
-    rw [he]; exact M₀.smul_mem _ hz
   have hm : m ∈ Submodule.span A (M₀ : Set M) := hspan ▸ Submodule.mem_top
   induction hm using Submodule.span_induction with
   | mem x hx => exact ⟨0, by simpa using hx⟩
@@ -100,10 +106,10 @@ theorem exists_pow_smul_mem (P : PairOfDefinition A) {s : A} (hs : IsTopological
       refine ⟨max kx ky, ?_⟩
       have hx' : s ^ (max kx ky) • x ∈ M₀ := by
         have he : max kx ky = (max kx ky - kx) + kx := by omega
-        rw [he]; exact key _ _ _ hkx
+        rw [he]; exact P.pow_add_smul_mem hs0 M₀ _ _ _ hkx
       have hy' : s ^ (max kx ky) • y ∈ M₀ := by
         have he : max kx ky = (max kx ky - ky) + ky := by omega
-        rw [he]; exact key _ _ _ hky
+        rw [he]; exact P.pow_add_smul_mem hs0 M₀ _ _ _ hky
       rw [smul_add]; exact M₀.add_mem hx' hy'
   | smul c x _ ih =>
       obtain ⟨k, hk⟩ := ih
