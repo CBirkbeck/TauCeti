@@ -7,6 +7,7 @@ module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basis
 public import TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated.RefinementCategory
+public import Mathlib.CategoryTheory.Functor.KanExtension.Pointwise
 public import Mathlib.CategoryTheory.Sites.Sheaf
 public import Mathlib.CategoryTheory.Sites.Spaces
 public import TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Limits
@@ -21,12 +22,19 @@ Wedhorn's `𝒪_X` is an initiality statement about the indexing functor which i
 here, so the declarations are named for the construction rather than for the target — see
 "Why the index is presentations and not subsets" below.
 
-The index is `RationalIndex`: a presentation with open numerator ideal — the rational-basis
-condition — whose rational subset is contained in `V`, ordered by refinement.
-`CompleteSeparated/RefinementCategory.lean` already makes the assignment `p ↦ A⟨p.num / p.den⟩`
-functorial on presentations, so the diagram is obtained by restricting that functor along the
-forgetful map, and the value is its limit — which exists because
-`CompleteSeparatedTopCommRingCat` has all small limits.
+The presheaf is Mathlib's **pointwise right Kan extension** of `rationalDiagram` along
+`rationalInclusion`. `CompleteSeparated/RefinementCategory.lean` already makes the assignment
+`p ↦ A⟨p.num / p.den⟩` functorial on presentations; `rationalDiagram` restricts that functor to
+the presentations with open numerator ideal — the rational-basis condition — and
+`rationalInclusion` records which open each of them presents, contravariantly, since refinement
+shrinks the rational subset.
+
+Unfolded, the extension's value on `V` is the limit of `A⟨T/s⟩` over the rational presentations
+whose open is contained in `V` — a limit that exists because `CompleteSeparatedTopCommRingCat` has
+all small limits — and its action on a containment is the reindexing of that limit. The index of
+that limit is `StructuredArrow (op V) rationalInclusion`, abbreviated `RationalIndex`: nothing
+about it is built here, so Mathlib's limit, `StructuredArrow` and Kan extension APIs all apply
+directly.
 
 Everything here is stated for an arbitrary `Subring` of a topological ring carrying a pair of
 definition. Wedhorn's standing hypotheses — a Huber ring, a ring of integral elements — are
@@ -36,12 +44,15 @@ not the hypotheses.
 
 ## Main definitions
 
-* `TauCeti.ValuationSpectrum.RationalIndex` : the index category for an open.
-* `TauCeti.ValuationSpectrum.rationalIndexDiagram` : the diagram it indexes.
-* `TauCeti.ValuationSpectrum.presentationLimitObj` : the limit over the index, the candidate
-  for `𝒪_X(V)`.
+* `TauCeti.ValuationSpectrum.isRational` : presenting a member of the rational basis.
+* `TauCeti.ValuationSpectrum.rationalInclusion` : the open each of them presents.
+* `TauCeti.ValuationSpectrum.rationalDiagram` : the diagram they index.
+* `TauCeti.ValuationSpectrum.RationalIndex` : the index at an open, a `StructuredArrow`.
+* `TauCeti.ValuationSpectrum.presentationLimitPresheaf` : the presheaf, the Kan extension.
+* `TauCeti.ValuationSpectrum.presentationLimitObj` : its value, the candidate for `𝒪_X(V)`.
+* `TauCeti.ValuationSpectrum.presentationLimitCone` : the cone that value is a limit of, with
+  `presentationLimitIsLimit` its universal property.
 * `TauCeti.ValuationSpectrum.presentationLimitMap` : the restriction morphism of a containment.
-* `TauCeti.ValuationSpectrum.presentationLimitPresheaf` : the presheaf itself.
 * `TauCeti.Huber.PairOfDefinition.HasSheafyPresentationLimit` : the presentation-indexed
   presheaf is a sheaf. It is named for the presheaf it actually tests: until the initiality
   statement is proved, that presheaf is not known to be Wedhorn's `𝒪_X`, so this is not yet the
@@ -55,9 +66,11 @@ not the hypotheses.
 * `presentationLimitPresheaf_obj`, `presentationLimitPresheaf_map` : its simp interface.
 * `presentationLimitMap_π` : the characteristic equation of the restriction morphism, and
   `presentationLimitMap_refl` / `presentationLimitMap_comp` : its identity and composition laws,
-  which is what the presheaf's functor laws are.
-* `RationalIndex.directed` : the index is directed, so presentations of the same subset are
-  constrained through a common refinement.
+  which are the presheaf's functor laws.
+* `presentationLimitπ_map` and `presentationLimitπ_restrictionHom` : the cone equation, stated
+  both as `Cone.w` and at the shape `simp` leaves a goal in.
+* The `IsFilteredOrEmpty` instance on `RationalIndex` : two indices have a common refinement, so
+  presentations of the same subset are constrained through one.
 
 Both `presentationLimitObj` and `presentationLimitMap` are **sealed**, so a consumer never
 depends on the object being Mathlib's chosen `limit`. The interface is the universal property,
@@ -113,7 +126,7 @@ needs. Its `IsSheafy` is a typeclass on the ring; the `P`-relative Prop here is 
 
 namespace TauCeti.ValuationSpectrum
 
-open CategoryTheory CategoryTheory.Limits _root_.TopologicalSpace TauCeti.Huber
+open CategoryTheory CategoryTheory.Limits Opposite _root_.TopologicalSpace TauCeti.Huber
 
 public section
 
@@ -122,134 +135,175 @@ universe v
 variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
 omit [IsTopologicalRing A] in
-/-- **The index of the presentation-indexed limit**: presentations with open numerator ideal —
-the rational-basis condition of `spaRationalFamily` — whose rational subset is contained in
-`V`. Without the openness condition the index would range over presentations outside the
-rational basis.
+/-- **A presentation is rational when it presents a member of the rational basis**: when its
+numerator ideal is open.
 
 The openness condition is necessary but not evidently sufficient: `Presentation` also carries
 `hasDenominatorPower`, which this repository nowhere derives from `IsOpen (Ideal.span num)`. So
-the index may be a proper subfamily of the rational opens contained in `V`, and showing it covers
-all of them is part of the outstanding comparison, not something recorded here. -/
-@[ext]
-structure RationalIndex (P : PairOfDefinition A) (Aplus : Subring A)
-    (V : Opens ↥(spa Aplus)) where
-  /-- The presentation. -/
-  pres : P.Presentation
-  /-- Its numerator ideal is open: the presentation presents a member of the rational basis. -/
-  isOpen_span_num : IsOpen (Ideal.span (pres.num : Set A) : Set A)
-  /-- Its rational subset is contained in `V`. -/
-  spaRationalOpen_le : spaRationalOpen Aplus pres.num pres.den ≤ V
+these may present a proper subfamily of the rational opens contained in a given open, and showing
+they cover all of them is part of the outstanding comparison, not something recorded here. -/
+def isRational (P : PairOfDefinition A) : ObjectProperty P.Presentation :=
+  fun p ↦ IsOpen (Ideal.span (p.num : Set A) : Set A)
 
 variable {P : PairOfDefinition A} {Aplus : Subring A} {V : Opens ↥(spa Aplus)}
 
-/-- Refinement of the underlying presentations orders the index. -/
-instance : Preorder (RationalIndex P Aplus V) :=
-  Preorder.lift RationalIndex.pres
+variable (P) in
+/-- **Each rational presentation names the rational open it presents.** Refinement of
+presentations shrinks the rational subset — this is `spaRationalOpen_le_of_cofactor` — so the
+assignment is contravariant, and the codomain is taken in `(Opens _)ᵒᵖ` to record that.
 
-omit [IsTopologicalRing A] in
-/-- The order on the index is refinement of the underlying presentations. -/
-theorem RationalIndex.le_def {i j : RationalIndex P Aplus V} : i ≤ j ↔ i.pres ≤ j.pres :=
-  Iff.rfl
-
-/-- **The index is directed**: the product presentation of two indices is again an index — its
-numerator span is open by `isOpen_span_insert_mul_insert` (this is what the insert-augmented
-numerators of `Presentation.commonRefinement` are for), and its rational open is the
-intersection of the
-factors' (`spaRationalOpen_inf`), hence contained in `V` through either factor.
-Presentations
-of the same rational subset are therefore constrained through a common refinement — weaker than
-identifying their components, which needs the unproved initiality. -/
-theorem RationalIndex.directed (i j : RationalIndex P Aplus V) :
-    ∃ k : RationalIndex P Aplus V, i ≤ k ∧ j ≤ k := by
-  classical
-  refine ⟨⟨i.pres.commonRefinement j.pres, ?_, ?_⟩,
-    i.pres.le_commonRefinement_left j.pres, i.pres.le_commonRefinement_right j.pres⟩
-  · rw [PairOfDefinition.Presentation.commonRefinement_num]
-    exact isOpen_span_insert_mul_insert P i.isOpen_span_num j.isOpen_span_num
-  · rw [PairOfDefinition.Presentation.commonRefinement_num,
-      PairOfDefinition.Presentation.commonRefinement_den,
-      ← spaRationalOpen_inf]
-    exact inf_le_left.trans i.spaRationalOpen_le
-
-/-- The directedness instance. It is **not** what makes the limit exist —
-`CompleteSeparatedTopCommRingCat` has all small limits
-(`Topology/Category/TopCommRingCat/CompleteSeparated/Limits.lean`) — and nothing in this file
-consumes it. It is recorded for the eventual cofinality/initiality argument. -/
-instance : IsDirected (RationalIndex P Aplus V) (· ≤ ·) :=
-  ⟨RationalIndex.directed⟩
+`@[expose]`, like `presentationFunctor`: `rationalDiagram` below composes with this functor, and
+the equations identifying the composite's values are unstatable unless it unfolds
+definitionally — their two sides otherwise live in different hom-types. -/
+@[expose]
+def rationalInclusion (Aplus : Subring A) :
+    (isRational P).FullSubcategory ⥤ (Opens ↥(spa Aplus))ᵒᵖ where
+  obj p := op (spaRationalOpen Aplus p.obj.num p.obj.den)
+  map {p q} h := (homOfLE (show spaRationalOpen Aplus q.obj.num q.obj.den ≤
+      spaRationalOpen Aplus p.obj.num p.obj.den by
+    obtain ⟨r, hr, hT⟩ :=
+      PairOfDefinition.Presentation.le_def.mp (leOfHom ((isRational P).ι.map h))
+    exact spaRationalOpen_le_of_cofactor Aplus hr hT)).op
+  map_id _ := rfl
+  map_comp _ _ := rfl
 
 variable (P) in
-/-- Forgetting the containment is a functor to the category of all presentations.
-
-`@[expose]`, like `presentationFunctor`: the equation `rationalIndexDiagram_map` below is
-unstatable unless the functors composing the diagram unfold definitionally — its two sides
-otherwise live in different hom-types. -/
+/-- **The diagram the limit is taken over**: each rational presentation contributes its completed
+rational localization `A⟨T/s⟩`, and a refinement contributes its restriction morphism. -/
 @[expose]
-def rationalIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
-    RationalIndex P Aplus V ⥤ P.Presentation :=
-  Monotone.functor (f := RationalIndex.pres) fun _ _ h ↦ h
+noncomputable def rationalDiagram :
+    (isRational P).FullSubcategory ⥤ CompleteSeparatedTopCommRingCat.{v} :=
+  (isRational P).ι ⋙ P.presentationFunctor
 
-variable (P) in
-/-- **The diagram the limit is taken over**: each presentation with open numerator ideal and
-rational subset inside `V` contributes `A⟨T/s⟩`, and a refinement contributes its restriction
-morphism. -/
-@[expose]
-noncomputable def rationalIndexDiagram (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
-    RationalIndex P Aplus V ⥤ CompleteSeparatedTopCommRingCat.{v} :=
-  rationalIndexInclusion P Aplus V ⋙ P.presentationFunctor
-
-/-- The diagram's value at an index is the completed rational localization of its
-presentation. -/
+/-- The diagram's value at a rational presentation is its completed rational localization. -/
 @[simp]
-theorem rationalIndexDiagram_obj (i : RationalIndex P Aplus V) :
-    (rationalIndexDiagram P Aplus V).obj i = i.pres.completionLocObj := (rfl)
+theorem rationalDiagram_obj (p : (isRational P).FullSubcategory) :
+    (rationalDiagram P).obj p = p.obj.completionLocObj := (rfl)
 
 /-- The diagram's value at a refinement is its restriction morphism. -/
 @[simp]
-theorem rationalIndexDiagram_map {i j : RationalIndex P Aplus V} (h : i ⟶ j) :
-    (rationalIndexDiagram P Aplus V).map h =
-      PairOfDefinition.Presentation.restrictionHom (leOfHom h) := (rfl)
+theorem rationalDiagram_map {p q : (isRational P).FullSubcategory} (h : p ⟶ q) :
+    (rationalDiagram P).map h =
+      PairOfDefinition.Presentation.restrictionHom (leOfHom ((isRational P).ι.map h)) := (rfl)
 
 variable (P) in
-/-- **The value of the presentation-indexed presheaf on an open**: the limit of `A⟨T/s⟩` over the
-presentations with open numerator ideal whose rational subset is contained in `V`
-(Wedhorn §8.1). The limit exists because `CompleteSeparatedTopCommRingCat` has all small limits.
+/-- **The index of the limit at an open `V`**: a rational presentation together with a proof that
+the rational subset it presents is contained in `V`, a refinement of presentations being a
+morphism.
 
-The body is sealed. A consumer works through the universal property below —
-`presentationLimitπ` for a component, `presentationLimitObj_hom_ext` to prove two maps into it
-equal, and `presentationLimitLift` with `presentationLimitLift_π` to build one — rather than
-through the fact that this happens to be Mathlib's chosen `limit`. -/
+This is literally Mathlib's `StructuredArrow`, so its whole API applies unchanged — the
+abbreviation names the role the category plays here rather than introducing a new one. An object
+is `StructuredArrow.mk` of the containment, and `i.right.obj` is the underlying presentation. -/
+abbrev RationalIndex (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :=
+  StructuredArrow (op V) (rationalInclusion P Aplus)
+
+/-- **The index is filtered**: the common refinement of two indices is again an index — its
+numerator span is open by `isOpen_span_insert_mul_insert` (this is what the insert-augmented
+numerators of `Presentation.commonRefinement` are for), and its rational open is the intersection
+of the factors' (`spaRationalOpen_inf`), hence contained in `V` through either factor.
+Presentations of the same rational subset are therefore constrained through a common
+refinement — weaker than identifying their components, which needs the unproved initiality.
+
+Filtered *or empty*: nothing here provides an index for an arbitrary `V`, and a `V` containing no
+rational open has none. This is the form the eventual cofinality argument needs; it is not what
+makes the limit exist, since `CompleteSeparatedTopCommRingCat` has all small limits
+(`Topology/Category/TopCommRingCat/CompleteSeparated/Limits.lean`). -/
+instance : IsFilteredOrEmpty (RationalIndex P Aplus V) where
+  cocone_objs i j := by
+    classical
+    have hopen : isRational P (i.right.obj.commonRefinement j.right.obj) := by
+      change IsOpen (Ideal.span
+        ((i.right.obj.commonRefinement j.right.obj).num : Set A) : Set A)
+      rw [PairOfDefinition.Presentation.commonRefinement_num]
+      exact isOpen_span_insert_mul_insert P i.right.property j.right.property
+    have hle : spaRationalOpen Aplus (i.right.obj.commonRefinement j.right.obj).num
+        (i.right.obj.commonRefinement j.right.obj).den ≤ V := by
+      rw [PairOfDefinition.Presentation.commonRefinement_num,
+        PairOfDefinition.Presentation.commonRefinement_den, ← spaRationalOpen_inf]
+      exact inf_le_left.trans (leOfHom i.hom.unop)
+    exact ⟨StructuredArrow.mk (Y := (⟨i.right.obj.commonRefinement j.right.obj, hopen⟩ :
+        (isRational P).FullSubcategory)) (homOfLE hle).op,
+      StructuredArrow.homMk (ObjectProperty.homMk
+        (homOfLE (i.right.obj.le_commonRefinement_left j.right.obj))) (Subsingleton.elim _ _),
+      StructuredArrow.homMk (ObjectProperty.homMk
+        (homOfLE (i.right.obj.le_commonRefinement_right j.right.obj))) (Subsingleton.elim _ _),
+      trivial⟩
+  cocone_maps _ _ f g := ⟨_, 𝟙 _, by
+    rw [StructuredArrow.hom_ext f g (ObjectProperty.hom_ext _ (Subsingleton.elim _ _))]⟩
+
+variable (P) in
+/-- **The presentation-indexed presheaf** on the adic spectrum of `Aplus`, valued in
+`CompleteSeparatedTopCommRingCat`: Mathlib's pointwise right Kan extension of `rationalDiagram`
+along `rationalInclusion`.
+
+Unfolded, its value on `V` is the limit of `A⟨T/s⟩` over the rational presentations whose open is
+contained in `V`, and its action on a containment is the reindexing of that limit — the two
+descriptions agree definitionally, `StructuredArrow.map` being the reindexing. Taking the
+Kan extension as the definition is what makes Mathlib's limit and extension API apply
+directly:
+`presentationLimitIsLimit` below is Mathlib's, not a reconstruction.
+
+This is the candidate for Wedhorn's `𝒪_X` (§8.1). It is not identified with it here: that needs
+the initiality of the forgetful functor to rational opens, which is not proved — see the module
+docstring. -/
+@[expose]
+noncomputable def presentationLimitPresheaf (Aplus : Subring A) :
+    (Opens ↥(spa Aplus))ᵒᵖ ⥤ CompleteSeparatedTopCommRingCat.{v} :=
+  (rationalInclusion P Aplus).pointwiseRightKanExtension (rationalDiagram P)
+
+variable (P) in
+/-- **The value of the presentation-indexed presheaf on an open.** -/
+@[expose]
 noncomputable def presentationLimitObj (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     CompleteSeparatedTopCommRingCat.{v} :=
-  limit (rationalIndexDiagram P Aplus V)
+  (presentationLimitPresheaf P Aplus).obj (op V)
 
 variable (P) in
-/-- **The projection of the presentation-indexed limit at one index.** With
-`presentationLimitObj`'s body sealed this is how a component is reached; `presentationLimitMap_π`
-below states how it interacts with restriction. -/
+/-- **The cone the value is a limit of**: its point is `presentationLimitObj` and its legs are the
+projections to the completed rational localizations. This is Mathlib's `RightExtension.coneAt`,
+so `presentationLimitIsLimit` and the whole `IsLimit` API are available on it. -/
+noncomputable def presentationLimitCone (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
+    Cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P) :=
+  limit.cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)
+
+variable (P) in
+/-- **The cone is a limit cone**: this is what "pointwise" means for the Kan extension, and it is
+the universal property the derived `presentationLimitLift` and `presentationLimitObj_hom_ext`
+below come from. -/
+noncomputable def presentationLimitIsLimit (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
+    IsLimit (presentationLimitCone P Aplus V) :=
+  limit.isLimit (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)
+
+variable (P) in
+/-- **The projection of the presentation-indexed limit at one index**: the leg of
+`presentationLimitCone` there. -/
 noncomputable def presentationLimitπ (Aplus : Subring A) (V : Opens ↥(spa Aplus))
     (i : RationalIndex P Aplus V) :
-    presentationLimitObj P Aplus V ⟶ (rationalIndexDiagram P Aplus V).obj i :=
-  limit.π (rationalIndexDiagram P Aplus V) i
+    presentationLimitObj P Aplus V ⟶ (rationalDiagram P).obj i.right :=
+  (presentationLimitCone P Aplus V).π.app i
 
 variable (P) in
-/-- **The projections form a cone over the diagram**: composing a projection with a diagram map is
-the projection at the target. This is `limit.w` for this diagram, stated through
-`presentationLimitπ` so that a consumer can see the compatibility without unfolding
-`presentationLimitObj`'s sealed body.
+/-- **The projections are compatible with refinement**: this is `Cone.w` for
+`presentationLimitCone`, stated through `presentationLimitπ`.
 
-Deliberately **not** `@[simp]`, and neither is any restatement of it — both options were tried
-against `lint-env` and rejected. As written, `rationalIndexDiagram_map` (itself `@[simp]`)
-rewrites this left-hand side into `Presentation.restrictionHom` form, so it is not in simp-normal
-form. Restating it *at* that normal form fails differently: `restrictionHom` takes the containment
-as a proof argument, so simp has no matchable key and the rule "does not simplify when using the
-simp lemma on itself", i.e. would never fire. The compatibility is therefore stated as a plain
-theorem; a consumer needing it under `simp` converts with `rationalIndexDiagram_map`. -/
+Deliberately **not** `@[simp]`: `rationalDiagram_map` (itself `@[simp]`) rewrites this left-hand
+side into `restrictionHom` form, so it is not in simp-normal form.
+`presentationLimitπ_restrictionHom` below is the restatement *at* that normal form. -/
 theorem presentationLimitπ_map {i j : RationalIndex P Aplus V} (f : i ⟶ j) :
-    presentationLimitπ P Aplus V i ≫ (rationalIndexDiagram P Aplus V).map f =
+    presentationLimitπ P Aplus V i ≫ (rationalDiagram P).map f.right =
       presentationLimitπ P Aplus V j :=
-  limit.w (rationalIndexDiagram P Aplus V) f
+  (presentationLimitCone P Aplus V).w f
+
+variable (P) in
+/-- **The projections are compatible with refinement, at the simp-normal shape.** This is
+`presentationLimitπ_map` after `rationalDiagram_map`; a goal that has met `simp` is in this form
+and has no other lemma to apply. Not `@[simp]` itself: `restrictionHom` takes the containment as
+a proof argument, so simp has no matchable key on the right-hand side. -/
+theorem presentationLimitπ_restrictionHom {i j : RationalIndex P Aplus V} (f : i ⟶ j) :
+    presentationLimitπ P Aplus V i ≫ PairOfDefinition.Presentation.restrictionHom
+        (leOfHom ((isRational P).ι.map f.right)) =
+      presentationLimitπ P Aplus V j :=
+  presentationLimitπ_map P f
 
 /-- **Hom-extensionality for the presentation-indexed limit**: two morphisms into it are equal
 once all their projections agree. `P`, `Aplus` and `V` are implicit here, being determined by the
@@ -258,126 +312,59 @@ theorem presentationLimitObj_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
     {f g : W ⟶ presentationLimitObj P Aplus V}
     (h : ∀ i, f ≫ presentationLimitπ P Aplus V i = g ≫ presentationLimitπ P Aplus V i) :
     f = g :=
-  limit.hom_ext h
+  (presentationLimitIsLimit P Aplus V).hom_ext h
 
 variable (P) in
 /-- **The morphism into the limit determined by a compatible family**: the universal property's
 existence half, with `presentationLimitLift_π` as its characteristic equation and
 `presentationLimitObj_hom_ext` giving uniqueness. -/
 noncomputable def presentationLimitLift (Aplus : Subring A) (V : Opens ↥(spa Aplus))
-    (c : Cone (rationalIndexDiagram P Aplus V)) :
+    (c : Cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)) :
     c.pt ⟶ presentationLimitObj P Aplus V :=
-  limit.lift (rationalIndexDiagram P Aplus V) c
+  (presentationLimitIsLimit P Aplus V).lift c
 
 /-- **The characteristic equation of `presentationLimitLift`**: its projection at an index is the
 cone's leg there. -/
 @[simp]
-theorem presentationLimitLift_π (c : Cone (rationalIndexDiagram P Aplus V))
+theorem presentationLimitLift_π
+    (c : Cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P))
     (i : RationalIndex P Aplus V) :
     presentationLimitLift P Aplus V c ≫ presentationLimitπ P Aplus V i = c.π.app i :=
-  limit.lift_π c i
+  (presentationLimitIsLimit P Aplus V).fac c i
 
 variable (P) in
-/-- Enlarging the open along `W ≤ V` includes the smaller index into the larger: a presentation
-whose rational subset is contained in `W` has it contained in `V`. -/
+/-- **The restriction morphism of a containment `W ≤ V`**: the presheaf's action, which unfolds to
+the reindexing of the limit along `StructuredArrow.map`. -/
 @[expose]
-def rationalIndexInclusionOfLE {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
-    RationalIndex P Aplus W ⥤ RationalIndex P Aplus V :=
-  Monotone.functor
-    (f := fun i ↦ ⟨i.pres, i.isOpen_span_num, i.spaRationalOpen_le.trans h⟩) fun _ _ hle ↦ hle
-
-omit [IsTopologicalRing A] in
-/-- Including along `le_refl` is the identity on the index. -/
-theorem rationalIndexInclusionOfLE_refl :
-    rationalIndexInclusionOfLE P (le_refl V) = 𝟭 (RationalIndex P Aplus V) := (rfl)
-
-omit [IsTopologicalRing A] in
-/-- Including twice is including once. -/
-theorem rationalIndexInclusionOfLE_comp {V W X : Opens ↥(spa Aplus)} (h₁ : X ≤ W) (h₂ : W ≤ V) :
-    rationalIndexInclusionOfLE P h₁ ⋙ rationalIndexInclusionOfLE P h₂ =
-      rationalIndexInclusionOfLE P (h₁.trans h₂) := (rfl)
-
-/-- **Reindexing the larger diagram along the inclusion is the smaller diagram.** This is the
-identity the limit's reindexing lemmas consume; naming it is what lets `limit.pre_π` be reached
-by `rw` instead of `erw`. -/
-theorem rationalIndexInclusionOfLE_comp_diagram {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
-    rationalIndexInclusionOfLE P h ⋙ rationalIndexDiagram P Aplus V =
-      rationalIndexDiagram P Aplus W := (rfl)
-
-variable (P) in
-/-- **The restriction morphism of a containment `W ≤ V`**: the limit over
-the presentations inside `V` (with open numerator ideal) maps to the limit over the smaller
-index, by reindexing along `rationalIndexInclusionOfLE`. The body is sealed: everything a
-consumer needs is `presentationLimitMap_π`, `_refl` and `_comp` below.
-
-Mathlib's `limit.pre_π` does *not* match this syntactically: it is stated with
-`limit.π (E ⋙ F)`, and seeing `rationalIndexInclusionOfLE _ _ ⋙ rationalIndexDiagram _ _ _` as
-`rationalIndexDiagram _ _ _` needs `rationalIndexInclusionOfLE_comp_diagram`. The consumer-facing
-equations are `presentationLimitMap_π`, `presentationLimitMap_refl` and
-`presentationLimitMap_comp` below; none of them requires reproducing that step. -/
 noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
     presentationLimitObj P Aplus V ⟶ presentationLimitObj P Aplus W :=
-  limit.pre (rationalIndexDiagram P Aplus V) (rationalIndexInclusionOfLE P h)
+  (presentationLimitPresheaf P Aplus).map (homOfLE h).op
 
 variable (P) in
 /-- **The characteristic equation of `presentationLimitMap`**: composing with a projection of the
-smaller limit is the projection of the larger one at the included index. This is `limit.pre_π`
-for this diagram, stated at the shape consumers actually meet.
-
-The term type-checks because `rationalIndexInclusionOfLE_comp_diagram` holds: `limit.pre_π`'s
-`E ⋙ F` is `rationalIndexInclusionOfLE P h ⋙ rationalIndexDiagram P Aplus V`, definitionally the
-smaller diagram.
-
-`@[simp]` but deliberately not `@[reassoc (attr := simp)]`, unlike `presentationLimitMap_comp`
-below: the generated `presentationLimitMap_π_assoc` is provable from this lemma by `simp` alone,
-because the right-hand side is a bare projection, and `lint-env`'s simpNF pass rejects it. -/
+smaller limit is the projection of the larger one at the included index, `StructuredArrow.map`
+being the inclusion. -/
 @[simp]
 theorem presentationLimitMap_π {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
     (j : RationalIndex P Aplus W) :
     presentationLimitMap P h ≫ presentationLimitπ P Aplus W j =
-      presentationLimitπ P Aplus V ((rationalIndexInclusionOfLE P h).obj j) :=
-  limit.pre_π (F := rationalIndexDiagram P Aplus V) (E := rationalIndexInclusionOfLE P h) j
+      presentationLimitπ P Aplus V ((StructuredArrow.map (homOfLE h).op).obj j) :=
+  limit.lift_π _ j
 
 variable (P) in
-/-- Restricting along `le_refl` is the identity. The definitional equality the term leans on is
-the one *stated* by `rationalIndexInclusionOfLE_refl` — the included index of `j` along `le_refl`
-is `j`. That lemma is not applied here; the equality holds by `rfl`. -/
+/-- Restricting along `le_refl` is the identity: the presheaf's identity law. -/
 @[simp]
 theorem presentationLimitMap_refl (V : Opens ↥(spa Aplus)) :
     presentationLimitMap P (le_refl V) = 𝟙 (presentationLimitObj P Aplus V) :=
-  presentationLimitObj_hom_ext fun j ↦
-    (presentationLimitMap_π P (le_refl V) j).trans (Category.id_comp _).symm
+  (presentationLimitPresheaf P Aplus).map_id (op V)
 
 variable (P) in
-/-- Restricting twice is restricting once. This is `limit.pre_pre`, and the definitional equality
-the term leans on is the one *stated* by `rationalIndexInclusionOfLE_comp` — composing the two
-inclusions is the inclusion of the composite containment. That lemma is not applied here; the
-equality holds by `rfl`. -/
+/-- Restricting twice is restricting once: the presheaf's composition law. -/
 @[reassoc (attr := simp)]
 theorem presentationLimitMap_comp {V W X : Opens ↥(spa Aplus)} (h₁ : X ≤ W) (h₂ : W ≤ V) :
     presentationLimitMap P h₂ ≫ presentationLimitMap P h₁ =
       presentationLimitMap P (h₁.trans h₂) :=
-  limit.pre_pre (rationalIndexDiagram P Aplus V) (rationalIndexInclusionOfLE P h₂)
-    (rationalIndexInclusionOfLE P h₁)
-
-/-- **The presentation-indexed presheaf** on the adic spectrum of `Aplus`, valued in
-`CompleteSeparatedTopCommRingCat`: on each open the limit of the completed rational
-localizations of the presentations with open numerator ideal inside it, restricting along
-containments by reindexing.
-
-This is the candidate for Wedhorn's `𝒪_X` (§8.1). It is not identified with it here: that needs
-the initiality of the forgetful functor to rational opens, which is not proved — see the module
-docstring. -/
-@[expose]
-noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Subring A) :
-    (Opens ↥(spa Aplus))ᵒᵖ ⥤ CompleteSeparatedTopCommRingCat.{v} where
-  obj V := presentationLimitObj P Aplus V.unop
-  map h := presentationLimitMap P (leOfHom h.unop)
-  -- Both laws are the corresponding equations for `presentationLimitMap`, which state the
-  -- reindexing identities once rather than re-deriving them from `limit.pre_π` here. Those two
-  -- lemmas, not these fields, are what a simp-normalised goal reaches for.
-  map_id V := presentationLimitMap_refl P V.unop
-  map_comp _ _ := (presentationLimitMap_comp P _ _).symm
+  ((presentationLimitPresheaf P Aplus).map_comp (homOfLE h₂).op (homOfLE h₁).op).symm
 
 /-- The presheaf's value on an open is `presentationLimitObj`. -/
 @[simp]
