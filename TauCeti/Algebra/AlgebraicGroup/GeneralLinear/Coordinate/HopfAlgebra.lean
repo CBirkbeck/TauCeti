@@ -316,9 +316,10 @@ private theorem exists_eq_mul_inverse_algebraMap_pow {A : Type*} [CommSemiring A
 
 /-- Every value of an algebra map out of the matrix coordinate ring lies in the algebra generated
 by the values it takes on the variables. -/
-private theorem mem_adjoin_range_apply_X {A : Type*} [Semiring A] [Algebra R A]
-    (f : MatrixMonoid.CoordinateRing R n →ₐ[R] A) (p : MatrixMonoid.CoordinateRing R n) :
-    f p ∈ Algebra.adjoin R (Set.range fun ij : Fin n × Fin n => f (MvPolynomial.X ij)) := by
+private theorem mem_adjoin_range_apply_X {S : Type*} [CommSemiring S] {A : Type*} [Semiring A]
+    [Algebra S A] (f : MatrixMonoid.CoordinateRing S n →ₐ[S] A)
+    (p : MatrixMonoid.CoordinateRing S n) :
+    f p ∈ Algebra.adjoin S (Set.range fun ij : Fin n × Fin n => f (MvPolynomial.X ij)) := by
   -- adjoining an image is the image of the adjoin, and the variables generate everything
   rw [Set.range_comp' f MvPolynomial.X, Algebra.adjoin_image, MvPolynomial.adjoin_range_X,
     Algebra.map_top]
@@ -341,11 +342,11 @@ private theorem adjoin_X_union_antipode_X :
   -- above into `B`
   have hpoly : ∀ p : MatrixMonoid.CoordinateRing R n, coordinateRingMap R n p ∈ B := fun p =>
     Algebra.adjoin_mono Set.subset_union_left
-      (mem_adjoin_range_apply_X R n (coordinateRingMap R n) p)
+      (mem_adjoin_range_apply_X n (coordinateRingMap R n) p)
   have hantipodePoly : ∀ p : MatrixMonoid.CoordinateRing R n,
       antipode R n (coordinateRingMap R n p) ∈ B := fun p =>
     Algebra.adjoin_mono Set.subset_union_right
-      (mem_adjoin_range_apply_X R n ((antipode R n).comp (coordinateRingMap R n)) p)
+      (mem_adjoin_range_apply_X n ((antipode R n).comp (coordinateRingMap R n)) p)
   have hinv : Ring.inverse (Matrix.det (localizedGenericMatrix R n)) ∈ B := by
     rw [← antipode_det_localizedGenericMatrix, det_localizedGenericMatrix]
     exact hantipodePoly _
