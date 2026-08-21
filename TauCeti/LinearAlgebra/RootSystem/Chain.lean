@@ -97,7 +97,7 @@ The entry at `(a, s)` contributes only when `s` is `a`, its predecessor, or its 
 successor contribution is doubled at the short end.
 
 The identity is pointwise in `s`: it mentions neither the summation range of the row it is used in
-nor any bound on `a`. The chain length `L` does appear, in the doubled coefficient at the short
+nor any bound on `a`. The last position `L` does appear, in the doubled coefficient at the short
 end. -/
 private theorem chainBEntry_mul_eq_add_add {R : Type*} [NonAssocRing R] (L a s : ℕ) (g : ℕ → R) :
     ((chainBEntry L a s : ℤ) : R) * g s
