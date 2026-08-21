@@ -123,6 +123,23 @@ section Points
 
 variable (A : Type*) [CommRing A]
 
+omit [Module ℚ V] in
+/-- The sum over `x ∈ s` of the `r`-th basis coordinate of `g x`, scaled by the `x`-th power of
+the coordinate generator and carried along `f`, is the `r`-th coordinate of the sum of the
+base-changed elementary tensors `f (ι 1) ^ x ⊗ₜ g x`. -/
+private theorem sum_apply_coord_smul_pow_eq_lapply_sum_repr_baseChange_tmul
+    {A : Type*} [CommRing A] (f : AdditiveGroup.coordinateHopfAlgebra ℤ →ₐ[ℤ] A)
+    (s : Finset ℕ) (g : ℕ → M) (r : Fin n) :
+    (∑ x ∈ s, f (b.coord r (g x) • SymmetricAlgebra.ι ℤ ℤ 1 ^ x)) =
+      (Finsupp.lapply r : (Fin n →₀ A) →ₗ[A] A)
+        (∑ x ∈ s, (b.baseChange A).repr ((f (SymmetricAlgebra.ι ℤ ℤ 1) ^ x) ⊗ₜ[ℤ] g x)) := by
+  rw [map_sum (Finsupp.lapply r : (Fin n →₀ A) →ₗ[A] A)]
+  simp only [Finsupp.lapply_apply]
+  refine Finset.sum_congr rfl fun x _ ↦ ?_
+  rw [Algebra.smul_def, map_mul, AlgHom.commutes, map_pow,
+    Module.Basis.baseChange_repr_tmul]
+  simp only [Module.Basis.coord_apply, Algebra.smul_def]
+
 /-- On algebra-valued points, precomposition with the Kostant coordinate morphism gives the
 original divided-power exponential matrix. -/
 theorem pointsMulEquiv_kostantRootSubgroupCoordinateMap_apply
@@ -149,32 +166,9 @@ theorem pointsMulEquiv_kostantRootSubgroupCoordinateMap_apply
   rw [Module.Basis.baseChange_apply, kostantRootSubgroupPoints_tmul]
   simp only [map_sum, TensorProduct.map_tmul, LinearMap.id_apply, TensorProduct.lid_tmul,
     AdditiveGroup.toAdd_gaPointsMulEquiv, mul_one]
-  -- Evaluation of a `Finsupp` sum does not normalize to the sum of its evaluations by
-  -- definitional equality, so expose the evaluation linear map before using `map_sum`.
-  change
-    (∑ x ∈ Finset.range
-        (nilpotencyClass (ρ (_root_.UniversalEnvelopingAlgebra.ι ℚ (e i)))),
-      q.ofConv
-        ((b.coord r) (integralDividedPower
-          (ρ (_root_.UniversalEnvelopingAlgebra.ι ℚ (e i))) M x
-          (fun _ hv => dividedPower_apply_mem_of_kostantForm_apply_mem
-            e h ρ hM i x hv) (b s)) •
-          (SymmetricAlgebra.ι ℤ ℤ 1) ^ x)) =
-      (Finsupp.lapply r : (Fin n →₀ A) →ₗ[A] A)
-        (∑ x ∈ Finset.range
-          (nilpotencyClass (ρ (_root_.UniversalEnvelopingAlgebra.ι ℚ (e i)))),
-          (b.baseChange A).repr
-            ((q.ofConv (SymmetricAlgebra.ι ℤ ℤ 1) ^ x) ⊗ₜ[ℤ]
-              integralDividedPower
-                (ρ (_root_.UniversalEnvelopingAlgebra.ι ℚ (e i))) M x
-                (fun _ hv => dividedPower_apply_mem_of_kostantForm_apply_mem
-                  e h ρ hM i x hv) (b s)))
-  rw [map_sum (Finsupp.lapply r : (Fin n →₀ A) →ₗ[A] A)]
-  simp only [Finsupp.lapply_apply]
-  refine Finset.sum_congr rfl fun x _ ↦ ?_
-  rw [Algebra.smul_def, map_mul, AlgHom.commutes, map_pow,
-    Module.Basis.baseChange_repr_tmul]
-  simp only [Module.Basis.coord_apply, Algebra.smul_def]
+  -- evaluating a `Finsupp` sum is not definitionally the sum of the evaluations, so the goal is
+  -- discharged by unification against the lemma above rather than by rewriting
+  exact sum_apply_coord_smul_pow_eq_lapply_sum_repr_baseChange_tmul M b q.ofConv _ _ r
 
 /-- On algebra-valued points, the matrix induced by the Kostant coordinate morphism is the
 original divided-power exponential matrix. -/
