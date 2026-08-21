@@ -27,17 +27,6 @@ Finite generation is used once more, and directly, to see that `Î` is itself fi
 (`TauCeti.Huber.PairOfDefinition.fg_completionIdeal`). The coefficients accumulate to series which
 converge because `Â` is complete, and their sums exhibit the element as a combination of `G`.
 
-A subring integrally closed in `A` also survives completion, and no pair of definition takes part:
-if `G` is *open* and integrally closed in `A`, the closure `Ĝ` of its image in `Â` is integrally
-closed in `Â` (Huber's Lemma 2.4.3(iv), Wedhorn's Lemma 7.47(4)). The proof below is Huber's.
-The integral closure `H` of `Ĝ` in `Â` contains the open subring `Ĝ`, hence is open, so every
-neighbourhood of a point of `H` meets the image of `A` inside `H`. For such an image `i b`, an
-integral relation over `Ĝ` is perturbed one coefficient at a time into a relation whose
-coefficients come from `G`; openness of `Ĝ` keeps the value of the perturbed relation at `i b`
-inside `Ĝ`, and an open `G` is closed, hence exactly the preimage of `Ĝ`, so that value is the
-image of an element of `G`. Subtracting it from the constant term leaves an integral relation for
-`b` over `G`, so `b ∈ G`, and `i b` therefore lies in the image of `G`.
-
 ## Main definitions
 
 * `TauCeti.Huber.PairOfDefinition.completionRingOfDefinition` and
@@ -59,17 +48,10 @@ image of an element of `G`. Subtracting it from the constant term leaves an inte
 * `TauCeti.Huber.PairOfDefinition.completionIdeal_pow`: `Îⁿ` is the closure of the image of `Iⁿ`.
 * `TauCeti.Huber.IsHuberRing.completion`: the completion of a Huber ring is a Huber ring, and
   `TauCeti.Huber.IsTateRing.completion`: the completion of a Tate ring is a Tate ring.
-* `TauCeti.Huber.isIntegrallyClosedIn_topologicalClosure_map_coeRingHom`: Huber's Lemma 2.4.3(iv),
-  the closure in `Â` of the image of an open subring of `A` integrally closed in `A` is integrally
-  closed in `Â`. Only a topological ring with a compatible uniformity is needed.
 
 ## References
 
-* [Wedhorn, *Adic Spaces*][wedhorn_adic], Remark 6.8, and Lemma 7.47(4) for the statement that
-  integral closedness of an open subring survives completion.
-* R. Huber, *Bewertungsspektrum und rigide Geometrie*, Regensburger Mathematische Schriften 23,
-  Universität Regensburg, 1993, Lemma 2.4.3(iv), whose proof
-  `TauCeti.Huber.isIntegrallyClosedIn_topologicalClosure_map_coeRingHom` follows.
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], Remark 6.8.
 * [The Stacks Project][stacks], Lemma 10.96.3 (tag
   [05GG](https://stacks.math.columbia.edu/tag/05GG)), the successive-approximation argument
   behind the private `completionIdealImageIdeal_le` below.
@@ -481,131 +463,6 @@ theorem isPowerBounded_completion_coe_of_isPowerBounded [IsHuberRing A] {a : A}
     simpa only [hcoe] using Set.range_comp' (((↑) : A → Completion A)) (a ^ · : ℕ → A)
   rw [isPowerBounded_iff, h]
   exact isBounded_image_completion_coe_of_isBounded (isPowerBounded_iff.mp ha)
-
-section IntegrallyClosed
-
-open Polynomial
-
-/-- An element integral over a subring `S` satisfies a monic relation of positive degree with
-coefficients in `S`. Writing the degree as `n + 1` builds the positivity into the shape, which is
-what lets the constant coefficient be adjusted below without disturbing the leading one. -/
-private theorem exists_pow_add_sum_eq_zero_of_isIntegral {R : Type*} [CommRing R] {S : Subring R}
-    {x : R} (hx : IsIntegral S x) : ∃ (n : ℕ) (c : ℕ → R), (∀ i, c i ∈ S) ∧ x ^ (n + 1) +
-      ∑ i ∈ Finset.range (n + 1), c i * x ^ i = 0 := by
-  obtain ⟨p, hmonic, heval⟩ := hx
-  -- multiplying the relation by `x` shifts the coefficients up by one, which makes the degree
-  -- positive even when `p` is constant
-  refine ⟨p.natDegree, fun i ↦ Nat.casesOn i 0 fun j ↦ (p.coeff j : R), ?_, ?_⟩
-  · rintro (_ | j)
-    · exact S.zero_mem
-    · exact (p.coeff j).2
-  · have h0 : (∑ i ∈ Finset.range p.natDegree, (p.coeff i : R) * x ^ i) + x ^ p.natDegree = 0 := by
-      rw [← heval, eval₂_eq_sum_range, Finset.sum_range_succ, hmonic.coeff_natDegree]
-      simp [Algebra.algebraMap_ofSubsemiring_apply]
-    rw [Finset.sum_range_succ', add_comm]
-    simpa [add_mul, Finset.sum_mul, mul_assoc, ← pow_succ] using congrArg (· * x) h0
-
-/-- The converse of `exists_pow_add_sum_eq_zero_of_isIntegral`: a monic relation of positive degree
-with coefficients in a subring `S` exhibits its root as integral over `S`. -/
-private theorem isIntegral_of_pow_add_sum_eq_zero {R : Type*} [CommRing R] {S : Subring R} {x : R}
-    {n : ℕ} {c : ℕ → R} (hcS : ∀ i, c i ∈ S)
-    (h : x ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), c i * x ^ i = 0) : IsIntegral S x :=
-  -- the witness sums over `Fin (n + 1)`, the shape `degree_sum_fin_lt` bounds directly
-  ⟨X ^ (n + 1) + ∑ i : Fin (n + 1), C (⟨c i, hcS i⟩ : S) * X ^ (i : ℕ),
-    monic_X_pow_add (degree_sum_fin_lt _), by
-      simpa [eval₂_finsetSum, Finset.sum_range, Algebra.algebraMap_ofSubsemiring_apply] using h⟩
-
-/-- The one analytic step of Huber's Lemma 2.4.3(iv): an element `y` of the closure `Ĝ` of the
-image of an *open* subring `G` can be replaced by the image of an element of `G` so closely that
-`Ĝ` still absorbs the error after it is multiplied by an arbitrary `z`.
-
-Openness is exactly what is used: it makes `Ĝ` a neighbourhood of zero, so multiplication by `z`
-carries a small enough neighbourhood of `y` back into `Ĝ`, and `y` lies in the closure of the
-image of `G`, which supplies a point of that neighbourhood. -/
-private theorem exists_mem_sub_mul_mem_topologicalClosure {G : Subring A} (hG : IsOpen (G : Set A))
-    {y : Completion A} (hy : y ∈ (G.map Completion.coeRingHom).topologicalClosure)
-    (z : Completion A) :
-    ∃ d ∈ G, ((d : Completion A) - y) * z ∈ (G.map Completion.coeRingHom).topologicalClosure := by
-  set Gh := (G.map Completion.coeRingHom).topologicalClosure
-  have hVopen : IsOpen {w : Completion A | (w - y) * z ∈ Gh} :=
-    (Completion.isOpen_closure_image_coe (G := G.toAddSubgroup) hG).preimage (by fun_prop)
-  obtain ⟨_, hw, d, hdG, rfl⟩ := mem_closure_iff.mp hy _ hVopen <| by simp
-  exact ⟨d, hdG, hw⟩
-
-/-- Huber's Lemma 2.4.3(iv) for a single element of `A`: if the image in `Â` of `b : A` is integral
-over the closure `Ĝ` of the image of an open subring `G`, then `b` is already integral over `G`.
-
-An integral relation for the image of `b` over `Ĝ` is perturbed one coefficient at a time by
-`exists_mem_sub_mul_mem_topologicalClosure`, which leaves the value of the relation at the image of
-`b` inside `Ĝ`. Being open, `G` is closed, hence exactly the preimage of `Ĝ`
-(`IsInducing.closure_eq_preimage_closure_image`), so that value is the image of an element of
-`G`; subtracting it from the constant term turns the perturbed relation into one over `G`. -/
-private theorem isIntegral_of_isIntegral_topologicalClosure {G : Subring A}
-    (hG : IsOpen (G : Set A)) {b : A}
-    (hb : IsIntegral ((G.map Completion.coeRingHom).topologicalClosure) (b : Completion A)) :
-    IsIntegral G b := by
-  -- the coercion is `⇑Completion.coeRingHom`, so `map_sum` and friends apply to it
-  have hcoe : ∀ y : A, (y : Completion A) = Completion.coeRingHom y := fun _ ↦ rfl
-  set Gh := (G.map Completion.coeRingHom).topologicalClosure
-  -- an open subring is closed, and the completion map is inducing, so the closure of the image
-  -- pulls back to `G` itself
-  have hpre : ((↑) : A → Completion A) ⁻¹' (Gh : Set (Completion A)) = (G : Set A) := by
-    change Completion.coe' ⁻¹' closure (Completion.coe' '' (G : Set A)) = (G : Set A)
-    rw [← Completion.isDenseInducing_coe.isInducing.closure_eq_preimage_closure_image,
-      ← Subring.coe_toAddSubgroup, (G.toAddSubgroup.isClosed_of_isOpen hG).closure_eq]
-  obtain ⟨n, c, hcmem, hc⟩ := exists_pow_add_sum_eq_zero_of_isIntegral hb
-  choose d hdG hd using fun i ↦
-    exists_mem_sub_mul_mem_topologicalClosure hG (hcmem i) ((b : Completion A) ^ i)
-  obtain ⟨e, hedef⟩ : ∃ e : A, e = b ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), d i * b ^ i := ⟨_, rfl⟩
-  -- the perturbed relation evaluates inside `Ĝ`, so its value comes from `G`
-  have hecoe : (e : Completion A)
-      = ∑ i ∈ Finset.range (n + 1), ((d i : Completion A) - c i) * (b : Completion A) ^ i := by
-    simp only [hedef, hcoe, map_add, map_pow, map_sum, map_mul, sub_mul,
-      Finset.sum_sub_distrib] at hc ⊢
-    linear_combination hc
-  have heG : e ∈ G := by
-    rw [← SetLike.mem_coe, ← hpre, Set.mem_preimage, SetLike.mem_coe, hecoe]
-    exact Gh.sum_mem fun i _ ↦ hd i
-  -- subtracting that value from the constant term leaves a relation for `b` over `G`
-  have harith : b ^ (n + 1)
-      + ((∑ i ∈ Finset.range n, d (i + 1) * b ^ (i + 1)) + (d 0 - e) * b ^ 0) = 0 := by
-    rw [hedef, Finset.sum_range_succ']
-    ring
-  refine isIntegral_of_pow_add_sum_eq_zero (n := n)
-    (c := fun i ↦ Nat.casesOn i (d 0 - e) fun j ↦ d (j + 1)) ?_ ?_
-  · rintro (_ | j)
-    · exact sub_mem (hdG 0) heG
-    · exact hdG (j + 1)
-  · rwa [Finset.sum_range_succ']
-
-/-- **Huber's Lemma 2.4.3(iv)**: the closure in `Â` of the image of an open subring `G` of `A` that
-is integrally closed in `A` is integrally closed in `Â`.
-
-Neither a Huber structure nor a pair of definition takes part: a topological ring carrying a
-compatible uniformity is enough, which is why this sits apart from the pair-of-definition
-material above. The proof route is in the module docstring and signposted in the body. -/
-theorem isIntegrallyClosedIn_topologicalClosure_map_coeRingHom {G : Subring A}
-    (hG : IsOpen (G : Set A)) [IsIntegrallyClosedIn G A] :
-    IsIntegrallyClosedIn ((G.map Completion.coeRingHom).topologicalClosure) (Completion A) := by
-  set Gh := (G.map Completion.coeRingHom).topologicalClosure
-  refine Subring.isIntegrallyClosedIn_iff.mpr fun a ha ↦ ?_
-  -- the integral closure `H` of the closure of the image is a subring containing that open
-  -- subring, hence is itself open
-  have hle : Gh.toAddSubgroup ≤ (integralClosure Gh (Completion A)).toSubring.toAddSubgroup :=
-    fun x hx ↦ (integralClosure Gh (Completion A)).algebraMap_mem ⟨x, hx⟩
-  have hHopen : IsOpen ((integralClosure Gh (Completion A)).toSubring : Set (Completion A)) :=
-    AddSubgroup.isOpen_mono hle (Completion.isOpen_closure_image_coe (G := G.toAddSubgroup) hG)
-  -- so it is enough to meet the image of `G` in every neighbourhood `t` of `a`
-  change a ∈ closure (((↑) : A → Completion A) '' (G : Set A))
-  refine mem_closure_iff_nhds.mpr fun t ht ↦ ?_
-  have haH : a ∈ (integralClosure Gh (Completion A)).toSubring := ha
-  -- density supplies a `b : A` whose image lies in `t` and, being in the open `H`, is integral
-  obtain ⟨b, hb⟩ := Completion.denseRange_coe.mem_nhds (Filter.inter_mem ht (hHopen.mem_nhds haH))
-  exact ⟨(b : Completion A), hb.1, b,
-    Subring.isIntegrallyClosedIn_iff.mp ‹_› (isIntegral_of_isIntegral_topologicalClosure hG hb.2),
-    rfl⟩
-
-end IntegrallyClosed
 
 /-- Wedhorn Remark 6.8: the completion of a Huber ring is a Huber ring. -/
 instance IsHuberRing.completion [IsHuberRing A] : IsHuberRing (Completion A) :=

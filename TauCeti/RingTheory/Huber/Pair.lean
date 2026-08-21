@@ -6,6 +6,7 @@ Authors: The Tau Ceti contributors
 module
 
 public import TauCeti.RingTheory.Huber.Basic
+public import TauCeti.Topology.Algebra.Ring.Subring
 
 /-!
 # Huber pairs
@@ -222,10 +223,7 @@ noncomputable def quotient (S : Pair A) (J : Ideal A) : Pair (A ⧸ J) where
         ha_power.map_of_isOpenMap continuous_quotient_mk'.continuousAt
           (QuotientRing.isOpenMap_coe J)
     refine
-      { isOpen := AddSubgroup.isOpen_mono
-          (H₁ := R.toAddSubgroup)
-          (H₂ := (integralClosure R (A ⧸ J)).toSubring.toAddSubgroup)
-          (fun x hx ↦ algebraMap_mem (integralClosure R (A ⧸ J)) ⟨x, hx⟩) hR_open
+      { isOpen := isOpen_integralClosure_toSubring hR_open
         isIntegrallyClosedIn := inferInstance
         le_powerBoundedSubring := ?_ }
     exact Subring.integralClosure_subring_le_iff.mpr hR_power
