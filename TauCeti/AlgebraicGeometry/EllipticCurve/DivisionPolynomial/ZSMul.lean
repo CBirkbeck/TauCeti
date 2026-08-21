@@ -188,7 +188,7 @@ lemma smulX_two : smulX 2 = smulX 1 - polyToField (curve.ψ 3) / polyToField (cu
 lemma smulX_sub_smulX (hm : m ≠ 0) (hn : n ≠ 0) :
     smulX m - smulX n = polyToField (curve.ψ (n + m)) * polyToField (curve.ψ (n - m)) /
       (polyToField (curve.ψ n) * polyToField (curve.ψ m)) ^ 2 := by
-  have key := isEllipticNet_polyToField_ψ n m 1 0
+  have key := isEllipticSequence_polyToField_ψ n m 1
   simp only [IsEllipticNet.rel, add_zero, ψ_one, map_one, mul_one] at key
   rw [smulX_eq hm, smulX_eq hn, sub_sub_sub_cancel_left,
     div_sub_div _ _ (pow_ne_zero 2 (polyToField_ψ_ne_zero hn))
