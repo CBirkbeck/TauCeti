@@ -147,7 +147,7 @@ image of `G` under the completion coercion. This unfolds `Subring.topologicalClo
 theorem coe_topologicalClosure_map_coeRingHom (G : Subring A) :
     ((G.map Completion.coeRingHom).topologicalClosure : Set (Completion A))
       = closure (((↑) : A → Completion A) '' (G : Set A)) := by
-  rw [Subring.coe_topologicalClosure, Subring.coe_map, coe_coeRingHom]
+  rw [Subring.topologicalClosure_coe, Subring.coe_map, coe_coeRingHom]
 
 /-- Membership in the closure `Ĝ` in `Â` of the image of a subring `G` of `A`, in the form the
 `closure` API consumes. This is the `mem_`-half of the pair whose `coe_` half is above; the

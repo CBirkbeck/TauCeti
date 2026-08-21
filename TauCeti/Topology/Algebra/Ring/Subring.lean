@@ -25,7 +25,7 @@ that an additive subgroup containing an open one is open.
 
 ## Main results
 
-* `Subring.coe_topologicalClosure`: `↑S.topologicalClosure = closure ↑S`.
+* `Subring.topologicalClosure_coe`: `↑S.topologicalClosure = closure ↑S`.
 * `isOpen_integralClosure_toSubring`: the integral closure of an open subring is open.
 
 ## References
@@ -44,7 +44,7 @@ variable {R : Type*} [Ring R] [TopologicalSpace R] [IsSemitopologicalRing R]
 `Subring.topologicalClosure` is defined. Mathlib has the `Subsemigroup`, `Submonoid` and
 `Subsemiring` forms of this equation but not the `Subring` one. -/
 @[simp]
-theorem coe_topologicalClosure (S : Subring R) :
+theorem topologicalClosure_coe (S : Subring R) :
     (S.topologicalClosure : Set R) = _root_.closure (S : Set R) := (rfl)
 
 end Subring
