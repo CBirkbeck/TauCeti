@@ -7,6 +7,7 @@ module
 
 public import Mathlib.LinearAlgebra.Matrix.Cartan
 import Mathlib.Tactic.NoncommRing
+import TauCeti.Data.Fin.Basic
 import Mathlib.Tactic.Push
 
 public section
@@ -115,26 +116,6 @@ private theorem chainBEntry_mul_eq_add_add {R : Type*} [Ring R] (L a s : ℕ) (g
   · rw [chainBEntry_eq_zero (Ne.symm h1) (fun h ↦ h3 h.symm) h2]
     split_ifs <;> first | (exfalso; omega) | (push_cast; noncomm_ring)
 
-/-- **A shifted indicator over a range sums to minus the weight at the predecessor.** For `a ≤ m`,
-so that the surviving index `a - 1` lies in the range. At `a = 0` there is no predecessor and the
-sum is zero. -/
-private theorem sum_range_ite_succ_eq {R : Type*} [AddCommGroup R] {m a : ℕ} (ha : a ≤ m)
-    (g : ℕ → R) :
-    ∑ s ∈ Finset.range m, (if s + 1 = a then -g s else 0)
-      = -(if a = 0 then 0 else g (a - 1)) := by
-  match a with
-  | 0 => simp
-  | k + 1 =>
-    -- reindex `s + 1 = k + 1` to `s = k`, then collapse the single surviving term, which sits at
-    -- `a - 1 = k` and is placed inside the range by `k + 1 = a ≤ m`
-    have hcongr : ∀ s ∈ Finset.range m, (if s + 1 = k + 1 then -g s else 0)
-        = (if s = k then -g k else 0) := by
-      intro s _
-      by_cases h : s = k <;> simp [h]
-    rw [Finset.sum_congr rfl hcongr, Finset.sum_ite_eq' (Finset.range m) k fun _ ↦ -g k,
-      ite_eq_left (Finset.mem_range.2 (by omega)), ite_eq_right (Nat.succ_ne_zero k)]
-    norm_num
-
 /-- **A row of a chain of type `B`, against an arbitrary weighting of its positions.** The row `a`
 collects `2 g a`, the weight of the position before it - absent at the head of the chain - and the
 weight of the position after it, doubled when that position is the short end and absent when the row
@@ -156,7 +137,12 @@ theorem sum_range_chainBEntry_mul {R : Type*} [Ring R] {L m a : ℕ} (ha : a < m
     by_cases hm : a + 1 = m
     · simp [Finset.mem_range, hm]
     · rw [ite_eq_left (Finset.mem_range.2 (by omega)), ite_eq_right hm]
-  rw [h1, sum_range_ite_succ_eq ha.le g, h3]
+  have h2 : ∑ s ∈ Finset.range m, (if s + 1 = a then -g s else 0)
+      = -(if a = 0 then 0 else g (a - 1)) := by
+    rw [← Fin.sum_univ_eq_sum_range]
+    have hcond : (a - 1 < m ∧ 1 ≤ a) ↔ a ≠ 0 := by omega
+    simpa [eq_comm, hcond, neg_ite] using sum_ite_val_add (n := m) (fun i : Fin m ↦ -g i) a 1
+  rw [h1, h2, h3]
   noncomm_ring
 
 /-- The Cartan-matrix entry of a **chain** between the positions `s` and `t` along it: `2` on the
