@@ -51,7 +51,8 @@ not the hypotheses.
 * `TauCeti.ValuationSpectrum.presentationLimitPresheaf` : the presheaf, the Kan extension.
 * `TauCeti.ValuationSpectrum.presentationLimitObj` : its value, the candidate for `𝒪_X(V)`.
 * `TauCeti.ValuationSpectrum.presentationLimitCone` : the cone that value is a limit of, with
-  `presentationLimitIsLimit` its universal property.
+  `presentationLimitIsLimit` its universal property — the two together are the whole interface,
+  used through Mathlib's `IsLimit` API rather than through local wrappers.
 * `TauCeti.ValuationSpectrum.presentationLimitMap` : the restriction morphism of a containment.
 * `TauCeti.Huber.PairOfDefinition.HasSheafyPresentationLimit` : the presentation-indexed
   presheaf is a sheaf. It is named for the presheaf it actually tests: until the initiality
@@ -73,11 +74,11 @@ not the hypotheses.
   presentations of the same subset are constrained through one.
 
 The interface is the universal property, and it is Mathlib's: `presentationLimitCone` is the
-cone, `presentationLimitIsLimit` its limit proof, and `presentationLimitπ`,
-`presentationLimitObj_hom_ext`, `presentationLimitLift` and `presentationLimitLift_π` are the
-projections, uniqueness and existence read off it. A consumer needing anything else — cofinality,
-`IsLimit.conePointUniqueUpToIso`, the extension's counit — reaches for it in Mathlib rather than
-here, which is why the definitions are exposed rather than sealed.
+cone and `presentationLimitIsLimit` its limit proof. Everything the universal property gives —
+`.lift` and its `.fac`, `.hom_ext`, `IsLimit.conePointUniqueUpToIso`, cofinality — is reached
+through that `IsLimit` directly rather than through wrappers named here; only
+`presentationLimitπ`, which the restriction equations below are stated with, has a local name.
+This is why the definitions are exposed rather than sealed.
 
 Reindexing needs no lemmas of its own. `presentationLimitMap` is the presheaf's own action, so
 `_refl` and `_comp` are its functor laws and `_π` is `limit.lift_π`; the inclusion of one index
@@ -261,9 +262,9 @@ noncomputable def presentationLimitCone (Aplus : Subring A) (V : Opens ↥(spa A
   limit.cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)
 
 variable (P) in
-/-- **The cone is a limit cone**: this is what "pointwise" means for the Kan extension, and it is
-the universal property the derived `presentationLimitLift` and `presentationLimitObj_hom_ext`
-below come from. -/
+/-- **The cone is a limit cone**: this is what "pointwise" means for the Kan extension. It is the
+whole universal property of `presentationLimitObj`, and consumers use its `.lift`, `.fac` and
+`.hom_ext` directly. -/
 noncomputable def presentationLimitIsLimit (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     IsLimit (presentationLimitCone P Aplus V) :=
   limit.isLimit (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)
@@ -298,33 +299,6 @@ theorem presentationLimitπ_restrictionHom {i j : RationalIndex P Aplus V} (f : 
         (leOfHom ((isRational P).ι.map f.right)) =
       presentationLimitπ P Aplus V j :=
   presentationLimitπ_map P f
-
-/-- **Hom-extensionality for the presentation-indexed limit**: two morphisms into it are equal
-once all their projections agree. `P`, `Aplus` and `V` are implicit here, being determined by the
-morphisms. -/
-theorem presentationLimitObj_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
-    {f g : W ⟶ presentationLimitObj P Aplus V}
-    (h : ∀ i, f ≫ presentationLimitπ P Aplus V i = g ≫ presentationLimitπ P Aplus V i) :
-    f = g :=
-  (presentationLimitIsLimit P Aplus V).hom_ext h
-
-variable (P) in
-/-- **The morphism into the limit determined by a compatible family**: the universal property's
-existence half, with `presentationLimitLift_π` as its characteristic equation and
-`presentationLimitObj_hom_ext` giving uniqueness. -/
-noncomputable def presentationLimitLift (Aplus : Subring A) (V : Opens ↥(spa Aplus))
-    (c : Cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)) :
-    c.pt ⟶ presentationLimitObj P Aplus V :=
-  (presentationLimitIsLimit P Aplus V).lift c
-
-/-- **The characteristic equation of `presentationLimitLift`**: its projection at an index is the
-cone's leg there. -/
-@[simp]
-theorem presentationLimitLift_π
-    (c : Cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P))
-    (i : RationalIndex P Aplus V) :
-    presentationLimitLift P Aplus V c ≫ presentationLimitπ P Aplus V i = c.π.app i :=
-  (presentationLimitIsLimit P Aplus V).fac c i
 
 variable (P) in
 /-- **The restriction morphism of a containment `W ≤ V`**: the presheaf's action, which unfolds to
