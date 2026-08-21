@@ -25,15 +25,19 @@ sequence statement over `Universal.Field` factors through the same identificatio
 ## Main results
 
 * `WeierstrassCurve.ψ_eq_normEDS`: `W.ψ = normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄)`, as functions.
-* `WeierstrassCurve.isEllipticSequence_ψ`: the `ψ` family is an elliptic sequence.
+* `WeierstrassCurve.isEllipticNet_ψ`: the `ψ` family is an elliptic net.
 
 ## Provenance
 
-`isEllipticSequence_ψ` is ported from J. Xu and D. K. Angdinata's
+`isEllipticNet_ψ` adapts J. Xu and D. K. Angdinata's
 `LutzNagell/DivisionPolynomialOmega.lean` in AINTLIB (`github.com/CBirkbeck/AINTLIB`,
-Apache-2.0, `main @ 1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declaration `isEllSequence_ψ`,
-renamed to match Mathlib's predicate name; its consumers are the scalar-multiplication
-development's addition formulas. That file's header reads
+Apache-2.0, `main @ 1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declaration `isEllSequence_ψ`.
+It is **strengthened rather than transcribed**: the source states the `s = 0` shift, and the net
+holds by the identical one-line route through `isEllipticNet_normEDS`. Its consumers are the
+scalar-multiplication development's addition formulas, and those need the nonzero shift, so the
+sequence form is not kept alongside — `IsEllipticNet.isEllipticSequence` recovers it. This is
+the same call `DivisionPolynomial/Universal.lean` already made on the source's
+`isEllSequence_ψᵤ`. That file's header reads
 `Authors: Junyan Xu, David Kurniadi Angdinata`; following this repository's convention for
 adapted material the upstream authorship is credited here rather than in the copyright header.
 `ψ_eq_normEDS` has no source counterpart: the source unfolds `ψ` where it needs this, which the
@@ -53,8 +57,10 @@ level of functions for rewriting under function-valued arguments such as
 `IsEllipticNet.invarDenom`, where the per-application equation cannot fire. -/
 theorem ψ_eq_normEDS : W.ψ = normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) := rfl
 
-/-- The `ψ` family of division polynomials is an elliptic sequence. -/
-theorem isEllipticSequence_ψ : IsEllipticSequence W.ψ :=
-  isEllipticSequence_normEDS _ _ _
+/-- **The `ψ` family of division polynomials is an elliptic net.** The elliptic-*sequence*
+consequence is the last index held at `0`, which `IsEllipticNet.isEllipticSequence` reads off;
+consumers needing a nonzero shift, as the addition formula for `n • (X, Y)` does, need the net. -/
+theorem isEllipticNet_ψ : IsEllipticNet W.ψ :=
+  isEllipticNet_normEDS _ _ _
 
 end WeierstrassCurve
