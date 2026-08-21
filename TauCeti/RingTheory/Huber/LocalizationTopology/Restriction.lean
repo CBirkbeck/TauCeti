@@ -81,10 +81,12 @@ the same factor-of-an-inverted-element argument Mathlib packages as
 across the completion. Its
 power-boundedness condition is *not* proved — it is carried as the field
 `HasLocLiftPowerBounded.locLift_divByS_isPowerBounded` of a hypothesis class, because from a bare
-containment it needs a valuative criterion for integrality: Wedhorn Proposition 7.18, whose own
-proof is the bare citation [Hu2] Lemma 3.3, together with Proposition 7.41, which bounds a
-height-one continuous valuation by `1` on `A°`. AINTLIB calls that combination an *adic
-Nullstellensatz*, a name Wedhorn does not use, and records it as an open ticket. Restricting
+containment it needs a valuative criterion for integrality. Wedhorn's is Proposition 7.18, whose
+own proof is the bare citation [Hu2] Lemma 3.3; he applies it in Lemma 8.1 through Proposition
+7.52(1), a reformulation of 7.18(1). AINTLIB instead reduces to height one, pairing 7.18 with
+Proposition 7.41, which bounds a height-one continuous valuation by `1` on `A°`; it calls that
+combination an *adic Nullstellensatz*, a name Wedhorn does not use, and records it as an open
+ticket. Restricting
 attention to a refining presentation is what removes that dependency: the fraction in question is
 then a distinguished one, and `isPowerBounded_divBy` already covers it.
 So the construction here is unconditional where AINTLIB's rests on an assumed class.
@@ -92,9 +94,10 @@ So the construction here is unconditional where AINTLIB's rests on an assumed cl
 ## References
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), §8.1–§8.2 for the structure
-  presheaf and its restriction maps, and Proposition 8.2 for the containment form. Propositions
-  7.18 and 7.41 are the criterion the containment form needs; Definition 7.14, which names rings
-  of integral elements, is a different result and does not supply it.
+  presheaf and its restriction maps, and Proposition 8.2 for the containment form. Proposition
+  7.18 is the criterion it needs, reached in Lemma 8.1 via Proposition 7.52(1); Proposition 7.41
+  belongs to AINTLIB's height-one reduction rather than to Wedhorn's route. Definition 7.14, which
+  names rings of integral elements, is a different result and does not supply it.
 * [C. Birkbeck, *AINTLIB*](https://github.com/CBirkbeck/AINTLIB), branch `dev/adic-spaces`,
   commit `37bbdaeb9`, under `projects/AdicSpaces/`:
   * `Adic spaces/Presheaf.lean` — the restriction maps built from a containment.
