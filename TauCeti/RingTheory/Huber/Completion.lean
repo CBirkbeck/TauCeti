@@ -540,7 +540,7 @@ over the closure `Ĝ` of the image of an open subring `G`, then `b` is already 
 An integral relation for the image of `b` over `Ĝ` is perturbed one coefficient at a time by
 `exists_mem_sub_mul_mem_topologicalClosure`, which leaves the value of the relation at the image of
 `b` inside `Ĝ`. Being open, `G` is closed, hence exactly the preimage of `Ĝ`
-(`UniformSpace.Completion.preimage_closure_image_coe`), so that value is the image of an element of
+(`IsInducing.closure_eq_preimage_closure_image`), so that value is the image of an element of
 `G`; subtracting it from the constant term turns the perturbed relation into one over `G`. -/
 private theorem isIntegral_of_isIntegral_topologicalClosure {G : Subring A}
     (hG : IsOpen (G : Set A)) {b : A}
@@ -549,8 +549,12 @@ private theorem isIntegral_of_isIntegral_topologicalClosure {G : Subring A}
   -- the coercion is `⇑Completion.coeRingHom`, so `map_sum` and friends apply to it
   have hcoe : ∀ y : A, (y : Completion A) = Completion.coeRingHom y := fun _ ↦ rfl
   set Gh := (G.map Completion.coeRingHom).topologicalClosure
-  have hpre : ((↑) : A → Completion A) ⁻¹' (Gh : Set (Completion A)) = (G : Set A) :=
-    Completion.preimage_closure_image_coe (G.toAddSubgroup.isClosed_of_isOpen hG)
+  -- an open subring is closed, and the completion map is inducing, so the closure of the image
+  -- pulls back to `G` itself
+  have hpre : ((↑) : A → Completion A) ⁻¹' (Gh : Set (Completion A)) = (G : Set A) := by
+    change Completion.coe' ⁻¹' closure (Completion.coe' '' (G : Set A)) = (G : Set A)
+    rw [← Completion.isDenseInducing_coe.isInducing.closure_eq_preimage_closure_image,
+      ← Subring.coe_toAddSubgroup, (G.toAddSubgroup.isClosed_of_isOpen hG).closure_eq]
   obtain ⟨n, c, hcmem, hc⟩ := exists_pow_add_sum_eq_zero_of_isIntegral hb
   choose d hdG hd using fun i ↦
     exists_mem_sub_mul_mem_topologicalClosure hG (hcmem i) ((b : Completion A) ^ i)
