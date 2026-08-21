@@ -58,9 +58,10 @@ The archimedean hypothesis is on the value group, which is what height one suppl
 archimedean codomain gives it by `MulArchimedean.comap`.
 
 The witness `b` is what analyticity supplies (Wedhorn Remark 7.40(1)), and it is not removable.
-Give `A` the discrete topology: every element is then power-bounded, every valuation is continuous
-(`Valuation.isContinuous_of_discreteTopology`), and `0` is the only topologically nilpotent
-element, so no witness exists — and any `v` with `1 < v a` refutes the conclusion. -/
+Give a *reduced* `A` the discrete topology: every element is then power-bounded, every valuation
+is continuous (`Valuation.isContinuous_of_discreteTopology`), and a power of `x` vanishes only if
+`x` does, so `0` is the sole topologically nilpotent element and no witness exists. Discrete `ℚ`
+carrying a `p`-adic valuation is such an `A`, and there `1 < v p⁻¹` refutes the conclusion. -/
 theorem IsContinuous.le_one_of_isPowerBounded {v : Valuation A Γ₀}
     [MulArchimedean (MonoidWithZeroHom.ValueGroup₀ (.ofClass v))] (hv : v.IsContinuous)
     {b : A} (hb : IsTopologicallyNilpotent b) (hb0 : v b ≠ 0) {a : A}
@@ -73,8 +74,8 @@ theorem IsContinuous.le_one_of_isPowerBounded {v : Valuation A Γ₀}
   obtain ⟨n, hn'⟩ := MulArchimedean.arch (v.restrict b)⁻¹ hgt'
   -- transport the comparison back to `Γ₀` along the strictly monotone embedding
   have hn : (v b)⁻¹ ≤ v a ^ n := by
-    have := MonoidWithZeroHom.ValueGroup₀.embedding_strictMono.le_iff_le.mpr hn'
-    simpa only [map_pow, map_inv₀, embedding_restrict] using this
+    simpa only [map_pow, map_inv₀, embedding_restrict] using
+      MonoidWithZeroHom.ValueGroup₀.embedding_strictMono.le_iff_le.mpr hn'
   -- so `a ^ n * b` has value at least `1`
   have hab : (1 : Γ₀) ≤ v (a ^ n * b) := by
     rw [map_mul, map_pow, ← inv_mul_cancel₀ hb0]
