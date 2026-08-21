@@ -65,7 +65,7 @@ definitions involved, and belongs upstream once its consumers are in place.
 Ported from FLT, https://github.com/ImperialCollegeLondon/FLT
 @ `bc2fe8ff7396469a16c2a6d51d6117f5825d93a0` (Apache-2.0), file
 `FLT/Mathlib/AlgebraicGeometry/EllipticCurve/Reduction.lean`, by Kevin Buzzard — the source commit
-is FLT PR #1088, "Quadratic twist to split multiplicative reduction". Four declarations are taken
+is FLT PR #1088, "Quadratic twist to split multiplicative reduction". Five declarations are taken
 from it:
 
 * `isMinimal_of_valuation_c₄_eq_one`;
@@ -79,7 +79,10 @@ FLT's current head (`9deae05a`), which drops that development entirely; the pinn
 is the record of it. It is absent from Mathlib too, whose `IsMinimal` API stops at the pairwise
 exclusion of the reduction types and never compares two minimal models.
 
-Statements are taken unchanged. The proofs diverge in six places:
+Statements are taken unchanged except for `of_isMinimal_smul`, which drops the source's
+`[IsMinimal R W₁]`: that instance is already implied by its `h₁`, since
+`HasSplitMultiplicativeReduction` extends `HasMultiplicativeReduction` extends `IsMinimal`. The
+proofs diverge in six places:
 
 * the section's variable block is restated here, and the `open`s are narrowed to those of Mathlib's
   own `Minimal` section (`IsLocalRing` is left closed, since opening it makes `maximalIdeal`
@@ -89,9 +92,10 @@ Statements are taken unchanged. The proofs diverge in six places:
   serve the comparison below;
 * the source's `exists_algebraMap_unit_eq_of_valuation_eq_one` — a separate shim of its own, in
   `FLT/Mathlib/RingTheory/Valuation/Discrete/IsDiscreteValuationRing.lean` — is **not ported**.
-  Mathlib has since acquired that file, and with it `mker_valuation_eq_isUnitSubmonoid`, which
-  reduces the unit extraction to the three lines inlined below. A standalone lemma over it would
-  be a one-step wrapper;
+  Mathlib has since acquired that file, and with it `associated_of_valuation_eq`, which the three
+  lines below call directly. The source obtains the unit in the orientation `u • x = 1` and then
+  inverts it; taking `associated_of_valuation_eq 1 ↑D.u` instead lands on `algebraMap R K u = D.u`
+  with no inversion at all;
 * the source's `exists_variableChange_baseChange_eq_of_smul_eq` is this repository's
   `WeierstrassCurve.VariableChange.exists_baseChange_eq_of_smul_eq`, which is stated over
   `IsIntegrallyClosedIn R K` rather than a discrete valuation ring; instance search discharges it
@@ -199,15 +203,16 @@ transfer is not definitional: it needs `D` to be defined over `R`, which is exac
 `valuation_u_eq_one_of_isMinimal_smul` supplies. A form of Silverman, *The Arithmetic of Elliptic
 Curves*, Remark VII.1.3(b), on the uniqueness of minimal models over a discrete valuation ring. -/
 theorem HasSplitMultiplicativeReduction.of_isMinimal_smul {W₁ W₂ : WeierstrassCurve K}
-    [IsMinimal R W₁] [IsMinimal R W₂] [W₁.IsElliptic] (D : VariableChange K) (hD : D • W₁ = W₂)
+    [IsMinimal R W₂] [W₁.IsElliptic] (D : VariableChange K) (hD : D • W₁ = W₂)
     (h₁ : W₁.HasSplitMultiplicativeReduction R) :
     W₂.HasSplitMultiplicativeReduction R := by
+  -- `W₁` is minimal because it has multiplicative reduction, so this is not a hypothesis.
+  have : IsMinimal R W₁ := h₁.toHasMultiplicativeReduction.toIsMinimal
   -- `v (D.u) = 1`, so `D.u` is the image of a unit of `R` and `D` descends to some `C₀` over `R`.
   have hvu := valuation_u_eq_one_of_isMinimal_smul R D hD
-  obtain ⟨u₀, hau⟩ : ∃ u₀ : Rˣ, algebraMap R K ↑u₀ = ↑D.u := by
-    obtain ⟨a, ha, hax⟩ : (↑D.u : K) ∈ (IsUnit.submonoid R).map (algebraMap R K) := by
-      rw [← mker_valuation_eq_isUnitSubmonoid]; simpa [MonoidHom.mem_mker] using hvu
-    exact ⟨((IsUnit.mem_submonoid_iff a).mp ha).unit, by simpa using hax⟩
+  obtain ⟨u₀, hau⟩ :=
+    associated_of_valuation_eq (A := R) 1 (↑D.u : K) (by rw [map_one]; exact hvu.symm)
+  rw [Units.smul_def, Algebra.smul_def, mul_one] at hau
   obtain ⟨C₀, hDC₀⟩ := VariableChange.exists_baseChange_eq_of_smul_eq R D hD u₀ hau
   have hW₂eq : (C₀ • W₁.integralModel R).baseChange K = W₂ := by
     rw [WeierstrassCurve.baseChange, ← map_variableChange, ← hD, ← hDC₀]
