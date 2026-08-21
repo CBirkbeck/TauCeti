@@ -267,7 +267,7 @@ theorem piTensorProductMap_comp_orthogonalCup {A : Matrix (Fin n) (Fin n) k} (hA
   -- the two coordinates are the `(r 0, r 1)` entries of `A * Aᵀ` and of `1`, which `hA` equates
   have hAA := Matrix.ext_iff.mpr hA (r 0) (r 1)
   simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply] at hAA
-  simpa [Matrix.one_apply] using hAA
+  simpa using hAA
 
 end Invariance
 
