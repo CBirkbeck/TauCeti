@@ -93,6 +93,9 @@ counterexample in `IsWeightFamily`'s docstring shows the hypothesis is not autom
   what `weightedMap` is built from; `weightedMap_weightedX` says it fixes the variables, while
   `weightedMap_weightedC` says it acts as `φ` on constants — the constants are moved, not fixed.
   `weightedMap_id` and `weightedMap_comp` are the functor laws.
+* `TauCeti.Huber.weightedCongr`: the isomorphism induced by a topological ring isomorphism of
+  coefficients, assembled from those functor laws; `continuous_weightedCongr` and its `_symm`
+  make it one of topological rings.
 
 ## Scope
 
@@ -1340,6 +1343,69 @@ theorem weightedMap_weightedX [NonarchimedeanRing A] [NonarchimedeanRing B] {φ 
     {hS : IsWeightFamily S} (hTS : ∀ i, φ '' T i ⊆ S i) (i : Fin k) :
     weightedMap hφ hT hS hTS (weightedX T hT i) = weightedX S hS i :=
   Subtype.ext (by simp [MvPowerSeries.map_X])
+
+/-- **A topological ring isomorphism of coefficients induces one of weighted series rings.**
+Given `e : A ≃+* B` continuous in both directions and carrying the weights across in both
+directions, `TauCeti.Huber.weightedMap` applied to `e` and to `e.symm` are mutually inverse —
+by `TauCeti.Huber.weightedMap_id` and `TauCeti.Huber.weightedMap_comp` — so they assemble into a
+ring isomorphism. `TauCeti.Huber.continuous_weightedCongr` and its `_symm` make it an
+isomorphism of *topological* rings.
+
+Both directions of each hypothesis are asked for separately rather than derived: `e` carrying
+`T i` into `S i` does not by itself make `e.symm` carry `S i` back into `T i`, since the weights
+are arbitrary sets and the inclusion may be strict. -/
+noncomputable def weightedCongr [NonarchimedeanRing A] [NonarchimedeanRing B] (e : A ≃+* B)
+    (he : Continuous ⇑(e : A →+* B)) (he' : Continuous ⇑(e.symm : B →+* A))
+    {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
+    (hTS : ∀ i, (e : A →+* B) '' T i ⊆ S i) (hST : ∀ i, (e.symm : B →+* A) '' S i ⊆ T i) :
+    weightedRestrictedSubring T hT ≃+* weightedRestrictedSubring S hS :=
+  RingEquiv.ofRingHom (weightedMap he hT hS hTS) (weightedMap he' hS hT hST)
+    (RingHom.ext fun x ↦ Subtype.ext (by
+      rw [RingHom.coe_comp, Function.comp_apply, coe_weightedMap, coe_weightedMap,
+        ← RingHom.comp_apply, ← MvPowerSeries.map_comp]
+      simp))
+    (RingHom.ext fun x ↦ Subtype.ext (by
+      rw [RingHom.coe_comp, Function.comp_apply, coe_weightedMap, coe_weightedMap,
+        ← RingHom.comp_apply, ← MvPowerSeries.map_comp]
+      simp))
+
+/-- `TauCeti.Huber.weightedCongr` is `TauCeti.Huber.weightedMap`; the body of the definition is
+not exported, so this is how a consumer computes with it. -/
+@[simp]
+theorem weightedCongr_apply [NonarchimedeanRing A] [NonarchimedeanRing B] (e : A ≃+* B)
+    (he : Continuous ⇑(e : A →+* B)) (he' : Continuous ⇑(e.symm : B →+* A))
+    {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
+    (hTS : ∀ i, (e : A →+* B) '' T i ⊆ S i) (hST : ∀ i, (e.symm : B →+* A) '' S i ⊆ T i)
+    (f : weightedRestrictedSubring T hT) :
+    weightedCongr e he he' hT hS hTS hST f = weightedMap he hT hS hTS f := by
+  simp [weightedCongr]
+
+/-- The inverse of `TauCeti.Huber.weightedCongr` is the map induced by `e.symm`. -/
+@[simp]
+theorem weightedCongr_symm_apply [NonarchimedeanRing A] [NonarchimedeanRing B] (e : A ≃+* B)
+    (he : Continuous ⇑(e : A →+* B)) (he' : Continuous ⇑(e.symm : B →+* A))
+    {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
+    (hTS : ∀ i, (e : A →+* B) '' T i ⊆ S i) (hST : ∀ i, (e.symm : B →+* A) '' S i ⊆ T i)
+    (f : weightedRestrictedSubring S hS) :
+    (weightedCongr e he he' hT hS hTS hST).symm f = weightedMap he' hS hT hST f := by
+  simp [weightedCongr, RingEquiv.ofRingHom_symm]
+
+/-- `TauCeti.Huber.weightedCongr` is continuous. -/
+theorem continuous_weightedCongr [NonarchimedeanRing A] [NonarchimedeanRing B] (e : A ≃+* B)
+    (he : Continuous ⇑(e : A →+* B)) (he' : Continuous ⇑(e.symm : B →+* A))
+    {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
+    (hTS : ∀ i, (e : A →+* B) '' T i ⊆ S i) (hST : ∀ i, (e.symm : B →+* A) '' S i ⊆ T i) :
+    Continuous (weightedCongr e he he' hT hS hTS hST) :=
+  continuous_weightedMap he hT hS hTS
+
+/-- The inverse of `TauCeti.Huber.weightedCongr` is continuous, so it is an isomorphism of
+topological rings. -/
+theorem continuous_weightedCongr_symm [NonarchimedeanRing A] [NonarchimedeanRing B] (e : A ≃+* B)
+    (he : Continuous ⇑(e : A →+* B)) (he' : Continuous ⇑(e.symm : B →+* A))
+    {T : Fin k → Set A} {S : Fin k → Set B} (hT : IsWeightFamily T) (hS : IsWeightFamily S)
+    (hTS : ∀ i, (e : A →+* B) '' T i ⊆ S i) (hST : ∀ i, (e.symm : B →+* A) '' S i ⊆ T i) :
+    Continuous (weightedCongr e he he' hT hS hTS hST).symm :=
+  continuous_weightedMap he' hS hT hST
 
 
 end Functoriality
