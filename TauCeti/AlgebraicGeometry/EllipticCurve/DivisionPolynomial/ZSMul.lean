@@ -16,7 +16,8 @@ elements of `Universal.Field`. This file defines those two rational functions, `
 `smulY`, develops the `smulX` calculus — values at `0`, `1` and `2`, the offset `ψₙ₊₁ψₙ₋₁/ψₙ²`
 from the `X`-coordinate, evenness in `n`, nonvanishing, the difference `smulX m - smulX n` as a
 single quotient, and the separation statement `smulX m = smulX n ↔ m = n ∨ m = -n` — and then
-**proves the identification itself**: `zsmul_point_eq_smulX_smulY` says that `(smulX n, smulY n)`
+**proves the identification itself**: `exists_zsmul_point_eq_smulX_smulY` says that
+`(smulX n, smulY n)`
 really are the affine coordinates of `n • (X, Y)`, for every `n ≠ 0`. `smulY`'s own sign rule is
 here too: negating a nonzero index negates the point, so `smulY (-n)` is the `negY` of
 `(smulX n, smulY n)`.
@@ -50,7 +51,7 @@ The file closes by specializing. A point `(x, y)` on a curve `W` over any commut
 `Universal.ringEval`, and `ringEval_comp_smulRing` says it carries the universal triple to
 `smulEval W x y n`, the division polynomials of `W` evaluated at `(x, y)`. The three identities
 above therefore hold for `W` at `(x, y)`, and feeding them to an even-odd induction proves
-**`zsmul_eq_smulEval`**: over a field, `n • (x, y)` has Jacobian coordinates
+**`zsmul_point_eq_smulEval`**: over a field, `n • (x, y)` has Jacobian coordinates
 `(φₙ(x,y) : ωₙ(x,y) : ψₙ(x,y))`, for every `n` and with no hypothesis on the characteristic. That
 is the statement the Nagell–Lutz layer consumes.
 
@@ -87,7 +88,7 @@ is the statement the Nagell–Lutz layer consumes.
 * `WeierstrassCurve.Universal.Affine.smulX_add`, `.smulY_add_sub_negY`: the chord formulas, giving
   `smulX (n + m)` and the vertical gap at `n + m` in terms of the values at `n`, `m` and `n - m`
   — the induction step.
-* `WeierstrassCurve.Universal.Affine.zsmul_point_eq_smulX_smulY`: **the identification**. For
+* `WeierstrassCurve.Universal.Affine.exists_zsmul_point_eq_smulX_smulY`: **the identification**. For
   `n ≠ 0` the pair `(smulX n, smulY n)` is nonsingular and `n • (X, Y)` is the affine point it
   names.
 * `WeierstrassCurve.Universal.Affine.zsmul_point_ne_zero`, `.Jacobian.zsmul_point_ne_zero`:
@@ -108,7 +109,8 @@ is the statement the Nagell–Lutz layer consumes.
   `smulRing` along the homomorphism a point of `W` induces — the bridge from the universal
   identities to a concrete curve, and what `dblXYZ_smulEval` and `addXYZ_smulEval` are proved
   through.
-* `WeierstrassCurve.zsmul_eq_smulEval`: **the headline**. Over a field, `n • (x, y)` in Jacobian
+* `WeierstrassCurve.zsmul_point_eq_smulEval`: **the headline**. Over a field, `n • (x, y)`
+  in Jacobian
   coordinates is `(φₙ(x,y) : ωₙ(x,y) : ψₙ(x,y))`, for every nonsingular `(x, y)` and every `n`.
 
 ## Provenance
@@ -318,12 +320,14 @@ namespace WeierstrassCurve.Universal.Affine
 variable {m n : ℤ}
 
 /-- The rational function `φₙ/ψₙ²` in the universal field. For `n ≠ 0` it is the affine
-`X`-coordinate of `n • (X, Y)` on the universal curve, by `zsmul_point_eq_smulX_smulY` below. -/
+`X`-coordinate of `n • (X, Y)` on the universal curve, by
+`exists_zsmul_point_eq_smulX_smulY` below. -/
 def smulX (n : ℤ) : Universal.Field :=
   polyToField (curve.φ n) / polyToField (curve.ψ n) ^ 2
 
 /-- The rational function `ωₙ/ψₙ³` in the universal field. For `n ≠ 0` it is the affine
-`Y`-coordinate of `n • (X, Y)` on the universal curve, by `zsmul_point_eq_smulX_smulY` below. -/
+`Y`-coordinate of `n • (X, Y)` on the universal curve, by
+`exists_zsmul_point_eq_smulX_smulY` below. -/
 def smulY (n : ℤ) : Universal.Field :=
   polyToField (curve.ω n) / polyToField (curve.ψ n) ^ 3
 
@@ -492,7 +496,8 @@ lemma addX_smul_one_smul_one :
   linear_combination hF
 
 /-- **The same for `addY`: it returns `smulY 2`.** Together with the previous lemma this is the
-`n = 2` base case of `zsmul_point_eq_smulX_smulY` below, which is what makes `(smulX 2, smulY 2)`
+`n = 2` base case of `exists_zsmul_point_eq_smulX_smulY` below, which is what makes
+`(smulX 2, smulY 2)`
 the coordinates of `2 • (X, Y)`. -/
 -- The certificate is `ω_def` at `2`: the reduced-invariant denominator is `1` and the
 -- complement's auxiliary term `0`, the multiples of the Weierstrass polynomial vanish,
@@ -590,7 +595,7 @@ curve, for every nonzero `n`. -/
 -- coordinates against Mathlib's chord formula: `smulX_add` against `addX_eq_addX_negY_sub`, and
 -- `smulY_add_sub_negY` against `addY_sub_negY_addY` — the latter determines `smulY` only through
 -- `z ↦ z - negY x z`, which `eq_of_sub_negY_eq` inverts.
-theorem zsmul_point_eq_smulX_smulY : n ≠ 0 →
+theorem exists_zsmul_point_eq_smulX_smulY : n ≠ 0 →
     ∃ h : Affine.Nonsingular pointedCurve.toAffine (smulX n) (smulY n),
       n • point = .some _ _ h := by
   induction n using Int.negInduction with
@@ -643,7 +648,7 @@ theorem zsmul_point_eq_smulX_smulY : n ≠ 0 →
 /-- **The distinguished point `(X, Y)` on the universal curve is not torsion.** Every nonzero
 multiple of it has affine coordinates, so none of them is the point at infinity. -/
 lemma zsmul_point_ne_zero (h0 : n ≠ 0) : n • point ≠ 0 := by
-  obtain ⟨ns, eq⟩ := zsmul_point_eq_smulX_smulY h0
+  obtain ⟨ns, eq⟩ := exists_zsmul_point_eq_smulX_smulY h0
   rw [eq]
   exact Affine.Point.some_ne_zero ns
 
@@ -697,7 +702,8 @@ lemma algebraMap_comp_smulRing (n : ℤ) : algebraMap _ _ ∘ smulRing n = smulF
   fin_cases i <;> simp [Function.comp_def, polyToField_apply]
 
 /-- **The Jacobian coordinates of `n • (X, Y)` are `(φₙ : ωₙ : ψₙ)`.** The Jacobian form of
-`Affine.zsmul_point_eq_smulX_smulY`: where the affine statement divides by `ψₙ²` and `ψₙ³`, the
+`Affine.exists_zsmul_point_eq_smulX_smulY`: where the affine statement divides by `ψₙ²` and
+`ψₙ³`, the
 Jacobian one carries `ψₙ` as the third coordinate and holds for `n = 0` as well, the triple
 becoming `(1 : 1 : 0)`, the point at infinity.
 
@@ -712,7 +718,7 @@ theorem zsmul_point_eq_smulField : (n • Jacobian.point).point = ⟦smulField n
   obtain rfl | hn := eq_or_ne n 0
   · simp_rw [zero_zsmul, φ_zero, ω_zero, ψ_zero, map_zero, map_one]
     rfl
-  obtain ⟨ns, eq⟩ := Universal.Affine.zsmul_point_eq_smulX_smulY hn
+  obtain ⟨ns, eq⟩ := Universal.Affine.exists_zsmul_point_eq_smulX_smulY hn
   rw [Jacobian.point_def, ← Point.toAffineAddEquiv_symm_apply,
     ← map_zsmul (Point.toAffineAddEquiv _).symm, eq]
   have hψ : polyToField (curve.ψ n) ≠ 0 := polyToField_ψ_ne_zero hn
@@ -914,7 +920,8 @@ variable (x y) in
 /-- The division polynomials of `W` evaluated at a point `(x, y)`, as a Jacobian triple
 `(φₙ(x,y), ωₙ(x,y), ψₙ(x,y))`. The definition needs only a commutative ring. **Over a field**, and
 for a nonsingular `(x, y)`, these are the Jacobian coordinates of `n • (x, y)` — that reading is
-`zsmul_eq_smulEval` below, which assumes `[Field F]`, and it is not claimed over a general `R`. -/
+`zsmul_point_eq_smulEval` below, which assumes `[Field F]`, and it is not claimed over a
+general `R`. -/
 abbrev smulEval (n : ℤ) : Fin 3 → R := evalEval x y ∘ ![W.φ n, W.ω n, W.ψ n]
 
 /-- `smulEval` at `0` is `(1, 1, 0)`, the Jacobian triple of the point at infinity. -/
@@ -1002,7 +1009,7 @@ not a specialization of one of them. -/
 -- summands are distinct because their difference is `P`, which is a nonzero affine point — not
 -- because `P` is non-torsion, which this theorem does not assume. The negative case rescales by
 -- `-1`, which is `smulRing_neg` specialized along the point.
-theorem zsmul_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : ℤ) :
+theorem zsmul_point_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : ℤ) :
     (n • Point.fromAffine (Affine.Point.some _ _ h)).point = ⟦smulEval W x y n⟧ := by
   induction n using Int.negInduction with
   | nat n =>
