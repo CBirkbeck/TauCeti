@@ -43,6 +43,14 @@ noncomputable def heckeSlashSumRing {N : ℕ} [NeZero N] (k : ℤ)
     heckeSlashSumRing (N := N) k 0 f = 0 :=
   Finsupp.sum_zero_index
 
+/-- The action on a basis element is the scaled slash sum of that double coset. -/
+@[simp] lemma heckeSlashSumRing_single {N : ℕ} [NeZero N] (k : ℤ)
+    (D : HeckeCoset (Delta0 N) ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ)))
+    (c : ℤ) (f : ℍ → ℂ) :
+    heckeSlashSumRing (N := N) k (HeckeCosetModule.single ℤ D c) f =
+      (c : ℂ) • heckeSlashSum k D f :=
+  HeckeCosetModule.sum_single_index ℤ (by simp)
+
 end
 
 end HeckeRing.GL2
