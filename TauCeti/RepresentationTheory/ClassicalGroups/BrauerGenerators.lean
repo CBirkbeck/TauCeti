@@ -266,7 +266,7 @@ theorem piTensorProductMap_comp_orthogonalCup {A : Matrix (Fin n) (Fin n) k} (hA
     Basis.piTensorProduct_repr_tprod_apply, Pi.basisFun_repr, Fin.prod_univ_two,
     Matrix.mulVec_single_one, Matrix.col_apply, Pi.single_apply]
   -- both sides are the `(r 0, r 1)` entry of `A * Aᵀ`, which `hA` identifies with the identity
-  have hAA := congrFun (congrFun hA (r 0)) (r 1)
+  have hAA := Matrix.ext_iff.mpr hA (r 0) (r 1)
   simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply] at hAA
   simpa [Matrix.one_apply, eq_comm] using hAA
 
