@@ -294,20 +294,7 @@ private theorem RowExchangeable.measure_setOf_two_blocks_eq (h : RowExchangeable
         {ω | (∀ a ∈ F, Y (a, m) ω ∈ B a ∧ Y (a, n) ω ∈ B a) ∧
           ∀ a ∈ G, Y (a, m') ω ∈ B a ∧ Y (a, n') ω ∈ B a} := by
     ext ω
-    have hFval : ∀ a ∈ F, c a = m ∧ d a = n := fun a ha => by simp [hc, hd, ha]
-    have hGval : ∀ a ∈ G, c a = m' ∧ d a = n' := fun a ha => by
-      have : a ∉ F := Finset.disjoint_right.mp hFG ha
-      simp [hc, hd, this]
-    simp only [Set.mem_ofPred_eq]
-    constructor
-    · rintro ⟨h1, h2⟩
-      refine ⟨fun a ha => ?_, fun a ha => ?_⟩
-      · rw [← (hFval a ha).1, ← (hFval a ha).2]; exact h1 a ha
-      · rw [← (hGval a ha).1, ← (hGval a ha).2]; exact h2 a ha
-    · rintro ⟨h1, h2⟩
-      refine ⟨fun a ha => ?_, fun a ha => ?_⟩
-      · rw [(hFval a ha).1, (hFval a ha).2]; exact h1 a ha
-      · rw [(hGval a ha).1, (hGval a ha).2]; exact h2 a ha
+    simp +contextual [hc, hd, Finset.disjoint_right.mp hFG]
   rw [← hglue, ← hsplit c d, ← hsplit (fun _ => 0) (fun _ => 1),
     h.measure_setOf_forall_pair_eq hY (F ∪ G)
       (fun a ha => hB a (Finset.mem_union.mp ha))
