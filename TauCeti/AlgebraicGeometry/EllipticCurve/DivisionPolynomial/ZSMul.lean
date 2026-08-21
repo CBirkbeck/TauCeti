@@ -96,8 +96,8 @@ is the statement the Nagell–Lutz layer consumes.
   `(n • point).point = ⟦(φₙ : ωₙ : ψₙ)⟧`, with no hypothesis on `n`.
 * `WeierstrassCurve.Universal.Jacobian.dblXYZ_smulField`, `.addXYZ_smulField`: Mathlib's Jacobian
   doubling and addition formulas evaluated on the universal triples, as equalities of triples.
-  `.addXYZ_smulField_add_one` is the unscaled adjacent-index case, and `.dblXYZ_smulRing`,
-  `.addXYZ_smulRing`, `.addXYZ_smulRing_add_one` are the same three over `Universal.Ring`.
+  `.dblXYZ_smulRing`, `.addXYZ_smulRing` and `.addXYZ_smulRing_add_one` are the same over
+  `Universal.Ring`, the last being the unscaled adjacent-index case.
 * `WeierstrassCurve.Universal.Jacobian.dblZ_smulPoly`, `.addZ_smulPoly`: the `Z`-coordinates of
   those two formulas, `ψ₂ₙ` and `ψₙ₊ₘψₙ₋ₘ`, already in the polynomial ring — no reduction modulo
   the Weierstrass polynomial is needed for the third coordinate.
@@ -249,10 +249,12 @@ identify the `n = 0` triple; the source proves that case by unfolding `dblXYZ` i
 `ringEval_comp_smulRing` and `ringEval_ψ` are placed in the `Universal` namespace rather than at
 `WeierstrassCurve` level as upstream, matching where `EllipticCurve/Universal.lean` keeps the rest
 of the `ringEval` API. The source's `curveRing_map_ringEval` is this repository's `map_ringEval`.
-The source's three `₁`-suffixed adjacent-index lemmas are renamed on port: `addXYZ_smulField₁`,
-`addXYZ_smulRing₁` and `addXYZ_smulEval₁` become `addXYZ_smulField_add_one`,
-`addXYZ_smulRing_add_one` and `addXYZ_smulEval_add_one` — the `₁` is a bare index rather than a
-description of the conclusion.
+Of the source's three `₁`-suffixed adjacent-index lemmas, two are ported and renamed —
+`addXYZ_smulRing₁` and `addXYZ_smulEval₁` become `addXYZ_smulRing_add_one` and
+`addXYZ_smulEval_add_one`, the `₁` being a bare index rather than a description of the conclusion.
+**`addXYZ_smulField₁` (`:539`) is not ported**: it is `addXYZ_smulField` followed by
+`add_sub_cancel_left`, `ψ_one`, `map_one` and `one_smul`, and nothing consumes it here — only the
+`Ring`-level form is used, by `addXYZ_smulEval_add_one`.
 
 **`point_point` (`:420`) is not ported at all, and the previous slice's copy of it is deleted
 here.** That slice predicted this block would supply a consumer; it does not. At `1c1c7466` the
@@ -904,13 +906,6 @@ lemma addXYZ_smulRing :
 /-- **Adjacent indices add without any scaling**: `ψ₍ₙ₊₁₎₋ₙ` is `ψ₁ = 1`, so `addXYZ` on the
 triples at `n` and `n + 1` is the triple at `2n + 1` exactly. This is the odd step of the
 scalar-multiplication induction. -/
-lemma addXYZ_smulField_add_one :
-    addXYZ pointedCurve (smulField n) (smulField (n + 1)) = smulField (2 * n + 1) := by
-  rw [addXYZ_smulField, add_sub_cancel_left, ψ_one, map_one, one_smul]
-  congr 1
-  omega
-
-/-- `addXYZ_smulField_add_one` over the universal ring. -/
 lemma addXYZ_smulRing_add_one :
     addXYZ curveRing (smulRing n) (smulRing (n + 1)) = smulRing (2 * n + 1) := by
   rw [addXYZ_smulRing, add_sub_cancel_left, ψ_one, map_one, one_smul]
@@ -1018,10 +1013,10 @@ not a specialization of one of them. -/
 -- Even-odd strong induction on `n ≥ 0`, then `Int.negInduction` for the sign. The base cases
 -- `n = 0` and `n = 1` are `(1 : 1 : 0)` and `(x : y : 1)`. The even step writes `2 * (m + 1) • P`
 -- through Mathlib's `add_self` and `dblXYZ_smulEval`; the odd step writes
--- `(m + 1) • P + (m + 2) • P` through `add_of_not_equiv` and `addXYZ_smulEval_add_one`, the
--- two summands being distinct because `P` is not torsion. The negative case rescales by `-1`,
--- which is
--- `smulRing_neg` specialized along the point.
+-- `(m + 1) • P + (m + 2) • P` through `add_of_not_equiv` and `addXYZ_smulEval_add_one`. The two
+-- summands are distinct because their difference is `P`, which is a nonzero affine point — not
+-- because `P` is non-torsion, which this theorem does not assume. The negative case rescales by
+-- `-1`, which is `smulRing_neg` specialized along the point.
 theorem zsmul_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : ℤ) :
     (n • Point.fromAffine (Affine.Point.some _ _ h)).point = ⟦smulEval W x y n⟧ := by
   induction n using Int.negInduction with
