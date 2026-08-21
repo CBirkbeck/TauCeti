@@ -261,9 +261,12 @@ not, `polyToField`'s body being unexposed.
 One prerequisite is added, in `EllipticCurve/Universal.lean`: `map_polyToField`, for the same
 reason. Upstream `curveField = curvePoly.map polyToField` definitionally, so `map_dblZ` and
 `map_addZ` land on `curveField` with no further step; here they land on `curvePoly.map polyToField`
-and the identification has to be cited. Two proofs below cite it. It is not `@[simp]`: `simp` makes
-no progress on the statement, so the tag would be admissible, but two explicit call sites do not
-warrant the global surface.
+and the identification has to be cited. Two proofs below cite it. It carries `@[simp]`, as does
+`ringEval_comp_smulRing`: both are map-specialization normal forms, reducing a mapped universal
+object to the concrete one it names, and neither loops. `api-design` asked for both tags in round
+three, over an initial judgement here that two explicit call sites did not warrant the global
+surface; the normal-form reading is the better one, and a full `lint-env` confirms neither tag
+introduces a simpNF violation.
 
 Two of the source's proofs are replaced rather than transcribed, both because a tactic upstream
 relies on is unavailable over `Poly = ℤ[A₁,⋯,A₆][X][Y]`. Instance search gives up on that
@@ -927,7 +930,7 @@ namespace Universal
 /-- **`smulEval` is the specialization of `smulRing`**: the universal triple `(φₙ, ωₙ, ψₙ)`,
 pushed along the homomorphism a point of `W` induces, is that point's evaluated triple. This is
 what turns each identity over `curveRing` into the same identity for `W` at `(x, y)`. -/
-lemma ringEval_comp_smulRing (n : ℤ) :
+@[simp] lemma ringEval_comp_smulRing (n : ℤ) :
     ringEval eqn ∘ Jacobian.smulRing n = smulEval W x y n := by
   -- Coordinatewise, each coordinate being `ringEval_mk` followed by the matching `evalEval_*`.
   -- Each `change` names the `i`-th component of two `![_, _, _]` tuples; `smulRing` and `smulEval`
@@ -992,9 +995,12 @@ a field are `(φₙ(x,y) : ωₙ(x,y) : ψₙ(x,y))`.
 
 This is the theorem the whole universal development exists to prove. It holds for every curve over
 every field, with no hypothesis on `n` and none on the characteristic, because its ingredients do:
-the universal doubling, addition and negation identities are equalities between polynomials in
-`A₁,⋯,A₆,X,Y`, and specialize along `ringEval` to any point on any curve. The theorem itself is
-then an induction over those three, not a specialization of one identity. -/
+the doubling, addition and negation identities the induction consumes are equalities in the
+universal coordinate ring `Universal.Ring` — polynomials in `A₁,⋯,A₆,X,Y` taken modulo the
+Weierstrass polynomial — and specialize along `ringEval` to any point on any curve. Only the
+third coordinates (`dblZ_smulPoly`, `addZ_smulPoly`) and the negation rule `smulPoly_neg` hold
+already over `Poly`, before that quotient. The theorem is then an induction over those identities,
+not a specialization of one of them. -/
 -- Even-odd strong induction on `n ≥ 0`, then `Int.negInduction` for the sign. The base cases
 -- `n = 0` and `n = 1` are `(1 : 1 : 0)` and `(x : y : 1)`. The even step writes `2 * (m + 1) • P`
 -- through Mathlib's `add_self` and `dblXYZ_smulEval`; the odd step writes

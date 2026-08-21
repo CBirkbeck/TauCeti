@@ -336,7 +336,7 @@ Upstream this identity is `rfl` and is never named. Here it is not `rfl`: the mo
 and the identity has to be read off `algebraMap_field_eq_comp` instead. Every Jacobian formula
 transported from `Poly` to `Universal.Field` — `map_dblZ`, `map_addZ` and their `XYZ` companions
 all produce `curvePoly.map polyToField` — needs it. -/
-lemma map_polyToField : curvePoly.map polyToField = pointedCurve :=
+@[simp] lemma map_polyToField : curvePoly.map polyToField = pointedCurve :=
   (congrArg (WeierstrassCurve.map curve) algebraMap_field_eq_comp).symm
 
 end Universal
