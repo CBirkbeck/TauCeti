@@ -127,10 +127,8 @@ private theorem continuousOn_dslope_prod_of_convex {U : Set ℂ} (hU : Convex �
       (⟨hc₀, hw₀⟩ : (c₀, w₀) ∈ U ×ˢ U)] with p hp
     exact dslope_eq_integral_deriv hU hU_open hf hp.1 hp.2
   have hp_proj : ∀ p : ℂ × ℂ, p ∈ Metric.ball (c₀, w₀) ε →
-      p.1 ∈ Metric.ball c₀ ε ∧ p.2 ∈ Metric.ball w₀ ε := fun p hp ↦ by
-    rw [Metric.mem_ball, Prod.dist_eq] at hp
-    exact ⟨Metric.mem_ball.mpr (lt_of_le_of_lt (le_max_left _ _) hp),
-      Metric.mem_ball.mpr (lt_of_le_of_lt (le_max_right _ _) hp)⟩
+      p.1 ∈ Metric.ball c₀ ε ∧ p.2 ∈ Metric.ball w₀ ε := fun p hp ↦
+    Set.mem_prod.mp (by rwa [← ball_prod_same] at hp)
   refine (ContinuousAt.congr ?_ h_eq_nbhd.symm).continuousWithinAt
   refine continuousAt_of_dominated_interval
     (bound := fun _ ↦ max M 0) ?_ ?_ intervalIntegrable_const ?_
