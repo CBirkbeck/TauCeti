@@ -19,9 +19,12 @@ explicit `y² = x³ + Ax + B` — the classical form of the Nagell–Lutz theore
 constructor, so it is supplied here, with the `IsShortNF` instance that connects it to everything
 Mathlib already proves.
 
-Only the coefficient values are stated as lemmas, and only those Mathlib does not already tag
-`@[simp]`. Every other fact about `shortCurve` — the `b`- and `c`-invariants, `Δ` and `j` — is
-inherited through the `IsShortNF` instance rather than restated.
+Only `a₄` and `a₆` are stated as lemmas. The three vanishing coefficients need none: with the
+`IsShortNF` instance in scope `simp` already discharges `(shortCurve A B).a₁ = 0` and `a₃`, and
+`a₂` besides, so a `@[simp]` lemma for any of them would be a simpNF duplicate — measured, by
+checking whether `simp` closes each goal with that lemma disabled. `rw`-style access to them is
+Mathlib's `a₁_of_isShortNF` family. Every other fact about `shortCurve` — the `b`- and
+`c`-invariants, `Δ` and `j` — is likewise inherited through the instance rather than restated.
 
 ## Main definitions
 
@@ -86,10 +89,6 @@ def shortCurve : _root_.WeierstrassCurve R where
   a₃ := 0
   a₄ := A
   a₆ := B
-
-@[simp] lemma shortCurve_a₁ : (shortCurve A B).a₁ = 0 := (rfl)
-
-@[simp] lemma shortCurve_a₃ : (shortCurve A B).a₃ = 0 := (rfl)
 
 @[simp] lemma shortCurve_a₄ : (shortCurve A B).a₄ = A := (rfl)
 
