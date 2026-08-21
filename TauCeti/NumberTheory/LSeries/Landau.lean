@@ -153,9 +153,12 @@ lemma hasAnalyticExtensionAt_of_abscissaOfAbsConv_lt {σ : ℝ}
     linarith
   exact Set.mem_ofPred.mpr (h₁.trans_le (by exact_mod_cast hσ'.le))
 
-/-- **A point of the larger ball that is not to the right of `σ` lies in the smaller one.** The
-ball of radius `1 + δ` about `σ + 1` is covered by the half-plane `σ < s.re` together with the ball
-of radius `r` about `σ`, provided `2 δ + δ ^ 2 ≤ r ^ 2`. -/
+/-- **A point of `ball (σ + 1) (1 + δ)` whose real part is at most `σ` lies in `ball σ r`.**
+Equivalently, `ball (σ + 1) (1 + δ)` is covered by the half-plane `σ < s.re` together with the ball
+of radius `r` about `σ`, provided `2 δ + δ ^ 2 ≤ r ^ 2`.
+
+The hypotheses are satisfiable only for `0 < δ`: at `δ ≤ 0` every point of `ball (σ + 1) (1 + δ)`
+has real part greater than `σ`. -/
 private lemma mem_ball_of_re_le {σ r δ : ℝ} (hr : 0 < r)
     (hcov : 2 * δ + δ ^ 2 ≤ r ^ 2) {s : ℂ}
     (hs : s ∈ ball (((σ + 1 : ℝ) : ℂ)) (1 + δ)) (hre : s.re ≤ σ) :
