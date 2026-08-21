@@ -35,8 +35,9 @@ one.
 * [Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition and Definition 5.32 and Example 5.33, for
   the completion of a topological group and ring; `ker_coeRingHom` is the statement there that
   the completion map has kernel `closure {0}`.
-* Mathlib's `Mathlib/Topology/Algebra/Nonarchimedean/Completion.lean`, whose
-  `Completion.isDenseInducing_coe` both proofs go through.
+* `Completion.isDenseInducing_coe`, which all three proofs go through, is declared in Mathlib's
+  `Mathlib/Topology/UniformSpace/Completion.lean`; the nonarchimedean file of the same name
+  supplies the openness machinery `isOpen_closure_image_coe` uses, not that lemma.
 -/
 
 public section
@@ -67,9 +68,14 @@ variable {A : Type*} [UniformSpace A]
 inducing map, so the closure of any set is the preimage of the closure of its image; for a closed
 set the left-hand side is the set itself.
 
-This is the form a consumer meets: it turns a membership question in `A` about the closure
-downstairs into one about `Â`, without unfolding the generic inducing-map argument each time. No
-algebraic structure enters — for a closed additive subgroup `G`, apply it to `(G : Set A)`. -/
+This is the form a consumer meets: it decides membership in `s` by a closure computation
+upstairs in `Â`, without unfolding the generic inducing-map argument each time. There is no
+closure on the `A` side — closedness of `s` is exactly what removes it.
+
+Closedness is not decoration. `A` need not be Hausdorff, so `A → Â` need not be injective: in
+general the preimage of the closure of the image of a subgroup `G` is `G + closure {0}` rather
+than `G`, and it is `IsClosed s` that collapses the difference. No algebraic structure enters —
+for a closed additive subgroup `G`, apply this to `(G : Set A)`. -/
 @[simp]
 theorem preimage_closure_image_coe {s : Set A} (hs : IsClosed s) :
     ((↑) : A → Completion A) ⁻¹' closure (((↑) : A → Completion A) '' s) = s := by
