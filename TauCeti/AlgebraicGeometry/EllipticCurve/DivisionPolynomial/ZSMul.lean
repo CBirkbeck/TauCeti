@@ -683,6 +683,13 @@ abbrev smulRing (n : ℤ) : Fin 3 → Universal.Ring := AdjoinRoot.mk _ ∘ smul
 /-- The three families of division polynomials as elements of the universal field. -/
 abbrev smulField (n : ℤ) : Fin 3 → Universal.Field := polyToField ∘ smulPoly n
 
+/-- **The `Z` coordinate of `smulField n` is `ψₙ`.** `smulField` is `polyToField ∘ ![φ, ω, ψ]`,
+so this is `comp_fin3` followed by the third component of `fin3_def_ext` — a rewrite route for a
+projection that would otherwise be discharged by definitional reduction. -/
+lemma smulField_Z (n : ℤ) : smulField n (2 : Fin 3) = polyToField (curve.ψ n) := by
+  rw [smulField, comp_fin3]
+  exact (fin3_def_ext ..).2.2
+
 /-- `smulField` is `smulRing` pushed into the field of fractions, coordinate by coordinate. -/
 @[simp]
 lemma algebraMap_comp_smulRing (n : ℤ) : algebraMap _ _ ∘ smulRing n = smulField n := by
@@ -758,11 +765,9 @@ lemma dblXYZ_smulField : dblXYZ pointedCurve (smulField n) = smulField (2 * n) :
     simp
   refine (equiv_iff_eq_of_Z_eq ?_ (polyToField_ψ_ne_zero (mul_ne_zero two_ne_zero hn))).mp
     (Quotient.exact ?_)
-  -- `equiv_iff_eq_of_Z_eq` compares two `z` components. `dblXYZ_Z` rewrites the left one;
-  -- the right is the third slot of the literal tuple `smulField (2 * n)`, so naming it is
-  -- `rfl` — `smulField` is an `abbrev` over `![φ, ω, ψ]` and the projection reduces.
-  · rw [dblXYZ_Z, show smulField (2 * n) (2 : Fin 3) = polyToField (curve.ψ (2 * n)) from rfl,
-      ← dblZ_smulPoly, ← map_dblZ polyToField (smulPoly n)]
+  -- `equiv_iff_eq_of_Z_eq` compares two `Z` components; `dblXYZ_Z` rewrites the left one and
+  -- `smulField_Z` the right.
+  · rw [dblXYZ_Z, smulField_Z, ← dblZ_smulPoly, ← map_dblZ polyToField (smulPoly n)]
     simp only [map_polyToField]
   · have h2 : ((2 : ℤ) • (n • Jacobian.point)).point = ⟦dblXYZ pointedCurve (smulField n)⟧ := by
       rw [two_zsmul, Point.add_point, zsmul_point_eq_smulField, addMap_eq, add_self]
@@ -814,9 +819,11 @@ the triple at `n`, rescaled by `-1`. -/
   -- Each `change` names the `i`-th component of the two tuples, for the same reason as in
   -- `ringEval_comp_smulRing`: `fin_cases` leaves the index as `⟨0, ⋯⟩`/`⟨1, ⋯⟩`/`⟨2, ⋯⟩`, whereas
   -- `fin3_def_ext` and `Matrix.cons_val_two` match the numerals `0`/`1`/`2`. `Fin.mk_zero` and
-  -- `Fin.mk_one` bridge the first two indices and Mathlib has no `Fin.mk_two`, so the third
-  -- coordinate has no rewrite route; `smulPoly` and `smul_fin3`/`neg` are `abbrev`-level, so the
-  -- projection is definitional and `change` states it rather than deriving it.
+  -- `Fin.mk_one` bridge the first two indices, but Mathlib has no `Fin.mk_two`: at the third,
+  -- `rw [Matrix.cons_val_two]` fails with "did not find an occurrence of `Matrix.vecCons ?x ?u 2`"
+  -- and `simp only` reports the lemma unused, because the index is still `(fun i => i) ⟨2, ⋯⟩`.
+  -- `smulPoly` and `smul_fin3`/`neg` are `abbrev`-level, so the projection is definitional and
+  -- `change` states it rather than deriving it.
   funext i
   fin_cases i
   · change curve.φ (-n) = (-1 : Poly) ^ 2 * curve.φ n
@@ -863,18 +870,17 @@ lemma addXYZ_smulField :
       ← map_dblZ polyToField (smulPoly m), smulField_zero]
     simp only [map_polyToField]
   refine (equiv_iff_eq_of_Z_eq ?_ ?_).mp (Quotient.exact ?_)
-  -- Same shape as `dblXYZ_smulField`: `addXYZ_Z` rewrites the left `z` component, and the
-  -- right is the third slot of a `ψ₍ₙ₋ₘ₎`-scaled tuple. Scalar action on `Fin 3 → _` is
-  -- pointwise, so that projection is again `rfl`.
-  · rw [addXYZ_Z, show (polyToField (curve.ψ (n - m)) • smulField (n + m)) (2 : Fin 3) =
-      polyToField (curve.ψ (n - m)) * polyToField (curve.ψ (n + m)) from rfl]
+  -- Same shape as `dblXYZ_smulField`, with a scaled right-hand side. Mathlib's Jacobian action is
+  -- *weighted* — `smul_fin3 : u • P = ![u ^ 2 * P x, u ^ 3 * P y, u * P z]` — so the `Z` component
+  -- takes a single factor of `u`, which is the third component of `smul_fin3_ext`.
+  · rw [addXYZ_Z,
+      (smul_fin3_ext (smulField (n + m)) (polyToField (curve.ψ (n - m)))).2.2, smulField_Z]
     have hF := congrArg polyToField (addZ_smulPoly (m := m) (n := n))
     simp only [addZ, smulPoly, smulField, Function.comp_def, fin3_def_ext, map_sub polyToField,
       map_mul polyToField, map_pow polyToField] at hF ⊢
     linear_combination hF
-  -- The nonvanishing side-goal is stated on the same scaled projection; `change` names it
-  -- rather than re-deriving the reduction just performed above.
-  · change polyToField (curve.ψ (n - m)) * polyToField (curve.ψ (n + m)) ≠ 0
+  -- The nonvanishing side-goal is that same scaled projection, rewritten the same way.
+  · rw [(smul_fin3_ext (smulField (n + m)) (polyToField (curve.ψ (n - m)))).2.2, smulField_Z]
     exact mul_ne_zero (polyToField_ψ_ne_zero (by omega)) (polyToField_ψ_ne_zero (by omega))
   · have hne : ¬ smulField m ≈ smulField n := fun hequiv ↦ h <| zsmul_point_injective <|
       Point.ext_iff.mpr <| by
