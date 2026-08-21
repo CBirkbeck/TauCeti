@@ -372,14 +372,17 @@ theorem stabilizer_smul_eq_mackeySubgroup_subgroupOf (s : G) (Γ : Subgroup G) (
 
 This is `card_doubleCoset_mul_card_mackeySubgroup` with `H = stabilizer G p`, read through
 `stabilizer_smul_eq_mackeySubgroup_subgroupOf` so that the second factor is a stabilizer rather
-than a Mackey subgroup. It is the multiplicity with which a `Γ`-orbit inside the `G`-orbit of `p`
-is counted when a sum over `Γ`-cosets is regrouped into a sum over `Γ`-orbits: rearranged, it
-reads `|Γ s Stab(p)| / (|Γ| · |Stab_G(p)|) = 1 / |Stab_Γ(s • p)|`, so the double coset carries
-exactly the weight `1 / |Stab_Γ(s • p)|` once normalised by `|Γ| · |Stab_G(p)|` — both of which
-are independent of `s`.
+than a Mackey subgroup.
 
-As with the formula it comes from, `Nat.card`'s convention that an infinite type has cardinality
-`0` means no finiteness hypothesis is needed. -/
+As with the formula it comes from, the product identity above holds unconditionally: `Nat.card`'s
+convention that an infinite type has cardinality `0` means no finiteness hypothesis is needed.
+
+When `Γ` and `Stab_G(p)` are finite it expresses the multiplicity with which a `Γ`-orbit inside
+the `G`-orbit of `p` is counted as a sum over `Γ`-cosets is regrouped into a sum over `Γ`-orbits:
+dividing by the then-nonzero `|Γ| · |Stab_G(p)|` gives, in `ℚ`,
+`|Γ s Stab(p)| / (|Γ| · |Stab_G(p)|) = 1 / |Stab_Γ(s • p)|`, so the double coset carries weight
+`1 / |Stab_Γ(s • p)|` once normalised, and the normalising factor is independent of `s`. That
+quotient reading needs the finiteness: without it the denominators can vanish. -/
 theorem card_doubleCoset_mul_card_stabilizer_smul (s : G) (Γ : Subgroup G) (p : α) :
     Nat.card (DoubleCoset.doubleCoset s (Γ : Set G) (stabilizer G p : Set G)) *
         Nat.card (stabilizer Γ (s • p)) = Nat.card Γ * Nat.card (stabilizer G p) := by
