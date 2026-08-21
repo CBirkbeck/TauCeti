@@ -187,11 +187,12 @@ theorem apply_mem_weightSpace_of_forall_diagGL_eq_sum_smul {S : Finset (Fin n �
     {A : (Fin n → ℤ) → Module.End K W}
     (hA : ∀ t : Fin n → Kˣ, ρ (diagGL t) = ∑ l ∈ S, weightCharHom K l t • A l)
     {l : Fin n → ℤ} (hl : l ∈ S) (w : W) : A l w ∈ weightSpace ρ l := by
-  set b := Module.Basis.ofVectorSpace K W
-  refine (mem_weightSpace_iff ρ l (A l w)).mpr fun s ↦ b.ext_elem fun i ↦ ?_
-  rw [← Module.Basis.coord_apply, ← Module.Basis.coord_apply, map_smul, smul_eq_mul,
-    ← weightCharHom_apply K l s]
-  exact apply_diagGL_coeff_eq_weightCharHom_mul hA hl (b.coord i) s w
+  -- vectors are separated by the dual, so the all-functionals statement gives the equality
+  refine (mem_weightSpace_iff ρ l (A l w)).mpr fun s ↦ ?_
+  rw [← sub_eq_zero, ← Module.forall_dual_apply_eq_zero_iff K]
+  intro ψ
+  rw [map_sub, map_smul, smul_eq_mul, ← weightCharHom_apply K l s, sub_eq_zero]
+  exact apply_diagGL_coeff_eq_weightCharHom_mul hA hl ψ s w
 
 end Coefficients
 
