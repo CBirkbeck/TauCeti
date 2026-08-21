@@ -487,45 +487,33 @@ section IntegrallyClosed
 open Polynomial
 
 /-- An element integral over a subring `S` satisfies a monic relation of positive degree with
-coefficients in `S`. Writing the degree as `n + 1` builds the positivity into the shape, and that
-is what lets the constant coefficient be adjusted below without disturbing the leading one. -/
+coefficients in `S`. Writing the degree as `n + 1` builds the positivity into the shape, which is
+what lets the constant coefficient be adjusted below without disturbing the leading one. -/
 private theorem exists_pow_add_sum_eq_zero_of_isIntegral {R : Type*} [CommRing R] {S : Subring R}
-    {x : R} (hx : IsIntegral S x) :
-    ∃ (n : ℕ) (c : ℕ → R), (∀ i, c i ∈ S) ∧
-      x ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), c i * x ^ i = 0 := by
+    {x : R} (hx : IsIntegral S x) : ∃ (n : ℕ) (c : ℕ → R), (∀ i, c i ∈ S) ∧ x ^ (n + 1) +
+      ∑ i ∈ Finset.range (n + 1), c i * x ^ i = 0 := by
   obtain ⟨p, hmonic, heval⟩ := hx
   -- multiplying the relation by `x` shifts the coefficients up by one, which makes the degree
   -- positive even when `p` is constant
-  refine ⟨p.natDegree, fun i ↦ Nat.casesOn i 0 fun j ↦ ((p.coeff j : S) : R), ?_, ?_⟩
+  refine ⟨p.natDegree, fun i ↦ Nat.casesOn i 0 fun j ↦ (p.coeff j : R), ?_, ?_⟩
   · rintro (_ | j)
     · exact S.zero_mem
     · exact (p.coeff j).2
-  · have h0 : (∑ i ∈ Finset.range p.natDegree, ((p.coeff i : S) : R) * x ^ i)
-        + x ^ p.natDegree = 0 := by
+  · have h0 : (∑ i ∈ Finset.range p.natDegree, (p.coeff i : R) * x ^ i) + x ^ p.natDegree = 0 := by
       rw [← heval, eval₂_eq_sum_range, Finset.sum_range_succ, hmonic.coeff_natDegree]
       simp [Algebra.algebraMap_ofSubsemiring_apply]
-    have h1 : (∑ i ∈ Finset.range p.natDegree, ((p.coeff i : S) : R) * x ^ (i + 1))
-        + x ^ (p.natDegree + 1) = 0 := by
-      have h := congrArg (· * x) h0
-      simpa only [zero_mul, add_mul, Finset.sum_mul, mul_assoc, ← pow_succ] using h
     rw [Finset.sum_range_succ', add_comm]
-    simpa using h1
+    simpa [add_mul, Finset.sum_mul, mul_assoc, ← pow_succ] using congrArg (· * x) h0
 
 /-- The converse of `exists_pow_add_sum_eq_zero_of_isIntegral`: a monic relation of positive degree
 with coefficients in a subring `S` exhibits its root as integral over `S`. -/
 private theorem isIntegral_of_pow_add_sum_eq_zero {R : Type*} [CommRing R] {S : Subring R} {x : R}
     {n : ℕ} {c : ℕ → R} (hcS : ∀ i, c i ∈ S)
-    (h : x ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), c i * x ^ i = 0) :
-    IsIntegral S x := by
-  refine ⟨X ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), C (⟨c i, hcS i⟩ : S) * X ^ i,
-    monic_X_pow_add ?_, ?_⟩
-  · have hdeg : (∑ i ∈ Finset.range (n + 1), C (⟨c i, hcS i⟩ : S) * X ^ i).degree
-        ≤ (n : WithBot ℕ) :=
-      (degree_sum_le _ _).trans (Finset.sup_le fun i hi ↦
-        (degree_C_mul_X_pow_le i (⟨c i, hcS i⟩ : S)).trans
-          (Nat.cast_le.mpr (Nat.lt_succ_iff.mp (Finset.mem_range.mp hi))))
-    exact hdeg.trans_lt (by exact_mod_cast Nat.lt_succ_self n)
-  · simpa [eval₂_finsetSum, Algebra.algebraMap_ofSubsemiring_apply] using h
+    (h : x ^ (n + 1) + ∑ i ∈ Finset.range (n + 1), c i * x ^ i = 0) : IsIntegral S x :=
+  -- the witness sums over `Fin (n + 1)`, the shape `degree_sum_fin_lt` bounds directly
+  ⟨X ^ (n + 1) + ∑ i : Fin (n + 1), C (⟨c i, hcS i⟩ : S) * X ^ (i : ℕ),
+    monic_X_pow_add (degree_sum_fin_lt _), by
+      simpa [eval₂_finsetSum, Finset.sum_range, Algebra.algebraMap_ofSubsemiring_apply] using h⟩
 
 /-- The one analytic step of Huber's Lemma 2.4.3(iv): an element `y` of the closure `Ĝ` of the
 image of an *open* subring `G` can be replaced by the image of an element of `G` so closely that
