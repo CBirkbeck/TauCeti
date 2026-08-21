@@ -31,10 +31,8 @@ generation first does work one layer up, where a single exponent has to serve a 
 * `TauCeti.Huber.PairOfDefinition.pow_add_smul_mem`: `M₀` absorbs further powers of `ϖ`.
 * `TauCeti.Huber.PairOfDefinition.exists_pow_smul_mem`: a power of `ϖ` carries any element of
   the `A`-span of `M₀` into `M₀`.
-* `TauCeti.Huber.PairOfDefinition.powSmulFamily_submodulesBasis`: the family is a
-  `SubmodulesBasis`.
-* `TauCeti.Huber.PairOfDefinition.mem_powSmulFamily`: the membership characterisation, and the
-  route by which any other module reasons about the family at all.
+* `TauCeti.Huber.PairOfDefinition.submodulesBasis_pow_smul`: the family is a `SubmodulesBasis`.
+* `TauCeti.Huber.pow_smul_antitone`: the family is antitone, over any subring.
 
 ## Implementation notes
 
@@ -42,14 +40,15 @@ The neighbourhoods are `A₀`-submodules, not `A`-submodules, so `SubmodulesBasi
 at `R := P.ringOfDefinition`: `M` carries its `A₀`-module structure by restriction of scalars
 along `A₀ → A`, which typeclass inference supplies unaided.
 
-`powSmulFamily` is a plain `def`, not `@[expose]`d, so its body is visible only inside this
-file. Every proof below therefore sees through it, but no other module does; `mem_powSmulFamily`
-and `powSmulFamily_def` are the intended routes out, and reaching for `@[expose]` instead would
-make an implementation composite public without leaving any API behind.
+The family is written out as `ϖⁿ • M₀` rather than wrapped in a definition of its own. Mathlib's
+pointwise action on submodules already *is* that operation:
+`Submodule.mem_smul_pointwise_iff_exists` characterises membership and
+`Submodule.smul_le_self_of_tower` gives the shrinking, so a wrapper would only oblige this file
+to restate both.
 
 The family is `ϖⁿ • M₀` rather than `Iⁿ • M₀` for the ideal of definition `I`. That is Wedhorn's
 own indexing, and it is what the proofs below run on: both `exists_pow_smul_mem` and
-`powSmulFamily_smul` consume the pseudouniformiser's own neighbourhood basis,
+`eventually_smul_mem_pow_smul` consume the pseudouniformiser's own neighbourhood basis,
 `TauCeti.Huber.IsPseudoUniformizer.hasBasis_nhds_zero`. This is a choice of presentation and not
 a constraint — nothing here shows an `I`-indexed family would fail.
 
@@ -69,42 +68,16 @@ namespace TauCeti.Huber.PairOfDefinition
 variable {A : Type*} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
   {M : Type*} [AddCommGroup M] [Module A M]
 
-omit [IsTopologicalRing A] in
-/-- **Wedhorn's Remark 6.19 family**: the `A₀`-submodules `ϖⁿ • M₀` of `M`. -/
-def powSmulFamily (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOfDefinition)
-    (M₀ : Submodule P.ringOfDefinition M) (n : ℕ) : Submodule P.ringOfDefinition M :=
-  ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) • M₀
-
-omit [IsTopologicalRing A] in
-/-- **Unfolding lemma for the family.** The definition is not `@[expose]`d, so a downstream file
-that needs to see `ϖⁿ • M₀` as a pointwise scalar multiple — to destructure a membership, or to
-feed `Submodule.smul_mem_pointwise_smul` — rewrites with this first. -/
-theorem powSmulFamily_def (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOfDefinition)
-    (M₀ : Submodule P.ringOfDefinition M) (n : ℕ) :
-    P.powSmulFamily hs0 M₀ n = ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) • M₀ := (rfl)
-
-omit [IsTopologicalRing A] in
-/-- **Membership in the family.** This is the characterisation a consumer should use: it
-introduces and eliminates `x ∈ ϖⁿ • M₀` without ever unfolding `powSmulFamily`, whose body is
-not exposed outside this file. -/
-@[simp]
-theorem mem_powSmulFamily (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOfDefinition)
-    (M₀ : Submodule P.ringOfDefinition M) (n : ℕ) {x : M} :
-    x ∈ P.powSmulFamily hs0 M₀ n ↔
-      ∃ y ∈ M₀, ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) • y = x := by
-  rw [powSmulFamily_def]
-  exact Submodule.mem_smul_pointwise_iff_exists _ _ _
-
-omit [IsTopologicalRing A] in
-/-- The family is antitone, which is the `inter` half of `SubmodulesBasis`. -/
-theorem powSmulFamily_antitone (P : PairOfDefinition A) {s : A} (hs0 : s ∈ P.ringOfDefinition)
-    (M₀ : Submodule P.ringOfDefinition M) : Antitone (P.powSmulFamily hs0 M₀) := by
+omit [TopologicalSpace A] [IsTopologicalRing A] in
+/-- **The family is antitone**, which is the `inter` half of `SubmodulesBasis`. Raising the
+exponent multiplies by a further `ϖ`, and `Submodule.smul_le_self_of_tower` says that shrinks
+the submodule. -/
+theorem pow_smul_antitone {S : Subring A} {r : S} (M₀ : Submodule S M) :
+    Antitone fun n : ℕ ↦ r ^ n • M₀ := by
   intro i j hij
   obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hij
-  intro x hx
-  obtain ⟨y, hy, rfl⟩ := hx
-  refine ⟨((⟨s, hs0⟩ : P.ringOfDefinition) ^ d) • y, M₀.smul_mem _ hy, ?_⟩
-  simp [smul_smul, ← pow_add, Nat.add_comm]
+  calc r ^ (i + d) • M₀ = r ^ i • (r ^ d • M₀) := by rw [pow_add, mul_smul]
+    _ ≤ r ^ i • M₀ := smul_mono_right _ (M₀.smul_le_self_of_tower _)
 
 /-- Some power of a topologically nilpotent `s` carries any `c : A` into the ring of
 definition — the ring of definition is open, and `sⁿ c → 0`. -/
@@ -162,10 +135,10 @@ given `m` into `ϖⁿ • M₀`.
 
 `m` is carried into `M₀` by `ϖᵏ` for some `k` (`exists_pow_smul_mem`), and `ϖⁿ⁺ᵏ A₀` is a
 neighbourhood of `0`; the two combine by arithmetic inside `A₀`. -/
-theorem powSmulFamily_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
+theorem eventually_smul_mem_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
     (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
     (hspan : Submodule.span A (M₀ : Set M) = ⊤) (m : M) (n : ℕ) :
-    ∀ᶠ a in 𝓝 (0 : P.ringOfDefinition), a • m ∈ P.powSmulFamily hs0 M₀ n := by
+    ∀ᶠ a in 𝓝 (0 : P.ringOfDefinition), a • m ∈ (⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ := by
   obtain ⟨k, hk⟩ := P.exists_pow_smul_mem hs.isTopologicallyNilpotent hs0 M₀
     (hspan ▸ Submodule.mem_top)
   have hnhd : ∀ᶠ a : P.ringOfDefinition in 𝓝 0,
@@ -199,13 +172,13 @@ additive group.
 This is the basis half of Wedhorn's Remark 6.19. He states it for `A` noetherian and `M₀`
 finitely generated, and identifies the resulting topology with the one of his Proposition
 6.18(1); neither hypothesis is used here, and no such identification is proved here. -/
-theorem powSmulFamily_submodulesBasis (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
+theorem submodulesBasis_pow_smul (P : PairOfDefinition A) {s : A} (hs : IsPseudoUniformizer s)
     (hs0 : s ∈ P.ringOfDefinition) (M₀ : Submodule P.ringOfDefinition M)
     (hspan : Submodule.span A (M₀ : Set M) = ⊤) :
-    SubmodulesBasis (P.powSmulFamily hs0 M₀) where
+    SubmodulesBasis ((⟨s, hs0⟩ : P.ringOfDefinition) ^ · • M₀) where
   inter i j :=
-    ⟨max i j, le_inf (P.powSmulFamily_antitone hs0 M₀ (le_max_left i j))
-      (P.powSmulFamily_antitone hs0 M₀ (le_max_right i j))⟩
-  smul m i := P.powSmulFamily_smul hs hs0 M₀ hspan m i
+    ⟨max i j, le_inf (pow_smul_antitone M₀ (le_max_left i j))
+      (pow_smul_antitone M₀ (le_max_right i j))⟩
+  smul m i := P.eventually_smul_mem_pow_smul hs hs0 M₀ hspan m i
 
 end TauCeti.Huber.PairOfDefinition
