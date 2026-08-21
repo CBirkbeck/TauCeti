@@ -156,13 +156,14 @@ lemma hasAnalyticExtensionAt_of_abscissaOfAbsConv_lt {σ : ℝ}
 /-- **A point of the larger ball that is not to the right of `σ` lies in the smaller one.** The
 ball of radius `1 + δ` about `σ + 1` is covered by the half-plane `σ < s.re` together with the ball
 of radius `r` about `σ`, provided `2 δ + δ ^ 2 ≤ r ^ 2`. -/
-private lemma mem_ball_of_re_le {σ r δ : ℝ} (hr : 0 < r) (hδ : 0 < δ)
+private lemma mem_ball_of_re_le {σ r δ : ℝ} (hr : 0 < r)
     (hcov : 2 * δ + δ ^ 2 ≤ r ^ 2) {s : ℂ}
     (hs : s ∈ ball (((σ + 1 : ℝ) : ℂ)) (1 + δ)) (hre : s.re ≤ σ) :
     s ∈ ball ((σ : ℝ) : ℂ) r := by
   -- writing `u = s.re - σ ≤ 0`, the hypothesis gives `u² + im² < 2δ + δ² + 2u`, and `2u ≤ 0`
+  have hpos : (0 : ℝ) < 1 + δ := Metric.pos_of_mem_ball hs
   rw [mem_ball, Complex.dist_eq_re_im, Real.sqrt_lt' hr]
-  rw [mem_ball, Complex.dist_eq_re_im, Real.sqrt_lt' (by linarith)] at hs
+  rw [mem_ball, Complex.dist_eq_re_im, Real.sqrt_lt' hpos] at hs
   simp only [Complex.ofReal_re, Complex.ofReal_im] at hs ⊢
   nlinarith [sq_nonneg (s.im - 0), sq_nonneg (s.re - σ)]
 
@@ -198,7 +199,7 @@ private lemma exists_differentiableOn_patch {σ : ℝ}
       σ < s.re ∨ s ∈ ball ((σ : ℝ) : ℂ) r := fun s hs => by
     by_cases hsσ : σ < s.re
     · exact Or.inl hsσ
-    · exact Or.inr (mem_ball_of_re_le hr hδpos hcov hs (not_lt.mp hsσ))
+    · exact Or.inr (mem_ball_of_re_le hr hcov hs (not_lt.mp hsσ))
   refine ⟨δ, hδpos, G, fun s hs ↦ ?_, hGU⟩
   rcases hsub s hs with hsU | hsF
   · have hev : G =ᶠ[nhds s] LSeries a := Filter.eventuallyEq_of_mem
