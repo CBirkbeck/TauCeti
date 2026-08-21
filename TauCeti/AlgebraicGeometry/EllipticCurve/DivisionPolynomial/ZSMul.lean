@@ -806,6 +806,12 @@ the triple at `n`, rescaled by `-1`. -/
 -- `ψ_neg`. The `(-1)ᵏ` factors are cleared by `ring` rather than `simp`, because instance search
 -- finds no `HasDistribNeg Poly` and the sign simp set therefore does not fire here.
 @[simp] lemma smulPoly_neg : smulPoly (-n) = (-1 : Poly) • neg curvePoly (smulPoly n) := by
+  -- Each `change` names the `i`-th component of the two tuples, for the same reason as in
+  -- `ringEval_comp_smulRing`: `fin_cases` leaves the index as `⟨0, ⋯⟩`/`⟨1, ⋯⟩`/`⟨2, ⋯⟩`, whereas
+  -- `fin3_def_ext` and `Matrix.cons_val_two` match the numerals `0`/`1`/`2`. `Fin.mk_zero` and
+  -- `Fin.mk_one` bridge the first two indices and Mathlib has no `Fin.mk_two`, so the third
+  -- coordinate has no rewrite route; `smulPoly` and `smul_fin3`/`neg` are `abbrev`-level, so the
+  -- projection is definitional and `change` states it rather than deriving it.
   funext i
   fin_cases i
   · change curve.φ (-n) = (-1 : Poly) ^ 2 * curve.φ n
