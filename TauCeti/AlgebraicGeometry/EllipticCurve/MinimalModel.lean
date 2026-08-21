@@ -123,11 +123,14 @@ private theorem valuation_Δ_aux_smul_le {W : WeierstrassCurve K} [hm : IsMinima
     (hm.val_Δ_maximal.2 hint) id
 
 /-- **Two minimal models related by a change of variables have the same discriminant valuation.**
-Antisymmetry: the change carries `W₁` to `W₂` and its inverse carries `W₂` back, and neither can
-increase the valuation. -/
+So `v (Δ)` is an invariant of the curve at this place rather than of the chosen model: any two
+minimal models of the same curve agree on it, and a consumer may read it off whichever model it
+holds. -/
 theorem valuation_Δ_eq_of_isMinimal_smul {W₁ W₂ : WeierstrassCurve K} [IsMinimal R W₁]
     [IsMinimal R W₂] (D : VariableChange K) (hD : D • W₁ = W₂) :
     valuation K (maximalIdeal R) W₂.Δ = valuation K (maximalIdeal R) W₁.Δ := by
+  -- Antisymmetry: `D` carries `W₁` to `W₂` and `D⁻¹` carries `W₂` back, and by minimality neither
+  -- direction can increase the valuation.
   rw [← valuation_Δ_aux_eq_of_isIntegral R W₂, ← valuation_Δ_aux_eq_of_isIntegral R W₁]
   refine le_antisymm (Subtype.coe_le_coe.mpr ?_) (Subtype.coe_le_coe.mpr ?_)
   · have hsub := valuation_Δ_aux_smul_le R D (by rw [hD]; infer_instance)
@@ -137,11 +140,15 @@ theorem valuation_Δ_eq_of_isMinimal_smul {W₁ W₂ : WeierstrassCurve K} [IsMi
     rwa [← hW₁eq, one_smul] at hsub
 
 /-- **The scaling factor of a change of variables between two minimal models of an elliptic curve
-has valuation `1`.** A change of variables scales `Δ` by `u⁻¹²`; since the two discriminant
-valuations agree and are nonzero, `v (u)¹² = 1`, and the value group is torsion-free. -/
+has valuation `1`.** Over a discrete valuation ring that says `u` is a **unit**: it and its inverse
+are both integral, so such a change of variables is as integral as its coordinates allow. This is
+the hypothesis `VariableChange.exists_baseChange_eq_of_smul_eq` asks for, and hence the step by
+which a property of the reduction transfers between two minimal models of one curve. -/
 theorem valuation_u_eq_one_of_isMinimal_smul {W₁ W₂ : WeierstrassCurve K} [IsMinimal R W₁]
     [IsMinimal R W₂] [W₁.IsElliptic] (D : VariableChange K) (hD : D • W₁ = W₂) :
     valuation K (maximalIdeal R) ↑D.u = 1 := by
+  -- A change of variables scales `Δ` by `u⁻¹²`. The two discriminant valuations agree and are
+  -- nonzero, so `v (u)¹² = 1`, and the value group is torsion-free.
   have hΔ0 : valuation K (maximalIdeal R) W₁.Δ ≠ 0 :=
     (Valuation.ne_zero_iff _).mpr W₁.isUnit_Δ.ne_zero
   have h12 : valuation K (maximalIdeal R) ↑D.u ^ 12 = 1 := by
