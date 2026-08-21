@@ -154,8 +154,11 @@ lemma hasAnalyticExtensionAt_of_abscissaOfAbsConv_lt {σ : ℝ}
   exact Set.mem_ofPred.mpr (h₁.trans_le (by exact_mod_cast hσ'.le))
 
 /-- **A point of `ball (σ + 1) (1 + δ)` whose real part is at most `σ` lies in `ball σ r`.**
-Equivalently, `ball (σ + 1) (1 + δ)` is covered by the half-plane `σ < s.re` together with the ball
-of radius `r` about `σ`, provided `2 δ + δ ^ 2 ≤ r ^ 2`.
+Equivalently, for `0 < r` satisfying `2 δ + δ ^ 2 ≤ r ^ 2`, the ball `ball (σ + 1) (1 + δ)` is
+covered by the half-plane `σ < s.re` together with the ball of radius `r` about `σ`.
+
+Positivity of `r` is load-bearing, not decoration: at `r < 0` the covering bound still admits
+`δ > 0`, and then `ball σ r` is empty while `ball (σ + 1) (1 + δ)` is not.
 
 The hypotheses are satisfiable only for `0 < δ`: at `δ ≤ 0` every point of `ball (σ + 1) (1 + δ)`
 has real part greater than `σ`. -/
