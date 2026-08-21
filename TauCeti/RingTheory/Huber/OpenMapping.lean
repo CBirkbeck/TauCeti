@@ -149,7 +149,7 @@ makes that corestriction open, and the inclusion of an open ideal is open, so th
 theorem isOpenMap_mul_of_isOpen_span {t : A}
     (ht : IsOpen ((Ideal.span {t} : Ideal A) : Set A)) : IsOpenMap (fun a : A ↦ t * a) := by
   have _ : (𝓤 A).IsCountablyGenerated := IsUniformAddGroup.uniformity_countably_generated
-  set p : Ideal A := Ideal.span {t} with hp
+  set p : Ideal A := Ideal.span {t}
   have hmem : ∀ a : A, t * a ∈ p := fun a ↦
     Ideal.mul_mem_right _ _ (Ideal.mem_span_singleton_self t)
   have _ : CompleteSpace p := (p.toAddSubgroup.isClosed_of_isOpen ht).completeSpace_coe
