@@ -177,24 +177,13 @@ private theorem eq_sum_indicator_cellBox {V E : Type*} [Fintype V] [AddCommMonoi
       = ∑ ψ : V → Fin m, (univ.pi fun v => cellIdx m ⁻¹' {((ψ v : ℕ))}).indicator
           (fun _ => f fun v => (ψ v : ℕ)) x := by
   set ψ₀ : V → Fin m := fun v => ⟨cellIdx m (x v), cellIdx_lt hm (x v)⟩ with hψ₀
-  rw [Finset.sum_eq_single ψ₀]
-  · have hx : x ∈ univ.pi fun v => cellIdx m ⁻¹' {((ψ₀ v : ℕ))} := by
-      intro v _
-      rw [Set.mem_preimage, Set.mem_singleton_iff, hψ₀]
-    calc
-      f (fun v => cellIdx m (x v)) = f (fun v => (ψ₀ v : ℕ)) := by
-        simp only [hψ₀, Fin.val_mk]
-      _ = (univ.pi fun v => cellIdx m ⁻¹' {((ψ₀ v : ℕ))}).indicator
-            (fun _ => f fun v => (ψ₀ v : ℕ)) x :=
-        (indicator_of_mem hx (fun _ => f fun v => (ψ₀ v : ℕ))).symm
-  · intro ψ _ hne
-    refine indicator_of_notMem (fun hmem => hne ?_) _
-    funext v
-    apply Fin.val_injective
-    rw [hψ₀]
-    exact (Set.mem_singleton_iff.mp (Set.mem_preimage.1 (hmem v (mem_univ v)))).symm
-  · intro h
-    exact absurd (Finset.mem_univ ψ₀) h
+  -- membership in the box of `ψ` pins `ψ` down to `ψ₀`, so the sum is an equality test on the
+  -- index and `Finset.sum_ite_eq` collapses it
+  have hψ : ∀ ψ : V → Fin m,
+      x ∈ (univ.pi fun v => cellIdx m ⁻¹' {((ψ v : ℕ))}) ↔ ψ₀ = ψ := by
+    intro ψ
+    simp [hψ₀, Set.mem_pi, funext_iff, Fin.ext_iff, eq_comm]
+  simp [Set.indicator_apply, hψ, hψ₀]
 
 open scoped Classical in
 /-- **Independent uniform points, read through their cells.** The integral of a function of the
