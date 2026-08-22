@@ -76,6 +76,34 @@ private theorem charpoly_endOfPoint_comp {B D : Type w} [CommRing B] [Algebra R 
   ext i j
   simp [Matrix.map_apply]
 
+/-- A matrix has the characteristic polynomial of the identity as soon as it is linked, over the
+Laurent polynomials, to a polynomial matrix that specialises to the identity at `0`: if `P` maps
+to `1` under evaluation at `0`, and `P` and the constant matrix `G` have the same characteristic
+polynomial over `LaurentPolynomial`, then `G` has characteristic polynomial `(X - 1) ^ n`. -/
+private theorem charpoly_eq_sub_one_pow_of_map_eval_zero_eq_one {ι : Type*} [DecidableEq ι]
+    [Fintype ι] {S : Type*} [CommRing S] {P : Matrix ι ι S[X]} {G : Matrix ι ι S}
+    (hzero : P.map (Polynomial.evalRingHom (0 : S)) = 1)
+    (hlaurent : (P.map Polynomial.toLaurent).charpoly = (G.map LaurentPolynomial.C).charpoly) :
+    G.charpoly = (X - 1) ^ Fintype.card ι := by
+  -- `toLaurent` is injective on polynomials, so the Laurent identity descends to `P.charpoly`.
+  have hpoly : P.charpoly = G.charpoly.map Polynomial.C := by
+    apply Polynomial.map_injective _ Polynomial.toLaurent_injective
+    calc
+      P.charpoly.map Polynomial.toLaurent = G.charpoly.map LaurentPolynomial.C := by
+        simpa only [Matrix.charpoly_map] using hlaurent
+      _ = (G.charpoly.map Polynomial.C).map Polynomial.toLaurent := by
+        ext m
+        simp
+  -- Evaluating that identity at `0` reads `G.charpoly` off the specialisation `P ↦ 1`.
+  have hzeroCharpoly := congrArg Matrix.charpoly hzero
+  rw [Matrix.charpoly_map, hpoly, Polynomial.map_map] at hzeroCharpoly
+  calc
+    G.charpoly = G.charpoly.map ((Polynomial.evalRingHom (0 : S)).comp Polynomial.C) := by
+      ext m
+      simp
+    _ = (1 : Matrix ι ι S).charpoly := hzeroCharpoly
+    _ = (X - 1) ^ Fintype.card ι := Matrix.charpoly_one
+
 /-- Every point of the dynamic unipotent subgroup attached to a cocharacter is unipotent in
 every finite-dimensional representation. -/
 theorem isUnipotentPoint_of_mem_unipotent
@@ -133,43 +161,22 @@ theorem isUnipotentPoint_of_mem_unipotent
         rw [← LinearMap.charpoly_toMatrix (Comodule.endOfPoint M g.ofConv) (b.baseChange A),
           Comodule.toMatrix_endOfPoint, hf]
       _ = (G.map LaurentPolynomial.C).charpoly := by rw [Matrix.charpoly_map]
-  have hpolyCharpoly : P.charpoly = G.charpoly.map Polynomial.C := by
-    apply Polynomial.map_injective _ Polynomial.toLaurent_injective
-    calc
-      P.charpoly.map Polynomial.toLaurent =
-          G.charpoly.map LaurentPolynomial.C := by
-        simpa only [Matrix.charpoly_map] using hLaurentCharpoly
-      _ = (G.charpoly.map Polynomial.C).map Polynomial.toLaurent := by
-        ext n
-        simp
   have hGCharpoly : G.charpoly =
-      (1 : Matrix (Module.Free.ChooseBasisIndex R M)
-        (Module.Free.ChooseBasisIndex R M) A).charpoly := by
-    have hzeroCharpoly := congrArg Matrix.charpoly hzeroMatrix
-    rw [Matrix.charpoly_map, hpolyCharpoly, Polynomial.map_map] at hzeroCharpoly
-    calc
-      G.charpoly = G.charpoly.map
-          ((Polynomial.evalRingHom (0 : A)).comp Polynomial.C) := by
-        ext n
-        simp
-      _ = (1 : Matrix (Module.Free.ChooseBasisIndex R M)
-          (Module.Free.ChooseBasisIndex R M) A).charpoly := hzeroCharpoly
+      (Polynomial.X - 1) ^ Fintype.card (Module.Free.ChooseBasisIndex R M) :=
+    charpoly_eq_sub_one_pow_of_map_eval_zero_eq_one hzeroMatrix hLaurentCharpoly
+  -- The `ofLinearEquiv` coercion is only definitionally the comodule endomorphism, so it has to
+  -- be pinned by an ascribed `have` before it can be rewritten.
   have hcoe :
       ((LinearMap.GeneralLinearGroup.ofLinearEquiv (Comodule.pointsAction M g) :
           LinearMap.GeneralLinearGroup A (A ⊗[R] M)) : Module.End A (A ⊗[R] M)) =
-        Comodule.endOfPoint M g.ofConv := by
-    exact Comodule.pointsAction_toLinearMap M g
-  have hEndCharpoly :
-      (Comodule.endOfPoint M g.ofConv).charpoly =
-        (Polynomial.X - 1) ^ Fintype.card (Module.Free.ChooseBasisIndex R M) := by
-    rw [← LinearMap.charpoly_toMatrix (Comodule.endOfPoint M g.ofConv) (b.baseChange A),
-      Comodule.toMatrix_endOfPoint, hGCharpoly, Matrix.charpoly_one]
+        Comodule.endOfPoint M g.ofConv :=
+    Comodule.pointsAction_toLinearMap M g
   have hActionCharpoly :
       ((LinearMap.GeneralLinearGroup.ofLinearEquiv (Comodule.pointsAction M g) :
           LinearMap.GeneralLinearGroup A (A ⊗[R] M)) : Module.End A (A ⊗[R] M)).charpoly =
         (Polynomial.X - 1) ^ Fintype.card (Module.Free.ChooseBasisIndex R M) := by
-    rw [hcoe]
-    exact hEndCharpoly
+    rw [hcoe, ← LinearMap.charpoly_toMatrix (Comodule.endOfPoint M g.ofConv) (b.baseChange A),
+      Comodule.toMatrix_endOfPoint, hGCharpoly]
   exact LinearMap.GeneralLinearGroup.isUnipotent_of_charpoly_eq _ hActionCharpoly
 
 end
