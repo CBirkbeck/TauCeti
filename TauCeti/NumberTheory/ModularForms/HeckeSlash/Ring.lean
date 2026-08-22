@@ -21,8 +21,7 @@ the identity endomorphism. What is delivered is the `ℤ`-linear assignment.
 
 The extension is `Finsupp.linearCombination` at the coefficient ring `ℤ`, so linearity in the
 ring element is inherited rather than reproved — `map_zero` and `map_add` apply directly. The
-two lemmas proved here are the ones specific to this setting: the value on a basis element and
-on the ring identity.
+one lemma proved here is the one specific to this setting: the value on a basis element.
 
 ## Main definitions
 
@@ -32,10 +31,9 @@ on the ring identity.
 ## Main results
 
 * `heckeSlashGamma1RingModularFormLinearMap_single`: the value on a basis element is the
-  scaled operator of that double coset.
-* `heckeSlashGamma1RingModularFormLinearMap_single_apply`: the same, evaluated on a form.
-* `heckeSlashGamma1RingModularFormLinearMap_one`: the ring identity is sent to the operator of
-  the identity double coset.
+  scaled operator of that double coset. Together with `map_zero`/`map_add` and
+  `HeckeCosetModule.one_def` this determines the map, so no further computation rules are
+  restated here.
 
 ## References
 
@@ -69,24 +67,6 @@ noncomputable def heckeSlashGamma1RingModularFormLinearMap :
     heckeSlashGamma1RingModularFormLinearMap (N := N) k (HeckeCosetModule.single ℤ D c) =
       c • heckeSlashGamma1ModularFormEnd k D :=
   HeckeCosetModule.sum_single_index ℤ (by simp)
-
-/-- The value on a basis element, evaluated on a modular form. Not a `simp` lemma: `simp`
-reaches this from `heckeSlashGamma1RingModularFormLinearMap_single` already, so tagging both
-would make the pair a `simpNF` normal-form conflict. -/
-lemma heckeSlashGamma1RingModularFormLinearMap_single_apply
-    (D : HeckeCoset (Delta0 N) ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ)))
-    (c : ℤ) (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :
-    heckeSlashGamma1RingModularFormLinearMap (N := N) k (HeckeCosetModule.single ℤ D c) f =
-      c • heckeSlashGamma1ModularFormEnd k D f := by
-  rw [heckeSlashGamma1RingModularFormLinearMap_single]
-  rfl
-
-/-- The ring identity is sent to the operator of the identity double coset. -/
-@[simp] lemma heckeSlashGamma1RingModularFormLinearMap_one :
-    heckeSlashGamma1RingModularFormLinearMap (N := N) k 1 =
-      heckeSlashGamma1ModularFormEnd k (1 : HeckeCoset (Delta0 N)
-        ((Gamma1 N).map (mapGL ℚ)) ((Gamma1 N).map (mapGL ℚ))) := by
-  rw [HeckeCosetModule.one_def, heckeSlashGamma1RingModularFormLinearMap_single, one_smul]
 
 end
 
