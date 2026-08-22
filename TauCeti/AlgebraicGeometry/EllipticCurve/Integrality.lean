@@ -34,8 +34,9 @@ arbitrary `R`-algebra, with the fraction-field version as a corollary.
   leading coefficient.
 * `TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral_x`: over **any** `R`-algebra, a
   point whose `x`-coordinate is integral over `R` has `y`-coordinate integral over `R`.
-* `TauCeti.WeierstrassCurve.isInteger_y_of_equation_of_isInteger_x`: its fraction-field corollary,
-  the shape the Nagell–Lutz argument consumes.
+* `TauCeti.WeierstrassCurve.isInteger_y_of_equation_of_isInteger_x`: its `IsLocalization.IsInteger`
+  corollary over any `K` in which `R` is integrally closed, the shape the Nagell–Lutz argument
+  consumes.
 
 Both are stated for an arbitrary point: no torsion, ellipticity or minimality hypothesis. In the
 Nagell–Lutz argument the polynomial `f` is a division polynomial, whose leading coefficient is the
@@ -104,22 +105,27 @@ theorem isInteger_x_of_equation_of_is_root_of_squarefree_leadingCoeff
 
 end UniqueFactorization
 
-section IntegrallyClosed
+end FractionField
 
-variable [IsIntegrallyClosed R]
+section IntegrallyClosedIn
 
-/-- **On the curve over a fraction field, an integral `x`-coordinate forces an integral
-`y`-coordinate.** The `IsLocalization.IsInteger` form of `isIntegral_y_of_equation_of_isIntegral_x`,
-which is the shape the Nagell–Lutz argument consumes. -/
+variable {K : Type*} [Field K] [Algebra R K] [IsIntegrallyClosedIn R K] {x y : K}
+
+/-- **On the curve, an integral `x`-coordinate forces an integral `y`-coordinate.** The
+`IsLocalization.IsInteger` form of `isIntegral_y_of_equation_of_isIntegral_x`, which is the shape
+the Nagell–Lutz argument consumes.
+
+`K` need not be a fraction field of `R`: integral closedness **relative to `K`** is what the
+argument uses, and it is strictly weaker than `[IsIntegrallyClosed R] [IsFractionRing R K]` —
+those two imply it (`isIntegrallyClosed_iff_isIntegrallyClosedIn`, and Mathlib supplies the
+instance), but not conversely. -/
 theorem isInteger_y_of_equation_of_isInteger_x (h : (W.baseChange K).toAffine.Equation x y)
     (hx : IsLocalization.IsInteger R x) : IsLocalization.IsInteger R y := by
   obtain ⟨x₀, hx₀⟩ := hx
-  exact RingHom.mem_rangeS.mpr (IsIntegrallyClosed.isIntegral_iff.mp
+  exact RingHom.mem_rangeS.mpr (IsIntegrallyClosedIn.isIntegral_iff.mp
     (isIntegral_y_of_equation_of_isIntegral_x W h (hx₀ ▸ isIntegral_algebraMap)))
 
-end IntegrallyClosed
-
-end FractionField
+end IntegrallyClosedIn
 
 end WeierstrassCurve
 
