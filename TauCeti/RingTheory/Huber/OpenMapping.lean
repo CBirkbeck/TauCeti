@@ -141,9 +141,11 @@ noetherian finitely generated setting would supply. It is the openness conjunct 
 free-standing lemma, and an ingredient for it rather than the proposition.
 
 Closedness of the range is the weaker of the two natural hypotheses: an open submodule is closed,
-so a map with *open* range satisfies it too. Consumers recover the plain open-map fact from
-`LinearMap.isStrictMap_iff_isOpenQuotientMap_rangeRestrict` and `IsOpenQuotientMap.isOpenMap`, and
-the first-isomorphism homeomorphism from `LinearMap.quotKerEquivRange`. -/
+so a map with *open* range satisfies it too. Consumers recover the openness of `f.rangeRestrict`
+from `LinearMap.isStrictMap_iff_isOpenQuotientMap_rangeRestrict` and `IsOpenQuotientMap.isOpenMap`,
+and the first-isomorphism homeomorphism from
+`LinearMap.isStrictMap_iff_isHomeomorph_quotKerEquivRange`. Note `LinearMap.quotKerEquivRange`
+on its own is only a linear equivalence, carrying no topology. -/
 theorem IsTateRing.isStrictMap_of_isClosed_range (f : M →ₗ[A] N)
     (hfc : ContinuousAt (f : M → N) 0)
     (hr : IsClosed ((LinearMap.range f : Submodule A N) : Set N)) :
