@@ -76,12 +76,20 @@ def spaOpens {P : PairOfDefinition A} (Aplus : Subring A) (p : P.Presentation) :
   ⟨Subtype.val ⁻¹' rationalSubset Aplus p.num p.den,
     isOpen_val_preimage_rationalSubset Aplus p.num p.den⟩
 
-/-- **The index of the limit defining `𝒪_X(V)`**: presentations whose rational subset lies in
-`V`. -/
+/-- **The index of the limit**: presentations whose numerator ideal is open and whose rational
+subset lies in `V`.
+
+The openness of `Ideal.span pres.num` is what makes `R(pres.num / pres.den)` a *rational* subset
+in Wedhorn's sense rather than a general basic open — it is the defining condition of
+`TauCeti.ValuationSpectrum.spaRationalFamily`. Carrying it as a field of the index restricts the
+diagram to admissible presentations; because it is a field, every object supplies its own proof
+and the refinement morphisms carry no preservation obligation. -/
 structure RationalIndex {P : PairOfDefinition A} (Aplus : Subring A)
     (V : Opens ↥(spa Aplus)) where
   /-- The presentation. -/
   pres : P.Presentation
+  /-- Its numerator ideal is open, so the subset it presents is rational. -/
+  isOpen_span : IsOpen (Ideal.span (pres.num : Set A) : Set A)
   /-- Its rational subset is contained in `V`. -/
   le_open : spaOpens Aplus pres ≤ V
 
@@ -97,7 +105,7 @@ def rationalIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
   obj i := i.pres
   map h := homOfLE h.le
 
-/-- **The diagram `𝒪_X(V)` is the limit of**: each presentation refining `V` contributes
+/-- **The diagram the limit is taken over**: each admissible presentation refining `V` contributes
 `A⟨T/s⟩`, and a refinement contributes its restriction morphism. -/
 noncomputable def rationalIndexDiagram (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     RationalIndex (P := P) Aplus V ⥤ CompleteSeparatedTopCommRingCat.{v} :=
@@ -115,7 +123,7 @@ noncomputable def presentationLimit (Aplus : Subring A) (V : Opens ↥(spa Aplus
 whenever `W ≤ V`. -/
 def rationalIndexRestrict {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
     RationalIndex (P := P) Aplus W ⥤ RationalIndex (P := P) Aplus V where
-  obj i := ⟨i.pres, i.le_open.trans h⟩
+  obj i := ⟨i.pres, i.isOpen_span, i.le_open.trans h⟩
   map f := homOfLE f.le
 
 /-- **The restriction morphism of a containment `W ≤ V`**: the limit over the presentations
