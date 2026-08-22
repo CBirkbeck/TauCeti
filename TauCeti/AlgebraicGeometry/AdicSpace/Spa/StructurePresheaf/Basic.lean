@@ -32,11 +32,6 @@ functor along the forgetful map, and the value is its limit — which exists bec
 * `TauCeti.ValuationSpectrum.structurePresheafObj` : the value `𝒪_X(V)`.
 * `TauCeti.ValuationSpectrum.structurePresheafMap` : the restriction morphism of a containment.
 * `TauCeti.ValuationSpectrum.structurePresheaf` : the presheaf itself.
-* `TauCeti.ValuationSpectrum.IsSheafyPair` : the pair is sheafy, i.e. that presheaf is a sheaf.
-
-## Main results
-
-* `TauCeti.ValuationSpectrum.isSheafyPair_iff` : it unfolds to Mathlib's sheaf condition.
 
 ## Why the index is presentations and not subsets
 
@@ -131,31 +126,6 @@ noncomputable def structurePresheaf (P : PairOfDefinition A) (Aplus : Subring A)
     exact (limit.pre_pre (rationalIndexDiagram (P := P) Aplus X.unop)
       (rationalIndexRestrict (P := P) (leOfHom f.unop))
       (rationalIndexRestrict (P := P) (leOfHom g.unop))).symm
-
-/-- **`(A, A⁺)` is sheafy**: its structure presheaf is a sheaf, in the sense of Mathlib's
-`CategoryTheory.Presheaf.IsSheaf` for the Grothendieck topology of `Spa(A,A⁺)` — equivalently
-`TopCat.Presheaf.IsSheaf`, which unfolds to exactly this.
-
-The definition is deliberately Mathlib's and not Wedhorn's equalizer condition or a Čech
-statement; those are theorems *about* this, to be proved as `iff` lemmas rather than taken as the
-definition.
-
-**This is the *pair* notion**, the first of the three the roadmap asks to be kept distinct — the
-chosen `(A, A⁺)` has a sheaf structure presheaf. Wedhorn Definition 8.26 quantifies instead over
-all rings of integral elements of the completion, and stable sheafiness asks it of every
-topologically finite-type algebra over the completion; both are separate definitions, and neither
-is this one. It additionally carries the pair of definition `P`, because presentations do;
-`PairOfDefinition.presentationRingEquiv` is the comparison that will remove that dependence. -/
-def IsSheafyPair (P : PairOfDefinition A) (Aplus : Subring A) : Prop :=
-  CategoryTheory.Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
-    (structurePresheaf P Aplus)
-
-/-- `IsSheafyPair` unfolds to Mathlib's sheaf condition. The body is not exported, so this is how a
-consumer moves between the two. -/
-theorem isSheafyPair_iff (P : PairOfDefinition A) (Aplus : Subring A) :
-    IsSheafyPair P Aplus ↔
-      CategoryTheory.Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
-        (structurePresheaf P Aplus) := Iff.rfl
 
 end
 
