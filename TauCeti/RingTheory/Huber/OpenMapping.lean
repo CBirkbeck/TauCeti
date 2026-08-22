@@ -7,6 +7,7 @@ module
 
 public import TauCeti.RingTheory.Huber.ZeroSequenceOfUnits
 public import TauCeti.Topology.Algebra.OpenMapping.Henkel
+import TauCeti.Topology.Algebra.Nonarchimedean.Pi
 import Mathlib.Topology.Baire.CompleteMetrizable
 
 /-!
@@ -82,6 +83,9 @@ open but that the target's topology is determined by the source's.
   complete pseudometrisable module onto a complete metrisable one over a Tate ring is open.
 * `TauCeti.Huber.IsTateRing.isQuotientMap`: the same map induces the quotient topology on its
   target. This is the form the strict-morphism material will consume.
+* `TauCeti.Huber.IsTateRing.isOpenMap_linearCombination`: a finite spanning family presents the
+  module as an **open** quotient of `Aⁿ`, which is the strict-presentation form the
+  Banach-theorem arguments consume.
 
 ## References
 
@@ -133,6 +137,39 @@ theorem IsTateRing.isQuotientMap (f : M →ₗ[A] N) (hf : Function.Surjective f
     (hfc : ContinuousAt (f : M → N) 0) : IsQuotientMap (f : M → N) :=
   HasZeroSequenceOfUnits.isQuotientMap f hf hfc
     fun _ ↦ (continuous_id.smul continuous_const).continuousAt
+
+section LinearCombination
+
+variable {A : Type*} [CommRing A] [UniformSpace A] [IsUniformAddGroup A] [CompleteSpace A]
+  [(𝓤 A).IsCountablyGenerated] [NonarchimedeanRing A] [IsTateRing A]
+  {N : Type*} [AddCommGroup N] [UniformSpace N] [IsUniformAddGroup N] [CompleteSpace N]
+  [(𝓤 N).IsCountablyGenerated] [T0Space N] [Module A N] [ContinuousSMul A N]
+
+/-- **A finite spanning family presents `N` as an open quotient of `Aⁿ`.** The linear-combination
+map `a ↦ ∑ aᵢ • gᵢ` is surjective because `g` spans and continuous because the action is, hence
+open by `TauCeti.Huber.IsTateRing.isOpenMap`.
+
+Openness is the content. It is what turns "every element of `N` is a combination of the `gᵢ`" into
+"every *small* element is a combination with *small* coefficients", and that quantitative form is
+what the Banach-theorem arguments over a Tate ring consume. This is an ingredient for the
+BGR §3.7.2/1 density argument on the route to Wedhorn 6.17/6.18, not that argument itself.
+
+Nothing is asked of `g` beyond spanning; the hypotheses are `TauCeti.Huber.IsTateRing.isOpenMap`'s,
+with the source instantiated at `Fin n → A` — which is where `A`'s own completeness, countably
+generated uniformity and nonarchimedean structure are spent, since the `Pi` instances carry each
+of them to `Aⁿ`. -/
+theorem IsTateRing.isOpenMap_linearCombination {n : ℕ} (g : Fin n → N)
+    (hspan : Submodule.span A (Set.range g) = ⊤) :
+    IsOpenMap (Fintype.linearCombination A g : (Fin n → A) → N) := by
+  have hsurj : Function.Surjective (Fintype.linearCombination A g) := by
+    rw [← LinearMap.range_eq_top, Fintype.range_linearCombination, hspan]
+  have hcont : Continuous (Fintype.linearCombination A g : (Fin n → A) → N) := by
+    rw [show (Fintype.linearCombination A g : (Fin n → A) → N) = fun a ↦ ∑ i, a i • g i from
+      funext (Fintype.linearCombination_apply A g)]
+    exact continuous_finsetSum _ fun i _ ↦ (continuous_apply i).smul continuous_const
+  exact IsTateRing.isOpenMap _ hsurj hcont.continuousAt
+
+end LinearCombination
 
 end TauCeti.Huber
 
