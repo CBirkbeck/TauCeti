@@ -14,7 +14,8 @@ public import TauCeti.NumberTheory.EllipticDivisibilitySequence.NormEDS
 Mathlib defines `WeierstrassCurve.ψ` as `normEDS` at the curve's division-polynomial parameters,
 but keeps the body unexposed, so no importing module can see the identification by unfolding.
 This file states it, at the level of functions, and draws the one consequence that needs nothing
-else: the `ψ` family is an elliptic sequence.
+else: the `ψ` family is an elliptic **net**. The elliptic-sequence reading is the last index held
+at `0`, available as `.isEllipticSequence`.
 
 These two facts depend only on Mathlib's `DivisionPolynomial/Basic.lean` and this repository's
 `EllipticDivisibilitySequence/NormEDS.lean`, so they sit at exactly that level — below both the
@@ -33,11 +34,13 @@ sequence statement over `Universal.Field` factors through the same identificatio
 `LutzNagell/DivisionPolynomialOmega.lean` in AINTLIB (`github.com/CBirkbeck/AINTLIB`,
 Apache-2.0, `main @ 1c1c74664e40071c2c2165bc55ca2616a67ccd6b`), declaration `isEllSequence_ψ`.
 It is **strengthened rather than transcribed**: the source states the `s = 0` shift, and the net
-holds by the identical one-line route through `isEllipticNet_normEDS`. Its consumers are the
-scalar-multiplication development's addition formulas, and those need the nonzero shift, so the
-sequence form is not kept alongside — `IsEllipticNet.isEllipticSequence` recovers it. This is
-the same call `DivisionPolynomial/Universal.lean` already made on the source's
-`isEllSequence_ψᵤ`. That file's header reads
+holds by the identical one-line route through `isEllipticNet_normEDS`, so the weaker form was
+never the cheaper one. The sequence form is not kept alongside because it had **no consumer** —
+`IsEllipticNet.isEllipticSequence` recovers it for any future one. (The addition formula at
+`ZSMul.lean:191` does consume a sequence form, but the *universal* one,
+`Universal.isEllipticSequence_polyToField_ψ`, which is a different declaration and untouched
+here.) Stating the net is the same call `DivisionPolynomial/Universal.lean` already made on the
+source's `isEllSequence_ψᵤ`. That file's header reads
 `Authors: Junyan Xu, David Kurniadi Angdinata`; following this repository's convention for
 adapted material the upstream authorship is credited here rather than in the copyright header.
 `ψ_eq_normEDS` has no source counterpart: the source unfolds `ψ` where it needs this, which the
@@ -60,7 +63,7 @@ theorem ψ_eq_normEDS : W.ψ = normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) := rfl
 /-- **The `ψ` family of division polynomials is an elliptic net.** The elliptic-*sequence*
 consequence is the last index held at `0`, which `IsEllipticNet.isEllipticSequence` reads off;
 consumers needing a nonzero shift, as the addition formula for `n • (X, Y)` does, need the net. -/
-theorem isEllipticNet_ψ : IsEllipticNet W.ψ :=
-  isEllipticNet_normEDS _ _ _
+theorem isEllipticNet_ψ : IsEllipticNet W.ψ := by
+  simpa only [ψ_eq_normEDS] using isEllipticNet_normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄)
 
 end WeierstrassCurve
