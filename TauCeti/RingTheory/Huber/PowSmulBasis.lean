@@ -39,6 +39,9 @@ definition, so a caller holding `powerBoundedSubring A` can use them.
 * `TauCeti.Huber.PairOfDefinition.submodulesBasis_pow_smul`: the family is a `SubmodulesBasis`.
 * `TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis`: the same family as a filter basis
   for scalars from `A`, not just from `A₀` — Proposition 6.18(1)'s `A`-module clause.
+* `TauCeti.Huber.PairOfDefinition.exists_pow_smul_le` and
+  `TauCeti.Huber.PairOfDefinition.exists_pow_smul_le_pow_smul`: Remark 6.19's well-definedness —
+  the family built from a finitely generated lattice is cofinal in the one built from `M₀`.
 * `TauCeti.Huber.PairOfDefinition.isCountablyGenerated_nhds_zero`: the induced topology has a
   countable fundamental system of neighbourhoods of `0` — 6.18(1)'s first-countability clause.
 
@@ -235,5 +238,59 @@ theorem isCountablyGenerated_nhds_zero (P : PairOfDefinition A) {s : A}
     · rintro n -
       exact ⟨_, (P.mem_powSmulModuleFilterBasis hs hs0 M₀ hspan).mpr ⟨n, rfl⟩, subset_rfl⟩
   exact hbasis.isCountablyGenerated
+
+/-- **A power of `ϖ` carries a finitely generated `A₀`-submodule into `M₀` wholesale.**
+
+`exists_pow_smul_mem` gives, for each element, *some* exponent that carries it into `M₀`; finite
+generation is what turns that pointwise statement into a uniform one, by taking the `Finset.sup`
+of the exponents attached to a generating set. -/
+theorem exists_pow_smul_le (P : PairOfDefinition A) {s : A} (hs : IsTopologicallyNilpotent s)
+    (hs0 : s ∈ P.ringOfDefinition) (M₀ M₁ : Submodule P.ringOfDefinition M)
+    (hspan : Submodule.span A (M₀ : Set M) = ⊤) (hfg : M₁.FG) :
+    ∃ k : ℕ, (⟨s, hs0⟩ : P.ringOfDefinition) ^ k • M₁ ≤ M₀ := by
+  obtain ⟨G, hG⟩ := hfg
+  choose f hf using fun z : M ↦ P.exists_pow_smul_mem hs hs0 M₀ (hspan ▸ Submodule.mem_top (x := z))
+  refine ⟨G.sup f, ?_⟩
+  have key : ∀ x ∈ M₁, s ^ G.sup f • x ∈ M₀ := by
+    intro x hx
+    rw [← hG] at hx
+    induction hx using Submodule.span_induction with
+    | mem g hg =>
+        obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le (Finset.le_sup (f := f) hg)
+        rw [hd, Nat.add_comm]
+        exact M₀.pow_add_smul_mem hs0 d (f g) g (hf g)
+    | zero => simp
+    | add x y _ _ ihx ihy => simpa [smul_add] using M₀.add_mem ihx ihy
+    | smul a x _ ih =>
+        have hcomm : s ^ G.sup f • (a • x) = a • (s ^ G.sup f • x) := smul_comm _ _ _
+        rw [hcomm]
+        exact M₀.smul_mem _ ih
+  rintro _ ⟨x, hx, rfl⟩
+  simp only [DistribSMul.toLinearMap_apply]
+  have hcast : (((⟨s, hs0⟩ : P.ringOfDefinition) ^ G.sup f : P.ringOfDefinition) : A) • x
+      = s ^ G.sup f • x := by
+    push_cast
+    ring_nf
+  exact hcast ▸ key x hx
+
+/-- **Remark 6.19's well-definedness.** The family `ϖ⁻ • M₁` built from a finitely generated `M₁`
+is cofinal in the family built from `M₀`, so the two induce the same topology and Wedhorn's
+"choose a finitely generated lattice" does not depend on the lattice chosen.
+
+`submodulesBasis_pow_smul` proves the basis half of Remark 6.19 without finite generation; this is
+where `M₁.FG` does its work. -/
+theorem exists_pow_smul_le_pow_smul (P : PairOfDefinition A) {s : A}
+    (hs : IsTopologicallyNilpotent s) (hs0 : s ∈ P.ringOfDefinition)
+    (M₀ M₁ : Submodule P.ringOfDefinition M)
+    (hspan : Submodule.span A (M₀ : Set M) = ⊤) (hfg : M₁.FG) (n : ℕ) :
+    ∃ k : ℕ, (⟨s, hs0⟩ : P.ringOfDefinition) ^ k • M₁
+      ≤ (⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ := by
+  obtain ⟨k, hk⟩ := P.exists_pow_smul_le hs hs0 M₀ M₁ hspan hfg
+  refine ⟨n + k, ?_⟩
+  have hsplit : (⟨s, hs0⟩ : P.ringOfDefinition) ^ (n + k) • M₁
+      = (⟨s, hs0⟩ : P.ringOfDefinition) ^ n • ((⟨s, hs0⟩ : P.ringOfDefinition) ^ k • M₁) := by
+    rw [pow_add, mul_smul]
+  rw [hsplit]
+  exact smul_mono_right ((⟨s, hs0⟩ : P.ringOfDefinition) ^ n) hk
 
 end TauCeti.Huber.PairOfDefinition
