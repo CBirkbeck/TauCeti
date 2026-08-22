@@ -64,8 +64,7 @@ cycle and weighted by their coefficients, an integral of `g` plus `2πi` times a
 that generator's winding numbers gives the cycle integral of `g` plus `2πi` times the `w`-weighted
 sum of the *cycle's* winding numbers.
 
-Neither `g` nor the weight `w` is constrained: this is the resummation step alone, carrying no
-analyticity, no residues and no null-homology. At `S = ∅` both sides collapse to `integral g C`. -/
+Both `g` and the weight `w` are arbitrary. At `S = ∅` both sides collapse to `integral g C`. -/
 theorem sum_support_smul_add_windingNumber_mul_eq (g w : ℂ → ℂ) (S : Finset ℂ) (C : Cycle) :
     ∑ γ ∈ FreeAbelianGroup.support C, FreeAbelianGroup.coeff γ C •
         ((∫ t in γ.a..γ.b, deriv (⇑γ) t • g (γ t))
