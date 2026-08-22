@@ -69,12 +69,13 @@ theorem isIntegral_of_forall_valuation_le_one {R : Type*} [CommRing R] [IsDomain
     {B : Subring R} {x : R}
     (hvle : ∀ v : ValuativeRel R, (∀ b ∈ B, v.vle b 1) → v.vle x 1) : IsIntegral B x := by
   by_contra hni
-  -- pass to the fraction field; `x` stays non-integral because the map is injective
+  -- pass to the fraction field; `x` stays non-integral because the map is injective, which
+  -- `isIntegral_algebraMap_iff` now draws from the `FaithfulSMul` instance rather than a
+  -- hypothesis
   let i := algebraMap R (FractionRing R)
-  have hinj : Function.Injective i := IsFractionRing.injective R (FractionRing R)
   have hxni : i x ∉ (integralClosure B (FractionRing R)).toSubring := by
     rw [Subalgebra.mem_toSubring, mem_integralClosure_iff]
-    exact mt (isIntegral_algebraMap_iff hinj).mp hni
+    exact mt isIntegral_algebraMap_iff.mp hni
   -- Stacks 090P(1): a valuation subring containing the closure but missing `i x`
   obtain ⟨V, hVle, hxV⟩ := Subring.exists_le_valuationSubring_of_isIntegrallyClosedIn hxni
   -- `vle` for the pulled-back relation is the valuation inequality: `vle_ofValuation` for the
