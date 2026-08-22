@@ -44,7 +44,8 @@ The Γ₀ pair corresponds to the AINTLIB
 * `HeckeRing.GL2.Gamma0Image_le_Delta0`: `Γ₀(N) ≤ Δ₀(N)`.
 * `HeckeRing.GL2.Delta0_le_commensurator_Gamma0Image`: `Δ₀(N)` lies in the commensurator of
   `Γ₀(N)`.
-* the `IsHeckeTriple (Delta0 N) (Gamma0Image N) (Gamma0Image N)` instance.
+* the `IsHeckeTriple (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ))`
+  instance; `Gamma0Image` is reducible, so the folded spelling finds it too.
 
 ## References
 
@@ -64,7 +65,7 @@ namespace HeckeRing.GL2
 variable (N : ℕ)
 
 /-- The image of `Γ₀(N)` in `GL₂(ℚ)`. -/
-noncomputable def Gamma0Image : Subgroup (GL (Fin 2) ℚ) :=
+@[reducible] noncomputable def Gamma0Image : Subgroup (GL (Fin 2) ℚ) :=
   (Gamma0 N).map (mapGL ℚ)
 
 /-- Membership in the image of `Γ₀(N)`, by an integral witness. -/
@@ -101,12 +102,11 @@ lemma Delta0_le_commensurator_Gamma0Image :
 /-- **The Hecke triple of `Γ₀(N)`**: `Γ₀(N) ≤ Δ₀(N) ≤ commensurator(Γ₀(N))` inside `GL₂(ℚ)` —
 the setting of Shimura §3.3, in which the Hecke ring `R(Γ₀(N), Δ₀(N))` is formed.
 
-Stated on `(Gamma0 N).map (mapGL ℚ)` rather than on `Gamma0Image N`, matching the `Γ₁(N)`
-instance: the modular-form side writes the level as `(Gamma0 N).map (mapGL ℝ)`, so the
-rational companion must arrive in the same shape for instance search to fire there. -/
--- The two hypotheses are stated for `Gamma0Image N`, which is by definition
--- `(Gamma0 N).map (mapGL ℚ)`, so unfolding that definition is all that connects them to the
--- target above.
+Stated on the unfolded `(Gamma0 N).map (mapGL ℚ)`, matching the `Γ₁(N)` instance: the
+modular-form side writes the level as `(Gamma0 N).map (mapGL ℝ)`, and its rational companion
+arrives in the same shape, which is the form instance search looks for. `Gamma0Image` is
+`@[reducible]` so the folded spelling used throughout the rest of this file resolves to the
+same instance, leaving the `Γ₀` surface undivided. -/
 instance : IsHeckeTriple (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) :=
   IsHeckeTriple.of_diagonal (Gamma0Image_le_Delta0 N) (Delta0_le_commensurator_Gamma0Image N)
 
