@@ -108,7 +108,7 @@ theorem integral_eq_analyticRemainder_add_sum (decomp : PolarPartDecomposition f
           exact Finset.sum_congr rfl fun γ hγ ↦ by rw [hgen γ hγ]
     _ = integral decomp.analyticRemainder C
           + 2 * (Real.pi : ℂ) * Complex.I * ∑ s ∈ S, windingNumber s C * residue f s :=
-          sum_support_smul_eq_integral_add_windingNumber_sum _ _ _ _
+          sum_support_smul_eq_integral_add_windingNumber_sum _ _ _ _ _
 
 /-- **The classical residue theorem for a null-homologous contour cycle.** Let `U` be open, `S` a
 finite set, `f` differentiable on `U ∖ S` and meromorphic at each point of `S` lying in `U`, and let

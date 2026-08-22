@@ -60,42 +60,38 @@ theorem windingNumber_eq_sum_support (C : Cycle) (z : ℂ) :
   simp only [map_sum, map_zsmul, windingNumber_of, ← Int.cast_smul_eq_zsmul ℂ, smul_eq_mul]
 
 /-- **A per-generator splitting resums to the cycle-level one.** Summing, over the generators of a
-cycle and weighted by their coefficients, an integral of `g` plus `2πi` times a `w`-weighted sum of
-that generator's winding numbers gives the cycle integral of `g` plus `2πi` times the `w`-weighted
+cycle and weighted by their coefficients, an integral of `g` plus `c` times a `w`-weighted sum of
+that generator's winding numbers gives the cycle integral of `g` plus `c` times the `w`-weighted
 sum of the *cycle's* winding numbers.
 
-Both `g` and the weight `w` are arbitrary. At `S = ∅` both sides collapse to `integral g C`. -/
+The scalar `c`, the integrand `g` and the weight `w` are all arbitrary; residue applications take
+`c = 2πi`. At `S = ∅` both sides collapse to `integral g C`, and at `c = 0` to the same. -/
 theorem sum_support_smul_eq_integral_add_windingNumber_sum
-    (g w : ℂ → ℂ) (S : Finset ℂ) (C : Cycle) :
+    (c : ℂ) (g w : ℂ → ℂ) (S : Finset ℂ) (C : Cycle) :
     ∑ γ ∈ FreeAbelianGroup.support C, FreeAbelianGroup.coeff γ C •
         ((∫ t in γ.a..γ.b, deriv (⇑γ) t • g (γ t))
-          + 2 * (Real.pi : ℂ) * Complex.I *
-              ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s)
+          + c * ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s)
       = integral g C
-        + 2 * (Real.pi : ℂ) * Complex.I * ∑ s ∈ S, windingNumber s C * w s := by
+        + c * ∑ s ∈ S, windingNumber s C * w s := by
   have hswap : ∀ γ : PiecewiseC1ClosedCurve,
       (FreeAbelianGroup.coeff γ C : ℂ) *
-          (2 * (Real.pi : ℂ) * Complex.I *
-            ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s)
-        = ∑ s ∈ S, 2 * (Real.pi : ℂ) * Complex.I *
-            ((FreeAbelianGroup.coeff γ C : ℂ) *
+          (c * ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s)
+        = ∑ s ∈ S, c * ((FreeAbelianGroup.coeff γ C : ℂ) *
               TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s) := fun γ ↦ by
     rw [Finset.mul_sum, Finset.mul_sum]
     exact Finset.sum_congr rfl fun s _ ↦ by ring
   calc
     ∑ γ ∈ FreeAbelianGroup.support C, FreeAbelianGroup.coeff γ C •
           ((∫ t in γ.a..γ.b, deriv (⇑γ) t • g (γ t))
-            + 2 * (Real.pi : ℂ) * Complex.I *
-                ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s)
+            + c * ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s)
         = (∑ γ ∈ FreeAbelianGroup.support C, FreeAbelianGroup.coeff γ C •
               (∫ t in γ.a..γ.b, deriv (⇑γ) t • g (γ t)))
             + ∑ γ ∈ FreeAbelianGroup.support C, FreeAbelianGroup.coeff γ C •
-                (2 * (Real.pi : ℂ) * Complex.I *
-                  ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s) := by
+                (c * ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s) := by
           simp only [smul_add]
           exact Finset.sum_add_distrib
     _ = integral g C
-          + 2 * (Real.pi : ℂ) * Complex.I * ∑ s ∈ S, windingNumber s C * w s := by
+          + c * ∑ s ∈ S, windingNumber s C * w s := by
           rw [← integral_eq_sum_support]
           refine congrArg _ ?_
           simp only [← Int.cast_smul_eq_zsmul ℂ, smul_eq_mul]

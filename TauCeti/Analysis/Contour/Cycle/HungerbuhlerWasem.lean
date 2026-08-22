@@ -108,7 +108,7 @@ theorem hasCauchyPV_analyticRemainder_add_residue_sum (decomp : PolarPartDecompo
               ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * residue f s))
       = integral decomp.analyticRemainder C
         + 2 * (Real.pi : ℂ) * Complex.I * ∑ s ∈ S, windingNumber s C * residue f s :=
-    sum_support_smul_eq_integral_add_windingNumber_sum _ _ _ _
+    sum_support_smul_eq_integral_add_windingNumber_sum _ _ _ _ _
   rw [← hval]
   exact HasCauchyPV.of_generators hgen
 
