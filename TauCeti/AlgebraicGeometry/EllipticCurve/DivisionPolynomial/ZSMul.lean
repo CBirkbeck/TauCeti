@@ -681,7 +681,7 @@ injective, because the point is not torsion. This is Mathlib's
 `zsmul_point_ne_zero`. -/
 lemma zsmul_point_injective : Function.Injective fun n : ℤ ↦ n • Jacobian.point :=
   injective_zsmul_iff_not_isOfFinAddOrder.mpr fun h ↦
-    let ⟨k, hk, hz⟩ := isOfFinAddOrder_iff_zsmul_eq_zero.mp h
+    let ⟨_k, hk, hz⟩ := isOfFinAddOrder_iff_zsmul_eq_zero.mp h
     zsmul_point_ne_zero hk hz
 
 /-- The three families of universal division polynomials as a 3-tuple. -/
