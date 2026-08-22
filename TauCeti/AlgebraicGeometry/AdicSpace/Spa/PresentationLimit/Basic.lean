@@ -50,8 +50,6 @@ not the hypotheses.
 * `TauCeti.ValuationSpectrum.rationalDiagram` : the diagram they index.
 * `TauCeti.ValuationSpectrum.RationalIndex` : the index at an open, a `StructuredArrow`.
 * `TauCeti.ValuationSpectrum.presentationLimitPresheaf` : the presheaf, the Kan extension.
-* `TauCeti.ValuationSpectrum.presentationLimitObj` : its value, the candidate for `𝒪_X(V)`.
-* `TauCeti.ValuationSpectrum.presentationLimitMap` : the restriction morphism of a containment.
 * `TauCeti.Huber.PairOfDefinition.HasSheafyPresentationLimit` : the presentation-indexed
   presheaf is a sheaf. It is named for the presheaf it actually tests: until the initiality
   statement is proved, that presheaf is not known to be Wedhorn's `𝒪_X`, so this is not yet the
@@ -62,7 +60,6 @@ not the hypotheses.
 * `TauCeti.Huber.PairOfDefinition.hasSheafyPresentationLimit_iff` : sheafiness unfolds to
   Mathlib's sheaf
   condition (`HasSheafyPresentationLimit` is not exposed; this is the route across).
-* `presentationLimitPresheaf_obj`, `presentationLimitPresheaf_map` : its simp interface.
 * The `IsFilteredOrEmpty` instance on `RationalIndex` : two indices have a common refinement, so
   presentations of the same subset are constrained through one.
 
@@ -72,14 +69,13 @@ not the hypotheses.
 refinement compatibility `limit.w D f`, and the restriction equations `limit.lift_π`,
 `Functor.map_id` and `Functor.map_comp` on `presentationLimitPresheaf P Aplus` — every one
 already `@[simp]` in Mathlib. No local cone, projection or characteristic equation is declared:
-the `@[expose]` on the presheaf and its value makes `presentationLimitObj P Aplus V`
-definitionally `limit D`, so all of that applies at the named object directly.
+the `@[expose]` on the presheaf makes `(presentationLimitPresheaf P Aplus).obj (op V)`
+definitionally `limit D`, so all of that applies at the presheaf's own value directly. Consumers
+write `(presentationLimitPresheaf P Aplus).obj (op V)` and
+`(presentationLimitPresheaf P Aplus).map (homOfLE h).op`, the spelling Mathlib's sheaf theory
+uses throughout; nothing here renames them.
 
-`presentationLimitObj` is `@[expose]` because `presentationLimitPresheaf_map` does not elaborate
-otherwise — its two sides are morphisms whose types agree only once the object unfolds.
-
-Reindexing needs no lemmas of its own. `presentationLimitMap` is the presheaf's own action;
-the inclusion of one index
+Reindexing needs no lemmas of its own; the inclusion of one index
 into another is `StructuredArrow.map`, whose functoriality is Mathlib's.
 
 ## Why the index is presentations and not subsets
@@ -148,6 +144,7 @@ omit [IsTopologicalRing A] in
 /-- **The defining condition of `isRational`**, as an intro/elim lemma. `isRational` is sealed, so
 this is how a consumer both builds a rational presentation and uses one: the numerator ideal of
 `p` is open. -/
+@[simp]
 theorem isRational_iff {P : PairOfDefinition A} {p : P.Presentation} :
     isRational P p ↔ IsOpen (Ideal.span (p.num : Set A) : Set A) := Iff.rfl
 
@@ -254,32 +251,6 @@ docstring. -/
 noncomputable def presentationLimitPresheaf (Aplus : Subring A) :
     (Opens ↥(spa Aplus))ᵒᵖ ⥤ CompleteSeparatedTopCommRingCat.{v} :=
   (rationalInclusion P Aplus).pointwiseRightKanExtension (rationalDiagram P)
-
-variable (P) in
-/-- **The value of the presentation-indexed presheaf on an open.** -/
-@[expose]
-noncomputable def presentationLimitObj (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
-    CompleteSeparatedTopCommRingCat.{v} :=
-  (presentationLimitPresheaf P Aplus).obj (op V)
-
-variable (P) in
-/-- **The restriction morphism of a containment `W ≤ V`**: the presheaf's action, which unfolds to
-the reindexing of the limit along `StructuredArrow.map`. -/
-noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
-    presentationLimitObj P Aplus V ⟶ presentationLimitObj P Aplus W :=
-  (presentationLimitPresheaf P Aplus).map (homOfLE h).op
-
-/-- The presheaf's value on an open is `presentationLimitObj`. -/
-@[simp]
-theorem presentationLimitPresheaf_obj (P : PairOfDefinition A) (Aplus : Subring A)
-    (V : (Opens ↥(spa Aplus))ᵒᵖ) :
-    (presentationLimitPresheaf P Aplus).obj V = presentationLimitObj P Aplus V.unop := (rfl)
-
-/-- The presheaf's action on a containment is `presentationLimitMap`. -/
-@[simp]
-theorem presentationLimitPresheaf_map (P : PairOfDefinition A) (Aplus : Subring A)
-    {V W : (Opens ↥(spa Aplus))ᵒᵖ} (h : V ⟶ W) :
-    (presentationLimitPresheaf P Aplus).map h = presentationLimitMap P (leOfHom h.unop) := (rfl)
 
 /-- **The presentation-indexed presheaf of `P` over `Aplus` is a sheaf**: that presheaf
 built from
