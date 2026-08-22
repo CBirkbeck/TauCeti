@@ -103,8 +103,7 @@ is the statement the Nagell–Lutz layer consumes.
   those two formulas, `ψ₂ₙ` and `ψₙ₊ₘψₙ₋ₘ`, already in the polynomial ring — no reduction modulo
   the Weierstrass polynomial is needed for the third coordinate.
 * `WeierstrassCurve.Universal.Jacobian.smulPoly_neg`, `.smulRing_neg`, `.smulField_neg`: negating
-  the index is Mathlib's Jacobian negation rescaled by `-1`; `ω_neg_eq_neg_negY` is the middle
-  coordinate's share of that, the `ω` parity rule in Jacobian form.
+  the index is Mathlib's Jacobian negation rescaled by `-1`.
 * `WeierstrassCurve.Universal.ringEval_comp_smulRing`: `smulEval` is the specialization of
   `smulRing` along the homomorphism a point of `W` induces — the bridge from the universal
   identities to a concrete curve, and what `dblXYZ_smulEval` and `addXYZ_smulEval` are proved
@@ -240,8 +239,8 @@ an `inferInstance` cache and is not needed, and neither is its second
 
 The final block below completes the port of the source file, adding, at the same revision,
 `dblZ_smulPoly` (`:446`), `nonsingular_smulField` (`:454`), `dblXYZ_smulField` (`:469`),
-`dblXYZ_smulRing` (`:480`), `addZ_smulPoly` (`:484`), `ω_neg_eq_neg_negY` (`:489`),
-`smulPoly_neg` (`:496`), `smulRing_neg` (`:499`), `smulField_neg` (`:502`), `smulPoly_zero` and
+`dblXYZ_smulRing` (`:480`), `addZ_smulPoly` (`:484`), `smulPoly_neg` (`:496`),
+`smulRing_neg` (`:499`), `smulField_neg` (`:502`), `smulPoly_zero` and
 `smulField_zero` (`:505`–`:506`), `addXYZ_smulField` (`:508`), `addXYZ_smulRing` (`:533`),
 then `smulEval` (`:560`), `ringEval_comp_smulRing` (`:566`), `dblXYZ_smulEval` (`:577`),
 `addXYZ_smulEval` (`:581`) and `zsmul_eq_smulEval` (`:599`). The three `₁`-suffixed
@@ -255,6 +254,10 @@ of the `ringEval` API. The source's `curveRing_map_ringEval` is this repository'
 The source's `ringEval_ψ` (`:572`) is **not ported**: it is the third coordinate of
 `ringEval_comp_smulRing`, used once, so it lives as a typed local `have` in `addXYZ_smulEval`
 rather than as public API.
+The source's `ω_neg_eq_neg_negY` (`:489`) is **not ported**: it is `ω_neg` followed by `negY_eq`
+and `ring`, and `smulPoly_neg` — its only advertised consumer — discharges the middle coordinate
+through the default `simp` set instead, so the intermediate lemma has no caller.
+
 **None of the source's three `₁`-suffixed adjacent-index lemmas is ported** (`:539`, `:546`,
 `:589`). Each is its `addXYZ_smul{Field,Ring,Eval}` parent followed by `add_sub_cancel_left`,
 `ψ_one`, `map_one`/`evalEval_one` and `one_smul` — the scaling factor at adjacent indices is
@@ -803,22 +806,11 @@ lemma addZ_smulPoly : addZ (smulPoly m) (smulPoly n) = curve.ψ (n + m) * curve.
   simp only [smulPoly, fin3_def_ext, WeierstrassCurve.φ]
   ring
 
-/-- **Negating the index negates the middle coordinate**: `ω₋ₙ` is the `negY` of `(φₙ, ωₙ, ψₙ)`,
-up to sign. This is the `ω` parity rule read in Jacobian coordinates. -/
-lemma ω_neg_eq_neg_negY : curve.ω (-n) = -negY curvePoly (smulPoly n) := by
-  -- As in `dblZ_smulPoly`, `negY_eq` is taken at the ascribed type, `curvePoly.aᵢ` being
-  -- definitionally `CC curve.aᵢ`.
-  have hneg : negY curvePoly (smulPoly n)
-      = -curve.ω n - CC curve.a₁ * curve.φ n * curve.ψ n - CC curve.a₃ * curve.ψ n ^ 3 :=
-    negY_eq (W' := curvePoly) _ _ _
-  rw [hneg, ω_neg]
-  ring
-
 /-- **Negating the index negates the point**: the triple at `-n` is Mathlib's Jacobian negation of
 the triple at `n`, rescaled by `-1`. -/
--- Coordinatewise, so that each coordinate's rule is visible: `φ_neg`, `ω_neg_eq_neg_negY`,
--- `ψ_neg`. The `(-1)ᵏ` factors are cleared by `ring` rather than `simp`, because instance search
--- finds no `HasDistribNeg Poly` and the sign simp set therefore does not fire here.
+-- Coordinatewise, so that each coordinate's rule is visible: `φ_neg`, `ω_neg` and `ψ_neg`. The
+-- `(-1)ᵏ` factors are cleared by `ring` rather than `simp`, because instance search finds no
+-- `HasDistribNeg Poly` and the sign simp set therefore does not fire here.
 @[simp] lemma smulPoly_neg : smulPoly (-n) = (-1 : Poly) • neg curvePoly (smulPoly n) := by
   -- `fin_cases` leaves the index as `⟨i, ⋯⟩` rather than the numeral, which `simp only` with
   -- explicit `Matrix.cons_val_*` lemmas cannot match; the default `simp` set can, via the
