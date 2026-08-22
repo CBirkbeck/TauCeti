@@ -6,7 +6,7 @@ Authors: Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Gamma1
-public import TauCeti.NumberTheory.HeckeRing.Associativity
+public import TauCeti.NumberTheory.HeckeRing.Basic
 
 /-!
 # The `ℤ`-linear extension of the Hecke slash operators to the Hecke ring
