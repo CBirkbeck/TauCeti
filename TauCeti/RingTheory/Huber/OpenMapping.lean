@@ -72,8 +72,8 @@ equivalent to continuity everywhere (`continuous_of_continuousAt_zero`), so this
 hypothesis spelled at its weakest, and a consumer holding `Continuous f` supplies
 `‹Continuous f›.continuousAt`.
 
-Both halves of the roadmap's derived form are here, and so is Proposition 6.18(2), the strict
-form for a map that need not be surjective. `TauCeti.Huber.IsTateRing.isOpenMap` is the
+Both halves of the roadmap's derived form are here, together with a strict-map form for a map
+that need not be surjective. `TauCeti.Huber.IsTateRing.isOpenMap` is the
 open-map half; `TauCeti.Huber.IsTateRing.isQuotientMap` is the other — that such a map induces the
 quotient topology — and it delegates to `TauCeti.HasZeroSequenceOfUnits.isQuotientMap` exactly as
 the open-map form delegates to `TauCeti.HasZeroSequenceOfUnits.isOpenMap`. It is the quotient form
@@ -86,13 +86,15 @@ open but that the target's topology is determined by the source's.
   complete pseudometrisable module onto a complete metrisable one over a Tate ring is open.
 * `TauCeti.Huber.IsTateRing.isQuotientMap`: the same map induces the quotient topology on its
   target. This is the form the strict-morphism material will consume.
-* `TauCeti.Huber.IsTateRing.isStrictMap_of_isClosed_range`: Wedhorn Proposition 6.18(2) — a linear
-  map continuous at zero with closed range is strict, i.e. open onto its image.
+* `TauCeti.Huber.IsTateRing.isStrictMap_of_isClosed_range`: a linear map continuous at zero with
+  closed range is strict, i.e. open onto its image. An ingredient for Wedhorn 6.18(2), not that
+  proposition — see its docstring.
 
 ## References
 
-* [Wedhorn, *Adic Spaces*][wedhorn_adic], Theorem 6.16, and Proposition 6.18(2) — of whose two
-  conjuncts, "continuous" is a hypothesis here and "open onto its image" is the conclusion.
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], Theorem 6.16. Proposition 6.18(2) is *not* proved
+  here: it assumes `A` noetherian and the modules finitely generated with the topology of
+  6.18(1), and concludes continuity as well as openness onto the image.
 * L. Henkel, *An Open Mapping Theorem for rings which have a zero sequence of units*,
   [arXiv:1407.5647](https://arxiv.org/abs/1407.5647).
 -/
@@ -128,12 +130,15 @@ theorem IsTateRing.isOpenMap (f : M →ₗ[A] N) (hf : Function.Surjective f)
   HasZeroSequenceOfUnits.isOpenMap f hf hfc
     fun _ ↦ (continuous_id.smul continuous_const).continuousAt
 
-/-- **Strictness over a Tate ring** — Wedhorn Proposition 6.18(2). An `A`-linear map that is
-continuous at zero and has closed range is a strict map: `Topology.IsStrictMap`, Bourbaki's "open
-onto its image".
+/-- **Strictness from a closed range over a Tate ring.** An `A`-linear map that is continuous at
+zero and has closed range is a strict map: `Topology.IsStrictMap`, Bourbaki's "open onto its
+image". Surjectivity is not assumed.
 
-Of 6.18(2)'s two conjuncts, "continuous" is the hypothesis here — asked at zero only — and "open
-onto its image" is the conclusion. Surjectivity is not assumed.
+This is **not** Wedhorn Proposition 6.18(2), which assumes `A` noetherian and `M`, `N` finitely
+generated with the canonical topology of 6.18(1), and *concludes* both continuity and openness onto
+the image. Here continuity is a hypothesis and the closed-range hypothesis stands in for what the
+noetherian finitely generated setting would supply. It is the openness conjunct of 6.18(2) as a
+free-standing lemma, and an ingredient for it rather than the proposition.
 
 Closedness of the range is the weaker of the two natural hypotheses: an open submodule is closed,
 so a map with *open* range satisfies it too. Consumers recover the plain open-map fact from
