@@ -288,17 +288,17 @@ from `M₀` contains a member of the family built from a finitely generated `M�
 
 This is the comparison Remark 6.19's well-definedness rests on, in one direction only: it gives
 the inclusion of the induced neighbourhood filters, not their equality. The reverse inclusion is
-this same theorem with the roles of `M₀` and `M₁` exchanged, which asks instead that `M₁` span and
-`M₀` be finitely generated; neither that instance nor the resulting equality of topologies is
-proved here.
+this same theorem with the roles of `M₀` and `M₁` exchanged, which asks instead that `M₀` lie in
+the `A`-span of `M₁` and that `M₀` be finitely generated. Note it is not that `M₁` spans `M`:
+the hypothesis is one containment, not a spanning condition. Neither that instance nor the
+resulting equality of topologies is proved here.
 
 `submodulesBasis_pow_smul` proves the basis half of Remark 6.19 without finite generation; this is
 where `M₁.FG` does its work. -/
 theorem exists_pow_smul_le_pow_smul (P : PairOfDefinition A) {s : A}
     (hs : IsTopologicallyNilpotent s) (hs0 : s ∈ P.ringOfDefinition)
-    (M₀ M₁ : Submodule P.ringOfDefinition M)
-    (hspan : (M₁ : Set M) ⊆ Submodule.span A (M₀ : Set M)) (hfg : M₁.FG) (n : ℕ) :
-    ∃ k : ℕ, (⟨s, hs0⟩ : P.ringOfDefinition) ^ k • M₁
+    (M₀ M₁ : Submodule P.ringOfDefinition M) (hspan : (M₁ : Set M) ⊆ Submodule.span A (M₀ : Set M))
+    (hfg : M₁.FG) (n : ℕ) : ∃ k : ℕ, (⟨s, hs0⟩ : P.ringOfDefinition) ^ k • M₁
       ≤ (⟨s, hs0⟩ : P.ringOfDefinition) ^ n • M₀ := by
   obtain ⟨k, hk⟩ := P.exists_pow_smul_le hs hs0 M₀ M₁ hspan hfg
   refine ⟨n + k, ?_⟩
