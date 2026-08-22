@@ -149,7 +149,6 @@ theorem pointsMulEquiv_kostantRootSubgroupCoordinateMap_apply
   rw [Module.Basis.baseChange_apply, kostantRootSubgroupPoints_tmul]
   simp only [map_sum, TensorProduct.map_tmul, LinearMap.id_apply, TensorProduct.lid_tmul,
     AdditiveGroup.toAdd_gaPointsMulEquiv, mul_one]
-  -- evaluating a `Finsupp` sum is not definitionally the sum of the evaluations
   simp only [Finset.sum_apply', map_zsmul, map_pow, Module.Basis.baseChange_repr_tmul,
     Module.Basis.coord_apply]
 
