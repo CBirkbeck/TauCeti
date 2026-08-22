@@ -7,8 +7,8 @@ module
 
 public import TauCeti.RingTheory.Huber.ZeroSequenceOfUnits
 public import TauCeti.Topology.Algebra.OpenMapping.Henkel
-public import TauCeti.Topology.Algebra.IsUniformGroup.Submodule
-public import TauCeti.Topology.Algebra.Module.Submodule
+import TauCeti.Topology.Algebra.IsUniformGroup.Submodule
+import TauCeti.Topology.Algebra.Module.Submodule
 import Mathlib.Topology.Baire.CompleteMetrizable
 
 /-!
@@ -84,8 +84,8 @@ open but that the target's topology is determined by the source's.
   complete pseudometrisable module onto a complete metrisable one over a Tate ring is open.
 * `TauCeti.Huber.IsTateRing.isQuotientMap`: the same map induces the quotient topology on its
   target. This is the form the strict-morphism material will consume.
-* `TauCeti.Huber.IsTateRing.isOpenMap_of_isOpen_range`: a continuous linear map whose range is
-  open is an open map, obtained by corestricting to that range.
+* `TauCeti.Huber.IsTateRing.isOpenMap_of_isOpen_range`: over the same Tate context, a linear map
+  continuous at zero whose range is open is an open map, obtained by corestricting to that range.
 
 ## References
 
@@ -125,11 +125,19 @@ theorem IsTateRing.isOpenMap (f : M →ₗ[A] N) (hf : Function.Surjective f)
   HasZeroSequenceOfUnits.isOpenMap f hf hfc
     fun _ ↦ (continuous_id.smul continuous_const).continuousAt
 
-/-- **A continuous linear map with open range is open.** The open-range hypothesis is what
-replaces surjectivity in `TauCeti.Huber.IsTateRing.isOpenMap`: a map onto an open submodule of
-`N` is open as a map into `N`. -/
-theorem IsTateRing.isOpenMap_of_isOpen_range (f : M →ₗ[A] N) (hf : Continuous (f : M → N))
+/-- **The open-range form over a Tate ring.** Under the same ambient hypotheses as
+`TauCeti.Huber.IsTateRing.isOpenMap` — `A` a Tate ring, `M` a complete pseudometrisable
+nonarchimedean `A`-module, `N` complete and metrisable — an `A`-linear map continuous at zero
+whose range is open is an open map.
+
+Openness of the range is what replaces surjectivity: corestricting to `LinearMap.range f` makes
+the map surjective, so `isOpenMap` applies there, and the inclusion of an open submodule is itself
+open. Note that when `N = A` this is *not* a weakening: an open ideal of a Tate ring is already
+`⊤` (`TauCeti.Huber.IsTateRing.eq_top_of_isOpen`), so the corestriction only has content for a
+target that is not the ring itself. -/
+theorem IsTateRing.isOpenMap_of_isOpen_range (f : M →ₗ[A] N) (hfc : ContinuousAt (f : M → N) 0)
     (hr : IsOpen ((LinearMap.range f : Submodule A N) : Set N)) : IsOpenMap (f : M → N) := by
+  have hf : Continuous (f : M → N) := continuous_of_continuousAt_zero f hfc
   have _ : CompleteSpace (LinearMap.range f) :=
     ((LinearMap.range f).toAddSubgroup.isClosed_of_isOpen hr).completeSpace_coe
   have hcont : Continuous (f.rangeRestrict : M → LinearMap.range f) :=
