@@ -72,10 +72,11 @@ This is the form a consumer meets: it decides membership in `s` by a closure com
 upstairs in `Â`, without unfolding the generic inducing-map argument each time. There is no
 closure on the `A` side — closedness of `s` is exactly what removes it.
 
-Closedness is not decoration. `A` need not be Hausdorff, so `A → Â` need not be injective: in
-general the preimage of the closure of the image of a subgroup `G` is `G + closure {0}` rather
-than `G`, and it is `IsClosed s` that collapses the difference. No algebraic structure enters —
-for a closed additive subgroup `G`, apply this to `(G : Set A)`. -/
+Closedness is not decoration. Without it the preimage is `closure s`, not `s` — that is exactly
+what `IsInducing.closure_eq_preimage_closure_image` says — and `closure s` can be strictly larger
+than `s` even in a Hausdorff `A`, where no failure of injectivity is available to blame: `ℚ ⊆ ℝ`
+is a proper subgroup whose closure is everything. `IsClosed s` is what collapses the two. No
+algebraic structure enters — for a closed additive subgroup `G`, apply this to `(G : Set A)`. -/
 @[simp]
 theorem preimage_closure_image_coe {s : Set A} (hs : IsClosed s) :
     ((↑) : A → Completion A) ⁻¹' closure (((↑) : A → Completion A) '' s) = s := by
