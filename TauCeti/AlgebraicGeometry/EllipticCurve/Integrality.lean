@@ -25,7 +25,8 @@ denominator at all, so `den x` is a unit and `x` is integral.
 The second is a consequence of the curve equation alone: once `x` comes from `R`, `y` is a root of
 the monic quadratic `Y² + (a₁x + a₃)Y − (x³ + a₂x² + a₄x + a₆)` over `R`, so `y` is integral over
 `R`. That step needs no domain, fraction-field or factorisation hypothesis, so it is stated over an
-arbitrary `R`-algebra, with the fraction-field version as a corollary.
+arbitrary `R`-algebra, with the `IsLocalization.IsInteger` form as a corollary over any commutative
+`R`-algebra in which `R` is integrally closed.
 
 ## Main results
 
