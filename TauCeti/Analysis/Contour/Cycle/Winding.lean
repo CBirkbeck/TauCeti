@@ -65,14 +65,15 @@ that generator's winding numbers gives the cycle integral of `g` plus `2πi` tim
 sum of the *cycle's* winding numbers.
 
 Both `g` and the weight `w` are arbitrary. At `S = ∅` both sides collapse to `integral g C`. -/
-theorem sum_support_smul_add_windingNumber_mul_eq (g w : ℂ → ℂ) (S : Finset ℂ) (C : Cycle) :
+theorem sum_support_smul_eq_integral_add_windingNumber_sum
+    (g w : ℂ → ℂ) (S : Finset ℂ) (C : Cycle) :
     ∑ γ ∈ FreeAbelianGroup.support C, FreeAbelianGroup.coeff γ C •
         ((∫ t in γ.a..γ.b, deriv (⇑γ) t • g (γ t))
           + 2 * (Real.pi : ℂ) * Complex.I *
               ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s)
       = integral g C
         + 2 * (Real.pi : ℂ) * Complex.I * ∑ s ∈ S, windingNumber s C * w s := by
-  -- regroup the double sum over generators and poles, pole index outermost
+  -- regroup the double sum over generators and points of `S`, with the latter outermost
   have hswap : ∀ γ : PiecewiseC1ClosedCurve,
       (FreeAbelianGroup.coeff γ C : ℂ) *
           (2 * (Real.pi : ℂ) * Complex.I *
