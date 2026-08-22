@@ -71,6 +71,7 @@ lemma isClosedImmersion_hopfSpec_map_comp_eqToHom_iff {S : CommRingCat.{u}}
     IsClosedImmersion
         (((AlgebraicGeometry.hopfSpec S).map f.op ≫ eqToHom hG.symm).hom.hom.left) ↔
       Function.Surjective f.hom := by
+  let _ : IsIso (eqToHom hG.symm).hom.hom.left := isIso_hom_hom_left (eqToHom hG.symm)
   simp only [Grp.comp', Mon.comp_hom', Over.comp_left]
   rw [MorphismProperty.cancel_right_of_respectsIso (P := @IsClosedImmersion)]
   exact isClosedImmersion_hopfSpec_map_iff f
@@ -85,6 +86,7 @@ lemma isClosedImmersion_eqToHom_comp_hopfSpec_map_iff {S : CommRingCat.{u}}
     IsClosedImmersion
         ((eqToHom hG ≫ (AlgebraicGeometry.hopfSpec S).map f.op).hom.hom.left) ↔
       Function.Surjective f.hom := by
+  let _ : IsIso (eqToHom hG).hom.hom.left := isIso_hom_hom_left (eqToHom hG)
   simp only [Grp.comp', Mon.comp_hom', Over.comp_left]
   rw [MorphismProperty.cancel_left_of_respectsIso (P := @IsClosedImmersion)]
   exact isClosedImmersion_hopfSpec_map_iff f

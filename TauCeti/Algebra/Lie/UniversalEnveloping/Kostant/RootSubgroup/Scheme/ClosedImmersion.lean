@@ -315,7 +315,7 @@ theorem isClosedImmersion_kostantRootSubgroup :
   let c₁ := ((AlgebraicGeometry.hopfSpec (CommRingCat.of ℤ)).map
     (kostantRootSubgroupCoordinateMap e h ρ M hM i hnil b).op ≫
       eqToHom (GeneralLinear.groupScheme_def ℤ n).symm).hom.hom.left
-  have he₁ : IsIso e₁ := isIso_eqToHom_hom_hom_left (AdditiveGroup.groupScheme_def ℤ)
+  have he₁ : IsIso e₁ := isIso_hom_hom_left (eqToHom (AdditiveGroup.groupScheme_def ℤ))
   have hc₁ : IsClosedImmersion c₁ :=
     (CommHopfAlgCat.isClosedImmersion_hopfSpec_map_comp_eqToHom_iff
       (GeneralLinear.groupScheme_def ℤ n) _).2
