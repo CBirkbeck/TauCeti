@@ -105,6 +105,9 @@ the setting of Shimura §3.3, in which the Hecke ring `R(Γ₀(N), Δ₀(N))` is
 Stated on the unfolded `(Gamma0 N).map (mapGL ℚ)`, matching the `Γ₁(N)` instance: the
 modular-form side writes the level as `(Gamma0 N).map (mapGL ℝ)`, and its rational companion
 arrives in the same shape, which is the form instance search looks for. -/
+-- The two hypotheses are stated for `Gamma0Image N`, which is by definition
+-- `(Gamma0 N).map (mapGL ℚ)`, so unfolding that definition is what connects them to the
+-- target above.
 instance : IsHeckeTriple (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) :=
   IsHeckeTriple.of_diagonal (Gamma0Image_le_Delta0 N) (Delta0_le_commensurator_Gamma0Image N)
 
