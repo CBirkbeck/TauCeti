@@ -89,9 +89,8 @@ theorem isUnipotentPoint_pointsMulEquiv_iff
       simpa only [AlgHom.mapDomain_apply, gright, e,
         AffineGroup.Product.mapDomain_projectRight] using h
     have hfactor : g = gleft * gright := by
-      apply e.injective
-      simp only [map_mul, e, gleft, gright, MulEquiv.apply_symm_apply]
-      ext <;> simp
+      simpa only [e, gleft, gright, map_mul, MulEquiv.symm_apply_apply] using
+        congrArg e.symm (Prod.fst_mul_snd (e g)).symm
     rw [hfactor]
     exact hgleft.mul_of_commute hgright <| (MonoidHom.commute_inl_inr _ _).map e.symm
 
