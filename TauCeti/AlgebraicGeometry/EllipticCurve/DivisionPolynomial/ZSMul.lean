@@ -91,7 +91,8 @@ is the statement the Nagell–Lutz layer consumes.
 * `WeierstrassCurve.Universal.Affine.exists_zsmul_point_eq_smulX_smulY`: **the identification**. For
   `n ≠ 0` the pair `(smulX n, smulY n)` is nonsingular and `n • (X, Y)` is the affine point it
   names.
-* `WeierstrassCurve.Universal.Affine.zsmul_point_ne_zero`, `.Jacobian.zsmul_point_ne_zero`:
+* `WeierstrassCurve.Universal.Affine.zsmul_point_ne_zero` and
+  `WeierstrassCurve.Universal.Jacobian.zsmul_point_ne_zero`:
   the distinguished point is not torsion, in affine and in Jacobian coordinates; whence
   `Jacobian.zsmul_point_injective`, that `n ↦ n • point` is injective.
 * `WeierstrassCurve.Universal.Jacobian.zsmul_point_eq_smulField`: the Jacobian identification,
@@ -243,7 +244,9 @@ The final block below completes the port of the source file, adding, at the same
 `smulRing_neg` (`:499`), `smulField_neg` (`:502`), `smulPoly_zero` and
 `smulField_zero` (`:505`–`:506`), `addXYZ_smulField` (`:508`), `addXYZ_smulRing` (`:533`),
 then `smulEval` (`:560`), `ringEval_comp_smulRing` (`:566`), `dblXYZ_smulEval` (`:577`),
-`addXYZ_smulEval` (`:581`) and `zsmul_eq_smulEval` (`:599`). The three `₁`-suffixed
+`addXYZ_smulEval` (`:581`) and `zsmul_eq_smulEval` (`:599`), the last ported under the name
+`zsmul_point_eq_smulEval` because its conclusion is about the `.point` projection. The three
+`₁`-suffixed
 adjacent-index lemmas (`:539`, `:546`, `:589`) are in the source's range but are **not** ported,
 for the reason given below.
 The two zero lemmas are moved ahead of `dblXYZ_smulField`, which uses `smulField_zero` to
