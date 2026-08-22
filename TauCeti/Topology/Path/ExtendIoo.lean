@@ -65,6 +65,10 @@ coercion. Injectivity on the interior is likewise left to the call site, being t
 * `TauCeti.Path.range_ofContinuousOnIoo` — its range is `closure (g '' Ioo a b)`.
 * `TauCeti.eq_or_eq_endpoints_of_notMem_of_forall_mem_Ioo` — the simplicity lemma above; it runs on
   Mathlib's trichotomy `Set.eq_endpoints_or_mem_Ioo_of_mem_Icc`, read on the unit interval.
+* `TauCeti.lineMap_mem_Ioo` — the affine reparametrisation `AffineMap.lineMap a b` sends the
+  interior of the unit interval into `Ioo a b`, for `a < b`. Callers establishing the membership
+  hypotheses of the simplicity lemma need it, so it is public rather than an implementation
+  detail.
 
 ## Generality
 
@@ -94,7 +98,7 @@ private theorem lineMap_mem_Icc (hab : a ≤ b) (t : I) :
 
 /-- The affine parametrisation from the unit interval to `Icc a b` sends its interior into
 `Ioo a b`. -/
-private theorem lineMap_mem_Ioo (hab : a < b) {t : I}
+theorem lineMap_mem_Ioo (hab : a < b) {t : I}
     (ht : t ∈ Ioo (0 : I) 1) : AffineMap.lineMap a b (t : ℝ) ∈ Ioo a b := by
   rw [← openSegment_eq_Ioo hab]
   exact lineMap_mem_openSegment ℝ a b (by simpa using ht)

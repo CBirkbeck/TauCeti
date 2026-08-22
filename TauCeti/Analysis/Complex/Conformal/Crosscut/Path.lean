@@ -220,9 +220,7 @@ private theorem injOn_Ioo_and_mapsTo_image_of_eq_circleMap_lineMap {X : Type*} {
     InjOn γ (Ioo (0 : unitInterval) 1) ∧
       ∀ t ∈ Ioo (0 : unitInterval) 1, γ t ∈ g '' S := by
   have hline : ∀ t ∈ Ioo (0 : unitInterval) 1,
-      AffineMap.lineMap a b (t : ℝ) ∈ Ioo a b := fun t ht => by
-    rw [← openSegment_eq_Ioo hab]
-    exact lineMap_mem_openSegment ℝ a b (by simpa using ht)
+      AffineMap.lineMap a b (t : ℝ) ∈ Ioo a b := fun _ ht => lineMap_mem_Ioo hab ht
   -- `circleMap` is injective on an arc no longer than a full turn, so the angular composite is
   -- injective on `Ioo a b`; the affine parametrisation then carries that to `γ`
   have hcircle : InjOn (circleMap ζ ρ) (Ioo a b) :=
