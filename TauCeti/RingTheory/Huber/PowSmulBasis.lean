@@ -272,15 +272,13 @@ theorem exists_pow_smul_le (P : PairOfDefinition A) {s : A} (hs : IsTopologicall
     | zero => simp
     | add x y _ _ ihx ihy => simpa [smul_add] using M₀.add_mem ihx ihy
     | smul a x _ ih =>
-        have hcomm : s ^ G.sup f • (a • x) = a • (s ^ G.sup f • x) := smul_comm _ _ _
-        rw [hcomm]
+        rw [smul_comm]
         exact M₀.smul_mem _ ih
   rintro _ ⟨x, hx, rfl⟩
   simp only [DistribSMul.toLinearMap_apply]
   have hcast : (((⟨s, hs0⟩ : P.ringOfDefinition) ^ G.sup f : P.ringOfDefinition) : A) • x
       = s ^ G.sup f • x := by
-    push_cast
-    ring_nf
+    rw [SubmonoidClass.coe_pow]
   exact hcast ▸ key x hx
 
 /-- **One-sided cofinality of the two `ϖ`-adic filtrations.** Every member of the family built
