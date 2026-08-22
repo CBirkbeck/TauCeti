@@ -51,11 +51,6 @@ not the hypotheses.
 * `TauCeti.ValuationSpectrum.RationalIndex` : the index at an open, a `StructuredArrow`.
 * `TauCeti.ValuationSpectrum.presentationLimitPresheaf` : the presheaf, the Kan extension.
 * `TauCeti.ValuationSpectrum.presentationLimitObj` : its value, the candidate for `𝒪_X(V)`.
-* `TauCeti.ValuationSpectrum.presentationLimitCone` : the cone that value is a limit of, with
-  `presentationLimitIsLimit` its universal property — the two together are the whole interface,
-  used through Mathlib's `IsLimit` API rather than through local wrappers, and
-  `presentationLimitCone_pt` identifies the cone's point with `presentationLimitObj` so that
-  `.lift` and `.hom_ext` land at the named object.
 * `TauCeti.ValuationSpectrum.presentationLimitMap` : the restriction morphism of a containment.
 * `TauCeti.Huber.PairOfDefinition.HasSheafyPresentationLimit` : the presentation-indexed
   presheaf is a sheaf. It is named for the presheaf it actually tests: until the initiality
@@ -68,28 +63,23 @@ not the hypotheses.
   Mathlib's sheaf
   condition (`HasSheafyPresentationLimit` is not exposed; this is the route across).
 * `presentationLimitPresheaf_obj`, `presentationLimitPresheaf_map` : its simp interface.
-* `presentationLimitMap_π` : the characteristic equation of the restriction morphism, and
-  `presentationLimitMap_refl` / `presentationLimitMap_comp` : its identity and composition laws,
-  which are the presheaf's functor laws.
-* `presentationLimitπ_map` : the cone equation, `Cone.w` stated through `presentationLimitπ`,
-  with `presentationLimitπ_restrictionHom` the `@[reassoc (attr := simp)]` corollary at the
-  shape `simp` leaves a goal in.
 * The `IsFilteredOrEmpty` instance on `RationalIndex` : two indices have a common refinement, so
   presentations of the same subset are constrained through one.
 
-The interface is the universal property, and it is Mathlib's: `presentationLimitCone` is the
-cone and `presentationLimitIsLimit` its limit proof. Everything the universal property gives —
-`.lift` and its `.fac`, `.hom_ext`, `IsLimit.conePointUniqueUpToIso`, cofinality — is reached
-through that `IsLimit` directly rather than through wrappers named here; only
-`presentationLimitπ`, which the restriction equations below are stated with, has a local name.
+**The interface is Mathlib's, named nowhere here.** Write `D` for the diagram
+`StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P`. The cone is
+`limit.cone D`, its universal property `limit.isLimit D`, the projections `limit.π D i`, their
+refinement compatibility `limit.w D f`, and the restriction equations `limit.lift_π`,
+`Functor.map_id` and `Functor.map_comp` on `presentationLimitPresheaf P Aplus` — every one
+already `@[simp]` in Mathlib. No local cone, projection or characteristic equation is declared:
+the `@[expose]` on the presheaf and its value makes `presentationLimitObj P Aplus V`
+definitionally `limit D`, so all of that applies at the named object directly.
 
 `presentationLimitObj` is `@[expose]` because `presentationLimitPresheaf_map` does not elaborate
 otherwise — its two sides are morphisms whose types agree only once the object unfolds.
-`presentationLimitMap`, the cone and its limit proof carry no exposure: their characteristic
-equations are the interface.
 
-Reindexing needs no lemmas of its own. `presentationLimitMap` is the presheaf's own action, so
-`_refl` and `_comp` are its functor laws and `_π` is `limit.lift_π`; the inclusion of one index
+Reindexing needs no lemmas of its own. `presentationLimitMap` is the presheaf's own action;
+the inclusion of one index
 into another is `StructuredArrow.map`, whose functoriality is Mathlib's.
 
 ## Why the index is presentations and not subsets
@@ -255,7 +245,7 @@ contained in `V`, and its action on a containment is the reindexing of that limi
 descriptions agree definitionally, `StructuredArrow.map` being the reindexing. Taking the
 Kan extension as the definition is what makes Mathlib's limit and extension API apply
 directly:
-`presentationLimitIsLimit` below is Mathlib's, not a reconstruction.
+`limit.isLimit D` applies at this object, with no reconstruction.
 
 This is the candidate for Wedhorn's `𝒪_X` (§8.1). It is not identified with it here: that needs
 the initiality of the forgetful functor to rational opens, which is not proved — see the module
@@ -273,116 +263,11 @@ noncomputable def presentationLimitObj (Aplus : Subring A) (V : Opens ↥(spa Ap
   (presentationLimitPresheaf P Aplus).obj (op V)
 
 variable (P) in
-/-- **The cone the value is a limit of**: its point is `presentationLimitObj` and its legs are the
-projections to the completed rational localizations. It is Mathlib's `limit.cone` at the
-Kan-extension indexing diagram, so `presentationLimitIsLimit` is `limit.isLimit` and the whole
-`IsLimit` API applies.
-
-`@[expose]` so that `(presentationLimitCone P Aplus V).pt` reduces to `presentationLimitObj`:
-without it the cone's legs and the named projections have types that differ by
-`presentationLimitCone_pt`, and `presentationLimitCone_π_app` — the equation connecting
-`presentationLimitIsLimit`'s `.fac` to those projections — cannot even be stated. -/
-@[expose]
-noncomputable def presentationLimitCone (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
-    Cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P) :=
-  limit.cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)
-
-variable (P) in
-/-- **The cone is a limit cone**: this is what "pointwise" means for the Kan extension. It is the
-whole universal property of `presentationLimitObj`, and consumers use its `.lift`, `.fac` and
-`.hom_ext` directly. -/
-noncomputable def presentationLimitIsLimit (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
-    IsLimit (presentationLimitCone P Aplus V) :=
-  limit.isLimit (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)
-
-/-- **The cone's point is the value of the presheaf.** `presentationLimitIsLimit` is stated about
-`presentationLimitCone`, whose `.pt` is this object; without this equation a consumer applying
-`.lift` or `.hom_ext` would have to unfold `presentationLimitCone` to see what it produces. -/
-@[simp]
-theorem presentationLimitCone_pt (P : PairOfDefinition A) (Aplus : Subring A)
-    (V : Opens ↥(spa Aplus)) :
-    (presentationLimitCone P Aplus V).pt = presentationLimitObj P Aplus V := rfl
-
-variable (P) in
-/-- **The projection of the presentation-indexed limit at one index**: the leg of
-`presentationLimitCone` there.
-
-`@[expose]` because `presentationLimitCone_π_app` below — the equation a consumer uses to connect
-`presentationLimitIsLimit`'s `.fac` to these named projections — is that unfolding, and cannot be
-stated across the seal. The exposure exists to make that lemma provable, not to stand in for it. -/
-@[expose]
-noncomputable def presentationLimitπ (Aplus : Subring A) (V : Opens ↥(spa Aplus))
-    (i : RationalIndex P Aplus V) :
-    presentationLimitObj P Aplus V ⟶ (rationalDiagram P).obj i.right :=
-  (presentationLimitCone P Aplus V).π.app i
-
-variable (P) in
-/-- **The cone's legs are the named projections.** `presentationLimitIsLimit` is stated about
-`presentationLimitCone`, so its `.fac` produces `(presentationLimitCone P Aplus V).π.app i`; this
-is what identifies that with `presentationLimitπ`, which the restriction equations are stated
-with. Consumers keep using Mathlib's `.lift`, `.fac` and `.hom_ext` on the cone. -/
-@[simp]
-theorem presentationLimitCone_π_app (Aplus : Subring A) (V : Opens ↥(spa Aplus))
-    (i : RationalIndex P Aplus V) :
-    (presentationLimitCone P Aplus V).π.app i = presentationLimitπ P Aplus V i := rfl
-
-variable (P) in
-/-- **The projections are compatible with refinement**: this is `Cone.w` for
-`presentationLimitCone`, stated through `presentationLimitπ`.
-
-Deliberately **not** `@[simp]`: `rationalDiagram_map` (itself `@[simp]`) rewrites this left-hand
-side into `restrictionHom` form, so it is not in simp-normal form; a goal that has met `simp` is
-at that shape instead. -/
-theorem presentationLimitπ_map {i j : RationalIndex P Aplus V} (f : i ⟶ j) :
-    presentationLimitπ P Aplus V i ≫ (rationalDiagram P).map f.right =
-      presentationLimitπ P Aplus V j :=
-  (presentationLimitCone P Aplus V).w f
-
-variable (P) in
-/-- **The projections are compatible with refinement, at the simp-normal shape.** This is
-`presentationLimitπ_map` after `rationalDiagram_map`, which is the form a goal that has met
-`simp` is in: `rationalDiagram_map` is itself `@[simp]` and rewrites `presentationLimitπ_map`'s
-left-hand side into `restrictionHom` form before that lemma can match, so this is the statement
-that drives simplification. -/
-@[reassoc (attr := simp)]
-theorem presentationLimitπ_restrictionHom {i j : RationalIndex P Aplus V} (f : i ⟶ j) :
-    presentationLimitπ P Aplus V i ≫ PairOfDefinition.Presentation.restrictionHom
-        (leOfHom ((isRational P).ι.map f.right)) =
-      presentationLimitπ P Aplus V j :=
-  presentationLimitπ_map P f
-
-variable (P) in
 /-- **The restriction morphism of a containment `W ≤ V`**: the presheaf's action, which unfolds to
 the reindexing of the limit along `StructuredArrow.map`. -/
 noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
     presentationLimitObj P Aplus V ⟶ presentationLimitObj P Aplus W :=
   (presentationLimitPresheaf P Aplus).map (homOfLE h).op
-
-variable (P) in
-/-- **The characteristic equation of `presentationLimitMap`**: composing with a projection of the
-smaller limit is the projection of the larger one at the included index, `StructuredArrow.map`
-being the inclusion. -/
-@[simp]
-theorem presentationLimitMap_π {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
-    (j : RationalIndex P Aplus W) :
-    presentationLimitMap P h ≫ presentationLimitπ P Aplus W j =
-      presentationLimitπ P Aplus V ((StructuredArrow.map (homOfLE h).op).obj j) :=
-  limit.lift_π _ j
-
-variable (P) in
-/-- Restricting along `le_refl` is the identity: the presheaf's identity law. -/
-@[simp]
-theorem presentationLimitMap_refl (V : Opens ↥(spa Aplus)) :
-    presentationLimitMap P (le_refl V) = 𝟙 (presentationLimitObj P Aplus V) :=
-  (presentationLimitPresheaf P Aplus).map_id (op V)
-
-variable (P) in
-/-- Restricting twice is restricting once: the presheaf's composition law. -/
-@[reassoc (attr := simp)]
-theorem presentationLimitMap_comp {V W X : Opens ↥(spa Aplus)} (h₁ : X ≤ W) (h₂ : W ≤ V) :
-    presentationLimitMap P h₂ ≫ presentationLimitMap P h₁ =
-      presentationLimitMap P (h₁.trans h₂) :=
-  ((presentationLimitPresheaf P Aplus).map_comp (homOfLE h₂).op (homOfLE h₁).op).symm
 
 /-- The presheaf's value on an open is `presentationLimitObj`. -/
 @[simp]
