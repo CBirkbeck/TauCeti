@@ -812,7 +812,7 @@ lemma dblXYZ_smulRing : dblXYZ curveRing (smulRing n) = smulRing (2 * n) := by
 -- `(MvPolynomial Coeff ℤ)[X][Y]` and reports no `IsRightCancelAdd`, so the certificate is
 -- discharged through `sub_eq_zero` and `ring` instead.
 lemma addZ_smulPoly : addZ (smulPoly m) (smulPoly n) = curve.ψ (n + m) * curve.ψ (n - m) := by
-  have key := curve.isEllipticSequence_ψ n m 1
+  have key := curve.isEllipticNet_ψ.isEllipticSequence n m 1
   simp only [IsEllipticNet.rel, add_zero, ψ_one, mul_one] at key
   symm
   rw [← sub_eq_zero, ← key, addZ]
