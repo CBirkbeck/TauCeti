@@ -32,6 +32,8 @@ discrete case below is proved through it.
 ## Main definitions
 
 * `TauCeti.Huber.IsStronglyNoetherian`: every `A⟨X₁,…,Xₖ⟩` is a noetherian ring.
+* `TauCeti.Huber.restrictedMvPowerSeriesCompletionCongr`: a bicontinuous ring isomorphism
+  `A ≃+* B` induces one `A⟨X₁,…,Xₖ⟩ ≃+* B⟨X₁,…,Xₖ⟩`, coefficientwise.
 
 ## Main results
 
@@ -52,6 +54,14 @@ discrete case below is proved through it.
   rather than an instance because it must be stated against the group uniformity introduced
   below, not against whichever `UniformSpace A` a consumer has in scope.
 
+* `TauCeti.Huber.isStronglyNoetherian_congr`: strong noetherianness is invariant under a
+  bicontinuous ring isomorphism. Layer 4.1 takes `IsStronglyNoetherian A` as a hypothesis while
+  the ring in question is presented in more than one way, so the hypothesis has to survive the
+  comparison isomorphisms; this is what makes that legitimate. Continuity is needed in *both*
+  directions and is not automatic — `weightedMapCompletion` is built from
+  `UniformSpace.Completion.mapRingHom`, which induces nothing on completions from a
+  discontinuous map.
+
 Neither the iteration `A⟨X⟩⟨Y⟩ ≅ A⟨X,Y⟩` nor the stability of noetherianness under quotients is
 proved here; those belong to the later roadmap milestones of Layer 0.5.
 
@@ -64,6 +74,15 @@ was consulted and not ported: its class quantifies over the *uncompleted* restri
 subring, while the class here is stated over the separated completion
 `TauCeti.Huber.restrictedMvPowerSeriesCompletion`, whose own module records that contrast.
 Nothing was copied.
+
+That same contrast is why AINTLIB's `isStronglyNoetherian_congr`
+(`projects/AdicSpaces/Adic spaces/StronglyNoetherianTransport.lean`) does not transfer either:
+it transports along `restrictedMvPowerSeriesEquiv`, built by hand on the uncompleted subring.
+The proof *shape* — coefficientwise transport in both directions, mutually inverse by the
+functor laws, then noetherianness along the resulting surjection — is the same, but here it
+runs one level up, on `TauCeti.Huber.weightedMapCompletion`, and the bridge is definitional:
+`restrictedMvPowerSeriesCompletion k A` is by definition the completion of the weighted
+subring at the trivial weight family, which is exactly that map's shape.
 -/
 
 public section
@@ -145,5 +164,51 @@ theorem isNoetherianRing_of_isStronglyNoetherian [IsStronglyNoetherian A] [T0Spa
   isNoetherianRing_of_ringEquiv _ (UniformSpace.Completion.completeRingEquivSelf A)
 
 end ZeroVariables
+
+/-! ### Transport along a bicontinuous ring isomorphism -/
+
+section Transport
+
+variable {A B : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
+  [CommRing B] [TopologicalSpace B] [NonarchimedeanRing B]
+
+/-- **The algebras `A⟨X₁,…,Xₖ⟩` transport along a bicontinuous ring isomorphism.** Coefficientwise
+transport in both directions, mutually inverse by the functor laws
+`TauCeti.Huber.weightedMapCompletion_id` and `TauCeti.Huber.weightedMapCompletion_comp`.
+
+Continuity in *both* directions is needed and is not automatic: `weightedMapCompletion` is built
+from `UniformSpace.Completion.mapRingHom`, which requires a continuous map to induce anything on
+completions at all. -/
+noncomputable def restrictedMvPowerSeriesCompletionCongr (e : A ≃+* B) (he : Continuous e)
+    (he' : Continuous e.symm) (k : ℕ) :
+    restrictedMvPowerSeriesCompletion k A ≃+* restrictedMvPowerSeriesCompletion k B :=
+  RingEquiv.ofRingHom
+    (weightedMapCompletion (φ := (e : A →+* B)) he isWeightFamily_one_weight
+      isWeightFamily_one_weight
+      fun _ ↦ by simp)
+    (weightedMapCompletion (φ := (e.symm : B →+* A)) he' isWeightFamily_one_weight
+      isWeightFamily_one_weight
+      fun _ ↦ by simp)
+    (by
+      rw [weightedMapCompletion_comp he' he isWeightFamily_one_weight isWeightFamily_one_weight
+        isWeightFamily_one_weight (fun _ ↦ by simp)
+        (fun _ ↦ by simp)]
+      simp)
+    (by
+      rw [weightedMapCompletion_comp he he' isWeightFamily_one_weight isWeightFamily_one_weight
+        isWeightFamily_one_weight (fun _ ↦ by simp)
+        (fun _ ↦ by simp)]
+      simp)
+
+/-- **Strong noetherianness is invariant under bicontinuous ring isomorphism.** Each
+`A⟨X₁,…,Xₖ⟩` is carried to `B⟨X₁,…,Xₖ⟩` by an isomorphism, and noetherianness transports along
+a surjection. -/
+theorem isStronglyNoetherian_congr (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm) :
+    IsStronglyNoetherian A ↔ IsStronglyNoetherian B := by
+  constructor <;> intro h <;> refine ⟨fun k ↦ ?_⟩
+  · exact isNoetherianRing_of_ringEquiv _ (restrictedMvPowerSeriesCompletionCongr e he he' k)
+  · exact isNoetherianRing_of_ringEquiv _ (restrictedMvPowerSeriesCompletionCongr e he he' k).symm
+
+end Transport
 
 end TauCeti.Huber
