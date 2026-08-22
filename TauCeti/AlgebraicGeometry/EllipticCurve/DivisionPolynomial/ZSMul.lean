@@ -935,13 +935,13 @@ what turns each identity over `curveRing` into the same identity for `W` at `(x,
 
 end Universal
 
-include eqn in
 /-- **`smulEval` at `-n`**: negating the index negates the triple, in the same `(-1) • neg` form
-as `smulPoly_neg`, `smulRing_neg` and `smulField_neg`. -/
+as `smulPoly_neg`, `smulRing_neg` and `smulField_neg`. This is an identity of polynomial
+evaluations and needs no equation on `(x, y)`. -/
 @[simp] lemma smulEval_neg (n : ℤ) :
     smulEval W x y (-n) = (-1 : R) • Jacobian.neg W (smulEval W x y n) := by
-  simp_rw [← Universal.ringEval_comp_smulRing eqn, Jacobian.smulRing_neg, comp_smul,
-    ← WeierstrassCurve.Jacobian.map_neg, map_ringEval, map_neg, map_one]
+  funext i
+  fin_cases i <;> (simp [smulEval, smul_fin3, Jacobian.neg, Jacobian.negY, φ_neg, ψ_neg]; try ring)
 
 include eqn in
 /-- **The doubling formula for a concrete curve**: `dblXYZ_smulRing` specialized along the point
@@ -1029,7 +1029,7 @@ theorem zsmul_point_eq_smulEval {x y : F} (h : Affine.Nonsingular W x y) (n : �
   | neg ih n =>
     simp_rw [_root_.neg_smul, Point.neg_point, ih n, eq_comm]
     refine Quotient.sound ⟨-1, ?_⟩
-    simp_rw [smulEval_neg h.1]
+    simp_rw [smulEval_neg]
     rfl
 
 end WeierstrassCurve
