@@ -7,6 +7,7 @@ module
 
 public import TauCeti.RingTheory.Huber.ZeroSequenceOfUnits
 public import TauCeti.Topology.Algebra.OpenMapping.Henkel
+public import Mathlib.Topology.Maps.Strict.Module
 import TauCeti.Topology.Algebra.IsUniformGroup.Submodule
 import TauCeti.Topology.Algebra.Module.Submodule
 import Mathlib.Topology.Baire.CompleteMetrizable
@@ -71,7 +72,8 @@ equivalent to continuity everywhere (`continuous_of_continuousAt_zero`), so this
 hypothesis spelled at its weakest, and a consumer holding `Continuous f` supplies
 `‹Continuous f›.continuousAt`.
 
-Both halves of the roadmap's derived form are here. `TauCeti.Huber.IsTateRing.isOpenMap` is the
+Both halves of the roadmap's derived form are here, and so is Proposition 6.18(2), the strict
+form for a map that need not be surjective. `TauCeti.Huber.IsTateRing.isOpenMap` is the
 open-map half; `TauCeti.Huber.IsTateRing.isQuotientMap` is the other — that such a map induces the
 quotient topology — and it delegates to `TauCeti.HasZeroSequenceOfUnits.isQuotientMap` exactly as
 the open-map form delegates to `TauCeti.HasZeroSequenceOfUnits.isOpenMap`. It is the quotient form
@@ -84,12 +86,13 @@ open but that the target's topology is determined by the source's.
   complete pseudometrisable module onto a complete metrisable one over a Tate ring is open.
 * `TauCeti.Huber.IsTateRing.isQuotientMap`: the same map induces the quotient topology on its
   target. This is the form the strict-morphism material will consume.
-* `TauCeti.Huber.IsTateRing.isOpenMap_rangeRestrict`: Wedhorn Proposition 6.18(2)'s corestriction
-  half — a linear map continuous at zero with closed range is open onto that range.
+* `TauCeti.Huber.IsTateRing.isStrictMap_of_isClosed_range`: Wedhorn Proposition 6.18(2) — a linear
+  map continuous at zero with closed range is strict, i.e. open onto its image.
 
 ## References
 
-* [Wedhorn, *Adic Spaces*][wedhorn_adic], Theorem 6.16 and Proposition 6.18(2).
+* [Wedhorn, *Adic Spaces*][wedhorn_adic], Theorem 6.16, and Proposition 6.18(2) — of whose two
+  conjuncts, "continuous" is a hypothesis here and "open onto its image" is the conclusion.
 * L. Henkel, *An Open Mapping Theorem for rings which have a zero sequence of units*,
   [arXiv:1407.5647](https://arxiv.org/abs/1407.5647).
 -/
@@ -125,26 +128,27 @@ theorem IsTateRing.isOpenMap (f : M →ₗ[A] N) (hf : Function.Surjective f)
   HasZeroSequenceOfUnits.isOpenMap f hf hfc
     fun _ ↦ (continuous_id.smul continuous_const).continuousAt
 
-/-- **Open onto its image** — the corestriction half of Wedhorn Proposition 6.18(2). Under the
-ambient hypotheses of `TauCeti.Huber.IsTateRing.isOpenMap`, an `A`-linear map continuous at zero
-with closed range is open *as a map onto that range*.
+/-- **Strictness over a Tate ring** — Wedhorn Proposition 6.18(2). An `A`-linear map that is
+continuous at zero and has closed range is a strict map: `Topology.IsStrictMap`, Bourbaki's "open
+onto its image".
 
-Surjectivity is not assumed: `f.rangeRestrict` is surjective by construction, so 6.16 applies to
-it once its target carries the four hypotheses 6.16 puts on a target. Closedness of the range is
-what supplies `CompleteSpace`, via `IsClosed.completeSpace_coe`; `T0Space` comes from the subspace
-topology, and `IsUniformAddGroup` and the countably generated uniformity from
-`TauCeti.Topology.Algebra.IsUniformGroup.Submodule`. Without those the statement cannot be put in
-the form 6.16 discharges.
+Of 6.18(2)'s two conjuncts, "continuous" is the hypothesis here — asked at zero only — and "open
+onto its image" is the conclusion. Surjectivity is not assumed.
 
-Closedness is the weaker hypothesis: an open submodule is closed, so a map with *open* range
-satisfies it too. -/
-theorem IsTateRing.isOpenMap_rangeRestrict (f : M →ₗ[A] N) (hfc : ContinuousAt (f : M → N) 0)
+Closedness of the range is the weaker of the two natural hypotheses: an open submodule is closed,
+so a map with *open* range satisfies it too. Consumers recover the plain open-map fact from
+`LinearMap.isStrictMap_iff_isOpenQuotientMap_rangeRestrict` and `IsOpenQuotientMap.isOpenMap`, and
+the first-isomorphism homeomorphism from `LinearMap.quotKerEquivRange`. -/
+theorem IsTateRing.isStrictMap_of_isClosed_range (f : M →ₗ[A] N)
+    (hfc : ContinuousAt (f : M → N) 0)
     (hr : IsClosed ((LinearMap.range f : Submodule A N) : Set N)) :
-    IsOpenMap (f.rangeRestrict : M → LinearMap.range f) := by
+    Topology.IsStrictMap (f : M → N) := by
   have _ : CompleteSpace (LinearMap.range f) := hr.completeSpace_coe
   have hcont : Continuous (f.rangeRestrict : M → LinearMap.range f) :=
-    continuous_induced_rng.mpr (continuous_of_continuousAt_zero f hfc)
-  exact IsTateRing.isOpenMap f.rangeRestrict f.surjective_rangeRestrict hcont.continuousAt
+    (continuous_of_continuousAt_zero f hfc).subtype_mk _
+  exact LinearMap.isStrictMap_iff_isOpenQuotientMap_rangeRestrict.mpr
+    ⟨f.surjective_rangeRestrict, hcont,
+      IsTateRing.isOpenMap f.rangeRestrict f.surjective_rangeRestrict hcont.continuousAt⟩
 
 /-- **The quotient form over a Tate ring.** Under exactly the hypotheses of
 `TauCeti.Huber.IsTateRing.isOpenMap`, the map does not merely carry open sets to open sets: the
