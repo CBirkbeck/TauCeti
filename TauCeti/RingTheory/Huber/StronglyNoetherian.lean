@@ -32,8 +32,6 @@ discrete case below is proved through it.
 ## Main definitions
 
 * `TauCeti.Huber.IsStronglyNoetherian`: every `A⟨X₁,…,Xₖ⟩` is a noetherian ring.
-* `TauCeti.Huber.restrictedMvPowerSeriesCompletionCongr`: a bicontinuous ring isomorphism
-  `A ≃+* B` induces one `A⟨X₁,…,Xₖ⟩ ≃+* B⟨X₁,…,Xₖ⟩`, coefficientwise.
 
 ## Main results
 
@@ -172,14 +170,14 @@ section Transport
 variable {A B : Type*} [CommRing A] [TopologicalSpace A] [NonarchimedeanRing A]
   [CommRing B] [TopologicalSpace B] [NonarchimedeanRing B]
 
-/-- **The algebras `A⟨X₁,…,Xₖ⟩` transport along a bicontinuous ring isomorphism.** Coefficientwise
-transport in both directions, mutually inverse by the functor laws
-`TauCeti.Huber.weightedMapCompletion_id` and `TauCeti.Huber.weightedMapCompletion_comp`.
-
-Continuity in *both* directions is needed and is not automatic: `weightedMapCompletion` is built
-from `UniformSpace.Completion.mapRingHom`, which requires a continuous map to induce anything on
-completions at all. -/
-noncomputable def restrictedMvPowerSeriesCompletionCongr (e : A ≃+* B) (he : Continuous e)
+/-- **The isomorphism `A⟨X₁,…,Xₖ⟩ ≃+* B⟨X₁,…,Xₖ⟩` induced by a bicontinuous ring isomorphism
+`e : A ≃+* B`**, acting coefficientwise. Continuity of `e` and of `e.symm` are both hypotheses;
+neither follows from the other for a bare `RingEquiv`. -/
+-- Built from `weightedMapCompletion` in each direction; the two are mutually inverse by
+-- `weightedMapCompletion_id` and `weightedMapCompletion_comp`. Both continuity hypotheses are
+-- load-bearing because `weightedMapCompletion` goes through `UniformSpace.Completion.mapRingHom`,
+-- which induces nothing on completions from a discontinuous map.
+private noncomputable def restrictedMvPowerSeriesCompletionCongr (e : A ≃+* B) (he : Continuous e)
     (he' : Continuous e.symm) (k : ℕ) :
     restrictedMvPowerSeriesCompletion k A ≃+* restrictedMvPowerSeriesCompletion k B :=
   RingEquiv.ofRingHom
@@ -200,9 +198,10 @@ noncomputable def restrictedMvPowerSeriesCompletionCongr (e : A ≃+* B) (he : C
         (fun _ ↦ by simp)]
       simp)
 
-/-- **Strong noetherianness is invariant under bicontinuous ring isomorphism.** Each
-`A⟨X₁,…,Xₖ⟩` is carried to `B⟨X₁,…,Xₖ⟩` by an isomorphism, and noetherianness transports along
-a surjection. -/
+/-- **Strong noetherianness is invariant under a bicontinuous ring isomorphism.** Continuity of
+`e` and of `e.symm` are both hypotheses; neither follows from the other for a bare `RingEquiv`. -/
+-- Each `A⟨X₁,…,Xₖ⟩` is carried to `B⟨X₁,…,Xₖ⟩` by `restrictedMvPowerSeriesCompletionCongr`, and
+-- noetherianness transports along the resulting surjection.
 theorem isStronglyNoetherian_congr (e : A ≃+* B) (he : Continuous e) (he' : Continuous e.symm) :
     IsStronglyNoetherian A ↔ IsStronglyNoetherian B := by
   constructor <;> intro h <;> refine ⟨fun k ↦ ?_⟩
