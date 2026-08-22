@@ -154,6 +154,13 @@ open. Showing they reach all of them is part of the outstanding comparison, not 
 def isRational (P : PairOfDefinition A) : ObjectProperty P.Presentation :=
   fun p ↦ IsOpen (Ideal.span (p.num : Set A) : Set A)
 
+omit [IsTopologicalRing A] in
+/-- **The defining condition of `isRational`**, as an intro/elim lemma. `isRational` is sealed, so
+this is how a consumer both builds a rational presentation and uses one: the numerator ideal of
+`p` is open. -/
+theorem isRational_iff {P : PairOfDefinition A} {p : P.Presentation} :
+    isRational P p ↔ IsOpen (Ideal.span (p.num : Set A) : Set A) := Iff.rfl
+
 variable {P : PairOfDefinition A} {Aplus : Subring A} {V : Opens ↥(spa Aplus)}
 
 variable (P) in
@@ -269,7 +276,13 @@ variable (P) in
 /-- **The cone the value is a limit of**: its point is `presentationLimitObj` and its legs are the
 projections to the completed rational localizations. It is Mathlib's `limit.cone` at the
 Kan-extension indexing diagram, so `presentationLimitIsLimit` is `limit.isLimit` and the whole
-`IsLimit` API applies. -/
+`IsLimit` API applies.
+
+`@[expose]` so that `(presentationLimitCone P Aplus V).pt` reduces to `presentationLimitObj`:
+without it the cone's legs and the named projections have types that differ by
+`presentationLimitCone_pt`, and `presentationLimitCone_π_app` — the equation connecting
+`presentationLimitIsLimit`'s `.fac` to those projections — cannot even be stated. -/
+@[expose]
 noncomputable def presentationLimitCone (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     Cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P) :=
   limit.cone (StructuredArrow.proj (op V) (rationalInclusion P Aplus) ⋙ rationalDiagram P)
@@ -288,16 +301,30 @@ noncomputable def presentationLimitIsLimit (Aplus : Subring A) (V : Opens ↥(sp
 @[simp]
 theorem presentationLimitCone_pt (P : PairOfDefinition A) (Aplus : Subring A)
     (V : Opens ↥(spa Aplus)) :
-    (presentationLimitCone P Aplus V).pt = presentationLimitObj P Aplus V := by
-  simp [presentationLimitCone, presentationLimitObj, presentationLimitPresheaf]
+    (presentationLimitCone P Aplus V).pt = presentationLimitObj P Aplus V := rfl
 
 variable (P) in
 /-- **The projection of the presentation-indexed limit at one index**: the leg of
-`presentationLimitCone` there. -/
+`presentationLimitCone` there.
+
+`@[expose]` because `presentationLimitCone_π_app` below — the equation a consumer uses to connect
+`presentationLimitIsLimit`'s `.fac` to these named projections — is that unfolding, and cannot be
+stated across the seal. The exposure exists to make that lemma provable, not to stand in for it. -/
+@[expose]
 noncomputable def presentationLimitπ (Aplus : Subring A) (V : Opens ↥(spa Aplus))
     (i : RationalIndex P Aplus V) :
     presentationLimitObj P Aplus V ⟶ (rationalDiagram P).obj i.right :=
   (presentationLimitCone P Aplus V).π.app i
+
+variable (P) in
+/-- **The cone's legs are the named projections.** `presentationLimitIsLimit` is stated about
+`presentationLimitCone`, so its `.fac` produces `(presentationLimitCone P Aplus V).π.app i`; this
+is what identifies that with `presentationLimitπ`, which the restriction equations are stated
+with. Consumers keep using Mathlib's `.lift`, `.fac` and `.hom_ext` on the cone. -/
+@[simp]
+theorem presentationLimitCone_π_app (Aplus : Subring A) (V : Opens ↥(spa Aplus))
+    (i : RationalIndex P Aplus V) :
+    (presentationLimitCone P Aplus V).π.app i = presentationLimitπ P Aplus V i := rfl
 
 variable (P) in
 /-- **The projections are compatible with refinement**: this is `Cone.w` for
