@@ -73,7 +73,6 @@ theorem sum_support_smul_eq_integral_add_windingNumber_sum
               ∑ s ∈ S, TauCeti.Contour.windingNumber (⇑γ) γ.a γ.b s * w s)
       = integral g C
         + 2 * (Real.pi : ℂ) * Complex.I * ∑ s ∈ S, windingNumber s C * w s := by
-  -- regroup the double sum over generators and points of `S`, with the latter outermost
   have hswap : ∀ γ : PiecewiseC1ClosedCurve,
       (FreeAbelianGroup.coeff γ C : ℂ) *
           (2 * (Real.pi : ℂ) * Complex.I *
