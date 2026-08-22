@@ -8,7 +8,6 @@ module
 public import TauCeti.RepresentationTheory.ClassicalGroups.Orthogonal
 public import TauCeti.RepresentationTheory.Symmetric.TensorAction.Basic
 public import TauCeti.RepresentationTheory.Tensor.Power
-import Mathlib.LinearAlgebra.PiTensorProduct.Basis
 
 /-!
 # The cap, the cup, and the Brauer relations on the tensor square
