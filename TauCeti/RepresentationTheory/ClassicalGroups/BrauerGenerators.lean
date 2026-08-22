@@ -258,13 +258,15 @@ theorem piTensorProductMap_comp_orthogonalCup {A : Matrix (Fin n) (Fin n) k} (hA
   refine LinearMap.ext_ring ?_
   simp only [LinearMap.coe_comp, Function.comp_apply, orthogonalCup_apply_one, map_sum,
     PiTensorProduct.map_tprod, Matrix.mulVecLin_apply]
+  -- Compare coefficients in the standard pure-tensor basis: at `r`, the transformed cup has
+  -- coefficient `(A * Aᵀ) (r 0) (r 1)` and the cup itself has the matching entry of `1`.
   refine (Basis.piTensorProduct fun _ : Fin 2 => Pi.basisFun k (Fin n)).ext_elem fun r => ?_
   simp only [map_sum, Finset.sum_apply, Finsupp.coe_finsetSum,
     Basis.piTensorProduct_repr_tprod_apply, Pi.basisFun_repr, Fin.prod_univ_two,
     Matrix.mulVec_single_one, Matrix.col_apply, Pi.single_apply]
-  have hAA := Matrix.ext_iff.mpr hA (r 0) (r 1)
-  simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply] at hAA
-  simpa using hAA
+  have hentry := Matrix.ext_iff.mpr hA (r 0) (r 1)
+  simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply] at hentry
+  simpa using hentry
 
 end Invariance
 
