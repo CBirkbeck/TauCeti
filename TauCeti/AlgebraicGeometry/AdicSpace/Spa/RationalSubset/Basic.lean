@@ -204,7 +204,7 @@ presentation-indexed presheaf and the sheaf criteria.
 This is the pointwise companion of `spaRationalOpens` (`RationalSubset/Basis.lean`), which is the
 *family* of such opens as a `Set (Opens _)` and cannot name the open a particular `(T, s)`
 presents; conversely membership there additionally demands an open numerator ideal, which naming
-the open does not need. `spaRationalOpen_mem_spaRationalOpens` there is the bridge. -/
+the open does not need, so `mem_spaRationalOpens` carries that hypothesis across. -/
 def spaRationalOpen (Aplus : Subring A) (T : Finset A) (s : A) : Opens ↥(spa Aplus) :=
   ⟨Subtype.val ⁻¹' rationalSubset Aplus T s, isOpen_val_preimage_rationalSubset Aplus T s⟩
 
