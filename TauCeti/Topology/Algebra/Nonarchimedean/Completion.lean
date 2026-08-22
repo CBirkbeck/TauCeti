@@ -12,22 +12,18 @@ public import Mathlib.Topology.Algebra.Ring.Ideal
 /-!
 # Completions of nonarchimedean groups and rings
 
-Three facts about the Hausdorff completion: the closure of the image of an open additive
-subgroup is open, a closed set is the preimage of the closure of its image, and the kernel of the
-completion map is the closure of the zero ideal. The first needs only the additive structure and
-the last the ring structure; the middle one needs neither, being about the inducing map alone.
+Two facts about the Hausdorff completion that need only the additive, resp. ring, structure:
+the closure of the image of an open additive subgroup is open, and the kernel of the completion
+map is the closure of the zero ideal.
 
-They are stated here rather than alongside the Huber-ring theory that uses them, since none of
-them mentions a pair of definition or an adic topology, and they live in the
-`UniformSpace.Completion` namespace of the construction they describe rather than in a `TauCeti`
-one.
+They are stated here rather than alongside the Huber-ring theory that uses them, since neither
+mentions a pair of definition or an adic topology, and they live in the `UniformSpace.Completion`
+namespace of the construction they describe rather than in a `TauCeti` one.
 
 ## Main results
 
 * `UniformSpace.Completion.isOpen_closure_image_coe`: the closure in `Â` of the image of an open
   additive subgroup of `A` is open.
-* `UniformSpace.Completion.preimage_closure_image_coe`: a *closed set* is the preimage of the
-  closure of its image, so membership downstairs can be tested upstairs.
 * `UniformSpace.Completion.ker_coeRingHom`: the kernel of `A → Â` is the closure of `⊥`.
 
 ## References
@@ -35,9 +31,9 @@ one.
 * [Wedhorn, *Adic Spaces*][wedhorn_adic], Proposition and Definition 5.32 and Example 5.33, for
   the completion of a topological group and ring; `ker_coeRingHom` is the statement there that
   the completion map has kernel `closure {0}`.
-* `Completion.isDenseInducing_coe`, which all three proofs go through, is declared in Mathlib's
-  `Mathlib/Topology/UniformSpace/Completion.lean`; the nonarchimedean file of the same name
-  supplies the openness machinery `isOpen_closure_image_coe` uses, not that lemma.
+* `Completion.isDenseInducing_coe`, which both proofs go through, is declared in Mathlib's
+  `Mathlib/Topology/UniformSpace/Completion.lean` — **not** in the nonarchimedean file of the
+  same name, which supplies only the openness machinery `isOpen_closure_image_coe` uses.
 -/
 
 public section
@@ -59,30 +55,6 @@ theorem isOpen_closure_image_coe {G : AddSubgroup A} (hG : IsOpen (G : Set A)) :
   exact AddSubgroup.isOpen_of_mem_nhds ((G.map Completion.toCompl).topologicalClosure) hmem
 
 end AddGroup
-
-section ClosedSet
-
-variable {A : Type*} [UniformSpace A]
-
-/-- **A closed set is the preimage of the closure of its image in the completion.** `A → Â` is an
-inducing map, so the closure of any set is the preimage of the closure of its image; for a closed
-set the left-hand side is the set itself.
-
-This is the form a consumer meets: it decides membership in `s` by a closure computation
-upstairs in `Â`, without unfolding the generic inducing-map argument each time. There is no
-closure on the `A` side — closedness of `s` is exactly what removes it.
-
-Closedness is not decoration. Without it the preimage is `closure s`, not `s` — that is exactly
-what `IsInducing.closure_eq_preimage_closure_image` says — and `closure s` can be strictly larger
-than `s` even in a Hausdorff `A`, where no failure of injectivity is available to blame: `ℚ ⊆ ℝ`
-is a proper subgroup whose closure is everything. `IsClosed s` is what collapses the two. No
-algebraic structure enters — for a closed additive subgroup `G`, apply this to `(G : Set A)`. -/
-@[simp]
-theorem preimage_closure_image_coe {s : Set A} (hs : IsClosed s) :
-    ((↑) : A → Completion A) ⁻¹' closure (((↑) : A → Completion A) '' s) = s := by
-  rw [← Completion.isDenseInducing_coe.isInducing.closure_eq_preimage_closure_image, hs.closure_eq]
-
-end ClosedSet
 
 section Ker
 
