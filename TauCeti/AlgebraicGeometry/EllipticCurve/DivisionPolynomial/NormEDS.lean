@@ -61,8 +61,9 @@ level of functions for rewriting under function-valued arguments such as
 theorem ψ_eq_normEDS : W.ψ = normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) := rfl
 
 /-- **The `ψ` family of division polynomials is an elliptic net.** The elliptic-*sequence*
-consequence is the last index held at `0`, which `IsEllipticNet.isEllipticSequence` reads off;
-consumers needing a nonzero shift, as the addition formula for `n • (X, Y)` does, need the net. -/
+consequence is the last relator index held at `0`, which `IsEllipticNet.isEllipticSequence` reads
+off. Only a consumer needing an arbitrary fourth index needs the net itself; the net is stated
+here because it holds by the same one-line route, not because a present caller requires it. -/
 theorem isEllipticNet_ψ : IsEllipticNet W.ψ := by
   rw [ψ_eq_normEDS]
   exact isEllipticNet_normEDS _ _ _
