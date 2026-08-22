@@ -40,8 +40,10 @@ definition, so a caller holding `powerBoundedSubring A` can use them.
 * `TauCeti.Huber.PairOfDefinition.powSmulModuleFilterBasis`: the same family as a filter basis
   for scalars from `A`, not just from `A₀` — Proposition 6.18(1)'s `A`-module clause.
 * `TauCeti.Huber.PairOfDefinition.exists_pow_smul_le` and
-  `TauCeti.Huber.PairOfDefinition.exists_pow_smul_le_pow_smul`: Remark 6.19's well-definedness —
-  the family built from a finitely generated lattice is cofinal in the one built from `M₀`.
+  `TauCeti.Huber.PairOfDefinition.exists_pow_smul_le_pow_smul`: the family built from a finitely
+  generated lattice is cofinal in the one built from `M₀`. This is one direction of the comparison
+  behind Remark 6.19's well-definedness; the reverse instance and the equality of topologies are
+  not proved here.
 * `TauCeti.Huber.PairOfDefinition.isCountablyGenerated_nhds_zero`: the induced topology has a
   countable fundamental system of neighbourhoods of `0` — 6.18(1)'s first-countability clause.
 
@@ -273,9 +275,14 @@ theorem exists_pow_smul_le (P : PairOfDefinition A) {s : A} (hs : IsTopologicall
     ring_nf
   exact hcast ▸ key x hx
 
-/-- **Remark 6.19's well-definedness.** The family `ϖ⁻ • M₁` built from a finitely generated `M₁`
-is cofinal in the family built from `M₀`, so the two induce the same topology and Wedhorn's
-"choose a finitely generated lattice" does not depend on the lattice chosen.
+/-- **One-sided cofinality of the two `ϖ`-adic filtrations.** Every member of the family built
+from `M₀` contains a member of the family built from a finitely generated `M₁`.
+
+This is the comparison Remark 6.19's well-definedness rests on, in one direction only: it gives
+the inclusion of the induced neighbourhood filters, not their equality. The reverse inclusion is
+this same theorem with the roles of `M₀` and `M₁` exchanged, which asks instead that `M₁` span and
+`M₀` be finitely generated; neither that instance nor the resulting equality of topologies is
+proved here.
 
 `submodulesBasis_pow_smul` proves the basis half of Remark 6.19 without finite generation; this is
 where `M₁.FG` does its work. -/
