@@ -255,11 +255,8 @@ theorem isSemisimplePoint_pointsMulEquiv_iff
         (R := k) (H₁ := H₁) (H₂ := H₂))
       simpa only [AlgHom.mapDomain_apply, gright, e,
         AffineGroup.Product.mapDomain_projectRight] using h
-    have hcomm : Commute gleft gright := by
-      rw [commute_iff_eq]
-      apply e.injective
-      simp only [map_mul, e, gleft, gright, MulEquiv.apply_symm_apply]
-      ext <;> simp
+    -- `gleft` and `gright` are the images under `e.symm` of `inl` and `inr`, which commute
+    have hcomm : Commute gleft gright := (MonoidHom.commute_inl_inr _ _).map e.symm
     have hfactor : g = gleft * gright := by
       apply e.injective
       simp only [map_mul, e, gleft, gright, MulEquiv.apply_symm_apply]
