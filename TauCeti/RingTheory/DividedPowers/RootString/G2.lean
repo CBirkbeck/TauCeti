@@ -108,7 +108,7 @@ private theorem mul_pow_of_commutator_eq_two_nsmul {a d : A} (hxz : x * z = z * 
         _ = z ^ (b + 2) * (z * x + a) + (b + 2) • (z ^ (b + 1) * (z * a + 2 • d)) +
               ((b + 2) * (b + 1)) • (z ^ b * (z * d)) := by rw [hxz, haz, hzd.eq]
         _ = _ := by
-            simp only [mul_add, smul_add, mul_smul_comm, smul_smul, pow_succ, mul_assoc]
+            simp only [mul_add, mul_smul_comm, pow_succ, mul_assoc]
             module
 
 /-- **Moving one element across a divided power with a non-central commutator.** Suppose
