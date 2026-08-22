@@ -64,6 +64,7 @@ theorem ψ_eq_normEDS : W.ψ = normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄) := rfl
 consequence is the last index held at `0`, which `IsEllipticNet.isEllipticSequence` reads off;
 consumers needing a nonzero shift, as the addition formula for `n • (X, Y)` does, need the net. -/
 theorem isEllipticNet_ψ : IsEllipticNet W.ψ := by
-  simpa only [ψ_eq_normEDS] using isEllipticNet_normEDS W.ψ₂ (C W.Ψ₃) (C W.preΨ₄)
+  rw [ψ_eq_normEDS]
+  exact isEllipticNet_normEDS _ _ _
 
 end WeierstrassCurve
