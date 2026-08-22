@@ -100,7 +100,7 @@ lemma Delta0_le_commensurator_Gamma0Image :
 
 /-- **The Hecke triple of `Γ₀(N)`**: `Γ₀(N) ≤ Δ₀(N) ≤ commensurator(Γ₀(N))` inside `GL₂(ℚ)` —
 the setting of Shimura §3.3, in which the Hecke ring `R(Γ₀(N), Δ₀(N))` is formed. -/
-instance : IsHeckeTriple (Delta0 N) (Gamma0Image N) (Gamma0Image N) :=
+instance : IsHeckeTriple (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) :=
   IsHeckeTriple.of_diagonal (Gamma0Image_le_Delta0 N) (Delta0_le_commensurator_Gamma0Image N)
 
 end HeckeRing.GL2
