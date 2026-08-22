@@ -576,12 +576,13 @@ lemma zsmul_point_ne_zero (h0 : n ≠ 0) : n • Jacobian.point ≠ 0 := by
   exact Universal.Affine.zsmul_point_ne_zero h0
 
 /-- **The multiples of the distinguished point are pairwise distinct**: `n ↦ n • point` is
-injective. Since the point is not torsion, `m • P = n • P` forces `(m - n) • P = 0`, hence
-`m = n`. -/
-lemma zsmul_point_injective : Function.Injective fun n : ℤ ↦ n • Jacobian.point := by
-  intro m n h
-  by_contra hmn
-  exact zsmul_point_ne_zero (sub_ne_zero.mpr hmn) (by rw [sub_zsmul]; exact sub_eq_zero_of_eq h)
+injective, because the point is not torsion. This is Mathlib's
+`injective_zsmul_iff_not_isOfFinAddOrder` with the non-torsion side supplied by
+`zsmul_point_ne_zero`. -/
+lemma zsmul_point_injective : Function.Injective fun n : ℤ ↦ n • Jacobian.point :=
+  injective_zsmul_iff_not_isOfFinAddOrder.mpr fun h ↦
+    let ⟨_k, hk, hz⟩ := isOfFinAddOrder_iff_zsmul_eq_zero.mp h
+    zsmul_point_ne_zero hk hz
 
 /-- The three families of universal division polynomials as a 3-tuple. -/
 abbrev smulPoly (n : ℤ) : Fin 3 → Poly := ![curve.φ n, curve.ω n, curve.ψ n]
