@@ -6,7 +6,6 @@ Authors: Tau Ceti contributors
 module
 
 public import TauCeti.NumberTheory.ModularForms.HeckeSlash.Gamma1
-public import TauCeti.NumberTheory.HeckeRing.Basic
 
 /-!
 # The `ℤ`-linear extension of the Hecke slash operators to the Hecke ring
@@ -72,6 +71,9 @@ noncomputable def heckeSlashGamma1RingModularFormLinearMap :
       c • heckeSlashGamma1ModularFormEnd k D :=
   -- `Finsupp.linearCombination_apply` names the step to the `Finsupp.sum` shape, rather than
   -- leaving it to delta-unfolding of `linearCombination`; the side goal is then explicit.
+  -- `Finsupp.linearCombination_single` does NOT apply here: `HeckeCosetModule.single` is a
+  -- separate, non-exposed `def`, so that lemma's left-hand side does not match — which is why
+  -- the wrapper `HeckeCosetModule.sum_single_index` exists.
   (Finsupp.linearCombination_apply (R := ℤ) (v := heckeSlashGamma1ModularFormEnd k) _).trans
     (HeckeCosetModule.sum_single_index ℤ (zero_smul _ _))
 
