@@ -990,14 +990,15 @@ variable {F : Type*} [Field F] (W : WeierstrassCurve F)
 polynomials.** For every `n`, the Jacobian coordinates of `n • (x, y)` on a Weierstrass curve over
 a field are `(φₙ(x,y) : ωₙ(x,y) : ψₙ(x,y))`.
 
-This is the theorem the whole universal development exists to prove. It holds for every curve over
-every field, with no hypothesis on `n` and none on the characteristic, because its ingredients do:
-the doubling, addition and negation identities the induction consumes are equalities in the
-universal coordinate ring `Universal.Ring` — polynomials in `A₁,⋯,A₆,X,Y` taken modulo the
-Weierstrass polynomial — and specialize along `ringEval` to any point on any curve. Only the
-third coordinates (`dblZ_smulPoly`, `addZ_smulPoly`) and the negation rule `smulPoly_neg` hold
-already over `Poly`, before that quotient. -/
--- The theorem is an induction over those identities, not a specialization of one of them.
+Stated for a nonsingular `(x, y)` on a curve over a field, with no hypothesis on `n` and none on
+the characteristic. -/
+-- This is the theorem the whole universal development exists to prove, and it holds that
+-- generally because its ingredients do: the doubling, addition and negation identities the
+-- induction consumes are equalities in the universal coordinate ring `Universal.Ring` —
+-- polynomials in `A₁,⋯,A₆,X,Y` taken modulo the Weierstrass polynomial — and specialize along
+-- `ringEval` to any point on any curve. Only the third coordinates (`dblZ_smulPoly`,
+-- `addZ_smulPoly`) and the negation rule `smulPoly_neg` hold already over `Poly`, before that
+-- quotient. The theorem is an induction over those identities, not a specialization of one.
 -- Even-odd strong induction on `n ≥ 0`, then `Int.negInduction` for the sign. The base cases
 -- `n = 0` and `n = 1` are `(1 : 1 : 0)` and `(x : y : 1)`. The even step writes `2 * (m + 1) • P`
 -- through Mathlib's `add_self` and `dblXYZ_smulEval`; the odd step writes
