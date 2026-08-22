@@ -5,20 +5,17 @@ Authors: The Tau Ceti contributors
 -/
 module
 
-public import Mathlib.CategoryTheory.Comma.Over.Basic
 public import Mathlib.CategoryTheory.Monoidal.Grp
 public import Mathlib.CategoryTheory.Monoidal.Mon
 
 /-!
-# Monoid and group objects
+# Commutative monoid objects
 
-This file provides general-purpose facts about monoid and group objects.
+This file provides general-purpose facts about commutative monoid objects.
 
 ## Main declarations
 
 * `TauCeti.isCommMonObj_of_grp_iso`: commutativity of a group object is preserved by isomorphism.
-* `TauCeti.isIso_hom_hom_left`: an isomorphism of group objects over `S` has an isomorphism as
-  its underlying morphism in the ambient category.
 -/
 
 public section
@@ -40,13 +37,5 @@ theorem isCommMonObj_of_grp_iso
   simp only [Category.assoc, IsMonHom.mul_hom]
   rw [← Category.assoc, ← BraidedCategory.braiding_naturality]
   simp only [Category.assoc, IsCommMonObj.mul_comm]
-
-/-- An isomorphism `f` of group objects over `S` has an isomorphism as its underlying morphism
-in the ambient category: `f.hom.hom.left` strips the group-object, monoid-object and `Over`
-layers in turn. -/
-lemma isIso_hom_hom_left {C : Type u} [Category C] {S : C}
-    [CartesianMonoidalCategory (Over S)] {G H : Grp (Over S)} (f : G ⟶ H) [IsIso f] :
-    IsIso f.hom.hom.left :=
-  (Grp.forget (Over S) ⋙ Over.forget S).map_isIso f
 
 end TauCeti

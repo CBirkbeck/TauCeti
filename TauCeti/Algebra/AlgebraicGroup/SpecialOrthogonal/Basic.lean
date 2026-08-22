@@ -162,7 +162,8 @@ instance isClosedImmersion_inclusion :
   let c := (CommHopfAlgCat.quotientSpecι
     (GeneralLinear.coordinateHopfAlgebra R n) (definingHopfIdeal R n)).hom.hom.left
   let e₂ := ((eqToIso (GeneralLinear.groupScheme_def R n).symm).hom).hom.hom.left
-  have he₂ : IsIso e₂ := isIso_hom_hom_left (eqToHom (GeneralLinear.groupScheme_def R n).symm)
+  have he₂ : IsIso e₂ :=
+    (Over.forget _).map_isIso (eqToHom (GeneralLinear.groupScheme_def R n).symm).hom.hom
   have hc : AlgebraicGeometry.IsClosedImmersion c := by
     infer_instance
   have hc₂ : AlgebraicGeometry.IsClosedImmersion (c ≫ e₂) :=

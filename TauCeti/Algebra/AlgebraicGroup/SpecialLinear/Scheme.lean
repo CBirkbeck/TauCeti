@@ -105,8 +105,9 @@ instance isClosedImmersion_groupSchemeι :
   let e1 := (eqToHom (groupScheme_def R n)).hom.hom.left
   let c := (CommHopfAlgCat.kernelSpecι (GeneralLinear.determinantCoordinateMap R n)).hom.hom.left
   let e2 := (eqToHom (GeneralLinear.groupScheme_def R n).symm).hom.hom.left
-  have he1 : IsIso e1 := isIso_hom_hom_left (eqToHom (groupScheme_def R n))
-  have he2 : IsIso e2 := isIso_hom_hom_left (eqToHom (GeneralLinear.groupScheme_def R n).symm)
+  have he1 : IsIso e1 := (Over.forget _).map_isIso (eqToHom (groupScheme_def R n)).hom.hom
+  have he2 : IsIso e2 :=
+    (Over.forget _).map_isIso (eqToHom (GeneralLinear.groupScheme_def R n).symm).hom.hom
   have hc : AlgebraicGeometry.IsClosedImmersion c := by
     dsimp only [c]
     rw [CommHopfAlgCat.kernelSpecι_def]

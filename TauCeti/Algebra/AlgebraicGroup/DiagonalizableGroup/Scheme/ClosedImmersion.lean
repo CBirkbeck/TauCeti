@@ -43,8 +43,8 @@ theorem isClosedImmersion_groupSchemeMap_of_surjective {G H : FGCommGrpCat.{u}} 
   let e₁ := (eqToHom (groupScheme_def R H)).hom.hom.left
   let e₂ := (eqToHom (groupScheme_def R G).symm).hom.hom.left
   let c := ((hopfSpec (CommRingCat.of R)).map (coordinateMap R φ).hom.op).hom.hom.left
-  have he₁ : IsIso e₁ := isIso_hom_hom_left (eqToHom (groupScheme_def R H))
-  have he₂ : IsIso e₂ := isIso_hom_hom_left (eqToHom (groupScheme_def R G).symm)
+  have he₁ : IsIso e₁ := (Over.forget _).map_isIso (eqToHom (groupScheme_def R H)).hom.hom
+  have he₂ : IsIso e₂ := (Over.forget _).map_isIso (eqToHom (groupScheme_def R G).symm).hom.hom
   have hc : IsClosedImmersion c :=
     (CommHopfAlgCat.isClosedImmersion_hopfSpec_map_iff _).2
       (coordinateMap_surjective_of_surjective R φ hφ)

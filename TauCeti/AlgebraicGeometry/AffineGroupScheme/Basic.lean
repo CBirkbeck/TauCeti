@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.AlgebraicGeometry.Group.Affine
-public import TauCeti.CategoryTheory.Monoidal.Mon
 
 /-!
 # The category of affine group schemes over `Spec S`
