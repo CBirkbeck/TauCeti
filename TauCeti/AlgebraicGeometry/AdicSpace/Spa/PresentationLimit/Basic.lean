@@ -44,7 +44,8 @@ not the hypotheses.
 
 ## Main definitions
 
-* `TauCeti.ValuationSpectrum.isRational` : presenting a member of the rational basis.
+* `TauCeti.ValuationSpectrum.isRational` : presentations whose numerator ideal is open, hence
+  presenting a member of the rational basis.
 * `TauCeti.ValuationSpectrum.rationalInclusion` : the open each of them presents.
 * `TauCeti.ValuationSpectrum.rationalDiagram` : the diagram they index.
 * `TauCeti.ValuationSpectrum.RationalIndex` : the index at an open, a `StructuredArrow`.
@@ -70,7 +71,9 @@ not the hypotheses.
 * `presentationLimitMap_π` : the characteristic equation of the restriction morphism, and
   `presentationLimitMap_refl` / `presentationLimitMap_comp` : its identity and composition laws,
   which are the presheaf's functor laws.
-* `presentationLimitπ_map` : the cone equation, `Cone.w` stated through `presentationLimitπ`.
+* `presentationLimitπ_map` : the cone equation, `Cone.w` stated through `presentationLimitπ`,
+  with `presentationLimitπ_restrictionHom` the `@[reassoc (attr := simp)]` corollary at the
+  shape `simp` leaves a goal in.
 * The `IsFilteredOrEmpty` instance on `RationalIndex` : two indices have a common refinement, so
   presentations of the same subset are constrained through one.
 
@@ -135,13 +138,19 @@ universe v
 variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
 omit [IsTopologicalRing A] in
-/-- **A presentation is rational when it presents a member of the rational basis**: when its
-numerator ideal is open.
+/-- **A presentation with open numerator ideal**, which is the condition under which the open it
+presents belongs to the rational basis.
 
-The openness condition is necessary but not evidently sufficient: `Presentation` also carries
-`hasDenominatorPower`, which this repository nowhere derives from `IsOpen (Ideal.span num)`. So
-these may present a proper subfamily of the rational opens contained in a given open, and showing
-they cover all of them is part of the outstanding comparison, not something recorded here. -/
+Openness is **sufficient** for that, in one step: membership in `spaRationalFamily` *is* the
+existence of a presentation with open numerator ideal (`mem_spaRationalFamily_iff`), and this
+presentation witnesses it. It is **not necessary**, since the same open may be presented by some
+other `(T', s')` whose span is open while this one's is not — so `isRational` is a condition on
+the presentation, not a characterisation of the opens.
+
+What is genuinely outstanding is the other direction of the *indexing*: `Presentation` also
+carries `hasDenominatorPower`, which this repository nowhere derives from `IsOpen (Ideal.span
+num)`, so these may reach only a proper subfamily of the rational opens contained in a given
+open. Showing they reach all of them is part of the outstanding comparison, not recorded here. -/
 def isRational (P : PairOfDefinition A) : ObjectProperty P.Presentation :=
   fun p ↦ IsOpen (Ideal.span (p.num : Set A) : Set A)
 
@@ -303,6 +312,19 @@ theorem presentationLimitπ_map {i j : RationalIndex P Aplus V} (f : i ⟶ j) :
   (presentationLimitCone P Aplus V).w f
 
 variable (P) in
+/-- **The projections are compatible with refinement, at the simp-normal shape.** This is
+`presentationLimitπ_map` after `rationalDiagram_map`, which is the form a goal that has met
+`simp` is in: `rationalDiagram_map` is itself `@[simp]` and rewrites `presentationLimitπ_map`'s
+left-hand side into `restrictionHom` form before that lemma can match, so this is the statement
+that drives simplification. -/
+@[reassoc (attr := simp)]
+theorem presentationLimitπ_restrictionHom {i j : RationalIndex P Aplus V} (f : i ⟶ j) :
+    presentationLimitπ P Aplus V i ≫ PairOfDefinition.Presentation.restrictionHom
+        (leOfHom ((isRational P).ι.map f.right)) =
+      presentationLimitπ P Aplus V j :=
+  presentationLimitπ_map P f
+
+variable (P) in
 /-- **The restriction morphism of a containment `W ≤ V`**: the presheaf's action, which unfolds to
 the reindexing of the limit along `StructuredArrow.map`. -/
 noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
@@ -358,10 +380,13 @@ the definition.
 
 This is a property of the pair `(P, Aplus)`, not yet of a Huber pair `(A, A⁺)`: `Aplus` is an
 arbitrary subring, and independence of the chosen pair of definition — that `locTopology` and
-`completionLocObj` do not depend on `P` — is outstanding; nothing in the repo yet compares two
-pairs of definition. The roadmap's names `IsSheafyPair A Aplus`, `IsSheafyRing A` and
-`IsStablySheafyRing A` are all left free for the `P`-independent notions this one feeds once
-that independence is available. -/
+`completionLocObj` do not depend on `P` — is outstanding. Two pairs of definition *can* be
+compared: `PairOfDefinition.sup`, with `le_sup_left`/`le_sup_right`
+(`Huber/RingOfDefinition.lean`), supplies the join such a comparison would go through,
+following Wedhorn Cor. 6.4. What is missing is any statement relating `locTopology` or
+`completionLocObj` for `P` and for `Q`. The roadmap's names `IsSheafyPair A Aplus`,
+`IsSheafyRing A` and `IsStablySheafyRing A` are all left free for the `P`-independent notions
+this one feeds once that independence is available. -/
 def _root_.TauCeti.Huber.PairOfDefinition.HasSheafyPresentationLimit (P : PairOfDefinition A)
     (Aplus : Subring A) : Prop :=
   CategoryTheory.Presheaf.IsSheaf (Opens.grothendieckTopology ↥(spa Aplus))
