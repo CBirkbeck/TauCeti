@@ -35,8 +35,8 @@ arbitrary `R`-algebra, with the fraction-field version as a corollary.
 * `TauCeti.WeierstrassCurve.isIntegral_y_of_equation_of_isIntegral_x`: over **any** `R`-algebra, a
   point whose `x`-coordinate is integral over `R` has `y`-coordinate integral over `R`.
 * `TauCeti.WeierstrassCurve.isInteger_y_of_equation_of_isInteger_x`: its `IsLocalization.IsInteger`
-  corollary over any `K` in which `R` is integrally closed, the shape the Nagell–Lutz argument
-  consumes.
+  corollary over any commutative `R`-algebra in which `R` is integrally closed, the shape the
+  Nagell–Lutz argument consumes.
 
 Both are stated for an arbitrary point: no torsion, ellipticity or minimality hypothesis. In the
 Nagell–Lutz argument the polynomial `f` is a division polynomial, whose leading coefficient is the
@@ -109,16 +109,17 @@ end FractionField
 
 section IntegrallyClosedIn
 
-variable {K : Type*} [Field K] [Algebra R K] [IsIntegrallyClosedIn R K] {x y : K}
+variable {K : Type*} [CommRing K] [Algebra R K] [IsIntegrallyClosedIn R K] {x y : K}
 
 /-- **On the curve, an integral `x`-coordinate forces an integral `y`-coordinate.** The
 `IsLocalization.IsInteger` form of `isIntegral_y_of_equation_of_isIntegral_x`, which is the shape
 the Nagell–Lutz argument consumes.
 
-`K` need not be a fraction field of `R`: integral closedness **relative to `K`** is what the
-argument uses, and it is strictly weaker than `[IsIntegrallyClosed R] [IsFractionRing R K]` —
-those two imply it (`isIntegrallyClosed_iff_isIntegrallyClosedIn`, and Mathlib supplies the
-instance), but not conversely. -/
+`K` need not be a fraction field of `R`, nor even a field: integral closedness **relative to `K`**
+is what the argument uses, over any commutative `R`-algebra. It is strictly weaker than
+`[IsIntegrallyClosed R] [IsFractionRing R K]` — those two imply it
+(`isIntegrallyClosed_iff_isIntegrallyClosedIn`, and Mathlib supplies the instance), but not
+conversely. -/
 theorem isInteger_y_of_equation_of_isInteger_x (h : (W.baseChange K).toAffine.Equation x y)
     (hx : IsLocalization.IsInteger R x) : IsLocalization.IsInteger R y := by
   obtain ⟨x₀, hx₀⟩ := hx
