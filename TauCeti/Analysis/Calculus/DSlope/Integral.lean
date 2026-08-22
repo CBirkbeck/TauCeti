@@ -126,15 +126,13 @@ private theorem continuousOn_dslope_prod_of_convex {U : Set ℂ} (hU : Convex �
     filter_upwards [(hU_open.prod hU_open).mem_nhds
       (⟨hc₀, hw₀⟩ : (c₀, w₀) ∈ U ×ˢ U)] with p hp
     exact dslope_eq_integral_deriv hU hU_open hf hp.1 hp.2
-  have hp_proj : ∀ p : ℂ × ℂ, p ∈ Metric.ball (c₀, w₀) ε →
-      p.1 ∈ Metric.ball c₀ ε ∧ p.2 ∈ Metric.ball w₀ ε := fun p hp ↦
-    Set.mem_prod.mp (by rwa [← ball_prod_same] at hp)
   refine (ContinuousAt.congr ?_ h_eq_nbhd.symm).continuousWithinAt
   refine continuousAt_of_dominated_interval
     (bound := fun _ ↦ max M 0) ?_ ?_ intervalIntegrable_const ?_
   · filter_upwards [Metric.ball_mem_nhds (c₀, w₀) hε_pos] with p hp
     rw [uIoc_of_le (zero_le_one' ℝ)]
-    obtain ⟨hp_c, hp_w⟩ := hp_proj p hp
+    rw [← ball_prod_same, Set.mem_prod] at hp
+    obtain ⟨hp_c, hp_w⟩ := hp
     have h_cont : ContinuousOn (fun t : ℝ ↦ deriv f (p.1 + t • (p.2 - p.1)))
         (Icc (0 : ℝ) 1) :=
       h_deriv_contU.comp (by continuity : Continuous _).continuousOn
@@ -143,7 +141,8 @@ private theorem continuousOn_dslope_prod_of_convex {U : Set ℂ} (hU : Convex �
   · filter_upwards [Metric.ball_mem_nhds (c₀, w₀) hε_pos] with p hp
     filter_upwards with t ht
     rw [uIoc_of_le zero_le_one] at ht
-    obtain ⟨hp_c, hp_w⟩ := hp_proj p hp
+    rw [← ball_prod_same, Set.mem_prod] at hp
+    obtain ⟨hp_c, hp_w⟩ := hp
     exact le_max_of_le_left (hM ⟨p.1 + t • (p.2 - p.1),
       hK_tube p.1 hp_c p.2 hp_w t (Ioc_subset_Icc_self ht), rfl⟩)
   · filter_upwards with t ht
