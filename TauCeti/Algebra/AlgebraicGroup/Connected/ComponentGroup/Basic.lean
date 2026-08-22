@@ -181,6 +181,43 @@ theorem mem_identityComponentPointsSubgroup_iff
   rw [rationalKernelPoint_one]
   exact mem_range_identityComponentPointsHom_iff H g
 
+/-- The kernel point of `h` lies in the connected component of the kernel point of `g` exactly
+when the right quotient `h * g⁻¹` belongs to the identity-component subgroup. -/
+private theorem mem_connectedComponent_rationalKernelPoint_iff
+    (H : FiniteTypeCommHopfAlgCat.{u, u} k)
+    (g h : HopfAlgebra.points (R := k) (H := H) (CommAlgCat.of k k)) :
+    rationalKernelPoint H h ∈ connectedComponent (rationalKernelPoint H g) ↔
+      h * g⁻¹ ∈ CommHopfAlgCat.quotientPointsSubgroup H.obj
+        (HopfAlgebra.identityComponentHopfIdeal (k := k) (H := H)) (CommAlgCat.of k k) := by
+  constructor
+  · intro hh
+    have himage := TauCeti.HopfAlgebra.rightTranslationHomeomorph_image_connectedComponent g⁻¹
+      (rationalKernelPoint H g)
+    have hmem : TauCeti.HopfAlgebra.rightTranslationHomeomorph g⁻¹
+        (rationalKernelPoint H h) ∈
+        TauCeti.HopfAlgebra.rightTranslationHomeomorph g⁻¹ ''
+          connectedComponent (rationalKernelPoint H g) :=
+      ⟨rationalKernelPoint H h, hh, rfl⟩
+    rw [himage, TauCeti.HopfAlgebra.rightTranslationHomeomorph_kernelPoint,
+      TauCeti.HopfAlgebra.rightTranslationHomeomorph_kernelPoint, mul_inv_cancel] at hmem
+    -- Translation simplifies the identity to `ofConv 1`; restore the bundled point spelling.
+    change rationalKernelPoint H (h * g⁻¹) ∈
+      connectedComponent (rationalKernelPoint H 1) at hmem
+    exact (mem_identityComponentPointsSubgroup_iff H (h * g⁻¹)).mpr hmem
+  · intro hh
+    have hh' := (mem_identityComponentPointsSubgroup_iff H (h * g⁻¹)).mp hh
+    have himage := TauCeti.HopfAlgebra.rightTranslationHomeomorph_image_connectedComponent g
+      (rationalKernelPoint H 1)
+    have hmem : TauCeti.HopfAlgebra.rightTranslationHomeomorph g
+        (rationalKernelPoint H (h * g⁻¹)) ∈
+        TauCeti.HopfAlgebra.rightTranslationHomeomorph g ''
+          connectedComponent (rationalKernelPoint H 1) :=
+      ⟨rationalKernelPoint H (h * g⁻¹), hh', rfl⟩
+    rw [himage, TauCeti.HopfAlgebra.rightTranslationHomeomorph_kernelPoint,
+      TauCeti.HopfAlgebra.rightTranslationHomeomorph_kernelPoint, mul_assoc,
+      inv_mul_cancel, mul_one, one_mul] at hmem
+    exact hmem
+
 /-- Two rational points have kernel points in the same connected component exactly when their
 left quotient belongs to the identity-component subgroup. -/
 theorem connectedComponents_rationalKernelPoint_eq_iff
@@ -190,56 +227,11 @@ theorem connectedComponents_rationalKernelPoint_eq_iff
       rationalKernelPoint H h ↔
       g⁻¹ * h ∈ CommHopfAlgCat.quotientPointsSubgroup H.obj
         (HopfAlgebra.identityComponentHopfIdeal (k := k) (H := H)) (CommAlgCat.of k k) := by
-  let N := CommHopfAlgCat.quotientPointsSubgroup H.obj
-    (HopfAlgebra.identityComponentHopfIdeal (k := k) (H := H)) (CommAlgCat.of k k)
-  let hN : N.Normal := CommHopfAlgCat.quotientPointsSubgroup_normal H.obj
+  have hN := CommHopfAlgCat.quotientPointsSubgroup_normal H.obj
     (HopfAlgebra.identityComponentHopfIdeal (k := k) (H := H))
     (isNormal_identityComponentHopfIdeal H) (CommAlgCat.of k k)
-  have hright :
-      rationalKernelPoint H h ∈ connectedComponent (rationalKernelPoint H g) ↔
-        h * g⁻¹ ∈ N := by
-    constructor
-    · intro hh
-      have himage := TauCeti.HopfAlgebra.rightTranslationHomeomorph_image_connectedComponent g⁻¹
-        (rationalKernelPoint H g)
-      have hmem : TauCeti.HopfAlgebra.rightTranslationHomeomorph g⁻¹
-          (rationalKernelPoint H h) ∈
-          TauCeti.HopfAlgebra.rightTranslationHomeomorph g⁻¹ ''
-            connectedComponent (rationalKernelPoint H g) :=
-        ⟨rationalKernelPoint H h, hh, rfl⟩
-      rw [himage, TauCeti.HopfAlgebra.rightTranslationHomeomorph_kernelPoint,
-        TauCeti.HopfAlgebra.rightTranslationHomeomorph_kernelPoint, mul_inv_cancel] at hmem
-      -- Translation simplifies the identity to `ofConv 1`; restore the bundled point spelling.
-      change rationalKernelPoint H (h * g⁻¹) ∈
-        connectedComponent (rationalKernelPoint H 1) at hmem
-      exact (mem_identityComponentPointsSubgroup_iff H (h * g⁻¹)).mpr hmem
-    · intro hh
-      have hh' := (mem_identityComponentPointsSubgroup_iff H (h * g⁻¹)).mp hh
-      have himage := TauCeti.HopfAlgebra.rightTranslationHomeomorph_image_connectedComponent g
-        (rationalKernelPoint H 1)
-      have hmem : TauCeti.HopfAlgebra.rightTranslationHomeomorph g
-          (rationalKernelPoint H (h * g⁻¹)) ∈
-          TauCeti.HopfAlgebra.rightTranslationHomeomorph g ''
-            connectedComponent (rationalKernelPoint H 1) :=
-        ⟨rationalKernelPoint H (h * g⁻¹), hh', rfl⟩
-      rw [himage, TauCeti.HopfAlgebra.rightTranslationHomeomorph_kernelPoint,
-        TauCeti.HopfAlgebra.rightTranslationHomeomorph_kernelPoint, mul_assoc,
-        inv_mul_cancel, mul_one, one_mul] at hmem
-      exact hmem
-  rw [ConnectedComponents.coe_eq_coe]
-  have hmem_swap :
-      rationalKernelPoint H g ∈ connectedComponent (rationalKernelPoint H h) ↔
-        rationalKernelPoint H h ∈ connectedComponent (rationalKernelPoint H g) := by
-    calc
-      rationalKernelPoint H g ∈ connectedComponent (rationalKernelPoint H h) ↔
-          connectedComponent (rationalKernelPoint H g) =
-            connectedComponent (rationalKernelPoint H h) :=
-        connectedComponent_eq_iff_mem.symm
-      _ ↔ connectedComponent (rationalKernelPoint H h) =
-          connectedComponent (rationalKernelPoint H g) := eq_comm
-      _ ↔ rationalKernelPoint H h ∈ connectedComponent (rationalKernelPoint H g) :=
-        connectedComponent_eq_iff_mem
-  rw [connectedComponent_eq_iff_mem, hmem_swap, hright]
+  rw [ConnectedComponents.coe_eq_coe, eq_comm, connectedComponent_eq_iff_mem,
+    mem_connectedComponent_rationalKernelPoint_iff]
   constructor
   · intro hh
     have hc := hN.conj_mem (h * g⁻¹) hh g⁻¹
