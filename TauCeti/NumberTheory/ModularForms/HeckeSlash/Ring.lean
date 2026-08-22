@@ -54,7 +54,11 @@ variable {N : ℕ} [NeZero N] (k : ℤ)
 
 /-- The `ℤ`-linear extension of `heckeSlashGamma1ModularFormEnd` to formal `ℤ`-combinations of
 double cosets: `ℤ`-linear in the ring element, but not known to be multiplicative, so this is
-not yet a ring action. -/
+not yet a ring action.
+
+`𝕋 Δ H ℤ` unfolds to `HeckeCoset Δ H H →₀ ℤ` carrying the transported module structure, which
+is why `Finsupp.linearCombination` applies at this type: the ascription below crosses the
+`HeckeCosetModule` wrapper. -/
 noncomputable def heckeSlashGamma1RingModularFormLinearMap :
     𝕋 (Delta0 N) ((Gamma1 N).map (mapGL ℚ)) ℤ →ₗ[ℤ]
       Module.End ℂ (ModularForm ((Gamma1 N).map (mapGL ℝ)) k) :=
@@ -66,7 +70,10 @@ noncomputable def heckeSlashGamma1RingModularFormLinearMap :
     (c : ℤ) :
     heckeSlashGamma1RingModularFormLinearMap (N := N) k (HeckeCosetModule.single ℤ D c) =
       c • heckeSlashGamma1ModularFormEnd k D :=
-  HeckeCosetModule.sum_single_index ℤ (by simp)
+  -- `Finsupp.linearCombination_apply` names the step to the `Finsupp.sum` shape, rather than
+  -- leaving it to delta-unfolding of `linearCombination`; the side goal is then explicit.
+  (Finsupp.linearCombination_apply (R := ℤ) (v := heckeSlashGamma1ModularFormEnd k) _).trans
+    (HeckeCosetModule.sum_single_index ℤ (zero_smul _ _))
 
 end
 
