@@ -236,9 +236,7 @@ theorem isClosedImmersion_diagonalGroupSchemeHom (b : Module.Basis (Fin n) R M)
     (Comodule.isClosedImmersion_coordinateGroupSchemeHom_iff b).2
       (surjective_diagonalCoordinateMap b wt hwt)
   have he : IsIso (eqToHom (groupScheme_def R G)).hom.hom.left :=
-    ((Over.forget (Spec (CommRingCat.of R))).mapIso
-      ((Grp.forget (Over (Spec (CommRingCat.of R)))).mapIso
-        (eqToIso (groupScheme_def R G)))).isIso_hom
+    isIso_eqToHom_hom_hom_left (groupScheme_def R G)
   have hcomp : IsClosedImmersion
       ((eqToHom (groupScheme_def R G)).hom.hom.left ≫
         (Comodule.coordinateGroupSchemeHom (H := MonoidAlgebra R G) b).hom.hom.left) :=

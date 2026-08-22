@@ -285,10 +285,7 @@ instance isClosedImmersion_inclusion :
   let c := ((AlgebraicGeometry.hopfSpec (CommRingCat.of R)).map
     (coordinateMap R n).op ≫
       eqToHom (GeneralLinear.groupScheme_def R n).symm).hom.hom.left
-  have he₁ : IsIso e₁ :=
-    ((Over.forget (AlgebraicGeometry.Spec (CommRingCat.of R))).mapIso
-      ((Grp.forget (Over (AlgebraicGeometry.Spec (CommRingCat.of R)))).mapIso
-        (eqToIso (groupScheme_def R (Fin n))))).isIso_hom
+  have he₁ : IsIso e₁ := isIso_eqToHom_hom_hom_left (groupScheme_def R (Fin n))
   have hc : AlgebraicGeometry.IsClosedImmersion c := by
     dsimp only [c]
     exact (CommHopfAlgCat.isClosedImmersion_hopfSpec_map_comp_eqToHom_iff

@@ -216,9 +216,7 @@ theorem of_isClosedImmersion_upperUnitriangularGroupScheme
   let hF := hopfSpec.fullyFaithful (R := CommRingCat.of k)
   let e := eqToHom (UpperUnitriangular.groupScheme_def k (Fin n))
   let _ : IsIso e.hom.hom.left :=
-    ((Over.forget (Spec (CommRingCat.of k))).mapIso
-      ((Grp.forget (Over (Spec (CommRingCat.of k)))).mapIso
-        (eqToIso (UpperUnitriangular.groupScheme_def k (Fin n))))).isIso_hom
+    isIso_eqToHom_hom_hom_left (UpperUnitriangular.groupScheme_def k (Fin n))
   let φ : (CommHopfAlgCat.of k (UpperUnitriangular.coordinateHopfAlgebra k (Fin n))) ⟶
       (CommHopfAlgCat.of k H) := (hF.preimage (f ≫ e)).unop
   have hmap : F.map φ.op = f ≫ e := by

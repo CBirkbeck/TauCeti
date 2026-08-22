@@ -62,6 +62,14 @@ instance (S : CommRingCat.{u}) : (affineGroupSchemeProperty S).IsClosedUnderIsom
   of_iso e hG :=
     (IsAffine.iff_of_isIso ((Over.forget _).mapIso ((Grp.forget _).mapIso e)).hom).mp hG
 
+/-- The morphism of schemes underlying an identification `h : G = H` of group objects over
+`Spec S` is an isomorphism. Stated in the `eqToHom` normal form that `simp` produces from
+`eqToIso`, and as an instance, so that isomorphism-cancellation lemmas discharge the
+hypothesis by instance search rather than at each call site. -/
+instance isIso_eqToHom_hom_hom_left {S : CommRingCat.{u}} {G H : Grp (Over (Spec S))}
+    (h : G = H) : IsIso (eqToHom h).hom.hom.left :=
+  ((Over.forget (Spec S)).mapIso ((Grp.forget (Over (Spec S))).mapIso (eqToIso h))).isIso_hom
+
 /-- Membership in `AffineGroupSchemeCat` supplies affineness of the underlying scheme
 automatically, so downstream instance searches need not invoke `property` by hand. -/
 instance {S : CommRingCat.{u}} (G : AffineGroupSchemeCat S) : IsAffine G.obj.X.left := G.property
