@@ -70,8 +70,7 @@ not the hypotheses.
 * `presentationLimitMap_π` : the characteristic equation of the restriction morphism, and
   `presentationLimitMap_refl` / `presentationLimitMap_comp` : its identity and composition laws,
   which are the presheaf's functor laws.
-* `presentationLimitπ_map` and `presentationLimitπ_restrictionHom` : the cone equation, stated
-  both as `Cone.w` and at the shape `simp` leaves a goal in.
+* `presentationLimitπ_map` : the cone equation, `Cone.w` stated through `presentationLimitπ`.
 * The `IsFilteredOrEmpty` instance on `RationalIndex` : two indices have a common refinement, so
   presentations of the same subset are constrained through one.
 
@@ -296,23 +295,12 @@ variable (P) in
 `presentationLimitCone`, stated through `presentationLimitπ`.
 
 Deliberately **not** `@[simp]`: `rationalDiagram_map` (itself `@[simp]`) rewrites this left-hand
-side into `restrictionHom` form, so it is not in simp-normal form.
-`presentationLimitπ_restrictionHom` below is the restatement *at* that normal form. -/
+side into `restrictionHom` form, so it is not in simp-normal form; a goal that has met `simp` is
+at that shape instead. -/
 theorem presentationLimitπ_map {i j : RationalIndex P Aplus V} (f : i ⟶ j) :
     presentationLimitπ P Aplus V i ≫ (rationalDiagram P).map f.right =
       presentationLimitπ P Aplus V j :=
   (presentationLimitCone P Aplus V).w f
-
-variable (P) in
-/-- **The projections are compatible with refinement, at the simp-normal shape.** This is
-`presentationLimitπ_map` after `rationalDiagram_map`; a goal that has met `simp` is in this form
-and has no other lemma to apply. Not `@[simp]` itself: `restrictionHom` takes the containment as
-a proof argument, so simp has no matchable key on the right-hand side. -/
-theorem presentationLimitπ_restrictionHom {i j : RationalIndex P Aplus V} (f : i ⟶ j) :
-    presentationLimitπ P Aplus V i ≫ PairOfDefinition.Presentation.restrictionHom
-        (leOfHom ((isRational P).ι.map f.right)) =
-      presentationLimitπ P Aplus V j :=
-  presentationLimitπ_map P f
 
 variable (P) in
 /-- **The restriction morphism of a containment `W ≤ V`**: the presheaf's action, which unfolds to
