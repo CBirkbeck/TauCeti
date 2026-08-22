@@ -331,15 +331,14 @@ abbrev curveRing : WeierstrassCurve Universal.Ring := curve.baseChange Universal
 /-- Pushing `curvePoly` along `polyToField` gives `pointedCurve`: the base change of the universal
 curve to `ℤ[A₁,⋯,A₆,X,Y]` and its base change to the universal field agree along `polyToField`.
 
-Upstream this identity is `rfl` and is never named. Here it has to be named — not because it fails
-to be definitional in this file, where `algebraMap_field_eq_comp` is itself proved `(rfl)`, but
-because `polyToField`'s body is unexposed, so no *consumer* outside this file can compare the
-two coefficient families by unfolding. This lemma is `congrArg` of that equation, exported for
-them. The **curve-dependent**
-Jacobian transports state their left-hand side over `W.map f`, so pushing one from `Poly` to
-`Universal.Field` produces `curvePoly.map polyToField` and needs this lemma to land on
-`pointedCurve`: `map_dblZ`, `map_dblXYZ`, `map_addX`, `map_addY`, `map_addXYZ`. `map_addZ` is
-**not** among them — `addZ` takes no curve argument, so its transport is curve-free. -/
+The **curve-dependent** Jacobian transports state their left-hand side over `W.map f`, so pushing
+one from `Poly` to `Universal.Field` produces `curvePoly.map polyToField` and needs this lemma to
+land on `pointedCurve`: `map_dblZ`, `map_dblXYZ`, `map_addX`, `map_addY`, `map_addXYZ`. `map_addZ`
+is **not** among them — `addZ` takes no curve argument, so its transport is curve-free. -/
+-- Upstream this identity is `rfl` and is never named. It has to be named here — not because it
+-- fails to be definitional in this file, where `algebraMap_field_eq_comp` is itself proved
+-- `(rfl)`, but because `polyToField`'s body is unexposed, so no consumer outside this file can
+-- compare the two coefficient families by unfolding. The proof is `congrArg` of that equation.
 @[simp] lemma map_polyToField : curvePoly.map polyToField = pointedCurve :=
   (congrArg (WeierstrassCurve.map curve) algebraMap_field_eq_comp).symm
 

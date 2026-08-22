@@ -695,9 +695,12 @@ abbrev smulRing (n : ℤ) : Fin 3 → Universal.Ring := AdjoinRoot.mk _ ∘ smul
 /-- The three families of division polynomials as elements of the universal field. -/
 abbrev smulField (n : ℤ) : Fin 3 → Universal.Field := polyToField ∘ smulPoly n
 
-/-- **The `Z` coordinate of `smulField n` is `ψₙ`.** `smulField` is `polyToField ∘ ![φ, ω, ψ]`,
-so this is `comp_fin3` followed by the third component of `fin3_def_ext` — a rewrite route for a
-projection that would otherwise be discharged by definitional reduction. -/
+/-- **The `Z` coordinate of `smulField n` is `ψₙ`.** The third component of the universal-field
+triple is the division polynomial itself, carried across by `polyToField`, with no
+denominator. -/
+-- `smulField` is `polyToField ∘ ![φ, ω, ψ]`, so this is `comp_fin3` followed by the third
+-- component of `fin3_def_ext` — a rewrite route for a projection that would otherwise be
+-- discharged by definitional reduction.
 lemma smulField_Z (n : ℤ) : smulField n (2 : Fin 3) = polyToField (curve.ψ n) := by
   rw [smulField, comp_fin3]
   exact (fin3_def_ext ..).2.2
@@ -888,8 +891,11 @@ lemma addXYZ_smulField :
     rw [smul_eq _ (polyToField_ψ_ne_zero (sub_ne_zero_of_ne h.symm)).isUnit,
       ← zsmul_point_eq_smulField, add_comm, add_zsmul, hadd]
 
-/-- The addition identity over the universal ring, by the same fraction-field injection as
-`dblXYZ_smulRing`. -/
+/-- **The addition identity over the universal ring.** `addXYZ` carries the triples at `m` and `n`
+to the triple at `n + m`, scaled by `ψₙ₋ₘ`: an equality in `Universal.Ring`, not merely of the
+points the triples represent. The scaling factor is genuine — `addXYZ` is homogeneous, so the
+representative it returns is the canonical triple only up to that factor. -/
+-- By the same fraction-field injection as `dblXYZ_smulRing`.
 lemma addXYZ_smulRing :
     addXYZ curveRing (smulRing m) (smulRing n) =
       AdjoinRoot.mk curve.polynomial (curve.ψ (n - m)) • smulRing (n + m) := by
@@ -990,8 +996,8 @@ the doubling, addition and negation identities the induction consumes are equali
 universal coordinate ring `Universal.Ring` — polynomials in `A₁,⋯,A₆,X,Y` taken modulo the
 Weierstrass polynomial — and specialize along `ringEval` to any point on any curve. Only the
 third coordinates (`dblZ_smulPoly`, `addZ_smulPoly`) and the negation rule `smulPoly_neg` hold
-already over `Poly`, before that quotient. The theorem is then an induction over those identities,
-not a specialization of one of them. -/
+already over `Poly`, before that quotient. -/
+-- The theorem is an induction over those identities, not a specialization of one of them.
 -- Even-odd strong induction on `n ≥ 0`, then `Int.negInduction` for the sign. The base cases
 -- `n = 0` and `n = 1` are `(1 : 1 : 0)` and `(x : y : 1)`. The even step writes `2 * (m + 1) • P`
 -- through Mathlib's `add_self` and `dblXYZ_smulEval`; the odd step writes
