@@ -258,12 +258,10 @@ theorem piTensorProductMap_comp_orthogonalCup {A : Matrix (Fin n) (Fin n) k} (hA
   refine LinearMap.ext_ring ?_
   simp only [LinearMap.coe_comp, Function.comp_apply, orthogonalCup_apply_one, map_sum,
     PiTensorProduct.map_tprod, Matrix.mulVecLin_apply]
-  -- compare coordinates in the basis of the tensor square induced by the standard basis
   refine (Basis.piTensorProduct fun _ : Fin 2 => Pi.basisFun k (Fin n)).ext_elem fun r => ?_
   simp only [map_sum, Finset.sum_apply, Finsupp.coe_finsetSum,
     Basis.piTensorProduct_repr_tprod_apply, Pi.basisFun_repr, Fin.prod_univ_two,
     Matrix.mulVec_single_one, Matrix.col_apply, Pi.single_apply]
-  -- the two coordinates are the `(r 0, r 1)` entries of `A * Aᵀ` and of `1`, which `hA` equates
   have hAA := Matrix.ext_iff.mpr hA (r 0) (r 1)
   simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.one_apply] at hAA
   simpa using hAA
