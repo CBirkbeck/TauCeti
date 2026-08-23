@@ -142,7 +142,7 @@ private theorem mapPointsFunctor_dynamicCocharacterCoordinateMap_app
     simp only [CommHopfAlgCat.hom_ofHom]
     apply (AlgEquiv.symm_apply_eq
       (AddMonoidAlgebra.toMultiplicativeBialgEquiv R R ℤ).toAlgEquiv).mpr
-    -- `simpa` needs the composite spelled out; the `ofHom` wrapper blocks it otherwise.
+    -- `simp` does not unfold `domCongrBialgEquiv`, so expose its underlying `domCongr`.
     change MonoidAlgebra.domCongr R R
         (AddEquiv.toMultiplicative (Finsupp.uniqueAddEquiv (ULift.up ())))
           (MonoidAlgebra.single
