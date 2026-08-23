@@ -31,7 +31,9 @@ as that entire fibre.
 Ported from the AINTLIB `LeanModularForms` project
 ([`LeanModularForms/HeckeRIngs/GL2/Gamma1Pair.lean`](https://github.com/CBirkbeck/AINTLIB),
 Chris Birkbeck), with `CoprimeDet` and `coprimeDet_iff` from the `CoprimeDet` section of
-`LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/Props.lean` (Chris Birkbeck).
+`LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/Props.lean`, and
+`exists_primitive_content_quotient` from `Gamma0_content_quotient` of
+`LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/AtkinLehner.lean` (all Chris Birkbeck).
 
 ## Main definitions
 
@@ -44,6 +46,8 @@ Chris Birkbeck), with `CoprimeDet` and `coprimeDet_iff` from the `CoprimeDet` se
   representative has determinant coprime to `N`, and the fact that one witness decides it.
 * `HeckeRing.GL2.Delta0_le_posDetInt`: `Δ₀(N)` consists of integral matrices of positive
   determinant, which is what puts it in the commensurator of `SL₂(ℤ)`.
+* `HeckeRing.GL2.exists_primitive_content_quotient`: dividing a matrix of the `Δ₀(N)` shape by
+  the gcd of its entries leaves a primitive matrix of the same shape.
 
 ## References
 
@@ -117,5 +121,68 @@ lemma Delta0_le_posDetInt : Delta0 N ≤ posDetInt 2 := by
   intro g hg
   obtain ⟨A, hA, hdet, -, -⟩ := (mem_Delta0_iff N).mp hg
   exact (mem_posDetInt_iff 2).mpr ⟨(hasIntEntries_iff 2).mpr ⟨A, hA⟩, hdet⟩
+
+/-- Scaling a `2 × 2` matrix by `d` scales its determinant by `d ^ 2`. -/
+private lemma det_eq_sq_mul_det_of_entries_eq {A A₀ : Matrix (Fin 2) (Fin 2) ℤ} {d : ℕ}
+    (hA_eq : ∀ i j, A i j = (d : ℤ) * A₀ i j) : A.det = (d : ℤ) ^ 2 * A₀.det := by
+  simp only [Matrix.det_fin_two]
+  rw [hA_eq 0 0, hA_eq 0 1, hA_eq 1 0, hA_eq 1 1]; ring
+
+/-- If `d` is the gcd of the entries of `A` and `A = d • A₀`, no prime divides every entry of
+`A₀`: such a prime `q` would make `q * d` a common divisor of `A`'s entries, exceeding `d`. -/
+private lemma not_prime_dvd_entries_of_isGCD {A A₀ : Matrix (Fin 2) (Fin 2) ℤ} {d : ℕ}
+    (hd_pos : 0 < d) (hA_eq : ∀ i j, A i j = (d : ℤ) * A₀ i j)
+    (hd_is_gcd : d = Nat.gcd (Nat.gcd (A 0 0).natAbs (A 0 1).natAbs)
+      (Nat.gcd (A 1 0).natAbs (A 1 1).natAbs)) (q : ℕ) (hq : q.Prime) :
+    ¬((q : ℤ) ∣ A₀ 0 0 ∧ (q : ℤ) ∣ A₀ 0 1 ∧ (q : ℤ) ∣ A₀ 1 0 ∧ (q : ℤ) ∣ A₀ 1 1) := by
+  rintro ⟨hq00, hq01, hq10, hq11⟩
+  have hqd_nat : ∀ i j : Fin 2, q * d ∣ (A i j).natAbs := fun i j ↦ by
+    have h : (q : ℤ) ∣ A₀ i j := by fin_cases i <;> fin_cases j <;> assumption
+    rw [show (A i j).natAbs = ((d : ℤ) * A₀ i j).natAbs by rw [← hA_eq], Int.natAbs_mul,
+      Int.natAbs_natCast, mul_comm]
+    exact Nat.mul_dvd_mul_left d (Int.natAbs_dvd_natAbs.mpr h)
+  have hqd_dvd_d : q * d ∣ d := by
+    conv_rhs => rw [hd_is_gcd]
+    exact Nat.dvd_gcd (Nat.dvd_gcd (hqd_nat 0 0) (hqd_nat 0 1))
+      (Nat.dvd_gcd (hqd_nat 1 0) (hqd_nat 1 1))
+  have hq_le : q ≤ 1 :=
+    Nat.le_of_mul_le_mul_right (by linarith [Nat.le_of_dvd hd_pos hqd_dvd_d]) hd_pos
+  exact absurd hq.two_le (by omega)
+
+/-- **Content factorisation for the `Δ₀(N)` shape.** Dividing an integral matrix by the gcd `d`
+of its entries leaves a *primitive* matrix — one no prime divides entrywise — that still has
+positive determinant, `N ∣ c`, and upper-left entry coprime to `N`.
+
+The `Δ₀(N)` conditions survive the division because `d` is coprime to `N`: it divides `A 0 0`,
+which is coprime to `N` by hypothesis. This is the reduction step that lets a statement about
+`Δ₀(N)` double cosets be proved for primitive representatives first.
+
+Ported from the AINTLIB `LeanModularForms` project
+(`LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/AtkinLehner.lean`, Chris Birkbeck,
+<https://github.com/CBirkbeck/AINTLIB>), where it is `Gamma0_content_quotient`. -/
+lemma exists_primitive_content_quotient (A : Matrix (Fin 2) (Fin 2) ℤ) (hA_det_pos : 0 < A.det)
+    (hAN : (N : ℤ) ∣ A 1 0) (hAco : Int.gcd (A 0 0) N = 1) (d : ℕ) (hd_pos : 0 < d)
+    (hd_dvd : ∀ i j : Fin 2, (d : ℤ) ∣ A i j)
+    (hd_is_gcd : d = Nat.gcd (Nat.gcd (A 0 0).natAbs (A 0 1).natAbs)
+      (Nat.gcd (A 1 0).natAbs (A 1 1).natAbs)) :
+    ∃ A₀ : Matrix (Fin 2) (Fin 2) ℤ, (∀ i j, A i j = (d : ℤ) * A₀ i j) ∧ 0 < A₀.det ∧
+      (N : ℤ) ∣ A₀ 1 0 ∧ Int.gcd (A₀ 0 0) N = 1 ∧
+      ∀ q : ℕ, q.Prime → ¬((q : ℤ) ∣ A₀ 0 0 ∧ (q : ℤ) ∣ A₀ 0 1 ∧ (q : ℤ) ∣ A₀ 1 0 ∧
+        (q : ℤ) ∣ A₀ 1 1) := by
+  set A₀ : Matrix (Fin 2) (Fin 2) ℤ := fun i j ↦ A i j / d with hA₀
+  have hA_eq : ∀ i j, A i j = (d : ℤ) * A₀ i j := fun i j ↦ by
+    simp only [hA₀]; rw [mul_comm]; exact (Int.ediv_mul_cancel (hd_dvd i j)).symm
+  -- `d` divides the upper-left entry, which is coprime to `N`, so `d` is too
+  have hd_Nco : Int.gcd (d : ℤ) N = 1 := by
+    refine Nat.eq_one_of_dvd_one (hAco ▸ Nat.dvd_gcd ?_ ?_)
+    · exact Int.natAbs_dvd_natAbs.mpr ((Int.gcd_dvd_left (d : ℤ) N).trans (hd_dvd 0 0))
+    · exact Int.natAbs_dvd_natAbs.mpr (Int.gcd_dvd_right (d : ℤ) N)
+  refine ⟨A₀, hA_eq, ?_, ?_, ?_, not_prime_dvd_entries_of_isGCD hd_pos hA_eq hd_is_gcd⟩
+  · refine (mul_pos_iff.mp (det_eq_sq_mul_det_of_entries_eq hA_eq ▸ hA_det_pos)).elim
+      (fun h ↦ h.2) fun h ↦ absurd h.1 (not_lt.mpr (sq_nonneg (d : ℤ)))
+  · exact (Int.isCoprime_iff_gcd_eq_one.mpr hd_Nco).symm.dvd_of_dvd_mul_left (hA_eq 1 0 ▸ hAN)
+  · exact Int.isCoprime_iff_gcd_eq_one.mp
+      ((Int.isCoprime_iff_gcd_eq_one.mpr (hA_eq 0 0 ▸ hAco)).of_isCoprime_of_dvd_left
+        (dvd_mul_left (A₀ 0 0) (d : ℤ)))
 
 end HeckeRing.GL2
