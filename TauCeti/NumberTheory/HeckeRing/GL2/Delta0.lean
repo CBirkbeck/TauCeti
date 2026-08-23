@@ -195,10 +195,11 @@ lemma exists_primitive_content_quotient (A : Matrix (Fin 2) (Fin 2) ℤ) (hA_det
     refine Nat.eq_one_of_dvd_one (hAco ▸ Nat.dvd_gcd ?_ ?_)
     · exact Int.natAbs_dvd_natAbs.mpr ((Int.gcd_dvd_left (d : ℤ) N).trans (hd_dvd 0 0))
     · exact Int.natAbs_dvd_natAbs.mpr (Int.gcd_dvd_right (d : ℤ) N)
+  -- the entrywise equation, repackaged as a scalar multiple so that `Matrix.det_smul` applies
+  have hA_smul : A = (d : ℤ) • A₀ := Matrix.ext fun i j ↦ hA_eq i j
   -- the scaling is `Matrix.det_smul` at `Fintype.card (Fin 2) = 2`
   have hdet : A.det = (d : ℤ) ^ 2 * A₀.det := by
-    rw [show A = (d : ℤ) • A₀ from Matrix.ext fun i j ↦ hA_eq i j, Matrix.det_smul,
-      Fintype.card_fin]
+    rw [hA_smul, Matrix.det_smul, Fintype.card_fin]
   refine ⟨A₀, hA_eq, ?_, ?_, ?_, not_prime_dvd_entries_of_isGCD hd_pos hA_eq hd_is_gcd⟩
   · exact (mul_pos_iff.mp (hdet ▸ hA_det_pos)).elim (fun h ↦ h.2)
       fun h ↦ absurd h.1 (not_lt.mpr (sq_nonneg (d : ℤ)))
