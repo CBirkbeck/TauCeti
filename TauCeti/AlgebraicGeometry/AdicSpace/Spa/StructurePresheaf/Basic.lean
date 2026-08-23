@@ -32,6 +32,16 @@ functor along the forgetful map, and the value is its limit — which exists bec
 * `TauCeti.ValuationSpectrum.presentationLimitMap` : the restriction morphism of a containment.
 * `TauCeti.ValuationSpectrum.presentationLimitPresheaf` : the presheaf they assemble into.
 
+## Main results
+
+* `TauCeti.ValuationSpectrum.presentationLimit_hom_ext` : two morphisms into the limit agree as
+  soon as their projections do.
+* `TauCeti.ValuationSpectrum.presentationLimitMap_comp_π` : restriction is reindexing —
+  restricting and then projecting is projecting at the same presentation.
+* `TauCeti.ValuationSpectrum.presentationLimitMap_refl` and
+  `TauCeti.ValuationSpectrum.presentationLimitMap_comp` : the two functor laws, as normal forms
+  for a restriction map along `le_refl` and for a composite of two restriction maps.
+
 ## Why the index is presentations and not subsets
 
 `A⟨T/s⟩` is built from the data `(T, s)`, and two presentations of the *same* rational subset give
@@ -134,38 +144,12 @@ noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V
     presentationLimit (P := P) Aplus V ⟶ presentationLimit (P := P) Aplus W :=
   limit.pre (presentationIndexDiagram (P := P) Aplus V) (presentationIndexRestrict (P := P) h)
 
-/-- **The presheaf `V ↦ presentationLimit V`** on `Spa(A,A⁺)`, valued in
-`CompleteSeparatedTopCommRingCat`. Both functor laws are reindexing identities for the limit:
-restricting along `le_refl` is the identity on the index, and restricting twice is restricting
-once. Wedhorn §8.1's `𝒪_X` is this presheaf only once presentation-independence is available.
-
-`@[expose]` is load-bearing: without it the body is sealed, and the `_obj`/`_map` evaluation
-lemmas below do not merely fail to prove by `rfl` — their statements fail to elaborate. -/
-@[expose]
-noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Subring A) :
-    (Opens ↥(spa Aplus))ᵒᵖ ⥤ CompleteSeparatedTopCommRingCat.{v} where
-  obj V := presentationLimit (P := P) Aplus V.unop
-  map h := presentationLimitMap (P := P) (leOfHom h.unop)
-  map_id V := by
-    apply limit.hom_ext
-    intro j
-    -- `erw` rather than `rw`: `presentationIndexRestrict (le_refl V)` is only definitionally the
-    -- identity functor, so `limit.pre_π`'s `π` index does not match syntactically and `rw`
-    -- reports "Did not find an occurrence of the pattern". `simp [limit.pre_π]` and
-    -- `simpa using limit.pre_π …` fail for the same reason.
-    erw [limit.pre_π, Category.id_comp]
-    rfl
-  map_comp {X Y Z} f g := by
-    simp only [presentationLimitMap]
-    exact (limit.pre_pre (presentationIndexDiagram (P := P) Aplus X.unop)
-      (presentationIndexRestrict (P := P) (leOfHom f.unop))
-      (presentationIndexRestrict (P := P) (leOfHom g.unop))).symm
-
 /-! ### The limit's characteristic API
 
-`presentationLimit` is a `limit`, and these three declarations are the interface a consumer needs:
-a named projection, its compatibility with refinement, and the universal property in `lift`/`ext`
-form. Together they mean downstream comparison and uniqueness proofs never unfold the definition.
+`presentationLimit` is a `limit`, and these declarations are the interface a consumer needs: a
+named projection with its compatibility with refinement, the universal property in `lift`/`ext`
+form, and normal forms for the restriction maps. Together they mean downstream comparison and
+uniqueness proofs never unfold the definition — the presheaf below is itself assembled from them.
 -/
 
 /-- **The projection of `presentationLimit` at an index.** -/
@@ -196,12 +180,18 @@ theorem presentationLimitLift_comp_π (Aplus : Subring A) (V : Opens ↥(spa Apl
     presentationLimitLift (P := P) Aplus V s ≫ presentationLimitπ (P := P) Aplus V i = s.π.app i :=
   limit.lift_π _ _
 
-/-- **Restriction is reindexing**: restricting to `W` and then projecting at an index of `W` is
-projecting at the same presentation viewed as an index of `V`.
+/-- **Extensionality**: maps into the limit agree when their projections do. -/
+theorem presentationLimit_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
+    {f g : W ⟶ presentationLimit (P := P) Aplus V}
+    (h : ∀ i, f ≫ presentationLimitπ (P := P) Aplus V i =
+      g ≫ presentationLimitπ (P := P) Aplus V i) : f = g :=
+  limit.hom_ext h
 
-Stating this needs `presentationIndexDiagram` exposed: `(diagram W).obj i` and
-`(diagram V).obj ((restrict h).obj i)` are definitionally equal, and sealed they cannot be seen
-to be — the same reason `map_id` below reaches for `erw`. -/
+/-- **Restriction is reindexing**: restricting to `W` and then projecting at an index of `W` is
+projecting at the same presentation viewed as an index of `V`. -/
+-- Stating this needs the index functors exposed: `(diagram W).obj i` and
+-- `(diagram V).obj ((restrict h).obj i)` are definitionally equal, and sealed they cannot be
+-- seen to be — the same reason `map_id` reaches for `erw`.
 @[simp]
 theorem presentationLimitMap_comp_π {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
     (i : PresentationIndex (P := P) Aplus W) :
@@ -209,12 +199,43 @@ theorem presentationLimitMap_comp_π {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
       presentationLimitπ (P := P) Aplus V ((presentationIndexRestrict (P := P) h).obj i) :=
   limit.pre_π _ _ _
 
-/-- **Extensionality**: maps into the limit agree when their projections do. -/
-theorem presentationLimit_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
-    {f g : W ⟶ presentationLimit (P := P) Aplus V}
-    (h : ∀ i, f ≫ presentationLimitπ (P := P) Aplus V i =
-      g ≫ presentationLimitπ (P := P) Aplus V i) : f = g :=
-  limit.hom_ext h
+/-- **Restricting along `le_refl` is the identity.** -/
+@[simp]
+theorem presentationLimitMap_refl (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
+    presentationLimitMap (P := P) (le_refl V) = 𝟙 (presentationLimit (P := P) Aplus V) := by
+  apply limit.hom_ext
+  intro j
+  -- `presentationIndexRestrict (le_refl V)` is only definitionally the identity functor, so
+  -- `limit.pre_π`'s index does not match syntactically and `rw` reports no occurrence.
+  erw [limit.pre_π, Category.id_comp]
+  rfl
+
+/-- **Successive restrictions compose** to the restriction along the transitive containment. -/
+@[simp]
+theorem presentationLimitMap_comp {U V W : Opens ↥(spa Aplus)} (h₁ : W ≤ V) (h₂ : U ≤ W) :
+    presentationLimitMap (P := P) h₁ ≫ presentationLimitMap (P := P) h₂ =
+      presentationLimitMap (P := P) (h₂.trans h₁) := by
+  refine presentationLimit_hom_ext (P := P) fun j => ?_
+  -- The last step needs `erw`: the two sides land in `(diagram W).obj i` and
+  -- `(diagram V).obj ((restrict h₁).obj i)`, which are definitionally but not syntactically equal.
+  simp only [Category.assoc, presentationLimitMap_comp_π]
+  erw [presentationLimitMap_comp_π]
+  rfl
+
+/-- **The presheaf `V ↦ presentationLimit V`** on `Spa(A,A⁺)`, valued in
+`CompleteSeparatedTopCommRingCat`. Both functor laws are reindexing identities for the limit:
+restricting along `le_refl` is the identity on the index, and restricting twice is restricting
+once. Wedhorn §8.1's `𝒪_X` is this presheaf only once presentation-independence is available. -/
+-- `@[expose]` is load-bearing: sealed, the `_obj`/`_map` evaluation lemmas below do not merely
+-- fail to prove by `rfl` — their statements fail to elaborate.
+@[expose]
+noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Subring A) :
+    (Opens ↥(spa Aplus))ᵒᵖ ⥤ CompleteSeparatedTopCommRingCat.{v} where
+  obj V := presentationLimit (P := P) Aplus V.unop
+  map h := presentationLimitMap (P := P) (leOfHom h.unop)
+  map_id V := presentationLimitMap_refl (P := P) Aplus V.unop
+  map_comp f g := (presentationLimitMap_comp (P := P) (leOfHom f.unop) (leOfHom g.unop)).symm
+
 
 /-- Evaluating the presheaf on an open is the limit over that open. -/
 @[simp]
