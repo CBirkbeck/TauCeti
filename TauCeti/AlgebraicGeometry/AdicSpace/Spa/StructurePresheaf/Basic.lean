@@ -7,7 +7,6 @@ module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basic
 public import TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated.RefinementCategory
-public import Mathlib.CategoryTheory.Sites.Sheaf
 public import Mathlib.CategoryTheory.Sites.Spaces
 public import TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Limits
 
@@ -19,7 +18,7 @@ arbitrary open `V ⊆ Spa(A,A⁺)` by the limit over the rational subsets contai
 constructs that limit **indexed by presentations rather than by rational subsets**, and makes it a
 presheaf. It is deliberately not named for `𝒪_X`: see *What this is not, yet* below.
 
-The index is `RationalIndex`: a presentation together with a proof that the rational subset it
+The index is `PresentationIndex`: a presentation together with a proof that the rational subset it
 presents lies in `V`, ordered by refinement. `RefinementCategory` already makes the assignment
 `p ↦ A⟨p.num / p.den⟩` functorial on presentations, so the diagram is obtained by restricting that
 functor along the forgetful map, and the value is its limit — which exists because
@@ -27,9 +26,9 @@ functor along the forgetful map, and the value is its limit — which exists bec
 
 ## Main definitions
 
-* `TauCeti.ValuationSpectrum.spaOpens` : the rational subset of a presentation, as an open.
-* `TauCeti.ValuationSpectrum.RationalIndex` : the index category for an open.
-* `TauCeti.ValuationSpectrum.rationalIndexDiagram` : the diagram it indexes.
+* `TauCeti.ValuationSpectrum.PresentationIndex` : the index category for an open — presentations
+  whose numerator ideal is open, so that the basic open they present really is a rational subset.
+* `TauCeti.ValuationSpectrum.presentationIndexDiagram` : the diagram it indexes.
 * `TauCeti.ValuationSpectrum.presentationLimit` : the limit itself.
 * `TauCeti.ValuationSpectrum.presentationLimitMap` : the restriction morphism of a containment.
 * `TauCeti.ValuationSpectrum.presentationLimitPresheaf` : the presheaf they assemble into.
@@ -58,6 +57,13 @@ exists, restriction along a containment is reindexing, and the two functor laws 
 ## References
 
 * [T. Wedhorn, *Adic Spaces*][wedhorn_adic] (arXiv:1910.05934v1), §8.1.
+
+## Provenance
+
+The idea of indexing the limit by presentations, and the refinement relation ordering them, were
+adapted from AINTLIB (Apache-2.0), commit `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`,
+`projects/AdicSpaces/Adic spaces/RestrictedLimitSheaf.lean`. The Lean here is written against this
+repository's own `RefinementCategory` and `PairOfDefinition.Presentation` API; no code was copied.
 -/
 
 namespace TauCeti.ValuationSpectrum
@@ -70,12 +76,6 @@ universe v
 
 variable {A : Type v} [CommRing A] [TopologicalSpace A] [IsTopologicalRing A]
 
-/-- The rational subset a presentation presents, as an open of `Spa(A,A⁺)`. -/
-def spaOpens {P : PairOfDefinition A} (Aplus : Subring A) (p : P.Presentation) :
-    Opens ↥(spa Aplus) :=
-  ⟨Subtype.val ⁻¹' rationalSubset Aplus p.num p.den,
-    isOpen_val_preimage_rationalSubset Aplus p.num p.den⟩
-
 /-- **The index of the limit**: presentations whose numerator ideal is open and whose rational
 subset lies in `V`.
 
@@ -84,32 +84,32 @@ in Wedhorn's sense rather than a general basic open — it is the defining condi
 `TauCeti.ValuationSpectrum.spaRationalFamily`. Carrying it as a field of the index restricts the
 diagram to admissible presentations; because it is a field, every object supplies its own proof
 and the refinement morphisms carry no preservation obligation. -/
-structure RationalIndex {P : PairOfDefinition A} (Aplus : Subring A)
+structure PresentationIndex {P : PairOfDefinition A} (Aplus : Subring A)
     (V : Opens ↥(spa Aplus)) where
   /-- The presentation. -/
   pres : P.Presentation
   /-- Its numerator ideal is open, so the subset it presents is rational. -/
   isOpen_span : IsOpen (Ideal.span (pres.num : Set A) : Set A)
   /-- Its rational subset is contained in `V`. -/
-  le_open : spaOpens Aplus pres ≤ V
+  le_open : spaBasicOpen Aplus pres.num pres.den ≤ V
 
 variable {P : PairOfDefinition A} {Aplus : Subring A} {V : Opens ↥(spa Aplus)}
 
 /-- Refinement of the underlying presentations orders the index. -/
-instance : Preorder (RationalIndex (P := P) Aplus V) :=
-  Preorder.lift RationalIndex.pres
+instance : Preorder (PresentationIndex (P := P) Aplus V) :=
+  Preorder.lift PresentationIndex.pres
 
 /-- Forgetting the containment is a functor to the category of all presentations. -/
-def rationalIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
-    RationalIndex (P := P) Aplus V ⥤ P.Presentation where
+def presentationIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
+    PresentationIndex (P := P) Aplus V ⥤ P.Presentation where
   obj i := i.pres
   map h := homOfLE h.le
 
 /-- **The diagram the limit is taken over**: each admissible presentation refining `V` contributes
 `A⟨T/s⟩`, and a refinement contributes its restriction morphism. -/
-noncomputable def rationalIndexDiagram (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
-    RationalIndex (P := P) Aplus V ⥤ CompleteSeparatedTopCommRingCat.{v} :=
-  rationalIndexInclusion Aplus V ⋙ P.presentationFunctor
+noncomputable def presentationIndexDiagram (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
+    PresentationIndex (P := P) Aplus V ⥤ CompleteSeparatedTopCommRingCat.{v} :=
+  presentationIndexInclusion Aplus V ⋙ P.presentationFunctor
 
 /-- **The limit over the presentations refining `V`**, `lim_{R(T/s) ⊆ V} A⟨T/s⟩` — Wedhorn §8.1's
 formula for `𝒪_X(V)`, but indexed by presentations rather than by rational subsets. The limit
@@ -117,12 +117,12 @@ exists because `CompleteSeparatedTopCommRingCat` has all small limits. This is *
 `𝒪_X(V)`; see the module docstring. -/
 noncomputable def presentationLimit (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     CompleteSeparatedTopCommRingCat.{v} :=
-  limit (rationalIndexDiagram (P := P) Aplus V)
+  limit (presentationIndexDiagram (P := P) Aplus V)
 
 /-- Restricting the containment reindexes the diagram: a presentation refining `W` refines `V`
 whenever `W ≤ V`. -/
-def rationalIndexRestrict {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
-    RationalIndex (P := P) Aplus W ⥤ RationalIndex (P := P) Aplus V where
+def presentationIndexRestrict {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
+    PresentationIndex (P := P) Aplus W ⥤ PresentationIndex (P := P) Aplus V where
   obj i := ⟨i.pres, i.isOpen_span, i.le_open.trans h⟩
   map f := homOfLE f.le
 
@@ -130,12 +130,16 @@ def rationalIndexRestrict {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
 refining `V` maps to the limit over the smaller index, by reindexing. -/
 noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
     presentationLimit (P := P) Aplus V ⟶ presentationLimit (P := P) Aplus W :=
-  limit.pre (rationalIndexDiagram (P := P) Aplus V) (rationalIndexRestrict (P := P) h)
+  limit.pre (presentationIndexDiagram (P := P) Aplus V) (presentationIndexRestrict (P := P) h)
 
 /-- **The presheaf `V ↦ presentationLimit V`** on `Spa(A,A⁺)`, valued in
 `CompleteSeparatedTopCommRingCat`. Both functor laws are reindexing identities for the limit:
 restricting along `le_refl` is the identity on the index, and restricting twice is restricting
-once. Wedhorn §8.1's `𝒪_X` is this presheaf only once presentation-independence is available. -/
+once. Wedhorn §8.1's `𝒪_X` is this presheaf only once presentation-independence is available.
+
+`@[expose]` is load-bearing: without it the body is sealed, and the `_obj`/`_map` evaluation
+lemmas below do not merely fail to prove by `rfl` — their statements fail to elaborate. -/
+@[expose]
 noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Subring A) :
     (Opens ↥(spa Aplus))ᵒᵖ ⥤ CompleteSeparatedTopCommRingCat.{v} where
   obj V := presentationLimit (P := P) Aplus V.unop
@@ -143,7 +147,7 @@ noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Su
   map_id V := by
     apply limit.hom_ext
     intro j
-    -- `erw` rather than `rw`: `rationalIndexRestrict (le_refl V)` is only definitionally the
+    -- `erw` rather than `rw`: `presentationIndexRestrict (le_refl V)` is only definitionally the
     -- identity functor, so `limit.pre_π`'s `π` index does not match syntactically and `rw`
     -- reports "Did not find an occurrence of the pattern". `simp [limit.pre_π]` and
     -- `simpa using limit.pre_π …` fail for the same reason.
@@ -151,9 +155,65 @@ noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Su
     rfl
   map_comp {X Y Z} f g := by
     simp only [presentationLimitMap]
-    exact (limit.pre_pre (rationalIndexDiagram (P := P) Aplus X.unop)
-      (rationalIndexRestrict (P := P) (leOfHom f.unop))
-      (rationalIndexRestrict (P := P) (leOfHom g.unop))).symm
+    exact (limit.pre_pre (presentationIndexDiagram (P := P) Aplus X.unop)
+      (presentationIndexRestrict (P := P) (leOfHom f.unop))
+      (presentationIndexRestrict (P := P) (leOfHom g.unop))).symm
+
+/-! ### The limit's characteristic API
+
+`presentationLimit` is a `limit`, and these three declarations are the interface a consumer needs:
+a named projection, its compatibility with refinement, and the universal property in `lift`/`ext`
+form. Together they mean downstream comparison and uniqueness proofs never unfold the definition.
+-/
+
+/-- **The projection of `presentationLimit` at an index.** -/
+noncomputable def presentationLimitπ (Aplus : Subring A) (V : Opens ↥(spa Aplus))
+    (i : PresentationIndex (P := P) Aplus V) :
+    presentationLimit (P := P) Aplus V ⟶ (presentationIndexDiagram (P := P) Aplus V).obj i :=
+  limit.π _ i
+
+/-- The projections are compatible with refinement: projecting then restricting is projecting
+at the finer index. -/
+@[simp]
+theorem presentationLimitπ_comp_map {i j : PresentationIndex (P := P) Aplus V} (h : i ⟶ j) :
+    presentationLimitπ (P := P) Aplus V i ≫ (presentationIndexDiagram (P := P) Aplus V).map h =
+      presentationLimitπ (P := P) Aplus V j :=
+  limit.w _ h
+
+/-- **The universal property**: a cone over the diagram factors through the limit. -/
+noncomputable def presentationLimitLift (Aplus : Subring A) (V : Opens ↥(spa Aplus))
+    (s : Cone (presentationIndexDiagram (P := P) Aplus V)) :
+    s.pt ⟶ presentationLimit (P := P) Aplus V :=
+  limit.lift _ s
+
+/-- The lift of a cone is a factorisation: composing it with a projection recovers the cone leg. -/
+@[simp]
+theorem presentationLimitLift_comp_π (Aplus : Subring A) (V : Opens ↥(spa Aplus))
+    (s : Cone (presentationIndexDiagram (P := P) Aplus V))
+    (i : PresentationIndex (P := P) Aplus V) :
+    presentationLimitLift (P := P) Aplus V s ≫ presentationLimitπ (P := P) Aplus V i = s.π.app i :=
+  limit.lift_π _ _
+
+/-- **Extensionality**: maps into the limit agree when their projections do. -/
+theorem presentationLimit_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
+    {f g : W ⟶ presentationLimit (P := P) Aplus V}
+    (h : ∀ i, f ≫ presentationLimitπ (P := P) Aplus V i =
+      g ≫ presentationLimitπ (P := P) Aplus V i) : f = g :=
+  limit.hom_ext h
+
+/-- Evaluating the presheaf on an open is the limit over that open. -/
+@[simp]
+theorem presentationLimitPresheaf_obj (P : PairOfDefinition A) (Aplus : Subring A)
+    (V : (Opens ↥(spa Aplus))ᵒᵖ) :
+    (presentationLimitPresheaf P Aplus).obj V = presentationLimit (P := P) Aplus V.unop :=
+  rfl
+
+/-- The presheaf's action on a containment is the reindexing map. -/
+@[simp]
+theorem presentationLimitPresheaf_map (P : PairOfDefinition A) (Aplus : Subring A)
+    {V W : (Opens ↥(spa Aplus))ᵒᵖ} (h : V ⟶ W) :
+    (presentationLimitPresheaf P Aplus).map h = presentationLimitMap (P := P) (leOfHom h.unop) :=
+  rfl
 
 end
 

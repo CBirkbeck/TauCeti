@@ -187,6 +187,13 @@ theorem isOpen_val_preimage_rationalSubset (Aplus : Subring A) (T : Finset A) (s
   rw [val_preimage_rationalSubset]
   exact (isOpen_basicOpenFinset T s).preimage continuous_subtype_val
 
+/-- **The basic open `R(T/s)`, as an `Opens` of `spa A⁺`.** This packages
+`rationalSubset` with its openness; it is a *rational* subset in Wedhorn's sense exactly when
+`Ideal.span (T : Set A)` is open, which is not assumed here. -/
+def spaBasicOpen (Aplus : Subring A) (T : Finset A) (s : A) :
+    TopologicalSpace.Opens ↥(spa Aplus) :=
+  ⟨Subtype.val ⁻¹' rationalSubset Aplus T s, isOpen_val_preimage_rationalSubset Aplus T s⟩
+
 open scoped Classical Pointwise in
 /-- **The set-level half of Wedhorn Remark 7.30(5)**: writing `Uᵢ = insert sᵢ Tᵢ` for each
 numerator set augmented by its own denominator,
