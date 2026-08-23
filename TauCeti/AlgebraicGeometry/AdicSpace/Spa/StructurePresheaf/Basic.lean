@@ -170,7 +170,10 @@ noncomputable def presentationLimitπ (Aplus : Subring A) (V : Opens ↥(spa Apl
     presentationLimit (P := P) Aplus V ⟶ (presentationIndexDiagram (P := P) Aplus V).obj i :=
   limit.π _ i
 
-/-- **Extensionality**: maps into the limit agree when their projections do. -/
+/-- **Extensionality**: maps into the limit agree when their projections do. Tagged `@[ext]` so
+`ext` can discover it: `presentationLimit` is sealed, so `limit.hom_ext` is not reachable through
+it from another module. -/
+@[ext]
 theorem presentationLimit_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
     {f g : W ⟶ presentationLimit (P := P) Aplus V}
     (h : ∀ i, f ≫ presentationLimitπ (P := P) Aplus V i =
