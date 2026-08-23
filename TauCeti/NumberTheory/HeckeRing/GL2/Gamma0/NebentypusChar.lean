@@ -34,6 +34,9 @@ of the one attached to a group element acting on forms. It is inherited directly
 
 ## Main results
 
+* `HeckeRing.GL2.delta0NebentypusChar_apply`: the defining equation, and the only route to it
+  from outside this file — the definition's body is not exposed, so `simp`, `rfl` and
+  `MonoidHom.comp_apply` cannot recover it downstream.
 * `HeckeRing.GL2.delta0NebentypusChar_mapGL`: on `Γ₀(N)` it is inverse to `χ ∘ Gamma0Map`.
 
 ## References
@@ -62,17 +65,26 @@ already a `MonoidHom`, so no hypothesis is needed on `χ` beyond being one. -/
 noncomputable def delta0NebentypusChar (χ : (ZMod N)ˣ →* ℂˣ) : Delta0 N →* ℂˣ :=
   χ.comp (Delta0UpperUnit N)
 
-/-- The defining equation. Deliberately **not** `@[simp]`: it shares a left-hand side with
-`delta0NebentypusChar_mapGL`, which is the normal form worth rewriting towards, and tagging
-both would let this one fire first and leave that one unable to apply. -/
-lemma delta0NebentypusChar_apply (χ : (ZMod N)ˣ →* ℂˣ) (g : Delta0 N) :
+/-- **The defining equation**, and the only route to it from outside this file. The definition
+sits in a `public section` without `@[expose]`, so its body is sealed to any module that
+exports a theorem — which is every module here. Downstream, `rfl`, `unfold` and
+`simp [delta0NebentypusChar]` all fail (the last with *"Expected a definition with an exposed
+body"*), and `MonoidHom.comp_apply` finds no occurrence to rewrite. Hence the `(rfl)` proof:
+inside the defining module the body is visible, and the parenthesised form elaborates against
+it where a bare `rfl` would export the defeq and be refused. -/
+@[simp] lemma delta0NebentypusChar_apply (χ : (ZMod N)ˣ →* ℂˣ) (g : Delta0 N) :
     delta0NebentypusChar N χ g = χ (Delta0UpperUnit N g) := (rfl)
 
 /-- **On `Γ₀(N)` the twisting character is inverse to the nebentypus.** `Delta0UpperUnit`
 restricts to the inverse of `Gamma0Map` there, because `ad ≡ 1`; applying `χ` carries the
 inverse across. Reading this character as an extension of the nebentypus and dropping the
-inverse would negate every twist downstream. -/
-@[simp] lemma delta0NebentypusChar_mapGL (χ : (ZMod N)ˣ →* ℂˣ) (γ : Gamma0 N) :
+inverse would negate every twist downstream.
+
+Not `@[simp]`, and it does not need to be: with `delta0NebentypusChar_apply` tagged, `simp`
+reaches this statement on its own through the already-`@[simp]` `Delta0UpperUnit_mapGL` and
+`map_inv`. Measured — tagging both makes `simpNF` report *"simp can prove this"* on this
+lemma. It is kept as the named specialization, which is the form the twisted Hecke ring cites. -/
+lemma delta0NebentypusChar_mapGL (χ : (ZMod N)ˣ →* ℂˣ) (γ : Gamma0 N) :
     delta0NebentypusChar N χ ⟨_, mapGL_mem_Delta0 N γ⟩ =
       (χ ((Gamma0Map N).toHomUnits γ))⁻¹ := by
   rw [delta0NebentypusChar_apply, Delta0UpperUnit_mapGL, map_inv]
