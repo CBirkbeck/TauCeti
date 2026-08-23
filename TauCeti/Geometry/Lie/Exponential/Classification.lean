@@ -89,6 +89,43 @@ private theorem tendsto_continuousOneParameterLog [FiniteDimensional ℝ E] [Lie
   rw [mulInvariantLog_one] at hlog
   refine hlog.congr' (Filter.Eventually.of_forall fun _ => rfl)
 
+/-- **Exponential halving along a one-parameter subgroup.** If `a` exponentiates to `φ` at `s + s`
+and `b` exponentiates to `φ` at `s`, then `a` and `2 • b` have the same exponential. -/
+private theorem mulInvariantExp_eq_mulInvariantExp_two_smul [FiniteDimensional ℝ E]
+    [LieGroup I ∞ G] [T2Space G] [BoundarylessManifold I G]
+    (φ : ContinuousMonoidHom (Multiplicative ℝ) G) {a b : E} {s : ℝ}
+    (ha : mulInvariantExp (I := I) (G := G) (a : GroupLieAlgebra I G) =
+      φ (Multiplicative.ofAdd (s + s)))
+    (hb : mulInvariantExp (I := I) (G := G) (b : GroupLieAlgebra I G) =
+      φ (Multiplicative.ofAdd s)) :
+    mulInvariantExp (I := I) (G := G) (a : GroupLieAlgebra I G) =
+      mulInvariantExp (I := I) (G := G) (((2 : ℝ) • b : E) : GroupLieAlgebra I G) := by
+  -- `φ` turns the doubled parameter into a square, and the exponential turns the square back
+  -- into a doubled Lie-algebra element.
+  have hsmul : (((2 : ℝ) • b : E) : GroupLieAlgebra I G) =
+      (2 : ℝ) • (b : GroupLieAlgebra I G) :=
+    (groupLieAlgebraEquivModelVectorSpace (I := I) (G := G)).symm.map_smul (2 : ℝ) b
+  calc
+    mulInvariantExp (I := I) (G := G) (a : GroupLieAlgebra I G) =
+        φ (Multiplicative.ofAdd (s + s)) := ha
+    _ = φ (Multiplicative.ofAdd s) * φ (Multiplicative.ofAdd s) := by
+      rw [ofAdd_add, map_mul]
+    _ = mulInvariantExp (I := I) (G := G) (b : GroupLieAlgebra I G) *
+        mulInvariantExp (I := I) (G := G) (b : GroupLieAlgebra I G) := by rw [hb]
+    _ = mulInvariantExp (I := I) (G := G) (((1 : ℝ) + 1) • (b : GroupLieAlgebra I G)) := by
+      calc
+        mulInvariantExp (I := I) (G := G) (b : GroupLieAlgebra I G) *
+              mulInvariantExp (I := I) (G := G) (b : GroupLieAlgebra I G) =
+            mulInvariantExp (I := I) (G := G) ((1 : ℝ) • (b : GroupLieAlgebra I G)) *
+              mulInvariantExp (I := I) (G := G) ((1 : ℝ) • (b : GroupLieAlgebra I G)) := by
+          rw [one_smul]
+        _ = mulInvariantExp (I := I) (G := G) (((1 : ℝ) + 1) • (b : GroupLieAlgebra I G)) :=
+        (mulInvariantExp_add_smul (I := I) (G := G)
+          (b : GroupLieAlgebra I G) (1 : ℝ) (1 : ℝ)).symm
+    _ = mulInvariantExp (I := I) (G := G) (((2 : ℝ) • b : E) : GroupLieAlgebra I G) := by
+      rw [hsmul]
+      norm_num
+
 /-- At sufficiently small dyadic times, the local logarithm scales exactly under time halving. -/
 private theorem eventually_continuousOneParameterLog_eq_two_smul_succ [FiniteDimensional ℝ E]
     [LieGroup I ∞ G] [T2Space G] [BoundarylessManifold I G]
@@ -118,39 +155,8 @@ private theorem eventually_continuousOneParameterLog_eq_two_smul_succ [FiniteDim
     (tendsto_add_atTop_nat 1).eventually hexp
   filter_upwards [hvU, htwoU, hexp, hexpSucc] with n hvn htwon hexpn hexpSuccn
   apply hinj hvn htwon
-  calc
-    mulInvariantExp (I := I) (G := G) (v n : GroupLieAlgebra I G) =
-        φ (Multiplicative.ofAdd (dyadicStep n)) := hexpn
-    _ = φ (Multiplicative.ofAdd
-        (dyadicStep (n + 1) + dyadicStep (n + 1))) := by
-      rw [← dyadicStep_eq_add_succ]
-    _ = φ (Multiplicative.ofAdd (dyadicStep (n + 1))) *
-        φ (Multiplicative.ofAdd (dyadicStep (n + 1))) := by
-      rw [ofAdd_add, map_mul]
-    _ = mulInvariantExp (I := I) (G := G) (v (n + 1) : GroupLieAlgebra I G) *
-        mulInvariantExp (I := I) (G := G) (v (n + 1) : GroupLieAlgebra I G) := by
-      rw [hexpSuccn]
-    _ = mulInvariantExp (I := I) (G := G)
-        (((1 : ℝ) + 1) • (v (n + 1) : GroupLieAlgebra I G)) := by
-      calc
-        mulInvariantExp (I := I) (G := G) (v (n + 1) : GroupLieAlgebra I G) *
-              mulInvariantExp (I := I) (G := G) (v (n + 1) : GroupLieAlgebra I G) =
-            mulInvariantExp (I := I) (G := G)
-                ((1 : ℝ) • (v (n + 1) : GroupLieAlgebra I G)) *
-              mulInvariantExp (I := I) (G := G)
-                ((1 : ℝ) • (v (n + 1) : GroupLieAlgebra I G)) := by rw [one_smul]
-        _ = mulInvariantExp (I := I) (G := G)
-            (((1 : ℝ) + 1) • (v (n + 1) : GroupLieAlgebra I G)) :=
-        (mulInvariantExp_add_smul (I := I) (G := G)
-          (v (n + 1) : GroupLieAlgebra I G) (1 : ℝ) (1 : ℝ)).symm
-    _ = mulInvariantExp (I := I) (G := G)
-        (((2 : ℝ) • v (n + 1) : E) : GroupLieAlgebra I G) := by
-      have hsmul : (((2 : ℝ) • v (n + 1) : E) : GroupLieAlgebra I G) =
-          (2 : ℝ) • (v (n + 1) : GroupLieAlgebra I G) :=
-        (groupLieAlgebraEquivModelVectorSpace (I := I) (G := G)).symm.map_smul
-          (2 : ℝ) (v (n + 1))
-      rw [hsmul]
-      norm_num
+  exact mulInvariantExp_eq_mulInvariantExp_two_smul φ
+    (by rw [hexpn, dyadicStep_eq_add_succ]) hexpSuccn
 
 /-- The rescaled dyadic logarithm whose eventual constancy determines the generator. -/
 private noncomputable def continuousOneParameterGeneratorApprox [FiniteDimensional ℝ E]
