@@ -230,19 +230,10 @@ theorem connectedComponents_rationalKernelPoint_eq_iff
   have hN := CommHopfAlgCat.quotientPointsSubgroup_normal H.obj
     (HopfAlgebra.identityComponentHopfIdeal (k := k) (H := H))
     (isNormal_identityComponentHopfIdeal H) (CommAlgCat.of k k)
-  rw [ConnectedComponents.coe_eq_coe, eq_comm, connectedComponent_eq_iff_mem,
+  -- Translation produces the right quotient `h * g⁻¹`; normality reorients it to the left one.
+  rw [eq_comm, ConnectedComponents.coe_eq_coe',
     mem_connectedComponent_rationalKernelPoint_iff]
-  constructor
-  · intro hh
-    have hc := hN.conj_mem (h * g⁻¹) hh g⁻¹
-    have heq : g⁻¹ * (h * g⁻¹) * (g⁻¹)⁻¹ = g⁻¹ * h := by group
-    rw [heq] at hc
-    exact hc
-  · intro hh
-    have hc := hN.conj_mem (g⁻¹ * h) hh g
-    have heq : g * (g⁻¹ * h) * g⁻¹ = h * g⁻¹ := by group
-    rw [heq] at hc
-    exact hc
+  exact hN.mem_comm_iff
 
 /-- Send a rational point to the connected component containing its kernel point. This descends
 to the quotient by `H⁰(k)`. -/
