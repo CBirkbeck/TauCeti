@@ -192,6 +192,32 @@ private theorem one_ne_neg_one (htwo : (2 : K) ≠ 0) : (1 : K) ≠ -1 := by
   have h2 : (2 : K) = 1 - -1 := by ring
   rw [h2, ← h, sub_self]
 
+/-- **A difference of diagonal units fills in the row and the column through `b`.** A Lie ideal
+containing `E_bb - Eₐₐ` for some `a ≠ b` contains every matrix unit `E_bp` and `E_pb` with `p ≠ b`,
+at every scalar. -/
+private theorem single_row_col_mem_of_single_self_sub_single_self_mem (htwo : (2 : K) ≠ 0)
+    {a b : n} (hab : a ≠ b) (hsub : single b b (1 : K) - single a a (1 : K) ∈ I) (p : n)
+    (hpb : p ≠ b) (c : K) : single b p c ∈ I ∧ single p b c ∈ I := by
+  -- `E_bb - Eₐₐ` separates `b` from `p`: its `(b, b)` entry is `1`, while at `p` it is `-1` when
+  -- `p = a` and `0` otherwise
+  have hsep : (single b b (1 : K) - single a a (1 : K)) b b
+      ≠ (single b b (1 : K) - single a a (1 : K)) p p := by
+    have hlhs : (single b b (1 : K) - single a a (1 : K)) b b = 1 := by
+      simp [hab]
+    rw [hlhs]
+    rcases eq_or_ne p a with hpa | hpa
+    · rw [hpa]
+      have hrhs : (single b b (1 : K) - single a a (1 : K)) a a = -1 := by
+        simp [hab.symm]
+      rw [hrhs]
+      exact one_ne_neg_one htwo
+    · have hrhs : (single b b (1 : K) - single a a (1 : K)) p p = 0 := by
+        simp [hpb.symm, hpa.symm]
+      rw [hrhs]
+      exact one_ne_zero
+  exact ⟨single_mem_of_single_self_sub_single_self_mem I hsub hsep c,
+    single_mem_of_single_self_sub_single_self_mem I hsub hsep.symm c⟩
+
 /-- **One off-diagonal matrix unit generates `sl n K`**: a Lie ideal of `gl n K` containing `Eₐb`
 for some `a ≠ b` contains every trace-zero matrix. -/
 theorem slIdeal_le_of_single_mem (htwo : (2 : K) ≠ 0) {a b : n} (hab : a ≠ b)
@@ -201,25 +227,8 @@ theorem slIdeal_le_of_single_mem (htwo : (2 : K) ≠ 0) {a b : n} (hab : a ≠ b
     have h := I.lie_mem (x := single b a (1 : K)) hmem
     rwa [lie_single_single_eq_sub b a 1] at h
   -- Hence every matrix unit in the row and in the column of `b`.
-  have hrow : ∀ p : n, p ≠ b → ∀ c : K, single b p c ∈ I ∧ single p b c ∈ I := by
-    intro p hpb c
-    have hsep : (single b b (1 : K) - single a a (1 : K)) b b
-        ≠ (single b b (1 : K) - single a a (1 : K)) p p := by
-      have hlhs : (single b b (1 : K) - single a a (1 : K)) b b = 1 := by
-        simp [hab]
-      rw [hlhs]
-      rcases eq_or_ne p a with hpa | hpa
-      · rw [hpa]
-        have hrhs : (single b b (1 : K) - single a a (1 : K)) a a = -1 := by
-          simp [hab.symm]
-        rw [hrhs]
-        exact one_ne_neg_one htwo
-      · have hrhs : (single b b (1 : K) - single a a (1 : K)) p p = 0 := by
-          simp [hpb.symm, hpa.symm]
-        rw [hrhs]
-        exact one_ne_zero
-    exact ⟨single_mem_of_single_self_sub_single_self_mem I hsub hsep c,
-      single_mem_of_single_self_sub_single_self_mem I hsub hsep.symm c⟩
+  have hrow (p : n) (hpb : p ≠ b) (c : K) : single b p c ∈ I ∧ single p b c ∈ I :=
+    single_row_col_mem_of_single_self_sub_single_self_mem I htwo hab hsub p hpb c
   -- Hence every difference of diagonal units.
   have hdiff : ∀ (p q : n) (c : K), single p p c - single q q c ∈ I := by
     have key : ∀ (p : n) (c : K), single p p c - single b b c ∈ I := by
