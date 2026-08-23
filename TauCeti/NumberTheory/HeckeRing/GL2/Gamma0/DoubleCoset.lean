@@ -38,7 +38,7 @@ Ported from the AINTLIB `LeanModularForms` project
 ## Main results
 
 * `HeckeRing.GL2.Gamma0_map_le_SLnZ`: `Γ₀(N) ≤ SL₂(ℤ)` inside `GL₂(ℚ)`.
-* `HeckeRing.GL2.doubleCoset_Gamma0Image_le_doubleCoset_SLnZ`: `Γ₀(N) α Γ₀(N) ⊆ Γ α Γ`.
+* `HeckeRing.GL2.doubleCoset_Gamma0_map_le_doubleCoset_SLnZ`: `Γ₀(N) α Γ₀(N) ⊆ Γ α Γ`.
 * `HeckeRing.GL2.doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0_map`: the equality above.
 
 ## References
@@ -70,15 +70,12 @@ lemma Gamma0_map_le_SLnZ : (Gamma0 N).map (mapGL ℚ) ≤ SLnZ 2 := by
   exact (mem_SLnZ_iff 2).mpr ⟨σ, rfl⟩
 
 /-- `Γ₀(N) α Γ₀(N) ⊆ Γ α Γ`: immediate from `Γ₀(N) ≤ SL₂(ℤ)`. -/
-lemma doubleCoset_Gamma0Image_le_doubleCoset_SLnZ (α : GL (Fin 2) ℚ) :
-    DoubleCoset.doubleCoset α (Gamma0Image N) (Gamma0Image N) ⊆
+lemma doubleCoset_Gamma0_map_le_doubleCoset_SLnZ (α : GL (Fin 2) ℚ) :
+    DoubleCoset.doubleCoset α ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) ⊆
       DoubleCoset.doubleCoset α (SLnZ 2) (SLnZ 2) := fun _ hx ↦ by
-  -- this statement is at the folded spelling, so the containment is folded back once here
-  -- rather than at each of the two members
-  have hle : Gamma0Image N ≤ SLnZ 2 := Gamma0Image_def N ▸ Gamma0_map_le_SLnZ N
   rw [DoubleCoset.mem_doubleCoset] at hx ⊢
   obtain ⟨γ₁, hγ₁, γ₂, hγ₂, hx_eq⟩ := hx
-  exact ⟨γ₁, hle hγ₁, γ₂, hle hγ₂, hx_eq⟩
+  exact ⟨γ₁, Gamma0_map_le_SLnZ N hγ₁, γ₂, Gamma0_map_le_SLnZ N hγ₂, hx_eq⟩
 
 /-- If `N ∣ c` and `det` is coprime to `N`, then so is the lower-right entry: modulo `N` the
 determinant is `a * d`, so `d` divides a unit. -/
@@ -228,7 +225,13 @@ theorem doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0_map
     obtain ⟨σ₂, rfl⟩ := (mem_SLnZ_iff 2).mp hγ₂
     exact mem_doubleCoset_Gamma0Image_of_mem_Delta0 N α A hA hAN hA11 hdet σ₁ σ₂ hx_delta
   · intro hx
-    refine ⟨doubleCoset_Gamma0Image_le_doubleCoset_SLnZ N α hx, ?_⟩
+    -- the goal was folded above to reuse the private folded lemmas, so the unfolded
+    -- containment is folded back once here
+    have hsub : DoubleCoset.doubleCoset α (Gamma0Image N) (Gamma0Image N) ⊆
+        DoubleCoset.doubleCoset α (SLnZ 2) (SLnZ 2) := by
+      rw [Gamma0Image_def N]
+      exact doubleCoset_Gamma0_map_le_doubleCoset_SLnZ N α
+    refine ⟨hsub hx, ?_⟩
     rw [DoubleCoset.mem_doubleCoset] at hx
     obtain ⟨δ₁, hδ₁, δ₂, hδ₂, rfl⟩ := hx
     exact (Delta0 N).mul_mem ((Delta0 N).mul_mem (Gamma0Image_le_Delta0 N hδ₁) hα)
