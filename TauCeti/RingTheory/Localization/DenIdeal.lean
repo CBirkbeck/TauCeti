@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.RingTheory.Ideal.Colon
-public import Mathlib.RingTheory.Localization.FractionRing
 public import Mathlib.RingTheory.Localization.NumDen
 
 /-!
@@ -92,12 +91,10 @@ theorem IsFractionRing.isInteger_mul_of_den_dvd {x : K} {d : R}
     IsLocalization.IsInteger R (algebraMap R K d * x) := by
   obtain ⟨e, he⟩ := h
   refine ⟨e * IsFractionRing.num R x, ?_⟩
-  have hden : algebraMap R K (IsFractionRing.den R x : R) ≠ 0 :=
-    IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors (IsFractionRing.den R x).2
-  have hx : algebraMap R K (IsFractionRing.num R x) =
-      x * algebraMap R K (IsFractionRing.den R x : R) := by
-    rw [← div_eq_iff hden]; exact IsFractionRing.mk'_num_den' R x
-  rw [he, map_mul, map_mul, hx]
+  have hx : x * algebraMap R K (IsFractionRing.den R x : R) =
+      algebraMap R K (IsFractionRing.num R x) :=
+    (IsFractionRing.num_mul_den_eq_num_iff_eq (A := R) (x := x) (y := x)).2 rfl
+  rw [he, map_mul, map_mul, ← hx]
   ring
 
 end NumDen
