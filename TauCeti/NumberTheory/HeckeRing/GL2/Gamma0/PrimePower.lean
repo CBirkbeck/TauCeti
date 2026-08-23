@@ -112,18 +112,17 @@ theorem diagElemGamma0_of_not_coprime {a : Fin 2 → ℕ} (h : ¬ Nat.Coprime (a
     diagElemGamma0 N a = 0 := by
   rw [diagElemGamma0, dite_eq_right_of_eq_false (eq_false h)]
 
-/-- The identity normal form: a tuple that is not everywhere positive gives `1`, since the
-underlying `natDiagGL` degenerates to the identity matrix.
-
-Deliberately **not** `@[simp]`, unlike the `diagCosetGamma0_of_not_pos` it is built on. That
-one takes its coprimality *conditionally*, as `(∀ i, 0 < a i) → Nat.Coprime (a 0) N`, so the
-hypothesis is vacuous in this branch and carried inside the term. `diagElemGamma0` instead
-guards with a `dite`, so this lemma needs `Nat.Coprime (a 0) N` outright — a side condition
-`simp` cannot discharge for a variable `a`, and one on which the `@[simp]`
-`diagElemGamma0_of_not_coprime` takes the *same* left-hand side to `0`. Tagging it makes
-`simpNF` report that the left-hand side never simplifies and the rule would never fire;
-restating the positivity hypothesis in its simp-normal form `0 < a 0 → a 1 = 0` does not
-change that. Both were measured. -/
+-- Deliberately not `@[simp]`, unlike the `diagCosetGamma0_of_not_pos` this is built on. That one
+-- takes its coprimality *conditionally*, as `(∀ i, 0 < a i) → Nat.Coprime (a 0) N`, so the
+-- hypothesis is vacuous in this branch and is carried inside the term. `diagElemGamma0` instead
+-- guards with a `dite`, so this lemma needs `Nat.Coprime (a 0) N` outright — a side condition
+-- `simp` cannot discharge for a variable `a`, and one on which the `@[simp]`
+-- `diagElemGamma0_of_not_coprime` takes the *same* left-hand side to `0`. Tagging it makes
+-- `simpNF` report that the left-hand side never simplifies and the rule would never fire;
+-- restating the positivity hypothesis in its simp-normal form `0 < a 0 → a 1 = 0` does not change
+-- that. Both were measured.
+/-- The identity normal form: a coprime-headed tuple that is not everywhere positive gives `1`,
+since the underlying `natDiagGL` degenerates to the identity matrix. -/
 lemma diagElemGamma0_of_not_pos {a : Fin 2 → ℕ} (hcop : Nat.Coprime (a 0) N)
     (ha : ¬ ∀ i, 0 < a i) : diagElemGamma0 N a = 1 := by
   rw [diagElemGamma0_of_coprime N hcop, diagCosetGamma0_of_not_pos N _ ha]
