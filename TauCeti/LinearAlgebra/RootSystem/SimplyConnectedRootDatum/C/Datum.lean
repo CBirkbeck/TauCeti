@@ -628,8 +628,9 @@ private lemma typeCSimpleRoot_dotProduct_coweight (i : Fin n) {c : ℕ} (hc : c 
       weight_dotProduct_coweight h]
     split_ifs <;> omega
 
-/-- The covector dual to the type `Cₙ` simple roots: the simple-coroot coordinates of
-`e₀ + ⋯ + e_j`. -/
+/-- The cumulative classical coweight: the sum of `coweight n b` over `b ≤ j`. For `j < n` this is
+the simple-coroot coordinate vector of `e₀ + ⋯ + e_j`; out-of-range coweights vanish, so the value
+is constant once `j` reaches `n - 1`. -/
 private def typeCDualVec (n j : ℕ) : Fin n → ℤ := ∑ b ∈ Finset.range (j + 1), coweight n b
 
 /-- Pairing a simple root of type `Cₙ` with the dual covectors is diagonal, with the value `2` on
@@ -657,9 +658,9 @@ private lemma linearIndependent_typeCSimpleRoot (n : ℕ) :
   intro g hg j
   have h := congrArg (· ⬝ᵥ typeCDualVec n (j : ℕ)) hg
   simp only [sum_dotProduct, smul_dotProduct, smul_eq_mul, zero_dotProduct,
-    typeCSimpleRoot_dotProduct_typeCDualVec, mul_ite, mul_zero] at h
+    typeCSimpleRoot_dotProduct_typeCDualVec, mul_ite, mul_zero, mul_one] at h
   rw [Finset.sum_ite_eq' Finset.univ j
-    fun i => if (i : ℕ) + 1 = n then g i * 2 else g i * 1] at h
+    fun i => if (i : ℕ) + 1 = n then g i * 2 else g i] at h
   simp only [Finset.mem_univ, ite_true] at h
   split_ifs at h <;> omega
 
