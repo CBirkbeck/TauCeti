@@ -102,30 +102,9 @@ theorem smoothAffineGroupSchemeProperty_inverseImage
     (smoothAffineGroupSchemeProperty (CommRingCat.of R)).inverseImage
         (commHopfAlgCatOpEquivAffineGroupSchemeCat (CommRingCat.of R)).functor =
       (smoothCommHopfAlgProperty R).op := by
-  ext H
-  let G : AffineGroupSchemeCat (CommRingCat.of R) :=
-    ⟨(hopfSpec (CommRingCat.of R)).obj H, by
-      apply (affineGroupSchemeProperty_iff _).mpr
-      rw [← essImage_hopfSpec]
-      exact ⟨H, ⟨Iso.refl _⟩⟩⟩
-  let e : (commHopfAlgCatOpEquivAffineGroupSchemeCat
-      (CommRingCat.of R)).functor.obj H ≅ G :=
-    (affineGroupSchemeProperty (CommRingCat.of R)).ι.preimageIso
-      ((commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso
-        (CommRingCat.of R)).app H)
-  rw [ObjectProperty.prop_inverseImage_iff,
-    smoothAffineGroupSchemeProperty_iff, ObjectProperty.op_iff,
-    smoothCommHopfAlgProperty_iff]
-  constructor
-  · intro h
-    have hG : smoothAffineGroupSchemeProperty (CommRingCat.of R) G :=
-      (smoothAffineGroupSchemeProperty (CommRingCat.of R)).prop_of_iso e h
-    exact (smoothCommHopfAlgProperty_iff H.unop).mp
-      ((algebraSmooth_iff_smooth_hopfSpec R H.unop).mpr hG)
-  · intro h
-    apply (smoothAffineGroupSchemeProperty (CommRingCat.of R)).prop_of_iso e.symm
-    exact (algebraSmooth_iff_smooth_hopfSpec R H.unop).mp
-      ((smoothCommHopfAlgProperty_iff H.unop).mpr h)
+  apply objectProperty_inverseImage_commHopfAlgCatOpEquiv
+  intro H
+  exact (algebraSmooth_iff_smooth_hopfSpec R H).symm
 
 /-- A finite-type affine group scheme has smooth structural morphism exactly when its coordinate
 algebra supplied by the affine anti-equivalence is smooth. -/

@@ -126,28 +126,10 @@ theorem finiteTypeAffineGroupSchemeProperty_inverseImage
     (finiteTypeAffineGroupSchemeProperty (CommRingCat.of R)).inverseImage
         (commHopfAlgCatOpEquivAffineGroupSchemeCat (CommRingCat.of R)).functor =
       (finiteTypeCommHopfAlgProperty R).op := by
-  ext H
-  let G : AffineGroupSchemeCat (CommRingCat.of R) :=
-    ⟨(hopfSpec (CommRingCat.of R)).obj H, by
-      apply (affineGroupSchemeProperty_iff _).mpr
-      rw [← essImage_hopfSpec]
-      exact ⟨H, ⟨Iso.refl _⟩⟩⟩
-  let e : (commHopfAlgCatOpEquivAffineGroupSchemeCat
-      (CommRingCat.of R)).functor.obj H ≅ G :=
-    (affineGroupSchemeProperty (CommRingCat.of R)).ι.preimageIso
-      ((commHopfAlgCatOpEquivAffineGroupSchemeCat.functorCompιIso
-        (CommRingCat.of R)).app H)
-  rw [ObjectProperty.prop_inverseImage_iff,
-    finiteTypeAffineGroupSchemeProperty_iff, ObjectProperty.op_iff,
-    finiteTypeCommHopfAlgProperty_iff]
-  constructor
-  · intro h
-    have hG : finiteTypeAffineGroupSchemeProperty (CommRingCat.of R) G :=
-      (finiteTypeAffineGroupSchemeProperty (CommRingCat.of R)).prop_of_iso e h
-    exact (algebraFiniteType_iff_locallyOfFiniteType_hopfSpec R H.unop).mpr hG
-  · intro h
-    apply (finiteTypeAffineGroupSchemeProperty (CommRingCat.of R)).prop_of_iso e.symm
-    exact (algebraFiniteType_iff_locallyOfFiniteType_hopfSpec R H.unop).mp h
+  apply objectProperty_inverseImage_commHopfAlgCatOpEquiv
+  intro H
+  rw [finiteTypeAffineGroupSchemeProperty_iff, finiteTypeCommHopfAlgProperty_iff]
+  exact (algebraFiniteType_iff_locallyOfFiniteType_hopfSpec R H).symm
 
 /-- `Spec` as an anti-equivalence from finite-type commutative `R`-Hopf algebras to affine
 group schemes of finite type over `Spec R`.
