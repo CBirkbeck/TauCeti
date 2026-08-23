@@ -61,8 +61,10 @@ namespace HeckeRing.GL2
 
 variable (N : ℕ)
 
-/-- The Atkin-Lehner matrix `w = diag(1, N)`. -/
-noncomputable def atkinLehnerMatrix [NeZero N] : GL (Fin 2) ℚ :=
+/-- The Atkin-Lehner matrix `w = diag(1, N)`. No `NeZero N` is needed to write it down:
+`natDiagGL` takes the junk value `1` when an entry vanishes. The hypothesis appears only where
+the value of `w` is actually read off, from `atkinLehnerHom` onwards. -/
+noncomputable def atkinLehnerMatrix : GL (Fin 2) ℚ :=
   natDiagGL 2 ![1, N]
 
 /-- `ι(g) = w · gᵀ · w⁻¹`, as a homomorphism to the opposite group. -/
