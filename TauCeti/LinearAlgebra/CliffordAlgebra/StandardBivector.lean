@@ -167,7 +167,7 @@ private theorem soToExteriorLinear_standardBivectorToSoLinear
 
 /-- Two elements of the orthogonal Lie algebra with equal coordinates agree on every
 strictly-upper-triangular matrix entry. -/
-private theorem soCoordinates_eq_upper {A B : LieAlgebra.Orthogonal.so (Fin n) R}
+private theorem matrix_apply_eq_of_soCoordinates_eq_of_lt {A B : LieAlgebra.Orthogonal.so (Fin n) R}
     (h : soCoordinates n R A = soCoordinates n R B) {a b : Fin n} (hab : a < b) :
     (A : Matrix (Fin n) (Fin n) R) a b = (B : Matrix (Fin n) (Fin n) R) a b := by
   let e : Fin 2 ↪o Fin n := OrderEmbedding.ofStrictMono ![a, b] (by
@@ -175,24 +175,10 @@ private theorem soCoordinates_eq_upper {A B : LieAlgebra.Orthogonal.so (Fin n) R
     intro k
     fin_cases k
     simpa using hab)
+  -- the coordinate at `{a, b}` is `⅟2` times the `(a, b)` entry, once the bundled map is unfolded
   have hs := congr_fun h (Set.powersetCard.ofFinEmbEquiv e)
-  -- Expose the upper-triangular coordinate selected by the local order embedding.
-  change (⅟ (2 : R)) *
-      (A : Matrix (Fin n) (Fin n) R)
-        (Set.powersetCard.ofFinEmbEquiv.symm
-          (Set.powersetCard.ofFinEmbEquiv e) 0)
-        (Set.powersetCard.ofFinEmbEquiv.symm
-          (Set.powersetCard.ofFinEmbEquiv e) 1) =
-    (⅟ (2 : R)) *
-      (B : Matrix (Fin n) (Fin n) R)
-        (Set.powersetCard.ofFinEmbEquiv.symm
-          (Set.powersetCard.ofFinEmbEquiv e) 0)
-        (Set.powersetCard.ofFinEmbEquiv.symm
-          (Set.powersetCard.ofFinEmbEquiv e) 1) at hs
-  rw [Equiv.symm_apply_apply] at hs
-  -- Normalize the coordinate equality before cancelling the invertible factor `⅟ 2`.
-  change (⅟ (2 : R)) * (A : Matrix (Fin n) (Fin n) R) a b =
-    (⅟ (2 : R)) * (B : Matrix (Fin n) (Fin n) R) a b at hs
+  simp only [soCoordinates, LinearMap.coe_mk, AddHom.coe_mk,
+    Equiv.symm_apply_apply] at hs
   exact (mul_right_inj_of_invertible (⅟ (2 : R))).mp hs
 
 private theorem soCoordinates_injective : Function.Injective (soCoordinates n R) := by
@@ -205,7 +191,7 @@ private theorem soCoordinates_injective : Function.Injective (soCoordinates n R)
     have hC := (LieAlgebra.Orthogonal.mem_so (Fin n) R
       (C : Matrix (Fin n) (Fin n) R)).1 C.property
     exact congr_fun (congr_fun hC a) b
-  have hupper (a b : Fin n) (hab : a < b) := soCoordinates_eq_upper n R h hab
+  have hupper (a b : Fin n) (hab : a < b) := matrix_apply_eq_of_soCoordinates_eq_of_lt n R h hab
   by_cases hij : i < j
   · exact hupper i j hij
   by_cases hji : j < i
