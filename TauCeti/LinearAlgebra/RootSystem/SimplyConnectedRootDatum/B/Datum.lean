@@ -513,15 +513,9 @@ private lemma typeBSimpleRoot_dotProduct_typeBDualVec (i j : Fin n) :
     split_ifs <;> omega
 
 private lemma linearIndependent_typeBSimpleRoot (n : ℕ) :
-    LinearIndependent ℤ fun i : Fin n => weight n (i : ℕ) - weight n ((i : ℕ) + 1) := by
-  rw [Fintype.linearIndependent_iff]
-  intro g hg j
-  have h := congrArg (· ⬝ᵥ typeBDualVec n (j : ℕ)) hg
-  simp only [sum_dotProduct, smul_dotProduct, smul_eq_mul, zero_dotProduct,
-    typeBSimpleRoot_dotProduct_typeBDualVec, mul_ite, mul_zero] at h
-  rw [Finset.sum_ite_eq' Finset.univ j fun i => g i * 2] at h
-  simp only [Finset.mem_univ, ite_true] at h
-  omega
+    LinearIndependent ℤ fun i : Fin n => weight n (i : ℕ) - weight n ((i : ℕ) + 1) :=
+  linearIndependent_of_dotProduct_diagonal (c := fun _ => 2) (fun _ => by norm_num)
+    typeBSimpleRoot_dotProduct_typeBDualVec
 
 /-- The support of the pinned base of type `Bₙ`: the first `n` root indices. -/
 private abbrev typeBSimpleSupport (n : ℕ) : Finset (Fin (2 * n ^ 2)) :=

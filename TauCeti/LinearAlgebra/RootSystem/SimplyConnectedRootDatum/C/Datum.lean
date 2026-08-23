@@ -653,16 +653,9 @@ private lemma typeCSimpleRoot_dotProduct_typeCDualVec (i j : Fin n) :
   split_ifs <;> omega
 
 private lemma linearIndependent_typeCSimpleRoot (n : ℕ) :
-    LinearIndependent ℤ (typeCSimpleRoot (n := n)) := by
-  rw [Fintype.linearIndependent_iff]
-  intro g hg j
-  have h := congrArg (· ⬝ᵥ typeCDualVec n (j : ℕ)) hg
-  simp only [sum_dotProduct, smul_dotProduct, smul_eq_mul, zero_dotProduct,
-    typeCSimpleRoot_dotProduct_typeCDualVec, mul_ite, mul_zero, mul_one] at h
-  rw [Finset.sum_ite_eq' Finset.univ j
-    fun i => if (i : ℕ) + 1 = n then g i * 2 else g i] at h
-  simp only [Finset.mem_univ, ite_true] at h
-  split_ifs at h <;> omega
+    LinearIndependent ℤ (typeCSimpleRoot (n := n)) :=
+  linearIndependent_of_dotProduct_diagonal (c := fun i => if (i : ℕ) + 1 = n then 2 else 1)
+    (fun _ => by split_ifs <;> norm_num) typeCSimpleRoot_dotProduct_typeCDualVec
 
 private lemma linearIndependent_typeCSimpleCoroot (n : ℕ) :
     LinearIndependent ℤ (typeCSimpleCoroot (n := n)) := by

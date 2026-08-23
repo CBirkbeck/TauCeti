@@ -187,4 +187,25 @@ theorem corootSpan_eq_top_of_coroot_eq_single {κ : Type*} [Finite κ] [Decidabl
 
 end RootPairing
 
+section DiagonalPairing
+
+/-- **A family of integer vectors paired diagonally by a second family is linearly independent.**
+If `v i ⬝ᵥ w j` vanishes whenever `i ≠ j` and is a nonzero scalar when `i = j`, the vectors `v i`
+are linearly independent over `ℤ`. The diagonal entries need only be nonzero, not units, which is
+what makes this usable for the pinned root data where they are `1` and `2`. -/
+theorem linearIndependent_of_dotProduct_diagonal {n : ℕ} {v w : Fin n → Fin n → ℤ} {c : Fin n → ℤ}
+    (hc : ∀ i, c i ≠ 0) (h : ∀ i j, v i ⬝ᵥ w j = if i = j then c i else 0) :
+    LinearIndependent ℤ v := by
+  rw [Fintype.linearIndependent_iff]
+  intro g hg j
+  -- pairing the relation with `w j` kills every term but the `j`-th, leaving `g j * c j = 0`
+  have hj := congrArg (· ⬝ᵥ w j) hg
+  simp only [sum_dotProduct, smul_dotProduct, smul_eq_mul, zero_dotProduct, h, mul_ite,
+    mul_zero] at hj
+  rw [Finset.sum_ite_eq' Finset.univ j fun i => g i * c i] at hj
+  simp only [Finset.mem_univ, ite_true] at hj
+  exact (mul_eq_zero.1 hj).resolve_right (hc j)
+
+end DiagonalPairing
+
 end TauCeti
