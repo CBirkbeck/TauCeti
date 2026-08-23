@@ -7,7 +7,6 @@ module
 
 public import TauCeti.AlgebraicGeometry.AdicSpace.Spa.RationalSubset.Basic
 public import TauCeti.RingTheory.Huber.LocalizationTopology.CompleteSeparated.RefinementCategory
-public import Mathlib.CategoryTheory.Sites.Spaces
 public import TauCeti.Topology.Category.TopCommRingCat.CompleteSeparated.Limits
 
 /-!
@@ -62,7 +61,7 @@ exists, restriction along a containment is reindexing, and the two functor laws 
 
 The idea of indexing the limit by presentations, and the refinement relation ordering them, were
 adapted from AINTLIB (Apache-2.0), commit `37bbdaeb9ad9e3bc9f0d660feadc2779e455a91c`,
-`projects/AdicSpaces/Adic spaces/RestrictedLimitSheaf.lean`. The Lean here is written against this
+`projects/AdicSpaces/Adic spaces/StructurePresheafLimit.lean`. The Lean here is written against this
 repository's own `RefinementCategory` and `PairOfDefinition.Presentation` API; no code was copied.
 -/
 
@@ -100,6 +99,7 @@ instance : Preorder (PresentationIndex (P := P) Aplus V) :=
   Preorder.lift PresentationIndex.pres
 
 /-- Forgetting the containment is a functor to the category of all presentations. -/
+@[expose]
 def presentationIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     PresentationIndex (P := P) Aplus V ⥤ P.Presentation where
   obj i := i.pres
@@ -107,6 +107,7 @@ def presentationIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
 
 /-- **The diagram the limit is taken over**: each admissible presentation refining `V` contributes
 `A⟨T/s⟩`, and a refinement contributes its restriction morphism. -/
+@[expose]
 noncomputable def presentationIndexDiagram (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     PresentationIndex (P := P) Aplus V ⥤ CompleteSeparatedTopCommRingCat.{v} :=
   presentationIndexInclusion Aplus V ⋙ P.presentationFunctor
@@ -121,6 +122,7 @@ noncomputable def presentationLimit (Aplus : Subring A) (V : Opens ↥(spa Aplus
 
 /-- Restricting the containment reindexes the diagram: a presentation refining `W` refines `V`
 whenever `W ≤ V`. -/
+@[expose]
 def presentationIndexRestrict {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
     PresentationIndex (P := P) Aplus W ⥤ PresentationIndex (P := P) Aplus V where
   obj i := ⟨i.pres, i.isOpen_span, i.le_open.trans h⟩
@@ -193,6 +195,19 @@ theorem presentationLimitLift_comp_π (Aplus : Subring A) (V : Opens ↥(spa Apl
     (i : PresentationIndex (P := P) Aplus V) :
     presentationLimitLift (P := P) Aplus V s ≫ presentationLimitπ (P := P) Aplus V i = s.π.app i :=
   limit.lift_π _ _
+
+/-- **Restriction is reindexing**: restricting to `W` and then projecting at an index of `W` is
+projecting at the same presentation viewed as an index of `V`.
+
+Stating this needs `presentationIndexDiagram` exposed: `(diagram W).obj i` and
+`(diagram V).obj ((restrict h).obj i)` are definitionally equal, and sealed they cannot be seen
+to be — the same reason `map_id` below reaches for `erw`. -/
+@[simp]
+theorem presentationLimitMap_comp_π {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
+    (i : PresentationIndex (P := P) Aplus W) :
+    presentationLimitMap (P := P) h ≫ presentationLimitπ (P := P) Aplus W i =
+      presentationLimitπ (P := P) Aplus V ((presentationIndexRestrict (P := P) h).obj i) :=
+  limit.pre_π _ _ _
 
 /-- **Extensionality**: maps into the limit agree when their projections do. -/
 theorem presentationLimit_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
