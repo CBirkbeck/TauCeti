@@ -14,9 +14,11 @@ public import TauCeti.RingTheory.Localization.NumDen
 
 Over `ℤ`, a nonzero torsion point of a Weierstrass curve has integral coordinates — unless it has
 order exactly two, where the honest bound is that `4x` and `8y` are integral. Over the fraction
-field `K` of a general unique factorisation domain `R` the same holds **given squarefreeness of a
-prime factor of the order**; that hypothesis is what the `ℤ` statement discharges for free, and it
-is not removable in general. This file is the assembly: `Torsion.lean` proves the cases a squarefree
+field `K` of a general unique factorisation domain `R` the same holds **given squarefreeness of
+the right factor**: `Squarefree (2 : R)` when `4` divides the order, or squarefreeness of an odd
+prime divisor of it. An arbitrary squarefree factor will not do — at order `6`, `Squarefree 2`
+supplies neither branch. That hypothesis is what the `ℤ` statement discharges for free, and it is
+not removable in general. This file is the assembly: `Torsion.lean` proves the cases a squarefree
 hypothesis makes accessible, `Descent.lean` pulls a conclusion back from a multiple of a point to
 the point itself, and what remains is the case analysis that connects them.
 
@@ -124,13 +126,14 @@ private lemma isInteger_of_odd_prime_factor {x y : K}
     (hsf : Squarefree ((p : ℤ) : R)) :
     IsLocalization.IsInteger R x ∧ IsLocalization.IsInteger R y := by
   set P := Affine.Point.some _ _ hns
-  set k := addOrderOf P / p
-  have hkp : k * p = addOrderOf P := Nat.div_mul_cancel hpm
-  have hk_pos : 0 < k := Nat.div_pos (Nat.le_of_dvd htor.addOrderOf_pos hpm) hp.pos
-  have hQ_ne : k • P ≠ 0 := fun h ↦
-    absurd (Nat.le_of_dvd hk_pos (addOrderOf_dvd_of_nsmul_eq_zero h))
-      (not_le.mpr (hkp ▸ lt_mul_of_one_lt_right hk_pos hp.one_lt))
-  have hpQ : p • (k • P) = 0 := by rw [← mul_nsmul, hkp, addOrderOf_nsmul_eq_zero]
+  -- `(m / p) • P` has order exactly `p`, by Mathlib's order-of-a-multiple lemma. Both facts the
+  -- descent needs — nonvanishing, and being killed by `p` — read off that one equality.
+  have hord : addOrderOf ((addOrderOf P / p) • P) = p :=
+    addOrderOf_nsmul_addOrderOf_sub htor.addOrderOf_pos.ne' hpm
+  have hQ_ne : (addOrderOf P / p) • P ≠ 0 := fun h ↦ by
+    rw [h, addOrderOf_zero] at hord; exact hp.ne_one hord.symm
+  have hpQ : p • ((addOrderOf P / p) • P) = 0 :=
+    addOrderOf_dvd_iff_nsmul_eq_zero.mp hord.dvd
   obtain ⟨x', y', hns', hQ_eq⟩ := exists_eq_some_of_ne_zero hQ_ne
   have hx' : IsLocalization.IsInteger R x' :=
     isInteger_x_of_odd_torsion_of_squarefree W hns'
@@ -143,8 +146,8 @@ private lemma isInteger_of_odd_prime_factor {x y : K}
 are integral.
 
 Set `k = ord / 4`; then `k • P` is killed by `4` but not by `2`, so the order-four theorem applies
-there, and integrality descends along `k`. This is the case where every prime factor of the order
-is `2` and the order exceeds `2`. -/
+there, and integrality descends along `k`. The hypothesis is exactly `4 ∣ addOrderOf P`; the order
+need not be a power of two, and `12` is an admissible case. -/
 private lemma isInteger_of_four_dvd_order {x y : K}
     (hns : (W.baseChange K).toAffine.Nonsingular x y)
     (h4 : 4 ∣ addOrderOf (Affine.Point.some _ _ hns))
@@ -152,17 +155,15 @@ private lemma isInteger_of_four_dvd_order {x y : K}
     (hsf : Squarefree (2 : R)) :
     IsLocalization.IsInteger R x ∧ IsLocalization.IsInteger R y := by
   set P := Affine.Point.some _ _ hns
-  have hm_pos := htor.addOrderOf_pos
-  set k := addOrderOf P / 4
-  have hk4 : k * 4 = addOrderOf P := Nat.div_mul_cancel h4
-  have hk_pos : 0 < k := Nat.div_pos (Nat.le_of_dvd hm_pos h4) (by norm_num)
-  have hQ_ne : k • P ≠ 0 := fun h ↦
-    absurd (Nat.le_of_dvd hk_pos (addOrderOf_dvd_of_nsmul_eq_zero h)) (not_le.mpr (by omega))
-  have h4Q : 4 • (k • P) = 0 := by rw [← mul_nsmul, hk4, addOrderOf_nsmul_eq_zero]
-  have h2Q_ne : (2 : ℕ) • (k • P) ≠ 0 := fun h ↦ by
-    rw [← mul_nsmul] at h
-    exact absurd (Nat.le_of_dvd (by omega) (addOrderOf_dvd_of_nsmul_eq_zero h))
-      (not_le.mpr (by omega))
+  -- As in the odd branch, one order equality from Mathlib supplies everything: `(m / 4) • P` has
+  -- order exactly `4`, hence is nonzero, is killed by `4`, and is *not* killed by `2`.
+  set Q := (addOrderOf P / 4) • P with hQ
+  have hord : addOrderOf Q = 4 := addOrderOf_nsmul_addOrderOf_sub htor.addOrderOf_pos.ne' h4
+  have hQ_ne : Q ≠ 0 := fun h ↦ by rw [h, addOrderOf_zero] at hord; omega
+  have h4Q : (4 : ℕ) • Q = 0 := addOrderOf_dvd_iff_nsmul_eq_zero.mp hord.dvd
+  have h2Q_ne : (2 : ℕ) • Q ≠ 0 := fun h ↦ by
+    have := Nat.le_of_dvd (by norm_num) (addOrderOf_dvd_of_nsmul_eq_zero h)
+    omega
   obtain ⟨x', y', hns', hQ_eq⟩ := exists_eq_some_of_ne_zero hQ_ne
   have hx' : IsLocalization.IsInteger R x' :=
     isInteger_x_of_order_four_of_squarefree W hns'
