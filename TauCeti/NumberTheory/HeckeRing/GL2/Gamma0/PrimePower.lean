@@ -14,9 +14,11 @@ public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DiagonalCoset
 This file introduces the diagonal elements of the Hecke ring `R(Γ₀(N), Δ₀(N))`, the two
 generating classes built from them, and the family the Diamond–Shurman recurrence assembles.
 
-`diagElemGamma0 a` is the class of `Γ₀(N)·diag(a)·Γ₀(N)` when the head entry `a 0` is coprime
-to the level, and `0` otherwise — the level-`N` analogue of `diagElem`, carrying the
-coprimality guard that `Δ₀(N)`-membership needs. The two generators specialise it:
+`diagElemGamma0 a` takes three values, according to the tuple. It is `0` unless the head entry
+`a 0` is coprime to the level — the guard `Δ₀(N)`-membership needs. Past that guard it is the
+class of `Γ₀(N)·diag(a)·Γ₀(N)` when every entry is positive, and `1` when positivity fails,
+since `natDiagGL` degenerates to the identity there. It is the level-`N` analogue of
+`diagElem`. The two generators specialise it:
 `heckeTGeneratorGamma0 p` at `![1, p]` and `heckeTScalarGamma0 p` at `![p, p]`. The iterated
 family `heckeTGeneratorPowGamma0 p r` satisfies `T₀ = 1`, `T₁ = T_p` and
 
@@ -79,13 +81,21 @@ namespace HeckeRing.GL2
 
 variable (N : ℕ) [NeZero N]
 
-/-- The level-`N` diagonal element of the Hecke ring: the class of `Γ₀(N)·diag(a)·Γ₀(N)` when
-the head entry `a 0` is coprime to the level, and `0` otherwise.
+/-- The level-`N` diagonal element of the Hecke ring, `0` unless the head entry `a 0` is
+coprime to the level.
 
-The guard is what `Δ₀(N)`-membership needs, and putting it here rather than at each generator
-means the vanishing case is stated once. This is the level-`N` analogue of `diagElem`; it
-cannot live beside `diagCosetGamma0` in `DiagonalCoset.lean` because the ring structure needs
-`[NeZero N]`. -/
+Inside the coprime branch the value still depends on the tuple, and the three cases are worth
+keeping straight:
+
+* `¬ Nat.Coprime (a 0) N` — the element is `0` (`diagElemGamma0_of_not_coprime`);
+* coprime head, every entry positive — the class of `Γ₀(N)·diag(a)·Γ₀(N)`, the intended case;
+* coprime head, positivity failing — the element is `1` (`diagElemGamma0_of_not_pos`), because
+  the underlying `natDiagGL` degenerates to the identity matrix rather than being undefined.
+
+The coprimality guard is what `Δ₀(N)`-membership needs, and putting it here rather than at each
+generator means the vanishing case is stated once. This is the level-`N` analogue of
+`diagElem`; it cannot live beside `diagCosetGamma0` in `DiagonalCoset.lean` because the ring
+structure needs `[NeZero N]`. -/
 noncomputable def diagElemGamma0 (a : Fin 2 → ℕ) : 𝕋 (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) ℤ :=
   if h : Nat.Coprime (a 0) N then
     HeckeCosetModule.single ℤ (diagCosetGamma0 N a fun _ ↦ h) 1
