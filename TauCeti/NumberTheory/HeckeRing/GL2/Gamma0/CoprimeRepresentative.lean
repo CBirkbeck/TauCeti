@@ -6,7 +6,7 @@ Authors: Chris Birkbeck, Claude
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
-public import Mathlib.Data.Nat.ChineseRemainder
+import Mathlib.Data.Nat.ChineseRemainder
 public import Mathlib.RingTheory.Int.Basic
 
 /-!
@@ -39,7 +39,7 @@ uses — membership of `g` in `Δ₀(N)`, and `c ∣ det A` — are dropped here
 
 ## Main results
 
-* `HeckeRing.GL2.exists_gamma0_mul_coprime_upperLeft`: the two-sided clearing.
+* `HeckeRing.GL2.exists_gamma0_mul_mul_coprime_upperLeft`: the two-sided clearing.
 
 ## References
 
@@ -137,14 +137,14 @@ glued by the Chinese remainder theorem over `c.primeFactors`; `entry_congr_mod` 
 the glued `l, t` inherit each local choice. -/
 private lemma exists_coprime_entry (A : Matrix (Fin 2) (Fin 2) ℤ) (M : ℤ)
     (c : ℕ) (hc : 0 < c)
-    (hprim : ∀ p : ℕ, p.Prime → ¬((p : ℤ) ∣ A 0 0 ∧ (p : ℤ) ∣ A 0 1 ∧
+    (hprim : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ (c : ℤ) → ¬((p : ℤ) ∣ A 0 0 ∧ (p : ℤ) ∣ A 0 1 ∧
       (p : ℤ) ∣ A 1 0 ∧ (p : ℤ) ∣ A 1 1))
     (hcM : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ (c : ℤ) → ¬((p : ℤ) ∣ M)) :
     ∃ l t : ℤ, Int.gcd (A 0 0 + l * A 1 0 + M * t * (A 0 1 + l * A 1 1)) c = 1 := by
   have havoid : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ (c : ℤ) →
       ∃ l t : ℤ, ¬((p : ℤ) ∣ (A 0 0 + l * A 1 0 + M * t * (A 0 1 + l * A 1 1))) :=
     fun p hp hpc ↦ entry_clear_prime A M p hp (hcM p hp hpc)
-      (fun ⟨h1, h2, h3, h4⟩ ↦ hprim p hp ⟨h1, h2, h3, h4⟩)
+      (fun ⟨h1, h2, h3, h4⟩ ↦ hprim p hp hpc ⟨h1, h2, h3, h4⟩)
   classical
   set wit : ℕ → ℤ × ℤ := fun p ↦
     if h : p.Prime ∧ (p : ℤ) ∣ (c : ℤ)
@@ -193,14 +193,21 @@ private lemma unipotent_translate_entries (A : Matrix (Fin 2) (Fin 2) ℤ) (l m 
       Matrix.cons_val_zero, Matrix.cons_val_one]
     ring
 
-/-- **Two-sided `Γ₀(N)` clearing for primitive matrices.** -/
-theorem exists_gamma0_mul_coprime_upperLeft
+/-- **Two-sided `Γ₀(N)` clearing.** Let `c` be positive and coprime to `N`, and let `A` be an
+integral representative of `g` with `N ∣ A₁₀` and `gcd(A₀₀, N) = 1` which no prime dividing `c`
+divides entrywise. Then there are `γL, γR ∈ Γ₀(N)` whose two-sided translate `γL · g · γR` has
+an integral representative `A'` with the same two properties — `N ∣ A'₁₀` and
+`gcd(A'₀₀, N) = 1` — and in addition `gcd(A'₀₀, c) = 1`.
+
+Primitivity is only assumed at primes dividing `c`, which is all the local-to-global argument
+consumes; a globally primitive `A` satisfies it a fortiori. -/
+theorem exists_gamma0_mul_mul_coprime_upperLeft
     (g : GL (Fin 2) ℚ) (A : Matrix (Fin 2) (Fin 2) ℤ)
     (hA : (g : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
     (hAN : (N : ℤ) ∣ A 1 0) (hAco : Int.gcd (A 0 0) N = 1)
-    (hprim : ∀ p : ℕ, p.Prime → ¬((p : ℤ) ∣ A 0 0 ∧ (p : ℤ) ∣ A 0 1 ∧
-      (p : ℤ) ∣ A 1 0 ∧ (p : ℤ) ∣ A 1 1))
-    (c : ℕ) (hc : 0 < c) (hcN : Nat.Coprime c N) :
+    (c : ℕ) (hc : 0 < c) (hcN : Nat.Coprime c N)
+    (hprim : ∀ p : ℕ, p.Prime → (p : ℤ) ∣ (c : ℤ) → ¬((p : ℤ) ∣ A 0 0 ∧ (p : ℤ) ∣ A 0 1 ∧
+      (p : ℤ) ∣ A 1 0 ∧ (p : ℤ) ∣ A 1 1)) :
     ∃ γL γR : ((Gamma0 N).map (mapGL ℚ)),
       ∃ A' : Matrix (Fin 2) (Fin 2) ℤ,
         (((γL : GL (Fin 2) ℚ) * g * (γR : GL (Fin 2) ℚ) : GL (Fin 2) ℚ) :
