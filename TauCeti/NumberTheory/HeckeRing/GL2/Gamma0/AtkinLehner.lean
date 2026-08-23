@@ -68,7 +68,7 @@ noncomputable def atkinLehnerMatrix : GL (Fin 2) ℚ :=
   natDiagGL 2 ![1, N]
 
 /-- `ι(g) = w · gᵀ · w⁻¹`, as a homomorphism to the opposite group. -/
-noncomputable def atkinLehnerHom [NeZero N] : GL (Fin 2) ℚ →* (GL (Fin 2) ℚ)ᵐᵒᵖ where
+noncomputable def atkinLehnerHom : GL (Fin 2) ℚ →* (GL (Fin 2) ℚ)ᵐᵒᵖ where
   toFun g := MulOpposite.op (atkinLehnerMatrix N *
     (transposeGLEquiv 2 g).unop * (atkinLehnerMatrix N)⁻¹)
   map_one' := by simp
@@ -81,12 +81,12 @@ noncomputable def atkinLehnerHom [NeZero N] : GL (Fin 2) ℚ →* (GL (Fin 2) �
     rw [h1]; group
 
 /-- Transposition fixes `w`, because `w` is diagonal. -/
-private lemma transposeGLEquiv_atkinLehnerMatrix [NeZero N] :
+private lemma transposeGLEquiv_atkinLehnerMatrix :
     (transposeGLEquiv 2 (atkinLehnerMatrix N)).unop = atkinLehnerMatrix N := by
   rw [atkinLehnerMatrix]
   exact transposeGLEquiv_natDiagGL 2 ![1, N]
 
-private lemma atkinLehner_involutive [NeZero N] (g : GL (Fin 2) ℚ) :
+private lemma atkinLehner_involutive (g : GL (Fin 2) ℚ) :
     (atkinLehnerHom N (atkinLehnerHom N g).unop).unop = g := by
   simp only [atkinLehnerHom, MonoidHom.coe_mk, OneHom.coe_mk, MulOpposite.unop_op]
   have h_tr : (transposeGLEquiv 2 (atkinLehnerMatrix N *
