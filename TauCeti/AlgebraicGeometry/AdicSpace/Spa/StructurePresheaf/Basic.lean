@@ -108,6 +108,18 @@ variable {P : PairOfDefinition A} {Aplus : Subring A} {V : Opens ↥(spa Aplus)}
 instance : Preorder (PresentationIndex (P := P) Aplus V) :=
   Preorder.lift PresentationIndex.pres
 
+omit [IsTopologicalRing A] in
+/-- **An index is its presentation.** The other two fields are propositions, so they are
+proof-irrelevant and carry no information: equality of indices reduces to equality of the
+underlying presentations. -/
+@[ext]
+theorem PresentationIndex.ext {i j : PresentationIndex (P := P) Aplus V} (h : i.pres = j.pres) :
+    i = j := by
+  cases i
+  cases j
+  subst h
+  rfl
+
 /-- Forgetting the containment is a functor to the category of all presentations. -/
 @[expose]
 def presentationIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
@@ -226,8 +238,13 @@ theorem presentationLimitMap_comp {U V W : Opens ↥(spa Aplus)} (h₁ : W ≤ V
 `CompleteSeparatedTopCommRingCat`. Both functor laws are reindexing identities for the limit:
 restricting along `le_refl` is the identity on the index, and restricting twice is restricting
 once. Wedhorn §8.1's `𝒪_X` is this presheaf only once presentation-independence is available. -/
--- `@[expose]` is load-bearing: sealed, the `_obj`/`_map` evaluation lemmas below do not merely
--- fail to prove by `rfl` — their statements fail to elaborate.
+-- `@[expose]` is load-bearing, but not uniformly, and the distinction is worth recording because
+-- the cheap half looks like the whole story. Sealed, `presentationLimitPresheaf_obj` still
+-- elaborates and closes — with `(rfl)` rather than `rfl`, since the sealed body needs the
+-- elaborator to postpone the defeq check. It is `presentationLimitPresheaf_map` whose *statement*
+-- fails to typecheck: its two sides live in `(presheaf).obj V ⟶ (presheaf).obj W` and
+-- `presentationLimit V.unop ⟶ presentationLimit W.unop`, equal only definitionally, so a sealed
+-- restatement needs `eqToHom` transports on both ends and hands that noise to every consumer.
 @[expose]
 noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Subring A) :
     (Opens ↥(spa Aplus))ᵒᵖ ⥤ CompleteSeparatedTopCommRingCat.{v} where
