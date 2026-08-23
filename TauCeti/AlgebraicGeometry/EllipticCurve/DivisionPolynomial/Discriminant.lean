@@ -33,17 +33,13 @@ should export. For a short model (`a₁ = a₃ = 0`, so `κ = 2y`) that future c
 * `TauCeti.WeierstrassCurve.dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃`: over any commutative
   ring, a common divisor of `Ψ₂Sq(x)` and `4·Ψ₃(x)` divides `4Δ`.
 * `TauCeti.WeierstrassCurve.evalEval_ψ₂_sq`: on the curve, `ψ₂(x, y)² = Ψ₂Sq(x)`.
-* `WeierstrassCurve.Φ_two_eq_X_mul_Ψ₂Sq_sub_Ψ₃`: `Φ₂ = X · Ψ₂Sq - Ψ₃`, the division-polynomial
-  form of `Φ 2` that Mathlib states only through the `b`-invariants. It extends Mathlib's own
-  `Φ_two`/`Φ_three`/`Φ_four` family and mentions nothing of this repository's, so it is stated in
-  the root `WeierstrassCurve` namespace where `W.Φ_two_eq_X_mul_Ψ₂Sq_sub_Ψ₃` elaborates.
 
 Stated over an arbitrary commutative ring: no domain, integrality or ellipticity hypothesis.
 
 ⚠ **No torsion hypothesis appears here, and no part of `lutz_nagell` is proved.** Nothing in this
 file takes a premise that awaits absent material: the headline is a statement about polynomials,
-usable by any caller with a common divisor in hand, and `evalEval_ψ₂_sq` and
-`Φ_two_eq_X_mul_Ψ₂Sq_sub_Ψ₃` are unconditional identities.
+usable by any caller with a common divisor in hand, and `evalEval_ψ₂_sq` is an unconditional
+on-curve evaluation.
 
 This is an ingredient for the Nagell–Lutz milestone of `TauCetiRoadmap/EllipticCurves/README.md`,
 Layer 6, item "The torsion subgroup and Nagell–Lutz", whose short-model target `lutz_nagell` asks
@@ -69,23 +65,6 @@ public section
 open Polynomial
 
 open scoped Polynomial.Bivariate
-
-namespace WeierstrassCurve
-
-variable {R : Type*} [CommRing R] (W : WeierstrassCurve R)
-
-/-- **`Φ 2` through the division polynomials**: `Φ₂ = X · Ψ₂Sq - Ψ₃`.
-
-Mathlib gives `Φ 3` and `Φ 4` in terms of `Ψ₃`, `preΨ₄` and `Ψ₂Sq`, but `Φ 2` only through the
-`b`-invariants (`Φ_two`); this is the degree-`2` member of that first family. It is the shape the
-`x`-coordinate of a doubled point is read in, that coordinate being `Φ₂/ΨSq₂`. -/
-theorem Φ_two_eq_X_mul_Ψ₂Sq_sub_Ψ₃ : W.Φ 2 = X * W.Ψ₂Sq - W.Ψ₃ := by
-  -- `Φ n = X * ΨSq n - preΨ (n + 1) * preΨ (n - 1) * (if Even n then 1 else Ψ₂Sq)`; at `n = 2` the
-  -- three division polynomials involved are `ΨSq 2 = Ψ₂Sq`, `preΨ 3 = Ψ₃` and `preΨ 1 = 1`.
-  rw [WeierstrassCurve.Φ, ΨSq_two]
-  simp only [Int.reduceAdd, preΨ_three, Int.reduceSub, preΨ_one, mul_one, even_two, ↓reduceIte]
-
-end WeierstrassCurve
 
 namespace TauCeti
 
