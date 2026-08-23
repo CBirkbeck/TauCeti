@@ -452,7 +452,12 @@ theorem diamondOp_coe_cuspForm (k : ℤ) (d : (ZMod N)ˣ)
 
 /-- **A cusp form is a `χ`-form exactly when the modular form underlying it is.** Membership in
 either character space is the same family of diamond eigenvalue equations, and the coercion is
-pointwise, so the two conditions transport across it. -/
+pointwise, so the two conditions transport across it.
+
+Not `@[simp]`: the left-hand side is itself simp-reducible — `mem_modFormCharSpace_iff` is
+`@[simp]` and rewrites it to the diamond eigenvalue equations — so this lemma could never fire
+as a rewrite rule, and tagging it makes the `simpNF` linter fail. Use it explicitly, as
+`Parity.lean` does. -/
 theorem coe_mem_modFormCharSpace_iff (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
     (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) ∈ modFormCharSpace k χ ↔
