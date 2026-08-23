@@ -6,7 +6,6 @@ Authors: The Tau Ceti contributors
 module
 
 public import Mathlib.CategoryTheory.ObjectProperty.FullSubcategory
-public import Mathlib.CategoryTheory.Comma.Over.Basic
 public import Mathlib.Topology.Category.TopCat.Basic
 public import Mathlib.Topology.Covering.Basic
 public import TauCeti.CategoryTheory.Comma.Over
