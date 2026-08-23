@@ -9,6 +9,7 @@ public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
 -- `intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0`: the diagonal entries of a `Γ₀(N)`
 -- matrix are mutually inverse mod `N`.
 public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
+public import TauCeti.LinearAlgebra.Matrix.GeneralLinearGroup.Adjugate
 
 /-!
 # The upper-left unit character of `Δ₀(N)`
@@ -63,7 +64,7 @@ dropping the inverse would negate every twist downstream.
 
 public section
 
-open Matrix Matrix.SpecialLinearGroup CongruenceSubgroup HeckeRing.GLn
+open Matrix Matrix.SpecialLinearGroup CongruenceSubgroup HeckeRing.GLn TauCeti
 
 open scoped MatrixGroups
 
@@ -88,5 +89,47 @@ double-coset operator divides by the character rather than multiplying by it. -/
     MonoidHom.coe_toHomUnits, Gamma0Map]
   simpa only [MonoidHom.coe_mk, OneHom.coe_mk] using
     intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 (M := N) γ.2
+
+/-- The integral adjugate is a `Δ₀(N)` witness for `adjugateGL` of a `Γ₀(N)` matrix: the
+entrywise `ℤ → ℚ` cast commutes with taking the adjugate. -/
+private lemma adjugateGL_mapGL_coe_matrix (γ : Gamma0 N) :
+    ((adjugateGL (mapGL ℚ (γ : SL(2, ℤ))) : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
+      (((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).adjugate).map (Int.cast : ℤ → ℚ) := by
+  rw [adjugateGL_val, mapGL_coe_matrix]
+  simpa [RingHom.mapMatrix_apply, algebraMap_int_eq] using
+    (RingHom.map_adjugate (Int.castRingHom ℚ)
+      ((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ)).symm
+
+/-- The adjugate of a `Γ₀(N)` matrix again lies in `Δ₀(N)`. The witness is the integral
+adjugate; the determinant is `det γ ^ 1 = 1`, the lower-left entry of the adjugate is `-c`,
+and its upper-left entry is `d`, a unit because `ad ≡ 1` on `Γ₀(N)`. -/
+lemma adjugateGL_mapGL_mem_Delta0 (γ : Gamma0 N) :
+    (adjugateGL (mapGL ℚ (γ : SL(2, ℤ))) : GL (Fin 2) ℚ) ∈ Delta0 N := by
+  refine (mem_Delta0_iff N).mpr
+    ⟨_, adjugateGL_mapGL_coe_matrix N γ, ?_, ?_, ?_⟩
+  · rw [adjugateGL_val, Matrix.det_adjugate, mapGL_coe_matrix,
+      (Matrix.SpecialLinearGroup.map (algebraMap ℤ ℚ) (γ : SL(2, ℤ))).prop]
+    exact one_pos
+  · rw [Matrix.adjugate_fin_two]
+    simpa using dvd_neg.mpr
+      ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp γ.2))
+  · have h : (((γ : SL(2, ℤ)) 1 1 : ℤ) : ZMod N) *
+      (((γ : SL(2, ℤ)) 0 0 : ℤ) : ZMod N) = 1 := by
+        rw [mul_comm]
+        exact intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 (M := N) γ.2
+    simpa [Matrix.adjugate_fin_two] using IsUnit.of_mul_eq_one _ h
+
+/-- **The adjugate half of the comparison.** On `Γ₀(N)` the upper-left unit of the *adjugate*
+is `Gamma0Map` itself, not its inverse: the `2 × 2` adjugate swaps the diagonal, so the entry
+it reads is the lower-right one that `Gamma0Map` records. Together with
+`Delta0UpperUnit_mapGL` this pins down both faces of the character. -/
+@[simp] lemma Delta0UpperUnit_adjugateGL_mapGL (γ : Gamma0 N) :
+    Delta0UpperUnit N ⟨_, adjugateGL_mapGL_mem_Delta0 N γ⟩ = (Gamma0Map N).toHomUnits γ := by
+  ext
+  rw [Delta0UpperUnit_apply_val N
+      (A := ((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).adjugate)
+      (adjugateGL_mapGL_coe_matrix N γ),
+    MonoidHom.coe_toHomUnits, Gamma0Map, Matrix.adjugate_fin_two]
+  simp
 
 end HeckeRing.GL2
