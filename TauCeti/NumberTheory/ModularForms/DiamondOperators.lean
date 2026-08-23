@@ -62,6 +62,13 @@ re-founded slash action with built-in character) and their names. The Hecke pair
 
 * Miyake, *Modular forms*, §4.5
 * Diamond–Shurman, *A first course in modular forms*, §5.1 and §5.3
+* `diamondOp_coe_cuspForm` and `coe_mem_modFormCharSpace_iff` adapt
+  [AINTLIB](https://github.com/CBirkbeck/AINTLIB) commit
+  `2baa76f742bdb4fb8ee323fabba41203bd390e08`, Apache-2.0, Chris Birkbeck,
+  `LeanModularForms/HeckeRIngs/GL2/Unified/NebentypusHeckeRingHom.lean`, declarations
+  `cuspFormCharSpace_toModularForm'_mem` and `cuspFormCharSpace_of_toModularForm'_mem`. Those
+  are two one-way statements about AINTLIB's own `CuspForm.toModularForm'`; here they are one
+  `iff` through mathlib's coercion, which this repository uses instead.
 -/
 
 public section
@@ -438,8 +445,10 @@ theorem diamondOp_coe_cuspForm (k : ℤ) (d : (ZMod N)ˣ)
     (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
     diamondOp k d (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
       (diamondOpCusp k d f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) := by
-  ext τ
-  rfl
+  obtain ⟨g, hg⟩ := Gamma0Map_toHomUnits_surjective (N := N) d
+  refine DFunLike.coe_injective ?_
+  rw [coe_diamondOp k d g hg, ModularFormClass.coe_modularForm,
+    ModularFormClass.coe_modularForm, coe_diamondOpCusp k d g hg]
 
 /-- **A cusp form is a `χ`-form exactly when the modular form underlying it is.** Membership in
 either character space is the same family of diamond eigenvalue equations, and the coercion is
