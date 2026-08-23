@@ -63,14 +63,65 @@ private lemma atkinLehner_involutive [NeZero N] (g : GL (Fin 2) ℚ) :
   rw [h_tr, transposeGLEquiv_transposeGLEquiv, transposeGLEquiv_atkinLehnerMatrix, h_inv]
   group
 
+/-- The integral matrix of `ι(g)`. Conjugating the transpose by `w = diag(1, N)` divides the
+upper-right entry by `N` and multiplies the lower-left by `N`; the first is integral exactly
+because `N ∣ A 1 0`, which is the `Δ₀(N)` shape. The two diagonal entries are untouched — in
+particular the upper-left one, which is why every coprimality hypothesis about it survives.
+
+This is the one computation both membership proofs below need, so it is done once here. -/
+private lemma atkinLehner_unop_val [NeZero N] (g : GL (Fin 2) ℚ)
+    (A : Matrix (Fin 2) (Fin 2) ℤ)
+    (hA : (g : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
+    (c : ℤ) (hc : A 1 0 = (N : ℤ) * c) :
+    (((atkinLehnerHom N g).unop : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
+      (Matrix.of ![![A 0 0, c], ![(N : ℤ) * A 0 1, A 1 1]]).map (Int.cast : ℤ → ℚ) := by
+  sorry
+
+/-- The rational matrix of an integral special-linear element is its entrywise cast. -/
+private lemma mapGL_val_eq_map_intCast (τ : SpecialLinearGroup (Fin 2) ℤ) :
+    ((mapGL ℚ τ : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
+      (τ : Matrix (Fin 2) (Fin 2) ℤ).map (Int.cast : ℤ → ℚ) := by
+  simp [mapGL_coe_matrix, algebraMap_int_eq, RingHom.mapMatrix_apply]
+
+/-- `ι` preserves the image of `Γ₀(N)`: the transported matrix again has determinant one and
+lower-left entry divisible by `N`. -/
 private lemma atkinLehner_mem_Gamma0 [NeZero N] (g : GL (Fin 2) ℚ)
     (hg : g ∈ (Gamma0 N).map (mapGL ℚ)) :
     (atkinLehnerHom N g).unop ∈ (Gamma0 N).map (mapGL ℚ) := by
-  sorry
+  rw [Subgroup.mem_map] at hg ⊢
+  obtain ⟨σ, hσ_mem, rfl⟩ := hg
+  rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd] at hσ_mem
+  obtain ⟨c, hc⟩ := hσ_mem
+  set A := (σ : Matrix (Fin 2) (Fin 2) ℤ) with hA_def
+  set B : Matrix (Fin 2) (Fin 2) ℤ := Matrix.of ![![A 0 0, c], ![(N : ℤ) * A 0 1, A 1 1]] with hB
+  have hB_det : B.det = 1 := by
+    have hdetA : A.det = A 0 0 * A 1 1 - A 0 1 * A 1 0 := Matrix.det_fin_two A
+    rw [σ.2] at hdetA
+    simp only [hB, Matrix.det_fin_two, Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one]
+    linarith [show c * ((N : ℤ) * A 0 1) = A 0 1 * A 1 0 by rw [hc]; ring]
+  refine ⟨⟨B, hB_det⟩, Gamma0_mem.mpr ?_, Units.ext ?_⟩
+  · simp only [hB, Matrix.of_apply, Matrix.cons_val_one, Matrix.cons_val_zero]
+    rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
+    exact dvd_mul_right _ _
+  · rw [atkinLehner_unop_val N _ A (mapGL_val_eq_map_intCast σ) c hc,
+      mapGL_val_eq_map_intCast ⟨B, hB_det⟩]
 
+/-- `ι` preserves `Δ₀(N)`: the determinant and the upper-left entry are unchanged, and the new
+lower-left entry `N · A 0 1` is visibly divisible by `N`. -/
 private lemma atkinLehner_mem_Delta0 [NeZero N] (g : GL (Fin 2) ℚ) (hg : g ∈ Delta0 N) :
     (atkinLehnerHom N g).unop ∈ Delta0 N := by
-  sorry
+  obtain ⟨A, hA, hdet, hAN, hAunit⟩ := (mem_Delta0_iff N).mp hg
+  obtain ⟨c, hc⟩ := hAN
+  set B : Matrix (Fin 2) (Fin 2) ℤ := Matrix.of ![![A 0 0, c], ![(N : ℤ) * A 0 1, A 1 1]] with hB
+  have hval := atkinLehner_unop_val N g A hA c hc
+  have hB_det : B.det = A.det := by
+    have hdetA : A.det = A 0 0 * A 1 1 - A 0 1 * A 1 0 := Matrix.det_fin_two A
+    simp only [hB, Matrix.det_fin_two, Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one]
+    linarith [show c * ((N : ℤ) * A 0 1) = A 0 1 * A 1 0 by rw [hc]; ring]
+  refine (mem_Delta0_iff N).mpr ⟨B, hval, ?_, ⟨A 0 1, by simp [hB]⟩, ?_⟩
+  · rw [hval, ← Int.cast_det, hB_det, Int.cast_det, ← hA]
+    exact hdet
+  · simpa [hB] using hAunit
 
 /-- **The Atkin-Lehner anti-involution** of the `Γ₀(N)` Hecke pair. -/
 noncomputable def atkinLehnerAntiInvolution [NeZero N] :
