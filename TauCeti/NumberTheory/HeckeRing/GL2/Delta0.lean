@@ -118,27 +118,6 @@ lemma coprimeDet_iff {g : Delta0 N} {A : Matrix (Fin 2) (Fin 2) ℤ}
   have : A' = A := Matrix.map_injective Int.cast_injective (hA'.symm.trans hA)
   exact this ▸ h
 
-/-- **Integral representatives survive two-sided integral translation.** If `A` represents
-`g ∈ GL₂(ℚ)` entrywise over `ℤ`, then `τ * A * δ` represents `mapGL τ * g * mapGL δ` for any
-`τ δ : SL₂(ℤ)`.
-
-Shared by every construction that changes representative inside a two-sided `SL₂(ℤ)` orbit and
-has to carry a `Δ₀(N)` witness across — the double-coset layer and
-`Gamma0/CoprimeRepresentative.lean` both use it. -/
-lemma mapGL_mul_coe_eq_intMatrix (τ δ : SpecialLinearGroup (Fin 2) ℤ)
-    (g : GL (Fin 2) ℚ) (A : Matrix (Fin 2) (Fin 2) ℤ)
-    (hA : (↑g : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ)) :
-    (↑(mapGL ℚ τ * g * mapGL ℚ δ) : Matrix (Fin 2) (Fin 2) ℚ) =
-      ((τ : Matrix (Fin 2) (Fin 2) ℤ) * A * (δ : Matrix (Fin 2) (Fin 2) ℤ)).map
-        (Int.cast : ℤ → ℚ) := by
-  have h₁ := map_mul (Int.castRingHom ℚ).mapMatrix
-    ((τ : Matrix (Fin 2) (Fin 2) ℤ) * A) (δ : Matrix (Fin 2) (Fin 2) ℤ)
-  have h₂ := map_mul (Int.castRingHom ℚ).mapMatrix (τ : Matrix (Fin 2) (Fin 2) ℤ) A
-  simp only [RingHom.mapMatrix_apply, Int.coe_castRingHom] at h₁ h₂
-  simp only [GeneralLinearGroup.coe_mul, mapGL_coe_matrix, map_apply_coe,
-    RingHom.mapMatrix_apply, algebraMap_int_eq, Int.coe_castRingHom, hA]
-  rw [h₁, h₂]
-
 /-! ### The upper-left unit character -/
 
 /-- The chosen integral witness of an element of `Δ₀(N)`.

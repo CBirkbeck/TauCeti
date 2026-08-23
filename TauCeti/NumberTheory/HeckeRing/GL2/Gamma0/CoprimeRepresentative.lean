@@ -49,7 +49,7 @@ uses — membership of `g` in `Δ₀(N)`, and `c ∣ det A` — are dropped here
 
 public section
 
-open Matrix Matrix.SpecialLinearGroup CongruenceSubgroup Subgroup
+open Matrix Matrix.SpecialLinearGroup CongruenceSubgroup Subgroup HeckeRing.GLn
 
 open scoped MatrixGroups
 
@@ -229,7 +229,7 @@ theorem exists_gamma0_mul_mul_coprime_upperLeft
   rw [← hL, ← hR] at h00 h10
   refine ⟨⟨mapGL ℚ ⟨L, hL_det⟩, Subgroup.mem_map_of_mem _ hL_Gamma0⟩,
     ⟨mapGL ℚ ⟨R, hR_det⟩, Subgroup.mem_map_of_mem _ hR_Gamma0⟩, L * A * R, ?_, ?_, ?_, ?_⟩
-  · exact mapGL_mul_coe_eq_intMatrix ⟨L, hL_det⟩ ⟨R, hR_det⟩ g A hA
+  · exact mapGL_mul_coe_eq_intMatrix 2 ⟨L, hL_det⟩ ⟨R, hR_det⟩ g A hA
   · -- the translate adds a multiple of `N` to the lower-left entry
     have hlow : A 1 0 + A 1 1 * ((N : ℤ) * t₀) = A 1 0 + (N : ℤ) * (A 1 1 * t₀) := by ring
     rw [h10, hlow]

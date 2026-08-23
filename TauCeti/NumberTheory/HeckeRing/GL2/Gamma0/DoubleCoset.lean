@@ -170,7 +170,7 @@ private lemma mem_doubleCoset_Gamma0Image_of_mem_Delta0
       hτ10 hτ11 hAN hA11
     have hB_eq : B = (τ_N : Matrix (Fin 2) (Fin 2) ℤ) * A * (γ₂' : Matrix (Fin 2) (Fin 2) ℤ) :=
       Matrix.map_injective Int.cast_injective
-        (hB.symm.trans (hx_eq ▸ mapGL_mul_coe_eq_intMatrix τ_N γ₂' α A hA))
+        (hB.symm.trans (hx_eq ▸ mapGL_mul_coe_eq_intMatrix 2 τ_N γ₂' α A hA))
     rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd]
     exact dvd_apply_one_zero_of_dvd_mul N _ (γ₂' : Matrix (Fin 2) (Fin 2) ℤ)
       (hB_eq ▸ hBN) hCN hC11
