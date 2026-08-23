@@ -111,7 +111,8 @@ lemma adjugateGL_mapGL_mem_Delta0 (γ : Gamma0 N) :
       (Matrix.SpecialLinearGroup.map (algebraMap ℤ ℚ) (γ : SL(2, ℤ))).prop]
     exact one_pos
   · rw [Matrix.adjugate_fin_two]
-    simpa using dvd_neg.mpr
+    simpa only [Fin.isValue, of_apply, cons_val', cons_val_zero, cons_val_fin_one,
+      cons_val_one, dvd_neg] using
       ((ZMod.intCast_zmod_eq_zero_iff_dvd _ _).mp (Gamma0_mem.mp γ.2))
   · have h : (((γ : SL(2, ℤ)) 1 1 : ℤ) : ZMod N) *
       (((γ : SL(2, ℤ)) 0 0 : ℤ) : ZMod N) = 1 := by
@@ -130,6 +131,7 @@ it reads is the lower-right one that `Gamma0Map` records. Together with
       (A := ((γ : SL(2, ℤ)) : Matrix (Fin 2) (Fin 2) ℤ).adjugate)
       (adjugateGL_mapGL_coe_matrix N γ),
     MonoidHom.coe_toHomUnits, Gamma0Map, Matrix.adjugate_fin_two]
-  simp
+  simp only [Fin.isValue, of_apply, cons_val', cons_val_zero, cons_val_fin_one,
+    MonoidHom.coe_mk, OneHom.coe_mk]
 
 end HeckeRing.GL2
