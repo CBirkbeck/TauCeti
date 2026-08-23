@@ -6,6 +6,8 @@ Authors: Chris Birkbeck, Claude
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
+-- `mapGL_mul_coe_eq_intMatrix`: the integral matrix of a two-sided `SL₂(ℤ)` translate.
+public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DoubleCoset
 public import Mathlib.Data.Nat.ChineseRemainder
 public import Mathlib.RingTheory.Int.Basic
 
@@ -178,31 +180,6 @@ private lemma not_intCast_dvd_of_coprime (c p : ℕ) (hp : p.Prime)
 
 /-! ### The clearing lemma -/
 
-/-- The integral matrix of a two-sided `SL₂(ℤ)` translate is the product of the three integral
-matrices, because the entrywise cast is a ring homomorphism.
-
-`Gamma0/DoubleCoset.lean` proves the same fact for its own use, but privately, so it cannot be
-called from here; the two copies should become one public lemma once neither file is in flight. -/
-private lemma mapGL_mul_mul_coe (τ δ : SpecialLinearGroup (Fin 2) ℤ) (g : GL (Fin 2) ℚ)
-    (A : Matrix (Fin 2) (Fin 2) ℤ)
-    (hA : (g : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ)) :
-    ((mapGL ℚ τ * g * mapGL ℚ δ : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
-      ((τ : Matrix (Fin 2) (Fin 2) ℤ) * A * (δ : Matrix (Fin 2) (Fin 2) ℤ)).map
-        (Int.cast : ℤ → ℚ) := by
-  have h₁ := map_mul (Int.castRingHom ℚ).mapMatrix
-    ((τ : Matrix (Fin 2) (Fin 2) ℤ) * A) (δ : Matrix (Fin 2) (Fin 2) ℤ)
-  have h₂ := map_mul (Int.castRingHom ℚ).mapMatrix (τ : Matrix (Fin 2) (Fin 2) ℤ) A
-  simp only [RingHom.mapMatrix_apply, Int.coe_castRingHom] at h₁ h₂
-  simp only [GeneralLinearGroup.coe_mul, mapGL_coe_matrix, map_apply_coe,
-    RingHom.mapMatrix_apply, algebraMap_int_eq, Int.coe_castRingHom, hA]
-  rw [h₁, h₂]
-
--- BLOCKED: the "integral matrix of a two-sided SL₂(ℤ) translate is the matrix product" step
--- is ALREADY in this repo, as the PRIVATE `mapGL_mul_coe_eq_intMatrix`
--- (Gamma0/DoubleCoset.lean:119) — identical statement, argument order (τ δ g A hA) vs
--- (g A hA P Q). Do NOT re-derive it. It has to be made public / relocated, and that edits
--- DoubleCoset.lean, which is #4243's file. Sequenced behind #4243.
-
 /-- The two entries of a two-sided unipotent translate that the `Δ₀(N)` conditions read: the
 upper-left one, carrying the coprimality, and the lower-left one, carrying the divisibility. -/
 private lemma unipotent_translate_entries (A : Matrix (Fin 2) (Fin 2) ℤ) (l m : ℤ) :
@@ -244,7 +221,7 @@ theorem exists_gamma0_mul_coprime_upperLeft
   rw [← hL, ← hR] at h00 h10
   refine ⟨⟨mapGL ℚ ⟨L, hL_det⟩, Subgroup.mem_map_of_mem _ hL_Gamma0⟩,
     ⟨mapGL ℚ ⟨R, hR_det⟩, Subgroup.mem_map_of_mem _ hR_Gamma0⟩, L * A * R, ?_, ?_, ?_, ?_⟩
-  · exact mapGL_mul_mul_coe ⟨L, hL_det⟩ ⟨R, hR_det⟩ g A hA
+  · exact mapGL_mul_coe_eq_intMatrix ⟨L, hL_det⟩ ⟨R, hR_det⟩ g A hA
   · rw [h10, show A 1 0 + A 1 1 * ((N : ℤ) * t₀) = A 1 0 + (N : ℤ) * (A 1 1 * t₀) by ring]
     exact dvd_add hAN (dvd_mul_right _ _)
   · obtain ⟨k, hk⟩ := hAN

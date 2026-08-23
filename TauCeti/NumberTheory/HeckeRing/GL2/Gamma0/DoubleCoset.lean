@@ -115,8 +115,15 @@ private lemma dvd_and_gcd_of_Gamma_mul (τ A : Matrix (Fin 2) (Fin 2) ℤ)
     have hshift : (τ * A) 1 1 = A 1 1 + k * (N : ℤ) := by linarith
     exact hshift ▸ (Int.isCoprime_iff_gcd_eq_one.mpr hA11).add_mul_right_left k
 
-/-- The integral matrix of `τ α δ` is the product of the three integral matrices. -/
-private lemma mapGL_mul_coe_eq_intMatrix (τ δ : SpecialLinearGroup (Fin 2) ℤ)
+/-- **The integral matrix of `τ α δ` is the product of the three integral matrices.** The
+entrywise cast `ℤ → ℚ` is a ring homomorphism, so it carries the product of the three integral
+matrices to the product of their images; the only work is spelling that through `mapGL` and the
+`GL` coercion.
+
+Public because it is the shared step for every two-sided `SL₂(ℤ)` translate — it is what lets a
+`Δ₀(N)` witness be transported along a change of representative, here and in
+`Gamma0/CoprimeRepresentative.lean`. -/
+lemma mapGL_mul_coe_eq_intMatrix (τ δ : SpecialLinearGroup (Fin 2) ℤ)
     (g : GL (Fin 2) ℚ) (A : Matrix (Fin 2) (Fin 2) ℤ)
     (hA : (↑g : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ)) :
     (↑(mapGL ℚ τ * g * mapGL ℚ δ) : Matrix (Fin 2) (Fin 2) ℚ) =
