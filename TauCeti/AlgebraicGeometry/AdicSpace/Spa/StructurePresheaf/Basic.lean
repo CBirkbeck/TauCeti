@@ -170,9 +170,34 @@ noncomputable def presentationLimitπ (Aplus : Subring A) (V : Opens ↥(spa Apl
     presentationLimit (P := P) Aplus V ⟶ (presentationIndexDiagram (P := P) Aplus V).obj i :=
   limit.π _ i
 
-/-- **Extensionality**: maps into the limit agree when their projections do. Tagged `@[ext]` so
-`ext` can discover it: `presentationLimit` is sealed, so `limit.hom_ext` is not reachable through
-it from another module. -/
+/-- **Projections are compatible with refinement**: projecting then restricting along a refinement
+is projecting at the finer index. -/
+-- These three are not restatements of Mathlib's limit API for their own sake: `presentationLimit`
+-- is sealed, so a consumer in another module cannot apply `limit.w`, `limit.lift` or `limit.lift_π`
+-- to it at all. They are the only access to the universal property from outside this file.
+@[simp]
+theorem presentationLimitπ_comp_map {i j : PresentationIndex (P := P) Aplus V} (h : i ⟶ j) :
+    presentationLimitπ (P := P) Aplus V i ≫ (presentationIndexDiagram (P := P) Aplus V).map h =
+      presentationLimitπ (P := P) Aplus V j :=
+  limit.w _ h
+
+/-- **The universal property**: a cone over the diagram factors through the limit. -/
+noncomputable def presentationLimitLift (Aplus : Subring A) (V : Opens ↥(spa Aplus))
+    (s : Cone (presentationIndexDiagram (P := P) Aplus V)) :
+    s.pt ⟶ presentationLimit (P := P) Aplus V :=
+  limit.lift _ s
+
+/-- **The lift is a factorisation**: composing it with a projection recovers the cone leg. -/
+@[simp]
+theorem presentationLimitLift_comp_π (Aplus : Subring A) (V : Opens ↥(spa Aplus))
+    (s : Cone (presentationIndexDiagram (P := P) Aplus V))
+    (i : PresentationIndex (P := P) Aplus V) :
+    presentationLimitLift (P := P) Aplus V s ≫ presentationLimitπ (P := P) Aplus V i = s.π.app i :=
+  limit.lift_π _ _
+
+/-- **Extensionality**: maps into the limit agree when their projections do. -/
+-- Tagged `@[ext]` because `presentationLimit` is sealed, so `ext` cannot reach `limit.hom_ext`
+-- through it from another module.
 @[ext]
 theorem presentationLimit_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
     {f g : W ⟶ presentationLimit (P := P) Aplus V}
@@ -180,10 +205,10 @@ theorem presentationLimit_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
       g ≫ presentationLimitπ (P := P) Aplus V i) : f = g :=
   limit.hom_ext h
 
-/-- **Restricting an index does not change what the diagram sends it to.** This is the object
-half of the reindexing characterisation, and it is what lets the definitions below stay sealed:
-the two objects are definitionally equal, and naming that equality here means no consumer has to
-see a body to use it. -/
+/-- **Restricting an index does not change what the diagram sends it to.** -/
+-- This is the object half of the reindexing characterisation, and what lets the index functors
+-- stay sealed: the two objects are definitionally equal, and naming that equality here means no
+-- consumer has to see a body to use it.
 theorem presentationIndexDiagram_obj_restrict {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
     (i : PresentationIndex (P := P) Aplus W) :
     (presentationIndexDiagram (P := P) Aplus V).obj ((presentationIndexRestrict (P := P) h).obj i) =
@@ -191,8 +216,9 @@ theorem presentationIndexDiagram_obj_restrict {V W : Opens ↥(spa Aplus)} (h : 
 
 /-- **Restriction is reindexing**: restricting to `W` and then projecting at an index of `W` is
 projecting at the same presentation viewed as an index of `V`, transported along
-`presentationIndexDiagram_obj_restrict`. The transport is the price of keeping the index functors
-sealed; it is `eqToHom` of a `rfl`-equality, so `simp` discharges it at every use site. -/
+`presentationIndexDiagram_obj_restrict`. -/
+-- The transport is the price of keeping the index functors sealed; it is `eqToHom` of a
+-- `rfl`-equality, so `simp` discharges it at every use site.
 @[simp]
 theorem presentationLimitMap_comp_π {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
     (i : PresentationIndex (P := P) Aplus W) :
