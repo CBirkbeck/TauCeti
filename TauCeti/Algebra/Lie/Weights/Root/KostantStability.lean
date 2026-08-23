@@ -180,7 +180,7 @@ theorem ad_pow_rootVector_eq_zero_or_exists {α β : Weight K H L} (hα : α.IsN
 /-- **The root string through `-α`.** The divided powers of `ad (x α)` send the opposite root
 vector into the Chevalley lattice. This is the exceptional string, excluded by the hypothesis
 `(α : H → K) + β ≠ 0` of the general estimate `ad_pow_rootVector_eq_zero_or_exists`. -/
-private theorem inv_factorial_smul_ad_pow_rootVector_neg_mem (α : Weight K H L)
+private theorem inv_factorial_smul_ad_pow_opposite_rootVector_mem (α : Weight K H L)
     (hα : α.IsNonZero) (n : ℕ) :
     (n.factorial : K)⁻¹ • ((ad K L (x α)) ^ n) (x (-α)) ∈ hx.chevalleyLieLattice := by
   -- `ad (x α)` walks `x (-α) ↦ α∨ ↦ -2 • x α ↦ 0`, so only `n ≤ 2` contributes.
@@ -234,7 +234,7 @@ theorem inv_factorial_smul_ad_pow_rootVector_mem (α β : Weight K H L) (n : ℕ
       simp only [Weight.coe_neg, Pi.neg_apply]
       linear_combination this
     subst hβα
-    exact hx.inv_factorial_smul_ad_pow_rootVector_neg_mem α hα n
+    exact hx.inv_factorial_smul_ad_pow_opposite_rootVector_mem α hα n
   -- the generic string, where the rising factorial is divisible by `n !`
   rcases hx.ad_pow_rootVector_eq_zero_or_exists hα hβ hαβ n with h0 | ⟨γ, -, -, z, hznat, hz⟩
   · rw [h0, smul_zero]
