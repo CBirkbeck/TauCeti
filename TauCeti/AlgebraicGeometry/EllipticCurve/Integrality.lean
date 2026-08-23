@@ -104,6 +104,20 @@ theorem isInteger_x_of_equation_of_is_root_of_squarefree_leadingCoeff
   isInteger_of_isUnit_den <|
     isUnit_den_of_dvd_squarefree W h hsf (den_dvd_of_is_root hroot)
 
+/-- A bound on the denominator of `x` is a bound on how far `x` is from being integral: if
+`den x ∣ d` then `d * x` lies in the image of `R`. -/
+theorem isInteger_mul_of_den_dvd {x : K} {d : R} (h : (IsFractionRing.den R x : R) ∣ d) :
+    IsLocalization.IsInteger R (algebraMap R K d * x) := by
+  obtain ⟨e, he⟩ := h
+  refine ⟨e * IsFractionRing.num R x, ?_⟩
+  have hden : algebraMap R K (IsFractionRing.den R x : R) ≠ 0 :=
+    IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors (IsFractionRing.den R x).2
+  have hx : algebraMap R K (IsFractionRing.num R x) =
+      x * algebraMap R K (IsFractionRing.den R x : R) := by
+    rw [← div_eq_iff hden]; exact IsFractionRing.mk'_num_den' R x
+  rw [he, map_mul, map_mul]
+  linear_combination algebraMap R K e * hx
+
 end UniqueFactorization
 
 end FractionField
