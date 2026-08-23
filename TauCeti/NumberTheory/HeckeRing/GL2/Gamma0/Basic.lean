@@ -99,6 +99,29 @@ lemma Delta0_le_commensurator_Gamma0Image :
   rw [Subgroup.Commensurable.eq (commensurable_Gamma0Image_SLnZ N)]
   exact (Delta0_le_posDetInt N).trans (posDetInt_le_commensurator 2)
 
+/-- **The integral matrix of `τ α δ` is the product of the three integral matrices.** The
+entrywise cast `ℤ → ℚ` is a ring homomorphism, so it carries the product of the three integral
+matrices to the product of their images; the only work is spelling that through `mapGL` and the
+`GL` coercion.
+
+Public because it is the shared step for every two-sided `SL₂(ℤ)` translate — it is what lets a
+`Δ₀(N)` witness be transported along a change of representative, here and in
+`Gamma0/CoprimeRepresentative.lean`. -/
+lemma mapGL_mul_coe_eq_intMatrix (τ δ : SpecialLinearGroup (Fin 2) ℤ)
+    (g : GL (Fin 2) ℚ) (A : Matrix (Fin 2) (Fin 2) ℤ)
+    (hA : (↑g : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ)) :
+    (↑(mapGL ℚ τ * g * mapGL ℚ δ) : Matrix (Fin 2) (Fin 2) ℚ) =
+      ((τ : Matrix (Fin 2) (Fin 2) ℤ) * A * (δ : Matrix (Fin 2) (Fin 2) ℤ)).map
+        (Int.cast : ℤ → ℚ) := by
+  -- multiplicativity of the entrywise cast is `map_mul` for `(Int.castRingHom ℚ).mapMatrix`
+  have h₁ := map_mul (Int.castRingHom ℚ).mapMatrix
+    ((τ : Matrix (Fin 2) (Fin 2) ℤ) * A) (δ : Matrix (Fin 2) (Fin 2) ℤ)
+  have h₂ := map_mul (Int.castRingHom ℚ).mapMatrix (τ : Matrix (Fin 2) (Fin 2) ℤ) A
+  simp only [RingHom.mapMatrix_apply, Int.coe_castRingHom] at h₁ h₂
+  simp only [GeneralLinearGroup.coe_mul, mapGL_coe_matrix, map_apply_coe,
+    RingHom.mapMatrix_apply, algebraMap_int_eq, Int.coe_castRingHom, hA]
+  rw [h₁, h₂]
+
 /-- **The Hecke triple of `Γ₀(N)`**: `Γ₀(N) ≤ Δ₀(N) ≤ commensurator(Γ₀(N))` inside `GL₂(ℚ)` —
 the setting of Shimura §3.3, in which the Hecke ring `R(Γ₀(N), Δ₀(N))` is formed.
 

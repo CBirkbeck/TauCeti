@@ -6,8 +6,6 @@ Authors: Chris Birkbeck, Claude
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
--- `mapGL_mul_coe_eq_intMatrix`: the integral matrix of a two-sided `SL₂(ℤ)` translate.
-public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.DoubleCoset
 public import Mathlib.Data.Nat.ChineseRemainder
 public import Mathlib.RingTheory.Int.Basic
 
@@ -17,8 +15,9 @@ public import Mathlib.RingTheory.Int.Basic
 An element of `Δ₀(N)` whose integral matrix is **primitive** — no prime divides all four
 entries — can be moved by the two-sided `Γ₀(N)` action to a representative whose upper-left
 entry is coprime to a prescribed modulus `c`, provided `c` is coprime to `N`. The `Δ₀(N)`
-shape is preserved: the translate is still integral with `N ∣ c`-entry and unit upper-left
-entry.
+shape is preserved: the translate is still integral, its lower-left entry is still divisible
+by `N`, and its upper-left entry is still coprime to `N` — now coprime to `c` as well. (Coprime
+to `N`, not a unit in `ℤ`: nothing here proves the entry is `±1`.)
 
 The mechanism is local-to-global. For a single prime `p ∤ N` not dividing all of `A`, one of
 the four choices `(l, t) ∈ {0,1}²` already makes `A₀₀ + l·A₁₀ + N·t·(A₀₁ + l·A₁₁)` prime to
@@ -75,21 +74,22 @@ private lemma entry_clear_prime (A : Matrix (Fin 2) (Fin 2) ℤ) (M : ℤ)
         refine ⟨1, 1, fun h ↦ hd ?_⟩
         have h1 : (p : ℤ) ∣ A 0 0 + A 1 0 + M * A 0 1 :=
           dvd_add (dvd_add ha hc) (dvd_mul_of_dvd_right hb _)
-        have h2 := dvd_sub h h1
-        rw [show A 0 0 + 1 * A 1 0 + M * 1 * (A 0 1 + 1 * A 1 1) -
-          (A 0 0 + A 1 0 + M * A 0 1) = M * A 1 1 by ring] at h2
+        -- what is left after removing the three divisible summands is `M * A 1 1`
+        have hgap : A 0 0 + 1 * A 1 0 + M * 1 * (A 0 1 + 1 * A 1 1) -
+            (A 0 0 + A 1 0 + M * A 0 1) = M * A 1 1 := by ring
+        have h2 : (p : ℤ) ∣ M * A 1 1 := hgap ▸ dvd_sub h h1
         exact (hp'.dvd_mul.mp h2).resolve_left hpM
       · refine ⟨0, 1, fun h ↦ hb ?_⟩
-        have h1 := dvd_sub h ha
-        rw [show A 0 0 + 0 * A 1 0 + M * 1 * (A 0 1 + 0 * A 1 1) - A 0 0 =
-          M * A 0 1 by ring] at h1
+        have hgap : A 0 0 + 0 * A 1 0 + M * 1 * (A 0 1 + 0 * A 1 1) - A 0 0 = M * A 0 1 := by
+          ring
+        have h1 : (p : ℤ) ∣ M * A 0 1 := hgap ▸ dvd_sub h ha
         exact (hp'.dvd_mul.mp h1).resolve_left hpM
     · refine ⟨1, 0, fun h ↦ hc ?_⟩
-      have h1 := dvd_sub h ha
-      rwa [show A 0 0 + 1 * A 1 0 + M * 0 * (A 0 1 + 1 * A 1 1) - A 0 0 =
-        A 1 0 by ring] at h1
-  · exact ⟨0, 0, by rwa [show A 0 0 + 0 * A 1 0 + M * 0 * (A 0 1 + 0 * A 1 1) =
-      A 0 0 by ring]⟩
+      have hgap : A 0 0 + 1 * A 1 0 + M * 0 * (A 0 1 + 1 * A 1 1) - A 0 0 = A 1 0 := by ring
+      exact hgap ▸ dvd_sub h ha
+  · -- `l = t = 0` leaves the upper-left entry untouched
+    have hgap : A 0 0 + 0 * A 1 0 + M * 0 * (A 0 1 + 0 * A 1 1) = A 0 0 := by ring
+    exact ⟨0, 0, by rw [hgap]; exact ha⟩
 
 /-- **Congruence transport.** The entry expression depends on `l` and `t` only modulo `n`:
 it is built from them by addition and multiplication, and `Int.ModEq` is a ring congruence. -/
@@ -162,8 +162,9 @@ private lemma exists_coprime_entry (A : Matrix (Fin 2) (Fin 2) ℤ) (M : ℤ)
     (A 0 0) (A 0 1) (A 1 0) (A 1 1) M
     (intCast_modEq_of_modEq_toNat l₀ p (wit p).1 hp_ne (hl₀ p hp_mem))
     (intCast_modEq_of_modEq_toNat t₀ p (wit p).2 hp_ne (ht₀ p hp_mem))).dvd
-  rw [show (wit p).1 = (havoid p hp hpc).choose by rw [hwit],
-      show (wit p).2 = (havoid p hp hpc).choose_spec.choose by rw [hwit]] at hcongr
+  have hwit_fst : (wit p).1 = (havoid p hp hpc).choose := by rw [hwit]
+  have hwit_snd : (wit p).2 = (havoid p hp hpc).choose_spec.choose := by rw [hwit]
+  rw [hwit_fst, hwit_snd] at hcongr
   apply (havoid p hp hpc).choose_spec.choose_spec
   obtain ⟨k, hk⟩ := hcongr
   obtain ⟨m, hm⟩ := hpe
@@ -222,14 +223,20 @@ theorem exists_gamma0_mul_coprime_upperLeft
   refine ⟨⟨mapGL ℚ ⟨L, hL_det⟩, Subgroup.mem_map_of_mem _ hL_Gamma0⟩,
     ⟨mapGL ℚ ⟨R, hR_det⟩, Subgroup.mem_map_of_mem _ hR_Gamma0⟩, L * A * R, ?_, ?_, ?_, ?_⟩
   · exact mapGL_mul_coe_eq_intMatrix ⟨L, hL_det⟩ ⟨R, hR_det⟩ g A hA
-  · rw [h10, show A 1 0 + A 1 1 * ((N : ℤ) * t₀) = A 1 0 + (N : ℤ) * (A 1 1 * t₀) by ring]
+  · -- the translate adds a multiple of `N` to the lower-left entry
+    have hlow : A 1 0 + A 1 1 * ((N : ℤ) * t₀) = A 1 0 + (N : ℤ) * (A 1 1 * t₀) := by ring
+    rw [h10, hlow]
     exact dvd_add hAN (dvd_mul_right _ _)
   · obtain ⟨k, hk⟩ := hAN
-    rw [h00, hk, show A 0 0 + l₀ * ((N : ℤ) * k) + (A 0 1 + l₀ * A 1 1) * ((N : ℤ) * t₀) =
-      A 0 0 + (N : ℤ) * (l₀ * k + (A 0 1 + l₀ * A 1 1) * t₀) by ring, Int.gcd_add_mul_left_left]
+    -- collecting the `N` lets `Int.gcd_add_mul_left_left` discard the whole correction
+    have hup : A 0 0 + l₀ * ((N : ℤ) * k) + (A 0 1 + l₀ * A 1 1) * ((N : ℤ) * t₀) =
+        A 0 0 + (N : ℤ) * (l₀ * k + (A 0 1 + l₀ * A 1 1) * t₀) := by ring
+    rw [h00, hk, hup, Int.gcd_add_mul_left_left]
     exact hAco
-  · rw [h00, show A 0 0 + l₀ * A 1 0 + (A 0 1 + l₀ * A 1 1) * ((N : ℤ) * t₀) =
-      A 0 0 + l₀ * A 1 0 + (N : ℤ) * t₀ * (A 0 1 + l₀ * A 1 1) by ring]
+  · -- the same entry, written in the shape `entry_clear_prime` produced it
+    have hshape : A 0 0 + l₀ * A 1 0 + (A 0 1 + l₀ * A 1 1) * ((N : ℤ) * t₀) =
+        A 0 0 + l₀ * A 1 0 + (N : ℤ) * t₀ * (A 0 1 + l₀ * A 1 1) := by ring
+    rw [h00, hshape]
     exact hlt
 
 end HeckeRing.GL2
