@@ -193,10 +193,8 @@ attribute [local instance] Classical.propDecidable
 /-- Points chosen one from each of a pairwise disjoint family are pairwise distinct. -/
 private theorem injective_of_mem_pairwise_disjoint {ι : Type*} (S : ι → Set α)
     (hS : Pairwise (Function.onFun Disjoint S)) {a : ι → α} (ha : ∀ i, a i ∈ S i) :
-    Function.Injective a := by
-  intro i j hij
-  by_contra hne
-  exact Set.disjoint_left.1 (hS hne) (ha i) (hij ▸ ha j)
+    Function.Injective a :=
+  fun i j hij => hS.eq (Set.not_disjoint_iff.2 ⟨a i, ha i, hij ▸ ha j⟩)
 
 /-- Filtering a tuple of points chosen one from each of a pairwise disjoint family by the `i`-th
 set of the family leaves exactly the `i`-th point. -/
