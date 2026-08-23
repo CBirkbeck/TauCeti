@@ -121,7 +121,6 @@ theorem PresentationIndex.ext {i j : PresentationIndex (P := P) Aplus V} (h : i.
   rfl
 
 /-- Forgetting the containment is a functor to the category of all presentations. -/
-@[expose]
 def presentationIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     PresentationIndex (P := P) Aplus V ⥤ P.Presentation where
   obj i := i.pres
@@ -129,7 +128,6 @@ def presentationIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
 
 /-- **The diagram the limit is taken over**: each admissible presentation refining `V` contributes
 `A⟨T/s⟩`, and a refinement contributes its restriction morphism. -/
-@[expose]
 noncomputable def presentationIndexDiagram (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     PresentationIndex (P := P) Aplus V ⥤ CompleteSeparatedTopCommRingCat.{v} :=
   presentationIndexInclusion Aplus V ⋙ P.presentationFunctor
@@ -144,7 +142,6 @@ noncomputable def presentationLimit (Aplus : Subring A) (V : Opens ↥(spa Aplus
 
 /-- Restricting the containment reindexes the diagram: a presentation refining `W` refines `V`
 whenever `W ≤ V`. -/
-@[expose]
 def presentationIndexRestrict {V W : Opens ↥(spa Aplus)} (h : W ≤ V) :
     PresentationIndex (P := P) Aplus W ⥤ PresentationIndex (P := P) Aplus V where
   obj i := ⟨i.pres, i.isOpen_span, i.le_open.trans h⟩
@@ -199,16 +196,25 @@ theorem presentationLimit_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
       g ≫ presentationLimitπ (P := P) Aplus V i) : f = g :=
   limit.hom_ext h
 
+/-- **Restricting an index does not change what the diagram sends it to.** This is the object
+half of the reindexing characterisation, and it is what lets the definitions below stay sealed:
+the two objects are definitionally equal, and naming that equality here means no consumer has to
+see a body to use it. -/
+theorem presentationIndexDiagram_obj_restrict {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
+    (i : PresentationIndex (P := P) Aplus W) :
+    (presentationIndexDiagram (P := P) Aplus V).obj ((presentationIndexRestrict (P := P) h).obj i) =
+      (presentationIndexDiagram (P := P) Aplus W).obj i := (rfl)
+
 /-- **Restriction is reindexing**: restricting to `W` and then projecting at an index of `W` is
-projecting at the same presentation viewed as an index of `V`. -/
--- Stating this needs the index functors exposed: `(diagram W).obj i` and
--- `(diagram V).obj ((restrict h).obj i)` are definitionally equal, and sealed they cannot be
--- seen to be — the same reason `map_id` reaches for `erw`.
+projecting at the same presentation viewed as an index of `V`, transported along
+`presentationIndexDiagram_obj_restrict`. The transport is the price of keeping the index functors
+sealed; it is `eqToHom` of a `rfl`-equality, so `simp` discharges it at every use site. -/
 @[simp]
 theorem presentationLimitMap_comp_π {V W : Opens ↥(spa Aplus)} (h : W ≤ V)
     (i : PresentationIndex (P := P) Aplus W) :
     presentationLimitMap (P := P) h ≫ presentationLimitπ (P := P) Aplus W i =
-      presentationLimitπ (P := P) Aplus V ((presentationIndexRestrict (P := P) h).obj i) :=
+      presentationLimitπ (P := P) Aplus V ((presentationIndexRestrict (P := P) h).obj i) ≫
+        eqToHom (presentationIndexDiagram_obj_restrict (P := P) h i) :=
   limit.pre_π _ _ _
 
 /-- **Restricting along `le_refl` is the identity.** -/
@@ -238,14 +244,14 @@ theorem presentationLimitMap_comp {U V W : Opens ↥(spa Aplus)} (h₁ : W ≤ V
 `CompleteSeparatedTopCommRingCat`. Both functor laws are reindexing identities for the limit:
 restricting along `le_refl` is the identity on the index, and restricting twice is restricting
 once. Wedhorn §8.1's `𝒪_X` is this presheaf only once presentation-independence is available. -/
--- `@[expose]` is load-bearing, but not uniformly, and the distinction is worth recording because
--- the cheap half looks like the whole story. Sealed, `presentationLimitPresheaf_obj` still
--- elaborates and closes — with `(rfl)` rather than `rfl`, since the sealed body needs the
--- elaborator to postpone the defeq check. It is `presentationLimitPresheaf_map` whose *statement*
--- fails to typecheck: its two sides live in `(presheaf).obj V ⟶ (presheaf).obj W` and
--- `presentationLimit V.unop ⟶ presentationLimit W.unop`, equal only definitionally, so a sealed
--- restatement needs `eqToHom` transports on both ends and hands that noise to every consumer.
-@[expose]
+-- This definition is sealed, as are the three index functors above. Two consequences worth
+-- naming, because they are what the evaluation lemmas below look like: `_obj` closes with
+-- `(rfl)` rather than `rfl`, the parentheses letting the elaborator postpone a defeq check the
+-- sealed body would otherwise refuse; and `_map` cannot be stated bare at all, since its sides
+-- live in `(presheaf).obj V ⟶ (presheaf).obj W` and `presentationLimit V.unop ⟶
+-- presentationLimit W.unop`, equal only definitionally. It carries `eqToHom` transports built
+-- from `_obj`. Both transports are `eqToHom` of `rfl`-equalities, so `simp` removes them at the
+-- use site and no consumer sees a body.
 noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Subring A) :
     (Opens ↥(spa Aplus))ᵒᵖ ⥤ CompleteSeparatedTopCommRingCat.{v} where
   obj V := presentationLimit (P := P) Aplus V.unop
@@ -259,14 +265,17 @@ noncomputable def presentationLimitPresheaf (P : PairOfDefinition A) (Aplus : Su
 theorem presentationLimitPresheaf_obj (P : PairOfDefinition A) (Aplus : Subring A)
     (V : (Opens ↥(spa Aplus))ᵒᵖ) :
     (presentationLimitPresheaf P Aplus).obj V = presentationLimit (P := P) Aplus V.unop :=
-  rfl
+  (rfl)
 
 /-- The presheaf's action on a containment is the reindexing map. -/
 @[simp]
 theorem presentationLimitPresheaf_map (P : PairOfDefinition A) (Aplus : Subring A)
     {V W : (Opens ↥(spa Aplus))ᵒᵖ} (h : V ⟶ W) :
-    (presentationLimitPresheaf P Aplus).map h = presentationLimitMap (P := P) (leOfHom h.unop) :=
-  rfl
+    (presentationLimitPresheaf P Aplus).map h =
+      eqToHom (presentationLimitPresheaf_obj P Aplus V) ≫
+        presentationLimitMap (P := P) (leOfHom h.unop) ≫
+          eqToHom (presentationLimitPresheaf_obj P Aplus W).symm :=
+  (rfl)
 
 end
 
