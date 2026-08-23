@@ -7,6 +7,7 @@ module
 
 public import Mathlib.AlgebraicGeometry.Morphisms.ClosedImmersion
 public import TauCeti.AlgebraicGeometry.AffineGroupScheme.Basic
+import TauCeti.CategoryTheory.Comma.Over
 
 /-!
 # Closed immersions of affine group schemes
@@ -71,8 +72,6 @@ lemma isClosedImmersion_hopfSpec_map_comp_eqToHom_iff {S : CommRingCat.{u}}
     IsClosedImmersion
         (((AlgebraicGeometry.hopfSpec S).map f.op ≫ eqToHom hG.symm).hom.hom.left) ↔
       Function.Surjective f.hom := by
-  let _ : IsIso (eqToHom hG.symm).hom.hom.left :=
-    (Over.forget _).map_isIso (eqToHom hG.symm).hom.hom
   simp only [Grp.comp', Mon.comp_hom', Over.comp_left]
   rw [MorphismProperty.cancel_right_of_respectsIso (P := @IsClosedImmersion)]
   exact isClosedImmersion_hopfSpec_map_iff f
@@ -87,7 +86,6 @@ lemma isClosedImmersion_eqToHom_comp_hopfSpec_map_iff {S : CommRingCat.{u}}
     IsClosedImmersion
         ((eqToHom hG ≫ (AlgebraicGeometry.hopfSpec S).map f.op).hom.hom.left) ↔
       Function.Surjective f.hom := by
-  let _ : IsIso (eqToHom hG).hom.hom.left := (Over.forget _).map_isIso (eqToHom hG).hom.hom
   simp only [Grp.comp', Mon.comp_hom', Over.comp_left]
   rw [MorphismProperty.cancel_left_of_respectsIso (P := @IsClosedImmersion)]
   exact isClosedImmersion_hopfSpec_map_iff f
