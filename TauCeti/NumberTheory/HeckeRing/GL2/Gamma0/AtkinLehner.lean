@@ -157,7 +157,8 @@ the determinant is unchanged. Both membership proofs need this, at different rig
 private lemma det_swapEntries (A : Matrix (Fin 2) (Fin 2) ℤ) (c : ℤ) (hc : A 1 0 = (N : ℤ) * c) :
     (Matrix.of ![![A 0 0, c], ![(N : ℤ) * A 0 1, A 1 1]]).det = A.det := by
   simp only [Matrix.det_fin_two, Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one]
-  linarith [show c * ((N : ℤ) * A 0 1) = A 0 1 * A 1 0 by rw [hc]; ring]
+  rw [hc]
+  ring
 
 /-- `ι` preserves the image of `Γ₀(N)`: the transported matrix again has determinant one and
 lower-left entry divisible by `N`. -/
