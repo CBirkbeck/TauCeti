@@ -121,7 +121,7 @@ theorem PresentationIndex.ext {i j : PresentationIndex (P := P) Aplus V} (h : i.
   rfl
 
 /-- Forgetting the containment is a functor to the category of all presentations. -/
-def presentationIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
+private def presentationIndexInclusion (Aplus : Subring A) (V : Opens ↥(spa Aplus)) :
     PresentationIndex (P := P) Aplus V ⥤ P.Presentation where
   obj i := i.pres
   map h := homOfLE h.le
