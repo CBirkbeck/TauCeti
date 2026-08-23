@@ -205,9 +205,9 @@ theorem slIdeal_le_of_single_mem (htwo : (2 : K) ≠ 0) {a b : n} (hab : a ≠ b
     intro p hpb c
     have hsep : (single b b (1 : K) - single a a (1 : K)) b b
         ≠ (single b b (1 : K) - single a a (1 : K)) p p := by
-      rcases eq_or_ne p a with rfl | hpa
-      · simpa [hab, hab.symm] using one_ne_neg_one (K := K) htwo
-      · simp [hab, hpb.symm, hpa.symm]
+      rcases eq_or_ne a p with rfl | hap
+      · simpa [hab, hab.symm] using one_ne_neg_one htwo
+      · simp [hab, hpb.symm, hap]
     exact ⟨single_mem_of_single_self_sub_single_self_mem I hsub hsep c,
       single_mem_of_single_self_sub_single_self_mem I hsub hsep.symm c⟩
   -- Hence every difference of diagonal units.
