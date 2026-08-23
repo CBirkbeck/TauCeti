@@ -292,6 +292,18 @@ lemma corootOfPair_comm (u v : Fin (2 * n)) : corootOfPair u v = corootOfPair v 
   · rw [ite_eq_right hk, ite_eq_right hk]
     ring
 
+@[simp] lemma corootOfPair_opp (u v : Fin (2 * n)) :
+    corootOfPair (opp u) (opp v) = -corootOfPair u v := by
+  funext k
+  simp only [corootOfPair, sgn_opp, axis_opp, Pi.neg_apply]
+  by_cases hk : (k : ℕ) + 1 = n
+  · rw [ite_eq_left hk, ite_eq_left hk]
+    by_cases hs : sgn u = sgn v
+    · rw [ite_eq_left (by rw [hs]), ite_eq_left hs]
+    · rw [ite_eq_right fun h => hs (neg_injective h), ite_eq_right hs, neg_zero]
+  · rw [ite_eq_right hk, ite_eq_right hk]
+    ring
+
 @[simp] lemma corootOfPair_self (u : Fin (2 * n)) : corootOfPair u u = signedCoweight u := by
   funext k
   have hlt := axis_lt u
@@ -464,6 +476,14 @@ lemma rootOfPair_comm (u v : Fin (2 * n)) : rootOfPair u v = rootOfPair v u := b
 @[simp] lemma rootOfPair_of_ne {u v : Fin (2 * n)} (h : u ≠ v) :
     rootOfPair u v = signedWeight u + signedWeight v := by
   rw [rootOfPair, ite_eq_right h]
+
+@[simp] lemma rootOfPair_opp (u v : Fin (2 * n)) :
+    rootOfPair (opp u) (opp v) = -rootOfPair u v := by
+  rcases eq_or_ne u v with rfl | huv
+  · rw [rootOfPair_self, rootOfPair_self, signedWeight_opp]
+  · rw [rootOfPair_of_ne huv,
+      rootOfPair_of_ne fun h => huv (by simpa using congrArg opp h),
+      signedWeight_opp, signedWeight_opp, neg_add]
 
 /-- The root indexed by an element of `Fin (2 * n) × Fin n`. -/
 def rootIdx (z : Fin (2 * n) × Fin n) : Fin n → ℤ := rootOfPair z.1 (shift z.1 z.2)
