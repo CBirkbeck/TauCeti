@@ -628,65 +628,40 @@ private lemma typeCSimpleRoot_dotProduct_coweight (i : Fin n) {c : ℕ} (hc : c 
       weight_dotProduct_coweight h]
     split_ifs <;> omega
 
+/-- The covector dual to the type `Cₙ` simple roots: the simple-coroot coordinates of
+`e₀ + ⋯ + e_j`. -/
+private def typeCDualVec (n j : ℕ) : Fin n → ℤ := ∑ b ∈ Finset.range (j + 1), coweight n b
+
+/-- Pairing a simple root of type `Cₙ` with the dual covectors is diagonal, with the value `2` on
+the long root and `1` on the short ones. -/
+private lemma typeCSimpleRoot_dotProduct_typeCDualVec (i j : Fin n) :
+    typeCSimpleRoot i ⬝ᵥ typeCDualVec n (j : ℕ)
+      = if i = j then (if (i : ℕ) + 1 = n then 2 else 1) else 0 := by
+  have hi := i.isLt
+  have hj := j.isLt
+  -- summing the coweight pairings over `b ≤ j` telescopes: the `- 1` at `b = i + 1` cancels the
+  -- diagonal contribution as soon as `i + 1 ≤ j`, leaving only the term at `i = j`
+  rw [typeCDualVec, dotProduct_sum,
+    Finset.sum_congr rfl fun b hb => typeCSimpleRoot_dotProduct_coweight i
+      (show b < n from lt_of_le_of_lt (Nat.lt_succ_iff.1 (Finset.mem_range.1 hb)) hj),
+    Finset.sum_sub_distrib,
+    Finset.sum_ite_eq (Finset.range (j + 1)) (i : ℕ)
+      (fun _ => (if (i : ℕ) + 1 = n then (2 : ℤ) else 1)),
+    Finset.sum_ite_eq' (Finset.range (j + 1)) ((i : ℕ) + 1) (fun _ => (1 : ℤ))]
+  simp only [Finset.mem_range, Fin.ext_iff]
+  split_ifs <;> omega
+
 private lemma linearIndependent_typeCSimpleRoot (n : ℕ) :
     LinearIndependent ℤ (typeCSimpleRoot (n := n)) := by
   rw [Fintype.linearIndependent_iff]
-  intro g hg
-  -- First extract the recurrence for the coefficients by pairing the relation with each
-  -- classical coweight.
-  have hrel : ∀ c : Fin n,
-      (if (c : ℕ) + 1 = n then (2 : ℤ) else 1) * g c
-        = ∑ i : Fin n, (if (c : ℕ) = (i : ℕ) + 1 then g i else 0) := by
-    intro c
-    have h0 : (∑ i : Fin n, g i • typeCSimpleRoot i) ⬝ᵥ coweight n (c : ℕ) = 0 := by
-      rw [hg, zero_dotProduct]
-    rw [sum_dotProduct] at h0
-    have hterm : ∀ i : Fin n, (g i • typeCSimpleRoot i) ⬝ᵥ coweight n (c : ℕ)
-        = (if (i : ℕ) = (c : ℕ) then g i * (if (i : ℕ) + 1 = n then 2 else 1) else 0)
-          - (if (c : ℕ) = (i : ℕ) + 1 then g i else 0) := by
-      intro i
-      rw [smul_dotProduct, smul_eq_mul, typeCSimpleRoot_dotProduct_coweight i c.isLt]
-      split_ifs <;> ring
-    simp only [hterm, Finset.sum_sub_distrib] at h0
-    have hfirst : ∑ i : Fin n,
-        (if (i : ℕ) = (c : ℕ) then g i * (if (i : ℕ) + 1 = n then 2 else 1) else 0)
-          = g c * (if (c : ℕ) + 1 = n then 2 else 1) := by
-      rw [Finset.sum_eq_single c]
-      · simp
-      · intro d _ hd
-        exact ite_eq_right fun hb => hd (Fin.ext hb)
-      · simp
-    rw [hfirst] at h0
-    linarith [h0]
-  -- Then solve that recurrence from left to right, starting with the coefficient at zero.
-  have hzero : ∀ m : ℕ, ∀ hm : m < n, g ⟨m, hm⟩ = 0 := by
-    intro m
-    induction m with
-    | zero =>
-      intro hm
-      have h := hrel ⟨0, hm⟩
-      have hsum : ∑ i : Fin n, (if (0 : ℕ) = (i : ℕ) + 1 then g i else 0) = 0 :=
-        Finset.sum_eq_zero fun i _ => ite_eq_right (by omega)
-      rw [hsum] at h
-      by_cases hn : (0 : ℕ) + 1 = n
-      · rw [ite_eq_left hn] at h; linarith
-      · rw [ite_eq_right hn] at h; linarith
-    | succ m ih =>
-      intro hm
-      have h := hrel ⟨m + 1, hm⟩
-      have hsum : ∑ i : Fin n, (if (m + 1 : ℕ) = (i : ℕ) + 1 then g i else 0)
-          = g ⟨m, by omega⟩ := by
-        rw [Finset.sum_eq_single (⟨m, by omega⟩ : Fin n)]
-        · simp
-        · intro d _ hd
-          exact ite_eq_right fun hb => hd (Fin.ext (by simpa using by omega))
-        · simp
-      rw [hsum, ih (by omega)] at h
-      by_cases hn : (m + 1 : ℕ) + 1 = n
-      · rw [ite_eq_left hn] at h; simpa using by linarith
-      · rw [ite_eq_right hn] at h; simpa using by linarith
-  intro i
-  simpa using hzero (i : ℕ) i.isLt
+  intro g hg j
+  have h := congrArg (· ⬝ᵥ typeCDualVec n (j : ℕ)) hg
+  simp only [sum_dotProduct, smul_dotProduct, smul_eq_mul, zero_dotProduct,
+    typeCSimpleRoot_dotProduct_typeCDualVec, mul_ite, mul_zero] at h
+  rw [Finset.sum_ite_eq' Finset.univ j
+    fun i => if (i : ℕ) + 1 = n then g i * 2 else g i * 1] at h
+  simp only [Finset.mem_univ, ite_true] at h
+  split_ifs at h <;> omega
 
 private lemma linearIndependent_typeCSimpleCoroot (n : ℕ) :
     LinearIndependent ℤ (typeCSimpleCoroot (n := n)) := by
