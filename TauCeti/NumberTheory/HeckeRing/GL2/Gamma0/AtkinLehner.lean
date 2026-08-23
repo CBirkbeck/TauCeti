@@ -75,7 +75,30 @@ private lemma atkinLehner_unop_val [NeZero N] (g : GL (Fin 2) ℚ)
     (c : ℤ) (hc : A 1 0 = (N : ℤ) * c) :
     (((atkinLehnerHom N g).unop : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
       (Matrix.of ![![A 0 0, c], ![(N : ℤ) * A 0 1, A 1 1]]).map (Int.cast : ℤ → ℚ) := by
-  sorry
+  have hpos : ∀ i : Fin 2, 0 < (![1, N]) i := by
+    intro i; fin_cases i <;> simp [NeZero.pos]
+  have hNe : (N : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne N)
+  have hw : ((atkinLehnerMatrix N : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
+      Matrix.diagonal ![1, (N : ℚ)] := by
+    rw [atkinLehnerMatrix, natDiagGL_coe 2 _ hpos]
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp
+  have hwinv : (((atkinLehnerMatrix N)⁻¹ : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
+      Matrix.diagonal ![1, (N : ℚ)⁻¹] := by
+    rw [Matrix.coe_units_inv, hw]
+    refine Matrix.inv_eq_right_inv ?_
+    rw [Matrix.diagonal_mul_diagonal]
+    ext i j
+    fin_cases i <;> fin_cases j <;> simp [hNe]
+  have hcast : ((A 1 0 : ℤ) : ℚ) = (N : ℚ) * ((c : ℤ) : ℚ) := by
+    exact_mod_cast congrArg (Int.cast : ℤ → ℚ) hc
+  simp only [atkinLehnerHom, MonoidHom.coe_mk, OneHom.coe_mk, MulOpposite.unop_op,
+    Units.val_mul, hw, hwinv, transposeGLEquiv_coe, hA]
+  ext i j
+  fin_cases i <;> fin_cases j <;>
+    simp [Matrix.mul_apply, Matrix.diagonal_apply, Matrix.map_apply,
+      Matrix.transpose_apply, hcast] <;>
+    field_simp
 
 /-- The rational matrix of an integral special-linear element is its entrywise cast. -/
 private lemma mapGL_val_eq_map_intCast (τ : SpecialLinearGroup (Fin 2) ℤ) :
