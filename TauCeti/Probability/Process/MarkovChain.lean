@@ -286,18 +286,11 @@ theorem markovChainLaw_map_prefix_apply_singleton [IsProbabilityMeasure ν]
             (fun _ => κ (w (Fin.last n).castSucc) {w (Fin.last (n + 1))}) v := by
       intro v
       by_cases hv : v = Fin.init w
+      -- writing the singleton as a product of singletons turns the fibre over `v` into
+      -- `{w (Fin.last (n + 1))}` when `v` matches the prefix, and into `∅` otherwise
       · subst hv
-        have hfibre : (Prod.mk (Fin.init w) ⁻¹'
-            ({(Fin.init w, w (Fin.last (n + 1)))} : Set ((Fin (n + 1) → α) × α)))
-            = {w (Fin.last (n + 1))} := by
-          ext c; simp
-        rw [hfibre, Kernel.comap_apply]
-        simp [Fin.init]
-      · have hfibre : (Prod.mk v ⁻¹'
-            ({(Fin.init w, w (Fin.last (n + 1)))} : Set ((Fin (n + 1) → α) × α))) = ∅ := by
-          ext c; simp [hv]
-        rw [hfibre]
-        simp [hv]
+        simp [← Set.singleton_prod_singleton, Fin.init_def]
+      · simp [hv, ← Set.singleton_prod_singleton]
     rw [lintegral_congr hint, lintegral_indicator (measurableSet_singleton _),
       setLIntegral_const, ih (Fin.init w), Fin.prod_univ_castSucc]
     have hsucc : (Fin.last n).succ = Fin.last (n + 1) := Fin.succ_last n
