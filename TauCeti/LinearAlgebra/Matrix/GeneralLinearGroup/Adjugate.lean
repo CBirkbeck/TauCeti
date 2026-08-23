@@ -20,7 +20,9 @@ on the nose. That keeps the construction over an arbitrary commutative ring — 
 `det ≠ 0` side condition, and nothing to discharge at a call site.
 
 Over a group of determinant-one matrices it is the inverse, and in size two it is an
-involution; those are the two facts that make it an anti-involution of a Hecke pair.
+involution. Those are the two ingredients a Hecke-pair anti-involution needs from the adjugate;
+the anti-involution itself also requires stability of the group and the monoid under the map,
+which is proved where those objects live, not here.
 
 ## Main definitions
 
@@ -28,9 +30,19 @@ involution; those are the two facts that make it an anti-involution of a Hecke p
 
 ## Main results
 
-* `TauCeti.adjugateGL_mul`: `adj(gh) = adj(h) adj(g)`.
+* `TauCeti.adjugateGL_one`, `TauCeti.adjugateGL_mul`: `adj(1) = 1` and `adj(gh) = adj(h) adj(g)`.
 * `TauCeti.adjugateGL_eq_inv`: on determinant one, `adj(g) = g⁻¹`.
 * `TauCeti.adjugateGL_adjugateGL`: in size two, `adj` is an involution.
+
+## References
+
+* Adapted from the AINTLIB `LeanModularForms` project (Chris Birkbeck), Apache-2.0,
+  [`HeckeRIngs/GL2/HeckeActionGeneral.lean`](https://github.com/CBirkbeck/AINTLIB) at commit
+  `2baa76f742bdb4fb8ee323fabba41203bd390e08`, declarations `GL_adjugate`, `GL_adjugate_val`,
+  `GL_adjugate_mul`, `GL_adjugate_involutive` and `GL_adjugate_eq_inv_of_det_one`. The source
+  is stated for `GL (Fin 2) ℚ` and builds the element with a `det ≠ 0` obligation; here the
+  inverse is exhibited directly, which removes that obligation and generalises the statements
+  to `GL n R` over a commutative ring.
 -/
 
 public section
@@ -54,8 +66,13 @@ def adjugateGL (g : GL n R) : GL n R where
 @[simp] lemma adjugateGL_val (g : GL n R) :
     (adjugateGL g : Matrix n n R) = adjugate (g : Matrix n n R) := by rfl
 
+/-- **The adjugate fixes the identity.** -/
+@[simp] lemma adjugateGL_one : adjugateGL (1 : GL n R) = 1 := by
+  ext
+  simp [adjugateGL_val]
+
 /-- **The adjugate is anti-multiplicative**, inherited entrywise from `Matrix.adjugate`. -/
-lemma adjugateGL_mul (g h : GL n R) : adjugateGL (g * h) = adjugateGL h * adjugateGL g := by
+@[simp] lemma adjugateGL_mul (g h : GL n R) : adjugateGL (g * h) = adjugateGL h * adjugateGL g := by
   ext
   simp [Units.val_mul, adjugate_mul_distrib]
 
@@ -66,7 +83,7 @@ lemma adjugateGL_eq_inv {g : GL n R} (hg : (g : Matrix n n R).det = 1) : adjugat
   rw [adjugateGL_val, Matrix.coe_units_inv, Matrix.inv_def, hg, Ring.inverse_one, one_smul]
 
 /-- **In size two the adjugate is an involution.** `adjugate` squares to
-`det ^ (card n - 2) • id`, and the exponent vanishes exactly here. -/
+`det ^ (card n - 2) • id`, and the size-two hypothesis makes that exponent vanish. -/
 lemma adjugateGL_adjugateGL (h2 : Fintype.card n = 2) (g : GL n R) :
     adjugateGL (adjugateGL g) = g := by
   ext
