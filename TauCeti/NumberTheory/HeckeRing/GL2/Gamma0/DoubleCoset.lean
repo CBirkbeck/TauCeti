@@ -39,7 +39,7 @@ Ported from the AINTLIB `LeanModularForms` project
 
 * `HeckeRing.GL2.Gamma0Image_le_SLnZ`: `Γ₀(N) ≤ SL₂(ℤ)` inside `GL₂(ℚ)`.
 * `HeckeRing.GL2.doubleCoset_Gamma0Image_le_doubleCoset_SLnZ`: `Γ₀(N) α Γ₀(N) ⊆ Γ α Γ`.
-* `HeckeRing.GL2.doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0Image`: the equality above.
+* `HeckeRing.GL2.doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0_map`: the equality above.
 
 ## References
 
@@ -196,12 +196,15 @@ double coset down to `Δ₀(N)` leaves exactly the `Γ₀(N)`-double coset:
 This is the prerequisite for comparing the level-one and `Γ₀(N)` Hecke operators at an index
 coprime to the level, and so for the later multiplicativity of `T_n` on `M_k(Γ₀(N))`; neither
 comparison nor multiplicativity is proved here — this identifies the two double cosets. -/
-theorem doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0Image
+theorem doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0_map
     (α : GL (Fin 2) ℚ) (hα : α ∈ Delta0 N) (A : Matrix (Fin 2) (Fin 2) ℤ)
     (hA : (↑α : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
     (hdet : Int.gcd A.det N = 1) :
     DoubleCoset.doubleCoset α (SLnZ 2) (SLnZ 2) ∩ (Delta0 N : Set (GL (Fin 2) ℚ)) =
-      DoubleCoset.doubleCoset α (Gamma0Image N) (Gamma0Image N) := by
+      DoubleCoset.doubleCoset α ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := by
+  -- the conclusion is an equation of *sets*, so the two spellings of `Γ₀(N)` may be exchanged
+  -- by rewriting; the coset *types* of `CosetMap.lean` cannot (see `Gamma0Image_eq`)
+  rw [← Gamma0Image_eq N]
   obtain ⟨B, hB, -, hBN, -⟩ := (mem_Delta0_iff N).mp hα
   -- `Δ₀(N)` already supplies an integral representative with `N ∣ c`, and `hA` identifies it
   -- with `A`, so the divisibility need not be assumed
