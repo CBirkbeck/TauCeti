@@ -66,21 +66,10 @@ namespace HeckeRing.GL2
 
 variable (N : ℕ)
 
-/-- The scaling matrix `w = diag(1, N)` by which the transpose is conjugated.
-
-This is **not** the Atkin-Lehner matrix of the operator `𝒲_Q`, which is `!![0, -1; N, 0]`; it is
-only the diagonal rescaling that repairs the transpose's failure to preserve `Γ₀(N)`.
-
-No `NeZero N` is needed to write it down — `natDiagGL` takes the junk value `1` when an entry
-vanishes. The hypothesis first appears at `atkinLehner_unop_val`, where the entries of `w` are
-evaluated. -/
-private noncomputable def atkinLehnerScaleMatrix : GL (Fin 2) ℚ :=
-  natDiagGL 2 ![1, N]
-
 /-- `ι(g) = w · gᵀ · w⁻¹`, as a homomorphism to the opposite group. -/
 private noncomputable def atkinLehnerHom : GL (Fin 2) ℚ →* (GL (Fin 2) ℚ)ᵐᵒᵖ where
-  toFun g := MulOpposite.op (atkinLehnerScaleMatrix N *
-    (transposeGLEquiv 2 g).unop * (atkinLehnerScaleMatrix N)⁻¹)
+  toFun g := MulOpposite.op (natDiagGL 2 ![1, N] *
+    (transposeGLEquiv 2 g).unop * (natDiagGL 2 ![1, N])⁻¹)
   map_one' := by simp
   map_mul' a b := by
     apply MulOpposite.unop_injective
@@ -90,30 +79,40 @@ private noncomputable def atkinLehnerHom : GL (Fin 2) ℚ →* (GL (Fin 2) ℚ)�
       simp only [map_mul, MulOpposite.unop_mul]
     rw [h1]; group
 
-/-- Transposition fixes `w`, because `w` is diagonal. -/
-private lemma transposeGLEquiv_atkinLehnerScaleMatrix :
-    (transposeGLEquiv 2 (atkinLehnerScaleMatrix N)).unop = atkinLehnerScaleMatrix N := by
-  rw [atkinLehnerScaleMatrix]
-  exact transposeGLEquiv_natDiagGL 2 ![1, N]
+/-- **The value of `ι`**, stated once so the three consumers below and the public `bar`
+lemma do not each rely on unfolding the definition. -/
+@[simp] private lemma atkinLehnerHom_unop (g : GL (Fin 2) ℚ) :
+    (atkinLehnerHom N g).unop =
+      natDiagGL 2 ![1, N] * (transposeGLEquiv 2 g).unop * (natDiagGL 2 ![1, N])⁻¹ := (rfl)
 
 /-- `ι` is involutive: transposition is, and the two conjugations by `w` cancel because
 transposition fixes `w`. -/
-private lemma atkinLehner_involutive (g : GL (Fin 2) ℚ) :
+private lemma atkinLehnerHom_involutive (g : GL (Fin 2) ℚ) :
     (atkinLehnerHom N (atkinLehnerHom N g).unop).unop = g := by
-  simp only [atkinLehnerHom, MonoidHom.coe_mk, OneHom.coe_mk, MulOpposite.unop_op]
-  have h_tr : (transposeGLEquiv 2 (atkinLehnerScaleMatrix N *
-      (transposeGLEquiv 2 g).unop * (atkinLehnerScaleMatrix N)⁻¹)).unop =
-      (transposeGLEquiv 2 (atkinLehnerScaleMatrix N)⁻¹).unop *
+  simp only [atkinLehnerHom_unop]
+  have h_tr : (transposeGLEquiv 2 (natDiagGL 2 ![1, N] *
+      (transposeGLEquiv 2 g).unop * (natDiagGL 2 ![1, N])⁻¹)).unop =
+      (transposeGLEquiv 2 (natDiagGL 2 ![1, N])⁻¹).unop *
         (transposeGLEquiv 2 (transposeGLEquiv 2 g).unop).unop *
-        (transposeGLEquiv 2 (atkinLehnerScaleMatrix N)).unop := by
+        (transposeGLEquiv 2 (natDiagGL 2 ![1, N])).unop := by
     rw [map_mul, map_mul]
     simp only [MulOpposite.unop_mul]
     group
-  have h_inv : (transposeGLEquiv 2 (atkinLehnerScaleMatrix N)⁻¹).unop =
-      (atkinLehnerScaleMatrix N)⁻¹ := by
-    rw [map_inv, MulOpposite.unop_inv, transposeGLEquiv_atkinLehnerScaleMatrix]
-  rw [h_tr, transposeGLEquiv_transposeGLEquiv, transposeGLEquiv_atkinLehnerScaleMatrix, h_inv]
+  have h_inv : (transposeGLEquiv 2 (natDiagGL 2 ![1, N])⁻¹).unop =
+      (natDiagGL 2 ![1, N])⁻¹ := by
+    rw [map_inv, MulOpposite.unop_inv, transposeGLEquiv_natDiagGL 2 ![1, N]]
+  rw [h_tr, transposeGLEquiv_transposeGLEquiv, transposeGLEquiv_natDiagGL 2 ![1, N], h_inv]
   group
+
+/-- **The entries of `ι(g)`**: `(a, b; N c, e) ↦ (a, c; N b, e)`, as an integral matrix.
+
+Public because it is the characteristic property of the map — `atkinLehnerAntiInvolution_bar_val`
+states the action in these terms, and a consumer reading entries off a `Δ₀(N)` element needs the
+name. Internally it also gives the value lemma, the determinant lemma and the two membership
+proofs one spelling instead of four copies of the literal. -/
+def atkinLehnerEntries (A : Matrix (Fin 2) (Fin 2) ℤ) (c : ℤ) :
+    Matrix (Fin 2) (Fin 2) ℤ :=
+  !![A 0 0, c; (N : ℤ) * A 0 1, A 1 1]
 
 /-- The integral matrix of `ι(g)`. Conjugating the transpose by `w = diag(1, N)` divides the
 upper-right entry by `N` and multiplies the lower-left by `N`; the first is integral exactly
@@ -121,21 +120,21 @@ because `N ∣ A 1 0`, which is the `Δ₀(N)` shape. The two diagonal entries a
 particular the upper-left one, which is why every coprimality hypothesis about it survives.
 
 This is the one computation both membership proofs below need, so it is done once here. -/
-private lemma atkinLehner_unop_val [NeZero N] (g : GL (Fin 2) ℚ)
+private lemma atkinLehnerHom_unop_val [NeZero N] (g : GL (Fin 2) ℚ)
     (A : Matrix (Fin 2) (Fin 2) ℤ)
     (hA : (g : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
     (c : ℤ) (hc : A 1 0 = (N : ℤ) * c) :
     (((atkinLehnerHom N g).unop : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
-      (Matrix.of ![![A 0 0, c], ![(N : ℤ) * A 0 1, A 1 1]]).map (Int.cast : ℤ → ℚ) := by
+      (atkinLehnerEntries N A c).map (Int.cast : ℤ → ℚ) := by
   have hpos : ∀ i : Fin 2, 0 < (![1, N]) i := by
     intro i; fin_cases i <;> simp [NeZero.pos]
   have hNe : (N : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (NeZero.ne N)
-  have hw : ((atkinLehnerScaleMatrix N : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
+  have hw : ((natDiagGL 2 ![1, N] : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
       Matrix.diagonal ![1, (N : ℚ)] := by
-    rw [atkinLehnerScaleMatrix, natDiagGL_coe 2 _ hpos]
+    rw [natDiagGL_coe 2 _ hpos]
     ext i j
     fin_cases i <;> fin_cases j <;> simp
-  have hwinv : (((atkinLehnerScaleMatrix N)⁻¹ : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
+  have hwinv : (((natDiagGL 2 ![1, N])⁻¹ : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
       Matrix.diagonal ![1, (N : ℚ)⁻¹] := by
     rw [Matrix.coe_units_inv, hw]
     refine Matrix.inv_eq_right_inv ?_
@@ -144,8 +143,8 @@ private lemma atkinLehner_unop_val [NeZero N] (g : GL (Fin 2) ℚ)
     fin_cases i <;> fin_cases j <;> simp [hNe]
   have hcast : ((A 1 0 : ℤ) : ℚ) = (N : ℚ) * ((c : ℤ) : ℚ) := by
     exact_mod_cast congrArg (Int.cast : ℤ → ℚ) hc
-  simp only [atkinLehnerHom, MonoidHom.coe_mk, OneHom.coe_mk, MulOpposite.unop_op,
-    Units.val_mul, hw, hwinv, transposeGLEquiv_coe, hA]
+  simp only [atkinLehnerHom_unop, atkinLehnerEntries, Units.val_mul, hw, hwinv,
+    transposeGLEquiv_coe, hA]
   ext i j
   fin_cases i <;> fin_cases j <;>
     simp [Matrix.mul_apply, Matrix.diagonal_apply, Matrix.map_apply,
@@ -154,26 +153,24 @@ private lemma atkinLehner_unop_val [NeZero N] (g : GL (Fin 2) ℚ)
 
 /-- Conjugating the transpose by `w` swaps which off-diagonal entry carries the factor `N`, so
 the determinant is unchanged. Both membership proofs need this, at different right-hand sides. -/
-private lemma det_swapEntries (A : Matrix (Fin 2) (Fin 2) ℤ) (c : ℤ) (hc : A 1 0 = (N : ℤ) * c) :
-    (Matrix.of ![![A 0 0, c], ![(N : ℤ) * A 0 1, A 1 1]]).det = A.det := by
-  simp only [Matrix.det_fin_two, Matrix.of_apply, Matrix.cons_val_zero, Matrix.cons_val_one]
-  rw [hc]
+private lemma atkinLehnerEntries_det (A : Matrix (Fin 2) (Fin 2) ℤ) (c : ℤ)
+    (hc : A 1 0 = (N : ℤ) * c) : (atkinLehnerEntries N A c).det = A.det := by
+  rw [atkinLehnerEntries, Matrix.det_fin_two_of, Matrix.det_fin_two, hc]
   ring
 
 /-- `ι` preserves the image of `Γ₀(N)`: the transported matrix again has determinant one and
 lower-left entry divisible by `N`. -/
-private lemma atkinLehner_mem_Gamma0 [NeZero N] (g : GL (Fin 2) ℚ)
-    (hg : g ∈ (Gamma0 N).map (mapGL ℚ)) :
-    (atkinLehnerHom N g).unop ∈ (Gamma0 N).map (mapGL ℚ) := by
-  rw [Subgroup.mem_map] at hg ⊢
+private lemma atkinLehnerHom_mem_Gamma0Image [NeZero N] (g : GL (Fin 2) ℚ)
+    (hg : g ∈ Gamma0Image N) : (atkinLehnerHom N g).unop ∈ Gamma0Image N := by
+  rw [mem_Gamma0Image_iff] at hg ⊢
   obtain ⟨σ, hσ_mem, rfl⟩ := hg
   rw [Gamma0_mem, ZMod.intCast_zmod_eq_zero_iff_dvd] at hσ_mem
   obtain ⟨c, hc⟩ := hσ_mem
   set A := (σ : Matrix (Fin 2) (Fin 2) ℤ) with hA_def
-  set B : Matrix (Fin 2) (Fin 2) ℤ := Matrix.of ![![A 0 0, c], ![(N : ℤ) * A 0 1, A 1 1]] with hB
-  have hB_det : B.det = 1 := by rw [hB, det_swapEntries N A c hc, hA_def, σ.2]
+  set B : Matrix (Fin 2) (Fin 2) ℤ := atkinLehnerEntries N A c with hB
+  have hB_det : B.det = 1 := by rw [hB, atkinLehnerEntries_det N A c hc, hA_def, σ.2]
   refine ⟨⟨B, hB_det⟩, Gamma0_mem.mpr ?_, Units.ext ?_⟩
-  · simp only [hB, Matrix.of_apply, Matrix.cons_val_one, Matrix.cons_val_zero]
+  · simp only [hB, atkinLehnerEntries]
     rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
     exact dvd_mul_right _ _
   · -- the entrywise cast of an integral special-linear element, inlined as at
@@ -182,27 +179,35 @@ private lemma atkinLehner_mem_Gamma0 [NeZero N] (g : GL (Fin 2) ℚ)
         ((mapGL ℚ μ : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
           (μ : Matrix (Fin 2) (Fin 2) ℤ).map (Int.cast : ℤ → ℚ) :=
       fun μ ↦ by simp [mapGL_coe_matrix, algebraMap_int_eq, RingHom.mapMatrix_apply]
-    rw [atkinLehner_unop_val N _ A (hval σ) c hc, hval ⟨B, hB_det⟩]
+    rw [atkinLehnerHom_unop_val N _ A (hval σ) c hc, hval ⟨B, hB_det⟩]
 
 /-- `ι` preserves `Δ₀(N)`: the determinant and the upper-left entry are unchanged, and the new
 lower-left entry `N · A 0 1` is visibly divisible by `N`. -/
-private lemma atkinLehner_mem_Delta0 [NeZero N] (g : GL (Fin 2) ℚ) (hg : g ∈ Delta0 N) :
+private lemma atkinLehnerHom_mem_Delta0 [NeZero N] (g : GL (Fin 2) ℚ) (hg : g ∈ Delta0 N) :
     (atkinLehnerHom N g).unop ∈ Delta0 N := by
   obtain ⟨A, hA, hdet, hAN, hAunit⟩ := (mem_Delta0_iff N).mp hg
   obtain ⟨c, hc⟩ := hAN
-  set B : Matrix (Fin 2) (Fin 2) ℤ := Matrix.of ![![A 0 0, c], ![(N : ℤ) * A 0 1, A 1 1]] with hB
-  have hval := atkinLehner_unop_val N g A hA c hc
-  have hB_det : B.det = A.det := by rw [hB, det_swapEntries N A c hc]
-  refine (mem_Delta0_iff N).mpr ⟨B, hval, ?_, ⟨A 0 1, by simp [hB]⟩, ?_⟩
+  set B : Matrix (Fin 2) (Fin 2) ℤ := atkinLehnerEntries N A c with hB
+  have hval := atkinLehnerHom_unop_val N g A hA c hc
+  have hB_det : B.det = A.det := by rw [hB, atkinLehnerEntries_det N A c hc]
+  refine (mem_Delta0_iff N).mpr ⟨B, hval, ?_, ⟨A 0 1, by simp [hB, atkinLehnerEntries]⟩, ?_⟩
   · rw [hval, ← Int.cast_det, hB_det, Int.cast_det, ← hA]
     exact hdet
-  · simpa [hB] using hAunit
+  · simpa [hB, atkinLehnerEntries] using hAunit
 
-/-- **The Atkin-Lehner anti-involution** of the `Γ₀(N)` Hecke pair. -/
+/-- **The Atkin-Lehner anti-involution** `g ↦ w · gᵀ · w⁻¹` of the `Γ₀(N)` Hecke pair, where
+`w = diag(1, N)`.
+
+`w` is the diagonal rescaling that repairs the transpose's failure to preserve `Γ₀(N)`. It is
+**not** the Atkin-Lehner matrix of the operator `𝒲_Q`, which is `!![0, -1; N, 0]`.
+
+Stated at `Gamma0Image N`, the spelling the `IsHeckeTriple (Delta0 N) (Gamma0Image N)
+(Gamma0Image N)` instance is found at, so `onHeckeCoset` and
+`HeckeCosetModule.mul_comm_of_antiInvolution` apply without an unfold. -/
 noncomputable def atkinLehnerAntiInvolution [NeZero N] :
-    HeckeAntiInvolution (Delta0 N) ((Gamma0 N).map (mapGL ℚ)) :=
-  HeckeAntiInvolution.ofAmbient (atkinLehnerHom N) (atkinLehner_involutive N)
-    (atkinLehner_mem_Gamma0 N) (atkinLehner_mem_Delta0 N)
+    HeckeAntiInvolution (Delta0 N) (Gamma0Image N) :=
+  HeckeAntiInvolution.ofAmbient (atkinLehnerHom N) (atkinLehnerHom_involutive N)
+    (atkinLehnerHom_mem_Gamma0Image N) (atkinLehnerHom_mem_Delta0 N)
 
 /-- The anti-involution acts by conjugating the transpose by `w`, unfolding the sealed
 definition. -/
@@ -210,5 +215,18 @@ definition. -/
     (atkinLehnerAntiInvolution N).bar x hx =
       natDiagGL 2 ![1, N] * (transposeGLEquiv 2 x).unop * (natDiagGL 2 ![1, N])⁻¹ :=
   HeckeAntiInvolution.ofAmbient_bar _ _ _ _ x hx
+
+/-- **The entrywise action**, on the bundle: `(a, b; N c, e) ↦ (a, c; N b, e)`. This is the
+form a consumer of `Δ₀(N)` elements needs; without it the entries can only be recovered by
+redoing the diagonal-conjugation computation. -/
+lemma atkinLehnerAntiInvolution_bar_val [NeZero N] {x : GL (Fin 2) ℚ} (hx : x ∈ Delta0 N)
+    (A : Matrix (Fin 2) (Fin 2) ℤ) (hA : (x : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
+    (c : ℤ) (hc : A 1 0 = (N : ℤ) * c) :
+    (((atkinLehnerAntiInvolution N).bar x hx : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
+      (atkinLehnerEntries N A c).map (Int.cast : ℤ → ℚ) := by
+  have hbar : ((atkinLehnerAntiInvolution N).bar x hx : GL (Fin 2) ℚ) = (atkinLehnerHom N x).unop :=
+    HeckeAntiInvolution.ofAmbient_bar _ _ _ _ x hx
+  rw [hbar]
+  exact atkinLehnerHom_unop_val N x A hA c hc
 
 end HeckeRing.GL2
