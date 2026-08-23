@@ -11,7 +11,44 @@ public import TauCeti.NumberTheory.HeckeRing.GLn.TransposeAntiInvolution
 /-!
 # The Atkin-Lehner anti-involution of the `Γ₀(N)` Hecke pair
 
-Placeholder; rewritten once the construction is settled.
+Conjugating the transpose by `w = diag(1, N)`,
+```
+ι(g) = w · gᵀ · w⁻¹,
+```
+is an anti-automorphism of `GL₂(ℚ)` preserving both the image of `Γ₀(N)` and the submonoid
+`Δ₀(N)`, so it restricts to a `HeckeAntiInvolution` of the `Γ₀(N)` Hecke datum.
+
+At level one the transpose alone already does this — that is
+`HeckeRing.GLn.transposeAntiInvolution`, and it is why the `GL_n` Hecke ring is commutative.
+It does **not** survive the congruence condition: transposition carries `Γ₀(N)` to `Γ⁰(N)`,
+swapping which off-diagonal entry is divisible by `N`. Conjugating by `w` swaps it back, which
+is exactly what the Atkin-Lehner twist buys.
+
+On entries the map is `(a, b; N c, e) ↦ (a, c; N b, e)`: the lower-left entry stays divisible
+by `N`, the determinant is unchanged, and — the point of the construction — the upper-left
+entry is untouched, so the coprimality condition cutting out `Δ₀(N)` transfers with no work.
+Integrality of the new upper-right entry is precisely the hypothesis `N ∣ A 1 0`.
+
+This file builds the anti-involution only. Commutativity of `R(Γ₀(N), Δ₀(N))` needs the further
+input that `ι` fixes every double coset, which `HeckeCosetModule.mul_comm_of_antiInvolution`
+takes as a separate hypothesis (Shimura, Proposition 3.8).
+
+Ported from the AINTLIB `LeanModularForms` project (Chris Birkbeck),
+[`HeckeRIngs/GLn/CongruenceHecke/AtkinLehner.lean`](https://github.com/CBirkbeck/AINTLIB),
+declarations `wN`, `Gamma0_AL_hom`, `Gamma0_AL_involutive`, `Gamma0_AL_map_H`,
+`Gamma0_AL_map_Δ` and `Gamma0_antiInvolution`. The source states its own transpose equivalence
+and diagonal-matrix API; here those come from `GLn/TransposeAntiInvolution.lean` and
+`GLn/DiagonalCosets.lean` instead, and the four-field bundle is assembled by
+`HeckeAntiInvolution.ofAmbient`.
+
+## Main definitions
+
+* `HeckeRing.GL2.atkinLehnerAntiInvolution`: the anti-involution of the `Γ₀(N)` Hecke pair.
+
+## References
+
+* [G. Shimura, *Introduction to the arithmetic theory of automorphic functions*][shimura1971],
+  Proposition 3.8.
 -/
 
 public section
