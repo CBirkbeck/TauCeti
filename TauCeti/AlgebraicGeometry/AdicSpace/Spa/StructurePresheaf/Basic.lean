@@ -153,12 +153,15 @@ noncomputable def presentationLimitMap {V W : Opens ↥(spa Aplus)} (h : W ≤ V
     presentationLimit (P := P) Aplus V ⟶ presentationLimit (P := P) Aplus W :=
   limit.pre (presentationIndexDiagram (P := P) Aplus V) (presentationIndexRestrict (P := P) h)
 
-/-! ### The limit's characteristic API
+/-! ### The projection, and the restriction normal forms
 
-`presentationLimit` is a `limit`, and these declarations are the interface a consumer needs: a
-named projection with its compatibility with refinement, the universal property in `lift`/`ext`
-form, and normal forms for the restriction maps. Together they mean downstream comparison and
-uniqueness proofs never unfold the definition — the presheaf below is itself assembled from them.
+`presentationLimit` is a `limit`, so Mathlib's `limit.w`, `limit.lift` and `limit.lift_π` are its
+interface and are not restated here. Two names do have to exist. `presentationLimitπ` is
+load-bearing rather than cosmetic: `presentationLimitMap`'s codomain is `presentationLimit W`, and
+because that definition is sealed the elaborator will not identify it with `limit (diagram W)`, so
+`limit.π` cannot be written at the use site — it reports *"definitions were not unfolded because
+their definition is not exposed"*. `presentationLimit_hom_ext` follows it: `limit.hom_ext` leaves
+goals spelled with `limit.π`, which the restriction lemmas below then fail to rewrite.
 -/
 
 /-- **The projection of `presentationLimit` at an index.** -/
@@ -166,28 +169,6 @@ noncomputable def presentationLimitπ (Aplus : Subring A) (V : Opens ↥(spa Apl
     (i : PresentationIndex (P := P) Aplus V) :
     presentationLimit (P := P) Aplus V ⟶ (presentationIndexDiagram (P := P) Aplus V).obj i :=
   limit.π _ i
-
-/-- The projections are compatible with refinement: projecting then restricting is projecting
-at the finer index. -/
-@[simp]
-theorem presentationLimitπ_comp_map {i j : PresentationIndex (P := P) Aplus V} (h : i ⟶ j) :
-    presentationLimitπ (P := P) Aplus V i ≫ (presentationIndexDiagram (P := P) Aplus V).map h =
-      presentationLimitπ (P := P) Aplus V j :=
-  limit.w _ h
-
-/-- **The universal property**: a cone over the diagram factors through the limit. -/
-noncomputable def presentationLimitLift (Aplus : Subring A) (V : Opens ↥(spa Aplus))
-    (s : Cone (presentationIndexDiagram (P := P) Aplus V)) :
-    s.pt ⟶ presentationLimit (P := P) Aplus V :=
-  limit.lift _ s
-
-/-- The lift of a cone is a factorisation: composing it with a projection recovers the cone leg. -/
-@[simp]
-theorem presentationLimitLift_comp_π (Aplus : Subring A) (V : Opens ↥(spa Aplus))
-    (s : Cone (presentationIndexDiagram (P := P) Aplus V))
-    (i : PresentationIndex (P := P) Aplus V) :
-    presentationLimitLift (P := P) Aplus V s ≫ presentationLimitπ (P := P) Aplus V i = s.π.app i :=
-  limit.lift_π _ _
 
 /-- **Extensionality**: maps into the limit agree when their projections do. -/
 theorem presentationLimit_hom_ext {W : CompleteSeparatedTopCommRingCat.{v}}
