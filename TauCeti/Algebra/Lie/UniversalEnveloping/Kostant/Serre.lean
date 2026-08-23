@@ -260,55 +260,41 @@ theorem kostantForm_serreChevalleyInvolution_eq :
         (fun i => serreChevalleyInvolution ℚ CM (serreRootGenerator CM i))
         (fun i => serreChevalleyInvolution ℚ CM (serreH ℚ CM i)) =
       serreKostantForm CM := by
+  -- `e` and `h`: the Serre root generators and Cartan elements, after the involution
+  set e := fun i => serreChevalleyInvolution ℚ CM (serreRootGenerator CM i) with he
+  set h := fun i => serreChevalleyInvolution ℚ CM (serreH ℚ CM i) with hh
   apply le_antisymm
   · rw [kostantForm_le_iff]
     constructor
     · rintro (i | i) n
-      · simp only [serreRootGenerator_inl, serreChevalleyInvolution_serreE]
+      · simp only [he, serreRootGenerator_inl, serreChevalleyInvolution_serreE]
         rw [map_neg]
         exact (dividedPower_neg_mem_iff CM (serreKostantForm CM)
           (_root_.UniversalEnvelopingAlgebra.ι ℚ (serreF ℚ CM i)) n).2
           (dividedPower_serreF_mem CM i n)
-      · simp only [serreRootGenerator_inr, serreChevalleyInvolution_serreF]
+      · simp only [he, serreRootGenerator_inr, serreChevalleyInvolution_serreF]
         rw [map_neg]
         exact (dividedPower_neg_mem_iff CM (serreKostantForm CM)
           (_root_.UniversalEnvelopingAlgebra.ι ℚ (serreE ℚ CM i)) n).2
           (dividedPower_serreE_mem CM i n)
     · intro i n
-      simp only [serreChevalleyInvolution_serreH]
+      simp only [hh, serreChevalleyInvolution_serreH]
       rw [map_neg]
       exact Ring.choose_neg_mem fun k _ => ringChoose_serreH_mem CM i k
   · rw [serreKostantForm_le_iff]
     refine ⟨fun i n => ?_, fun i n => ?_, fun i n => ?_⟩
-    · apply (dividedPower_neg_mem_iff CM
-        (kostantForm
-          (fun i => serreChevalleyInvolution ℚ CM (serreRootGenerator CM i))
-          (fun i => serreChevalleyInvolution ℚ CM (serreH ℚ CM i))) _ n).1
-      simpa only [serreRootGenerator_inr, serreChevalleyInvolution_serreF, map_neg]
-        using dividedPower_mem_kostantForm
-          (fun i => serreChevalleyInvolution ℚ CM (serreRootGenerator CM i))
-          (fun i => serreChevalleyInvolution ℚ CM (serreH ℚ CM i)) (.inr i) n
-    · apply (dividedPower_neg_mem_iff CM
-        (kostantForm
-          (fun i => serreChevalleyInvolution ℚ CM (serreRootGenerator CM i))
-          (fun i => serreChevalleyInvolution ℚ CM (serreH ℚ CM i))) _ n).1
-      simpa only [serreRootGenerator_inl, serreChevalleyInvolution_serreE, map_neg]
-        using dividedPower_mem_kostantForm
-          (fun i => serreChevalleyInvolution ℚ CM (serreRootGenerator CM i))
-          (fun i => serreChevalleyInvolution ℚ CM (serreH ℚ CM i)) (.inl i) n
+    · apply (dividedPower_neg_mem_iff CM (kostantForm e h) _ n).1
+      simpa only [he, serreRootGenerator_inr, serreChevalleyInvolution_serreF, map_neg]
+        using dividedPower_mem_kostantForm e h (.inr i) n
+    · apply (dividedPower_neg_mem_iff CM (kostantForm e h) _ n).1
+      simpa only [he, serreRootGenerator_inl, serreChevalleyInvolution_serreE, map_neg]
+        using dividedPower_mem_kostantForm e h (.inl i) n
     · have hneg : ∀ k, Ring.choose
-          (-(_root_.UniversalEnvelopingAlgebra.ι ℚ (serreH ℚ CM i))) k ∈
-            kostantForm
-              (fun i => serreChevalleyInvolution ℚ CM (serreRootGenerator CM i))
-              (fun i => serreChevalleyInvolution ℚ CM (serreH ℚ CM i)) := fun k => by
-        simpa only [serreChevalleyInvolution_serreH, map_neg]
-          using ringChoose_mem_kostantForm
-            (fun i => serreChevalleyInvolution ℚ CM (serreRootGenerator CM i))
-            (fun i => serreChevalleyInvolution ℚ CM (serreH ℚ CM i)) i k
-      simpa only [neg_neg] using Ring.choose_neg_mem
-        (A := kostantForm
-          (fun i => serreChevalleyInvolution ℚ CM (serreRootGenerator CM i))
-          (fun i => serreChevalleyInvolution ℚ CM (serreH ℚ CM i)))
+          (-(_root_.UniversalEnvelopingAlgebra.ι ℚ (serreH ℚ CM i))) k ∈ kostantForm e h :=
+        fun k => by
+          simpa only [hh, serreChevalleyInvolution_serreH, map_neg]
+            using ringChoose_mem_kostantForm e h i k
+      simpa only [neg_neg] using Ring.choose_neg_mem (A := kostantForm e h)
         (r := -(_root_.UniversalEnvelopingAlgebra.ι ℚ (serreH ℚ CM i))) (n := n)
         (fun k _ => hneg k)
 
