@@ -37,7 +37,7 @@ Ported from the AINTLIB `LeanModularForms` project
 
 ## Main results
 
-* `HeckeRing.GL2.Gamma0Image_le_SLnZ`: `Γ₀(N) ≤ SL₂(ℤ)` inside `GL₂(ℚ)`.
+* `HeckeRing.GL2.Gamma0_map_le_SLnZ`: `Γ₀(N) ≤ SL₂(ℤ)` inside `GL₂(ℚ)`.
 * `HeckeRing.GL2.doubleCoset_Gamma0Image_le_doubleCoset_SLnZ`: `Γ₀(N) α Γ₀(N) ⊆ Γ α Γ`.
 * `HeckeRing.GL2.doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0_map`: the equality above.
 
@@ -58,8 +58,13 @@ namespace HeckeRing.GL2
 variable (N : ℕ)
 
 /-- `Γ₀(N) ≤ SL₂(ℤ)` as subgroups of `GL₂(ℚ)`: the image of any integral matrix of determinant
-one lies in the range of `mapGL`. -/
-lemma Gamma0Image_le_SLnZ : Gamma0Image N ≤ SLnZ 2 := by
+one lies in the range of `mapGL`.
+
+Stated at the unfolded `(Gamma0 N).map (mapGL ℚ)` so the coset layer can use it directly: the
+`HeckeCoset` types of `CosetMap.lean` are spelled that way, and transporting a folded
+containment along `Gamma0Image_def` at each use site would hide the canonical form. -/
+lemma Gamma0_map_le_SLnZ : (Gamma0 N).map (mapGL ℚ) ≤ SLnZ 2 := by
+  rw [← Gamma0Image_def N]
   intro g hg
   obtain ⟨σ, -, rfl⟩ := (mem_Gamma0Image_iff N).mp hg
   exact (mem_SLnZ_iff 2).mpr ⟨σ, rfl⟩
@@ -68,9 +73,12 @@ lemma Gamma0Image_le_SLnZ : Gamma0Image N ≤ SLnZ 2 := by
 lemma doubleCoset_Gamma0Image_le_doubleCoset_SLnZ (α : GL (Fin 2) ℚ) :
     DoubleCoset.doubleCoset α (Gamma0Image N) (Gamma0Image N) ⊆
       DoubleCoset.doubleCoset α (SLnZ 2) (SLnZ 2) := fun _ hx ↦ by
+  -- this statement is at the folded spelling, so the containment is folded back once here
+  -- rather than at each of the two members
+  have hle : Gamma0Image N ≤ SLnZ 2 := Gamma0Image_def N ▸ Gamma0_map_le_SLnZ N
   rw [DoubleCoset.mem_doubleCoset] at hx ⊢
   obtain ⟨γ₁, hγ₁, γ₂, hγ₂, hx_eq⟩ := hx
-  exact ⟨γ₁, Gamma0Image_le_SLnZ N hγ₁, γ₂, Gamma0Image_le_SLnZ N hγ₂, hx_eq⟩
+  exact ⟨γ₁, hle hγ₁, γ₂, hle hγ₂, hx_eq⟩
 
 /-- If `N ∣ c` and `det` is coprime to `N`, then so is the lower-right entry: modulo `N` the
 determinant is `a * d`, so `d` divides a unit. -/
@@ -203,8 +211,8 @@ theorem doubleCoset_SLnZ_inter_Delta0_eq_doubleCoset_Gamma0_map
     DoubleCoset.doubleCoset α (SLnZ 2) (SLnZ 2) ∩ (Delta0 N : Set (GL (Fin 2) ℚ)) =
       DoubleCoset.doubleCoset α ((Gamma0 N).map (mapGL ℚ)) ((Gamma0 N).map (mapGL ℚ)) := by
   -- the conclusion is an equation of *sets*, so the two spellings of `Γ₀(N)` may be exchanged
-  -- by rewriting; the coset *types* of `CosetMap.lean` cannot (see `Gamma0Image_eq`)
-  rw [← Gamma0Image_eq N]
+  -- by rewriting; the coset *types* of `CosetMap.lean` cannot (see `Gamma0Image_def`)
+  rw [← Gamma0Image_def N]
   obtain ⟨B, hB, -, hBN, -⟩ := (mem_Delta0_iff N).mp hα
   -- `Δ₀(N)` already supplies an integral representative with `N ∣ c`, and `hA` identifies it
   -- with `A`, so the divisibility need not be assumed

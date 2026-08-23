@@ -73,8 +73,8 @@ noncomputable def toLevelOneCoset :
     HeckeCoset (Delta0 N) ((Gamma0 N).map (mapGL ℚ))
       ((Gamma0 N).map (mapGL ℚ)) →
       HeckeCoset (posDetInt 2) (SLnZ 2) (SLnZ 2) :=
-  HeckeCoset.map (Delta0_le_posDetInt N) (Gamma0Image_eq N ▸ Gamma0Image_le_SLnZ N)
-    (Gamma0Image_eq N ▸ Gamma0Image_le_SLnZ N)
+  HeckeCoset.map (Delta0_le_posDetInt N) (Gamma0_map_le_SLnZ N)
+    (Gamma0_map_le_SLnZ N)
 
 /-- The computation rule for `toLevelOneCoset`: it keeps the representative and forgets the
 level. -/
@@ -91,8 +91,8 @@ private lemma intMatrix_det_eq_of_mem_doubleCoset {a b : GL (Fin 2) ℚ}
     {A B : Matrix (Fin 2) (Fin 2) ℤ}
     (hA : (↑a : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
     (hB : (↑b : Matrix (Fin 2) (Fin 2) ℚ) = B.map (Int.cast : ℤ → ℚ)) : B.det = A.det := by
-  have hdet := det_eq_of_mem_doubleCoset_of_le_SLnZ 2 (Gamma0Image_eq N ▸ Gamma0Image_le_SLnZ N)
-    (Gamma0Image_eq N ▸ Gamma0Image_le_SLnZ N) hb
+  have hdet := det_eq_of_mem_doubleCoset_of_le_SLnZ 2 (Gamma0_map_le_SLnZ N)
+    (Gamma0_map_le_SLnZ N) hb
   have hcast : ((B.det : ℤ) : ℚ) = ((A.det : ℤ) : ℚ) := by
     rw [Int.cast_det B, Int.cast_det A, ← hB, ← hA]; exact hdet
   exact_mod_cast hcast
