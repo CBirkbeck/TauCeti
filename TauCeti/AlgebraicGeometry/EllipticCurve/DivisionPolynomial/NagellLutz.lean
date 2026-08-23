@@ -101,16 +101,6 @@ variable {R : Type*} [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R]
 variable {K : Type*} [Field K] [DecidableEq K] [Algebra R K] [IsFractionRing R K]
 variable (W : WeierstrassCurve R)
 
-/-- **A nonzero affine point is `.some`.** `Affine.Point` has two constructors, so this is the
-`rcases` that names the coordinates and their nonsingularity certificate. Local proof plumbing:
-the case split needs no field structure and has no Nagell–Lutz content. -/
-private lemma exists_eq_some_of_ne_zero {F : Type*} [CommRing F] {E : WeierstrassCurve F}
-    {P : Affine.Point E.toAffine} (hP : P ≠ 0) :
-    ∃ x y, ∃ hns : E.toAffine.Nonsingular x y, P = .some _ _ hns := by
-  rcases P with _ | ⟨_, _, hns⟩
-  · exact absurd rfl hP
-  · exact ⟨_, _, hns, rfl⟩
-
 /-- **The odd branch.** If some odd prime `p` divides the order of a torsion point, both its
 coordinates are integral.
 

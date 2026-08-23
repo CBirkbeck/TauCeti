@@ -44,6 +44,11 @@ Mathlib's `leadingCoeff_preΨ` (`= n` for odd `n` and `= n / 2` for even `n`) an
   where `4 / 2 = 2` collapses both arithmetic premises into `Squarefree (2 : R)`.
 * `WeierstrassCurve.den_dvd_four_of_order_two`: order two is the genuine exception — the
   coordinates need not be integral, but the denominator of `x` divides `4`.
+* `WeierstrassCurve.addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero`: the converse side of that
+  exception — a point where `ψ₂` does not vanish is not two-torsion, which is how consumers
+  discharge the `addOrderOf ≠ 2` guard the theorems above carry.
+* `WeierstrassCurve.exists_eq_some_of_ne_zero`: a nonzero affine point is `.some`, in the form
+  that applies to a compound point such as `n • P`.
 
 ## Roadmap
 
@@ -95,6 +100,14 @@ kept as `isInteger_x_of_order_four_of_squarefree`), `den_dvd_of_order_two` →
 `two_zsmul_eq_zero_of_evalEval_ψ₂_eq_zero`, restated for the Jacobian point so that the even-index
 theorem needs no `[DecidableEq K]`; that one carries no integrality content and lives in
 `DivisionPolynomial/ZSMul.lean`, which this file consumes.
+
+Two later additions come from a **different** source file, `PIDMain.lean` in the same project,
+because they are torsion facts rather than discriminant ones and their consumers sit on both sides
+of that split. `addOrderOf_ne_two_of_kappa_ne_zero` (`:279`) is
+`addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero`, placed here beside `den_dvd_four_of_order_two`, whose
+opening step it shares verbatim. `exists_eq_some_of_ne_zero` is not from the source at all: it is
+the `Affine.Point` case split, which the source performs inline at each of its uses, extracted
+once here because three consumers across two files need it applied to a compound point.
 -/
 
 public section
@@ -109,6 +122,16 @@ open TauCeti.WeierstrassCurve
 variable {R : Type*} [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R]
 variable {K : Type*} [Field K] [DecidableEq K] [Algebra R K] [IsFractionRing R K]
 variable (W : WeierstrassCurve R)
+
+/-- **A nonzero affine point is `.some`.** `Affine.Point` has two constructors, so this is the
+`rcases` that names the coordinates and their nonsingularity certificate, packaged so that it can
+be applied to a compound point such as `n • P` without first generalising it. -/
+theorem exists_eq_some_of_ne_zero {F : Type*} [CommRing F] {E : WeierstrassCurve F}
+    {P : Affine.Point E.toAffine} (hP : P ≠ 0) :
+    ∃ x y, ∃ hns : E.toAffine.Nonsingular x y, P = .some _ _ hns := by
+  rcases P with _ | ⟨_, _, hns⟩
+  · exact absurd rfl hP
+  · exact ⟨_, _, hns, rfl⟩
 
 omit [DecidableEq K] in
 /-- For an **odd** `n` with `(n : R)` squarefree, an `n`-torsion point has integral
@@ -210,5 +233,27 @@ theorem den_dvd_four_of_order_two {x y : K}
   have hdvd := den_dvd_of_is_root hΨ_zero
   rwa [W.leadingCoeff_Ψ₂Sq h4_ne] at hdvd
 
+omit [IsDomain R] [UniqueFactorizationMonoid R] in
+/-- **A point with `ψ₂ ≠ 0` is not two-torsion.** Order two forces `ψ₂` to vanish at the point,
+so a nonvanishing `ψ₂` rules it out.
+
+This is the converse companion of `den_dvd_four_of_order_two`: that lemma says what order two
+costs, this one says when it cannot arise. The hypothesis is read over `R`, at integral
+coordinates, because that is where its consumers have `ψ₂` in hand. -/
+theorem addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero {x y : K}
+    (hns : (W.baseChange K).toAffine.Nonsingular x y)
+    {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y)
+    (hκ : W.ψ₂.evalEval x₀ y₀ ≠ 0) :
+    addOrderOf (Affine.Point.some _ _ hns) ≠ 2 := by
+  intro h2
+  have h2P : (2 : ℕ) • Affine.Point.some _ _ hns = 0 := by
+    rw [← h2]; exact addOrderOf_nsmul_eq_zero _
+  have hψ := evalEval_ψ_eq_zero_of_zsmul_eq_zero (W.baseChange K) hns 2
+    (zsmul_fromAffine_eq_zero_iff.mpr h2P)
+  rw [WeierstrassCurve.ψ_two] at hψ
+  -- `ψ₂` commutes with base change, so its vanishing over `K` descends along `algebraMap R K`.
+  have hbase : (W.baseChange K).ψ₂.evalEval x y = algebraMap R K (W.ψ₂.evalEval x₀ y₀) := by
+    rw [← hx, ← hy, WeierstrassCurve.baseChange, map_ψ₂, map_mapRingHom_evalEval]
+  exact hκ (IsFractionRing.injective R K (by rw [map_zero, ← hbase]; exact hψ))
 
 end WeierstrassCurve

@@ -35,11 +35,18 @@ The route is doubling. `κ ≠ 0` forces `2 • P ≠ 0`, so `2 • P` has an af
   the guarded squarefreeness hypothesis `isInteger_or_order_two_of_torsion` takes.
 * `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_rat`: the `ℤ`/`ℚ` specialisation,
   assuming only that the point is torsion with integral coordinates.
-* `WeierstrassCurve.addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero`: `ψ₂ ≠ 0` rules out order two, which
-  is what discharges the guard on the squarefreeness hypothesis.
-* `WeierstrassCurve.equation_of_algebraMap_eq`: the curve equation descends along `algebraMap R K`.
-* `WeierstrassCurve.evalEval_ψ₂_baseChange_of_algebraMap_eq`: `ψ₂` commutes with base change at an
-  integral point, so `κ` may be read either over `R` or over `K`.
+
+## Why the arithmetic hypothesis is the all-primes form
+
+`isInteger_or_order_two_of_torsion` takes a *sharp* guarded disjunction — `4 ∣ ord ∧ Squarefree 2`,
+or some odd prime `p ∣ ord` with `Squarefree p`. The headline here cannot take that form, because
+it applies integrality not at `P` but at `2 • P`, and the sharp hypothesis **does not transfer**
+along `addOrderOf (2 • P) ∣ addOrderOf P`. Concretely, at `addOrderOf P = 12` the sharp hypothesis
+is satisfied by its left disjunct, supplying only `Squarefree (2 : R)`; but `addOrderOf (2 • P)` is
+`6`, where `4 ∤ 6` forces the right disjunct and hence `Squarefree (3 : R)`, which nothing has
+provided. The all-primes form is closed under passing to divisors of the order, so it is the
+weakest hypothesis this route can carry. Its guard is still the sharp one, and is discharged for
+free on the only branch that consumes it.
 
 ## Roadmap
 
@@ -53,10 +60,16 @@ companion". The short-model sharpening is separate and already present, as
 Ported from J. Xu and D. K. Angdinata's
 `projects/NagellLutz/LutzNagell/LutzNagellTheorem/PIDMain.lean` in AINTLIB
 (`github.com/CBirkbeck/AINTLIB`, Apache-2.0, `main @ 1c1c74664e40071c2c2165bc55ca2616a67ccd6b`):
-`curveR_equation_of_isInteger` (`:266`), `addOrderOf_ne_two_of_kappa_ne_zero` (`:279`),
 `kappa_sq_dvd_four_Psi3_of_torsion` (`:356`) and `lutz_nagell_pid_discriminant_of_torsion`
 (`:415`). That file is byte-identical at `9fec8eba7652`, the revision the roadmap pins for this
 project (`README:1072`), verified by blob hash, so the citations hold at either.
+
+Two further declarations of that source file are ported **into `Torsion.lean`** rather than here.
+`addOrderOf_ne_two_of_kappa_ne_zero` (`:279`) is a statement about the order of a point, and its
+proof shares its opening step verbatim with that file's `den_dvd_four_of_order_two`; the two are
+the same fact about two-torsion read in opposite directions, so they belong together.
+`curveR_equation_of_isInteger` (`:266`) is not ported at all: it is Mathlib's
+`Affine.map_equation` with the coordinates substituted, so this file applies that lemma directly.
 
 **Most of the source's discriminant section is not ported, because this repository already carries
 it.** `kappa_sq_eq_Psi2Sq` (`:183`), `bezout_identity` (`:192`) and `kappa_sq_dvd_four_delta`
@@ -86,51 +99,6 @@ variable {R : Type*} [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R]
 variable {K : Type*} [Field K] [DecidableEq K] [Algebra R K] [IsFractionRing R K]
 variable (W : WeierstrassCurve R)
 
-/-- **A nonzero affine point is `.some`.** `Affine.Point` has two constructors, so this is the
-`rcases` that names the coordinates and their nonsingularity certificate. Local proof plumbing:
-no field structure and no discriminant content, so it stays private rather than joining the
-public API. -/
-private lemma exists_eq_some_of_ne_zero {F : Type*} [CommRing F] {E : WeierstrassCurve F}
-    {P : Affine.Point E.toAffine} (hP : P ≠ 0) :
-    ∃ x y, ∃ hns : E.toAffine.Nonsingular x y, P = .some _ _ hns := by
-  rcases P with _ | ⟨_, _, hns⟩
-  · exact absurd rfl hP
-  · exact ⟨_, _, hns, rfl⟩
-
-omit [IsDomain R] [UniqueFactorizationMonoid R] [DecidableEq K] in
-/-- **The curve equation descends to `R`.** A point of the base-changed curve whose coordinates
-are integral satisfies the equation over `R` itself. -/
-lemma equation_of_algebraMap_eq {x y : K} (h : (W.baseChange K).toAffine.Equation x y)
-    {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y) :
-    W.toAffine.Equation x₀ y₀ :=
-  (W.toAffine.map_equation (IsFractionRing.injective R K) x₀ y₀).mp (hx ▸ hy ▸ h)
-
-omit [IsDomain R] [UniqueFactorizationMonoid R] [DecidableEq K] [IsFractionRing R K] in
-/-- **`ψ₂` commutes with base change at an integral point.** -/
-lemma evalEval_ψ₂_baseChange_of_algebraMap_eq {x y : K}
-    {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y) :
-    (W.baseChange K).ψ₂.evalEval x y = algebraMap R K (W.ψ₂.evalEval x₀ y₀) := by
-  rw [← hx, ← hy, WeierstrassCurve.baseChange, map_ψ₂, map_mapRingHom_evalEval]
-
-omit [IsDomain R] [UniqueFactorizationMonoid R] in
-/-- **A point with `ψ₂ ≠ 0` is not two-torsion.** Order two forces `ψ₂` to vanish at the point,
-so a nonvanishing `ψ₂` rules it out. This is what supplies the `addOrderOf ≠ 2` side condition
-that Nagell–Lutz integrality needs at `2 • P`. -/
-lemma addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero {x y : K}
-    (hns : (W.baseChange K).toAffine.Nonsingular x y)
-    {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y)
-    (hκ : W.ψ₂.evalEval x₀ y₀ ≠ 0) :
-    addOrderOf (Affine.Point.some _ _ hns) ≠ 2 := by
-  intro h2
-  have h2P : (2 : ℕ) • Affine.Point.some _ _ hns = 0 := by
-    rw [← h2]; exact addOrderOf_nsmul_eq_zero _
-  have hψ := evalEval_ψ_eq_zero_of_zsmul_eq_zero (W.baseChange K) hns 2
-    (zsmul_fromAffine_eq_zero_iff.mpr h2P)
-  rw [WeierstrassCurve.ψ_two] at hψ
-  refine hκ (IsFractionRing.injective R K ?_)
-  rw [map_zero, ← evalEval_ψ₂_baseChange_of_algebraMap_eq W hx hy]
-  exact hψ
-
 /-- **The `Ψ₃` divisibility, from torsion.** For a torsion point with integral coordinates and
 `κ = ψ₂(x₀, y₀) ≠ 0`, the square `κ²` divides `4·Ψ₃(x₀)`.
 
@@ -144,7 +112,7 @@ private lemma sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ {x y : K}
     (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf (Affine.Point.some _ _ hns) →
       Squarefree ((p : ℤ) : R))
     {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y)
-    (hκ : W.ψ₂.evalEval x₀ y₀ ≠ 0) :
+    (hκ : W.ψ₂.evalEval x₀ y₀ ≠ 0) (hEq : W.toAffine.Equation x₀ y₀) :
     W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * (W.Ψ₃).eval x₀ := by
   set P := Affine.Point.some _ _ hns
   have hord2 : addOrderOf P ≠ 2 := addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero W hns hx hy hκ
@@ -154,8 +122,11 @@ private lemma sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ {x y : K}
   have h2P_ne : (2 : ℕ) • P ≠ 0 := nsmul_ne_zero_of_lt_addOrderOf two_ne_zero (by omega)
   obtain ⟨x', y', hns', h2P_eq⟩ := exists_eq_some_of_ne_zero h2P_ne
   -- The cleared doubling relation, then `Ψ₃ = (x - x') · Ψ₂Sq` over `K`.
-  have hcoord := mul_eval_ΨSq_eq_eval_Φ_of_zsmul (W.baseChange K) hns hns'
-    (n := 2) (by rw [show (2 : ℤ) = ((2 : ℕ) : ℤ) from rfl, natCast_zsmul]; exact h2P_eq)
+  -- The doubling lemma is indexed by `ℤ`, so restate the doubling with an integer scalar.
+  have h2P_zsmul : (2 : ℤ) • P = Affine.Point.some x' y' hns' := by
+    rw [show (2 : ℤ) = ((2 : ℕ) : ℤ) from Nat.cast_ofNat.symm, natCast_zsmul]
+    exact h2P_eq
+  have hcoord := mul_eval_ΨSq_eq_eval_Φ_of_zsmul (W.baseChange K) hns hns' (n := 2) h2P_zsmul
   have hΨ₃K := eval_Ψ₃_eq_sub_mul_eval_Ψ₂Sq (W.baseChange K) hcoord
   -- Both evaluations descend: `Ψ₃` and `Ψ₂Sq` commute with base change, and on the curve
   -- `Ψ₂Sq(x₀) = κ²`.
@@ -164,7 +135,7 @@ private lemma sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ {x y : K}
       eval₂_at_apply]
   have hΨ₂Sq : ((W.baseChange K).Ψ₂Sq).eval x = algebraMap R K (W.ψ₂.evalEval x₀ y₀) ^ 2 := by
     rw [← hx, WeierstrassCurve.baseChange, _root_.WeierstrassCurve.map_Ψ₂Sq, eval_map,
-      eval₂_at_apply, ← evalEval_ψ₂_sq W (equation_of_algebraMap_eq W hns.left hx hy), map_pow]
+      eval₂_at_apply, ← evalEval_ψ₂_sq W hEq, map_pow]
   rw [hΨ₃, hΨ₂Sq] at hΨ₃K
   -- Nagell–Lutz at `2 • P`. Both disjuncts hand back the same datum — some `c : R` with
   -- `c = 4x'` — so the divisibility is extracted once rather than twice: the integral case
@@ -199,11 +170,13 @@ theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ {x y : K}
     W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ := by
   by_cases hκ : W.ψ₂.evalEval x₀ y₀ = 0
   · exact Or.inl hκ
+  -- The point satisfies the equation over `R` itself, by injectivity of `algebraMap R K`.
+  have hEq : W.toAffine.Equation x₀ y₀ :=
+    (W.toAffine.map_equation (IsFractionRing.injective R K) x₀ y₀).mp (hx ▸ hy ▸ hns.left)
   -- On the curve `κ² = Ψ₂Sq(x₀)`, so the first premise is that equation read as a divisibility.
-  refine Or.inr (dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ W
-    (evalEval_ψ₂_sq W (equation_of_algebraMap_eq W hns.left hx hy)).dvd ?_)
+  refine Or.inr (dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ W (evalEval_ψ₂_sq W hEq).dvd ?_)
   exact sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ W hns htor
-    (hsf (addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero W hns hx hy hκ)) hx hy hκ
+    (hsf (addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero W hns hx hy hκ)) hx hy hκ hEq
 
 /-- **The discriminant companion over `ℚ`**, the form the roadmap asks for: for an integral long
 Weierstrass model, a torsion point with integral coordinates has `ψ₂ = 0` there, or `ψ₂²` divides
