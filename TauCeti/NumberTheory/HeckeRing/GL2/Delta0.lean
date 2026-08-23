@@ -6,6 +6,8 @@ Authors: Chris Birkbeck
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GLn.Basic
+-- `Matrix.map_mul_intCast`: the entrywise integer cast is multiplicative on matrices.
+public import Mathlib.LinearAlgebra.Matrix.Integer
 
 /-!
 # The semigroup `Δ₀(N)`
@@ -117,7 +119,7 @@ lemma coprimeDet_iff {g : Delta0 N} {A : Matrix (Fin 2) (Fin 2) ℤ}
 /-- The chosen integral witness of an element of `Δ₀(N)`.
 
 `Δ₀(N)`-membership is an existential over integral matrices, so a value-level map out of it
-must choose. The choice is harmless: `Delta0_witness_eq` shows the witness is unique, and
+must choose. The choice is harmless: `delta0Witness_eq` shows the witness is unique, and
 `Delta0UpperUnit_apply_val` states the resulting API against an arbitrary witness, so this
 definition never escapes into a consumer's proof obligation. -/
 private noncomputable def delta0Witness (g : Delta0 N) : Matrix (Fin 2) (Fin 2) ℤ :=
@@ -156,13 +158,8 @@ noncomputable def Delta0UpperUnit : Delta0 N →* (ZMod N)ˣ where
     ext
     rw [Units.val_mul, IsUnit.unit_spec, IsUnit.unit_spec, IsUnit.unit_spec,
       delta0Witness_eq N (A := delta0Witness N g * delta0Witness N h) (by
-        -- `Matrix.map_mul` does not fire on the bare function `Int.cast`; it needs the
-        -- `RingHom` coercion, as at `Gamma0/DoubleCoset.lean:119`
-        have hmap := map_mul (Int.castRingHom ℚ).mapMatrix
-          (delta0Witness N g) (delta0Witness N h)
-        simp only [RingHom.mapMatrix_apply, Int.coe_castRingHom] at hmap
         rw [Submonoid.coe_mul, Units.val_mul, delta0Witness_spec N g,
-          delta0Witness_spec N h, hmap])]
+          delta0Witness_spec N h, Matrix.map_mul_intCast])]
     have hzero : ((delta0Witness N g 0 1 * delta0Witness N h 1 0 : ℤ) : ZMod N) = 0 := by
       rw [ZMod.intCast_zmod_eq_zero_iff_dvd]
       exact Dvd.dvd.mul_left (delta0Witness_lowerLeft N h) _

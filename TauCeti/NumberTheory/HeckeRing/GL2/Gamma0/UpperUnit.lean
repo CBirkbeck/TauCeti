@@ -6,6 +6,9 @@ Authors: Chris Birkbeck, Claude
 module
 
 public import TauCeti.NumberTheory.HeckeRing.GL2.Gamma0.Basic
+-- `intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0`: the diagonal entries of a `Γ₀(N)`
+-- matrix are mutually inverse mod `N`.
+public import TauCeti.NumberTheory.ModularForms.CongruenceSubgroups
 
 /-!
 # The upper-left unit character of `Δ₀(N)`
@@ -68,12 +71,6 @@ namespace HeckeRing.GL2
 
 variable (N : ℕ)
 
-/-- `Γ₀(N)` lands in `Δ₀(N)`: its elements are integral of determinant one, with lower-left
-entry divisible by `N` and upper-left entry a unit because `ad ≡ 1`. -/
-lemma mapGL_mem_Delta0 (γ : Gamma0 N) :
-    (mapGL ℚ (γ : SL(2, ℤ)) : GL (Fin 2) ℚ) ∈ Delta0 N :=
-  Gamma0Image_le_Delta0 N ((mem_Gamma0Image_iff N).mpr ⟨(γ : SL(2, ℤ)), γ.2, rfl⟩)
-
 /-- **On `Γ₀(N)` the upper-left unit inverts `Gamma0Map`.** The determinant is one and the
 lower-left entry vanishes mod `N`, so `ad ≡ 1`: the upper-left unit of `γ` viewed in `Δ₀(N)`
 is the inverse of the lower-right unit Mathlib's `Gamma0Map` records.
@@ -89,12 +86,7 @@ double-coset operator divides by the character rather than multiplying by it. -/
     Delta0UpperUnit_apply_val N (A := (γ : Matrix (Fin 2) (Fin 2) ℤ))
       (by simp [mapGL_coe_matrix, algebraMap_int_eq]),
     MonoidHom.coe_toHomUnits, Gamma0Map]
-  have hdet : (γ : Matrix (Fin 2) (Fin 2) ℤ).det = 1 := (γ : SL(2, ℤ)).2
-  have hlow : (((γ : Matrix (Fin 2) (Fin 2) ℤ) 1 0 : ℤ) : ZMod N) = 0 := Gamma0_mem.mp γ.2
-  rw [Matrix.det_fin_two] at hdet
-  have := congrArg (Int.cast : ℤ → ZMod N) hdet
-  push_cast at this
-  simp only [MonoidHom.coe_mk, OneHom.coe_mk, hlow, mul_zero, sub_zero] at this ⊢
-  exact this
+  simpa only [MonoidHom.coe_mk, OneHom.coe_mk] using
+    intCast_apply_zero_zero_mul_apply_one_one_of_mem_Gamma0 (M := N) γ.2
 
 end HeckeRing.GL2
