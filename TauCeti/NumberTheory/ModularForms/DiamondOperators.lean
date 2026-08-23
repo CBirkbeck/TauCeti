@@ -54,6 +54,9 @@ re-founded slash action with built-in character) and their names. The Hecke pair
   suitable `Γ₀(N)` representative is the corresponding natural-indexed diamond operator;
   `slash_mapGL_gamma0Twist_eq_diamondOpNat` and its cusp counterpart specialize to the explicit
   Bézout representative.
+* `diamondOp_coe_cuspForm`, `coe_mem_modFormCharSpace_iff`: the diamond operators, and hence the
+  character spaces, commute with the coercion `S_k(Γ₁(N)) → M_k(Γ₁(N))`; a cusp form is a
+  `χ`-form exactly when the modular form underlying it is.
 
 ## References
 
@@ -425,3 +428,28 @@ theorem slash_mapGL_gamma0Twist_eq_diamondOpCuspNat {p : ℕ} (k : ℤ) (h : Nat
     ⇑f ∣[k] (mapGL ℚ (gamma0Twist N p h) : GL (Fin 2) ℚ) = ⇑(diamondOpCuspNat k p f) :=
   slash_mapGL_eq_diamondOpCuspNat k h ⟨gamma0Twist N p h, gamma0Twist_mem_Gamma0 h⟩
     (Gamma0Map_toHomUnits_gamma0Twist h) f
+
+/-! ### The character spaces under the cusp-form coercion -/
+
+/-- The diamond operator commutes with the coercion `S_k(Γ) → M_k(Γ)`: `⟨d⟩` slashes by a
+representative of `d`, which does not see whether a form vanishes at the cusps. -/
+@[simp]
+theorem diamondOp_coe_cuspForm (k : ℤ) (d : (ZMod N)ˣ)
+    (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    diamondOp k d (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) =
+      (diamondOpCusp k d f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) := by
+  ext τ
+  rfl
+
+/-- **A cusp form is a `χ`-form exactly when the modular form underlying it is.** Membership in
+either character space is the same family of diamond eigenvalue equations, and the coercion is
+pointwise, so the two conditions transport across it. -/
+theorem coe_mem_modFormCharSpace_iff (k : ℤ) (χ : (ZMod N)ˣ →* ℂˣ)
+    (f : CuspForm ((Gamma1 N).map (mapGL ℝ)) k) :
+    (f : ModularForm ((Gamma1 N).map (mapGL ℝ)) k) ∈ modFormCharSpace k χ ↔
+      f ∈ cuspFormCharSpace k χ := by
+  simp only [mem_modFormCharSpace_iff, mem_cuspFormCharSpace_iff, diamondOpHom_apply,
+    diamondOpCuspHom_apply, diamondOp_coe_cuspForm]
+  exact forall_congr' fun d ↦
+    ⟨fun h ↦ DFunLike.ext _ _ fun τ ↦ DFunLike.congr_fun h τ,
+      fun h ↦ DFunLike.ext _ _ fun τ ↦ DFunLike.congr_fun h τ⟩
