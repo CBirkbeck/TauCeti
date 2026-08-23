@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Discriminant
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.NagellLutz
@@ -12,9 +13,14 @@ public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.NagellL
 /-!
 # The discriminant companion of Nagell–Lutz
 
-For a torsion point with integral coordinates, either `ψ₂` vanishes there or its square divides
+Over `ℤ`, a torsion point with integral coordinates either has `ψ₂ = 0` there or has `ψ₂²` dividing
 `4Δ`. Writing `κ = ψ₂(x₀, y₀) = 2y₀ + a₁x₀ + a₃`, that is the classical `y = 0 ∨ y² ∣ Δ` disjunct
 in the form a long Weierstrass model supports.
+
+Over the fraction field of a general unique factorisation domain the same holds **given a
+squarefreeness hypothesis**, exactly as in `NagellLutz.lean`: this route applies integrality at
+`2 • P`, so what it needs is squarefreeness at the primes dividing that point's order. Over `ℤ`
+that discharges for free, which is why the specialisation carries no arithmetic hypothesis.
 
 The arithmetic is already in `Discriminant.lean`, which proves — for any commutative ring, any `x`
 and **any** divisor `d` — that `d ∣ Ψ₂Sq(x)` and `d ∣ 4·Ψ₃(x)` together give `d ∣ 4Δ`, by an
@@ -31,22 +37,27 @@ The route is doubling. `κ ≠ 0` forces `2 • P ≠ 0`, so `2 • P` has an af
 
 ## Main results
 
-* `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ`: the companion over a UFD `R`, with
-  the guarded squarefreeness hypothesis `isInteger_or_order_two_of_torsion` takes.
+* `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ`: the companion over a UFD `R`,
+  asking squarefreeness at the primes dividing `addOrderOf (2 • P)` — the point where the proof
+  actually applies `isInteger_or_order_two_of_torsion_of_squarefree`.
+* `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree`: the same conclusion
+  from the more familiar hypothesis at `P` itself, which is strictly stronger.
 * `WeierstrassCurve.evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_rat`: the `ℤ`/`ℚ` specialisation,
   assuming only that the point is torsion with integral coordinates.
 
-## Why the arithmetic hypothesis is the all-primes form
+## Why the hypothesis sits at `2 • P`, and is not the sharp disjunction
 
 `isInteger_or_order_two_of_torsion` takes a *sharp* guarded disjunction — `4 ∣ ord ∧ Squarefree 2`,
-or some odd prime `p ∣ ord` with `Squarefree p`. The headline here cannot take that form, because
-it applies integrality not at `P` but at `2 • P`, and the sharp hypothesis **does not transfer**
-along `addOrderOf (2 • P) ∣ addOrderOf P`. Concretely, at `addOrderOf P = 12` the sharp hypothesis
-is satisfied by its left disjunct, supplying only `Squarefree (2 : R)`; but `addOrderOf (2 • P)` is
-`6`, where `4 ∤ 6` forces the right disjunct and hence `Squarefree (3 : R)`, which nothing has
-provided. The all-primes form is closed under passing to divisors of the order, so it is the
-weakest hypothesis this route can carry. Its guard is still the sharp one, and is discharged for
-free on the only branch that consumes it.
+or some odd prime `p ∣ ord` with `Squarefree p` — and this file does **not** use it, for a reason
+worth recording. Integrality is applied at `2 • P`, and that disjunction does not transfer along
+`addOrderOf (2 • P) ∣ addOrderOf P`: at `addOrderOf P = 12` it is satisfied by its left disjunct,
+supplying only `Squarefree (2 : R)`, whereas `addOrderOf (2 • P) = 6` has `4 ∤ 6` and so forces the
+right disjunct, needing `Squarefree (3 : R)`, which nothing provided.
+
+What *does* transfer is the all-primes condition, since the divisors of `addOrderOf (2 • P)` are
+divisors of `addOrderOf P`. Stating it **at `2 • P`** rather than at `P` is therefore the weakest
+form this route supports, and it needs no guard: when `P` has order two, `2 • P` is zero, no prime
+divides `1`, and the hypothesis is vacuous of its own accord.
 
 ## Roadmap
 
@@ -64,10 +75,11 @@ Ported from J. Xu and D. K. Angdinata's
 (`:415`). That file is byte-identical at `9fec8eba7652`, the revision the roadmap pins for this
 project (`README:1072`), verified by blob hash, so the citations hold at either.
 
-Two further declarations of that source file are ported **into `Torsion.lean`** rather than here.
-`addOrderOf_ne_two_of_kappa_ne_zero` (`:279`) is a statement about the order of a point, and its
-proof shares its opening step verbatim with that file's `den_dvd_four_of_order_two`; the two are
-the same fact about two-torsion read in opposite directions, so they belong together.
+Two further declarations of that source file land elsewhere. `addOrderOf_ne_two_of_kappa_ne_zero`
+(`:279`) is ported **into `ZSMul.lean`**, beside the `evalEval_ψ_eq_zero_of_zsmul_eq_zero` its
+proof consumes, and **generalised** while there: the source states it over the fraction field of a
+PID at integral coordinates, but nothing in the argument sees the base ring, so it is stated over
+the point's own field and the transport across `algebraMap` happens here, at the call site.
 `curveR_equation_of_isInteger` (`:266`) is not ported at all: it is Mathlib's
 `Affine.map_equation` with the coordinates substituted, so this file applies that lemma directly.
 
@@ -109,18 +121,19 @@ and the `4` is already on the left. -/
 private lemma sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ {x y : K}
     (hns : (W.baseChange K).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
-    (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf (Affine.Point.some _ _ hns) →
+    (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) →
       Squarefree ((p : ℤ) : R))
-    {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y)
-    (hκ : W.ψ₂.evalEval x₀ y₀ ≠ 0) (hEq : W.toAffine.Equation x₀ y₀) :
+    {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hEq : W.toAffine.Equation x₀ y₀)
+    (hκK : (W.baseChange K).ψ₂.evalEval x y ≠ 0) :
     W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * (W.Ψ₃).eval x₀ := by
   set P := Affine.Point.some _ _ hns
-  have hord2 : addOrderOf P ≠ 2 := addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero W hns hx hy hκ
+  have hord2 : addOrderOf P ≠ 2 :=
+    addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero (W.baseChange K) hns hκK
   have hord1 : addOrderOf P ≠ 1 := fun h ↦
     Affine.Point.some_ne_zero hns (AddMonoid.addOrderOf_eq_one_iff.mp h)
   have hpos : 0 < addOrderOf P := htor.addOrderOf_pos
   have h2P_ne : (2 : ℕ) • P ≠ 0 := nsmul_ne_zero_of_lt_addOrderOf two_ne_zero (by omega)
-  obtain ⟨x', y', hns', h2P_eq⟩ := exists_eq_some_of_ne_zero h2P_ne
+  obtain ⟨x', y', hns', h2P_eq⟩ := Affine.Point.exists_eq_some_of_ne_zero h2P_ne
   -- The cleared doubling relation, then `Ψ₃ = (x - x') · Ψ₂Sq` over `K`.
   -- The doubling lemma is indexed by `ℤ`, so restate the doubling with an integer scalar.
   have h2P_zsmul : (2 : ℤ) • P = Affine.Point.some x' y' hns' := by
@@ -146,10 +159,8 @@ private lemma sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ {x y : K}
     ⟨4 * x₀ - c, hinj <| by
       simp only [map_mul, map_sub, map_pow, map_ofNat, hx, hc]
       linear_combination (norm := ring_nf) 4 * hΨ₃K⟩
-  have hdvd : addOrderOf (Affine.Point.some _ _ hns') ∣ addOrderOf P := by
-    rw [← h2P_eq]; exact addOrderOf_dvd_of_mem_zmultiples ⟨2, rfl⟩
   rcases isInteger_or_order_two_of_torsion_of_squarefree W hns' (h2P_eq ▸ htor.nsmul)
-      (fun _ p hp hpd ↦ hsf p hp (hpd.trans hdvd)) with
+      (fun _ p hp hpd ↦ hsf p hp (by rw [h2P_eq]; exact hpd)) with
     ⟨⟨x'₀, hx'₀⟩, _⟩ | ⟨_, ⟨n₀, hn₀⟩, _⟩
   · exact key (4 * x'₀) (by rw [map_mul, map_ofNat, hx'₀])
   · exact key n₀ hn₀
@@ -157,15 +168,15 @@ private lemma sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ {x y : K}
 /-- **The discriminant companion of Nagell–Lutz.** For a torsion point with integral coordinates,
 either `ψ₂` vanishes there — equivalently the point is two-torsion — or its square divides `4Δ`.
 
-This is the second disjunct of the classical statement. The squarefreeness hypothesis is the
-guarded one that `isInteger_or_order_two_of_torsion` takes, and its guard is discharged here for
-free: on the branch that uses it, `ψ₂ ≠ 0` has already ruled order two out. -/
+This is the second disjunct of the classical statement. The squarefreeness hypothesis is asked at
+the primes dividing the order of `2 • P`, because that is the point at which the proof applies
+Nagell–Lutz integrality; `evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree` is the same
+conclusion from the more familiar hypothesis at `P` itself. -/
 theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ {x y : K}
     (hns : (W.baseChange K).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
-    (hsf : addOrderOf (Affine.Point.some _ _ hns) ≠ 2 →
-      ∀ p : ℕ, p.Prime → p ∣ addOrderOf (Affine.Point.some _ _ hns) →
-        Squarefree ((p : ℤ) : R))
+    (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf ((2 : ℕ) • Affine.Point.some _ _ hns) →
+      Squarefree ((p : ℤ) : R))
     {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y) :
     W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ := by
   by_cases hκ : W.ψ₂.evalEval x₀ y₀ = 0
@@ -173,23 +184,45 @@ theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ {x y : K}
   -- The point satisfies the equation over `R` itself, by injectivity of `algebraMap R K`.
   have hEq : W.toAffine.Equation x₀ y₀ :=
     (W.toAffine.map_equation (IsFractionRing.injective R K) x₀ y₀).mp (hx ▸ hy ▸ hns.left)
+  -- `ψ₂` commutes with base change, so nonvanishing over `R` is nonvanishing over `K`.
+  have hκK : (W.baseChange K).ψ₂.evalEval x y ≠ 0 := by
+    have hbase : (W.baseChange K).ψ₂.evalEval x y = algebraMap R K (W.ψ₂.evalEval x₀ y₀) := by
+      rw [← hx, ← hy, WeierstrassCurve.baseChange, map_ψ₂, map_mapRingHom_evalEval]
+    rw [hbase]
+    exact fun h ↦ hκ (IsFractionRing.injective R K (by rwa [map_zero]))
   -- On the curve `κ² = Ψ₂Sq(x₀)`, so the first premise is that equation read as a divisibility.
   refine Or.inr (dvd_four_mul_Δ_of_dvd_Ψ₂Sq_of_dvd_four_mul_Ψ₃ W (evalEval_ψ₂_sq W hEq).dvd ?_)
-  exact sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ W hns htor
-    (hsf (addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero W hns hx hy hκ)) hx hy hκ hEq
+  exact sq_evalEval_ψ₂_dvd_four_mul_eval_Ψ₃ W hns htor hsf hx hEq hκK
+
+/-- **The discriminant companion from a uniform hypothesis.** The same conclusion, asking
+squarefreeness at every prime dividing the order of `P` itself.
+
+That is strictly stronger than what the theorem above takes — the order of `2 • P` divides the
+order of `P` — but it is the form a caller usually already has, needing no knowledge of what
+doubling does to the order. The pair mirrors `isInteger_or_order_two_of_torsion` and its
+`_of_squarefree` companion. -/
+theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_of_squarefree {x y : K}
+    (hns : (W.baseChange K).toAffine.Nonsingular x y)
+    (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
+    (hsf : ∀ p : ℕ, p.Prime → p ∣ addOrderOf (Affine.Point.some _ _ hns) →
+      Squarefree ((p : ℤ) : R))
+    {x₀ y₀ : R} (hx : algebraMap R K x₀ = x) (hy : algebraMap R K y₀ = y) :
+    W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ := by
+  refine evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ W hns htor (fun p hp hpd ↦ hsf p hp ?_) hx hy
+  exact hpd.trans (addOrderOf_dvd_of_mem_zmultiples ⟨2, rfl⟩)
 
 /-- **The discriminant companion over `ℚ`**, the form the roadmap asks for: for an integral long
 Weierstrass model, a torsion point with integral coordinates has `ψ₂ = 0` there, or `ψ₂²` divides
 `4Δ`. For a short model (`a₁ = a₃ = 0`) `ψ₂` is `2y`, so this reads `y = 0` or `4y² ∣ 4Δ`.
 
 As with `isInteger_or_order_two_of_torsion_rat`, no arithmetic hypothesis survives: over `ℤ` a
-rational prime is squarefree, so the general statement's guarded hypothesis discharges outright. -/
+rational prime is squarefree, so the general statement's hypothesis discharges outright. -/
 theorem evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ_rat {W : WeierstrassCurve ℤ} {x y : ℚ}
     (hns : (W.baseChange ℚ).toAffine.Nonsingular x y)
     (htor : IsOfFinAddOrder (Affine.Point.some _ _ hns))
     {x₀ y₀ : ℤ} (hx : algebraMap ℤ ℚ x₀ = x) (hy : algebraMap ℤ ℚ y₀ = y) :
     W.ψ₂.evalEval x₀ y₀ = 0 ∨ W.ψ₂.evalEval x₀ y₀ ^ 2 ∣ 4 * W.Δ :=
   evalEval_ψ₂_eq_zero_or_sq_dvd_four_mul_Δ W hns htor
-    (fun _ p hp _ ↦ by simpa using (Nat.prime_iff_prime_int.mp hp).squarefree) hx hy
+    (fun p hp _ ↦ by simpa using (Nat.prime_iff_prime_int.mp hp).squarefree) hx hy
 
 end WeierstrassCurve

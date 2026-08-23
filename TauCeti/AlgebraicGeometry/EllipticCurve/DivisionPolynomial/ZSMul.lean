@@ -1104,4 +1104,20 @@ lemma zsmul_fromAffine_eq_zero_iff [DecidableEq F] {E : WeierstrassCurve F}
   rw [natCast_zsmul, ← Jacobian.Point.toAffineAddEquiv_symm_apply,
     ← map_nsmul (Jacobian.Point.toAffineAddEquiv E).symm, AddEquiv.map_eq_zero_iff]
 
+/-- **A point where `ψ₂` does not vanish is not two-torsion.** Order two makes `2 • P = 0`, which
+by `evalEval_ψ_eq_zero_of_zsmul_eq_zero` at `n = 2` forces `ψ₂` to vanish at the point; so a
+nonvanishing `ψ₂` rules order two out.
+
+Stated over the point's own field, with no arithmetic on the coefficients: consumers working over
+a fraction field transport their hypothesis across `algebraMap` at the call site. -/
+theorem addOrderOf_ne_two_of_evalEval_ψ₂_ne_zero [DecidableEq F] {x y : F}
+    (hns : W.toAffine.Nonsingular x y) (hψ₂ : W.ψ₂.evalEval x y ≠ 0) :
+    addOrderOf (Affine.Point.some _ _ hns) ≠ 2 := by
+  intro h2
+  have h2P : (2 : ℕ) • Affine.Point.some _ _ hns = 0 := by
+    rw [← h2]; exact addOrderOf_nsmul_eq_zero _
+  have hψ := evalEval_ψ_eq_zero_of_zsmul_eq_zero W hns 2 (zsmul_fromAffine_eq_zero_iff.mpr h2P)
+  rw [WeierstrassCurve.ψ_two] at hψ
+  exact hψ₂ hψ
+
 end WeierstrassCurve

@@ -5,6 +5,7 @@ Authors: The Tau Ceti contributors
 -/
 module
 
+public import TauCeti.AlgebraicGeometry.EllipticCurve.Affine.Point.Basic
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Descent
 public import TauCeti.AlgebraicGeometry.EllipticCurve.DivisionPolynomial.Torsion
 public import TauCeti.RingTheory.Localization.NumDen
@@ -124,7 +125,7 @@ private lemma isInteger_of_odd_prime_factor {x y : K}
     rw [h, addOrderOf_zero] at hord; exact hp.ne_one hord.symm
   have hpQ : p • ((addOrderOf P / p) • P) = 0 :=
     addOrderOf_dvd_iff_nsmul_eq_zero.mp hord.dvd
-  obtain ⟨x', y', hns', hQ_eq⟩ := exists_eq_some_of_ne_zero hQ_ne
+  obtain ⟨x', y', hns', hQ_eq⟩ := Affine.Point.exists_eq_some_of_ne_zero hQ_ne
   have hx' : IsLocalization.IsInteger R x' :=
     isInteger_x_of_odd_torsion_of_squarefree W hns'
       (Int.not_even_iff_odd.mpr ((Int.odd_coe_nat p).mpr (hp.odd_of_ne_two hodd)))
@@ -154,7 +155,7 @@ private lemma isInteger_of_four_dvd_order {x y : K}
   have h2Q_ne : (2 : ℕ) • Q ≠ 0 := fun h ↦ by
     have := Nat.le_of_dvd (by norm_num) (addOrderOf_dvd_of_nsmul_eq_zero h)
     omega
-  obtain ⟨x', y', hns', hQ_eq⟩ := exists_eq_some_of_ne_zero hQ_ne
+  obtain ⟨x', y', hns', hQ_eq⟩ := Affine.Point.exists_eq_some_of_ne_zero hQ_ne
   have hx' : IsLocalization.IsInteger R x' :=
     isInteger_x_of_order_four_of_squarefree W hns'
       (by exact_mod_cast zsmul_fromAffine_eq_zero_iff.mpr (hQ_eq ▸ h4Q))
