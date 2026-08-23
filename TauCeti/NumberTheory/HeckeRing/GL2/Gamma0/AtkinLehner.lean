@@ -104,13 +104,11 @@ private lemma atkinLehnerHom_involutive (g : GL (Fin 2) ℚ) :
   rw [h_tr, transposeGLEquiv_transposeGLEquiv, transposeGLEquiv_natDiagGL 2 ![1, N], h_inv]
   group
 
-/-- **The entries of `ι(g)`**: `(a, b; N c, e) ↦ (a, c; N b, e)`, as an integral matrix.
-
-Public because it is the characteristic property of the map — `atkinLehnerAntiInvolution_bar_val`
-states the action in these terms, and a consumer reading entries off a `Δ₀(N)` element needs the
-name. Internally it also gives the value lemma, the determinant lemma and the two membership
-proofs one spelling instead of four copies of the literal. -/
-def atkinLehnerEntries (A : Matrix (Fin 2) (Fin 2) ℤ) (c : ℤ) :
+/-- The entries of `ι(g)`: `(a, b; N c, e) ↦ (a, c; N b, e)`, as an integral matrix. Gives the
+value lemma, the determinant lemma and the two membership proofs one spelling instead of four
+copies of the literal; the public `atkinLehnerAntiInvolution_bar_val` writes the matrix out
+rather than exposing this constructor. -/
+private def atkinLehnerEntries (A : Matrix (Fin 2) (Fin 2) ℤ) (c : ℤ) :
     Matrix (Fin 2) (Fin 2) ℤ :=
   !![A 0 0, c; (N : ℤ) * A 0 1, A 1 1]
 
@@ -223,7 +221,7 @@ lemma atkinLehnerAntiInvolution_bar_val [NeZero N] {x : GL (Fin 2) ℚ} (hx : x 
     (A : Matrix (Fin 2) (Fin 2) ℤ) (hA : (x : Matrix (Fin 2) (Fin 2) ℚ) = A.map (Int.cast : ℤ → ℚ))
     (c : ℤ) (hc : A 1 0 = (N : ℤ) * c) :
     (((atkinLehnerAntiInvolution N).bar x hx : GL (Fin 2) ℚ) : Matrix (Fin 2) (Fin 2) ℚ) =
-      (atkinLehnerEntries N A c).map (Int.cast : ℤ → ℚ) := by
+      (!![A 0 0, c; (N : ℤ) * A 0 1, A 1 1]).map (Int.cast : ℤ → ℚ) := by
   have hbar : ((atkinLehnerAntiInvolution N).bar x hx : GL (Fin 2) ℚ) = (atkinLehnerHom N x).unop :=
     HeckeAntiInvolution.ofAmbient_bar _ _ _ _ x hx
   rw [hbar]
