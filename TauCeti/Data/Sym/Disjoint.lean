@@ -190,6 +190,58 @@ theorem ofFn_map_injective {X : Fin n → Type*} (f : ∀ i, X i → α)
 
 attribute [local instance] Classical.propDecidable
 
+/-- Points chosen one from each of a pairwise disjoint family are pairwise distinct. -/
+private theorem injective_of_mem_pairwise_disjoint {ι : Type*} (S : ι → Set α)
+    (hS : Pairwise (Function.onFun Disjoint S)) {a : ι → α} (ha : ∀ i, a i ∈ S i) :
+    Function.Injective a := by
+  intro i j hij
+  by_contra hne
+  exact Set.disjoint_left.1 (hS hne) (ha i) (hij ▸ ha j)
+
+/-- Filtering a tuple of points chosen one from each of a pairwise disjoint family by the `i`-th
+set of the family leaves exactly the `i`-th point. -/
+private theorem filter_ofFn_eq_singleton (S : Fin n → Set α)
+    (hS : Pairwise (Function.onFun Disjoint S)) {a : Fin n → α} (ha : ∀ i, a i ∈ S i)
+    (i : Fin n) :
+    Multiset.filter (· ∈ S i) (ofFn a : Multiset α) = {a i} := by
+  classical
+  have hnodup : (ofFn a : Multiset α).Nodup := by
+    rw [coe_ofFn]
+    exact List.nodup_ofFn.2 (injective_of_mem_pairwise_disjoint S hS ha)
+  apply (Multiset.Nodup.ext (hnodup.filter _) (Multiset.nodup_singleton _)).2
+  intro b
+  rw [Multiset.mem_filter, Multiset.mem_singleton]
+  constructor
+  · rintro ⟨hb, hbi⟩
+    obtain ⟨j, hj⟩ := mem_ofFn.1 (_root_.Sym.mem_coe.1 hb)
+    -- disjointness forces the index to be `i`, since `a j` lies in both `S j` and `S i`
+    have hji : j = i := by
+      by_contra hne
+      exact Set.disjoint_left.1 (hS hne) (ha j) (hj ▸ hbi)
+    simpa [hji] using hj.symm
+  · rintro rfl
+    exact ⟨_root_.Sym.mem_coe.2 (mem_ofFn.2 ⟨i, rfl⟩), ha i⟩
+
+/-- An unordered `n`-tuple meeting each of `n` pairwise disjoint sets is exactly the tuple of one
+point from each. -/
+private theorem exists_ofFn_eq_of_forall_exists_mem (S : Fin n → Set α)
+    (hS : Pairwise (Function.onFun Disjoint S)) {w : Sym α n}
+    (hw : ∀ i, ∃ b, b ∈ w ∧ b ∈ S i) :
+    ∃ a : Fin n → α, (∀ i, a i ∈ S i) ∧ ofFn a = w := by
+  classical
+  choose a haw ha using hw
+  have hnodup : (↑(List.ofFn a) : Multiset α).Nodup :=
+    List.nodup_ofFn.2 (injective_of_mem_pairwise_disjoint S hS ha)
+  -- a nodup sub-multiset of the same cardinality exhausts `w`
+  have hle : (↑(List.ofFn a) : Multiset α) ≤ (w : Multiset α) :=
+    (Multiset.le_iff_subset hnodup).2 fun b hb => by
+      rw [← coe_ofFn] at hb
+      obtain ⟨i, hi⟩ := mem_ofFn.1 (_root_.Sym.mem_coe.1 hb)
+      exact _root_.Sym.mem_coe.2 (hi ▸ haw i)
+  have heq : (↑(List.ofFn a) : Multiset α) = (w : Multiset α) :=
+    Multiset.eq_of_le_of_card_le hle (by simp)
+  exact ⟨a, ha, Sym.coe_injective (by simpa using heq)⟩
+
 /-- The range of ordered tuples mapped pointwise into pairwise disjoint ranges consists exactly of
 the unordered tuples having one point in each range. -/
 theorem mem_range_ofFn_map {X : Fin n → Type*} (f : ∀ i, X i → α)
@@ -200,59 +252,17 @@ theorem mem_range_ofFn_map {X : Fin n → Type*} (f : ∀ i, X i → α)
   classical
   constructor
   · rintro ⟨x, rfl⟩ i
-    set a : Fin n → α := fun j => f j (x j)
-    have ha : Function.Injective a := by
-      intro j k hjk
-      by_contra hne
-      exact Set.disjoint_left.1 (h hne) (Set.mem_range_self (x j))
-        ⟨x k, hjk.symm⟩
-    have hnodup : (ofFn a : Multiset α).Nodup := by
-      rw [coe_ofFn]
-      exact List.nodup_ofFn.2 ha
-    have hfilter : Multiset.filter (· ∈ Set.range (f i)) (ofFn a : Multiset α) = {a i} := by
-      apply (Multiset.Nodup.ext (hnodup.filter _) (Multiset.nodup_singleton _)).2
-      intro b
-      rw [Multiset.mem_filter, Multiset.mem_singleton]
-      constructor
-      · rintro ⟨hb, hbi⟩
-        obtain ⟨j, hj⟩ := mem_ofFn.1 (_root_.Sym.mem_coe.1 hb)
-        have hji : j = i := by
-          by_contra hne
-          exact Set.disjoint_left.1 (h hne) ⟨x j, hj⟩ hbi
-        simpa [hji] using hj.symm
-      · rintro rfl
-        exact ⟨_root_.Sym.mem_coe.2 (mem_ofFn.2 ⟨i, rfl⟩), Set.mem_range_self (x i)⟩
-    rw [hfilter]
+    rw [filter_ofFn_eq_singleton _ h (fun j => Set.mem_range_self (x j)) i]
     simp
   · intro hcount
-    have hex : ∀ i, ∃ a, a ∈ w ∧ a ∈ Set.range (f i) := by
-      intro i
-      have hpos : 0 < Multiset.card
-          (Multiset.filter (· ∈ Set.range (f i)) (w : Multiset α)) := by
-        rw [hcount i]
-        exact Nat.zero_lt_succ 0
-      obtain ⟨a, ha⟩ := Multiset.card_pos_iff_exists_mem.1 hpos
-      exact ⟨a, (_root_.Sym.mem_coe.1 (Multiset.mem_filter.1 ha).1),
-        (Multiset.mem_filter.1 ha).2⟩
-    choose a ha using hex
-    have haw : ∀ i, a i ∈ w := fun i => (ha i).1
-    have har : ∀ i, a i ∈ Set.range (f i) := fun i => (ha i).2
-    have hainj : Function.Injective a := by
-      intro i j hij
-      by_contra hne
-      exact Set.disjoint_left.1 (h hne) (har i) (hij.symm ▸ har j)
-    choose x hx using har
-    have hnodup : (↑(List.ofFn a) : Multiset α).Nodup := List.nodup_ofFn.2 hainj
-    have hle : (↑(List.ofFn a) : Multiset α) ≤ (w : Multiset α) :=
-      (Multiset.le_iff_subset hnodup).2 fun b hb => by
-        rw [← coe_ofFn] at hb
-        obtain ⟨i, hi⟩ := mem_ofFn.1 (_root_.Sym.mem_coe.1 hb)
-        exact _root_.Sym.mem_coe.2 (hi ▸ haw i)
-    have heq : (↑(List.ofFn a) : Multiset α) = (w : Multiset α) :=
-      Multiset.eq_of_le_of_card_le hle (by simp)
-    have hofa : ofFn a = w := Sym.coe_injective (by simpa using heq)
-    refine ⟨x, ?_⟩
-    exact (congrArg ofFn (funext hx)).trans hofa
+    have hw : ∀ i, ∃ b, b ∈ w ∧ b ∈ Set.range (f i) := fun i => by
+      obtain ⟨b, hb⟩ := Multiset.card_eq_one.1 (hcount i)
+      have hmem := hb ▸ Multiset.mem_singleton_self b
+      exact ⟨b, _root_.Sym.mem_coe.1 (Multiset.mem_filter.1 hmem).1,
+        (Multiset.mem_filter.1 hmem).2⟩
+    obtain ⟨a, ha, hofa⟩ := exists_ofFn_eq_of_forall_exists_mem _ h hw
+    choose x hx using ha
+    exact ⟨x, (congrArg ofFn (funext hx)).trans hofa⟩
 
 end Sym
 
