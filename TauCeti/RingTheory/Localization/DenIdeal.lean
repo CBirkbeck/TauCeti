@@ -7,6 +7,7 @@ module
 
 public import Mathlib.RingTheory.Ideal.Colon
 public import Mathlib.RingTheory.Localization.FractionRing
+public import Mathlib.RingTheory.Localization.NumDen
 
 /-!
 # The denominator ideal of an element of an algebra
@@ -15,6 +16,10 @@ For `x` in an `R`-algebra `K`, the denominator ideal `Algebra.denIdeal K x` is t
 `(R : x) = {r : R | r • x ∈ R}` — the `r` that clear the denominator of `x`. When `K` is the
 localization of `R` at its non-zero-divisors it is nonzero (`Algebra.denIdeal_ne_bot`), because
 any expression of `x` as a fraction exhibits a denominator in it.
+
+Over a unique factorization domain `Mathlib` picks out a canonical such `r`, the reduced
+denominator `IsFractionRing.den`, and `IsFractionRing.isInteger_mul_of_den_dvd` says every multiple
+of it clears `x` too — a bound on `den x` is thereby a bound on how far `x` is from being integral.
 
 This is general commutative algebra, used in
 `TauCeti/RingTheory/DedekindDomain/SInteger/Basic.lean`
@@ -70,5 +75,31 @@ lemma Algebra.denIdeal_ne_bot [Nontrivial R] [IsLocalization R⁰ K] (x : K) :
   have : b ∈ Algebra.denIdeal K x := by
     rw [Algebra.mem_denIdeal_iff]; exact ⟨a, by rw [mul_comm]; exact hab⟩
   simpa [h0] using this
+
+section NumDen
+
+variable {R : Type*} [CommRing R] [IsDomain R] [UniqueFactorizationMonoid R]
+variable {K : Type*} [Field K] [Algebra R K] [IsFractionRing R K]
+
+/-- **A bound on the denominator of `x` bounds how far `x` is from being integral**: if
+`den x ∣ d` then `d * x` lies in the image of `R`.
+
+Equivalently, by `Algebra.mem_denIdeal_iff`, every multiple of `IsFractionRing.den R x` lies in
+`Algebra.denIdeal K x`; the `IsLocalization.IsInteger` form is stated because that is the shape
+consumers of a denominator bound need, with `d` a numeral in `K` rather than an ideal member. -/
+theorem IsFractionRing.isInteger_mul_of_den_dvd {x : K} {d : R}
+    (h : (IsFractionRing.den R x : R) ∣ d) :
+    IsLocalization.IsInteger R (algebraMap R K d * x) := by
+  obtain ⟨e, he⟩ := h
+  refine ⟨e * IsFractionRing.num R x, ?_⟩
+  have hden : algebraMap R K (IsFractionRing.den R x : R) ≠ 0 :=
+    IsFractionRing.to_map_ne_zero_of_mem_nonZeroDivisors (IsFractionRing.den R x).2
+  have hx : algebraMap R K (IsFractionRing.num R x) =
+      x * algebraMap R K (IsFractionRing.den R x : R) := by
+    rw [← div_eq_iff hden]; exact IsFractionRing.mk'_num_den' R x
+  rw [he, map_mul, map_mul, hx]
+  ring
+
+end NumDen
 
 end
