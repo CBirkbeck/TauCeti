@@ -122,11 +122,28 @@ lemma Delta0_le_posDetInt : Delta0 N ≤ posDetInt 2 := by
   obtain ⟨A, hA, hdet, -, -⟩ := (mem_Delta0_iff N).mp hg
   exact (mem_posDetInt_iff 2).mpr ⟨(hasIntEntries_iff 2).mpr ⟨A, hA⟩, hdet⟩
 
-/-- Scaling a `2 × 2` matrix by `d` scales its determinant by `d ^ 2`. -/
-private lemma det_eq_sq_mul_det_of_entries_eq {A A₀ : Matrix (Fin 2) (Fin 2) ℤ} {d : ℕ}
-    (hA_eq : ∀ i j, A i j = (d : ℤ) * A₀ i j) : A.det = (d : ℤ) ^ 2 * A₀.det := by
-  simp only [Matrix.det_fin_two]
-  rw [hA_eq 0 0, hA_eq 0 1, hA_eq 1 0, hA_eq 1 1]; ring
+/-- The gcd of the four entries, as a natural number. -/
+private def entryGCD (A : Matrix (Fin 2) (Fin 2) ℤ) : ℕ :=
+  Nat.gcd (Nat.gcd (A 0 0).natAbs (A 0 1).natAbs) (Nat.gcd (A 1 0).natAbs (A 1 1).natAbs)
+
+/-- The gcd of the entries divides each of them. -/
+private lemma entryGCD_dvd (A : Matrix (Fin 2) (Fin 2) ℤ) (i j : Fin 2) :
+    ((entryGCD A : ℕ) : ℤ) ∣ A i j := by
+  refine Int.natAbs_dvd_natAbs.mp ?_
+  rw [Int.natAbs_natCast]
+  fin_cases i <;> fin_cases j
+  · exact (Nat.gcd_dvd_left _ _).trans (Nat.gcd_dvd_left _ _)
+  · exact (Nat.gcd_dvd_left _ _).trans (Nat.gcd_dvd_right _ _)
+  · exact (Nat.gcd_dvd_right _ _).trans (Nat.gcd_dvd_left _ _)
+  · exact (Nat.gcd_dvd_right _ _).trans (Nat.gcd_dvd_right _ _)
+
+/-- A matrix with nonzero determinant has a nonzero entry, so its entry gcd is positive. -/
+private lemma entryGCD_pos {A : Matrix (Fin 2) (Fin 2) ℤ} (hA_det_pos : 0 < A.det) :
+    0 < entryGCD A := by
+  refine Nat.pos_of_ne_zero fun h ↦ hA_det_pos.ne' ?_
+  simp only [entryGCD, Nat.gcd_eq_zero_iff, Int.natAbs_eq_zero] at h
+  rw [Matrix.det_fin_two, h.1.1, h.1.2, h.2.1, h.2.2]
+  ring
 
 /-- If `d` is the gcd of the entries of `A` and `A = d • A₀`, no prime divides every entry of
 `A₀`: such a prime `q` would make `q * d` a common divisor of `A`'s entries, exceeding `d`. -/
@@ -138,8 +155,7 @@ private lemma not_prime_dvd_entries_of_isGCD {A A₀ : Matrix (Fin 2) (Fin 2) �
   rintro ⟨hq00, hq01, hq10, hq11⟩
   have hqd_nat : ∀ i j : Fin 2, q * d ∣ (A i j).natAbs := fun i j ↦ by
     have h : (q : ℤ) ∣ A₀ i j := by fin_cases i <;> fin_cases j <;> assumption
-    rw [show (A i j).natAbs = ((d : ℤ) * A₀ i j).natAbs by rw [← hA_eq], Int.natAbs_mul,
-      Int.natAbs_natCast, mul_comm]
+    rw [hA_eq i j, Int.natAbs_mul, Int.natAbs_natCast, mul_comm]
     exact Nat.mul_dvd_mul_left d (Int.natAbs_dvd_natAbs.mpr h)
   have hqd_dvd_d : q * d ∣ d := by
     conv_rhs => rw [hd_is_gcd]
@@ -161,14 +177,16 @@ Ported from the AINTLIB `LeanModularForms` project
 (`LeanModularForms/HeckeRIngs/GLn/CongruenceHecke/AtkinLehner.lean`, Chris Birkbeck,
 <https://github.com/CBirkbeck/AINTLIB>), where it is `Gamma0_content_quotient`. -/
 lemma exists_primitive_content_quotient (A : Matrix (Fin 2) (Fin 2) ℤ) (hA_det_pos : 0 < A.det)
-    (hAN : (N : ℤ) ∣ A 1 0) (hAco : Int.gcd (A 0 0) N = 1) (d : ℕ) (hd_pos : 0 < d)
-    (hd_dvd : ∀ i j : Fin 2, (d : ℤ) ∣ A i j)
+    (hAN : (N : ℤ) ∣ A 1 0) (hAco : Int.gcd (A 0 0) N = 1) (d : ℕ)
     (hd_is_gcd : d = Nat.gcd (Nat.gcd (A 0 0).natAbs (A 0 1).natAbs)
       (Nat.gcd (A 1 0).natAbs (A 1 1).natAbs)) :
     ∃ A₀ : Matrix (Fin 2) (Fin 2) ℤ, (∀ i j, A i j = (d : ℤ) * A₀ i j) ∧ 0 < A₀.det ∧
       (N : ℤ) ∣ A₀ 1 0 ∧ Int.gcd (A₀ 0 0) N = 1 ∧
       ∀ q : ℕ, q.Prime → ¬((q : ℤ) ∣ A₀ 0 0 ∧ (q : ℤ) ∣ A₀ 0 1 ∧ (q : ℤ) ∣ A₀ 1 0 ∧
         (q : ℤ) ∣ A₀ 1 1) := by
+  -- both facts the caller might have supplied are consequences of `hd_is_gcd`
+  have hd_dvd : ∀ i j : Fin 2, (d : ℤ) ∣ A i j := fun i j ↦ hd_is_gcd ▸ entryGCD_dvd A i j
+  have hd_pos : 0 < d := hd_is_gcd ▸ entryGCD_pos hA_det_pos
   set A₀ : Matrix (Fin 2) (Fin 2) ℤ := fun i j ↦ A i j / d with hA₀
   have hA_eq : ∀ i j, A i j = (d : ℤ) * A₀ i j := fun i j ↦ by
     simp only [hA₀]; rw [mul_comm]; exact (Int.ediv_mul_cancel (hd_dvd i j)).symm
@@ -177,9 +195,13 @@ lemma exists_primitive_content_quotient (A : Matrix (Fin 2) (Fin 2) ℤ) (hA_det
     refine Nat.eq_one_of_dvd_one (hAco ▸ Nat.dvd_gcd ?_ ?_)
     · exact Int.natAbs_dvd_natAbs.mpr ((Int.gcd_dvd_left (d : ℤ) N).trans (hd_dvd 0 0))
     · exact Int.natAbs_dvd_natAbs.mpr (Int.gcd_dvd_right (d : ℤ) N)
+  -- the scaling is `Matrix.det_smul` at `Fintype.card (Fin 2) = 2`
+  have hdet : A.det = (d : ℤ) ^ 2 * A₀.det := by
+    rw [show A = (d : ℤ) • A₀ from Matrix.ext fun i j ↦ hA_eq i j, Matrix.det_smul,
+      Fintype.card_fin]
   refine ⟨A₀, hA_eq, ?_, ?_, ?_, not_prime_dvd_entries_of_isGCD hd_pos hA_eq hd_is_gcd⟩
-  · refine (mul_pos_iff.mp (det_eq_sq_mul_det_of_entries_eq hA_eq ▸ hA_det_pos)).elim
-      (fun h ↦ h.2) fun h ↦ absurd h.1 (not_lt.mpr (sq_nonneg (d : ℤ)))
+  · exact (mul_pos_iff.mp (hdet ▸ hA_det_pos)).elim (fun h ↦ h.2)
+      fun h ↦ absurd h.1 (not_lt.mpr (sq_nonneg (d : ℤ)))
   · exact (Int.isCoprime_iff_gcd_eq_one.mpr hd_Nco).symm.dvd_of_dvd_mul_left (hA_eq 1 0 ▸ hAN)
   · exact Int.isCoprime_iff_gcd_eq_one.mp
       ((Int.isCoprime_iff_gcd_eq_one.mpr (hA_eq 0 0 ▸ hAco)).of_isCoprime_of_dvd_left
