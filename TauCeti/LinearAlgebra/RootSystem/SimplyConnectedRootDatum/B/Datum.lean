@@ -624,10 +624,8 @@ private lemma typeB_corootOfPair_nonpos_of_sgn_eq_one_of_sgn_eq_neg_one_of_axis_
   · rw [corootOfPair_apply_of_ne hj, hsu, hsv]
     split_ifs <;> omega
 
-/-- The roots of the pinned type `Bₙ` datum lie in the additive closure of the simple
-roots, up to sign: each is a nonnegative or nonpositive combination of the Bourbaki simple
-roots. -/
-private theorem typeBRoot_mem_or_neg_mem (n : ℕ) (k : Fin (2 * n ^ 2)) :
+/-- The type `Bₙ` roots are, up to sign, `ℕ`-combinations of the simple roots. -/
+private theorem typeB_root_mem_or_neg_mem (n : ℕ) (k : Fin (2 * n ^ 2)) :
     (typeBSimplyConnectedRootDatum n).root k ∈
         AddSubmonoid.closure (⇑(typeBSimplyConnectedRootDatum n).root ''
           (typeBSimpleSupport n : Set (Fin (2 * n ^ 2)))) ∨
@@ -672,10 +670,8 @@ private theorem typeBRoot_mem_or_neg_mem (n : ℕ) (k : Fin (2 * n ^ 2)) :
         (by simp [sgn_opp, hsu])
         (by simp [sgn_opp, hsv])
 
-/-- The coroots of the pinned type `Bₙ` datum lie in the additive closure of the simple
-coroots, up to sign: each is a nonnegative or nonpositive combination of the Bourbaki simple
-coroots. -/
-private theorem typeBCoroot_mem_or_neg_mem (n : ℕ) (k : Fin (2 * n ^ 2)) :
+/-- The type `Bₙ` coroots are, up to sign, `ℕ`-combinations of the simple coroots. -/
+private theorem typeB_coroot_mem_or_neg_mem (n : ℕ) (k : Fin (2 * n ^ 2)) :
     (typeBSimplyConnectedRootDatum n).coroot k ∈
         AddSubmonoid.closure (⇑(typeBSimplyConnectedRootDatum n).coroot ''
           (typeBSimpleSupport n : Set (Fin (2 * n ^ 2)))) ∨
@@ -724,8 +720,8 @@ def typeBSimplyConnectedBase (n : ℕ) : (typeBSimplyConnectedRootDatum n).Base 
         simp
       rw [hcomp]
       exact (Pi.basisFun ℤ (Fin n)).linearIndependent
-  root_mem_or_neg_mem k := typeBRoot_mem_or_neg_mem n k
-  coroot_mem_or_neg_mem k := typeBCoroot_mem_or_neg_mem n k
+  root_mem_or_neg_mem := typeB_root_mem_or_neg_mem n
+  coroot_mem_or_neg_mem := typeB_coroot_mem_or_neg_mem n
 
 /-- Membership in the pinned base support is exactly membership among the first `n` root
 indices. -/
