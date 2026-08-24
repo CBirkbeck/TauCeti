@@ -111,6 +111,9 @@ lemma adjugateGL_mapGL_mem_Delta0 (γ : Gamma0 N) :
 is `Gamma0Map` itself, not its inverse: the adjugate is the image of `γ⁻¹`, and
 `Delta0UpperUnit_mapGL` inverts once more. Together the two pin down both faces of the
 character. -/
+-- This is the `@[simp]` half of the pair and `TauCeti.adjugateGL_mapGL` is not: that lemma's
+-- left-hand side occurs inside this one's, so tagging both would leave this statement
+-- non-normal. Do not add the tag there.
 @[simp] lemma Delta0UpperUnit_adjugateGL_mapGL (γ : Gamma0 N) :
     Delta0UpperUnit N ⟨_, adjugateGL_mapGL_mem_Delta0 N γ⟩ = (Gamma0Map N).toHomUnits γ := by
   -- The first step replaces one `Delta0 N` element by another. They have *equal values* —
